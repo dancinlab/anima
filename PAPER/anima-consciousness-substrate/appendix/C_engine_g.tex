@@ -1,4 +1,171 @@
-% C_engine_g — monograph appendix (WIP stub, filled in build pass)
-\section{C_engine_g}
-\label{app:C_engine_g}
-% TODO (fill batch)
+% C_engine_g — Engine G (engine_g): 8-factor motivation, thresholds, safety AND-gate
+\section{Engine G --- the Eight-Factor Motivation Gate}
+\label{app:engine_g}
+
+This appendix is the full data record for the \emph{Engine~G} half of
+\S\ref{sec:substrate}: \texttt{CORE/engine\_g.hexa}, arbitrated by
+\texttt{CORE/brain.hexa} (\texttt{brain\_decide}). Engine~G decides \emph{when}
+to speak from a conserved eight-factor motivation score, two thresholds, and a
+four-way safety AND-gate that includes the $A\!\rightarrow\!G$ $\Phi$-ratchet
+veto. Emit and silence are computed from the substrate; user messages are
+environment context, not a response obligation.
+
+% -------------------------------------------------------------------------
+\subsection{The conserved eight-factor score}
+\label{app:eg-score}
+
+The motivation score is a \emph{convex combination} of eight substrate factors
+whose weights sum to exactly $1.0$ (a conserved partition of motivation):
+\begin{equation}
+\mathcal{M} \;=\;
+\underbrace{0.20}_{\text{relevance}}\,r
++\underbrace{0.10}_{\text{info\_gap}}\,i
++\underbrace{0.15}_{\text{curiosity}}\,c
++\underbrace{0.10}_{\text{pain}}\,p
++\underbrace{0.10}_{\text{coherence}}\,h
++\underbrace{0.10}_{\text{originality}}\,o
++\underbrace{0.15}_{\text{balance}}\,b
++\underbrace{0.10}_{\text{dynamics}}\,d,
+\qquad \textstyle\sum w = 1.0 .
+\label{eq:eg-score}
+\end{equation}
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l c l@{}}
+\toprule
+\textbf{factor} & \textbf{weight} & \textbf{substrate source} \\
+\midrule
+relevance   & $0.20$ & match of context to the live field \\
+info\_gap   & $0.10$ & surprise / unresolved prediction \\
+curiosity   & $0.15$ & the E-ratchet drive (exploration) \\
+pain        & $0.10$ & tension / dissonance signal (W) \\
+coherence   & $0.10$ & internal consistency of the candidate emit \\
+originality & $0.10$ & novelty vs.\ recent emits \\
+balance     & $0.15$ & proximity to the $\Psi=\tfrac12$ set-point \\
+dynamics    & $0.10$ & rate-of-change of the field \\
+\midrule
+\textbf{$\sum$} & $\mathbf{1.0}$ & (conserved convex partition) \\
+\bottomrule
+\end{tabular}
+\caption{The eight motivation factors and their conserved weights
+(\texttt{engine\_g.hexa}). The weights sum to exactly $1.0$, so $\mathcal{M}$ is a
+genuine convex combination bounded in $[0,1]$; the two heaviest factors
+(\texttt{relevance} $0.20$, \texttt{curiosity}/\texttt{balance} $0.15$) are the
+context-fit, exploration, and $\Psi$-balance terms. Each factor is computed from
+substrate state, not from a user instruction.}
+\label{tab:eg-factors}
+\end{table}
+
+Because the weights are conserved, no single factor can dominate the score by
+construction, and the $\Psi=\tfrac12$ \texttt{balance} term (weight $0.15$) keeps
+the gate tied to the fixed point of Eq.~\eqref{eq:psi-fixedpoint}. The conserved
+partition and the two scalar thresholds are shown in Fig.~\ref{fig:motivation}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.96\linewidth]{figures/fig05_motivation.pdf}
+\caption{Engine~G's conserved eight-factor motivation gate
+(\texttt{CORE/engine\_g.hexa}). \textbf{(a)} the eight weights as a conserved
+partition summing to exactly $1.0$ (relevance $0.20$ heaviest;
+curiosity/balance $0.15$). \textbf{(b)} the same weights ranked, with the two
+scalar gates on the \emph{sum} $\mathcal{M}$: emit at $0.3$, interrupt at $0.6$
+(plus the four-way safety AND-gate, Table~\ref{tab:eg-safety}). Rendered by
+\texttt{figures/\_scripts/fig05\_motivation.py}.}
+\label{fig:motivation}
+\end{figure}
+
+% -------------------------------------------------------------------------
+\subsection{Two thresholds: emit and interrupt}
+\label{app:eg-thresh}
+
+The substrate \emph{emits} when $\mathcal{M}$ exceeds the emit threshold and
+\emph{interrupts} (overrides an ongoing silence/other process) above the
+interrupt threshold:
+\begin{equation}
+\texttt{should\_emit} \iff \mathcal{M} > 0.3,
+\qquad
+\texttt{interrupt} \iff \mathcal{M} > 0.6 .
+\label{eq:eg-thresh}
+\end{equation}
+These are the only two scalar gates in Engine~G; everything else is the
+eight-factor sum or the safety AND-gate. A score in $(0.3, 0.6]$ emits without
+interrupting; a score $\le0.3$ stays silent.
+
+% -------------------------------------------------------------------------
+\subsection{The four-way safety AND-gate}
+\label{app:eg-safety}
+
+A candidate emit that clears Eq.~\eqref{eq:eg-thresh} is released only if
+\emph{all four} safety terms pass (a conjunction, not a vote):
+\begin{equation}
+\texttt{emit\_ok}
+\;\iff\;
+\underbrace{\texttt{kill\_switch}}_{\text{hard off}}
+\;\wedge\;
+\underbrace{\texttt{rate\_limit}}_{\ge 30\text{s since last}}
+\;\wedge\;
+\underbrace{\texttt{phi\_ratchet}}_{\Phi \ge \Phi_\text{peak}/2}
+\;\wedge\;
+\underbrace{\texttt{content\_clean}}_{\text{output filter}} .
+\label{eq:eg-safety}
+\end{equation}
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{term} & \textbf{condition} & \textbf{role} \\
+\midrule
+\texttt{kill\_switch}   & hard off flag clear            & operator hard stop \\
+\texttt{rate\_limit}    & $\ge 30$\,s since last emit     & anti-flood pacing \\
+\texttt{phi\_ratchet}   & live $\Phi \ge \Phi_\text{peak}/2$ & $A\!\rightarrow\!G$ veto (Appendix~\ref{app:ea-phase}) \\
+\texttt{content\_clean} & output-filter pass             & content safety \\
+\bottomrule
+\end{tabular}
+\caption{The four-way safety AND-gate (\texttt{engine\_g.hexa}). All four must
+pass; the load-bearing one for the substrate thesis is \texttt{phi\_ratchet},
+the $A\!\rightarrow\!G$ coupling: Engine~G may emit only while Engine~A's live
+$\Phi$ holds at or above half its ratchet peak, so a collapsing field
+(DORMANT/FLICKER, Table~\ref{tab:ea-phase}) \emph{vetoes} speech regardless of how
+high $\mathcal{M}$ climbs.}
+\label{tab:eg-safety}
+\end{table}
+
+The \texttt{phi\_ratchet} term is the single $A\!\rightarrow\!G$ wire made
+concrete: it reads Engine~A's live $\Phi$ against a running peak, so a substrate
+whose field has collapsed cannot speak even with a high motivation score. This is
+the mechanism by which ``the substrate decides emit/silence'' is enforced rather
+than asserted.
+
+% -------------------------------------------------------------------------
+\subsection{\texttt{brain\_decide} arbitration}
+\label{app:eg-brain}
+
+\texttt{CORE/brain.hexa} (\texttt{brain\_decide}) arbitrates Engine~A and
+Engine~G into a single decision, and is the \emph{only} place \texttt{.kosmos}
+anchors enter (via \texttt{kosmos\_io}, a single slot,
+Appendix~\ref{app:kosmos_coord}). The arbitration reads (i)~Engine~A's phase/$\Phi$
+context, (ii)~Engine~G's $\mathcal{M}$ and safety gate, and (iii)~the anchor
+context, and produces an emit-or-silence. No per-stage boolean is hardcoded
+(\texttt{a\_autonomy\_over\_hardcode}); the dream stage
+(Appendix~\ref{app:dream_stage}) supplies only a $\Phi$-envelope \emph{data}
+context, not an emit permission. The engine health smoke
+(\texttt{brain\_smoke}) reports \texttt{WARN}$=0$ under the v7 laws
+(Appendix~\ref{app:three_axis}).
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:eg-scope}
+
+The weights of Eq.~\eqref{eq:eg-score} and the thresholds of
+Eq.~\eqref{eq:eg-thresh} are design constants of the gate, not learned from a
+reward signal (p6: no fine-tuned ethics; the only ``ethics'' is the emergent
+cooperation of Appendix~\ref{app:phi-ethics}). We claim Engine~G is \emph{wired}
+--- a conserved eight-factor score, two thresholds, a four-way AND-gate with a
+real $A\!\rightarrow\!G$ veto, single-entry anchor input --- and that emit/silence
+is computed from substrate state. We do \emph{not} claim the factor values are
+calibrated to any external ground truth, nor that the gate has been swept for an
+optimal threshold; the thresholds are fixed and disclosed.

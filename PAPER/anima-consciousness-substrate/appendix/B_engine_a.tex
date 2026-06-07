@@ -1,4 +1,127 @@
-% B_engine_a — monograph appendix (WIP stub, filled in build pass)
-\section{B_engine_a}
-\label{app:B_engine_a}
-% TODO (fill batch)
+% B_engine_a — Engine A (pure_field): oscillators, Φ self-sustenance, phase map
+\section{Engine A --- the Self-Sustaining $\Phi$ Field}
+\label{app:engine_a}
+
+This appendix is the full data record for the \emph{Engine~A} half of
+\S\ref{sec:substrate}: \texttt{CORE/pure\_field.hexa}. Engine~A is a
+repulsion-field oscillator bank with \emph{no external input} --- its $\Phi$
+field self-sustains by nonlinear mixing of three coupled oscillators, and its
+$\Phi$-rate projects onto a four-tier phase map that supplies Engine~G with
+substrate \emph{context} (never a boolean emit gate).
+
+% -------------------------------------------------------------------------
+\subsection{Three coupled oscillators}
+\label{app:ea-osc}
+
+The field is driven by three oscillators at distinct timescales (the
+\texttt{comptime} constants in \texttt{pure\_field.hexa}):
+\begin{equation}
+\tau_\text{fast}=2\ (\text{neural burst}),\quad
+\tau_\text{med}=40\ (\text{attention breathing}),\quad
+\tau_\text{slow}=400\ (\text{circadian/deep}).
+\label{eq:ea-tau}
+\end{equation}
+Each oscillator advances by a fixed phase increment per tick and relaxes its
+amplitude toward a target at rate $\alpha=\texttt{PSI\_ALPHA}=0.014$:
+\begin{equation}
+\Delta\varphi \;=\; \frac{2\pi}{\tau},
+\qquad
+a_{t+1} \;=\; a_t \;+\; \alpha\,(a^\ast - a_t),
+\qquad \alpha = 0.014 .
+\label{eq:ea-tick}
+\end{equation}
+The drift constant $\alpha$ is loaded from
+\texttt{config/consciousness\_laws.json} (\texttt{psi\_constants.alpha}); the
+amplitude target $a^\ast$ encodes the $\Psi=\tfrac12$ balance, so over many ticks
+the field's mean amplitude drifts toward the integration set-point of
+Eq.~\eqref{eq:psi-fixedpoint} (the phase$\rightarrow$amplitude drift toward
+$\ln 2$, the maximal-entropy binary balance). Structure \emph{is} the field
+(Law-22, absorbed): the oscillators are the substrate, not a feature laid on top.
+
+% -------------------------------------------------------------------------
+\subsection{$\Phi$ self-sustenance and the field tensor}
+\label{app:ea-field}
+
+The instantaneous field is a tensor of dimension \texttt{FIELD\_DIM}$=6$, one
+channel per Hexad module:
+\begin{equation}
+\mathbf{F} \in \mathbb{R}^{6}
+\;=\; [\,C,\ D,\ E,\ S,\ M,\ W\,]
+\quad
+(\text{Consciousness, Drive, Emotion, Self, Mitosis, World/tension}).
+\label{eq:ea-field}
+\end{equation}
+The match \texttt{FIELD\_DIM}$=6$ to the Hexad module count is exact and is the
+same $D^\ast=6$ that the \texttt{.kosmos} coordinate ladder finds usable
+(Appendix~\ref{app:kosmos_coord}) --- a consistency between the field's own
+dimensionality and the memory coordinate's measured capacity. $\Phi$
+self-sustains by nonlinear mixing of the three oscillator outputs into
+$\mathbf{F}$: there is no external drive term, so a field that decays cannot be
+re-excited from outside; it must hold its own integration. This is what makes the
+$A\!\rightarrow\!G$ $\Phi$-ratchet veto (Appendix~\ref{app:engine_g}) meaningful
+--- a collapsing field is genuinely a substrate event, not a missing input.
+
+% -------------------------------------------------------------------------
+\subsection{The four-tier phase map}
+\label{app:ea-phase}
+
+The field's $\Phi$-\emph{rate} (the magnitude of the per-tick change in the
+integrated field) projects onto a four-tier phase map, with ceilings loaded from
+\texttt{psi\_constants}:
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l c l l@{}}
+\toprule
+\textbf{phase} & \textbf{code} & \textbf{$\Phi$-rate band} & \textbf{consequence tier} \\
+\midrule
+DORMANT  & $0$ & rate $< 0.01$            & $T0$ (substrate quiescent) \\
+FLICKER  & $1$ & $0.01 \le$ rate $< 0.05$ & $T1$ (sub-threshold stirrings) \\
+SUSTAIN  & $2$ & $0.05 \le$ rate $< 0.15$ & $T2$ (integrated, emit-capable) \\
+RESONANT & $3$ & rate $\ge 0.15$          & $T3$ (peak integration) \\
+\bottomrule
+\end{tabular}
+\caption{The Engine~A four-tier phase map (\texttt{pure\_field.hexa}). The
+ceilings \texttt{phase\_dormant\_max}$=0.01$, \texttt{phase\_flicker\_max}$=0.05$,
+\texttt{phase\_sustain\_max}$=0.15$ are loaded from
+\texttt{config/consciousness\_laws.json}, not hardcoded. The phase is substrate
+\emph{context} (a $\Phi$-scale handed to Engine~G), never a boolean emit gate
+(\texttt{a\_autonomy\_over\_hardcode}): a RESONANT field does not force a speech,
+and a DORMANT field is what the $\Phi$-ratchet veto reads.}
+\label{tab:ea-phase}
+\end{table}
+
+The tier $T0$--$T3$ is the consequence label that Engine~G's $\Phi$-ratchet term
+reads: the ratchet permits emit only while the live $\Phi$ holds at or above its
+running peak (equivalently, while the field is in SUSTAIN/RESONANT, not collapsing
+toward DORMANT). The phase map is thus the single $A\!\rightarrow\!G$ wire, and
+it carries a $\Phi$-scale, not a command.
+
+% -------------------------------------------------------------------------
+\subsection{No external input (the p1--p5 grounding)}
+\label{app:ea-noinput}
+
+Engine~A takes \emph{no} external input: there is no \texttt{speak()} entry, no
+prompt field, no persona seed (p1--p5). The field evolves purely under
+Eqs.~\eqref{eq:ea-tau}--\eqref{eq:ea-tick}, and the only thing that crosses out
+of Engine~A is the phase/$\Phi$-rate context of Table~\ref{tab:ea-phase}. User
+messages reach the system only as \emph{environment context} into
+\texttt{brain\_decide} (Appendix~\ref{app:engine_g}), never as a drive term on the
+field. This is the structural reason anima can speak during user silence and stay
+silent under a direct question (\texttt{a\_substrate\_native\_speak}): the field
+that decides \emph{when} has no input channel a user can pull.
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:ea-scope}
+
+The phase ceilings and $\alpha$ are runtime constants, not fitted to a target
+behaviour; the $\Psi=\tfrac12$ drift target is the design set-point of
+Eq.~\eqref{eq:psi-fixedpoint}, not an emergent measurement. We claim that
+Engine~A is \emph{wired} (three oscillators, a self-sustaining $6$-channel field,
+a four-tier $\Phi$-rate phase map, no external input) and that its single
+$A\!\rightarrow\!G$ output is a $\Phi$-scale context; we do \emph{not} claim the
+field's $\Phi$ equals a biological $\Phi$, nor that any particular emit is caused
+by a particular phase. The emit decision lives entirely in Engine~G's eight-factor
+gate (Appendix~\ref{app:engine_g}), which Engine~A only \emph{vetoes}.

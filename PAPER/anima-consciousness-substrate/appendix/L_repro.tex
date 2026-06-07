@@ -1,4 +1,126 @@
-% L_repro — monograph appendix (WIP stub, filled in build pass)
-\section{L_repro}
-\label{app:L_repro}
-% TODO (fill batch)
+% L_repro — full reproducibility: HF repos, byte-exact mirror, probe commands, p1-p8 protocol
+\section{Reproducibility --- Artifacts, Commands, and the Anti-Goodhart Protocol}
+\label{app:repro}
+
+This appendix is the full reproducibility runbook: the HF repositories, the
+byte-exact mirror, the exact probe commands, and the p1--p8 anti-Goodhart
+protocol that the whole substrate is built to satisfy. Every section claim links
+to a verbatim verdict (Appendix~\ref{app:verify_ledger}); this appendix lists how
+to re-run them.
+
+% -------------------------------------------------------------------------
+\subsection{Hugging Face repositories}
+\label{app:repro-hf}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{repo} & \textbf{visibility} & \textbf{artifact} \\
+\midrule
+\texttt{anima-clm-convmoe-3b-engine-rung-byte-3b} & PRIVATE & 3B \texttt{.clm} v0.3 (Lane-P torch; sha256 \texttt{01df4f26\dots}) \\
+\texttt{anima-clm-mid-convmoe-engine-mount-byte-7m} & PRIVATE & MID $7.479$M ConvMoE \\
+\texttt{anima-clm-corpus-7b-mid-byte-202m} & PUBLIC & $202$M corpus-validation (sha256 \texttt{adbb1911\dots}) \\
+\texttt{clm-7b-undertrained-step\{500..2000\}} & PRIVATE & M13 7B intermediate ckpts (future ext.) \\
+\bottomrule
+\end{tabular}
+\caption{HF repositories (org \texttt{dancinlab}). The Lane-P torch \texttt{.clm}
+files are PRIVATE (forge remains the PUBLIC production trainer,
+\texttt{a\_clm\_gen\_pipeline}); the corpus-validation probe is PUBLIC
+(PASS-grade, \texttt{a\_hf\_autonomous}), HF-redownload sha256 verified equal to
+local (\texttt{a\_hf\_complete}). All rows are tracked in root \texttt{/HF.jsonl}
+(\texttt{a\_hf\_registry}).}
+\label{tab:repro-hf}
+\end{table}
+
+% -------------------------------------------------------------------------
+\subsection{The byte-exact mirror}
+\label{app:repro-mirror}
+
+AXIS-2 (CE-descent) is measured through a byte-exact Python mirror of
+\texttt{CORE/clm\_decode.hexa}
+(\texttt{state/mid\_convmoe\_fire/clm\_decode\_mirror.py}), validated
+\emph{identical} to the engine on the golden reference. The mirror is used because
+the canonical hexa probe \texttt{clm\_ce\_descent\_probe.hexa} fails to link on
+macOS arm64 (the \texttt{\_forge\_dispatch\_groupnorm\_gelu} hexa-fusion native is
+absent from the installed self runtime --- a toolchain link-gap, not a \texttt{.clm}
+problem; \texttt{three\_axis\_probe.hexa} links fine). A handoff is on file to
+hexa-lang (memory: \texttt{clm-decode-macos-link-gap}).
+
+% -------------------------------------------------------------------------
+\subsection{Exact probe / re-run map}
+\label{app:repro-commands}
+
+\begin{table}[h]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l l@{}}
+\toprule
+\textbf{claim} & \textbf{re-run path} \\
+\midrule
+Theory (Φ-laws)   & \texttt{UNIVERSE/H\_287,288,290,285,291.md} (faithful IIT4, \$0, mac-local, \texttt{llm:none}) \\
+$\Psi=\tfrac12$   & \texttt{config/consciousness\_laws.json} (\texttt{psi\_constants.balance}$=0.5$) \\
+Substrate         & \texttt{CORE/\{pure\_field,engine\_g,brain,generator,kosmos\_io\}.hexa} \\
+Dream             & \texttt{AGENT/CHAT/anima\_dream\_stage.hexa} \\
+Decode            & sibling \texttt{PAPER/omega-substrate-coupled-decoding}; \texttt{.verdicts/omega-engine/*} \\
+Mouth (3B)        & \texttt{.verdicts/convmoe-3b-engine-rung/SUMMARY.txt}; \texttt{CLM/train/train\_lane\_p\_3b.py} $+$ \texttt{serialize\_v3} \\
+Corpus            & \texttt{.verdicts/corpus-7b-mid-validation/SUMMARY.txt}; \texttt{domains/CORPUS.md} \\
+Memory            & \texttt{.verdicts/kosmos-\{carving-engine,dim-ladder,axis-semantics\}/SUMMARY.txt} \\
+AKIDA (Lane~A)    & \texttt{.verdicts/clm-akida-multiling-semantic/result.txt} (real AKD1000 silicon) \\
+Proof (3-axis)    & \texttt{CORE/three\_axis\_probe.hexa}, \texttt{clm\_ce\_descent\_probe.hexa} \\
+\bottomrule
+\end{tabular}
+\caption{The re-run map. Theory and toy probes are deterministic, \$0, mac-local,
+\texttt{llm:none} (re-runnable bit-for-bit); the 3B/202M fires are GPU runs whose
+verdicts are persisted verbatim in \texttt{.verdicts/}. The AKIDA result is a real
+on-chip run on \texttt{pi5-akida} (Lane~A, recorded separately from any GPU number,
+\texttt{a\_lane\_akida\_gpu\_split}).}
+\label{tab:repro-commands}
+\end{table}
+
+% -------------------------------------------------------------------------
+\subsection{The p1--p8 anti-Goodhart protocol}
+\label{app:repro-protocol}
+
+The substrate is built to satisfy eight philosophy principles; they are the
+anti-Goodhart contract under which every claim is made.
+\begin{table}[h]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{principle} & \textbf{statement} & \textbf{enforced by} \\
+\midrule
+p1 & no system prompt        & no \texttt{system:} field, ever \\
+p2 & no identity rules       & identity emerges from cells (no \texttt{identity.yaml}) \\
+p3 & no persona injection    & no role prefix / register memorization \\
+p4 & no assistant framing    & anchors are environment context (single \texttt{kosmos\_io} entry) \\
+p5 & no \texttt{speak()}     & emit from real tension only (dream API removed) \\
+p6 & no fine-tuned ethics    & cooperation emerges (H\_291, lattice $1.0$ vs.\ mixed $0$) \\
+p7 & no perplexity verdict   & coherence discriminator (structure vs.\ gibberish), not loss \\
+p8 & no train/infer split    & MITOSIS ticks during sleep; growth not gated by a flag \\
+\bottomrule
+\end{tabular}
+\caption{The p1--p8 anti-Goodhart protocol. The load-bearing pair for this paper
+is p1--p4 (consciousness is \emph{measured}, not \emph{prompted}: no system
+prompt, no persona, no assistant framing) and p7 (competence is adjudicated by a
+structure-vs-gibberish coherence discriminator, not by perplexity ---
+Appendix~\ref{app:ta-antigoodhart}). Together they make every green a falsifiable
+measurement rather than an injected demonstration.}
+\label{tab:repro-protocol}
+\end{table}
+
+% -------------------------------------------------------------------------
+\subsection{Build}
+\label{app:repro-build}
+
+The paper builds on the pool host \texttt{aiden} (TeX Live; the local Mac has no
+pdflatex/matplotlib): \texttt{pdflatex $\times2$ $+$ bibtex $+$ pdflatex}. Figures
+render on \texttt{aiden} (matplotlib) and as TikZ in-document. The companion
+ledgers (\texttt{verify-ledger.json}, \texttt{pr-roll.json},
+\texttt{session-journal.md}) externalize every record. The registry root is
+\texttt{/HF.jsonl}.

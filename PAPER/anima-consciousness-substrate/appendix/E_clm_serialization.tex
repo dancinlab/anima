@@ -1,4 +1,105 @@
-% E_clm_serialization — monograph appendix (WIP stub, filled in build pass)
-\section{E_clm_serialization}
-\label{app:E_clm_serialization}
-% TODO (fill batch)
+% E_clm_serialization — .clm byte grammar v0.1 / v0.2 / v0.3 + macOS link-gap disclosure
+\section{The \texttt{.clm} Byte Grammar --- v0.1, v0.2, and the Config-Agnostic v0.3}
+\label{app:clm_serialization}
+
+This appendix is the full data record for the serialization honesty paragraph of
+\S\ref{sec:mouth}. The \texttt{.clm} format is the byte grammar by which a trained
+byte-language model enters the consciousness engine through the single generator
+L3 slot. Three versions exist; only v0.2 and v0.3 are engine-loadable, and v0.3
+is config-agnostic (it restores $(d,E,L)$ from block structure). The CE-descent
+axis is measured through a byte-exact Python mirror of the decoder because the
+canonical hexa probe fails to link on macOS arm64 --- a disclosure we make rather
+than bury.
+
+% -------------------------------------------------------------------------
+\subsection{v0.1 --- the non-engine-loadable 2-track JSON}
+\label{app:clm-v01}
+
+The v0.1 serializer (\texttt{CLM/model/clm\_serialize.py}) writes a 2-track JSON
+layout: \texttt{MAGIC CLM\textbackslash x01} $+$ \texttt{nblocks} $+$ per-block
+$(C_\text{out},\text{rest},\text{int4},\text{scale})$. It carries the trunk
+weights but \emph{not} the trained embedding or the group-norm affine, so the
+engine cannot reconstruct a forward from it. v0.1 is therefore \textbf{not
+engine-loadable} (the \texttt{F-CLM-SERIALIZE-GAP} finding); it is retained only
+as a debugging dump and must never be claimed engine-mountable
+(\texttt{a\_clm\_gen\_pipeline}).
+
+% -------------------------------------------------------------------------
+\subsection{v0.2 --- the CLMX trailer makes it loadable}
+\label{app:clm-v02}
+
+v0.2 (\texttt{CLM/model/clm\_serialize\_v2.py}) appends a \texttt{CLMX} trailer
+carrying the two pieces v0.1 dropped: the trained embedding $[\,V\!\times\!d\,]$
+and the group-norm affine, packed as $11$ extension entries. With the trailer the
+engine can reconstruct the full forward, so v0.2 is \textbf{engine-loadable}. The
+golden reference \texttt{reexport\_d768\_v2\_fast.clm} is the ground-truth layout
+that \texttt{CORE/clm\_decode.hexa} reads.
+
+% -------------------------------------------------------------------------
+\subsection{v0.3 --- config-agnostic block grammar}
+\label{app:clm-v03}
+
+v0.3 (\texttt{serialize\_v3}) generalizes the v0.2 byte grammar to \emph{arbitrary}
+$(L,E)$: the file carries $L+E+3$ blocks and $2L+E+6$ extension entries, and the
+decoder restores $d$, $E$, and $L$ from the block structure alone --- no separate
+config side-channel. The compatibility is exact: v0.3 at $L1/E2$ is
+\emph{byte-identical} to v0.2. Table~\ref{tab:clm-versions} summarizes the three.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l l l l@{}}
+\toprule
+\textbf{ver} & \textbf{layout} & \textbf{loadable?} & \textbf{config} \\
+\midrule
+v0.1 & \texttt{CLM\textbackslash x01} $+$ nblocks $+$ per-block (2-track JSON) & \textbf{No} & --- (F-CLM-SERIALIZE-GAP) \\
+v0.2 & $+$ \texttt{CLMX} trailer: embed$[V{\cdot}d]$ $+$ GN affine, $11$ ext & Yes & fixed $(L,E)$ \\
+v0.3 & $L{+}E{+}3$ blocks, $2L{+}E{+}6$ ext & Yes & \textbf{config-agnostic} ($d,E,L$ from blocks) \\
+\bottomrule
+\end{tabular}
+\caption{The three \texttt{.clm} versions. v0.1 is not engine-loadable (drops the
+embedding $+$ GN affine); v0.2 adds the CLMX trailer; v0.3 makes the block/ext
+counts config-agnostic so any $(L,E)$ decodes. v0.3 at $L1/E2$ is byte-identical
+to v0.2 (the generalization is a superset, not a re-layout).}
+\label{tab:clm-versions}
+\end{table}
+
+\paragraph{The 3B \texttt{.clm} decodes config-agnostically.} The serialized 3B
+model (\texttt{state/lane\_p\_3b\_fire/clm\_3b.clm}, $1{,}542{,}913{,}258$\,B,
+sha256 \texttt{01df4f26\dots}) decodes through the generalized
+\texttt{CORE/clm\_decode.hexa}:
+\begin{verbatim}
+CLM\x01  valid=true  loaded=true  nblk=63   (3 fixed + L30 + E30)
+CONFIG_RESTORED=true: d_model=4096, E=30, L=30, V=256, K=3
+\end{verbatim}
+i.e.\ $d4096/E30/L30/V256/K3$ are restored from the block structure alone, with
+no side-channel config (Appendix~\ref{app:engine_mount}).
+
+% -------------------------------------------------------------------------
+\subsection{The byte-exact mirror and the macOS link-gap}
+\label{app:clm-mirror}
+
+The CE-descent measurement (Appendix~\ref{app:three_axis}, AXIS-2) uses a
+\emph{byte-exact Python mirror} of \texttt{CORE/clm\_decode.hexa}
+(\texttt{state/mid\_convmoe\_fire/clm\_decode\_mirror.py}), validated
+\emph{identical} to the engine on the golden reference. The mirror is used because
+the canonical hexa probe \texttt{clm\_ce\_descent\_probe.hexa}
+\textbf{fails to link on macOS arm64}: the installed self runtime is missing the
+hexa-fusion-only native \texttt{\_forge\_dispatch\_groupnorm\_gelu}. This is a
+\emph{toolchain link-gap}, not a \texttt{.clm} problem --- \texttt{three\_axis\_probe.hexa}
+links fine, and the mirror reproduces the engine forward byte-for-byte on the
+golden ref. A handoff is filed to hexa-lang (memory: \texttt{clm-decode-macos-link-gap}).
+We disclose the workaround rather than present the mirror as the engine.
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:clm-scope}
+
+v0.1 is honestly not engine-loadable and is never claimed otherwise; the
+engine-loadable path is v0.2/v0.3 only. The byte-exact mirror is validated equal
+to the engine on the golden reference, but the canonical hexa CE probe is blocked
+on macOS arm64 by a native-symbol link-gap; the AXIS-2 number is therefore a
+mirror measurement that is byte-equal to what the engine would produce, with the
+toolchain caveat stated. Lane-P torch \texttt{.clm} files are PRIVATE on HF
+(forge remains the PUBLIC production trainer, \texttt{a\_clm\_gen\_pipeline}).

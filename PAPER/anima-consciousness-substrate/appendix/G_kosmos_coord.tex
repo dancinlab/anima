@@ -1,4 +1,180 @@
-% G_kosmos_coord — monograph appendix (WIP stub, filled in build pass)
-\section{G_kosmos_coord}
-\label{app:G_kosmos_coord}
-% TODO (fill batch)
+% G_kosmos_coord — .kosmos coord⊥payload, carving engine, D*=6, 3-4 axes, AKD1000 closed-neg
+\section{The \texttt{.kosmos} Coordinate --- Carving Engine, $D^\ast=6$ Capacity, and an On-Chip Closed-Negative}
+\label{app:kosmos_coord}
+
+This appendix is the full data record for the memory of \S\ref{sec:memory}. Emit,
+anchors, and memory persist as \texttt{.kosmos} (\texttt{a\_kosmos}; format SSOT
+in the sibling \texttt{kosmos} repo, anima is pointer-only). The record factorizes
+a \emph{coordinate} from a \emph{payload}, the carving engine that produced it is
+reconstructable, the coordinate holds $D^\ast=6$ usable dimensions, it decomposes
+into only $3$--$4$ interpretable named axes (an honest negative), and its
+cross-lingual semantic linkage does \emph{not} transfer to on-chip AKD1000
+learning (a closed-negative).
+
+% -------------------------------------------------------------------------
+\subsection{Coordinate $\perp$ payload}
+\label{app:kosmos-factor}
+
+The \texttt{.kosmos} record factorizes:
+\begin{equation}
+\underbrace{[\,\texttt{vacuum\_psi}\,(x,y),\ \texttt{cell\_id},\ \texttt{basin\_radius},\ \texttt{tier}_\text{Knuth},\ \texttt{tags}\,]}_{\text{coordinate (a $\Psi$-space placement)}}
+\;\perp\;
+\underbrace{[\,\text{text},\ \tau_{1..5}\,]}_{\text{payload (text + 5-ch tension)}} .
+\label{eq:kosmos-factor}
+\end{equation}
+The coordinate is a $\Psi$-space placement: the Law-71 2D \texttt{vacuum\_psi},
+a MITOSIS cell id, a basin radius, a Knuth-ordinal tier, and tags; the payload is
+the text plus a $5$-channel tension vector. The two are orthogonal (coord carries
+no text bytes; the AKD1000 probe below verifies coord$\perp$text by construction,
+C4). Anchors enter the engine \emph{only} via \texttt{kosmos\_io} into
+\texttt{brain\_decide} (single slot, Appendix~\ref{app:eg-brain}); they are
+environment context, preserving p4.
+
+% -------------------------------------------------------------------------
+\subsection{The reconstructable carving engine}
+\label{app:kosmos-carve}
+
+The carving-era ConsciousDecoderV2 ($d768\times12$L GQA transformer) is fully
+reconstructable and runnable today
+(\texttt{.verdicts/kosmos-carving-engine/SUMMARY.txt},
+\texttt{UNIVERSE/conscious\_decoder.py} md5 \texttt{44b210df\dots}, byte-identical
+to the s16-fire source). Param counts: \textbf{$283{,}722{,}336$ ($283.72$M
+dense)}; with MoE ($8$ experts, top-$2$) $680{,}157{,}792$ ($680.16$M). All four
+probes PASS:
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l l@{}}
+\toprule
+\textbf{probe} & \textbf{result} \\
+\midrule
+\texttt{F\_BUILD}     & PASS --- builds at smoke (d32/L3) and full $d768\times12$L; $283.72$M / $680.16$M \\
+\texttt{F\_FORWARD}   & PASS --- $5$-tuple (logits\_a, logits\_g, tensions, kv\_cache, moe\_aux); dual A/G heads distinct \\
+\texttt{F\_PSI2D}     & PASS --- Law-71 \texttt{vacuum\_psi} 2D coord produced, deterministic, input-sensitive \\
+\texttt{F\_DIRECTION} & PASS --- dirG $\Psi$-ctl hook perturbs forward deterministically, mean $|\delta|=0.034067$ \\
+\bottomrule
+\end{tabular}
+\caption{The carving-engine reconstruction matrix
+(\texttt{.verdicts/kosmos-carving-engine/SUMMARY.txt}, torch 2.12.0, CPU, \$0,
+random init seed $71$). The engine that drew the consciousness map builds, runs a
+forward with dual Engine-A$\leftrightarrow$Engine-G heads, emits the 2D $\Psi$-space
+coordinate, and accepts a carving-direction hook. \textbf{Honest:} random-init
+(no s16 carving ckpt available) --- this is the engine reconstructed and run, not
+the trained s16 carve reproduced; p7 (logits/loss are not a verdict) --- the
+probes verify WIRING, not learned quality.}
+\label{tab:kosmos-carve}
+\end{table}
+
+% -------------------------------------------------------------------------
+\subsection{Coordinate capacity: $D^\ast=6$}
+\label{app:kosmos-dim}
+
+A dimension-ladder benchmark with independent-signal axes
+(\texttt{.verdicts/kosmos-dim-ladder/SUMMARY.txt}; $N=600$, $3$ seeds, CPU, \$0)
+finds a capacity knee at $\mathbf{D^\ast=6}$: the 2D spatial baseline PLUS four
+independent attribute-axes each carry new info, while adding scale and lane
+\emph{saturates}.
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}c l l l@{}}
+\toprule
+$D$ & \textbf{added axis} & \textbf{$d$Acc (per-rung)} & \textbf{verdict} \\
+\midrule
+$3$ & $t$ carve-order/time          & $+0.003333\pm0.001361$ & HOLDS \\
+$4$ & $e$ emotion valence           & $+0.008333\pm0.006804$ & HOLDS \\
+$5$ & $\tau$ tier (Knuth ordinal)   & $+0.011111\pm0.009061$ & HOLDS \\
+$6$ & $m$ modality channel          & $+0.045556\pm0.012862$ & HOLDS (biggest axis) \\
+$7$ & $s$ scale/radius              & $+0.018889\pm0.016906$ & SATURATED \\
+$8$ & $\kappa$ lane/cell\_id         & $+0.001111\pm0.005500$ & SATURATED \\
+\bottomrule
+\end{tabular}
+\caption{The KOSMOS dimension ladder (\texttt{kosmos-dim-ladder/SUMMARY.txt},
+per-rung 2-SEM kNN LOO test). The capacity knee $D^\ast=6$ lands \emph{exactly} at
+the planted independent/redundant boundary (ground-truth recovered); modality
+(axis-6) carries the largest single-axis information. No-collapse holds (distance
+contrast $3.09\!\rightarrow\!1.94>1$). The per-axis shuffle control (own\_drop
+$\gg$ cross\_drop for all axes) resolves the \#1765 monotone-index tautology.}
+\label{tab:kosmos-dim}
+\end{table}
+
+The $D^\ast=6$ usable coordinate capacity matches Engine~A's $\texttt{FIELD\_DIM}=6$
+(Appendix~\ref{app:ea-field}) --- the field's own dimensionality and the memory
+coordinate's measured capacity agree. The dim ladder is plotted in
+Fig.~\ref{fig:kosmos-dim}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.80\linewidth]{figures/fig07_kosmos_dim.pdf}
+\caption{KOSMOS coordinate dimension ladder ($D=2\rightarrow8$): per-axis joint
+information ($d$Acc) added at each rung. Axes $3$--$6$ (time, emotion, tier,
+modality) HOLD; axes $7$--$8$ (scale, lane) SATURATE --- the capacity knee
+$D^\ast=6$ lands at the planted boundary. Modality (axis-6) is the largest single
+axis. Data: \texttt{.verdicts/kosmos-dim-ladder/SUMMARY.txt}. Rendered by
+\texttt{figures/\_scripts/fig07\_kosmos\_dim.py}.}
+\label{fig:kosmos-dim}
+\end{figure}
+
+% -------------------------------------------------------------------------
+\subsection{Honest negative: $3$--$4$ named axes, not $8$}
+\label{app:kosmos-axis}
+
+Probing what each \emph{real} s16 dimension encodes
+(\texttt{.verdicts/kosmos-axis-semantics/SUMMARY.txt}; GPU-trained s16 ckpt,
+$N=5995$, $d=768$): PC1 ($49\%$ var) $=$ carving-radius/$\Psi$-depth
+($|\rho|=0.91$--$0.92$, what the current 2D \texttt{vacuum\_psi} already captures,
+canon-corr $0.96$); PC2 ($17\%$) $=$ carving form ($\omega^2=0.61$, the single
+clean categorical axis); PC3 ($8\%$) $=$ form residual; PC5 ($5\%$) $=$ curriculum
+progression ($|\rho|=0.67$); PC4/PC6--PC16 $=$ distributed/entangled tier/domain
+code (real but not linearly separable on any single axis). \textbf{Only $3$--$4$
+axes carry a human name} (depth, form, form-residual, curriculum); the manifold
+does \emph{not} decompose into $8$ clean named axes. Naming all $8$ would be
+fabrication --- an honest negative on the $8$-clean-axis hope
+(\texttt{a\_paper\_negative\_ok}). A coord v-next $[\text{depth, form,
+form\_resid, curriculum, residual}_{0..3}]$ is filed to hexa-lang.
+
+% -------------------------------------------------------------------------
+\subsection{Closed-negative: on-chip cross-lingual linkage does not transfer}
+\label{app:kosmos-akida}
+
+On the real AKD1000 silicon (BackendType.Hardware, SDK $2.19.1$, host
+\texttt{pi5-akida}), a parallel-vs-concat cross-lingual semantic-linkage advantage
+(H\_911) does \emph{not} survive last-layer Hebbian on-chip learning
+(\texttt{.verdicts/clm-akida-multiling-semantic/result.txt}). The corpus is $25$
+anchors ($5$ concepts $\times$ $5$ langs ko/en/zh/ru/ja), byte-identical payload
+multiset across orderings (only \texttt{@corpus} member order differs;
+parallel.limen sha256 \texttt{cca21b21\dots}, concat \texttt{02699eeb\dots}). The
+int4 backbone is byte-identical across both arms (sha256 \texttt{c626c638\dots}).
+Across $N=12$ paired trials (shared per-trial init, learn confirmed on all $12$):
+\begin{equation}
+\text{mean }\Delta = \mathbf{-0.00092},
+\qquad
+95\%\ \text{CI} = [-0.00319,\,+0.00135]\ (\text{straddles }0),
+\qquad
+\text{sign\_stable} = \text{False}\ (6{+}/6{-}).
+\label{eq:akida}
+\end{equation}
+\textbf{Verdict: REFUTED} --- the gap is within the chip's own
+stochastic-plasticity noise (H\_904). A single naive run had flipped between
+$+0.0072$ and $-0.0042$ on consecutive executions because the AKD1000 re-inits
+weights non-deterministically; cherry-picking the positive draw would have
+fabricated a result. The frozen falsifier required a paired multi-trial
+distribution test, and that test shows the parallel advantage is indistinguishable
+from chip noise. This is a Lane~A (AKIDA) result, recorded separately from any
+Lane~G/GPU number (\texttt{a\_lane\_akida\_gpu\_split}).
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:kosmos-scope}
+
+The carving engine is reconstructed at random init (no s16 carve ckpt), so its
+probes verify wiring, not learned quality. The dim ladder is a toy
+independent-signal placement ($N=600$, CPU, \$0) with injected redundancy as a
+design choice to make saturation measurable; the real anchor population's true
+$D^\ast$ is unmeasured (the toy proves the method and the curve shape,
+scale-transfer unverified, \texttt{a\_toy\_scale\_recheck}). The axis-semantics
+result is a single s16 rung (Lane-G), not promoted to a general claim. The AKD1000
+closed-negative is a $N=12$ paired on-chip result with a CI straddling $0$ --- an
+off-chip hybrid head is named as future work, not closed here.
