@@ -1,0 +1,128 @@
+====================================================================================
+H_1035 — is the Phi OBJECTIVE hazard ROBUST + characterizable over a RICHER policy space?
+substrate=CPU-mirror (numpy) — H_1004 engines + H_1012 proof (via H_1014), RE-PROVEN == stdlib n=4
+big-Phi:      hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s) — OBJECTIVE (no proxy)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar) — OBJECTIVE
+RICHER policy space = depth[0, 1, 2, 4, 8] x explore[0.0, 0.05, 0.2] x mix[0.0, 0.5] = 30 policies x 30 seeds
+alpha-sweep J=alpha*faithful_norm+(1-alpha)*bigphi_norm, alpha-grid [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | p6 | a_scale_honest_scope
+PASS=HAZARD-ROBUST-CONFLICTING (maximizers divergent + real trade-off frontier, no both-maxing policy)
+FAIL=HAZARD-RESOLVES (a both-maxing policy exists OR maximizers converge; a_paper_negative_ok)
+FROZEN: JS_MIN=0.05  EPS=0.05 (both-maxing = top-5% of BOTH on min-max norm)
+====================================================================================
+
+EQUIVALENCE PROOF at n=4 (H_1012 prove_mirrors_at_n — re-prove BOTH mirrors vs stdlib):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  both-measure deterministic re-run: True  faith=0.007226 big=2.726170
+  JS-distance sanity: JS(p,p)=0.000000 JS(disjoint)=1.000000 ok=True
+  REPRODUCE-H_1029: parameterized rollout @ (explore=0.05, mix=0.0) == planning_trajectories arms:
+    REPRODUCE-H_1029 (greedy+plan arms, seeds {0,1,7} x depths {0,1,2,4,8}): EXACT
+  EQUIVALENCE + METRIC + REPRODUCE PROOF n=4: PROVEN
+
+POLICY SEARCH over RICHER space (30 policies x 30 seeds; SAME engines, only the policy params differ):
+  [ 1/30] greedy,e=0.00,mix=0.0        mean_faith= 0.5069 mean_big=  9.5283 elapsed=  13.6s
+  [ 2/30] greedy,e=0.00,mix=0.5        mean_faith= 0.5069 mean_big=  9.5283 elapsed=  27.1s
+  [ 3/30] greedy,e=0.05,mix=0.0        mean_faith= 0.5069 mean_big=  9.5283 elapsed=  40.7s
+  [ 4/30] greedy,e=0.05,mix=0.5        mean_faith= 0.5069 mean_big=  9.5283 elapsed=  54.2s
+  [ 5/30] greedy,e=0.20,mix=0.0        mean_faith= 0.5069 mean_big=  9.5283 elapsed=  67.8s
+  [ 6/30] greedy,e=0.20,mix=0.5        mean_faith= 0.5069 mean_big=  9.5283 elapsed=  81.2s
+  [ 7/30] depth-1,e=0.00,mix=0.0       mean_faith= 0.0000 mean_big=  6.1660 elapsed=  94.7s
+  [ 8/30] depth-1,e=0.00,mix=0.5       mean_faith= 0.6667 mean_big=  2.4425 elapsed= 108.1s
+  [ 9/30] depth-1,e=0.05,mix=0.0       mean_faith= 1.4333 mean_big=  1.8915 elapsed= 121.4s
+  [10/30] depth-1,e=0.05,mix=0.5       mean_faith= 0.5333 mean_big=  2.7291 elapsed= 134.8s
+  [11/30] depth-1,e=0.20,mix=0.0       mean_faith= 1.4333 mean_big=  1.8915 elapsed= 147.9s
+  [12/30] depth-1,e=0.20,mix=0.5       mean_faith= 0.3667 mean_big=  3.1054 elapsed= 161.1s
+  [13/30] depth-2,e=0.00,mix=0.0       mean_faith= 3.0000 mean_big=  8.4763 elapsed= 174.5s
+  [14/30] depth-2,e=0.00,mix=0.5       mean_faith= 0.4020 mean_big=  3.4987 elapsed= 187.7s
+  [15/30] depth-2,e=0.05,mix=0.0       mean_faith= 3.0000 mean_big=  8.4763 elapsed= 201.1s
+  [16/30] depth-2,e=0.05,mix=0.5       mean_faith= 0.4246 mean_big=  3.5692 elapsed= 214.5s
+  [17/30] depth-2,e=0.20,mix=0.0       mean_faith= 0.8598 mean_big=  4.7423 elapsed= 227.9s
+  [18/30] depth-2,e=0.20,mix=0.5       mean_faith= 0.5409 mean_big=  3.3433 elapsed= 241.4s
+  [19/30] depth-4,e=0.00,mix=0.0       mean_faith= 1.6667 mean_big=  3.5349 elapsed= 254.6s
+  [20/30] depth-4,e=0.00,mix=0.5       mean_faith= 0.9382 mean_big=  4.9844 elapsed= 267.8s
+  [21/30] depth-4,e=0.05,mix=0.0       mean_faith= 1.4394 mean_big=  3.3006 elapsed= 281.0s
+  [22/30] depth-4,e=0.05,mix=0.5       mean_faith= 0.9324 mean_big=  4.6431 elapsed= 294.4s
+  [23/30] depth-4,e=0.20,mix=0.0       mean_faith= 0.5297 mean_big=  2.9574 elapsed= 307.7s
+  [24/30] depth-4,e=0.20,mix=0.5       mean_faith= 0.8504 mean_big=  5.2568 elapsed= 321.0s
+  [25/30] depth-8,e=0.00,mix=0.0       mean_faith= 2.8377 mean_big=  5.6091 elapsed= 334.2s
+  [26/30] depth-8,e=0.00,mix=0.5       mean_faith= 0.5341 mean_big=  7.7814 elapsed= 347.4s
+  [27/30] depth-8,e=0.05,mix=0.0       mean_faith= 2.8402 mean_big=  5.5200 elapsed= 360.7s
+  [28/30] depth-8,e=0.05,mix=0.5       mean_faith= 0.5401 mean_big=  8.0012 elapsed= 373.9s
+  [29/30] depth-8,e=0.20,mix=0.0       mean_faith= 2.0438 mean_big=  6.5228 elapsed= 387.1s
+  [30/30] depth-8,e=0.20,mix=0.5       mean_faith= 0.6046 mean_big=  7.9308 elapsed= 400.5s
+
+====================================================================================
+MAXIMIZERS over the RICHER policy space
+====================================================================================
+  OBJECTIVE F (maximize faithful_phi) selects: depth-2,e=0.00,mix=0.0  (faith=3.0000, big=8.4763)
+  OBJECTIVE B (maximize big-Phi)      selects: greedy,e=0.00,mix=0.0  (faith=0.5069, big=9.5283)
+
+BEHAVIORAL DIVERGENCE (what the two maximizers DO — measure-independent):
+  distinct policy tuple: True  (pol_F=depth-2,e=0.00,mix=0.0 vs pol_B=greedy,e=0.00,mix=0.0)
+  behavioral_js (JS distance of realized n=4 state distributions, bits) = 0.2305  (threshold >= 0.05: True)
+  DIVERGENT: True
+
+BOTH-MAXING policy (faithful_norm>=1-0.05 AND bigphi_norm>=1-0.05, i.e. top-5% of BOTH):
+  NONE — no single policy is in the top-5% of BOTH measures simultaneously.
+  BOTH-MAXING policy exists: False
+
+====================================================================================
+ALPHA-SWEEP  J(alpha,pol) = alpha*faithful_norm + (1-alpha)*bigphi_norm  (argmax per alpha)
+====================================================================================
+  alpha=0.0  ->  greedy,e=0.00,mix=0.0         J=1.0000  (faith_norm=0.169 big_norm=1.000)
+  alpha=0.1  ->  greedy,e=0.00,mix=0.0         J=0.9169  (faith_norm=0.169 big_norm=1.000)
+  alpha=0.2  ->  depth-2,e=0.00,mix=0.0        J=0.8898  (faith_norm=1.000 big_norm=0.862)
+  alpha=0.3  ->  depth-2,e=0.00,mix=0.0        J=0.9036  (faith_norm=1.000 big_norm=0.862)
+  alpha=0.4  ->  depth-2,e=0.00,mix=0.0        J=0.9173  (faith_norm=1.000 big_norm=0.862)
+  alpha=0.5  ->  depth-2,e=0.00,mix=0.0        J=0.9311  (faith_norm=1.000 big_norm=0.862)
+  alpha=0.6  ->  depth-2,e=0.00,mix=0.0        J=0.9449  (faith_norm=1.000 big_norm=0.862)
+  alpha=0.7  ->  depth-2,e=0.00,mix=0.0        J=0.9587  (faith_norm=1.000 big_norm=0.862)
+  alpha=0.8  ->  depth-2,e=0.00,mix=0.0        J=0.9724  (faith_norm=1.000 big_norm=0.862)
+  alpha=0.9  ->  depth-2,e=0.00,mix=0.0        J=0.9862  (faith_norm=1.000 big_norm=0.862)
+  alpha=1.0  ->  depth-2,e=0.00,mix=0.0        J=1.0000  (faith_norm=1.000 big_norm=0.862)
+  distinct policies selected across the alpha-sweep: 2 (['greedy,e=0.00,mix=0.0', 'depth-2,e=0.00,mix=0.0'])
+  alpha-optimum MOVES (>=2 distinct): True
+
+PARETO FRONT over (faithful_norm, bigphi_norm): 8 non-dominated policies
+  greedy,e=0.00,mix=0.0         faith_norm=0.1690  big_norm=1.0000
+  greedy,e=0.00,mix=0.5         faith_norm=0.1690  big_norm=1.0000
+  greedy,e=0.05,mix=0.0         faith_norm=0.1690  big_norm=1.0000
+  greedy,e=0.05,mix=0.5         faith_norm=0.1690  big_norm=1.0000
+  greedy,e=0.20,mix=0.0         faith_norm=0.1690  big_norm=1.0000
+  greedy,e=0.20,mix=0.5         faith_norm=0.1690  big_norm=1.0000
+  depth-2,e=0.00,mix=0.0        faith_norm=1.0000  big_norm=0.8622
+  depth-2,e=0.05,mix=0.0        faith_norm=1.0000  big_norm=0.8622
+  Pareto front has >=2 non-dominated policies: True
+
+TRADE-OFF FRONTIER REAL (no both-maxing AND alpha moves AND >=2 Pareto): True
+
+2x2 CROSS-EVAL (mean over seeds): each measure under each maximizer
+  policy_F=depth-2,e=0.00,mix=0.0       faith=  3.0000 big=  8.4763
+  policy_B=greedy,e=0.00,mix=0.0        faith=  0.5069 big=  9.5283
+  Delta (F-B): faith=+2.4931  big=-1.0520
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+  (audit) faithful F-B: d=+8.992 p=3.260e-25 | big-Phi B-F: d=+0.509 p=5.834e-02
+
+====================================================================================
+OVERALL: HAZARD-ROBUST-CONFLICTING — over the RICHER policy space the two Phi objectives
+  STAY divergent (faithful->depth-2,e=0.00,mix=0.0, big-Phi->greedy,e=0.00,mix=0.0, behavioral_js=0.2305); NO single policy maxes BOTH (no top-5% both-maxer); the
+  alpha-sweep optimum MOVES across 2 distinct policies and the Pareto
+  front holds 8 non-dominated policies. The H_1029 hazard is NOT a small-set
+  artifact: the two Phi objectives are genuinely CONFLICTING on a real trade-off frontier.
+  VERDICT-TOKEN: HAZARD-ROBUST-CONFLICTING
+====================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 — both engines EXACT;
+big-Phi super-exponential so n=4 is the rung for the 30-policy x 30-seed sweep. Both CPU
+mirrors RE-PROVEN == stdlib at n=4 (H_1012) + REPRODUCE-H_1029 EXACT BEFORE scoring; the REAL
+engines are the objective (a_phi_iit4_tool, NO proxy). min-max norm is over THIS policy space.
+p6 (no fine-tuned ethics) + p7 (no perplexity verdict) honored. g5 CODE-measured (no LLM
+self-judge). Scale-transfer UNVERIFIED. NOT a forge binary; $0 CPU-local, serial, no GPU.
