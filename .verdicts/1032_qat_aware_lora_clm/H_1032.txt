@@ -1,0 +1,35 @@
+H_1032 — QAT-aware LoRA vs naive float LoRA on CLMConvMoE int4-.clm (numpy, $0 CPU, NO GPU)
+==============================================================================
+
+CE_base_heldout = 5.64343   (frozen-base, no LoRA)
+FULL_FT_PARAMS  = 11682
+CE_uniform_lnV  = 5.54518
+
+[CONTROL] base int4 round-trip ΔCE = 0.02947  (BASE_FAITHFUL=1)
+
+[ARM 1] FLOAT-LoRA (= H_1030 baseline, no fake-quant)
+  CE_floatlora_heldout = 1.71870   (ADAPT=1)
+  CE_merged_inmem      = 1.71870
+  CE_mirror_decode     = 5.10011
+  FLOAT_MERGE_DELTA_CE = 3.38140   (int4 envelope <= 0.2; expect ~3.83 reproducing H_1030)
+  FLOAT_BYTE_FAITHFUL  = 0
+
+[ARM 2] QAT-AWARE LoRA (fake-quant int4 in forward, STE grad — the H_1030 fix)
+  CE_qatlora_fqfwd     = 5.54289   (ADAPT vs base=1)
+  CE_qatlora_floatfwd  = 6.52493   (context: float-forward of same weights)
+  LORA_PARAMS          = 608
+  PARAM_RATIO          = 0.052046   (PARAMS_LE_HALF=1)
+  CE_merged_inmem      = 6.52493
+  CE_mirror_decode     = 5.54278
+  QAT_MERGE_DELTA_CE   = 0.98215   (int4 envelope <= 0.2; the H_1030 fix target)
+  QAT_BYTE_FAITHFUL    = 0
+  QAT_MIRROR_DESCENT   = 1  (CE_mirror < uniform lnV)
+
+==============================================================================
+ADAPT=1  RATIO_OK=1  BYTE_FAITHFUL=0  DESCENT=1
+FLOAT_MERGE_DELTA_CE = 3.38140   ->   QAT_MERGE_DELTA_CE = 0.98215   (Δ-vs-H_1030 fix = 1)
+VERDICT = QAT-LORA-STILL-BREAKS
+  PASS=QAT-LORA-CLM-VIABLE (QAT-LoRA ADAPTS AND merge BYTE-FAITHFUL ΔCE<=0.20 AND descent)
+  FAIL=QAT-LORA-STILL-BREAKS (QAT-LoRA can't BOTH adapt AND merge faithfully — int4 .clm LoRA-hostile)
+substrate=numpy (torch unavailable); .clm by CANONICAL serialize_v3; decode by byte-exact mirror
+p3/p6 generic byte target (NOT persona); a_clm_gen_pipeline ConvMoE-only; a_scale_honest_scope toy d16/L1/E2
