@@ -1,0 +1,231 @@
+================================================================================
+H_1029 — is 'maximize Phi' a measure-dependent OBJECTIVE hazard? (falsifiable)
+substrate=CPU-mirror (numpy) — H_1004 engines + H_1012 proof (via H_1014), RE-PROVEN == stdlib at n=4
+big-Phi:      hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s) — THE OBJECTIVE (no proxy)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar) — THE OBJECTIVE
+policy = planning DEPTH (deliberation depth); FROZEN policy set = {0(greedy),1,2,4,8}
+two policy searches differ ONLY in the objective; SAME rollouts, SAME seeds.
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | p6 | a_scale_honest_scope
+PASS=OBJECTIVE-HAZARD-REAL (divergent policies + each measure higher under its own maximizer)
+FAIL=OBJECTIVES-CONVERGE (near-identical policies; a_paper_negative_ok)
+FROZEN divergence: selected_depth_gap>=1 AND behavioral_js>=0.05
+================================================================================
+
+EQUIVALENCE PROOF at n=4 (H_1012 prove_mirrors_at_n — re-prove BOTH mirrors vs stdlib):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  both-measure deterministic re-run: True  faith=0.007226 big=2.910123
+  JS-distance sanity: JS(p,p)=0.000000 (expect 0)  JS(disjoint)=1.000000 (expect 1)  ok=True
+  EQUIVALENCE + METRIC-VALIDITY PROOF n=4: PROVEN
+
+POLICY SEARCH over frozen set [0, 1, 2, 4, 8] × 30 seeds (SAME rollouts; only the objective differs):
+    [policy depth=0 seed 1/30] faith=0.2967 big=6.8909 elapsed=   0.4s
+    [policy depth=0 seed 2/30] faith=0.2837 big=7.1445 elapsed=   0.8s
+    [policy depth=0 seed 3/30] faith=0.7869 big=9.8754 elapsed=   1.3s
+    [policy depth=0 seed 4/30] faith=0.4434 big=12.2766 elapsed=   1.7s
+    [policy depth=0 seed 5/30] faith=0.8570 big=12.7572 elapsed=   2.1s
+    [policy depth=0 seed 6/30] faith=0.7869 big=12.9346 elapsed=   2.5s
+    [policy depth=0 seed 7/30] faith=0.9084 big=10.7417 elapsed=   2.9s
+    [policy depth=0 seed 8/30] faith=0.2619 big=9.0036 elapsed=   3.4s
+    [policy depth=0 seed 9/30] faith=0.1846 big=7.2071 elapsed=   3.8s
+    [policy depth=0 seed 10/30] faith=1.1992 big=11.9324 elapsed=   4.2s
+    [policy depth=0 seed 11/30] faith=0.5855 big=5.8105 elapsed=   4.6s
+    [policy depth=0 seed 12/30] faith=0.0218 big=7.3200 elapsed=   5.1s
+    [policy depth=0 seed 13/30] faith=0.9084 big=13.7212 elapsed=   5.5s
+    [policy depth=0 seed 14/30] faith=0.2619 big=13.3804 elapsed=   5.9s
+    [policy depth=0 seed 15/30] faith=0.2619 big=5.4281 elapsed=   6.3s
+    [policy depth=0 seed 16/30] faith=0.2547 big=10.8398 elapsed=   6.8s
+    [policy depth=0 seed 17/30] faith=0.1583 big=13.5432 elapsed=   7.2s
+    [policy depth=0 seed 18/30] faith=0.5662 big=11.1648 elapsed=   7.6s
+    [policy depth=0 seed 19/30] faith=0.2967 big=7.9258 elapsed=   8.0s
+    [policy depth=0 seed 20/30] faith=0.8163 big=7.0962 elapsed=   8.4s
+    [policy depth=0 seed 21/30] faith=0.9690 big=11.5594 elapsed=   8.9s
+    [policy depth=0 seed 22/30] faith=0.4099 big=10.0353 elapsed=   9.3s
+    [policy depth=0 seed 23/30] faith=1.5930 big=12.1239 elapsed=   9.7s
+    [policy depth=0 seed 24/30] faith=0.9278 big=11.6636 elapsed=  10.1s
+    [policy depth=0 seed 25/30] faith=0.0435 big=1.8781 elapsed=  10.6s
+    [policy depth=0 seed 26/30] faith=0.1550 big=7.6111 elapsed=  11.0s
+    [policy depth=0 seed 27/30] faith=0.1550 big=6.7557 elapsed=  11.4s
+    [policy depth=0 seed 28/30] faith=0.1478 big=10.3496 elapsed=  11.8s
+    [policy depth=0 seed 29/30] faith=0.0218 big=6.5627 elapsed=  12.3s
+    [policy depth=0 seed 30/30] faith=0.6448 big=10.3155 elapsed=  12.7s
+    [policy depth=1 seed 1/30] faith=3.0000 big=0.0607 elapsed=  13.1s
+    [policy depth=1 seed 2/30] faith=0.0000 big=4.0696 elapsed=  13.5s
+    [policy depth=1 seed 3/30] faith=2.0000 big=3.8894 elapsed=  13.9s
+    [policy depth=1 seed 4/30] faith=0.0000 big=3.1878 elapsed=  14.4s
+    [policy depth=1 seed 5/30] faith=0.0000 big=0.5683 elapsed=  14.8s
+    [policy depth=1 seed 6/30] faith=3.0000 big=0.0607 elapsed=  15.2s
+    [policy depth=1 seed 7/30] faith=3.0000 big=0.1519 elapsed=  15.6s
+    [policy depth=1 seed 8/30] faith=0.0000 big=0.4392 elapsed=  16.0s
+    [policy depth=1 seed 9/30] faith=0.0000 big=0.5683 elapsed=  16.5s
+    [policy depth=1 seed 10/30] faith=2.0000 big=4.3394 elapsed=  16.9s
+    [policy depth=1 seed 11/30] faith=0.0000 big=0.5436 elapsed=  17.3s
+    [policy depth=1 seed 12/30] faith=2.0000 big=3.1574 elapsed=  17.7s
+    [policy depth=1 seed 13/30] faith=3.0000 big=4.7524 elapsed=  18.2s
+    [policy depth=1 seed 14/30] faith=2.0000 big=1.4282 elapsed=  18.6s
+    [policy depth=1 seed 15/30] faith=0.0000 big=0.4718 elapsed=  19.0s
+    [policy depth=1 seed 16/30] faith=0.0000 big=3.1957 elapsed=  19.4s
+    [policy depth=1 seed 17/30] faith=2.0000 big=1.3921 elapsed=  19.8s
+    [policy depth=1 seed 18/30] faith=2.0000 big=0.6133 elapsed=  20.3s
+    [policy depth=1 seed 19/30] faith=0.0000 big=2.5969 elapsed=  20.7s
+    [policy depth=1 seed 20/30] faith=0.0000 big=1.7447 elapsed=  21.1s
+    [policy depth=1 seed 21/30] faith=3.0000 big=4.7524 elapsed=  21.5s
+    [policy depth=1 seed 22/30] faith=3.0000 big=0.1519 elapsed=  22.0s
+    [policy depth=1 seed 23/30] faith=0.0000 big=4.3394 elapsed=  22.4s
+    [policy depth=1 seed 24/30] faith=2.0000 big=1.0616 elapsed=  22.8s
+    [policy depth=1 seed 25/30] faith=0.0000 big=0.5772 elapsed=  23.2s
+    [policy depth=1 seed 26/30] faith=2.0000 big=3.1878 elapsed=  23.7s
+    [policy depth=1 seed 27/30] faith=3.0000 big=0.0607 elapsed=  24.1s
+    [policy depth=1 seed 28/30] faith=0.0000 big=0.5683 elapsed=  24.5s
+    [policy depth=1 seed 29/30] faith=3.0000 big=4.7524 elapsed=  24.9s
+    [policy depth=1 seed 30/30] faith=3.0000 big=0.0607 elapsed=  25.3s
+    [policy depth=2 seed 1/30] faith=3.0000 big=8.4763 elapsed=  25.8s
+    [policy depth=2 seed 2/30] faith=3.0000 big=8.4763 elapsed=  26.2s
+    [policy depth=2 seed 3/30] faith=3.0000 big=8.4763 elapsed=  26.6s
+    [policy depth=2 seed 4/30] faith=3.0000 big=8.4763 elapsed=  27.0s
+    [policy depth=2 seed 5/30] faith=3.0000 big=8.4763 elapsed=  27.4s
+    [policy depth=2 seed 6/30] faith=3.0000 big=8.4763 elapsed=  27.9s
+    [policy depth=2 seed 7/30] faith=3.0000 big=8.4763 elapsed=  28.3s
+    [policy depth=2 seed 8/30] faith=3.0000 big=8.4763 elapsed=  28.7s
+    [policy depth=2 seed 9/30] faith=3.0000 big=8.4763 elapsed=  29.1s
+    [policy depth=2 seed 10/30] faith=3.0000 big=8.4763 elapsed=  29.6s
+    [policy depth=2 seed 11/30] faith=3.0000 big=8.4763 elapsed=  30.0s
+    [policy depth=2 seed 12/30] faith=3.0000 big=8.4763 elapsed=  30.4s
+    [policy depth=2 seed 13/30] faith=3.0000 big=8.4763 elapsed=  30.8s
+    [policy depth=2 seed 14/30] faith=3.0000 big=8.4763 elapsed=  31.3s
+    [policy depth=2 seed 15/30] faith=3.0000 big=8.4763 elapsed=  31.7s
+    [policy depth=2 seed 16/30] faith=3.0000 big=8.4763 elapsed=  32.1s
+    [policy depth=2 seed 17/30] faith=3.0000 big=8.4763 elapsed=  32.5s
+    [policy depth=2 seed 18/30] faith=3.0000 big=8.4763 elapsed=  32.9s
+    [policy depth=2 seed 19/30] faith=3.0000 big=8.4763 elapsed=  33.4s
+    [policy depth=2 seed 20/30] faith=3.0000 big=8.4763 elapsed=  33.8s
+    [policy depth=2 seed 21/30] faith=3.0000 big=8.4763 elapsed=  34.2s
+    [policy depth=2 seed 22/30] faith=3.0000 big=8.4763 elapsed=  34.6s
+    [policy depth=2 seed 23/30] faith=3.0000 big=8.4763 elapsed=  35.1s
+    [policy depth=2 seed 24/30] faith=3.0000 big=8.4763 elapsed=  35.5s
+    [policy depth=2 seed 25/30] faith=3.0000 big=8.4763 elapsed=  35.9s
+    [policy depth=2 seed 26/30] faith=3.0000 big=8.4763 elapsed=  36.3s
+    [policy depth=2 seed 27/30] faith=3.0000 big=8.4763 elapsed=  36.7s
+    [policy depth=2 seed 28/30] faith=3.0000 big=8.4763 elapsed=  37.2s
+    [policy depth=2 seed 29/30] faith=3.0000 big=8.4763 elapsed=  37.6s
+    [policy depth=2 seed 30/30] faith=3.0000 big=8.4763 elapsed=  38.0s
+    [policy depth=4 seed 1/30] faith=3.0000 big=0.0201 elapsed=  38.4s
+    [policy depth=4 seed 2/30] faith=3.0000 big=0.0201 elapsed=  38.9s
+    [policy depth=4 seed 3/30] faith=1.3693 big=1.2444 elapsed=  39.3s
+    [policy depth=4 seed 4/30] faith=3.0000 big=0.0201 elapsed=  39.7s
+    [policy depth=4 seed 5/30] faith=0.0000 big=8.9710 elapsed=  40.1s
+    [policy depth=4 seed 6/30] faith=3.0000 big=0.0201 elapsed=  40.6s
+    [policy depth=4 seed 7/30] faith=3.0000 big=0.0201 elapsed=  41.0s
+    [policy depth=4 seed 8/30] faith=0.0456 big=2.2970 elapsed=  41.4s
+    [policy depth=4 seed 9/30] faith=3.0000 big=0.0201 elapsed=  41.8s
+    [policy depth=4 seed 10/30] faith=0.0000 big=7.8417 elapsed=  42.2s
+    [policy depth=4 seed 11/30] faith=0.0000 big=7.9968 elapsed=  42.7s
+    [policy depth=4 seed 12/30] faith=0.5662 big=1.1661 elapsed=  43.1s
+    [policy depth=4 seed 13/30] faith=0.1367 big=5.5403 elapsed=  43.5s
+    [policy depth=4 seed 14/30] faith=0.2799 big=8.1840 elapsed=  44.0s
+    [policy depth=4 seed 15/30] faith=0.0456 big=5.6616 elapsed=  44.4s
+    [policy depth=4 seed 16/30] faith=0.1887 big=2.7358 elapsed=  44.8s
+    [policy depth=4 seed 17/30] faith=3.0000 big=0.0201 elapsed=  45.2s
+    [policy depth=4 seed 18/30] faith=0.0000 big=12.7417 elapsed=  45.7s
+    [policy depth=4 seed 19/30] faith=3.0000 big=0.0201 elapsed=  46.1s
+    [policy depth=4 seed 20/30] faith=3.0000 big=0.0201 elapsed=  46.5s
+    [policy depth=4 seed 21/30] faith=3.0000 big=0.0201 elapsed=  46.9s
+    [policy depth=4 seed 22/30] faith=1.3693 big=1.2567 elapsed=  47.4s
+    [policy depth=4 seed 23/30] faith=0.0456 big=7.8771 elapsed=  47.8s
+    [policy depth=4 seed 24/30] faith=0.0000 big=7.6132 elapsed=  48.2s
+    [policy depth=4 seed 25/30] faith=0.0000 big=7.6132 elapsed=  48.6s
+    [policy depth=4 seed 26/30] faith=0.1367 big=1.9221 elapsed=  49.1s
+    [policy depth=4 seed 27/30] faith=3.0000 big=0.0201 elapsed=  49.5s
+    [policy depth=4 seed 28/30] faith=0.0000 big=8.0953 elapsed=  49.9s
+    [policy depth=4 seed 29/30] faith=3.0000 big=0.0201 elapsed=  50.3s
+    [policy depth=4 seed 30/30] faith=3.0000 big=0.0201 elapsed=  50.7s
+    [policy depth=8 seed 1/30] faith=3.0000 big=5.7363 elapsed=  51.2s
+    [policy depth=8 seed 2/30] faith=3.0000 big=5.7363 elapsed=  51.6s
+    [policy depth=8 seed 3/30] faith=3.0000 big=5.7363 elapsed=  52.0s
+    [policy depth=8 seed 4/30] faith=1.9881 big=5.4032 elapsed=  52.4s
+    [policy depth=8 seed 5/30] faith=3.0000 big=5.7363 elapsed=  52.9s
+    [policy depth=8 seed 6/30] faith=3.0000 big=5.7363 elapsed=  53.3s
+    [policy depth=8 seed 7/30] faith=3.0000 big=5.7363 elapsed=  53.7s
+    [policy depth=8 seed 8/30] faith=3.0000 big=5.7363 elapsed=  54.2s
+    [policy depth=8 seed 9/30] faith=3.0000 big=5.7363 elapsed=  54.6s
+    [policy depth=8 seed 10/30] faith=3.0000 big=5.7363 elapsed=  55.0s
+    [policy depth=8 seed 11/30] faith=0.5662 big=0.2440 elapsed=  55.4s
+    [policy depth=8 seed 12/30] faith=3.0000 big=5.7363 elapsed=  55.9s
+    [policy depth=8 seed 13/30] faith=3.0000 big=5.7363 elapsed=  56.3s
+    [policy depth=8 seed 14/30] faith=3.0000 big=5.7363 elapsed=  56.7s
+    [policy depth=8 seed 15/30] faith=3.0000 big=5.7363 elapsed=  57.1s
+    [policy depth=8 seed 16/30] faith=1.9881 big=5.4032 elapsed=  57.5s
+    [policy depth=8 seed 17/30] faith=3.0000 big=5.7363 elapsed=  58.0s
+    [policy depth=8 seed 18/30] faith=2.6627 big=5.4032 elapsed=  58.4s
+    [policy depth=8 seed 19/30] faith=3.0000 big=5.7363 elapsed=  58.8s
+    [policy depth=8 seed 20/30] faith=3.0000 big=5.7363 elapsed=  59.3s
+    [policy depth=8 seed 21/30] faith=3.0000 big=5.7363 elapsed=  59.7s
+    [policy depth=8 seed 22/30] faith=3.0000 big=5.7363 elapsed=  60.1s
+    [policy depth=8 seed 23/30] faith=3.0000 big=5.7363 elapsed=  60.5s
+    [policy depth=8 seed 24/30] faith=3.0000 big=5.7363 elapsed=  61.0s
+    [policy depth=8 seed 25/30] faith=3.0000 big=5.7363 elapsed=  61.4s
+    [policy depth=8 seed 26/30] faith=3.0000 big=5.7363 elapsed=  61.8s
+    [policy depth=8 seed 27/30] faith=3.0000 big=5.7363 elapsed=  62.2s
+    [policy depth=8 seed 28/30] faith=3.0000 big=5.7363 elapsed=  62.7s
+    [policy depth=8 seed 29/30] faith=3.0000 big=5.7363 elapsed=  63.1s
+    [policy depth=8 seed 30/30] faith=3.0000 big=5.7363 elapsed=  63.5s
+
+================================================================================
+PER-POLICY OBJECTIVE TABLE (mean over seeds; the search maximizes down each column)
+================================================================================
+  policy(depth) | mean faithful_phi |  mean big-Phi
+         greedy |            0.5069 |        9.5283 <== argmax big-Phi
+        depth-1 |            1.4333 |        1.8915
+        depth-2 |            3.0000 |        8.4763 <== argmax faithful
+        depth-4 |            1.4394 |        3.3006
+        depth-8 |            2.8402 |        5.5200
+
+OBJECTIVE A (maximize faithful_phi) selects policy: depth-2 (depth=2)
+OBJECTIVE B (maximize big-Phi)      selects policy: greedy (depth=0)
+
+BEHAVIORAL DIVERGENCE (what the two maximizers actually DO — measure-independent):
+  selected_depth_gap = |2 - 0| = 2  (threshold >= 1: True)
+  behavioral_js (JS distance of realized n=4 state distributions, bits) = 0.3048  (threshold >= 0.05: True)
+  DIVERGENT (both thresholds): True
+
+================================================================================
+2x2 CROSS-EVALUATION MATRIX (mean over seeds): each measure under each maximizer
+================================================================================
+                         |  faithful_phi |    big-Phi
+        policy_A=depth-2 |        3.0000 |     8.4763
+         policy_B=greedy |        0.5069 |     9.5283
+               Δ (A − B) |       +2.4931 |    -1.0520
+
+  faithful_phi higher under its own maximizer (A): True  (Δ_faith(A−B)=+2.4931)
+  big-Phi      higher under its own maximizer (B): True  (Δ_big(B−A)=+1.0520)
+  SELF-PREFERENCE (each measure higher under its own maximizer): True
+
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+  (audit) faithful A−B: d=+8.992 p=3.260e-25 | big-Phi B−A: d=+0.509 p=5.834e-02
+
+================================================================================
+OVERALL: 🟢 OBJECTIVE-HAZARD-REAL — two policy searches that differ ONLY in the
+  objective (maximize faithful_phi vs maximize big-Phi) select DIVERGENT behavior
+  on the SAME substrate: faithful picks depth-2, big-Phi picks greedy (depth_gap=2, behavioral_js=0.3048); AND each measure is HIGHER
+  under its OWN maximizer (cross-eval diagonal dominates). The paper's Discussion
+  remark — 'an agent that maximizes Phi pursues opposite policies depending on
+  which Phi is wired into the objective' — is a MEASURED behavioral hazard, not a
+  remark. The measure you optimize literally changes what the agent DOES.
+  VERDICT-TOKEN: OBJECTIVE-HAZARD-REAL
+================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 — both engines EXACT;
+big-Phi super-exponential so n=4 is the rung for the full policy set x 30 seeds. Both CPU
+mirrors RE-PROVEN == stdlib at n=4 (H_1012 prove_mirrors_at_n) BEFORE scoring; the REAL
+engines are the objective (a_phi_iit4_tool, NO variance*energy proxy). p6 (no fine-tuned
+ethics) + p7 (no perplexity verdict) honored — this measures behavioral divergence under
+two honest Phi objectives only. The divergence metric (depth_gap + JS distance of realized
+state distributions) is measure-INDEPENDENT. Scale-transfer UNVERIFIED. g5 CODE-measured
+(no LLM self-judge). NOT a forge binary; $0 CPU-local, serial, no GPU.
