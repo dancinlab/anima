@@ -17,11 +17,18 @@
 \usetikzlibrary{positioning,arrows.meta,fit,backgrounds}
 % ENGINE-AWARE preamble. The §Implications section + Appendix M quote the
 % Hc_912 sub-claims VERBATIM, which carries Korean Hangul. The canonical build
-% engine is now lualatex (installed on pool host aiden, with Noto CJK KR fonts +
-% fontspec): it renders all UTF-8 (Greek capitals, Hangul, arrows) natively, so
-% the verbatim Korean stays legible. A degraded pdflatex fallback is kept for the
+% engine is a CJK-capable Unicode engine (lualatex OR xelatex) with the Noto CJK
+% KR fonts + fontspec: it renders all UTF-8 (Greek capitals, verbatim Hangul,
+% arrows) natively, so the Korean stays legible. Both branches install an
+% AUTOMATIC CJK fallback so raw inline Hangul (unwrapped in the body) renders
+% without per-glyph mapping. A degraded pdflatex fallback is kept for the
 % Greek/arrow glyphs only (Hangul → romanized) so the source still compiles under
-% pdflatex if luatex is unavailable.
+% pdflatex if no Unicode engine is available.
+% Reproducible host: pool host `aiden` (Ubuntu). Build deps installed there:
+% `texlive-luatex texlive-xetex texlive-lang-cjk` (kotex/xeCJK + a working
+% luaotfload) + the system `fonts-noto-cjk` package (Noto {Sans,Serif} CJK KR).
+% Verified verbatim-Hangul build 2026-06-07: lualatex on aiden, 47 pages,
+% font = Noto Serif CJK KR.
 \ifLuaTeX
   \usepackage{fontspec}
   % CJK fallback so verbatim Hangul renders without per-glyph mapping.
@@ -33,6 +40,11 @@
 \else\ifXeTeX
   \usepackage{fontspec}
   \setmainfont{Latin Modern Roman}
+  % xeCJK gives raw inline Hangul an automatic Korean font under xelatex (the
+  % luaotfload add_fallback above is lua-only), so this branch is a true
+  % engine-agnostic alternative — not just a \cjkfont-wrapped path.
+  \usepackage{xeCJK}
+  \setCJKmainfont{Noto Serif CJK KR}
   \newfontfamily\cjkfont{Noto Serif CJK KR}
 \else
   % pdflatex fallback: Greek/arrow via newunicodechar; Hangul → romanized so the
