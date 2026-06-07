@@ -300,7 +300,7 @@ def main():
 
         rungs.append(dict(name=name, j=j, delay=delay, n_train=n_train, ridge=ridge,
                           mnoise=mnoise, mean_err=mean_err, fidelity=fidelity,
-                          hstar=hstar, ladder=ladder))
+                          k16_err=fwd[DEPTHS[-1]], hstar=hstar, ladder=ladder))
 
     # --- cross-rung regression: does h* rise monotonically with fidelity? ---
     print("=" * 78)
@@ -329,6 +329,30 @@ def main():
     print(f"Spearman h* ~ fidelity      r={rs_FH:+.4f} (p={ps_FH:.3e})")
     print(f"Spearman h* ~ mean_fwd_err  r={rs_eH:+.4f} (p={ps_eH:.3e})  (negative => more error, shorter horizon)")
     print(f"every rung tracks ALL depths (h*=={DEPTHS[-1]} for all) = {all_track_all}")
+    print()
+
+    # --- DIAGNOSTICS (honest, do NOT alter the frozen PASS/FAIL above) ---
+    # The pre-frozen ladder R0->R4 was CONSTRUCTED monotone in capacity/data/training (delay,
+    # n_train up; ridge, mnoise down). Report h* in that CONSTRUCTED order, and report the
+    # TRUE multi-step (k=16) forward error per rung -- the hypothesis names "multi-step forward
+    # fidelity", and the k=16 error is the genuine multi-step measure (mean-over-ladder error
+    # mixes 1-step and is gamed by a degenerate origin-collapsing WM).
+    H_by_construct = np.array([r["hstar"] for r in rungs])   # rungs are in constructed R0..R4 order
+    k16_err = np.array([r["k16_err"] for r in rungs])         # genuine multi-step (k=16) forward error
+    print("---- DIAGNOSTIC: constructed-capacity-ladder order (R0 under-fit -> R4 high-fit) ----")
+    print(f"  h* in CONSTRUCTED ladder order [R0..R4] = {H_by_construct.tolist()}")
+    cons_monotone = bool(np.all(np.diff(H_by_construct) >= 0))
+    print(f"  h* monotone-nondecreasing in CONSTRUCTED capacity order = {cons_monotone} "
+          f"(extends {int(H_by_construct[0])} -> {int(H_by_construct[-1])})")
+    print(f"  k=16 multi-step forward error [R0..R4] = {k16_err.round(3).tolist()}")
+    rs_k16, ps_k16 = spearman(k16_err, H_by_construct)
+    print(f"  Spearman h* ~ k16_forward_error r={rs_k16:+.4f} (p={ps_k16:.3e})")
+    print(f"  NOTE: R0_crippled (delay=1, cannot recover hidden velocity) games the open-loop")
+    print(f"        error metric -- it collapses predictions toward the origin so ||pred-true||")
+    print(f"        stays SMALL on this near-origin station-keeping task, yielding a misleadingly")
+    print(f"        HIGH scalar fidelity F={F[0]:.3f}, yet its planning gaps are ENORMOUS")
+    print(f"        ({rungs[0]['ladder'][0][3]:+.1f} at d=1): open-loop forward error is NOT a")
+    print(f"        faithful planning-fidelity proxy for a structurally-incapacitated WM.")
     print()
 
     # ---- verdict (g5 CODE-measured; pre-registered tokens) ----
@@ -366,17 +390,33 @@ def main():
                      f"NO GPU needed (g0). a_phi_iit4_tool n/a.")
     else:
         verdict_line("H_1028", "RED",
-                     f"FIDELITY-DOESNT-HELP (closed-negative, a_paper_negative_ok) — the reachable "
-                     f"horizon h* does NOT rise monotonically with WM fidelity over the frozen "
-                     f"ladder. h* (low F -> high F) = {H_by_F.astype(int).tolist()} "
-                     f"(monotone-nondecreasing={monotone_nondec}, strictly-extends={strictly_extends}); "
-                     f"Spearman h*~fidelity r={rs_FH:+.4f} (p={ps_FH:.2e}). Increasing the WM's "
-                     f"measured forward fidelity does NOT cleanly push the imagine-rollout horizon "
-                     f"out — the relationship between fidelity and reachable optimum is not the "
-                     f"monotone scaling the hypothesis predicted (planner/task effects dominate or "
-                     f"non-monotone). Closed-negative against FIDELITY-SCALES-HORIZON. TOY single "
-                     f"env, ladder OPEN (a_scale_honest_scope · a_toy_scale_recheck). $0 CPU-local, "
-                     f"NO GPU needed (g0). a_phi_iit4_tool n/a.")
+                     f"FIDELITY-DOESNT-HELP (closed-negative, a_paper_negative_ok) — by the literal "
+                     f"pre-registered criterion the reachable horizon h* does NOT rise MONOTONICALLY "
+                     f"with the WM's MEASURED forward fidelity. Ordered by measured scalar fidelity F "
+                     f"(low->high) h* = {H_by_F.astype(int).tolist()} "
+                     f"(monotone-nondecreasing={monotone_nondec}); Spearman h*~F r={rs_FH:+.4f} "
+                     f"(p={ps_FH:.2e}, n={len(F)}). The monotone fidelity->horizon scaling the "
+                     f"hypothesis predicted is REFUTED on this toy. KEY SECONDARY FINDING (the why): "
+                     f"OPEN-LOOP forward error is NOT a faithful planning-fidelity proxy. R0_crippled "
+                     f"(delay=1, structurally cannot recover the hidden velocity) GAMES the metric — "
+                     f"it collapses predictions toward the origin so ||pred-true|| stays small on this "
+                     f"near-origin station-keeping task (mean_err {ME[0]:.2f} -> deceptively HIGH "
+                     f"F={F[0]:.3f}), yet it is useless for planning (gap {rungs[0]['ladder'][0][3]:+.1f} "
+                     f"at d=1, h*=0). Conversely R1_underfit has a huge k=16 error blowup "
+                     f"({rungs[1]['k16_err']:.1f}) but still plans (gaps ~0.2). When instead ordered by "
+                     f"the CONSTRUCTED capacity/data/training ladder (R0..R4), h* = "
+                     f"{H_by_construct.tolist()} — monotone-nondecreasing="
+                     f"{bool(np.all(np.diff(H_by_construct) >= 0))}, extending {int(H_by_construct[0])}"
+                     f"->{int(H_by_construct[-1])}: more capacity/data/training DOES push the horizon "
+                     f"out, but the open-loop forward-error SCALAR fails to rank-order it because a "
+                     f"degenerate WM scores low error by collapsing. Net closed-negative against "
+                     f"FIDELITY-SCALES-HORIZON AS STATED (measured-forward-fidelity-indexed), with the "
+                     f"actionable lesson that planning fidelity != open-loop forward accuracy. Compare "
+                     f"H_1027 (single high-fidelity WM, TRACKS-ALL-DEPTHS): the low-fidelity end DOES "
+                     f"expose finite small h* (0,0,1) that the high end (16,16) extends, but not as a "
+                     f"clean function of the measured error metric. TOY single env, ladder OPEN "
+                     f"(a_scale_honest_scope · a_toy_scale_recheck). $0 CPU-local, NO GPU needed (g0). "
+                     f"a_phi_iit4_tool n/a.")
 
 
 if __name__ == "__main__":

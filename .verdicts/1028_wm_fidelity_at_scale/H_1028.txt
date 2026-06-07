@@ -1,0 +1,146 @@
+==============================================================================
+H_1028 — does WM forward-fidelity scale the reachable imagine-rollout horizon?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=continuous-action hidden-velocity station-keeping (position-only obs)  metric M=mean return (0=optimal)
+N_runs=40 ep/run=60  action=CONTINUOUS 2-D thrust in [-1.0,1.0]^2
+FROZEN depth ladder DEPTHS=[1, 2, 4, 8, 16]  GAP_TOL=0.05  (MPC depth == imagine horizon)
+planner=CEM (pop=64 iters=5 elite=8)  NEW AXIS = WM fidelity ladder (capacity x data x ridge x model-noise)
+GPU: NONE — tiny closed-form ridge WMs, CPU-local serial (g0, a_cpu_local_no_waiter)
+no-Phi (a_phi_iit4_tool n/a)
+
+PRE-FROZEN FIDELITY LADDER (frozen 2026-06-07):
+  R0_crippled    delay=1 n_train= 20 ridge=1      mnoise=0.2
+  R1_underfit    delay=2 n_train= 30 ridge=0.3    mnoise=0.08
+  R2_partial     delay=2 n_train= 80 ridge=0.05   mnoise=0.03
+  R3_good        delay=3 n_train=200 ridge=0.005  mnoise=0.01
+  R4_high        delay=3 n_train=400 ridge=0.001  mnoise=0.0
+
+==============================================================================
+RUNG 0: R0_crippled  (delay=1 n_train=20 ridge=1.0 mnoise=0.2)
+==============================================================================
+  k-step OPEN-LOOP forward error (||pred pos - true pos||):
+    k= 1  forward_err = 0.4971
+    k= 2  forward_err = 0.5978
+    k= 4  forward_err = 0.5810
+    k= 8  forward_err = 0.4463
+    k=16  forward_err = 0.3834
+  mean forward err over ladder = 0.5011  ->  fidelity F = 1/(1+err) = 0.6662
+  depth ladder (same-depth true-MPC vs imagine-rollout through R0_crippled):
+    d= 1  MPC=-0.3715  imagine=-33.8225  gap=+33.4509 (p=4.31e-60 d=-43.285)  [BREAKS]
+    d= 2  MPC=-0.2623  imagine=-28.2081  gap=+27.9457 (p=2.22e-63 d=-52.715)  [BREAKS]
+    d= 4  MPC=-0.3205  imagine=-26.7210  gap=+26.4005 (p=2.64e-63 d=-52.744)  [BREAKS]
+    d= 8  MPC=-0.4847  imagine=-25.2533  gap=+24.7685 (p=5.63e-66 d=-61.158)  [BREAKS]
+    d=16  MPC=-0.8746  imagine=-23.2880  gap=+22.4134 (p=6.48e-60 d=-42.061)  [BREAKS]
+  -> h* (deepest contiguously-tracked depth) = 0
+  -> within-rung gap-vs-forward-error Spearman r=+0.7000 (p=1.88e-01)
+
+==============================================================================
+RUNG 1: R1_underfit  (delay=2 n_train=30 ridge=0.3 mnoise=0.08)
+==============================================================================
+  k-step OPEN-LOOP forward error (||pred pos - true pos||):
+    k= 1  forward_err = 0.1503
+    k= 2  forward_err = 0.4932
+    k= 4  forward_err = 1.6291
+    k= 8  forward_err = 4.6870
+    k=16  forward_err = 47.5575
+  mean forward err over ladder = 10.9034  ->  fidelity F = 1/(1+err) = 0.0840
+  depth ladder (same-depth true-MPC vs imagine-rollout through R1_underfit):
+    d= 1  MPC=-0.3715  imagine=-0.5718  gap=+0.2003 (p=9.46e-24 d=-3.236)  [BREAKS]
+    d= 2  MPC=-0.2623  imagine=-0.4129  gap=+0.1506 (p=3.96e-30 d=-4.118)  [BREAKS]
+    d= 4  MPC=-0.3205  imagine=-0.5005  gap=+0.1800 (p=1.64e-30 d=-4.709)  [BREAKS]
+    d= 8  MPC=-0.4847  imagine=-0.7147  gap=+0.2300 (p=3.88e-32 d=-5.161)  [BREAKS]
+    d=16  MPC=-0.8746  imagine=-1.8300  gap=+0.9554 (p=5.29e-38 d=-8.224)  [BREAKS]
+  -> h* (deepest contiguously-tracked depth) = 0
+  -> within-rung gap-vs-forward-error Spearman r=+0.7000 (p=1.88e-01)
+
+==============================================================================
+RUNG 2: R2_partial  (delay=2 n_train=80 ridge=0.05 mnoise=0.03)
+==============================================================================
+  k-step OPEN-LOOP forward error (||pred pos - true pos||):
+    k= 1  forward_err = 0.1410
+    k= 2  forward_err = 0.2707
+    k= 4  forward_err = 0.6285
+    k= 8  forward_err = 1.3380
+    k=16  forward_err = 2.1071
+  mean forward err over ladder = 0.8970  ->  fidelity F = 1/(1+err) = 0.5271
+  depth ladder (same-depth true-MPC vs imagine-rollout through R2_partial):
+    d= 1  MPC=-0.3715  imagine=-0.4046  gap=+0.0331 (p=3.85e-03 d=-0.671)  [TRACKS]
+    d= 2  MPC=-0.2623  imagine=-0.3599  gap=+0.0976 (p=6.95e-22 d=-3.175)  [BREAKS]
+    d= 4  MPC=-0.3205  imagine=-0.4792  gap=+0.1587 (p=3.61e-36 d=-5.183)  [BREAKS]
+    d= 8  MPC=-0.4847  imagine=-0.7755  gap=+0.2907 (p=2.66e-27 d=-4.833)  [BREAKS]
+    d=16  MPC=-0.8746  imagine=-1.4820  gap=+0.6074 (p=8.88e-29 d=-5.249)  [BREAKS]
+  -> h* (deepest contiguously-tracked depth) = 1
+  -> within-rung gap-vs-forward-error Spearman r=+1.0000 (p=1.40e-24)
+
+==============================================================================
+RUNG 3: R3_good  (delay=3 n_train=200 ridge=0.005 mnoise=0.01)
+==============================================================================
+  k-step OPEN-LOOP forward error (||pred pos - true pos||):
+    k= 1  forward_err = 0.0477
+    k= 2  forward_err = 0.0947
+    k= 4  forward_err = 0.2553
+    k= 8  forward_err = 0.8043
+    k=16  forward_err = 2.3861
+  mean forward err over ladder = 0.7176  ->  fidelity F = 1/(1+err) = 0.5822
+  depth ladder (same-depth true-MPC vs imagine-rollout through R3_good):
+    d= 1  MPC=-0.3715  imagine=-0.3676  gap=-0.0040 (p=7.35e-01 d=+0.076)  [TRACKS]
+    d= 2  MPC=-0.2623  imagine=-0.2695  gap=+0.0072 (p=3.40e-01 d=-0.215)  [TRACKS]
+    d= 4  MPC=-0.3205  imagine=-0.3323  gap=+0.0118 (p=6.46e-02 d=-0.419)  [TRACKS]
+    d= 8  MPC=-0.4847  imagine=-0.4949  gap=+0.0102 (p=2.17e-01 d=-0.279)  [TRACKS]
+    d=16  MPC=-0.8746  imagine=-0.8459  gap=-0.0288 (p=1.87e-02 d=+0.538)  [TRACKS]
+  -> h* (deepest contiguously-tracked depth) = 16
+  -> within-rung gap-vs-forward-error Spearman r=-0.1000 (p=8.73e-01)
+
+==============================================================================
+RUNG 4: R4_high  (delay=3 n_train=400 ridge=0.001 mnoise=0.0)
+==============================================================================
+  k-step OPEN-LOOP forward error (||pred pos - true pos||):
+    k= 1  forward_err = 0.0359
+    k= 2  forward_err = 0.0624
+    k= 4  forward_err = 0.1128
+    k= 8  forward_err = 0.2078
+    k=16  forward_err = 0.3349
+  mean forward err over ladder = 0.1508  ->  fidelity F = 1/(1+err) = 0.8690
+  depth ladder (same-depth true-MPC vs imagine-rollout through R4_high):
+    d= 1  MPC=-0.3715  imagine=-0.3761  gap=+0.0046 (p=7.06e-01 d=-0.085)  [TRACKS]
+    d= 2  MPC=-0.2623  imagine=-0.2663  gap=+0.0039 (p=5.95e-01 d=-0.119)  [TRACKS]
+    d= 4  MPC=-0.3205  imagine=-0.3155  gap=-0.0051 (p=3.79e-01 d=+0.198)  [TRACKS]
+    d= 8  MPC=-0.4847  imagine=-0.4523  gap=-0.0324 (p=1.11e-05 d=+1.050)  [TRACKS]
+    d=16  MPC=-0.8746  imagine=-0.7708  gap=-0.1038 (p=5.68e-13 d=+1.947)  [TRACKS]
+  -> h* (deepest contiguously-tracked depth) = 16
+  -> within-rung gap-vs-forward-error Spearman r=-1.0000 (p=1.40e-24)
+
+==============================================================================
+CROSS-RUNG SUMMARY — fidelity vs reachable horizon h*
+==============================================================================
+rung           fidelity F  mean_err   h*   per-depth gaps
+R0_crippled        0.6662    0.5011    0   [+33.451 +27.946 +26.401 +24.769 +22.413]
+R1_underfit        0.0840   10.9034    0   [+0.200 +0.151 +0.180 +0.230 +0.955]
+R2_partial         0.5271    0.8970    1   [+0.033 +0.098 +0.159 +0.291 +0.607]
+R3_good            0.5822    0.7176   16   [-0.004 +0.007 +0.012 +0.010 -0.029]
+R4_high            0.8690    0.1508   16   [+0.005 +0.004 -0.005 -0.032 -0.104]
+
+fidelity-sorted h* sequence (low F -> high F): [0, 1, 16, 0, 16]
+h* monotone-nondecreasing in fidelity = False
+h* strictly extends (top F h* 16 > bottom F h* 0) = True
+Spearman h* ~ fidelity      r=+0.4743 (p=4.195e-01)
+Spearman h* ~ mean_fwd_err  r=-0.4743 (p=4.195e-01)  (negative => more error, shorter horizon)
+every rung tracks ALL depths (h*==16 for all) = False
+
+---- DIAGNOSTIC: constructed-capacity-ladder order (R0 under-fit -> R4 high-fit) ----
+  h* in CONSTRUCTED ladder order [R0..R4] = [0, 0, 1, 16, 16]
+  h* monotone-nondecreasing in CONSTRUCTED capacity order = True (extends 0 -> 16)
+  k=16 multi-step forward error [R0..R4] = [0.383, 47.557, 2.107, 2.386, 0.335]
+  Spearman h* ~ k16_forward_error r=-0.3162 (p=6.042e-01)
+  NOTE: R0_crippled (delay=1, cannot recover hidden velocity) games the open-loop
+        error metric -- it collapses predictions toward the origin so ||pred-true||
+        stays SMALL on this near-origin station-keeping task, yielding a misleadingly
+        HIGH scalar fidelity F=0.666, yet its planning gaps are ENORMOUS
+        (+33.5 at d=1): open-loop forward error is NOT a
+        faithful planning-fidelity proxy for a structurally-incapacitated WM.
+
+------------------------------------------------------------------------------
+VERDICT H_1028: RED FIDELITY-DOESNT-HELP (closed-negative, a_paper_negative_ok) — by the literal pre-registered criterion the reachable horizon h* does NOT rise MONOTONICALLY with the WM's MEASURED forward fidelity. Ordered by measured scalar fidelity F (low->high) h* = [0, 1, 16, 0, 16] (monotone-nondecreasing=False); Spearman h*~F r=+0.4743 (p=4.20e-01, n=5). The monotone fidelity->horizon scaling the hypothesis predicted is REFUTED on this toy. KEY SECONDARY FINDING (the why): OPEN-LOOP forward error is NOT a faithful planning-fidelity proxy. R0_crippled (delay=1, structurally cannot recover the hidden velocity) GAMES the metric — it collapses predictions toward the origin so ||pred-true|| stays small on this near-origin station-keeping task (mean_err 0.50 -> deceptively HIGH F=0.666), yet it is useless for planning (gap +33.5 at d=1, h*=0). Conversely R1_underfit has a huge k=16 error blowup (47.6) but still plans (gaps ~0.2). When instead ordered by the CONSTRUCTED capacity/data/training ladder (R0..R4), h* = [0, 0, 1, 16, 16] — monotone-nondecreasing=True, extending 0->16: more capacity/data/training DOES push the horizon out, but the open-loop forward-error SCALAR fails to rank-order it because a degenerate WM scores low error by collapsing. Net closed-negative against FIDELITY-SCALES-HORIZON AS STATED (measured-forward-fidelity-indexed), with the actionable lesson that planning fidelity != open-loop forward accuracy. Compare H_1027 (single high-fidelity WM, TRACKS-ALL-DEPTHS): the low-fidelity end DOES expose finite small h* (0,0,1) that the high end (16,16) extends, but not as a clean function of the measured error metric. TOY single env, ladder OPEN (a_scale_honest_scope · a_toy_scale_recheck). $0 CPU-local, NO GPU needed (g0). a_phi_iit4_tool n/a.
+------------------------------------------------------------------------------
