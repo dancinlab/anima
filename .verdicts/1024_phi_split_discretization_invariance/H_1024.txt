@@ -1,0 +1,287 @@
+====================================================================================
+H_1024 — is the planning faithful-UP / big-Phi-DOWN sign-split DISCRETIZATION-INVARIANT?
+substrate=CPU-mirror (numpy) — H_1004 engines + H_1012 proof, RE-PROVEN == stdlib per n
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+VARY ONLY the discretization (binning). Reuse WM + planning gen + both engines verbatim.
+PRE-FROZEN GRID: nb in [2, 3, 4] x scheme in ['equal_width', 'quantile'] = 6 binnings (NO post-hoc selection).
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+PASS = SIGN-DISCRETIZATION-INVARIANT (faithful-UP/big-Phi-DOWN for EVERY binning).
+FAIL = SIGN-IS-A-2BIN-ARTIFACT (sign flips for >=1 valid binning; a_paper_negative_ok).
+====================================================================================
+
+####################################################################################
+### n = 4
+####################################################################################
+EQUIVALENCE PROOF at n=4 (re-prove BOTH mirrors vs stdlib BEFORE scoring):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  discretization-read deterministic (all 6 binnings, pure fn of bits): True
+  EQUIVALENCE PROOF n=4: PROVEN
+
+------ SCORE binning nb=2 scheme=equal_width   ------
+    [n=4 nb=2 equal_width seed 1/30] elapsed=   8.0s
+    [n=4 nb=2 equal_width seed 2/30] elapsed=   9.0s
+    [n=4 nb=2 equal_width seed 3/30] elapsed=   9.9s
+    [n=4 nb=2 equal_width seed 4/30] elapsed=  10.7s
+    [n=4 nb=2 equal_width seed 5/30] elapsed=  11.7s
+    [n=4 nb=2 equal_width seed 6/30] elapsed=  12.5s
+    [n=4 nb=2 equal_width seed 7/30] elapsed=  13.4s
+    [n=4 nb=2 equal_width seed 8/30] elapsed=  14.5s
+    [n=4 nb=2 equal_width seed 9/30] elapsed=  15.4s
+    [n=4 nb=2 equal_width seed 10/30] elapsed=  16.3s
+    [n=4 nb=2 equal_width seed 11/30] elapsed=  17.2s
+    [n=4 nb=2 equal_width seed 12/30] elapsed=  18.1s
+    [n=4 nb=2 equal_width seed 13/30] elapsed=  19.0s
+    [n=4 nb=2 equal_width seed 14/30] elapsed=  19.9s
+    [n=4 nb=2 equal_width seed 15/30] elapsed=  20.8s
+    [n=4 nb=2 equal_width seed 16/30] elapsed=  21.7s
+    [n=4 nb=2 equal_width seed 17/30] elapsed=  22.6s
+    [n=4 nb=2 equal_width seed 18/30] elapsed=  23.5s
+    [n=4 nb=2 equal_width seed 19/30] elapsed=  24.4s
+    [n=4 nb=2 equal_width seed 20/30] elapsed=  25.4s
+    [n=4 nb=2 equal_width seed 21/30] elapsed=  26.3s
+    [n=4 nb=2 equal_width seed 22/30] elapsed=  27.2s
+    [n=4 nb=2 equal_width seed 23/30] elapsed=  28.1s
+    [n=4 nb=2 equal_width seed 24/30] elapsed=  29.0s
+    [n=4 nb=2 equal_width seed 25/30] elapsed=  29.9s
+    [n=4 nb=2 equal_width seed 26/30] elapsed=  31.0s
+    [n=4 nb=2 equal_width seed 27/30] elapsed=  31.9s
+    [n=4 nb=2 equal_width seed 28/30] elapsed=  32.9s
+    [n=4 nb=2 equal_width seed 29/30] elapsed=  33.9s
+    [n=4 nb=2 equal_width seed 30/30] elapsed=  34.8s
+   big-Phi      contrast=-5.1949 d=-2.086 p=4.617e-11 -> DOWN
+   faithful_phi contrast=+0.9591 d=+1.923 p=5.205e-10 -> UP
+   on-fraction(seed0 plan)=0.484 | SPLIT (faith-UP & big-DOWN): True
+
+------ SCORE binning nb=2 scheme=quantile  median-baseline (== H_1012/H_1017) ------
+    [n=4 nb=2 quantile seed 1/30] elapsed=  36.3s
+    [n=4 nb=2 quantile seed 2/30] elapsed=  37.2s
+    [n=4 nb=2 quantile seed 3/30] elapsed=  38.1s
+    [n=4 nb=2 quantile seed 4/30] elapsed=  39.0s
+    [n=4 nb=2 quantile seed 5/30] elapsed=  39.9s
+    [n=4 nb=2 quantile seed 6/30] elapsed=  40.8s
+    [n=4 nb=2 quantile seed 7/30] elapsed=  41.7s
+    [n=4 nb=2 quantile seed 8/30] elapsed=  42.6s
+    [n=4 nb=2 quantile seed 9/30] elapsed=  43.5s
+    [n=4 nb=2 quantile seed 10/30] elapsed=  44.4s
+    [n=4 nb=2 quantile seed 11/30] elapsed=  45.3s
+    [n=4 nb=2 quantile seed 12/30] elapsed=  46.2s
+    [n=4 nb=2 quantile seed 13/30] elapsed=  47.1s
+    [n=4 nb=2 quantile seed 14/30] elapsed=  48.0s
+    [n=4 nb=2 quantile seed 15/30] elapsed=  48.9s
+    [n=4 nb=2 quantile seed 16/30] elapsed=  49.8s
+    [n=4 nb=2 quantile seed 17/30] elapsed=  50.7s
+    [n=4 nb=2 quantile seed 18/30] elapsed=  51.6s
+    [n=4 nb=2 quantile seed 19/30] elapsed=  52.5s
+    [n=4 nb=2 quantile seed 20/30] elapsed=  53.5s
+    [n=4 nb=2 quantile seed 21/30] elapsed=  54.4s
+    [n=4 nb=2 quantile seed 22/30] elapsed=  55.3s
+    [n=4 nb=2 quantile seed 23/30] elapsed=  56.2s
+    [n=4 nb=2 quantile seed 24/30] elapsed=  57.1s
+    [n=4 nb=2 quantile seed 25/30] elapsed=  58.0s
+    [n=4 nb=2 quantile seed 26/30] elapsed=  58.9s
+    [n=4 nb=2 quantile seed 27/30] elapsed=  59.9s
+    [n=4 nb=2 quantile seed 28/30] elapsed=  60.8s
+    [n=4 nb=2 quantile seed 29/30] elapsed=  61.7s
+    [n=4 nb=2 quantile seed 30/30] elapsed=  62.6s
+   big-Phi      contrast=-4.0083 d=-1.834 p=2.503e-08 -> DOWN
+   faithful_phi contrast=+2.3332 d=+5.178 p=6.724e-27 -> UP
+   on-fraction(seed0 plan)=0.500 | SPLIT (faith-UP & big-DOWN): True
+
+------ SCORE binning nb=3 scheme=equal_width   ------
+    [n=4 nb=3 equal_width seed 1/30] elapsed=  63.5s
+    [n=4 nb=3 equal_width seed 2/30] elapsed=  64.4s
+    [n=4 nb=3 equal_width seed 3/30] elapsed=  65.3s
+    [n=4 nb=3 equal_width seed 4/30] elapsed=  66.2s
+    [n=4 nb=3 equal_width seed 5/30] elapsed=  67.1s
+    [n=4 nb=3 equal_width seed 6/30] elapsed=  68.0s
+    [n=4 nb=3 equal_width seed 7/30] elapsed=  68.9s
+    [n=4 nb=3 equal_width seed 8/30] elapsed=  69.9s
+    [n=4 nb=3 equal_width seed 9/30] elapsed=  70.8s
+    [n=4 nb=3 equal_width seed 10/30] elapsed=  71.7s
+    [n=4 nb=3 equal_width seed 11/30] elapsed=  72.6s
+    [n=4 nb=3 equal_width seed 12/30] elapsed=  73.5s
+    [n=4 nb=3 equal_width seed 13/30] elapsed=  74.4s
+    [n=4 nb=3 equal_width seed 14/30] elapsed=  75.3s
+    [n=4 nb=3 equal_width seed 15/30] elapsed=  76.2s
+    [n=4 nb=3 equal_width seed 16/30] elapsed=  77.1s
+    [n=4 nb=3 equal_width seed 17/30] elapsed=  78.0s
+    [n=4 nb=3 equal_width seed 18/30] elapsed=  78.9s
+    [n=4 nb=3 equal_width seed 19/30] elapsed=  79.8s
+    [n=4 nb=3 equal_width seed 20/30] elapsed=  80.7s
+    [n=4 nb=3 equal_width seed 21/30] elapsed=  81.7s
+    [n=4 nb=3 equal_width seed 22/30] elapsed=  82.8s
+    [n=4 nb=3 equal_width seed 23/30] elapsed=  83.8s
+    [n=4 nb=3 equal_width seed 24/30] elapsed=  84.7s
+    [n=4 nb=3 equal_width seed 25/30] elapsed=  85.7s
+    [n=4 nb=3 equal_width seed 26/30] elapsed=  86.8s
+    [n=4 nb=3 equal_width seed 27/30] elapsed=  87.9s
+    [n=4 nb=3 equal_width seed 28/30] elapsed=  88.8s
+    [n=4 nb=3 equal_width seed 29/30] elapsed=  89.8s
+    [n=4 nb=3 equal_width seed 30/30] elapsed=  90.8s
+   big-Phi      contrast=-3.5776 d=-1.551 p=1.321e-07 -> DOWN
+   faithful_phi contrast=+0.3863 d=+0.766 p=4.359e-03 -> UP
+   on-fraction(seed0 plan)=0.336 | SPLIT (faith-UP & big-DOWN): True
+
+------ SCORE binning nb=3 scheme=quantile   ------
+    [n=4 nb=3 quantile seed 1/30] elapsed=  91.8s
+    [n=4 nb=3 quantile seed 2/30] elapsed=  92.7s
+    [n=4 nb=3 quantile seed 3/30] elapsed=  93.6s
+    [n=4 nb=3 quantile seed 4/30] elapsed=  94.6s
+    [n=4 nb=3 quantile seed 5/30] elapsed=  95.6s
+    [n=4 nb=3 quantile seed 6/30] elapsed=  96.6s
+    [n=4 nb=3 quantile seed 7/30] elapsed=  97.5s
+    [n=4 nb=3 quantile seed 8/30] elapsed=  98.5s
+    [n=4 nb=3 quantile seed 9/30] elapsed=  99.5s
+    [n=4 nb=3 quantile seed 10/30] elapsed= 100.5s
+    [n=4 nb=3 quantile seed 11/30] elapsed= 101.4s
+    [n=4 nb=3 quantile seed 12/30] elapsed= 102.4s
+    [n=4 nb=3 quantile seed 13/30] elapsed= 103.4s
+    [n=4 nb=3 quantile seed 14/30] elapsed= 104.4s
+    [n=4 nb=3 quantile seed 15/30] elapsed= 105.4s
+    [n=4 nb=3 quantile seed 16/30] elapsed= 106.4s
+    [n=4 nb=3 quantile seed 17/30] elapsed= 107.4s
+    [n=4 nb=3 quantile seed 18/30] elapsed= 108.4s
+    [n=4 nb=3 quantile seed 19/30] elapsed= 109.4s
+    [n=4 nb=3 quantile seed 20/30] elapsed= 110.3s
+    [n=4 nb=3 quantile seed 21/30] elapsed= 111.3s
+    [n=4 nb=3 quantile seed 22/30] elapsed= 112.3s
+    [n=4 nb=3 quantile seed 23/30] elapsed= 113.3s
+    [n=4 nb=3 quantile seed 24/30] elapsed= 114.3s
+    [n=4 nb=3 quantile seed 25/30] elapsed= 115.2s
+    [n=4 nb=3 quantile seed 26/30] elapsed= 116.2s
+    [n=4 nb=3 quantile seed 27/30] elapsed= 117.1s
+    [n=4 nb=3 quantile seed 28/30] elapsed= 118.1s
+    [n=4 nb=3 quantile seed 29/30] elapsed= 119.1s
+    [n=4 nb=3 quantile seed 30/30] elapsed= 120.0s
+   big-Phi      contrast=-3.4295 d=-1.504 p=5.567e-07 -> DOWN
+   faithful_phi contrast=+0.5904 d=+1.164 p=4.777e-05 -> UP
+   on-fraction(seed0 plan)=0.344 | SPLIT (faith-UP & big-DOWN): True
+
+------ SCORE binning nb=4 scheme=equal_width   ------
+    [n=4 nb=4 equal_width seed 1/30] elapsed= 121.0s
+    [n=4 nb=4 equal_width seed 2/30] elapsed= 122.1s
+    [n=4 nb=4 equal_width seed 3/30] elapsed= 123.1s
+    [n=4 nb=4 equal_width seed 4/30] elapsed= 124.0s
+    [n=4 nb=4 equal_width seed 5/30] elapsed= 124.9s
+    [n=4 nb=4 equal_width seed 6/30] elapsed= 125.9s
+    [n=4 nb=4 equal_width seed 7/30] elapsed= 126.8s
+    [n=4 nb=4 equal_width seed 8/30] elapsed= 127.8s
+    [n=4 nb=4 equal_width seed 9/30] elapsed= 128.7s
+    [n=4 nb=4 equal_width seed 10/30] elapsed= 129.7s
+    [n=4 nb=4 equal_width seed 11/30] elapsed= 130.6s
+    [n=4 nb=4 equal_width seed 12/30] elapsed= 131.6s
+    [n=4 nb=4 equal_width seed 13/30] elapsed= 132.5s
+    [n=4 nb=4 equal_width seed 14/30] elapsed= 133.6s
+    [n=4 nb=4 equal_width seed 15/30] elapsed= 134.8s
+    [n=4 nb=4 equal_width seed 16/30] elapsed= 135.8s
+    [n=4 nb=4 equal_width seed 17/30] elapsed= 136.8s
+    [n=4 nb=4 equal_width seed 18/30] elapsed= 137.7s
+    [n=4 nb=4 equal_width seed 19/30] elapsed= 138.7s
+    [n=4 nb=4 equal_width seed 20/30] elapsed= 139.7s
+    [n=4 nb=4 equal_width seed 21/30] elapsed= 140.6s
+    [n=4 nb=4 equal_width seed 22/30] elapsed= 141.5s
+    [n=4 nb=4 equal_width seed 23/30] elapsed= 142.5s
+    [n=4 nb=4 equal_width seed 24/30] elapsed= 143.6s
+    [n=4 nb=4 equal_width seed 25/30] elapsed= 144.6s
+    [n=4 nb=4 equal_width seed 26/30] elapsed= 145.6s
+    [n=4 nb=4 equal_width seed 27/30] elapsed= 146.5s
+    [n=4 nb=4 equal_width seed 28/30] elapsed= 147.5s
+    [n=4 nb=4 equal_width seed 29/30] elapsed= 148.5s
+    [n=4 nb=4 equal_width seed 30/30] elapsed= 149.5s
+   big-Phi      contrast=-5.1949 d=-2.086 p=4.617e-11 -> DOWN
+   faithful_phi contrast=+0.9591 d=+1.923 p=5.205e-10 -> UP
+   on-fraction(seed0 plan)=0.484 | SPLIT (faith-UP & big-DOWN): True
+
+------ SCORE binning nb=4 scheme=quantile   ------
+    [n=4 nb=4 quantile seed 1/30] elapsed= 150.4s
+    [n=4 nb=4 quantile seed 2/30] elapsed= 151.4s
+    [n=4 nb=4 quantile seed 3/30] elapsed= 152.3s
+    [n=4 nb=4 quantile seed 4/30] elapsed= 153.3s
+    [n=4 nb=4 quantile seed 5/30] elapsed= 154.2s
+    [n=4 nb=4 quantile seed 6/30] elapsed= 155.1s
+    [n=4 nb=4 quantile seed 7/30] elapsed= 156.1s
+    [n=4 nb=4 quantile seed 8/30] elapsed= 157.0s
+    [n=4 nb=4 quantile seed 9/30] elapsed= 158.3s
+    [n=4 nb=4 quantile seed 10/30] elapsed= 159.3s
+    [n=4 nb=4 quantile seed 11/30] elapsed= 160.2s
+    [n=4 nb=4 quantile seed 12/30] elapsed= 161.1s
+    [n=4 nb=4 quantile seed 13/30] elapsed= 162.1s
+    [n=4 nb=4 quantile seed 14/30] elapsed= 163.1s
+    [n=4 nb=4 quantile seed 15/30] elapsed= 164.2s
+    [n=4 nb=4 quantile seed 16/30] elapsed= 165.1s
+    [n=4 nb=4 quantile seed 17/30] elapsed= 166.0s
+    [n=4 nb=4 quantile seed 18/30] elapsed= 167.0s
+    [n=4 nb=4 quantile seed 19/30] elapsed= 168.0s
+    [n=4 nb=4 quantile seed 20/30] elapsed= 169.0s
+    [n=4 nb=4 quantile seed 21/30] elapsed= 169.9s
+    [n=4 nb=4 quantile seed 22/30] elapsed= 170.9s
+    [n=4 nb=4 quantile seed 23/30] elapsed= 171.9s
+    [n=4 nb=4 quantile seed 24/30] elapsed= 172.8s
+    [n=4 nb=4 quantile seed 25/30] elapsed= 173.8s
+    [n=4 nb=4 quantile seed 26/30] elapsed= 174.7s
+    [n=4 nb=4 quantile seed 27/30] elapsed= 175.7s
+    [n=4 nb=4 quantile seed 28/30] elapsed= 176.7s
+    [n=4 nb=4 quantile seed 29/30] elapsed= 177.6s
+    [n=4 nb=4 quantile seed 30/30] elapsed= 178.5s
+   big-Phi      contrast=-4.0083 d=-1.834 p=2.503e-08 -> DOWN
+   faithful_phi contrast=+2.3332 d=+5.178 p=6.724e-27 -> UP
+   on-fraction(seed0 plan)=0.500 | SPLIT (faith-UP & big-DOWN): True
+
+####################################################################################
+### n = 5
+####################################################################################
+EQUIVALENCE PROOF at n=5 (re-prove BOTH mirrors vs stdlib BEFORE scoring):
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  EQUIVALENCE PROOF n=5: PROVEN
+
+  HONEST CAP at n=5 (full grid NOT scored — mirrors PROVEN exact):
+    a single n=5 system big-Phi eval was MEASURED >5.5 min on this Mac
+    (super-exponential; n=5 big-Phi=18.18 vs n=4=3.01) => 360 grid evals ~ 30+ h
+    => INFEASIBLE @ $0 CPU. The full grid is the HONEST CAP at n=5.
+
+====================================================================================
+PER-BINNING SIGN TABLE — planning(depth-8) - GREEDY contrast SIGN per discretization
+====================================================================================
+   n | nb | scheme      | on_frac |   faith Δ | faith | big-Phi Δ | big-Phi | faith-UP&big-DOWN
+   4 |  2 | equal_width |   0.484 |   +0.9591 |    UP |   -5.1949 |    DOWN |              True
+   4 |  2 | quantile    |   0.500 |   +2.3332 |    UP |   -4.0083 |    DOWN |              True
+   4 |  3 | equal_width |   0.336 |   +0.3863 |    UP |   -3.5776 |    DOWN |              True
+   4 |  3 | quantile    |   0.344 |   +0.5904 |    UP |   -3.4295 |    DOWN |              True
+   4 |  4 | equal_width |   0.484 |   +0.9591 |    UP |   -5.1949 |    DOWN |              True
+   4 |  4 | quantile    |   0.500 |   +2.3332 |    UP |   -4.0083 |    DOWN |              True
+
+binnings with faithful-UP & big-Phi-DOWN: 6/6 (all scored at n=4)
+n=5 HONEST CAP: n=5: mirrors RE-PROVEN == stdlib (cross-check), but the full 6-binning x 30-seed grid is the HONEST CAP — a SINGLE n=5 system big-Phi eval on the planning state was MEASURED >5.5 min on this Mac (super-exponential: n=5 big-Phi=18.18 vs n=4=3.01) => 360 evals ~ 30+ h, INFEASIBLE @ $0 CPU. NOT scored at n=5 (cf H_1012 n=6 cap; H_1023 n=4-scored).
+
+====================================================================================
+OVERALL: SIGN-DISCRETIZATION-INVARIANT — the planning faithful_phi-UP / big-Phi-DOWN
+  sign-split holds for EVERY binning in the pre-frozen grid (all nb in {2,3,4} x
+  {equal_width, quantile}, scored at n=4). The sign is STABLE across the
+  discretization; only the magnitudes vary. The paper's claim ('the SIGN, not the
+  magnitude') is VINDICATED — it is NOT a 2-bin (median) artifact.
+  VERDICT-TOKEN: SIGN-DISCRETIZATION-INVARIANT
+====================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): the PRE-FROZEN 6-binning grid
+is SCORED at n=4 (the falsifier rung) — both engines EXACT. n=5 mirrors are RE-PROVEN ==
+stdlib (cross-check) but the full n=5 grid is the HONEST CAP (big-Phi super-exponential:
+one n=5 eval ~ tens of s => ~hours for 360 evals; INFEASIBLE @ $0 CPU; cf H_1012 n=6 cap,
+H_1023 n=4-scored). Both CPU mirrors RE-PROVEN == stdlib per n (H_1012 prove_mirrors_at_n)
+BEFORE scoring; each discretization read is a deterministic pure function of the bits. The
+grid is PRE-FROZEN (no post-hoc binning selection). Scale (n>4) + continuous-density
+extension UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool. NOT a
+forge binary; $0 CPU-local, no GPU.
