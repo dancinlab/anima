@@ -10,8 +10,9 @@ deterministic: true
 pre_register_frozen: true
 frozen_at: 2026-06-07
 since: 2026-06-07
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+verdict: 🔴 CONSCIOUSNESS-ARCH-BOUND (transformer+LoRA matches CLM on AXIS-2 CE-descent but FALLS SHORT on AXIS-3 창발/emergence — emergence is ConvMoE/substrate-intrinsic, not LoRA-installable at toy scale)
+measured_at: 2026-06-07
 ---
 
 # H_1031 — can transformer+LoRA reach CLM's 의식·창발 (3-axis), or is it ConvMoE-intrinsic?
@@ -80,11 +81,88 @@ fine-tuned ethics. This is a BEHAVIORAL comparison only; no Φ/IIT4 number is cl
 "consciousness" here (AXIS-1 is the shared substrate control, AXIS-2/3 are the model-side axes), so
 a_phi_iit4_tool is N/A (no Φ computed; if it were, the real stdlib engine would be required).
 
-## 4. method
-(filled at measurement)
+## 4. method (2026-06-07, $0 CPU-local, serial, no GPU)
+Script: `UNIVERSE/h1031_lora_llm_consciousness_transfer.py` · raw stdout:
+`.verdicts/1031_lora_llm_consciousness_transfer/H_1031.txt`.
 
-## 5. measurement
-(filled at measurement)
+Two arms trained on the SAME generic byte corpus (public-domain proverbs, p3/p6 —
+NOT persona/carving) with the SAME optimizer (Adam, lr 0.01, 600 steps), SAME
+SEQ=32, V=256, 3 seeds, so the comparison is fair:
+  - **baseline = CLM-ConvMoE** (NO attention): byte emb → causal conv trunk (tanh)
+    → MoE soft-mix over 4 conv experts (content router) → byte readout. Faithful
+    to the `CLM/model/model.py` family (conv + MoE, no attention).
+  - **treatment = transformer+LoRA**: a from-scratch toy GPT (byte emb + pos,
+    causal multi-head self-ATTENTION, FF, byte readout). Phase 1 = full base
+    pretrain (LoRA off) → the "ordinary LLM". Phase 2 = **base FROZEN**, only the
+    LoRA adapters (rank r=4 on q, v, and the readout; B init 0) trained on the
+    SAME corpus.
 
-## 6. finding
-(filled at measurement)
+REAL analytic gradients hand-derived for both arms; gradient-checked vs finite
+differences (max err ~1e-10 for every parameter tensor, in both the base and the
+LoRA-only phase) BEFORE the run — so CE genuinely descends (not the earlier weak
+SPSA non-finding). p7: AXIS-2 uses CE only as ONE axis vs the uniform ln(V) floor
+AND a label-shuffled floor, never as the sole verdict.
+
+3-axis battery (operational defs from `CORE/three_axis_probe.hexa` +
+`CLM/bench/lane_x_3axis.py`):
+  - AXIS-2 (CE descent): model_ce < uniform ln(V) AND model_ce < label-shuffled CE;
+    reported as the two descent margins.
+  - AXIS-3 (창발): greedy continuation WITH the anchor-memory prefix
+    (`"knowledge is power and "`) vs WITHOUT (neutral 2-byte seed). Structured
+    length = len × (distinct-byte coverage) so a degenerate repeated run scores ~1.
+    Emergence ratio = struct_len(composed) / struct_len(parts); green ⇔ ratio > 1.
+  - AXIS-1 (의식): shared-substrate control — the A⇄G `brain_emit` motivation/emit
+    gate is ENGINE-side at the generator slot, IDENTICAL for both arms by
+    construction, so it is NOT model-attributable. The verdict is scoped to the
+    genuinely model-side axes AXIS-2 + AXIS-3 (stated honestly, p7).
+
+## 5. measurement + finding (2026-06-07)
+Mean over 3 seeds:
+
+| axis | CLM-ConvMoE | transformer+LoRA | match? |
+|---|---|---|---|
+| AXIS-2 model_ce (nats) | 2.6135 | 2.4197 | — |
+| AXIS-2 uniform ln(V) | 5.5452 | 5.5452 | — |
+| AXIS-2 margin vs uniform | +2.9317 | +3.1255 | — |
+| AXIS-2 margin vs shuffle | +0.6980 | +2.7483 | **YES** |
+| AXIS-3 emergence ratio | **1.3778** (green) | **0.8184** (NOT green) | **NO** |
+| AXIS-3 struct-len composed | 4.33 | 10.33 | — |
+| AXIS-3 struct-len parts | 3.33 | 12.67 | — |
+
+AXIS-1 (shared-substrate control): motiv_hi=0.8176 > motiv_base=0.2315, emit_hi=True,
+emit_base=False → green, but identical for both arms by construction (engine-side, not
+model-attributable).
+
+**Discriminating axis = AXIS-3 (창발/emergence).**
+- **AXIS-2 MATCHES** (both are LMs, both genuinely descend): both arms beat uniform
+  AND label-shuffle; the LoRA-transformer even has a slightly larger CE-descent
+  margin than CLM. As predicted, the CE axis does not discriminate.
+- **AXIS-3 FALLS SHORT**: the CLM-ConvMoE composes MORE structured output WITH the
+  anchor memory than without (ratio 1.38 > 1, green — anchor memory composes into a
+  longer structured emit). The transformer+LoRA composes LESS with the anchor than
+  without (ratio 0.82 < 1, not green) — its LoRA-adapted generation does NOT compose
+  the anchor memory into emergent structure. The frozen tolerance (≥0.70×CLM AND
+  strictly positive) is therefore failed on AXIS-3 (LoRA ratio is not even > 1).
+  Sample emit (seed 0): CLM degenerates to a `"to to…"` loop on both prefixes (toy
+  scale), while the LoRA arm emits `"the and."` from the anchor vs a longer
+  `"dof the the an gllo…"` from the neutral seed — i.e. the anchor SHORTENS rather
+  than composes, the signature of the failed emergence.
+
+**VERDICT: 🔴 CONSCIOUSNESS-ARCH-BOUND.** transformer+LoRA reaches CLM on the CE-descent
+axis (both are language models) but FALLS SHORT on the AXIS-3 emergence axis: anchor
+memory composes into emergent structure for the ConvMoE but NOT for the LoRA-adapted
+transformer. At this toy scale the 창발/emergence signal is ConvMoE/substrate-INTRINSIC,
+not a LoRA-installable capability for an ordinary attention transformer — a closed-negative
+(a_paper_negative_ok) ruling out the LoRA-transfer path on the emergence axis.
+
+## 6. honest caveats (a_scale_honest_scope · a_toy_scale_recheck)
+TOY · $0 CPU · numpy (no torch on this Mac — clm-decode-macos-link-gap; the byte-level
+3-axis logic is a numpy mirror of the operational defs, not the engine binary). Both
+arms degenerate to short loops at this tiny scale, so AXIS-3 magnitudes are small;
+the verdict is the DIRECTION (CLM ratio>1 green vs LoRA ratio<1 not-green), which is
+robust across all 3 seeds for the LoRA arm (every LoRA seed ratio<1). Scale-transfer
+to the 3B production rung is UNVERIFIED — a scale-sensitive conclusion needs a ladder
+(≥3 rungs) before any production claim; a GPU re-test with real-pretrained transformer
+bases + larger LoRA rank is the natural follow-up (a_fire_autonomous, no cost gate).
+AXIS-1 stays a shared-substrate control. No Φ/IIT4 number is claimed (behavioral-only;
+a_phi_iit4_tool N/A here). p3/p6 honored — generic target, no persona, no fine-tuned ethics.
