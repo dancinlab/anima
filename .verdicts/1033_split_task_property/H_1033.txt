@@ -1,0 +1,254 @@
+====================================================================================
+H_1033 — which TASK-STRUCTURAL property predicts the big-Phi-DOWN (split-enabling) half?
+RESIDUAL of H_1023 (🔴 SPLIT-TASK-LOCAL: big-Phi went UP not DOWN on a generic TPM).
+FROZEN family of 5 n=4 task substrates, each vs the SAME H_1023 independent-bits baseline.
+FROZEN structural predictor Δ_DEC = decomposability(intervention) − decomposability(base),
+  from the best balanced 2|2 cut of the mirror-built MI matrix (NOT a Phi proxy).
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+engine reads=CPU mirror (numpy), H_1004 engines RE-PROVEN == stdlib at n=4 AND n=5 (H_1012)
+  BEFORE scoring. PID = Williams-Beer (2010) I_min, imported VERBATIM (secondary cross-check).
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+PASS = TASK-PROPERTY-PREDICTS-SPLIT: Δ_DEC PERFECTLY rank-separates bigΦ-DOWN from bigΦ-NOT-DOWN
+  (min Δ_DEC over DOWN > max over NOT-DOWN), DOWN = the more-decomposable tasks.
+FAIL = NO-TASK-PREDICTOR: the two classes interleave in Δ_DEC (closed-negative).
+====================================================================================
+
+EQUIVALENCE PROOF (H_1012 prove_mirrors_at_n — re-prove BOTH mirrors vs stdlib):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  predictor/engine deterministic re-run: dec=True engine=True  dec=0.954037 big=1.5110 faith=0.008452
+  Δ_DEC sanity: DEC(modular)=0.9540 > DEC(xor)=-0.0539 : True | DEC(base)=0.1244
+  WB sanity: COPY red=1.0000 syn=0.0000 | XOR red=0.0000 syn=1.0000 -> COPY=True XOR=True
+  EQUIVALENCE + PREDICTOR-VALIDITY PROOF: PROVEN
+
+################ SCORE task = modular-planning  [2 indep coupled sub-modules {0,1},{2,3} (factorizes)] ################
+    [modular-planning seed 1/30] elapsed=   0.9s
+    [modular-planning seed 2/30] elapsed=   1.7s
+    [modular-planning seed 3/30] elapsed=   2.6s
+    [modular-planning seed 4/30] elapsed=   3.5s
+    [modular-planning seed 5/30] elapsed=   4.4s
+    [modular-planning seed 6/30] elapsed=   5.2s
+    [modular-planning seed 7/30] elapsed=   6.1s
+    [modular-planning seed 8/30] elapsed=   7.0s
+    [modular-planning seed 9/30] elapsed=   7.9s
+    [modular-planning seed 10/30] elapsed=   8.8s
+    [modular-planning seed 11/30] elapsed=   9.6s
+    [modular-planning seed 12/30] elapsed=  10.5s
+    [modular-planning seed 13/30] elapsed=  11.4s
+    [modular-planning seed 14/30] elapsed=  12.2s
+    [modular-planning seed 15/30] elapsed=  13.1s
+    [modular-planning seed 16/30] elapsed=  14.0s
+    [modular-planning seed 17/30] elapsed=  14.9s
+    [modular-planning seed 18/30] elapsed=  15.7s
+    [modular-planning seed 19/30] elapsed=  16.7s
+    [modular-planning seed 20/30] elapsed=  17.6s
+    [modular-planning seed 21/30] elapsed=  18.5s
+    [modular-planning seed 22/30] elapsed=  19.4s
+    [modular-planning seed 23/30] elapsed=  20.2s
+    [modular-planning seed 24/30] elapsed=  21.1s
+    [modular-planning seed 25/30] elapsed=  22.0s
+    [modular-planning seed 26/30] elapsed=  22.8s
+    [modular-planning seed 27/30] elapsed=  23.7s
+    [modular-planning seed 28/30] elapsed=  24.6s
+    [modular-planning seed 29/30] elapsed=  25.5s
+    [modular-planning seed 30/30] elapsed=  26.4s
+  --- modular-planning: intervention vs independent-bits baseline (matched n=4) ---
+     big-Phi      contrast=+0.4582 d=+0.519 p=4.930e-02 -> RAISES
+     faithful_phi contrast=+0.0028 d=+0.442 p=9.502e-02 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     Δ_DEC (decomposability) contrast=+0.7205 d=+3.726 [base=0.2404 intv=0.9609]
+     (cross-check) Δredund=+0.0182 Δsynergy=+0.0291
+
+################ SCORE task = coupled-chain  [directed ring 0->1->2->3->0 (integrated, no driver)] ################
+    [coupled-chain seed 1/30] elapsed=  28.1s
+    [coupled-chain seed 2/30] elapsed=  28.9s
+    [coupled-chain seed 3/30] elapsed=  29.8s
+    [coupled-chain seed 4/30] elapsed=  30.7s
+    [coupled-chain seed 5/30] elapsed=  31.5s
+    [coupled-chain seed 6/30] elapsed=  32.4s
+    [coupled-chain seed 7/30] elapsed=  33.3s
+    [coupled-chain seed 8/30] elapsed=  34.2s
+    [coupled-chain seed 9/30] elapsed=  35.1s
+    [coupled-chain seed 10/30] elapsed=  36.0s
+    [coupled-chain seed 11/30] elapsed=  36.9s
+    [coupled-chain seed 12/30] elapsed=  37.8s
+    [coupled-chain seed 13/30] elapsed=  38.7s
+    [coupled-chain seed 14/30] elapsed=  39.6s
+    [coupled-chain seed 15/30] elapsed=  40.5s
+    [coupled-chain seed 16/30] elapsed=  41.4s
+    [coupled-chain seed 17/30] elapsed=  42.5s
+    [coupled-chain seed 18/30] elapsed=  43.7s
+    [coupled-chain seed 19/30] elapsed=  44.7s
+    [coupled-chain seed 20/30] elapsed=  45.8s
+    [coupled-chain seed 21/30] elapsed=  46.8s
+    [coupled-chain seed 22/30] elapsed=  47.9s
+    [coupled-chain seed 23/30] elapsed=  49.0s
+    [coupled-chain seed 24/30] elapsed=  50.3s
+    [coupled-chain seed 25/30] elapsed=  51.5s
+    [coupled-chain seed 26/30] elapsed=  52.4s
+    [coupled-chain seed 27/30] elapsed=  53.3s
+    [coupled-chain seed 28/30] elapsed=  54.1s
+    [coupled-chain seed 29/30] elapsed=  55.1s
+    [coupled-chain seed 30/30] elapsed=  56.0s
+  --- coupled-chain: intervention vs independent-bits baseline (matched n=4) ---
+     big-Phi      contrast=+2.4492 d=+3.071 p=3.450e-17 -> RAISES
+     faithful_phi contrast=+0.0049 d=+0.564 p=3.603e-02 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     Δ_DEC (decomposability) contrast=-0.0976 d=-0.347 [base=0.2404 intv=0.1428]
+     (cross-check) Δredund=+0.0182 Δsynergy=+0.0407
+
+################ SCORE task = random-TPM  [frozen random dense majority channel (generic)] ################
+    [random-TPM seed 1/30] elapsed=  56.9s
+    [random-TPM seed 2/30] elapsed=  57.8s
+    [random-TPM seed 3/30] elapsed=  58.7s
+    [random-TPM seed 4/30] elapsed=  59.5s
+    [random-TPM seed 5/30] elapsed=  60.4s
+    [random-TPM seed 6/30] elapsed=  61.4s
+    [random-TPM seed 7/30] elapsed=  62.3s
+    [random-TPM seed 8/30] elapsed=  63.2s
+    [random-TPM seed 9/30] elapsed=  64.1s
+    [random-TPM seed 10/30] elapsed=  65.0s
+    [random-TPM seed 11/30] elapsed=  65.8s
+    [random-TPM seed 12/30] elapsed=  66.7s
+    [random-TPM seed 13/30] elapsed=  67.6s
+    [random-TPM seed 14/30] elapsed=  68.5s
+    [random-TPM seed 15/30] elapsed=  69.4s
+    [random-TPM seed 16/30] elapsed=  70.3s
+    [random-TPM seed 17/30] elapsed=  71.1s
+    [random-TPM seed 18/30] elapsed=  72.0s
+    [random-TPM seed 19/30] elapsed=  73.0s
+    [random-TPM seed 20/30] elapsed=  74.0s
+    [random-TPM seed 21/30] elapsed=  74.9s
+    [random-TPM seed 22/30] elapsed=  75.8s
+    [random-TPM seed 23/30] elapsed=  76.7s
+    [random-TPM seed 24/30] elapsed=  77.6s
+    [random-TPM seed 25/30] elapsed=  78.4s
+    [random-TPM seed 26/30] elapsed=  79.3s
+    [random-TPM seed 27/30] elapsed=  80.2s
+    [random-TPM seed 28/30] elapsed=  81.1s
+    [random-TPM seed 29/30] elapsed=  82.0s
+    [random-TPM seed 30/30] elapsed=  82.8s
+  --- random-TPM: intervention vs independent-bits baseline (matched n=4) ---
+     big-Phi      contrast=+5.2300 d=+3.224 p=8.915e-15 -> RAISES
+     faithful_phi contrast=+0.0458 d=+1.683 p=3.668e-07 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     Δ_DEC (decomposability) contrast=-0.2956 d=-1.344 [base=0.2404 intv=-0.0551]
+     (cross-check) Δredund=+0.2896 Δsynergy=+0.2052
+
+################ SCORE task = xor-parity  [each unit = XOR of other three (pure synergy, H_1023)] ################
+    [xor-parity seed 1/30] elapsed=  83.7s
+    [xor-parity seed 2/30] elapsed=  84.6s
+    [xor-parity seed 3/30] elapsed=  85.5s
+    [xor-parity seed 4/30] elapsed=  86.4s
+    [xor-parity seed 5/30] elapsed=  87.3s
+    [xor-parity seed 6/30] elapsed=  88.2s
+    [xor-parity seed 7/30] elapsed=  89.1s
+    [xor-parity seed 8/30] elapsed=  90.0s
+    [xor-parity seed 9/30] elapsed=  90.8s
+    [xor-parity seed 10/30] elapsed=  91.7s
+    [xor-parity seed 11/30] elapsed=  92.6s
+    [xor-parity seed 12/30] elapsed=  93.6s
+    [xor-parity seed 13/30] elapsed=  94.4s
+    [xor-parity seed 14/30] elapsed=  95.3s
+    [xor-parity seed 15/30] elapsed=  96.2s
+    [xor-parity seed 16/30] elapsed=  97.1s
+    [xor-parity seed 17/30] elapsed=  98.0s
+    [xor-parity seed 18/30] elapsed=  98.8s
+    [xor-parity seed 19/30] elapsed=  99.7s
+    [xor-parity seed 20/30] elapsed= 100.6s
+    [xor-parity seed 21/30] elapsed= 101.5s
+    [xor-parity seed 22/30] elapsed= 102.4s
+    [xor-parity seed 23/30] elapsed= 103.2s
+    [xor-parity seed 24/30] elapsed= 104.1s
+    [xor-parity seed 25/30] elapsed= 105.0s
+    [xor-parity seed 26/30] elapsed= 106.0s
+    [xor-parity seed 27/30] elapsed= 106.9s
+    [xor-parity seed 28/30] elapsed= 107.8s
+    [xor-parity seed 29/30] elapsed= 108.7s
+    [xor-parity seed 30/30] elapsed= 109.6s
+  --- xor-parity: intervention vs independent-bits baseline (matched n=4) ---
+     big-Phi      contrast=+3.2668 d=+3.121 p=2.620e-16 -> RAISES
+     faithful_phi contrast=+0.0128 d=+1.222 p=4.391e-05 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     Δ_DEC (decomposability) contrast=-0.0226 d=-0.081 [base=0.2404 intv=0.2179]
+     (cross-check) Δredund=+0.0622 Δsynergy=+0.1194
+
+################ SCORE task = copy-channel  [units 1,2,3 noisy copies of shared driver (H_1023)] ################
+    [copy-channel seed 1/30] elapsed= 110.5s
+    [copy-channel seed 2/30] elapsed= 111.3s
+    [copy-channel seed 3/30] elapsed= 112.2s
+    [copy-channel seed 4/30] elapsed= 113.1s
+    [copy-channel seed 5/30] elapsed= 114.0s
+    [copy-channel seed 6/30] elapsed= 114.9s
+    [copy-channel seed 7/30] elapsed= 115.7s
+    [copy-channel seed 8/30] elapsed= 116.6s
+    [copy-channel seed 9/30] elapsed= 117.5s
+    [copy-channel seed 10/30] elapsed= 118.4s
+    [copy-channel seed 11/30] elapsed= 119.3s
+    [copy-channel seed 12/30] elapsed= 120.2s
+    [copy-channel seed 13/30] elapsed= 121.1s
+    [copy-channel seed 14/30] elapsed= 122.0s
+    [copy-channel seed 15/30] elapsed= 122.9s
+    [copy-channel seed 16/30] elapsed= 123.8s
+    [copy-channel seed 17/30] elapsed= 124.8s
+    [copy-channel seed 18/30] elapsed= 125.7s
+    [copy-channel seed 19/30] elapsed= 126.6s
+    [copy-channel seed 20/30] elapsed= 127.5s
+    [copy-channel seed 21/30] elapsed= 128.4s
+    [copy-channel seed 22/30] elapsed= 129.3s
+    [copy-channel seed 23/30] elapsed= 130.2s
+    [copy-channel seed 24/30] elapsed= 131.0s
+    [copy-channel seed 25/30] elapsed= 131.9s
+    [copy-channel seed 26/30] elapsed= 132.8s
+    [copy-channel seed 27/30] elapsed= 133.7s
+    [copy-channel seed 28/30] elapsed= 134.7s
+    [copy-channel seed 29/30] elapsed= 135.5s
+    [copy-channel seed 30/30] elapsed= 136.4s
+  --- copy-channel: intervention vs independent-bits baseline (matched n=4) ---
+     big-Phi      contrast=+0.2606 d=+0.352 p=1.784e-01 -> RAISES
+     faithful_phi contrast=+1.1220 d=+9.646 p=4.299e-26 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     Δ_DEC (decomposability) contrast=-0.5441 d=-2.865 [base=0.2404 intv=-0.3037]
+     (cross-check) Δredund=+4.4174 Δsynergy=+0.7520
+
+====================================================================================
+SPLIT-PREDICTOR MATRIX — per task: big-Phi sign x Δ_DEC predictor
+====================================================================================
+  task               |  big sign | bigΦ-DOWN? |     Δ_DEC | faith sign
+  modular-planning   |    RAISES |      False |   +0.7205 |     RAISES
+  coupled-chain      |    RAISES |      False |   -0.0976 |     RAISES
+  random-TPM         |    RAISES |      False |   -0.2956 |     RAISES
+  xor-parity         |    RAISES |      False |   -0.0226 |     RAISES
+  copy-channel       |    RAISES |      False |   -0.5441 |     RAISES
+
+  bigΦ-DOWN tasks (0): []
+  bigΦ-NOT-DOWN tasks (5): ['modular-planning', 'coupled-chain', 'random-TPM', 'xor-parity', 'copy-channel']
+
+====================================================================================
+OVERALL: ⚪ INCONCLUSIVE — the frozen family is degenerate (a class is empty); the
+  separation test requires >=1 task in EACH class. No predictor claim made.
+  (bigΦ-DOWN count=0, bigΦ-NOT-DOWN count=5)
+  VERDICT-TOKEN: INCONCLUSIVE-DEGENERATE-FAMILY
+====================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 — both engines EXACT;
+big-Phi super-exponential so n=4 is the rung for the full family x 30 seeds. Both CPU
+mirrors RE-PROVEN == stdlib at n=4 AND n=5 (H_1012 prove_mirrors_at_n) BEFORE scoring;
+Δ_DEC is exact + deterministic on the mirror-built MI matrix; the PID is validated on
+canonical COPY/XOR. The predictor is NOT a proxy for Phi (Phi from stdlib mirrors only).
+Scale-transfer UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool.
+NOT a forge binary; $0 CPU-local, no GPU.
