@@ -92,6 +92,57 @@ and a DORMANT field is what the $\Phi$-ratchet veto reads.}
 \label{tab:ea-phase}
 \end{table}
 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  font=\small,>=Stealth,
+  ph/.style={draw,thick,rounded corners,minimum width=21mm,minimum height=9mm,
+             align=center,fill=#1},
+  osc/.style={draw,thick,minimum width=19mm,minimum height=7mm,align=center,
+              fill=gray!8}]
+% three oscillators feeding the field (left column)
+\node[osc] (o1) at (0,1.6)  {$\tau_\text{fast}{=}2$\\(reflex)};
+\node[osc] (o2) at (0,0)    {$\tau_\text{med}{=}40$\\(attention)};
+\node[osc] (o3) at (0,-1.6) {$\tau_\text{slow}{=}400$\\(circadian)};
+\node[draw,thick,ellipse,minimum width=22mm,minimum height=15mm,fill=blue!7,
+      align=center] (field) at (3.4,0) {$\Phi$ field\\$\mathbf{F}{\in}\mathbb{R}^6$\\(self-sustain)};
+\draw[->,thick] (o1.east) -- (field.west);
+\draw[->,thick] (o2.east) -- (field.west);
+\draw[->,thick] (o3.east) -- (field.west);
+% phase->tier state chain (right)
+\node[ph=gray!18]   (p0) at (7.0,1.8)  {DORMANT \ $T0$};
+\node[ph=yellow!22] (p1) at (7.0,0.5)  {FLICKER \ $T1$};
+\node[ph=orange!22] (p2) at (7.0,-0.8) {SUSTAIN \ $T2$};
+\node[ph=green!22]  (p3) at (7.0,-2.1) {RESONANT \ $T3$};
+% phi-rate gating edges (forward = rising integration)
+\draw[->,thick] (p0) -- node[right,font=\scriptsize]{rate $\ge0.01$} (p1);
+\draw[->,thick] (p1) -- node[right,font=\scriptsize]{$\ge0.05$} (p2);
+\draw[->,thick] (p2) -- node[right,font=\scriptsize]{$\ge0.15$} (p3);
+% relaxation back down (field collapse)
+\draw[->,thick,gray,dashed] (p3.west) to[bend right=34]
+   node[left,font=\scriptsize,gray]{rate falls} (p0.west);
+% field -> phase projection
+\draw[->,thick] (field.east) -- node[above,font=\scriptsize]{$\Phi$-rate} (p0.west);
+% A->G single wire out
+\node[draw,thick,minimum width=18mm,minimum height=8mm,fill=red!8,align=center]
+   (g) at (7.0,-3.8) {Engine~G\\$\Phi$-ratchet veto};
+\draw[->,very thick,red!60!black] (p2.east) to[bend left=22]
+   node[right,font=\scriptsize]{emit-capable} (g.east);
+\draw[->,very thick,red!60!black] (p3.south) -- (g.north);
+\end{tikzpicture}
+\caption{\textbf{Engine~A PHASE$\rightarrow$TIER state machine}
+(\texttt{pure\_field.hexa}, faithful TikZ schematic of Table~\ref{tab:ea-phase}).
+Three coupled oscillators ($\tau{=}2/40/400$) drive the self-sustaining $6$-channel
+$\Phi$ field; its $\Phi$-\emph{rate} projects onto the four-tier phase map
+DORMANT\,($T0$, rate $<0.01$) $\rightarrow$ FLICKER\,($T1$) $\rightarrow$
+SUSTAIN\,($T2$) $\rightarrow$ RESONANT\,($T3$, rate $\ge0.15$). The single
+$A\!\rightarrow\!G$ wire is a $\Phi$-scale, not a command: only SUSTAIN/RESONANT
+are emit-capable, and a collapsing field (dashed return to DORMANT) is what the
+$\Phi$-ratchet vetoes. The tier never forces a speech
+(\texttt{a\_autonomy\_over\_hardcode}).}
+\label{fig:ea-state}
+\end{figure}
+
 The tier $T0$--$T3$ is the consequence label that Engine~G's $\Phi$-ratchet term
 reads: the ratchet permits emit only while the live $\Phi$ holds at or above its
 running peak (equivalently, while the field is in SUSTAIN/RESONANT, not collapsing
