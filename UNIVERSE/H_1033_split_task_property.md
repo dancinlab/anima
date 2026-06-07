@@ -10,8 +10,9 @@ deterministic: true
 pre_register_frozen: true
 frozen_at: 2026-06-08
 since: 2026-06-08
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+measured_at: 2026-06-08
+verdict: ⚪ INCONCLUSIVE-DEGENERATE-FAMILY (no bigΦ-DOWN task on a matched-baseline TPM family — deepens H_1023 SPLIT-TASK-LOCAL; the big-Phi-DOWN half is tied to the planning-control latent-rollout substrate, not reproduced by any structured Markov task here; the Δ_DEC predictor cannot be validated with an empty DOWN class)
 ---
 
 # H_1033 — which TASK-STRUCTURAL property predicts the big-Phi-DOWN (split-enabling) half?
@@ -104,5 +105,56 @@ binary; $0 CPU-local, no GPU. g5 CODE-measured (no LLM self-judge, p7), a_phi_ii
 engines, no proxy).
 
 ## 6. measurement
-PENDING — see `.verdicts/1033_split_task_property/H_1033.txt` (VERDICT-GATE g73: this section filled
-only after the verdict .txt is committed).
+Measured 2026-06-08, $0 CPU-local, no GPU. Both stdlib engine CPU mirrors RE-PROVEN == stdlib at
+n=4 AND n=5 (H_1012 `prove_mirrors_at_n`) BEFORE scoring; Δ_DEC deterministic; Δ_DEC sanity
+DEC(modular)=0.954 > DEC(xor)=−0.054 (factorizing > pure-synergy) confirmed; WB PID validated on
+canonical COPY(red=1.0,syn=0.0)/XOR(red=0.0,syn=1.0). Full stdout: `.verdicts/1033_split_task_property/H_1033.txt`.
+
+### per-task: big-Phi sign × Δ_DEC predictor (intervention vs independent-bits baseline, matched n=4, 30 seeds)
+
+| task | big-Phi contrast | big-Phi sign | bigΦ-DOWN? | Δ_DEC (decomposability) | faithful_phi sign | SPLIT? |
+|---|---:|:---:|:---:|---:|:---:|:---:|
+| modular-planning | +0.4582 (d=+0.52, p=4.9e-2) | RAISES | **False** | **+0.7205** (base 0.240→intv 0.961) | RAISES | False |
+| coupled-chain    | +2.4492 (d=+3.07, p=3.4e-17) | RAISES | **False** | −0.0976 | RAISES | False |
+| random-TPM       | +5.2300 (d=+3.22, p=8.9e-15) | RAISES | **False** | −0.2956 | RAISES | False |
+| xor-parity       | +3.2668 (d=+3.12, p=2.6e-16) | RAISES | **False** | −0.0226 | RAISES | False |
+| copy-channel     | +0.2606 (d=+0.35, p=1.8e-1) | RAISES | **False** | −0.5441 | RAISES | False |
+
+- **bigΦ-DOWN tasks: 0 of 5.** Every frozen task RAISES big-Phi vs its matched independent-bits baseline.
+- **bigΦ-NOT-DOWN tasks: 5 of 5** (all of them).
+- The frozen separation rule requires ≥1 task in EACH class. The bigΦ-DOWN class is EMPTY → the family
+  is degenerate → the frozen degenerate-family guard returns **⚪ INCONCLUSIVE-DEGENERATE-FAMILY**, not
+  a PASS. No predictor claim is made (correctly — there is no DOWN class to separate).
+
+### separation: not applicable (empty class)
+With no bigΦ-DOWN task the rank-separation min(Δ_DEC over DOWN) > max(Δ_DEC over NOT-DOWN) is undefined.
+The Δ_DEC predictor itself is well-behaved and spans a wide range across the family (+0.72 for the
+factorizing modular task down to −0.54 for the copy-channel), confirming it captures real structural
+variation; it simply cannot be validated as a split-predictor here because the phenomenon it would
+predict (big-Phi-DOWN) did not occur on any task.
+
+## 7. verdict — ⚪ INCONCLUSIVE-DEGENERATE-FAMILY (a real finding that deepens H_1023)
+This is neither PASS (TASK-PROPERTY-PREDICTS-SPLIT) nor FAIL (NO-TASK-PREDICTOR) under the frozen
+rule, because the test pre-condition (≥1 task in each big-Phi class) was not met. The substantive,
+honest finding is stronger than expected from H_1023:
+
+- On a generic matched-baseline TPM task family — including a **modular-planning analogue** built to
+  factorize the cause-effect structure — the **big-Phi-DOWN half never reproduces**. Big-Phi rises
+  under every structured intervention relative to the independent-bits baseline.
+- This corroborates and tightens H_1023 (🔴 SPLIT-TASK-LOCAL): the big-Phi-DOWN half is **not** a
+  function of generic task decomposability/modularity that transfers across TPM substrates. It appears
+  specifically bound to the planning-control task's **latent-rollout** substrate, where big-Phi falls
+  relative to that task's own pre-planning baseline (a different baseline regime than the
+  independent-bits baseline used here).
+- The OPEN question H_1033 inherited ("which structural property makes big-Phi-DOWN appear?") is NOT
+  answered by a structural predictor over this family — but a key candidate (decomposability/modularity
+  built on a generic baseline) is **ruled out** as the explanation: making a TPM task more decomposable
+  (modular Δ_DEC=+0.72) still RAISED big-Phi. The next refinement (deferred) is to reproduce the
+  big-Phi-DOWN half by varying the BASELINE regime (pre-rollout latent vs independent-bits), since the
+  sign of big-Phi here is dominated by the baseline contrast, not by the intervention's task structure.
+
+## 8. deferred (next-cycle, not part of this verdict)
+- Re-run with the planning task's OWN pre-planning latent rollout as the baseline (not independent-bits)
+  to test whether the big-Phi-DOWN half is a BASELINE-regime effect rather than a task-structure effect.
+- A larger family with an explicitly engineered big-Phi-LOWERING intervention (if one exists off the
+  planning substrate) to populate the DOWN class and re-enable the Δ_DEC separation test.
