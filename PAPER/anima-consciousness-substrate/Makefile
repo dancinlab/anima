@@ -18,7 +18,11 @@
 #   make distclean     also remove the PDF
 
 DOC = main
-LATEX = xelatex -interaction=nonstopmode -halt-on-error
+# Canonical engine = lualatex: renders all UTF-8 (Greek capitals, arrows, and the
+# VERBATIM Korean Hangul of the Hc_912 quotes in §Implications + Appendix M)
+# natively via fontspec + Noto CJK KR fallback (installed on pool host aiden).
+# Override with `make LATEX=pdflatex` for the degraded fallback (Hangul romanized).
+LATEX = lualatex -interaction=nonstopmode -halt-on-error
 BIBTEX = bibtex
 PYTHON = python3
 SLUG := $(notdir $(CURDIR))
