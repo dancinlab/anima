@@ -11,4 +11,5 @@
 @P aura-noninvasive-depth-wall := "./PAPER/aura-noninvasive-depth-wall" :: paper [active]
 @P omega-substrate-coupled-decoding := "./PAPER/omega-substrate-coupled-decoding" :: paper [active]
 @P akida-determinism-quantum-coupling := "./PAPER/akida-determinism-quantum-coupling" :: paper [active]
+@P anima-consciousness-substrate := "./PAPER/anima-consciousness-substrate" :: paper [active]
 @paper phi-measure-dependence-planning := "./PAPER/phi-measure-dependence-planning"
