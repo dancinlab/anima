@@ -1,0 +1,39 @@
+H_1030 — LoRA on CLMConvMoE vs foundation transformer (numpy, $0 CPU, NO GPU)
+========================================================================
+
+[ARM A] foundation transformer -> .clm serialize
+  ARM_A_BLOCKED = 1
+  ARM_A_REASON  = KeyError: "missing weight for slot 'ecW' (tried torch key 'embed_conv.conv.weight'); available keys: ['tok_emb.weight', 'blocks.0.
+
+[ARM B1] LoRA adapts CLMConvMoE on generic held-out byte task (p3/p6: NOT persona)
+  CE_base_heldout = 5.74688
+  CE_lora_heldout = 1.65926
+  CE_DROPPED      = 1
+  LORA_PARAMS     = 608
+  FULL_FT_PARAMS  = 11682
+  PARAM_RATIO     = 0.052046
+  PARAMS_LE_HALF  = 1
+  ARM_B1_PASS     = 1
+
+[CONTROL] int4 round-trip of BASE (no LoRA) — is the envelope generally lossy?
+  CE_base_inmem    = 5.74688
+  CE_base_mirror   = 5.75013
+  DELTA_CE_BASE    = 0.00325   (int4 envelope <= 0.20)
+  BASE_FAITHFUL    = 1  (1 => int4 faithful on base; any B2 break is LoRA-delta-specific)
+
+[ARM B2] LoRA-merged -> serialize_v3 (.clm) -> byte-exact mirror decode
+  CLM_BYTES        = 22918
+  CE_merged_inmem  = 1.65926
+  CE_mirror_decode = 5.48810
+  CE_uniform_lnV   = 5.54518
+  DELTA_CE         = 3.82885   (int4 envelope <= 0.2)
+  BYTE_FAITHFUL    = 0
+  MIRROR_DESCENT   = 1  (CE_mirror < uniform)
+  ARM_B2_PASS      = 0
+
+========================================================================
+ARM_A_BLOCKED=1  ARM_B1=1  ARM_B2=0
+VERDICT = LORA-BREAKS-CLM
+  PASS=LORA-VIABLE-ON-CONVMOE (Arm B1&B2 hold AND Arm A foundation BLOCKED)
+  FAIL=LORA-BREAKS-CLM (Arm B fails to adapt OR breaks int4/.clm byte-faithfulness)
+substrate=numpy (torch unavailable); .clm by CANONICAL serialize_v3; decode by byte-exact mirror (engine-link deferred, a_scale_honest_scope)
