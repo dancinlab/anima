@@ -67,38 +67,10 @@ to v0.2 (the generalization is a superset, not a re-layout).}
 
 \begin{figure}[h]
 \centering
-\begin{tikzpicture}[
-  font=\footnotesize,
-  blk/.style={draw,thick,minimum height=8mm,minimum width=15mm,fill=#1,
-              inner sep=2pt,align=center},
-  >=Stealth,node distance=2.5mm]
-% ── v0.1 row (NOT loadable) ───────────────────────────────────────────────
-\node[blk=red!10] (m1)  at (0,0)        {\texttt{CLM}\textbackslash\texttt{x01}\\(MAGIC)};
-\node[blk=red!10,right=of m1] (n1)      {\texttt{nblocks}};
-\node[blk=red!10,right=of n1] (b1)      {per-block\\int4 trunk};
-\node[blk=red!10,right=of b1] (e1)      {\dots};
-\node[left=4mm of m1,align=right] {\textbf{v0.1}\\\textcolor{red!70!black}{NOT loadable}};
-\node[right=3mm of e1,align=left,text=red!70!black] {drops embed $+$ GN\\(F-CLM-SERIALIZE-GAP)};
-% ── v0.2 row (loadable) ───────────────────────────────────────────────────
-\node[blk=green!12,below=11mm of m1.west,anchor=west] (m2) {\texttt{CLM}\textbackslash\texttt{x01}};
-\node[blk=green!12,right=of m2] (n2)    {\texttt{nblocks}};
-\node[blk=green!12,right=of n2] (b2)    {per-block\\int4 trunk};
-\node[blk=blue!14,right=of b2] (x2)     {\texttt{CLMX} trailer\\embed$[V{\cdot}d]$\\$+$ GN, $11$ ext};
-\node[left=4mm of m2,align=right] {\textbf{v0.2}\\\textcolor{green!50!black}{loadable}};
-\node[right=3mm of x2,align=left] {fixed $(L,E)$};
-% ── v0.3 row (config-agnostic) ────────────────────────────────────────────
-\node[blk=green!12,below=11mm of m2.west,anchor=west] (m3) {\texttt{CLM}\textbackslash\texttt{x01}};
-\node[blk=green!12,right=of m3] (b3)    {$L{+}E{+}3$\\blocks};
-\node[blk=blue!14,right=of b3] (x3)     {\texttt{CLMX}: $2L{+}E{+}6$\\ext (embed $+$ GN)};
-\node[left=4mm of m3,align=right] {\textbf{v0.3}\\\textcolor{green!50!black}{loadable}};
-\node[right=3mm of x3,align=left,text=blue!50!black] {\textbf{config-agnostic}\\$(d,E,L)$ from blocks};
-% arrows down the version ladder
-\draw[->,thick,gray] (m1.south west) ++(2mm,0) -- ++(0,-3mm);
-\draw[->,thick,gray] (m2.south west) ++(2mm,0) -- ++(0,-3mm);
-\end{tikzpicture}
+\includegraphics[width=0.98\linewidth]{figures/figE_clm_grammar.png}
 \caption{\textbf{The \texttt{.clm} byte-grammar ladder} (v0.1 $\rightarrow$ v0.2
-$\rightarrow$ v0.3), a faithful TikZ schematic of the block layout in
-Table~\ref{tab:clm-versions}. v0.1 (\textcolor{red!70!black}{red}, \emph{not}
+$\rightarrow$ v0.3), a labeled technical schematic of the block layout in
+Table~\ref{tab:clm-versions} (prompt \texttt{figures/\_prompts/figE\_clm\_grammar.md}). v0.1 (\textcolor{red!70!black}{red}, \emph{not}
 engine-loadable) carries only the \texttt{CLM}\textbackslash\texttt{x01} magic,
 \texttt{nblocks}, and per-block int4 trunk weights --- it \emph{drops} the trained
 embedding and the group-norm affine (\texttt{F-CLM-SERIALIZE-GAP}). v0.2 appends
