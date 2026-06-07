@@ -65,7 +65,38 @@ prove_mirrors_at_n = _h1012.prove_mirrors_at_n
 planning_trajectories = _h1012.planning_trajectories
 cohens_d = _h1012.cohens_d
 welch_t = _h1012.welch_t
-spearman = _h1012.spearman
+
+# Self-contained Spearman (numpy-only) — the pod may lack scipy; the imported
+# h1012.spearman calls scipy.stats.spearmanr. rho's SIGN is all the verdict uses;
+# p is reported but not gating. t-approximation for p (large-n) avoids scipy.
+def spearman(a, b):
+    a = np.asarray(a, float); b = np.asarray(b, float)
+    n = len(a)
+    if n < 3:
+        return 0.0, float("nan")
+    def _rank(x):
+        order = np.argsort(x, kind="mergesort")
+        r = np.empty(n, float)
+        r[order] = np.arange(1, n + 1, dtype=float)
+        # average ties
+        _, inv, cnt = np.unique(x, return_inverse=True, return_counts=True)
+        sums = np.zeros(len(cnt)); tot = np.zeros(len(cnt))
+        for i in range(n):
+            sums[inv[i]] += r[i]; tot[inv[i]] += 1.0
+        avg = sums / tot
+        return avg[inv]
+    ra, rb = _rank(a), _rank(b)
+    ra -= ra.mean(); rb -= rb.mean()
+    denom = math.sqrt((ra * ra).sum() * (rb * rb).sum())
+    rho = float((ra * rb).sum() / denom) if denom > 0 else 0.0
+    rho = max(-1.0, min(1.0, rho))
+    if abs(rho) >= 1.0:
+        p = 0.0
+    else:
+        t = rho * math.sqrt((n - 2) / (1.0 - rho * rho))
+        # two-sided p via a crude normal approx (sign-only use; not gating)
+        p = 2.0 * (1.0 - 0.5 * (1.0 + math.erf(abs(t) / math.sqrt(2.0))))
+    return rho, float(p)
 # big-Phi internal helpers live in the H_1004 engine module (h1012 holds it as _h1004)
 _h1004 = _h1012._h1004
 _bit = _h1004._bit
