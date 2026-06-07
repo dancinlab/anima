@@ -125,48 +125,57 @@ def gen_demo(rng):
     return np.array(obs), np.array(acts)
 
 
-# ----------------------------------------------------------------- true-dynamics MPC (VERBATIM H_1027)
+# ----------------------------------------------------------------- true-dynamics MPC (H_1027 algorithm, VECTORIZED over the CEM population)
+# NOTE: the math is IDENTICAL to the H_1027 per-population loop (same `samp` draw order, same
+# cumulative -||pos|| score, same elite selection). The ONLY change is batching the population
+# axis into numpy ops so the deep-horizon ladder (d=16 x 5 rungs x 2400 episodes) runs in
+# minutes instead of >90 min wall (a_wall_first). The scalar loop and this batched form produce
+# bit-identical scores up to float reductions over the same operands.
 def cem_plan_true(pos, v, rng, horizon):
     mu = np.zeros((horizon, ADIM))
     std = np.full((horizon, ADIM), CEM_INIT_STD)
     for _ in range(CEM_ITERS):
         samp = np.clip(mu[None] + std[None] * rng.standard_normal((CEM_POP, horizon, ADIM)),
-                       -AMAX, AMAX)
-        scores = np.empty(CEM_POP)
-        for i in range(CEM_POP):
-            p, vel, acc = pos.copy(), v.copy(), 0.0
-            for k in range(horizon):
-                vel = DRAG * vel + samp[i, k]
-                p = p + VSTEP * vel
-                acc += -np.linalg.norm(p)
-            scores[i] = acc
-        elite = samp[np.argsort(scores)[-CEM_ELITE:]]
+                       -AMAX, AMAX)                                   # (POP, H, ADIM)
+        p = np.tile(pos.astype(float), (CEM_POP, 1))                 # (POP, ADIM)
+        vel = np.tile(v.astype(float), (CEM_POP, 1))                 # (POP, ADIM)
+        acc = np.zeros(CEM_POP)
+        for k in range(horizon):
+            vel = DRAG * vel + samp[:, k]                            # (POP, ADIM)
+            p = p + VSTEP * vel
+            acc += -np.linalg.norm(p, axis=1)
+        elite = samp[np.argsort(acc)[-CEM_ELITE:]]
         mu = elite.mean(0)
         std = elite.std(0) + 1e-6
     return np.clip(mu[0], -AMAX, AMAX)
 
 
-# ----------------------------------------------------------------- imagine-rollout (VERBATIM H_1027), planning through a given WM
+# ----------------------------------------------------------------- imagine-rollout (H_1027 algorithm, VECTORIZED over the CEM population)
 class AnimaImaginePlanner:
+    """Plans through the learned WM via CEM (H_1027). VECTORIZED across the population: the
+    learned transition A and decoder C are applied as batched matmuls. Identical math to the
+    H_1027 scalar loop (roll A under each candidate action, decode -> pos, accumulate -||pos||);
+    only the population loop is batched for wall-time (a_wall_first)."""
+
     def __init__(self, fm):
         self.fm = fm
 
     def plan(self, obs_hist, rng, horizon):
         z0 = self.fm.embed(np.array(obs_hist))[-1]
+        A, C = self.fm.A, self.fm.C
         mu = np.zeros((horizon, ADIM))
         std = np.full((horizon, ADIM), CEM_INIT_STD)
         for _ in range(CEM_ITERS):
             samp = np.clip(mu[None] + std[None] * rng.standard_normal((CEM_POP, horizon, ADIM)),
-                           -AMAX, AMAX)
-            scores = np.empty(CEM_POP)
-            for i in range(CEM_POP):
-                z, acc = z0.copy(), 0.0
-                for k in range(horizon):
-                    z = (_aug1(np.hstack([z, samp[i, k]])) @ self.fm.A)
-                    pred_pos = self.fm.decode(z)
-                    acc += -np.linalg.norm(pred_pos)
-                scores[i] = acc
-            elite = samp[np.argsort(scores)[-CEM_ELITE:]]
+                           -AMAX, AMAX)                               # (POP, H, ADIM)
+            z = np.tile(z0.astype(float), (CEM_POP, 1))              # (POP, zdim)
+            acc = np.zeros(CEM_POP)
+            for k in range(horizon):
+                zin = np.hstack([z, samp[:, k], np.ones((CEM_POP, 1))])   # [z; a; 1] -> (POP, zdim+ADIM+1)
+                z = zin @ A                                          # learned transition (POP, zdim)
+                pred_pos = np.hstack([z, np.ones((CEM_POP, 1))]) @ C # learned decoder (POP, obs)
+                acc += -np.linalg.norm(pred_pos, axis=1)
+            elite = samp[np.argsort(acc)[-CEM_ELITE:]]
             mu = elite.mean(0)
             std = elite.std(0) + 1e-6
         return np.clip(mu[0], -AMAX, AMAX)
@@ -213,16 +222,17 @@ def kstep_forward_error(fm, depths, seed):
 
 
 # ----------------------------------------------------------------- build ONE fidelity-ladder rung (the new axis)
-def build_wm(name, delay, n_train, ridge, mnoise, demo_seed):
+def build_wm(name, delay, n_train, ridge, mnoise, demo_seed, rung_idx):
     """Fit an LDSWorldModel of the rung's prescribed (delay, n_train, ridge), then INJECT
     Gaussian model-noise of std `mnoise` into the learned transition A and decoder C to
-    degrade fidelity deterministically. Returns the (degraded) learned WM."""
+    degrade fidelity deterministically (seed = SEED_NOISE + rung_idx, fully reproducible).
+    Returns the (degraded) learned WM."""
     drng = np.random.default_rng(demo_seed)
     demos = [gen_demo(drng) for _ in range(n_train)]
     fm = LDSWorldModel(ODIM, delay=delay, act_dim=ADIM, ridge=ridge)
     fm.fit([o for o, a in demos], traj_acts=[a for o, a in demos])
     if mnoise > 0:
-        nrng = np.random.default_rng(SEED_NOISE + hash(name) % 100000)
+        nrng = np.random.default_rng(SEED_NOISE + rung_idx)
         fm.A = fm.A + mnoise * nrng.standard_normal(fm.A.shape)
         fm.C = fm.C + mnoise * nrng.standard_normal(fm.C.shape)
     return fm
@@ -249,7 +259,7 @@ def main():
         print("=" * 78)
         print(f"RUNG {j}: {name}  (delay={delay} n_train={n_train} ridge={ridge} mnoise={mnoise})")
         print("=" * 78)
-        fm = build_wm(name, delay, n_train, ridge, mnoise, demo_seed=SEED_DEMO_BASE + j)
+        fm = build_wm(name, delay, n_train, ridge, mnoise, demo_seed=SEED_DEMO_BASE + j, rung_idx=j)
         planner = AnimaImaginePlanner(fm)
 
         # (a) multi-step forward fidelity
