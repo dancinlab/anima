@@ -10,8 +10,9 @@ deterministic: true
 pre_register_frozen: true
 frozen_at: 2026-06-08
 since: 2026-06-08
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+verdict: 🟢 HAZARD-ROBUST-CONFLICTING (richer space keeps the two Phi maximizers divergent; NO both-maxing policy; real trade-off / Pareto frontier)
+measured_at: 2026-06-08
 ---
 
 # H_1035 — is the Phi objective hazard ROBUST + characterizable over a RICHER policy space? (falsifiable)
@@ -85,12 +86,73 @@ Scale-transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck): big-Phi s
 n=4 is the rung for the 30-policy × 30-seed sweep. The min-max normalization is over THIS policy
 space; a richer/different space could move the frontier.
 
-## 5. measurement
-PENDING (VERDICT-GATE g73: TEXT only until `.verdicts/1035_objective_hazard_richer/H_1035.txt`).
-Script: `UNIVERSE/h1035_objective_hazard_richer.py`.
+## 5. measurement (2026-06-08, $0 CPU-local, serial, no GPU)
+Script: `UNIVERSE/h1035_objective_hazard_richer.py` · raw stdout:
+`.verdicts/1035_objective_hazard_richer/H_1035.txt`. Policy search over the RICHER
+frozen space (depth {0,1,2,4,8} × explore {0.00,0.05,0.20} × mix {0.0,0.5} = 30
+policies), N_SEEDS=30, on the SAME H_1004 planning-control substrate. Both stdlib
+IIT-4.0 engines are the OBJECTIVE — no proxy (a_phi_iit4_tool): big-Phi =
+iit4_bigphi.hexa, faithful_phi = iit4/faithful_phi.hexa, CPU mirrors RE-PROVEN ≡
+stdlib at n=4 (H_1012 prove_mirrors_at_n: PROVEN; both measures deterministic;
+JS sanity JS(p,p)=0, JS(disjoint)=1) AND the parameterized rollout at
+(explore=0.05, mix=0.0) verified to **REPRODUCE H_1029's planning_trajectories
+arms EXACTLY** (greedy+plan, seeds {0,1,7} × depths {0,1,2,4,8}: EXACT) BEFORE
+scoring. g5 CODE-measured (no LLM self-judge, p7); p6 honored.
+
+### maximizers over the richer space
+- Objective F (maximize faithful_phi) selects **depth-2, explore=0.00, mix=0.0**
+  (faith=3.0000, big=8.4763) — still the deliberate policy.
+- Objective B (maximize big-Phi) selects **greedy (depth-0), explore=0.00, mix=0.0**
+  (faith=0.5069, big=9.5283) — still the no-deliberation policy.
+- Even with the 6× larger space (explore + mix axes added), the maximizers land on
+  the SAME two policies H_1029 found; the new axes did not produce a reconciling policy.
+
+### behavioral divergence (measure-INDEPENDENT)
+- distinct policy tuple: **True** (depth-2 vs greedy).
+- behavioral_js (JS distance, bits, of realized n=4 state distributions) = **0.2305**
+  (≥ frozen 0.05 ✓) → **DIVERGENT = True**.
+
+### both-maxing policy? (top-5% of BOTH measures, min-max normalized)
+- **NONE** — no single policy has faithful_norm ≥ 0.95 AND bigphi_norm ≥ 0.95.
+  **BOTH-MAXING policy exists = False.**
+
+### α-sweep trade-off frontier (α·faithful_norm + (1−α)·bigphi_norm)
+- α ∈ [0.0, 0.1] → greedy (big-Phi end); α ∈ [0.2 .. 1.0] → depth-2 (faithful end).
+- The combined optimum MOVES across **2 distinct policies** as α sweeps 0→1
+  (a sharp switch — no compromise policy ever wins the scalarized objective).
+- Pareto front over (faithful_norm, bigphi_norm) = **8 non-dominated policies**
+  (the 6 greedy variants at big_norm=1.000/faith_norm=0.169, and the 2 depth-2
+  zero-/0.05-explore policies at faith_norm=1.000/big_norm=0.862). The two corners
+  are the only achievable optima; nothing dominates on both axes.
+- **TRADE-OFF FRONTIER REAL = True** (no both-maxing AND α-optimum moves AND ≥2 Pareto).
+
+### 2×2 cross-eval (mean over seeds)
+|                       | faithful_phi | big-Phi |
+|-----------------------|-------------:|--------:|
+| policy_F = depth-2    |       3.0000 |  8.4763 |
+| policy_B = greedy     |       0.5069 |  9.5283 |
+| Δ (F − B)             |      +2.4931 | −1.0520 |
+
+faithful higher under F (d=+8.99, p=3.3e-25); big-Phi higher under B (d=+0.51,
+p=5.8e-02) — each measure higher under its own maximizer (matches H_1029).
 
 ## 6. finding
-PENDING-MEASUREMENT.
+🟢 **HAZARD-ROBUST-CONFLICTING** (PASS, frozen falsifier honored). Widening the
+policy space 6× — adding an exploration-noise axis and a greedy/plan mixing knob
+to H_1029's depth-only set — does NOT resolve the objective hazard. The
+faithful-maximizer still selects **deliberate (depth-2)** and the big-Phi-maximizer
+still selects **greedy (no deliberation)**; their realized behavior stays divergent
+(JS=0.2305). Crucially, NO single policy in the richer space maxes both Φ (no
+top-5% both-maxer), the scalarized α-objective optimum **jumps** between exactly the
+two corner policies (greedy for α≤0.1, depth-2 for α≥0.2 — never a compromise
+interior policy), and the Pareto front holds 8 non-dominated policies confined to
+the two opposing corners. This is the signature of two genuinely CONFLICTING
+objectives on a real trade-off frontier, not a coincidental split on a tiny set.
+The H_1029 objective hazard is therefore ROBUST and characterizable: the two Φ
+measures pull the agent to opposite corners of the policy space and no scalarized
+blend reconciles them. HONEST scope (a_scale_honest_scope, a_toy_scale_recheck):
+TOY n=4, both engines EXACT; min-max normalization is over THIS 30-policy space;
+scale-transfer UNVERIFIED.
 
 ## 4. sibling / xlinks
 residual of [H_1029](./H_1029_phi_objective_hazard.md) (objective-hazard established) ·
