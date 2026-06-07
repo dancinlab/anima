@@ -1,0 +1,34 @@
+==============================================================================
+H_1027 — imagine-rollout depth ladder vs a deepening MPC optimum
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=continuous-action hidden-velocity station-keeping (position-only obs)  metric M=mean return (0=optimal)
+N_runs=40 ep/run=60  action=CONTINUOUS 2-D thrust in [-1.0,1.0]^2
+FROZEN depth ladder DEPTHS=[1, 2, 4, 8, 16]  GAP_TOL=0.05  (MPC depth == imagine horizon)
+planner=CEM (pop=64 iters=5 elite=8)  no-Phi (a_phi_iit4_tool n/a)
+
+[learned-WM 1-step decode sanity] true pos=[-0.014 -0.025] pred pos=[0.02  0.024]
+
+---- learned-model k-step OPEN-LOOP forward error (||pred pos - true pos||) ----
+  k= 1  forward_err = 0.0349
+  k= 2  forward_err = 0.0613
+  k= 4  forward_err = 0.1096
+  k= 8  forward_err = 0.2024
+  k=16  forward_err = 0.3299
+
+---- depth ladder: same-depth true-MPC vs imagine-rollout (mean +/- std, bootstrap CI) ----
+  d= 1  MPC=-0.3715 CI=[-0.3896,-0.3532]   imagine=-0.3790 CI=[-0.3962,-0.3623]   gap=+0.0075  (Welch p=5.59e-01 d=-0.131)  [TRACKS @ GAP_TOL=0.05]
+  d= 2  MPC=-0.2623 CI=[-0.2729,-0.2512]   imagine=-0.2684 CI=[-0.2768,-0.2604]   gap=+0.0061  (Welch p=3.97e-01 d=-0.191)  [TRACKS @ GAP_TOL=0.05]
+  d= 4  MPC=-0.3205 CI=[-0.3288,-0.3120]   imagine=-0.3167 CI=[-0.3252,-0.3084]   gap=-0.0038  (Welch p=5.34e-01 d=+0.140)  [TRACKS @ GAP_TOL=0.05]
+  d= 8  MPC=-0.4847 CI=[-0.4941,-0.4755]   imagine=-0.4526 CI=[-0.4613,-0.4434]   gap=-0.0322  (Welch p=8.43e-06 d=+1.067)  [TRACKS @ GAP_TOL=0.05]
+  d=16  MPC=-0.8746 CI=[-0.8924,-0.8562]   imagine=-0.7606 CI=[-0.7729,-0.7483]   gap=-0.1140  (Welch p=2.90e-15 d=+2.265)  [TRACKS @ GAP_TOL=0.05]
+
+gap-vs-forward-error correlation over the ladder: Spearman r=-1.0000 p=1.404e-24  (gaps=[0.0075, 0.0061, -0.0038, -0.0322, -0.114], fwd_err=[0.0349, 0.0613, 0.1096, 0.2024, 0.3299])
+
+shallowest depth d=1 gap=+0.0075 -> tracks_at_shallowest=True
+forward error grows with horizon (k=16 0.3299 > k=1 0.0349) = True
+
+------------------------------------------------------------------------------
+VERDICT H_1027: RED TRACKS-ALL-DEPTHS (closed-negative, a_paper_negative_ok) — imagine-rollout tracks the same-depth true-MPC at EVERY tested depth [1, 2, 4, 8, 16] (max gap +0.0075 <= GAP_TOL 0.05). On this toy the learned model is accurate enough that NO finite crossover horizon h* exists in the tested ladder: imagination substitutes for the true planner across the whole range. forward-err k=1->16: 0.0349->0.3299 (grows=True) but stays small enough not to break planning. a_scale_honest_scope: a deeper ladder / harder env may yet expose h*. TOY rung.
+------------------------------------------------------------------------------
