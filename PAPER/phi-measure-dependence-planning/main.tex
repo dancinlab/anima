@@ -73,7 +73,15 @@ $n=6$ requires $\approx 10$ minutes per evaluation and is the honest cap of a
 CPU mirror at each $n$ ($|\Delta|\le 3.7\times10^{-6}$). The headline
 consequence: the claim ``planning raises consciousness'' is true \emph{only}
 for the scalar effective-information measure and is \emph{reversed} for the
-integration-structure measure. We accompany this with two closed-negative
+integration-structure measure. We further \emph{explain} the split: a
+Williams--Beer partial-information decomposition shows planning's MI rise is
+\textbf{redundancy}-dominated (redundancy-margin $+10.44$ vs $\le +2.95$ for
+non-split controls), so the scalar (which credits redundant/shared information
+as integration) rises while big-$\Phi$ (which rewards irreducible synergy)
+falls. A redundancy-margin predictor of which interventions induce the split is
+\emph{robust in $n$}, separating planning from all controls at $n=5$, exactly
+where a surface coupling-magnitude predictor is only an $n=4$ artifact. We
+accompany this with two closed-negative
 results on the orthogonal \emph{learning} axis (a credit-density horizon cap
 at length 72; a task-locality of per-step supervision), establishing that the
 broader world-model generalization wall is an optimization phenomenon, not a
@@ -140,6 +148,17 @@ computational cap (Section~\ref{sec:results}).
 The H\_999/H\_1001 result is correct but must be read as scoped to the scalar
 effective-information measure; the integration-structure measure says the
 opposite (Section~\ref{sec:discussion}).
+\item \textbf{A mechanism for the split: redundancy, not synergy (\tierGreen).}
+A Williams--Beer PID shows planning's MI rise is redundancy-dominated
+(redundancy-margin $+10.44$ vs $\le +2.95$ controls); the scalar credits
+redundancy as integration (rises) while big-$\Phi$ rewards irreducible synergy
+(falls) --- the split is a redundancy artifact, not a movement of genuine
+integration (Section~\ref{sec:mechanism}, Table~\ref{tab:pid}).
+\item \textbf{A predictor that is robust in $n$ (\tierGreen).} The
+redundancy-margin predicts which interventions induce the split and separates
+planning from all controls at $n=5$ ($+25.07$ vs $\le +7.48$), exactly where a
+surface coupling-magnitude predictor is only an $n=4$ artifact
+(Section~\ref{sec:predictor}, Table~\ref{tab:predictor}).
 \item \textbf{Two orthogonal closed-negatives on the learning axis (\tierRed).}
 A credit-density horizon cap (per-step supervision extends the world-model
 $>$ language-model separation only to length 72, then breaks) and a
@@ -380,6 +399,91 @@ $4.0$). Planning makes each transition carry more effective information
 ``$\Phi$''s answer different questions and a single manipulation can move them
 oppositely.
 
+\section{The mechanism: redundancy, not synergy}
+\label{sec:mechanism}
+
+Section~\ref{sec:results} establishes \emph{that} the two measures split; this
+section establishes \emph{why}. The candidate mechanism: planning's added mutual
+information is \textbf{redundant}, not synergistic. On the same $n=4$ substrate
+that feeds both engines, we ran a self-contained Williams--Beer $I_{\min}$
+partial-information decomposition (PID, pure numpy, validated on canonical
+COPY=pure-redundancy / XOR=pure-synergy cases) of the planning vs greedy
+dependency into redundancy, synergy, and unique components (H\_1017,
+\tierGreen). The PID is the \emph{explanatory variable} --- an information
+decomposition of the same bits --- not a $\Phi$ proxy (all $\Phi$ values remain
+from the stdlib engines, per \texttt{a\_phi\_iit4\_tool}).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{intervention} & \textbf{split?} & \textbf{$\Delta$redundancy} & \textbf{$\Delta$synergy} & \textbf{red.\ margin} \\
+\midrule
+planning    & \textbf{True}  & $+9.40$ & $-1.04$ & $+10.44$ \\
+imagination & False & $+0.27$ & $-0.18$ & $+0.45$ \\
+guided      & False & $+1.87$ & $-0.38$ & $+2.25$ \\
+chaos       & False & $+2.57$ & $-0.37$ & $+2.95$ \\
+\bottomrule
+\end{tabular}
+\caption{Partial-information decomposition of each intervention's MI change
+(n=4, 30 seeds). Planning's entire pairwise-MI rise is carried by REDUNDANCY
+($+9.40$) while synergy actually FALLS ($-1.04$); its redundancy-margin
+($+10.44$) dwarfs every non-split control ($\le +2.95$). Source: H\_1017 verdict.}
+\label{tab:pid}
+\end{table}
+
+\noindent\textbf{Why the engines read the same MI rise oppositely.} The MIP-EI
+scalar \faithful{} sums pairwise mutual information and so \emph{credits
+redundant/shared information as integration} --- it rises. The system big-$\Phi$
+\bigphi{} rewards \emph{irreducible} (synergistic) structure, and redundant
+copies are reducible across the MIP --- so it falls. The sign-split is thus a
+redundancy artifact of the pairwise-MI scalar, not a movement of genuine
+integration. This answers the open ``mechanism'' question left by the first
+version of this work: planning does not make the system more integrated; it
+floods it with redundant shared information that one measure mistakes for
+integration.
+
+\subsection{Predictor robustness in $n$: the mechanism beats the surface}
+\label{sec:predictor}
+
+A predictor of \emph{which} interventions induce the split can be built at two
+levels. (i) A \textbf{surface} predictor on the magnitude of $\Delta$(cross-MIP
+coupling): at $n=4$ a single threshold ($+1.4933$) separates the one split
+intervention (planning) from the three non-split ones, and the split onsets
+exactly when the predictor crosses that boundary as planning depth rises
+(H\_1014, \tierGreen-qualified --- but the pre-registered \emph{direction},
+``split$\Leftrightarrow$decreased coupling,'' was falsified: every intervention
+\emph{raises} coupling, only magnitude separates). (ii) A \textbf{mechanism}
+predictor on the redundancy-margin ($\Delta$redundancy $-$ $\Delta$synergy).
+
+The two predictors diverge sharply when tested for robustness in $n$
+(Table~\ref{tab:predictor}). The surface magnitude predictor is an $n=4$
+\emph{artifact}: at $n=5$ its separation collapses (weak non-split interventions
+acquire spurious split labels from non-significant big-$\Phi$ sign-flips;
+H\_1016, \tierOrange). The mechanism redundancy-margin predictor survives: at
+$n=5$ it cleanly isolates planning ($+25.07$) from every control ($\le +7.48$)
+and tracks the \emph{true} planning-only split, not the spurious labels (H\_1020,
+\tierGreen). The deeper, redundancy-grounded quantity is the robust one.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{predictor} & \textbf{$n=4$} & \textbf{$n=5$} & \textbf{verdict} & \textbf{record} \\
+\midrule
+coupling-magnitude (surface)  & separates & FAILS (artifact)  & \tierOrange & H\_1014 / H\_1016 \\
+redundancy-margin (mechanism) & separates & separates (robust) & \tierGreen  & H\_1017 / H\_1020 \\
+\bottomrule
+\end{tabular}
+\caption{The mechanism predictor is robust in $n$ where the surface predictor is
+an $n=4$ artifact. At $n=5$ the redundancy-margin isolates planning ($+25.07$)
+from all controls ($\le +7.48$); the coupling magnitude misclassifies weak
+controls as split. Sources: H\_1014/1016/1017/1020 verdicts.}
+\label{tab:predictor}
+\end{table}
+
 \section{The learning axis is orthogonal: two closed-negatives}
 \label{sec:learning}
 
@@ -523,12 +627,19 @@ big-$\Phi$ \bigphi{} falls, robustly across every system size at which exact
 big-$\Phi$ is computable ($n=4,5$). ``Planning raises consciousness'' is
 therefore true for the scalar effective-information measure and false for the
 integration-structure measure --- a measure-dependence that any
-consciousness-targeting objective must confront. Separately, the world-model's
-long-horizon learning wall is governed by credit-assignment density and task
-structure, an optimization phenomenon orthogonal to the measure question. The
-single most important follow-up is an analytic characterization of \emph{which}
-interventions induce the sign-split (planning does, imagination/guided do not),
-which would turn an empirical counterexample into a predictive boundary.
+consciousness-targeting objective must confront. The split is now
+\emph{explained}: planning floods the system with redundant shared information,
+which the pairwise-MI scalar mistakes for integration while big-$\Phi$ correctly
+sees as reducible --- and a redundancy-margin predictor identifies split-inducing
+interventions robustly in $n$, where the original surface predictor was only an
+$n=4$ artifact. The earlier open follow-up (``which interventions induce the
+split'') is thus answered: redundancy-dominance does, and it predicts robustly.
+Separately, the world-model's long-horizon learning wall is governed by
+credit-assignment density and task structure, an optimization phenomenon
+orthogonal to the measure question. The next follow-up is to test whether the
+redundancy account survives beyond the toy $n$-ladder (the $n=6$ computational
+cap, or a non-enumerable estimator) and across substrates other than the
+planning control task.
 
 % =========================================================================
 \paragraph{Acknowledgments.}
@@ -622,14 +733,18 @@ verdict file.}
 \textbf{Hypothesis} & \textbf{Verdict} & \textbf{Record} \\
 \midrule
 H\_1004 (clean disagreement, $n=4$)    & \tierRed{} GENUINE-MEASURE-DISAGREEMENT & \texttt{.verdicts/1004\_bigphi\_faithful\_clean} \\
-H\_1012 (robust in $n$, this paper)    & \tierGreen{} DISAGREEMENT-ROBUST-IN-N   & \texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n} \\
+H\_1012 (split robust in $n$)          & \tierGreen{} DISAGREEMENT-ROBUST-IN-N   & \texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n} \\
+H\_1014 (surface predictor, $n=4$)     & \tierGreen{} PREDICTOR-SEPARATES (QUAL) & \texttt{.verdicts/1014\_intervention\_split\_predictor} \\
+H\_1016 (surface pred.\ is $n=4$ artifact) & \tierOrange{} PARTIAL                & \texttt{.verdicts/1016\_split\_predictor\_robustness} \\
+H\_1017 (mechanism = redundancy)       & \tierGreen{} REDUNDANCY-EXPLAINS-SPLIT  & \texttt{.verdicts/1017\_split\_redundancy\_mechanism} \\
+H\_1020 (mechanism pred.\ robust $n=5$) & \tierGreen{} MECHANISM-PREDICTOR-ROBUST & \texttt{.verdicts/1020\_redundancy\_predictor\_robustness} \\
 H\_1011 (credit-density horizon cap)   & \tierRed{} HORIZON-CAPPED-AT-72         & \texttt{.verdicts/1011\_dense\_supervision\_scaleup} \\
 H\_1013 (task-locality of dense sup.)  & \tierRed{} CREDIT-DENSITY-TASK-LOCAL    & \texttt{.verdicts/1013\_credit\_density\_general} \\
 \bottomrule
 \end{tabular}
-\caption{The four pre-registered hypotheses behind this paper, each with its
+\caption{The eight pre-registered hypotheses behind this paper, each with its
 terminal verdict token and the verbatim record path. Every numeric claim in
-the body traces to one of these four files.}
+the body traces to one of these files.}
 \label{tab:siblings}
 \end{table}
 
