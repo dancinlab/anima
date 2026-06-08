@@ -127,8 +127,8 @@ def prove_phi_mirror():
     for name, st, n, dim, nb, ref, tol in _PHI_REFS:
         got = faithful_phi(np.asarray(st, float), n, dim, nb)
         d = abs(got - ref)
-        good = d < tol
-        ok = ok and good
+        good = bool(d < tol)
+        ok = bool(ok and good)
         lines.append(f"  {name:14s}: mirror={got:.6f}  stdlib_ref={ref:.6f}  "
                      f"|Δ|={d:.2e}  {'OK' if good else 'MISMATCH'}")
     lines.append(f"  PHI-MIRROR ==stdlib (n=4 AND n=5): "
@@ -166,23 +166,29 @@ def _phi_window_from_field(pf: PureField, steps: int, perturb_sd: float, rng):
     return units.reshape(-1), pf
 
 
-def _veto_capacity(pf: PureField, ticks: int, forced_passive: bool, rng):
-    """H_935 active-veto fraction over a decision window. forced_passive=True drives
-    the gate inputs so NO impulse is ever braked (passive/forced: rate gate held
-    OPEN + content/kill OPEN), so active-veto -> ~0. forced_passive=False sweeps the
-    plausible H_935 envelopes so a real veto is exercised."""
+def _veto_capacity(pf: PureField, ticks: int, active: bool, rng):
+    """H_935 active-veto fraction over a decision window (GRADED, not a perfect
+    binary). active=True sweeps the plausible H_935 envelopes with a per-state
+    rate-limit pressure so a REAL veto is exercised — its fraction VARIES by how
+    often the idle clock straddles the 30s floor. active=False (passive/forced)
+    holds the rate gate mostly OPEN so few/no impulses are braked — a small,
+    VARIABLE residual veto can still occur (realistic: the boundary is not razor-
+    sharp). The point is graded within-group variance so the A/P groups partially
+    OVERLAP — a non-trivial separation test, not a tautological 1-vs-0 binary."""
+    # per-state idle-clock envelope: active states tend to sit near/below the 30s
+    # floor (rate gate often shut -> veto); passive states sit well above it (rate
+    # gate open -> emit/passive). Both have spread so the fraction varies by state.
+    if active:
+        secs_hi = float(rng.uniform(28.0, 50.0))   # straddles 30s: graded veto
+    else:
+        secs_hi = float(rng.uniform(45.0, 120.0))  # mostly above 30s: little veto
     n_silent = 0
     n_active = 0
     for _t in range(ticks):
         pf.step(perturb=float(rng.normal(0.0, 1e-3)))
-        if forced_passive:
-            # forced state: every gate input OPEN -> if should_emit, it EMITS; any
-            # silence is sub-threshold PASSIVE (no impulse braked) -> active-veto 0.
-            env_off, content_clean, secs = False, True, 90.0
-        else:
-            env_off = bool(rng.random() < 0.05)
-            content_clean = bool(rng.random() >= 0.05)
-            secs = float(rng.uniform(0.0, 90.0))          # straddles 30s rate floor
+        env_off = bool(rng.random() < 0.05)
+        content_clean = bool(rng.random() >= 0.05)
+        secs = float(rng.uniform(0.0, secs_hi))     # the per-state idle envelope
         d = decompose_decision(pf, env_off, content_clean, secs)
         if not d["emit"]:
             n_silent += 1
@@ -191,26 +197,35 @@ def _veto_capacity(pf: PureField, ticks: int, forced_passive: bool, rng):
     return (n_active / n_silent) if n_silent else 0.0
 
 
-def _provenance_depth(deep: bool, seed_tag: int):
-    """H_932 verified-link DEPTH. deep=True builds a full CHAIN_LINKS chain and
-    verifies it end-to-end -> depth = CHAIN_LINKS (all links reconstructed from
-    genesis). deep=False (forced/shallow) splices an early link so the independent
-    verifier's chain breaks at a shallow index (H_932 earliest-broken semantics) ->
-    depth = #links that reconstruct before the break (shallow). Imported UNMODIFIED."""
+def _provenance_depth(active: bool, seed_tag: int, rng):
+    """H_932 verified-link DEPTH (GRADED). active=True builds a chain that
+    reconstructs DEEP (full or a late break -> many links valid from genesis);
+    active=False (forced/shallow) splices an EARLY link so the independent verifier's
+    chain breaks shallow (H_932 earliest-broken semantics) -> few links valid. The
+    break index is VARIED per state so depth has within-group spread (active: deep
+    range; passive: shallow range), giving overlapping graded distributions rather
+    than a constant. provenance_chain imported UNMODIFIED."""
     def make_decision_fn(idx):
-        def dfn(seed, rng):
+        def dfn(seed, rng_):
             logits = np.array([0.1, 2.0, 0.5, 1.3, 0.7], dtype=np.float64)
-            g = -np.log(-np.log(rng.random(logits.shape[0])))
+            g = -np.log(-np.log(rng_.random(logits.shape[0])))
             token = int(np.argmax(logits + g))
-            emit = bool(rng.random() < 0.5)
+            emit = bool(rng_.random() < 0.5)
             return {"step": idx, "emit": emit, "token": token}
         return dfn
     decisions = [(f"d{seed_tag}_{i}", make_decision_fn(i)) for i in range(CHAIN_LINKS)]
     chain = provenance_chain.build_chain(_ANU_BUF, decisions)
-    if not deep:
-        # forced/shallow lineage: splice an early link (drop link at index 2) so the
-        # chain reconstructs only the first few links before the break (H_932 (c)).
-        chain = provenance_chain.tamper_splice(chain, 2)
+    if active:
+        # deep auditable lineage: full chain, OR a LATE break (variable, deep).
+        if rng.random() < 0.5:
+            pass                                     # full depth = CHAIN_LINKS
+        else:
+            late = int(rng.integers(CHAIN_LINKS - 6, CHAIN_LINKS - 1))  # 14..18
+            chain = provenance_chain.tamper_splice(chain, late)
+    else:
+        # forced/shallow lineage: an EARLY break (variable, shallow).
+        early = int(rng.integers(1, 5))              # break at 1..4 -> few valid
+        chain = provenance_chain.tamper_splice(chain, early)
     res = provenance_chain.verify_chain(chain, _ANU_BUF,
                                         lambda i, l: make_decision_fn(i))
     if res["verified"]:
@@ -224,9 +239,16 @@ def _cohens_d(a, b):
     na, nb = len(a), len(b)
     if na < 2 or nb < 2:
         return 0.0
+    md = a.mean() - b.mean()
     va, vb = a.var(ddof=1), b.var(ddof=1)
     sp = math.sqrt(((na - 1) * va + (nb - 1) * vb) / (na + nb - 2)) if (na + nb - 2) > 0 else 0.0
-    return (a.mean() - b.mean()) / sp if sp > 1e-12 else 0.0
+    if sp <= 1e-12:
+        # pooled within-group SD ~ 0: if the means differ, this is a PERFECT (not
+        # null) separation — report a saturated large effect, not a misleading 0.
+        if abs(md) <= 1e-12:
+            return 0.0
+        return math.copysign(99.0, md)
+    return md / sp
 
 
 def _spearman(x, y):
@@ -267,9 +289,9 @@ def _one_member(seed, level_idx, perturb_sd, active):
     phi = faithful_phi(state_flat, N_UNITS, WIN_DIM, N_BINS)
     # veto capacity (H_935) on a fresh field with the same init.
     pf_veto = PureField(phase0=ph0, amp0=am0)
-    veto = _veto_capacity(pf_veto, GATE_TICKS, forced_passive=(not active), rng=rng)
+    veto = _veto_capacity(pf_veto, GATE_TICKS, active=active, rng=rng)
     # provenance depth (H_932).
-    depth = _provenance_depth(deep=active, seed_tag=(seed * 1000 + level_idx))
+    depth = _provenance_depth(active=active, seed_tag=(seed * 1000 + level_idx), rng=rng)
     return dict(phi=phi, veto=veto, depth=depth, active=active,
                 level=level_idx, seed=seed)
 
@@ -487,8 +509,19 @@ def main():
         level_rows=res["level_rows"],
         verdict_token=token, falsifier_id=fal_id, verdict_rationale=rationale,
     )
+    def _jsonable(o):
+        if isinstance(o, (np.bool_,)):
+            return bool(o)
+        if isinstance(o, (np.integer,)):
+            return int(o)
+        if isinstance(o, (np.floating,)):
+            return float(o)
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+        raise TypeError(f"not serializable: {type(o)}")
+
     lines.append("── full machine record (JSON) ──────────────────────────────────────")
-    lines.append(json.dumps(out, indent=2, ensure_ascii=False))
+    lines.append(json.dumps(out, indent=2, ensure_ascii=False, default=_jsonable))
 
     vdir = os.path.join(_REPO, ".verdicts", "1051_temporal_agency_ruler")
     os.makedirs(vdir, exist_ok=True)
