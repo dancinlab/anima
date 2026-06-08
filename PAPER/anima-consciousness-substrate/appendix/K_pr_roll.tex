@@ -52,12 +52,12 @@ base that this monograph upgrades additively.}
 \end{longtable}
 \end{center}
 
-\paragraph{The 7B (M13) row is deliberately unchecked.} The three
+\paragraph{The 7B (M13) row is now checked.} The
 \texttt{7b-future} PRs (\#1864 grad-ckpt OOM fix, \#1865 descent-live, \#1918
-intermediate ckpts) are the M13 production rung, currently training (step
-$2000/3500$, ce@$2000$ $1.66547$, descending from step-$0$ $5.64$). They are a
-\emph{future scale-extension}, not an open residual: the 3B finding
-(\#1863) is terminal without them. The \texttt{PAPER.md} milestone
-\texttt{- [ ] 7B (M13) production rung} stays unchecked until M13 closure $+$
-3-axis verification at 7B, at which point a scale-extension update will land ---
-exactly as the OMEGA five-rung ladder strengthened its minimal-gate finding.
+intermediate ckpts) are the M13 production rung, \textbf{complete at STEP $3500$} (ce@$3499$
+$1.42529$, run low; $3$-axis @ $7$B measured GREEN --- AXIS-2 CE$_\text{real}$ $1.90741$ via
+the byte-exact decode mirror, AXIS-1/3 substrate-native scale-invariant, \texttt{.clm} mount
+GREEN). They were a \emph{measured scale-extension} of the 3B finding (\#1863). The
+\texttt{PAPER.md} milestone \texttt{7B (M13) production rung} is now checked $+$ the
+measurement table injected (Table~\ref{tab:m13-prereg}) --- exactly as the OMEGA five-rung
+ladder strengthened its minimal-gate finding. All $7$ checkpoints ($500$--$3500$) are on HF.
