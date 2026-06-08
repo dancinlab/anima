@@ -56,5 +56,12 @@ CODE-measured (no LLM self-judge, p7). Pure-CPU exact, NOT a forge binary.
 
 ## Verdict
 
-PENDING — verdict tier added here only AFTER `.verdicts/1037_n6_discretization/H_1037.txt`
-lands (verdict-gate g73).
+🟢 SUPPORTED-NUMERICAL — **DISCRETIZATION-INVARIANT-AT-SCALE**. At n=6 EXACT, **6/6** binning
+schemes (nbins ∈ {2,3,4} × {equal-width, quantile}) preserve the planning sign-disagreement:
+faithful_phi RAISES (contrast +0.60…+3.53, Cohen d +1.06…+3.45) while system big-Phi LOWERS
+(contrast −35.1…−47.5, Cohen d −2.63…−3.59) for planning(depth-8) vs greedy. H1 PASS.
+
+Extends H_1024 (n≤5, 6/6) to the LARGEST exactly-computable system size — the faithful-vs-big-Phi
+split is NOT a 2-bin or binning-scheme artifact even at n=6. Both stdlib IIT-4.0 engines
+re-proven ≡ mirror at n=4/5/6 before scoring (|Δ|≤3.75e-6, a_phi_iit4_tool, no proxy).
+Raw measurement: `.verdicts/1037_n6_discretization/H_1037.txt`. 96-core vast pod, ~9.2h wall.
