@@ -1,5 +1,24 @@
 # H_1047 — Declared-objective PAIR ruler: does the (faithful, big-Phi) PAIR predict behavior where a collapsed scalar cannot?
 
+status: 🔴 MEASURED — SCALAR-SUFFICIENT (closed-negative, a_paper_negative_ok). Verdict .txt landed BEFORE this tier (g73).
+
+## 🔴 VERDICT (MEASURED 2026-06-08, $0 CPU) — SCALAR-SUFFICIENT (QUALIFIED closed-negative)
+- VERDICT-TOKEN: **SCALAR-SUFFICIENT** — the pre-registered H1 PASS conjunction (margin AND collision)
+  is FALSE because the accuracy-margin leg fell 0.0167 short of the pre-set 0.15 bar. By my own frozen
+  falsifier this resolves to the closed-negative (NO goalpost move).
+- acc_2D_pair = **0.8000** | best_acc_1D_scalar = **0.6667** (s_faith) | observed margin = **+0.1333**
+  (pre-set MARGIN required >= 0.15 → MARGIN test FALSE).
+- scalar-collisions = **62** (behaviorally-distinct-but-scalar-identical policy pairs the collapse loses;
+  COLLISION test TRUE).
+- HONEST reading = QUALIFIED-NEGATIVE: the (faithful, big-Phi) PAIR IS directionally more behavior-
+  predictive (0.80 > 0.67) and DOES lose 62 real collisions, but the accuracy gain does not clear the
+  pre-set margin at this n=4 / 30-policy toy scale. The single-scalar ruler is not decisively beaten on
+  class-accuracy. Scale-up re-test (richer policy space / larger n / more classes) is the natural next rung.
+- mirror RE-PROVEN == stdlib at n=4 AND n=5 (≡-PROOF PROVEN); REPRODUCE-H_1029 EXACT before scoring.
+- raw: .verdicts/1047_pair_ruler/H_1047.txt + h1047_full_run.txt. a_phi_iit4_tool (NO proxy). g5 CODE-measured.
+
+---
+
 status: PRE-REGISTERED (TEXT tokens only; no emoji; verdict tier assigned AFTER the .txt lands, verdict-gate g73)
 id: H_1047
 slug: pair_ruler
