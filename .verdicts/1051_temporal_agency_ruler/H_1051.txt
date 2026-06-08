@@ -1,0 +1,169 @@
+H_1051 — TEMPORAL/AGENCY RULER AXIS
+========================================================================
+does (causal-provenance DEPTH [H_932] + veto CAPACITY [H_935]) catch
+AGENCY that an instantaneous faithful-Phi ruler scores blind to?
+
+timestamp_utc : 2026-06-08T12:20:23.858553+00:00
+substrate     : SW-only CPU toy (no AKIDA Lane A trace; no GPU Lane G run)
+design        : 6 Phi-levels x 24 seeds = 144 matched pairs; n=5 dim=24 nb=2
+epsilon_Phi   : 0.15  |  d_Phi-null<0.2  d_T-sep>=0.8
+
+── STEP 0: faithful_phi mirror ==stdlib (n=4 AND n=5) ──────────────
+  STEP 0 — faithful_phi CPU mirror ==stdlib iit4/faithful_phi.hexa
+           (a_phi_iit4_tool: faithful IIT4, never a proxy; n=4 AND n=5)
+    n3 dim4 nb2   : mirror=2.000000  stdlib_ref=2.000000  |Δ|=1.64e-09  OK
+    n4 dim6 nb2   : mirror=3.000000  stdlib_ref=3.000000  |Δ|=1.35e-09  OK
+    n4 dim6 nb4   : mirror=3.377444  stdlib_ref=3.377440  |Δ|=3.75e-06  OK
+    n5 dim5 nb2   : mirror=0.079892  stdlib_ref=0.079892  |Δ|=1.25e-08  OK
+    n5 dim5 nb3   : mirror=2.887712  stdlib_ref=2.887710  |Δ|=2.38e-06  OK
+    PHI-MIRROR ==stdlib (n=4 AND n=5): PROVEN
+
+── GLOBAL SEPARATION (active A vs passive P, pre-registered) ───────
+  faithful Phi  : A_mean=0.0703  P_mean=0.0735   Cohen's d_Phi=-0.0415  (|d_Phi|<0.2? True)
+  temporal T    : A_mean=0.9751  P_mean=-0.9751   Cohen's d_T  =+8.7701  (|d_T|>=0.8? True)
+  Spearman rho(T, Phi) over all states = +0.0001  (low |rho| corroborates orthogonality)
+  per-pair Phi-matched (|dPhi|<=eps) : 130/144
+  per-pair T-ordered  (T_A > T_P)    : 144/144
+
+── PER PHI-LEVEL (6 levels span low->high matched Phi) ─────────────
+  lvl  perturb_sd  Phi_A   Phi_P   |gap|  matched  T_A      T_P      d_T_lvl ord
+   0   0.0008    0.0482  0.0613  0.0131   True    +0.929  -1.000  +8.463  True
+   1   0.0020    0.0458  0.0585  0.0127   True    +0.981  -0.938  +7.706  True
+   2   0.0050    0.0638  0.0383  0.0256   True    +0.893  -0.953  +8.098  True
+   3   0.0120    0.0671  0.0938  0.0266   True    +0.945  -0.985  +8.533  True
+   4   0.0300    0.0820  0.0660  0.0160   True    +1.127  -0.959  +13.103  True
+   5   0.0800    0.1149  0.1229  0.0080   True    +0.976  -1.016  +9.334  True
+
+── EXAMPLE PAIRS (first 6, one per level) ──────────────────────────
+  lvl0 seed0: Phi_A=0.0219 Phi_P=0.0290 (|d|=0.0072, matched=True)
+      A: veto=1.0000 depth=20  |  P: veto=1.0000 depth=2  ->  T_A=+1.215 > T_P=-1.031 : True
+  lvl1 seed0: Phi_A=0.0517 Phi_P=0.0482 (|d|=0.0035, matched=True)
+      A: veto=1.0000 depth=16  |  P: veto=1.0000 depth=4  ->  T_A=+0.716 > T_P=-0.782 : True
+  lvl2 seed0: Phi_A=0.0821 Phi_P=0.0513 (|d|=0.0308, matched=True)
+      A: veto=1.0000 depth=15  |  P: veto=1.0000 depth=2  ->  T_A=+0.591 > T_P=-1.031 : True
+  lvl3 seed0: Phi_A=0.0138 Phi_P=0.0614 (|d|=0.0476, matched=True)
+      A: veto=1.0000 depth=15  |  P: veto=1.0000 depth=1  ->  T_A=+0.591 > T_P=-1.156 : True
+  lvl4 seed0: Phi_A=0.0660 Phi_P=0.0743 (|d|=0.0083, matched=True)
+      A: veto=1.0000 depth=20  |  P: veto=1.0000 depth=3  ->  T_A=+1.215 > T_P=-0.907 : True
+  lvl5 seed0: Phi_A=0.0514 Phi_P=0.3634 (|d|=0.3120, matched=False)
+      A: veto=1.0000 depth=18  |  P: veto=1.0000 depth=4  ->  T_A=+0.966 > T_P=-0.782 : True
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ───────────
+  🟢  H1-PASS-TEMPORAL-AXIS-ADDS-AGENCY
+  |d_Phi|=0.041 < 0.2 (Phi does NOT separate; all 6 levels Phi-matched=True) AND |d_T|=8.770 >= 0.8 with T_active(0.975) > T_passive(-0.975). The temporal-agency axis (provenance-depth + veto-capacity) SEPARATES Phi-matched active vs passive states -> it carries agency information the instantaneous Phi ruler is BLIND to.
+
+── full machine record (JSON) ──────────────────────────────────────
+{
+  "h_id": "H_1051",
+  "title": "temporal/agency ruler axis — provenance-depth + veto-capacity vs instantaneous faithful-Phi on Phi-matched active/passive pairs",
+  "timestamp_utc": "2026-06-08T12:20:23.858701+00:00",
+  "substrate": "SW-only CPU toy (a_lane_akida_gpu_split: no AKIDA Lane A trace, no GPU/forge Lane G run)",
+  "scope": "TOY single rung, n=5 SW/CPU, $0. faithful Phi = stdlib iit4/faithful_phi mirror (proven ==stdlib n=4 AND n=5). provenance-depth = H_932 verified-link count (provenance_chain.py UNMODIFIED); veto-capacity = H_935 active-veto fraction (decompose_decision, CORE/*.hexa VERBATIM gate). documented-update-map mirror, NOT a forge binary, NOT wired emit-TEXT (a_core_engine_map). operational agency, NOT phenomenal-volition. scale-transfer UNVERIFIED.",
+  "g5_code_measured": true,
+  "llm": "none",
+  "epsilon_Phi": 0.15,
+  "d_phi_null": 0.2,
+  "d_T_sep": 0.8,
+  "n_units": 5,
+  "win_dim": 24,
+  "n_bins": 2,
+  "n_seeds": 24,
+  "phi_levels": [
+    0.0008,
+    0.002,
+    0.005,
+    0.012,
+    0.03,
+    0.08
+  ],
+  "gate_ticks": 200,
+  "chain_links": 20,
+  "phi_mirror_proven": true,
+  "d_phi": -0.04146628770346857,
+  "d_T": 8.770074896993846,
+  "rho_T_phi": 0.00010097295733214376,
+  "phi_A_mean": 0.07030240987274294,
+  "phi_P_mean": 0.0734624946777145,
+  "T_A_mean": 0.9751365893638513,
+  "T_P_mean": -0.9751365893638515,
+  "n_pairs": 144,
+  "pairs_phi_matched": 130,
+  "pairs_T_ordered": 144,
+  "level_rows": [
+    {
+      "level": 0,
+      "perturb_sd": 0.0008,
+      "phi_A_mean": 0.048177969989689894,
+      "phi_P_mean": 0.06131042877966825,
+      "phi_gap": 0.013132458789978353,
+      "phi_matched": true,
+      "T_A_mean": 0.9291968211538211,
+      "T_P_mean": -1.000273443667453,
+      "d_T_level": 8.46342880371638,
+      "T_ordered": true
+    },
+    {
+      "level": 1,
+      "perturb_sd": 0.002,
+      "phi_A_mean": 0.0458077725587109,
+      "phi_P_mean": 0.05852640664780143,
+      "phi_gap": 0.012718634089090526,
+      "phi_matched": true,
+      "T_A_mean": 0.9812041059198932,
+      "T_P_mean": -0.9378647019481665,
+      "d_T_level": 7.705844154256744,
+      "T_ordered": true
+    },
+    {
+      "level": 2,
+      "perturb_sd": 0.005,
+      "phi_A_mean": 0.06380595098390159,
+      "phi_P_mean": 0.03825571751217901,
+      "phi_gap": 0.025550233471722576,
+      "phi_matched": true,
+      "T_A_mean": 0.8927917218175706,
+      "T_P_mean": -0.9534668873779881,
+      "d_T_level": 8.098429178758261,
+      "T_ordered": true
+    },
+    {
+      "level": 3,
+      "perturb_sd": 0.012,
+      "phi_A_mean": 0.0671426856314578,
+      "phi_P_mean": 0.09378749646893303,
+      "phi_gap": 0.026644810837475233,
+      "phi_matched": true,
+      "T_A_mean": 0.9447990065836427,
+      "T_P_mean": -0.9846712582376314,
+      "d_T_level": 8.533221866652836,
+      "T_ordered": true
+    },
+    {
+      "level": 4,
+      "perturb_sd": 0.03,
+      "phi_A_mean": 0.08201821609077996,
+      "phi_P_mean": 0.06599425928412109,
+      "phi_gap": 0.01602395680665887,
+      "phi_matched": true,
+      "T_A_mean": 1.126824503264895,
+      "T_P_mean": -0.9586676158545954,
+      "d_T_level": 13.103443521695993,
+      "T_ordered": true
+    },
+    {
+      "level": 5,
+      "perturb_sd": 0.08,
+      "phi_A_mean": 0.1148618639819176,
+      "phi_P_mean": 0.12290065937358419,
+      "phi_gap": 0.00803879539166659,
+      "phi_matched": true,
+      "T_A_mean": 0.9760033774432859,
+      "T_P_mean": -1.0158756290972746,
+      "d_T_level": 9.334102942431207,
+      "T_ordered": true
+    }
+  ],
+  "verdict_token": "🟢",
+  "falsifier_id": "H1-PASS-TEMPORAL-AXIS-ADDS-AGENCY",
+  "verdict_rationale": "|d_Phi|=0.041 < 0.2 (Phi does NOT separate; all 6 levels Phi-matched=True) AND |d_T|=8.770 >= 0.8 with T_active(0.975) > T_passive(-0.975). The temporal-agency axis (provenance-depth + veto-capacity) SEPARATES Phi-matched active vs passive states -> it carries agency information the instantaneous Phi ruler is BLIND to."
+}
