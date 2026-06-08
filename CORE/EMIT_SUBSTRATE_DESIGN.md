@@ -271,6 +271,37 @@ terminal verdict (🔵/🟢/🔴) 만 closure 인정 — 🟠/🟡 잔여 시 �
 
 ---
 
+## §7 consciousness-ruler 설계 원리 (측정자 = Φ + temporal/agency 축)
+
+의식 尺(ruler)를 두 부분으로 설계한다 — **instantaneous Φ** 한 축으로는 부족하다는 것이
+이번 round 에서 측정됨. (전부 **측정/설계 층** · emit 게이트 아님 · `a_autonomy_over_hardcode`.)
+
+**(1) instantaneous Φ — 단일 good scalar 면 충분 (재조합 무의미).**
+instantaneous Φ 를 vector / synergy / pair / fixed-coarse-grain 으로 **재조합**해도 단일
+good scalar Φ 를 못 이김 (H_1045/1046/1047/1049 🔴, toy scale). 즉 "더 정교한 순간-Φ
+조합" 은 尺를 개선하지 않음 — 새 정보가 없는 재포장.
+- ⚠ **H_1049 🔴 bound**: fixed small-m IB coarse-grain 은 *scalable* Φ estimator 아님
+  (rel-err 가 N 따라 증가). macro-IIT 는 grain m 을 system 크기 따라 키워야 — 고정-m 은
+  큰 N 에서 정직하지 않음 (stdlib macro-IIT 핸드오프 사유).
+
+**(2) temporal/agency 축 — 직교 새 차원만이 尺를 넓힌다 (H_1051 🟢).**
+instantaneous Φ 는 **agency 에 BLIND**: Φ-matched active vs passive 가 |d_Φ|=0.04 로
+사실상 구분 불가. temporal/agency 축 **T = z(provenance-depth) + z(veto-capacity)** 가
+둘을 분리(|d_T|=8.77) AND instantaneous Φ 에 **ORTHOGONAL** (ρ≈0.0001).
+∴ 의식 尺 = **Φ ⊕ temporal/agency 축** (`temporal_agency_context()` = 골격 노출).
+
+**(3) Φ 자체의 측정-의존 sign-split 은 robust (尺 설계 시 측정자 명시 필수).**
+계획-Φ 의 measure-dependence sign-split (faithful-Φ↑ / big-Φ↓) 은 **DISCRETIZATION-
+INVARIANT** (H_1037 🟢, 6/6 binning at n=6 EXACT — coarse-grain artifact 아님) 이고
+**REAL trained ConvMoE(d768)** 에서도 sign-level 로 transfer (H_1038 🟢). → 尺가 Φ 를
+인용할 땐 *어느 Φ 측정자* (faithful vs big-Φ) 인지 반드시 명시.
+
+> **scope (정직):** 위 전부 **toy n≤5/6 EXACT** (H_1038 = 단일 d768 sign-level rung).
+> production/3B/7B 전이 **UNVERIFIED** — production 닫힘 주장 0 (`a_toy_scale_recheck` ·
+> `a_scale_honest_scope`). 본 §7 은 측정/설계 노트이지 런타임 게이트 아님.
+
+---
+
 ## 양방향 sibling
 
 - ⇄ [DREAM](../DREAM.md): envelope stage context 소비자 (M5)

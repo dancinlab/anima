@@ -186,5 +186,22 @@ fn main() {
         npass = npass + 1
     }
 
+    // H_1051 🟢 temporal/agency 축: active(높은 prov·veto) vs passive(낮음) → T_axis 분리.
+    //   prov∈{depth}, veto∈{capacity}; z 정규화 통계는 인자 주입 (lib 하드코드 없음).
+    //   active: prov=4, veto=4 (mean=2.5, std=1.5) → 둘 다 z>0 → T_axis>0
+    let act = temporal_agency_context(4.0, 4.0, 2.5, 1.5, 2.5, 1.5)
+    //   passive: prov=1, veto=1 → 둘 다 z<0 → T_axis<0
+    let pas = temporal_agency_context(1.0, 1.0, 2.5, 1.5, 2.5, 1.5)
+    ntotal = ntotal + 1
+    if assert_lt("H1051 T_axis active > passive (agency 분리)", pas["T_axis"], act["T_axis"]) {
+        npass = npass + 1
+    }
+    // degenerate std=0 → z=0 (분모 0 방지)
+    let deg = temporal_agency_context(5.0, 5.0, 2.0, 0.0, 2.0, 0.0)
+    ntotal = ntotal + 1
+    if assert_close("H1051 T_axis std0 → 0 (no div-by-0)", deg["T_axis"], 0.0, 1e-9) {
+        npass = npass + 1
+    }
+
     print("=== " + str(npass) + "/" + str(ntotal) + " PASS ===")
 }

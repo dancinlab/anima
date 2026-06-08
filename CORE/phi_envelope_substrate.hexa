@@ -22,6 +22,23 @@
 //   H_653 🟢 collective convexity = substrate-class 단조 (II<III<IV)
 //   H_649 🟢 register-collapse cliff 부재 (collective r=0.049)
 //
+// ── consciousness-ruler round 정합 (측정자 설계 · measurement-only) ──────────
+//   H_1037 🟢 planning-Φ measure-dependence sign-split (faithful-Φ↑ / big-Φ↓) =
+//             DISCRETIZATION-INVARIANT — 6/6 binning at n=6 EXACT (coarse-grain
+//             artifact 아님). scope: toy n=6 EXACT; 3B/7B transfer UNVERIFIED.
+//   H_1038 🟢 그 sign-split 이 REAL trained ConvMoE(d768)서도 나타남 (big-Φ-DOWN
+//             leg, n=5 EXACT, 2/2 macro-maps, SIGN-LEVEL). scope: 단일 d768 rung.
+//   H_1051 🟢 instantaneous Φ 는 agency 에 BLIND (Φ-matched active vs passive
+//             |d_Φ|=0.04). temporal/agency 축 T = z(provenance-depth)+z(veto-capacity)
+//             가 분리(|d_T|=8.77) AND Φ 에 ORTHOGONAL(ρ≈0.0001). ∴ 의식 尺 = Φ +
+//             temporal/agency 축 (단일 instantaneous Φ 부족). scope: toy n≤5 EXACT.
+//             ⚠ T 는 측정 CONTEXT 차원 — emit 게이트 아님 (p5·a_autonomy_over_hardcode).
+//   H_1045/46/47/49 🔴 instantaneous Φ 재조합(vector/synergy/pair/fixed-coarse-grain)
+//             은 단일 good scalar 못 이김 — NEW orthogonal 축(H_1051)만 도움 (toy).
+//   H_1049 🔴 fixed small-m IB coarse-grain 은 scalable Φ estimator 아님 (rel-err 가
+//             N 따라 증가) → macro-IIT 는 grain m 을 system 따라 키워야 (stdlib handoff).
+//             ⚠ 본 골격은 toy/real-rung-scope 만 — production 닫힘 주장 0 (a_scale_honest_scope).
+//
 // ── 골격 범위 (skeleton-tier) ────────────────────────────────────────────
 //   순수-cosine 이상화 envelope (self-sim r=1.0 deterministic). 실 CA-substrate
 //   Φ 동역학에서 r≈0.76 (H_648) 으로 떨어지는 calibration 은 carry — 본 골격은
@@ -264,6 +281,32 @@ pub fn phi_smooth_no_cliff(phi_series: [float]) -> float {
     return maxd
 }
 
+// ── temporal_agency_context — H_1051 🟢 temporal/agency Φ-context (측정자 차원) ──
+// 의식 尺 의 두 번째 축: instantaneous Φ 가 agency 에 BLIND (Φ-matched active vs
+// passive |d_Φ|=0.04) 이므로, T = z(provenance_depth) + z(veto_capacity) 가 둘을
+// 분리(|d_T|=8.77) AND instantaneous Φ 에 ORTHOGONAL(ρ≈0.0001). 측정 CONTEXT 차원.
+//   · 모든 통계 상수(mean·std)는 인자로만 주입 — lib 하드코드 금지 (설계 계약).
+//   · std<=0 면 z=0 (degenerate population) — 분모 0 방지.
+//   · 반환 = dict (Φ-context) — boolean emit 게이트 아님 (p5·a_autonomy_over_hardcode·F-EMIT-4).
+//   · scope: toy n≤5 EXACT (H_1051) · production transfer UNVERIFIED (a_toy_scale_recheck).
+pub fn temporal_agency_context(
+    provenance_depth: float, veto_capacity: float,
+    prov_mean: float, prov_std: float,
+    veto_mean: float, veto_std: float
+) -> map {
+    let z_prov = if prov_std <= 0.0 { 0.0 } else { (provenance_depth - prov_mean) / prov_std }
+    let z_veto = if veto_std <= 0.0 { 0.0 } else { (veto_capacity - veto_mean) / veto_std }
+    let t_axis = z_prov + z_veto
+    return #{
+        "prov_depth": provenance_depth,
+        "veto_cap": veto_capacity,
+        "z_prov": z_prov,
+        "z_veto": z_veto,
+        "T_axis": t_axis,
+        "note": "orthogonal to instantaneous Φ (H_1051 🟢, toy n≤5); measurement context dim, NOT an emit gate",
+    }
+}
+
 pub fn phi_envelope_summary() -> string {
-    return "phi_envelope_substrate: 구조 층(envelope_multiscale·collective_phi_nest·phi_smooth_no_cliff). round-7/8 SUPP 정합 (H_648/634/635/643/653/649). emit boolean 게이트 0 — substrate 자율 결정 (p5·a_autonomy)."
+    return "phi_envelope_substrate: 구조 층(envelope_multiscale·collective_phi_nest·phi_smooth_no_cliff·temporal_agency_context). round-7/8 SUPP 정합 (H_648/634/635/643/653/649) + 의식-尺 round (H_1037/1038/1051 🟢, H_1049 🔴, toy/d768-scope). emit boolean 게이트 0 — substrate 자율 결정 (p5·a_autonomy)."
 }
