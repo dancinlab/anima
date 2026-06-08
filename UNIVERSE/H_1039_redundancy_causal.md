@@ -33,4 +33,24 @@ Toy n<=6 TPM; production-scale UNVERIFIED. Orthogonalization is one de-redundifi
 others (PCA-drop, channel-ablation) are robustness follow-ups. g5 CODE-measured (p7).
 
 ## Verdict
-PENDING — tier added only AFTER `.verdicts/1039_redundancy_causal/H_1039.txt` lands (g73).
+🟢 REDUNDANCY-CAUSAL (H1 PASS) — 2026-06-09. De-redundifying the planning channels
+(ZCA-whiten primary; Gram-Schmidt robustness, both on the continuous top-variance channels
+before median-binarization) REMOVES the Williams-Beer redundancy (control |Δred|=9.40 →
+ZCA 97.3% cut / GS 99.6% cut, both clearing the >=80% frozen threshold) AND COLLAPSES the
+split (SPLIT False on BOTH de-redundified arms) WHILE the split HOLDS on the matched control
+(SPLIT True: faith +2.33 UP / big-Φ −4.01 DOWN). Redundancy is the CAUSAL driver of the
+split — H_1017's correlational mechanism confirmed CAUSALLY, consistent across both operators.
+
+Raw + mirror≡stdlib proof (n=4 AND n=5, a_phi_iit4_tool, no proxy) + de-redundified-vs-control
+table: `.verdicts/1039_redundancy_causal/H_1039.txt` (g73). Code:
+`UNIVERSE/h1039_redundancy_causal.py`. JSON: `UNIVERSE/h1039_redundancy_causal_result.json`.
+
+| arm        | faith Δ | faith | big-Φ Δ  | big-Φ | Δredund | SPLIT |
+|------------|---------|-------|----------|-------|---------|-------|
+| control    | +2.3332 | UP    | −4.0083  | DOWN  | +9.3958 | True  |
+| dered_zca  | −0.0709 | DOWN  | −3.0843  | DOWN  | −0.2563 | False |
+| dered_gs   | +0.0023 | UP    | +1.2000  | UP    | +0.0396 | False |
+
+HONEST SCOPE: TOY n=4 EXACT (mirrors proven n=4,5); production-scale UNVERIFIED. ZCA primary,
+GS robustness; PCA-drop / channel-ablation are follow-up operators. The PID is the
+intervention-validation variable (NOT a Phi proxy). SERIAL CPU, $0, no GPU/pod. g5 (p7).
