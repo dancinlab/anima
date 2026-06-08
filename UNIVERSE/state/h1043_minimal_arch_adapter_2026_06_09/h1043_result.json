@@ -1,0 +1,38 @@
+{
+  "id": "H_1043",
+  "n_units": 6,
+  "dim": 24,
+  "n_bins": 2,
+  "n_seeds": 3,
+  "base_steps": 600,
+  "adapt_steps": 600,
+  "thresh": 0.1,
+  "prescreen": {
+    "phi": {
+      "base": 0.07657545191310368,
+      "graft_convmoe": 0.09210206422794616,
+      "graft_recurrent": 0.10144234767358269,
+      "graft_dwdilated": 0.0876284549974818,
+      "lora_control": 0.0630236016250609,
+      "convmoe_native": 0.9119820358802234
+    },
+    "delta_vs_base": {
+      "base": 0.0,
+      "graft_convmoe": 0.01552661231484248,
+      "graft_recurrent": 0.024866895760479013,
+      "graft_dwdilated": 0.011053003084378121,
+      "lora_control": -0.013551850288042774,
+      "convmoe_native": 0.8354065839671198
+    },
+    "lora_control_delta": -0.013551850288042774,
+    "control_band": 0.013551850288042774,
+    "convmoe_native_delta": 0.8354065839671198,
+    "passing_adapters": [],
+    "h1_pass": false,
+    "token": "PHI-NEEDS-MORE-THAN-GRAFT"
+  },
+  "state_file": "/tmp/h1043_states.txt",
+  "scope": "TOY CPU $0 numpy small rung; 3B/7B + emergence UNVERIFIED",
+  "note": "TERMINAL phi = stdlib faithful IIT-4.0 (run_faithful_phi_1043.hexa); python phi is PRE-SCREEN only. \u03a6-structure necessary-not-sufficient.",
+  "h1036_ref_lora_control_terminal_delta": -0.065576
+}
