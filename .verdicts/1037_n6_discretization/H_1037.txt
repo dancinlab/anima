@@ -1,0 +1,42 @@
+H_1037 — n=6 EXACT discretization-invariance of the planning Phi-measure split
+verdict-gate g73 — raw measurement, verbatim (committed BEFORE the .md emoji tier)
+substrate: vast pod 39922335 (192-core), 96 workers, pure-CPU EXACT IIT-4.0
+total wall: 33117.5s (~9.2h). a_phi_iit4_tool (stdlib faithful_phi + iit4_bigphi, NO proxy).
+
+VERDICT-TOKEN: DISCRETIZATION-INVARIANT-AT-SCALE
+n_ok = 6 / n_total = 6   invariant = True   det_ok = True
+
+== mirror-equivalence re-proven vs stdlib BEFORE scoring (a_phi_iit4_tool) ==
+  n=4: big-Phi ring |D|=1.34e-10 OK ; faithful nb2 |D|=3.48e-10 OK ; nb4 |D|=3.75e-06 OK -> PROVEN
+  n=5: big-Phi ring |D|=1.34e-10 OK ; faithful nb2 |D|=7.97e-10 OK -> PROVEN
+  n=6: big-Phi ring |D|=1.34e-10 OK ; faithful nb2 |D|=2.46e-10 OK -> PROVEN
+  mirror-equivalence results: {4: True, 5: True, 6: True}
+  (n>=6 matched-path big-Phi SKIPPED super-exp; mirror proven exact via ring+standalone)
+
+== STEP 1 — 6-binning grid at n=6 EXACT (planning depth-8 minus GREEDY contrast) ==
+criterion: PRESERVES iff faithful_phi sign==UP (contrast>+1e-3) AND big-Phi sign==DOWN (contrast<-1e-3)
+
+  nb  scheme        big-Phi contrast   d        faithful contrast   d        signs        preserves
+  2   equal_width   -47.4810           -3.016   +1.3792             +1.997   big DOWN/f UP   True
+  2   quantile      -42.1569           -3.595   +3.5332             +3.452   big DOWN/f UP   True
+  3   equal_width   -41.2509           -2.825   +0.6029             +1.059   big DOWN/f UP   True
+  3   quantile      -35.0589           -2.633   +1.1237             +2.751   big DOWN/f UP   True
+  4   equal_width   -47.4810           -3.016   +1.3792             +1.997   big DOWN/f UP   True
+  4   quantile      -42.1569           -3.595   +3.5332             +3.452   big DOWN/f UP   True
+
+binnings PRESERVING faith-UP & big-Phi-DOWN at n=6 EXACT: 6/6
+
+== Falsifier resolution ==
+H1 PASS = at n=6 EXACT the sign-disagreement (faithful phi_EI RAISES, system big-Phi LOWERS
+for planning vs greedy) holds for ALL 6 binning schemes. MEASURED: 6/6 preserve.
+=> H1 PASS. Discretization-invariance CONFIRMED AT SCALE (n=6 EXACT), extending H_1024 (n<=5).
+The faithful-vs-big-Phi planning split is NOT a 2-bin / binning-scheme artifact even at the
+largest exactly-computable system size.
+
+== Honest scope (a_scale_honest_scope) ==
+n=6 is the LARGEST EXACT rung; n=7 EXACT INFEASIBLE-CAP (2^(n-1) MIP + super-exp distinctions;
+H_1022 used a SAMPLED MC big-Phi estimator at n=7, validated |D|=0.0000 at n<=5). Verdict scoped
+to n<=6 EXACT. g5 CODE-measured (no LLM self-judge, p7). Toy n-ladder; production-scale transfer
+UNVERIFIED. NaN p-values = deterministic seeds (Cohen d is the effect-size statistic).
+
+TIER: GREEN (SUPPORTED-NUMERICAL) — 6/6 schemes preserve the sign-disagreement at n=6 EXACT.
