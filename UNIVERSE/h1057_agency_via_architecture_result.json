@@ -1,0 +1,84 @@
+{
+  "h_id": "H_1057",
+  "title": "can the agency axis be installed via architecture / runtime-structure",
+  "timestamp_utc": "2026-06-08T20:35:35.612619+00:00",
+  "substrate": "SW-only CPU toy Elman RNN + runtime architectures",
+  "n_seeds": 20,
+  "n_samples": 40,
+  "sample_len": 24,
+  "hid": 8,
+  "reg": 2,
+  "epochs": 220,
+  "lr": 0.08,
+  "eps_ce": 0.05,
+  "margins": {
+    "d_recov_vs_control": 0.8,
+    "d_vs_blind": 0.5,
+    "f_shuffle_margin": 0.2
+  },
+  "result": {
+    "n_matched": 20,
+    "n_total": 20,
+    "degenerate": false,
+    "per_arch": {
+      "treat_a": {
+        "target": "depth",
+        "blind": "blind_a",
+        "treat_rho_mean": -0.1123170731707317,
+        "ctrl_rho_mean": -0.1123170731707317,
+        "blind_rho_mean": -0.024915572232645407,
+        "treat_sh_mean": -0.0721763602251407,
+        "d_vs_control": -1.1422120969411124e-17,
+        "d_vs_blind": -0.47660389784698787,
+        "fshuffle_margin": -0.040140712945590996,
+        "above_control": false,
+        "above_blind": false,
+        "above_fshuffle": false,
+        "arch_pass": false
+      },
+      "treat_b": {
+        "target": "veto",
+        "blind": "blind_b",
+        "treat_rho_mean": 0.581641651031895,
+        "ctrl_rho_mean": -0.011697936210131332,
+        "blind_rho_mean": 0.7856003752345216,
+        "treat_sh_mean": -0.03175797373358349,
+        "d_vs_control": 2.1415967705761267,
+        "d_vs_blind": -0.8147468846338886,
+        "fshuffle_margin": 0.6133996247654785,
+        "above_control": true,
+        "above_blind": false,
+        "above_fshuffle": true,
+        "arch_pass": false
+      }
+    },
+    "phi": {
+      "control": 0.11974408603096509,
+      "treat_a": 0.11974408603096509,
+      "treat_b": 0.11974408603096509,
+      "blind_a": 0.11974408603096509,
+      "blind_b": 0.11974408603096509
+    },
+    "t_sep": {
+      "control": 0.7695867340624513,
+      "treat_a": 0.8604765311669347,
+      "treat_b": 0.7945695531123395,
+      "blind_a": 1.2534014615710327,
+      "blind_b": 1.1830925585236822
+    },
+    "token": "ARCHITECTURE-AXIS-NULL",
+    "any_pass": false
+  },
+  "phi_mirror_lines": [
+    "STEP 0 \u2014 faithful_phi CPU mirror ==stdlib iit4/faithful_phi.hexa",
+    "         (a_phi_iit4_tool: faithful IIT4, never a proxy; n=4 AND n=5)",
+    "  n3 dim4 nb2   : mirror=2.000000  stdlib_ref=2.000000  |delta|=1.64e-09  OK",
+    "  n4 dim6 nb2   : mirror=3.000000  stdlib_ref=3.000000  |delta|=1.35e-09  OK",
+    "  n4 dim6 nb4   : mirror=3.377444  stdlib_ref=3.377440  |delta|=3.75e-06  OK",
+    "  n5 dim5 nb2   : mirror=0.079892  stdlib_ref=0.079892  |delta|=1.25e-08  OK",
+    "  n5 dim5 nb3   : mirror=2.887712  stdlib_ref=2.887710  |delta|=2.38e-06  OK",
+    "  prove_mirrors_at_n: {4: True, 5: True}",
+    "  PHI-MIRROR ==stdlib (n=4 AND n=5): PROVEN"
+  ],
+  "wall_s": 53.079063177108765
+}
