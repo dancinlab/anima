@@ -18,7 +18,7 @@ since: 2026-06-09
 scope: TOY single rung, n<=6 units, SW/CPU, $0. Offline research probe on a toy gradient-trained Elman RNN — NOT a change to anima's runtime training (p8 is anima's LIVE-substrate philosophy; this measurement does NOT wire into CORE/brain, a_core_engine_map). faithful Phi = stdlib iit4/faithful_phi (exact MIP-EI, n<=8), CPU mirror RE-PROVEN ==stdlib at n=4 AND n=5. Provenance depth = verified-link count of the H_932 chain machinery (provenance_chain.py UNMODIFIED). Veto capacity = the H_935 active-veto fraction (decompose_decision, CORE/brain.hexa+engine_g.hexa VERBATIM gate). a_scale_honest_scope / a_toy_scale_recheck: toy-only; scale-transfer + on-chip (Lane A AKIDA curriculum) UNVERIFIED — a separate rung (note only).
 sister: H_1051 (the temporal-agency RULER axis being tested for learnability), H_1052 (matched-CE learning-nondet null — the matched-perf control discipline + RNN harness reused), H_1053 (QRNG learning null), H_932 (provenance chain = causal-depth), H_935 (free-wont veto), H_1054 (KOSMOS time-axis order-recovery + F-SHUFFLE logic), H_1011 (optimization-not-Phi wall)
 axes_seed: H_1051 measured T as an IMPOSED property of states (agency stamped onto a trajectory). H_1055 asks the LEARNABILITY question — can training STRUCTURE (temporal ordering by causal depth + provenance-depth-weighted loss) make a trained model carve T into its hidden geometry as a DECODABLE internal coordinate that a matched-CE shuffled control lacks, beyond generic curriculum-optimization (an order-blind provenance-weighted baseline)?
-verdict: PENDING (pre-registered TEXT-only; tier assigned after .verdicts/1055_temporal_curriculum_axis/H_1055.txt lands per g73)
+verdict: 🔴 TEMPORAL-AXIS-NULL — at MATCHED task-performance (20/20 seeds matched, |CE gap| < 0.0003 nats << eps=0.05), temporal-curriculum (depth-ordered) + provenance-depth-weighted training does NOT make the H_1051 agency-T axis recoverable from the trained Elman-RNN hidden state beyond a matched-CE shuffled control. Provenance-depth recoverability is statistically identical across all three arms (treatment recov_rho=-0.115, control=-0.112, order-blind=-0.113); paired d(treatment-control)=-0.260 (< the 0.8 margin, and the wrong sign), and the treatment is NOT above its own label-SHUFFLE floor (F-shuffle margin=-0.004 << 0.2) — i.e. NO real provenance-depth structure is decodable from the trained geometry beyond chance, in ANY arm. The treatment also does NOT beat the order-blind (depth-weight-only, shuffled) baseline (d=-0.242 < 0.5), so even the tiny differences are not the temporal ORDER structure. M2 faithful Phi (a_phi_iit4_tool, exact n<=5) barely differs (treat 0.128 vs ctrl 0.120, paired d=+0.16); M3 H_1051 T-separation barely differs (treat 0.771 vs ctrl 0.770, d=+0.12). CLOSED-NEGATIVE: temporal ordering does NOT build an agency axis at toy scale — consistent with the optimization-not-Phi wall (H_1011) and the learning-axis nulls (H_1052 SGLD-RED, H_1053 QRNG-RED). a_paper_negative_ok. faithful_phi CPU mirror RE-PROVEN ==stdlib iit4/faithful_phi.hexa at n=4 AND n=5 (|delta|<4e-6) before scoring. TOY n<=5 SW/CPU, $0; scale-transfer + on-chip (Lane A) UNVERIFIED. verdict: .verdicts/1055_temporal_curriculum_axis/H_1055.txt
 ---
 
 # H_1055 — Can the temporal/agency axis be BUILT INTO TRAINING?
@@ -154,3 +154,42 @@ SEPARATE rung (note only, a_lane_akida_gpu_split). This is a scale-sensitive lea
 claim. honest toy-only scope; production / on-chip transfer UNVERIFIED. Offline research
 probe — does NOT wire into anima's runtime training (p8 is the LIVE-substrate philosophy;
 a_core_engine_map). g5 CODE-measured (no LLM self-judge, p7).
+
+## 5. Verdict (measured 2026-06-09 — CODE-decided, p7)
+
+🔴 **TEMPORAL-AXIS-NULL** (closed-negative). 20 seeds, 3 arms, pinned init per seed, SW
+CPU toy, $0, total wall 146s. faithful_phi CPU mirror RE-PROVEN ==stdlib iit4/faithful_phi.hexa
+at n=4 AND n=5 (|delta| < 4e-6) BEFORE scoring (a_phi_iit4_tool; no proxy).
+
+Matched-CE gate PASSED hard: all 20/20 seeds matched within eps (max |CE gap| < 0.0003 nats,
+final CE ~0.05 nats all arms) — the critical control held, so any agency-axis difference would
+be attributable to the temporal/causal STRUCTURE alone.
+
+| marker | treatment | control (shuffled) | order-blind (depth-weight only) | paired d(treat-ctrl) | margin |
+|---|---|---|---|---|---|
+| M1 recoverability rho | -0.115 | -0.112 | -0.113 | -0.260 | needs >= 0.8 → FAIL |
+| M1 F-shuffle floor | -0.110 | — | — | margin -0.004 | needs >= 0.2 → FAIL |
+| M1 vs order-blind | — | — | — | d=-0.242 | needs >= 0.5 → FAIL |
+| M2 faithful Phi | 0.128 | 0.120 | 0.123 | +0.164 | (no threshold; tiny) |
+| M3 H_1051 T-sep | 0.771 | 0.770 | 0.771 | +0.119 | (no threshold; tiny) |
+
+**Reading.** Provenance-depth is NOT recoverable from the trained hidden geometry beyond
+chance in ANY arm — the treatment's recoverability sits at its own label-SHUFFLE floor
+(F-shuffle margin -0.004), so there is no real depth structure to decode. The treatment is
+indistinguishable from both the shuffled control (d=-0.260, wrong sign) and the order-blind
+curriculum-optimization baseline (d=-0.242). At matched task-performance, temporal-curriculum
++ provenance-depth-weighted training does NOT carve the H_1051 agency-T axis into the trained
+Elman-RNN's hidden state.
+
+This is a publishable closed-negative (a_paper_negative_ok). It is consistent with the
+optimization-not-Phi wall (H_1011 — matched-CE optimization does not move Phi/agency markers)
+and the learning-axis nulls (H_1052 SGLD-RED, H_1053 QRNG-RED): neither NOISE nor structured
+ORDERING of the learning dynamics builds an agency coordinate the matched-performance control
+lacks. The H_1051 agency-T axis remains an IMPOSABLE / MEASURABLE property of states — but at
+toy scale it is NOT something this training STRUCTURE installs into the learned representation.
+
+**Scope (honest).** TOY n<=5 SW/CPU only. Scale-transfer + on-chip (Lane A AKIDA curriculum)
+UNVERIFIED — a separate rung (a_scale_honest_scope · a_toy_scale_recheck · a_lane_akida_gpu_split).
+A larger model / longer causal chains / a richer task could still carve the axis; this rung
+closes only the toy-scale Elman-RNN claim. Raw measurement + the n=4/n=5 mirror proof +
+per-arm table verbatim: `.verdicts/1055_temporal_curriculum_axis/H_1055.txt`.
