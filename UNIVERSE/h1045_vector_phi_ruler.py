@@ -28,6 +28,7 @@ PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/H_1045_vector_phi_ruler.md; TEXT on
 """
 import sys, os, math, time, json, argparse
 import numpy as np
+import multiprocessing as mp
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "CWM", "probes"))
@@ -103,17 +104,47 @@ def sub_deep_shallow(seed, n=4, deep=12, shallow=2):
     return Hp_deep, Hp_shallow, n
 
 
-# frozen battery (>=6 substrates) — name, builder, fixed kwargs
-BATTERY = [
-    ("S1_n4_plan_greedy",   lambda s: sub_plan_greedy(s, 4, 8)),
-    ("S2_n5_plan_greedy",   lambda s: sub_plan_greedy(s, 5, 8)),
-    ("S3_n6_plan_greedy",   lambda s: sub_plan_greedy(s, 6, 8)),
-    ("S4_n4_plan_drift",    lambda s: sub_plan_drift(s, 4, 8)),
-    ("S5_n4_plan_guided",   lambda s: sub_plan_guided(s, 4, 8)),
-    ("S6_n4_deep_shallow",  lambda s: sub_deep_shallow(s, 4, 12, 2)),
+# frozen battery (>=6 substrates) — name only; build_substrate() dispatches by name so
+# forked Pool workers can rebuild the (pos,neg) pair without pickling a lambda/closure.
+BATTERY_NAMES = [
+    "S1_n4_plan_greedy",
+    "S2_n5_plan_greedy",
+    "S3_n6_plan_greedy",
+    "S4_n4_plan_drift",
+    "S5_n4_plan_guided",
+    "S6_n4_deep_shallow",
 ]
 
+
+def build_substrate(name, seed):
+    """Dispatch a substrate by NAME (picklable for forked workers). Returns (posH,negH,n)."""
+    if name == "S1_n4_plan_greedy":
+        return sub_plan_greedy(seed, 4, 8)
+    if name == "S2_n5_plan_greedy":
+        return sub_plan_greedy(seed, 5, 8)
+    if name == "S3_n6_plan_greedy":
+        return sub_plan_greedy(seed, 6, 8)
+    if name == "S4_n4_plan_drift":
+        return sub_plan_drift(seed, 4, 8)
+    if name == "S5_n4_plan_guided":
+        return sub_plan_guided(seed, 4, 8)
+    if name == "S6_n4_deep_shallow":
+        return sub_deep_shallow(seed, 4, 12, 2)
+    raise ValueError(f"unknown substrate {name}")
+
+
 FEATURES = ["faith", "big", "redmargin"]
+
+
+# ── top-level Pool worker — ONE (substrate, seed) -> both sides' 3-vectors. Top-level so
+#    forked workers can pickle it (H_1022 lesson). EXACT, pure fn of (name, seed). ──
+def _eval_pair(args):
+    name, seed = args
+    posH, negH, n = build_substrate(name, seed)
+    rp = reads_at_n(posH, n)
+    rn = reads_at_n(negH, n)
+    return (name, seed, n,
+            [rp[f] for f in FEATURES], [rn[f] for f in FEATURES])
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -193,6 +224,10 @@ def main():
     ap.add_argument("--margin", type=float, default=0.05, help="pre-set AUC margin (frozen)")
     ap.add_argument("--needs-thr", type=float, default=0.75,
                     help="NEEDS-VECTOR per-substrate AUC threshold (frozen)")
+    ap.add_argument("--workers", type=int, default=max(1, mp.cpu_count() - 1),
+                    help="parallel Pool workers (a_wall_first)")
+    ap.add_argument("--pool-timeout", type=float, default=7200.0,
+                    help="hard Pool timeout in seconds")
     ap.add_argument("--out", type=str,
                     default=os.path.join(HERE, "h1045_vector_phi_ruler_result.json"))
     args = ap.parse_args()
@@ -249,36 +284,48 @@ def main():
         raise SystemExit(1)
     print()
 
-    # ── STEP 1: score the battery. For each substrate, build the (pos,neg) feature
-    #    table over seeds, then LOO-AUC for the vector and each single scalar. ──
-    print(f"STEP 1 — score the {len(BATTERY)}-substrate battery, {args.seeds} seeds each "
-          f"(SERIAL, EXACT)", flush=True)
+    # ── STEP 1: score the battery. Dispatch ALL (substrate, seed) read-pairs over a
+    #    GUARDED multiprocessing Pool (a_wall_first — the n=6 big-Phi read is ~6min/eval, so
+    #    a serial chain over 6 substrates x seeds is hours; the reads are an EXACT pure fn of
+    #    (name, seed), independent, so they parallelize cleanly). Hard per-pool timeout.
+    #    Each (substrate,seed) returns BOTH sides' 3-vectors; we then assemble per-substrate
+    #    LOO-AUC for the vector and each single scalar. ──
+    print(f"STEP 1 — score the {len(BATTERY_NAMES)}-substrate battery, {args.seeds} seeds each "
+          f"(PARALLEL Pool, EXACT) over {args.workers} workers", flush=True)
     t0 = time.time()
+    jobs = [(name, s) for name in BATTERY_NAMES for s in range(args.seeds)]
+    pool = mp.Pool(processes=args.workers)
+    try:
+        async_res = pool.map_async(_eval_pair, jobs)
+        results = async_res.get(timeout=args.pool_timeout)  # hard timeout
+    finally:
+        pool.close()
+        pool.join()
+    print(f"  all {len(jobs)} (substrate,seed) read-pairs DONE in {time.time()-t0:.1f}s wall "
+          f"({2*len(jobs)} EXACT reads)", flush=True)
+
+    # assemble per-substrate (X,y) and score
     per_sub = []
-    for sname, builder in BATTERY:
-        X = []  # feature rows
-        y = []  # 1=positive(planning) 0=negative(control)
-        tb = time.time()
-        for s in range(args.seeds):
-            posH, negH, n = builder(s)
-            rp = reads_at_n(posH, n)
-            rn = reads_at_n(negH, n)
-            X.append([rp[f] for f in FEATURES]); y.append(1)
-            X.append([rn[f] for f in FEATURES]); y.append(0)
+    for sname in BATTERY_NAMES:
+        rows = [r for r in results if r[0] == sname]
+        rows.sort(key=lambda r: r[1])  # by seed (determinism of table)
+        n = rows[0][2]
+        X = []; y = []
+        for (_nm, _s, _n, pvec, nvec) in rows:
+            X.append(pvec); y.append(1)
+            X.append(nvec); y.append(0)
         X = np.array(X, float); y = np.array(y, int)
-        # per-feature scalar LOO-AUC + vector LOO-AUC (all sign-agnostic)
         scalar_auc = {FEATURES[i]: loo_auc(X, y, [i]) for i in range(len(FEATURES))}
         vec_auc = loo_auc(X, y, [0, 1, 2])
         best_scalar = max(scalar_auc, key=lambda k: scalar_auc[k])
         best_scalar_auc = scalar_auc[best_scalar]
         all_scalars_below = all(v < NEEDS_THR for v in scalar_auc.values())
         needs_vector = (vec_auc >= NEEDS_THR) and all_scalars_below
-        el = time.time() - tb
         print(f"  {sname:20s} (n={n}, {args.seeds} seeds): "
               f"faith={scalar_auc['faith']:.3f} big={scalar_auc['big']:.3f} "
               f"redmargin={scalar_auc['redmargin']:.3f} | VECTOR={vec_auc:.3f} | "
-              f"best-scalar={best_scalar}({best_scalar_auc:.3f}) | needs-vector={needs_vector} "
-              f"[{el:.1f}s]", flush=True)
+              f"best-scalar={best_scalar}({best_scalar_auc:.3f}) | needs-vector={needs_vector}",
+              flush=True)
         per_sub.append(dict(name=sname, n=int(n), seeds=int(args.seeds),
                             scalar_auc=scalar_auc, vector_auc=float(vec_auc),
                             best_scalar=best_scalar, best_scalar_auc=float(best_scalar_auc),
