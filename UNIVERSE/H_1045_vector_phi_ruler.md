@@ -94,3 +94,41 @@ SERIAL at n<=6 toy. g5 CODE-measured (no LLM self-judge, p7).
 TOY n<=6 (the largest EXACTLY-computable big-Phi size). The ruler's vector-vs-scalar
 verdict is scoped to this toy battery; production-scale transfer is UNVERIFIED. $0
 CPU-local, no GPU, not a forge binary.
+
+## Finding — 🔴 ONE-SCALAR-SUFFICES (CLOSED-NEGATIVE, a_paper_negative_ok)
+
+Verdict raw measurement: `.verdicts/1045_vector_phi_ruler/H_1045.txt` (verbatim stdout).
+Mirror discipline (a_phi_iit4_tool): BOTH CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5
+BEFORE scoring (big-Phi ring |Δ|≈1.3e-10, faithful_phi |Δ|≤3.8e-6; H_1012 prove_mirrors_at_n,
+LIVE stdlib refs). PID validated on canonical COPY (red=12.0, syn=0.0) / XOR (red=0.0,
+syn=6.0); reads deterministic. 288 EXACT reads, 144 (substrate,seed) pairs, 24 seeds x 6
+substrates, parallel over 9 CPU workers (4347.6s wall, $0 CPU-local).
+
+Per-substrate sign-agnostic Fisher-LDA leave-one-out AUC:
+
+  substrate            n |  faith |   big | redmrg | VECTOR | best-scalar      | needs-vec
+  S1_n4_plan_greedy    4 |  0.958 | 0.925 |  0.998 |  1.000 | redmargin(0.998) | False
+  S2_n5_plan_greedy    5 |  0.962 | 0.991 |  0.962 |  1.000 | big(0.991)       | False
+  S3_n6_plan_greedy    6 |  0.941 | 0.998 |  0.995 |  1.000 | big(0.998)       | False
+  S4_n4_plan_drift     4 |  0.958 | 0.960 |  0.993 |  1.000 | redmargin(0.993) | False
+  S5_n4_plan_guided    4 |  0.944 | 1.000 |  0.974 |  0.998 | big(1.000)       | False
+  S6_n4_deep_shallow   4 |  0.917 | 1.000 |  0.917 |  0.958 | big(1.000)       | False
+
+  mean LOO-AUC: faith=0.9468  big=0.9792  redmargin=0.9731  |  VECTOR=0.9928
+  best single scalar (mean) = big-Phi = 0.9792
+  vector - best-scalar margin = +0.0136  (pre-set MARGIN = +0.05)
+
+Falsifier result: cond(a) vector beats best scalar by >= +0.05 = FALSE (only +0.0136);
+cond(b) NEEDS-VECTOR substrate exists (vector>=0.75 AND every scalar<0.75) = FALSE (no
+substrate; the weakest single-scalar AUC anywhere is 0.917, far above 0.75). NOT (a AND b)
+=> H1 FAIL = ONE-SCALAR-SUFFICES.
+
+Interpretation: the Phi measure-dependence (faithful vs big-Phi sign-disagreement, prior
+GREEN H_1004->H_1037) is real at the CONTRAST/regression level, but it does NOT translate
+into a CLASSIFICATION gap that a vector ruler is needed to close. On this >=6-substrate
+toy battery EACH single axis (and big-Phi in particular, mean AUC 0.979) already separates
+planning/integrated from matched controls nearly perfectly; the 3-vector's tiny +0.0136
+lift is within saturation and no state-pair needs the vector. The RULED-OUT axis: a vector
+ruler is NOT strictly more informative than the best single scalar for binary
+planning-vs-control separation at toy n<=6. (A vector may still matter for ORDINAL/graded
+"how integrated" estimation or at production scale — both UNVERIFIED here, a_toy_scale_recheck.)
