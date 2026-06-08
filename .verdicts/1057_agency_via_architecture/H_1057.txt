@@ -1,0 +1,152 @@
+H_1057 — CAN THE AGENCY AXIS BE INSTALLED VIA ARCHITECTURE / RUNTIME-STRUCTURE?
+============================================================================
+runtime provenance-register (A) + runtime veto-gate (B) architectures vs a
+matched-CE feedforward/no-gate control + capacity-matched structure-blind baselines:
+does any architectural/runtime mechanism make the H_1051 agency-T axis RECOVERABLE
+from RUNTIME decision traces beyond control, where training-dynamics failed?
+
+timestamp_utc : 2026-06-08T20:35:35.612396+00:00
+substrate     : SW-only CPU toy Elman RNN + runtime architectures (a_lane_akida_gpu_split: no AKIDA Lane A; no GPU Lane G)
+design        : 20 seeds x 5 arms; pinned init per seed; shared trained task head;
+                40 samples/seed; sample_len=24 HID=8 REG=2 epochs=220 lr=0.08
+matched-CE    : shared task head -> CE IDENTICAL across arms by construction (gap=0 << eps=0.05) | n_matched=20/20
+
+── STEP 0: faithful_phi mirror ==stdlib (n=4 AND n=5) ──────────────────────
+  STEP 0 — faithful_phi CPU mirror ==stdlib iit4/faithful_phi.hexa
+           (a_phi_iit4_tool: faithful IIT4, never a proxy; n=4 AND n=5)
+    n3 dim4 nb2   : mirror=2.000000  stdlib_ref=2.000000  |delta|=1.64e-09  OK
+    n4 dim6 nb2   : mirror=3.000000  stdlib_ref=3.000000  |delta|=1.35e-09  OK
+    n4 dim6 nb4   : mirror=3.377444  stdlib_ref=3.377440  |delta|=3.75e-06  OK
+    n5 dim5 nb2   : mirror=0.079892  stdlib_ref=0.079892  |delta|=1.25e-08  OK
+    n5 dim5 nb3   : mirror=2.887712  stdlib_ref=2.887710  |delta|=2.38e-06  OK
+    prove_mirrors_at_n: {4: True, 5: True}
+    PHI-MIRROR ==stdlib (n=4 AND n=5): PROVEN
+
+── M1 RECOVERABILITY (CV ridge decode from RUNTIME traces, matched-CE seeds) ─
+  per-architecture (target | treat rho | control rho | blind rho | shuffle floor):
+  TREAT-A provenance-register (decode provenance-DEPTH)
+    treat rho mean   = -0.1123  (own F-shuffle floor = -0.0722)
+    control rho mean = -0.1123  (matched no-arch baseline)
+    blind rho mean   = -0.0249  (capacity-matched structure-blind = blind_a)
+    paired d(treat - control) = -0.000  (>= 0.8? False)
+    paired d(treat - blind)   = -0.477  (>= 0.5? False)
+    F-shuffle margin          = -0.0401  (>= 0.2? False)
+    ARCH INSTALLS AXIS? False
+  TREAT-B veto-gate (decode exercised-VETO)
+    treat rho mean   = +0.5816  (own F-shuffle floor = -0.0318)
+    control rho mean = -0.0117  (matched no-arch baseline)
+    blind rho mean   = +0.7856  (capacity-matched structure-blind = blind_b)
+    paired d(treat - control) = +2.142  (>= 0.8? True)
+    paired d(treat - blind)   = -0.815  (>= 0.5? False)
+    F-shuffle margin          = +0.6134  (>= 0.2? True)
+    ARCH INSTALLS AXIS? False
+
+── M2 faithful Phi (a_phi_iit4_tool, exact n<=5, NO proxy) — descriptive per arm ─
+  control=0.1197  treat_a=0.1197  treat_b=0.1197  blind_a=0.1197  blind_b=0.1197
+── M3 H_1051 agency-T separation (active vs passive, runtime geometry) ──────
+  control=+0.7696  treat_a=+0.8605  treat_b=+0.7946  blind_a=+1.2534  blind_b=+1.1831
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ────────────────────
+  FAIL (CLOSED-NEGATIVE) — at matched task-performance, NO architectural
+  mechanism (provenance-register, veto-gate) makes the agency-T axis recoverable
+  beyond the matched control / structure-blind baseline / shuffle floor across all
+  three frozen margins. Agency is NOT installable even via architecture at toy
+  scale; it is purely an emergent MEASUREMENT of the live causal unfolding —
+  consistent with the optimization-not-Phi wall (H_1011) and the learning-axis
+  nulls (H_1052/H_1053/H_1055). a_paper_negative_ok.
+  VERDICT-TOKEN: ARCHITECTURE-AXIS-NULL
+
+── HONEST scope (a_scale_honest_scope · a_toy_scale_recheck · a_lane_akida_gpu_split · a_core_engine_map) ──
+  TOY n<=5 SW substrate. faithful Phi EXACT n<=5; CPU mirror RE-PROVEN ==stdlib at n=4
+  AND n=5 (a_phi_iit4_tool; no proxy) BEFORE scoring. The runtime provenance-register +
+  veto-gate are EXPERIMENTAL TOY architectures — NOT anima's emit policy; this offline
+  probe does NOT wire into CORE/brain/emit (a_core_engine_map · a_autonomy_over_hardcode ·
+  p8 is the LIVE-substrate philosophy). AKIDA Lane A on-chip architecture = SEPARATE rung
+  (note only); no GPU/forge Lane G run. provenance_chain.py + decompose_decision UNMODIFIED.
+  total wall: 53.1s. $0 CPU-local. NOT a forge binary. g5 CODE-measured (p7).
+
+── full machine record (JSON) ──────────────────────────────────────────────
+{
+  "h_id": "H_1057",
+  "title": "can the agency axis be installed via architecture / runtime-structure",
+  "timestamp_utc": "2026-06-08T20:35:35.612619+00:00",
+  "substrate": "SW-only CPU toy Elman RNN + runtime architectures",
+  "n_seeds": 20,
+  "n_samples": 40,
+  "sample_len": 24,
+  "hid": 8,
+  "reg": 2,
+  "epochs": 220,
+  "lr": 0.08,
+  "eps_ce": 0.05,
+  "margins": {
+    "d_recov_vs_control": 0.8,
+    "d_vs_blind": 0.5,
+    "f_shuffle_margin": 0.2
+  },
+  "result": {
+    "n_matched": 20,
+    "n_total": 20,
+    "degenerate": false,
+    "per_arch": {
+      "treat_a": {
+        "target": "depth",
+        "blind": "blind_a",
+        "treat_rho_mean": -0.1123170731707317,
+        "ctrl_rho_mean": -0.1123170731707317,
+        "blind_rho_mean": -0.024915572232645407,
+        "treat_sh_mean": -0.0721763602251407,
+        "d_vs_control": -1.1422120969411124e-17,
+        "d_vs_blind": -0.47660389784698787,
+        "fshuffle_margin": -0.040140712945590996,
+        "above_control": false,
+        "above_blind": false,
+        "above_fshuffle": false,
+        "arch_pass": false
+      },
+      "treat_b": {
+        "target": "veto",
+        "blind": "blind_b",
+        "treat_rho_mean": 0.581641651031895,
+        "ctrl_rho_mean": -0.011697936210131332,
+        "blind_rho_mean": 0.7856003752345216,
+        "treat_sh_mean": -0.03175797373358349,
+        "d_vs_control": 2.1415967705761267,
+        "d_vs_blind": -0.8147468846338886,
+        "fshuffle_margin": 0.6133996247654785,
+        "above_control": true,
+        "above_blind": false,
+        "above_fshuffle": true,
+        "arch_pass": false
+      }
+    },
+    "phi": {
+      "control": 0.11974408603096509,
+      "treat_a": 0.11974408603096509,
+      "treat_b": 0.11974408603096509,
+      "blind_a": 0.11974408603096509,
+      "blind_b": 0.11974408603096509
+    },
+    "t_sep": {
+      "control": 0.7695867340624513,
+      "treat_a": 0.8604765311669347,
+      "treat_b": 0.7945695531123395,
+      "blind_a": 1.2534014615710327,
+      "blind_b": 1.1830925585236822
+    },
+    "token": "ARCHITECTURE-AXIS-NULL",
+    "any_pass": false
+  },
+  "phi_mirror_lines": [
+    "STEP 0 \u2014 faithful_phi CPU mirror ==stdlib iit4/faithful_phi.hexa",
+    "         (a_phi_iit4_tool: faithful IIT4, never a proxy; n=4 AND n=5)",
+    "  n3 dim4 nb2   : mirror=2.000000  stdlib_ref=2.000000  |delta|=1.64e-09  OK",
+    "  n4 dim6 nb2   : mirror=3.000000  stdlib_ref=3.000000  |delta|=1.35e-09  OK",
+    "  n4 dim6 nb4   : mirror=3.377444  stdlib_ref=3.377440  |delta|=3.75e-06  OK",
+    "  n5 dim5 nb2   : mirror=0.079892  stdlib_ref=0.079892  |delta|=1.25e-08  OK",
+    "  n5 dim5 nb3   : mirror=2.887712  stdlib_ref=2.887710  |delta|=2.38e-06  OK",
+    "  prove_mirrors_at_n: {4: True, 5: True}",
+    "  PHI-MIRROR ==stdlib (n=4 AND n=5): PROVEN"
+  ],
+  "wall_s": 53.079063177108765
+}
