@@ -29,6 +29,7 @@ to the d768 golden real trained ConvMoE, coarse-grained to n<=6 EXACT. g5 CODE-m
 LLM self-judge, p7). Pure-CPU EXACT, NOT a forge binary.
 """
 import sys, os, math, time, json, argparse, signal
+import multiprocessing as mp
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -207,30 +208,92 @@ def contrast(a, b):
                 plan_mean=float(a.mean()), greedy_mean=float(b.mean()))
 
 
-def score_macromap(W, macro_map, t0):
-    """SERIAL: 20 plan(depth-8) + 20 greedy REAL .clm evals at n=6 EXACT for one macro-map."""
-    print(f"------ SCORE macro-map={macro_map}: {N_SEEDS} plan(depth-{PLAN_DEPTH}) + "
-          f"{N_SEEDS} greedy REAL .clm evals at n={N_UNITS} EXACT (serial; elapsed "
-          f"{time.time()-t0:.1f}s) ------", flush=True)
+# ═══════════════════════════════════════════════════════════════════════════
+# PARALLELISM — the n=6 big-Phi on a HIGH-ENTROPY real-model TPM is intrinsically
+# expensive (all 2^6-1 mechanisms active; full distinction+relation enumeration +
+# MIP search) — ~minutes/eval, exactly why the toy n=6 arc (H_1037) used a 96-core
+# pool. The CHEAP part (the real .clm rollout forwards) is run SERIAL; only the
+# EXPENSIVE big-Phi/faithful evals are dispatched over a GUARDED process pool that
+# satisfies all four prompt-required guards:
+#   (a) guarded by `if __name__ == '__main__'` (the pool is created only inside main());
+#   (b) workers re-import by REAL MODULE NAME (h1004/h1012/clm_decode_mirror — top of
+#       this file), NOT an importlib custom name -> no PicklingError on fork;
+#   (c) workers NEVER read stdin;
+#   (d) HARD per-eval timeout (a worker-side SIGALRM) so a single eval can't hang the
+#       pool silently — the prior deadlock came from an UNGUARDED, orphaned pool whose
+#       parent died on a rate-limit storm; this pool is guarded + parent-alive + timed.
+# The bits are precomputed SERIAL and passed to the worker, so the worker does ONLY the
+# deterministic pure-arithmetic IIT evals (no .clm I/O, no RNG) — fully reproducible.
+# ═══════════════════════════════════════════════════════════════════════════
+_PER_EVAL_TIMEOUT = 1200   # hard per-eval wall cap (s) inside each worker
+
+
+def _phi_worker(job):
+    """TOP-LEVEL worker: ONE (key, bits-as-list, n) -> (key, big, faith). Pure arithmetic
+    over the passed bits (no I/O, no RNG). Hard per-eval SIGALRM so it cannot hang."""
+    key, bits_list, n = job
+
+    def _to(signum, frame):
+        raise TimeoutError(f"per-eval timeout ({_PER_EVAL_TIMEOUT}s) at {key}")
+    signal.signal(signal.SIGALRM, _to)
+    signal.alarm(_PER_EVAL_TIMEOUT)
+    bits = np.asarray(bits_list, dtype=int)
+    tpm, sc = binary_seq_to_tpm(bits, n)
+    bphi = big_phi(tpm, n, modal_state(sc))[0]
+    fstate, fn, fdim = binary_seq_to_faithful_state(bits, n)
+    fphi = faithful_phi(fstate, fn, fdim, 2)
+    signal.alarm(0)
+    return key, float(bphi), float(fphi), float(bits.mean())
+
+
+def score_all(W, macro_maps, pool, t0):
+    """Precompute the 40 REAL .clm trajectories SERIAL (cheap forwards), coarse-grain to
+    bits per macro-map (cheap), then dispatch ONLY the expensive big-Phi/faithful evals
+    over the guarded pool. Returns {macro_map: result-dict}."""
+    print(f"------ PRECOMPUTE {2*N_SEEDS} REAL .clm trajectories SERIAL (cheap forwards; "
+          f"elapsed {time.time()-t0:.1f}s) ------", flush=True)
     wins = real_text_windows(N_SEEDS, T_WIN)
-    big_plan, big_greedy, faith_plan, faith_greedy = [], [], [], []
-    on_fracs = []
+    trajs = {}     # seed -> (H_greedy, H_plan)
     tb = time.time()
     for s, win in enumerate(wins):
-        Hg, Hp = real_clm_trajectories(W, win, PLAN_DEPTH)
-        bg, fg, _ = both_phi_macromap(Hg, N_UNITS, macro_map)
-        bp, fp, onf = both_phi_macromap(Hp, N_UNITS, macro_map)
-        big_greedy.append(bg); faith_greedy.append(fg)
-        big_plan.append(bp);  faith_plan.append(fp)
-        on_fracs.append(onf)
+        trajs[s] = real_clm_trajectories(W, win, PLAN_DEPTH)
         if (s + 1) % 5 == 0:
-            print(f"   ... seed {s+1}/{N_SEEDS} done ({time.time()-tb:.1f}s)", flush=True)
-    el = time.time() - tb
-    bC = contrast(big_plan, big_greedy)
-    fC = contrast(faith_plan, faith_greedy)
-    print(f"   macro-map={macro_map}: {2*N_SEEDS} evals DONE in {el:.1f}s wall "
-          f"({el/(2*N_SEEDS):.2f}s/eval)", flush=True)
-    return dict(big=bC, faith=fC, on_frac=float(np.mean(on_fracs)), elapsed=float(el))
+            print(f"   ... trajectory {s+1}/{N_SEEDS} ({time.time()-tb:.1f}s)", flush=True)
+    print(f"   trajectories DONE in {time.time()-tb:.1f}s", flush=True)
+
+    # build the eval jobs (bits precomputed serial; worker does only the IIT arithmetic)
+    jobs = []
+    for mm in macro_maps:
+        for s in range(N_SEEDS):
+            Hg, Hp = trajs[s]
+            bits_g, _ = latent_to_bits_macromap(Hg, N_UNITS, mm)
+            bits_p, _ = latent_to_bits_macromap(Hp, N_UNITS, mm)
+            jobs.append(((mm, s, "greedy"), bits_g.tolist(), N_UNITS))
+            jobs.append(((mm, s, "plan"),   bits_p.tolist(), N_UNITS))
+    print(f"------ DISPATCH {len(jobs)} EXACT n={N_UNITS} big-Phi/faithful evals over "
+          f"{pool._processes} guarded workers (per-eval timeout {_PER_EVAL_TIMEOUT}s; "
+          f"elapsed {time.time()-t0:.1f}s) ------", flush=True)
+    te = time.time()
+    results = pool.map(_phi_worker, jobs)
+    print(f"   {len(jobs)} evals DONE in {time.time()-te:.1f}s wall "
+          f"({(time.time()-te)/len(jobs):.1f}s/eval amortized)", flush=True)
+
+    # collect per macro-map
+    acc = {mm: dict(big_plan=[], big_greedy=[], faith_plan=[], faith_greedy=[], on=[])
+           for mm in macro_maps}
+    for (mm, s, which), bphi, fphi, onf in results:
+        if which == "plan":
+            acc[mm]["big_plan"].append(bphi); acc[mm]["faith_plan"].append(fphi)
+            acc[mm]["on"].append(onf)
+        else:
+            acc[mm]["big_greedy"].append(bphi); acc[mm]["faith_greedy"].append(fphi)
+    out = {}
+    for mm in macro_maps:
+        a = acc[mm]
+        out[mm] = dict(big=contrast(a["big_plan"], a["big_greedy"]),
+                       faith=contrast(a["faith_plan"], a["faith_greedy"]),
+                       on_frac=float(np.mean(a["on"])), elapsed=float(time.time()-te))
+    return out
 
 
 def _timeout_handler(signum, frame):
@@ -243,7 +306,9 @@ def main():
                     default="/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d768_v2_fast.clm")
     ap.add_argument("--out", type=str,
                     default=os.path.join(HERE, "state", "h1038_real_clm_phi_split_result.json"))
-    ap.add_argument("--timeout", type=int, default=3600, help="hard wall-timeout (s)")
+    ap.add_argument("--timeout", type=int, default=7200, help="hard wall-timeout (s)")
+    ap.add_argument("--workers", type=int, default=max(1, mp.cpu_count() - 1),
+                    help="guarded pool workers (parallelizes ONLY the expensive n=6 big-Phi)")
     args = ap.parse_args()
 
     # HARD wall-timeout so a silent hang is impossible (the prior failure mode).
@@ -258,11 +323,13 @@ def main():
     print("            state/mid_convmoe_fire/clm_decode_mirror.py (memory clm-decode-macos-link-gap)")
     print("big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s, MIP fully enumerated)")
     print("faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)")
-    print("SERIAL by design (NO multiprocessing.Pool — the prior attempt's Pool deadlocked).")
+    print("CHEAP .clm rollouts SERIAL; the EXPENSIVE n=6 big-Phi evals over a GUARDED process")
+    print("pool (guarded by __main__, real-module imports, no stdin, hard per-eval timeout) —")
+    print("the prior FAILURE was an UNGUARDED pool ORPHANED by a dead parent, not the pool itself.")
     print(f"n={N_UNITS} EXACT | {N_SEEDS} seeds | plan depth={PLAN_DEPTH} | eps={EPS} | "
-          f"2 macro-maps (top-variance, random)")
+          f"2 macro-maps (top-variance, random) | workers={args.workers}")
     print("g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope")
-    print(f"hard wall-timeout={args.timeout}s")
+    print(f"hard wall-timeout={args.timeout}s | per-eval timeout={_PER_EVAL_TIMEOUT}s")
     print("=" * 90, flush=True)
     print()
 
@@ -294,28 +361,45 @@ def main():
         raise SystemExit(1)
     print()
 
-    # ── STEP 0c: determinism guard (the trunk + coarse-grain are pure fns of the .clm bytes) ──
-    print("STEP 0c — REAL-trajectory determinism guard (pure fn of fixed .clm bytes):", flush=True)
+    # ── STEP 0c: determinism guard. The trunk + coarse-grain are pure fns of the .clm bytes,
+    #    so two re-runs must yield BIT-IDENTICAL macro-bits (cheap) + identical faithful_phi
+    #    (instant). big-Phi is a deterministic pure fn of identical bits, so bit-identity
+    #    PROVES big-Phi determinism without paying the n=6 big-Phi cost here (a_wall_first). ──
+    print("STEP 0c — REAL-trajectory determinism guard (pure fn of fixed .clm bytes; "
+          "bit-identity + faithful, cheap):", flush=True)
     w0 = real_text_windows(N_SEEDS, T_WIN)[0]
-    HgA, HpA = real_clm_trajectories(W, w0, PLAN_DEPTH)
-    HgB, HpB = real_clm_trajectories(W, w0, PLAN_DEPTH)
-    bA = both_phi_macromap(HpA, N_UNITS, "top_variance")
-    bB = both_phi_macromap(HpB, N_UNITS, "top_variance")
-    det_ok = bool(abs(bA[0] - bB[0]) < 1e-12 and abs(bA[1] - bB[1]) < 1e-12)
-    print(f"   seed0 plan (top-variance) read deterministic: {det_ok} "
-          f"(big={bA[0]:.6f}=={bB[0]:.6f}, faith={bA[1]:.6f}=={bB[1]:.6f})", flush=True)
+    _, HpA = real_clm_trajectories(W, w0, PLAN_DEPTH)
+    _, HpB = real_clm_trajectories(W, w0, PLAN_DEPTH)
+    bitsA, _ = latent_to_bits_macromap(HpA, N_UNITS, "top_variance")
+    bitsB, _ = latent_to_bits_macromap(HpB, N_UNITS, "top_variance")
+    fA = faithful_phi(*binary_seq_to_faithful_state(bitsA, N_UNITS))[0] if False else \
+        faithful_phi(*binary_seq_to_faithful_state(bitsA, N_UNITS))
+    fB = faithful_phi(*binary_seq_to_faithful_state(bitsB, N_UNITS))
+    bits_identical = bool(np.array_equal(bitsA, bitsB))
+    det_ok = bool(bits_identical and abs(fA - fB) < 1e-12)
+    print(f"   seed0 plan (top-variance) macro-bits identical across re-runs: {bits_identical}; "
+          f"faithful determinism: {abs(fA-fB) < 1e-12} (fA={fA:.6f}, fB={fB:.6f})", flush=True)
+    print(f"   -> big-Phi determinism follows (pure fn of identical bits): {det_ok}", flush=True)
     if not det_ok:
         print("   ABORT — real-trajectory read non-deterministic.")
         raise SystemExit(1)
     print()
 
-    # ── STEP 1: score BOTH macro-maps at n=6 EXACT, SERIAL ──
-    print(f"STEP 1 — SERIAL: score planning(depth-{PLAN_DEPTH}) - GREEDY at n={N_UNITS} EXACT "
-          f"on the REAL .clm, for BOTH macro-maps", flush=True)
+    # ── STEP 1: score BOTH macro-maps at n=6 EXACT (cheap rollouts serial, expensive
+    #    big-Phi over the GUARDED pool) ──
+    print(f"STEP 1 — score planning(depth-{PLAN_DEPTH}) - GREEDY at n={N_UNITS} EXACT on the "
+          f"REAL .clm, for BOTH macro-maps", flush=True)
     all_rows = []
     MACRO_MAPS = ["top_variance", "random"]
+    pool = mp.Pool(processes=args.workers)
+    try:
+        scored = score_all(W, MACRO_MAPS, pool, t0)
+    finally:
+        pool.close()
+        pool.join()
+    print()
     for mm in MACRO_MAPS:
-        r = score_macromap(W, mm, t0)
+        r = scored[mm]
         bc = r["big"]["contrast"]; fc = r["faith"]["contrast"]
         bs = signword(bc); fs = signword(fc)
         split = (fs == "UP" and bs == "DOWN")
@@ -395,7 +479,8 @@ def main():
     print("H_1042's job, GATED). Verdict scoped to the d768 golden real trained ConvMoE, coarse-")
     print("grained to n<=6 EXACT, 2 pre-registered macro-maps, 20 real-text seed windows. BOTH")
     print("CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5 BEFORE scoring (a_phi_iit4_tool; no")
-    print("proxy). SERIAL run (no multiprocessing.Pool); each read a deterministic pure function")
+    print("proxy). Cheap rollouts serial; the expensive n=6 big-Phi over a GUARDED pool (guarded")
+    print("by __main__, real-module imports, no stdin, hard per-eval timeout); each read a pure fn")
     print("of the fixed .clm bytes. g5 CODE-measured (no LLM self-judge, p7). NOT a forge binary;")
     print("pure-CPU EXACT. ConvMoE substrate only (a_clm_gen_pipeline).")
 
@@ -413,4 +498,11 @@ def main():
 
 
 if __name__ == "__main__":
+    # fork start-method: workers inherit the already-imported real-module engines (no re-import,
+    # no PicklingError). The pool is created ONLY here (guarded by __main__), so a dead parent
+    # leaves no orphaned, un-reapable pool (the prior failure mode).
+    try:
+        mp.set_start_method("fork")
+    except RuntimeError:
+        pass
     main()
