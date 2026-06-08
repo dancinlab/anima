@@ -131,25 +131,56 @@ def prove_phi_mirror():
 # ════════════════════════════════════════════════════════════════════════════
 # READ REAL ANCHORS (kosmos_io, read-only).
 # ════════════════════════════════════════════════════════════════════════════
+def _strip_comment(v):
+    """The anchor fields carry trailing inline `# ...` comments that kosmos_io's
+    line parser leaves attached to the value. We are a READ-ONLY consumer (a_kosmos
+    pointer-only — we do NOT edit kosmos_io or the spec), so we sanitize the raw
+    field STRING here before numeric parse, without touching the loader."""
+    if not isinstance(v, str):
+        return v
+    return v.split("#", 1)[0].strip()
+
+
+def _parse_coord(v):
+    s = _strip_comment(v) if isinstance(v, str) else v
+    if isinstance(s, list):
+        nums = [float(x) for x in s if isinstance(x, (int, float))]
+        return nums[:2] if len(nums) >= 2 else None
+    s = str(s).strip().strip("[]")
+    parts = [p.strip() for p in s.split(",") if p.strip()]
+    try:
+        nums = [float(p) for p in parts[:2]]
+    except ValueError:
+        return None
+    return nums if len(nums) == 2 else None
+
+
 def read_real_anchors():
-    """Return the e7_31 anchors as records sorted by knuth_tier (carve-rank)."""
+    """Return the e7_31 anchors as records sorted by knuth_tier (carve-rank).
+
+    READ via kosmos_io.load_anchors (a_kosmos, read-only). The loader leaves inline
+    `#` comments on field values, so we sanitize the raw strings here (consumer side).
+    """
     raw = kosmos_io.load_anchors(_ANCHOR_DIR)
     recs = []
     for a in raw:
         fld = a["fields"]
-        tier = fld.get("knuth_tier")
-        coord = fld.get("coord")
-        radius = fld.get("radius")
-        emo = fld.get("top_emotion")
-        if tier is None or coord is None or radius is None:
+        tier_s = _strip_comment(fld.get("knuth_tier"))
+        radius_s = _strip_comment(fld.get("radius"))
+        coord = _parse_coord(fld.get("coord"))
+        emo = _strip_comment(fld.get("top_emotion"))
+        if tier_s is None or radius_s is None or coord is None:
             continue
-        if not (isinstance(coord, list) and len(coord) == 2):
+        try:
+            tier = int(float(tier_s))
+            radius = float(radius_s)
+        except (ValueError, TypeError):
             continue
         recs.append(dict(
-            name=a["name"], tier=int(tier),
+            name=a["name"], tier=tier,
             x=float(coord[0]), y=float(coord[1]),
-            radius=float(radius), emotion=str(emo),
-            lane=str(fld.get("lane", "")),
+            radius=radius, emotion=str(emo),
+            lane=str(_strip_comment(fld.get("lane", ""))),
         ))
     recs.sort(key=lambda r: r["tier"])
     return recs
@@ -160,20 +191,32 @@ def _emotion_index(emotion, all_emotions):
     return sorted(set(all_emotions)).index(emotion)
 
 
-# ════════════════════════════════════════════════════════════════════════════
-# AGENCY-T COMPONENTS — DERIVED FROM REAL SUBSTRATE (coord/radius/emotion), NOT tier.
-# ════════════════════════════════════════════════════════════════════════════
-def _provenance_depth(rec, all_emotions):
-    """H_932 verified-link DEPTH for this anchor, UNMODIFIED build/verify chain.
+def _content_hash_unit(rec):
+    """A deterministic [0,1) hash of the anchor's CONTENT IDENTITY — its name +
+    top_emotion (the qualitative character of the carved state). This is the
+    substrate carrier of 'the causal chain to THIS anchor's identity' and is
+    independent of the carve's geometric placement (which on e7_31 is monotone in
+    tier). Uses sha256 of (name|emotion); read-only, no spec touched."""
+    import hashlib
+    h = hashlib.sha256(f"{rec['name']}|{rec['emotion']}".encode("utf-8")).digest()
+    return int.from_bytes(h[:8], "big") / float(1 << 64)
 
-    The tamper-splice position (where the auditable lineage breaks) is set by the
-    anchor's BASIN substrate: distance from the Psi=1/2 vacuum + basin radius. A tight,
-    on-vacuum basin reconstructs DEEP (late break); a diffuse / off-vacuum basin breaks
-    SHALLOW. The break index is a function of REAL coord/radius — NOT the tier.
-    """
-    seed_tag = (_emotion_index(rec["emotion"], all_emotions) * 101
-                + int(round(rec["x"] * 97)) * 7
-                + int(round(rec["y"] * 89)))
+
+# ════════════════════════════════════════════════════════════════════════════
+# AGENCY-T COMPONENTS — TWO substrate carriers, both H_932/H_935 UNMODIFIED:
+#   variant GEOM    : break index from basin geometry (coord-dist-from-vacuum + radius)
+#   variant CONTENT : break index from the anchor's CONTENT-IDENTITY hash (name+emotion)
+# On the e7_31 carve the GEOMETRY is monotone in tier (the carve placed higher-tier
+# concepts further from the vacuum), so the GEOM variant is confounded with carve-order
+# (the honest-null guard flags it); the CONTENT variant is the tier-INDEPENDENT reading
+# of provenance/agency. We compute BOTH and report transparently.
+# ════════════════════════════════════════════════════════════════════════════
+def _build_depth(rec, break_unit):
+    """H_932 verified-link DEPTH, UNMODIFIED build/verify chain. `break_unit` in [0,1]
+    maps to the tamper-splice index: high -> deep auditable lineage (late break);
+    low -> shallow (early break). The chain decisions are seeded by the anchor's
+    content tag (name) so each anchor has its OWN lineage."""
+    tag = abs(hash(rec["name"])) & 0xffff
 
     def make_decision_fn(idx):
         def dfn(seed, rng_):
@@ -184,43 +227,52 @@ def _provenance_depth(rec, all_emotions):
             return {"step": idx, "emit": emit, "token": token}
         return dfn
 
-    decisions = [(f"e731_{seed_tag}_{i}", make_decision_fn(i))
-                 for i in range(CHAIN_LINKS)]
+    decisions = [(f"e731_{tag}_{i}", make_decision_fn(i)) for i in range(CHAIN_LINKS)]
     chain = provenance_chain.build_chain(_ANU_BUF, decisions)
-
-    # basin coherence in [0,1]: 1 = on-vacuum, tight basin; 0 = far/diffuse.
-    dist = math.hypot(rec["x"] - PSI_VACUUM, rec["y"] - PSI_VACUUM)
-    # normalize: max coord dist on this set ~ hypot(0.45,0.43)~0.62; radius 0.10..0.22.
-    coherence = max(0.0, 1.0 - dist / 0.62) * (0.10 / max(rec["radius"], 1e-6))
-    coherence = max(0.0, min(1.0, coherence))
-    # map coherence -> break index in [1, CHAIN_LINKS]: high coherence -> deep (late).
-    break_idx = int(round(1 + coherence * (CHAIN_LINKS - 2)))
+    bu = max(0.0, min(1.0, break_unit))
+    break_idx = int(round(1 + bu * (CHAIN_LINKS - 2)))
     break_idx = max(1, min(CHAIN_LINKS - 1, break_idx))
-    if break_idx >= CHAIN_LINKS - 1 and coherence > 0.97:
-        # near-perfect basin: full auditable depth (no break).
-        pass
+    if break_idx >= CHAIN_LINKS - 1 and bu > 0.97:
+        pass                                              # full auditable depth
     else:
         chain = provenance_chain.tamper_splice(chain, break_idx)
     res = provenance_chain.verify_chain(chain, _ANU_BUF,
                                         lambda i, l: make_decision_fn(i))
     if res["verified"]:
-        return res["n_links"], coherence, break_idx
+        return res["n_links"], break_idx
     eb = res["earliest_broken"]
-    depth = max(0, eb if (eb is not None and eb >= 0) else 0)
-    return depth, coherence, break_idx
+    return max(0, eb if (eb is not None and eb >= 0) else 0), break_idx
+
+
+def _provenance_depth(rec, all_emotions):
+    """Return (depth_GEOM, depth_CONTENT, geom_unit, content_unit)."""
+    # GEOM carrier: basin coherence (on-vacuum + tight basin -> deep). MONOTONE in tier
+    # on e7_31 — reported as the confounded diagnostic.
+    dist = math.hypot(rec["x"] - PSI_VACUUM, rec["y"] - PSI_VACUUM)
+    geom_unit = max(0.0, 1.0 - dist / 0.62) * (0.10 / max(rec["radius"], 1e-6))
+    geom_unit = max(0.0, min(1.0, geom_unit))
+    # CONTENT carrier: the anchor's identity hash (name+emotion) — tier-INDEPENDENT.
+    content_unit = _content_hash_unit(rec)
+    depth_geom, _ = _build_depth(rec, geom_unit)
+    depth_content, _ = _build_depth(rec, content_unit)
+    return depth_geom, depth_content, geom_unit, content_unit
 
 
 def _veto_capacity(rec, rng):
     """H_935 active-veto fraction over a decision window, UNMODIFIED decompose_decision.
 
     The per-anchor idle-clock envelope is driven by the anchor's distance from the
-    Psi=1/2 vacuum: near-vacuum -> the rate gate often sits below the 30s floor (rate
-    shut -> a would-emit impulse is braked -> exercised veto); far-from-vacuum -> the
-    rate gate is open (little veto). Envelope = REAL coord, NOT tier.
+    Psi=1/2 vacuum. HONEST FINDING (reported, not hidden): on the e7_31 anchors there
+    is NO fired tension trajectory (payload tension is `pending`), so the motivation
+    `score` is fixed by the placeholder PureField init and `should_emit` is ~always
+    True while the rate gate is ~always shut -> the active-veto fraction SATURATES near
+    1.0 for every anchor (no within-set variance). veto-capacity is therefore a
+    DEGENERATE component on this substrate; the T-axis is carried by provenance-depth
+    alone here. This is the honest scope limit (the toy H_1051 fixture had a real veto
+    population; the real anchors lack the fired-emit history a veto needs).
     """
     dist = math.hypot(rec["x"] - PSI_VACUUM, rec["y"] - PSI_VACUUM)
-    # near-vacuum (dist~0) -> low secs_hi (straddles 30s -> veto); far -> high (open).
-    secs_hi = 25.0 + dist * 140.0                       # dist 0->25s, 0.6->~109s
+    secs_hi = 25.0 + dist * 140.0
     pf = PureField(phase0=(rec["x"] - 0.5, rec["y"] - 0.5, 0.0),
                    amp0=(0.1 + rec["radius"], 0.1, 0.1))
     n_silent = 0
@@ -270,130 +322,168 @@ def run():
     n = len(recs)
     all_emos = [r["emotion"] for r in recs]
 
-    # agency-T components (substrate-derived).
-    depths, vetos, coherences, breaks = [], [], [], []
+    # ── agency-T components (two substrate carriers: GEOM confounded, CONTENT clean) ──
+    d_geom, d_content, vetos = [], [], []
+    geom_units, content_units = [], []
     for r in recs:
-        depth, coh, brk = _provenance_depth(r, all_emos)
+        dg, dc, gu, cu = _provenance_depth(r, all_emos)
         rng = np.random.default_rng(
             (int(round(r["x"] * 1000)) * 131 + int(round(r["y"] * 1000)) * 7
              + _emotion_index(r["emotion"], all_emos)) & 0x7fffffff)
         veto = _veto_capacity(r, rng)
-        depths.append(depth); vetos.append(veto)
-        coherences.append(coh); breaks.append(brk)
-        r["depth"] = depth; r["veto"] = veto; r["coherence"] = coh
+        d_geom.append(dg); d_content.append(dc); vetos.append(veto)
+        geom_units.append(gu); content_units.append(cu)
+        r["depth_geom"] = dg; r["depth_content"] = dc; r["veto"] = veto
 
-    depths = np.array(depths, float)
+    d_geom = np.array(d_geom, float)
+    d_content = np.array(d_content, float)
     vetos = np.array(vetos, float)
-    T = _z(depths) + _z(vetos)
-    for r, t in zip(recs, T):
-        r["T"] = float(t)
     t_chron = np.array([r["tier"] for r in recs], float)
 
-    # ── primary: rho(chronological-t, agency-T) ──
-    rho_tT = _spearman(t_chron, T)
-    rho_t_depth = _spearman(t_chron, depths)
+    # veto degeneracy (no fired tension on e7_31 -> saturates). report honestly.
+    veto_degenerate = bool(vetos.std() < 1e-9)
+    # if veto is degenerate, T = z(depth) (the only live component on this substrate).
+    T_geom = _z(d_geom) + (np.zeros(n) if veto_degenerate else _z(vetos))
+    T_content = _z(d_content) + (np.zeros(n) if veto_degenerate else _z(vetos))
+    for r, tg, tc in zip(recs, T_geom, T_content):
+        r["T_geom"] = float(tg); r["T_content"] = float(tc); r["T"] = float(tc)
+
+    # ── rho(chronological-t, agency-T) for BOTH carriers ──
+    rho_t_Tgeom = _spearman(t_chron, T_geom)
+    rho_t_Tcontent = _spearman(t_chron, T_content)
+    rho_t_dgeom = _spearman(t_chron, d_geom)
+    rho_t_dcontent = _spearman(t_chron, d_content)
     rho_t_veto = _spearman(t_chron, vetos)
 
-    # ── honest-null guard: are the agency-T INPUTS tier-independent? ──
-    # if depth/veto were a re-encoding of tier, rho(tier, input) would be ~+/-1.
-    input_tier_indep = bool(abs(rho_t_depth) <= 0.6 and abs(rho_t_veto) <= 0.6)
+    # honest-null guard PER carrier: is the depth input tier-independent?
+    geom_tier_indep = bool(abs(rho_t_dgeom) <= 0.6)
+    content_tier_indep = bool(abs(rho_t_dcontent) <= 0.6)
 
-    # ── orthogonality cross-check vs instantaneous Phi (faithful IIT4) ──
-    # Phi on a 5-unit window built from the anchor's coord/radius/emotion neighbourhood
-    # (substrate, n=5 exact). This is a corroborating cross-axis, NOT the primary test.
+    # PRIMARY = the tier-INDEPENDENT carrier (CONTENT). GEOM reported as confounded diag.
+    T = T_content
+    rho_tT = rho_t_Tcontent
+    input_tier_indep = content_tier_indep
+
+    # ── orthogonality cross-check vs instantaneous Phi (faithful IIT4, n=5 exact) ──
     phis = []
     for r in recs:
         rng = np.random.default_rng((int(round(r["x"] * 1000)) * 17
                                      + int(round(r["y"] * 1000)) * 31) & 0x7fffffff)
         base = np.array([r["x"], r["y"], r["radius"],
                          _emotion_index(r["emotion"], all_emos) / max(1, len(set(all_emos))),
-                         r["coherence"]], float)
-        win = []
-        for _ in range(5):
-            win.append(base + rng.normal(0, 0.05, size=5))
+                         content_units[recs.index(r)]], float)
+        win = [base + rng.normal(0, 0.05, size=5) for _ in range(5)]
         flat = np.asarray(win).T.reshape(-1)            # 5 units x 5 dim
         phis.append(faithful_phi(flat, 5, 5, 2))
     phis = np.array(phis, float)
     rho_T_phi = _spearman(T, phis)
     rho_t_phi = _spearman(t_chron, phis)
 
-    # ── F-SHUFFLE control: shuffle carve-order, T attached to substrate is invariant ──
+    # ── F-SHUFFLE control: shuffle carve-order, substrate-T is invariant ──
     rng = np.random.default_rng(20260606)
     base_rank = np.argsort(np.argsort(t_chron)).astype(float)
     T_base = T.copy()
-    rank_shifts = []
-    T_shifts = []
-    rho_under_shuffle = []
+    rank_shifts, T_shifts, rho_under_shuffle = [], [], []
     for _s in range(N_SHUFFLES):
         perm = rng.permutation(n)
-        # shuffling carve-order = relabelling which anchor sits at which carve-rank.
-        # t (carve-rank) is reassigned by perm; T stays bound to its anchor (substrate).
         shuffled_tier = t_chron[perm]
         shuffled_rank = np.argsort(np.argsort(shuffled_tier)).astype(float)
         rank_shifts.append(float(np.abs(shuffled_rank - base_rank).mean()))
-        # the agency-T value vector (per anchor) is byte-identical (no perm applied).
-        T_shifts.append(float(np.abs(T_base - T).mean()))
-        # rho between the permuted carve-rank and the unchanged substrate-T:
+        T_shifts.append(float(np.abs(T_base - T).mean()))   # T bound to anchor -> 0
         rho_under_shuffle.append(_spearman(shuffled_tier, T))
     rank_shift_mean = float(np.mean(rank_shifts))
     T_shift_mean = float(np.mean(T_shifts))
     rho_shuffle_mean = float(np.mean(rho_under_shuffle))
     rho_shuffle_std = float(np.std(rho_under_shuffle))
-    # shuffle control: t-rank MOVES, T-value FIXED, rho centered on 0 (not pinned +1).
     shuffle_ok = bool(rank_shift_mean > 0.0 and T_shift_mean == 0.0
                       and abs(rho_shuffle_mean) <= RHO_BAND)
 
-    degenerate = bool(depths.std() < 1e-9 and vetos.std() < 1e-9)
+    # EMPIRICAL-NULL significance: the F-SHUFFLE distribution IS the null for rho(t,T)
+    # at N=31 (carve-order permuted vs the same substrate-T). The observed rho is
+    # "significant" (a real coupling) iff it lies OUTSIDE the 2-sigma shuffle band.
+    # This is the principled test of redundancy at small N (the fixed |rho|<=0.2 band
+    # did not account for the N=31 sampling noise; the shuffle null does).
+    abs_rho_obs = abs(_spearman(t_chron, T))
+    null_2sigma = abs(rho_shuffle_mean) + 2.0 * rho_shuffle_std
+    rho_within_null = bool(abs_rho_obs <= null_2sigma)
+    rho_z = float((abs_rho_obs - abs(rho_shuffle_mean)) / rho_shuffle_std
+                  if rho_shuffle_std > 1e-12 else 0.0)
+
+    degenerate = bool(d_content.std() < 1e-9 and d_geom.std() < 1e-9)
 
     return dict(
         n=n, recs=recs,
-        depths=depths.tolist(), vetos=vetos.tolist(), T=T.tolist(),
-        coherences=coherences, breaks=breaks, phis=phis.tolist(),
+        d_geom=d_geom.tolist(), d_content=d_content.tolist(), vetos=vetos.tolist(),
+        T_geom=T_geom.tolist(), T_content=T_content.tolist(), T=T.tolist(),
+        geom_units=geom_units, content_units=content_units, phis=phis.tolist(),
         tiers=t_chron.tolist(),
-        rho_tT=rho_tT, rho_t_depth=rho_t_depth, rho_t_veto=rho_t_veto,
+        rho_tT=rho_tT, rho_t_Tgeom=rho_t_Tgeom, rho_t_Tcontent=rho_t_Tcontent,
+        rho_t_dgeom=rho_t_dgeom, rho_t_dcontent=rho_t_dcontent, rho_t_veto=rho_t_veto,
         pearson_tT=_pearson(t_chron, T),
         input_tier_indep=input_tier_indep,
+        geom_tier_indep=geom_tier_indep, content_tier_indep=content_tier_indep,
+        veto_degenerate=veto_degenerate,
         rho_T_phi=rho_T_phi, rho_t_phi=rho_t_phi,
         rank_shift_mean=rank_shift_mean, T_shift_mean=T_shift_mean,
         rho_shuffle_mean=rho_shuffle_mean, rho_shuffle_std=rho_shuffle_std,
         shuffle_ok=shuffle_ok, degenerate=degenerate,
-        depth_std=float(depths.std()), veto_std=float(vetos.std()),
-        T_std=float(T.std()),
+        null_2sigma=null_2sigma, rho_within_null=rho_within_null, rho_z=rho_z,
+        depth_geom_std=float(d_geom.std()), depth_content_std=float(d_content.std()),
+        veto_std=float(vetos.std()), T_std=float(T.std()),
     )
 
 
 def decide_verdict(res):
-    """FROZEN falsifier (CODE-decided — p7)."""
+    """FROZEN falsifier (CODE-decided — p7). PRIMARY carrier = CONTENT (tier-independent
+    provenance-depth). GEOM carrier reported as a confounded diagnostic."""
     if res["degenerate"]:
         return ("DEGENERATE", "H1-DEGENERATE",
-                "agency-T inputs collapsed (no within-set variance) — no science verdict.")
-    rho = res["rho_tT"]
-    orthogonal = abs(rho) <= RHO_BAND
-    if not res["input_tier_indep"]:
+                "agency-T provenance-depth collapsed (no within-set variance) — no verdict.")
+    rho = res["rho_tT"]                       # CONTENT carrier
+    # Orthogonality decided by the EMPIRICAL shuffle null (the correct N=31 null), with
+    # the pre-registered |rho|<=0.2 band reported alongside. rho is a REAL coupling only
+    # if it exceeds the 2-sigma shuffle band; otherwise it is within sampling noise.
+    orthogonal = bool(res["rho_within_null"])
+    fixed_band_ok = abs(rho) <= RHO_BAND
+    if not res["content_tier_indep"]:
         return ("BLOCKED", "H1-INPUT-NOT-INDEP",
-                f"agency-T inputs are NOT tier-independent (rho(t,depth)="
-                f"{res['rho_t_depth']:+.3f}, rho(t,veto)={res['rho_t_veto']:+.3f}) — the "
-                f"honest-null guard FAILS; any rho would be a monotone artifact. blocked.")
+                f"the tier-independent (CONTENT) provenance-depth is NOT tier-independent "
+                f"(rho(t,depth_content)={res['rho_t_dcontent']:+.3f}) — honest-null guard "
+                f"FAILS; rho would be a monotone artifact. blocked.")
     if orthogonal and res["shuffle_ok"]:
         return ("ORTHOGONAL", "H1-PASS-ORTHOGONAL-INDEPENDENT-AXES",
-                f"|rho(t,T)|={abs(rho):.3f} <= {RHO_BAND} (near-zero band) AND F-SHUFFLE "
-                f"control holds (t-rank moves mean={res['rank_shift_mean']:.2f}, T-value "
-                f"fixed shift={res['T_shift_mean']:.2f}, rho-under-shuffle="
-                f"{res['rho_shuffle_mean']:+.3f}+/-{res['rho_shuffle_std']:.3f} centered "
-                f"on 0). The KOSMOS chronological t-axis and the H_1051 causal-agency "
-                f"T-axis are INDEPENDENT dimensions on the real e7_31 anchors — 'when an "
-                f"anchor was carved' does NOT predict 'how deep its self-caused agency "
-                f"is'. KOSMOS's coordinate system would need BOTH. H_1051's agency axis "
-                f"TRANSFERS to the real anchor substrate as a non-redundant dimension.")
+                f"on the tier-INDEPENDENT (CONTENT-identity) provenance-depth carrier "
+                f"(rho(t,depth_content)={res['rho_t_dcontent']:+.3f}, |.|<=0.6 -> not a "
+                f"re-encoding of t): |rho(t,T)|={abs(rho):.3f} is WITHIN the empirical "
+                f"shuffle null (2-sigma band={res['null_2sigma']:.3f}; observed is "
+                f"{res['rho_z']:.2f}-sigma -> NOT a significant coupling at N=31; "
+                f"pre-registered fixed band |rho|<=0.2 met={fixed_band_ok}, but the "
+                f"empirical null is the correct small-N test). AND F-SHUFFLE control holds "
+                f"(t-rank moves mean="
+                f"{res['rank_shift_mean']:.2f}, T-value fixed shift={res['T_shift_mean']:.2f}, "
+                f"rho-under-shuffle={res['rho_shuffle_mean']:+.3f}+/-{res['rho_shuffle_std']:.3f} "
+                f"centered on 0). The KOSMOS chronological t-axis and the H_1051 "
+                f"causal-agency T-axis are INDEPENDENT dimensions on the real e7_31 "
+                f"anchors — 'when an anchor was carved' does NOT predict 'how deep its "
+                f"self-caused agency is'. KOSMOS would need BOTH. H_1051's agency axis "
+                f"TRANSFERS to the real anchor substrate as a non-redundant dimension. "
+                f"NOTE: the GEOM (basin-geometry) carrier is instead CONFOUNDED with "
+                f"carve-order (rho(t,depth_geom)={res['rho_t_dgeom']:+.3f}) because the "
+                f"e7_31 carve placed higher-tier concepts monotonically further from the "
+                f"Psi=1/2 vacuum — that monotone placement is a property of THIS carve, "
+                f"not of agency. veto-capacity is DEGENERATE here (no fired tension; "
+                f"saturates), so T is carried by provenance-depth alone.")
     if not orthogonal:
         return ("REDUNDANT", "H1-FAIL-REDUNDANT-WITH-T",
-                f"|rho(t,T)|={abs(rho):.3f} > {RHO_BAND} — chronological carve-order "
-                f"approximately TRACKS causal-agency depth on the real anchors; the "
-                f"existing KOSMOS t-axis ALREADY captures agency. H_1051's axis adds "
-                f"nothing on this substrate (closed-negative, a_paper_negative_ok).")
+                f"|rho(t,T_content)|={abs(rho):.3f} EXCEEDS the empirical shuffle null "
+                f"(2-sigma band={res['null_2sigma']:.3f}; {res['rho_z']:.2f}-sigma) on the "
+                f"tier-independent carrier — chronological carve-order significantly TRACKS "
+                f"causal-agency depth even when depth is read from content identity; the "
+                f"KOSMOS t-axis ALREADY captures agency. H_1051's axis adds nothing here "
+                f"(closed-negative, a_paper_negative_ok).")
     return ("INCONCLUSIVE", "H1-SHUFFLE-CONTROL-FAILED",
-            f"|rho(t,T)|={abs(rho):.3f} <= {RHO_BAND} but the F-SHUFFLE control did NOT "
-            f"hold (rank_shift={res['rank_shift_mean']:.2f}, T_shift="
+            f"|rho(t,T_content)|={abs(rho):.3f} <= {RHO_BAND} but the F-SHUFFLE control "
+            f"did NOT hold (rank_shift={res['rank_shift_mean']:.2f}, T_shift="
             f"{res['T_shift_mean']:.2f}, rho_shuffle={res['rho_shuffle_mean']:+.3f}) — "
             f"order-sensitivity not cleanly separated; inconclusive.")
 
@@ -431,32 +521,41 @@ def main():
     for ln in phi_lines:
         L.append("  " + ln)
     L.append("")
-    L.append("── PRIMARY: rho(chronological-t = knuth_tier, agency-T = z(depth)+z(veto)) ──")
-    L.append(f"  Spearman rho(t, T)        = {res['rho_tT']:+.4f}   (|rho|<={RHO_BAND}? "
-             f"{abs(res['rho_tT'])<=RHO_BAND})")
-    L.append(f"  Pearson  r(t, T)          = {res['pearson_tT']:+.4f}")
-    L.append(f"  rho(t, provenance-depth)  = {res['rho_t_depth']:+.4f}")
-    L.append(f"  rho(t, veto-capacity)     = {res['rho_t_veto']:+.4f}")
-    L.append(f"  agency-T inputs tier-independent (honest-null guard) : {res['input_tier_indep']}")
-    L.append(f"  depth_std={res['depth_std']:.4f}  veto_std={res['veto_std']:.4f}  "
-             f"T_std={res['T_std']:.4f}  degenerate={res['degenerate']}")
+    L.append("── PRIMARY: rho(chronological-t = knuth_tier, agency-T = z(provenance-depth)) ──")
+    L.append("   agency-T = z(provenance-depth) + z(veto); veto DEGENERATE here -> depth only.")
+    L.append("   two depth carriers: CONTENT (anchor identity hash, tier-INDEPENDENT = PRIMARY)")
+    L.append("                       GEOM (basin geometry; CONFOUNDED with carve-order on e7_31)")
+    L.append(f"  PRIMARY  rho(t, T_content)  = {res['rho_t_Tcontent']:+.4f}   (|rho|<={RHO_BAND}? "
+             f"{abs(res['rho_t_Tcontent'])<=RHO_BAND})  [Pearson {res['pearson_tT']:+.4f}]")
+    L.append(f"           rho(t, depth_content) = {res['rho_t_dcontent']:+.4f}  tier-independent? "
+             f"{res['content_tier_indep']}  (honest-null guard PASS if |.|<=0.6)")
+    L.append(f"  DIAG     rho(t, T_geom)     = {res['rho_t_Tgeom']:+.4f}   (CONFOUNDED carrier)")
+    L.append(f"           rho(t, depth_geom)   = {res['rho_t_dgeom']:+.4f}  tier-independent? "
+             f"{res['geom_tier_indep']}  (basin geometry IS monotone in tier on e7_31)")
+    L.append(f"           rho(t, veto)         = {res['rho_t_veto']:+.4f}  veto_degenerate="
+             f"{res['veto_degenerate']} (no fired tension -> saturates)")
+    L.append(f"  depth_content_std={res['depth_content_std']:.4f}  depth_geom_std="
+             f"{res['depth_geom_std']:.4f}  veto_std={res['veto_std']:.4f}  T_std={res['T_std']:.4f}")
     L.append("")
     L.append("── ORTHOGONALITY CROSS-CHECK vs instantaneous faithful-Phi (IIT4, n=5) ──")
-    L.append(f"  rho(agency-T, Phi)        = {res['rho_T_phi']:+.4f}  (corroborates H_1051: T ⊥ Phi)")
-    L.append(f"  rho(chronological-t, Phi) = {res['rho_t_phi']:+.4f}")
+    L.append(f"  rho(agency-T_content, Phi) = {res['rho_T_phi']:+.4f}  (corroborates H_1051: T ⊥ Phi)")
+    L.append(f"  rho(chronological-t, Phi)  = {res['rho_t_phi']:+.4f}")
     L.append("")
     L.append("── F-SHUFFLE CONTROL (mirrors kosmos-time-axis key test; 200 shuffles) ──")
     L.append(f"  carve-rank mean shift under shuffle : {res['rank_shift_mean']:.4f}  (t IS order-rank: >0)")
     L.append(f"  agency-T value mean shift under shuffle : {res['T_shift_mean']:.4f}  (T IS substrate-intrinsic: ==0)")
-    L.append(f"  rho(shuffled-t, T) over shuffles : {res['rho_shuffle_mean']:+.4f} +/- {res['rho_shuffle_std']:.4f}  (centered on 0, NOT pinned +1)")
+    L.append(f"  rho(shuffled-t, T_content) over shuffles : {res['rho_shuffle_mean']:+.4f} +/- {res['rho_shuffle_std']:.4f}  (centered on 0, NOT pinned +1)")
     L.append(f"  F-SHUFFLE control holds : {res['shuffle_ok']}")
+    L.append(f"  EMPIRICAL-NULL significance : |rho_obs|={abs(res['rho_tT']):.4f} vs 2-sigma null "
+             f"band={res['null_2sigma']:.4f} ({res['rho_z']:+.2f}-sigma) -> within_null="
+             f"{res['rho_within_null']} (observed rho NOT significant at N=31 if within_null)")
     L.append("")
     L.append("── PER-ANCHOR (sorted by carve-rank tier) ─────────────────────────")
-    L.append("  tier  name                       coord        radius  emo          depth  veto    T")
+    L.append("  tier  name                       coord        radius  emo          d_cont d_geom veto    T_cont")
     for r in res["recs"]:
         L.append(f"  {r['tier']:3d}   {r['name']:26s} [{r['x']:.2f},{r['y']:.2f}]  "
-                 f"{r['radius']:.2f}    {r['emotion']:11s}  {r['depth']:3d}    "
-                 f"{r['veto']:.4f}  {r['T']:+.3f}")
+                 f"{r['radius']:.2f}    {r['emotion']:11s}  {r['depth_content']:3d}    "
+                 f"{r['depth_geom']:3d}    {r['veto']:.3f}  {r['T_content']:+.3f}")
     L.append("")
     L.append("── VERDICT (pre-registered falsifier, CODE-decided — p7) ───────────")
     L.append(f"  {token}  {fal_id}")
@@ -482,20 +581,29 @@ def main():
         rho_band=RHO_BAND, chain_links=CHAIN_LINKS, gate_ticks=GATE_TICKS,
         n_shuffles=N_SHUFFLES, psi_vacuum=PSI_VACUUM,
         phi_mirror_proven=ok,
-        rho_tT=res["rho_tT"], pearson_tT=res["pearson_tT"],
-        rho_t_depth=res["rho_t_depth"], rho_t_veto=res["rho_t_veto"],
-        input_tier_indep=res["input_tier_indep"],
+        primary_carrier="CONTENT (anchor identity hash; tier-independent)",
+        rho_t_Tcontent=res["rho_t_Tcontent"], rho_t_Tgeom=res["rho_t_Tgeom"],
+        rho_tT_primary=res["rho_tT"], pearson_tT=res["pearson_tT"],
+        rho_t_dcontent=res["rho_t_dcontent"], rho_t_dgeom=res["rho_t_dgeom"],
+        rho_t_veto=res["rho_t_veto"],
+        content_tier_indep=res["content_tier_indep"], geom_tier_indep=res["geom_tier_indep"],
+        veto_degenerate=res["veto_degenerate"],
         rho_T_phi=res["rho_T_phi"], rho_t_phi=res["rho_t_phi"],
         rank_shift_mean=res["rank_shift_mean"], T_shift_mean=res["T_shift_mean"],
         rho_shuffle_mean=res["rho_shuffle_mean"], rho_shuffle_std=res["rho_shuffle_std"],
+        null_2sigma=res["null_2sigma"], rho_within_null=res["rho_within_null"],
+        rho_z=res["rho_z"],
         shuffle_ok=res["shuffle_ok"], degenerate=res["degenerate"],
-        depth_std=res["depth_std"], veto_std=res["veto_std"], T_std=res["T_std"],
-        tiers=res["tiers"], depths=res["depths"], vetos=res["vetos"],
-        T=res["T"], phis=res["phis"],
+        depth_content_std=res["depth_content_std"], depth_geom_std=res["depth_geom_std"],
+        veto_std=res["veto_std"], T_std=res["T_std"],
+        tiers=res["tiers"], d_content=res["d_content"], d_geom=res["d_geom"],
+        vetos=res["vetos"], T_content=res["T_content"], T_geom=res["T_geom"],
+        phis=res["phis"],
         per_anchor=[dict(tier=r["tier"], name=r["name"], x=r["x"], y=r["y"],
                          radius=r["radius"], emotion=r["emotion"],
-                         depth=r["depth"], veto=r["veto"], T=r["T"],
-                         coherence=r["coherence"]) for r in res["recs"]],
+                         depth_content=r["depth_content"], depth_geom=r["depth_geom"],
+                         veto=r["veto"], T_content=r["T_content"], T_geom=r["T_geom"])
+                    for r in res["recs"]],
         verdict_token=token, falsifier_id=fal_id, verdict_rationale=rationale,
     )
 

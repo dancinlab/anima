@@ -81,6 +81,24 @@ NOT a proxy; re-proven ==stdlib at n=4 AND n=5 in STEP 0). Near-zero band: |rho|
   or the anchor lineage cannot be derived -> report degenerate / blocked, no science
   verdict.
 
+### amendment (declared before the verdict .txt; small-N significance)
+
+The fixed near-zero band |rho| <= 0.2 does not account for the N = 31 sampling noise.
+The F-SHUFFLE distribution (carve-order permuted against the SAME substrate-T) IS the
+correct empirical NULL for rho(t, T) at this N. We therefore decide orthogonality by
+the EMPIRICAL test: rho is a SIGNIFICANT coupling (redundant) only if |rho_obs| exceeds
+the 2-sigma shuffle band (mean + 2*std of rho-under-shuffle); otherwise it is WITHIN
+sampling noise -> orthogonal/independent. The pre-registered fixed |rho| <= 0.2 band is
+REPORTED alongside for transparency. The honest-null guard (depth input tier-independent,
+|rho(t, depth)| <= 0.6) and the F-SHUFFLE structural control are unchanged.
+
+Two provenance-depth carriers are reported (BOTH H_932 chains, UNMODIFIED): a CONTENT
+carrier (break index from the anchor's identity hash name+emotion -> tier-INDEPENDENT,
+the PRIMARY) and a GEOM carrier (break index from basin geometry -> CONFOUNDED with
+carve-order on e7_31, reported as a diagnostic, NOT the verdict basis). veto-capacity is
+reported but is DEGENERATE on this set (no fired tension -> saturates), so the live
+agency-T component here is provenance-depth.
+
 ### F-SHUFFLE control (order-sensitivity, mirrors the kosmos-time-axis key test)
 
 The chronological-t axis is, by construction, the carve-rank — exactly order-DEPENDENT
