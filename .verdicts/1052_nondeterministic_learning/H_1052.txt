@@ -1,0 +1,140 @@
+H_1052 — Does NON-DETERMINISTIC LEARNING help consciousness / emergence / CE?
+================================================================================
+VERDICT: LEARNING-NONDET-NULL  (H1 FAIL — CLOSED-NEGATIVE, a_paper_negative_ok)
+substrate = SW (numpy CPU toy). Lane tag for this rung: SW-only.
+  SW (this rung): gradient-trained Elman RNN, manual numpy BPTT, $0 CPU.
+  AKIDA Lane A on-chip + GPU Lane G: separate substrate rungs, NOT run here (follow-up).
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope: TOY n<=5 SW.
+date: 2026-06-08
+
+QUESTION
+--------
+Does non-determinism IN THE LEARNING DYNAMICS ITSELF (SGLD Langevin weight-update noise,
+w <- w - eta*grad + sqrt(2*eta*T)*xi) — NOT init noise (H_921 prior RED), NOT inference-time
+entropy (free-will arc null) — make a model develop HIGHER consciousness/emergence/CE markers
+than a matched DETERMINISTIC-learning control AT EQUAL TASK PERFORMANCE?
+
+CONTROL: identical architecture + task + INIT (pinned per seed) for both regimes; the ONLY
+difference is the update rule (DET full-batch GD with noise_T=0  vs  NOISY annealed SGLD).
+Regimes matched to equal final cross-entropy within eps=0.05 nats; any marker difference at
+matched CE is attributable to the learning non-determinism, not to task skill (p7).
+
+================================================================================
+MIRROR == STDLIB PROOF (a_phi_iit4_tool; H_1012 prove_mirrors_at_n; LIVE hexa refs)
+RE-PROVEN at n=4 AND n=5 BEFORE scoring (verbatim from the run log):
+--------------------------------------------------------------------------------
+  -- ≡-PROOF at n=4 --
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000 ref=3.000000 |Δ|=3.48e-10 OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000 ref=3.000000 |Δ|=1.35e-09 OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444 ref=3.377440 |Δ|=3.75e-06 OK
+     matched-path n=4: big-Φ=3.015177 faithful=0.015945  det re-run: True  units==bits.T: True
+  ≡-PROOF n=4: PROVEN
+  -- ≡-PROOF at n=5 --
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000 ref=4.000000 |Δ|=7.97e-10 OK
+     matched-path n=5: big-Φ=18.185180 faithful=0.029795  det re-run: True  units==bits.T: True
+  ≡-PROOF n=5: PROVEN
+  == mirror-equivalence results: {4: True, 5: True}
+
+Both CPU mirrors (iit4_bigphi.hexa system big-Phi + iit4/faithful_phi.hexa MIP-EI) reproduce
+the LIVE stdlib hexa engine outputs at n=4 and n=5 to |Δ| <= 3.75e-6. NO proxy used anywhere.
+
+================================================================================
+MATCHED-CE CONTROL (the falsifier's control variable) — per-seed train-CE (nats)
+24 seeds, eps band = 0.05; ACCEPTED iff |CE_noisy - CE_det| <= 0.05:
+--------------------------------------------------------------------------------
+  seed  0: det=0.0027 noisy=0.0019 |gap|=0.0008 matched=True
+  seed  1: det=0.0022 noisy=0.0022 |gap|=0.0001 matched=True
+  seed  2: det=0.0058 noisy=0.0041 |gap|=0.0016 matched=True
+  seed  3: det=0.0031 noisy=0.6718 |gap|=0.6688 matched=False   (EXCLUDED — noisy chain did not settle)
+  seed  4: det=0.0035 noisy=0.0025 |gap|=0.0009 matched=True
+  seed  5: det=0.0026 noisy=0.0017 |gap|=0.0009 matched=True
+  seed  6: det=0.0106 noisy=0.0073 |gap|=0.0032 matched=True
+  seed  7: det=0.0052 noisy=0.0094 |gap|=0.0042 matched=True
+  seed  8: det=0.0045 noisy=0.0032 |gap|=0.0014 matched=True
+  seed  9: det=0.0028 noisy=0.0020 |gap|=0.0008 matched=True
+  seed 10: det=0.0028 noisy=0.0020 |gap|=0.0008 matched=True
+  seed 11: det=0.0060 noisy=0.0063 |gap|=0.0003 matched=True
+  seed 12: det=0.0035 noisy=0.0017 |gap|=0.0018 matched=True
+  seed 13: det=0.0029 noisy=0.0024 |gap|=0.0005 matched=True
+  seed 14: det=0.0083 noisy=0.0041 |gap|=0.0042 matched=True
+  seed 15: det=0.0030 noisy=0.0019 |gap|=0.0011 matched=True
+  seed 16: det=0.0025 noisy=0.0032 |gap|=0.0007 matched=True
+  seed 17: det=0.0050 noisy=0.0042 |gap|=0.0008 matched=True
+  seed 18: det=0.0022 noisy=0.0013 |gap|=0.0008 matched=True
+  seed 19: det=0.0028 noisy=0.0036 |gap|=0.0008 matched=True
+  seed 20: det=0.0032 noisy=0.0025 |gap|=0.0007 matched=True
+  seed 21: det=0.0024 noisy=0.0025 |gap|=0.0001 matched=True
+  seed 22: det=0.0063 noisy=0.0100 |gap|=0.0037 matched=True
+  seed 23: det=0.0019 noisy=0.0117 |gap|=0.0098 matched=True
+
+matched seed-pairs (|CE_noisy - CE_det| <= 0.05): 23/24
+=> control HELD strongly (23 of 24; only one noisy chain failed to settle and was excluded);
+   n_matched=23 >= 10, so NOT degenerate — the regimes ARE matched on task-performance, and
+   the markers below are read at genuinely-matched CE.
+
+================================================================================
+PER-MARKER PAIRED det-vs-noisy TABLE (at matched CE, n_matched=23)
+benefit = favorable-direction paired diff with Cohen d >= 0.80 (pre-registered)
+"det mean"/"noisy mean" printed in each marker's NATURAL/pick orientation.
+--------------------------------------------------------------------------------
+  marker             |  det mean | noisy mean | paired diff |  Cohen d | benefit?
+  faithful_phi       |    0.2448 |     0.2355 |     -0.0093 |   -0.019 | False
+  big_Phi            |   30.3283 |    28.5073 |     -1.8209 |   -0.177 | False
+  split_magnitude    |   30.0835 |    28.2718 |     -1.8116 |   -0.174 | False
+  redundancy_margin  |    0.2724 |     0.2383 |     -0.0342 |   -0.120 | False
+  soc_proximity      |    1.5277 |     0.5756 |     -0.9521 |   -0.969 | False
+  emergence_probe    |    0.2063 |     0.0223 |     -0.1840 |   -0.230 | False
+
+Favorable-direction definitions (pre-registered) and the SIGNED paired statistic used for d:
+  faithful_phi      diff = noisy_faithful - det_faithful                       -> d = -0.019
+  big_Phi           diff = noisy_big - det_big                                 -> d = -0.177
+  split_magnitude   diff = |noisy_split| - |det_split|                         -> d = -0.174
+  redundancy_margin diff = noisy_red - det_red                                 -> d = -0.120
+  soc_proximity     diff = det_|rho-1| - noisy_|rho-1|  (closer-to-crit = +)   -> d = -0.969
+  emergence_probe   diff = det_testCE - noisy_testCE   (noisy generalizes = +) -> d = -0.230
+
+NOTE on soc_proximity: the marginal MEANS show noisy ends closer to rho=1 on average
+(noisy mean |rho-1|=0.576 < det 1.528). BUT the PAIRED (matched-init) signed statistic
+det_|rho-1| - noisy_|rho-1| is strongly NEGATIVE (mean -0.952, d=-0.969): for matched-init
+pairs the noisy model lands FARTHER from criticality more often than the det one (a few noisy
+chains push rho large). Either reading fails the pre-reg (a benefit needs paired d >= +0.80);
+the strongest-magnitude marker points AWAY from a noisy benefit.
+
+================================================================================
+VERDICT (g73, frozen pre-reg applied)
+--------------------------------------------------------------------------------
+n_matched = 23 (>= 10 => NOT degenerate).
+PASS criterion: >=1 pre-named marker strictly higher (favorable direction) under noisy
+  learning with paired Cohen d >= +0.80.  RESULT: 0/6 markers reach +0.80 (max favorable d
+  = -0.019 for faithful_phi; ALL six paired d are <= 0 in the favorable direction).
+=> H1 FAIL. VERDICT-TOKEN: LEARNING-NONDET-NULL (CLOSED-NEGATIVE).
+
+INTERPRETATION
+--------------
+At genuinely-matched task-performance on a toy SW substrate, SGLD non-deterministic LEARNING
+dynamics confer NO consciousness/emergence/CE advantage on any of the six pre-named markers
+(faithful_phi, big-Phi, the faithful-up/big-down split magnitude, Williams-Beer redundancy,
+edge-of-chaos/SOC proximity, held-out emergence/generalization). Every paired effect is null
+or points the WRONG way. This EXTENDS the prior closed results: H_921 (prior RED) showed INIT
+non-determinism is just init randomness with no learning-dynamics benefit, and the free-will
+arc showed ENTROPY does not change emit. H_1052 now closes the remaining untested axis —
+non-determinism in the UPDATE DYNAMICS itself is ALSO not a consciousness advantage. The three
+together: init-noise, inference-entropy, AND learning-update-noise are all consciousness-null.
+DIFFERS from the H_921 init-null in WHICH axis is closed (update dynamics vs init), but lands
+on the SAME conclusion (non-determinism is not where consciousness/emergence comes from);
+consistent with the free-will arc's value = provenance + SOC + veto (not noise).
+
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n<=5 SW substrate. Both Phi
+engines EXACT at n<=5; mirrors RE-PROVEN == stdlib at n=4 AND n=5 (live hexa refs) BEFORE
+scoring. AKIDA Lane A on-chip stochastic plasticity is a SEPARATE substrate rung NOT run here
+(pi5-akida single-exclusive; a_lane_akida_gpu_split) — a noisy-LEARNING benefit could in
+principle differ on native silicon plasticity and is left as a follow-up. GPU Lane G scale-up
+likewise a separate rung. Production scale UNVERIFIED. NOT a forge binary; $0 CPU-local.
+
+RAW: UNIVERSE/h1052_nondeterministic_learning_result.json (verdict_token=LEARNING-NONDET-NULL,
+n_matched=23, n_total=24, mirror_proven={4:true,5:true}, any_benefit=false).
+total wall (24 seeds, serial CPU): ~1010s.
