@@ -372,9 +372,10 @@ def main():
     _, HpB = real_clm_trajectories(W, w0, PLAN_DEPTH)
     bitsA, _ = latent_to_bits_macromap(HpA, N_UNITS, "top_variance")
     bitsB, _ = latent_to_bits_macromap(HpB, N_UNITS, "top_variance")
-    fA = faithful_phi(*binary_seq_to_faithful_state(bitsA, N_UNITS))[0] if False else \
-        faithful_phi(*binary_seq_to_faithful_state(bitsA, N_UNITS))
-    fB = faithful_phi(*binary_seq_to_faithful_state(bitsB, N_UNITS))
+    fsA, fnA, fdA = binary_seq_to_faithful_state(bitsA, N_UNITS)
+    fsB, fnB, fdB = binary_seq_to_faithful_state(bitsB, N_UNITS)
+    fA = faithful_phi(fsA, fnA, fdA, 2)
+    fB = faithful_phi(fsB, fnB, fdB, 2)
     bits_identical = bool(np.array_equal(bitsA, bitsB))
     det_ok = bool(bits_identical and abs(fA - fB) < 1e-12)
     print(f"   seed0 plan (top-variance) macro-bits identical across re-runs: {bits_identical}; "
