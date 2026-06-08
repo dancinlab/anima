@@ -1,6 +1,6 @@
 # H_1049 — Scalable validated Phi estimator: does an information-bottleneck coarse-grain stay within epsilon of exact?
 
-Status: PRE-REGISTERED (generation-only; not yet measured)
+Status: 🔴 CLOSED-NEGATIVE — NO-VALIDATED-ESTIMATOR (verdict .verdicts/1049_scalable_estimator/H_1049.txt). a_paper_negative_ok.
 Lane: CPU-local many-core ($0; a_fire_autonomous not needed). Engine: stdlib faithful_phi
 (exact MIP-EI scalar, exact for n<=8) as the GROUND TRUTH (a_phi_iit4_tool, no proxy). big-Phi
 (iit4_bigphi) is the super-exponential structure measure used at H_1037/H_1044; here the exact
@@ -84,3 +84,28 @@ the substrate; production-scale transfer is UNVERIFIED (a_toy_scale_recheck). g5
 self-judge, p7). NOT a forge binary; pure-CPU $0. The IB macro-map is the H_1037/H_1038 majority-vote
 coarse-grain with a future-predictive (information-bottleneck) group-selection rule; the random control
 isolates whether the IB selection rule (not merely the act of coarse-graining) is what preserves Phi.
+
+## RESULT (🔴 CLOSED-NEGATIVE — NO-VALIDATED-ESTIMATOR; measured, g5 CODE)
+Mirror == stdlib RE-PROVEN before scoring: faithful_phi n4 nb2 |Delta|=3.48e-10, n4 nb4 |Delta|=3.75e-06,
+n5 nb2 |Delta|=7.97e-10 (all OK); coarse-grain read deterministic (|Delta|=0). 30 seeds, m=4 macro fixed.
+
+   N | Phi_ground(EXACT) | Phi_IB  | Phi_topvar | Phi_rand | errIB  | errTV  | errRand
+   4 |     2.84017       | 2.84017 |  2.84017   | 2.84017  | 0.0000 | 0.0000 | 0.0000  (identity rung m==N)
+   5 |     3.67301       | 2.78618 |  2.24790   | 1.61131  | 0.2414 | 0.3880 | 0.5613
+   6 |     4.24366       | 2.65719 |  2.60715   | 1.29860  | 0.3738 | 0.3856 | 0.6940
+   7 |     4.60955       | 2.59640 |  2.30486   | 1.19607  | 0.4367 | 0.5000 | 0.7405
+   8 |     5.07632       | 2.50453 |  2.46186   | 1.05677  | 0.5066 | 0.5150 | 0.7918
+
+Falsifier (eps=0.15, genuine rungs N in {5,6,7,8}): [1] IB within eps = FALSE (all errIB > 0.15);
+[2] IB beats random control = TRUE (errIB ~2x lower at every rung); [3] error not growing with N =
+FALSE (errIB strictly monotone 0.24->0.51). PASS needs all three -> NO-VALIDATED-ESTIMATOR.
+
+DOES A VALIDATED SCALABLE ESTIMATOR EXIST? NO at this fidelity. Smallest eps the IB map satisfies at
+every genuine rung = 0.5066 (3.4x the pre-reg 0.15). PARTIAL honest positive: the IB SELECTION rule is
+principled-better than chance (strictly beats random everywhere; beats top-var at N=5,6,7).
+
+MECHANISM: exact faithful phi_EI scales ~LINEARLY with the unit count (Phi_ground 2.84->5.08 as N 4->8;
+near-fully-coupled binarized traces -> MIP min-cut/small-side saturates near n-1). A FIXED m=4 coarse-
+grain structurally caps the estimate near m-1~3, so relative error grows ~ (N-m)/(N-1) with the
+compression ratio. A fixed-small-m IB grain cannot track a Phi that lives in the unit count itself.
+This RED gates/bounds the macro-IIT honesty hypotheses H_1038/H_1042. Validated n<=8 only.

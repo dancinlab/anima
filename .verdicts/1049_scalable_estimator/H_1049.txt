@@ -1,0 +1,71 @@
+H_1049 — Scalable validated Phi estimator: does an information-bottleneck (IB) coarse-grain
+stay within epsilon of EXACT Phi on a validation ladder n=4..8?
+
+VERDICT: RED — CLOSED-NEGATIVE (NO-VALIDATED-ESTIMATOR). a_paper_negative_ok.
+No principled scalable Phi estimator exists at the pre-registered fidelity (epsilon=0.15): a
+fixed m=4 IB coarse-grain does NOT stay within 15% of exact faithful phi_EI on the n=4..8
+ladder, and its error GROWS with N. The IB selection rule does help (it strictly beats the
+random-macro-map control at every rung), but not enough to make a validated ruler that extends
+past the exact n<=8 ceiling. The consciousness ruler cannot honestly extend past n<=8 yet at
+this fidelity.
+
+ENGINE / GROUND TRUTH (a_phi_iit4_tool — no proxy)
+- GROUND TRUTH = stdlib faithful_phi (exact MIP-EI phi_EI, exact for n<=8) on the FULL N-unit
+  system. Chosen over big-Phi because phi_EI is exact through n=8 (big-Phi caps at n<=6), so the
+  validation ladder reaches N=7,8 where big-Phi cannot. ESTIMATE = faithful_phi on the m=4
+  macro-unit coarse-grain (IB / top-var / random-control macro-maps).
+
+MIRROR == STDLIB RE-PROVEN BEFORE SCORING (H_1012 prove_mirrors_at_n; LIVE stdlib hexa refs):
+  n=4: faithful_phi n4 dim6 nb2 mirror=3.000000 vs stdlib_ref=3.000000  |Delta|=3.48e-10  OK
+       faithful_phi n4 dim6 nb4 mirror=3.377444 vs stdlib_ref=3.377440  |Delta|=3.75e-06  OK
+       (big-Phi ring4 |Delta|=1.34e-10 OK; matched-path determinism + no-leak OK)
+  n=5: faithful_phi n5 dim6 nb2 mirror=4.000000 vs stdlib_ref=4.000000  |Delta|=7.97e-10  OK
+       (big-Phi ring5 |Delta|=1.34e-10 OK; matched-path determinism + no-leak OK)
+  == mirror-equivalence: {4: True, 5: True} PROVEN. Coarse-grain read deterministic
+  (IB macro re-run at N=6 |Delta|=0.00e+00, pure fn of bits).
+
+PER-RUNG LADDER (30 seeds, planning depth-8 rollout, m=4 macro fixed):
+   N | Phi_ground(EXACT) | Phi_IB  | Phi_topvar | Phi_rand | errIB  | errTV  | errRand
+   4 |     2.84017       | 2.84017 |  2.84017   | 2.84017  | 0.0000 | 0.0000 | 0.0000  (identity rung m==N)
+   5 |     3.67301       | 2.78618 |  2.24790   | 1.61131  | 0.2414 | 0.3880 | 0.5613
+   6 |     4.24366       | 2.65719 |  2.60715   | 1.29860  | 0.3738 | 0.3856 | 0.6940
+   7 |     4.60955       | 2.59640 |  2.30486   | 1.19607  | 0.4367 | 0.5000 | 0.7405
+   8 |     5.07632       | 2.50453 |  2.46186   | 1.05677  | 0.5066 | 0.5150 | 0.7918
+
+FALSIFIER SCORING (pre-registered epsilon=0.15; genuine-compression rungs N in {5,6,7,8}):
+  [1] IB within epsilon at EVERY genuine rung: FALSE (errIB 0.2414/0.3738/0.4367/0.5066, all > 0.15)
+  [2] IB strictly beats random control at every genuine rung: TRUE (0.24<0.56, 0.37<0.69, 0.44<0.74, 0.51<0.79)
+  [3] IB error NOT growing with N: FALSE (errIB is strictly monotone-increasing; N=8 = 0.5066 is the max)
+  -> PASS requires [1] AND [2] AND [3]; [1] and [3] FAIL -> NO-VALIDATED-ESTIMATOR.
+
+DOES A VALIDATED SCALABLE ESTIMATOR EXIST? NO (at this fidelity). The IB error is NOT flat in N
+(it grows monotonically 0.24 -> 0.51) and is NOT within epsilon=0.15 at any genuine rung.
+Smallest epsilon the IB map satisfies at EVERY genuine rung = 0.5066 (3.4x the pre-reg 0.15).
+
+PARTIAL (honest) POSITIVE: the IB selection rule IS principled-better than chance — it strictly
+beats the random-macro-map control at every rung (errIB < errRand throughout, ~2x lower error),
+and beats the top-variance non-IB baseline at N=5,6,7 (ties ~N=6). So the information-bottleneck
+SELECTION captures real structure; it just cannot overcome the fundamental compression loss.
+
+MECHANISM (why the negative is structural, not a bug): exact faithful phi_EI of the binarized
+planning rollout scales ~LINEARLY with the unit count (Phi_ground 2.84->3.67->4.24->4.61->5.08
+as N 4->8; the binarized traces are near-fully-coupled, so the MIP min-cut / small-side
+saturates near n-1). Coarse-graining N units down to a FIXED m=4 macro-units structurally caps
+the estimate near m-1~3 (Phi_IB saturates 2.79->2.50, slightly DECREASING). Thus the relative
+error grows ~ (N-m)/(N-1) with the compression ratio. A fixed-m coarse-grain cannot track a Phi
+that lives in the unit count itself; the IB rule chooses the best macro-units but cannot recover
+the lost dimensions. -> a scalable ruler needs an m that grows with the system (within the n<=8
+exact ceiling) or a non-coarse-graining estimator; a FIXED small-m IB grain is NOT it.
+
+HONEST SCOPE (a_scale_honest_scope): validated to n<=8 ONLY (exact faithful phi_EI is the ground
+truth, exact only n<=8; no exact reference exists beyond N=8 to validate against). Real-model
+fidelity UNVERIFIED — this RED gates / bounds the macro-IIT honesty hypotheses H_1038/H_1042
+(a fixed-small-m macro-grain is NOT a faithful Phi estimator at this fidelity). TOY WM latent;
+production-scale transfer UNVERIFIED (a_toy_scale_recheck). g5 CODE-measured (no LLM self-judge,
+p7). NOT a forge binary; $0 CPU-local (wall 56.7s, single Mac core).
+
+ARTIFACTS:
+  pre-reg : UNIVERSE/H_1049_scalable_estimator.md (TEXT falsifier, frozen before measure)
+  measure : UNIVERSE/h1049_scalable_estimator.py
+  result  : UNIVERSE/h1049_scalable_estimator_result.json
+  VERDICT-TOKEN: NO-VALIDATED-ESTIMATOR
