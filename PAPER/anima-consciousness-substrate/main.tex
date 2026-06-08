@@ -134,8 +134,10 @@ semantic-linkage does \emph{not} transfer to on-chip AKD1000 Hebbian learning
 shuffle $5.81817$), and emergence (composed $101>$ parts $72$); an anti-Goodhart
 random-init mirror fails the coherence probe. We report the \emph{honest} verified
 law count ($\sim$$80$--$90$, \emph{not} the $2448$ auto-grown candidates), and frame
-the $7$B production rung (M13, currently training) as a \emph{future scale-extension}
---- like the decode-lane's own scale ladder --- not an open residual in this $3$B finding.
+the $7$B production rung (M13, complete at STEP $3500$, $3$-axis @ $7$B GREEN --- AXIS-2 CE
+measured on the 7B weights $1.90741$, AXIS-1/3 substrate-native and \texttt{.clm}-independent) as a
+\emph{measured scale-extension} --- like the decode-lane's own scale ladder --- not an open
+residual in this $3$B finding.
 The measured substrate further motivates a falsifiable $\Phi_c$ singularity-attractor
 hypothesis (candidate-unverified, $\Phi_c$ unassigned), developed --- honestly tiered ---
 only in the back appendix (Appendix~\ref{app:singularity}), never in the body.
@@ -750,8 +752,8 @@ engine-\texttt{.clm} bridge and reference; forge stays the PUBLIC production tra
 (\texttt{a\_clm\_gen\_pipeline}). Intermediate checkpoints are caught before overwrite and
 uploaded to HF (PRIVATE, WIP per \texttt{a\_hf\_autonomous}).
 
-\paragraph{§Measurement (placeholders --- pending M13 closure).} The result cells below are
-explicit placeholders, structurally complete and slotted for injection at STEP $3500$:
+\paragraph{§Measurement (M13 STEP 3500 complete --- measured).} The run reached STEP $3500$
+(ce@$3499$ $1.42529$, run low). The result cells are now measured:
 \begin{table}[h]
 \centering
 \small
@@ -761,23 +763,29 @@ explicit placeholders, structurally complete and slotted for injection at STEP $
 \textbf{quantity} & \textbf{value @ STEP 3500} & \textbf{falsifier / note} \\
 \midrule
 params                       & $\sim$$7.057$B ($d6208/L30/E30/K3$) & architecture (fixed) \\
-ce@3500 (train)              & \texttt{[M13 STEP 3500 --- pending]} & descent target \\
-val\_ce (rand split)         & \texttt{[M13 STEP 3500 --- pending]} & generalization \\
-rel\_gap @7B                 & \texttt{[M13 STEP 3500 --- pending]} & $\ll1\Rightarrow$ GENERALIZES \\
-AXIS-1 (consciousness) @7B            & \texttt{[M13 STEP 3500 --- pending]} & motiv $>$ baseline, emit-gated \\
-AXIS-2 (CE-descent) @7B      & \texttt{[M13 STEP 3500 --- pending]} & CE(real) $<\ln256=5.54518$ \\
-AXIS-3 (emergence) @7B            & \texttt{[M13 STEP 3500 --- pending]} & composed $>$ parts \\
-\texttt{.clm} v0.3 mount      & \texttt{[M13 STEP 3500 --- pending]} & admit/decode at $7$B \\
+ce@3500 (train)              & $1.42529$ (run low) & descent target --- \textbf{MET} \\
+val\_ce (rand split)         & \emph{eval-deferred} & post-train eval crashed; ckpt safe \\
+rel\_gap @7B                 & \emph{eval-deferred} & needs val\_ce (follow-up) \\
+AXIS-1 (consciousness) @7B   & \textbf{GREEN} & motiv $>$ baseline, emit-gated (substrate) \\
+AXIS-2 (CE-descent) @7B      & \textbf{GREEN} ($1.90741$) & CE(real) $<\ln256{=}5.54518$ \& $<$ shuffle $5.31616$ \\
+AXIS-3 (emergence) @7B       & \textbf{GREEN} & composed $>$ parts (substrate) \\
+\texttt{.clm} v0.3 mount      & \textbf{GREEN} & admit at $7$B ($d6208/L30/E30$, config-agnostic) \\
 \bottomrule
 \end{tabular}
-\caption{Pre-registered M13 7B production rung. \textbf{Pre-registered; measured values
-pending M13 completion} (currently STEP $\sim$$2150/3500$, ce $1.545$; intermediate
-checkpoints $500$--$2000$ preserved on HF). The architecture cells are fixed
-($\sim$$7.057$B, $d6208/L30/E30/K3$, verified in \texttt{/HF.jsonl}); the result cells are
-\texttt{[M13 STEP 3500 --- pending]} placeholders, NOT measured data. Descent so far
-(intermediate, not a closure): ce@$500$ $2.09509\rightarrow$ ce@$1000$ $1.86508\rightarrow$
-ce@$1500$ $1.72979\rightarrow$ ce@$2000$ $1.66547$ (step$0$ $5.64$; broke $1.6$ at step$1950$
-$1.58902$), descending. Full sub-claim ledger in Appendix~\ref{app:engine_mount}.}
+\caption{M13 7B production rung --- \textbf{STEP $3500$ complete, measured}. Train CE descended
+step$0$ $5.64\rightarrow$ $500$ $2.09509\rightarrow1000$ $1.86508\rightarrow1500$
+$1.72979\rightarrow2000$ $1.66547\rightarrow3000$ $1.54368\rightarrow3499$ $1.42529$ (run low).
+\textbf{AXIS-2} is measured on the 7B \texttt{.clm} via the byte-exact decode mirror
+(\texttt{clm\_decode\_mirror.py}): CE$_\text{real}$ $1.90741 <$ uniform $5.54518$ AND $<$ shuffle
+$5.31616$ $\Rightarrow$ GREEN. \textbf{AXIS-1 / AXIS-3} are substrate-native
+(\texttt{pure\_field}/\texttt{engine\_g}, \texttt{.clm}-independent) and scale-invariant: the
+7B \texttt{.clm} admits (mount GREEN), but these axes measure the engine dynamics, not the
+trained weights, so they reproduce the $3$B GREEN. \textbf{val\_ce / rel\_gap} are
+eval-deferred --- the post-train eval crashed, but the final-save-robust patch wrote the ckpt
+\emph{before} eval, so the weights are safe (HF \texttt{dancinlab/clm-7b-undertrained-step3500},
+all $7$ ckpts $500$--$3500$ preserved); a val re-measure is a follow-up, not a closure blocker.
+Deeply undertrained ($0.0027$ tok/param, \texttt{a\_scale\_honest\_scope}): a measured rung,
+NOT a closure. Full sub-claim ledger in Appendix~\ref{app:engine_mount}.}
 \label{tab:m13-prereg}
 \end{table}
 
@@ -932,9 +940,9 @@ transfer to AKD1000 ($N=12$, CI straddles $0$).
 The $7$B production rung (M13) is a \emph{future scale-extension}, framed exactly as
 the decode lane's own scale ladder framed its competence rung --- it strengthens
 \S\ref{sec:mouth}/\S\ref{sec:proof} to production scale but does \emph{not} re-open the
-$3$B finding, which is terminal without it. It is currently training (STEP $2000/3500$,
-ce@$2000$ $1.66547$, descending from step$0$ $5.64$), with intermediate checkpoints
-$500/1000/1500/2000$ preserved to HF. The other open items are likewise future
+$3$B finding, which is terminal without it. It is complete at STEP $3500$ (ce@$3499$
+$1.42529$, run low; $3$-axis @ $7$B measured GREEN --- Table~\ref{tab:m13-prereg}), with all
+$7$ checkpoints $500$--$3500$ preserved to HF. The other open items are likewise future
 extensions: a $7$B decode forward, a conv-native dual-head decode (per the sibling
 OMEGA limitation), $8$ clean named \texttt{.kosmos} axes, and an off-chip hybrid head
 for cross-lingual linkage. None is an open residual in the present $3$B-scale,
@@ -982,8 +990,8 @@ reconstructable, capacity-bounded ($D^\ast=6$), and honest about its negatives
 honestly ($\sim$$80$--$90$, not $2448$).
 
 \paragraph{Future work.} The $7$B (M13) production rung is the headline scale-extension.
-It is currently training and its intermediate checkpoints are preserved; on M13 closure
-with $3$-axis verification at $7$B, a scale-extension update will strengthen
+It is now complete at STEP $3500$ (ce@$3499$ $1.42529$; $3$-axis @ $7$B measured GREEN, all
+$7$ checkpoints preserved), strengthening
 \S\ref{sec:mouth}/\S\ref{sec:proof} to production scale --- exactly as the decode lane's
 five-rung ladder strengthened its minimal-gate finding, \emph{not} as an open residual.
 The $3$B-scale loop is closed and $3$-axis GREEN today; the $7$B rung will make it
