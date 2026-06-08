@@ -22,11 +22,14 @@ n=5 BEFORE scoring via the H_1012 prove_mirrors_at_n discipline (LIVE stdlib ref
 NEVER a proxy. The mirrors are imported by REAL MODULE NAME (h1004/h1012) — same engine code
 the whole toy arc used; ONLY the trajectory source changes (toy WM -> real .clm).
 
-HONEST scope (a_scale_honest_scope): d768 = ONE real-model rung. n<=6 is the largest EXACT
-IIT size. 3B / 7B engine-rung transfer is UNVERIFIED (a real trained model is not a toy, but
-ONE model is not a ladder; the 3B rung needs GPU and is H_1042's job, GATED). Verdict scoped
-to the d768 golden real trained ConvMoE, coarse-grained to n<=6 EXACT. g5 CODE-measured (no
-LLM self-judge, p7). Pure-CPU EXACT, NOT a forge binary.
+HONEST scope (a_scale_honest_scope): d768 = ONE real-model rung, coarse-grained to n=5 EXACT.
+n=6 EXACT was MEASURED-INFEASIBLE here: every real .clm trajectory coarse-grains to a maximal-
+entropy n=6 TPM (on_frac=0.500, all 63 mechanisms active) whose exact big-Phi enumeration is
+super-exponential (>600s/eval at $0 CPU under contention); n=5 big-Phi on the SAME real TPMs
+is ~12s/eval. n=5 satisfies the pre-reg "n<=6 EXACT" bound; n=6 EXACT on real max-entropy TPMs
+is an INFEASIBLE-CAP at $0 CPU (a many-core pod could reach it). 3B / 7B engine-rung transfer
+is UNVERIFIED (a real trained model is not a toy, but ONE model is not a ladder; the 3B rung
+needs GPU and is H_1042's job, GATED). g5 CODE-measured (no LLM self-judge, p7). Pure-CPU EXACT.
 """
 import sys, os, math, time, json, argparse, signal
 import multiprocessing as mp
@@ -54,7 +57,17 @@ welch_t = h1004.welch_t
 prove_mirrors_at_n = h1012.prove_mirrors_at_n
 
 # ── PRE-REGISTERED CONSTANTS (frozen before scoring) ────────────────────────
-N_UNITS    = 6        # n<=6 EXACT (largest exact IIT size)
+# n=5 EXACT: n=6 big-Phi was MEASURED-INFEASIBLE on the REAL d768 TPMs — every real
+# greedy/plan trajectory coarse-grains to a MAXIMAL-entropy n=6 TPM (on_frac=0.500, all
+# 2^6-1=63 mechanisms active), so big-Phi's exact distinction+relation+MIP enumeration
+# is super-exponential and exceeded a 300s/eval cap on ALL 80 evals (a measurement wall,
+# NOT a science result — the toy arc's n=6 worked because toy WM TPMs were sparse/low-
+# entropy). n=5 big-Phi on the SAME real TPMs is ~12s/eval (tractable). n=5 is EXACT,
+# satisfies the pre-reg "n<=6 EXACT" bound, and the mirror is RE-PROVEN ==stdlib at n=5.
+# a_scale_honest_scope: this rung is scoped to n=5 EXACT; n=6 EXACT is INFEASIBLE-CAP on
+# real max-entropy TPMs at $0 CPU (would need a many-core pod, cf the H_1022/H_1037 n=6
+# toy rungs which used a 96-core pool — but those were sparse toy TPMs, far cheaper).
+N_UNITS    = 5        # n=5 EXACT (n=6 measured-infeasible on real max-entropy TPMs)
 N_SEEDS    = 20       # >= the pre-registered 20
 PLAN_DEPTH = 8        # depth-ladder rollout horizon (planning); greedy = depth-0
 T_WIN      = 24       # the .clm decode window length (engine convention)
@@ -225,7 +238,9 @@ def contrast(a, b):
 # The bits are precomputed SERIAL and passed to the worker, so the worker does ONLY the
 # deterministic pure-arithmetic IIT evals (no .clm I/O, no RNG) — fully reproducible.
 # ═══════════════════════════════════════════════════════════════════════════
-_PER_EVAL_TIMEOUT = 300   # per-eval wall cap (s) inside each worker — NON-FATAL
+_PER_EVAL_TIMEOUT = 600   # per-eval wall cap (s) inside each worker — NON-FATAL
+                          # n=5 big-Phi on real TPMs ~12s/eval; 600s is generous headroom
+                          # even under heavy CPU contention (kept non-fatal as a backstop)
 
 
 class _EvalTimeout(Exception):
@@ -361,8 +376,8 @@ def main():
     print("            state/mid_convmoe_fire/clm_decode_mirror.py (memory clm-decode-macos-link-gap)")
     print("big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s, MIP fully enumerated)")
     print("faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)")
-    print("CHEAP .clm rollouts SERIAL; the EXPENSIVE n=6 big-Phi evals over a GUARDED process")
-    print("pool (guarded by __main__, real-module imports, no stdin, hard per-eval timeout) —")
+    print(f"CHEAP .clm rollouts SERIAL; the EXPENSIVE n={N_UNITS} big-Phi evals over a GUARDED process")
+    print("pool (guarded by __main__, real-module imports, no stdin, non-fatal per-eval timeout) —")
     print("the prior FAILURE was an UNGUARDED pool ORPHANED by a dead parent, not the pool itself.")
     print(f"n={N_UNITS} EXACT | {N_SEEDS} seeds | plan depth={PLAN_DEPTH} | eps={EPS} | "
           f"2 macro-maps (top-variance, random) | workers={args.workers}")
@@ -517,15 +532,17 @@ def main():
         print("  NOT of a real trained model -> a publishable closed-negative (a_paper_negative_ok).")
     print(f"  VERDICT-TOKEN: {token}")
     print("=" * 90)
-    print(f"HONEST scope (a_scale_honest_scope): d768 = ONE real-model rung; n={N_UNITS} is the")
-    print("largest EXACT IIT size. 3B / 7B engine-rung transfer is UNVERIFIED (3B needs GPU =")
-    print("H_1042's job, GATED). Verdict scoped to the d768 golden real trained ConvMoE, coarse-")
-    print("grained to n<=6 EXACT, 2 pre-registered macro-maps, 20 real-text seed windows. BOTH")
-    print("CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5 BEFORE scoring (a_phi_iit4_tool; no")
-    print("proxy). Cheap rollouts serial; the expensive n=6 big-Phi over a GUARDED pool (guarded")
-    print("by __main__, real-module imports, no stdin, hard per-eval timeout); each read a pure fn")
-    print("of the fixed .clm bytes. g5 CODE-measured (no LLM self-judge, p7). NOT a forge binary;")
-    print("pure-CPU EXACT. ConvMoE substrate only (a_clm_gen_pipeline).")
+    print(f"HONEST scope (a_scale_honest_scope): d768 = ONE real-model rung at n={N_UNITS} EXACT.")
+    print("n=6 EXACT was MEASURED-INFEASIBLE on the real max-entropy TPMs (on_frac=0.5, all 63")
+    print("mechanisms active -> super-exponential big-Phi >600s/eval at $0 CPU); n=5 on the SAME")
+    print(f"real TPMs is ~12s/eval. n={N_UNITS} satisfies the pre-reg n<=6 bound; n=6 is INFEASIBLE-CAP")
+    print("here (a many-core pod could reach it). 3B / 7B engine-rung transfer UNVERIFIED (3B needs")
+    print("GPU = H_1042, GATED). Verdict scoped to the d768 real ConvMoE coarse-grained to n=5 EXACT,")
+    print("2 pre-registered macro-maps, 20 real-text seed windows. BOTH CPU mirrors RE-PROVEN ==")
+    print("stdlib at n=4 AND n=5 BEFORE scoring (a_phi_iit4_tool; no proxy). Cheap rollouts serial;")
+    print("expensive big-Phi over a GUARDED pool (guarded by __main__, real-module imports, no")
+    print("stdin, non-fatal per-eval timeout); each read a pure fn of the fixed .clm bytes. g5")
+    print("CODE-measured (no LLM self-judge, p7). NOT a forge binary; pure-CPU EXACT. ConvMoE only.")
 
     signal.alarm(0)  # disarm the wall-timeout
     out = dict(clm=args.clm, n=N_UNITS, n_seeds=N_SEEDS, plan_depth=PLAN_DEPTH,
