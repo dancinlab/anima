@@ -1,0 +1,62 @@
+==============================================================================
+H_1041 — imagine-rollout vs MPC on a HARDER control task (H_1034 generalization)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+N_runs=40 ep/run=40  FROZEN depth ladder DEPTHS=[1, 2, 4, 8, 16]  deep-tail=[8, 16]
+GAP_TOL=0.05  Welch p<0.001  CEM(pop=64 iters=5 elite=8) robust N_SCEN=16  no-Phi (a_phi_iit4_tool n/a)
+
+==== H_1034 REPRODUCE CHECK (bit-identical vs stored verdict) ====
+  naive : got [np.float64(-0.3715), np.float64(-0.2623), np.float64(-0.3205), np.float64(-0.4847), np.float64(-0.8746)]  expect [-0.3715, -0.2623, -0.3205, -0.4847, -0.8746]  OK
+  robust: got [np.float64(-0.3702), np.float64(-0.2697), np.float64(-0.3174), np.float64(-0.4787), np.float64(-0.8734)]  expect [-0.3702, -0.2697, -0.3174, -0.4787, -0.8734]  OK
+  imag  : got [np.float64(-0.379), np.float64(-0.2684), np.float64(-0.3167), np.float64(-0.4526), np.float64(-0.7606)]  expect [-0.379, -0.2684, -0.3167, -0.4526, -0.7606]  OK
+  reproduce-H_1034 = PASS (bit-identical)
+
+==== TASK A — NONLINEAR pendulum swing-up (angle-only obs, omega HIDDEN) ====
+  d= 1 [    ]  naive=-8.6962  robust=-8.6980  imagine=-9.0142  best-MPC=-8.6962
+            lead=imag-bestMPC=-0.3180 (Welch p=1.19e-25 d=-3.713) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d= 2 [    ]  naive=-8.6122  robust=-8.6210  imagine=-9.0928  best-MPC=-8.6122
+            lead=imag-bestMPC=-0.4806 (Welch p=7.70e-39 d=-5.566) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d= 4 [    ]  naive=-8.5724  robust=-8.5544  imagine=-9.1552  best-MPC=-8.5544
+            lead=imag-bestMPC=-0.6009 (Welch p=1.71e-38 d=-6.596) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d= 8 [DEEP]  naive=-8.4022  robust=-8.3982  imagine=-9.2318  best-MPC=-8.3982
+            lead=imag-bestMPC=-0.8336 (Welch p=1.70e-61 d=-11.384) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d=16 [DEEP]  naive=-8.3284  robust=-8.3247  imagine=-9.2129  best-MPC=-8.3247
+            lead=imag-bestMPC=-0.8883 (Welch p=3.95e-58 d=-10.276) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  TASK A curves: naive=[np.float64(-8.6962), np.float64(-8.6122), np.float64(-8.5724), np.float64(-8.4022), np.float64(-8.3284)]  robust=[np.float64(-8.698), np.float64(-8.621), np.float64(-8.5544), np.float64(-8.3982), np.float64(-8.3247)]  imag=[np.float64(-9.0142), np.float64(-9.0928), np.float64(-9.1552), np.float64(-9.2318), np.float64(-9.2129)]
+  TASK A deep-tail lead(imag-bestMPC): [(8, np.float64(-0.8336), 'p=1.7e-61', np.False_), (16, np.float64(-0.8883), 'p=3.9e-58', np.False_)]
+  TASK A PASS = False
+
+==== TASK B — PARTIAL-OBS + OBS-NOISE station-keeping (belief tracking, OBS_NOISE=0.15) ====
+  d= 1 [    ]  naive=-0.4541  robust=-0.4695  imagine=-41.5465  best-MPC=-0.4541
+            lead=imag-bestMPC=-41.0924 (Welch p=7.70e-86 d=-167.206) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d= 2 [    ]  naive=-0.3601  robust=-0.3748  imagine=-40.4790  best-MPC=-0.3601
+            lead=imag-bestMPC=-40.1189 (Welch p=3.26e-80 d=-138.291) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d= 4 [    ]  naive=-0.3934  robust=-0.3946  imagine=-37.0149  best-MPC=-0.3934
+            lead=imag-bestMPC=-36.6215 (Welch p=6.40e-74 d=-95.956) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d= 8 [DEEP]  naive=-0.5510  robust=-0.5476  imagine=-29.8333  best-MPC=-0.5476
+            lead=imag-bestMPC=-29.2857 (Welch p=9.11e-76 d=-105.399) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  d=16 [DEEP]  naive=-0.9297  robust=-0.9377  imagine=-23.8623  best-MPC=-0.9297
+            lead=imag-bestMPC=-22.9326 (Welch p=1.38e-69 d=-69.274) [MPC-catches/beats @ GAP_TOL=0.05, p<0.001]
+  TASK B curves: naive(Kalman)=[np.float64(-0.4541), np.float64(-0.3601), np.float64(-0.3934), np.float64(-0.551), np.float64(-0.9297)]  robust(Kalman)=[np.float64(-0.4695), np.float64(-0.3748), np.float64(-0.3946), np.float64(-0.5476), np.float64(-0.9377)]  imag=[np.float64(-41.5465), np.float64(-40.479), np.float64(-37.0149), np.float64(-29.8333), np.float64(-23.8623)]
+  TASK B deep-tail lead(imag-bestMPC): [(8, np.float64(-29.2857), 'p=9.1e-76', np.False_), (16, np.float64(-22.9326), 'p=1.4e-69', np.False_)]
+  TASK B PASS = False
+
+GENERALIZES (>= one harder task PASS) = False  passed=[]  failed=['A-nonlinear', 'B-partial-obs']
+
+------------------------------------------------------------------------------
+VERDICT H_1041: RED IMAGINE-ADVANTAGE-IS-TASK-SPECIFIC (closed-negative, a_paper_negative_ok) — on EVERY harder task an MPC baseline CATCHES or BEATS imagine at deep horizon [8, 16] (lead <= GAP_TOL=0.05 or not Welch-significant p<0.001). TASK A (nonlinear pendulum swing-up) deep tail: d=8: lead=-0.8336 p=1.7e-61 caught; d=16: lead=-0.8883 p=3.9e-58 caught. TASK B (partial-obs + obs-noise, Kalman-belief MPC) deep tail: d=8: lead=-29.2857 p=9.1e-76 caught; d=16: lead=-22.9326 p=1.4e-69 caught. The H_1034 'imagine beats MPC at deep horizon' was specific to stiff-LINEAR CEM-landscape difficulty: when the true dynamics are nonlinear (so the MPC's true-model advantage matters) or the optimal belief is available (Kalman), a true-model MPC reclaims the deep-horizon lead. The MECHANISM (robust/expected-return planning beats a brittle noise-free landscape) transfers, but the HEADLINE (imagine > MPC) does not generalize beyond the stiff-linear toy. reproduce-H_1034 = bit-identical (PASS) before scoring. TOY single rung per task, $0 CPU-local; scale-transfer UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck). a_phi_iit4_tool n/a.
+------------------------------------------------------------------------------
+
+==============================================================================
+PROVENANCE / CONSTRAINTS
+  g5 CODE-measured (control-return metric; a_phi_iit4_tool N/A — no Phi claim).
+  $0 CPU-local, NO pod/GPU, SERIAL, deterministic given seeds, if __name__-guarded
+    (no unguarded Pool — H_1038 hang lesson).
+  reproduce-H_1034 gate: re-ran h1034_imagine_vs_robust_mpc.py planners; curve
+    bit-identical to the stored .verdicts/1034 verdict (PASS) BEFORE scoring H_1041.
+  a_scale_honest_scope / a_toy_scale_recheck: TOY single rung per task; scenario-tube
+    + Kalman-belief variants only; scale-transfer UNVERIFIED.
+  command: python3 UNIVERSE/h1041_imagine_harder_control.py
+  run-date: 2026-06-09
+==============================================================================
