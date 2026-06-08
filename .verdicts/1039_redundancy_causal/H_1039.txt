@@ -1,0 +1,91 @@
+H_1039 — Is the planning Phi sign-split CAUSED by redundancy? (CAUSAL ablation)
+================================================================================
+VERDICT: GREEN — REDUNDANCY-CAUSAL  (H1 PASS)
+DATE: 2026-06-09
+LANE: zero-cost CPU toy, SERIAL (no multiprocessing.Pool, no GPU, no pod).
+PRE-REG: UNIVERSE/H_1039_redundancy_causal.md (merged #1939).
+CODE: UNIVERSE/h1039_redundancy_causal.py ; RESULT JSON: UNIVERSE/h1039_redundancy_causal_result.json
+
+WHAT WAS TESTED
+---------------
+H_1017 (prior GREEN) showed planning's MI rise is REDUNDANCY-DOMINATED (Williams-Beer
+I_min PID Δred >> Δsyn) — a CORRELATIONAL mechanism. H_1039 tests it CAUSALLY: surgically
+REMOVE the redundancy among the planning channels (decorrelate the top-variance channel
+matrix BEFORE median-binarization) and re-measure the faithful_phi-UP / big-Phi-DOWN
+sign-split. PASS = de-redundification COLLAPSES the split while the matched control HOLDS
+it (redundancy causal). FAIL = split SURVIVES (correlated-not-causal).
+
+De-redundification operators (act on the continuous top-variance channels):
+  PRIMARY    = ZCA whitening (symmetric, cov -> ~I, per-channel signal preserved)
+  ROBUSTNESS = Gram-Schmidt orthogonalization (rescaled to original per-channel std)
+
+FROZEN THRESHOLDS (pre-registered, stated BEFORE running):
+  SIGN_EPS = 1e-3 (split = faith contrast > +1e-3 AND big-Phi contrast < -1e-3)
+  RED_REDUCTION_THRESHOLD = 0.20 : redundancy "removed" iff |Δred_dered| <= 0.20*|Δred_control| (>=80% cut)
+
+================================================================================
+MIRROR == stdlib RE-PROOF (a_phi_iit4_tool — BOTH CPU mirrors vs LIVE stdlib IIT4 engines)
+RE-PROVEN AT n=4 AND n=5 BEFORE SCORING (h1012.prove_mirrors_at_n; verbatim):
+================================================================================
+  ── ≡-PROOF at n=4 ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  == mirror-equivalence results: {4: True, 5: True}
+  >>> MIRROR ≡ STDLIB: PROVEN at n=4 AND n=5 (a_phi_iit4_tool; NO proxy used).
+
+DE-REDUNDIFICATION OPERATOR VALIDITY GUARD (STEP 0b):
+  mean|off-diag corr| on redundant block: control=0.9978 -> ZCA=0.0000  GS=0.0000
+  on-fraction (signal/median split intact ~0.5): ZCA=0.500 GS=0.500
+  decorrelation>=90% cut (ZCA&GS): True | signal-preserved: True | dered read deterministic: True
+
+================================================================================
+DE-REDUNDIFIED vs CONTROL — split contrast table (planning(depth-8) - GREEDY @ n=4 EXACT, 30 seeds)
+================================================================================
+  arm        |   faith Δ | faith |  big-Phi Δ | big-Phi |   Δredund | SPLIT
+  control    |   +2.3332 |    UP |    -4.0083 |    DOWN |   +9.3958 |  True
+  dered_zca  |   -0.0709 |  DOWN |    -3.0843 |    DOWN |   -0.2563 | False
+  dered_gs   |   +0.0023 |    UP |    +1.2000 |      UP |   +0.0396 | False
+
+Redundancy reduction (threshold: |Δred_dered| <= 0.20*|Δred_control|, i.e. >=80% cut):
+  control |Δred|=9.3958
+  ZCA     |Δred|=0.2563  cut=97.3%  removed=True
+  GS      |Δred|=0.0396  cut=99.6%  removed=True
+
+  split HELD on control: True
+  split COLLAPSED on de-redundified ZCA (primary): True   (faith flips UP->DOWN -> SPLIT False)
+  split COLLAPSED on de-redundified GS  (robustness): True (big-Phi flips DOWN->UP -> SPLIT False)
+  redundancy removed by ZCA: True | by GS: True
+
+================================================================================
+VERDICT-TOKEN: REDUNDANCY-CAUSAL  (H1 PASS — GREEN)
+================================================================================
+De-redundifying the planning channels REMOVES the Williams-Beer redundancy (97.3% ZCA /
+99.6% GS cut, both clearing the >=80% frozen threshold) AND COLLAPSES the faithful_phi-UP /
+big-Phi-DOWN sign-split (SPLIT False on BOTH de-redundified arms), WHILE the split HOLDS on
+the matched un-orthogonalized control (SPLIT True). The redundancy is therefore the CAUSAL
+driver of the split — H_1017's correlational mechanism is confirmed CAUSALLY. Consistent
+across the ZCA (primary) and Gram-Schmidt (robustness) operators. On the de-redundified
+substrate the engines stop disagreeing: when redundant copies are gone, faithful_phi no
+longer rises on shared info (ZCA: faith goes slightly DOWN) and/or big-Phi no longer falls
+(GS: big-Phi goes UP) — both routes break the sign-disagreement.
+
+HONEST SCOPE (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 EXACT (both engines exact;
+big-Phi super-exponential -> n=4 is the rung for the full SET x 30 seeds; mirrors proven at
+n=4 AND n=5). ZCA = PRIMARY operator, Gram-Schmidt = ROBUSTNESS; PCA-drop / channel-ablation
+are follow-up operators. The Williams-Beer PID is the intervention-VALIDATION variable (it
+confirms the operator actually removed redundancy) — it is NOT a Phi proxy; all Phi numbers
+come from the stdlib IIT4 mirrors only. Production scale UNVERIFIED. g5 CODE-measured (no LLM
+self-judge, p7). SERIAL pure-CPU, $0, no GPU, no pod. NOT a forge binary.
