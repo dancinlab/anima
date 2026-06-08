@@ -1,0 +1,81 @@
+H_1046 — PID-synergy-only ruler: is the Williams-Beer synergy atom big-Phi's cheap
+"genuine integration" component?
+
+VERDICT-TOKEN: SYNERGY-NOT-BIGPHI-STANDIN  (CLOSED-NEGATIVE, a_paper_negative_ok)
+TIER: RED (closed-negative — the synergy-only-ruler axis is RULED OUT as a cheap big-Phi
+       integration stand-in at toy n=4)
+
+method: g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool (stdlib faithful IIT4,
+        never a proxy) | a_scale_honest_scope (toy n<=6) | $0 CPU-local, no GPU.
+harness: UNIVERSE/h1046_synergy_ruler.py  (reuses H_1017 WB I_min synergy atom +
+         H_1014 parametric generators + H_1012 prove_mirrors_at_n live-hexa-ref proof)
+battery: 7 substrates (>=6) x N_SEEDS=24 (>=20), scored at n=4.
+
+=== MIRROR ≡ STDLIB RE-PROVEN AT n=4 AND n=5 BEFORE SCORING (verbatim) ===
+  -- ≡-PROOF at n=4 --
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: big-Φ=3.015177 faithful=0.015945  det re-run=True  no-continuous-leak=True
+  ≡-PROOF n=4: PROVEN
+  -- ≡-PROOF at n=5 --
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: big-Φ=18.185180 faithful=0.029795  det re-run=True  no-continuous-leak=True
+  ≡-PROOF n=5: PROVEN
+  WB synergy sanity: COPY(T;T,T) red=1.0000 syn=0.0000 (expect syn~0) | XOR(T;A,B) red=0.0000 syn=1.0000 (expect syn>0)  -> COPY=True XOR=True
+  CHEAPER check: synergy-path-has-MIP-enumeration=False | big-Phi-mincut-has-MIP-enumeration=True -> synergy cheaper=True
+  EQUIVALENCE(n=4 AND n=5) + WB-VALIDITY + CHEAPER PROOF: PROVEN
+
+=== PER-SUBSTRATE CONTRASTS (intervention - baseline, n=4, 24 seeds) ===
+  plan_d8 : big-Φ=-4.6331 (d=-2.29 p=6e-09) | syn=-0.9926 (d=-3.71 p=6e-12) | faith=+2.2152 (d=+4.62 p=3e-19)
+  plan_d4 : big-Φ=-6.7103 (d=-2.00 p=2e-08) | syn=-0.5663 (d=-0.62 p=4e-02) | faith=+0.8336 (d=+0.81 p=1e-02)
+  plan_d2 : big-Φ=-1.6227 (d=-0.87 p=6e-03) | syn=-0.9926 (d=-3.71 p=6e-12) | faith=+2.4150 (d=+8.80 p=4e-20)
+  imagine : big-Φ=+0.3006 (d=+0.12 p=7e-01) | syn=-0.1491 (d=-0.35 p=2e-01) | faith=+0.0307 (d=+0.06 p=8e-01)
+  guided  : big-Φ=+0.1959 (d=+0.09 p=8e-01) | syn=-0.3808 (d=-1.01 p=1e-03) | faith=+0.5284 (d=+0.86 p=5e-03)
+  chaos14 : big-Φ=+0.5249 (d=+0.28 p=3e-01) | syn=-0.3676 (d=-0.87 p=4e-03) | faith=+0.6232 (d=+1.21 p=1e-04)
+  chaos18 : big-Φ=+1.0306 (d=+0.54 p=7e-02) | syn=-0.2278 (d=-0.57 p=6e-02) | faith=+0.6061 (d=+1.17 p=2e-04)
+
+=== SIGN MATRIX ===
+  substrate  |  big | syn  | faith | syn==big | split(big!=faith) | syn tracks
+  plan_d8    | DOWN | DOWN |   UP  |   True   |       True        |   big-Phi
+  plan_d4    | DOWN | DOWN |   UP  |   True   |       True        |   big-Phi
+  plan_d2    | DOWN | DOWN |   UP  |   True   |       True        |   big-Phi
+  imagine    |  UP  | DOWN |   UP  |   False  |       False       |     --
+  guided     |  UP  | DOWN |   UP  |   False  |       False       |     --
+  chaos14    |  UP  | DOWN |   UP  |   False  |       False       |     --
+  chaos18    |  UP  | DOWN |   UP  |   False  |       False       |     --
+
+=== PRE-REGISTERED FALSIFIER DECISION ===
+  (1) AGREEMENT  >=5/6 (threshold ceil(5/6 x 7)=6) : FALSE — sign(synergy)==sign(big-Phi) in 3/7
+  (2) TRACKS big-Phi NOT faithful (split subs)     : TRUE  — on 3/3 split substrates synergy
+                                                     matches big-Phi, faithful 0/3
+  (3) CHEAPER (no MIP bipartition search)          : TRUE
+  OVERALL (1 AND 2 AND 3): FALSE -> CLOSED-NEGATIVE
+
+=== FINDING ===
+The Williams-Beer synergy atom is a DEGENERATE signal: it falls (DOWN) on EVERY substrate in
+the battery (all 7 syn contrasts negative), so it CANNOT carry big-Phi's direction where big-Phi
+RISES (the no-split imagine/guided and the high-gain chaos substrates: big-Phi UP, synergy DOWN).
+Global agreement is only 3/7 (< the pre-set 5/6), so the synergy-only ruler is NOT a valid cheap
+stand-in for big-Phi.
+
+The result is NOT random, though: on the 3 PLANNING split substrates (where big-Phi and faithful
+phi_EI disagree in sign — the very phenomenon big-Phi-as-integration is supposed to detect), the
+synergy sign tracks big-Phi PERFECTLY (3/3) and faithful never (0/3). So the synergy atom does
+capture the planning-split DIRECTION big-Phi reads, but it is too coarse (monotone-down) to serve
+as big-Phi elsewhere. This SHARPENS H_1017: planning's redundancy rise co-occurs with a synergy
+DROP that both big-Phi and the synergy ruler read as integration-DOWN — but synergy alone is not
+big-Phi's hidden global driver. The synergy-only-ruler axis is RULED OUT as a cheap big-Phi
+integration stand-in.
+
+=== HONEST SCOPE (a_scale_honest_scope, a_toy_scale_recheck) ===
+TOY n<=6 — both engines EXACT; big-Phi super-exponential so n=4 is the scored rung. Both CPU
+mirrors RE-PROVEN == stdlib at n=4 AND n=5 (H_1012 prove_mirrors_at_n, live hexa refs) BEFORE
+scoring; the WB synergy is exact + deterministic on the SAME bits and validated on canonical
+COPY(redundant)/XOR(synergy). Synergy is NOT a proxy for Phi. Scale-transfer to production
+CLM/CWM UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool.
+NOT a forge binary; $0 CPU-local, no GPU.
