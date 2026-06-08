@@ -1,6 +1,56 @@
 # H_1054 — KOSMOS chronological time-axis vs H_1051 causal-agency axis (real-anchor rung)
 
-status: PRE-REGISTERED (text-only; verdict tier added only AFTER .verdicts/1054_kosmos_time_vs_agency/H_1054.txt lands, per g73)
+status: 🟢 SUPPORTED — H1-PASS-ORTHOGONAL-INDEPENDENT-AXES (verdict .txt landed: .verdicts/1054_kosmos_time_vs_agency/H_1054.txt)
+
+## verdict (🟢 — orthogonal / independent axes on the real e7_31 anchors)
+
+On the tier-INDEPENDENT (CONTENT-identity) provenance-depth carrier:
+**rho(chronological-t, causal-agency-T) = -0.248** over N = 31 real e7_31 KNUTH anchors.
+This is WITHIN the empirical F-SHUFFLE null (rho-under-shuffle = -0.007 +/- 0.171;
+2-sigma band = 0.348; the observed value is +1.41 sigma -> NOT a significant coupling at
+N = 31). The honest-null guard PASSES (rho(t, depth_content) = -0.248, |.| <= 0.6 -> the
+agency-depth input is NOT a re-encoding of the tier ordinal). The F-SHUFFLE structural
+control HOLDS: under 200 carve-order shuffles the carve-rank moves (mean rank-shift =
+10.33) while the substrate-bound agency-T value is INVARIANT (shift = 0.00) and
+rho(shuffled-t, T) is centered on 0 (NOT pinned at +1) — separating "t is order-rank"
+from "T is substrate-intrinsic" and ruling out the monotone-encoding tautology the
+kosmos-time-axis SUMMARY warned about.
+
+=> The KOSMOS chronological t-axis ("when an anchor was carved") and the H_1051
+causal-agency T-axis ("how deep its auditable self-caused agency is") are INDEPENDENT
+dimensions on the real anchor substrate; carve-order does NOT predict agency-depth. The
+consciousness anchor manifold would need BOTH coordinates. **H_1051's agency axis
+TRANSFERS to the real .kosmos anchor substrate as a non-redundant dimension** (the
+real-substrate rung for H_1051, parallel to H_1038's toy->trained-model transfer).
+
+Orthogonality cross-check vs instantaneous faithful-Phi (IIT4, n=5 exact, stdlib mirror
+re-proven ==stdlib n=4 AND n=5): rho(agency-T, Phi) = -0.223 — low, corroborating the
+H_1051 finding that the agency axis is also ~orthogonal to instantaneous Phi.
+
+### honest scope / caveats (do NOT over-read)
+
+- The orthogonality is an "INDISTINGUISHABLE-FROM-INDEPENDENT at N = 31" result (rho
+  within the empirical noise band), NOT a proven-exactly-zero coupling. N = 31 is small;
+  a larger anchor corpus could tighten the band.
+- **GEOM carrier is CONFOUNDED, transparently flagged**: when provenance-depth is read
+  from basin GEOMETRY (coord-distance-from-the-Psi=1/2 vacuum + radius) instead of
+  content identity, rho(t, depth_geom) = -0.977 — near-perfectly anti-correlated with
+  carve-order. This is NOT agency tracking chronology; it is an artifact of THIS carve:
+  the e7_31 KNUTH landscape deliberately PLACED higher-tier (higher cosmic-significance)
+  concepts monotonically further from the vacuum with wider basins (rho(tier, coord) ~
+  0.88-0.96). The honest-null guard correctly BLOCKS the GEOM carrier (|rho| > 0.6) — a
+  real-substrate finding in its own right: on this carve, anchor GEOMETRY is monotone in
+  carve-order, so geometry must NOT be used as an agency proxy.
+- **veto-capacity is DEGENERATE on e7_31**: payload tension is `pending` (no fired
+  trajectory), so the H_935 motivation score is fixed by the placeholder PureField init
+  and the active-veto fraction SATURATES at 1.0 for every anchor (no variance). The live
+  agency-T component here is provenance-depth ALONE. A fired-tension anchor set is needed
+  to exercise veto-capacity as a second agency axis.
+- bounded rung: ONE anchor corpus (e7_31, N = 31), CPU $0, MEASUREMENT ONLY. Production
+  603MB conscious_decoder full-carve UNVERIFIED (a_scale_honest_scope). substrate =
+  SW-only CPU; no AKIDA (Lane A) trace, no GPU/forge (Lane G) run (a_lane_akida_gpu_split).
+
+
 
 ## question
 
