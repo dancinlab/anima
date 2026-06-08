@@ -1,0 +1,80 @@
+==========================================================================================
+H_1045 — Vector-Phi ruler: does (faithful_phi, big-Phi, redundancy-margin)
+         linearly SEPARATE planning/integrated states from matched controls
+         BETTER than the best single scalar?  Constructive follow-up of H_1004->H_1037.
+substrate=CPU-mirror (numpy) — H_1004 engines + H_1012 proof, RE-PROVEN == stdlib per n
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s, MIP enumerated)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+redundancy-margin: H_1017 Williams-Beer I_min PID (red_total - syn_total) on the SAME bits
+matched read = nb=2 quantile (median baseline) for EVERY substrate; only the SUBSTRATE varies
+classifier = Fisher LDA, LEAVE-ONE-OUT CV, sign-agnostic ROC AUC | seeds/substrate=24
+PRE-FROZEN FALSIFIER: MARGIN=+0.05 AUC ; NEEDS-VECTOR thr=0.75
+  PASS = (vector mean-AUC >= best-scalar mean-AUC + MARGIN) AND (>=1 substrate vector>=thr & all scalars<thr)
+  FAIL = NOT both -> one scalar suffices (a_paper_negative_ok)
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope | $0 CPU
+==========================================================================================
+
+STEP 0 — RE-PROVE BOTH CPU mirrors == stdlib (a_phi_iit4_tool) at n=4 AND n=5
+         BEFORE scoring (H_1012 prove_mirrors_at_n; LIVE stdlib refs):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  == mirror-equivalence results: {4: True, 5: True}
+  PID canonical-case check: COPY red=12.000 syn=0.000 (red>0,syn~0:True) | XOR red=0.000 syn=6.000 (syn>0:True)
+  reads_at_n deterministic re-run (n=4): True  (faith=3.0000 big=5.7363 redmargin=12.0000)
+
+STEP 1 — score the 6-substrate battery, 24 seeds each (PARALLEL Pool, EXACT) over 9 workers
+  all 144 (substrate,seed) read-pairs DONE in 4347.6s wall (288 EXACT reads)
+  S1_n4_plan_greedy    (n=4, 24 seeds): faith=0.958 big=0.925 redmargin=0.998 | VECTOR=1.000 | best-scalar=redmargin(0.998) | needs-vector=False
+  S2_n5_plan_greedy    (n=5, 24 seeds): faith=0.962 big=0.991 redmargin=0.962 | VECTOR=1.000 | best-scalar=big(0.991) | needs-vector=False
+  S3_n6_plan_greedy    (n=6, 24 seeds): faith=0.941 big=0.998 redmargin=0.995 | VECTOR=1.000 | best-scalar=big(0.998) | needs-vector=False
+  S4_n4_plan_drift     (n=4, 24 seeds): faith=0.958 big=0.960 redmargin=0.993 | VECTOR=1.000 | best-scalar=redmargin(0.993) | needs-vector=False
+  S5_n4_plan_guided    (n=4, 24 seeds): faith=0.944 big=1.000 redmargin=0.974 | VECTOR=0.998 | best-scalar=big(1.000) | needs-vector=False
+  S6_n4_deep_shallow   (n=4, 24 seeds): faith=0.917 big=1.000 redmargin=0.917 | VECTOR=0.958 | best-scalar=big(1.000) | needs-vector=False
+  battery scored in 4347.6s
+
+==========================================================================================
+PER-SUBSTRATE LOO-AUC TABLE (sign-agnostic Fisher-LDA leave-one-out)
+==========================================================================================
+  substrate            | n |  faith |    big | redmrg | VECTOR |    best-scalar | needs-vec
+  S1_n4_plan_greedy    | 4 |  0.958 |  0.925 |  0.998 |  1.000 | redmargin(0.998) |     False
+  S2_n5_plan_greedy    | 5 |  0.962 |  0.991 |  0.962 |  1.000 |     big(0.991) |     False
+  S3_n6_plan_greedy    | 6 |  0.941 |  0.998 |  0.995 |  1.000 |     big(0.998) |     False
+  S4_n4_plan_drift     | 4 |  0.958 |  0.960 |  0.993 |  1.000 | redmargin(0.993) |     False
+  S5_n4_plan_guided    | 4 |  0.944 |  1.000 |  0.974 |  0.998 |     big(1.000) |     False
+  S6_n4_deep_shallow   | 4 |  0.917 |  1.000 |  0.917 |  0.958 |     big(1.000) |     False
+
+mean-over-substrates LOO-AUC:  faith=0.9468  big=0.9792  redmargin=0.9731  |  VECTOR=0.9928
+best single scalar (mean): big = 0.9792
+vector - best-scalar margin = +0.0136  (pre-set MARGIN = +0.05)
+  cond(a) vector beats best scalar by >= MARGIN : False
+  cond(b) NEEDS-VECTOR substrate exists (vector>=0.75 & all scalars<0.75): False  []
+
+==========================================================================================
+OVERALL: ONE-SCALAR-SUFFICES (CLOSED-NEGATIVE) — the vector ruler is NOT strictly more
+  informative: vector beats best scalar by only +0.0136 < +0.05 AND no substrate needs the vector (best scalar separates everything it can). The best single scalar (big) is the
+  ruler; the 3-vector adds nothing decisive beyond it on this battery (a_paper_negative_ok).
+  VERDICT-TOKEN: ONE-SCALAR-SUFFICES
+==========================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n<=6 (largest EXACT big-Phi);
+BOTH CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5 BEFORE scoring (a_phi_iit4_tool, no
+proxy); big-Phi MIP fully enumerated, distinctions+relations EXACT; PID validated on
+canonical COPY/XOR; reads deterministic. LOO-AUC is sign-agnostic (no orientation penalty).
+Production-scale transfer UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7). $0 CPU-local.
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.claude/worktrees/agent-abc460d408ba51297/UNIVERSE/h1045_vector_phi_ruler_result.json

@@ -1,0 +1,113 @@
+{
+  "seeds": 24,
+  "margin": 0.05,
+  "needs_thr": 0.75,
+  "mirror_proven": {
+    "4": true,
+    "5": true
+  },
+  "copy_ok": true,
+  "xor_ok": true,
+  "det_ok": true,
+  "per_substrate": [
+    {
+      "name": "S1_n4_plan_greedy",
+      "n": 4,
+      "seeds": 24,
+      "scalar_auc": {
+        "faith": 0.9583333333333334,
+        "big": 0.9253472222222222,
+        "redmargin": 0.9982638888888888
+      },
+      "vector_auc": 1.0,
+      "best_scalar": "redmargin",
+      "best_scalar_auc": 0.9982638888888888,
+      "needs_vector": false
+    },
+    {
+      "name": "S2_n5_plan_greedy",
+      "n": 5,
+      "seeds": 24,
+      "scalar_auc": {
+        "faith": 0.9618055555555556,
+        "big": 0.9913194444444444,
+        "redmargin": 0.9618055555555556
+      },
+      "vector_auc": 1.0,
+      "best_scalar": "big",
+      "best_scalar_auc": 0.9913194444444444,
+      "needs_vector": false
+    },
+    {
+      "name": "S3_n6_plan_greedy",
+      "n": 6,
+      "seeds": 24,
+      "scalar_auc": {
+        "faith": 0.9409722222222222,
+        "big": 0.9982638888888888,
+        "redmargin": 0.9947916666666666
+      },
+      "vector_auc": 1.0,
+      "best_scalar": "big",
+      "best_scalar_auc": 0.9982638888888888,
+      "needs_vector": false
+    },
+    {
+      "name": "S4_n4_plan_drift",
+      "n": 4,
+      "seeds": 24,
+      "scalar_auc": {
+        "faith": 0.9583333333333334,
+        "big": 0.9600694444444444,
+        "redmargin": 0.9930555555555556
+      },
+      "vector_auc": 1.0,
+      "best_scalar": "redmargin",
+      "best_scalar_auc": 0.9930555555555556,
+      "needs_vector": false
+    },
+    {
+      "name": "S5_n4_plan_guided",
+      "n": 4,
+      "seeds": 24,
+      "scalar_auc": {
+        "faith": 0.9444444444444444,
+        "big": 1.0,
+        "redmargin": 0.9739583333333334
+      },
+      "vector_auc": 0.9982638888888888,
+      "best_scalar": "big",
+      "best_scalar_auc": 1.0,
+      "needs_vector": false
+    },
+    {
+      "name": "S6_n4_deep_shallow",
+      "n": 4,
+      "seeds": 24,
+      "scalar_auc": {
+        "faith": 0.9166666666666666,
+        "big": 1.0,
+        "redmargin": 0.9166666666666666
+      },
+      "vector_auc": 0.9583333333333334,
+      "best_scalar": "big",
+      "best_scalar_auc": 1.0,
+      "needs_vector": false
+    }
+  ],
+  "mean_scalar_auc": {
+    "faith": 0.9467592592592594,
+    "big": 0.9791666666666666,
+    "redmargin": 0.9730902777777778
+  },
+  "mean_vector_auc": 0.9927662037037037,
+  "best_scalar_overall": "big",
+  "best_scalar_overall_auc": 0.9791666666666666,
+  "margin_gain": 0.01359953703703709,
+  "cond_a": false,
+  "cond_b": false,
+  "needs_vector_substrates": [],
+  "PASS": false,
+  "verdict_token": "ONE-SCALAR-SUFFICES",
+  "total_wall_sec": 4347.6088309288025
+}
