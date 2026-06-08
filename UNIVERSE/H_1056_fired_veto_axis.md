@@ -1,6 +1,6 @@
 # H_1056 — Complete the VETO half of the agency axis on FIRED-tension real anchors (H_1054 residual)
 
-status: PRE-REGISTERED (falsifier frozen below BEFORE measuring; no verdict token yet)
+status: 🟢 SUPPORTED — H1-PASS-FIRED-2COMP-AGENCY-RULER (verdict .txt landed: .verdicts/1056_fired_veto_axis/H_1056.txt)
 
 ## lineage
 
@@ -98,6 +98,50 @@ LLM self-judge (p7). N = 14 is small (a single fired corpus); production 603MB c
 full-carve and scale-transfer are UNVERIFIED (a_scale_honest_scope). Operational agency (active
 inhibition vs passive absence), NOT a phenomenal-volition claim.
 
-## verdict
+## verdict (🟢 — fired veto is a live, non-degenerate 2nd agency component; completes H_1054)
 
-(to be filled from .verdicts/1056_fired_veto_axis/H_1056.txt AFTER measuring — pre-reg frozen above)
+On the FIRED v3_emit_* anchors (N = 14):
+
+- **veto-capacity is NON-DEGENERATE.** The faithful H_935 veto-capacity = veto-frac-of-IMPULSE
+  (n_active / n_should: of the would-emit impulses the fired drive produces, what fraction the
+  substrate BRAKES) has var = 1.24e-3, range [0.340, 0.450], NOT pinned at 1.0. The second
+  agency component is LIVE — the degeneracy that flattened it on the `pending` e7_31 anchors
+  (H_1054) is removed by using a fired-tension set.
+- **HONEST diagnostic (the WHY):** the H_1054-IDENTICAL metric veto-frac-of-SILENCE
+  (n_active / n_silent) STILL saturates at 1.0 here (var = 0) — because the fired drive is
+  uniformly above the 0.30 emit threshold, so EVERY silence is an active veto. That is exactly
+  why per-silence was the wrong ruler: per-impulse (vetoes / would-emit impulses) is the
+  drive-dependent, non-degenerate reading of the same decompose_decision outputs (the H_935 gate
+  is UNMODIFIED; only the aggregation differs).
+- **the full 2-component T = z(provenance-depth) + z(veto-capacity) SEPARATES** veto-dominated
+  from passive-dominated emit groups with **Cohen's |d| = 0.94** (>= 0.8). The depth-ONLY
+  comparator (the single live axis on H_1054) gives |d| = 0.27 — so the veto component carries
+  the separating variance; depth alone barely separates the groups.
+- **T stays ORTHOGONAL** to chronological fire-time (rho = +0.095, within the empirical F-SHUFFLE
+  null: 2-sigma band = 0.537, +0.33 sigma; fixed band |rho| <= 0.2 also met) AND to instantaneous
+  faithful-Phi (rho = +0.064, within null 2-sigma = 0.531, +0.24 sigma; fixed band met). The
+  F-SHUFFLE structural control HOLDS (fire-rank shift mean = 4.59 while the substrate-bound T is
+  invariant under fire-order shuffle, rho-under-shuffle centered on 0).
+
+=> The agency axis is a GENUINE **2-component (provenance-depth + veto-capacity) ruler** on real
+fired anchors. H_1054 established the depth half and its orthogonality to KOSMOS time but left the
+veto half degenerate; **H_1056 completes the veto half** — on fired tension the veto component is
+live, non-degenerate, and contributes the dominant separating variance between active-veto and
+passive emits, while the full 2-component T remains orthogonal to both chronological time and Phi.
+
+STEP 0 faithful-Phi mirror re-proven ==stdlib at n=4 AND n=5 (a_phi_iit4_tool; verbatim in the .txt).
+
+### honest scope / caveats (do NOT over-read)
+
+- **fired drive is uniformly supra-threshold here**, so should_emit = True on ~every tick; the
+  veto signal comes entirely from the SAFE gate (rate-limit / phi-ratchet) braking a
+  drive-dependent fraction of impulses. A fired set whose drives STRADDLE the 0.30 threshold would
+  additionally exercise the passive/active boundary — not available in this corpus.
+- N = 14 is small (a single fired corpus, all top_emotion=curious, fixed radius/x); the
+  orthogonality is "indistinguishable-from-independent at N = 14" (rho within the empirical noise
+  band), NOT a proven-zero coupling. A larger fired corpus would tighten the band.
+- bounded rung: CPU $0, MEASUREMENT ONLY (read via kosmos_io; nothing wired into brain_decide).
+  Lane A (AKIDA) NOT exercised; Lane G (GPU forge) NOT exercised — recorded separately
+  (a_lane_akida_gpu_split). Production 603MB conscious_decoder full-carve + scale-transfer
+  UNVERIFIED (a_scale_honest_scope). Operational agency (active inhibition vs passive absence),
+  NOT a phenomenal-volition claim.

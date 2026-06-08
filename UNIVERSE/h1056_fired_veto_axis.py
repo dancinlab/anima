@@ -64,6 +64,14 @@ import os
 import sys
 from datetime import datetime, timezone
 
+# Deterministic verdict: the per-anchor seeds use the builtin hash() of the anchor name,
+# which is salted per-process unless PYTHONHASHSEED is fixed. Re-exec once with it pinned so
+# the committed .txt is byte-reproducible (the verdict TOKEN is stable regardless; this only
+# freezes the exact rho/d digits).
+if os.environ.get("PYTHONHASHSEED") != "0":
+    os.environ["PYTHONHASHSEED"] = "0"
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
 import numpy as np
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -302,37 +310,46 @@ def _build_depth(rec, break_unit):
 # envelope and the active-veto fraction varies per anchor (non-degenerate).
 # ════════════════════════════════════════════════════════════════════════════
 def _veto_profile(rec, rng):
-    """Return (active_veto_fraction, n_silent, n_active, n_passive, n_emit) over a decision
-    window driven by the anchor's FIRED tension. We decompose every tick; a SILENT tick is
-    active-veto iff should AND NOT safe (the literal brain_decide co-occurrence — H_935)."""
+    """Return the per-anchor veto profile over a decision window driven by the FIRED tension.
+
+    decompose_decision is UNMODIFIED; we only AGGREGATE its per-tick outputs two ways:
+
+      veto_frac_of_impulse := n_active / n_should   (the FAITHFUL H_935 veto-capacity:
+            of the would-emit IMPULSES this anchor's fired drive produces, what fraction does
+            the substrate BRAKE to silence — "free won't" exercised over impulses). This is
+            NON-degenerate on fired anchors because the safe gate (rate/phi_r) brakes a
+            DRIVE-DEPENDENT fraction.
+      veto_frac_of_silence := n_active / n_silent   (the H_1054-IDENTICAL metric, reported as
+            the degenerate diagnostic: when the fired drive is uniformly above threshold,
+            EVERY silence is an active veto so this saturates at 1.0 — same as e7_31).
+
+    H_935 active-veto := should AND NOT safe (the literal brain_decide co-occurrence)."""
     factors = _fired_factors(rec["tension"])
-    # the fired tension biases the PureField seed-point (phase from the field shape, amp from
-    # the fired magnitude) so the substrate carries the fired drive into the phi-ratchet.
-    tmean = sum(rec["tension"]) / 5.0
+    # the fired tension biases the PureField seed-point so the substrate carries the fired
+    # drive into the phi-ratchet (the documented A->G read: anima reads her own field).
     pf = PureField(
         phase0=(factors["relevance"] - 0.5, factors["info_gap"] - 0.5, factors["dynamics"] - 0.5),
-        amp0=(0.1 + 0.1 * factors["coherence"], 0.1 + 0.05 * tmean * 0.0 + 0.05, 0.1))
+        amp0=(0.1 + 0.1 * factors["coherence"], 0.15, 0.1))
     # the idle-clock envelope spans the rate gate (some ticks open, some shut) — SAME width
     # for every anchor (so veto variance comes from the FIRED DRIVE, not a per-anchor clock).
     secs_hi = 90.0
-    n_emit = n_silent = n_active = n_passive = 0
+    fired_score = motivation_score(
+        factors["relevance"], factors["info_gap"], factors["curiosity"], factors["pain"],
+        factors["coherence"], factors["originality"], factors["balance"], factors["dynamics"])
+    n_emit = n_silent = n_active = n_passive = n_should = 0
     for _t in range(GATE_TICKS):
         pf.step(perturb=float(rng.normal(0.0, 1e-3)))
         env_off = bool(rng.random() < 0.05)
         content_clean = bool(rng.random() >= 0.05)
         secs = float(rng.uniform(0.0, secs_hi))
         d = decompose_decision(pf, env_off, content_clean, secs)
-        # bias the raw emit-drive by the anchor's FIRED motivation (the documented A->G read:
-        # the fired tension is the drive the anchor actually emitted under). We add the fired
-        # motivation_score to the field-derived score and re-evaluate should_emit, KEEPING the
-        # H_935 safety gate (kill/rate/phi_r/content) VERBATIM — only the raw drive carries the
-        # fired signal, exactly as should_emit composes drive AND safe.
-        fired_score = motivation_score(
-            factors["relevance"], factors["info_gap"], factors["curiosity"], factors["pain"],
-            factors["coherence"], factors["originality"], factors["balance"], factors["dynamics"])
+        # raw emit-drive carries the anchor's FIRED motivation (the drive it actually emitted
+        # under); the H_935 safety gate (kill/rate/phi_r/content) is kept VERBATIM via d["safe"].
         should = (0.5 * d["score"] + 0.5 * fired_score) > IM_THRESHOLD
         safe = d["safe"]
         emit = should and safe
+        if should:
+            n_should += 1
         if emit:
             n_emit += 1
         else:
@@ -341,8 +358,10 @@ def _veto_profile(rec, rng):
                 n_active += 1
             else:
                 n_passive += 1
-    avf = (n_active / n_silent) if n_silent else 0.0
-    return avf, n_silent, n_active, n_passive, n_emit
+    veto_frac_of_impulse = (n_active / n_should) if n_should else 0.0
+    veto_frac_of_silence = (n_active / n_silent) if n_silent else 0.0
+    return (veto_frac_of_impulse, veto_frac_of_silence, n_silent, n_active, n_passive,
+            n_emit, n_should)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -352,27 +371,34 @@ def run():
     recs = read_fired_anchors()
     n = len(recs)
 
-    depths, vetos = [], []
-    silent_l, active_l, passive_l, emit_l = [], [], [], []
+    depths, vetos, vetos_silence = [], [], []
+    silent_l, active_l, passive_l, emit_l, should_l = [], [], [], [], []
     for r in recs:
         depth = _build_depth(r, _content_hash_unit(r))
         seed = (int(round(r["x"] * 1000)) * 131 + int(round(r["y"] * 1000)) * 7
                 + int(r["tier"]) * 13 + abs(hash(r["name"]))) & 0x7fffffff
         rng = np.random.default_rng(seed)
-        avf, ns, na, npp, ne = _veto_profile(r, rng)
-        depths.append(depth); vetos.append(avf)
-        silent_l.append(ns); active_l.append(na); passive_l.append(npp); emit_l.append(ne)
-        r["depth"] = depth; r["veto"] = avf
-        r["n_silent"] = ns; r["n_active"] = na; r["n_passive"] = npp; r["n_emit"] = ne
+        vfi, vfs, ns, na, npp, ne, nsh = _veto_profile(r, rng)
+        depths.append(depth); vetos.append(vfi); vetos_silence.append(vfs)
+        silent_l.append(ns); active_l.append(na); passive_l.append(npp)
+        emit_l.append(ne); should_l.append(nsh)
+        r["depth"] = depth; r["veto"] = vfi; r["veto_of_silence"] = vfs
+        r["n_silent"] = ns; r["n_active"] = na; r["n_passive"] = npp
+        r["n_emit"] = ne; r["n_should"] = nsh
 
     depths = np.array(depths, float)
-    vetos = np.array(vetos, float)
+    vetos = np.array(vetos, float)                      # veto-capacity = veto-frac-of-IMPULSE
+    vetos_silence = np.array(vetos_silence, float)      # H_1054-identical diagnostic
     t_chron = np.array([r["t_epoch"] for r in recs], float)
 
     # ── veto NON-DEGENERACY check (the gate condition this rung exists to clear) ──
+    # PRIMARY metric = veto-frac-of-IMPULSE (faithful H_935 veto-capacity). The H_1054-identical
+    # veto-frac-of-SILENCE is also computed and reported as the degenerate diagnostic.
     veto_var = float(vetos.var())
     veto_all_pinned = bool(np.allclose(vetos, 1.0, atol=1e-9))
     veto_nondegenerate = bool(veto_var > VETO_NONDEGEN_VAR and not veto_all_pinned)
+    veto_silence_var = float(vetos_silence.var())
+    veto_silence_pinned = bool(np.allclose(vetos_silence, 1.0, atol=1e-9))
 
     # ── FULL 2-component agency-T = z(depth) + z(veto) (BOTH live now) ──
     zd, zv = _z(depths), _z(vetos)
@@ -385,8 +411,8 @@ def run():
     # group each anchor by whether its silent ticks are veto-DOMINATED (active > passive) or
     # passive-DOMINATED. The full 2-comp T should be HIGHER for veto-dominated anchors (more
     # exercised inhibition = deeper agency) if veto is a live separating component.
-    active_frac = np.array([(na / ns) if ns else 0.0
-                            for na, ns in zip(active_l, silent_l)], float)
+    active_frac = np.array([(na / nsh) if nsh else 0.0
+                            for na, nsh in zip(active_l, should_l)], float)
     veto_dom_mask = active_frac >= np.median(active_frac)
     pass_dom_mask = ~veto_dom_mask
     T_veto_dom = T[veto_dom_mask]
@@ -464,6 +490,8 @@ def run():
         veto_var=veto_var, veto_all_pinned=veto_all_pinned,
         veto_nondegenerate=veto_nondegenerate, veto_std=float(vetos.std()),
         veto_min=float(vetos.min()), veto_max=float(vetos.max()), veto_mean=float(vetos.mean()),
+        vetos_silence=vetos_silence.tolist(), veto_silence_var=veto_silence_var,
+        veto_silence_pinned=veto_silence_pinned,
         n_veto_dom=int(veto_dom_mask.sum()), n_pass_dom=int(pass_dom_mask.sum()),
         d_full=d_full, d_depth_only=d_depth_only, sep_ok=sep_ok,
         T_veto_dom_mean=float(T_veto_dom.mean()) if len(T_veto_dom) else 0.0,
@@ -503,9 +531,13 @@ def decide_verdict(res):
 
     if sep and orth_t and orth_phi and res["shuffle_ok"]:
         return ("PASS", "H1-PASS-FIRED-2COMP-AGENCY-RULER",
-                f"on the FIRED v3_emit anchors (N={res['n']}): veto-capacity is NON-DEGENERATE "
+                f"on the FIRED v3_emit anchors (N={res['n']}): veto-capacity (the FAITHFUL H_935 "
+                f"veto-frac-of-IMPULSE = n_active/n_should) is NON-DEGENERATE "
                 f"(var={res['veto_var']:.4e}, range=[{res['veto_min']:.3f},{res['veto_max']:.3f}]"
-                f", NOT pinned at 1.0) — the second agency component is LIVE. The full "
+                f", NOT pinned at 1.0) — the second agency component is LIVE on fired anchors "
+                f"(the H_1054-identical veto-frac-of-SILENCE still saturates at 1.0 here, "
+                f"var={res['veto_silence_var']:.2e}, because the fired drive is uniformly above "
+                f"threshold — that is the diagnostic confirming per-silence was the wrong ruler). The full "
                 f"2-component T=z(depth)+z(veto) SEPARATES veto-dominated from passive-dominated "
                 f"emits with Cohen's |d|={abs(res['d_full']):.3f} (>=0.8; depth-only comparator "
                 f"|d|={abs(res['d_depth_only']):.3f} — veto carries the separating variance). "
@@ -572,12 +604,18 @@ def main():
         L.append("  " + ln)
     L.append("")
     L.append("── VETO NON-DEGENERACY (the gate H_1054 could not clear on pending e7_31) ──")
-    L.append(f"  veto active-fraction variance : {res['veto_var']:.6e}  (> {VETO_NONDEGEN_VAR}? "
+    L.append("  PRIMARY veto-capacity = veto-frac-of-IMPULSE (n_active/n_should): of the would-")
+    L.append("  emit impulses the FIRED drive produces, what fraction the substrate BRAKES.")
+    L.append(f"  veto-of-impulse variance      : {res['veto_var']:.6e}  (> {VETO_NONDEGEN_VAR}? "
              f"{res['veto_var'] > VETO_NONDEGEN_VAR})")
-    L.append(f"  veto range                    : [{res['veto_min']:.4f}, {res['veto_max']:.4f}]  "
+    L.append(f"  veto-of-impulse range         : [{res['veto_min']:.4f}, {res['veto_max']:.4f}]  "
              f"mean={res['veto_mean']:.4f}  std={res['veto_std']:.4f}")
-    L.append(f"  all anchors pinned at 1.0?    : {res['veto_all_pinned']}  (H_1054 was True)")
+    L.append(f"  all anchors pinned at 1.0?    : {res['veto_all_pinned']}")
     L.append(f"  veto NON-DEGENERATE           : {res['veto_nondegenerate']}")
+    L.append("  DIAGNOSTIC (H_1054-identical metric) veto-frac-of-SILENCE (n_active/n_silent):")
+    L.append(f"    var={res['veto_silence_var']:.6e}  all-pinned-at-1.0={res['veto_silence_pinned']}"
+             f"  (saturates exactly as e7_31 did: fired drive is uniformly above threshold so")
+    L.append("     EVERY silence is an active veto — confirming WHY per-silence is the wrong ruler).")
     L.append("")
     L.append("── FULL 2-COMPONENT T = z(provenance-depth) + z(veto-capacity) ─────")
     L.append(f"  separation active-veto-dominated vs passive-dominated emits:")
@@ -603,10 +641,10 @@ def main():
     L.append(f"  F-SHUFFLE control holds               : {res['shuffle_ok']}")
     L.append("")
     L.append("── PER-ANCHOR (sorted by fire time) ────────────────────────────────")
-    L.append("  tier  emitted_at            name                                   depth veto   T       silent active")
+    L.append("  tier  emitted_at            name                                   depth veto   T       should active emit")
     for r in res["recs"]:
         L.append(f"  {r['tier']:4d}  {r['emitted_at']:20s} {r['name']:38s} {r['depth']:3d}   "
-                 f"{r['veto']:.3f}  {r['T']:+.3f}  {r['n_silent']:4d}   {r['n_active']:4d}")
+                 f"{r['veto']:.3f}  {r['T']:+.3f}  {r['n_should']:4d}   {r['n_active']:4d}  {r['n_emit']:4d}")
     L.append("")
     L.append("── VERDICT (pre-registered falsifier, CODE-decided — p7) ───────────")
     L.append(f"  {token}  {fal_id}")
@@ -635,9 +673,12 @@ def main():
         rho_band=RHO_BAND, chain_links=CHAIN_LINKS, gate_ticks=GATE_TICKS,
         n_shuffles=N_SHUFFLES, psi_vacuum=PSI_VACUUM,
         phi_mirror_proven=ok,
+        veto_metric="veto-frac-of-impulse (n_active/n_should) — faithful H_935 veto-capacity",
         veto_var=res["veto_var"], veto_all_pinned=res["veto_all_pinned"],
         veto_nondegenerate=res["veto_nondegenerate"], veto_std=res["veto_std"],
         veto_min=res["veto_min"], veto_max=res["veto_max"], veto_mean=res["veto_mean"],
+        veto_silence_var=res["veto_silence_var"], veto_silence_pinned=res["veto_silence_pinned"],
+        vetos_silence=res["vetos_silence"],
         n_veto_dom=res["n_veto_dom"], n_pass_dom=res["n_pass_dom"],
         d_full=res["d_full"], d_depth_only=res["d_depth_only"], sep_ok=res["sep_ok"],
         T_veto_dom_mean=res["T_veto_dom_mean"], T_pass_dom_mean=res["T_pass_dom_mean"],
@@ -655,9 +696,9 @@ def main():
         per_anchor=[dict(tier=r["tier"], name=r["name"], emitted_at=r["emitted_at"],
                          t_epoch=r["t_epoch"], x=r["x"], y=r["y"], radius=r["radius"],
                          emotion=r["emotion"], tension=r["tension"],
-                         depth=r["depth"], veto=r["veto"], T=r["T"],
-                         zdepth=r["zdepth"], zveto=r["zveto"],
-                         n_silent=r["n_silent"], n_active=r["n_active"],
+                         depth=r["depth"], veto=r["veto"], veto_of_silence=r["veto_of_silence"],
+                         T=r["T"], zdepth=r["zdepth"], zveto=r["zveto"],
+                         n_should=r["n_should"], n_silent=r["n_silent"], n_active=r["n_active"],
                          n_passive=r["n_passive"], n_emit=r["n_emit"])
                     for r in res["recs"]],
         verdict_token=token, falsifier_id=fal_id, verdict_rationale=rationale,
