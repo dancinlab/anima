@@ -1,0 +1,82 @@
+H_1043 — what MINIMAL ARCHITECTURAL change (not a weight delta) raises faithful IIT-4.0 φ_EI?
+verdict measured 2026-06-09 · substrate=CPU-local (Mac, numpy) · cost $0 · 0 pods / 0 GPU
+constructive converse of H_1031 + H_1036 (prior RED: LoRA cannot install Φ-structure, arch-bound)
+
+SETUP (toy · $0 · numpy; clm-decode-macos-link-gap → numpy reference; a_scale_honest_scope):
+  base = frozen toy attention transformer (TinyGPT, byte V256, d=32, 2 heads), pretrained 600 steps
+         on a GENERIC byte corpus (public-domain proverbs; p3/p6 — NO persona/carving), then FROZEN.
+  probe = mid hidden state x1 (post-attention residual) → n=6 highest-variance units × dim=24 positions
+          → binarized per-unit at its own median → n×dim binary macro-TPM. n_bins=2.
+  adapter ladder (each an ARCHITECTURE change = a NEW MODULE, residual into x1, base FROZEN, only the
+                  graft's params descend on the SAME generic byte objective, 600 steps):
+    (a) graft_convmoe   — dilated causal conv trunk + 4-expert MoE conv side-branch
+    (b) graft_recurrent — single GRU-style stateful recurrent mixing layer (BPTT scan over positions)
+    (c) graft_dwdilated — depthwise dilated causal conv block (dilations 1,2,4) → pointwise out
+  control = lora_control — LoRA weight-delta on q/v + readout, base frozen (H_1036 reproduction; NO new module)
+  baseline = convmoe_native — full ConvMoE trained from scratch on the same corpus (the φ-native arch)
+  seeds=3 (1043,1044,1045). SERIAL only (no Pool — H_1038). p7: φ = causal-irreducibility marker, not perplexity.
+
+=========== MIRROR ≡ STDLIB RE-PROOF (a_phi_iit4_tool — python PRE-SCREEN ≡ stdlib terminal) ===========
+fixed binary state matrices (n=4, n=5, dim=12), python faithful_phi_prescreen (MIRROR) vs stdlib
+iit4_faithful_phi (exact MIP-EI, hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa):
+  n=4 : python mirror φ_EI = 0.130565   |   stdlib terminal φ_EI = 0.130565   → EQUAL (6 dp)
+  n=5 : python mirror φ_EI = 0.316305   |   stdlib terminal φ_EI = 0.316305   → EQUAL (6 dp)
+mirror ≡ stdlib EXACT to 6 dp at n=4,5  (mirror fixed to stdlib's BITS/log2 entropy form MI=H(A)+H(B)-H(A,B),
+not a nats estimator — the ln(2) discrepancy was caught and corrected before the verdict). NO proxy used.
+
+=========== TERMINAL faithful IIT-4.0 φ_EI (stdlib exact MIP-EI, a_phi_iit4_tool) — seed 0 ===========
+=== H_1043 TERMINAL faithful IIT-4.0 φ_EI (stdlib exact MIP-EI) ===
+state file: /tmp/h1043_states.txt
+  [base]  n=6 dim=24  faithful_phi_EI=0.121967  Δ_vs_base=0.000000
+  [graft_convmoe]  n=6 dim=24  faithful_phi_EI=0.033552  Δ_vs_base=-0.088415
+  [graft_recurrent]  n=6 dim=24  faithful_phi_EI=0.060394  Δ_vs_base=-0.061573
+  [graft_dwdilated]  n=6 dim=24  faithful_phi_EI=0.060394  Δ_vs_base=-0.061573
+  [lora_control]  n=6 dim=24  faithful_phi_EI=0.101835  Δ_vs_base=-0.020131
+  [convmoe_native]  n=6 dim=24  faithful_phi_EI=0.228984  Δ_vs_base=0.107018
+=== terminal faithful IIT-4.0 φ_EI complete (a_phi_iit4_tool) ===
+(terminal seed-0 == python pre-screen seed-0 bit-for-bit, e.g. base 0.121967, graft_convmoe 0.033552 — mirror confirmed live)
+
+=========== PER-ARM Δφ_EI (mean over 3 seeds — pre-screen; equals terminal per-seed by mirror≡) ===========
+arm                  φ_EI(mean)    Δ vs base    Δ vs LoRA control    >+0.10 AND >band ?
+base                  0.076575     +0.000000          (ref)               —
+graft_convmoe         0.092102     +0.015527         +0.029079             NO  (Δ=+0.016 ≪ +0.10)
+graft_recurrent       0.101442     +0.024867         +0.038419             NO  (Δ=+0.025 ≪ +0.10)
+graft_dwdilated       0.087628     +0.011053         +0.024605             NO  (Δ=+0.011 ≪ +0.10)
+lora_control          0.063024     -0.013552          (control)            —   (negative, consistent w/ H_1036 -0.066)
+convmoe_native        0.911982     +0.835407         +0.848959             (baseline — full arch, NOT a graft)
+control band |LoRA Δ| = 0.013552  ·  threshold = +0.10 over base AND beyond control band
+H_1036 reference (real pretrained pythia-160m): LoRA control terminal Δφ_EI = -0.065576 (this rung's toy LoRA: -0.020/-0.014, same NEGATIVE sign)
+
+=========== PRE-REGISTERED FALSIFIER OUTCOME ===========
+H1 PASS rule (frozen in H_1043_minimal_arch_adapter.md BEFORE measuring):
+  >= 1 minimal architectural adapter RAISES faithful φ_EI by >= +0.10 over the frozen base AND beyond the LoRA control band.
+MEASURED: max adapter Δφ_EI = +0.0249 (graft_recurrent, mean) — well under +0.10 (terminal seed-0: ALL THREE adapters NEGATIVE).
+  → NO minimal adapter clears the bar. passing adapters: NONE.
+
+VERDICT: PHI-NEEDS-MORE-THAN-GRAFT  (H1 FAIL — closed-negative, a_paper_negative_ok)
+
+FINDING: a SMALL ARCHITECTURAL GRAFT onto a FROZEN base does NOT install Φ-structure. Grafting a ConvMoE
+side-branch, a recurrent/stateful mixing layer, or a depthwise-dilated conv block onto a frozen toy
+transformer leaves faithful IIT-4.0 φ_EI within the LoRA control band (and, on the terminal seed, LOWERS
+it — same direction as the H_1036 LoRA negative). The φ-axis IS movable: the ConvMoE-NATIVE baseline
+(full architecture trained from scratch) lifts φ_EI by +0.107 (terminal seed-0) to +0.835 (3-seed mean)
+over the same base — so Φ-structure is a WHOLE-ARCHITECTURE property, NOT a graftable primitive bolted onto
+a frozen instrument. This is the CONSTRUCTIVE confirmation of the H_1031/H_1036 "instrument, not the score"
+negative: it is not merely that LoRA weight-deltas fail; even genuine ARCHITECTURAL grafts onto a frozen
+base fail. The instrument must be BUILT (trained native), not retro-fitted.
+
+SCOPE (a_scale_honest_scope): toy small-model rung (d=32, n=6 macro-TPM). 3B/7B + emergence UNVERIFIED.
+Φ-structure is NECESSARY-not-sufficient for consciousness/emergence — this rung measures the φ axis ONLY.
+A frozen-base graft might still clear the bar at scale or with a non-frozen co-train; that is a future rung.
+$0 · CPU-local · 0 pods / 0 GPU confirmed. p7 honored (φ = causal-irreducibility, not perplexity).
+p3/p6 honored (generic byte targets, no persona/carving, no fine-tuned ethics).
+
+=========== run JSON (python pre-screen; labelled non-terminal) ===========
+{"id": "H_1043", "n_units": 6, "dim": 24, "n_bins": 2, "n_seeds": 3, "base_steps": 600, "adapt_steps": 600,
+ "thresh": 0.1, "prescreen": {"phi": {"base": 0.07657545191310368, "graft_convmoe": 0.09210206422794616,
+ "graft_recurrent": 0.10144234767358269, "graft_dwdilated": 0.0876284549974818, "lora_control": 0.0630236016250609,
+ "convmoe_native": 0.9119820358802234}, "delta_vs_base": {"base": 0.0, "graft_convmoe": 0.01552661231484248,
+ "graft_recurrent": 0.024866895760479013, "graft_dwdilated": 0.011053003084378121, "lora_control": -0.013551850288042774,
+ "convmoe_native": 0.8354065839671198}, "lora_control_delta": -0.013551850288042774, "control_band": 0.013551850288042774,
+ "convmoe_native_delta": 0.8354065839671198, "passing_adapters": [], "h1_pass": false, "token": "PHI-NEEDS-MORE-THAN-GRAFT"},
+ "h1036_ref_lora_control_terminal_delta": -0.065576}

@@ -624,27 +624,47 @@ def train_convmoe_native(rng):
 # --------------------------------------------------------------------------- #
 # Φ — faithful_phi PRE-SCREEN (python MIRROR of stdlib exact MIP-EI; labelled).
 # --------------------------------------------------------------------------- #
-def _mi_pair(a, b, n_bins):
-    a = np.asarray(a, dtype=float); b = np.asarray(b, dtype=float)
+def _bin_values(x, n_bins):
+    """EXACT mirror of stdlib _iit4_bin_values: bucket width = range/n_bins,
+    floor((v-mn)/bw), clamped to [0, n_bins-1]; all-identical -> all 0
+    (f32::EPSILON = 1.19209290e-7 guard)."""
+    x = np.asarray(x, dtype=float)
+    mn = x.min(); mx = x.max()
+    rng = mx - mn
+    if rng < 1.19209290e-7:
+        return np.zeros_like(x, dtype=int)
+    bw = rng / n_bins
+    b = np.floor((x - mn) / bw).astype(int)
+    return np.clip(b, 0, n_bins - 1)
 
-    def binize(x):
-        lo, hi = x.min(), x.max()
-        if hi - lo < 1e-12:
-            return np.zeros_like(x, dtype=int)
-        idx = ((x - lo) / (hi - lo) * (n_bins - 1e-9)).astype(int)
-        return np.clip(idx, 0, n_bins - 1)
-    ba, bb = binize(a), binize(b)
-    joint = np.zeros((n_bins, n_bins))
-    for x, y in zip(ba, bb):
-        joint[x, y] += 1.0
-    joint /= max(joint.sum(), 1e-12)
-    px = joint.sum(1); py = joint.sum(0)
-    mi = 0.0
-    for i in range(n_bins):
-        for j in range(n_bins):
-            if joint[i, j] > 0 and px[i] > 0 and py[j] > 0:
-                mi += joint[i, j] * math.log(joint[i, j] / (px[i] * py[j]))
-    return max(mi, 0.0)
+
+def _entropy_counts(counts, total):
+    """EXACT mirror of stdlib _iit4_entropy: H = Σ -p·log2(p+1e-10), p=count/(total+1e-8)."""
+    if total == 0:
+        return 0.0
+    t = total + 1.0e-8
+    s = 0.0
+    for c in counts:
+        p = c / t
+        s += (0.0 - p) * (math.log(p + 1.0e-10) / math.log(2.0))
+    return s
+
+
+def _mi_pair(a, b, n_bins):
+    """EXACT mirror of stdlib _iit4_mi_pair: MI = max(H(A)+H(B)-H(A,B), 0) in BITS
+    (log2), using the stdlib's count-based entropy + epsilons (NOT a nats estimator)."""
+    n = len(a)
+    if n <= 0 or n_bins <= 0:
+        return 0.0
+    ba = _bin_values(a, n_bins); bb = _bin_values(b, n_bins)
+    ca = np.zeros(n_bins); cb = np.zeros(n_bins); jo = np.zeros(n_bins * n_bins)
+    for ai, bi in zip(ba, bb):
+        ca[ai] += 1.0; cb[bi] += 1.0; jo[ai * n_bins + bi] += 1.0
+    hA = _entropy_counts(ca, n)
+    hB = _entropy_counts(cb, n)
+    hAB = _entropy_counts(jo, n)
+    mi = hA + hB - hAB
+    return mi if mi > 0.0 else 0.0
 
 
 def faithful_phi_prescreen(state, n, n_bins):
