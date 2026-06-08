@@ -1,10 +1,23 @@
 # H_1052 — Does NON-DETERMINISTIC LEARNING help consciousness / emergence / CE?
 
+## TIER: 🔴 LEARNING-NONDET-NULL (H1 FAIL — CLOSED-NEGATIVE, a_paper_negative_ok)
+
+At MATCHED task-performance (23/24 init-paired seeds within |CE_noisy - CE_det| <= 0.05 nats),
+SGLD non-deterministic LEARNING dynamics confer NO benefit on ANY of the six pre-named markers
+(faithful_phi, big-Phi, faithful-up/big-down split magnitude, Williams-Beer redundancy,
+edge-of-chaos/SOC proximity, held-out emergence). 0/6 markers reach the pre-set paired Cohen
+d >= +0.80; ALL six paired effects are <= 0 in the favorable direction (max favorable d =
+-0.019; strongest-magnitude marker soc_proximity d = -0.969 points AWAY from a noisy benefit).
+Mirrors RE-PROVEN == stdlib at n=4 AND n=5 (|Δ| <= 3.75e-6) BEFORE scoring (a_phi_iit4_tool;
+no proxy). This EXTENDS H_921 (init non-determinism = prior RED) and the entropy null: init-
+noise, inference-entropy, AND learning-update-noise are all consciousness-null — non-determinism
+is not where consciousness/emergence comes from. Raw + per-marker table:
+`.verdicts/1052_nondeterministic_learning/H_1052.txt`.
+
 substrate = SW (numpy CPU toy). Lane tag for THIS rung: SW-only.
 - SW (this rung): numpy CPU toy gradient-trained RNN — the measured substrate here.
 - AKIDA Lane A (on-chip): NOT run here — a separate substrate rung (see Follow-up).
 - GPU Lane G (forge): NOT run here — a separate substrate rung (see Follow-up).
-status: PRE-REGISTERED (TEXT-only; tier assigned ONLY after `.verdicts/1052_nondeterministic_learning/H_1052.txt` lands, g73).
 
 ## Question
 
