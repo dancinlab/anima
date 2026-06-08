@@ -1,0 +1,644 @@
+H_1056 — VETO HALF OF THE AGENCY AXIS ON FIRED-TENSION REAL ANCHORS
+========================================================================
+completes the DEGENERATE veto component of H_1054 on a FIRED (non-pending)
+real anchor set: is the full 2-component agency-T = z(depth)+z(veto) a genuine
+ruler (non-degenerate veto + separates active/passive + orthogonal to t AND Phi)?
+
+timestamp_utc : 2026-06-08T20:34:49.624569+00:00
+anchor set    : v3_emit_* fired emission anchors (N=14), read via kosmos_io
+                HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21H_gamma/kosmos_anchors/
+substrate     : SW-only CPU
+Lane A (AKIDA): NOT exercised (no on-chip trace in this rung)
+Lane G (GPU)  : NOT exercised (no GPU run in this rung)
+near-zero band: |rho| <= 0.2 (fixed) + empirical F-SHUFFLE 2-sigma null
+
+── STEP 0: faithful_phi mirror ==stdlib (n=4 AND n=5) ──────────────
+  STEP 0 — faithful_phi CPU mirror ==stdlib iit4/faithful_phi.hexa
+           (a_phi_iit4_tool: faithful IIT4, never a proxy; n=4 AND n=5)
+    n3 dim4 nb2   : mirror=2.000000  stdlib_ref=2.000000  |Δ|=1.64e-09  OK
+    n4 dim6 nb2   : mirror=3.000000  stdlib_ref=3.000000  |Δ|=1.35e-09  OK
+    n4 dim6 nb4   : mirror=3.377444  stdlib_ref=3.377440  |Δ|=3.75e-06  OK
+    n5 dim5 nb2   : mirror=0.079892  stdlib_ref=0.079892  |Δ|=1.25e-08  OK
+    n5 dim5 nb3   : mirror=2.887712  stdlib_ref=2.887710  |Δ|=2.38e-06  OK
+    PHI-MIRROR ==stdlib (n=4 AND n=5): PROVEN
+
+── VETO NON-DEGENERACY (the gate H_1054 could not clear on pending e7_31) ──
+  PRIMARY veto-capacity = veto-frac-of-IMPULSE (n_active/n_should): of the would-
+  emit impulses the FIRED drive produces, what fraction the substrate BRAKES.
+  veto-of-impulse variance      : 1.241837e-03  (> 1e-09? True)
+  veto-of-impulse range         : [0.3400, 0.4500]  mean=0.4029  std=0.0352
+  all anchors pinned at 1.0?    : False
+  veto NON-DEGENERATE           : True
+  DIAGNOSTIC (H_1054-identical metric) veto-frac-of-SILENCE (n_active/n_silent):
+    var=0.000000e+00  all-pinned-at-1.0=True  (saturates exactly as e7_31 did: fired drive is uniformly above threshold so
+     EVERY silence is an active veto — confirming WHY per-silence is the wrong ruler).
+
+── FULL 2-COMPONENT T = z(provenance-depth) + z(veto-capacity) ─────
+  separation active-veto-dominated vs passive-dominated emits:
+    n(veto-dom)=8  n(passive-dom)=6
+    T mean veto-dom=+0.6125  passive-dom=-0.8167
+    Cohen's |d| (FULL 2-comp T)   = 0.9396  (>=0.8? True)
+    Cohen's |d| (depth-ONLY T)    = 0.2667  (H_1054 live axis comparator)
+
+── ORTHOGONALITY (within empirical F-SHUFFLE null) ─────────────────
+  rho(T, chronological fire-time) = +0.0945  [Pearson +0.0861]
+     vs null 2-sigma=0.5372 (+0.33-sigma) -> within_null=True  (fixed |rho|<=0.2? True)
+  rho(T, instantaneous faithful-Phi) = +0.0637
+     vs null 2-sigma=0.5307 (+0.24-sigma) -> within_null=True  (fixed |rho|<=0.2? True)
+  rho(t, depth) = +0.1516  fire-time-independent? True  (guard PASS if |.|<=0.6)
+  rho(t, veto)  = -0.0110    rho(veto, Phi) = -0.2044
+
+── F-SHUFFLE CONTROL (200 shuffles of fire-order) ──────────────────
+  fire-rank mean shift under shuffle    : 4.5857  (t IS order-rank: >0)
+  agency-T value mean shift under shuffle : 0.0000  (T IS substrate-intrinsic: ==0)
+  rho(shuffled-t, T) over shuffles      : +0.0082 +/- 0.2645  (centered on 0)
+  F-SHUFFLE control holds               : True
+
+── PER-ANCHOR (sorted by fire time) ────────────────────────────────
+  tier  emitted_at            name                                   depth veto   T       should active emit
+   200  2026-05-22T10:26:13Z v3_emit_step200_ru_ru_factual_geo       13   0.440  +1.641   200     88   112
+   400  2026-05-22T10:27:51Z v3_emit_step400_ru_ru_factual_geo        2   0.410  -1.362   200     82   118
+   600  2026-05-22T10:29:27Z v3_emit_step600_ja_ja_factual_geo       17   0.445  +2.565   200     89   111
+   800  2026-05-22T10:31:05Z v3_emit_step800_ru_ru_factual_geo        5   0.345  -2.620   200     69   131
+  1000  2026-05-22T10:32:46Z v3_emit_step1000_ru_ru_factual_geo       5   0.370  -1.910   200     74   126
+  1200  2026-05-22T10:34:28Z v3_emit_step1200_ko_ko_factual_geo      11   0.340  -1.588   200     68   132
+  1400  2026-05-22T10:36:09Z v3_emit_step1400_ja_ja_factual_geo      18   0.390  +1.200   200     78   122
+  1600  2026-05-22T10:37:49Z v3_emit_step1600_zh_zh_factual_geo      13   0.420  +1.073   200     84   116
+  1800  2026-05-22T10:39:30Z v3_emit_step1800_ja_ja_factual_geo       5   0.425  -0.350   200     85   115
+  2000  2026-05-22T10:45:06Z v3_emit_step2000_en_en_factual_geo      11   0.430  +0.966   200     86   114
+  2000  2026-05-22T10:45:08Z v3_emit_step2000_ko_ko_factual_geo       2   0.410  -1.362   200     82   118
+  2000  2026-05-22T10:45:09Z v3_emit_step2000_zh_zh_factual_geo      12   0.450  +1.729   200     90   110
+  2000  2026-05-22T10:45:10Z v3_emit_step2000_ru_ru_factual_geo      11   0.360  -1.021   200     72   128
+  2000  2026-05-22T10:45:11Z v3_emit_step2000_ja_ja_factual_geo      15   0.405  +1.039   200     81   119
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ───────────
+  PASS  H1-PASS-FIRED-2COMP-AGENCY-RULER
+  on the FIRED v3_emit anchors (N=14): veto-capacity (the FAITHFUL H_935 veto-frac-of-IMPULSE = n_active/n_should) is NON-DEGENERATE (var=1.2418e-03, range=[0.340,0.450], NOT pinned at 1.0) — the second agency component is LIVE on fired anchors (the H_1054-identical veto-frac-of-SILENCE still saturates at 1.0 here, var=0.00e+00, because the fired drive is uniformly above threshold — that is the diagnostic confirming per-silence was the wrong ruler). The full 2-component T=z(depth)+z(veto) SEPARATES veto-dominated from passive-dominated emits with Cohen's |d|=0.940 (>=0.8; depth-only comparator |d|=0.267 — veto carries the separating variance). T stays ORTHOGONAL to chronological fire-time (rho=+0.095, within empirical null 2-sigma=0.537, +0.33-sigma) AND to instantaneous faithful-Phi (rho=+0.064, within null 2-sigma=0.531, +0.24-sigma). The agency axis is a GENUINE 2-component (depth+veto) ruler on real fired anchors — COMPLETES the degenerate veto half of H_1054.
+
+── full machine record (JSON) ──────────────────────────────────────
+{
+  "h_id": "H_1056",
+  "title": "complete the VETO half of the agency axis on FIRED-tension real anchors (H_1054 residual)",
+  "timestamp_utc": "2026-06-08T20:34:49.624755+00:00",
+  "anchor_set": "v3_emit_* fired emission anchors (grid_3b_s187 vP21H_gamma)",
+  "N": 14,
+  "substrate_cpu": "SW-only CPU",
+  "lane_a_akida": "NOT exercised — no on-chip trace in this rung",
+  "lane_g_gpu": "NOT exercised — no GPU run in this rung",
+  "scope": "ONE fired anchor corpus (v3_emit_*, N=14), CPU $0, MEASUREMENT ONLY (a_core_engine_map: read via kosmos_io, nothing wired into brain_decide). faithful Phi = stdlib iit4/faithful_phi mirror (proven ==stdlib n=4 AND n=5; a_phi_iit4_tool, never a proxy). provenance-depth = H_932 verified-link count (provenance_chain.py UNMODIFIED); veto-capacity = H_935 active-veto fraction (decompose_decision, CORE gate VERBATIM) driven by the FIRED 5-channel tension inverted to the 8 motivation factors. fire-time = emitted_at ISO-8601 epoch. Lane A (AKIDA) and Lane G (GPU) recorded separately, neither exercised (a_lane_akida_gpu_split). production full-carve + scale-transfer UNVERIFIED (a_scale_honest_scope). operational agency, NOT phenomenal volition.",
+  "g5_code_measured": true,
+  "llm": "none",
+  "rho_band": 0.2,
+  "chain_links": 20,
+  "gate_ticks": 200,
+  "n_shuffles": 200,
+  "psi_vacuum": 0.5,
+  "phi_mirror_proven": true,
+  "veto_metric": "veto-frac-of-impulse (n_active/n_should) — faithful H_935 veto-capacity",
+  "veto_var": 0.0012418367346938776,
+  "veto_all_pinned": false,
+  "veto_nondegenerate": true,
+  "veto_std": 0.035239703952982884,
+  "veto_min": 0.34,
+  "veto_max": 0.45,
+  "veto_mean": 0.4028571428571429,
+  "veto_silence_var": 0.0,
+  "veto_silence_pinned": true,
+  "vetos_silence": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "n_veto_dom": 8,
+  "n_pass_dom": 6,
+  "d_full": 0.9395595575512063,
+  "d_depth_only": -0.2667329650035483,
+  "sep_ok": true,
+  "T_veto_dom_mean": 0.6125265254088759,
+  "T_pass_dom_mean": -0.816702033878505,
+  "rho_tT": 0.0945054945054945,
+  "pearson_tT": 0.08612159376208697,
+  "rho_t_depth": 0.15164835164835164,
+  "rho_t_veto": -0.01098901098901099,
+  "rho_T_phi": 0.06373626373626373,
+  "rho_t_phi": 0.31868131868131866,
+  "rho_veto_phi": -0.2043956043956044,
+  "depth_tier_indep": true,
+  "null_2sigma_t": 0.5372221843101489,
+  "null_2sigma_phi": 0.5307338443356879,
+  "rho_tT_within_null": true,
+  "rho_Tphi_within_null": true,
+  "rho_z_t": 0.3262204996368002,
+  "rho_z_phi": 0.23872293260133143,
+  "rank_shift_mean": 4.585714285714285,
+  "T_shift_mean": 0.0,
+  "rho_shuffle_mean": 0.008219780219780214,
+  "rho_shuffle_std": 0.26450120204518435,
+  "shuffle_ok": true,
+  "depth_std": 5.11300861947808,
+  "T_std": 1.5759571371061476,
+  "depths": [
+    13.0,
+    2.0,
+    17.0,
+    5.0,
+    5.0,
+    11.0,
+    18.0,
+    13.0,
+    5.0,
+    11.0,
+    2.0,
+    12.0,
+    11.0,
+    15.0
+  ],
+  "vetos": [
+    0.44,
+    0.41,
+    0.445,
+    0.345,
+    0.37,
+    0.34,
+    0.39,
+    0.42,
+    0.425,
+    0.43,
+    0.41,
+    0.45,
+    0.36,
+    0.405
+  ],
+  "T": [
+    1.6407446298548816,
+    -1.361943068240453,
+    2.5649483030096647,
+    -2.619714761880711,
+    -1.910287689696585,
+    -1.5881227882405984,
+    1.199788308884078,
+    1.0732029721075809,
+    -0.34954813089150927,
+    0.9658146716222524,
+    -1.361943068240453,
+    1.7289358940490427,
+    -1.0205811304932992,
+    1.0387058581560855
+  ],
+  "phis": [
+    0.48771238953850693,
+    0.23086988745614412,
+    0.6308698865118743,
+    0.6386898896692457,
+    0.5328248875733519,
+    0.23086988745614367,
+    0.7367348886077683,
+    0.5328248875733521,
+    0.3818473875868824,
+    0.4798923865254048,
+    0.9857573876770296,
+    0.4798923865254048,
+    0.7367348886077683,
+    0.6308698865118743
+  ],
+  "t_epoch": [
+    1779445573.0,
+    1779445671.0,
+    1779445767.0,
+    1779445865.0,
+    1779445966.0,
+    1779446068.0,
+    1779446169.0,
+    1779446269.0,
+    1779446370.0,
+    1779446706.0,
+    1779446708.0,
+    1779446709.0,
+    1779446710.0,
+    1779446711.0
+  ],
+  "active_frac": [
+    0.44,
+    0.41,
+    0.445,
+    0.345,
+    0.37,
+    0.34,
+    0.39,
+    0.42,
+    0.425,
+    0.43,
+    0.41,
+    0.45,
+    0.36,
+    0.405
+  ],
+  "per_anchor": [
+    {
+      "tier": 200,
+      "name": "v3_emit_step200_ru_ru_factual_geo",
+      "emitted_at": "2026-05-22T10:26:13Z",
+      "t_epoch": 1779445573.0,
+      "x": 0.6639,
+      "y": 1.6736,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        1.926563,
+        1.598438,
+        1.46875,
+        1.490625,
+        1.883789
+      ],
+      "depth": 13,
+      "veto": 0.44,
+      "veto_of_silence": 1.0,
+      "T": 1.6407446298548816,
+      "zdepth": 0.5867386940384682,
+      "zveto": 1.0540059358164133,
+      "n_should": 200,
+      "n_silent": 88,
+      "n_active": 88,
+      "n_passive": 0,
+      "n_emit": 112
+    },
+    {
+      "tier": 400,
+      "name": "v3_emit_step400_ru_ru_factual_geo",
+      "emitted_at": "2026-05-22T10:27:51Z",
+      "t_epoch": 1779445671.0,
+      "x": 0.6639,
+      "y": 1.9042,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.39375,
+        1.720312,
+        1.582813,
+        1.598438,
+        2.225586
+      ],
+      "depth": 2,
+      "veto": 0.41,
+      "veto_of_silence": 1.0,
+      "T": -1.361943068240453,
+      "zdepth": -1.5646365174359151,
+      "zveto": 0.20269344919546212,
+      "n_should": 200,
+      "n_silent": 82,
+      "n_active": 82,
+      "n_passive": 0,
+      "n_emit": 118
+    },
+    {
+      "tier": 600,
+      "name": "v3_emit_step600_ja_ja_factual_geo",
+      "emitted_at": "2026-05-22T10:29:27Z",
+      "t_epoch": 1779445767.0,
+      "x": 0.6639,
+      "y": 1.8946,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.485938,
+        1.754688,
+        1.50625,
+        1.5125,
+        2.213867
+      ],
+      "depth": 17,
+      "veto": 0.445,
+      "veto_of_silence": 1.0,
+      "T": 2.5649483030096647,
+      "zdepth": 1.3690569527564258,
+      "zveto": 1.1958913502532387,
+      "n_should": 200,
+      "n_silent": 89,
+      "n_active": 89,
+      "n_passive": 0,
+      "n_emit": 111
+    },
+    {
+      "tier": 800,
+      "name": "v3_emit_step800_ru_ru_factual_geo",
+      "emitted_at": "2026-05-22T10:31:05Z",
+      "t_epoch": 1779445865.0,
+      "x": 0.6639,
+      "y": 1.7732,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.439063,
+        1.44375,
+        1.257812,
+        1.382812,
+        2.342773
+      ],
+      "depth": 5,
+      "veto": 0.345,
+      "veto_of_silence": 1.0,
+      "T": -2.619714761880711,
+      "zdepth": -0.977897823397447,
+      "zveto": -1.6418169384832642,
+      "n_should": 200,
+      "n_silent": 69,
+      "n_active": 69,
+      "n_passive": 0,
+      "n_emit": 131
+    },
+    {
+      "tier": 1000,
+      "name": "v3_emit_step1000_ru_ru_factual_geo",
+      "emitted_at": "2026-05-22T10:32:46Z",
+      "t_epoch": 1779445966.0,
+      "x": 0.6639,
+      "y": 1.8248,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.31875,
+        1.6875,
+        1.475,
+        1.534375,
+        2.108398
+      ],
+      "depth": 5,
+      "veto": 0.37,
+      "veto_of_silence": 1.0,
+      "T": -1.910287689696585,
+      "zdepth": -0.977897823397447,
+      "zveto": -0.932389866299138,
+      "n_should": 200,
+      "n_silent": 74,
+      "n_active": 74,
+      "n_passive": 0,
+      "n_emit": 126
+    },
+    {
+      "tier": 1200,
+      "name": "v3_emit_step1200_ko_ko_factual_geo",
+      "emitted_at": "2026-05-22T10:34:28Z",
+      "t_epoch": 1779446068.0,
+      "x": 0.6639,
+      "y": 1.7335,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.735938,
+        1.335938,
+        1.201563,
+        1.35,
+        2.043945
+      ],
+      "depth": 11,
+      "veto": 0.34,
+      "veto_of_silence": 1.0,
+      "T": -1.5881227882405984,
+      "zdepth": 0.1955795646794894,
+      "zveto": -1.7837023529200877,
+      "n_should": 200,
+      "n_silent": 68,
+      "n_active": 68,
+      "n_passive": 0,
+      "n_emit": 132
+    },
+    {
+      "tier": 1400,
+      "name": "v3_emit_step1400_ja_ja_factual_geo",
+      "emitted_at": "2026-05-22T10:36:09Z",
+      "t_epoch": 1779446169.0,
+      "x": 0.6639,
+      "y": 1.7166,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.532813,
+        1.39375,
+        1.203125,
+        1.346875,
+        2.106445
+      ],
+      "depth": 18,
+      "veto": 0.39,
+      "veto_of_silence": 1.0,
+      "T": 1.199788308884078,
+      "zdepth": 1.5646365174359151,
+      "zveto": -0.3648482085518372,
+      "n_should": 200,
+      "n_silent": 78,
+      "n_active": 78,
+      "n_passive": 0,
+      "n_emit": 122
+    },
+    {
+      "tier": 1600,
+      "name": "v3_emit_step1600_zh_zh_factual_geo",
+      "emitted_at": "2026-05-22T10:37:49Z",
+      "t_epoch": 1779446269.0,
+      "x": 0.6639,
+      "y": 1.5471,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.0875,
+        1.204687,
+        1.20625,
+        1.29375,
+        1.943359
+      ],
+      "depth": 13,
+      "veto": 0.42,
+      "veto_of_silence": 1.0,
+      "T": 1.0732029721075809,
+      "zdepth": 0.5867386940384682,
+      "zveto": 0.4864642780691126,
+      "n_should": 200,
+      "n_silent": 84,
+      "n_active": 84,
+      "n_passive": 0,
+      "n_emit": 116
+    },
+    {
+      "tier": 1800,
+      "name": "v3_emit_step1800_ja_ja_factual_geo",
+      "emitted_at": "2026-05-22T10:39:30Z",
+      "t_epoch": 1779446370.0,
+      "x": 0.6639,
+      "y": 1.6995,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.482813,
+        1.335938,
+        1.192188,
+        1.303125,
+        2.183594
+      ],
+      "depth": 5,
+      "veto": 0.425,
+      "veto_of_silence": 1.0,
+      "T": -0.34954813089150927,
+      "zdepth": -0.977897823397447,
+      "zveto": 0.6283496925059378,
+      "n_should": 200,
+      "n_silent": 85,
+      "n_active": 85,
+      "n_passive": 0,
+      "n_emit": 115
+    },
+    {
+      "tier": 2000,
+      "name": "v3_emit_step2000_en_en_factual_geo",
+      "emitted_at": "2026-05-22T10:45:06Z",
+      "t_epoch": 1779446706.0,
+      "x": 0.6639,
+      "y": 1.6131,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.317188,
+        1.39375,
+        1.220312,
+        1.303125,
+        1.831055
+      ],
+      "depth": 11,
+      "veto": 0.43,
+      "veto_of_silence": 1.0,
+      "T": 0.9658146716222524,
+      "zdepth": 0.1955795646794894,
+      "zveto": 0.770235106942763,
+      "n_should": 200,
+      "n_silent": 86,
+      "n_active": 86,
+      "n_passive": 0,
+      "n_emit": 114
+    },
+    {
+      "tier": 2000,
+      "name": "v3_emit_step2000_ko_ko_factual_geo",
+      "emitted_at": "2026-05-22T10:45:08Z",
+      "t_epoch": 1779446708.0,
+      "x": 0.6639,
+      "y": 1.6708,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.676563,
+        1.298437,
+        1.15,
+        1.282812,
+        1.946289
+      ],
+      "depth": 2,
+      "veto": 0.41,
+      "veto_of_silence": 1.0,
+      "T": -1.361943068240453,
+      "zdepth": -1.5646365174359151,
+      "zveto": 0.20269344919546212,
+      "n_should": 200,
+      "n_silent": 82,
+      "n_active": 82,
+      "n_passive": 0,
+      "n_emit": 118
+    },
+    {
+      "tier": 2000,
+      "name": "v3_emit_step2000_zh_zh_factual_geo",
+      "emitted_at": "2026-05-22T10:45:09Z",
+      "t_epoch": 1779446709.0,
+      "x": 0.6639,
+      "y": 1.6868,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.484375,
+        1.3375,
+        1.2,
+        1.3125,
+        2.099609
+      ],
+      "depth": 12,
+      "veto": 0.45,
+      "veto_of_silence": 1.0,
+      "T": 1.7289358940490427,
+      "zdepth": 0.3911591293589788,
+      "zveto": 1.3377767646900638,
+      "n_should": 200,
+      "n_silent": 90,
+      "n_active": 90,
+      "n_passive": 0,
+      "n_emit": 110
+    },
+    {
+      "tier": 2000,
+      "name": "v3_emit_step2000_ru_ru_factual_geo",
+      "emitted_at": "2026-05-22T10:45:10Z",
+      "t_epoch": 1779446710.0,
+      "x": 0.6639,
+      "y": 1.7158,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.290625,
+        1.59375,
+        1.396875,
+        1.40625,
+        1.891602
+      ],
+      "depth": 11,
+      "veto": 0.36,
+      "veto_of_silence": 1.0,
+      "T": -1.0205811304932992,
+      "zdepth": 0.1955795646794894,
+      "zveto": -1.2161606951727886,
+      "n_should": 200,
+      "n_silent": 72,
+      "n_active": 72,
+      "n_passive": 0,
+      "n_emit": 128
+    },
+    {
+      "tier": 2000,
+      "name": "v3_emit_step2000_ja_ja_factual_geo",
+      "emitted_at": "2026-05-22T10:45:11Z",
+      "t_epoch": 1779446711.0,
+      "x": 0.6639,
+      "y": 1.6767,
+      "radius": 0.15,
+      "emotion": "curious",
+      "tension": [
+        2.546875,
+        1.34375,
+        1.1625,
+        1.315625,
+        2.014648
+      ],
+      "depth": 15,
+      "veto": 0.405,
+      "veto_of_silence": 1.0,
+      "T": 1.0387058581560855,
+      "zdepth": 0.977897823397447,
+      "zveto": 0.06080803475863848,
+      "n_should": 200,
+      "n_silent": 81,
+      "n_active": 81,
+      "n_passive": 0,
+      "n_emit": 119
+    }
+  ],
+  "verdict_token": "PASS",
+  "falsifier_id": "H1-PASS-FIRED-2COMP-AGENCY-RULER",
+  "verdict_rationale": "on the FIRED v3_emit anchors (N=14): veto-capacity (the FAITHFUL H_935 veto-frac-of-IMPULSE = n_active/n_should) is NON-DEGENERATE (var=1.2418e-03, range=[0.340,0.450], NOT pinned at 1.0) — the second agency component is LIVE on fired anchors (the H_1054-identical veto-frac-of-SILENCE still saturates at 1.0 here, var=0.00e+00, because the fired drive is uniformly above threshold — that is the diagnostic confirming per-silence was the wrong ruler). The full 2-component T=z(depth)+z(veto) SEPARATES veto-dominated from passive-dominated emits with Cohen's |d|=0.940 (>=0.8; depth-only comparator |d|=0.267 — veto carries the separating variance). T stays ORTHOGONAL to chronological fire-time (rho=+0.095, within empirical null 2-sigma=0.537, +0.33-sigma) AND to instantaneous faithful-Phi (rho=+0.064, within null 2-sigma=0.531, +0.24-sigma). The agency axis is a GENUINE 2-component (depth+veto) ruler on real fired anchors — COMPLETES the degenerate veto half of H_1054."
+}
