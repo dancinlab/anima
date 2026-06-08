@@ -1,6 +1,24 @@
 # H_1053 — Does TRUE QUANTUM non-determinism (ANU QRNG) differ from pseudo-random (H_1052)?
 
-## TIER: pre-registration (TEXT-only; no verdict, no emoji — set AFTER the .txt lands)
+## TIER: 🔴 QRNG-NONDET-NULL (H1 FAIL — CLOSED-NEGATIVE, a_paper_negative_ok)
+
+At MATCHED task-performance (12/12 init-paired seeds within |CE_qrng - CE_det| <= 0.05 nats),
+TRUE-QUANTUM (ANU vacuum-fluctuation) SGLD learning noise confers NO benefit on ANY of the six
+pre-named markers vs the deterministic control: 0/6 reach the pre-set favorable paired Cohen
+d >= +0.8 (strongest favorable = faithful_phi d=+0.471; soc_proximity d=-1.801 points AWAY from
+criticality, NOT a benefit). AND the QRNG arm is statistically indistinguishable from the PRNG
+arm (QRNG-vs-PRNG max |Cohen d| = 0.757 < 0.80 on every marker) — the noise SOURCE (quantum vs
+pseudo) is IRRELEVANT. H_1052's null is therefore NOT a PRNG artifact; this DEFINITIVELY closes
+the "you used FAKE randomness" objection and refutes the Penrose-Hameroff/Orch-OR-spirit steelman
+at this toy scale. Mirrors RE-PROVEN == stdlib at n=4 (|D| <= 3.75e-6) AND n=5 (|D| <= 7.97e-10)
+BEFORE scoring (a_phi_iit4_tool; no proxy). EXTENDS the non-determinism-null line: init (H_921),
+entropy (free-will arc), learning (H_1052), and now true-quantum learning (H_1053) are ALL
+consciousness-null. Raw + provenance + tables: `.verdicts/1053_qrng_nondeterminism/H_1053.txt`.
+
+substrate = SW (numpy CPU toy). Lane tag for THIS rung: SW-only.
+
+## TIER pre-registration (frozen TEXT, kept for the record)
+pre-registration (TEXT-only; verdict set above AFTER the .txt landed)
 
 ## Question
 
