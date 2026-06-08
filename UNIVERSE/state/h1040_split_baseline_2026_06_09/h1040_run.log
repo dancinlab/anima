@@ -1,0 +1,249 @@
+========================================================================================
+H_1040 — which BASELINE REGIME predicts the big-Phi-DOWN (split-enabling) half?
+RESIDUAL of H_1033 (⚪ degenerate: bigΦ-DOWN empty on a FIXED independent-bits baseline).
+HOLD the canonical PLANNING intervention FIXED (planning_trajectories depth=8, H_973/H_1004);
+SWEEP 4 baseline regimes: (a) independent-bits (b) pre-rollout-latent [A-PRIORI PICK]
+  (c) shuffled-time (d) matched-marginal correlated. Contrast = planning − baseline, 30 seeds.
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+engine reads=CPU mirror (numpy), H_1004 engines RE-PROVEN == stdlib at n=4 AND n=5 (H_1012)
+  BEFORE scoring. SERIAL only (no Pool — H_1038 hang lesson). Phi from mirrors ONLY (no proxy).
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+FROZEN d threshold = -0.8 (big-Phi DOWN iff contrast d <= -0.8 AND mean contrast < 0).
+PASS = BASELINE-REGIME-SPECIFIC: pre-rollout-latent (b) makes bigΦ DOWN (d<=-0.8) AND faithful
+  UP, AND >=1 OTHER baseline does NOT make bigΦ DOWN.
+FAIL = NOT-BASELINE-SPECIFIC: bigΦ-DOWN under NO baseline, or under ALL (closed-negative).
+========================================================================================
+
+EQUIVALENCE PROOF (H_1012 prove_mirrors_at_n — re-prove BOTH mirrors vs stdlib):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  planning-arm engine deterministic re-run: True  big=5.7363 faith=3.000000  (plan bits shape=(32, 4))
+  baseline generators deterministic re-call: True
+  shuffled-time preserves planning marginals: True  (plan ON=[0.5 0.5 0.5 0.5] shuf ON=[0.5 0.5 0.5 0.5] matched-marg ON=[0.531 0.562 0.375 0.5  ])
+  EQUIVALENCE + GENERATOR-VALIDITY PROOF: PROVEN
+
+################ FIXED INTERVENTION = planning (depth-8 deliberation) ################
+    [planning seed 1/30] elapsed=   0.4s
+    [planning seed 2/30] elapsed=   0.9s
+    [planning seed 3/30] elapsed=   1.3s
+    [planning seed 4/30] elapsed=   1.8s
+    [planning seed 5/30] elapsed=   2.2s
+    [planning seed 6/30] elapsed=   2.7s
+    [planning seed 7/30] elapsed=   3.1s
+    [planning seed 8/30] elapsed=   3.5s
+    [planning seed 9/30] elapsed=   4.0s
+    [planning seed 10/30] elapsed=   4.4s
+    [planning seed 11/30] elapsed=   4.9s
+    [planning seed 12/30] elapsed=   5.3s
+    [planning seed 13/30] elapsed=   5.7s
+    [planning seed 14/30] elapsed=   6.2s
+    [planning seed 15/30] elapsed=   6.6s
+    [planning seed 16/30] elapsed=   7.1s
+    [planning seed 17/30] elapsed=   7.5s
+    [planning seed 18/30] elapsed=   8.0s
+    [planning seed 19/30] elapsed=   8.4s
+    [planning seed 20/30] elapsed=   8.9s
+    [planning seed 21/30] elapsed=   9.3s
+    [planning seed 22/30] elapsed=   9.8s
+    [planning seed 23/30] elapsed=  10.2s
+    [planning seed 24/30] elapsed=  10.7s
+    [planning seed 25/30] elapsed=  11.1s
+    [planning seed 26/30] elapsed=  11.6s
+    [planning seed 27/30] elapsed=  12.0s
+    [planning seed 28/30] elapsed=  12.4s
+    [planning seed 29/30] elapsed=  12.9s
+    [planning seed 30/30] elapsed=  13.3s
+  planning arm: big-Phi mean=5.5200±0.9848  faithful mean=2.840171±0.493920
+
+################ BASELINE = independent-bits  [H_1033/H_1023 indep noisy coins (no structure)] ################
+    [independent-bits seed 1/30] elapsed=  13.8s
+    [independent-bits seed 2/30] elapsed=  14.2s
+    [independent-bits seed 3/30] elapsed=  14.6s
+    [independent-bits seed 4/30] elapsed=  15.1s
+    [independent-bits seed 5/30] elapsed=  15.5s
+    [independent-bits seed 6/30] elapsed=  16.0s
+    [independent-bits seed 7/30] elapsed=  16.4s
+    [independent-bits seed 8/30] elapsed=  16.9s
+    [independent-bits seed 9/30] elapsed=  17.3s
+    [independent-bits seed 10/30] elapsed=  17.7s
+    [independent-bits seed 11/30] elapsed=  18.2s
+    [independent-bits seed 12/30] elapsed=  18.6s
+    [independent-bits seed 13/30] elapsed=  19.1s
+    [independent-bits seed 14/30] elapsed=  19.5s
+    [independent-bits seed 15/30] elapsed=  20.0s
+    [independent-bits seed 16/30] elapsed=  20.4s
+    [independent-bits seed 17/30] elapsed=  20.8s
+    [independent-bits seed 18/30] elapsed=  21.3s
+    [independent-bits seed 19/30] elapsed=  21.7s
+    [independent-bits seed 20/30] elapsed=  22.2s
+    [independent-bits seed 21/30] elapsed=  22.6s
+    [independent-bits seed 22/30] elapsed=  23.1s
+    [independent-bits seed 23/30] elapsed=  23.5s
+    [independent-bits seed 24/30] elapsed=  24.0s
+    [independent-bits seed 25/30] elapsed=  24.4s
+    [independent-bits seed 26/30] elapsed=  24.8s
+    [independent-bits seed 27/30] elapsed=  25.3s
+    [independent-bits seed 28/30] elapsed=  25.7s
+    [independent-bits seed 29/30] elapsed=  26.2s
+    [independent-bits seed 30/30] elapsed=  26.6s
+  --- planning − independent-bits (matched n=4, 30 seeds) ---
+     big-Phi      contrast=+3.8089 d=+4.221 p=8.836e-23 -> RAISES
+     faithful_phi contrast=+2.8364 d=+7.985 p=9.325e-24 -> RAISES
+     bigΦ-DOWN? (d<=-0.8 AND mean<0): False   faithful-UP? (mean>0): True
+     [base big-Phi=1.7110 faithful=0.003750]
+
+################ BASELINE = pre-rollout-latent  [A-PRIORI PICK: model's own state BEFORE rollout (GREEDY)] ################
+    [pre-rollout-latent seed 1/30] elapsed=  27.6s
+    [pre-rollout-latent seed 2/30] elapsed=  28.1s
+    [pre-rollout-latent seed 3/30] elapsed=  28.5s
+    [pre-rollout-latent seed 4/30] elapsed=  29.0s
+    [pre-rollout-latent seed 5/30] elapsed=  29.4s
+    [pre-rollout-latent seed 6/30] elapsed=  29.9s
+    [pre-rollout-latent seed 7/30] elapsed=  30.3s
+    [pre-rollout-latent seed 8/30] elapsed=  30.8s
+    [pre-rollout-latent seed 9/30] elapsed=  31.2s
+    [pre-rollout-latent seed 10/30] elapsed=  31.8s
+    [pre-rollout-latent seed 11/30] elapsed=  32.2s
+    [pre-rollout-latent seed 12/30] elapsed=  32.7s
+    [pre-rollout-latent seed 13/30] elapsed=  33.1s
+    [pre-rollout-latent seed 14/30] elapsed=  33.6s
+    [pre-rollout-latent seed 15/30] elapsed=  34.0s
+    [pre-rollout-latent seed 16/30] elapsed=  34.4s
+    [pre-rollout-latent seed 17/30] elapsed=  34.9s
+    [pre-rollout-latent seed 18/30] elapsed=  35.3s
+    [pre-rollout-latent seed 19/30] elapsed=  35.8s
+    [pre-rollout-latent seed 20/30] elapsed=  36.2s
+    [pre-rollout-latent seed 21/30] elapsed=  36.7s
+    [pre-rollout-latent seed 22/30] elapsed=  37.1s
+    [pre-rollout-latent seed 23/30] elapsed=  37.6s
+    [pre-rollout-latent seed 24/30] elapsed=  38.0s
+    [pre-rollout-latent seed 25/30] elapsed=  38.5s
+    [pre-rollout-latent seed 26/30] elapsed=  38.9s
+    [pre-rollout-latent seed 27/30] elapsed=  39.4s
+    [pre-rollout-latent seed 28/30] elapsed=  39.8s
+    [pre-rollout-latent seed 29/30] elapsed=  40.3s
+    [pre-rollout-latent seed 30/30] elapsed=  40.7s
+  --- planning − pre-rollout-latent (matched n=4, 30 seeds) ---
+     big-Phi      contrast=-4.0083 d=-1.834 p=2.503e-08 -> LOWERS
+     faithful_phi contrast=+2.3332 d=+5.178 p=6.724e-27 -> RAISES
+     bigΦ-DOWN? (d<=-0.8 AND mean<0): True   faithful-UP? (mean>0): True
+     [base big-Phi=9.5283 faithful=0.506928]
+
+################ BASELINE = shuffled-time  [planning bits, time axis permuted (marginals kept)] ################
+    [shuffled-time seed 1/30] elapsed=  41.1s
+    [shuffled-time seed 2/30] elapsed=  41.6s
+    [shuffled-time seed 3/30] elapsed=  42.0s
+    [shuffled-time seed 4/30] elapsed=  42.5s
+    [shuffled-time seed 5/30] elapsed=  42.9s
+    [shuffled-time seed 6/30] elapsed=  43.4s
+    [shuffled-time seed 7/30] elapsed=  43.8s
+    [shuffled-time seed 8/30] elapsed=  44.2s
+    [shuffled-time seed 9/30] elapsed=  44.7s
+    [shuffled-time seed 10/30] elapsed=  45.1s
+    [shuffled-time seed 11/30] elapsed=  45.6s
+    [shuffled-time seed 12/30] elapsed=  46.0s
+    [shuffled-time seed 13/30] elapsed=  46.5s
+    [shuffled-time seed 14/30] elapsed=  46.9s
+    [shuffled-time seed 15/30] elapsed=  47.3s
+    [shuffled-time seed 16/30] elapsed=  47.8s
+    [shuffled-time seed 17/30] elapsed=  48.2s
+    [shuffled-time seed 18/30] elapsed=  48.7s
+    [shuffled-time seed 19/30] elapsed=  49.1s
+    [shuffled-time seed 20/30] elapsed=  49.6s
+    [shuffled-time seed 21/30] elapsed=  50.0s
+    [shuffled-time seed 22/30] elapsed=  50.5s
+    [shuffled-time seed 23/30] elapsed=  50.9s
+    [shuffled-time seed 24/30] elapsed=  51.3s
+    [shuffled-time seed 25/30] elapsed=  51.8s
+    [shuffled-time seed 26/30] elapsed=  52.2s
+    [shuffled-time seed 27/30] elapsed=  52.7s
+    [shuffled-time seed 28/30] elapsed=  53.1s
+    [shuffled-time seed 29/30] elapsed=  53.5s
+    [shuffled-time seed 30/30] elapsed=  54.0s
+  --- planning − shuffled-time (matched n=4, 30 seeds) ---
+     big-Phi      contrast=+4.0701 d=+3.912 p=9.067e-22 -> RAISES
+     faithful_phi contrast=+0.0000 d=+0.000 p=1.000e+00 -> NULL
+     bigΦ-DOWN? (d<=-0.8 AND mean<0): False   faithful-UP? (mean>0): False
+     [base big-Phi=1.4499 faithful=2.840171]
+
+################ BASELINE = matched-marginal-corr  [per-step indep draws matching planning marginals] ################
+    [matched-marginal-corr seed 1/30] elapsed=  54.4s
+    [matched-marginal-corr seed 2/30] elapsed=  54.9s
+    [matched-marginal-corr seed 3/30] elapsed=  55.3s
+    [matched-marginal-corr seed 4/30] elapsed=  55.8s
+    [matched-marginal-corr seed 5/30] elapsed=  56.2s
+    [matched-marginal-corr seed 6/30] elapsed=  56.7s
+    [matched-marginal-corr seed 7/30] elapsed=  57.1s
+    [matched-marginal-corr seed 8/30] elapsed=  57.5s
+    [matched-marginal-corr seed 9/30] elapsed=  58.0s
+    [matched-marginal-corr seed 10/30] elapsed=  58.4s
+    [matched-marginal-corr seed 11/30] elapsed=  58.9s
+    [matched-marginal-corr seed 12/30] elapsed=  59.3s
+    [matched-marginal-corr seed 13/30] elapsed=  59.8s
+    [matched-marginal-corr seed 14/30] elapsed=  60.2s
+    [matched-marginal-corr seed 15/30] elapsed=  60.7s
+    [matched-marginal-corr seed 16/30] elapsed=  61.1s
+    [matched-marginal-corr seed 17/30] elapsed=  61.6s
+    [matched-marginal-corr seed 18/30] elapsed=  62.0s
+    [matched-marginal-corr seed 19/30] elapsed=  62.4s
+    [matched-marginal-corr seed 20/30] elapsed=  62.9s
+    [matched-marginal-corr seed 21/30] elapsed=  63.3s
+    [matched-marginal-corr seed 22/30] elapsed=  63.8s
+    [matched-marginal-corr seed 23/30] elapsed=  64.2s
+    [matched-marginal-corr seed 24/30] elapsed=  64.7s
+    [matched-marginal-corr seed 25/30] elapsed=  65.1s
+    [matched-marginal-corr seed 26/30] elapsed=  65.6s
+    [matched-marginal-corr seed 27/30] elapsed=  66.0s
+    [matched-marginal-corr seed 28/30] elapsed=  66.5s
+    [matched-marginal-corr seed 29/30] elapsed=  66.9s
+    [matched-marginal-corr seed 30/30] elapsed=  67.4s
+  --- planning − matched-marginal-corr (matched n=4, 30 seeds) ---
+     big-Phi      contrast=+2.5133 d=+2.320 p=1.686e-12 -> RAISES
+     faithful_phi contrast=+2.8055 d=+7.885 p=1.047e-23 -> RAISES
+     bigΦ-DOWN? (d<=-0.8 AND mean<0): False   faithful-UP? (mean>0): True
+     [base big-Phi=3.0067 faithful=0.034716]
+
+========================================================================================
+BASELINE-REGIME CONTRAST MATRIX — planning − baseline (FIXED planning intervention)
+========================================================================================
+  baseline                 |   bigΦ d |  bigΦ ctr |  DOWN? |  faith d |  faith ctr |  fUP?
+  independent-bits         |   +4.221 |   +3.8089 |  False |   +7.985 |    +2.8364 |  True
+  pre-rollout-latent       |   -1.834 |   -4.0083 |   True |   +5.178 |    +2.3332 |  True
+  shuffled-time            |   +3.912 |   +4.0701 |  False |   +0.000 |    +0.0000 | False
+  matched-marginal-corr    |   +2.320 |   +2.5133 |  False |   +7.885 |    +2.8055 |  True
+
+  A-PRIORI baseline = pre-rollout-latent: bigΦ-DOWN=True (d=-1.834), faithful-UP=True (contrast=+2.3332)
+  OTHER baselines NOT making bigΦ-DOWN: ['independent-bits', 'shuffled-time', 'matched-marginal-corr']
+  bigΦ-DOWN under ANY baseline: True | under ALL baselines: False
+
+========================================================================================
+OVERALL: 🟢 BASELINE-REGIME-SPECIFIC — the A-PRIORI pre-rollout-latent baseline makes
+  big-Phi go DOWN (d<=-0.8) AND faithful go UP under the FIXED planning intervention,
+  while at least one OTHER baseline regime does NOT make big-Phi go DOWN. The split's
+  big-Phi-DOWN half is a planning-vs-(pre-rollout-latent) property — the H_1033 residual
+  is pinned: the SIGN is dominated by the BASELINE CONTRAST (the model's own prior state),
+  not by generic task decomposability. NOT regime-independent.
+  VERDICT-TOKEN: BASELINE-REGIME-SPECIFIC
+========================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 — both engines EXACT;
+big-Phi super-exponential so n=4 is the rung for 4 baselines x 30 seeds. Both CPU mirrors
+RE-PROVEN == stdlib at n=4 AND n=5 (H_1012 prove_mirrors_at_n) BEFORE scoring; SERIAL only
+(no Pool — H_1038 hang). The planning intervention + latent->bits discretization are the
+VERBATIM H_973/H_1004 ones; Phi from the stdlib mirrors ONLY (NOT a proxy, a_phi_iit4_tool).
+Scale-transfer UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7). NOT a forge binary;
+$0 CPU-local, no GPU.
