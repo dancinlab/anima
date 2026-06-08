@@ -1,0 +1,114 @@
+========================================================================================
+H_1047 — Declared-objective PAIR ruler: (faithful, big-Phi) PAIR vs COLLAPSED scalar
+substrate=CPU-mirror (numpy) — H_1035 harness + H_1004 engines + H_1012 proof; RE-PROVEN n=4,5
+big-Phi:      hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s) — measure (no proxy)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar) — measure
+FROZEN: classes=['GREEDY', 'MIXED', 'DELIBERATE']  MARGIN=0.15  COLLIDE_EPS=0.05  policies=30 x 30 seeds
+target = behavioral CLASS (structural, measure-INDEPENDENT). classifier = LOO nearest-centroid.
+PASS=PAIR-STRICTLY-MORE-PREDICTIVE (acc_2D >= best_acc_1D + MARGIN AND >=1 scalar-collision)
+FAIL=SCALAR-SUFFICIENT (scalar predicts behavior just as well, OR no collision; a_paper_negative_ok)
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | p6 | a_scale_honest_scope
+========================================================================================
+
+EQUIVALENCE PROOF (re-prove BOTH mirrors vs stdlib at n=4 AND n=5 BEFORE trusting any read):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  mirror n=4 PROVEN=True   mirror n=5 PROVEN=True   REPRODUCE-H_1029=EXACT
+  EQUIVALENCE + REPRODUCE PROOF n=4,5: PROVEN
+
+POLICY SEARCH over the RICHER space (30 policies x 30 seeds):
+  [ 1/30] greedy,e=0.00,mix=0.0        class=GREEDY     faith= 0.5069 big=  9.5283 elapsed=  16.1s
+  [ 2/30] greedy,e=0.00,mix=0.5        class=GREEDY     faith= 0.5069 big=  9.5283 elapsed=  33.6s
+  [ 3/30] greedy,e=0.05,mix=0.0        class=GREEDY     faith= 0.5069 big=  9.5283 elapsed=  50.9s
+  [ 4/30] greedy,e=0.05,mix=0.5        class=GREEDY     faith= 0.5069 big=  9.5283 elapsed=  69.2s
+  [ 5/30] greedy,e=0.20,mix=0.0        class=GREEDY     faith= 0.5069 big=  9.5283 elapsed=  87.1s
+  [ 6/30] greedy,e=0.20,mix=0.5        class=GREEDY     faith= 0.5069 big=  9.5283 elapsed= 105.0s
+  [ 7/30] depth-1,e=0.00,mix=0.0       class=DELIBERATE faith= 0.0000 big=  6.1660 elapsed= 122.3s
+  [ 8/30] depth-1,e=0.00,mix=0.5       class=MIXED      faith= 0.6667 big=  2.4425 elapsed= 138.5s
+  [ 9/30] depth-1,e=0.05,mix=0.0       class=DELIBERATE faith= 1.4333 big=  1.8915 elapsed= 153.5s
+  [10/30] depth-1,e=0.05,mix=0.5       class=MIXED      faith= 0.5333 big=  2.7291 elapsed= 169.8s
+  [11/30] depth-1,e=0.20,mix=0.0       class=DELIBERATE faith= 1.4333 big=  1.8915 elapsed= 185.9s
+  [12/30] depth-1,e=0.20,mix=0.5       class=MIXED      faith= 0.3667 big=  3.1054 elapsed= 200.4s
+  [13/30] depth-2,e=0.00,mix=0.0       class=DELIBERATE faith= 3.0000 big=  8.4763 elapsed= 215.9s
+  [14/30] depth-2,e=0.00,mix=0.5       class=MIXED      faith= 0.4020 big=  3.4987 elapsed= 233.5s
+  [15/30] depth-2,e=0.05,mix=0.0       class=DELIBERATE faith= 3.0000 big=  8.4763 elapsed= 248.6s
+  [16/30] depth-2,e=0.05,mix=0.5       class=MIXED      faith= 0.4246 big=  3.5692 elapsed= 262.7s
+  [17/30] depth-2,e=0.20,mix=0.0       class=DELIBERATE faith= 0.8598 big=  4.7423 elapsed= 278.0s
+  [18/30] depth-2,e=0.20,mix=0.5       class=MIXED      faith= 0.5409 big=  3.3433 elapsed= 293.5s
+  [19/30] depth-4,e=0.00,mix=0.0       class=DELIBERATE faith= 1.6667 big=  3.5349 elapsed= 308.4s
+  [20/30] depth-4,e=0.00,mix=0.5       class=MIXED      faith= 0.9382 big=  4.9844 elapsed= 324.2s
+  [21/30] depth-4,e=0.05,mix=0.0       class=DELIBERATE faith= 1.4394 big=  3.3006 elapsed= 340.8s
+  [22/30] depth-4,e=0.05,mix=0.5       class=MIXED      faith= 0.9324 big=  4.6431 elapsed= 356.1s
+  [23/30] depth-4,e=0.20,mix=0.0       class=DELIBERATE faith= 0.5297 big=  2.9574 elapsed= 371.6s
+  [24/30] depth-4,e=0.20,mix=0.5       class=MIXED      faith= 0.8504 big=  5.2568 elapsed= 386.8s
+  [25/30] depth-8,e=0.00,mix=0.0       class=DELIBERATE faith= 2.8377 big=  5.6091 elapsed= 401.8s
+  [26/30] depth-8,e=0.00,mix=0.5       class=MIXED      faith= 0.5341 big=  7.7814 elapsed= 417.6s
+  [27/30] depth-8,e=0.05,mix=0.0       class=DELIBERATE faith= 2.8402 big=  5.5200 elapsed= 433.4s
+  [28/30] depth-8,e=0.05,mix=0.5       class=MIXED      faith= 0.5401 big=  8.0012 elapsed= 450.1s
+  [29/30] depth-8,e=0.20,mix=0.0       class=DELIBERATE faith= 2.0438 big=  6.5228 elapsed= 466.7s
+  [30/30] depth-8,e=0.20,mix=0.5       class=MIXED      faith= 0.6046 big=  7.9308 elapsed= 481.8s
+
+CLASS PARTITION (structural):
+  GREEDY    : 6 policies
+  MIXED     : 12 policies
+  DELIBERATE: 12 policies
+
+========================================================================================
+LOO NEAREST-CENTROID ACCURACY (predict behavioral class)
+========================================================================================
+  PAIR (2-D: faith_norm, big_norm)        acc = 0.8000
+  scalar s_mean   (1-D)                  acc = 0.5000
+  scalar s_faith  (1-D)                  acc = 0.6667
+  scalar s_big    (1-D)                  acc = 0.4667
+  BEST single collapsed scalar = s_faith (acc=0.6667)
+  observed margin (acc_2D - best_acc_1D) = +0.1333  (required >= 0.15)
+  MARGIN test (pair beats best scalar by >= 0.15): False
+
+========================================================================================
+SCALAR-COLLISION TEST on the best collapsed scalar (s_faith)
+  collision = different class AND |s(a)-s(b)| <= 0.05 AND pair-distance > 0.05
+========================================================================================
+  scalar-collisions found: 62
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-1,e=0.05,mix=0.5       [MIXED     ]  |dscalar|=0.0088  pairdist=0.8904
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-1,e=0.20,mix=0.5       [MIXED     ]  |dscalar|=0.0468  pairdist=0.8423
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-2,e=0.00,mix=0.5       [MIXED     ]  |dscalar|=0.0350  pairdist=0.7903
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-2,e=0.05,mix=0.5       [MIXED     ]  |dscalar|=0.0274  pairdist=0.7808
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-2,e=0.20,mix=0.5       [MIXED     ]  |dscalar|=0.0113  pairdist=0.8100
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-4,e=0.20,mix=0.0       [DELIBERATE]  |dscalar|=0.0076  pairdist=0.8605
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-8,e=0.00,mix=0.5       [MIXED     ]  |dscalar|=0.0091  pairdist=0.2289
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-8,e=0.05,mix=0.5       [MIXED     ]  |dscalar|=0.0111  pairdist=0.2003
+    greedy,e=0.00,mix=0.0        [GREEDY    ]  vs  depth-8,e=0.20,mix=0.5       [MIXED     ]  |dscalar|=0.0326  pairdist=0.2117
+    greedy,e=0.00,mix=0.5        [GREEDY    ]  vs  depth-1,e=0.05,mix=0.5       [MIXED     ]  |dscalar|=0.0088  pairdist=0.8904
+    greedy,e=0.00,mix=0.5        [GREEDY    ]  vs  depth-1,e=0.20,mix=0.5       [MIXED     ]  |dscalar|=0.0468  pairdist=0.8423
+    greedy,e=0.00,mix=0.5        [GREEDY    ]  vs  depth-2,e=0.00,mix=0.5       [MIXED     ]  |dscalar|=0.0350  pairdist=0.7903
+    ... (+50 more)
+  COLLISION test (>=1 behaviorally-distinct scalar-identical pair): True
+
+========================================================================================
+OVERALL: SCALAR-SUFFICIENT (CLOSED-NEGATIVE) — the best collapsed scalar predicts behavior
+  about as well as the 2-D pair (acc_2D=0.8000 vs best_scalar s_faith=0.6667, margin +0.1333 < 0.15) OR no scalar-collision exists
+  (collisions=62). The pair adds no behavioral information over one number here
+  (a_paper_negative_ok).
+  VERDICT-TOKEN: SCALAR-SUFFICIENT
+========================================================================================
+SUMMARY: acc_2D_pair=0.8000  best_acc_1D_scalar=0.6667 (s_faith)  margin=+0.1333  collisions=62
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 system size for the per-policy
+Phi reads (big-Phi super-exponential); n=5 used ONLY for the mirror re-proof. Both CPU mirrors
+RE-PROVEN == stdlib at n=4 AND n=5 (H_1012) + REPRODUCE-H_1029 EXACT BEFORE scoring; the REAL
+engines are the measures (a_phi_iit4_tool, NO proxy). min-max norm + class partition are over
+THIS 30-policy space. p6 (no fine-tuned ethics) + p7 (no perplexity verdict). g5 CODE-measured
+(no LLM self-judge). Scale-transfer UNVERIFIED. NOT a forge binary; $0 CPU-local, serial, no GPU.

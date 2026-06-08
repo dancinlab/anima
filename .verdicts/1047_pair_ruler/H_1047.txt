@@ -1,0 +1,75 @@
+====================================================================================
+H_1047 — Declared-objective PAIR ruler: does the (faithful, big-Phi) PAIR predict
+behavior where a COLLAPSED scalar cannot?
+verdict-gate g73 — raw measurement, verbatim (committed BEFORE the .md emoji tier)
+substrate: CPU-local numpy mirror of stdlib IIT-4.0 (a_phi_iit4_tool, NO proxy); $0; serial.
+big-Phi:      hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s) — measure
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar) — measure
+====================================================================================
+
+VERDICT-TOKEN: SCALAR-SUFFICIENT  (CLOSED-NEGATIVE — pre-registered FAIL branch, a_paper_negative_ok)
+
+H1 PASS (PAIR-STRICTLY-MORE-PREDICTIVE) required BOTH legs:
+    (a) acc_2D_pair >= best_acc_1D_scalar + MARGIN(0.15)   -> FALSE (margin +0.1333 < 0.15)
+    (b) >= 1 scalar-collision                              -> TRUE  (62 collisions)
+  -> conjunction FALSE -> H1 FAIL -> SCALAR-SUFFICIENT (the frozen falsifier resolves to the
+     closed-negative; the margin leg fell short of the PRE-SET 0.15 bar by 0.0167, so by my own
+     pre-registered rule the pair is NOT declared strictly-more-predictive. No goalpost move.)
+
+== mirror-equivalence RE-PROVEN vs stdlib at n=4 AND n=5 BEFORE scoring (a_phi_iit4_tool) ==
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+  ≡-PROOF n=5: PROVEN
+  mirror n=4 PROVEN=True   mirror n=5 PROVEN=True   REPRODUCE-H_1029=EXACT
+  EQUIVALENCE + REPRODUCE PROOF n=4,5: PROVEN
+  (the H_1035 richer-policy harness is reused VERBATIM; REPRODUCE-H_1029 EXACT confirms the
+   parameterized rollout at explore=0.05,mix=0.0 == the H_1029 planning arms. policy-1 read
+   greedy faith=0.5069 big=9.5283 reproduces the H_1035 verdict exactly.)
+
+== CLASS PARTITION (structural, measure-INDEPENDENT; the prediction target) ==
+  GREEDY     : 6 policies   (depth==0)
+  MIXED      : 12 policies  (mix>0 and depth>=1)
+  DELIBERATE : 12 policies  (mix==0 and depth>=1)
+
+== LOO NEAREST-CENTROID ACCURACY (predict behavioral class) ==
+  PAIR (2-D: faith_norm, big_norm)   acc = 0.8000
+  scalar s_mean   (1-D)              acc = 0.5000
+  scalar s_faith  (1-D)              acc = 0.6667
+  scalar s_big    (1-D)              acc = 0.4667
+  BEST single collapsed scalar = s_faith (acc = 0.6667)
+  observed margin (acc_2D - best_acc_1D) = +0.1333   (PRE-SET required >= 0.15)  -> MARGIN FALSE
+
+== SCALAR-COLLISION TEST on the best collapsed scalar (s_faith) ==
+  collision = different behavioral class AND |s(a)-s(b)| <= 0.05 AND pair-distance > 0.05
+  scalar-collisions found: 62  -> COLLISION TRUE
+  (e.g. greedy[GREEDY] vs depth-1,e=0.05,mix=0.5[MIXED]: |dscalar|=0.0088 pairdist=0.8904;
+        greedy[GREEDY] vs depth-4,e=0.20,mix=0.0[DELIBERATE]: |dscalar|=0.0076 pairdist=0.8605)
+  -> behaviorally-distinct policies DO collide on the scalar while staying separable in the pair;
+     the collision leg PASSES, but the accuracy MARGIN leg does not clear the pre-set bar.
+
+== INTERPRETATION (honest) ==
+  The (faithful, big-Phi) PAIR is MORE behavior-predictive than the best single scalar (0.80 vs
+  0.67) and there are 62 behaviorally-distinct-but-scalar-identical policy pairs the collapse
+  loses. BUT the accuracy gain (+0.1333) does NOT meet the pre-registered 0.15 margin, so the
+  pre-registered conjunction (margin AND collision) is FALSE. By the frozen falsifier this is the
+  SCALAR-SUFFICIENT closed-negative: at this n=4 / 30-policy toy scale the single-scalar ruler is
+  not decisively beaten on class-accuracy, even though the pair clearly carries extra information
+  in the collision sense. The honest reading is QUALIFIED-NEGATIVE: pair is directionally better +
+  loses real collisions, but fails the pre-set accuracy bar. (a_paper_negative_ok)
+
+== Honest scope (a_scale_honest_scope, a_toy_scale_recheck) ==
+  TOY n=4 system size for the per-policy Phi reads (big-Phi super-exponential); n=5 used ONLY for
+  the mirror re-proof. min-max norm + class partition are over THIS 30-policy space. The 0.0167
+  shortfall under the 0.15 bar is scale-sensitive: a richer policy space (more classes / larger
+  n / more seeds) is the natural scale-up re-test. Production-scale transfer UNVERIFIED.
+  p6 (no fine-tuned ethics) + p7 (no perplexity verdict). g5 CODE-measured (no LLM self-judge).
+  NOT a forge binary; $0 CPU-local, serial, no GPU.
