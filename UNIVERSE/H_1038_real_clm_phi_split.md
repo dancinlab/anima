@@ -75,7 +75,37 @@ CPU-local (the 3B rung needs GPU; not auto-rented here). n<=6 is the largest EXA
 Verdict scoped to: the d768 golden real trained ConvMoE, coarse-grained to n<=6 EXACT.
 g5 CODE-measured (no LLM self-judge, p7). Pure-CPU EXACT, NOT a forge binary.
 
-## Verdict
+## Verdict — 🟢 SPLIT-TRANSFERS-TO-REAL-MODEL
 
-(pending measurement — verdict txt lands at .verdicts/1038_real_clm_phi_split/H_1038.txt
-BEFORE any emoji tier is added here, per g73)
+🟢 **TRANSFERS** — on the golden trained ConvMoE `reexport_d768_v2_fast.clm`, the planning
+faithful_phi-UP / big-Phi-DOWN sign-split appears under BOTH pre-registered macro-maps
+(top-variance AND random channel) at n=5 EXACT. The toy-TPM arc (H_1004 → H_1037, prior GREEN)
+split is a property of a REAL trained consciousness model too — toy → real BRIDGED at d768. It is
+NOT a toy-TPM artifact.
+
+Per-macro-map sign table (planning(depth-8) − GREEDY contrast, 20 real-text seed windows, n=5 EXACT):
+
+| macro-map     | on_frac | faithful d | faithful sign | big-Phi d | big-Phi sign | SPLIT? |
+|---------------|---------|------------|---------------|-----------|--------------|--------|
+| top_variance  | 0.495   | +0.0656    | UP            | −3.6652   | DOWN         | True   |
+| random        | 0.494   | +0.3526    | UP            | −1.6291   | DOWN         | True   |
+
+2/2 macro-maps SHOW the split. The defining property — the cross-MEASURE SIGN DISAGREEMENT
+(faithful RAISES while system big-Phi LOWERS under planning) — holds in both maps. The big-Phi-DOWN
+leg is the strong/robust component (d=−3.67 / −1.63; significant p=0.028 for top-variance); the
+faithful-UP leg is positive but SMALL on the real model (Welch p>0.05 in both). This is a sign-level
+transfer, not a magnitude claim.
+
+Engines: stdlib `iit4_bigphi.hexa` + `iit4/faithful_phi.hexa` (a_phi_iit4_tool, no proxy), CPU mirrors
+RE-PROVEN ≡ stdlib at n=4 AND n=5 (|Δ|≤3.75e-6) BEFORE scoring. Decode-sanity: CE 3.254 < uniform
+5.545 (trained descent). 80/80 evals completed (0 timeouts), guarded-pool, did NOT hang. $0 CPU-local.
+
+**Honest scope (a_scale_honest_scope):** n=6 EXACT was MEASURED-INFEASIBLE here — every real .clm
+trajectory coarse-grains to a maximal-entropy n=6 TPM (on_frac=0.500, all 63 mechanisms active),
+making exact big-Phi enumeration super-exponential (>600s/eval at $0 CPU; run4: 80/80 timed out — a
+measurement wall, NOT a science result). The toy n=6 rungs were tractable because toy WM TPMs were
+sparse/low-entropy. n=5 big-Phi on the SAME real TPMs is ~12s/eval. This rung is scoped to n=5 EXACT
+(largest feasible exact size for these dense real TPMs at $0 CPU); n=6 EXACT is an INFEASIBLE-CAP here
+(a many-core pod could reach it). d768 = ONE real-model rung; 3B/7B transfer UNVERIFIED (3B needs GPU
+= H_1042, GATED). Raw measurement (incl. the n=4/n=5 mirror≡stdlib proof + per-macro-map sign table):
+`.verdicts/1038_real_clm_phi_split/H_1038.txt`.

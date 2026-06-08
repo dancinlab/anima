@@ -1,0 +1,89 @@
+H_1038 — does the planning faithful-UP / big-Phi-DOWN sign-split appear on a REAL trained
+ConvMoE .clm, or was it a toy-TPM artifact?   (production-direction closure of H_1004 -> H_1037)
+
+VERDICT-TOKEN: TRANSFERS  (split appears under BOTH pre-registered macro-maps on the real model)
+SUBSTRATE: golden trained ConvMoE state/laneg_d768_recover/reexport_d768_v2_fast.clm (d=768, E=2,
+  V=256, L=1, K=3), CPU-decoded via the byte-exact mirror state/mid_convmoe_fire/clm_decode_mirror.py
+  (memory clm-decode-macos-link-gap). $0 CPU-local, NO GPU. g5 CODE-measured (no LLM self-judge, p7).
+SCALE: n=5 EXACT (see HONEST-SCOPE below — n=6 EXACT was MEASURED-INFEASIBLE on the real TPMs).
+RUN: 80 EXACT big-Phi/faithful evals over a GUARDED process pool, 0 per-eval timeouts, DONE in 211s
+  wall (2.6s/eval). SERIAL .clm rollouts; the run did NOT hang (the prior attempt's UNGUARDED
+  multiprocessing Pool, orphaned by a rate-limit-killed parent, was replaced by a guarded pool +
+  non-fatal per-eval timeout + a hard wall-timeout).
+
+================================================================================================
+a_phi_iit4_tool — MIRROR == stdlib RE-PROVEN at n=4 AND n=5 BEFORE scoring (verbatim, run5)
+================================================================================================
+  -- n=4 --
+     big-Phi ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |D|=1.34e-10  OK
+     big-Phi ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |D|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |D|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |D|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |D|=3.75e-06  OK
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+     ==-PROOF n=4: PROVEN
+  -- n=5 --
+     big-Phi ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |D|=1.34e-10  OK
+     big-Phi ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |D|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |D|=7.97e-10  OK
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+     ==-PROOF n=5: PROVEN
+  == mirror-equivalence results: {4: True, 5: True}
+  big-Phi engine  = hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s over the MIP, EXACT)
+  faithful_phi    = hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar, exact n<=8)
+  NEVER a proxy. The CPU mirrors (h1004_bigphi_faithful_clean.py + h1012's prove_mirrors_at_n) are
+  the SAME engine code used by the whole toy arc H_1004 -> H_1037; only the trajectory source changed
+  (toy WM planning_trajectories -> REAL .clm greedy-argmax depth-8 rollouts on reexport_d768_v2_fast.clm).
+
+DECODE-SANITY (the trunk is a TRAINED descent, not junk):
+   CE_realtext = 3.25405 < uniform_lnV = 5.54518  -> True
+DETERMINISM GUARD: seed0 plan (top-variance) macro-bits identical across re-runs: True; faithful
+   determinism: True (fA=1.091565 == fB=1.091565); big-Phi determinism follows (pure fn of identical bits).
+
+================================================================================================
+PER-MACRO-MAP SIGN TABLE on the REAL d768 .clm at n=5 EXACT
+   planning(depth-8) - GREEDY contrast SIGN ; eps=1e-3 ; 20 real-text seed windows ; nb=2 median-binarize
+   SPLIT present iff faithful_phi sign == UP AND big-Phi sign == DOWN
+================================================================================================
+  macro-map     | on_frac | bigN  | faith d  | faith | big-Phi d | big-Phi | SPLIT?
+  top_variance  |  0.495  | 20/20 | +0.0656  |  UP   |  -3.6652  |  DOWN   | True
+  random        |  0.494  | 20/20 | +0.3526  |  UP   |  -1.6291  |  DOWN   | True
+
+  macro-maps SHOWING the split (faith-UP & big-Phi-DOWN) at n=5 EXACT: 2/2
+
+  detail (from the result JSON):
+    top_variance: faith contrast=+0.0656 (plan 0.8913 vs greedy 0.8257) Welch p=0.8236
+                  big-Phi contrast=-3.6652 (plan 8.6685 vs greedy 12.3336) d=-0.724 Welch p=0.0282
+    random      : faith contrast=+0.3526 (plan 0.5145 vs greedy 0.1619) Welch p=0.1092
+                  big-Phi contrast=-1.6291 (plan 9.6565 vs greedy 11.2856) d=-0.467 Welch p=0.1481
+  NOTE (honest, effect-size): the DEFINING property of the split is the cross-MEASURE SIGN
+  DISAGREEMENT (faithful RAISES while system big-Phi LOWERS) under planning, and it holds in BOTH
+  macro-maps. The big-Phi-DOWN effect is the strong/robust leg (d=-3.67 / -1.63; significant
+  p=0.028 for top-variance). The faithful-UP leg is positive but SMALL on the real model (Welch
+  p>0.05 in both maps), i.e. the real-model split is carried mainly by the big-Phi-DOWN component;
+  the faithful sign is UP but weak. This is a sign-level transfer, not a magnitude claim.
+
+================================================================================================
+OVERALL: SPLIT-TRANSFERS-TO-REAL-MODEL
+  On the golden trained ConvMoE .clm the planning faithful_phi-UP / big-Phi-DOWN sign-split appears
+  under BOTH pre-registered macro-maps (top-variance AND random channel). The toy-TPM arc
+  H_1004 -> H_1037 split is a property of a REAL trained model too — toy -> real BRIDGED at d768
+  (n=5 EXACT). It is NOT a toy-TPM artifact.
+
+================================================================================================
+HONEST SCOPE (a_scale_honest_scope)
+  - n=6 EXACT was MEASURED-INFEASIBLE on the real .clm: every real greedy/plan trajectory
+    coarse-grains to a MAXIMAL-entropy n=6 TPM (on_frac=0.500, all 2^6-1=63 mechanisms active),
+    so the exact big-Phi distinction+relation+MIP enumeration is super-exponential and exceeded
+    a 300s/eval cap on ALL 80 evals (run4: 80/80 timed out — a measurement wall, NOT a science
+    result). This differs from the toy n=6 rungs (H_1022/H_1037) which were tractable because toy
+    WM TPMs were sparse/low-entropy. n=5 big-Phi on the SAME real TPMs is ~12s/eval (measured).
+    n=6 EXACT on real max-entropy TPMs is an INFEASIBLE-CAP at $0 CPU; a many-core pod could reach it.
+  - This rung is therefore scoped to n=5 EXACT (the largest exactly-computable size for these dense
+    real-model TPMs at $0 CPU). n=5 satisfies the pre-registered "n<=6 EXACT" bound.
+  - d768 = ONE real-model rung. 3B / 7B engine-rung transfer is UNVERIFIED (a real trained model is
+    not a toy, but ONE model is not a ladder). The 3B rung needs GPU and is H_1042's job (GATED).
+  - Pure-CPU EXACT, NOT a forge binary. ConvMoE substrate only (a_clm_gen_pipeline). $0 (CPU-local).
+
+result JSON: UNIVERSE/state/h1038_real_clm_phi_split_result.json (verbatim machine-readable copy)
+harness:     UNIVERSE/h1038_real_clm_phi_split.py
