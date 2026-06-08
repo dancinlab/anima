@@ -225,25 +225,43 @@ def contrast(a, b):
 # The bits are precomputed SERIAL and passed to the worker, so the worker does ONLY the
 # deterministic pure-arithmetic IIT evals (no .clm I/O, no RNG) — fully reproducible.
 # ═══════════════════════════════════════════════════════════════════════════
-_PER_EVAL_TIMEOUT = 1200   # hard per-eval wall cap (s) inside each worker
+_PER_EVAL_TIMEOUT = 300   # per-eval wall cap (s) inside each worker — NON-FATAL
+
+
+class _EvalTimeout(Exception):
+    pass
 
 
 def _phi_worker(job):
-    """TOP-LEVEL worker: ONE (key, bits-as-list, n) -> (key, big, faith). Pure arithmetic
-    over the passed bits (no I/O, no RNG). Hard per-eval SIGALRM so it cannot hang."""
+    """TOP-LEVEL worker: ONE (key, bits-as-list, n) -> (key, big, faith, on_frac, timed_out).
+    Pure arithmetic over the passed bits (no I/O, no RNG). The per-eval SIGALRM is NON-FATAL:
+    on timeout the worker returns timed_out=True with NaN phis, so ONE pathological
+    high-entropy real-model TPM (where big-Phi's distinction+relation+MIP enumeration
+    explodes) cannot crash the whole run — it is honestly EXCLUDED + disclosed (a single
+    excluded eval out of 20 seeds barely shifts a sign-contrast). faithful_phi is computed
+    FIRST (it is cheap and never the bottleneck) so it survives even a big-Phi timeout."""
     key, bits_list, n = job
+    bits = np.asarray(bits_list, dtype=int)
+    on_frac = float(bits.mean())
+    # faithful_phi first (cheap; always succeeds at n<=6)
+    fstate, fn, fdim = binary_seq_to_faithful_state(bits, n)
+    fphi = float(faithful_phi(fstate, fn, fdim, 2))
 
     def _to(signum, frame):
-        raise TimeoutError(f"per-eval timeout ({_PER_EVAL_TIMEOUT}s) at {key}")
-    signal.signal(signal.SIGALRM, _to)
+        raise _EvalTimeout()
+    old = signal.signal(signal.SIGALRM, _to)
     signal.alarm(_PER_EVAL_TIMEOUT)
-    bits = np.asarray(bits_list, dtype=int)
-    tpm, sc = binary_seq_to_tpm(bits, n)
-    bphi = big_phi(tpm, n, modal_state(sc))[0]
-    fstate, fn, fdim = binary_seq_to_faithful_state(bits, n)
-    fphi = faithful_phi(fstate, fn, fdim, 2)
-    signal.alarm(0)
-    return key, float(bphi), float(fphi), float(bits.mean())
+    try:
+        tpm, sc = binary_seq_to_tpm(bits, n)
+        bphi = float(big_phi(tpm, n, modal_state(sc))[0])
+        timed_out = False
+    except _EvalTimeout:
+        bphi = float("nan")
+        timed_out = True
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old)
+    return key, bphi, fphi, on_frac, bool(timed_out)
 
 
 def score_all(W, macro_maps, pool, t0):
@@ -278,21 +296,41 @@ def score_all(W, macro_maps, pool, t0):
     print(f"   {len(jobs)} evals DONE in {time.time()-te:.1f}s wall "
           f"({(time.time()-te)/len(jobs):.1f}s/eval amortized)", flush=True)
 
-    # collect per macro-map
-    acc = {mm: dict(big_plan=[], big_greedy=[], faith_plan=[], faith_greedy=[], on=[])
-           for mm in macro_maps}
-    for (mm, s, which), bphi, fphi, onf in results:
-        if which == "plan":
-            acc[mm]["big_plan"].append(bphi); acc[mm]["faith_plan"].append(fphi)
-            acc[mm]["on"].append(onf)
-        else:
-            acc[mm]["big_greedy"].append(bphi); acc[mm]["faith_greedy"].append(fphi)
+    # collect per (macro_map, seed): big/faith for plan + greedy, plus timeout flags.
+    # big-Phi is PAIRED per seed (plan-greedy), so a seed is EXCLUDED from the big-Phi
+    # contrast iff EITHER its plan or greedy big-Phi timed out (NON-FATAL). faithful_phi
+    # never times out (cheap), so its contrast uses ALL 20 seeds. Timeouts are disclosed.
+    cells = {mm: {s: {} for s in range(N_SEEDS)} for mm in macro_maps}
+    n_timeout = {mm: 0 for mm in macro_maps}
+    timeout_keys = []
+    for (mm, s, which), bphi, fphi, onf, to in results:
+        cells[mm][s][which] = dict(big=bphi, faith=fphi, on=onf, to=to)
+        if to:
+            n_timeout[mm] += 1
+            timeout_keys.append((mm, s, which))
     out = {}
     for mm in macro_maps:
-        a = acc[mm]
-        out[mm] = dict(big=contrast(a["big_plan"], a["big_greedy"]),
-                       faith=contrast(a["faith_plan"], a["faith_greedy"]),
-                       on_frac=float(np.mean(a["on"])), elapsed=float(time.time()-te))
+        big_plan, big_greedy = [], []     # paired, timeout-excluded
+        faith_plan, faith_greedy = [], []  # all seeds
+        on_all = []
+        n_excluded = 0
+        for s in range(N_SEEDS):
+            cp = cells[mm][s].get("plan"); cg = cells[mm][s].get("greedy")
+            faith_plan.append(cp["faith"]); faith_greedy.append(cg["faith"])
+            on_all.append(cp["on"]); on_all.append(cg["on"])
+            if cp["to"] or cg["to"]:
+                n_excluded += 1
+            else:
+                big_plan.append(cp["big"]); big_greedy.append(cg["big"])
+        out[mm] = dict(big=contrast(big_plan, big_greedy),
+                       faith=contrast(faith_plan, faith_greedy),
+                       on_frac=float(np.mean(on_all)),
+                       n_big_seeds=len(big_plan), n_excluded=int(n_excluded),
+                       elapsed=float(time.time()-te))
+    if timeout_keys:
+        print(f"   NOTE: {len(timeout_keys)} big-Phi eval(s) hit the {_PER_EVAL_TIMEOUT}s "
+              f"per-eval timeout (pathological high-entropy real-model TPM) and were EXCLUDED "
+              f"from the big-Phi contrast (faithful_phi unaffected): {timeout_keys}", flush=True)
     return out
 
 
@@ -410,7 +448,9 @@ def main():
         print(f"   big-Phi      contrast(plan-greedy)={bc:+.4f} d={r['big']['d']:+.3f} "
               f"p={r['big']['p']:.3e} -> {bs}  (plan={r['big']['plan_mean']:.4f} "
               f"greedy={r['big']['greedy_mean']:.4f})")
-        print(f"   on-fraction(mean)={r['on_frac']:.3f}")
+        print(f"   on-fraction(mean)={r['on_frac']:.3f}  "
+              f"big-Phi seeds used={r['n_big_seeds']}/{N_SEEDS} "
+              f"(excluded {r['n_excluded']} on per-eval timeout)")
         print(f"   SHOWS THE SPLIT (faith-UP & big-DOWN): {split}", flush=True)
         print()
         all_rows.append(dict(macro_map=mm, bc=float(bc), fc=float(fc),
@@ -418,6 +458,7 @@ def main():
                              bp=float(r["big"]["p"]), fp=float(r["faith"]["p"]),
                              bs=bs, fs=fs, on_frac=float(r["on_frac"]),
                              split=bool(split), elapsed=float(r["elapsed"]),
+                             n_big_seeds=int(r["n_big_seeds"]), n_excluded=int(r["n_excluded"]),
                              faith_plan=float(r["faith"]["plan_mean"]),
                              faith_greedy=float(r["faith"]["greedy_mean"]),
                              big_plan=float(r["big"]["plan_mean"]),
@@ -430,13 +471,14 @@ def main():
     print(f"PER-MACRO-MAP SIGN TABLE on the REAL d768 .clm at n={N_UNITS} EXACT "
           f"— planning(depth-{PLAN_DEPTH}) - GREEDY contrast SIGN")
     print("=" * 90)
-    print(f"  {'macro-map':13s} | {'on_frac':>7s} | {'faith d':>9s} | {'faith':>5s} | "
+    print(f"  {'macro-map':13s} | {'on_frac':>7s} | {'bigN':>4s} | {'faith d':>9s} | {'faith':>5s} | "
           f"{'big-Phi d':>10s} | {'big-Phi':>7s} | {'SPLIT?':>6s}")
     n_split = 0
     for r in all_rows:
         if r["split"]:
             n_split += 1
-        print(f"  {r['macro_map']:13s} | {r['on_frac']:>7.3f} | {r['fc']:+9.4f} | {r['fs']:>5s} | "
+        print(f"  {r['macro_map']:13s} | {r['on_frac']:>7.3f} | "
+              f"{r['n_big_seeds']:>2d}/{N_SEEDS:<1d} | {r['fc']:+9.4f} | {r['fs']:>5s} | "
               f"{r['bc']:+10.4f} | {r['bs']:>7s} | {str(r['split']):>6s}")
     print()
     n_total = len(all_rows)
