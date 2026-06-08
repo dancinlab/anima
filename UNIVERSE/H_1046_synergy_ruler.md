@@ -62,4 +62,24 @@ seeds, with the mirror re-proven at n=4 AND n=5. PID exact + deterministic. Scal
 production CLM/CWM UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7). $0 CPU-local, no GPU.
 
 ## Status
-PENDING — pre-registered, awaiting measurement and the verdict .txt before any tier token.
+🔴 CLOSED-NEGATIVE (SYNERGY-NOT-BIGPHI-STANDIN) — verdict `.verdicts/1046_synergy_ruler/H_1046.txt`.
+
+Measured: 7 substrates x 24 seeds, n=4, mirror RE-PROVEN == stdlib at n=4 AND n=5 (|Δ|≈1e-10
+ring big-Φ, ≈1e-9 faithful; COPY syn=0 / XOR syn=1; synergy path has NO MIP enumeration while
+big-Φ's mincut does → cheaper PROVEN).
+
+Falsifier outcome (all three required for PASS):
+- (1) AGREEMENT sign(synergy)==sign(big-Φ) ≥5/6 → **FAIL, 3/7**. Synergy is monotone-DOWN on
+  EVERY substrate, so it cannot carry big-Φ's direction where big-Φ RISES (imagine/guided/chaos:
+  big-Φ UP, synergy DOWN).
+- (2) TRACKS big-Φ NOT faithful on split substrates → **TRUE, 3/3** (faithful 0/3). On the 3
+  planning split substrates (big-Φ DOWN, faithful UP) the synergy sign matches big-Φ perfectly.
+- (3) CHEAPER (no MIP search) → **TRUE**.
+- OVERALL = (1)∧(2)∧(3) = **FALSE** → CLOSED-NEGATIVE.
+
+Finding: the Williams-Beer synergy atom captures the planning-split DIRECTION big-Φ reads
+(perfect 3/3 on the split substrates) but is a DEGENERATE always-down signal globally, so it is
+NOT a valid cheap stand-in for big-Φ's integration. The synergy-only-ruler axis is RULED OUT as
+a cheap big-Φ stand-in (a_paper_negative_ok). This SHARPENS H_1017 (planning's redundancy rise
+co-occurs with a synergy DROP both engines read as integration-DOWN) without promoting synergy to
+big-Φ's global driver. TOY n≤6 only; scale-transfer UNVERIFIED (a_scale_honest_scope).
