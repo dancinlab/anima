@@ -1,6 +1,17 @@
-# H_1063 — phi-split-sign-universality (PRE-REGISTRATION)
+# H_1063 — phi-split-sign-universality 🔴 SIGN-NOT-CLEAN-UNIVERSAL (closed-negative, a_paper_negative_ok)
 
-**Status:** PRE-REGISTERED (falsifier + FROZEN thresholds locked BEFORE scoring). TEXT-only until `.verdicts/1063_phi_split_sign_universality/H_1063.txt` lands.
+**Status:** SCORED. Verdict backed by `.verdicts/1063_phi_split_sign_universality/H_1063.txt` (raw stdout, 147 lines). TOY n=4 EXACT, 30 seeds, $0 CPU, 0-pod. mirror==stdlib n=4 AND n=5 RE-PROVEN; reproduce-H_1039 confirmed.
+
+## VERDICT (🔴 SIGN-NOT-CLEAN-UNIVERSAL)
+The faithful-UP / big-Phi-DOWN sign-split is **NOT** a clean universal measure-property of within-block correlation. Over the graded rho_corr sweep {0.0..0.9} (knob validated monotone: Spearman(rho_corr, mean|corr|)=**+1.0000**):
+- **faithful phi_EI Spearman(rho_corr) = +0.2848** (FAIL frozen bar >= +0.9) — near-flat, non-monotone (5/9 steps up).
+- **big-Phi Spearman(rho_corr) = +0.0788** (FAIL frozen bar <= -0.9) — non-monotone, sign flips repeatedly (only 3/9 steps down; +0.51 / +0.64 at mid-high rho is the OPPOSITE of the predicted DOWN).
+- **cond_opposite = False** (neither measure is monotone, signs not robustly opposite).
+- **Removability-resistant check FAIL:** at rho=0.9 CONTROL the split is present (faith +0.181 / big -0.360, SPLIT=True) but ZCA de-redundify (93.3% Dred cut) COLLAPSES it (faith -0.004 DOWN, SPLIT=False) → the high-rho sign does **NOT** survive de-redundify (cond_resistant = False).
+
+**Finding:** the sign-split is NOT removability-INDEPENDENT — wherever a clean faith-UP/big-DOWN split arises (e.g. rho=0.1, 0.2, 0.9), ZCA de-redundify still collapses it (sign DEPENDS on removable redundancy), consistent with H_1062's planning-specific causal mechanism. The split DIRECTION's cross-IV rank-generalization (H_1062 ρ=+0.80) is therefore NOT explained by a universal opposite-monotone measure-response to within-block correlation: a diffuse, controlled correlation knob produces NEITHER monotone measure NOR a removability-resistant sign. The unification of H_1039 + H_1062 via a "universal sign" is **ruled out** — the split is bounded to redundancy that is structured enough to be both ZCA-removable AND aligned with the discretized binarization, not a generic property of raised channel correlation.
+
+**Original pre-registration follows (FROZEN before scoring):**
 
 ## Lineage / puzzle
 - [[h1039-redundancy-causal]] H_1039 (REDUNDANCY-CAUSAL, PASS): Williams-Beer redundancy causally drives the *planning* Phi-sign-split (de-redundify ZCA/GS collapses it on planning; control: faith +2.33 / big -4.01).
