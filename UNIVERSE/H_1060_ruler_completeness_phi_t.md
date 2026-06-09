@@ -88,3 +88,40 @@ the cleanest possible test of "is T needed".
 
 artifacts: `UNIVERSE/h1060_ruler_completeness_phi_t.py` ·
 `.verdicts/1060_ruler_completeness_phi_t/H_1060.txt`
+
+## section 4 — VERDICT (g73 .txt backed; emoji tier AFTER the .txt landed)
+
+🟢 **RULER-NEEDS-T (QUALIFIED — PHI-BLIND-BY-CONSTRUCTION)**
+
+The FROZEN falsifier resolves to **H1-PASS**: the (Φ, T) 2-vector predicts the behavioral
+class at **acc=0.8000**, beating the best single Φ-scalar (s_faith, **acc=0.2000**) by
+**margin = +0.6000 ≥ 0.15** (the pre-set H_1047 bar, NOT moved). 60 members (12 REACTIVE +
+24 DELIBERATE-ACTIVE + 24 DELIBERATE-PASSIVE).
+
+But the verdict is **QUALIFIED / DEGENERATE**, flagged by the in-code FAIRNESS GUARD (the
+H_1051 graded-design + H_1047 fair-bar lesson):
+
+- `phi_blind_by_construction = True` — the DELIBERATE-ACTIVE vs DELIBERATE-PASSIVE classes
+  are **Φ-IDENTICAL pair-for-pair (24/24 deliberate pairs share Φ exactly)**, because
+  agency-mode only changes T, never the policy-determined Φ. So any Φ-scalar is
+  STRUCTURALLY unable to separate them, and the large margin is **partly built-in**.
+- `s_T alone = 0.8000` == the 2-vector → **Φ adds ZERO**; T does all the work. This is not a
+  "needs BOTH axes" win — it is a "needs T, Φ is blind to agency" result.
+- **Φ-FAIR sub-test**: Φ reaches **acc=0.8333** on the REACTIVE-vs-DELIBERATE *planning*
+  split it CAN see (above the 0.80 majority baseline) → Φ is **specifically blind to
+  AGENCY, not globally useless** (the precise, non-tautological finding).
+- empirical orthogonality: ρ(faith,T) = −0.115, ρ(big,T) = +0.020 (corroborates H_1051's ρ≈0).
+
+**Precise finding:** WHEN behavioral classes differ ONLY in agency, an instantaneous Φ-scalar
+is provably INSUFFICIENT and the temporal/agency T axis is NECESSARY to recover them —
+consistent with H_1051's orthogonal-T result, lifted to a multi-class battery. This CONFIRMS
+the ruler needs T for agency, but does NOT demonstrate a fair head-to-head Φ-vs-T contest
+(that would need agency to ALSO move Φ-relevant behavior — UNVERIFIED, a follow-up rung).
+
+**Reproduce / integrity:** mirror ≡ stdlib RE-PROVEN at n=4 AND n=5 for BOTH engines (big-Φ
+ring |Δ|=1.34e-10; faithful n4 |Δ|≤3.75e-6, n5 |Δ|=7.97e-10) via H_1012 `prove_mirrors_at_n`;
+REPRODUCE-H_1029 EXACT; REPRODUCE-H_1047 greedy seed-mean anchor faith=0.50693 / big=9.52829
+(published 0.5069 / 9.5283) — all BEFORE scoring. a_phi_iit4_tool (NO proxy). T = H_1051
+machinery UNMODIFIED. **TOY n=4 (n=5 only for the mirror re-proof); scale-transfer UNVERIFIED;
+p3/p6/p7; g5 CODE-measured; $0 CPU-local, SERIAL, no GPU/pod.**
+
