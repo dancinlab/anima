@@ -1,0 +1,175 @@
+==========================================================================================
+H_1060 — ruler-completeness Phi-T capstone (synthesis of H_1045 + H_1051 + H_1047)
+verdict-gate g73 — raw measurement, verbatim (committed BEFORE the .md emoji tier)
+substrate: CPU-local numpy mirror of stdlib IIT-4.0 (a_phi_iit4_tool, NO proxy); $0; serial.
+big-Phi:      hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+T:            z(provenance-depth, H_932) + z(veto-capacity, H_935)  [H_1051 machinery, UNMODIFIED]
+==========================================================================================
+
+== STEP 0: mirror ==stdlib RE-PROVEN at n=4 AND n=5 (BOTH engines) BEFORE scoring ==
+    ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+       big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+       big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+       faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+       faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+       faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+       matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+       deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+    ≡-PROOF n=4: PROVEN
+  ==-PROOF n=4: PROVEN
+    ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+       big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+       big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+       faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+       matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+       deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+    ≡-PROOF n=5: PROVEN
+  ==-PROOF n=5: PROVEN
+  mirror n=4 PROVEN=True   mirror n=5 PROVEN=True   REPRODUCE-H_1029=EXACT
+  EQUIVALENCE + REPRODUCE PROOF n=4,5: PROVEN
+
+== STEP 0b: REPRODUCE-H_1047 anchor — greedy policy (0,0.0,0.0) SEED-MEAN faith/big ==
+  greedy faith=0.5069 (H_1047 ref 0.5069, |Δ|=2.84e-05, OK=True)
+  greedy big  =9.5283 (H_1047 ref 9.5283, |Δ|=1.15e-05, OK=True)
+  REPRODUCE-H_1047 (greedy seed-mean faith/big anchor matches published): True
+
+== STEP 1: MIXED battery — 30 policies x {ACTIVE,PASSIVE} agency, agency seeds=12 ==
+  [ 1/30] greedy,e=0.00,mix=0.0      faith= 0.5069 big=  9.5283  elapsed= 386.8s
+  [ 2/30] greedy,e=0.00,mix=0.5      faith= 0.5069 big=  9.5283  elapsed= 386.9s
+  [ 3/30] greedy,e=0.05,mix=0.0      faith= 0.5069 big=  9.5283  elapsed= 387.0s
+  [ 4/30] greedy,e=0.05,mix=0.5      faith= 0.5069 big=  9.5283  elapsed= 387.2s
+  [ 5/30] greedy,e=0.20,mix=0.0      faith= 0.5069 big=  9.5283  elapsed= 387.3s
+  [ 6/30] greedy,e=0.20,mix=0.5      faith= 0.5069 big=  9.5283  elapsed= 387.4s
+  [ 7/30] depth-1,e=0.00,mix=0.0     faith= 0.0000 big=  6.1660  elapsed= 387.5s
+  [ 8/30] depth-1,e=0.00,mix=0.5     faith= 0.6667 big=  2.4425  elapsed= 387.6s
+  [ 9/30] depth-1,e=0.05,mix=0.0     faith= 1.4333 big=  1.8915  elapsed= 387.8s
+  [10/30] depth-1,e=0.05,mix=0.5     faith= 0.5333 big=  2.7291  elapsed= 387.9s
+  [11/30] depth-1,e=0.20,mix=0.0     faith= 1.4333 big=  1.8915  elapsed= 388.0s
+  [12/30] depth-1,e=0.20,mix=0.5     faith= 0.3667 big=  3.1054  elapsed= 388.1s
+  [13/30] depth-2,e=0.00,mix=0.0     faith= 3.0000 big=  8.4763  elapsed= 388.2s
+  [14/30] depth-2,e=0.00,mix=0.5     faith= 0.4020 big=  3.4987  elapsed= 388.3s
+  [15/30] depth-2,e=0.05,mix=0.0     faith= 3.0000 big=  8.4763  elapsed= 388.5s
+  [16/30] depth-2,e=0.05,mix=0.5     faith= 0.4246 big=  3.5692  elapsed= 388.6s
+  [17/30] depth-2,e=0.20,mix=0.0     faith= 0.8598 big=  4.7423  elapsed= 388.7s
+  [18/30] depth-2,e=0.20,mix=0.5     faith= 0.5409 big=  3.3433  elapsed= 388.8s
+  [19/30] depth-4,e=0.00,mix=0.0     faith= 1.6667 big=  3.5349  elapsed= 388.9s
+  [20/30] depth-4,e=0.00,mix=0.5     faith= 0.9382 big=  4.9844  elapsed= 389.0s
+  [21/30] depth-4,e=0.05,mix=0.0     faith= 1.4394 big=  3.3006  elapsed= 389.2s
+  [22/30] depth-4,e=0.05,mix=0.5     faith= 0.9324 big=  4.6431  elapsed= 389.3s
+  [23/30] depth-4,e=0.20,mix=0.0     faith= 0.5297 big=  2.9574  elapsed= 389.4s
+  [24/30] depth-4,e=0.20,mix=0.5     faith= 0.8504 big=  5.2568  elapsed= 389.5s
+  [25/30] depth-8,e=0.00,mix=0.0     faith= 2.8377 big=  5.6091  elapsed= 389.6s
+  [26/30] depth-8,e=0.00,mix=0.5     faith= 0.5341 big=  7.7814  elapsed= 389.8s
+  [27/30] depth-8,e=0.05,mix=0.0     faith= 2.8402 big=  5.5200  elapsed= 389.9s
+  [28/30] depth-8,e=0.05,mix=0.5     faith= 0.5401 big=  8.0012  elapsed= 390.0s
+  [29/30] depth-8,e=0.20,mix=0.0     faith= 2.0438 big=  6.5228  elapsed= 390.1s
+  [30/30] depth-8,e=0.20,mix=0.5     faith= 0.6046 big=  7.9308  elapsed= 390.2s
+
+== CLASS PARTITION (structural, measure-INDEPENDENT; the prediction target) ==
+  REACTIVE            : 12 members
+  DELIBERATE-ACTIVE   : 24 members
+  DELIBERATE-PASSIVE  : 24 members
+
+== ORTHOGONALITY (Phi vs T over the battery; low |rho| => T is a distinct axis) ==
+  Spearman rho(faith, T) = -0.1150
+  Spearman rho(big,   T) = +0.0196
+
+== FAIRNESS / DEGENERACY GUARD (is the agency split Phi-IDENTICAL by construction?) ==
+  deliberate policy active/passive pairs: 24; Phi-IDENTICAL pairs: 24
+  => Phi is BLIND to the agency split BY CONSTRUCTION: True
+  (when True, the agency classes share Phi pair-for-pair, so any Phi-scalar is
+   STRUCTURALLY unable to separate them — the large margin is PARTLY built-in.)
+
+== BASELINES == majority-class baseline = 0.4000 (largest class DELIBERATE-ACTIVE=24/60)
+  Phi-FAIR sub-test (Phi on REACTIVE-vs-DELIBERATE, the split Phi COULD see):
+    best Phi-scalar acc = 0.8333  (majority 0.8000) — Phi is useful on the PLANNING split
+    => Phi is specifically BLIND to AGENCY, not globally useless (precise finding).
+
+==========================================================================================
+LOO NEAREST-CENTROID ACCURACY (predict behavioral class; H_1047 protocol VERBATIM)
+==========================================================================================
+  scalar s_faith  (1-D)                  acc = 0.2000
+  scalar s_big    (1-D)                  acc = 0.2000
+  scalar s_T      (1-D)                  acc = 0.8000
+  BEST single Phi-scalar = s_faith (acc=0.2000)
+
+  (Phi, T) 2-vector [Phi=s_faith, T]   acc = 0.8000
+  observed margin (acc_pair - best_Phi_scalar) = +0.6000  (required >= 0.15)
+  MARGIN test (2-vector beats best Phi-scalar by >= 0.15): True
+
+==========================================================================================
+OVERALL: RULER-NEEDS-T (QUALIFIED / DEGENERATE PASS) — the frozen falsifier resolves PASS
+  (margin +0.6000 >= 0.15: (Phi,T) acc=0.8000 vs best Phi-scalar s_faith=0.2000),
+  AND s_T ALONE already reaches 0.8000 == the 2-vector (Phi adds ZERO).
+  BUT the FAIRNESS GUARD fires: the DELIBERATE-ACTIVE vs DELIBERATE-PASSIVE classes are
+  Phi-IDENTICAL pair-for-pair (24/24 deliberate pairs share Phi
+  exactly), because agency-mode only changes T, never the policy-determined Phi. So Phi is
+  STRUCTURALLY blind to the agency split and the large margin is PARTLY built-in — NOT a
+  clean quantitative win. The PRECISE, NON-tautological finding (corroborated by the
+  Phi-FAIR sub-test: Phi reaches 0.8333 on the REACTIVE-vs-DELIBERATE
+  planning split it CAN see, but is blind to AGENCY specifically; and the empirical
+  orthogonality rho(faith,T)=-0.115, rho(big,T)=+0.020) is:
+  WHEN behavioral classes differ ONLY in agency, an instantaneous Phi-scalar is provably
+  insufficient and the temporal/agency T axis is NECESSARY to recover them — consistent
+  with H_1051's orthogonal-T result, lifted to a multi-class battery. This CONFIRMS the
+  ruler needs T for agency, but does NOT demonstrate a fair head-to-head Phi-vs-T contest
+  (that would need agency to ALSO move Phi-relevant behavior — UNVERIFIED, follow-up).
+  VERDICT-TOKEN: RULER-NEEDS-T-QUALIFIED-PHI-BLIND-BY-CONSTRUCTION
+==========================================================================================
+DEGENERACY: phi_blind_by_construction=True  majority_baseline=0.4000  s_T_alone=0.8000  phi_fair_planning_acc=0.8333
+SUMMARY: acc_(Phi,T)_2vec=0.8000  best_single_Phi_scalar=0.2000 (s_faith)  margin=+0.6000  FROZEN_bar=0.15  s_T_alone_acc=0.8000
+REPRODUCE: mirror n4,5 PROVEN=True  REPRODUCE-H_1029=EXACT  REPRODUCE-H_1047 greedy(faith=0.5069,big=9.5283)=anchored
+HONEST scope (a_scale_honest_scope): TOY n=4 system for the per-policy Phi reads (big-Phi
+super-exponential); n=5 used ONLY for the mirror re-proof. BOTH CPU mirrors RE-PROVEN ==
+stdlib at n=4 AND n=5 (H_1012) + REPRODUCE-H_1029 EXACT + REPRODUCE-H_1047 greedy anchor
+BEFORE scoring; REAL engines are the measures (a_phi_iit4_tool, NO proxy). T = H_1051
+machinery UNMODIFIED (H_932 prov-depth + H_935 veto). p3/p6/p7. g5 CODE-measured (no LLM
+self-judge). Scale-transfer UNVERIFIED. NOT a forge binary; $0 CPU-local, SERIAL, no GPU/pod.
+
+── full machine record (JSON) ──────────────────────────────────────
+{
+  "h_id": "H_1060",
+  "title": "ruler-completeness Phi-T capstone — does (Phi, T) 2-vector beat the best single Phi-scalar on a mixed battery varying in BOTH planning-structure and agency?",
+  "timestamp_utc": "2026-06-09T11:37:29.663747+00:00",
+  "substrate": "SW-only CPU numpy mirror of stdlib IIT-4.0 (a_phi_iit4_tool, NO proxy); no AKIDA Lane A, no GPU/forge Lane G; $0; serial.",
+  "classes": [
+    "REACTIVE",
+    "DELIBERATE-ACTIVE",
+    "DELIBERATE-PASSIVE"
+  ],
+  "margin_bar": 0.15,
+  "n_agency_seeds": 12,
+  "n_members": 60,
+  "class_counts": {
+    "REACTIVE": 12,
+    "DELIBERATE-ACTIVE": 24,
+    "DELIBERATE-PASSIVE": 24
+  },
+  "mirror_n4_proven": true,
+  "mirror_n5_proven": true,
+  "reproduce_h1029": true,
+  "reproduce_h1047_greedy_faith": 0.5069283807122003,
+  "reproduce_h1047_greedy_big": 9.528288538848718,
+  "scalar_accs": {
+    "s_faith": 0.2,
+    "s_big": 0.2,
+    "s_T": 0.8
+  },
+  "best_phi_scalar": "s_faith",
+  "best_phi_acc": 0.2,
+  "acc_pair_phi_T": 0.8,
+  "margin": 0.6000000000000001,
+  "margin_pass": true,
+  "rho_faith_T": -0.11503195332036677,
+  "rho_big_T": 0.01961656015559878,
+  "phi_blind_by_construction": true,
+  "n_deliberate_pairs": 24,
+  "n_phi_identical_pairs": 24,
+  "majority_baseline": 0.4,
+  "phi_fair_planning_acc": 0.8333333333333334,
+  "s_T_alone_acc": 0.8,
+  "verdict_token": "🟢",
+  "verdict_id": "RULER-NEEDS-T-QUALIFIED-PHI-BLIND-BY-CONSTRUCTION",
+  "scope": "TOY n=4 per-member Phi; n=5 only for mirror re-proof; scale-transfer UNVERIFIED; p3/p6/p7; g5 CODE-measured."
+}
