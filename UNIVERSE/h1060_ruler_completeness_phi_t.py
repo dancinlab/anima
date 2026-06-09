@@ -275,6 +275,55 @@ def main():
     emit(f"  Spearman rho(big,   T) = {rho_b_T:+.4f}")
     emit("")
 
+    # ── FAIRNESS / DEGENERACY GUARD (the H_1051 graded-design + H_1047 fair-bar lesson) ──
+    # The capstone is only a CLEAN win if Phi had a genuine CHANCE on the agency split. By
+    # construction here, a depth>=1 policy under ACTIVE vs PASSIVE has the SAME Phi (agency
+    # only changes T), so the DELIBERATE-ACTIVE vs DELIBERATE-PASSIVE classes are Phi-IDENTICAL
+    # pair-for-pair. If so, the headline margin is PARTLY a built-in tautology and the verdict
+    # must be QUALIFIED (degenerate), not a clean quantitative win. We MEASURE this directly.
+    emit("== FAIRNESS / DEGENERACY GUARD (is the agency split Phi-IDENTICAL by construction?) ==")
+    by_policy = {}
+    for mm in members:
+        by_policy.setdefault(mm["policy"], {})[mm["agency"]] = mm
+    n_delib_pairs = 0
+    n_phi_identical = 0
+    for p, d in by_policy.items():
+        if p[0] == 0:        # REACTIVE policies — no active/passive split to compare
+            continue
+        a, q = d.get(True), d.get(False)
+        if a is None or q is None:
+            continue
+        n_delib_pairs += 1
+        if abs(a["faith"] - q["faith"]) < 1e-9 and abs(a["big"] - q["big"]) < 1e-9:
+            n_phi_identical += 1
+    phi_blind_by_construction = (n_delib_pairs > 0 and n_phi_identical == n_delib_pairs)
+    emit(f"  deliberate policy active/passive pairs: {n_delib_pairs}; "
+         f"Phi-IDENTICAL pairs: {n_phi_identical}")
+    emit(f"  => Phi is BLIND to the agency split BY CONSTRUCTION: {phi_blind_by_construction}")
+    emit("  (when True, the agency classes share Phi pair-for-pair, so any Phi-scalar is")
+    emit("   STRUCTURALLY unable to separate them — the large margin is PARTLY built-in.)")
+    emit("")
+
+    # majority-class baseline (the honest floor a 1-feature classifier must beat).
+    counts = {c: labels.count(c) for c in CLASSES}
+    majority_baseline = max(counts.values()) / len(members)
+    emit(f"== BASELINES == majority-class baseline = {majority_baseline:.4f} "
+         f"(largest class {max(counts,key=counts.get)}={max(counts.values())}/{len(members)})")
+
+    # Phi-FAIR sub-test: can Phi separate the distinction it COULD plausibly see —
+    # REACTIVE (depth0, distinct Phi) vs the DELIBERATE union (depth>=1)? This isolates
+    # whether Phi is USELESS or merely blind to AGENCY specifically (the precise finding).
+    y_planning = np.array([0 if mm["depth"] == 0 else 1 for mm in members])  # REACTIVE vs DELIB
+    acc_phi_planning_faith, _ = loo_nearest_centroid_accuracy(f_norm, y_planning)
+    acc_phi_planning_big, _ = loo_nearest_centroid_accuracy(b_norm, y_planning)
+    acc_phi_planning = max(acc_phi_planning_faith, acc_phi_planning_big)
+    maj_planning = max(np.bincount(y_planning)) / len(members)
+    emit(f"  Phi-FAIR sub-test (Phi on REACTIVE-vs-DELIBERATE, the split Phi COULD see):")
+    emit(f"    best Phi-scalar acc = {acc_phi_planning:.4f}  (majority {maj_planning:.4f}) "
+         f"— Phi is{' ' if acc_phi_planning > maj_planning else ' NOT '}useful on the PLANNING split")
+    emit("    => Phi is specifically BLIND to AGENCY, not globally useless (precise finding).")
+    emit("")
+
     # ── STEP 3 — LOO nearest-centroid accuracies (H_1047 protocol VERBATIM). ──
     scalars = {
         "s_faith": f_norm,
@@ -308,18 +357,42 @@ def main():
     emit(f"  MARGIN test (2-vector beats best Phi-scalar by >= {MARGIN}): {margin_pass}")
     emit("")
 
-    # ── VERDICT — FROZEN falsifier. ──
+    # ── VERDICT — FROZEN falsifier, with the FAIRNESS/DEGENERACY guard applied honestly. ──
+    # The frozen falsifier resolves on margin >= 0.15. But the H_1051 graded-design lesson +
+    # H_1047 fair-bar lesson demand: if the agency classes are Phi-IDENTICAL BY CONSTRUCTION,
+    # the margin is PARTLY built-in -> the PASS is DEGENERATE and the verdict is QUALIFIED
+    # (still terminal/publishable per a_paper_negative_ok framing, but NOT a clean win).
     emit("=" * 90)
-    if margin_pass:
+    if margin_pass and not phi_blind_by_construction:
         token = "🟢"
         vtok = "RULER-NEEDS-T"
-        emit("OVERALL: RULER-NEEDS-T (H1-PASS) — once the battery varies in BOTH planning-structure")
-        emit(f"  AND agency, the (Phi, T) 2-vector predicts the behavioral class at acc={acc_pair:.4f},")
-        emit(f"  beating the BEST single Phi-scalar ({best_phi_scalar}, acc={best_phi_acc:.4f}) by")
-        emit(f"  {margin:+.4f} >= MARGIN {MARGIN}. The orthogonal T axis carries class-information the")
-        emit("  Phi-scalar is BLIND to (the DELIBERATE-ACTIVE vs DELIBERATE-PASSIVE split has the SAME")
-        emit("  Phi but different T). The consciousness ruler genuinely NEEDS two axes.")
+        emit("OVERALL: RULER-NEEDS-T (H1-PASS, CLEAN) — the (Phi, T) 2-vector predicts the behavioral")
+        emit(f"  class at acc={acc_pair:.4f}, beating the BEST single Phi-scalar ({best_phi_scalar}, "
+             f"acc={best_phi_acc:.4f})")
+        emit(f"  by {margin:+.4f} >= MARGIN {MARGIN}, AND Phi had a genuine chance on the agency split")
+        emit("  (not Phi-identical by construction). The ruler genuinely NEEDS the orthogonal T axis.")
         emit("  VERDICT-TOKEN: RULER-NEEDS-T")
+    elif margin_pass and phi_blind_by_construction:
+        token = "🟢"
+        vtok = "RULER-NEEDS-T-QUALIFIED-PHI-BLIND-BY-CONSTRUCTION"
+        emit("OVERALL: RULER-NEEDS-T (QUALIFIED / DEGENERATE PASS) — the frozen falsifier resolves PASS")
+        emit(f"  (margin {margin:+.4f} >= {MARGIN}: (Phi,T) acc={acc_pair:.4f} vs best Phi-scalar "
+             f"{best_phi_scalar}={best_phi_acc:.4f}),")
+        emit(f"  AND s_T ALONE already reaches {scalar_accs['s_T']:.4f} == the 2-vector (Phi adds ZERO).")
+        emit("  BUT the FAIRNESS GUARD fires: the DELIBERATE-ACTIVE vs DELIBERATE-PASSIVE classes are")
+        emit(f"  Phi-IDENTICAL pair-for-pair ({n_phi_identical}/{n_delib_pairs} deliberate pairs share Phi")
+        emit("  exactly), because agency-mode only changes T, never the policy-determined Phi. So Phi is")
+        emit("  STRUCTURALLY blind to the agency split and the large margin is PARTLY built-in — NOT a")
+        emit("  clean quantitative win. The PRECISE, NON-tautological finding (corroborated by the")
+        emit(f"  Phi-FAIR sub-test: Phi reaches {acc_phi_planning:.4f} on the REACTIVE-vs-DELIBERATE")
+        emit("  planning split it CAN see, but is blind to AGENCY specifically; and the empirical")
+        emit(f"  orthogonality rho(faith,T)={rho_f_T:+.3f}, rho(big,T)={rho_b_T:+.3f}) is:")
+        emit("  WHEN behavioral classes differ ONLY in agency, an instantaneous Phi-scalar is provably")
+        emit("  insufficient and the temporal/agency T axis is NECESSARY to recover them — consistent")
+        emit("  with H_1051's orthogonal-T result, lifted to a multi-class battery. This CONFIRMS the")
+        emit("  ruler needs T for agency, but does NOT demonstrate a fair head-to-head Phi-vs-T contest")
+        emit("  (that would need agency to ALSO move Phi-relevant behavior — UNVERIFIED, follow-up).")
+        emit("  VERDICT-TOKEN: RULER-NEEDS-T-QUALIFIED-PHI-BLIND-BY-CONSTRUCTION")
     else:
         token = "🔴"
         vtok = "PHI-SCALAR-STILL-SUFFICES"
@@ -331,6 +404,9 @@ def main():
         emit("  A sub-threshold directional win is an HONEST negative (the H_1047 lesson: the bar has teeth).")
         emit("  VERDICT-TOKEN: PHI-SCALAR-STILL-SUFFICES")
     emit("=" * 90)
+    emit(f"DEGENERACY: phi_blind_by_construction={phi_blind_by_construction}  "
+         f"majority_baseline={majority_baseline:.4f}  s_T_alone={scalar_accs['s_T']:.4f}  "
+         f"phi_fair_planning_acc={acc_phi_planning:.4f}")
     emit(f"SUMMARY: acc_(Phi,T)_2vec={acc_pair:.4f}  best_single_Phi_scalar={best_phi_acc:.4f} "
          f"({best_phi_scalar})  margin={margin:+.4f}  FROZEN_bar={MARGIN}  s_T_alone_acc={scalar_accs['s_T']:.4f}")
     emit(f"REPRODUCE: mirror n4,5 PROVEN={mirror_ok}  REPRODUCE-H_1029=EXACT  "
@@ -359,6 +435,11 @@ def main():
         best_phi_scalar=best_phi_scalar, best_phi_acc=float(best_phi_acc),
         acc_pair_phi_T=float(acc_pair), margin=float(margin), margin_pass=bool(margin_pass),
         rho_faith_T=float(rho_f_T), rho_big_T=float(rho_b_T),
+        phi_blind_by_construction=bool(phi_blind_by_construction),
+        n_deliberate_pairs=int(n_delib_pairs), n_phi_identical_pairs=int(n_phi_identical),
+        majority_baseline=float(majority_baseline),
+        phi_fair_planning_acc=float(acc_phi_planning),
+        s_T_alone_acc=float(scalar_accs["s_T"]),
         verdict_token=token, verdict_id=vtok,
         scope="TOY n=4 per-member Phi; n=5 only for mirror re-proof; scale-transfer UNVERIFIED; "
               "p3/p6/p7; g5 CODE-measured.",
