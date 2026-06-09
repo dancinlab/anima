@@ -1,5 +1,33 @@
 # H_1066 — planning-specificity-primitive-dissection (the WHY behind H_1062/H_1063)
 
+## 🔴 VERDICT: HOLISTIC-IRREDUCIBLE (closed-negative, a_paper_negative_ok)
+
+Verdict: `.verdicts/1066_planning_specificity_dissection/H_1066.txt` (raw stdout — mirror n4/n5
+proofs + reproduce-H_1039 + reproduce-H_1062 + per-arm table + nec/suff logic + FROZEN thresholds).
+
+**Finding.** The ZCA-removable, binarization-aligned faithful-φ↑/big-Φ↓ sign-split (the H_1039
+planning signature) is NOT reducible to any single structural primitive at toy scale. NONE of the
+6 feature arms (3 constructive add-to-greedy + 3 destructive remove-from-planning) reproduces a
+ZCA-removable split: `c_vbackup` and `c_depth` DO install a raw split (faith +0.082/+0.081,
+big −0.581/−0.013) but ZCA cuts only 65.5%/70.1% of Δred (<80% frozen bar) → the split survives
+de-redundification, exactly mirroring H_1062's ema/lowrank failure. `c_shared` (axis-aligned shared
+value) does not even install a split. Removing any single feature from full planning abolishes the
+split (so each feature is trivially "necessary"), but no feature is SUFFICIENT to install the
+*ZCA-removable* version → no feature is necessary+sufficient. **Conclusion: planning-specificity is
+HOLISTIC/IRREDUCIBLE — the ZCA-removable split is a property of the WHOLE planning intervention
+(coupled forward-rolled multi-branch deliberation), not any decomposed backward-credit / horizon /
+shared-value primitive.** The "≥80%-ZCA-removable" property — not raw split presence — is the
+load-bearing discriminator that toy feature-isolation cannot synthesize.
+
+Anchors (verbatim, both confirmed): reproduce-H_1039 = control faith **+2.3332**(UP) / big-Φ
+**−4.0083**(DOWN), ZCA Δred-cut **97.3%** → split collapses (matches H_1039 ref +2.33/−4.01).
+reproduce-H_1062 = ema split present, ZCA cut 70.1% <80% (no collapse); lowrank split present, ZCA
+cut 48.3% <80% (no collapse). mirror ≡ stdlib EXACT: n=4 |Δ|≤3.75e-6, n=5 |Δ|≤7.97e-10. $0 CPU,
+0-pod, SERIAL. xref [[h1062-redundancy-universality]] · [[h1039-redundancy-causal]] ·
+[[h1063-phi-split-sign-universality]].
+
+---
+
 **Status (pre-registration):** thresholds FROZEN below BEFORE any scoring. NO goalpost move.
 
 ## Prior (the contrast this hypothesis must explain)
