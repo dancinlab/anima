@@ -1,7 +1,43 @@
 # H_1062 — redundancy-universality (generality test of H_1039's causal mechanism)
 
-**Status: PRE-REGISTERED (falsifier + FROZEN thresholds locked BEFORE scoring).**
+**Status: 🔴 SPLIT-IS-PLANNING-SPECIFIC (CLOSED-NEGATIVE, a_paper_negative_ok).**
+Verdict: `.verdicts/1062_redundancy_universality/H_1062.txt` (raw stdout).
 substrate = CPU-mirror (numpy), stdlib IIT-4.0 engines (h1004), $0 CPU, 0-pod.
+
+## RESULT (measured; FROZEN thresholds, NO goalpost move)
+mirror ≡ stdlib RE-PROVEN at n=4 (|Δ|≤3.75e-6) AND n=5 (|Δ|≤7.97e-10) BEFORE scoring.
+reproduce-H_1039 confirmed bit-exact: control faith **+2.3332** (UP) / big-Φ **−4.0083** (DOWN),
+SPLIT=True; ZCA collapses (faith→−0.0709, SPLIT=False; Δred cut **97.3%**).
+
+Per-intervention (intervention − baseline @ n=4 EXACT, 30 seeds):
+
+| IV | faith Δc | big Δc | Δred | SPLIT? | ZCA-collapse? | GS-collapse? | Δred-cut(ZCA) |
+|---|---|---|---|---|---|---|---|
+| ema     | +0.0814 | −0.0129 | +0.4402 | **True**  | False | True  | 70.1% |
+| gain    | +0.0000 | +0.0000 | +0.0000 | False     | False | False | n/a   |
+| pool    | −0.0182 | −0.0278 | −0.0340 | False     | False | False | −2.3% |
+| lowrank | +0.0289 | −0.1107 | +0.0999 | **True**  | False | False | 48.3% |
+
+Cross-intervention Spearman ρ(|Δred|, split_mag) = **+0.8000** (over 4 IVs; bar 0.7).
+
+Falsifier (FROZEN):
+- cond1 split in ≥2 non-planning IVs: **True** (ema, lowrank).
+- cond2 de-redundify collapses EACH split IV (ZCA primary ≥80% cut + collapse, GS consistent): **False**
+  — ema ZCA cut only 70.1% (<80% bar) so removed=False; lowrank ZCA cut only 48.3%. The ≥80%
+  surgical-removal criterion that planning satisfies easily (97.3%) is NOT met for the
+  non-planning interventions; their induced redundancy is small/diffuse and not cleanly excisable.
+- cond3 cross-IV Spearman ρ ≥ 0.7: **True** (+0.80).
+
+→ cond2 FAILS ⇒ **SPLIT-IS-PLANNING-SPECIFIC**. The redundancy→split DIRECTION still rank-tracks
+across interventions (ρ=+0.80, cond3), but the de-redundify CAUSAL TEST (the heart of H_1039)
+does NOT generalize: only PLANNING induces a redundancy block that is both large AND surgically
+removable enough to collapse the split. **H_1039's redundancy-causal claim is BOUNDED to planning.**
+
+a_scale_honest_scope: TOY n=4 EXACT (n=5 mirror-proven); production scale UNVERIFIED. g5/p7.
+
+---
+
+## Pre-registration (locked BEFORE scoring)
 
 ## Background
 H_1039 (prior REDUNDANCY-CAUSAL, GREEN) established that Williams-Beer (WB) redundancy CAUSALLY
