@@ -18,11 +18,16 @@ THE FIX (anti-degeneracy)
 -------------------------
 In rich_rollout(seed, depth, explore, mix) the realized n=4 state distribution (hence faithful
 phi_EI and big-Phi) is a deterministic function of (depth, explore, mix). H_1060 held (e, m)
-FIXED across agency, so Phi was agency-blind by construction. Here agency COUPLES to (explore,
-mix):
-  ACTIVE  = committed plan -> (explore_base, mix_base),                active=True  (deep prov + real veto)
-  PASSIVE = drifting plan  -> (explore_base+DE, min(mix_base+DM,0.5)), active=False (shallow prov + sat veto)
-=> the SAME base policy under ACTIVE vs PASSIVE now has a DIFFERENT Phi AND a DIFFERENT T.
+FIXED across agency, so Phi was agency-blind by construction. Here agency SETS the Phi-driving
+(explore, mix) to OPPOSITE absolute corners (NON-saturating, so it ALWAYS moves Phi):
+  ACTIVE  = committed plan -> (ACT_E, ACT_M) = (0.00, 0.0),  active=True  (deep prov + real veto)
+  PASSIVE = drifting  plan -> (PAS_E, PAS_M) = (0.20, 0.5),  active=False (shallow prov + sat veto)
+=> the SAME deliberate base policy under ACTIVE vs PASSIVE has a DIFFERENT Phi AND a DIFFERENT T.
+The deliberate battery is swept by DEPTH only ({1,2,4,8}), so EVERY deliberate pair is guaranteed
+a genuine Phi-contrast (the additive+cap coupling of the first cut saturated 4/24 pairs at the
+(e=0.20,mix=0.5) corner -> variance-0 tautology cells, the H_1051 idealized-binary lesson; the
+opposite-corner coupling removes that defect BEFORE any terminal scoring). REACTIVE = depth-0
+greedy, one cell per agency (agency cannot move a depth-0 reactive Phi -> still REACTIVE).
 
 THE KEY NEW PIECE = the anti-tautology NON-DEGENERACY guard (converse of H_1060's fairness
 guard): explicitly MEASURE + ASSERT the agency classes are NOT Phi-identical (per-pair
@@ -110,9 +115,12 @@ NONDEG_FLOOR = 1e-3       # per-pair |dphi| floor: classes must NOT be Phi-ident
 SAT_EPS = 1e-9           # s_T-saturation sub-clause epsilon (deterministic LOO)
 N_AGENCY_SEEDS = 12       # agency-mode seeds per (policy, agency) cell; T-machinery is the cost
 
-# agency -> Phi-relevant coupling (FROZEN): PASSIVE drifts toward greedy via +explore +mix.
-PASSIVE_DE = 0.20         # extra explore for the drifting/forced (passive) plan
-PASSIVE_DM = 0.50         # extra greedy-mixing for the passive plan (capped at 0.5)
+# deliberate base policies swept by DEPTH only (agency sets explore/mix), so every deliberate
+# pair is guaranteed a Phi-contrast (no cap-saturation tautology cell). FROZEN.
+DELIB_DEPTHS = [1, 2, 4, 8]   # H_1035 depths > 0 (depth 0 == greedy == REACTIVE)
+# agency -> Phi-relevant coupling (FROZEN): OPPOSITE absolute corners (NON-saturating).
+ACT_E, ACT_M = 0.00, 0.0   # ACTIVE  = committed plan (low explore / no greedy-mix)
+PAS_E, PAS_M = 0.20, 0.5   # PASSIVE = drifting / forced plan (high explore / greedy-mix)
 
 
 def behavioral_class(depth, agency):
@@ -123,13 +131,11 @@ def behavioral_class(depth, agency):
     return "DELIBERATE-ACTIVE" if agency else "DELIBERATE-PASSIVE"
 
 
-def agency_rollout_params(base_explore, base_mix, agency):
-    """FAIR coupling: agency co-varies the Phi-driving rollout params (explore, mix).
-    ACTIVE  = committed plan (base e, base m).
-    PASSIVE = drifting/forced plan (+DE explore, +DM mix capped at 0.5)."""
-    if agency:
-        return float(base_explore), float(base_mix)
-    return float(min(base_explore + PASSIVE_DE, 0.20)), float(min(base_mix + PASSIVE_DM, 0.5))
+def agency_rollout_params(agency):
+    """FAIR coupling: agency SETS the Phi-driving rollout params to opposite absolute corners.
+    ACTIVE  = committed plan (ACT_E, ACT_M).
+    PASSIVE = drifting/forced plan (PAS_E, PAS_M).  NON-saturating -> always a Phi-contrast."""
+    return (ACT_E, ACT_M) if agency else (PAS_E, PAS_M)
 
 
 def _zscore(v):
@@ -161,8 +167,10 @@ def main():
     emit("big-Phi:      hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)")
     emit("faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)")
     emit("T:            z(provenance-depth, H_932) + z(veto-capacity, H_935)  [H_1051 machinery, UNMODIFIED]")
-    emit(f"FAIR coupling: PASSIVE = drifting plan (+explore {PASSIVE_DE}, +mix {PASSIVE_DM} capped 0.5);")
-    emit("               ACTIVE = committed plan (base explore/mix). => agency moves BOTH Phi AND T.")
+    emit(f"FAIR coupling: ACTIVE = committed plan (e={ACT_E},mix={ACT_M}); PASSIVE = drifting plan "
+         f"(e={PAS_E},mix={PAS_M}).")
+    emit(f"               deliberate base = DEPTH sweep {DELIB_DEPTHS} (agency sets e/mix). "
+         "=> agency moves BOTH Phi AND T, NON-degenerately.")
     emit("=" * 90)
     emit("")
 
@@ -207,45 +215,43 @@ def main():
         raise SystemExit("REPRODUCE-H_1047 anchor mismatch — aborting (harness drift)")
     emit("")
 
-    # ── STEP 1 — build the FAIR MIXED battery: (base-policy, agency-mode) members. ──
-    # Unlike H_1060, agency co-varies (explore, mix), so Phi is per (policy, agency) — the same
-    # base policy under ACTIVE vs PASSIVE yields a DIFFERENT Phi AND a DIFFERENT T.
-    POLS = policies()
-    emit(f"== STEP 1: FAIR MIXED battery — {len(POLS)} base policies x {{ACTIVE,PASSIVE}} agency, "
-         f"agency seeds={N_AGENCY_SEEDS} ==")
-    emit("   (Phi is read PER (policy, agency) since agency now moves explore/mix.)")
+    # ── STEP 1 — build the FAIR MIXED battery. ──
+    # cells = REACTIVE (depth-0 greedy, one per agency) + DELIBERATE (DEPTH sweep x agency).
+    # agency SETS the Phi-driving (explore, mix) to opposite corners, so each deliberate pair
+    # has a DIFFERENT Phi AND a DIFFERENT T (NON-degenerate by construction; no cap-saturation).
+    cells = [(0, ag) for ag in (True, False)]                    # REACTIVE: depth-0 x agency
+    cells += [(d, ag) for d in DELIB_DEPTHS for ag in (True, False)]  # DELIBERATE: depth x agency
+    emit(f"== STEP 1: FAIR MIXED battery — REACTIVE(depth0 x{{ACT,PAS}}) + "
+         f"DELIBERATE(depths {DELIB_DEPTHS} x{{ACT,PAS}}); agency seeds={N_AGENCY_SEEDS} ==")
+    emit("   (Phi read PER (depth, agency); agency sets explore/mix to opposite corners.)")
     t0 = time.time()
 
+    # each cell emits N_AGENCY_SEEDS members: Phi SHARED within the cell (one seed-mean read,
+    # the H_1047/H_1035 path VERBATIM), T computed PER agency-seed (H_1051 machinery UNMODIFIED)
+    # — exactly the H_1060 member structure, with the Phi/agency coupling added.
     members = []
-    for pi, p in enumerate(POLS):
-        d, e_base, m_base = p
-        for agency in (True, False):
-            e_eff, m_eff = agency_rollout_params(e_base, m_base, agency)
-            # Phi for this (policy, agency) — seed-mean over the H_1047/H_1035 path, VERBATIM.
-            faith, big = _phi_seedmean(d, e_eff, m_eff)
-            # T machinery (H_1051 UNMODIFIED), averaged over agency seeds.
-            depths_seed, vetos_seed = [], []
-            for s in range(N_AGENCY_SEEDS):
-                rng = np.random.default_rng((pi * 9173 + s * 31 + (1 if agency else 0)) & 0x7fffffff)
-                ph0 = tuple(float(rng.uniform(-0.5, 0.5)) for _ in range(3))
-                am0 = tuple(float(0.1 + rng.uniform(-0.02, 0.02)) for _ in range(3))
-                pf = PureField(phase0=ph0, amp0=am0)
-                veto = _veto_capacity(pf, H1051_GATE_TICKS, active=agency, rng=rng)
-                depth_prov = _provenance_depth(active=agency, seed_tag=(pi * 1000 + s), rng=rng)
-                depths_seed.append(depth_prov)
-                vetos_seed.append(veto)
+    for ci, (d, agency) in enumerate(cells):
+        e_eff, m_eff = agency_rollout_params(agency)
+        # Phi for this (depth, agency) — seed-mean over the H_1047/H_1035 path, VERBATIM.
+        # depth-0 (REACTIVE) ignores explore/mix in rich_rollout, so both agency cells share Phi
+        # (a depth-0 reaction has no plan to be active/passive ABOUT — declared in the .md).
+        faith, big = _phi_seedmean(d, e_eff, m_eff)
+        for s in range(N_AGENCY_SEEDS):
+            rng = np.random.default_rng((ci * 9173 + s * 31 + (1 if agency else 0)) & 0x7fffffff)
+            ph0 = tuple(float(rng.uniform(-0.5, 0.5)) for _ in range(3))
+            am0 = tuple(float(0.1 + rng.uniform(-0.02, 0.02)) for _ in range(3))
+            pf = PureField(phase0=ph0, amp0=am0)
+            veto = _veto_capacity(pf, H1051_GATE_TICKS, active=agency, rng=rng)
+            depth_prov = _provenance_depth(active=agency, seed_tag=(ci * 1000 + s), rng=rng)
             members.append(dict(
-                policy=p, depth=d, agency=agency, e_eff=e_eff, m_eff=m_eff,
+                policy=(d, e_eff, m_eff), depth=d, agency=agency, e_eff=e_eff, m_eff=m_eff,
                 faith=faith, big=big,
-                prov_depth=float(np.mean(depths_seed)),
-                veto_cap=float(np.mean(vetos_seed)),
+                prov_depth=float(depth_prov), veto_cap=float(veto),
                 cls=behavioral_class(d, agency),
             ))
-        ma = members[-2]; mq = members[-1]
-        emit(f"  [{pi+1:2d}/{len(POLS)}] {pol_name(p):26s} "
-             f"ACT(faith={ma['faith']:6.3f},big={ma['big']:6.3f}) "
-             f"PAS(faith={mq['faith']:6.3f},big={mq['big']:6.3f})  "
-             f"elapsed={time.time()-t0:6.1f}s")
+        emit(f"  [{ci+1:2d}/{len(cells)}] depth={d} agency={'ACT' if agency else 'PAS'} "
+             f"(e={e_eff:.2f},mix={m_eff:.1f})  faith={faith:7.4f} big={big:8.4f}  "
+             f"x{N_AGENCY_SEEDS} members  elapsed={time.time()-t0:6.1f}s")
     emit("")
 
     # ── STEP 2 — features. T = z(prov-depth) + z(veto-cap) over ALL battery members. ──
@@ -278,14 +284,14 @@ def main():
     # Assert the deliberate ACTIVE vs PASSIVE classes are NOT Phi-identical pair-for-pair, so
     # the contest is FAIR (Phi had a genuine chance on the agency split). Report distribution.
     emit("== NON-DEGENERACY GUARD (THE KEY NEW PIECE — are agency classes NOT Phi-identical?) ==")
-    by_policy = {}
+    by_depth = {}        # pair the deliberate ACTIVE/PASSIVE cells of the SAME depth
     for mm in members:
-        by_policy.setdefault(mm["policy"], {})[mm["agency"]] = mm
+        by_depth.setdefault(mm["depth"], {})[mm["agency"]] = mm
     dphi_faith_list, dphi_big_list = [], []
     n_delib_pairs = 0
     n_nondeg_pairs = 0
-    for p, dct in by_policy.items():
-        if p[0] == 0:        # REACTIVE base policies — no active/passive deliberate split
+    for d, dct in by_depth.items():
+        if d == 0:        # REACTIVE — no active/passive deliberate split (depth-0 reaction)
             continue
         a, q = dct.get(True), dct.get(False)
         if a is None or q is None:
@@ -446,7 +452,8 @@ def main():
                   "no AKIDA Lane A, no GPU/forge Lane G; $0; serial.",
         classes=CLASSES, margin_bar=MARGIN, nondeg_floor=NONDEG_FLOOR,
         n_agency_seeds=N_AGENCY_SEEDS, n_members=len(members),
-        passive_de=PASSIVE_DE, passive_dm=PASSIVE_DM,
+        delib_depths=DELIB_DEPTHS, active_e=ACT_E, active_m=ACT_M,
+        passive_e=PAS_E, passive_m=PAS_M,
         class_counts={c: labels.count(c) for c in CLASSES},
         mirror_n4_proven=bool(ok4), mirror_n5_proven=bool(ok5),
         reproduce_h1029=bool(rep), reproduce_h1047_greedy_faith=g_faith,

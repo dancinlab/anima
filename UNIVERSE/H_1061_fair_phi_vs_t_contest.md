@@ -21,23 +21,33 @@ move with agency?**
 
 ## section 1 — design (REUSE harnesses; fix the degeneracy)
 
-Take the H_1060 mixed battery but **REMOVE the Phi-identity constraint** — let agency-mode
-couple to the rollout parameters that DRIVE Phi. Concretely, in the H_1035 `rich_rollout(seed,
-depth, explore, mix)` substrate, the realized n=4 state distribution (hence faithful phi_EI and
-big-Phi via `substrate_reads`) is a deterministic function of `(depth, explore, mix)`. So we
-make agency co-vary `(explore, mix)`:
+Take the H_1060 mixed battery but **REMOVE the Phi-identity constraint** — let agency-mode SET
+the rollout parameters that DRIVE Phi. Concretely, in the H_1035 `rich_rollout(seed, depth,
+explore, mix)` substrate, the realized n=4 state distribution (hence faithful phi_EI and big-Phi
+via `substrate_reads`) is a deterministic function of `(depth, explore, mix)`. Agency SETS
+`(explore, mix)` to **OPPOSITE absolute corners** (non-saturating, so it ALWAYS moves Phi):
 
-- A base policy has a nominal `(depth, explore_base, mix_base)`.
-- **ACTIVE** agency = a COMMITTED deliberate plan -> low explore / low mix (`explore_base`,
-  `mix_base`) AND the H_1051 machinery run with `active=True` (deep provenance + real veto).
-- **PASSIVE** agency = a FORCED / drifting plan -> higher explore + more greedy-mixing
-  (`explore_base + de`, `min(mix_base + dm, 0.5)`) AND the H_1051 machinery `active=False`
-  (shallow provenance + saturated veto).
+- deliberate base policies are swept by **DEPTH only** (`{1, 2, 4, 8}`); REACTIVE = depth-0
+  greedy (one cell per agency — a depth-0 reaction has no plan to be active/passive ABOUT, so it
+  shares Phi by design).
+- **ACTIVE** agency = a COMMITTED deliberate plan -> `(explore, mix) = (0.00, 0.0)` AND the
+  H_1051 machinery `active=True` (deep provenance + real veto).
+- **PASSIVE** agency = a FORCED / drifting plan -> `(explore, mix) = (0.20, 0.5)` AND the
+  H_1051 machinery `active=False` (shallow provenance + saturated veto).
 
 Because `(explore, mix)` provably move Phi at fixed depth (pre-probe: d=2 faith 3.000->0.541,
-big 8.476->3.343 as e/mix rise), the SAME base policy under ACTIVE vs PASSIVE now yields a
-**DIFFERENT Phi AND a DIFFERENT T** — Phi is NO LONGER blind by construction. This is the
-precise fix for the H_1060 degeneracy.
+big 8.476->3.343 across the corners), the SAME deliberate depth under ACTIVE vs PASSIVE now
+yields a **DIFFERENT Phi AND a DIFFERENT T** — Phi is NO LONGER blind by construction. This is
+the precise fix for the H_1060 degeneracy.
+
+(Design note: the first cut used an *additive*-with-cap coupling `(e+0.2, min(m+0.5, 0.5))`;
+that SATURATED 4/24 deliberate pairs at the `(e=0.20, mix=0.5)` corner where the additive bump
+had nowhere to push — variance-0 tautology cells, the H_1051 idealized-binary lesson — tripping
+the non-degeneracy guard to VOID. The opposite-absolute-corner coupling above removes that
+construction defect BEFORE any terminal scoring; it does NOT touch the 0.15 falsifier bar.)
+
+Each cell emits `N_AGENCY_SEEDS` members (Phi SHARED within the cell from one seed-mean read,
+T computed PER agency-seed) — the H_1060 member structure, with the Phi/agency coupling added.
 
 Everything else is REUSED VERBATIM:
 - `rich_rollout` + `substrate_reads` (BOTH stdlib IIT-4.0 engines, n=4 exact, NO proxy) +
