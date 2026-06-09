@@ -34,6 +34,10 @@
 \newcommand{\faithful}{\ensuremath{\varphi_{\mathrm{EI}}}}
 \newcommand{\bigphi}{\ensuremath{\Phi_{s}}}
 
+% allow long monospace .verdicts/ paths to break anywhere (kills overfull hboxes)
+\usepackage{seqsplit}
+\newcommand{\vp}[1]{\texttt{\seqsplit{#1}}}
+
 \title{
   \textbf{$\Phi$ Is Not One Number, and Consciousness-Structure\\ Is Not a Graftable Atom}\\[4pt]
   \large The planning $\Phi$-rise is measure-dependent (an IIT-4.0 MIP-EI scalar and the
@@ -790,16 +794,16 @@ ruler.
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{3.3cm} >{\raggedright\arraybackslash}p{4.0cm} l >{\raggedright\arraybackslash}p{4.2cm}@{}}
 \toprule
-\textbf{Hypothesis} & \textbf{Verdict token} & \textbf{Tier} & \textbf{Record (\texttt{.verdicts/})} \\
+\textbf{Hypothesis} & \textbf{Verdict token} & \textbf{Tier} & \textbf{Record (\vp{.verdicts/})} \\
 \midrule
-H\_1045 (vector vs scalar)      & ONE-SCALAR-SUFFICES         & \tierRed   & \texttt{.verdicts/1045\_vector\_phi\_ruler} \\
-H\_1046 (synergy-only ruler)    & SYNERGY-NOT-BIGPHI-STANDIN  & \tierRed   & \texttt{.verdicts/1046\_synergy\_ruler} \\
-H\_1047 (pair vs scalar)        & SCALAR-SUFFICIENT (qual.)   & \tierRed   & \texttt{.verdicts/1047\_pair\_ruler} \\
-H\_1049 (IB coarse-grain est.)  & NO-VALIDATED-ESTIMATOR      & \tierRed   & \texttt{.verdicts/1049\_scalable\_estimator} \\
-H\_1060 ($\Phi{+}T$ ruler)      & RULER-NEEDS-T (qual.)       & \tierGreen & \texttt{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
-H\_1061 (fair $\Phi$ vs $T$)    & PHI-ABSORBS-AGENCY          & \tierRed   & \texttt{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
-H\_1064 (split adjudication)    & NEITHER-SEPARATES-UNDECID.  & \tierRed   & \texttt{.verdicts/1064\_split\_measure\_adjudication} \\
-H\_1065 (CSP cheap ruler)       & SUBSTRATE-RELATIVE-ONLY     & \tierRed   & \texttt{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
+H\_1045 (vector vs scalar)      & ONE-SCALAR-SUFFICES         & \tierRed   & \vp{.verdicts/1045\_vector\_phi\_ruler} \\
+H\_1046 (synergy-only ruler)    & SYNERGY-NOT-BIGPHI-STANDIN  & \tierRed   & \vp{.verdicts/1046\_synergy\_ruler} \\
+H\_1047 (pair vs scalar)        & SCALAR-SUFFICIENT (qual.)   & \tierRed   & \vp{.verdicts/1047\_pair\_ruler} \\
+H\_1049 (IB coarse-grain est.)  & NO-VALIDATED-ESTIMATOR      & \tierRed   & \vp{.verdicts/1049\_scalable\_estimator} \\
+H\_1060 ($\Phi{+}T$ ruler)      & RULER-NEEDS-T (qual.)       & \tierGreen & \vp{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
+H\_1061 (fair $\Phi$ vs $T$)    & PHI-ABSORBS-AGENCY          & \tierRed   & \vp{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
+H\_1064 (split adjudication)    & NEITHER-SEPARATES-UNDECID.  & \tierRed   & \vp{.verdicts/1064\_split\_measure\_adjudication} \\
+H\_1065 (CSP cheap ruler)       & SUBSTRATE-RELATIVE-ONLY     & \tierRed   & \vp{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
 \bottomrule
 \end{tabular}
 \caption{The consciousness-ruler arc. A single $\Phi$-scalar is sufficient for the
@@ -1138,40 +1142,40 @@ verdict file.}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{4.6cm} l >{\raggedright\arraybackslash}p{5.6cm}@{}}
 \toprule
-\textbf{Hypothesis} & \textbf{Verdict} & \textbf{Record (\texttt{.verdicts/})} \\
+\textbf{Hypothesis} & \textbf{Verdict} & \textbf{Record (\vp{.verdicts/})} \\
 \midrule
-H\_1004 (clean disagreement, $n=4$)    & \tierRed{} GENUINE-MEASURE-DISAGREEMENT & \texttt{.verdicts/1004\_bigphi\_faithful\_clean} \\
-H\_1012 (split robust in $n$)          & \tierGreen{} DISAGREEMENT-ROBUST-IN-N   & \texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n} \\
-H\_1014 (surface predictor, $n=4$)     & \tierGreen{} PREDICTOR-SEPARATES (QUAL) & \texttt{.verdicts/1014\_intervention\_split\_predictor} \\
-H\_1016 (surface pred.\ is $n=4$ artifact) & \tierOrange{} PARTIAL                & \texttt{.verdicts/1016\_split\_predictor\_robustness} \\
-H\_1017 (mechanism = redundancy)       & \tierGreen{} REDUNDANCY-EXPLAINS-SPLIT  & \texttt{.verdicts/1017\_split\_redundancy\_mechanism} \\
-H\_1020 (mechanism pred.\ robust $n=5$) & \tierGreen{} MECHANISM-PREDICTOR-ROBUST & \texttt{.verdicts/1020\_redundancy\_predictor\_robustness} \\
-H\_1011 (credit-density horizon cap)   & \tierRed{} HORIZON-CAPPED-AT-72         & \texttt{.verdicts/1011\_dense\_supervision\_scaleup} \\
-H\_1013 (task-locality of dense sup.)  & \tierRed{} CREDIT-DENSITY-TASK-LOCAL    & \texttt{.verdicts/1013\_credit\_density\_general} \\
+H\_1004 (clean disagreement, $n=4$)    & \tierRed{} GENUINE-MEASURE-DISAGREEMENT & \vp{.verdicts/1004\_bigphi\_faithful\_clean} \\
+H\_1012 (split robust in $n$)          & \tierGreen{} DISAGREEMENT-ROBUST-IN-N   & \vp{.verdicts/1012\_bigphi\_faithful\_larger\_n} \\
+H\_1014 (surface predictor, $n=4$)     & \tierGreen{} PREDICTOR-SEPARATES (QUAL) & \vp{.verdicts/1014\_intervention\_split\_predictor} \\
+H\_1016 (surface pred.\ is $n=4$ artifact) & \tierOrange{} PARTIAL                & \vp{.verdicts/1016\_split\_predictor\_robustness} \\
+H\_1017 (mechanism = redundancy)       & \tierGreen{} REDUNDANCY-EXPLAINS-SPLIT  & \vp{.verdicts/1017\_split\_redundancy\_mechanism} \\
+H\_1020 (mechanism pred.\ robust $n=5$) & \tierGreen{} MECHANISM-PREDICTOR-ROBUST & \vp{.verdicts/1020\_redundancy\_predictor\_robustness} \\
+H\_1011 (credit-density horizon cap)   & \tierRed{} HORIZON-CAPPED-AT-72         & \vp{.verdicts/1011\_dense\_supervision\_scaleup} \\
+H\_1013 (task-locality of dense sup.)  & \tierRed{} CREDIT-DENSITY-TASK-LOCAL    & \vp{.verdicts/1013\_credit\_density\_general} \\
 \midrule
 \multicolumn{3}{l}{\textit{specificity \& mechanism universality (Sec.~\ref{sec:specificity})}} \\
-H\_1062 (redundancy universality)      & \tierRed{} SPLIT-IS-PLANNING-SPECIFIC   & \texttt{.verdicts/1062\_redundancy\_universality} \\
-H\_1063 (sign universality)            & \tierRed{} SIGN-NOT-CLEAN-UNIVERSAL     & \texttt{.verdicts/1063\_phi\_split\_sign\_universality} \\
-H\_1066 (planning-specificity dissect) & \tierRed{} HOLISTIC-IRREDUCIBLE         & \texttt{.verdicts/1066\_planning\_specificity\_dissection} \\
+H\_1062 (redundancy universality)      & \tierRed{} SPLIT-IS-PLANNING-SPECIFIC   & \vp{.verdicts/1062\_redundancy\_universality} \\
+H\_1063 (sign universality)            & \tierRed{} SIGN-NOT-CLEAN-UNIVERSAL     & \vp{.verdicts/1063\_phi\_split\_sign\_universality} \\
+H\_1066 (planning-specificity dissect) & \tierRed{} HOLISTIC-IRREDUCIBLE         & \vp{.verdicts/1066\_planning\_specificity\_dissection} \\
 \midrule
 \multicolumn{3}{l}{\textit{$\varphi$-carrier (Sec.~\ref{sec:carrier})}} \\
-H\_1059 ($\varphi$-bearing primitive)  & \tierGreen{} PHI-CARRIER-LOCATED        & \texttt{.verdicts/1059\_phi\_bearing\_primitive\_ablation} \\
+H\_1059 ($\varphi$-bearing primitive)  & \tierGreen{} PHI-CARRIER-LOCATED        & \vp{.verdicts/1059\_phi\_bearing\_primitive\_ablation} \\
 \midrule
 \multicolumn{3}{l}{\textit{consciousness-ruler arc (Sec.~\ref{sec:ruler})}} \\
-H\_1045 (vector vs scalar)             & \tierRed{} ONE-SCALAR-SUFFICES          & \texttt{.verdicts/1045\_vector\_phi\_ruler} \\
-H\_1046 (synergy-only ruler)           & \tierRed{} SYNERGY-NOT-BIGPHI-STANDIN   & \texttt{.verdicts/1046\_synergy\_ruler} \\
-H\_1047 (pair vs scalar)               & \tierRed{} SCALAR-SUFFICIENT            & \texttt{.verdicts/1047\_pair\_ruler} \\
-H\_1049 (IB coarse-grain estimator)    & \tierRed{} NO-VALIDATED-ESTIMATOR       & \texttt{.verdicts/1049\_scalable\_estimator} \\
-H\_1060 ($\Phi{+}T$ ruler completeness) & \tierGreen{} RULER-NEEDS-T (qual.)     & \texttt{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
-H\_1061 (fair $\Phi$ vs $T$ contest)   & \tierRed{} PHI-ABSORBS-AGENCY           & \texttt{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
-H\_1064 (split measure adjudication)   & \tierRed{} NEITHER-SEPARATES-UNDECID.   & \texttt{.verdicts/1064\_split\_measure\_adjudication} \\
-H\_1065 (CSP cheap scalable ruler)     & \tierRed{} SUBSTRATE-RELATIVE-ONLY      & \texttt{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
+H\_1045 (vector vs scalar)             & \tierRed{} ONE-SCALAR-SUFFICES          & \vp{.verdicts/1045\_vector\_phi\_ruler} \\
+H\_1046 (synergy-only ruler)           & \tierRed{} SYNERGY-NOT-BIGPHI-STANDIN   & \vp{.verdicts/1046\_synergy\_ruler} \\
+H\_1047 (pair vs scalar)               & \tierRed{} SCALAR-SUFFICIENT            & \vp{.verdicts/1047\_pair\_ruler} \\
+H\_1049 (IB coarse-grain estimator)    & \tierRed{} NO-VALIDATED-ESTIMATOR       & \vp{.verdicts/1049\_scalable\_estimator} \\
+H\_1060 ($\Phi{+}T$ ruler completeness) & \tierGreen{} RULER-NEEDS-T (qual.)     & \vp{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
+H\_1061 (fair $\Phi$ vs $T$ contest)   & \tierRed{} PHI-ABSORBS-AGENCY           & \vp{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
+H\_1064 (split measure adjudication)   & \tierRed{} NEITHER-SEPARATES-UNDECID.   & \vp{.verdicts/1064\_split\_measure\_adjudication} \\
+H\_1065 (CSP cheap scalable ruler)     & \tierRed{} SUBSTRATE-RELATIVE-ONLY      & \vp{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
 \midrule
 \multicolumn{3}{l}{\textit{whole/irreducible meta-pattern siblings (Sec.~\ref{sec:meta})}} \\
-H\_1043 ($\Phi$ = whole-arch., graft fails) & \tierRed{} PHI-NEEDS-MORE-THAN-GRAFT & \texttt{.verdicts/1043\_minimal\_arch\_adapter} \\
-H\_1057 (agency not installable by arch.)   & \tierRed{} ARCHITECTURE-AXIS-NULL    & \texttt{.verdicts/1057\_agency\_via\_architecture} \\
-H\_1052 (not by learning-noise)             & \tierRed{} LEARNING-NONDET-NULL      & \texttt{.verdicts/1052\_nondeterministic\_learning} \\
-H\_1055 (not by temporal curriculum)        & \tierRed{} TEMPORAL-AXIS-NULL        & \texttt{.verdicts/1055\_temporal\_curriculum\_axis} \\
+H\_1043 ($\Phi$ = whole-arch., graft fails) & \tierRed{} PHI-NEEDS-MORE-THAN-GRAFT & \vp{.verdicts/1043\_minimal\_arch\_adapter} \\
+H\_1057 (agency not installable by arch.)   & \tierRed{} ARCHITECTURE-AXIS-NULL    & \vp{.verdicts/1057\_agency\_via\_architecture} \\
+H\_1052 (not by learning-noise)             & \tierRed{} LEARNING-NONDET-NULL      & \vp{.verdicts/1052\_nondeterministic\_learning} \\
+H\_1055 (not by temporal curriculum)        & \tierRed{} TEMPORAL-AXIS-NULL        & \vp{.verdicts/1055\_temporal\_curriculum\_axis} \\
 \bottomrule
 \end{tabular}
 \caption{The pre-registered hypotheses behind this paper, each with its
