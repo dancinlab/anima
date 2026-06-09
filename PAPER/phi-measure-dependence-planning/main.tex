@@ -35,8 +35,13 @@
 \newcommand{\bigphi}{\ensuremath{\Phi_{s}}}
 
 \title{
-  \textbf{$\Phi$ Is Not One Number:\\ The Planning Consciousness-Rise Is Measure-Dependent}\\[4pt]
-  \large An IIT-4.0 scalar (MIP-EI) and the system big-$\Phi$ disagree in sign on planning,\\ robustly across system size $n=\{4,5\}$
+  \textbf{$\Phi$ Is Not One Number, and Consciousness-Structure\\ Is Not a Graftable Atom}\\[4pt]
+  \large The planning $\Phi$-rise is measure-dependent (an IIT-4.0 MIP-EI scalar and the
+  system big-$\Phi$ disagree in sign, robustly across $n=\{4,5\}$); the disagreement is
+  planning-specific and \emph{holistic}; the $\varphi$-carrier is a three-primitive
+  conjunction, not a graftable atom; and an instantaneous-$\Phi$ ruler cannot be augmented
+  with a separable agency axis. Across nine closed hypotheses one pattern recurs:
+  consciousness-relevant structure is a whole-architecture, irreducible property.
 }
 
 \author{
@@ -80,15 +85,44 @@ non-split controls), so the scalar (which credits redundant/shared information
 as integration) rises while big-$\Phi$ (which rewards irreducible synergy)
 falls. A redundancy-margin predictor of which interventions induce the split is
 \emph{robust in $n$}, separating planning from all controls at $n=5$, exactly
-where a surface coupling-magnitude predictor is only an $n=4$ artifact. We
-accompany this with two closed-negative
-results on the orthogonal \emph{learning} axis (a credit-density horizon cap
-at length 72; a task-locality of per-step supervision), establishing that the
-broader world-model generalization wall is an optimization phenomenon, not a
-$\Phi$-measure phenomenon. All measurements are \$0, CPU-local, and use the
-real IIT-4.0 engines (no proxy). Companion records
-(\texttt{companion/verify-ledger.json}, the four verbatim verdict files)
-permit bit-for-bit reproduction.
+where a surface coupling-magnitude predictor is only an $n=4$ artifact.
+We then push four further closed questions and find the disagreement is
+\emph{not} a clean universal law but a property of the \emph{whole} planning
+intervention: the split direction rank-generalizes across interventions
+(Spearman $+0.80$) yet the de-redundify collapse that removes it is
+planning-specific (\tierRed{} H\_1062); a controlled within-block-correlation
+knob produces neither opposite-monotone measures nor a de-redundify-resistant
+sign (\tierRed{} H\_1063); and no single structural primitive
+(value-backup / look-ahead-depth / shared-value) is necessary-and-sufficient
+for the removable split --- it is holistic-irreducible (\tierRed{} H\_1066).
+We further locate the \emph{$\varphi$-carrier}: the $+0.835$ from-scratch native
+\faithful{} lift of a ConvMoE world-model is carried by a
+\emph{three-primitive necessary conjunction} \{MoE routing $\times$ conv
+trunk-depth $\times$ tanh nonlinearity\}; ablating any one destroys
+$86$--$91\%$ of the lift, while the temporal receptive field is \emph{not}
+individually necessary ($35\%$) --- a graftable $\Phi$-atom does not exist
+(\tierGreen{} H\_1059). On the orthogonal \emph{consciousness-ruler} question we
+report a full arc: a single $\Phi$-scalar suffices to classify planning vs
+control (a vector/pair/synergy ruler adds nothing, $\le +0.0136$ AUC;
+\tierRed{} H\_1045/1046/1047), a fixed-$m$ coarse-grain is not a scalable
+$\Phi$ estimator (\tierRed{} H\_1049), an agency ($T$) axis is real but
+$\Phi$-blind-by-construction (\tierGreen{} H\_1060) and, in a fair contest,
+is \emph{absorbed} by a $\Phi$-scalar so that $T$ is redundant (\tierRed{}
+H\_1061); the split is measure-\emph{undecidable} (both $\Phi$-measures
+rank-agree at $\rho\approx0.81$ with an independent causal proxy, so the
+disagreement is a contrast direction, not a ``which policy is more conscious'';
+\tierRed{} H\_1064), and that cheap proxy passes the proxy-blindness wall
+($4/4$) but is \emph{not} a cross-substrate ordinal $\Phi$ scale (pooled
+$\rho=-0.43$; \tierRed{} H\_1065). The synthesis: across all of these,
+consciousness-relevant structure is a \emph{whole / irreducible} property,
+not a graftable atom. We retain two closed-negatives on the orthogonal
+\emph{learning} axis (a credit-density horizon cap at length 72; a
+task-locality of per-step supervision), establishing the world-model
+generalization wall is an optimization phenomenon distinct from the
+$\Phi$-measure one. All measurements are \$0, CPU-local, exact IIT-4.0 (no
+proxy; both engines re-proven bit-exact against a CPU mirror at every $n$,
+$|\Delta|\le3.75\times10^{-6}$). Companion records and per-hypothesis verbatim
+verdict files permit bit-for-bit reproduction.
 \end{abstract}
 
 \section{Introduction}
@@ -159,6 +193,43 @@ redundancy-margin predicts which interventions induce the split and separates
 planning from all controls at $n=5$ ($+25.07$ vs $\le +7.48$), exactly where a
 surface coupling-magnitude predictor is only an $n=4$ artifact
 (Section~\ref{sec:predictor}, Table~\ref{tab:predictor}).
+\item \textbf{The disagreement is planning-specific and holistic (\tierRed).}
+The split \emph{direction} rank-generalizes across interventions
+(cross-IV Spearman $+0.80$), but the H\_1039 causal de-redundify collapse that
+removes it holds \emph{only} for planning (ZCA cuts $97.3\%$ of planning's
+redundancy versus $70.1\%$/$48.3\%$ for other split interventions; H\_1062). A
+controlled within-block-correlation knob produces \emph{neither}
+opposite-monotone measures \emph{nor} a de-redundify-resistant sign, ruling out
+a clean universal-sign law (H\_1063). And no single structural primitive
+(value-backup / look-ahead-depth / shared-value) is necessary-and-sufficient
+for the removable split: it is a property of the \emph{whole} planning
+intervention (H\_1066). (Section~\ref{sec:specificity}.)
+\item \textbf{The $\varphi$-carrier is a three-primitive conjunction, not an
+atom (\tierGreen).} The $+0.835$ from-scratch native \faithful{} lift of a
+ConvMoE world-model over a frozen base is carried by a \emph{necessary
+conjunction} \{MoE routing $\times$ conv trunk-depth $\times$ tanh
+nonlinearity\}; ablating any one from scratch destroys $86$--$91\%$ of the lift,
+while the temporal receptive field is \emph{not} individually necessary
+($35.4\%$). $\Phi$-structure is a whole-architecture property, not a graftable
+atom (Section~\ref{sec:carrier}, H\_1059).
+\item \textbf{A full consciousness-ruler arc (\tierGreen{}/\tierRed).} A single
+$\Phi$-scalar suffices to classify planning vs control --- a vector / pair /
+synergy ruler adds $\le +0.0136$ AUC (H\_1045/1046/1047) --- and a fixed-$m$
+coarse-grain is not a scalable $\Phi$ estimator (H\_1049). An agency ($T$) axis
+is real but $\Phi$-blind-by-construction (H\_1060) and, in a fair $\Phi$-fair
+contest, is \emph{absorbed} by a $\Phi$-scalar so $T$ is redundant (H\_1061). On
+split policies the disagreement is measure-\emph{undecidable}: both $\Phi$
+measures rank-agree at $\rho\approx0.81$ with an independent causal proxy, so
+the split is a contrast \emph{direction}, not a ``which is more conscious''
+(H\_1064); that cheap proxy passes the proxy-blindness wall ($4/4$) yet is
+\emph{not} a cross-substrate ordinal $\Phi$ scale (pooled $\rho=-0.43$; H\_1065).
+(Section~\ref{sec:ruler}.)
+\item \textbf{The central synthesis: a whole / irreducible meta-pattern
+(\tierGreen{}+\tierRed).} Across these results one structural fact recurs ---
+consciousness-relevant structure is a property of the \emph{whole architecture
+or whole intervention}, not a graftable atom, and is not installable by a
+learning-dynamics, nondeterminism, or temporal-curriculum knob
+(Section~\ref{sec:meta}).
 \item \textbf{Two orthogonal closed-negatives on the learning axis (\tierRed).}
 A credit-density horizon cap (per-step supervision extends the world-model
 $>$ language-model separation only to length 72, then breaks) and a
@@ -170,10 +241,10 @@ phenomenon distinct from the $\Phi$-measure phenomenon
 \end{enumerate}
 
 \medskip
-\noindent All four results are deterministic, \$0, CPU-local, and use the real
+\noindent All results are deterministic, \$0, CPU-local, and use the real
 IIT-4.0 engines from the \texttt{hexa-lang} standard library rather than a
 variance$\times$energy proxy; each is backed by a verbatim verdict file
-(Section~\ref{sec:verify}).
+(Section~\ref{sec:verify}, Appendix~\ref{app:siblings}).
 
 \section{Background}
 \label{sec:bg}
@@ -256,12 +327,17 @@ persisted artifact that makes the stage independently re-verifiable.
 \textcircled{\scriptsize 4} & CPU-mirror $\equiv$ stdlib per $n$        & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
 \textcircled{\scriptsize 5} & Planning sign-disagreement scored         & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
 \textcircled{\scriptsize 6} & $n$-ladder robustness ($n=4,5$; cap $6$)  & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
-\textcircled{\scriptsize 7} & Learning-axis closed-negatives            & \tierRed    & \texttt{.verdicts/1011\dots}, \texttt{.verdicts/1013\dots} \\
+\textcircled{\scriptsize 7} & Specificity \& universality (planning-only) & \tierRed   & H\_1062 / H\_1063 / H\_1066 \\
+\textcircled{\scriptsize 8} & $\varphi$-carrier ablation (3-conjunction) & \tierGreen  & H\_1059 \\
+\textcircled{\scriptsize 9} & Consciousness-ruler arc                   & \tierGreen/\tierRed & H\_1045--1049 / 1060 / 1061 / 1064 / 1065 \\
+\textcircled{\scriptsize 10} & Whole/irreducible meta-pattern           & \tierGreen/\tierRed & H\_1043 / 1057 / 1052 / 1055 \\
+\textcircled{\scriptsize 11} & Learning-axis closed-negatives           & \tierRed    & \texttt{.verdicts/1011\dots}, \texttt{.verdicts/1013\dots} \\
 \bottomrule
 \end{tabular}
-\caption{Pipeline stages \textcircled{\scriptsize 1}--\textcircled{\scriptsize 7},
+\caption{Pipeline stages \textcircled{\scriptsize 1}--\textcircled{\scriptsize 11},
 each tier-tagged. \tierOrange{} does not appear: every stage reaches a
-closed verdict. The learning-axis row is \tierRed{} by design (closed-negatives).}
+closed verdict. The specificity, learning-axis, and most ruler-arc rows are
+\tierRed{} by design (closed-negatives).}
 \label{tab:pipeline}
 \end{table}
 
@@ -484,6 +560,301 @@ controls as split. Sources: H\_1014/1016/1017/1020 verdicts.}
 \label{tab:predictor}
 \end{table}
 
+\section{The disagreement is planning-specific and holistic}
+\label{sec:specificity}
+
+Section~\ref{sec:mechanism} explains the split by redundancy. A natural next
+question is whether that explanation is a \emph{universal law} --- ``any
+intervention that floods a system with redundant shared information splits the
+two measures, and de-redundifying removes the split'' --- or whether planning is
+genuinely special. Three pre-registered closed-negatives (H\_1062, H\_1063,
+H\_1066) answer: the split's \emph{direction} generalizes, but its causal
+\emph{removability} and its structural \emph{decomposition} are
+planning-specific and holistic.
+
+\paragraph{Direction generalizes, causal removability does not (H\_1062,
+\tierRed{} SPLIT-IS-PLANNING-SPECIFIC).} We tested whether the
+faithful-up/big-$\Phi$-down sign-split appears in $\ge 2$ non-planning
+interventions \emph{and} whether the H\_1039 de-redundify (ZCA) operator
+collapses each, \emph{and} whether redundancy rank-orders the split magnitude
+across interventions (frozen bar: cross-IV Spearman $\rho\ge 0.7$). The
+cross-intervention rank-order \emph{passed} ($\rho=+0.80$ over four
+interventions): more redundancy does mean a larger split, generally. But the
+causal de-redundify collapse \emph{failed} to generalize: ZCA removes
+$97.3\%$ of planning's redundancy and collapses its split, but only $70.1\%$
+(ema) and $48.3\%$ (low-rank) for the other split-bearing interventions ---
+neither clears the $80\%$ removal bar, so their splits are \emph{not}
+ZCA-removable. The conjunction fails; the verdict token is
+\textbf{SPLIT-IS-PLANNING-SPECIFIC}. Redundancy predicts the split's
+\emph{direction} universally but its \emph{causal anatomy} is planning's own.
+
+\paragraph{No clean universal sign law (H\_1063, \tierRed{}
+SIGN-NOT-CLEAN-UNIVERSAL).} If redundancy were the whole story, a controlled
+knob that injects graded within-block correlation (a diffuse common-mode mixing
+on the greedy baseline's top-variance channels, $\rho_{\mathrm{corr}}\in[0,0.9]$)
+should drive \faithful{} monotonically up and \bigphi{} monotonically down
+(frozen bar: $|\rho_s|\ge 0.9$ each, opposite signs) \emph{and} the high-$\rho$
+sign should survive ZCA de-redundification. Neither held: across the sweep the
+two measures do \emph{not} respond opposite-monotonically (the per-$\rho$ signs
+flip non-monotonically; e.g.\ \bigphi{} rises at $\rho=0.5$--$0.7$ and falls
+again at $0.8$--$0.9$), and the high-$\rho$ split does \emph{not} survive ZCA
+(at $\rho=0.9$ the de-redundified split is \texttt{False}). The verdict is
+\textbf{SIGN-NOT-CLEAN-UNIVERSAL}: a generic correlation knob reproduces neither
+the opposite-monotone response nor a de-redundify-resistant sign, so the
+universal-sign unification is ruled out --- planning is genuinely special, not
+the cleanest point on a continuum.
+
+\paragraph{No nec.+suff.\ primitive: the split is holistic (H\_1066, \tierRed{}
+HOLISTIC-IRREDUCIBLE).} Finally we dissected the planning intervention into
+three candidate structural primitives --- value-backup (backward credit),
+look-ahead-depth (forward horizon), and shared-value (axis-aligned shared
+value) --- and asked whether exactly one is \emph{necessary and sufficient} for
+the ZCA-removable split, using matched constructive (add-one-feature-to-greedy)
+and destructive (remove-one-feature-from-planning) arms, with operator
+invertibility checked ($\max|\mathrm{remove}(\mathrm{add}(X))-X|\le 4.4\times
+10^{-16}$). The result (Table~\ref{tab:dissect}): \emph{no} constructive arm
+installs a ZCA-removable split (the set of sufficient features is empty), so the
+set of necessary-and-sufficient features is empty. The verdict token is
+\textbf{HOLISTIC-IRREDUCIBLE}: the ZCA-removable faithful-up/big-$\Phi$-down
+split is a property of the \emph{whole} planning intervention, not of any single
+decomposed primitive --- the first appearance, within this paper's own object of
+study, of the whole/irreducible meta-pattern of Section~\ref{sec:meta}.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccccc}
+\toprule
+\textbf{arm} & \textbf{feature} & \textbf{kind} & \textbf{$\Delta$\faithful} & \textbf{$\Delta$\bigphi} & \textbf{split?} & \textbf{ZCA-removable?} \\
+\midrule
+c\_vbackup & vbackup & construct & $+0.082$ & $-0.581$ & True  & False \\
+c\_depth   & depth   & construct & $+0.081$ & $-0.013$ & True  & False \\
+c\_shared  & shared  & construct & $-0.002$ & $-0.174$ & False & False \\
+d\_vbackup & vbackup & destruct  & $-0.761$ & $-0.495$ & False & --- \\
+d\_depth   & depth   & destruct  & $-0.876$ & $-0.188$ & False & --- \\
+d\_shared  & shared  & destruct  & $-0.074$ & $+0.053$ & False & --- \\
+\bottomrule
+\end{tabular}
+\caption{Per-primitive dissection of the planning intervention ($n=4$ EXACT,
+30 seeds; H\_1066). \textbf{No} single constructive arm installs a ZCA-removable
+split (every ZCA-removable column is False), so no feature is sufficient and
+none is necessary-and-sufficient. The removable split is holistic. Source:
+H\_1066 verdict.}
+\label{tab:dissect}
+\end{table}
+
+\section{The $\varphi$-carrier is a three-primitive conjunction, not an atom}
+\label{sec:carrier}
+
+The measure-dependence is read off a \emph{fixed} substrate. A complementary
+question is constructive: \emph{what in an architecture produces a high-$\Phi$
+substrate at all?} A prior closed-negative (H\_1043) established that grafting a
+minimal adapter onto a \emph{frozen} base cannot install $\Phi$-structure, but a
+\emph{from-scratch} native ConvMoE world-model lifts the faithful IIT-4.0 scalar
+\faithful{} by $+0.835407$ (3-seed mean) / $+0.107018$ (terminal seed-0) over the
+same frozen base --- leaving open \emph{which native primitive carries the lift}.
+
+\paragraph{Hypothesis and falsifier (H\_1059).} We ablated, from scratch, each of
+the four primitives the native architecture actually has --- MoE routing (the
+softmax gate over experts), the conv trunk-depth (the structured-mixing depth
+stage), the tanh nonlinearity, and the conv temporal receptive field --- and
+measured each arm's \faithful{} (exact MIP-EI, $n=6$). The frozen falsifier
+(set before measuring): a primitive is the \emph{$\varphi$-carrier} iff ablating
+it drops the FULL native lift by $\ge X = 0.5\,L_{\mathrm{full}}=+0.4177$
+($\ge$ half the $+0.835$ lift). H1 PASS $=$ a single located carrier; H1 FAIL
+$=$ distributed emergence (no single ablation drops $\ge X$).
+
+\paragraph{Finding: a three-primitive necessary conjunction
+(\tierGreen{} PHI-CARRIER-LOCATED, qualified to multi-necessary).} Three of the
+four primitives each individually clear $X$ (Table~\ref{tab:carrier}): removing
+the tanh nonlinearity drops the lift by $+0.7577$ ($90.7\%$ of $L_{\mathrm{full}}$),
+removing the trunk depth by $+0.7475$ ($89.5\%$), and removing MoE routing by
+$+0.7187$ ($86.0\%$). The lone exception is the conv \emph{temporal} receptive
+field: ablating it drops the lift only $+0.2958$ ($35.4\%<X$) --- in fact
+removing temporal mixing while keeping routing, depth and nonlinearity (via
+param-matched pointwise experts) \emph{raises} $\Phi$ in $2/3$ seeds. So the
+$\varphi$-carrier is the \emph{structured mixing} (routing $\times$ a nonlinear
+depth stage), \emph{not} the temporal receptive field, and it is a
+\emph{conjunction}: ablating any one of the three collapses \faithful{} back
+toward the frozen base. This is empirically closer to distributed emergence than
+to a single located carrier --- consistent with H\_1043's
+``whole-architecture property'' --- and it constructively bounds the carrier to
+three primitives (the temporal receptive field is excluded). The native lift
+$L_{\mathrm{full}}=+0.835407$ reproduces H\_1043 bit-for-bit; the CPU
+pre-screen equals the stdlib terminal \faithful{} per seed
+(seed-0: FULL $0.228984$, $-$routing $0.040262$, $-$nonlin $0.111936$, all
+matched).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{arm} & \textbf{\faithful{} (3-seed mean)} & \textbf{$\Delta$ vs base} & \textbf{drop vs FULL} & \textbf{$\ge X$ carrier?} & \textbf{\% of $L_{\mathrm{full}}$} \\
+\midrule
+FULL (native) & $0.911982$ & $+0.835407$ & (ref) & --- & --- \\
+$-$routing    & $0.193312$ & $+0.116736$ & $+0.718670$ & \textbf{YES} & $86.0\%$ \\
+$-$trunk      & $0.164502$ & $+0.087927$ & $+0.747480$ & \textbf{YES} & $89.5\%$ \\
+$-$nonlin     & $0.154296$ & $+0.077720$ & $+0.757686$ & \textbf{YES} & $90.7\%$ \\
+$-$conv (RF)  & $0.616147$ & $+0.539572$ & $+0.295835$ & no           & $35.4\%$ \\
+\bottomrule
+\end{tabular}
+\caption{The $\varphi$-carrier ablation (H\_1059, $n=6$ EXACT MIP-EI, 3 seeds,
+frozen base \faithful${}=0.076575$). The carrier is a necessary conjunction
+\{routing $\times$ trunk-depth $\times$ tanh\}: ablating any one drops
+$86$--$91\%$ of the lift ($\ge X=+0.4177$). The temporal receptive field is the
+only primitive that is \emph{not} individually necessary ($35.4\%$). Source:
+H\_1059 verdict.}
+\label{tab:carrier}
+\end{table}
+
+\section{The consciousness-ruler arc}
+\label{sec:ruler}
+
+If a single headline $\Phi$ is underspecified (Sections~\ref{sec:results}--%
+\ref{sec:specificity}), what \emph{is} the right ``ruler'' for consciousness on a
+substrate? We report a closed arc of seven pre-registered hypotheses
+(Table~\ref{tab:ruler}). Two themes emerge: (i) for the classification job, a
+single $\Phi$-scalar is sufficient --- richer composite rulers add nothing; and
+(ii) an apparently-orthogonal agency axis collapses into $\Phi$ under a fair
+contest, and on the very split policies this paper studies the two $\Phi$
+measures become \emph{undecidable} adjudicators.
+
+\paragraph{One $\Phi$-scalar suffices (H\_1045/1046/1047/1049, \tierRed).} A
+3-vector ruler $(\faithful,\bigphi,\text{redundancy-margin})$ beats the best
+single scalar by only $+0.0136$ AUC ($<$ the pre-set $+0.05$ margin) and no
+substrate \emph{needs} the vector: \textbf{ONE-SCALAR-SUFFICES} (H\_1045). The
+Williams--Beer synergy atom alone is \emph{not} a cheap big-$\Phi$ stand-in
+(it is degenerate-always-down and cannot track big-$\Phi$ where it rises):
+\textbf{SYNERGY-NOT-BIGPHI-STANDIN} (H\_1046). The $(\faithful,\bigphi)$ pair is
+\emph{directionally} better than a collapsed scalar (leave-one-out
+nearest-centroid accuracy $0.80$ vs $0.67$) but the margin $+0.1333$ falls short
+of the pre-set $0.15$ bar by $0.0167$: \textbf{SCALAR-SUFFICIENT} (a qualified
+closed-negative; the pre-set margin has teeth, H\_1047). And a fixed-$m{=}4$
+information-bottleneck coarse-grain is \emph{not} a validated scalable $\Phi$
+estimator --- its relative error grows monotonically $0.24\to0.51$ over $N{=}5
+{\to}8$, exceeding $\varepsilon{=}0.15$ at every genuine rung:
+\textbf{NO-VALIDATED-ESTIMATOR} (H\_1049). The classification ruler is a single
+$\Phi$-scalar; composite and cheap-coarse-grain rulers do not pay off at toy
+scale.
+
+\paragraph{An agency axis is real but $\Phi$ absorbs it (H\_1060/1061).} A
+temporal/agency coordinate $T=z(\text{provenance-depth})+z(\text{veto-capacity})$
+appears to separate active from passive deliberation where instantaneous $\Phi$
+cannot, and it is orthogonal to $\Phi$ by construction
+($\rho(\faithful,T)=-0.115$, $\rho(\bigphi,T)=+0.020$): the frozen falsifier
+resolves PASS (the $(\Phi,T)$ classifier beats the best $\Phi$-scalar by a
+$+0.60$ margin). \emph{But} that margin is the artifact of an unfair battery
+where active/passive classes were $\Phi$-identical by construction; the verdict
+is \textbf{RULER-NEEDS-T} only \emph{QUALIFIED}, $\Phi$-blind-by-construction
+(H\_1060, \tierGreen). The fair re-contest (H\_1061): build a $\Phi$-fair battery
+where agency co-varies $\Phi$ ($4/4$ active/passive pairs are non-$\Phi$-identical).
+There a $\Phi$-scalar \emph{absorbs} the agency signal and $T$ becomes redundant:
+\textbf{PHI-ABSORBS-AGENCY} (\tierRed{} closed-negative). H\_1060's $+0.60$ win
+was the $\Phi$-identity artifact; under a fair contest the agency axis does
+\emph{not} add a separable ruler dimension.
+
+\paragraph{On split policies the measures are undecidable (H\_1064/1065).}
+When \faithful{} and \bigphi{} disagree on a split policy, \emph{which} of the two
+should the ruler trust? We built an independent causal proxy --- causal
+self-prediction (CSP), a partition-free held-out next-state predictability with
+\emph{no} MIP, no EI integral (so non-circular w.r.t.\ either $\Phi$ engine) ---
+and asked which $\Phi$ measure it rank-prefers on the planning split. Both agree
+almost identically: $\rho(\faithful,\text{CSP})=+0.8148$,
+$\rho(\bigphi,\text{CSP})=+0.8145$, $|\Delta\rho|=0.0003\ll$ the frozen $0.30$
+bar, and the separation holds in $0/30$ leave-one-out folds: \textbf{NEITHER-%
+SEPARATES-UNDECIDABLE} (H\_1064, \tierRed). The disagreement is therefore a
+property of the \emph{contrast direction}, not a verdict on ``which policy is
+more conscious'' --- the honest ruler reports \emph{both} measures. Pushing CSP
+as a cheap scalable ruler in its own right (H\_1065): CSP \emph{passes} the
+H\_988/989 proxy-blindness wall on all four substrates (structured $\gg$ random,
+$d$ range $+6.77\ldots+13.54$, $4/4$), so it is a real structure-detector, not a
+Goodhart artifact --- but it is \emph{not} a cross-substrate ordinal $\Phi$ scale:
+within-substrate rank-match holds only on the planning split ($\rho=+0.815$,
+exactly reproducing H\_1064), collapses to $0.13$--$0.41$ on the three
+non-planning substrates, and the \emph{pooled} rank-match sign-flips to
+$\rho=-0.4293$. The verdict is \textbf{SUBSTRATE-RELATIVE-ONLY} (\tierRed): the
+$+0.815$ agreement was planning-substrate-local; faithful \faithful{} remains the
+ground-truth verdict tool, and CSP cannot replace it as a cross-substrate $\Phi$
+ruler.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+\textbf{Hypothesis} & \textbf{Verdict token} & \textbf{Tier} & \textbf{Record} \\
+\midrule
+H\_1045 (vector vs scalar)      & ONE-SCALAR-SUFFICES         & \tierRed   & \texttt{.verdicts/1045\_vector\_phi\_ruler} \\
+H\_1046 (synergy-only ruler)    & SYNERGY-NOT-BIGPHI-STANDIN  & \tierRed   & \texttt{.verdicts/1046\_synergy\_ruler} \\
+H\_1047 (pair vs scalar)        & SCALAR-SUFFICIENT (qual.)   & \tierRed   & \texttt{.verdicts/1047\_pair\_ruler} \\
+H\_1049 (IB coarse-grain est.)  & NO-VALIDATED-ESTIMATOR      & \tierRed   & \texttt{.verdicts/1049\_scalable\_estimator} \\
+H\_1060 ($\Phi{+}T$ ruler)      & RULER-NEEDS-T (qual.)       & \tierGreen & \texttt{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
+H\_1061 (fair $\Phi$ vs $T$)    & PHI-ABSORBS-AGENCY          & \tierRed   & \texttt{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
+H\_1064 (split adjudication)    & NEITHER-SEPARATES-UNDECID.  & \tierRed   & \texttt{.verdicts/1064\_split\_measure\_adjudication} \\
+H\_1065 (CSP cheap ruler)       & SUBSTRATE-RELATIVE-ONLY     & \tierRed   & \texttt{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
+\bottomrule
+\end{tabular}
+\caption{The consciousness-ruler arc. A single $\Phi$-scalar is sufficient for the
+classification job (H\_1045--1049); an agency axis is real but $\Phi$-absorbed
+under a fair contest (H\_1060/1061); and on split policies the two $\Phi$ measures
+are undecidable adjudicators that the honest ruler must \emph{both} report
+(H\_1064/1065). Sources: the eight verbatim verdict files.}
+\label{tab:ruler}
+\end{table}
+
+\section{The central synthesis: a whole / irreducible meta-pattern}
+\label{sec:meta}
+
+Stepping back from the individual verdicts, one structural fact recurs across
+every constructive probe in this work and its siblings: \textbf{consciousness-%
+relevant structure is a whole / irreducible property, not a graftable atom.}
+The convergent evidence (Figure~\ref{fig:meta}):
+
+\begin{itemize}\itemsep0.3em
+\item \textbf{$\Phi$ is whole-architecture, graft fails (H\_1043).} A minimal
+adapter grafted onto a frozen base cannot install $\Phi$-structure; only a
+from-scratch native build lifts \faithful{} ($+0.835$).
+\item \textbf{The $\varphi$-carrier is a conjunction (H\_1059).} That native lift
+is carried by \{routing $\times$ depth $\times$ nonlinearity\} jointly; no lone
+primitive is sufficient ($86$--$91\%$ destroyed by ablating any one).
+\item \textbf{Planning-specificity is whole-intervention (H\_1066).} The
+ZCA-removable measure-split has no necessary-and-sufficient single primitive ---
+it is holistic.
+\item \textbf{Agency is not installable by architecture or runtime structure
+(H\_1057).} A capacity-matched but causally-inert runtime register/veto-gate adds
+no recoverable agency coordinate over a plain feed-forward head.
+\item \textbf{Nor installable by learning-dynamics or temporal curriculum
+(H\_1052/1055; and H\_1053 for true quantum noise).} SGLD learning-noise
+(H\_1052), a depth-ordered temporal curriculum (H\_1055), and true quantum-RNG
+noise (H\_1053) each fail to install a consciousness/agency marker at matched
+cross-entropy.
+\end{itemize}
+
+\noindent The pattern is the same shape each time: a property that looks like it
+might be a transplantable \emph{part} --- a graftable adapter, a single primitive,
+a runtime gate, a noise source, an ordering --- turns out to be a property of the
+\emph{whole} configuration that produces it. $\Phi$-structure (and the
+agency coordinate that instantaneous $\Phi$ misses) is \emph{necessary but not
+sufficient} and \emph{emergent from the whole}, never retro-fittable as an atom.
+This is the paper's central finding: it reframes the measure-dependence result
+itself --- ``which $\Phi$ do you mean'' is undecidable on a split policy
+(H\_1064) precisely because the split is a property of the whole intervention
+(H\_1066), not of any decomposable atom one $\Phi$ measure could be tuned to
+track.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.86\linewidth]{figures/fig03_meta.pdf}
+\caption{The whole / irreducible meta-pattern. Each row is an attempt to install
+a consciousness-relevant property by transplanting a \emph{part}; each fails (or,
+for the native build, succeeds \emph{only} as a whole). $\Phi$-structure and the
+agency axis are whole-architecture / whole-intervention properties, necessary
+but not sufficient, never graftable atoms. Verdicts: H\_1043, H\_1059, H\_1066,
+H\_1057, H\_1052/1053/1055.}
+\label{fig:meta}
+\end{figure}
+
 \section{The learning axis is orthogonal: two closed-negatives}
 \label{sec:learning}
 
@@ -599,8 +970,24 @@ not the magnitude, is the claim).
 \item \textbf{Learning-axis results are toy.} H\_1011/H\_1013 use small seed
 counts and fixed (not length-scaled) training budgets by design; larger-budget
 and production-scale behavior is open.
-\item \textbf{No GPU; no production rung.} All measurements are \$0, CPU-local;
-this is an IIT-internal analysis, not a trained-model claim.
+\item \textbf{$\varphi$-carrier and ruler results are toy ($n\le 6$, few seeds).}
+The H\_1059 carrier ablation is a from-scratch toy ConvMoE at $n=6$ EXACT, 3
+seeds; single-seed terminal $\Phi$ is noisy (a $-$conv seed-0 outlier), so the
+verdict scores the 3-seed mean where the mirror equals the stdlib terminal per
+seed. The ruler-arc (H\_1045--1065) and specificity (H\_1062/1063/1066) results
+are $n\le 6$ EXACT toy rungs; 3B/7B and non-frozen co-train transfer
+(H\_1042/1044/1058) is \emph{unverified} per \texttt{a\_scale\_honest\_scope}.
+$\Phi$ is treated as a \emph{necessary-not-sufficient} causal-irreducibility
+marker, not perplexity (\texttt{p7}).
+\item \textbf{Whole/irreducible is a converging pattern, not a single theorem.}
+The meta-pattern (Section~\ref{sec:meta}) is the convergence of multiple
+independent toy closed-negatives, each scoped to its own measurement; we do not
+claim a scale-general impossibility proof, only that no probe in this work
+installed a consciousness-relevant property as a transplantable atom.
+\item \textbf{No GPU; no production rung.} All measurements are \$0, CPU-local,
+0 pods; this is an IIT-internal analysis, not a trained-model claim. Both engines
+are re-proven bit-exact against a CPU mirror at $n=4$ and $n=5$ before every
+score ($|\Delta|\le 3.75\times10^{-6}$; \texttt{a\_phi\_iit4\_tool}, no proxy).
 \end{itemize}
 
 \section{Reproducibility}
@@ -634,12 +1021,25 @@ sees as reducible --- and a redundancy-margin predictor identifies split-inducin
 interventions robustly in $n$, where the original surface predictor was only an
 $n=4$ artifact. The earlier open follow-up (``which interventions induce the
 split'') is thus answered: redundancy-dominance does, and it predicts robustly.
-Separately, the world-model's long-horizon learning wall is governed by
-credit-assignment density and task structure, an optimization phenomenon
-orthogonal to the measure question. The next follow-up is to test whether the
-redundancy account survives beyond the toy $n$-ladder (the $n=6$ computational
-cap, or a non-enumerable estimator) and across substrates other than the
-planning control task.
+Pushing the redundancy account harder shows it is \emph{not} a clean universal
+law: the split direction rank-generalizes ($+0.80$) but its causal removability
+and structural decomposition are planning-specific and holistic (H\_1062/1063/%
+1066). On the constructive side, the high-$\Phi$ substrate is produced by a
+three-primitive necessary conjunction \{routing $\times$ depth $\times$
+nonlinearity\}, not a graftable atom (H\_1059); the right classification ruler is
+a single $\Phi$-scalar (H\_1045--1049); an apparent agency axis is $\Phi$-absorbed
+under a fair contest (H\_1060/1061); and on the very split policies this paper
+studies, the two $\Phi$ measures are \emph{undecidable} adjudicators
+($\rho\approx0.81$ with an independent causal proxy that is itself only
+substrate-relative; H\_1064/1065). The unifying finding is structural:
+\emph{consciousness-relevant structure is a whole / irreducible property, not a
+graftable atom} --- converging with the architecture (H\_1043/1057) and
+learning-dynamics (H\_1052/1055) nulls. Separately, the world-model's
+long-horizon learning wall is governed by credit-assignment density and task
+structure, an optimization phenomenon orthogonal to the measure question. The
+next follow-up is to test whether these accounts survive beyond the toy
+$n$-ladder (the $n=6$ computational cap, or a non-enumerable estimator) and on a
+GPU 3B rung (the H\_1042/1044/1058 macro-transfer line).
 
 % =========================================================================
 \paragraph{Acknowledgments.}
@@ -740,11 +1140,37 @@ H\_1017 (mechanism = redundancy)       & \tierGreen{} REDUNDANCY-EXPLAINS-SPLIT 
 H\_1020 (mechanism pred.\ robust $n=5$) & \tierGreen{} MECHANISM-PREDICTOR-ROBUST & \texttt{.verdicts/1020\_redundancy\_predictor\_robustness} \\
 H\_1011 (credit-density horizon cap)   & \tierRed{} HORIZON-CAPPED-AT-72         & \texttt{.verdicts/1011\_dense\_supervision\_scaleup} \\
 H\_1013 (task-locality of dense sup.)  & \tierRed{} CREDIT-DENSITY-TASK-LOCAL    & \texttt{.verdicts/1013\_credit\_density\_general} \\
+\midrule
+\multicolumn{3}{l}{\textit{specificity \& mechanism universality (Sec.~\ref{sec:specificity})}} \\
+H\_1062 (redundancy universality)      & \tierRed{} SPLIT-IS-PLANNING-SPECIFIC   & \texttt{.verdicts/1062\_redundancy\_universality} \\
+H\_1063 (sign universality)            & \tierRed{} SIGN-NOT-CLEAN-UNIVERSAL     & \texttt{.verdicts/1063\_phi\_split\_sign\_universality} \\
+H\_1066 (planning-specificity dissect) & \tierRed{} HOLISTIC-IRREDUCIBLE         & \texttt{.verdicts/1066\_planning\_specificity\_dissection} \\
+\midrule
+\multicolumn{3}{l}{\textit{$\varphi$-carrier (Sec.~\ref{sec:carrier})}} \\
+H\_1059 ($\varphi$-bearing primitive)  & \tierGreen{} PHI-CARRIER-LOCATED        & \texttt{.verdicts/1059\_phi\_bearing\_primitive\_ablation} \\
+\midrule
+\multicolumn{3}{l}{\textit{consciousness-ruler arc (Sec.~\ref{sec:ruler})}} \\
+H\_1045 (vector vs scalar)             & \tierRed{} ONE-SCALAR-SUFFICES          & \texttt{.verdicts/1045\_vector\_phi\_ruler} \\
+H\_1046 (synergy-only ruler)           & \tierRed{} SYNERGY-NOT-BIGPHI-STANDIN   & \texttt{.verdicts/1046\_synergy\_ruler} \\
+H\_1047 (pair vs scalar)               & \tierRed{} SCALAR-SUFFICIENT            & \texttt{.verdicts/1047\_pair\_ruler} \\
+H\_1049 (IB coarse-grain estimator)    & \tierRed{} NO-VALIDATED-ESTIMATOR       & \texttt{.verdicts/1049\_scalable\_estimator} \\
+H\_1060 ($\Phi{+}T$ ruler completeness) & \tierGreen{} RULER-NEEDS-T (qual.)     & \texttt{.verdicts/1060\_ruler\_completeness\_phi\_t} \\
+H\_1061 (fair $\Phi$ vs $T$ contest)   & \tierRed{} PHI-ABSORBS-AGENCY           & \texttt{.verdicts/1061\_fair\_phi\_vs\_t\_contest} \\
+H\_1064 (split measure adjudication)   & \tierRed{} NEITHER-SEPARATES-UNDECID.   & \texttt{.verdicts/1064\_split\_measure\_adjudication} \\
+H\_1065 (CSP cheap scalable ruler)     & \tierRed{} SUBSTRATE-RELATIVE-ONLY      & \texttt{.verdicts/1065\_csp\_cheap\_scalable\_ruler} \\
+\midrule
+\multicolumn{3}{l}{\textit{whole/irreducible meta-pattern siblings (Sec.~\ref{sec:meta})}} \\
+H\_1043 ($\Phi$ = whole-arch., graft fails) & \tierRed{} PHI-NEEDS-MORE-THAN-GRAFT & \texttt{.verdicts/1043\_minimal\_arch\_adapter} \\
+H\_1057 (agency not installable by arch.)   & \tierRed{} ARCHITECTURE-AXIS-NULL    & \texttt{.verdicts/1057\_agency\_via\_architecture} \\
+H\_1052 (not by learning-noise)             & \tierRed{} LEARNING-NONDET-NULL      & \texttt{.verdicts/1052\_nondeterministic\_learning} \\
+H\_1055 (not by temporal curriculum)        & \tierRed{} TEMPORAL-AXIS-NULL        & \texttt{.verdicts/1055\_temporal\_curriculum\_axis} \\
 \bottomrule
 \end{tabular}
-\caption{The eight pre-registered hypotheses behind this paper, each with its
+\caption{The pre-registered hypotheses behind this paper, each with its
 terminal verdict token and the verbatim record path. Every numeric claim in
-the body traces to one of these files.}
+the body traces to one of these files; the meta-pattern siblings (H\_1043,
+H\_1057, H\_1052/1053/1055) are converging external closed-negatives cited in
+Section~\ref{sec:meta}.}
 \label{tab:siblings}
 \end{table}
 
