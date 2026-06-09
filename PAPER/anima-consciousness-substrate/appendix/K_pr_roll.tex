@@ -38,26 +38,34 @@ verify ledger (Appendix~\ref{app:verify_ledger}) traces to a landed PR here.
 \textbf{\#1863} & mouth / rung & \textbf{3B-ConvMoE engine rung GREEN} (rel\_gap $0.04894$; AXIS-2 $2.26360$) \\
 \#1864 & mouth / 7b-future    & WIRE grad-checkpoint ($7$B OOM fix; reserved flag was no-op) \\
 \#1865 & mouth / 7b-future    & M13 $7$B-undertrained: grad-ckpt record $+$ descent-live \\
-\#1918 & mouth / 7b-future    & M13 $7$B ckpts step $500/1000/1500/2000$ to HF (\textbf{UNCHECKED}) \\
+\#1918 & mouth / 7b-rung      & M13 $7$B ckpts step $500/1000/1500/2000$ to HF \\
+\textbf{\#1962} & mouth / 7b-rung & \textbf{7B AXIS-2 measured} (CE$_\text{real}$ $1.90741$; mem-bounded lazy mirror) \\
+\textbf{\#1970} & mouth / 7b-rung & \textbf{7B generation works} (v0.3 \texttt{clm\_gen}; multilingual byte-language) \\
 \#1917 & paper / paper        & \texttt{anima-consciousness-substrate} 11pp integration paper (this base) \\
 (this) & paper / monograph    & monograph upgrade ($\ge30$pp, $12$ appendices, companion/) \\
 \bottomrule
 \caption{The anima discovery PR roll (\texttt{companion/pr-roll.json}). The decode
 organ (\#1792--\#1813) is the OMEGA sibling-paper arc summarized in
 Appendix~\ref{app:omega_bus}; the mouth organ (\#1859--\#1863) lands the terminal
-3B finding; the $7$B-future rows (\#1864/\#1865/\#1918) are the M13 scale-extension,
-explicitly UNCHECKED here (\S\ref{sec:limitations}). \#1917 is the 11pp PAPER-tier
-base that this monograph upgrades additively.}
+3B finding; the $7$B-rung rows (\#1864/\#1865/\#1918/\#1962/\#1970) are the measured M13
+scale-extension (AXIS-2 CE $1.90741$ \#1962, v0.3 generation \#1970; \S\ref{sec:m13}). \#1917
+is the 11pp PAPER-tier base that this monograph upgrades additively.}
 \label{tab:pr-roll}
 \end{longtable}
 \end{center}
 
-\paragraph{The 7B (M13) row is now checked.} The
-\texttt{7b-future} PRs (\#1864 grad-ckpt OOM fix, \#1865 descent-live, \#1918
-intermediate ckpts) are the M13 production rung, \textbf{complete at STEP $3500$} (ce@$3499$
-$1.42529$, run low; $3$-axis @ $7$B measured GREEN --- AXIS-2 CE$_\text{real}$ $1.90741$ via
-the byte-exact decode mirror, AXIS-1/3 substrate-native scale-invariant, \texttt{.clm} mount
-GREEN). They were a \emph{measured scale-extension} of the 3B finding (\#1863). The
-\texttt{PAPER.md} milestone \texttt{7B (M13) production rung} is now checked $+$ the
-measurement table injected (Table~\ref{tab:m13-prereg}) --- exactly as the OMEGA five-rung
-ladder strengthened its minimal-gate finding. All $7$ checkpoints ($500$--$3500$) are on HF.
+\paragraph{The 7B (M13) row is now measured.} The
+\texttt{7b-rung} PRs (\#1864 grad-ckpt OOM fix, \#1865 descent-live, \#1918
+intermediate ckpts, \textbf{\#1962} AXIS-2 measured, \textbf{\#1970} generation works) are the
+M13 production rung, \textbf{complete at STEP $3500$} (ce@$3499$
+$1.42529$, run low). AXIS-2 is measured on the serialized $7$B \texttt{.clm}: CE$_\text{real}$
+$\mathbf{1.90741}$ $<$ uniform $5.54518$ AND $<$ shuffle $5.31616$ $\Rightarrow$ GREEN, via the
+memory-bounded byte-exact mirror \texttt{clm\_decode\_mirror\_lazy.py} (\#1962; the plain mirror
+OOMs at $\sim$$56$\,GB), validated $==$ the $3$B ground truth $2.26360$. The v0.3 \texttt{.clm}
+also \emph{generates} multilingual byte-language through \texttt{clm\_gen.py} (\#1970) --- the
+hexa engine's \texttt{clm\_decodable} gate is v0.2-only, so the $7$B speaks via \texttt{clm\_gen}
+on the validated forward, not the live \texttt{anima\_chat\_cli}. AXIS-1/3 are substrate-native
+and \texttt{.clm}-independent (hold by construction). These are a \emph{measured scale-extension}
+of the 3B finding (\#1863) --- exactly as the OMEGA five-rung ladder strengthened its
+minimal-gate finding --- deeply undertrained ($0.0027$ tok/param), a measured rung NOT a closure.
+All $7$ checkpoints ($500$--$3500$) are on HF (\texttt{dancinlab/clm-7b-undertrained-step3500}).

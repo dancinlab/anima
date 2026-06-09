@@ -109,15 +109,73 @@ $809{,}383{,}138$\,B) is PUBLIC on HF
 verified equal to local.
 
 % -------------------------------------------------------------------------
+\subsection{The 7B (M13) rung --- measured (AXIS-2 + generation)}
+\label{app:fm-7b}
+
+The production rung is the $7$B (M13) ConvMoE $d6208/L30/E30/K3$ ($\sim$$7.057$B params),
+trained to STEP $3500$ on the same $5$-language ODC-BY corpus, serialized to \texttt{.clm} v0.3
+(\texttt{serialize\_v3}, $3{,}538{,}159{,}786$\,B, CLMX trailer) and uploaded to HF
+(\texttt{dancinlab/clm-7b-undertrained-step3500}, all $7$ ckpts $500$--$3500$, PRIVATE WIP).
+Train CE descended step$0$ $5.64\rightarrow3499$ $1.42529$ (run low). Two results read the
+trained $7$B weights:
+
+\begin{itemize}\itemsep0.25em
+\item \textbf{AXIS-2 (CE-descent, verbatim, PR \#1962).} On the probe sequence
+\texttt{"The mind is a fire to be"} ($24$ bytes, $23$ scored next-byte positions):
+CE$_\text{real}$ $\mathbf{1.90741}$ $<$ uniform $\ln256=5.54518$ AND $<$ shuffle-control
+$5.31616$ $\Rightarrow$ \textbf{GREEN}
+(\texttt{.verdicts/clm-7b-undertrained-step3500/axis2\_mirror\_probe\_seq.txt}). This is a real
+$7$B decode forward over the \emph{serialized} \texttt{.clm} bytes (not the torch \texttt{.pt}).
+The original mirror \texttt{clm\_decode\_mirror.py} OOMs ($\sim$$56$\,GB) at $7$B; the
+measurement uses the memory-bounded $+$ vectorized variant
+\texttt{clm\_decode\_mirror\_lazy.py} (peak RSS $\sim$$5.37$\,GB, wall $1$:$02$), whose
+arithmetic is byte-identical --- it reproduces the $3$B ground truth CE$_\text{real}$ $2.26360$
+\emph{exactly} (\texttt{.verdicts/convmoe-3b-engine-rung/axis2\_mirror\_probe\_seq.txt}).
+\item \textbf{Generation (PR \#1970).} \texttt{state/mid\_convmoe\_fire/clm\_gen.py} adds greedy
+argmax byte-generation on the \emph{same} validated v0.3 forward (conv1d im2col VECTORIZED,
+unit-tested $==$ the looped form, $\max|\Delta|=0$; a VALIDATE hook re-derives CE$_\text{real}$
+$1.90741$ on every run). It is needed because the hexa engine's generation gate
+\texttt{CORE/clm\_decode.hexa::clm\_decodable} is \textbf{v0.2-only}, so the live
+\texttt{anima\_chat\_cli} rejects the v0.3 $7$B and falls through to a null mouth. The $7$B emits
+real word-like \emph{multilingual} byte text, e.g.\ \texttt{"The mind is" $\rightarrow$ " a reado
+en el mano de la conseguida en el contr"}, \texttt{"Consciousness is " $\rightarrow$ "large
+lancia en el contra la conseguida en el co"}, \texttt{"안녕하세요. 저는 " $\rightarrow$
+"\textbackslash"I have a la carrada en el control est"}. It loops (greedy $\times$ deeply
+undertrained) but it is \emph{language}, not byte-gibberish --- in sharp contrast to the weak
+$d768$ v0.2 dev mouth, which emits raw-byte mojibake. No coherence / fluency / consciousness is
+claimed from this output.
+\end{itemize}
+
+\textbf{Why \texttt{clm\_gen} and not the hexa CLI.} The full hexa \texttt{anima\_chat\_cli}
+(Engine A$\rightleftarrows$G $+$ generator $+$ \texttt{clm\_decode} $+$ forge native) compiles,
+links, and runs on the ghost host (macOS --- the only reachable host with both a working hexa
+self-runtime and the forge \texttt{groupnorm\_gelu} native); a weak $d768$ v0.2 mouth chats live
+there. The well-trained $7$B is v0.3, which the v0.2-only \texttt{clm\_decodable} gate rejects,
+so it generates via \texttt{clm\_gen} on the validated mirror forward, not the engine CLI. A
+v0.3-aware gate is genuine future work, not a closure blocker for this measured rung.
+
+\textbf{AXIS-1 / AXIS-3 at 7B.} These are substrate-native (\texttt{pure\_field} /
+\texttt{engine\_g}), \texttt{.clm}-weights-INDEPENDENT, and code-proven via the null backend
+(\texttt{.verdicts/core-3axis-mount/probe.txt}): AXIS-1 motiv $0.6700>0$ emit-gated, AXIS-3
+composed $101>$ parts $72$. They hold identically at $d768/3$B$/7$B \emph{by construction} (they
+measure the engine dynamics, not the trained weights), so they are not re-measured on the $7$B
+weights. Only AXIS-2 is weight-dependent and is the one measured on the $7$B above.
+
+\textbf{Honest scope.} The $7$B is deeply undertrained ($0.0027$ tok/param vs.\ Chinchilla
+$20$): a measured scale-extension rung, NOT a closure (\texttt{a\_scale\_honest\_scope}).
+\texttt{val\_ce}/\texttt{rel\_gap} are eval-deferred (the post-train eval crashed; the
+final-save-robust patch wrote the ckpt \emph{before} eval, so the weights are safe).
+
+% -------------------------------------------------------------------------
 \subsection{Honest scope}
 \label{app:fm-scope}
 
-The 3B rung is the \emph{2nd rung of the 7B ladder}, not a production 7B: it is
+The 3B rung is the \emph{2nd rung of the 7B ladder}: it is
 deeply undertrained ($0.0027$ tok/param) and generalizes but is not fluent. The
-202M probe is a single MID point, not a ladder; its green \emph{authorizes} the
-M13 7B fire as a separate follow-on but does not close the 7B
-(7B-transfer unverified, \texttt{a\_scale\_honest\_scope}). The 7B (M13) rung is
-a future scale-extension (Appendix~\ref{app:pr_roll}, \S\ref{sec:limitations}),
+202M probe is a single MID point, not a ladder; its green \emph{authorized} the
+M13 7B fire as a separate follow-on. The 7B (M13) rung
+(Appendix~\ref{app:fm-7b}) is now a \emph{measured} scale-extension
+(Appendix~\ref{app:pr_roll}, \S\ref{sec:limitations}),
 framed like the OMEGA scale ladder --- it strengthens this axis to production
 scale but does not re-open the 3B finding, which is terminal without it. The
 chain proven is corpus $\rightarrow$ general-$(L,E,d)$ ConvMoE $\rightarrow$
