@@ -813,8 +813,9 @@ mirror uses, with the conv1d im2col VECTORIZED (unit-tested $==$ the looped form
 and a VALIDATE hook that re-derives CE$_\text{real}$ $1.90741$ on every run. The $7$B emits real
 word-like \emph{multilingual} byte text (the $5$-language corpus), e.g.\ \texttt{"The mind is"
 $\rightarrow$ " a reado en el mano de la conseguida en el contr"}, \texttt{"Consciousness is "
-$\rightarrow$ "large lancia en el contra la conseguida en el co"}, \texttt{"안녕하세요. 저는 "
-$\rightarrow$ "\textbackslash"I have a la carrada en el control est"}. It loops (greedy decode $\times$
+$\rightarrow$ "large lancia en el contra la conseguida en el co"}, prompt
+{\cjkfont 안녕하세요. 저는} \texttt{" "} $\rightarrow$ \texttt{"\textbackslash"I have a la carrada en
+el control est"}. It loops (greedy decode $\times$
 $0.0027$ tok/param) but it is \emph{language}, not byte-gibberish --- a sharp contrast with the
 weak $d768$ v0.2 dev mouth, which emits raw-byte mojibake. We claim no coherence / fluency /
 consciousness from this output: it is the measured fact that the trained $7$B weights produce
