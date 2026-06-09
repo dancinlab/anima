@@ -70,6 +70,7 @@ reproduce_h1029_check = _h1047.reproduce_h1029_check
 policies = _h1047.policies                          # H_1035 richer policy space
 pol_name = _h1047.pol_name
 loo_nearest_centroid_accuracy = _h1047.loo_nearest_centroid_accuracy  # H_1047 LOO protocol
+N_SEEDS = _h1047.N_SEEDS                             # H_1035 seed count (30); Phi = seed-mean
 
 
 # ── Load the H_1051 T-machinery by path (real-module import; UNMODIFIED). ──
@@ -165,18 +166,26 @@ def main():
         raise SystemExit("equivalence/reproduce proof failed — aborting")
     emit("")
 
-    # ── STEP 0b — REPRODUCE-H_1047 numeric anchor (greedy policy faith/big read). ──
-    emit("== STEP 0b: REPRODUCE-H_1047 anchor — greedy policy (depth0,e0.05,mix0.0) faith/big read ==")
-    H_greedy = rich_rollout(0, 0, 0.05, 0.0)
-    r_greedy = substrate_reads(H_greedy)
-    g_faith, g_big = float(r_greedy["faith"]), float(r_greedy["big"])
-    # H_1047/H_1035 published: policy-1 greedy faith=0.5069 big=9.5283
+    # ── STEP 0b — REPRODUCE-H_1047 numeric anchor (greedy policy SEED-MEAN faith/big read). ──
+    # H_1047/H_1035 published "policy-1 read greedy faith=0.5069 big=9.5283" — that is the
+    # SEED-MEAN over N_SEEDS of the greedy policy (0, 0.0, 0.0), exactly the H_1047 path:
+    #   for s in range(N_SEEDS): H = rich_rollout(s, d, e, m); r = substrate_reads(H).
+    def _policy_phi_seedmean(p):
+        d, e, m = p
+        fs, bs = [], []
+        for s in range(N_SEEDS):
+            r = substrate_reads(rich_rollout(s, d, e, m))
+            fs.append(float(r["faith"])); bs.append(float(r["big"]))
+        return float(np.mean(fs)), float(np.mean(bs))
+
+    emit("== STEP 0b: REPRODUCE-H_1047 anchor — greedy policy (0,0.0,0.0) SEED-MEAN faith/big ==")
+    g_faith, g_big = _policy_phi_seedmean((0, 0.0, 0.0))
     rep1047_faith = abs(g_faith - 0.5069) < 1e-3
     rep1047_big = abs(g_big - 9.5283) < 1e-3
     rep1047 = rep1047_faith and rep1047_big
     emit(f"  greedy faith={g_faith:.4f} (H_1047 ref 0.5069, |Δ|={abs(g_faith-0.5069):.2e}, OK={rep1047_faith})")
     emit(f"  greedy big  ={g_big:.4f} (H_1047 ref 9.5283, |Δ|={abs(g_big-9.5283):.2e}, OK={rep1047_big})")
-    emit(f"  REPRODUCE-H_1047 (greedy faith/big anchor matches published): {rep1047}")
+    emit(f"  REPRODUCE-H_1047 (greedy seed-mean faith/big anchor matches published): {rep1047}")
     if not rep1047:
         raise SystemExit("REPRODUCE-H_1047 anchor mismatch — aborting (harness drift)")
     emit("")
@@ -191,14 +200,10 @@ def main():
          f"agency seeds={N_AGENCY_SEEDS} ==")
     t0 = time.time()
 
-    # Phi reads are per-policy (deterministic, computed once).
+    # Phi reads are per-policy SEED-MEANS over N_SEEDS (the H_1047/H_1035 path, VERBATIM).
     pol_faith, pol_big = {}, {}
     for p in POLS:
-        d, e, m = p
-        H = rich_rollout(0, d, e, m)            # seed 0 for the Phi snapshot (deterministic)
-        r = substrate_reads(H)
-        pol_faith[p] = float(r["faith"])
-        pol_big[p] = float(r["big"])
+        pol_faith[p], pol_big[p] = _policy_phi_seedmean(p)
 
     # Build battery members: for each policy x agency-mode, average T over agency seeds.
     members = []
