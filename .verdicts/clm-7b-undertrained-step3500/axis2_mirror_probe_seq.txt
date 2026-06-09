@@ -1,0 +1,23 @@
+=== AXIS-2 mirror probe-seq on 7B .clm (d6208/L30/E30/K3, V256, ~7.057B) ===
+host: summer (linux); tool: state/mid_convmoe_fire/clm_decode_mirror_lazy.py
+  (memory-bounded + vectorized variant of clm_decode_mirror.py; byte-IDENTICAL
+   arithmetic — validated reproducing the 3B ground truth CE_realtext 2.26360
+   exactly, .verdicts/convmoe-3b-engine-rung/axis2_mirror_probe_seq.txt)
+artifact: dancinlab/clm-7b-undertrained-step3500 :: clm_7b.clm
+  (3538159786 bytes, serialize_v3 / .clm v0.3, CLMX trailer)
+probe seq: "The mind is a fire to be" (24 bytes), 23 scored next-byte positions
+
+CLM_CONFIG d=6208 L=30 E=30 K=3 V=256
+MIRROR_MODE=probe-seq
+CE_realtext        = 1.90741
+CE_shuffled_ctrl   = 5.31616
+CE_uniform_baseline= 5.54518
+CE_BELOW_UNIFORM   = 1
+CE_BEATS_SHUFFLE   = 1
+VERDICT = GREEN (CORE_3AXIS AXIS-2 gate: CE_real<uniform AND CE_real<shuffle)
+
+wall 1:02.45 ; peak RSS 5365752 KiB (~5.37 GB) ; EXIT 0
+HONEST: AXIS-2 is the ONLY axis that reads the trained 7B weights. This is a
+real 7B decode forward over the SERIALIZED .clm bytes (not the torch .pt), so
+it proves the serialized 7B .clm decodes to descent. Deeply undertrained
+(0.0027 tok/param, a_scale_honest_scope) — a measured rung, NOT a closure.
