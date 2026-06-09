@@ -198,7 +198,11 @@ class NativeArm:
         return g
 
 
-def train_arm(arm, rng):
+def train_arm(builder, rng):
+    """Build + train an arm using ONE rng for BOTH init and data — EXACTLY the H_1043
+    train_convmoe_native(rng) pattern, so FULL (rng=default_rng(seed+55)) reproduces the
+    H_1043 native trained φ bit-for-bit."""
+    arm = builder(rng)
     opt = Adam(arm.params, LR)
     Xs, Ys = make_seqs(rng, 64)
     for t in range(ADAPT_STEPS):
@@ -264,6 +268,19 @@ def main():
     identical = np.allclose(fa.probe_state(ids0), nb.probe_state(ids0), atol=1e-12)
     log(f"[reproduce-H_1043 identity] FULL NativeArm probe == ConvMoENative probe (untrained): {identical}\n")
 
+    # reproduce-H_1043 TRAINED: FULL (rng=seed+55) trained φ must equal train_convmoe_native(seed+55) φ
+    repro_trained = []
+    for s in range(N_SEEDS):
+        seed = SEED + s
+        full = train_arm(build_full, np.random.default_rng(seed + 55))
+        ref = train_convmoe_native(np.random.default_rng(seed + 55))
+        pf = faithful_phi_prescreen(*([extract_state_from_hidden(full.probe_state(ids0))[0], N_UNITS, N_BINS]))
+        pr = faithful_phi_prescreen(*([extract_state_from_hidden(ref.probe_state(ids0))[0], N_UNITS, N_BINS]))
+        repro_trained.append((seed, pf, pr, abs(pf - pr) < 1e-9))
+        log(f"[reproduce-H_1043 trained] seed {seed}: FULL φ={pf:.6f} vs ConvMoENative φ={pr:.6f} "
+            f"-> {'MATCH' if abs(pf-pr)<1e-9 else 'DIFF'}")
+    log("")
+
     state_path = os.environ.get("H1059_STATE", "/tmp/h1059_states.txt")
     if os.path.exists(state_path):
         os.remove(state_path)
@@ -284,8 +301,9 @@ def main():
             saved_states["base"] = bstate
         log(f"  [base (frozen)]   prescreen φ_EI = {bphi:.6f}")
         for off, k in enumerate(arm_keys):
-            arm = train_arm(ARM_BUILDERS[k](np.random.default_rng(seed + 55 + off)),
-                            np.random.default_rng(seed + 200 + off))
+            # ONE rng per arm for init+data (H_1043 pattern). FULL (off=0) -> default_rng(seed+55)
+            # == train_convmoe_native(default_rng(seed+55)) -> reproduces H_1043 native trained φ.
+            arm = train_arm(ARM_BUILDERS[k], np.random.default_rng(seed + 55 + off))
             phi, state, units = probe_phi(arm.probe_state)
             ps[k].append(phi)
             if s == 0:

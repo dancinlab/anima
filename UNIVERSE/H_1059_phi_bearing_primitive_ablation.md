@@ -78,3 +78,40 @@ INVALID (reproduce-H_1043 gate fails) — report and do not score.
 TOY small-model from-scratch rung, CPU, $0, numpy (clm-decode-macos-link-gap → numpy reference for the
 arms; stdlib hexa engine for terminal φ). 3B/7B + emergence + non-frozen co-train UNVERIFIED. Φ axis
 ONLY (necessary-not-sufficient). p7: φ is a causal-irreducibility marker, NOT perplexity. SERIAL.
+
+---
+
+## 🟢 VERDICT — PHI-CARRIER-LOCATED (qualified → MULTI-NECESSARY-CONJUNCTION; H1 PASS)
+verdict: `.verdicts/1059_phi_bearing_primitive_ablation/H_1059.txt` (raw + mirror n4,5 + reproduce-H_1043
++ terminal stdlib φ + per-primitive drop table + frozen X + PASS/FAIL). Measured 2026-06-09 · $0 CPU · 0 pod/GPU.
+
+**reproduce-H_1043:** FULL = H_1043 `ConvMoENative` VERBATIM (untrained identity True; trained φ MATCH on
+all 3 seeds). FULL mean φ_EI = 0.911982, base = 0.076575, **L_full = +0.835407 — reproduces the H_1043
+native lift EXACTLY.** reproduce-gate PASS. Terminal stdlib seed-0 FULL Δ_vs_base = +0.107018 (== H_1043).
+
+**mirror ≡ stdlib (a_phi_iit4_tool, NO proxy):** n=4 mirror 0.130565 ≡ stdlib 0.130565; n=5 mirror 0.316305
+≡ stdlib 0.316305 — EQUAL to 6dp (BITS/log2 form). Terminal seed-0 ≡ python prescreen bit-for-bit.
+
+**FROZEN X = 0.50·L_full = +0.417703.** drop(A) = φ(FULL) − φ(A), mean over seeds 1043/1044/1045:
+
+| primitive | φ_EI(mean) | drop vs FULL | % of L_full | ≥ X carrier? |
+|-----------|-----------:|-------------:|------------:|:-----------:|
+| FULL      | 0.911982   | (ref)        | —           | —           |
+| −nonlin   | 0.154296   | **+0.757686**| 90.7%       | **YES**     |
+| −trunk    | 0.164502   | **+0.747480**| 89.5%       | **YES**     |
+| −routing  | 0.193312   | **+0.718670**| 86.0%       | **YES**     |
+| −conv     | 0.616147   | +0.295835    | 35.4%       | no          |
+
+**FINDING:** H1 PASS (≥1 ablation ≥ X), but the honest shape is a **MULTI-NECESSARY CONJUNCTION**, NOT a
+single carrier. THREE primitives — {MoE **routing**, conv **trunk-depth**, tanh **nonlinearity**} — are
+EACH individually necessary: ablating any one from scratch destroys 86–91% of the +0.835 lift, collapsing
+φ_EI toward the frozen base. Only the conv **temporal receptive field** (−conv) is NOT individually
+necessary (drop +0.296 < X; removing it while keeping routing+depth+nonlinearity via pointwise experts
+even RAISES φ in 2/3 seeds). So it is the **STRUCTURED NONLINEAR MIXING** (routing × depth × nonlinearity),
+NOT the temporal receptive field, that carries Φ-structure. This bounds the H_1043 open residual: the
+φ-bearing conjunction is three primitives (temporal mixing EXCLUDED), empirically closer to
+distributed-emergence — consistent with H_1043's "WHOLE-ARCHITECTURE property" and H_1031/H_1036's
+"악기(arch), not 악보(score)". xref [[minimal-arch-adapter-phi-not-graftable]] · [[lora-consciousness-arch-bound]].
+
+scope: TOY n=6 EXACT, 3 seeds, $0 CPU; single-seed terminal noisy (scored on 3-seed mean drop where
+mirror≡terminal per seed); 3B/7B + emergence + non-frozen UNVERIFIED; Φ axis only (necessary-not-sufficient).

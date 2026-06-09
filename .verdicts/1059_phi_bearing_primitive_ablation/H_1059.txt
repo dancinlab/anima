@@ -1,0 +1,114 @@
+H_1059 — WHICH native ConvMoE primitive carries the faithful IIT-4.0 φ_EI lift?
+verdict measured 2026-06-09 · substrate=CPU-local (Mac, numpy) · cost $0 · 0 pods / 0 GPU
+constructive FORWARD of H_1043 (PHI-NEEDS-MORE-THAN-GRAFT) + H_1031/H_1036 (LoRA arch-bound).
+
+H_1043 closed: a minimal GRAFT onto a FROZEN base cannot install Φ-structure, BUT a from-scratch
+NATIVE ConvMoE lifts faithful φ_EI by +0.835407 (mean prescreen) / +0.107018 (terminal seed-0) over
+the same toy frozen base (at seeds 1043/1044/1045). OPEN RESIDUAL: which native primitive carries it?
+
+SETUP (toy · $0 · numpy; clm-decode-macos-link-gap → numpy reference; a_scale_honest_scope; SERIAL):
+  FULL = the H_1043 ConvMoENative arch VERBATIM:
+         emb -> c=causal_conv(x,w1) -> h=tanh(c) -> gate=softmax(h@wr) -> experts ce_e=tanh(conv(h,we_e))
+         -> mix=Σ gate_e·ce_e -> logits=mix@wo.  PROBE = mix (= ConvMoENative.probe_state).
+         d=32, k=3, E=4, generic byte corpus (public-domain proverbs; p3/p6 — NO persona/carving),
+         600 train steps, Adam lr=0.01.  PROBE n=6 highest-var units × dim=24 positions, binarized
+         per-unit at its own median, n_bins=2 -> n×dim binary macro-TPM.
+  ablation ladder — each a FROM-SCRATCH native arm (NOT a frozen graft = the H_1043 distinction),
+  removing ONE real primitive of the native arch (it has NO residual/multi-block; those are not its
+  primitives — ablating an absent primitive is undefined, so the ladder is the four it actually has):
+    -routing  = single expert, no softmax gate (E=1, uniform). MoE routing removed.
+    -conv     = trunk conv w1 + expert convs we replaced by pointwise linear (k stacked (d,d),
+                param-matched, NO temporal receptive field).
+    -trunk    = remove the conv trunk layer w1+tanh (experts act directly on the embedding) — the
+                depth / structured-mixing primitive ("shallower native trunk").
+    -nonlin   = remove the tanh nonlinearities (trunk+experts linear-activated), capacity identical.
+  seeds = 1043/1044/1045 (the H_1043 seeds where the +0.835 native lift was established, so FULL
+  reproduces it). ONE rng per arm for init+data = the H_1043 train_convmoe_native(rng) pattern, so
+  FULL (rng=default_rng(seed+55)) reproduces the H_1043 native TRAINED φ bit-for-bit. p7: φ = causal-
+  irreducibility marker, not perplexity.
+
+=========== MIRROR ≡ STDLIB RE-PROOF (a_phi_iit4_tool — python PRE-SCREEN ≡ stdlib terminal) ===========
+fixed binary state matrices (n=4, n=5, dim=12) via h1043_mirror_proof.py; python faithful_phi_prescreen
+(MIRROR) vs stdlib iit4_faithful_phi (exact MIP-EI, hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa):
+  n=4 : python mirror φ_EI = 0.130565   |   stdlib terminal φ_EI = 0.130565   → EQUAL (6 dp)
+  n=5 : python mirror φ_EI = 0.316305   |   stdlib terminal φ_EI = 0.316305   → EQUAL (6 dp)
+mirror ≡ stdlib EXACT to 6 dp at n=4 AND n=5 (mirror uses stdlib's BITS/log2 entropy form
+MI=H(A)+H(B)-H(A,B), NOT a nats estimator — the H_1043 ln(2) discrepancy lesson). NO proxy used.
+  (live re-run on this Mac 2026-06-09: H1043_STATE=/tmp/h1043_mirror_states.txt hexa run
+   UNIVERSE/run_faithful_phi_1043.hexa -> mirror_n4=0.130565, mirror_n5=0.316305.)
+
+=========== REPRODUCE-H_1043 NATIVE LIFT (FULL == H_1043 ConvMoENative, bit-for-bit) ===========
+[reproduce-H_1043 identity] FULL NativeArm probe == ConvMoENative probe (untrained): True
+[reproduce-H_1043 trained] seed 1043: FULL φ=0.228984 vs ConvMoENative φ=0.228984 -> MATCH
+[reproduce-H_1043 trained] seed 1044: FULL φ=2.364864 vs ConvMoENative φ=2.364864 -> MATCH
+[reproduce-H_1043 trained] seed 1045: FULL φ=0.142098 vs ConvMoENative φ=0.142098 -> MATCH
+FULL mean φ_EI = 0.911982 ; frozen base mean φ_EI = 0.076575 ; L_full = +0.835407
+  == H_1043 verdict's documented native lift +0.835407 (mean prescreen), reproduced EXACTLY.
+
+=========== TERMINAL faithful IIT-4.0 φ_EI (stdlib exact MIP-EI, a_phi_iit4_tool) — seed-0 (1043) ===========
+=== H_1059 TERMINAL faithful IIT-4.0 φ_EI (stdlib exact MIP-EI) ===  (run_faithful_phi_1043.hexa)
+state file: /tmp/h1059_states.txt
+  [base]       n=6 dim=24  faithful_phi_EI=0.121967  Δ_vs_base=0.000000
+  [FULL]       n=6 dim=24  faithful_phi_EI=0.228984  Δ_vs_base=+0.107018   (== H_1043 terminal seed-0)
+  [-routing]   n=6 dim=24  faithful_phi_EI=0.040262  Δ_vs_base=-0.081704
+  [-conv]      n=6 dim=24  faithful_phi_EI=1.384144  Δ_vs_base=+1.262177   (seed-0 outlier)
+  [-trunk]     n=6 dim=24  faithful_phi_EI=0.142098  Δ_vs_base=+0.020131
+  [-nonlin]    n=6 dim=24  faithful_phi_EI=0.111936  Δ_vs_base=-0.010030
+=== terminal complete (a_phi_iit4_tool) ===
+(terminal seed-0 == python pre-screen seed-0 bit-for-bit: FULL 0.228984, -routing 0.040262,
+ -conv 1.384144, -trunk 0.142098, -nonlin 0.111936 — mirror confirmed live. single-seed terminal is
+ NOISY; the scoring surface is the 3-seed MEAN drop below, where mirror≡terminal holds per seed.)
+
+=========== PER-PRIMITIVE Δφ_EI (mean over 3 H_1043 seeds — pre-screen; ≡ terminal per-seed by mirror) ===========
+frozen base φ_EI (mean) = 0.076575
+arm          φ_EI(mean)     Δ vs base     drop vs FULL = φ(FULL)-φ(A)   >= X carrier?   params
+FULL          0.911982      +0.835407          (ref)                        —            31872
+-routing      0.193312      +0.116736         +0.718670                    YES           22528
+-conv         0.616147      +0.539572         +0.295835                    no            31872
+-trunk        0.164502      +0.087927         +0.747480                    YES           28800
+-nonlin       0.154296      +0.077720         +0.757686                    YES           31872
+
+FROZEN X (set in H_1059_phi_bearing_primitive_ablation.md BEFORE measuring) = 0.50 * L_full
+       L_full = +0.835407  ->  X = +0.417703   (a primitive is a φ-carrier iff ablating it drops the
+       FULL native φ_EI by >= HALF of the FULL lift).
+reproduce-H_1043 native lift gate (L_full > +0.10): PASS (L_full = +0.835407)
+
+=========== PRE-REGISTERED FALSIFIER OUTCOME ===========
+H1 PASS rule (frozen BEFORE measuring): >= 1 single primitive ablation has drop(A) >= X (>=50% of L_full)
+  -> that primitive is the φ-bearing carrier.
+H1 FAIL (distributed-emergence, closed-neg): no single ablation drops >= X -> Φ emergent from the
+  primitive COMBINATION, not any one part.
+MEASURED: THREE of four primitives each individually clear X:
+  -nonlin  drop +0.757686 (>=X, 90.7% of L_full)   <- largest
+  -trunk   drop +0.747480 (>=X, 89.5% of L_full)
+  -routing drop +0.718670 (>=X, 86.0% of L_full)
+  -conv    drop +0.295835 (< X, only 35.4% of L_full — the receptive-field is the LEAST necessary;
+           removing it RAISES φ in 2/3 seeds, mean φ stays well above base)
+  located carrier primitive(s): [-routing, -trunk, -nonlin].
+
+VERDICT: PHI-CARRIER-LOCATED — QUALIFIED to MULTI-NECESSARY-CONJUNCTION (H1 PASS, but NOT a single carrier).
+
+FINDING: the native ConvMoE φ_EI lift is carried by a CONJUNCTION of THREE individually-necessary
+primitives — {MoE routing, conv trunk-depth, tanh nonlinearity}. Ablating ANY ONE of them from scratch
+destroys 86-91% of the +0.835 lift (each drop >= X = 50% of L_full), collapsing φ_EI back toward the
+frozen base. The depth-wise/temporal receptive-field of the conv (-conv) is the ONLY primitive that is
+NOT individually necessary (drop +0.296 < X; removing the temporal mixing while keeping routing+depth+
+nonlinearity via pointwise experts even RAISES φ in 2/3 seeds) — i.e. it is the STRUCTURED MIXING
+(routing + a nonlinear depth stage), NOT the temporal receptive field, that carries Φ-structure.
+
+This is NOT a single located carrier (H1's simplest PASS shape); it is a multi-necessary conjunction,
+empirically CLOSER to the distributed-emergence alternative: Φ-structure is an emergent property of the
+COMBINATION {routing × depth × nonlinearity}, with no lone primitive sufficient — consistent with
+H_1043's "WHOLE-ARCHITECTURE property" and H_1031/H_1036's "instrument not the score". The constructive
+contribution: the φ-bearing conjunction is now BOUNDED to three primitives (the temporal receptive
+field is excluded), narrowing the H_1043 open residual.
+
+SCOPE (a_scale_honest_scope): TOY small-model from-scratch rung; n=6 EXACT faithful IIT-4.0; CPU $0
+numpy; 3 seeds. 3B/7B + emergence + non-frozen co-train UNVERIFIED. Single-seed terminal φ is noisy
+(seed-0 -conv outlier 1.384) — the verdict scores the 3-seed MEAN drop, where mirror≡terminal per seed.
+Φ axis ONLY (necessary-not-sufficient). p7: φ = causal-irreducibility marker, NOT perplexity. SERIAL
+(no multiprocessing.Pool — H_1038 hang lesson). Lane A (AKIDA) / Lane G (GPU) UNUSED — pure CPU $0.
+
+artifacts: UNIVERSE/h1059_phi_bearing_primitive_ablation.py · UNIVERSE/h1043_mirror_proof.py ·
+           UNIVERSE/run_faithful_phi_1043.hexa · this verdict.
+xref: [[minimal-arch-adapter-phi-not-graftable]] (H_1043) · [[lora-consciousness-arch-bound]] (H_1031/H_1036).
