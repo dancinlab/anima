@@ -1,0 +1,228 @@
+================================================================================================
+H_1066 — planning-specificity-primitive-dissection: WHICH structural feature of planning
+         is NECESSARY+SUFFICIENT for the ZCA-removable faithful-UP/big-Phi-DOWN sign-split?
+substrate=CPU-mirror (numpy) — h1004 engines + h1012 proof, RE-PROVEN == stdlib at n=4,5
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+PID = Williams-Beer (2010) I_min, EXACT pure-numpy (h1039.pid_system VERBATIM;
+      ZCA/collapse VALIDATION variable, NOT a Phi proxy). a_phi_iit4_tool — no proxy.
+3 structural primitives (transform continuous top-variance channels BEFORE binarize):
+  (i) vbackup g=0.5 (backward credit)  (ii) depth a=0.5 (forward horizon)
+  (iii) shared b=0.6 (axis-aligned shared value)
+ARMS: CONSTRUCTIVE add-1-feature-to-GREEDY (c_*) + DESTRUCTIVE remove-1-feature-from-PLAN (d_*)
+de-redundify = ZCA (primary) + Gram-Schmidt (robustness), H_1039 operators UNMODIFIED.
+FROZEN: SIGN_EPS=0.001; split=(faith>+eps & big<-eps); ZCA-collapse iff split present
+  AND |Dred_zca| <= 0.2*|Dred| (>=80% cut) AND split->False.
+PASS = H1-LOCATED: exactly ONE feature F nec+suff (construct-add-F has ZCA-removable split
+  AND destruct-remove-F abolishes it AND no other single F does). FAIL = DISTRIBUTED or
+  HOLISTIC/IRREDUCIBLE (both a_paper_negative_ok).
+g5 CODE-measured (no LLM self-judge, p7) | a_scale_honest_scope | SERIAL CPU $0, no GPU/pod
+================================================================================================
+
+STEP 0 — RE-PROVE BOTH CPU mirrors == stdlib (a_phi_iit4_tool) at n=4 AND n=5 BEFORE scoring:
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  == mirror-equivalence results: {4: True, 5: True}
+
+STEP 0c — operator invertibility (remove(add(X)) ~= X; destructive truly removes the feature):
+  vbackup : max|remove(add(X)) - X| = 2.22e-16  invertible=True
+  depth   : max|remove(add(X)) - X| = 4.44e-16  invertible=True
+  shared  : max|remove(add(X)) - X| = 4.44e-16  invertible=True
+
+STEP 1 — reproduce-H_1039 at n=4 EXACT, 30 seeds (planning split + ZCA collapse anchor)
+REPRODUCE-H_1039 — planning(depth-8) vs GREEDY split control + ZCA collapse
+    [control seed 1/30] elapsed=   1.0s
+    [control seed 10/30] elapsed=   9.4s
+    [control seed 20/30] elapsed=  19.0s
+    [control seed 30/30] elapsed=  28.5s
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+    [dered_zca seed 1/30] elapsed=  31.6s
+    [dered_zca seed 10/30] elapsed=  40.3s
+    [dered_zca seed 20/30] elapsed=  49.3s
+    [dered_zca seed 30/30] elapsed=  58.8s
+  control:    faith=+2.3332(UP) big=-4.0083(DOWN) Dred=+9.3958  SPLIT=True
+  dered_zca:  faith=-0.0709(DOWN) big=-3.0843(DOWN) Dred=-0.2563  SPLIT=False
+  Dred cut by ZCA =  97.3%  (>=80% removed = True)
+  reproduce-H_1039 confirmed (control split HELD + ZCA collapsed + Dred removed): True
+  [ref H_1039: control faith +2.33-region / big-Phi ~ -4.01; ZCA collapses split]
+
+STEP 2 — reproduce-H_1062 anchor at n=4 EXACT, 30 seeds (ema & lowrank: split present
+         but ZCA does NOT collapse, <80% cut) — the contrast the feature-arms must explain
+    [ema seed 1/30] elapsed=  59.7s
+    [ema seed 10/30] elapsed=  67.6s
+    [ema seed 20/30] elapsed=  76.5s
+    [ema seed 30/30] elapsed=  85.2s
+    [ema+zca seed 1/30] elapsed=  86.1s
+    [ema+zca seed 10/30] elapsed=  94.0s
+    [ema+zca seed 20/30] elapsed= 103.3s
+    [ema+zca seed 30/30] elapsed= 112.1s
+  ema     : split=True (faith=+0.0814 big=-0.0129)  ZCA Dred-cut= 70.1% removed=False  ZCA-collapse=False
+    [lowrank seed 1/30] elapsed= 113.0s
+    [lowrank seed 10/30] elapsed= 121.0s
+    [lowrank seed 20/30] elapsed= 129.8s
+    [lowrank seed 30/30] elapsed= 138.5s
+    [lowrank+zca seed 1/30] elapsed= 139.4s
+    [lowrank+zca seed 10/30] elapsed= 147.6s
+    [lowrank+zca seed 20/30] elapsed= 156.4s
+    [lowrank+zca seed 30/30] elapsed= 165.1s
+  lowrank : split=True (faith=+0.0289 big=-0.1107)  ZCA Dred-cut= 48.3% removed=False  ZCA-collapse=False
+  reproduce-H_1062 anchor (a non-planning split that ZCA does NOT collapse): True
+
+STEP 3 — score 6 feature-arms at n=4 EXACT, 30 seeds SERIAL (no-dered + ZCA + GS each)
+################ ARM = c_vbackup (feature=vbackup) ################
+    [c_vbackup seed 1/30] elapsed= 166.0s
+    [c_vbackup seed 10/30] elapsed= 173.9s
+    [c_vbackup seed 20/30] elapsed= 183.0s
+    [c_vbackup seed 30/30] elapsed= 191.8s
+    [c_vbackup+zca seed 1/30] elapsed= 192.6s
+    [c_vbackup+zca seed 10/30] elapsed= 200.6s
+    [c_vbackup+zca seed 20/30] elapsed= 209.7s
+    [c_vbackup+zca seed 30/30] elapsed= 218.6s
+    [c_vbackup+gs seed 1/30] elapsed= 219.4s
+    [c_vbackup+gs seed 10/30] elapsed= 227.6s
+    [c_vbackup+gs seed 20/30] elapsed= 236.6s
+    [c_vbackup+gs seed 30/30] elapsed= 245.3s
+   no-dered : faith=+0.0821(UP) big-Phi=-0.5814(DOWN) Dred=+0.4162  SPLIT=True
+   ZCA arm  : faith=-0.0271 big=-0.6466 SPLIT=False Dred-cut= 65.5% removed=False  ZCA-collapse=False
+   GS  arm  : faith=+0.0009 big=+0.6789 SPLIT=False Dred-cut= 99.3% removed=True  GS-collapse=True
+
+################ ARM = c_depth (feature=depth) ################
+    [c_depth seed 1/30] elapsed= 246.2s
+    [c_depth seed 10/30] elapsed= 254.4s
+    [c_depth seed 20/30] elapsed= 264.2s
+    [c_depth seed 30/30] elapsed= 273.8s
+    [c_depth+zca seed 1/30] elapsed= 274.7s
+    [c_depth+zca seed 10/30] elapsed= 283.3s
+    [c_depth+zca seed 20/30] elapsed= 293.1s
+    [c_depth+zca seed 30/30] elapsed= 302.6s
+    [c_depth+gs seed 1/30] elapsed= 303.5s
+    [c_depth+gs seed 10/30] elapsed= 312.0s
+    [c_depth+gs seed 20/30] elapsed= 321.9s
+    [c_depth+gs seed 30/30] elapsed= 331.5s
+   no-dered : faith=+0.0814(UP) big-Phi=-0.0129(DOWN) Dred=+0.4402  SPLIT=True
+   ZCA arm  : faith=-0.0383 big=-0.9495 SPLIT=False Dred-cut= 70.1% removed=False  ZCA-collapse=False
+   GS  arm  : faith=-0.0020 big=+0.1665 SPLIT=False Dred-cut= 94.1% removed=True  GS-collapse=True
+
+################ ARM = c_shared (feature=shared) ################
+    [c_shared seed 1/30] elapsed= 332.6s
+    [c_shared seed 10/30] elapsed= 341.2s
+    [c_shared seed 20/30] elapsed= 351.0s
+    [c_shared seed 30/30] elapsed= 360.5s
+    [c_shared+zca seed 1/30] elapsed= 361.6s
+    [c_shared+zca seed 10/30] elapsed= 370.4s
+    [c_shared+zca seed 20/30] elapsed= 379.5s
+    [c_shared+zca seed 30/30] elapsed= 388.3s
+    [c_shared+gs seed 1/30] elapsed= 389.2s
+    [c_shared+gs seed 10/30] elapsed= 397.1s
+    [c_shared+gs seed 20/30] elapsed= 406.4s
+    [c_shared+gs seed 30/30] elapsed= 416.1s
+   no-dered : faith=-0.0016(DOWN) big-Phi=-0.1737(DOWN) Dred=+0.0852  SPLIT=False
+   ZCA arm  : faith=-0.0041 big=-0.3277 SPLIT=False Dred-cut= 78.5% removed=False  ZCA-collapse=False
+   GS  arm  : faith=-0.0091 big=+0.2991 SPLIT=False Dred-cut= 59.7% removed=False  GS-collapse=False
+
+################ ARM = d_vbackup (feature=vbackup) ################
+    [d_vbackup seed 1/30] elapsed= 417.2s
+    [d_vbackup seed 10/30] elapsed= 426.5s
+    [d_vbackup seed 20/30] elapsed= 436.8s
+    [d_vbackup seed 30/30] elapsed= 446.7s
+    [d_vbackup+zca seed 1/30] elapsed= 447.7s
+    [d_vbackup+zca seed 10/30] elapsed= 456.7s
+    [d_vbackup+zca seed 20/30] elapsed= 466.5s
+    [d_vbackup+zca seed 30/30] elapsed= 476.8s
+    [d_vbackup+gs seed 1/30] elapsed= 477.8s
+    [d_vbackup+gs seed 10/30] elapsed= 486.7s
+    [d_vbackup+gs seed 20/30] elapsed= 496.4s
+    [d_vbackup+gs seed 30/30] elapsed= 505.6s
+   no-dered : faith=-0.7610(DOWN) big-Phi=-0.4948(DOWN) Dred=-2.7702  SPLIT=False
+   ZCA arm  : faith=-0.0042 big=-0.0478 SPLIT=False Dred-cut= 99.5% removed=True  ZCA-collapse=False
+   GS  arm  : faith=-0.0020 big=-0.4832 SPLIT=False Dred-cut= 99.7% removed=True  GS-collapse=False
+
+################ ARM = d_depth (feature=depth) ################
+    [d_depth seed 1/30] elapsed= 506.9s
+    [d_depth seed 10/30] elapsed= 515.4s
+    [d_depth seed 20/30] elapsed= 525.5s
+    [d_depth seed 30/30] elapsed= 535.1s
+    [d_depth+zca seed 1/30] elapsed= 536.2s
+    [d_depth+zca seed 10/30] elapsed= 544.8s
+    [d_depth+zca seed 20/30] elapsed= 553.8s
+    [d_depth+zca seed 30/30] elapsed= 562.7s
+    [d_depth+gs seed 1/30] elapsed= 563.6s
+    [d_depth+gs seed 10/30] elapsed= 571.8s
+    [d_depth+gs seed 20/30] elapsed= 580.7s
+    [d_depth+gs seed 30/30] elapsed= 589.8s
+   no-dered : faith=-0.8756(DOWN) big-Phi=-0.1884(DOWN) Dred=-3.4994  SPLIT=False
+   ZCA arm  : faith=-0.0011 big=+0.4780 SPLIT=False Dred-cut= 99.1% removed=True  ZCA-collapse=False
+   GS  arm  : faith=+0.0088 big=-0.4972 SPLIT=True Dred-cut= 99.2% removed=True  GS-collapse=False
+
+################ ARM = d_shared (feature=shared) ################
+    [d_shared seed 1/30] elapsed= 590.7s
+    [d_shared seed 10/30] elapsed= 598.6s
+    [d_shared seed 20/30] elapsed= 607.6s
+    [d_shared seed 30/30] elapsed= 616.4s
+    [d_shared+zca seed 1/30] elapsed= 617.3s
+    [d_shared+zca seed 10/30] elapsed= 625.2s
+    [d_shared+zca seed 20/30] elapsed= 634.1s
+    [d_shared+zca seed 30/30] elapsed= 642.9s
+    [d_shared+gs seed 1/30] elapsed= 643.8s
+    [d_shared+gs seed 10/30] elapsed= 651.9s
+    [d_shared+gs seed 20/30] elapsed= 661.1s
+    [d_shared+gs seed 30/30] elapsed= 669.9s
+   no-dered : faith=-0.0741(DOWN) big-Phi=+0.0534(UP) Dred=-0.3234  SPLIT=False
+   ZCA arm  : faith=+0.0078 big=-0.1409 SPLIT=True Dred-cut= 96.0% removed=True  ZCA-collapse=False
+   GS  arm  : faith=+0.0100 big=-0.2940 SPLIT=True Dred-cut= 97.5% removed=True  GS-collapse=False
+
+================================================================================================
+PER-ARM TABLE (feature · split? · ZCA-collapse? · Dred) @ n=4 EXACT, 30 seeds
+================================================================================================
+  arm        | feature  | kind      |  faith Dc |    big Dc |     Dred | split | ZCA-coll |  cut(ZCA)
+  c_vbackup  | vbackup  | construct |   +0.0821 |   -0.5814 |  +0.4162 |  True |    False |     65.5%
+  c_depth    | depth    | construct |   +0.0814 |   -0.0129 |  +0.4402 |  True |    False |     70.1%
+  c_shared   | shared   | construct |   -0.0016 |   -0.1737 |  +0.0852 | False |    False |     78.5%
+  d_vbackup  | vbackup  | destruct  |   -0.7610 |   -0.4948 |  -2.7702 | False |    False |     99.5%
+  d_depth    | depth    | destruct  |   -0.8756 |   -0.1884 |  -3.4994 | False |    False |     99.1%
+  d_shared   | shared   | destruct  |   -0.0741 |   +0.0534 |  -0.3234 | False |    False |     96.0%
+
+NECESSARY+SUFFICIENT logic per feature (ZCA-removable split = split present AND ZCA collapses):
+  feature=vbackup : SUFFICIENT(c_vbackup installs ZCA-removable split)=False  NECESSARY(d_vbackup does not preserve it)=True
+  feature=depth   : SUFFICIENT(c_depth installs ZCA-removable split)=False  NECESSARY(d_depth does not preserve it)=True
+  feature=shared  : SUFFICIENT(c_shared installs ZCA-removable split)=False  NECESSARY(d_shared does not preserve it)=True
+
+================================================================================================
+FALSIFIER (FROZEN; NO goalpost move)
+  features that are SUFFICIENT (construct installs ZCA-removable split): []
+  features that are NECESSARY+SUFFICIENT:                                []
+  any constructive arm reproduces a ZCA-removable split at all:          False
+
+OVERALL: HOLISTIC/IRREDUCIBLE (CLOSED-NEGATIVE, a_paper_negative_ok) — feature-isolation
+  does NOT reproduce the ZCA-removable split in ANY single-feature constructive arm; the
+  planning-specificity is holistic/irreducible at toy scale — the ZCA-removable split is
+  a property of the WHOLE planning intervention, not any single decomposed primitive.
+  VERDICT-TOKEN: HOLISTIC-IRREDUCIBLE
+================================================================================================
+reproduce-H_1039 confirmed: True  (planning split held + ZCA collapse + Dred>=80% cut)
+reproduce-H_1062 anchor confirmed: True  (a non-planning split ZCA does NOT collapse)
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 EXACT (both engines exact;
+big-Phi super-exponential -> n=4 rung for the full arm SET x 30 seeds; n=5 mirror-proven). BOTH
+CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5 (h1012.prove_mirrors_at_n) BEFORE scoring
+(a_phi_iit4_tool; NO proxy). H_1039 ZCA/GS de-redundify operators reused UNMODIFIED; the WB
+PID is the ZCA/collapse-validation variable (NOT a Phi proxy). SERIAL CPU $0, no GPU/pod.
+Production scale UNVERIFIED. g5 (p7).
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.claude/worktrees/agent-a55e4d8a4f9129e8c/UNIVERSE/h1066_planning_specificity_dissection_result.json
