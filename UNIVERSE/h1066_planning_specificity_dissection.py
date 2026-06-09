@@ -100,11 +100,13 @@ def _add_vbackup(X):
 
 def _remove_vbackup(X):
     """REMOVE backward credit flow: invert the backward smear (forward-causal de-smear).
-    Inverse of Y[t]=X[t]+g*X[t+1] is X[t]=Y[t]-g*X[t+1], solved from the LAST step backward."""
+    _add_vbackup computes Y[t] = X[t] + g*Y[t+1] using the ALREADY-smeared Y[t+1] (it walks
+    backward). So the exact inverse is X[t] = Y[t] - g*Y[t+1] using the SMEARED Y[t+1] (not a
+    reconstructed original). Y[-1] is untouched by the forward op (X[-1]=Y[-1])."""
     Y = X.astype(float)
     Xr = Y.copy()
     for t in range(Xr.shape[0] - 2, -1, -1):
-        Xr[t] = Y[t] - GAMMA_BACKUP * Xr[t + 1]
+        Xr[t] = Y[t] - GAMMA_BACKUP * Y[t + 1]
     return Xr
 
 # ── (ii) LOOKAHEAD-DEPTH : forward multi-step horizon coupling (causal EMA) ──
