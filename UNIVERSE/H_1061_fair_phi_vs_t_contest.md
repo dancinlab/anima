@@ -1,6 +1,6 @@
 # H_1061 — fair-Phi-vs-T-contest (closes the H_1060 QUALIFIED / DEGENERATE residual)
 
-**status: PRE-REGISTERED (falsifier + FROZEN 0.15 margin + non-degeneracy guard declared BEFORE measuring; TEXT-only until the verdict .txt lands)**
+**status: TERMINAL — 🔴 PHI-ABSORBS-AGENCY (closed-negative; falsifier + FROZEN 0.15 margin + non-degeneracy guard declared BEFORE measuring; verdict .txt landed)**
 
 ## section 0 — lineage / why this H (the residual H_1060 SELF-FLAGGED verbatim)
 
@@ -137,4 +137,44 @@ artifacts: `UNIVERSE/h1061_fair_phi_vs_t_contest.py` ·
 
 ## section 4 — VERDICT (g73 .txt backed; emoji tier AFTER the .txt landed)
 
-_(pending measurement — TEXT-only until `.verdicts/1061_fair_phi_vs_t_contest/H_1061.txt` lands)_
+🔴 **PHI-ABSORBS-AGENCY (CLOSED-NEGATIVE, a_paper_negative_ok)** — closes the H_1060 QUALIFIED
+residual with a clean negative.
+
+On a **Φ-FAIR battery** (non-degeneracy guard PASSES: all **4/4 deliberate ACTIVE/PASSIVE
+pairs are NON-Φ-identical** — |Δφ_faith| min/median/max = **0.367 / 1.525 / 2.459**, |Δφ_big|
+= **1.722 / 2.691 / 5.133**, so agency genuinely moves Φ and the contest is honest), the FROZEN
+falsifier resolves to **FAIL mode (a)**:
+
+- best single Φ-scalar (s_faith) acc = **0.7000**; (Φ, T) 2-vector acc = **0.7250**;
+  observed **margin = +0.0250 < 0.15** (the pre-set H_1047/H_1060 bar, NOT moved).
+- s_T-alone = 0.7667; (Φ, T) = 0.7250 → Φ does not lift past T, and T does not lift the pair
+  past the Φ-scalar by the bar. 120 members (24 REACTIVE + 48 DELIBERATE-ACTIVE + 48
+  DELIBERATE-PASSIVE); majority baseline 0.4000.
+
+**Precise finding:** once Φ is genuinely **allowed to move with agency** (committed plan e=0,mix=0
+vs drifting plan e=0.20,mix=0.5), a single Φ-scalar **ABSORBS the agency signal** and the
+orthogonal T axis is **REDUNDANT** at the pre-set bar. **H_1060's headline "RULER-NEEDS-T"
+margin (+0.60) was an ARTIFACT of the Φ-blind-by-construction battery** — when agency only moved
+T (Φ-identical pairs 24/24), a Φ-scalar was structurally barred from the agency split, inflating
+the apparent T-need. On a fair head-to-head, **one Φ-scalar suffices** — this strengthens H_1045
+(ONE-SCALAR-SUFFICES) and resolves the H_1060 QUALIFIED flag in the SUFFICIENCY direction.
+
+This does NOT contradict H_1051 (T separates *Φ-matched* active/passive pairs, |d_T|=8.77): T is
+a real orthogonal coordinate WHEN Φ is held fixed. The H_1061 finding is sharper — when the
+behavioral classes are allowed to differ in Φ (the natural case where agency-mode reshapes the
+plan), the Φ-axis already carries the class information, so a *ruler* that must predict class
+does not gain from adding T. A sub-threshold directional win (+0.025) is an HONEST negative (the
+H_1047 lesson: the pre-set bar has teeth).
+
+**Reproduce / integrity:** mirror ≡ stdlib RE-PROVEN at n=4 AND n=5 for BOTH engines (big-Φ ring
+|Δ|=1.34e-10; faithful n4 |Δ|≤3.75e-6, n5 |Δ|=7.97e-10) via H_1012 `prove_mirrors_at_n`;
+REPRODUCE-H_1029 EXACT; REPRODUCE-H_1047 greedy seed-mean anchor faith=0.50693 / big=9.52829
+(published 0.5069 / 9.5283) — all BEFORE scoring. a_phi_iit4_tool (NO proxy, BITS/log2 MI). T =
+H_1051 machinery UNMODIFIED (H_932 prov-depth + H_935 veto). The **non-degeneracy guard is the
+anti-tautology converse of H_1060's fairness guard** — it explicitly asserts the agency classes
+are NOT Φ-identical, the exact failure H_1060 self-flagged. **TOY n=4 (n=5 only for the mirror
+re-proof); scale-transfer UNVERIFIED; p3/p6/p7; g5 CODE-measured; $0 CPU-local, SERIAL, no
+GPU/pod.**
+
+artifacts: `UNIVERSE/h1061_fair_phi_vs_t_contest.py` ·
+`.verdicts/1061_fair_phi_vs_t_contest/H_1061.txt`
