@@ -1,0 +1,171 @@
+============================================================================================
+H_1062 — is the faithful-phi-UP / big-Phi-DOWN sign-split UNIVERSALLY redundancy-driven
+         or PLANNING-SPECIFIC? (generality test of H_1039's causal mechanism)
+substrate=CPU-mirror (numpy) — h1004 engines + h1012 proof, RE-PROVEN == stdlib n=4,5
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+PID = Williams-Beer (2010) I_min, EXACT pure-numpy (h1039.pid_system VERBATIM;
+      intervention-validation variable, NOT a Phi proxy). a_phi_iit4_tool — no proxy.
+4 NON-planning phi-interventions on the continuous top-variance channels (GREEDY baseline Hg):
+  ema(a=0.5) gain(g=2.5) pool(b=0.5) lowrank(c=0.6)
+de-redundify = ZCA (primary) + Gram-Schmidt (robustness), H_1039 operators UNMODIFIED.
+FROZEN: SIGN_EPS=0.001; split=(faith>+eps & big<-eps); redundancy removed iff
+  |Dred_dered| <= 0.2*|Dred_intervention| (>=80% cut);
+  cross-intervention Spearman rho >= 0.7.
+PASS = REDUNDANCY-UNIVERSAL: split in >=2 non-planning IVs AND de-redundify collapses each
+       AND cross-IV Spearman rho >= 0.7. FAIL = SPLIT-IS-PLANNING-SPECIFIC (a_paper_negative_ok).
+g5 CODE-measured (no LLM self-judge, p7) | a_scale_honest_scope | SERIAL CPU $0, no GPU/pod
+============================================================================================
+
+STEP 0 — RE-PROVE BOTH CPU mirrors == stdlib (a_phi_iit4_tool) at n=4 AND n=5
+         BEFORE scoring (h1012.prove_mirrors_at_n discipline; LIVE stdlib refs):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  == mirror-equivalence results: {4: True, 5: True}
+
+STEP 1 — reproduce-H_1039 at n=4 EXACT, 30 seeds (confirm harness fidelity)
+REPRODUCE-H_1039 — planning(depth-8) vs GREEDY split control + ZCA collapse
+    [control seed 1/30] elapsed=   0.9s
+    [control seed 10/30] elapsed=   8.5s
+    [control seed 20/30] elapsed=  17.1s
+    [control seed 30/30] elapsed=  25.7s
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+    [dered_zca seed 1/30] elapsed=  27.5s
+    [dered_zca seed 10/30] elapsed=  35.2s
+    [dered_zca seed 20/30] elapsed=  43.8s
+    [dered_zca seed 30/30] elapsed=  52.4s
+  control:    faith=+2.3332(UP) big=-4.0083(DOWN) Dred=+9.3958  SPLIT=True
+  dered_zca:  faith=-0.0709(DOWN) big=-3.0843(DOWN) Dred=-0.2563  SPLIT=False
+  Dred cut by ZCA =  97.3%  (>=80% removed = True)
+  reproduce-H_1039 confirmed (control split HELD + ZCA collapsed + Dred removed): True
+  [ref H_1039: control faith +2.33-region / big-Phi ~ -4.01; ZCA collapses split]
+
+STEP 2 — score 4 NON-planning interventions vs baseline at n=4 EXACT, 30 seeds SERIAL
+################ INTERVENTION = ema (vs un-intervened baseline) ################
+    [ema seed 1/30] elapsed=  53.3s
+    [ema seed 10/30] elapsed=  61.0s
+    [ema seed 20/30] elapsed=  69.6s
+    [ema seed 30/30] elapsed=  78.2s
+    [ema+zca seed 1/30] elapsed=  79.1s
+    [ema+zca seed 10/30] elapsed=  86.9s
+    [ema+zca seed 20/30] elapsed=  95.5s
+    [ema+zca seed 30/30] elapsed= 104.2s
+    [ema+gs seed 1/30] elapsed= 105.0s
+    [ema+gs seed 10/30] elapsed= 112.7s
+    [ema+gs seed 20/30] elapsed= 121.3s
+    [ema+gs seed 30/30] elapsed= 129.9s
+   baseline-vs-IV : faith=+0.0814(UP) d=+0.18  big-Phi=-0.0129(DOWN) d=-0.00  Dred=+0.4402 d=+0.26
+   SPLIT present (faith-UP & big-DOWN): True   split_mag(faith-big)=+0.0944
+   ZCA arm : faith=-0.0383(DOWN) big=-0.9495(DOWN) SPLIT=False  Dred-cut= 70.1% removed=False collapse=False
+   GS  arm : faith=-0.0020(DOWN) big=+0.1665(UP) SPLIT=False  Dred-cut= 94.1% removed=True collapse=True
+
+################ INTERVENTION = gain (vs un-intervened baseline) ################
+    [gain seed 1/30] elapsed= 130.8s
+    [gain seed 10/30] elapsed= 138.5s
+    [gain seed 20/30] elapsed= 147.2s
+    [gain seed 30/30] elapsed= 155.8s
+    [gain+zca seed 1/30] elapsed= 156.7s
+    [gain+zca seed 10/30] elapsed= 164.6s
+    [gain+zca seed 20/30] elapsed= 173.2s
+    [gain+zca seed 30/30] elapsed= 182.0s
+    [gain+gs seed 1/30] elapsed= 182.8s
+    [gain+gs seed 10/30] elapsed= 190.6s
+    [gain+gs seed 20/30] elapsed= 199.2s
+    [gain+gs seed 30/30] elapsed= 208.0s
+   baseline-vs-IV : faith=+0.0000(NULL) d=+0.00  big-Phi=+0.0000(NULL) d=+0.00  Dred=+0.0000 d=+0.00
+   SPLIT present (faith-UP & big-DOWN): False   split_mag(faith-big)=+0.0000
+   ZCA arm : faith=+0.1240(UP) big=+1.1441(UP) SPLIT=False  Dred-cut=  nan% removed=False collapse=False
+   GS  arm : faith=+0.1688(UP) big=+2.3511(UP) SPLIT=False  Dred-cut=  nan% removed=False collapse=False
+
+################ INTERVENTION = pool (vs un-intervened baseline) ################
+    [pool seed 1/30] elapsed= 208.9s
+    [pool seed 10/30] elapsed= 216.7s
+    [pool seed 20/30] elapsed= 225.3s
+    [pool seed 30/30] elapsed= 233.9s
+    [pool+zca seed 1/30] elapsed= 234.8s
+    [pool+zca seed 10/30] elapsed= 242.6s
+    [pool+zca seed 20/30] elapsed= 251.2s
+    [pool+zca seed 30/30] elapsed= 260.0s
+    [pool+gs seed 1/30] elapsed= 260.8s
+    [pool+gs seed 10/30] elapsed= 268.5s
+    [pool+gs seed 20/30] elapsed= 277.2s
+    [pool+gs seed 30/30] elapsed= 285.8s
+   baseline-vs-IV : faith=-0.0182(DOWN) d=-0.05  big-Phi=-0.0278(DOWN) d=-0.01  Dred=-0.0340 d=-0.03
+   SPLIT present (faith-UP & big-DOWN): False   split_mag(faith-big)=+0.0096
+   ZCA arm : faith=-0.0069(DOWN) big=-0.4543(DOWN) SPLIT=False  Dred-cut= -2.3% removed=False collapse=False
+   GS  arm : faith=-0.0127(DOWN) big=-0.1270(DOWN) SPLIT=False  Dred-cut=-56.9% removed=False collapse=False
+
+################ INTERVENTION = lowrank (vs un-intervened baseline) ################
+    [lowrank seed 1/30] elapsed= 286.7s
+    [lowrank seed 10/30] elapsed= 294.5s
+    [lowrank seed 20/30] elapsed= 303.3s
+    [lowrank seed 30/30] elapsed= 311.9s
+    [lowrank+zca seed 1/30] elapsed= 312.9s
+    [lowrank+zca seed 10/30] elapsed= 320.6s
+    [lowrank+zca seed 20/30] elapsed= 329.2s
+    [lowrank+zca seed 30/30] elapsed= 337.9s
+    [lowrank+gs seed 1/30] elapsed= 338.7s
+    [lowrank+gs seed 10/30] elapsed= 346.6s
+    [lowrank+gs seed 20/30] elapsed= 355.2s
+    [lowrank+gs seed 30/30] elapsed= 363.7s
+   baseline-vs-IV : faith=+0.0289(UP) d=+0.07  big-Phi=-0.1107(DOWN) d=-0.03  Dred=+0.0999 d=+0.07
+   SPLIT present (faith-UP & big-DOWN): True   split_mag(faith-big)=+0.1396
+   ZCA arm : faith=-0.0149(DOWN) big=-1.1302(DOWN) SPLIT=False  Dred-cut= 48.3% removed=False collapse=False
+   GS  arm : faith=-0.0105(DOWN) big=-0.2721(DOWN) SPLIT=False  Dred-cut= 51.6% removed=False collapse=False
+
+============================================================================================
+PER-INTERVENTION TABLE (intervention - baseline @ n=4 EXACT, 30 seeds)
+============================================================================================
+  IV        |  faith Dc |    big Dc |     Dred | SPLIT | ZCA-collapse | GS-collapse | Dred-cut(ZCA)
+  ema       |   +0.0814 |   -0.0129 |  +0.4402 |  True |        False |        True |         70.1%
+  gain      |   +0.0000 |   +0.0000 |  +0.0000 | False |        False |       False |          nan%
+  pool      |   -0.0182 |   -0.0278 |  -0.0340 | False |        False |       False |         -2.3%
+  lowrank   |   +0.0289 |   -0.1107 |  +0.0999 |  True |        False |       False |         48.3%
+
+CROSS-INTERVENTION redundancy -> split-magnitude (Spearman rank; FROZEN bar >= 0.7)
+  ema        |Dred|=0.4402   split_mag(faith-big)=+0.0944
+  gain       |Dred|=0.0000   split_mag(faith-big)=+0.0000
+  pool       |Dred|=0.0340   split_mag(faith-big)=+0.0096
+  lowrank    |Dred|=0.0999   split_mag(faith-big)=+0.1396
+  Spearman rho(|Dred|, split_mag) over 4 interventions = +0.8000  (bar 0.7)
+
+============================================================================================
+FALSIFIER (FROZEN; NO goalpost move)
+  cond1 split in >=2 non-planning IVs:        True  (n_split=2, split_IVs=['ema', 'lowrank'])
+  cond2 de-redundify collapses EACH split IV: False  (ZCA-all=False, GS-all=False)
+  cond3 cross-IV Spearman rho >= 0.7:       True  (rho=+0.8000)
+
+OVERALL: SPLIT-IS-PLANNING-SPECIFIC (CLOSED-NEGATIVE, a_paper_negative_ok) — at least
+  one falsifier condition FAILED: the redundancy-gated faithful-UP/big-Phi-DOWN split
+  does NOT universally arise from non-planning phi-raising interventions on this
+  substrate (split absent in <2 IVs, OR de-redundify does not collapse it, OR the
+  redundancy-margin does not rank-predict split across interventions). H_1039's
+  redundancy-causal claim is BOUNDED to planning — the split is planning-specific.
+  VERDICT-TOKEN: SPLIT-IS-PLANNING-SPECIFIC
+============================================================================================
+reproduce-H_1039 confirmed: True  (control split held + ZCA collapse + Dred>=80% cut)
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 EXACT (both engines exact;
+big-Phi super-exponential -> n=4 rung for the full SET x 30 seeds; n=5 mirror-proven). BOTH
+CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5 (h1012.prove_mirrors_at_n) BEFORE scoring
+(a_phi_iit4_tool; NO proxy). H_1039 de-redundify operators (ZCA/GS) reused UNMODIFIED; the
+PID is the intervention-validation variable (NOT a Phi proxy). SERIAL CPU $0, no GPU/pod.
+Production scale UNVERIFIED. g5 (p7).
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.claude/worktrees/agent-a57e20bdd0c49ca16/UNIVERSE/h1062_redundancy_universality_result.json
