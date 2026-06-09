@@ -1,0 +1,147 @@
+================================================================================================
+H_1063 — phi-split-sign-universality: is the faithful-UP / big-Phi-DOWN SIGN-split a
+         UNIVERSAL measure-property of within-block correlation, removability-INDEPENDENT?
+         (synthesis resolving the H_1062 puzzle: direction generalizes, mechanism does not)
+substrate=CPU-mirror (numpy) — h1004 engines + h1012 proof, RE-PROVEN == stdlib n=4,5
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+PID = Williams-Beer (2010) I_min, EXACT pure-numpy (h1039.pid_system VERBATIM;
+      knob/removability-validation variable, NOT a Phi proxy). a_phi_iit4_tool — no proxy.
+KNOB: graded within-block correlation rho_corr via shared-latent (diffuse common-mode)
+  mixing on the EXACT top-variance channels (GREEDY baseline Hg); rho grid = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+de-redundify = ZCA (H_1039 operator UNMODIFIED) — removability-resistant check at high rho.
+FROZEN: SIGN_EPS=0.001; MONO_BAR=0.9 (Spearman |rho| over sweep); N_SEEDS=30;
+  RED_REDUCTION_THRESHOLD=0.2 (>=80% cut labels removability).
+PASS = SIGN-UNIVERSAL: faith Spearman(rho)>=+0.9 AND big Spearman(rho)<=-0.9 (opposite,
+  both |rho_s|>=0.9) AND high-rho faith-UP/big-DOWN SIGN SURVIVES ZCA de-redundify.
+FAIL = SIGN-NOT-CLEAN-UNIVERSAL (closed-negative, a_paper_negative_ok).
+g5 CODE-measured (no LLM self-judge, p7) | a_scale_honest_scope | SERIAL CPU $0, no GPU/pod
+================================================================================================
+
+STEP 0 — RE-PROVE BOTH CPU mirrors == stdlib (a_phi_iit4_tool) at n=4 AND n=5
+         BEFORE scoring (h1012.prove_mirrors_at_n discipline; LIVE stdlib refs):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  == mirror-equivalence results: {4: True, 5: True}
+
+STEP 1 — reproduce-H_1039 at n=4 EXACT, 30 seeds (confirm harness fidelity)
+REPRODUCE-H_1039 — planning(depth-8) vs GREEDY split control + ZCA collapse
+    [control seed 1/30] elapsed=   0.9s
+    [control seed 10/30] elapsed=   8.7s
+    [control seed 20/30] elapsed=  17.4s
+    [control seed 30/30] elapsed=  26.2s
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+    [dered_zca seed 1/30] elapsed=  27.9s
+    [dered_zca seed 10/30] elapsed=  35.8s
+    [dered_zca seed 20/30] elapsed=  44.6s
+    [dered_zca seed 30/30] elapsed=  53.4s
+  control:    faith=+2.3332(UP) big=-4.0083(DOWN) Dred=+9.3958  SPLIT=True
+  dered_zca:  faith=-0.0709(DOWN) big=-3.0843(DOWN) Dred=-0.2563  SPLIT=False
+  Dred cut by ZCA =  97.3%  (>=80% removed = True)
+  reproduce-H_1039 confirmed (control split HELD + ZCA collapsed + Dred removed): True
+  [ref H_1039: control faith +2.33-region / big-Phi ~ -4.01; ZCA collapses split]
+
+STEP 2 — GRADED rho_corr sweep at n=4 EXACT, 30 seeds SERIAL (CONTROL, no dered)
+  rho=0.0  meancorr=0.533 | faith=+0.0000(NULL) d=+0.00 | big-Phi=+0.0000(NULL) d=+0.00 | Dred=+0.0000 | SPLIT=False
+  rho=0.1  meancorr=0.650 | faith=+0.0111(UP) d=+0.03 | big-Phi=-0.4388(DOWN) d=-0.15 | Dred=+0.1205 | SPLIT=True
+  rho=0.2  meancorr=0.706 | faith=+0.0104(UP) d=+0.03 | big-Phi=-0.1572(DOWN) d=-0.05 | Dred=+0.1109 | SPLIT=True
+  rho=0.3  meancorr=0.749 | faith=+0.0041(UP) d=+0.01 | big-Phi=+0.0008(NULL) d=+0.00 | Dred=+0.1231 | SPLIT=False
+  rho=0.4  meancorr=0.785 | faith=-0.0016(DOWN) d=-0.00 | big-Phi=+0.1752(UP) d=+0.06 | Dred=+0.0364 | SPLIT=False
+  rho=0.5  meancorr=0.818 | faith=+0.0040(UP) d=+0.01 | big-Phi=+0.5127(UP) d=+0.18 | Dred=-0.0160 | SPLIT=False
+  rho=0.6  meancorr=0.850 | faith=+0.0143(UP) d=+0.04 | big-Phi=+0.2877(UP) d=+0.11 | Dred=+0.0465 | SPLIT=False
+  rho=0.7  meancorr=0.881 | faith=+0.0472(UP) d=+0.12 | big-Phi=+0.6397(UP) d=+0.24 | Dred=+0.1198 | SPLIT=False
+  rho=0.8  meancorr=0.914 | faith=-0.0666(DOWN) d=-0.17 | big-Phi=-0.6336(DOWN) d=-0.20 | Dred=-0.1415 | SPLIT=False
+  rho=0.9  meancorr=0.951 | faith=+0.1806(UP) d=+0.39 | big-Phi=-0.3601(DOWN) d=-0.11 | Dred=+0.5997 | SPLIT=True
+
+STEP 3 — removability-resistant check: ZCA de-redundify on the correlated channels
+         (does the high-rho faith-UP/big-DOWN SIGN SURVIVE ZCA? sign indep of removability?)
+  rho=0.0 ZCA | faith=+0.0000(NULL) | big-Phi=+0.0000(NULL) | Dred=+0.0000 | SPLIT=False
+  rho=0.1 ZCA | faith=+0.0042(UP) | big-Phi=-0.4239(DOWN) | Dred=+0.0038 | SPLIT=True
+  rho=0.2 ZCA | faith=-0.0054(DOWN) | big-Phi=-0.4430(DOWN) | Dred=-0.0106 | SPLIT=False
+  rho=0.3 ZCA | faith=-0.0017(DOWN) | big-Phi=-0.1468(DOWN) | Dred=-0.0177 | SPLIT=False
+  rho=0.4 ZCA | faith=-0.0034(DOWN) | big-Phi=-0.2141(DOWN) | Dred=-0.0233 | SPLIT=False
+  rho=0.5 ZCA | faith=-0.0058(DOWN) | big-Phi=-0.5379(DOWN) | Dred=-0.0304 | SPLIT=False
+  rho=0.6 ZCA | faith=-0.0126(DOWN) | big-Phi=-0.8422(DOWN) | Dred=-0.0601 | SPLIT=False
+  rho=0.7 ZCA | faith=-0.0084(DOWN) | big-Phi=-1.0596(DOWN) | Dred=-0.0479 | SPLIT=False
+  rho=0.8 ZCA | faith=-0.0028(DOWN) | big-Phi=-1.0535(DOWN) | Dred=-0.0451 | SPLIT=False
+  rho=0.9 ZCA | faith=-0.0041(DOWN) | big-Phi=-1.1310(DOWN) | Dred=-0.0403 | SPLIT=False
+
+================================================================================================
+SWEEP TABLE — (faithful, big-Phi) contrast vs rho_corr @ n=4 EXACT, 30 seeds (CONTROL arm)
+================================================================================================
+   rho | meancorr |  faith Dc |    big Dc |     Dred | SPLIT | faith_sign | big_sign
+   0.0 |    0.533 |   +0.0000 |   +0.0000 |  +0.0000 | False |       NULL |     NULL
+   0.1 |    0.650 |   +0.0111 |   -0.4388 |  +0.1205 |  True |         UP |     DOWN
+   0.2 |    0.706 |   +0.0104 |   -0.1572 |  +0.1109 |  True |         UP |     DOWN
+   0.3 |    0.749 |   +0.0041 |   +0.0008 |  +0.1231 | False |         UP |     NULL
+   0.4 |    0.785 |   -0.0016 |   +0.1752 |  +0.0364 | False |       DOWN |       UP
+   0.5 |    0.818 |   +0.0040 |   +0.5127 |  -0.0160 | False |         UP |       UP
+   0.6 |    0.850 |   +0.0143 |   +0.2877 |  +0.0465 | False |         UP |       UP
+   0.7 |    0.881 |   +0.0472 |   +0.6397 |  +0.1198 | False |         UP |       UP
+   0.8 |    0.914 |   -0.0666 |   -0.6336 |  -0.1415 | False |       DOWN |     DOWN
+   0.9 |    0.951 |   +0.1806 |   -0.3601 |  +0.5997 |  True |         UP |     DOWN
+
+MONOTONE Spearman over the rho_corr sweep (FROZEN bar |rho_s| >= 0.9, opposite signs):
+  knob-validation : Spearman(rho_corr, mean within-block |corr|) = +1.0000  (monotone-up knob check)
+  faithful phi_EI : Spearman(rho_corr, faith_contrast) = +0.2848  (want >= +0.9)
+  big-Phi         : Spearman(rho_corr, big_contrast)   = +0.0788  (want <= -0.9)
+
+PER-STEP direction (saturation/reversal bound) — d(measure)/d(rho) sign per step:
+     rho step |   d_faith |   dir |     d_big |   dir
+  0.0->0.1 |   +0.0111 |    UP |   -0.4388 |  DOWN
+  0.1->0.2 |   -0.0007 |  DOWN |   +0.2816 |    UP
+  0.2->0.3 |   -0.0063 |  DOWN |   +0.1580 |    UP
+  0.3->0.4 |   -0.0057 |  DOWN |   +0.1745 |    UP
+  0.4->0.5 |   +0.0056 |    UP |   +0.3375 |    UP
+  0.5->0.6 |   +0.0103 |    UP |   -0.2251 |  DOWN
+  0.6->0.7 |   +0.0328 |    UP |   +0.3521 |    UP
+  0.7->0.8 |   -0.1138 |  DOWN |   -1.2733 |  DOWN
+  0.8->0.9 |   +0.2472 |    UP |   +0.2735 |    UP
+  faith steps increasing: 5/9   big-Phi steps decreasing: 3/9
+
+REMOVABILITY-RESISTANT check at highest rho (sign INDEPENDENT of removability?):
+  rho=0.9 CONTROL : faith=+0.1806(UP) big=-0.3601(DOWN) SPLIT=True Dred=+0.5997
+  rho=0.9 ZCA     : faith=-0.0041(DOWN) big=-1.1310(DOWN) SPLIT=False Dred=-0.0403
+  ZCA Dred cut at high rho =  93.3% (>=80% removed = True); redundancy diffuse/non-removable iff cut < 80%
+  SIGN survives ZCA (faith-UP/big-DOWN split STILL present after de-redundify): False
+
+================================================================================================
+FALSIFIER (FROZEN; NO goalpost move)
+  cond_faith  faithful Spearman >= +0.9:        False  (rho_s=+0.2848)
+  cond_big    big-Phi  Spearman <= -0.9:        False  (rho_s=+0.0788)
+  cond_opposite (both, opposite signs):        False
+  cond_resistant high-rho SIGN survives ZCA:   False  (zca_split@rho=0.9=False)
+
+OVERALL: SIGN-NOT-CLEAN-UNIVERSAL (CLOSED-NEGATIVE, a_paper_negative_ok) — at least one
+  falsifier condition FAILED: the faithful-UP/big-Phi-DOWN opposite-monotone response
+  is NOT a clean universal measure-property over the graded within-block correlation
+  sweep (same-sign / non-monotone / |Spearman|<0.9 for a measure, OR the high-rho sign
+  does NOT survive ZCA de-redundify). The unification is BOUNDED accordingly.
+  VERDICT-TOKEN: SIGN-NOT-CLEAN-UNIVERSAL
+================================================================================================
+reproduce-H_1039 confirmed: True  (control split held + ZCA collapse + Dred>=80% cut)
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 EXACT (both engines exact;
+big-Phi super-exponential -> n=4 rung for the full sweep x 30 seeds; n=5 mirror-proven). BOTH
+CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5 (h1012.prove_mirrors_at_n) BEFORE scoring
+(a_phi_iit4_tool; NO proxy). H_1039 ZCA de-redundify operator reused UNMODIFIED; the WB PID
+is the knob/removability-validation variable (NOT a Phi proxy). SERIAL CPU $0, no GPU/pod.
+Production scale UNVERIFIED. g5 (p7).
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.claude/worktrees/agent-ac28bf04dc5f82983/UNIVERSE/h1063_phi_split_sign_universality_result.json
