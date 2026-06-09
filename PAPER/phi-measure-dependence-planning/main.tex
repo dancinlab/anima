@@ -251,8 +251,12 @@ variance$\times$energy proxy; each is backed by a verbatim verdict file
 
 \subsection{Two IIT-4.0 operationalizations of ``$\Phi$''}
 
-IIT 4.0 \citep{albantakis2023iit4} builds the cause--effect structure of a
-system from its transition probability matrix (TPM). For a mechanism in a
+IIT 4.0 \citep{albantakis2023iit4,mayner2018pyphi} builds the cause--effect
+structure of a system from its transition probability matrix (TPM). The
+multiplicity of candidate integration measures --- and their non-equivalence ---
+is itself a known theme \citep{mediano2019measures,barrett2011phi,oizumi2016unified};
+this paper sharpens it to a \emph{sign}-disagreement on an identical
+manipulation. For a mechanism in a
 state, its \emph{integrated information} $\varphi$ is the distance between its
 cause--effect repertoire and the repertoire computed across its
 \emph{minimum information partition} --- the partition that makes the least
@@ -482,8 +486,9 @@ Section~\ref{sec:results} establishes \emph{that} the two measures split; this
 section establishes \emph{why}. The candidate mechanism: planning's added mutual
 information is \textbf{redundant}, not synergistic. On the same $n=4$ substrate
 that feeds both engines, we ran a self-contained Williams--Beer $I_{\min}$
-partial-information decomposition (PID, pure numpy, validated on canonical
-COPY=pure-redundancy / XOR=pure-synergy cases) of the planning vs greedy
+partial-information decomposition \citep{williams2010pid} (PID, pure numpy,
+validated on canonical COPY=pure-redundancy / XOR=pure-synergy cases) of the
+planning vs greedy
 dependency into redundancy, synergy, and unique components (H\_1017,
 \tierGreen). The PID is the \emph{explanatory variable} --- an information
 decomposition of the same bits --- not a $\Phi$ proxy (all $\Phi$ values remain
@@ -609,7 +614,8 @@ HOLISTIC-IRREDUCIBLE).} Finally we dissected the planning intervention into
 three candidate structural primitives --- value-backup (backward credit),
 look-ahead-depth (forward horizon), and shared-value (axis-aligned shared
 value) --- and asked whether exactly one is \emph{necessary and sufficient} for
-the ZCA-removable split, using matched constructive (add-one-feature-to-greedy)
+the ZCA \citep{bell1997ica}-removable split, using matched constructive
+(add-one-feature-to-greedy)
 and destructive (remove-one-feature-from-planning) arms, with operator
 invertibility checked ($\max|\mathrm{remove}(\mathrm{add}(X))-X|\le 4.4\times
 10^{-16}$). The result (Table~\ref{tab:dissect}): \emph{no} constructive arm
