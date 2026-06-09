@@ -21,20 +21,29 @@ corpus, capacity-matched where feasible. Measure Δφ_EI of the hidden-state mac
 native baseline** (the +0.835/+0.107 reference).
 
 ## primitive ladder (each a from-scratch native arch, generic byte target, p3/p6)
-The reference FULL native is a 2-block ConvMoE with explicit per-block residuals:
-`x → [block]×2 → readout`, block = `h = x + mix(MoE-routed depthwise-dilated-conv experts over conv-trunk(x))`.
+FULL = the H_1043 `ConvMoENative` arch VERBATIM (the one that achieved +0.835 mean / +0.107 terminal):
+`emb → c=conv(x,w1) → h=tanh(c) → gate=softmax(h@wr) → experts ce_e=tanh(conv(h,we_e)) → mix=Σ g_e·ce_e
+→ logits=mix@wo`. PROBE = `mix` (gated expert mixture, = `ConvMoENative.probe_state`). The harness
+asserts (untrained) FULL `NativeArm` ≡ imported `ConvMoENative` bit-for-bit → reproduce-H_1043 identity.
 
-- **FULL** = native ConvMoE (reference) — MoE routing + conv trunk + per-block residual + 2 blocks.
-  Must reproduce the H_1043 native lift DIRECTION (large positive Δφ_EI vs frozen base).
-- **−routing** = ConvMoE with MoE expert-routing removed (single expert, no gating softmax).
-- **−conv** = replace the depthwise-conv trunk/experts with a plain pointwise linear/MLP mixer
-  (param-matched: same total trainable param budget, no temporal receptive field).
-- **−residual** = remove the per-block residual/skip connection (`h = mix(...)`, no `x +`).
-- **−depth** = shallower trunk: 1 block instead of 2, width-widened to capacity-match the 2-block param count.
+The native arch's REAL ablatable primitives (it has NO residual / multi-block — those are not its
+primitives; ablating an absent primitive is undefined, so the ladder is the four primitives the
+φ-bearing native actually contains):
+
+- **FULL** = H_1043 native (routing + conv-trunk + conv-experts + tanh nonlin). Must reproduce the
+  native lift DIRECTION (L_full > +0.10 vs frozen base) at the H_1043 seeds.
+- **−routing** = single expert, no softmax gate (E=1, uniform). MoE routing removed.
+- **−conv** = trunk conv `w1` and expert convs `we` replaced by pointwise linear maps (k stacked (d,d),
+  param-matched, NO temporal receptive field).
+- **−trunk** = remove the conv trunk layer `w1`+tanh (experts operate directly on the embedding) —
+  the depth / structured-mixing primitive (the "shallower native trunk" ablation).
+- **−nonlin** = remove the structural `tanh` nonlinearities (trunk + experts linear-activated),
+  capacity identical — isolates whether the φ-lift needs the nonlinearity primitive.
 
 All arms: same generic byte corpus as H_1043 (public-domain proverbs, p3/p6 — NO persona/carving),
-same `BASE`/`ADAPT_STEPS` train budget, same Adam/LR, 3 seeds (1059/1060/1061), SERIAL only
-(no `multiprocessing.Pool` — H_1038 hang lesson; `if __name__`-guard).
+same `ADAPT_STEPS` train budget, same Adam/LR, **3 seeds (1043/1044/1045 — the H_1043 seeds where the
++0.835 native lift was established, so FULL reproduces it)**, SERIAL only (no `multiprocessing.Pool` —
+H_1038 hang lesson; `if __name__`-guard).
 
 ## Φ measurement (a_phi_iit4_tool — faithful, NO proxy)
 Per arm: probe the mid hidden-state (post-block-1 residual stream) → n=6 highest-variance units ×
