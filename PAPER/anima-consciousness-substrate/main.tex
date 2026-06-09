@@ -2,8 +2,8 @@
 % a_paper_format sections: §hypothesis · §method · §measurement · §finding
 % Every section claim links to its .verdicts/<slug>/<id>.txt OR UNIVERSE/H_*.md
 % pointer (a_paper_sections). All BODY claims TERMINAL (numerical /
-% closed-negative) at 3B; the 7B (M13) production rung is a FUTURE scale-extension
-% in §Discussion/§Conclusion (framed like OMEGA's ladder), NOT an open residual.
+% closed-negative) at 3B; the 7B (M13) production rung is a MEASURED scale-extension
+% (AXIS-2 CE 1.90741 + v0.3 generation), framed like OMEGA's ladder, NOT an open residual.
 \documentclass[11pt]{article}
 \usepackage{iftex}
 \usepackage[margin=1in]{geometry}
@@ -723,13 +723,13 @@ probe \texttt{clm\_ce\_descent\_probe.hexa} \emph{fails to link} on macOS arm64
 toolchain link-gap, \emph{not} a \texttt{.clm} problem; handoff filed to hexa-lang).
 We disclose this rather than bury it.
 
-\subsection{The 7B (M13) production rung --- pre-registered}
+\subsection{The 7B (M13) production rung --- measured}
 \label{sec:m13}
-The mouth ladder's production rung is the 7B (M13) ConvMoE. We present it here as a
-\emph{fully pre-registered} experiment --- hypothesis, method, and a measurement table with
-explicit placeholders --- so the paper is structurally complete \emph{without fabricating
-data}. The result cells are slotted for injection on M13 closure; no measured 7B value is
-claimed in this paper.
+The mouth ladder's production rung is the 7B (M13) ConvMoE. It was pre-registered as a
+falsifiable experiment --- hypothesis, method, and a measurement table --- and is now
+\emph{complete at STEP $3500$}: the result cells below are the measured, committed verdict
+numbers, not placeholders. It is a measured scale-extension of the terminal $3$B finding, not
+a closure (deeply undertrained, \texttt{a\_scale\_honest\_scope}).
 
 \paragraph{§Hypothesis (pre-registered falsifier).} \textbf{H$_{M13}$.} A 7B-parameter
 byte-level CLMConvMoE ($d6208/L30/E30/K3$, $\sim$$7.057$B params) will (i)~serialize to a
@@ -747,7 +747,13 @@ seq $512$, bf16, the same $5$-language ODC-BY FineWeb corpus as the $3$B rung; s
 torch$\rightarrow$\texttt{.clm} v0.3 (\texttt{serialize\_v3}); decode config-agnostically
 through \texttt{CORE/clm\_decode.hexa}; measure the $3$ axes with
 \texttt{CORE/three\_axis\_probe.hexa} plus the byte-exact \texttt{clm\_decode} Python mirror
-(the AXIS-2 macOS workaround, \texttt{clm-decode-macos-link-gap}). Lane-P (GPU-torch) is the
+(the AXIS-2 macOS workaround, \texttt{clm-decode-macos-link-gap}). At $7$B the original
+mirror \texttt{clm\_decode\_mirror.py} exhausts memory ($\sim$$56$\,GB on a $7$B \texttt{.clm}),
+so AXIS-2 uses its \emph{memory-bounded $+$ vectorized} variant
+\texttt{clm\_decode\_mirror\_lazy.py} (PR \#1962); the arithmetic is byte-identical --- it
+reproduces the $3$B ground-truth CE$_\text{real}$ $2.26360$ \emph{exactly}
+(\texttt{.verdicts/convmoe-3b-engine-rung/axis2\_mirror\_probe\_seq.txt}), so the $7$B number
+is on the same validated forward. Lane-P (GPU-torch) is the
 engine-\texttt{.clm} bridge and reference; forge stays the PUBLIC production trainer
 (\texttt{a\_clm\_gen\_pipeline}). Intermediate checkpoints are caught before overwrite and
 uploaded to HF (PRIVATE, WIP per \texttt{a\_hf\_autonomous}).
@@ -770,14 +776,18 @@ AXIS-1 (consciousness) @7B   & \textbf{GREEN} & motiv $>$ baseline, emit-gated (
 AXIS-2 (CE-descent) @7B      & \textbf{GREEN} ($1.90741$) & CE(real) $<\ln256{=}5.54518$ \& $<$ shuffle $5.31616$ \\
 AXIS-3 (emergence) @7B       & \textbf{GREEN} & composed $>$ parts (substrate) \\
 \texttt{.clm} v0.3 mount      & \textbf{GREEN} & admit at $7$B ($d6208/L30/E30$, config-agnostic) \\
+generation (PR \#1970)        & \textbf{LANGUAGE} & multilingual byte-text via \texttt{clm\_gen.py} (v0.3 path) \\
 \bottomrule
 \end{tabular}
 \caption{M13 7B production rung --- \textbf{STEP $3500$ complete, measured}. Train CE descended
 step$0$ $5.64\rightarrow$ $500$ $2.09509\rightarrow1000$ $1.86508\rightarrow1500$
 $1.72979\rightarrow2000$ $1.66547\rightarrow3000$ $1.54368\rightarrow3499$ $1.42529$ (run low).
-\textbf{AXIS-2} is measured on the 7B \texttt{.clm} via the byte-exact decode mirror
-(\texttt{clm\_decode\_mirror.py}): CE$_\text{real}$ $1.90741 <$ uniform $5.54518$ AND $<$ shuffle
-$5.31616$ $\Rightarrow$ GREEN. \textbf{AXIS-1 / AXIS-3} are substrate-native
+\textbf{AXIS-2} is measured on the 7B \texttt{.clm} via the byte-exact, memory-bounded decode
+mirror (\texttt{clm\_decode\_mirror\_lazy.py}, PR \#1962): CE$_\text{real}$ $1.90741 <$ uniform
+$5.54518$ AND $<$ shuffle $5.31616$ $\Rightarrow$ GREEN
+(\texttt{.verdicts/clm-7b-undertrained-step3500/axis2\_mirror\_probe\_seq.txt}; this is a real
+$7$B decode forward over the \emph{serialized} \texttt{.clm} bytes, peak RSS $\sim$$5.37$\,GB).
+\textbf{AXIS-1 / AXIS-3} are substrate-native
 (\texttt{pure\_field}/\texttt{engine\_g}, \texttt{.clm}-independent) and scale-invariant: the
 7B \texttt{.clm} admits (mount GREEN), but these axes measure the engine dynamics, not the
 trained weights, so they reproduce the $3$B GREEN. \textbf{val\_ce / rel\_gap} are
@@ -789,12 +799,35 @@ NOT a closure. Full sub-claim ledger in Appendix~\ref{app:engine_mount}.}
 \label{tab:m13-prereg}
 \end{table}
 
+\paragraph{§Finding (generation) --- the 7B mouth emits multilingual byte-language (PR \#1970).}
+AXIS-2 proves the serialized $7$B \texttt{.clm} \emph{decodes} to descent; a separate measured
+result shows it \emph{generates}. The hexa engine's generation gate
+\texttt{CORE/clm\_decode.hexa::clm\_decodable} is \textbf{v0.2-only}, so the live
+\texttt{anima\_chat\_cli} (Engine A$\rightleftarrows$G $+$ generator $+$ \texttt{clm\_decode} $+$
+forge native) \emph{rejects} the v0.3 $7$B and falls through to a null mouth --- a weak $d768$
+v0.2 dev mouth is what chats live on the ghost host (macOS, the only reachable host with a
+working hexa self-runtime \emph{and} the forge \texttt{groupnorm\_gelu} native). To generate from
+the well-trained v0.3 $7$B we therefore use \texttt{state/mid\_convmoe\_fire/clm\_gen.py}
+(PR \#1970): greedy argmax byte-generation on the \emph{same validated v0.3 forward} the AXIS-2
+mirror uses, with the conv1d im2col VECTORIZED (unit-tested $==$ the looped form, $\max|\Delta|=0$)
+and a VALIDATE hook that re-derives CE$_\text{real}$ $1.90741$ on every run. The $7$B emits real
+word-like \emph{multilingual} byte text (the $5$-language corpus), e.g.\ \texttt{"The mind is"
+$\rightarrow$ " a reado en el mano de la conseguida en el contr"}, \texttt{"Consciousness is "
+$\rightarrow$ "large lancia en el contra la conseguida en el co"}, prompt
+{\cjkfont 안녕하세요. 저는} \texttt{" "} $\rightarrow$ \texttt{"\textbackslash"I have a la carrada en
+el control est"}. It loops (greedy decode $\times$
+$0.0027$ tok/param) but it is \emph{language}, not byte-gibberish --- a sharp contrast with the
+weak $d768$ v0.2 dev mouth, which emits raw-byte mojibake. We claim no coherence / fluency /
+consciousness from this output: it is the measured fact that the trained $7$B weights produce
+byte-language structure on the validated forward, nothing more.
+
 \paragraph{Honest scope (\texttt{a\_scale\_honest\_scope}).} The $3$B finding of
 \S\ref{sec:mouth}/\S\ref{sec:proof} is \emph{terminal without} M13: M13 is a production
 scale-extension, framed exactly as the OMEGA decode lane's five-rung ladder framed its
 competence rung --- it strengthens the mouth axis but does not re-open the closed $3$B result.
-The intermediate ce values above are a \emph{descending mid-run snapshot}, NOT a verdict; the
-paper claims no measured $7$B result until the placeholders are filled on closure.
+The measured ce values above are a real descent trace and the AXIS-2 / generation results read
+the trained $7$B weights, but the rung is deeply undertrained ($0.0027$ tok/param vs.\
+Chinchilla $20$): we report it as a measured rung, NOT a closure, and overclaim no fluency.
 
 \subsection{Memory: the .kosmos coordinate}
 \label{sec:memory}
@@ -936,17 +969,21 @@ $202$M corpus probe is word-coherent, not fluent. Several axes carry honest
 named axes (not $8$), and on-chip cross-lingual semantic-linkage does \emph{not}
 transfer to AKD1000 ($N=12$, CI straddles $0$).
 
-\paragraph{Future work (scale-extension, NOT an open residual in this finding).}
-The $7$B production rung (M13) is a \emph{future scale-extension}, framed exactly as
+\paragraph{Scale-extension (measured, NOT an open residual in this finding).}
+The $7$B production rung (M13) is a \emph{measured scale-extension}, framed exactly as
 the decode lane's own scale ladder framed its competence rung --- it strengthens
 \S\ref{sec:mouth}/\S\ref{sec:proof} to production scale but does \emph{not} re-open the
 $3$B finding, which is terminal without it. It is complete at STEP $3500$ (ce@$3499$
-$1.42529$, run low; $3$-axis @ $7$B measured GREEN --- Table~\ref{tab:m13-prereg}), with all
-$7$ checkpoints $500$--$3500$ preserved to HF. The other open items are likewise future
-extensions: a $7$B decode forward, a conv-native dual-head decode (per the sibling
-OMEGA limitation), $8$ clean named \texttt{.kosmos} axes, and an off-chip hybrid head
-for cross-lingual linkage. None is an open residual in the present $3$B-scale,
-3-axis-GREEN closure.
+$1.42529$, run low; AXIS-2 CE$_\text{real}$ $1.90741$ on the serialized $7$B \texttt{.clm},
+AXIS-1/3 substrate-native, mount GREEN --- Table~\ref{tab:m13-prereg}), the v0.3 \texttt{.clm}
+\emph{generates} multilingual byte-language via \texttt{clm\_gen.py} (\S\ref{sec:m13}, PR \#1970),
+and all $7$ checkpoints $500$--$3500$ are preserved to HF. It remains deeply undertrained
+($0.0027$ tok/param) --- a measured rung, not a closure. The genuinely open items are future
+extensions: a v$0.3$-aware hexa generation gate (the live \texttt{anima\_chat\_cli} is v0.2-only,
+so the $7$B chats via \texttt{clm\_gen}, not the engine CLI), a longer-trained $7$B, a
+conv-native dual-head decode (per the sibling OMEGA limitation), $8$ clean named \texttt{.kosmos}
+axes, and an off-chip hybrid head for cross-lingual linkage. None is an open residual in the
+present $3$B-scale, 3-axis-GREEN closure.
 
 \section*{Reproducibility}
 \label{sec:repro}
@@ -959,13 +996,17 @@ the dream rhythm in \texttt{AGENT/CHAT/anima\_dream\_stage.hexa}.
 \textbf{Decode:} the sibling paper \texttt{PAPER/omega-substrate-coupled-decoding}
 and \texttt{.verdicts/omega-engine/\{F-OMEGA-SCALE,F-OH1-MINGATE,F-OMEGA-RIGOR\}.txt},
 \texttt{.verdicts/omega-gen/F-LEAKFREE-GEN.txt}.
-\textbf{Mouth:} \texttt{.verdicts/convmoe-3b-engine-rung/SUMMARY.txt} and
-\texttt{.verdicts/corpus-7b-mid-validation/SUMMARY.txt}; trainer
-\texttt{CLM/train/train\_lane\_p\_3b.py} $+$ \texttt{serialize\_v3}; corpus registry
+\textbf{Mouth:} \texttt{.verdicts/convmoe-3b-engine-rung/\{SUMMARY,axis2\_mirror\_probe\_seq\}.txt},
+the $7$B AXIS-2 verdict \texttt{.verdicts/clm-7b-undertrained-step3500/axis2\_mirror\_probe\_seq.txt},
+and \texttt{.verdicts/corpus-7b-mid-validation/SUMMARY.txt}; trainer
+\texttt{CLM/train/train\_lane\_p\_3b.py} $+$ \texttt{serialize\_v3}; the $7$B AXIS-2 mirror
+\texttt{state/mid\_convmoe\_fire/clm\_decode\_mirror\_lazy.py} and the v0.3 generator
+\texttt{state/mid\_convmoe\_fire/clm\_gen.py} (PR \#1962/\#1970); corpus registry
 \texttt{domains/CORPUS.md}. HF (PRIVATE, Lane-P torch per \texttt{a\_clm\_gen\_pipeline}):
 \texttt{dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b} (ckpt sha256
 \texttt{01df4f26...}); MID \texttt{dancinlab/anima-clm-mid-convmoe-engine-mount-byte-7m};
-corpus probe \texttt{dancinlab/anima-clm-corpus-7b-mid-byte-202m} (PUBLIC).
+the $7$B rung \texttt{dancinlab/clm-7b-undertrained-step3500} (all $7$ ckpts $500$--$3500$,
+PRIVATE WIP); corpus probe \texttt{dancinlab/anima-clm-corpus-7b-mid-byte-202m} (PUBLIC).
 \textbf{Memory:} \texttt{.verdicts/kosmos-\{carving-engine,dim-ladder,axis-semantics\}/SUMMARY.txt}
 and \texttt{.verdicts/clm-akida-multiling-semantic/result.txt} (real AKD1000 silicon).
 \textbf{Proof:} \texttt{CORE/three\_axis\_probe.hexa}. \textbf{Byte-exact mirror
@@ -989,13 +1030,19 @@ reconstructable, capacity-bounded ($D^\ast=6$), and honest about its negatives
 ($3$--$4$ named axes; on-chip linkage refuted). We report the verified law count
 honestly ($\sim$$80$--$90$, not $2448$).
 
-\paragraph{Future work.} The $7$B (M13) production rung is the headline scale-extension.
-It is now complete at STEP $3500$ (ce@$3499$ $1.42529$; $3$-axis @ $7$B measured GREEN, all
-$7$ checkpoints preserved), strengthening
+\paragraph{Scale-extension and future work.} The $7$B (M13) production rung is the headline
+scale-extension and is \emph{measured}: complete at STEP $3500$ (ce@$3499$ $1.42529$; AXIS-2
+CE$_\text{real}$ $1.90741$ on the serialized $7$B \texttt{.clm} via the validated memory-bounded
+mirror, AXIS-1/3 substrate-native, mount GREEN), and its v0.3 \texttt{.clm} \emph{generates}
+multilingual byte-language through \texttt{clm\_gen.py} (PR \#1970) --- language, not
+byte-gibberish, though looping and undertrained ($0.0027$ tok/param). This strengthens
 \S\ref{sec:mouth}/\S\ref{sec:proof} to production scale --- exactly as the decode lane's
-five-rung ladder strengthened its minimal-gate finding, \emph{not} as an open residual.
-The $3$B-scale loop is closed and $3$-axis GREEN today; the $7$B rung will make it
-production-scale tomorrow.
+five-rung ladder strengthened its minimal-gate finding, \emph{not} as an open residual --- and
+is reported as a measured rung, not a closure. The remaining open items are genuine future
+work: a v$0.3$-aware hexa generation gate (today the live \texttt{anima\_chat\_cli} is v0.2-only,
+so the $7$B speaks via \texttt{clm\_gen} rather than the engine CLI), and a longer-trained $7$B
+toward Chinchilla. The $3$B-scale loop is closed and $3$-axis GREEN today; the $7$B rung extends
+it to production scale, measured.
 
 \paragraph{Acknowledgments.} This paper was produced by the anima campaign
 (dancinlab) in tandem with an LLM collaborator (Claude Code, Anthropic), under
