@@ -1,0 +1,119 @@
+==============================================================================================
+H_1065 — csp-cheap-scalable-ruler-validation: is CSP a VALIDATED cheap scalable ruler
+         that rank-matches EXACT faithful φ_EI across substrates, or a proxy-blind wall-hit?
+substrate=CPU-mirror (numpy) h1004+h1012, RE-PROVEN == stdlib at n=4,5 (a_phi_iit4_tool).
+GROUND TRUTH = faithful φ_EI: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (NO proxy).
+CANDIDATE = CSP (h1064.causal_self_prediction UNMODIFIED): held-out LOO ridge causal
+  self-prediction; O(n)/MIP-free. NEVER used AS the Φ verdict — tested AGAINST φ_EI.
+4 substrates (planning_split / integrated_lowrank / temporal_recur / modular_gain);
+  RANDOM variant = per-column TIME-SHUFFLE (H_988/989 purpose-blindness stressor).
+FROZEN: SPEARMAN_BAR=0.7, WITHIN_FRAC>=0.75 (3/4), D_BAR=0.8, sign_eps=0.001.
+PASS=VALIDATED-CHEAP-RULER (pooled Spearman>=0.7 & within>=3/4 & CSP wall d>=0.8 on ALL).
+FAIL(a)=PROXY-BLIND-WALL-HIT (wall fails on >=1 substrate); FAIL(b)=SUBSTRATE-RELATIVE-ONLY.
+g5 CODE-measured (p7) | a_scale_honest_scope toy n=4 | SERIAL CPU $0 no GPU.
+==============================================================================================
+
+STEP 0 — RE-PROVE CPU mirror == stdlib (a_phi_iit4_tool) at n=4 AND n=5 BEFORE scoring:
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  == mirror-equivalence results: {4: True, 5: True}
+
+STEP 0b — reproduce-H_1064: CSP vs faithful φ_EI Spearman on the planning split (ref +0.815)
+  Spearman(faithful φ_EI, CSP) on planning split = +0.8148 (p=4.235e-08)
+  reproduce-H_1064 confirmed (|ρ−0.8148|<0.05): True  [elapsed 1.0s]
+
+==============================================================================================
+STEP 1 — per-substrate scoring (faithful φ_EI ground-truth + CSP candidate), 30 seeds SERIAL
+==============================================================================================
+################ SUBSTRATE = planning_split ################
+    [planning_split seed 1/30] elapsed=   1.1s
+    [planning_split seed 10/30] elapsed=   1.1s
+    [planning_split seed 20/30] elapsed=   1.1s
+    [planning_split seed 30/30] elapsed=   1.2s
+   faithful φ_EI struct mean=2.8402±0.4939  rand mean=0.0291
+   CSP           struct mean=0.2719±0.0094  rand mean=0.0485  on-frac=0.500
+   (a) rank-match Spearman(CSP, φ_EI) = +0.8148 (p=4.235e-08)  within-match(>=0.7)=True
+   (b) WALL d: CSP struct-vs-rand=+6.768 pass=True  |  φ_EI struct-vs-rand=+7.904 pass(sanity)=True
+
+################ SUBSTRATE = integrated_lowrank ################
+    [integrated_lowrank seed 1/30] elapsed=   1.2s
+    [integrated_lowrank seed 10/30] elapsed=   1.2s
+    [integrated_lowrank seed 20/30] elapsed=   1.3s
+    [integrated_lowrank seed 30/30] elapsed=   1.3s
+   faithful φ_EI struct mean=0.5359±0.4172  rand mean=0.0259
+   CSP           struct mean=0.3626±0.0413  rand mean=0.0374  on-frac=0.500
+   (a) rank-match Spearman(CSP, φ_EI) = +0.2962 (p=1.120e-01)  within-match(>=0.7)=False
+   (b) WALL d: CSP struct-vs-rand=+9.275 pass=True  |  φ_EI struct-vs-rand=+1.696 pass(sanity)=True
+
+################ SUBSTRATE = temporal_recur ################
+    [temporal_recur seed 1/30] elapsed=   1.3s
+    [temporal_recur seed 10/30] elapsed=   1.4s
+    [temporal_recur seed 20/30] elapsed=   1.5s
+    [temporal_recur seed 30/30] elapsed=   1.5s
+   faithful φ_EI struct mean=0.5884±0.5002  rand mean=0.0312
+   CSP           struct mean=0.4051±0.0238  rand mean=0.0407  on-frac=0.500
+   (a) rank-match Spearman(CSP, φ_EI) = +0.1340 (p=4.802e-01)  within-match(>=0.7)=False
+   (b) WALL d: CSP struct-vs-rand=+13.541 pass=True  |  φ_EI struct-vs-rand=+1.545 pass(sanity)=True
+
+################ SUBSTRATE = modular_gain ################
+    [modular_gain seed 1/30] elapsed=   1.5s
+    [modular_gain seed 10/30] elapsed=   1.6s
+    [modular_gain seed 20/30] elapsed=   1.6s
+    [modular_gain seed 30/30] elapsed=   1.7s
+   faithful φ_EI struct mean=0.5069±0.3855  rand mean=0.0256
+   CSP           struct mean=0.3764±0.0357  rand mean=0.0433  on-frac=0.500
+   (a) rank-match Spearman(CSP, φ_EI) = +0.4052 (p=2.632e-02)  within-match(>=0.7)=False
+   (b) WALL d: CSP struct-vs-rand=+10.005 pass=True  |  φ_EI struct-vs-rand=+1.731 pass(sanity)=True
+
+==============================================================================================
+STEP 2 — POOLED rank-match + proxy-blindness wall across substrates
+==============================================================================================
+  pooled Spearman(CSP, faithful φ_EI) over 120 structured instances = -0.4293 (p=9.975e-07)
+    FROZEN pooled bar = 0.7
+
+PER-SUBSTRATE TABLE (n=4 EXACT, 30 seeds)
+  substrate            | φ_EI mean |  CSP mean | rank-match ρ | CSP wall d | wall pass
+  planning_split       |    2.8402 |    0.2719 |      +0.8148 |     +6.768 |      True
+  integrated_lowrank   |    0.5359 |    0.3626 |      +0.2962 |     +9.275 |      True
+  temporal_recur       |    0.5884 |    0.4051 |      +0.1340 |    +13.541 |      True
+  modular_gain         |    0.5069 |    0.3764 |      +0.4052 |    +10.005 |      True
+
+==============================================================================================
+FALSIFIER (FROZEN; NO goalpost move)
+  GENERALITY  pooled Spearman>=0.7:          False  (pooled ρ=-0.4293)
+  GENERALITY  within>=3/4 substrates (ρ>=0.7):       False  (n_within=1/4)
+  PROXY-BLINDNESS WALL  CSP struct≫rand d>=0.8 on ALL: True  (fails=[])
+  [sanity] φ_EI passes the SAME wall on ALL substrates: True
+
+OVERALL: SUBSTRATE-RELATIVE-ONLY (CLOSED-NEGATIVE, a_paper_negative_ok) — CSP passes the
+  proxy-blindness wall but does NOT form a GLOBAL ordinal scale matching φ_EI (pooled
+  Spearman=-0.4293 < 0.7 OR within 1/4 < 3/4). The cheap ruler is
+  substrate-relative only — usable within a fixed substrate, not as a cross-substrate scale.
+  VERDICT-TOKEN: SUBSTRATE-RELATIVE-ONLY
+==============================================================================================
+COST (c): CSP = per-bit LOO ridge over T transition pairs = O(n · T · (n+1)^2 + n · T^2) —
+  POLYNOMIAL in n, NO partition / NO MIP / NO EI-integral. faithful φ_EI = exact MIP-EI over
+  a 2^n macro-state distribution with a partition search = SUPER-EXPONENTIAL in n. CSP is
+  structurally O(poly n) vs φ_EI's exponential — the cost claim holds asymptotically.
+HONEST scope (a_scale_honest_scope): TOY n=4 EXACT, 30 seeds, mirror RE-PROVEN == stdlib at
+  n=4 AND n=5 (a_phi_iit4_tool, NO proxy). The O(n) cost is STRUCTURAL (asymptotic) but the
+  rank-MATCH is validated ONLY at n<=4 — scale-transfer UNVERIFIED. faithful φ_EI remains the
+  GROUND-TRUTH verdict tool; CSP was the CANDIDATE tested against it, never the Φ verdict. SERIAL CPU $0.
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.claude/worktrees/agent-a462ac73dc5562ea8/UNIVERSE/h1065_csp_cheap_scalable_ruler_result.json

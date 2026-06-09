@@ -1,6 +1,14 @@
 # H_1065 — csp-cheap-scalable-ruler-validation
 
-**Status:** PRE-REGISTERED (frozen before scoring)
+**VERDICT: 🔴 SUBSTRATE-RELATIVE-ONLY** (CLOSED-NEGATIVE, a_paper_negative_ok) — verdict at
+`.verdicts/1065_csp_cheap_scalable_ruler/H_1065.txt`. CSP PASSES the H_988/989 proxy-blindness
+wall on ALL 4 substrates (d=+6.8…+13.5) so it is NOT a purpose-blind proxy — but it does NOT form
+a global ordinal scale matching faithful φ_EI: within-match only 1/4 (planning ρ=+0.815 reproduced
+H_1064 exactly; non-planning ρ=+0.13…+0.41), pooled Spearman SIGN-FLIPS to −0.4293 (<0.7). The
+cheap CSP ruler is substrate-relative only; H_1064's +0.815 was planning-substrate-LOCAL.
+Mirror≡stdlib EXACT n=4 AND n=5 ({4:True,5:True}). reproduce-H_1064 ✓ (+0.8148). Toy n=4, $0, 0-pod.
+
+**Status:** PRE-REGISTERED (frozen before scoring) → MEASURED → TERMINAL 🔴
 **Date:** 2026-06-09
 **Lineage:** forward of H_1064 (CSP defined + rank-tracked φ on planning split); re-opens the
 H_1049 scalable-estimator question (IB-coarse-grain 🔴 was NOT a scalable Φ estimator) with a

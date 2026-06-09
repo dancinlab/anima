@@ -1,0 +1,128 @@
+H_1065 — csp-cheap-scalable-ruler-validation (forward of H_1064; re-opens H_1049's open question)
+VERDICT: SUBSTRATE-RELATIVE-ONLY  (🔴 CLOSED-NEGATIVE, a_paper_negative_ok)
+g5 CODE-measured (p7) | a_scale_honest_scope toy n=4 (n=5 mirror-proven) | SERIAL CPU $0 | 0 GPU/pod
+date: 2026-06-09
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+QUESTION
+═══════════════════════════════════════════════════════════════════════════════════════════
+H_1064 found a SURPRISE: on PLANNING split policies the independent causal proxy CSP (causal
+self-prediction — held-out LOO ridge balanced-accuracy of macro-state→next-macro-state; NO
+partition, NO MIP, O(n) not O(2^n)) rank-tracked BOTH faithful φ_EI (ρ=+0.8148) AND big-Φ.
+That raised the high-value question H_1049 left OPEN (IB-coarse-grain 🔴 was NOT a scalable Φ
+estimator): can the CHEAP behavioral CSP serve as a VALIDATED cheap scalable ruler that
+rank-matches the EXACT faithful φ_EI GROUND-TRUTH ACROSS MULTIPLE substrates — or does it hit
+the H_988/989 proxy-blindness wall (a purpose-blind proxy scores structured == random)?
+
+CRITICAL DISCIPLINE: faithful φ_EI is the GROUND-TRUTH verdict tool (a_phi_iit4_tool); CSP is
+the CANDIDATE tested AGAINST it, NEVER used AS the Φ verdict.
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+FROZEN FALSIFIER (locked in the pre-reg .md BEFORE any CSP-vs-φ correlation was viewed; NO move)
+═══════════════════════════════════════════════════════════════════════════════════════════
+  SPEARMAN_BAR = 0.7 (pooled) ; WITHIN_FRAC = 3/4 (per-substrate ρ≥0.7) ; D_BAR = 0.8 ; SIGN_EPS = 1e-3.
+  PASS = VALIDATED-CHEAP-RULER: pooled Spearman≥0.7 AND within≥3/4 AND CSP passes the proxy-
+    blindness wall on ALL substrates (CSP[structured]>CSP[random], d≥0.8).
+  FAIL(a) = PROXY-BLIND-WALL-HIT: CSP fails the H_988/989 wall on ≥1 substrate (struct≈rand).
+  FAIL(b) = SUBSTRATE-RELATIVE-ONLY: rank-matches within but pooled<bar OR within<3/4.
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+MIRROR ≡ stdlib EXACT (a_phi_iit4_tool, NO proxy) — RE-PROVEN n=4 AND n=5 BEFORE scoring
+  (MI in BITS/log2, MI=H(A)+H(B)−H(A,B); H_1043 nats-bug avoided)
+═══════════════════════════════════════════════════════════════════════════════════════════
+n=4:  big-Φ ring4_s15 mirror=2.999999999 stdlib_hexa_ref=2.999999999 |Δ|=1.34e-10 OK
+      big-Φ ring4_s12 mirror=2.999999999 stdlib_hexa_ref=2.999999999 |Δ|=1.34e-10 OK
+      faithful_phi n4 dim6 nb2 mirror=3.000000 stdlib_hexa_ref=3.000000 |Δ|=3.48e-10 OK
+      faithful_phi n4 dim6 nb2 (H_999) mirror=3.000000 hexa_ref=3.000000 |Δ|=1.35e-09 OK
+      faithful_phi n4 dim6 nb4 (H_999) mirror=3.377444 hexa_ref=3.377440 |Δ|=3.75e-06 OK
+      matched-path n=4 big-Φ=3.015177 faithful=0.015945; det re-run True; units==bits.T True
+      ≡-PROOF n=4: PROVEN
+n=5:  big-Φ ring5_s31 mirror=2.999999999 stdlib_hexa_ref=2.999999999 |Δ|=1.34e-10 OK
+      big-Φ ring5_s24 mirror=2.999999999 stdlib_hexa_ref=2.999999999 |Δ|=1.34e-10 OK
+      faithful_phi n5 dim6 nb2 mirror=4.000000 stdlib_hexa_ref=4.000000 |Δ|=7.97e-10 OK
+      matched-path n=5 big-Φ=18.185180 faithful=0.029795; det re-run True; units==bits.T True
+      ≡-PROOF n=5: PROVEN
+  == mirror-equivalence results: {4: True, 5: True}
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+REPRODUCE-H_1064 (BEFORE scoring) — CSP vs faithful φ_EI Spearman on the planning split
+═══════════════════════════════════════════════════════════════════════════════════════════
+  Spearman(faithful φ_EI, CSP) on planning split = +0.8148 (p=4.235e-08)
+  reproduce-H_1064 confirmed (|ρ − 0.8148| < 0.05): True   (ref H_1064 = +0.8148)
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+PER-SUBSTRATE TABLE (n=4 EXACT, 30 seeds; faithful φ_EI = GROUND TRUTH, CSP = CANDIDATE)
+  RANDOM variant = per-column TIME-SHUFFLE of the SAME structured bits (on-fraction preserved
+  EXACTLY, cause-effect dynamics DESTROYED) = the H_988/989 purpose-blindness stressor.
+═══════════════════════════════════════════════════════════════════════════════════════════
+  substrate            | φ_EI mean |  CSP mean | rank-match ρ(CSP,φ_EI) | CSP wall d(struct vs rand) | wall pass
+  planning_split       |    2.8402 |    0.2719 |              +0.8148   |               +6.768       |   True
+  integrated_lowrank   |    0.5359 |    0.3626 |              +0.2962   |               +9.275       |   True
+  temporal_recur       |    0.5884 |    0.4051 |              +0.1340   |              +13.541       |   True
+  modular_gain         |    0.5069 |    0.3764 |              +0.4052   |              +10.005       |   True
+
+  [sanity] φ_EI struct-vs-rand wall d (MUST pass): planning +7.904 / lowrank +1.696 / recur +1.545 /
+           gain +1.731 — φ_EI passes the SAME wall on ALL substrates (ground truth is not blind).
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+POOLED + FALSIFIER ADJUDICATION (FROZEN bars; NO goalpost move)
+═══════════════════════════════════════════════════════════════════════════════════════════
+  pooled Spearman(CSP, faithful φ_EI) over 120 structured instances = -0.4293 (p=9.975e-07)
+    FROZEN pooled bar = 0.7
+
+  GENERALITY  pooled Spearman ≥ 0.7:                 False  (pooled ρ = -0.4293 — SIGN-FLIPPED)
+  GENERALITY  within ≥ 3/4 substrates (ρ ≥ 0.7):     False  (n_within = 1/4 — only planning_split)
+  PROXY-BLINDNESS WALL  CSP struct≫rand d≥0.8 on ALL: True   (fails = [], d range +6.77 … +13.54)
+  [sanity] φ_EI passes the SAME wall on ALL:         True
+
+  VERDICT-TOKEN: SUBSTRATE-RELATIVE-ONLY
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+FINDING (a_paper_negative_ok — a publishable closed-negative with a dissociation)
+═══════════════════════════════════════════════════════════════════════════════════════════
+CSP is NOT a purpose-blind proxy — it PASSES the H_988/989 proxy-blindness wall on EVERY
+substrate, and MASSIVELY (d = +6.8 … +13.5, far above the φ_EI ground-truth's own d ≈ +1.5–1.7).
+So FAIL-mode (a) PROXY-BLIND-WALL-HIT is RULED OUT: CSP robustly discriminates structured from
+random everywhere. H_1064's CSP is a real structure-detector, not a Goodhart artifact.
+
+BUT CSP does NOT form a GLOBAL ordinal scale that matches faithful φ_EI: within-substrate
+rank-match holds ONLY on the planning split (ρ=+0.815, the H_1064 result EXACTLY reproduced);
+on the three non-planning substrates the within-substrate ρ collapses to +0.13 … +0.41 (all <
+0.7), and POOLED across substrates the rank-match SIGN-FLIPS to ρ = -0.4293. The sign-flip is
+mechanistic: φ_EI's LEVEL spans a huge cross-substrate range (planning φ_EI≈2.84 ≫ non-planning
+≈0.51–0.59) while CSP's level is COMPRESSED and INVERTED (planning CSP≈0.27 is the LOWEST, the
+non-planning substrates sit at 0.36–0.41). CSP measures one-step macro-state self-determinism;
+φ_EI measures MIP-minimized effective-information integration — they co-rank WITHIN the planning
+family (H_1064) but their cross-substrate LEVELS are not commensurable.
+
+CONCLUSION = FAIL-mode (b) SUBSTRATE-RELATIVE-ONLY: the cheap CSP ruler is usable WITHIN a fixed
+substrate but is NOT a validated cross-substrate scalable Φ ruler. This re-confirms H_1049's
+lesson with a NEW candidate: a cheap behavioral estimator can co-rank φ_EI locally (and even
+robustly catch structure-vs-noise) yet still fail to be a global ordinal Φ scale. H_1064's
++0.815 rank-agreement was PLANNING-SUBSTRATE-LOCAL — exactly the localness this hypothesis
+pre-registered as FAIL(b). faithful φ_EI remains the GROUND-TRUTH verdict tool (a_phi_iit4_tool);
+CSP cannot replace it as a cross-substrate Φ ruler.
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+COST (c) — structural, asymptotic
+═══════════════════════════════════════════════════════════════════════════════════════════
+  CSP = per-bit LOO ridge over T transition pairs = O(n · T · (n+1)^2 + n · T^2) — POLYNOMIAL in
+  n, NO partition / NO MIP / NO EI-integral. faithful φ_EI = exact MIP-EI over a 2^n macro-state
+  distribution with a partition search = SUPER-EXPONENTIAL in n. CSP is structurally O(poly n)
+  vs φ_EI's exponential — the cost claim holds asymptotically. (But the rank-MATCH is the part
+  that FAILED, so the cheap-ruler payoff is not realized as a cross-substrate scale.)
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+HONEST SCOPE (a_scale_honest_scope, p7)
+═══════════════════════════════════════════════════════════════════════════════════════════
+TOY n=4 EXACT, 30 seeds; both mirrors RE-PROVEN == stdlib at n=4 AND n=5 (a_phi_iit4_tool, NO
+proxy). CSP REUSED UNMODIFIED from H_1064; substrates REUSED from H_1062 (_iv_lowrank/_iv_ema/
+_iv_gain) + H_1004 planning_trajectories; mirror prover from H_1012. SERIAL CPU $0, no GPU/pod.
+The O(n) cost is STRUCTURAL (asymptotic) but the rank-MATCH is validated ONLY at n≤4 — scale-
+transfer UNVERIFIED. The proxy-blindness wall PASS and the cross-substrate rank-FAIL are both
+toy-scale rulings; whether a richer / larger-n substrate set would recover a global scale is a
+follow-up. faithful φ_EI stays the GROUND-TRUTH verdict tool; CSP was the CANDIDATE, never the verdict.
+
+xref: [[h1064-split-measure-adjudication]] [[scalable-phi-estimator-ib-closed-neg]] [[iit4-real-engine-in-stdlib-not-proxy]]
+artifacts: UNIVERSE/h1065_csp_cheap_scalable_ruler.py · UNIVERSE/h1065_csp_cheap_scalable_ruler_result.json
+           · .verdicts/1065_csp_cheap_scalable_ruler/H_1065_raw_stdout.txt
