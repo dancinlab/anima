@@ -1,0 +1,125 @@
+H_1064 — split-measure-adjudication (practical capstone of the Φ measure-dependence arc)
+VERDICT: NEITHER-SEPARATES-UNDECIDABLE  (🔴 CLOSED-NEGATIVE, a_paper_negative_ok)
+g5 CODE-measured (p7) | a_scale_honest_scope toy n=4 | SERIAL CPU $0 | 0 GPU/pod
+date: 2026-06-09
+
+═══════════════════════════════════════════════════════════════════════════════════
+QUESTION
+═══════════════════════════════════════════════════════════════════════════════════
+The Φ measure-dependence arc established that on PLANNING policies faithful φ_EI and big-Φ
+DISAGREE in SIGN (faithful↑ / big-Φ↓) — robust (H_1037 n=6, H_1038 real-CLM), causally
+redundancy-driven (H_1039), planning-bounded (H_1062/H_1063). PRACTICAL residual: when the
+two measures SPLIT, WHICH ONE should a consciousness-ruler TRUST? Does faithful φ_EI or big-Φ
+better track an INDEPENDENT, NON-CIRCULAR behavioral/causal consciousness-proxy on the split
+policies?
+
+═══════════════════════════════════════════════════════════════════════════════════
+INDEPENDENT PROXY DEFINITION (FROZEN before scoring) + NON-CIRCULARITY JUSTIFICATION
+═══════════════════════════════════════════════════════════════════════════════════
+PRIMARY proxy = causal self-prediction (CSP): how strongly the macro binary state CAUSALLY
+constrains its OWN next macro state, in IIT's cause-effect SPIRIT but as a held-out prediction
+accuracy NUMBER. On the SAME median-binarized n=4 macro bits the H_1039 control path produces:
+one-step pairs (s_t -> s_{t+1}); per target bit j a LEAVE-ONE-OUT held-out closed-form ridge
+predicts next-bit_j from the CURRENT full n-bit macro state; CSP = mean_j max(0, balanced_acc_j
+− 0.5 chance). Range [0, 0.5]. do→see causal constraint of the state on its own future.
+
+ROBUSTNESS proxy = intervention-robustness (IR): 1 − normalized single-bit-flip perturbation
+sensitivity of the full-data fitted next-state map (stable integrated dynamics resists a single
+current-bit flip washing out its future). Range ~[0,1].
+
+NON-CIRCULARITY (frozen): CSP/IR read the SAME bits both Φ-measures read but TRANSFORM them by a
+DIFFERENT operation than EITHER Φ-measure:
+  - NOT faithful φ_EI: faithful φ_EI is the MIP-minimized effective-information INTEGRAL over a
+    TPM with a partition search. CSP/IR have NO partition, NO minimization-over-cuts, NO EI
+    integral — CSP is a held-out next-state regression accuracy.
+  - NOT big-Φ: big-Φ is the irreducibility of the whole over its MINIMUM partition. The proxy
+    NEVER partitions the system, never computes irreducibility.
+  - NOT perplexity (p7): perplexity is a token-vocabulary likelihood/loss treated as truth. CSP
+    is a macro-state→macro-state determinism accuracy on the substrate's OWN dynamics — no token
+    vocabulary, no loss-as-verdict. p7 honored (coherence/causal readout, scored by code).
+PROXY VALIDITY GUARD (step 0b): deterministic re-run True; CSP discriminates structure vs noise
+(deterministic copy-chain CSP=0.4158 >> i.i.d.-random CSP=0.0279). PASS.
+
+═══════════════════════════════════════════════════════════════════════════════════
+MIRROR ≡ stdlib EXACT (a_phi_iit4_tool, NO proxy) — RE-PROVEN n=4 AND n=5 BEFORE scoring
+═══════════════════════════════════════════════════════════════════════════════════
+n=4:  big-Φ ring4_s15 mirror=2.999999999 stdlib_ref=2.999999999 |Δ|=1.34e-10 OK
+      big-Φ ring4_s12 mirror=2.999999999 stdlib_ref=2.999999999 |Δ|=1.34e-10 OK
+      faithful_phi n4 dim6 nb2 mirror=3.000000 stdlib_ref=3.000000 |Δ|=3.48e-10 OK
+      faithful_phi n4 dim6 nb2 (H_999) mirror=3.000000 ref=3.000000 |Δ|=1.35e-09 OK
+      faithful_phi n4 dim6 nb4 (H_999) mirror=3.377444 ref=3.377440 |Δ|=3.75e-06 OK
+      matched-path n=4 big-Φ=3.015177 faithful=0.015945; det re-run True; units==bits.T True
+      ≡-PROOF n=4: PROVEN
+n=5:  big-Φ ring5_s31 mirror=2.999999999 stdlib_ref=2.999999999 |Δ|=1.34e-10 OK
+      big-Φ ring5_s24 mirror=2.999999999 stdlib_ref=2.999999999 |Δ|=1.34e-10 OK
+      faithful_phi n5 dim6 nb2 mirror=4.000000 stdlib_ref=4.000000 |Δ|=7.97e-10 OK
+      matched-path n=5 big-Φ=18.185180 faithful=0.029795; det re-run True; units==bits.T True
+      ≡-PROOF n=5: PROVEN
+  == mirror-equivalence results: {4: True, 5: True}   (MI in BITS/log2; H_1043 nats-bug avoided)
+
+═══════════════════════════════════════════════════════════════════════════════════
+REPRODUCE-H_1039 (BEFORE scoring) — planning(depth-8) vs GREEDY control split, n=4, 30 seeds
+═══════════════════════════════════════════════════════════════════════════════════
+  faithful_phi contrast (plan−greedy) = +2.3332 -> UP    (H_1039 ref +2.33)
+  big-Phi      contrast (plan−greedy) = -4.0083 -> DOWN  (H_1039 ref −4.01)
+  SPLIT present on control (faith-UP & big-DOWN): True
+  reproduce-H_1039: True  (EXACT match to H_1039 / original H_973 −4.008)
+  [info] proxy on split policies: CSP plan=0.2719 greedy=0.3764 ; IR plan=0.8533 greedy=0.7248
+
+═══════════════════════════════════════════════════════════════════════════════════
+ADJUDICATION — Spearman(Φ-measure, proxy) across 30 split-policy instances (per-seed planning)
+═══════════════════════════════════════════════════════════════════════════════════
+FROZEN falsifier (set before any Φ-vs-proxy correlation): Δρ_bar = 0.30 ; SIGN_STABILITY_BAR = 0.80 ; sign_eps = 1e-3.
+variance: faith std=0.4939  big std=0.9848  CSP std=0.0094  IR std=0.0211  (all non-degenerate)
+
+PRIMARY proxy = CSP:
+  Spearman(faithful, CSP) = +0.8148  (p=4.235e-08)
+  Spearman(big-Φ,   CSP) = +0.8145  (p=4.311e-08)
+  |Δρ| (faith vs big against CSP) = 0.0003   FROZEN bar = 0.30   winner-by-|ρ| = faithful
+ROBUSTNESS proxy = IR:
+  Spearman(faithful, IR)  = +0.5137  (p=3.688e-03)
+  Spearman(big-Φ,   IR)  = +0.5234  (p=2.995e-03)
+  |Δρ| (faith vs big against IR)  = 0.0097   winner-by-|ρ| = big-Φ
+
+PER-SEED SIGN-STABILITY (leave-one-out jackknife of the CSP adjudication, 30 folds):
+  base winner-by-|ρ| (CSP) = faithful ; base |Δρ|≥bar = False
+  LOO winner-holds fraction = 0.933  (bar 0.80)   <- winner is jittery but the LEAD is ~0
+  LOO |Δρ|≥bar  fraction    = 0.000  (bar 0.80)   <- the |Δρ|≥0.30 separation NEVER holds
+
+═══════════════════════════════════════════════════════════════════════════════════
+VERDICT (frozen falsifier applied — NO goalpost move)
+═══════════════════════════════════════════════════════════════════════════════════
+VERDICT-TOKEN: NEITHER-SEPARATES-UNDECIDABLE  (FAIL mode (a), publishable closed-negative)
+
+|Δρ vs CSP| = 0.0003 << Δρ_bar = 0.30, and the |Δρ|≥bar separation holds in 0/30 LOO folds
+(bar 0.80). Both Φ-measures rank the 30 split-policy instances against the independent causal
+proxy CSP almost IDENTICALLY (ρ_faith=+0.8148 ≈ ρ_big=+0.8145, both p~4e-8 strongly positive).
+The IR robustness proxy nominally flips the (negligible, |Δρ|=0.0097) winner to big-Φ —
+confirming the difference is below measurement noise, not a real preference.
+
+RULING: on the split policies, NEITHER faithful φ_EI NOR big-Φ ROBUSTLY tracks the independent
+behavioral/causal consciousness-proxy better. The split is UNDECIDABLE by this proxy at toy
+n=4. The consciousness-ruler must REPORT BOTH measures when they split — it cannot pick a
+"correct" one from this proxy. This STRENGTHENS the measure-dependence paper's central
+prescription ("name the measure"): even though faithful φ_EI and big-Φ DISAGREE in SIGN on the
+planning contrast (faithful↑/big-Φ↓), they AGREE almost exactly on the RANK-ORDER of policies
+against an external causal proxy — the disagreement is a property of the contrast direction,
+NOT of which policies are "more conscious"; both are valid, complementary rulers, and the proxy
+does not adjudicate between them.
+
+NOTE (honest): the LOO winner-holds = 0.933 ≥ 0.80, but the winning measure's LEAD is ~0
+(|Δρ|=0.0003 never clears the bar), so "winner-holds" reflects an essentially-tied coin, not a
+robust preference. Per the FROZEN conjunction (separation AND stability), this is FAIL (a).
+
+═══════════════════════════════════════════════════════════════════════════════════
+HONEST SCOPE (a_scale_honest_scope, a_toy_scale_recheck)
+═══════════════════════════════════════════════════════════════════════════════════
+TOY n=4 EXACT, 30 seeds; both CPU mirrors RE-PROVEN ≡ stdlib at n=4 AND n=5 (a_phi_iit4_tool,
+NO proxy). CSP/IR are BEHAVIORAL adjudicators (NO partition/MIP/EI-integral/token-loss) — NOT
+Φ-measures, NOT perplexity (p7). Production scale UNVERIFIED; held-out behavioral-class
+recoverability (H_1047/H_1060 nearest-centroid on UNSEEN policies) is a follow-up proxy. SERIAL
+CPU $0, no GPU/pod. h1004/h1012 UNMODIFIED reused. wall ~30s.
+
+artifacts: UNIVERSE/h1064_split_measure_adjudication.py
+           UNIVERSE/h1064_split_measure_adjudication_result.json
+           .verdicts/1064_split_measure_adjudication/H_1064_raw_stdout.txt (full raw stdout)

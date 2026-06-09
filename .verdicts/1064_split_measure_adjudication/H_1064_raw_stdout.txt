@@ -1,0 +1,81 @@
+==========================================================================================
+H_1064 — split-measure-adjudication: when faithful φ_EI & big-Φ SPLIT, which to trust?
+substrate=CPU-mirror (numpy) h1004+h1012, RE-PROVEN == stdlib at n=4,5 (a_phi_iit4_tool).
+big-Φ: stdlib iit4_bigphi.hexa | faithful_phi: stdlib iit4/faithful_phi.hexa (NO proxy).
+INDEPENDENT PROXY (NOT Φ, NOT perplexity): CSP=held-out causal self-prediction (PRIMARY),
+  IR=intervention-robustness (ROBUSTNESS). NO partition/MIP/EI-integral/token-loss.
+FROZEN falsifier: Δρ_bar=0.3, sign-stability_bar=0.8, sign_eps=0.001.
+PASS=ONE-MEASURE-TRACKS-PROXY (|ρ_faith−ρ_big|≥Δρ_bar & winner sign stable ≥80% LOO).
+FAIL(a)=NEITHER-SEPARATES (undecidable, report both); FAIL(b)=PROXY-RELATIVE (CSP≠IR winner).
+g5 CODE-measured (p7) | a_scale_honest_scope toy n=4 | SERIAL CPU $0 no GPU.
+==========================================================================================
+
+STEP 0 — RE-PROVE BOTH CPU mirrors == stdlib (a_phi_iit4_tool) at n=4 AND n=5:
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  == mirror-equivalence results: {4: True, 5: True}
+STEP 0b — PROXY validity guard (deterministic, discriminating, NOT a Φ copy):
+  CSP  deterministic-chain=0.4158  i.i.d.-random=0.0279  (chain should >> random)
+  IR   deterministic-chain=0.7676  i.i.d.-random=0.8597
+  proxy deterministic re-run: True | CSP discriminates structure vs noise: True
+
+STEP 1 — reproduce-H_1039 CONTROL split (planning depth-8 vs GREEDY, n=4, 30 seeds)
+    [seed 1/30] elapsed=   0.8s
+    [seed 10/30] elapsed=   8.5s
+    [seed 20/30] elapsed=  17.1s
+    [seed 30/30] elapsed=  25.7s
+  faithful_phi contrast (plan−greedy) = +2.3332 -> UP
+  big-Phi      contrast (plan−greedy) = -4.0083 -> DOWN
+  SPLIT present on control (faith-UP & big-DOWN): True
+  reproduce-H_1039 (ref faith+2.33/big−4.01, SPLIT True): True
+  [info] proxy on split policies: CSP plan mean=0.2719 greedy=0.3764 ; IR plan=0.8533 greedy=0.7248
+
+==========================================================================================
+STEP 2 — ADJUDICATION: Spearman(Φ-measure, proxy) across 30 split-policy instances
+==========================================================================================
+  [variance] faith std=0.4939  big std=0.9848  CSP std=0.0094  IR std=0.0211
+  PRIMARY proxy = CSP:
+    Spearman(faithful, CSP) = +0.8148  (p=4.235e-08)
+    Spearman(big-Φ,   CSP) = +0.8145  (p=4.311e-08)
+    |Δρ| (faith vs big against CSP) = 0.0003   (FROZEN bar = 0.3)  winner-by-|ρ| = faithful
+  ROBUSTNESS proxy = IR:
+    Spearman(faithful, IR)  = +0.5137  (p=3.688e-03)
+    Spearman(big-Φ,   IR)  = +0.5234  (p=2.995e-03)
+    |Δρ| (faith vs big against IR)  = 0.0097   winner-by-|ρ| = big-Φ
+
+STEP 2b — leave-one-out (jackknife) sign+lead stability of the CSP adjudication:
+  base winner-by-|ρ| (CSP) = faithful ; base |Δρ|≥bar = False
+  LOO winner-holds fraction = 0.933  (bar 0.8)
+  LOO |Δρ|≥bar  fraction    = 0.000  (bar 0.8)
+
+==========================================================================================
+OVERALL: NEITHER-SEPARATES → UNDECIDABLE at toy scale (CLOSED-NEGATIVE, a_paper_negative_ok)
+  |Δρ vs CSP|=0.0003 < Δρ_bar=0.3 OR winner not stable ≥80% LOO
+  (winner-holds 0.93, bar-holds 0.00). Neither faithful φ_EI nor
+  big-Φ ROBUSTLY tracks the independent proxy better on the split policies → the ruler
+  must REPORT BOTH when they split (STRENGTHENS the measure-dependence 'name the measure'
+  prescription: the split is not adjudicable by this behavioral proxy at toy n=4).
+  VERDICT-TOKEN: NEITHER-SEPARATES-UNDECIDABLE
+==========================================================================================
+HONEST scope (a_scale_honest_scope): TOY n=4 EXACT, 30 seeds, both mirrors RE-PROVEN ==
+stdlib at n=4 AND n=5 (a_phi_iit4_tool, NO proxy). CSP/IR are BEHAVIORAL adjudicators (NO
+partition/MIP/EI-integral/token-loss) — NOT Φ-measures, NOT perplexity (p7). Production scale
+UNVERIFIED; held-out behavioral-class recoverability is a follow-up proxy. SERIAL CPU $0.
+
+RESULT JSON -> /Users/mini/dancinlab/anima/.claude/worktrees/agent-a25051a38ded4ba92/UNIVERSE/h1064_split_measure_adjudication_result.json

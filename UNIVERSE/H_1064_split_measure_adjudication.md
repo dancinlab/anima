@@ -80,4 +80,24 @@ the robustness proxy; other behavioral proxies (held-out behavioral-class recove
 follow-ups. Production scale UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7).
 
 ## Verdict
-(pending — TEXT-only until .verdicts/1064_split_measure_adjudication/H_1064.txt lands)
+🔴 NEITHER-SEPARATES-UNDECIDABLE (H1 FAIL mode (a); CLOSED-NEGATIVE, a_paper_negative_ok) — 2026-06-09.
+On the 30 split-policy planning instances, BOTH Φ-measures rank policies against the independent
+causal proxy CSP almost IDENTICALLY: Spearman(faithful, CSP) = +0.8148 (p=4.2e-8) ≈
+Spearman(big-Φ, CSP) = +0.8145 (p=4.3e-8), |Δρ| = 0.0003 ≪ FROZEN Δρ_bar = 0.30, and the
+|Δρ|≥bar separation holds in 0/30 leave-one-out folds (sign-stability bar 0.80). The IR robustness
+proxy nominally flips the negligible (|Δρ|=0.0097) winner to big-Φ — confirming the difference is
+below measurement noise. RULING: neither faithful φ_EI nor big-Φ ROBUSTLY tracks the independent
+behavioral/causal proxy better; the split is UNDECIDABLE by this proxy at toy n=4 — the ruler must
+REPORT BOTH when they split. This STRENGTHENS the measure-dependence paper's "name the measure"
+prescription: although the two measures DISAGREE in SIGN on the planning contrast (faithful↑/big-Φ↓),
+they AGREE almost exactly on the RANK-ORDER of policies against an external causal proxy — the
+disagreement is a property of the CONTRAST DIRECTION, not of which policies are "more conscious".
+Both are valid complementary rulers; the proxy does not adjudicate between them.
+
+Mirror ≡ stdlib EXACT RE-PROVEN at n=4 (|Δ| ≤ 3.75e-6) AND n=5 (|Δ| ≤ 7.97e-10) before scoring
+(a_phi_iit4_tool, NO proxy; MI in BITS/log2). reproduce-H_1039: faithful +2.3332 / big −4.0083,
+SPLIT True — EXACT match. TOY n=4 EXACT, 30 seeds, SERIAL CPU $0, 0 GPU/pod. g5 (p7).
+
+Artifacts: UNIVERSE/h1064_split_measure_adjudication.py ·
+UNIVERSE/h1064_split_measure_adjudication_result.json ·
+.verdicts/1064_split_measure_adjudication/H_1064.txt (+ H_1064_raw_stdout.txt).
