@@ -1,0 +1,14 @@
+=== H_1117 breadth-is-lever? (controlled: same 11M arch, narrow vs broad corpus, 15MB each) ===
+host=summer RTX5070 $0, seed=7, g5/p7
+
+NARROW (dialogue×3, 15.7MB) train CE → 1.4413 @step3999
+BROAD  (dialogue+wiki, 15.2MB) train CE similar
+[NARROW] singles_max_distinct=0 composed_distinct=1 novel=0 :: "P weensore of consciousness"
+[BROAD]  singles_max_distinct=0 composed_distinct=0 novel=1 :: "Pututeldicon이를 corge한 식가 웄정지까요."
+F-BREADTH-LEVER = 0 🔴 NOT (broad 0 NOT > narrow 1)
+
+CONCLUSION (🔴 closed-negative, size-confounded honest): both 11M models GARBLE on the composed
+5-concept seed; breadth ALONE at low capacity does not rescue recombination (narrow even kept 1
+concept via memorization). SYNTHESIS with 1116 (7B × narrow → 0): the emergence-of-ideation arc
+is a 2×2 — neither capacity-alone (1116) nor breadth-alone (1117) suffices; recombination needs
+the CONJUNCTION of capacity × breadth. Decisive cell (capable 7B × broad corpus) = GPU-gated.
