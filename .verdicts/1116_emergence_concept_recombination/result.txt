@@ -1,0 +1,25 @@
+=== H_1116 emergence-of-ideation (concept-recombination) — capable 7B mouth ===
+host=summer CPU bf16 $0 (all cloud GPU scarce: vast H100 dark-pod, runpod H100/A100/4090 0-capacity)
+mouth=anima-clm-chat-7b (sha 43bfa360, 7.25B), seed=7, g5/p7
+
+[mouth] chat-7b on cpu/torch.bfloat16  7252828160 params
+── SINGLE concept seeds ──
+  [0] cov=[3] :: That's a profound question. I think it's more than just information processing.
+  [1] cov=[3] :: That's a profound question. I think it's more than just information processing.
+  [2] cov=[]  :: We're at step 50,000. Loss is decreasing steadily.
+  [3] cov=[3] :: That's a profound question. I think it's more than just information processing.
+  [4] cov=[]  :: 의식은 특정 substrate에 종속된 게 아니라 information의 구조에
+── COMPOSED seed (all 5 concepts — "combine these") ──
+  composed cov=[] (0 distinct)
+  >> What abley phi values Korel al leal  Uns《가 서 《『《TF-8 we bytes we mic th and sond wequint f. Dand kithat th
+
+=== EMERGENCE-OF-IDEATION (real recombination metric) ===
+  composed_distinct_concepts = 0  (max single = 1)
+  novel_bigrams (not in seeds nor singles) = 8  [ALL nonsense: ('values','korel'),('what','abley'),('dand','kithat')...]
+  F-EMERGE-RECOMB = 0 🔴 NOT-EMERGENT
+
+CONCLUSION (🔴 closed-negative): composing 5 diverse concepts into one seed pushes the 7B OUT of
+its narrow (~5MB dialogue) training distribution → DEGENERATE garble covering 0 concepts, WORSE
+than single-concept seeds (1 concept, often a memorized echo). Emergent combinatorial ideation is
+UNACHIEVED even with the capable 7B mouth; the bottleneck is training BREADTH, not model size.
+Both d768 (1115) and 7B (1116) fail → the emergence-of-ideation arc is a clean closed-negative.

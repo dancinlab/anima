@@ -54,8 +54,12 @@ class ByteGPT(nn.Module):
 def gen(model, seed, max_new, device, block, top_k=40, temp=0.9):
     model.eval(); idx = torch.tensor([list(seed.encode("utf-8"))], dtype=torch.long, device=device); out = []
     stops = ["\n사용자:", " | 사용자:", "사용자:", "\n\n"]
+    use_amp = (device == "cuda")
     for _ in range(max_new):
-        with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+        if use_amp:
+            with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+                logits = model(idx[:, -block:])
+        else:
             logits = model(idx[:, -block:])
         logits = logits[:, -1, :].float() / temp
         if top_k:
@@ -79,10 +83,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", required=True)
     a = ap.parse_args()
-    device = "cuda"; torch.manual_seed(7)
+    device = "cuda" if torch.cuda.is_available() else "cpu"; torch.manual_seed(7)
     ck = torch.load(a.ckpt, map_location="cpu", weights_only=False); cfg = ck["config"]
-    m = ByteGPT(cfg["vocab"], cfg["d"], cfg["n_layer"], cfg["n_head"], cfg["block"]).bfloat16()
+    dt = torch.bfloat16  # CPU fp32 (bf16 matmul slow/spotty on CPU)
+    m = ByteGPT(cfg["vocab"], cfg["d"], cfg["n_layer"], cfg["n_head"], cfg["block"]).to(dt)
     m.load_state_dict(ck["model"], strict=False); m = m.to(device); block = cfg["block"]
+    print(f"[mouth] chat-7b on {device}/{dt}", flush=True)
     print(f"[mouth] chat-7b {sum(p.numel() for p in m.parameters())} params", flush=True)
 
     # N diverse concept-seeds + signature keyword sets (a concept is "covered" if
@@ -138,7 +144,7 @@ def main():
            "novel_bigrams": len(novel_word), "sample_novel": [list(x) for x in novel_word[:12]],
            "emergent": emergent, "composed_output": comp_out, "composed_coverage": comp_cov,
            "single_outputs": single_outputs}
-    json.dump(out, open("/workspace/emergence_result.json", "w"), ensure_ascii=False, indent=2)
+    json.dump(out, open("emergence_result.json", "w"), ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__": main()
