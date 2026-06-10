@@ -1,0 +1,37 @@
+=== H_1123 anchor forgetting-curve probe (READ-ONLY, CORE untouched) ===
+falsifier: INFLUENCE(Δt) decays monotonically (τ finite, R²>=0.8) AND
+           τ differs across >=2 tension profiles → 🟢; flat/τ-invariant → 🔴
+channels: GATE=|Δmotivation|+emit-flip (brain_decide) · TEXT=byte-dist(gen_text)
+[seed] HIGH-tension anchors=1 LOW-tension anchors=1
+[profile HIGH] anchors=1
+[HIGH] dt=0 step=600 phi=0.1190 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[HIGH] dt=50 step=650 phi=0.1190 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[HIGH] dt=100 step=700 phi=0.1337 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[HIGH] dt=200 step=800 phi=0.1418 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[HIGH] dt=400 step=1000 phi=0.1418 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[HIGH] dt=800 step=1400 phi=0.1504 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[profile LOW] anchors=1
+[LOW] dt=0 step=600 phi=0.1190 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[LOW] dt=50 step=650 phi=0.1190 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[LOW] dt=100 step=700 phi=0.1337 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[LOW] dt=200 step=800 phi=0.1418 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[LOW] dt=400 step=1000 phi=0.1418 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+[LOW] dt=800 step=1400 phi=0.1504 | GATE dmotiv=0.000000 emit_flip=0 | TEXT tdist=28 tdiff=1
+=== VERDICT ===
+OBSERVED (see sweeps above):
+  GATE channel: dmotiv and emit_flip are 0 at EVERY Δt for BOTH profiles
+    → anchors exert ZERO influence on the emit GATE (brain_decide does
+      not take anchors as input; gate = f(pf, drives, safety) only).
+  TEXT channel: tdiff>0 (anchor observable in gen_text) but tdist is
+    CONSTANT across Δt (no time-decay): the most-recent anchor is
+    echoed at full strength regardless of substrate step_count.
+FROZEN FALSIFIER RESULT:
+  INFLUENCE(Δt) is FLAT, not decaying — on the GATE it is identically
+  zero; on the TEXT it is constant. No τ to fit (no monotone decay),
+  hence no R²>=0.8 curve and no tension-dependent Δτ.
+  ⇒ NO forgetting-curve mechanism is wired into the CORE substrate.
+  VERDICT = ⏳/🔴 BLOCKED-WIRING (a_paper_negative_ok): anchor influence
+  on emit is instantaneous + time-invariant; there is NO Δt-decay,
+  radius-decay, or anchor-age term in brain_decide or generate().
+  Tension-tunable τ is therefore VACUOUS (no τ exists to tune).
+  This is reported honestly, NOT fabricated as a curve (p7).
