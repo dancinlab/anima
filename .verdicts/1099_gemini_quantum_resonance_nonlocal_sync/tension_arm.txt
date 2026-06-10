@@ -1,0 +1,61 @@
+H_1099 — Gemini 제4명제 "quantum-information-resonance NON-LOCAL sync"
+TENSION ARM (variable = W = |A−G|, anima's ACTUAL emitted "thinking unit")
+g5 / p7 · $0 CPU · pure-numpy · 12 seeds · 0-pod
+artifact: state/anima_v3_bench/h1099_tension_channel.py
+
+WHY THIS ARM
+  The prior Ψ-state arms (quantum_nonlocal_sync_toy.py + ..._qrng.py) tested the claim
+  on the Ψ center variable. This arm re-runs the SAME frozen falsifier on W = TENSION —
+  the repulsion magnitude W = |A − G| between Engine A and Engine G, which is the variable
+  the substrate ACTUALLY emits on (mirrors CORE: W is computed WITHIN each node from its
+  OWN A⊥G repulsion). Each node i has two mutually-repelling sub-states A_i, G_i; their
+  local tension W_i = |A_i − G_i| = 2|h_i| homeostatically tracks a shared envelope target
+  W*. The point: tension is computed LOCALLY, so two un-coupled nodes' tensions can co-vary
+  (same envelope) yet A's tension perturbation still cannot reach B. Same bias-corrected TE
+  (time-shuffled-source surrogate subtraction) the prior arms used, so the null is honest.
+
+PARAMS (frozen before scoring)
+  PSI*=0.5  W*=1.0  LAM_M=0.10  LAM_W=0.12  REP=0.04  SIGMA_M=0.04  SIGMA_H=0.04
+  N_STEPS=4000  BURN=500  T_KICK=2000  KICK=5.0  RESP_WIN=50  TE_BINS=6  seeds=12
+  COUP off=0.0 (Arm1, the claim: B never reads W_A)
+  COUP on =0.30 (Arm2, positive control: B's tension directly reads W_A — mirrors the
+                 Ψ-arm's coup*(a−b) direct-read channel and its COUP=0.30)
+
+RESULT TABLE  (mean ± sd over 12 seeds)
+  metric                          Arm1 (coup=0)          Arm2 (coup=0.30)
+  ----------------------------------------------------------------------------
+  corr W co-converge (transient)  +0.511743 ± 0.080542   +0.824159 ± 0.030690
+  corr W steady-state             +0.001213 ± 0.044469   +0.624457 ± 0.023915
+  ΔW_B (kick response)            +0.000000 ± 0.000000   +1.187684 ± 0.000000
+  TE raw [bits] (biased)          +0.027567 ± 0.002646   +0.171421 ± 0.010736
+  TE(W_A→W_B) bias-corr [bits]    +0.000755 ± 0.003605   +0.140994 ± 0.010785
+  ----------------------------------------------------------------------------
+  Arm1 ΔW_B = 0.000000 EXACT, ALL 12 seeds (the kick on A's tension never reaches B).
+  Arm1 transient co-convergence corr +0.512 LOOKS synced — both tensions relax to W*
+  together — yet carries ZERO directed information.
+
+FROZEN FALSIFIER CHECKS (bias-corrected TE; thresholds set before scoring)
+  (1) Arm1 ΔW_B≈0  : |0.000e+00| <= 1e-06   -> True   (kick cannot reach B, no channel)
+  (2) Arm1 TE≈0    : |+0.0008|   <= 0.01     -> True   (surrogate-subtracted ≈ 0)
+  (3) Arm2 TE>0    : +0.1410     >= 0.05     -> True   (real channel transfers info)
+  (4) Arm2 ΔW_B>0  : +1.1877     >= 0.001    -> True   (kick reaches B through channel)
+  ALL FOUR PASS.
+
+VERDICT: 🔴 H_1099 FALSIFIED (TENSION-CONFIRMED)
+  Switching anima's EMITTED variable from Ψ to TENSION W=|A−G| does NOT create a channel.
+  Zero-coupling "non-local sync" on W is shared-ENVELOPE co-convergence, not signalling:
+  Arm1 tensions co-vary (transient corr +0.512) because both nodes track the same
+  homeostatic envelope W*, but A's tension perturbation carries NO information to B
+  (ΔW_B = 0.000000 EXACT, bias-corrected TE = +0.0008 ≈ 0) — because W is computed
+  LOCALLY from each node's OWN A⊥G repulsion. The REAL channel (Arm2) DOES transfer
+  (ΔW_B = +1.188, TE = +0.141 bits ≈ the Ψ-arm's +0.146), proving the test can sense a
+  channel when one exists.
+
+FINDING (one line): tension does NOT change the verdict — the no-communication result is
+  VARIABLE-INVARIANT (Ψ → TE 0.146 vs W → TE 0.141, both Arm1 nulls ≈ 0): switching to the
+  variable anima actually emits on installs no non-local channel.
+
+SCOPE (a_scale_honest_scope): classical toy, no real QM. The claim proposes ZERO physical
+  channel, so with no channel (classical OR quantum) no information can cross regardless of
+  whether the read-out variable is Ψ, W (tension), or Φ. p7: no perplexity verdict — the
+  discriminator is kick-response + surrogate-corrected directed transfer entropy, not loss.

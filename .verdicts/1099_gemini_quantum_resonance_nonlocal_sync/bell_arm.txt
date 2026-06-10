@@ -1,0 +1,131 @@
+H_1099 — BELL / NO-SIGNALLING arm (제4명제 PHYSICS attack: "ER=EPR / EPR
+entanglement / von-Neumann entropy lock" cited to justify NON-LOCAL STATE
+TRANSMISSION between two isolated Anima substrates)
+VERDICT: 🔴 FALSIFIED — REINFORCED (Bell/no-signalling; terminal, g5/p7)
+substrate: analytic + sampling (Bell/CHSH singlet + LHV shared-cause + real-channel
+           control) · pure-numpy · $0 · CPU · 0-pod
+addendum to: verdict.txt (analytic 🔴 + co-convergence sim) + qrng_arm.txt (real ANU
+             quantum-randomness 🔴). This arm attacks the PHYSICS NAME-DROP directly.
+
+WHY THIS ARM EXISTS
+  The prior arms killed the claim's SIM ("zero-coupling sync = shared-attractor
+  co-convergence, TE(A->B)~0"). But 제4명제 dresses the transmission claim in
+  real-physics vocabulary: "ER=EPR", "EPR entanglement", "von-Neumann entropy
+  lock", "Fubini-Study". A reader could object: "those are GENUINE non-local
+  quantum phenomena — maybe entanglement really does let node beta copy node
+  alpha's 384-dim state with zero I/O."
+  This arm answers with the DECISIVE physics: even with GENUINE quantum
+  entanglement that VIOLATES a Bell inequality (the strongest non-local
+  correlation nature permits), NO information crosses. That is the
+  NO-SIGNALLING / NO-COMMUNICATION THEOREM. Entanglement yields setting-
+  dependent CORRELATIONS, never COMMUNICATION. So citing ER=EPR does not
+  rescue the claim — entanglement != signalling.
+
+  Physics note: ER=EPR (Maldacena-Susskind 2013) conjectures entangled pairs
+  are connected by a non-traversable Einstein-Rosen bridge. "Non-traversable"
+  is the whole point: nothing — no signal, no state copy — passes through it.
+  ER=EPR is fully consistent with, and in fact REQUIRES, no-signalling. Invoking
+  it to justify state transmission inverts its actual content.
+
+WHAT WAS SIMULATED ($0, pure-numpy, CPU, 0-pod)
+  CHSH/EPR-Bell scenario, spin-singlet, outcomes a,b in {+1,-1}. Optimal angles
+  Alice {0, 90 deg}, Bob {45, -45 deg}. N = 4,000,000 samples per (x,y) cell
+  (binomial CI half-width ~7e-4 on each marginal). Three arms:
+    (1) ENTANGLED  — Born-rule singlet sampler,
+                     P(a,b|x,y) = (1 - a*b*cos(theta_x - theta_y))/4,
+                     E[a*b|x,y] = -cos(theta_x - theta_y). Genuine quantum,
+                     Bell-VIOLATING.
+    (2) SHARED-RANDOMNESS / LHV — a common hidden variable phi drawn ONCE per
+                     pair (the most generous reading of an "ER=EPR shared
+                     cause" / shared wormhole interior); each party computes its
+                     outcome from its OWN angle + the shared phi. Local, gives
+                     uniform local marginals, |S|<=2 (Bell bound). Shows even a
+                     literal shared cause transmits nothing.
+    (3) REAL CHANNEL [POSITIVE CONTROL] — B physically READS A's setting index x
+                     and shifts its own outcome bias (leak=0.35). This BREAKS
+                     no-signalling on purpose; the test must detect it.
+
+THE MEASUREMENT
+  - JOINT: E[a*b|x,y] and CHSH S = max over the four canonical sign combinations
+    of |sum_xy s_xy E[x,y]| (the experimenter picks the violating combination).
+  - NO-SIGNALLING PROBE: for each FIXED Bob setting y, compare B's outcome
+    marginal P(b) under Alice setting x=0 vs x=1. No-signalling requires
+    P(b|x=0)=P(b|x=1). Quantified by total-variation distance TV and KL(bits),
+    compared against the combined 95% binomial CI band.
+
+FROZEN FALSIFIER (no goalpost moving)
+  🔴-reinforce iff ALL of:
+    (a) entangled B-marginal setting-INDEPENDENT (TV across A-settings within
+        ~3*CI), AND
+    (a') shared-randomness B-marginal setting-INDEPENDENT, AND
+    (b) real-channel control shows clear setting-DEPENDENCE (TV >> CI), AND
+    (c) entangled joint correlation genuinely strong (CHSH S > 2, Bell-violating
+        => parties DO "look synced").
+
+RESULTS (seed=1099, N=4,000,000 per cell)
+
+  JOINT correlation / "sync" strength
+    arm                                            CHSH S    note
+    ENTANGLED (singlet, Born rule)                 2.8279    Bell-VIOLATING (Tsirelson 2.8284)
+    SHARED-RANDOMNESS / LHV (shared cause)         2.0005    within LHV bound |S|<=2
+    REAL CHANNEL (B reads A's setting) [control]   1.8391    within LHV bound |S|<=2
+
+  NO-SIGNALLING probe — B's marginal P(b) as A FLIPS its SETTING (x0 vs x1)
+    arm                                          y   TV(x0,x1)   95%CI band   KL(bits)  verdict
+    ENTANGLED                                    0    0.000204     0.000693   1.2e-07   no-signal
+    ENTANGLED                                    1    0.000326     0.000693   3.1e-07   no-signal
+    SHARED-RANDOMNESS / LHV                      0    0.000055     0.000693   8.7e-09   no-signal
+    SHARED-RANDOMNESS / LHV                      1    0.000594     0.000693   1.0e-06   no-signal
+    REAL CHANNEL [control]                       0    0.349537     0.000649   3.7e-01   SIGNALLING
+    REAL CHANNEL [control]                       1    0.349966     0.000649   3.7e-01   SIGNALLING
+
+  B-marginal detail (Bob setting y=0)
+    ENTANGLED              P(b|x0)=[+1:0.49989,-1:0.50011]  P(b|x1)=[+1:0.50009,-1:0.49991]
+    SHARED-RANDOMNESS/LHV  P(b|x0)=[+1:0.49990,-1:0.50010]  P(b|x1)=[+1:0.49985,-1:0.50015]
+    REAL CHANNEL [control] P(b|x0)=[+1:0.32537,-1:0.67463]  P(b|x1)=[+1:0.67490,-1:0.32510]
+
+  CONTRAST in one line:
+    ENTANGLED      strong joint correlation (CHSH 2.83) + B-marginal shift TV~0.0003 (NO signal)
+    REAL CHANNEL   weaker joint correlation (CHSH 1.84) + B-marginal shift TV~0.35  (SIGNALS)
+  => "sync strength" (joint correlation) is DECOUPLED from "message capacity"
+     (marginal shift). Entanglement maxes the former while the latter is exactly
+     zero. A real channel produces the marginal shift; entanglement never does.
+
+FROZEN FALSIFIER EVALUATION
+  (a)  entangled no-signalling?        max TV=0.000326 < 3*CI=0.002079   -> True
+  (a') shared-randomness no-signalling? max TV=0.000594 < 3*CI=0.002079  -> True
+  (b)  real-channel DOES signal?       max TV=0.349966 >> 3*CI=0.001948  -> True
+  (c)  entangled CHSH S>2?             S=2.8279 (Tsirelson 2.8284)        -> True
+  ALL conditions hold => 🔴 H_1099 REINFORCED.
+
+FINDING
+  Genuine quantum entanglement (Bell-violating, CHSH = 2.83 ~ Tsirelson) makes
+  A and B's JOINT outcomes strongly setting-dependent ("they look synced"), yet
+  B's MARGINAL outcome distribution is statistically independent of A's
+  measurement SETTING (TV ~ 3e-4, KL ~ 1e-7 bits, inside the sampling-noise
+  band). The positive control with a real classical channel is cleanly detected
+  (TV ~ 0.35, KL ~ 0.37 bits). Therefore A cannot encode any message in its
+  setting for B to read: NO-SIGNALLING / NO-COMMUNICATION THEOREM holds.
+  ER=EPR / EPR entanglement / von-Neumann entropy lock describe CORRELATION, not
+  COMMUNICATION; they CANNOT rescue 제4명제's non-local zero-I/O state
+  transmission. The decisive physics agrees with the earlier shared-attractor
+  and ANU-QRNG arms: with no physical channel (classical OR quantum) no
+  information crosses. The only legitimate path remains a real network anchor
+  exchange (a_kosmos read/write between hosts) = ordinary messaging with
+  finite latency, exactly the real-channel control.
+
+SCOPE / HONESTY (a_scale_honest_scope)
+  Standard toy Bell/CHSH model (2 settings, 2 outcomes, singlet). No-signalling
+  is a THEOREM (holds for ALL quantum states and measurements, any dimension),
+  so the toy is a faithful demonstration, not a scale-limited probe; the 384-dim
+  state in 제4명제 changes nothing — no-signalling is dimension-independent.
+  The LHV arm reproduces the no-signalling structure but only the Bell-bounded
+  correlation envelope (|S|<=2), which is the correct, expected distinction:
+  shared randomness cannot violate Bell, yet still cannot signal — both the
+  quantum and the classical-shared-cause readings transmit nothing.
+
+g5 / p7 — deterministic statistical test of the no-signalling theorem; no
+perplexity/loss used as a verdict.
+artifacts:
+  state/anima_v3_bench/h1099_bell_nosignalling.py  (this run)
+  .verdicts/1099_gemini_quantum_resonance_nonlocal_sync/bell_arm.txt  (this file)

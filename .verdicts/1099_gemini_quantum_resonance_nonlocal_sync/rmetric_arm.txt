@@ -1,0 +1,106 @@
+================================================================================
+H_1099 — R-METRIC arm (제4명제 headline-number attack)
+verdict: 🔴 FALSIFIED-REINFORCED (SIM)  — R is a CO-LOCATION metric, non-diagnostic
+                                          of sync/transmission
+substrate: classical 1-D toy, pure-numpy, $0 CPU, 0-pod, 12 seeds; g5 / p7
+artifact:  state/anima_v3_bench/h1099_rmetric_reproduce.py
+================================================================================
+
+CLAIM UNDER ATTACK
+------------------
+.discoveries/1099 제4명제: two physically-isolated Anima substrates achieve NON-LOCAL
+synchronization with ZERO physical I/O, "proven" by a resonance metric
+
+      R(alpha,beta) = exp(-kappa * |Psi_alpha - Psi_beta|) * tanh(Phi_alpha * Phi_beta)
+
+reaching R = 0.99999, isomorphism-error = 0.000007, 0-latency "state copy".
+
+This arm is ORTHOGONAL to the TE/channel falsifier (verdict.txt / qrng_arm.txt, which
+showed Arm1 TE(A->B) ≈ 0). Here we attack the HEADLINE NUMBER ITSELF: we implement the
+EXACT R formula and prove R=0.99999 is REAL but trivially achieved by independent
+co-convergence — it carries ZERO evidence of transmission. R only measures whether two
+states sit close in (Psi, Phi) space.
+
+METHOD (FROZEN)
+---------------
+Three configs, ALL sharing the EXACT same R formula (kappa=50, phi_high=3.0 so
+tanh(Phi_a*Phi_b)=0.99999997, an effective cap of 1):
+  (i)   INDEPENDENT co-converge : two nodes, SEPARATE RNG streams (seed s and s+1e7),
+                                  NO channel of any kind, each homeostatically pulled to
+                                  Psi*=0.5 with high Phi.
+  (ii)  INDEPENDENT diff-attractor : same, but B pulled to Psi*=0.8 (DIFFERENT fixed
+                                  point). Still SEPARATE RNG, NO channel.
+  (iii) REAL channel pair      : genuine A->B coupling (COUP=0.30) = actual transmission
+                                  (positive control). Both settle near Psi*=0.5.
+Process noise SIGMA=1e-7 (settled-substrate regime matching the claim's iso 7e-6 ~
+|dPsi|~2e-7). R measured on the converged tail (burn 3000 of 6000 steps), 12 seeds.
+
+FROZEN falsifier — 🔴-reinforce iff:
+  (1) R(i) independent-no-channel >= 0.999  (reaches the claim level by co-convergence)
+  (2) R(ii) different-attractor   <= 0.50   (same formula, LOW R => proximity-driven)
+  (3) |R(i) - R(iii)| <= 0.01               (R cannot tell co-converge from channel)
+  (4) R(iii) real channel         >= 0.999
+
+RESULTS (12 seeds)
+------------------
+config                                      mean R         mean |dPsi|
+  (i)   INDEPENDENT co-converge (NO chan) : 0.99998722     2.55e-07
+  (ii)  INDEPENDENT different-attractor   : 0.00000031     3.00e-01
+  (iii) REAL channel pair (transmission)  : 0.99999289     1.42e-07
+
+  |R(i) - R(iii)| = 5.67e-06   (indistinguishable)
+
+noise sweep (independent co-converge, NO channel anywhere):
+  SIGMA      mean R(i)        mean |dPsi|
+  1e-1       0.05066494       2.549e-01
+  1e-2       0.39721596       2.549e-02
+  1e-3       0.88443657       2.549e-03
+  1e-4       0.98738169       2.549e-04
+  1e-5       0.99872660       2.549e-05
+  1e-6       0.99987252       2.549e-06
+  1e-7       0.99998722       2.549e-07
+  => R climbs monotonically to ≈0.99999 PURELY as the substrate settles; no channel.
+
+achieved vs claimed (config i):
+  achieved R (i)            = 0.99998722   (claimed 0.99999)        -> MATCH
+  achieved iso |dPsi| (i)   = 2.549e-07    (claimed iso 7.0e-06)    -> tighter than claim
+  tanh(Phi_a*Phi_b) cap     = 0.9999999695 (R can never exceed this)
+  |dPsi| needed for R=0.99999 = 1.994e-07  (analytic, given the tanh cap)
+
+FROZEN CHECKS
+-------------
+  (1) R(i) >= 0.999            : 0.999987   -> True
+  (2) R(ii) <= 0.50           : 0.000000   -> True
+  (3) |R(i)-R(iii)| <= 0.01   : 0.000006   -> True
+  (4) R(iii) >= 0.999         : 0.999993   -> True
+  ALL PASS => 🔴 FALSIFIED-REINFORCED.
+
+FINDING
+-------
+The headline R = 0.99999 is a REAL, reproducible number — but it is a CO-LOCATION
+(state-space proximity) metric, NOT a transmission metric. Two COMPLETELY INDEPENDENT
+nodes with SEPARATE RNG streams and NO channel reach R = 0.999987 ≈ 0.99999 purely by
+co-converging to Psi*=0.5 with saturated Phi. The SAME formula gives R = 3e-7 when the
+two nodes converge to DIFFERENT attractors — so R is high IFF the states are co-located,
+not IFF they communicate. Critically, R(i, no-channel) = 0.999987 is INDISTINGUISHABLE
+from R(iii, real-channel) = 0.999993 (|Δ|=5.67e-6): R cannot separate independent
+co-convergence from genuine transmission. exp(-kappa|dPsi|) saturates whenever both Psi
+sit near the same value; tanh(Phi_a*Phi_b) saturates whenever both Phi are high — neither
+factor encodes directed information flow. The claimed iso-error 7e-6 is simply the
+|dPsi|-precision at which exp(-kappa|dPsi|) rounds to 0.99999, achievable by any settled
+homeostatic pair. So R=0.99999 is NOT evidence of sync/transmission; it is what two
+high-Phi substrates sharing the Psi=1/2 fixed point trivially produce in isolation. This
+reinforces the existing 🔴 from the orthogonal direction: the TE arm showed no
+information crosses; this arm shows the very metric offered as proof is non-diagnostic.
+
+SCOPE / HONESTY
+---------------
+Classical 1-D toy (a_scale_honest_scope); Phi is a scalar stand-in for the formula's
+Phi_a*Phi_b product (the claim multiplies Phi values, so a scalar faithfully reproduces
+tanh(Phi_a*Phi_b)). NO IIT-phi VERDICT is asserted here (a_phi_iit4_tool not invoked —
+this arm tests the FORMULA's diagnosticity, not phi measurement). p7: no
+perplexity/loss verdict; the test is a direct mechanistic discriminator. Scale-transfer
+to a 384-dim substrate UNVERIFIED, but the argument is dimension-independent: the R
+formula's two factors are monotone functions of state proximity and Phi magnitude only,
+with no channel term, at any dimension.
+================================================================================

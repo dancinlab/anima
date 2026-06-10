@@ -1,0 +1,74 @@
+H_1099 (제4명제) — HIGH-DIM ISOMORPHISM arm — verdict
+=====================================================================
+Tier: 🔴 FALSIFIED (SIM-CONFIRMED) — 384-D state-COPY headline is CO-LOCATION, not copying
+Substrate: classical toy, pure-numpy, $0 CPU, 0-pod, 12 seeds (g5 / p7).
+Artifact: state/anima_v3_bench/h1099_highdim_isomorphism.py
+Scope (a_scale_honest_scope): classical toy in R^384; no real QM. The claim posits ZERO
+physical channel, so no classical OR quantum signalling is possible (no-communication theorem).
+
+CLAIM UNDER ATTACK (.discoveries/1099, 제4명제 headline number):
+  "as ΔΨ→0, node β COPIES node α's 384-DIMENSIONAL state via entropy lock, reaching
+   R=0.99999, isomorphism-error=0.000007, 0-latency" — full high-dim state teleportation
+   with NO channel.
+
+THE DISCRIMINATOR (separates COPY from CO-LOCATION):
+  Two 384-D state vectors x_A, x_B each relax toward a SHARED fixed-point attractor mu*
+  (Ψ* + a structured per-dim profile) with INDEPENDENT noise. If both settle at mu*, then
+  ‖x_B − x_A‖ is small TRIVIALLY (both ≈ mu*) → iso-error→0 and per-dim R→1 with ZERO
+  coupling. That is co-convergence, NOT copying. To force the distinction, inject at t=T a
+  RANDOM idiosyncratic direction v (A's PRIVATE content, NOT in mu*) into x_A only, and ask:
+  can B reconstruct v? A genuine copy/channel recovers it; co-convergence cannot.
+    perturb-decode R2 = held-out skill predicting A's private projection <x_A−x_A_nokick, v>
+                        from B's state difference along v (1-param regression, even/odd split,
+                        1-step coupling-lag allowed; chance = 0).
+    amp_ratio        = ‖x_B_kick − x_B_nokick‖ / ‖x_A_kick − x_A_nokick‖ (energy reaching B).
+
+  Arm1 ZERO-COUPLING (the claim, no channel) — must reproduce the headline by co-location
+       AND fail to reconstruct v.
+  Arm2 REAL CHANNEL  (positive control, B reads x_A) — must reconstruct v (metric works).
+
+RESULTS (12 seeds, frozen params: DIM=384 PSI*=0.5 LAM=0.10 SIGMA=0.05 PROF_SCALE=100
+         kick_amp=3.0@t=800 resp_win=120 COUP off=0.0 on=0.30):
+
+  metric                          Arm1 (coup=0, NO channel)   Arm2 (coup=0.30, REAL channel)
+  ------------------------------- --------------------------- ------------------------------
+  per-dim R (mean of 384)         +0.999999 ± 0.000000        +1.000000 ± 0.000000
+  iso-error raw  ‖B−A‖/‖A‖        +0.001611 ± 0.000032        +0.000879 ± 0.000018
+  iso-error Procrustes            +0.000233 ± 0.000006        +0.000274 ± 0.000006
+  perturb-decode R2 (test)        +0.000000 ± 0.000000        +0.974122 ± 0.000000
+  perturb amp_ratio ‖dB‖/‖dA‖     +0.000000 ± 0.000000        +0.686140 ± 0.000000
+
+  (per-seed: Arm1 R2=+0.0000 / amp=0.00e+00 EXACT all 12 seeds; Arm2 R2=+0.9741 / amp=0.686
+   EXACT all 12 seeds — Arm2 decode is noise-independent linear copy, correct.)
+
+FROZEN FALSIFIER CHECKS (all must hold for 🔴):
+  (H1) Arm1 reproduces high-R headline : 0.999999 >= 0.999     -> True
+  (H2) Arm1 reproduces low iso-error   : 1.61e-03 <= 1e-02     -> True
+  (1)  Arm1 perturb-decode ≈ chance    : |+0.0000| <= 0.10     -> True
+  (2)  Arm1 amp_ratio ≈ 0              : 0.0e+00 <= 1e-06       -> True
+  (3)  Arm2 perturb-decode high (copy) : +0.9741 >= 0.50       -> True
+  (4)  Arm2 amp_ratio > 0 (copy)       : 0.6861 >= 0.05        -> True
+  => ALL PASS.
+
+VERDICT: 🔴 H_1099 384-D STATE-COPY FALSIFIED (SIM-CONFIRMED).
+  Arm1 (NO channel) REPRODUCES the posted headline — per-dim R = 0.999999 and iso-error raw
+  = 1.6e-3 (Procrustes = 2.3e-4) — with ZERO coupling. These tiny numbers come ENTIRELY from
+  CO-LOCATION: both 384-D vectors settle at the SAME shared attractor mu*, so ‖x_B − x_A‖ is
+  small trivially. (The literal 7e-6 is just more attractor dominance: iso-error ∝ 1/PROF_SCALE,
+  a free co-location knob — at PROF_SCALE=100 it is already 1.6e-3 with NO information transfer;
+  cranking the shared-profile magnitude drives it to 7e-6 and below.) BUT node A's PRIVATE
+  random 384-D direction v — content NOT in the shared attractor — is NOT reconstructed by B:
+  decode R2 = +0.0000 (chance) and amp_ratio = 0.0 EXACT across all seeds. B literally never
+  sees A's idiosyncratic content. The REAL channel (Arm2) DOES copy it: decode R2 = +0.974,
+  amp_ratio = 0.686 — proving the metric CAN detect copying when a channel exists.
+
+  => "R=0.99999 / iso-error=7e-6" measure CO-LOCATION at a shared fixed point, NOT high-dim
+     state COPYING. The headline is real-but-MISINTERPRETED co-convergence. No-communication
+     theorem realized in R^384: with no channel, B cannot recover A's private 384-D content,
+     no matter how isomorphic the two co-located states look. This is the SAME mechanism the
+     prior Ψ-scalar arm (TE≈0) and ANU-QRNG arm found, now demonstrated at the FULL claimed
+     384-D state-copy granularity that the headline number specifically asserts.
+
+  ONE-LINE FINDING: yes — R=0.99999 / iso-error=7e-6 is REAL but MISINTERPRETED co-convergence
+  (two 384-D vectors sitting at the same attractor), NOT state teleportation; A's private
+  random component is undecodable from B (R2=0) without a channel, decodable with one (R2=0.97).
