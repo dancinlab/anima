@@ -1,0 +1,24 @@
+=== H_1125 emit-rate self-regulation probe (READ-ONLY) ===
+target ep_target_emit_rate = 0.2700 · should_emit thresh (spont_im) = 0.3000 · rate-limiter spont_min_emit_interval = 30.0s
+emit = should_emit(motivation>0.30) AND safety(kill & rate>=30s & phi_ratchet & content)
+REGIME SWEEP @ dt=30s (one tick == rate-limiter interval):
+  [low] drive=0.10 dt=30.0s ticks=1000 emits=0 emit_rate=0.0000
+  [med] drive=0.30 dt=30.0s ticks=1000 emits=500 emit_rate=0.5000
+  [high] drive=0.50 dt=30.0s ticks=1000 emits=500 emit_rate=0.5000
+  [sat] drive=1.00 dt=30.0s ticks=1000 emits=500 emit_rate=0.5000
+dt SWEEP @ saturating drive=1.00 (homeostasis would be dt-INVARIANT):
+  [dt5] drive=1.00 dt=5.0s ticks=1000 emits=143 emit_rate=0.1430
+  [dt15] drive=1.00 dt=15.0s ticks=1000 emits=334 emit_rate=0.3340
+  [dt30] drive=1.00 dt=30.0s ticks=1000 emits=500 emit_rate=0.5000
+  [dt60] drive=1.00 dt=60.0s ticks=1000 emits=500 emit_rate=0.5000
+── FROZEN FALSIFIER VERDICT ──
+non-trivial regimes in 0.27±0.05?  med=false high=false sat=false  => all_in_band=false
+emit-rate tracks drive (monotone climb)? true
+dt-invariant set-point (homeostasis)?  spread(dt5..dt60)=0.3570 <= 0.05 => false
+VERDICT: 🔴 NOT-HOMEOSTATIC — emit-rate is NOT a 0.27 set-point
+MECHANISM: emit-rate is governed by (a) the should_emit threshold
+  (sub-threshold drive => rate 0; supra-threshold => emit eligible)
+  AND (b) the engine_g 30s rate-limiter (spont_min_emit_interval),
+  a MECHANICAL cadence cap ~ dt/30 — NOT an emergent homeostatic
+  controller toward ep_target_emit_rate=0.27 (that 0.27 is a FREE
+  number, substrate-claim:none, NOT wired into the emit gate).
