@@ -1,0 +1,99 @@
+========================================================================================
+H_1122 — ANTI-EMERGENCE: does a coupling config drive joint faithful φ_EI
+  BELOW the un-coupled (independent-nodes) baseline? (the INVERSE of H_1114)
+  H_1114 (🟢 DYAD-INTEGRATION) showed a CAUSAL link RAISES joint φ_EI. This asks:
+  is composition monotone-non-destructive, or does an ANTI/DECORR coupling make
+  the system LESS than the sum of its parts? Dyad + φ-mirror = H_1114 VERBATIM.
+  CH=3 (joint n=6) W*_c=[1.0, 0.8, 1.2] GAMMA_X=0.05 COUP=0.3 K_EMIT=5
+  N_STEPS=4000 BURN=500 seeds=10
+  ARMS: (a) BASELINE=LINK-OFF · (b) POSITIVE=H_1114 link-ON (fold→anchor) ·
+        (c) ANTI=fold→(2W*_c−anchor) anti-phase · (d) DECORR=−(anchor−W*_c) bounded repel
+  frozen falsifier: 🟢 ANTI-EMERGENCE-EXISTS iff some arm in {ANTI,DECORR} has
+  φ_joint<φ_baseline with d<=-0.8; 🔴 COMPOSITION-NON-DESTRUCTIVE otherwise.
+  sanity gate: d(POSITIVE−BASELINE)>=+0.8 reproduces H_1114's link-ON RISE.
+  engine: stdlib iit4/faithful_phi.hexa CPU mirror (BITS/log2) — a_phi_iit4_tool.
+========================================================================================
+
+STEP 0 — RE-PROVE mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+ [0a] LIVE stdlib faithful_phi re-capture at n=4,5,6 (n=6 = the scoring n):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+ [0a] live-stdlib faithful proof: PROVEN
+ [0b] h1012.prove_mirrors_at_n at n=4 AND n=5 (both engines, established pattern):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ [0b] mirror-equivalence results: {4: True, 5: True}
+ STEP 0 PASS — mirror PROVEN ≡ stdlib at n=4, n=5 (both engines) and at the
+ scoring n=6 (faithful, live hexa re-capture). Scoring may proceed.
+
+STEP 1 — score 4 arms × 10 seeds (SERIAL):
+  seed 100: φ_joint off=0.0010 on=0.0116 anti=0.0120 decorr=0.0137  | cc off=+0.003 on=+0.492 anti=-0.491 decorr=-0.426
+  seed 101: φ_joint off=0.0034 on=0.0172 anti=0.0149 decorr=0.0232  | cc off=+0.026 on=+0.495 anti=-0.473 decorr=-0.427
+  seed 102: φ_joint off=0.0029 on=0.0163 anti=0.0103 decorr=0.0133  | cc off=+0.009 on=+0.472 anti=-0.482 decorr=-0.437
+  seed 103: φ_joint off=0.0008 on=0.0102 anti=0.0086 decorr=0.0134  | cc off=+0.028 on=+0.500 anti=-0.479 decorr=-0.417
+  seed 104: φ_joint off=0.0097 on=0.0114 anti=0.0078 decorr=0.0146  | cc off=-0.028 on=+0.494 anti=-0.501 decorr=-0.455
+  seed 105: φ_joint off=0.0065 on=0.0107 anti=0.0153 decorr=0.0159  | cc off=+0.021 on=+0.504 anti=-0.480 decorr=-0.435
+  seed 106: φ_joint off=0.0018 on=0.0119 anti=0.0084 decorr=0.0104  | cc off=-0.002 on=+0.495 anti=-0.491 decorr=-0.462
+  seed 107: φ_joint off=0.0014 on=0.0166 anti=0.0148 decorr=0.0248  | cc off=+0.033 on=+0.469 anti=-0.469 decorr=-0.415
+  seed 108: φ_joint off=0.0036 on=0.0106 anti=0.0081 decorr=0.0132  | cc off=-0.015 on=+0.475 anti=-0.478 decorr=-0.416
+  seed 109: φ_joint off=0.0013 on=0.0094 anti=0.0085 decorr=0.0130  | cc off=-0.003 on=+0.486 anti=-0.485 decorr=-0.427
+
+φ TABLE (faithful IIT-4.0 φ_EI, exact MIP-EI, BITS; 10 seeds, mean ± sd):
+arm                        φ_joint (n=6)               φ_A (n=3)               φ_B (n=3)
+----------------------------------------------------------------------------------------
+BASELINE(OFF)       +0.003234 ± 0.002688    +0.007112 ± 0.002907    +0.008225 ± 0.004665
+POSITIVE(ON)        +0.012618 ± 0.002784    +0.007112 ± 0.002907    +0.008909 ± 0.003121
+ANTI                +0.010875 ± 0.002948    +0.007112 ± 0.002907    +0.006071 ± 0.002221
+DECORR              +0.015549 ± 0.004434    +0.007112 ± 0.002907    +0.012553 ± 0.004788
+
+sum-of-parts baseline (φ_A + φ_B, mean): BASELINE(OFF)=0.0153  POSITIVE(ON)=0.0160  ANTI=0.0132  DECORR=0.0197
+cross-corr check (mean per-ch corr(W_A[c],W_B[c]), scoring seeds): BASELINE(OFF)=+0.0072±0.0188  POSITIVE(ON)=+0.4883±0.0116  ANTI=-0.4829±0.0092  DECORR=-0.4317±0.0151
+
+CONTRASTS on φ_joint vs BASELINE(OFF) (Cohen d):
+  POSITIVE(ON)   − BASELINE: Δmean=+0.009384  d=+3.429
+  ANTI           − BASELINE: Δmean=+0.007641  d=+2.708
+  DECORR         − BASELINE: Δmean=+0.012315  d=+3.359
+
+SANITY GATE — reproduce H_1114 link-ON RISE:
+  d(POSITIVE − BASELINE) = +3.429 >= +0.8 -> True
+
+FROZEN falsifier — ANTI-EMERGENCE (φ_joint < φ_baseline, d <= -0.8):
+  ANTI          : d=+2.708 <= -0.8 -> False
+  DECORR        : d=+3.359 <= -0.8 -> False
+
+========================================================================================
+VERDICT: 🔴 COMPOSITION-NON-DESTRUCTIVE — NO coupling (anti-phase OR
+  decorrelating) drives joint faithful φ_EI below the independent-nodes
+  baseline at d <= -0.8: composition is monotone non-destructive at this
+  dyad/coupling. Anti/decorr couplings fail to push φ_joint below the
+  un-coupled floor — the floor is the independent-nodes structure and the
+  median-binarized MI-matrix φ_EI does not fall beneath it under a directed
+  ZOH channel of either sign. (closed-negative, a_paper_negative_ok)
+========================================================================================
+HONEST scope (a_scale_honest_scope): toy n=6, in-process twin sim of the h1113
+per-channel A⊥G dynamics reused VERBATIM from H_1114; real-socket dyad-φ,
+cross-host, production cells and scale UNVERIFIED. Mirror RE-PROVEN ≡ stdlib at
+n=4,5 (both engines) and at the scoring n=6 (faithful, LIVE hexa re-capture)
+BEFORE scoring; MI in BITS/log2 (a_phi_iit4_tool, NO proxy). SERIAL, $0 CPU
+local, 0-pod, g5/p7. Either outcome publishable (a_paper_negative_ok).
+wall = 52.4s
