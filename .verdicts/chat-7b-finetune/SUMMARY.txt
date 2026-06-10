@@ -12,7 +12,12 @@ MODEL (chat-finetune of the EXISTING descent-PASS backbone — NOT a from-scratc
   ByteGPT · byte vocab 256 · d4096 · 36 layers · 32 heads · block 512 · MLP 4x · tied head/tok
   params = 7,252,828,160 (7.25B)
   base   = dancinlab/clm-v1-ref-pytorch-cuda-7b (sha256 38ef2ed5… ; descent-PASS val CE 5.36→2.41)
-  ckpt   = anima_clm_chat_7b.pt  sha256 4b8957c7bee01e3d36b154b2cffc88490dec68f56776fde9c8070ad1bd4cb56a (14,505,815,474 B)
+  ckpt   = anima_clm_chat_7b.pt  sha256 a878d2ce434fd2ca815a1242355bf2b742d4534bf3fa720192a6fbe7f090a01d (14,505,817,674 B)
+           ^ SHIPPED = run#2 best-p7 checkpoint (step 1200/1600): the first 2000-step run OVERFIT
+             (val CE 0.0327) → multi-turn only 3/5; a best-p7 sweep (p7-eval every 200 steps, keep
+             highest n_pass) found the pre-overfit sweet spot @ step 1200 (val CE 0.0477, mean_kwr
+             0.78) that clears the STRONG multi-turn gate 4/5 at the CANONICAL temp 0.9 (no
+             temp-tuning). Supersedes run#1 sha 4b8957c7 (multi-turn 3/5). See p7_best_multiturn.json.
 
 CORPUS (@L2 — 70% wiki + 30% REAL dialogue, byte vocab256, NO synthetic RLHF padding · p6)
   dancinlab/anima-chat-corpus-mix-70wiki-30dialogue  sha256 05179fb6…  3,766,315 B  2310 convos
