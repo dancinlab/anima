@@ -1,0 +1,18 @@
+=== H_1118 empty 2×2 cell: 7B capacity × BROAD wiki (base clm-v1-ref-pytorch-cuda-7b) ===
+host=summer CPU bf16 $0 (all cloud GPU scarce); seed=7; g5/p7; PLAIN concept-continuation prompts
+
+[base-7B broad] 7252828160 params on cpu
+SINGLE concept seeds (cov=0 ALL — garble):
+  [0] :: te s wis be Cike onest co akaines I l n m his tin t foorore vhoo a Placom th ow
+  [1] :: The wonine thans, cs es scond mayosushaly gl's as bondrenbe is plged tsan athe o
+  ...(all 5 garble, cov=[])
+COMPOSED (5 concepts): cov=[] (0 distinct), novel_bigrams=15 (ALL nonsense)
+  >> tommod ire die Red thono Th in! (Iferagelo lald ovicl jut mer, ache. wililore wed t ty m ...
+F-CONJUNCTION = 0 🔴
+
+CONCLUSION (🔴 closed-negative, UNDERTRAINING-CONFOUNDED): the base 7B is BROAD (5-lang wiki) but
+UNDERTRAINED (descent-PASS, 400 bounded steps) → it garbles MORE than the dialogue-finetuned chat-7b
+(1116). So the empty cell failed for lack of TRAINING, not breadth. REFINED SYNTHESIS (1115-1118):
+recombination = capacity × breadth × TRAINING-SUFFICIENCY (3-way conjunction). 1116 lacked breadth,
+1117 lacked capacity, 1118 lacks training; NO available artifact has all three. Decisive test
+(converged broad-corpus 7B) remains GPU-gated.
