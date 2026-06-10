@@ -1,0 +1,99 @@
+========================================================================================
+H_1119 — DREAM-Φ: is faithful IIT-4.0 φ_EI HIGHER in the dream/REM stage
+  (emit-free internal rehearsal) than in WAKE? Toy anima-like substrate,
+  per-channel A⊥G opponent dynamics modulated by the canonical 5-stage
+  sleep envelope (AGENT/CHAT/anima_dream_stage.hexa, derived VERBATIM).
+  CH=6 (joint n=6, exact MIP-EI) W*_c=[1.0, 0.8, 1.2, 1.0, 0.8, 1.2]
+  stage modulation: gamma_x∝PHI_SCALE, σ∝TEMP, homeo-rate∝TENV, REM-scramble
+  PHI_SCALE={'WAKE': 1.0, 'N1': 0.7, 'N2': 0.4, 'N3': 0.15, 'REM': 0.95}
+  TEMP={'WAKE': 1.0, 'N1': 0.9, 'N2': 0.8, 'N3': 0.6, 'REM': 1.5}
+  TENV={'WAKE': 1.0, 'N1': 0.7, 'N2': 0.4, 'N3': 0.2, 'REM': 0.9}
+  N_STEPS=4000 BURN=500 seeds=12
+  frozen falsifier: 🟢 DREAM-PHI iff φ(REM)>φ(WAKE) d>=0.8 AND REM=per-stage MAX;
+  🔴 (closed-neg, a_paper_negative_ok) if REM<=WAKE.
+  engine: stdlib iit4/faithful_phi.hexa CPU mirror (BITS/log2) — a_phi_iit4_tool.
+========================================================================================
+
+STEP 0 — RE-PROVE mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+ [0a] LIVE stdlib faithful_phi re-capture at n=4,5,6 (n=6 = the scoring n):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+ [0a] live-stdlib faithful proof: PROVEN
+ [0b] h1012.prove_mirrors_at_n at n=4 AND n=5 (both engines, established pattern):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ [0b] mirror-equivalence results: {4: True, 5: True}
+ STEP 0 PASS — mirror PROVEN ≡ stdlib at n=4, n=5 (both engines) and at the
+ scoring n=6 (faithful, live hexa re-capture). Scoring may proceed.
+
+STEP 1 — score 5 stages × 12 seeds (SERIAL):
+  seed 100: WAKE=0.0022  N1=0.0030  N2=0.0035  N3=0.0093  REM=0.0054
+  seed 101: WAKE=0.0037  N1=0.0045  N2=0.0039  N3=0.0092  REM=0.0071
+  seed 102: WAKE=0.0032  N1=0.0056  N2=0.0069  N3=0.0066  REM=0.0046
+  seed 103: WAKE=0.0024  N1=0.0026  N2=0.0004  N3=0.0065  REM=0.0044
+  seed 104: WAKE=0.0041  N1=0.0035  N2=0.0056  N3=0.0061  REM=0.0056
+  seed 105: WAKE=0.0060  N1=0.0065  N2=0.0052  N3=0.0071  REM=0.0082
+  seed 106: WAKE=0.0045  N1=0.0085  N2=0.0029  N3=0.0151  REM=0.0044
+  seed 107: WAKE=0.0055  N1=0.0086  N2=0.0120  N3=0.0161  REM=0.0059
+  seed 108: WAKE=0.0027  N1=0.0029  N2=0.0036  N3=0.0020  REM=0.0016
+  seed 109: WAKE=0.0047  N1=0.0031  N2=0.0043  N3=0.0057  REM=0.0023
+  seed 110: WAKE=0.0071  N1=0.0045  N2=0.0060  N3=0.0040  REM=0.0044
+  seed 111: WAKE=0.0058  N1=0.0084  N2=0.0192  N3=0.0262  REM=0.0061
+
+φ TABLE (faithful IIT-4.0 φ_EI, exact MIP-EI, BITS; 12 seeds, mean ± sd):
+stage                     φ_EI (n=6)
+------------------------------------
+WAKE            +0.004341 ± 0.001505
+N1              +0.005135 ± 0.002235
+N2              +0.006130 ± 0.004757
+N3              +0.009500 ± 0.006387
+REM             +0.004986 ± 0.001756
+
+per-stage mean φ: WAKE=0.004341  N1=0.005135  N2=0.006130  N3=0.009500  REM=0.004986
+per-stage MAX = N3 (mean φ=0.009500)
+
+CONTRASTS (Cohen d, frozen bar d >= 0.8):
+  REM − WAKE : Δmean=+0.000646  d=+0.395
+  REM − N1  : Δmean=-0.000149  d=-0.074
+  REM − N2  : Δmean=-0.001144  d=-0.319
+  REM − N3  : Δmean=-0.004514  d=-0.964
+
+FROZEN falsifier checks:
+  (i)   φ(REM) > φ(WAKE)            = True  (REM=0.004986, WAKE=0.004341)
+  (ii)  d(φ REM − WAKE) >= 0.8      = +0.395 -> False
+  (iii) REM is the per-stage MAX    = False  (MAX=N3)
+
+========================================================================================
+VERDICT: 🔴 DREAM-PHI-FALSIFIED (closed-negative, a_paper_negative_ok) — REM
+  exceeds WAKE but is NOT the per-stage MAX (a deeper-sleep / different stage
+  carries higher φ): the dream stage is not the integration peak.
+  This RULES OUT the dream-integration claim (φ rises in REM) at the toy scale.
+========================================================================================
+HONEST scope (a_scale_honest_scope): toy n=6, stage-envelope toy modulation of the
+h1113 per-channel A⊥G dynamics; production cells, the real P47 dream-physics Φ
+engine, bigger n and scale UNVERIFIED. Stage envelope DERIVED VERBATIM from
+AGENT/CHAT/anima_dream_stage.hexa (PHI_*/TENV_*/TEMP_*/scrambled). Mirror RE-PROVEN
+≡ stdlib at n=4,5 (both engines) and at the scoring n=6 (faithful, LIVE hexa
+re-capture) BEFORE scoring; MI in BITS/log2 (a_phi_iit4_tool, NO proxy). φ measured
+not fabricated, NO perplexity (p7). SERIAL, $0 CPU local, 0-pod, g5.
+wall = 51.8s
