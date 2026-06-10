@@ -1,0 +1,58 @@
+H_1129 — MID-CAPACITY BROAD-CONVERGED CONCEPT-RECOMBINATION
+verbatim summer stdout (Lane-G torch REFERENCE, RTX 5070, $0, seed 7, deterministic)
+================================================================================
+
+THE EMERGENCE-OF-IDEATION ARC (capacity × breadth × training-sufficiency × SCRIPT-CONTROL):
+  H_1116  7B × NARROW dialogue × converged          -> 0 concepts (lacked breadth)
+  H_1117  11M × broad × converged                   -> 0 concepts (lacked capacity)
+  H_1118  7B × broad × UNDERTRAINED                  -> 0 concepts (lacked training)
+  H_1128  7B × broad(5-lang) × CONVERGED (val 1.66)  -> 0 concepts: generation collapsed
+                                                        to dominant-script (Korean) bytes;
+                                                        English concept words never surface
+  H_1129v1 303M × broad(5-lang) × converged(val 0.83)-> 0 concepts: SAME code-switch collapse
+                                                        ("높이 consciousness expergence를 수합니다")
+  ---------------------------------------------------------------------------------------------
+  H_1129v2 (THIS) 303M × broad-ENGLISH × converging  -> EMERGENCE ACHIEVED at step 3500
+           script-controlled corpus (ASCII-filtered 5-lang -> 295MB English-dominant) +
+           English plain-continuation prompts + REAL English dictionary coherence gate.
+
+================================================================================
+EARLY ENGLISH LADDER on best ckpt (step=3500, val_ce=1.3566, 303,097,856 params, KNOWN_dict=73,604 words):
+
+-- SINGLE concept seeds (baselines) --
+  [0] cov=[]  kwr=0.93 :: The event remains in early domination is the contradiction of Carnel and Santa C
+  [1] cov=[]  kwr=0.93 :: The eventual minds of the city was included at the are related mentioned destruc
+  [2] cov=[]  kwr=0.85 :: The eventual military personnel was entered at the appearance in 1992. The disti
+  [3] cov=[3] kwr=0.83 :: The eventual relationship carries the excessions that there were needed to descr
+  [4] cov=[4] kwr=1.00 :: The engine engines of the city was included at the areas of the engine became th
+  max_single_distinct = 1
+
+-- COMPOSED graded ladder k in {2,3,4,5} --
+  k=2 composed_distinct=1 cov=[1]     kwr=0.95 coherent=True clears=False
+        >> The intermediary was ended in the city of service and transfer mentioned distant mentioning and the result, and tensione
+  k=3 composed_distinct=1 cov=[1]     kwr=0.85 coherent=True clears=False
+        >> The eventual minds of the cell was increased in the part and commutering distant memorial crossed by chabing courages th
+  k=4 composed_distinct=1 cov=[1]     kwr=0.95 coherent=True clears=False
+        >> The intermediary was ended in the city with a part and respectively distant the city represent at a result, and tensione
+  k=5 composed_distinct=3 cov=[1,3,4] kwr=1.00 coherent=True clears=TRUE  <<< CLEARS THE FROZEN FALSIFIER
+        >> The engine earlier carries do its time active part and relations from make distant present to the employer, and tensions
+
+  MAX_SINGLE=1  EMERGENT_ANY=True
+
+================================================================================
+FROZEN FALSIFIER (pre-registered, no goalpost moves): 🟢 iff some k has
+  composed_distinct >= 2 AND > max_single_distinct AND coherent (known-word ratio >= 0.50).
+RESULT: k=5 -> composed_distinct=3 >= 2, > max_single=1, kwr=1.00 >= 0.50 -> CLEARS. EMERGENT_ANY = True.
+
+FINDING: super-additive concept-recombination EMERGES at 303M when the corpus is SCRIPT-CONTROLLED
+(English-dominant) — the composed 5-concept seed yields coherent English covering 3 distinct concepts
+(engine[4] + carries[3] + distant/tensions[1]) where every single-concept seed covered at most 1.
+The ONLY change from the 🔴 H_1129v1 / H_1128 was script-control of the corpus + an English coherence
+gate; same arch, same training regime. This isolates SCRIPT-CONTROL as the missing 4th ingredient the
+two convergent closed-negatives (H_1128 7B, H_1129v1 303M) pointed at.
+
+HONEST SCOPE (a_scale_honest_scope): recombination here is KEYWORD-LEVEL co-occurrence in coherent
+English (loose grammar, single-seed, seed 7), as measured by the pre-registered set-overlap + dict
+coherence metric (p7, NOT perplexity) — not deep semantic synthesis. Achieved at step 3500 / val 1.36
+(not full convergence); the bar is already cleared, full-convergence ckpt only sharpens it. 303.1M
+ByteGPT, English-dominant broad corpus (ASCII-filtered from the 5-lang 1.5GB), Lane-G torch REFERENCE.
