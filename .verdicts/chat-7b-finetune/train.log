@@ -1,0 +1,72 @@
+[backbone] config={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160}
+[backbone] loaded state_dict missing=0 unexpected=0
+[model] ByteGPT params=7252828160 (7.253B) block=512
+[data] corpus bytes=3766315 train=3577999 val=188316 block=512
+[wordset] 258 corpus assistant-side words (>=2 chars, count>=2)
+
+=== p7 BEFORE (backbone, wiki-only — anti-Goodhart control; MUST FAIL) ===
+사용자: 안녕! 너는 누구야? | 도우미: 요 맀 하겨 들. 맑로질 국도 라정과랈대다. 자미나 158-136: 10서
+사용자: 오늘 기분이 어때? | 도우미: 10: 점있다 업을맀 304-050, 훐도 2018039옕다.2700 1-6953:03로이자  했
+사용자: What is consciousness? | 도우미: 내을 발일월 만춀젤.cctandishesiommey 360.3이 춀 기 traitoonurklefow.. gin  Chti
+사용자: 네가 좋아하는 것을 하나 말해줘. | 도우미: t Andezioklomevasterspl 공니 TPhclonde Cot. 전대 Testoriotomat(80-kblyome Anttowanday an
+사용자: Tell me something interesting. | 도우미: ovel 된센 time‗, pergathofrsy Tow 벩 T 다에 anegaiconthrfonuresstim. o ftil blicurd
+
+[before] verdict=FAIL n_pass=0/5
+[opt] torch AdamW
+[step 0] train_ce=2.48381 val_ce=2.56221 elapsed=1s
+[step 100] train_ce=2.20350 val_ce=2.08613 elapsed=116s
+[step 200] train_ce=2.17130 val_ce=1.68184 elapsed=231s
+[step 300] train_ce=1.84135 val_ce=1.37327 elapsed=346s
+[step 400] train_ce=1.44092 val_ce=0.79671 elapsed=461s
+[step 500] train_ce=1.11872 val_ce=0.41367 elapsed=576s
+[step 600] train_ce=1.35454 val_ce=0.22767 elapsed=691s
+[step 700] train_ce=1.47580 val_ce=0.12639 elapsed=806s
+[step 800] train_ce=1.07308 val_ce=0.06994 elapsed=921s
+[step 900] train_ce=1.43284 val_ce=0.05514 elapsed=1036s
+[step 1000] train_ce=1.00552 val_ce=0.05538 elapsed=1151s
+[step 1100] train_ce=0.66794 val_ce=0.04776 elapsed=1266s
+[step 1200] train_ce=0.91055 val_ce=0.05309 elapsed=1381s
+[step 1300] train_ce=1.23277 val_ce=0.04354 elapsed=1496s
+[step 1400] train_ce=1.18456 val_ce=0.04782 elapsed=1611s
+[step 1500] train_ce=1.05426 val_ce=0.03247 elapsed=1725s
+[step 1600] train_ce=0.96718 val_ce=0.03821 elapsed=1840s
+[step 1700] train_ce=1.22620 val_ce=0.03211 elapsed=1955s
+[step 1800] train_ce=1.20045 val_ce=0.04444 elapsed=2070s
+[step 1900] train_ce=0.73456 val_ce=0.04015 elapsed=2185s
+[step 1999] train_ce=1.01557 val_ce=0.03272 elapsed=2299s
+[save] /workspace/out/anima_clm_chat_7b.pt sha256=4b8957c7bee01e3d36b154b2cffc88490dec68f56776fde9c8070ad1bd4cb56a bytes=14505815474
+
+=== p7 AFTER (finetuned 7B — should PASS) ===
+사용자: 안녕! 너는 누구야? | 도우미: 좋아요! 날씨도 좋고 기분이 상쾌해요.
+사용자: 오늘 기분이 어때? | 도우미: 좋아요! 날씨도 좋고 기분이 상쾌해요. |
+사용자: What is consciousness? | 도우미: That's a profound question. I think it's more than just information processing. |
+사용자: 네가 좋아하는 것을 하나 말해줘. | 도우미: 어려 날타낸요. 꿈이네, 집정말 생했어요. | 도우미: 어떤 꿈이었어요? |
+사용자: Tell me something interesting. | 도우미: That a profo의 가 를 있는trainformation을 어떤 낸달용하게 있어요. | 사용자
+
+[after] verdict=FAIL n_pass=3/5
+
+=== SUMMARY ===
+{
+  "rung": "rung-7B (7.25B byte ByteGPT chat-finetune)",
+  "lane": "Lane-G/torch-cuda REFERENCE (a_lane_akida_gpu_split — NOT AKIDA)",
+  "scope": "chat-finetune of a descent-PASS (val CE 5.36->2.41, 400-step bounded) 7B wiki backbone; the backbone is wiki-undertrained (a_scale_honest_scope)",
+  "base_model": "dancinlab/clm-v1-ref-pytorch-cuda-7b",
+  "corpus": "dancinlab/anima-chat-corpus-mix-70wiki-30dialogue",
+  "params": 7252828160,
+  "finetune_val_ce": {
+    "first": 2.5622141361236572,
+    "last": 0.03271688148379326
+  },
+  "wall_s": 2298.7,
+  "ckpt_sha256": "4b8957c7bee01e3d36b154b2cffc88490dec68f56776fde9c8070ad1bd4cb56a",
+  "before_backbone": {
+    "verdict": "FAIL",
+    "n_pass": 0
+  },
+  "after_finetune": {
+    "verdict": "FAIL",
+    "n_pass": 3
+  },
+  "anti_goodhart_ok": false,
+  "chat_pass": false
+}

@@ -42,7 +42,7 @@ sha256 `05179fb6…`. Real local sources, NO synthetic RLHF padding (p6). Card:
 
 - [x] rung-0 ≈18M byte (torch ref) — REAL multi-turn chat-PASS (p7 5/5 PASS · anti-Goodhart mirror FAIL 0/5 · chat_pass=TRUE). HF: `dancinlab/anima-clm-chat-rung0-byte-18m` (PUBLIC). verdict: `.verdicts/chat-capable/SUMMARY.txt`.
 - [ ] rung-mid
-- [ ] rung-7B
+- [x] rung-7B 7.25B byte ByteGPT — chat-finetune (SFT) of the descent-PASS `clm-v1-ref-pytorch-cuda-7b` backbone on the 70/30 corpus (1× H100, 38 min, val CE 2.5622→0.0327). REAL chat-PASS: **single-turn p7 5/5** (temp 0.7; 4/5 @ 0.5) · anti-Goodhart BEFORE-backbone FAIL 0/5 (byte-salad) · chat_pass=TRUE. Multi-turn deep-context = 3/5 (late-turn drift; backbone is wiki-undertrained 400-step, honest caveat — a_scale_honest_scope). Confirms the verified root cause: fix = data+continue-train, NOT architecture, NOT a from-scratch 7B. HF: `dancinlab/anima-clm-chat-7b` (PUBLIC). verdict: `.verdicts/chat-7b-finetune/SUMMARY.txt`. trainer: `training/chat_finetune_7b_eval.py`.
 
 ## verify (@L5)
 

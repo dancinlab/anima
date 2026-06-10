@@ -1,0 +1,69 @@
+{
+  "label": "finetuned_7b",
+  "n_pass": 3,
+  "n_total": 5,
+  "verdict": "FAIL",
+  "turns": [
+    {
+      "user": "안녕! 너는 누구야?",
+      "reply": "좋아요! 날씨도 좋고 기분이 상쾌해요.",
+      "ok": true,
+      "non_empty": true,
+      "valid_utf8": true,
+      "not_degenerate": true,
+      "control_ratio": 0.0,
+      "word_class_ratio": 1.0,
+      "intra_word_purity": 1.0,
+      "known_word_ratio": 1.0
+    },
+    {
+      "user": "오늘 기분이 어때?",
+      "reply": "좋아요! 날씨도 좋고 기분이 상쾌해요. |",
+      "ok": true,
+      "non_empty": true,
+      "valid_utf8": true,
+      "not_degenerate": true,
+      "control_ratio": 0.0,
+      "word_class_ratio": 0.9565,
+      "intra_word_purity": 1.0,
+      "known_word_ratio": 1.0
+    },
+    {
+      "user": "What is consciousness?",
+      "reply": "That's a profound question. I think it's more than just information processing. |",
+      "ok": true,
+      "non_empty": true,
+      "valid_utf8": true,
+      "not_degenerate": true,
+      "control_ratio": 0.0,
+      "word_class_ratio": 0.9877,
+      "intra_word_purity": 1.0,
+      "known_word_ratio": 1.0
+    },
+    {
+      "user": "네가 좋아하는 것을 하나 말해줘.",
+      "reply": "어려 날타낸요. 꿈이네, 집정말 생했어요. | 도우미: 어떤 꿈이었어요? |",
+      "ok": false,
+      "non_empty": true,
+      "valid_utf8": true,
+      "not_degenerate": true,
+      "control_ratio": 0.0,
+      "word_class_ratio": 0.9524,
+      "intra_word_purity": 1.0,
+      "known_word_ratio": 0.25
+    },
+    {
+      "user": "Tell me something interesting.",
+      "reply": "That a profo의 가 를 있는trainformation을 어떤 낸달용하게 있어요. | 사용자",
+      "ok": false,
+      "non_empty": true,
+      "valid_utf8": true,
+      "not_degenerate": true,
+      "control_ratio": 0.0,
+      "word_class_ratio": 0.9818,
+      "intra_word_purity": 0.8,
+      "known_word_ratio": 0.4286
+    }
+  ],
+  "transcript": "사용자: 안녕! 너는 누구야? | 도우미: 좋아요! 날씨도 좋고 기분이 상쾌해요.\n사용자: 오늘 기분이 어때? | 도우미: 좋아요! 날씨도 좋고 기분이 상쾌해요. |\n사용자: What is consciousness? | 도우미: That's a profound question. I think it's more than just information processing. |\n사용자: 네가 좋아하는 것을 하나 말해줘. | 도우미: 어려 날타낸요. 꿈이네, 집정말 생했어요. | 도우미: 어떤 꿈이었어요? |\n사용자: Tell me something interesting. | 도우미: That a profo의 가 를 있는trainformation을 어떤 낸달용하게 있어요. | 사용자\n"
+}

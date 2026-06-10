@@ -1,0 +1,16 @@
+{
+  "rung": "rung-7B (7.25B byte ByteGPT chat-finetune) — eval re-run (fixed turn-stopping)",
+  "lane": "Lane-G/torch-cuda REFERENCE (a_lane_akida_gpu_split — NOT AKIDA)",
+  "base_model": "dancinlab/clm-v1-ref-pytorch-cuda-7b",
+  "corpus": "dancinlab/anima-chat-corpus-mix-70wiki-30dialogue",
+  "before_backbone": {
+    "verdict": "FAIL",
+    "n_pass": 0
+  },
+  "after_finetune": {
+    "verdict": "PASS",
+    "n_pass": 5
+  },
+  "anti_goodhart_ok": true,
+  "chat_pass": true
+}

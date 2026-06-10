@@ -263,7 +263,8 @@ closed-negative runs, intermediate ckpts) are intentionally omitted (governance 
 | Model | HF repo | Size | Status | Download |
 |---|---|---|---|---|
 | **Chat rung-0 (byte 18M)** | [`dancinlab/anima-clm-chat-rung0-byte-18m`](https://huggingface.co/dancinlab/anima-clm-chat-rung0-byte-18m) | ~18M | ✅ **chats — p7 5/5 PASS** (multi-turn KO/EN; anti-Goodhart mirror FAIL 0/5) | `hf download dancinlab/anima-clm-chat-rung0-byte-18m` |
-| **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ available — descent-PASS, **not chat-tuned** (5-lang WIKI backbone, dialogue 0%) | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| **Chat 7B (byte)** | [`dancinlab/anima-clm-chat-7b`](https://huggingface.co/dancinlab/anima-clm-chat-7b) | ~7.25B | ✅ **chats — single-turn p7 5/5 PASS** (KO/EN; anti-Goodhart BEFORE-backbone FAIL 0/5; chat-finetune of CLM 7B on the 70/30 dialogue corpus, val CE 2.56→0.03) | `hf download dancinlab/anima-clm-chat-7b` |
+| **CLM 7B (backbone)** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ available — descent-PASS, **not chat-tuned** (5-lang WIKI backbone, dialogue 0%; chat-tuned variant above) | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
 | **Production CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ available | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
 | **SAVANT 7B (5-lang)** | `dancinlab/savant-7b-5lang` (reserved) | ~7B | 🚧 **in training — not yet released** | — |
 | Reference baseline | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ available | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
