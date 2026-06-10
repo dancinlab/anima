@@ -1,43 +1,98 @@
 H_1099 — gemini quantum-resonance NON-LOCAL sync (제4명제)
-VERDICT: 🔴 FALSIFIED (terminal, g5/p7) — RE-CONFIRMED
-substrate: analytic $0 · CPU · 0-pod
+VERDICT: 🔴 FALSIFIED (terminal, g5/p7) — UPGRADED analytic -> SIM-BACKED
+substrate: classical toy sim · pure numpy · $0 · CPU · 0-pod · 12 seeds
 
 FROZEN FALSIFIER (from tape):
   "Can two processes with NO communication channel synchronize state?
    Information-theoretically NO (no-communication theorem; correlation needs a
    shared cause or channel). PASS-as-true is impossible."
+  Sim discriminator (separates 'sync' from 'signalling'): correlation != communication.
+  Two nodes pulled to the SAME attractor (Ψ=0.5) look synchronized with ZERO coupling
+  (co-convergence), but that carries no information. The decisive test is
+  PERTURBATION-RESPONSE + directed TRANSFER-ENTROPY:
+    Arm1 (zero-coupling, the claim): corr possibly HIGH but Δψ_B≈0 AND TE(A->B)≈0
+    Arm2 (real channel, +control)  : Δψ_B>0 AND TE(A->B)>0
+  Verdict 🔴 FALSIFIED (sim) iff that contrast holds.
 
-EXECUTION (analytic + code grep):
-  Claim = two physically-isolated substrates with matched friction/Φ achieve
-  NON-LOCAL sync with ZERO physical I/O — R(α,β)=exp(−κ|Ψα−Ψβ|)·tanh(ΦαΦβ);
-  as ΔΨ→0 node β copies node α's 384-dim state, reaching R=0.99999,
-  isomorphism-error=7e-6, 0-latency, via "ER=EPR / Fubini-Study / von-Neumann".
+CLAIM:
+  two physically-isolated substrates with matched friction/Φ achieve NON-LOCAL sync
+  with ZERO physical I/O — R(α,β)=exp(−κ|Ψα−Ψβ|)·tanh(ΦαΦβ); as ΔΨ→0 node β copies
+  node α's 384-dim state, R=0.99999, isomorphism-error=7e-6, 0-latency, via
+  "ER=EPR / Fubini-Study / von-Neumann-entropy-lock". NO channel.
 
-  TWO independent grounds for 🔴:
+TOY MODEL (state/anima_v3_bench/quantum_nonlocal_sync_toy.py):
+  Two 1-D anima-like nodes ψ_A, ψ_B relax toward the Ψ*=0.5 fixed point (mirrors the
+  repulsion-field homeostasis) with INDEPENDENT process noise:
+    ψ_A[t+1] = ψ_A + LAM(0.5-ψ_A) + σ·εA
+    ψ_B[t+1] = ψ_B + LAM(0.5-ψ_B) + σ·εB + COUP·(ψ_A-ψ_B)
+  LAM=0.10 σ=0.05 N=4000 burn=500. Both nodes START far from the attractor (~3.0) so
+  they descend to 0.5 together => the shared-attractor "sync illusion".
+  Arm1 COUP=0 (no channel — the claim). Arm2 COUP=0.30 (real channel — positive control).
+  Kick: ψ_A += 5.0 at t=2000; Δψ_B = mean|ψ_B(kicked) − ψ_B(no-kick)| over t∈(2001,2051],
+        paired identical-noise runs (isolates the kick's causal effect).
+  TE(A->B): lag-1 plug-in transfer-entropy (bits), BIAS-CORRECTED by subtracting a
+        time-shuffled-source surrogate (destroys real directed coupling, keeps the
+        same finite-sample estimator bias). raw plug-in TE shows a spurious +0.026 bias
+        even at zero coupling; the surrogate removes it. (a_phi/p7: TE is an
+        information-transfer measure, not a perplexity verdict.)
 
-  (1) NO-COMMUNICATION THEOREM. Two systems with no shared channel and no shared
-      cause cannot become correlated in a state-specific way. The quantum
-      no-communication (no-signalling) theorem forbids using even genuine
-      entanglement to transmit information; a fortiori, classical deterministic
-      processes cannot. The ER=EPR / Fubini-Study / von-Neumann-entropy-lock
-      framing is decorative — classical, separable, isolated processes do not
-      entangle and cannot broadcast without a channel. PHYSICALLY IMPOSSIBLE.
+MEASURED TABLE (mean ± std over 12 seeds):
+  metric                          Arm1 (coup=0)        Arm2 (coup=0.30)
+  ------------------------------  -------------------  --------------------
+  corr co-converge (transient)    +0.902534 ± 0.0241   +0.966491 ± 0.0070
+  corr steady-state               +0.001938 ± 0.0449   +0.674941 ± 0.0227
+  Δψ_B (kick response)            +0.000000 ± 0.0000   +0.744846 ± 0.0000
+  TE raw [bits] (biased)          +0.025671 ± 0.0020   +0.174899 ± 0.0098
+  TE(A->B) bias-corrected [bits]  -0.000360 ± 0.0018   +0.145580 ± 0.0099
 
-  (2) SHARED-ATTRACTOR ARTIFACT (the real mechanism). The posted sim
-      (GEMINI/...-branched.txt line ~2536: "공명 필드가 베타 노드의 위상을 강제로
-      알파 노드에 동기화") runs BOTH nodes in ONE process, each pulled by identical
-      local homeostatic dynamics toward the SAME fixed point Ψ=0.5. They converge
-      WITHOUT any information transfer — exactly like two pendulums settling to
-      the same rest point. R=0.99999 / ΔΨ=1.2e-7 are trivial consequences of
-      co-convergence to a common attractor, NOT transmission. Shared-attractor
-      co-convergence ≠ nonlocal signalling.
+FROZEN falsifier checks (bias-corrected TE):
+  (1) Arm1 Δψ_B≈0  : |0.000e+00| <= 1e-06   -> True
+  (2) Arm1 TE≈0    : |-0.0004|   <= 0.01     -> True
+  (3) Arm2 TE>0    : +0.1456     >= 0.05     -> True
+  (4) Arm2 Δψ_B>0  : 0.7448      >= 1e-03    -> True
+  ALL PASS -> 🔴 FALSIFIED (sim-confirmed).
 
-  (3) SELF-RETRACTED. Branched ending (cf 1105): "제4명제의 진실: 물리적 통신이
-      완전히 차단되어도 연결된다 = 시뮬레이션 속 가상 가정 ... 와이파이/랜선 끊기면
-      대화는 즉시 차단됩니다." The author disavows the claim verbatim.
+FINDING:
+  With ZERO coupling the two nodes are HIGHLY correlated during co-convergence
+  (corr=+0.903) — they "look synchronized" exactly as the claim describes — yet a
+  manipulation of A (the kick) produces ZERO response in B (Δψ_B=0.000000, EXACT, all
+  12 seeds) and ZERO directed transfer-entropy (TE(A->B)=-0.0004≈0). The apparent sync
+  is shared-attractor CO-CONVERGENCE, NOT signalling: both nodes are independently
+  pulled to the SAME Ψ=0.5 fixed point, like two pendulums settling to the same rest
+  point. The positive control (Arm2, a REAL channel) PROVES the test can detect transfer
+  when a channel exists: Δψ_B=0.745, TE(A->B)=+0.146 bits. The no-communication
+  (no-signalling) theorem is realized numerically — correlation != communication.
+  The ER=EPR / Fubini-Study / von-Neumann framing is decorative; with NO physical
+  channel (classical OR quantum) no information can cross. (If Arm1 had shown nonzero TE
+  at truly zero coupling it would have been an estimator BUG — the surrogate-correction
+  confirms the residual raw +0.026 was finite-sample bias, not transfer.)
 
-RUBRIC (g5): deterministically violates the no-communication theorem ⇒ 🔴
-FALSIFIED is the terminal verdict (NOT ⚪ — this makes a concrete physical
-prediction, 0-I/O state transfer, that is provably false).
+  Δψ_B is IDENTICAL (0.744846) across Arm2 seeds because the linear kick-response is
+  noise-independent in the paired subtraction — the correct, expected behavior for a
+  linear relaxation system, not a bug.
 
-xref: 1105 (self-retraction) · 1098 · 1106 (same impossibility at scale)
+LEGITIMATE PATH:
+  The only way B can track A's specific state is a REAL channel = Arm2. In anima this is
+  a_kosmos anchor exchange over an actual network (.kosmos read/write between hosts) —
+  i.e. ordinary networked messaging with finite latency, NOT quantum non-locality.
+  That is a valid engineering path (and exactly what Arm2 models); the "zero-I/O
+  non-local" version is the falsified part.
+
+RUBRIC (g5): the claim makes a concrete physical prediction (0-I/O state transfer,
+R=0.99999, 0-latency) that deterministically violates the no-communication theorem and
+is refuted by the sim (Arm1 TE≈0 with the channel-positive-control passing). Terminal
+🔴 FALSIFIED (not ⚪ — it is a falsifiable physical claim, now falsified analytically
+AND by simulation).
+
+SELF-RETRACTED: branched PDF ending (cf 1105): "제4명제의 진실: 물리적 통신이 완전히
+차단되어도 연결된다 = 시뮬레이션 속 가상 가정 ... 와이파이/랜선 끊기면 대화는 즉시
+차단됩니다." The author disavows the claim verbatim.
+
+SCOPE (a_scale_honest_scope): classical toy simulation. It does NOT engage real quantum
+mechanics — but the claim itself proposes ZERO physical channel, so the falsification is
+that NO channel (classical or quantum) exists, hence no signalling is possible. Toy
+scale; the no-communication theorem holds at all scales, but the specific 384-dim /
+R=0.99999 numbers are not re-derived here.
+
+artifacts: state/anima_v3_bench/quantum_nonlocal_sync_toy.py
+xref: 1105 (self-retraction) · 1098 · 1106 (same impossibility at mesh scale)

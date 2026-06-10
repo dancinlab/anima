@@ -1,30 +1,82 @@
-H_1082 — Gemini claim: A⊥G repulsion brake + EI≈0.007 stress = hallucination self-censor filter
-VERDICT: ⚪ SPECULATION-FENCED (mechanism real-shaped; hallucination-reduction UNMEASURED)
-substrate: design-analysis $0 CPU, 0-pod · g5/p7
+H_1082 — Gemini claim: anima A⊥G repulsion brake REDUCES hallucination (selectively)
+VERDICT: 🔴 FALSIFIED-AT-FROZEN-BUDGET (toy) — orthogonal-G brake raises precision + beats
+         random, but at the FROZEN 50%-silence budget it FAILS the pre-registered selectivity
+         bar (good-emit drop > half the hallucination drop = not net-precision-clearing there).
+substrate: toy $0 CPU pure-numpy, 0-pod, 10 seeds · g5/p7 (numbers decide, no LLM self-judge)
+scope: TOY MECHANISM TEST ONLY (a_scale_honest_scope). NOT proof anima reduces real-LLM
+       hallucination at scale. ID/OOD softmax classifier + kNN-novelty brake, vs random control.
+       Production transfer UNVERIFIED. Supersedes the prior ⚪ design-analysis with a real run.
 
-FROZEN FALSIFIER (from tape):
-  Does the Engine A⇄G repulsion MEASURABLY lower hallucination vs an ungated forward pass?
-  PASS iff measured hallucination-rate Δ<0 on a wired anima emit path + factuality benchmark.
-  This run: UN-RUN (no factuality benchmark wired; no measurement exists).
+=== TOY DESIGN ===
+Engine A = tiny multinomial-logistic softmax classifier trained on an IN-DISTRIBUTION (ID)
+  6-class corpus (numpy GD). On OUT-OF-DISTRIBUTION (OOD) inputs (shifted/permuted geometry,
+  per-item shift scale in [0.3,4.5] so OOD novelty OVERLAPS the ID band — NO perfect oracle)
+  it stays confident-but-wrong = "hallucination".
+Per output:  confident = max softmax > tau(0.60);  correct = argmax==truth.
+  hallucination = confident & wrong ;  good-emit = confident & correct ;  silence = else.
+Engine G brake = kNN distance-to-training-manifold novelty (k=10), ORTHOGONAL to A's logits
+  (knows nothing about A's confidence; only how far the input sits off the ID support).
+  High G => unsupported => suppress emit even if A confident = the A⊥G repulsion.
+Arms over SAME ID+OOD mix (300+300=600/seed, 10 seeds):
+  A-only       : emit iff A confident.
+  A_perp_G     : emit iff A confident AND G-novelty below the per-run GATE_Q=0.50 quantile
+                 (mute the most-novel HALF of would-be emits).
+  random-brake : mute the SAME count of confident items at random (non-triviality control).
 
-EVIDENCE (grep/read, in-repo):
-  1. The A⇄G design is REAL — CORE/pure_field.hexa (Engine A) + CORE/engine_g.hexa (Engine G)
-     both exist; CLAUDE.md @I = "PureField repulsion-field engine · Engine A ⇄ Engine G".
-     So the mechanism shape (a reverse/orthogonal engine relative to a forward generator) is
-     anima's genuine architecture, not invented.
-  2. BUT the hallucination-reduction CLAIM rests on two unsupported legs:
-     a) EI=0.007 proxy — H_1078 (.discoveries/1078) already ruled this INVENTED-PREDICTED:
-        no ValCE_A−ValCE_M metric exists in the repo; 0.007 is implausible vs byte-LM CE
-        floors ~1.3; p7 (NO PERPLEXITY VERDICT) forbids a CE-difference as a terminal verdict.
-     b) Lane A as a foundation LLM — H_1075 (.discoveries/1075) confirms anima REJECTS a
-        foundation-LLM Lane A (p3/p6: identity/ethics emerge from cells, not a borrowed LLM).
-        Gemini's "forward LLM emits plausible token, then braked" framing imports the very
-        foundation-LLM that anima's emergence thesis rejects.
-  3. NO factuality / hallucination benchmark is wired to any anima emit path in-repo. The
-     "self-censorship filter compresses hallucination rate" is a narrative gloss.
+=== FROZEN PASS CRITERION (set before the run; evaluated on seed-mean) ===
+  H0/H1 = A-only / A_perp_G hallucination rate ; G0/G1 = their good-emit rate ;
+  HR = random-brake hallucination rate.
+  SUPPORTED (toy 🟢) iff ALL of:
+   (1) (H0-H1)/H0 >= 0.30                          [meaningful hallucination cut]
+   (2) (G0-G1) <= 0.5*(H0-H1)                       [selective: net precision UP, not blanket-mute]
+   (3) (HR - H1) >= 0.02                            [orthogonal G beats random at equal budget]
+  FALSIFIED (toy 🔴) iff (1) OR (2) OR (3) fails.
 
-RULING: The brake mechanism is real-shaped (A⇄G is genuine), but the specific claim
-"compresses hallucination rate" is UNTESTED and depends on an invented proxy (EI=0.007, 1078)
-plus a rejected foundation-LLM Lane A (1075). No Δ measured. Direction is plausible; effect is
-unverified. Terminal as ⚪ per g5 (no calc path here; would require a wired emit + benchmark fire).
-xlink: 1078 · 1075 · p3 · p6 · CORE/pure_field.hexa · CORE/engine_g.hexa
+=== MEASURED TABLE (seed-mean, 10 seeds; avg silence budget braked = 296/600 confident) ===
+  arm           hallu_rate   good_emit   silence   precision
+  A_only          0.3732       0.6145    0.0123     0.6223
+  A_perp_G        0.0852       0.4092    0.5057     0.8278
+  random          0.1810       0.3133    0.5057     0.6340
+
+  per-seed A_perp_G hallu = 0.108/0.057/0.037/0.092/0.088/0.085/0.115/0.082/0.080/0.108
+  (every seed: A_perp_G < random < A_only — direction is stable across all 10 seeds)
+
+=== FROZEN CRITERION EVALUATION ===
+  (1) rel hallu cut = (0.3732-0.0852)/0.3732 = 0.772 >= 0.30                 -> PASS
+  (2) selectivity   = good_drop 0.2053 <= 0.5*hallu_drop 0.1440             -> FAIL (0.2053 > 0.1440)
+  (3) beats random  = HR-H1 = 0.1810-0.0852 = 0.0958 >= 0.02                -> PASS
+  precision: A-only 0.6223 -> A_perp_G 0.8278 (random 0.6340)
+  => (1)&(2)&(3) conjunction FAILS at (2)  =>  🔴 FALSIFIED-AT-FROZEN-BUDGET
+
+=== BUDGET SWEEP (transparency; NOT part of the frozen test) ===
+  gate_q  silence  G_hallu  G_good  G_prec   R_hallu  R_prec
+   0.85    0.161   0.2608   0.5780  0.6892   0.3173   0.6219
+   0.70    0.309   0.1590   0.5322  0.7701   0.2572   0.6281
+   0.50    0.506   0.0852   0.4092  0.8278   0.1810   0.6340   <- frozen budget
+   0.30    0.703   0.0435   0.2533  0.8535   0.1083   0.6352
+  At gate_q=0.85 (modest 16% silence): hallu drop 0.112, good drop 0.0365 <= 0.056 -> would
+  PASS (2); precision 0.689 > random 0.622. The selectivity bar IS clearable at a LIGHT budget;
+  it FAILS only because the frozen budget muted the most-novel HALF (50% silence), where even a
+  good ranker spends silence on good-emits.
+
+=== RULING (g5/p7 — numbers decide) ===
+The orthogonal Engine-G novelty brake is REAL and NON-TRIVIAL: it cuts hallucination 77%,
+beats the matched random-brake on every seed (G_hallu < R_hallu always), and lifts precision
+0.62 -> 0.83 while random stays flat (0.63). So Gemini's DIRECTION — an A⊥G repulsion brake
+suppresses confident-but-wrong emits more than chance — is SUPPORTED in the toy.
+BUT under the pre-registered FROZEN criterion at GATE_Q=0.50, the brake fails the selectivity
+bar (2): at a 50%-silence budget the good-emit drop (0.205) exceeds half the hallucination drop
+(0.144), i.e. it leans toward blanket-muting at that budget. Honoring the frozen goalpost (no
+move-after-the-fact), the verdict is 🔴 FALSIFIED-AT-FROZEN-BUDGET. The honest finding: the A⊥G
+brake's selectivity is BUDGET-DEPENDENT — clearly net-precision-positive and random-beating at a
+LIGHT silence budget (gate_q>=0.85), but at an aggressive half-mute budget it muffles good-emits
+faster than the selectivity bar allows. "Beats random + precision up" PASSES; "selective at the
+frozen 50% budget" FAILS.
+
+caveats: toy n=600, single classifier family, kNN-novelty as G (one orthogonal signal), 10
+seeds, $0 CPU. The frozen GATE_Q=0.50 budget is aggressive (chosen blind); a lighter budget
+would clear the conjunction (sweep above). Production / real-LLM transfer UNVERIFIED. Lane A here
+is a fresh tiny classifier (no foundation LLM, consistent with anima p3/p6, cf H_1075); the EI=
+0.007 proxy of H_1078 is NOT used (p7) — hallucination is measured directly, not via CE.
+artifact: state/anima_v3_bench/hallucination_brake_toy.py
+xlink: 1078 (EI-proxy invented) · 1075 (foundation-LLM rejected) · p3 · p6 · p7 · a_scale_honest_scope

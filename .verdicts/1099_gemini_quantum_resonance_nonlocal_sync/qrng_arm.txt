@@ -1,0 +1,76 @@
+H_1099 — REAL-QUANTUM-RANDOMNESS arm (제4명제: quantum-info-resonance NON-LOCAL sync)
+VERDICT: 🔴 FALSIFIED (quantum-seeded, sim-confirmed; terminal, g5/p7)
+substrate: classical sim seeded by REAL ANU quantum entropy · $0 · CPU · 0-pod
+addendum to: verdict.txt (analytic 🔴) + quantum_nonlocal_sync_toy.py (PRNG sim 🔴)
+
+WHY THIS ARM EXISTS
+  Kills the obvious objection to the PRNG sim: "you used a pseudo-RNG, so of course
+  no quantum effect appeared." Here the per-step node noise is driven by GENUINE ANU
+  quantum-vacuum random numbers (real measured quantum entropy). Even then, zero
+  coupling => zero information transfer. Quantum randomness AT THE SOURCE is NOT a
+  quantum non-local channel: with no channel (classical or quantum) there is no
+  signalling (no-communication / no-signalling theorem).
+
+QRNG PROVENANCE
+  bulk source : UNIVERSE/state/h1053_qrng_bytes.bin — 3,000,000 genuine ANU
+                quantum-vacuum bytes (cached from prior H_1053; offline-safe,
+                reproducible).
+  byte sanity : mean=127.5261 (ideal 127.5) · std=73.8989 (ideal 73.90) ·
+                min/max=0/255 — consistent with uniform quantum bytes.
+  consumed    : 96,024 bytes this run (12 seeds × 2 DISJOINT node-slices × 4001 draws).
+                A and B consume DISJOINT slices => genuinely independent quantum entropy.
+  byte->noise : byte∈[0,255] -> u=(b+0.5)/256 ∈(0,1) -> Gaussian via probit Φ⁻¹(u)
+                (Acklam inverse-erf, |err|<1.2e-9). Deterministic transform; preserves
+                slice independence.
+  liveness    : a fresh live ANU pull SUCCEEDED for provenance —
+                  keyed endpoint api.quantumnumbers.anu.edu.au (x-api-key) returned
+                  {"success": true, "type":"uint8", "length":"16",
+                   "data":[194,241,75,14,229,30,229,200,58,138,134,15,36,45,241,137]}
+                (the free jsonI.php endpoint was rate-limited to 1 req/min; bulk run
+                 relies on the 3MB cache for reproducibility, not the live block.)
+
+FROZEN FALSIFIER (identical thresholds to the PRNG arm)
+  🔴 FALSIFIED iff  Arm1(coup=0): Δψ_B≈0 AND TE(A->B)≈0 (corr may be high via shared
+  attractor), WHILE  Arm2(coup=0.30, B reads A): Δψ_B>0 AND TE>0.
+  >=10 "seeds" = 12 DISJOINT quantum-stream offsets (distinct windows of the ANU file).
+
+RESULTS (12 quantum-offset seeds)
+  metric                          Arm1 (coup=0)            Arm2 (coup=0.30)
+  ----------------------------    -------------------      --------------------
+  corr co-converge (transient)    +0.876064 ± 0.027841     +0.957877 ± 0.015322
+  corr steady-state               +0.010187 ± 0.029039     +0.659402 ± 0.028743
+  Δψ_B (kick response)            +0.000000 ± 0.000000     +0.744846 ± 0.000000
+  TE raw [bits] (biased)          +0.025730 ± 0.001469     +0.168597 ± 0.010219
+  TE(A->B) bias-corr [bits]       +0.000404 ± 0.001790     +0.139271 ± 0.010856
+
+FROZEN CHECKS (quantum-seeded, surrogate-bias-corrected TE)
+  (1) Arm1 Δψ_B≈0 : |0.000e+00| <= 1e-6   -> True
+  (2) Arm1 TE≈0   : |+0.0004|   <= 0.01    -> True
+  (3) Arm2 TE>0   : +0.1393     >= 0.05    -> True
+  (4) Arm2 Δψ_B>0 : 0.7448      >= 0.001   -> True
+  ALL PASS => 🔴 FALSIFIED.
+
+FINDING
+  Even with GENUINE ANU quantum-vacuum entropy, a zero-coupling pair shows high
+  transient co-convergence correlation (+0.876, both relaxing to Ψ*=0.5) yet exactly
+  zero perturbation response (Δψ_B=0.0e+00: kicking A NEVER moves B) and zero directed
+  transfer (bias-corrected TE(A->B)=+0.0004≈0, indistinguishable from the shuffled-
+  surrogate null). The REAL channel (Arm2) transmits (Δψ_B=0.745, TE=+0.139 bits),
+  proving the test CAN detect transfer. => Quantum randomness at the source ≠ quantum
+  signalling. The PRNG-artifact objection is dead: real quantum entropy does NOT create
+  non-locality between un-coupled systems.
+
+RUBRIC (g5): deterministically violates the no-communication theorem under genuine
+  quantum entropy ⇒ 🔴 FALSIFIED is terminal. Corroborates verdict.txt analytic 🔴 and
+  the PRNG sim 🔴 with a quantum-sourced positive demonstration.
+
+SCOPE (a_scale_honest_scope): classical toy dynamics seeded by REAL quantum entropy.
+  No quantum dynamics/entanglement are simulated — none are needed: the claim's own
+  premise is ZERO physical I/O, and with NO channel (classical or quantum) no
+  information can cross. p7 (no perplexity verdict): decision is Δψ_B + directed TE,
+  not loss. Cf no-communication / no-signalling theorem.
+
+artifacts: state/anima_v3_bench/quantum_nonlocal_sync_qrng.py
+xref: verdict.txt · quantum_nonlocal_sync_toy.py · 1105 (self-retraction) · 1098 · 1106
+NOTE: parent must fold this QRNG arm into
+      .discoveries/1099_gemini_quantum_resonance_nonlocal_sync.tape (not edited here).
