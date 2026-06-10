@@ -1,0 +1,65 @@
+{
+  "n": 4,
+  "n_seeds": 12,
+  "sign_eps": 0.001,
+  "plan_depth": 8,
+  "latent": 24,
+  "eng_hid": 32,
+  "roll": 40,
+  "lr": 0.7,
+  "mirror_proven": {
+    "4": true,
+    "5": true
+  },
+  "reproduce_h1039_anchor": {
+    "faith_contrast": 2.1615214646979637,
+    "big_contrast": -4.240311002573318,
+    "split_present": true
+  },
+  "per_mode": {
+    "opponent": {
+      "faith_mean": 0.6468350756378011,
+      "faith_std": 0.7643675875485934,
+      "big_mean": 10.31856455234656,
+      "big_std": 2.7229810286516307,
+      "on_frac": 0.5
+    },
+    "additive": {
+      "faith_mean": 0.8026906937644057,
+      "faith_std": 0.740634422121161,
+      "big_mean": 9.377280247171917,
+      "big_std": 2.3920876467517576,
+      "on_frac": 0.5
+    },
+    "single": {
+      "faith_mean": 1.2758463140697305,
+      "faith_std": 1.2266509075444758,
+      "big_mean": 9.614084763937706,
+      "big_std": 2.5691894710225114,
+      "on_frac": 0.5
+    }
+  },
+  "opponent_contrast": {
+    "faith": -0.15585561812660464,
+    "big": 0.9412843051746425,
+    "faith_sign": "DOWN",
+    "big_sign": "UP"
+  },
+  "control_contrast": {
+    "faith": -0.47315562030532476,
+    "big": -0.23680451676578862,
+    "faith_sign": "DOWN",
+    "big_sign": "DOWN"
+  },
+  "non_degeneracy": {
+    "phi_has_var": true,
+    "diff_seeds": 12,
+    "modes_distinct": true,
+    "non_degenerate": true
+  },
+  "opponent_splits": false,
+  "control_splits": false,
+  "opp_same_sign": false,
+  "verdict_token": "NO-SPLIT-PLANNING-SPECIFIC",
+  "total_wall_sec": 26.79058003425598
+}

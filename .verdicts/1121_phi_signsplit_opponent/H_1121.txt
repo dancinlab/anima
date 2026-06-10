@@ -1,0 +1,119 @@
+H_1121 — Φ sign-split on an ANIMA ENGINE-A⊥G OPPONENT substrate vs planning?
+VERDICT: 🔴 NO-SPLIT-PLANNING-SPECIFIC (closed-negative, a_paper_negative_ok)
+================================================================================
+
+QUESTION
+--------
+The H_1059–1066 planning Φ-measure-dependence arc (faithful φ_EI ↑ / big-Φ ↓
+sign-split) was measured on a PLANNING toy substrate. Does the SAME faithful↑/
+big-Φ↓ sign-split appear when the n≤5 channel substrate is driven by the anima
+engine's A⊥G OPPONENT dynamics (per-channel out = engine_A(x) − engine_G(x), the
+H404 dual-FFN form) rather than the planning toy — i.e. is the split a property of
+A⊥G opponent composition, or planning-specific (H_1062 said planning-specific for
+the CAUSAL mechanism)?
+
+FROZEN FALSIFIER (set BEFORE running, NO goalpost)
+--------------------------------------------------
+SIGN_EPS=1e-3 ; N_SEEDS=12 (≥10) ; n=4 EXACT (n=5 mirror-proven).
+Opponent substrate  x_{t+1}=(1−LR)x+LR(A(x)−G(x))  vs matched NON-opponent control
+ADDITIVE  x_{t+1}=(1−LR)x+LR(A(x)+G(x))  (SAME engine weights/seeds, ONLY the
+opponent SIGN removed) + SINGLE (A only) robustness control. Both stdlib engines.
+Opponent contrast = OPPONENT − ADDITIVE, SAME-seed paired.
+  🟢 OPPONENT-SPLITS  iff opponent contrast faithful>+1e-3 AND big-Φ<−1e-3 (like
+     planning) AND the non-opponent control does NOT itself split.
+  🔴 NO-SPLIT  if no split ⇒ planning-specific (consistent with H_1062).
+  🔴 SAME-SIGN if both move same direction ⇒ no measure dependence.
+
+CONSTRUCTION-DEFECT FIX (BEFORE scoring, H_1061 discipline — bar NOT moved)
+--------------------------------------------------------------------------
+A first cut with a plain accumulator x += LR(A(x)−G(x)) DIVERGED (final-state norm
+~42, range ±18): the median-binarized top-variance channels collapsed to a trivial
+monotone ramp (uniq macro-rows=2), giving a DEGENERATE Φ that was bit-identical
+across opponent/additive/single (faithful=3.0000±0.0000, big-Φ=11.6475±0.0000 for
+ALL modes — a saturation tautology, the H_1051/H_1061 idealized-binary trap). FIX
+= a LEAKY/contractive update x=(1−LR)x+LR(upd) (LR=0.70), the engine's BOUNDED
+Ψ=1/2 fixed-point regime (pure_field.hexa); this removes the divergence and yields
+genuinely non-degenerate, mode-distinct trajectories. A NON-DEGENERACY guard now
+asserts real across-seed Φ variance AND opponent≠additive macro-bits before any
+verdict (a degenerate substrate VOIDs the run, never silently reports a NULL).
+
+LIVE stdlib mirror RE-PROVED ≡ this Mac (a_phi_iit4_tool, BITS/log2, NO proxy)
+-----------------------------------------------------------------------------
+`hexa run UNIVERSE/h1012_ref_faithful.hexa`  (LIVE, verbatim):
+    faithful_n4_dim6_nb2_x1e9= 3000000001
+    faithful_n5_dim6_nb2_x1e9= 4000000001
+    faithful_n6_dim6_nb2_x1e9= 5000000002
+`hexa run UNIVERSE/h1012_ref_check.hexa`  (LIVE big-Φ ring, verbatim):
+    ring5_s31 bigphi_x1e9= 2999999999
+    ring5_s24 bigphi_x1e9= 2999999999
+    ring6_s63 bigphi_x1e9= 2999999999
+In-run STEP-0 mirror proof (both engines vs the LIVE stdlib refs above):
+    big-Φ ring4_s15 : mirror=2.999999999 stdlib=2.999999999 |Δ|=1.34e-10 OK
+    big-Φ ring4_s12 : mirror=2.999999999 stdlib=2.999999999 |Δ|=1.34e-10 OK
+    faithful n4 dim6 nb2 : mirror=3.000000 stdlib=3.000000 |Δ|=3.48e-10 OK
+    faithful n4 dim6 nb4 (H_999): mirror=3.377444 hexa=3.377440 |Δ|=3.75e-06 OK
+    big-Φ ring5_s31 : mirror=2.999999999 stdlib=2.999999999 |Δ|=1.34e-10 OK
+    big-Φ ring5_s24 : mirror=2.999999999 stdlib=2.999999999 |Δ|=1.34e-10 OK
+    faithful n5 dim6 nb2 : mirror=4.000000 stdlib=4.000000 |Δ|=7.97e-10 OK
+    ≡ mirror-equivalence results: {4: True, 5: True}
+
+reproduce-H_1039 ANCHOR (planning split reproduces in THIS file's mirror)
+-------------------------------------------------------------------------
+    planning faithful contrast (plan−greedy) = +2.1615 -> UP
+    planning big-Φ   contrast (plan−greedy) = -4.2403 -> DOWN
+    planning SPLIT present (faith-UP & big-DOWN): True  (H_1039 ref faith+2.33/big−4.01)
+    reproduce-H_1039 anchor OK: True
+
+RESULT — A⊥G OPPONENT substrate (12 seeds, n=4 EXACT)
+----------------------------------------------------
+  per-mode mean Φ (both stdlib engines):
+    OPPONENT   faithful=0.6468±0.7644   big-Φ=10.3186±2.7230   on_frac=0.500
+    ADDITIVE   faithful=0.8027±0.7406   big-Φ= 9.3773±2.3921   on_frac=0.500
+    SINGLE     faithful=1.2758±1.2267   big-Φ= 9.6141±2.5692   on_frac=0.500
+  NON-DEGENERACY guard: per-mode Φ has across-seed variance = True
+    (opp faith_std=0.7644 big_std=2.7230); opponent macro-bits ≠ additive
+    macro-bits on 12/12 seeds -> modes_distinct=True ; NON-DEGENERATE = True.
+  CONTRAST (FROZEN sign test):
+    OPPONENT − ADDITIVE :  faithful = -0.1559 -> DOWN   big-Φ = +0.9413 -> UP
+    ADDITIVE − SINGLE   :  faithful = -0.4732 -> DOWN   big-Φ = -0.2368 -> DOWN
+
+FINDING
+-------
+🔴 NO-SPLIT-PLANNING-SPECIFIC. The A⊥G OPPONENT substrate does NOT reproduce the
+planning faithful↑/big-Φ↓ sign-split. On the opponent contrast (opponent − matched
+additive control) faithful moves DOWN (−0.156) and big-Φ moves UP (+0.941) — the
+EXACT OPPOSITE polarity to the planning split (where faithful was UP and big-Φ was
+DOWN). So removing the opponent (subtraction) structure does NOT install the split,
+and the opponent structure itself produces (if anything) the reverse contrast. The
+faithful↑/big-Φ↓ sign-split is therefore PLANNING-SPECIFIC, not a general property
+of A⊥G opponent composition — consistent with H_1062 (the split's clean ZCA-
+removable causal mechanism was planning-bounded). The split is carried by the
+coupled forward-rolled multi-branch deliberation of planning, not by the engine's
+opponent self-dynamics. Mechanistically: the planning substrate builds a large AND
+surgically-removable redundancy block (H_1039/H_1062) that the two Φ measures read
+in OPPOSITE directions; the bounded A⊥G opponent attractor does not.
+
+METHOD / HONESTY
+----------------
+ENGINES = BOTH stdlib IIT-4.0 CPU mirrors (h1004_bigphi_faithful_clean), RE-PROVEN
+≡ stdlib at n=4 AND n=5 BEFORE scoring (h1012.prove_mirrors_at_n; a_phi_iit4_tool,
+NO proxy, MI=BITS/log2). big-Φ = stdlib iit4_bigphi.hexa (IIT 4.0 over MIP);
+faithful φ_EI = stdlib iit4/faithful_phi.hexa (exact MIP-EI). engine_A, engine_G =
+two FIXED distinct tanh-FFN maps (Engine A ⊥ Engine G); matched additive control
+shares weights, only the opponent SIGN differs. Read path = top-variance channels
+median-binarized (EXACT H_1039/H_1064). IMPORTS by REAL module name (H_1038
+lesson); SERIAL, NO multiprocessing.Pool (H_1038 hang); $0 CPU-local, no GPU/pod.
+a_scale_honest_scope: TOY n=4 EXACT (n=5 mirror-proven); large-n / live-engine-
+coupled (real pure_field/engine_g binaries) / production UNVERIFIED. g5 (p7),
+frozen falsifier, no goalpost. A⊥G substrate is a dual-FFN dynamical MIRROR of the
+engine repulsion form (H404), not the live engine binaries.
+
+ARTIFACTS
+---------
+UNIVERSE/h1121_phi_signsplit_opponent.py
+UNIVERSE/h1121_phi_signsplit_opponent_result.json
+.verdicts/1121_phi_signsplit_opponent/H_1121.txt
+.discoveries/1121_phi_signsplit_opponent.tape
+
+xref: H_1064 (split-measure-adjudication) · H_1062 (split-is-planning-specific) ·
+phi-measure-dependence paper · a_phi_iit4_tool.
