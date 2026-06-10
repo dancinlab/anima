@@ -1,0 +1,98 @@
+========================================================================================
+H_1120 — DYAD-Φ RATE-MONOTONE: does joint dyad faithful φ_EI scale with the
+  anchor-exchange RATE? (joint faithful IIT-4.0 φ_EI, n=6 exact MIP-EI)
+  fuses H_1114 (🟢 causal link raises joint φ beyond controls) + H_1112
+  (🟢 rate-monotone TE over a real socket); dyad construction = H_1114 VERBATIM,
+  the ONLY swept knob = K_EMIT (steps-per-exchange; exchange RATE = 1/K).
+  ARMS (rate-increasing): OFF(K=None, rate=0)  K50(K=50, rate=1/50)  K10(K=10, rate=1/10)  K5(K=5, rate=1/5)
+  CH=3 (joint n=6) W*_c=[1.0, 0.8, 1.2] COUP=0.3 N_STEPS=4000 BURN=500 seeds=10
+  frozen falsifier: 🟢 RATE-MONOTONE iff φ_joint monotone-INCREASING in rate
+  (OFF<=K50<=K10<=K5 in mean) AND every adjacent-arm Cohen d>=0.8 AND
+  φ(K5) clearly > φ(OFF); 🔴 NON-MONOTONE-OR-FLAT otherwise. No goalpost moves.
+  engine: stdlib iit4/faithful_phi.hexa CPU mirror (BITS/log2) — a_phi_iit4_tool.
+========================================================================================
+
+STEP 0 — RE-PROVE mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+ [0a] LIVE stdlib faithful_phi re-capture at n=4,5,6 (n=6 = the scoring n):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+ [0a] live-stdlib faithful proof: PROVEN
+ [0b] h1012.prove_mirrors_at_n at n=4 AND n=5 (both engines, established pattern):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ [0b] mirror-equivalence results: {4: True, 5: True}
+ STEP 0 PASS — mirror PROVEN ≡ stdlib at n=4, n=5 (both engines) and at the
+ scoring n=6 (faithful, live hexa re-capture). Scoring may proceed.
+
+STEP 1 — SANITY GATE: reproduce H_1114 headline LINK-ON φ≈0.012618 at K=5:
+  K=5 φ_joint mean over seeds 100..109 = 0.012618 (H_1114 published LINK-ON = 0.012618, |Δ|=0.000000, tol 0.001) -> MATCH
+ STEP 1 PASS — H_1114 LINK-ON headline REPRODUCED at K=5. Rate sweep may proceed.
+
+STEP 2 — rate sweep: 4 arms × 10 seeds (SERIAL):
+  seed 100: φ_joint OFF=0.0010 K50=0.0019 K10=0.0091 K5=0.0116  | cc OFF=+0.003 K50=+0.081 K10=+0.348 K5=+0.492
+  seed 101: φ_joint OFF=0.0034 K50=0.0043 K10=0.0154 K5=0.0172  | cc OFF=+0.026 K50=+0.120 K10=+0.380 K5=+0.495
+  seed 102: φ_joint OFF=0.0029 K50=0.0038 K10=0.0143 K5=0.0163  | cc OFF=+0.009 K50=+0.067 K10=+0.351 K5=+0.472
+  seed 103: φ_joint OFF=0.0008 K50=0.0069 K10=0.0048 K5=0.0102  | cc OFF=+0.028 K50=+0.133 K10=+0.350 K5=+0.500
+  seed 104: φ_joint OFF=0.0097 K50=0.0025 K10=0.0122 K5=0.0114  | cc OFF=-0.028 K50=+0.016 K10=+0.355 K5=+0.494
+  seed 105: φ_joint OFF=0.0065 K50=0.0097 K10=0.0093 K5=0.0107  | cc OFF=+0.021 K50=+0.120 K10=+0.372 K5=+0.504
+  seed 106: φ_joint OFF=0.0018 K50=0.0092 K10=0.0125 K5=0.0119  | cc OFF=-0.002 K50=+0.099 K10=+0.365 K5=+0.495
+  seed 107: φ_joint OFF=0.0014 K50=0.0061 K10=0.0114 K5=0.0166  | cc OFF=+0.033 K50=+0.073 K10=+0.329 K5=+0.469
+  seed 108: φ_joint OFF=0.0036 K50=0.0026 K10=0.0098 K5=0.0106  | cc OFF=-0.015 K50=+0.054 K10=+0.343 K5=+0.475
+  seed 109: φ_joint OFF=0.0013 K50=0.0050 K10=0.0067 K5=0.0094  | cc OFF=-0.003 K50=+0.054 K10=+0.339 K5=+0.486
+
+φ-vs-RATE TABLE (faithful IIT-4.0 φ_EI, exact MIP-EI, BITS; 10 seeds, mean ± sd):
+arm         K_EMIT   rate(1/K)             φ_joint (n=6)        cross-corr
+----------------------------------------------------------------------------------------
+OFF              ∞      0.0000      +0.003234 ± 0.002688     +0.0072±0.019
+K50             50      0.0200      +0.005207 ± 0.002609     +0.0817±0.035
+K10             10      0.1000      +0.010557 ± 0.003118     +0.3531±0.015
+K5               5      0.2000      +0.012618 ± 0.002784     +0.4883±0.012
+
+ADJACENT-ARM CONTRASTS on φ_joint (Cohen d, frozen bar d >= 0.8):
+   OFF -> K50  (rate up): Δmean=+0.001973  d=+0.745  < 0.8 -> False
+   K50 -> K10  (rate up): Δmean=+0.005351  d=+1.861  >=0.8 -> True
+   K10 -> K5   (rate up): Δmean=+0.002060  d=+0.697  < 0.8 -> False
+
+  highest-rate vs OFF: K5 - OFF Δmean=+0.009384  d=+3.429 (>= 0.8 -> True)
+
+FROZEN falsifier checks:
+  (i)   means monotone-increasing in rate (OFF<=K50<=K10<=K5) -> True
+  (ii)  every adjacent-arm Cohen d >= 0.8 -> False
+  (iii) φ(K5) clearly > φ(OFF) (d >= 0.8) -> True
+
+========================================================================================
+VERDICT: 🔴 NON-MONOTONE-OR-FLAT — joint dyad faithful φ_EI does NOT scale
+  monotonically with the anchor-exchange rate at d >= 0.8 per adjacent step.
+  WHY: adjacent d<0.8 at: OFF->K50(d=+0.74), K10->K5(d=+0.70).
+  Integration is present (H_1114 🟢) but does not increase smoothly with
+  exchange frequency at the frozen per-step effect-size bar — the φ-rate
+  relation is not a clean adjacent-step monotone ladder (closed-negative).
+========================================================================================
+HONEST scope (a_scale_honest_scope): toy n=6, in-process twin sim of the h1113
+per-channel A⊥G dynamics (H_1114 construction VERBATIM); real-socket dyad-φ,
+cross-host, production cells and scale UNVERIFIED — next rung. Mirror RE-PROVEN
+≡ stdlib at n=4,5 (both engines) and at the scoring n=6 (faithful, LIVE hexa
+re-capture) BEFORE scoring; H_1114 LINK-ON headline REPRODUCED at K=5 as a
+construction gate; MI in BITS/log2 (a_phi_iit4_tool, NO proxy). SERIAL, $0 CPU
+local, 0-pod, g5/p7. CORE/brain NOT wired; 1114/1112 artifacts untouched.
+wall = 55.5s
