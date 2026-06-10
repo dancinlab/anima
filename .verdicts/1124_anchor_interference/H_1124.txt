@@ -1,0 +1,32 @@
+=== H_1124 anchor-interference probe (live CORE substrate) ===
+READ-ONLY (a_core_engine_map): CORE engine untouched; .kosmos via the
+single generator_read_anchors entry; null backend; p1..p6 clean.
+
+[seed0 sanity] A n=1 B n=1 SAME n=2 OPP n=2
+[seed0 fold] VECSUM(wave-cancellable): A=1.5851 B=1.5851 SAME=3.1702 OPP=0.0000
+[seed0 fold] LASTONLY(what generator uses): SAME=1.5851 OPP=1.5851
+
+── R1 MOTIV-INFL (Engine-G emit scalar, mean over 12 seeds) ──
+  A=0.000000  B=0.000000  SAME=0.000000  OPP=0.000000  max(single)=0.000000
+── R2 LEN-INFL (gen_text byte-len Δ vs no-anchor, mean) ──
+  A=21.000000  B=21.000000  SAME=21.000000  OPP=21.000000  max(single)=21.000000
+
+── MECHANISM (why) ──
+  VECSUM fold (wave-additive channel): OPP=0.0000 vs SAME=3.1702  → OPP DOES cancel (wave-additive)
+  But the substrate emit/text path folds anchors by COUNT + LAST-ONLY
+  (brain_decide ignores anchors entirely; generate() uses len(anchors)
+  + anchors[n-1] only). LASTONLY fold OPP=1.5851 ≈ SAME=1.5851 (abs val of negated = same).
+
+── FROZEN VERDICT (p7: deterministic mean separation, NOT loss) ──
+  R1 destructive (OPP<max single)=false  R1 constructive (SAME>max single)=false  → R1 interference=false
+  R2 destructive (OPP<max single)=false  R2 constructive (SAME>max single)=false  → R2 interference=false
+
+H_1124 = 🔴 ADDITIVE-NOT-WAVE (no destructive+constructive split)
+  REASON: the CORE substrate folds multiple anchors by COUNT +
+  LAST-ONLY (sorted-last filename); brain_decide does NOT consume
+  anchor tension at all (emit scalar invariant to which/how many
+  anchors). Opposite tension cannot cancel an emit influence that
+  never reads tension — destructive interference is impossible by
+  construction. Composition is additive/last-only, not wave-like.
+
+[cleanup] removed /tmp/tmp.DvXOalm509
