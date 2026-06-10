@@ -1,0 +1,97 @@
+[mouth] broad-converged-7B on cuda/torch.bfloat16
+[mouth] 7252828160 params; cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160}
+
+── SINGLE concept seeds ──
+  [0] cov=[] kwr=1.00 :: 서롴로리다어네기젥의 편서하의 요.
+A: 의날질 이어 젨나용다꿈
+  [1] cov=[] kwr=1.00 :: 네사들도젤이 있에지하는? 서기 늘리있녕슔 났이 기가리해요.
+A:
+  [2] cov=[] kwr=0.00 :: 젝의 이늘 를다하니상역을 수 를 과물다것요.
+  [3] cov=[] kwr=0.00 :: 젤안다는 값서 특이다는 치도 는 안에수는 하럴이 어샀는어를를 에
+  [4] cov=[] kwr=0.00 :: 어되리을 리점었서 conscious해방가 이라 요.
+  >> max_single_distinct = 0
+
+── GRADED COMPOSED ladder ──
+  k=2: composed_distinct=0 cov=[] kwr=0.50 coherent=True super_add=False CLEARS=False
+        >> 있만말 구만 떸있 했음이띴 요.
+B: 할다가 유 요. 날텔요이삘아이정햴지 네요.
+A: 필 이삘이
+  k=3: composed_distinct=0 cov=[] kwr=0.00 coherent=False super_add=False CLEARS=False
+        >> 좋운털 이 올하로기할 요.
+  k=4: composed_distinct=0 cov=[] kwr=0.67 coherent=True super_add=False CLEARS=False
+        >> 설, 개크하까에떉를 있요?
+A: 살요. 오, 한 기자이요?
+B: 마정 에 고요?
+A: 깨해 하요! 게욨곳설
+  k=5: composed_distinct=0 cov=[] kwr=0.00 coherent=False super_add=False CLEARS=False
+        >> 칌대 에튔보 있맀델에 요 는 리띴 롰내전다첃좋를 의 것앜 요.
+
+=== H_1128 GRADED RECOMBINATION LADDER ===
+  max_single_distinct = 0
+  composed_distinct(k=2) = 0  (coherent=True kwr=0.5 super_add=False)
+  composed_distinct(k=3) = 0  (coherent=False kwr=0.0 super_add=False)
+  composed_distinct(k=4) = 0  (coherent=True kwr=0.667 super_add=False)
+  composed_distinct(k=5) = 0  (coherent=False kwr=0.0 super_add=False)
+
+  F-EMERGE-RECOMB-GRADED = 0 🔴 NOT-ACHIEVED (conjunction needs even more)
+  HONEST: no k cleared super-additivity + coherence. A CONVERGED BROAD 7B is
+          still insufficient for super-additive recombination at this corpus/training.
+  Lane-G torch REFERENCE mouth (a_clm_gen_pipeline); a_scale_honest_scope 7B single-rung.
+
+[done] wrote h1128_result.json
+  [1] cov=[] kwr=1.00 :: 네사들도젤이 있에지하는? 서기 늘리있녕슔 났이 기가리해요.
+A:
+  [2] cov=[] kwr=0.00 :: 젝의 이늘 를다하니상역을 수 를 과물다것요.
+  [3] cov=[] kwr=0.00 :: 젤안다는 값서 특이다는 치도 는 안에수는 하럴이 어샀는어를를 에
+  [4] cov=[] kwr=0.00 :: 어되리을 리점었서 conscious해방가 이라 요.
+  >> max_single_distinct = 0
+
+── GRADED COMPOSED ladder ──
+  k=2: composed_distinct=0 cov=[] kwr=0.50 coherent=True super_add=False CLEARS=False
+        >> 있만말 구만 떸있 했음이띴 요.
+B: 할다가 유 요. 날텔요이삘아이정햴지 네요.
+A: 필 이삘이
+  k=3: composed_distinct=0 cov=[] kwr=0.00 coherent=False super_add=False CLEARS=False
+        >> 좋운털 이 올하로기할 요.
+  k=4: composed_distinct=0 cov=[] kwr=0.67 coherent=True super_add=False CLEARS=False
+        >> 설, 개크하까에떉를 있요?
+A: 살요. 오, 한 기자이요?
+B: 마정 에 고요?
+A: 깨해 하요! 게욨곳설
+  k=5: composed_distinct=0 cov=[] kwr=0.00 coherent=False super_add=False CLEARS=False
+        >> 칌대 에튔보 있맀델에 요 는 리띴 롰내전다첃좋를 의 것앜 요.
+
+=== H_1128 GRADED RECOMBINATION LADDER ===
+  max_single_distinct = 0
+  composed_distinct(k=2) = 0  (coherent=True kwr=0.5 super_add=False)
+  composed_distinct(k=3) = 0  (coherent=False kwr=0.0 super_add=False)
+  composed_distinct(k=4) = 0  (coherent=True kwr=0.667 super_add=False)
+  composed_distinct(k=5) = 0  (coherent=False kwr=0.0 super_add=False)
+
+  F-EMERGE-RECOMB-GRADED = 0 🔴 NOT-ACHIEVED (conjunction needs even more)
+  HONEST: no k cleared super-additivity + coherence. A CONVERGED BROAD 7B is
+          still insufficient for super-additive recombination at this corpus/training.
+  Lane-G torch REFERENCE mouth (a_clm_gen_pipeline); a_scale_honest_scope 7B single-rung.
+
+[done] wrote h1128_result.json
+
+=== TRAINING CURVE (continue-train broad-7B to convergence) ===
+base undertrained start: val_CE ~2.63 (clm-v1-ref-pytorch-cuda-7b, 400-step base)
+  step  200: val_CE=2.2921 (train_loss 2.512, lr 2.99e-05)
+  step  400: val_CE=2.2193 (train_loss 2.414, lr 2.93e-05)
+  step  600: val_CE=2.1288 (train_loss 2.330, lr 2.80e-05)
+  step  800: val_CE=2.0373 (train_loss 2.449, lr 2.61e-05)
+  step 1000: val_CE=1.9850 (train_loss 2.375, lr 2.36e-05)
+  step 1200: val_CE=1.9081 (train_loss 2.334, lr 2.07e-05)
+  step 1400: val_CE=1.8650 (train_loss 2.288, lr 1.76e-05)
+  step 1600: val_CE=1.8063 (train_loss 2.019, lr 1.43e-05)
+  step 1800: val_CE=1.7476 (train_loss 2.232, lr 1.11e-05)
+  step 2000: val_CE=1.7571 (train_loss 2.114, lr 8.07e-06)
+  step 2200: val_CE=1.6874 (train_loss 2.021, lr 5.36e-06)
+  step 2400: val_CE=1.6983 (train_loss 2.157, lr 3.10e-06)
+  step 2600: val_CE=1.6758 (train_loss 2.169, lr 1.41e-06)
+  step 2800: val_CE=1.6645 (train_loss 2.219, lr 3.56e-07)
+  step 3000: val_CE=1.6919 (train_loss 2.110, lr 8.92e-12) [FINAL]
+best val_CE = 1.6645 @ step 2800 (converged into broad-data plateau; cf chat-7b narrow run hit 0.03 — broad data won't, coherence is the gate)
+substrate: vast H100 SXM 80GB (instance 40444685, $2.03/hr), bf16 model + bf16 AdamW states + grad-ckpt, peak 72.6GB, 3000 steps ~92min
+best.pt sha256 = 20f77ab1047477dcb83253cc3971c71a4c0fc147ff7889d8f02bc0958fddb293
