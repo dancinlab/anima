@@ -56,3 +56,22 @@ English (loose grammar, single-seed, seed 7), as measured by the pre-registered 
 coherence metric (p7, NOT perplexity) — not deep semantic synthesis. Achieved at step 3500 / val 1.36
 (not full convergence); the bar is already cleared, full-convergence ckpt only sharpens it. 303.1M
 ByteGPT, English-dominant broad corpus (ASCII-filtered from the 5-lang 1.5GB), Lane-G torch REFERENCE.
+
+================================================================================
+FINAL CONVERGED LADDER (best ckpt step=5500, val_ce=1.224)
+HF (PUBLIC): dancinlab/anima-clm-midcap-303m-broad-en-emergent  sha256 19be1295282d41c06db12bb890bc7c6e6d03b18565ee090ddfa208e46a160a28
+
+-- SINGLE baselines: max_single_distinct = 2 (concepts sharpen with convergence)
+-- COMPOSED graded ladder:
+  k=2 composed_distinct=1 cov=[1]     kwr=1.00 clears=False
+  k=3 composed_distinct=3 cov=[0,1,2] kwr=0.96 clears=TRUE
+        >> The meaning of the cells of original cells, along with the distant cells of the cell line cells them...
+  k=4 composed_distinct=1 cov=[0]     kwr=0.96 clears=False
+  k=5 composed_distinct=3 cov=[0,1,4] kwr=0.96 clears=TRUE
+        >> The engine engines can be caused on the cells of the cells, the engine between the cell is today...
+  MAX_SINGLE=2  EMERGENT_ANY=True
+
+At convergence TWO k's clear (k=3, k=5) vs ONE at step 3500 -> recombination STRENGTHENS with
+training, consistent with the H_1132 phase-transition direction (one data point: emergence present
+by step 3500, sharper by step 5500). Honest scope unchanged: keyword-level coherent-English
+recombination, loose grammar (repetition tic), single seed 7, toy scale.
