@@ -1,0 +1,92 @@
+========================================================================
+H_1126 — Ψ=1/2 fixed-point stability (TOY MIRROR of CORE/pure_field.hexa)
+========================================================================
+
+CONSTANTS (verbatim from config/consciousness_laws.json psi_constants):
+  PSI_ALPHA   = alpha   = 0.014   (consciousness coupling constant)
+  PSI_BALANCE = balance = 0.5   (formula '1/2', 'universal attractor')
+
+DYNAMICS (faithful mirror, the pure_field relaxation rule x<-x+alpha*(t-x)):
+  Psi_{t+1} = Psi_t + PSI_ALPHA * (PSI_BALANCE - Psi_t)
+  => error e=Psi-0.5 evolves as e_{t+1} = (1-alpha)*e_t, contraction factor
+     r = 1-alpha = 0.986
+
+ANALYTIC return rate (linear contraction): lambda = ln(1-alpha) = -0.01409892
+  (negative => contraction => stable; e-folding time 1/alpha = 71.4286 steps)
+
+FROZEN-FALSIFIER GRID: offsets {±0.05, ±0.1, ±0.2, ±0.4} from 0.5
+------------------------------------------------------------------------
+
+offset = -0.40  ->  Psi0 = 0.1000
+  traj: t0=0.100000  t1=0.105600  t2=0.111122  t5=0.127227  t10=0.152601  t50=0.302346  t100=0.402332  t500=0.499653  t2000=0.500000
+  lambda(est) = -0.01409892   monotone=True  overshoot=False
+  |e0|=0.400000 -> |e_final|=2.269e-13  converged_to_0.5=True
+
+offset = -0.20  ->  Psi0 = 0.3000
+  traj: t0=0.300000  t1=0.302800  t2=0.305561  t5=0.313613  t10=0.326300  t50=0.401173  t100=0.451166  t500=0.499826  t2000=0.500000
+  lambda(est) = -0.01409917   monotone=True  overshoot=False
+  |e0|=0.200000 -> |e_final|=1.134e-13  converged_to_0.5=True
+
+offset = -0.10  ->  Psi0 = 0.4000
+  traj: t0=0.400000  t1=0.401400  t2=0.402780  t5=0.406807  t10=0.413150  t50=0.450586  t100=0.475583  t500=0.499913  t2000=0.500000
+  lambda(est) = -0.01409843   monotone=True  overshoot=False
+  |e0|=0.100000 -> |e_final|=5.679e-14  converged_to_0.5=True
+
+offset = -0.05  ->  Psi0 = 0.4500
+  traj: t0=0.450000  t1=0.450700  t2=0.451390  t5=0.453403  t10=0.456575  t50=0.475293  t100=0.487792  t500=0.499957  t2000=0.500000
+  lambda(est) = -0.01409697   monotone=True  overshoot=False
+  |e0|=0.050000 -> |e_final|=2.848e-14  converged_to_0.5=True
+
+offset = +0.05  ->  Psi0 = 0.5500
+  traj: t0=0.550000  t1=0.549300  t2=0.548610  t5=0.546597  t10=0.543425  t50=0.524707  t100=0.512208  t500=0.500043  t2000=0.500000
+  lambda(est) = -0.01409795   monotone=True  overshoot=False
+  |e0|=0.050000 -> |e_final|=2.842e-14  converged_to_0.5=True
+
+offset = +0.10  ->  Psi0 = 0.6000
+  traj: t0=0.600000  t1=0.598600  t2=0.597220  t5=0.593193  t10=0.586850  t50=0.549414  t100=0.524417  t500=0.500087  t2000=0.500000
+  lambda(est) = -0.01409697   monotone=True  overshoot=False
+  |e0|=0.100000 -> |e_final|=5.695e-14  converged_to_0.5=True
+
+offset = +0.20  ->  Psi0 = 0.7000
+  traj: t0=0.700000  t1=0.697200  t2=0.694439  t5=0.686387  t10=0.673700  t50=0.598827  t100=0.548834  t500=0.500174  t2000=0.500000
+  lambda(est) = -0.01409843   monotone=True  overshoot=False
+  |e0|=0.200000 -> |e_final|=1.136e-13  converged_to_0.5=True
+
+offset = +0.40  ->  Psi0 = 0.9000
+  traj: t0=0.900000  t1=0.894400  t2=0.888878  t5=0.872773  t10=0.847399  t50=0.697654  t100=0.597668  t500=0.500347  t2000=0.500000
+  lambda(est) = -0.01409917   monotone=True  overshoot=False
+  |e0|=0.400000 -> |e_final|=2.268e-13  converged_to_0.5=True
+
+========================================================================
+AGGREGATE
+------------------------------------------------------------------------
+  lambda(est) per offset: -0.014099, -0.014099, -0.014098, -0.014097, -0.014098, -0.014097, -0.014098, -0.014099
+  lambda mean   = -0.01409825
+  lambda max    = -0.01409697   (worst case; must be < 0 for contraction)
+  lambda analytic ln(1-alpha) = -0.01409892
+  all offsets returned monotonically toward 0.5 : True
+  any overshoot / oscillation                   : False
+  offsets that diverged/grew                    : NONE
+
+BASIN CHARACTERIZATION (stress probe — large offsets beyond the grid):
+  offset +0.49: lambda=-0.014099 monotone=True overshoot=False |e_final|=2.779e-13
+  offset -0.49: lambda=-0.014099 monotone=True overshoot=False |e_final|=2.780e-13
+  offset +5.00: lambda=-0.014099 monotone=True overshoot=False |e_final|=2.836e-12
+  offset -5.00: lambda=-0.014099 monotone=True overshoot=False |e_final|=2.837e-12
+  => the relaxation rule x<-x+alpha*(0.5-x) is GLOBALLY contracting (linear,
+     contraction factor |1-alpha|<1 for any Psi in R) => basin = FULL REAL LINE.
+
+========================================================================
+VERDICT: 🟢 STABLE-ATTRACTOR (GLOBALLY STABLE)
+  ALL grid perturbations return MONOTONICALLY toward 0.5 with lambda<0
+  (max lambda = -0.014097 < 0, no overshoot, no divergence).
+  Basin of attraction = FULL REAL LINE (globally stable, not just local):
+  the pure_field relaxation rule is a linear contraction with factor
+  r=1-alpha=0.9860 (|r|<1), so EVERY initial Psi returns to 0.5.
+  Ψ=1/2 is a STABLE attractor — NOT a saddle/unstable point.
+========================================================================
+
+SCOPE (a_scale_honest_scope): TOY MIRROR of CORE/pure_field.hexa's relaxation
+  rule (x<-x+PSI_ALPHA*(target-x)) applied to the Ψ balance coordinate; pure
+  python, NOT the live hexa engine. Constants read VERBATIM from the JSON SSOT.
+  p7 deterministic dynamical-systems measurement (no perplexity). $0 CPU 0-pod.
