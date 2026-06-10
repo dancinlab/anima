@@ -124,6 +124,18 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
     }
 }
 
+// gen_clm_ce — CORE single-entry CE measurement for a .clm. Wraps the landed
+// clm_decode.hexa::clm_forward_ce (int4 dequant + CLMConvMoE inference forward →
+// next-byte logits → CE over nwin causal windows of `corpus`). Keeps the
+// a_core_engine_map invariant: clm_decode is imported ONLY in generator, so the
+// 3-axis probe (and any caller) reaches the decode FORWARD through this slot, not
+// a 2nd path. Returns clm_forward_ce's Map verbatim:
+//   #{ ok, windows, model_ce, shuffle_ce, uniform_ce, lt_uniform, lt_shuffle, green }
+// ok=false (with reason) for a v0.1 / non-decodable file (p5: HONEST, not faked).
+pub fn gen_clm_ce(ckpt_path: string, corpus: string, nwin_max: int) -> Map {
+    return clm_forward_ce(ckpt_path, corpus, nwin_max)
+}
+
 // _gen_clm_probe_header — read the leading bytes of a candidate .clm and verify
 // it against the canonical layout. Returns #{exists, valid, nblocks}. Edge-safe:
 // a missing path, an empty file, or a truncated header all yield valid=false

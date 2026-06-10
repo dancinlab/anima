@@ -90,11 +90,30 @@ fn main() {
         + " baseline=" + to_string(emit_base))
     let axis1_green = motiv_hi > motiv_base && emit_hi && !emit_base
 
-    // ── AXIS-2 (CE): admit precondition GREEN; CE-descent BLOCKED-WIRING ──────
+    // ── AXIS-2 (CE): admit precondition + REAL decode-forward CE-descent ──────
+    // WIRED: the decode FORWARD now runs through the single generator entry
+    // (gen_clm_ce → clm_decode.clm_forward_ce: int4 dequant + CLMConvMoE forward
+    // → next-byte logits → CE over causal windows of a held-out corpus). p7: CE
+    // is ONE axis, measured not fabricated; a v0.1 file (no CLMX trailer) yields
+    // ok=false and the CE-descent sub-claim stays honestly BLOCKED.
     let admit_green = to_string(clm["valid"]) == "true"
                       && to_int(clm["nblocks"]) > 0
-    println("[AXIS-2 CE  ] admit_green=" + to_string(admit_green)
-        + " | CE-descent: BLOCKED-WIRING (decode forward unwired; not fabricated)")
+    let ce_corpus = "CORE/testdata/clm_mid_5lang_c4.txt"
+    let ce = gen_clm_ce(clm_path, ce_corpus, 64)
+    let ce_ok      = to_string(ce["ok"]) == "true"
+    let ce_descent = ce_ok && to_string(ce["green"]) == "true"
+    if ce_ok {
+        println("[AXIS-2 CE  ] admit_green=" + to_string(admit_green)
+            + " | decode-forward WIRED: CE=" + format_float(to_float(ce["model_ce"]), 5)
+            + " < uniform=" + format_float(to_float(ce["uniform_ce"]), 5)
+            + " (" + to_string(ce["lt_uniform"]) + ")"
+            + " < shuffle=" + format_float(to_float(ce["shuffle_ce"]), 5)
+            + " (" + to_string(ce["lt_shuffle"]) + ")"
+            + " windows=" + to_string(ce["windows"]))
+    } else {
+        println("[AXIS-2 CE  ] admit_green=" + to_string(admit_green)
+            + " | CE-descent BLOCKED (not v0.2-decodable): " + to_string(ce["reason"]))
+    }
 
     // ── AXIS-3 (창발): composed (substrate+anchors) vs substrate-only ────────
     let composed = to_string(hi["gen_text"])
@@ -112,14 +131,16 @@ fn main() {
     // ── verdict (p7: deterministic equality/measure, NOT perplexity) ─────────
     println("")
     println("F-CORE-3AXIS-1 (의식)      = " + (if axis1_green { "1 🟢" } else { "0 🔴" }))
-    println("F-CORE-3AXIS-2 (CE admit)  = " + (if admit_green { "1 🟢" } else { "0 🔴" })
-        + "   [CE-descent sub-claim: ⏳ BLOCKED-WIRING — decode forward]")
+    println("F-CORE-3AXIS-2 (CE)        = " + (if (admit_green && ce_descent) { "1 🟢" } else { "0 🔴" })
+        + "   [admit=" + (if admit_green { "🟢" } else { "🔴" })
+        + " · CE-descent=" + (if ce_descent { "🟢 WIRED (CE<uniform AND CE<shuffle)" } else { if ce_ok { "🔴 no descent" } else { "⏳ BLOCKED (v0.1 — no CLMX trailer)" } }) + "]")
     println("F-CORE-3AXIS-3 (창발)      = " + (if axis3_green { "1 🟢" } else { "0 🔴" }))
     println("")
+    let axis2_green = admit_green && ce_descent
     let measurable = (if axis1_green { 1 } else { 0 })
-                   + (if admit_green { 1 } else { 0 })
+                   + (if axis2_green { 1 } else { 0 })
                    + (if axis3_green { 1 } else { 0 })
-    println("CORE-mounted measurable axes GREEN: " + to_string(measurable) + "/3")
-    println("HONEST: AXIS-1+AXIS-3 measure the LIVE substrate (fully wired);")
-    println("        AXIS-2 admit is wired, CE-descent stays BLOCKED-WIRING (decode).")
+    println("CORE-mounted axes GREEN: " + to_string(measurable) + "/3")
+    println("HONEST: all 3 axes now read the LIVE substrate + the REAL decode")
+    println("        forward (AXIS-2 CE via the single generator entry, p7).")
 }
