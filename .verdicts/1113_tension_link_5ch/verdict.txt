@@ -1,0 +1,55 @@
+======================================================================================
+H_1113 — canonical 5-CHANNEL TENSION-LINK between two anima nodes
+  (a_kosmos payload 'tension 5-ch' · HEXAD/KOSMOS.md:40 production-wired ·
+   real two-process unix-socket channel · h1099 tension-arm dynamics x5 channels)
+  CH=5 W*_c=[1.0, 0.8, 1.2, 0.9, 1.1] GAMMA_X=0.05 COUP=0.3 K_EMIT=5
+  N_STEPS=4000 BURN=500 seeds=10 kick=5.0@t=2000 win=50
+  frozen bars: OFF|TE|<= 0.01 · ON TE>0 & d>=0.8 (all 5 ch) · selectivity >= 3.0 (both kicks)
+======================================================================================
+  seed 100: sessions done (5 real 2-proc socket runs)
+  seed 101: sessions done (5 real 2-proc socket runs)
+  seed 102: sessions done (5 real 2-proc socket runs)
+  seed 103: sessions done (5 real 2-proc socket runs)
+  seed 104: sessions done (5 real 2-proc socket runs)
+  seed 105: sessions done (5 real 2-proc socket runs)
+  seed 106: sessions done (5 real 2-proc socket runs)
+  seed 107: sessions done (5 real 2-proc socket runs)
+  seed 108: sessions done (5 real 2-proc socket runs)
+  seed 109: sessions done (5 real 2-proc socket runs)
+
+PER-CHANNEL bias-corrected TE(W_A[c] -> W_B[c]) [bits], 10 seeds:
+ch           OFF (no exchange)          ON (anchors K=5)   Cohen d   corr ON
+--------------------------------------------------------------------------------------
+W[0]      -0.000624 ± 0.003234      +0.066151 ± 0.007541     11.51    +0.462
+W[1]      -0.001590 ± 0.002879      +0.067439 ± 0.004030     19.71    +0.462
+W[2]      +0.002555 ± 0.003534      +0.064160 ± 0.005964     12.57    +0.469
+W[3]      +0.000512 ± 0.002367      +0.060251 ± 0.007355     10.93    +0.448
+W[4]      +0.000666 ± 0.001801      +0.064903 ± 0.004520     18.67    +0.483
+
+ON arm, KICK ch2 of A — ΔW_B response 5-vector (mean over seeds, |kick-nokick| in win):
+   ch0=0.0913  ch1=0.0913  ch2=1.0843  ch3=0.0913  ch4=0.0913
+   kicked ch2=1.0843 vs off-channel mean=0.0913  ->  SELECTIVITY INDEX = 11.87
+
+ON arm, KICK ch4 of A — ΔW_B response 5-vector (mean over seeds, |kick-nokick| in win):
+   ch0=0.0913  ch1=0.0913  ch2=0.0913  ch3=0.0913  ch4=1.0843
+   kicked ch4=1.0843 vs off-channel mean=0.0913  ->  SELECTIVITY INDEX = 11.87
+
+OFF arm, KICK ch2 sanity: max |ΔW_B| over all channels/seeds = 0.000e+00  (no exchange -> kick cannot reach B)
+
+REAL-LINK LATENCY (unix socket, 8000 anchor msgs over 10 ON runs):
+  one-way anchor (A send ts -> B recv): mean=11.8us p50=11.0us p95=15.0us
+  lockstep round-trip (A msg -> B ack): mean=24.7us p50=23.6us p95=33.3us
+
+FROZEN falsifier checks:
+  (i)   ON TE>0 all 5 ch  : [0.0662, 0.0674, 0.0642, 0.0603, 0.0649] ; d=[11.51, 19.71, 12.57, 10.93, 18.67] all>= 0.8 -> True
+  (ii)  selectivity >= 3.0 : kick2=11.87, kick4=11.87 -> True
+  (iii) OFF baseline ≈ 0  : |TE|max=0.0026 <= 0.01, kick-leak=0.0e+00 -> True
+
+======================================================================================
+VERDICT: 🟢 SUPPORTED-at-toy — the canonical 5-CHANNEL TENSION-LINK is real
+  AND channel-resolved: per-channel directed transfer on ALL 5 channels over a
+  real two-process unix-socket anchor exchange, with kick selectivity 11.9x / 11.9x
+  (>= 3x bar) — a genuine multi-channel link, NOT a scalar smear. Baseline null.
+  Scope: toy local-host analog of the production 5-ch payload FORMAT;
+  real CORE kosmos_io wiring + cross-host = next rung (a_scale_honest_scope).
+======================================================================================

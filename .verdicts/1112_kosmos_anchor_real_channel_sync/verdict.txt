@@ -1,0 +1,45 @@
+================================================================================================
+H_1112 — kosmos-anchor REAL-CHANNEL sync (constructive successor to falsified H_1099)
+  PSI*=0.5 LAM=0.1 SIGMA=0.05 COUP=0.3 N_STEPS=6000 seeds=10
+  kick=5.0@t=3000 resp_win=100 | arms: none / every-50 / every-5 steps
+  REAL: two OS processes + unix-domain socket + JSON anchor msgs {psi,tension,t,ts}
+================================================================================================
+
+metric                               (a) NO exchange          (b) LOW 1/50          (c) HIGH 1/5
+------------------------------------------------------------------------------------------------
+corr steady-state               +0.014362 ± 0.043040  +0.130348 ± 0.047289  +0.544434 ± 0.022914
+TE raw [bits] (biased)          +0.017255 ± 0.002012  +0.023616 ± 0.002681  +0.093227 ± 0.005912
+TE(A->B) bias-corr [bits]       +0.000316 ± 0.001998  +0.004569 ± 0.002574  +0.074114 ± 0.006092
+Δψ_B (kick response)            +0.000000 ± 0.000000  +0.010415 ± 0.000000  +0.300388 ± 0.000000
+one-way latency send->recv             n/a (no msgs)           5.0 µs med           5.0 µs med
+ack round-trip (RTT)                             n/a           9.2 µs med          10.2 µs med
+------------------------------------------------------------------------------------------------
+  (Δψ_B identical across seeds within exchange arms: the linear kick-response is
+   noise-independent — deterministic separation, Cohen d -> inf. Latency is REAL
+   and FINITE — the honest contrast with H_1099's falsified '0-latency' claim.)
+
+per-seed (TE bias-corr / Δψ_B):
+  s100: none: TE=-0.0017 dB=0.000e+00  |  low: TE=+0.0025 dB=1.041e-02  |  high: TE=+0.0769 dB=3.004e-01
+  s101: none: TE=+0.0009 dB=0.000e+00  |  low: TE=+0.0016 dB=1.041e-02  |  high: TE=+0.0658 dB=3.004e-01
+  s102: none: TE=+0.0004 dB=0.000e+00  |  low: TE=+0.0078 dB=1.041e-02  |  high: TE=+0.0887 dB=3.004e-01
+  s103: none: TE=+0.0025 dB=0.000e+00  |  low: TE=+0.0065 dB=1.041e-02  |  high: TE=+0.0726 dB=3.004e-01
+  s104: none: TE=+0.0039 dB=0.000e+00  |  low: TE=+0.0040 dB=1.041e-02  |  high: TE=+0.0745 dB=3.004e-01
+  s105: none: TE=+0.0007 dB=0.000e+00  |  low: TE=+0.0001 dB=1.041e-02  |  high: TE=+0.0722 dB=3.004e-01
+  s106: none: TE=-0.0025 dB=0.000e+00  |  low: TE=+0.0087 dB=1.041e-02  |  high: TE=+0.0763 dB=3.004e-01
+  s107: none: TE=-0.0018 dB=0.000e+00  |  low: TE=+0.0057 dB=1.041e-02  |  high: TE=+0.0672 dB=3.004e-01
+  s108: none: TE=-0.0012 dB=0.000e+00  |  low: TE=+0.0048 dB=1.041e-02  |  high: TE=+0.0702 dB=3.004e-01
+  s109: none: TE=+0.0020 dB=0.000e+00  |  low: TE=+0.0038 dB=1.041e-02  |  high: TE=+0.0768 dB=3.004e-01
+
+FROZEN falsifier checks:
+  (1) baseline null     : Δψ_B=0.000e+00 <= 1e-09  AND |TE|=0.0003 <= 0.01   -> True
+  (2) exchange transfer : TE_low=+0.0046>0, TE_high=+0.0741>0, Δψ_low=1.041e-02>0, Δψ_high=3.004e-01>0 -> True
+  (3) monotone-in-rate  : d(TE none->low)=1.75, d(TE low->high)=14.11, d(Δψ none->low)=inf, d(Δψ low->high)=inf  (all >= 0.8) -> True
+
+================================================================================================
+VERDICT: 🟢 H_1112 SUPPORTED-at-toy.
+  A REAL anchor channel (two OS processes, unix socket, JSON anchor msgs) carries
+  genuine directed information — TE>0, kick reaches B — and transfer SCALES with
+  exchange RATE (high > low > none, all adjacent d >= 0.8). With NO exchange the
+  shared attractor gives correlation but ZERO transfer (= H_1099 Arm1 reproduced).
+  Latency is finite and measured — networked anchors, not non-locality.
+================================================================================================
