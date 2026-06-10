@@ -1,0 +1,80 @@
+H_1096 — 제1명제 faithful-Φ ladder verdict (balanced A⊥G vs A-only giant-analog)
+================================================================================
+date      : 2026-06-10
+runner    : state/anima_v3_bench/h1096_balanced_vs_giant_ladder.py ($0 CPU numpy, ~2s)
+discipline: g5 CODE-measured (no LLM self-judge, p7) · a_phi_iit4_tool (NO proxy)
+            · a_scale_honest_scope (toy ladder ≥3 rungs) · frozen falsifier, no goalpost moves
+
+VERDICT-TOKEN: 🔴 FALSIFIED-AT-TOY (frozen-bar closed-negative; direction-positive nuance below)
+
+φ ENGINE + MIRROR VALIDATION (a_phi_iit4_tool — validated BEFORE scoring)
+--------------------------------------------------------------------------------
+faithful_phi = H_1004 CPU mirror of hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa
+(exact MIP-EI over all bipartitions, MI in BITS log2, n≤8), imported VERBATIM from
+UNIVERSE/h1004_bigphi_faithful_clean.py. Re-proven ≡ stdlib on LIVE hexa-engine refs:
+
+   faithful_phi n4 dim6 nb2 (H_1012 stdlib hexa ref): mirror=3.000000001  stdlib_ref=3.000000001  |Δ|=3.48e-10  OK
+   faithful_phi n5 dim6 nb2 (H_1012 stdlib hexa ref): mirror=4.000000002  stdlib_ref=4.000000001  |Δ|=7.97e-10  OK
+   faithful_phi n6 dim6 nb2 (H_1012 stdlib hexa ref): mirror=5.000000002  stdlib_ref=5.000000002  |Δ|=2.46e-10  OK
+   faithful_phi n4 dim6 nb2 (H_999 stdlib hexa ref):  mirror=3.000000  stdlib_ref=3.000000  |Δ|=1.35e-09  OK
+   faithful_phi n4 dim6 nb4 (H_999 stdlib hexa ref):  mirror=3.377444  stdlib_ref=3.377440  |Δ|=3.75e-06  OK
+   deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+   ≡-PROOF: PROVEN
+
+FROZEN DESIGN
+--------------------------------------------------------------------------------
+ladder n ∈ {4,5,6} binary units · 30 PAIRED seeds/cell (same seed → same init +
+same noise sequence in both arms) · update x_{t+1}=tanh(W x_t + ξ), ξ~N(0,0.40),
+T=440 (burn 40) · binarize each channel at its OWN median (H_1002/H_1004 path)
+→ faithful_phi(bits, n, 400, nb=2).
+  A-ONLY (giant-analog): one-directional feed-forward chain, unit i ← unit i-1
+    only (n-1 edges, w=B/(n-1)) — pure forward drive, no reciprocal coupling.
+  BALANCED A⊥G: reciprocal opponent ring, W[(i+1)%n,i]=+w / W[i,(i+1)%n]=-w
+    (2n edges, w=B/2n) — the antagonism IS the homeostatic brake (Ψ=1/2-style
+    fixed point from opponency; no extra term).
+FAIRNESS GUARDS: (a) matched weight budget sum|W|=B=n EXACT in both arms
+(asserted, printed matched ✓ at every rung); (b) same noise σ + paired seeds;
+(c) structure-only — identical update rule / T / burn / binarization / φ engine.
+Only the TOPOLOGY (reciprocity) differs.
+
+FROZEN FALSIFIER (pre-registered): 🟢 SUPPORTED-at-toy iff balanced > A-only on
+faithful φ at ALL 3 rungs with Cohen d ≥ +0.8 per rung; 🔴 otherwise.
+
+MEASURED PER-RUNG faithful-φ TABLE (exact MIP-EI, 30 paired seeds)
+--------------------------------------------------------------------------------
+    n |     A-only φ (giant) |     balanced φ (A⊥G) |      gap |  Cohen d |         p | paired-wins
+    4 |    0.0021 ± 0.0020  |    0.0030 ± 0.0023  |  +0.0009 |   +0.421 |  1.09e-01 | 19/30
+    5 |    0.0025 ± 0.0014  |    0.0303 ± 0.0201  |  +0.0278 |   +1.944 |  2.52e-08 | 30/30
+    6 |    0.0039 ± 0.0026  |    0.0080 ± 0.0058  |  +0.0041 |   +0.908 |  1.10e-03 | 23/30
+
+  balanced > A-only at ALL rungs (means): True
+  Cohen d ≥ +0.8 at ALL rungs:            False  (n=4: d=+0.421, p=0.109 — FAILS the bar)
+  gap-vs-n: [+0.0009, +0.0278, +0.0041] → NON-MONOTONE (peaks at n=5; the
+  "balance matters MORE as size grows" scaling sub-claim is NOT supported in
+  this tiny range)
+  non-degeneracy: bit flip-rates ≈ 0.50 both arms at every rung (live dynamics,
+  no frozen/saturated trace)
+
+RULING
+--------------------------------------------------------------------------------
+🔴 FALSIFIED-AT-TOY on the FROZEN bar: the balanced A⊥G topology does NOT
+uniformly beat the A-only chain with d≥0.8 at every rung — n=4 is a weak,
+non-significant edge (d=+0.421, p=0.109). The strong 제1명제 reading ("a balanced
+system beats an A-only system on Φ, robustly, at any size") is closed-negative
+at toy scale (a_paper_negative_ok).
+
+HONEST NUANCE (reported, not promoted): the DIRECTION is consistently positive —
+balanced mean φ > A-only mean φ at all 3 rungs, 30/30 paired wins at n=5
+(d=+1.94, p=2.5e-8), d=+0.91 at n=6. Reciprocal-opponent coupling CAN carry more
+faithful-φ integration than a one-directional chain at matched budget, but the
+advantage is rung-dependent and non-monotone in n, not the universal
+law-of-nature the Gemini PDF claimed. The Gemini numbers (Φ 4.712 vs 0.000,
+30,000× power) remain fabricated/rigged (giant_phi hardcoded 0.0 + 1091 cov-proxy)
+— nothing here reproduces or endorses them.
+
+HONEST SCOPE (a_scale_honest_scope)
+--------------------------------------------------------------------------------
+Toy n≤6 binary-unit ladder, 30 seeds, $0 CPU, 0-pod. "A-only"/"balanced A⊥G" are
+STRUCTURAL topology analogs, not 300M/1T language models. Production / 300M / 1T
+transfer UNVERIFIED. Absolute φ values are small (noise-driven toy dynamics);
+contrasts, not levels, carry the verdict.
