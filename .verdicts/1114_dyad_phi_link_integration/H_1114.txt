@@ -1,0 +1,94 @@
+========================================================================================
+H_1114 — DYAD-Φ: does a real tension-link make two anima-like nodes ONE
+  more-integrated system? (joint faithful IIT-4.0 φ_EI, n=6 exact MIP-EI)
+  forward of H_1112 (🟢 scalar real-channel TE) + H_1113 (🟢 channel-resolved 5-ch
+  link); dynamics = h1113 per-channel A⊥G opponent pair VERBATIM, CH=3 slice;
+  in-process twin sim (real-socket transport already closed by H_1112/1113).
+  CH=3 (joint n=6) W*_c=[1.0, 0.8, 1.2] GAMMA_X=0.05 COUP=0.3 K_EMIT=5
+  N_STEPS=4000 BURN=500 seeds=10 cal-seeds=[500, 501, 502, 503, 504]
+  frozen falsifier: 🟢 iff d(ON−OFF)>=0.8 AND d(ON−CORR)>=0.8 on φ_joint;
+  🔴 CHANNEL-NOT-INTEGRATING if ON≈OFF; 🔴 CORRELATION-ARTIFACT if ON≈CORR.
+  engine: stdlib iit4/faithful_phi.hexa CPU mirror (BITS/log2) — a_phi_iit4_tool.
+========================================================================================
+
+STEP 0 — RE-PROVE mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+ [0a] LIVE stdlib faithful_phi re-capture at n=4,5,6 (n=6 = the scoring n):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+ [0a] live-stdlib faithful proof: PROVEN
+ [0b] h1012.prove_mirrors_at_n at n=4 AND n=5 (both engines, established pattern):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ [0b] mirror-equivalence results: {4: True, 5: True}
+ STEP 0 PASS — mirror PROVEN ≡ stdlib at n=4, n=5 (both engines) and at the
+ scoring n=6 (faithful, live hexa re-capture). Scoring may proceed.
+
+STEP 1 — calibrate CORR-CONTROL MIX (calibration seeds only, frozen tol 0.005):
+  ON-arm mean per-channel cross-corr over cal seeds = +0.48282 (target)
+  cal iter  1: MIX=0.50000  cross-corr=+0.48495  target=+0.48282
+  FROZEN MIX = 0.50000  (achieved cal cross-corr +0.48495 vs target +0.48282, |Δ|=0.00213)
+
+STEP 2 — score 3 arms × 10 seeds (SERIAL):
+  seed 100: φ_joint off=0.0010 on=0.0116 corr=0.0132  | cross-corr off=+0.003 on=+0.492 corr=+0.512
+  seed 101: φ_joint off=0.0034 on=0.0172 corr=0.0084  | cross-corr off=+0.026 on=+0.495 corr=+0.514
+  seed 102: φ_joint off=0.0029 on=0.0163 corr=0.0119  | cross-corr off=+0.009 on=+0.472 corr=+0.512
+  seed 103: φ_joint off=0.0008 on=0.0102 corr=0.0107  | cross-corr off=+0.028 on=+0.500 corr=+0.522
+  seed 104: φ_joint off=0.0097 on=0.0114 corr=0.0139  | cross-corr off=-0.028 on=+0.494 corr=+0.494
+  seed 105: φ_joint off=0.0065 on=0.0107 corr=0.0061  | cross-corr off=+0.021 on=+0.504 corr=+0.510
+  seed 106: φ_joint off=0.0018 on=0.0119 corr=0.0044  | cross-corr off=-0.002 on=+0.495 corr=+0.499
+  seed 107: φ_joint off=0.0014 on=0.0166 corr=0.0112  | cross-corr off=+0.033 on=+0.469 corr=+0.543
+  seed 108: φ_joint off=0.0036 on=0.0106 corr=0.0076  | cross-corr off=-0.015 on=+0.475 corr=+0.502
+  seed 109: φ_joint off=0.0013 on=0.0094 corr=0.0127  | cross-corr off=-0.003 on=+0.486 corr=+0.504
+
+φ TABLE (faithful IIT-4.0 φ_EI, exact MIP-EI, BITS; 10 seeds, mean ± sd):
+arm                      φ_joint (n=6)               φ_A (n=3)               φ_B (n=3)
+----------------------------------------------------------------------------------------
+LINK-OFF          +0.003234 ± 0.002688    +0.007112 ± 0.002907    +0.008225 ± 0.004665
+LINK-ON           +0.012618 ± 0.002784    +0.007112 ± 0.002907    +0.008909 ± 0.003121
+CORR-CONTROL      +0.010010 ± 0.003050    +0.006097 ± 0.003019    +0.007956 ± 0.002740
+
+sum-of-parts baseline (φ_A + φ_B, mean): LINK-OFF=0.0153  LINK-ON=0.0160  CORR-CONTROL=0.0141
+cross-corr check (mean per-ch corr(W_A[c],W_B[c]), scoring seeds): LINK-OFF=+0.0072±0.0188  LINK-ON=+0.4883±0.0116  CORR-CONTROL=+0.5113±0.0133
+  |Δ cross-corr(ON, CORR)| on scoring seeds = 0.0230 (d=-1.85) — correlation-matched control validity
+
+CONTRASTS on φ_joint (Cohen d, frozen bar d >= 0.8):
+  ON  − OFF : Δmean=+0.009384  d=+3.429
+  ON  − CORR: Δmean=+0.002608  d=+0.893
+  CORR− OFF : Δmean=+0.006776  d=+2.357   (context: what correlation alone buys)
+
+FROZEN falsifier checks:
+  (i)  d(φ_joint ON − OFF)  = +3.429 >= 0.8 -> True
+  (ii) d(φ_joint ON − CORR) = +0.893 >= 0.8 -> True
+
+========================================================================================
+VERDICT: 🟢 DYAD-INTEGRATION — the causal tension-link makes the pair ONE
+  more-integrated system: joint faithful φ_EI rises vs LINK-OFF AND vs the
+  correlation-matched control — the rise comes from the CAUSAL channel,
+  not from correlation per se.
+========================================================================================
+HONEST scope (a_scale_honest_scope): toy n=6, in-process twin sim of the h1113
+per-channel A⊥G dynamics; real-socket dyad-φ, cross-host, production cells and
+scale UNVERIFIED — next rung. Mirror RE-PROVEN ≡ stdlib at n=4,5 (both engines)
+and at the scoring n=6 (faithful, LIVE hexa re-capture) BEFORE scoring; MI in
+BITS/log2 (a_phi_iit4_tool, NO proxy). SERIAL, $0 CPU local, 0-pod, g5/p7.
+wall = 53.6s
