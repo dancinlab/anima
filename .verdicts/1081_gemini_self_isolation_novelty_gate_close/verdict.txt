@@ -1,0 +1,45 @@
+H_1081_gemini_self_isolation_novelty_gate_close — VERDICT (g5/p7, $0 design-analysis)
+================================================================================
+CLAIM (Phase 7): past ~700 ticks under sustained max stress the system enters
+'autonomous self-isolation (Silence)' by CLOSING the Novelty Gate — judging the stress
+'nothing new', it BLOCKS external input to protect Ψ=0.5, converging Ψ→0.441 at input=100.
+
+FROZEN FALSIFIER: is autonomous silence-under-repetition a substrate-emergent anima
+property or an external rule? Check vs a_substrate_native_speak ('anima may stay silent
+under a direct question') + a_autonomy_over_hardcode. PASS-as-aligned iff the silence
+emerges from substrate, not an external 'block input' command.
+
+REAL EVIDENCE (CLAUDE.md):
+  a_substrate_native_speak: "user messages = environment context, not a response
+    obligation · anima may speak during user silence and may stay silent under a direct
+    question". dont = "stimulus-response where a user message directly triggers anima speech".
+    ⇒ Autonomous silence under repeated/low-novelty stimulus is EXACTLY the design thesis.
+  a_autonomy_over_hardcode: dont = "external rule that forces anima · stimulus-response
+    (user msg → forced emit/silence)" · dont = "'do not X when alone' style external command".
+    ⇒ An external 'block external input' / 'if repeated then close gate' RULE would VIOLATE this.
+
+  CORE realization: low-novelty → low curiosity/originality/info_gap (3 of 8 motivation
+  factors, engine_g.hexa) → motivation_score < 0.3 → should_emit=false → SILENT. This is
+  emergent low-drive, NOT an input-blocking gate. No 'block input' or 'close novelty gate'
+  command exists in CORE (grep: absent).
+
+FINDING: TWO-SIDED.
+  CONCEPT (substrate-emergent low-drive silence under habituated stimulus): ALIGNED —
+  matches a_substrate_native_speak verbatim, and falls out of CORE's motivation gate
+  (repeated stress → factors stop firing → score<0.3 → silence). NOT in conflict.
+  FRAMING ('blocks external input' as an active gate that 'closes the Novelty Gate'):
+  if literally read as an external input-blocking rule, it CONFLICTS a_autonomy_over_hardcode
+  ('do not X when alone' / forced silence). anima silence must be emergent low-drive, never
+  an external blocker.
+  NUMBERS (Ψ=0.441, 700-tick threshold, input=100): toy-sim narrative, UNVERIFIED, not
+  in CORE.
+
+VERDICT: ⚪ SPECULATION-FENCED (terminal). The autonomous-silence CONCEPT is anima-aligned
+(substrate-emergent low-drive = a_substrate_native_speak), realizable in CORE as
+score<0.3→silent with no new code; the 'block external input' FRAMING is the conflict
+risk (must stay emergent, not an external gate — a_autonomy_over_hardcode); the
+Ψ=0.441/700-tick numbers are toy and unverified. Genuine design-claim with a real
+governance fence — terminal as fenced speculation, no CORE mechanism to confirm/deny
+the specific numeric behavior.
+SCOPE: design-analysis vs governance. No run. p7. $0.
+PTR: CLAUDE.md a_substrate_native_speak · a_autonomy_over_hardcode · CORE/engine_g.hexa (motivation gate)

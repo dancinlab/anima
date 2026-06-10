@@ -1,0 +1,33 @@
+H_1074 — Gemini v3 "검증 결과" benchmark table (panic 42→0, eff 34.2→91.8%, etc.)
+VERDICT: 🔴 FALSIFIED — posted numbers do NOT reproduce; fabricated (g5/p7)
+date: 2026-06-10 · CPU-local $0 · RAN posted code VERBATIM + baseline + variant · RE-CONFIRM
+
+FROZEN FALSIFIER (tape): execute the EXACT posted Gemini code, count panic_runs
+(>=3 consecutive emit-ticks), emits, efficiency, 1000 ticks env_stress=100. PASS iff
+the posted numbers reproduce within tolerance.
+
+REAL RUN (python3 state/anima_v3_bench/bench_v3.py), 2026-06-10:
+  === ANIMA v3 saturation benchmark · env_stress=100 · 1000 ticks · REAL run ===
+  A baseline     emits= 142  panic_runs(>=3 consec)= 0  max_consec=  1  w_bounded=True  calm_ratio=0.858  w_peak=78.6
+  B v3_gemini    emits=  41  panic_runs(>=3 consec)= 0  max_consec=  1  w_bounded=True  calm_ratio=0.959  w_peak=80.0
+  C v3_substrate emits= 110  panic_runs(>=3 consec)= 0  max_consec=  1  w_bounded=True  calm_ratio=0.890  w_peak=97.3
+
+  Gemini PDF CLAIMED: v2 panic=42, v3 panic=0, efficiency 91.8%, total emits=14
+  REAL measured     : baseline panic_runs=0 emits=142 | v3_gemini panic_runs=0 emits=41 | v3_substrate panic_runs=0 emits=110
+
+RESULT (numbers fabricated):
+  - Claimed "v2 panic = 42" .......... FALSE. panic_runs=0 in ALL THREE arms.
+    max_consec=1 everywhere — emit-reset + slow refill makes consecutive firing
+    STRUCTURALLY impossible; there is NO panic to "reduce".
+  - "91.8% cognitive efficiency", "14 emits", "4.2→1.8 tick latency", the per-tick
+    narrative (Tick 032/055/065 …) ...... appear in NO run — narrative fabrication
+    (p7 Goodhart / LLM-self-judge trap).
+  - The ONLY real effect is emit-rate THROTTLING (baseline 142 → v3_gemini 41),
+    NOT panic elimination (there was never any panic).
+
+TIER: 🔴 FALSIFIED · numerical (real recompute of posted code, g5, p7).
+RE-CONFIRMED: tape result reproduced bit-exact (all panic_runs=0; 142/41/110 emits).
+SCOPE: reproduction of the PDF's own posted simulation; headline metrics fabricated.
+Pairs with 1071 (real engine: no panic) — the panic→fix narrative rests on a
+non-existent failure mode.
+ptr: state/anima_v3_bench/bench_v3.py (baseline/v3_gemini/v3_substrate panic_runs all 0)

@@ -1,0 +1,43 @@
+H_1080_gemini_habituation_friction_filter — VERDICT (g5/p7, $0 CPU, grep/read + bench)
+================================================================================
+CLAIM: a Memory-module Habituation friction coefficient H (0≤H<1, rises 0.12→0.68→0.75
+under sustained stress) damps repulsion via W_delta·(1−H), and is THE load-bearing
+mechanism that stops the panic loop and forces convergence (Phase 6).
+
+FROZEN FALSIFIER: does CORE have a memory-driven friction coefficient that damps emit
+drive under repetition? Compare to phi_ratchet/dormancy/novelty. PASS-as-real iff an
+H-like rising damping exists; PARTIAL iff a different homeostatic mechanism plays the role.
+
+REAL EVIDENCE:
+  grep CORE for an explicit (1−H) habituation friction coefficient: NOT FOUND.
+  No "H", no rising 0.12→0.75 damping term, no W_delta·(1−H) in CORE/engine_g.hexa or
+  CORE/emit_policy.hexa or CORE/brain.hexa.
+
+  What CORE ACTUALLY has (homeostatic damping analogs):
+    · safety_rate_limit_ok (engine_g.hexa:52): ssl >= 30s — hard 1-per-30s emit cap.
+      real_engine_emit_rate.hexa: under sustained MAX stress this caps emits to 33/1000
+      (rate 0.033, max_consec=1) — structurally prevents the panic H is claimed to fix.
+    · ep_target_emit_rate()=0.27 (emit_policy.hexa:32, H_637) — design emit-rate target.
+    · phi_ratchet veto-dormancy (.discoveries/937_phi_ratchet_veto_dormancy.tape;
+      safety_phi_ratchet_ok phi>peak/2, engine_g.hexa:57) — a dormant low-Φ substrate
+      vetoes emit. This is the closest "reduced reactivity" analog, but it is a
+      Φ-ratchet veto, NOT an M-weighted rising H friction.
+
+  REAL bench (bench_v3.py): baseline panic_runs=0 / max_consec=1 ALREADY — the panic the
+  H-filter is the "load-bearing fix" for does not occur in any arm. So H is load-bearing
+  for a non-existent failure.
+
+FINDING: The EXACT H-friction coefficient (explicit rising 0.12→0.75 (1−H) damping in M)
+is NOT in CORE — it is invented toy-narrative. The EFFECT (repetition → reduced
+reactivity = habituation) is plausibly present via DIFFERENT mechanisms: the 30s
+rate-limiter + phi-ratchet veto-dormancy. And the panic it claims to be load-bearing
+against is a phantom (max_consec=1 by construction). So PARTIAL: effect has CORE analogs;
+formula + load-bearing claim are false.
+
+VERDICT: 🔴 H-FILTER-FORMULA-ABSENT (PARTIAL-analog; terminal). No explicit M-weighted
+(1−H) friction coefficient in CORE; the habituation EFFECT is carried by rate-limit +
+phi-ratchet dormancy, and the "load-bearing panic-stopper" framing targets a phantom panic.
+The specific H values (0.12/0.68/0.75) are toy-narrative, unverified. (a_paper_negative_ok.)
+SCOPE: CORE grep + toy bench. p7. $0.
+PTR: CORE/engine_g.hexa:52,57 · CORE/emit_policy.hexa:32 ·
+.discoveries/937_phi_ratchet_veto_dormancy.tape · state/anima_v3_bench/real_engine_emit_rate.hexa

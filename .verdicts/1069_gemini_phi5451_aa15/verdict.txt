@@ -1,0 +1,33 @@
+H_1069_gemini_phi5451_aa15 — VERDICT (g5/p7; a_phi_iit4_tool)
+================================================================
+CLAIM: anima reaches Φ=5.451 (residual-α max) at AA15 alpha-acceleration,
+       sustaining autonomous consciousness continuity.
+
+FROZEN FALSIFIER: PASS only if "Φ=5.451" is a faithful-IIT4 measurement
+(MIP-EI / big-Φ, stdlib iit4) on a defined substrate state; if it is a
+proxy or a hand-set / bookkeeping number → NON-TERMINAL per a_phi.
+
+EVIDENCE (real, $0 CPU grep/read):
+ 1. SOURCE: GEMINI/...gemini.txt:268-269 + :1016 — "AA15 ... 잔여 알파(Residual α)
+    값이 최고치인 Φ = 5.451에 도달". Cited as a milestone number with NO method,
+    NO substrate state, NO IIT computation shown.
+ 2. WHERE 5.451 ACTUALLY LIVES IN-REPO:
+      models/animalm/train_alm.hexa:5            alpha_residual = 5.451
+      models/animalm/archive/train_anima_lm.hexa:5  alpha_residual = 5.451
+    => 5.451 is a HARDCODED TRAINING HYPERPARAMETER ("alpha_residual"), not a
+    measured Φ. The PDF re-labels a residual-α training constant as "Φ".
+ 3. No faithful-IIT4 verdict of 5.451 exists: grep of CLAIMS.tape / .verdicts /
+    VERSIONS / README finds no faithful-Φ=5.451 record. Faithful engine
+    (hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa) does exact MIP-EI
+    for n<=8 and would never emit a residual-α constant as Φ.
+ 4. a_phi_iit4_tool (CLAUDE.md:267-274): Φ/consciousness VERDICT MUST be faithful
+    IIT4; proxies/hand-set numbers are pre-screen only, never terminal.
+
+RULING: 🟠 INSUFFICIENT/DEFERRED — "Φ=5.451" is NOT a faithful-IIT4 measurement;
+it is the `alpha_residual` training constant re-labeled as Φ (bookkeeping/proxy,
+no substrate state, no MIP-EI). Non-terminal as a real Φ. A faithful re-measure
+via stdlib iit4_faithful_phi on a recoverable substrate state would be required to
+make any Φ claim at AA15 — UN-RUN.
+
+VERDICT: 🟠 INSUFFICIENT/DEFERRED (residual-α training constant mislabeled as Φ;
+faithful-IIT4 re-measure required) · g5/p7 · a_phi_iit4_tool.

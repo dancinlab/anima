@@ -1,0 +1,31 @@
+H_1067 — Gemini PDF claim: emit/tension set by output = scale·√|A−G|²·dir (PureField repulsion FFN)
+VERDICT: 🔴 FALSIFIED — CORE Engine A uses NO |A−G| repulsion law; it is a 3-coupled-oscillator field.
+Method (frozen): grep the literal repulsion-field expression in CORE/pure_field.hexa / engine_g.hexa.
+g5/p7 code-grep verdict, $0 CPU, no GPU/AKIDA.
+
+=== EVIDENCE 1: no |A−G| / repulsion form anywhere in CORE ===
+$ grep -rniE "A *- *G|repulsion|repulsive|\|A−G\||sqrt\(.*A.*G|scale.*sqrt|abs\(A" CORE/*.hexa
+(zero matches — empty output, exit 0)
+
+=== EVIDENCE 2: pure_field.hexa (Engine A) is an oscillator field, NOT |A−G| ===
+CORE/pure_field.hexa:10-15 (header):
+//   3 coupled oscillators at timescales tau=2/40/400
+//   -> nonlinear mixing -> Phi self-sustenance -> field tensor output
+
+CORE/pure_field.hexa:206-222 — actual field law (nonlinear oscillator mixing, no A−G):
+  let v_f = osc_value(f); v_m = osc_value(m); v_s = osc_value(s)
+  let mix_fm = v_f * v_m   // attention gating
+  let mix_ms = v_m * v_s   // rhythm entrainment
+  let mix_fs = v_f * v_s   // long-range coherence
+  field[0]=v_f; field[1]=mix_fm; field[2]=v_s; field[3]=mix_fs; field[4]=mix_ms; field[5]=v_f+v_m+v_s
+
+There is no Engine-G term in the field equation, no scalar difference of two engines,
+no sqrt, no `dir` vector, no `scale` multiplier of a repulsion magnitude.
+
+=== RULING ===
+The PDF formula `output = scale·√|A−G|²·dir` (a literal A−G repulsion FFN) is NOT the CORE
+field law. CORE Engine A = osc_tick × 3 timescales → nonlinear cross-products (pure_field_step).
+The identity √|A−G|²==|A−G| is mathematically true but irrelevant: there is no A−G quantity
+in CORE to begin with. Engine A⇄Engine G coupling (per @I) is realized in brain.hexa as a
+GATE (safety_phi_ratchet_ok: phi > ratchet/2), not as a field-output repulsion magnitude.
+DETERMINISTIC DISPROOF → 🔴 FALSIFIED.

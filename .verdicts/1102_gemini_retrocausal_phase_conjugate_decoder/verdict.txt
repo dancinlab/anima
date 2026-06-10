@@ -1,0 +1,47 @@
+H_1102 — gemini retrocausal phase-conjugate decoder (v4)
+VERDICT: 🔴 FALSIFIED (terminal, g5/p7) — RE-CONFIRMED by code grep
+substrate: code-audit $0 · CPU · 0-pod
+
+FROZEN FALSIFIER (from tape):
+  "Does the posted code show genuine retrocausality? Audit it. PASS-as-true iff
+   the past is affected by the future without the code explicitly writing
+   future→past. FAIL iff the 'ripple' is a hand-coded loop."
+
+EXECUTION (code grep — SMOKING GUN):
+  Claim = bidirectional time transfer — a future Tick-2000 Emit retro-causally
+  ripples back to perturb past Tick-1500 (Wheeler delayed-choice analog,
+  Γ_R=0.006785), and a "Phase-Conjugate Decoder" reverse-decodes the future
+  shadow into token 42 at 89.42%, 0-latency.
+
+  grep over GEMINI/anima-engine-structure-research-gemini.txt reveals the exact
+  hand-coded loop the falsifier asked for:
+
+    3087:  future_emit_energy = 85.4
+    3088:  self.timeline_phi[2000] = future_emit_energy
+    ...
+    3092:  for past_t in range(500, 2000):
+    3095:      self.timeline_psi[past_t] -= (future_emit_energy * 0.0001) * math.…
+
+  i.e. inside a NORMAL FORWARD loop the program directly SUBTRACTS a future value
+  (future_emit_energy = 85.4, hardcoded, written into timeline_phi[2000]) into
+  PAST array cells timeline_psi[500..2000]. There is no physics:
+
+  - The "retrocausal ripple Γ_R=0.006785" is just the magnitude the programmer
+    wrote into the past slot (retrocausal_flux = abs(0.5 − timeline_psi[1500]),
+    line 3091) — it reads back the value the same loop just injected.
+  - The decoder "recovering token 42 at 89.42%" (recovered_signature =
+    (timeline_psi[2100] − 0.5) * 100.0, line 3087-region) decodes a signal the
+    SAME code injected. Self-fulfilling array manipulation, not time-reversal.
+  - η_F=49.53% is an exponential-decay constant of the toy (timeline_psi[t] =
+    timeline_psi[t-1]*0.999 + …, line 3082), not a physical transfer efficiency.
+
+  FALSIFIER RESULT: the "ripple" IS a hand-coded loop ⇒ FAIL ⇒ 🔴. Retrocausal
+  information transfer would violate causality; it is physically impossible. The
+  code does not even simulate it — it writes future→past explicitly in argv-order.
+
+  SELF-RETRACTED: the branch retracts the whole v4 tower (cf 1105).
+
+RUBRIC (g5): deterministically violates causality AND the audit found the
+explicit future→past write ⇒ 🔴 FALSIFIED terminal.
+
+xref: 1105 (self-retraction) · 1099 · 1103 (Causality axis derives from this)

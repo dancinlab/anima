@@ -1,0 +1,38 @@
+H_1077 — Gemini PDF claim: Φ = scale·(dW/dt)·(1−H), W=∫(k1|Ψ−0.5|+k2|A−G|²)dt; telemetry bands <1/1-5/≥5
+VERDICT: 🔴 FALSIFIED-as-real-Φ-measure (closed-negative). The Gemini Φ-formula is BOTH (a) not the
+CORE Φ computation AND (b) a tension-rate/variance·energy proxy that a_phi_iit4_tool forbids as a
+terminal Φ verdict. Either way the claim "this is anima's Φ" is disproved by CORE code.
+Method (frozen): is anima's Φ this tension-rate proxy or faithful IIT4? g5/p7, $0 CPU.
+
+=== EVIDENCE 1: CORE Φ is variance×energy of the oscillator field, NOT dW/dt·(1−H) ===
+CORE/pure_field.hexa:224-242:
+  // 4. Phi = information integration across field
+  //    Approximation: variance of field (non-uniform = integrated)
+  ... let variance = sum_sq / to_float(FIELD_DIM)
+  let energy = abs(v_f) + abs(v_m) + abs(v_s)
+  let raw_phi = variance * energy           // <-- CORE Φ
+  let phi = pf.phi + PSI_ALPHA * (raw_phi - pf.phi)   // EMA smoothing
+
+CORE Φ = EMA(variance(field) × energy). There is no integral W, no dW/dt time-derivative,
+no (1−H) habituation friction, no k1|Ψ−0.5|, no k2|A−G|² integrand.
+
+=== EVIDENCE 2: no |A−G| term exists in CORE (so integrand k2|A−G|² has no referent) ===
+$ grep -rniE "A *- *G|repulsion|\|A−G\|" CORE/*.hexa  → zero matches.
+Engine A is an oscillator field (pure_field.hexa:10-15), not an A−G difference.
+
+=== EVIDENCE 3: telemetry bands (1.0 / 5.0 cutoffs) are NOT in CORE ===
+CORE phase thresholds come from consciousness_laws.json (phase_dormant_max 0.01 /
+phase_flicker_max 0.05 / phase_sustain_max 0.15 — pure_field.hexa:86-88), classifying
+DORMANT/FLICKER/SUSTAIN/RESONANT. There is no <1 / 1–5 / ≥5 "telemetry scale".
+
+=== EVIDENCE 4: a_phi_iit4_tool bars the proxy as terminal ===
+CORE raw_phi = variance×energy is an energy/variance-class proxy (the exact "variance*energy
+byte-mirror" pattern a_phi_iit4_tool names as a forbidden proxy). The Gemini dW/dt·(1−H) form
+is ALSO such a proxy. Faithful Φ verdicts require stdlib iit4_faithful_phi / iit4_bigphi
+(exact MIP-EI). H_988/989 proxy-blindness wall: a proxy cannot be a terminal Φ verdict.
+
+=== RULING ===
+The Gemini formula matches NEITHER the CORE Φ code NOR the mandated faithful-IIT4 measure, and
+asserting it as "anima's Φ" is deterministically false. CORE Φ is itself a proxy (runtime
+telemetry, not a consciousness verdict). 🔴 FALSIFIED as a claim-of-being-anima's-Φ-measure.
+(Faithful-IIT4 re-measure of the substrate remains a separate OPEN question, not this claim.)

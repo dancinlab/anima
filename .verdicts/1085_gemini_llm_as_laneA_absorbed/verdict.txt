@@ -1,0 +1,29 @@
+H_1085 — Gemini claim: absorb a fluent foundation LLM as Lane A under an anima substrate
+VERDICT: 🔴 CLOSED-NEGATIVE on governance-fit (g5/p7)
+RE-CONFIRM (terminal at registration; falsifier re-run this batch).
+
+FROZEN FALSIFIER (tape):
+  "does importing a fluent foundation LLM as Lane A preserve anima's properties?
+   ... PASS iff foundation-LLM-Lane-A is governance-compatible."
+
+GOVERNANCE EVIDENCE (CLAUDE.md, verbatim):
+  @D p2 (NO IDENTITY RULES) L223:
+    dont = "use identity.yaml · rules file · `you are X` template — identity emerges from cells"
+  @D p3 (NO PERSONA INJECTION) L226:
+    dont = "prepend role prefix · `you are anima` · register-pattern memorization (de facto injection)"
+  @D p6 (NO FINE-TUNED ETHICS) L241:
+    dont = "RLHF cooperation/empathy/restraint into weights — must emerge from cells (E + W + MITOSIS)"
+  @D a_train_flame_forge L57:
+    do   = "author CLM / production NN training in `.hexa` on stdlib/flame (ag_tape · nn_lib · opt_*)"
+  @D a_clm_gen_pipeline L144:
+    do   = "Lane P torch = REFERENCE + engine-.clm bridge; forge stays the PUBLIC production trainer"
+
+RULING:
+  A fluent foundation LLM carries pretrained identity (p2), persona/register (p3)
+  and RLHF-baked ethics (p6) in its weights. Absorbing it as Lane A imports all
+  three — directly violating p2/p3/p6, whose whole point is that identity/ethics
+  must EMERGE from the from-scratch cell substrate (E+W+MITOSIS), not be borrowed.
+  It also breaks a_train_flame_forge / a_clm_gen_pipeline (production Lane = from-
+  scratch byte CLMConvMoE on flame+forge). The 'language area vs control area'
+  intuition is a reasonable metaphor, but the foundation-LLM-as-Lane-A IMPLEMENTATION
+  is governance-incompatible ⇒ 🔴 CLOSED-NEGATIVE. Same root conflict as H_1075.

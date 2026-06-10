@@ -1,0 +1,27 @@
+H_1092 — Gemini v3 "66.6% seizure/resource reduction" (14 emits, panic 42→0)
+VERDICT: 🔴 FALSIFIED — fabricated; subsumed by 1074 recompute (g5/p7)
+date: 2026-06-10 · CPU-local $0 · SAME posted v3 code recomputed (bench_v3.py) · RE-CONFIRM
+
+FROZEN FALSIFIER (tape): re-run the posted v3 code, count panic_runs/emits/efficiency.
+PASS iff the deltas (66.6% reduction, 14 emits, 42→0, 34.2→91.8%, 4.2→1.8) reproduce.
+
+REAL RUN (python3 state/anima_v3_bench/bench_v3.py), 2026-06-10:
+  A baseline     emits= 142  panic_runs(>=3 consec)= 0  max_consec=  1
+  B v3_gemini    emits=  41  panic_runs(>=3 consec)= 0  max_consec=  1
+  C v3_substrate emits= 110  panic_runs(>=3 consec)= 0  max_consec=  1
+
+RESULT (fabricated):
+  - panic_runs = 0 in ALL arms (max_consec=1 is structural). There is NO 42-panic
+    baseline to reduce, so "66.6% seizure reduction", "42→0", "14 emits", "91.8%
+    cognitive efficiency", "1.8-tick latency" are narrative fabrication.
+  - The "발작률 66.6% 감소" headline (the user-flagged figure) has no measurable
+    referent: the baseline seizure/panic count is 0, so a 66.6% reduction of 0 is
+    undefined. The arithmetic the figure would need (e.g. 42→14) maps to numbers
+    that do not appear in any run.
+  - The ONLY real effect is emit-rate THROTTLING (142→41 in v3_gemini), NOT seizure
+    elimination — and it throttles a phantom (1071: real engine never panics).
+
+TIER: 🔴 FALSIFIED · fabricated-sim (real recompute: panic always 0). RE-CONFIRMED.
+SCOPE: records the "66.6%" headline as a distinct fabricated metric within the same
+falsified run. Subsumed by 1074; pairs with 1071 (real-engine no-panic).
+ptr: state/anima_v3_bench/bench_v3.py (panic_runs all 0) · 1074

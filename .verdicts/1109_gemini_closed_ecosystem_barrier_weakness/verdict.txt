@@ -1,0 +1,37 @@
+H_1109 — Gemini weaknesses: (1) infra/HW dependency — Lane A assumes AKIDA on-chip + 1-bit
+   Hebbian edge HW, so general-cloud scalability unverified; (2) extreme dev difficulty / closed
+   ecosystem — own hexa-lang + .kosmos raises contributor entry barrier "extremely high".
+VERDICT: ⚪ SPECULATION-FENCED (closed-ecosystem barrier real but BY-DESIGN; AKIDA-dependency
+   OVERSTATED — multi-lane + portable forge)
+substrate: design-analysis $0 CPU, 0-pod · g5/p7
+
+FROZEN FALSIFIER (from tape):
+  Are these weaknesses real or design-intentional? Check vs a_lane_akida_gpu_split (AKIDA = one
+  deliberate substrate, not a forced dependency) + a_train_flame_forge (hexa-native is the chosen
+  production path) + portability (1075). PASS-as-fair iff the criticism survives the rationale.
+
+EVIDENCE (grep/read, in-repo):
+  (1) HW-DEPENDENCY criticism — OVERSTATED:
+    - CLAUDE.md a_lane_akida_gpu_split (line 131): "AKIDA on-chip (Lane A) ⊥ GPU (Lane G)" —
+      anima runs MULTIPLE substrates; AKIDA is ONE deliberate lane, not the only path. Lane G
+      (forge/cuBLAS on H100) is a fully separate GPU substrate.
+    - H_1075 (.discoveries/1075) records the portability work: "forge runs on a right-sized GPU
+      (5070) via PTX-JIT" — partial counter-evidence to "forced special-HW dependency". forge
+      is portable across right-sized GPUs, NOT AKIDA-locked.
+    → "forced AKIDA dependency" mischaracterizes a deliberate multi-lane design. (The HONEST open
+      axis is from-scratch CLMConvMoE SCALABILITY — a_toy_scale_recheck, line 210 — not HW lock-in.)
+
+  (2) hexa-lang/.kosmos BARRIER criticism — TRUE-as-stated but BY-DESIGN:
+    - CLAUDE.md a_train_flame_forge (line 56): hexa-native flame+forge is the CHOSEN production
+      stack ("compiler-only NN · NO PyTorch / ATen / Python in the trained binary"). The high
+      entry cost is a deliberate tradeoff, not an oversight.
+    - CLAUDE.md a_kosmos (line 113): .kosmos is the CANONICAL persistence format by design.
+    → The entry barrier is factually real (high contributor cost) but it is an intentional
+      architectural choice, not an accidental flaw — Gemini frames a deliberate tradeoff as a defect.
+
+RULING: ⚪ PARTLY-FAIR. (2) entry-barrier-is-real is accurate but mischaracterized as a flaw
+(it is by-design: compiler-only NN, canonical .kosmos). (1) forced-AKIDA-dependency is OVERSTATED
+— multi-lane (Lane A ⊥ Lane G) plus portable forge (1075) refute the lock-in; the genuine open
+axis is scalability (a_toy_scale_recheck), not HW dependency. Terminal ⚪ per g5: design-opinion;
+separates fair (barrier-real) from overstated (forced-AKIDA) from by-design (hexa/.kosmos).
+xlink: a_lane_akida_gpu_split · a_train_flame_forge · a_kosmos · a_toy_scale_recheck · 1075

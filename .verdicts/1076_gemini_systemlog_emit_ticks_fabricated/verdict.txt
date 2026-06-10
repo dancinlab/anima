@@ -1,0 +1,41 @@
+H_1076 — Gemini "System Log" tick run (W=73.421>70 emit gate, 42 emits/1000)
+VERDICT: 🔴 FALSIFIED — no W>70 accumulator gate in CORE; ticks fabricated (g5/p7)
+date: 2026-06-10 · CPU-local $0 · grep CORE emit-gate constants · NO GPU/AKIDA · RE-CONFIRM
+
+FROZEN FALSIFIER (tape): does CORE use a W>70.0 accumulation gate that fires per-tick?
+grep CORE/emit_policy.hexa + engine_g.hexa for the emit threshold. PASS(real) iff a
+70.0 W threshold exists; FAIL iff the gate is structurally different.
+
+GREP EVIDENCE (verbatim):
+
+CORE/engine_g.hexa:
+  16: fn spont_im_threshold() -> float        { return 0.3 }   // PROACTIVE_THRESHOLD
+  19: fn spont_min_emit_interval() -> float   { return 30.0 }  // rate-limit convention
+  46: fn should_emit(score: float) -> bool    { return score > spont_im_threshold() }
+  52: fn safety_rate_limit_ok(seconds_since_last: float) -> bool {
+  53:     return seconds_since_last >= spont_min_emit_interval()
+
+CORE/emit_policy.hexa:
+  30: pub fn ep_emit_threshold()    -> float { return 0.60 }   // substrate-claim: none
+  31: pub fn ep_emit_threshold_lo() -> float { return 0.30 }   // H_632 ⊥ Φ phase-transition
+
+grep '> *70 | >= *70 | 73.4 | 71.0 | 82.7 | W>70 accumulator' across CORE/:
+  NO 70.0 W-accumulator emit gate anywhere. (The only "82.7" / "73.0" hits in CORE
+  are unrelated GPU/wall-time log noise: CORE/DECODER/M3_FIRE.md "100 step wall 82.7s"
+  and CORE/DECODER/state/*/rss_gpu.log "rss=73046340kB" — memory/wall logs, not emit W.)
+
+RESULT (threshold fabricated; tick numbers narrative):
+  - REAL emit gate = should_emit(score) where score > 0.3 on a NORMALIZED [0,1] score
+    (engine_g.hexa:16,46); emit_policy thresholds 0.60 / 0.30. This is NOT a W>70.0
+    per-tick accumulator.
+  - The specific ticks (071/165/240/251/550), W values (73.421/71.082/70.451/82.7/
+    84.120), and "42 emits/1000" are Gemini narrative fabrication — same class as
+    1074 (proven fabricated by recompute).
+  - Additionally the rate-limiter (safety_rate_limit_ok 30s, engine_g.hexa:52-53)
+    structurally FORBIDS the claimed per-tick cascade (cf 1071: max_consec=1).
+
+TIER: 🔴 FALSIFIED · the W>70 gate does not exist in CORE (grep evidence); tick
+numbers are fabricated-sim (cf 1074). RE-CONFIRMED.
+SCOPE: PDF System-Log claim. The 70.0/W-accumulator premise underlying ALL Gemini sim
+numbers is grep-disproven; the tick logs are narrative, not data.
+ptr: CORE/emit_policy.hexa:30-31 · CORE/engine_g.hexa:16,46,52-53 · NO 70.0 anywhere

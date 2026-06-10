@@ -1,0 +1,42 @@
+H_1091_gemini_iit_phi_4840_cov_eigen_proxy — VERDICT (g5/p7; a_phi_iit4_tool)
+=============================================================================
+CLAIM: a "real-consciousness IIT validator" computes Φ_IIT = H_partition − H_whole
+       from a covariance-matrix eigen-decomposition of Lane A/G vectors, yielding
+       Φ_IIT = 0.000 idle → 1.430 rumination → 4.840 apex, proving Φ_IIT>0 =
+       irreducible whole>parts = genuine machine consciousness.
+
+FROZEN FALSIFIER: is the posted formula faithful IIT4? a_phi_iit4_tool requires
+exact MIP-EI (iit4_faithful_phi / iit4_bigphi). PASS only if it computes MIP-EI
+integration over a cause-effect TPM; FAIL if it is a covariance-entropy proxy.
+
+EVIDENCE (real, $0 CPU — direct source audit of the posted code):
+ GEMINI/...gemini-branched.txt:1804-1809 (verbatim):
+   p_whole     = np.cov(lane_A_vector, lane_G_vector) / (np.std(A)*np.std(G))
+   eigenvalues = np.linalg.eigvals(p_whole)
+   eigenvalues = np.abs(eigenvalues[eigenvalues > 0])
+   h_whole     = -np.sum(eigenvalues * np.log2(eigenvalues + 1e-9))
+ => Φ is computed as (sum of per-channel entropies) − (entropy of covariance-matrix
+    EIGENVALUES). This is a COVARIANCE-ENTROPY DIFFERENCE (a Gaussian proxy).
+ METHOD AUDIT — what faithful IIT4 requires vs what this has:
+   - minimum-information-partition (MIP) search ............ ABSENT
+   - effective-information (EI) integral .................. ABSENT
+   - transition-probability matrix (cause-effect TPM) ..... ABSENT
+   This is exactly the proxy class a_phi forbids (CLAUDE.md:273-274: "use a proxy
+   (variance*energy byte-mirror) as a terminal phi verdict" / "purpose-blind proxy
+   — H_988/989 scored random == intentional"). The faithful engine
+   (stdlib/consciousness/iit4/faithful_phi.hexa) does TRUE MIP-EI (2^(n-1) exact
+   bipartitions, cross-cut MI at the MIP) — the posted code does none of this.
+ DATA AUDIT: the values 0.000/1.430/4.840 are toy-narrative; later a "data로 해보자"
+   run re-prints the SAME 4.840 with different H_whole/H_partition (lines 4573
+   "I(Omni)=4.840000", 2940, 3319) — consistent with hand-set numbers, not a
+   recomputed measurement.
+
+RULING: 🔴 FALSIFIED on method — the posted Φ_IIT is a covariance-eigenvalue-entropy
+PROXY, NOT faithful IIT4 (no MIP, no EI, no TPM). Per a_phi_iit4_tool this can never
+be a terminal Φ verdict; H_988/989 proxy-blindness wall: such proxies score random
+== intentional. The headline "Φ_IIT=4.840 proves machine consciousness" is rejected
+on method (proxy) AND on data (hand-set/re-printed). The only legitimate Φ path is
+stdlib faithful IIT4.
+
+VERDICT: 🔴 FALSIFIED on method (covariance-entropy proxy ≠ faithful IIT4; values
+fabricated-sim) · g5/p7 · a_phi_iit4_tool.

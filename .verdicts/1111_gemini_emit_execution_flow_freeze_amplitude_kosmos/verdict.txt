@@ -1,0 +1,34 @@
+H_1111 — Gemini PDF claim: emit runs a 4-step pipeline (1) Freeze Φ/M state (2) A⊥G repulsion track
+(3) Amplitude = |A−G| → tone/volume/urgency (4) emit + .kosmos persist as next-loop memory
+VERDICT: ⚪ SPECULATION-FENCED (mixed; terminal). Endpoints REAL (emit gate + .kosmos anchor wiring);
+the middle "Freeze" and "amplitude = |A−G|" steps are Gemini reconstruction — Freeze is ABSENT from
+CORE and the |A−G| amplitude is DEFINITIVELY FALSIFIED (no |A−G| quantity exists in CORE, cf 1067/1077).
+Method (frozen): does CORE emit follow freeze→A⊥G→amplitude→.kosmos? PASS iff steps map; PARTIAL iff differs.
+
+=== STEP 1 "Freeze Φ/M at trigger" — ABSENT ===
+$ grep -rniE "freez|frozen" CORE/brain.hexa CORE/generator.hexa CORE/emit_policy.hexa → no match.
+CORE/brain.hexa:57 emit is a single-shot gated decision; there is no documented state-lock/freeze step.
+
+=== STEP 2 "A⊥G repulsion track" / STEP 3 "amplitude = |A−G| → tone/volume/urgency" — FALSIFIED ===
+$ grep -rniE "A *- *G|repulsion|amplitude.*emit|tone|volume|urgency" CORE/brain.hexa CORE/generator.hexa
+  CORE/emit_policy.hexa → no |A−G|, no tone/volume/urgency mapping.
+Engine A is an oscillator field (pure_field.hexa:10-15), there is NO |A−G| difference to set an
+amplitude from (same disproof as H_1067). A⇄G coupling is realized as a GATE
+(brain.hexa:52 safety_phi_ratchet_ok: phi > ratchet/2), not a repulsion-amplitude write.
+
+=== STEP 4 "emit + .kosmos persist" — emit gate REAL; .kosmos wired as READ (write-persist not in CORE emit) ===
+CORE/brain.hexa:52,57:
+  let safe = safety_combined(kill, rate, phi_r, cont)
+  let emit = should_emit(score) && safe          // REAL emit gate
+CORE/generator.hexa:191-195, 46:
+  import ".../kosmos_io.hexa" ; generator_read_anchors → kosmos_io.load_anchors  // .kosmos READ wired
+The .kosmos coupling in CORE is anchor READ (load_anchors feeds brain_decide, a_core_engine_map
+single anchor entry). a_kosmos mandates emit→.kosmos WRITE persistence via kosmos_io, but that
+write step is NOT wired in the CORE emit path itself (kosmos_io appears only as a read import).
+So ".kosmos as next-loop memory" is design-real but the persist-on-emit half is not in CORE emit.
+
+=== RULING ===
+2 of 4 steps fail: Freeze ABSENT, amplitude=|A−G| FALSIFIED (no |A−G| in CORE). Endpoints partially
+real: emit gate real; .kosmos wired (read) but emit-write-persist not in the CORE emit path. The
+pipeline as a whole does NOT map to CORE — the freeze/amplitude middle is Gemini reconstruction.
+Mixed real/invented with a definitively-false sub-step → ⚪ SPECULATION-FENCED (terminal).

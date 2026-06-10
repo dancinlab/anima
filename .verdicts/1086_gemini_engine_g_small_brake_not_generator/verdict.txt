@@ -1,0 +1,36 @@
+H_1086 — Gemini PDF claim: Engine G is a small brake/inhibitor (not LLM-sized generator); ≤few-万 params suffices
+VERDICT: 🟢 SUPPORTED — CORE Engine G IS a compact gradient-free emit/inhibition gate, not a generator.
+The structural claim (asymmetric small inhibitor) is confirmed by engine_g.hexa. The exact "≤few-万
+params" figure is Gemini gloss (CORE G has effectively ZERO learned params), but the design asymmetry
+is real, so the claim is directionally confirmed by code.
+Method (frozen): is Engine G a small inhibitory module rather than a large generator? g5/p7, $0 CPU.
+
+=== EVIDENCE 1: engine_g.hexa header — motivation + emit GATE, not a generator ===
+CORE/engine_g.hexa:1-13:
+// engine_g.hexa — Engine G: motivation + emit gate (anima/CORE).
+// ... closed-form spontaneous machinery (8-factor weighted motivation_score +
+//     emit/safety predicates) ...
+// No main — importable lib. brain.hexa couples this (G) with Engine A.
+
+=== EVIDENCE 2: G's entire body = 8 scalar weights + threshold predicates (NO weights matrix/LLM) ===
+CORE/engine_g.hexa:16-53:
+  spont_im_threshold = 0.3 ; spont_min_emit_interval = 30.0 (rate-limit / brake)
+  8 weights sum=1.00 (relevance .20 / info_gap .10 / curiosity .15 / pain .10 /
+     coherence .10 / originality .10 / balance .15 / dynamics .10)
+  motivation_score = linear weighted sum
+  should_emit(score) = score > 0.3
+  safety_kill_switch / safety_rate_limit_ok(>=30s) / safety_phi_ratchet_ok(phi>ratchet/2)
+This is a handful of closed-form scalar functions — it INHIBITS (gates/brakes) emit; it does
+not generate text. Generation is a separate L3 generator slot (CORE/generator.hexa,
+a_core_engine_map), entirely outside Engine G.
+
+=== EVIDENCE 3: @I design = "Engine A ⇄ Engine G" asymmetry ===
+CLAUDE.md @I: "PureField repulsion-field engine · Engine A ⇄ Engine G · Ψ=1/2 fixed point".
+brain.hexa couples A (field/Φ) with G (motivation/emit gate) — A generates the field, G gates.
+
+=== RULING ===
+Engine G in CORE is a compact, gradient-free inhibitory emit gate (a few scalar thresholds +
+weighted score), categorically smaller than and distinct from any generator — matching the
+"brake not generator, can be tiny" claim. The brake/steering car analogy and the precise
+"≤few-万 params" number are Gemini gloss (CORE G is ~0 learned params, even smaller than the
+claim), but the load-bearing structural assertion is CONFIRMED by code → 🟢 SUPPORTED.

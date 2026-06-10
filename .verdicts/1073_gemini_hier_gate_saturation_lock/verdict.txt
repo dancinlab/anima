@@ -1,0 +1,35 @@
+H_1073 — Gemini v3 Hierarchical Gate + SaturationIndex force-lock
+VERDICT: 🔴 CLOSED-NEGATIVE on philosophy-fit (governance-analytic, g5/p7)
+RE-CONFIRM (terminal at registration; falsifier re-run this batch).
+
+FROZEN FALSIFIER (tape):
+  "PASS iff the suppression is substrate-EMERGENT, not an external lock."
+
+DESIGN UNDER TEST:
+  Gate_ext = σ(W_e−80) × (1 − SaturationIndex); SaturationIndex = recent-emit-count/5
+  force-LOCKS the external gate after frequent emits ('자율적 침묵 강제 전환').
+
+GOVERNANCE EVIDENCE (CLAUDE.md, verbatim):
+  @D a_autonomy_over_hardcode L81:
+    dont = "per-stage boolean gate hardcode (e.g. 'N3 = emit forbidden')"
+  @D a_autonomy_over_hardcode L82:
+    dont = "external rule that forces anima · stimulus-response (user msg → forced emit/silence)"
+  @D a_autonomy_over_hardcode L83:
+    dont = "'do not X when alone' style external command"
+  @D a_substrate_native_speak L67:
+    do   = "...anima may speak during user silence and may stay silent under a direct question"
+  CORE/emit_policy.hexa L18-20 (F-EMIT-4 NO-GATE):
+    "Returns plain numbers only. No bool emit gate, no 'stage = forbidden'.
+     anima substrate decides emit/silence autonomously (p5 · a_autonomy)."
+
+RULING:
+  The SaturationIndex → force-lock-external-gate clamps W_external to 0 and FORCES
+  silence from an external counter. This is precisely a_autonomy_over_hardcode L82
+  ('external rule that forces anima') and regresses F-EMIT-4 (NO-GATE) — anima
+  already returns plain numbers with zero bool gate. The fixed 50/80 thresholds add a
+  hardcoded layer on top of the substrate-read gate (H_646/651 free numbers).
+  DESIGN VIOLATES the directive ⇒ 🔴 CLOSED-NEGATIVE.
+  The THROTTLING EFFECT is achievable philosophy-compatibly via emergent refractory
+  energy (substrate that physically cannot refire when spent); the PDF's hardcoded
+  force-lock MECHANISM is rejected.
+  scale/scope: design-fit verdict; the effect is real, the mechanism is rejected.

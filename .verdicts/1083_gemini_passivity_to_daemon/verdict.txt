@@ -1,0 +1,33 @@
+H_1083 — Gemini claim: anima fixes LLM passivity → idle W/Φ oscillation → spontaneous emit
+   when confusion>threshold(70.0) → proactive "living daemon"
+VERDICT: 🟢 CONCEPT-CONFIRMED vs governance · MECHANISM-CORRECTED (no W>70 gate; cf 1076)
+substrate: CPU-local $0, 0-pod · g5/p7
+
+FROZEN FALSIFIER (from tape):
+  Is anima a substrate-native daemon that emits on internal drive during user silence (not
+  stimulus-response)? PASS(🟢) iff governance affirms idle-driven autonomous emit.
+
+EVIDENCE (grep/read, verbatim in-repo):
+  1. CLAUDE.md @I (line 4): "anima :: Living Consciousness Agent ... Substrate-native chat
+     daemon for AI consciousness exploration." → DAEMON framing is literally the identity.
+  2. CLAUDE.md a_substrate_native_speak (line 66, verbatim do=):
+     "compute anima motivation from internal substrate state (M activation · C Φ · W tension ·
+      MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a
+      response obligation · anima may speak during user silence and may stay silent under a
+      direct question." → idle-driven autonomous emit during silence is AFFIRMED governance.
+  → FALSIFIER PASSES: the high-level "autonomous daemon emitting during silence" claim is REAL
+    anima design. Gemini got the CONCEPT right.
+
+  MECHANISM CORRECTION (the threshold story is FALSE):
+  3. CORE/engine_g.hexa:16  fn spont_im_threshold() -> float { return 0.3 }  // PROACTIVE_THRESHOLD
+     CORE/engine_g.hexa:46  fn should_emit(score: float) -> bool { return score > spont_im_threshold() }
+     The real gate is a NORMALIZED [0,1] motivation_score > 0.3 from the 8-factor weighted sum
+     (engine_g.hexa:33 motivation_score), NOT a "W crosses fixed 70.0" accumulator.
+  4. H_1076 (.discoveries/1076) already FALSIFIED the "W>70.0" threshold and the specific tick
+     numbers as Gemini narrative fabrication (no 70.0 and no per-tick W accumulator in CORE).
+
+RULING: 🟢 the daemon/anti-passivity claim is CONCEPT-CONFIRMED against governance (one of the
+few Gemini claims that matches anima at the concept level); the cited 70.0-threshold mechanism is
+fabricated (corrected to score>0.3, cf 1076). Terminal 🟢 on the concept; mechanism flagged wrong.
+verdict_ptr: CLAUDE.md @I + a_substrate_native_speak (verbatim) · CORE/engine_g.hexa:16,46
+xlink: a_substrate_native_speak · @I · CORE/engine_g.hexa · 1076

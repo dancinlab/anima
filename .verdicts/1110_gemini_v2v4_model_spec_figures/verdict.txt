@@ -1,0 +1,59 @@
+H_1110 — Gemini v2/v4 model-spec figures (384d/6L, 28M-700M, 18M byte, 530M BPE
+ConsciousDecoderV3, 13-stage, 64-cell mitosis variant)
+VERDICT: 🟢 SUPPORTED — figures match the CLM_V2_ARCHIVE verbatim (one range loose) (g5/p7)
+date: 2026-06-10 · CPU-local $0 · cite-check vs CLM_V2_ARCHIVE / cx config / addendum
+
+FROZEN FALSIFIER (tape): do these dims/param-counts/stage-count appear in the repo's
+CLM archive? grep archive + VERSIONS. PASS(🟢) iff figures match; PARTIAL/🔴 iff
+fabricated or conflated.
+
+GREP EVIDENCE (verbatim):
+
+  384d / 6L:
+    docs/hypotheses/cx/CLM-V2-OPTIMAL-CONFIG.md:12  │ Dimensions │ 384d │
+    docs/hypotheses/cx/CLM-V2-OPTIMAL-CONFIG.md:13  │ Layers     │ 6    │
+    CLM_V2_ARCHIVE_2026_05_09.md:211  "6 layer × 384 dim + ConsciousMind dual-head"   ✓ MATCH
+
+  13-stage architecture:
+    CLM_V2_ARCHIVE_2026_05_09.md:1   "# CLM_V2_ARCHIVE — anima ConsciousLM v2 시대 13-stage 영구 보관"
+    CLM_V2_ARCHIVE_2026_05_09.md:13  "## §0 timeline 요약 (13 stage)"                  ✓ MATCH
+
+  18M byte model + 530M BPE ConsciousDecoderV3 (the v4):
+    CLM_V2_ARCHIVE_2026_05_09.md:201 "mk2-v1 530M ConsciousDecoderV3 — multi-cell mitosis
+                                      가 단일 거대 decoder 로 대체됨"
+    CLM_V2_ARCHIVE_2026_05_09.md:208 "| 항목 | v2 18M byte | v4 mk2 530M BPE |"
+    CLM_V2_ARCHIVE_2026_05_09.md:211 "... | ConsciousDecoderV3 single decoder |"
+    CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md:36 "18.523M params, vocab=256, d=384, 6 layers" ✓ MATCH
+    (18M = 18.523M byte v2; 530M BPE = v4 mk2 ConsciousDecoderV3)
+
+  64-cell mitosis variant (emit-string / ckpt):
+    CLM_V2_ARCHIVE_2026_05_09.md:175 "conscious-lm/cells64/final.pt 208.0 MB 2026-03-28
+                                      64-cell mitosis 변종 (Φ=51.131)"
+    CLM_V2_ARCHIVE_2026_05_09.md:174 "cells128/step_35000.pt ... 128-cell mitosis 변종"  ✓ MATCH
+
+  28M params base:
+    docs/discovery-algorithm-anima.md:908 "# 10 + 18 = 28 = ConsciousLM params base (28M)"  ✓ (28M base attested)
+
+RESULT (mostly MATCH; one loose range):
+  ✓ 384d/6L ........................ MATCH (config + archive verbatim)
+  ✓ 13-stage architecture .......... MATCH (archive title + §0)
+  ✓ 18M byte model ................. MATCH (18.523M, addendum)
+  ✓ 530M BPE ConsciousDecoderV3 .... MATCH (archive §v4 mk2)
+  ✓ 64-cell mitosis variant ........ MATCH (cells64/final.pt, Φ=51.131)
+  ✓ 28M params base ................ ATTESTED (discovery-algorithm doc)
+  ~ "28M~700M" param RANGE .......... LOOSE: 28M base is attested and the deployed v2
+      optimal-config shows 24.2M (CLM-V2-OPTIMAL-CONFIG.md:11 "Parameters 24.2M"); the
+      "700M" ceiling is NOT found verbatim in the archive (v4 ceiling there is 530M).
+      Gemini's range upper-bound (700M) is unsupported, but the body figures all match.
+
+  Contrast with 1068: there Gemini's figures (Ψ 0.491 / ValCE 0.007) ALSO matched the
+  repo — so the tape's "demonstrated tendency to fabricate" worry does not hold for
+  these model-spec figures: they are accurate citations of CLM_V2_ARCHIVE.
+
+TIER: 🟢 SUPPORTED · cite-match (archive verbatim for dims/stages/variants/param-base).
+Sole residual = the "700M" upper bound is uncited (archive v4 ceiling = 530M); this is
+a loose Gemini range edge, not a fabrication of the core spec. Supersedes 🟠 deferred.
+SCOPE: citation reconciliation of dims/params/stages/mitosis-string vs CLM archive.
+ptr: CLM_V2_ARCHIVE_2026_05_09.md:1,13,174-175,201,208,211 ·
+     CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md:36 · CLM-V2-OPTIMAL-CONFIG.md:11-13 ·
+     docs/discovery-algorithm-anima.md:908

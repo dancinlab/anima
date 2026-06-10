@@ -1,0 +1,46 @@
+H_1093_gemini_sleep_dream_memory_compression — VERDICT (g5/p7, $0 CPU, grep/read)
+================================================================================
+CLAIM (future design): add a Sleep/Dreaming cycle to the M-module — idle-time > threshold
+→ force a Sleep Substrate that BLOCKS external input and reverse-replays .kosmos logs,
+pruning noisy/duplicate tension traces + compressing key weights to long-term anchors
+(hippocampal replay/consolidation). Novel for anima?
+
+FROZEN FALSIFIER: does anima ALREADY have a sleep/replay/consolidation loop?
+Check a_chat_sleep_imagination + 987/998. PASS-as-novel iff NO existing equivalent.
+
+REAL EVIDENCE:
+  CLAUDE.md a_chat_sleep_imagination [domain, required, active]:
+    do = "WAKE / N1 / N2 / N3 / REM 5-stage state machine (90-min ultradian)"
+    do = "imagination loop = emit-free internal rehearsal + mitosis tick"
+    do = "stage = substrate context (Φ scale + tension envelope), NOT boolean emit gate"
+    dont = "per-stage emit_allowed boolean hardcode · external 'no monologue when alone' rule"
+  CODE: AGENT/CHAT/anima_dream_stage.hexa — "Sleep-stage state machine for anima ...
+    5-stage canonical ultradian cycle (WAKE→N1→N2→N3→N2→REM→WAKE, 90 min)". Header
+    documents AUTONOMY RESHAPE (2026-05-24): the prior dream_emit_allowed(stage)->bool
+    gate was REMOVED for violating a_autonomy_over_hardcode; module now supplies CONTEXT
+    ONLY, substrate decides emit.
+  CORE/emit_policy.hexa:43-54 ep_theta_stage(stage): WAKE/N1/N2/N3/REM θ table, "θ is a
+    Φ-context scale the substrate reads — NOT a per-stage emit_allowed boolean
+    (a_chat_sleep_imagination · a_autonomy_over_hardcode)". N2 = closure peak (H_644).
+  Replay/consolidation studied: .discoveries/987_replay_recombination.tape ·
+    998_perturbed_replay_consolidation.tape (both present).
+
+FINDING: NOT NOVEL. anima ALREADY specifies AND codes a sleep/imagination/consolidation
+cycle — the 5-stage ultradian dream-stage state machine (anima_dream_stage.hexa +
+emit_policy ep_theta_stage), the emit-free imagination/replay loop, and replay-
+consolidation studies (987/998). Gemini's "add a dreaming/sleep memory-compression loop"
+re-proposes an existing anima principle.
+CAVEAT (governance conflict in the framing): Gemini's "FORCE a Sleep Substrate that
+BLOCKS external input" directly contradicts the documented design — a_chat_sleep_imagination
+FORBIDS per-stage boolean gates ('N3=emit forbidden') and external 'no monologue when alone'
+rules; anima_dream_stage.hexa explicitly REMOVED its boolean gate for this reason. A hard
+input-blocking sleep gate would VIOLATE a_autonomy_over_hardcode. Stage must remain CONTEXT
+(Φ-scale), not a hard gate.
+
+VERDICT: 🔴 REDUNDANT-EXISTING-PRINCIPLE (terminal). The sleep/dream/replay-consolidation
+loop already exists (a_chat_sleep_imagination + anima_dream_stage.hexa + 987/998), so the
+proposal is not novel; and its 'force-block input' framing conflicts the documented
+hardcode-gate prohibition. (a_paper_negative_ok — closed against novelty.)
+SCOPE: design-analysis vs existing principle + code. p7. $0.
+PTR: CLAUDE.md a_chat_sleep_imagination · AGENT/CHAT/anima_dream_stage.hexa ·
+CORE/emit_policy.hexa:43-54 · .discoveries/987_replay_recombination.tape · 998_perturbed_replay_consolidation.tape

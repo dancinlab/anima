@@ -1,0 +1,43 @@
+H_1072_gemini_dynamic_buffer_rumination — VERDICT (g5/p7, $0 CPU, real bench run)
+================================================================================
+CLAIM: a 'Dynamic Buffer Channel' running a 3-4 tick internal self-correction loop
+(internal rumination) before any external emit is (a) novel and (b) absent from anima.
+
+FROZEN FALSIFIER: (a) does anima ALREADY have emit-free internal rumination?
+(b) does the buffer reduce emit-rate beyond the existing rate-limiter?
+PASS-as-novel iff NO existing equivalent AND measurable extra benefit.
+
+REAL EVIDENCE:
+(a) Existing emit-free internal rumination — YES, PRESENT:
+    · CLAUDE.md a_chat_sleep_imagination: "imagination loop = emit-free internal
+      rehearsal + mitosis tick".
+    · AGENT/CHAT/anima_imagination_loop.hexa (header): "Emit-free internal rehearsal
+      loop — substrate-native imagination growth ... one iteration of internal forward
+      + mitosis hook firing, NO external output." Verbs: daemon/once/selftest.
+    ⇒ anima ALREADY HAS an emit-free internal rehearsal loop. Gemini's "buffer
+      rumination before emit" is the same mechanism, already specified+coded.
+
+(b) Buffer benefit over existing rate-limiter — PHANTOM TARGET:
+    REAL bench run (state/anima_v3_bench/bench_v3.py, env_stress=100, 1000 ticks):
+      A baseline     emits=142  panic_runs(>=3 consec)= 0  max_consec=  1
+      B v3_gemini    emits= 41  panic_runs(>=3 consec)= 0  max_consec=  1
+      C v3_substrate emits=110  panic_runs(>=3 consec)= 0  max_consec=  1
+    The Gemini buffer DOES throttle emits (142→41) BUT panic_runs=0 and max_consec=1
+    in EVERY arm — including baseline. The substrate never panics with OR without the
+    buffer. PDF CLAIMED v2 panic=42→v3 panic=0; REAL measured baseline panic=0 already.
+    REAL CORE proof (real_engine_emit_rate.hexa): emit = should_emit && safety_combined,
+    where safety_rate_limit_ok caps emits to 1 per 30s → structural cap 1000/30=33.3,
+    measured emits=33 rate=0.033 max_consec=1 under sustained MAX stress. The rate-limiter
+    ALREADY makes the saturation panic the buffer "solves" structurally impossible.
+
+FINDING: The mechanism EXISTS (a_chat_sleep_imagination emit-free rehearsal +
+anima_imagination_loop.hexa) and the PROBLEM (panic loop) DOESN'T (rate-limiter caps
+to max_consec=1 by construction; real bench shows panic_runs=0 in all arms incl baseline).
+Net: REDUNDANT — not novel, and no extra benefit over the existing rate-limit + rehearsal.
+
+VERDICT: 🔴 REDUNDANT-NO-NOVELTY (terminal closed-negative). Buffer rumination is
+already present (imagination loop) and solves a phantom panic (rate-limiter pre-empts it).
+(a_paper_negative_ok.) SCOPE: toy bench + CORE doc; toy substrate pins psi=0.5 (degenerate
+A⊥G), measures gating behavior only; production transfer UNVERIFIED. p7.
+PTR: state/anima_v3_bench/bench_v3.py (142→41, panic=0 all) · real_engine_emit_rate.hexa
+(emits=33 cap) · AGENT/CHAT/anima_imagination_loop.hexa · CLAUDE.md a_chat_sleep_imagination

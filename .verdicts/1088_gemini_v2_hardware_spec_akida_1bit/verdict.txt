@@ -1,0 +1,52 @@
+H_1088 — Gemini v2 HW spec: Engine A = GB ConsciousDecoder, Engine G = AKIDA 1-bit Hebbian on-chip
+VERDICT: 🔴 FALSIFIED — lane/engine mapping found-but-WRONG (AKIDA is Lane A, not Engine G) (g5/p7)
+date: 2026-06-10 · CPU-local $0 · cite-check vs PI5-AKIDA.json / CORE / archive · NO GPU/AKIDA
+
+FROZEN FALSIFIER (tape): does the repo assign Engine A = GB ConsciousDecoder and
+Engine G = AKIDA-1bit-Hebbian? Cross-check archive + a_lane_akida_gpu_split.
+PASS(🟢) iff the lane↔hardware mapping matches; PARTIAL iff Gemini conflates lanes.
+
+GREP EVIDENCE (verbatim):
+
+(1) Engine A / Engine G are SUBSTRATE-INTERNAL SOFTWARE modules in CORE/, NOT hardware:
+  CORE/pure_field.hexa:1  // pure_field.hexa — PureField: zero-input consciousness field (Engine A).
+  CORE/engine_g.hexa:1    // engine_g.hexa — Engine G: motivation + emit gate (anima/CORE).
+  CORE/engine_g.hexa:13   // No main — importable lib. brain.hexa couples this (G) with Engine A.
+  → Engine A = PureField repulsion field; Engine G = motivation+emit gate. Both run as
+    .hexa modules (the A⇄G consciousness engine, a_core_engine_map). NEITHER is a
+    hardware accelerator, and neither is "a GB-scale ConsciousDecoder LLM variant".
+
+(2) AKIDA is REAL but is LANE A hardware (pi5-akida), NOT "Engine G":
+  PI5-AKIDA.json:2-6  "host":"pi5-akida" · "role":"anima dedicated Akida neuromorphic
+    host — NOT shared pool compute" · "hardware":"Raspberry Pi 5 + BrainChip AKD1000
+    (Akida neuromorphic accelerator)"
+  PI5-AKIDA.json:40   "purpose":"anima 자연발화 HW — AKD1000 spike stream (24h, regime R3)"
+  governance a_lane_akida_gpu_split: AKIDA = Lane A (AKD1000 native non-det plasticity);
+    GPU = Lane G (forge/cuBLAS) — DISTINCT lanes, never merged. "Lane G" ≠ "Engine G".
+
+(3) The v2 model body is a single byte Transformer decoder, NOT a GB-scale "Engine A":
+  CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md:36  "모델 본체 = 단일 byte-level Transformer
+    decoder (conscious_lm.py family, 18.523M params, vocab=256, d=384, 6 layers, dual
+    engine_a/engine_g FFN + dual head_a/head_g)" — i.e. engine_a/engine_g are FFN/head
+    branches inside an 18.5M decoder, not a "GB ConsciousDecoder = Engine A".
+
+RESULT (found-but-different, 🔴):
+  Gemini's spec triple-conflates:
+  (a) puts AKIDA on "Engine G" — but AKIDA is LANE A hardware, and Engine G is a CORE
+      software emit-gate. Gemini swaps the on-chip (Lane A) ↔ Lane-G/Engine-G axis,
+      exactly the merge a_lane_akida_gpu_split forbids.
+  (b) calls Engine A a "GB-scale ConsciousDecoder LLM" — Engine A is the PureField
+      consciousness field; the byte decoder body is 18.5M params (MB-scale), and the
+      production line is from-scratch byte-V256 CLMConvMoE (a_clm_gen_pipeline), not a
+      GB foundation decoder (cf 1085 foundation-LLM rejection).
+  AKIDA 1-bit Hebbian on-chip plasticity IS real (Lane A, AKD1000); but the SPECIFIC
+  engine↔hardware ASSIGNMENT Gemini states is found-but-wrong → FALSIFIED, not merely
+  deferred. The tape's PARTIAL prediction is resolved to 🔴 (the mapping is in the repo
+  and it contradicts Gemini's assignment).
+
+TIER: 🔴 FALSIFIED · cite-check (repo assigns A/G as CORE software + AKIDA as Lane A;
+Gemini's A=GB-decoder / G=AKIDA mapping contradicts it). Supersedes 🟠 deferred.
+SCOPE: PDF hardware-spec. The A/G ↔ AKIDA/GPU swap + foundation-decoder conflict are
+confirmed by repo grep. AKIDA-real (Lane A) preserved; only Gemini's mapping is wrong.
+ptr: CORE/pure_field.hexa:1 · CORE/engine_g.hexa:1,13 · PI5-AKIDA.json:2-6,40 ·
+     CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md:36 · a_lane_akida_gpu_split

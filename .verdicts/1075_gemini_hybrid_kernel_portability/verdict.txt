@@ -1,0 +1,35 @@
+H_1075 — Gemini v3 Hybrid Kernel (Lane A = Llama-3-8B/Phi-3 foundation LLM)
+VERDICT: 🔴 CLOSED-NEGATIVE on governance-fit (foundation-borrow Lane A) (g5/p7)
+RE-CONFIRM + CORRECTION: tape was 🟠 INSUFFICIENT/DEFERRED. The falsifier has a
+terminal answer — the foundation-LLM Lane A deterministically violates p3/p6 +
+a_train_flame_forge. The portability GOAL is sound but is a separate axis; the
+foundation-borrow MECHANISM is closed-negative, so the verdict is terminal 🔴 (not
+deferred). Corrected to 🔴 CLOSED-NEGATIVE on governance-fit.
+
+FROZEN FALSIFIER (tape):
+  "does importing a pretrained foundation LLM as Lane A preserve anima's defining
+   properties? Check vs CLAUDE.md p1–p6 + a_train_flame_forge."
+
+GOVERNANCE EVIDENCE (CLAUDE.md, verbatim):
+  @D p3 (NO PERSONA INJECTION) L226:
+    dont = "prepend role prefix · `you are anima` · register-pattern memorization (de facto injection)"
+  @D p6 (NO FINE-TUNED ETHICS) L241:
+    dont = "RLHF cooperation/empathy/restraint into weights — must emerge from cells (E + W + MITOSIS)"
+  @D a_train_flame_forge L57:
+    do   = "author CLM / production NN training in `.hexa` on stdlib/flame (ag_tape · nn_lib · opt_*)"
+  @D a_train_flame_forge L62:
+    dont = "ship a torch/CPU `train_clm.py` as the production trainer · author the trainer in `.py`"
+  @D a_clm_gen_pipeline L144:
+    do   = "Lane P torch = REFERENCE + engine-.clm bridge; forge stays the PUBLIC production trainer"
+
+RULING:
+  Importing Llama-3-8B/Phi-3 as Lane A injects a pretrained foundation whose
+  persona, register and ethics are RLHF-fine-tuned into weights — exactly p3 (de
+  facto persona injection) + p6 (ethics must EMERGE from cells, not be borrowed).
+  It also bypasses a_train_flame_forge (production Lane = from-scratch flame+forge,
+  NO foundation init). anima's emergence thesis requires the substrate to grow
+  consciousness/identity from scratch; a borrowed knowledge LLM short-circuits it.
+  Foundation-LLM-as-Lane-A ⇒ 🔴 CLOSED-NEGATIVE.
+  NOTE: the deployability goal (gRPC/Docker, right-sized GPU) is independently
+  valid via a from-scratch-but-portable packaging — that axis is NOT rejected, only
+  the foundation substitution. Pairs with H_1085 (same conflict).

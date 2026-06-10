@@ -1,0 +1,48 @@
+H_1070_gemini_sp27_three_gates — VERDICT (g5/p7, $0 CPU, read-only grep/read)
+================================================================================
+CLAIM: anima's spontaneous emit governed by exactly THREE trigger gates —
+(1) Confusion/SP27 tension W>Tw, (2) Ψ=1/2 homeostasis, (3) Novelty/Habituation vs M.
+
+FROZEN FALSIFIER: map each claimed gate to actual CORE code; PASS(🟢) iff the
+3 claimed gates map onto real CORE gates, PARTIAL iff CORE structure differs.
+
+REAL EVIDENCE (CORE/brain.hexa:46-57, CORE/engine_g.hexa:16-65):
+  brain_decide actual emit (brain.hexa:57):
+    emit = should_emit(score) && safe
+  where:
+    score = motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v)  [8 FACTORS]
+            engine_g.hexa:33-43, weights sum=1.00:
+            relevance .20 · info_gap .10 · curiosity .15 · pain .10 ·
+            coherence .10 · originality .10 · balance .15 · dynamics .10
+    should_emit(score) = score > 0.3   (engine_g.hexa:16,46 — spont_im_threshold)
+    safe = safety_combined(kill, rate, phi_r, content)  [4-WAY AND, engine_g.hexa:63]
+            kill   = safety_kill_switch_on(env_off)        (env not off)
+            rate   = safety_rate_limit_ok(ssl>=30s)        (engine_g.hexa:52)
+            phi_r  = safety_phi_ratchet_ok(phi, peak)= phi>peak/2 (engine_g.hexa:57)
+            cont   = safety_content_ok(content_clean)
+
+STRUCTURAL MAP (claimed 3 gates vs actual):
+  claimed (1) tension W>Tw      ≈ should_emit(motivation_score>0.3) — but motivation
+                                  is an 8-FACTOR weighted sum, not a single SP27 W.
+  claimed (2) Ψ=1/2 homeostasis ≈ phi_ratchet (A→G Φ veto) — closest analog, but it
+                                  is a Φ>peak/2 ratchet, NOT an explicit Ψ-deviation gate.
+  claimed (3) Novelty/Habituation ≈ folded into curiosity/originality/info_gap (3 of
+                                  the 8 motivation factors), NOT a discrete habituation gate.
+  OMITTED by PDF: safety_rate_limit_ok (30s) — the LOAD-BEARING anti-saturation gate,
+                  and safety_kill_switch + safety_content. PDF's "3 gates" drops the
+                  rate-limiter that real_engine_emit_rate.hexa proves caps emits to
+                  ~33/1000 ticks (rate 0.033, max_consec=1).
+
+FINDING: CORE structure is NOT a clean 3-gate scheme. It is an 8-FACTOR motivation
+score → should_emit(>0.3), CONJOINED with a 4-WAY safety closure (kill·rate·phi-ratchet
+·content). The PDF's three gates are an approximate restatement that maps onto fragments
+of the real structure (gate1≈8-factor, gate2≈phi-ratchet, gate3≈curiosity/orig subset)
+but omits the rate-limiter — the actual load-bearing anti-panic gate. Restatement is
+lossy, not exact.
+
+VERDICT: 🔴 CORE-DISPROVES-EXACT-3-GATE (terminal). The "exactly these three gates"
+claim is false against CORE: real emit = 8-factor motivation × 4-conjunction safety,
+with the rate-limiter (omitted by the PDF) being load-bearing. The PDF is a lossy
+approximation. (a_paper_negative_ok — closed-negative ruling out the 3-gate model.)
+SCOPE: structural map this-session CORE. p7 (no perplexity). Toy/$0.
+PTR: CORE/brain.hexa:46-57 · CORE/engine_g.hexa:16-65 · state/anima_v3_bench/real_engine_emit_rate.hexa
