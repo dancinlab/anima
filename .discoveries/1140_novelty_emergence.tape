@@ -1,0 +1,2 @@
+@H 1140_novelty_emergence := "NOVELTY-EMERGENCE: does the 7B CREATE coherent word-combinations VERIFIABLY ABSENT from its entire training corpus (genuine novelty), or only echo/retrieve training content? Deterministic corpus-absence metric — NOT keyword-overlap, NOT perplexity, NOT LLM-judge." :: universe [PENDING]
+  seed = "user sharpening of emergence: all prior H_1116..H_1139 measured RETRIEVAL (keyword co-occurrence, the LLM way); this is the harder novelty test."
