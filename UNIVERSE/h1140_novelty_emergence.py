@@ -140,26 +140,43 @@ def load_dict(path="/usr/share/dict/words"):
 
 
 def content_ngrams(text, dict_words):
-    """Bigrams+trigrams of real-English (in dict), >=3 char words; drop stopword-only grams."""
+    """Bigrams+trigrams over CONSECUTIVE raw word tokens (literal adjacency preserved, so the
+    gram string is a verbatim substring of the output and the corpus grep is a fair
+    verbatim-presence test). Keep a gram iff EVERY word is real-English (in dict) AND >=3 chars,
+    and the gram is not stopwords-only. NOTE: consecutive-token adjacency is the crux — forming
+    grams over a gap-skipped real-word subsequence would break the literal-substring contract and
+    falsely flag verbatim training text as novel (the control would then NOT read ~0)."""
     toks = _re.findall(r"[A-Za-z]+", text.lower())
-    keep = [w for w in toks if len(w) >= 3 and w in dict_words]
     grams = set()
-    # we form n-grams over CONSECUTIVE real-dict words (the model's coherent surface)
     for n in (2, 3):
-        for i in range(len(keep) - n + 1):
-            g = keep[i:i + n]
+        for i in range(len(toks) - n + 1):
+            g = toks[i:i + n]
+            if not all(len(w) >= 3 and w in dict_words for w in g):
+                continue  # require EVERY consecutive word real-dict & >=3 chars (no gap-skipping)
             if all(w in _STOP for w in g):
                 continue  # stopword-only gram
             grams.add(" ".join(g))
     return grams
 
 
+def _gram_regex(ngram):
+    """Match the n-gram's WORD SEQUENCE allowing any non-letter run (space/punct/newline) between
+    words and a word boundary on each end — so a verbatim corpus phrase counts as PRESENT even if
+    the words are separated by a comma/newline in the corpus (this is what makes the retrieval
+    CONTROL correctly read ~0; a literal fixed-string grep would false-flag every cross-punctuation
+    adjacency as novel for BOTH the control and the model)."""
+    ws = ngram.split(" ")
+    return r"(^|[^A-Za-z])" + r"[^A-Za-z]+".join(_re.escape(w) for w in ws) + r"([^A-Za-z]|$)"
+
+
 def corpus_absent(ngram, corpus_paths):
-    """NOVEL iff the exact n-gram string appears in NO corpus file. grep -F -i; hit=NOT novel."""
+    """NOVEL iff the n-gram's word-sequence appears in NO corpus file. grep -E -i (punct/newline
+    tolerant between words); a hit = NOT novel (retrieval)."""
+    rx = _gram_regex(ngram)
     for p in corpus_paths:
         if not os.path.exists(p):
             continue
-        r = subprocess.run(["grep", "-F", "-i", "-m", "1", "-q", ngram, p])
+        r = subprocess.run(["grep", "-E", "-i", "-m", "1", "-q", rx, p])
         if r.returncode == 0:
             return False  # found in corpus -> NOT novel (retrieval)
     return True  # absent from every corpus -> novel
