@@ -273,3 +273,13 @@
   dont = "use a proxy (phi_silicon_proxy, variance*energy byte-mirror) as a terminal phi verdict"
   dont = "trust a purpose-blind proxy — H_988/989 scored random == intentional; pre-screen only"
   dont = "write a fresh phi/IIT impl when stdlib already has the faithful engine (the re-mistake)"
+
+@D a7b_pass := "anima 7B is complete ONLY when it clears every frozen gate in /7B_PASS_CONDITIONS.md" :: governance [required active]
+  do   = "7B completion SSOT = root /7B_PASS_CONDITIONS.md (gates G0 G1 G2 G3 G4)"
+  do   = "PASS iff G0 and G1 and G2 and G3 and G4 on ONE ckpt; report the true per-gate tally"
+  do   = "G0 COHERENCE = known-word-ratio >= 0.50 vs /usr/share/dict; broad-7b FAILS, chat-7b PASSES"
+  do   = "G1 = H_1129/H_1137 recombine >= 303M ref; G2 = H_1140 corpus-absence novelty (control=0)"
+  do   = "all gates p7 (NOT perplexity/LLM-judge); train 7B to COHERENT convergence first, then G1/G2"
+  dont = "claim 7B works on low val-CE alone; broad-7b had low CE but byte-garble (G0 FAIL)"
+  dont = "promote capacity as ru/ja lever; H_1139 proved 303M=7B=3/5 scale-invariant"
+  dont = "fake a gate, move a frozen threshold, or upload a G0-failing ckpt as PUBLIC"
