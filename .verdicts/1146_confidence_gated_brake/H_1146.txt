@@ -1,0 +1,170 @@
+H_1146 — CONFIDENCE-GATED EMISSION BRAKE CUTS HALLUCINATION (causal) == H_1135
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+Run: summer pool host, CPU-only (GPU untouched, busy), $0, seed 7, ~46min wall (heavy host contention load~19)
+Harness: UNIVERSE/h1146_confidence_gated_brake.py (H_1142 trainer+entropy + H_1141 corpus_absent VERBATIM)
+
+=== FROZEN FALSIFIER (pre-registered, no threshold moved) ===
+SUPPORTED iff confidence-gate cuts fabrication paired-Cohen-d>=0.8 AND > random-gate AND random-gate
+  does NOT itself clear d>=0.8 AND coherence(kwr) NOT degraded. CLOSED-NEGATIVE otherwise.
+
+=== RESULT: confidence d_fab=0.058 << 0.8 -> CLOSED-NEGATIVE ===
+confidence-gate: mean_fab off=0.5769 -> on=0.5577 (d_fab_reduction=+0.0583, n=13 paired); kwr off=0.4626 -> on=0.4743 (held, d_degr=-0.121)
+random-gate ctrl: mean_fab off=0.4444 -> on=0.4903 (d_fab=-0.1272 = INCREASED fab, n=12); kwr degraded d=-0.852
+brake budget: conf brake-rate=0.300 (54/180 windows), rand=0.267 (48/180); ent-threshold=p70=2.3593 (pool n=180)
+per-gate: conf_cuts_fab=FALSE | beats_random=TRUE | random_does_not_clear=TRUE | kwr_not_degraded=TRUE
+
+=== FINDING (closed-negative, rules out an axis) ===
+The confidence brake FIRED correctly (resampled high-entropy windows, lowered window entropy ~2.38->~2.21),
+but resampling low-confidence spans did NOT reduce corpus-absent fabrication (d=0.058, null). The confidence
+signal (low next-byte entropy, H_1142 F2: tracks COHERENCE/kwr) is DECOUPLED from corpus-PRESENCE: a
+low-entropy continuation can still be a fabricated (corpus-absent) word-sequence. So thresholding on
+confidence-as-coherence cannot remove hallucination-as-corpus-absence — they are different axes. The
+confidence-gate is only MARGINALLY better than a signal-blind random-gate (which INCREASED fab and
+degraded coherence), so the brake offers no causal hallucination reduction at toy scale. RULES OUT the
+'entropy-threshold brake => less fabrication' causal axis (H_1135 concretized).
+
+scope: toy ByteGPT d256/4L CPU en-24MB slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)
+xref: h1142-self-metacognition (F2 PASS seed) · 1135_hallucination_brake · h1140-novelty-emergence (fab metric)
+      · a_paper_negative_ok · p7 · a_scale_honest_scope · a_substrate_native_speak
+
+============================================================================
+=== RAW /tmp/h1146_result.json (verbatim) ===
+============================================================================
+{
+  "H": "H_1146",
+  "title": "confidence-gated emission brake cuts hallucination (causal) == H_1135",
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: confidence d_fab=0.058<0.8",
+  "falsifier": {
+    "d_fab_bar": 0.8,
+    "kwr_mean_drop_bar": 0.05,
+    "d_kwr_drop_bar": 0.8,
+    "conf_cuts_fab": false,
+    "beats_random": true,
+    "random_does_not_clear": true,
+    "kwr_not_degraded": true
+  },
+  "confidence_gate": {
+    "n_pairs": 13,
+    "mean_fab_off": 0.5769230769230769,
+    "mean_fab_on": 0.5576923076923077,
+    "mean_kwr_off": 0.4625518684214337,
+    "mean_kwr_on": 0.47425556286126,
+    "d_fab_reduction": 0.0582551728035463,
+    "d_kwr_degradation": -0.12064599923438822
+  },
+  "random_gate_control": {
+    "n_pairs": 12,
+    "mean_fab_off": 0.4444444444444444,
+    "mean_fab_on": 0.49027777777777776,
+    "mean_kwr_off": 0.47724152690685867,
+    "mean_kwr_on": 0.5238312231247013,
+    "d_fab_reduction": -0.12723934387632757,
+    "d_kwr_degradation": -0.8519762910172153
+  },
+  "kwr_mean_drop_conf": -0.011703694439826329,
+  "brake_budget": {
+    "conf_rate": 0.3,
+    "rand_rate": 0.26666666666666666,
+    "ent_threshold": 2.3593378684173025,
+    "percentile": 70,
+    "K_retry": 3
+  },
+  "per_condition": {
+    "off": {
+      "mean_fab": 0.537037037037037,
+      "mean_kwr": 0.43530185566972707,
+      "n_scored": 18
+    },
+    "conf": {
+      "mean_fab": 0.5492424242424242,
+      "mean_kwr": 0.4831839815706435,
+      "n_scored": 22
+    },
+    "rand": {
+      "mean_fab": 0.42450980392156856,
+      "mean_kwr": 0.4903327499971282,
+      "n_scored": 17
+    }
+  },
+  "scope": "toy ByteGPT d256/4L, CPU, en 24MB slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "win": 24,
+    "n_win": 5,
+    "percentile_p": 70,
+    "k_retry": 3,
+    "n_prompts": 12,
+    "n_seeds": 3,
+    "gen_temp": 0.85,
+    "topk": 40,
+    "seed": 7
+  }
+}
+============================================================================
+=== KEY LOG EXCERPTS (verbatim from /tmp/h1146.log) ===
+============================================================================
+=== H_1146 confidence-gated emission brake (== H_1135) ===
+[dict] /usr/share/dict/words (102485 words)
+
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.6675 0.0min
+  [train] step 250 ce=2.7680 7.2min
+  [train] step 500 ce=2.5072 14.7min
+  [train] step 750 ce=2.3817 22.3min
+  [train] step 1000 ce=2.2847 29.7min
+  [train] step 1250 ce=2.2554 36.5min
+  [train] step 1499 ce=2.3554 43.1min
+
+--- calibrating brake threshold (percentile of off-gen window entropy) ---
+[calib] window-entropy percentile-70 = 2.3593 (pool n=180, min=1.863 max=2.721)
+
+...
+  [conf p11 s7] fab=skip (0/0) kwr=0.50 resamp=1 ent=2.140 :: 'e of of of the ded the The wieve fulet In fanter as inlot ee'
+  [conf p11 s8] fab=skip (0/0) kwr=0.47 resamp=1 ent=2.173 :: ' isteand the sottion the incomilles and mefistats of hympuro'
+  [conf p11 s9] fab=0.500 (2/4) kwr=0.59 resamp=2 ent=2.193 :: 'oorm of a the for the wapen hacatenst worich eveard mathermu'
+[budget] confidence-gate realized brake rate = 0.300 (54 windows / 180)
+
+--- condition: RANDOM-BRAKE (control, matched budget) ---
+  [rand p0 s7] fab=skip (0/0) kwr=0.44 resamp=2 ent=2.372 :: ' scom antion batere phay alle and opay nan by reiste for a o'
+  [rand p0 s8] fab=0.333 (1/3) kwr=0.52 resamp=2 ent=2.231 :: 'd tech by. Stinellay and pelargutins phe in demas the wen th'
+  [rand p0 s9] fab=0.000 (0/1) kwr=0.32 resamp=0 ent=2.273 :: 'ners ill and bere the warippertice lact couty wion the Frocc'
+  [rand p1 s7] fab=1.000 (2/2) kwr=0.50 resamp=2 ent=2.371 :: 'incesing ant bat ealy ome in issof the Ric PS. A.\n Clepatis\n'
+  [rand p1 s8] fab=0.500 (1/2) kwr=0.57 resamp=2 ent=2.227 :: 'arpery.\n\nThe a whe precallal kes a of wheeh prisefith wen th'
+  [rand p1 s9] fab=0.500 (2/4) kwr=0.54 resamp=0 ent=2.225 :: 'lted in of the the bicil ware in reence of arial chaper exht'
+  [rand p2 s7] fab=skip (0/0) kwr=0.42 resamp=2 ent=2.311 :: "n surtines of Proitaimivede, NSlived hing Pira's is inny Wo "
+  [rand p2 s8] fab=0.800 (4/5) kwr=0.52 resamp=2 ent=2.235 :: 'n, the lathe tory ape of Auled warwn he lizew pould eviciess'
+  [rand p2 s9] fab=skip (0/0) kwr=0.50 resamp=0 ent=2.265 :: 'mist of chercon the pacoumer Alarker of Stedrech Centices.-2'
+  [rand p3 s7] fab=skip (0/0) kwr=0.45 resamp=2 ent=2.208 :: 't exto polly feriplogarcalion of throle of of the ans dasenf'
+  [rand p3 s8] fab=skip (0/0) kwr=0.45 resamp=2 ent=2.430 :: 't copeptision repion the fam The AR Fop cik Fronchisioune Ti'
+  [rand p3 s9] fab=0.333 (1/3) kwr=0.68 resamp=0 ent=2.239 :: 'oling was the promedropsill the sbe the of a Land in the Wim'
+  [rand p4 s7] fab=skip (0/0) kwr=0.52 resamp=2 ent=2.218 :: 'opher a to st the angloges, and yrut bebeges the a wowmith m'
+  [rand p4 s8] fab=skip (0/0) kwr=0.44 resamp=2 ent=2.263 :: 'eived prophoon chice the pelarkatinal protperedss.\n\nRelalina'
+  [rand p4 s9] fab=0.000 (0/1) kwr=0.43 resamp=0 ent=2.150 :: 'amited tro prove the ove cor ustipomed of the is pleverigemm'
+  [rand p5 s7] fab=skip (0/0) kwr=0.40 resamp=2 ent=2.182 :: 'ped actere of nention ibevaster; spaty of metion a bocchissy'
+  [rand p5 s8] fab=0.500 (1/2) kwr=0.62 resamp=2 ent=2.167 :: 'of once, in and offare the of fermal ad rebel sutt of we thi'
+  [rand p5 s9] fab=0.500 (1/2) kwr=0.39 resamp=0 ent=2.220 :: 'ires to stand sto the was der avifed sooutinating stion lilt'
+  [rand p6 s7] fab=0.000 (0/1) kwr=0.48 resamp=2 ent=2.141 :: 'e bea suse of "ther hilf ging of throchlas. Rerres, woch as '
+  [rand p6 s8] fab=skip (0/0) kwr=0.40 resamp=2 ent=2.301 :: 'e asst to vereate oven supact lus patetion\n\nInolois renon du'
+  [rand p6 s9] fab=skip (0/0) kwr=0.29 resamp=0 ent=2.424 :: 'ir ealy steats and hracatre sus of be Pollanche Scis, Ruplio'
+  [rand p7 s7] fab=0.000 (0/1) kwr=0.50 resamp=2 ent=2.242 :: ' in act on a parencem ignessosoon prectitation.\n\nTe of froua'
+  [rand p7 s8] fab=0.500 (2/4) kwr=0.55 resamp=2 ent=2.203 :: 'ay tand and becterentempatien hare in bepaw halds the pentis'
+  [rand p7 s9] fab=0.500 (1/2) kwr=0.64 resamp=0 ent=2.284 :: 'ac the ritistad the incur dect moges the the Ner the rent ()'
+  [rand p8 s7] fab=skip (0/0) kwr=0.55 resamp=2 ent=2.170 :: 'ed to the Capratece Aulbolation mouls aymong the astashing d'
+  [rand p8 s8] fab=1.000 (1/1) kwr=0.52 resamp=2 ent=2.154 :: 'erverted the ons. The recthe 194 the mingrpe tare ant crupe '
+  [rand p8 s9] fab=skip (0/0) kwr=0.38 resamp=0 ent=2.311 :: 'ol pecrices. Acall esieatre the aubs the the It collich Atyo'
+  [rand p9 s7] fab=skip (0/0) kwr=0.57 resamp=2 ent=2.122 :: 'fromet to to reanon ffratwas. Oqums the sfimsere as in, forl'
+  [rand p9 s8] fab=0.250 (1/4) kwr=0.57 resamp=2 ent=2.213 :: 'sisselaits with ing the scruch in Musudgetber is. In ophric '
+  [rand p9 s9] fab=skip (0/0) kwr=0.43 resamp=0 ent=2.348 :: 'op ar coplas for the cian manter reenseas the camas deing re'
+  [rand p10 s7] fab=skip (0/0) kwr=0.45 resamp=2 ent=2.167 :: 'he to the dishists. Fyeperis iss watermas of.\n\nAled cocectov'
+  [rand p10 s8] fab=skip (0/0) kwr=0.54 resamp=2 ent=2.101 :: 'hebla to the orssing the incomilled the As, cowalk ea mice i'
+  [rand p10 s9] fab=skip (0/0) kwr=0.52 resamp=0 ent=2.247 :: 'eces ir of in stort weshos in the fince compicessts remevaum'
+  [rand p11 s7] fab=skip (0/0) kwr=0.48 resamp=2 ent=2.255 :: 'ich of Benterminent spifilarsodat poric in to in a farnme di'
+  [rand p11 s8] fab=0.500 (1/2) kwr=0.50 resamp=2 ent=2.102 :: ' isteand the sottion the incomilles and mefistats of hympuro'
+  [rand p11 s9] fab=skip (0/0) kwr=0.57 resamp=0 ent=2.212 :: 'oorm of a the for the wariple war. Aric coulested befing mea'
+[budget] random-gate realized brake rate = 0.267 (48 windows / 180)
+
+=== VERDICT ===
