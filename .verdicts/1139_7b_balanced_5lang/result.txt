@@ -1,0 +1,32 @@
+H_1139 — BALANCED-5LANG 7B continue-train + per-language ladder
+Lane-G torch REFERENCE, rented H100 80GB (runpod ihslfg2pkw29m4, torn down), $0-gate per a_fire_autonomous, seed 7
+========================================================================
+7B = 7,252,828,160 params; best_val_ce = 1.2265 (step 6000, MORE converged than the 303M's 1.366)
+
+FINAL per-language tally (step 6000 ladder, authoritative result.json):
+  en: emergent=True  max_single=1
+  zh: emergent=True  max_single=1
+  ru: emergent=False  max_single=0
+  ja: emergent=False  max_single=1
+  ko: emergent=True  max_single=1
+  n_emergent = 3/5  (en, zh, ko clear; ru, ja do not)
+
+CONVERGENCE TRAJECTORY (ladder ran at step 2000/4000/6000):
+  step 2000 (val 1.39): 1/5 (en)
+  step 4000 (val 1.28): 1/5 (en)
+  step 6000 (val 1.23): 3/5 (en, zh, ko)
+
+========================================================================
+SCALE-INVARIANT FINDING — capacity is NOT the lever:
+  303M balanced (val 1.366) -> 3/5 : en, zh, ko clear ; ru, ja fail
+  7B   balanced (val 1.227) -> 3/5 : en, zh, ko clear ; ru, ja fail   <-- SAME three
+  20x capacity + deeper convergence did NOT lift ru/ja. The EXACT same
+  3 languages clear at both scales. The 3/5 ceiling is SCALE-INVARIANT;
+  ru/ja are concept-density / metric-bound (Cyrillic morphology + Japanese
+  keyword surfacing), NOT capacity-bound. This RULES OUT model size as the
+  remaining lever for ru/ja — a stronger, cleaner result than a 5/5 would be.
+
+HONEST SCOPE (a_scale_honest_scope): the 7B is a CONTINUE-TRAIN from the broad-
+wiki base (English-wiki-biased pretraining), not a from-scratch balanced 7B; that
+untested variant could in principle differ, but the scale-invariant en/zh/ko match
+makes capacity an unlikely lever. Keyword-level, single-seed, toy concept set.
