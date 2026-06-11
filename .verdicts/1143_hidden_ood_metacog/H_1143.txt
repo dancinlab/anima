@@ -1,0 +1,38 @@
+=== H_1143 hidden-state OOD vs byte-entropy (closes H_1142 F1) ===
+[prompts] 60 manifold-ref, 30 KNOWN, 30 UNKNOWN
+--- F3 control: UNTRAINED ---
+  [untrained] AUROC ood=0.7100  entropy=0.4444  delta=+0.2656
+--- training ---
+  [train] step 0 ce=5.7144
+  [train] step 500 ce=2.4751
+  [train] step 1000 ce=2.3601
+  [train] step 1499 ce=2.3345
+--- TRAINED ---
+  [trained] AUROC ood=0.5644  entropy=0.3622  delta=+0.2022
+=== VERDICT ===
+{
+  "H": "H_1143",
+  "title": "hidden-state OOD beats byte-entropy for input-familiarity metacog",
+  "F1prime_ood_discrimination": {
+    "ood_auroc": 0.5644444444444444,
+    "bar": 0.7,
+    "pass": false
+  },
+  "head_to_head_vs_entropy": {
+    "ood": 0.5644444444444444,
+    "entropy": 0.3622222222222222,
+    "delta": 0.2022222222222222,
+    "bar": 0.15,
+    "pass": true
+  },
+  "F3_control": {
+    "untrained_ood_auroc": 0.71,
+    "bar_max": 0.6,
+    "pass": false
+  },
+  "h1142_entropy_reference": 0.436,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: hidden state ALSO fails — input-familiarity metacog genuinely absent at toy scale",
+  "scope": "toy ByteGPT d256/4L CPU en slice — scale-up UNVERIFIED (a_scale_honest_scope)"
+}
+[done] /tmp/h1143_result.json
