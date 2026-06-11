@@ -1,0 +1,32 @@
+=== H_1148 metacog-gap causes hallucination (capstone) ===
+[dict] 73292 words
+--- training ---
+  [train] step 0 ce=5.6675
+  [train] step 500 ce=2.5072
+  [train] step 1000 ce=2.2847
+  [train] step 1499 ce=2.3554
+=== VERDICT ===
+{
+  "H": "H_1148",
+  "title": "metacog-gap causes hallucination (unifying capstone)",
+  "n_gens": 72,
+  "mean_fab": 0.31707243373910043,
+  "F_concentration": {
+    "blind_tercile_fab": 0.33849206349206346,
+    "aware_tercile_fab": 0.3384106634106634,
+    "ratio": 1.0002405363961633,
+    "bar": 2.0,
+    "pass": false
+  },
+  "spearman_conf_fab": 0.2566402984114734,
+  "spearman_ood_fab": -0.023506334812528135,
+  "confidence_terciles": {
+    "low_conf_fab": 0.16428571428571428,
+    "high_conf_fab": 0.4000268250268251
+  },
+  "no_metacog_handle": true,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: fabrication is metacog-signal-INDEPENDENT — NO internal handle on hallucination (|rho(C,fab)|<0.3 AND |rho(ood,fab)|<0.3); the metacog-gap does NOT localize hallucination — unifies the campaign's negatives",
+  "scope": "toy ByteGPT d256/4L CPU en slice — scale-up UNVERIFIED (a_scale_honest_scope)"
+}
+[done] /tmp/h1148_result.json
