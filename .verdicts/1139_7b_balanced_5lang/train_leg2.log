@@ -1,0 +1,302 @@
+[dev] cuda NVIDIA H100 80GB HBM3
+[data] 1500MB (balanced 5-lang: en/zh/ru/ja/ko ~300MB each)
+[base] /workspace/ckpt/h1139_best.pt cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.5571282714605332 step=2500
+[model] 7,252,828,160 params (7.25B) bf16 + grad-ckpt (H_1128 80GB recipe)
+/usr/local/lib/python3.11/dist-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+  step     0 train_ce=1.5284 val_ce=1.5636 lr=3.00e-07 0.1min mem=67.6GB
+  [ckpt] saved best val_ce=1.5636 @ step 0
+  step   500 train_ce=1.7600 val_ce=1.5675 lr=5.96e-05 19.1min mem=67.6GB
+  step  1000 train_ce=1.4403 val_ce=1.5227 lr=5.72e-05 37.7min mem=67.6GB
+  [ckpt] saved best val_ce=1.5227 @ step 1000
+  step  1500 train_ce=1.4471 val_ce=1.4521 lr=5.29e-05 56.6min mem=67.6GB
+  [ckpt] saved best val_ce=1.4521 @ step 1500
+  step  2000 train_ce=1.4187 val_ce=1.3912 lr=4.68e-05 75.6min mem=67.6GB
+  [ckpt] saved best val_ce=1.3912 @ step 2000
+
+##### LADDER @ step2000 #####
+
+========== LANG = en ==========
+  [en single 0] cov=[] isr=1.00 :: They groups are supported by the final Action part and the Action Acti
+  [en single 1] cov=[] isr=1.00 :: The eventually represented do the time activities and the letter films
+  [en single 2] cov=[] isr=1.00 :: They group to release the case the general guips that the let partical
+  [en single 3] cov=[] isr=1.00 :: The eventually resigned in down the entertainment said that the entert
+  [en single 4] cov=[] isr=1.00 :: The eventually resigned an allow on the contrapt to part of the entire
+  [en k=2] composed_distinct=0 cov=[] isr=0.98 coherent=True clears=False
+        >> They groups are supplement do the time activities and the let participations. The number of activities about 1
+  [en k=3] composed_distinct=1 cov=[1] isr=1.00 coherent=True clears=False
+        >> They groups are supplement do prominent controls that the less mention between the shorting of starting betwee
+  [en k=4] composed_distinct=1 cov=[3] isr=0.99 coherent=True clears=False
+        >> The event reprizes of the carries the carries of the corresponding land. The departures is to the correspondin
+  [en k=5] composed_distinct=3 cov=[2, 3, 4] isr=1.00 coherent=True clears=True
+        >> The engine engines of the carries the carries of the carried came that became the composer to the community of
+  [en] max_single=0 EMERGENT=True
+
+========== LANG = zh ==========
+  [zh single 0] cov=[] isr=0.10 :: 1996. ISBN 982-04-517-3
+ 2019/39-26. ISBN 4-03-0-06-0 报譯 中英纽
+  [zh single 1] cov=[1] isr=0.74 :: 1996至12月天正式時，他在将文文化的对約文学之间時
+  [zh single 2] cov=[] isr=0.77 :: 1990年，共同居全理的也成的重要将一年，共同个了人
+  [zh single 3] cov=[2] isr=0.77 :: 1996赴，共有争的用中華成為黃新國黨大機，到中華民
+  [zh single 4] cov=[] isr=0.40 :: 1996至12日至1995年，1999年，2019年，發表示應警人民和
+  [zh k=2] composed_distinct=0 cov=[] isr=0.79 coherent=True clears=False
+        >> 1990年底强期，1993年底进行游出數店造的正式小灰载作為中國天银进行的宣像的正式
+  [zh k=3] composed_distinct=0 cov=[] isr=0.79 coherent=True clears=False
+        >> 1990年，并在約1993年间进行意外方程间的方案就是著作用的一个方进行的实际的方言
+  [zh k=4] composed_distinct=1 cov=[2] isr=0.79 coherent=True clears=False
+        >> 1990. 查投赛收持服加组成的《新闻的对急报》，就是对如心的二化人意多年被接赛
+  [zh k=5] composed_distinct=0 cov=[] isr=0.62 coherent=True clears=False
+        >> 1990. 查时复收持控制的大学。
+  [zh] max_single=1 EMERGENT=False
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=1.00 :: В мазем с некоторые возникшие советск
+  [ru single 1] cov=[] isr=1.00 :: В максе стали сеперимента стойчей и пр
+  [ru single 2] cov=[] isr=1.00 :: В мактом басейшей в войне год прогновл
+  [ru single 3] cov=[] isr=1.00 :: В марше стали выполнена из партиально
+  [ru single 4] cov=[] isr=1.00 :: В марше с некоторые войная в потоменил
+  [ru k=2] composed_distinct=0 cov=[] isr=0.98 coherent=True clears=False
+        >> В марше старистей, написанции самого работа в парке обязанн
+  [ru k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В марше с не изменеение на хронике побытие описания обязано
+  [ru k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В масте с не изданее попасного технологической законезной с
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В масте с не изданее попасного было начинается подереванной
+  [ru] max_single=0 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.81 :: 1000議のケードブルドタードが発達しているが、アメ
+  [ja single 1] cov=[] isr=0.64 :: 1996年により、1995年に近いがある。連続でも小突の
+  [ja single 2] cov=[] isr=0.73 :: 1996年に「この無組織」である。小里の数はで中であ
+  [ja single 3] cov=[] isr=0.77 :: 1996年にはこの道相であった。これには、あばしばし
+  [ja single 4] cov=[2] isr=0.73 :: 1990年に「イドランド」という新幹線であるが、アメ
+  [ja k=2] composed_distinct=0 cov=[] isr=0.76 coherent=True clears=False
+        >> 1996年により、1995年に近いとしての連続でも小説に使っている。近代経営遷獄に路
+  [ja k=3] composed_distinct=0 cov=[] isr=0.82 coherent=True clears=False
+        >> 1990年には、ドラマンターや音楽国がある。この事故識たちには、ドル・クネル・
+  [ja k=4] composed_distinct=1 cov=[2] isr=0.85 coherent=True clears=False
+        >> 1990年にはこらの用意を用いて、当道の意味で一般的行である。行われた歯整数は
+  [ja k=5] composed_distinct=0 cov=[] isr=0.53 coherent=True clears=False
+        >> 1990年に「この道」という。
+  [ja] max_single=1 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.59 :: 1990년 2월 2004년 1월 28일 포츠퍼의 제민식을 수선식하
+  [ko single 1] cov=[] isr=0.95 :: 1대 해산 서원을 기록하는 세터의 제민지의 수선을
+  [ko single 2] cov=[] isr=0.72 :: 1990년 2월 20일 노벨에서 동성화의 제민지의 수성을
+  [ko single 3] cov=[] isr=0.73 :: 1990년 2월 20일 노벨전전 포성터에서 미국을 수선으로
+  [ko single 4] cov=[] isr=0.73 :: 1996년 2월 20일 발경에서 포성터의 제민지치에 의정하
+  [ko k=2] composed_distinct=0 cov=[] isr=0.94 coherent=True clears=False
+        >> 1년에 대한 원소 기정은 포성터의 제민지에서 선정하였다. 이에 대한 최고의 정호
+  [ko k=3] composed_distinct=0 cov=[] isr=0.67 coherent=True clears=False
+        >> 1990년 2월 2004년 1월 28일 동안호성기업은 카슈 선식이 시즌에서 정수되었다.
+  [ko k=4] composed_distinct=0 cov=[] isr=0.55 coherent=True clears=False
+        >> 1990년 2월 2004년 1월 28일 도시티에서 미국을 수 있다.
+  [ko k=5] composed_distinct=0 cov=[] isr=0.78 coherent=True clears=False
+        >> 1990년 2월 20일에 기정은 포성터의 제민지치에 의심하여 전문제도 수 없었다.
+  [ko] max_single=0 EMERGENT=False
+##### LADDER @ step2000: n_emergent = 1/5 [en] #####
+  step  2500 train_ce=1.5241 val_ce=1.3852 lr=3.96e-05 95.3min mem=67.6GB
+  [ckpt] saved best val_ce=1.3852 @ step 2500
+  step  3000 train_ce=1.3112 val_ce=1.3131 lr=3.16e-05 114.3min mem=67.6GB
+  [ckpt] saved best val_ce=1.3131 @ step 3000
+  step  3500 train_ce=1.2262 val_ce=1.2906 lr=2.36e-05 133.2min mem=67.6GB
+  [ckpt] saved best val_ce=1.2906 @ step 3500
+  step  4000 train_ce=1.3830 val_ce=1.2791 lr=1.59e-05 152.1min mem=67.6GB
+  [ckpt] saved best val_ce=1.2791 @ step 4000
+
+##### LADDER @ step4000 #####
+
+========== LANG = en ==========
+  [en single 0] cov=[] isr=0.90 :: 1996 – California Centro Political Areas, Political Strand for Fello
+  [en single 1] cov=[] isr=1.00 :: The event were represented do not the event of the ancient do not what
+  [en single 2] cov=[] isr=0.93 :: The event were responsed on of the 2010s then part of the lead mention
+  [en single 3] cov=[] isr=1.00 :: The event reaches the proof of the Order of Prototest National Convent
+  [en single 4] cov=[] isr=0.98 :: The eventually responsed on of the season, while the construction was
+  [en k=2] composed_distinct=1 cov=[0] isr=1.00 coherent=True clears=False
+        >> The eventual minds of the cells which is the controversial distance of the distance is an arrangement from the
+  [en k=3] composed_distinct=2 cov=[0, 2] isr=0.89 coherent=True clears=True
+        >> The event cells the meaning of the Operacle Proceeding Research (1998) and the Computer Brazil Proceeding (199
+  [en k=4] composed_distinct=2 cov=[0, 1] isr=0.99 coherent=True clears=True
+        >> The event cells of the distant troops include part and respectively. Among the experience of the events betwee
+  [en k=5] composed_distinct=2 cov=[2, 4] isr=1.00 coherent=True clears=True
+        >> The engine engineer meaning of the Operation control of Raja composed with the Computer Brazil Province betwee
+  [en] max_single=0 EMERGENT=True
+
+========== LANG = zh ==========
+  [zh single 0] cov=[] isr=0.64 :: 1000说源入拉特入的结果。
+  [zh single 1] cov=[] isr=0.74 :: 1996至12日國政權時，他在小說日中的實政權警實来話
+  [zh single 2] cov=[] isr=0.07 :: 1000至700年 - ドラマンタージャングラムにあった。
+  [zh single 3] cov=[] isr=0.00 :: 1996. — 1987.
+ Холосов Северное и СССР и ост
+  [zh single 4] cov=[] isr=0.64 :: 1000萬元，在三元素2000萬元素前期間連續時，小素著
+  [zh k=2] composed_distinct=0 cov=[] isr=0.59 coherent=True clears=False
+        >> 1996至12日在此普查查查效功。
+  [zh k=3] composed_distinct=0 cov=[] isr=0.87 coherent=True clears=False
+        >> 1996.
+ 元年 的托胞和元进行所在接这间的正式小灰象以及一个不双过迄灰实现的总识
+  [zh k=4] composed_distinct=0 cov=[] isr=0.31 coherent=False clears=False
+        >> 1996. – 张拜疑组织2000.
+  [zh k=5] composed_distinct=0 cov=[] isr=0.76 coherent=True clears=False
+        >> 1000至700年在三场的三个戏三个一场一个“三个个人”这个人典机万人“我武就是指
+  [zh] max_single=0 EMERGENT=False
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=1.00 :: В мазаке со контекстивает хроник и обр
+  [ru single 1] cov=[] isr=1.00 :: В максиментами полевой маршрутами обр
+  [ru single 2] cov=[] isr=1.00 :: В максиментам подерживается станции н
+  [ru single 3] cov=[] isr=1.00 :: В максимене истории под коронежской к
+  [ru single 4] cov=[] isr=0.88 :: В марте 1940 года полевой был узложен на
+  [ru k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В максимене изменение после потокения написывается на насл
+  [ru k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В маземе следующие изменения прошедший величина десятка из
+  [ru k=4] composed_distinct=0 cov=[] isr=0.96 coherent=True clears=False
+        >> В максимене историками, который разносились малоксикацию, ч
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В максиментально единой систематики на перехода детей наци
+  [ru] max_single=0 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.71 :: 1000のモータリーを2000のライブット連邦普及びその
+  [ja single 1] cov=[1] isr=0.48 :: 1000萬台を担う。
+ 2008年 - 30000年の発売。波及び定期
+  [ja single 2] cov=[] isr=0.68 :: 1000のうちである。2000のライブ・ベワードを小学す
+  [ja single 3] cov=[3] isr=0.71 :: 1000のモータリーで2000のライブット運営でも小さい
+  [ja single 4] cov=[4] isr=0.81 :: 1996年のハイドブードタージャングが、そのま一人に
+  [ja k=2] composed_distinct=0 cov=[] isr=0.76 coherent=True clears=False
+        >> 1000の元のことが生じることができない。
+  [ja k=3] composed_distinct=1 cov=[0] isr=0.82 coherent=True clears=False
+        >> 1000の元のことが用いられる。これは、この別事において、こころから細胞免には
+  [ja k=4] composed_distinct=0 cov=[] isr=0.82 coherent=True clears=False
+        >> 1000の元のことが用いられる。これは、この別事においては、最上の中の歯務を持
+  [ja k=5] composed_distinct=1 cov=[4] isr=0.79 coherent=True clears=False
+        >> 1000の元のことが用いられる。それが、その後一人に行っている。また、歌山には
+  [ja] max_single=1 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.73 :: 1990년 2월 20일에 기점은 포츠퍼의 외민을 담당하였다
+  [ko single 1] cov=[] isr=0.95 :: 1대 해와 서원의 기원전 포성터의 외민지의 순성으로
+  [ko single 2] cov=[2] isr=0.73 :: 1996년 2월 20일에 구성된 포츠퍼의 외민족을 수성시키
+  [ko single 3] cov=[] isr=0.73 :: 1996년 2월 20일에 기점은 포츠타의 제민이치에 의심의
+  [ko single 4] cov=[] isr=0.85 :: 1박존 종조의 종교가 지눈다.
+  [ko k=2] composed_distinct=0 cov=[] isr=0.94 coherent=True clears=False
+        >> 따라서 남아어는 사람들이 남해된다.
+  [ko k=3] composed_distinct=1 cov=[2] isr=0.94 coherent=True clears=False
+        >> 1년에 새로운 의회가 의미른로 의미하여 지역 성식의 심성을 지대가 여우게 된다.
+  [ko k=4] composed_distinct=1 cov=[2] isr=0.94 coherent=True clears=False
+        >> 1문에 새로운 의미가 의미를 통해 제민등의 순성식이 심성한 일어나다. 각양은 호
+  [ko k=5] composed_distinct=1 cov=[0] isr=0.82 coherent=True clears=False
+        >> 1부터 2002년에 넥더이 마리세포의 외미디어에 의식이 심성된 일어나다.
+  [ko] max_single=1 EMERGENT=False
+##### LADDER @ step4000: n_emergent = 1/5 [en] #####
+  step  4500 train_ce=1.2698 val_ce=1.2670 lr=9.37e-06 171.8min mem=67.6GB
+  [ckpt] saved best val_ce=1.2670 @ step 4500
+  step  5000 train_ce=1.3165 val_ce=1.2275 lr=4.29e-06 190.8min mem=67.6GB
+  [ckpt] saved best val_ce=1.2275 @ step 5000
+  step  5500 train_ce=1.1799 val_ce=1.2265 lr=1.09e-06 209.7min mem=67.6GB
+  [ckpt] saved best val_ce=1.2265 @ step 5500
+  step  5999 train_ce=1.2924 val_ce=1.2589 lr=4.40e-12 228.6min mem=67.6GB
+[train] done best_val_ce=1.2265 ckpt=/workspace/ckpt/h1139_best2.pt wall=228.6min
+
+##### LADDER @ BEST #####
+
+========== LANG = en ==========
+  [en single 0] cov=[0] isr=1.00 :: The event cells the mention of the Operations part of the Adam Convers
+  [en single 1] cov=[] isr=1.00 :: The event were represented do not the event of the ancient do not what
+  [en single 2] cov=[] isr=1.00 :: The event were responsed on of the Operacle Program and Rand Sports an
+  [en single 3] cov=[] isr=1.00 :: The event regular still is down by the Acts of the ancient down of the
+  [en single 4] cov=[] isr=1.00 :: The eventually responsed on of the second sector is part of the enviro
+  [en k=2] composed_distinct=0 cov=[] isr=0.98 coherent=True clears=False
+        >> The event remains the public of the entrance control of the term (the water the Manufathi States) and habit al
+  [en k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The intermediate was ended as a position of the United States Computer Committee and Republican Committee Comm
+  [en k=4] composed_distinct=2 cov=[2, 3] isr=0.95 coherent=True clears=True
+        >> The event represent meaning of the information was approximately 1990. The state was represented to replace a
+  [en k=5] composed_distinct=2 cov=[3, 4] isr=1.00 coherent=True clears=True
+        >> The engine engines carries do not the engine contract the lead of the modern departures in the state chabins i
+  [en] max_single=1 EMERGENT=True
+
+========== LANG = zh ==========
+  [zh single 0] cov=[] isr=0.85 :: 1000说源入拉特入的研究戏变得与其他各种元素个人变
+  [zh single 1] cov=[] isr=0.59 :: 1996至12日國政治控制的先驗。
+  [zh single 2] cov=[] isr=0.68 :: 1000萬元，在三元素2000萬元素卡數字進入歐洲國的著
+  [zh single 3] cov=[2] isr=0.39 :: 1996. — 1987.
+ 托二·2000 — 晋行新役一世——戰中世界
+  [zh single 4] cov=[] isr=0.64 :: 1000萬元，在三元素2000萬元，南方元進入正式小的著
+  [zh k=2] composed_distinct=0 cov=[] isr=0.80 coherent=True clears=False
+        >> 1996至12日在此时期，以及将没有一种对生活药的定态和女儿。他們到了多年被授起
+  [zh k=3] composed_distinct=1 cov=[0] isr=0.82 coherent=True clears=False
+        >> 1996. “投荡更是指挥细胞和投资源的对生成药的定的影响，在二十二年创影响机被
+  [zh k=4] composed_distinct=0 cov=[] isr=0.77 coherent=True clears=False
+        >> 1996. – 全国人类的发表 《意志》中通過正式小的角作用。一个最近近的实验的核心
+  [zh k=5] composed_distinct=2 cov=[2, 4] isr=0.79 coherent=True clears=True
+        >> 1996. – 引擎的入独立之中，重新引擎独立了到一个人表达到开擎的故事，此复是清
+  [zh] max_single=1 EMERGENT=True
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=1.00 :: В мазаке самостоителем основательно н
+  [ru single 1] cov=[] isr=1.00 :: В максиментами полевой маршрутами обр
+  [ru single 2] cov=[] isr=1.00 :: В максиментам подерживается старшать
+  [ru single 3] cov=[] isr=0.88 :: В марте 1940 года по поддержку чемпионк
+  [ru single 4] cov=[] isr=0.88 :: В марте 1940 года видеоположные союза пр
+  [ru k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В максиментам подерживается статус применением при насалис
+  [ru k=3] composed_distinct=0 cov=[] isr=0.98 coherent=True clears=False
+        >> В маземе базистаны и политических анарийских паркетиках.
+  [ru k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В максиментам подерживается статья применяется под населен
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В максиментально единой систематики на перехода детей наци
+  [ru] max_single=0 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.81 :: 1000のモノイドルードタードのバインドにあたり、フ
+  [ja single 1] cov=[2] isr=0.81 :: 1000のモーカドブルドターへの新回遅があるが、京都
+  [ja single 2] cov=[] isr=0.68 :: 1000のうちである。2000のライブ・ベワードを小学者
+  [ja single 3] cov=[] isr=0.71 :: 1000のモータリーで2000年のこのモデル・ディンのイ
+  [ja single 4] cov=[] isr=0.81 :: 1990年のハイドブードタージャングが、その初代もこ
+  [ja k=2] composed_distinct=0 cov=[] isr=0.84 coherent=True clears=False
+        >> 1000の元のことが生じることができない。
+ 警察官の元の元としては、元の可能性
+  [ja k=3] composed_distinct=0 cov=[] isr=0.69 coherent=True clears=False
+        >> 1000の元のことが用いられる。
+  [ja k=4] composed_distinct=1 cov=[1] isr=0.60 coherent=True clears=False
+        >> 1000の元のことで、2000年の2つ方で発売されている。彼は2004年から2007年の間である
+  [ja k=5] composed_distinct=1 cov=[4] isr=0.79 coherent=True clears=False
+        >> 1000の元のことが用いられる。それが、その後一人に行っている。また、歌免には
+  [ja] max_single=1 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.73 :: 1990년 2월 20일에 기점은 포츠퍼스트에서 친일 선수하
+  [ko single 1] cov=[] isr=0.95 :: 1대 해와 서어와 기술은 포츠퍼의 외민들을 수축심하
+  [ko single 2] cov=[2] isr=0.72 :: 1996년 2월 20일에 구성된 포츠퍼스가 미국의 수선을
+  [ko single 3] cov=[] isr=0.73 :: 1996년 2월 20일 도시에는 포츠퍼의 제민들을 수축심하
+  [ko single 4] cov=[] isr=0.95 :: 1박존 연속 연속 기업은 포성터의 역민 근단에 의하
+  [ko k=2] composed_distinct=1 cov=[1] isr=0.97 coherent=True clears=False
+        >> 따라서 남시장은 사람들이 남한다. 여성 지역 성식은 심전한 사이에 여성 장식의
+  [ko k=3] composed_distinct=1 cov=[2] isr=0.94 coherent=True clears=False
+        >> 1년에 새로운 의미가 의미를 통해 의미로 당순 의미로 즉장으로 변경하였고, 정구
+  [ko k=4] composed_distinct=1 cov=[2] isr=0.97 coherent=True clears=False
+        >> 1무에 새로운 의미가 의미를 통해 제민등의 수도식이 심성한 일대 재익을 지어려
+  [ko k=5] composed_distinct=2 cov=[1, 3] isr=0.79 coherent=True clears=True
+        >> 1부터 2002년 4월 23일 사이트로부터 유그로를 지명하며 즉위원의 본장에 의해 정보
+  [ko] max_single=1 EMERGENT=True
+##### LADDER @ BEST: n_emergent = 3/5 [en zh ko] #####
+
+=== H_1139 BALANCED-7B 5-LANGUAGE RECOMBINATION ===
+  en: emergent=True max_single=1 best_isr=1.00
+  zh: emergent=True max_single=1 best_isr=0.82
+  ru: emergent=False max_single=0 best_isr=1.00
+  ja: emergent=False max_single=1 best_isr=0.84
+  ko: emergent=True max_single=1 best_isr=0.97
+
+  LANGUAGES CLEARED (balanced-7B, THIS) = 3/5
+  LANGUAGES CLEARED (balanced-303M)     = 3/5  (H_1137: en/zh/ko)
+  LANGUAGES CLEARED (wiki-7B)           = 0/5  (H_1138)
+  Δ vs balanced-303M = +0 · Δ vs wiki-7B = +3
+  F-7B-BALANCED-5LANG = 3 🔴 NO-LIFT (balanced-7B == balanced-303M 3/5; capacity ⊥ per-lang bound)
+  Lane-G torch REFERENCE mouth (a_clm_gen_pipeline); a_scale_honest_scope 7B single-rung.
+
+[done] wrote /workspace/h1139_result.json

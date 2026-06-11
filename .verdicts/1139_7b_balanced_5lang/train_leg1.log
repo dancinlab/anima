@@ -1,0 +1,380 @@
+[dev] cuda NVIDIA H100 80GB HBM3
+[data] 1500MB (balanced 5-lang: en/zh/ru/ja/ko ~300MB each)
+[base] /workspace/base/best.pt cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.6645175099372864 step=2800
+[model] 7,252,828,160 params (7.25B) bf16 + grad-ckpt (H_1128 80GB recipe)
+/usr/local/lib/python3.11/dist-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+  step     0 train_ce=2.5639 val_ce=2.6838 lr=5.33e-07 0.1min mem=67.6GB
+  [ckpt] saved best val_ce=2.6838 @ step 0
+  step   500 train_ce=2.0515 val_ce=2.0452 lr=7.79e-05 14.8min mem=67.6GB
+  [ckpt] saved best val_ce=2.0452 @ step 500
+  step  1000 train_ce=1.8389 val_ce=1.8676 lr=6.80e-05 29.5min mem=67.6GB
+  [ckpt] saved best val_ce=1.8676 @ step 1000
+
+##### LADDER @ step1000 #####
+
+========== LANG = en ==========
+  [en single 0] cov=[] isr=1.00 :: The is sumber is with peroces of the concentury of an the lecanicated
+  [en single 1] cov=[2] isr=1.00 :: The is sumber is with peroces of the new the contrain the lead ment th
+  [en single 2] cov=[] isr=0.93 :: 1990s as ment in the endences of the concentury of an the leach of the
+  [en single 3] cov=[] isr=0.93 :: 1990s as ment in the enderade of the concentury of an the leach of the
+  [en single 4] cov=[] isr=0.98 :: The is sumber in the end of of the senters, who the part all communiza
+  [en k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The is sumber is withen an domition main the contrain the let partical becally of the spirate Tathemach bechan
+  [en k=3] composed_distinct=0 cov=[] isr=0.99 coherent=True clears=False
+        >> The is sumber is withen an domition mainis, and the part and communization disents presince on stable hiber ch
+  [en k=4] composed_distinct=0 cov=[] isr=0.96 coherent=True clears=False
+        >> 1996 Jast Cen is withen an domining main the contrain the lech ment diside distorment the croduct by chabolles
+  [en k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The is sumber is the endion of the senerces lips in the relection that becontive most that to nothember becons
+  [en] max_single=1 EMERGENT=False
+
+========== LANG = zh ==========
+  [zh single 0] cov=[] isr=0.47 :: 1990表元元在争的用2010%先小。
+  [zh single 1] cov=[] isr=0.83 :: 199年中卡大政政案加的大小。
+ 李大逯约正小小的著
+  [zh single 2] cov=[] isr=0.69 :: 1990表元元在争的用2010%先小名斯人的对尔报设人尔失
+  [zh single 3] cov=[] isr=0.64 :: 1996表元元勒特入的2010%先小。
+ 是克逯约正的小的车
+  [zh single 4] cov=[] isr=0.41 :: 199年 - 旅大武政案 1989年
+1921년 - 小魔
+ 1999年 - 中京麻
+  [zh k=2] composed_distinct=0 cov=[] isr=0.87 coherent=True clears=False
+        >> 199年中投大政政案，以先小治斯人的对尔报警人尔失和女告。二区人期多响可机司
+  [zh k=3] composed_distinct=0 cov=[] isr=0.79 coherent=True clears=False
+        >> 1990表元元在争的用2000进題，並是一逯约正中小的车为置一一为二过迄終兵现獎的表
+  [zh k=4] composed_distinct=0 cov=[] isr=0.70 coherent=True clears=False
+        >> 1990表元共區争的用2010%先小據斯人的对尔报设人尔失和女告。
+  [zh k=5] composed_distinct=0 cov=[] isr=0.47 coherent=False clears=False
+        >> 1990表元山勒的入的2010%先小。
+  [zh] max_single=0 EMERGENT=False
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=1.00 :: В мекаканнакие поекаволизых чекалани
+  [ru single 1] cov=[] isr=1.00 :: Вохаблитов корепилиленая хройтей анк
+  [ru single 2] cov=[] isr=1.00 :: Вохабиил наковепиенией кохкой каканк
+  [ru single 3] cov=[] isr=1.00 :: В мекаканной навиение посли забонение
+  [ru single 4] cov=[] isr=1.00 :: В мекаканной азаление послиа проледан
+  [ru k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> Востомиталией леканованые сойтелениеми екатолалии насарич
+  [ru k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> Вохабии накакие илевовойных чекаланих оскомованеей в карич
+  [ru k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В Созаканнаемие илевоволациой каканкрииействова екелальны
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В Созноенна изавиенамией гольциа налоловалиналаее обликаз
+  [ru] max_single=0 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.81 :: 1990のッーイドブーンタメ・ーバスが、ーーグ一亖に
+  [ja single 1] cov=[] isr=0.60 :: 1990年の山である。2019年の2ら10月の連野正通小の記
+  [ja single 2] cov=[] isr=0.80 :: 199年、日本ブを指加画守する業の発対、报警人定の
+  [ja single 3] cov=[] isr=0.55 :: 1990の州を拡する。2019年の2019年に発対、报警人定の
+  [ja single 4] cov=[4] isr=0.81 :: 1990のッーイドブーンタメ・ーバスが、カーグ一人に
+  [ja k=2] composed_distinct=0 cov=[] isr=0.66 coherent=True clears=False
+        >> 1990年の山である。2019年の2019年に発対、湖警人定の大女告の事、人シアロ・ッジ
+  [ja k=3] composed_distinct=0 cov=[] isr=0.56 coherent=True clears=False
+        >> 1990年の山である。2010年の2012月に発対生报していた。
+  [ja k=4] composed_distinct=0 cov=[] isr=0.71 coherent=True clears=False
+        >> 1990年の除である。2019年にには、大連野正通小の車、になれ、造述近の宮道獲に額
+  [ja k=5] composed_distinct=0 cov=[] isr=0.87 coherent=True clears=False
+        >> 1990のトドイドブーンタメンーバスが、にあば一事に行されるこのがにの武對を渡
+  [ja] max_single=1 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.87 :: 1덕에 에서 원을 군정은 포세하였다. 1이 지에 이정의
+  [ko single 1] cov=[] isr=0.87 :: 1덕에 에서 원을 군정은 포세하였다. 1이 지에 이신하
+  [ko single 2] cov=[] isr=0.87 :: 1덕에서 위대의 개가 이 포세하였다. 1이 지에 이신하
+  [ko single 3] cov=[] isr=0.95 :: 1덕에서 위드르 파가 이 포세하였는 미가지에 이신하
+  [ko single 4] cov=[] isr=0.87 :: 1덕에 에서 원을 군정은 포세하였다. 1이 치에 이신의
+  [ko k=2] composed_distinct=0 cov=[] isr=0.89 coherent=True clears=False
+        >> 1덕에 에서 원을 군정은 포세하였다. 1이 지에 이신하였며, 유의 본업에 가장을 호
+  [ko k=3] composed_distinct=0 cov=[] isr=0.94 coherent=True clears=False
+        >> 1덕에 에서 원의 군정은 포세하였는 미가지었 이신하였다. 유의 본에서 가장을 호
+  [ko k=4] composed_distinct=0 cov=[] isr=0.94 coherent=True clears=False
+        >> 1년에 에전지를 판가 이 포세하였는 미방치에 이신하였다. 유의 본입에서 작을 호
+  [ko k=5] composed_distinct=0 cov=[] isr=0.94 coherent=True clears=False
+        >> 1덕에서 전지를 판가 이 포세하였는 미방치에 이신하였다. 유의 본입에서 작을 호
+  [ko] max_single=0 EMERGENT=False
+##### LADDER @ step1000: n_emergent = 0/5 [] #####
+  step  1500 train_ce=1.6733 val_ce=1.7608 lr=5.20e-05 45.0min mem=67.6GB
+  [ckpt] saved best val_ce=1.7608 @ step 1500
+  step  2000 train_ce=1.6365 val_ce=1.6207 lr=3.35e-05 59.7min mem=67.6GB
+  [ckpt] saved best val_ce=1.6207 @ step 2000
+
+##### LADDER @ step2000 #####
+
+========== LANG = en ==========
+  [en single 0] cov=[] isr=1.00 :: They groupself the catternado of the concestly consideration for the a
+  [en single 1] cov=[] isr=1.00 :: The event of the stome of the presentations of the apperation of the a
+  [en single 2] cov=[] isr=1.00 :: The evention with the persed of the enterages of the company community
+  [en single 3] cov=[] isr=1.00 :: The is supper is of mether do program including the part of the extern
+  [en single 4] cov=[] isr=1.00 :: The event reaches the persed of the enterages of the correse for the a
+  [en k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The event reprises of the called of the cases of the correlect of the word of the competitions of the Websill
+  [en k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The include of the computer of the centries of the appearance of the awarded and the life of the family being
+  [en k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The event reprises of the case of the exces acreased a reale for the away of the most to particular achibitals
+  [en k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The is symply is of metiron of the season forces that the lead metiles of the convestly in the stations being
+  [en] max_single=0 EMERGENT=False
+
+========== LANG = zh ==========
+  [zh single 0] cov=[] isr=0.71 :: 10.0萬元元。争其为201个爵共和世界一個中共和个产人
+  [zh single 1] cov=[2] isr=0.77 :: 1990年，并最三在省中國爵器院新國中大學大學中，中
+  [zh single 2] cov=[2] isr=0.81 :: 1990年，其在三入种秘之分各经新在一初教了到个了于
+  [zh single 3] cov=[] isr=0.81 :: 1990年，其在三入省中國爵器黨中國魔大工中国中产人
+  [zh single 4] cov=[2] isr=0.81 :: 1996年，其在三入种司之到增重新地一大工于到中产属
+  [zh k=2] composed_distinct=0 cov=[] isr=0.87 coherent=True clears=False
+        >> 1990萬元元在争的电要之分各统一得了后，与国个于于这于于八本产公东的歐共和经
+  [zh k=3] composed_distinct=0 cov=[] isr=0.00 coherent=False clears=False
+        >> 1990.
+  [zh k=4] composed_distinct=0 cov=[] isr=0.00 coherent=False clears=False
+        >> 1990.
+  [zh k=5] composed_distinct=0 cov=[] isr=0.00 coherent=False clears=False
+        >> 1990.
+  [zh] max_single=1 EMERGENT=False
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=1.00 :: В межно собъейские собобы хройте и обр
+  [ru single 1] cov=[] isr=0.97 :: В межде своем следение общётном, необр
+  [ru single 2] cov=[] isr=0.97 :: В межно с наком полеком, котом совет пр
+  [ru single 3] cov=[] isr=1.00 :: В месте своем следетельным согловения
+  [ru single 4] cov=[] isr=1.00 :: В межде своем следение общущей приниб
+  [ru k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межно собъятей положения согло инниционного подерение из
+  [ru k=3] composed_distinct=0 cov=[] isr=0.98 coherent=True clears=False
+        >> В межно с накомение возданции, то инних обломожное и насария
+  [ru k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межно собенной из возниму друга возними в имененеции нако
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межде собъейские собом зачание имниции на того детельным
+  [ru] max_single=0 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.85 :: 1000話のケードブーンターへのバインテーーで中され
+  [ja single 1] cov=[2] isr=0.77 :: 1990年のバイドブールタードの新式がある。また、こ
+  [ja single 2] cov=[2, 4] isr=0.85 :: 1990年のケードュールタードの新国においては一人に
+  [ja single 3] cov=[4] isr=0.77 :: 1996年によっている。このだとしらて、そので一人に
+  [ja single 4] cov=[] isr=0.85 :: 1990年のバイドブールタードのバインテードで主人に
+  [ja k=2] composed_distinct=0 cov=[] isr=0.68 coherent=True clears=False
+        >> 1990年の山であり、2010年の2012年に発売されていたことが年になった。多くは民語
+  [ja k=3] composed_distinct=0 cov=[] isr=0.44 coherent=False clears=False
+        >> 12.0のである。
+  [ja k=4] composed_distinct=1 cov=[2] isr=0.74 coherent=True clears=False
+        >> 1000話の山である。2000年の2を新したと、湾警体は機報の告としている催の台が語
+  [ja k=5] composed_distinct=1 cov=[2] isr=0.85 coherent=True clears=False
+        >> 1990年のケードブーンターへの新式がある。また、これただしかししての歌對には
+  [ja] max_single=2 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.73 :: 1990년 2월 20일에 기정은 포성학을 제민합전에 선신하
+  [ko single 1] cov=[] isr=0.88 :: 1덕에 대한 원의 구정은 포성하였다.
+  [ko single 2] cov=[] isr=0.60 :: 1990년 2월 20일에 구정은 도시하였다.
+  [ko single 3] cov=[] isr=0.60 :: 1990년 2월 20일에 기정은 도시하였다.
+  [ko single 4] cov=[] isr=0.59 :: 1990년 2012년 4월 23일 시종되었다. 그는 방치에 설신하
+  [ko k=2] composed_distinct=0 cov=[] isr=0.70 coherent=True clears=False
+        >> 1990년 2012년 4월 23일부 서반되었다. 여선 지역 선신의 시전에서 이수 여용 작을 호
+  [ko k=3] composed_distinct=0 cov=[] isr=0.82 coherent=True clears=False
+        >> 1990년 2월 20일에 구정은 도시편의 시민인의 수선의 재심전에서도 수 여용하고 있다
+  [ko k=4] composed_distinct=0 cov=[] isr=0.85 coherent=True clears=False
+        >> 1년에 수전 수사로 정되었다.
+  [ko k=5] composed_distinct=0 cov=[] isr=0.84 coherent=True clears=False
+        >> 1반에 대한 원의 기정은 포성하지만, 1998년부터 이를 사론을 섬닌한 넷간에 밍방되
+  [ko] max_single=0 EMERGENT=False
+##### LADDER @ step2000: n_emergent = 0/5 [] #####
+  step  2500 train_ce=1.5235 val_ce=1.5571 lr=1.63e-05 75.1min mem=67.6GB
+  [ckpt] saved best val_ce=1.5571 @ step 2500
+  step  3000 train_ce=1.5404 val_ce=1.6045 lr=4.32e-06 89.8min mem=67.6GB
+
+##### LADDER @ step3000 #####
+
+========== LANG = en ==========
+  [en single 0] cov=[] isr=0.98 :: They groups of the computer of the seconds, along the transe for the a
+  [en single 1] cov=[] isr=0.93 :: The event of million end of or the 2010 century of an the lead menths
+  [en single 2] cov=[] isr=0.98 :: The eventually reprement of the United Act, and the power of the film
+  [en single 3] cov=[] isr=1.00 :: The eventually resulted in do the time of sector that the lead menther
+  [en single 4] cov=[] isr=0.93 :: The eventually responsed on of the 2010s seasons that the lead menths
+  [en k=2] composed_distinct=0 cov=[] isr=0.96 coherent=True clears=False
+        >> The eventually responsed on of the 2000s seasons in the Rand Spanish and Sadade Manufle in the startick becaus
+  [en k=3] composed_distinct=0 cov=[] isr=0.94 coherent=True clears=False
+        >> The include of the computer of the 2000s seasons in the Rand Space Committee. The number park is also habit co
+  [en k=4] composed_distinct=0 cov=[] isr=0.96 coherent=True clears=False
+        >> The eventually responsed on of the 2000s seasons in the release of the budget of the life of the family being
+  [en k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> The include of the city of domination is the contract of all communition of the Manuflinic roads and chability
+  [en] max_single=0 EMERGENT=False
+
+========== LANG = zh ==========
+  [zh single 0] cov=[] isr=0.60 :: 1996起，其在于1993年7月39日运南斯克间间普通小的车
+  [zh single 1] cov=[] isr=0.81 :: 1990萬元年在紅約納約之爵器，並在一年中央到中了亞
+  [zh single 2] cov=[] isr=0.77 :: 1000萬元，拜统组维与也成的重裡将一個中，如中了些
+  [zh single 3] cov=[] isr=0.77 :: 1996行，其在三全省中之分司黨的地一黨，一到个了些
+  [zh single 4] cov=[] isr=0.81 :: 1996年，其在三入种科之到三全称公司大教可以中产教
+  [zh k=2] composed_distinct=0 cov=[] isr=0.79 coherent=True clears=False
+        >> 1990萬元元在紅約約2000萬里，其於其间的正式小的著作為一一不可能近的兵随獎的路
+  [zh k=3] composed_distinct=0 cov=[] isr=0.68 coherent=True clears=False
+        >> 1990. – 1982.
+ 托二女 经济将成斯“续对”报证人尔是好的命在二区了了多席可民在
+  [zh k=4] composed_distinct=1 cov=[2] isr=0.82 coherent=True clears=False
+        >> 1990. – 元最争组维的也成功黨伐动，并中央到个了人行政府典机产的一放治對新的
+  [zh k=5] composed_distinct=0 cov=[] isr=0.67 coherent=True clears=False
+        >> 1990萬式共在三全的中之一。
+  [zh] max_single=0 EMERGENT=False
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=1.00 :: В межно собразной и войне горова первы
+  [ru single 1] cov=[] isr=1.00 :: В межде с некоменическом зачение и отн
+  [ru single 2] cov=[] isr=1.00 :: В мозном бакийские создателя проявлен
+  [ru single 3] cov=[] isr=1.00 :: В место своего впериопа и горясном обр
+  [ru single 4] cov=[] isr=1.00 :: В межде с на истоглавления по прогода
+  [ru k=2] composed_distinct=0 cov=[] isr=0.98 coherent=True clears=False
+        >> В межде спосистемение постольки перение первые пределамы, ч
+  [ru k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межде с не истокутский создательной империи попутавление
+  [ru k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межде спосистеменно после потоления напользования правит
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межде с некоторые вознимы друга возними в именется в самих
+  [ru] max_single=0 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.52 :: 1000話のようない。2000年から2000年から200月には尾応
+  [ja single 1] cov=[] isr=0.76 :: 1990年の共同が入き、一戦に関することになった。
+  [ja single 2] cov=[] isr=0.55 :: 1000話の共であり、2010年の2014年に発売されている。
+  [ja single 3] cov=[] isr=0.81 :: 1996のモーイドブードタードのバインドにあった。こ
+  [ja single 4] cov=[] isr=0.64 :: 1990年によっている。
+ 1999年 - バスプ・ローグ世人に
+  [ja k=2] composed_distinct=1 cov=[2] isr=0.85 coherent=True clears=False
+        >> 1990年の共勝が入き、一爵に重装備がその大別上につかたがにかっていたが、新理
+  [ja k=3] composed_distinct=0 cov=[] isr=0.76 coherent=True clears=False
+        >> 12世紀20年である。2010年には南方の連着でも小の記作になる。
+ 中国には歌對に渡
+  [ja k=4] composed_distinct=1 cov=[2] isr=0.76 coherent=True clears=False
+        >> 1000行の山があり、2000年には南東京都で正式小の記作になる。
+ 中央以松止きる新
+  [ja k=5] composed_distinct=0 cov=[] isr=0.80 coherent=True clears=False
+        >> 1ドヴッドがあり、2010年に2コープの対生成は他から場合された。
+ 近終容王的に記
+  [ja] max_single=0 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.69 :: 1990년 2009년 양년구 만들은 등향을 독구로 낭질 이면
+  [ko single 1] cov=[] isr=0.87 :: 1대 해부에 이의 기정은 포성하지만, 1세 친울 선신하
+  [ko single 2] cov=[] isr=0.72 :: 1990년 2월 20일에 구정은 도세터의 제민인의 수선의
+  [ko single 3] cov=[] isr=0.50 :: 1990년 2월 20일에 기정은 도세하였다. 1998년 1월 19일
+  [ko single 4] cov=[] isr=0.61 :: 1990년 2009년 4월 23일 시즈면 변톨 같은 방송을 설시하
+  [ko k=2] composed_distinct=0 cov=[] isr=0.83 coherent=True clears=False
+        >> 1대 해상으로 이후 2010년, 미로 이훈에서 카용 선신의 시즌 유일 본입의 가장을 포
+  [ko k=3] composed_distinct=0 cov=[] isr=0.81 coherent=True clears=False
+        >> 1990년 2월 20일에 구정은 도세터의 제민인의 수선의 자심을 유지하고 있었던 일반
+  [ko k=4] composed_distinct=0 cov=[] isr=0.91 coherent=True clears=False
+        >> 1대 해부에 수의 기정은 포성하지만, 1세 친울 선수의 시전에서돌가 널급에 밍방되
+  [ko k=5] composed_distinct=0 cov=[] isr=0.91 coherent=True clears=False
+        >> 1대 한반의 원의 기정은 포성하지만, 1세 친울 선수의 시전에서 경찰 여치 작을 호
+  [ko] max_single=0 EMERGENT=False
+##### LADDER @ step3000: n_emergent = 0/5 [] #####
+  step  3499 train_ce=1.6734 val_ce=1.5821 lr=1.76e-11 105.1min mem=67.6GB
+[train] done best_val_ce=1.5571 ckpt=/workspace/ckpt/h1139_best.pt wall=105.1min
+
+##### LADDER @ BEST #####
+
+========== LANG = en ==========
+  [en single 0] cov=[] isr=0.98 :: They groups of the computer of the seconds, along the create of the di
+  [en single 1] cov=[] isr=0.93 :: The event of million end of or the 2010 century of an the lead menths
+  [en single 2] cov=[] isr=1.00 :: The eventually reprement of the University of Scotland belled immigran
+  [en single 3] cov=[] isr=0.98 :: The is summer is one end of or the seniors, and the part of the envest
+  [en single 4] cov=[] isr=1.00 :: The eventually responent of objective is the contract of all community
+  [en k=2] composed_distinct=0 cov=[] isr=0.99 coherent=True clears=False
+        >> The eventually reprement of or the senies from the appearance of the southern of the line of the four hibe, an
+  [en k=3] composed_distinct=0 cov=[] isr=0.95 coherent=True clears=False
+        >> The include of the computer of the 2010 century of an the lead menths of the department in the start of being
+  [en k=4] composed_distinct=0 cov=[] isr=0.98 coherent=True clears=False
+        >> The event remain of men's call protems acts look in the release of language. See most that the starm of being
+  [en k=5] composed_distinct=1 cov=[2] isr=1.00 coherent=True clears=False
+        >> The include of the city of do of the new seell some of the difficulty of destroyed in this road that chabilles
+  [en] max_single=0 EMERGENT=False
+
+========== LANG = zh ==========
+  [zh single 0] cov=[2] isr=0.60 :: 1000萬元元。于1993年7月3日，自新公司多教共和中京属
+  [zh single 1] cov=[] isr=0.69 :: 1000萬元年在紅約30040年先導治斯年的克約斯学也導在
+  [zh single 2] cov=[2] isr=0.77 :: 1000萬元年 - 三元級的也成器重新公司年主，如中于于
+  [zh single 3] cov=[] isr=0.77 :: 1990萬元元 : 三全省破之爵器點的地黨分，一到个了亞
+  [zh single 4] cov=[] isr=0.68 :: 1996年，其在第1993年重近里入南方入造的正式小的轻
+  [zh k=2] composed_distinct=0 cov=[] isr=0.76 coherent=True clears=False
+        >> 1990萬元元在紅素約2000萬里，其普受造约時代小的著作置，一为二过近的元王罗斯路
+  [zh k=3] composed_distinct=0 cov=[] isr=0.68 coherent=True clears=False
+        >> 1990. – 1982.
+ 托亚生 经济将成果“经对”报证亚尔是其一個在二区了个多多可民在
+  [zh k=4] composed_distinct=1 cov=[2] isr=0.74 coherent=True clears=False
+        >> 1990. – 元最争的用与也戏各经济在一为“一到个产”行个产典机”，们是此免新的
+  [zh k=5] composed_distinct=1 cov=[2] isr=0.87 coherent=True clears=False
+        >> 1990萬式共在三入的中之分各织新式一分数，到个了于这个制开机个公业的歐免方操
+  [zh] max_single=1 EMERGENT=False
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=0.97 :: В межно своем с видении, которые актив
+  [ru single 1] cov=[] isr=1.00 :: В межде с некоменическом зачественной
+  [ru single 2] cov=[] isr=1.00 :: В межде с неколее единой соверхной обы
+  [ru single 3] cov=[2] isr=1.00 :: В месте с некомение возданции состави
+  [ru single 4] cov=[] isr=1.00 :: В межде с на истоге или округо спаряди
+  [ru k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межно с некоторизились зачей принёл и верхные деятельные
+  [ru k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межно с некомение возданы для предприняло того деятеля из
+  [ru k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межде своенной послед из по проявой силей имперестии наяв
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> В межде с некоторое возникаций принцит отнорования обятник
+  [ru] max_single=1 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.55 :: 1000話のようない。2000年から2000年まで、报警体は東
+  [ja single 1] cov=[] isr=0.55 :: 1000致の共がない。2010年の2014年に発対されている。
+  [ja single 2] cov=[] isr=0.55 :: 1000話の共であり、2010年の2014年に発売されている。
+  [ja single 3] cov=[] isr=0.85 :: 1000のモースドブードタードのバインドにあば中であ
+  [ja single 4] cov=[] isr=0.81 :: 1990年によって、プロタージャングがディーで中人に
+  [ja k=2] composed_distinct=0 cov=[] isr=0.60 coherent=True clears=False
+        >> 1990年の元がない。2000年には南かけ配では約3 世紀に警いている。2007年度の約2008
+  [ja k=3] composed_distinct=0 cov=[] isr=0.66 coherent=True clears=False
+        >> 1000致の共であり、2000年の2000年に発対し报警体が智売された。また、多年は本調
+  [ja k=4] composed_distinct=0 cov=[] isr=0.56 coherent=True clears=False
+        >> 1000致の山があり、2000年の2000年に発売されていた。彼は2004年から2007年度に発行さ
+  [ja k=5] composed_distinct=0 cov=[] isr=0.79 coherent=True clears=False
+        >> 10世紀200系の扱がり、近の大学の大院は正式小の記作になる。
+ 中央中の武對方、
+  [ja] max_single=0 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.69 :: 1990년 2009년 양년 연마 안면 변토 감업이 지역 선신하
+  [ko single 1] cov=[] isr=0.76 :: 1대 해상으로 이후 2010년, 환로 이토에서 카용 선신하
+  [ko single 2] cov=[] isr=0.69 :: 1990년 2009년 양년 연맹 성면 변통 같은 방치에 선신하
+  [ko single 3] cov=[] isr=0.68 :: 1990년 2002년 양년 연마 절면 보루 같은 방정의 선수
+  [ko single 4] cov=[] isr=0.61 :: 1990년 2009년 4월 20일 시즈면 보루 같은 방송을 설시하
+  [ko k=2] composed_distinct=0 cov=[] isr=0.91 coherent=True clears=False
+        >> 1만 해상인 새의 기정은 포성하지만, 1세 친울 성용의 시즌 성의 본장을 가지하려
+  [ko k=3] composed_distinct=0 cov=[] isr=0.79 coherent=True clears=False
+        >> 1990년 2월 20일에 교통은 도시편의 시민인의 수성의 자심에 유의 본입을 가지고, 등
+  [ko k=4] composed_distinct=0 cov=[] isr=0.91 coherent=True clears=False
+        >> 1만 해상을 수상한 정치 포성하지만, 1세 카용 성용하지 않는 일대이 여우 장을 호
+  [ko k=5] composed_distinct=0 cov=[] isr=0.91 coherent=True clears=False
+        >> 1만 해에서 원의 기정은 포성하지만, 1세 친울 성용의 심성을 시쌍하면 작계읍 제작
+  [ko] max_single=0 EMERGENT=False
+##### LADDER @ BEST: n_emergent = 0/5 [] #####
+
+=== H_1139 BALANCED-7B 5-LANGUAGE RECOMBINATION ===
+  en: emergent=False max_single=0 best_isr=1.00
+  zh: emergent=False max_single=1 best_isr=0.87
+  ru: emergent=False max_single=1 best_isr=1.00
+  ja: emergent=False max_single=0 best_isr=0.80
+  ko: emergent=False max_single=0 best_isr=0.91
+
+  LANGUAGES CLEARED (balanced-7B, THIS) = 0/5
+  LANGUAGES CLEARED (balanced-303M)     = 3/5  (H_1137: en/zh/ko)
+  LANGUAGES CLEARED (wiki-7B)           = 0/5  (H_1138)
+  Δ vs balanced-303M = -3 · Δ vs wiki-7B = +0
+  F-7B-BALANCED-5LANG = 0 🔴 BELOW-303M (0/5 < 3/5)
+  Lane-G torch REFERENCE mouth (a_clm_gen_pipeline); a_scale_honest_scope 7B single-rung.
+
+[done] wrote /workspace/h1139_result.json
