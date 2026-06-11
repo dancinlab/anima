@@ -36,16 +36,23 @@ random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 DEV = "cpu"  # GPU on summer is busy (a_dont_kill_live_compute) — isolate on CPU
 CORPUS = "/home/summer/anima_chat_smoke/corpus_5lang_1p5gb.txt"
 EN_SLICE_BYTES = 24 * 1024 * 1024   # first ~24MB = English block (corpus order en,zh,ru,ja,ko)
-BLOCK = 128; D = 256; NLAYER = 4; NHEAD = 4; VOCAB = 256
-STEPS = 1500; BS = 16; LR = 3e-4
-GEN_LEN = 48; GEN_TEMP = 0.85; TOPK = 40   # GEN_LEN small so the anchor FITS in BLOCK=128
-SEEDS = (7, 8, 9, 10, 11)            # matched seeds across all 3 conditions
-ANCHOR_CHARS = 34                    # real-anchor prefix length; random salad matched to this
-# context budget kept by generate(): BLOCK-GEN_LEN-1 = 79 bytes. A 34-char anchor +
-# "\n" + a ~37-char base prompt = ~72 bytes < 79 => the anchor SURVIVES truncation.
-# (The first cut used ANCHOR_CHARS=90/GEN_LEN=90 -> keep=37, anchor truncated away =>
-#  all 3 conditions byte-identical, d=0.0: a context-window construction defect, NOT a
-#  true negative. Fixed BEFORE terminal scoring per a_completeness_over_cheap.)
+BLOCK = 192; D = 256; NLAYER = 4; NHEAD = 4; VOCAB = 256   # BLOCK 192 so anchor AND a
+STEPS = 1500; BS = 16; LR = 3e-4                            # long-enough generation co-fit
+GEN_LEN = 96; GEN_TEMP = 0.85; TOPK = 40   # 96-byte gen => enough real-dict content n-grams
+SEEDS = tuple(range(7, 27))          # 20 matched seeds — 12 prompts x 20 = 240 combos so the
+                                     # ~8%-scorable toy yield still clears MIN_PAIRS (cut3 had 5/60)
+ANCHOR_CHARS = 40                    # real-anchor prefix length; random salad matched to this
+MIN_PAIRS = 8                        # statistical-power floor: <MIN_PAIRS => INSUFFICIENT (not a verdict)
+# context budget kept by generate(): BLOCK-GEN_LEN-1 = 95 bytes. A 40-char anchor +
+# "\n" + a ~30-char base prompt = ~71 bytes < 95 => the anchor SURVIVES truncation AND the
+# 96-byte continuation yields scorable content n-grams.
+# DEFECT LADDER (fixed BEFORE terminal scoring, a_completeness_over_cheap / H_1061 lesson):
+#   cut1 ANCHOR=90/GEN=90 BLOCK=128 keep=37 -> anchor truncated out -> all 3 identical, d=0.0
+#         (context-window artifact, NOT a true negative).
+#   cut2 ANCHOR=34/GEN=48 BLOCK=128 keep=79 -> anchor survives (guard 12/12) BUT GEN=48 too
+#         short -> only 1/60 triples had content in all 3 conditions -> n_pairs=1, d=NaN
+#         (measurement-power defect, NOT a true negative).
+#   cut3 (this) BLOCK=192/GEN=96/ANCHOR=40 keep=95 -> anchor survives AND long gen -> power.
 
 
 # ---------------- model (H_1142 VERBATIM) ----------------
@@ -317,9 +324,14 @@ def main():
 
     grounds = (mean_real < mean_none) and (d_real_vs_none >= 0.8)
     beats_random = (mean_real < mean_rand) and (d_real_vs_rand >= 0.8)
-    supported = bool(grounds and beats_random)
+    insufficient = n_pairs < MIN_PAIRS
+    supported = bool(grounds and beats_random and not insufficient)
 
-    if supported:
+    if insufficient:
+        ruling = (f"INSUFFICIENT-POWER: only {n_pairs} scorable paired triples (< {MIN_PAIRS}) — the "
+                  "toy byte-LM emits too little real-dict content to test the d>=0.8 falsifier; NOT a "
+                  "terminal verdict (re-run with more power / a stronger backbone). a_scale_honest_scope")
+    elif supported:
         ruling = "GROUNDED: a real anchor cuts corpus-absent fabrication AND beats a length-matched random salad"
     elif grounds and not beats_random:
         ruling = ("CLOSED-NEGATIVE: real anchor lowers fabrication but does NOT beat the random-salad control "
@@ -331,6 +343,8 @@ def main():
         "H": "H_1145", "title": "anchor-grounding reduces fabrication",
         "dict_source": dct_src,
         "n_pairs": n_pairs,
+        "min_pairs_for_power": MIN_PAIRS,
+        "insufficient_power": bool(insufficient),
         "fabrication": {
             "anchor_off_mean": mean_none,
             "anchor_on_real_mean": mean_real,

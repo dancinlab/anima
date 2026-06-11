@@ -1,28 +1,3 @@
-=== H_1145 anchor-grounding reduces fabrication ===
-[dict] /usr/share/dict/words (73578 words)
---- training tiny ByteGPT (en slice) ---
-  [train] step 0 ce=5.7392 0.0min
-  [train] step 250 ce=2.5532 0.6min
-  [train] step 500 ce=2.5919 1.1min
-  [train] step 750 ce=2.4733 1.7min
-  [train] step 1000 ce=2.4624 2.3min
-  [train] step 1250 ce=2.4485 2.8min
-  [train] step 1499 ce=2.3539 3.4min
-[anchors] 12 real corpus lines + matched random salads
-  e.g. REAL : 'Substituted tryptamines and phenethylami'
-       RAND : 'Substituted tryptamines and Substituted '
-[guard] anchor survives truncation in 12/12 prompts (keep=95 bytes)
-  [p1 s11] none=1.000(1) real=0.000(1) rand=0.000(1)
-  [p2 s12] none=0.667(6) real=1.000(3) rand=1.000(1)
-  [p3 s8] none=0.500(2) real=0.000(1) rand=0.000(1)
-  [p3 s12] none=0.500(2) real=0.000(3) rand=0.667(3)
-  [p4 s20] none=0.000(2) real=0.667(3) rand=1.000(2)
-  [p5 s26] none=0.000(1) real=0.000(1) rand=0.500(2)
-  [p6 s11] none=0.500(2) real=1.000(1) rand=1.000(1)
-  [p8 s9] none=0.500(2) real=1.000(1) rand=1.000(1)
-  [p8 s10] none=0.000(1) real=1.000(1) rand=0.000(1)
-  [p11 s26] none=0.000(1) real=1.000(1) rand=0.500(2)
-=== VERDICT ===
 {
   "H": "H_1145",
   "title": "anchor-grounding reduces fabrication",
@@ -162,4 +137,3 @@
     "seed": 7
   }
 }
-[done] /tmp/h1145_result.json
