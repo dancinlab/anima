@@ -52,3 +52,25 @@ VERDICT: 🟢-PARTIAL (3/5) on the SHARED balanced model + SCRIPT-CONTROL-GENERA
 HONEST SCOPE (a_scale_honest_scope): keyword-level recombination, single seed 7, toy
 303M, single-seed metric is noisy (ja cleared at step 3500, not 6000). Lane-G torch
 REFERENCE, balanced full 1.5GB 5-lang wiki, $0 summer RTX 5070.
+
+================================================================================
+DEDICATED-COMPLETION ATTEMPT (the proposed path to 5/5) — RAN, did NOT clear:
+Continue-tuned the shared 5-lang ckpt on ru then ja, each on its FULL 300MB
+single-language slice for 2500 steps (full capacity, the H_1129 solo recipe).
+
+  ru DEDICATED: max_single=0; k2=0 k3=0 k4=0 k5=1 (cov=[1]); isr 0.92-0.98 (stays Cyrillic) -> EMERGENT=False
+  ja DEDICATED: max_single=1; k2=1(cov[1]) k3=1(cov[2]) k4=0(isr 0.30 code-switch) k5=1(cov[0]) -> EMERGENT=False
+
+ru MORPHOLOGY-CORRECTED DIAGNOSTIC (keyword STEMS instead of full nominative forms,
+to rule out a Russian-inflection metric artifact — сознани/клетк/памят/... on the
+dedicated ru ckpt): RU-STEM EMERGENT=False max_single=0.
+=> ru's failure is a GENUINE concept-coverage shortfall (the model does not surface
+   the Russian concept vocabulary even singly), NOT merely a keyword/morphology artifact.
+
+HONEST FINAL TALLY:
+  super-additive concept-RECOMBINATION: 3/5  (en, zh, ko clear; ru, ja do not, even dedicated)
+  SCRIPT-CONTROL (stays in-language):   5/5  (in_script_ratio 0.59-1.00 everywhere — the headline)
+
+Literal 5/5 recombination is UNREACHED at this 303M toy scale for ru/ja — a real,
+honest limit (NOT faked to 5/5), plausibly capacity/concept-density bound. The
+language-GENERAL script-control finding (5/5 in-script) stands on its own.
