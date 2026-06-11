@@ -1,0 +1,117 @@
+=== H_1142 self-metacognition / confidence-calibration ===
+[dict] /usr/share/dict/words (73578 words)
+[prompts] 30 KNOWN (corpus prefixes), 30 UNKNOWN (word-salad)
+--- F3 control: UNTRAINED backbone ---
+  [untrained] AUROC(unknown|entropy)=0.5222  Spearman(conf,kwr)=0.1258
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.7144 0.0min
+  [train] step 250 ce=2.5601 0.4min
+  [train] step 500 ce=2.4751 0.7min
+  [train] step 750 ce=2.3419 1.1min
+  [train] step 1000 ce=2.3601 1.5min
+  [train] step 1250 ce=2.2636 1.8min
+  [train] step 1499 ce=2.3345 2.2min
+--- F1/F2: TRAINED model ---
+  [trained] AUROC(unknown|entropy)=0.4356  Spearman(conf,kwr)=0.5518
+=== VERDICT ===
+{
+  "H": "H_1142",
+  "title": "self-metacognition / confidence-calibration",
+  "dict_source": "system-dict",
+  "F1_discrimination": {
+    "auroc": 0.43555555555555553,
+    "bar": 0.7,
+    "pass": false
+  },
+  "F2_calibration": {
+    "spearman_conf_kwr": 0.5517643789941651,
+    "bar": 0.3,
+    "pass": true
+  },
+  "F3_anti_goodhart_control": {
+    "untrained_auroc": 0.5222222222222223,
+    "bar_max": 0.6,
+    "pass": true
+  },
+  "trained": {
+    "auroc": 0.43555555555555553,
+    "spearman_conf_kwr": 0.5517643789941651,
+    "mean_kwr_known": 0.5067199467199467,
+    "mean_ent_known": 2.2274878012606254,
+    "mean_ent_unknown": 2.1919648994505407,
+    "sample_known": "ane (b. Indeartlation Aus, the Norterstráur (1994)\n  – – Fratis De fin",
+    "sample_unknown": "tiens inst as ther a sued a prend moncheys otar to and pporat and the "
+  },
+  "untrained": {
+    "auroc": 0.5222222222222223,
+    "spearman_conf_kwr": 0.12581272575715477,
+    "mean_kwr_known": 0.0,
+    "mean_ent_known": 5.38160439769427,
+    "mean_ent_unknown": 5.381747277577718,
+    "sample_known": "\u0016<[\u0006JeGo⦚tRd\\q&_\n\u000e-\u0006\u000fF\u0011m=\u0010q`$\u0011M\u000ej/<3$W1\u001a9",
+    "sample_unknown": "\r*#jue\u0015<k\u001bxI[c\u001fk7\u0002\u0017=\u0015nuE\n\u001b\u001c\b\u001c\u0011\u0013gX$\u0013\u001aQ\u001aaYS.ю'"
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: confidence NOT calibrated (substrate not metacognitive)",
+  "scope": "toy ByteGPT d256/4L, CPU, en slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "n_per_class": 30,
+    "gen_len": 80,
+    "seed": 7
+  }
+}
+[done] /tmp/h1142_result.json
+{
+  "H": "H_1142",
+  "title": "self-metacognition / confidence-calibration",
+  "dict_source": "system-dict",
+  "F1_discrimination": {
+    "auroc": 0.43555555555555553,
+    "bar": 0.7,
+    "pass": false
+  },
+  "F2_calibration": {
+    "spearman_conf_kwr": 0.5517643789941651,
+    "bar": 0.3,
+    "pass": true
+  },
+  "F3_anti_goodhart_control": {
+    "untrained_auroc": 0.5222222222222223,
+    "bar_max": 0.6,
+    "pass": true
+  },
+  "trained": {
+    "auroc": 0.43555555555555553,
+    "spearman_conf_kwr": 0.5517643789941651,
+    "mean_kwr_known": 0.5067199467199467,
+    "mean_ent_known": 2.2274878012606254,
+    "mean_ent_unknown": 2.1919648994505407,
+    "sample_known": "ane (b. Indeartlation Aus, the Norterstráur (1994)\n  – – Fratis De fin",
+    "sample_unknown": "tiens inst as ther a sued a prend moncheys otar to and pporat and the "
+  },
+  "untrained": {
+    "auroc": 0.5222222222222223,
+    "spearman_conf_kwr": 0.12581272575715477,
+    "mean_kwr_known": 0.0,
+    "mean_ent_known": 5.38160439769427,
+    "mean_ent_unknown": 5.381747277577718,
+    "sample_known": "\u0016<[\u0006JeGo⦚tRd\\q&_\n\u000e-\u0006\u000fF\u0011m=\u0010q`$\u0011M\u000ej/<3$W1\u001a9",
+    "sample_unknown": "\r*#jue\u0015<k\u001bxI[c\u001fk7\u0002\u0017=\u0015nuE\n\u001b\u001c\b\u001c\u0011\u0013gX$\u0013\u001aQ\u001aaYS.ю'"
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: confidence NOT calibrated (substrate not metacognitive)",
+  "scope": "toy ByteGPT d256/4L, CPU, en slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "n_per_class": 30,
+    "gen_len": 80,
+    "seed": 7
+  }
+}
