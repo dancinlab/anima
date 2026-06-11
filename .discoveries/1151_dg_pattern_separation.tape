@@ -1,0 +1,12 @@
+@H 1151 := "DG pattern separation recovers learned input-familiarity that the dense hidden state could not" :: discovery [pre-registered]
+  seed = "H_1143 found input-familiarity UNDETECTABLE in the dense mean-pooled hidden state (ood AUROC 0.564, and an UNTRAINED backbone already scored 0.71 — surface-statistics, not learned). Does a hippocampal-DG-style SPARSE EXPANSIVE recoding recover a LEARNED familiarity signal the dense code missed?"
+  grounding = "Hippocampal dentate gyrus (DG) performs PATTERN SEPARATION — orthogonalizes similar inputs into sparse, expansive, decorrelated codes — while CA3 does pattern completion/retrieval (Marr 1971; Treves & Rolls; O'Reilly & McClelland). A novelty/familiarity signal arises from DG mismatch. Operationalize: fixed random expansive projection (~10x dim) + k-winners-take-all (~5% active) on the trained byte-LM's last-layer hidden state = a sparse DG code; familiarity = distance of the DG-sparse code to an in-corpus DG-code reference manifold."
+  verdict_tier_target = "🟢 SUPPORTED (DG recovers learned familiarity) OR 🔴 closed-negative (DG also surface-statistics) — a_paper_negative_ok"
+  falsifier_F1 = "FROZEN: DG-sparse familiarity AUROC >= 0.70 (beating H_1143's dense 0.564)"
+  falsifier_head_to_head = "FROZEN: DG-sparse AUROC must BEAT the dense-hidden AUROC on the SAME prompts by >= +0.10"
+  falsifier_control = "FROZEN ANTI-GOODHART (load-bearing, exactly where H_1143 died): UNTRAINED backbone's DG-sparse code must FAIL (AUROC <= 0.60). If the untrained backbone ALSO separates, the DG code is surface-statistics not learned familiarity => CLOSED-NEGATIVE."
+  supported_iff = "F1 (DG AUROC>=0.70) AND head-to-head (DG-dense >= +0.10) AND control (untrained DG AUROC<=0.60)"
+  method = "reuse UNIVERSE/h1143_hidden_ood_metacog.py VERBATIM (ByteGPT .hidden(), KNOWN in-corpus prefixes vs UNKNOWN real-word salad, kNN OOD on a reference manifold, AUROC, untrained control, en 24MB slice of corpus_5lang_1p5gb.txt, seed 7, DEV=cpu); ADD a FIXED random expansive projection + kWTA sparsification recode of the mean-pooled hidden state before the kNN OOD distance; same fixed DG projection applied to trained AND untrained backbones"
+  scope = "TOY ByteGPT d256/4L CPU en slice, $0 0-pod summer, scale-up UNVERIFIED (a_scale_honest_scope), g5/p7"
+  artifacts = "UNIVERSE/h1151_dg_pattern_separation.py · .verdicts/1151_dg_pattern_separation/H_1151.txt"
+  xref = "h1143 · h1142 · a_paper_negative_ok · a_scale_honest_scope · p7"
