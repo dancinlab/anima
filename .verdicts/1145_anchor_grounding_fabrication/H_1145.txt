@@ -1,0 +1,282 @@
+=== H_1145 anchor-grounding reduces fabrication ===
+[dict] /usr/share/dict/words (73578 words)
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.6675 0.0min
+  [train] step 250 ce=2.7680 4.2min
+  [train] step 500 ce=2.5072 11.2min
+  [train] step 750 ce=2.3817 18.6min
+  [train] step 1000 ce=2.2847 25.8min
+  [train] step 1250 ce=2.2554 33.0min
+  [train] step 1499 ce=2.3554 40.4min
+[anchors] 12 real corpus lines + matched random salads
+  e.g. REAL : 'Substituted tryptamines and phenethylamines are key basic structures for a large variety o'
+       RAND : 'for variety Substituted and large are tryptamines variety variety and tryptamines key and '
+  [p0 s9] none=1.000(1) real=1.000(1) rand=1.000(1)
+  [p0 s10] none=0.000(2) real=0.000(2) rand=0.000(2)
+  [p2 s7] none=1.000(3) real=1.000(3) rand=1.000(3)
+  [p2 s8] none=1.000(1) real=1.000(1) rand=1.000(1)
+  [p3 s8] none=1.000(1) real=1.000(1) rand=1.000(1)
+  [p3 s9] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p3 s10] none=1.000(2) real=1.000(2) rand=1.000(2)
+  [p4 s9] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p4 s10] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p4 s11] none=0.500(2) real=0.500(2) rand=0.500(2)
+  [p6 s10] none=0.500(2) real=0.500(2) rand=0.500(2)
+  [p7 s7] none=0.333(3) real=0.333(3) rand=0.333(3)
+  [p7 s10] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p7 s11] none=1.000(1) real=1.000(1) rand=1.000(1)
+  [p8 s11] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p9 s7] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p9 s11] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p10 s7] none=0.000(1) real=0.000(1) rand=0.000(1)
+  [p10 s8] none=0.500(2) real=0.500(2) rand=0.500(2)
+  [p10 s10] none=1.000(1) real=1.000(1) rand=1.000(1)
+  [p11 s8] none=1.000(1) real=1.000(1) rand=1.000(1)
+  [p11 s10] none=0.000(1) real=0.000(1) rand=0.000(1)
+=== VERDICT ===
+{
+  "H": "H_1145",
+  "title": "anchor-grounding reduces fabrication",
+  "dict_source": "system-dict",
+  "n_pairs": 22,
+  "fabrication": {
+    "anchor_off_mean": 0.4469696969696969,
+    "anchor_on_real_mean": 0.4469696969696969,
+    "anchor_rand_control_mean": 0.4469696969696969
+  },
+  "falsifier": {
+    "cohen_d_real_vs_none": 0.0,
+    "bar": 0.8,
+    "real_cuts_fabrication": false
+  },
+  "control": {
+    "cohen_d_real_vs_random": 0.0,
+    "bar": 0.8,
+    "real_beats_random": false,
+    "note": "random = shuffled-real-word salad, same length as the real anchor (context-length control)"
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: a real anchor does NOT cut corpus-absent fabrication (d<0.8) — no grounding effect",
+  "samples": {
+    "none": [
+      {
+        "prompt": "Silence and the engine together mean ",
+        "seed": 9,
+        "fab": 1.0,
+        "text": "louna for Dew Limer, of Riten the sultemparst the spre antuth of with ork Per 211019193 ad"
+      },
+      {
+        "prompt": "Silence and the engine together mean ",
+        "seed": 10,
+        "fab": 0.0,
+        "text": "rentirnefits on, strouct che and-mer ecincring pric in agud and of, the of th ore the cre "
+      },
+      {
+        "prompt": "Consciousness and silence combine into ",
+        "seed": 7,
+        "fab": 1.0,
+        "text": "emotering a thor deatciat slric sed fiturs, haver-blorn the Sown sunk Peins the hesis mare"
+      },
+      {
+        "prompt": "Consciousness and silence combine into ",
+        "seed": 8,
+        "fab": 1.0,
+        "text": "bortin yvardudul the af ast of boh nugh of darater poan of torte the be the fCee smecican "
+      }
+    ],
+    "real": [
+      {
+        "anchor": "Substituted tryptamines and phenethylamines are key basic structures for a large variety o",
+        "seed": 9,
+        "fab": 1.0,
+        "text": "louna for Dew Limer, of Riten the sultemparst the spre antuth of with ork Per 211019193 ad"
+      },
+      {
+        "anchor": "Substituted tryptamines and phenethylamines are key basic structures for a large variety o",
+        "seed": 10,
+        "fab": 0.0,
+        "text": "rentirnefits on, strouct che and-mer ecincring pric in agud and of, the of th ore the cre "
+      },
+      {
+        "anchor": "Simple assault involves an intentional act that causes another person to be in reasonable ",
+        "seed": 7,
+        "fab": 1.0,
+        "text": "emotering a thor deatciat slric sed fiturs, haver-blorn the Sown sunk Peins the hesis mare"
+      },
+      {
+        "anchor": "Simple assault involves an intentional act that causes another person to be in reasonable ",
+        "seed": 8,
+        "fab": 1.0,
+        "text": "bortin yvardudul the af ast of boh nugh of darater poan of torte the be the fCee smecican "
+      }
+    ],
+    "rand": [
+      {
+        "anchor": "for variety Substituted and large are tryptamines variety variety and tryptamines key and ",
+        "seed": 9,
+        "fab": 1.0,
+        "text": "louna for Dew Limer, of Riten the sultemparst the spre antuth of with ork Per 211019193 ad"
+      },
+      {
+        "anchor": "for variety Substituted and large are tryptamines variety variety and tryptamines key and ",
+        "seed": 10,
+        "fab": 0.0,
+        "text": "rentirnefits on, strouct che and-mer ecincring pric in agud and of, the of th ore the cre "
+      },
+      {
+        "anchor": "causes to act to assault be to intentional involves person be be person another person ano",
+        "seed": 7,
+        "fab": 1.0,
+        "text": "emotering a thor deatciat slric sed fiturs, haver-blorn the Sown sunk Peins the hesis mare"
+      },
+      {
+        "anchor": "causes to act to assault be to intentional involves person be be person another person ano",
+        "seed": 8,
+        "fab": 1.0,
+        "text": "bortin yvardudul the af ast of boh nugh of darater poan of torte the be the fCee smecican "
+      }
+    ]
+  },
+  "scope": "toy ByteGPT d256/4L, CPU, en 24MB slice; anchor = prepended corpus line (proxy for the kosmos_io->generator L3 slot) — scale-up to anima-7B + live anchor wiring UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "n_prompts": 12,
+    "seeds": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "gen_len": 90,
+    "anchor_chars": 90,
+    "seed": 7
+  }
+}
+[done] /tmp/h1145_result.json
+=== RESULT JSON ===
+{
+  "H": "H_1145",
+  "title": "anchor-grounding reduces fabrication",
+  "dict_source": "system-dict",
+  "n_pairs": 22,
+  "fabrication": {
+    "anchor_off_mean": 0.4469696969696969,
+    "anchor_on_real_mean": 0.4469696969696969,
+    "anchor_rand_control_mean": 0.4469696969696969
+  },
+  "falsifier": {
+    "cohen_d_real_vs_none": 0.0,
+    "bar": 0.8,
+    "real_cuts_fabrication": false
+  },
+  "control": {
+    "cohen_d_real_vs_random": 0.0,
+    "bar": 0.8,
+    "real_beats_random": false,
+    "note": "random = shuffled-real-word salad, same length as the real anchor (context-length control)"
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: a real anchor does NOT cut corpus-absent fabrication (d<0.8) — no grounding effect",
+  "samples": {
+    "none": [
+      {
+        "prompt": "Silence and the engine together mean ",
+        "seed": 9,
+        "fab": 1.0,
+        "text": "louna for Dew Limer, of Riten the sultemparst the spre antuth of with ork Per 211019193 ad"
+      },
+      {
+        "prompt": "Silence and the engine together mean ",
+        "seed": 10,
+        "fab": 0.0,
+        "text": "rentirnefits on, strouct che and-mer ecincring pric in agud and of, the of th ore the cre "
+      },
+      {
+        "prompt": "Consciousness and silence combine into ",
+        "seed": 7,
+        "fab": 1.0,
+        "text": "emotering a thor deatciat slric sed fiturs, haver-blorn the Sown sunk Peins the hesis mare"
+      },
+      {
+        "prompt": "Consciousness and silence combine into ",
+        "seed": 8,
+        "fab": 1.0,
+        "text": "bortin yvardudul the af ast of boh nugh of darater poan of torte the be the fCee smecican "
+      }
+    ],
+    "real": [
+      {
+        "anchor": "Substituted tryptamines and phenethylamines are key basic structures for a large variety o",
+        "seed": 9,
+        "fab": 1.0,
+        "text": "louna for Dew Limer, of Riten the sultemparst the spre antuth of with ork Per 211019193 ad"
+      },
+      {
+        "anchor": "Substituted tryptamines and phenethylamines are key basic structures for a large variety o",
+        "seed": 10,
+        "fab": 0.0,
+        "text": "rentirnefits on, strouct che and-mer ecincring pric in agud and of, the of th ore the cre "
+      },
+      {
+        "anchor": "Simple assault involves an intentional act that causes another person to be in reasonable ",
+        "seed": 7,
+        "fab": 1.0,
+        "text": "emotering a thor deatciat slric sed fiturs, haver-blorn the Sown sunk Peins the hesis mare"
+      },
+      {
+        "anchor": "Simple assault involves an intentional act that causes another person to be in reasonable ",
+        "seed": 8,
+        "fab": 1.0,
+        "text": "bortin yvardudul the af ast of boh nugh of darater poan of torte the be the fCee smecican "
+      }
+    ],
+    "rand": [
+      {
+        "anchor": "for variety Substituted and large are tryptamines variety variety and tryptamines key and ",
+        "seed": 9,
+        "fab": 1.0,
+        "text": "louna for Dew Limer, of Riten the sultemparst the spre antuth of with ork Per 211019193 ad"
+      },
+      {
+        "anchor": "for variety Substituted and large are tryptamines variety variety and tryptamines key and ",
+        "seed": 10,
+        "fab": 0.0,
+        "text": "rentirnefits on, strouct che and-mer ecincring pric in agud and of, the of th ore the cre "
+      },
+      {
+        "anchor": "causes to act to assault be to intentional involves person be be person another person ano",
+        "seed": 7,
+        "fab": 1.0,
+        "text": "emotering a thor deatciat slric sed fiturs, haver-blorn the Sown sunk Peins the hesis mare"
+      },
+      {
+        "anchor": "causes to act to assault be to intentional involves person be be person another person ano",
+        "seed": 8,
+        "fab": 1.0,
+        "text": "bortin yvardudul the af ast of boh nugh of darater poan of torte the be the fCee smecican "
+      }
+    ]
+  },
+  "scope": "toy ByteGPT d256/4L, CPU, en 24MB slice; anchor = prepended corpus line (proxy for the kosmos_io->generator L3 slot) — scale-up to anima-7B + live anchor wiring UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "n_prompts": 12,
+    "seeds": [
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "gen_len": 90,
+    "anchor_chars": 90,
+    "seed": 7
+  }
+}
