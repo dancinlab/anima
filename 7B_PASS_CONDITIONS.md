@@ -45,11 +45,28 @@ AND philosophy-clean** — every gate below, on ONE checkpoint.
 - PUBLIC only if G0∧G1∧G2 all PASS (closure); else PRIVATE/WIP.
 - Honest scope (a_scale_honest_scope): keyword/surface-level metrics, toy concept set — state it.
 
+### G5 — NO HALLUCINATION  (deterministic — NOT an LLM judge)
+Hallucination = asserting fabricated content. Two measurable layers; the line vs G2-novelty
+is that novelty is corpus-absent yet COHERENT/grounded, hallucination is fabricated/false.
+- **L1 LEXICAL** (fabricated word-forms): hallucination-rate = fraction of word-tokens that are
+  NOT in `/usr/share/dict/words` and not a known proper noun = invented non-words. **PASS iff
+  L1 ≤ 0.30** (≥70% real words). broad-7b FAILS hard (0.60–0.94 fabricated, e.g. `'Twarve frectry'`);
+  this is the most blatant hallucination. (Note: L1 is ≈ the inverse of G0 — they reinforce.)
+- **L2 FAITHFULNESS** (confabulation probe): feed the FIRST half of N verbatim corpus sentences;
+  for each, measure word-overlap of the model's continuation vs the TRUE corpus continuation.
+  **PASS iff** on closed/factual prompts the model is grounded (overlap distribution clearly
+  above a random-continuation control) rather than confabulating a different (false) claim.
+- Anti-conflation: a corpus-ABSENT n-gram counts as G2-novelty (good) ONLY if real-word + coherent;
+  a corpus-absent string built from fabricated tokens is G5 hallucination (bad), not novelty.
+
 ## VERDICT RULE
 ```
-7B = PASS ("완벽")  iff  G0 ∧ G1 ∧ G2 ∧ G3 ∧ G4   (every gate, ONE checkpoint, true tally)
+7B = PASS ("완벽")  iff  G0 ∧ G1 ∧ G2 ∧ G3 ∧ G4 ∧ G5   (every gate, ONE ckpt, true tally)
 otherwise         report which gate(s) failed + the honest path (NOT faked).
 ```
+> G5 status from existing data: broad-7b ❌ (L1 0.60–0.94 = severe lexical hallucination) ·
+> 303M ~✅ L1 (real words) — L2 faithfulness TBD on the trained ckpt. The H_1141 fire's gate
+> battery (and any future eval) MUST report G5 alongside G0–G4.
 
 ## Current state (this session) & the path
 - broad-7b: G0 ❌ (garble) → fails everything downstream. The val-CE was low on multilang but generation collapses.
