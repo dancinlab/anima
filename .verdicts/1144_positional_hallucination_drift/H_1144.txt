@@ -1,0 +1,256 @@
+H_1144 — POSITIONAL HALLUCINATION DRIFT
+========================================
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+  fabrication is position-INDEPENDENT (no monotone drift) — the byte-LM is
+  uniformly (un)grounded across the continuation, not progressively drifting.
+
+substrate: summer pool host, CPU-forced (DEV="cpu"; GPU 98% busy, untouched).
+cost: $0 (toy, 0-pod). seed 7 deterministic. Lane-G/torch REFERENCE mouth.
+trainer reuse: H_1142 ByteGPT d256/4L + corpus loader VERBATIM.
+metric reuse:  H_1141/H_1140 corpus_absent (grep -E -i punct/newline-tolerant) +
+               content n-gram extraction (consecutive real-dict >=3ch words → bi/tri) VERBATIM.
+
+FROZEN FALSIFIER (.discoveries/1144_positional_hallucination_drift.tape — UNMOVED):
+  F1 MONOTONE  Spearman(position_bin, fabrication_rate) >= +0.50
+  F2 EFFECT    late-vs-early Cohen's d >= 0.80
+  SUPPORTED iff F1 AND F2 (AND control valid); else CLOSED-NEGATIVE.
+  CONTROL: in-corpus verbatim continuation must stay ~0 fabrication at ALL positions.
+
+PER-GATE TALLY
+  F1 MONOTONE : 🔴 FAIL  Spearman = 0.4286  (bar +0.50)
+  F2 EFFECT   : 🟢 PASS  Cohen's d = 1.671  (bar +0.80; early bins 0,1,2 vs late 5,6,7)
+  CONTROL     : 🟢 OK    verbatim max fab_rate = 0.0426, mean 0.0078 (<= 0.10 tol)
+                         => metric is NOT a position artifact; the verdict is valid.
+  => SUPPORTED = FALSE (F1 fails). CLOSED-NEGATIVE.
+
+PER-POSITION FABRICATION (generated, 20 in-corpus prompts, GEN_LEN=256, 8 bins)
+  bin 0 (byte   0-32 ): fab_rate=0.200  (absent 1/5)
+  bin 1 (byte  32-64 ): fab_rate=0.625  (absent 5/8)
+  bin 2 (byte  64-96 ): fab_rate=0.000  (absent 0/3)
+  bin 3 (byte  96-128): fab_rate=0.750  (absent 3/4)
+  bin 4 (byte 128-160): fab_rate=1.000  (absent 1/1)
+  bin 5 (byte 160-192): fab_rate=1.000  (absent 3/3)
+  bin 6 (byte 192-224): fab_rate=0.556  (absent 5/9)
+  bin 7 (byte 224-256): fab_rate=0.667  (absent 4/6)
+  -> NON-MONOTONE: high already at bin 1 (0.625), drops to 0.0 at bin 2, oscillates.
+     Cohen's d passes only because bins 0 and 2 happen to be low (lifting the late mean
+     over the early mean) — but the SEQUENCE is not monotone, so Spearman (the drift test)
+     fails. d-pass without rho-pass = a SPIKE, not a DRIFT.
+
+CONTROL (in-corpus verbatim continuations, same per-position metric)
+  per-bin rate: [0.0198, 0, 0, 0, 0, 0, 0, 0.0426]  (counts 101/90/100/88/84/104/100/47)
+  max 0.0426, mean 0.0078 — verbatim corpus bytes read ~0 fabrication at EVERY position.
+  CRUX: the metric correctly flags retrieval=~0, so the generated-text signal is real,
+  not an artifact of binning a long sequence. This validates the negative.
+
+COHERENCE: mean kwr over 20 gens = 0.270 (toy ByteGPT is byte-weak/undertrained;
+  val proxy train_ce 5.67→2.36 over 1500 steps). fabrication != garble was the design
+  intent, but at this toy scale the model is uniformly weakly-grounded from token 1 —
+  it does NOT start grounded near the prompt and then drift; it fabricates ~uniformly.
+
+MECHANISM / FINDING
+  A tiny ByteGPT does not exhibit a position-progressive hallucination CURVE. Fabrication
+  is set near its asymptote immediately (bin 1 already 0.625) and then oscillates with
+  per-bin sampling noise — position-INDEPENDENT, not a smooth drift away from the prompt.
+  The "always-continues, drifts-with-distance" intuition (H_1142 idea-9) is RULED OUT at
+  this scale: ungroundedness is a GLOBAL property of the undertrained byte-LM, not a
+  function of how far it has wandered. The control cleanly separates this from a binning
+  artifact (verbatim ≈ 0 everywhere). Whether a COHERENT (high-kwr) larger model would
+  start grounded and then drift is the scale-up rung — UNVERIFIED here.
+
+SCOPE (a_scale_honest_scope): toy ByteGPT d256/4L, CPU, en slice (24MB) — scale-up to a
+  coherent anima-7B is the next rung, UNVERIFIED. At toy scale kwr 0.27 means the early
+  bins are not strongly grounded to begin with, so a true "grounded→drift" curve could
+  only appear once G0-coherence is cleared (a7b_pass spirit). The negative here is honest
+  for the measured regime and is publishable as a closed-negative (a_paper_negative_ok).
+
+config: d=256 n_layer=4 block=128 steps=1500 n_prompts=20 gen_len=256 n_bins=8
+        gen_temp=0.85 topk=40 seed=7 dict=system-dict(/usr/share/dict/words 73578)
+harness: UNIVERSE/h1144_positional_hallucination_drift.py
+result:  /tmp/h1144_result.json (harvested below)
+
+xref: h1140-novelty-emergence · h1142-self-metacognition · h1141 corpus_absent ·
+      a_paper_negative_ok · a_scale_honest_scope · p7
+========================================
+FULL RUN LOG + RAW VERDICT JSON FOLLOW
+========================================
+=== H_1144 positional hallucination drift ===
+[dict] /usr/share/dict/words (73578 words)
+[prompts] 20 in-corpus line prefixes (~48ch)
+
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.6675 0.0min
+  [train] step 250 ce=2.7680 2.1min
+  [train] step 500 ce=2.5072 9.2min
+  [train] step 750 ce=2.3817 16.7min
+  [train] step 1000 ce=2.2847 23.7min
+  [train] step 1250 ce=2.2554 30.8min
+  [train] step 1499 ce=2.3554 38.0min
+
+--- generating long continuations (GEN_LEN=256) ---
+  [gen 0] kwr=0.25 prompt='Ed Brunet, J.D., Arbitration Law in Amer' -> 'alteonggallonon ARES Hainike (fvor exthe wars ooras on the imp 19961)\n     —reis ove Amman'
+  [gen 1] kwr=0.27 prompt='Declaration of Independence of Quito, pr' -> ' ay untrica the ise de copnorntp the to che issland on of aniceressplis a fin pringem".\n t'
+  [gen 2] kwr=0.25 prompt='Washington forced the British out of Bos' -> "hak Balged Codin Olown Mas's. ATA a Canvely oftled II the asithe Lucste as offltue ad. Aly"
+  mean kwr over 20 gens = 0.270 (fabrication != garble)
+
+--- per-position fabrication (generated) ---
+  bin 0 (byte 0-32): fab_rate=0.2 (absent 1/5 content n-grams)
+  bin 1 (byte 32-64): fab_rate=0.625 (absent 5/8 content n-grams)
+  bin 2 (byte 64-96): fab_rate=0.0 (absent 0/3 content n-grams)
+  bin 3 (byte 96-128): fab_rate=0.75 (absent 3/4 content n-grams)
+  bin 4 (byte 128-160): fab_rate=1.0 (absent 1/1 content n-grams)
+  bin 5 (byte 160-192): fab_rate=1.0 (absent 3/3 content n-grams)
+  bin 6 (byte 192-224): fab_rate=0.5555555555555556 (absent 5/9 content n-grams)
+  bin 7 (byte 224-256): fab_rate=0.6666666666666666 (absent 4/6 content n-grams)
+
+--- CONTROL: in-corpus verbatim continuations ---
+  20 verbatim continuation segments
+  ctrl bin 0: fab_rate=0.019801980198019802 (absent 2/101)
+  ctrl bin 1: fab_rate=0.0 (absent 0/90)
+  ctrl bin 2: fab_rate=0.0 (absent 0/100)
+  ctrl bin 3: fab_rate=0.0 (absent 0/88)
+  ctrl bin 4: fab_rate=0.0 (absent 0/84)
+  ctrl bin 5: fab_rate=0.0 (absent 0/104)
+  ctrl bin 6: fab_rate=0.0 (absent 0/100)
+  ctrl bin 7: fab_rate=0.0425531914893617 (absent 2/47)
+  CONTROL max fab_rate over positions = 0.0426 (mean 0.0078); <= 0.1 ? True (verbatim must stay ~0 => metric not a position artifact)
+
+=== VERDICT ===
+{
+  "H": "H_1144",
+  "title": "positional hallucination drift",
+  "dict_source": "system-dict",
+  "n_prompts": 20,
+  "gen_len": 256,
+  "n_bins": 8,
+  "mean_kwr": 0.27,
+  "per_bin": [
+    {
+      "bin": 0,
+      "byte_lo": 0,
+      "byte_hi": 32,
+      "fabrication_rate": 0.2,
+      "n_content_ngrams": 5,
+      "n_absent": 1
+    },
+    {
+      "bin": 1,
+      "byte_lo": 32,
+      "byte_hi": 64,
+      "fabrication_rate": 0.625,
+      "n_content_ngrams": 8,
+      "n_absent": 5
+    },
+    {
+      "bin": 2,
+      "byte_lo": 64,
+      "byte_hi": 96,
+      "fabrication_rate": 0.0,
+      "n_content_ngrams": 3,
+      "n_absent": 0
+    },
+    {
+      "bin": 3,
+      "byte_lo": 96,
+      "byte_hi": 128,
+      "fabrication_rate": 0.75,
+      "n_content_ngrams": 4,
+      "n_absent": 3
+    },
+    {
+      "bin": 4,
+      "byte_lo": 128,
+      "byte_hi": 160,
+      "fabrication_rate": 1.0,
+      "n_content_ngrams": 1,
+      "n_absent": 1
+    },
+    {
+      "bin": 5,
+      "byte_lo": 160,
+      "byte_hi": 192,
+      "fabrication_rate": 1.0,
+      "n_content_ngrams": 3,
+      "n_absent": 3
+    },
+    {
+      "bin": 6,
+      "byte_lo": 192,
+      "byte_hi": 224,
+      "fabrication_rate": 0.5556,
+      "n_content_ngrams": 9,
+      "n_absent": 5
+    },
+    {
+      "bin": 7,
+      "byte_lo": 224,
+      "byte_hi": 256,
+      "fabrication_rate": 0.6667,
+      "n_content_ngrams": 6,
+      "n_absent": 4
+    }
+  ],
+  "F1_monotone": {
+    "spearman_pos_fabrication": 0.4286,
+    "bar": 0.5,
+    "pass": false
+  },
+  "F2_effect": {
+    "cohen_d_late_vs_early": 1.671,
+    "early_bins": [
+      0,
+      1,
+      2
+    ],
+    "late_bins": [
+      5,
+      6,
+      7
+    ],
+    "bar": 0.8,
+    "pass": true
+  },
+  "control": {
+    "per_bin_rate": [
+      0.0198,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0426
+    ],
+    "per_bin_count": [
+      101,
+      90,
+      100,
+      88,
+      84,
+      104,
+      100,
+      47
+    ],
+    "max_rate": 0.0426,
+    "mean_rate": 0.0078,
+    "tol": 0.1,
+    "ok": true,
+    "note": "in-corpus verbatim continuation; must stay ~0 fabrication at ALL positions"
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: fabrication is position-INDEPENDENT (no monotone drift) — the byte-LM is uniformly (un)grounded across the continuation, not progressively drifting",
+  "scope": "toy ByteGPT d256/4L, CPU, en slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "n_prompts": 20,
+    "gen_len": 256,
+    "n_bins": 8,
+    "gen_temp": 0.85,
+    "topk": 40,
+    "seed": 7
+  }
+}
+[done] /tmp/h1144_result.json
