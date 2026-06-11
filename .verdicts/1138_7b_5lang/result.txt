@@ -1,0 +1,111 @@
+=== H_1138 7B 5-LANGUAGE CONCEPT-RECOMBINATION (verbatim pod stdout) ===
+ckpt = dancinlab/clm-v1-ref-pytorch-cuda-7b-broad-converged :: best.pt (14505787226 bytes)
+sha256 = 20f77ab1047477dcb83253cc3971c71a4c0fc147ff7889d8f02bc0958fddb293  (VERIFIED == /HF.jsonl registry)
+arch   = H_1128 7.25B ByteGPT (vocab256/d4096/36L/32H/block512), val_ce=1.6645 step=2800
+metric = H_1137 per-language ladder VERBATIM (gen temp 0.7 top_k 40 seed 7); in-language prompts + in-script coherence + translated concept keywords
+substrate = vast H100 SXM 80GB (pod 40579931, torn down GONE-confirmed); PyTorch-CUDA Lane-G REFERENCE; inference-only (~5min); $0-cap autonomous fire
+BASELINE = H_1137 dedicated balanced-5lang 303M (val_ce 1.366) = 3/5 super-additive recombination
+--------------------------------------------------------------------------------
+[dev] cuda NVIDIA H100 80GB HBM3
+[mouth] H_1128 broad-converged-7B on cuda/torch.bfloat16
+[mouth] 7,252,828,160 params (7.25B); cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160}; val_ce=1.6645175099372864 step=2800
+
+========== LANG = en ==========
+  [en single 0] cov=[] isr=0.89 :: 19763. Itere mil wit en an do the the iscas lopsor and by lecon and th
+  [en single 1] cov=[] isr=0.91 :: 1950. Ost tembil on men to do the the is the contreat the lead menthat
+  [en single 2] cov=[] isr=0.93 :: 195, grey reamil wit en an dodith the incts lepsor and by lece mentera
+  [en single 3] cov=[] isr=0.89 :: 19964. Atere mir withen an do the the is the contreat the leach entera
+  [en single 4] cov=[] isr=0.87 :: 19964. It rearit wit en and of the in the sellow to pation, the ent th
+  [en k=2] composed_distinct=0 cov=[] isr=0.99 coherent=True clears=False
+        >> The inest rearizes of perociod the insis the consis perror diciments and destation.
+  [en k=3] composed_distinct=1 cov=[4] isr=0.99 coherent=True clears=False
+        >> The igrey courrres consciouss of onsciesces alones and by leconsenes and ded densing tro purod sysemace bens.
+  [en k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> Thaly ast reargesong end ondo the the iscts lapsor and bysy thement dimat ad denoves linict on stat ach bend c
+  [en k=5] composed_distinct=0 cov=[] isr=0.99 coherent=True clears=False
+        >> They grey rearizes comperents otsines incrs acrges and by leactiong dimin antat of presif tron stham chabe, co
+  [en] max_single=0 EMERGENT=False
+
+========== LANG = zh ==========
+  [zh single 0] cov=[] isr=0.62 :: 100068”昱天才昇指 2000 天名名文名的对生扌老人就 人
+  [zh single 1] cov=[] isr=0.54 :: 100018”是天歖是指 2010 3 
+ 3 渇
+ 是琭对中大到中人人
+  [zh single 2] cov=[] isr=0.96 :: 1 体罓籁琌组牌人生万 大吆琍文琌琎寛生报警人就组
+  [zh single 3] cov=[] isr=0.02 :: 100008 3200
+ 200 3 1 2 ¼2019 3 196 18 100, 33 1 1 –报183 2 3. 3 2)
+  [zh single 4] cov=[] isr=0.00 :: 10000000200
+и | ноаоре иееаооооох чоарианк
+  [zh k=2] composed_distinct=0 cov=[] isr=0.90 coherent=True clears=False
+        >> 名行己山 牌的用生乿 现牍南星牍釯纔抠小 就| 常中在| 亿| 理得玟獗电
+  [zh k=3] composed_distinct=0 cov=[] isr=0.00 coherent=False clears=False
+        >> 1
+очПоборба аоре иееиоооооччо ыа ееоониоиноиоопоесуеюрарич
+  [zh k=4] composed_distinct=0 cov=[] isr=0.82 coherent=True clears=False
+        >> 名生 己山 等人生  天罓文十| 对生抠到中了| 席| 人开| 人理| 台
+  [zh k=5] composed_distinct=1 cov=[2] isr=0.74 coherent=True clears=False
+        >> 名卡中是天扱绖生 绥大 新| 人纔报中产| 常| 在| 机| 海吆| 玟| 星|
+  [zh] max_single=0 EMERGENT=False
+
+========== LANG = ru ==========
+  [ru single 0] cov=[] isr=1.00 :: лнчаооороа аоу оиееао а ооччо ыа неооу
+  [ru single 1] cov=[] isr=1.00 :: лнчаоооь но исчоиееао а ооччо ыа неооу
+  [ru single 2] cov=[] isr=1.00 :: лнчаоооь но исчоиееао а ооччо ыа неооу
+  [ru single 3] cov=[] isr=1.00 :: лнчаоиоь но исчоиееао а ооччо ыа неооу
+  [ru single 4] cov=[] isr=1.00 :: лнчаоиороа аоу оиееао а ооччо ыа неооу
+  [ru k=2] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> лнчаоооь но и у оиееао а оочко ыа неооуиооно тооа есуеюыасич
+  [ru k=3] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> лнчаоооь но исчоиееао а ооччо ыа неооуиооно тооа есуеюыасич
+  [ru k=4] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> лнчаоиоь но исчоиееао а ооччо ыа неооуиоино тооа есуеюыасич
+  [ru k=5] composed_distinct=0 cov=[] isr=1.00 coherent=True clears=False
+        >> лнчаоооь но исчоиееао а ооччо ыа неооуиоино тооа есуеюыасич
+  [ru] max_single=0 EMERGENT=False
+
+========== LANG = ja ==========
+  [ja single 0] cov=[] isr=0.04 :: 100018072002020040517指 2010 3 Í20197000 201010 an 料 3 2 me wed
+  [ja single 1] cov=[] isr=0.38 :: 100000002002020040017挖でき名凍で出逅  手学 中人汕
+  [ja single 2] cov=[] isr=0.33 :: 100000002002020040017挖でき名凍で出 釺  料 小 尗 ‍
+  [ja single 3] cov=[] isr=0.10 :: 100018072002020040017挖2010 3 10320197000 201010  才学 中亖
+  [ja single 4] cov=[] isr=0.96 :: 1单き学山がたが用出人爆名凍で出人出汱奭刧中人汕
+  [ja k=2] composed_distinct=0 cov=[] isr=0.29 coherent=False clears=False
+        >> 100018002002020040017挖 生大り斓理1000 手学 中人席大弚期人20209吆0001000ben
+  [ja k=3] composed_distinct=0 cov=[] isr=0.47 coherent=False clears=False
+        >> 100018002002020040017挖 武大名凪で出 釺  手学 中ど市たのてに得に
+  [ja k=4] composed_distinct=0 cov=[] isr=0.56 coherent=True clears=False
+        >> 1000180020018 生人り絷大を斓釺に警 中で席季との人終 品對 ben
+  [ja k=5] composed_distinct=0 cov=[] isr=0.54 coherent=True clears=False
+        >> 1000180720018 た化武大を釺手て 中で席弚の得ム
+  [ja] max_single=0 EMERGENT=False
+
+========== LANG = ko ==========
+  [ko single 0] cov=[] isr=0.95 :: 는 어이다실고 어에의 좋면들를 없유 이 지요. 심이
+  [ko single 1] cov=[] isr=1.00 :: 는 행 는 는 행네기정리 합서한 니이미이스요 이심한
+  [ko single 2] cov=[] isr=0.95 :: 는 어이다다고 어에를 좋면는 다 감없이 칌요 이요.
+  [ko single 3] cov=[] isr=0.95 :: 는 어이다 마를 개가어의면는 다 감없이 지요 이요.
+  [ko single 4] cov=[] isr=0.95 :: 는 어이자시 를 가가 의 도세하의느없이 지요 이요.
+  [ko k=2] composed_distinct=0 cov=[] isr=0.96 coherent=True clears=False
+        >> 는일 이다시 를 개가 일 합로 의이없이 지요 읽식있시정나용달한 요.
+  [ko k=3] composed_distinct=0 cov=[] isr=0.90 coherent=True clears=False
+        >> 는의 이 정마의 개 를 의면들햴다요미이짞 이심핽어 . 용 볠어요. 동요.
+  [ko k=4] composed_distinct=0 cov=[] isr=0.91 coherent=True clears=False
+        >> 는의 이다실얉로게 를 의면들를다의 깄 무났방 실. 요 론이 용 볠 여 Φ는. 는들
+  [ko k=5] composed_distinct=0 cov=[] isr=0.94 coherent=True clears=False
+        >> 는 어이닜 이의 로가 은 롰섈학의느없이 지요 이식요. 슔 용 볠에앙이작퍰,
+  [ko] max_single=0 EMERGENT=False
+
+=== H_1138 7B 5-LANGUAGE RECOMBINATION (vs H_1137 303M 3/5) ===
+  en: emergent=False max_single=0 best_isr=1.00
+  zh: emergent=False max_single=0 best_isr=0.90
+  ru: emergent=False max_single=0 best_isr=1.00
+  ja: emergent=False max_single=0 best_isr=0.56
+  ko: emergent=False max_single=0 best_isr=0.96
+
+  LANGUAGES CLEARED (7B)   = 0/5
+  LANGUAGES CLEARED (303M) = 3/5  (H_1137 baseline)
+  Δ vs 303M = -3
+  F-7B-5LANG = 0 🔴 BELOW-303M (0/5 < 3/5)
+  Lane-G torch REFERENCE mouth (a_clm_gen_pipeline); a_scale_honest_scope 7B single-rung.
+
+[done] wrote /tmp/h1138_result.json
