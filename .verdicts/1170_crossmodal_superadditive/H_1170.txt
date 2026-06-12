@@ -1,0 +1,95 @@
+============================================================================================
+H_1170 — does the super-additive surplus SURVIVE a full CROSS-DATA-TYPE jump?
+  data types: text · audio(TOY) · image(TOY) · numeric   K=6 shared symbols  L=256
+  PROXY-Φ surplus S = I(a;b) − ½[I(a_L;a_R)+I(b_L;b_R)]  (co-occurrence, NOT faithful-Φ)
+  seeds=10  frozen falsifier: 🟢 iff same-content cross-type S>0 AND
+    d(same-cross − diff-cross)≥0.8 AND d(same-cross − same-type-redundant)≥0.8; else 🔴 collapse
+  PRIOR (H_1155 surface-domination): COLLAPSE likely — renderings are TOY, projection a PROXY
+============================================================================================
+
+STEP 1 — render every seed in 4 data types, project to shared alphabet, surplus (SERIAL):
+
+============================================================================================
+S per pair (mean ± std over seeds) — the surplus for EVERY pair:
+                    pair |          S (surplus) |  Φ_joint=I(a;b) |     Φ_pA |     Φ_pB
+  --------------------------------------------------------------------------------------
+       ('text', 'audio') |     +0.168712±0.0384 |       +0.294571 |  +0.1301 |  +0.1216  (d vs diff=+5.20)  <- BRIDGE
+       ('text', 'image') |     -0.054252±0.0486 |       +0.082221 |  +0.1301 |  +0.1429  (d vs diff=-0.34)
+     ('text', 'numeric') |     -0.015367±0.0370 |       +0.138445 |  +0.1301 |  +0.1775  (d vs diff=+0.59)
+      ('audio', 'image') |     -0.055674±0.0421 |       +0.076563 |  +0.1216 |  +0.1429  (d vs diff=-0.41)
+   SAME-TYPE (text,text) |     +2.454779±0.0384 | (redundant ctrl) |          |
+      DIFF-CONTENT cross |     -0.038691±0.0413 |   (diff-C ctrl) |          |
+
+============================================================================================
+FROZEN falsifier on POOLED same-content cross-type surplus:
+  S(same-content cross-type) mean        = +0.010855   (>0 ? True)
+  S(same-cross) − S(diff-content cross)  Cohen d = +0.639  (≥0.8) -> False
+  S(same-cross) − S(same-type redundant) Cohen d = -31.832  (≥0.8) -> False
+  per-pair bridges (same-content S>0 AND d≥0.8 vs diff-control): ["('text', 'audio')"]
+
+============================================================================================
+VERDICT: 🔴 CROSS-MODAL-COLLAPSE (closed-negative, a_paper_negative_ok)
+  the super-additive surplus does NOT survive a full data-type jump: same-content
+  cross-type S (=+0.0109) is NOT reliably above the diff-content control
+  (d=+0.64) and/or the same-type redundant baseline (d=-31.83).
+  Different data TYPES at this toy/byte scale share NO integrable structure — super-
+  additivity needs a SHARED representational substrate, which the cross-data-type
+  renderings (TOY, projected via a PROXY rank-co-occurrence) do not provide.
+  TIES TO H_1155: byte/toy reps are SURFACE-DOMINATED — surface dominates over data
+  TYPE exactly as it dominated over LANGUAGE; a data-type jump is the ultimate surface
+  jump and the surplus collapses, confirming super-additivity is substrate-gated.
+============================================================================================
+
+=== VERDICT JSON ===
+{
+  "H": "H_1170",
+  "title": "does the super-additive surplus survive a full cross-data-type (cross-modal) jump?",
+  "data_types": [
+    "text",
+    "audio",
+    "image",
+    "numeric"
+  ],
+  "renderings_note": "TOY deterministic renderings (NOT real TTS/images); shared-feature projection = rank-quantize to common K-symbol alphabet = a PROXY, NOT faithful-phi",
+  "K_symbols": 6,
+  "L_common": 256,
+  "n_seeds": 10,
+  "S_per_pair_same_content_cross_type": {
+    "text|audio": 0.1687123860517865,
+    "text|image": -0.05425177560435326,
+    "text|numeric": -0.015366582372089755,
+    "audio|image": -0.05567356802879967
+  },
+  "phi_joint_per_pair": {
+    "text|audio": 0.2945712411972865,
+    "text|image": 0.08222069309187473,
+    "text|numeric": 0.13844506683608,
+    "audio|image": 0.07656283151400096
+  },
+  "S_same_type_redundant_text_text": 2.4547792892863205,
+  "S_diff_content_cross_text_audio": -0.038690707033093484,
+  "pooled_same_content_cross_type_S_mean": 0.010855115011635958,
+  "F_positive_surplus": {
+    "S_mean": 0.010855115011635958,
+    "pass": true
+  },
+  "F_vs_diff_content": {
+    "cohen_d": 0.6390897274141588,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F_vs_same_type_redundant": {
+    "cohen_d": -31.832182779899554,
+    "bar": 0.8,
+    "pass": false
+  },
+  "bridging_data_type_pairs": [
+    "text|audio"
+  ],
+  "supported_cross_modal_bridge": false,
+  "ruling": "CLOSED-NEGATIVE: super-additive surplus COLLAPSES across data types — different data types share no integrable structure at toy/byte scale; super-additivity needs a shared representational substrate (ties to H_1155 surface-domination)",
+  "h1155_tie": "H_1155 found byte-LM reps SURFACE-DOMINATED (cross-lingual semantic alignment NULL); a data-TYPE jump is the ultimate surface jump — the surplus collapses exactly as surface-domination predicts (surface > data type)",
+  "scope": "TOY deterministic renderings (NOT real audio/image/TTS); shared-feature projection is a PROXY (rank co-occurrence, NOT faithful-phi, NOT a learned shared embedding); $0 CPU 0-pod deterministic; scale / real modalities / learned cross-modal encoder UNVERIFIED (a_scale_honest_scope); NO perplexity (p7)",
+  "wall_s": 0.1
+}
+[done]
