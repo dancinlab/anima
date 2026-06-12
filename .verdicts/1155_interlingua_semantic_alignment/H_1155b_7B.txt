@@ -1,0 +1,115 @@
+=== H_1155b interlingua on REAL 5lang 7B (h1141_best.pt) ===
+[ckpt] config={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.4283547192811965 step=3000
+[model] loaded 7B to CPU fp32
+  [7B-trained] same=0.8973 diff=0.9005 d=-0.0380
+  [7B-trained] per-lang: en=1.000+ zh=0.774- ru=0.853- ja=0.780- ko=0.806-
+
+=== VERDICT ===
+{
+  "H": "H_1155b",
+  "title": "interlingua on the real balanced-5lang 7B (h1141 fire ckpt)",
+  "ckpt_val_ce": 1.4283547192811965,
+  "ckpt_step": 3000,
+  "F1_alignment": {
+    "cohen_d": -0.03798156346898653,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_perlang": {
+    "aligned_langs": [
+      "en"
+    ],
+    "n": 1,
+    "bar": 5,
+    "pass": false
+  },
+  "ru_ja_semantic_pass": {
+    "ru": false,
+    "ja": false
+  },
+  "trained": {
+    "same_mean": 0.8973233662545681,
+    "diff_mean": 0.9005078211426735,
+    "cohen_d": -0.03798156346898653,
+    "perlang": {
+      "en": {
+        "align_to_en": 0.9999999701976776,
+        "above_baseline": true
+      },
+      "zh": {
+        "align_to_en": 0.7743626981973648,
+        "above_baseline": false
+      },
+      "ru": {
+        "align_to_en": 0.8534715250134468,
+        "above_baseline": false
+      },
+      "ja": {
+        "align_to_en": 0.780283510684967,
+        "above_baseline": false
+      },
+      "ko": {
+        "align_to_en": 0.8057070821523666,
+        "above_baseline": false
+      }
+    }
+  },
+  "vs_toy": "H_1155 toy d=−0.226 (no interlingua); does the 7B differ?",
+  "ruling": "CLOSED-NEGATIVE: even the real 5lang 7B shows no cross-lingual semantic alignment — the ceiling is real, not just a metric artifact",
+  "scope": "real 7.25B balanced-5lang ckpt (val_ce ~1.43, mid-train best); Lane-G reference; mean-pool hidden"
+}
+[done] /workspace/h1155b_result.json
+=== JSON ===
+{
+  "H": "H_1155b",
+  "title": "interlingua on the real balanced-5lang 7B (h1141 fire ckpt)",
+  "ckpt_val_ce": 1.4283547192811965,
+  "ckpt_step": 3000,
+  "F1_alignment": {
+    "cohen_d": -0.03798156346898653,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_perlang": {
+    "aligned_langs": [
+      "en"
+    ],
+    "n": 1,
+    "bar": 5,
+    "pass": false
+  },
+  "ru_ja_semantic_pass": {
+    "ru": false,
+    "ja": false
+  },
+  "trained": {
+    "same_mean": 0.8973233662545681,
+    "diff_mean": 0.9005078211426735,
+    "cohen_d": -0.03798156346898653,
+    "perlang": {
+      "en": {
+        "align_to_en": 0.9999999701976776,
+        "above_baseline": true
+      },
+      "zh": {
+        "align_to_en": 0.7743626981973648,
+        "above_baseline": false
+      },
+      "ru": {
+        "align_to_en": 0.8534715250134468,
+        "above_baseline": false
+      },
+      "ja": {
+        "align_to_en": 0.780283510684967,
+        "above_baseline": false
+      },
+      "ko": {
+        "align_to_en": 0.8057070821523666,
+        "above_baseline": false
+      }
+    }
+  },
+  "vs_toy": "H_1155 toy d=−0.226 (no interlingua); does the 7B differ?",
+  "ruling": "CLOSED-NEGATIVE: even the real 5lang 7B shows no cross-lingual semantic alignment — the ceiling is real, not just a metric artifact",
+  "scope": "real 7.25B balanced-5lang ckpt (val_ce ~1.43, mid-train best); Lane-G reference; mean-pool hidden"
+}
