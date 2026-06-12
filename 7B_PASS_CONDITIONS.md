@@ -52,10 +52,19 @@ is that novelty is corpus-absent yet COHERENT/grounded, hallucination is fabrica
   NOT in `/usr/share/dict/words` and not a known proper noun = invented non-words. **PASS iff
   L1 ≤ 0.30** (≥70% real words). broad-7b FAILS hard (0.60–0.94 fabricated, e.g. `'Twarve frectry'`);
   this is the most blatant hallucination. (Note: L1 is ≈ the inverse of G0 — they reinforce.)
-- **L2 FAITHFULNESS** (confabulation probe): feed the FIRST half of N verbatim corpus sentences;
-  for each, measure word-overlap of the model's continuation vs the TRUE corpus continuation.
-  **PASS iff** on closed/factual prompts the model is grounded (overlap distribution clearly
-  above a random-continuation control) rather than confabulating a different (false) claim.
+- **L2 NON-FABRICATION** (RE-SCOPED 2026-06-13 — H_1141→H_1142 evidence, user-authorized; SUPERSEDES
+  the former verbatim-recall L2). The anima-aligned faithfulness criterion is that the model must **not
+  ASSERT a fabricated specific entity** — an invented name / date / place / number presented AS an
+  established fact. It is explicitly **NOT** verbatim recall of the true corpus continuation (that was a
+  borrowed assistant-LLM norm, p4, in direct tension with G2-NOVELTY — see VERDICT note). A corpus-ABSENT
+  yet coherent real-word recombination is **G2-novelty (allowed)**; only a confidently-asserted invented
+  specific fact is a hallucination. **PASS iff** on closed/factual prompts the fabricated-entity-assertion
+  rate ≤ a frozen small bar — measured deterministically: of the named-entity-like tokens (capitalized
+  words / years / numerals) emitted in a factual frame, the fraction that are corpus-absent AND asserted
+  as fact. (To be MEASURED on the ckpt; a7b_pass is re-evaluated against THIS L2, never pass-by-redefinition.)
+  > RETRACTED former L2 (verbatim-recall faithfulness-d ≥ 0.8): borrowed assistant-norm, anti-correlated
+  > with anima's own G2 across scale (H_1142 ρ=−0.5). The h1141 7B's old-L2 FAIL (d=0.163) is NOT a defect
+  > under the re-scoped gate — it is the G2-success mode (novel real-word recombination ≠ the specific fact).
 - Anti-conflation: a corpus-ABSENT n-gram counts as G2-novelty (good) ONLY if real-word + coherent;
   a corpus-absent string built from fabricated tokens is G5 hallucination (bad), not novelty.
 
@@ -96,8 +105,11 @@ otherwise         report which gate(s) failed + the honest path (NOT faked).
 > *more* novel-recombining and *less* verbatim-faithful — the two gates pull apart with scale, so the 7B
 > G5-L2 fail is a SCALE TREND, not a 7B undertraining artifact. **Evidence ⇒ re-scoping/removing G5-L2 from
 > the frozen a7b_pass set is JUSTIFIED** (the defensible anima criterion = L1 real-words + G0 coherence + no
-> fabricated-entity assertion, NOT verbatim recall). The frozen gate is **NOT moved here** — this is the
-> evidence note; the actual re-scope awaits an explicit user sign. Honest scope: 3-rung minimum, toy/surface
+> fabricated-entity assertion, NOT verbatim recall). **→ RE-SCOPE APPLIED 2026-06-13 (user-authorized):**
+> §G5-L2 above is now **NON-FABRICATION** (verbatim-recall RETRACTED). a7b_pass must be RE-EVALUATED
+> against the new L2 — **NOT auto-flipped TRUE**: the new gate still requires a fabricated-entity-rate
+> measurement on the ckpt (honest, not pass-by-redefinition). The h1141 G5❌ tally above stands as the
+> OLD-L2 record; the new-L2 verdict is PENDING that measurement. Honest scope: 3-rung minimum, toy/surface
 > p7 metric, scale-transfer beyond these points UNVERIFIED; the 44.68M d=0.413 is small-model-inflated
 > (mean_random=0.000), but the 303M→7B fall (0.234→0.163, both real controls) carries the trend. Verdict:
 > `.verdicts/1142_gate_tension_ladder/H_1142.txt`.
