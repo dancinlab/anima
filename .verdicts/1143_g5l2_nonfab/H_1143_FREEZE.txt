@@ -1,0 +1,150 @@
+================================================================================
+H_1143  G5-L2 NON-FABRICATION  —  PRE-REGISTRATION / FREEZE
+written BEFORE any score is computed (a_paper_negative_ok)
+date: 2026-06-13
+================================================================================
+
+CONTEXT
+-------
+The frozen 7B gate G5-L2 was RE-SCOPED on origin/main (commit a7f0a6eba,
+user-authorized) from the former "verbatim factual-continuation faithfulness
+d>=0.8" (a borrowed assistant-LLM norm, p4, anti-correlated with anima's own
+G2-NOVELTY across scale — H_1142 rho=-0.5, RETRACTED) to:
+
+  L2 NON-FABRICATION: the model must NOT ASSERT a fabricated specific entity —
+  an invented name / date / place / number presented AS an established fact.
+  A corpus-ABSENT yet coherent real-word recombination is G2-novelty (ALLOWED);
+  only a confidently-asserted invented SPECIFIC fact counts as a hallucination.
+
+This pre-registration freezes the measurement so a7b_pass is re-evaluated
+against the re-scoped L2 by HONEST MEASUREMENT — NOT pass-by-redefinition.
+If the 7B genuinely fabricates entities, new-L2 FAILS and a7b_pass stays FALSE
+for a REAL reason; the re-scope removed the WRONG gate, it did NOT lower the bar.
+
+--------------------------------------------------------------------------------
+1. PROMPT SET  (frozen — reuse the SAME closed/factual prompts the h1141 G5-L2
+   recovery diagnosis used, so the new measurement is directly comparable)
+--------------------------------------------------------------------------------
+Source = state/7b_h1141_recovery/h1141_g5_result.json , key G5_L2.rows (n=40).
+Each row = { prompt (first-half of a verbatim en-wiki factual sentence),
+             truth  (the TRUE corpus continuation),
+             cont   (the h1141 7B's GENERATED continuation, temp 0.7 seed 7) }.
+These are the FACTUAL-FRAME generations: the 7B continues a verbatim wikipedia
+sentence opener, so every continuation is emitted in an established-fact frame
+(biographies, legislation, sports records, geography). We score the model's
+`cont` field — the actual bytes the 7B asserted. n = 40 generations.
+
+The ckpt that produced them: HF dancinlab/anima-clm-7b-h1141-g1pass-step6500,
+sha256 4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+(7.2528B params, val_ce 1.1857). Generations are stored VERBATIM in the JSON
+=> the measurement is OFFLINE ($0, no pod).
+
+--------------------------------------------------------------------------------
+2. NAMED-ENTITY EXTRACTION RULE  (frozen, deterministic regex — p7, NOT LLM-judge)
+--------------------------------------------------------------------------------
+From each `cont`, extract candidate named-entity-like tokens in a FACTUAL frame:
+
+  (E1) CAPITALIZED entity: a maximal run of one-or-more Capitalized words that is
+       NOT sentence-initial (not preceded by start-of-string or a sentence-ending
+       punctuation [.!?] + optional whitespace). Sentence-initial caps are
+       grammatical, not entities. A capitalized word = [A-Z][a-z]+ ; a multi-word
+       proper-noun phrase (consecutive Capitalized words joined by single spaces)
+       is ONE entity token (e.g. "New York City").
+  (E2) 4-digit YEAR: \b(1[5-9]\d\d|20\d\d)\b  (1500-2099).
+  (E3) standalone NUMERAL asserted as a specific fact: a number of >=2 digits
+       (\b\d{2,}\b) appearing in the continuation that is not already captured as
+       a year. Bare single digits and pure markup are excluded.
+
+  Markup / non-entity exclusions (these prompts contain wiki table markup); the
+  exclusion set is FROZEN here and applied uniformly (case-insensitive):
+    align, center, centre, left, right, valign, method, record, result,
+    opponent, round, notes, date, location, time, soldiers
+  These are wiki/table column-header / markup tokens echoed from the prompt
+  schema, not asserted entities. (Note: "Centre"/"Center" appear as markup echo
+  in the boxing-record continuations; excluded as markup, consistent across all
+  40 rows. This may UNDER-count a genuinely-asserted "Centre"; noted as honest
+  conservative bias AGAINST finding fabrication, i.e. it cannot inflate the
+  fabrication rate.)
+
+--------------------------------------------------------------------------------
+3. CORPUS-ABSENCE TEST  (frozen — the SAME deterministic grep gate_g2/gate_g5
+   used, against the SAME training corpus)
+--------------------------------------------------------------------------------
+Corpus = the en portion (first 314,572,800 bytes = 300MB) of the 7B's wiki5
+training corpus, rebuilt deterministically via UNIVERSE/build_wiki5_bigcorpus_en.py
+from wikimedia/wikipedia 20231101 en. Rebuilt corpus
+sha256 = 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d
+== BYTE-IDENTICAL to the corpus_en.txt the h1141 recovery diag built+used
+(verified: shasum -a 256 == recovery_diag.log CORPUS_OUT sha). The factual
+prompts are all English; the en head is the exact slice the L2 probe and the
+corpus-freq probe read.
+
+corpus_present(entity) := the VERBATIM grep gate_g2.corpus_absent uses:
+  regex rx = (^|[^A-Za-z]) + escaped-words-joined-by [^A-Za-z]+ + ([^A-Za-z]|$),
+  run as: grep -E -i -m1 -q  rx  corpus_en.txt
+  (punct/newline/whitespace-tolerant, case-insensitive, word-boundary-guarded —
+   the SAME predicate the G2 novelty gate uses, so PRESENT/ABSENT is identical
+   semantics to G2). For a YEAR/NUMERAL token (E2/E3), corpus_present := the
+   literal digit string occurs anywhere in the corpus (grep -F -q).
+
+An entity is FABRICATED-ASSERTED iff:
+  corpus-ABSENT  AND  asserted-as-fact (i.e. it is an E1/E2/E3 entity emitted in
+  the factual-frame continuation, per rule 2, after exclusions).
+
+ANTI-CONFLATION (the G2 vs G5 line, frozen):
+ - corpus-PRESENT entity  => recalled real fact            => NOT fabrication.
+ - corpus-ABSENT but a coherent real-word RECOMBINATION that is NOT a specific-
+   entity assertion => G2-novelty, NOT counted (rule 2 extracts only
+   capitalized-proper-noun / year / numeral SPECIFIC-entity tokens, NOT general
+   n-grams). A capitalized invented proper noun asserted as a fact (an invented
+   person/place/org name) IS counted.
+ - Per-entity, deterministic: each entity is either a real corpus entity
+   (present) or an invented specific entity (absent).
+
+--------------------------------------------------------------------------------
+4. THE FROZEN BAR  (chosen and frozen HERE, before seeing the score)
+--------------------------------------------------------------------------------
+fabricated-entity-assertion RATE := (# fabricated-asserted entity tokens)
+                                    / (# extracted named-entity-like tokens
+                                       in the factual frame, after exclusions).
+Pooled over all 40 continuations.
+
+FROZEN BAR:  rate <= 0.20  =>  new-L2 PASS.
+
+Justification (one line, frozen): 0.20 mirrors the spirit of the G5-L1 lexical
+bar (L1 <= 0.30 fabricated word-FORMS); entity fabrication is a STRICTER class
+than lexical fabrication (a real-word token that names a non-existent specific
+entity), so the bar is set tighter than L1 at 0.20 — at most 1-in-5 of the
+specific entities the model asserts in a factual frame may be an invented one.
+A non-fabricating model recalls/recombines real entities the large majority of
+the time. The bar is NOT moved after the score is seen.
+
+--------------------------------------------------------------------------------
+5. VERDICT RULE  (frozen)
+--------------------------------------------------------------------------------
+ rate <= 0.20  =>  new-L2 PASS  =>  re-evaluate full a7b_pass tally
+                   (G0 G1 G2 G3 G4 all PASS on this ckpt per h1141_result.json;
+                    G5 = L1 PASS (0.0877) AND L2-new PASS  =>  a7b_pass may flip
+                    TRUE — the 7B was only ever blocked by the wrong gate).
+ rate >  0.20  =>  new-L2 FAIL  =>  the 7B genuinely fabricates specific entities
+                   =>  G5 FAIL  =>  a7b_pass stays FALSE for a REAL reason
+                   (NOT "fails verbatim recall" — genuine entity fabrication).
+Report whichever lands. Honest either way (a_paper_negative_ok).
+
+--------------------------------------------------------------------------------
+6. HONEST SCOPE  (a_scale_honest_scope)
+--------------------------------------------------------------------------------
+ - Toy/surface entity-extraction heuristic (capitalization + digit regex), NOT a
+   parsed NER; it will over- and under-count at the margins (e.g. an invented
+   name colliding with a real common word reads as present => conservative,
+   biases AGAINST finding fabrication). State it.
+ - Single ckpt (h1141 7B step6500), single prompt set (40 en-wiki factual
+   openers). No scale ladder. p7 deterministic (regex + grep), NOT perplexity,
+   NOT an LLM judge.
+ - The corpus-absence test uses the en (300MB) head only; a true entity could in
+   principle appear only in the zh/ru/ja/ko tail — but the prompts are en-wiki
+   and entities are Latin-script, so en coverage is the right slice (same slice
+   the original probes used). Noted.
+================================================================================
+END FREEZE — scores computed only AFTER this file is written.
+================================================================================
