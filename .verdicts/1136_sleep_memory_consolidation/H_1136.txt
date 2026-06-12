@@ -1,0 +1,74 @@
+=== H_1136 sleep memory consolidation probe (READ-ONLY, CORE/DREAM untouched) ===
+falsifier: post-cycle anchor recall/emit-relevance > no-sleep control by d>=0.8
+           across seeds, N3-dominant > REM-dominant -> 🟢; no improvement -> 🔴;
+           imagination loop has NO anchor write-back -> ⏳ BLOCKED-WIRING (honest).
+channels: T=recall fidelity (gen_text echo of seeded anchor name+count) ·
+          G=emit-relevance (|Δmotivation| anchor induces on brain_decide gate)
+loop:     emit-free ir_replay_session + ir_mitosis_tick_during_replay (cell_pool
+          pass-through) over the dr_stage_at ultradian, substrate += pure_field_step
+
+--- N3-DOMINANT cycles (slow-wave window, dr_stage_at N3 [80,87)) ---
+[N3dom/s7] K=3 ticks[80,87) emit_free=true replay_snaps=21 mitosis_ticks=7 imag_ticks=7
+    PRE   recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    SLEEP recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    CTRL  recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    Δ(sleep−ctrl): recall=0.000000 emit_rel=0.000000
+[N3dom/s8] K=3 ticks[80,87) emit_free=true replay_snaps=21 mitosis_ticks=7 imag_ticks=7
+    PRE   recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    SLEEP recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    CTRL  recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    Δ(sleep−ctrl): recall=0.000000 emit_rel=0.000000
+[N3dom/s9] K=3 ticks[80,87) emit_free=true replay_snaps=21 mitosis_ticks=7 imag_ticks=7
+    PRE   recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    SLEEP recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    CTRL  recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    Δ(sleep−ctrl): recall=0.000000 emit_rel=0.000000
+
+--- REM-DOMINANT cycles (REM tail window, dr_stage_at REM [87,90)) ---
+[REMdom/s7] K=3 ticks[87,90) emit_free=true replay_snaps=9 mitosis_ticks=3 imag_ticks=3
+    PRE   recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    SLEEP recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    CTRL  recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    Δ(sleep−ctrl): recall=0.000000 emit_rel=0.000000
+[REMdom/s8] K=3 ticks[87,90) emit_free=true replay_snaps=9 mitosis_ticks=3 imag_ticks=3
+    PRE   recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    SLEEP recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    CTRL  recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    Δ(sleep−ctrl): recall=0.000000 emit_rel=0.000000
+[REMdom/s9] K=3 ticks[87,90) emit_free=true replay_snaps=9 mitosis_ticks=3 imag_ticks=3
+    PRE   recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    SLEEP recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    CTRL  recall=1.000 emit_rel=0.000000 name_ok=1 count_ok=1
+    Δ(sleep−ctrl): recall=0.000000 emit_rel=0.000000
+
+=== VERDICT ===
+MEASURED (see conditions above):
+  N3-dominant  mean Δrecall(sleep−ctrl)=0.000000 mean Δemit-rel=0.000000
+  REM-dominant mean Δrecall(sleep−ctrl)=0.000000 mean Δemit-rel=0.000000
+  emit-free invariant held (total_emits=0 every loop): the a_chat_sleep
+    imagination loop ran (replay_snaps>0, mitosis_ticks>0) WITHOUT emitting.
+
+WIRING INSPECTION:
+  ir_replay_session / ir_mitosis_tick_during_replay take (WAKE-memory
+  ctx_tokens ring, cell_pool) — NEITHER takes anchors NOR writes anchor
+  state. cell_pool is a PASS-THROUGH (wired_to_lib=false, M2 placeholder).
+  dr_kosmos_persist_dream is a STUB (raw dict, not a file write). NO
+  sleep/N3/REM/mitosis path calls create_anchor or mutates anchor
+  strength/radius/name. Anchors re-read at full strength every emit,
+  independent of any sleep loop.
+
+FROZEN FALSIFIER RESULT:
+  Δrecall and Δemit-relevance (sleep − no-sleep) are IDENTICALLY ZERO for
+  BOTH N3-dominant and REM-dominant cycles across all seeds: the post-sleep
+  anchor state is byte-identical to the no-sleep control because the
+  imagination loop has NO anchor write-back path to change it. With d≡0
+  there is no d>=0.8 consolidation, and N3-dominant == REM-dominant (no
+  N3>REM ordering to test — both are 0).
+  ⇒ This is NOT 'no effect 🔴' on a wired mechanism — it is the ABSENCE
+  of the mechanism. The emit-free imagination loop rehearses WAKE-memory
+  ctx_tokens + ticks a cell_pool placeholder, but there is NO write path
+  from sleep back to anchor recall / emit-relevance.
+  VERDICT = ⏳ BLOCKED-WIRING (a_paper_negative_ok): the a_chat_sleep_
+  imagination N3/REM loop does NOT consolidate anchors because no anchor
+  write-back path is wired (parallel to H_1123/H_1124 anchor-emit gaps).
+  Reported honestly, NOT fabricated as a consolidation curve (p7).
