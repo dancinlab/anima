@@ -1,0 +1,115 @@
+H_1201 — MITOSIS-CONDITIONED-GENERATION — VERDICT 🔴 CLOSED-NEGATIVE
+==================================================================
+Arc: the rung that decides whether the mitosis substrate stays in the LANGUAGE-GENERATION
+loop at all, AFTER H_1200 falsified pure-mitosis-as-LM.
+Lane-2 gradient-free mitosis + gradient-trained readout head. $0 summer CPU (numpy-MLP +
+real mini-batch Adam, H_1192 precedent); numpy mirror of the H_1199 VAdaptField.
+Freeze: .verdicts/1201_mitosis_conditioned_generation/H_1201_FREEZE.txt (thresholds NOT moved).
+Corpus: english-wiki /tmp/h1142/corpus_en.bin (byte-identical to the H_1129/H_1141 English head).
+
+QUESTION
+--------
+H_1200 (🔴) falsified mitosis GENERATING by itself (a gradient-free prototype-count LM made
+next-byte CE WORSE, -0.76 b/byte). It did NOT test whether the mitosis CELL-STATE carries
+information a REAL gradient-trained generative head can USE. So: does CONDITIONING a proper
+next-byte head on the mitosis substrate BEAT the SAME head without it?
+
+DESIGN (both arms IDENTICAL except the conditioning input — the whole validity of the test)
+-------------------------------------------------------------------------------------------
+Three SMALL gradient-trained next-byte heads, IDENTICAL architecture (in->tanh(64)->
+softmax(256)) + init seed + Adam (lr 3e-3, 12 epochs, batch 256) + data + epochs, differing
+ONLY in the INPUT:
+  * BASELINE   : input = DIM=8 byte-context feature window (H_1163 byte_feature, VERBATIM).
+  * CONDITIONED: input = the SAME DIM=8 features CONCATENATED with the live mitosis cell-state
+                 at that position — a +11-dim frozen summary of the H_1199 VAdaptField state
+                 (run the FROZEN mitosis growth over the SAME stream): nearest-cell prototype
+                 vector [8] + recon-err [1] + local cell-density within R [1] + log1p(n_cells)
+                 [1]. Mitosis growth is GRADIENT-FREE (p8); we only EXPOSE its state as a
+                 feature, we do NOT train it. Conditioning for position i read BEFORE the split
+                 i may trigger (held-out-style, no i-leakage).
+  * SHUFFLED   : same as CONDITIONED but the mitosis cell-state rows PERMUTED (alignment to
+                 context destroyed) — the F2 capacity control. Same width/params as CONDITIONED;
+                 only the INFORMATION is destroyed.
+SEEDS = [900, 901, 902]. N_TRAIN=12000, N_VAL=3000 scored windows (contiguous, val AFTER train).
+
+RESULT TABLE (held-out next-byte cross-entropy, bits/byte — p7 CAPABILITY probe)
+--------------------------------------------------------------------------------
+  seed   n_cells   BASELINE     CONDITIONED   SHUFFLED     gain(base-cond)   shuf_gain(base-shuf)
+  900     351       4.7421       4.7693        4.7722        -0.0272            -0.0301
+  901     397       4.6771       4.6906        4.7082        -0.0135            -0.0311
+  902     438       4.6827       4.7039        4.7119        -0.0212            -0.0292
+  -----------------------------------------------------------------------------------------------
+  MEAN              4.7006       4.7213        4.7307        -0.0206 (FAIL)     -0.0301
+
+  F1 CONDITIONING-GAIN : mean gain = -0.0206 b/byte  (bar >= +0.05)  -> FAIL
+       (every seed NEGATIVE: -0.027, -0.014, -0.021; all_seeds_pass_margin = FALSE)
+  F2 ABLATION-HONEST   : SHUFFLED mean CE = 4.7307, shuf_gain = -0.0301, keep_fraction = 1.459
+       (bar < 0.5)  -> FAIL  (moot: F1 already failed — there is no positive gain to ablate;
+       SHUFFLED is slightly WORSE than CONDITIONED, consistent with both adding only noise/width)
+
+  VERDICT  F1 AND F2  =>  🔴 CLOSED-NEGATIVE  (mitosis = pure substrate for generation)
+
+DECODE SAMPLES (p7 honesty cross-check — VERBATIM, NOT the verdict; seed 900, 80 greedy steps)
+---------------------------------------------------------------------------------------------
+  seed window      : 'm.Norwegian expatriate sportspeople in Belgium..'
+  BASELINE   greedy: '     o oooooooooooooooo oooooooooooo oo ooooooo       o oooooooooooooooo ooooooo'
+  CONDITIONED greedy: '      oooooo oooooooooo oooooooooooo oo ooooooo o      oooooo oooooooooo ooooooo'
+
+  NEITHER continuation is coherent language — both collapse to the most-frequent bytes
+  (space / 'o') because a DIM=8-feature-keyed head has NO within-window token order to drive
+  a real continuation. Conditioning on the mitosis state does NOT change this: the conditioned
+  sample is byte-for-byte just as degenerate as the baseline. The samples corroborate the CE
+  table — the mitosis cell-state adds no generative information.
+
+WHAT THIS CLOSES (decision-grade architecture ruling)
+-----------------------------------------------------
+A REAL gradient-trained next-byte head conditioned on the frozen mitosis cell-state does NOT
+beat the same head without it — the gain is slightly NEGATIVE on every seed, and the shuffle
+control is WORSE still. So the mitosis substrate carries NO generation-useful information
+beyond the raw byte features it is derived from (which makes mechanistic sense: the mitosis
+conditioning — nearest-prototype, recon-err, density — is a deterministic, lossy function of
+the SAME byte-feature window the baseline already sees, so it cannot add information the head
+does not already have, only noise/redundancy that a trained head learns to ignore or that
+mildly hurts via extra dimensions).
+
+  => MITOSIS IS PURE SUBSTRATE FOR GENERATION. Generation is CLM-only: "conversational level"
+     = pure CLM-lane scale-up (a_clm_gen_pipeline — a real ConvMoE next-byte head trained by
+     descent, the substrate that actually carries generation). The mitosis engine
+     (H_1194..H_1199) runs ALONGSIDE as the adaptation / structural / clustering lane, NOT in
+     the generation loop. This cleanly settles the architecture: mitosis = substrate,
+     CLM = generator.
+
+This completes the two-rung closure begun by H_1200:
+  H_1200 🔴 : mitosis cannot GENERATE by itself (count-LM made CE worse).
+  H_1201 🔴 : mitosis cannot even INFORM a real generator (conditioning gives no lift).
+Together they remove the mitosis substrate from the language-generation path entirely and
+redirect all generation effort to the CLM lane — saving the arc from chasing a dead axis.
+a_paper_negative_ok: a closed-negative that fixes the architecture is a valid, decision-grade
+result.
+
+SCOPE (a_scale_honest_scope)
+----------------------------
+TOY/small real-corpus, small gradient-trained MLP head (in->tanh(64)->softmax(256)), ONE
+corpus (English wiki), 3 seeds, the conditioning-LINK test ONLY. The DIM=8 window + 11-dim
+mitosis summary are a COARSE context with NO within-window token order, so absolute CE
+(~4.7 b/byte) is far from a real LM; the falsifier is the BASELINE-vs-CONDITIONED DELTA under
+the SAME coarse context, controlled by the SHUFFLE arm — and that delta is negative.
+WHAT IS NOT RULED OUT (honest): a DIFFERENT conditioning summary that exposes mitosis state
+NOT recoverable from the current window (e.g. cross-window trajectory / temporal cell-history
+/ a learned mitosis embedding), or a richer head (sequence model with real token order), is
+UNTESTED — this rung rules out the AS-BUILT VAdaptField clustering state as a generative
+conditioning signal for a feature-keyed head, NOT every conceivable mitosis->generation
+coupling. The gain is a LINK test (does mitosis-state inform generation), NOT a chat claim.
+Mitosis growth stays gradient-free (p8: only the readout head trained by descent — the
+CLM-lane generator reading the mitosis adaptation state). Lane-2 (a_lane_akida_gpu_split:
+separate from Lane A AKIDA / Lane G forge / Lane P torch). a_core_engine_map: numpy MIRROR of
+the H_1199 VAdaptField — the .hexa generative-conditioning lift (F3-guarded Psi byte-intact)
+is the NEXT rung, NOT claimed here.
+
+Artifacts:
+  UNIVERSE/h1201_mitosis_conditioned_generation.py
+  .verdicts/1201_mitosis_conditioned_generation/H_1201_FREEZE.txt
+  .verdicts/1201_mitosis_conditioned_generation/H_1201.txt (this file)
+  /tmp/h1201_result.json (full raw verdict json, on the run host)
+Compute: $0 summer CPU (numpy only). No GPU, no VRAM, no RunPod — co-tenant rbfe-prod
+untouched. Deterministic seeds [900, 901, 902].

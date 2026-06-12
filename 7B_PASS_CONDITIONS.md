@@ -65,6 +65,49 @@ is that novelty is corpus-absent yet COHERENT/grounded, hallucination is fabrica
   > RETRACTED former L2 (verbatim-recall faithfulness-d ≥ 0.8): borrowed assistant-norm, anti-correlated
   > with anima's own G2 across scale (H_1142 ρ=−0.5). The h1141 7B's old-L2 FAIL (d=0.163) is NOT a defect
   > under the re-scoped gate — it is the G2-success mode (novel real-word recombination ≠ the specific fact).
+  > **MEASURED 2026-06-13 (H_1143, re-scoped L2, $0 offline — saved h1141 factual-frame generations,
+  > deterministic regex entity-extraction + the VERBATIM gate_g2 grep corpus-absence over the
+  > byte-identical 300MB en wiki5 corpus sha 80ba6b48…):** of the 81 named-entity-like tokens the h1141
+  > 7B emits across the 40 closed/factual prompts (after frozen markup exclusions), **20 are corpus-ABSENT
+  > AND asserted-as-fact ⇒ fabricated-entity-assertion rate = 0.2469 > the frozen 0.20 bar ⇒ new-L2 FAIL.**
+  > The fabrications are genuine confabulations, NOT metric artifacts (FAIL survives dropping the 2
+  > truncation fragments: 18/79=0.2278): `Raja Almen` · `Jacob Burrough` · `Nora Andrew` ·
+  > `Ultimate Hockey Championship` · `Centro Politician Assembly` · `Jason Junior The League` ·
+  > `War Championship` · `United States County Award` · `Orange Church`/`Raja Church` · `Communist Service`
+  > · `Communication News` · `Canadian Canadian Council` · `Political Hill` · `Altenmark` · `Oriental Plans`
+  > · `Boston Red Red Bowl` · `Warrers` · `Centro Politician Assembly`. Corpus-PRESENT entities (New York
+  > City, United States, United Kingdom, South Africa, years 1981/2001/2002/2009/2010/2012) are RECALLED,
+  > NOT penalized — the G2-vs-G5 line holds. **The re-scope removed the WRONG gate, it did NOT lower the
+  > bar: under the CORRECT NON-FABRICATION criterion the undertrained h1141 7B (val 1.1857) STILL fails —
+  > ~1 in 4 of the specific entities it asserts in a factual frame are invented.** Honest 🔴 (a_paper_negative_ok,
+  > a_scale_honest_scope: toy regex NER, single ckpt/prompt-set, en-only corpus — conservative, true rate ≥ 0.2469).
+  > **RE-EVALUATED a7b_pass tally on the h1141 ckpt: G0✅ G1✅ G2✅ G3✅ G4✅ G5❌ (L1✅ 0.0877 ∧ L2-new❌ 0.2469)
+  > ⇒ a7b_pass = FALSE (still, for a REAL re-scope-valid reason — genuine entity fabrication, not "fails
+  > verbatim recall").** Freeze + verdict: `.verdicts/1143_g5l2_nonfab/{H_1143_FREEZE.txt,H_1143.txt}` ·
+  > harness `UNIVERSE/h1143_g5l2_nonfab_measure.py`. Path-to-PASS = a grounding objective that stops asserting
+  > invented entities (NOT a bigger model — H_1139 scale-invariance), NOT a gate move.
+  > **H_1144 GROUNDING CONTINUE-TRAIN 2026-06-13 (RunPod H100 SXM 80GB ~$6, probe-only, NO convergence burn):**
+  > the grounding path (H_1143's named path-to-PASS) is FALSIFIED at the probe. A LOWER-LR (2e-5 vs 7e-5) anti-
+  > overfit continue-train of the h1141 7B on a BROADER 1200MB en-wiki slice (4x the 300MB probe corpus; first
+  > 300MB byte-identical sha 80ba6b48…), real held-out 5% val tail, best-ckpt-by-val, grad-ckpt ENGAGED (67.6GB
+  > peak on 80GB) — drove held-out val DOWN (1.2667 baseline → **1.2187** best) but the fabricated-entity rate
+  > **UP**: re-measured via the H_1143 harness VERBATIM, **fab-rate 0.2469 → 0.3220 (19/59) > 0.20 ⇒ new-L2 STILL
+  > FAIL, WORSE than the base.** The FROZEN slope rule (pre-registered, `.verdicts/1144_grounding_train/H_1144_FREEZE.txt`
+  > §3: r1 ≥ r0 ⇒ f ≤ 0 ⇒ STOP) triggered STOP — NO convergence burn on a rising slope (cost-smart, h1141-recovery
+  > discipline). **FINDING — a LOSS-vs-FABRICATION divergence:** descending CE on more real text bought more entity-
+  > SHAPED fluency, NOT entity grounding (probe confabulations are richer than base: `Casello Red Sox Red Championship`
+  > · `Ultimate Hockey Brothers` · `Royal Community Region` · `World Series Arts Finals` · `Altenmark` recurs). This
+  > sharpens H_1142's G2-vs-G5 tension into a within-objective divergence and confirms p7 (loss is not the gate).
+  > **RE-EVALUATED a7b_pass on the probe ckpt:** G0✅ (re-scored 5/5 kwr 0.75-1.00 w/ a real dict — the pod image
+  > lacked /usr/share/dict/words so its on-pod G0/G1/G2/G5-L1 were dict-corrupted=0; re-scored locally on the saved
+  > gens, the model is COHERENT, NOT garble) · G3✅ · G4✅ · G5-L1✅ (re-scored fab-word-rate 0.1829 ≤ 0.30) ·
+  > **G5-L2❌ (0.3220 > 0.20)** ⇒ G5❌ ⇒ **a7b_pass = FALSE** (deciding gate = G5-L2 alone; G1/G2 dict-corrupted but
+  > CANNOT flip a FALSE-from-G5 verdict, so no GPU re-fire was burned to recover them). **Plain byte-continuation
+  > grounding is now RULED OUT as the G5-L2 path** — narrower path-to-PASS = retrieval-grounding / a corpus where the
+  > probe entities are densely attested (recall not confabulate), NOT more corpus, NOT a bigger model, NOT a gate move.
+  > Probe ckpt = `dancinlab/anima-clm-7b-h1144-grounding-probe` (sha 95e787d1…, HF PRIVATE/WIP). Pod 404-verified
+  > terminated. Freeze + verdict: `.verdicts/1144_grounding_train/{H_1144_FREEZE.txt,H_1144.txt}` · harnesses
+  > `UNIVERSE/h1144_grounding_train.py · h1144_slope_decide.py · h1144_grounding_pod_run.sh`.
 - Anti-conflation: a corpus-ABSENT n-gram counts as G2-novelty (good) ONLY if real-word + coherent;
   a corpus-absent string built from fabricated tokens is G5 hallucination (bad), not novelty.
 

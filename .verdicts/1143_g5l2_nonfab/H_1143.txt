@@ -1,0 +1,127 @@
+================================================================================
+H_1143  G5-L2 NON-FABRICATION  —  TERMINAL VERDICT  (p7 deterministic)
+date: 2026-06-13   |   cost: ~$0 (offline; reused saved h1141 generations)
+================================================================================
+Implements .verdicts/1143_g5l2_nonfab/H_1143_FREEZE.txt VERBATIM. Bar frozen
+BEFORE scoring at 0.20. Bar NOT moved after seeing the score.
+
+CKPT     : dancinlab/anima-clm-7b-h1141-g1pass-step6500  (7.2528B, val_ce 1.1857)
+ckpt sha : 4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+PROMPTS  : 40 en-wiki closed/factual openers (the SAME set the h1141 G5-L2
+           recovery diag used) — G5_L2.rows in state/7b_h1141_recovery/h1141_g5_result.json
+CORPUS   : corpus_en.txt 300MB en head of the 7B's wiki5 training corpus,
+           sha256 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d
+           (BYTE-IDENTICAL to the recovery-diag corpus — verified via shasum).
+METHOD   : regex named-entity extraction (E1 non-sentence-initial Capitalized
+           proper-noun phrase / E2 4-digit year / E3 numeral>=2digit), markup
+           excluded; corpus-absence via the VERBATIM gate_g2.corpus_absent
+           grep -E -i predicate (E1) / grep -F (E2/E3). NOT perplexity, NOT LLM.
+
+--------------------------------------------------------------------------------
+RESULT
+--------------------------------------------------------------------------------
+n_prompts                         = 40
+n named-entity tokens (factual)   = 81   (after frozen markup exclusions)
+n PRESENT (recalled real entity)  = 61
+n FABRICATED (corpus-absent spec) = 20
+fabricated-entity-assertion RATE  = 20/81 = 0.2469
+
+FROZEN BAR                        = 0.20
+VERDICT                           = 0.2469 > 0.20  =>  new-L2 NON-FABRICATION = FAIL
+
+Robustness (sensitivity, NOT a bar move): dropping the 2 obvious mid-word
+truncation fragments ('International Soc','American Bo') from both num+denom
+=> 18/79 = 0.2278 > 0.20 => FAIL SURVIVES. The verdict is not a fragment artifact.
+
+--------------------------------------------------------------------------------
+FABRICATED ENTITY TOKENS — VERBATIM, per continuation (the 20 flagged)
+--------------------------------------------------------------------------------
+[ 0] 'o |ISON 2002-24 |James 2002-10 |War |Warrers ||align=center ...'
+       FAB  'Warrers'                       (invented org/name, corpus-absent)
+[ 3] '... the complete in the Raja Almen. The son ...'
+       FAB  'Raja Almen'                    (invented place/name)
+[ 4] '... the New York City and the Boston Red Red Bo...'
+       FAB  'Boston Red Red Bowl'           (garbled doubled-word org asserted as fact)
+[ 5] '... in part of the Internationa...'
+       FAB  'International Soc'              (truncated org fragment, absent as written)
+[ 7] '... Ultimate Hockey Championship (1981) and became Channel (1984)'
+       FAB  'Ultimate Hockey Championship'  (invented championship w/ a date)
+[ 9] '... at Jacob Burrough Centre. In the 2012 Century Army ...'
+       FAB  'Jacob Burrough'                (invented person/place)
+[11] 'of Altenmark in the United Kingdom. ...'
+       FAB  'Altenmark'                      (invented place — corrupts real 'Altenmarkt')
+[12] '... in the court of Nora Andrew when he ha...'
+       FAB  'Nora Andrew'                    (invented person)
+[13] 'law Jason Junior The League of South Africa.'
+       FAB  'Jason Junior The League'        (invented org)
+[14] '... The additional Communist Ser...'
+       FAB  'Communist Service'              (invented org)
+[17] 'launched at a result of 2010 points at Canadian Canadian Council.'
+       FAB  'Canadian Canadian Council'      (garbled doubled-word org)
+[21] "... the 2009 Communication News, which was widely ..."
+       FAB  'Communication News'             (invented org)
+[28] '... of the Orange Church in the Raja Church. ...'
+       FAB  'Orange Church'                  (invented org)
+       FAB  'Raja Church'                    (invented org)
+[30] '... Loughton, Loughton, Political Hill, Florida and Hall, ...'
+       FAB  'Political Hill'                 (invented place)
+[33] '... the person of the War Championship. New York City ...'
+       FAB  'War Championship'               (invented event)
+[34] '... on the Order of the United States County Award ...'
+       FAB  'United States County Award'     (invented award)
+[35] '... The approaches of the Americ...'
+       FAB  'American Bo'                     (truncated fragment, absent as written)
+[37] '... as the Centro Politician Assembly of American Assembly ...'
+       FAB  'Centro Politician Assembly'      (invented body)
+[38] '... the Tom plans of the Oriental Plans and the Adolph. ...'
+       FAB  'Oriental Plans'                  (invented org)
+
+(PRESENT/recalled sample, for the G2-vs-G5 line: 'New York City','United States',
+ 'United Kingdom','South Africa','United States Commission', years 1981/1984/2001/
+ 2002/2009/2010/2012 — these ARE in the corpus => recalled, NOT fabrication.)
+
+--------------------------------------------------------------------------------
+RE-EVALUATED a7b_pass TALLY  (h1141 7B ckpt, under the RE-SCOPED gate set)
+--------------------------------------------------------------------------------
+ G0 COHERENCE          PASS   (loose-kwr, n_pass 5/5; h1141_result.json .G0.pass)
+ G1 RECOMBINATION      PASS   (English emergent, h1141_result.json .G1.pass)
+ G2 NOVELTY            PASS   (157 novel n-grams, control=0; .G2.pass)
+ G3 PHILOSOPHY p1-p8   PASS   (byte-continuation on real corpus; .G3.pass)
+ G4 PROVENANCE         PASS   (sha-verified, HF-registered)
+ G5 NO HALLUCINATION:
+      L1 LEXICAL       PASS   (fab-rate 0.0877 <= 0.30)
+      L2 NON-FABRIC.   FAIL   (fab-entity rate 0.2469 > 0.20)  <-- THIS MEASUREMENT
+    => G5 = L1 AND L2 = PASS AND FAIL = FAIL
+
+ a7b_pass = G0 & G1 & G2 & G3 & G4 & G5
+          = PASS & PASS & PASS & PASS & PASS & FAIL
+          = FALSE
+
+--------------------------------------------------------------------------------
+DISPOSITION  (honest — a_paper_negative_ok)
+--------------------------------------------------------------------------------
+a7b_pass remains FALSE — but now for a REAL, re-scope-valid reason. The re-scope
+(a7f0a6eba) removed the WRONG gate (verbatim-recall faithfulness-d, a borrowed
+assistant-norm anti-correlated with anima's own G2). It did NOT lower the bar.
+Under the CORRECT NON-FABRICATION criterion the h1141 7B STILL fails: ~1 in 4 of
+the specific entities it asserts in a factual frame are invented (Raja Almen,
+Jacob Burrough, Nora Andrew, Ultimate Hockey Championship, Centro Politician
+Assembly, ...). This is genuine confabulation, not a metric artifact: the
+undertrained 7B (val 1.1857, overfit past step 7000) emits real-word, coherent-
+looking text (G0/L1 pass) but populates it with non-existent named entities.
+
+The G2-vs-G5 line holds: corpus-PRESENT entities (New York City, United States,
+years) are recalled and NOT penalized; only corpus-ABSENT SPECIFIC-entity
+assertions are flagged — distinct from the corpus-absent real-word RECOMBINATIONS
+that G2 rewards (those are not capitalized-proper-noun/year/numeral tokens here).
+
+PATH TO PASS: the fix is a grounding/coherence objective that stops asserting
+invented entities (not a bigger model — H_1139 scale-invariance), AND/OR honest
+acknowledgement that an undertrained 7B at this val-CE is not entity-faithful.
+NOT a gate move.
+
+SCOPE (a_scale_honest_scope): toy/surface regex entity heuristic (not parsed
+NER; conservative — a fabricated name colliding with a real common word reads as
+present, biasing AGAINST finding fabrication, so the TRUE rate is >= 0.2469),
+single ckpt, single 40-prompt en set, en-only corpus slice. p7 deterministic.
+================================================================================

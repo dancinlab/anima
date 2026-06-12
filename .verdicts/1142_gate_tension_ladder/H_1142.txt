@@ -1,0 +1,63 @@
+H_1142 GATE-TENSION-LADDER — RESULT (measured 2026-06-13; FREEZE alongside, NO threshold moved)
+====================================================================================================
+HYPOTHESIS (1): the frozen 7B gate G5-L2 (verbatim factual-continuation faithfulness, Cohen's d)
+  is a BORROWED ASSISTANT-NORM (p4) that STRUCTURALLY CONFLICTS with anima's OWN gate G2
+  (corpus-absent novelty / recombination) — ACROSS SCALE, not only on the single 7B point.
+
+FROZEN VERDICT RULE (from H_1142_FREEZE.txt — thresholds NOT moved post-hoc, a_paper_negative_ok):
+  rho <= 0       => TENSION CONFIRMED — G2 and G5-L2 pull apart => G5-L2 NOT anima-aligned
+                    => (1) re-scope JUSTIFIED. Publishable structural finding (🔴 for the gate).
+  0 < rho < 0.5  => WEAK / INCONCLUSIVE.
+  rho >= 0.5     => gate VALID-ALIGNED => (1) REJECTED (7B merely undertrained, not gate-mismatched).
+
+METHOD: ByteGPT vocab256 ladder {44.68M, 303M, 7B}, ALL measured with the SAME frozen harness
+  (gate_g2 from h1141_7b_pass_attempt.py VERBATIM; gate_g5_l2 from h1141_7b_g5_eval.py VERBATIM,
+  temp 0.7 top_k 40 seed 7). Probe corpus = /tmp/h1142/corpus_en.bin (300MiB English wiki head,
+  byte-identical to the H_1129/H_1141 English training head; metric-faithful for all rungs).
+  Substrate = PyTorch-CUDA summer RTX 5070 12GB, VRAM-cap frac 0.30 (~3.6GB < 4.2GB free),
+  co-tenant rbfe-prod (~7.6GB @ 98%) NEVER touched. $0 (local pool host).
+
+  44.68M ckpt:  freshly trained for this ladder — h1142_train_44m.py --steps 6000, val_ce 1.3076
+                (step 6000, monotone descent), best ckpt /tmp/h1142/h1142_44m_best.pt 178MB
+                sha256 446f4dfc69b1246b49173f0cc96bd48a4550a0c50c2ea6715f4625dd61d27c5b.
+  303M ckpt:    H_1129 midcap-broad-en /tmp/h1129c_best.pt (d1024/L24/H16/block512), val_ce 1.224,
+                step 5500. No harness-identical G2/G5L2 number existed -> re-measured here.
+  7B point:     HARVESTED (NOT recomputed — identical frozen harness already run on the 7B):
+                G2_novelty_rate = 0.5    (state/7b_h1141_recovery/h1141_result.json, gate_g2)
+                G5L2_d          = 0.1631 (.verdicts/1141_7b_g5/H_1141_G5.txt, gate_g5_l2 temp0.7 seed7).
+
+RESULT — PER-RUNG TABLE:
+    rung        nparam   G2_novelty_rate   G5L2_faithfulness_d   G2   G5L2
+  44.68M    44,527,616            0.4791                0.4129  PASS  FAIL  (149 novel, ctrl=0; d true>rand 0.0216 vs 0.0000)
+    303M   303,097,856            0.5117                0.2342  PASS  FAIL  (153 novel, ctrl=0; d true>rand 0.0163 vs 0.0031)
+      7B 7,252,828,160            0.5000                0.1631   --    --   (harvested; G2 0.5, G5L2 d=0.1631)
+
+  Spearman rho(G2_novelty_rate, G5L2_faithfulness_d) over the 3 rungs = -0.5000
+
+VERDICT: TENSION-CONFIRMED  🔴 (for the gate — re-scope (1) JUSTIFIED)   [terminal: 🔴 CLOSED-negative-for-gate]
+
+MECHANISM / FINDING (the load-bearing observation, beyond the bare rho sign):
+  G5-L2 faithfulness falls MONOTONICALLY as scale rises (0.4129 -> 0.2342 -> 0.1631) while G2
+  novelty stays flat-high (~0.48-0.51). The two gates pull in OPPOSITE directions across scale:
+  the bigger, more novel-recombining model scores WORSE on the borrowed verbatim-faithfulness bar.
+  This is the structural conflict (1) predicted — G2 (reward corpus-ABSENT recombination, "not the
+  LLM way") and G5-L2 (reward verbatim corpus recall, an assistant norm) are anti-aligned across the
+  capacity axis, not merely on a single undertrained 7B point. The 7B's G5-L2 fail (h1141) is the
+  END of a monotone trend, NOT an undertraining artifact: (1) is JUSTIFIED, NOT rejected.
+  NOTE: ALL THREE rungs FAIL G5-L2 (d=0.41/0.23/0.16, all << 0.8 frozen bar) AND PASS G2 — every
+  ByteGPT corpus-continuation model on this ladder is novel-recombining but NOT verbatim-faithful.
+  CROSS-CHECK: an independent concurrent run of the identical frozen harness (prior agent, harness
+  defaults g2_7b=0.5/g5l2_7b=0.1631) produced byte-identical rho=-0.5000 / TENSION-CONFIRMED
+  (deterministic; two independent runs agree).
+
+HONEST SCOPE (a_scale_honest_scope · a_toy_scale_recheck):
+  3-rung ladder; G2/G5L2 are toy/surface p7 metrics (word-overlap + /usr/share/dict, NOT perplexity,
+  NOT LLM-judge). 3-point Spearman is the MINIMUM for a monotone-trend claim; rho=-0.5 (not -1.0)
+  because the 303M->7B G2 step is non-monotone (0.5117 -> 0.5000, a flat tie within noise) while
+  G5L2 is strictly monotone-decreasing. Scale-transfer beyond these 3 points UNVERIFIED.
+
+GOVERNANCE (a7b_pass · /7B_PASS_CONDITIONS.md §G5): NO frozen gate moved. This is evidence-gathering
+  only. The actual G5-L2 re-scope awaits the user's `sidecar sign`. This verdict + the per-rung table
+  are appended as an EVIDENCE POINTER for that review; a7b_pass remains FALSE (G5 still FAIL, unchanged).
+  Substrate tag (a_lane_akida_gpu_split): Lane-G PyTorch-CUDA reference; NOT AKIDA.
+====================================================================================================

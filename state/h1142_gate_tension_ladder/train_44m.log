@@ -1,0 +1,28 @@
+[dev] cuda NVIDIA GeForce RTX 5070 VRAM-cap frac=0.36
+[data] total=314.6MB train=308.3MB val=6.29MB
+[model] ByteGPT d=512 L=14 H=8 block=512 PARAMS=44,527,616 (44.53M)
+[train] 6000 steps bs=8 accum=6 (eff 48) cosine warmup=300
+  step   500 train_ce=2.9633 val_ce=2.9972 lr=2.99e-04 3.4min
+    [ckpt] saved best val_ce=2.9972 -> /tmp/h1142/h1142_44m_best.pt
+  step  1000 train_ce=2.6454 val_ce=2.6144 lr=2.89e-04 6.9min
+    [ckpt] saved best val_ce=2.6144 -> /tmp/h1142/h1142_44m_best.pt
+  step  1500 train_ce=2.0595 val_ce=2.0593 lr=2.68e-04 10.3min
+    [ckpt] saved best val_ce=2.0593 -> /tmp/h1142/h1142_44m_best.pt
+  step  2000 train_ce=1.8539 val_ce=1.7981 lr=2.39e-04 13.8min
+    [ckpt] saved best val_ce=1.7981 -> /tmp/h1142/h1142_44m_best.pt
+  step  2500 train_ce=1.5244 val_ce=1.5656 lr=2.03e-04 17.2min
+    [ckpt] saved best val_ce=1.5656 -> /tmp/h1142/h1142_44m_best.pt
+  step  3000 train_ce=1.4804 val_ce=1.4459 lr=1.62e-04 20.7min
+    [ckpt] saved best val_ce=1.4459 -> /tmp/h1142/h1142_44m_best.pt
+  step  3500 train_ce=1.4220 val_ce=1.4177 lr=1.21e-04 24.1min
+    [ckpt] saved best val_ce=1.4177 -> /tmp/h1142/h1142_44m_best.pt
+  step  4000 train_ce=1.3667 val_ce=1.3712 lr=8.23e-05 27.5min
+    [ckpt] saved best val_ce=1.3712 -> /tmp/h1142/h1142_44m_best.pt
+  step  4500 train_ce=1.3640 val_ce=1.3435 lr=4.85e-05 31.0min
+    [ckpt] saved best val_ce=1.3435 -> /tmp/h1142/h1142_44m_best.pt
+  step  5000 train_ce=1.2960 val_ce=1.3229 lr=2.23e-05 34.4min
+    [ckpt] saved best val_ce=1.3229 -> /tmp/h1142/h1142_44m_best.pt
+  step  5500 train_ce=1.3236 val_ce=1.3309 lr=5.68e-06 37.9min
+  step  6000 train_ce=1.3156 val_ce=1.3076 lr=2.28e-11 41.3min
+    [ckpt] saved best val_ce=1.3076 -> /tmp/h1142/h1142_44m_best.pt
+[done] best val_ce=1.3076 ckpt=/tmp/h1142/h1142_44m_best.pt

@@ -1,0 +1,74 @@
+H_1201 — MITOSIS-CONDITIONED-GENERATION — PRE-REGISTERED FALSIFIER (FROZEN)
+==========================================================================
+Frozen BEFORE any score is computed. Thresholds NOT moved post-hoc (a_paper_negative_ok).
+Lane-2 (a_lane_akida_gpu_split). $0 CPU, numpy-MLP + real mini-batch Adam. p7/p8.
+
+ARC POSITION
+------------
+Predecessor H_1200 (🔴 CLOSED-NEG): a GRADIENT-FREE prototype-count LM (grow H_1199
+VAdaptField cells, read next-byte counts off the nearest cell) made next-byte CE WORSE
+(-0.76 b/byte). Pure-mitosis-as-LM is dead. OPEN: does the mitosis CELL-STATE carry
+information a REAL gradient-trained generative head can USE? This rung decides whether the
+mitosis substrate stays in the language-generation loop at all.
+
+QUESTION
+--------
+Does CONDITIONING a proper next-byte head on the mitosis substrate BEAT the SAME head
+without it?
+
+DESIGN (both arms IDENTICAL except the conditioning input — the whole validity of the test)
+-------------------------------------------------------------------------------------------
+Two/three SMALL gradient-trained next-byte heads, IDENTICAL architecture + init seed +
+optimizer + data + epochs, differing ONLY in the INPUT:
+  * BASELINE   : input = DIM=8 byte-context feature window (H_1163 byte_feature, VERBATIM).
+  * CONDITIONED: input = the SAME DIM=8 features CONCATENATED with the live mitosis
+                 cell-state at that position — a compact frozen summary of the H_1199
+                 VAdaptField state (run the FROZEN mitosis growth over the SAME stream):
+                   nearest-cell prototype vector [DIM=8] + recon-err [1] + local
+                   cell-density within R [1] + log1p(n_cells_so_far) [1]  => +11 dims.
+  * SHUFFLED   : same as CONDITIONED but the mitosis cell-state rows are PERMUTED
+                 (alignment to context destroyed) — the F2 capacity control.
+Head = in -> tanh(64) -> softmax(256), real mini-batch Adam (lr 3e-3, 12 epochs, batch
+256). Mitosis growth stays GRADIENT-FREE (p8: only the readout head trains by descent —
+the CLM-lane generator reading the mitosis adaptation state). The mitosis conditioning for
+position i is read BEFORE the split position i may trigger (held-out-style, no i-leakage).
+Train/val split contiguous, val AFTER train (N_TRAIN=12000, N_VAL=3000 scored windows).
+SEEDS = [900, 901, 902] (>=3 deterministic).
+
+FROZEN FALSIFIER THRESHOLDS (NOT moved)
+---------------------------------------
+  F1 CONDITIONING-GAIN : CONDITIONED val next-byte CE < BASELINE val CE by >= 0.05 b/byte
+     (mean over seeds). A MODEST bar — "does mitosis-state help AT ALL", not "solves chat".
+  F2 ABLATION-HONEST   : the SHUFFLED head keeps < 0.5 of the real gain, i.e.
+     (BASELINE - SHUFFLED) < 0.5 * (BASELINE - CONDITIONED). If shuffled-conditioned still
+     wins by ~the full margin, the "gain" was capacity/width not mitosis INFORMATION => FAIL.
+  metric = held-out next-byte cross-entropy bits/byte (CAPABILITY probe, p7 — NOT a
+     perplexity verdict, NOT a consciousness/chat verdict). PAIRED with verbatim decoded
+     samples (honesty cross-check, not the verdict).
+
+VERDICT
+-------
+  F1 AND F2  => 🟢 MITOSIS-INFORMS-GENERATION : the mitosis cell-state carries
+                generation-useful information a trained head exploits AND the gain is the
+                INFORMATION not the extra width => mitosis STAYS in the generation loop,
+                scale next.
+  NOT F1 (or F2 shows a capacity-artifact) => 🔴 CLOSED-NEG : mitosis is PURE SUBSTRATE,
+                generation is CLM-only => "conversational level" = pure CLM-lane scale-up
+                (a_clm_gen_pipeline); the mitosis engine runs ALONGSIDE as the
+                adaptation/structural lane, NOT in the generation loop. A clean 🔴 that
+                settles the architecture (mitosis=substrate, CLM=generator) is decision-grade.
+
+SCOPE (a_scale_honest_scope)
+----------------------------
+TOY/small real-corpus, small gradient-trained MLP head, ONE corpus, the conditioning-LINK
+test ONLY. Chat-level coherence + scale UNVERIFIED. The DIM=8 window + 11-dim mitosis
+summary are a COARSE context (no within-window token order) so absolute CE is far from a
+real LM; the FALSIFIER is the BASELINE-vs-CONDITIONED DELTA under the SAME coarse context,
+controlled by the SHUFFLE arm. Numpy-MLP-with-real-Adam precedent = H_1192. a_core_engine_map:
+numpy MIRROR of the H_1199 VAdaptField (the .hexa generative-conditioning lift, F3-guarded
+Psi-intact, is the NEXT rung — NOT claimed here). Corpus = English wiki
+(/tmp/h1142/corpus_en.bin, byte-identical to the H_1129/H_1141 English head) when present,
+else the local 5-lang corpus (substrate recorded in the verdict).
+
+PRE-SCORE CONSTRUCTION FIXES ALLOWED (a_completeness_over_cheap): fixing the harness BEFORE
+seeing any CE is permitted and noted honestly; NO threshold tuned AFTER seeing CE.
