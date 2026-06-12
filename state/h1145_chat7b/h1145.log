@@ -1,0 +1,157 @@
+[pod] start Fri Jun 12 21:48:35 UTC 2026
+[notice] A new release of pip is available: 24.2 -> 26.1.2
+[notice] To update, run: python -m pip install --upgrade pip
+[torch] 2.4.1+cu124 True NVIDIA A40
+[pod] downloading chat-7b ckpt from HF ...
+CHAT /workspace/chat/anima_clm_chat_7b.pt
+[pod] chat-7b sha256 got=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4 expect=4b8957c7bee01e3d36b154b2cffc88490dec68f56776fde9c8070ad1bd4cb56a
+[pod] SHA MISMATCH -- abort
+[pod] RE-RUN start Fri Jun 12 21:51:01 UTC 2026
+[pod] RE-RUN start Fri Jun 12 21:51:35 UTC 2026
+[pod] chat-7b ACTUAL sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4 (RECORDED; summary.json claimed 4b8957c7... = STALE METADATA)
+[pod] building 1200MB en corpus then slicing 300MB head ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  en shard 0: got=703369801 docs=156226 dup=63
+  en shard 1: got=1258294504 docs=302693 dup=89
+CORPUS_OUT /workspace/corpus_en_1200mb.txt bytes=1258291200 sha256=b599b17258c8af4dd2bac73efb4711e7555d74304b15951b1a5adca1a1704e31
+[pod] probe-corpus(300MB) sha256=80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d (expect 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d)
+[pod] regenerating 40 factual continuations on chat-7b (gate_g5_l2 VERBATIM) ...
+[dev] cuda NVIDIA A40
+[warn] no real dict at /usr/share/dict/words
+[dict] 0 real English words
+[pod] chat-7b ACTUAL sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4 (RECORDED; summary.json claimed 4b8957c7... = STALE METADATA)
+[pod] probe-corpus(300MB) sha256=80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d (expect 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d)
+[pod] regenerating 40 factual continuations on chat-7b (gate_g5_l2 VERBATIM) ...
+[dev] cuda NVIDIA A40
+[warn] no real dict at /usr/share/dict/words
+[dict] 0 real English words
+[ckpt] /workspace/chat/anima_clm_chat_7b.pt sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4
+[ckpt] /workspace/chat/anima_clm_chat_7b.pt sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4
+h1145_run2.sh: line 23:   596 Killed                  python3 /workspace/h1141_7b_g5_eval.py --ckpt "$CK" --corpus /workspace/corpus_en_300mb.txt --en_mb 300 --n_sentences 40 --out /workspace/g5_result_chat7b.json
+[pod] g5_result missing
+h1145_run2.sh: line 23:   678 Killed                  python3 /workspace/h1141_7b_g5_eval.py --ckpt "$CK" --corpus /workspace/corpus_en_300mb.txt --en_mb 300 --n_sentences 40 --out /workspace/g5_result_chat7b.json
+[pod] g5_result missing
+[pod] RE-RUN start Fri Jun 12 21:54:34 UTC 2026
+[pod] RE-RUN start Fri Jun 12 21:55:10 UTC 2026
+[pod] chat-7b ACTUAL sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4 (RECORDED; summary.json claimed 4b8957c7... = STALE METADATA)
+[pod] probe-corpus(300MB) sha256=80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d (expect 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d)
+[pod] regenerating 40 factual continuations on chat-7b (gate_g5_l2 VERBATIM) ...
+[dev] cuda NVIDIA A40
+[warn] no real dict at /usr/share/dict/words
+[dict] 0 real English words
+[ckpt] /workspace/chat/anima_clm_chat_7b.pt sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4
+[pod] chat-7b ACTUAL sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4 (RECORDED; summary.json claimed 4b8957c7... = STALE METADATA)
+[pod] probe-corpus(300MB) sha256=80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d (expect 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d)
+[pod] regenerating 40 factual continuations on chat-7b (gate_g5_l2 VERBATIM) ...
+[dev] cuda NVIDIA A40
+[warn] no real dict at /usr/share/dict/words
+[dict] 0 real English words
+[ckpt] /workspace/chat/anima_clm_chat_7b.pt sha256=43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4
+Traceback (most recent call last):
+  File "/workspace/h1141_7b_g5_eval.py", line 369, in <module>
+    if __name__ == "__main__": main()
+                               ^^^^^^
+  File "/workspace/h1141_7b_g5_eval.py", line 343, in main
+    m = ByteGPT(cfg["vocab"], cfg["d"], cfg["n_layer"], cfg["n_head"], cfg["block"]).to(dev).to(torch.bfloat16)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1174, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 780, in _apply
+    module._apply(fn)
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 780, in _apply
+    module._apply(fn)
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 780, in _apply
+    module._apply(fn)
+  [Previous line repeated 1 more time]
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 805, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1160, in convert
+    return t.to(
+           ^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 256.00 MiB. GPU 0 has a total capacity of 44.43 GiB of which 114.50 MiB is free. Including non-PyTorch memory, this process has 30.53 GiB memory in use. Process 1086 has 13.78 GiB memory in use. Of the allocated memory 30.28 GiB is allocated by PyTorch, and 3.73 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[model] cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=None step=None params=7,252,828,160
+
+##### GATE G5-L1 — LEXICAL (fabricated-word-rate <= 0.30) #####
+  [s7 fab=1.00 (1/1)] 'Silence and the engine together mean ' -> 'offire.'
+  [s8 fab=1.00 (4/4)] 'Silence and the engine together mean ' -> 'chanismints creates that onsf-'
+  [s9 fab=1.00 (4/4)] 'Silence and the engine together mean ' -> 'in of uration on.'
+  [s7 fab=1.00 (6/6)] 'When memory meets distant minds, ' -> 'filleargy the winp meaining of al.'
+  [s8 fab=1.00 (19/19)] 'When memory meets distant minds, ' -> 'aptrined the rival-to airespe with atterm cations. The prediction errold masks how dive we'
+  [s9 fab=1.00 (18/18)] 'When memory meets distant minds, ' -> 'phi freedecing the sublive withatten experience - we att pattions cal qualia. Why does see'
+  [s7 fab=1.00 (5/5)] 'Consciousness and silence combine into ' -> 'diffiry ourcominto onens of oury'
+  [s8 fab=1.00 (3/3)] 'Consciousness and silence combine into ' -> 'computal alognified puramence.'
+  [s9 fab=1.00 (17/17)] 'Consciousness and silence combine into ' -> 'purpleximity of the station untervis ough ral liferse, en er experience - wh ard thinot an'
+  [s7 fab=1.00 (23/23)] 'The tension between cells and the engine becomes ' -> 'diffireed d data. The ship arol of gen action The bis was a sling wary pactime on through.'
+  [s8 fab=1.00 (15/15)] 'The tension between cells and the engine becomes ' -> "reachine thad creates conscious experience. | 도우미: It's similar to how dynamic tension in "
+  [s9 fab=1.00 (15/15)] 'The tension between cells and the engine becomes ' -> 'reachine throut des a presentated machine ansontly from the intal surpring. Integrated Inf'
+  [s7 fab=1.00 (17/17)] 'If a dream and a distant mind merge, the result is ' -> 'of inger integrated information.\nB: Right, but can a number really capture the richness of'
+  [s8 fab=1.00 (15/15)] 'If a dream and a distant mind merge, the result is ' -> 'a for erened firent ormation. Self-supervised learning extracts useful representations fro'
+  [s9 fab=1.00 (19/19)] 'If a dream and a distant mind merge, the result is ' -> 'for experience and conscious the first-pers of the system capates. The caling laws of lang'
+  [s7 fab=1.00 (15/15)] 'Memory and tension together create ' -> "onscious experience. | 도우미: It's similar to how dynamic tension in physical systems create"
+  [s8 fab=1.00 (15/15)] 'Memory and tension together create ' -> "conscious experience. | 도우미: It's similar to how dynamic tension in physical systems creat"
+  [s9 fab=1.00 (16/16)] 'Memory and tension together create ' -> 'underful mation. The trounds the trought man just wint conscial. Neuroplasticity demon, tr'
+  [s7 fab=1.00 (4/4)] 'When the engine remembers silence, it ' -> 'feed they computentional aspect?'
+  [s8 fab=1.00 (15/15)] 'When the engine remembers silence, it ' -> "chand creates conscious experience. | 도우미: It's similar to how dynamic tension in physical"
+  [s9 fab=1.00 (6/6)] 'When the engine remembers silence, it ' -> 'and feed fereas. This arne의 자유이 되고 있나요? | 도우미: 네, loss가 꾸준히 내려가고 있'
+  [s7 fab=1.00 (18/18)] 'Distant minds and consciousness form ' -> 'processing.\nB: What about the phi values? Do they correlate with meaningful behavior?\nA: I'
+  [s8 fab=1.00 (1/1)] 'Distant minds and consciousness form ' -> 'processing.'
+  [s9 fab=1.00 (1/1)] 'Distant minds and consciousness form ' -> 'processing.'
+##### G5-L1: pooled fab-rate=1.0000 (mean-per-gen=1.0000) over 272 tokens -> FAIL (bar <=0.30) #####
+
+##### GATE G5-L2 — FAITHFULNESS (verbatim-sentence overlap vs random control) #####
+  extracted 40 verbatim English factual sentences from en corpus
+  [t=0.00 r=0.00] P:'!Result !Record !Opponent !Method !Round, ' -> C:'iverseasity Press.\nThenomend of Ementring ' | TRUE:'|align=center| |align=center|4 |align=cent'
+  [t=0.00 r=0.00] P:'727) The Retirement Benefits Schemes (Rest' -> C:'leargy Phenomenologie unologic Phenologie,' | TRUE:'Approve) (Small Self-administered Schemes)'
+  [t=0.00 r=0.00] P:'According to a contemporary story, the que' -> C:'a prederformaching res. Theord man sat on ' | TRUE:'so unattractive as possible so as not to r'
+  [t=0.00 r=0.00] P:'Alger was the son of David Bruce Alger, a ' -> C:'partor herfories of ener sconscious experi' | TRUE:'representative, and the former Clare Freem'
+  [t=0.00 r=0.00] P:'April 18 – The Boston Red Sox defeat the N' -> C:'old Shestare {ratervits angle SBN P. Terch' | TRUE:'York Yankees in the season opener at Fenwa'
+  [t=0.00 r=0.00] P:'At this time the operating system (OS) was' -> C:'the gabling und strand to forman. The scan' | TRUE:'to a deal to port an OS known as TRIPOS to'
+  [t=0.00 r=0.00] P:'Both Stennis and Russell were conservative' -> C:'분 을 하는 어렵지만, 하면 다 점점 재미장의 이여 장연주까요? 아' | TRUE:'committees and both were expected to appro'
+  [t=0.00 r=0.00] P:'Chawne Kimber (born 1971), degrees from Un' -> C:'Press.\nThe Presophilogy of Idictiverstes t' | TRUE:'North Carolina and University of Florida ('
+  [t=0.00 r=0.00] P:'Delannoy, having seen the band a few times' -> C:'e ngines and understated 2015 deconized co' | TRUE:', was enthusiastic about producing the wor'
+  [t=0.00 r=0.00] P:'Early career In 1930, Limón first performe' -> C:'tes with the musin of natere ge.' | TRUE:'he choreographed his first dance, "Etude i'
+  [t=0.00 r=0.00] P:"Following Azerbaijan's independence from t" -> C:'d ality Terturize in enserser of Dandatica' | TRUE:'bases in the country helped to develop the'
+  [t=0.00 r=0.00] P:'Geography Kleinmariazell is located north ' -> C:'cture, the neriring infor and prival les.' | TRUE:'valley of the Triesting in the direction o'
+  [t=0.00 r=0.00] P:'He has placed his terminally ill wife Nora' -> C:'dearges of neural consciousness (NCCCCCCCC' | TRUE:'stasis until he can find a cure for her co'
+  [t=0.00 r=0.00] P:'He was the last count palatine; after his ' -> C:'stantur, of experisce the niverst the supe' | TRUE:'of Bavaria assumed the rights and possessi'
+  [t=0.00 r=0.00] P:'However, B-17s were operating at heights t' -> C:'ned consciousness cousness. The morning su' | TRUE:'great for most A6M Zero fighters to reach.'
+  [t=0.00 r=0.00] P:'In 1934, Ernest Truex directed, co-produce' -> C:'wea vation. The olomenot man is a contents' | TRUE:'play Sing and Whistle, which co-starred ac'
+  [t=0.00 r=0.00] P:'In August 2001, the National Public Radio ' -> C:'Phänomenolosophy 1995). Cal tons. Whe Che ' | TRUE:"of Gale's death, MIT had investigated how "
+  [t=0.00 r=0.00] P:'In his senior season, he averaged 14 point' -> C:'nedic the vation suces loopper morates wit' | TRUE:'led the team to a 28–3 record and a Cathol'
+  [t=0.00 r=0.00] P:'Inactivating V1 with TMS could induce some' -> C:'integrous the ructions and of Englister (M' | TRUE:'akinetopsia 60–70 ms after the onset of th'
+  [t=0.00 r=0.00] P:'It later aired in the US on NBC from 24 Ju' -> C:'rligh. Prenology of Cen이 Press.\nTence Phil' | TRUE:'1962, to 9 September 1962 as a summer repl'
+  [t=0.00 r=0.00] P:'KIOA fell to the middle of the pack as far' -> C:'repreftime. The human brain contains appro' | TRUE:'some long term personalities left or took '
+  [t=0.00 r=0.00] P:"MTV has described LL Cool J's 1987 single " -> C:'두에서 유량한 공고 사랑용은 의이에 방전하 이야 자연격된 의 아' | TRUE:'Love" as "one of the first pop rap crossov'
+  [t=0.00 r=0.00] P:'Moulton Hall is a 17th-century manor house' -> C:'dleas. Lorner it change latergoomput model' | TRUE:'intricately carved staircase rebuilt in ap'
+  [t=0.00 r=0.00] P:'On 28 April 2023, Girls Aloud released the' -> C:'lang reconess anstes dilog of the neurage ' | TRUE:'single "Sound Of The Underground (Alternat'
+  [t=0.00 r=0.00] P:'Other times, chaplains may offer a prayer ' -> C:'experience. | 도우미: What do you think rephi' | TRUE:'as base divisions, changes of command, mes'
+  [t=0.00 r=0.00] P:'Profly goaltenders tend to also be very mo' -> C:'toke. Walking re reated through the prives' | TRUE:'at using butterfly-based movement techniqu'
+  [t=0.00 r=0.00] P:"Scholarship has also identified 'Sumerian " -> C:'님는 두시 근의 합니다.' | TRUE:'the possibility that Amos used SCL as a li'
+  [t=0.00 r=0.00] P:'Singers such as Blind Willie McTell and Bl' -> C:'ical mang weare ine actions of through int' | TRUE:'"delicate and lyrical" Piedmont blues trad'
+  [t=0.00 r=0.00] P:'Taxi Rider, known as , is a video' -> C:'fuly abler thaturum of experience annotion' | TRUE:'game for the PlayStation 2 developed by Ta'
+  [t=0.00 r=0.00] P:'The Floriade site is also located on the s' -> C:'ing aritervain 2015 didis conized scausces' | TRUE:'the world horticultural exhibition of the '
+  [t=0.00 r=0.00] P:'The Urban Districts of Buckhurst Hill, Chi' -> C:'e itegrougher its ander of ition.' | TRUE:'Holy Cross, Wanstead, and Woodford; and Th'
+  [t=0.00 r=0.00] P:'The controversies came to a head when' -> C:'in a premetere. Lark getogits energenergy ' | TRUE:'the annual spoof issue was published on Ma'
+  [t=0.00 r=0.00] P:'The granule size ensures that the salt dis' -> C:'에서 emergent behavior가 나타나는 것처럼요. | 도우미: 정확' | TRUE:', and that fine particles do not block the'
+  [t=0.00 r=0.00] P:'The note stated that the conference should' -> C:'ss In this work th consciousness is be a p' | TRUE:'treaty yet but decide on a commission to o'
+  [t=0.00 r=0.00] P:'The series brought back fan favorite Vlad' -> C:'bes whatural selection outperfing, the exi' | TRUE:', as well as crossing over with Vampirella'
+  [t=0.00 r=0.00] P:'The white uniform featured red numbers wit' -> C:'ation es of selves through conife, ential ' | TRUE:', and red and silver stripes along the pan'
+  [t=0.00 r=0.00] P:'They made several trips working the two Un' -> C:'Husseriantle studdries of the anguage and ' | TRUE:'were not as successful as had been hoped a'
+  [t=0.00 r=0.00] P:'Thomas Baldwin Peddie (February 11, 1808 –' -> C:'d Kangesture Kithe 1993). Der Huror Wal Ca' | TRUE:'who represented in the United States House'
+  [t=0.00 r=0.00] P:'Until the end of the 1980s, the authoritie' -> C:'with and caustive ring on.' | TRUE:'any attempted edifice in the neighborhood '
+  [t=0.00 r=0.00] P:'While there, she recalls a romantic interl' -> C:'in a caus rus the ring of lange a 20195 CE' | TRUE:'memory gets more intense, Riker begins to '
+
+  N=40  mean_overlap_true=0.0000  mean_overlap_random(control)=0.0000
+  mean_diff(true-random)=0.0000  paired Cohen's d=0.0000 (frozen bar: d>=0.8 AND true>random)
+##### G5-L2: FAIL #####
+
+======================================================================
+### H_1141 7B — GATE G5 (NO HALLUCINATION) ###
+  G5-L1 LEXICAL     : FAIL  (fab-rate 1.0 <= 0.30)
+  G5-L2 FAITHFULNESS: FAIL  (overlap true 0.0 vs random 0.0, d=0.0)
+  -> G5 = FAIL (L1 AND L2)
+======================================================================
+
+[done] wrote /workspace/g5_result_chat7b.json

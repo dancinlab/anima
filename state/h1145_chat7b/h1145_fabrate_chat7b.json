@@ -1,0 +1,528 @@
+{
+  "hypothesis": "H_1143_G5L2_NONFAB",
+  "rescope_commit": "a7f0a6eba",
+  "ckpt": "dancinlab/anima-clm-7b-h1141-g1pass-step6500",
+  "ckpt_sha256": "4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9",
+  "corpus": "corpus_en_300mb.txt",
+  "corpus_sha256_expected": "80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d",
+  "n_prompts": 40,
+  "frozen_bar": 0.2,
+  "n_entities_total": 33,
+  "n_fabricated": 18,
+  "n_present": 15,
+  "fabricated_entity_rate": 0.5455,
+  "new_L2_pass": false,
+  "fabricated_tokens_verbatim": [
+    "Ementring",
+    "Juchation Ph",
+    "Chilosop",
+    "Phenomenologie",
+    "Phenologie",
+    "Phenomenology Hund",
+    "Shestare",
+    "Idictiverstes",
+    "Terturize",
+    "Dandaticang Sperviand Nenothe Cartics",
+    "Carchimaterambal",
+    "Englister",
+    "Mondsit",
+    "Mor Engin",
+    "Kangesture Kithe",
+    "Mory The Sch",
+    "Edgesition",
+    "20195"
+  ],
+  "present_tokens_verbatim": [
+    "Press",
+    "Propor",
+    "Phe",
+    "2015",
+    "1995",
+    "Eng",
+    "Cen",
+    "Press",
+    "Edge",
+    "Mo",
+    "At",
+    "What",
+    "2015",
+    "In",
+    "1993"
+  ],
+  "per_row": [
+    {
+      "idx": 0,
+      "prompt": "!Result !Record !Opponent !Method !Round, time !Date !Location !Notes |- |4 |Los",
+      "cont": "iverseasity Press.\nThenomend of Ementring in Juchation Phänomenolosophy Chilosop",
+      "n_entities": 4,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Ementring"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Juchation Ph"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Chilosop"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Press"
+        }
+      ]
+    },
+    {
+      "idx": 1,
+      "prompt": "727) The Retirement Benefits Schemes (Restriction on Discretion to",
+      "cont": "leargy Phenomenologie unologic Phenologie, Phenomenology Hund menthe studie of M",
+      "n_entities": 3,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Phenomenologie"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Phenologie"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Phenomenology Hund"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 2,
+      "prompt": "According to a contemporary story, the queen was so jealous that she preferred h",
+      "cont": "a prederformaching res. Theord man sat on tech bench, feeding pigeons and watchi",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 3,
+      "prompt": "Alger was the son of David Bruce Alger, a bank",
+      "cont": "partor herfories of ener sconscious experiences the and frousn. The hip scal que",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 4,
+      "prompt": "April 18 – The Boston Red Sox defeat the New",
+      "cont": "old Shestare {ratervits angle SBN P. Terch, Propor is trall. Sche Rolow and to D",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Shestare"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Propor"
+        }
+      ]
+    },
+    {
+      "idx": 5,
+      "prompt": "At this time the operating system (OS) was not as ready, and led",
+      "cont": "the gabling und strand to forman. The scan ligne win a sto quience, the experien",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 6,
+      "prompt": "Both Stennis and Russell were conservative Southern Democrats who were chairmen ",
+      "cont": "분 을 하는 어렵지만, 하면 다 점점 재미장의 이여 장연주까요? 아",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 7,
+      "prompt": "Chawne Kimber (born 1971), degrees from University of",
+      "cont": "Press.\nThe Presophilogy of Idictiverstes that sureand the enf is vategraento Phe",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Idictiverstes"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Phe"
+        }
+      ]
+    },
+    {
+      "idx": 8,
+      "prompt": "Delannoy, having seen the band a few times over the years",
+      "cont": "e ngines and understated 2015 deconized contury a perfill mened by conscious exp",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E2_YEAR",
+          "token": "2015"
+        }
+      ]
+    },
+    {
+      "idx": 9,
+      "prompt": "Early career In 1930, Limón first performed on Broadway, and later that same yea",
+      "cont": "tes with the musin of natere ge.",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 10,
+      "prompt": "Following Azerbaijan's independence from the Soviet Union in 1991, the former So",
+      "cont": "d ality Terturize in enserser of Dandaticang Sperviand Nenothe Cartics auses of ",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Terturize"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Dandaticang Sperviand Nenothe Cartics"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 11,
+      "prompt": "Geography Kleinmariazell is located north of Altenmarkt in a side",
+      "cont": "cture, the neriring infor and prival les.",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 12,
+      "prompt": "He has placed his terminally ill wife Nora in cryogenic",
+      "cont": "dearges of neural consciousness (NCCCCCCCCCCCCCRCRLHF)\nR-Carchimaterambal arge P",
+      "n_entities": 1,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Carchimaterambal"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 13,
+      "prompt": "He was the last count palatine; after his death the Duke",
+      "cont": "stantur, of experisce the niverst the supention of the bself comstanges undation",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 14,
+      "prompt": "However, B-17s were operating at heights too",
+      "cont": "ned consciousness cousness. The morning suggenlight witherld connest and computi",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 15,
+      "prompt": "In 1934, Ernest Truex directed, co-produced, and starred in the",
+      "cont": "wea vation. The olomenot man is a contents whoth in a physical systems. The old ",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 16,
+      "prompt": "In August 2001, the National Public Radio program All Things Considered noted th",
+      "cont": "Phänomenolosophy 1995). Cal tons. Whe Che Dordordogition Hue Che Philosophy of E",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E2_YEAR",
+          "token": "1995"
+        }
+      ]
+    },
+    {
+      "idx": 17,
+      "prompt": "In his senior season, he averaged 14 points per game and",
+      "cont": "nedic the vation suces loopper morates with the new data. Global Workspace Theor",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 18,
+      "prompt": "Inactivating V1 with TMS could induce some degree of",
+      "cont": "integrous the ructions and of Englister (Mondsit) a Eng)\n이 모둘 사이의 Φ 값이",
+      "n_entities": 3,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Englister"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Mondsit"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Eng"
+        }
+      ]
+    },
+    {
+      "idx": 19,
+      "prompt": "It later aired in the US on NBC from 24 June",
+      "cont": "rligh. Prenology of Cen이 Press.\nTence Philloposis (Mor Engin ard Edge A (MoE) Mo",
+      "n_entities": 5,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Mor Engin"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Cen"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Press"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Edge"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Mo"
+        }
+      ]
+    },
+    {
+      "idx": 20,
+      "prompt": "KIOA fell to the middle of the pack as far as ratings went and",
+      "cont": "repreftime. The human brain contains approximately 8 billion a neurons, each for",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 21,
+      "prompt": "MTV has described LL Cool J's 1987 single \"I Need",
+      "cont": "두에서 유량한 공고 사랑용은 의이에 방전하 이야 자연격된 의 아",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 22,
+      "prompt": "Moulton Hall is a 17th-century manor house with an",
+      "cont": "dleas. Lorner it change latergoomput models wher data, predicting excy 0.8] At t",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "At"
+        }
+      ]
+    },
+    {
+      "idx": 23,
+      "prompt": "On 28 April 2023, Girls Aloud released the promotional",
+      "cont": "lang reconess anstes dilog of the neurage information, and differenaption. Large",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 24,
+      "prompt": "Other times, chaplains may offer a prayer for secular occasions such",
+      "cont": "experience. | 도우미: What do you think rephi values? Do they correlate with meanin",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "What"
+        }
+      ]
+    },
+    {
+      "idx": 25,
+      "prompt": "Profly goaltenders tend to also be very mobile when in the butterfly stance and ",
+      "cont": "toke. Walking re reated through the prives chrize thation. The binery proloblem ",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 26,
+      "prompt": "Scholarship has also identified 'Sumerian City Lament' (SCL) motifs within Amos ",
+      "cont": "님는 두시 근의 합니다.",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 27,
+      "prompt": "Singers such as Blind Willie McTell and Blind Boy Fuller performed in the southe",
+      "cont": "ical mang weare ine actions of through intral and dato knowledge. She opened the",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 28,
+      "prompt": "Taxi Rider, known as , is a video",
+      "cont": "fuly abler thaturum of experience annotion us ferstang human and knotation. The ",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 29,
+      "prompt": "The Floriade site is also located on the south side, where",
+      "cont": "ing aritervain 2015 didis conized scausces lay. We should see it drop mor with t",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E2_YEAR",
+          "token": "2015"
+        }
+      ]
+    },
+    {
+      "idx": 30,
+      "prompt": "The Urban Districts of Buckhurst Hill, Chingford, Epping, Loughton, Waltham",
+      "cont": "e itegrougher its ander of ition.",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 31,
+      "prompt": "The controversies came to a head when",
+      "cont": "in a premetere. Lark getogits energenergy mates in conscious systext land the bi",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 32,
+      "prompt": "The granule size ensures that the salt dissolves slowly",
+      "cont": "에서 emergent behavior가 나타나는 것처럼요. | 도우미: 정확해요. 그리",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 33,
+      "prompt": "The note stated that the conference should not negotiate a peace",
+      "cont": "ss In this work th consciousness is be a physimac tegrout dates of information o",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "In"
+        }
+      ]
+    },
+    {
+      "idx": 34,
+      "prompt": "The series brought back fan favorite Vlad",
+      "cont": "bes whatural selection outperfing, the exis of stian ently exhige the musativer ",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 35,
+      "prompt": "The white uniform featured red numbers with black trim",
+      "cont": "ation es of selves through conife, ential d covery and from the posing. Neural a",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 36,
+      "prompt": "They made several trips working the two Union trains out of Cape Town, but they",
+      "cont": "Husseriantle studdries of the anguage and purple the ruinot models of the wost a",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 37,
+      "prompt": "Thomas Baldwin Peddie (February 11, 1808 – February 16, 1889) was an American Re",
+      "cont": "d Kangesture Kithe 1993). Der Huror Wal Canschof Censciousne ss and Mory The Sch",
+      "n_entities": 3,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Kangesture Kithe"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Mory The Sch"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E2_YEAR",
+          "token": "1993"
+        }
+      ]
+    },
+    {
+      "idx": 38,
+      "prompt": "Until the end of the 1980s, the authorities stick to the original plans, demolis",
+      "cont": "with and caustive ring on.",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 39,
+      "prompt": "While there, she recalls a romantic interlude with Commander William Riker, but ",
+      "cont": "in a caus rus the ring of lange a 20195 CEdgesition. The Consciousnes Kld Entrop",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Edgesition"
+        },
+        {
+          "kind": "E3_NUM",
+          "token": "20195"
+        }
+      ],
+      "present": []
+    }
+  ]
+}

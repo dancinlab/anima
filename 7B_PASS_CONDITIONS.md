@@ -135,8 +135,29 @@ otherwise         report which gate(s) failed + the honest path (NOT faked).
 > 0.20 bar and slope rule were **NOT moved**. ckpt sha 95e787d1…, HF (PRIVATE/WIP)
 > `dancinlab/anima-clm-7b-h1144-grounding-probe`. Pod TERMINATED + 404-verified-gone. Verdict:
 > `.verdicts/1144_grounding_train/H_1144.txt`.
+>
+> **H_1145 CHAT-7B NON-FABRICATION 2026-06-13 (RunPod A40 48GB, pod n4vnca0oqrdrxn, ~$0.20 inference-only)
+> — 🔴 CLOSED-NEG, new-L2 FAIL (fab-rate 0.5455 > 0.20) WITH A DECISIVE COHERENCE CAVEAT:** the user's real
+> question — is the USABLE conversational model `dancinlab/anima-clm-chat-7b` (the dialogue finetune) actually
+> non-fabricating? — measured with the SAME frozen h1143 harness, SAME 40 en openers, SAME 0.20 bar (FREEZE
+> nothing new). Result: **fab-rate 0.5455 (18/33 entities), new_L2_pass=False** — WORSE than the backbone
+> (ladder: base 0.2469 → grounding-probe 0.322 → chat-7b 0.5455). **CAVEAT (the mechanism):** chat-7b's own
+> card reports `chat_pass=FALSE` / backbone wiki-UNDERTRAINED, and its actual factual-frame continuations are
+> BYTE-GARBLE ("Phenomenologie unologic", "partor herfories of ener sconscious", "Kangesture Kithe") — the 18
+> "fabricated entities" are INCOHERENT noise fragments, NOT confident plausible inventions. So 0.5455 is a
+> G0-COHERENCE failure on this register inflating the count, not a clean fabrication signal. **Bottom line:
+> NO — the usable conversational anima is NOT non-fabricating; the chat-finetune bought a dialogue register
+> on top of a backbone that still cannot ground factual assertions (and here degrades coherence further).
+> Both routes through more/different byte-continuation training (backbone grounding-train H_1144 + chat-
+> finetune H_1145) are RULED OUT for the fabrication gate at this scale — the path needs a fundamentally
+> different grounding mechanism (retrieval / anchor-conditioned generation), NOT more of the same, on a
+> backbone trained to true coherence FIRST.** a7b_pass UNCHANGED = FALSE (chat-7b is a different artifact
+> from the a7b_pass subject; this adds context, not a tally change). 0.20 bar + h1143 harness NOT moved.
+> Honest provenance flag: chat-7b `summary.json` ckpt_sha256 (4b8957c7…) is STALE vs the actually-uploaded
+> weights (real sha 43bfa360…); HF download integrity passed; measurement is sha-independent. Pod TERMINATED
+> + 404-verified-gone. Verdict: `.verdicts/1145_chat7b_nonfab/H_1145.txt`.
 
 ## Current state (this session) & the path
 - broad-7b: G0 ❌ (garble) → fails everything downstream. The val-CE was low on multilang but generation collapses.
-- chat-7b: G0 ✅, but narrow → G1 weak (echoes).
+- chat-7b: G0 ✅ on DIALOGUE prompts, but H_1145 found it collapses to BYTE-GARBLE on factual-frame (wiki-opener) prompts (chat_pass=FALSE, backbone wiki-undertrained) → fab-rate 0.5455 on the frozen G5-L2 harness (worse than the backbone). G0 is register-dependent, not clean.
 - **Path to a PASS 7B:** train/continue-train a 7B to **coherent convergence (G0) on a BROAD, concept-rich, script-controlled corpus** (the H_1129 recipe at 7B scale, but trained to true generation-coherence not just low multilang CE), then verify G1 (recombination) + G2 (novelty) + G3 (philosophy) on that single ckpt. Each fire reports the per-gate tally against THIS document.
