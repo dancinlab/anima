@@ -1,0 +1,76 @@
+H_1150 — PREDICTIVE-CODING PRECISION & ABERRANT-PRECISION HALLUCINATION
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+Run: summer pool host, CPU-only (DEV=cpu, GPU untouched), $0, seed 7, thread-capped (OMP=2) ~33min wall
+     under heavy host contention (load ~24, competing python3 jobs); a default-thread duplicate was 5x
+     slower (12.7min to step 250 vs 0.9min) and was killed as a confirmed redundant deterministic double-spend.
+Harness: UNIVERSE/h1150_precision_hallucination.py
+         (H_1142 ByteGPT trainer + per-step entropy + kwr VERBATIM; H_1141 corpus_absent/content_ngrams VERBATIM)
+
+NEUROSCIENCE GROUNDING (predictive coding / active inference, Friston free-energy):
+  perception balances PRIOR precision vs SENSORY/LIKELIHOOD precision. Hallucination = ABERRANT PRECISION —
+  the prior over-weighted relative to evidence (Powers, Corlett et al, conditioned hallucinations, Science 2017:
+  stronger priors -> hallucinate an absent tone). Reframes the metacog campaign's anti-metacognition finding
+  (H_1148: high-confidence tercile fabricated 2.4x MORE = over-sharp = over-confident prior = more hallucination).
+  In a byte-LM, sampling temperature is an inverse prior-precision knob (low temp = sharp = high prior precision).
+
+=== FROZEN FALSIFIER (pre-registered in .discoveries/1150_precision_hallucination.tape; NO threshold moved) ===
+  F1  Spearman(prior_precision=1/T, fabrication) >= +0.50          (fabrication rises as the prior sharpens)
+  F2  precision-balance brake (mix toward corpus-bigram EVIDENCE when prior over-sharp) cuts fabrication
+      paired Cohen-d >= 0.80 WITHOUT degrading coherence (mean kwr drop <= 0.05 AND no d_degr >= 0.80)
+  CTRL precision-RANDOM (matched alpha, wrong direction) must NOT cut fabrication (random d_fab < balance AND < 0.80)
+  SUPPORTED iff F1 AND F2 AND control; else CLOSED-NEGATIVE; F1-only = partial-publishable.
+
+=== RESULT: F1 FAIL (Spearman +0.037) AND F2 FAIL (coherence collapse) -> CLOSED-NEGATIVE ===
+
+F1  PRECISION -> FABRICATION MONOTONICITY = FAIL
+    Spearman(1/T, fabrication) point-wise = +0.0368   temp-mean = -0.3000   (bar +0.50; n=82 points)
+    per-temp mean fabrication (prior_precision = 1/T):
+      T=1.2 prec=0.833  fab=0.6667 (n=3)    <- high-temp byte-garble => few scorable content-ngrams
+      T=1.0 prec=1.000  fab=0.4375 (n=16)
+      T=0.85 prec=1.176 fab=0.5370 (n=18)
+      T=0.7 prec=1.429  fab=0.5435 (n=18)
+      T=0.5 prec=2.000  fab=0.4562 (n=27)   <- HIGHEST precision had LOWER fab than T=1.2
+    Fabrication is NON-MONOTONIC in prior-precision; the sharpest prior (T=0.5) does NOT fabricate most.
+    At toy scale, sharpening the prior (lower T) makes the model COMMIT to high-corpus-frequency byte
+    sequences => MORE likely to be corpus-PRESENT, not absent => fabrication if anything DROPS. The
+    H_1148 "confident => 2.4x fabrication" effect (a per-generation confidence tercile within a fixed T)
+    does NOT transfer to the temperature/prior-precision knob: confidence-as-realized-entropy and
+    precision-as-temperature are DIFFERENT axes at this scale.
+
+F2  PRECISION-BALANCE BRAKE = FAIL (defect-flagged, correctly gated by coherence)
+    balance d_fab_reduction = +0.9078 (>= 0.80, it DID lower fabrication) BUT
+    coherence DEGRADED: mean kwr 0.587 -> 0.453 (drop 0.134 >> 0.05; d_degr = +1.224 >= 0.80) -> kwr_not_degraded=FALSE
+    n_pairs = ONLY 6 (vs control's 10): mixing the sampling distribution toward the raw corpus-bigram
+    evidence at alpha=0.5 turns coherent text into byte-soup ('serts ist and thes phoin omer, acat prpa'),
+    so most balance generations have NO scorable content-ngrams. The apparent fabrication "cut" is an
+    ARTIFACT of destroying coherent content wholesale, NOT surgical removal of corpus-absent n-grams.
+    The frozen falsifier handled this correctly: F2 requires cut AND coherence-held; coherence collapse fails it.
+
+CTRL PRECISION-RANDOM = PASS (control behaves)
+    random d_fab = +0.144 (< balance 0.908 AND < 0.80) -> does NOT cut fabrication; kwr drop mild (d_degr +0.285).
+
+per-gate: F1=FALSE | F2=FALSE (cut but coherence-collapsed) | control=TRUE  =>  CLOSED-NEGATIVE
+
+=== FINDING (closed-negative, rules out an axis) ===
+Prior-precision-as-temperature does NOT drive corpus-absence hallucination at toy scale (F1 null/anti),
+and the free-energy precision-balance brake (re-weight an over-sharp prior toward the corpus-bigram
+likelihood term) does NOT surgically cut fabrication where the entropy-brake (H_1146) failed — it only
+"cuts" by collapsing coherence (kwr -0.134, d_degr +1.22), which the frozen coherence gate correctly
+rejects. RULES OUT the 'temperature = aberrant-precision => more hallucination' axis AND the
+'mix-toward-bigram-evidence corrects it' axis at toy scale. Unifying lesson with H_1146/H_1148: the
+byte-LM's hallucination (corpus-ABSENCE) is decoupled from BOTH its realized confidence (H_1146) AND its
+prior sharpness (H_1150) — sharpening the prior commits to FREQUENT (=corpus-present) byte-strings, the
+OPPOSITE of the conditioned-hallucination prediction. The H_1148 within-T confident-fabrication effect is
+a different axis from the across-T precision knob; aberrant-precision-as-temperature is not the toy mechanism.
+A faithful free-energy correction needs a TRAINED grounding/likelihood signal, not a raw bigram-mix at inference.
+
+scope: toy ByteGPT d256/4L CPU en-24MB slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope).
+       A larger model with sharper, more semantic priors MAY show the aberrant-precision effect F1 predicts;
+       this toy negative does not rule it out at production scale.
+xref: h1148-metacog-gap (2.4x confident-fabrication seed) · h1146-confidence-gated-brake (entropy-brake failed)
+      · h1142-self-metacognition · h1140-novelty-emergence (fab metric) · a_paper_negative_ok · p7
+      · a_scale_honest_scope · a_substrate_native_speak
+
+config: d=256 n_layer=4 block=128 steps=1500 | temps=[1.2,1.0,0.85,0.7,0.5] f2_temp=0.7 alpha=0.5
+        sharp_pctl=30 win=24 n_win=5 n_prompts=12 seeds=[7,8,9] topk=40 seed=7
+============================================================================

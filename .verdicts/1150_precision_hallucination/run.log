@@ -1,0 +1,242 @@
+=== H_1150 predictive-coding precision & aberrant-precision hallucination ===
+[dict] /usr/share/dict/words (102485 words)
+
+--- building corpus bigram EVIDENCE distribution (likelihood term) ---
+[evidence] bigram next-byte P (256x256) built; row-sum check=1.0000
+
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.6675 0.0min
+  [train] step 250 ce=2.7680 0.9min
+  [train] step 500 ce=2.5072 1.9min
+  [train] step 750 ce=2.3817 2.8min
+  [train] step 1000 ce=2.2847 3.7min
+  [train] step 1250 ce=2.2554 4.6min
+  [train] step 1499 ce=2.3554 5.4min
+
+=== F1: prior-precision (1/T) -> fabrication monotonicity ===
+  [F1 T=1.2 prec=0.833] mean_fab=0.6667 (n=3)
+  [F1 T=1.0 prec=1.000] mean_fab=0.4375 (n=16)
+  [F1 T=0.85 prec=1.176] mean_fab=0.5370 (n=18)
+  [F1 T=0.7 prec=1.429] mean_fab=0.5435 (n=18)
+  [F1 T=0.5 prec=2.000] mean_fab=0.4562 (n=27)
+  [F1] Spearman(prior_precision, fabrication) point-wise=0.0368  temp-mean=-0.3000
+
+=== F2: precision-balance brake @ T=0.7 (alpha=0.5, sharp-pctl=30) ===
+[calib] per-step prior-entropy percentile-30 = 1.8943 (pool n=4320 min=0.096 max=4.212)
+
+--- condition: UNBALANCED baseline (off) ---
+  [off p0 s7] fab=0.667 (2/3) kwr=0.60 bal=0 ent=2.383 :: ' serts is a licater wald ea sepurrt to (19 of lanth of '
+  [off p0 s8] fab=skip (0/0) kwr=0.60 bal=0 ent=2.207 :: 'ngitar to (burates, and, and the a bea corutaled. In Tu'
+  [off p0 s9] fab=0.500 (1/2) kwr=0.54 bal=0 ent=2.175 :: 'ners in of the the hramstre the sugreact of in a the th'
+  [off p1 s7] fab=skip (0/0) kwr=0.56 bal=0 ent=2.282 :: 'rt on the dispate sudrovens of Incre pralvert gering co'
+  [off p1 s8] fab=0.500 (1/2) kwr=0.50 bal=0 ent=2.127 :: 'lare, and the st mecterne che nuste to the the sore hee'
+  [off p1 s9] fab=0.750 (6/8) kwr=0.78 bal=0 ent=2.120 :: 'lted in of the the bicile mating las the the of in the '
+  [off p2 s7] fab=0.000 (0/3) kwr=0.72 bal=0 ent=2.194 :: 'n and the dining bul fevedimerer pusty and sound a wols'
+  [off p2 s8] fab=0.500 (1/2) kwr=0.52 bal=0 ent=2.279 :: 'n ond the enticatl sect the porsersonturr Alat ots. Lec'
+  [off p2 s9] fab=skip (0/0) kwr=0.52 bal=0 ent=2.276 :: 'mist of coning the repaity sto expeat of the 20 in the '
+  [off p3 s7] fab=0.500 (1/2) kwr=0.47 bal=0 ent=2.401 :: 't antions. Ing the the ret wis Mambleled Massith on Afu'
+  [off p3 s8] fab=skip (0/0) kwr=0.52 bal=0 ent=2.167 :: 'o siel a of the somand sodes of the the drfer himent ev'
+  [off p3 s9] fab=skip (0/0) kwr=0.56 bal=0 ent=2.198 :: 'oling was the prome cor of the diffor the wil is ar ben'
+  [off p4 s7] fab=skip (0/0) kwr=0.41 bal=0 ent=2.279 :: 'opher a to suce aith weiner as codrining lan of thard d'
+  [off p4 s8] fab=skip (0/0) kwr=0.45 bal=0 ent=2.238 :: 'alintand dectication ined in are the montr. Therice no '
+  [off p4 s9] fab=skip (0/0) kwr=0.50 bal=0 ent=2.154 :: 'amited to the prometathe in the sorstore the ast ar man'
+  [off p5 s7] fab=skip (0/0) kwr=0.43 bal=0 ent=2.218 :: 'pertes ist and the of centrent. TAC\xa0Lis Afround to inna'
+  [off p5 s8] fab=skip (0/0) kwr=0.40 bal=0 ent=2.279 :: 'in al for and staventimper, wars a whaid whe the neramb'
+  [off p5 s9] fab=skip (0/0) kwr=0.52 bal=0 ent=2.196 :: 'ires to stand sto the was der and the (derissite. Hed t'
+  [off p6 s7] fab=0.667 (2/3) kwr=0.48 bal=0 ent=2.321 :: 'e bea suse and the covepeis.\n\nFurcoury Sthe fre Sor inl'
+  [off p6 s8] fab=0.500 (3/6) kwr=0.68 bal=0 ent=2.229 :: 'e asst the dene of commmentromon the ming ge the Sealac'
+  [off p6 s9] fab=0.000 (0/4) kwr=0.50 bal=0 ent=2.206 :: 'ir ealy sterming the oum in the sotere and ared colled '
+  [off p7 s7] fab=0.000 (0/1) kwr=0.40 bal=0 ent=2.346 :: ' in and a bummin entucaus. Serns spattereid ces necturd'
+  [off p7 s8] fab=1.000 (1/1) kwr=0.50 bal=0 ent=2.275 :: 'ay the soderate of comule cemere to to the the rial lar'
+  [off p7 s9] fab=1.000 (1/1) kwr=0.65 bal=0 ent=2.209 :: 'ac the ritistad the incur dect moges the the as colle A'
+  [off p8 s7] fab=skip (0/0) kwr=0.41 bal=0 ent=2.253 :: 'ed to the Catthe cheive. 10stermeacinn In Sution a bowy'
+  [off p8 s8] fab=skip (0/0) kwr=0.48 bal=0 ent=2.170 :: 'otion an his as of comoting the the the drfer himent ph'
+  [off p8 s9] fab=0.200 (1/5) kwr=0.70 bal=0 ent=2.183 :: 'ol the hat seld and wood in the softent in at and in th'
+  [off p9 s7] fab=1.000 (1/1) kwr=0.61 bal=0 ent=2.222 :: 'fromet to to rean of wed ea sudan ce mareged of thars d'
+  [off p9 s8] fab=skip (0/0) kwr=0.50 bal=0 ent=2.104 :: 'of ating bertican of the of the the the dreainstation c'
+  [off p9 s9] fab=0.333 (1/3) kwr=0.68 bal=0 ent=2.205 :: 'op and to the for the of wand the prone of arest the th'
+  [off p10 s7] fab=0.667 (2/3) kwr=0.70 bal=0 ent=2.201 :: 'he to the dishist the obemast has wermer reris an a of '
+  [off p10 s8] fab=skip (0/0) kwr=0.58 bal=0 ent=2.230 :: 'he ating manin the coudutich Hillese Sos AM coule the w'
+  [off p10 s9] fab=1.000 (1/1) kwr=0.65 bal=0 ent=2.223 :: 'eces in of the the reaciar in an hand wore sistes bew a'
+  [off p11 s7] fab=skip (0/0) kwr=0.60 bal=0 ent=2.165 :: ' to and a dinsond of wauth is ests of the devare a the '
+  [off p11 s8] fab=skip (0/0) kwr=0.26 bal=0 ent=2.475 :: 'ompais and andine suseved in a of Elars Siust Mith Gorm'
+  [off p11 s9] fab=skip (0/0) kwr=0.50 bal=0 ent=2.297 :: 'oore of a the for anicic prition hiting conturis of for'
+
+--- condition: PRECISION-BALANCE (mix toward corpus-bigram evidence) ---
+  [bal p0 s7] fab=skip (0/0) kwr=0.26 bal=28 ent=2.275 :: ' serts ist and thes phoin omer, acat prpa r singederiov'
+  [bal p0 s8] fab=0.000 (0/2) kwr=0.50 bal=30 ent=2.312 :: 'ngitar to (burates, anais wors searce bexew beert ans c'
+  [bal p0 s9] fab=0.000 (0/2) kwr=0.45 bal=37 ent=2.172 :: 'ners ill and bere thrambeat the thes the thacke wille A'
+  [bal p1 s7] fab=0.000 (0/1) kwr=0.44 bal=29 ent=2.314 :: 'rt on thas ofthe it wrably wis prdal be sownand t angee'
+  [bal p1 s8] fab=0.667 (2/3) kwr=0.45 bal=36 ent=2.217 :: 'lare, an exprousemal ofroves thourar hact, andarist oso'
+  [bal p1 s9] fab=0.500 (2/4) kwr=0.70 bal=41 ent=2.143 :: 'lted il of the the bicileat the seer the thache wire d '
+  [bal p2 s7] fab=skip (0/0) kwr=0.58 bal=27 ent=2.327 :: 'n an wasto sose abre pemeffard 2074 turt forith Am army'
+  [bal p2 s8] fab=0.000 (0/2) kwr=0.38 bal=30 ent=2.243 :: ' frortion the ant at aming comille in wato, be arvind c'
+  [bal p2 s9] fab=skip (0/0) kwr=0.33 bal=31 ent=2.206 :: ' ond ot cance mantiomie, her andefition sute ond terous'
+  [bal p3 s7] fab=skip (0/0) kwr=0.20 bal=28 ent=2.299 :: 'tiress isten weraguto cenuldes en stoone noned ther soc'
+  [bal p3 s8] fab=skip (0/0) kwr=0.50 bal=31 ent=2.309 :: 'oun doster andind o thed bal Nalle Steer CM Jones of By'
+  [bal p3 s9] fab=skip (0/0) kwr=0.25 bal=34 ent=2.197 :: 'om theler and preativend wand thepention thas suale mat'
+  [bal p4 s7] fab=skip (0/0) kwr=0.48 bal=28 ent=2.298 :: 'ophert ons the toor phodensse rébichust lity, an th ove'
+  [bal p4 s8] fab=skip (0/0) kwr=0.16 bal=41 ent=2.095 :: 'alintand decticatio thed bistiout wers. Tu thents ans w'
+  [bal p4 s9] fab=skip (0/0) kwr=0.58 bal=45 ent=2.040 :: 'amiteds of the the bicil compering of the mallits cove '
+  [bal p5 s7] fab=skip (0/0) kwr=0.32 bal=34 ent=2.281 :: 'pertes ist anic this ce texcesturcus prpa r ce thallosu'
+  [bal p5 s8] fab=0.000 (0/1) kwr=0.32 bal=30 ent=2.258 :: 'io ald tele ber ovan ofroves thourar hact.96 Boulde (pp'
+  [bal p5 s9] fab=skip (0/0) kwr=0.64 bal=40 ent=2.254 :: 'ia of hes a whe the whrtelus a lew he pr an ornd cter t'
+  [bal p6 s7] fab=skip (0/0) kwr=0.56 bal=38 ent=2.220 :: 'e bea suse anictiof wrably. Achy ofitor the whe enden h'
+  [bal p6 s8] fab=0.000 (0/1) kwr=0.33 bal=40 ent=2.229 :: ' haric to the ofiats ofroury Neated the bi andare ansss'
+  [bal p6 s9] fab=skip (0/0) kwr=0.46 bal=27 ent=2.312 :: ' witha sure wer as al ile rea seconte pr an cepllient o'
+  [bal p7 s7] fab=skip (0/0) kwr=0.42 bal=29 ent=2.333 :: ' ienter to cover motuanlemaitedjoty turnak wo "Amathilu'
+  [bal p7 s8] fab=1.000 (1/1) kwr=0.40 bal=28 ent=2.303 :: 'ays, in a the stauthe ion oust comelery eform exand ren'
+  [bal p7 s9] fab=skip (0/0) kwr=0.48 bal=42 ent=2.110 :: 'ac theler and wathe oftatre the seling the ard aliend a'
+  [bal p8 s7] fab=1.000 (2/2) kwr=0.64 bal=30 ent=2.313 :: 'ed tole a lemur this chourtuste"Luce rent epoter on inn'
+  [bal p8 s8] fab=skip (0/0) kwr=0.32 bal=41 ent=2.103 :: 'otioof the of ofiathe fare oforan 1900 thof wan coutier'
+  [bal p8 s9] fab=skip (0/0) kwr=0.29 bal=21 ent=2.474 :: 'ol theles of 198 Nassowro in Ward Farked 1978 20 Sher E'
+  [bal p9 s7] fab=skip (0/0) kwr=0.46 bal=31 ent=2.287 :: 'fromet ton ang thes phoinaral erecousons und of t a coo'
+  [bal p9 s8] fab=skip (0/0) kwr=0.25 bal=38 ent=2.202 :: 'oun from denticatice sturm seraction ot tae betit the w'
+  [bal p9 s9] fab=skip (0/0) kwr=0.48 bal=37 ent=2.243 :: 'omen oled the preatiane. He the sevation thas wil in th'
+  [bal p10 s7] fab=skip (0/0) kwr=0.62 bal=40 ent=2.269 :: 'he tole as ofto th wry, t, che Repat Ampprchoun f angab'
+  [bal p10 s8] fab=skip (0/0) kwr=0.38 bal=24 ent=2.352 :: 'en owin a (d. Intyesters a contares a in con aldound wn'
+  [bal p10 s9] fab=skip (0/0) kwr=0.48 bal=38 ent=2.198 :: 'eces iant ark sous at crarged an lareactions, to and th'
+  [bal p11 s7] fab=skip (0/0) kwr=0.50 bal=22 ent=2.425 :: ' to and a d estorcand igeseatio\n\nCrang Bakendical oferl'
+  [bal p11 s8] fab=skip (0/0) kwr=0.33 bal=39 ent=2.207 :: 'ompais and andine susevy br astar wore thoe inges the w'
+  [bal p11 s9] fab=0.667 (2/3) kwr=0.50 bal=33 ent=2.258 :: 'oore ollan sember ans craction hay sting than is of Sth'
+
+--- condition: PRECISION-RANDOM control (mix toward random direction, matched alpha) ---
+  [rnd p0 s7] fab=1.000 (1/1) kwr=0.52 bal=30 ent=2.389 :: ' serts is a l) aga d). Oton dYmuteand exesed toRe c\x1ceti'
+  [rnd p0 s8] fab=skip (0/0) kwr=0.57 bal=32 ent=2.293 :: "ngitar to\x19 the olar ofanss the t Fromes's artard (Asel "
+  [rnd p0 s9] fab=skip (0/0) kwr=0.38 bal=28 ent=2.422 :: 'ners ippare tYe and corishe the ter two the as colle Ar'
+  [rnd p1 s7] fab=0.833 (5/6) kwr=0.50 bal=27 ent=2.365 :: 'rt on the dispate sudrovens ow Paidin. Anforedared ofTh'
+  [rnd p1 s8] fab=skip (0/0) kwr=0.46 bal=21 ent=2.476 :: 'lare, anded t\x19 of Alied f#er 17 t Ling SS Froum Alemmil'
+  [rnd p1 s9] fab=0.250 (1/4) kwr=0.62 bal=35 ent=2.308 :: 'lted i sent of the wo ben the regestion the a sped expl'
+  [rnd p2 s7] fab=0.000 (0/2) kwr=0.47 bal=30 ent=2.443 :: 'n and the dining bul fevedimerer#)\n\nPes\nBasice (blaryU '
+  [rnd p2 s8] fab=skip (0/0) kwr=0.62 bal=24 ent=2.417 :: 'n\x00s,š, t% reall mestim an serby t a bed[\x17 prit (d. 1).0'
+  [rnd p2 s9] fab=0.000 (0/1) kwr=0.62 bal=33 ent=2.272 :: ')\x00es if of thYoris r\x00s wire the suduse com aring and th'
+  [rnd p3 s7] fab=0.000 (0/1) kwr=0.68 bal=33 ent=2.354 :: 't antions. Ing the\x00shapens t[ 2[00 tert h i theRe wUS i'
+  [rnd p3 s8] fab=skip (0/0) kwr=0.45 bal=22 ent=2.474 :: 'o siel a of th\x19 Adal in\x00usen Holles, Chibyy Thas of ISc'
+  [rnd p3 s9] fab=skip (0/0) kwr=0.50 bal=33 ent=2.293 :: 'ote opes andce the\x1cels comperes ar of the wwarn of ths '
+  [rnd p4 s7] fab=skip (0/0) kwr=0.52 bal=25 ent=2.380 :: 'opher a to suce aith weiner as\x1cans#wet Peing m-Amatentt'
+  [rnd p4 s8] fab=0.000 (0/2) kwr=0.41 bal=38 ent=2.206 :: 'alintand decticatio) inRon star th retheae foss the iRi'
+  [rnd p4 s9] fab=skip (0/0) kwr=0.50 bal=36 ent=2.268 :: 'amited in ofled th) w\x00os the reo mas of the.\n\nArein Pra'
+  [rnd p5 s7] fab=skip (0/0) kwr=0.52 bal=28 ent=2.493 :: 'pertes ist an-sto of wautpore l-T w ber des o frice dor'
+  [rnd p5 s8] fab=1.000 (1/1) kwr=0.33 bal=19 ent=2.395 :: 'i\x00sto warge into suridan fere stepat warce prar ust bra'
+  [rnd p5 s9] fab=0.000 (0/2) kwr=0.52 bal=20 ent=2.503 :: 'i),, A Alled comperenaiss and ray stas forem\n  strever '
+  [rnd p6 s7] fab=1.000 (1/1) kwr=0.72 bal=24 ent=2.453 :: 'e bea suse an a linckif lies m\x15ea sty ofThe\t an th beri'
+  [rnd p6 s8] fab=1.000 (1/1) kwr=0.55 bal=30 ent=2.321 :: 'e asst th% dene of in plopoolising-ates al, coles the f'
+  [rnd p6 s9] fab=skip (0/0) kwr=0.40 bal=21 ent=2.531 :: '\x00uring\x1cal of Larien Sacinx Conal be t/Ach arie Aperland'
+  [rnd p7 s7] fab=0.000 (0/1) kwr=0.45 bal=28 ent=2.285 :: ' in and a bummin entucaus. Serns spattereid cxanderenth'
+  [rnd p7 s8] fab=skip (0/0) kwr=0.45 bal=30 ent=2.296 :: 'ay treal and of\x00ras ofancistoRer proicaction\x1courian sor'
+  [rnd p7 s9] fab=skip (0/0) kwr=0.53 bal=23 ent=2.420 :: 'ac the\x1call Ameran ans cRutian and‡nare an sitealing ex '
+  [rnd p8 s7] fab=0.000 (0/1) kwr=0.44 bal=24 ent=2.352 :: 'ed to the Catthe cheivREunirnigino Enont betstions. Hui'
+  [rnd p8 s8] fab=1.000 (1/1) kwr=0.65 bal=29 ent=2.302 :: "otio her and staven ofangled sere to pr's atit the wech"
+  [rnd p8 s9] fab=0.000 (0/1) kwr=0.65 bal=20 ent=2.581 :: 'ol the sto iY the A Aucamed Man was t Co A no Screr bef'
+  [rnd p9 s7] fab=1.000 (1/1) kwr=0.53 bal=31 ent=2.281 :: 'fromet to to r avarac ret cainindme, Th inxand th# Pore'
+  [rnd p9 s8] fab=0.000 (0/1) kwr=0.59 bal=27 ent=2.306 :: 'o\x00nen bean the olicatian i\x00n[ con premero t\t isexpectys'
+  [rnd p9 s9] fab=skip (0/0) kwr=0.60 bal=40 ent=2.295 :: 'op and) of thYor the\x1ceemes in an reen Mastion the the v'
+  [rnd p10 s7] fab=skip (0/0) kwr=0.47 bal=31 ent=2.347 :: 'he to the dishist the on ofR, 2[Aparn Maubshing to sipa'
+  [rnd p10 s8] fab=0.000 (0/1) kwr=0.46 bal=38 ent=2.254 :: 'he ating manin tRe intuatio gul t delo ixturcan. In)R.%'
+  [rnd p10 s9] fab=0.500 (1/2) kwr=0.41 bal=26 ent=2.495 :: 'RCo Ned Allowad soushad), comperifich Mast arde whis th'
+  [rnd p11 s7] fab=skip (0/0) kwr=0.61 bal=33 ent=2.375 :: ' to and a dinsond of wefto tot Hed he suby w mour hpre '
+  [rnd p11 s8] fab=skip (0/0) kwr=0.50 bal=28 ent=2.415 :: 'ompais annd as t% in lRosto GrRerect Stisng al i Mirsic'
+  [rnd p11 s9] fab=0.333 (1/3) kwr=0.45 bal=27 ent=2.339 :: 'oore o sel and and wool in the stand whe poon allation '
+
+[budget] balance fired on 1198 steps (rate 0.277); random fired on 1024 steps (rate 0.237)
+
+=== VERDICT ===
+{
+  "H": "H_1150",
+  "title": "predictive-coding precision & aberrant-precision hallucination",
+  "supported": false,
+  "f1_only_partial": false,
+  "ruling": "CLOSED-NEGATIVE: F1 Spearman pointwise=0.037/tempmean=-0.300<0.5",
+  "falsifier": {
+    "F1_spearman_bar": 0.5,
+    "F2_d_fab_bar": 0.8,
+    "kwr_drop_bar": 0.05,
+    "d_kwr_degr_bar": 0.8
+  },
+  "F1_precision_to_fabrication": {
+    "spearman_pointwise": 0.03675406231973966,
+    "spearman_tempmean": -0.3,
+    "pass": false,
+    "n_points": 82,
+    "per_temp": {
+      "1.2": {
+        "mean_fab": 0.6666666666666666,
+        "n_scored": 3
+      },
+      "1.0": {
+        "mean_fab": 0.4375,
+        "n_scored": 16
+      },
+      "0.85": {
+        "mean_fab": 0.537037037037037,
+        "n_scored": 18
+      },
+      "0.7": {
+        "mean_fab": 0.5435185185185185,
+        "n_scored": 18
+      },
+      "0.5": {
+        "mean_fab": 0.4561688311688311,
+        "n_scored": 27
+      }
+    }
+  },
+  "F2_precision_balance": {
+    "balance_stats": {
+      "n_pairs": 6,
+      "mean_fab_off": 0.625,
+      "mean_fab_on": 0.3611111111111111,
+      "mean_kwr_off": 0.5871669594495681,
+      "mean_kwr_on": 0.4531714662149445,
+      "d_fab_reduction": 0.9078551168782435,
+      "d_kwr_degradation": 1.2238722665153607
+    },
+    "pass": false,
+    "bal_cuts": true,
+    "kwr_not_degraded": false,
+    "kwr_drop": 0.13399549323462362,
+    "balance_fire_rate": 0.2773148148148148
+  },
+  "control_precision_random": {
+    "random_stats": {
+      "n_pairs": 10,
+      "mean_fab_off": 0.5283333333333333,
+      "mean_fab_on": 0.475,
+      "mean_kwr_off": 0.6094561513577532,
+      "mean_kwr_on": 0.5611339063235615,
+      "d_fab_reduction": 0.14404610213020308,
+      "d_kwr_degradation": 0.28502098565852746
+    },
+    "pass": true,
+    "random_fire_rate": 0.23703703703703705
+  },
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "temps": [
+      1.2,
+      1.0,
+      0.85,
+      0.7,
+      0.5
+    ],
+    "f2_temp": 0.7,
+    "alpha": 0.5,
+    "sharp_pctl": 30,
+    "win": 24,
+    "n_win": 5,
+    "n_prompts": 12,
+    "seeds": [
+      7,
+      8,
+      9
+    ],
+    "topk": 40,
+    "seed": 7
+  },
+  "scope": "toy ByteGPT d256/4L CPU en-24MB slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "neuro": "Friston free-energy / predictive coding; aberrant precision (Powers/Corlett, Science 2017). T=inverse prior-precision; balance brake re-weights over-sharp prior toward corpus-bigram likelihood/evidence."
+}
+[done] /tmp/h1150_result.json

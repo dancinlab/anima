@@ -1,0 +1,98 @@
+{
+  "H": "H_1150",
+  "title": "predictive-coding precision & aberrant-precision hallucination",
+  "supported": false,
+  "f1_only_partial": false,
+  "ruling": "CLOSED-NEGATIVE: F1 Spearman pointwise=0.037/tempmean=-0.300<0.5",
+  "falsifier": {
+    "F1_spearman_bar": 0.5,
+    "F2_d_fab_bar": 0.8,
+    "kwr_drop_bar": 0.05,
+    "d_kwr_degr_bar": 0.8
+  },
+  "F1_precision_to_fabrication": {
+    "spearman_pointwise": 0.03675406231973966,
+    "spearman_tempmean": -0.3,
+    "pass": false,
+    "n_points": 82,
+    "per_temp": {
+      "1.2": {
+        "mean_fab": 0.6666666666666666,
+        "n_scored": 3
+      },
+      "1.0": {
+        "mean_fab": 0.4375,
+        "n_scored": 16
+      },
+      "0.85": {
+        "mean_fab": 0.537037037037037,
+        "n_scored": 18
+      },
+      "0.7": {
+        "mean_fab": 0.5435185185185185,
+        "n_scored": 18
+      },
+      "0.5": {
+        "mean_fab": 0.4561688311688311,
+        "n_scored": 27
+      }
+    }
+  },
+  "F2_precision_balance": {
+    "balance_stats": {
+      "n_pairs": 6,
+      "mean_fab_off": 0.625,
+      "mean_fab_on": 0.3611111111111111,
+      "mean_kwr_off": 0.5871669594495681,
+      "mean_kwr_on": 0.4531714662149445,
+      "d_fab_reduction": 0.9078551168782435,
+      "d_kwr_degradation": 1.2238722665153607
+    },
+    "pass": false,
+    "bal_cuts": true,
+    "kwr_not_degraded": false,
+    "kwr_drop": 0.13399549323462362,
+    "balance_fire_rate": 0.2773148148148148
+  },
+  "control_precision_random": {
+    "random_stats": {
+      "n_pairs": 10,
+      "mean_fab_off": 0.5283333333333333,
+      "mean_fab_on": 0.475,
+      "mean_kwr_off": 0.6094561513577532,
+      "mean_kwr_on": 0.5611339063235615,
+      "d_fab_reduction": 0.14404610213020308,
+      "d_kwr_degradation": 0.28502098565852746
+    },
+    "pass": true,
+    "random_fire_rate": 0.23703703703703705
+  },
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "temps": [
+      1.2,
+      1.0,
+      0.85,
+      0.7,
+      0.5
+    ],
+    "f2_temp": 0.7,
+    "alpha": 0.5,
+    "sharp_pctl": 30,
+    "win": 24,
+    "n_win": 5,
+    "n_prompts": 12,
+    "seeds": [
+      7,
+      8,
+      9
+    ],
+    "topk": 40,
+    "seed": 7
+  },
+  "scope": "toy ByteGPT d256/4L CPU en-24MB slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "neuro": "Friston free-energy / predictive coding; aberrant precision (Powers/Corlett, Science 2017). T=inverse prior-precision; balance brake re-weights over-sharp prior toward corpus-bigram likelihood/evidence."
+}
