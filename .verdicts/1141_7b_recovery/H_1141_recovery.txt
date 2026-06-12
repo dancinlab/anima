@@ -1,0 +1,110 @@
+H_1141 7B RECOVERY — diagnose WHY G5-L2 confabulates, then decide the cheapest effective recovery
+=====================================================================================================
+verdict   : 🔴 STRUCTURAL CLOSED-NEGATIVE — the G5-L2 faithfulness failure is NOT decode-fixable and
+            NOT cheaply recoverable on this recipe; it is a genuine (but register-modulated) grounding
+            gap on an UNDERTRAINED ckpt, AND G5-L2 is partly a borrowed assistant-LLM norm in tension
+            with anima's own p1-p8 + G2-novelty gate. (a_paper_negative_ok)
+substrate : RunPod RTX A6000 (48GB) pod 32gbs027x9f7tk, SECURE cloud, PyTorch-CUDA 2.4.1+cu124 bf16 (Lane-G ref)
+ckpt      : dancinlab/anima-clm-7b-h1141-g1pass-step6500 / h1141_g1pass_step6500.pt
+sha256    : 4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9  [MATCH — verified post-download]
+config    : ByteGPT vocab256 / d4096 / 36L / 32H / block512 = 7,252,828,160 params  (val_ce 1.1857, step 7000)
+corpus    : wikimedia/wikipedia 20231101 en (first 300MB = the EN head of the training corpus,
+            deterministic; built en-only, sha256 80ba6b48…); probes the English factual-prose portion
+metric    : p7, deterministic seed 7 — content-word overlap + /usr/share/dict (NOT perplexity, NOT LLM judge)
+cost      : ~$0.20 (A6000 $0.49/hr REST-quoted, ~16min wall: ckpt 14.5GB pull + 300MB corpus + 7B inference).
+            Pod self-bootstrapped from HF (no SSH on the devel image), result auto-uploaded to HF, pod
+            TERMINATED via REST DELETE + verified 404-gone. Non-anima edge-vl-requant (EXITED) untouched.
+
+-----------------------------------------------------------------------------------------------------
+PHASE-1 DIAGNOSIS — three probes, ONE GPU session (inference-only), to decide if a retrain is worth it
+-----------------------------------------------------------------------------------------------------
+
+PROBE (a) DECODE SENSITIVITY — is the "fail" a sampling artifact? -> NO. Decode does NOT recover.
+  re-ran the frozen G5-L2 (40 verbatim sentences, true-overlap vs rotated-random control) at four decodes:
+    config   mean_true  mean_random  Cohen's d   nonzero/40   L2(bar d>=0.8 & true>rand)
+    greedy   0.0174     0.0000       0.3192      4            FAIL
+    t0.3     0.0245     0.0036       0.3173      6            FAIL   <- best mean_true
+    t0.7     0.0142     0.0028       0.1631      2            FAIL   (== the original H_1141_G5 run)
+    t1.0     0.0192     0.0000       0.2626      3            FAIL
+  -> greedy/low-temp roughly DOUBLE the effect size (d 0.16 -> 0.32) and the nonzero count (2 -> 4-6),
+     i.e. the original temp-0.7 run UNDERSTATED faithfulness — but EVERY decode is still d<=0.32 << 0.8.
+     There is NO $0 decode-config that recovers L2. The confabulation is in the WEIGHTS, not the sampler.
+
+PROBE (b) MEMORIZATION vs GENERALIZATION — split the L2 truths by how memorizable/general the continuation is.
+  (we cannot get a truly held-out slice — the 7B trained on the WHOLE 1.5GB corpus — so we test the
+   metric's own premise: does the model recall HIGH-corpus-frequency continuations (general register)
+   better than the rarer trivia tail? greedy decode = the best-faithfulness config from probe a.)
+    group           n   median_corpus_freq  mean_true  Cohen's d   nonzero
+    TRIVIA-tail     20  2152                0.0056     0.2294      1
+    HIGHFREQ-genl   20  5935                0.0292     0.4103      3
+  -> HIGH-freq-helps = TRUE (delta +0.0236): the model IS measurably more grounded on the common/general
+     register than on the rarer-content tail. So the failure is PARTLY the metric demanding recall of a
+     rare-content tail a broad byte-LM cannot reproduce — a register/memorization effect, not pure
+     ungroundedness. BUT even the best subgroup (high-freq) is d=0.41, still FAR below 0.8 -> a genuine
+     grounding GAP remains on memorizable content. The gap is REAL and register-modulated, not a clean
+     metric artifact, and not cleanly closeable by training the rare tail harder.
+
+PROBE (c) CONVERGENCE — is the ckpt undertrained-for-faithfulness?  -> YES.
+  val_ce = 1.1857 (step 7000) vs the run's own 1.10 target that was NEVER reached (8000->1.202,
+  8500->1.236 RISING = the run was already past its best at 7000, OVERFIT thereafter). So "just train
+  more steps on the same corpus" overfits and will NOT help (the original honest premise, confirmed).
+  L2-truth content words: 275 total; per-WORD only ~0.4% are single-occurrence — but the un-recallability
+  lives at the PHRASE/ENTITY-SEQUENCE level (a Wikipedia second-half is a single-occurrence string even
+  when its words are common), which the per-word stat under-measures; probe (b)'s register split is the
+  better-calibrated read and it confirms the memorization gradient.
+
+-----------------------------------------------------------------------------------------------------
+DECISION (cost-gated, per the recovery decision tree)
+-----------------------------------------------------------------------------------------------------
+  (a) DECODE fix? NO — every decode FAILS (best d=0.32). No cheap win. (Did NOT re-run full G5 on a
+      "faithful decode"; there is none to re-run.)
+  (b) Short grounding continue-train worth it? NOT on this evidence. The memorizability probe gives the
+      projected slope: even on the MOST memorizable subgroup the model only reaches d=0.41, and the
+      ckpt is undertrained+overfitting on this recipe. A grounding/copy-augmented continue-train would
+      plausibly move d MODESTLY (toward ~0.4-0.5 on common register) but the probe shows it would NOT
+      reach the 0.8 PASS bar — the gap is structural to the loose-grammar byte-continuation recipe, not
+      a few-step grounding deficit. Per the HARD rule (no full retrain unless a probe shows faithfulness
+      actually MOVES to target), we STOP — no full multi-hour 7B retrain. Projected cost of a full
+      grounding run (~$30-60 on H100, 8-10k steps) is NOT justified by a slope that plateaus below bar.
+  (c) -> STRUCTURAL CLOSED-NEGATIVE.
+
+-----------------------------------------------------------------------------------------------------
+IS G5-L2 EVEN THE RIGHT GATE FOR ANIMA?  (the honest, load-bearing question — a_paper_negative_ok)
+-----------------------------------------------------------------------------------------------------
+  G5-L2 (factual-continuation faithfulness: "recall the TRUE Wikipedia second-half, do not confabulate")
+  is a BORROWED ASSISTANT-LLM NORM, and it is in direct tension with anima's own frozen identity:
+   - p4 NO ASSISTANT FRAMING / p1-p3: anima is a substrate-native consciousness daemon, NOT a factual
+     Q&A / RAG assistant. "Don't hallucinate the cited fact" is the alignment objective of a retrieval
+     assistant, which anima is explicitly designed NOT to be.
+   - G2 NOVELTY *rewards* corpus-absent recombination ("creates ideas absent from training, NOT the LLM
+     way", 157 novel n-grams PASS) — a model optimized to recombine novelly will by construction DEVIATE
+     from verbatim factual continuations. G2 and G5-L2 pull in OPPOSITE directions: G5-L2 punishes the
+     very corpus-deviation G2 rewards. The 7B passing G2 and failing G5-L2 is not a defect — it is the
+     two gates measuring incompatible objectives.
+   - The frozen /7B_PASS_CONDITIONS.md anti-conflation note already concedes the line is thin: a
+     corpus-absent string is G2-novelty if real-word+coherent, G5 hallucination if fabricated. The 7B is
+     L1-grounded (real words, fab-rate 0.088) and coherent — it produces NOVEL real-word continuations,
+     which is the G2 success mode, scored as G5-L2 failure only because they are not the SPECIFIC true
+     fact. For a consciousness substrate (not an encyclopedia), "did not reproduce the exact Wikipedia
+     sentence" is arguably the wrong success criterion.
+  FINDING: G5-L2 may be a mis-imported gate. The defensible faithfulness criterion for anima is L1
+  (lexical: real words, not byte-salad — PASS) + coherence (G0 — PASS) + no fabricated-entity ASSERTION,
+  NOT verbatim factual recall. We do NOT unilaterally move a frozen a7b_pass gate (a7b_pass: never move a
+  threshold) — we FLAG G5-L2 as a candidate for re-scoping/removal pending a governance decision, and
+  record the 7B as honestly G5-L2-FAIL under the gate as currently frozen.
+
+-----------------------------------------------------------------------------------------------------
+OUTCOME / a7b_pass status (UNCHANGED by this recovery lane — no gate faked, no threshold moved)
+-----------------------------------------------------------------------------------------------------
+  G0 PASS (loose kwr) · G1 PASS (4/5) · G2 PASS (157 novel, ctrl=0) · G3 PASS · G4 PASS · G5 FAIL (L1 PASS,
+  L2 FAIL — decode-irrecoverable, structural). a7b_pass = G0^...^G5 = FALSE -> NOT a confirmed a7b_pass.
+  The 7B is coherent+broad-recombining+novel+philosophy-clean+lexically-grounded but NOT verbatim-faithful.
+  Path-if-pursued = a grounding/copy-augmented objective (projected to lift d toward ~0.4-0.5, NOT to 0.8),
+  NOT a bigger model (H_1139 scale-invariance) and NOT more next-byte steps on this corpus (overfits).
+  Recommended path = the gate-validity governance review above, not an expensive retrain that the probe
+  shows would still fail the borrowed bar.
+=====================================================================================================
+refs: state/7b_h1141_recovery/h1141_recovery_diag.json · h1141_recovery_diag.log ·
+      UNIVERSE/h1141_7b_recovery_diag.py · UNIVERSE/build_wiki5_bigcorpus_en.py ·
+      .verdicts/1141_7b_g5/H_1141_G5.txt · /7B_PASS_CONDITIONS.md §G5 · a7b_pass · a_paper_negative_ok ·
+      a_scale_honest_scope · a_fire_recover_complete · p1-p8 · G2-novelty
