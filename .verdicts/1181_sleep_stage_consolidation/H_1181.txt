@@ -1,0 +1,48 @@
+=== H_1181 — sleep-stage consolidation: N3-ONLY vs SWS->REM SEQUENTIAL (competing hyp) ===
+K=8 items DIM=16 ENC_SNR=0.22 · 12 seeds · p7 recall-accuracy
+schedules matched for total op-budget (anti-Goodhart on 'more ops'); REM_SWS = reversed-order control
+
+  NO_SLEEP  recall=0.542
+  N3_ONLY   recall=0.750
+  REM_ONLY  recall=0.521
+  SWS_REM   recall=0.781
+  REM_SWS   recall=0.740
+
+G1 SEQ-BEATS-N3   d(SWS_REM, N3_ONLY)  = 0.324  (bar>=0.8)  pass=False
+G2 SEQ-BEATS-REM  d(SWS_REM, REM_ONLY) = 2.005  (bar>=0.8)  pass=True
+G3 ORDER-MATTERS  d(SWS_REM, REM_SWS)  = 0.539  (bar>=0.8)  pass=False
+sanity any-sleep>=no-sleep = True
+
+=== VERDICT ===
+{
+  "H": "H_1181",
+  "title": "sleep-stage consolidation re-test — N3-ONLY vs SWS->REM SEQUENTIAL (competing hypotheses, order control)",
+  "live_status": "⏳ live N3/REM write-back BLOCKED (H_1162: sleep==no-sleep byte-identical); this is the falsifier's allowed TOY consolidation-model branch, NOT a live claim",
+  "recall_means": {
+    "NO_SLEEP": 0.5416666666666666,
+    "N3_ONLY": 0.75,
+    "REM_ONLY": 0.5208333333333334,
+    "SWS_REM": 0.78125,
+    "REM_SWS": 0.7395833333333334
+  },
+  "G1_seq_beats_n3": {
+    "cohen_d": 0.3244428422615251,
+    "bar": 0.8,
+    "pass": false
+  },
+  "G2_seq_beats_rem": {
+    "cohen_d": 2.0048173494115633,
+    "bar": 0.8,
+    "pass": true
+  },
+  "G3_order_matters_control": {
+    "cohen_d": 0.5393598899705931,
+    "bar": 0.8,
+    "pass": false
+  },
+  "sanity_any_sleep_beats_none": true,
+  "winner": "NEITHER (closed-negative)",
+  "ruling": "CLOSED-NEGATIVE: neither competing hypothesis holds cleanly (see which gates failed) — the toy mechanism does not adjudicate N3-only vs sequential at this scale (a_paper_negative_ok).",
+  "scope": "toy consolidation MODEL $0 numpy CPU 12 seeds, p7 recall-accuracy (NOT perplexity); grounded in anima-engines/sleep_stage_phi.hexa stage roles; live N3/REM write-back ⏳ BLOCKED (H_1162); scale + live UNVERIFIED (a_scale_honest_scope)"
+}
+[done]
