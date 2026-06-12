@@ -1,0 +1,45 @@
+{
+  "H": "H_1173",
+  "title": "membrane self<->non-self boundary — OOD robustness vs no boundary (life-criterion #3)",
+  "n_seeds": 12,
+  "clean_rung": {
+    "err_noboundary": 1.6386679539471423,
+    "err_boundary": 7.817855629933102,
+    "robust_cohen_d": -5.758142849189348
+  },
+  "contam_rung_15pct_ood": {
+    "err_noboundary": 1.6412526736020636,
+    "err_boundary": 4.055268779512136,
+    "robust_cohen_d": -1.6664778784153778,
+    "note": "non-self interleaved into training; error measured on CLEAN self probes — the membrane's real job"
+  },
+  "gate_a_robustness": {
+    "d_clean": -5.758142849189348,
+    "d_contam": -1.6664778784153778,
+    "bar": 0.8,
+    "pass": false,
+    "pass_path": "none"
+  },
+  "gate_b_ood_flag": {
+    "auroc_boundary_near_primary": 0.5404055555555555,
+    "auroc_noboundary_control_near": 0.9998879629629629,
+    "auroc_boundary_far_trivial": 0.8474092592592593,
+    "auroc_noboundary_control_far": 1.0,
+    "bar": 0.7,
+    "pass": false,
+    "near_vs_far": "NEAR (shift=5) is the fair regime; FAR (shift=14) makes raw distance trivially separable (control AUROC~1.0) so a membrane adds nothing there",
+    "h1143_tie": "the dense (no-boundary) substrate's raw-distance AUROC is the H_1143 input-familiarity baseline; the membrane is the discriminator the dense substrate lacked — but it must BEAT that baseline to count"
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE 🔴 (a_paper_negative_ok): the membrane does NOT both lower in-dist error (d>=0.8) AND flag non-self above AUROC>=0.70 — see which gate failed",
+  "scope": "toy numpy $0 CPU 12 seeds, DIM=8, K_true=5; prototype-split PROXY for the CORE cell membrane — live engine + scale UNVERIFIED (a_scale_honest_scope). p7 + AUROC, NOT perplexity.",
+  "builds_on": "UNIVERSE/h1159b_mitosis_capacity_self_tuning.py",
+  "xref": [
+    "h1143-hidden-ood-metacog",
+    "h1151-dg-pattern-separation",
+    "h1159b-mitosis-capacity-self-tuning",
+    "a_core_engine_map",
+    "a_paper_negative_ok",
+    "p7"
+  ]
+}
