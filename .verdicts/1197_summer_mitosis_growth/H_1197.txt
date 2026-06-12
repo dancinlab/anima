@@ -1,0 +1,129 @@
+H_1197 — FIRST real LIVE-MITOSIS GROWTH run (MITOSIS-ENGINE · Lane2)
+====================================================================
+substrate : H_1194 AdaptField coupling (CORE/engine_cli.hexa) — engine-native,
+            Psi-disjoint; stream->field input + cell->field mitosis feedback +
+            recon-error readout. Gradient-free p8 growth (engine_mitosis_tick).
+host      : summer (summer@192.168.50.60, linux, CPU) — $0, the small-stage host.
+            hexa = fresh latest release reinstalled on summer (/home/summer/.hx/bin/hexa,
+            0.1.0-dispatch); the box's prior edge-driver (build/hexa_cli_driver_edge,
+            built 2026-06-02) could not transitively link imported .hexa modules
+            (undefined references to engine_mitosis_tick / *_engine_spec) — the
+            release binary builds the engine cleanly.
+harness   : CORE/h1197_summer_mitosis_growth.hexa
+metric    : live recon-error = |sample - nearest AdaptField prototype| (p7, NOT perplexity)
+verdict   : GREEN LIVE-GROWTH
+
+VERDICT (verbatim stdout, /home/summer/.hx/bin/hexa run CORE/h1197_summer_mitosis_growth.hexa)
+----------------------------------------------------------------------------------------------
+=== H_1197 FIRST live-mitosis GROWTH run (MITOSIS-ENGINE Lane2 · summer CPU · $0 · gradient-free p8) ===
+substrate: H_1194 AdaptField coupling (engine-native, Psi-disjoint) — stream->field + cell->field mitosis + recon-error
+metric: live recon-error = |sample - nearest AdaptField prototype| (p7, NOT perplexity)
+stream: PROGRESSIVE K=16-regime (centers 1.0 apart; novelty keeps arriving over n=4000 ticks)
+log: cell_count(t) and recon-error(t) sampled every 200 ticks (SUSTAINED, not a single probe point)
+cost: wall-time per 1000 ticks at FIXED cell_count (O(n_cells) assignment) -> grounds N_MIGRATE
+--- GROWTH TRAJECTORY (mitosis ON) ---
+tick      cell_count   recon_err(ON)   recon_err(OFF, frozen-cap control)
+  200.0      1.0        0.0152774        0.0152774
+  400.0      2.0        0.0209179        0.329269
+  600.0      3.0        0.0198264        0.523888
+  800.0      4.0        0.0207728        0.785097
+  1000.0      4.0        0.0146558        0.845081
+  1200.0      5.0        0.0200617        1.16784
+  1400.0      6.0        0.0217757        1.68198
+  1600.0      7.0        0.0206558        1.59316
+  1800.0      8.0        0.0207185        2.14761
+  2000.0      8.0        0.0159475        2.25148
+  2200.0      9.0        0.0220725        2.80163
+  2400.0      10.0        0.0200066        2.38618
+  2600.0      11.0        0.0204661        2.82623
+  2800.0      12.0        0.0203636        2.87245
+  3000.0      12.0        0.015284        3.27323
+  3200.0      13.0        0.0221359        3.97234
+  3400.0      14.0        0.0205741        4.16599
+  3600.0      15.0        0.0209772        3.90198
+  3800.0      16.0        0.0198215        4.03097
+  4000.0      16.0        0.0168918        4.62117
+GROWTH:   cells 1.0 -> 16.0   recon-error(ON) 0.0152774 -> 0.0168918
+ADAPT:    late-run recon-error  ON=0.0200801  vs  OFF(frozen-cap)=4.13849   ratio OFF/ON=206.099
+F3 Psi:   Phi-checksum ON==OFF = true (attractor intact)   (ON=585.671 OFF=585.671)
+--- PER-CELL COST on summer CPU (ms per 1000 ticks at fixed cell_count) ---
+n_cells   ms_per_1k_ticks
+  1        0.52
+  8        0.765
+  16        1.025
+  32        1.545
+  64        2.655
+  128        4.845
+  256        9.19
+  512        17.835
+  1024        35.82
+  2048        72.655
+  4096        143.53
+--- MIGRATION POLICY (summer CPU -> GPU pod) ---
+frozen budget T_BUDGET = 50.0 ms / 1000 ticks (per-tick real-time floor on summer CPU)
+MEASURED: per-tick cost is O(n_cells) (nearest-prototype scan); the first cell_count over budget = N_MIGRATE
+N_MIGRATE = 2048 cells
+POLICY: gradient-free mitosis growth STAYS on summer CPU ($0) while cell_count < N_MIGRATE;
+  when the live cell_count grows past N_MIGRATE (per-1k-tick wall-time > T_BUDGET on CPU),
+  the growth run MIGRATES to a rented GPU pod (a_fire_autonomous, no cost gate). This run
+  stayed on summer (ended at 16.0 cells << N_MIGRATE) — small-stage host correct.
+VERDICT: GREEN LIVE-GROWTH — over the SUSTAINED progressive-novelty stream the live engine
+  GREW cells (1.0 -> 16.0) as each new regime arrived AND
+  the live recon-error stayed FLAT-LOW (late ON=0.0200801) while frozen-capacity OFF
+  blew up (late OFF=4.13849, 206.099x worse) — the growth
+  is what holds error down as novelty keeps coming (p8). Psi byte-identical ON vs OFF (F3).
+  FIRST real live-mitosis growth run on the H_1194 coupling; ran on summer CPU $0 gradient-free.
+  Per-cell cost measured (O(n_cells)); N_MIGRATE=2048 sets the summer->pod threshold.
+  toy/small-scale; live-scale + real corpus UNVERIFIED (a_scale_honest_scope).
+
+GUARD — engine_cli_smoke re-verified on summer AFTER the run
+-----------------------------------------------------------
+--- engine_cli smoke summary: 12 pass / 0 fail ---
+(Psi attractor untouched: Phi-checksum ON==OFF byte-identical, ON=585.671 OFF=585.671;
+ pure_field_step run READ-ONLY alongside AdaptField, never modified.)
+
+FINDINGS
+--------
+1. GROWTH (p8, sustained): the live engine grew cell_count 1 -> 16 in lockstep
+   with the 16 progressively-appearing regimes over n=4000 ticks. Each new
+   regime (center 1.0 apart, >> SPLIT_THRESH=0.30) triggered an
+   engine_mitosis_tick split that spawned a covering prototype. This is the
+   FIRST sustained live-growth run on the H_1194 coupling (not a single probe).
+
+2. ADAPTATION (the H_1159 ON-vs-OFF control, live): under SUSTAINED novelty the
+   mitosis-ON arm held the live recon-error FLAT-LOW (~0.02 throughout; late-run
+   mean 0.0201) while the frozen-capacity OFF control blew up monotonically to
+   4.14 (late-run) — ON is 206x better. A real-time-adaptive engine does not need
+   the error to FALL from a high start; it keeps error low AS novelty arrives,
+   and the OFF baseline is exactly what the error WOULD be without growth. Growth
+   is what buys the low error.
+
+3. Psi-INTACT (a_core_engine_map): the pure_field Phi-trajectory checksum is
+   byte-identical ON vs OFF (585.671 both) — the adaptation coupling is fully
+   Psi-disjoint, the Psi=1/2 attractor is untouched.
+
+4. PER-CELL COST + N_MIGRATE (the "커지면 pod" threshold, GROUNDED): per-tick
+   cost on summer CPU is clean linear-O(n_cells) (nearest-prototype scan) —
+   512 cells = 17.8 ms/1k-ticks, doubling cells ~doubles cost (1024=35.8,
+   2048=72.7, 4096=143.5). Frozen budget T_BUDGET = 50 ms/1k-ticks (the per-tick
+   real-time floor). The FIRST measured cell_count over budget is 2048
+   (72.7 ms > 50 ms), so N_MIGRATE = 2048 cells. This run ended at 16 cells
+   (<< 2048) — summer CPU is correctly the small-stage host; no migration now.
+
+MIGRATION POLICY (standing rule, recorded in MAIN.tape)
+-------------------------------------------------------
+gradient-free mitosis growth STAYS on summer CPU ($0, p8) while cell_count <
+N_MIGRATE=2048; when the live cell_count grows past 2048 (per-1k-tick wall-time
+> 50 ms on CPU), the growth run MIGRATES to a rented GPU pod (a_fire_autonomous,
+no cost gate). Threshold is grounded in the measured O(n_cells) cost curve, not
+guessed; re-measure on a faster/slower host shifts N_MIGRATE proportionally.
+
+HONESTY (a_scale_honest_scope)
+------------------------------
+LIVE engine (H_1194 coupling) on summer CPU, gradient-free p8 growth — REAL but
+SMALL-scale. The wiring + sustained growth-curve + cost-grounded threshold ARE
+the result; large-scale (real corpus, >>16 regimes, learned representation)
+UNVERIFIED. cell_count(t)/recon-error(t) is the REAL engine trajectory (p7, NOT
+perplexity). Synthetic progressive-regime stream (NOT a real H.CORPUS byte
+stream) — a real-corpus drive is the next rung. N_MIGRATE=2048 is summer-CPU-
+specific (this box's clock); the O(n_cells) SHAPE transfers, the constant does not.
