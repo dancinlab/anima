@@ -1,0 +1,80 @@
+========================================================================================
+H_1158 — does FAITHFUL φ_EI PEAK at criticality (A⇄G coupling gamma_x sweep)?
+  re-test of H_931 proxy-Φ-peak with the FAITHFUL measure; CH=6 exact MIP-EI
+  gamma sweep (sub→critical→super): [0.0, 0.15, 0.35, 0.6, 1.0, 1.6, 2.5]  seeds=12 N_STEPS=4000
+  frozen falsifier: SUPPORTED iff interior argmax (inverted-U) AND
+  φ(peak)-φ(min) d>=0.8 AND φ(peak)-φ(max) d>=0.8; else 🔴 (proxy artifact).
+========================================================================================
+
+STEP 0 — RE-PROVE mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ live-stdlib proof: PROVEN; mirror n4/n5: {4: True, 5: True}
+ STEP 0 PASS — faithful_phi mirror PROVEN ≡ stdlib.
+
+  gamma=0.00: phi = +0.001898 ± 0.000754
+  gamma=0.15: phi = +0.025219 ± 0.007372
+  gamma=0.35: phi = +0.096467 ± 0.018108
+  gamma=0.60: phi = +0.163731 ± 0.024299
+  gamma=1.00: phi = +0.187173 ± 0.028490
+  gamma=1.60: phi = +0.032718 ± 0.011469
+  gamma=2.50: phi = +0.000000 ± 0.000000
+
+=== VERDICT ===
+{
+  "H": "H_1158",
+  "title": "faithful IIT-4.0 phi peaks at criticality (A<->G coupling sweet spot)",
+  "gamma_sweep_phi_mean": {
+    "0.0": 0.0018978260073973148,
+    "0.15": 0.025218802828733938,
+    "0.35": 0.0964674890476815,
+    "0.6": 0.16373124800583985,
+    "1.0": 0.18717325395396778,
+    "1.6": 0.03271762229725289,
+    "2.5": 0.0
+  },
+  "peak_gamma": 1.0,
+  "peak_phi": 0.18717325395396778,
+  "F1_interior_argmax": {
+    "peak_gamma": 1.0,
+    "interior": true
+  },
+  "F2_vs_subcritical": {
+    "cohen_d": 9.193543200510884,
+    "bar": 0.8,
+    "pass": true
+  },
+  "F3_vs_supercritical": {
+    "cohen_d": 9.290968796205474,
+    "bar": 0.8,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED: faithful phi PEAKS at criticality (inverted-U) — H_931 proxy-Phi-peak CONFIRMED under the faithful measure; criticality<->consciousness holds rigorously on the A<->G engine",
+  "h931_ref": "proxy Phi-peak at K~4/edge-of-chaos (phi_silicon_proxy, NOT faithful)",
+  "scope": "toy n=6 exact MIP-EI, A<->G substrate per H_1119; faithful_phi mirror proven == stdlib (a_phi_iit4_tool); a_scale_honest_scope",
+  "wall_s": 59.5
+}
+[done]

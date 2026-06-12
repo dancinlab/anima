@@ -1,0 +1,82 @@
+=== H_1157 alignment coverage sweep ===
+[lex] 27 trainable + 8 held-out
+--- K=0 control (no alignment) ---
+  [K=0] step 0 loss=5.7224
+  [K=0] step 700 loss=2.4288
+  [K=0] step 1400 loss=2.3230
+  [K=0] step 2100 loss=2.2669
+  [K=0] step 2199 loss=2.0839
+  [K0-ctrl] held-out d=-0.1940 same=0.185 diff=0.236
+--- K=8 alignment ---
+  [K=8] step 0 loss=6.6945
+  [K=8] step 700 loss=2.4689
+  [K=8] step 1400 loss=2.3489
+  [K=8] step 2100 loss=2.2878
+  [K=8] step 2199 loss=2.1069
+  [K8] held-out d=-0.0788 same=0.244 diff=0.263
+--- K=27 alignment ---
+  [K=27] step 0 loss=6.7264
+  [K=27] step 700 loss=2.5008
+  [K=27] step 1400 loss=2.3527
+  [K=27] step 2100 loss=2.2884
+  [K=27] step 2199 loss=2.1021
+  [K27] held-out d=-0.1160 same=0.060 diff=0.093
+=== VERDICT ===
+{
+  "H": "H_1157",
+  "title": "alignment coverage sweep — does more parallel coverage build a general interlingua bridge",
+  "curve_heldout_d": {
+    "0": -0.19402933382876592,
+    "8": -0.07878684362823848,
+    "27": -0.11596318664774213
+  },
+  "F1_K27": {
+    "d": -0.11596318664774213,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_climb": {
+    "delta_8_to_27": -0.03717634301950365,
+    "bar": 0.5,
+    "pass": false
+  },
+  "control_K0": {
+    "d": -0.19402933382876592,
+    "bar_max": 0.3,
+    "pass": true
+  },
+  "h1156_8pair_heldout": -0.0625,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: held-out stays ~0 even at K=27 — coverage-INDEPENDENT byte siloing; partial alignment never generalizes, path-1 needs ~FULL translation coverage (= a translation model), not partial pairs",
+  "honest": "hand-curated 35-concept 5-lang lexicon (minor translation noise possible); toy d256/4L; coverage sweep 0/8/27 only (a_scale_honest_scope)"
+}
+[done] /tmp/h1157_result.json
+=== JSON ===
+{
+  "H": "H_1157",
+  "title": "alignment coverage sweep — does more parallel coverage build a general interlingua bridge",
+  "curve_heldout_d": {
+    "0": -0.19402933382876592,
+    "8": -0.07878684362823848,
+    "27": -0.11596318664774213
+  },
+  "F1_K27": {
+    "d": -0.11596318664774213,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_climb": {
+    "delta_8_to_27": -0.03717634301950365,
+    "bar": 0.5,
+    "pass": false
+  },
+  "control_K0": {
+    "d": -0.19402933382876592,
+    "bar_max": 0.3,
+    "pass": true
+  },
+  "h1156_8pair_heldout": -0.0625,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: held-out stays ~0 even at K=27 — coverage-INDEPENDENT byte siloing; partial alignment never generalizes, path-1 needs ~FULL translation coverage (= a translation model), not partial pairs",
+  "honest": "hand-curated 35-concept 5-lang lexicon (minor translation noise possible); toy d256/4L; coverage sweep 0/8/27 only (a_scale_honest_scope)"
+}
