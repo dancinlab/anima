@@ -1,0 +1,141 @@
+=== H_1189 — SIMULTANEOUS multi-modal (TEXT+AUDIO+IMAGE at the same tick): super-additive (F1) AND temporal (F2)? ===
+  shared scene timeline stage[t] drives all 3 modalities (동시); fused = [audio|text|image] 24-d -> DIM=8 via FIXED seeded projection
+  cap ladder K=[4, 6, 8, 12, 16, 24, 32, 48, 64]; per-stream K*=argmax d(DERIVATIVE,METRONOME); 10 seeds; reuses H_1163 grow_arm/stage_decode VERBATIM
+
+  audio  K*= 32  deriv_acc=0.5954  metro_acc=0.3907  d_real=+1.220  d_shuf=+0.352  drop=+0.869
+  text   K*= 32  deriv_acc=0.6152  metro_acc=0.3811  d_real=+1.232  d_shuf=+0.519  drop=+0.713
+  image  K*= 24  deriv_acc=0.8272  metro_acc=0.5233  d_real=+1.814  d_shuf=+0.057  drop=+1.757
+  FUSED  K*= 12  deriv_acc=0.3490  metro_acc=0.1600  d_real=+1.282  d_shuf=-0.434  drop=+1.716
+  (decode chance = 0.1667)
+
+=== VERDICT ===
+{
+  "H": "H_1189",
+  "title": "SIMULTANEOUS multi-modal input (TEXT+AUDIO+IMAGE at the same tick): does fusing 3 concurrent modalities give the derivative-tick coverage mechanism a SUPER-ADDITIVE benefit (fused > best single) AND is it TEMPORAL (killed by time-shuffle)?",
+  "frozen_falsifier": {
+    "F1": "FUSED derivative decode-acc beats BEST single modality, paired d(fused-best)>=0.5",
+    "F2": "FUSED d(DERIVATIVE,METRONOME) advantage is temporal, drop=d_real-d_shuf>=0.5 at K*",
+    "SUPPORTED": "F1 and F2 (simultaneous fusion helps super-additively AND temporally)",
+    "metric": "clm-time-encoding STAGE-DECODE accuracy of the DERIVATIVE arm (p7, NOT perplexity)"
+  },
+  "cap_ladder": [
+    4,
+    6,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64
+  ],
+  "decode_chance": 0.16666666666666666,
+  "per_stream": {
+    "audio": {
+      "name": "audio",
+      "K_star": 32,
+      "deriv_acc_mean": 0.5954166666666667,
+      "metro_acc_mean": 0.3907083333333334,
+      "d_real": 1.2204999827732324,
+      "d_shuf": 0.3516395931875583,
+      "drop": 0.8688603895856741
+    },
+    "text": {
+      "name": "text",
+      "K_star": 32,
+      "deriv_acc_mean": 0.61525,
+      "metro_acc_mean": 0.381125,
+      "d_real": 1.2323883099547952,
+      "d_shuf": 0.5190721677512902,
+      "drop": 0.713316142203505
+    },
+    "image": {
+      "name": "image",
+      "K_star": 24,
+      "deriv_acc_mean": 0.8271666666666666,
+      "metro_acc_mean": 0.5233333333333333,
+      "d_real": 1.8142662797523,
+      "d_shuf": 0.0568331401585574,
+      "drop": 1.7574331395937426
+    },
+    "FUSED": {
+      "name": "FUSED",
+      "K_star": 12,
+      "deriv_acc_mean": 0.34900000000000003,
+      "metro_acc_mean": 0.15995833333333334,
+      "d_real": 1.2820312740094886,
+      "d_shuf": -0.4340566926379575,
+      "drop": 1.716087966647446
+    }
+  },
+  "curves": {
+    "audio": {
+      "4": 0.3333333333333333,
+      "6": -0.2908842506149836,
+      "8": -0.44036683035224106,
+      "12": 0.542831271843128,
+      "16": 0.0257460364037397,
+      "24": 0.559713294733003,
+      "32": 1.2204999827732324,
+      "48": 0.044941315933190194,
+      "64": 0.5912589248740779
+    },
+    "text": {
+      "4": 0.5132215646064561,
+      "6": -0.41176999836672623,
+      "8": -0.28656227153433295,
+      "12": 0.15502827079489545,
+      "16": 0.2767267472055464,
+      "24": 1.1512898767753341,
+      "32": 1.2323883099547952,
+      "48": 0.08894971506474082,
+      "64": -0.3252731008798292
+    },
+    "image": {
+      "4": 0.6257264836658919,
+      "6": 0.11484536415650526,
+      "8": 0.5456449045401046,
+      "12": 0.9516566055774965,
+      "16": 1.441436374630737,
+      "24": 1.8142662797523,
+      "32": 1.3690881650969258,
+      "48": 0.5917732813541671,
+      "64": -0.24005086894391797
+    },
+    "FUSED": {
+      "4": 0.7907622948742731,
+      "6": 0.05280904953598036,
+      "8": -0.07407085599291689,
+      "12": 1.2820312740094886,
+      "16": 1.0845208527982013,
+      "24": 0.6705630473581613,
+      "32": 0.33740683662059484,
+      "48": 0.08947957337688459,
+      "64": -0.9429839304218588
+    }
+  },
+  "F1_super_additive": {
+    "best_single_modality_on_mean": "image",
+    "fused_deriv_acc_mean": 0.34900000000000003,
+    "best_single_deriv_acc_mean": 0.8367083333333334,
+    "fused_minus_best_single_mean": -0.4877083333333333,
+    "d_fused_vs_best_single_paired": -2.7869185859399708,
+    "bar": 0.5,
+    "pass": false,
+    "note": "best_single = per-seed max over {audio,text,image} own-K* derivative acc (strong baseline)"
+  },
+  "F2_temporal": {
+    "K_star": 12,
+    "d_real": 1.2820312740094886,
+    "d_shuf": -0.4340566926379575,
+    "drop": 1.716087966647446,
+    "bar": 0.5,
+    "pass": true
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: F1 fail: FUSED does NOT beat the best single modality (image) super-additively — d(fused - best_single)=-2.79 < 0.5 (Δacc=-0.488); fusion ~= best part, NOT super-additive (echoing H_1170's surface-gated collapse — label-only alignment is not enough)",
+  "surface_vs_label_note": "The 3 sub-modalities (drift-tone audio / byte-feature text / static spatial image) share ONLY the abstract regime LABEL stage[t], NOT a common surface alphabet (cf H_1170, where ONLY the monotone-byte text↔audio bridge survived). The fusion's surface bridge is the FIXED 24->8 random projection, which MIXES the three geometries into a shared 8-d surface. So this tests whether SIMULTANEITY (same stage, same t, fused before decode) + a shared projection surface manufactures the super-additive benefit that H_1170's MISALIGNED cross-type pairing could not. It did NOT exceed the best single part — consistent with H_1170: label-only alignment (no preserved per-modality surface correspondence) does not manufacture super-additivity; the fused projection only RECOVERS the strongest part, it does not exceed it.",
+  "scope": "TOY ($0 CPU numpy, 10 seeds). Reuses H_1163 grow_arm/stage_decode_accuracy/cohen_d_paired/SEEDS/N_REGIMES_AUDIO VERBATIM. The 3 'modalities' are TOY synthetic geometries (drift-tone / byte-feature / static spatial pattern) sharing a SAME 24->8 random-projection surface — NOT real TTS / images / learned encoders (cf H_1170 toy renderings). DIM=8 (the grow_arm contract); fused 24-d is projected to 8, NOT widened. Live CORE engine_mitosis_tick + real modalities + production scale UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope). Lane-M gradient-free growth lane (separate from Lane A AKIDA / Lane G forge / Lane P torch, a_lane_akida_gpu_split)."
+}
+
+[done]
