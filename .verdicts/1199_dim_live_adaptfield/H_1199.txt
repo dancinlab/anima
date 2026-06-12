@@ -1,0 +1,48 @@
+=== H_1199 — DIM>1 LIVE AdaptField over REAL DIM=8 corpus byte-features (MITOSIS-ENGINE · Lane-1) ===
+VERDICT: 🟢 GREEN LIVE-DIM-GROWTH — DIM>1 coupling WIRED CLEANLY; the H_1198 numpy-mirror leg is now the live .hexa engine.
+host: summer (summer@192.168.50.60), $0, latest-release /home/summer/.hx/bin/hexa 0.1.0-dispatch, CPU, gradient-free p8.
+  (local mini fork-storm admission cap was saturated by sibling /cycle fan-out; ran on summer pool per the prompt's allowance + a_wall_first.)
+engine edit: CORE/engine_cli.hexa — added VAdaptField / vadapt_field_new / vadapt_field_step / vadapt_field_recon_err / vadapt_field_cells (DIM-vector sample+prototypes, L2 nearest, L2 recon-err; engine_mitosis_tick STILL drives the split). pure_field / Ψ UNTOUCHED.
+input: DIM=8 real-corpus byte features (H_1163 _byte_feature / make_text_stream, VERBATIM) exported by UNIVERSE/h1199_dim_feature_export.py -> /tmp/h1199_feat8_seed{900,901,902}.txt; split gated by the engine's OWN L2 recon-err>0.30 (native VAdaptField mechanism).
+
+── GUARD 1+2 (engine_cli_smoke 12/0 + h1196 single-entry 7/0, on summer AFTER the engine edit) ──
+=== SMOKE ===
+--- engine_cli smoke summary: 12 pass / 0 fail ---
+=== SINGLE-ENTRY ===
+--- single-entry audit summary: 7 pass / 0 fail ---
+
+── numpy REFERENCE cross-check (UNIVERSE/h1199_dim_feature_export.py — NOT the verdict; confirms the live engine reproduces the mechanism on the SAME input) ──
+  seed 900: cells ON 1->172  OFF ->1  late recon-err ON=0.1561 OFF=1.3042 ratio=8.36x
+  seed 901: cells ON 1->171  OFF ->1  late recon-err ON=0.1585 OFF=1.2896 ratio=8.14x
+  seed 902: cells ON 1->177  OFF ->1  late recon-err ON=0.1425 OFF=1.2605 ratio=8.84x
+  -> live .hexa engine final cells 172/171/177 + ratios 8.36/8.14/8.84 MATCH the reference (mechanism reproduced).
+
+── LIVE .hexa DIM=8 VAdaptField PROBE (CORE/h1199_dim_adaptfield_probe.hexa, summer, verbatim stdout) ──
+=== H_1199 DIM>1 LIVE AdaptField over REAL DIM=8 corpus byte-features (MITOSIS-ENGINE Lane-1 · $0 CPU · p8) ===
+substrate: LIVE .hexa VAdaptField (engine-native, Psi-disjoint) — the DIM>1 extension of the H_1194 AdaptField
+stream: REAL-corpus DIM=8 byte feature (H_1163 _byte_feature, VERBATIM) — the leg that was a NUMPY MIRROR in H_1198
+metric: live L2 recon-error = ||sample - nearest VAdaptField prototype|| over DIM (p7, NOT perplexity)
+split: gated by the engine's OWN L2 recon-err > SPLIT_THRESH=0.30 (native VAdaptField mechanism); engine_mitosis_tick drives +1 cell
+Psi: pure_field_step run READ-ONLY alongside; Phi trajectory checksum must be ON==OFF (VAdaptField touches ONLY AdaptField)
+falsifier: F1 GROWTH cells ON>>OFF | F2 ADAPT late OFF/ON>=2.0 | F3 Psi byte-identical ON==OFF
+
+seed=900  ON cells 41.0->172.0 late-err=0.156053  |  OFF cells 1.0->1.0 late-err=1.30412  ratio OFF/ON=8.35692  PsiSame=true
+seed=901  ON cells 51.0->171.0 late-err=0.158452  |  OFF cells 1.0->1.0 late-err=1.28938  ratio OFF/ON=8.13736  PsiSame=true
+seed=902  ON cells 54.0->177.0 late-err=0.142545  |  OFF cells 1.0->1.0 late-err=1.2604  ratio OFF/ON=8.8421  PsiSame=true
+
+POOLED  cells ON mean=173.333  OFF mean=1.0
+POOLED  late recon-err ON=0.15235  OFF=1.28463  ratio OFF/ON=8.43212
+
+F1 GROWTH  cells ON(173.333) >> OFF(1.0)  = true
+F2 ADAPT   late OFF/ON ratio=8.43212 (>=2.0)            = true
+F3 Psi     Phi-checksum ON==OFF                          = true (attractor intact)
+
+--- MIGRATION CHECK --- N_MIGRATE=2048; DIM=8 real-corpus growth ended at 177.0 cells (<< N_MIGRATE — local CPU correct host)
+
+VERDICT: GREEN LIVE-DIM-GROWTH — the DIM=8 REAL-corpus byte-feature stream drove the
+  ACTUAL .hexa VAdaptField engine: cells GREW ON 173.333 >> OFF 1.0 (F1), late live L2
+  recon-err held LOW ON=0.15235 vs frozen-cap OFF=1.28463 (8.43212x, F2 >=2.0), and the Psi attractor is byte-identical ON vs OFF (F3).
+  The H_1159 ON<OFF adaptation HOLDS on REAL DIM=8 features THROUGH THE LIVE ENGINE — the
+  H_1198 leg that was a NUMPY MIRROR is now the real .hexa engine. DIM>1 coupling WIRED
+  (Psi-disjoint, smoke 12/0, single-entry 7/0). p8: the growth tick IS the learning, now
+  observable on a DIM=8 real-corpus stream. toy/small-scale + learned-rep UNVERIFIED (a_scale_honest_scope).

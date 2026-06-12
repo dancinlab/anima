@@ -79,6 +79,32 @@ Three wires + one readout, all in `CORE/pure_field.hexa` (+ the harness that dri
   Re-runs unchanged. (Caveat from the H_1179 SERENDIP: the readout must out-rise the actively-decaying
   EMA, so wire 3 should read recon-error, not phase-coherence.)
 
+### ✅ BUILT (Ψ-disjoint realization) — AdaptField, 1-D (H_1194) → DIM>1 (H_1199)
+
+The three wires above are framed as a coupling **into `pure_field`** (Ψ=½ risk MODERATE). H_1194
+chose the **honest Ψ-disjoint alternative**: instead of perturbing the Ψ attractor, it added an
+**engine-native `AdaptField`** to `CORE/engine_cli.hexa` that rides the SAME `EngineConfig`/mitosis
+axis **alongside** pure_field (pure_field called READ-ONLY). It wires all three of section ①'s pieces
+without the Ψ risk — (1) `adapt_field_step(af, x, cfg)` = stream→field input, (2) it CALLS
+`engine_mitosis_tick` (cell→field feedback, spawns a covering prototype on novelty), (3)
+`adapt_field_recon_err` = the live recon-error readout. The H_1159 ON-vs-OFF falsifier runs GREEN on
+this substrate, Ψ Φ-checksum byte-identical ON==OFF (`memory/h1194-live-adaptation-coupling.md`).
+
+- **H_1199 ✅ BUILT — DIM>1.** The 1-D scalar AdaptField is now extended to a **DIM-vector**
+  `VAdaptField` (`vadapt_field_new/step/recon_err/cells`): sample + prototypes are DIM-vectors
+  (`[[float]]`), nearest by DIM-dim **L2**, recon-err = L2 norm over DIM, `engine_mitosis_tick` STILL
+  drives the split (same frozen `SPLIT_THRESH=0.30` / `LR=0.20`). The REAL **DIM=8** corpus
+  byte-feature stream (H_1163 `_byte_feature`, VERBATIM) — the leg that was a labelled **numpy MIRROR**
+  in H_1198 — now drives the **ACTUAL .hexa engine**: cells grew ON 1→~173 >> OFF 1, late L2
+  recon-err ON 0.152 vs OFF 1.285 = **8.43×**, **Ψ Φ-checksum byte-identical ON==OFF** (3 seeds).
+  Guards re-verified: `engine_cli_smoke` **12/0** + `h1196` single-entry **7/0**. DIM>1 coupling
+  **wired cleanly**, Ψ-disjoint (touches ONLY AdaptField); the H_1198 numpy-mirror leg is now the
+  live engine. `CORE/h1199_dim_adaptfield_probe.hexa` · `.verdicts/1199_dim_live_adaptfield/H_1199.txt`.
+- **NOTE:** this BUILT path is the AdaptField **alongside** pure_field. The `pure_field`-internal
+  coupling (table wires 1–3, driving the Ψ field itself) remains **⏳ UNBUILT** — H_1166/H_1179 still
+  carry their ⏳ for the *Ψ-internal* counterpart; the AdaptField answers H_1159's adaptation question
+  on a live, engine-native substrate without the Ψ risk.
+
 ---
 
 ## ② Sleep→anchor write-back in the imagination loop (consolidation)
