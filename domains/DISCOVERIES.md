@@ -1,9 +1,10 @@
 # discoveries — per-domain continuous discovery log
 
-> **Convention (since 2026-06-12):** discovery records live PER DOMAIN at
-> `domains/<DOMAIN>/discoveries/<slug>.tape` — NOT in a flat root `.discoveries/`.
-> The old flat `.discoveries/` folder was migrated into the domains and abolished
-> (227 tapes via `git mv`, lossless; master index = `MAIN.tape` @L discovery_migration).
+> **Convention (since 2026-06-13):** discovery records are appended into the
+> per-domain log `domains/<DOMAIN>.log.md` (the `.md` = curated doc, `.log.md` =
+> raw append-only log — discoveries are log entries). The old `discoveries/`
+> subfolders were merged into each domain's `.log.md` and removed, lossless
+> (master index = `MAIN.tape` @L discovery_migration).
 
 A discovery tape = a `/kick` · `/gap` finding, logged every batch (id · seed ·
 verdict-tier-target), persisted next to the domain it belongs to.
@@ -15,8 +16,9 @@ new /kick or /gap finding
         │
         ├─ identify the domain (MITOSIS-ENGINE · OMEGA · ENGINE+CLM+KOSMOS · CORPUS · ...)
         │
-        └─▶ write domains/<DOMAIN>/discoveries/<slug>.tape
-                 (genuinely cross-domain + no honest home → domains/_UNSORTED/discoveries/)
+        └─▶ append the record into domains/<DOMAIN>.log.md
+                 (genuinely cross-domain + no honest home → the closest domain's
+                  .log.md + a cross-ref note)
 ```
 
 ## Flow (unchanged)
