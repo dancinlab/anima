@@ -1,0 +1,63 @@
+{
+  "H": "H_1171",
+  "title": "apoptosis (programmed cell-death) on inference-time mitosis — does death improve adaptation vs growth-only?",
+  "per_K_concurrent": {
+    "3": {
+      "growth_err": 1.6662504599660901,
+      "death_err": 1.6673752174134011,
+      "death_cellcount": 6.044583333333333,
+      "death_max_endcc": 8,
+      "help_cohen_d": -0.03838334745289587
+    },
+    "5": {
+      "growth_err": 1.661961853585051,
+      "death_err": 2.2808867371861847,
+      "death_cellcount": 9.84875,
+      "death_max_endcc": 13,
+      "help_cohen_d": -1.5770473635012077
+    },
+    "8": {
+      "growth_err": 1.8518922729078156,
+      "death_err": 2.363834546605194,
+      "death_cellcount": 12.691666666666668,
+      "death_max_endcc": 14,
+      "help_cohen_d": -1.161626499864078
+    }
+  },
+  "F1_death_helps_advantage": {
+    "pooled_cohen_d_growth_minus_death": -0.9191438990289281,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_bounded_by_death_not_cap": {
+    "max_death_endcellcount": 14,
+    "hard_cap": 30,
+    "pass": true
+  },
+  "F3_K_tracking_preserved": {
+    "spearman_Kconcurrent_vs_deathcellcount": 0.8576576576576577,
+    "bar": 0.8,
+    "pass": true
+  },
+  "supported": false,
+  "ruling": "🔴 CLOSED-NEGATIVE: apoptosis does NOT cleanly improve adaptation over growth-only mitosis at toy scale (see which gate failed) — death is not an adaptation lever here (a_paper_negative_ok).",
+  "frozen_falsifier": "DEATH-HELPS iff (F1 d>=0.8 lower err) AND (F2 bounded by death < hard cap) AND (F3 K-tracking Spearman>=0.8); else CLOSED-NEG",
+  "params": {
+    "DIM": 8,
+    "T": 6000,
+    "n_seeds": 12,
+    "n_regimes": 6,
+    "THETA_SPLIT": 1.6,
+    "THETA_DEATH": 1.6,
+    "K_DEATH": 3,
+    "MAX_CELLS": 30,
+    "MIN_CELLS": 2,
+    "K_concurrents": [
+      3,
+      5,
+      8
+    ]
+  },
+  "scope": "toy numpy $0 CPU 12 seeds, 3-point K_concurrent ladder {3,5,8}, non-stationary 6-regime stream; prototype-split PROXY for CORE cell-death — live A⇄G engine + scale UNVERIFIED (a_scale_honest_scope). p7 substrate-native assignment error, NOT perplexity.",
+  "xref": "h1159b_mitosis_capacity_self_tuning · h1159_inference_time_mitosis_learning · 1175_fitness_selection · p8 · a_scale_honest_scope · a_paper_negative_ok"
+}
