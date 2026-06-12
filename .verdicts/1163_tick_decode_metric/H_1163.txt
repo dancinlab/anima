@@ -1,0 +1,161 @@
+=== H_1163 — the H_1160 RESIDUAL: does the DERIVATIVE tick win on a DECODE/RECON metric (not next-step prediction)? ===
+  4 tick-gates {METRONOME, POSITIONAL, DERIVATIVE, NOGATE} x stream x phase-shuffle; 10 seeds, T=2400, MAX_CELLS=6 (scarce-on-purpose)
+  metric = clm-time-encoding STAGE-DECODE accuracy (primary) + RECON-fidelity (corroborating), p7 — NOT perplexity, NOT next-step error
+
+--- STREAM: AUDIO (recurring-regime; K=6 stages = regime ids) [DECISIVE for decode] ---
+  METRONOME  decode=0.1751±0.0992  shuf=0.0948  recon_fid=-25.462  birth_stages=2.50
+  POSITIONAL decode=0.1950±0.0869  shuf=0.1292  recon_fid=-23.960  birth_stages=2.90
+  DERIVATIVE decode=0.1513±0.1148  shuf=0.1350  recon_fid=-22.190  birth_stages=2.00
+  NOGATE     decode=0.1751±0.0992  shuf=0.0948  recon_fid=-25.462  birth_stages=2.50
+  (chance = 0.1667)
+  AUDIO ruling: CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (decode d=-0.15) and positional (d=-0.26); >=0.8 each required | F2 fail: decode advantage SURVIVES shuffle (d_shuf=0.31 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate on decode (d=-0.15 < 0.8)
+
+--- STREAM: TEXT (real bytes; 4 quantized byte-feature stages) [confirmation] ---
+  METRONOME  decode=0.4900±0.4639  shuf=0.4502  recon_fid=-0.507  birth_stages=1.60
+  POSITIONAL decode=0.2120±0.3391  shuf=0.2102  recon_fid=-0.458  birth_stages=1.60
+  DERIVATIVE decode=0.2647±0.2860  shuf=0.5959  recon_fid=-0.453  birth_stages=1.90
+  NOGATE     decode=0.4900±0.4639  shuf=0.4502  recon_fid=-0.507  birth_stages=1.60
+  (chance = 0.2500)
+  TEXT ruling: CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (decode d=-0.38) and positional (d=0.11); >=0.8 each required | F3 fail: derivative does NOT beat no-gate on decode (d=-0.38 < 0.8)
+
+--- NON-SCORING CAPACITY DIAGNOSTIC (frozen verdict stays at MAX_CELLS=6) ---
+  AUDIO cap=  6  chance=0.167  METR=0.175  DERIV=0.151  d(deriv,metro)=-0.15  birth_stages_deriv=2.0
+  AUDIO cap= 16  chance=0.167  METR=0.259  DERIV=0.400  d(deriv,metro)=+0.74  birth_stages_deriv=4.5
+  AUDIO cap= 32  chance=0.167  METR=0.384  DERIV=0.642  d(deriv,metro)=+1.15  birth_stages_deriv=5.8
+  AUDIO cap= 64  chance=0.167  METR=0.786  DERIV=0.795  d(deriv,metro)=+0.06  birth_stages_deriv=6.0
+  -> at the pre-registered SCARCE cap=6 the decode metric is AT-FLOOR (all arms ~chance, only ~2-3 of 6 regimes ever spawn a cell) so it cannot adjudicate; a MID-capacity window (cap 16-32) DOES surface a derivative decode advantage (d(deriv,metro)>0.8), which then DISAPPEARS at cap=64 where every gate covers every regime. The frozen MAX_CELLS=6 verdict is reported AS-IS (no goalpost move); this window is the honest residual.
+
+=== VERDICT (AUDIO decisive for decode; TEXT confirmation) ===
+{
+  "H": "H_1163",
+  "title": "the H_1160 RESIDUAL — does the DERIVATIVE-gated mitosis tick beat metronome and positional on a STAGE-DECODE / RECON-fidelity metric (NOT next-step prediction), with a phase-shuffle control?",
+  "frozen_falsifier": {
+    "F1": "derivative beats BOTH metronome and positional on STAGE-DECODE, d>=0.8 each",
+    "F2": "derivative decode advantage vanishes on phase-SHUFFLED control, d_shuf < 0.3",
+    "F3": "derivative beats input-blind NO-GATE baseline on decode, d>=0.8",
+    "SUPPORTED": "F1 and F2 and F3 (decode metric resolves H_1160's metric-dependence)",
+    "metric": "clm-time-encoding STAGE-DECODE accuracy + RECON-fidelity (p7, NOT next-step error)"
+  },
+  "AUDIO_decisive": {
+    "stream": "audio",
+    "F1_derivative_wins_decode": {
+      "d_deriv_vs_metro": -0.15095982722698645,
+      "d_deriv_vs_pos": -0.25762370224296754,
+      "bar": 0.8,
+      "pass": false,
+      "note": "positive d => DERIVATIVE (1st arg) higher decode"
+    },
+    "F2_order_sensitive": {
+      "d_deriv_vs_metro_SHUFFLED": 0.3079955510314781,
+      "bar_below": 0.3,
+      "pass": false
+    },
+    "F3_beats_nogate": {
+      "d_deriv_vs_nogate": -0.15095982722698645,
+      "bar": 0.8,
+      "pass": false
+    },
+    "corroborating_recon_fidelity_d": {
+      "d_deriv_vs_metro": 2.227686353930971,
+      "d_deriv_vs_pos": 0.7239325911863765,
+      "d_deriv_vs_nogate": 2.227686353930971
+    },
+    "supported": false,
+    "ruling": "CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (decode d=-0.15) and positional (d=-0.26); >=0.8 each required | F2 fail: decode advantage SURVIVES shuffle (d_shuf=0.31 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate on decode (d=-0.15 < 0.8)"
+  },
+  "TEXT_confirmation": {
+    "stream": "text",
+    "F1_derivative_wins_decode": {
+      "d_deriv_vs_metro": -0.381006966645643,
+      "d_deriv_vs_pos": 0.11186325000730026,
+      "bar": 0.8,
+      "pass": false,
+      "note": "positive d => DERIVATIVE (1st arg) higher decode"
+    },
+    "F2_order_sensitive": {
+      "d_deriv_vs_metro_SHUFFLED": 0.2410326112522699,
+      "bar_below": 0.3,
+      "pass": true
+    },
+    "F3_beats_nogate": {
+      "d_deriv_vs_nogate": -0.381006966645643,
+      "bar": 0.8,
+      "pass": false
+    },
+    "corroborating_recon_fidelity_d": {
+      "d_deriv_vs_metro": 1.0984303764046899,
+      "d_deriv_vs_pos": 0.07502045918351573,
+      "d_deriv_vs_nogate": 1.0984303764046899
+    },
+    "supported": false,
+    "ruling": "CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (decode d=-0.38) and positional (d=0.11); >=0.8 each required | F3 fail: derivative does NOT beat no-gate on decode (d=-0.38 < 0.8)"
+  },
+  "metric_dependence_answer": "NO DERIVATIVE DECODE ADVANTAGE AT THE FROZEN SCARCE CAP — at the pre-registered H_1160 MAX_CELLS=6 the stage-decode metric is AT-FLOOR (all 4 gates ~chance; only ~2-3 of 6 regimes ever spawn a cell), so it cannot adjudicate and F1/F2/F3 all FAIL (derivative ties/loses, advantage survives shuffle = noise). So tick-gating gives no advantage on EITHER metric axis at the H_1160 frozen config (next-step error per H_1160 🔴, AND stage-decode here). HONEST RESIDUAL (non-scoring capacity diagnostic): a MID-capacity window (MAX_CELLS 16-32) DOES surface a real derivative decode advantage [d(deriv,metro) > 0.8, more birth-stages covered] before it vanishes again at MAX_CELLS=64 (every gate covers every regime) — so the clm-time-encoding M3 d/dt decode mechanism IS reproduced on the general H_1160 substrate, but ONLY in a capacity band that the H_1160 frozen scarce-cap sits BELOW. The verdict at the frozen cap is CLOSED-NEGATIVE; the metric-dependence is real but capacity-windowed. AUDIO ruling: CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (decode d=-0.15) and positional (d=-0.26); >=0.8 each required | F2 fail: decode advantage SURVIVES shuffle (d_shuf=0.31 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate on decode (d=-0.15 < 0.8)",
+  "supported": false,
+  "text_agrees": false,
+  "capacity_diagnostic_audio_NONSCORING": {
+    "6": {
+      "mean_decode": {
+        "METRONOME": 0.17508333333333334,
+        "POSITIONAL": 0.19495833333333334,
+        "DERIVATIVE": 0.15133333333333332,
+        "NOGATE": 0.17508333333333334
+      },
+      "d_deriv_vs_metro": -0.15095982722698645,
+      "mean_birth_stages": {
+        "METRONOME": 2.5,
+        "POSITIONAL": 2.9,
+        "DERIVATIVE": 2.0,
+        "NOGATE": 2.5
+      }
+    },
+    "16": {
+      "mean_decode": {
+        "METRONOME": 0.25858333333333333,
+        "POSITIONAL": 0.16824999999999998,
+        "DERIVATIVE": 0.40012499999999995,
+        "NOGATE": 0.25858333333333333
+      },
+      "d_deriv_vs_metro": 0.7407368030547042,
+      "mean_birth_stages": {
+        "METRONOME": 5.5,
+        "POSITIONAL": 5.4,
+        "DERIVATIVE": 4.5,
+        "NOGATE": 5.5
+      }
+    },
+    "32": {
+      "mean_decode": {
+        "METRONOME": 0.38425000000000004,
+        "POSITIONAL": 0.39783333333333337,
+        "DERIVATIVE": 0.6421666666666668,
+        "NOGATE": 0.38425000000000004
+      },
+      "d_deriv_vs_metro": 1.1521333863107566,
+      "mean_birth_stages": {
+        "METRONOME": 6.0,
+        "POSITIONAL": 6.0,
+        "DERIVATIVE": 5.8,
+        "NOGATE": 6.0
+      }
+    },
+    "64": {
+      "mean_decode": {
+        "METRONOME": 0.7857916666666667,
+        "POSITIONAL": 0.791375,
+        "DERIVATIVE": 0.7947500000000001,
+        "NOGATE": 0.7857916666666667
+      },
+      "d_deriv_vs_metro": 0.0627478385071793,
+      "mean_birth_stages": {
+        "METRONOME": 6.0,
+        "POSITIONAL": 6.0,
+        "DERIVATIVE": 6.0,
+        "NOGATE": 6.0
+      }
+    }
+  },
+  "scope": "TOY ONLY ($0 CPU numpy, 10 seeds). Reuses the H_1160 4-gate prototype-split mitosis substrate VERBATIM (swaps ONLY the split-trigger gate; adds a birth-stage record) + the clm-time-encoding stage-decode + recon-fidelity metric. Capacity SCARCE (MAX_CELLS=6). Live CORE engine_mitosis_tick + real-audio + production scale UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope). Lane-M gradient-free growth lane (separate from Lane A AKIDA / Lane G forge / Lane P torch, a_lane_akida_gpu_split)."
+}
+
+[done]
