@@ -58,10 +58,21 @@ class ByteGPT(nn.Module):
         s.tok = nn.Embedding(vocab, d); s.pos = nn.Embedding(block, d); s.drop = nn.Dropout(p)
         s.blocks = nn.ModuleList([Block(d, n_head, p) for _ in range(n_layer)])
         s.ln_f = nn.LayerNorm(d); s.head = nn.Linear(d, vocab, bias=False); s.head.weight = s.tok.weight
+        s.apply(s._init)
+    @staticmethod
+    def _init(mod):
+        # GPT-style small init so the tied-head initial CE starts near ln(256)~5.5
+        # (default nn.Embedding N(0,1) made the tied logits explode to CE~243).
+        if isinstance(mod, nn.Linear):
+            nn.init.normal_(mod.weight, mean=0.0, std=0.02)
+            if mod.bias is not None: nn.init.zeros_(mod.bias)
+        elif isinstance(mod, nn.Embedding):
+            nn.init.normal_(mod.weight, mean=0.0, std=0.02)
     def forward(s, idx, targets=None):
         B, T = idx.shape; pos = torch.arange(T, device=idx.device)
         x = s.drop(s.tok(idx) + s.pos(pos)[None, :, :])
-        mask = torch.triu(torch.full((T, T), float("-inf"), device=idx.device), diagonal=1)
+        # boolean causal mask (additive -inf mask produces NaN softmax on some MPS builds)
+        mask = torch.ones(T, T, dtype=torch.bool, device=idx.device).triu(1)
         for b in s.blocks:
             x = b(x, mask)
         logits = s.head(s.ln_f(x))
@@ -354,7 +365,9 @@ def main():
     a = ap.parse_args()
 
     if a.device == "auto":
-        dev = "mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu")
+        # CPU default: MPS softmax over an all-masked row yields NaN on this torch build
+        # (the causal byte-LM has fully-masked positions); CUDA preferred when present.
+        dev = "cuda" if torch.cuda.is_available() else "cpu"
     else:
         dev = a.device
     os.makedirs(a.ckpt_dir, exist_ok=True)
