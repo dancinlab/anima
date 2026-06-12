@@ -1,0 +1,15 @@
+PASS  case_1_default_or_env want=true got=true
+PASS  case_2_no_mitosis_flag_off want=false got=false
+PASS  case_3_mitosis_on want=true got=true
+PASS  case_3b_mitosis_off want=false got=false
+PASS  case_3c_mitosis_eq_off want=false got=false
+PASS  case_4a_flag_on_beats_env want=true got=true
+PASS  case_4b_flag_off_beats_env want=false got=false
+PASS  case_5_on_grows_to_13 want=13 got=13
+PASS  case_6_off_stays_static_3 want=3 got=3
+PASS  case_7_ON_differs_from_OFF want=true got=true
+PASS  case_8_tick_on_plus1 want=1 got=1
+PASS  case_9_tick_off_noop want=0 got=0
+INFO  engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · precedence flag>env>default · mitosis=on (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · engine=conv (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis
+INFO  engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · precedence flag>env>default · mitosis=off (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · engine=conv (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis
+--- engine_cli smoke summary: 12 pass / 0 fail ---

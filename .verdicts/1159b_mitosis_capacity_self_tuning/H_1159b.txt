@@ -1,0 +1,52 @@
+=== H_1159b — mitosis capacity self-tuning to world complexity (p8 x SOC) ===
+  K_true=3: mit_cells=5.9 mit_err=1.601 frozen_err=10.520 adv_d=5.05
+  K_true=5: mit_cells=7.1 mit_err=1.625 frozen_err=11.545 adv_d=6.52
+  K_true=8: mit_cells=9.5 mit_err=1.668 frozen_err=13.043 adv_d=8.14
+
+=== VERDICT ===
+{
+  "H": "H_1159b",
+  "title": "mitosis self-tunes capacity to world complexity (p8 x SOC self-organization)",
+  "per_K_true": {
+    "3": {
+      "mit_err": 1.6011234626283248,
+      "frozen_err": 10.519692937721514,
+      "mit_cellcount": 5.9,
+      "adv_cohen_d": 5.051014477247347,
+      "max_cc": 7
+    },
+    "5": {
+      "mit_err": 1.6247295911592474,
+      "frozen_err": 11.54500560463609,
+      "mit_cellcount": 7.1,
+      "adv_cohen_d": 6.520291851617532,
+      "max_cc": 8
+    },
+    "8": {
+      "mit_err": 1.6682972350896286,
+      "frozen_err": 13.043072311733308,
+      "mit_cellcount": 9.5,
+      "adv_cohen_d": 8.14237644079379,
+      "max_cc": 11
+    }
+  },
+  "F1_self_tuning": {
+    "spearman_Ktrue_vs_cellcount": 0.8522803114571746,
+    "bar": 0.8,
+    "pass": true
+  },
+  "F2_advantage_all_K": {
+    "min_adv_d": 5.051014477247347,
+    "bar": 2.0,
+    "pass": true
+  },
+  "F3_self_limiting": {
+    "max_cellcount_any_K": 11,
+    "cap": 20,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED: inference-time mitosis SELF-ORGANIZES its capacity to the world's complexity (cell-count tracks #clusters, Spearman>=0.8), stays self-limiting (no runaway), and keeps the err-advantage at every scale — the p8 analog of H_931 SOC self-tuning to the critical point",
+  "scope": "toy numpy $0 CPU 10 seeds, 3-point K_true ladder {3,5,8}; prototype-split PROXY for the CORE cell-division — live engine + scale UNVERIFIED (a_scale_honest_scope)"
+}
+[done]
