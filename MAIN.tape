@@ -68,3 +68,11 @@
   convention = "first discovery written under the NEW convention — appended into domains/MITOSIS-ENGINE.log.md (### h1183_bimodal_capacity tape block), NOT a discoveries/ subfolder (a_discovery_log)"
   artifacts = "UNIVERSE/h1183_bimodal_capacity.py · .verdicts/1183_bimodal_capacity/H_1183.txt · domains/MITOSIS-ENGINE.log.md ### h1183_bimodal_capacity"
   next = "tick/capacity discovery arc has a clean 3-rung result (H_1178 asymmetric inverted-U -> H_1182 scaling refuted+bimodal serendip -> H_1183 bimodal confirmed). Candidate /paper at FULL closure (a_paper_only_at_closure); or pivot Lane 2 to a fresh axis"
+
+@L 2026_06_13_lane2_h1184 := "Lane 2 rung-4 SHIPPED — H_1184 🔴 closed-neg-with-SPLIT: the two bimodal peaks are OPPOSITE on temporality" :: log [active]
+  result = "H_1184 CLOSED-NEG on joint claim (F1 pass F2 fail) but the per-peak split IS the finding. K=40 coverage: d_real=+1.29 d_shuf=+0.22 (shuffle KILLS = temporal). K=4 scarcity: d_real=+1.24 d_shuf=+2.67 (shuffle IMPROVES = NOT temporal)"
+  discovery = "Lane-2 payoff + H_1183 correction: the two H_1183 advantage peaks are NOT two sizes of one mechanism — they are mechanistically OPPOSITE on the temporality axis. coverage peak (mid-K) = genuine event/time-driven (contrasts the temporally-blind H_1179/1180); scarcity peak (low-K) = NON-temporal variance-spread sampler (shuffle helps it). H_1183's 'precise temporal placement' label for K=4 is CORRECTED to distribution-spreading"
+  finding = "temporal-grounding is the knife that separates the bimodality: only the coverage peak reads time. New axis (temporality) pursued from the Lane-1 thread paid off — the event-tick's genuinely temporal half is isolated"
+  honest = "toy AUDIO N=10 10 seeds; shuffle isolates temporal ORDER (dist + (X,stage) pairing preserved). dichotomy transfers, exact d's substrate-specific (a_scale_honest_scope). live CORE + real-model unverified"
+  artifacts = "UNIVERSE/h1184_temporal_grounding.py · .verdicts/1184_temporal_grounding/H_1184.txt · domains/MITOSIS-ENGINE.log.md ### h1184_temporal_grounding"
+  next = "tick arc now 4 rungs (1178 asymmetric-U -> 1182 scaling-refuted+bimodal -> 1183 bimodal-confirmed -> 1184 temporal-split). The coverage peak = the publishable temporal mechanism. Candidate /paper at closure"
