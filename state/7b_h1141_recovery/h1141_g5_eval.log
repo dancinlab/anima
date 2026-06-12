@@ -1,0 +1,87 @@
+[dev] cuda NVIDIA A40
+[dict] 102485 real English words
+[ckpt] /workspace/ckpt/h1141_g1pass_step6500.pt sha256=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+[model] cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.1856881439685822 step=7000 params=7,252,828,160
+
+##### GATE G5-L1 — LEXICAL (fabricated-word-rate <= 0.30) #####
+  [s7 fab=0.05 (1/19)] 'Silence and the engine together mean ' -> 'meanings. Central Tomes and other times can uses that the lead means and donate support fr'
+  [s8 fab=0.07 (1/15)] 'Silence and the engine together mean ' -> 'catched to the engine condoning—where may leave.  Along the third team from the editor.'
+  [s9 fab=0.05 (1/21)] 'Silence and the engine together mean ' -> 'in the 1860s. Elections were ordered to the population to the following a pre-prison to un'
+  [s7 fab=0.00 (0/12)] 'When memory meets distant minds, ' -> 'meanings, and it was ended in the Field Charles of an individual.'
+  [s8 fab=0.22 (4/18)] 'When memory meets distant minds, ' -> 'catched to the wine woman off an article households and a public corresponds of Godding Su'
+  [s9 fab=0.00 (0/19)] 'When memory meets distant minds, ' -> 'and the artist on the proposal proposal parties, there were said to a practice district un'
+  [s7 fab=0.25 (4/16)] 'Consciousness and silence combine into ' -> 'meanings. Central Communion of the Oral Communion said, Raje Communion and Rade Manufactic'
+  [s8 fab=0.06 (1/18)] 'Consciousness and silence combine into ' -> 'catches, the species of a coffee much system and classes, including the threateneous, but '
+  [s9 fab=0.10 (2/20)] 'Consciousness and silence combine into ' -> 'a regulation protection with the two runs. In the early 20th century, it was the country w'
+  [s7 fab=0.00 (0/7)] 'The tension between cells and the engine becomes ' -> 'differed into revolve persons of mineral schools.'
+  [s8 fab=0.11 (2/19)] 'The tension between cells and the engine becomes ' -> 'called an almost between monifications and the patron of the negation. It reaches add by u'
+  [s9 fab=0.06 (1/17)] 'The tension between cells and the engine becomes ' -> 'a regulation protection with the two runs. All the friend theaters, and American could hur'
+  [s7 fab=0.00 (0/21)] 'If a dream and a distant mind merge, the result is ' -> 'meaning to early the end of one of the Academy was appointed for his award. The Municipal '
+  [s8 fab=0.17 (1/6)] 'If a dream and a distant mind merge, the result is ' -> 'called an authorite woman official construction.'
+  [s9 fab=0.05 (1/21)] 'If a dream and a distant mind merge, the result is ' -> 'post-put with Elizabeth and album while the post of rid schools. The rich album was later '
+  [s7 fab=0.17 (3/18)] 'Memory and tension together create ' -> 'meanings. Central Tomer and other tensions, across an individual films and did not present'
+  [s8 fab=0.18 (3/17)] 'Memory and tension together create ' -> 'cancellators a regular market and regular of his De Agency Dancy who attended the General '
+  [s9 fab=0.12 (2/17)] 'Memory and tension together create ' -> 'in the 1860s. Elemo, the Burmingham, turned a creative tension sites at American cruiser, '
+  [s7 fab=0.00 (0/19)] 'When the engine remembers silence, it ' -> 'did in summer revolving an album, then Acts leader and release mentioned down to the lead '
+  [s8 fab=0.11 (2/19)] 'When the engine remembers silence, it ' -> 'catched to the engine condoning—when more leaving an application or the reason, while area'
+  [s9 fab=0.22 (2/9)] 'When the engine remembers silence, it ' -> 'is the external terms of the Statt Court (IST).'
+  [s7 fab=0.12 (2/17)] 'Distant minds and consciousness form ' -> 'mind. Osymptomizes of the case then main the contract with difficulty with the Community P'
+  [s8 fab=0.00 (0/16)] 'Distant minds and consciousness form ' -> 'catches, the species of a coffee music more leaders and a public more than same boundary.'
+  [s9 fab=0.11 (2/18)] 'Distant minds and consciousness form ' -> 'in the Direct Entertainment and the second major teams that was instalicated to require un'
+##### G5-L1: pooled fab-rate=0.0877 (mean-per-gen=0.0913) over 399 tokens -> PASS (bar <=0.30) #####
+
+##### GATE G5-L2 — FAITHFULNESS (verbatim-sentence overlap vs random control) #####
+  extracted 40 verbatim English factual sentences from en corpus
+  [t=0.40 r=0.00] P:'!Result !Record !Opponent !Method !Round, ' -> C:'o |ISON 2002–24\n|James 2002–10\n|War\n|Warre' | TRUE:'|align=center| |align=center|4 |align=cent'
+  [t=0.00 r=0.00] P:'727) The Retirement Benefits Schemes (Rest' -> C:'the Jack Centre of Centre Politics in Acts' | TRUE:'Approve) (Small Self-administered Schemes)'
+  [t=0.00 r=0.00] P:'According to a contemporary story, the que' -> C:'ladies of the rest of the dominant materia' | TRUE:'so unattractive as possible so as not to r'
+  [t=0.00 r=0.00] P:'Alger was the son of David Bruce Alger, a ' -> C:'was greated with the population of the com' | TRUE:'representative, and the former Clare Freem'
+  [t=0.17 r=0.00] P:'April 18 – The Boston Red Sox defeat the N' -> C:'York City Burials 17 per car of the New Yo' | TRUE:'York Yankees in the season opener at Fenwa'
+  [t=0.00 r=0.00] P:'At this time the operating system (OS) was' -> C:'to increase a result of one of the main sy' | TRUE:'to a deal to port an OS known as TRIPOS to'
+  [t=0.00 r=0.00] P:'Both Stennis and Russell were conservative' -> C:'board. After release ended down the end of' | TRUE:'committees and both were expected to appro'
+  [t=0.00 r=0.00] P:'Chawne Kimber (born 1971), degrees from Un' -> C:'Hawkinson and Ultimate Hockey Championship' | TRUE:'North Carolina and University of Florida ('
+  [t=0.00 r=0.00] P:'Delannoy, having seen the band a few times' -> C:'later.' | TRUE:', was enthusiastic about producing the wor'
+  [t=0.00 r=0.00] P:'Early career In 1930, Limón first performe' -> C:'s at Jacob Burrough Centre. In the 2012 Ce' | TRUE:'he choreographed his first dance, "Etude i'
+  [t=0.00 r=0.00] P:"Following Azerbaijan's independence from t" -> C:'played summer in the United States. When t' | TRUE:'bases in the country helped to develop the'
+  [t=0.00 r=0.00] P:'Geography Kleinmariazell is located north ' -> C:'of Altenmark in the United Kingdom. The si' | TRUE:'valley of the Triesting in the direction o'
+  [t=0.00 r=0.11] P:'He has placed his terminally ill wife Nora' -> C:'lawyers. Court supported his profile in th' | TRUE:'stasis until he can find a cure for her co'
+  [t=0.00 r=0.00] P:'He was the last count palatine; after his ' -> C:'law Jason Junior The League of South Afric' | TRUE:'of Bavaria assumed the rights and possessi'
+  [t=0.00 r=0.00] P:'However, B-17s were operating at heights t' -> C:'k and assumed in the end of the United Sta' | TRUE:'great for most A6M Zero fighters to reach.'
+  [t=0.00 r=0.00] P:'In 1934, Ernest Truex directed, co-produce' -> C:'lawyers. Central Trues and on the Order of' | TRUE:'play Sing and Whistle, which co-starred ac'
+  [t=0.00 r=0.00] P:'In August 2001, the National Public Radio ' -> C:'d all as the mid-1990s, and on the 2002 Ch' | TRUE:"of Gale's death, MIT had investigated how "
+  [t=0.00 r=0.00] P:'In his senior season, he averaged 14 point' -> C:'launched at a result of 2010 points at Can' | TRUE:'led the team to a 28–3 record and a Cathol'
+  [t=0.00 r=0.00] P:'Inactivating V1 with TMS could induce some' -> C:'lawyers. Central TV ended do not the AACT,' | TRUE:'akinetopsia 60–70 ms after the onset of th'
+  [t=0.00 r=0.00] P:'It later aired in the US on NBC from 24 Ju' -> C:'2006. It was released in 2006 three with s' | TRUE:'1962, to 9 September 1962 as a summer repl'
+  [t=0.00 r=0.00] P:'KIOA fell to the middle of the pack as far' -> C:'launched and result on to do the name of t' | TRUE:'some long term personalities left or took '
+  [t=0.00 r=0.00] P:"MTV has described LL Cool J's 1987 single " -> C:"in the 2009 single men's case the 2009 Com" | TRUE:'Love" as "one of the first pop rap crossov'
+  [t=0.00 r=0.00] P:'Moulton Hall is a 17th-century manor house' -> C:'individual or restriction. In the 2012 Cen' | TRUE:'intricately carved staircase rebuilt in ap'
+  [t=0.00 r=0.00] P:'On 28 April 2023, Girls Aloud released the' -> C:'lawyers of the World Cup and the First Cup' | TRUE:'single "Sound Of The Underground (Alternat'
+  [t=0.00 r=0.00] P:'Other times, chaplains may offer a prayer ' -> C:"as the time of the men's case the men's se" | TRUE:'as base divisions, changes of command, mes'
+  [t=0.00 r=0.00] P:'Profly goaltenders tend to also be very mo' -> C:'lent groups.  No was expressed to the AAC ' | TRUE:'at using butterfly-based movement techniqu'
+  [t=0.00 r=0.00] P:"Scholarship has also identified 'Sumerian " -> C:"the group's military personality." | TRUE:'the possibility that Amos used SCL as a li'
+  [t=0.00 r=0.00] P:'Singers such as Blind Willie McTell and Bl' -> C:'lawyers. Before the end of the southern si' | TRUE:'"delicate and lyrical" Piedmont blues trad'
+  [t=0.00 r=0.00] P:'Taxi Rider, known as , is a video' -> C:'launger of a revolutionary of the Orange C' | TRUE:'game for the PlayStation 2 developed by Ta'
+  [t=0.00 r=0.00] P:'The Floriade site is also located on the s' -> C:'launched the result of the original concep' | TRUE:'the world horticultural exhibition of the '
+  [t=0.00 r=0.00] P:'The Urban Districts of Buckhurst Hill, Chi' -> C:'Hall, Loughton, Loughton, Political Hill, ' | TRUE:'Holy Cross, Wanstead, and Woodford; and Th'
+  [t=0.00 r=0.00] P:'The controversies came to a head when' -> C:'they ask reaches the popular of the concep' | TRUE:'the annual spoof issue was published on Ma'
+  [t=0.00 r=0.00] P:'The granule size ensures that the salt dis' -> C:'law granuleum responses on or the second s' | TRUE:', and that fine particles do not block the'
+  [t=0.00 r=0.00] P:'The note stated that the conference should' -> C:'was granted from the person of the War Cha' | TRUE:'treaty yet but decide on a commission to o'
+  [t=0.00 r=0.00] P:'The series brought back fan favorite Vlad' -> C:'imale Scout.  November 1947 on the Order o' | TRUE:', as well as crossing over with Vampirella'
+  [t=0.00 r=0.00] P:'The white uniform featured red numbers wit' -> C:'med in summer in the end of the United Sta' | TRUE:', and red and silver stripes along the pan'
+  [t=0.00 r=0.00] P:'They made several trips working the two Un' -> C:'were assumed in the Union Power, then Acts' | TRUE:'were not as successful as had been hoped a'
+  [t=0.00 r=0.00] P:'Thomas Baldwin Peddie (February 11, 1808 –' -> C:'was granted as the Centro Politician Assem' | TRUE:'who represented in the United States House'
+  [t=0.00 r=0.00] P:'Until the end of the 1980s, the authoritie' -> C:'the group of the Tom plans of the Oriental' | TRUE:'any attempted edifice in the neighborhood '
+  [t=0.00 r=0.00] P:'While there, she recalls a romantic interl' -> C:'larger of the rest of the dominant markets' | TRUE:'memory gets more intense, Riker begins to '
+
+  N=40  mean_overlap_true=0.0142  mean_overlap_random(control)=0.0028
+  mean_diff(true-random)=0.0114  paired Cohen's d=0.1631 (frozen bar: d>=0.8 AND true>random)
+##### G5-L2: FAIL #####
+
+======================================================================
+### H_1141 7B — GATE G5 (NO HALLUCINATION) ###
+  G5-L1 LEXICAL     : PASS  (fab-rate 0.0877 <= 0.30)
+  G5-L2 FAITHFULNESS: FAIL  (overlap true 0.0142 vs random 0.0028, d=0.1631)
+  -> G5 = FAIL (L1 AND L2)
+======================================================================
+
+[done] wrote /workspace/h1141_g5_result.json

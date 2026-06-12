@@ -67,6 +67,12 @@ otherwise         report which gate(s) failed + the honest path (NOT faked).
 > G5 status from existing data: broad-7b ❌ (L1 0.60–0.94 = severe lexical hallucination) ·
 > 303M ~✅ L1 (real words) — L2 faithfulness TBD on the trained ckpt. The H_1141 fire's gate
 > battery (and any future eval) MUST report G5 alongside G0–G4.
+> **H_1141 7B G5 MEASURED 2026-06-13 (A40, sha256 4de903… verified):** L1 PASS (fab-rate 0.0877 ≤ 0.30) ·
+> **L2 FAIL** (mean-overlap true 0.0142 vs random-control 0.0028, paired Cohen's d 0.1631 ≪ 0.8 bar —
+> the model confabulates a different/false continuation rather than the grounded fact). **→ G5 FAIL.**
+> Final per-gate tally on this ckpt: G0✅(loose-kwr) G1✅ G2✅ G3✅ G4✅ G5❌ ⇒ **a7b_pass = FALSE,
+> NOT a confirmed PASS.** Verdict: `.verdicts/1141_7b_g5/H_1141_G5.txt`. Path to PASS-L2 = a
+> grounding/faithful objective, NOT a bigger model (H_1139 scale-invariance) — honest 🔴 (a_paper_negative_ok).
 
 ## Current state (this session) & the path
 - broad-7b: G0 ❌ (garble) → fails everything downstream. The val-CE was low on multilang but generation collapses.
