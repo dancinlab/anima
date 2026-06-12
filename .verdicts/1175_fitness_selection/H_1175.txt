@@ -1,0 +1,48 @@
+=== H_1175 — fitness-differential SELECTION vs instructive growth (Darwinian gap, p8) ===
+  seed=900: sel_fit early=0.3808 late=0.3613 dFit=-0.0195 | heldout_err sel=7.618 ins=6.421
+  seed=901: sel_fit early=0.3806 late=0.3712 dFit=-0.0094 | heldout_err sel=9.524 ins=6.761
+  seed=902: sel_fit early=0.3861 late=0.3754 dFit=-0.0107 | heldout_err sel=8.401 ins=6.917
+  seed=903: sel_fit early=0.3784 late=0.3758 dFit=-0.0026 | heldout_err sel=10.697 ins=7.056
+  seed=904: sel_fit early=0.3809 late=0.3705 dFit=-0.0104 | heldout_err sel=12.157 ins=6.749
+  seed=905: sel_fit early=0.3694 late=0.3756 dFit=+0.0062 | heldout_err sel=11.422 ins=8.897
+  seed=906: sel_fit early=0.3602 late=0.3980 dFit=+0.0377 | heldout_err sel=17.094 ins=7.804
+  seed=907: sel_fit early=0.3750 late=0.3684 dFit=-0.0067 | heldout_err sel=10.759 ins=6.242
+
+=== VERDICT ===
+{
+  "H": "H_1175",
+  "title": "fitness-differential SELECTION vs instructive growth — the keystone Darwinian gap (p8)",
+  "config": {
+    "DIM": 8,
+    "N_SEEDS": 8,
+    "CAP": 12,
+    "K_TRUE": 5,
+    "LR": 0.05,
+    "GEN_LEN": 300,
+    "N_GEN": 14,
+    "FIT_WIN": 120,
+    "DAUGHTER_NOISE": 0.3,
+    "HELDOUT_LEN": 600,
+    "EARLY_GENS": 3,
+    "LATE_GENS": 3
+  },
+  "A_fitness_increases": {
+    "mean_dFit_late_minus_early": -0.0018945076252840434,
+    "frac_seeds_increasing": 0.25,
+    "bar": "mean_dFit>0 AND frac>=0.5",
+    "pass": false
+  },
+  "B_beats_instructive_heldout_shifted": {
+    "sel_heldout_err_mean": 10.958826177647122,
+    "ins_heldout_err_mean": 7.105818675462446,
+    "cohen_d_ins_minus_sel": -1.9211437247142333,
+    "bar": 0.8,
+    "pass": false,
+    "note": "lower held-out err = better; d>0 => selection generalizes better than instructive"
+  },
+  "supported": false,
+  "ruling": "🔴 CLOSED-NEGATIVE: fitness-differential selection adds NOTHING over instructive online-adaptation at toy scale — selection either does not raise population mean-fitness over generations OR fails to beat instructive growth on the held-out shifted task (d<0.8). At this scale instructive/Lamarckian adaptation (H_1159) captures the available adaptive gains; the Darwinian selection operator is not a distinct lever (a_paper_negative_ok).",
+  "scope": "toy numpy $0 CPU 8 seeds, prototype-cell PROXY for CORE cell-division; live engine + scale UNVERIFIED (a_scale_honest_scope). p7: fitness = clustering error not perplexity.",
+  "xref": "h1159_inference_time_mitosis_learning · h1159b_mitosis_capacity_self_tuning · 1171_apoptosis_death · p8 · a_paper_negative_ok"
+}
+[done]
