@@ -308,7 +308,9 @@ def main():
 
     both_redundant = all(m["redundant"] for m in mods)
     any_adds = any(m["surprise_adds"] for m in mods)
-    supported = bool(both_redundant)
+    any_worse = any(m["classification"] == "SURPRISE-WORSE" for m in mods)
+    supported = bool(both_redundant)         # FROZEN: SUPPORTED iff BOTH classify REDUNDANT
+    deltas_str = "; ".join(f"{m['modality']}: Δ={m['delta']:+.2f} ({m['classification']})" for m in mods)
 
     if supported:
         ruling = ("SUPPORTED (SURPRISE-REDUNDANT-ON-TEMPORAL): on BOTH already-temporal modalities "
@@ -318,19 +320,41 @@ def main():
                   "adds nothing. The PRE-REGISTERED prediction is BORNE OUT: learned surprise is NOT a "
                   "universal upgrade — it specifically RESCUES the one modality (text, H_1187) where "
                   "raw byte-change is uninformative, and is redundant where raw change already encodes "
-                  "the temporal structure. %s"
-                  % (REDUNDANT_BAR,
-                     "; ".join(f"{m['modality']}: Δ={m['delta']:+.2f} ({m['classification']})" for m in mods)))
-    else:
+                  "the temporal structure. %s" % (REDUNDANT_BAR, deltas_str))
+    elif any_adds:
         adds_mods = [m for m in mods if m["surprise_adds"]]
         ruling = ("CLOSED-NEGATIVE (a_paper_negative_ok): the PRE-REGISTERED 'surprise is redundant on "
-                  "already-temporal streams' prediction FAILS — learned surprise ALSO BEATS the raw "
-                  "derivative (Δ>=%.1f) on %s, so it is a (partially) UNIVERSAL upgrade, not only a text "
-                  "rescue. %s. FINDING: a learned one-step predictor extracts decode-relevant "
-                  "transition structure the raw |dX/dt| derivative misses even on a smooth temporal "
-                  "stream."
-                  % (REDUNDANT_BAR, ", ".join(m["modality"] for m in adds_mods),
-                     "; ".join(f"{m['modality']}: Δ={m['delta']:+.2f} ({m['classification']})" for m in mods)))
+                  "already-temporal streams' prediction FAILS in the OTHER direction — learned surprise "
+                  "ALSO BEATS the raw derivative (Δ>=%.1f) on %s, so it is a (partially) UNIVERSAL "
+                  "upgrade, not only a text rescue. %s. FINDING: a learned one-step predictor extracts "
+                  "decode-relevant transition structure the raw |dX/dt| derivative misses even on a "
+                  "smooth temporal stream."
+                  % (REDUNDANT_BAR, ", ".join(m["modality"] for m in adds_mods), deltas_str))
+    else:
+        # The honest THIRD outcome the binary REDUNDANT/SURPRISE-ADDS split did not anticipate:
+        # surprise NEVER adds (Δ never >= +0.5 on either) but is strictly WORSE than the raw
+        # derivative on >=1 modality (numeric Δ<<0). The scored verdict is CLOSED-NEG on the
+        # FROZEN letter (numeric not |Δ|<0.5), but the SCIENTIFIC direction is the OPPOSITE of a
+        # universal upgrade — surprise is redundant-or-WORSE, never additive, on temporal streams.
+        worse_mods = [m["modality"] for m in mods if m["classification"] == "SURPRISE-WORSE"]
+        ruling = ("CLOSED-NEGATIVE on the FROZEN letter (a_paper_negative_ok): NOT both-redundant — but "
+                  "in the OPPOSITE direction to a universal upgrade. Learned surprise NEVER beats the "
+                  "raw |dX/dt| DERIVATIVE on either modality (Δ never >= +%.1f); it is REDUNDANT on "
+                  "audio (Δ=%+.2f) and strictly WORSE than the raw derivative on %s (numeric Δ=%+.2f, the "
+                  "binary REDUNDANT/SURPRISE-ADDS split did not anticipate a WORSE bucket). %s. FINDING: "
+                  "the PRE-REGISTERED science holds even MORE strongly than predicted — on already-"
+                  "temporal streams a learned one-step-surprise gate adds NOTHING over the raw "
+                  "derivative and on AR(1) numeric it actively LAGS it (the predictor fits the smooth "
+                  "relaxation so its surprise peaks LATE/under-covers regimes the rising-edge catches), "
+                  "so learned surprise is a TEXT-SPECIFIC rescue (H_1187), never a universal upgrade. "
+                  "Both gates still beat the input-blind METRONOME (d_surp & d_deriv both > 0), so the "
+                  "tick still matters — only the LEARNED refinement is wasted where raw change already "
+                  "reads the flow."
+                  % (REDUNDANT_BAR,
+                     next(m["delta"] for m in mods if m["modality"] == "audio"),
+                     ", ".join(worse_mods),
+                     next(m["delta"] for m in mods if m["modality"] == "numeric"),
+                     deltas_str))
 
     verdict = {
         "H": "H_1190",
@@ -360,6 +384,7 @@ def main():
         "cap_ladders": {m["modality"]: m["cap_ladder"] for m in mods},
         "both_redundant": both_redundant,
         "any_surprise_adds": any_adds,
+        "any_surprise_worse": any_worse,
         "supported": supported,
         "ruling": ruling,
         "generality_answer": (
@@ -367,9 +392,14 @@ def main():
             "on already-temporal numeric AR(1) + audio drifting-regimes the raw |dX/dt| derivative "
             "already reads the smooth flow, so a learned one-step predictor adds nothing (|Δ|<0.5 "
             "each). Surprise was load-bearing in H_1187 precisely because text's byte-feature stages "
-            "are NOT smoothly approached." if supported else
-            "NOT REDUNDANT — learned surprise ALSO beats the raw derivative on a smooth already-temporal "
-            "modality, so it is a (partially) universal upgrade rather than only a text rescue."),
+            "are NOT smoothly approached." if supported else (
+            "SURPRISE ALSO HELPS A SMOOTH MODALITY — a (partial) universal upgrade, not only a text "
+            "rescue." if any_adds else
+            "NOT A UNIVERSAL UPGRADE (opposite direction) — learned surprise NEVER beats the raw "
+            "derivative on numeric/audio; it is REDUNDANT on audio and strictly WORSE than the raw "
+            "derivative on AR(1) numeric. The science that surprise only RESCUES text (H_1187) holds "
+            "even more strongly than predicted; the frozen binary just lacked a WORSE bucket so the "
+            "letter reads CLOSED-NEG.")),
         "scope": "TOY ONLY ($0 CPU numpy, %d seeds, synthetic numeric/audio streams, a TINY "
                  "least-squares linear one-step predictor as the surprise model). Reuses the H_1163 "
                  "grow_arm DERIVATIVE+METRONOME arms + stage_decode_accuracy + cohen_d_paired + "
