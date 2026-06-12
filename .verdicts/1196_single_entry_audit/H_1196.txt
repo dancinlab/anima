@@ -1,0 +1,62 @@
+H_1196 — a_core_engine_map SINGLE-ENTRY audit + guard (MITOSIS-ENGINE Lane-2 LIVE)
+date: 2026-06-13  ·  $0 CPU  ·  p7 (source count-equality, NOT perplexity)
+================================================================================
+
+## HARD RULE — engine_cli_smoke.hexa 12 pass / 0 fail (Ψ=1/2 untouched)
+--------------------------------------------------------------------------------
+PASS  case_1_default_or_env want=true got=true
+PASS  case_2_no_mitosis_flag_off want=false got=false
+PASS  case_3_mitosis_on want=true got=true
+PASS  case_3b_mitosis_off want=false got=false
+PASS  case_3c_mitosis_eq_off want=false got=false
+PASS  case_4a_flag_on_beats_env want=true got=true
+PASS  case_4b_flag_off_beats_env want=false got=false
+PASS  case_5_on_grows_to_13 want=13 got=13
+PASS  case_6_off_stays_static_3 want=3 got=3
+PASS  case_7_ON_differs_from_OFF want=true got=true
+PASS  case_8_tick_on_plus1 want=1 got=1
+PASS  case_9_tick_off_noop want=0 got=0
+--- engine_cli smoke summary: 12 pass / 0 fail ---
+
+## H_1196 single-entry guard — CORE/h1196_single_entry_audit.hexa
+--------------------------------------------------------------------------------
+=== H_1196 a_core_engine_map SINGLE-ENTRY audit + guard (MITOSIS-ENGINE Lane-2) ===
+method: deterministic source grep over checked-in CORE/*.hexa (p7 count-equality, $0 CPU)
+
+PASS  inv1a_clm_decode_importers_are_generator+omegaprobe_only want="generator.hexa,omega_clm_closure_probe.hexa" got="generator.hexa,omega_clm_closure_probe.hexa"
+PASS  inv1b_omega_probe_imported_by_zero_files_standalone want=0 got=0
+PASS  inv2_load_anchors_called_only_in_generator want="generator.hexa" got="generator.hexa"
+PASS  inv3_substrate_engines_no_clm want=0 got=0
+PASS  inv4_substrate_engines_no_kosmos want=0 got=0
+PASS  inv5a_generator_imports_clm_decode want=1 got=1
+PASS  inv5b_generator_calls_load_anchors_ge1 want=1 got=1
+
+--- single-entry audit summary: 7 pass / 0 fail ---
+WIRED:   .clm decode L3 slot = generator.hexa (use CORE/clm_decode) · .kosmos read = generator_read_anchors→load_anchors→brain_emit anchors arg
+HONEST:  CORE/omega_clm_closure_probe.hexa = standalone measurement probe (own fn main, 0 importers) — NOT a 2nd runtime .clm path
+CLEAN:   pure_field/engine_g/brain consume 0 .clm + 0 .kosmos (substrate-only)
+
+## TEETH PROOF — inject a fake 2nd .clm leak into engine_g, guard must FAIL inv3
+--------------------------------------------------------------------------------
+FAIL  inv3_substrate_engines_no_clm want=0 got=1
+--- single-entry audit summary: 6 pass / 1 fail ---
+(reverted) after-revert:
+PASS  inv3_substrate_engines_no_clm want=0 got=0
+--- single-entry audit summary: 7 pass / 0 fail ---
+
+## AUDIT FINDINGS (verbatim)
+--------------------------------------------------------------------------------
+.clm decode entry  : SINGLE — use "CORE/clm_decode" lives ONLY in CORE/generator.hexa
+                     (the L3 slot). The sole other importer, CORE/omega_clm_closure_probe.hexa,
+                     is a STANDALONE env-driven measurement probe (own fn main, imported by
+                     0 files, NOT in any runtime engine import graph) — NOT a 2nd runtime path.
+                     loaded=valid; decode forward WIRED + descends CORE-mounted @ d=768.
+.kosmos read entry : SINGLE — load_anchors() called ONLY by generator.hexa::generator_read_anchors,
+                     threaded into brain_emit's anchors arg. WIRED.
+substrate leak chk : pure_field / engine_g / brain import 0 clm_decode + 0 kosmos_io; call
+                     0 load_anchors / 0 clm decode forward. brain reaches anchors ONLY as a
+                     plain arg from generator. NO LEAK.
+engine adapters    : conv/cdv2/hexad/omega adapters do NOT import clm_decode directly — they
+                     route through engines/engine_iface.hexa. No bypass.
+VERDICT            : 🟢 SINGLE-ENTRY HOLDS — exactly ONE .clm path + ONE .kosmos path, no leaks,
+                     no phantom wiring. Guard added (7/0) with proven teeth. smoke 12/0.

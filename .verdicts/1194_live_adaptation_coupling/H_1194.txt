@@ -1,0 +1,58 @@
+H_1194 — LIVE-ENGINE adaptation coupling (MITOSIS-ENGINE · Lane2)
+verdict: 🟢 GREEN LIVE-ADAPTS
+date: 2026-06-13 · $0 local hexa · deterministic seeds 7/8/9 · g5/p7
+harness: CORE/h1194_live_adaptation_coupling_probe.hexa
+engine edit: CORE/engine_cli.hexa (AdaptField coupling; pure_field/Ψ UNTOUCHED)
+
+================================================================
+GUARD — engine_cli_smoke.hexa AFTER edit (12/0 anchor unbroken):
+================================================================
+PASS  case_1_default_or_env want=true got=true
+PASS  case_2_no_mitosis_flag_off want=false got=false
+PASS  case_3_mitosis_on want=true got=true
+PASS  case_3b_mitosis_off want=false got=false
+PASS  case_3c_mitosis_eq_off want=false got=false
+PASS  case_4a_flag_on_beats_env want=true got=true
+PASS  case_4b_flag_off_beats_env want=false got=false
+PASS  case_5_on_grows_to_13 want=13 got=13
+PASS  case_6_off_stays_static_3 want=3 got=3
+PASS  case_7_ON_differs_from_OFF want=true got=true
+PASS  case_8_tick_on_plus1 want=1 got=1
+PASS  case_9_tick_off_noop want=0 got=0
+--- engine_cli smoke summary: 12 pass / 0 fail ---
+
+  (also 12/0 under ANIMA_MITOSIS=off env tier — verified)
+
+================================================================
+LIVE ON-vs-OFF RESULT — h1194_live_adaptation_coupling_probe.hexa:
+================================================================
+=== H_1194 LIVE-ENGINE adaptation-coupling probe (MITOSIS-ENGINE Lane2) ===
+metric: live recon-error = |sample - nearest AdaptField prototype| (p7, NOT perplexity)
+stream: non-stationary K=6-regime (centers 1.0 apart; novelty grows 1->K)
+windows: NOVELTY-ONSET (first 20 steps after each boundary) vs SETTLED (block tail)
+coupling: (1) stream->field input  (2) cell_count->field mitosis feedback  (3) recon-error readout
+Psi: pure_field_step run READ-ONLY alongside; Phi trajectory checksum must be ON==OFF (attractor disjoint)
+falsifier: F1 ADAPT d(OFF_nov - ON_nov)>=0.8 | F2 GROWTH cells ON>OFF & ON_settled<=OFF | F3 Psi byte-identical
+
+seed=7  ON  nov=0.0578622 settled=0.0150709 cells=6.0  phiSum=48.6613
+         OFF nov=0.209025 settled=0.0150685 cells=1.0  phiSum=48.6613  PsiSame=true
+seed=8  ON  nov=0.0584898 settled=0.0148736 cells=6.0  phiSum=48.6613
+         OFF nov=0.208995 settled=0.0149664 cells=1.0  phiSum=48.6613  PsiSame=true
+seed=9  ON  nov=0.055566 settled=0.0154301 cells=6.0  phiSum=48.6613
+         OFF nov=0.209885 settled=0.0154457 cells=1.0  phiSum=48.6613  PsiSame=true
+
+ON  mean novelty-err=0.057306  settled-err=0.0151249
+OFF mean novelty-err=0.209302  settled-err=0.0151602
+cells ON mean=6.0  OFF mean=1.0
+
+F1 ADAPT   d(OFF nov - ON nov)     = 162.497  (>=0.8 ⇒ live error FELL under novelty, ON<OFF)
+F2 GROWTH  cells ON>OFF=true & ON_settled<=OFF=true
+F3 Psi     Phi-checksum ON==OFF    = true (attractor intact)
+
+VERDICT: GREEN LIVE-ADAPTS — under novelty the live coupling makes recon-error FALL,
+  ON below OFF (F1 d=162.497>=0.8) BECAUSE live engine_mitosis_tick grew
+  covering cells (F2 ON 6.0 > OFF 1.0 cells, ON settled no worse), and the Psi attractor is byte-identical
+  ON vs OFF (F3). The stream->field input + cell->field mitosis feedback +
+  recon-error readout are WIRED LIVE; H_1159's ON-vs-OFF adaptation question now
+  has a live answer (p8). UNBLOCKS H_1166/H_1179. toy-scale; live-scale + real
+  corpus UNVERIFIED (a_scale_honest_scope).

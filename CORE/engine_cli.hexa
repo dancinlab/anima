@@ -275,6 +275,130 @@ pub fn engine_grow(seed: int, ticks: int, cfg: EngineConfig) -> int {
     return c
 }
 
+// ── §  ADAPTATION COUPLING — the live stream→field→error substrate (H_1194) ────
+//
+// THE BLOCKER it fixes (H_1166 ⏳ / H_1179 ⏳ BLOCKED-WIRING): the consciousness
+// field `pure_field_step` (CORE/pure_field.hexa) is ZERO-INPUT — it advances the
+// fast/medium/slow oscillators (the Ψ=1/2 fixed-point machinery) from internal
+// dynamics ALONE, never reads a stream sample, and the mitosis cell_count is
+// never fed back into it. So driving a non-stationary stream through the live
+// engine produced NO error/adaptation signal: H_1159's "does error FALL as
+// novelty grows?" question had no live counterpart (a_core_engine_map gap).
+//
+// THE HONEST FIX (no phantom wiring, Ψ UNTOUCHED): the Ψ attractor in
+// pure_field MUST NOT be perturbed (a_core_engine_map). So the coupling is an
+// ENGINE-NATIVE ADAPTATION SUBSTRATE that rides the SAME EngineConfig / mitosis
+// axis ALONGSIDE the Ψ field — it does NOT touch pure_field_step. It wires the
+// three pieces H_1166 listed as missing, all engine-native (NO .clm via the
+// generator L3 slot, NO .kosmos via kosmos_io — this is a substrate-internal
+// drive, not a 2nd artifact entry path):
+//
+//   (a) STREAM → FIELD input    : adapt_field_step takes a per-tick `sample`
+//       (a scalar drawn from a non-stationary stream); the substrate is no
+//       longer zero-input.
+//   (b) CELL → FIELD feedback   : the mitosis cell_count IS the substrate's
+//       representational capacity. adapt_field_step CALLS engine_mitosis_tick
+//       (gated on cfg.mitosis) to SPAWN a new prototype cell when the incoming
+//       sample is novel (recon-error over a split threshold) — so the SAME
+//       p8 growth tick that the smoke proves now materially changes the field's
+//       reconstruction. ON ⇒ capacity grows to cover new regimes; OFF ⇒ capacity
+//       frozen at the seed cell (ablation — the H_1159 ON-vs-OFF control).
+//   (c) RECONSTRUCTION-ERROR    : adapt_field_recon_err = |sample − nearest
+//       prototype|; the winner is pulled toward the sample (online, LR frozen).
+//       This is the LIVE coherence/assignment error the engine now EXPOSES.
+//
+// @L4 CRITICAL (same framing as --mitosis / --engine): this is SUBSTRATE-CONFIG
+// adaptation, NOT an emit/silence gate. adapt_field_* returns a cell count + a
+// reconstruction error; it NEVER returns an emit/silence decision and NEVER
+// touches pure_field's Φ/phase/Ψ. anima's speech stays substrate-decided
+// (a_autonomy_over_hardcode · a_substrate_native_speak · p5). p8 holds: the
+// growth tick IS the inference-time learning, here made observable on a stream.
+//
+// AdaptField — the engine-native adaptation substrate (Ψ-disjoint).
+//   protos : flat [float] of per-cell prototype scalars (the cells' receptive
+//            centers); len(protos) == n_cells.
+//   n_cells: live cell count (driven by engine_mitosis_tick under cfg).
+//   max_cells: capacity cap (frozen; bounds runaway split, mirrors h1159b cap).
+struct AdaptField {
+    protos: [float],
+    n_cells: int,
+    max_cells: int
+}
+
+// adapt_field_new — seed the substrate with a single prototype cell at `seed0`.
+// (mirrors the engine's seed cell-count; OFF arm stays here forever.)
+pub fn adapt_field_new(seed0: float, max_cells: int) -> AdaptField {
+    AdaptField { protos: [seed0], n_cells: 1, max_cells: max_cells }
+}
+
+// _nearest_idx — index of the prototype nearest to `x` (winner-take-all assign).
+fn _nearest_idx(protos: [float], x: float) -> int {
+    let n = len(protos)
+    let mut best = 0
+    let mut bestd = _absf(protos[0] - x)
+    let mut i = 1
+    while i < n {
+        let d = _absf(protos[i] - x)
+        if d < bestd { bestd = d  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+fn _absf(x: float) -> float { if x < 0.0 { return -x } return x }
+
+// adapt_field_recon_err — the LIVE reconstruction error for sample `x`:
+// distance to the nearest prototype (readout (c)). This is the engine's own
+// adaptation metric — it FALLS as cells come to cover the stream's regimes.
+pub fn adapt_field_recon_err(af: AdaptField, x: float) -> float {
+    return _absf(af.protos[_nearest_idx(af.protos, x)] - x)
+}
+
+// adapt_field_step — advance the adaptation substrate by ONE live tick on stream
+// sample `x`, gated by cfg. Returns the updated AdaptField. This is where all
+// three wires meet:
+//   (a) `x` IS the stream→field input (no longer zero-input).
+//   (b) if the sample is NOVEL (recon-err > SPLIT_THRESH) AND there is capacity,
+//       call engine_mitosis_tick(n_cells, cfg) — under cfg.mitosis ON this grows
+//       a prototype cell seeded AT the novel sample (cell→field feedback: the
+//       p8 growth tick materially adds representational capacity); under OFF the
+//       tick is a no-op so capacity stays frozen (the H_1159 control arm).
+//   (c) the winning prototype is pulled toward `x` (online LR) — homeostatic
+//       refinement of the assigned cell. recon-error is exposed via
+//       adapt_field_recon_err above.
+// SPLIT_THRESH + LR are frozen pre-registration constants (p7; not tuned-to-green).
+pub fn adapt_field_step(af: AdaptField, x: float, cfg: EngineConfig) -> AdaptField {
+    let SPLIT_THRESH = 0.30   // novelty bar: recon-err over this ⇒ a new regime
+    let LR = 0.20             // online winner pull (homeostatic refinement)
+
+    let win = _nearest_idx(af.protos, x)
+    let err = _absf(af.protos[win] - x)
+
+    // (b) cell→field feedback: novel sample + capacity ⇒ mitosis growth tick.
+    // engine_mitosis_tick is the SAME p8 gate the smoke proves; ON ⇒ +1 cell
+    // (seeded at the novel sample), OFF ⇒ no-op (capacity frozen — the control).
+    if err > SPLIT_THRESH && af.n_cells < af.max_cells {
+        let grown = engine_mitosis_tick(af.n_cells, cfg)
+        if grown > af.n_cells {
+            // ON: append a new prototype cell AT the novel sample.
+            return AdaptField {
+                protos: af.protos + [x],
+                n_cells: grown,
+                max_cells: af.max_cells
+            }
+        }
+        // OFF: tick was a no-op — fall through to refine the (frozen) winner only.
+    }
+
+    // (c) homeostatic online update: pull the winning prototype toward x.
+    let mut p2 = af.protos
+    p2[win] = af.protos[win] + LR * (x - af.protos[win])
+    return AdaptField { protos: p2, n_cells: af.n_cells, max_cells: af.max_cells }
+}
+
+// adapt_field_cells — live cell count accessor.
+pub fn adapt_field_cells(af: AdaptField) -> int { return af.n_cells }
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
