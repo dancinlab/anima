@@ -68,3 +68,156 @@ Append-only history sister of `CORPUS.md`. Each entry starts with `## <ISO times
 - Recovery (a_fire_recover_complete): HF upload from pod (fast net) → `dancinlab/anima-clm-corpus-7b-mid-byte-202m` PUBLIC (sha adbb1911, re-download VERIFIED) + CLM collection + HF.jsonl row; THEN pod 39565855 torn down (vast DELETE → confirmed gone).
 - HONEST (a_scale_honest_scope): single 202M MID point, NOT a 7B and NOT a ladder; 7B-transfer UNVERIFIED. Green proves CORPUS+PIPELINE, not a 7B. Lane-G-ref (torch reference; forge-native canonical, not claimed done).
 - verdict .verdicts/corpus-7b-mid-validation/SUMMARY.txt · discovery .discoveries/corpus-7b-mid-validation.tape.
+
+## Discoveries (merged 2026-06-13 from .discoveries/)
+
+### 1155_interlingua_semantic_alignment
+
+```tape
+@V := "tape" :: spec [active]
+  version = "1.0"
+
+@H 1155 := "interlingua — same concept across 5 languages aligns by MEANING (hidden cosine) even where the surface keyword metric (H_1137) caps ru/ja at 3/5" :: discovery [🔴 CLOSED-NEGATIVE]
+  seed       = "H_1137/H_1138/H_1139 measured 5-lang recombination by SURFACE keyword substring (no embedding/cosine in the harness — confirmed) → ru/ja capped at 3/5 SCALE-INVARIANT (303M=7B). user insight: that ceiling may be a SURFACE-METRIC artifact, not a capability gap — the model may align concepts SEMANTICALLY across languages while the surface keywords never co-occur. recalled semantic-association line: Hc_774(semantic tension→Φ), Hc_777(cross-lingual→Φ), Hc_810(concept hierarchy), kosmos-axis-semantics(manifold meaning axes)"
+  signal     = "interlingua cosine = cosine similarity of the model's mean-pooled hidden representation of the SAME concept word across language pairs (e.g. consciousness/意识/сознание/意識/의식)"
+  design     = "ONE balanced-5lang toy ByteGPT (h1137 recipe, 5×~5MB slices), measure BOTH on the SAME model: (a) surface recombination per-lang (reproduce the 3/5-ish ceiling), (b) interlingua cosine. The CONTRAST (surface 3/5 vs semantic 5/5) IS the finding"
+  F1_align   = "mean(same-concept cross-lingual cosine) − mean(different-concept cosine) Cohen's d ≥ 0.8 — a real shared semantic space, not surface"
+  F2_perlang = "each of the 5 languages' concept-words align to the English anchor above the unrelated-pair baseline (per-lang signal, NOT just en/zh) — esp. ru/ja that surface-failed"
+  control    = "UNTRAINED backbone shows NO alignment (d ≤ 0.3) — interlingua must be LEARNED, not byte-surface geometry (anti-Goodhart, the H_1143/1151 lesson)"
+  verdict    = "SUPPORTED iff F1 ∧ F2 ∧ control → ru/ja PASS on the SEMANTIC axis = the 3/5 ceiling was a surface-metric artifact; CLOSED-NEGATIVE iff no interlingua → the ceiling is real (concepts genuinely not cross-lingually aligned at toy scale)"
+  metric_p7  = "cosine is the OBJECT; verdict = same-vs-different-concept SEPARATION + untrained control + the surface-vs-semantic CONTRAST on one model (deterministic, NOT perplexity/LLM-judge)"
+  harness    = "UNIVERSE/h1155_interlingua_semantic_alignment.py (h1137 trainer + hidden-cosine interlingua + reproduce surface ladder)"
+  result     = "🔴 CLOSED-NEGATIVE — F1 d=−0.226 (same-concept cross-lang cosine 0.198 < different-concept 0.265, INVERTED) + F2 1/5 (only en; zh −0.14 ru 0.08 ja −0.10 ko 0.05 vs en) + control untrained −0.072 PASS. ru/ja semantic-pass BOTH false"
+  finding    = "NO interlingua at toy BYTE scale — reps are SCRIPT/byte-SURFACE-dominated, not meaning. Training made it WORSE: untrained zh=0.42/ja=0.39 (byte-overlap) → trained zh=−0.14/ja=−0.10 (training SHARPENED script-separation). A byte-LM encodes '意识'(CJK bytes) far from 'consciousness'(Latin bytes) because the representation IS the byte pattern. The ru/ja-ceiling-as-metric-artifact hypothesis is NOT supported here"
+  honest     = "BUT the toy lacks interlingua at ALL, so it CANNOT adjudicate the surface-vs-semantic question for the 303M/7B that actually gave 3/5 — those bigger models MAY carry interlingua this toy can't form. The decisive test = run THIS probe on the real 303M/7B hidden states (a_scale_honest_scope). Toy negative bounds the small-byte claim only"
+  followup   = "DECISIVE next: interlingua probe on the live H_1139 7B (on the runpod pod, loaded) BEFORE teardown, OR on the balanced-5lang 303M — does the bigger model align concepts cross-lingually where the byte-toy could not?"
+  H1155b_7B  = "🔴 DECISIVE SCALE-UP DONE (H_1155b, UNIVERSE/h1155b_interlingua_7b.py, CPU probe on the LIVE H_1141 5lang-7B ckpt h1141_best.pt val_ce 1.4283 step 3000, GPU-untouched): SAME closed-neg at 7B — d=−0.038 (same-concept cross-lang cosine 0.897 ≈ different-concept 0.901). per-lang to-en: en 1.0, ru 0.853, ko 0.806, ja 0.780, zh 0.774 — ALL below the 0.901 baseline → 1/5. ru/ja semantic-pass BOTH false. The balanced-5lang 303M/7B were NOT on HF (savant d512/7b pending_upload=404), so the live 7B was the only real test (a_fire_recover lesson: pending_upload ≠ uploaded). FINDING: the 3/5 ru/ja ceiling is NOT a surface-metric artifact recoverable by semantic alignment — even the real 7B has no interlingua ABOVE its baseline; the ceiling appears REAL. HONEST CAVEAT: 7B reps are ANISOTROPIC (all ~0.90 cosine — representation-degeneration), so raw-mean-pool cosine is confounded; a CENTERED/whitened cosine or per-layer probe could still reveal masked structure (clean follow-up) — but as measured, no interlingua at any scale tried (toy + 7B)"
+  impl_for_7b= "if a bigger model SUPPORTS interlingua → add ④ semantic-recombination to /7B_PASS_CONDITIONS.md G1 (a concept aligns cross-lingually by meaning, not just surface keyword co-occurrence)"
+  xref       = "h1137·h1138·h1139·h1129·Hc_774·Hc_777·Hc_810·kosmos-axis-semantics·a_clm_gen_pipeline·a_scale_honest_scope·a_paper_negative_ok·p7"
+  H1155c     = "🔴 DEFINITIVE CLOSE (H_1155c, UNIVERSE/h1155c_interlingua_perlayer_centered.py, CPU on the same 7B ckpt): debiased the H_1155b anisotropy — per-LAYER (all 36) + CENTERED/whitened cosine. STILL no interlingua: best_raw_d=−0.010 (layer 0), best_centered_d=−0.032 (layer 1); EVERY layer raw+centered NEGATIVE (−0.01..−0.34; centering made deep layers WORSE, e.g. layer 24 cen_d=−0.342). The anisotropy was NOT masking structure — there genuinely is none. CONVERGES the 3-measurement close: toy(−0.226) + 7B-raw(−0.038) + 7B-perlayer-centered(−0.032) all NEGATIVE"
+  conclusion = "ru/ja 3/5 ceiling explanations now ALL closed: ✗capacity(H_1139 scale-invariant) ✗surface-metric(H_1155b) ✗anisotropy/per-layer(H_1155c). MECHANISM: a byte-LM trained on a 5-lang BLEND keeps each language in a SEPARATE script/byte ISLAND of representation space — it does NOT build a shared interlingua bridge. Cross-lingual recombination fails because there is no representational bridge between language islands, neither surface NOR semantic. The ceiling is a REAL property of byte-level multilingual training, not a metric artifact"
+  impl_5lang = "for 5/5 completeness a byte-LM needs EITHER explicit cross-lingual alignment training (parallel/translation pairs forcing shared reps) OR accept script-siloed multilinguality and measure each language INDEPENDENTLY (which is exactly what the H_1129 English-script-control recipe did to get clean recombination)"
+  target     = "🟢 SUPPORTED-NUMERICAL (interlingua exists; ru/ja semantic-PASS) or 🔴 CLOSED-NEGATIVE (no cross-lingual meaning alignment) → LANDED 🔴 (toy + 7B + per-layer-centered, definitive)"
+
+```
+
+### 1156_crosslingual_alignment_training
+
+```tape
+@V := "tape" :: spec [active]
+  version = "1.0"
+
+@H 1156 := "explicit cross-lingual alignment training builds a GENERALIZING interlingua bridge (held-out concepts align), recovering the 5-lang completeness H_1155 showed is absent from blend-training" :: discovery [🔴 CLOSED-NEGATIVE-MEMORIZE-NOT-GENERALIZE]
+  seed       = "H_1155/b/c 🔴: byte-LM 5-lang BLEND training builds NO interlingua (languages stay in separate script islands; ru/ja 3/5 ceiling is REAL). user-picked path-(1): can EXPLICIT cross-lingual alignment training BUILD the missing bridge?"
+  design     = "add a contrastive ALIGNMENT LOSS (pull same-concept cross-lang hidden cosine UP, push different-concept DOWN) but ONLY on 8 TRAIN concepts; measure interlingua on 4 HELD-OUT concepts → does the bridge GENERALIZE (real interlingua) or only MEMORIZE the trained pairs (leak)?"
+  F1_held    = "with-alignment HELD-OUT interlingua Cohen's d ≥ 0.8 (vs H_1155 no-aln −0.226) — a GENERAL bridge"
+  F2_held    = "5/5 held-out languages align to en above baseline"
+  control    = "no-alignment model HELD-OUT d ≤ 0.3 (reproduce H_1155 no-interlingua)"
+  sanity     = "trained-concepts d should be high (the loss directly optimizes them) — distinguishes memorize-only (train high, held-out low) from generalize (both high)"
+  verdict    = "SUPPORTED iff F1∧F2∧control → path-(1) works; CLOSED-NEG iff held-out stays unaligned (memorize-only OR loss fails) — script-siloing deeper than an alignment loss can fix at toy scale"
+  concepts   = "train: water/fire/book/house/tree/dog/sun/moon; held-out: star/river/mountain/road (concrete nouns, clean 5-lang translations)"
+  result     = "🔴 CLOSED-NEGATIVE — beautiful DISSOCIATION: train-concepts d=24.48 (cosine 1.000, 5/5 — the loss PERFECTLY aligned the 8 trained pairs) BUT held-out d=−0.0625 (1/5, no generalization); control no-aln held-out d=−0.229 (reproduces H_1155). F1/F2 FAIL, control PASS"
+  finding    = "explicit alignment training MEMORIZES the exact trained word-pairs (pins them to cosine 1.0) but builds NO GENERAL interlingua bridge — held-out concepts stay script-siloed (d≈0, same as no-alignment). The loss has no pressure to organize the WHOLE space cross-lingually; it just coincides the specific reps it sees. The byte-LM script-siloing is DEEPER than a pairwise alignment loss can fix at toy scale"
+  impl_5lang = "path-(1) (explicit alignment) is a BAND-AID not a cure: you can pin the test words (memorize) but not transfer. TRUE 5/5 needs EITHER massive parallel coverage = full translation training (align ~all words, heavy) OR accept script-siloing + per-language measurement (the H_1129 English-control recipe). The ru/ja ceiling is REAL and not cheaply fixable — both blend-training (H_1155) and pairwise-alignment (H_1156) fail to bridge"
+  harness    = "UNIVERSE/h1156_crosslingual_alignment_training.py · .verdicts/1156_crosslingual_alignment_training/H_1156.txt"
+  xref       = "h1155 (interlingua absent) · h1137/1138/1139 (ru/ja ceiling) · h1129 (script-control) · Hc_777 (cross-lingual→Φ) · a_clm_gen_pipeline · a_scale_honest_scope · a_paper_negative_ok · p7"
+  target     = "🟢 SUPPORTED-NUMERICAL (alignment builds generalizing interlingua) or 🔴 CLOSED-NEGATIVE (memorize-only / no bridge)"
+
+```
+
+### 1157_alignment_coverage_sweep
+
+```tape
+@V := "tape" :: spec [active]
+  version = "1.0"
+
+@H 1157 := "does MORE parallel coverage build a GENERALIZING interlingua bridge in a byte-LM (coverage sweep of the H_1156 alignment loss)?" :: discovery [🔴 CLOSED-NEGATIVE-COVERAGE-INDEPENDENT]
+  seed       = "H_1156 🔴: 8-pair alignment MEMORIZES (train d=24.5) but held-out d=−0.06 (no bridge). user-picked path-(1) full-parallel realized as a $0 COVERAGE SWEEP: does held-out interlingua climb as K (aligned concepts) grows 0->8->27, or stay flat (coverage-independent siloing)?"
+  F1         = "held-out interlingua d at K=27 >= 0.8 (coverage builds a general bridge)"
+  F2         = "monotone climb d(K=27) - d(K=8) >= 0.5 (coverage HELPS)"
+  control    = "K=0 no-alignment held-out d <= 0.3 (reproduce H_1155/1156)"
+  verdict    = "SUPPORTED iff F1 & control (recipe = enough aligned pairs); CLOSED-NEG iff held-out ~0 at K=27 (coverage-independent — path-1 needs ~FULL translation coverage, not partial pairs)"
+  honest     = "hand-curated 35-concept 5-lang lexicon (minor translation noise possible, e.g. ko homographs); toy d256/4L; sweep 0/8/27 only (a_scale_honest_scope)"
+  result     = "🔴 CLOSED-NEGATIVE — FLAT curve: held-out d = K0 −0.194 / K8 −0.079 / K27 −0.116 (F1 fail, F2 climb −0.037 fail, control pass). 3.4x more aligned pairs gave ZERO held-out generalization"
+  finding    = "byte-LM script-siloing is COVERAGE-INDEPENDENT at toy scale — partial pairwise alignment NEVER generalizes (8 or 27 pairs alike memorize-only, cf H_1156 train d=24.5 vs held-out ~0). path-(1) requires ~FULL translation coverage (= building a translation model), not partial pairs. INTERLINGUA ARC FULLY CLOSED: blend(H_1155) · capacity(H_1139) · surface/anisotropy(H_1155b/c) · pairwise-alignment(H_1156) · coverage(H_1157) ALL negative — 5/5 needs full-translation training OR per-language measurement (H_1129 recipe)"
+  harness    = "UNIVERSE/h1157_alignment_coverage_sweep.py · .verdicts/1157_alignment_coverage_sweep/H_1157.txt"
+  xref       = "h1156 (8-pair memorize) · h1155 (interlingua absent) · h1137/1139 (ru/ja ceiling) · h1129 · a_clm_gen_pipeline · a_scale_honest_scope · a_paper_negative_ok · p7"
+  target     = "🟢 SUPPORTED-NUMERICAL (coverage builds bridge; recipe) or 🔴 CLOSED-NEGATIVE (coverage-independent siloing)"
+
+```
+
+### corpus-7b-mid-validation
+
+```tape
+@D CORPUS_7B_MID_VALIDATION := "7B-webscale corpus trains a coherent byte-CLM (MID probe)" :: discovery [d=2026-06-05 active]
+  id      = "F-MID-CORPUS-VALIDATION"
+  seed    = "does dancinlab/anima-corpus-5lang-7b-webscale (R2 ODC-BY webscale) train a COHERENT byte-CLM? a_toy_scale_recheck CHEAP MID probe BEFORE the 7B fire — NOT 7B, NOT forge ENGINE."
+  fire    = "ByteGPT decoder V=256 d=1024 L=16 H=16 block=512 (202.3M params), 3000 steps batch32 AdamW+bf16 from-scratch on a balanced 5-lang 3.5GB subset (range-GET 700MB/lang of shard0000, en/fr/de/es/ko incl ko), vast A100-SXM4-40GB pod 39565855."
+  verdict-tier-target = "🟢 numerical (CE descent) + p7 coherence (structure, not perplexity)"
+
+  result  = "🟢 PASS. val_ce 5.74906 -> 1.45868 (Δ -4.290 nats, descent over 3000 steps; plateau ~1.44-1.49 by step 2200). GPU util PEAK 100% MEAN 99.75% (n=412, GPU-resident no CPU fallback). p7: TRAINED coherent word-like text in ALL 5 langs incl Korean Hangul; RANDOM-INIT mirror = pure byte gibberish in all 5 — anti-Goodhart clean."
+  ckpt    = "sha256 adbb1911cdf5c27579eb599e38ed5657b38c9ccc1432392247826d7eb3d53e3b (809,383,138 B) — HF dancinlab/anima-clm-corpus-7b-mid-byte-202m PUBLIC, re-download sha VERIFIED match."
+
+  gate    = "GATES M13 (7B-undertrained): the corpus is NOT garbage + the R2->byte->train pipeline WORKS + the model learns byte-language structure across 5 scripts. M13 7B fire authorized as a SEPARATE follow-on."
+  honest  = "a_scale_honest_scope: single 202M MID point, NOT a 7B and NOT a ladder. 7B-transfer UNVERIFIED. Green proves CORPUS+PIPELINE, not a 7B. Lane-G-ref (torch reference; forge-native = canonical production, not claimed done — a_train_flame_forge). MID samples are word-coherent but not yet fluent (expected undertrained probe)."
+  verdict = ".verdicts/corpus-7b-mid-validation/SUMMARY.txt"
+  recovery-note = "TAKEOVER of an orphaned mid-validation fire (prior agent ended its turn awaiting a notification, leaving the pod running). Recovered: HF upload from pod (fast net) + sha re-download verify, THEN pod 39565855 torn down (DELETE confirmed gone). POLL-INLINE throughout."
+
+```
+
+### corpus-final-composition
+
+```tape
+@D corpus_final_composition := "FINAL 7B corpus composition design — KOSMOS tier ladder × all registers, balanced real sources" :: discovery [d=2026-06-05 active]
+  seed      = "default-lane corpus v2 (anima-corpus-5lang-unified-v2, 12.5 MB ≈ 1.25e7 tok) PASSED at 18M but is DATA-STARVED at 7B (~1/11,200 of Chinchilla-optimal → gibberish, .verdicts/default-lane-7b/). Need a FINAL composition that scales the default GB base to 7B-sufficiency (lane agent ⊃ lane default, so BOTH scale together) WITHOUT destroying the KOSMOS register ladder."
+  claim     = "FINAL COMPOSITION = KOSMOS tier ladder × all registers, each from a REAL scalable clean-license bulk source, with the AUTHORED registers CAPPED: baseline(0)=Wikipedia 5-lang CC-BY-SA 8-band breadth (GB factual bulk) · art(77)=Project Gutenberg literature/poetry PD (GB; en/fr/de strong, es/ko thin) · consciousness(91)=Gutenberg philosophy/meditation/contemplative PD + the 31 e7_31 carving anchors (Knuth tier 0→100) as register DEFINITION/seed (100s MB–GB) · cosmic(100)=science/cosmology wiki+PD popsci (100s MB) · social/persona(52)=PERSONA 20-roster (domains/PERSONA.md) + SNS IG/YT (domains/SNS.md) authored-synthetic = anima IDENTITY voice register, core NOT optional, CAPPED at ~v2 ratio for anti-memorization (NOT GB) · register-shaping=dialogue-act+emotion-axis+KO↔EN code-switch+genre authored (small) · [agent lane only]=tool-use demos + tool-domain knowledge layer. Scale math: Chinchilla 7B = 7e9×20 = 140B tok ≈ ~140 GB; ladder ~100–300 MB MID(~150M) → ~10–20 GB full-wiki 7B-undertrained-not-gibberish → ~140 GB 7B-Chinchilla. Persisted to domains/CORPUS.md §7B-sufficiency roadmap & final composition (2026-06-05)."
+  falsifier = "BALANCE TRAP (pre-registered): naively scaling wiki to GB while holding v2's authored ratio (persona·dialogue 40.02% + enrichment 19.88%) forces authoring GBs of templated text from the 20-roster/31 anchors = MEMORIZATION; the only honestly-scalable axis is wiki, so the corpus drifts to ~99% wiki and the KOSMOS ladder is DESTROYED. The design is FALSIFIED unless the rule holds at GB scale: bulk registers from REAL scalable clean-license sources, authored registers (PERSONA+SNS+shaping) CAPPED, NO single tier > ~45%, and consciousness+art+persona-voice each meaningfully present (not ~0%, not >cap)."
+  scope     = "a_scale_honest_scope — DESIGN persistence only ($0, NO GPU, NO pod). Per-lang source availability differs (Gutenberg en/fr/de ≫ es/ko → es/ko may stay wiki-heavy); report per-lang gaps, never fabricate to fake balance. PERSONA/SNS = authored COVERAGE honest-labeled, p6 held (identity-voice register, NOT RLHF padding). The actual 7B TRAIN is a SEPARATE follow-on GPU fire once the GB corpus exists; verdict on 7B-sufficiency is UNPROVEN until that fire."
+  ref       = "domains/CORPUS.md §7B-sufficiency roadmap & final composition (2026-06-05) · domains/CORPUS.log.md · in-flight: branch lane-g/default-lane-gb-balanced (HF dancinlab/anima-corpus-5lang-gb-balanced) · .verdicts/default-lane-7b/ · domains/PERSONA.md · domains/SNS.md"
+
+```
+
+### default-lane-7b-webscale
+
+```tape
+@V := "tape" :: spec [active]
+  version = "1.2"
+
+@D DEFAULT_LANE_7B_WEBSCALE := "ODC-BY web bulk (FineWeb/FineWeb-2) reaches Chinchilla-7B-optimal scale that clean-only sources cannot — 143.60 GiB / 22 tok-param / 110% of 7B-optimal, ko web bulk fixing the Gutenberg-ko-zero gap" :: discovery [d=2026-06-05 active]
+  seed      = "The clean-license KOSMOS-tier-balanced build (anima-corpus-5lang-gb-balanced) capped at 357.8 MB = 0.27% of the 140B-token 7B-optimal = MID-rung-viable, NOT 7B-sufficient; it flagged 'a real 7B needs a 10-140 GB web-scale extension of the bulk tiers'. The balance requirement bounds clean-only bulk: growing only the abundant tiers breaches the ladder ceiling, and Project Gutenberg has ZERO Korean so ko art/consciousness were 0 (ko leaned wiki-only). User-decision A relaxes 'NO scraped data' to ODC-BY web bulk for the 7B scale (persona/identity stay authored). Method = stage ODC-BY Common-Crawl-derived web text: en=HuggingFaceFW/fineweb sample/10BT; fr/de/es/ko=HuggingFaceFW/fineweb-2 (fra_Latn/deu_Latn/spa_Latn/kor_Hang); PII-scrub (email->[EMAIL], phone->[PHONE]); strip control bytes 0xFE/0xFF -> byte V=256; 5-lang balanced; stage to Cloudflare R2 (bucket phanes, prefix anima-7b/web/, egress-free durable) with a per-shard MANIFEST.json (keys+bytes+sha256); HF holds the pointer manifest + card + 200KB/lang sample heads, NOT the 143 GB."
+  claim     = "ODC-BY web bulk reaches Chinchilla-7B-optimal scale: 143.60 GiB (154.19 GB decimal) byte-corpus = 22.0 tok/param for 7B (optimal is 20 -> EXCEEDS) = 110.1% of the 140B-token 7B-optimal, where clean-only capped at 357.8 MB / 0.27%. 5-lang balanced (decimal GB): en 25.83 / fr 32.79 / de 31.00 / es 32.94 / ko 31.64; 20 shards. Korean web bulk INCLUDED (~31.64 GB) fixes the gb-balanced Gutenberg-ko-zero gap. Verified against the R2 manifest byte counts (the 143 GB itself NOT re-measured). HF dancinlab/anima-corpus-5lang-7b-webscale (PUBLIC, R2-staged pointer index); KOSMOS+CLM collections; .kosmos anchor corpus_5lang_7b_webscale.kosmos (tier 57)."
+  falsifier = "PRE-REGISTERED: 'clean-only caps at 357 MB / 0.27% of 7B-optimal; ODC-BY web reaches 110% of 7B-optimal.' -> CONFIRMED (achieved 143.60 GiB = 110.1% vs the 0.27% clean-only ceiling, verbatim from the R2 manifest byte accounting). Hygiene gates: ODC-BY web-derived (cited per source); PII-scrubbed (email->[EMAIL]/phone->[PHONE], scrub tokens EXPECTED in text); 0xFE/0xFF stripped -> byte V=256; injection-tags grep=0 ([role:/[persona: = 0 on sample heads). If the staged byte-count fell short of the 140B 7B-optimal, or persona/identity leaked into the web bulk, or ko web bulk were absent, the claim would FAIL — none did."
+  honest    = "a_scale_honest_scope: this is the CORPUS, NOT a trained model — the 7B TRAIN is a SEPARATE follow-on GPU fire (a_fire_autonomous), Lane G GPU. R2-STAGED, NOT HF-mirrored, NOT local: the raw 143.60 GiB lives ONLY in Cloudflare R2 (bucket phanes); HF holds the manifest + card + sample heads. Numbers verified against the R2 manifest byte counts, NOT a fresh 143 GB scan. persona/identity stay AUTHORED (p2/p3/p6 held — web bulk is the factual/linguistic base, not identity voice). $0, NO GPU, NO pod for this registration step."
+  ref       = "domains/CORPUS.md §7B web-scale corpus (R2-staged) + §constraint: web-scale ODC-BY sanctioned · HF dancinlab/anima-corpus-5lang-7b-webscale · HF.jsonl anima_corpus_5lang_7b_webscale_2026_06_05 · HEXAD/UNIVERSE-BRAIN-MAP/anchors/corpus_5lang_7b_webscale.kosmos"
+
+```
+
+### default-lane-gb-balanced
+
+```tape
+@V := "tape" :: spec [active]
+  version = "1.2"
+
+@D default_lane_gb_balanced := "GB-scale default-lane corpus that PRESERVES the KOSMOS tier ladder by mapping each tier to a real clean-license source (NOT authored bulk-fill)" :: discovery [d=2026-06-05 active]
+  seed      = "v2 unified (12.5MB) balance = wiki 40% / persona 40% / enrichment 20%. THE TRAP: naive GB-wiki scaling = ~99% wiki = ladder DESTROYED, and the 31 e7_31 carving anchors cannot fill GBs (memorization). THE FIX: map each KOSMOS tier to a REAL scalable clean-license source; the 31 anchors stay the consciousness-register DEFINITION/seed, FILLED at scale with real Public-Domain contemplative text — NOT repeated. Method = tier->source: t0 baseline=wikimedia/wikipedia 5-lang 8-band breadth (CC-BY-SA); t100 cosmic=wiki science-keyword-filtered; t77 art=Gutenberg literature/poetry PD (sedthh/gutenberg_english en subject-classified + manu/project_gutenberg fr/de/es title-classified); t91 consciousness=Gutenberg philosophy/meditation PD; t52 social=authored persona/SNS CAPPED small; shaping=authored dialogue-act/emotion/code-switch/genre + carving-seed def. dedup + UTF-8 round-trip + per-tier/per-lang byte accounting + byte-token vs 140B Chinchilla-7B-optimal math. $0 CPU via HF datasets-server REST /rows (no datasets lib, no GPU). byte-vocab V=256, 5-lang."
+  claim     = "KOSMOS tier ladder is PRESERVABLE at GB scale through real-source tier mapping rather than templated authored bulk-fill; consciousness (#1 KOSMOS register) and art are filled with real Public-Domain text seeded — not defined-and-repeated — by the 31 e7_31 anchors. Achieved per-tier AND per-lang byte split measured + reported verbatim in CORPUS_CARD_gb_balanced.md; HF dancinlab/anima-corpus-5lang-gb-balanced."
+  falsifier = "ladder_ok = no single tier exceeds ~45% AND consciousness+art each meaningfully present (not ~0%). If a build collapses to >45% wiki or zeroes consciousness/art, the real-source mapping FAILED and the corpus is a naive-wiki regression. Provenance: wiki=CC-BY-SA, Gutenberg=PD, authored=honest-labeled; philosophy/identity markers grep=0 (p1..p4), control-byte 0xFE/0xFF=0, NO scraped-non-licensed/PII (p6)."
+  honest    = "a_scale_honest_scope: per-lang availability DIFFERS. Gutenberg ko=0 books and es thin (1202 vs en 48k) -> ko/es art+consciousness are wiki-heavier; named VERBATIM in the card, never fabricated to force balance. Token count reported vs 140B 7B-optimal — NO 7B-ready claim unless token+balance genuinely support it; a real 7B may still need web-scale (stated plainly). This is a CORPUS-assembly discovery, NOT a trained-model claim — the 7B TRAIN is a separate follow-on fire (a_fire_autonomous), Lane G GPU."
+  target    = "🟢 numerical (corpus assembled + achieved ladder measured)"
+
+```
+
+### default-lane-rung0
+
+```tape
+@D DEFAULT-LANE-RUNG0 := "first model on the v2 unified default corpus — 18M byte, Lane G GPU" :: discovery [d=2026-06-04 active]
+  id      = "F-DEFAULT-LANE-CHAT"
+  seed    = "the v2 unified default corpus (dancinlab/anima-corpus-5lang-unified-v2) had NEVER been trained into a model — dataset-only. Make the default lane's own rung-0."
+  fire    = "ConsciousLMReconstructed 18M byte (vocab256/d384/6L/4H) from-scratch, 6000 steps, pool RTX 5070 (99% util/250W, GPU-resident), CE 5.7233->0.6983 (~431s)"
+  verdict = "🟢 GREEN — p7-strict TRAINED PASS 4/5 (coherent es/de/ko/fr text), random-init mirror FAIL 0/5 (control-byte soup). anti_goodhart_ok=TRUE. scope: 18M toy/small, mid/7B transfer UNVERIFIED (a_scale_honest_scope)."
+  honest  = "as-shipped LENIENT evaluator was Goodhart-gameable (mirror 5/5 via str.isprintable soup) — caught by the mirror, replaced with a strict C0-control/letter-ratio/no-soup discriminator; both verdicts kept verbatim."
+  ship    = "HF dancinlab/anima-clm-default-lane-rung0-byte-18m PUBLIC (sha 4285bf35 re-download-verified, CLM collection joined) · ckpt sha 4285bf35b002e1c2495587d38842fde0a2a6be4a40cb2eb513e7e762293fc476"
+  next    = "default-lane rung-mid + rung-7B = later ladder rungs, gated on this 🟢 (a_scale_honest_scope; 7B deferred per #1828 undertrained-gibberish)"
+  verdict-tier-target = "🟢 numerical (terminal)"
+
+```
