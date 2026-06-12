@@ -1,0 +1,161 @@
+{
+  "H": "H_1152",
+  "title": "neuromodulatory uncertainty split (ACh expected ⊥ NE unexpected)",
+  "grounding": "Yu & Dayan 2005 — ACh=expected uncertainty (within-model entropy), NE=unexpected uncertainty (model-mismatch surprise)",
+  "primary_NE_channel": "NE_kl",
+  "F1_NE_predicts_fab": {
+    "spearman": 0.025049842433597015,
+    "bar": 0.3,
+    "pass": false,
+    "both_variants": {
+      "NE_kl": 0.025049842433597015,
+      "NE_gap": -0.30223808605054986
+    }
+  },
+  "F2_dissociation": {
+    "spearman_ACh_NE": -0.08080905524471027,
+    "bar_max_abs": 0.7,
+    "pass": true,
+    "ACh_NEkl": -0.08080905524471027,
+    "ACh_NEgap": 0.11875361759598688
+  },
+  "control_anti_goodhart": {
+    "untrained_NE_fab_spearman": 0.0,
+    "bar_max_abs": 0.15,
+    "pass": true,
+    "untrained_NEkl": 0.0,
+    "untrained_NEgap": 0.0
+  },
+  "baseline_conflated": {
+    "trained_conf_fab": 0.04862049006366969,
+    "trained_ACh_fab": -0.04900636696893691,
+    "note": "H_1148 conflated-entropy signal reproduction (conf~+0.257 anti-predictive)"
+  },
+  "trained": {
+    "n_gens": 72,
+    "mean_fab": 0.29594356261022925,
+    "spearman_NEkl_fab": 0.025049842433597015,
+    "spearman_NEgap_fab": -0.30223808605054986,
+    "spearman_ACh_fab": -0.04900636696893691,
+    "spearman_conf_fab": 0.04862049006366969,
+    "spearman_ACh_NEkl": -0.08080905524471027,
+    "spearman_ACh_NEgap": 0.11875361759598688
+  },
+  "untrained": {
+    "n_gens": 72,
+    "mean_fab": 0.0,
+    "spearman_NEkl_fab": 0.0,
+    "spearman_NEgap_fab": 0.0,
+    "spearman_ACh_fab": 0.0,
+    "spearman_conf_fab": 0.0,
+    "spearman_ACh_NEkl": -0.2881857354170686,
+    "spearman_ACh_NEgap": 0.06035757926554763
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE (a_paper_negative_ok): the ACh⊥NE split does NOT yield a correctly-signed fabrication handle that conflated entropy lacked",
+  "scope": "toy ByteGPT d256/4L CPU en-24MB slice seed 7 — anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "n_prompts": 24,
+    "seeds": [
+      7,
+      8,
+      9
+    ],
+    "gen_len": 90,
+    "seed": 7
+  }
+}=== full log ===
+=== H_1152 neuromodulatory uncertainty split (ACh expected ⊥ NE unexpected) ===
+[dict] 73292 words
+[prompts] 24 concept-fusion x 3 seeds = 72 gens
+
+--- CONTROL: UNTRAINED backbone ---
+  [untrained] NEkl->fab=+0.0000 NEgap->fab=+0.0000 ACh->fab=+0.0000 conf->fab=+0.0000 ACh~NEkl=-0.2882 ACh~NEgap=+0.0604
+
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.7144 0.0min
+  [train] step 500 ce=2.4751 2.2min
+  [train] step 1000 ce=2.3601 3.7min
+  [train] step 1499 ce=2.3345 4.5min
+
+--- TRAINED battery ---
+  [corpus] loaded 1.50GB lowercased in 1.0s
+  [trained] NEkl->fab=+0.0250 NEgap->fab=-0.3022 ACh->fab=-0.0490 conf->fab=+0.0486 ACh~NEkl=-0.0808 ACh~NEgap=+0.1188
+
+=== VERDICT ===
+{
+  "H": "H_1152",
+  "title": "neuromodulatory uncertainty split (ACh expected ⊥ NE unexpected)",
+  "grounding": "Yu & Dayan 2005 — ACh=expected uncertainty (within-model entropy), NE=unexpected uncertainty (model-mismatch surprise)",
+  "primary_NE_channel": "NE_kl",
+  "F1_NE_predicts_fab": {
+    "spearman": 0.025049842433597015,
+    "bar": 0.3,
+    "pass": false,
+    "both_variants": {
+      "NE_kl": 0.025049842433597015,
+      "NE_gap": -0.30223808605054986
+    }
+  },
+  "F2_dissociation": {
+    "spearman_ACh_NE": -0.08080905524471027,
+    "bar_max_abs": 0.7,
+    "pass": true,
+    "ACh_NEkl": -0.08080905524471027,
+    "ACh_NEgap": 0.11875361759598688
+  },
+  "control_anti_goodhart": {
+    "untrained_NE_fab_spearman": 0.0,
+    "bar_max_abs": 0.15,
+    "pass": true,
+    "untrained_NEkl": 0.0,
+    "untrained_NEgap": 0.0
+  },
+  "baseline_conflated": {
+    "trained_conf_fab": 0.04862049006366969,
+    "trained_ACh_fab": -0.04900636696893691,
+    "note": "H_1148 conflated-entropy signal reproduction (conf~+0.257 anti-predictive)"
+  },
+  "trained": {
+    "n_gens": 72,
+    "mean_fab": 0.29594356261022925,
+    "spearman_NEkl_fab": 0.025049842433597015,
+    "spearman_NEgap_fab": -0.30223808605054986,
+    "spearman_ACh_fab": -0.04900636696893691,
+    "spearman_conf_fab": 0.04862049006366969,
+    "spearman_ACh_NEkl": -0.08080905524471027,
+    "spearman_ACh_NEgap": 0.11875361759598688
+  },
+  "untrained": {
+    "n_gens": 72,
+    "mean_fab": 0.0,
+    "spearman_NEkl_fab": 0.0,
+    "spearman_NEgap_fab": 0.0,
+    "spearman_ACh_fab": 0.0,
+    "spearman_conf_fab": 0.0,
+    "spearman_ACh_NEkl": -0.2881857354170686,
+    "spearman_ACh_NEgap": 0.06035757926554763
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE (a_paper_negative_ok): the ACh⊥NE split does NOT yield a correctly-signed fabrication handle that conflated entropy lacked",
+  "scope": "toy ByteGPT d256/4L CPU en-24MB slice seed 7 — anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "n_prompts": 24,
+    "seeds": [
+      7,
+      8,
+      9
+    ],
+    "gen_len": 90,
+    "seed": 7
+  }
+}
+[done] /tmp/h1152_result.json
