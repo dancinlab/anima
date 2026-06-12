@@ -1,0 +1,220 @@
+=== H_1190 — is the LEARNED-SURPRISE gate GENERAL, or only a TEXT rescue? Does surprise beat the raw DERIVATIVE on already-temporal numeric/audio? ===
+  continuous surprise = one-step linear-predictor error ||X[t]-x̂_t|| (analogue of H_1187 byte-surprise); surprise-gated split (mean+1.0σ saccade) vs raw DERIVATIVE vs METRONOME
+  10 seeds; metric = STAGE-DECODE (p7, NOT predictor loss); per-modality K* = argmax d(deriv,metro) over cap ladder (4, 6, 8, 12, 16, 24, 32, 48, 64)
+  PRE-REG prediction: surprise is REDUNDANT (|Δ|<0.5) on already-temporal numeric/audio (raw derivative already reads smooth flow), unlike text (H_1187)
+
+--- MODALITY: NUMERIC (6 stages; chance=0.167) ---
+  surprise spread (std over seed0 scored region) = 2.4646  degenerate=False (ok)
+  cap=  4  surp=0.0517  deriv=0.0137  metro=0.0000  d(surp,metro)=+0.44  d(deriv,metro)=+0.39
+  cap=  6  surp=0.2051  deriv=0.1315  metro=0.2136  d(surp,metro)=-0.04  d(deriv,metro)=-0.34
+  cap=  8  surp=0.2660  deriv=0.2590  metro=0.2596  d(surp,metro)=+0.02  d(deriv,metro)=-0.00
+  cap= 12  surp=0.4591  deriv=0.4371  metro=0.2304  d(surp,metro)=+0.70  d(deriv,metro)=+0.91
+  cap= 16  surp=0.5162  deriv=0.6448  metro=0.2948  d(surp,metro)=+0.99  d(deriv,metro)=+3.17
+  cap= 24  surp=0.6168  deriv=0.7916  metro=0.4550  d(surp,metro)=+0.37  d(deriv,metro)=+1.29
+  cap= 32  surp=0.6798  deriv=0.7566  metro=0.6786  d(surp,metro)=+0.00  d(deriv,metro)=+0.47
+  cap= 48  surp=0.7070  deriv=0.8843  metro=0.8220  d(surp,metro)=-0.62  d(deriv,metro)=+0.49
+  cap= 64  surp=0.6994  deriv=0.8592  metro=0.9553  d(surp,metro)=-0.96  d(deriv,metro)=-0.85
+  K* = 16 (argmax d(deriv,metro)):  d_surprise_vs_metro=+0.992  d_derivative_vs_metro=+3.168  Δ=-2.176  => SURPRISE-WORSE
+
+--- MODALITY: AUDIO (6 stages; chance=0.167) ---
+  surprise spread (std over seed0 scored region) = 29.8077  degenerate=False (ok)
+  cap=  4  surp=0.0938  deriv=0.0699  metro=0.0000  d(surp,metro)=+0.79  d(deriv,metro)=+0.64
+  cap=  6  surp=0.1852  deriv=0.1513  metro=0.1751  d(surp,metro)=+0.10  d(deriv,metro)=-0.15
+  cap=  8  surp=0.2628  deriv=0.2394  metro=0.1742  d(surp,metro)=+0.73  d(deriv,metro)=+0.48
+  cap= 12  surp=0.3534  deriv=0.3744  metro=0.2932  d(surp,metro)=+0.33  d(deriv,metro)=+0.56
+  cap= 16  surp=0.4397  deriv=0.4001  metro=0.2586  d(surp,metro)=+1.09  d(deriv,metro)=+0.74
+  cap= 24  surp=0.5238  deriv=0.5015  metro=0.3454  d(surp,metro)=+0.75  d(deriv,metro)=+0.81
+  cap= 32  surp=0.5522  deriv=0.6422  metro=0.3843  d(surp,metro)=+0.88  d(deriv,metro)=+1.15
+  cap= 48  surp=0.6410  deriv=0.7308  metro=0.5771  d(surp,metro)=+0.26  d(deriv,metro)=+0.67
+  cap= 64  surp=0.6440  deriv=0.7948  metro=0.7858  d(surp,metro)=-0.58  d(deriv,metro)=+0.06
+  K* = 32 (argmax d(deriv,metro)):  d_surprise_vs_metro=+0.876  d_derivative_vs_metro=+1.152  Δ=-0.276  => REDUNDANT
+
+=== VERDICT ===
+  CLOSED-NEGATIVE on the FROZEN letter (a_paper_negative_ok): NOT both-redundant — but in the OPPOSITE direction to a universal upgrade. Learned surprise NEVER beats the raw |dX/dt| DERIVATIVE on either modality (Δ never >= +0.5); it is REDUNDANT on audio (Δ=-0.28) and strictly WORSE than the raw derivative on numeric (numeric Δ=-2.18, the binary REDUNDANT/SURPRISE-ADDS split did not anticipate a WORSE bucket). numeric: Δ=-2.18 (SURPRISE-WORSE); audio: Δ=-0.28 (REDUNDANT). FINDING: the PRE-REGISTERED science holds even MORE strongly than predicted — on already-temporal streams a learned one-step-surprise gate adds NOTHING over the raw derivative and on AR(1) numeric it actively LAGS it (the predictor fits the smooth relaxation so its surprise peaks LATE/under-covers regimes the rising-edge catches), so learned surprise is a TEXT-SPECIFIC rescue (H_1187), never a universal upgrade. Both gates still beat the input-blind METRONOME (d_surp & d_deriv both > 0), so the tick still matters — only the LEARNED refinement is wasted where raw change already reads the flow.
+
+{
+  "H": "H_1190",
+  "title": "is the learned-surprise gate GENERAL (beats the raw derivative on already-temporal numeric/audio too) or REDUNDANT there (only rescues text where raw change is uninformative)?",
+  "frozen_falsifier": {
+    "Kstar": "per modality, argmax over cap ladder {4,6,8,12,16,24,32,48,64} of d_derivative_vs_metro",
+    "delta": "Δ = d_surprise_vs_metro − d_derivative_vs_metro at K*",
+    "REDUNDANT": "|Δ| < 0.5 (surprise ≈ derivative)",
+    "SURPRISE_ADDS": "Δ >= 0.5 (surprise meaningfully beats raw derivative)",
+    "SUPPORTED": "BOTH numeric AND audio classify REDUNDANT (pre-reg prediction borne out)",
+    "ELSE": "CLOSED-NEGATIVE — surprise also helps a smooth modality = (partial) universal upgrade",
+    "metric": "STAGE-DECODE accuracy (p7, NOT the predictor's one-step error)"
+  },
+  "modalities": {
+    "numeric": {
+      "Kstar": 16,
+      "d_surprise_vs_metro": 0.9922595954709882,
+      "d_derivative_vs_metro": 3.1683267640483117,
+      "delta": -2.1760671685773234,
+      "classification": "SURPRISE-WORSE",
+      "redundant": false,
+      "surprise_adds": false,
+      "mean_decode_at_Kstar": {
+        "surprise": 0.5161666666666667,
+        "derivative": 0.6447916666666667,
+        "metronome": 0.29483333333333334
+      },
+      "surprise_degenerate": false
+    },
+    "audio": {
+      "Kstar": 32,
+      "d_surprise_vs_metro": 0.8756972007424523,
+      "d_derivative_vs_metro": 1.1521333863107566,
+      "delta": -0.2764361855683043,
+      "classification": "REDUNDANT",
+      "redundant": true,
+      "surprise_adds": false,
+      "mean_decode_at_Kstar": {
+        "surprise": 0.5521666666666667,
+        "derivative": 0.6421666666666668,
+        "metronome": 0.38425000000000004
+      },
+      "surprise_degenerate": false
+    }
+  },
+  "cap_ladders": {
+    "numeric": {
+      "4": {
+        "d_surprise_vs_metro": 0.4395704097728054,
+        "d_derivative_vs_metro": 0.3897488518743507,
+        "mean_surp": 0.05166666666666667,
+        "mean_deriv": 0.013666666666666669,
+        "mean_metro": 0.0
+      },
+      "6": {
+        "d_surprise_vs_metro": -0.03624350171069711,
+        "d_derivative_vs_metro": -0.3408449730354899,
+        "mean_surp": 0.205125,
+        "mean_deriv": 0.13145833333333332,
+        "mean_metro": 0.213625
+      },
+      "8": {
+        "d_surprise_vs_metro": 0.021247758334605106,
+        "d_derivative_vs_metro": -0.0019765332622672838,
+        "mean_surp": 0.2660416666666667,
+        "mean_deriv": 0.259,
+        "mean_metro": 0.25962500000000005
+      },
+      "12": {
+        "d_surprise_vs_metro": 0.6954381042521726,
+        "d_derivative_vs_metro": 0.9104615356482115,
+        "mean_surp": 0.45912500000000006,
+        "mean_deriv": 0.4371250000000001,
+        "mean_metro": 0.23037500000000005
+      },
+      "16": {
+        "d_surprise_vs_metro": 0.9922595954709882,
+        "d_derivative_vs_metro": 3.1683267640483117,
+        "mean_surp": 0.5161666666666667,
+        "mean_deriv": 0.6447916666666667,
+        "mean_metro": 0.29483333333333334
+      },
+      "24": {
+        "d_surprise_vs_metro": 0.37290627462194015,
+        "d_derivative_vs_metro": 1.2863264533691599,
+        "mean_surp": 0.6167916666666666,
+        "mean_deriv": 0.791625,
+        "mean_metro": 0.45495833333333324
+      },
+      "32": {
+        "d_surprise_vs_metro": 0.004512412922786246,
+        "d_derivative_vs_metro": 0.467708341992781,
+        "mean_surp": 0.6797916666666667,
+        "mean_deriv": 0.756625,
+        "mean_metro": 0.6785833333333334
+      },
+      "48": {
+        "d_surprise_vs_metro": -0.6247753413173257,
+        "d_derivative_vs_metro": 0.48845294826606334,
+        "mean_surp": 0.7069583333333334,
+        "mean_deriv": 0.8843333333333332,
+        "mean_metro": 0.8220416666666666
+      },
+      "64": {
+        "d_surprise_vs_metro": -0.9564152622550454,
+        "d_derivative_vs_metro": -0.8525709111926346,
+        "mean_surp": 0.6994166666666667,
+        "mean_deriv": 0.85925,
+        "mean_metro": 0.9552916666666667
+      }
+    },
+    "audio": {
+      "4": {
+        "d_surprise_vs_metro": 0.7854490165521077,
+        "d_derivative_vs_metro": 0.6403901026636177,
+        "mean_surp": 0.09379166666666668,
+        "mean_deriv": 0.06991666666666667,
+        "mean_metro": 0.0
+      },
+      "6": {
+        "d_surprise_vs_metro": 0.1007604976420037,
+        "d_derivative_vs_metro": -0.15095982722698645,
+        "mean_surp": 0.18520833333333336,
+        "mean_deriv": 0.15133333333333332,
+        "mean_metro": 0.17508333333333334
+      },
+      "8": {
+        "d_surprise_vs_metro": 0.7345101529616547,
+        "d_derivative_vs_metro": 0.47868225359000044,
+        "mean_surp": 0.26279166666666665,
+        "mean_deriv": 0.23937499999999998,
+        "mean_metro": 0.17416666666666666
+      },
+      "12": {
+        "d_surprise_vs_metro": 0.3274790163464498,
+        "d_derivative_vs_metro": 0.5607824180925532,
+        "mean_surp": 0.35341666666666666,
+        "mean_deriv": 0.3744166666666666,
+        "mean_metro": 0.2932083333333333
+      },
+      "16": {
+        "d_surprise_vs_metro": 1.0878441820457807,
+        "d_derivative_vs_metro": 0.7407368030547042,
+        "mean_surp": 0.43966666666666665,
+        "mean_deriv": 0.40012499999999995,
+        "mean_metro": 0.25858333333333333
+      },
+      "24": {
+        "d_surprise_vs_metro": 0.7538303801932813,
+        "d_derivative_vs_metro": 0.8096704517285566,
+        "mean_surp": 0.5238333333333334,
+        "mean_deriv": 0.5014583333333333,
+        "mean_metro": 0.345375
+      },
+      "32": {
+        "d_surprise_vs_metro": 0.8756972007424523,
+        "d_derivative_vs_metro": 1.1521333863107566,
+        "mean_surp": 0.5521666666666667,
+        "mean_deriv": 0.6421666666666668,
+        "mean_metro": 0.38425000000000004
+      },
+      "48": {
+        "d_surprise_vs_metro": 0.26170671213304536,
+        "d_derivative_vs_metro": 0.6687312535800919,
+        "mean_surp": 0.6410416666666666,
+        "mean_deriv": 0.7307916666666666,
+        "mean_metro": 0.5770833333333333
+      },
+      "64": {
+        "d_surprise_vs_metro": -0.5760012595732953,
+        "d_derivative_vs_metro": 0.0627478385071793,
+        "mean_surp": 0.6439583333333332,
+        "mean_deriv": 0.7947500000000001,
+        "mean_metro": 0.7857916666666667
+      }
+    }
+  },
+  "both_redundant": false,
+  "any_surprise_adds": false,
+  "any_surprise_worse": true,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE on the FROZEN letter (a_paper_negative_ok): NOT both-redundant — but in the OPPOSITE direction to a universal upgrade. Learned surprise NEVER beats the raw |dX/dt| DERIVATIVE on either modality (Δ never >= +0.5); it is REDUNDANT on audio (Δ=-0.28) and strictly WORSE than the raw derivative on numeric (numeric Δ=-2.18, the binary REDUNDANT/SURPRISE-ADDS split did not anticipate a WORSE bucket). numeric: Δ=-2.18 (SURPRISE-WORSE); audio: Δ=-0.28 (REDUNDANT). FINDING: the PRE-REGISTERED science holds even MORE strongly than predicted — on already-temporal streams a learned one-step-surprise gate adds NOTHING over the raw derivative and on AR(1) numeric it actively LAGS it (the predictor fits the smooth relaxation so its surprise peaks LATE/under-covers regimes the rising-edge catches), so learned surprise is a TEXT-SPECIFIC rescue (H_1187), never a universal upgrade. Both gates still beat the input-blind METRONOME (d_surp & d_deriv both > 0), so the tick still matters — only the LEARNED refinement is wasted where raw change already reads the flow.",
+  "generality_answer": "NOT A UNIVERSAL UPGRADE (opposite direction) — learned surprise NEVER beats the raw derivative on numeric/audio; it is REDUNDANT on audio and strictly WORSE than the raw derivative on AR(1) numeric. The science that surprise only RESCUES text (H_1187) holds even more strongly than predicted; the frozen binary just lacked a WORSE bucket so the letter reads CLOSED-NEG.",
+  "scope": "TOY ONLY ($0 CPU numpy, 10 seeds, synthetic numeric/audio streams, a TINY least-squares linear one-step predictor as the surprise model). Reuses the H_1163 grow_arm DERIVATIVE+METRONOME arms + stage_decode_accuracy + cohen_d_paired + make_audio_stream VERBATIM; make_numeric_stream = H_1188 AR(1) reproduced verbatim; grow_arm_surprise mirrors grow_arm's DERIVATIVE body (split trigger swapped to surprise>mean+1σ, the H_1187 swap). Real continuous-modality data + a learned deep predictor + live CORE engine_mitosis_tick + production scale UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck). Predictor's own error NOT the verdict (p7). Lane-M gradient-free growth lane (a_lane_akida_gpu_split)."
+}
+
+[done]
