@@ -399,6 +399,134 @@ pub fn adapt_field_step(af: AdaptField, x: float, cfg: EngineConfig) -> AdaptFie
 // adapt_field_cells — live cell count accessor.
 pub fn adapt_field_cells(af: AdaptField) -> int { return af.n_cells }
 
+// ── §  DIM>1 ADAPTATION COUPLING — the live VECTOR stream→field→error (H_1199) ──
+//
+// THE GAP it closes (H_1198 honest split): the scalar AdaptField above is 1-D
+// (samples + prototypes are plain `float`). H_1198 drove the LIVE engine over a
+// 1-D real-corpus SURPRISE scalar (the actual adapt_field_step), but the DIM=8
+// real byte-feature growth (the H_1163 `_byte_feature` window stat) had to run as
+// a LABELLED NUMPY MIRROR — the live AdaptField could not take a DIM>1 sample.
+// VAdaptField extends the SAME substrate to a DIM-vector sample, so the DIM=8
+// real-corpus byte-feature stream now goes through the ACTUAL .hexa engine, not a
+// mirror. It is the EXACT scalar mechanism lifted to DIM:
+//   · sample  : a DIM-vector (was float)            — `[float]` of length DIM.
+//   · proto   : a DIM-vector receptive center        — `[float]` of length DIM.
+//   · nearest : winner over the DIM-dim L2 distance  (was |float diff|).
+//   · recon-err: L2 norm over DIM to the nearest proto (was 1-D abs).
+//   · split   : recon-err > SPLIT_THRESH ⇒ engine_mitosis_tick spawns a +1 cell
+//               seeded AT the novel DIM-sample (the SAME p8 growth gate, gated cfg).
+//   · refine  : winner pulled toward the sample per-component (online LR).
+//
+// @L4 CRITICAL (identical framing to the scalar AdaptField / --mitosis): this is
+// SUBSTRATE-CONFIG adaptation, NOT an emit/silence gate. vadapt_field_* returns a
+// cell count + a reconstruction error; it NEVER returns an emit/silence decision
+// and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction, exactly
+// like the scalar field — the DIM>1 extension touches ONLY AdaptField). The
+// stream is an ENGINE-NATIVE drive (NO .clm via generator L3, NO .kosmos via
+// kosmos_io — no 2nd artifact entry path). p8 holds: the growth tick IS the
+// inference-time learning, now observable on a DIM=8 real-corpus feature stream.
+//
+// VAdaptField — the DIM>1 engine-native adaptation substrate (Ψ-disjoint).
+//   protos : flat [[float]] of per-cell DIM-vector prototype centers;
+//            len(protos) == n_cells, len(protos[i]) == dim.
+//   n_cells: live cell count (driven by engine_mitosis_tick under cfg).
+//   max_cells: capacity cap (frozen; bounds runaway split, mirrors h1159b cap).
+//   dim    : sample/prototype dimensionality (DIM=8 for the byte-feature stream).
+struct VAdaptField {
+    protos: [[float]],
+    n_cells: int,
+    max_cells: int,
+    dim: int
+}
+
+// vadapt_field_new — seed the substrate with a single prototype cell at `seed0`
+// (a DIM-vector). Mirrors adapt_field_new; the OFF arm stays here forever.
+pub fn vadapt_field_new(seed0: [float], max_cells: int) -> VAdaptField {
+    VAdaptField { protos: [seed0], n_cells: 1, max_cells: max_cells, dim: len(seed0) }
+}
+
+// _l2 — Euclidean (L2) distance between two DIM-vectors (the DIM-dim metric).
+fn _l2(a: [float], b: [float]) -> float {
+    let n = len(a)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        let d = a[i] - b[i]
+        s = s + d * d
+        i = i + 1
+    }
+    return sqrt(s)
+}
+
+// _vnearest_idx — index of the prototype nearest to DIM-vector `x` over L2
+// distance (winner-take-all assign, the DIM analogue of _nearest_idx).
+fn _vnearest_idx(protos: [[float]], x: [float]) -> int {
+    let n = len(protos)
+    let mut best = 0
+    let mut bestd = _l2(protos[0], x)
+    let mut i = 1
+    while i < n {
+        let d = _l2(protos[i], x)
+        if d < bestd { bestd = d  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+// vadapt_field_recon_err — the LIVE reconstruction error for DIM-sample `x`:
+// L2 distance to the nearest prototype (readout (c), DIM analogue). It FALLS as
+// cells come to cover the stream's regimes in DIM space.
+pub fn vadapt_field_recon_err(af: VAdaptField, x: [float]) -> float {
+    return _l2(af.protos[_vnearest_idx(af.protos, x)], x)
+}
+
+// vadapt_field_step — advance the DIM>1 adaptation substrate by ONE live tick on
+// DIM-sample `x`, gated by cfg. The DIM analogue of adapt_field_step — same three
+// wires, same frozen SPLIT_THRESH + LR:
+//   (a) `x` (a DIM-vector) IS the stream→field input.
+//   (b) if recon-err (L2) > SPLIT_THRESH AND there is capacity, call
+//       engine_mitosis_tick(n_cells, cfg) — ON grows a prototype seeded AT the
+//       novel DIM-sample (cell→field feedback); OFF is a no-op (H_1159 control).
+//   (c) the winning prototype is pulled per-component toward `x` (online LR).
+// SPLIT_THRESH + LR are the SAME frozen constants as the scalar field (p7; not
+// tuned-to-green — the only change vs adapt_field_step is the metric/dim).
+pub fn vadapt_field_step(af: VAdaptField, x: [float], cfg: EngineConfig) -> VAdaptField {
+    let SPLIT_THRESH = 0.30   // novelty bar: L2 recon-err over this ⇒ a new regime
+    let LR = 0.20             // online winner pull (homeostatic refinement)
+
+    let win = _vnearest_idx(af.protos, x)
+    let err = _l2(af.protos[win], x)
+
+    // (b) cell→field feedback: novel sample + capacity ⇒ mitosis growth tick.
+    if err > SPLIT_THRESH && af.n_cells < af.max_cells {
+        let grown = engine_mitosis_tick(af.n_cells, cfg)
+        if grown > af.n_cells {
+            // ON: append a new prototype cell AT the novel DIM-sample.
+            return VAdaptField {
+                protos: af.protos + [x],
+                n_cells: grown,
+                max_cells: af.max_cells,
+                dim: af.dim
+            }
+        }
+        // OFF: tick was a no-op — fall through to refine the (frozen) winner only.
+    }
+
+    // (c) homeostatic online update: pull the winning prototype toward x per-dim.
+    let mut p2 = af.protos
+    let mut row = p2[win]
+    let mut i = 0
+    while i < af.dim {
+        row[i] = row[i] + LR * (x[i] - row[i])
+        i = i + 1
+    }
+    p2[win] = row
+    return VAdaptField { protos: p2, n_cells: af.n_cells, max_cells: af.max_cells, dim: af.dim }
+}
+
+// vadapt_field_cells — live cell count accessor (DIM analogue).
+pub fn vadapt_field_cells(af: VAdaptField) -> int { return af.n_cells }
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
