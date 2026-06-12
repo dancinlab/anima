@@ -1,0 +1,72 @@
+H_1131 anchor tension-vecsum fold rewire — TERMINAL VERDICT (g5/p7, live CORE substrate)
+verdict: 🟢 REWIRE-ENABLES-BOTH (both round-1 BLOCKED-WIRING negatives H_1123+H_1124 FLIP to 🟢)
+engine stayed stable: Ψ=1/2 preserved (monotone-return, final_err≈0, live φ finite) + 12/12 smoke preserved
+date: 2026-06-12
+
+======================================================================
+PROBE: hexa run CORE/h1131_anchor_fold_rewire_probe.hexa (verbatim stdout)
+======================================================================
+=== H_1131 anchor-fold rewire probe (live CORE substrate, fold WIRED) ===
+falsifier: (a) influence(Δt) monotone-decay R²≥0.8 AND τ(HIGH)≠τ(LOW)
+           (b) OPP-pair influence < SAME-pair, Cohen's d≥0.8
+           GUARD: Ψ=1/2 stable (H_1126) + 12/12 smoke preserved
+
+── (a) H_1123 forgetting curve (gate influence decay over age_dt) ──
+[HIGH] age_dt=0 GATE influence=0.04465610
+[HIGH] age_dt=50 GATE influence=0.04299867
+[HIGH] age_dt=100 GATE influence=0.04112171
+[HIGH] age_dt=200 GATE influence=0.03685542
+[HIGH] age_dt=400 GATE influence=0.02749412
+[HIGH] age_dt=800 GATE influence=0.01239791
+
+[LOW] age_dt=0 GATE influence=0.01001852
+[LOW] age_dt=50 GATE influence=0.00735331
+[LOW] age_dt=100 GATE influence=0.00534981
+[LOW] age_dt=200 GATE influence=0.00278309
+[LOW] age_dt=400 GATE influence=0.00072807
+[LOW] age_dt=800 GATE influence=0.00004808
+
+  HIGH: R²=0.9823 τ=618.70 monotone=true infl0=0.04465610
+  LOW : R²=0.9999 τ=149.45 monotone=true infl0=0.01001852
+  Δτ(HIGH−LOW)=469.25
+  (a) decay(monotone+R²≥0.8 both)=true τ-tunable(Δτ>1)=true → (a) FORGETTING-CURVE=true
+
+── (b) H_1124 destructive interference (OPP-pair vs SAME-pair) ──
+[seed0] A=0.03975349 B=0.03975349 SAME=0.04790018 OPP=0.00000000
+  A=0.03975349 B=0.03975349 SAME=0.04790018 OPP=0.00000000
+  Cohen's d(SAME vs OPP)=1000000000.0000 destructive(OPP<SAME)=true
+  (b) INTERFERENCE(OPP<SAME, d≥0.8)=true
+
+── GUARD: Ψ=1/2 fixed point (H_1126 re-check) ──
+  Ψ relaxation monotone-return=true final_err=0.000000000000
+  live pure_field φ=0.141840 finite/bounded=true
+  GUARD Ψ-stable=true (fold touches G motivation only, never pure_field)
+
+=== FROZEN VERDICT (p7: deterministic measure over the live substrate) ===
+  (a) forgetting-curve = true
+  (b) interference     = true
+  GUARD Ψ-stable       = true
+  GUARD 12/12 smoke    = (run separately; see verdict file)
+
+H_1131 = 🟢 REWIRE-ENABLES-BOTH (fold wires forgetting curve + interference,
+  Ψ=1/2 preserved). Both round-1 BLOCKED-WIRING negatives (H_1123+H_1124)
+  FLIP to 🟢 under the tension-vecsum fold.
+
+======================================================================
+GUARD (3-axis): hexa run CORE/engine_cli_smoke.hexa (verbatim, post-fold)
+======================================================================
+PASS  case_1_default_or_env want=true got=true
+PASS  case_2_no_mitosis_flag_off want=false got=false
+PASS  case_3_mitosis_on want=true got=true
+PASS  case_3b_mitosis_off want=false got=false
+PASS  case_3c_mitosis_eq_off want=false got=false
+PASS  case_4a_flag_on_beats_env want=true got=true
+PASS  case_4b_flag_off_beats_env want=false got=false
+PASS  case_5_on_grows_to_13 want=13 got=13
+PASS  case_6_off_stays_static_3 want=3 got=3
+PASS  case_7_ON_differs_from_OFF want=true got=true
+PASS  case_8_tick_on_plus1 want=1 got=1
+PASS  case_9_tick_off_noop want=0 got=0
+INFO  engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · precedence flag>env>default · mitosis=on (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · engine=conv (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis
+INFO  engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · precedence flag>env>default · mitosis=off (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · engine=conv (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis
+--- engine_cli smoke summary: 12 pass / 0 fail ---

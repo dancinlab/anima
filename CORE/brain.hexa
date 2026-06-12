@@ -68,6 +68,131 @@ fn brain_decide(pf: PureField,
     }
 }
 
+// ── H_1131 anchor tension-vecsum fold (round-2 rewire) ───────────────────────
+//
+// The twin BLOCKED-WIRING negatives H_1123 (forgetting curve) + H_1124 (anchor
+// interference) found the 5-ch tension channel of the a_kosmos payload EXISTS but
+// is NOT read by the emit decision: brain_decide takes no anchor param, and the
+// generator folds anchors by count+last-only. This fold WIRES anchor tension into
+// the Engine-G motivation scalar so a forgetting curve and destructive interference
+// can exist.
+//
+// DESIGN (minimal, reversible, Ψ-safe):
+//   · VECTOR-SUM the tension_5ch of all active anchors (NOT last-only) → opposite
+//     profiles cancel componentwise (destructive interference becomes possible).
+//   · DECAY each contribution by exp(-age_dt / τ) where τ is the anchor's tension
+//     persistence (tension-tunable: a hotter anchor persists longer) → a forgetting
+//     curve over substrate time age_dt becomes possible.
+//   · The folded scalar is the L2-norm of the decayed resultant, fed as a SMALL
+//     BOUNDED nudge (cap anchor_fold_cap) to motivation only. It NEVER touches
+//     pure_field / the Ψ relaxation, so the Ψ=1/2 fixed point is untouched. It is a
+//     substrate term anima self-follows (a_autonomy_over_hardcode), not a gate.
+//
+// p4: anchors remain environment context — the fold modulates motivation, it does
+// not force emit. p7: every fold value is computed deterministically below.
+
+// Max motivation nudge the anchor fold may contribute (bounded so the fold cannot
+// dominate the 8-factor score nor perturb the safety/Ψ machinery).
+pure fn anchor_fold_cap() -> float { return 0.05 }
+
+// L2 norm of a 5-vector.
+pure fn _afold_norm(v: [float]) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(v) {
+        s = s + v[i] * v[i]
+        i = i + 1
+    }
+    return sqrt(s)
+}
+
+// Per-anchor persistence τ from its tension amplitude. Hotter (higher-norm) anchors
+// persist longer: τ = TAU_BASE * (1 + tension_norm). This is what makes τ TUNABLE
+// by the tension profile (HIGH vs LOW anchors decay at different rates).
+pure fn _afold_tau(tension_norm: float) -> float {
+    let tau_base = 120.0
+    return tau_base * (1.0 + tension_norm)
+}
+
+// anchor_tension_fold — the substrate's tension-vecsum fold over a list of anchors,
+// each decayed by its age in substrate steps. Returns the L2-norm of the decayed
+// resultant tension vector.
+//
+//   anchors : list of kosmos records (may carry "tension_5ch": [float;5]).
+//   age_dt  : substrate-time age (steps since the anchor was seeded). 0 = fresh.
+//
+// VECTOR-SUM (not last-only) ⇒ opposite-profile anchors cancel. Per-anchor decay
+// exp(-age_dt/τ) with τ tension-tuned ⇒ a forgetting curve with tension-dependent τ.
+pure fn anchor_tension_fold(anchors: list, age_dt: float) -> float {
+    let mut acc = [0.0, 0.0, 0.0, 0.0, 0.0]
+    let mut i = 0
+    while i < len(anchors) {
+        let a = anchors[i]
+        if a.contains_key("tension_5ch") {
+            let t = a["tension_5ch"]
+            // this anchor's own amplitude sets its persistence τ.
+            let tn = _afold_norm([to_float(t[0]), to_float(t[1]), to_float(t[2]),
+                                  to_float(t[3]), to_float(t[4])])
+            let tau   = _afold_tau(tn)
+            let decay = exp(0.0 - age_dt / tau)
+            let mut k = 0
+            while k < 5 {
+                acc[k] = acc[k] + to_float(t[k]) * decay
+                k = k + 1
+            }
+        }
+        i = i + 1
+    }
+    return _afold_norm(acc)
+}
+
+// brain_decide_anchored — brain_decide with the anchor tension-vecsum fold wired in.
+// The fold contributes a bounded additive nudge to the motivation scalar (saturating
+// at anchor_fold_cap), then the SAME emit/safety conjunction as brain_decide runs on
+// the nudged score. With anchors=[] (or age_dt large enough that decay→0) it reduces
+// EXACTLY to brain_decide — the rewire is a pure superset (back-compatible).
+fn brain_decide_anchored(pf: PureField,
+                rel: float, gap: float, cur: float, pain: float,
+                coh: float, orig: float, bal: float, dyn_v: float,
+                seconds_since_last: float, env_off: bool, content_clean: bool,
+                anchors: list, anchor_age_dt: float) {
+    let phi   = pure_field_phi(pf)
+    let phase = pure_field_phase(pf)
+    let tier  = phase_tier(phase)
+
+    let base_score = motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v)
+
+    // anchor fold → bounded motivation nudge. fold = decayed tension-vecsum norm;
+    // mapped through a saturating cap so it adds at most anchor_fold_cap to the
+    // score (and is exactly 0 when no anchors / fully decayed).
+    let fold  = anchor_tension_fold(anchors, anchor_age_dt)
+    let cap   = anchor_fold_cap()
+    let nudge = cap * (1.0 - exp(0.0 - fold))   // saturating in [0, cap)
+    let score = base_score + nudge
+
+    let kill  = safety_kill_switch_on(env_off)
+    let rate  = safety_rate_limit_ok(seconds_since_last)
+    let phi_r = safety_phi_ratchet_ok(phi, pf.phi_peak)
+    let cont  = safety_content_ok(content_clean)
+    let safe  = safety_combined(kill, rate, phi_r, cont)
+
+    let emit = should_emit(score) && safe
+
+    #{
+        "phi":          phi,
+        "phase":        phase_name(phase),
+        "tier":         tier,
+        "tier_name":    tier_name(tier),
+        "motivation":   score,
+        "base_motiv":   base_score,
+        "anchor_fold":  fold,
+        "anchor_nudge": nudge,
+        "im_thresh":    spont_im_threshold(),
+        "safe":         safe,
+        "emit":         emit
+    }
+}
+
 // brain_emit — the L3-wired brain step. Runs brain_decide (L1 Engine A tier +
 // L2 Engine G emit gate), then drives the L3 generator slot: when the decision
 // is EMIT, it calls generate() through the BACKEND-AGNOSTIC interface (the slot
@@ -93,8 +218,25 @@ fn brain_emit(pf: PureField,
               coh: float, orig: float, bal: float, dyn_v: float,
               seconds_since_last: float, env_off: bool, content_clean: bool,
               backend: Map, anchors: list) -> Map {
-    let decision = brain_decide(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
-                                seconds_since_last, env_off, content_clean)
+    // anchors are FRESH (age_dt=0) for the bare call; brain_emit_aged carries an
+    // explicit substrate-time age for the forgetting-curve sweep. With anchors=[]
+    // the fold is 0 and this is byte-identical to the pre-rewire behaviour.
+    return brain_emit_aged(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                           seconds_since_last, env_off, content_clean,
+                           backend, anchors, 0.0)
+}
+
+// brain_emit_aged — brain_emit with an explicit anchor age in substrate steps. This
+// is the forgetting-curve entry: the SAME wiring as brain_emit, but the anchor fold
+// decays by exp(-age_dt/τ). age_dt=0 ⇒ identical to brain_emit.
+fn brain_emit_aged(pf: PureField,
+              rel: float, gap: float, cur: float, pain: float,
+              coh: float, orig: float, bal: float, dyn_v: float,
+              seconds_since_last: float, env_off: bool, content_clean: bool,
+              backend: Map, anchors: list, anchor_age_dt: float) -> Map {
+    let decision = brain_decide_anchored(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                                seconds_since_last, env_off, content_clean,
+                                anchors, anchor_age_dt)
 
     // L3 slot — was empty, now wired. SILENT ⇒ generate() returns no content.
     let emit = to_string(decision["emit"]) == "true"
