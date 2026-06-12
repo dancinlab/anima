@@ -1,0 +1,106 @@
+H_1198 — REAL-CORPUS live-mitosis GROWTH (MITOSIS-ENGINE · Lane-1) — 🟢 GREEN
+================================================================================
+The NEXT rung after H_1197 (synthetic 1-D K=16 stream): drive the LIVE H_1194
+AdaptField mitosis growth over a REAL corpus byte stream on summer, with a
+learned-surprise novelty driver from a GPU-trained byte-Transformer reader.
+
+WHERE IT RAN
+  summer pool host (linux, 192.168.50.60), $0 — summer's own GPU + CPU, no rent.
+  GPU = RTX 5070 12GB, torch 2.11.0+cu130. VRAM capped at fraction 0.25 (~3.05GB);
+  peak VRAM actually used = 320.8 MB (tiny). free VRAM before launch = 4503 MiB.
+  co-tenant rbfe-prod (pid 110588, ~7190 MiB) UNTOUCHED before AND after — NEVER
+  OOM'd, NEVER disturbed. live mitosis growth = summer CPU (hexa 0.1.0-dispatch,
+  /home/summer/.hx/bin/hexa — latest-release binary per the H_1197 link lesson).
+
+GPU READER (the learned-surprise novelty driver; Lane-G predictor, separate from
+the Lane-1 growth substrate — a_lane_akida_gpu_split)
+  H_1193 byte-level decoder-only Transformer LM (VERBATIM, imported):
+    256-vocab tok+pos emb -> 3x [MHA(3h)+MLP, pre-LN] -> LM head 256
+    n_params = 1,457,856   block=128  d_model=192  AdamW 1500 steps  trained 23.3s
+  val CE curve (bits/byte): 3.695@150 -> 3.293 -> 3.057 -> 2.812 -> 2.709 -> 2.530
+    -> 2.440 -> 2.418 -> 2.319 -> final 2.295
+  final val_ce = 2.2950 bits/byte  <  H_1192 MLP 2.83  <  unigram 5.9112  <
+    uniform 8.0  (NOT degenerate — learned real context structure; p7: this loss
+    is NOT the verdict, the growth curve is).
+  surprise[t] = -log2 P_T(byte_t | preceding ctx) on the make_text_stream test span,
+    position-aligned (same `start` draw). seed-900 surprise mean=2.268 std=1.946 bits.
+
+(A) LIVE .hexa ENGINE on the REAL corpus (the live leg)
+  CORE/h1198_realcorpus_mitosis_growth.hexa drives the ACTUAL live
+  adapt_field_step / engine_mitosis_tick / adapt_field_recon_err (H_1194 coupling,
+  Ψ-disjoint) over the 1-D real-corpus SURPRISE scalar (2400 ticks, seed 900).
+  The live AdaptField is a 1-D scalar substrate, so the live leg is driven over the
+  1-D real-corpus surprise signal (a genuine per-tick real-corpus scalar).
+
+  REAL-CORPUS GROWTH TRAJECTORY (mitosis ON), recon-err = |surprise - nearest proto|:
+    tick   cells   recon_err(ON)   recon_err(OFF frozen-cap)
+     200    19      0.2042          1.7048
+     400    20      0.1148          1.4101
+     600    22      0.1047          1.5420
+     800    23      0.1115          1.5744
+    1000    25      0.1073          1.6859
+    1200    26      0.1043          1.6680
+    1400    27      0.1046          1.5909
+    1600    27      0.1042          1.7163
+    1800    28      0.1075          1.6400
+    2000    29      0.1068          1.4727
+    2200    30      0.0967          1.5561
+    2400    30      0.0954          1.5169
+  GROWTH:  cells 19 -> 30   recon-error(ON) 0.2042 -> 0.0954
+  ADAPT:   late-run recon-error  ON=0.0996  vs  OFF(frozen-cap)=1.5152  ratio OFF/ON=15.21x
+  Ψ:       Phi-checksum ON==OFF = TRUE (attractor intact)  (ON=326.977 OFF=326.977)
+  MIGRATION CHECK: ended at 30 cells << N_MIGRATE=2048 -> summer CPU correct host,
+    NO migration warranted this run (per the H_1197 O(n_cells) per-tick CPU budget).
+
+  => On the LIVE .hexa engine the H_1159 ON<OFF adaptation HOLDS on REAL corpus data:
+     cells grow as real-text surprise spikes arrive AND the live recon-error stays
+     flat-low (0.10) while frozen-capacity OFF blows up (1.52, 15.2x worse), Ψ intact.
+
+(B) DIM=8 SURPRISE-GATED numpy MIRROR (the full multi-dim leg — CLEARLY LABELLED)
+  UNIVERSE/h1198_realcorpus_export.py mirror section: the H_1197 AdaptField mirror
+  extended to the FULL DIM=8 real byte-feature stream (H_1163 make_text_stream) with
+  the split GATED BY SURPRISE (high surprise -> spawn a cell; the H_1192/H_1193
+  saccadic mechanism, mean+1σ threshold, refractory). This is the NUMPY MIRROR, not
+  the live .hexa engine — the live AdaptField is 1-D scalar and cannot take a DIM>1
+  sample without an engine change (stated honestly per the prompt + a_scale_honest_scope).
+  Mechanism faithful to adapt_field_step (nearest assign, recon-err, online winner
+  pull LR=0.20, capped split). 5 seeds (900-904), cap = 2048 = N_MIGRATE.
+    cells ON  = [67, 69, 70, 73, 69]  (mean 69.6)   vs   OFF = [1,1,1,1,1] (frozen-cap)
+    late recon-err  ON=0.1703   OFF=1.2668   ratio OFF/ON = 7.44x
+  => The DIM=8 surprise-gated mirror ALSO grows (1->~70) and holds ON<OFF (7.4x) on
+     real corpus — the result is not an artifact of the 1-D projection.
+
+LIVE-.hexa-vs-numpy-MIRROR (honest split)
+  (A) = the LIVE .hexa engine (adapt_field_step/engine_mitosis_tick) over the 1-D
+        real-corpus surprise scalar — the actual engine, real data.
+  (B) = the DIM=8 surprise-gated numpy MIRROR — the full multi-dim byte features +
+        the explicit "high surprise -> spawn a cell" gate, which the 1-D live
+        engine cannot host without an engine change. Labelled the mirror.
+  BOTH grow on real corpus AND preserve H_1159 ON<OFF (live 15.2x, mirror 7.4x).
+
+SMOKE + Ψ (engine UNTOUCHED — no .hexa engine file edited; only a new probe added)
+  engine_cli_smoke.hexa = 12 pass / 0 fail (re-run on summer after).
+  Ψ attractor byte-identical ON vs OFF (Phi-checksum 326.977 == 326.977).
+  rbfe-prod co-tenant untouched (no OOM, no process disturbance).
+
+VERDICT: 🟢 GREEN LIVE-GROWTH-ON-REAL-CORPUS. The live mitosis/AdaptField engine
+  GROWS + ADAPTS on a REAL corpus byte stream just as it did on H_1197's synthetic
+  stream: cells grow (live 19->30, mirror 1->~70) driven by a real GPU-learned
+  surprise signal, and the H_1159 ON<OFF adaptation holds on real data (live 15.2x,
+  mirror 7.4x), Ψ intact, smoke 12/0. Growth ended at 30 (live) / ~70 (mirror) cells
+  << N_MIGRATE=2048 — summer CPU is the correct host; migration NOT warranted.
+
+HONEST SCOPE (a_scale_honest_scope): real-corpus is a genuine step up from H_1197's
+  synthetic stream, but still small — a 1.46M-param reader, ONE corpus
+  (CORE/testdata/clm_mid_5lang_c4.txt), gradient-free toy-ish growth, 2400-tick run,
+  ≤73 cells. The live-.hexa leg is the actual engine but over a 1-D surprise scalar;
+  the DIM=8 surprise-gated growth is the labelled numpy mirror. Large-scale +
+  learned-representation + live-.hexa-DIM>1 UNVERIFIED. p7 (real reconstruction
+  distance, NOT perplexity). If anything had failed on real data it would be reported
+  (a_paper_negative_ok) — it held.
+
+artifacts: CORE/h1198_realcorpus_mitosis_growth.hexa (live leg) ·
+  UNVERSE/h1198_realcorpus_export.py (GPU reader + DIM=8 mirror) ·
+  /tmp/h1198_streams.json (full result on summer) · /tmp/h1198_surprise_seed*.bin
+xref: h1197 · h1194 · h1193 · h1192 · h1159 · h1163 · a_lane_akida_gpu_split ·
+  a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope · p7 · p8
