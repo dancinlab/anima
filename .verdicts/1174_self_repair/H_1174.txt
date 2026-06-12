@@ -1,0 +1,54 @@
+=== H_1174 — self-repair vs homeostasis-only under perturbation (life #4) ===
+  CLAUSE-A sustained: repair_err=12.477 homeo_err=29.252 d(homeo-repair)=22.51 (bar 0.8) -> True
+  CLAUSE-B burst: frac_recovered=0.92 (bar 0.80) mean_rec_step_repair=124.2/400 post_repair_err=6.129 post_homeo_err=10.251 d_post(homeo-repair)=3.26 (bar 0.8) -> True
+
+=== VERDICT ===
+{
+  "H": "H_1174",
+  "title": "self-repair maintains function under perturbation better than homeostasis alone (life-criterion #4)",
+  "n_seeds": 12,
+  "config": {
+    "DIM": 8,
+    "K_TRUE": 5,
+    "T": 4000,
+    "LR": 0.05,
+    "DAMAGE_FRAC": 0.3,
+    "DAMAGE_MAG": 5.0,
+    "BURST_MAG": 6.0,
+    "REPAIR_LR": 0.3,
+    "MANI_WIN": 60.0,
+    "BURST_T": 1500,
+    "BURST_LEN": 40,
+    "RECOVER_WIN": 400,
+    "RECOVER_TOL": 0.2
+  },
+  "CLAUSE_A_sustained": {
+    "repair_err": 12.476701063292284,
+    "homeo_err": 29.252273700663952,
+    "cohen_d_homeo_minus_repair": 22.509657251731035,
+    "bar": 0.8,
+    "pass": true
+  },
+  "CLAUSE_B_recovery": {
+    "frac_recovered": 0.9166666666666666,
+    "frac_bar": 0.8,
+    "mean_recovery_step_repair": 124.16666666666667,
+    "recover_win": 400,
+    "post_burst_repair_err": 6.1291893095402505,
+    "post_burst_homeo_err": 10.250537580317262,
+    "cohen_d_post_homeo_minus_repair": 3.2637229213837036,
+    "d_bar": 0.8,
+    "pass": true
+  },
+  "supported": true,
+  "repair_vs_homeostasis_d_sustained": 22.509657251731035,
+  "ruling": "SUPPORTED (REPAIR-HELPS): under sustained damage the active repair rule holds LOWER assignment error than homeostasis-only (Cohen's d>=0.8) AND recovers toward the pre-damage baseline after a damage burst faster than homeostasis alone — self-repair is a function-maintaining mechanism DISTINCT from the homeostatic regime (life-criterion #4 present).",
+  "scope": "toy numpy $0 CPU 12 seeds; prototype-cell PROXY for the CORE cell substrate; live engine + scale UNVERIFIED (a_scale_honest_scope). p7 (real assignment error, not perplexity).",
+  "xref": [
+    "h931_self_organized_criticality",
+    "h1126_psi_stability",
+    "h1159b_mitosis_capacity_self_tuning",
+    "h1153_criticality_branching"
+  ]
+}
+[done]
