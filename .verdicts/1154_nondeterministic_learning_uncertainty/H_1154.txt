@@ -1,0 +1,53 @@
+=== H_1154 non-deterministic learning -> epistemic uncertainty ===
+[seeds] quantum-arm=ANU-QRNG-bytes [576525586, 1429344201, 456226181, 1399314178, 146146434]
+        prng-arm=[695425565, 2035525363, 323946140, 847877000, 1397871145]
+--- CONTROL: untrained ensemble ---
+  [untrained] trained 5 replicas (do_train=False)
+  [untrained] F1 AUROC=0.4740  F2 Spearman(dis,fab)=-0.0226  mean_fab=0.000
+--- QUANTUM-seeded trained ensemble (primary) ---
+  [quantum] trained 5 replicas (do_train=True)
+  [quantum] F1 AUROC=0.3767  F2 Spearman(dis,fab)=-0.4957  mean_fab=0.368
+--- PRNG-seeded trained ensemble (q-vs-PRNG appendix) ---
+  [prng] trained 5 replicas (do_train=True)
+  [prng] F1 AUROC=0.3594  F2 Spearman(dis,fab)=0.0617  mean_fab=0.274
+=== VERDICT ===
+{
+  "H": "H_1154",
+  "title": "non-deterministic learning -> epistemic uncertainty (ensemble disagreement)",
+  "F1_familiarity": {
+    "auroc": 0.3767361111111111,
+    "bar": 0.7,
+    "pass": false
+  },
+  "F2_fabrication": {
+    "spearman_dis_fab": -0.4956521739130435,
+    "bar": 0.3,
+    "pass": false
+  },
+  "control_untrained": {
+    "auroc": 0.4739583333333333,
+    "bar_max": 0.6,
+    "pass": true
+  },
+  "q_vs_prng_appendix": {
+    "quantum": {
+      "auroc": 0.3767361111111111,
+      "spearman_dis_fab": -0.4956521739130435,
+      "mean_fab": 0.36806156806156815
+    },
+    "prng": {
+      "auroc": 0.359375,
+      "spearman_dis_fab": 0.06173913043478261,
+      "mean_fab": 0.2738696488696489
+    },
+    "delta_auroc": 0.017361111111111105,
+    "delta_rho": -0.5573913043478261,
+    "note": "expect ~0 per #1784 (quantum no advantage); large delta would REOPEN #1784"
+  },
+  "h1143_ref_auroc": 0.564,
+  "h1148_ref_rho": 0.257,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: non-det learning disagreement does NOT give the metacog handle (the gap is architectural, not a determinism artifact)",
+  "scope": "toy ByteGPT d256/4L CPU en-24MB, N_REP=5/arm — scale-up UNVERIFIED (a_scale_honest_scope)"
+}
+[done] /tmp/h1154_result.json
