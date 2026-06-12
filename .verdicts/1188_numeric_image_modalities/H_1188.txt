@@ -1,0 +1,155 @@
+=== H_1188 — extend the H_1186 per-modality temporal ranking to NUMERIC + IMAGE ===
+  cap ladder K=[4, 6, 8, 12, 16, 24, 32, 48, 64]; per stream K*=argmax d(DERIVATIVE,METRONOME); then time-shuffle at K*; 10 seeds; reuses H_1163 VERBATIM + toy numeric/image
+  PRE-REG predictions (frozen): NUMERIC=TEMPORAL(AR(1) smooth recurring regimes), IMAGE=NON-TEMPORAL(static-per-scene frames)
+
+  audio    n_stages=6  K*= 32  d_real=+1.152  d_shuf=+0.269  drop=+0.883  -> TEMPORAL=True
+  numeric  n_stages=6  K*= 16  d_real=+3.168  d_shuf=-0.185  drop=+3.353  -> TEMPORAL=True
+  image    n_stages=6  K*=  4  d_real=+0.000  d_shuf=+1.375  drop=-1.375  -> TEMPORAL=False
+
+=== VERDICT ===
+{
+  "H": "H_1188",
+  "title": "extend the H_1186 per-modality temporal ranking to NUMERIC (autoregressive) + IMAGE (static-per-scene frames): which structural property makes a modality temporal?",
+  "cap_ladder": [
+    4,
+    6,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64
+  ],
+  "frozen_predictions": {
+    "numeric": "TEMPORAL=YES (AR(1) smooth recurring regimes)",
+    "image": "TEMPORAL=NO (static-per-scene frames, cut-only)"
+  },
+  "per_modality": {
+    "audio": {
+      "n_stages": 6,
+      "K_star": 32,
+      "d_real": 1.1521333863107566,
+      "d_shuf": 0.2688310922289032,
+      "drop": 0.8833022940818533,
+      "temporal": true
+    },
+    "numeric": {
+      "n_stages": 6,
+      "K_star": 16,
+      "d_real": 3.1683267640483117,
+      "d_shuf": -0.18493105571386906,
+      "drop": 3.353257819762181,
+      "temporal": true
+    },
+    "image": {
+      "n_stages": 6,
+      "K_star": 4,
+      "d_real": 0.0,
+      "d_shuf": 1.3752636619073235,
+      "drop": -1.3752636619073235,
+      "temporal": false
+    }
+  },
+  "curves": {
+    "audio": {
+      "4": 0.6403901026636177,
+      "6": -0.15095982722698645,
+      "8": 0.47868225359000044,
+      "12": 0.5607824180925532,
+      "16": 0.7407368030547042,
+      "24": 0.8096704517285566,
+      "32": 1.1521333863107566,
+      "48": 0.6687312535800919,
+      "64": 0.0627478385071793
+    },
+    "numeric": {
+      "4": 0.3897488518743507,
+      "6": -0.3408449730354899,
+      "8": -0.0019765332622672838,
+      "12": 0.9104615356482115,
+      "16": 3.1683267640483117,
+      "24": 1.2863264533691599,
+      "32": 0.467708341992781,
+      "48": 0.48845294826606334,
+      "64": -0.8525709111926346
+    },
+    "image": {
+      "4": 0.0,
+      "6": -2.69943590475189,
+      "8": -0.40352358537957916,
+      "12": -0.6580888302082509,
+      "16": -1.0199171089442365,
+      "24": -1.1407175145625275,
+      "32": -1.2524490276587288,
+      "48": -0.6976663806653547,
+      "64": -0.33333333333333326
+    }
+  },
+  "F1_numeric": {
+    "K_star": 16,
+    "d_real": 3.1683267640483117,
+    "drop": 3.353257819762181,
+    "temporal": true,
+    "predicted_temporal": true,
+    "prediction_match": true
+  },
+  "F2_image": {
+    "K_star": 4,
+    "d_real": 0.0,
+    "drop": -1.3752636619073235,
+    "temporal": false,
+    "predicted_temporal": false,
+    "prediction_match": true
+  },
+  "supported": true,
+  "full_ranking_with_h1186": {
+    "note": "audio/text/video numbers cited from H_1186 (domains/MITOSIS-ENGINE.log.md); audio re-run here as the anchor for grounding (should reproduce ~temporal).",
+    "audio_h1186": {
+      "K_star": 32,
+      "d_real": 1.15,
+      "d_shuf": 0.27,
+      "drop": 0.88,
+      "temporal": true
+    },
+    "video_h1186": {
+      "K_star": 64,
+      "d_real": 0.49,
+      "d_shuf": -0.62,
+      "drop": 1.11,
+      "temporal": false
+    },
+    "text_h1186": {
+      "K_star": 4,
+      "d_real": 0.5,
+      "d_shuf": 0.91,
+      "drop": -0.41,
+      "temporal": false
+    },
+    "audio_rerun_here": {
+      "K_star": 32,
+      "d_real": 1.1521333863107566,
+      "d_shuf": 0.2688310922289032,
+      "drop": 0.8833022940818533,
+      "temporal": true
+    },
+    "numeric_h1188": {
+      "K_star": 16,
+      "d_real": 3.1683267640483117,
+      "d_shuf": -0.18493105571386906,
+      "drop": 3.353257819762181,
+      "temporal": true
+    },
+    "image_h1188": {
+      "K_star": 4,
+      "d_real": 0.0,
+      "d_shuf": 1.3752636619073235,
+      "drop": -1.3752636619073235,
+      "temporal": false
+    }
+  },
+  "ruling": "SUPPORTED: BOTH pre-registered predictions BORNE OUT. NUMERIC is TEMPORAL (predicted YES) at K*=16 (d_real=+3.17, drop=+3.35) and IMAGE is NON-TEMPORAL (predicted NO) at K*=4 (d_real=+0.00, drop=-1.38). The structural property that makes a modality temporal is SMOOTH WITHIN-REGIME APPROACH: numeric AR(1) relaxes smoothly toward each attractor (like audio's drifting regimes) so the derivative tick exploits real time order; image's STATIC-per-scene frames give no smooth approach so the event tick has no time-order edge.",
+  "scope": "TOY ($0 CPU numpy, 10 seeds). Reuses h1163 VERBATIM + the H_1186 own-cap + shuffle harness VERBATIM + TWO new toy streams: make_numeric_stream (per-regime AR(1), NOT real numeric sensors) + make_image_stream (DIM=8 flattened static frame + pixel noise, NOT real images, cf H_1170 toy renderings). Real numeric/image + learned encoders + scale UNVERIFIED (a_scale_honest_scope). Lane-M gradient-free growth lane (a_lane_akida_gpu_split)."
+}
+
+[done]
