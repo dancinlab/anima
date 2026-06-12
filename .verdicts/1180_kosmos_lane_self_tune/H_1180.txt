@@ -1,0 +1,77 @@
+=== H_1180 — kosmos LANE-count self-tunes to anchor complexity (saturation + shuffle control) ===
+DIM=5 (kosmos tension_5ch) · K ladder=[2, 3, 4, 5, 6, 8, 10, 12] · seeds=[800, 801, 802, 803, 804, 805, 806, 807, 808, 809] · MAX_CELLS=20
+(PROPOSAL on 5-ch anchor geometry; live lane = cell_id passthrough = BLOCKED, cf H_1164)
+
+  K_true= 2: REAL lane-count=3.00  SHUFFLED lane-count=2.00
+  K_true= 3: REAL lane-count=3.70  SHUFFLED lane-count=3.00
+  K_true= 4: REAL lane-count=4.60  SHUFFLED lane-count=4.00
+  K_true= 5: REAL lane-count=5.30  SHUFFLED lane-count=5.00
+  K_true= 6: REAL lane-count=6.10  SHUFFLED lane-count=5.90
+  K_true= 8: REAL lane-count=7.90  SHUFFLED lane-count=7.90
+  K_true=10: REAL lane-count=9.30  SHUFFLED lane-count=9.50
+  K_true=12: REAL lane-count=11.20  SHUFFLED lane-count=11.20
+
+F1 TRACKS-COMPLEXITY  Spearman_real(K, lane-count) = 0.965  (bar>=0.8)  pass=True
+F2 SATURATION         bottom-half gain=0.775/K  top-half gain=0.850/K  ratio=1.097  (bar<0.6)  pass=False
+F3 SHUFFLE-CONTROL    Spearman_shuffled=0.992 (bar<0.5)  real-shuf=-0.027 (bar>=0.3)  pass=False
+
+=== VERDICT ===
+{
+  "H": "H_1180",
+  "title": "kosmos lane-count self-tunes to anchor-stream complexity — saturation knee + shuffle control (PROPOSAL on 5-ch geometry; live lane = cell_id passthrough = BLOCKED cf H_1164)",
+  "live_wiring_verdict": "⏳ BLOCKED-WIRING (unchanged from H_1164): live kosmos lane = 'cell_'+cell_id passthrough (AGENT/CHAT/kosmos_anchor.hexa), no live partition grows a lane-count from the anchor tension_5ch stream (a_core_engine_map · a_kosmos)",
+  "dim": 5,
+  "k_ladder": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    10,
+    12
+  ],
+  "mean_lane_count_real": {
+    "2": 3.0,
+    "3": 3.7,
+    "4": 4.6,
+    "5": 5.3,
+    "6": 6.1,
+    "8": 7.9,
+    "10": 9.3,
+    "12": 11.2
+  },
+  "mean_lane_count_shuffled": {
+    "2": 2.0,
+    "3": 3.0,
+    "4": 4.0,
+    "5": 5.0,
+    "6": 5.9,
+    "8": 7.9,
+    "10": 9.5,
+    "12": 11.2
+  },
+  "F1_tracks_complexity": {
+    "spearman_real": 0.9648382559774965,
+    "bar": 0.8,
+    "pass": true
+  },
+  "F2_saturation": {
+    "bottom_half_gain_per_K": 0.7749999999999999,
+    "top_half_gain_per_K": 0.85,
+    "ratio": 1.0967741935483872,
+    "bar": 0.6,
+    "pass": false
+  },
+  "F3_shuffle_control": {
+    "spearman_shuffled": 0.9919127988748242,
+    "bar_below": 0.5,
+    "real_minus_shuffled": -0.02707454289732769,
+    "bar_gap": 0.3,
+    "pass": false
+  },
+  "supported_proposal": false,
+  "ruling": "CLOSED-NEGATIVE (proposal): the lane-partition does NOT cleanly self-tune+saturate+shuffle-discriminate (see failed gate); a_paper_negative_ok",
+  "scope": "PROPOSAL on the 5-channel anchor GEOMETRY (h1159b substrate VERBATIM, DIM 8->5), NOT the live kosmos lane (cell_id passthrough = BLOCKED). toy numpy $0 CPU 10 seeds. a_scale_honest_scope · a_core_engine_map · a_kosmos."
+}
+[done]

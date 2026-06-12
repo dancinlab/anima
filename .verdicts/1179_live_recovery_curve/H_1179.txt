@@ -1,0 +1,30 @@
+=== H_1179 LIVE-ENGINE recovery-curve probe (MITOSIS-ENGINE Lane1) ===
+metric: coherence-error = 1 - pure_field.narrative_coherence
+stream: SINGLE mid-stream regime shift (A->B at t=n/2); baseline/spike/settle windows W=50
+falsifier: (a) spike d>=0.8 vs baseline, (b) recovery ratio >=0.50, (c) control off does NOT recover
+
+seed=7  ON  base=0.000147577 spike=2.10629e-09 settle=2.99272e-14 cells=603.0  rr_on=0.0
+         OFF base=0.000147577 spike=2.10629e-09 settle=2.99272e-14 cells=3.0  rr_off=0.0
+seed=8  ON  base=0.000147577 spike=2.10629e-09 settle=2.99272e-14 cells=603.0  rr_on=0.0
+         OFF base=0.000147577 spike=2.10629e-09 settle=2.99272e-14 cells=3.0  rr_off=0.0
+seed=9  ON  base=0.000147577 spike=2.10629e-09 settle=2.99272e-14 cells=603.0  rr_on=0.0
+         OFF base=0.000147577 spike=2.10629e-09 settle=2.99272e-14 cells=3.0  rr_off=0.0
+
+ON  mean baseline=0.000147577 spike=2.10629e-09 settle=2.99272e-14
+spike magnitude (spike - baseline) = -0.000147575
+recovery ratio  ON mean=0.0  OFF mean=0.0
+cells ON mean=603.0  OFF mean=3.0
+
+sanity: live engine_mitosis_tick grew cells ON>OFF = true
+sanity: ON==OFF coherence trajectory (stream-blind + mitosis-blind) = true
+
+VERDICT: HOURGLASS NO-RECOVERY-SIGNAL (BLOCKED-WIRING) — the mid-stream regime
+  shift produced NO upward spike in the engine's coherence-error (spike
+  magnitude=-0.000147575 <= eps; coherence-error DECAYS as the field
+  settles, indifferent to the shift). There is nothing to recover FROM.
+  WHAT IS MISSING: pure_field_step is ZERO-INPUT (CORE/pure_field.hexa) — it
+  advances internal oscillators ONLY; narrative_coherence is an EMA of the
+  field's OWN phase-stability, never of the stream sample. The regime shift in
+  the stream never reaches the field, so no adaptation transient exists to
+  measure. The stream->field coupling is UNBUILT (a_core_engine_map). CANNOT
+  adjudicate GREEN vs RED live — honest HOURGLASS, the falsifier branch.
