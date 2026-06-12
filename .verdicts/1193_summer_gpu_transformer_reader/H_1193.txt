@@ -1,0 +1,274 @@
+--- TRAINING the reader (the '학습') on summer GPU [cuda]: byte Transformer d_model=192 layers=3 heads=3 block=128, 1500 AdamW steps, train span = first 50% of corpus (201135 bytes) ---
+  Transformer params = 1,457,856
+    step    1/1500  train_ce=8.2232  val_ce=8.2257  bits/byte  lr=3.00e-06  peakVRAM=308MB
+    step  150/1500  train_ce=3.7754  val_ce=3.6953  bits/byte  lr=2.99e-04  peakVRAM=321MB
+    step  300/1500  train_ce=3.2956  val_ce=3.2932  bits/byte  lr=2.87e-04  peakVRAM=321MB
+    step  450/1500  train_ce=3.0814  val_ce=3.0567  bits/byte  lr=2.61e-04  peakVRAM=321MB
+    step  600/1500  train_ce=2.8294  val_ce=2.8123  bits/byte  lr=2.24e-04  peakVRAM=321MB
+    step  750/1500  train_ce=2.6127  val_ce=2.7088  bits/byte  lr=1.80e-04  peakVRAM=321MB
+    step  900/1500  train_ce=2.4631  val_ce=2.5298  bits/byte  lr=1.35e-04  peakVRAM=321MB
+    step 1050/1500  train_ce=2.3174  val_ce=2.4399  bits/byte  lr=9.34e-05  peakVRAM=321MB
+    step 1200/1500  train_ce=2.2343  val_ce=2.4182  bits/byte  lr=5.96e-05  peakVRAM=321MB
+    step 1350/1500  train_ce=2.1251  val_ce=2.3190  bits/byte  lr=3.77e-05  peakVRAM=321MB
+    step 1500/1500  train_ce=2.3478  val_ce=2.2568  bits/byte  lr=3.00e-05  peakVRAM=321MB
+  trained in 22.8s  final val_ce=2.2950  unigram_val_ce=5.9112  bits/byte  peakVRAM=321MB
+=== H_1193 — summer-GPU REAL neural reader de-toys H_1187/H_1192: does a TRAINED byte TRANSFORMER LM surprise gate (not n-gram, not MLP) still beat a uniform scan, temporally? ===
+  reader = byte Transformer (d_model=192, 3 layers, 3 heads, block=128, 1,457,856 params), AdamW 1500 steps on held-out first 50%; surprise = −log2 P_T(byte|ctx)
+  surprise-gated split (mean+1.0σ saccade, refrac 30) vs METRONOME on TEXT stage-decode (4 stages); 10 seeds; metric = STAGE-DECODE (p7, NOT model loss)
+--- CONSTRUCTION GUARDS ---
+  TRAINED Transformer: params=1,457,856  train_pairs=181022  final_val_ce=2.2950  unigram_val_ce=5.9112  uniform=8.0 bits/byte  H_1192_MLP_ref=2.83
+  train curve (step,bits/byte) = [(1, 8.2232), (150, 3.7754), (300, 3.2956), (450, 3.0814), (600, 2.8294), (750, 2.6127), (900, 2.4631), (1050, 2.3174), (1200, 2.2343), (1350, 2.1251), (1500, 2.3478)]
+  val   curve (step,bits/byte) = [(1, 8.2257), (150, 3.6953), (300, 3.2932), (450, 3.0567), (600, 2.8123), (750, 2.7088), (900, 2.5298), (1050, 2.4399), (1200, 2.4182), (1350, 2.319), (1500, 2.2568)]
+  peak VRAM = 321 MB (cap = 28% of 12GB ≈ 3424 MB)
+  degenerate = False (ok — val_ce below uniform, unigram, AND H_1192 MLP)
+  position-alignment (surprise track ↔ make_text_stream `start`) = True
+  surprise spread (std over seed0) = 1.946 bits  mean = 2.268 bits  (flat<=0.1 would be degenerate)
+  guards PASS — TRANSFORMER learned real structure (beats MLP), positions aligned, surprise has spread
+--- CAP LADDER (find K* = argmax d_surprise_vs_metro on real-ordered text) ---
+  cap=  4  surp_decode=0.4614  metro_decode=0.0000  d_real=+1.00  surp_cells=2.0
+  cap=  6  surp_decode=0.6190  metro_decode=0.4900  d_real=+0.20  surp_cells=4.0
+  cap=  8  surp_decode=0.6159  metro_decode=0.3747  d_real=+0.36  surp_cells=6.0
+  cap= 12  surp_decode=0.7343  metro_decode=0.4573  d_real=+0.50  surp_cells=10.0
+  cap= 16  surp_decode=0.7070  metro_decode=0.4714  d_real=+0.45  surp_cells=14.0
+  cap= 24  surp_decode=0.6950  metro_decode=0.2764  d_real=+0.95  surp_cells=22.0
+  cap= 32  surp_decode=0.7986  metro_decode=0.5711  d_real=+0.48  surp_cells=30.0
+  cap= 48  surp_decode=0.5470  metro_decode=0.5187  d_real=+0.08  surp_cells=46.0
+  cap= 64  surp_decode=0.7047  metro_decode=0.5518  d_real=+0.35  surp_cells=62.0
+--- K* = 4 (text's own coverage cap; argmax d_real) ---
+  d_real (surprise vs metronome, real-ordered) = +1.004   F1 (>=0.5) = True
+  d_shuf (surprise vs metronome, time-shuffled) = +0.570
+  drop  (d_real - d_shuf)                       = +0.434   F2 (>=0.5) = False
+  surp_decode=0.4614  metro_decode=0.0000  chance=0.2500
+  H_1187 n-gram ref: K*=24  d_real=+1.015  drop=+0.512
+  H_1192 MLP   ref: K*=4  d_real=+1.168  drop=+0.621  val_ce=2.83
+=== VERDICT ===
+  CLOSED-NEGATIVE (a_paper_negative_ok): the H_1187/H_1192 saccadic-reading GREEN did NOT survive a REAL neural Transformer LM at the text's own cap K*=4 — F2 fail: advantage NOT temporal (drop=+0.43 < 0.5; d_shuf=+0.57). The count n-gram (H_1187 d_real=+1.01) and the numpy MLP (H_1192 d_real=+1.17) both beat the metronome, but a genuine attention Transformer surprise (val_ce=2.29 bits/byte, the BEST predictor) does not — the saccadic edge is sensitive to predictor SHARPNESS (a_toy_scale_recheck): the Transformer's smoother, longer-context surprise washes out the sharp local surprise spikes the cruder readers exploited. Real-LLM surprise + real human reading-time UNVERIFIED.
+{
+  "H": "H_1193",
+  "title": "the summer-GPU neural rung — de-toy H_1187/H_1192: does a REAL byte-level TRANSFORMER LM next-byte surprise reader (GPU-trained, attention) reproduce the saccadic-reading result (beat a uniform metronome scan on real-text stage-decode, temporally), completing the n-gram→MLP→Transformer ladder?",
+  "compute_host": "summer",
+  "compute": "summer-GPU-shared (RTX 5070 12GB, torch 2.11.0+cu130, VRAM capped 28%; co-tenant rbfe-prod live)",
+  "device": "cuda",
+  "frozen_falsifier": {
+    "Kstar": "argmax over cap ladder (4, 6, 8, 12, 16, 24, 32, 48, 64) of d_surprise_vs_metro (text's own cap)",
+    "F1": "d_surprise_vs_metro(K*) >= 0.5 (Transformer saccadic reading beats uniform scan)",
+    "F2": "(d_real - d_shuf) >= 0.5 at K* (advantage destroyed by time-shuffle = temporal)",
+    "SUPPORTED": "F1 and F2 (SACCADIC-READING-HOLDS-WITH-A-REAL-NEURAL-LM — completes the n-gram→MLP→Transformer de-toy ladder)",
+    "metric": "STAGE-DECODE accuracy (p7, NOT the model's loss/perplexity)"
+  },
+  "trained_model": {
+    "kind": "byte-level decoder-only Transformer LM (GPU-trained)",
+    "arch": "256-vocab tok+pos emb -> 3x [MHA(3h)+MLP, pre-LN] -> LM head 256",
+    "n_params": 1457856,
+    "d_model": 192,
+    "n_layers": 3,
+    "n_heads": 3,
+    "block": 128,
+    "d_ff": 768,
+    "steps": 1500,
+    "batch": 48,
+    "lr": 0.0003,
+    "train_pairs": 181022,
+    "train_wall_s": 22.82,
+    "train_ce_curve_bits": [
+      [
+        1,
+        8.2232
+      ],
+      [
+        150,
+        3.7754
+      ],
+      [
+        300,
+        3.2956
+      ],
+      [
+        450,
+        3.0814
+      ],
+      [
+        600,
+        2.8294
+      ],
+      [
+        750,
+        2.6127
+      ],
+      [
+        900,
+        2.4631
+      ],
+      [
+        1050,
+        2.3174
+      ],
+      [
+        1200,
+        2.2343
+      ],
+      [
+        1350,
+        2.1251
+      ],
+      [
+        1500,
+        2.3478
+      ]
+    ],
+    "val_ce_curve_bits": [
+      [
+        1,
+        8.2257
+      ],
+      [
+        150,
+        3.6953
+      ],
+      [
+        300,
+        3.2932
+      ],
+      [
+        450,
+        3.0567
+      ],
+      [
+        600,
+        2.8123
+      ],
+      [
+        750,
+        2.7088
+      ],
+      [
+        900,
+        2.5298
+      ],
+      [
+        1050,
+        2.4399
+      ],
+      [
+        1200,
+        2.4182
+      ],
+      [
+        1350,
+        2.319
+      ],
+      [
+        1500,
+        2.2568
+      ]
+    ],
+    "final_val_ce_bits": 2.295,
+    "unigram_val_ce_bits": 5.9112,
+    "uniform_baseline_bits": 8.0,
+    "h1192_mlp_val_ce_bits": 2.83,
+    "peak_vram_mb": 320.8,
+    "not_degenerate": true,
+    "degenerate_reason": ""
+  },
+  "construction_guards": {
+    "degenerate": false,
+    "degenerate_reason": "",
+    "position_alignment": true,
+    "surprise_spread_bits_seed0": 1.9461120131616068,
+    "surprise_mean_bits_seed0": 2.2675468638477483
+  },
+  "Kstar": 4,
+  "d_real": 1.0040905409028251,
+  "d_shuf": 0.5700164903576372,
+  "drop": 0.4340740505451879,
+  "F1_saccadic_wins": {
+    "d_real": 1.0040905409028251,
+    "bar": 0.5,
+    "pass": true
+  },
+  "F2_temporal": {
+    "drop": 0.4340740505451879,
+    "d_shuf": 0.5700164903576372,
+    "bar": 0.5,
+    "pass": false
+  },
+  "mean_decode": {
+    "surprise": 0.4614166666666666,
+    "metronome": 0.0,
+    "chance": 0.25
+  },
+  "cap_ladder": {
+    "4": {
+      "d_real": 1.0040905409028251,
+      "mean_surp": 0.4614166666666666,
+      "mean_metro": 0.0,
+      "mean_surp_cells": 2.0
+    },
+    "6": {
+      "d_real": 0.19605354180977974,
+      "mean_surp": 0.6189583333333333,
+      "mean_metro": 0.49000000000000005,
+      "mean_surp_cells": 4.0
+    },
+    "8": {
+      "d_real": 0.35619564829371075,
+      "mean_surp": 0.615875,
+      "mean_metro": 0.3746666666666667,
+      "mean_surp_cells": 6.0
+    },
+    "12": {
+      "d_real": 0.504031299892013,
+      "mean_surp": 0.7342916666666668,
+      "mean_metro": 0.4573333333333333,
+      "mean_surp_cells": 10.0
+    },
+    "16": {
+      "d_real": 0.4542497390194274,
+      "mean_surp": 0.7070416666666667,
+      "mean_metro": 0.47137499999999993,
+      "mean_surp_cells": 14.0
+    },
+    "24": {
+      "d_real": 0.9472425603520204,
+      "mean_surp": 0.6949583333333333,
+      "mean_metro": 0.27641666666666664,
+      "mean_surp_cells": 22.0
+    },
+    "32": {
+      "d_real": 0.481646885176417,
+      "mean_surp": 0.798625,
+      "mean_metro": 0.5710833333333334,
+      "mean_surp_cells": 30.0
+    },
+    "48": {
+      "d_real": 0.07843086128709123,
+      "mean_surp": 0.547,
+      "mean_metro": 0.5186666666666666,
+      "mean_surp_cells": 46.0
+    },
+    "64": {
+      "d_real": 0.348850024994559,
+      "mean_surp": 0.7047083333333333,
+      "mean_metro": 0.5518333333333334,
+      "mean_surp_cells": 62.0
+    }
+  },
+  "h1187_ngram_reference": {
+    "Kstar": 24,
+    "d_real": 1.015,
+    "drop": 0.512
+  },
+  "h1192_mlp_reference": {
+    "Kstar": 4,
+    "d_real": 1.168,
+    "drop": 0.621,
+    "val_ce": 2.83
+  },
+  "comparison_ladder": "H_1187 (COUNT n-gram): K*=24, d_real=+1.015, drop=+0.512  →  H_1192 (numpy MLP, val_ce=2.83): K*=4, d_real=+1.168, drop=+0.621  →  H_1193 (GPU TRANSFORMER, val_ce=2.29): K*=4, d_real=+1.004, drop=+0.434. Ladder BREAKS at the neural rung — the n-gram/MLP greens did NOT survive a real Transformer; saccadic edge is predictor-sharpness-sensitive.",
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE (a_paper_negative_ok): the H_1187/H_1192 saccadic-reading GREEN did NOT survive a REAL neural Transformer LM at the text's own cap K*=4 — F2 fail: advantage NOT temporal (drop=+0.43 < 0.5; d_shuf=+0.57). The count n-gram (H_1187 d_real=+1.01) and the numpy MLP (H_1192 d_real=+1.17) both beat the metronome, but a genuine attention Transformer surprise (val_ce=2.29 bits/byte, the BEST predictor) does not — the saccadic edge is sensitive to predictor SHARPNESS (a_toy_scale_recheck): the Transformer's smoother, longer-context surprise washes out the sharp local surprise spikes the cruder readers exploited. Real-LLM surprise + real human reading-time UNVERIFIED.",
+  "reading_answer": "NO at this rung — the saccadic-reading advantage found with a count n-gram AND a numpy MLP does NOT reproduce when the surprise comes from a genuinely neural Transformer LM; the earlier greens are sensitive to predictor sharpness (a_toy_scale_recheck). Production-LLM next-token surprise + real human reading-time remain the unverified path.",
+  "scope": "SMALL ($0 summer GPU, 10 seeds) but a GENUINELY NEURAL model — a byte-level Transformer LM (1457856 params, 3-layer attention, block=128, AdamW 1500 steps) on ONE corpus, VRAM-CAPPED ≤3.5GB and GPU-TIME-SHARED with a live co-tenant; the strongest reader of the n-gram→MLP→Transformer ladder. Reuses the H_1163 grow_arm METRONOME + stage_decode + cohen_d + make_text_stream and H_1187 grow_arm_surprise + CAP_LADDER + time-shuffle VERBATIM; the ONLY swap is the surprise SOURCE (MLP -> GPU Transformer). NOT a production LLM; production-LM surprise + real human reading-time/eye-tracking + scale UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck). The reader's training is a separate Lane-G GPU predictor; the mitosis GROWTH arm stays Lane-M gradient-free (a_lane_akida_gpu_split). Ran on the SUMMER pool host (RTX 5070, torch 2.11.0+cu130, cu130)."
+}
+  [ckpt saved /tmp/h1193_byte_transformer.pt — small toy probe, NOT HF-uploaded]
+[done]
