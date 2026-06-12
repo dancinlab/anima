@@ -27,6 +27,13 @@ Status (2026-06-12, step 8000 · val_ce 1.2015 ↓ · 543min):
 Milestone safety: best.pt @ step6500 (G0✅+G1✅ snapshot) → HF PRIVATE `dancinlab/anima-clm-7b-h1141-g1pass-step6500` (uploaded). Watcher (PID 1123) auto DONE→HF-verify→self-teardown.
 **NOT a7b_pass-complete** — G1 unstable + G2–G4 unseen. Let training converge; re-check all gates at DONE.
 
+## Lanes — two ways to run the mitosis track (Track A)
+Both lanes run on **`summer`** ($0, per Compute policy). They take DISJOINT rungs (no collision).
+- **Lane 1 · AUTONOMOUS ("그냥 진행")** — background fan-out: open rungs auto-dispatched to summer,
+  run to depletion, harvest verdict + commit to origin/main with NO per-step LLM/user intervention. (~/cycle-bg on summer.)
+- **Lane 2 · HANDS-ON ("하나하나 LLM 직접")** — the LLM drives each rung INLINE one at a time, foreground + visible:
+  write harness → `sidecar pool on summer` run → read verdict → commit, step by step. (~/cycle-fg on summer.)
+
 ## Compute policy — small cells run on `summer`, NOT rented GPU
 While the mitosis cells are SMALL (toy $0 numpy + live-CORE `.hexa` probes), run the research
 track on the **`summer` pool host** (own hardware · linux · py3.12 · numpy2.4 · hexa installed ·

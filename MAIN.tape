@@ -13,3 +13,8 @@
   rationale = "small cells do not need a GPU; summer = own hardware $0 (linux py3.12 numpy2.4 hexa-installed 133G free), keeps Mac free + avoids local disk-full; renting reserved for genuine scale-up (7B-class, Track B)"
   summer_ready = "host summer-B650M-K · python 3.12.3 · numpy 2.4.4 · hexa /home/summer/.local/bin/hexa · git ok · 133G free · repo /home/summer/core/anima"
   next = "MAIN-progress dispatches mitosis open rungs via `sidecar pool on summer`; harvest verdict back + commit to origin/main; rent GPU only when cell/model size demands it"
+
+@MAIN 2026_06_12_two_lanes := "mitosis Track A runs in TWO lanes on summer: Lane1 autonomous batch + Lane2 LLM hands-on" :: log [active]
+  lane1 = "AUTONOMOUS — background agent fans open rungs to summer pool, runs to depletion, harvest+commit, no per-step LLM intervention"
+  lane2 = "HANDS-ON — LLM drives each rung inline one-by-one on summer (write harness -> sidecar pool on summer -> verdict -> commit), visible step-by-step"
+  split = "lanes take disjoint rungs; Lane2 reserves H_1178 (decode-metric tick @ cap~24, H_1163 residual); Lane1 takes the rest of the open-rung list"
