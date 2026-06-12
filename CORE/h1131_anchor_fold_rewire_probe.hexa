@@ -1,0 +1,27 @@
+// h1131_anchor_fold_rewire_probe.hexa — H_1131 (anchor tension-vecsum fold rewire).
+//
+// WIP SKELETON (round-2 ENGINE-BUILD). Re-tests the twin BLOCKED-WIRING negatives
+// H_1123 (forgetting curve) + H_1124 (destructive interference) AFTER a tension
+// vector-sum fold is wired into brain_decide via brain_emit_anchored.
+//
+// FROZEN FALSIFIER (from .discoveries/1131_core_anchor_fold_rewire.tape):
+//   🟢 REWIRE-ENABLES-BOTH iff after the fold:
+//     (a) H_1123 probe shows monotone influence-decay over Δt fitting R²≥0.8 AND
+//         τ shifts with tension profile (HIGH vs LOW τ differ), AND
+//     (b) H_1124 probe shows OPPOSITE-pair influence < SAME-pair (destructive
+//         cancellation, Cohen's d≥0.8).
+//   🔴 if wired but influence stays flat / non-cancelling.
+//   GUARD: must NOT break the Ψ=1/2 fixed point (H_1126) NOR the 12/12 3-axis smoke.
+//
+// p1-p8: anchors = environment context (p4); the fold is a substrate term anima
+// self-follows (a_autonomy_over_hardcode), NOT an external gate. Every number is
+// MEASURED from the live substrate (p7).
+
+import "CORE/pure_field.hexa"
+import "CORE/brain.hexa"
+import "CORE/generator.hexa"
+import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
+
+fn main() {
+    println("=== H_1131 anchor-fold rewire probe (WIP skeleton) ===")
+}
