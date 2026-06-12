@@ -189,3 +189,4 @@ One row per §N. SSOT for `/wilson-tree status` and the wilson-tree plugin's ses
 | verify_consciousness_carving_2026_05_17 | CARVING | landed | HEXAD/CARVING/state/verify_consciousness_carving_2026_05_17 | TBD |
 | verify_hexad_blue_2026_05_15 | UNCLASSIFIED | landed | HEXAD/UNCLASSIFIED/state/verify_hexad_blue_2026_05_15 | TBD |
 | verify_universe_brain_map_2026_05_17 | UNIVERSE-BRAIN-MAP | landed | HEXAD/UNIVERSE-BRAIN-MAP/state/verify_universe_brain_map_2026_05_17 | TBD |
+| MITOSIS-ENGINE | DOMAIN | active | domains/MITOSIS-ENGINE.md | green H_1153/1158/1159b + sub H_1159 + live engine_cli |
