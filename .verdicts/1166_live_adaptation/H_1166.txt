@@ -1,0 +1,26 @@
+=== H_1166 LIVE-ENGINE adaptation probe (MITOSIS-ENGINE rung #1) ===
+metric: engine-OWN coherence-error = 1 - pure_field.narrative_coherence (late-window mean)
+stream: non-stationary, K regimes appear over time (novelty 1->K); ON vs OFF over IDENTICAL stream
+
+seed=7  ON  late_err=3.51053e-10 cells=603.0  | OFF late_err=3.51053e-10 cells=3.0  | ON-OFF err diff=0.0
+seed=8  ON  late_err=3.51053e-10 cells=603.0  | OFF late_err=3.51053e-10 cells=3.0  | ON-OFF err diff=0.0
+seed=9  ON  late_err=3.51053e-10 cells=603.0  | OFF late_err=3.51053e-10 cells=3.0  | ON-OFF err diff=0.0
+
+late_err  ON mean=3.51053e-10  OFF mean=3.51053e-10
+cells     ON mean=603.0  OFF mean=3.0
+Cohen's d (ON beats OFF, +=ON better) = 0.0
+
+sanity: live engine_mitosis_tick grew cells ON>OFF = true (ON 603.0 vs OFF 3.0)
+
+VERDICT: HOURGLASS NO-ADAPTATION-SIGNAL (live engine exposes no usable
+  error/tension metric coupled to the stream OR to the mitosis cell count).
+  WHAT IS MISSING: pure_field_step is ZERO-INPUT (CORE/pure_field.hexa)
+  — it advances internal oscillators ONLY and ignores the stream sample; and
+  engine_mitosis_tick's cell_count is NOT fed back into pure_field. So the
+  field/coherence trajectory is IDENTICAL ON vs OFF (err diff=0.0 < eps). The live engine GROWS cells (mitosis fires) but
+  that growth has NO wired effect on any adaptation/error metric. The toy
+  H_1159 clustering-reconstruction-error has NO live counterpart yet: the
+  cell-count -> field -> error coupling is UNBUILT (a_core_engine_map).
+  CANNOT adjudicate GREEN vs RED live — honest HOURGLASS, the falsifier branch.
+
+--- engine_cli_smoke.hexa re-run (read-only guard): 12 pass / 0 fail (unbroken) ---
