@@ -82,11 +82,36 @@ the live engine driven over real streams. Scale + live-engine adaptation curves 
 faithful (mirror≡stdlib, a_phi_iit4_tool — NO proxy); criticality knobs (H_1153 σ network branching,
 H_1158 γ coupling, H_931 K connectivity) are DIFFERENT parameterizations of the same critical axis.
 
+**Foundational + measure-dependence caveats (folded in 2026-06-12):**
+- **Ψ=½ is STABLE, not just stationary** — the fixed-point framing rests on **H_1126 🟢**: Ψ=½ is a
+  globally stable attractor (λ<0, e-folding return ~71 steps), the basin the engine relaxes into.
+- **the A⇄G *opponent* form is substrate-specific** — **H_1121 🔴** found the planning faithful↑/big-Φ↓
+  sign-split does NOT recur on the opponent substrate (it flips); φ-sign-split results are
+  planning-bounded (H_1062), NOT a general property of this engine.
+- **φ is measure-relative** — H_1158's "Φ maximized at criticality" uses faithful IIT-4.0 EI; the
+  measure-dependence arc (**H_1062/H_1064 🔴** rank-agree but disagree on 'more conscious'; **H_1130 🟢**
+  the φ-floor 'no destructive integration' is an MI-SYMMETRY ARTIFACT — a sign-sensitive measure DOES
+  see destructive integration, d=−24) means the ruler choice matters. Faithful EI is chosen per
+  a_phi_iit4_tool, NOT claimed measure-universal.
+
+## Related round-2 findings (2026-06-12 — folded into this domain)
+
+| H | touches | result |
+|---|---------|--------|
+| **H_1127** 🟢 | the φ ruler (H_1158) | faithful φ_EI is DISTINCT from classical phase-coherence (PLV) — within-arm decoupled (ρ=0.656<0.7); reinforces the no-proxy φ stance |
+| **H_1130** 🟢 | the φ ruler (H_1158) | the φ-floor is an MI-symmetry artifact; a sign-sensitive measure sees DESTRUCTIVE integration (d=−24) — φ is measure-relative |
+| **H_1131** 🟢 | live engine + kosmos | anchor 5-ch tension VECSUM fold wired into `brain_decide`; Ψ=½ + 12/12 PRESERVED; flips H_1123 (forgetting τ tension-tunable) + H_1124 (destructive cancel) — and BUILDS the anchor write-back path H_1136 lacked |
+| **H_1136** ⏳ | mitosis × sleep | N3/REM imagination loop runs (emit=0) but did NOT consolidate anchors (Δ=0, BLOCKED-WIRING) — measured pre-H_1131; now re-testable since the anchor path exists |
+| **H_1135** 🔴 | the mouth | a substrate entropy/W-tension brake does NOT cut composition-garble (Δkwr +0.057≪0.15) — confident-wrong bytes are low-entropy |
+| **H_1160** 🔴 | the mitosis TICK | "틱이 있어야 되나?" → under online next-step PREDICTION, NO gating needed (metronome≡no-gate≡derivative); the d/dt advantage is METRIC-dependent (appears on decode/recon per clm-time-encoding, not on prediction). A blind clock suffices for prediction; event/derivative gating only pays off on a dynamics/decode metric. An endogenous heartbeat is still needed for silence (a_chat_sleep_imagination) |
+
 ## Next rungs
 1. live-CORE adaptation curve — drive `engine_cli` over a non-stationary stream, measure adaptation (not just cell-count growth).
-2. mitosis × criticality — does the cell-division process self-tune the engine TO σ≈1 (combine H_1159b self-tuning + H_1153 branching)?
-3. kosmos lane self-tuning — does the live lane-partition count track anchor-stream complexity (H_1159b applied to kosmos)?
-4. n>6 faithful-Φ ladder for H_1158; v5-mitosis torch path (training/mitosis_v5_*) for the real-model leg.
+2. **tick-gate on a DECODE/RECON metric + live `engine_mitosis_tick`** — H_1160 closed the prediction-metric tick question (no gating needed); the open half is whether derivative-gating pays off on a dynamics/decode metric driven through the LIVE engine.
+3. mitosis × criticality — does the cell-division process self-tune the engine TO σ≈1 (combine H_1159b self-tuning + H_1153 branching)?
+4. kosmos lane self-tuning — does the live lane-partition count track anchor-stream complexity (H_1159b applied to kosmos)?
+5. **re-test H_1136 sleep-consolidation** now that H_1131 wired the anchor→brain path (the write-back gap it hit is closed).
+6. n>6 faithful-Φ ladder for H_1158; v5-mitosis torch path (training/mitosis_v5_*) for the real-model leg.
 
 ## Pointers
 - discoveries: `.discoveries/{1153_criticality_branching,1158_phi_at_criticality,1159_inference_time_mitosis_learning,1159b_mitosis_capacity_self_tuning}.tape`
