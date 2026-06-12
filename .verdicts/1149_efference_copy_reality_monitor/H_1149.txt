@@ -1,0 +1,130 @@
+=== H_1149 v2 RUN LOG ===
+=== H_1149 efference-copy / reality monitoring ===
+[dict] /usr/share/dict/words (73292 words)
+[pairs] built 80 matched prompts (prompt=40B span=60B)
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.6675 0.1min
+  [train] step 300 ce=2.5802 11.1min
+  [train] step 600 ce=2.4870 15.7min
+  [train] step 900 ce=2.3192 22.4min
+  [train] step 1200 ce=2.3005 23.6min
+  [train] step 1499 ce=2.3554 24.9min
+--- generating fixed SELF spans from the trained model ---
+--- F3 control: UNTRAINED backbone (same fixed spans) ---
+  [untrained] valid_pairs=80 AUROC(self|self-logprob)=0.5403 mean_self_lp=-5.6485 mean_ext_lp=-5.6537
+--- F1/F2: TRAINED model ---
+  [trained] valid_pairs=80 AUROC(self|self-logprob)=0.7509 mean_self_lp=-2.0243 mean_ext_lp=-2.2380
+=== VERDICT ===
+{
+  "H": "H_1149",
+  "title": "efference-copy / reality monitoring",
+  "dict_source": "system-dict",
+  "F1_source_discrimination": {
+    "auroc": 0.7509375,
+    "bar": 0.7,
+    "pass": true
+  },
+  "F2_fabrication_handle": {
+    "spearman_within_self": -0.15768556399766218,
+    "spearman_pooled": -0.2633719111667188,
+    "primary": "within_self",
+    "abs": 0.15768556399766218,
+    "bar": 0.3,
+    "pass": false
+  },
+  "F3_anti_goodhart_control": {
+    "untrained_auroc": 0.5403125,
+    "bar_max": 0.6,
+    "pass": true
+  },
+  "fabrication_base_rates": {
+    "self_fab": 0.2885122410546139,
+    "external_fab": 0.3218536528830646,
+    "n_fab_spans": 139,
+    "total_grams": 1085
+  },
+  "valid_pairs": {
+    "trained": 80,
+    "untrained": 80,
+    "built": 80
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: source-monitoring EXISTS (F1 pass) but gives NO fabrication handle (F2 fail) — the substrate can tell self-vs-external yet that signal does NOT predict corpus-absence; reality-monitoring != hallucination detection here",
+  "design": "v2: SELF spans generated ONCE by the TRAINED model; both the trained scorer and the untrained control re-read the IDENTICAL fixed spans, so F3 tests LEARNED discrimination (not the self-sampling tautology that gave v1 untrained AUROC=1.0)",
+  "sample_self": "rmoth wats and. A thece of mone was poraw apt hor's priric p",
+  "sample_external": "s the Buddy Secondary Life Support System (BSLSS), a set of ",
+  "scope": "toy ByteGPT d256/4L CPU en slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "prompt_bytes": 40,
+    "span_bytes": 60,
+    "n_pairs": 80,
+    "gen_temp": 0.85,
+    "seed": 7
+  }
+}
+[done] /tmp/h1149_result.json
+=== H_1149 v2 RESULT JSON ===
+{
+  "H": "H_1149",
+  "title": "efference-copy / reality monitoring",
+  "dict_source": "system-dict",
+  "F1_source_discrimination": {
+    "auroc": 0.7509375,
+    "bar": 0.7,
+    "pass": true
+  },
+  "F2_fabrication_handle": {
+    "spearman_within_self": -0.15768556399766218,
+    "spearman_pooled": -0.2633719111667188,
+    "primary": "within_self",
+    "abs": 0.15768556399766218,
+    "bar": 0.3,
+    "pass": false
+  },
+  "F3_anti_goodhart_control": {
+    "untrained_auroc": 0.5403125,
+    "bar_max": 0.6,
+    "pass": true
+  },
+  "fabrication_base_rates": {
+    "self_fab": 0.2885122410546139,
+    "external_fab": 0.3218536528830646,
+    "n_fab_spans": 139,
+    "total_grams": 1085
+  },
+  "valid_pairs": {
+    "trained": 80,
+    "untrained": 80,
+    "built": 80
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: source-monitoring EXISTS (F1 pass) but gives NO fabrication handle (F2 fail) — the substrate can tell self-vs-external yet that signal does NOT predict corpus-absence; reality-monitoring != hallucination detection here",
+  "design": "v2: SELF spans generated ONCE by the TRAINED model; both the trained scorer and the untrained control re-read the IDENTICAL fixed spans, so F3 tests LEARNED discrimination (not the self-sampling tautology that gave v1 untrained AUROC=1.0)",
+  "sample_self": "rmoth wats and. A thece of mone was poraw apt hor's priric p",
+  "sample_external": "s the Buddy Secondary Life Support System (BSLSS), a set of ",
+  "scope": "toy ByteGPT d256/4L CPU en slice — scale-up to anima-7B UNVERIFIED (a_scale_honest_scope)",
+  "config": {
+    "d": 256,
+    "n_layer": 4,
+    "block": 128,
+    "steps": 1500,
+    "prompt_bytes": 40,
+    "span_bytes": 60,
+    "n_pairs": 80,
+    "gen_temp": 0.85,
+    "seed": 7
+  }
+}
+=== v1 DEFECT EVIDENCE (self-sampling tautology, untrained AUROC=1.0) ===
+=== H_1149 efference-copy / reality monitoring ===
+[dict] /usr/share/dict/words (73292 words)
+[pairs] built 80 matched prompts (prompt=40B span=60B)
+--- F3 control: UNTRAINED backbone ---
+  [untrained] valid_pairs=80 AUROC(self|self-logprob)=1.0000 mean_self_lp=-4.7401 mean_ext_lp=-5.6815
+--- training tiny ByteGPT (en slice) ---
+  [train] step 0 ce=5.7144 0.0min
+  [train] step 300 ce=2.5356 10.1min
