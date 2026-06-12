@@ -1,0 +1,61 @@
+H_1200 — MITOSIS-GENERATIVE-GROWTH — PRE-REGISTERED FALSIFIER (FROZEN before any score)
+=======================================================================================
+Frozen: before running UNIVERSE/h1200_mitosis_generative_growth.py. Thresholds below
+are FIXED; they will NOT be moved post-hoc (a_paper_negative_ok).
+
+ARC: "can mitosis-growth reach conversational language?" — FIRST rung.
+
+THE GAP
+-------
+The mitosis engine (H_1194..H_1199, CORE/engine_cli.hexa VAdaptField) GROWS prototype
+cells on a DIM=8 byte-feature stream and lowers L2 RECONSTRUCTION error — a CLUSTERING
+homeostat, NOT a language GENERATOR (no next-byte emission head). This rung tests the
+first untested link: does growing more cells make the system better at PREDICTING /
+GENERATING the next byte of real text, or does growth only improve clustering?
+
+MECHANISM (gradient-free, p8: the mitosis tick IS the learning; NO backprop)
+----------------------------------------------------------------------------
+Each grown prototype cell gets a GENERATIVE readout: a prototype-conditional next-byte
+distribution (256-dim Laplace-smoothed counts), accumulated ONLINE. Per tick: featurise
+the DIM=8 byte window (H_1163 _byte_feature VERBATIM) -> nearest prototype cell (L2) ->
+predict next byte from that cell's distribution -> score CE (held-out: scored BEFORE the
+count is added) -> update that cell's counts -> if recon-err (L2) > SPLIT_THRESH=0.30 and
+capacity, SPLIT (H_1199 VAdaptField rule, frozen SPLIT_THRESH), daughter inherits the
+parent's counts (heredity). ON = grow; OFF = frozen 1 cell, one global distribution (the
+H_1159 ON-vs-OFF control; OFF still learns its single table online — only GROWTH differs).
+
+FROZEN CONSTANTS (H_1199 VAdaptField, not tuned-to-green)
+--------------------------------------------------------
+  DIM=8, SPLIT_THRESH=0.30, LR=0.20, MAX_CELLS=2048, VOCAB=256, LAPLACE=1.0
+  SEEDS = 900..904 (5 deterministic seeds), T=2400 scored span, BLOCK=200
+  corpus = CORE/testdata/clm_mid_5lang_c4.txt (H_1198 English/multilingual real corpus)
+
+FALSIFIER (pre-registered, p7 — next-byte CE is a CAPABILITY probe, NOT a chat verdict)
+---------------------------------------------------------------------------------------
+  F1 GENERATIVE-GAIN : mitosis-ON next-byte CE (bits/byte) < OFF by >= 0.30 b/byte,
+     pooled over seeds (a REAL margin, not noise).
+  F2 MONOTONE-GROWTH : next-byte CE FALLS as cells grow — Spearman(n_cells, -CE) > 0
+     across the per-block trajectory pooled over seeds (growth buys the gain).
+  F3 SUBSTRATE-INTACT : (live .hexa only) engine Psi Phi-checksum byte-identical ON==OFF.
+     THIS RUNG = NUMPY MIRROR of VAdaptField (H_1198/H_1199 pattern). The .hexa lift
+     (extend CORE/engine_cli.hexa VAdaptField with the generative head, F3-guarded) is
+     the NEXT rung — stated honestly, NOT claimed here.
+
+VERDICT
+-------
+  F1 AND F2  => 🟢 GROWTH-IS-GENERATIVE : first rung of the mitosis-LM ladder secured.
+  NOT F1     => 🔴 CLOSED-NEG : mitosis-growth is CLUSTERING, not language-learning =>
+               the naive pure-mitosis -> chat path is falsified cheaply here; redirect to
+               the CLM lane (a_paper_negative_ok — a valid, valuable negative).
+
+p7 HONESTY CROSS-CHECK (NOT the verdict): decode short greedy + sampled continuations
+from the GROWN vs FROZEN model and report VERBATIM, so a human can see whether growth
+produces more coherent continuations.
+
+SCOPE (a_scale_honest_scope): toy/small real-corpus FIRST rung, gradient-free
+prototype-LM (DIM=8 feature-keyed next-byte tables, 256-byte vocab, ONE corpus). The
+DIM=8 window is a COARSE context (no within-window token order) so absolute CE is far
+from a real LM; the falsifier is the ON-vs-OFF DELTA under the same coarse context. Scale
++ true conversational coherence UNVERIFIED — tests ONLY the growth -> generation LINK,
+NOT chat. Lane-2 gradient-free (separate from Lane A AKIDA / Lane G forge / Lane P torch).
+$0 local CPU, numpy, deterministic seeds.

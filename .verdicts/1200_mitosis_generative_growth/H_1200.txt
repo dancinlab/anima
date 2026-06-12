@@ -1,0 +1,98 @@
+H_1200 — MITOSIS-GENERATIVE-GROWTH — VERDICT 🔴 CLOSED-NEGATIVE
+================================================================
+Arc: "can mitosis-growth reach conversational language?" — FIRST rung.
+Lane-2 gradient-free growth. $0 local CPU, numpy mirror of the H_1199 VAdaptField.
+Freeze: .verdicts/1200_mitosis_generative_growth/H_1200_FREEZE.txt (thresholds NOT moved).
+
+TERMINAL TIER: 🔴 CLOSED-NEGATIVE — and STRONGER than a null: growth made next-byte
+generation WORSE, the OPPOSITE direction of the hypothesis.
+
+ON/OFF NEXT-BYTE CROSS-ENTROPY (bits/byte), 5 seeds, T=2400 scored span
+-----------------------------------------------------------------------
+  seed   ON_CE     OFF_CE    delta(OFF-ON)   ON cells   OFF cells
+  900    6.9104    6.2150    -0.6955         1->172     1
+  901    7.0336    6.2477    -0.7859         1->171     1
+  902    7.0345    6.2451    -0.7893         1->177     1
+  903    6.9866    6.2478    -0.7388         1->171     1
+  904    6.9997    6.2202    -0.7795         1->159     1
+  ----------------------------------------------------------------
+  MEAN   6.9930    6.2352    -0.7578         1->170     1
+
+F1 GENERATIVE-GAIN : ON CE 6.9930  vs  OFF CE 6.2352  => delta = -0.7578 b/byte
+   bar = ON must beat OFF by >= +0.30. Result: ON is WORSE by 0.76. -> FAIL (decisively,
+   and in the wrong direction on every one of 5 seeds).
+
+F2 MONOTONE-GROWTH : Spearman(n_cells, -CE) = +0.8546 (bar > 0) over 60 pooled
+   per-block trajectory points. -> PASS (within the ON run, CE does fall as cells grow).
+
+F3 SUBSTRATE-INTACT : numpy mirror (not live .hexa). The .hexa lift is the next rung,
+   NOT claimed here. F3 not evaluated (would only matter on a GREEN that warrants the lift).
+
+VERDICT: F1 FAIL => 🔴 CLOSED-NEG. (F2 passing does not rescue it — see mechanism.)
+
+MECHANISM — why growth HURTS generation (the finding, not goalpost-moving)
+--------------------------------------------------------------------------
+COUNT-FRAGMENTATION / DATA-SPARSITY. Splitting fragments the next-byte counts across
+~170 cells, so each cell's distribution is starved (T=2400 windows / 170 cells ≈ 14
+samples per cell, smeared by the LAPLACE=1.0 prior toward uniform 8 b/byte). The single
+OFF table sees ALL 2400 windows, so its one distribution is sharper than any single
+grown cell's. The DIM=8 byte-feature key that the cells cluster on is NOT predictive of
+the NEXT byte: the within-window statistics (mean / lowercase-ratio / non-ascii-ratio)
+identify the local REGIME (latin prose vs cjk run vs digits) but do not localise the
+next byte tightly enough to offset the data-split cost.
+
+The F2 PASS is a RED HERRING that the falsifier deliberately separated from F1: within
+the ON run, CE falls as cells accumulate — but that is because MORE DATA has arrived by
+later blocks (the global count of observed bytes grows monotonically), NOT because growth
+beats no-growth. The ON-vs-OFF F1 comparison (the real test) shows growth LOSES to one
+fat table. So "CE falls as the system grows" is true yet does NOT imply "growth causes
+the gain" — the clean separation F1 was designed to catch.
+
+DECODE SAMPLES (p7 honesty cross-check — VERBATIM, NOT the verdict; seed 900)
+----------------------------------------------------------------------------
+seed window (real corpus, cyrillic/cjk run):
+  'Ñ.ÐºÐ°Ð»..è.ªå·±ã..é.¡ã.®ä¸\xadã.®é.¡ã.§è.ªå·±ã..è¦'
+GROWN  (172 cells) greedy :
+  '   ìììììì ìììììììììììì ìììììììììììììììììììììììììì   ìììììì ìììììììììììì ìììììììì'
+FROZEN (1 cell)   greedy :
+  '                                                                                '
+GROWN  (172 cells) sampled:
+  '.&2Ñd¨êöG.Ü..].VËK\'e.C.´rùKL.+.j(´á1Ö²..+êÞJ`Pã4._:[.ï..2Ün°.ý.a[. .Gº..Ì.åÎ.þòl'
+FROZEN (1 cell)   sampled:
+  's.N¸i.ëìcxÝ..i h¶e0n e.¦sìghI?.r4¡ëaÑ...Eìêgnhëa.ncl.ì..Yês..í}nl.).e©..¸.ë¸.óìr'
+
+NEITHER continuation is coherent language. GROWN greedy collapses to a degenerate
+repeated multibyte fragment (one starved cell's argmax); FROZEN greedy emits the single
+most-common byte (space). The samples corroborate the CE verdict: a DIM=8-feature-keyed
+gradient-free prototype-LM cannot generate text REGARDLESS of growth — and growth makes
+it WORSE, not better.
+
+WHAT THIS CLOSES
+----------------
+The naive "grow prototype cells -> they become a language model" path is FALSIFIED
+cheaply ($0, here). Mitosis-growth as built (H_1194..H_1199) is a CLUSTERING /
+reconstruction homeostat: it lowers L2 recon error (H_1198/H_1199 GREEN) but does NOT
+lower next-byte cross-entropy — the growth->generation LINK is BROKEN at the first link.
+Pure-mitosis -> chat needs a DIFFERENT mechanism than feature-clustering + per-cell
+count tables. Redirect: the CLM lane (a_clm_gen_pipeline — a real ConvMoE next-byte head
+trained by descent) is the substrate that actually carries generation; mitosis-growth is
+a structural/adaptation lane, not a generative LM lane. a_paper_negative_ok — this
+closed-negative that rules out the naive axis is a valid, valuable result that saves the
+arc from chasing a dead path.
+
+SCOPE (a_scale_honest_scope)
+----------------------------
+TOY/small real-corpus FIRST rung, gradient-free prototype-LM (DIM=8 feature-keyed
+next-byte tables, 256-byte vocab, ONE corpus, 5 seeds). The DIM=8 window is a COARSE
+context with NO within-window token order, so absolute CE (~6-7 b/byte) is far from a
+real LM; the falsifier is the ON-vs-OFF DELTA under the same coarse context — and that
+delta is negative. A richer per-cell readout (sequence model inside the cell) or a
+predictive (not clustering) split key is UNTESTED. This rung tests ONLY the
+growth -> generation LINK with the AS-BUILT mitosis mechanism, NOT chat, NOT scale.
+Lane-2 gradient-free (separate from Lane A AKIDA / Lane G forge / Lane P torch).
+
+Artifacts:
+  UNIVERSE/h1200_mitosis_generative_growth.py
+  .verdicts/1200_mitosis_generative_growth/H_1200_FREEZE.txt
+  /tmp/h1200_result.json (full raw verdict json)
+Compute: $0 local CPU (numpy). No GPU, no RunPod.
