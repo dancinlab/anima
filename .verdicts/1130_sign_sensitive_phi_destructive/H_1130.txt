@@ -1,0 +1,103 @@
+============================================================================================
+H_1130 — SIGN-SENSITIVE φ: does a NON-MI, signed directed-EI candidate register
+  DESTRUCTIVE integration (go BELOW its independent-nodes floor) where the faithful
+  MI-matrix φ_EI (SIGN-BLIND, H_1122) cannot? Is the φ-floor reality, or MI-symmetry?
+  Dyad/substrate/faithful-mirror = H_1122/H_1114 VERBATIM (imported). Candidate =
+  SIGNED DIRECTED-EI BALANCE φ_sde = [Σ_{A→B}+Σ_{B→A} sign(r)·(-½log2(1-r²))] / 3,
+  r = lag-1 Pearson corr; DIRECTED + SIGNED (NOT MI, NOT MIP big-Φ, NOT perplexity).
+  CH=3 (joint n=6) seeds=10 D_BAR=0.8
+  ARMS: (a) OFF=floor · (b) ON=cooperative · (c) ANTI=anti-phase · (d) DECORR=repel
+  frozen falsifier: 🟢 SIGN-SENSITIVE-SEES-DESTRUCTIVE iff φ_sde(ANTI or DECORR) <
+  φ_sde_off at d<=-0.8 WHILE faithful φ_EI stays >= floor (H_1122 EXACT, sign-blind
+  control). 🔴 FLOOR-IS-MEASURE-GENERAL if the candidate ALSO can't go below floor.
+============================================================================================
+
+STEP 0 — RE-PROVE faithful mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+ [0a] LIVE stdlib faithful_phi re-capture at n=4,5,6 (n=6 = the scoring n):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+ [0a] live-stdlib faithful proof: PROVEN
+ [0b] h1012.prove_mirrors_at_n at n=4 AND n=5 (established pattern):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ [0b] mirror-equivalence results: {4: True, 5: True}
+ STEP 0 PASS — faithful mirror PROVEN ≡ stdlib at n=4,5 (both engines) and at the
+ scoring n=6 (LIVE hexa re-capture). NOTE: the candidate φ_sde is NOT IIT — it has
+ no stdlib engine to mirror; it is a pre-registered CANDIDATE, never ground truth.
+
+STEP 1 — score 4 arms × 10 seeds (SERIAL):
+  seed 100: faithφ off=0.0010 on=0.0116 anti=0.0120 dec=0.0137 | φ_sde off=+0.0020 on=+0.1878 anti=-0.1888 dec=-0.1770 | cc anti=-0.491 dec=-0.426
+  seed 101: faithφ off=0.0034 on=0.0172 anti=0.0149 dec=0.0232 | φ_sde off=+0.0055 on=+0.1924 anti=-0.1783 dec=-0.1650 | cc anti=-0.473 dec=-0.427
+  seed 102: faithφ off=0.0029 on=0.0163 anti=0.0103 dec=0.0133 | φ_sde off=+0.0031 on=+0.1701 anti=-0.1825 dec=-0.1754 | cc anti=-0.482 dec=-0.437
+  seed 103: faithφ off=0.0008 on=0.0102 anti=0.0086 dec=0.0134 | φ_sde off=+0.0004 on=+0.1824 anti=-0.1761 dec=-0.1761 | cc anti=-0.479 dec=-0.417
+  seed 104: faithφ off=0.0097 on=0.0114 anti=0.0078 dec=0.0146 | φ_sde off=-0.0024 on=+0.1734 anti=-0.1858 dec=-0.1883 | cc anti=-0.501 dec=-0.455
+  seed 105: faithφ off=0.0065 on=0.0107 anti=0.0153 dec=0.0159 | φ_sde off=-0.0034 on=+0.1737 anti=-0.2022 dec=-0.1980 | cc anti=-0.480 dec=-0.435
+  seed 106: faithφ off=0.0018 on=0.0119 anti=0.0084 dec=0.0104 | φ_sde off=+0.0004 on=+0.1889 anti=-0.1871 dec=-0.1853 | cc anti=-0.491 dec=-0.462
+  seed 107: faithφ off=0.0014 on=0.0166 anti=0.0148 dec=0.0248 | φ_sde off=-0.0003 on=+0.2013 anti=-0.1783 dec=-0.1562 | cc anti=-0.469 dec=-0.415
+  seed 108: faithφ off=0.0036 on=0.0106 anti=0.0081 dec=0.0132 | φ_sde off=+0.0003 on=+0.1695 anti=-0.1649 dec=-0.1641 | cc anti=-0.478 dec=-0.416
+  seed 109: faithφ off=0.0013 on=0.0094 anti=0.0085 dec=0.0130 | φ_sde off=+0.0008 on=+0.1637 anti=-0.1661 dec=-0.1545 | cc anti=-0.485 dec=-0.427
+
+MEASURE TABLE (10 seeds, mean ± sd):
+arm                faithful φ_EI (n=6, BITS)      candidate φ_sde (signed)
+--------------------------------------------------------------------------------------------
+OFF(floor)              +0.003234 ± 0.002688          +0.000658 ± 0.002412
+ON(coop)                +0.012618 ± 0.002784          +0.180319 ± 0.011446
+ANTI                    +0.010875 ± 0.002948          -0.181012 ± 0.010450
+DECORR                  +0.015549 ± 0.004434          -0.174001 ± 0.013418
+cross-corr (mean per-ch corr(W_A,W_B)): OFF(floor)=+0.007  ON(coop)=+0.488  ANTI=-0.483  DECORR=-0.432
+
+CONTRASTS vs OWN OFF-floor (Cohen d, arm − OFF):
+  ON(coop)   faithful: Δ=+0.009384 d=+3.429   |  candidate φ_sde: Δ=+0.179661 d=+21.721
+  ANTI       faithful: Δ=+0.007641 d=+2.708   |  candidate φ_sde: Δ=-0.181669 d=-23.955
+  DECORR     faithful: Δ=+0.012315 d=+3.359   |  candidate φ_sde: Δ=-0.174659 d=-18.118
+
+SANITY GATES:
+  candidate registers cooperative directed integration: d_sde(ON−OFF)=+21.721 >= +0.8 -> True
+  faithful SIGN-BLIND control reproduces H_1122:
+     d_faithful(ON−OFF)=+3.429 >= +0.8 (coop rise) -> True
+     d_faithful(ANTI−OFF)=+2.708 NOT <= -0.8 (at/above floor) -> True
+     d_faithful(DECORR−OFF)=+3.359 NOT <= -0.8 (at/above floor) -> True
+     => faithful is sign-blind (H_1122 reproduced): True
+
+FROZEN falsifier — candidate goes BELOW its OWN floor (d <= -0.8):
+  φ_sde ANTI    : d=-23.955 <= -0.8 -> True
+  φ_sde DECORR  : d=-18.118 <= -0.8 -> True
+
+============================================================================================
+VERDICT: 🟢 SIGN-SENSITIVE-SEES-DESTRUCTIVE — the signed directed-EI candidate
+  φ_sde drops BELOW its independent-nodes floor for ['ANTI', 'DECORR'] (d <= -0.8) WHILE the
+  faithful MI-matrix φ_EI stays at-or-above floor (H_1122 reproduced, sign-blind).
+  ⇒ the φ-floor 'no destructive integration' is an ARTIFACT of the MI-SYMMETRIC
+  measure, NOT a property of reality: a sign-sensitive measure SEES the anti-phase
+  coupling carve joint integrated information BELOW the un-coupled baseline.
+============================================================================================
+HONEST scope (a_scale_honest_scope): toy n=6, in-process twin sim of the h1113
+per-channel A⊥G dynamics reused VERBATIM from H_1122/H_1114; real-socket dyad-φ,
+cross-host, production cells and scale UNVERIFIED. faithful φ_EI (ground truth + the
+SIGN-BLIND control) RE-PROVEN ≡ stdlib at n=4,5,6 BEFORE scoring (a_phi_iit4_tool, NO
+proxy; BITS/log2). The candidate φ_sde is a pre-registered DISTINCT non-MI operation,
+NOT IIT ground truth. SERIAL, $0 CPU, 0-pod, g5/p7. Publishable either way.
+wall = 53.8s
+
+[result-json] /tmp/h1130_result.json
+[done]
