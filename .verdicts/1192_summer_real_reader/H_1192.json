@@ -1,0 +1,142 @@
+{
+  "H": "H_1192",
+  "title": "the FIRST summer-trained run — de-toy H_1187: does a REAL TRAINED numpy-MLP next-byte surprise reader (not a count n-gram) reproduce the saccadic-reading result (beat a uniform metronome scan on real-text stage-decode, temporally)?",
+  "compute_host": "summer",
+  "frozen_falsifier": {
+    "Kstar": "argmax over cap ladder (4, 6, 8, 12, 16, 24, 32, 48, 64) of d_surprise_vs_metro (text's own cap)",
+    "F1": "d_surprise_vs_metro(K*) >= 0.5 (trained-reader saccadic reading beats uniform scan)",
+    "F2": "(d_real - d_shuf) >= 0.5 at K* (advantage destroyed by time-shuffle = temporal)",
+    "SUPPORTED": "F1 and F2 (SACCADIC-READING-HOLDS-AT-LESS-TOY-SCALE — de-toys H_1187 one rung)",
+    "metric": "STAGE-DECODE accuracy (p7, NOT the model's loss/perplexity)"
+  },
+  "trained_model": {
+    "kind": "numpy MLP next-byte predictor (one-hidden-layer)",
+    "arch": "1024 one-hot in -> tanh 64 -> softmax 256",
+    "n_params": 82240,
+    "k_order": 4,
+    "hidden": 64,
+    "epochs": 8,
+    "lr": 0.3,
+    "batch": 256,
+    "train_pairs": 108000,
+    "train_wall_s": 68.09,
+    "train_ce_curve_bits": [
+      4.4037,
+      3.723,
+      3.4071,
+      3.1961,
+      3.0399,
+      2.9161,
+      2.8174,
+      2.7282
+    ],
+    "val_ce_curve_bits": [
+      4.2514,
+      3.6443,
+      3.3747,
+      3.199,
+      3.074,
+      2.9777,
+      2.8989,
+      2.8291
+    ],
+    "final_val_ce_bits": 2.8291,
+    "unigram_val_ce_bits": 5.9083,
+    "uniform_baseline_bits": 8.0,
+    "not_degenerate": true,
+    "degenerate_reason": ""
+  },
+  "construction_guards": {
+    "degenerate": false,
+    "degenerate_reason": "",
+    "position_alignment": true,
+    "surprise_spread_bits_seed0": 2.1578039923536827,
+    "surprise_mean_bits_seed0": 2.833823925788189
+  },
+  "Kstar": 4,
+  "d_real": 1.1682835447091118,
+  "d_shuf": 0.5472106479963332,
+  "drop": 0.6210728967127785,
+  "F1_saccadic_wins": {
+    "d_real": 1.1682835447091118,
+    "bar": 0.5,
+    "pass": true
+  },
+  "F2_temporal": {
+    "drop": 0.6210728967127785,
+    "d_shuf": 0.5472106479963332,
+    "bar": 0.5,
+    "pass": true
+  },
+  "mean_decode": {
+    "surprise": 0.5082083333333334,
+    "metronome": 0.0,
+    "chance": 0.25
+  },
+  "cap_ladder": {
+    "4": {
+      "d_real": 1.1682835447091118,
+      "mean_surp": 0.5082083333333334,
+      "mean_metro": 0.0,
+      "mean_surp_cells": 2.0
+    },
+    "6": {
+      "d_real": 0.07979375456672935,
+      "mean_surp": 0.549625,
+      "mean_metro": 0.49000000000000005,
+      "mean_surp_cells": 4.0
+    },
+    "8": {
+      "d_real": 0.276015614902006,
+      "mean_surp": 0.53825,
+      "mean_metro": 0.3746666666666667,
+      "mean_surp_cells": 6.0
+    },
+    "12": {
+      "d_real": 0.23914694613814003,
+      "mean_surp": 0.6179583333333334,
+      "mean_metro": 0.4573333333333333,
+      "mean_surp_cells": 10.0
+    },
+    "16": {
+      "d_real": 0.0977360194739115,
+      "mean_surp": 0.52,
+      "mean_metro": 0.47137499999999993,
+      "mean_surp_cells": 14.0
+    },
+    "24": {
+      "d_real": 0.9089010324374912,
+      "mean_surp": 0.6423750000000001,
+      "mean_metro": 0.27641666666666664,
+      "mean_surp_cells": 22.0
+    },
+    "32": {
+      "d_real": 0.21080016809032073,
+      "mean_surp": 0.661125,
+      "mean_metro": 0.5710833333333334,
+      "mean_surp_cells": 30.0
+    },
+    "48": {
+      "d_real": 0.536601395144135,
+      "mean_surp": 0.7169166666666668,
+      "mean_metro": 0.5186666666666666,
+      "mean_surp_cells": 46.0
+    },
+    "64": {
+      "d_real": 0.2652858045198284,
+      "mean_surp": 0.6543333333333333,
+      "mean_metro": 0.5518333333333334,
+      "mean_surp_cells": 62.0
+    }
+  },
+  "h1187_ngram_reference": {
+    "Kstar": 24,
+    "d_real": 1.015,
+    "drop": 0.512
+  },
+  "comparison_to_h1187": "H_1192 (TRAINED MLP): K*=4, d_real=+1.168, drop=+0.621  vs  H_1187 (COUNT n-gram): K*=24, d_real=+1.015, drop=+0.512. Result SURVIVES the de-toy — the saccadic-reading advantage reproduces on a genuine gradient-trained predictor.",
+  "supported": true,
+  "ruling": "SUPPORTED (SACCADIC-READING-HOLDS-AT-LESS-TOY-SCALE): a REAL TRAINED numpy-MLP surprise reader (SGD-learned weights, val_ce=2.83 < unigram 5.91 < uniform 8.0 bits/byte) reproduces H_1187's saccadic-reading result at the text's own cap K*=4: it BEATS a uniform metronome scan (F1 d_real=+1.17>=0.5) AND that advantage is TEMPORAL — destroyed by a time-shuffle (F2 drop=+0.62>=0.5). The H_1187 finding was NOT a count-table artifact: surprise-driven saccadic reading de-toys ONE rung to a genuine gradient-trained predictor. (Model loss is NOT the verdict; stage-decode is.)",
+  "reading_answer": "YES, AND it de-toys — a GENUINELY TRAINED model's surprise (not a count table) still drives saccadic reading that beats a uniform scan AND is temporally grounded. The H_1187 finding is robust to a real gradient-trained predictor one rung up.",
+  "scope": "TOY-ISH ($0 CPU numpy, 10 seeds) but a GENUINE TRAINED model — a one-hidden-layer MLP next-byte predictor (SGD 8 epochs, k=4 one-hot ctx, hid=64) on ONE corpus, a real step UP from H_1187's order-4 COUNT n-gram. Reuses the H_1163 grow_arm METRONOME + stage_decode + cohen_d + make_text_stream and H_1187 grow_arm_surprise + CAP_LADDER + time-shuffle VERBATIM; the ONLY swap is the surprise SOURCE (count-table -> trained MLP). NOT a production LLM; real-LLM surprise + real human reading-time/eye-tracking + scale UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck). The reader's SGD is a separate predictor; the mitosis GROWTH arm stays Lane-M gradient-free (a_lane_akida_gpu_split). Ran on the SUMMER pool host (CPU linux, python3.12 + numpy)."
+}
