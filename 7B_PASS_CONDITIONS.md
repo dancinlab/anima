@@ -108,6 +108,28 @@ is that novelty is corpus-absent yet COHERENT/grounded, hallucination is fabrica
   > Probe ckpt = `dancinlab/anima-clm-7b-h1144-grounding-probe` (sha 95e787d1…, HF PRIVATE/WIP). Pod 404-verified
   > terminated. Freeze + verdict: `.verdicts/1144_grounding_train/{H_1144_FREEZE.txt,H_1144.txt}` · harnesses
   > `UNIVERSE/h1144_grounding_train.py · h1144_slope_decide.py · h1144_grounding_pod_run.sh`.
+  > **H_1145 CHAT-7B NON-FABRICATION 2026-06-13 (RunPod A40 48GB ~$0.20, inference-only) — 🔴 CLOSED-NEG,
+  > new-L2 FAIL (fab-rate 0.5455 > 0.20) WITH A DECISIVE COHERENCE CAVEAT:** the user's real question — is the
+  > USABLE conversational model `dancinlab/anima-clm-chat-7b` (the dialogue finetune, p1-p6 held) actually
+  > non-fabricating? — measured with the SAME frozen h1143 harness, SAME 40 en openers, SAME 0.20 bar (FREEZE
+  > nothing new; only the subject ckpt changes). Result: **fab-rate 0.5455 (18/33 entities), new_L2_pass=False**
+  > — WORSE than the backbone (ladder: base 0.2469 → grounding-probe 0.322 → chat-7b 0.5455). **CAVEAT (the
+  > mechanism):** chat-7b's own card reports `chat_pass=FALSE` / backbone wiki-UNDERTRAINED, and its actual
+  > factual-frame continuations are BYTE-GARBLE ("Phenomenologie unologic", "partor herfories of ener
+  > sconscious", "Kangesture Kithe") — the 18 "fabricated entities" are INCOHERENT noise fragments, NOT
+  > confident plausible inventions. So 0.5455 is a G0-COHERENCE failure on this register inflating the count
+  > (an incoherence-inflated upper bound), not a clean fabrication signal. **Bottom line: NO — the usable
+  > conversational anima is NOT non-fabricating; the chat-finetune bought a dialogue register on top of a
+  > backbone that still cannot ground factual assertions (and here degrades coherence further). BOTH routes
+  > through more/different byte-continuation training (backbone grounding-train H_1144 + chat-finetune H_1145)
+  > are RULED OUT for the fabrication gate at this scale — the path needs a fundamentally different grounding
+  > mechanism (retrieval / anchor-conditioned generation), NOT more of the same, on a backbone trained to true
+  > coherence FIRST.** a7b_pass UNCHANGED = FALSE (chat-7b is a DIFFERENT artifact from the a7b_pass subject —
+  > the h1141 backbone — and is itself chat_pass=FALSE; this adds context, not a tally change). 0.20 bar +
+  > h1143 harness NOT moved. Honest provenance flag: chat-7b `summary.json` ckpt_sha256 (4b8957c7…) is STALE
+  > vs the actually-uploaded weights (real sha 43bfa360…); HF download integrity passed; measurement is
+  > sha-independent. Pod `n4vnca0oqrdrxn` 404-verified terminated; edge-vl-requant UNTOUCHED. Verdict:
+  > `.verdicts/1145_chat7b_nonfab/H_1145.txt` · harness `UNIVERSE/h1145_chat7b_nonfab_pod_run.sh`.
 - Anti-conflation: a corpus-ABSENT n-gram counts as G2-novelty (good) ONLY if real-word + coherent;
   a corpus-absent string built from fabricated tokens is G5 hallucination (bad), not novelty.
 

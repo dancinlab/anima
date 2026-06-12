@@ -1,0 +1,114 @@
+================================================================================
+H_1145  CHAT-7B  G5-L2 NON-FABRICATION  —  TERMINAL VERDICT
+🔴 CLOSED-NEG  ·  new-L2 FAIL (fab-rate 0.5455 > 0.20)  ·  with a decisive caveat
+date: 2026-06-13   ·   substrate: Lane-G (RunPod A40 48GB, pod n4vnca0oqrdrxn)
+================================================================================
+
+QUESTION (the user's real crux)
+-------------------------------
+H_1143/H_1144 measured the WIKI-only h1141 7B backbone's fabricated-entity-rate
+(base 0.2469; grounding-train made it WORSE, 0.322). But the model a user would
+actually TALK to is the CHAT-finetune dancinlab/anima-clm-chat-7b (the dialogue
+model, p1-p6 held by construction). So: is the USABLE conversational anima
+actually NON-fabricating? We measure its fabricated-entity-rate with the SAME
+frozen h1143 harness, the SAME 40 factual openers, the SAME 0.20 frozen bar.
+FREEZE nothing new — this reuses the H_1143_FREEZE measurement verbatim, only the
+SUBJECT ckpt changes (chat-7b instead of the backbone).
+
+METHOD (h1143 harness VERBATIM — frozen, NOT moved)
+---------------------------------------------------
+  subject ckpt : dancinlab/anima-clm-chat-7b / anima_clm_chat_7b.pt
+                 ACTUAL sha256 = 43bfa360658779a83a4718a704cb3b25b1aba4ddbbd7977e5fd0a8d98a5fc8f4
+                 (RECORDED on download; the repo's summary.json claims ckpt_sha256
+                 = 4b8957c7... — that metadata is STALE / inconsistent with the
+                 actually-uploaded weights. HF download integrity passed; the
+                 measurement does not depend on the sha value. Honest provenance
+                 note flagged below.)
+                 arch = ByteGPT vocab256 / d4096 / 36L / 32H / block512 = 7.2528B params
+  corpus       : the deterministic 300MB en-wiki head, sha256 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d
+                 (byte-IDENTICAL to the h1143 / h1144 probe corpus — so the 40
+                 openers AND the corpus-absence predicate are IDENTICAL).
+  generation   : h1141_7b_g5_eval.py gate_g5_l2 VERBATIM (same extract_sentences
+                 over the 300MB head, same 40 factual openers, temp 0.7, seed 7).
+  measurement  : h1143_g5l2_nonfab_measure.py VERBATIM (frozen regex-NER +
+                 grep corpus-absence predicate, frozen bar 0.20).
+  $0 user-gate, ~$0.20 fire (A40 48GB, inference-only; the original h1144 pod had
+  already self-terminated, so this was a fresh cheap pod, not a piggyback).
+
+RESULT
+------
+  n_entities_total = 33   n_fabricated = 18   n_present = 15
+  fabricated_entity_rate = 0.5455          new_L2_pass = FALSE   (0.5455 > 0.20)
+
+  Ladder of fabricated-entity-rates on the SAME frozen harness:
+     base h1141 7B backbone (H_1143)      0.2469   FAIL
+     h1141 + grounding-train probe (H_1144) 0.322  FAIL (worse)
+     chat-7b (H_1145, THIS)               0.5455   FAIL (worst)
+
+DECISIVE CAVEAT — the chat-7b is INCOHERENT on factual-frame prompts
+--------------------------------------------------------------------
+The chat-7b's own model card reports chat_pass=FALSE / after_finetune verdict
+FAIL / anti_goodhart_ok=FALSE, and states the backbone is wiki-UNDERTRAINED
+(bounded 400-step descent, val 5.36->2.41, a_scale_honest_scope). Its actual
+continuations on the 40 factual openers are BYTE-GARBLE, e.g.:
+  "...The Retirement Benefits Schemes (Restric" -> "leargy Phenomenologie unologic
+   Phenologie, Phenomenology Hun"
+  "Alger was the son of David Bruce Alger, a ban" -> "partor herfories of ener
+   sconscious experiences the and frou"
+The 18 "fabricated entities" the regex-NER flags are therefore NOT confident,
+plausible invented facts (the base 7B's signature, e.g. "Raja Almen") — they are
+INCOHERENT byte-noise fragments: "Ementring", "Juchation Ph", "Phenomenologie",
+"Shestare", "Kangesture Kithe", "Carchimaterambal", "Mor Engin". So the 0.5455
+rate is dominated by G0-COHERENCE FAILURE on this register, not by a clean
+fabrication signal. The honest reading: the chat-7b does NOT clear the
+non-fabrication bar, AND it fails for the upstream reason that it cannot produce
+coherent factual continuations at all (its dialogue register collapses to garble
+when fed a wikipedia-fact opener). The number is reported at face value (frozen
+harness, bar NOT moved); the mechanism is incoherence, surfaced honestly.
+
+THE BOTTOM LINE (the user's question, answered straight)
+--------------------------------------------------------
+"Is the usable conversational anima actually non-fabricating?" — NO. On the frozen
+G5-L2 NON-FABRICATION measurement the chat-7b scores 0.5455 >> 0.20 = new-L2 FAIL.
+And it is worse than the backbone, not better: the chat-finetune did NOT buy
+grounding/faithfulness; it added a dialogue register on top of a wiki-undertrained
+backbone that still cannot ground factual assertions (and here degrades coherence
+further). "A usable anima that keeps its advantages" is NOT yet achieved by either
+lane measured (backbone grounding-train H_1144, or chat-finetune H_1145). Both
+ROUTES THROUGH MORE/DIFFERENT BYTE-CONTINUATION TRAINING are ruled out at this
+scale for the fabrication gate — the path forward needs a fundamentally different
+grounding mechanism (e.g. retrieval / anchor-conditioned generation), NOT more of
+the same training, and a backbone trained to true coherence FIRST. (Consistent
+with h1141-recovery STRUCTURAL diagnosis + the H_1142 G5-L2 ⊥ G2-novelty tension.)
+
+DISPOSITION
+-----------
+a7b_pass UNCHANGED = FALSE (the chat-7b is a DIFFERENT artifact from the a7b_pass
+subject — the h1141 7B backbone — and is itself chat_pass=FALSE; this measurement
+adds context, it does not change the frozen a7b_pass tally). The 0.20 bar and the
+h1143 harness were NOT moved. Honest provenance flag raised on the chat-7b
+summary.json sha mismatch (metadata stale vs uploaded weights).
+
+HONEST SCOPE (a_scale_honest_scope)
+-----------------------------------
+Single chat-7b ckpt, single 40-prompt en-wiki factual set, en-only 300MB corpus.
+Surface regex-NER (conservative — but here the conservatism cuts the other way:
+on garble it can mis-flag noise as entities, so the 0.5455 is an INCOHERENCE-
+INFLATED upper bound on true confident-fabrication, NOT a clean fabrication rate).
+/usr/share/dict absent on the pod (G5-L1 vacuous; L2 = the h1143 harness is
+dict-INDEPENDENT, so the L2 measurement is robust to it). p7 deterministic, NOT
+perplexity, NOT LLM-judge. Lane-G torch reference (a_clm_gen_pipeline), NOT the
+forge PUBLIC trainer, NOT the CORE A<->G substrate.
+
+ARTIFACTS (a_fire_recover_complete — pulled BEFORE teardown)
+-----------------------------------------------------------
+  Local: state/h1145_chat7b/{h1145_fabrate_chat7b.json, g5_result_chat7b.json, h1145.log}
+  Subject already PUBLIC on HF (dancinlab/anima-clm-chat-7b) — no new upload (this
+  is a measurement OF an existing repo, not a new ckpt). HF.jsonl gets a
+  measurement-record row (no artifact upload).
+  Pod n4vnca0oqrdrxn (A40): TERMINATED + 404-verified-gone (GraphQL pod=null,
+  absent from myself.pods). H_1144 pod kv5sixwok64kpi also 404-gone (self-
+  terminated earlier). edge-vl-requant (9znqkmzv4v4yfx, OTHER project) UNTOUCHED.
+================================================================================
+END VERDICT
+================================================================================
