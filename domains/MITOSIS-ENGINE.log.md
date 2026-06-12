@@ -682,3 +682,18 @@ growth (development/learning), NOT Darwinian evolution (no death+selection+compe
   refs     = "h1183 (the bimodality this dissects; scarcity-peak interpretation corrected) · h1178 · h1182 · h1179/h1180 (the temporally-blind substrates this contrasts) · h1163 · a_scale_honest_scope · a_paper_negative_ok · p7 · p8"
   artifacts = "UNIVERSE/h1184_temporal_grounding.py · .verdicts/1184_temporal_grounding/H_1184.txt"
 ```
+
+### h1185_temporal_grounding_text
+
+```tape
+@H 1185 := "does the H_1184 temporal/non-temporal split reproduce on the TEXT stream, or is it AUDIO-specific?" :: discovery [terminal closed-negative d=2026-06-13]
+  lane     = "Lane-2 (MAIN hands-on / LLM-watched) · MITOSIS-ENGINE · modality-generalization of the H_1184 temporality axis · $0 CPU numpy 10 seeds · g5/p7 · FROZEN pre-reg falsifier"
+  question = "re-run the H_1184 time-shuffle test on the TEXT stream (real bytes, N_STAGES=4) at the same K in {4,40}: does the dichotomy (K40 coverage=temporal shuffle-kills, K4 scarcity=non-temporal shuffle-helps) reproduce?"
+  method   = "reuse h1163 VERBATIM (grow_arm/stage_decode/cohen_d/make_text_stream/SEEDS/N_STAGES_TEXT); seeded time-axis permutation of (X,stages) identical to H_1184; d(DERIVATIVE,METRONOME) at K in {4,40}"
+  falsifier = "FROZEN: F1 COVERAGE-TEMPORAL drop(40)>=0.5; F2 SCARCITY-NONTEMPORAL drop(4)<=0.0. SUPPORTED (dichotomy modality-general) iff F1 and F2."
+  verdict  = "CLOSED-NEGATIVE. TEXT: K=4 d_real=+0.50 d_shuf=+0.91 drop=-0.41 (F2 non-temporal PASS, matches audio scarcity); K=40 d_real=-0.30(!) d_shuf=+0.11 drop=-0.41 (F1 FAIL — at K=40 the derivative is WORSE than the metronome, NO coverage peak). The temporal coverage mechanism does NOT appear on TEXT at the audio-borrowed caps."
+  finding  = "the genuine TEMPORAL coverage mechanism (H_1184, the publishable half of the bimodality) is GATED by the capacity-to-regime ratio, NOT freely modality-portable. TEXT has 4 stages vs AUDIO's 10, so K=40 = ~10 cells/stage = heavy OVER-PROVISION -> the derivative's coverage edge vanishes and even inverts (d=-0.30: metronome wins). This is consistent with H_1182 (the coverage peak sits at an absolute ~24-32 capacity for ~6-10 regimes) and H_1183 (bimodality = a regimes-vs-cells balance). The K=4 scarcity-peak non-temporal signature DOES carry over (variance-spread is modality-general; shuffle helps on text too)."
+  honesty  = "HONEST PRE-REG LIMITATION (a_completeness_over_cheap, not goalpost-moved): the caps {4,40} were borrowed from AUDIO's 10-regime peak and NOT re-derived for 4-stage TEXT, so K=40 is out-of-band for text. A fair modality test needs TEXT's OWN coverage-peak cap (smaller, ~ a few cells per 4 stages). The verdict is therefore: the dichotomy is NOT shown modality-general at the audio caps, AND the coverage mechanism is capacity/regime-ratio gated. toy ($0, 10 seeds); live CORE + scale UNVERIFIED (a_scale_honest_scope)."
+  refs     = "h1184 (the split this tries to generalize) · h1183 · h1182 (absolute-capacity coverage peak — explains the over-provision) · h1163 · a_completeness_over_cheap · a_scale_honest_scope · a_paper_negative_ok · p7 · p8"
+  artifacts = "UNIVERSE/h1185_temporal_grounding_text.py · .verdicts/1185_temporal_grounding_text/H_1185.txt"
+```

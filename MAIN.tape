@@ -76,3 +76,10 @@
   honest = "toy AUDIO N=10 10 seeds; shuffle isolates temporal ORDER (dist + (X,stage) pairing preserved). dichotomy transfers, exact d's substrate-specific (a_scale_honest_scope). live CORE + real-model unverified"
   artifacts = "UNIVERSE/h1184_temporal_grounding.py · .verdicts/1184_temporal_grounding/H_1184.txt · domains/MITOSIS-ENGINE.log.md ### h1184_temporal_grounding"
   next = "tick arc now 4 rungs (1178 asymmetric-U -> 1182 scaling-refuted+bimodal -> 1183 bimodal-confirmed -> 1184 temporal-split). The coverage peak = the publishable temporal mechanism. Candidate /paper at closure"
+
+@L 2026_06_13_lane2_h1185 := "Lane 2 rung-5 SHIPPED — H_1185 🔴 the temporal coverage mechanism is AUDIO-specific / capacity-ratio gated, not modality-portable" :: log [active]
+  result = "H_1185 CLOSED-NEG: re-running the H_1184 shuffle test on TEXT at K{4,40} — K=4 non-temporal signature carries over (drop -0.41), but K=40 has NO coverage peak (d_real=-0.30, derivative WORSE than metronome). The temporal coverage mechanism does not appear on text at the audio-borrowed caps"
+  finding = "the genuine temporal half of the bimodality (coverage peak) is GATED by capacity-to-regime ratio, not freely modality-portable. text(4 stages)/K=40 = ~10 cells/stage over-provision -> coverage edge vanishes+inverts. consistent with H_1182 (absolute ~24-32 coverage capacity) + H_1183 (regimes-vs-cells balance). the K=4 variance-spread non-temporal signature IS modality-general"
+  honest = "HONEST pre-reg limitation (a_completeness_over_cheap, no goalpost move): caps {4,40} borrowed from audio's 10-regime peak, not re-derived for 4-stage text, so K=40 is out-of-band. fair test needs text's own coverage cap. toy $0"
+  artifacts = "UNIVERSE/h1185_temporal_grounding_text.py · .verdicts/1185_temporal_grounding_text/H_1185.txt · domains/MITOSIS-ENGINE.log.md ### h1185_temporal_grounding_text"
+  next = "tick arc 5 rungs (1178->1182->1183->1184->1185). substrate showing diminishing returns at fixed audio caps; a fair modality test would re-derive text's coverage cap (bigger rung). candidate /paper at closure; or pivot Lane 2 to a fresh substrate/axis"

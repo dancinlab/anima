@@ -1,0 +1,44 @@
+=== H_1185 — does the H_1184 temporal/non-temporal SPLIT hold on the TEXT stream (modality-general) or is it AUDIO-specific? ===
+  TEXT stream (N_STAGES=4); peaks K=[4, 40]; d(DERIVATIVE,METRONOME) stage-decode; 10 seeds; reuses H_1163+h1184 VERBATIM
+
+  K=  4  d_real=+0.499  d_shuf=+0.905  drop=-0.406
+  K= 40  d_real=-0.300  d_shuf=+0.106  drop=-0.405
+
+=== VERDICT ===
+{
+  "H": "H_1185",
+  "title": "does the H_1184 temporal/non-temporal split of the two bimodal peaks (coverage=temporal, scarcity=non-temporal) reproduce on the TEXT stream, or is it AUDIO-specific?",
+  "stream": "TEXT",
+  "N_stages": 4,
+  "peaks": [
+    4,
+    40
+  ],
+  "per_peak": {
+    "4": {
+      "d_real": 0.4988385350726899,
+      "d_shuf": 0.9052798625772911,
+      "drop": -0.4064413275046012
+    },
+    "40": {
+      "d_real": -0.2998027078316323,
+      "d_shuf": 0.10563845235049515,
+      "drop": -0.4054411601821275
+    }
+  },
+  "F1_coverage_temporal": {
+    "need": "drop(40)>=0.5",
+    "value": -0.4054411601821275,
+    "pass": false
+  },
+  "F2_scarcity_nontemporal": {
+    "need": "drop(4)<=0.0",
+    "value": -0.4064413275046012,
+    "pass": true
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: the H_1184 split does NOT cleanly reproduce on TEXT (F1 coverage-temporal=False drop(40)=-0.41; F2 scarcity-nontemporal=True drop(4)=-0.41). The temporal/non-temporal dichotomy may be AUDIO-specific or the text stage-geometry shifts the peak caps. a_paper_negative_ok.",
+  "scope": "TOY ($0 CPU numpy, 10 seeds, TEXT real-bytes stream, N_stages=4). Reuses UNIVERSE/h1163_tick_decode_metric.py VERBATIM; only added op = seeded time-axis permutation of (X,stages), identical to H_1184. NOTE: text has 4 stages vs audio 10, so K=4/K=40 map to different cells-per-stage ratios — a confound the verdict flags. Live CORE + scale UNVERIFIED (a_scale_honest_scope)."
+}
+
+[done]
