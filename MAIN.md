@@ -27,6 +27,14 @@ Status (2026-06-12, step 8000 · val_ce 1.2015 ↓ · 543min):
 Milestone safety: best.pt @ step6500 (G0✅+G1✅ snapshot) → HF PRIVATE `dancinlab/anima-clm-7b-h1141-g1pass-step6500` (uploaded). Watcher (PID 1123) auto DONE→HF-verify→self-teardown.
 **NOT a7b_pass-complete** — G1 unstable + G2–G4 unseen. Let training converge; re-check all gates at DONE.
 
+## Compute policy — small cells run on `summer`, NOT rented GPU
+While the mitosis cells are SMALL (toy $0 numpy + live-CORE `.hexa` probes), run the research
+track on the **`summer` pool host** (own hardware · linux · py3.12 · numpy2.4 · hexa installed ·
+133G free) via `sidecar pool on summer <cmd>` — NOT a rented RunPod/Vast GPU. Renting is reserved
+for genuine scale-up (a 7B-class fire, e.g. Track B). Small-cell mitosis on summer = $0, keeps the
+Mac free, avoids the local disk-full that bit the early runs. Rent only when the cell/model size
+actually demands a GPU.
+
 ## How to run MAIN
 1. (A) advance a MITOSIS-ENGINE open rung as a $0 toy micro-exp (frozen falsifier, reuse h1159b).
 2. (B) monitor the 7B fire — `/pod pods` · ssh tail `h1141.log` · re-check G0–G4 at convergence; harvest+HF on DONE (a_fire_recover_complete).
