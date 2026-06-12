@@ -1,0 +1,96 @@
+=== H_1186 — does the TEMPORAL coverage mechanism appear PER MODALITY at each stream's OWN coverage cap? (video + saccadic-reading text) ===
+  cap ladder K=[4, 6, 8, 12, 16, 24, 32, 48, 64]; per stream K*=argmax d(DERIVATIVE,METRONOME); then shuffle at K*; 10 seeds; reuses H_1163 VERBATIM + toy video
+
+  audio n_stages=6  K*= 32  d_real=+1.152  d_shuf=+0.269  drop=+0.883  -> TEMPORAL=True
+  text  n_stages=4  K*=  4  d_real=+0.499  d_shuf=+0.905  drop=-0.406  -> TEMPORAL=False
+  video n_stages=6  K*= 64  d_real=+0.491  d_shuf=-0.619  drop=+1.110  -> TEMPORAL=False
+
+=== VERDICT ===
+{
+  "H": "H_1186",
+  "title": "does the temporal coverage mechanism appear per modality at each stream's OWN coverage cap — VIDEO (intrinsically temporal) + the saccadic-reading TEXT re-test (fixing H_1185)?",
+  "cap_ladder": [
+    4,
+    6,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64
+  ],
+  "per_modality": {
+    "audio": {
+      "n_stages": 6,
+      "K_star": 32,
+      "d_real": 1.1521333863107566,
+      "d_shuf": 0.2688310922289032,
+      "drop": 0.8833022940818533,
+      "temporal": true
+    },
+    "text": {
+      "n_stages": 4,
+      "K_star": 4,
+      "d_real": 0.4988385350726899,
+      "d_shuf": 0.9052798625772911,
+      "drop": -0.4064413275046012,
+      "temporal": false
+    },
+    "video": {
+      "n_stages": 6,
+      "K_star": 64,
+      "d_real": 0.4914664732419215,
+      "d_shuf": -0.6186769056595218,
+      "drop": 1.1101433789014434,
+      "temporal": false
+    }
+  },
+  "curves": {
+    "audio": {
+      "4": 0.6403901026636177,
+      "6": -0.15095982722698645,
+      "8": 0.47868225359000044,
+      "12": 0.5607824180925532,
+      "16": 0.7407368030547042,
+      "24": 0.8096704517285566,
+      "32": 1.1521333863107566,
+      "48": 0.6687312535800919,
+      "64": 0.0627478385071793
+    },
+    "text": {
+      "4": 0.4988385350726899,
+      "6": -0.381006966645643,
+      "8": -0.08581171272086476,
+      "12": -0.06630795779624209,
+      "16": -0.3018751169614304,
+      "24": 0.38932428478747183,
+      "32": -0.14693617976509007,
+      "48": -0.0585382801158111,
+      "64": -0.23022634309696585
+    },
+    "video": {
+      "4": 0.33333333333333337,
+      "6": -1.1020448741349007,
+      "8": -1.2146685603549228,
+      "12": 0.11907884129125614,
+      "16": -0.10484101523755683,
+      "24": -0.48872119177796725,
+      "32": -0.5670022987775631,
+      "48": -0.01293797633206314,
+      "64": 0.4914664732419215
+    }
+  },
+  "F1_video_temporal": {
+    "K_star": 64,
+    "d_real": 0.4914664732419215,
+    "drop": 1.1101433789014434,
+    "pass": false
+  },
+  "supported": false,
+  "reading_finding": "TEXT at its OWN cap K*=4: d_real=+0.50, drop=-0.41, temporal=False — the event tick does NOT show a clean temporal coverage peak on this toy byte-feature text even at its own cap — the toy text stage-geometry may lack the smooth-then-surprise structure real reading exploits; real-text + learned-surprise UNVERIFIED.",
+  "ruling": "CLOSED-NEGATIVE: even at its own coverage cap K*=64, the VIDEO stream does NOT show a clean temporal coverage peak (d_real=+0.49, drop=+1.11). per-modality: audio=True, text=False, video=False. a_paper_negative_ok.",
+  "scope": "TOY ($0 CPU numpy, 10 seeds). Reuses h1163 VERBATIM + a TOY make_video_stream (long dwell + small drift + far centers = smooth-motion + cuts; NOT real frames, cf H_1170 toy renderings). Per-stream OWN cap fixes the H_1185 borrowed-cap flaw. Real video/text + learned encoders + scale UNVERIFIED (a_scale_honest_scope)."
+}
+
+[done]
