@@ -1,6 +1,0 @@
-@D la_microexp_a2_state_accum := "A2 on-chip spike-count state-accumulator feedback vs 1-hop wall" :: discovery [d=2026-06-03 active]
-  seed = "substrate=AKIDA (live AKD1000 BC.00.000.002 IpVersion.v1 akida 2.19.1 pi5-akida; temp ~73C). True on-chip running SPIKE-COUNT memory trace (trace=trace*0.6+spike_count) thresholded to ctx, x=bind(g_bin,ctx) re-fed each hop; vs no-trace stateless arm same chip/trial; trained transition FC; K=3 rollout 8 trials, all learn=True"
-  falsifier = "F-A2-1: hop-2 AND hop-3 trace acc ci_lo > shuffle-NULL hi AND p<=0.01 AND mean>0.038. F-A2-2: trace acc > no-trace acc at BOTH hop-2/3"
-  claim = "CLOSED-NEGATIVE (F-A2-1 NOT-REFUTED, F-A2-2 NOT-REFUTED): decay TRACE [0.3920,0.0282,0.0122] vs NOTRACE [0.3920,0.0319,0.0133]. hop-1 p=0.0050 clears; hop-2 trace=0.0282 ci_lo=0.0221 shufNULL_hi=0.0330 p=0.0697 IN-NULL; hop-3 p=0.8706. trace delta NEGATIVE (hop-2 -0.0037, hop-3 -0.0011) = spike-count trace slightly HURTS. True on-chip state-accumulation does NOT break the 1-hop wall at 256-unit. EMERGENCE NULL. a_paper_negative_ok"
-  target = "closed-negative (terminal); verdict .verdicts/lane-a-microexp-state-accum/F-STATE-ACCUM.txt"
-  scope = "toy 250-anchor / 50-concept / 256-unit (a_scale_honest_scope); Lane A on-chip NEVER merged with Lane G (a_lane_akida_gpu_split)"

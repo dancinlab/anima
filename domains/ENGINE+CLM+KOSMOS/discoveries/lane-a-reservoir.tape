@@ -1,6 +1,0 @@
-@D la_microexp_a1_reservoir := "A1 reservoir/echo-state on-chip recurrence vs 1-hop wall" :: discovery [d=2026-06-03 active]
-  seed = "substrate=AKIDA (live AKD1000 BC.00.000.002 IpVersion.v1 akida 2.19.1 pi5-akida; temp ~74C). Fixed UNTRAINED reservoir FC (echo recurrence state=R(bind(code,prev_state))) + TRAINED 1-bit readout FC; codebook in readout output space; K=3 autoregressive rollout, 8 trials"
-  falsifier = "F-A1-1: hop-2 AND hop-3 acc ci_lo > shuffle-NULL hi AND p<=0.01 AND mean>0.038 (material >0.01 over pure-on-chip wall 0.028)"
-  claim = "CLOSED-NEGATIVE (F-A1-1 NOT-REFUTED): decay [0.1904,0.0282,0.0138]; hop-1 p=0.0050 clears but hop-2 acc=0.0282 ci_lo=0.0212 shufNULL_hi=0.0357 p=0.1393 IN-NULL, hop-3 p=0.7463 <chance. reservoir_learned=False(fixed echo-state intended) readout_learned_all=True(live silicon). Fixed-random on-chip echo-state reservoir + trained 1-bit readout does NOT break the 1-hop wall at 256-unit. EMERGENCE axis NULL. a_paper_negative_ok"
-  target = "closed-negative (terminal); verdict .verdicts/lane-a-microexp-reservoir/F-RESERVOIR.txt"
-  scope = "toy 250-anchor / 50-concept / 256-unit (a_scale_honest_scope); Lane A on-chip NEVER merged with Lane G (a_lane_akida_gpu_split)"
