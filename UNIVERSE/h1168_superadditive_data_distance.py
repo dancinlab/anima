@@ -91,11 +91,11 @@ LADDER = ["d0_identical", "d1_paraphrase", "d2_xling_parallel",
 
 # ───────────────────────── real-data loaders ──────────────────────────────
 def load_flores():
-    lines = open(FLORES, encoding="utf-8").read().splitlines()
+    lines = open(FLORES, encoding="utf-8", errors="ignore").read().splitlines()
     return {lg: lines[a:b] for lg, (a, b) in BLOCKS.items()}
 
 def load_c4():
-    return [l for l in open(C4, encoding="utf-8").read().splitlines() if l.strip()]
+    return [l for l in open(C4, encoding="utf-8", errors="ignore").read().splitlines() if l.strip()]
 
 # ───────────── measure (a): faithful-φ on a byte rendering ─────────────────
 def text_to_channels(text, n_ch, t_steps, seed_salt):

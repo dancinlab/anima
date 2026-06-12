@@ -1,0 +1,118 @@
+==========================================================================================
+H_1168 — OPTIMAL-OFFSET on a DATA-DISTANCE axis? (super-additive surplus
+  S=phi_joint-Sum phi_parts; '어긋나 어울림' = offset-but-harmonious). REAL parallel data.
+  ladder: ['d0_identical', 'd1_paraphrase', 'd2_xling_parallel', 'd3_topical', 'd4_unrelated', 'd5_random']
+  seeds=12 T_STEPS=600 CH=6  D_MIN=0.8
+  GREEN iff INTERIOR argmax (not d0/d5) AND d(peak,d0)>=0.8 AND d(peak,d5)>=0.8
+     on BOTH (a) faithful-phi surplus AND (b) recombination surplus.
+==========================================================================================
+
+STEP 0 — RE-PROVE faithful_phi mirror == stdlib BEFORE scoring (a_phi_iit4_tool):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  live-stdlib proof: PROVEN; mirror n4/n5: {4: True, 5: True}
+  STEP 0 PASS — faithful_phi mirror PROVEN == stdlib.
+
+[data] flores blocks: en=997, zh=997, ru=997, ja=997, ko=997  | c4 lines=4240
+
+── MEASURE (a): FAITHFUL-phi integration surplus  S_a = phi_joint - [phi(A)+phi(B)] ──
+  d0_identical      : S_a = -0.039077 ± 0.066952
+  d1_paraphrase     : S_a = -0.073975 ± 0.049891
+  d2_xling_parallel : S_a = -0.095956 ± 0.084504
+  d3_topical        : S_a = -0.104116 ± 0.049764
+  d4_unrelated      : S_a = -0.147743 ± 0.066855
+  d5_random         : S_a = -0.180508 ± 0.112092
+
+── MEASURE (b): RECOMBINATION surplus  S_b = distinct(A⊕B) - [distinct(A)+distinct(B)] ──
+  d0_identical      : S_b = -11.8333 ± 6.6186
+  d1_paraphrase     : S_b = -6.4167 ± 3.4510
+  d2_xling_parallel : S_b = -0.6667 ± 1.3744
+  d3_topical        : S_b = +1.0000 ± 0.0000
+  d4_unrelated      : S_b = -3.9167 ± 10.6650
+  d5_random         : S_b = -6.7500 ± 2.0052
+
+=== VERDICT ===
+{
+  "H": "H_1168",
+  "title": "optimal-offset on a data-distance axis for super-additive surplus (어긋나 어울림)",
+  "ladder": [
+    "d0_identical",
+    "d1_paraphrase",
+    "d2_xling_parallel",
+    "d3_topical",
+    "d4_unrelated",
+    "d5_random"
+  ],
+  "predicted_peak": "d2_xling_parallel",
+  "measure_a_faithful_phi": {
+    "S_mean": {
+      "d0_identical": -0.03907657754820765,
+      "d1_paraphrase": -0.0739745838272708,
+      "d2_xling_parallel": -0.09595638816191844,
+      "d3_topical": -0.10411618804579227,
+      "d4_unrelated": -0.14774267025862045,
+      "d5_random": -0.1805077383298713
+    },
+    "peak": "d0_identical",
+    "interior_argmax": false,
+    "d_vs_d0": 0.0,
+    "d_vs_d5": 1.531907249836816,
+    "F_interior": false,
+    "F_d0_ge_0.8": false,
+    "F_d5_ge_0.8": true,
+    "supported": false,
+    "d2_xling_wins": false
+  },
+  "measure_b_recombination": {
+    "S_mean": {
+      "d0_identical": -11.833333333333334,
+      "d1_paraphrase": -6.416666666666667,
+      "d2_xling_parallel": -0.6666666666666666,
+      "d3_topical": 1.0,
+      "d4_unrelated": -3.9166666666666665,
+      "d5_random": -6.75
+    },
+    "peak": "d3_topical",
+    "interior_argmax": true,
+    "d_vs_d0": 2.7421415937131006,
+    "d_vs_d5": 5.465862024269515,
+    "F_interior": true,
+    "F_d0_ge_0.8": true,
+    "F_d5_ge_0.8": true,
+    "supported": true,
+    "d2_xling_wins": false
+  },
+  "both_measures_supported": false,
+  "any_measure_supported": true,
+  "winning_distance_a": "d0_identical",
+  "winning_distance_b": "d3_topical",
+  "d2_cross_lingual_predicted_and_won": false,
+  "ruling": "PARTIAL (honest): OPTIMAL-OFFSET holds on (b) recombination ONLY (a-peak=d0_identical sup=False; b-peak=d3_topical sup=True) — measure-specific, NOT both (a_paper_negative_ok).",
+  "scope": "REAL-data sample (flores 5-lang parallel + c4); measure (a) IS faithful IIT-4.0 phi (PROVEN mirror == stdlib, n=6 exact MIP-EI) on a DETERMINISTIC byte-bigram channel rendering (rendering=representation choice, labelled — NOT a proxy-Phi); measure (b) is deterministic content-ngram recombination (p7, NOT perplexity). toy faithful-phi n=6 + real-data sample, a_scale_honest_scope.",
+  "reuse": "H_1119 faithful_phi mirror (a) · H_1116 content-ngram metric (b)",
+  "wall_s": 63.1
+}
+
+[done]

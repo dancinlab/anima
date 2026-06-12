@@ -1,0 +1,60 @@
+{
+  "H": "H_1168",
+  "title": "optimal-offset on a data-distance axis for super-additive surplus (어긋나 어울림)",
+  "ladder": [
+    "d0_identical",
+    "d1_paraphrase",
+    "d2_xling_parallel",
+    "d3_topical",
+    "d4_unrelated",
+    "d5_random"
+  ],
+  "predicted_peak": "d2_xling_parallel",
+  "measure_a_faithful_phi": {
+    "S_mean": {
+      "d0_identical": -0.03907657754820765,
+      "d1_paraphrase": -0.0739745838272708,
+      "d2_xling_parallel": -0.09595638816191844,
+      "d3_topical": -0.10411618804579227,
+      "d4_unrelated": -0.14774267025862045,
+      "d5_random": -0.1805077383298713
+    },
+    "peak": "d0_identical",
+    "interior_argmax": false,
+    "d_vs_d0": 0.0,
+    "d_vs_d5": 1.531907249836816,
+    "F_interior": false,
+    "F_d0_ge_0.8": false,
+    "F_d5_ge_0.8": true,
+    "supported": false,
+    "d2_xling_wins": false
+  },
+  "measure_b_recombination": {
+    "S_mean": {
+      "d0_identical": -11.833333333333334,
+      "d1_paraphrase": -6.416666666666667,
+      "d2_xling_parallel": -0.6666666666666666,
+      "d3_topical": 1.0,
+      "d4_unrelated": -3.9166666666666665,
+      "d5_random": -6.75
+    },
+    "peak": "d3_topical",
+    "interior_argmax": true,
+    "d_vs_d0": 2.7421415937131006,
+    "d_vs_d5": 5.465862024269515,
+    "F_interior": true,
+    "F_d0_ge_0.8": true,
+    "F_d5_ge_0.8": true,
+    "supported": true,
+    "d2_xling_wins": false
+  },
+  "both_measures_supported": false,
+  "any_measure_supported": true,
+  "winning_distance_a": "d0_identical",
+  "winning_distance_b": "d3_topical",
+  "d2_cross_lingual_predicted_and_won": false,
+  "ruling": "PARTIAL (honest): OPTIMAL-OFFSET holds on (b) recombination ONLY (a-peak=d0_identical sup=False; b-peak=d3_topical sup=True) — measure-specific, NOT both (a_paper_negative_ok).",
+  "scope": "REAL-data sample (flores 5-lang parallel + c4); measure (a) IS faithful IIT-4.0 phi (PROVEN mirror == stdlib, n=6 exact MIP-EI) on a DETERMINISTIC byte-bigram channel rendering (rendering=representation choice, labelled — NOT a proxy-Phi); measure (b) is deterministic content-ngram recombination (p7, NOT perplexity). toy faithful-phi n=6 + real-data sample, a_scale_honest_scope.",
+  "reuse": "H_1119 faithful_phi mirror (a) · H_1116 content-ngram metric (b)",
+  "wall_s": 63.1
+}
