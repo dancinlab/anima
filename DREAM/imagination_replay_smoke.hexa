@@ -14,6 +14,9 @@
 //   I5: ir_select_snapshots(empty_memory, _, _) == []  (empty 처리)
 //   I6: ir_replay_session.snapshot_count == len(replay_log)
 //   I7: rehearsal_kind == "internal_silent" AND session_kind == "emit_free_rehearsal"
+//   I8: reconsolidation write-back (H_1195) — ir_consolidation_gain monotone in
+//       replay_count (0→0), ir_effective_age < chrono when replayed (==chrono at
+//       0 = no-sleep control), ir_reconsolidate_session emit-free (total_emits==0)
 // ════════════════════════════════════════════════════════════════════════
 
 use "DREAM/imagination_replay"
@@ -71,6 +74,24 @@ fn main() {
     // ── I7: kind labels ──────────────────────────────────────────────────
     let i7 = (rec_i1["rehearsal_kind"] == "internal_silent") && (session["session_kind"] == "emit_free_rehearsal")
 
+    // ── I8: reconsolidation write-back (H_1195) — monotone + emit-free ───
+    //   consolidation gain rises with replay_count; effective age < chrono age
+    //   when replayed (==chrono age when not replayed = no-sleep control); the
+    //   reconsolidation session stays emit-free (total_emits==0).
+    let g0  = ir_consolidation_gain(0, 0.80)            // not replayed → 0
+    let g3  = ir_consolidation_gain(3, 0.80)            // 3 replays
+    let g7  = ir_consolidation_gain(7, 0.80)            // 7 replays (N3 window)
+    let gain_zero_ok = g0 == 0.0
+    let gain_monotone = (g3 > g0) && (g7 > g3) && (g7 < 1.0)
+    let age_ctrl = ir_effective_age(100.0, 0, 0.80)     // control: full chrono age
+    let age_slp7 = ir_effective_age(100.0, 7, 0.80)     // slept: younger eff age
+    let age_ok = (age_ctrl == 100.0) && (age_slp7 < 100.0) && (age_slp7 >= 0.0)
+    let recon = ir_reconsolidate_session(mem, 5, 100.0, 7, 0.80)
+    let recon_emit_free = recon["total_emits"] == 0
+    let recon_kind_ok = recon["session_kind"] == "emit_free_reconsolidation"
+    let recon_eff_ok = recon["effective_age"] < 100.0
+    let i8 = gain_zero_ok && gain_monotone && age_ok && recon_emit_free && recon_kind_ok && recon_eff_ok
+
     println("I1  emit_count=0        " + (if i1 { "PASS" } else { "FAIL" }))
     println("I2  cell_pool unchanged " + (if i2 { "PASS (density=" + str(mit_rec["mitosis_density"]) + ")" } else { "FAIL" }))
     println("I3  session emits=0     " + (if i3 { "PASS" } else { "FAIL" }))
@@ -78,8 +99,9 @@ fn main() {
     println("I5  empty mem → []      " + (if i5 { "PASS" } else { "FAIL" }))
     println("I6  count == log len    " + (if i6 { "PASS" } else { "FAIL" }))
     println("I7  kind labels         " + (if i7 { "PASS" } else { "FAIL" }))
+    println("I8  reconsolidation w-b  " + (if i8 { "PASS (g3=" + str(g3) + " g7=" + str(g7) + " eff=" + str(recon["effective_age"]) + ")" } else { "FAIL" }))
 
-    let all_pass = i1 && i2 && i3 && i4 && i5 && i6 && i7
+    let all_pass = i1 && i2 && i3 && i4 && i5 && i6 && i7 && i8
     println("")
-    println(if all_pass { "ALL INVARIANTS PASS (7/7)" } else { "INVARIANT FAILURE" })
+    println(if all_pass { "ALL INVARIANTS PASS (8/8)" } else { "INVARIANT FAILURE" })
 }

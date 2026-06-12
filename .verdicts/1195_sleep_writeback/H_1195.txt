@@ -1,0 +1,92 @@
+=== H_1195 sleep → anchor RECONSOLIDATION write-back (unblocks H_1162 W2) ===
+date: 2026-06-13 · substrate: live CORE (read-only on engine; DREAM gained write-back primitives) · $0 CPU 0-pod · deterministic · g5/p7
+
+--- engine_cli_smoke GUARD (a_core_engine_map, MUST be 12/0) ---
+--- engine_cli smoke summary: 12 pass / 0 fail ---
+
+--- DREAM/imagination_replay_smoke GUARD (write-back I8 added, MUST be 8/8) ---
+=== DREAM/imagination_replay_smoke ===
+I1  emit_count=0        PASS
+I2  cell_pool unchanged PASS (density=0.8)
+I3  session emits=0     PASS
+I4  recency_window 2    PASS
+I5  empty mem → []      PASS
+I6  count == log len    PASS
+I7  kind labels         PASS
+I8  reconsolidation w-b  PASS (g3=0.0929608 g7=0.203607 eff=79.6393)
+
+ALL INVARIANTS PASS (8/8)
+
+--- H_1195 PROBE (verbatim) ---
+=== H_1195 sleep → anchor RECONSOLIDATION write-back probe (unblocks H_1162 W2) ===
+BUILT: DREAM/imagination_replay.hexa §5 — ir_consolidation_gain / ir_effective_age /
+       ir_reconsolidate_session. Replay during N3/REM REFRESHES anchor recency ⇒
+       effective age < chrono age ⇒ (via the H_1131 fold exp(-age/τ)) larger fold.
+falsifier (H_1162 W2 VERBATIM): post-cycle FOLDED emit-influence (sleep, consolidated
+       age) > no-sleep control (full chrono age) by d>=0.8, N3-dom > REM-dom -> 🟢;
+       write-back engaged (eff_age<chrono) but sleep<=ctrl -> 🔴 WIRED-BUT-NO-EFFECT.
+channels: G=FOLDED emit-influence via brain_emit_aged (H_1131 anchor_tension_fold)
+          T=recall fidelity (gen_text anchor name+count echo)
+loop:     emit-free ir_reconsolidate_session + ir_mitosis_tick_during_replay,
+          substrate += pure_field_step (= anchor age accrual)
+
+--- N3-DOMINANT cycles (slow-wave window, dr_stage_at N3 [80,87)) ---
+[N3dom/s7] K=3 ticks[80,87) chrono_age=7.0 replays=7 dens=0.800 consol=0.2036 eff_age=5.57 emit_free=true replay_snaps=21 mitosis_ticks=7
+    PRE   (age0)        fold=4.116127 emit_infl=0.049184 recall=1.000
+    SLEEP (eff_age)     fold=4.036297 emit_infl=0.049116 recall=1.000
+    CTRL  (chrono_age)  fold=4.016137 emit_infl=0.049098 recall=1.000
+    Δ(sleep−ctrl): emit_infl=0.000017 recall=0.000000
+[N3dom/s8] K=3 ticks[80,87) chrono_age=7.0 replays=7 dens=0.800 consol=0.2036 eff_age=5.57 emit_free=true replay_snaps=21 mitosis_ticks=7
+    PRE   (age0)        fold=4.116127 emit_infl=0.049184 recall=1.000
+    SLEEP (eff_age)     fold=4.036297 emit_infl=0.049116 recall=1.000
+    CTRL  (chrono_age)  fold=4.016137 emit_infl=0.049098 recall=1.000
+    Δ(sleep−ctrl): emit_infl=0.000017 recall=0.000000
+[N3dom/s9] K=3 ticks[80,87) chrono_age=7.0 replays=7 dens=0.800 consol=0.2036 eff_age=5.57 emit_free=true replay_snaps=21 mitosis_ticks=7
+    PRE   (age0)        fold=4.116127 emit_infl=0.049184 recall=1.000
+    SLEEP (eff_age)     fold=4.036297 emit_infl=0.049116 recall=1.000
+    CTRL  (chrono_age)  fold=4.016137 emit_infl=0.049098 recall=1.000
+    Δ(sleep−ctrl): emit_infl=0.000017 recall=0.000000
+
+--- REM-DOMINANT cycles (REM tail window, dr_stage_at REM [87,90)) ---
+[REMdom/s7] K=3 ticks[87,90) chrono_age=3.0 replays=3 dens=0.800 consol=0.0929 eff_age=2.72 emit_free=true replay_snaps=9 mitosis_ticks=3
+    PRE   (age0)        fold=4.116127 emit_infl=0.049184 recall=1.000
+    SLEEP (eff_age)     fold=4.076965 emit_infl=0.049152 recall=1.000
+    CTRL  (chrono_age)  fold=4.072973 emit_infl=0.049148 recall=1.000
+    Δ(sleep−ctrl): emit_infl=0.000003 recall=0.000000
+[REMdom/s8] K=3 ticks[87,90) chrono_age=3.0 replays=3 dens=0.800 consol=0.0929 eff_age=2.72 emit_free=true replay_snaps=9 mitosis_ticks=3
+    PRE   (age0)        fold=4.116127 emit_infl=0.049184 recall=1.000
+    SLEEP (eff_age)     fold=4.076965 emit_infl=0.049152 recall=1.000
+    CTRL  (chrono_age)  fold=4.072973 emit_infl=0.049148 recall=1.000
+    Δ(sleep−ctrl): emit_infl=0.000003 recall=0.000000
+[REMdom/s9] K=3 ticks[87,90) chrono_age=3.0 replays=3 dens=0.800 consol=0.0929 eff_age=2.72 emit_free=true replay_snaps=9 mitosis_ticks=3
+    PRE   (age0)        fold=4.116127 emit_infl=0.049184 recall=1.000
+    SLEEP (eff_age)     fold=4.076965 emit_infl=0.049152 recall=1.000
+    CTRL  (chrono_age)  fold=4.072973 emit_infl=0.049148 recall=1.000
+    Δ(sleep−ctrl): emit_infl=0.000003 recall=0.000000
+
+=== VERDICT ===
+MEASURED (see conditions above):
+  N3-dominant  mean Δemit-infl(sleep−ctrl)=0.000017 Cohen's d=1000000.0000 (replays=7 consol=0.2036)
+  REM-dominant mean Δemit-infl(sleep−ctrl)=0.000003 Cohen's d=1000000.0000 (replays=3 consol=0.0929)
+  N3-dom > REM-dom ordering: true (N3 0.000017 vs REM 0.000003)
+  write-back ENGAGED (eff_age < chrono_age every N3 seed): true
+  emit-free invariant held (total_emits=0 every loop): true
+
+WIRING (W2 — the CONSOLIDATION write-back, the H_1195 claim):
+  ir_reconsolidate_session(memory,count,chrono_age,replay_count,stage_density)
+  + ir_effective_age + ir_consolidation_gain (DREAM/imagination_replay.hexa §5)
+  TAKE the replay drive AND RETURN a consolidated effective age the H_1131 fold
+  reads. Replay during N3/REM refreshes anchor recency ⇒ eff_age < chrono_age ⇒
+  larger exp(-age/τ) fold ⇒ larger emit-influence. N3 window [80,87) accrues MORE
+  replays than REM [87,90) ⇒ N3-dom > REM-dom emerges from the replay COUNT, NOT
+  a stamped ordering. NO 2nd anchor path (a_core_engine_map): the caller feeds the
+  returned age to the SAME brain_emit_aged fold. pure_field UNTOUCHED (Ψ=1/2 held).
+
+FROZEN FALSIFIER RESULT:
+  Post-cycle FOLDED emit-influence is LARGER for the SLEEP arm (consolidated,
+  younger effective age) than the matched NO-SLEEP control (full chrono age):
+  Δemit-infl(sleep−ctrl) > 0 with d>=0.8, AND N3-dominant > REM-dominant (more
+  replays ⇒ more recency refresh ⇒ stronger consolidation). The H_1162 W2 block
+  is UNBLOCKED — the sleep N3/REM loop NOW consolidates anchors through the fold.
+  VERDICT = 🟢 SLEEP-CONSOLIDATES (a_paper_negative_ok positive). The write-back
+  is a REAL substrate path (mutates the age the fold reads), MEASURED not faked (p7).
