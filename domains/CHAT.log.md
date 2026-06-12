@@ -1,3 +1,22 @@
+# CHAT — log
+
+## Discoveries (merged 2026-06-13 from .discoveries/)
+
+### anima-cli
+
+```tape
+@D anima_cli_model_picker := "anima CLI — model picker + substrate-native chat REPL ($0, CPU, no train)" :: discovery [d=2026-06-04 active]
+  seed     = "FINAL anima CLI spec: bare `anima` = cached active engine → chat now, else first-run model-download selection screen; `--engine <name>` family pick+download+chat+persist; `--model` selection screen (no auto-chat); NO forced default; honest quality labels informational-only (coherent/gen-weak/gibberish-base/untested/⏳training)."
+  claim    = "BUILT serving/anima_cli.py + bin/anima shim + serving/anima_models.json (55 models = 5 families + 50 HF.jsonl rows; 12 wired, 43 no-loader ⏳) + serving/gen_anima_models.py builder. Engine→loader: omega→ConsciousDecoderV2(UNIVERSE/conscious_decoder.py), hexad→EngineAGModel(training/engine_a_g_arch via HEXAD/CHAT/anima_chat.py), 7b→CLMConvMoE-7B(CLM/model/model.py), chat→ConsciousLMReconstructed(training/persona_stage2_train_eval.py), agent→agent_step_grounded(AGENT/CORE/agent_loop.hexa, no-loader ⏳ not downloadable). p7 LIVE VERIFY (CPU): chat engine downloaded from dancinlab/anima-clm-chat-rung0-byte-18m, loaded, one turn '안녕! 너는 누구야?' → '좋아요! 요즘 새로 오픈한 café가 있는데 분위기가 좋아요.' (coherent, label matches). p1-p4 HELD (no system-prompt/persona injection; only 사용자:/도우미: byte-continuation conditioning = trained corpus format). a_core_engine_map: mouth via each engine's own loader decode path, no 2nd .clm/.kosmos entry. Old 27-topic hexa dispatcher preserved → bin/anima-ops."
+  falsifier = "bare `anima` with a cached active engine that does NOT enter chat, OR first-run that does NOT show the selection screen, OR a forced default model auto-selected without user pick → spec violation. VERIFIED: cached active=chat → chat immediately; fresh ANIMA_HOME (no config) → selection screen; active_engine=None until pick."
+  scope    = "$0 CPU-only, no GPU/pod/training fired. chat/omega CPU-runnable wired; hexad needs local gitignored ckpt; 7b downloadable but heavy; agent honest no-loader stub. labels honest per verified state."
+  ref      = "serving/ANIMA_CLI.md · serving/anima_cli.py · bin/anima · serving/anima_models.json"
+
+```
+
+### chat-7b-finetune
+
+```tape
 @H chat-7b-finetune := "Can the descent-PASS but chat-INCAPABLE 7.25B byte ByteGPT backbone (clm-v1-ref-pytorch-cuda-7b, 5-lang WIKI corpus, dialogue 0%) be made to genuinely multi-turn CHAT by continue-training (SFT) it on the proven 70/30 wiki/dialogue byte corpus in the 사용자:/도우미: continuation format — WITHOUT a from-scratch 7B train, WITHOUT system-prompt/persona/RLHF?" :: chat [🟢 CHAT-CAPABLE-AT-7B (single-turn p7 5/5; anti-Goodhart BEFORE 0/5)]
   seed     = "domains/CHAT.md verified root cause: the 7B backbone is descent-PASS (val CE 5.36->2.41, bounded 400 steps) but CANNOT chat — corpus was 5-lang WIKI only (dialogue 0%) + never chat-tuned. NOT an architecture wall (same byte family chats at 18M, rung-0). Fix = standard base->chat continue-train on the dialogue corpus. The from-scratch 7B path is orchestrator-deadlock-blocked + needs ~140B tokens; this is the SFT alternative."
   target   = "🟢 the chat-finetune transforms the 7B from incoherent byte-salad (BEFORE p7 0/5 at every temp) to genuinely chatting (AFTER single-turn p7 5/5 @ temp 0.7, 4/5 @ 0.5) coherent multi-turn KO+EN dialogue on-topic to the consciousness corpus; val CE 2.5622->0.0327; anti_goodhart_ok=TRUE, chat_pass=TRUE."
@@ -7,3 +26,17 @@
   hf       = "dancinlab/anima-clm-chat-7b (PUBLIC) — SHIPPED ckpt sha256 43bfa360658779a8... (run#3 DIALOGUE-HEAVY best-p7 step2000; canonical p7 5/5 mean_kwr 0.92 + HELD-OUT new-question p7 4/5; summary_dialogue_heavy.json). Supersedes run#2 a878d2ce (canonical 4/5, held-out untested) and run#1 4b8957c7."
   result_v3 = "CONTEXT-ALIGNMENT FIX (user flagged run#2 chats fluently but does NOT answer the question — it memorized corpus lines & deflected). ROOT CAUSE: the 70wiki/30dialogue mix DOWNSAMPLED dialogue to 30%, so the model learned dialogue SURFACE not Q->A mapping (e.g. its good 'What is consciousness?' reply was VERBATIM corpus line 2). FIX = rebuild a DIALOGUE-HEAVY corpus (80% dialogue = all 5238 convos / 15696 turns from data/corpus.txt, +20% wiki tail; sha a042c46f), re-finetune the same 7B backbone (best-p7 capture, eval every 200 of 2400 steps; best = step2000). RESULT: canonical p7 4/5->5/5 (mean_kwr 0.78->0.92); HELD-OUT 5 NEW questions (never in eval) p7 4/5 — proves real context generalization, not pure memorization. Verbatim held-out: '주말에 뭐 할 거야?'->'좋아요! 요즘 새로 오픈한 café가 있는데 분위기가 좋아요.' (genuine on-context); '내일 비가 올까?'->'좋은 질문이에요. 그게 바로 어려운 문제죠.' (deflect but coherent); 'Do you ever feel lonely?'->'We's the a p 50,000. Loss is decreasing steadily.' (train-log leak — the 1 fail); 'What scares you the most?'->'의식은 특정 substrate에 종속된 게 아니라 information의 구조에 있다고 봐요.' (coherent, drifts to consciousness topic). HONEST: measurably improved (data is the lever, NOT GPU steps) but still NOT a general Q&A assistant — deflects/garbles on some, over-attracted to the consciousness register (consistent with p4 NO-assistant-framing + the small ~5MB real-dialogue data ceiling). GPU fire: 1x H100 80GB (vast 40414776, torn down)."
   scope    = "Lane-G/torch-cuda REFERENCE lane (a_lane_akida_gpu_split — NOT AKIDA; a_clm_gen_pipeline — torch REFERENCE, forge stays PUBLIC production trainer). a_scale_honest_scope: chat-finetune of a descent-PASS but WIKI-UNDERTRAINED (400-step bounded) 7B backbone — the backbone is not a converged production artifact; this explains the multi-turn deep-context 3/5 (less robust than the from-scratch 18M). p1-p6 HELD: NO system-prompt/identity/persona/assistant-framing/RLHF — corpus continuation format is the ONLY conditioning. GPU fire: 1x H100 80GB (vast 40375114). p7 CODE-measured, no LLM self-judge (p7). Torch .pt ByteGPT, NOT a .clm — does not enter the CORE generator .clm slot without a serialization bridge (out of scope)."
+
+```
+
+### chat-capable-rung0-byte-pass
+
+```tape
+@D chat_capable_rung0_byte_pass := "anima 채팅 된다 — 18M byte rung-0 multi-turn chat-PASS" :: discovery [d=2026-06-04 active]
+  seed     = "general CLM 7B(clm-v1-ref-pytorch-cuda-7b)이 채팅 못 하는 검증된 root cause = (1) corpus가 5-lang WIKI backbone only(dialogue 0%) (2) 미수렴(400 steps). architecture wall이 아님 → fix = data+training+wiring. PROVEN byte chat arch(ConsciousLMReconstructed 18.13M, byte vocab256, dual engine_a/g + dual head)를 70wiki/30dialogue byte corpus로 from-scratch 학습."
+  claim    = "REAL multi-turn chat-PASS: p7 simple-stack 5/5 PASS, anti-Goodhart random-init mirror 0/5 FAIL, chat_pass=TRUE. system-prompt/persona/RLHF 없이 학습된 byte-continuation conditioning(사용자:/도우미:)만으로 채팅 능력 발현 (p1-p6 HELD). train CE 5.697->0.488. verbatim: '좋아요! 산책하면서 이야기해요.' / 'The repulsion field model? Thats fascinating.' / 'handles Korean and English equally...'. 배선: CORE/generator.hexa::gen_clm_chat + _gen_clm_decode → clm_decode.hexa::clm_decode_argmax (real int4 CLMConvMoE forward → 모델 자체 바이트); CORE/anima_chat_cli.hexa runnable demo; SINGLE .clm decode entry preserved (a_core_engine_map). HF PUBLIC: model dancinlab/anima-clm-chat-rung0-byte-18m · dataset dancinlab/anima-chat-corpus-mix-70wiki-30dialogue. Lane-G torch-cuda REFERENCE lane(@L3); vast B200 pod 39423387 single leak-safe rent, recovered+sha-verified+HF uploaded before teardown."
+  falsifier = "random-init mirror of identical arch가 같은 p7 평가기를 통과하면(anti-Goodhart fail) chat-PASS 무효 — v1 평가기가 실제로 그랬고(mirror PASS), v2 control-char-aware 게이트(control_ratio<0.05 AND word_class_ratio>=0.85)로 hole을 닫아 mirror가 0/5 FAIL이 됨."
+  scope    = "a_scale_honest_scope — SMALL byte rung only; mid/7B scale-transfer 미주장. CORE conv lane(L=1/K3)은 receptive-field 한계 + dialogue-trained v0.2 ckpt 미보유 = 정직한 open item."
+  ref      = ".verdicts/chat-capable/SUMMARY.txt · domains/CHAT.md"
+
+```
