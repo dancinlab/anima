@@ -1,0 +1,104 @@
+{
+  "H": "H_1169",
+  "title": "semantic x surface surplus: is S maximal at the high-semantic/low-surface corner (same content, different form)?",
+  "pair_types": [
+    "P1_identical",
+    "P2_paraphrase",
+    "P3_crosslingual",
+    "P4_abstraction",
+    "P5_unrelated",
+    "P6_random"
+  ],
+  "HSLS_set": [
+    "P2_paraphrase",
+    "P3_crosslingual",
+    "P4_abstraction"
+  ],
+  "n_seeds": 12,
+  "n_parallel_tuples": 150,
+  "n_flores": 2008,
+  "map_sem_proxy": {
+    "P1_identical": 1.0,
+    "P2_paraphrase": 1.0,
+    "P3_crosslingual": 0.0,
+    "P4_abstraction": 0.9294833294130201,
+    "P5_unrelated": 0.0887026263190125,
+    "P6_random": 0.0
+  },
+  "map_surf_proxy": {
+    "P1_identical": 1.0,
+    "P2_paraphrase": 0.663104083992186,
+    "P3_crosslingual": 0.0,
+    "P4_abstraction": 0.4635743114909781,
+    "P5_unrelated": 0.050824541236390235,
+    "P6_random": 0.0
+  },
+  "S_phi_PROXY_mean": {
+    "P1_identical": -1.6622933639772723e-09,
+    "P2_paraphrase": -1.6622933753849092e-09,
+    "P3_crosslingual": -1.3875956272936454e-09,
+    "P4_abstraction": -2.9680128126311266e-09,
+    "P5_unrelated": -2.2588229853312927e-10,
+    "P6_random": -1.6622934064722111e-09
+  },
+  "S_recomb_p7_mean": {
+    "P1_identical": -5.333333333333333,
+    "P2_paraphrase": 3.0,
+    "P3_crosslingual": 0.0,
+    "P4_abstraction": -4.0,
+    "P5_unrelated": 3.0,
+    "P6_random": 0.3333333333333333
+  },
+  "phi_degenerate": true,
+  "phi_max_abs_mean": 2.9680128126311266e-09,
+  "measure_a_S_phi_PROXY": {
+    "win": "P5_unrelated",
+    "C1": false,
+    "C2": true,
+    "C3": false,
+    "d_vs_P1": 6.67127620656484,
+    "d_vs_P5": 0.0,
+    "supported": false,
+    "degenerate": true,
+    "corr_surf": 0.0,
+    "corr_sem": 0.0,
+    "tracks": "DEGENERATE",
+    "abstraction_P4_peaks": false
+  },
+  "measure_b_S_recomb_p7": {
+    "win": "P2_paraphrase",
+    "C1": true,
+    "C2": true,
+    "C3": false,
+    "d_vs_P1": 9.449111825219967,
+    "d_vs_P5": 0.0,
+    "supported": false,
+    "degenerate": false,
+    "corr_surf": -0.5439007243951576,
+    "corr_sem": -0.4703725968836604,
+    "tracks": "SURFACE",
+    "abstraction_P4_peaks": false
+  },
+  "winning_form_types": [
+    "P2_paraphrase",
+    "P5_unrelated"
+  ],
+  "abstraction_P4_peaks": false,
+  "supported_both": false,
+  "supported_either": false,
+  "verdict": "🔴 CORNER-NOT-SINGLED-OUT (closed-negative, a_paper_negative_ok)",
+  "ruling": "CLOSED-NEGATIVE: surplus does NOT single out the high-sem/low-surf corner on either measure",
+  "h1155_caveat": {
+    "S_phi_tracks": "DEGENERATE",
+    "S_recomb_tracks": "SURFACE",
+    "note": "byte/lexical reps are surface-dominated (H_1155); sem_proxy is a lexical bag that reads ~0 cross-script (P3), so it CANNOT see cross-lingual meaning at toy scale"
+  },
+  "labels": {
+    "P2_P4": "DETERMINISTIC toy proxies (synonym-map / stem-skeleton), NOT human-labeled",
+    "P3": "fully-REAL same-meaning cross-lingual parallel (the only real same-meaning pairing)",
+    "S_phi": "faithful-φ engine on a BYTE/co-occurrence rep = PROXY surplus (rep surface, φ faithful)",
+    "S_recomb": "H_1116 content-ngram, dict-coherence-gated (p7), NOT perplexity, NOT LLM-judge"
+  },
+  "scope": "toy scale, REAL 5-lang parallel data; LIVE-engine / learned-semantic-rep transfer UNVERIFIED (a_scale_honest_scope); $0 CPU, 0-pod, deterministic, p7",
+  "wall_s": 49.2
+}
