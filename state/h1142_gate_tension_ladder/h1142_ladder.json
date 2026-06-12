@@ -1,0 +1,63 @@
+{
+  "hypothesis": "H_1142_gate_tension_ladder",
+  "rungs": [
+    {
+      "label": "44.68M",
+      "nparam": 44527616,
+      "val_ce": 1.3076267570257187,
+      "step": 6000,
+      "G2_novelty_rate": 0.4791,
+      "G2_n_novel": 149,
+      "G2_pass": true,
+      "G2_control_novel": 0,
+      "G5L2_faithfulness_d": 0.4129,
+      "G5L2_d_val": 0.4129,
+      "G5L2_mean_true": 0.0216,
+      "G5L2_mean_random": 0.0,
+      "G5L2_pass": false,
+      "G5L2_n": 40
+    },
+    {
+      "label": "303M",
+      "nparam": 303097856,
+      "val_ce": 1.2240448951721192,
+      "step": 5500,
+      "G2_novelty_rate": 0.5117,
+      "G2_n_novel": 153,
+      "G2_pass": true,
+      "G2_control_novel": 0,
+      "G5L2_faithfulness_d": 0.2342,
+      "G5L2_d_val": 0.2342,
+      "G5L2_mean_true": 0.0163,
+      "G5L2_mean_random": 0.0031,
+      "G5L2_pass": false,
+      "G5L2_n": 40
+    },
+    {
+      "label": "7B",
+      "nparam": 7252828160,
+      "val_ce": 1.1857,
+      "step": 7000,
+      "G2_novelty_rate": 0.5,
+      "G5L2_faithfulness_d": 0.1631,
+      "G5L2_d_val": 0.1631,
+      "harvested": true,
+      "source_G2": "state/7b_h1141_recovery/h1141_result.json (gate_g2)",
+      "source_G5L2": ".verdicts/1141_7b_g5/H_1141_G5.txt (gate_g5_l2 temp0.7 seed7)"
+    }
+  ],
+  "G2_novelty_rates": [
+    0.4791,
+    0.5117,
+    0.5
+  ],
+  "G5L2_ds": [
+    0.4129,
+    0.2342,
+    0.1631
+  ],
+  "spearman_rho": -0.5,
+  "verdict": "TENSION-CONFIRMED",
+  "tier": "🔴 (for the gate — re-scope ① JUSTIFIED)",
+  "frozen_rule": "rho<=0 TENSION-CONFIRMED | 0<rho<0.5 INCONCLUSIVE | rho>=0.5 VALID-ALIGNED"
+}

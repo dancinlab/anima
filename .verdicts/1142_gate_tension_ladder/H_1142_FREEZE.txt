@@ -1,0 +1,33 @@
+H_1142 GATE-TENSION-LADDER — PRE-REGISTERED FALSIFIER (FROZEN 2026-06-13, before any ladder score)
+====================================================================================================
+HYPOTHESIS (1): the frozen 7B gate G5-L2 (verbatim factual-continuation faithfulness, Cohen's d)
+  is a BORROWED ASSISTANT-NORM that STRUCTURALLY CONFLICTS with anima's own gate G2 (corpus-absent
+  novelty / recombination) — ACROSS SCALE, not only on the single 7B point.
+
+LADDER (>=3 ByteGPT vocab256 ckpts, architecture-consistent so the frozen harness applies VERBATIM):
+  ~44.68M  · 303M (H_1129 midcap-broad-en) · 7B (H_1141 g1pass-step6500)
+  For EACH ckpt, measure BOTH frozen metrics with the SAME harness:
+    G2_novelty_rate   = gate_g2()  novelty_rate (corpus-absent novel n-gram rate; retrieval-control=0)
+                        [h1141_7b_pass_attempt.py VERBATIM — H_1140 metric]
+    G5L2_faithfulness_d = gate_g5_l2() paired Cohen's d (true-overlap vs rotated-random control,
+                        temp 0.7 top_k 40 seed 7) [h1141_7b_g5_eval.py VERBATIM]
+
+CORRELATION: rho = Spearman(G2_novelty_rate, G5L2_faithfulness_d) over the 3 rungs.
+
+VERDICT RULE (FROZEN — thresholds NOT to be moved post-hoc, a_paper_negative_ok):
+  rho <= 0           => TENSION CONFIRMED — G2 and G5-L2 pull apart => G5-L2 is NOT anima-aligned
+                        => (1) re-scope JUSTIFIED. Publishable structural finding (🔴 for the gate).
+  0 < rho < 0.5      => WEAK / INCONCLUSIVE.
+  rho >= 0.5         => gate VALID-ALIGNED => (1) REJECTED (7B merely undertrained, not gate-mismatched).
+                        An honest negative that KILLS (1) is equally valuable.
+
+HARVEST (reuse — NOT recomputed): 7B numbers come from the IDENTICAL frozen harness already run:
+  7B G2_novelty_rate = 0.5    (state/7b_h1141_recovery/h1141_result.json, gate_g2)
+  7B G5L2_d          = 0.1631 (.verdicts/1141_7b_g5/H_1141_G5.txt + h1141_g5_result.json, gate_g5_l2,
+                               temp 0.7 seed 7 — the harness-default config, NOT the decode-probe 0.32)
+RE-RUN (metric-consistency gap — no harness-identical number exists): 303M + 44.68M, both gates,
+  on summer GPU ($0, VRAM-capped under 4.5GB free, co-tenant rbfe-prod untouched).
+
+HONEST SCOPE (a_scale_honest_scope): 3-rung ladder, toy/surface p7 metric (word-overlap + dict, NOT
+  perplexity, NOT LLM-judge), scale-transfer beyond these 3 points UNVERIFIED. No frozen gate moved.
+====================================================================================================
