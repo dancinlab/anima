@@ -18,3 +18,8 @@
   lane1 = "AUTONOMOUS — background agent fans open rungs to summer pool, runs to depletion, harvest+commit, no per-step LLM intervention"
   lane2 = "HANDS-ON — LLM drives each rung inline one-by-one on summer (write harness -> sidecar pool on summer -> verdict -> commit), visible step-by-step"
   split = "lanes take disjoint rungs; Lane2 reserves H_1178 (decode-metric tick @ cap~24, H_1163 residual); Lane1 takes the rest of the open-rung list"
+
+@MAIN 2026_06_12_lane2_discovery := "Lane 2 (LLM hands-on) is the DISCOVERY lane — close-watching each step surfaces serendipitous findings a batch misses" :: log [active]
+  principle = "Lane 2 is not merely slower execution; the LLM watching each rung inline can NOTICE an unexpected pattern / anomaly / cross-link that an autonomous batch (Lane 1) would never flag — discovery happens in the looking"
+  practice = "per rung: after the verdict, the LLM explicitly asks 'what surprised me here? what does this connect to?' and spins the surprise into the next rung (cf a_discovery / a_kick)"
+  split = "Lane 1 = throughput (drain open rungs); Lane 2 = depth+discovery (one rung, watched, mined for the unexpected)"
