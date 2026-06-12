@@ -203,9 +203,11 @@
   do   = "interleave /kick · /gap discovery every batch — a discovery lane runs alongside verify"
   dont = "defer discovery to the end · single tail-only round · stop discovering once a paper ships"
 
-@D a_discovery_log := "discoveries persist at .discoveries/<slug>.tape" :: workflow [required active]
-  do   = "log every kick/gap discovery to `.discoveries/<slug>.tape` — id · seed · verdict-tier-target"
-  dont = "discard discovery output · paraphrase findings · skip linking discovery → next-cycle claim"
+@D a_discovery_log := "discoveries persist PER DOMAIN at domains/<DOMAIN>/discoveries/<slug>.tape" :: workflow [required active]
+  do   = "log every kick/gap discovery to `domains/<DOMAIN>/discoveries/<slug>.tape` — id · seed · tier"
+  do   = "cross-domain + no home → `domains/_UNSORTED/discoveries/` (no force-fit · a_paper_on_discovery)"
+  do   = "flat root `.discoveries/` migrated into domains + abolished 2026-06-12 (see domains/DISCOVERIES.md)"
+  dont = "recreate a flat root `.discoveries/` · discard output · paraphrase findings · skip claim-link"
 
 @D a_toy_scale_recheck := "toy verify is not production closure — scale-up re-test required" :: workflow [required active]
   do   = "toy verdict ($0 · small-n · toy-vocab) states 'toy-only, scale-transfer unverified' in C3"
