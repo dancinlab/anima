@@ -1,0 +1,58 @@
+=== H_1164 — kosmos lane-partition self-tuning to anchor-stream complexity ===
+LIVE-WIRING: ⏳ BLOCKED — kosmos lane == 'cell_'+cell_id passthrough (no independent lane-growth from anchor tension_5ch; a_core_engine_map)
+PROPOSAL TEST: H_1159b tension-split substrate applied to the 5-dim kosmos anchor tension_5ch stream (clearly a proposal, NOT the live partition)
+
+  K_true=3: split_lanes=3.7 split_err=1.295 fixed_err=8.230 adv_d=6.95
+  K_true=5: split_lanes=5.3 split_err=1.301 fixed_err=9.080 adv_d=6.48
+  K_true=8: split_lanes=7.9 split_err=1.415 fixed_err=9.339 adv_d=7.05
+
+=== VERDICT ===
+{
+  "H": "H_1164",
+  "title": "kosmos lane-partition self-tuning to anchor-stream complexity (PROPOSAL test of the H_1159b property on the real 5-channel anchor geometry)",
+  "live_wiring_verdict": "⏳ BLOCKED-WIRING",
+  "live_wiring_reason": "the live kosmos `lane` is a STATIC passthrough of the active mitosis cell_id (AGENT/CHAT/kosmos_anchor.hexa: lane = 'cell_'+cell_id, default cell_0) — there is NO independent partition algorithm that grows a lane-COUNT from the anchor tension_5ch stream. The lane axis labels which cell emitted the anchor; it is not itself a dynamically-grown partition of the anchor stream. So 'does the live lane self-tune its count to anchor complexity?' is structurally unmeasurable — the self-tuning mechanism is not wired (a_core_engine_map · a_kosmos). This is NOT a 🔴 no-tracking: there is no live partition to track. To make it dynamic, a future lane axis would have to decouple from cell_id and grow lanes from the anchor tension stream (unbuilt).",
+  "proposal_per_K_true": {
+    "3": {
+      "split_err": 1.2951009371848983,
+      "fixed_err": 8.230143835513875,
+      "split_lanecount": 3.7,
+      "adv_cohen_d": 6.9528551318868885,
+      "max_lc": 4
+    },
+    "5": {
+      "split_err": 1.3008223947588795,
+      "fixed_err": 9.079829799675222,
+      "split_lanecount": 5.3,
+      "adv_cohen_d": 6.483395021112402,
+      "max_lc": 6
+    },
+    "8": {
+      "split_err": 1.4145194018162999,
+      "fixed_err": 9.338936604174098,
+      "split_lanecount": 7.9,
+      "adv_cohen_d": 7.053109965992107,
+      "max_lc": 8
+    }
+  },
+  "proposal_F1_self_tuning": {
+    "spearman_Ktrue_vs_lanecount": 0.8812013348164628,
+    "bar": 0.8,
+    "pass": true
+  },
+  "proposal_F2_advantage_all_K": {
+    "min_adv_d": 6.483395021112402,
+    "bar": 2.0,
+    "pass": true
+  },
+  "proposal_F3_self_limiting": {
+    "max_lanecount_any_K": 8,
+    "cap": 20,
+    "pass": true
+  },
+  "proposal_supported": true,
+  "proposal_ruling": "PROPOSAL-SUPPORTED: a tension-driven lane-partition applied to the real kosmos anchor tension_5ch (5-dim) stream WOULD self-tune its lane-COUNT to anchor-stream complexity (lane-count tracks #tension-regimes, Spearman>=0.8), stay self-limiting (no runaway to MAX_LANES), and beat a fixed-lane control at every K_true (d>=2.0). The H_1159b mitosis self-tuning property TRANSFERS to the 5-channel anchor geometry — so IF the kosmos lane axis were decoupled from cell_id and grown from the anchor stream, it would inherit self-tuning. PROPOSAL only — the LIVE lane is a static cell_id passthrough (⏳ above); live kosmos_io partition UNVERIFIED.",
+  "verdict": "⏳ BLOCKED-WIRING (live) + 🟢 PROPOSAL-SUPPORTED",
+  "scope": "toy numpy $0 CPU 10 seeds, 3-point K_true ladder {3,5,8}; DIM=5 == kosmos anchor tension_5ch. (A) LIVE kosmos lane = static cell_id passthrough → ⏳ no self-tuning mechanism wired (a_core_engine_map · a_kosmos). (B) PROPOSAL = H_1159b tension-split substrate VERBATIM on the 5-dim anchor tension stream — a PROXY for a hypothetical dynamic lane-partition; the live kosmos_io partition and scale are UNVERIFIED (a_scale_honest_scope)."
+}
+[done]
