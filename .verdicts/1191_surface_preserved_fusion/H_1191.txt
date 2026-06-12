@@ -1,0 +1,180 @@
+=== H_1191 — SURFACE-PRESERVED fusion: does a shared recoverable surface make SUPER-ADDITIVITY RETURN (closes the H_1189/H_1170 loop)? ===
+  (A) LABEL-ONLY = H_1189 setup (3 independent geometries, shared label only) [neg control]
+  (B) SURFACE-SHARED = 3 well-conditioned INVERTIBLE maps of ONE shared latent z[t]
+  cap ladder K=[4, 6, 8, 12, 16, 24, 32, 48, 64]; per-stream K*=argmax d(DERIVATIVE,METRONOME); 10 seeds; reuses H_1163 grow_arm/stage_decode VERBATIM
+
+--- construction audit (B), pre-scoring (a_completeness_over_cheap) ---
+  M cond numbers: {'M_a': 1.0000000000000007, 'M_t': 1.0000000000000004, 'M_i': 1.0000000000000007}  well-conditioned=True
+  cross-modality Pearson (B): {'audio-text': 0.017352840224312487, 'audio-image': -0.29947755245514684, 'text-image': -0.1008909902464445}
+
+--- condition A_label_only (chance=0.1667) ---
+  audio  K*= 32  deriv_acc=0.5954  metro_acc=0.3907  d_real=+1.220  d_shuf=+0.352
+  text   K*= 32  deriv_acc=0.6152  metro_acc=0.3811  d_real=+1.232  d_shuf=+0.519
+  image  K*= 24  deriv_acc=0.8272  metro_acc=0.5233  d_real=+1.814  d_shuf=+0.057
+  FUSED  K*= 12  deriv_acc=0.3490  metro_acc=0.1600  d_real=+1.282  d_shuf=-0.434
+  best_single=image (acc=0.8367)  fused_acc=0.3490  Δ(fused-best)=-0.4877  super_add_d=-2.787
+
+--- condition B_surface_shared (chance=0.1667) ---
+  audio  K*=  4  deriv_acc=0.0864  metro_acc=0.0000  d_real=+0.903  d_shuf=+1.549
+  text   K*= 24  deriv_acc=0.5319  metro_acc=0.3532  d_real=+1.015  d_shuf=-0.032
+  image  K*= 24  deriv_acc=0.5607  metro_acc=0.3124  d_real=+1.402  d_shuf=+0.720
+  FUSED  K*=  4  deriv_acc=0.1197  metro_acc=0.0000  d_real=+1.407  d_shuf=+1.257
+  best_single=image (acc=0.5927)  fused_acc=0.1197  Δ(fused-best)=-0.4730  super_add_d=-5.208
+
+=== VERDICT ===
+{
+  "H": "H_1191",
+  "title": "SURFACE-PRESERVED multi-modal fusion: does giving the three modalities a preserved shared surface (a common low-rank latent each is a smooth invertible function of) make SUPER-ADDITIVITY RETURN (fused > best single)? — isolates surface-preservation as the binding variable predicted by H_1170/H_1189.",
+  "frozen_falsifier": {
+    "F1": "condition (B) surface-shared fusion super-additive: d(fused - best_single) >= 0.5",
+    "F2": "condition (A) label-only control still fails: d(fused - best_single) <= 0 (reproduces H_1189)",
+    "SUPPORTED": "F1 and F2 (surface-preservation is the binding variable, confirming H_1170/H_1189)",
+    "metric": "clm-time-encoding STAGE-DECODE accuracy of the DERIVATIVE arm (p7, NOT perplexity)"
+  },
+  "cap_ladder": [
+    4,
+    6,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64
+  ],
+  "decode_chance": 0.16666666666666666,
+  "construction_audit_B": {
+    "M_condition_numbers": {
+      "M_a": 1.0000000000000007,
+      "M_t": 1.0000000000000004,
+      "M_i": 1.0000000000000007
+    },
+    "all_well_conditioned(cond<2)": true,
+    "warp_min_slope_per_modality": {
+      "warp_alpha=0.0": 1.0,
+      "warp_alpha=0.15": 1.0,
+      "warp_alpha=0.3": 1.0
+    },
+    "all_invertible(min_slope>0)": true,
+    "cross_modality_pearson(B_surface_shared)": {
+      "audio-text": 0.017352840224312487,
+      "audio-image": -0.29947755245514684,
+      "text-image": -0.1008909902464445
+    },
+    "note": "M_i orthogonal -> cond=1 -> invertible; warp y+a*tanh(y) slope>=1>0 -> strictly monotone -> invertible; nonzero cross-modality Pearson confirms the three are surface-correlated views of the SAME z (preserved shared surface)."
+  },
+  "condition_A_label_only": {
+    "label": "A_label_only",
+    "per_stream": {
+      "audio": {
+        "name": "audio",
+        "K_star": 32,
+        "deriv_acc_mean": 0.5954166666666667,
+        "metro_acc_mean": 0.3907083333333334,
+        "d_real": 1.2204999827732324,
+        "d_shuf": 0.3516395931875583,
+        "drop": 0.8688603895856741
+      },
+      "text": {
+        "name": "text",
+        "K_star": 32,
+        "deriv_acc_mean": 0.61525,
+        "metro_acc_mean": 0.381125,
+        "d_real": 1.2323883099547952,
+        "d_shuf": 0.5190721677512902,
+        "drop": 0.713316142203505
+      },
+      "image": {
+        "name": "image",
+        "K_star": 24,
+        "deriv_acc_mean": 0.8271666666666666,
+        "metro_acc_mean": 0.5233333333333333,
+        "d_real": 1.8142662797523,
+        "d_shuf": 0.0568331401585574,
+        "drop": 1.7574331395937426
+      },
+      "FUSED": {
+        "name": "FUSED",
+        "K_star": 12,
+        "deriv_acc_mean": 0.34900000000000003,
+        "metro_acc_mean": 0.15995833333333334,
+        "d_real": 1.2820312740094886,
+        "d_shuf": -0.4340566926379575,
+        "drop": 1.716087966647446
+      }
+    },
+    "best_single_modality_on_mean": "image",
+    "fused_deriv_acc_mean": 0.34900000000000003,
+    "best_single_deriv_acc_mean": 0.8367083333333334,
+    "fused_minus_best_single_mean": -0.4877083333333333,
+    "super_additive_d": -2.7869185859399708
+  },
+  "condition_B_surface_shared": {
+    "label": "B_surface_shared",
+    "per_stream": {
+      "audio": {
+        "name": "audio",
+        "K_star": 4,
+        "deriv_acc_mean": 0.08641666666666666,
+        "metro_acc_mean": 0.0,
+        "d_real": 0.9028625192395872,
+        "d_shuf": 1.5491764324501494,
+        "drop": -0.6463139132105622
+      },
+      "text": {
+        "name": "text",
+        "K_star": 24,
+        "deriv_acc_mean": 0.5319166666666667,
+        "metro_acc_mean": 0.35324999999999995,
+        "d_real": 1.015348433188871,
+        "d_shuf": -0.03182776572074308,
+        "drop": 1.047176198909614
+      },
+      "image": {
+        "name": "image",
+        "K_star": 24,
+        "deriv_acc_mean": 0.56075,
+        "metro_acc_mean": 0.312375,
+        "d_real": 1.4024535673950165,
+        "d_shuf": 0.7203877575898691,
+        "drop": 0.6820658098051474
+      },
+      "FUSED": {
+        "name": "FUSED",
+        "K_star": 4,
+        "deriv_acc_mean": 0.11975,
+        "metro_acc_mean": 0.0,
+        "d_real": 1.407450433424092,
+        "d_shuf": 1.2573401790630288,
+        "drop": 0.1501102543610633
+      }
+    },
+    "best_single_modality_on_mean": "image",
+    "fused_deriv_acc_mean": 0.11975,
+    "best_single_deriv_acc_mean": 0.5927083333333334,
+    "fused_minus_best_single_mean": -0.4729583333333333,
+    "super_additive_d": -5.207873112205448
+  },
+  "F1_surface_rescues": {
+    "super_additive_d_B": -5.207873112205448,
+    "bar": 0.5,
+    "pass": false,
+    "fused_acc_B": 0.11975,
+    "best_single_acc_B": 0.5927083333333334,
+    "best_single_modality_B": "image"
+  },
+  "F2_label_only_still_fails": {
+    "super_additive_d_A": -2.7869185859399708,
+    "bar_at_most": 0.0,
+    "pass": true,
+    "fused_acc_A": 0.34900000000000003,
+    "best_single_acc_A": 0.8367083333333334,
+    "best_single_modality_A": "image"
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: F1 fail: (B) surface-shared fusion is NOT super-additive — d(fused − best_single)=-5.21 < 0.5 (Δacc=-0.473); even a shared recoverable surface does not lift fused above the best single part at toy scale",
+  "surface_is_the_gate_answer": "NO (at toy scale) — CLOSED-NEGATIVE: F1 fail: (B) surface-shared fusion is NOT super-additive — d(fused − best_single)=-5.21 < 0.5 (Δacc=-0.473); even a shared recoverable surface does not lift fused above the best single part at toy scale",
+  "scope": "TOY ($0 CPU numpy, 10 seeds). Reuses H_1163 grow_arm/stage_decode_accuracy/cohen_d_paired/SEEDS/N_REGIMES_AUDIO/DIM/T/WARMUP VERBATIM. The 'shared surface' in (B) is an ENGINEERED linear-ish latent — three WELL-CONDITIONED (orthogonal, cond≈1) INVERTIBLE maps of ONE shared drifting-regime z[t] + a mild monotone tanh warp — a PROXY for a real cross-modal surface (cf H_1170 toy renderings), NOT real TTS / images / learned encoders. (A) = H_1189's exact label-only construction reproduced as the within-experiment negative control. DIM=8 (the grow_arm contract); fused 24-d projected to 8, NOT widened. Live CORE engine_mitosis_tick + real modalities + production scale UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope). Lane-M gradient-free growth lane (separate from Lane A AKIDA / Lane G forge / Lane P torch, a_lane_akida_gpu_split). a_completeness_over_cheap: invertibility/well-conditioning verified BEFORE scoring; frozen bars NOT moved."
+}
+
+[done]
