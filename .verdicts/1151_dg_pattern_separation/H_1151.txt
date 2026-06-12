@@ -1,0 +1,49 @@
+=== H_1151 DG pattern separation vs dense hidden-state (follows H_1143) ===
+[DG] expand D=256 -> 2560 (10x), kWTA top-K=128 (5% active)
+[prompts] 60 manifold-ref, 30 KNOWN, 30 UNKNOWN
+--- CONTROL: UNTRAINED backbone (anti-Goodhart) ---
+  [untrained] AUROC dense=0.7100  DG-sparse=0.6978  delta(DG-dense)=-0.0122
+--- training ---
+  [train] step 0 ce=5.7144
+  [train] step 500 ce=2.4751
+  [train] step 1000 ce=2.3601
+  [train] step 1499 ce=2.3345
+--- TRAINED backbone ---
+  [trained] AUROC dense=0.5644  DG-sparse=0.6244  delta(DG-dense)=+0.0600
+=== VERDICT ===
+{
+  "H": "H_1151",
+  "title": "hippocampal DG pattern separation recovers learned input-familiarity the dense hidden state missed",
+  "DG_params": {
+    "expand_dim": 2560,
+    "expand_x": 10,
+    "kwta_K": 128,
+    "active_frac": 0.05
+  },
+  "F1_dg_discrimination": {
+    "dg_auroc": 0.6244444444444445,
+    "bar": 0.7,
+    "pass": false
+  },
+  "head_to_head_dg_vs_dense": {
+    "dg": 0.6244444444444445,
+    "dense": 0.5644444444444444,
+    "delta": 0.06000000000000005,
+    "bar": 0.1,
+    "pass": false
+  },
+  "control_untrained": {
+    "untrained_dg_auroc": 0.6977777777777778,
+    "untrained_dense_auroc": 0.71,
+    "bar_max": 0.6,
+    "pass": false
+  },
+  "h1143_dense_reference": {
+    "trained_dense_auroc": 0.5644,
+    "untrained_dense_auroc": 0.71
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE (a_paper_negative_ok): DG code fails the conjunction — untrained also separates (surface-statistics, not learned) DG AUROC below 0.70 no >=+0.10 lift over dense -> DG pattern separation does NOT recover a learned familiarity signal at toy scale",
+  "scope": "toy ByteGPT d256/4L CPU en slice — scale-up UNVERIFIED (a_scale_honest_scope), seed 7, g5/p7"
+}
+[done] /tmp/h1151_result.json
