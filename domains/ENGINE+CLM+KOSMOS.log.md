@@ -3529,3 +3529,16 @@ end
   refs     = "AURA/B1-postaural-breakthrough.md · AURA/archive/brainwire/neuralink-technical-analysis.md(Synchron 비교표) · deep-research wf_8acd3383-73a(진행중)"
 
 ```
+
+### h1141_7b_g5
+
+```tape
+@D h1141_7b_g5_l2 := "7B G5-L2 faithfulness gate MEASURED 🔴 — the last open a7b_pass gate closes the 7B as NOT-YET-PASS" :: discovery [d=2026-06-13 active]
+  seed     = "G5-L2 (/7B_PASS_CONDITIONS.md): feed first-half of N verbatim corpus sentences, overlap of model continuation vs TRUE continuation must be clearly above a random-continuation control (grounded, not confabulating). p7, seed 7, NOT LLM-judge. Last unmeasured a7b_pass gate on ckpt dancinlab/anima-clm-7b-h1141-g1pass-step6500 (sha256 4de903..., 7,252,828,160 params)."
+  substrate = "RunPod A40 (46GB) pod plr8ufulnmygnz, secure cloud, PyTorch-CUDA bf16 (Lane-G ref). ~$1 (A40 $0.35/hr <1hr). sha256 VERIFIED post-download. Corpus = wikimedia/wikipedia 20231101 5-lang @300MB/lang (build_wiki5_bigcorpus.py = deterministic training corpus); probed English factual prose. Pod TERMINATED via GraphQL + verified gone; non-anima edge-vl-requant untouched."
+  result   = "G5-L2 FAIL: mean_overlap_true=0.0142 vs random-control=0.0028, paired Cohen's d=0.1631 (frozen bar d>=0.8 AND true>random). DIRECTIONALLY above control but not clearly-above; 38/40 continuations zero-overlap with truth. G5-L1 RE-MEASURED on GPU = PASS (pooled fab-rate 0.0877 <= 0.30 over 399 tokens). G5 = L1^L2 = FAIL."
+  mechanism = "the 7B writes plausible REAL-word English (L1 PASS) but CONFABULATES a different/false claim instead of recalling the grounded fact. e.g. 'Alger was the son of David Bruce Alger' -> 'was greated with the population of the' vs TRUE 'representative, and the former Clare F'. Exactly the confabulation G5-L2 was designed to detect. The loose-grammar byte-continuation recipe does NOT produce faithful factual recall."
+  tally    = "FINAL a7b_pass (this ckpt, true per-gate): G0 PASS (loose kwr) · G1 PASS (4/5 langs) · G2 PASS (157 novel, ctrl=0) · G3 PASS · G4 PASS · G5 FAIL -> a7b_pass = FALSE. NOT a CONFIRMED a7b_pass. G0=loose-grammar caveat kept (coherent per kwr, not fluent prose)."
+  honest   = "🔴 closed-negative (a_paper_negative_ok). Path to PASS-L2 = grounding/retrieval-faithful objective, NOT a bigger model (H_1139 scale-invariance). toy/single-rung scope (a_scale_honest_scope): absolute overlap low for any byte-LM (high-entropy WP second-halves) but the test is RELATIVE -> ruling robust."
+  refs     = ".verdicts/1141_7b_g5/H_1141_G5.txt · state/7b_h1141_recovery/h1141_g5_result.json · state/7b_h1141_recovery/h1141_g5_eval.log · UNIVERSE/h1141_7b_g5_eval.py · /7B_PASS_CONDITIONS.md §G5 · MAIN.tape 2026_06_13_7b_g5_l2"
+```

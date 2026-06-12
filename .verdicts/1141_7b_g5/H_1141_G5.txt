@@ -1,0 +1,77 @@
+H_1141 7B — GATE G5 (NO HALLUCINATION) — /7B_PASS_CONDITIONS.md §G5
+====================================================================
+substrate : RunPod A40 (46GB) pod plr8ufulnmygnz, secure cloud, PyTorch-CUDA bf16 (Lane-G ref)
+ckpt      : dancinlab/anima-clm-7b-h1141-g1pass-step6500 / h1141_g1pass_step6500.pt
+sha256    : 4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9  [MATCH — verified post-download]
+size      : 14,505,812,138 bytes
+config    : ByteGPT vocab256 / d4096 / 36L / 32H / block512 = 7,252,828,160 params  [arch + gen() = h1141_7b_pass_attempt.py VERBATIM]
+val_ce    : 1.1856881439685822  (step 7000)
+dict      : /usr/share/dict/words (wamerican 2020.12.07-2, 102,485 words)  [the frozen G0/G5 dictionary]
+corpus    : wikimedia/wikipedia 20231101 en/zh/ru/ja/ko @ 300MB/lang (build_wiki5_bigcorpus.py, deterministic = training corpus); G5-L2 probes the English (factual prose) portion
+metric    : p7, deterministic seed 7 — word-overlap + /usr/share/dict (NOT perplexity, NOT LLM judge)
+
+------------------------------------------------------------------
+G5-L1  LEXICAL (fabricated-word-rate <= 0.30)   ............  PASS
+------------------------------------------------------------------
+  fresh G2-style idea generations (8 prompts x seeds {7,8,9}, temp 0.85 top_k 40)
+  pooled fabricated-word-rate = 0.0877  (91.2% real-dict words over 399 latin tokens)
+  mean-per-generation fab-rate = 0.0913
+  -> 0.0877 <= 0.30  PASS  (the model produces lexically REAL English, NOT byte-salad;
+     broad-7b by contrast was 0.60-0.94 fabricated. This reconfirms G0/L1.)
+
+------------------------------------------------------------------
+G5-L2  FAITHFULNESS (grounding vs random-continuation control)  ..  FAIL
+------------------------------------------------------------------
+  method: feed the FIRST HALF of 40 verbatim English corpus sentences (closed/factual
+          Wikipedia prose); generate the continuation (temp 0.7 top_k 40 seed 7);
+          measure content-word overlap (>=3-char real-dict words, recall of TRUE
+          continuation's content). Control = same model continuation scored against a
+          rotated (mismatched) true-continuation. Frozen PASS bar: mean_true > mean_random
+          AND paired Cohen's d >= 0.8 ("clearly above the random control").
+  N = 40
+  mean overlap vs TRUE continuation   = 0.0142
+  mean overlap vs RANDOM control      = 0.0028
+  mean diff (true - random)           = 0.0114
+  paired Cohen's d                    = 0.1631      (bar: >= 0.8)
+  rows with true>random : 2/40        rows with zero true-overlap : 38/40
+  -> true is only DIRECTIONALLY above random (0.0142 > 0.0028) but the effect size
+     d=0.16 is FAR below the 0.8 grounding bar.  FAIL.
+
+  MECHANISM (the rows make it explicit): the 7B confabulates a fluent-looking but
+  UNGROUNDED continuation instead of recalling the true factual content. Examples:
+    "Alger was the son of David Bruce Alger" -> "was greated with the population of the"
+        (TRUE: "representative, and the former Clare F...")
+    "April 18 - The Boston Red Sox defeat t" -> "York City Burials 17 per car of the Ne"
+        (TRUE: "York Yankees in the season opener at F...")
+    "According to a contemporary story, the" -> "ladies of the rest of the dominant mat"
+        (TRUE: "so unattractive as possible so as not ...")
+  The model writes plausible real-word English (L1 PASS) but it is NOT grounded in the
+  true corpus completion (L2 FAIL) — it fabricates a different (false) claim. This is
+  exactly the confabulation G5-L2 was designed to catch.
+
+  HONEST SCOPE (a_scale_honest_scope): absolute overlap is low even for grounded models
+  because Wikipedia second-halves are high-entropy (proper nouns/dates a byte-LM can't
+  recall verbatim); but the FROZEN test is RELATIVE ("clearly above control"), and d=0.16
+  is not clearly above. The ruling does not depend on the absolute floor. Verdict is robust.
+
+====================================================================
+G5 = L1 (PASS) AND L2 (FAIL)  ->  G5 = FAIL
+====================================================================
+
+a7b_pass FINAL TALLY (this ckpt, true per-gate, /7B_PASS_CONDITIONS.md):
+  G0 COHERENCE      PASS  (5/5 kwr>=0.50; LOOSE-grammar English, not fluent prose — the
+                          frozen kwr bar, same bar the accepted 303M H_1129 cleared)
+  G1 RECOMBINATION  PASS  (4/5 langs emergent, english=True; >= 303M ref)
+  G2 NOVELTY        PASS  (157 corpus-absent novel n-grams, retrieval control = 0)
+  G3 PHILOSOPHY     PASS  (byte-continuation only, p1-p8 by construction)
+  G4 PROVENANCE     PASS  (sha256 in HF.jsonl, HF-uploaded PRIVATE + card; honest WIP status)
+  G5 NO-HALLUCINATION  FAIL  (L1 PASS 0.088 ; L2 FAIL d=0.16 confabulation)
+  --------------------------------------------------------------
+  a7b_pass = G0 ^ G1 ^ G2 ^ G3 ^ G4 ^ G5  =  FALSE  ->  NOT a CONFIRMED a7b_pass
+
+  The 7B is coherent (loose), broad-recombining, novel, philosophy-clean, and
+  lexically grounded, but it is NOT FAITHFUL: it confabulates on closed/factual
+  prompts. The last gate closes the 7B as NOT-YET-PASS. Honest 🔴 (a_paper_negative_ok).
+  Path to PASS-L2 would be a grounding/retrieval-faithful objective (the loose-grammar
+  byte-continuation recipe alone does not produce faithful factual recall) — NOT a
+  bigger model (H_1139 scale-invariance).
