@@ -72,7 +72,9 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 N = 4000                 # units in the opponent network (matches H_1153)
 K_OUT = 8                # mean out-degree (A⇄G coupling fan-out, matches H_1153)
 GRAPH_SEED = 1153        # reuse the H_1153 fixed coupling graph
-N_AVAL_PROBE = 8000      # avalanches per σ measurement (per tick)
+N_AVAL_PROBE = 3000      # avalanches per σ measurement (per tick); thousands of
+                         # cascades give a stable Beggs-Plenz ⟨desc/anc⟩ estimate
+                         # (super-critical cascades each hit the finite-size cap)
 N_TICKS = 30             # mitosis ticks per run
 N_SEEDS = 10             # deterministic seeds (>= 8)
 SEEDS = list(range(1161, 1161 + N_SEEDS))
@@ -227,12 +229,14 @@ def main():
         p("-" * 74)
         mit_finals, frz_finals = [], []
         mit_final_ncells = []
+        mit_sigfinal = []     # signed final σ̂ from the SAME mitosis pass (no re-run)
         traj_stack = []   # per-seed mitosis |σ-1| trajectory
         for s in SEEDS:
             mdev, msig, mnc = run_homeostat(sigma0, adj, s, mitosis=True)
             fdev, fsig, fnc = run_homeostat(sigma0, adj, s, mitosis=False)
             mit_finals.append(mdev[-1]); frz_finals.append(fdev[-1])
             mit_final_ncells.append(mnc)
+            mit_sigfinal.append(msig[-1])
             traj_stack.append(mdev)
             mit_final_dev_all.append(mdev[-1]); frz_final_dev_all.append(fdev[-1])
             # pooled monotone (mitosis arm)
@@ -241,12 +245,6 @@ def main():
         traj_mean = np.mean(np.vstack(traj_stack), axis=0)
         mit_final_dev = float(np.mean(mit_finals))
         frz_final_dev = float(np.mean(frz_finals))
-        sigma_final = 1.0 + (np.mean([t[-1] for t in [traj_stack[i] for i in range(len(SEEDS))]]))  # placeholder, recomputed below
-        # report final σ̂ mean (signed) for clarity
-        mit_sigfinal = []
-        for s in SEEDS:
-            _, msig, _ = run_homeostat(sigma0, adj, s, mitosis=True)
-            mit_sigfinal.append(msig[-1])
         results[label] = {
             "sigma0": sigma0,
             "mit_final_absdev": mit_final_dev,

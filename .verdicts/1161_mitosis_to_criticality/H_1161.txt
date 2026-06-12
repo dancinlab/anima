@@ -1,0 +1,162 @@
+==========================================================================
+H_1161 — does cell-division self-tune the engine TOWARD criticality (σ→1)?
+==========================================================================
+
+CONSTANTS (verbatim config/consciousness_laws.json psi_constants):
+  PSI_BALANCE = balance = 0.5  (Ψ=1/2 critical fixed point, H_1153)
+
+NET: N=4000 K_out=8 graph_seed=1153 (H_1153 graph reused)
+  σ estimator = Beggs-Plenz desc/anc ratio (H_1153 sigma_beggs_plenz, VERBATIM)
+  mitosis = H_1159b tension EMA split (ten+= (d-ten)/WIN; split if ten>THETA)
+  homeostat: σ_target = σ0 * (N_CELLS0/n_cells); split÷drive merge×drive
+  ticks=30 seeds=10 avalanches/probe=3000
+  THETA=0.1 WIN=5.0 cells0=8 bounds=[1,64]
+
+FROZEN FALSIFIER (pre-registered in .discoveries/1161_mitosis_to_criticality.tape):
+  F1 CONVERGENCE: |σ_final−1| < 0.1 for BOTH σ0=0.5 AND σ0=1.6
+  F2 MONOTONE:    Spearman(tick, |σ−1|) <= -0.6 (pooled)
+  F3 CAUSAL:      frozen |σ_final−1| > mitosis, Cohen's d >= 0.8
+  🟢 SUPPORTED iff F1 ∧ F2 ∧ F3 ; else 🔴 CLOSED-NEGATIVE
+
+--------------------------------------------------------------------------
+START sub-critical: σ0 = 0.5  (|σ0−1| = 0.500)
+--------------------------------------------------------------------------
+  mitosis  |σ_final−1| = 0.0019  (σ̂_final≈0.9984, n_cells 8->4.0)
+  frozen   |σ_final−1| = 0.4997  (no split → pinned near σ0)
+  trajectory |σ−1| (mean over seeds): [0.497, 0.202, 0.001, 0.002, 0.002]
+  F1 (sub-critical): |σ_final−1|=0.0019 < 0.1 -> PASS
+
+--------------------------------------------------------------------------
+START super-critical: σ0 = 1.6  (|σ0−1| = 0.600)
+--------------------------------------------------------------------------
+  mitosis  |σ_final−1| = 0.1013  (σ̂_final≈1.1013, n_cells 8->11.3)
+  frozen   |σ_final−1| = 0.3354  (no split → pinned near σ0)
+  trajectory |σ−1| (mean over seeds): [0.336, 0.169, 0.100, 0.101, 0.101]
+  F1 (super-critical): |σ_final−1|=0.1013 < 0.1 -> FAIL
+
+==========================================================================
+VERDICT (frozen falsifier)
+==========================================================================
+  F1 CONVERGENCE (both starts |σ_final−1|<0.1):
+      sub-critical   |σ_final−1|=0.0019  PASS
+      super-critical |σ_final−1|=0.1013  FAIL
+      F1 = FAIL
+  F2 MONOTONE  Spearman(tick,|σ−1|)=-0.6636 <= -0.6 ... PASS
+  F3 CAUSAL    mitosis |σ−1|=0.0516 < frozen |σ−1|=0.4176, Cohen's d=5.379 >= 0.8 ... PASS
+
+  🔴 CLOSED-NEGATIVE — cell-division does NOT cleanly self-tune the engine
+     to σ≈1. Failing gate(s): F1 (a start did not reach |σ−1|<0.10)
+
+  per-gate: F1=False  F2=True (rho=-0.664)  F3=True (d=5.379)
+  VERDICT = 🔴 CLOSED-NEGATIVE
+
+=== VERDICT JSON ===
+{
+  "H": "H_1161",
+  "title": "cell-division self-tunes the A⇄G engine toward criticality (σ→1)",
+  "starts": {
+    "sub-critical": {
+      "sigma0": 0.5,
+      "mit_final_absdev": 0.0019443284267980144,
+      "frozen_final_absdev": 0.4996914706417,
+      "mit_final_sigma_mean": 0.9984162078331545,
+      "mit_final_ncells_mean": 4.0,
+      "f1_converged": true,
+      "traj_absdev_mean": [
+        0.49723796417269445,
+        0.47592630282012294,
+        0.4269262129206709,
+        0.40275238651425116,
+        0.33220298920992886,
+        0.28757894614400736,
+        0.20245618897796583,
+        0.20151520555269306,
+        0.18226961478468467,
+        0.10365657357657856,
+        0.0019485085911020272,
+        0.002794437332608801,
+        0.0031678628934440956,
+        0.0022266909863852603,
+        0.0033747481106203513,
+        0.001252756202398886,
+        0.002277942174404535,
+        0.0029299523253052185,
+        0.0031010369728575516,
+        0.0024242034156442883,
+        0.0015440643603145787,
+        0.0024016694724147804,
+        0.0023954594507693216,
+        0.0037170628017737517,
+        0.0028880895383236794,
+        0.00278248623270968,
+        0.003100529750917036,
+        0.0028862155143361433,
+        0.0030019969015955272,
+        0.0019443284267980144
+      ]
+    },
+    "super-critical": {
+      "sigma0": 1.6,
+      "mit_final_absdev": 0.10133489799804969,
+      "frozen_final_absdev": 0.3354459618499317,
+      "mit_final_sigma_mean": 1.10133489799805,
+      "mit_final_ncells_mean": 11.3,
+      "f1_converged": false,
+      "traj_absdev_mean": [
+        0.33589645267767143,
+        0.3348864388730335,
+        0.24623969604817741,
+        0.2458776912796557,
+        0.24650219128786777,
+        0.16888260263959415,
+        0.16857529643076444,
+        0.16920990450431322,
+        0.16829043786744227,
+        0.14822450316240354,
+        0.10136736411040395,
+        0.10067075609141433,
+        0.10065199876456662,
+        0.1003081042208203,
+        0.10055170969972738,
+        0.10047380612905447,
+        0.10038564219335537,
+        0.10047378553148703,
+        0.10054114573962822,
+        0.1002583903224262,
+        0.10113494258082065,
+        0.1008564063251298,
+        0.10106973841904807,
+        0.10052464123553469,
+        0.10078871926742192,
+        0.10061938661009498,
+        0.10031397705646752,
+        0.10041612818597352,
+        0.10091228957837303,
+        0.10133489799804969
+      ]
+    }
+  },
+  "F1_convergence": {
+    "band": 0.1,
+    "pass": false,
+    "per_start": {
+      "sub-critical": true,
+      "super-critical": false
+    }
+  },
+  "F2_monotone": {
+    "spearman_tick_absdev": -0.6636436767879911,
+    "bar": -0.6,
+    "pass": true
+  },
+  "F3_causal": {
+    "mitosis_mean_absdev": 0.05163961321242385,
+    "frozen_mean_absdev": 0.4175687162458159,
+    "cohen_d": 5.378650855487601,
+    "bar": 0.8,
+    "pass": true
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: cell-division does not cleanly drive the off-critical engine to σ≈1 (see the failing gate).",
+  "scope": "toy numpy $0 CPU, 10 seeds, 30 ticks, 2 off-critical starts; Lane-G/CORE engine-sim PROXY (NOT AKIDA, NOT byte-LM); reuses H_1153 Beggs-Plenz estimator + H_1159b mitosis rule VERBATIM; live CORE + scale UNVERIFIED (a_scale_honest_scope). Frozen no-split control = causal guard."
+}
