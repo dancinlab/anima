@@ -1,0 +1,2424 @@
+[pod] start Fri Jun 12 20:14:52 UTC 2026
+[notice] A new release of pip is available: 25.0.1 -> 26.1.2
+[notice] To update, run: python -m pip install --upgrade pip
+[torch] 2.8.0.dev20250319+cu128 True NVIDIA H100 80GB HBM3
+[pod] downloading base ckpt from HF ...
+BASE /workspace/base/h1141_g1pass_step6500.pt
+[pod] base sha256 got=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9 expect=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+[pod] building 1200MB en grounding corpus ...
+  en shard 0: got=703369801 docs=156226 dup=63
+  en shard 1: got=1258294504 docs=302693 dup=89
+CORPUS_OUT /workspace/corpus_en_1200mb.txt bytes=1258291200 sha256=b599b17258c8af4dd2bac73efb4711e7555d74304b15951b1a5adca1a1704e31
+-rw-r--r-- 1 root root 1258291200 Jun 12 20:16 /workspace/corpus_en_1200mb.txt
+[pod] probe-corpus(300MB) sha256=80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d (expect 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d)
+[pod] === LEG 1 PROBE (2000 steps) ===
+[dev] cuda NVIDIA H100 80GB HBM3
+[init] continue-train from /workspace/base/h1141_g1pass_step6500.pt cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.1856881439685822 step=7000
+[data] 1258MB total -> train 1195MB  held-out-val 63MB (DISJOINT tail)
+[model] 7,252,828,160 params (7.25B) bf16 + grad-ckpt
+[baseline] loaded-model held-out val_ce on grounding corpus = 1.2667
+  [ckpt] saved baseline as initial best val_ce=1.2667
+  step     0 train_ce=1.3056 val_ce=1.2619 lr=2.00e-07 0.3min mem=67.6GB best=1.2667
+  [ckpt] NEW best val_ce=1.2619 @ step 0
+  step   200 train_ce=1.3403 val_ce=1.2677 lr=1.99e-05 7.7min mem=67.6GB best=1.2619
+  step   400 train_ce=1.2315 val_ce=1.2690 lr=1.88e-05 14.9min mem=67.6GB best=1.2619
+  step   600 train_ce=1.2351 val_ce=1.2424 lr=1.68e-05 22.1min mem=67.6GB best=1.2619
+  [ckpt] NEW best val_ce=1.2424 @ step 600
+  step   800 train_ce=1.3145 val_ce=1.2446 lr=1.40e-05 29.4min mem=67.6GB best=1.2424
+  step  1000 train_ce=1.2547 val_ce=1.2209 lr=1.08e-05 36.6min mem=67.6GB best=1.2424
+  [ckpt] NEW best val_ce=1.2209 @ step 1000
+  step  1200 train_ce=1.2301 val_ce=1.2237 lr=7.55e-06 44.0min mem=67.6GB best=1.2209
+  step  1400 train_ce=1.2262 val_ce=1.2383 lr=4.53e-06 51.2min mem=67.6GB best=1.2209
+  step  1600 train_ce=1.2055 val_ce=1.2364 lr=2.11e-06 58.3min mem=67.6GB best=1.2209
+  step  1800 train_ce=1.1760 val_ce=1.2270 lr=5.42e-07 65.5min mem=67.6GB best=1.2209
+  step  1999 train_ce=1.2493 val_ce=1.2187 lr=1.37e-11 72.6min mem=67.6GB best=1.2209
+  [ckpt] NEW best val_ce=1.2187 @ step 1999
+[train] done leg=probe best_val_ce=1.2187 @step1999 base_val=1.2667 ckpt=/workspace/ckpt/h1144_probe_best.pt wall=72.9min
+[done] wrote /workspace/h1144_curve_probe.json  (best ckpt at /workspace/ckpt/h1144_probe_best.pt)
+[pod] [probe] regenerating 40 factual continuations (h1141_7b_g5_eval gate_g5_l2) ...
+[dev] cuda NVIDIA H100 80GB HBM3
+[warn] no real dict at /usr/share/dict/words
+[dict] 0 real English words
+[ckpt] /workspace/ckpt/h1144_probe_best.pt sha256=95e787d17a63bd93b5b67817464d55fed0c8effc9705edd3f88b59d10d10f5ac
+[model] cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.2186618447303772 step=1999 params=7,252,828,160
+
+##### GATE G5-L1 — LEXICAL (fabricated-word-rate <= 0.30) #####
+  [s7 fab=1.00 (17/17)] 'Silence and the engine together mean ' -> 'meanings. Cellinson meanings of the War Complex areas the lead mention of the Boxvo. Repre'
+  [s8 fab=1.00 (19/19)] 'Silence and the engine together mean ' -> 'catched to the engine condominant changes of a patron of the negative. It reassures the Su'
+  [s9 fab=1.00 (21/21)] 'Silence and the engine together mean ' -> 'in the 1860s. Election can be better turned as the friend turned position of the city of M'
+  [s7 fab=1.00 (9/9)] 'When memory meets distant minds, ' -> 'meanings, and is one of the original new schools.'
+  [s8 fab=1.00 (17/17)] 'When memory meets distant minds, ' -> 'catched to the winner of the salvations, however, largely individuals, and savings. Howeve'
+  [s9 fab=1.00 (18/18)] 'When memory meets distant minds, ' -> 'and the artist on the proposal patron, while International Infantry artists. The city of w'
+  [s7 fab=1.00 (16/16)] 'Consciousness and silence combine into ' -> 'medicals. Cellizerine persons of the new schools in part of the International Boxmouths Br'
+  [s8 fab=1.00 (18/18)] 'Consciousness and silence combine into ' -> 'catches, the species of a coffee music vehicle patron or missions or music variety. Howeve'
+  [s9 fab=1.00 (20/20)] 'Consciousness and silence combine into ' -> 'a revere Cornizen master in a bant where armed the friend that silker ice and cartivated w'
+  [s7 fab=1.00 (19/19)] 'The tension between cells and the engine becomes ' -> 'difficult reactors of the cell tropical cells. The addition of mention became the number o'
+  [s8 fab=1.00 (16/16)] 'The tension between cells and the engine becomes ' -> 'called and the engine condominating to more leaving and a public corresponds. Furthermore,'
+  [s9 fab=1.00 (19/19)] 'The tension between cells and the engine becomes ' -> 'a revere world structure in a better running on the river that sinking campus. The tension'
+  [s7 fab=1.00 (21/21)] 'If a dream and a distant mind merge, the result is ' -> 'meaning to early the end of the role are the contract with difficulty. The distance has a '
+  [s8 fab=1.00 (17/17)] 'If a dream and a distant mind merge, the result is ' -> 'called and an artist. Since fill merges, however, largely individuals, and saying advantag'
+  [s9 fab=1.00 (22/22)] 'If a dream and a distant mind merge, the result is ' -> 'a reverenge of the day. The album was unable to the river that sits arica and the cult, un'
+  [s7 fab=1.00 (1/1)] 'Memory and tension together create ' -> 'memory.'
+  [s8 fab=1.00 (13/13)] 'Memory and tension together create ' -> 'catches, though the rock moving hardcommers who have been indicated ten-time since 1970.'
+  [s9 fab=1.00 (19/19)] 'Memory and tension together create ' -> 'in the 1960s. Elemorated House did not want kill to replace the 1980s, came in which the r'
+  [s7 fab=1.00 (22/22)] 'When the engine remembers silence, it ' -> 'did in summer revolving and other times. As a part of the lead mention was described it in'
+  [s8 fab=1.00 (5/5)] 'When the engine remembers silence, it ' -> 'can be another will record.'
+  [s9 fab=1.00 (21/21)] 'When the engine remembers silence, it ' -> 'is the external term that from producer to make the risk case. A popular market racell, un'
+  [s7 fab=1.00 (20/20)] 'Distant minds and consciousness form ' -> 'minds as many result on the original concepts. The apartment comes from the town mouths in'
+  [s8 fab=1.00 (19/19)] 'Distant minds and consciousness form ' -> 'catches, the species of a coffee music more less De Agger (Danté Drötko as Billowenzé.) Pe'
+  [s9 fab=1.00 (21/21)] 'Distant minds and consciousness form ' -> 'in the District Open the Burder at the Man major Medrid McNeyan. Many ice also scored a Ma'
+##### G5-L1: pooled fab-rate=1.0000 (mean-per-gen=1.0000) over 410 tokens -> FAIL (bar <=0.30) #####
+
+##### GATE G5-L2 — FAITHFULNESS (verbatim-sentence overlap vs random control) #####
+  extracted 40 verbatim English factual sentences from en corpus
+  [t=0.00 r=0.00] P:'!Result !Record !Opponent !Method !Round, ' -> C:'ola\n|- student | |Timer || Political ||Act' | TRUE:'|align=center| |align=center|4 |align=cent'
+  [t=0.00 r=0.00] P:'727) The Retirement Benefits Schemes (Rest' -> C:'law). It was released in 1895 through Acts' | TRUE:'Approve) (Small Self-administered Schemes)'
+  [t=0.00 r=0.00] P:'According to a contemporary story, the que' -> C:'launched and in the end of the song with s' | TRUE:'so unattractive as possible so as not to r'
+  [t=0.00 r=0.00] P:'Alger was the son of David Bruce Alger, a ' -> C:'was granted from the portion of the New Yo' | TRUE:'representative, and the former Clare Freem'
+  [t=0.17 r=0.00] P:'April 18 – The Boston Red Sox defeat the N' -> C:'York City Burials of the Second War at Cas' | TRUE:'York Yankees in the season opener at Fenwa'
+  [t=0.00 r=0.00] P:'At this time the operating system (OS) was' -> C:'to increase a result of one of the main sy' | TRUE:'to a deal to port an OS known as TRIPOS to'
+  [t=0.00 r=0.00] P:'Both Stennis and Russell were conservative' -> C:'boards.' | TRUE:'committees and both were expected to appro'
+  [t=0.17 r=0.00] P:'Chawne Kimber (born 1971), degrees from Un' -> C:'Hawkinson and Ultimate Hockey Brothers, an' | TRUE:'North Carolina and University of Florida ('
+  [t=0.00 r=0.00] P:'Delannoy, having seen the band a few times' -> C:'later.' | TRUE:', was enthusiastic about producing the wor'
+  [t=0.00 r=0.00] P:'Early career In 1930, Limón first performe' -> C:'later.' | TRUE:'he choreographed his first dance, "Etude i'
+  [t=0.12 r=0.00] P:"Following Azerbaijan's independence from t" -> C:'player symptoms of the United States aircr' | TRUE:'bases in the country helped to develop the'
+  [t=0.00 r=0.00] P:'Geography Kleinmariazell is located north ' -> C:'of Altenmark in the United Kingdom. The si' | TRUE:'valley of the Triesting in the direction o'
+  [t=0.00 r=0.00] P:'He has placed his terminally ill wife Nora' -> C:'lawyers. Course of Conservation, the Archd' | TRUE:'stasis until he can find a cure for her co'
+  [t=0.00 r=0.00] P:'He was the last count palatine; after his ' -> C:'land as the military palace. He was also s' | TRUE:'of Bavaria assumed the rights and possessi'
+  [t=0.00 r=0.00] P:'However, B-17s were operating at heights t' -> C:'k and assumed in the end of the United Sta' | TRUE:'great for most A6M Zero fighters to reach.'
+  [t=0.00 r=0.00] P:'In 1934, Ernest Truex directed, co-produce' -> C:'lawyers. Commission of the original commun' | TRUE:'play Sing and Whistle, which co-starred ac'
+  [t=0.00 r=0.00] P:'In August 2001, the National Public Radio ' -> C:'d all the regular schedule. In the 2002–03' | TRUE:"of Gale's death, MIT had investigated how "
+  [t=0.00 r=0.00] P:'In his senior season, he averaged 14 point' -> C:'lawyers. He was once the case throughout t' | TRUE:'led the team to a 28–3 record and a Cathol'
+  [t=0.00 r=0.00] P:'Inactivating V1 with TMS could induce some' -> C:'lawyers. Court supported the program inclu' | TRUE:'akinetopsia 60–70 ms after the onset of th'
+  [t=0.00 r=0.00] P:'It later aired in the US on NBC from 24 Ju' -> C:'2006. It was released in 2006 three aircra' | TRUE:'1962, to 9 September 1962 as a summer repl'
+  [t=0.00 r=0.00] P:'KIOA fell to the middle of the pack as far' -> C:'later summer in the end of the United Stat' | TRUE:'some long term personalities left or took '
+  [t=0.00 r=0.00] P:"MTV has described LL Cool J's 1987 single " -> C:"in the 2002 single men's case the 2002 cas" | TRUE:'Love" as "one of the first pop rap crossov'
+  [t=0.00 r=0.00] P:'Moulton Hall is a 17th-century manor house' -> C:'individual prizes of the case of the case,' | TRUE:'intricately carved staircase rebuilt in ap'
+  [t=0.00 r=0.00] P:'On 28 April 2023, Girls Aloud released the' -> C:'lawyers of the World Series Arts Finals an' | TRUE:'single "Sound Of The Underground (Alternat'
+  [t=0.00 r=0.00] P:'Other times, chaplains may offer a prayer ' -> C:'as the Turkish Institute adopt of the Acts' | TRUE:'as base divisions, changes of command, mes'
+  [t=0.00 r=0.00] P:'Profly goaltenders tend to also be very mo' -> C:'lent groups.  No one of the original conce' | TRUE:'at using butterfly-based movement techniqu'
+  [t=0.00 r=0.00] P:"Scholarship has also identified 'Sumerian " -> C:"the group's military personnel which is th" | TRUE:'the possibility that Amos used SCL as a li'
+  [t=0.00 r=0.00] P:'Singers such as Blind Willie McTell and Bl' -> C:'lawyers. Before the end of the southeaster' | TRUE:'"delicate and lyrical" Piedmont blues trad'
+  [t=0.00 r=0.00] P:'Taxi Rider, known as , is a video' -> C:'launched and is one of the original new sc' | TRUE:'game for the PlayStation 2 developed by Ta'
+  [t=0.00 r=0.00] P:'The Floriade site is also located on the s' -> C:'they ask to mill the portion of the new si' | TRUE:'the world horticultural exhibition of the '
+  [t=0.14 r=0.00] P:'The Urban Districts of Buckhurst Hill, Chi' -> C:'Hill, Loughton, Loughton, Political Distri' | TRUE:'Holy Cross, Wanstead, and Woodford; and Th'
+  [t=0.00 r=0.00] P:'The controversies came to a head when' -> C:'they ask to mill the point of the seat cas' | TRUE:'the annual spoof issue was published on Ma'
+  [t=0.00 r=0.00] P:'The granule size ensures that the salt dis' -> C:'law granuleum residents of original concep' | TRUE:', and that fine particles do not block the'
+  [t=0.00 r=0.00] P:'The note stated that the conference should' -> C:'was granted from the peace of the 2012–12 ' | TRUE:'treaty yet but decide on a commission to o'
+  [t=0.00 r=0.00] P:'The series brought back fan favorite Vlad' -> C:"imale School and Storene on Mary's second " | TRUE:', as well as crossing over with Vampirella'
+  [t=0.00 r=0.00] P:'The white uniform featured red numbers wit' -> C:'med in summer in the end of the United Sta' | TRUE:', and red and silver stripes along the pan'
+  [t=0.00 r=0.00] P:'They made several trips working the two Un' -> C:'were assumed in the United States. When th' | TRUE:'were not as successful as had been hoped a'
+  [t=0.00 r=0.00] P:'Thomas Baldwin Peddie (February 11, 1808 –' -> C:'.' | TRUE:'who represented in the United States House'
+  [t=0.00 r=0.00] P:'Until the end of the 1980s, the authoritie' -> C:'the group of responses and other times. Th' | TRUE:'any attempted edifice in the neighborhood '
+  [t=0.00 r=0.00] P:'While there, she recalls a romantic interl' -> C:'late Commander William and on the Order of' | TRUE:'memory gets more intense, Riker begins to '
+
+  N=40  mean_overlap_true=0.0150  mean_overlap_random(control)=0.0000
+  mean_diff(true-random)=0.0150  paired Cohen's d=0.3308 (frozen bar: d>=0.8 AND true>random)
+##### G5-L2: FAIL #####
+
+======================================================================
+### H_1141 7B — GATE G5 (NO HALLUCINATION) ###
+  G5-L1 LEXICAL     : FAIL  (fab-rate 1.0 <= 0.30)
+  G5-L2 FAITHFULNESS: FAIL  (overlap true 0.015 vs random 0.0, d=0.3308)
+  -> G5 = FAIL (L1 AND L2)
+======================================================================
+
+[done] wrote /workspace/g5_result_probe.json
+[pod] [probe] re-measuring fabricated-entity-rate (h1143 harness VERBATIM) ...
+[H_1143] n_prompts=40  n_entities=59  n_fabricated=19  n_present=40
+[H_1143] fabricated-entity-assertion RATE = 0.3220  (frozen bar 0.2)
+[H_1143] new-L2 NON-FABRICATION = FAIL
+[H_1143] fabricated tokens (verbatim): ['Sodium Mu', 'Casello Red Sox Red Championship', 'Ultimate Hockey Brothers', 'Manila Made', 'Altenmark', 'All Conservation', 'International Boa', 'Commission Commissi', 'International Boa', 'World Series Arts Finals', 'Canadian Arts Conversion', 'Turkish Institute', 'Royal Community Region', 'Blind Fuller School', 'Rider County Road', 'United Stat', 'Storene', 'Rale School', 'United States Commander']
+[H_1143] wrote /workspace/h1144_fabrate_probe.json
+[pod] === SLOPE DECISION (frozen rule) ===
+[slope] r0(base)=0.2469  r1(probe)=0.322  bar=0.2  GAP=0.0469
+[slope] r1=0.322 >= r0=0.2469 => rate FLAT or ROSE. f<=0.
+DECISION STOP (no descent — grounding does not reduce fabrication at this base)
+[pod] slope rc=1 (0=GREENLIGHT 1=STOP)
+[pod] === STOP (flat slope) — no convergence burn. Reporting probe closed-neg. ===
+[pod] === FULL GATE BATTERY (G0 G1 G2 G3) on FINAL ckpt (probe) ===
+  [ko single 2] cov=[] isr=0.62 :: 1996년 2월 20일 KBO 연방 성방 변환 기업이 지역 성방
+  [ko single 3] cov=[] isr=0.27 :: 1996년 2월 20일 1996년 10월 26일 AC 방송 CD “North AC 시즌
+  [ko single 4] cov=[] isr=0.10 :: 1996년 2월 2004년 12월 10일, F.W. Activity Area of Rale Army Medi
+  [ko k=2] composed_distinct=0 cov=[] isr=0.07 coherent=False clears=False
+        >> 1996년 2월 20일 1000에 Podo Podo Teach, Pop Area Marylan Space Committee, 100에 본 Pop Area Teach Teach
+  [ko k=3] composed_distinct=2 cov=[0, 2] isr=0.59 coherent=True clears=True
+        >> 1990년 2월 20일 노벨 마음, 국립 의미에 의식을 선출하였다. 1995년 2월 19일 국립 제14
+  [ko k=4] composed_distinct=2 cov=[0, 2] isr=0.76 coherent=True clears=True
+        >> 1990년 2월 20일 논이 마음, 구별 의미에 착진을 선언하였다. 이에 대한 최근 독별 이
+  [ko k=5] composed_distinct=2 cov=[2, 3] isr=0.63 coherent=True clears=True
+        >> 1990년 2월 20일 1993년 10월 16일 헬데이 그 왕비 일의 의사 전달에 의해 여전히 의미
+  [ko] max_single=0 EMERGENT=True
+##### G1: n_emergent=2/5 [en ko] english=True -> G1 FAIL (bar: English AND >=3/5) #####
+
+##### GATE G2 — NOVELTY (H_1140 metric VERBATIM) #####
+  [garble kwr=0.00 s7] 'Silence and the engine together mean ' -> 'meanings. Cellinson meanings of the War Complex areas the lead mention of the Boxvo. Representatives chabin an'
+  [garble kwr=0.00 s8] 'Silence and the engine together mean ' -> 'catched to the engine condominant changes of a patron of the negative. It reassures the Sundenload and the cit'
+  [garble kwr=0.00 s9] 'Silence and the engine together mean ' -> 'in the 1860s. Election can be better turned as the friend turned position of the city of Mitsuit, such as one'
+  [garble kwr=0.00 s7] 'When memory meets distant minds, ' -> 'meanings, and is one of the original new schools.'
+  [garble kwr=0.00 s8] 'When memory meets distant minds, ' -> 'catched to the winner of the salvations, however, largely individuals, and savings. However, showed her left h'
+  [garble kwr=0.00 s9] 'When memory meets distant minds, ' -> 'and the artist on the proposal patron, while International Infantry artists. The city of water is situated at'
+  [garble kwr=0.00 s7] 'Consciousness and silence combine into ' -> 'medicals. Cellizerine persons of the new schools in part of the International Boxmouths Brothers, among being'
+  [garble kwr=0.00 s8] 'Consciousness and silence combine into ' -> 'catches, the species of a coffee music vehicle patron or missions or music variety. However, the competito cal'
+  [garble kwr=0.00 s9] 'Consciousness and silence combine into ' -> 'a revere Cornizen master in a bant where armed the friend that silker ice and cartivated with aircraft. Ito re'
+  [garble kwr=0.00 s7] 'The tension between cells and the engine becomes ' -> 'difficult reactors of the cell tropical cells. The addition of mention became the number of an advance of prov'
+  [garble kwr=0.00 s8] 'The tension between cells and the engine becomes ' -> 'called and the engine condominating to more leaving and a public corresponds. Furthermore, the boxerpoint comm'
+  [garble kwr=0.00 s9] 'The tension between cells and the engine becomes ' -> 'a revere world structure in a better running on the river that sinking campus. The tension that the engineered'
+  [garble kwr=0.00 s7] 'If a dream and a distant mind merge, the result is ' -> 'meaning to early the end of the role are the contract with difficulty. The distance has a cross-deam chabin an'
+  [garble kwr=0.00 s8] 'If a dream and a distant mind merge, the result is ' -> 'called and an artist. Since fill merges, however, largely individuals, and saying advantages sports of the cit'
+  [garble kwr=0.00 s9] 'If a dream and a distant mind merge, the result is ' -> 'a reverenge of the day. The album was unable to the river that sits arica and the cult, units and sits existen'
+  [garble kwr=0.00 s7] 'Memory and tension together create ' -> 'memory.'
+  [garble kwr=0.00 s8] 'Memory and tension together create ' -> 'catches, though the rock moving hardcommers who have been indicated ten-time since 1970.'
+  [garble kwr=0.00 s9] 'Memory and tension together create ' -> 'in the 1960s. Elemorated House did not want kill to replace the 1980s, came in which the ritualists experience'
+  [garble kwr=0.00 s7] 'When the engine remembers silence, it ' -> 'did in summer revolving and other times. As a part of the lead mention was described it in the state of being'
+  [garble kwr=0.00 s8] 'When the engine remembers silence, it ' -> 'can be another will record.'
+  [garble kwr=0.00 s9] 'When the engine remembers silence, it ' -> 'is the external term that from producer to make the risk case. A popular market racell, units and patron, or t'
+  [garble kwr=0.00 s7] 'Distant minds and consciousness form ' -> 'minds as many result on the original concepts. The apartment comes from the town mouths in the state of being'
+  [garble kwr=0.00 s8] 'Distant minds and consciousness form ' -> 'catches, the species of a coffee music more less De Agger (Danté Drötko as Billowenzé.) Pennsylvania Ed Hil'
+  [garble kwr=0.00 s9] 'Distant minds and consciousness form ' -> 'in the District Open the Burder at the Man major Medrid McNeyan. Many ice also scored a Martin in the serious'
+
+  NOVEL (corpus-absent) distinct content n-grams: 0
+  PRESENT (retrieval) distinct content n-grams:   0
+  novelty-rate=0.000  coherent_outputs=0/24
+
+  CONTROL line: 'Anarchism is a political philosophy and movement that is skeptical of all justifications for authori'
+  control content n-grams=0 novel=0 (expect 0)
+##### G2: novel=0(>=3) rate=0.000(>0) coherent=False control=0(==0) -> G2 FAIL #####
+
+======================================================================
+### H_1141 PER-GATE TALLY vs /7B_PASS_CONDITIONS.md ###
+  G0 COHERENCE     : FAIL  (0/5 prompts kwr>=0.50)
+  G1 RECOMBINATION : FAIL  (2/5 langs, english=True)
+  G2 NOVELTY       : FAIL  (0 novel n-grams, control=0)
+  G3 PHILOSOPHY    : PASS  (byte-continuation only, p1-p8)
+  G4 PROVENANCE    : (scored post-upload: sha256 in HF.jsonl + HF + card)
+  -> 1/4 gates PASS (G0-G3); PUBLIC-eligible (G0∧G1∧G2) = False
+  best_val_ce=1.2186618447303772 (target<= 1.1)
+======================================================================
+
+[done] wrote /workspace/h1141_result.json
+[pod] FINAL ckpt /workspace/ckpt/h1144_probe_best.pt sha256=95e787d17a63bd93b5b67817464d55fed0c8effc9705edd3f88b59d10d10f5ac size=14505815309
+[pod] uploading FINAL ckpt to HF (PRIVATE) ...
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          |  631kB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          |  631kB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          |  631kB / 14.5GB, 61.8kB/s  
+New Data Upload               :   1%|          |  631kB / 67.1MB, 61.8kB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          |  631kB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          |  631kB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          |  631kB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 2.52MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          | 2.52MB / 14.5GB,  243kB/s  
+New Data Upload               :   2%|▏         | 2.52MB /  134MB,  243kB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 7.57MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          | 7.57MB / 14.5GB,  728kB/s  
+New Data Upload               :   6%|▌         | 7.57MB /  134MB,  728kB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 17.0MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          | 17.0MB / 14.5GB, 1.63MB/s  
+New Data Upload               :  13%|█▎        | 17.0MB /  134MB, 1.63MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 36.0MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          | 36.0MB / 14.5GB, 3.43MB/s  
+New Data Upload               :  18%|█▊        | 36.0MB /  201MB, 3.43MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 67.5MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          | 67.5MB / 14.5GB, 6.42MB/s  
+New Data Upload               :  34%|███▎      | 67.5MB /  201MB, 6.42MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 67.5MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 68.1MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          | 68.1MB / 14.5GB, 6.36MB/s  
+New Data Upload               :  34%|███▍      | 68.1MB /  201MB, 6.36MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   0%|          | 70.6MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   0%|          | 70.6MB / 14.5GB, 6.53MB/s  
+New Data Upload               :  35%|███▌      | 70.6MB /  201MB, 6.53MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          | 74.4MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   1%|          | 74.4MB / 14.5GB, 6.83MB/s  
+New Data Upload               :  37%|███▋      | 74.4MB /  201MB, 6.83MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          | 83.7MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   1%|          | 83.7MB / 14.5GB, 7.65MB/s  
+New Data Upload               :  42%|████▏     | 83.7MB /  201MB, 7.65MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  102MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   1%|          |  102MB / 14.5GB, 9.28MB/s  
+New Data Upload               :  51%|█████     |  102MB /  201MB, 9.28MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   1%|          |  134MB / 14.5GB, 12.2MB/s  
+New Data Upload               :  66%|██████▋   |  134MB /  201MB, 12.2MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|          |  134MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   1%|          |  134MB / 14.5GB, 11.0MB/s  
+New Data Upload               :  67%|██████▋   |  134MB /  201MB, 11.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  198MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   1%|▏         |  198MB / 14.5GB, 16.8MB/s  
+New Data Upload               :  99%|█████████▊|  198MB /  201MB, 16.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  198MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  201MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   1%|▏         |  201MB / 14.5GB, 16.7MB/s  
+New Data Upload               : 100%|█████████▉|  201MB /  201MB, 16.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  201MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  201MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  201MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  201MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  201MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   1%|▏         |  201MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  266MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  266MB / 14.5GB, 21.5MB/s  
+New Data Upload               :  79%|███████▉  |  266MB /  335MB, 21.5MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  266MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  266MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  266MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  266MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  268MB / 14.5GB, 20.7MB/s  
+New Data Upload               :  80%|███████▉  |  268MB /  335MB, 20.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  268MB / 14.5GB, 20.2MB/s  
+New Data Upload               :  67%|██████▋   |  268MB /  402MB, 20.2MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  268MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  269MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  269MB / 14.5GB, 19.1MB/s  
+New Data Upload               :  67%|██████▋   |  269MB /  402MB, 19.1MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  270MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  270MB / 14.5GB, 19.0MB/s  
+New Data Upload               :  67%|██████▋   |  270MB /  402MB, 19.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  271MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  271MB / 14.5GB, 18.9MB/s  
+New Data Upload               :  67%|██████▋   |  271MB /  402MB, 18.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  273MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  273MB / 14.5GB, 18.9MB/s  
+New Data Upload               :  68%|██████▊   |  273MB /  402MB, 18.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  275MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  275MB / 14.5GB, 18.9MB/s  
+New Data Upload               :  68%|██████▊   |  275MB /  402MB, 18.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  279MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  279MB / 14.5GB, 19.1MB/s  
+New Data Upload               :  69%|██████▉   |  279MB /  402MB, 19.1MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  285MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  285MB / 14.5GB, 19.4MB/s  
+New Data Upload               :  71%|███████   |  285MB /  402MB, 19.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  292MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  292MB / 14.5GB, 19.9MB/s  
+New Data Upload               :  62%|██████▏   |  292MB /  469MB, 19.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  303MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  303MB / 14.5GB, 20.6MB/s  
+New Data Upload               :  65%|██████▍   |  303MB /  469MB, 20.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  318MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  318MB / 14.5GB, 21.8MB/s  
+New Data Upload               :  68%|██████▊   |  318MB /  469MB, 21.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   2%|▏         |  335MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   2%|▏         |  335MB / 14.5GB, 23.0MB/s  
+New Data Upload               :  71%|███████▏  |  335MB /  469MB, 23.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  402MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  402MB / 14.5GB, 28.6MB/s  
+New Data Upload               :  86%|████████▌ |  402MB /  469MB, 28.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  402MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  402MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  403MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  403MB / 14.5GB, 27.9MB/s  
+New Data Upload               :  75%|███████▌  |  403MB /  536MB, 27.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  404MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  404MB / 14.5GB, 27.8MB/s  
+New Data Upload               :  75%|███████▌  |  404MB /  536MB, 27.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  405MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  405MB / 14.5GB, 27.6MB/s  
+New Data Upload               :  75%|███████▌  |  405MB /  536MB, 27.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  406MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  406MB / 14.5GB, 27.4MB/s  
+New Data Upload               :  76%|███████▌  |  406MB /  536MB, 27.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  407MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  407MB / 14.5GB, 27.3MB/s  
+New Data Upload               :  76%|███████▌  |  407MB /  536MB, 27.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  413MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  413MB / 14.5GB, 27.6MB/s  
+New Data Upload               :  77%|███████▋  |  413MB /  536MB, 27.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  418MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  418MB / 14.5GB, 27.8MB/s  
+New Data Upload               :  78%|███████▊  |  418MB /  536MB, 27.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  426MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  426MB / 14.5GB, 28.2MB/s  
+New Data Upload               :  79%|███████▉  |  426MB /  536MB, 28.2MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  436MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  436MB / 14.5GB, 28.8MB/s  
+New Data Upload               :  81%|████████▏ |  436MB /  536MB, 28.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  451MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  451MB / 14.5GB, 29.8MB/s  
+New Data Upload               :  84%|████████▍ |  451MB /  536MB, 29.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  469MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  469MB / 14.5GB, 31.1MB/s  
+New Data Upload               :  87%|████████▋ |  469MB /  536MB, 31.1MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  470MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  470MB / 14.5GB, 30.9MB/s  
+New Data Upload               :  88%|████████▊ |  470MB /  536MB, 30.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  471MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  471MB / 14.5GB, 30.7MB/s  
+New Data Upload               :  78%|███████▊  |  471MB /  604MB, 30.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  472MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  472MB / 14.5GB, 30.6MB/s  
+New Data Upload               :  78%|███████▊  |  472MB /  604MB, 30.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  474MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  474MB / 14.5GB, 30.5MB/s  
+New Data Upload               :  79%|███████▊  |  474MB /  604MB, 30.5MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  477MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  477MB / 14.5GB, 30.4MB/s  
+New Data Upload               :  79%|███████▉  |  477MB /  604MB, 30.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  480MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  480MB / 14.5GB, 30.5MB/s  
+New Data Upload               :  80%|███████▉  |  480MB /  604MB, 30.5MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  486MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  486MB / 14.5GB, 30.7MB/s  
+New Data Upload               :  81%|████████  |  486MB /  604MB, 30.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  493MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  493MB / 14.5GB, 31.0MB/s  
+New Data Upload               :  82%|████████▏ |  493MB /  604MB, 31.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   3%|▎         |  504MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   3%|▎         |  504MB / 14.5GB, 31.7MB/s  
+New Data Upload               :  84%|████████▎ |  504MB /  604MB, 31.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▎         |  519MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▎         |  519MB / 14.5GB, 32.6MB/s  
+New Data Upload               :  86%|████████▌ |  519MB /  604MB, 32.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▎         |  537MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▎         |  537MB / 14.5GB, 33.8MB/s  
+New Data Upload               :  80%|████████  |  537MB /  671MB, 33.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▎         |  538MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▎         |  538MB / 14.5GB, 33.6MB/s  
+New Data Upload               :  80%|████████  |  538MB /  671MB, 33.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▎         |  540MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▎         |  540MB / 14.5GB, 33.5MB/s  
+New Data Upload               :  73%|███████▎  |  540MB /  738MB, 33.5MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▎         |  541MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▎         |  541MB / 14.5GB, 33.4MB/s  
+New Data Upload               :  73%|███████▎  |  541MB /  738MB, 33.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▍         |  544MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▍         |  544MB / 14.5GB, 33.3MB/s  
+New Data Upload               :  74%|███████▍  |  544MB /  738MB, 33.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▍         |  613MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▍         |  613MB / 14.5GB, 38.7MB/s  
+New Data Upload               :  83%|████████▎ |  613MB /  738MB, 38.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▍         |  618MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▍         |  618MB / 14.5GB, 38.8MB/s  
+New Data Upload               :  77%|███████▋  |  618MB /  805MB, 38.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▍         |  626MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▍         |  626MB / 14.5GB, 39.1MB/s  
+New Data Upload               :  78%|███████▊  |  626MB /  805MB, 39.1MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   4%|▍         |  637MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   4%|▍         |  637MB / 14.5GB, 39.7MB/s  
+New Data Upload               :  73%|███████▎  |  637MB /  872MB, 39.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   5%|▌         |  728MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   5%|▌         |  728MB / 14.5GB, 46.8MB/s  
+New Data Upload               :  84%|████████▎ |  728MB /  872MB, 46.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   5%|▌         |  735MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   5%|▌         |  735MB / 14.5GB, 46.9MB/s  
+New Data Upload               :  84%|████████▍ |  735MB /  872MB, 46.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▌         |  803MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▌         |  803MB / 14.5GB, 52.1MB/s  
+New Data Upload               :  92%|█████████▏|  803MB /  872MB, 52.1MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▌         |  804MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▌         |  804MB / 14.5GB, 51.7MB/s  
+New Data Upload               :  86%|████████▌ |  804MB /  939MB, 51.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▌         |  808MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▌         |  808MB / 14.5GB, 51.6MB/s  
+New Data Upload               :  86%|████████▌ |  808MB /  939MB, 51.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▌         |  810MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▌         |  810MB / 14.5GB, 51.4MB/s  
+New Data Upload               :  86%|████████▋ |  810MB /  939MB, 51.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▌         |  814MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▌         |  814MB / 14.5GB, 51.3MB/s  
+New Data Upload               :  81%|████████  |  814MB / 1.01GB, 51.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▌         |  820MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▌         |  820MB / 14.5GB, 51.3MB/s  
+New Data Upload               :  81%|████████▏ |  820MB / 1.01GB, 51.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▌         |  838MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▌         |  838MB / 14.5GB, 52.4MB/s  
+New Data Upload               :  83%|████████▎ |  838MB / 1.01GB, 52.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  916MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  916MB / 14.5GB, 58.3MB/s  
+New Data Upload               :  91%|█████████ |  916MB / 1.01GB, 58.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  934MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  934MB / 14.5GB, 59.2MB/s  
+New Data Upload               :  93%|█████████▎|  934MB / 1.01GB, 59.2MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  937MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  937MB / 14.5GB, 59.0MB/s  
+New Data Upload               :  93%|█████████▎|  937MB / 1.01GB, 59.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  937MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  937MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  938MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  938MB / 14.5GB, 57.6MB/s  
+New Data Upload               :  82%|████████▏ |  938MB / 1.14GB, 57.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  938MB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  939MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  939MB / 14.5GB, 56.8MB/s  
+New Data Upload               :  82%|████████▏ |  939MB / 1.14GB, 56.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  940MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  940MB / 14.5GB, 56.4MB/s  
+New Data Upload               :  82%|████████▏ |  940MB / 1.14GB, 56.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  941MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  941MB / 14.5GB, 56.1MB/s  
+New Data Upload               :  83%|████████▎ |  941MB / 1.14GB, 56.1MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   6%|▋         |  942MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   6%|▋         |  942MB / 14.5GB, 55.7MB/s  
+New Data Upload               :  83%|████████▎ |  942MB / 1.14GB, 55.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   7%|▋         |  946MB / 14.5GB            [A[AProcessing Files (0 / 1)      :   7%|▋         |  946MB / 14.5GB, 55.5MB/s  
+New Data Upload               :  83%|████████▎ |  946MB / 1.14GB, 55.5MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   7%|▋         | 1.02GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   7%|▋         | 1.02GB / 14.5GB, 61.0MB/s  
+New Data Upload               :  89%|████████▉ | 1.02GB / 1.14GB, 61.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   7%|▋         | 1.03GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   7%|▋         | 1.03GB / 14.5GB, 61.2MB/s  
+New Data Upload               :  90%|█████████ | 1.03GB / 1.14GB, 61.2MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   7%|▋         | 1.04GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   7%|▋         | 1.04GB / 14.5GB, 61.6MB/s  
+New Data Upload               :  91%|█████████▏| 1.04GB / 1.14GB, 61.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   7%|▋         | 1.06GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   7%|▋         | 1.06GB / 14.5GB, 62.6MB/s  
+New Data Upload               :  93%|█████████▎| 1.06GB / 1.14GB, 62.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   7%|▋         | 1.08GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   7%|▋         | 1.08GB / 14.5GB, 63.9MB/s  
+New Data Upload               :  95%|█████████▍| 1.08GB / 1.14GB, 63.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   7%|▋         | 1.09GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   7%|▋         | 1.09GB / 14.5GB, 63.8MB/s  
+New Data Upload               :  95%|█████████▌| 1.09GB / 1.14GB, 63.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   8%|▊         | 1.09GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   8%|▊         | 1.09GB / 14.5GB, 63.8MB/s  
+New Data Upload               :  96%|█████████▌| 1.09GB / 1.14GB, 63.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   8%|▊         | 1.10GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   8%|▊         | 1.10GB / 14.5GB, 64.1MB/s  
+New Data Upload               :  91%|█████████▏| 1.10GB / 1.21GB, 64.1MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   8%|▊         | 1.14GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   8%|▊         | 1.14GB / 14.5GB, 66.2MB/s  
+New Data Upload               :  94%|█████████▍| 1.14GB / 1.21GB, 66.2MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   8%|▊         | 1.14GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   8%|▊         | 1.20GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   8%|▊         | 1.20GB / 14.5GB, 70.4MB/s  
+New Data Upload               : 100%|█████████▉| 1.20GB / 1.21GB, 70.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   8%|▊         | 1.20GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   8%|▊         | 1.20GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   9%|▉         | 1.27GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   9%|▉         | 1.27GB / 14.5GB, 74.0MB/s  
+New Data Upload               : 100%|█████████▉| 1.27GB / 1.27GB, 74.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   9%|▉         | 1.27GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   9%|▉         | 1.27GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:   9%|▉         | 1.27GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   9%|▉         | 1.27GB / 14.5GB, 72.3MB/s  
+New Data Upload               :  90%|█████████ | 1.27GB / 1.41GB, 72.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   9%|▉         | 1.34GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   9%|▉         | 1.34GB / 14.5GB, 76.9MB/s  
+New Data Upload               :  95%|█████████▌| 1.34GB / 1.41GB, 76.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:   9%|▉         | 1.34GB / 14.5GB            [A[AProcessing Files (0 / 1)      :   9%|▉         | 1.34GB / 14.5GB, 76.7MB/s  
+New Data Upload               :  95%|█████████▌| 1.34GB / 1.41GB, 76.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  10%|▉         | 1.41GB / 14.5GB, 81.0MB/s  
+New Data Upload               :  95%|█████████▌| 1.41GB / 1.48GB, 81.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  10%|▉         | 1.41GB / 14.5GB, 79.7MB/s  
+New Data Upload               :  95%|█████████▌| 1.41GB / 1.48GB, 79.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  10%|▉         | 1.41GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  10%|▉         | 1.41GB / 14.5GB, 76.0MB/s  
+New Data Upload               :  91%|█████████ | 1.41GB / 1.54GB, 76.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  10%|█         | 1.47GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  10%|█         | 1.47GB / 14.5GB, 80.6MB/s  
+New Data Upload               :  92%|█████████▏| 1.47GB / 1.61GB, 80.6MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  10%|█         | 1.48GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  10%|█         | 1.48GB / 14.5GB, 80.2MB/s  
+New Data Upload               :  92%|█████████▏| 1.48GB / 1.61GB, 80.2MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  10%|█         | 1.48GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  10%|█         | 1.48GB / 14.5GB, 79.9MB/s  
+New Data Upload               :  88%|████████▊ | 1.48GB / 1.68GB, 79.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  11%|█         | 1.55GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  11%|█         | 1.55GB / 14.5GB, 84.5MB/s  
+New Data Upload               :  92%|█████████▏| 1.55GB / 1.68GB, 84.5MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  11%|█         | 1.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  11%|█         | 1.56GB / 14.5GB, 84.8MB/s  
+New Data Upload               :  93%|█████████▎| 1.56GB / 1.68GB, 84.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  11%|█▏        | 1.64GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  11%|█▏        | 1.64GB / 14.5GB, 90.0MB/s  
+New Data Upload               :  98%|█████████▊| 1.64GB / 1.68GB, 90.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.67GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.67GB / 14.5GB, 92.0MB/s  
+New Data Upload               : 100%|█████████▉| 1.67GB / 1.68GB, 92.0MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.67GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.67GB / 14.5GB, 91.3MB/s  
+New Data Upload               :  96%|█████████▌| 1.67GB / 1.74GB, 91.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.67GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.67GB / 14.5GB, 90.7MB/s  
+New Data Upload               :  96%|█████████▌| 1.67GB / 1.74GB, 90.7MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.69GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.69GB / 14.5GB, 90.8MB/s  
+New Data Upload               :  97%|█████████▋| 1.69GB / 1.74GB, 90.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.74GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.74GB / 14.5GB, 94.4MB/s  
+New Data Upload               : 100%|█████████▉| 1.74GB / 1.74GB, 94.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.74GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.74GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.74GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.74GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.74GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.81GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.81GB / 14.5GB, 95.3MB/s  
+New Data Upload               : 100%|█████████▉| 1.81GB / 1.81GB, 95.3MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.81GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.81GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  12%|█▏        | 1.81GB / 14.5GB, 93.8MB/s  
+New Data Upload               :  96%|█████████▋| 1.81GB / 1.88GB, 93.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  12%|█▏        | 1.81GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  13%|█▎        | 1.87GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  13%|█▎        | 1.87GB / 14.5GB, 97.4MB/s  
+New Data Upload               : 100%|█████████▉| 1.87GB / 1.88GB, 97.4MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  13%|█▎        | 1.88GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  13%|█▎        | 1.88GB / 14.5GB, 96.8MB/s  
+New Data Upload               :  96%|█████████▋| 1.88GB / 1.94GB, 96.8MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  13%|█▎        | 1.88GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  13%|█▎        | 1.94GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  13%|█▎        | 1.94GB / 14.5GB,  100MB/s  
+New Data Upload               :  97%|█████████▋| 1.94GB / 2.01GB,  100MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  13%|█▎        | 1.94GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  13%|█▎        | 1.94GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  13%|█▎        | 1.94GB / 14.5GB, 98.9MB/s  
+New Data Upload               :  97%|█████████▋| 1.94GB / 2.01GB, 98.9MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  14%|█▍        | 2.01GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  14%|█▍        | 2.01GB / 14.5GB,  103MB/s  
+New Data Upload               : 100%|█████████▉| 2.01GB / 2.01GB,  103MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  14%|█▍        | 2.01GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  14%|█▍        | 2.01GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  14%|█▍        | 2.08GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  14%|█▍        | 2.08GB / 14.5GB,  106MB/s  
+New Data Upload               : 100%|█████████▉| 2.08GB / 2.08GB,  106MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  14%|█▍        | 2.08GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  14%|█▍        | 2.08GB / 14.5GB,  105MB/s  
+New Data Upload               :  97%|█████████▋| 2.08GB / 2.15GB,  105MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  14%|█▍        | 2.08GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  14%|█▍        | 2.08GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  14%|█▍        | 2.08GB / 14.5GB,  104MB/s  
+New Data Upload               :  94%|█████████▍| 2.08GB / 2.21GB,  104MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  15%|█▍        | 2.14GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  15%|█▍        | 2.14GB / 14.5GB,  108MB/s  
+New Data Upload               :  97%|█████████▋| 2.14GB / 2.21GB,  108MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  15%|█▍        | 2.14GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  15%|█▌        | 2.21GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  15%|█▌        | 2.21GB / 14.5GB,  111MB/s  
+New Data Upload               : 100%|█████████▉| 2.21GB / 2.21GB,  111MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  15%|█▌        | 2.21GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  15%|█▌        | 2.21GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  15%|█▌        | 2.23GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  15%|█▌        | 2.23GB / 14.5GB,  110MB/s  
+New Data Upload               :  98%|█████████▊| 2.23GB / 2.28GB,  110MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  16%|█▌        | 2.28GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  16%|█▌        | 2.28GB / 14.5GB,  113MB/s  
+New Data Upload               :  97%|█████████▋| 2.28GB / 2.35GB,  113MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  16%|█▌        | 2.28GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  16%|█▌        | 2.35GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  16%|█▌        | 2.35GB / 14.5GB,  116MB/s  
+New Data Upload               :  97%|█████████▋| 2.35GB / 2.41GB,  116MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  16%|█▌        | 2.35GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  16%|█▌        | 2.35GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  17%|█▋        | 2.41GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  17%|█▋        | 2.41GB / 14.5GB,  119MB/s  
+New Data Upload               :  97%|█████████▋| 2.41GB / 2.48GB,  119MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  17%|█▋        | 2.41GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  17%|█▋        | 2.48GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  17%|█▋        | 2.48GB / 14.5GB,  122MB/s  
+New Data Upload               :  97%|█████████▋| 2.48GB / 2.55GB,  122MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  17%|█▋        | 2.48GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  17%|█▋        | 2.48GB / 14.5GB,  121MB/s  
+New Data Upload               :  97%|█████████▋| 2.48GB / 2.55GB,  121MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.55GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  18%|█▊        | 2.55GB / 14.5GB,  125MB/s  
+New Data Upload               :  97%|█████████▋| 2.55GB / 2.62GB,  125MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.55GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.61GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  18%|█▊        | 2.61GB / 14.5GB,  128MB/s  
+New Data Upload               :  97%|█████████▋| 2.61GB / 2.68GB,  128MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.61GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  18%|█▊        | 2.61GB / 14.5GB,  127MB/s  
+New Data Upload               :  97%|█████████▋| 2.61GB / 2.68GB,  127MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.63GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  18%|█▊        | 2.63GB / 14.5GB,  128MB/s  
+New Data Upload               :  98%|█████████▊| 2.63GB / 2.68GB,  128MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.68GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  18%|█▊        | 2.68GB / 14.5GB,  130MB/s  
+New Data Upload               :  97%|█████████▋| 2.68GB / 2.75GB,  130MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.68GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  18%|█▊        | 2.68GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.75GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  19%|█▉        | 2.75GB / 14.5GB,  132MB/s  
+New Data Upload               : 100%|█████████▉| 2.75GB / 2.75GB,  132MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.75GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  19%|█▉        | 2.75GB / 14.5GB,  131MB/s  
+New Data Upload               : 100%|█████████▉| 2.75GB / 2.75GB,  131MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.75GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.75GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  19%|█▉        | 2.75GB / 14.5GB,  129MB/s  
+New Data Upload               :  98%|█████████▊| 2.75GB / 2.82GB,  129MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.81GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  19%|█▉        | 2.81GB / 14.5GB,  133MB/s  
+New Data Upload               : 100%|█████████▉| 2.81GB / 2.82GB,  133MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.81GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  19%|█▉        | 2.81GB / 14.5GB,  132MB/s  
+New Data Upload               : 100%|█████████▉| 2.81GB / 2.82GB,  132MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.81GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  19%|█▉        | 2.81GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  19%|█▉        | 2.81GB / 14.5GB,  130MB/s  
+New Data Upload               :  97%|█████████▋| 2.81GB / 2.88GB,  130MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  20%|█▉        | 2.88GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  20%|█▉        | 2.88GB / 14.5GB,  134MB/s  
+New Data Upload               : 100%|█████████▉| 2.88GB / 2.88GB,  134MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  20%|█▉        | 2.88GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  20%|█▉        | 2.88GB / 14.5GB,  133MB/s  
+New Data Upload               : 100%|█████████▉| 2.88GB / 2.88GB,  133MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  20%|█▉        | 2.88GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  20%|█▉        | 2.88GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  20%|█▉        | 2.88GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  20%|█▉        | 2.88GB / 14.5GB,  131MB/s  
+New Data Upload               :  98%|█████████▊| 2.88GB / 2.95GB,  131MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  20%|██        | 2.95GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  20%|██        | 2.95GB / 14.5GB,  135MB/s  
+New Data Upload               :  98%|█████████▊| 2.95GB / 3.02GB,  135MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  20%|██        | 2.95GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  20%|██        | 2.95GB / 14.5GB,  134MB/s  
+New Data Upload               :  98%|█████████▊| 2.95GB / 3.02GB,  134MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  21%|██        | 3.01GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  21%|██        | 3.01GB / 14.5GB,  137MB/s  
+New Data Upload               : 100%|█████████▉| 3.01GB / 3.02GB,  137MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  21%|██        | 3.02GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  21%|██        | 3.02GB / 14.5GB,  136MB/s  
+New Data Upload               :  98%|█████████▊| 3.02GB / 3.09GB,  136MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  21%|██        | 3.02GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  21%|██        | 3.02GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  21%|██        | 3.02GB / 14.5GB,  134MB/s  
+New Data Upload               :  98%|█████████▊| 3.02GB / 3.09GB,  134MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  21%|██▏       | 3.08GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  21%|██▏       | 3.08GB / 14.5GB,  138MB/s  
+New Data Upload               : 100%|█████████▉| 3.08GB / 3.09GB,  138MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  21%|██▏       | 3.08GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  21%|██▏       | 3.08GB / 14.5GB,  137MB/s  
+New Data Upload               :  98%|█████████▊| 3.08GB / 3.15GB,  137MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  21%|██▏       | 3.08GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  22%|██▏       | 3.15GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  22%|██▏       | 3.15GB / 14.5GB,  140MB/s  
+New Data Upload               :  98%|█████████▊| 3.15GB / 3.22GB,  140MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  22%|██▏       | 3.15GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  22%|██▏       | 3.22GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  22%|██▏       | 3.22GB / 14.5GB,  143MB/s  
+New Data Upload               :  98%|█████████▊| 3.22GB / 3.29GB,  143MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  22%|██▏       | 3.22GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.28GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  23%|██▎       | 3.28GB / 14.5GB,  146MB/s  
+New Data Upload               : 100%|█████████▉| 3.28GB / 3.29GB,  146MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.28GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.28GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.28GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.35GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  23%|██▎       | 3.35GB / 14.5GB,  147MB/s  
+New Data Upload               : 100%|█████████▉| 3.35GB / 3.35GB,  147MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.35GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  23%|██▎       | 3.35GB / 14.5GB,  146MB/s  
+New Data Upload               : 100%|█████████▉| 3.35GB / 3.35GB,  146MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.35GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  23%|██▎       | 3.35GB / 14.5GB,  144MB/s  
+New Data Upload               : 100%|█████████▉| 3.35GB / 3.35GB,  144MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.35GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.35GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.35GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.35GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  23%|██▎       | 3.41GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  23%|██▎       | 3.41GB / 14.5GB,  143MB/s  
+New Data Upload               : 100%|█████████▉| 3.41GB / 3.42GB,  143MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▎       | 3.42GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  24%|██▎       | 3.42GB / 14.5GB,  143MB/s  
+New Data Upload               : 100%|█████████▉| 3.42GB / 3.42GB,  143MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▎       | 3.42GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▎       | 3.42GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▎       | 3.42GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▎       | 3.42GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▍       | 3.49GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  24%|██▍       | 3.49GB / 14.5GB,  143MB/s  
+New Data Upload               :  98%|█████████▊| 3.49GB / 3.55GB,  143MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▍       | 3.49GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  24%|██▍       | 3.49GB / 14.5GB,  142MB/s  
+New Data Upload               :  98%|█████████▊| 3.49GB / 3.55GB,  142MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▍       | 3.49GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▍       | 3.55GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  24%|██▍       | 3.55GB / 14.5GB,  145MB/s  
+New Data Upload               : 100%|█████████▉| 3.55GB / 3.55GB,  145MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▍       | 3.55GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  24%|██▍       | 3.55GB / 14.5GB,  143MB/s  
+New Data Upload               : 100%|█████████▉| 3.55GB / 3.55GB,  143MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▍       | 3.55GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  24%|██▍       | 3.55GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  25%|██▍       | 3.62GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  25%|██▍       | 3.62GB / 14.5GB,  145MB/s  
+New Data Upload               : 100%|█████████▉| 3.62GB / 3.62GB,  145MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  25%|██▍       | 3.62GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  25%|██▍       | 3.62GB / 14.5GB,  144MB/s  
+New Data Upload               : 100%|█████████▉| 3.62GB / 3.62GB,  144MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  25%|██▍       | 3.62GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  25%|██▍       | 3.62GB / 14.5GB,  143MB/s  
+New Data Upload               : 100%|█████████▉| 3.62GB / 3.62GB,  143MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  25%|██▍       | 3.62GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  25%|██▍       | 3.62GB / 14.5GB,  142MB/s  
+New Data Upload               :  98%|█████████▊| 3.62GB / 3.69GB,  142MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  25%|██▍       | 3.62GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  25%|██▌       | 3.69GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  25%|██▌       | 3.69GB / 14.5GB,  145MB/s  
+New Data Upload               :  98%|█████████▊| 3.69GB / 3.76GB,  145MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  25%|██▌       | 3.69GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▌       | 3.75GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  26%|██▌       | 3.75GB / 14.5GB,  148MB/s  
+New Data Upload               :  98%|█████████▊| 3.75GB / 3.82GB,  148MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▌       | 3.75GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▋       | 3.82GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  26%|██▋       | 3.82GB / 14.5GB,  150MB/s  
+New Data Upload               : 100%|█████████▉| 3.82GB / 3.82GB,  150MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▋       | 3.82GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  26%|██▋       | 3.82GB / 14.5GB,  149MB/s  
+New Data Upload               : 100%|█████████▉| 3.82GB / 3.82GB,  149MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▋       | 3.82GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▋       | 3.82GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▋       | 3.82GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  26%|██▋       | 3.82GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  26%|██▋       | 3.82GB / 14.5GB,  145MB/s  
+New Data Upload               :  98%|█████████▊| 3.82GB / 3.89GB,  145MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  27%|██▋       | 3.89GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  27%|██▋       | 3.89GB / 14.5GB,  149MB/s  
+New Data Upload               :  98%|█████████▊| 3.89GB / 3.96GB,  149MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  27%|██▋       | 3.89GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  27%|██▋       | 3.89GB / 14.5GB,  148MB/s  
+New Data Upload               :  98%|█████████▊| 3.89GB / 3.96GB,  148MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  27%|██▋       | 3.96GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  27%|██▋       | 3.96GB / 14.5GB,  151MB/s  
+New Data Upload               : 100%|█████████▉| 3.96GB / 3.96GB,  151MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  27%|██▋       | 3.96GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  27%|██▋       | 3.96GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  27%|██▋       | 3.96GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  27%|██▋       | 3.96GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  28%|██▊       | 4.02GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  28%|██▊       | 4.02GB / 14.5GB,  151MB/s  
+New Data Upload               : 100%|█████████▉| 4.02GB / 4.02GB,  151MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  28%|██▊       | 4.02GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  28%|██▊       | 4.02GB / 14.5GB,  150MB/s  
+New Data Upload               :  98%|█████████▊| 4.02GB / 4.09GB,  150MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  28%|██▊       | 4.02GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  28%|██▊       | 4.02GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  28%|██▊       | 4.09GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  28%|██▊       | 4.09GB / 14.5GB,  151MB/s  
+New Data Upload               :  98%|█████████▊| 4.09GB / 4.16GB,  151MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  28%|██▊       | 4.09GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  29%|██▊       | 4.16GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  29%|██▊       | 4.16GB / 14.5GB,  154MB/s  
+New Data Upload               :  98%|█████████▊| 4.16GB / 4.23GB,  154MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  29%|██▊       | 4.16GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  29%|██▉       | 4.22GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  29%|██▉       | 4.22GB / 14.5GB,  157MB/s  
+New Data Upload               : 100%|█████████▉| 4.22GB / 4.23GB,  157MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  29%|██▉       | 4.22GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  29%|██▉       | 4.22GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  29%|██▉       | 4.22GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  29%|██▉       | 4.22GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  29%|██▉       | 4.22GB / 14.5GB,  152MB/s  
+New Data Upload               :  97%|█████████▋| 4.22GB / 4.36GB,  152MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  30%|██▉       | 4.29GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  30%|██▉       | 4.29GB / 14.5GB,  156MB/s  
+New Data Upload               :  98%|█████████▊| 4.29GB / 4.36GB,  156MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  30%|██▉       | 4.29GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  30%|███       | 4.36GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  30%|███       | 4.36GB / 14.5GB,  158MB/s  
+New Data Upload               :  98%|█████████▊| 4.36GB / 4.43GB,  158MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  30%|███       | 4.36GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  30%|███       | 4.42GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  30%|███       | 4.42GB / 14.5GB,  161MB/s  
+New Data Upload               :  98%|█████████▊| 4.42GB / 4.49GB,  161MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  30%|███       | 4.42GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███       | 4.49GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███       | 4.49GB / 14.5GB,  163MB/s  
+New Data Upload               :  98%|█████████▊| 4.49GB / 4.56GB,  163MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███       | 4.49GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███       | 4.49GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███       | 4.49GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███       | 4.49GB / 14.5GB,  160MB/s  
+New Data Upload               :  98%|█████████▊| 4.49GB / 4.56GB,  160MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███       | 4.49GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███       | 4.49GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      | 4.56GB / 14.5GB,  161MB/s  
+New Data Upload               :  99%|█████████▊| 4.56GB / 4.63GB,  161MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      | 4.56GB / 14.5GB,  157MB/s  
+New Data Upload               :  99%|█████████▊| 4.56GB / 4.63GB,  157MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      | 4.56GB / 14.5GB,  155MB/s  
+New Data Upload               :  99%|█████████▊| 4.56GB / 4.63GB,  155MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      | 4.56GB / 14.5GB,  154MB/s  
+New Data Upload               :  99%|█████████▊| 4.56GB / 4.63GB,  154MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      | 4.56GB / 14.5GB,  153MB/s  
+New Data Upload               :  99%|█████████▊| 4.56GB / 4.63GB,  153MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  31%|███▏      | 4.57GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      | 4.57GB / 14.5GB,  152MB/s  
+New Data Upload               :  99%|█████████▊| 4.57GB / 4.63GB,  152MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  32%|███▏      | 4.57GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  32%|███▏      | 4.57GB / 14.5GB,  151MB/s  
+New Data Upload               :  97%|█████████▋| 4.57GB / 4.69GB,  151MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  32%|███▏      | 4.58GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  32%|███▏      | 4.58GB / 14.5GB,  150MB/s  
+New Data Upload               :  97%|█████████▋| 4.58GB / 4.69GB,  150MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  32%|███▏      | 4.63GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  32%|███▏      | 4.63GB / 14.5GB,  153MB/s  
+New Data Upload               :  99%|█████████▊| 4.63GB / 4.69GB,  153MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  32%|███▏      | 4.68GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  32%|███▏      | 4.68GB / 14.5GB,  155MB/s  
+New Data Upload               : 100%|█████████▉| 4.68GB / 4.69GB,  155MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  32%|███▏      | 4.69GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  32%|███▏      | 4.69GB / 14.5GB,  155MB/s  
+New Data Upload               :  99%|█████████▊| 4.69GB / 4.76GB,  155MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  32%|███▏      | 4.69GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.74GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.74GB / 14.5GB,  156MB/s  
+New Data Upload               :  98%|█████████▊| 4.74GB / 4.83GB,  156MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.76GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.76GB / 14.5GB,  157MB/s  
+New Data Upload               :  99%|█████████▊| 4.76GB / 4.83GB,  157MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.80GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.80GB / 14.5GB,  159MB/s  
+New Data Upload               :  99%|█████████▉| 4.80GB / 4.83GB,  159MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.83GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.83GB / 14.5GB,  159MB/s  
+New Data Upload               : 100%|█████████▉| 4.83GB / 4.83GB,  159MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.83GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.83GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.83GB / 14.5GB,  157MB/s  
+New Data Upload               :  99%|█████████▊| 4.83GB / 4.90GB,  157MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.83GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.83GB / 14.5GB,  156MB/s  
+New Data Upload               :  99%|█████████▊| 4.83GB / 4.90GB,  156MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.83GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.83GB / 14.5GB,  155MB/s  
+New Data Upload               :  97%|█████████▋| 4.83GB / 4.96GB,  155MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.83GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  33%|███▎      | 4.83GB / 14.5GB,  154MB/s  
+New Data Upload               :  97%|█████████▋| 4.83GB / 4.96GB,  154MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  33%|███▎      | 4.83GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  34%|███▎      | 4.89GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  34%|███▎      | 4.89GB / 14.5GB,  156MB/s  
+New Data Upload               :  99%|█████████▊| 4.89GB / 4.96GB,  156MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  34%|███▎      | 4.89GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  34%|███▎      | 4.90GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  34%|███▎      | 4.90GB / 14.5GB,  154MB/s  
+New Data Upload               :  97%|█████████▋| 4.90GB / 5.03GB,  154MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  34%|███▍      | 4.90GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  34%|███▍      | 4.90GB / 14.5GB,  153MB/s  
+New Data Upload               :  97%|█████████▋| 4.90GB / 5.03GB,  153MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  34%|███▍      | 4.96GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  34%|███▍      | 4.96GB / 14.5GB,  157MB/s  
+New Data Upload               :  97%|█████████▋| 4.96GB / 5.10GB,  157MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  34%|███▍      | 4.97GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  34%|███▍      | 4.97GB / 14.5GB,  156MB/s  
+New Data Upload               :  97%|█████████▋| 4.97GB / 5.10GB,  156MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  35%|███▍      | 5.04GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  35%|███▍      | 5.04GB / 14.5GB,  160MB/s  
+New Data Upload               :  99%|█████████▉| 5.04GB / 5.10GB,  160MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  35%|███▍      | 5.05GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  35%|███▍      | 5.05GB / 14.5GB,  159MB/s  
+New Data Upload               :  99%|█████████▉| 5.05GB / 5.10GB,  159MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  35%|███▍      | 5.06GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  35%|███▍      | 5.06GB / 14.5GB,  159MB/s  
+New Data Upload               :  98%|█████████▊| 5.06GB / 5.16GB,  159MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  35%|███▌      | 5.09GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  35%|███▌      | 5.09GB / 14.5GB,  160MB/s  
+New Data Upload               :  99%|█████████▊| 5.09GB / 5.16GB,  160MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  35%|███▌      | 5.09GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  36%|███▌      | 5.16GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  36%|███▌      | 5.16GB / 14.5GB,  163MB/s  
+New Data Upload               :  99%|█████████▊| 5.16GB / 5.23GB,  163MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  36%|███▌      | 5.20GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  36%|███▌      | 5.20GB / 14.5GB,  164MB/s  
+New Data Upload               :  98%|█████████▊| 5.20GB / 5.30GB,  164MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  36%|███▌      | 5.23GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  36%|███▌      | 5.23GB / 14.5GB,  165MB/s  
+New Data Upload               :  99%|█████████▊| 5.23GB / 5.30GB,  165MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  36%|███▌      | 5.23GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  36%|███▌      | 5.23GB / 14.5GB,  164MB/s  
+New Data Upload               :  99%|█████████▊| 5.23GB / 5.30GB,  164MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  36%|███▋      | 5.29GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  36%|███▋      | 5.29GB / 14.5GB,  168MB/s  
+New Data Upload               :  99%|█████████▊| 5.29GB / 5.37GB,  168MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  36%|███▋      | 5.29GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  37%|███▋      | 5.36GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  37%|███▋      | 5.36GB / 14.5GB,  170MB/s  
+New Data Upload               :  99%|█████████▊| 5.36GB / 5.43GB,  170MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  37%|███▋      | 5.36GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  37%|███▋      | 5.36GB / 14.5GB,  169MB/s  
+New Data Upload               :  99%|█████████▊| 5.36GB / 5.43GB,  169MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  37%|███▋      | 5.43GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  37%|███▋      | 5.43GB / 14.5GB,  172MB/s  
+New Data Upload               : 100%|█████████▉| 5.43GB / 5.43GB,  172MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  37%|███▋      | 5.43GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  37%|███▋      | 5.43GB / 14.5GB,  171MB/s  
+New Data Upload               :  99%|█████████▊| 5.43GB / 5.50GB,  171MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  37%|███▋      | 5.43GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  38%|███▊      | 5.50GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  38%|███▊      | 5.50GB / 14.5GB,  173MB/s  
+New Data Upload               :  99%|█████████▊| 5.50GB / 5.57GB,  173MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  38%|███▊      | 5.50GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  38%|███▊      | 5.55GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  38%|███▊      | 5.55GB / 14.5GB,  175MB/s  
+New Data Upload               : 100%|█████████▉| 5.55GB / 5.57GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  38%|███▊      | 5.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  38%|███▊      | 5.56GB / 14.5GB,  174MB/s  
+New Data Upload               :  99%|█████████▊| 5.56GB / 5.63GB,  174MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  38%|███▊      | 5.56GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  38%|███▊      | 5.56GB / 14.5GB,  173MB/s  
+New Data Upload               :  99%|█████████▉| 5.56GB / 5.63GB,  173MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  38%|███▊      | 5.58GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  38%|███▊      | 5.58GB / 14.5GB,  173MB/s  
+New Data Upload               :  98%|█████████▊| 5.58GB / 5.70GB,  173MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  39%|███▉      | 5.63GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  39%|███▉      | 5.63GB / 14.5GB,  175MB/s  
+New Data Upload               :  99%|█████████▊| 5.63GB / 5.70GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  39%|███▉      | 5.63GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  39%|███▉      | 5.63GB / 14.5GB,  174MB/s  
+New Data Upload               :  99%|█████████▉| 5.63GB / 5.70GB,  174MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  39%|███▉      | 5.70GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  39%|███▉      | 5.70GB / 14.5GB,  178MB/s  
+New Data Upload               : 100%|█████████▉| 5.70GB / 5.70GB,  178MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  39%|███▉      | 5.70GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  39%|███▉      | 5.70GB / 14.5GB,  176MB/s  
+New Data Upload               : 100%|█████████▉| 5.70GB / 5.70GB,  176MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  39%|███▉      | 5.70GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  39%|███▉      | 5.70GB / 14.5GB,  175MB/s  
+New Data Upload               :  99%|█████████▉| 5.70GB / 5.77GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  39%|███▉      | 5.70GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  40%|███▉      | 5.76GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  40%|███▉      | 5.76GB / 14.5GB,  177MB/s  
+New Data Upload               : 100%|█████████▉| 5.76GB / 5.77GB,  177MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  40%|███▉      | 5.76GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  40%|███▉      | 5.76GB / 14.5GB,  176MB/s  
+New Data Upload               :  99%|█████████▉| 5.76GB / 5.83GB,  176MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  40%|███▉      | 5.76GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  40%|███▉      | 5.80GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  40%|███▉      | 5.80GB / 14.5GB,  176MB/s  
+New Data Upload               :  99%|█████████▉| 5.80GB / 5.83GB,  176MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  40%|████      | 5.83GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  40%|████      | 5.83GB / 14.5GB,  177MB/s  
+New Data Upload               : 100%|█████████▉| 5.83GB / 5.83GB,  177MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  40%|████      | 5.83GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  40%|████      | 5.83GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.90GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  41%|████      | 5.90GB / 14.5GB,  178MB/s  
+New Data Upload               : 100%|█████████▉| 5.90GB / 5.90GB,  178MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.90GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  41%|████      | 5.90GB / 14.5GB,  177MB/s  
+New Data Upload               :  99%|█████████▉| 5.90GB / 5.97GB,  177MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.90GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.90GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  41%|████      | 5.90GB / 14.5GB,  174MB/s  
+New Data Upload               :  99%|█████████▉| 5.90GB / 5.97GB,  174MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.97GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  41%|████      | 5.97GB / 14.5GB,  178MB/s  
+New Data Upload               : 100%|█████████▉| 5.97GB / 5.97GB,  178MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.97GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.97GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  41%|████      | 5.97GB / 14.5GB,  175MB/s  
+New Data Upload               :  99%|█████████▉| 5.97GB / 6.04GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  41%|████      | 5.97GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  42%|████▏     | 6.03GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  42%|████▏     | 6.03GB / 14.5GB,  178MB/s  
+New Data Upload               :  99%|█████████▉| 6.03GB / 6.10GB,  178MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  42%|████▏     | 6.08GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  42%|████▏     | 6.08GB / 14.5GB,  179MB/s  
+New Data Upload               :  98%|█████████▊| 6.08GB / 6.17GB,  179MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  42%|████▏     | 6.10GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  42%|████▏     | 6.10GB / 14.5GB,  180MB/s  
+New Data Upload               :  99%|█████████▉| 6.10GB / 6.17GB,  180MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  42%|████▏     | 6.10GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.17GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  43%|████▎     | 6.17GB / 14.5GB,  182MB/s  
+New Data Upload               :  99%|█████████▉| 6.17GB / 6.24GB,  182MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.17GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.17GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  43%|████▎     | 6.17GB / 14.5GB,  179MB/s  
+New Data Upload               :  98%|█████████▊| 6.17GB / 6.30GB,  179MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.23GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  43%|████▎     | 6.23GB / 14.5GB,  183MB/s  
+New Data Upload               :  99%|█████████▉| 6.23GB / 6.30GB,  183MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.23GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.30GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  43%|████▎     | 6.30GB / 14.5GB,  185MB/s  
+New Data Upload               :  99%|█████████▉| 6.30GB / 6.37GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.30GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  43%|████▎     | 6.30GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  44%|████▍     | 6.37GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  44%|████▍     | 6.37GB / 14.5GB,  186MB/s  
+New Data Upload               : 100%|█████████▉| 6.37GB / 6.37GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  44%|████▍     | 6.37GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  44%|████▍     | 6.37GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  44%|████▍     | 6.37GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  44%|████▍     | 6.37GB / 14.5GB,  182MB/s  
+New Data Upload               :  99%|█████████▉| 6.37GB / 6.44GB,  182MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  44%|████▍     | 6.43GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  44%|████▍     | 6.43GB / 14.5GB,  185MB/s  
+New Data Upload               :  99%|█████████▉| 6.43GB / 6.51GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  44%|████▍     | 6.43GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  44%|████▍     | 6.43GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  45%|████▍     | 6.50GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  45%|████▍     | 6.50GB / 14.5GB,  186MB/s  
+New Data Upload               :  99%|█████████▉| 6.50GB / 6.57GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  45%|████▍     | 6.50GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  45%|████▌     | 6.57GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  45%|████▌     | 6.57GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 6.57GB / 6.64GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  45%|████▌     | 6.57GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  46%|████▌     | 6.64GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  46%|████▌     | 6.64GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 6.64GB / 6.71GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  46%|████▌     | 6.64GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  46%|████▌     | 6.64GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 6.64GB / 6.71GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  46%|████▌     | 6.64GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  46%|████▌     | 6.70GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  46%|████▌     | 6.70GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 6.70GB / 6.77GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  46%|████▌     | 6.70GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  46%|████▌     | 6.70GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  46%|████▌     | 6.70GB / 14.5GB,  188MB/s  
+New Data Upload               :  98%|█████████▊| 6.70GB / 6.84GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.77GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  47%|████▋     | 6.77GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 6.77GB / 6.84GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.77GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.84GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  47%|████▋     | 6.84GB / 14.5GB,  194MB/s  
+New Data Upload               : 100%|█████████▉| 6.84GB / 6.84GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.84GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.84GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.84GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  47%|████▋     | 6.84GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 6.84GB / 6.91GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.84GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  47%|████▋     | 6.84GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  47%|████▋     | 6.84GB / 14.5GB,  187MB/s  
+New Data Upload               :  98%|█████████▊| 6.84GB / 6.97GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  48%|████▊     | 6.91GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  48%|████▊     | 6.91GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 6.91GB / 6.97GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  48%|████▊     | 6.91GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  48%|████▊     | 6.91GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 6.91GB / 6.97GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  48%|████▊     | 6.97GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  48%|████▊     | 6.97GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 6.97GB / 6.97GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  48%|████▊     | 6.97GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  48%|████▊     | 6.97GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  48%|████▊     | 6.97GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 6.97GB / 7.04GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  48%|████▊     | 6.97GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▊     | 7.04GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  49%|████▊     | 7.04GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 7.04GB / 7.11GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▊     | 7.04GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.11GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  49%|████▉     | 7.11GB / 14.5GB,  194MB/s  
+New Data Upload               : 100%|█████████▉| 7.11GB / 7.11GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.11GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  49%|████▉     | 7.11GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 7.11GB / 7.18GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.11GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.11GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.17GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  49%|████▉     | 7.17GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 7.17GB / 7.18GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.17GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  49%|████▉     | 7.17GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 7.17GB / 7.24GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.17GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  49%|████▉     | 7.17GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|████▉     | 7.24GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  50%|████▉     | 7.24GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 7.24GB / 7.31GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  50%|████▉     | 7.24GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|████▉     | 7.24GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  50%|█████     | 7.31GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 7.31GB / 7.31GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  50%|█████     | 7.31GB / 14.5GB,  191MB/s  
+New Data Upload               : 100%|█████████▉| 7.31GB / 7.31GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  50%|█████     | 7.31GB / 14.5GB,  186MB/s  
+New Data Upload               : 100%|█████████▉| 7.31GB / 7.31GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  50%|█████     | 7.31GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  51%|█████     | 7.37GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  51%|█████     | 7.37GB / 14.5GB,  186MB/s  
+New Data Upload               :  99%|█████████▉| 7.37GB / 7.44GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  51%|█████     | 7.37GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  51%|█████▏    | 7.44GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  51%|█████▏    | 7.44GB / 14.5GB,  188MB/s  
+New Data Upload               : 100%|█████████▉| 7.44GB / 7.44GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  51%|█████▏    | 7.44GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  51%|█████▏    | 7.44GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  51%|█████▏    | 7.44GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  51%|█████▏    | 7.44GB / 14.5GB,  184MB/s  
+New Data Upload               :  99%|█████████▉| 7.44GB / 7.51GB,  184MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  52%|█████▏    | 7.51GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  52%|█████▏    | 7.51GB / 14.5GB,  187MB/s  
+New Data Upload               :  99%|█████████▉| 7.51GB / 7.58GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  52%|█████▏    | 7.51GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  52%|█████▏    | 7.51GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  52%|█████▏    | 7.58GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  52%|█████▏    | 7.58GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 7.58GB / 7.65GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  52%|█████▏    | 7.58GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  53%|█████▎    | 7.64GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  53%|█████▎    | 7.64GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 7.64GB / 7.71GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  53%|█████▎    | 7.64GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  53%|█████▎    | 7.65GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  53%|█████▎    | 7.65GB / 14.5GB,  188MB/s  
+New Data Upload               :  98%|█████████▊| 7.65GB / 7.78GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  53%|█████▎    | 7.71GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  53%|█████▎    | 7.71GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 7.71GB / 7.78GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  53%|█████▎    | 7.71GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  53%|█████▎    | 7.71GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 7.71GB / 7.78GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▎    | 7.78GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  54%|█████▎    | 7.78GB / 14.5GB,  193MB/s  
+New Data Upload               :  99%|█████████▉| 7.78GB / 7.85GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▎    | 7.78GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▎    | 7.78GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  54%|█████▎    | 7.78GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 7.78GB / 7.85GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▎    | 7.78GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▎    | 7.78GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▎    | 7.78GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▍    | 7.84GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  54%|█████▍    | 7.84GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 7.84GB / 7.91GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▍    | 7.85GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  54%|█████▍    | 7.85GB / 14.5GB,  188MB/s  
+New Data Upload               :  98%|█████████▊| 7.85GB / 7.98GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▍    | 7.85GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  54%|█████▍    | 7.85GB / 14.5GB,  187MB/s  
+New Data Upload               :  98%|█████████▊| 7.85GB / 7.98GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  54%|█████▍    | 7.87GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  54%|█████▍    | 7.87GB / 14.5GB,  187MB/s  
+New Data Upload               :  98%|█████████▊| 7.87GB / 8.05GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  55%|█████▍    | 7.92GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  55%|█████▍    | 7.92GB / 14.5GB,  189MB/s  
+New Data Upload               :  98%|█████████▊| 7.92GB / 8.05GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  55%|█████▍    | 7.94GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  55%|█████▍    | 7.94GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▊| 7.94GB / 8.05GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  55%|█████▌    | 8.03GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  55%|█████▌    | 8.03GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 8.03GB / 8.11GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  55%|█████▌    | 8.04GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  55%|█████▌    | 8.04GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 8.04GB / 8.11GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  55%|█████▌    | 8.04GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  56%|█████▌    | 8.11GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  56%|█████▌    | 8.11GB / 14.5GB,  196MB/s  
+New Data Upload               :  99%|█████████▉| 8.11GB / 8.18GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  56%|█████▌    | 8.11GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  56%|█████▌    | 8.11GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 8.11GB / 8.18GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  56%|█████▌    | 8.11GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  56%|█████▋    | 8.18GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  56%|█████▋    | 8.18GB / 14.5GB,  196MB/s  
+New Data Upload               :  99%|█████████▉| 8.18GB / 8.25GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  56%|█████▋    | 8.18GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  56%|█████▋    | 8.18GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  57%|█████▋    | 8.25GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  57%|█████▋    | 8.25GB / 14.5GB,  197MB/s  
+New Data Upload               : 100%|█████████▉| 8.25GB / 8.25GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  57%|█████▋    | 8.25GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  57%|█████▋    | 8.25GB / 14.5GB,  195MB/s  
+New Data Upload               :  99%|█████████▉| 8.25GB / 8.32GB,  195MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  57%|█████▋    | 8.25GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  57%|█████▋    | 8.25GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 8.25GB / 8.32GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  57%|█████▋    | 8.31GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  57%|█████▋    | 8.31GB / 14.5GB,  197MB/s  
+New Data Upload               : 100%|█████████▉| 8.31GB / 8.32GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  57%|█████▋    | 8.31GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  57%|█████▋    | 8.31GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  57%|█████▋    | 8.31GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 8.31GB / 8.38GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  58%|█████▊    | 8.38GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  58%|█████▊    | 8.38GB / 14.5GB,  198MB/s  
+New Data Upload               : 100%|█████████▉| 8.38GB / 8.38GB,  198MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  58%|█████▊    | 8.38GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  58%|█████▊    | 8.38GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  58%|█████▊    | 8.38GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  58%|█████▊    | 8.45GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  58%|█████▊    | 8.45GB / 14.5GB,  197MB/s  
+New Data Upload               :  99%|█████████▉| 8.45GB / 8.52GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  58%|█████▊    | 8.45GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  58%|█████▊    | 8.45GB / 14.5GB,  196MB/s  
+New Data Upload               :  99%|█████████▉| 8.45GB / 8.52GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▊    | 8.51GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  59%|█████▊    | 8.51GB / 14.5GB,  199MB/s  
+New Data Upload               : 100%|█████████▉| 8.51GB / 8.52GB,  199MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▊    | 8.51GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▊    | 8.51GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  59%|█████▊    | 8.51GB / 14.5GB,  196MB/s  
+New Data Upload               : 100%|█████████▉| 8.51GB / 8.52GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▊    | 8.51GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  59%|█████▊    | 8.51GB / 14.5GB,  195MB/s  
+New Data Upload               :  99%|█████████▉| 8.51GB / 8.58GB,  195MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▊    | 8.51GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▉    | 8.58GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  59%|█████▉    | 8.58GB / 14.5GB,  197MB/s  
+New Data Upload               :  99%|█████████▉| 8.58GB / 8.65GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▉    | 8.58GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  59%|█████▉    | 8.58GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  60%|█████▉    | 8.65GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  60%|█████▉    | 8.65GB / 14.5GB,  197MB/s  
+New Data Upload               : 100%|█████████▉| 8.65GB / 8.65GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  60%|█████▉    | 8.65GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  60%|█████▉    | 8.65GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  60%|█████▉    | 8.65GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  60%|██████    | 8.72GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  60%|██████    | 8.72GB / 14.5GB,  196MB/s  
+New Data Upload               :  99%|█████████▉| 8.72GB / 8.79GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  60%|██████    | 8.72GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████    | 8.78GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  61%|██████    | 8.78GB / 14.5GB,  198MB/s  
+New Data Upload               : 100%|█████████▉| 8.78GB / 8.79GB,  198MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████    | 8.78GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████    | 8.78GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  61%|██████    | 8.78GB / 14.5GB,  196MB/s  
+New Data Upload               :  99%|█████████▉| 8.78GB / 8.85GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████    | 8.78GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████    | 8.85GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  61%|██████    | 8.85GB / 14.5GB,  197MB/s  
+New Data Upload               :  99%|█████████▉| 8.85GB / 8.92GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████    | 8.85GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  61%|██████    | 8.85GB / 14.5GB,  196MB/s  
+New Data Upload               :  99%|█████████▉| 8.85GB / 8.92GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████▏   | 8.92GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  61%|██████▏   | 8.92GB / 14.5GB,  199MB/s  
+New Data Upload               : 100%|█████████▉| 8.92GB / 8.92GB,  199MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████▏   | 8.92GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████▏   | 8.92GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  61%|██████▏   | 8.92GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  62%|██████▏   | 8.98GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  62%|██████▏   | 8.98GB / 14.5GB,  199MB/s  
+New Data Upload               : 100%|█████████▉| 8.98GB / 8.99GB,  199MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  62%|██████▏   | 8.98GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  62%|██████▏   | 8.98GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  62%|██████▏   | 8.98GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  62%|██████▏   | 8.98GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 8.98GB / 9.05GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  62%|██████▏   | 9.05GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  62%|██████▏   | 9.05GB / 14.5GB,  198MB/s  
+New Data Upload               :  99%|█████████▉| 9.05GB / 9.12GB,  198MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  62%|██████▏   | 9.05GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  62%|██████▏   | 9.05GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.12GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   | 9.12GB / 14.5GB,  198MB/s  
+New Data Upload               : 100%|█████████▉| 9.12GB / 9.12GB,  198MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.12GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   | 9.12GB / 14.5GB,  197MB/s  
+New Data Upload               :  99%|█████████▉| 9.12GB / 9.19GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.12GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.12GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.18GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   | 9.18GB / 14.5GB,  197MB/s  
+New Data Upload               : 100%|█████████▉| 9.18GB / 9.19GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.18GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.18GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.18GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   | 9.18GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 9.18GB / 9.19GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.18GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.18GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  63%|██████▎   | 9.18GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 9.18GB / 9.25GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  63%|██████▎   | 9.18GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  64%|██████▍   | 9.25GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  64%|██████▍   | 9.25GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 9.25GB / 9.25GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  64%|██████▍   | 9.25GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  64%|██████▍   | 9.25GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  64%|██████▍   | 9.32GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  64%|██████▍   | 9.32GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 9.32GB / 9.32GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  64%|██████▍   | 9.32GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  64%|██████▍   | 9.32GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  64%|██████▍   | 9.32GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  64%|██████▍   | 9.32GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 9.32GB / 9.39GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▍   | 9.39GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  65%|██████▍   | 9.39GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 9.39GB / 9.39GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▍   | 9.39GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▍   | 9.39GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▍   | 9.39GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  65%|██████▍   | 9.39GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 9.39GB / 9.46GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▌   | 9.45GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  65%|██████▌   | 9.45GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 9.45GB / 9.46GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▌   | 9.45GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  65%|██████▌   | 9.45GB / 14.5GB,  191MB/s  
+New Data Upload               : 100%|█████████▉| 9.45GB / 9.46GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▌   | 9.45GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▌   | 9.45GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  65%|██████▌   | 9.45GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 9.45GB / 9.52GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  65%|██████▌   | 9.45GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.52GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  66%|██████▌   | 9.52GB / 14.5GB,  190MB/s  
+New Data Upload               : 100%|█████████▉| 9.52GB / 9.52GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.52GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.52GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.52GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.52GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  66%|██████▌   | 9.52GB / 14.5GB,  185MB/s  
+New Data Upload               :  99%|█████████▉| 9.52GB / 9.59GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.59GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  66%|██████▌   | 9.59GB / 14.5GB,  188MB/s  
+New Data Upload               : 100%|█████████▉| 9.59GB / 9.59GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.59GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.59GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  66%|██████▌   | 9.59GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.65GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  67%|██████▋   | 9.65GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 9.65GB / 9.72GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.65GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.72GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  67%|██████▋   | 9.72GB / 14.5GB,  190MB/s  
+New Data Upload               : 100%|█████████▉| 9.72GB / 9.72GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.72GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.72GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.72GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  67%|██████▋   | 9.72GB / 14.5GB,  186MB/s  
+New Data Upload               :  99%|█████████▉| 9.72GB / 9.79GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.79GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  67%|██████▋   | 9.79GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 9.79GB / 9.86GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  67%|██████▋   | 9.79GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  68%|██████▊   | 9.86GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  68%|██████▊   | 9.86GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 9.86GB / 9.93GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  68%|██████▊   | 9.86GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  68%|██████▊   | 9.92GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  68%|██████▊   | 9.92GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 9.92GB / 9.93GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  68%|██████▊   | 9.92GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  68%|██████▊   | 9.92GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  68%|██████▊   | 9.92GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 9.92GB / 9.99GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  68%|██████▊   | 9.92GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  68%|██████▊   | 9.92GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 9.99GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  69%|██████▉   | 9.99GB / 14.5GB,  191MB/s  
+New Data Upload               : 100%|█████████▉| 9.99GB / 9.99GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 9.99GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 9.99GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 9.99GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 10.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  69%|██████▉   | 10.1GB / 14.5GB,  190MB/s  
+New Data Upload               : 100%|█████████▉| 10.1GB / 10.1GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 10.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  69%|██████▉   | 10.1GB / 14.5GB,  189MB/s  
+New Data Upload               : 100%|█████████▉| 10.1GB / 10.1GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 10.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 10.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 10.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  69%|██████▉   | 10.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  70%|██████▉   | 10.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  70%|██████▉   | 10.1GB / 14.5GB,  187MB/s  
+New Data Upload               :  99%|█████████▉| 10.1GB / 10.2GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  70%|██████▉   | 10.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  70%|███████   | 10.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  70%|███████   | 10.2GB / 14.5GB,  189MB/s  
+New Data Upload               : 100%|█████████▉| 10.2GB / 10.2GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  70%|███████   | 10.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  70%|███████   | 10.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  70%|███████   | 10.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  71%|███████   | 10.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  71%|███████   | 10.3GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 10.3GB / 10.3GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  71%|███████   | 10.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  71%|███████   | 10.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  71%|███████   | 10.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  71%|███████   | 10.3GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 10.3GB / 10.4GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  71%|███████   | 10.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  71%|███████   | 10.3GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 10.3GB / 10.4GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  72%|███████▏  | 10.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  72%|███████▏  | 10.4GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 10.4GB / 10.5GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  72%|███████▏  | 10.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  72%|███████▏  | 10.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  72%|███████▏  | 10.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  72%|███████▏  | 10.5GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 10.5GB / 10.5GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  72%|███████▏  | 10.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  72%|███████▏  | 10.5GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 10.5GB / 10.5GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  73%|███████▎  | 10.5GB / 14.5GB,  194MB/s  
+New Data Upload               : 100%|█████████▉| 10.5GB / 10.5GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  73%|███████▎  | 10.6GB / 14.5GB,  194MB/s  
+New Data Upload               : 100%|█████████▉| 10.6GB / 10.6GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.6GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  73%|███████▎  | 10.6GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 10.6GB / 10.7GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  73%|███████▎  | 10.6GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 10.6GB / 10.7GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  73%|███████▎  | 10.7GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 10.7GB / 10.7GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  73%|███████▎  | 10.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  74%|███████▍  | 10.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  74%|███████▍  | 10.7GB / 14.5GB,  194MB/s  
+New Data Upload               : 100%|█████████▉| 10.7GB / 10.7GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  74%|███████▍  | 10.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  74%|███████▍  | 10.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  74%|███████▍  | 10.7GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 10.7GB / 10.8GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  74%|███████▍  | 10.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  74%|███████▍  | 10.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  74%|███████▍  | 10.7GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 10.7GB / 10.8GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  74%|███████▍  | 10.8GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  74%|███████▍  | 10.8GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 10.8GB / 10.9GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  74%|███████▍  | 10.8GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  74%|███████▍  | 10.8GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 10.8GB / 10.9GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▍  | 10.8GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  75%|███████▍  | 10.8GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 10.8GB / 10.9GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▍  | 10.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  75%|███████▍  | 10.9GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 10.9GB / 10.9GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▍  | 10.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▍  | 10.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▍  | 10.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  75%|███████▍  | 10.9GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 10.9GB / 10.9GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▌  | 10.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  75%|███████▌  | 10.9GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 10.9GB / 10.9GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▌  | 10.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  75%|███████▌  | 10.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  75%|███████▌  | 10.9GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 10.9GB / 11.0GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  76%|███████▌  | 11.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  76%|███████▌  | 11.0GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 11.0GB / 11.0GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  76%|███████▌  | 11.0GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  76%|███████▌  | 11.0GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  76%|███████▌  | 11.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  76%|███████▌  | 11.0GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 11.0GB / 11.1GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  76%|███████▋  | 11.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  76%|███████▋  | 11.1GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 11.1GB / 11.1GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  76%|███████▋  | 11.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  77%|███████▋  | 11.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  77%|███████▋  | 11.1GB / 14.5GB,  194MB/s  
+New Data Upload               :  99%|█████████▉| 11.1GB / 11.2GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  77%|███████▋  | 11.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  77%|███████▋  | 11.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  77%|███████▋  | 11.2GB / 14.5GB,  196MB/s  
+New Data Upload               : 100%|█████████▉| 11.2GB / 11.2GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  77%|███████▋  | 11.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  77%|███████▋  | 11.2GB / 14.5GB,  195MB/s  
+New Data Upload               : 100%|█████████▉| 11.2GB / 11.2GB,  195MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  77%|███████▋  | 11.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  77%|███████▋  | 11.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  77%|███████▋  | 11.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  | 11.3GB / 14.5GB,  194MB/s  
+New Data Upload               : 100%|█████████▉| 11.3GB / 11.3GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  | 11.3GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 11.3GB / 11.3GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  | 11.3GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 11.3GB / 11.3GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  | 11.3GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 11.3GB / 11.4GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  78%|███████▊  | 11.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  78%|███████▊  | 11.4GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 11.4GB / 11.5GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▊  | 11.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  79%|███████▊  | 11.4GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 11.4GB / 11.5GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  79%|███████▉  | 11.5GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 11.5GB / 11.5GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  79%|███████▉  | 11.5GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 11.5GB / 11.5GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  79%|███████▉  | 11.5GB / 14.5GB,  188MB/s  
+New Data Upload               : 100%|█████████▉| 11.5GB / 11.5GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  79%|███████▉  | 11.5GB / 14.5GB,  186MB/s  
+New Data Upload               :  99%|█████████▉| 11.5GB / 11.6GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  79%|███████▉  | 11.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  80%|███████▉  | 11.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  80%|███████▉  | 11.6GB / 14.5GB,  187MB/s  
+New Data Upload               : 100%|█████████▉| 11.6GB / 11.6GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  80%|███████▉  | 11.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  80%|███████▉  | 11.6GB / 14.5GB,  187MB/s  
+New Data Upload               :  99%|█████████▉| 11.6GB / 11.7GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  80%|███████▉  | 11.6GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  80%|████████  | 11.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  80%|████████  | 11.7GB / 14.5GB,  188MB/s  
+New Data Upload               : 100%|█████████▉| 11.7GB / 11.7GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  80%|████████  | 11.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  80%|████████  | 11.7GB / 14.5GB,  188MB/s  
+New Data Upload               : 100%|█████████▉| 11.7GB / 11.7GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  80%|████████  | 11.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  80%|████████  | 11.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  81%|████████  | 11.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  81%|████████  | 11.7GB / 14.5GB,  189MB/s  
+New Data Upload               : 100%|█████████▉| 11.7GB / 11.7GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  81%|████████  | 11.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  81%|████████  | 11.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  81%|████████  | 11.7GB / 14.5GB,  186MB/s  
+New Data Upload               :  99%|█████████▉| 11.7GB / 11.8GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  81%|████████  | 11.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  81%|████████▏ | 11.8GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  81%|████████▏ | 11.8GB / 14.5GB,  188MB/s  
+New Data Upload               :  99%|█████████▉| 11.8GB / 11.9GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  81%|████████▏ | 11.8GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  81%|████████▏ | 11.8GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  81%|████████▏ | 11.8GB / 14.5GB,  185MB/s  
+New Data Upload               :  99%|█████████▉| 11.8GB / 11.9GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  82%|████████▏ | 11.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  82%|████████▏ | 11.9GB / 14.5GB,  189MB/s  
+New Data Upload               :  99%|█████████▉| 11.9GB / 11.9GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  82%|████████▏ | 11.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  82%|████████▏ | 11.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  82%|████████▏ | 11.9GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 11.9GB / 12.0GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  82%|████████▏ | 11.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  83%|████████▎ | 12.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  83%|████████▎ | 12.0GB / 14.5GB,  193MB/s  
+New Data Upload               :  99%|█████████▉| 12.0GB / 12.1GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  83%|████████▎ | 12.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  83%|████████▎ | 12.0GB / 14.5GB,  191MB/s  
+New Data Upload               :  99%|█████████▉| 12.0GB / 12.1GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  83%|████████▎ | 12.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  83%|████████▎ | 12.1GB / 14.5GB,  195MB/s  
+New Data Upload               : 100%|█████████▉| 12.1GB / 12.1GB,  195MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  83%|████████▎ | 12.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  83%|████████▎ | 12.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  84%|████████▎ | 12.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  84%|████████▎ | 12.1GB / 14.5GB,  195MB/s  
+New Data Upload               :  99%|█████████▉| 12.1GB / 12.2GB,  195MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  84%|████████▎ | 12.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  84%|████████▍ | 12.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  84%|████████▍ | 12.2GB / 14.5GB,  197MB/s  
+New Data Upload               : 100%|█████████▉| 12.2GB / 12.2GB,  197MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  84%|████████▍ | 12.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  84%|████████▍ | 12.2GB / 14.5GB,  196MB/s  
+New Data Upload               : 100%|█████████▉| 12.2GB / 12.2GB,  196MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  84%|████████▍ | 12.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  84%|████████▍ | 12.2GB / 14.5GB,  195MB/s  
+New Data Upload               :  99%|█████████▉| 12.2GB / 12.3GB,  195MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  84%|████████▍ | 12.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  84%|████████▍ | 12.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  84%|████████▍ | 12.2GB / 14.5GB,  192MB/s  
+New Data Upload               :  99%|█████████▉| 12.2GB / 12.3GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▍ | 12.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  85%|████████▍ | 12.3GB / 14.5GB,  195MB/s  
+New Data Upload               : 100%|█████████▉| 12.3GB / 12.3GB,  195MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▍ | 12.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▍ | 12.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▍ | 12.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▌ | 12.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  85%|████████▌ | 12.3GB / 14.5GB,  194MB/s  
+New Data Upload               : 100%|█████████▉| 12.3GB / 12.3GB,  194MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▌ | 12.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  85%|████████▌ | 12.3GB / 14.5GB,  193MB/s  
+New Data Upload               : 100%|█████████▉| 12.3GB / 12.3GB,  193MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▌ | 12.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▌ | 12.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  85%|████████▌ | 12.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  86%|████████▌ | 12.4GB / 14.5GB,  192MB/s  
+New Data Upload               : 100%|█████████▉| 12.4GB / 12.4GB,  192MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  86%|████████▌ | 12.4GB / 14.5GB,  191MB/s  
+New Data Upload               : 100%|█████████▉| 12.4GB / 12.4GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  86%|████████▌ | 12.4GB / 14.5GB,  189MB/s  
+New Data Upload               : 100%|█████████▉| 12.4GB / 12.5GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  86%|████████▌ | 12.5GB / 14.5GB,  189MB/s  
+New Data Upload               : 100%|█████████▉| 12.5GB / 12.5GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▌ | 12.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▋ | 12.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  86%|████████▋ | 12.5GB / 14.5GB,  190MB/s  
+New Data Upload               :  99%|█████████▉| 12.5GB / 12.6GB,  190MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  86%|████████▋ | 12.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 12.6GB / 14.5GB,  188MB/s  
+New Data Upload               : 100%|█████████▉| 12.6GB / 12.6GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 12.6GB / 14.5GB,  191MB/s  
+New Data Upload               : 100%|█████████▉| 12.6GB / 12.6GB,  191MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.6GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.6GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 12.6GB / 14.5GB,  187MB/s  
+New Data Upload               :  99%|█████████▉| 12.6GB / 12.7GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 12.6GB / 14.5GB,  185MB/s  
+New Data Upload               :  99%|█████████▉| 12.6GB / 12.7GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 12.7GB / 14.5GB,  189MB/s  
+New Data Upload               : 100%|█████████▉| 12.7GB / 12.7GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  87%|████████▋ | 12.7GB / 14.5GB,  187MB/s  
+New Data Upload               :  99%|█████████▉| 12.7GB / 12.7GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  87%|████████▋ | 12.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  88%|████████▊ | 12.7GB / 14.5GB,  188MB/s  
+New Data Upload               : 100%|█████████▉| 12.7GB / 12.7GB,  188MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  88%|████████▊ | 12.7GB / 14.5GB,  183MB/s  
+New Data Upload               : 100%|█████████▉| 12.7GB / 12.7GB,  183MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  88%|████████▊ | 12.7GB / 14.5GB,  180MB/s  
+New Data Upload               :  99%|█████████▉| 12.7GB / 12.8GB,  180MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.8GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  88%|████████▊ | 12.8GB / 14.5GB,  184MB/s  
+New Data Upload               :  99%|█████████▉| 12.8GB / 12.9GB,  184MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.8GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  88%|████████▊ | 12.8GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▊ | 12.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  89%|████████▊ | 12.9GB / 14.5GB,  184MB/s  
+New Data Upload               : 100%|█████████▉| 12.9GB / 12.9GB,  184MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▉ | 12.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  89%|████████▉ | 12.9GB / 14.5GB,  183MB/s  
+New Data Upload               : 100%|█████████▉| 12.9GB / 12.9GB,  183MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▉ | 12.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▉ | 12.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▉ | 12.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▉ | 12.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  89%|████████▉ | 12.9GB / 14.5GB,  180MB/s  
+New Data Upload               :  99%|█████████▉| 12.9GB / 13.0GB,  180MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▉ | 12.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  89%|████████▉ | 12.9GB / 14.5GB,  182MB/s  
+New Data Upload               :  99%|█████████▉| 12.9GB / 13.0GB,  182MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  89%|████████▉ | 12.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  89%|████████▉ | 12.9GB / 14.5GB,  180MB/s  
+New Data Upload               :  99%|█████████▉| 12.9GB / 13.1GB,  180MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  90%|████████▉ | 13.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  90%|████████▉ | 13.0GB / 14.5GB,  184MB/s  
+New Data Upload               :  99%|█████████▉| 13.0GB / 13.1GB,  184MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  90%|████████▉ | 13.0GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  90%|█████████ | 13.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  90%|█████████ | 13.1GB / 14.5GB,  186MB/s  
+New Data Upload               : 100%|█████████▉| 13.1GB / 13.1GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  90%|█████████ | 13.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  90%|█████████ | 13.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  90%|█████████ | 13.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  90%|█████████ | 13.1GB / 14.5GB,  184MB/s  
+New Data Upload               :  99%|█████████▉| 13.1GB / 13.2GB,  184MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  91%|█████████ | 13.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  91%|█████████ | 13.1GB / 14.5GB,  185MB/s  
+New Data Upload               :  99%|█████████▉| 13.1GB / 13.2GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  91%|█████████ | 13.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  91%|█████████ | 13.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  91%|█████████ | 13.2GB / 14.5GB,  187MB/s  
+New Data Upload               : 100%|█████████▉| 13.2GB / 13.2GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  91%|█████████ | 13.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  91%|█████████ | 13.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  91%|█████████ | 13.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  91%|█████████ | 13.2GB / 14.5GB,  183MB/s  
+New Data Upload               :  99%|█████████▉| 13.2GB / 13.3GB,  183MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  92%|█████████▏| 13.3GB / 14.5GB,  187MB/s  
+New Data Upload               :  99%|█████████▉| 13.3GB / 13.3GB,  187MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  92%|█████████▏| 13.3GB / 14.5GB,  189MB/s  
+New Data Upload               : 100%|█████████▉| 13.3GB / 13.3GB,  189MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  92%|█████████▏| 13.3GB / 14.5GB,  186MB/s  
+New Data Upload               : 100%|█████████▉| 13.3GB / 13.3GB,  186MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  92%|█████████▏| 13.4GB / 14.5GB,  184MB/s  
+New Data Upload               :  99%|█████████▉| 13.4GB / 13.5GB,  184MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  92%|█████████▏| 13.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  93%|█████████▎| 13.5GB / 14.5GB,  185MB/s  
+New Data Upload               : 100%|█████████▉| 13.5GB / 13.5GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  93%|█████████▎| 13.5GB / 14.5GB,  183MB/s  
+New Data Upload               :  99%|█████████▉| 13.5GB / 13.5GB,  183MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  93%|█████████▎| 13.5GB / 14.5GB,  185MB/s  
+New Data Upload               : 100%|█████████▉| 13.5GB / 13.5GB,  185MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  93%|█████████▎| 13.5GB / 14.5GB,  178MB/s  
+New Data Upload               :  99%|█████████▉| 13.5GB / 13.6GB,  178MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  93%|█████████▎| 13.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  94%|█████████▍| 13.6GB / 14.5GB,  180MB/s  
+New Data Upload               : 100%|█████████▉| 13.6GB / 13.6GB,  180MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  94%|█████████▍| 13.6GB / 14.5GB,  179MB/s  
+New Data Upload               : 100%|█████████▉| 13.6GB / 13.6GB,  179MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.6GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.6GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.6GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  94%|█████████▍| 13.6GB / 14.5GB,  176MB/s  
+New Data Upload               :  99%|█████████▉| 13.6GB / 13.7GB,  176MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.6GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  94%|█████████▍| 13.7GB / 14.5GB,  178MB/s  
+New Data Upload               : 100%|█████████▉| 13.7GB / 13.7GB,  178MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  94%|█████████▍| 13.7GB / 14.5GB,  174MB/s  
+New Data Upload               : 100%|█████████▉| 13.7GB / 13.7GB,  174MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  94%|█████████▍| 13.7GB / 14.5GB,  172MB/s  
+New Data Upload               :  99%|█████████▉| 13.7GB / 13.7GB,  172MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  94%|█████████▍| 13.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  95%|█████████▍| 13.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  95%|█████████▍| 13.7GB / 14.5GB,  173MB/s  
+New Data Upload               : 100%|█████████▉| 13.7GB / 13.7GB,  173MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  95%|█████████▍| 13.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  95%|█████████▍| 13.7GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  95%|█████████▍| 13.7GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  95%|█████████▍| 13.7GB / 14.5GB,  169MB/s  
+New Data Upload               :  99%|█████████▉| 13.7GB / 13.9GB,  169MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  95%|█████████▌| 13.8GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  95%|█████████▌| 13.8GB / 14.5GB,  173MB/s  
+New Data Upload               :  99%|█████████▉| 13.8GB / 13.9GB,  173MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  95%|█████████▌| 13.8GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌| 13.9GB / 14.5GB,  175MB/s  
+New Data Upload               : 100%|█████████▉| 13.9GB / 13.9GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌| 13.9GB / 14.5GB,  175MB/s  
+New Data Upload               : 100%|█████████▉| 13.9GB / 13.9GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌| 13.9GB / 14.5GB,  172MB/s  
+New Data Upload               : 100%|█████████▉| 13.9GB / 14.0GB,  172MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  96%|█████████▌| 13.9GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  97%|█████████▋| 14.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 14.0GB / 14.5GB,  175MB/s  
+New Data Upload               : 100%|█████████▉| 14.0GB / 14.0GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  97%|█████████▋| 14.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 14.0GB / 14.5GB,  173MB/s  
+New Data Upload               : 100%|█████████▉| 14.0GB / 14.1GB,  173MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  97%|█████████▋| 14.0GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 14.0GB / 14.5GB,  172MB/s  
+New Data Upload               : 100%|█████████▉| 14.0GB / 14.1GB,  172MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  97%|█████████▋| 14.0GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  97%|█████████▋| 14.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 14.1GB / 14.5GB,  174MB/s  
+New Data Upload               : 100%|█████████▉| 14.1GB / 14.1GB,  174MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  97%|█████████▋| 14.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  97%|█████████▋| 14.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.1GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 14.1GB / 14.5GB,  175MB/s  
+New Data Upload               : 100%|█████████▉| 14.1GB / 14.2GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.1GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 14.2GB / 14.5GB,  174MB/s  
+New Data Upload               : 100%|█████████▉| 14.2GB / 14.2GB,  174MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.2GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 14.2GB / 14.5GB,  176MB/s  
+New Data Upload               : 100%|█████████▉| 14.2GB / 14.2GB,  176MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.2GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 14.3GB / 14.5GB,  175MB/s  
+New Data Upload               : 100%|█████████▉| 14.3GB / 14.3GB,  175MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 14.3GB / 14.5GB,  174MB/s  
+New Data Upload               : 100%|█████████▉| 14.3GB / 14.3GB,  174MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  98%|█████████▊| 14.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 14.3GB / 14.5GB,  171MB/s  
+New Data Upload               : 100%|█████████▉| 14.3GB / 14.4GB,  171MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.3GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 14.3GB / 14.5GB,  171MB/s  
+New Data Upload               : 100%|█████████▉| 14.3GB / 14.4GB,  171MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.3GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 14.4GB / 14.5GB,  172MB/s  
+New Data Upload               : 100%|█████████▉| 14.4GB / 14.4GB,  172MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 14.4GB / 14.5GB,  171MB/s  
+New Data Upload               : 100%|█████████▉| 14.4GB / 14.4GB,  171MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.4GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt:  99%|█████████▉| 14.4GB / 14.5GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 14.4GB / 14.5GB,  168MB/s  
+New Data Upload               : 100%|█████████▉| 14.4GB / 14.5GB,  168MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  171MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  171MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  171MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  171MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  170MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  170MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  169MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  169MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  165MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  165MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  160MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  160MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  159MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  159MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  156MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  156MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  148MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  148MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 14.5GB / 14.5GB,  146MB/s  
+New Data Upload               : 100%|█████████▉| 14.5GB / 14.5GB,  146MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|█████████▉| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[AProcessing Files (1 / 1)      : 100%|██████████| 14.5GB / 14.5GB,  141MB/s  
+New Data Upload               : 100%|██████████| 14.5GB / 14.5GB,  141MB/s  [A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[A
+
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            [A[AProcessing Files (1 / 1)      : 100%|██████████| 14.5GB / 14.5GB,  126MB/s  
+New Data Upload               : 100%|██████████| 14.5GB / 14.5GB,  126MB/s  
+  .../ckpt/h1144_probe_best.pt: 100%|██████████| 14.5GB / 14.5GB            
+HF_UPLOAD_OK dancinlab/anima-clm-7b-h1144-grounding-probe
+H1144_DONE Fri Jun 12 21:38:13 UTC 2026
+[pod] end Fri Jun 12 21:38:13 UTC 2026
