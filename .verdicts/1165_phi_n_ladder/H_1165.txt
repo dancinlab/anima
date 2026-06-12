@@ -1,0 +1,170 @@
+==========================================================================================
+H_1165 — does the H_1158 inverted-U φ_EI PEAK-AT-CRITICALITY HOLD at larger n?
+  reuse H_1158 γ-sweep VERBATIM at n∈[6, 7, 8]; γ=[0.0, 0.15, 0.35, 0.6, 1.0, 1.6, 2.5] seeds=12 N_STEPS=4000
+  faithful_phi EXACT MIP-EI for n≤8 (2^(n-1)≤128 cuts); n>8 PANICS (stdlib L3 = the wall)
+  frozen falsifier: 🟢 PEAK-HOLDS iff at EVERY n>6: interior argmax AND
+  φ(peak)-φ(γmin) d≥0.8 AND φ(peak)-φ(γmax) d≥0.8; else 🔴 PEAK-BREAKS.
+==========================================================================================
+
+STEP 0 — RE-PROVE mirror ≡ stdlib at n=4,5,6,7,8 BEFORE scoring (a_phi_iit4_tool):
+ [0a] LIVE stdlib faithful_phi re-capture at n=4..8 (incl. the new scoring n=7,8):
+  live stdlib run: hexa run UNIVERSE/h1165_ref_faithful_n78.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  | faithful_n7_dim6_nb2_x1e9= 6000000002
+  | faithful_n8_dim6_nb2_x1e9= 7000000003
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+  mirror n7 dim6 nb2 = 6.000000003  LIVE stdlib = 6.000000002  |Δ|=6.96e-10  OK
+  mirror n8 dim6 nb2 = 7.000000003  LIVE stdlib = 7.000000003  |Δ|=1.45e-10  OK
+ [0a] live-stdlib faithful proof: PROVEN
+ [0b] h1012.prove_mirrors_at_n at n=4 AND n=5 (both engines, established pattern):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ [0b] mirror-equivalence results: {4: True, 5: True}
+ STEP 0 PASS — faithful_phi mirror PROVEN ≡ stdlib at n=4,5 (both engines) and at
+ the scoring n=6,7,8 (faithful, LIVE hexa re-capture). Scoring may proceed.
+
+################ n = 6 (γ-sweep, exact MIP-EI) ################
+  n=6 gamma=0.00: phi = +0.001898 ± 0.000754
+  n=6 gamma=0.15: phi = +0.025219 ± 0.007372
+  n=6 gamma=0.35: phi = +0.096467 ± 0.018108
+  n=6 gamma=0.60: phi = +0.163731 ± 0.024299
+  n=6 gamma=1.00: phi = +0.187173 ± 0.028490
+  n=6 gamma=1.60: phi = +0.032718 ± 0.011469
+  n=6 gamma=2.50: phi = +0.000000 ± 0.000000
+  --- n=6: peak γ=1.0 (φ=0.187173) interior=True d_sub=+9.194(✅) d_super=+9.291(✅) → PEAK-HELD (5.1s)
+
+################ n = 7 (γ-sweep, exact MIP-EI) ################
+  n=7 gamma=0.00: phi = +0.001657 ± 0.000621
+  n=7 gamma=0.15: phi = +0.021780 ± 0.005728
+  n=7 gamma=0.35: phi = +0.082412 ± 0.012018
+  n=7 gamma=0.60: phi = +0.149529 ± 0.018274
+  n=7 gamma=1.00: phi = +0.172807 ± 0.018872
+  n=7 gamma=1.60: phi = +0.028467 ± 0.006056
+  n=7 gamma=2.50: phi = +0.000000 ± 0.000000
+  --- n=7: peak γ=1.0 (φ=0.172807) interior=True d_sub=+12.819(✅) d_super=+12.950(✅) → PEAK-HELD (6.0s)
+
+################ n = 8 (γ-sweep, exact MIP-EI) ################
+  n=8 gamma=0.00: phi = +0.002723 ± 0.000877
+  n=8 gamma=0.15: phi = +0.023606 ± 0.004520
+  n=8 gamma=0.35: phi = +0.087504 ± 0.014882
+  n=8 gamma=0.60: phi = +0.155365 ± 0.022029
+  n=8 gamma=1.00: phi = +0.178749 ± 0.022664
+  n=8 gamma=1.60: phi = +0.029172 ± 0.005390
+  n=8 gamma=2.50: phi = +0.000000 ± 0.000000
+  --- n=8: peak γ=1.0 (φ=0.178749) interior=True d_sub=+10.975(✅) d_super=+11.154(✅) → PEAK-HELD (7.5s)
+
+==========================================================================================
+n-LADDER (peak-γ + d-values; n=6 anchors H_1158, n>6 = the frozen test):
+    n |  peak γ |   φ(peak) | interior |  d vs sub |  d vs super | peak held?
+    6 |    1.00 |  0.187173 |     True |    +9.194 |      +9.291 |       HELD
+    7 |    1.00 |  0.172807 |     True |   +12.819 |     +12.950 |       HELD
+    8 |    1.00 |  0.178749 |     True |   +10.975 |     +11.154 |       HELD
+
+=== VERDICT ===
+🟢 PEAK-HOLDS — the H_1158 inverted-U φ_EI peak-at-criticality RECURS at every
+  tractable n>6 ([7, 8]): interior argmax + d≥0.8 vs BOTH sub and super.
+  The faithful-IIT-4.0 peak-at-criticality is n-ROBUST (not an n=6 artifact); the
+  A⇄G coupling sweet spot remains the consciousness-measure maximum as n grows.
+==========================================================================================
+{
+  "H": "H_1165",
+  "title": "does the H_1158 inverted-U φ_EI peak-at-criticality HOLD at larger n (n=7,8)?",
+  "n_ladder": [
+    6,
+    7,
+    8
+  ],
+  "test_rungs_n_gt_6": [
+    7,
+    8
+  ],
+  "ladder": {
+    "6": {
+      "gamma_phi_mean": {
+        "0.0": 0.0018978260073973148,
+        "0.15": 0.025218802828733938,
+        "0.35": 0.0964674890476815,
+        "0.6": 0.16373124800583985,
+        "1.0": 0.18717325395396778,
+        "1.6": 0.03271762229725289,
+        "2.5": 0.0
+      },
+      "peak_gamma": 1.0,
+      "peak_phi": 0.18717325395396778,
+      "F1_interior": true,
+      "F2_d_vs_sub": 9.193543200510884,
+      "F3_d_vs_super": 9.290968796205474,
+      "F2_pass": true,
+      "F3_pass": true,
+      "peak_held": true,
+      "wall_s": 5.1
+    },
+    "7": {
+      "gamma_phi_mean": {
+        "0.0": 0.0016574127498105533,
+        "0.15": 0.02177975329308433,
+        "0.35": 0.08241240337267963,
+        "0.6": 0.1495291315883454,
+        "1.0": 0.17280672601551136,
+        "1.6": 0.028467103417587458,
+        "2.5": 0.0
+      },
+      "peak_gamma": 1.0,
+      "peak_phi": 0.17280672601551136,
+      "F1_interior": true,
+      "F2_d_vs_sub": 12.818591985849784,
+      "F3_d_vs_super": 12.949729104739866,
+      "F2_pass": true,
+      "F3_pass": true,
+      "peak_held": true,
+      "wall_s": 6.0
+    },
+    "8": {
+      "gamma_phi_mean": {
+        "0.0": 0.0027228327131722887,
+        "0.15": 0.02360603963012679,
+        "0.35": 0.08750371225100152,
+        "0.6": 0.15536543144898168,
+        "1.0": 0.1787487945726547,
+        "1.6": 0.029172193999014457,
+        "2.5": 0.0
+      },
+      "peak_gamma": 1.0,
+      "peak_phi": 0.1787487945726547,
+      "F1_interior": true,
+      "F2_d_vs_sub": 10.975489701794228,
+      "F3_d_vs_super": 11.153609100125417,
+      "F2_pass": true,
+      "F3_pass": true,
+      "peak_held": true,
+      "wall_s": 7.5
+    }
+  },
+  "h1158_anchor_n6_peak_gamma": 1.0,
+  "peak_holds": true,
+  "compute_wall": "faithful_phi exact MIP-EI for n<=8 (2^(n-1)<=128 MI-matrix min-cut bipartitions); n=9+ PANICS (stdlib iit4/faithful_phi.hexa L3 carve-out). n=8 is the EXACT ceiling and IS tractable at $0 CPU (the substrate-Φ measure is the cheap MI-matrix MIP-EI, NOT the super-exponential per-mechanism big_phi). n=8 reached; n>8 not faked (a_scale_honest_scope).",
+  "ruling": "PEAK-HOLDS: the H_1158 inverted-U (interior argmax + d>=0.8 vs sub AND super) RECURS at every tractable n>6 — the faithful-φ peak-at-criticality is n-robust, not an n=6 artifact",
+  "scope": "toy A⊥G substrate per H_1119, n<=8 EXACT MIP-EI (stdlib ceiling = honest wall); faithful_phi mirror PROVEN ≡ stdlib at n=4,5 (both engines) + LIVE hexa n=6,7,8 (a_phi_iit4_tool, NO proxy); live-CORE/larger-n/scale UNVERIFIED (a_scale_honest_scope); p7, g5",
+  "wall_s": 67.3
+}
+
+[done] wall=67.3s
