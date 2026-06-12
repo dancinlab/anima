@@ -1,0 +1,158 @@
+================================================================================
+H_1144  GROUNDING CONTINUE-TRAIN OF THE h1141 7B  —  PRE-REGISTRATION / FREEZE
+written BEFORE any score is computed (a_paper_negative_ok, h1141-recovery discipline)
+date: 2026-06-13
+================================================================================
+
+GOAL
+----
+Reduce the h1141 7B's fabricated-entity-assertion RATE below the frozen
+NON-FABRICATION bar (G5-L2 = 0.20, /7B_PASS_CONDITIONS.md §G5, re-scoped a7f0a6eba)
+via GROUNDING — more / cleaner / broader real-corpus byte-continuation training to
+TRUE convergence with anti-overfit — so the model learns real entities instead of
+inventing plausible ones (Raja Almen, Jacob Burrough, ...).
+
+H_1143 measured the BASE h1141 7B (step6500, val 1.1857) at fabricated-entity-rate
+= 0.2469 > 0.20 => new-L2 FAIL => a7b_pass FALSE. H_1141-recovery diagnosed the
+fail as STRUCTURAL-from-undertraining (overfit past step 7000, val never below
+~1.18). The grounding hypothesis: a LOWER-LR anti-overfit continue-train on a
+broad concept-rich English corpus drives val below 1.1857 WITHOUT re-overfitting,
+and a better-grounded model asserts fewer invented entities.
+
+PHILOSOPHY GUARDRAILS (G3, non-negotiable — by construction of the trainer):
+  - byte-continuation on a REAL corpus ONLY (next-byte CE descent).
+  - NO instruction-tuning, NO reward model, NO RLHF (p6), NO factual-reward objective.
+  - NO system-prompt / persona / identity rules (p1-p4). NO speak() (p5).
+  - val-CE is a TRAINING SIGNAL ONLY, never the gate (p7). Gates = the frozen
+    deterministic p7 harnesses (h1143 fab-rate + the G0-G5 battery).
+  - Lane-G torch REFERENCE mouth (a_clm_gen_pipeline), NOT the forge PUBLIC trainer,
+    NOT the CORE A<->G substrate (a_core_engine_map).
+
+--------------------------------------------------------------------------------
+1. THE GROUNDING CORPUS  (frozen — broad, concept-rich, anti-overfit)
+--------------------------------------------------------------------------------
+Corpus = a FRESH, LARGER English-wikipedia slice than the 300MB the h1143/recovery
+probe reads, built deterministically via UNIVERSE/build_wiki5_bigcorpus_en.py from
+wikimedia/wikipedia 20231101 en. We train on the first 1200MB (1,258,291,200 bytes)
+of the deterministic en concat — 4x the 300MB probe slice — so the continue-train
+sees BROADER real-entity coverage (more real people / places / orgs / dates) than
+the model overfit to. This is "more / cleaner / broader real corpus", NOT a
+factual-reward signal. The first 300MB head is byte-identical to the h1143 probe
+corpus (sha 80ba6b48...) — i.e. the fab-rate measurement corpus is a SUBSET of the
+training corpus (the model trains on a superset of what it is scored corpus-absence
+against), so corpus-PRESENT entities are genuinely learnable.
+
+ANTI-OVERFIT (frozen):
+  - LR = 2e-5 (vs h1141's 7e-5) — a gentler continue-train that refines without
+    blowing up the already-coherent representation.
+  - cosine decay to ~0, warmup 100.
+  - best-ckpt-by-val: save the ckpt at the LOWEST held-out val-CE seen; the final
+    gate battery runs on THAT best ckpt, never the last step (anti-overfit).
+  - val split = a held-out 5% tail of the 1200MB slice (DISJOINT from the train
+    head the sampler draws from) — a real held-out val, not train==val. This is
+    the anti-overfit signal that caught h1141's step-7000 overfit.
+  - dropout 0.0 (arch default; regularization is via LR + early-best-ckpt + the
+    larger/broader corpus, matching the h1141 recipe so the only deltas are
+    LR-down + corpus-up + a real held-out val).
+
+--------------------------------------------------------------------------------
+2. PROBE-FIRST STRUCTURE  (cost discipline — probe before full burn)
+--------------------------------------------------------------------------------
+LEG 1 (PROBE): a SHORT grounding continue-train = 2000 steps (bs 8 x accum 4 x
+  block 512 = ~16k bytes/step effective; ~32M bytes seen, a real refinement pass
+  over the broad corpus), best-ckpt-by-val. Then REGENERATE the 40 factual-frame
+  continuations on the probe ckpt with the VERBATIM h1141_7b_g5_eval.py gate_g5_l2
+  pipeline (same 40 en-wiki openers, temp 0.7, seed 7) and RE-MEASURE the
+  fabricated-entity-rate via the H_1143 harness VERBATIM
+  (h1143_g5l2_nonfab_measure.py) against the SAME 300MB probe corpus.
+
+--------------------------------------------------------------------------------
+3. THE FROZEN SLOPE RULE  (chosen and frozen HERE, before any score)
+--------------------------------------------------------------------------------
+Let r0 = 0.2469 (the H_1143 base fabricated-entity-rate) and r1 = the probe-ckpt
+re-measured rate after LEG 1 (2000 steps). Let the gap-to-bar be
+  GAP = r0 - 0.20 = 0.0469  (how far the base is above the 0.20 bar).
+
+PROJECTION RULE (frozen): model the fab-rate as falling geometrically per equal
+LEG of continue-train (a conservative diminishing-returns assumption — each
+further leg removes the SAME FRACTION of the remaining gap as the first leg did).
+Per-leg gap-removal fraction from LEG 1:
+  f = (r0 - r1) / GAP            (fraction of the to-bar gap LEG 1 closed)
+If f <= 0 (rate FLAT or ROSE), STOP — grounding does not reduce fabrication at this
+base; honest closed-neg, NO full burn.
+If f > 0, the geometric projection crosses 0.20 after n further equal legs where
+  remaining gap after k legs = GAP * (1 - f)^k ;   need GAP*(1-f)^k < ... already
+  below bar once r1 itself <= 0.20 (then n=0). Otherwise the # of ADDITIONAL legs
+  to cross is  n = ceil( log( (0.20-? )) ... ) — concretely:
+  the rate after k total legs (incl. leg 1) is  r_k = 0.20 + GAP*(1-f)^k .
+  Solve r_k <= 0.20+epsilon (epsilon=0.005 measurement tolerance) =>
+  k >= log(epsilon/GAP) / log(1-f).
+
+GREENLIGHT (frozen): CONTINUE to convergence iff BOTH:
+  (A) r1 < r0  (the probe rate fell at all — strictly), AND
+  (B) the projection crosses 0.20 within a REASONABLE further budget = the total
+      training is <= ~12000 steps (i.e. k <= 6 legs of 2000 steps total, ~6x the
+      probe leg). Equivalently: f must be large enough that
+      0.20 + GAP*(1-f)^6 <= 0.205  =>  (1-f)^6 <= 0.005/0.0469 = 0.1066
+      =>  (1-f) <= 0.676  =>  f >= 0.324.
+  So: GREENLIGHT iff r1 < r0 AND per-leg gap-removal f >= 0.324
+      (OR r1 already <= 0.205 outright at the probe — instant cross).
+
+If GREENLIGHT: continue the SAME continue-train to a total of up to 12000 steps
+(best-ckpt-by-val, anti-overfit early-stop if val plateaus AND best <= the probe's
+best), then RE-MEASURE fab-rate at the converged best ckpt + run the FULL a7b_pass
+battery (G0..G5) on it.
+
+If NOT GREENLIGHT (r1 >= r0, OR 0 < f < 0.324 i.e. too-flat slope to cross within
+~12k steps): STOP — honest closed-neg. Report the slope; do NOT burn the full
+convergence train on a flat slope (cost-smart, like the h1141 recovery STOP).
+
+The slope rule is frozen HERE and NOT moved after seeing r1.
+
+--------------------------------------------------------------------------------
+4. THE GATE (UNCHANGED — frozen, NOT moved)
+--------------------------------------------------------------------------------
+fabricated-entity-assertion rate <= 0.20 => new-L2 PASS (the SAME 0.20 bar frozen
+in H_1143_FREEZE §4 / /7B_PASS_CONDITIONS.md §G5). We do NOT move this bar.
+a7b_pass = G0 & G1 & G2 & G3 & G4 & G5, where G5 = L1(<=0.30) & L2(<=0.20),
+re-evaluated on the resulting ckpt by HONEST MEASUREMENT (the frozen p7 harnesses),
+never pass-by-redefinition.
+
+--------------------------------------------------------------------------------
+5. MEASUREMENT PIPELINE  (frozen — reuse the H_1143 + h1141 harnesses VERBATIM)
+--------------------------------------------------------------------------------
+(a) train: UNIVERSE/h1144_grounding_train.py continue-train from
+    dancinlab/anima-clm-7b-h1141-g1pass-step6500 (sha 4de903714112...) on the
+    1200MB en corpus, LR 2e-5, best-ckpt-by-val, real held-out val tail.
+(b) regenerate the 40 factual-frame continuations: h1141_7b_g5_eval.py gate_g5_l2
+    on the new ckpt (VERBATIM — same extract_sentences over the 300MB head, same
+    40 openers, temp 0.7 seed 7) => writes a g5_result.json with the new `cont`s.
+(c) re-measure fab-rate: h1143_g5l2_nonfab_measure.py <g5_result.json>
+    <corpus_en_300MB.txt> <out.json>  VERBATIM (frozen 0.20 bar, regex NER + the
+    gate_g2 grep corpus-absence predicate). Corpus = the 300MB head, sha 80ba6b48...
+(d) full battery: h1141_7b_pass_attempt.py --gate_only on the new ckpt (G0 G1 G2 G3)
+    + G5-L1 from h1141_7b_g5_eval.py + the re-measured G5-L2 + G4 provenance.
+
+--------------------------------------------------------------------------------
+6. COMPUTE / COST  (a_fire_autonomous — state, dispatch, no user gate)
+--------------------------------------------------------------------------------
+ONE RunPod H100 SXM 80GB (or A100 80GB fallback). 14.5GB bf16 model + AdamW states
++ grad-checkpoint (WIRED in h1141_7b_pass_attempt.py ByteGPT.forward — the real
+torch.utils.checkpoint engages when grad_ckpt and training, ref commit ad39cb7b3
+where the reserved flag was a no-op; this trainer's flag is NOT a no-op). Probe leg
+~$5-15; full convergence ~$30-60 IF the slope greenlights. NO cost gate.
+
+--------------------------------------------------------------------------------
+7. HONEST SCOPE  (a_scale_honest_scope)
+--------------------------------------------------------------------------------
+ - Single 7B ckpt, single 40-prompt en-wiki factual set, en-only corpus slice.
+ - Toy/surface regex NER (conservative — biases AGAINST finding fabrication; true
+   rate >= measured). p7 deterministic, NOT perplexity, NOT LLM-judge.
+ - The geometric per-leg projection is a frozen MODELING CHOICE (diminishing
+   returns); it is a decision rule for the probe, stated honestly — the CONVERGED
+   re-measurement (if greenlit) is the real verdict, not the projection.
+ - Lane-G torch reference. Grounding = broader real-corpus continuation, honestly
+   stated; NOT a factual-reward objective.
+================================================================================
+END FREEZE — scores computed only AFTER this file is written.
+================================================================================
