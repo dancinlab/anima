@@ -203,11 +203,11 @@
   do   = "interleave /kick · /gap discovery every batch — a discovery lane runs alongside verify"
   dont = "defer discovery to the end · single tail-only round · stop discovering once a paper ships"
 
-@D a_discovery_log := "discoveries persist PER DOMAIN at domains/<DOMAIN>/discoveries/<slug>.tape" :: workflow [required active]
-  do   = "log every kick/gap discovery to `domains/<DOMAIN>/discoveries/<slug>.tape` — id · seed · tier"
-  do   = "cross-domain + no home → `domains/_UNSORTED/discoveries/` (no force-fit · a_paper_on_discovery)"
-  do   = "flat root `.discoveries/` migrated into domains + abolished 2026-06-12 (see domains/DISCOVERIES.md)"
-  dont = "recreate a flat root `.discoveries/` · discard output · paraphrase findings · skip claim-link"
+@D a_discovery_log := "discoveries join the per-domain log domains/<DOMAIN>.log.md" :: workflow [required active]
+  do   = "append every kick/gap discovery into `domains/<DOMAIN>.log.md` — id · seed · verdict-tier-target"
+  do   = "cross-domain + no home → closest domain's .log.md + a cross-ref note (cf a_paper_on_discovery)"
+  do   = "old discovery tapes merged into per-domain .log.md + discoveries/ subfolders removed 2026-06-13"
+  dont = "no discoveries/ subfolder or flat .discoveries/ · discard output · paraphrase · skip claim-link"
 
 @D a_toy_scale_recheck := "toy verify is not production closure — scale-up re-test required" :: workflow [required active]
   do   = "toy verdict ($0 · small-n · toy-vocab) states 'toy-only, scale-transfer unverified' in C3"
