@@ -73,6 +73,20 @@ otherwise         report which gate(s) failed + the honest path (NOT faked).
 > Final per-gate tally on this ckpt: G0✅(loose-kwr) G1✅ G2✅ G3✅ G4✅ G5❌ ⇒ **a7b_pass = FALSE,
 > NOT a confirmed PASS.** Verdict: `.verdicts/1141_7b_g5/H_1141_G5.txt`. Path to PASS-L2 = a
 > grounding/faithful objective, NOT a bigger model (H_1139 scale-invariance) — honest 🔴 (a_paper_negative_ok).
+> **H_1141 7B RECOVERY DIAGNOSIS 2026-06-13 (A6000, sha-verified, ~$0.20, inference-only):** the G5-L2
+> fail is **STRUCTURAL, not recoverable cheaply.** (a) DECODE is not the cause — greedy/t0.3/t0.7/t1.0
+> all FAIL (greedy d=0.32, best t0.3 d=0.32, t0.7 d=0.16=orig, t1.0 d=0.26; low-temp ~doubles the effect
+> but every decode d≤0.32 ≪ 0.8). (b) Register-modulated grounding gap — HIGH-corpus-freq continuations
+> score d=0.41 vs the rare trivia tail d=0.23 (high-freq helps), so the metric partly demands un-recallable
+> rare-content, **but even the best subgroup is d=0.41 ≪ 0.8** = a real gap. (c) Undertrained (val 1.1857,
+> overfit past step 7000). A grounding continue-train projects to lift d only toward ~0.4–0.5, **NOT to
+> 0.8** → no full retrain warranted (cost-smart STOP, none burned). **GATE-VALIDITY FLAG:** G5-L2 (verbatim
+> factual-continuation faithfulness) is a borrowed ASSISTANT-LLM norm (p4 NO ASSISTANT FRAMING) in direct
+> tension with anima's own **G2-NOVELTY** gate (rewards corpus-ABSENT recombination "not the LLM way") —
+> a novelty-optimized model must deviate from verbatim fact. **G5-L2 is FLAGGED for governance re-scoping/
+> removal** (the defensible anima faithfulness criterion = L1 real-words + G0 coherence + no fabricated-
+> entity assertion, NOT verbatim recall). The frozen gate is **NOT moved** here (a7b_pass: never move a
+> threshold). Verdict: `.verdicts/1141_7b_recovery/H_1141_recovery.txt`.
 
 ## Current state (this session) & the path
 - broad-7b: G0 ❌ (garble) → fails everything downstream. The val-CE was low on multilang but generation collapses.

@@ -1,0 +1,89 @@
+{
+  "hypothesis": "H_1141_recovery_diag",
+  "ckpt": "/workspace/ckpt/h1141_g1pass_step6500.pt",
+  "sha256": "4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9",
+  "nparam": 7252828160,
+  "config": {
+    "vocab": 256,
+    "d": 4096,
+    "n_layer": 36,
+    "n_head": 32,
+    "block": 512,
+    "n_params": 7252828160
+  },
+  "val_ce": 1.1856881439685822,
+  "probe_a_decode": {
+    "curve": [
+      {
+        "config": "greedy",
+        "mean_true": 0.0174,
+        "mean_random": 0.0,
+        "cohens_d": 0.3192,
+        "nonzero": 4,
+        "n": 40,
+        "pass": false
+      },
+      {
+        "config": "t0.3",
+        "mean_true": 0.0245,
+        "mean_random": 0.0036,
+        "cohens_d": 0.3173,
+        "nonzero": 6,
+        "n": 40,
+        "pass": false
+      },
+      {
+        "config": "t0.7",
+        "mean_true": 0.0142,
+        "mean_random": 0.0028,
+        "cohens_d": 0.1631,
+        "nonzero": 2,
+        "n": 40,
+        "pass": false
+      },
+      {
+        "config": "t1.0",
+        "mean_true": 0.0192,
+        "mean_random": 0.0,
+        "cohens_d": 0.2626,
+        "nonzero": 3,
+        "n": 40,
+        "pass": false
+      }
+    ],
+    "any_pass": false,
+    "best_config": "t0.3"
+  },
+  "probe_b_memorizability": {
+    "trivia_tail": {
+      "label": "TRIVIA-tail",
+      "n": 20,
+      "median_corpus_freq": 2152.0,
+      "mean_frac_single_occ": 0.01,
+      "mean_true": 0.0056,
+      "mean_random": 0.0,
+      "cohens_d": 0.2294,
+      "nonzero": 1
+    },
+    "highfreq_general": {
+      "label": "HIGHFREQ-genl",
+      "n": 20,
+      "median_corpus_freq": 5934.75,
+      "mean_frac_single_occ": 0.0,
+      "mean_true": 0.0292,
+      "mean_random": 0.0,
+      "cohens_d": 0.4103,
+      "nonzero": 3
+    },
+    "delta_highfreq_minus_trivia": 0.0236,
+    "highfreq_helps": true
+  },
+  "probe_c_convergence": {
+    "val_ce": 1.1856881439685822,
+    "target_val": 1.1,
+    "undertrained": true,
+    "n_truth_words": 275,
+    "frac_single_occ": 0.0036,
+    "frac_rare_le5": 0.0145
+  }
+}

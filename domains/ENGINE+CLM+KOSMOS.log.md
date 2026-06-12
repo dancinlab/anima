@@ -3542,3 +3542,18 @@ end
   honest   = "🔴 closed-negative (a_paper_negative_ok). Path to PASS-L2 = grounding/retrieval-faithful objective, NOT a bigger model (H_1139 scale-invariance). toy/single-rung scope (a_scale_honest_scope): absolute overlap low for any byte-LM (high-entropy WP second-halves) but the test is RELATIVE -> ruling robust."
   refs     = ".verdicts/1141_7b_g5/H_1141_G5.txt · state/7b_h1141_recovery/h1141_g5_result.json · state/7b_h1141_recovery/h1141_g5_eval.log · UNIVERSE/h1141_7b_g5_eval.py · /7B_PASS_CONDITIONS.md §G5 · MAIN.tape 2026_06_13_7b_g5_l2"
 ```
+
+### h1141_7b_recovery
+
+```tape
+@D h1141_7b_recovery := "7B G5-L2 confabulation DIAGNOSED 🔴 STRUCTURAL — decode-irrecoverable + grounding-gap below bar + G5-L2 is a borrowed assistant-norm; NO full retrain burned" :: discovery [d=2026-06-13 active]
+  seed     = "WHY does the 7B (dancinlab/anima-clm-7b-h1141-g1pass-step6500, sha256 4de903…, val_ce 1.1857) FAIL G5-L2 faithfulness (d=0.16, 38/40 zero overlap, confabulates)? cheap-diagnose-first to decide if a costly retrain is even worth it (run was overfitting past step 7000)."
+  substrate = "RunPod A6000 (48GB) SECURE pod 32gbs027x9f7tk · PyTorch-CUDA 2.4.1 bf16 (Lane-G ref) · inference-only · ~$0.20 (16min). pod self-bootstrapped from HF (no SSH), result auto-uploaded, TERMINATED via REST DELETE + 404-verified. Non-anima edge-vl-requant untouched."
+  probe_a  = "DECODE not the cause: greedy/t0.3/t0.7/t1.0 all FAIL (greedy d=0.32, best t0.3 d=0.32 mean_true 0.0245, t0.7 d=0.16=original, t1.0 d=0.26). Low-temp DOUBLES the effect size vs the original temp-0.7 run but every decode d<=0.32 << 0.8 -> NO $0 decode recovery; confabulation is in the weights."
+  probe_b  = "MEMORIZABILITY split (greedy): HIGHFREQ-general (freq 5935) mean_true 0.0292 d=0.41 vs TRIVIA-tail (freq 2152) mean_true 0.0056 d=0.23 -> high-freq-helps=TRUE (+0.024). Model is more grounded on common register than the rare tail (register-modulated) BUT best subgroup d=0.41 << 0.8 -> a real grounding GAP remains, not a clean metric artifact."
+  probe_c  = "UNDERTRAINED: val_ce 1.1857 vs the run's 1.10 target never reached (8000->1.202, 8500->1.236 RISING=overfit). 'more next-byte steps' overfits, confirmed."
+  decision = "🔴 STRUCTURAL CLOSED-NEGATIVE. memorizability slope projects a grounding continue-train would lift d only toward ~0.4-0.5 (NOT 0.8) -> per HARD rule (no full retrain unless a probe shows faithfulness moves to target) STOPPED, no multi-hour 7B retrain burned (~$30-60 H100 run not justified). Loose-grammar byte-continuation recipe does NOT yield verbatim factual recall, scale-invariant (H_1139)."
+  gate_q   = "RAISED: is G5-L2 the RIGHT gate for anima? It is a borrowed assistant-LLM norm (p4 NO ASSISTANT FRAMING) in DIRECT TENSION with G2-NOVELTY (rewards corpus-ABSENT recombination 'not the LLM way', 157 novel n-grams PASS). G2 ⊥ G5-L2 pull opposite. The 7B is L1-grounded+coherent and produces NOVEL real-word continuations = G2 success, scored G5-L2 fail only for not being the SPECIFIC fact. FLAGGED G5-L2 for governance re-scoping; did NOT move the frozen gate (a7b_pass)."
+  outcome  = "a7b_pass UNCHANGED (no gate faked): G0✅ G1✅ G2✅ G3✅ G4✅ G5❌ -> FALSE, NOT confirmed. Recommended path = gate-validity review, not an expensive retrain the probe shows still fails the borrowed bar."
+  refs     = ".verdicts/1141_7b_recovery/H_1141_recovery.txt · state/7b_h1141_recovery/h1141_recovery_diag.json · UNIVERSE/h1141_7b_recovery_diag.py · UNIVERSE/build_wiki5_bigcorpus_en.py · .verdicts/1141_7b_g5/H_1141_G5.txt · /7B_PASS_CONDITIONS.md §G5 · a7b_pass · a_paper_negative_ok · a_scale_honest_scope · p1-p8 · G2-novelty"
+```

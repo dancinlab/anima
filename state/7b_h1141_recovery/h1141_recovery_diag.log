@@ -1,0 +1,43 @@
+[pod] START Fri Jun 12 17:48:05 UTC 2026
+GOT /workspace/src/recovery/h1141_7b_recovery_diag.py
+GOT /workspace/src/recovery/build_wiki5_bigcorpus_en.py
+CKPT /workspace/ckpt/h1141_g1pass_step6500.pt
+[pod] ckpt sha256=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+[torch] 2.4.1+cu124 True NVIDIA RTX A6000
+[pod] building en corpus 300MB ...
+  en shard 0: got=314615453 docs=62437 dup=54
+CORPUS_OUT /workspace/corpus_en.txt bytes=314572800 sha256=80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d
+[pod] running diagnostic ...
+[dev] cuda NVIDIA RTX A6000
+[ckpt] /workspace/ckpt/h1141_g1pass_step6500.pt sha256=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+[model] cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.1856881439685822 step=7000 params=7,252,828,160
+[L2] extracted 40 verbatim English factual sentences
+[L2] 40 usable pairs
+[freq] 613775 distinct content words in probed corpus
+
+########## PROBE (a) DECODE SENSITIVITY ##########
+  [greedy ] mean_true=0.0174 mean_rand=0.0000 d=0.3192 nonzero=4/40 L2=FAIL
+  [t0.3   ] mean_true=0.0245 mean_rand=0.0036 d=0.3173 nonzero=6/40 L2=FAIL
+  [t0.7   ] mean_true=0.0142 mean_rand=0.0028 d=0.1631 nonzero=2/40 L2=FAIL
+  [t1.0   ] mean_true=0.0192 mean_rand=0.0000 d=0.2626 nonzero=3/40 L2=FAIL
+  => best-by-mean_true = t0.3 (mean_true=0.0245); any decode PASS = False
+
+########## PROBE (b) MEMORIZATION-vs-GENERALIZATION ##########
+  [TRIVIA-tail ] n=20 med_corpus_freq=2152.0 frac_single_occ=0.01 mean_true=0.0056 mean_rand=0.0000 d=0.2294 nonzero=1
+  [HIGHFREQ-genl] n=20 med_corpus_freq=5934.75 frac_single_occ=0.00 mean_true=0.0292 mean_rand=0.0000 d=0.4103 nonzero=3
+  => HIGHFREQ mean_true 0.0292 vs TRIVIA 0.0056 (delta=+0.0236); high-freq-helps=True
+
+########## PROBE (c) CONVERGENCE / CORPUS-MEMORIZABILITY ##########
+  val_ce=1.1856881439685822 (target 1.1) -> undertrained-for-faithfulness=True
+  L2-truth content words: 275 total; 1 appear <=1x in corpus (0.4% un-memorizable single-occ), 4 appear <=5x (1.5% rare)
+  => the L2 metric demands recall of a 0%-single-occurrence trivia tail from a 315MB broad corpus
+
+========================================================================
+### H_1141 7B RECOVERY — PHASE-1 DIAGNOSIS SUMMARY ###
+  (a) DECODE: any config PASSes L2 = False (best=t0.3)
+  (b) MEMORIZABILITY: high-freq-continuations-help = True (delta=+0.0236)
+  (c) CONVERGENCE: undertrained=True (val 1.1856881439685822); L2-truth single-occ tail = 0%
+========================================================================
+
+[done] wrote /workspace/h1141_recovery_diag.json
+DIAG_DONE Fri Jun 12 18:02:49 UTC 2026 rc=0
