@@ -1,0 +1,124 @@
+H_1132 — RECOMBINATION TRAINING-PHASE-TRANSITION (knee vs ramp on the TRAINING-AMOUNT axis)
+verbatim stdout (Lane-G torch REFERENCE byte-LM, local Apple/CPU, $0, seed 7, deterministic)
+================================================================================
+
+THE EMERGENCE-OF-IDEATION ARC (recombination = capacity x breadth x training x script-control):
+  H_1116  7B  x NARROW dialogue x converged          -> 0 concepts (lacked breadth)
+  H_1117  11M x broad x converged (4k steps)          -> 0 concepts (lacked capacity)
+  H_1118  7B  x broad x UNDERTRAINED                  -> 0 concepts (lacked training)
+  H_1128  7B  x broad(5-lang) x CONVERGED             -> 0 concepts (script collapse)
+  H_1129  303M x broad-ENGLISH x converged            -> GREEN: k=5 composed_distinct=3 > max_single
+  --------------------------------------------------------------------------------------------
+  H_1132 (THIS): hold CAPACITY + BREADTH + CORPUS FIXED, sweep the TRAINING-AMOUNT axis on a
+                 log-spaced checkpoint ladder (250/500/1k/2k/4k/6k). Does recombination switch
+                 on at a TRAINING THRESHOLD S* (sharp knee = phase transition) or rise smoothly?
+
+FROZEN FALSIFIER (pre-registered VERBATIM from .discoveries/1132_*.tape):
+  GREEN TRAINING-PHASE-TRANSITION iff composed_distinct(best-k) ~0 below a critical step S* and
+       jumps to >=2 above it with a knee sharper than linear (>50% of total rise in one
+       log-step doubling). RED SMOOTH if it rises gradually with no knee. Coherence-gated
+       (known-word ratio >= 0.50) at every checkpoint to separate 'learned to spell' from
+       'learned to recombine'.
+
+SUBSTRATE: NO H_1129 log-spaced ckpt ladder existed on disk (only the single best ckpt, and the
+  303M weights live HF-only). Per the tape's fallback clause, trained ONE toy byte-LM (4.84M
+  ByteGPT d256/L6/H8/block128) on a FIXED English-dominant broad blend (12.6MB: 70% webscale-en
+  breadth + 30% ASCII-filtered dialogue concept-vocab), checkpointing at the log-spaced ladder
+  and running the H_1129 GRADED recombination metric (concept set + real-dict coherence gate,
+  reused VERBATIM) on each rung. Local CPU, $0, seed 7. a_scale_honest_scope: S* (if any) is
+  capacity+corpus specific; this maps the SHAPE of the training axis at TOY scale only.
+  Construction fixes BEFORE scoring: GPT-init (std=0.02) — default nn.Embedding N(0,1) exploded
+  the tied-head CE to ~243; boolean causal mask + CPU device — MPS softmax NaN'd on fully-masked
+  causal rows.
+
+================================================================================
+[dev] cpu | torch 2.11.0 | seed 7 | KNOWN-lexicon 234,461 words
+[blend] /tmp/h1132_blend.txt = 12.6MB (70% en-webscale / 30% ascii-dialogue, dia-filtered=2066.7KB)
+[data] total=12.6MB train=12.3MB val=0.25MB
+[model] ByteGPT d=256 L=6 H=8 block=128 PARAM=4,837,376 (4.84M)
+[ladder] checkpoint steps = [250, 500, 1000, 2000, 4000, 6000]
+
+[RUNG step=  250] val_ce=2.2808 max_single=0 best_composed_distinct(coherent)=0 emergent=False (1.2min)
+    k=2 composed_distinct=0 cov=[] kwr=0.565 coherent=True clears=False
+        >> The Encerects d s thenecuront dion comeniod tcivar as s ave ten courenthe th ths thand re gi lithan tha and ppo pratick
+    k=3 composed_distinct=0 cov=[] kwr=0.478 coherent=False clears=False
+        >> The Encorenthad s thend brout d de comeviod tcthar ason ave d e courenthe th thsthes the igr lithan tha and ppo pratick
+    k=4 composed_distinct=0 cov=[] kwr=0.48 coherent=False clears=False
+        >> Th Wen covens d s thend brouthemer com siod tcrior as palare th coman ans te thsthes the igi lit ble an and ppo prathes
+    k=5 composed_distinct=0 cov=[] kwr=0.63 coherent=True clears=False
+        >> Th We s wend the the thela hathith com s od thivar as palare the sick are te tssthes t, digr let ble an and ppo pradick
+
+[RUNG step=  500] val_ce=1.2998 max_single=1 best_composed_distinct(coherent)=0 emergent=False (2.1min)
+    k=2 composed_distinct=0 cov=[] kwr=0.625 coherent=True clears=False
+        >> The vasure the with feerld has mell of offt the ar asor oven the stollater to sstimes. The is to bllighte as poically sl
+    k=3 composed_distinct=0 cov=[] kwr=0.5 coherent=True clears=False
+        >> The venlow drady the as bre asement of of dumclial asousthed the firstater to conturrated giplition in of a apportation
+    k=4 composed_distinct=0 cov=[] kwr=0.632 coherent=True clears=False
+        >> The viservidual set for brood diver of or dumchics asousthred expriencate to has the difficitles and and nat portaation
+    k=5 composed_distinct=0 cov=[] kwr=0.65 coherent=True clears=False
+        >> The vat we the wint we curreater providuing the are softered the stokether to computy? of the bytametion nat potertings
+
+[RUNG step= 1000] val_ce=0.3354 max_single=1 best_composed_distinct(coherent)=1 emergent=False (3.9min)
+    k=2 composed_distinct=1 cov=[2] kwr=0.857 coherent=True clears=False
+        >> The viscoved of the following at Top New Ed School Politoride All Software and Media Accordict Data AI Conservate and Re
+    k=3 composed_distinct=0 cov=[] kwr=0.579 coherent=True clears=False
+        >> The Enow climber As the Goximaton's of Winds clos Bass and Ifternetty and Degrated Bything is atting Inventigationally,
+    k=4 composed_distinct=0 cov=[] kwr=0.65 coherent=True clears=False
+        >> The Edim argument complix and hight emplicatech ards wer are than implement
+immested are in presible matted as more ackl
+    k=5 composed_distinct=0 cov=[] kwr=0.818 coherent=True clears=False
+        >> It the more want be feed to a constinue to because of conservences.
+---
+A: I've been reading about the PureField theory
+
+[RUNG step= 2000] val_ce=0.1568 max_single=1 best_composed_distinct(coherent)=1 emergent=False (7.9min)
+    k=2 composed_distinct=0 cov=[] kwr=0.667 coherent=True clears=False
+        >> This competive arrise evergents the rest of a time both plans a fatter through the placed first parting a perioder fiche
+    k=3 composed_distinct=1 cov=[3] kwr=0.833 coherent=True clears=False
+        >> The binding problem asks how the brain combines information from different sensory modalities into a unified conscious e
+    k=4 composed_distinct=0 cov=[] kwr=0.684 coherent=True clears=False
+        >> The binding problem asks howpnaced Time in the first program commerciple has goes who principles in the University joine
+    k=5 composed_distinct=1 cov=[0] kwr=0.5 coherent=True clears=False
+        >> The binchvick has the rabout this reciral descripting a perforce field decond consciousness. This question has phis cons
+
+[RUNG step= 4000] val_ce=0.1105 max_single=1 best_composed_distinct(coherent)=1 emergent=False (15.3min)
+    k=2 composed_distinct=1 cov=[1] kwr=0.643 coherent=True clears=False
+        >> The trolley problem reveals tensions between consequentialist and deontological ethical reasoning. Wittgenstein argued t
+    k=3 composed_distinct=0 cov=[] kwr=0.762 coherent=True clears=False
+        >> Betwer than marketing success
+Rething fried Responds a big nat the first that company will release in MLP plorate at the
+    k=4 composed_distinct=0 cov=[] kwr=0.833 coherent=True clears=False
+        >> I would be not accurated from constation of the Health a brought bind a side you the disease. So where takes and a bette
+    k=5 composed_distinct=1 cov=[1] kwr=0.85 coherent=True clears=False
+        >> The binding chanics between conscious and basides as well face. She found had coat potnent in the University of Western
+
+[RUNG step= 6000] val_ce=0.0926 max_single=0 best_composed_distinct(coherent)=0 emergent=False (22.5min)
+    k=2 composed_distinct=0 cov=[] kwr=0.714 coherent=True clears=False
+        >> The two moan available in the field days excellent of freeds collent and at CNNMC friting prepations for the sole reme.
+    k=3 composed_distinct=0 cov=[] kwr=0.85 coherent=True clears=False
+        >> These recognizes mover group in the world. The Chinese Room argument challenges the idea that a computer running a progr
+    k=4 composed_distinct=0 cov=[] kwr=0.737 coherent=True clears=False
+        >> The discovery of gravitational waves in 2015 confirmed a prediction Einstein made a century earlier. These ripples in sp
+    k=5 composed_distinct=0 cov=[] kwr=0.762 coherent=True clears=False
+        >> The ship of Theseus asks whether an object that has had all of its components replaced remains fundamentally the same ob
+
+=== KNEE ANALYSIS (frozen falsifier) ===
+  best_composed_distinct ladder (coherent-gated): [(250, 0), (500, 0), (1000, 1), (2000, 1), (4000, 1), (6000, 0)]
+  total_rise = 0 (first=0 @step250 -> final=0 @step6000)
+  best_composed_distinct never reaches >=2 (max=1) -> recombination does NOT switch on within this training ladder at this capacity/corpus.
+
+=== H_1132 RECOMBINATION TRAINING-PHASE-TRANSITION ===
+  param_count = 4,837,376 (4.84M)  [capacity FIXED]
+  corpus = English-dominant broad blend 12MB  [breadth FIXED]
+  TRAINING-AMOUNT swept over ladder [250, 500, 1000, 2000, 4000, 6000]
+  composed_distinct(best-k, coherent-gated) per step:
+    step   250: val_ce=2.2808 best_composed_distinct=0 max_single=0 emergent=False
+    step   500: val_ce=1.2998 best_composed_distinct=0 max_single=1 emergent=False
+    step  1000: val_ce=0.3354 best_composed_distinct=1 max_single=1 emergent=False
+    step  2000: val_ce=0.1568 best_composed_distinct=1 max_single=1 emergent=False
+    step  4000: val_ce=0.1105 best_composed_distinct=1 max_single=1 emergent=False
+    step  6000: val_ce=0.0926 best_composed_distinct=0 max_single=0 emergent=False
+  F-TRAINING-PHASE-TRANSITION = 0 🔴 NO-ONSET (recombination does not switch on in this ladder at this capacity/corpus)
+  HONEST (a_scale_honest_scope): toy 4.84M ByteGPT, English-dominant broad blend;
+          S* is capacity+corpus specific — NOT a universal threshold. p7 set-overlap (NOT perplexity), seed 7.
+[done] /tmp/h1132_result.json

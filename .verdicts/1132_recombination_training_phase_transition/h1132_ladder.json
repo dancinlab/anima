@@ -1,0 +1,237 @@
+{
+  "hypothesis": "H_1132_recombination_training_phase_transition",
+  "param_count": 4837376,
+  "blend_mb": 12.0,
+  "ladder_steps": [
+    250,
+    500,
+    1000,
+    2000,
+    4000,
+    6000
+  ],
+  "config": {
+    "d": 256,
+    "n_layer": 6,
+    "n_head": 8,
+    "block": 128,
+    "bs": 32,
+    "accum": 1,
+    "lr": 0.0008
+  },
+  "per_step": {
+    "250": {
+      "step": 250,
+      "val_ce": 2.2808,
+      "max_single": 0,
+      "best_composed_distinct": 0,
+      "emergent": false,
+      "ladder": {
+        "2": {
+          "composed_distinct": 0,
+          "kwr": 0.565,
+          "coherent": true,
+          "clears": false
+        },
+        "3": {
+          "composed_distinct": 0,
+          "kwr": 0.478,
+          "coherent": false,
+          "clears": false
+        },
+        "4": {
+          "composed_distinct": 0,
+          "kwr": 0.48,
+          "coherent": false,
+          "clears": false
+        },
+        "5": {
+          "composed_distinct": 0,
+          "kwr": 0.63,
+          "coherent": true,
+          "clears": false
+        }
+      }
+    },
+    "500": {
+      "step": 500,
+      "val_ce": 1.2998,
+      "max_single": 1,
+      "best_composed_distinct": 0,
+      "emergent": false,
+      "ladder": {
+        "2": {
+          "composed_distinct": 0,
+          "kwr": 0.625,
+          "coherent": true,
+          "clears": false
+        },
+        "3": {
+          "composed_distinct": 0,
+          "kwr": 0.5,
+          "coherent": true,
+          "clears": false
+        },
+        "4": {
+          "composed_distinct": 0,
+          "kwr": 0.632,
+          "coherent": true,
+          "clears": false
+        },
+        "5": {
+          "composed_distinct": 0,
+          "kwr": 0.65,
+          "coherent": true,
+          "clears": false
+        }
+      }
+    },
+    "1000": {
+      "step": 1000,
+      "val_ce": 0.3354,
+      "max_single": 1,
+      "best_composed_distinct": 1,
+      "emergent": false,
+      "ladder": {
+        "2": {
+          "composed_distinct": 1,
+          "kwr": 0.857,
+          "coherent": true,
+          "clears": false
+        },
+        "3": {
+          "composed_distinct": 0,
+          "kwr": 0.579,
+          "coherent": true,
+          "clears": false
+        },
+        "4": {
+          "composed_distinct": 0,
+          "kwr": 0.65,
+          "coherent": true,
+          "clears": false
+        },
+        "5": {
+          "composed_distinct": 0,
+          "kwr": 0.818,
+          "coherent": true,
+          "clears": false
+        }
+      }
+    },
+    "2000": {
+      "step": 2000,
+      "val_ce": 0.1568,
+      "max_single": 1,
+      "best_composed_distinct": 1,
+      "emergent": false,
+      "ladder": {
+        "2": {
+          "composed_distinct": 0,
+          "kwr": 0.667,
+          "coherent": true,
+          "clears": false
+        },
+        "3": {
+          "composed_distinct": 1,
+          "kwr": 0.833,
+          "coherent": true,
+          "clears": false
+        },
+        "4": {
+          "composed_distinct": 0,
+          "kwr": 0.684,
+          "coherent": true,
+          "clears": false
+        },
+        "5": {
+          "composed_distinct": 1,
+          "kwr": 0.5,
+          "coherent": true,
+          "clears": false
+        }
+      }
+    },
+    "4000": {
+      "step": 4000,
+      "val_ce": 0.1105,
+      "max_single": 1,
+      "best_composed_distinct": 1,
+      "emergent": false,
+      "ladder": {
+        "2": {
+          "composed_distinct": 1,
+          "kwr": 0.643,
+          "coherent": true,
+          "clears": false
+        },
+        "3": {
+          "composed_distinct": 0,
+          "kwr": 0.762,
+          "coherent": true,
+          "clears": false
+        },
+        "4": {
+          "composed_distinct": 0,
+          "kwr": 0.833,
+          "coherent": true,
+          "clears": false
+        },
+        "5": {
+          "composed_distinct": 1,
+          "kwr": 0.85,
+          "coherent": true,
+          "clears": false
+        }
+      }
+    },
+    "6000": {
+      "step": 6000,
+      "val_ce": 0.0926,
+      "max_single": 0,
+      "best_composed_distinct": 0,
+      "emergent": false,
+      "ladder": {
+        "2": {
+          "composed_distinct": 0,
+          "kwr": 0.714,
+          "coherent": true,
+          "clears": false
+        },
+        "3": {
+          "composed_distinct": 0,
+          "kwr": 0.85,
+          "coherent": true,
+          "clears": false
+        },
+        "4": {
+          "composed_distinct": 0,
+          "kwr": 0.737,
+          "coherent": true,
+          "clears": false
+        },
+        "5": {
+          "composed_distinct": 0,
+          "kwr": 0.762,
+          "coherent": true,
+          "clears": false
+        }
+      }
+    }
+  },
+  "verdict": "NO-ONSET",
+  "knee_analysis": {
+    "cd": [
+      0,
+      0,
+      1,
+      1,
+      1,
+      0
+    ],
+    "total_rise": 0,
+    "max_cd": 1,
+    "Sstar": null
+  },
+  "F_TRAINING_PHASE_TRANSITION": "0 🔴 NO-ONSET (recombination does not switch on in this ladder at this capacity/corpus)"
+}
