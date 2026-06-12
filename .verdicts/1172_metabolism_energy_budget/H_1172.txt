@@ -1,0 +1,76 @@
+=== H_1172 — METABOLISM energy budget self-regulates cell-count (NO MAX_CELLS cap) ===
+  K_true=3: final_cells=1.4 (min 0/max 3) peak=5 collapsed=5/10
+  K_true=5: final_cells=0.0 (min 0/max 0) peak=5 collapsed=10/10
+  K_true=8: final_cells=0.0 (min 0/max 0) peak=5 collapsed=10/10
+
+=== VERDICT ===
+{
+  "H": "H_1172",
+  "title": "binding metabolism (energy budget, starve->die) self-regulates cell-count WITHOUT the external MAX_CELLS cap",
+  "design": "REUSE h1159b mitosis; ADD per-cell energy E (upkeep each step; reward for winning low-error assignments; division costs energy + daughter inherits half; E<=0 -> die); REMOVE the hard MAX_CELLS cap.",
+  "params": {
+    "E_INIT": 1.0,
+    "UPKEEP": 0.01,
+    "REWARD": 0.04,
+    "D_REF": 6.0,
+    "DIV_COST": 0.5,
+    "THETA": 1.6,
+    "WIN": 200,
+    "LR": 0.05,
+    "EXPLODE_LIMIT": 200,
+    "n_seeds": 10,
+    "K_trues": [
+      3,
+      5,
+      8
+    ]
+  },
+  "per_K_true": {
+    "3": {
+      "final_count_mean": 1.4,
+      "final_count_min": 0,
+      "final_count_max": 3,
+      "peak_count_max": 5,
+      "n_collapsed": 5
+    },
+    "5": {
+      "final_count_mean": 0.0,
+      "final_count_min": 0,
+      "final_count_max": 0,
+      "peak_count_max": 5,
+      "n_collapsed": 10
+    },
+    "8": {
+      "final_count_mean": 0.0,
+      "final_count_min": 0,
+      "final_count_max": 0,
+      "peak_count_max": 5,
+      "n_collapsed": 10
+    }
+  },
+  "F1_self_tuning_no_cap": {
+    "spearman_Ktrue_vs_count": -0.6987764182424917,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_survival_usefulness": {
+    "spearman_usefulness_vs_survived": 0.1434181409659783,
+    "bar": 0.5,
+    "pass": false,
+    "survivor_mean_usefulness": 0.010257316505695861,
+    "dead_mean_usefulness": 0.006537368544487615
+  },
+  "guard_no_collapse": {
+    "pass": false,
+    "note": ">=1 live cell each K, no die-out"
+  },
+  "guard_no_explosion": {
+    "pass": true,
+    "global_peak_count": 5,
+    "explode_limit": 200
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: the metabolic energy budget does NOT cleanly self-regulate cell-count without the external cap (see which gate failed: F1 count-tracking / F2 survival-usefulness / collapse / explosion) — a_paper_negative_ok.",
+  "scope": "toy numpy $0 CPU 10 seeds, 3-point K_true ladder {3,5,8}; prototype-split PROXY for CORE cell-division; metabolism is a toy energy model, NOT the live E ratchet. live engine + scale UNVERIFIED (a_scale_honest_scope). p7."
+}
+[done]
