@@ -87,6 +87,20 @@ otherwise         report which gate(s) failed + the honest path (NOT faked).
 > removal** (the defensible anima faithfulness criterion = L1 real-words + G0 coherence + no fabricated-
 > entity assertion, NOT verbatim recall). The frozen gate is **NOT moved** here (a7b_pass: never move a
 > threshold). Verdict: `.verdicts/1141_7b_recovery/H_1141_recovery.txt`.
+> **H_1142 GATE-TENSION LADDER 2026-06-13 (summer GPU, $0, no pod):** the G5-L2-vs-G2 conflict is now
+> measured ACROSS SCALE, not just at the single 7B point. A 3-rung ByteGPT ladder (44.68M / 303M-H_1129 /
+> 7B-H_1141), BOTH gates via the IDENTICAL frozen harness (`gate_g2` + `gate_g5_l2`, p7, seed 7): as scale
+> grows, G5-L2 faithfulness-d FALLS MONOTONICALLY **0.413 → 0.234 → 0.163** while G2 corpus-absent novelty
+> stays flat-high **0.479 / 0.512 / 0.500** (all PASS G2, all FAIL the 0.8 G5-L2 bar). Spearman
+> **ρ(G2_novelty_rate, G5L2_d) = −0.5 ≤ 0 ⇒ TENSION-CONFIRMED**: the bigger/better-converged anima model is
+> *more* novel-recombining and *less* verbatim-faithful — the two gates pull apart with scale, so the 7B
+> G5-L2 fail is a SCALE TREND, not a 7B undertraining artifact. **Evidence ⇒ re-scoping/removing G5-L2 from
+> the frozen a7b_pass set is JUSTIFIED** (the defensible anima criterion = L1 real-words + G0 coherence + no
+> fabricated-entity assertion, NOT verbatim recall). The frozen gate is **NOT moved here** — this is the
+> evidence note; the actual re-scope awaits an explicit user sign. Honest scope: 3-rung minimum, toy/surface
+> p7 metric, scale-transfer beyond these points UNVERIFIED; the 44.68M d=0.413 is small-model-inflated
+> (mean_random=0.000), but the 303M→7B fall (0.234→0.163, both real controls) carries the trend. Verdict:
+> `.verdicts/1142_gate_tension_ladder/H_1142.txt`.
 
 ## Current state (this session) & the path
 - broad-7b: G0 ❌ (garble) → fails everything downstream. The val-CE was low on multilang but generation collapses.
