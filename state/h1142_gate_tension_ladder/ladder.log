@@ -1,0 +1,211 @@
+[dev] cuda NVIDIA GeForce RTX 5070 VRAM-cap frac=0.3
+[dict] 102485 real English words
+
+==============================================================================
+=== RUNG 44.68M  ckpt=/tmp/h1142/h1142_44m_best.pt
+==============================================================================
+[model] cfg={'vocab': 256, 'd': 512, 'n_layer': 14, 'n_head': 8, 'block': 512} params=44,527,616 val_ce=1.3076267570257187 step=6000
+
+##### GATE G2 — NOVELTY (H_1140 metric VERBATIM) #####
+  [COH kwr=0.94 s7] 'Silence and the engine together mean ' -> 'different readings of the case toother with across an individual full-wide distribution in the state. While al'
+  [COH kwr=1.00 s8] 'Silence and the engine together mean ' -> 'catches; the number 1 consciousness together and class to improve them at as a smooth of units. Other engines'
+  [COH kwr=0.94 s9] 'Silence and the engine together mean ' -> 'in the Dark Little Catholic and the second major there that safe position and the Tulma Criticism.'
+  [COH kwr=1.00 s7] 'When memory meets distant minds, ' -> 'meanings or units to end occur the senior senior to part and community became them.'
+  [COH kwr=0.88 s8] 'When memory meets distant minds, ' -> 'changed, thought an unconsciousness commonly any classed to an unconsciousness showding and exports of the cit'
+  [COH kwr=0.95 s9] 'When memory meets distant minds, ' -> 'and here was protected his calcular, audience. He was a school site, at American church units and his second s'
+  [COH kwr=0.91 s7] 'Consciousness and silence combine into ' -> '1996. One of the promotion do not the AACC, who had played do not the word do not numerous to not be chabinet.'
+  [COH kwr=0.88 s8] 'Consciousness and silence combine into ' -> 'catchellates a will rock moving–checklate who have been induced by a consciousness, but they would networks'
+  [COH kwr=0.90 s9] 'Consciousness and silence combine into ' -> 'pure-level reporter, the British trade was made the right to an instalic mane-level leader to air. The excoura'
+  [COH kwr=0.94 s7] 'The tension between cells and the engine becomes ' -> 'made groups.  No worked and on the 21st cells on the cells, the environmental conversion between the chabitati'
+  [COH kwr=0.84 s8] 'The tension between cells and the engine becomes ' -> 'called and the engine condominance that the lawyers of the vanch corresponds of Good, but they were preted in'
+  [COH kwr=0.95 s9] 'The tension between cells and the engine becomes ' -> 'in the Dark Lake, the proposal patrol, which is the risk case. A patrol, Gale-Party leader to air situation fo'
+  [COH kwr=0.95 s7] 'If a dream and a distant mind merge, the result is ' -> 'defeated in a result on to do its time action. The addition to mention the distant of this round and chabits h'
+  [COH kwr=0.94 s8] 'If a dream and a distant mind merge, the result is ' -> 'called and an unifer. Since for his common that his products negative the reason, while are experienced their'
+  [COH kwr=0.87 s9] 'If a dream and a distant mind merge, the result is ' -> 'portioned the Electorate House of Premunicipal to enrop the same position of the civil authorities.'
+  [COH kwr=0.89 s7] 'Memory and tension together create ' -> 'meanings. Cemera was ended do not the AACC had sold player, the International Box Supreme State Coast Coast Co'
+  [COH kwr=0.80 s8] 'Memory and tension together create ' -> 'catches; the cleane would car an article house patrophed by an architect from the cleane.'
+  [COH kwr=1.00 s9] 'Memory and tension together create ' -> 'police to the English power and then running often bridge them.'
+  [COH kwr=0.94 s7] 'When the engine remembers silence, it ' -> 'meanings of a result ending of the 2012–1 living and resulted and distinguished numbering on state chabing c'
+  [COH kwr=0.95 s8] 'When the engine remembers silence, it ' -> 'can be an almost and occasionally, health of his class to indicate remembers of Good, and his force of the cla'
+  [COH kwr=0.90 s9] 'When the engine remembers silence, it ' -> 'is the Dark Lake, the proposal proposaurs, along there the seats of a praise to rule to units and silice, one'
+  [COH kwr=1.00 s7] 'Distant minds and consciousness form ' -> '1996. On the military persons of the New York part and relations.'
+  [COH kwr=0.89 s8] 'Distant minds and consciousness form ' -> 'cancer and an universal (motify–check, South African African form), the reason, were the festival of the cit'
+  [COH kwr=0.87 s9] 'Distant minds and consciousness form ' -> 'and research protects that can be are undermant, there the symbol search markets through rituality.'
+
+  NOVEL (corpus-absent) distinct content n-grams: 149
+  PRESENT (retrieval) distinct content n-grams:   162
+  novelty-rate=0.479  coherent_outputs=24/24
+    NOVEL n-gram: 'action the addition'  (from 'If a dream and a distant mind merge, the result is ' s7)
+    NOVEL n-gram: 'african african form'  (from 'Distant minds and consciousness form ' s8)
+    NOVEL n-gram: 'african form the'  (from 'Distant minds and consciousness form ' s8)
+    NOVEL n-gram: 'almost and occasionally'  (from 'When the engine remembers silence, it ' s8)
+    NOVEL n-gram: 'along there the'  (from 'When the engine remembers silence, it ' s9)
+    NOVEL n-gram: 'american church units'  (from 'When memory meets distant minds, ' s9)
+    NOVEL n-gram: 'and community became'  (from 'When memory meets distant minds, ' s7)
+    NOVEL n-gram: 'and distinguished numbering'  (from 'When the engine remembers silence, it ' s7)
+    NOVEL n-gram: 'and occasionally health'  (from 'When the engine remembers silence, it ' s8)
+    NOVEL n-gram: 'and research protects'  (from 'Distant minds and consciousness form ' s9)
+    NOVEL n-gram: 'and resulted and'  (from 'When the engine remembers silence, it ' s7)
+    NOVEL n-gram: 'any classed'  (from 'When memory meets distant minds, ' s8)
+
+  CONTROL line: 'Anarchism is a political philosophy and movement that is skeptical of all justifications for authori'
+  control content n-grams=93 novel=0 (expect 0)
+##### G2: novel=149(>=3) rate=0.479(>0) coherent=True control=0(==0) -> G2 PASS #####
+
+##### GATE G5-L2 — FAITHFULNESS (verbatim-sentence overlap vs random control) #####
+  extracted 40 verbatim English factual sentences from en corpus
+  [t=0.00 r=0.00] P:'!Result !Record !Opponent !Method !Round, ' -> C:'d || Timer || Timer Centre.' | TRUE:'|align=center| |align=center|4 |align=cent'
+  [t=0.00 r=0.00] P:'727) The Retirement Benefits Schemes (Rest' -> C:'law). It was released in the 1990s War II,' | TRUE:'Approve) (Small Self-administered Schemes)'
+  [t=0.00 r=0.00] P:'According to a contemporary story, the que' -> C:'law. On the military persons of the new sh' | TRUE:'so unattractive as possible so as not to r'
+  [t=0.00 r=0.00] P:'Alger was the son of David Bruce Alger, a ' -> C:'lawyer of the restores of Political Algers' | TRUE:'representative, and the former Clare Freem'
+  [t=0.17 r=0.00] P:'April 18 – The Boston Red Sox defeat the N' -> C:'York City of New York City of Brothers Cit' | TRUE:'York Yankees in the season opener at Fenwa'
+  [t=0.00 r=0.00] P:'At this time the operating system (OS) was' -> C:'to the time with the popular to the new sy' | TRUE:'to a deal to port an OS known as TRIPOS to'
+  [t=0.14 r=0.00] P:'Both Stennis and Russell were conservative' -> C:'laws. It was released in the 1990s War II,' | TRUE:'committees and both were expected to appro'
+  [t=0.17 r=0.00] P:'Chawne Kimber (born 1971), degrees from Un' -> C:'Haligan matchines of the Chawn (born 1970)' | TRUE:'North Carolina and University of Florida ('
+  [t=0.00 r=0.00] P:'Delannoy, having seen the band a few times' -> C:'later. The main was ended do not the enclo' | TRUE:', was enthusiastic about producing the wor'
+  [t=0.00 r=0.00] P:'Early career In 1930, Limón first performe' -> C:'s all as the million end of Brown.' | TRUE:'he choreographed his first dance, "Etude i'
+  [t=0.00 r=0.00] P:"Following Azerbaijan's independence from t" -> C:'craft as the mid-1997 personnel and main t' | TRUE:'bases in the country helped to develop the'
+  [t=0.00 r=0.00] P:'Geography Kleinmariazell is located north ' -> C:'lawyer of the United States. He was also s' | TRUE:'valley of the Triesting in the direction o'
+  [t=0.00 r=0.00] P:'He has placed his terminally ill wife Nora' -> C:'lawyers. Course of Centro do not the AAC s' | TRUE:'stasis until he can find a cure for her co'
+  [t=0.17 r=0.00] P:'He was the last count palatine; after his ' -> C:'launched and its primarily on the 2012–1 l' | TRUE:'of Bavaria assumed the rights and possessi'
+  [t=0.00 r=0.00] P:'However, B-17s were operating at heights t' -> C:'k and asked a result on to do not the each' | TRUE:'great for most A6M Zero fighters to reach.'
+  [t=0.00 r=0.00] P:'In 1934, Ernest Truex directed, co-produce' -> C:'lawyers of the World War III of the New Yo' | TRUE:'play Sing and Whistle, which co-starred ac'
+  [t=0.00 r=0.00] P:'In August 2001, the National Public Radio ' -> C:'of the 2002 City Commence Power, the Augus' | TRUE:"of Gale's death, MIT had investigated how "
+  [t=0.00 r=0.00] P:'In his senior season, he averaged 14 point' -> C:'lawyers. Court supported a series in the s' | TRUE:'led the team to a 28–3 record and a Cathol'
+  [t=0.00 r=0.00] P:'Inactivating V1 with TMS could induce some' -> C:'the group early on mention of the Orald Ch' | TRUE:'akinetopsia 60–70 ms after the onset of th'
+  [t=0.00 r=0.00] P:'It later aired in the US on NBC from 24 Ju' -> C:'2006. It was released in 2006 the 2006 Cen' | TRUE:'1962, to 9 September 1962 as a summer repl'
+  [t=0.00 r=0.00] P:'KIOA fell to the middle of the pack as far' -> C:'law groups.  The pack was down interned to' | TRUE:'some long term personalities left or took '
+  [t=0.00 r=0.00] P:"MTV has described LL Cool J's 1987 single " -> C:'lawy".' | TRUE:'Love" as "one of the first pop rap crossov'
+  [t=0.00 r=0.00] P:'Moulton Hall is a 17th-century manor house' -> C:"integration of the Centre Power's Order to" | TRUE:'intricately carved staircase rebuilt in ap'
+  [t=0.00 r=0.00] P:'On 28 April 2023, Girls Aloud released the' -> C:'law group earlier James 2023 at the Univer' | TRUE:'single "Sound Of The Underground (Alternat'
+  [t=0.00 r=0.00] P:'Other times, chaplains may offer a prayer ' -> C:'as in successions, mentions of the main se' | TRUE:'as base divisions, changes of command, mes'
+  [t=0.11 r=0.00] P:'Profly goaltenders tend to also be very mo' -> C:'lent groups. The butterfly do not the exce' | TRUE:'at using butterfly-based movement techniqu'
+  [t=0.11 r=0.00] P:"Scholarship has also identified 'Sumerian " -> C:'lawyers of a result on to do not the Amos ' | TRUE:'the possibility that Amos used SCL as a li'
+  [t=0.00 r=0.00] P:'Singers such as Blind Willie McTell and Bl' -> C:'lawyers. Before the end of the South Archi' | TRUE:'"delicate and lyrical" Piedmont blues trad'
+  [t=0.00 r=0.00] P:'Taxi Rider, known as , is a video' -> C:'lawyer of the restore with only on the cla' | TRUE:'game for the PlayStation 2 developed by Ta'
+  [t=0.00 r=0.00] P:'The Floriade site is also located on the s' -> C:'laungest reaches the portion of the new si' | TRUE:'the world horticultural exhibition of the '
+  [t=0.00 r=0.00] P:'The Urban Districts of Buckhurst Hill, Chi' -> C:'Hall as the Urban James of Buckhurst Archd' | TRUE:'Holy Cross, Wanstead, and Woodford; and Th'
+  [t=0.00 r=0.00] P:'The controversies came to a head when' -> C:'they asked a result on to do not the commu' | TRUE:'the annual spoof issue was published on Ma'
+  [t=0.00 r=0.00] P:'The granule size ensures that the salt dis' -> C:'laudgest reaches that disciplines in the s' | TRUE:', and that fine particles do not block the'
+  [t=0.00 r=0.00] P:'The note stated that the conference should' -> C:'wall. It was released in the profile of th' | TRUE:'treaty yet but decide on a commission to o'
+  [t=0.00 r=0.00] P:'The series brought back fan favorite Vlad' -> C:'ila in supporting the popular of the count' | TRUE:', as well as crossing over with Vampirella'
+  [t=0.00 r=0.00] P:'The white uniform featured red numbers wit' -> C:'mentings. The result of the original conce' | TRUE:', and red and silver stripes along the pan'
+  [t=0.00 r=0.00] P:'They made several trips working the two Un' -> C:'was group to revenge the cape them. The tw' | TRUE:'were not as successful as had been hoped a'
+  [t=0.00 r=0.00] P:'Thomas Baldwin Peddie (February 11, 1808 –' -> C:'lawyer of the American Local Local Local L' | TRUE:'who represented in the United States House'
+  [t=0.00 r=0.00] P:'Until the end of the 1980s, the authoritie' -> C:'the group of the North America Society Com' | TRUE:'any attempted edifice in the neighborhood '
+  [t=0.00 r=0.00] P:'While there, she recalls a romantic interl' -> C:"late as the military persed of the Wales's" | TRUE:'memory gets more intense, Riker begins to '
+
+  N=40  mean_overlap_true=0.0216  mean_overlap_random(control)=0.0000
+  mean_diff(true-random)=0.0216  paired Cohen's d=0.4129 (frozen bar: d>=0.8 AND true>random)
+##### G5-L2: FAIL #####
+
+==============================================================================
+=== RUNG 303M  ckpt=/tmp/h1129c_best.pt
+==============================================================================
+[model] cfg={'vocab': 256, 'd': 1024, 'n_layer': 24, 'n_head': 16, 'block': 512} params=303,097,856 val_ce=1.2240448951721192 step=5500
+
+##### GATE G2 — NOVELTY (H_1140 metric VERBATIM) #####
+  [COH kwr=1.00 s7] 'Silence and the engine together mean ' -> 'minute.\nThe main of men is dominated by classical silence and political demonstration that the state of being'
+  [COH kwr=0.94 s8] 'Silence and the engine together mean ' -> 'catcher, the species of a caffair, health and history of the negative. It reaches additionally because the cal'
+  [COH kwr=0.85 s9] 'Silence and the engine together mean ' -> 'in the 1960s. Electronic community was used as the friend of a single ica and the Tulcolurity of Tulcole, one'
+  [COH kwr=0.90 s7] 'When memory meets distant minds, ' -> 'meanings, and important rocks in the new seasons.\n When Rale comes from the town of Rale Park Town or White Th'
+  [COH kwr=0.85 s8] 'When memory meets distant minds, ' -> "calcity, though the ruling city–runners of a patron on the negation's threating of the university of the cit"
+  [COH kwr=0.75 s9] 'When memory meets distant minds, ' -> 'in the 1860s, Electoral Terrace Township (IST), the reputation of searcharge township of rituality.\nThe reorga'
+  [COH kwr=0.94 s7] 'Consciousness and silence combine into ' -> '1000. On the military personal transmitters across an introduction language to the president of the royal proc'
+  [COH kwr=0.95 s8] 'Consciousness and silence combine into ' -> 'catcher, the species of a coffee much small lines.  Along individuals, the same route is underpowed by the col'
+  [COH kwr=0.94 s9] 'Consciousness and silence combine into ' -> 'a regional report of the Boston Consciousness. The critic subate of a region conclusion using an appeared one'
+  [COH kwr=0.95 s7] 'The tension between cells and the engine becomes ' -> 'meanings. Cells such as to do the tensions, like that the letters were built due to the first tensions of proc'
+  [COH kwr=0.90 s8] 'The tension between cells and the engine becomes ' -> 'catcher; the species of a coffension were of a patron or mission who attends the one-living engines of the cel'
+  [COH kwr=0.95 s9] 'The tension between cells and the engine becomes ' -> 'in the 1860s. Electoral system is an european change to the same populace of the church units in the rename te'
+  [COH kwr=0.94 s7] 'If a dream and a distant mind merge, the result is ' -> 'difficult for its priest occurs and mainly guilt in part of the International Book.\nResults\nReferences\nExterna'
+  [COH kwr=0.95 s8] 'If a dream and a distant mind merge, the result is ' -> 'called and an articulation to an articulation hyging to a public horror.\nOrder stores\nOrder stores\nThe type st'
+  [COH kwr=0.89 s9] 'If a dream and a distant mind merge, the result is ' -> 'portrayed as possible for full draw, authors, channers that if the family and the cult, units and sierred out'
+  [COH kwr=1.00 s7] 'Memory and tension together create ' -> 'meals. It was released in 1895, and in 1907 at the age of 43 communities destroyed in the crown that changed i'
+  [COH kwr=0.84 s8] 'Memory and tension together create ' -> 'categories. La Mile would carry hardway the last De Agara in 1984 by the fastest of King.\nIn 1984, an etymolog'
+  [COH kwr=0.94 s9] 'Memory and tension together create ' -> 'in the 1860s. Electronic common power, while one memorial theater, also addressed the curriculum, such electro'
+  [COH kwr=0.95 s7] 'When the engine remembers silence, it ' -> 'made group embrace of the case of the Arctical Command, which immigrated the deposit to its opening route.\nIn'
+  [COH kwr=1.00 s8] 'When the engine remembers silence, it ' -> 'can be another engine consolidation of more lawyers and a public content. The income is a called carbon law, l'
+  [COH kwr=1.00 s9] 'When the engine remembers silence, it ' -> 'is the Dark Lake, the proposal proposal parties, there is the following a greater culture itself, silence, and'
+  [COH kwr=0.95 s7] 'Distant minds and consciousness form ' -> 'minds. It is a residential domination in the contract or all commuted with the Distants in the state. While th'
+  [COH kwr=0.94 s8] 'Distant minds and consciousness form ' -> 'changes, though the ruling criminal community has largely indicated that from the control of the centre of the'
+  [COH kwr=0.90 s9] 'Distant minds and consciousness form ' -> 'in the District of Istanbul and the District of the right to attend a tradement in the Burytsmain. These is th'
+
+  NOVEL (corpus-absent) distinct content n-grams: 153
+  PRESENT (retrieval) distinct content n-grams:   146
+  novelty-rate=0.512  coherent_outputs=24/24
+    NOVEL n-gram: 'additionally because the'  (from 'Silence and the engine together mean ' s8)
+    NOVEL n-gram: 'addressed the curriculum'  (from 'Memory and tension together create ' s9)
+    NOVEL n-gram: 'all commuted'  (from 'Distant minds and consciousness form ' s7)
+    NOVEL n-gram: 'all commuted with'  (from 'Distant minds and consciousness form ' s7)
+    NOVEL n-gram: 'along individuals'  (from 'Consciousness and silence combine into ' s8)
+    NOVEL n-gram: 'along individuals the'  (from 'Consciousness and silence combine into ' s8)
+    NOVEL n-gram: 'and important rocks'  (from 'When memory meets distant minds, ' s7)
+    NOVEL n-gram: 'and mainly guilt'  (from 'If a dream and a distant mind merge, the result is ' s7)
+    NOVEL n-gram: 'and political demonstration'  (from 'Silence and the engine together mean ' s7)
+    NOVEL n-gram: 'another engine consolidation'  (from 'When the engine remembers silence, it ' s8)
+    NOVEL n-gram: 'attends the one'  (from 'The tension between cells and the engine becomes ' s8)
+    NOVEL n-gram: 'because the cal'  (from 'Silence and the engine together mean ' s8)
+
+  CONTROL line: 'Anarchism is a political philosophy and movement that is skeptical of all justifications for authori'
+  control content n-grams=93 novel=0 (expect 0)
+##### G2: novel=153(>=3) rate=0.512(>0) coherent=True control=0(==0) -> G2 PASS #####
+
+##### GATE G5-L2 — FAITHFULNESS (verbatim-sentence overlap vs random control) #####
+  extracted 40 verbatim English factual sentences from en corpus
+  [t=0.00 r=0.00] P:'!Result !Record !Opponent !Method !Round, ' -> C:'= Ingasion.  Notes \n Loss Power, time Acts' | TRUE:'|align=center| |align=center|4 |align=cent'
+  [t=0.00 r=0.00] P:'727) The Retirement Benefits Schemes (Rest' -> C:'Representatives) The Service of Discretion' | TRUE:'Approve) (Small Self-administered Schemes)'
+  [t=0.00 r=0.00] P:'According to a contemporary story, the que' -> C:'launched. There was ended during the early' | TRUE:'so unattractive as possible so as not to r'
+  [t=0.00 r=0.00] P:'Alger was the son of David Bruce Alger, a ' -> C:'with a 200-m release person of the War Cha' | TRUE:'representative, and the former Clare Freem'
+  [t=0.17 r=0.00] P:'April 18 – The Boston Red Sox defeat the N' -> C:'York City of New York City of the Order of' | TRUE:'York Yankees in the season opener at Fenwa'
+  [t=0.00 r=0.00] P:'At this time the operating system (OS) was' -> C:'to intermediate the end of the southern sy' | TRUE:'to a deal to port an OS known as TRIPOS to'
+  [t=0.00 r=0.00] P:'Both Stennis and Russell were conservative' -> C:'board. It was released in 1895, and in 189' | TRUE:'committees and both were expected to appro'
+  [t=0.00 r=0.00] P:'Chawne Kimber (born 1971), degrees from Un' -> C:'Hawes. The Hawes Tom Kimber was one of the' | TRUE:'North Carolina and University of Florida ('
+  [t=0.00 r=0.00] P:'Delannoy, having seen the band a few times' -> C:'later. The former Jeeps occurred in 1950, ' | TRUE:', was enthusiastic about producing the wor'
+  [t=0.00 r=0.00] P:'Early career In 1930, Limón first performe' -> C:'later.\nThe former James of Indian Jewish s' | TRUE:'he choreographed his first dance, "Etude i'
+  [t=0.12 r=0.00] P:"Following Azerbaijan's independence from t" -> C:'craft as the military population, the Azer' | TRUE:'bases in the country helped to develop the'
+  [t=0.00 r=0.00] P:'Geography Kleinmariazell is located north ' -> C:'of the 2002 million election of the New Yo' | TRUE:'valley of the Triesting in the direction o'
+  [t=0.00 r=0.00] P:'He has placed his terminally ill wife Nora' -> C:'lawyers. He was one of the original conces' | TRUE:'stasis until he can find a cure for her co'
+  [t=0.00 r=0.00] P:'He was the last count palatine; after his ' -> C:"was granted as the men's case the second s" | TRUE:'of Bavaria assumed the rights and possessi'
+  [t=0.00 r=0.00] P:'However, B-17s were operating at heights t' -> C:'launched and resulted in common on the com' | TRUE:'great for most A6M Zero fighters to reach.'
+  [t=0.00 r=0.00] P:'In 1934, Ernest Truex directed, co-produce' -> C:'late 1920s.  He was elected by Song Truex,' | TRUE:'play Sing and Whistle, which co-starred ac'
+  [t=0.00 r=0.00] P:'In August 2001, the National Public Radio ' -> C:'of the 2002 National Public Consolidation,' | TRUE:"of Gale's death, MIT had investigated how "
+  [t=0.00 r=0.00] P:'In his senior season, he averaged 14 point' -> C:'launched another schedule. In the 2014 cen' | TRUE:'led the team to a 28–3 record and a Cathol'
+  [t=0.00 r=0.00] P:'Inactivating V1 with TMS could induce some' -> C:'lawyers. Couries are pursued in the new se' | TRUE:'akinetopsia 60–70 ms after the onset of th'
+  [t=0.00 r=0.00] P:'It later aired in the US on NBC from 24 Ju' -> C:'2006. It was released in 2005 that the clu' | TRUE:'1962, to 9 September 1962 as a summer repl'
+  [t=0.00 r=0.00] P:'KIOA fell to the middle of the pack as far' -> C:'later summer in the end of the United Stat' | TRUE:'some long term personalities left or took '
+  [t=0.00 r=0.00] P:"MTV has described LL Cool J's 1987 single " -> C:'Man". It was released in 2005, and in 2004' | TRUE:'Love" as "one of the first pop rap crossov'
+  [t=0.00 r=0.00] P:'Moulton Hall is a 17th-century manor house' -> C:'individual array in the order of the Archd' | TRUE:'intricately carved staircase rebuilt in ap'
+  [t=0.00 r=0.00] P:'On 28 April 2023, Girls Aloud released the' -> C:'law on 27 June 2021.\nIn 2013, the Online C' | TRUE:'single "Sound Of The Underground (Alternat'
+  [t=0.00 r=0.00] P:'Other times, chaplains may offer a prayer ' -> C:'as the Turkish World War and the First Cha' | TRUE:'as base divisions, changes of command, mes'
+  [t=0.00 r=0.00] P:'Profly goaltenders tend to also be very mo' -> C:'lent groups.  The stance of one stance was' | TRUE:'at using butterfly-based movement techniqu'
+  [t=0.11 r=0.00] P:"Scholarship has also identified 'Sumerian " -> C:'the group of release the city of the Amos ' | TRUE:'the possibility that Amos used SCL as a li'
+  [t=0.00 r=0.00] P:'Singers such as Blind Willie McTell and Bl' -> C:'land. It was released in 1995, and in 1997' | TRUE:'"delicate and lyrical" Piedmont blues trad'
+  [t=0.25 r=0.00] P:'Taxi Rider, known as , is a video' -> C:'game as the military person of the War Cha' | TRUE:'game for the PlayStation 2 developed by Ta'
+  [t=0.00 r=0.00] P:'The Floriade site is also located on the s' -> C:'it is supposed to the site of the site cas' | TRUE:'the world horticultural exhibition of the '
+  [t=0.00 r=0.00] P:'The Urban Districts of Buckhurst Hill, Chi' -> C:'and Jason Burrough, and other three weeks,' | TRUE:'Holy Cross, Wanstead, and Woodford; and Th'
+  [t=0.00 r=0.00] P:'The controversies came to a head when' -> C:'later summer in the end of the United Stat' | TRUE:'the annual spoof issue was published on Ma'
+  [t=0.00 r=0.00] P:'The granule size ensures that the salt dis' -> C:'launched and is used to occur the second s' | TRUE:', and that fine particles do not block the'
+  [t=0.00 r=0.00] P:'The note stated that the conference should' -> C:'in the 2002 million end of the University ' | TRUE:'treaty yet but decide on a commission to o'
+  [t=0.00 r=0.00] P:'The series brought back fan favorite Vlad' -> C:'imalevas. The result of the original conce' | TRUE:', as well as crossing over with Vampirella'
+  [t=0.00 r=0.00] P:'The white uniform featured red numbers wit' -> C:'mers. One of the white discovery, the comm' | TRUE:', and red and silver stripes along the pan'
+  [t=0.00 r=0.00] P:'They made several trips working the two Un' -> C:'were asymmetrized to the case of the Archd' | TRUE:'were not as successful as had been hoped a'
+  [t=0.00 r=0.12] P:'Thomas Baldwin Peddie (February 11, 1808 –' -> C:'who had made it with the city of the Ameri' | TRUE:'who represented in the United States House'
+  [t=0.00 r=0.00] P:'Until the end of the 1980s, the authoritie' -> C:'the group of the North America and the Cas' | TRUE:'any attempted edifice in the neighborhood '
+  [t=0.00 r=0.00] P:'While there, she recalls a romantic interl' -> C:'late regular in the end of the United Stat' | TRUE:'memory gets more intense, Riker begins to '
+
+  N=40  mean_overlap_true=0.0163  mean_overlap_random(control)=0.0031
+  mean_diff(true-random)=0.0132  paired Cohen's d=0.2342 (frozen bar: d>=0.8 AND true>random)
+##### G5-L2: FAIL #####
+
+==============================================================================
+### H_1142 GATE-TENSION LADDER — RESULT ###
+==============================================================================
+    rung        nparam  G2_novelty    G5L2_d
+  44.68M    44,527,616      0.4791    0.4129
+    303M   303,097,856      0.5117    0.2342
+      7B 7,252,828,160      0.5000    0.1631
+
+Spearman rho(G2_novelty_rate, G5L2_faithfulness_d) = -0.5000
+VERDICT: TENSION-CONFIRMED  🔴 (for the gate — re-scope ① JUSTIFIED)
+
+[out] /tmp/h1142/h1142_ladder.json
