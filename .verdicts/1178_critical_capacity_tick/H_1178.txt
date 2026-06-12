@@ -1,0 +1,123 @@
+=== H_1178 — is there a CRITICAL CAPACITY for derivative-tick gating? (inverted-U of d(deriv,metro) over cell-count) ===
+  ladder K=[6, 8, 12, 16, 24, 32, 48, 64, 96]; metric = stage-decode d(DERIVATIVE,METRONOME) paired over 10 seeds; AUDIO stream (K=6 regimes); reuses H_1163 VERBATIM
+
+  K=  6  d(deriv,metro)=-0.151  decode_deriv=0.151 metro=0.175  birth_stages_deriv=2.0
+  K=  8  d(deriv,metro)=+0.479  decode_deriv=0.239 metro=0.174  birth_stages_deriv=3.0
+  K= 12  d(deriv,metro)=+0.561  decode_deriv=0.374 metro=0.293  birth_stages_deriv=4.1
+  K= 16  d(deriv,metro)=+0.741  decode_deriv=0.400 metro=0.259  birth_stages_deriv=4.5
+  K= 24  d(deriv,metro)=+0.810  decode_deriv=0.501 metro=0.345  birth_stages_deriv=5.2
+  K= 32  d(deriv,metro)=+1.152  decode_deriv=0.642 metro=0.384  birth_stages_deriv=5.8
+  K= 48  d(deriv,metro)=+0.669  decode_deriv=0.731 metro=0.577  birth_stages_deriv=6.0
+  K= 64  d(deriv,metro)=+0.063  decode_deriv=0.795 metro=0.786  birth_stages_deriv=6.0
+  K= 96  d(deriv,metro)=-0.060  decode_deriv=0.847 metro=0.855  birth_stages_deriv=6.0
+
+=== VERDICT ===
+{
+  "H": "H_1178",
+  "title": "is there a CRITICAL CAPACITY K* where derivative-tick gating is maximally beneficial — an inverted-U of d(deriv,metro) over cell-count, echoing the critical-coupling peaks of faithful-Phi (H_1158) and super-additivity (H_1167)?",
+  "ladder": [
+    6,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48,
+    64,
+    96
+  ],
+  "curve_d_deriv_vs_metro": {
+    "6": -0.15095982722698645,
+    "8": 0.47868225359000044,
+    "12": 0.5607824180925532,
+    "16": 0.7407368030547042,
+    "24": 0.8096704517285566,
+    "32": 1.1521333863107566,
+    "48": 0.6687312535800919,
+    "64": 0.0627478385071793,
+    "96": -0.05976602516932061
+  },
+  "curve_full": {
+    "6": {
+      "d_deriv_vs_metro": -0.15095982722698645,
+      "decode_deriv": 0.15133333333333332,
+      "decode_metro": 0.17508333333333334,
+      "birth_stages_deriv": 2.0
+    },
+    "8": {
+      "d_deriv_vs_metro": 0.47868225359000044,
+      "decode_deriv": 0.23937499999999998,
+      "decode_metro": 0.17416666666666666,
+      "birth_stages_deriv": 3.0
+    },
+    "12": {
+      "d_deriv_vs_metro": 0.5607824180925532,
+      "decode_deriv": 0.3744166666666666,
+      "decode_metro": 0.2932083333333333,
+      "birth_stages_deriv": 4.1
+    },
+    "16": {
+      "d_deriv_vs_metro": 0.7407368030547042,
+      "decode_deriv": 0.40012499999999995,
+      "decode_metro": 0.25858333333333333,
+      "birth_stages_deriv": 4.5
+    },
+    "24": {
+      "d_deriv_vs_metro": 0.8096704517285566,
+      "decode_deriv": 0.5014583333333333,
+      "decode_metro": 0.345375,
+      "birth_stages_deriv": 5.2
+    },
+    "32": {
+      "d_deriv_vs_metro": 1.1521333863107566,
+      "decode_deriv": 0.6421666666666668,
+      "decode_metro": 0.38425000000000004,
+      "birth_stages_deriv": 5.8
+    },
+    "48": {
+      "d_deriv_vs_metro": 0.6687312535800919,
+      "decode_deriv": 0.7307916666666666,
+      "decode_metro": 0.5770833333333333,
+      "birth_stages_deriv": 6.0
+    },
+    "64": {
+      "d_deriv_vs_metro": 0.0627478385071793,
+      "decode_deriv": 0.7947500000000001,
+      "decode_metro": 0.7857916666666667,
+      "birth_stages_deriv": 6.0
+    },
+    "96": {
+      "d_deriv_vs_metro": -0.05976602516932061,
+      "decode_deriv": 0.8470833333333333,
+      "decode_metro": 0.8545,
+      "birth_stages_deriv": 6.0
+    }
+  },
+  "K_star": 32,
+  "d_at_peak": 1.1521333863107566,
+  "d_at_endpoints": {
+    "K6": -0.15095982722698645,
+    "K96": -0.05976602516932061
+  },
+  "F1_interior_peak": {
+    "K_star": 32,
+    "is_interior": true
+  },
+  "F2_inverted_U": {
+    "d_peak_minus_endpoint": 1.2118994114800772,
+    "d_peak": 1.1521333863107566,
+    "bar_gap": 0.8,
+    "bar_peak": 0.8,
+    "pass": true
+  },
+  "F3_unimodal": {
+    "reversals_rise": 0,
+    "reversals_fall": 0,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED (CRITICAL-CAPACITY): the derivative-tick decode advantage is an INVERTED-U over cell-count peaking at a CRITICAL CAPACITY K*=32 (d_peak=+1.15 vs endpoints -0.15/-0.06). Event-driven structure-growth helps most at an intermediate capacity: too few cells (every regime can't get one) and too many (every clock covers every regime) both wash the advantage out. CRITICALITY recurs on a THIRD axis (capacity), alongside the critical-coupling peaks of faithful-Phi (H_1158) and super-additivity (H_1167) — the engine has a sweet spot on coupling AND on capacity.",
+  "scope": "TOY ($0 CPU numpy, 10 seeds). Reuses UNIVERSE/h1163_tick_decode_metric.py substrate VERBATIM (grow_arm/stage_decode/cohen_d/make_audio_stream/SEEDS). AUDIO stream decisive (clean regime stages). Live CORE + scale UNVERIFIED (a_scale_honest_scope). Lane-M growth lane."
+}
+
+[done]

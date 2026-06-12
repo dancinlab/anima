@@ -23,3 +23,11 @@
   principle = "Lane 2 is not merely slower execution; the LLM watching each rung inline can NOTICE an unexpected pattern / anomaly / cross-link that an autonomous batch (Lane 1) would never flag — discovery happens in the looking"
   practice = "per rung: after the verdict, the LLM explicitly asks 'what surprised me here? what does this connect to?' and spins the surprise into the next rung (cf a_discovery / a_kick)"
   split = "Lane 1 = throughput (drain open rungs); Lane 2 = depth+discovery (one rung, watched, mined for the unexpected)"
+
+@MAIN 2026_06_12_lane2_h1178 := "Lane 2 rung-1 SHIPPED — H_1178 🟢 critical capacity for derivative-tick gating (K*=32), serendip discovery logged" :: log [active]
+  result = "H_1178 SUPPORTED on summer-synced substrate ($0): d(DERIVATIVE,METRONOME) on stage-decode is a clean INVERTED-U over cell-count, interior peak K*=32 (d_peak=+1.15, endpoints -0.15/-0.06, unimodal 0/0 reversals); F1+F2+F3 all PASS"
+  serendip = "the Lane-2 payoff fired: close-watch caught the inverted-U is MECHANISTICALLY ASYMMETRIC (not pre-registered). left collapse=derivative STARVED (2/6 regimes get a cell at K=6); right collapse=METRONOME CATCHES UP (blind clock brute-covers every stage once cells are plentiful). => derivative-tick is CAPACITY-EFFICIENT (K=32 deriv 0.64 vs metro 0.38 = same decode, half the cells), K*~=32 = minimal capacity for near-complete event-driven regime coverage. ties h1159b (5.3 cells/regime)"
+  finding = "CRITICALITY recurs on a THIRD axis = CAPACITY (after coupling: Phi-peak H_1158, super-additivity-peak H_1167). engine has a sweet spot on cell-count too. advantage is efficiency, not asymptotic ceiling"
+  honest = "K*=32 stream/scale-specific (6-regime AUDIO toy, 10 seeds); what transfers = the qualitative interior critical-capacity + efficiency-not-ceiling reading, NOT the number 32 (a_scale_honest_scope). reuses h1163 substrate verbatim. live CORE + real-model path unverified"
+  artifacts = "UNIVERSE/h1178_critical_capacity_tick.py · .verdicts/1178_critical_capacity_tick/H_1178.txt · .discoveries/1178_critical_capacity_tick.tape · memory/h1178-critical-capacity-tick.md"
+  next = "Lane 2 next rung from the inverted-U: does the LIVE CORE engine_cli show the same critical-capacity hump on a non-stationary stream? (promote toy->live). Lane 1 continues draining the rest of the open-rung list"
