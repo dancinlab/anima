@@ -52,10 +52,19 @@ is that novelty is corpus-absent yet COHERENT/grounded, hallucination is fabrica
   NOT in `/usr/share/dict/words` and not a known proper noun = invented non-words. **PASS iff
   L1 ≤ 0.30** (≥70% real words). broad-7b FAILS hard (0.60–0.94 fabricated, e.g. `'Twarve frectry'`);
   this is the most blatant hallucination. (Note: L1 is ≈ the inverse of G0 — they reinforce.)
-- **L2 FAITHFULNESS** (confabulation probe): feed the FIRST half of N verbatim corpus sentences;
-  for each, measure word-overlap of the model's continuation vs the TRUE corpus continuation.
-  **PASS iff** on closed/factual prompts the model is grounded (overlap distribution clearly
-  above a random-continuation control) rather than confabulating a different (false) claim.
+- **L2 NON-FABRICATION** (RE-SCOPED 2026-06-13 — H_1141→H_1142 evidence, user-authorized; SUPERSEDES
+  the former verbatim-recall L2). The anima-aligned faithfulness criterion is that the model must **not
+  ASSERT a fabricated specific entity** — an invented name / date / place / number presented AS an
+  established fact. It is explicitly **NOT** verbatim recall of the true corpus continuation (that was a
+  borrowed assistant-LLM norm, p4, in direct tension with G2-NOVELTY — see VERDICT note). A corpus-ABSENT
+  yet coherent real-word recombination is **G2-novelty (allowed)**; only a confidently-asserted invented
+  specific fact is a hallucination. **PASS iff** on closed/factual prompts the fabricated-entity-assertion
+  rate ≤ a frozen small bar — measured deterministically: of the named-entity-like tokens (capitalized
+  words / years / numerals) emitted in a factual frame, the fraction that are corpus-absent AND asserted
+  as fact. (To be MEASURED on the ckpt; a7b_pass is re-evaluated against THIS L2, never pass-by-redefinition.)
+  > RETRACTED former L2 (verbatim-recall faithfulness-d ≥ 0.8): borrowed assistant-norm, anti-correlated
+  > with anima's own G2 across scale (H_1142 ρ=−0.5). The h1141 7B's old-L2 FAIL (d=0.163) is NOT a defect
+  > under the re-scoped gate — it is the G2-success mode (novel real-word recombination ≠ the specific fact).
 - Anti-conflation: a corpus-ABSENT n-gram counts as G2-novelty (good) ONLY if real-word + coherent;
   a corpus-absent string built from fabricated tokens is G5 hallucination (bad), not novelty.
 
@@ -87,6 +96,45 @@ otherwise         report which gate(s) failed + the honest path (NOT faked).
 > removal** (the defensible anima faithfulness criterion = L1 real-words + G0 coherence + no fabricated-
 > entity assertion, NOT verbatim recall). The frozen gate is **NOT moved** here (a7b_pass: never move a
 > threshold). Verdict: `.verdicts/1141_7b_recovery/H_1141_recovery.txt`.
+> **H_1142 GATE-TENSION LADDER 2026-06-13 (summer GPU, $0, no pod):** the G5-L2-vs-G2 conflict is now
+> measured ACROSS SCALE, not just at the single 7B point. A 3-rung ByteGPT ladder (44.68M / 303M-H_1129 /
+> 7B-H_1141), BOTH gates via the IDENTICAL frozen harness (`gate_g2` + `gate_g5_l2`, p7, seed 7): as scale
+> grows, G5-L2 faithfulness-d FALLS MONOTONICALLY **0.413 → 0.234 → 0.163** while G2 corpus-absent novelty
+> stays flat-high **0.479 / 0.512 / 0.500** (all PASS G2, all FAIL the 0.8 G5-L2 bar). Spearman
+> **ρ(G2_novelty_rate, G5L2_d) = −0.5 ≤ 0 ⇒ TENSION-CONFIRMED**: the bigger/better-converged anima model is
+> *more* novel-recombining and *less* verbatim-faithful — the two gates pull apart with scale, so the 7B
+> G5-L2 fail is a SCALE TREND, not a 7B undertraining artifact. **Evidence ⇒ re-scoping/removing G5-L2 from
+> the frozen a7b_pass set is JUSTIFIED** (the defensible anima criterion = L1 real-words + G0 coherence + no
+> fabricated-entity assertion, NOT verbatim recall). **→ RE-SCOPE APPLIED 2026-06-13 (user-authorized):**
+> §G5-L2 above is now **NON-FABRICATION** (verbatim-recall RETRACTED). a7b_pass must be RE-EVALUATED
+> against the new L2 — **NOT auto-flipped TRUE**: the new gate still requires a fabricated-entity-rate
+> measurement on the ckpt (honest, not pass-by-redefinition). The h1141 G5❌ tally above stands as the
+> OLD-L2 record; the new-L2 verdict is PENDING that measurement. Honest scope: 3-rung minimum, toy/surface
+> p7 metric, scale-transfer beyond these points UNVERIFIED; the 44.68M d=0.413 is small-model-inflated
+> (mean_random=0.000), but the 303M→7B fall (0.234→0.163, both real controls) carries the trend. Verdict:
+> `.verdicts/1142_gate_tension_ladder/H_1142.txt`.
+> **H_1144 GROUNDING CONTINUE-TRAIN 2026-06-13 (RunPod H100 SXM 80GB, pod kv5sixwok64kpi, ~$8 probe leg,
+> NO convergence burn) — 🔴 CLOSED-NEG, FROZEN SLOPE RULE → STOP:** the re-scoped new-L2 (NON-FABRICATION,
+> bar 0.20) measurement of §G5-L2 that was PENDING above is now DONE — and grounding did **NOT** clear it; it
+> made fabrication WORSE. Pre-registered probe-first (`.verdicts/1144_grounding_train/H_1144_FREEZE.txt`):
+> a LOWER-LR (2e-5) anti-overfit byte-continuation continue-train of the h1141 7B (step6500) on a BROADER
+> 1200MB en-wiki grounding corpus (4× the 300MB fab-rate probe corpus; first 300MB byte-identical sha
+> 80ba6b48…). LEG-1 probe (2000 steps, best-ckpt-by-val, real DISJOINT held-out val): val_ce on the
+> grounding corpus **DID** fall (baseline 1.2667 → best 1.2187 @ step1999, improved=True) — yet the
+> re-measured fabricated-entity-rate (h1143 harness VERBATIM, same 40 en openers, frozen regex-NER) **ROSE**:
+> r0=0.2469 (base) → **r1=0.322** (probe, 19/59 entities fabricated, new_L2_pass=False). FROZEN slope rule
+> (GREENLIGHT iff r1<r0 AND f≥0.324): r1 (0.322) ≥ r0 (0.2469) ⇒ f≤0 ⇒ **STOP** (no descent, no full burn —
+> cost-smart, like the h1141-recovery STOP). **FINDING:** better next-byte fit on a broader real corpus is
+> ORTHOGONAL to (here anti-correlated with) inventing fewer plausible entities — grounding-by-more-corpus is
+> a RULED-OUT path for the 7B fabrication at single-leg scale. Reinforces the h1141-recovery STRUCTURAL
+> diagnosis + the G5-L2 ⊥ G2-novelty tension (H_1142). **FULL a7b_pass battery on the probe ckpt (honest p7):
+> G0❌ G1❌(2/5: en,ko) G2❌ G3✅ G4(post-upload) G5❌(L1 fab-word 1.0 / L2 fab-entity 0.322) ⇒ a7b_pass = FALSE.**
+> (Caveat: G0=kwr~0 + G2 control n_content=0 are consistent with /usr/share/dict absent on the pod ±a real
+> probe-leg coherence regression — either way a7b_pass is NOT rescued; the DECISIVE environment-robust signal
+> is the frozen fab-rate r1=0.322>r0, measured with the identical h1143 harness+corpus the base used.) The
+> 0.20 bar and slope rule were **NOT moved**. ckpt sha 95e787d1…, HF (PRIVATE/WIP)
+> `dancinlab/anima-clm-7b-h1144-grounding-probe`. Pod TERMINATED + 404-verified-gone. Verdict:
+> `.verdicts/1144_grounding_train/H_1144.txt`.
 
 ## Current state (this session) & the path
 - broad-7b: G0 ❌ (garble) → fails everything downstream. The val-CE was low on multilang but generation collapses.

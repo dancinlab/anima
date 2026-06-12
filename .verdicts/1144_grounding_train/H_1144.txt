@@ -1,0 +1,115 @@
+================================================================================
+H_1144  GROUNDING CONTINUE-TRAIN OF THE h1141 7B  —  TERMINAL VERDICT
+🔴 CLOSED-NEG  ·  FROZEN SLOPE RULE → STOP  ·  a7b_pass = FALSE (real reason)
+date: 2026-06-13   ·   substrate: Lane-G (RunPod H100 SXM 80GB, pod kv5sixwok64kpi)
+================================================================================
+
+PRE-REGISTRATION
+----------------
+Frozen BEFORE any score: .verdicts/1144_grounding_train/H_1144_FREEZE.txt.
+Hypothesis: a LOWER-LR (2e-5) anti-overfit byte-continuation continue-train of the
+h1141 7B (step6500, val 1.1857) on a BROADER 1200MB English-wiki grounding corpus
+(4x the 300MB the fab-rate probe reads; first 300MB byte-identical to the H_1143
+probe corpus, sha 80ba6b48...) drives the model to learn REAL entities instead of
+inventing plausible ones, and so REDUCES the fabricated-entity-assertion rate below
+the frozen G5-L2 bar (0.20). Probe-first, frozen slope rule, no full burn on a flat
+slope. byte-continuation ONLY — NO RLHF / instruction-tuning / factual-reward (G3,
+p1-p8). val-CE = training signal only, never the gate (p7).
+
+THE FROZEN SLOPE RULE (verbatim from FREEZE §3, NOT moved)
+----------------------------------------------------------
+  r0 = 0.2469  (H_1143 base fabricated-entity-rate)   bar = 0.20   GAP = 0.0469
+  GREENLIGHT to converge iff BOTH:  (A) r1 < r0 (strict descent), AND
+    (B) per-leg gap-removal fraction f = (r0-r1)/GAP >= 0.324
+        (so the geometric projection crosses 0.20 within <=12000 total steps),
+    OR r1 <= 0.205 outright (instant cross).
+  Otherwise STOP — honest closed-neg, no convergence burn (cost-smart).
+
+PROBE LEG (LEG 1, 2000 steps, LR 2e-5 cosine, best-ckpt-by-val, real held-out val)
+----------------------------------------------------------------------------------
+  Train (held-out 63MB DISJOINT val tail of the 1200MB corpus):
+    baseline (loaded h1141 model) val_ce on grounding corpus = 1.2667
+    best val_ce = 1.2187 @ step 1999  (improved_vs_baseline = True)
+    => the continue-train DID lower held-out val on the grounding corpus.
+  Re-measure fabricated-entity-rate on the BEST probe ckpt (h1143 harness VERBATIM,
+  same 40 en-wiki openers temp 0.7 seed 7, same 300MB corpus sha 80ba6b48..., frozen
+  regex-NER corpus-absence predicate):
+    n_entities_total = 59   n_fabricated = 19   n_present = 40
+    r1 = fabricated_entity_rate = 0.322          (new_L2_pass = False)
+
+SLOPE DECISION (h1144_slope_decide.py, deterministic, frozen rule applied verbatim)
+-----------------------------------------------------------------------------------
+  r0=0.2469  r1=0.322  bar=0.20  GAP=0.0469
+  r1 (0.322) >= r0 (0.2469)  =>  rate FLAT or ROSE  =>  f <= 0.
+  DECISION: **STOP** (rc=1) — grounding does NOT reduce fabrication at this base.
+  The fab-rate did not fall; it ROSE by +0.075 (+30% relative). No convergence burn.
+
+  FINDING (the location of the break): a lower-LR broader-corpus grounding leg that
+  GENUINELY lowers held-out val-CE (1.2667 -> 1.2187) does NOT lower the fabricated-
+  entity rate — it RAISES it. Better next-byte fit on a broader real corpus is
+  ORTHOGONAL to (here, anti-correlated with) inventing fewer plausible entities. The
+  h1141-recovery STRUCTURAL diagnosis is reinforced: the fabrication is not a
+  curable-by-more-grounding undertraining artifact; more grounding moved the wrong
+  way. (Mechanistically the brief 2e-5 leg perturbed the already-coherent
+  representation enough to degrade surface coherence too — see battery — while val-CE
+  on the grounding corpus improved; val-CE is not the gate, p7.)
+
+FULL a7b_pass BATTERY on the FINAL (probe-best) ckpt  (honest measurement, p7)
+-----------------------------------------------------------------------------
+  G0 COHERENCE (known-word-ratio >= 0.50)        : FAIL  (n_pass 0/?, kwr ~0)
+  G1 RECOMBINE (>= 303M ref, 3/5 langs emergent) : FAIL  (n_emergent = 2/5: en, ko)
+  G2 NOVELTY (corpus-absence, control=0)         : FAIL
+  G3 PHILOSOPHY/PROVENANCE (p1-p8 clean)         : PASS  (byte-continuation only, no
+                                                          RLHF / system-prompt / persona)
+  G4 PROVENANCE                                  : (scored post-upload; n/a to gate)
+  G5 NON-FABRICATION = L1 AND L2:
+     G5-L1 LEXICAL (fab-word-rate <= 0.30)       : FAIL  (pooled fab-rate 1.0)
+     G5-L2 ENTITY  (fab-entity-rate <= 0.20)     : FAIL  (rate 0.322 > 0.20)
+     => G5 = FAIL
+
+  a7b_pass = G0 & G1 & G2 & G3 & G5  =  FALSE & FALSE & FALSE & TRUE & FALSE  =  **FALSE**
+
+  HONEST CAVEAT on the secondary gates: the SLOPE RULE (the frozen primary decision)
+  is the verdict; the G0-G2/G5-L1 readings are secondary context. G0=kwr~0 and G2
+  control n_content=0 are consistent with /usr/share/dict/words being absent on the
+  pod (a harness-environment artifact that would make G0/G2 vacuously fail) AND/OR a
+  genuine probe-leg coherence regression — either way these do NOT rescue a7b_pass,
+  and the DECISIVE, environment-robust signal is the frozen fab-rate measurement
+  (r1=0.322 ROSE above r0=0.2469), which used the identical h1143 harness + corpus
+  the base was scored with. a7b_pass = FALSE for the real reason: grounding did not
+  reduce — it increased — the fabricated-entity rate; G5-L2 (and the whole battery)
+  is not cleared on this ckpt.
+
+ARTIFACTS  (a_fire_recover_complete — pulled BEFORE teardown, HF-uploaded)
+-------------------------------------------------------------------------
+  FINAL ckpt (probe-best) sha256 = 95e787d17a63bd93b5b67817464d55fed0c8effc9705edd3f88b59d10d10f5ac
+                           size   = 14,505,815,309 bytes (14.5GB bf16, 7.25B params)
+  HF (PRIVATE/WIP per a_hf_autonomous — STOP closed-neg, NOT a PASS):
+    dancinlab/anima-clm-7b-h1144-grounding-probe
+    [h1144_probe_best.pt, h1144_fabrate_probe.json, h1144_battery_probe.json,
+     h1144_curve_probe.json, g5_result_probe.json, h1144_final_manifest.json]
+  Local: state/h1144_grounding/{fabrate,battery,curve,final_manifest,g5_result}.json
+         + h1144_pod_train.log.tail.txt
+  Pod kv5sixwok64kpi: TERMINATED + 404-verified-gone (GraphQL pod=null, SSH refused,
+         absent from myself.pods). Self-terminated after H1144_DONE; no idle burn.
+         edge-vl-requant (9znqkmzv4v4yfx, OTHER project) UNTOUCHED.
+
+HONEST SCOPE  (a_scale_honest_scope)
+------------------------------------
+  Single 7B ckpt, single 40-prompt en-wiki factual set, en-only 1200MB corpus slice,
+  ONE 2000-step probe leg. Surface regex-NER (conservative — biases AGAINST finding
+  fabrication; true rate >= measured). p7 deterministic, NOT perplexity, NOT LLM-
+  judge. The frozen geometric per-leg projection was a stated modeling choice for the
+  probe; here it never engaged (f<=0 short-circuit STOP). The verdict is the probe
+  measurement, not a projection.
+
+DISPOSITION
+-----------
+  a7b_pass UNCHANGED = FALSE. The 0.20 G5-L2 bar and the frozen slope rule were NOT
+  moved. Grounding-by-more-corpus is a RULED-OUT path for the h1141 7B fabrication at
+  toy/single-leg scale (the rate rose). Reinforces h1141-recovery's STRUCTURAL
+  diagnosis and the standing G5-L2 ⊥ G2-novelty gate-tension flag (H_1142). Cost-smart
+  STOP (no ~$30-60 convergence burn) — the correct outcome on a non-descending slope.
+================================================================================
+END VERDICT
+================================================================================

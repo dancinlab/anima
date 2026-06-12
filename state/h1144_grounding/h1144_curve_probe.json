@@ -1,0 +1,82 @@
+{
+  "hypothesis": "H_1144_grounding_train",
+  "leg": "probe",
+  "base_ckpt": "/workspace/base/h1141_g1pass_step6500.pt",
+  "resume": "",
+  "corpus": "corpus_en_1200mb.txt",
+  "cap_mb": 1200.0,
+  "lr": 2e-05,
+  "steps": 2000,
+  "bs": 8,
+  "accum": 4,
+  "val_frac": 0.05,
+  "nparam": 7252828160,
+  "baseline_val_on_grounding_corpus": 1.2667,
+  "best_val_ce": 1.2187,
+  "best_step": 1999,
+  "wall_min": 72.9,
+  "improved_vs_baseline": true,
+  "curve": [
+    {
+      "step": -1,
+      "train_ce": null,
+      "val_ce": 1.2667,
+      "note": "baseline-on-grounding-corpus"
+    },
+    {
+      "step": 0,
+      "train_ce": 1.3056,
+      "val_ce": 1.2619
+    },
+    {
+      "step": 200,
+      "train_ce": 1.3403,
+      "val_ce": 1.2677
+    },
+    {
+      "step": 400,
+      "train_ce": 1.2315,
+      "val_ce": 1.269
+    },
+    {
+      "step": 600,
+      "train_ce": 1.2351,
+      "val_ce": 1.2424
+    },
+    {
+      "step": 800,
+      "train_ce": 1.3145,
+      "val_ce": 1.2446
+    },
+    {
+      "step": 1000,
+      "train_ce": 1.2547,
+      "val_ce": 1.2209
+    },
+    {
+      "step": 1200,
+      "train_ce": 1.2301,
+      "val_ce": 1.2237
+    },
+    {
+      "step": 1400,
+      "train_ce": 1.2262,
+      "val_ce": 1.2383
+    },
+    {
+      "step": 1600,
+      "train_ce": 1.2055,
+      "val_ce": 1.2364
+    },
+    {
+      "step": 1800,
+      "train_ce": 1.176,
+      "val_ce": 1.227
+    },
+    {
+      "step": 1999,
+      "train_ce": 1.2493,
+      "val_ce": 1.2187
+    }
+  ]
+}
