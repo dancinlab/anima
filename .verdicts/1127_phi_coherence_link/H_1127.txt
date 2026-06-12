@@ -1,0 +1,117 @@
+========================================================================================
+H_1127 — DYAD-Φ vs CLASSICAL COHERENCE: is joint faithful φ_EI a re-encoding of
+  cheap phase-coherence (PLV / |Pearson r|), or a distinct quantity? (n=6 exact MIP-EI)
+  Round-2 forward of H_1114 (🟢 causal link raises joint φ beyond corr-control) +
+  H_1120 (🔴 φ saturates w/ rate) + H_1122 (🔴 φ sign-blind); dyad = H_1114 VERBATIM,
+  the ONLY swept knob = COUP (coupling STRENGTH). Classical comparands: PLV (Hilbert)
+  + mean |Pearson r| over the 3 same-index channel pairs.
+  COUP arms: [0.0, 0.1, 0.2, 0.3, 0.45, 0.6]  (0=LINK-OFF, 0.30=H_1114 LINK-ON)
+  CH=3 (joint n=6) W*_c=[1.0, 0.8, 1.2] K_EMIT=5 N_STEPS=4000 BURN=500 seeds=10
+  frozen falsifier: 🟢 PHI-IS-DISTINCT iff (A) at a corr-MATCHED config pair (|d(PLV)|<
+  0.8) joint φ varies d>=0.8, OR (B) φ–PLV Spearman |ρ|<0.7;
+  🔴 PHI-IS-COHERENCE-PROXY iff φ tracks PLV at ρ>=0.7 AND no matched dissociation.
+  engine: stdlib iit4/faithful_phi.hexa CPU mirror (BITS/log2) — a_phi_iit4_tool.
+========================================================================================
+
+STEP 0 — RE-PROVE mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+ [0a] LIVE stdlib faithful_phi re-capture at n=4,5,6 (n=6 = the scoring n):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+ [0a] live-stdlib faithful proof: PROVEN
+ [0b] h1012.prove_mirrors_at_n at n=4 AND n=5 (both engines, established pattern):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+ [0b] mirror-equivalence results: {4: True, 5: True}
+ STEP 0 PASS — mirror PROVEN ≡ stdlib at n=4, n=5 (both engines) and at the
+ scoring n=6 (faithful, live hexa re-capture). Scoring may proceed.
+
+STEP 1 — SANITY GATE: reproduce H_1114 headline LINK-ON φ≈0.012618 at COUP=0.30:
+  COUP=0.30 φ_joint mean over seeds 100..109 = 0.012618 (H_1114 published LINK-ON = 0.012618, |Δ|=0.000000, tol 0.001) -> MATCH
+ STEP 1 PASS — H_1114 LINK-ON headline REPRODUCED at COUP=0.30. Sweep may proceed.
+
+STEP 2 — coupling-strength sweep: 6 arms × 10 seeds (SERIAL):
+  seed 100: 0.00:φ=0.0010/PLV=0.047 0.10:φ=0.0095/PLV=0.240 0.20:φ=0.0115/PLV=0.376 0.30:φ=0.0116/PLV=0.455 0.45:φ=0.0107/PLV=0.520 0.60:φ=0.0108/PLV=0.555
+  seed 101: 0.00:φ=0.0034/PLV=0.068 0.10:φ=0.0098/PLV=0.252 0.20:φ=0.0145/PLV=0.379 0.30:φ=0.0172/PLV=0.452 0.45:φ=0.0158/PLV=0.513 0.60:φ=0.0148/PLV=0.546
+  seed 102: 0.00:φ=0.0029/PLV=0.080 0.10:φ=0.0238/PLV=0.210 0.20:φ=0.0146/PLV=0.345 0.30:φ=0.0163/PLV=0.425 0.45:φ=0.0151/PLV=0.490 0.60:φ=0.0142/PLV=0.525
+  seed 103: 0.00:φ=0.0008/PLV=0.036 0.10:φ=0.0069/PLV=0.239 0.20:φ=0.0095/PLV=0.372 0.30:φ=0.0102/PLV=0.452 0.45:φ=0.0119/PLV=0.519 0.60:φ=0.0102/PLV=0.554
+  seed 104: 0.00:φ=0.0097/PLV=0.042 0.10:φ=0.0067/PLV=0.229 0.20:φ=0.0107/PLV=0.372 0.30:φ=0.0114/PLV=0.455 0.45:φ=0.0124/PLV=0.526 0.60:φ=0.0133/PLV=0.564
+  seed 105: 0.00:φ=0.0065/PLV=0.036 0.10:φ=0.0068/PLV=0.246 0.20:φ=0.0089/PLV=0.379 0.30:φ=0.0107/PLV=0.457 0.45:φ=0.0121/PLV=0.525 0.60:φ=0.0120/PLV=0.561
+  seed 106: 0.00:φ=0.0018/PLV=0.044 0.10:φ=0.0079/PLV=0.264 0.20:φ=0.0131/PLV=0.390 0.30:φ=0.0119/PLV=0.465 0.45:φ=0.0121/PLV=0.528 0.60:φ=0.0113/PLV=0.561
+  seed 107: 0.00:φ=0.0014/PLV=0.051 0.10:φ=0.0081/PLV=0.240 0.20:φ=0.0124/PLV=0.374 0.30:φ=0.0166/PLV=0.453 0.45:φ=0.0201/PLV=0.520 0.60:φ=0.0222/PLV=0.557
+  seed 108: 0.00:φ=0.0036/PLV=0.030 0.10:φ=0.0079/PLV=0.218 0.20:φ=0.0098/PLV=0.355 0.30:φ=0.0106/PLV=0.434 0.45:φ=0.0118/PLV=0.499 0.60:φ=0.0108/PLV=0.537
+  seed 109: 0.00:φ=0.0013/PLV=0.039 0.10:φ=0.0062/PLV=0.232 0.20:φ=0.0079/PLV=0.364 0.30:φ=0.0094/PLV=0.440 0.45:φ=0.0093/PLV=0.507 0.60:φ=0.0088/PLV=0.541
+
+φ-vs-COUPLING-STRENGTH TABLE (faithful φ_EI; PLV/|r|; 10 seeds, mean ± sd):
+  COUP             φ_joint (n=6)               PLV           mean|r|       signed cc
+----------------------------------------------------------------------------------------
+  0.00      +0.003234 ± 0.002688     +0.0473±0.015   +0.0340±0.014    +0.007
+  0.10      +0.009344 ± 0.004938     +0.2369±0.015   +0.2511±0.013    +0.251
+  0.20      +0.011294 ± 0.002201     +0.3705±0.012   +0.4006±0.012    +0.401
+  0.30      +0.012618 ± 0.002784     +0.4489±0.011   +0.4883±0.012    +0.488
+  0.45      +0.013134 ± 0.002932     +0.5147±0.012   +0.5628±0.011    +0.563
+  0.60      +0.012829 ± 0.003584     +0.5501±0.012   +0.6038±0.011    +0.604
+
+SPEARMAN (φ_joint vs classical coherence) across the full sweep:
+  per-seed (n=60): φ–PLV  ρ=+0.6558 (p=1.29e-08)   φ–|r|  ρ=+0.6303 (p=6.77e-08)
+  arm-mean (n=6): φ–PLV  ρ=+0.9429   φ–|r|  ρ=+0.9429
+
+CORRELATION-MATCHED DISSOCIATION (test A): among arm-pairs with the closest
+  mean PLV (PLV-flat, |d(PLV)|<0.8), does joint φ vary at d>=0.8?
+  COUP 0.00 vs 0.10: |Δmean PLV|=0.1896 d(PLV)=+12.89 [PLV-differs]  |Δmean φ|=0.006110 d(φ)=+1.54
+  COUP 0.00 vs 0.20: |Δmean PLV|=0.3232 d(PLV)=+23.95 [PLV-differs]  |Δmean φ|=0.008060 d(φ)=+3.28
+  COUP 0.00 vs 0.30: |Δmean PLV|=0.4016 d(PLV)=+30.65 [PLV-differs]  |Δmean φ|=0.009384 d(φ)=+3.43
+  COUP 0.00 vs 0.45: |Δmean PLV|=0.4674 d(PLV)=+35.17 [PLV-differs]  |Δmean φ|=0.009900 d(φ)=+3.52
+  COUP 0.00 vs 0.60: |Δmean PLV|=0.5028 d(PLV)=+37.83 [PLV-differs]  |Δmean φ|=0.009595 d(φ)=+3.03
+  COUP 0.10 vs 0.20: |Δmean PLV|=0.1336 d(PLV)=+9.83 [PLV-differs]  |Δmean φ|=0.001950 d(φ)=+0.51
+  COUP 0.10 vs 0.30: |Δmean PLV|=0.2120 d(PLV)=+16.06 [PLV-differs]  |Δmean φ|=0.003273 d(φ)=+0.82
+  COUP 0.10 vs 0.45: |Δmean PLV|=0.2778 d(PLV)=+20.75 [PLV-differs]  |Δmean φ|=0.003790 d(φ)=+0.93
+  COUP 0.10 vs 0.60: |Δmean PLV|=0.3132 d(PLV)=+23.39 [PLV-differs]  |Δmean φ|=0.003485 d(φ)=+0.81
+  COUP 0.20 vs 0.30: |Δmean PLV|=0.0784 d(PLV)=+6.62 [PLV-differs]  |Δmean φ|=0.001323 d(φ)=+0.53
+  COUP 0.20 vs 0.45: |Δmean PLV|=0.1442 d(PLV)=+11.97 [PLV-differs]  |Δmean φ|=0.001840 d(φ)=+0.71
+  COUP 0.20 vs 0.60: |Δmean PLV|=0.1796 d(PLV)=+14.91 [PLV-differs]  |Δmean φ|=0.001535 d(φ)=+0.52
+  COUP 0.30 vs 0.45: |Δmean PLV|=0.0658 d(PLV)=+5.67 [PLV-differs]  |Δmean φ|=0.000517 d(φ)=+0.18
+  COUP 0.30 vs 0.60: |Δmean PLV|=0.1012 d(PLV)=+8.72 [PLV-differs]  |Δmean φ|=0.000211 d(φ)=+0.07
+  COUP 0.45 vs 0.60: |Δmean PLV|=0.0354 d(PLV)=+2.99 [PLV-differs]  |Δmean φ|=0.000305 d(φ)=-0.09
+  (no PLV-flat arm-pair found — every arm-pair differs in PLV at d>=0.8)
+
+FROZEN falsifier checks:
+  (A) corr-matched dissociation (PLV-flat pair, φ d>=0.8) -> False
+  (B) φ–PLV Spearman |ρ|<0.7 across the sweep (|ρ|=0.6558) -> True
+  PROXY trigger: |ρ(φ,PLV)|>=0.7 AND not(A) -> False
+
+========================================================================================
+VERDICT: 🟢 PHI-IS-DISTINCT — joint faithful φ_EI is NOT a re-encoding of classical
+  phase-coherence. φ–PLV Spearman |ρ|=0.656<0.7 — φ does not track PLV across the sweep. 
+  Integrated information carries structure cheap synchrony misses — strengthens the
+  a_phi_iit4_tool no-proxy stance at this scale.
+========================================================================================
+HONEST scope (a_scale_honest_scope): toy n=6, in-process twin sim of the h1113
+per-channel A⊥G dynamics (H_1114 construction VERBATIM); real-socket dyad-φ,
+cross-host, production cells and scale UNVERIFIED — next rung. Mirror RE-PROVEN
+≡ stdlib at n=4,5 (both engines) and at the scoring n=6 (faithful, LIVE hexa
+re-capture) BEFORE scoring; H_1114 LINK-ON headline REPRODUCED at COUP=0.30 as a
+construction gate; MI in BITS/log2 (a_phi_iit4_tool, NO proxy). PLV=Hilbert-analytic
+phase-lock, |r|=mean |Pearson| over 3 channel pairs. SERIAL, $0 CPU local, 0-pod,
+g5/p7. CORE/brain NOT wired; 1114/1120/1122 artifacts untouched.
+wall = 60.3s
+[done]
