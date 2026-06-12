@@ -1,0 +1,147 @@
+=== H_1177 — generations/population evolution vs single growing organism ===
+N_AGENTS=12 G_GENS=10 N_CELLS=6 K_TRUE=6 seeds=8
+  seed=900: rho(gen,meanfit)=+0.867 meanfit 0.1820->0.2427 | evolved_err=3.5611 single_err=2.8255
+  seed=901: rho(gen,meanfit)=+0.830 meanfit 0.2451->0.3770 | evolved_err=2.4781 single_err=3.0923
+  seed=902: rho(gen,meanfit)=+0.855 meanfit 0.2200->0.2781 | evolved_err=3.4491 single_err=3.2573
+  seed=903: rho(gen,meanfit)=+1.000 meanfit 0.2070->0.4546 | evolved_err=1.9294 single_err=5.4986
+  seed=904: rho(gen,meanfit)=+0.491 meanfit 0.1907->0.2574 | evolved_err=3.5175 single_err=3.1644
+  seed=905: rho(gen,meanfit)=+0.891 meanfit 0.2488->0.3284 | evolved_err=3.0440 single_err=4.1676
+  seed=906: rho(gen,meanfit)=+0.758 meanfit 0.2255->0.3210 | evolved_err=2.8150 single_err=2.7700
+  seed=907: rho(gen,meanfit)=+0.879 meanfit 0.2413->0.4370 | evolved_err=1.9508 single_err=3.8681
+
+=== VERDICT ===
+{
+  "H": "H_1177",
+  "title": "generations/population evolution (heredity+variation+selection) vs single growing organism",
+  "config": {
+    "N_AGENTS": 12,
+    "G_GENS": 10,
+    "N_CELLS": 6,
+    "K_TRUE": 6,
+    "DIM": 8,
+    "T": 1200,
+    "WARMUP": 150,
+    "MUT_SCALE": 0.8,
+    "N_SEEDS": 8,
+    "SEEDS": [
+      900,
+      901,
+      902,
+      903,
+      904,
+      905,
+      906,
+      907
+    ],
+    "single_budget_lifetimes": 120
+  },
+  "per_seed": [
+    {
+      "seed": 900,
+      "rho_gen_vs_meanfit": 0.8666666666666667,
+      "gen0_meanfit": 0.18202481197498702,
+      "genLast_meanfit": 0.24273489592809513,
+      "evolved_err": 3.5611041506714183,
+      "single_err": 2.8255231610286207,
+      "evolved_fit": 0.2808117812366274,
+      "single_fit": 0.35391675900544983
+    },
+    {
+      "seed": 901,
+      "rho_gen_vs_meanfit": 0.8303030303030303,
+      "gen0_meanfit": 0.2451149814920062,
+      "genLast_meanfit": 0.3770430071395246,
+      "evolved_err": 2.4781406221263915,
+      "single_err": 3.0923328559808683,
+      "evolved_fit": 0.4035283513243136,
+      "single_fit": 0.32338045296208123
+    },
+    {
+      "seed": 902,
+      "rho_gen_vs_meanfit": 0.8545454545454545,
+      "gen0_meanfit": 0.22000894127790602,
+      "genLast_meanfit": 0.27808867168155477,
+      "evolved_err": 3.449124789307341,
+      "single_err": 3.2573121068202626,
+      "evolved_fit": 0.2899286227074704,
+      "single_fit": 0.3070015911582949
+    },
+    {
+      "seed": 903,
+      "rho_gen_vs_meanfit": 1.0,
+      "gen0_meanfit": 0.20700348623154105,
+      "genLast_meanfit": 0.45459373886710003,
+      "evolved_err": 1.9293855076560138,
+      "single_err": 5.49859832290041,
+      "evolved_fit": 0.518299736114732,
+      "single_fit": 0.18186453003001932
+    },
+    {
+      "seed": 904,
+      "rho_gen_vs_meanfit": 0.4909090909090909,
+      "gen0_meanfit": 0.19069641267126525,
+      "genLast_meanfit": 0.2574176956765224,
+      "evolved_err": 3.5174598255151612,
+      "single_err": 3.164362874993176,
+      "evolved_fit": 0.2842960685611372,
+      "single_fit": 0.3160193818435369
+    },
+    {
+      "seed": 905,
+      "rho_gen_vs_meanfit": 0.8909090909090909,
+      "gen0_meanfit": 0.24881825318113251,
+      "genLast_meanfit": 0.3283608397241969,
+      "evolved_err": 3.044017344317733,
+      "single_err": 4.16756541715511,
+      "evolved_fit": 0.3285132397613261,
+      "single_fit": 0.23994824307825216
+    },
+    {
+      "seed": 906,
+      "rho_gen_vs_meanfit": 0.7575757575757576,
+      "gen0_meanfit": 0.22551258211427325,
+      "genLast_meanfit": 0.32100544864316605,
+      "evolved_err": 2.8150144790958027,
+      "single_err": 2.770004618772704,
+      "evolved_fit": 0.35523795954540427,
+      "single_fit": 0.3610102282363905
+    },
+    {
+      "seed": 907,
+      "rho_gen_vs_meanfit": 0.8787878787878788,
+      "gen0_meanfit": 0.24125616862880647,
+      "genLast_meanfit": 0.4370244923316366,
+      "evolved_err": 1.9508439149297223,
+      "single_err": 3.8680999760802193,
+      "evolved_fit": 0.5125986717002039,
+      "single_fit": 0.2585248586968623
+    }
+  ],
+  "F1_rise_across_generations": {
+    "spearman_gen_vs_meanfit_median": 0.8606060606060606,
+    "per_seed_rho": [
+      0.8666666666666667,
+      0.8303030303030303,
+      0.8545454545454545,
+      1.0,
+      0.4909090909090909,
+      0.8909090909090909,
+      0.7575757575757576,
+      0.8787878787878788
+    ],
+    "bar": 0.5,
+    "pass": true
+  },
+  "F2_beats_single_growing_organism": {
+    "cohen_d_evolved_minus_single_fitness": 1.033143517448756,
+    "mean_evolved_fit": 0.37165180386890184,
+    "mean_single_fit": 0.2927082556263609,
+    "bar": 0.8,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED 🟢 POPULATION-EVOLVES: a multi-generation population with heredity+variation+selection raises mean fitness across generations AND the evolved population beats a single-growing organism given equal compute (d>=0.8) — cross-generational Darwinian improvement adds adaptive power that single-lifetime growth (H_1159 instructive mitosis) lacks. Completes the Darwinian set with #1175/#1176.",
+  "scope": "toy numpy $0 CPU; fitness=quantization error not perplexity (p7); population layer on h1159b cell-cluster; live CORE engine + scale UNVERIFIED (a_scale_honest_scope).",
+  "xref": "1175_fitness_selection · 1176_resource_competition · 1159b_mitosis_capacity_self_tuning · p8"
+}
+[done]
