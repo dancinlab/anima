@@ -1,0 +1,20 @@
+@V := "tape" :: spec [active]
+  version = "1.0"
+
+@H 1155 := "interlingua — same concept across 5 languages aligns by MEANING (hidden cosine) even where the surface keyword metric (H_1137) caps ru/ja at 3/5" :: discovery [🔴 CLOSED-NEGATIVE]
+  seed       = "H_1137/H_1138/H_1139 measured 5-lang recombination by SURFACE keyword substring (no embedding/cosine in the harness — confirmed) → ru/ja capped at 3/5 SCALE-INVARIANT (303M=7B). user insight: that ceiling may be a SURFACE-METRIC artifact, not a capability gap — the model may align concepts SEMANTICALLY across languages while the surface keywords never co-occur. recalled semantic-association line: Hc_774(semantic tension→Φ), Hc_777(cross-lingual→Φ), Hc_810(concept hierarchy), kosmos-axis-semantics(manifold meaning axes)"
+  signal     = "interlingua cosine = cosine similarity of the model's mean-pooled hidden representation of the SAME concept word across language pairs (e.g. consciousness/意识/сознание/意識/의식)"
+  design     = "ONE balanced-5lang toy ByteGPT (h1137 recipe, 5×~5MB slices), measure BOTH on the SAME model: (a) surface recombination per-lang (reproduce the 3/5-ish ceiling), (b) interlingua cosine. The CONTRAST (surface 3/5 vs semantic 5/5) IS the finding"
+  F1_align   = "mean(same-concept cross-lingual cosine) − mean(different-concept cosine) Cohen's d ≥ 0.8 — a real shared semantic space, not surface"
+  F2_perlang = "each of the 5 languages' concept-words align to the English anchor above the unrelated-pair baseline (per-lang signal, NOT just en/zh) — esp. ru/ja that surface-failed"
+  control    = "UNTRAINED backbone shows NO alignment (d ≤ 0.3) — interlingua must be LEARNED, not byte-surface geometry (anti-Goodhart, the H_1143/1151 lesson)"
+  verdict    = "SUPPORTED iff F1 ∧ F2 ∧ control → ru/ja PASS on the SEMANTIC axis = the 3/5 ceiling was a surface-metric artifact; CLOSED-NEGATIVE iff no interlingua → the ceiling is real (concepts genuinely not cross-lingually aligned at toy scale)"
+  metric_p7  = "cosine is the OBJECT; verdict = same-vs-different-concept SEPARATION + untrained control + the surface-vs-semantic CONTRAST on one model (deterministic, NOT perplexity/LLM-judge)"
+  harness    = "UNIVERSE/h1155_interlingua_semantic_alignment.py (h1137 trainer + hidden-cosine interlingua + reproduce surface ladder)"
+  result     = "🔴 CLOSED-NEGATIVE — F1 d=−0.226 (same-concept cross-lang cosine 0.198 < different-concept 0.265, INVERTED) + F2 1/5 (only en; zh −0.14 ru 0.08 ja −0.10 ko 0.05 vs en) + control untrained −0.072 PASS. ru/ja semantic-pass BOTH false"
+  finding    = "NO interlingua at toy BYTE scale — reps are SCRIPT/byte-SURFACE-dominated, not meaning. Training made it WORSE: untrained zh=0.42/ja=0.39 (byte-overlap) → trained zh=−0.14/ja=−0.10 (training SHARPENED script-separation). A byte-LM encodes '意识'(CJK bytes) far from 'consciousness'(Latin bytes) because the representation IS the byte pattern. The ru/ja-ceiling-as-metric-artifact hypothesis is NOT supported here"
+  honest     = "BUT the toy lacks interlingua at ALL, so it CANNOT adjudicate the surface-vs-semantic question for the 303M/7B that actually gave 3/5 — those bigger models MAY carry interlingua this toy can't form. The decisive test = run THIS probe on the real 303M/7B hidden states (a_scale_honest_scope). Toy negative bounds the small-byte claim only"
+  followup   = "DECISIVE next: interlingua probe on the live H_1139 7B (on the runpod pod, loaded) BEFORE teardown, OR on the balanced-5lang 303M — does the bigger model align concepts cross-lingually where the byte-toy could not?"
+  impl_for_7b= "if a bigger model SUPPORTS interlingua → add ④ semantic-recombination to /7B_PASS_CONDITIONS.md G1 (a concept aligns cross-lingually by meaning, not just surface keyword co-occurrence)"
+  xref       = "h1137·h1138·h1139·h1129·Hc_774·Hc_777·Hc_810·kosmos-axis-semantics·a_clm_gen_pipeline·a_scale_honest_scope·a_paper_negative_ok·p7"
+  target     = "🟢 SUPPORTED-NUMERICAL (interlingua exists; ru/ja semantic-PASS) or 🔴 CLOSED-NEGATIVE (no cross-lingual meaning alignment)"

@@ -1,0 +1,99 @@
+=== H_1155 interlingua semantic alignment ===
+[corpus] balanced 5-lang 31457280 bytes
+--- CONTROL: untrained ---
+  [untrained] same=0.4095 diff=0.4202 d=-0.0721
+  [untrained] per-lang align_to_en: en=1.000+ zh=0.416- ru=0.252- ja=0.391- ko=0.368-
+--- training balanced-5lang ---
+  [train] step 0 ce=5.7224
+  [train] step 500 ce=2.3220
+  [train] step 1000 ce=2.2772
+  [train] step 1500 ce=2.0945
+  [train] step 1999 ce=2.2472
+--- TRAINED interlingua ---
+  [trained] same=0.1981 diff=0.2652 d=-0.2264
+  [trained] per-lang align_to_en: en=1.000+ zh=-0.141- ru=0.084- ja=-0.096- ko=0.052-
+=== VERDICT ===
+{
+  "H": "H_1155",
+  "title": "interlingua — cross-lingual semantic alignment vs surface keyword ceiling",
+  "F1_alignment": {
+    "cohen_d": -0.22643167303072925,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_perlang_5of5": {
+    "aligned_langs": [
+      "en"
+    ],
+    "n": 1,
+    "bar": 5,
+    "pass": false
+  },
+  "control_untrained": {
+    "cohen_d": -0.07213409590045083,
+    "bar_max": 0.3,
+    "pass": true
+  },
+  "ru_ja_semantic_pass": {
+    "ru": false,
+    "ja": false
+  },
+  "trained": {
+    "same_mean": 0.19813998006284236,
+    "diff_mean": 0.26516460643615575,
+    "cohen_d": -0.22643167303072925,
+    "perlang": {
+      "en": {
+        "align_to_en": 0.9999999850988388,
+        "above_baseline": true
+      },
+      "zh": {
+        "align_to_en": -0.14139442867599428,
+        "above_baseline": false
+      },
+      "ru": {
+        "align_to_en": 0.08395193051546812,
+        "above_baseline": false
+      },
+      "ja": {
+        "align_to_en": -0.09559131995774806,
+        "above_baseline": false
+      },
+      "ko": {
+        "align_to_en": 0.052369872108101845,
+        "above_baseline": false
+      }
+    }
+  },
+  "untrained": {
+    "same_mean": 0.4094679668545723,
+    "diff_mean": 0.4201578930020332,
+    "cohen_d": -0.07213409590045083,
+    "perlang": {
+      "en": {
+        "align_to_en": 1.0000000149011612,
+        "above_baseline": true
+      },
+      "zh": {
+        "align_to_en": 0.4162965565919876,
+        "above_baseline": false
+      },
+      "ru": {
+        "align_to_en": 0.25219276547431946,
+        "above_baseline": false
+      },
+      "ja": {
+        "align_to_en": 0.3911621868610382,
+        "above_baseline": false
+      },
+      "ko": {
+        "align_to_en": 0.36776553839445114,
+        "above_baseline": false
+      }
+    }
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: no learned cross-lingual semantic alignment at toy scale (the 3/5 surface ceiling is NOT just a metric artifact here)",
+  "scope": "toy ByteGPT d256/4L CPU, balanced 5×6MB — scale-up to 303M/7B UNVERIFIED (a_scale_honest_scope)"
+}
+[done] /tmp/h1155_result.json
