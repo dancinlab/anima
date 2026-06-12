@@ -1,0 +1,69 @@
+=== H_1156 cross-lingual alignment training ===
+--- training NO-alignment (control) ---
+  [aln=False] step 0 loss=5.7224
+  [aln=False] step 500 loss=2.3214
+  [aln=False] step 1000 loss=2.2708
+  [aln=False] step 1500 loss=2.0761
+  [aln=False] step 2000 loss=2.2155
+  [aln=False] step 2199 loss=2.0839
+  [ctrl-heldout] d=-0.2295 same=0.196 diff=0.256 langs_above=1/5
+--- training WITH-alignment ---
+  [aln=True] step 0 loss=6.6838
+  [aln=True] step 500 loss=2.3668
+  [aln=True] step 1000 loss=2.2921
+  [aln=True] step 1500 loss=2.0889
+  [aln=True] step 2000 loss=2.2406
+  [aln=True] step 2199 loss=2.0772
+  [aln-train(sanity)] d=24.4810 same=1.000 diff=0.036 langs_above=5/5
+  [aln-heldout] d=-0.0625 same=0.200 diff=0.216 langs_above=1/5
+=== VERDICT ===
+{
+  "H": "H_1156",
+  "title": "explicit cross-lingual alignment training builds a generalizing interlingua bridge",
+  "F1_heldout_alignment": {
+    "cohen_d": -0.0624840566814469,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_heldout_5of5": {
+    "langs_above": 1,
+    "bar": 5,
+    "pass": false
+  },
+  "control_noaln_heldout": {
+    "cohen_d": -0.22949237196089517,
+    "bar_max": 0.3,
+    "pass": true
+  },
+  "sanity_train_concepts_d": 24.481027670045137,
+  "h1155_ref_d": -0.226,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: alignment only MEMORIZES trained pairs (train aligns, held-out does NOT generalize) — no general bridge",
+  "scope": "toy ByteGPT d256/4L CPU 5×6MB; alignment on 8 train concepts, measured on 4 held-out — scale-up UNVERIFIED (a_scale_honest_scope)"
+}
+[done] /tmp/h1156_result.json
+=== JSON ===
+{
+  "H": "H_1156",
+  "title": "explicit cross-lingual alignment training builds a generalizing interlingua bridge",
+  "F1_heldout_alignment": {
+    "cohen_d": -0.0624840566814469,
+    "bar": 0.8,
+    "pass": false
+  },
+  "F2_heldout_5of5": {
+    "langs_above": 1,
+    "bar": 5,
+    "pass": false
+  },
+  "control_noaln_heldout": {
+    "cohen_d": -0.22949237196089517,
+    "bar_max": 0.3,
+    "pass": true
+  },
+  "sanity_train_concepts_d": 24.481027670045137,
+  "h1155_ref_d": -0.226,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: alignment only MEMORIZES trained pairs (train aligns, held-out does NOT generalize) — no general bridge",
+  "scope": "toy ByteGPT d256/4L CPU 5×6MB; alignment on 8 train concepts, measured on 4 held-out — scale-up UNVERIFIED (a_scale_honest_scope)"
+}
