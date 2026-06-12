@@ -1,0 +1,48 @@
+=== H_1176 — resource competition: does scarcity create selection pressure? ===
+K_TRUE=16 K_CAP=6 RESOURCE=6.0 MAX_CELLS=60 seeds=10
+  seed=900: COMP final=6 culled=87 corr(fit,surv)=+0.550 | NOCOMP final=28
+  seed=901: COMP final=6 culled=75 corr(fit,surv)=+0.422 | NOCOMP final=27
+  seed=902: COMP final=6 culled=70 corr(fit,surv)=+0.587 | NOCOMP final=26
+  seed=903: COMP final=6 culled=79 corr(fit,surv)=+0.279 | NOCOMP final=26
+  seed=904: COMP final=6 culled=71 corr(fit,surv)=+0.188 | NOCOMP final=29
+  seed=905: COMP final=6 culled=76 corr(fit,surv)=+0.048 | NOCOMP final=28
+  seed=906: COMP final=6 culled=78 corr(fit,surv)=+0.310 | NOCOMP final=28
+  seed=907: COMP final=6 culled=73 corr(fit,surv)=+0.072 | NOCOMP final=27
+  seed=908: COMP final=6 culled=81 corr(fit,surv)=+0.262 | NOCOMP final=28
+  seed=909: COMP final=6 culled=69 corr(fit,surv)=+0.309 | NOCOMP final=28
+
+=== VERDICT ===
+{
+  "H": "H_1176",
+  "title": "resource competition — does a scarce shared resource create the selection pressure pure mitosis lacks?",
+  "config": {
+    "K_true": 16,
+    "K_cap": 6,
+    "resource_pool": 6.0,
+    "max_cells": 60,
+    "n_seeds": 10,
+    "cull_every": 50
+  },
+  "competition_final_cellcount_mean": 6.0,
+  "nocompetition_final_cellcount_mean": 27.5,
+  "F1_fitness_tracking": {
+    "mean_corr_fitness_survival": 0.3028494382313614,
+    "pooled_corr_fitness_survival": 0.32516598980553624,
+    "bar": 0.5,
+    "pass": false,
+    "note": "competition culls the LOWEST-fitness cells -> survival tracks fitness"
+  },
+  "F2_bounded": {
+    "competition_bounded_by_Kcap": true,
+    "nocomp_unbounded_over_Kcap": true,
+    "Kcap": 6,
+    "comp_max_cellcount": 6,
+    "nocomp_min_cellcount": 26,
+    "pass": true
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: scarce-resource competition does NOT produce fitness-tracking selection at toy scale (see which gate failed). a_paper_negative_ok.",
+  "scope": "toy numpy $0 CPU 10 seeds; reuses h1159b cell substrate; carrying-capacity competition PROXY for CORE cell scarcity — live engine + scale UNVERIFIED (a_scale_honest_scope). p7 (fitness=clustering error, NOT perplexity).",
+  "xref": "h1159b_mitosis_capacity_self_tuning · 1175_fitness_selection · 1171_apoptosis_death · 1172_metabolism_energy_budget"
+}
+[done]
