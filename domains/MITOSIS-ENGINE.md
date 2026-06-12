@@ -113,6 +113,35 @@ H_1158 γ coupling, H_931 K connectivity) are DIFFERENT parameterizations of the
 5. **re-test H_1136 sleep-consolidation** now that H_1131 wired the anchor→brain path (the write-back gap it hit is closed).
 6. n>6 faithful-Φ ladder for H_1158; v5-mitosis torch path (training/mitosis_v5_*) for the real-model leg.
 
+## Super-additivity arc (the "1+1 = 2.2" surplus, H_1167–1170)
+
+The super-additive surplus S = whole − Σ(parts) — the "1+1>2" advantage — measured across two axes:
+
+| H | axis | result |
+|---|------|--------|
+| **H_1167** 🟢 | dynamical COUPLING (γ) | S PEAKS at the critical γ=1.0 (d=+3.5/+3.5); a STRICTER criticality signature than raw φ — at γ=0 raw φ>0 but S<0 (parts already carry it). WB I_min synergy corroborates |
+| **H_1168** 🟡 | DATA-distance | optimum exists only on the recombination measure (interior peak at same-language related offset d3); faithful-φ surplus is monotone (rewards surface overlap). cross-lingual prediction FALSIFIED |
+| **H_1169** 🔴 | semantic×surface (same-meaning-different-form) | surplus tracks SURFACE not semantics (corr_surf>corr_sem); the high-sem/low-surf "어긋나 어울림" corner does NOT win; abstraction REMOVES structure (S<0) |
+| **H_1170** 🔴 | data-TYPE / modality (text↔audio↔image↔numeric) | COLLAPSE — cross-type same-content S≈0; the lone text↔audio "bridge" is a monotone-tone-map ARTIFACT. Cross-type integration is gated by SURFACE-preservation, not shared meaning |
+
+**One line:** the 1+1>2 surplus is REAL and maximal at dynamical criticality (H_1167), but on DATA it is entirely SURFACE-gated — it does NOT track shared meaning at byte/toy scale. The semantic bridge needs a TRAINED semantic representation, not byte-level co-occurrence (consistent with the H_1155/1156/1157 interlingua-null arc).
+
+## Life & evolution gap probes (H_1171–1177) — "the level matters"
+
+Audit of the working engine vs (A) life-criteria + (B) Darwinian-evolution checklists found it HAS growth/variation/heredity/homeostasis but lacks death/metabolism/membrane/repair/selection/competition/generations. Registered + tested all 7 (toy $0, reuse H_1159b):
+
+| H | element | result |
+|---|---------|--------|
+| **H_1171** 🔴 | apoptosis (cell death) | HURTS — death-threshold at the noise floor prunes still-useful cells (d=−0.92) |
+| **H_1172** 🔴 | metabolism (energy budget) | boom-bust extinction; starvation can't replace the H_1159b homeostatic cap (Spearman K↔count = −0.70) |
+| **H_1173** 🔴 | membrane (self↔non-self) | redundant — the raw substrate already separates non-self (AUROC 0.9998); gating only discards self-adaptation (ties H_1143) |
+| **H_1174** 🟢 | self-repair | HELPS — damage→repair holds function far better than homeostasis alone (sustained d=22.5, burst-recovery d=3.3); distinct from SOC homeostasis |
+| **H_1175** 🔴 | fitness-selection (within-organism) | HURTS — hard cull/reproduce collapses cell-diversity → worse coverage (loses shifted task d=−1.9) |
+| **H_1176** 🔴 | resource competition | a population BRAKE (bounds count) but NOT a selection engine (corr(fit,surv)=0.30<0.5) |
+| **H_1177** 🟢 | generations/population | EVOLVES — multi-generation population (heredity+variation+truncation-selection) beats single-organism growth (d=+1.0, Spearman gen↔fitness +0.86) |
+
+**One line — the LEVEL decides:** naive biological additions at the WITHIN-organism CELL level (death, metabolism, membrane, cell-selection, competition) all 🔴 — they destabilize or are redundant with the homeostatic instructive-growth substrate (H_1159b). Genuine improvement appears only at OTHER levels: ORGANISM-level self-repair (🟢) and POPULATION-of-organisms × GENERATIONS evolution (🟢). anima currently does INSTRUCTIVE growth (development); true Darwinian evolution needs a meta-level population+generations layer, NOT cell-level Darwinization. Same "selection" HELPS across generations (H_1177) but HURTS within an organism (H_1175).
+
 ## Pointers
 - discoveries: `.discoveries/{1153_criticality_branching,1158_phi_at_criticality,1159_inference_time_mitosis_learning,1159b_mitosis_capacity_self_tuning}.tape`
 - harnesses: `UNIVERSE/{h1153_criticality_branching,h1158_phi_at_criticality,h1159_inference_time_mitosis_learning,h1159b_mitosis_capacity_self_tuning}.py`
