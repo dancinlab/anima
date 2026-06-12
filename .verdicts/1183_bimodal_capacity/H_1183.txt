@@ -1,0 +1,107 @@
+=== H_1183 — is the derivative-tick advantage curve BIMODAL at fixed N=10 (fine ladder), or was H_1182 coarse-ladder aliasing? ===
+  fine cap ladder K=[3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 80, 96]; metric d(DERIVATIVE,METRONOME) stage-decode; 10 seeds; reuses H_1163+h1182 VERBATIM
+
+  K=  3  d(deriv,metro)=+0.000
+  K=  4  d(deriv,metro)=+1.237
+  K=  5  d(deriv,metro)=-0.236
+  K=  6  d(deriv,metro)=+0.009
+  K=  8  d(deriv,metro)=+0.051
+  K= 10  d(deriv,metro)=-0.065
+  K= 12  d(deriv,metro)=-0.016
+  K= 16  d(deriv,metro)=+0.147
+  K= 20  d(deriv,metro)=+1.172
+  K= 24  d(deriv,metro)=+0.893
+  K= 28  d(deriv,metro)=+0.750
+  K= 32  d(deriv,metro)=+0.757
+  K= 40  d(deriv,metro)=+1.290
+  K= 48  d(deriv,metro)=+0.826
+  K= 56  d(deriv,metro)=+0.435
+  K= 64  d(deriv,metro)=+0.483
+  K= 80  d(deriv,metro)=+0.038
+  K= 96  d(deriv,metro)=-0.756
+
+=== VERDICT ===
+{
+  "H": "H_1183",
+  "title": "is the derivative-tick stage-decode advantage curve genuinely BIMODAL at fixed N=10 on a fine capacity ladder (two distinct advantage regimes), or was H_1182's two-peak hint coarse-ladder aliasing?",
+  "N_fixed": 10,
+  "cap_ladder": [
+    3,
+    4,
+    5,
+    6,
+    8,
+    10,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    40,
+    48,
+    56,
+    64,
+    80,
+    96
+  ],
+  "d_curve": {
+    "3": 0.0,
+    "4": 1.2370554294843201,
+    "5": -0.23568929196680896,
+    "6": 0.008885942480709811,
+    "8": 0.05055696961828667,
+    "10": -0.0646162025571694,
+    "12": -0.01555466072039176,
+    "16": 0.14701828332012376,
+    "20": 1.1717472995162717,
+    "24": 0.8927161687413202,
+    "28": 0.7502514936826506,
+    "32": 0.7573218441474898,
+    "40": 1.2899876477218697,
+    "48": 0.826141009030421,
+    "56": 0.4347733539399861,
+    "64": 0.4833495950519602,
+    "80": 0.038473553712068814,
+    "96": -0.7562461988890004
+  },
+  "peaks_d_ge_0.5": [
+    {
+      "K": 40,
+      "d": 1.2899876477218697
+    },
+    {
+      "K": 4,
+      "d": 1.2370554294843201
+    },
+    {
+      "K": 20,
+      "d": 1.1717472995162717
+    }
+  ],
+  "top2_peaks": [
+    {
+      "K": 40,
+      "d": 1.2899876477218697
+    },
+    {
+      "K": 4,
+      "d": 1.2370554294843201
+    }
+  ],
+  "valley_min_between_top2": -0.23568929196680896,
+  "F1_bimodal_separated": {
+    "need": "2 peaks, one K<=8 + one K>=20",
+    "pass": true
+  },
+  "F2_real_valley": {
+    "valley_min": -0.23568929196680896,
+    "rule": "<= min(peak_d) - 0.3",
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED (BIMODAL-CONFIRMED): on a fine ladder at N=10 the advantage curve has TWO separated peaks (peaks at K=[40, 4]) with a real valley between — H_1182's bimodality is NOT coarse aliasing. Two distinct event-driven advantage regimes exist: scarcity-placement (very low K) and coverage-completion (mid K). Sharpens H_1178's single inverted-U into a two-regime structure.",
+  "scope": "TOY ($0 CPU numpy, 10 seeds, fixed N=10). Reuses UNIVERSE/h1163_tick_decode_metric.py + h1182 sweep VERBATIM; only N_REGIMES_AUDIO pinned + fine cap ladder. Live CORE + scale UNVERIFIED (a_scale_honest_scope)."
+}
+
+[done]

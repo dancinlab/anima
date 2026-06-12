@@ -60,3 +60,11 @@
   honest = "toy AUDIO DIM=8/T=2400, coarse quantized cap ladder; the absolute ~24-32 is itself substrate-specific (a_scale_honest_scope). h1159b refuted as the K*-location explanation. live CORE + real-model unverified"
   artifacts = "UNIVERSE/h1182_critical_capacity_scaling.py · .verdicts/1182_critical_capacity_scaling/H_1182.txt · domains/MITOSIS-ENGINE/discoveries/1182_critical_capacity_scaling.tape (NEW per-domain convention)"
   next = "Lane 2: the bimodality opens a cleaner rung — separate the two mechanisms (scarcity-placement vs coverage-completion) on a fixed N with a fine cap ladder; or promote the absolute-K* reading by varying DIM/T. Lane 1 open-rung list depleted (H_1179-1181 terminal)"
+
+@L 2026_06_13_lane2_h1183 := "Lane 2 rung-3 SHIPPED — H_1183 🟢 BIMODAL confirmed (H_1182 serendip validated, not coarse aliasing)" :: log [active]
+  result = "H_1183 SUPPORTED ($0): fine cap ladder at fixed N=10 shows the d(deriv,metro) stage-decode curve is genuinely BIMODAL — peaks K=4 (+1.24) and K=40 (+1.29), valley_min=-0.236 (K5-16 dead zone). F1+F2 pass. Not coarse-ladder aliasing"
+  finding = "TWO distinct event-driven advantage regimes: (A) low-K scarcity-placement (K=4: event places too-few cells at change-points, beats blind clock) + (B) mid/high coverage-completion (broad ridge K=20-64, peak K=40). Dead valley between. Sharpens H_1178's single inverted-U (= coverage ridge alone) into a two-regime structure; vindicates H_1182 serendip"
+  honest = "toy AUDIO N=10 DIM=8/T=2400 10 seeds; peak POSITIONS substrate-specific (a_scale_honest_scope), the two-regime STRUCTURE + placement-vs-coverage mechanism split is the transferable claim. live CORE + real-model unverified"
+  convention = "first discovery written under the NEW convention — appended into domains/MITOSIS-ENGINE.log.md (### h1183_bimodal_capacity tape block), NOT a discoveries/ subfolder (a_discovery_log)"
+  artifacts = "UNIVERSE/h1183_bimodal_capacity.py · .verdicts/1183_bimodal_capacity/H_1183.txt · domains/MITOSIS-ENGINE.log.md ### h1183_bimodal_capacity"
+  next = "tick/capacity discovery arc has a clean 3-rung result (H_1178 asymmetric inverted-U -> H_1182 scaling refuted+bimodal serendip -> H_1183 bimodal confirmed). Candidate /paper at FULL closure (a_paper_only_at_closure); or pivot Lane 2 to a fresh axis"

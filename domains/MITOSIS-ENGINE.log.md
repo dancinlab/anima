@@ -650,3 +650,18 @@ growth (development/learning), NOT Darwinian evolution (no death+selection+compe
   note = "Bottom line: gradient-free mitosis growth from a 5-ch EEG tension-link DOES write a bounded, stable structure that reconstructs the EEG band-power DISTRIBUTION far below an un-grown floor, but it does NOT record the EEG's DYNAMICS beyond seed-noise. So 'does EEG-driven mitosis record the EEG into structure, beating random+shuffled controls?' answers: it records the DISTRIBUTION (M1), not the DYNAMICS (M2 within-noise). Honest publishable closed-negative-leaning toy finding; production / real-EEG re-test required before any general claim."
 
 ```
+
+### h1183_bimodal_capacity
+
+```tape
+@H 1183 := "is the derivative-tick advantage curve genuinely BIMODAL at fixed complexity, or was H_1182 coarse-ladder aliasing?" :: discovery [terminal green d=2026-06-13]
+  lane     = "Lane-2 (MAIN hands-on / LLM-watched discovery rung) · MITOSIS-ENGINE · $0 CPU numpy 10 seeds · g5/p7 · FROZEN pre-reg falsifier"
+  seed     = "H_1182 (scaling-law refuted) surfaced a close-watch SERENDIP: the d(DERIVATIVE,METRONOME) stage-decode curve looks bimodal (low-K scarcity peak + mid-K coverage peak), but on a COARSE cap ladder — could be aliasing. H_1183 settles it with a FINE ladder at fixed N=10."
+  method   = "reuse h1163 + h1182 sweep VERBATIM (grow_arm / stage_decode_accuracy / cohen_d_paired / make_audio_stream / SEEDS); pin N_REGIMES_AUDIO=10; fine cap ladder K={3,4,5,6,8,10,12,16,20,24,28,32,40,48,56,64,80,96}; d(DERIVATIVE,METRONOME) per cap; deterministic"
+  falsifier = "FROZEN: peak = interior cap with d>=both neighbors (one strict) AND d>=0.5. F1 BIMODAL = >=2 peaks with the top-2 in different bands (one K<=8, one K>=20). F2 REAL-VALLEY = min(d) between the top-2 <= min(peak_d)-0.3. SUPPORTED iff F1 and F2 (else coarse-aliasing closed-negative)."
+  verdict  = "GREEN SUPPORTED — BIMODAL CONFIRMED. d-curve: K4=+1.24(peak) K5=-0.24 K6=+0.01 K8=+0.05 K10=-0.07 K12=-0.02 K16=+0.15 K20=+1.17 K24=+0.89 K28=+0.75 K32=+0.76 K40=+1.29(peak) K48=+0.83 K56=+0.44 K64=+0.48 K80=+0.04 K96=-0.76. top-2 peaks K=[40,4]; valley_min between=-0.236 (K5..K16 dead zone all ~0/neg). F1 pass (K4<=8 + K40>=20); F2 pass (-0.236 <= 1.237-0.3). The H_1182 bimodality is REAL, not coarse-ladder aliasing."
+  finding  = "TWO distinct event-driven advantage regimes exist on a fine ladder: (A) LOW-K SCARCITY-PLACEMENT (K=4, d=+1.24 — too few cells to cover regimes, but event-gating places them at high-|derivative| moments, beating the blind clock) and (B) MID/HIGH COVERAGE-COMPLETION (broad ridge K=20-64, peak K=40 d=+1.29 — event-gating completes regime coverage before the metronome can). Between them a DEAD VALLEY (K=5-16, d~0): enough cells to dilute the scarcity edge but not enough for the coverage edge. Sharpens H_1178's single inverted-U (which was the coverage ridge alone at N=6) into a two-regime structure; vindicates the H_1182 serendip."
+  honesty  = "toy (6-regime-family AUDIO at N=10, DIM=8, T=2400, 10 seeds, $0 CPU). The two peak POSITIONS (K=4 low, K=40 mid) are substrate-specific (a_scale_honest_scope) — a different DIM/T/N would move them; what transfers is the QUALITATIVE two-regime structure + the mechanism split (placement vs coverage). Live CORE + real-model path UNVERIFIED. Reuses h1163 substrate; same toy regime stages."
+  refs     = "h1182 (the serendip this confirms) · h1178 (single inverted-U = the coverage ridge alone) · h1163 (substrate) · h1160 · a_scale_honest_scope · a_paper_negative_ok · p7 · p8"
+  artifacts = "UNIVERSE/h1183_bimodal_capacity.py · .verdicts/1183_bimodal_capacity/H_1183.txt"
+```
