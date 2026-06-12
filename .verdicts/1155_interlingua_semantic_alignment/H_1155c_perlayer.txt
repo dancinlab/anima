@@ -1,0 +1,41 @@
+=== H_1155c per-layer + centered interlingua (7B) ===
+[model] loaded 7B val_ce=1.4283547192811965 layers=36
+  layer  0: raw_d=-0.010 centered_d=-0.033
+  layer  6: raw_d=-0.092 centered_d=-0.088
+  layer 12: raw_d=-0.114 centered_d=-0.107
+  layer 18: raw_d=-0.133 centered_d=-0.239
+  layer 24: raw_d=-0.116 centered_d=-0.342
+  layer 30: raw_d=-0.079 centered_d=-0.282
+  layer 36: raw_d=-0.038 centered_d=-0.147
+
+=== VERDICT ===
+{
+  "H": "H_1155c",
+  "title": "per-layer + centered interlingua on the real 5lang 7B (debias H_1155b anisotropy)",
+  "ckpt_val_ce": 1.4283547192811965,
+  "best_raw_layer": 0,
+  "best_raw_d": -0.010344020431031997,
+  "best_centered_layer": 1,
+  "best_centered_d": -0.03215979162420849,
+  "bar": 0.8,
+  "supported": false,
+  "h1155b_final_raw_d": -0.038,
+  "ruling": "CLOSED-NEGATIVE: no interlingua at ANY layer even after centering — the 7B genuinely lacks cross-lingual semantic alignment (ru/ja ceiling is real, not a metric/anisotropy artifact)",
+  "scope": "real 7.25B 5lang ckpt val_ce~1.43; per-layer mean-pool, centered cosine; Lane-G"
+}
+[done] /workspace/h1155c_result.json
+=== JSON(summary) ===
+{
+  "H": "H_1155c",
+  "title": "per-layer + centered interlingua on the real 5lang 7B (debias H_1155b anisotropy)",
+  "ckpt_val_ce": 1.4283547192811965,
+  "best_raw_layer": 0,
+  "best_raw_d": -0.010344020431031997,
+  "best_centered_layer": 1,
+  "best_centered_d": -0.03215979162420849,
+  "bar": 0.8,
+  "supported": false,
+  "h1155b_final_raw_d": -0.038,
+  "ruling": "CLOSED-NEGATIVE: no interlingua at ANY layer even after centering — the 7B genuinely lacks cross-lingual semantic alignment (ru/ja ceiling is real, not a metric/anisotropy artifact)",
+  "scope": "real 7.25B 5lang ckpt val_ce~1.43; per-layer mean-pool, centered cosine; Lane-G"
+}
