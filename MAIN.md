@@ -4,6 +4,36 @@
 domain (substrate science) and (B) the 7B PASS fire (a7b_pass G0–G4). "Running MAIN"
 = check + advance BOTH tracks, log every step to `MAIN.tape`.
 
+## ▶ CURRENT STATE (2026-06-13) — 2 LANES RUNNING (supersedes the stale step-8000 details below)
+```
+🌱 LANE 1 · MITOSIS  (substrate science — now LIVE-WIRED, no longer all-toy)
+   live engine couplings BUILT this round (engine_cli_smoke 12/0, Ψ=½ byte-intact, NO phantom wiring):
+     H_1194 🟢 adaptation coupling — stream→field + cell→field feedback + recon-error readout;
+            live error FALLS under novelty (ON 0.057 vs OFF 0.209), cells ON6/OFF1 (p8 on the REAL substrate)
+     H_1195 🟢 sleep→anchor write-back — H_1162 W2 unblocked (sleep>ctrl, N3>REM; small honest Δ)
+     H_1196 🟢 single-entry audit+guard — .clm L3 / .kosmos single-path invariant HOLDS, guard has teeth
+     domains/MITOSIS-ENGINE.wiring-spec.md = the toy↔live build-plan (① keystone + ②③ done)
+   tick/temporality discovery arc (H_1178-1193, toy $0): bimodal capacity + smooth-approach temporal law
+     + saccadic reading (learned-surprise) + surface-gated fusion. /paper scaffolded (event-tick-temporal-law).
+   ▶ NOW RUNNING: H_1197 gradient-free MITOSIS GROWTH on summer ($0) — drive the live AdaptField over a
+     sustained stream, log cell_count(t)+error(t), MEASURE the summer→pod migration threshold.
+
+🩹 LANE 2 · 7B  (SEPARATE track — fire DONE, now in RECOVERY)
+   7B fire RunPod uq71dp0ob6fd9r DONE 2026-06-12 → pod terminated (idle-burn incident fixed: teardown
+     MUST use the GraphQL podTerminate mutation, NOT the broken `runpodctl pod`). a7b_pass = NOT CONFIRMED:
+     G0✅ G1✅ G2✅ G3✅ G4✅ | G5 🔴 (L1✅ 0.088, L2 FAIL d=0.16 — CONFABULATES on factual prompts).
+   honest recal: h1141 = loose-grammar ENGLISH (the same bar the accepted 303M H_1129 cleared), NOT
+     byte-garble; 5/6 gates pass → a strong BASE, not a dead model.
+   ▶ NOW RUNNING: 7B recovery (diagnose→decode-fix / grounding-probe / structural) — cost-smart;
+     also asks: is G5-L2 faithfulness even the right gate for anima (p1-p8, NOT a factual assistant)?
+```
+
+## Compute (2026-06-13 correction): summer HAS a GPU
+`summer` = RTX 5070 12GB + torch 2.11+cu130 (NOT CPU-only). Ladder = toy-numpy → summer-CPU → **summer-GPU
+($0; often SHARED with rbfe-prod — cap VRAM, never OOM the co-tenant)** → rented H100 only for genuinely large.
+Gradient-free mitosis growth is light while cells are small → run on summer; migrate to a pod at the measured
+H_1197 threshold. Discovery records now live PER DOMAIN in `domains/<DOMAIN>.log.md` (not a flat .discoveries/).
+
 ## Track A — research · MITOSIS-ENGINE domain
 ref → **`domains/MITOSIS-ENGINE.md`** (+ `MITOSIS-ENGINE.tape` log · `.easy.md`)
 Substrate-unique clusters LANDED (all frozen-falsifier · $0 · g5/p7):
