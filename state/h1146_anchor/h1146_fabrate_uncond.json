@@ -1,0 +1,828 @@
+{
+  "hypothesis": "H_1143_G5L2_NONFAB",
+  "rescope_commit": "a7f0a6eba",
+  "ckpt": "dancinlab/anima-clm-7b-h1141-g1pass-step6500",
+  "ckpt_sha256": "4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9",
+  "corpus": "corpus_en_300mb.txt",
+  "corpus_sha256_expected": "80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d",
+  "n_prompts": 40,
+  "frozen_bar": 0.2,
+  "n_entities_total": 88,
+  "n_fabricated": 26,
+  "n_present": 62,
+  "fabricated_entity_rate": 0.2955,
+  "new_L2_pass": false,
+  "fabricated_tokens_verbatim": [
+    "Warrers",
+    "Manufactur",
+    "Raja Almen",
+    "Boston Red Red Bowl",
+    "Manufactur",
+    "International Society Priz",
+    "Ultimate Hockey Championship",
+    "Jacob Burrough",
+    "Altenmark",
+    "College Engineeri",
+    "Jason Junior The League",
+    "Communist Service Music Priz",
+    "Canadian Canadian Council",
+    "Manufactur",
+    "Repub",
+    "Communication News",
+    "Blind Resort",
+    "Orange League Coast",
+    "International Research Cou",
+    "Waltham Hockey",
+    "South Archdistrict",
+    "War Championship",
+    "United States County Award",
+    "Centro Politician Assembly",
+    "Colonian Repub",
+    "Oriental Plans"
+  ],
+  "present_tokens_verbatim": [
+    "James",
+    "War",
+    "2002",
+    "24",
+    "10",
+    "1895",
+    "1980",
+    "1990",
+    "New York City",
+    "17",
+    "Channel",
+    "1981",
+    "1984",
+    "Century Army",
+    "Random",
+    "2012",
+    "United States",
+    "United Kingdom",
+    "Br",
+    "Act",
+    "Political News",
+    "New York",
+    "South Africa",
+    "United States",
+    "Order",
+    "United States Commission",
+    "Ministry",
+    "Chief",
+    "August",
+    "2002",
+    "2001",
+    "2010",
+    "Commission",
+    "Ministry",
+    "2006",
+    "2009",
+    "Century Army",
+    "Electricity",
+    "Control Engineers",
+    "2012",
+    "World Cup",
+    "First Cup",
+    "April",
+    "2004",
+    "2010",
+    "03",
+    "Hollywood",
+    "Raja",
+    "Br",
+    "Scout",
+    "Order",
+    "United",
+    "1947",
+    "United States",
+    "American Books",
+    "Union Power",
+    "Acts",
+    "Union",
+    "College",
+    "American Assembly",
+    "Tom",
+    "Adolph"
+  ],
+  "per_row": [
+    {
+      "idx": 0,
+      "prompt": "!Result !Record !Opponent !Method !Round, time !Date !Location !Notes |- |4 |Loss |align=center|2–1–1 | Timer Nikulin",
+      "cont": "o |ISON 2002–24\n|James 2002–10\n|War\n|Warrers ||align=center ||Method Soldiers ||Method",
+      "n_entities": 6,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Warrers"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "James"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "War"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2002"
+        },
+        {
+          "kind": "E3_NUM",
+          "token": "24"
+        },
+        {
+          "kind": "E3_NUM",
+          "token": "10"
+        }
+      ]
+    },
+    {
+      "idx": 1,
+      "prompt": "727) The Retirement Benefits Schemes (Restriction on Discretion to",
+      "cont": "law). It was released in 1895 through 1980 and 1990. It was removed awarded an investment",
+      "n_entities": 3,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E2_YEAR",
+          "token": "1895"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "1980"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "1990"
+        }
+      ]
+    },
+    {
+      "idx": 2,
+      "prompt": "According to a contemporary story, the queen was so jealous that she preferred her appointed ladies-in-waiting to be",
+      "cont": "ladies of the rest of the dominant materials. The appointed community with the Manufactur",
+      "n_entities": 1,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Manufactur"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 3,
+      "prompt": "Alger was the son of David Bruce Alger, a bank",
+      "cont": "was greated with the population of the complete in the Raja Almen. The son was supported",
+      "n_entities": 1,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Raja Almen"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 4,
+      "prompt": "April 18 – The Boston Red Sox defeat the New",
+      "cont": "York City Burials 17 per car of the New York City and the Boston Red Red Bowl, Manufactur",
+      "n_entities": 4,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Boston Red Red Bowl"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Manufactur"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "New York City"
+        },
+        {
+          "kind": "E3_NUM",
+          "token": "17"
+        }
+      ]
+    },
+    {
+      "idx": 5,
+      "prompt": "At this time the operating system (OS) was not as ready, and led",
+      "cont": "to increase a result of one of the main systems in part of the International Society Priz",
+      "n_entities": 1,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "International Society Priz"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 6,
+      "prompt": "Both Stennis and Russell were conservative Southern Democrats who were chairmen of key",
+      "cont": "board. After release ended down the end of the stream was lead of the word state leader in",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 7,
+      "prompt": "Chawne Kimber (born 1971), degrees from University of",
+      "cont": "Hawkinson and Ultimate Hockey Championship (1981) and became Channel (1984). Both preside",
+      "n_entities": 4,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Ultimate Hockey Championship"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Channel"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "1981"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "1984"
+        }
+      ]
+    },
+    {
+      "idx": 8,
+      "prompt": "Delannoy, having seen the band a few times over the years",
+      "cont": "later.",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 9,
+      "prompt": "Early career In 1930, Limón first performed on Broadway, and later that same year",
+      "cont": "s at Jacob Burrough Centre. In the 2012 Century Army at Random Centre was added to present",
+      "n_entities": 4,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Jacob Burrough"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Century Army"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Random"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2012"
+        }
+      ]
+    },
+    {
+      "idx": 10,
+      "prompt": "Following Azerbaijan's independence from the Soviet Union in 1991, the former Soviet air",
+      "cont": "played summer in the United States. When the contract was replaced by the United States in",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "United States"
+        }
+      ]
+    },
+    {
+      "idx": 11,
+      "prompt": "Geography Kleinmariazell is located north of Altenmarkt in a side",
+      "cont": "of Altenmark in the United Kingdom. The side of the community mention is also known as Br",
+      "n_entities": 3,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Altenmark"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "United Kingdom"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Br"
+        }
+      ]
+    },
+    {
+      "idx": 12,
+      "prompt": "He has placed his terminally ill wife Nora in cryogenic",
+      "cont": "lawyers. Central Northern Politics in Act, Political News, New York and College Engineeri",
+      "n_entities": 4,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "College Engineeri"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Act"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Political News"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "New York"
+        }
+      ]
+    },
+    {
+      "idx": 13,
+      "prompt": "He was the last count palatine; after his death the Duke",
+      "cont": "law Jason Junior The League of South Africa.",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Jason Junior The League"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "South Africa"
+        }
+      ]
+    },
+    {
+      "idx": 14,
+      "prompt": "However, B-17s were operating at heights too",
+      "cont": "k and assumed in the end of the United States. The additional Communist Service Music Priz",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Communist Service Music Priz"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "United States"
+        }
+      ]
+    },
+    {
+      "idx": 15,
+      "prompt": "In 1934, Ernest Truex directed, co-produced, and starred in the",
+      "cont": "lawyers. Central Trues and on the Order of the United States Commission of the Ministry o",
+      "n_entities": 3,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Order"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "United States Commission"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Ministry"
+        }
+      ]
+    },
+    {
+      "idx": 16,
+      "prompt": "In August 2001, the National Public Radio program All Things Considered noted that, in the wake",
+      "cont": "d all as the mid-1990s, and on the 2002 Chief program with August 2001. A mother most that",
+      "n_entities": 4,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Chief"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "August"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2002"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2001"
+        }
+      ]
+    },
+    {
+      "idx": 17,
+      "prompt": "In his senior season, he averaged 14 points per game and",
+      "cont": "launched at a result of 2010 points at Canadian Canadian Council.",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Canadian Canadian Council"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E2_YEAR",
+          "token": "2010"
+        }
+      ]
+    },
+    {
+      "idx": 18,
+      "prompt": "Inactivating V1 with TMS could induce some degree of",
+      "cont": "lawyers. Central TV ended do not the AACT, who had played do not the AACT, the Manufactur",
+      "n_entities": 1,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Manufactur"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 19,
+      "prompt": "It later aired in the US on NBC from 24 June",
+      "cont": "2006. It was released in 2006 three with selection of the AC Commission of the Ministry o",
+      "n_entities": 3,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Commission"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Ministry"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2006"
+        }
+      ]
+    },
+    {
+      "idx": 20,
+      "prompt": "KIOA fell to the middle of the pack as far as ratings went and",
+      "cont": "launched and result on to do the name of the pack and resulted and distinguished by Repub",
+      "n_entities": 1,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Repub"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 21,
+      "prompt": "MTV has described LL Cool J's 1987 single \"I Need",
+      "cont": "in the 2009 single men's case the 2009 Communication News, which was widely depositive fr",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Communication News"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E2_YEAR",
+          "token": "2009"
+        }
+      ]
+    },
+    {
+      "idx": 22,
+      "prompt": "Moulton Hall is a 17th-century manor house with an",
+      "cont": "individual or restriction. In the 2012 Century Army and Electricity and Control Engineers",
+      "n_entities": 4,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Century Army"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Electricity"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Control Engineers"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2012"
+        }
+      ]
+    },
+    {
+      "idx": 23,
+      "prompt": "On 28 April 2023, Girls Aloud released the promotional",
+      "cont": "lawyers of the World Cup and the First Cup at the 2004–03 April 2010.",
+      "n_entities": 6,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "World Cup"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "First Cup"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "April"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2004"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "2010"
+        },
+        {
+          "kind": "E3_NUM",
+          "token": "03"
+        }
+      ]
+    },
+    {
+      "idx": 24,
+      "prompt": "Other times, chaplains may offer a prayer for secular occasions such",
+      "cont": "as the time of the men's case the men's secular tradition, the entire became the number o",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 25,
+      "prompt": "Profly goaltenders tend to also be very mobile when in the butterfly stance and excel",
+      "cont": "lent groups.  No was expressed to the AAC service was transferred to a budget to the line",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 26,
+      "prompt": "Scholarship has also identified 'Sumerian City Lament' (SCL) motifs within Amos and particularly the hymn, offering",
+      "cont": "the group's military personality.",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 27,
+      "prompt": "Singers such as Blind Willie McTell and Blind Boy Fuller performed in the southeastern",
+      "cont": "lawyers. Before the end of the southern significant and red for the southern Blind Resort",
+      "n_entities": 1,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Blind Resort"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 28,
+      "prompt": "Taxi Rider, known as , is a video",
+      "cont": "launger of a revolutionary of the Orange League Coast, and the International Research Cou",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Orange League Coast"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "International Research Cou"
+        }
+      ],
+      "present": []
+    },
+    {
+      "idx": 29,
+      "prompt": "The Floriade site is also located on the south side, where",
+      "cont": "launched the result of the original conceptual or an individual film. The state was like",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 30,
+      "prompt": "The Urban Districts of Buckhurst Hill, Chingford, Epping, Loughton, Waltham",
+      "cont": "Hall. However, Waltham Hockey, South Archdistrict and Hollywood.",
+      "n_entities": 3,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Waltham Hockey"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "South Archdistrict"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Hollywood"
+        }
+      ]
+    },
+    {
+      "idx": 31,
+      "prompt": "The controversies came to a head when",
+      "cont": "they ask reaches the popular of the new schools in the Raja came when they to the presenc",
+      "n_entities": 1,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Raja"
+        }
+      ]
+    },
+    {
+      "idx": 32,
+      "prompt": "The granule size ensures that the salt dissolves slowly",
+      "cont": "law granuleum responses on or the second second real transformation and distribution to p",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    },
+    {
+      "idx": 33,
+      "prompt": "The note stated that the conference should not negotiate a peace",
+      "cont": "was granted from the person of the War Championship. New York City and the town of the Br",
+      "n_entities": 2,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "War Championship"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Br"
+        }
+      ]
+    },
+    {
+      "idx": 34,
+      "prompt": "The series brought back fan favorite Vlad",
+      "cont": "imale Scout.  November 1947 on the Order of the United States County Award for the United",
+      "n_entities": 5,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "United States County Award"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Scout"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Order"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "United"
+        },
+        {
+          "kind": "E2_YEAR",
+          "token": "1947"
+        }
+      ]
+    },
+    {
+      "idx": 35,
+      "prompt": "The white uniform featured red numbers with black trim",
+      "cont": "med in summer in the end of the United States. The approaches of the American Books is a p",
+      "n_entities": 2,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "United States"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "American Books"
+        }
+      ]
+    },
+    {
+      "idx": 36,
+      "prompt": "They made several trips working the two Union trains out of Cape Town, but they",
+      "cont": "were assumed in the Union Power, then Acts and Union trained College with the College of",
+      "n_entities": 4,
+      "fabricated": [],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Union Power"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Acts"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Union"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "College"
+        }
+      ]
+    },
+    {
+      "idx": 37,
+      "prompt": "Thomas Baldwin Peddie (February 11, 1808 – February 16, 1889) was an American Republican politician",
+      "cont": "was granted as the Centro Politician Assembly of American Assembly and the Colonian Repub",
+      "n_entities": 3,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Centro Politician Assembly"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Colonian Repub"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "American Assembly"
+        }
+      ]
+    },
+    {
+      "idx": 38,
+      "prompt": "Until the end of the 1980s, the authorities stick to the original plans, demolishing",
+      "cont": "the group of the Tom plans of the Oriental Plans and the Adolph. Although the original fi",
+      "n_entities": 3,
+      "fabricated": [
+        {
+          "kind": "E1_CAP",
+          "token": "Oriental Plans"
+        }
+      ],
+      "present": [
+        {
+          "kind": "E1_CAP",
+          "token": "Tom"
+        },
+        {
+          "kind": "E1_CAP",
+          "token": "Adolph"
+        }
+      ]
+    },
+    {
+      "idx": 39,
+      "prompt": "While there, she recalls a romantic interlude with Commander William Riker, but as the",
+      "cont": "larger of the rest of the dominant markets and the position of the dominant. The number o",
+      "n_entities": 0,
+      "fabricated": [],
+      "present": []
+    }
+  ]
+}

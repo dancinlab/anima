@@ -222,7 +222,32 @@ otherwise         report which gate(s) failed + the honest path (NOT faked).
 > weights (real sha 43bfa360…); HF download integrity passed; measurement is sha-independent. Pod TERMINATED
 > + 404-verified-gone. Verdict: `.verdicts/1145_chat7b_nonfab/H_1145.txt`.
 
+> **H_1146 ANCHOR-CONDITIONED DECODE 2026-06-13 (A40, ckpt sha256 4de903… verified, inference-only ~$0.10):**
+> H_1145's bottom line pointed at retrieval / anchor-conditioned generation as the path the training routes
+> could not reach. H_1146 TESTED that path at the cheapest level — decode-time anchor conditioning — and it
+> is **🔴 CLOSED-NEG**. Three arms over the SAME 40 (prompt, truth) pairs + the h1141 gate_g5_l2 generator
+> + the h1143 scorer VERBATIM, only the prepended context differs: **UNCONDITIONED 0.2955** (26/88,
+> reproduces H_1143) · **TRUE-ANCHOR (ORACLE) 0.2577** (25/97) · **WRONG-ANCHOR 0.3295** (29/88). The frozen
+> falsifier (F1: true ≤ uncond−0.10 AND F2: wrong−true ≥ 0.10) **FAILS both** — F1 drop +0.0378 ≪ 0.10, true
+> 0.2577 > 0.20 bar; F2 gap +0.0718 < 0.10. **Even a PERFECT oracle ground-truth anchor — the exact relevant
+> corpus continuation, perfectly retrieved and prepended — does NOT stop fabrication: the byte-LM does not
+> copy / attend-to retrieved context** (it was never trained with a retrieve-then-ground objective; prepending
+> only shifts prefix bytes). Sample: anchor "to a deal to port an OS known as TRIPOS to the platform" →
+> true-anchor cont "to the operating system of operating the system in the Republic" (ignores TRIPOS, invents
+> "the Republic"). WRONG-anchor being WORST confirms longer context is mildly harmful noise, no length benefit.
+> Since the TRUE anchor is an **ORACLE upper bound** (real kosmos retrieval would be noisier), this 🔴 is
+> decisive: oracle fails ⇒ real retrieval fails harder. **The grounding strategy is now CLOSED-NEG on ALL of
+> {unconditioned (H_1143), +grounding-train (H_1144), chat-finetune (H_1145), oracle anchor-conditioned decode
+> (H_1146)} — anchor-grounding ALONE is insufficient; anchor-conditioned generation would require
+> ARCHITECTURAL / TRAINED grounding (a copy/attend-to-context mechanism trained into the weights), NOT
+> decode-time context-prepending.** a7b_pass G5 UNCHANGED = FALSE; 0.20 bar + 0.10/0.10 margins NOT moved.
+> p1-p8 preserved (anchor = retrieved decode context, NOT a system-prompt / persona / reward). NUMBERING NOTE:
+> integer 1146 collides with the unrelated `.verdicts/1146_confidence_gated_brake` 🔴; this is the distinct
+> slug `1146_anchor_conditioned_decode`. Pod self-terminated + 404-verified-gone. Verdict:
+> `.verdicts/1146_anchor_conditioned_decode/H_1146.txt` · harness `UNIVERSE/h1146_anchor_conditioned_decode.py`.
+
 ## Current state (this session) & the path
 - broad-7b: G0 ❌ (garble) → fails everything downstream. The val-CE was low on multilang but generation collapses.
 - chat-7b: G0 ✅ on DIALOGUE prompts, but H_1145 found it collapses to BYTE-GARBLE on factual-frame (wiki-opener) prompts (chat_pass=FALSE, backbone wiki-undertrained) → fab-rate 0.5455 on the frozen G5-L2 harness (worse than the backbone). G0 is register-dependent, not clean.
+- **Grounding-path disposition (H_1143→H_1146):** the "make it stop fabricating" axis is now closed-neg across every cheap route — unconditioned (H_1143 0.247), +grounding-train (H_1144 0.322), chat-finetune (H_1145 0.545), and oracle anchor-conditioned **decode** (H_1146 true-anchor 0.258). Decode-time anchor-prepending does NOT install grounding; the only remaining grounding direction is **architectural/trained** (a retrieval-augmented objective that trains a copy/attend-to-context mechanism into the weights), not anything bolted on at inference.
 - **Path to a PASS 7B:** train/continue-train a 7B to **coherent convergence (G0) on a BROAD, concept-rich, script-controlled corpus** (the H_1129 recipe at 7B scale, but trained to true generation-coherence not just low multilang CE), then verify G1 (recombination) + G2 (novelty) + G3 (philosophy) on that single ckpt. Each fire reports the per-gate tally against THIS document.

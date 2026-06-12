@@ -1,0 +1,88 @@
+H_1146 — ANCHOR-CONDITIONED DECODE: does grounding the descent-7B's decode on a
+          retrieved (oracle) anchor stop it fabricating entities?
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok) — anchor-grounding alone is INSUFFICIENT.
+
+NUMBERING NOTE: the integer "1146" already labels a different terminal experiment on
+origin/main (.verdicts/1146_confidence_gated_brake, CONFIDENCE-GATED BRAKE 🔴). THIS rung
+is the ANCHOR-CONDITIONED-DECODE experiment under the slug 1146_anchor_conditioned_decode.
+The integer collision is recorded honestly; no threshold was shared or moved.
+
+Run: RunPod A40 48GB (pod anima-h1146-anchor, id tcjkymhr3oqclb), inference-only, ~$0.10
+     this run (~14min wall) / ~$0.19 total incl. 2 aborted orchestrator-bug dispatches.
+     seed 7, p7 deterministic (regex NER + corpus-absence grep), NOT perplexity/LLM-judge.
+     Pod SELF-TERMINATED after self-uploading results to HF; 404-verified gone.
+ckpt: dancinlab/anima-clm-7b-h1141-g1pass-step6500 (h1141_g1pass_step6500.pt)
+      sha256 4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9 (VERIFIED on pod)
+      val_ce 1.1857, step 7000, 7,252,828,160 params.
+corpus: en 300MB head (== h1143/h1144/h1145 probe corpus).
+harness: UNIVERSE/h1146_anchor_conditioned_decode.py — reuses h1141_7b_g5_eval.py
+      gate_g5_l2 generator path VERBATIM (same 40 seed-7 factual openers, first_half_split,
+      gen_from_prompt_grounded temp 0.7 top_k 40) and h1143_g5l2_nonfab_measure.py scorer
+      VERBATIM (frozen 0.20 bar, regex NER, gate_g2 corpus-absence grep). The 40
+      (prompt, truth) pairs are IDENTICAL across all 3 arms; ONLY the prepended context
+      differs. Only the model's NEW generated suffix is scored (anchor entities never counted).
+
+=== FROZEN FALSIFIER (.verdicts/1146_anchor_conditioned_decode/H_1146_FREEZE.txt; immovable) ===
+F1 ANCHOR-GROUNDS : fab(TRUE-ANCHOR) <= fab(UNCOND) - 0.10  (real >=0.10 absolute drop)
+F2 INFO-NOT-LENGTH: fab(WRONG-ANCHOR) - fab(TRUE-ANCHOR) >= 0.10  (true beats wrong by >=0.10)
+VERDICT: F1 ∧ F2 => 🟢 ANCHOR-GROUNDS ; NOT F1 => 🔴 CLOSED-NEG.
+
+=== 3-ARM RESULT (fabricated-entity-assertion RATE, frozen bar 0.20) ===
+  ARM                       fab_rate   n_fab/n_entities
+  UNCONDITIONED (=H_1143)   0.2955     26/88     (reproduces H_1143 ~0.247 ballpark)
+  TRUE-ANCHOR  (ORACLE)     0.2577     25/97
+  WRONG-ANCHOR (control)    0.3295     29/88
+
+  F1 drop (uncond - true)  = +0.0378   << 0.10 frozen margin     -> F1 FAIL
+  F2 gap  (wrong - true)   = +0.0718   <  0.10 frozen margin     -> F2 FAIL
+  true_anchor under 0.20 bar: FALSE (0.2577 > 0.20)
+  => 🔴 CLOSED-NEGATIVE  (F1 ∧ F2 = FALSE; NOT F1)
+
+=== FINDING (closed-negative — rules out an axis) ===
+Even an ORACLE ground-truth anchor — the EXACT relevant corpus continuation, perfectly
+retrieved and prepended as decode context — does NOT stop the descent-7B fabricating. The
+true-anchor arm cut fabrication only 0.0378 absolute (88->97 entities, 26->25 fabricated):
+a null effect, nowhere near the 0.10 margin and still +0.058 OVER the 0.20 bar. The model
+does not COPY or condition on the retrieved context; it confabulates the SAME garbled
+invented entities with or without the anchor.
+
+MECHANISM (decoded samples, verbatim):
+  prompt "At this time the operating system (OS) was not as ready"
+    TRUE anchor prepended: "to a deal to port an OS known as TRIPOS to the platform"
+    true-anchor cont:      "to the operating system of operating the system in the Republic"
+    -> ignores TRIPOS entirely; loops + invents "the Republic".
+  prompt "727) The Retirement Benefits Schemes (Restriction on Di"
+    true-anchor cont: "the Jack Centre of Centre Politics in Acts and Regional Schemes" [FAB Regiment Priz]
+  Fabricated tokens persist under the oracle anchor: "Regiment Priz", "Carolina Carolina
+  Adventures", "Archdella", "Jason Burrough", "Opera State Corporation", "Manufactur" ...
+
+This is a BYTE-LEVEL byte-LM that was never trained with a retrieve-then-ground objective;
+prepending context only shifts the prefix bytes, it does not install a copy/attend-to-context
+capability. The wrong-anchor arm being WORST (0.3295) confirms longer context is, if anything,
+mildly harmful noise — there is no length benefit to disentangle from grounding (F2 moot
+because the true-anchor benefit it would contrast against does not exist).
+
+=== DISPOSITION OF THE GROUNDING PATH ===
+The G5-L2 NON-FABRICATION ladder is now CLOSED-NEG on ALL of: descent-7B unconditioned
+(H_1143 0.247), +grounding-train (H_1144 0.322 worse), chat-7b (H_1145 0.545 worst), AND
+oracle anchor-conditioned decode (H_1146 0.258, this rung). The "retrieve an anchor and
+ground the decode" path is RULED OUT for the EXISTING ckpt: anchor-grounding ALONE is
+insufficient because the model cannot use retrieved context at inference. Since this used a
+PERFECT oracle anchor (an upper bound — real kosmos retrieval would be noisier and weaker),
+a real retrieval pipeline would fail at least as hard. Anchor-conditioned generation would
+require ARCHITECTURAL/TRAINED grounding (a copy/attend-to-context mechanism trained into the
+weights — e.g. a retrieval-augmented objective), not just context-prepending at decode.
+a7b_pass G5 UNCHANGED = FAIL.
+
+=== HONEST SCOPE (a_scale_honest_scope) ===
+- Toy entity-regex (cap-phrase / year / numeral), 40-prompt set, single ckpt, seed 7.
+- TRUE anchor = ORACLE upper bound (exact ground-truth, perfect retrieval). Real kosmos
+  retrieval is noisier => a 🔴 here is decisive (oracle fails => real fails harder).
+- substrate = PyTorch-CUDA (Lane-G ref). p1-p8 preserved: anchor = retrieved decode context,
+  NOT a system-prompt / persona / reward (no instruction-tuning, no RLHF).
+- Frozen 0.20 bar and 0.10/0.10 margins NOT moved post-hoc.
+
+Artifacts: state/h1146_anchor/{h1146_anchor_result.json, h1146_fabrate_{uncond,true,wrong}.json,
+g5_result_{uncond,true,wrong}.json, h1146.log}. HF (private, WIP): dancinlab/
+anima-h1146-anchor-conditioned-decode. Harness: UNIVERSE/h1146_anchor_conditioned_decode.py,
+h1146_anchor_pod_run.sh, h1146_orchestrator.py.

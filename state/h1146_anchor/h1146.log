@@ -1,0 +1,176 @@
+[pod] start Fri Jun 12 22:41:09 UTC 2026
+[notice] A new release of pip is available: 25.0.1 -> 26.1.2
+[notice] To update, run: python -m pip install --upgrade pip
+[torch] 2.8.0.dev20250319+cu128 True NVIDIA A40
+[pod] downloading 7B ckpt from HF ...
+CK /workspace/ck/h1141_g1pass_step6500.pt
+[pod] 7B sha256 got=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9 expect=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+[pod] building 1200MB en corpus then slicing the 300MB head ...
+  en shard 0: got=703369801 docs=156226 dup=63
+  en shard 1: got=1258294504 docs=302693 dup=89
+CORPUS_OUT /workspace/corpus_en_1200mb.txt bytes=1258291200 sha256=b599b17258c8af4dd2bac73efb4711e7555d74304b15951b1a5adca1a1704e31
+[pod] probe-corpus(300MB) sha256=80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d (expect 80ba6b48943e1943c4c3a0753c2bc594132acd7f30046733f4bf0102020c979d)
+[pod] running H_1146 3-arm anchor-conditioned-decode measure ...
+[dev] cuda NVIDIA A40
+[ckpt] /workspace/ck/h1141_g1pass_step6500.pt sha256=4de903714112c26c826a983797e5dfea0c7b3c1f19f15a34dd35822f33e245d9
+[model] cfg={'vocab': 256, 'd': 4096, 'n_layer': 36, 'n_head': 32, 'block': 512, 'n_params': 7252828160} val_ce=1.1856881439685822 step=7000
+[pairs] 40 (prompt,truth) pairs (seed 7, IDENTICAL across arms)
+
+##### ARM unconditioned #####
+  [unconditioned 1/40] P:'!Result !Record !Opponent !Method !Rou' -> C:'o |ISON 2002–24\n|James 2002–10\n|War\n|Warrers ||a'
+  [unconditioned 2/40] P:'727) The Retirement Benefits Schemes (' -> C:'law). It was released in 1895 through 1980 and 1'
+  [unconditioned 3/40] P:'According to a contemporary story, the' -> C:'ladies of the rest of the dominant materials. Th'
+  [unconditioned 4/40] P:'Alger was the son of David Bruce Alger' -> C:'was greated with the population of the complete '
+  [unconditioned 5/40] P:'April 18 – The Boston Red Sox defeat t' -> C:'York City Burials 17 per car of the New York Cit'
+  [unconditioned 6/40] P:'At this time the operating system (OS)' -> C:'to increase a result of one of the main systems '
+  [unconditioned 7/40] P:'Both Stennis and Russell were conserva' -> C:'board. After release ended down the end of the s'
+  [unconditioned 8/40] P:'Chawne Kimber (born 1971), degrees fro' -> C:'Hawkinson and Ultimate Hockey Championship (1981'
+  [unconditioned 9/40] P:'Delannoy, having seen the band a few t' -> C:'later.'
+  [unconditioned 10/40] P:'Early career In 1930, Limón first perf' -> C:'s at Jacob Burrough Centre. In the 2012 Century '
+  [unconditioned 11/40] P:"Following Azerbaijan's independence fr" -> C:'played summer in the United States. When the con'
+  [unconditioned 12/40] P:'Geography Kleinmariazell is located no' -> C:'of Altenmark in the United Kingdom. The side of '
+  [unconditioned 13/40] P:'He has placed his terminally ill wife ' -> C:'lawyers. Central Northern Politics in Act, Polit'
+  [unconditioned 14/40] P:'He was the last count palatine; after ' -> C:'law Jason Junior The League of South Africa.'
+  [unconditioned 15/40] P:'However, B-17s were operating at heigh' -> C:'k and assumed in the end of the United States. T'
+  [unconditioned 16/40] P:'In 1934, Ernest Truex directed, co-pro' -> C:'lawyers. Central Trues and on the Order of the U'
+  [unconditioned 17/40] P:'In August 2001, the National Public Ra' -> C:'d all as the mid-1990s, and on the 2002 Chief pr'
+  [unconditioned 18/40] P:'In his senior season, he averaged 14 p' -> C:'launched at a result of 2010 points at Canadian '
+  [unconditioned 19/40] P:'Inactivating V1 with TMS could induce ' -> C:'lawyers. Central TV ended do not the AACT, who h'
+  [unconditioned 20/40] P:'It later aired in the US on NBC from 2' -> C:'2006. It was released in 2006 three with selecti'
+  [unconditioned 21/40] P:'KIOA fell to the middle of the pack as' -> C:'launched and result on to do the name of the pac'
+  [unconditioned 22/40] P:"MTV has described LL Cool J's 1987 sin" -> C:"in the 2009 single men's case the 2009 Communica"
+  [unconditioned 23/40] P:'Moulton Hall is a 17th-century manor h' -> C:'individual or restriction. In the 2012 Century A'
+  [unconditioned 24/40] P:'On 28 April 2023, Girls Aloud released' -> C:'lawyers of the World Cup and the First Cup at th'
+  [unconditioned 25/40] P:'Other times, chaplains may offer a pra' -> C:"as the time of the men's case the men's secular "
+  [unconditioned 26/40] P:'Profly goaltenders tend to also be ver' -> C:'lent groups.  No was expressed to the AAC servic'
+  [unconditioned 27/40] P:"Scholarship has also identified 'Sumer" -> C:"the group's military personality."
+  [unconditioned 28/40] P:'Singers such as Blind Willie McTell an' -> C:'lawyers. Before the end of the southern signific'
+  [unconditioned 29/40] P:'Taxi Rider, known as , is a video' -> C:'launger of a revolutionary of the Orange League '
+  [unconditioned 30/40] P:'The Floriade site is also located on t' -> C:'launched the result of the original conceptual o'
+  [unconditioned 31/40] P:'The Urban Districts of Buckhurst Hill,' -> C:'Hall. However, Waltham Hockey, South Archdistric'
+  [unconditioned 32/40] P:'The controversies came to a head when' -> C:'they ask reaches the popular of the new schools '
+  [unconditioned 33/40] P:'The granule size ensures that the salt' -> C:'law granuleum responses on or the second second '
+  [unconditioned 34/40] P:'The note stated that the conference sh' -> C:'was granted from the person of the War Champions'
+  [unconditioned 35/40] P:'The series brought back fan favorite V' -> C:'imale Scout.  November 1947 on the Order of the '
+  [unconditioned 36/40] P:'The white uniform featured red numbers' -> C:'med in summer in the end of the United States. T'
+  [unconditioned 37/40] P:'They made several trips working the tw' -> C:'were assumed in the Union Power, then Acts and U'
+  [unconditioned 38/40] P:'Thomas Baldwin Peddie (February 11, 18' -> C:'was granted as the Centro Politician Assembly of'
+  [unconditioned 39/40] P:'Until the end of the 1980s, the author' -> C:'the group of the Tom plans of the Oriental Plans'
+  [unconditioned 40/40] P:'While there, she recalls a romantic in' -> C:'larger of the rest of the dominant markets and t'
+[H_1143] n_prompts=40  n_entities=88  n_fabricated=26  n_present=62
+[H_1143] fabricated-entity-assertion RATE = 0.2955  (frozen bar 0.2)
+[H_1143] new-L2 NON-FABRICATION = FAIL
+[H_1143] fabricated tokens (verbatim): ['Warrers', 'Manufactur', 'Raja Almen', 'Boston Red Red Bowl', 'Manufactur', 'International Society Priz', 'Ultimate Hockey Championship', 'Jacob Burrough', 'Altenmark', 'College Engineeri', 'Jason Junior The League', 'Communist Service Music Priz', 'Canadian Canadian Council', 'Manufactur', 'Repub', 'Communication News', 'Blind Resort', 'Orange League Coast', 'International Research Cou', 'Waltham Hockey', 'South Archdistrict', 'War Championship', 'United States County Award', 'Centro Politician Assembly', 'Colonian Repub', 'Oriental Plans']
+[H_1143] wrote /workspace/h1146_fabrate_uncond.json
+  -> unconditioned: fab_rate=0.2955 (n_fab=26/88)
+
+##### ARM true_anchor #####
+  [true_anchor 1/40] P:'!Result !Record !Opponent !Method !Rou' -> C:'o |ISO 227–2022\n|J. & Location & Opponent |Joshi'
+  [true_anchor 2/40] P:'727) The Retirement Benefits Schemes (' -> C:'the Jack Centre of Centre Politics in Acts and R'
+  [true_anchor 3/40] P:'According to a contemporary story, the' -> C:'ladies of early stores and other then schools wh'
+  [true_anchor 4/40] P:'Alger was the son of David Bruce Alger' -> C:'launched before the end of the University of Sco'
+  [true_anchor 5/40] P:'April 18 – The Boston Red Sox defeat t' -> C:'York City of New York City of the Order of New Y'
+  [true_anchor 6/40] P:'At this time the operating system (OS)' -> C:'to the operating system of operating the system '
+  [true_anchor 7/40] P:'Both Stennis and Russell were conserva' -> C:'board. After release ending of the 2012 century,'
+  [true_anchor 8/40] P:'Chawne Kimber (born 1971), degrees fro' -> C:'Native Public Association. In the 2012 Carolina '
+  [true_anchor 9/40] P:'Delannoy, having seen the band a few t' -> C:'later. The former competition was included at th'
+  [true_anchor 10/40] P:'Early career In 1930, Limón first perf' -> C:'later. The first priest of Ide South African par'
+  [true_anchor 11/40] P:"Following Azerbaijan's independence fr" -> C:"launched at a result of 2010 in the USAC's Depar"
+  [true_anchor 12/40] P:'Geography Kleinmariazell is located no' -> C:'of the 2002 million ending of the 2002 century a'
+  [true_anchor 13/40] P:'He has placed his terminally ill wife ' -> C:'lawyers. He was the end of the United States pro'
+  [true_anchor 14/40] P:'He was the last count palatine; after ' -> C:'of Barbara and the Centro do not the Archdella a'
+  [true_anchor 15/40] P:'However, B-17s were operating at heigh' -> C:'k and assumed in the end of the United States. T'
+  [true_anchor 16/40] P:'In 1934, Ernest Truex directed, co-pro' -> C:'law Jason Burrough, ending on the 2014–1 season '
+  [true_anchor 17/40] P:'In August 2001, the National Public Ra' -> C:'d for a 2002 million ending of the 2002 century '
+  [true_anchor 18/40] P:'In his senior season, he averaged 14 p' -> C:'lawyers. Catholic Jews and on the 2012–0 season '
+  [true_anchor 19/40] P:'Inactivating V1 with TMS could induce ' -> C:'lawyers of a revolutionary of the Ottomans live '
+  [true_anchor 20/40] P:'It later aired in the US on NBC from 2' -> C:'1963. It was released in the US on 1 April 1963,'
+  [true_anchor 21/40] P:'KIOA fell to the middle of the pack as' -> C:'launched before the end of the United States. Th'
+  [true_anchor 22/40] P:"MTV has described LL Cool J's 1987 sin" -> C:'later summer in the end of the United States pro'
+  [true_anchor 23/40] P:'Moulton Hall is a 17th-century manor h' -> C:'individual market carved a site on the cases. Th'
+  [true_anchor 24/40] P:'On 28 April 2023, Girls Aloud released' -> C:'lawyers of the World Cup and the First Company o'
+  [true_anchor 25/40] P:'Other times, chaplains may offer a pra' -> C:'as in summer in the end of the United States, wh'
+  [true_anchor 26/40] P:'Profly goaltenders tend to also be ver' -> C:'lent groups.  The building do not the excellent '
+  [true_anchor 27/40] P:"Scholarship has also identified 'Sumer" -> C:"the group's military policy of Science City Cont"
+  [true_anchor 28/40] P:'Singers such as Blind Willie McTell an' -> C:'lawyers of the World War III in 1921. According '
+  [true_anchor 29/40] P:'Taxi Rider, known as , is a video' -> C:'law game for its sometimes of the Opera State Co'
+  [true_anchor 30/40] P:'The Floriade site is also located on t' -> C:'they asked on the city of Port South Africa.'
+  [true_anchor 31/40] P:'The Urban Districts of Buckhurst Hill,' -> C:'Hall. Lought it was ended in 1999 and was electe'
+  [true_anchor 32/40] P:'The controversies came to a head when' -> C:'the group of North Central of the Order of North'
+  [true_anchor 33/40] P:'The granule size ensures that the salt' -> C:'law granule with the particles of the granule st'
+  [true_anchor 34/40] P:'The note stated that the conference sh' -> C:'was greated from the northern treaty of the conf'
+  [true_anchor 35/40] P:'The series brought back fan favorite V' -> C:'illa Jason Burrough, ending on the 2012 Casello '
+  [true_anchor 36/40] P:'The white uniform featured red numbers' -> C:'mes in summer in the end of the United States. T'
+  [true_anchor 37/40] P:'They made several trips working the tw' -> C:'were as the military personnel which is the cont'
+  [true_anchor 38/40] P:'Thomas Baldwin Peddie (February 11, 18' -> C:'in 1887. Before the end of the United States pol'
+  [true_anchor 39/40] P:'Until the end of the 1980s, the author' -> C:'the general million ended down to the Academy of'
+  [true_anchor 40/40] P:'While there, she recalls a romantic in' -> C:'late assertion of Japanese of the Order of Deann'
+[H_1143] n_prompts=40  n_entities=97  n_fabricated=25  n_present=72
+[H_1143] fabricated-entity-assertion RATE = 0.2577  (frozen bar 0.2)
+[H_1143] new-L2 NON-FABRICATION = FAIL
+[H_1143] fabricated tokens (verbatim): ['Regiment Priz', 'New York City City Council', 'Manufactur', 'Carolina Carolina Adventures', 'Ide South African', 'La College', 'Adam Conversation', 'Soviet Manufactur', 'Adam Conversion', 'Archdella', 'Repub', 'Jason Burrough', 'American North Club', 'Barnard Conference', 'Catholic Br', 'New York City Award', 'Science City Control', 'Relatives Mc', 'Blind Respon', 'Opera State Corporation', 'Port South Africa', 'Grammad', 'Jason Burrough', 'Casello River Night Championship Championship Priz', 'International Box Supreme']
+[H_1143] wrote /workspace/h1146_fabrate_true.json
+  -> true_anchor: fab_rate=0.2577 (n_fab=25/97)
+
+##### ARM wrong_anchor #####
+  [wrong_anchor 1/40] P:'!Result !Record !Opponent !Method !Rou' -> C:'ola\n|-\n|2009–07\n|1999\n|2009–1992\n|2000–1997\n|200'
+  [wrong_anchor 2/40] P:'727) The Retirement Benefits Schemes (' -> C:'law) as the military personnel of the A400 Discr'
+  [wrong_anchor 3/40] P:'According to a contemporary story, the' -> C:'ladies of the rest of the dominant materials. Th'
+  [wrong_anchor 4/40] P:'Alger was the son of David Bruce Alger' -> C:'launched before the end of the University of Sco'
+  [wrong_anchor 5/40] P:'April 18 – The Boston Red Sox defeat t' -> C:'York City of New York City of the Order of New Y'
+  [wrong_anchor 6/40] P:'At this time the operating system (OS)' -> C:'to the operating system of the University of Sou'
+  [wrong_anchor 7/40] P:'Both Stennis and Russell were conserva' -> C:'boards. The original ended down the War Classics'
+  [wrong_anchor 8/40] P:'Chawne Kimber (born 1971), degrees fro' -> C:'Hawkinson and University Production at Chawness '
+  [wrong_anchor 9/40] P:'Delannoy, having seen the band a few t' -> C:'later. The first pop was called on the clubs of '
+  [wrong_anchor 10/40] P:'Early career In 1930, Limón first perf' -> C:'later. The original ended do not the end of the '
+  [wrong_anchor 11/40] P:"Following Azerbaijan's independence fr" -> C:'player symbol in the United States in April 2011'
+  [wrong_anchor 12/40] P:'Geography Kleinmariazell is located no' -> C:'lawyer of the United States. He was also selecte'
+  [wrong_anchor 13/40] P:'He has placed his terminally ill wife ' -> C:'lawyers in a revolve personal technique that pro'
+  [wrong_anchor 14/40] P:'He was the last count palatine; after ' -> C:'lawyers of Harris Jerusalem during the country o'
+  [wrong_anchor 15/40] P:'However, B-17s were operating at heigh' -> C:'k and assumed in the end of the sound of the con'
+  [wrong_anchor 16/40] P:'In 1934, Ernest Truex directed, co-pro' -> C:'law game for the Trues and of the Orner Service '
+  [wrong_anchor 17/40] P:'In August 2001, the National Public Ra' -> C:'d for a 2002 million ending of the 2002 century '
+  [wrong_anchor 18/40] P:'In his senior season, he averaged 14 p' -> C:'lawyers. He was one of the only one widely large'
+  [wrong_anchor 19/40] P:'Inactivating V1 with TMS could induce ' -> C:'lawyers in a result of ancient rocketing selling'
+  [wrong_anchor 20/40] P:'It later aired in the US on NBC from 2' -> C:'1966. It was released in the US on 12 April 1967'
+  [wrong_anchor 21/40] P:'KIOA fell to the middle of the pack as' -> C:'later summer in the end of the United States. Th'
+  [wrong_anchor 22/40] P:"MTV has described LL Cool J's 1987 sin" -> C:"in the 2002 single men's case the 2002 Cool Jose"
+  [wrong_anchor 23/40] P:'Moulton Hall is a 17th-century manor h' -> C:"individual market of the county's 21st century, "
+  [wrong_anchor 24/40] P:'On 28 April 2023, Girls Aloud released' -> C:'lawyers of the World War III of the New York Cit'
+  [wrong_anchor 25/40] P:'Other times, chaplains may offer a pra' -> C:'as the United States program in the United State'
+  [wrong_anchor 26/40] P:'Profly goaltenders tend to also be ver' -> C:'led in summer in the end of the sound included s'
+  [wrong_anchor 27/40] P:"Scholarship has also identified 'Sumer" -> C:'the getting millennium and other then begins of '
+  [wrong_anchor 28/40] P:'Singers such as Blind Willie McTell an' -> C:'Australian Horror J. League of Southern Field wh'
+  [wrong_anchor 29/40] P:'Taxi Rider, known as , is a video' -> C:'lawyer of the regulations down and entertainers '
+  [wrong_anchor 30/40] P:'The Floriade site is also located on t' -> C:'they are regarded on the case of the Arctic Forc'
+  [wrong_anchor 31/40] P:'The Urban Districts of Buckhurst Hill,' -> C:'was granted as the Central of Buckhurst and Josh'
+  [wrong_anchor 32/40] P:'The controversies came to a head when' -> C:"the group of Norway ended Power's interchange wh"
+  [wrong_anchor 33/40] P:'The granule size ensures that the salt' -> C:'launched that the computer of the OS included so'
+  [wrong_anchor 34/40] P:'The note stated that the conference sh' -> C:'was granted with the note do not negotiate acros'
+  [wrong_anchor 35/40] P:'The series brought back fan favorite V' -> C:'ima in support of the philadelphia in the series'
+  [wrong_anchor 36/40] P:'The white uniform featured red numbers' -> C:'med in such a revolve personal trimmentation to '
+  [wrong_anchor 37/40] P:'They made several trips working the tw' -> C:'were assumed in the United Kingdom. The two cont'
+  [wrong_anchor 38/40] P:'Thomas Baldwin Peddie (February 11, 18' -> C:'was granted as the Centro Politician Air Forces '
+  [wrong_anchor 39/40] P:'Until the end of the 1980s, the author' -> C:'lawyers of the World War III in the 1970s, and t'
+  [wrong_anchor 40/40] P:'While there, she recalls a romantic in' -> C:'last as the military personnel of the Acts of Co'
+[H_1143] n_prompts=40  n_entities=88  n_fabricated=29  n_present=59
+[H_1143] fabricated-entity-assertion RATE = 0.3295  (frozen bar 0.2)
+[H_1143] new-L2 NON-FABRICATION = FAIL
+[H_1143] fabricated tokens (verbatim): ['Supplement Be', 'Manufactur', 'New York City City Council', 'International Society Priz', 'War Classics Coast Research', 'Car Research Manufactur', 'Chawness Coast', 'Random Coast', 'Adolf International Boxford Priz', 'Harris Jerusalem', 'Trues', 'Orner Service Coast', 'American National Gir', 'American Box Summer', 'Cool Joseph', 'Cool Back International', 'Atlantic Management', 'Repre', 'Southern Field', 'Blind Series', 'Rajeth Conversion', 'Scholar Rider', 'Arctic Force', 'Joshira', 'Buckhurst Bu', 'Computer Br', 'International Box Supreme', 'International Box Supreme', 'Centro Politician Air Forces']
+[H_1143] wrote /workspace/h1146_fabrate_wrong.json
+  -> wrong_anchor: fab_rate=0.3295 (n_fab=29/88)
+
+========================================================================
+### H_1146 ANCHOR-CONDITIONED DECODE — 3-ARM RESULT ###
+  UNCONDITIONED fab_rate = 0.2955
+  TRUE-ANCHOR   fab_rate = 0.2577
+  WRONG-ANCHOR  fab_rate = 0.3295
+  F1 ANCHOR-GROUNDS (true <= uncond-0.10): False  (drop=+0.0378)
+  F2 INFO-NOT-LENGTH (wrong-true >= 0.10): False  (gap=+0.0718)
+  true_anchor under 0.20 bar: False
+  => RED_CLOSED_NEG  (F1 ∧ F2 = False)
+========================================================================
+H1146_DONE wrote /workspace/h1146_anchor_result.json
+[pod] === H_1146 RESULT ===
+fab= {'unconditioned': 0.2955, 'true_anchor': 0.2577, 'wrong_anchor': 0.3295} F1= False F2= False tier= RED_CLOSED_NEG
+[pod] uploading result JSONs to HF (private) ...
