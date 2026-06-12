@@ -1,0 +1,82 @@
+=== H_1160 — does the mitosis growth-tick need a metronome, or is it DERIVATIVE/event-driven? (틱이 있어야 되나?) ===
+  4 tick-gates {METRONOME, POSITIONAL, DERIVATIVE, NOGATE} x stream x shuffle-control; 10 seeds, T=2400, MAX_CELLS=6 (scarce-on-purpose)
+  metric = substrate-native ONLINE NEXT-STEP prediction error (p7, NOT perplexity/CE); order-sensitivity via a time-SHUFFLE control
+
+--- STREAM: TEXT (real bytes, time-ordered, CORE/testdata/clm_mid_5lang_c4.txt) [DECISIVE] ---
+  METRONOME  err=0.7437±0.1055  shuf=2.5818  splits=3.0
+  POSITIONAL err=0.7424±0.1025  shuf=2.5628  splits=4.0
+  DERIVATIVE err=0.7416±0.0982  shuf=2.5639  splits=4.0
+  NOGATE     err=0.7437±0.1055  shuf=2.5818  splits=3.0
+  TEXT ruling: CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (d=0.15) and positional (d=0.06); >=0.8 each required | F2 fail: advantage SURVIVES shuffle (d_shuf=0.56 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate (d=0.15 < 0.8) | => 'no special tick-gating needed, a blind clock roughly suffices': metronome ties derivative and both tie no-gate at toy scale under the next-step-error metric
+
+--- STREAM: AUDIO (synthetic RECURRING-REGIME drift; confirmation, non-blocking) ---
+  METRONOME  err=1.6480±0.2335  shuf=36.6093  splits=3.0
+  POSITIONAL err=1.7068±0.2229  shuf=35.4027  splits=4.0
+  DERIVATIVE err=1.7502±0.4001  shuf=35.8867  splits=4.0
+  NOGATE     err=1.6480±0.2335  shuf=36.6093  splits=3.0
+  AUDIO ruling: CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (d=-0.49) and positional (d=-0.18); >=0.8 each required | F2 fail: advantage SURVIVES shuffle (d_shuf=1.34 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate (d=-0.49 < 0.8) | => 'no special tick-gating needed, a blind clock roughly suffices': metronome ties derivative and both tie no-gate at toy scale under the next-step-error metric
+
+=== VERDICT (TEXT decisive; AUDIO confirmation) ===
+{
+  "H": "H_1160",
+  "title": "does the from-scratch inference+learning mitosis growth-tick need a metronome, or is it DERIVATIVE/event-driven? (틱이 있어야 되나?)",
+  "frozen_falsifier": {
+    "F1": "derivative beats BOTH metronome and positional on ordered stream, d>=0.8 each",
+    "F2": "derivative advantage vanishes on time-SHUFFLED control, d_metro_vs_deriv_shuf < 0.3",
+    "F3": "derivative beats input-blind NO-GATE baseline, d>=0.8 (tick necessity + event-driven)",
+    "SUPPORTED": "F1 and F2 and F3-derivative-beats-nogate",
+    "metric": "substrate-native ONLINE NEXT-STEP prediction error (p7, NOT perplexity/CE)"
+  },
+  "TEXT_decisive": {
+    "stream": "text",
+    "F1_derivative_wins": {
+      "d_metro_vs_deriv": 0.147366800885023,
+      "d_pos_vs_deriv": 0.05899148903726968,
+      "bar": 0.8,
+      "pass": false,
+      "note": "positive d => derivative (2nd arg) is better/lower-error"
+    },
+    "F2_order_sensitive": {
+      "d_metro_vs_deriv_SHUFFLED": 0.5566162931516707,
+      "bar_below": 0.3,
+      "pass": false
+    },
+    "F3_tick_necessity": {
+      "d_nogate_vs_deriv": 0.147366800885023,
+      "bar": 0.8,
+      "derivative_beats_nogate": false,
+      "d_nogate_vs_metro": 0.0
+    },
+    "supported": false,
+    "ruling": "CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (d=0.15) and positional (d=0.06); >=0.8 each required | F2 fail: advantage SURVIVES shuffle (d_shuf=0.56 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate (d=0.15 < 0.8) | => 'no special tick-gating needed, a blind clock roughly suffices': metronome ties derivative and both tie no-gate at toy scale under the next-step-error metric"
+  },
+  "AUDIO_confirmation": {
+    "stream": "audio",
+    "F1_derivative_wins": {
+      "d_metro_vs_deriv": -0.4880503618144069,
+      "d_pos_vs_deriv": -0.18479121490642883,
+      "bar": 0.8,
+      "pass": false,
+      "note": "positive d => derivative (2nd arg) is better/lower-error"
+    },
+    "F2_order_sensitive": {
+      "d_metro_vs_deriv_SHUFFLED": 1.3408881491166904,
+      "bar_below": 0.3,
+      "pass": false
+    },
+    "F3_tick_necessity": {
+      "d_nogate_vs_deriv": -0.4880503618144069,
+      "bar": 0.8,
+      "derivative_beats_nogate": false,
+      "d_nogate_vs_metro": 0.0
+    },
+    "supported": false,
+    "ruling": "CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (d=-0.49) and positional (d=-0.18); >=0.8 each required | F2 fail: advantage SURVIVES shuffle (d_shuf=1.34 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate (d=-0.49 < 0.8) | => 'no special tick-gating needed, a blind clock roughly suffices': metronome ties derivative and both tie no-gate at toy scale under the next-step-error metric"
+  },
+  "tick_answer": "NO EVENT-DERIVATIVE TICK ADVANTAGE under next-step error at toy scale — a blind clock roughly suffices for online next-step prediction; the WHEN of the growth-tick barely changes next-step error (see TEXT ruling). NOTE: the prior toy-EEG d/dt win (clm-time-encoding.tape) was on a DECODE/RECON metric, NOT next-step error — so the derivative tick may still matter for regime-decode/recon while being near-irrelevant for next-step prediction. Ruling: CLOSED-NEGATIVE: F1 fail: derivative does NOT clearly beat both metronome (d=0.15) and positional (d=0.06); >=0.8 each required | F2 fail: advantage SURVIVES shuffle (d_shuf=0.56 >= 0.3) — not exploiting real temporal structure | F3 fail: derivative does NOT beat no-gate (d=0.15 < 0.8) | => 'no special tick-gating needed, a blind clock roughly suffices': metronome ties derivative and both tie no-gate at toy scale under the next-step-error metric",
+  "supported": false,
+  "audio_agrees": false,
+  "scope": "TOY ONLY ($0 CPU numpy, 10 seeds). Reuses the H_1159/H_1159b prototype-split mitosis substrate; swaps ONLY the split-trigger gate. Capacity SCARCE (MAX_CELLS=6) so split-placement is testable. Live CORE engine_mitosis_tick (CORE/engine_cli.hexa) + real-audio + production scale UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope). Lane-M gradient-free growth lane (separate from Lane A AKIDA / Lane G forge / Lane P torch, a_lane_akida_gpu_split)."
+}
+
+[done]
