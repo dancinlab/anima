@@ -1,0 +1,176 @@
+==========================================================================================
+H_1167 — does the SUPER-ADDITIVE SURPLUS S(γ)=φ_joint−Σφ_parts PEAK at criticality?
+  partition: P_A=[0, 1, 2] ⊥ P_B=[3, 4, 5]  (joint n=6, sub-parts n=3 each)
+  γ sweep (SAME as H_1158): [0.0, 0.15, 0.35, 0.6, 1.0, 1.6, 2.5]   seeds=12
+  PRIMARY surplus = faithful φ_EI whole−sum; SECOND = WB I_min synergy (H_1017)
+  frozen falsifier: 🟢 iff S has INTERIOR argmax AND S(peak)−S(γ0) d≥0.8
+  AND S(peak)−S(γ2.5) d≥0.8; else 🔴 (super-additivity ⊥ criticality).
+  ANTI-REDUNDANCY: S≠raw φ — report S(γ) AND φ(γ) side by side.
+==========================================================================================
+
+STEP 0 — RE-PROVE faithful_phi mirror ≡ stdlib BEFORE scoring (a_phi_iit4_tool):
+  live stdlib run: hexa run UNIVERSE/h1012_ref_faithful.hexa
+  ── verbatim stdlib stdout ──
+  | faithful_n4_dim6_nb2_x1e9= 3000000001
+  | faithful_n5_dim6_nb2_x1e9= 4000000001
+  | faithful_n6_dim6_nb2_x1e9= 5000000002
+  mirror n4 dim6 nb2 = 3.000000001  LIVE stdlib = 3.000000001  |Δ|=3.48e-10  OK
+  mirror n5 dim6 nb2 = 4.000000002  LIVE stdlib = 4.000000001  |Δ|=7.97e-10  OK
+  mirror n6 dim6 nb2 = 5.000000002  LIVE stdlib = 5.000000002  |Δ|=2.46e-10  OK
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  live-stdlib proof: PROVEN; mirror n4/n5: {4: True, 5: True}
+  WB synergy sanity: XOR(T;A,B) syn=1.0000 red=0.0000 (expect syn>0) -> True ;  COPY(T;T,T) red=1.0000 syn=0.0000 (expect syn~0) -> True
+  STEP 0 PASS — faithful_phi mirror PROVEN ≡ stdlib; WB synergy VALID.
+
+STEP 1 — sweep γ × seeds (SERIAL):
+  γ=0.00: S=-0.001093±0.001667  φ_joint=+0.001898  φA=+0.00185  φB=+0.00114  Syn=+0.00097
+  γ=0.15: S=-0.001380±0.010698  φ_joint=+0.025219  φA=+0.01376  φB=+0.01283  Syn=+0.00443
+  γ=0.35: S=+0.011744±0.015715  φ_joint=+0.096467  φA=+0.04328  φB=+0.04144  Syn=+0.01335
+  γ=0.60: S=+0.023344±0.014457  φ_joint=+0.163731  φA=+0.06827  φB=+0.07211  Syn=+0.01948
+  γ=1.00: S=+0.029384±0.011983  φ_joint=+0.187173  φA=+0.07739  φB=+0.08040  Syn=+0.02206
+  γ=1.60: S=+0.006513±0.004945  φ_joint=+0.032718  φA=+0.01197  φB=+0.01424  Syn=+0.00453
+  γ=2.50: S=+0.000000±0.000000  φ_joint=+0.000000  φA=+0.00000  φB=+0.00000  Syn=+0.00000
+
+==========================================================================================
+S(γ) vs raw φ(γ) — ANTI-REDUNDANCY side-by-side (S = whole−sum SURPLUS, NOT raw φ):
+      γ |   S=φ_joint−Σφ_parts |  φ_joint (raw, H_1158) |   φ_partA |   φ_partB |   Syn(WB)
+  --------------------------------------------------------------------------------------------
+   0.00 |            -0.001093 |              +0.001898 |  +0.00185 |  +0.00114 |  +0.00097
+   0.15 |            -0.001380 |              +0.025219 |  +0.01376 |  +0.01283 |  +0.00443
+   0.35 |            +0.011744 |              +0.096467 |  +0.04328 |  +0.04144 |  +0.01335
+   0.60 |            +0.023344 |              +0.163731 |  +0.06827 |  +0.07211 |  +0.01948
+   1.00 |            +0.029384 |              +0.187173 |  +0.07739 |  +0.08040 |  +0.02206
+   1.60 |            +0.006513 |              +0.032718 |  +0.01197 |  +0.01424 |  +0.00453
+   2.50 |            +0.000000 |              +0.000000 |  +0.00000 |  +0.00000 |  +0.00000
+
+==========================================================================================
+FROZEN falsifier on the PRIMARY surplus S(γ):
+  S(γ) peak γ = 1.0 (idx 4)   S_max = +0.029384
+  F1 INTERIOR argmax (not endpoint)   = True
+  F2 S(peak)−S(γ=0)   Cohen d = +3.562  (≥0.8) -> True
+  F3 S(peak)−S(γ=2.5) Cohen d = +3.468  (≥0.8) -> True
+
+  ANTI-REDUNDANCY check — S vs raw φ:
+    raw φ_joint peak γ = 1.0 ; surplus S peak γ = 1.0 ; diverge = False
+    WB synergy Syn peak γ = 1.0 (corroborating surplus)
+
+==========================================================================================
+VERDICT: 🟢 SURPLUS-PEAKS-AT-CRITICALITY — the super-additive whole−sum surplus
+  S(γ) has an INTERIOR argmax at γ=1.0 (inverted-U), S(peak)−S(γ=0) d=+3.56,
+  S(peak)−S(γ=2.5) d=+3.47: the 1+1>2 advantage (whole exceeds its independent
+  parts) is MAXIMAL exactly where the A⇄G engine is critical. NOT a re-statement of
+  H_1158: S is a whole−sum SURPLUS, raw φ peaks at γ=1.0 (diverge=False).
+==========================================================================================
+
+=== VERDICT JSON ===
+{
+  "H": "H_1167",
+  "title": "super-additive surplus S=phi_joint-sum(phi_parts) peaks at the critical A<->G coupling",
+  "partition": {
+    "P_A": [
+      0,
+      1,
+      2
+    ],
+    "P_B": [
+      3,
+      4,
+      5
+    ]
+  },
+  "gamma_sweep": [
+    0.0,
+    0.15,
+    0.35,
+    0.6,
+    1.0,
+    1.6,
+    2.5
+  ],
+  "S_mean": {
+    "0.0": -0.0010928821166225067,
+    "0.15": -0.0013804169768611985,
+    "0.35": 0.01174382201182872,
+    "0.6": 0.023344146506070695,
+    "1.0": 0.02938380380803594,
+    "1.6": 0.006513456959249098,
+    "2.5": 0.0
+  },
+  "phi_joint_mean_raw_H1158": {
+    "0.0": 0.0018978260073973148,
+    "0.15": 0.025218802828733938,
+    "0.35": 0.0964674890476815,
+    "0.6": 0.16373124800583985,
+    "1.0": 0.18717325395396778,
+    "1.6": 0.03271762229725289,
+    "2.5": 0.0
+  },
+  "phi_partA_mean": {
+    "0.0": 0.0018477311595274288,
+    "0.15": 0.013764406382235436,
+    "0.35": 0.04328171389543001,
+    "0.6": 0.06827473766949016,
+    "1.0": 0.07738833979741198,
+    "1.6": 0.01196699263467436,
+    "2.5": 0.0
+  },
+  "phi_partB_mean": {
+    "0.0": 0.0011429769644923926,
+    "0.15": 0.0128348134233597,
+    "0.35": 0.04144195314042278,
+    "0.6": 0.07211236383027898,
+    "1.0": 0.08040111034851986,
+    "1.6": 0.014237172703329434,
+    "2.5": 0.0
+  },
+  "synergy_WB_mean": {
+    "0.0": 0.0009694214086857175,
+    "0.15": 0.004434543093017674,
+    "0.35": 0.013347798713126252,
+    "0.6": 0.01948341948425132,
+    "1.0": 0.022056024052920658,
+    "1.6": 0.00452720093448582,
+    "2.5": 0.0
+  },
+  "S_peak_gamma": 1.0,
+  "S_peak": 0.02938380380803594,
+  "raw_phi_peak_gamma": 1.0,
+  "synergy_peak_gamma": 1.0,
+  "surplus_diverges_from_raw_phi": false,
+  "F1_interior_argmax": {
+    "peak_gamma": 1.0,
+    "interior": true
+  },
+  "F2_vs_subcritical": {
+    "cohen_d": 3.562384935440347,
+    "bar": 0.8,
+    "pass": true
+  },
+  "F3_vs_supercritical": {
+    "cohen_d": 3.467719521045844,
+    "bar": 0.8,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED: super-additive surplus PEAKS at criticality (interior argmax, inverted-U) — the 1+1>2 advantage is maximal where the A<->G engine is critical",
+  "anti_redundancy": "S is a whole-minus-sum SURPLUS (NOT raw phi); raw phi peaks at gamma=1.0, surplus peaks at gamma=1.0 (diverge=False)",
+  "h1046_note": "H_1046 synergy was on the PLANNING battery (degenerate always-DOWN bigPhi stand-in); here surplus is measured over the gamma-CRITICALITY axis = a different question",
+  "scope": "toy n=6 (sub-parts n=3) exact MIP-EI, A<->G substrate per H_1119/H_1158; faithful_phi mirror PROVEN == stdlib (a_phi_iit4_tool); WB synergy exact PID; LIVE CORE / bigger n / scale UNVERIFIED (a_scale_honest_scope)",
+  "wall_s": 55.7
+}
+[done]
