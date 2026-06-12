@@ -1,0 +1,42 @@
+=== H_1159 — inference-time mitosis = online learning (p8) ===
+  non-stationary stream T=4000, 5 clusters appearing at [0, 1000, 2000, 3000, 3500]
+  FROZEN   final-window err = 13.0283 ± 2.4081
+  ONLINE   final-window err = 7.8316 ± 1.0780
+  MITOSIS  final-window err = 1.6373 ± 0.0318
+  RAND     final-window err = 3.1911 ± 1.6558
+  MITOSIS mean splits = 5.4
+
+=== VERDICT ===
+{
+  "H": "H_1159",
+  "title": "inference-time mitosis = online learning (p8 no train/infer split)",
+  "final_window_err": {
+    "FROZEN": 13.028322192399594,
+    "ONLINE": 7.831556420356145,
+    "MITOSIS": 1.6372600499531587,
+    "RAND": 3.191076246235807
+  },
+  "mean_splits": 5.4,
+  "F1_adapts_during_inference": {
+    "mitosis_err_slope_perstep": 5.9610850706834424e-05,
+    "frozen_err_slope_perstep": 0.0034151479891828184,
+    "cohen_d_frozen_vs_mit_slope": 6.143188519500355,
+    "pass": false,
+    "note": "CORRECTED from the defective early-vs-late F1 (early window = trivial 2-cluster regime, not a no-learning baseline); this tests novelty-adaptation: mit error NON-rising while frozen RISES"
+  },
+  "F1_original_defective_early_vs_late_d": -0.8230501258445203,
+  "F2_beats_frozen": {
+    "cohen_d_frozen_vs_mit": 6.689052224212809,
+    "bar": 0.8,
+    "pass": true
+  },
+  "F3_tension_guided_vs_random": {
+    "cohen_d_rand_vs_mit": 1.3268551234182848,
+    "bar": 0.8,
+    "pass": true
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: inference-time mitosis does not deliver the p8 online-learning advantage on this toy (see which gate failed)",
+  "scope": "toy non-stationary clustering, numpy, $0 CPU, 10 seeds — CORE engine + scale UNVERIFIED (a_scale_honest_scope); mitosis = prototype-split proxy for the CORE cell-division, NOT the live engine"
+}
+[done]
