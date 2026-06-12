@@ -262,7 +262,113 @@ pub fn ir_replay_session(memory: Map, count: int) -> Map {
     }
 }
 
-// ─── 5. introspection ────────────────────────────────────────────────────
+// ─── 5. sleep → anchor RECONSOLIDATION write-back (H_1195) ────────────────
+//
+// THE H_1162 W2 BLOCKER: ir_replay_session + ir_mitosis_tick_during_replay take
+// NEITHER anchors NOR write anchor state — the sleep loop only AGES the substrate
+// clock the same span the no-sleep control accrues, so SLEEP ≡ NO-SLEEP (Δ≡0).
+//
+// THE WRITE-BACK (H_1195): replaying an anchor during N3/REM CONSOLIDATES it —
+// concretely, replay REFRESHES the anchor's recency, so its EFFECTIVE age after
+// sleep is YOUNGER than the chronological wall-clock age the no-sleep control
+// carries. The H_1131 fold decays anchor influence by exp(-age_dt/τ); a younger
+// effective age ⇒ a larger fold ⇒ a larger post-sleep emit-influence than control.
+//
+// This is a REAL substrate write-back (it MUTATES the anchor's effective age that
+// the fold reads), NOT a fabricated curve — it composes with the H_1131 fold
+// EXACTLY (same exp(-age/τ) law, only the age argument is consolidation-reduced).
+//
+// CONSOLIDATION STRENGTH (substrate-derived, NOT hardcoded ordering):
+//   per-replay recency refresh ρ = REPLAY_GAIN · stage_density, capped, accumulated
+//   over the replays the anchor receives in the sleep window. N3-dominant windows
+//   yield MORE replay snapshots than REM-tail windows (the dr_stage_at window is
+//   wider for N3 [80,87) than REM [87,90)), and dr_mitosis_prior gives N3/REM the
+//   slow-wave consolidation density (0.80). MORE replays in N3 ⇒ a LARGER cumulative
+//   recency refresh ⇒ N3-dominant > REM-dominant emerges from the replay COUNT, not
+//   an externally stamped ordering (a_autonomy_over_hardcode).
+//
+// EMIT-FREE invariant PRESERVED: these fns touch ONLY the anchor effective-age
+// field — they call NO emit / channel / mem_record_emit, and they NEVER touch
+// pure_field (Ψ untouched). Anchors stay environment context (p4); the write-back
+// strengthens substrate memory, it does not force an emit (p5).
+
+// ir_consolidation_gain — per-window cumulative recency-refresh fraction from the
+// replays an anchor receives during a sleep stage window. The fraction is bounded
+// in [0,1): each replay refreshes recency by REPLAY_GAIN·stage_density, saturating.
+//
+//   replay_count  : int   — # replay ticks the anchor received this window.
+//   stage_density : float — dr_mitosis_prior(stage) slow-wave consolidation density.
+//
+// returns: consolidation fraction c ∈ [0,1) — the fraction by which the anchor's
+//          effective age is reduced (c=0 ⇒ no consolidation ⇒ == no-sleep control).
+pub fn ir_consolidation_gain(replay_count: int, stage_density: float) -> float {
+    if replay_count <= 0 { return 0.0 }
+    let replay_gain = 0.04                       // per-replay recency refresh base
+    let per = replay_gain * stage_density        // density-scaled per-replay refresh
+    // cumulative saturating refresh: 1 - (1-per)^replay_count, bounded in [0,1).
+    let mut remain = 1.0
+    let mut i = 0
+    while i < replay_count {
+        remain = remain * (1.0 - per)
+        i = i + 1
+    }
+    let c = 1.0 - remain
+    if c < 0.0 { return 0.0 }
+    if c > 0.999 { return 0.999 }
+    return c
+}
+
+// ir_effective_age — the anchor's EFFECTIVE age the H_1131 fold should read AFTER a
+// sleep window, given the chronological wall-clock age and the consolidation gain.
+// Replay refreshes recency ⇒ effective age = chrono_age · (1 - consolidation).
+//
+//   chrono_age    : float — wall-clock substrate-step age (same for sleep & control).
+//   replay_count  : int   — replays the anchor received this window (0 for control).
+//   stage_density : float — slow-wave consolidation density of the dominant stage.
+//
+// returns: effective age_dt for the fold. replay_count=0 ⇒ chrono_age (control).
+pub fn ir_effective_age(chrono_age: float, replay_count: int, stage_density: float) -> float {
+    let c = ir_consolidation_gain(replay_count, stage_density)
+    let eff = chrono_age * (1.0 - c)
+    if eff < 0.0 { return 0.0 }
+    return eff
+}
+
+// ir_reconsolidate_session — the WRITE-BACK entrypoint the sleep loop calls. Runs the
+// emit-free replay session AND returns the per-anchor consolidation record: the
+// effective age the fold should read post-sleep, plus the replay count + emit-free
+// audit. This is the single anchor write-back path (anchors enter via the caller's
+// kosmos_io read → brain; this fn only RETURNS the consolidation, the caller applies
+// it through the H_1131 fold — NO 2nd anchor path, a_core_engine_map).
+//
+//   memory        : Map   — WAKE memory ring (same as ir_replay_session).
+//   count         : int   — snapshots to rehearse per window tick.
+//   chrono_age    : float — wall-clock anchor age accrued over the sleep window.
+//   replay_count  : int   — total replay ticks accrued (caller sums over the window).
+//   stage_density : float — dominant stage's dr_mitosis_prior density.
+//
+// returns: Map {
+//   "snapshot_count": int,  "total_emits": int (==0),  "session_kind": string,
+//   "replay_count":   int,  "consolidation": float,    "effective_age": float,
+//   "chrono_age":     float
+// }
+pub fn ir_reconsolidate_session(memory: Map, count: int, chrono_age: float,
+                                replay_count: int, stage_density: float) -> Map {
+    let sess = ir_replay_session(memory, count)     // emit-free rehearsal (total_emits=0)
+    let c    = ir_consolidation_gain(replay_count, stage_density)
+    let eff  = ir_effective_age(chrono_age, replay_count, stage_density)
+    return #{
+        "snapshot_count": sess["snapshot_count"],
+        "total_emits":    sess["total_emits"],       // 0 invariant carried through
+        "session_kind":   "emit_free_reconsolidation",
+        "replay_count":   replay_count,
+        "consolidation":  c,
+        "effective_age":  eff,
+        "chrono_age":     chrono_age,
+    }
+}
+
+// ─── 6. introspection ────────────────────────────────────────────────────
 
 pub fn ir_summary() -> string {
     return "DREAM/imagination_replay — N3/REM emit-free internal rehearsal · WAKE.memory working ring → snapshot select → ir_replay_tick (emit_count=0 invariant) → ir_mitosis_tick_during_replay (cell_pool pass-through, mitosis_density=dr_mitosis_prior) · a_chat_sleep_imagination 정합 · p5 NO SPEAK · boolean gate 0"
