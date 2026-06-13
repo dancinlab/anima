@@ -72,12 +72,12 @@ not re-derive them from scratch.
 > STATUS: PARKED 2026-06-13. None block v1. Promote a facet into A/B/C only with a
 > falsifiable gate + a real measurement, same bar as the rest (a_paper_significance).
 
-## THE ONE OPEN GATE
-Everything above is settled by measurement EXCEPT one empirical question:
-**does RETRO retrieval-grounding actually reduce fabrication?**
-- **H_1147** (toy: trained-copy vs prepend on un-memorizable facts) answers it CHEAPLY ($0) BEFORE any 303M GPU spend. IN FLIGHT.
-  - 🟢 mechanism validated ⇒ build `anima-303M-RETRO` (tens of $, days).
-  - 🔴 ⇒ RETRO insufficient ⇒ redesign the grounding mechanism (saves the spend).
+## THE ONE OPEN GATE — RESOLVED 🟢 (H_1147, 2026-06-13)
+The one empirical question — **does RETRO retrieval-grounding actually reduce fabrication?**
+— is now answered GREEN, $0, toy: **YES, when the copy is TRAINED INTO the weights.**
+- **H_1147** (un-memorizable must-copy toy; 3 arms): VANILLA-PREPEND fab-rate **1.0** (replays H_1146 — prepend alone fails), RETRO-TRAINED fab-rate **0.0** copy-acc **1.0**, NO-ANCHOR floor 1.0. F1∧F2 PASS ⇒ 🟢. The single manipulated variable = copy/attend trained into the weights; that alone flips fabrication 1.0→0.0 where even an oracle prepend could not. Verdict `.verdicts/1147_retro_mechanism_gate/H_1147.txt`, branch `h1147/retro-mechanism-gate` @ e8f48b37e.
+- ⇒ **GREENLIGHT** the RETRO head in the 303M build (BUILD ORDER step 2).
+- HONEST: 1.0/0.0 saturation = mechanism EXISTENCE-PROOF, not an effect size; 303M transfer + real noisy/wrong-anchor kosmos retrieval + coherence-backbone interaction + multi-entity copy all UNVERIFIED (a_scale_honest_scope).
 
 ## WHAT THIS SUPERSEDES
 - **7B is DEFERRED** (a7b_pass stays FALSE): 7B gives NO coherence/emergence advantage (H_1139) and the SAME fabrication (H_1142–46), at 20× the cost. Revisit only if a measured 303M result demands scale (a_scale_honest_scope).
