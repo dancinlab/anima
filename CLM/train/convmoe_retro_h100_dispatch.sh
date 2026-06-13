@@ -53,8 +53,11 @@ for p in (rt.get('ports') or []):
 done
 if [ -z "${HOST:-}" ]; then log "FATAL: no ssh endpoint after wait"; exit 3; fi
 echo "$HOST $PORT" > "$OUT/ssh_endpoint.txt"
-SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20 -p $PORT root@$HOST"
-SCP="scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P $PORT"
+# ServerAliveInterval + ConnectTimeout + a per-cmd timeout so the inline poll can NEVER
+# block indefinitely on a stalled SSH (the prod fire's poll hung 1h+ with 0 CPU on a
+# blocked poll SSH — these options make every poll cmd return within ~30s, win or fail).
+SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -p $PORT root@$HOST"
+SCP="scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20 -o ServerAliveInterval=15 -P $PORT"
 
 # wait until sshd answers
 for i in $(seq 1 40); do $SSH "echo ok" 2>/dev/null | grep -q ok && break; sleep 10; done
@@ -76,13 +79,18 @@ HFTOK="$(secret get hf.token 2>/dev/null || echo '')"
 $SSH "cd /workspace/anima && HF_TOKEN='${HFTOK}' nohup bash convmoe_retro_remote.sh > /workspace/train.log 2>&1 & echo LAUNCHED \$!"
 
 # ---------------------------------------------------------------- inline poll (a_cpu_local_no_waiter)
+# Each poll cmd is hard-wrapped in `timeout 40` so a stalled SSH can NEVER hang the loop
+# (the prod fire hung 1h on a blocked poll SSH). One combined remote probe per iteration.
 log "polling remote until DONE marker..."
 DONE=0
+SD=/workspace/anima/state/convmoe_retro_prod
 for i in $(seq 1 240); do          # up to ~2h (30s * 240)
-  if $SSH "test -f /workspace/anima/state/convmoe_retro_prod/DONE" 2>/dev/null; then DONE=1; log "remote DONE"; break; fi
-  if $SSH "test -f /workspace/anima/state/convmoe_retro_prod/FAILED" 2>/dev/null; then log "remote FAILED"; break; fi
-  TAIL=$($SSH "tail -2 /workspace/train.log 2>/dev/null" 2>/dev/null | tr '\n' ' ')
-  log "  poll $i: $TAIL"
+  PROBE=$(timeout 40 $SSH "if [ -f $SD/DONE ]; then echo DONE; elif [ -f $SD/FAILED ]; then echo FAILED; else echo RUN; fi; tail -2 /workspace/train.log 2>/dev/null" 2>/dev/null)
+  STAT=$(printf '%s' "$PROBE" | head -1)
+  TAIL=$(printf '%s' "$PROBE" | tail -n +2 | tr '\n' ' ')
+  log "  poll $i [$STAT]: $TAIL"
+  if [ "$STAT" = "DONE" ]; then DONE=1; log "remote DONE"; break; fi
+  if [ "$STAT" = "FAILED" ]; then log "remote FAILED"; break; fi
   sleep 30
 done
 

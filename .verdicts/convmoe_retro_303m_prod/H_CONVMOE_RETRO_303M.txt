@@ -1,0 +1,51 @@
+ConvMoE-RETRO 303M PRODUCTION TRAIN — anima-303M-RETRO (MODEL.md BUILD ORDER step 2)
+substrate = Lane-P PyTorch-CUDA, RunPod H100 SXM 80GB (pod 6s2gwhtd4ip0z0), seed 7, p7 frozen
+date = 2026-06-14 | recipe = baseline_fast (H_1129 winning) | wall ~62min train | cost ~$3.5
+
+ARCH: ConvMoE-RETRO = CLMConvMoE E2/L1 (byte V256) engine-mountable trunk
+      + H_1147/H_1149 RETRO cross-attention/copy head (Pq/Pk/Wg)
+      + H_1148 semantic byte-trigram anchor source (+ prior-window v1).
+PARAMS total=353,740,338 (353.7M) | trunk=303,575,202 (303.6M) | retro_head=50,165,136 (+16.52%)
+  NOTE: retro_head scales with d (2·d²+d at d=5008 = 50.2M, NOT the toy's 2.1M @ d=1024).
+
+CORPUS: 125.8MB English (Salesforce/wikitext-103-raw-v1, parquet-native, ASCII-filtered).
+TRAIN: 12000 steps, bs=24 accum=2 (eff 48), bf16, grad-ckpt OFF, lr 3e-4 cosine warmup 300,
+       dropout 0.0 wd 0.1. fit peak 5.89GB/80GB. GPU 92-100% util, 535W (genuine GPU fire).
+       val_ce: step0 5.72 -> 500 1.48 -> 1000 1.40 -> 11500 1.236. best_val_ce = 1.2292.
+
+=== a303m_pass SCORES (frozen p7, NOT perplexity/LLM-judge) ===
+  G0 COHERENCE   PASS  kwr mean=0.941 each=[1.0,0.846,0.923,1.0,0.933] (5/5 >=0.50)
+                       => COHERENT English, NOT byte-salad. (the gate broad-7b FAILED.)
+  G1 RECOMBINATION FAIL emergent=False, max_single=0, all k composed_distinct=0.
+                       => gens are coherent wiki-prose but DRIFT OFF the seeded abstract
+                          CONCEPTS, so H_1129 coverage() (concept-keyword count) reads 0.
+  G2 NOVELTY     PASS  novel=50 present=2 control=0 (>=3 corpus-absent, control=0).
+  G5 NON-FABRIC  FAIL  fab_with_anchor=1.000 (==no_anchor==vanilla 1.000).
+                       CAVEAT: the g5 probe is a SYNTHETIC "?"-run prompt over an
+                       all-spaces anchor carrying ONE entity byte — OUT-OF-DISTRIBUTION
+                       vs how the head trained (real prior-window/semantic wiki anchors).
+                       All 3 arms identical 1.000 => the probe did not elicit the copy
+                       path at all (degenerate format), NOT a clean measure of trained
+                       grounding. A real retrieve-then-ground eval is the open follow-on.
+  .clm v0.2      PASS  serialize+verify ok=True, 156,497,158 bytes, decodable=True,
+                       struct_ok=True, nblk=6, n_ext=11,
+                       blocks=[[5008,15024]x4,[2,5008],[256,5008]], exact_eof=True,
+                       head_absent_from_clm=True (RETRO Pq/Pk/Wg excluded by construction).
+                       => engine-mountable trunk (CORE generator L3 slot, a_clm_gen_pipeline).
+
+SAMPLE GENERATIONS (coherent, real English; fabrication NOT cleanly separable here):
+  "made group . The stores and other then began to be approaches among the momentum"
+  "There were public of South American soldiers were commonly known to the presidents .
+   The route , and the star"
+  vs broad-7b byte-garble baseline ("Phenomenologie unologic Phenologie") => MUCH more
+  coherent; G0 0.941 >> broad-7b which FAILED G0 (<0.50).
+
+VERDICT: anima-303M-RETRO TRAINS END-TO-END on H100 (coherent + novel + engine-mountable).
+  a303m_pass PARTIAL: G0 PASS, G2 PASS, .clm-serialize PASS; G1 FAIL, G5 FAIL (probe caveat).
+  NOT full PASS (G1 recombination + G5 grounding + G3 philosophy + CHAT remain).
+  PRIVATE/WIP HF (a_hf_autonomous: closure not yet cleared). Frozen gates NOT moved.
+
+SCOPE (a_scale_honest_scope): single ckpt, seed 7, 125.8MB en-wiki corpus, p7 deterministic.
+  G1=0 is a coverage-metric / seed-adherence finding, not necessarily a recombination-
+  capacity ceiling. G5 probe format is OOD => a non-result, needs a real grounded eval.
+  Lane-P torch REFERENCE + engine-.clm bridge (a_clm_gen_pipeline); forge stays PUBLIC.
