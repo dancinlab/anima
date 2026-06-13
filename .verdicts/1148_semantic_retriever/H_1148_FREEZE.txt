@@ -1,0 +1,41 @@
+H_1148 — SEMANTIC RETRIEVER vs PRIOR-WINDOW — FROZEN FALSIFIER (pre-registration)
+Frozen 2026-06-13, BEFORE any measurement. axis-5 of the anima 303M 완성 campaign.
+
+QUESTION
+  axis-4 (branch retro303m-en-prep, prior_window_batch) feeds the H_1147-validated RETRO copy
+  head a v1 anchor = the PRIOR WINDOW of the same corpus (positional surrogate, picked by
+  position not content). Does a SEMANTIC retriever — select the prior chunk most CONTENT-similar
+  to the query by cheap byte/n-gram cosine ($0, index-free) — ground copying BETTER than the
+  positional prior-window, and how close to an ORACLE (always-true-anchor) ceiling?
+
+DESIGN (reuses H_1147 must-copy copy/pointer head VERBATIM; only the RETRIEVAL POLICY varies)
+  - un-memorizable must-copy toy: VALUE random per example, drawn from a HELD-OUT pool never a
+    training target => the answer MUST be copied from the retrieved chunk, cannot be recalled.
+  - each example: a pool of N_CHUNKS=6 fact chunks [BOS KEY REL VALUE SEP]; exactly ONE (true)
+    contains the QUERY-KEY + its VALUE, at a RANDOM pool position; the rest are distractors.
+  - 3 policies select ONE chunk -> fed to the SAME trained copy head as the anchor:
+      (1) PRIOR-WINDOW (v1): always the fixed-position "preceding window" slot (idx 0);
+          true chunk is at random position => hit only by luck (~1/6).
+      (2) SEMANTIC (test): retrieve the chunk whose token-bigram profile is most cosine-similar
+          to the query; should pick the chunk sharing the KEY => high hit-rate.
+      (3) ORACLE (ceiling): always the true chunk.
+  - head trained ONCE on SEMANTIC-retrieved anchors (the deployment policy); evaluated under all
+    3 policies on the SAME held-out pools (only the selected chunk differs).
+
+METRICS (p7 deterministic; NOT perplexity, NOT LLM-judge)
+  copy-accuracy = P(argmax == query-key's true VALUE);  fab-rate = 1 - copy-acc;
+  hit-rate = P(selected chunk == true chunk) per policy.
+
+FROZEN BARS (immovable)
+  F1 SEMANTIC-LIFTS    : copy_acc(SEMANTIC) - copy_acc(PRIOR-WINDOW) >= 0.20
+  F2 APPROACHES-ORACLE : copy_acc(ORACLE)   - copy_acc(SEMANTIC)     <= 0.15
+
+VERDICT MAP
+  F1 AND F2 => 🟢 GREEN   : swap v1 prior-window -> semantic in RETRO-303M v2.
+  F1 only   => 🟡 PARTIAL : semantic helps but a ceiling gap remains (stronger retriever first).
+  NOT F1    => 🔴 NEUTRAL : semantic ~ prior-window; v1 positional good enough, no retriever yet
+                            (honest negative, a_paper_negative_ok; keep v1).
+
+SCOPE (a_scale_honest_scope): toy, $0 CPU numpy, seed 1148, single-entity copy, token-id
+  bigram similarity surrogate for byte-trigram TF. 303M transfer + real noisy multi-entity
+  kosmos retrieval + coherence-backbone interaction UNVERIFIED. Falsifier set before measuring.
