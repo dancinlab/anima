@@ -9,10 +9,16 @@ deterministic (NOT perplexity). nohup-detached (survives SSH drop); one ledger J
 eval (crash-recovery). The RECIPE (dropout/wd/lr/warmup) is read from the ByteGPT sweep winner
 ledger (best G0/G1/G2) OR passed explicitly via --dropout/--wd/--lr/--warmup.
 
-ANCHOR SOURCE = PRIOR-WINDOW SELF-RETRIEVAL (v1; see retro303m_en.py docstring CRUX). The
-anchor for the target span at offset i is the preceding [i-La-gap : i-gap] window of the SAME
-corpus — index-free, $0, real long-range coref, NO external RAG (a_kosmos). The retrieved
-KOSMOS anchor replaces this slot at inference (kosmos_io→brain).
+ANCHOR SOURCE (--anchor, default=semantic):
+  semantic (v2, H_1148 🟢) = byte-trigram TF-cosine retrieval over a RING of recent prior
+    windows; the anchor for a target span is the MOST content-similar prior window (not the
+    fixed positional one). H_1148 proved the RETRO copy head is RETRIEVAL-limited not capacity-
+    limited (copy-acc 0.218 prior-window -> 1.000 semantic = oracle). Index-free, $0, gap=64
+    causal no-leak, NO external RAG (a_kosmos). This is the PRIMARY RETRO-303M run.
+  prior_window (v1 baseline) = the preceding [i-La-gap : i-gap] window picked by POSITION; kept
+    as the labelled BASELINE arm for an honest G5 A/B (a_completeness_over_cheap).
+At inference both reduce to the retrieved KOSMOS anchor via generator_read_anchors (kosmos_io->
+brain, single-entry a_core_engine_map) scored by the SAME byte-trigram cosine.
 """
 from __future__ import annotations
 import argparse, json, math, os, sys, time
@@ -72,6 +78,14 @@ def main():
     # RETRO anchor
     ap.add_argument("--anchor_len", type=int, default=256)
     ap.add_argument("--anchor_gap", type=int, default=64)
+    # anchor SOURCE: semantic (H_1148 v2, default) | prior_window (v1 baseline arm, honest A/B)
+    ap.add_argument("--anchor", choices=["semantic", "prior_window"], default="semantic",
+                    help="anchor retrieval policy: semantic=byte-trigram cosine over a ring of "
+                         "recent prior windows (H_1148 v2 GREEN); prior_window=v1 positional baseline")
+    ap.add_argument("--anchor_ring", type=int, default=8,
+                    help="semantic: # of recent prior windows scored per target (ring size)")
+    ap.add_argument("--anchor_qhead", type=int, default=64,
+                    help="semantic: leading query bytes used to build the retrieval profile")
     # recipe (overridden by sweep winner unless given)
     ap.add_argument("--dropout", type=float, default=None)
     ap.add_argument("--weight_decay", type=float, default=None)
@@ -111,6 +125,23 @@ def main():
     print(f"[data] {a.corpus} total={n/1e6:.1f}MB train={tr.numel()/1e6:.1f}MB val={va.numel()/1e6:.2f}MB",
           flush=True)
 
+    # anchor SOURCE dispatch (H_1148 v2): semantic byte-trigram-cosine retrieval (default)
+    # vs the v1 prior-window positional baseline. SAME (x,y) target stream + SAME La/gap; only
+    # WHICH window fills the anchor slot changes (cf a_completeness_over_cheap honest A/B).
+    if a.anchor == "semantic":
+        print(f"[anchor] SEMANTIC (H_1148 v2) ring={a.anchor_ring} qhead={a.anchor_qhead} "
+              f"gap={a.anchor_gap} — byte-trigram cosine over recent prior windows", flush=True)
+        def anchor_batch(d):
+            return R.semantic_anchor_batch(d, a.block, a.anchor_len, a.anchor_gap, a.bs, dev,
+                                           ring=a.anchor_ring, q_head=a.anchor_qhead)
+        anchor_source_tag = "semantic_byte_trigram_cosine_v2"
+    else:
+        print(f"[anchor] PRIOR_WINDOW (v1 baseline) gap={a.anchor_gap} — positional surrogate",
+              flush=True)
+        def anchor_batch(d):
+            return R.prior_window_batch(d, a.block, a.anchor_len, a.anchor_gap, a.bs, dev)
+        anchor_source_tag = "prior_window_self_retrieval"
+
     m = R.RetroByteGPT(H, d=a.d, n_layer=a.n_layer, n_head=a.n_head, block=a.block,
                        p=rec["dropout"], grad_ckpt=a.grad_ckpt).to(dev)
     nparam = sum(p.numel() for p in m.parameters())
@@ -124,7 +155,7 @@ def main():
 
     # OOM-guard fit probe (one fwd+bwd with anchor at full batch)
     m.train()
-    x, y, anc, amask = R.prior_window_batch(tr, a.block, a.anchor_len, a.anchor_gap, a.bs, dev)
+    x, y, anc, amask = anchor_batch(tr)
     if dev == "cuda":
         with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
             _, loss = m(x, anc, targets=y, anchor_mask=amask)
@@ -139,7 +170,7 @@ def main():
     def eval_ce(d, iters=30):
         m.eval(); tot = 0.0
         for _ in range(iters):
-            x, y, anc, amask = R.prior_window_batch(d, a.block, a.anchor_len, a.anchor_gap, a.bs, dev)
+            x, y, anc, amask = anchor_batch(d)
             if dev == "cuda":
                 with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
                     _, l = m(x, anc, targets=y, anchor_mask=amask)
@@ -156,9 +187,11 @@ def main():
                "G0_kwr": (round(g0, 3) if g0 is not None else None),
                "G1": g1, "G2": g2, "G5": g5, "status": status, "ckpt_path": a.ckpt,
                "nparam": nparam, "nparam_backbone": nback, "nparam_retro": nextra,
-               "winner_cfg": win_cfg, "anchor_source": "prior_window_self_retrieval",
+               "winner_cfg": win_cfg, "anchor_source": anchor_source_tag,
+               "anchor_policy": a.anchor,
                "axes": {**rec, "steps": a.steps, "anchor_len": a.anchor_len,
-                        "anchor_gap": a.anchor_gap},
+                        "anchor_gap": a.anchor_gap, "anchor_ring": a.anchor_ring,
+                        "anchor_qhead": a.anchor_qhead},
                "ts": time.strftime("%Y-%m-%dT%H:%M:%S")}
         with open(a.ledger, "a") as f:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -178,7 +211,7 @@ def main():
         opt.zero_grad(set_to_none=True)
         acc_loss = 0.0
         for _ in range(a.accum):
-            x, y, anc, amask = R.prior_window_batch(tr, a.block, a.anchor_len, a.anchor_gap, a.bs, dev)
+            x, y, anc, amask = anchor_batch(tr)
             if dev == "cuda":
                 with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
                     _, loss = m(x, anc, targets=y, anchor_mask=amask)
@@ -319,7 +352,7 @@ def main():
                "best_val_ce": best_val, "G0_kwr": g0_kwr, "G0_pass": g0_pass,
                "G1_emergent": g1_emergent, "G2_novel": g2_novel, "G2_pass": g2_pass,
                "G5": g5, "winner_cfg": win_cfg, "recipe": rec,
-               "anchor_source": "prior_window_self_retrieval"},
+               "anchor_source": anchor_source_tag, "anchor_policy": a.anchor},
               open(a.ckpt + ".result.json", "w"), ensure_ascii=False, indent=2)
     print(f"[done] {a.ckpt}.result.json", flush=True)
 

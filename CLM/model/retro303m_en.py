@@ -188,6 +188,99 @@ def prior_window_batch(data, block, La, gap, bs, dev):
     return x, y, anchors.to(dev), amask.to(dev)
 
 
+# ----------------------------------------------------------- semantic retriever (H_1148 v2)
+# Byte-trigram TF cosine, $0, index-free. Ported VERBATIM in spirit from the H_1148-validated
+# UNIVERSE/h1148_semantic_retriever.py (token-bigram cosine in the toy -> byte-trigram cosine
+# here over real corpus bytes). H_1148 🟢: SEMANTIC copy-acc 1.000 vs prior-window 0.218
+# (=oracle) — the RETRO copy head is RETRIEVAL-limited, not capacity-limited, so the v2
+# anchor SOURCE is content-similarity not position.
+def _byte_trigram_profile(buf):
+    """Sparse byte-trigram TF profile (dict: trigram-int -> count) over a 1-D byte tensor.
+    Trigram packed as b0*65536 + b1*256 + b2. Mirrors H_1148 token_profile(): n-gram TF, the
+    cheap content fingerprint scored by cosine. Empty/short buffers -> empty profile."""
+    p = {}
+    L = buf.numel()
+    if L < 3:
+        return p
+    bl = buf.tolist()
+    for i in range(L - 2):
+        g = (bl[i] << 16) | (bl[i + 1] << 8) | bl[i + 2]
+        p[g] = p.get(g, 0.0) + 1.0
+    return p
+
+
+def _profile_cosine(pa, pb):
+    """Cosine over two sparse byte-trigram TF profiles (H_1148 cosine() VERBATIM in form)."""
+    if not pa or not pb:
+        return 0.0
+    # iterate the smaller dict for the dot product
+    if len(pa) > len(pb):
+        pa, pb = pb, pa
+    dot = 0.0
+    for k, v in pa.items():
+        w = pb.get(k)
+        if w is not None:
+            dot += v * w
+    na = math.sqrt(sum(v * v for v in pa.values()))
+    nb = math.sqrt(sum(v * v for v in pb.values()))
+    if na == 0.0 or nb == 0.0:
+        return 0.0
+    return dot / (na * nb)
+
+
+def semantic_anchor_batch(data, block, La, gap, bs, dev, ring=8, q_head=64, gen=None):
+    """v2 SEMANTIC anchor source (H_1148 v2 TRAIN-SOURCE design; swaps prior_window_batch).
+
+    For each target offset i the QUERY is data[i:i+block] (causal LM target = next byte, IDENTICAL
+    to prior_window_batch). The anchor is no longer the single FIXED preceding window: instead we
+    build a RING of `ring` recent prior windows, each length La, walking back from the gap
+    boundary (window w = data[i-gap-(w+1)*La : i-gap-w*La], w=0..ring-1), and SCORE each by
+    byte-trigram cosine against the query's leading `q_head` bytes. The MOST content-similar
+    window is handed to the copy head as the anchor (H_1148: hit-rate 1.0 vs 0.172 positional).
+
+    CAUSAL / NO-LEAK: every candidate window ends at or before i-gap, strictly before the target
+    span, so gap=64 guarantees the anchor never overlaps the next-byte target (same guarantee as
+    v1). When i is too early for a full ring, only the available windows are scored; if NONE are
+    available the anchor is left zero/masked (vocab fallback, exactly as v1).
+    `gen` is an optional torch.Generator for deterministic offset draws.
+    Returns x[bs,block], y[bs,block], anchor[bs,La], anchor_mask[bs,La]."""
+    n = data.numel()
+    lo = 0
+    hi = n - block - 1
+    ix = torch.randint(lo, hi, (bs,), generator=gen) if gen is not None else torch.randint(lo, hi, (bs,))
+    x = torch.stack([data[i:i + block] for i in ix]).to(dev)
+    y = torch.stack([data[i + 1:i + 1 + block] for i in ix]).to(dev)
+    anchors = torch.zeros(bs, La, dtype=torch.long)
+    amask = torch.zeros(bs, La, dtype=torch.long)
+    for r, i in enumerate(ix.tolist()):
+        qprof = _byte_trigram_profile(data[i:i + min(q_head, block)])
+        best_sim = -1.0
+        best = None  # (a_start, a_end)
+        a_end = i - gap
+        for w in range(ring):
+            w_end = a_end - w * La
+            w_start = w_end - La
+            if w_start < 0:
+                break  # earlier windows only get earlier -> stop
+            sim = _profile_cosine(qprof, _byte_trigram_profile(data[w_start:w_end]))
+            if sim > best_sim:
+                best_sim = sim
+                best = (w_start, w_end)
+        if best is not None:
+            anchors[r] = data[best[0]:best[1]]
+            amask[r] = 1
+        else:
+            # too early for any full window -> partial fallback (v1-style left-pad+mask)
+            valid = max(0, a_end)
+            if valid >= La:
+                anchors[r] = data[a_end - La:a_end]
+                amask[r] = 1
+            elif valid > 0:
+                anchors[r, La - valid:] = data[0:valid]
+                amask[r, La - valid:] = 1
+    return x, y, anchors.to(dev), amask.to(dev)
+
+
 # ----------------------------------------------------------------------- CPU fit-probe
 def fit_probe(sweep_universe, corpus=None, tiny=True):
     """Tiny end-to-end fit-probe: build at FULL 303M scale (param assert), then a TINY-dim

@@ -9,7 +9,8 @@
 #   (2) the ConvMoE queue has fired+returned: its sentinel exists AND its queue.log shows
 #       "run.sh returned" (axis-3 done) — OR (belt+suspenders) the GPU is idle (<1GB used).
 # On fire it READS THE BYTEGPT WINNER (best G0>=0.5, then G1, G2, lowest val) from the sweep
-# ledger and trains anima-303M-RETRO with that recipe, nohup-safe.
+# ledger and trains anima-303M-RETRO with that recipe, nohup-safe, ANCHOR=$ANCHOR
+# (default semantic — H_1148 v2 🟢 byte-trigram cosine retrieval; prior_window = v1 baseline).
 #
 # Idempotent: a sentinel ($SENT) blocks a double-fire; safe to relaunch.
 set -u
@@ -24,10 +25,16 @@ CKDIR="${CKDIR:-$REPO/state/retro303m_en/ckpt}"
 LOGDIR="${LOGDIR:-/tmp/retro303m}"
 STEPS="${STEPS:-12000}"
 POLL="${POLL:-300}"
+# anchor SOURCE: semantic (H_1148 v2 🟢, PRIMARY) | prior_window (v1 baseline arm). Default
+# fires the SEMANTIC arm. To run the honest v1 baseline A/B AFTER it, relaunch with ANCHOR=
+# prior_window once the semantic ckpt is done (sequential — NEVER double-book the GPU).
+ANCHOR="${ANCHOR:-semantic}"
+ANCHOR_RING="${ANCHOR_RING:-8}"
+ANCHOR_QHEAD="${ANCHOR_QHEAD:-64}"
 SENT="$LOGDIR/queue_fired.sentinel"
 mkdir -p "$LOGDIR" "$CKDIR" "$(dirname "$LEDGER")"
 QLOG="$LOGDIR/queue.log"
-echo "[retro-queue] $(date) watcher START pid=$$ poll=${POLL}s" >> "$QLOG"
+echo "[retro-queue] $(date) watcher START pid=$$ poll=${POLL}s anchor=${ANCHOR} ring=${ANCHOR_RING} qhead=${ANCHOR_QHEAD}" >> "$QLOG"
 
 bytegpt_done () {
   local n
@@ -61,7 +68,7 @@ if [ -f "$SENT" ]; then
 fi
 while true; do
   if bytegpt_done && { convmoe_done || gpu_idle; }; then
-    echo "[retro-queue] $(date) FIRE: bytegpt 4/4 done AND (convmoe done OR gpu idle)" >> "$QLOG"
+    echo "[retro-queue] $(date) FIRE: bytegpt 4/4 done AND (convmoe done OR gpu idle) anchor=${ANCHOR}" >> "$QLOG"
     touch "$SENT"
     nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader >> "$QLOG" 2>&1
     cd "$REPO/CLM/train" || { echo "[retro-queue] no repo $REPO" >> "$QLOG"; exit 3; }
@@ -74,6 +81,7 @@ while true; do
       --d 1024 --n_layer 24 --n_head 16 --block 512 \
       --bs 8 --accum 4 --steps "$STEPS" \
       --anchor_len 256 --anchor_gap 64 \
+      --anchor "$ANCHOR" --anchor_ring "$ANCHOR_RING" --anchor_qhead "$ANCHOR_QHEAD" \
       --grad_ckpt --eval_every 500 \
       >> "$LOGDIR/retro303m_en.log" 2>&1
     echo "[retro-queue] $(date) retro303m train returned rc=$?" >> "$QLOG"
