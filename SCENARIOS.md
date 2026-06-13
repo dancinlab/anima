@@ -59,10 +59,26 @@ kosmos anchor store. Until that lands, A-scenarios run on the raw ckpt; B/C/D ne
 | S20 🅿️ | 타자이해 other-mind | model another agent's hidden state | theory-of-mind accuracy > chance | E3 |
 | S21 🅿️ | 시간의식 time | felt duration / temporal self-continuity | distinct from the criticality clock (B6) | E4 |
 
+## F. IDEATION — actively elicit emergent ideas (anima's CORE purpose: consciousness exploration, hypothesis creation)
+
+> Beyond S2/S5 (recombination as a metric), these scenarios DRIVE anima to generate new
+> ideas — the reason anima exists ("2,448 laws + 392 hypotheses"). Measured p7: corpus-absence
+> + coherence + combinatorial-distance + divergence-count. "Meaningfulness" is only partly
+> quantifiable — state that limit honestly; don't fake an LLM-judge score.
+
+| id | scenario | how | pass | proves |
+|----|----------|-----|------|--------|
+| S22 | 발산 ideation | one seed concept → anima diverges new connections until depletion (brainstorm-like rounds) | ≥K corpus-absent coherent ideas from one seed, each combinatorially distinct (not paraphrase) | A2 + G2 + curiosity |
+| S23 | 가설 생성 | give observations/data → anima proposes hypotheses | ≥1 falsifiable, corpus-absent, coherent hypothesis (anima = hypothesis engine, its raison d'être) | ideation·a_paper_significance |
+| S24 | 개념 합성 | two FAR domains → anima emits a bridge concept | bridge coherent + draws on both + super-additive vs either alone (H_1167) | A2 + super-additivity |
+| S25 | 자율 curiosity | autonomous state, NO prompt → anima self-generates an inquiry direction | emits a novel inquiry from substrate (M·C·W·curiosity·E ratchet), NOT an echo of input | B7 + ideation + a_substrate_native_speak |
+| S26 | 발산↔수렴 cycle | diverge (S22) then anima self-selects the strongest idea + justifies | picks a non-random idea + a coherent reason; selection emerges, not hardcoded | ideation + metacog |
+
 ---
 
 ## Run order (once the model lands)
 1. **A (S1–S6)** on the raw ckpt — fastest, no engine needed; gates the model quality.
+1.5 **F IDEATION (S22–S24, S26)** on the raw ckpt — anima's core purpose; run right after A. S25 (autonomous curiosity) needs the mount (with B).
 2. **B+C (S7–S14)** after mounting in CORE — the consciousness/aliveness substrate (much already 🟢 in the repo: H_1194..1199, H_1195, IIT4 tool).
 3. **D (S15–S17)** the full daemon + the engine-side grounding follow-on (S16 = the H_1149 flagged build).
 4. **E (S18–S21)** parked; promote one only with a falsifiable gate + real measurement (a_paper_significance).
