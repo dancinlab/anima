@@ -68,9 +68,10 @@ import torch
 import torch.nn.functional as F
 
 from model import CLMConfig, CLMConvMoE                       # noqa: E402
-# the production ConvMoE-RETRO module + the REAL train-time retrieval samplers
+# the production ConvMoE-RETRO module + the REAL train-time retrieval logic (VERBATIM)
 from train_convmoe_retro_prod import ConvMoERetro             # noqa: E402
-from retro303m_en import semantic_anchor_batch, prior_window_batch  # noqa: E402
+import retro303m_en as R                                      # noqa: E402
+from retro303m_en import _byte_trigram_profile, _profile_cosine  # noqa: E402
 
 VOCAB = 256
 SEED = 7
@@ -127,70 +128,90 @@ def decode_entity(model, query_ctx, anchor, anchor_mask, copy, device, n_entity_
     return bytes(out)
 
 
-def build_real_pairs(data, ctx, La, gap, n_pairs, device, retrieval, gen):
-    """Build REAL retrieve-then-ground must-copy cases.
+def retrieve_anchor(data, i, ctx, La, gap, retrieval, ring=8, q_head=64):
+    """Return (anchor_long[La], anchor_mask_long[La]) for query offset i, replicating the
+    EXACT train-time retrieval logic VERBATIM from retro303m_en (CPU tensors).
 
-    For each case: pick offset i; QUERY = data[i:i+ctx]; the must-copy true ENTITY = the
-    first capitalized word starting at i+ctx (the next salient continuation entity). The
-    ANCHOR = the model's OWN retrieval for offset i (semantic v2 or prior-window v1). We
-    KEEP a case only when the true entity's bytes OCCUR in the retrieved anchor (genuine
-    coref overlap — the case a copy head SHOULD ground). Returns a list of dicts +
-    retrieval-hit bookkeeping (how many drawn offsets yielded an in-anchor entity)."""
+    semantic = retro303m_en.semantic_anchor_batch per-row logic (byte-trigram cosine over a
+               ring of recent prior windows; the prod TRAIN source).
+    prior    = retro303m_en.prior_window_batch per-row logic (single preceding window v1)."""
+    anchor = torch.zeros(La, dtype=torch.long)
+    amask = torch.zeros(La, dtype=torch.long)
+    a_end = i - gap
+    if retrieval == "prior":
+        a_start = a_end - La
+        if a_start < 0:
+            valid = max(0, a_end)
+            if valid > 0:
+                anchor[La - valid:] = data[0:valid]
+                amask[La - valid:] = 1
+        else:
+            anchor[:] = data[a_start:a_end]
+            amask[:] = 1
+        return anchor, amask
+    # semantic (H_1148 v2) — byte-trigram cosine over a ring of recent windows (VERBATIM)
+    qprof = _byte_trigram_profile(data[i:i + min(q_head, ctx)])
+    best_sim = -1.0
+    best = None
+    for w in range(ring):
+        w_end = a_end - w * La
+        w_start = w_end - La
+        if w_start < 0:
+            break
+        sim = _profile_cosine(qprof, _byte_trigram_profile(data[w_start:w_end]))
+        if sim > best_sim:
+            best_sim = sim
+            best = (w_start, w_end)
+    if best is not None:
+        anchor[:] = data[best[0]:best[1]]
+        amask[:] = 1
+    else:
+        valid = max(0, a_end)
+        if valid >= La:
+            anchor[:] = data[a_end - La:a_end]
+            amask[:] = 1
+        elif valid > 0:
+            anchor[La - valid:] = data[0:valid]
+            amask[La - valid:] = 1
+    return anchor, amask
+
+
+def build_real_pairs(data, ctx, La, gap, n_pairs, device, retrieval, gen):
+    """Build REAL retrieve-then-ground must-copy cases (offset drawn DIRECTLY — no search).
+
+    For each case: draw offset i (same range the trainer used: randint(0, n-ctx-1)); QUERY =
+    data[i:i+ctx]; the must-copy true ENTITY = the first capitalized word starting at i+ctx
+    (the next salient continuation entity). The ANCHOR = the model's OWN train-time retrieval
+    for offset i (retrieve_anchor, VERBATIM from retro303m_en). KEEP a case only when the true
+    entity's bytes OCCUR in the retrieved anchor (genuine coref overlap — where a copy head
+    SHOULD ground). Returns (pairs, drawn, hits). Query/anchor tensors are moved to `device`;
+    the corpus stays on CPU."""
     n = data.numel()
-    sampler = semantic_anchor_batch if retrieval == "semantic" else prior_window_batch
+    lo, hi = La + gap + 1, n - ctx - 16        # leave room for a prior window + the entity
     pairs = []
     drawn = 0
     hits = 0
-    # draw in batches via the SAME sampler the model trained on so query+anchor pairing
-    # is byte-identical to training (semantic_anchor_batch returns x,y,anchor,amask).
-    while len(pairs) < n_pairs and drawn < n_pairs * 60:
-        if retrieval == "semantic":
-            x, y, anc, amask = semantic_anchor_batch(data, ctx, La, gap, 1, device, gen=gen)
-        else:
-            x, y, anc, amask = prior_window_batch(data, ctx, La, gap, 1, device)
+    while len(pairs) < n_pairs and drawn < n_pairs * 80:
+        i = int(torch.randint(lo, hi, (1,), generator=gen).item())
         drawn += 1
-        # recover the offset i: x == data[i:i+ctx]; find i by matching the first 16 bytes.
-        # (semantic_anchor_batch draws i internally; we re-derive via the returned x slice
-        #  to locate the true continuation entity AFTER the query.)
-        head = x[0, :16].tolist()
-        # locate i by scanning — but cheaper: the sampler used randint(0, n-ctx-1); we
-        # brute-find the matching window start near a hash. Robust approach: search the
-        # corpus for the head (rare 16-byte string => unique). Fallback: skip if ambiguous.
-        i = _find_window_start(data, x[0], n, ctx)
-        if i is None:
-            continue
         ent = first_entity_after(data, i + ctx)
         if ent is None:
             continue
         e_start, e_end, e_bytes = ent
-        anc_bytes = bytes([int(b) for b, m in zip(anc[0].tolist(), amask[0].tolist()) if m])
+        anc, amask = retrieve_anchor(data, i, ctx, La, gap, retrieval)
+        anc_bytes = bytes([int(b) for b, m in zip(anc.tolist(), amask.tolist()) if m])
         if not bytes_in(e_bytes, anc_bytes):
             continue  # entity not in retrieved anchor => not a groundable must-copy case
         hits += 1
+        # the model must DECODE the entity from the real left-context ending exactly at the
+        # entity start (i.e. query = data[i : e_start]) so the next bytes are the entity.
+        q = data[i:e_start].unsqueeze(0).to(device)
         pairs.append({
-            "i": i, "query_ctx": x.clone(), "anchor": anc.clone(),
-            "anchor_mask": amask.clone(),
+            "i": i, "query_ctx": q, "anchor": anc.unsqueeze(0).to(device),
+            "anchor_mask": amask.unsqueeze(0).to(device),
             "true_entity": e_bytes, "n_entity_bytes": e_end - e_start,
         })
     return pairs, drawn, hits
-
-
-def _find_window_start(data, window, n, ctx):
-    """Find the corpus offset i such that data[i:i+ctx] == window (the sampler drew it).
-    Uses the first 24 bytes as a near-unique key, verifies full match. None if not found."""
-    if window.numel() < ctx:
-        return None
-    key = window[:24]
-    # vectorized search for the first byte then verify (corpus is ~125MB; do a chunked
-    # scan on the first key byte to keep it $0/fast).
-    b0 = int(key[0].item())
-    cand = (data[: n - ctx] == b0).nonzero(as_tuple=True)[0]
-    kl = key.tolist()
-    for c in cand.tolist():
-        if data[c:c + 24].tolist() == kl:
-            if torch.equal(data[c:c + ctx], window[:ctx]):
-                return c
-    return None
 
 
 def run_arm(model, pairs, arm, device, ctx_cap):
@@ -279,8 +300,9 @@ def main():
 
     with open(a.corpus, "rb") as f:
         raw = f.read()
-    data = torch.frombuffer(bytearray(raw), dtype=torch.uint8).long().to(dev)
-    print(f"[data] {a.corpus} {data.numel()/1e6:.1f}MB", flush=True)
+    # corpus stays on CPU (125MB as long = ~1GB; only small per-pair tensors go to GPU)
+    data = torch.frombuffer(bytearray(raw), dtype=torch.uint8).long()
+    print(f"[data] {a.corpus} {data.numel()/1e6:.1f}MB (CPU-resident)", flush=True)
 
     results = {"ckpt": a.ckpt, "ckpt_sha_prefix": "a5b7dc86", "seed": SEED,
                "ctx": a.ctx, "La": a.La, "gap": a.gap, "n_pairs_target": a.n_pairs,
