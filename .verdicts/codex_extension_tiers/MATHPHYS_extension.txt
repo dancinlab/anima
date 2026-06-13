@@ -1,0 +1,20 @@
+=== codex extension MATH/PHYSICS verification — first-principles vs analytical ===
+  🟢 MATCH  A. H_5001 Minkowski s² (Lorentz-invariant)
+        computed=3.0  analytical=3.0  |err|=0.0  tol=1e-06
+  🟢 MATCH  B. H_6002 least-action minimizes (1=yes)
+        computed=1.0  analytical=1.0  |err|=0.0  tol=1e-06
+  🟢 MATCH  B. H_6002 S_perturbed (ε=0.2) closed-form
+        computed=0.506665  analytical=0.506667  |err|=1.7e-06  tol=0.0001
+  🟢 MATCH  C. H_6003 momentum drift (Noether ⇒ 0)
+        computed=7.21645e-16  analytical=0.0  |err|=7.21645e-16  tol=1e-06
+  🟢 MATCH  D. H_5301 entropy ratio S(2r)/S(r) (area=4)
+        computed=4.00001  analytical=4.0  |err|=1e-05  tol=0.0001
+  🟢 MATCH  E. H_6005 |ρ01| at 5τ (→0, classical)
+        computed=0.00673795  analytical=0.006738  |err|=5.30009e-08  tol=0.0001
+  🟢 MATCH  E. H_6005 coherence < 0.01 (decohered)
+        computed=1.0  analytical=1.0  |err|=0.0  tol=1e-06
+  🟢 MATCH  F. H_5202 σ≥0 & ΔS>0 (2nd law, 1=yes)
+        computed=1.0  analytical=1.0  |err|=0.0  tol=1e-06
+  🟢 MATCH  F. H_5202 total entropy produced ΔS
+        computed=0.5  analytical=0.5  |err|=0.0  tol=1e-06
+=== codex extension math/physics verification complete (g5 first-principles) ===
