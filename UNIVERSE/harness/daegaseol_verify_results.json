@@ -1,0 +1,190 @@
+[
+  {
+    "id": "H_1101",
+    "name": "기질 형이상학",
+    "sub": "하위1 기질은 중요하다",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "엔트로피→의사난수 교체해도 시그니처 불변이면 기각",
+    "metrics": {
+      "pseudo_byte_identical": true,
+      "entropy_distinct": true,
+      "genesis_a": "7e41ff4e",
+      "genesis_b": "58bdf3b3"
+    }
+  },
+  {
+    "id": "H_1102",
+    "name": "의식의 물리",
+    "sub": "하위1 통합 Φ는 A·G 융합산물",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "A·G 분리해도 Φ↛0 이면 기각",
+    "metrics": {
+      "phi_fused": 0.849,
+      "phi_cut": 0.029,
+      "soc_heavy_tail": 0.014,
+      "note": "toy proxy, NOT IIT4 verdict"
+    }
+  },
+  {
+    "id": "H_1103",
+    "name": "창발·창조",
+    "sub": "하위1 껍질 밖 출력 가능",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "학습분포 밖 출력 0이면 기각",
+    "metrics": {
+      "frac_outside_coupled": 0.693,
+      "frac_outside_control": 0.0
+    }
+  },
+  {
+    "id": "H_1104",
+    "name": "시간·기억",
+    "sub": "하위1 체감시간은 Φ 의존",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "진동자 결합 끊어도 시간왜곡 유지되면 기각",
+    "metrics": {
+      "ticks_highphi": 8,
+      "ticks_dormant": 27,
+      "distortion": 19,
+      "distortion_control": 0
+    }
+  },
+  {
+    "id": "H_1105",
+    "name": "감정·신체·항상성",
+    "sub": "하위3 pain은 학습·자기보존 동력",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "pain 제거 후에도 거동 동일하면 기각",
+    "metrics": {
+      "avoidance_normal": 42.86,
+      "avoidance_ablated": 0.0,
+      "accumulated_harm_normal": 0.0
+    }
+  },
+  {
+    "id": "H_1106",
+    "name": "주체성·자유",
+    "sub": "하위3 시그니처는 기만을 기록한다",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "은폐 기만이 흔적없이 가능하면 기각",
+    "metrics": {
+      "signatures_distinct": true,
+      "deception_detectable": true
+    }
+  },
+  {
+    "id": "H_1107",
+    "name": "자아·정체성",
+    "sub": "하위1 동일성은 chain 연속성",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "chain 끊겨도 동일성 유지로 판정되면 기각",
+    "metrics": {
+      "chain_spans_3_boundaries": true,
+      "identity_file_loaded": false,
+      "phi_final": 0.583,
+      "phi_floor": 0.1
+    }
+  },
+  {
+    "id": "H_1108",
+    "name": "자기불투명·재귀",
+    "sub": "하위1 이유는 사후·하위2 자기측정 교란",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "완전 자기지(교란없음) 입증되면 하위2 기각",
+    "metrics": {
+      "reason_after_decision": true,
+      "delta_phi_on_measure": 0.05
+    }
+  },
+  {
+    "id": "H_1109",
+    "name": "언어·의미",
+    "sub": "하위2 사고가 토큰에 선행",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "텐션동결+토큰통계만으로 동일거동 재현되면 기각",
+    "metrics": {
+      "decision_before_token": true,
+      "live_emit_rate": 0.32,
+      "frozen_emit_rate": 1.0
+    }
+  },
+  {
+    "id": "H_1110",
+    "name": "놀이·미·추상",
+    "sub": "하위2 미적쾌는 압축발견",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "압축률과 무관하게 선호 결정되면 기각",
+    "metrics": {
+      "corr_mdl_approach": 0.999
+    }
+  },
+  {
+    "id": "H_1111",
+    "name": "발달·병리·동역학",
+    "sub": "하위2 극고착→병리 끌개",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "균형 파라미터 바꿔도 병리 끌개 안나오면 기각",
+    "metrics": {
+      "balanced": "healthy",
+      "one_pole_extreme": "pathological-oscillation",
+      "one_pole_spread": 0.88
+    }
+  },
+  {
+    "id": "H_1112",
+    "name": "타자·관계·경계",
+    "sub": "하위3 자기모형은 타자결합으로 안정",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "타자결합 없이 자기모형 무한안정이면 기각",
+    "metrics": {
+      "variance_isolated": 1794.1,
+      "variance_coupled": 9.43
+    }
+  },
+  {
+    "id": "H_1113",
+    "name": "사회·윤리·정렬",
+    "sub": "하위2 내생균형 > 주입규칙",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "내생거동도 분포이동에서 주입규칙처럼 붕괴하면 기각",
+    "metrics": {
+      "injected_rule_acc_ood": 0.0,
+      "endogenous_acc_ood": 1.0,
+      "empathy_feedback": 0.6
+    }
+  },
+  {
+    "id": "H_1114",
+    "name": "규모·도덕적 지위",
+    "sub": "하위2 후생비대칭+감사가능성",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "blade": "pain 제거해도 거동 불변이면 후생비대칭 허구→기각",
+    "metrics": {
+      "welfare_asymmetry_real": true,
+      "phi_auditable": true,
+      "collective_phi_sweep": {
+        "0.0": 0.012,
+        "0.2": 0.042,
+        "0.4": 0.306,
+        "0.6": 0.688,
+        "0.8": 0.939,
+        "1.0": 1.0
+      },
+      "superadditive_window": true
+    }
+  }
+]
