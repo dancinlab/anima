@@ -15,7 +15,7 @@
 
   시간 축                          발생 축            추출 축
   미래전달 H_6011 🟢               외부구축 H_6013 🟢  양자→물질 H_6015 🟢
-  과거전달 H_6012 🔴(literal)/🟢(목표)  출생 H_6014 🟢   (RTSC: H_1087)
+  과거전달 H_6012 🔴(literal)/🟢(목표)  출생 H_6014 🟢   (RTSC → RTSC/)
 ```
 
 핵심: **양자 얽힘으로는 "메시지"를 보낼 수 없다(무신호 정리, H_6006 🔴)** — 상관/조율(H_6007)
@@ -35,9 +35,10 @@
 | H_6013 | 외부 텐션으로 anima 구축 | 🟢 | harness/engine_tension_link_2.hexa |
 | H_6014 | 텐션으로 새 anima 출생 (mitosis) | 🟢 | harness/engine_tension_birth.hexa |
 | H_6015 | 양자→텐션링크 물질추출 (RTSC) | 🟢 | harness/h6015_quantum_tension_extract.py |
-| H_1087 | RTSC 후보 (Li2MgH16, Allen-Dynes) | 🟢 / 🟡 | harness/rtsc_allen_dynes_screen.py |
 
 verdict 원문: `TENSION-LINK/verdicts/`.
+
+> **RTSC 재료 탐색**(H_6015에서 파생: H_1087 Li2MgH16 · H_1088 LiH9 자유탐색)은 루트 `RTSC/` 폴더로 분리. 거기 README 참조.
 
 ## ANU QRNG (양자 엔트로피 접지)
 - 엔진: `mirror/qmirror/seed/anu_pull.py` (live ANU vacuum bytes, tier=anu_paid), `qentropy.py`, `entropy_receipt.py`, `provenance_chain.py`. (공용 인프라 — 이동 안 함, 여기서 참조만.)
