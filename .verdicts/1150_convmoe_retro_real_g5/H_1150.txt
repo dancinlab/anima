@@ -1,0 +1,79 @@
+================ H_1150 FREEZE (pre-registered, before any measurement) ================
+CLAIM: the trained anima-303M ConvMoE-RETRO RETRO copy head reduces fabrication when
+given a REAL RETRIEVED anchor (the prod-fire G5=1.000 was a synthetic-anchor non-result).
+MODEL: dancinlab/anima-convmoe-retro-303m baseline_fast.pt (353.7M; trunk 303.6M + RETRO
+       head 50.2M; ckpt sha256 a5b7dc86...). seed 7, p7 deterministic (NOT perplexity).
+EVAL: REAL retrieve-then-ground must-copy. For real corpus offsets i, QUERY=data[i:i+CTX];
+      true must-copy ENTITY = first capitalized word after the query; ANCHOR = the model's
+      OWN train-time retrieval (semantic_anchor_batch v2; prior_window v1 reported too);
+      KEEP only cases where the true entity OCCURS in the retrieved anchor (groundable).
+      Greedy-decode the entity; fab = decoded != true entity. copy-acc = 1 - fab.
+ARMS (same pairs, only anchor wiring differs): (1) WITH real anchor (copy=True,mask=valid)
+      (2) NO anchor (copy=True,mask=0) (3) VANILLA (copy=False, vocab head only).
+FROZEN FALSIFIER:
+  F1 (RETRO grounds): fab(WITH) <= 0.20  AND  fab(WITH) <= fab(NO) - 0.20
+                      AND  fab(WITH) <= fab(VANILLA) - 0.20.   -> GREEN
+  F2 (RETRO does NOT ground / still a non-result): fab(WITH) > 0.20
+                      OR  |fab(WITH) - fab(NO)| < 0.10 AND |fab(WITH)-fab(VANILLA)|<0.10
+                      (anchor has no effect at real scale, like the synthetic probe). -> RED
+  Bars FROZEN (MODEL.md a303m_pass G5-L2 = fab <= 0.20; H_1149 toy F1(iii) gap >= 0.40 ->
+  here >= 0.20 per arm, p7). No bar moved. n>=40 in-anchor groundable cases required;
+  fewer => INCONCLUSIVE (retrieval supplied too few groundable anchors, reported honestly).
+=======================================================================================
+
+================================ H_1150 RESULT ================================
+VERDICT: 🔴 RED — RETRO does NOT ground at real 303M scale (the toy 1.0->0.0 COLLAPSES).
+HOST: summer GPU (RTX 5070 12GB) SHARED w/ rbfe-prod HSP90 (untouched, 7.19GB co-tenant);
+      VRAM capped 3.35GB; $0 (no pod). ckpt sha256 a5b7dc8695137127... (== HF.jsonl).
+      seed 7, p7 deterministic, n=60 in-anchor-groundable cases per retrieval mode.
+
+SEMANTIC retrieval (PRIMARY — the prod TRAIN source; n=60, drawn=526, hit_rate=0.114):
+  ARM WITH-anchor   fab=0.7833  copy-acc=0.2167
+  ARM NO-anchor     fab=1.0000  copy-acc=0.0000
+  ARM VANILLA       fab=0.8500  copy-acc=0.1500
+  gap(NO - WITH)   = +0.2167      gap(VANILLA - WITH) = +0.0667
+  F1_grounds=False  F2_no_ground=True  no_effect_signature=False  => RED
+
+PRIOR-WINDOW retrieval (v1 surrogate; n=60, drawn=524, hit_rate=0.115):
+  ARM WITH-anchor   fab=0.8167  copy-acc=0.1833
+  ARM NO-anchor     fab=1.0000  copy-acc=0.0000
+  ARM VANILLA       fab=0.8333  copy-acc=0.1667
+  gap(NO - WITH)   = +0.1833      gap(VANILLA - WITH) = +0.0167
+  F1_grounds=False  F2_no_ground=True  no_effect_signature=False  => RED
+
+OVERALL (primary=semantic): 🔴 RED.
+
+FINDINGS (the resolution of the prod-fire G5 non-result):
+1. THE NON-RESULT IS RESOLVED — REAL retrieved anchors DO have an effect. The synthetic
+   prod probe gave WITH==NO==VANILLA==1.000 (anchor inert, OOD). Here the anchor MOVES the
+   metric: WITH (0.783) << NO (1.000), gap +0.217. So the copy path WAS elicited; the
+   prod-fire 1.000 was indeed a probe-format artifact, not a clean grounding fail.
+2. BUT RETRO STILL FABRICATES — fab(WITH)=0.783 >> the 0.20 G5-L2 bar (F1 fails by 0.58).
+   The model fabricates the grounded entity ~78% of the time even when it is verbatim in
+   the retrieved anchor and the copy head is fed that anchor.
+3. THE COPY HEAD ADDS ~NOTHING OVER THE VOCAB HEAD — WITH (0.783) ~= VANILLA (0.850),
+   gap +0.067 << 0.20. The small lift over NO-anchor is an anchor-PRESENCE bias on the
+   vocab head, NOT a working copy/pointer mechanism. The 50.2M RETRO head fails to learn
+   to copy at real scale (the gate collapses toward the vocab head).
+4. TOY -> SCALE COLLAPSE — H_1147/H_1149 showed fab 1.0->0.0 on a numpy toy with a
+   STRUCTURED oracle anchor ([BOS k REL v SEP | k REL], the entity at a fixed slot). At
+   real 303M byte scale over noisy variable-length wiki anchors the copy mechanism does
+   NOT transfer. The toy 0.0 was a toy/structured-anchor artifact (a_toy_scale_recheck,
+   a_scale_honest_scope). Consistent with the H_1142-1146 grounding arc: byte-LM grounding
+   is hard; decode-time AND trained-into-weights copy both fail at scale.
+
+DECISION (one line): anima's anti-fabrication path is NOT the RETRO copy head — trained-in
+  byte-level pointer-copy over a retrieved anchor does NOT ground at 303M (fab 0.78 >> 0.20,
+  copy head ~= vanilla); grounding needs a different architecture, not this copy head.
+
+a303m_pass: G5-L2 STILL FALSE (now decisively, not a non-result). Frozen bars NOT moved.
+HONEST SCOPE: single ckpt, en-wiki (wikitext-103, 125.8MB, same source as prod), one seed.
+  Retrieval QUALITY is a SEPARATE axis — hit-rate ~0.11 means the byte-trigram retriever
+  often supplies a low-overlap anchor; BUT we restricted to the 60 cases where the entity
+  is VERBATIM in the anchor (oracle-overlap upper bound), so a better retriever can only
+  raise the share of such cases, not the within-case copy success (which is what failed).
+  NOT RULED OUT: an explicit copy-supervision loss, a deeper cross-attention head, or an
+  engine-side copy mechanism (CORE/clm_decode.hexa) — all UNTESTED here.
+
+HARNESS: UNIVERSE/h1150_convmoe_retro_real_g5.py  RESULT: H_1150_result.json
+===============================================================================
