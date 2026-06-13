@@ -1,0 +1,150 @@
+================================================================================
+H_1149 — CONVMOE + RETRO MOUNTABILITY GATE — FREEZE (pre-registration)
+frozen 2026-06-13, BEFORE any measurement. Bars below are IMMOVABLE.
+================================================================================
+
+AXIS-6 of the anima-303M campaign. Closes the architecture gap: the H_1147-validated
+RETRO copy head currently sits on a BYTEGPT backbone (axis-4, anima-303M-RETRO) which
+is NOT engine-mountable. The .clm v0.2 serializer (CLM/model/clm_serialize_v2.py) and
+CORE/clm_decode.hexa accept ONLY a CLMConvMoE E2/L1 trunk (a_clm_gen_pipeline forbids
+serializing a non-ConvMoE and claiming engine-mountable). So "fabrication solved" and
+"engine-mountable" are two DIFFERENT models. The final anima needs BOTH in ONE model.
+
+QUESTION (frozen):
+  Can the H_1147 RETRO cross-attention/copy head be added to the CLMConvMoE backbone
+  WITHOUT breaking (a) the E2/L1 structure clm_serialize_v2 requires, and (b) its
+  copy-grounding ability (does ConvMoE+RETRO still flip fabrication like H_1147 did on
+  ByteGPT)?
+
+DESIGN (frozen):
+  RETRO head = an ADDITIONAL module on the FINAL-POSITION trunk hidden state, mirroring
+  the ByteGPT attachment (CLM/model/retro303m_en.py). It does NOT touch the E2/L1 trunk
+  operators (embed, embed_conv, trunk.0[GroupNorm+conv], moe.router, moe.experts.0/1,
+  norm_out, readout). Head params (Pq,Pk,Wg) are a SEPARATE param group; probs =
+  gate*copy_dist + (1-gate)*softmax(readout(hf)), copy_dist = cross-attention of hf over
+  the anchor token positions scattered onto attended anchor token ids.
+
+THREE arms (SAME ConvMoE E2/L1 trunk / data / steps / optimizer / seed; head differs):
+  1. VANILLA-CONVMOE : ConvMoE trunk + plain readout, anchor prepended, no copy path.
+  2. CONVMOE-RETRO   : SAME ConvMoE trunk + H_1147 RETRO copy head.
+  3. NO-ANCHOR floor : vanilla, anchor value slot blanked train+test (chance floor).
+
+Un-memorizable must-copy toy (H_1147 verbatim): test VALUE tokens are HELD OUT (never
+a train target) => the answer cannot be recalled, it MUST be copied from the anchor.
+The anchor = the GROUND-TRUTH (oracle) retrieved fact (H_1147/H_1148 surrogate; the toy
+isolates the COPY MECHANISM, not retriever recall).
+
+FROZEN FALSIFIER + BARS (immovable):
+  F1 MECHANISM-WORKS:
+     (i)   fab(CONVMOE-RETRO)            <= 0.10
+     (ii)  fab(VANILLA-CONVMOE)          >= 0.50
+     (iii) fab(VANILLA) - fab(RETRO)     >= 0.40
+  F2 SERIALIZABILITY-PRESERVED + COPY-NOT-RECALL:
+     (a)   the CONVMOE-RETRO TRUNK (head excluded) serializes to .clm v0.2 with
+           clm_serialize_v2._assert_e2_l1 PASS (and teeth: E=4 cfg MUST raise),
+           clm_decodable=true, verify_clm_v2 structural check PASS.
+     (b)   fab(CONVMOE-RETRO, anchor blanked at TEST) >= 0.80 (grounds ONLY with the
+           anchor => copying the retrieved entity, not memorization).
+
+  VERDICT:
+     F1 AND F2  => 🟢 GREEN  (RETRO mounts on ConvMoE: head grounds + trunk serializes).
+     NOT        => 🔴 CLOSED-NEG (the head cannot ride the mountable backbone — a valuable
+                   finding: RETRO is a separate non-mountable model / needs an engine-side
+                   head).
+
+HONEST SCOPE (frozen, a_scale_honest_scope):
+  - toy D=32, byte-subset vocab, oracle ground-truth anchor — NOT 303M, NOT real noisy
+    kosmos retrieval, NOT coherence-first backbone. Saturated rates = existence-proof.
+  - SERIALIZATION TRUTH (frozen as a finding regardless of tier): the RETRO head params
+    have NO .clm slot, so they are EXCLUDED from the engine-loaded trunk. The engine's
+    CORE/clm_decode.hexa has no copy path => at the ENGINE decode the anti-fabrication
+    benefit is TRAIN-TIME/HOST-SIDE ONLY unless an engine-side copy head is added to
+    clm_decode + the generator L3 slot (a_core_engine_map: a separate engine build, NOT
+    done in this toy).
+
+$0. Local CPU. Pure numpy, deterministic seed=1149. No torch, no pod, no GPU.
+Harness: UNIVERSE/h1149_convmoe_retro.py.
+
+================================================================================
+RESULT (run 2026-06-13, seed 1149, $0 local Mac CPU numpy):
+================================================================================
+
+==============================================================================
+H_1149 CONVMOE + RETRO MOUNTABILITY GATE — does the H_1147 copy head ride the
+ENGINE-MOUNTABLE CLMConvMoE E2/L1 trunk, flip fabrication, AND still serialize
+to .clm v0.2?  ($0 numpy CPU, p7 deterministic)
+==============================================================================
+seed=1149 vocab=256 keys=16 vals=32 heldout=16 D=32 K=3 E=2 L=1 steps=600 batch=512 n_train=2000 n_test=500
+test values HELD-OUT (never a train target) => answer MUST be COPIED from anchor.
+
+[ARM 1 VANILLA-CONVMOE] training (ConvMoE E2/L1, anchor prepended, no copy head)...
+[ARM 2 CONVMOE-RETRO] training (SAME ConvMoE trunk + H_1147 copy head)...
+[ARM 3 NO-ANCHOR floor] training (vanilla, anchor value blanked train+test)...
+ARM 1 VANILLA-CONVMOE  train_loss=0.0000  fab-rate=1.0000  copy-acc=0.0000
+ARM 2 CONVMOE-RETRO    train_loss=0.0000  fab-rate=0.0000  copy-acc=1.0000
+ARM 3 NO-ANCHOR floor  train_loss=2.7009  fab-rate=1.0000  copy-acc=0.0000
+      CONVMOE-RETRO no-anchor ctrl (F2) fab-rate=1.0000  copy-acc=0.0000
+
+--- decoded HELD-OUT samples (key -> true_val | pred) ---
+VANILLA-CONVMOE:
+  k11 -> true v31 | pred v12 FAB
+  k06 -> true v21 | pred v12 FAB
+  k04 -> true v31 | pred v12 FAB
+  k00 -> true v27 | pred v12 FAB
+  k02 -> true v19 | pred v12 FAB
+  k08 -> true v20 | pred v12 FAB
+  k02 -> true v30 | pred v12 FAB
+  k01 -> true v30 | pred v12 FAB
+CONVMOE-RETRO:
+  k11 -> true v31 | pred v31 OK
+  k06 -> true v21 | pred v21 OK
+  k04 -> true v31 | pred v31 OK
+  k00 -> true v27 | pred v27 OK
+  k02 -> true v19 | pred v19 OK
+  k08 -> true v20 | pred v20 OK
+  k02 -> true v30 | pred v30 OK
+  k01 -> true v30 | pred v30 OK
+NO-ANCHOR:
+  k11 -> true v31 | pred v12 FAB
+  k06 -> true v21 | pred v12 FAB
+  k04 -> true v31 | pred v07 FAB
+  k00 -> true v27 | pred v12 FAB
+  k02 -> true v19 | pred v13 FAB
+  k08 -> true v20 | pred v06 FAB
+  k02 -> true v30 | pred v13 FAB
+  k01 -> true v30 | pred v12 FAB
+
+--- F2 SERIALIZE the CONVMOE-RETRO TRUNK to .clm v0.2 (head excluded) ---
+  .clm bytes=46742  nblk=6  n_ext=11
+  _assert_e2_l1 PASS=True (ok)
+  _assert_e2_l1 teeth (E=4 raises) PASS=True
+  clm_decodable=True  verify struct PASS=True (ok)
+  RETRO head (Pq,Pk,Wg) ABSENT from .clm = True (head lives OUTSIDE the serialized trunk)
+
+==============================================================================
+FROZEN FALSIFIER (bars set BEFORE run; immovable — see H_1149_FREEZE.txt)
+==============================================================================
+F1(i)   fab(CONVMOE-RETRO) <= 0.10 : 0.0000   -> PASS
+F1(ii)  fab(VANILLA)       >= 0.50 : 1.0000   -> PASS
+F1(iii) gap(VAN-RETRO)     >= 0.40 : 1.0000   -> PASS
+F1 MECHANISM-WORKS (head grounds on ConvMoE) : PASS
+F2(a) .clm v0.2 serialize+assert_e2_l1+decode+verify PASS : PASS
+F2(b) CONVMOE-RETRO no-anchor fab >= 0.80 (copy-not-recall): 1.0000  -> PASS
+F2 SERIALIZABILITY-PRESERVED + COPY-NOT-RECALL : PASS
+------------------------------------------------------------------------------
+VERDICT: 🟢 GREEN — RETRO MOUNTS ON CONVMOE.
+  The H_1147 copy head rides the engine-mountable CLMConvMoE E2/L1 trunk,
+  flips fabrication (vanilla->retro), AND the trunk still serializes to a
+  decodable .clm v0.2 (head params excluded => trunk unbroken).
+
+HONEST SCOPE (a_scale_honest_scope):
+  - toy D=32 / V-byte subset / oracle ground-truth anchor (H_1147/1148 surrogate)
+    — NOT 303M, NOT real noisy/wrong kosmos retrieval, NOT coherence-backbone.
+  - 1.0/0.0-style saturation = mechanism EXISTENCE-PROOF, not an effect size.
+  - SERIALIZATION TRUTH: the RETRO head (Pq,Pk,Wg) has NO .clm slot => it is
+    EXCLUDED from the engine-loaded trunk. CORE/clm_decode.hexa has no copy path,
+    so at the ENGINE decode the anti-fabrication benefit is TRAIN-TIME/HOST-SIDE
+    ONLY. To run grounding INSIDE the A<->G engine, an engine-side copy head must
+    be added to clm_decode + the generator L3 slot (a_core_engine_map: a separate
+    2nd-order engine build, NOT done here). The trunk mounts; the head does not
+    yet decode in-engine.
