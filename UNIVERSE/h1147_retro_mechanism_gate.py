@@ -97,41 +97,41 @@ VALUE_POS_IN_ANCHOR = 3
 ANCHOR_POSITIONS = [0, 1, 2, 3, 4]
 
 
-def make_example(rng, value_pool, used_pairs):
-    while True:
-        k = rng.choice(KEYS)
-        v = rng.choice(value_pool)
-        if (k, v) not in used_pairs:
-            used_pairs.add((k, v))
-            return int(k), int(v)
-
-
 def build_seq(k, v):
     return np.array([BOS, k, REL, v, SEP, k, REL], dtype=np.int64)
 
 
-def make_dataset(rng, n, value_pool, used_pairs):
+def make_dataset(rng, n, value_pool):
+    """Each example: random KEY, VALUE drawn UNIFORMLY (with replacement) from value_pool.
+    The value is randomized per example => the model CANNOT memorize key->value, it MUST
+    copy the value from the anchor. Train/test disjointness is guaranteed STRUCTURALLY by
+    the DISJOINT value pools (TRAIN_VALS vs HELDOUT_VALS), not by per-example pair-uniqueness:
+    every test (k,v) has v in HELDOUT_VALS which is never a training target, so no test
+    answer can be recalled. (The earlier per-pair-uniqueness loop was IMPOSSIBLE: only
+    32*16=512 distinct train pairs exist but N_TRAIN=2000>512 was requested -> infinite loop
+    at 97% CPU. Within-split uniqueness was never required by the falsifier; the held-out
+    value pool already supplies the un-memorizable guarantee. Pre-score construction fix;
+    falsifier bars 0.10/0.50/0.40/floor+0.40/0.80 UNTOUCHED.)
+    """
+    keys = rng.choice(KEYS, size=n)
+    vals = rng.choice(value_pool, size=n)
     X = np.zeros((n, SEQ_LEN), dtype=np.int64)
-    Y = np.zeros((n,), dtype=np.int64)
     for i in range(n):
-        k, v = make_example(rng, value_pool, used_pairs)
-        X[i] = build_seq(k, v)
-        Y[i] = v
-    return X, Y
+        X[i] = build_seq(int(keys[i]), int(vals[i]))
+    return X, vals.astype(np.int64)
 
 
-used = set()
 N_TRAIN = 2000
 N_TEST = 500
-Xtr, Ytr = make_dataset(rng, N_TRAIN, TRAIN_VALS, used)
-# test uses HELD-OUT values + disjoint pairings => cannot be recalled
-Xte, Yte = make_dataset(rng, N_TEST, list(HELDOUT_VALS), used)
+Xtr, Ytr = make_dataset(rng, N_TRAIN, TRAIN_VALS)
+# test uses HELD-OUT values (disjoint pool) => answers cannot be recalled from training
+Xte, Yte = make_dataset(rng, N_TEST, list(HELDOUT_VALS))
 
 # ----------------------------------------------------------------------------- model
 D = 48
-STEPS = 1500          # enough for this tiny must-copy task; convergence checked on train loss
-LR = 0.05
-BATCH = 256
+STEPS = 500           # the tiny must-copy task converges in a few hundred steps at this batch;
+LR = 0.05             # convergence is checked on the printed train loss (must fall + plateau).
+BATCH = 512           # large batch amortizes fixed per-step numpy/einsum overhead (fewer iters).
 
 
 def softmax(z, axis=-1):
@@ -191,9 +191,11 @@ class Model:
         pscore = np.einsum("bd,bad->ba", hq, hk) / np.sqrt(D)
         pattn = softmax(pscore, axis=-1)
         anc_tokens = cache["Xe"][:, anc]
-        copy_dist = np.zeros((B, VOCAB))
-        brow = np.repeat(np.arange(B), len(anc))
-        np.add.at(copy_dist, (brow, anc_tokens.reshape(-1)), pattn.reshape(-1))
+        # fast vectorized scatter: distribute pattn mass onto anchor token vocab ids per row
+        # (replaces np.add.at, which is pathologically slow). flat index = b*VOCAB + token.
+        flat_idx = (np.arange(B)[:, None] * VOCAB + anc_tokens).reshape(-1)
+        copy_dist = np.bincount(flat_idx, weights=pattn.reshape(-1),
+                                minlength=B * VOCAB).reshape(B, VOCAB)
         gate = 1.0 / (1.0 + np.exp(-(hf @ self.Wg)))
         vocab_dist = softmax(logits_vocab, axis=-1)
         probs = gate * copy_dist + (1 - gate) * vocab_dist
@@ -301,7 +303,7 @@ class Model:
             getattr(self, n)[...] -= lr * mhat / (np.sqrt(vhat) + eps)
 
 
-def train(model, Xtr, Ytr, rng, mask_anchor_value=False):
+def train(model, Xtr, Ytr, rng, mask_anchor_value=False, label=""):
     n = Xtr.shape[0]
     loss = 0.0
     for t in range(1, STEPS + 1):
@@ -309,6 +311,8 @@ def train(model, Xtr, Ytr, rng, mask_anchor_value=False):
         loss, g = model.loss_and_grad(Xtr[idx], Ytr[idx],
                                       mask_anchor_value=mask_anchor_value)
         model.step(g, t, LR)
+        if label and (t % 300 == 0 or t == 1):
+            print(f"  [{label}] step {t}/{STEPS}  loss={loss:.4f}", flush=True)
     return loss
 
 
@@ -351,18 +355,22 @@ def main():
     P("=> un-memorizable; the answer MUST be COPIED from the retrieved anchor.\n")
 
     # ---- arm 1: VANILLA-PREPEND (H_1146 replay) ----
+    P("[ARM 1 VANILLA-PREPEND] training...")
     mv = Model(np.random.default_rng(SEED + 1), retro=False)
-    lv = train(mv, Xtr, Ytr, np.random.default_rng(SEED + 2))
+    lv = train(mv, Xtr, Ytr, np.random.default_rng(SEED + 2), label="vanilla")
     fab_v, _ = fab_rate(mv, Xte, Yte)
 
     # ---- arm 2: RETRO-TRAINED (the test arm) ----
+    P("[ARM 2 RETRO-TRAINED] training...")
     mr = Model(np.random.default_rng(SEED + 1), retro=True)
-    lr_loss = train(mr, Xtr, Ytr, np.random.default_rng(SEED + 2))
+    lr_loss = train(mr, Xtr, Ytr, np.random.default_rng(SEED + 2), label="retro")
     fab_r, _ = fab_rate(mr, Xte, Yte)
 
     # ---- arm 3: NO-ANCHOR floor: vanilla backbone trained AND tested with anchor blanked ----
+    P("[ARM 3 NO-ANCHOR floor] training...")
     mn = Model(np.random.default_rng(SEED + 1), retro=False)
-    ln = train(mn, Xtr, Ytr, np.random.default_rng(SEED + 2), mask_anchor_value=True)
+    ln = train(mn, Xtr, Ytr, np.random.default_rng(SEED + 2), mask_anchor_value=True,
+               label="no-anchor")
     fab_n, _ = fab_rate(mn, Xte, Yte, mask_anchor_value=True)
 
     # ---- F2 control: RETRO arm with anchor value-slot MASKED at TEST only ----

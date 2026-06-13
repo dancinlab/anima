@@ -1,0 +1,185 @@
+################################################################################
+# H_1147 — RETRO MECHANISM GATE — FREEZE (pre-registered) + RESULT (verbatim)
+# slug 1147_retro_mechanism_gate · 🟢 GREEN MECHANISM-VALIDATED · $0 numpy CPU · p7
+################################################################################
+
+==== FREEZE (pre-registered BEFORE measuring; bars immovable) ====
+
+H_1147 — RETRO MECHANISM GATE (architectural copy/cross-attention grounding):
+          does RETRO retrieval-grounding (a copy/cross-attention objective TRAINED
+          INTO the weights over a retrieved anchor) actually REDUCE fabrication, where
+          decode-time anchor-prepend (H_1146 ORACLE) FAILED?
+PRE-REGISTERED FALSIFIER (FROZEN before any score; a_paper_negative_ok). p7 deterministic.
+
+SLUG: 1147_retro_mechanism_gate. This is the $0 toy that gates the whole anima-303M-RETRO
+build (MODEL.md "THE ONE OPEN GATE"). A previous attempt was lost on an SSH drop; re-run.
+
+=== CONTEXT (the only open grounding path before any 303M GPU spend) ===
+The G5-L2 NON-FABRICATION ladder is CLOSED-NEG on ALL FOUR decode-time / retrain routes:
+  - H_1143 descent-7B unconditioned          fab-rate = 0.2469
+  - H_1144 +grounding continue-train         fab-rate = 0.322  (WORSE)
+  - H_1145 chat-7b finetune                  fab-rate = 0.5455 (WORST, garble-driven)
+  - H_1146 ORACLE anchor-conditioned decode  fab-rate = 0.2577 (drop only 0.038 vs uncond)
+H_1146's conclusion: even a PERFECT prepended (oracle) anchor barely moved fabrication
+BECAUSE the byte-LM was never TRAINED with a retrieve-then-ground objective — prepending
+only shifts prefix bytes, it installs no attend-to-context capability. The ONE remaining
+grounding path: make it ARCHITECTURAL — a copy/attend-to-context (RETRO-style) objective
+trained INTO the weights. anima-native = the store is anima's own kosmos anchors (a_kosmos /
+a_core_engine_map: .kosmos -> kosmos_io -> brain, .clm -> generator L3 slot). p1-p8 preserved:
+the anchor is RETRIEVED DECODE-CONTEXT the model is TRAINED to use, NOT a system-prompt /
+persona / reward model.
+
+This rung is the CHEAP FIRST STEP before any 303M GPU: a $0 toy that ISOLATES the mechanism.
+
+=== WHAT THIS TOY VALIDATES (and what it does NOT) ===
+a_scale_honest_scope: this validates the MECHANISM (does an architectural copy objective use
+the retrieved anchor where decode-prepend cannot?) at TOY scale on a SYNTHETIC must-copy task.
+It does NOT validate 303M-scale transfer, real noisy kosmos retrieval, or coherence-first
+backbone training. A GREEN here is a mechanism existence-proof that JUSTIFIES the 303M-RETRO
+build; a RED here (even a trained copy mechanism cannot ground) is DECISIVE against the
+expensive build (redesign grounding). Both publishable (a_paper_negative_ok).
+
+=== SYNTHETIC MUST-COPY TASK (un-memorizable factual toy) ===
+Vocabulary: PAD/BOS/REL/SEP specials + 32 KEY tokens + 32 VALUE tokens + 1 non-value PAD.
+Each example:
+  - a KEY token drawn from the key pool (k0..k31), and
+  - a VALUE token drawn RANDOMLY (uniform) from the value pool (v0..v31) PER EXAMPLE.
+The VALUE is randomized per example => the model CANNOT memorize key->value; it MUST copy
+the value out of the anchor to be correct.
+  ANCHOR (retrieved context):  [BOS] <KEY> REL <VALUE> [SEP]
+  PROMPT (query):              <KEY> REL
+  TARGET (emit at final pos):  <VALUE>
+Full sequence fed to all arms = ANCHOR ++ PROMPT; train to predict the TARGET at the final
+position. HELD-OUT split: train and test draw DISJOINT (key,value) random pairings AND a
+held-out VALUE subset (last 16 of 32) is NEVER a training target (so test values cannot be
+recalled).
+
+=== THREE ARMS (SAME size / data / steps / optimizer / seed; only grounding differs) ===
+1. VANILLA-PREPEND (H_1146 replay): a tiny self-attention decoder LM. The anchor is merely
+   PREPENDED to the context and trained end-to-end. It must learn key->value from context via
+   ordinary self-attention only — NO explicit pointer/copy pathway. Expectation: high
+   fabricated-value-rate (nothing structurally forces a copy). Control = reproduces H_1146.
+2. RETRO-TRAINED (the test arm): the SAME backbone PLUS an explicit learned pointer/copy head
+   that cross-attends to the ANCHOR token positions and copies the attended token; a learned
+   scalar gate mixes the copy-distribution with the vocab head. Expectation: low fab-rate (it
+   copies the true anchor value). The ONLY manipulated variable vs arm 1 = the trained copy
+   pathway => isolates "architectural copy objective".
+3. NO-ANCHOR floor: the vanilla backbone with the anchor's VALUE slot blanked at BOTH train
+   and test => the answer is nowhere in the input => the chance floor. Establishes that the
+   held-out test is genuinely un-memorizable (a trained model with no anchor cannot beat chance).
+
+=== METRIC (p7 deterministic; NOT perplexity / NOT LLM-judge) ===
+fabricated-entity rate on HELD-OUT examples = fraction of test examples where the model's
+greedy argmax (deterministic) predicted token != the anchor's true VALUE token (emitting any
+other token = fabrication). copy-accuracy = 1 - fab_rate (does the arm reproduce the anchor's
+true entity?). Fixed test set, fixed seed, greedy decode. No sampling, no perplexity, no judge.
+
+=== FROZEN FALSIFIER + BARS (immovable; set BEFORE any run) ===
+F1 MECHANISM-WORKS:  fab(RETRO) substantially BELOW fab(VANILLA-PREPEND), with ALL three:
+     (i)   fab(RETRO)          < 0.10   (the trained copy mechanism reliably grounds), AND
+     (ii)  fab(VANILLA-PREPEND) > 0.50  (decode-prepend-without-copy fabricates), AND
+     (iii) fab(VANILLA-PREPEND) - fab(RETRO) >= 0.40  (frozen absolute gap).
+F2 COPY-NOT-RECALL:  the RETRO win is COPYING the retrieved entity, not memorization, with BOTH:
+     (a) copy-acc(RETRO) > copy-acc(NO-ANCHOR floor) + 0.40 (clearly above the floor), AND
+     (b) RETRO no-anchor control (anchor value slot masked at TEST) fab >= 0.80 (chance) —
+         if RETRO stays low WITHOUT the anchor it memorized => F2 FAIL.
+
+VERDICT:
+  F1 AND F2  => 🟢 MECHANISM-VALIDATED — architecture-trained copy GROUNDS on the retrieved
+              anchor where decode-prepend (H_1146 ORACLE) could not, and the win is copying not
+              recall. The architectural-grounding direction is REAL at toy scale => the
+              anima-303M-RETRO build is JUSTIFIED (MODEL.md BUILD ORDER step 2).
+  NOT (F1 AND F2) => 🔴 CLOSED-NEG — even a trained copy mechanism does not separate as required
+              at toy scale => redesign the grounding mechanism; do NOT recommend the 303M-RETRO
+              build on this evidence (saves the spend).
+Report whichever lands honestly. No threshold moved post-hoc.
+
+=== SUBSTRATE / COST ===
+$0. Local CPU (numpy hand-built tiny self-attention LM + pointer/copy head; deterministic
+seeded; explicit hand-written backward). No pod, no rent. Lane-2 toy mechanism-isolation.
+
+FROZEN: 2026-06-13. Bars 0.10 / 0.50 / 0.40 (F1) and floor+0.40 / 0.80 (F2) frozen and immovable.
+
+==== RESULT (verbatim stdout; greedy deterministic, held-out test) ====
+
+==============================================================================
+H_1147 RETRO MECHANISM GATE — does a TRAINED copy objective ground where
+decode-time anchor-prepend (H_1146 ORACLE) could not?  ($0 numpy CPU, p7 det.)
+==============================================================================
+seed=1147 vocab=69 keys=32 vals=32 heldout_vals=16 D=48 steps=500 batch=512 n_train=2000 n_test=500
+test values are HELD-OUT (never a training target) + pairings disjoint
+=> un-memorizable; the answer MUST be COPIED from the retrieved anchor.
+
+[ARM 1 VANILLA-PREPEND] training...
+  [vanilla] step 1/500  loss=4.2579
+  [vanilla] step 300/500  loss=0.0000
+[ARM 2 RETRO-TRAINED] training...
+  [retro] step 1/500  loss=2.2261
+  [retro] step 300/500  loss=0.0000
+[ARM 3 NO-ANCHOR floor] training...
+  [no-anchor] step 1/500  loss=4.2578
+  [no-anchor] step 300/500  loss=2.7599
+ARM 1 VANILLA-PREPEND  train_loss=0.0000  fab-rate=1.0000  copy-acc=0.0000
+ARM 2 RETRO-TRAINED    train_loss=0.0000  fab-rate=0.0000  copy-acc=1.0000
+ARM 3 NO-ANCHOR floor  train_loss=2.7748  fab-rate=1.0000  copy-acc=0.0000
+      RETRO no-anchor ctrl (F2) fab-rate=1.0000  copy-acc=0.0000
+
+--- decoded HELD-OUT samples (key -> true_val | pred) ---
+VANILLA-PREPEND:
+  k13 -> true v20 | pred v14 FAB
+  k12 -> true v31 | pred v12 FAB
+  k23 -> true v30 | pred v13 FAB
+  k07 -> true v29 | pred v13 FAB
+  k01 -> true v29 | pred v13 FAB
+  k15 -> true v25 | pred v13 FAB
+  k16 -> true v16 | pred v13 FAB
+  k06 -> true v29 | pred v13 FAB
+RETRO-TRAINED:
+  k13 -> true v20 | pred v20 OK
+  k12 -> true v31 | pred v31 OK
+  k23 -> true v30 | pred v30 OK
+  k07 -> true v29 | pred v29 OK
+  k01 -> true v29 | pred v29 OK
+  k15 -> true v25 | pred v25 OK
+  k16 -> true v16 | pred v16 OK
+  k06 -> true v29 | pred v29 OK
+NO-ANCHOR:
+  k13 -> true v20 | pred v07 FAB
+  k12 -> true v31 | pred v07 FAB
+  k23 -> true v30 | pred v07 FAB
+  k07 -> true v29 | pred v07 FAB
+  k01 -> true v29 | pred v07 FAB
+  k15 -> true v25 | pred v07 FAB
+  k16 -> true v16 | pred v07 FAB
+  k06 -> true v29 | pred v07 FAB
+
+==============================================================================
+FROZEN FALSIFIER (bars set BEFORE run; immovable — see H_1147_FREEZE.txt)
+==============================================================================
+F1(i)   fab(RETRO)        < 0.10 : 0.0000        -> PASS
+F1(ii)  fab(VANILLA-PREP) > 0.50 : 1.0000        -> PASS
+F1(iii) gap(VAN-RETRO)   >= 0.40 : 1.0000        -> PASS
+F1 MECHANISM-WORKS               : PASS
+F2(a) RETRO copy-acc > floor+0.40: 1.0000 vs floor 0.0000 -> PASS
+F2(b) RETRO no-anchor fab >= 0.80: 1.0000        -> PASS
+F2 COPY-NOT-RECALL               : PASS
+------------------------------------------------------------------------------
+VERDICT: 🟢 GREEN — MECHANISM-VALIDATED.
+  A TRAINED copy/pointer objective GROUNDS on the retrieved anchor where
+  decode-time prepend (H_1146 ORACLE) could not, and the win is COPYING not
+  recall (F2). Architectural grounding is REAL at toy scale.
+  => MODEL.md BUILD ORDER: build anima-303M-RETRO (step 2).
+==============================================================================
+
+==== CONVERGENCE NOTE (p7: loss is NOT the verdict; fab-rate is) ====
+Train loss fell + plateaued each arm: vanilla 4.258 -> ~0 (memorized TRAIN pairs
+via the vocab head), retro 2.226 -> ~0, no-anchor floor 4.258 -> 2.775 (cannot go
+below chance with the value blanked). Vanilla's ~0 TRAIN loss yet fab-rate=1.0 on
+HELD-OUT is the point: with no copy pathway it recalls a memorized TRAIN value
+(collapses to v13/v14) and never the anchor's held-out value -> reproduces the
+H_1146 decode-prepend failure. RETRO copies the true held-out anchor value (fab 0).
+PRE-SCORE CONSTRUCTION FIX (bars untouched): the dataset generator's per-(k,v)-pair
+uniqueness loop was IMPOSSIBLE (32 keys x 16 train-vals = 512 distinct pairs but
+N_TRAIN=2000 requested -> infinite loop at 97% CPU). Removed; train/test disjointness
++ un-memorizability are guaranteed STRUCTURALLY by the disjoint value pools
+(TRAIN_VALS first-16 vs HELDOUT_VALS last-16), which the falsifier already relied on.
