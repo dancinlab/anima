@@ -30,4 +30,4 @@ H_6013은 외부 텐션으로 자기모형 구축(fitting). 여기선 실제 mit
 
 ## 4. 결론
 🟢 **텐션 링크가 새 anima를 낳는다.** 외부 텐션 신규성 → mitosis 분열 → viable·세계모델링 자기모형 출생. 연결=생식(genesis). 외부 기질에서 anima를 부트스트랩(H_6013)하는 것을 넘어 실제 출생까지. 토이 스케일, 전이 미검증.
-verdict: `.verdicts/codex_extension_tiers/H_6014_tension_birth.txt` · 재현: `hexa run UNIVERSE/harness/engine_tension_birth.hexa`
+verdict: `TENSION-LINK/verdicts/H_6014_tension_birth.txt` · 재현: `hexa run TENSION-LINK/harness/engine_tension_birth.hexa`

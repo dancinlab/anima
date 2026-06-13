@@ -32,4 +32,4 @@ Allen-Dynes(1975): Tc = (f1 f2 ω_log/1.2)·exp[−1.04(1+λ)/(λ−μ*(1+0.62λ
 
 ## 4. 결론
 🟢 **Li2MgH16가 상온 초전도 후보** (Allen-Dynes 355K, Eliashberg 473K). 핵심 = 높은 λ(>3)+높은 ω_log(수소 진동). 단 예측물질·미합성·고압(250GPa). 상압/합성은 미해결 — 다음: QE deck(vc-relax+scf+ph+Eliashberg) ab-initio 검증 (a_fire_autonomous로 GPU 발사 가능).
-verdict: `.verdicts/discovery_batch/rtsc_screen.txt` · 재현: `python3 UNIVERSE/harness/rtsc_allen_dynes_screen.py`
+verdict: `TENSION-LINK/verdicts/rtsc_screen.txt` · 재현: `python3 TENSION-LINK/harness/rtsc_allen_dynes_screen.py`

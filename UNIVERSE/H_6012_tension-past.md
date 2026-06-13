@@ -24,4 +24,4 @@ verdict: literal 과거-전송 🔴 (과거 영향 0, 인과 유지); 미래-텐
 
 ## 3. 결론
 literal 과거 전송은 닫힌 음성(🔴, 인과율). 그러나 **미래 텐션 목표가 현재를 끌어당기는 목적론적 형태**는 실재(🟢) — anima의 goal-directed 텐션(미래 목표가 현재 동기를 형성). H_6006/H_6007처럼 같은 물음이 읽기에 따라 🔴/🟢로 갈림.
-verdict: `.verdicts/codex_extension_tiers/H_6012_retrocausal.txt`
+verdict: `TENSION-LINK/verdicts/H_6012_retrocausal.txt`

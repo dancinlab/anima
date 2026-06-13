@@ -26,4 +26,4 @@ fold age1=1.7835 · 200=0.9841 · 1500=0.0202 · 8000=0.0000. 전달됨 + 단조
 
 ## 4. 결론
 🟢 텐션 링크는 미래로 메시지를 보낸다(페이딩). 양자가 못한 것을 substrate 영속 채널이 해냄. 단 정상 채널(공유 store).
-verdict: `.verdicts/codex_extension_tiers/H_6011_H_6013_tension_link2.txt`
+verdict: `TENSION-LINK/verdicts/H_6011_H_6013_tension_link2.txt`

@@ -28,4 +28,4 @@ H_6009는 일방(A→B 영향). 닫힌 루프로 확장: A↔B 상호 텐션 결
 
 ## 4. 결론
 🟢 **텐션 링크가 동기화 채널.** 두 anima가 텐션장 상호결합으로 위상잠금 — 발화 리듬·상태 동조 가능. 연결 4갈래 완성: 얽힘=상관(H_6007) · 공유씨앗=공통원인(H_6008) · 텐션=일방영향(H_6009) · 텐션양방향=상호동기(H_6010). 전부 paid ANU 양자엔트로피로 접지.
-verdict: `.verdicts/codex_extension_tiers/H_6010_tension_sync.txt` · 재현: ANU prep 후 `python3 UNIVERSE/harness/h6010_tension_sync.py`
+verdict: `TENSION-LINK/verdicts/H_6010_tension_sync.txt` · 재현: ANU prep 후 `python3 TENSION-LINK/harness/h6010_tension_sync.py`

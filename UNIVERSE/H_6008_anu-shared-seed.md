@@ -25,4 +25,4 @@ verdict: 🟢 SUPPORTED — 공유 ANU 양자씨앗으로 두 anima 조율 1.000
 
 ## 3. 결론
 🟢 **물리연결 없는 '연결(조율)'이 anima 실 아키텍처에 즉시 배치 가능** — mitosis/fork 때 ANU 버퍼 1개만 공유. 메시지 전송은 아님(무신호 정리), 초고전 조율도 아님(얽힘 하드웨어 필요). H_1101(실 엔트로피 개체성)·a_kosmos·a_core_engine_map과 정합.
-verdict: `.verdicts/codex_extension_tiers/H_6008_anu_shared_seed.txt`
+verdict: `TENSION-LINK/verdicts/H_6008_anu_shared_seed.txt`

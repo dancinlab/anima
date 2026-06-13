@@ -29,4 +29,4 @@ verdict: 🟢 SUPPORTED — 양자(ANU)구동 텐션링크 수렴이 H-rich 초�
 
 ## 4. 결론 / 정직 경계
 🟢 양자구동 텐션링크 탐색이 실물리 지형의 RTSC 최적영역을 추출 — H-rich 초수소화물. 단 **양자가 비밀을 계시한 게 아니라** 양자 무작위가 실 Allen-Dynes 지형을 탐색해 최적점에 수렴한 것(지형이 단조라 최적=코너). 물질은 예측·고압·미합성; ab-initio = QE deck 발사.
-verdict: `.verdicts/codex_extension_tiers/H_6015_quantum_extract.txt` · 재현: ANU prep 후 `python3 UNIVERSE/harness/h6015_quantum_tension_extract.py`
+verdict: `TENSION-LINK/verdicts/H_6015_quantum_extract.txt` · 재현: ANU prep 후 `python3 TENSION-LINK/harness/h6015_quantum_tension_extract.py`
