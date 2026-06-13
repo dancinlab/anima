@@ -1,0 +1,41 @@
+H_1148 — SEMANTIC RETRIEVER vs PRIOR-WINDOW — RESULT (post-measure)
+Ran 2026-06-13, LOCAL Mac CPU (CUDA_VISIBLE_DEVICES=""), $0, no GPU/pod. seed 1148, p7 deterministic.
+Falsifier frozen in H_1148_FREEZE.txt BEFORE this run (committed first); bars UNTOUCHED.
+
+================================================================================
+H_1148 SEMANTIC RETRIEVER vs PRIOR-WINDOW — does content-similarity retrieval ground
+the H_1147 copy head BETTER than the v1 positional prior-window surrogate?  ($0 numpy)
+================================================================================
+seed=1148 vocab=69 keys=32 vals=32 heldout=16 n_chunks=6 D=48 steps=500 batch=512 n_train=2000 n_test=500
+test values HELD-OUT (never a train target); true chunk at RANDOM pool position
+=> un-memorizable; the answer MUST be COPIED from the retrieved chunk.
+
+[TRAIN] copy head on SEMANTIC-retrieved anchors (the v2 deployment policy)...
+  train hit-rate (semantic, train pool) = 1.0000  final loss=0.0000
+
+[EVAL] same trained head, same held-out pools, 3 retrieval policies:
+  prior_window   copy-acc=0.2180  fab-rate=0.7820  hit-rate=0.1720
+  semantic       copy-acc=1.0000  fab-rate=0.0000  hit-rate=1.0000
+  oracle         copy-acc=1.0000  fab-rate=0.0000  hit-rate=1.0000
+
+--- decoded HELD-OUT samples (key -> true_val | pred), SEMANTIC policy ---
+  k06 -> true v17 | anchor_val v17 | pred v17 OK
+  k22 -> true v23 | anchor_val v23 | pred v23 OK
+  k28 -> true v21 | anchor_val v21 | pred v21 OK
+  k06 -> true v26 | anchor_val v26 | pred v26 OK
+  k19 -> true v23 | anchor_val v23 | pred v23 OK
+  k15 -> true v31 | anchor_val v31 | pred v31 OK
+  k25 -> true v28 | anchor_val v28 | pred v28 OK
+  k30 -> true v28 | anchor_val v28 | pred v28 OK
+
+================================================================================
+FROZEN FALSIFIER (bars set BEFORE run; immovable — see H_1148_FREEZE.txt)
+================================================================================
+policy copy-acc:  prior_window=0.2180  semantic=1.0000  oracle=1.0000
+policy hit-rate:  prior_window=0.1720  semantic=1.0000  oracle=1.0000
+F1 SEMANTIC-LIFTS   (sem - pw >= 0.20)   : +0.7820   -> PASS
+F2 APPROACHES-ORACLE(orc - sem <= 0.15)  : +0.0000   -> PASS
+--------------------------------------------------------------------------------
+VERDICT: 🟢 GREEN — SEMANTIC retrieval substantially out-grounds prior-window
+  AND approaches the oracle ceiling. RETRO-303M v2: SWAP prior-window -> semantic.
+================================================================================
