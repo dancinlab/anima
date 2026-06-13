@@ -1,0 +1,24 @@
+========================================================================================
+RTSC pressure-Tc frontier — toward a CONFIRMABLE material (lower P = more confirmable)
+========================================================================================
+material        P_min     300     170     100      50       0  status
+----------------------------------------------------------------------------------------
+LaH10             150    214K    214K     --      --      --   confirmed 250K@170
+H3S               120    229K    229K     --      --      --   confirmed 203K@155
+YH9               150    232K    232K     --      --      --   confirmed 243K@200
+CaH6              150    218K    218K     --      --      --   confirmed 215K@172
+LaBH8 (pred)       40    177K    177K    177K    177K     --   LOW-P route ~126K@40
+Li2MgH16(pr)      250    355K     --      --      --      --   pred 473K@250 (extreme P)
+LaH10@lowP        150    214K    214K     --      --      --   same, test below P_min
+MgB2                0     37K     37K     37K     37K     37K  ambient! conf 39K
+cuprate(amb)        0    n/a     n/a     n/a     n/a     n/a   ambient ~133K (non-BCS, not Allen-Dynes)
+----------------------------------------------------------------------------------------
+달성가능 압력별 최선(BCS hydride):
+  P<=300 GPa: Li2MgH16(pr)   Tc≈355K 🟢 RTSC
+  P<=170 GPa: YH9            Tc≈232K 🟡
+  P<=100 GPa: LaBH8 (pred)   Tc≈177K 
+  P<= 50 GPa: LaBH8 (pred)   Tc≈177K 
+  P<=  0 GPa: MgB2           Tc≈37K 
+----------------------------------------------------------------------------------------
+결론: 고-Tc는 >100GPa 필요(미합성·미확정). 저압 루트=LaBH8(~40GPa). 상압(0GPa) BCS는
+MgB2 39K가 한계, RTSC 아님. 상압 RTSC는 미해결(cuprate 133K도 non-BCS). 확정 최고=LaH10 250K@170GPa.

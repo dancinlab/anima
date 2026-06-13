@@ -1,5 +1,5 @@
 ---
-id: H_1087
+id: RTSC_01
 slug: rtsc-candidate
 title: RTSC 후보 — Li2MgH16 등 삼원계 수소화물이 상온(Tc>=293K) 초전도 후보다 (Allen-Dynes 스크리닝, 양자 EPC 기반)
 domain: universe materials superconductivity electron-phonon BCS
