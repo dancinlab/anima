@@ -9,6 +9,11 @@
 | RTSC_02 | 무시드 자유탐색 (ANU) | 🟢 | LiH9·BeH7·BH8 (최경량 초수소화물) Tc~400K(proxy) |
 | RTSC_03 | 압력 프런티어 (확정가능성) | 🟢/🔴 | RTSC는 >250GPa; 상압 RTSC 미해결; 확정최고 LaH10 250K@170GPa |
 | RTSC_04 | 양자+텐션 확정가능 찾아오기 | 🟡/🔴 | 저압 후보 ~121K@73GPa; P↔Tc 트레이드오프 못 깸 |
+| RTSC_05 | LANE A 호버보드 | 🟢/🔴 | 냉각형 YBCO+LN2 가능; 무냉각 상온 미해결 |
+| RTSC_06 | LANE B 핵융합 자석(demiurge) | 🟢/🟠 | REBCO 20T@20K 실현; RTSC=비용급감 최대수혜 |
+| RTSC_07 | LANE C UFO 반중력/추진 | 🔴/🟠 | 반중력 무근거; SC자석 MHD추진만 유용 |
+
+## 실용 응용 3 LANE → `RTSC/LANES.md` (호버보드·핵융합·UFO)
 
 ## 수렴 결론
 시드(RTSC_01)·무시드(RTSC_02)·양자추출(UNIVERSE/H_6015) 세 경로가 **최경량금속 초수소화물**
