@@ -21,10 +21,11 @@ log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
 gql(){ curl -s --max-time 60 "$GQL" -H 'Content-Type: application/json' -d "$1"; }
 
 # ---------------------------------------------------------------- rent
-log "renting 1x H100 SXM 80GB (\$2.69/h on-demand)..."
+log "renting 1x H100 SXM 80GB on-demand..."
 ENV_PUB=$(printf '%s' "$PUBKEY" | sed 's/"/\\"/g')
+PODNAME="anima-convmoe-retro-303m-$(date +%H%M%S)"     # unique suffix => distinguishable from any stale dup
 CREATE_Q=$(cat <<JSON
-{"query":"mutation { podFindAndDeployOnDemand(input:{cloudType:ALL, gpuCount:1, volumeInGb:80, containerDiskInGb:80, minVcpuCount:8, minMemoryInGb:64, gpuTypeId:\"${GPU}\", name:\"anima-convmoe-retro-303m\", imageName:\"${IMAGE}\", dockerArgs:\"\", ports:\"22/tcp\", volumeMountPath:\"/workspace\", env:[{key:\"PUBLIC_KEY\",value:\"${ENV_PUB}\"}]}) { id imageName machineId } }"}
+{"query":"mutation { podFindAndDeployOnDemand(input:{cloudType:ALL, gpuCount:1, volumeInGb:80, containerDiskInGb:80, minVcpuCount:8, minMemoryInGb:64, gpuTypeId:\"${GPU}\", name:\"${PODNAME}\", imageName:\"${IMAGE}\", dockerArgs:\"\", ports:\"22/tcp\", volumeMountPath:\"/workspace\", env:[{key:\"PUBLIC_KEY\",value:\"${ENV_PUB}\"}]}) { id imageName machineId } }"}
 JSON
 )
 RESP=$(gql "$CREATE_Q"); log "create resp: $RESP"
@@ -71,7 +72,8 @@ $SCP "$WT/CLM/train/convmoe_retro_remote.sh" root@$HOST:/workspace/anima/ >/dev/
 
 # ---------------------------------------------------------------- launch (nohup remote)
 log "launching remote train+eval+serialize (nohup)..."
-$SSH "cd /workspace/anima && nohup bash convmoe_retro_remote.sh > /workspace/train.log 2>&1 & echo LAUNCHED \$!"
+HFTOK="$(secret get hf.token 2>/dev/null || echo '')"
+$SSH "cd /workspace/anima && HF_TOKEN='${HFTOK}' nohup bash convmoe_retro_remote.sh > /workspace/train.log 2>&1 & echo LAUNCHED \$!"
 
 # ---------------------------------------------------------------- inline poll (a_cpu_local_no_waiter)
 log "polling remote until DONE marker..."

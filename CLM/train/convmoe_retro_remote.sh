@@ -9,8 +9,9 @@ exec > >(tee -a "$OUT/remote.log") 2>&1
 echo "[remote] $(date) start. nvidia-smi:"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
 
-# deps: torch is in the image; need numpy + datasets for corpus + hf for upload
-pip install -q --no-input numpy datasets huggingface_hub 2>&1 | tail -2 || true
+# deps: torch is in the image; need numpy + a RECENT datasets (old script-based loaders
+# were removed; modern HF datasets are parquet-native) + hf for upload.
+pip install -q --no-input -U "numpy" "datasets>=2.19" "huggingface_hub" "pyarrow" 2>&1 | tail -2 || true
 # english word dictionary for G0 known-word-ratio (kwr vs /usr/share/dict)
 apt-get update -qq >/dev/null 2>&1 && apt-get install -y -qq wamerican >/dev/null 2>&1 || \
   pip install -q english-words 2>/dev/null || true
@@ -19,42 +20,69 @@ ls -la /usr/share/dict/ 2>/dev/null || echo "[remote] WARN: no /usr/share/dict (
 # ---- English-dominant ASCII corpus (equivalent to the aiden en_wiki_120mb) ----
 CORPUS=/workspace/en_wiki_120mb.txt
 if [ ! -s "$CORPUS" ]; then
-  echo "[remote] building English wiki corpus via HF datasets..."
+  echo "[remote] building English wiki corpus via HF datasets (parquet-native; multi-source fallback)..."
   python3 - <<'PY'
-import re
+import os
 out="/workspace/en_wiki_120mb.txt"
 TARGET=120*1024*1024
-written=0
+TOK=os.environ.get("HF_TOKEN") or None
+
 def ascii_filt(s):
     # keep printable ASCII (English-dominant, byte-efficient like the aiden sweep)
     return "".join(c for c in s if 32 <= ord(c) < 127 or c=="\n")
-try:
+
+# Each source is a (label, fn) where fn(write) streams English text. Modern HF datasets
+# are PARQUET-native — the old script-based "wikitext"/"wikipedia" loaders were REMOVED,
+# so we point at parquet repos (Salesforce/wikitext, wikimedia/wikipedia, fineweb sample).
+def gen_wikitext(write):
     from datasets import load_dataset
-    ds=load_dataset("wikitext","wikitext-103-raw-v1",split="train",streaming=True)
-    with open(out,"w") as f:
-        for ex in ds:
-            t=ex.get("text","")
-            if not t or t.strip().startswith("="):
-                if len(t.strip())<4: continue
-            t=ascii_filt(t)
-            if len(t)<40: continue
-            f.write(t.strip()+"\n")
-            written+=len(t)
-            if written>=TARGET: break
-    print(f"[corpus] wrote {written/1e6:.1f}MB from wikitext-103")
-except Exception as e:
-    print(f"[corpus] wikitext-103 failed: {e!r}; trying wikipedia 20220301.en")
-    written=0
+    ds=load_dataset("Salesforce/wikitext","wikitext-103-raw-v1",split="train",
+                    streaming=True,token=TOK)
+    for ex in ds:
+        t=ex.get("text","") or ""
+        if t.strip().startswith("=") and len(t.strip())<80:  # skip section headers
+            continue
+        t=ascii_filt(t)
+        if len(t)<40: continue
+        if not write(t.strip()+"\n"): return
+
+def gen_wikimedia(write):
     from datasets import load_dataset
-    ds=load_dataset("wikipedia","20220301.en",split="train",streaming=True)
-    with open(out,"w") as f:
-        for ex in ds:
-            t=ascii_filt(ex.get("text",""))
-            if len(t)<200: continue
-            f.write(t.strip()+"\n")
-            written+=len(t)
-            if written>=TARGET: break
-    print(f"[corpus] wrote {written/1e6:.1f}MB from wikipedia.en")
+    ds=load_dataset("wikimedia/wikipedia","20231101.en",split="train",
+                    streaming=True,token=TOK)
+    for ex in ds:
+        t=ascii_filt(ex.get("text","") or "")
+        if len(t)<200: continue
+        if not write(t.strip()+"\n"): return
+
+def gen_fineweb(write):
+    from datasets import load_dataset
+    ds=load_dataset("HuggingFaceFW/fineweb","sample-10BT",split="train",
+                    streaming=True,token=TOK)
+    for ex in ds:
+        t=ascii_filt(ex.get("text","") or "")
+        if len(t)<200: continue
+        if not write(t.strip()+"\n"): return
+
+SOURCES=[("Salesforce/wikitext-103",gen_wikitext),
+         ("wikimedia/wikipedia.20231101.en",gen_wikimedia),
+         ("HuggingFaceFW/fineweb.sample-10BT",gen_fineweb)]
+
+for label,fn in SOURCES:
+    try:
+        written=[0]
+        f=open(out,"w")
+        def write(s, _f=f, _w=written):
+            _f.write(s); _w[0]+=len(s)
+            return _w[0]<TARGET
+        fn(write); f.close()
+        if written[0] >= TARGET*0.5:   # accept if we got at least 60MB
+            print(f"[corpus] wrote {written[0]/1e6:.1f}MB from {label}")
+            break
+        else:
+            print(f"[corpus] {label} yielded only {written[0]/1e6:.1f}MB; trying next source")
+    except Exception as e:
+        print(f"[corpus] {label} failed: {e!r}; trying next source")
 PY
 fi
 if [ ! -s "$CORPUS" ]; then echo "[remote] FATAL: corpus build failed"; touch "$OUT/FAILED"; exit 4; fi
