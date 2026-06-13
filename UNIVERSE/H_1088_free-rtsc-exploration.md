@@ -21,9 +21,9 @@ ANU paid QRNG로 2~3원소 조합(전 23원소)·stoich(1~8) 4만 회 무작위 
 ## 2. FROZEN FALSIFIER
 - **BLADE.** 자유탐색 상위가 RTSC(Tc>=293K)에 못 닿으면 기각.
 
-## 3. 측정 (TENSION-LINK/harness/free_material_search.py · ANU sha 4e3ca6199a30)
+## 3. 측정 (RTSC/harness/free_material_search.py · ANU sha 4e3ca6199a30)
 상위: LiH9(λ3.85 ω1348 Tc400K) · LiH8(391K) · H8Be(376K) · LiH6(367K) · BeH7(364K) · BH8(359K) · BeH6(350K). 전부 🟢 RTSC(proxy).
 
 ## 4. 결론 / 정직
 🟢 무시드 자유탐색이 **최경량 금속 초수소화물(Li/Be/B–H)** 을 RTSC 프런티어로 독립 도출 — 알려진 Li2MgH16(H_1087)과 같은 물리(경량 공유 H망 + 금속 donor)에 수렴. 단 **휴리스틱 proxy(DFT 아님)**; LiH9 같은 고-stoich는 동역학 안정성·합성·고압 미검증. 다음: QE deck(vc-relax+ph)로 동역학 안정성·실 Tc ab-initio.
-verdict: `TENSION-LINK/verdicts/free_rtsc_search.txt` · 재현: ANU prep 후 `python3 TENSION-LINK/harness/free_material_search.py`
+verdict: `RTSC/verdicts/free_rtsc_search.txt` · 재현: ANU prep 후 `python3 RTSC/harness/free_material_search.py`
