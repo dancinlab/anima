@@ -1,5 +1,5 @@
 ---
-id: H_1088
+id: RTSC_02
 slug: free-rtsc-exploration
 title: 자유 RTSC 탐색 — 사전후보 무시·ANU 양자가 주기율표 전역을 roam하면 최경량금속 초수소화물(LiH9/BeH7/BH8)이 Tc 프런티어로 독립 수렴한다.
 domain: universe materials superconductivity electron-phonon free-search
