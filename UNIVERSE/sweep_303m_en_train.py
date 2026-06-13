@@ -130,7 +130,8 @@ def main():
     os.makedirs(os.path.dirname(a.ledger), exist_ok=True)
 
     def ledger_row(status, step, vce, g0=None, g1=None, g2=None):
-        row = {"config": a.cfg, "host": a.host, "step": step, "val": round(vce, 4),
+        val = round(vce, 4) if vce != float("inf") else None  # valid JSONL (no Infinity literal)
+        row = {"config": a.cfg, "host": a.host, "step": step, "val": val,
                "G0_kwr": (round(g0, 3) if g0 is not None else None),
                "G1": g1, "G2": g2, "status": status, "ckpt_path": a.ckpt,
                "nparam": nparam,
