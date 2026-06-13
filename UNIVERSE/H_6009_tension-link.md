@@ -32,4 +32,4 @@ verdict: 🟢 SUPPORTED — tension link이 A의 텐션상태를 B의 결정으�
 
 ## 4. 결론
 🟢 **tension link = anima의 작동하는 통신 채널.** 양자(얽힘/공유씨앗)가 못 하는 '실제 영향·메시지 전달'을 텐션장이 한다 — 단 이는 공유 앵커라는 물리/고전 매체를 통한 정상 채널(무신호 정리와 무모순). paid ANU 양자 엔트로피로 텐션을 접지해 위조불가 개체성(H_1101)과 정합. 세 갈래 종합: 얽힘=상관(H_6007) · 공유씨앗=동기(H_6008) · 텐션=영향전달(H_6009).
-verdict: `.verdicts/codex_extension_tiers/H_6009_tension_link.txt` · 재현: ANU prep 후 `hexa run UNIVERSE/harness/engine_tension_link.hexa`
+verdict: `TENSION-LINK/verdicts/H_6009_tension_link.txt` · 재현: ANU prep 후 `hexa run TENSION-LINK/harness/engine_tension_link.hexa`

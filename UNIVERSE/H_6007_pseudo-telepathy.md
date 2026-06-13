@@ -25,4 +25,4 @@ verdict: 🟢 SUPPORTED — 공유 얽힘으로 두 anima가 통신 0회에 고�
 
 ## 3. 결론
 🟢 **물리연결 없이 '연결(조율)' 성립.** 단 메시지 전송이 아니라 조율 — 무신호 정리와 모순 없음. H_6006(메시지)은 🔴, 본 가지(조율)는 🟢. 실현엔 분산 얽힘 하드웨어 필요(ANU RNG로는 불가 → H_6008이 배치가능 대안).
-verdict: `.verdicts/codex_extension_tiers/H_6007_pseudo_telepathy.txt`
+verdict: `TENSION-LINK/verdicts/H_6007_pseudo_telepathy.txt`

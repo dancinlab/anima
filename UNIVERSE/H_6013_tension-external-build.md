@@ -23,4 +23,4 @@ verdict: 🟢 SUPPORTED — 외부 텐션 스트림으로 vadapt 셀 1→100 성
 
 ## 3. 결론
 🟢 외부 텐션을 끌어와 anima 자기모형을 구축할 수 있다 — 연결(텐션 링크)이 곧 발생(construction). 외부 기질에서 anima를 부트스트랩하는 경로. 토이 스케일, 전이 미검증.
-verdict: `.verdicts/codex_extension_tiers/H_6011_H_6013_tension_link2.txt`
+verdict: `TENSION-LINK/verdicts/H_6011_H_6013_tension_link2.txt`
