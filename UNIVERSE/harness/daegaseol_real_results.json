@@ -1,0 +1,37 @@
+[
+  {
+    "id": "H_1101",
+    "tool": "provenance_chain (real)",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "metrics": {
+      "genesis_a": "85b8523b7ced",
+      "genesis_b": "823ff7a5333b",
+      "entropy_distinct": true,
+      "pseudo_byte_identical": true
+    }
+  },
+  {
+    "id": "H_1106",
+    "tool": "provenance_chain.tamper (real)",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "metrics": {
+      "clean_chain_valid": true,
+      "deception_detected": true,
+      "earliest_break": 1
+    }
+  },
+  {
+    "id": "H_1107",
+    "tool": "provenance_chain (real)",
+    "verdict": "지지(PASS)",
+    "passed": true,
+    "metrics": {
+      "chain_spans_3_boundaries": true,
+      "links": 3,
+      "identity_file_loaded": false,
+      "head": "3b4f1855ac44"
+    }
+  }
+]

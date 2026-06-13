@@ -1,0 +1,20 @@
+=== daegaseol MATH/PHYSICS verification — first-principles vs known analytical ===
+  🟢 MATCH  A. Landauer  E=k_B·T·ln2 @300K
+        computed=2.87098 zJ  analytical=2.87095 zJ  |err|=2.88851e-05  tol=0.001
+  🟢 MATCH  B. SOC ccdf slope (mean-field −1/2)
+        computed=-0.551  analytical=-0.5  |err|=0.051  tol=0.1
+  🟢 MATCH  C1. Shannon H(uniform-4)
+        computed=2.0 bits  analytical=2.0 bits  |err|=0.0  tol=1e-06
+  🟢 MATCH  C2. Kraft Σ2^(−l) (complete)
+        computed=1.0  analytical=1.0  |err|=0.0  tol=1e-06
+  🟢 MATCH  C3. Shannon H(1/2,1/4,1/4)
+        computed=1.5 bits  analytical=1.5 bits  |err|=0.0  tol=1e-06
+  🟢 MATCH  D1. Boltzmann ΔS=k_B·ln2 (W→2W)
+        computed=0.00956993 zJ/K  analytical=0.009569 zJ/K  |err|=9.29617e-07  tol=1e-06
+  🟢 MATCH  D2. E=T·ΔS == Landauer (consistency)
+        computed=2.87098 zJ  analytical=2.87098 zJ  |err|=0.0  tol=1e-06
+  🟢 MATCH  E. Born rule Σ|ψ|² (a=0.6,b=0.8)
+        computed=1.0  analytical=1.0  |err|=0.0  tol=1e-06
+  🟢 MATCH  F. IIT4 Φ closed-form (n=2 ⇒ MI[0][1])
+        computed=0.42  analytical=0.42  |err|=0.0  tol=1e-06
+=== math/physics verification complete (g5 first-principles, verbatim) ===
