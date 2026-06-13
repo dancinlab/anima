@@ -69,7 +69,14 @@ def convmoe_gen(model, seed_text, max_new, device, gen_rng, ctx_cap=512,
     """ConvMoE next-byte generation. SAME decode policy as H.gen (top_k=40, temp=0.7,
     multinomial, stop on \\n\\n, utf-8 ignore) so G0/G1/G2 are comparable to ByteGPT.
     ConvMoE is fully causal-conv with no positional block, so we feed the growing
-    sequence (capped at ctx_cap for cost) and read the LAST position's logits."""
+    sequence (capped at ctx_cap for cost) and read the LAST position's logits.
+
+    torch.multinomial requires the generator's device to match the probs tensor's
+    device; if the caller passed a CPU generator but the model is on cuda, mint a
+    same-device generator seeded from the caller's (preserves determinism per device)."""
+    if gen_rng.device.type != torch.device(device).type:
+        _seed = gen_rng.initial_seed()
+        gen_rng = torch.Generator(device=device).manual_seed(_seed)
     model.eval()
     idx = torch.tensor([[b for b in seed_text.encode("utf-8")]], device=device, dtype=torch.long)
     out_bytes = []
