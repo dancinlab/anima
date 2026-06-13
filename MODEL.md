@@ -11,7 +11,8 @@
 | decision | value | evidence (this repo) |
 |----------|-------|----------------------|
 | **scale** | ~303M (NOT 7B) | H_1129 coherent+emergent @303M · H_1139 recombination scale-invariant (7B==303M) |
-| **base arch** | ByteGPT, H_1129 recipe (d1024 / L24 / H16 / block512, byte vocab256) | H_1129 GREEN (kwr 0.96, super-additive recombination) |
+| **base arch** | ByteGPT (H_1129 recipe d1024/L24/H16/block512, byte vocab256) = LANGUAGE-RESEARCH arm; **ConvMoE-RETRO (E2/L1) = PRODUCTION mountable trunk** | H_1129 GREEN + H_1149 🟢: same RETRO head flips fab 1.0→0.0 on ConvMoE AND the trunk serializes clean to .clm v0.2 (engine-mountable) |
+| **engine grounding** | ConvMoE-RETRO grounds at TRAIN time; running grounding INSIDE the A⇄G engine needs an engine-side copy head in CORE/clm_decode.hexa + generator L3 (a_core_engine_map-clean follow-on, NOT yet built) | H_1149: RETRO head params have no .clm slot ⇒ engine ignores them at decode today |
 | **anti-fabrication** | RETRO retrieval — cross-attention / copy over retrieved **kosmos anchors**, trained INTO the weights | H_1142–H_1146: size, more-training, chat-finetune, oracle-decode ALL fail the 0.20 bar — only architectural grounding remains |
 | **retrieval store** | anima's OWN kosmos anchors (text+tension+coord), via kosmos_io→brain — NOT external RAG | a_kosmos · a_core_engine_map |
 | **corpus** | English-broad (H_1129) + dialogue + persona, script-controlled | CHAT + PERSONA gates |
