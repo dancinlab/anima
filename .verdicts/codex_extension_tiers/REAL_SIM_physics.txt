@@ -1,0 +1,29 @@
+======================================================================================
+CODEX physics — REAL SIMULATION verification (measured by running code, NOT formula-plug)
+======================================================================================
+axis     check                                           measured    expect  ok
+--------------------------------------------------------------------------------------
+H_6001   Bell CHSH |S| (200k-shot MC experiment)          2.83306    2.8284  🟢
+H_6002   least-action: frac perturbed paths worse         1.00000    1.0000  🟢
+H_6002     measured S(straight) vs analytic ½             0.50000    0.5000  🟢
+H_6003   Noether: total-momentum drift                    0.00000    0.0000  🟢
+H_5001   Lorentz: max |Δs²| over 10k boosts               0.00000    0.0000  🟢
+H_5301   holographic: boundary scaling exponent           2.13078    2.0000  🟢
+H_6005   decoherence: |ρ01| at n=10 steps                 0.63517    0.6376  🟢
+H_6005     coherence decayed below 0.1                    1.00000    1.0000  🟢
+H_5202   dissipative: total ΔS produced                   0.50025    0.5000  🟢
+H_5202     min entropy-prod rate σ (≥0)                   1.00000    1.0000  🟢
+H_2004   SOC: critical ccdf slope                        -0.55089   -0.5000  🟢
+H_2004     critical max ≫ subcritical max                 1.00000    1.0000  🟢
+--------------------------------------------------------------------------------------
+PASS 12/12  (each 'measured' came from a real simulation, then checked vs theory)
+
+method per axis:
+  H_6001: shot-by-shot singlet measurement sampling, E estimated from counts
+  H_6002: 5000 random fixed-endpoint paths, action by finite-diff integration
+  H_6003: 4000-step symplectic integration of translation-invariant 2-body
+  H_5001: random events × random boosts, interval recomputed each time
+  H_5301: 3-D lattice shell-cell count vs radius, log-log slope (area=2, volume=3)
+  H_6005: 20k-member ensemble, random phase kicks, |<e^{iφ}>| measured
+  H_5202: 20000-step ODE integration, σ=γẋ²/T summed over trajectory
+  H_2004: 20k branching avalanches σ=1.0, measured tail exponent (mean-field -0.5)
