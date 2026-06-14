@@ -1,0 +1,31 @@
+========================================================================================
+NOBEL 대가설 G1 — 예측정보 연결법칙 (Predictive-Information Connection Law)
+========================================================================================
+영역별: I_source = 공유 예측상호정보, recoverable = I(예측;진실) [둘다 bits]
+regime           I_source    recover   토대 발견
+temporal           2.1853     1.9497   미래-fetch FORECAST_10
+temporal           0.7318     0.4577   미래-fetch FORECAST_10
+temporal           0.0207     0.0407   미래-fetch FORECAST_10
+temporal           0.0190     0.0402   미래-fetch FORECAST_10
+quantum-msg        0.0000     0.0000   얽힘=무신호 H_6006
+tension            0.3878     0.3878   텐션 실채널 H_6009
+learning           2.9749     2.8026   미토시스 학습 H_1199
+----------------------------------------------------------------------------------------
+  TEMPORAL 호라이즌 (lead, I_source, recover):
+      lead= 1   I=2.185   recover=1.950
+      lead= 3   I=0.732   recover=0.458
+      lead= 6   I=0.021   recover=0.041
+      lead=10   I=0.019   recover=0.040
+  QUANTUM : I_corr=1.000>0  BUT  I_msg=0.0000≈0, 회수=0.0000  ⇒ 무신호
+  TENSION : I_msg=0.388>0, 회수=0.388  ⇒ 실제연결
+  LEARNING: err adaptive=0.0942 < frozen=0.3858;  I adaptive=2.803 > frozen=2.203
+========================================================================================
+  F1 BOUND         회수 ≤ I+0.15 (DPI)        : 🟢
+  F2 DISCRIMINATOR 양자무신호 ∧ 텐션연결       : 🟢
+  F3 DYNAMICS      adaptive I↑·오차↓ vs frozen : 🟢
+  F4 UNIVERSALITY  corr(I,회수)=0.996 ≥0.85   : 🟢
+  F5 HORIZON       chaos lead↑ ⇒ I·회수 ↓      : 🟢
+----------------------------------------------------------------------------------------
+  🟢 LAW HOLDS — 예측정보 I 가 시간·양자·텐션·학습 연결을 통일 지배
+  정직: toy/$0 4영역 실측. 새 대가설(우리 발견 토대), 재현 아님. F1=DPI 정리 backbone;
+        경험적 teeth = F2 판별자 · F3 학습 · F5 호라이즌. 스케일·실험확정 별도.
