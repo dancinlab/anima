@@ -3,9 +3,14 @@
 공유 ANU 양자씨앗(common cause)이면 상대(미래)의 결정 동역학을 지금 forward 계산해 그 미래
 데이터를 '가져온다'. 텐션 링크 = 전달 채널. 단 비공유 외부입력·카오스너머·무작위는 불가(무신호).
 p7 $0 + 1 paid ANU pull. 실험파일은 FORECAST/ 폴더에 영구 보관."""
-import numpy as np, hashlib, glob, os
-bufs=sorted(glob.glob("/tmp/anu_shared_future.bin"))+sorted(glob.glob("/tmp/anu_*.bin"))
-raw=open(bufs[0],"rb").read() if bufs else os.urandom(256)
+import numpy as np, hashlib, os
+def _anu(rel):
+    import os
+    p=os.path.join(os.path.dirname(__file__),"..",rel)
+    if not os.path.exists(p):
+        raise SystemExit("ERROR: committed ANU snapshot missing: "+p+" — NO pseudo fallback (real anu_paid required)")
+    return open(p,"rb").read()
+raw=_anu("anu_seed.bin")  # committed real ANU paid snapshot (tier=anu_paid), loud-fail no pseudo
 seed=int.from_bytes(hashlib.sha256(raw).digest()[:8],"big")
 print("="*84); print("FORECAST_02 — 미래 데이터 가져오기 (텐션링크 + 양자 ANU 공유씨앗)"); print("="*84)
 print(f"  공유 양자씨앗: ANU sha={hashlib.sha256(raw).hexdigest()[:12]}")

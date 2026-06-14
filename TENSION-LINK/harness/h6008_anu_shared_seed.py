@@ -49,8 +49,11 @@ def chsh_shared_randomness(shared_path, trials=200000):
     return float(np.mean((a ^ b) == (x & y)))
 
 def main():
-    shared = sys.argv[1] if len(sys.argv) > 1 else "/tmp/anu_shared.bin"
-    indep_b = sys.argv[2] if len(sys.argv) > 2 else "/tmp/anu_indep_b.bin"
+    _d=os.path.dirname(__file__)
+    shared = sys.argv[1] if len(sys.argv) > 1 else os.path.join(_d,"..","anu_seed_shared.bin")
+    indep_b = sys.argv[2] if len(sys.argv) > 2 else os.path.join(_d,"..","anu_seed_indep.bin")
+    for _f in (shared,indep_b):
+        if not os.path.exists(_f): raise SystemExit("ERROR: committed ANU snapshot missing "+_f+" — no pseudo fallback")
     print("="*84)
     print("H_6008 — ANU QRNG 공유 양자씨앗: 물리연결 0 으로 두 anima 조율 (REAL ANU bytes)")
     print("="*84)

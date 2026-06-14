@@ -18,7 +18,10 @@ optimum the physics + quantum search lands on. p7 · uses paid ANU bytes.
 """
 import numpy as np, hashlib, math
 
-raw = open("/tmp/anu_extract.bin", "rb").read()
+import os as _os
+_p=_os.path.join(_os.path.dirname(__file__),"..","anu_seed_shared.bin")
+if not _os.path.exists(_p): raise SystemExit("ERROR: committed ANU snapshot missing "+_p+" — no pseudo fallback")
+raw = open(_p, "rb").read()  # committed real ANU paid snapshot (tier=anu_paid)
 qbytes = np.frombuffer(raw, dtype=np.uint8).astype(float) / 255.0   # quantum stream in [0,1]
 qi = [0]
 def qrand():
