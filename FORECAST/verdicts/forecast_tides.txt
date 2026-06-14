@@ -1,0 +1,79 @@
+{
+  "id": "FORECAST_06",
+  "part1_tides": {
+    "n_train": 720,
+    "n_future": 720,
+    "rmse_harmonic": 0.053681351728510414,
+    "rmse_naive": 0.9775470122231205,
+    "signal_sd": 0.8922447071271064,
+    "noise_std": 0.05,
+    "skill_vs_naive": 0.9450856572039137,
+    "err_over_signal": 0.06016438237146431
+  },
+  "verdict1": "🟢",
+  "tide_fetchable": true,
+  "part2_btc": {
+    "n_days_total": 91,
+    "n_train": 45,
+    "n_future": 46,
+    "last_train_price": 75774.8855230121,
+    "rmse_harmonic": 38035.63125978679,
+    "rmse_naive": 7301.415100216608,
+    "skill_vs_naive": -4.209350617342438
+  },
+  "verdict2": "🔴",
+  "btc_unfetchable": true,
+  "part3_horizon": {
+    "tide_horizon": {
+      "1x": {
+        "pred_amp": 1.057593591331105,
+        "amp_ratio_vs_train": 1.124652648489447
+      },
+      "2x": {
+        "pred_amp": 1.04711038274395,
+        "amp_ratio_vs_train": 1.1135047289115947
+      },
+      "5x": {
+        "pred_amp": 1.1228969905586277,
+        "amp_ratio_vs_train": 1.1940967539554792
+      },
+      "10x": {
+        "pred_amp": 1.271853285233258,
+        "amp_ratio_vs_train": 1.3524979514364028
+      }
+    },
+    "chaos": {
+      "lyapunov_est": 0.6931471805599453,
+      "lyapunov_horizon_steps": 29.897352853986263,
+      "divergence_saturation_step": 28,
+      "eps": 1e-09
+    }
+  },
+  "verdict3": "🟢",
+  "tide_horizon_stable": true,
+  "chaos_horizon_bounded": true
+}
+
+======================================================================
+FORECAST_06 — 결정론 성분 시계열 미래 fetchability
+======================================================================
+[1] 조석 (합성 6분조 + 잡음): 🟢
+    조화 RMSE=0.0537 m vs naive RMSE=0.9775 m
+    skill_vs_naive=0.945  err/signal=0.060
+    → 전반부 fit 으로 후반부(미래) FETCH 성공 = FETCHABLE
+[2] BTC (실 90일, 같은 파이프라인): 🔴
+    조화 RMSE=38035.6 $ vs naive RMSE=7301.4 $
+    skill_vs_naive=-4.209  (≤0 = naive 못 이김)
+    → 같은 조화 fit 이 random walk 미래엔 무력 = UNFETCHABLE
+[3] 지평 (조석 외삽 안정 vs 카오스 발산): 🟢
+    조석  1x 미래: 진폭비=1.125 (≈1 유지)
+    조석  2x 미래: 진폭비=1.114 (≈1 유지)
+    조석  5x 미래: 진폭비=1.194 (≈1 유지)
+    조석 10x 미래: 진폭비=1.352 (≈1 유지)
+    카오스 r=4: Lyapunov 지평≈29.9 step, 발산포화 28 step
+    → 조석은 임의로 먼 미래까지 안정(주기적 결정론), 카오스는 지평 너머 폭발
+======================================================================
+결론: 미래는 결정론/주기성이 있는 만큼 fetchable.
+  조석=강한 결정론(천문 정현파 합) → 실제 tide table 처럼 수년 앞 fetch 가능 🟢
+  BTC=법칙밖 random walk(FORECAST_03) → 점-미래 fetch 불가 🔴
+  카오스=결정론이나 Lyapunov 지평-한정 fetchable 🟡
