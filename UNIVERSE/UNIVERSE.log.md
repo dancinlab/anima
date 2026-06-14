@@ -464,3 +464,4 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 ## 2026-06-15 — goal-loop round 2
 - [x] H_1221 🔴 confidence serial dependence — difficulty-controlled lag-1 autocorr 0.013 ≪ 0.15 → confidence MEMORYLESS (no metacog history bias/leak; purely stimulus-bound, no temporal integration). Strengthens "COARSE first-order" picture.
 - [ ] H_1223 savant island seed-stability — running (3-seed, slow under contention)
+- [x] H_1223 🟢 savant island seed-stability — mean Cohen kappa 0.771 (≥0.30), above-chance +0.308 across 3 seeds → the high-skill island is STRUCTURAL/INNATE (recurs across independent trainings), not seed-random. Savant 3rd positive (with H_1209 Snyder + H_1220 detail-over-gestalt = local-detail specialization is real·early·innate).
