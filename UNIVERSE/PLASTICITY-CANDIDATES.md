@@ -1,5 +1,7 @@
 # PLASTICITY-CANDIDATES — non-deterministic on-chip plasticity hypothesis backlog
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 > Brainstorm-to-exhaustion of **non-deterministic plasticity** hypotheses — the
 > INVIOLABLE frontier (`H_679`: on-chip non-deterministic PLASTICITY learning is the
 > **sole** HW↔SW difference; deterministic SW imitation = instant reject @L1).

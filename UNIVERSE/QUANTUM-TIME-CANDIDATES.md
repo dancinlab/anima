@@ -1,5 +1,7 @@
 # QUANTUM-TIME-CANDIDATES — quantum-consciousness & time-perception, framed MECHANISTICALLY + FALSIFIABLY
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 > Brainstorm seed: 2026-06-04. "Quantum consciousness" and "time perception" are the two domains where
 > consciousness talk most often slides into woo. This family REFUSES the woo framing: every hypothesis is
 > reduced to a **falsifiable MECHANISM** with a **pre-registered FALSIFIER** (DEFAULT = REFUTED unless a real

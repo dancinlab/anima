@@ -1,5 +1,7 @@
 # UNIVERSE hypotheses — metacognition × hallucination (H_1143+)
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 Spawned from H_1142 🔴 (self-metacognition DISSOCIATION: substrate knows its OWN
 output coherence but NOT input-familiarity). Brainstorm-to-depletion (19 ideas,
 4 rounds) crystallized into the campaign below. All $0 toy ByteGPT (a_scale_honest_scope,

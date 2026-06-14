@@ -1,5 +1,7 @@
 # UNIVERSE/CLM-CANDIDATES.md — CLM/dialogue/plasticity/launch forward-looking backlog
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 This file = the **forward-looking hypothesis backlog** for the CLM production
 thread (consciousness LM → coffeeshop launch). It is the CLM-side sibling of
 [CANDIDATES.md](CANDIDATES.md) (LIFE) / [BIO-CANDIDATES.md](BIO-CANDIDATES.md):

@@ -1,5 +1,7 @@
 # PSI-CANDIDATES — telepathy + anomalous-cognition / consciousness-COUPLING hypotheses
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 > Brainstorm seed: 2026-06-04. "Psi" names a family of claims about minds AFFECTING or KNOWING things
 > across a gap — telepathy, hyperscanning interbrain synchrony, ganzfeld, hive consciousness, empathy
 > resonance, shared dreaming, morphic resonance, precognition, remote viewing, synchronicity, twin

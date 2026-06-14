@@ -1,5 +1,7 @@
 # BIO-CANDIDATES — anima 생물학적 축 후보 36+ 보관 문서
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 > brainstorm 결과 (round-16 종결 직후, 2026-05-27). MITOSIS 형제 메커니즘 발산.
 
 ## TOP5 친근 설명 (icon · name · alias · plain · analogy · ASCII · compare)

@@ -1,5 +1,7 @@
 # BIO-DECODER-CANDIDATES — BIO ∩ DECODER 매핑 후보 보관 문서
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 > brainstorm 결과 (2026-05-27). BIO-CANDIDATES 36+ 메커니즘 중 anima DECODER 아키텍처에 mapping 가능한 후보 선별.
 
 ## TOP5 친근 설명 (EASY · 7-요소)

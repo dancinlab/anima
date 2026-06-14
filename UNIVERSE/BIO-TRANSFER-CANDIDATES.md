@@ -1,5 +1,7 @@
 # BIO-TRANSFER-CANDIDATES — biological "전이" (transfer / transition / metastasis) hypotheses
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 > Brainstorm seed: 2026-06-03. Biology has THREE distinct senses of 전이 — **transfer** (수평유전자전이),
 > **transition** (발생·진화 전이), **metastasis** (암전이). Each names a way a pattern LEAVES its origin and
 > takes hold elsewhere. anima already MEASURES one such operator empirically: the Lane A-multi HYBRID branching

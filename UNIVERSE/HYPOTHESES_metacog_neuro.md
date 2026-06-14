@@ -1,5 +1,7 @@
 # UNIVERSE hypotheses — metacognition × neuroscience/bio (H_1202+)
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 Spawned 2026-06-15. The prior metacog × hallucination campaign (H_1142–1148)
 closed mostly NEGATIVE — capstone H_1148: "fabrication is metacog-signal-
 INDEPENDENT; the substrate has NO internal handle on its own hallucination."

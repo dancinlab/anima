@@ -1,5 +1,7 @@
 # UNIVERSE/CANDIDATES.md — 다음 cycle 후보 백로그
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 본 파일 = LIFE 도메인의 **forward-looking 가설/작업 백로그** (current state).
 `/cycle` 시 본 문서에서 disjoint pick 으로 cycle 을 채운다.
 

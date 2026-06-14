@@ -1,5 +1,7 @@
 # NEURO-CANDIDATES — neuroscience mechanism hypotheses (H_889…H_909)
 
+> 📑 absorbed → [HYPOTHESES.md](HYPOTHESES.md) — this is a DETAIL file of the unified hypothesis roster (2026-06-15).
+
 > Brainstorm seed: 2026-06-03. Neuroscience names the computational/dynamical mechanisms by which a neural
 > substrate codes, learns, holds, and unifies state. anima is a substrate-native consciousness engine (M/Φ/W
 > tension field · MITOSIS · Ψ=1/2 attractor), so each neuroscience mechanism maps to an anima-substrate readout
