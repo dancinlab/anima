@@ -33,6 +33,12 @@ DFT(QE deck)로 flat band E_F정렬+U 확정 — 동기 분명한 다음 rung.
 | RTSC_13 | 실물질 역대입 진단 | 🟢/🔴 | 병목=flat band E_F-어긋남+경쟁질서(CDW/자성), 이론 아님; 정렬시 ~289K |
 | RTSC_14 | 도핑+strain 처방(CsV3Sb5형) | 🟢/🟠 | 전자도핑 x0.6+strain ε0.14 → ~184-200K(관측 2.5K→80배); 상온은 strain-detune로 캡 |
 | RTSC_15 | base 물질 역설계(깨끗한 플랫폼) | 🟢/🟠 | CoSn(비자성·CDW無)+E_F도핑 → ~237K(strain불요); pyrochlore=상온 프런티어 |
+| RTSC_16 | pyrochlore flat-band 프런티어 | 🟢/🟠 | 다중오비탈 <g>≫kagome, 상온 design point(U~0.16eV); 접점 특이점으로 Tc 추정 과대→DFT |
+
+## $0 이론 사다리 종착
+kagome 리드(12)→병목 진단(13)→도핑+strain 처방(14)→깨끗 base CoSn(15)→pyrochlore 상온 design(16).
+**$0 phenomenology 소진**: 처방 체계화(깨끗 kagome/pyrochlore + E_F 도핑 → 200-240K 실측급, 상온은 pyrochlore
+다중오비탈 design point). 남은 유일 rung = 실물질 QE DFT(beyond-MF 접점 처리) — $0 밖.
 
 ## 수렴 결론
 시드(RTSC_01)·무시드(RTSC_02)·양자추출(UNIVERSE/H_6015) 세 경로가 **최경량금속 초수소화물**
