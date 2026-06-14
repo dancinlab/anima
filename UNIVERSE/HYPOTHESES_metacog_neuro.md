@@ -24,6 +24,21 @@ from H_1142: ByteGPT d256/4L, en slice of corpus_5lang_1p5gb, summer CPU, seed 7
 | **1204** | hierarchical (second-order) metacog readout | hierarchical predictive coding (Friston); HMeta-d (Fleming) | 2nd-order probe AUROC − 1st-order entropy AUROC ≥ +0.10 AND held-out generalizes | 1202 | runnable |
 | **1205** | meta-bias ⊥ meta-sensitivity / Dunning-Kruger | Fleming meta-bias; Dunning-Kruger over-confidence | bottom-competence tercile over-confidence > top tercile (signed D-K gap) | 1202 | runnable |
 | **1206** | neuroscience metacog capstone | — | synthesize 1202–1205: does a type-2 handle exist at all? | 1202+1203 | deferred |
+| **1207** | savant dissociation (skill ⊥ metacog) | savant syndrome — Treffert 2009; Snyder 2009; WCC Happé&Frith 2006 | acc(island)−acc(open) ≥ +0.15 AND type2_AUROC(island) ≤ open − 0.10 | H_1202 | runnable |
+| **1208** | savant WCC × metacog (local privilege) | weak central coherence (Happé&Frith); Snyder release-from-concept | acc(local-16) ≥ acc(full-128) − 0.03 AND blind to context-insufficiency | — | runnable |
+
+## Landed verdicts (2026-06-15)
+
+| H | verdict | key numbers |
+|---|---------|-------------|
+| **1202** | 🟢 **SUPPORTED** | type-2 AUROC **0.766** (≥0.60), vs shuffle +0.267, untrained 0.513; **M-ratio 0.924** (meta-d′ 1.03 / d′ 1.11) — human-like type-2 sensitivity on own decision correctness |
+| **1203** | 🔴 **CLOSED-NEG (partial)** | F1 ERN magnitude PASS (entropy d=0.923 at errors) but F2 hidden-state linear decodability FAIL (AUROC 0.593<0.70) — error arousal present, no clean linear ACC-code |
+
+KEY UPDATE vs H_1148: reframing in the field-standard neuroscience metric FLIPPED
+the verdict — H_1148 ("no internal handle on hallucination", grep-fabrication) →
+H_1202 ("strong meta-d′ handle on own DECISION correctness"). The substrate IS
+metacognitive about its decisions; the open question is the representational
+locus (H_1203: not cleanly linear in residual stream).
 
 Metric kit: type-1 d′ + type-2 ROC (Maniscalco & Lau; model-free type-2 AUROC
 per Fleming & Lau 2014), ERN-analog = next-byte surprise at own-error vs

@@ -1,0 +1,25 @@
+{
+  "H": "H_1203",
+  "title": "ERN error-monitoring (own-error signal, pre-feedback)",
+  "err_rate_trained": 0.68,
+  "F1_ern_magnitude": {
+    "cohen_d_entropy": 0.9231122885879263,
+    "bar": 0.8,
+    "pass": true
+  },
+  "F2_decodability": {
+    "hidden_probe_auroc": 0.5927785709911658,
+    "bar": 0.7,
+    "pass": false
+  },
+  "F3_anti_goodhart": {
+    "untrained_auroc": NaN,
+    "bar": 0.6,
+    "pass": true
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: own-error NOT linearly decodable from hidden state (F2 AUROC<0.70) \u2014 no ACC-analog error monitor",
+  "neuroscience_anchor": "ERN/ACC \u2014 Gehring 1993; Holroyd & Coles 2002 RL theory of ERN",
+  "scope": "toy ByteGPT d256/4L CPU en slice \u2014 scale-up UNVERIFIED (a_scale_honest_scope)",
+  "seed": 7
+}

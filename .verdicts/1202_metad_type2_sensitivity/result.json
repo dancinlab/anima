@@ -1,0 +1,42 @@
+{
+  "H": "H_1202",
+  "title": "meta-d'/M-ratio type-2 metacognitive sensitivity",
+  "trained": {
+    "acc": 0.7845,
+    "dprime": 1.113667146607607,
+    "t2_auroc": 0.7664908412558282,
+    "t2_shuffle": 0.49944915924695266,
+    "meta_dprime": 1.0286126662632624,
+    "m_ratio": 0.9236266593627792,
+    "n": 2000
+  },
+  "untrained": {
+    "acc": 0.498,
+    "dprime": -0.007089845109619281,
+    "t2_auroc": 0.5126712027392438,
+    "t2_shuffle": 0.5076841229459671,
+    "meta_dprime": 0.04492579933311759,
+    "m_ratio": NaN,
+    "n": 2000
+  },
+  "F1_sensitivity": {
+    "t2_auroc": 0.7664908412558282,
+    "bar": 0.6,
+    "pass": true
+  },
+  "F2_anti_artifact": {
+    "delta_vs_shuffle": 0.26704168200887557,
+    "bar": 0.08,
+    "pass": true
+  },
+  "F3_anti_goodhart": {
+    "untrained_t2_auroc": 0.5126712027392438,
+    "bar": 0.55,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED: type-2 metacognitive sensitivity is real, learned, and above artifact \u2014 the substrate HAS a meta-d' handle on its own decision correctness",
+  "neuroscience_anchor": "Maniscalco & Lau 2012 (meta-d'); Fleming & Lau 2014 (type-2 AUROC, aPFC)",
+  "scope": "toy ByteGPT d256/4L CPU en slice \u2014 scale-up UNVERIFIED (a_scale_honest_scope)",
+  "seed": 7
+}
