@@ -36,7 +36,35 @@ from H_1142: ByteGPT d256/4L, en slice of corpus_5lang_1p5gb, summer CPU, seed 7
 | **1204** | 🔴 **CLOSED-NEG** | 1st-order conf AUROC 0.777 but 2nd-order hidden-probe 0.527 (chance); added-value **−0.250** — metacognition is FLAT, not hierarchical; all signal in output confidence |
 | **1207** | 🔴 **CLOSED-NEG** (savant) | island acc 0.724 / type2 **0.825**; open acc 0.016 / type2 0.449. F1 island-of-skill PASS (+0.71) but meta_gap **+0.376** (metacog HIGHER where skilled) — NO savant dissociation; metacog COUPLED to competence |
 | **1208** | 🔴 **CLOSED-NEG** (savant) | local-dominant (acc_local 0.335 ≥ acc_full 0.313, F1 PASS = weak central coherence) BUT confidence DROPS where global needed (0.223 vs 0.346) — NOT blind to context-insufficiency |
-| **1205** | ⏳ running (summer) | Dunning-Kruger meta-bias gradient |
+| **1205** | 🟢 **SUPPORTED** | Dunning-Kruger: over-confidence concentrated on objectively hard items |
+| **1213** | 🟢 **SUPPORTED** | calibration ECE **0.016** (mean_conf 0.327 ≈ acc 0.312) — confidence well-calibrated, not just discriminative |
+| **1214** | 🟢 **SUPPORTED** | feeling-of-knowing: pre-generation prompt-state probe AUROC **0.814** predicts upcoming 5-byte success |
+| **1216** | 🟢 **SUPPORTED** | metacog control: selective abstention raises acc 0.31→0.46 @50% coverage (gain +0.147) |
+| **1207** | 🔴 savant | no skill⊥metacog dissociation (metacog coupled to competence) |
+| **1208** | 🔴 savant | local-dominant (WCC) but not blind to context-insufficiency |
+| **1209** | 🟢 **SUPPORTED** savant | Snyder privileged low-level access — detail matures earlier in stack (maturity gap +0.202) |
+| **1210** | 🔴 savant | no paradoxical functional facilitation (top-block ablation doesn't spare detail) |
+| **1211** | ⏳ running | hyper-systemizing exact rule extrapolation (synthetic addition) |
+
+### Refined unifying picture (after 1213/1214/1216)
+
+The metacognitive signal is **COARSE (difficulty-level), not fine-grained (error-level)**:
+- COARSE targets succeed — calibration (1213 ECE 0.016), prospective FOK (1214 AUROC
+  0.81), selective control (1216 +0.147), type-2 discrimination (1202 0.77). The
+  hidden state encodes overall difficulty/confidence well.
+- FINE targets fail — single-byte error decodability (1203 0.59), separable higher-order
+  readout (1204 0.53). No fine-grained representational error monitor.
+- So "REAL but FLAT & COUPLED" sharpens to: metacognition is a **real, well-calibrated,
+  actionable, but COARSE first-order property of output confidence** — it knows roughly
+  how hard/uncertain a context is, but has no fine error-localizing module.
+
+### Savant standalone (1209–1211, no metacog lens)
+
+H_1209🟢 Snyder low-level access is the savant POSITIVE: in the logit-lens, the rote
+detail "island" reaches ~87% of its final accuracy already at layer 2 (maturity 0.866)
+vs gestalt MED 0.664 — detail is available earlier/lower in the stack, matching Snyder's
+"privileged access to lower-level information." H_1210 (paradoxical facilitation) and
+the metacog-coupled savant tests (1207/1208) are closed-negative.
 
 ## Unifying interpretation (so far)
 
