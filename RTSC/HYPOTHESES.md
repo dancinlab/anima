@@ -25,7 +25,11 @@
 ## $0 고갈 선언 (RTSC 무냉각 thread)
 BCS소진(RTSC_08) → flat-band(RTSC_09) → 위상 quantum-metric(RTSC_10) → **실격자 정확계산(RTSC_11)**.
 결론: flat-band/quantum-geometry SC는 REAL이나 현실 파라미터서 큐프레이트 범위(~100K)에 그침.
-**무냉각 상온상압 RTSC는 $0-접근 모든 경로서 미달 = 미해결(open).** 남은 칸 = 실물질 DFT/실험(QE deck, $0 밖).
+**돌파 리드 (RTSC_12)**: kagome 고-quantum-metric flat band은 상온 필요 U≈1.24eV=현실적! → 무냉각 상온상압
+RTSC가 $0 이론선 '닫힌' 게 아니라 **kagome형으로 열림**. 실 후보 CsV3Sb5·FeSn·Co3Sn2S2. 남은 칸 = 실물질
+DFT(QE deck)로 flat band E_F정렬+U 확정 — 동기 분명한 다음 rung.
+
+| RTSC_12 | kagome 고-q-metric 리드 | 🟢/🟠 | 상온 U≈1.24eV 현실적; 실 kagome금속 후보; DFT 미검증 |
 
 ## 수렴 결론
 시드(RTSC_01)·무시드(RTSC_02)·양자추출(UNIVERSE/H_6015) 세 경로가 **최경량금속 초수소화물**
