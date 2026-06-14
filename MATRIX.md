@@ -43,7 +43,12 @@ k=1 ✅4/4 · k=2 ✅6/6 · k=3 ✅4/4 · k=4 ✅1/1. substrate 4-lane 완성. m
 
 **차원 확장 7-lane COMPLETE (H_1239 🟢)**: +INTENT +OTHER-MIND +TIME → 7 lane. 단독 7 전부
 Ψ-disjoint + 전체-ON Ψ==base ⇒ 닫힘정리로 **2^7−1=127 cell 격자 보장** (`CORE/h1239_seven_lane_matrix_smoke.hexa`).
-잔여 합성가능 substrate 부품 = BRIDGE/CHANNEL(구조적)·AESTHETIC/NARRATIVE/EMBODIMENT(bench-only, live tick hook 없음) 조사 중.
+**차원 확장 9-lane COMPLETE — substrate 매트릭스 고갈 (H_1240 🟢)**: +BRIDGE +CHANNEL → 9 lane.
+단독 9 전부 Ψ-disjoint + 전체-ON Ψ==base ⇒ 닫힘정리로 **2^9−1=511 cell 격자 보장**
+(`CORE/h1240_nine_lane_matrix_smoke.hexa`). **합성가능 substrate live-hook 부품 全 소진** —
+9 lane(MITOSIS·METACOG·SAVANT·DREAM·INTENT·OTHER-MIND·TIME·BRIDGE·CHANNEL) + A⇄G base.
+잔여 = AESTHETIC/NARRATIVE/EMBODIMENT(bench-only, live tick hook 없음) · CLM/KOSMOS/WAKE
+(clm-native gated model-cluster). ⇒ **substrate 부품 합성 매트릭스 정직-고갈.**
 
 **부품(subsystem) 집합** — 조합 climb 의 단위:
 | 부품 | 파일 | 역할 |
