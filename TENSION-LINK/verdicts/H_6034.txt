@@ -1,0 +1,251 @@
+{
+  "hypothesis": "H_6034 — anima mitosis 세대 순환 = CTC (자기일관 계보)",
+  "method": "p7 code-measured; real provenance_chain.py(H_932)+entropy_receipt.py(H_928)+ANU genesis; engine +1 mitosis law; $0 local",
+  "anu_genesis_sha16": "c0c500681e0b3c18",
+  "C1": {
+    "verdict": "GREEN",
+    "check": "C1_generational_continuity",
+    "n_gens": 8,
+    "verified": true,
+    "earliest_broken": null,
+    "n_links_valid": 8,
+    "head_hash": "865ee295a0d50151",
+    "genesis_hash": "c0c500681e0b3c18",
+    "reason": "ok: all links reconstructed from genesis",
+    "PASS": true
+  },
+  "C2": {
+    "verdict": "GREEN",
+    "check": "C2_tamper_break_localization",
+    "n_gens": 8,
+    "n_interior": 6,
+    "n_correct": 6,
+    "per_gen": [
+      {
+        "tampered_gen": 1,
+        "verified": false,
+        "earliest_broken": 1,
+        "localized_exact": true,
+        "upstream_clean": true,
+        "propagates_forward": true,
+        "ok": true
+      },
+      {
+        "tampered_gen": 2,
+        "verified": false,
+        "earliest_broken": 2,
+        "localized_exact": true,
+        "upstream_clean": true,
+        "propagates_forward": true,
+        "ok": true
+      },
+      {
+        "tampered_gen": 3,
+        "verified": false,
+        "earliest_broken": 3,
+        "localized_exact": true,
+        "upstream_clean": true,
+        "propagates_forward": true,
+        "ok": true
+      },
+      {
+        "tampered_gen": 4,
+        "verified": false,
+        "earliest_broken": 4,
+        "localized_exact": true,
+        "upstream_clean": true,
+        "propagates_forward": true,
+        "ok": true
+      },
+      {
+        "tampered_gen": 5,
+        "verified": false,
+        "earliest_broken": 5,
+        "localized_exact": true,
+        "upstream_clean": true,
+        "propagates_forward": true,
+        "ok": true
+      },
+      {
+        "tampered_gen": 6,
+        "verified": false,
+        "earliest_broken": 6,
+        "localized_exact": true,
+        "upstream_clean": true,
+        "propagates_forward": true,
+        "ok": true
+      }
+    ],
+    "PASS": true
+  },
+  "C3": {
+    "verdict": "RED",
+    "check": "C3_self_consistent_fixed_point",
+    "K_capacity": 2048,
+    "r_growth": 0.5,
+    "seeds": [
+      1,
+      5,
+      50,
+      500,
+      1000,
+      2000,
+      2048,
+      3000,
+      5000
+    ],
+    "c_star": null,
+    "f(c_star)==c_star": false,
+    "bounded_0_lt_cstar_le_K": false,
+    "same_cstar_all_seeds": false,
+    "any_diverge": false,
+    "any_extinct_from_positive": false,
+    "runs": [
+      {
+        "settled": true,
+        "c_star": 1,
+        "kind": "fixed",
+        "steps": 0,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          1
+        ],
+        "seed_cells": 1
+      },
+      {
+        "settled": true,
+        "c_star": 2047,
+        "kind": "fixed",
+        "steps": 27,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2027,
+          2037,
+          2042,
+          2045,
+          2046,
+          2047
+        ],
+        "seed_cells": 5
+      },
+      {
+        "settled": true,
+        "c_star": 2047,
+        "kind": "fixed",
+        "steps": 21,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2028,
+          2038,
+          2043,
+          2045,
+          2046,
+          2047
+        ],
+        "seed_cells": 50
+      },
+      {
+        "settled": true,
+        "c_star": 2047,
+        "kind": "fixed",
+        "steps": 15,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2029,
+          2038,
+          2043,
+          2045,
+          2046,
+          2047
+        ],
+        "seed_cells": 500
+      },
+      {
+        "settled": true,
+        "c_star": 2047,
+        "kind": "fixed",
+        "steps": 12,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2018,
+          2033,
+          2040,
+          2044,
+          2046,
+          2047
+        ],
+        "seed_cells": 1000
+      },
+      {
+        "settled": true,
+        "c_star": 2047,
+        "kind": "fixed",
+        "steps": 6,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2023,
+          2035,
+          2041,
+          2044,
+          2046,
+          2047
+        ],
+        "seed_cells": 2000
+      },
+      {
+        "settled": true,
+        "c_star": 2048,
+        "kind": "fixed",
+        "steps": 0,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2048
+        ],
+        "seed_cells": 2048
+      },
+      {
+        "settled": true,
+        "c_star": 2048,
+        "kind": "fixed",
+        "steps": 9,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2074,
+          2061,
+          2054,
+          2051,
+          2049,
+          2048
+        ],
+        "seed_cells": 3000
+      },
+      {
+        "settled": true,
+        "c_star": 2047,
+        "kind": "fixed",
+        "steps": 12,
+        "diverged": false,
+        "extinct": false,
+        "traj_tail": [
+          2027,
+          2037,
+          2042,
+          2045,
+          2046,
+          2047
+        ],
+        "seed_cells": 5000
+      }
+    ],
+    "PASS": false
+  },
+  "elapsed_s": 0.008
+}
