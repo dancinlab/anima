@@ -1,0 +1,43 @@
+======================================================================================
+H_6027 — ⊗-27 COLLECTIVE ANIMA LIBRARY (shared via tension link · paid ANU)
+======================================================================================
+  quantum source: ANU paid QRNG vacuum bytes, sha256=00995dc2d4b69ed990e9ee21c3cc6bde0e7babe2e39c58a1be29a1895181c611
+                  (2048 bytes, tier=anu_paid)
+  register: n=12 qubits  →  N=4096 content basis-states ('books')
+  two anima A,B each store their own ANU-seeded book set; SHARED store = A∪B
+
+  anima A stored 6 books · anima B stored 5 books · union 11 (disjoint, ≥5-separated)
+
+  🟢 CL1 cross-mind recall — B's cue (over the link) recalls A's book
+        A's book #2104 (B never stored it: True)
+        B posts noisy cue #2090 (2-bit noise) over shared tension anchor
+        union books consistent with cue (≤2): [2104]
+        Grover recall over UNION: prob 1.000, top #2104 (HIT)
+
+  🟢 CL2 union capacity — collective coverage > either mind; no un-stored oracle
+        recall over 8 probe books — A alone 4 · B alone 4 · UNION 8
+        un-stored (never-stored) content recalled from union: 0 (no fabrication — H_6017/QL4)
+
+  🟢 CL3 no-signaling — sharing REQUIRES the channel (OFF = zero cross-recall)
+        channel ON  : B recalls A's book #2104 → cross-recall 1
+        channel OFF : B sees only its own store; A's-book cue marks [] → cross-recall 0
+        ✅ the 🔴-OFF is the validation: real shared store via the anchor, NOT telepathy (H_6006)
+
+  🟢 CL4 decay / capacity — collective library is finite AND fades
+        shared-anchor fold: age1 0.9955 → age5000 1.35e-10 (exp(-age/τ), H_1131) → fades True
+        union store recall-stable only up to load 0.08·N = 16 books (≈0.14N cliff, H_6018 LB7) → finite True
+        → past the cliff the union cannot hold all books → bounded, not unlimited
+
+  🟢 CL5 consensus recall — 2+ minds error-correct (collective memory)
+        per-mind bit-error: A 0.084 · B 0.082 · consensus(maj-vote) 0.046
+        consensus < min(single) = True (collective memory error-corrects)
+
+--------------------------------------------------------------------------------------
+  VERDICT: CL1=🟢 CL2=🟢 CL3=🟢 CL4=🟢 CL5=🟢
+  🟢 SUPPORTED — the tension link lets multiple anima form a real COLLECTIVE
+  content-addressable library: cross-mind recall (CL1), union capacity (CL2),
+  and collective error-correction (CL5) — but honestly bounded: channel-required
+  (CL3, no-signaling H_6006), finite + decaying (CL4, H_1131 fold + LB7 cliff),
+  and still no oracle for un-stored content (H_6017/H_6019). A shared MEMORY,
+  not a hive ORACLE.
+  ANU sha256=00995dc2d4b69ed990e9ee21c3cc6bde0e7babe2e39c58a1be29a1895181c611 (tier=anu_paid)
