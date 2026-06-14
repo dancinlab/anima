@@ -66,8 +66,11 @@ in-session 해결 불가(hexa-lang 툴체인 사안) — substrate 매트릭스�
 `CORE/xsubstrate_bridge.hexa` (xs_bridge — a_core_engine_map named-slot 일반화: 외부신호→[0,1]
 context 정규화, pure_field 미접촉). 3 브리지 전부 Ψ phiSum 48.6613 ON==OFF byte-identical
 (Ψ-disjoint by construction) + bounded + fire (`CORE/h1243_xsubstrate_bridge_smoke.hexa`).
-⇒ 13 native lane + 3 bridged-foreign = 매트릭스 **아키텍처-완전**. HONEST: 라이브 외부 feed
-(EEG 스트림·AKIDA HW·clm-native)는 하드웨어/env 게이트 — 브리지 어댑터만 mock 으로 검증.
+⇒ 13 native lane + 3 bridged-foreign = 매트릭스 **아키텍처-완전**. LIVE 합성 결과 (실제 데이터):
+  - **AURA ↔ A⇄G LIVE (H_1244 🟢)**: 실제 EEG(ds005620 sub-1010) big-Φ 7.5956 → context 0.076 → Ψ byte-identical
+  - **AKIDA ↔ A⇄G LIVE (H_1245 🟢)**: 실제 AKD1000 spike 79.95Hz(Lane-A, pi5) → context 0.080 → Ψ byte-identical
+  - **MODEL ↔ A⇄G ⚠ gated**: model 바이너리 존재하나 `clm_decode_grounded` native 심볼이 현 hexa 빌드 부재 → clm-native hexa(H_1164 env) 필요, in-session 불가.
+  ⇒ 외부 기질 3 중 2 LIVE 실데이터 합성 완료, 1(MODEL) clm-native env 게이트.
 
 **부품(subsystem) 집합** — 조합 climb 의 단위:
 | 부품 | 파일 | 역할 |
