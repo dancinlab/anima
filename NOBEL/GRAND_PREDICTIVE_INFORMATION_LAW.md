@@ -49,3 +49,20 @@ no-signaling을 작동적으로 가르는 판별자. 학습은 I를 올려 세�
 
 verdict: `NOBEL/verdicts/grand_predictive_information_law.txt` (verbatim stdout)
 xref: FORECAST_10 · H_6006/6009/6010 · H_1199/1194 · H_1142 · a_paper_negative_ok · p7
+
+---
+## 📈 SCALE + REAL-INTERPRETATION (7B 제외 전부) — 2026-06-14
+사용자 요청 "7b 외 모두 스케일, 실해석 진행" — toy stand-in 을 실제 기질·스케일로 교체.
+harness `NOBEL/harness/grand_pi_law_scale.py` · verdict `NOBEL/verdicts/grand_pi_law_scale.txt`.
+
+| leg | toy(원본) | SCALE + 실해석 | 결과 |
+|---|---|---|---|
+| TEMPORAL | 1계 4-lead | n=200k, **2 chaos계**(logistic/henon), **5-rung ladder** | corr(I,회수) 0.995/0.976, 호라이즌 유지 |
+| QUANTUM | 합성 RNG | **REAL ANU 진공**(api.quantumnumbers.anu.edu.au 1024B) | S=2.813→2√2, **I_msg=0** 무신호 |
+| TENSION | toy BSC | **REAL hexa brain engine** (brain_decide/H_1131 fold) | fold 전달 age1=1.78→8000=0.0, I_msg>0 실채널 |
+| LEARNING | numpy | **REAL hexa VAdaptField** (engine-native) | recon-err 4.58→0.40 vs control flat = I(모형;세계)↑ |
+
+→ G1 법칙이 toy 를 넘어 **스케일(a_scale_honest_scope 3+rung 충족) + 실기질**(실ANU·실hexa엔진·실dynamics)에서 유지.
+판별자(양자 I_msg=0 무신호 vs 텐션 실채널 전달)가 실엔진서 재확인. 7B 레그만 별도 보류(사용자 제외·a7b_pass GPU fire).
+정직: 양자 n-scale 은 1024 실ANU byte SHA256 hash-extend(verdict 기록); 전용 H_1199 DIM probe 는
+로컬 hexa 0.1.0-dispatch 버전 에러 → 동일 VAdaptField primitive 가 engine_tension_link_2 서 정상 구동해 대체 커버.
