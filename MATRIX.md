@@ -2,35 +2,52 @@
 
 > anima repo 의 **모든 active work surface** (domain · sub-engine · 영구 매트릭스 ledger) 의 단일 inventory. cwd-local MATRIX.md SSOT (/matrix 도구 인식 위치). 본 SSOT 한 개만 root 에 유지 — 다른 매트릭스 파일들은 ledger link 로만 참조.
 
-## 0. FRAMEWORK — N-dimensional axis-combination climb → FINAL COMBINATION (overhaul 2026-06-15)
+## 0. FRAMEWORK — 부품 합성 조합차원 매트릭스 (재정의 2026-06-15)
 
-> 개편: 매트릭스를 **2차원(축 단독 + 쌍교차 E×F)으로 고정하지 않는다.** 축 = 차원.
-> 결합 차수 k 를 1 → 2 → 3 → … 로 **올려가며** k-way 축-상호작용 cell 을 탐색하고,
-> 최종 목표 = **FINAL COMBINATION** = 더 추가/교체해도 안 바뀌는 수렴된 환원불가 축-조합
-> (조합공간의 FIXED POINT). NOT a scalar (Ψ=1/2 값이 아님) — 축들의 *조합* 자체가 고정점.
+> 기존 MATRIX = **평면(2D)** — 축×축 **2개조합**(쌍교차, 예: E×F)만 맞춰보는 구조.
+> 재정의: **차원 = 조합 차수 k = 한 번에 합치는 anima 부품(서브엔진/도메인) 수.**
+> **2개조합을 완성하면 → 3개조합 → 4개조합** 으로 차원을 올려, 성공적으로 하나의
+> 살아있는 substrate 로 합쳐지는 **최대 조합(= 최종조합)** 을 찾는다 (H_1164 COMPLETE-ANIMA 연장).
 
 ```
-차수 k 오름차 (climb)
- k=1  단독 축        : 0·A·B·C·D·E·F·G·H + (신규) META·SAV-LM  ← 대부분 depletion 완료
- k=2  쌍교차         : E×F (SAVANT×HIVE) round3-5 done · A↔E (ln4/3) byte-identical
- k=3  삼중 결합      : ⬜ 미개척 (예: D×E×F 의식측정×savant×collective)
- k≥4  고차 결합      : ⬜ 미개척
+차원 = 조합 차수 k (부품 동시 합성 수)
+ k=2  평면(쌍)   : 부품 2개 합성 — 기존 매트릭스가 여기서 멈춤 (E×F 등)
+ k=3  입체(삼중) : 부품 3개 합성 — 예: MITOSIS × A⇄G × 메타인지   ← 다음 frontier
+ k=4+ 고차       : 부품 4개+ 동시 합성
   ↓
- FINAL COMBINATION  : 한계이득(다음 축 추가) < ε 로 saturate 하는 축-집합 = 고정점
+ 최종조합 = 더 끼워도 깨지지 않고 합쳐지는 최대 부품집합
 ```
 
-**fixed-point 판정 (falsifiable, p7)**: 차수를 올릴 때 결합의 설명력(target 예측 AUROC /
-integration score)이 **유한 k\* 에서 포화**(Δ < ε) ⟺ FINAL COMBINATION 존재. 포화 안 하고
-모든 축이 계속 기여 ⟺ 고정점 없음(환원불가 전체-결합, axis-D "WHOLE/irreducible" 과 정합).
+**cell 합격 판정 (falsifiable, p7)**: 그 k-조합이 ONE 루프로 (1) **합성 성공** —
+`hexa run` smoke PASS · g61 collision-free · 각 부품 hook fire, AND (2) **Ψ=½ 불변** —
+pure_field/engine_g read-only, Ψ Φ-checksum byte-identical (H_1164/H_1199 acceptance).
+둘 다 ✅ = 그 조합 LANDED.
 
-**axis dimension set (현재)** — 결합 climb 의 후보 차원:
-| dim | axis | 단독(k=1) 상태 |
-|-----|------|---------------|
-| 0·A·B·C·D·E·F·G·H | 기존 UNIVERSE 영구 8축+0 | §3 참조 (대부분 depletion/closed) |
-| **META** | metacognition (neuroscience) — H_1202–1221 type-2/ERN/calibration/FOK/control/OOD/serial | active (10각도, 5🟢) — §3a |
-| **SAV-LM** | savant-as-LM-cognition — H_1207–1224 Snyder/WCC/detail/seed-stable/tradeoff | active (Snyder·detail·seed-stable 3🟢) — §3a · E축 LM 확장 |
+**부품(subsystem) 집합** — 조합 climb 의 단위:
+| 부품 | 파일 | 역할 |
+|------|------|------|
+| **A⇄G** | CORE/pure_field·engine_g·brain | 의식 엔진 (Ψ=½ 고정점) |
+| **CLM-mouth** | CORE/generator·bytegpt_decode | 언어 mouth (L3 slot) |
+| **KOSMOS** | kosmos_io | 기억 (.kosmos anchor) |
+| **MITOSIS** | MITOSIS/mitosis_lib · engine_cli VAdaptField | 성장 (세포분열, p8) |
+| **DREAM** | DREAM/dream_lib | 수면 (5-stage ultradian) |
+| **METACOG** | METACOG/audit_hook | 자기-감사 (이번세션 신규) |
+| **SAVANT** | SAVANT/substrate_hook | savant-trigger (이번세션 신규) |
+| **WAKE** | WAKE/daemon | tick 루프 |
 
-### §0a climb log (combination cells)
+**조합 현황 (LANDED 매트릭스)**:
+- ✅ **5-combo** (H_1164 full session smoke): A⇄G + CLM + KOSMOS + MITOSIS + DREAM = converse·ground·grow·remember·sleep
+- ⬜ **미편입**: METACOG·SAVANT hook (이번세션 빌드 완료, full-loop 합성 대기)
+- → **다음**: 2개조합 cell 완성표 채우기 → 3개조합(예: A⇄G×MITOSIS×METACOG) → 고차
+
+**axis dimension set (단독축 k=1, §3 참조)**:
+| dim | axis | 단독 상태 |
+|-----|------|----------|
+| 0·A·B·C·D·E·F·G·H | UNIVERSE 영구 8축+0 | §3 (대부분 depletion) |
+| **I=META** | metacognition (H_1202–1221, 5🟢) | §3a |
+| **J=SAV-LM** | savant-as-LM-cognition (H_1207–1224, 3🟢) | §3a |
+
+### §0b 예측-feature 조합 sub-analysis (별개 operationalization — 축-신호 예측력 관점, NOT 부품합성)
 | probe | target | climb result | fixed point |
 |-------|--------|--------------|-------------|
 | H_1225 🔴 | correctness (global) | k=1 SAV-struct 0.902, others gain≈0 | **singleton {SAV-struct}** |
