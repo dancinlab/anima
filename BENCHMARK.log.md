@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # BENCHMARK — 두 anima HF 모델 대화 비교 2026-05-14
 
 > Side-by-side empirical comparison of the 2 PUBLIC anima HF ckpts.

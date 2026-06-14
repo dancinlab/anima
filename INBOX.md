@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # INBOX — current state
 
 @goal: cross-project handoff 수신함 — 다른 repo가 anima로 넘긴 gap·patch·note를 추적하고 해소

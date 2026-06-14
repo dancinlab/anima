@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # HANDOFF — CLM CAUSAL-POWER production + HW transfer (F-CLM-CAUSAL-XFER · H_856)
 
 > 2026-05-30 · CLM 측도 transfer fire 완료. toy 🟢 CAUSAL-POWER(H_855)의 production

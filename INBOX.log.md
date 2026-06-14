@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # INBOX — log
 
 ## 2026-05-30 — UNIVERSE 핸드오프: H_858 edge-of-chaos Φ-peak LIVE AKD1000 재검 🟢 GREEN_NUMERICAL_CONFIRM (M2 🟢 promote)

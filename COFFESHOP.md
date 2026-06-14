@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # COFFESHOP — substrate-native group-chat 90-min 시나리오
 
 PURE Phase D B3 closure 단일 시나리오. 한 채팅방 (Anima 1 명 + Human 3+ 명, `text_cli`

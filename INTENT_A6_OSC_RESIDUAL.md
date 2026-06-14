@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # INTENT_A6 — `intent-osc-residual` (ANIMA INTENT 축, bench D OSC 잔류 진단·해소)
 
 > A6 단독. ANIMA INTENT 축. bench D axisbench (#1143) 4/5 🟠 PARTIAL · OSC residual carry 의 진단 + 해소.

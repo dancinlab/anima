@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # TIME_E3 — BENCH RECHECK · 메타 역적용 (PASS-as-artifact probe)
 
 @title: ⏳ TIME E3 — bench axis_time 9/0 PASS 재검 · 4 artifact 패턴 역적용

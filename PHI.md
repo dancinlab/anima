@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # PHI — current state
 
 @goal: phi_rs algorithm 의 **hexa-native port** (pure-hexa source) — Rust crate 의존 제거 · `UNIVERSE/lib/phi_native.hexa` · byte-equal vs RFC 036 C replica → 22+ UNIVERSE H 의 🟢 NUMERICAL → 🔵 SUPPORTED-FORMAL promote path

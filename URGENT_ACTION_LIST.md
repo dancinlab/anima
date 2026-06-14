@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # [URGENT] Prioritized Action List — 2026-04-16
 
 Flagged items from codebase scan, ranked by severity.

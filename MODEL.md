@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # MODEL — the final decision on anima's real conversational model
 
 > ONE decision: the single model anima builds to be a REAL, usable, conversational

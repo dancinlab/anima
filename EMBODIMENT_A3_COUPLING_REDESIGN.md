@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # EMBODIMENT A3 — coupling transfer-fn redesign (BROKEN 0.45 → 0.027)
 
 `🟢 SUPPORTED-NUMERICAL` · bench F EMBODIMENT redesign · $0 mac-local · 2026-05-28

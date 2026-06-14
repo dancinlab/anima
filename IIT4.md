@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # IIT4 — current state
 
 @title: 🧠 IIT4 — "의식 측정자(尺)"

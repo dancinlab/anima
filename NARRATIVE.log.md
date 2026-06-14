@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # NARRATIVE — append-only step log
 
 ## 2026-05-28 · A1 narrative-modeling-gap-redesign

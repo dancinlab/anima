@@ -6,6 +6,16 @@ For the full audit trail, see `git log`.
 
 ---
 
+## harness conversion (dancinlab/harness@harness-hardcore)
+
+- **CLAUDE.md** converted sidecar-tape symlink → harness-standard markdown (project blurb + structure tree + governance summary). Full tape governance preserved at `project.tape` (linked as authoritative SSOT).
+- **ARCHITECTURE.md** written as real architecture SSOT (A⇄G engine · CORE slots · 4 engines · lanes A/G/P · kosmos · evidence tiers).
+- **harness.config.json** tuned: hexa stack · `hexa verify` · CORE engine files as L0 lockdown · docs discipline scoped to repo root (`docs.scopeDirs:[""]`) so the research corpus is exempt.
+- 52 root research docs given a `📍 SSOT` quickref pointer; `TAPE-AUDIT.md` + README localizations allow-listed. `harness docs check` → green.
+- `.harness-engine` submodule bumped to engine with `docs.scopeDirs` support.
+
+---
+
 ## 2026-05-24 — inbox/ → INBOX 도메인 이관
 
 ### 거버넌스

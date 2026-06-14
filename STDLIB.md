@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # STDLIB — current state
 
 @goal: anima 전반의 general primitive (entropy · mutual info · binning · log · bitops · math · signal processing 등) 를 **hexa-lang stdlib 으로 promote · anima 는 import-only path 로 정리** — phi_native (PHI domain LAND) 가 first 사례, 후속 EEG/clustering/FFT 등 단계 이주

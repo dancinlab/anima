@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # NARRATIVE A1 — modeling-gap 진단 + falsifier 재설계
 
 @axis: 📖 NARRATIVE (AxisBench C, #1144) · @hypothesis: A1 narrative-modeling-gap-redesign

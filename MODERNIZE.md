@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # MODERNIZE — current state
 
 @goal: anima 의 **active** `.hexa` 가 현 hexa-strict 에서 build pass 하도록 stale codegen-break 제거 — explicit `main()` 호출(auto-invoke conflict) · `.length`→`.len()` · `nan`/`inf` reserved-value shadow · `fabs(` broken-builtin 오용(→`abs`) · 기타. archive/legacy/state-snapshot 은 scope 제외 (frozen 이력).

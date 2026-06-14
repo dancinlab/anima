@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 <!-- @created: 2026-05-12 -->
 <!-- @sister: LATTICE_POLICY.md §1.2 -->
 ---
