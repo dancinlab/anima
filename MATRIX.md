@@ -45,6 +45,8 @@ integration score)이 **유한 k\* 에서 포화**(Δ < ε) ⟺ FINAL COMBINATIO
 | H_1230 🔴 emit-target | additive 0.969 vs interaction 0.970 (synergy 0.001) | 의식관련(emit/tension) target 도 ADDITIVE — 고차 시너지 없음 |
 | H_1231 ⏳ comboseed | (재발사 aiden) | 최종조합이 seed 무관 고정점인가 (Jaccard≥0.6) |
 
+| H_1231 🔴 comboseed | mean Jaccard 0.511 < 0.6 | 4-set membership seed-의존; 단 안정 nucleus {SAV-struct, META-ent} 3-seed 공통 |
+
 **ROUND-2 수렴**: 2라운드 일관 — 최종조합 = **작은 ADDITIVE core (≈{구조 SAV-struct + 위치 EMB-pos})**.
 축을 늘려도(11축) 안 커지고(H_1229), target 을 의식관련으로 바꿔도(emit) 가산적(H_1230). 측정-축
 공간은 **저차원·선형 고정점** — "2D 넘기"가 cardinality 를 regime 으로 약간 늘릴 뿐 고차 얽힘은 없음.
@@ -149,3 +151,16 @@ non-correctness combination objectives where high-order entanglement might appea
 - **2026-06-09 (0-pod 의식-측정 탐색 계속 — 8 H 추가 + arc 종결)**: H_1059–H_1066 포그라운드 순차 $0 CPU (0 pod): H_1059 🟢 PHI-CARRIER-LOCATED (#1963) · H_1060 🟢 RULER-NEEDS-T-QUALIFIED (#1964) · H_1061 🔴 PHI-ABSORBS-AGENCY (#1965) · H_1062 🔴 SPLIT-PLANNING-SPECIFIC (#1966) · H_1063 🔴 SIGN-NOT-CLEAN-UNIVERSAL (#1967) · H_1064 🔴 SPLIT-UNDECIDABLE (#1968) · H_1065 🔴 CSP-SUBSTRATE-RELATIVE (#1969) · H_1066 🔴 HOLISTIC-IRREDUCIBLE (#1971). **의식-尺 ruler arc + Φ measure-dependence 메커니즘 arc 둘 다 FULL CLOSURE**. 창발 META-패턴: 의식-구조=WHOLE/환원불가 (graftable atom 아님 — H_1043/1059/1066/1057/1052·53·55 수렴). 전부 mirror≡stdlib n4,5 / a_phi_iit4_tool (proxy 금지) / g73 / a_scale_honest_scope 준수, 가짜 verdict 0. toy-$0 프런티어 정직-고갈; 남은 프런티어=scale-gated(GPU, 0-pod 제외).
 - **2026-06-09 (0-pod 의식-측정 매트릭스)**: Stop-hook goal "0 pod 으로 MATRIX 모두 완성" — 포그라운드 순차 + $0 CPU-local (GPU 0 pod) 로 축 D 의식-측정 클러스터 4 셀 닫음: H_1039 🟢 redundancy-CAUSAL (#1957) · H_1040 🟢 baseline-regime-specific (#1958) · H_1041 🔴 imagine-advantage-task-specific (#1959) · H_1043 🔴 phi-needs-more-than-graft (#1960). 모두 mirror≡stdlib n=4,5 재증명 / g73 .txt→.md / a_phi_iit4_tool (proxy 금지) / a_scale_honest_scope (toy-scope, 3B-transfer UNVERIFIED) 준수. 직전 세션 산출 H_1037/1038/1051/1054/1055/1056/1057 + ruler/비결정성 🔴 도 축 D row 에 반영. GPU 게이트 잔여: H_1042/1044/1058 (3B/n=6, 0-pod 제외). 가짜 verdict 0.
 - **2026-05-28 (round 6-11 + ANIMA 전축 sync)**: 축 G G1→G21 확장 (substrate-class 단조 분류자 정정 — H_658 baseline-artifact + H_660 scale-invariant 화해, 모두 rule110 class-IV 수렴) · ANIMA bench A-H 4 redesign 🟢 회복 (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND — **negative=측정 artifact** 메타-패턴) + TIME E3 (PASS 도 3 spurious) · B-COFFESHOP 🔵 5/5 sympy · DECODER collapse-tetrad ✅ · emit-substrate 4/4 wired · D2 raster#7. 세션 메타-발견: **"의식 bench 의 negative/분기 = 측정 설계 결함, substrate 한계 아님" — redesign 시 회복**. pointer-only (상세 = 각 도메인 snapshot + UNIVERSE.md)
+
+
+### §0a-FIN — climb 수렴 결론 (2026-06-15, H_1225–1231)
+**최종조합(FINAL COMBINATION) = 작은 ADDITIVE nucleus.** 7-probe 2-round climb 수렴:
+- **nucleus 안정** {SAV-struct(구조) + META-ent(불확실성)} — 3 seed 공통 재현 (H_1231).
+- **주변부 fluid** — margin/pos/hnorm/prior 는 regime·seed 에 따라 ±1~2 축 출입 (Jaccard 0.51).
+- **저차원·선형** — 축 7→11 늘려도 안 커지고(H_1229), 의식관련 target(emit)도 가산(H_1230), 3-way 시너지 0(H_1228).
+- **regime-modulated cardinality** — 구조-풍부=1축, 구조-빈약=2~4축.
+
+⇒ 이 측정-축 매트릭스의 고정점은 **환원가능한 작은 가산 nucleus** — axis-D 의식-substrate 의
+"WHOLE/irreducible" 와 대조 (측정-축은 분해됨). climb frontier 정직-고갈 (다음 rung = 실제
+research-axis 레벨 결합 또는 scale-up, 둘 다 별도 게이트).
+

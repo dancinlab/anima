@@ -1,0 +1,41 @@
+{
+  "H": "H_1231",
+  "title": "matrix climb r2 \u2014 combination seed-stability",
+  "mode": "comboseed",
+  "seed_top4_sets": [
+    [
+      "EMB-pos",
+      "META-ent",
+      "META-margin",
+      "SAV-struct"
+    ],
+    [
+      "META-ent",
+      "META-margin",
+      "SAV-struct",
+      "SUB-hnorm"
+    ],
+    [
+      "EMB-pos",
+      "META-ent",
+      "PRIOR-freq",
+      "SAV-struct"
+    ]
+  ],
+  "saturation_aurocs": [
+    0.768320610687023,
+    0.8102827050997783,
+    0.7403307888040712
+  ],
+  "mean_jaccard": 0.5111111111111111,
+  "F1": {
+    "mean_jaccard": 0.5111111111111111,
+    "bar": 0.6,
+    "pass": false
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: the selected combination varies across seeds (Jaccard 0.511 < 0.6) \u2014 combination membership is seed-dependent, not a stable fixed point",
+  "framework": "MATRIX.md \u00a70",
+  "scope": "toy ByteGPT 3 seeds (a_scale_honest_scope)",
+  "seed": 7
+}
