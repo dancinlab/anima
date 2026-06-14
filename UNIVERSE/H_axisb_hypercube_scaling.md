@@ -52,4 +52,4 @@ HYPERCUBE_k4_n16=17.0107
 ## 양방향 sibling
 
 - sibling: [H_axisb_ring_scaling](H_axisb_ring_scaling.md) (degree-고정 near-linear 대조) · [H_axisb_greedy_upper_bound](H_axisb_greedy_upper_bound.md) · [H_axisb_corr_ctrl_separation](H_axisb_corr_ctrl_separation.md)
-- SSOT: MATRIX.tape axis B row.
+- SSOT: MATRIX.md axis B row.

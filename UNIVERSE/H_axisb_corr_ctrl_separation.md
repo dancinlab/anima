@@ -57,4 +57,4 @@ CTRL_n16=1.58696e-08
 ## 양방향 sibling
 
 - sibling: [H_axisb_ring_scaling](H_axisb_ring_scaling.md) · [H_axisb_hypercube_scaling](H_axisb_hypercube_scaling.md) · [H_axisb_greedy_upper_bound](H_axisb_greedy_upper_bound.md)
-- SSOT: MATRIX.tape axis B row.
+- SSOT: MATRIX.md axis B row.

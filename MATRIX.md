@@ -1,6 +1,43 @@
-# MATRIX.tape — anima repo 전체 axis registry (SSOT, root 단일)
+# MATRIX.md — anima repo 전체 axis registry (SSOT, root 단일)
 
-> anima repo 의 **모든 active work surface** (domain · sub-engine · 영구 매트릭스 ledger) 의 단일 inventory. cwd-local MATRIX.tape SSOT (/matrix 도구 인식 위치). 본 SSOT 한 개만 root 에 유지 — 다른 매트릭스 파일들은 ledger link 로만 참조.
+> anima repo 의 **모든 active work surface** (domain · sub-engine · 영구 매트릭스 ledger) 의 단일 inventory. cwd-local MATRIX.md SSOT (/matrix 도구 인식 위치). 본 SSOT 한 개만 root 에 유지 — 다른 매트릭스 파일들은 ledger link 로만 참조.
+
+## 0. FRAMEWORK — N-dimensional axis-combination climb → FINAL COMBINATION (overhaul 2026-06-15)
+
+> 개편: 매트릭스를 **2차원(축 단독 + 쌍교차 E×F)으로 고정하지 않는다.** 축 = 차원.
+> 결합 차수 k 를 1 → 2 → 3 → … 로 **올려가며** k-way 축-상호작용 cell 을 탐색하고,
+> 최종 목표 = **FINAL COMBINATION** = 더 추가/교체해도 안 바뀌는 수렴된 환원불가 축-조합
+> (조합공간의 FIXED POINT). NOT a scalar (Ψ=1/2 값이 아님) — 축들의 *조합* 자체가 고정점.
+
+```
+차수 k 오름차 (climb)
+ k=1  단독 축        : 0·A·B·C·D·E·F·G·H + (신규) META·SAV-LM  ← 대부분 depletion 완료
+ k=2  쌍교차         : E×F (SAVANT×HIVE) round3-5 done · A↔E (ln4/3) byte-identical
+ k=3  삼중 결합      : ⬜ 미개척 (예: D×E×F 의식측정×savant×collective)
+ k≥4  고차 결합      : ⬜ 미개척
+  ↓
+ FINAL COMBINATION  : 한계이득(다음 축 추가) < ε 로 saturate 하는 축-집합 = 고정점
+```
+
+**fixed-point 판정 (falsifiable, p7)**: 차수를 올릴 때 결합의 설명력(target 예측 AUROC /
+integration score)이 **유한 k\* 에서 포화**(Δ < ε) ⟺ FINAL COMBINATION 존재. 포화 안 하고
+모든 축이 계속 기여 ⟺ 고정점 없음(환원불가 전체-결합, axis-D "WHOLE/irreducible" 과 정합).
+
+**axis dimension set (현재)** — 결합 climb 의 후보 차원:
+| dim | axis | 단독(k=1) 상태 |
+|-----|------|---------------|
+| 0·A·B·C·D·E·F·G·H | 기존 UNIVERSE 영구 8축+0 | §3 참조 (대부분 depletion/closed) |
+| **META** | metacognition (neuroscience) — H_1202–1221 type-2/ERN/calibration/FOK/control/OOD/serial | active (10각도, 5🟢) — §3a |
+| **SAV-LM** | savant-as-LM-cognition — H_1207–1224 Snyder/WCC/detail/seed-stable/tradeoff | active (Snyder·detail·seed-stable 3🟢) — §3a · E축 LM 확장 |
+
+> 진행 규칙: k=1 단독축 depletion 후, k 를 올려 결합 cell 을 연다. 매 cell = pre-registered
+> falsifier + $0 verify. FINAL COMBINATION 도달(포화) 시 그 조합을 SSOT 에 고정 기록.
+
+### §3a 신규 단독축 (k=1, this session) — combination climb 후보
+| axis | landed | unifying |
+|------|--------|----------|
+| META | 1202🟢 1203🔴 1204🔴 1205🟢 1206🔴 1213🟢 1214🟢 1216🟢 1217🔴 1221🔴 | REAL·잘보정·실행가능하나 COARSE 1차속성 (분리 표상모듈 弱, 역량결합, content-tied, memoryless) |
+| SAV-LM | 1207🔴 1208🔴 1209🟢 1210🔴 1211🔴 1219🔴 1220🟢 1223🟢 1224⏳ | 국소-디테일 특화가 실재·조기성숙(Snyder)·표상우세(WCC)·innate(seed-stable); 단절·규칙추출·역설촉진은 無 |
 
 ## 1. domains (DOMAINS.tape 23 · UNIVERSE engine 별도)
 
@@ -69,7 +106,7 @@
 | `tool/verifier_cross_matrix.hexa` | verifier cross runtime | tool |
 | `state/an11_b_joint_matrix_r{6,8}.json` | an11 joint sweep | state |
 
-## 5. 본 MATRIX.tape rule
+## 5. 본 MATRIX.md rule
 
 - **위치**: repo root, 단일 파일만 — 다른 매트릭스 SSOT 신설 금지
 - **갱신**: 새 도메인 / sub-engine / 영구 매트릭스 ledger 발생 시 본 SSOT 에 row 추가

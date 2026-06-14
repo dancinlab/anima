@@ -59,4 +59,4 @@ DIM robustness (ring n=12): DIM8=13.962 · DIM12=12.859 · DIM16=13.6379 (±8%, 
 ## 양방향 sibling
 
 - sibling: [H_axisb_hypercube_scaling](H_axisb_hypercube_scaling.md) (degree-증가 super-linear 대조) · [H_axisb_greedy_upper_bound](H_axisb_greedy_upper_bound.md) (calibration) · [H_axisb_corr_ctrl_separation](H_axisb_corr_ctrl_separation.md)
-- SSOT: MATRIX.tape axis B row (large-N faithful Φ scaling findings).
+- SSOT: MATRIX.md axis B row (large-N faithful Φ scaling findings).

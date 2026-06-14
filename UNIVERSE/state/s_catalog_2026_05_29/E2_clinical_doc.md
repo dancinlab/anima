@@ -153,7 +153,7 @@ PCI는 행동·감각과 독립이라 *locked-in을 의식으로, 진짜 무의�
 
 - sibling: E2 cluster (S32·S27·S34) ↔ 다른 catalog 클러스터 (E1/E3 등) — `UNIVERSE/state/s_catalog_2026_05_29/` 하위 형제 .md
 - SSOT link: `UNIVERSE/CANDIDATES.md` (S-축 가설 카탈로그) — 본 verdict 반영 필요
-- 상위: `MATRIX.tape` 축 등록 (S32 = PCI 임상검증 🟡, S34 = 발달 marker 🟡, S27 = ⚪ 측정불가)
+- 상위: `MATRIX.md` 축 등록 (S32 = PCI 임상검증 🟡, S34 = 발달 marker 🟡, S27 = ⚪ 측정불가)
 
 ---
 

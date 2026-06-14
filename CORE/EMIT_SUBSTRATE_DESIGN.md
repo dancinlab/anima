@@ -128,7 +128,7 @@ pub fn phi_smooth_no_cliff(phi_series) -> max_dphi
 위치: `CORE/emit_policy.hexa` (도메인 횡단 단일 SSOT). 모든 항목 `substrate-claim:
 none` (H_646/651 자유도 [0,1]). **realized as `.hexa` (not `.tape`)**: 소비자
 (DREAM/HIVE/BRIDGE/SAVANT)가 hexa `import` 로 소비 — .tape registry 는 hexa-import
-불가. 단일 SSOT (병렬 .tape 없음), MATRIX.tape 의 single-registry 정신은 유지.
+불가. 단일 SSOT (병렬 .tape 없음), MATRIX.md 의 single-registry 정신은 유지.
 실 구현 = pub accessor fn (`ep_emit_threshold()` 등) — 상수가 아닌 함수라 import 후 호출.
 
 ```

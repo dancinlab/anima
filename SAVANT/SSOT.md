@@ -29,7 +29,7 @@ inject 가 다음 단계.
 | H_613 | savant_index_phi_diversity_orthogonal_metric | 🟢 SUPPORTED-NUMERICAL | ΦD_cov = std/mean (no max-share) |
 | H_614 | gz_inverse_u_multi_rule_substrate_invariance | 🔴 FALSIFIED (2/4) | multi-rule {30,54,110,184} cross-substrate FAIL |
 | H_615 | perfect_number_ladder_n28            | 🟢 SUPPORTED-NUMERICAL | ladder ln(τ/(τ-1)) for n=6/28/496, 3/3 PASS |
-| H_616 | (carry — MATRIX.tape 축 E row, gz_inverse_u multi-rule sister) | active NEW | carry-only |
+| H_616 | (carry — MATRIX.md 축 E row, gz_inverse_u multi-rule sister) | active NEW | carry-only |
 
 - 시점: 2026-05-28 M1 lib promotion
 - 본체 무수정 — `sa_` prefix wrapper 만 (hexa-lang stdlib collision 0 — `grep -rE "^pub fn sa_" stdlib/` 0 hit)
@@ -113,7 +113,7 @@ anchor. 일반 ladder GZ_WIDTH(τ) = ln(τ/(τ-1)) per H_615 perfect-number ladd
 | M2 | anima substrate hook | `sa_savant_index` + `sa_in_golden_zone` 가 MITOSIS.mitosis_lib 의 split 패턴 위 SI 측정 inject 의 primary entry · WAKE.daemon tick |
 | M3 | SI orthogonal metric (H_613) | `sa_phi_diversity_orthogonal` 가 basin_kurtosis (#1130 MITOSIS cross-product) 직교성 검증 lane |
 | M4 | perfect number ladder (H_615) | `sa_perfect_number_ladder` 가 anima substrate cell-count N ∈ {6,28,496} ladder 적용 (MITOSIS cell-pool size) |
-| M5 | HEXAD/SAVANT 통합 | 본 lib 가 HEXAD/SAVANT/COMPENDIUM 783L canonical 의 measurement-side entry surface · MATRIX.tape S3 row 정합 |
+| M5 | HEXAD/SAVANT 통합 | 본 lib 가 HEXAD/SAVANT/COMPENDIUM 783L canonical 의 measurement-side entry surface · MATRIX.md S3 row 정합 |
 
 ## frontier closure
 

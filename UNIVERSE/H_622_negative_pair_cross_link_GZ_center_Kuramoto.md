@@ -160,8 +160,8 @@ verbatim 측정값은 §4.1–4.4 표에 기재 + state/results.txt 에 완전 �
 - **H_349/H_612/H_354 closure update**: 본 H_622 결과로 세 closed-negative 가 *independent* 임이 형식 확정 → 후속 search lane 도 분리 진행 (H_349 lane 의 후속 = SAVANT axis E, H_354 lane 의 후속 = HIVE-MIND axis F, cross-link 가 두 axis 의 *negative-pair* mechanism share 아님 확인).
 - 본 lane 의 가치 = closed-negative 통한 SAVANT × HIVE-MIND axis-orthogonality 의 negative-pair evidence 축적 (H_617 의 positive-pair axis-orthogonal evidence 와 sibling) — 추가 H 보다 axis-orthogonality 형식 결정성 확보가 우선.
 
-## 10. UNIVERSE.md / MATRIX.tape update
+## 10. UNIVERSE.md / MATRIX.md update
 
 - 축 E×F round 4 신설 (round 3 H_617/H_618/H_619 의 negative-pair extension) + H_622 row.
-- MATRIX.tape §3 UNIVERSE 영구 축 E×F row 갱신 — round 4 LANDED (H_622 🔴 FALSIFIED · negative-pair axis-orthogonal).
+- MATRIX.md §3 UNIVERSE 영구 축 E×F row 갱신 — round 4 LANDED (H_622 🔴 FALSIFIED · negative-pair axis-orthogonal).
 - verdict: `🔴 FALSIFIED (chi-square p=0.624 + Fisher exact p=1.000 — H_349/H_354 substrate-class pattern axis-orthogonal, two closed-negatives independent, mac-local $0 2026-05-28)`.

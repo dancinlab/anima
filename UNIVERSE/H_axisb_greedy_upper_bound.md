@@ -51,4 +51,4 @@ RING_n8_GREEDY=8.65654
 ## 양방향 sibling
 
 - sibling: [H_axisb_ring_scaling](H_axisb_ring_scaling.md) · [H_axisb_hypercube_scaling](H_axisb_hypercube_scaling.md) · [H_axisb_corr_ctrl_separation](H_axisb_corr_ctrl_separation.md)
-- SSOT: MATRIX.tape axis B row (greedy = 🟢 upper bound, never 🔵).
+- SSOT: MATRIX.md axis B row (greedy = 🟢 upper bound, never 🔵).

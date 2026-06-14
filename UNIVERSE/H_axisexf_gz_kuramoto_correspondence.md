@@ -247,4 +247,4 @@ UNIVERSE/state/axisexf_gz_kuramoto_correspondence_2026_05_29/
 - **axis-E sibling**: `UNIVERSE/H_axise_gz_si_crossing.md` · `UNIVERSE/H_axise_gz_band_si.md` (parent GZ band).
 - **axis-F sibling**: `UNIVERSE/H_axisf_kuramoto_K_sync_collective_phi.md` (parent Kuramoto K-sweep).
 - **UNIVERSE SSOT**: 본 E×F cross 결과(🟠 PARTIAL · slope-sign 공유 · transition 직교)는 UNIVERSE 도메인
-  기록. MATRIX.tape axis E×F cell 갱신은 parent consolidator 가 수행(본 PR 은 H_ + verdict 만).
+  기록. MATRIX.md axis E×F cell 갱신은 parent consolidator 가 수행(본 PR 은 H_ + verdict 만).

@@ -6,7 +6,7 @@
 
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
-- [x] UNIVERSE 축 F 채택 — H_354 (kuramoto hivemind sync tau) · H_355 (collective phi pid synergy) · H_609 (collective phi super additive) · H_610 (pair polarity collective phi) · H_611 (hivemind transfer entropy align) (active NEW 2026-05-28 — MATRIX.tape 축 F row)
+- [x] UNIVERSE 축 F 채택 — H_354 (kuramoto hivemind sync tau) · H_355 (collective phi pid synergy) · H_609 (collective phi super additive) · H_610 (pair polarity collective phi) · H_611 (hivemind transfer entropy align) (active NEW 2026-05-28 — MATRIX.md 축 F row)
 - [x] M1 hivemind_lib — `HIVE-MIND/{hivemind_lib.hexa,SSOT.md,hivemind_lib_smoke.hexa}` PURE wrapper · kuramoto_order_r + kuramoto_sync_tau + pid_synergy + collective_phi_super_additive + collective_si + cross_link_savant_modulation + gz_inverse_u_collective stdlib 화 (8 pub fn, `hm_` prefix g61 collision-free). UNIVERSE H_354/355/609/610/611 5 H + E×F cross-link H_617/618/619 verbatim cite-port. smoke 10 invariant `hexa parse` PASS. CHANNEL.tension · OTHER-MIND.bench G cross-link spec only (실 wiring 은 M2/M3 별도). (active LANDED 2026-05-28)
 - [ ] M2 CHANNEL.tension 통합 — CHANNEL/tension/tension_emit.hexa 의 5-ch telepathy 의 sync τ 측정 ↔ Kuramoto 정합 (H_354). TensionHub UDP 9999 / WS 3-port partner registry 위에 collective Φ aggregation.
 - [ ] M3 OTHER-MIND cross-link — OTHER-MIND.bench G axisbench (#1147) 의 collective Φ 측정자 정합 · partner_state_estimate × pid_synergy multi-partner synergy 측정.
@@ -17,7 +17,7 @@
 
 ## 양방향 sibling
 
-- ⇄ [UNIVERSE](./UNIVERSE/AXES.md): 축 F (5 H 측정자 SSOT) · MATRIX.tape `## 3.` row 축 F
+- ⇄ [UNIVERSE](./UNIVERSE/AXES.md): 축 F (5 H 측정자 SSOT) · MATRIX.md `## 3.` row 축 F
 - ⇄ [SAVANT](./SAVANT.md): UNIVERSE E×F cross-link (H_617 🔴 / H_618 🟢 / H_619 🟢) · SI modulation × PID synergy
 - ⇄ [CHANNEL](./CHANNEL.md): tension 5-ch telepathy ↔ Kuramoto sync τ (H_354) · TensionHub partner registry 위 collective Φ
 - ⇄ [OTHER-MIND](./OTHER-MIND.md): bench G collective coupling (#1147) · partner_state_estimate × pid_synergy

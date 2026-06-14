@@ -287,7 +287,7 @@ H_002 (universe-origin) · H_003 (life-origin) · H_004 (hard-problem) · H_007 
 
 ## ANIMA-side mirror (2026-05-28)
 
-UNIVERSE 축 E (SAVANT GZ × SI) 와 축 F (HIVE-MIND collective Φ) 는 ANIMA repo root 의 도메인 `.md` 으로 양방향 mirror. DOMAINS.tape 18/19 등록, MATRIX.tape 축 E/F + E×F row 정합.
+UNIVERSE 축 E (SAVANT GZ × SI) 와 축 F (HIVE-MIND collective Φ) 는 ANIMA repo root 의 도메인 `.md` 으로 양방향 mirror. DOMAINS.tape 18/19 등록, MATRIX.md 축 E/F + E×F row 정합.
 
 | 축 | UNIVERSE H | ANIMA-side mirror |
 |---|---|---|
