@@ -165,6 +165,17 @@ fn dep_present(path: string) -> int {
     return 0
 }
 
+// Resolve the anima repo root portably — never emit a foreign author path.
+//   1. $ANIMA   2. git rev-parse --show-toplevel   3. $HOME/core/anima
+fn anima_root() -> string {
+    let a = env("ANIMA")
+    if a != "" { return a }
+    let gt = exec("git rev-parse --show-toplevel 2>/dev/null").trim()
+    if gt != "" { return gt }
+    let home = env("HOME")
+    return home + "/core/anima"
+}
+
 // ── ms-precision timer (R37/AN13/L3-PY: python3 removed 2026-04-18) ──
 // Previously: python3 -c 'import time; print(int(time.time()*1000))'
 // Replacement: gdate/date ns-precision shell, then divide by 1e6 via shell.
@@ -191,11 +202,12 @@ println("    T5 latency < 10ms @ vocab=32000")
 println("════════════════════════════════════════════════════════")
 
 // ── Dependency check ──
-let dep_qcs = dep_present("/Users/ghost/Dev/anima/serving/quantum_collapse_sample.hexa")
+let _root = anima_root()
+let dep_qcs = dep_present(_root + "/serving/quantum_collapse_sample.hexa")
 if dep_qcs == 0 {
     println("[gate] MISSING dep: serving/quantum_collapse_sample.hexa")
-    println("[gate] hint: ln -sf /Users/ghost/Dev/anima/anima-engines/quantum_collapse_sample.hexa \\")
-    println("             /Users/ghost/Dev/anima/serving/quantum_collapse_sample.hexa")
+    println("[gate] hint: ln -sf " + _root + "/anima-engines/quantum_collapse_sample.hexa \\")
+    println("             " + _root + "/serving/quantum_collapse_sample.hexa")
     println("[gate] HARNESS ABORT — dep missing, 머지 금지")
 } else {
     println("[gate] dep_ok: serving/quantum_collapse_sample.hexa")
