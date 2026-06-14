@@ -33,12 +33,28 @@ from H_1142: ByteGPT d256/4L, en slice of corpus_5lang_1p5gb, summer CPU, seed 7
 |---|---------|-------------|
 | **1202** | 🟢 **SUPPORTED** | type-2 AUROC **0.766** (≥0.60), vs shuffle +0.267, untrained 0.513; **M-ratio 0.924** (meta-d′ 1.03 / d′ 1.11) — human-like type-2 sensitivity on own decision correctness |
 | **1203** | 🔴 **CLOSED-NEG (partial)** | F1 ERN magnitude PASS (entropy d=0.923 at errors) but F2 hidden-state linear decodability FAIL (AUROC 0.593<0.70) — error arousal present, no clean linear ACC-code |
+| **1204** | 🔴 **CLOSED-NEG** | 1st-order conf AUROC 0.777 but 2nd-order hidden-probe 0.527 (chance); added-value **−0.250** — metacognition is FLAT, not hierarchical; all signal in output confidence |
+| **1207** | 🔴 **CLOSED-NEG** (savant) | island acc 0.724 / type2 **0.825**; open acc 0.016 / type2 0.449. F1 island-of-skill PASS (+0.71) but meta_gap **+0.376** (metacog HIGHER where skilled) — NO savant dissociation; metacog COUPLED to competence |
+| **1208** | 🔴 **CLOSED-NEG** (savant) | local-dominant (acc_local 0.335 ≥ acc_full 0.313, F1 PASS = weak central coherence) BUT confidence DROPS where global needed (0.223 vs 0.346) — NOT blind to context-insufficiency |
+| **1205** | ⏳ running (summer) | Dunning-Kruger meta-bias gradient |
+
+## Unifying interpretation (so far)
+
+Metacognition in this substrate is **REAL but FLAT and COUPLED**:
+- **REAL** — human-like type-2 sensitivity at the output/confidence level (H_1202, M-ratio 0.92).
+- **FLAT** — NOT a separable higher-order readout; no extra metacognitive info is
+  linearly decodable from the residual stream (H_1203 F2 0.59; H_1204 2nd-order 0.53).
+  The signal lives in the OUTPUT distribution, not a distinct monitoring module.
+- **COUPLED to competence** — metacog sensitivity is high exactly where skill is high
+  (H_1207: island type2 0.83 vs open 0.45) and confidence falls exactly where context
+  is insufficient (H_1208). NO savant "can-do-can't-monitor" dissociation; NO
+  metacognitive blindness.
 
 KEY UPDATE vs H_1148: reframing in the field-standard neuroscience metric FLIPPED
 the verdict — H_1148 ("no internal handle on hallucination", grep-fabrication) →
 H_1202 ("strong meta-d′ handle on own DECISION correctness"). The substrate IS
-metacognitive about its decisions; the open question is the representational
-locus (H_1203: not cleanly linear in residual stream).
+metacognitive about its decisions — but as a first-order, competence-coupled
+property of output confidence, with no separable representational metacog locus.
 
 Metric kit: type-1 d′ + type-2 ROC (Maniscalco & Lau; model-free type-2 AUROC
 per Fleming & Lau 2014), ERN-analog = next-byte surprise at own-error vs
