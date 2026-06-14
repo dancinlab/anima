@@ -1,0 +1,48 @@
+{
+  "project": "anima",
+  "profile": "hardcore",
+  "stack": [
+    "hexa"
+  ],
+  "lockdown": {
+    "files": [],
+    "fromMarkdown": "CLAUDE.md",
+    "onEditReminder": "L0 file edited — update CHANGELOG + issue tracker in the same change."
+  },
+  "enforcementFile": ".harness/enforcement.json",
+  "keywordsFile": ".harness/keywords.json",
+  "severityMapFile": ".harness/severity-map.json",
+  "verify": {
+    "checks": [
+      {
+        "id": "verify",
+        "cmd": "hexa verify",
+        "timeoutMs": 240000
+      }
+    ]
+  },
+  "lint": {
+    "freshnessFiles": [],
+    "changelog": {
+      "file": "CHANGELOG.md",
+      "triggerPattern": "\\.(hexa)$",
+      "ignore": [
+        "(^|/)(tests?|__tests__|spec)/",
+        "\\.(test|spec)\\.[a-z]+$",
+        "(^|/)\\.harness(-engine)?/"
+      ]
+    },
+    "protectedBranches": [
+      "main",
+      "master"
+    ]
+  },
+  "guides": [
+    "CLAUDE.md",
+    "AGENTS.md",
+    "README.md"
+  ],
+  "ledger": {
+    "staleSec": 1800
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "_doc": "HARDCORE enforcement profile — maximum strictness. Everything that can block, blocks; escape hatches (--no-verify) are closed; destructive git is gated. Installed by `harness init --hardcore`. Superset of the default profile.",
+  "pre_bash": [
+    {
+      "id": "H-FORCE-PUSH",
+      "desc": "force-push to any branch (lease-less) is blocked",
+      "match": "git\\s+push\\b[\\s\\S]*--force(?!-with-lease)\\b",
+      "exceptions": ["--force-with-lease", "# force-ok"],
+      "action": "block",
+      "reason": "force-push without --force-with-lease 차단. lease 를 쓰거나, 꼭 필요하면 명령에 `# force-ok <사유>`."
+    },
+    {
+      "id": "H-NO-VERIFY",
+      "desc": "bypassing hooks with --no-verify / -n is blocked",
+      "match": "git\\s+(commit|push)\\b[\\s\\S]*(--no-verify|\\s-n\\b)",
+      "exceptions": ["# no-verify-ok"],
+      "action": "block",
+      "reason": "hardcore: git hook 우회(--no-verify/-n) 금지 — 게이트를 건너뛰지 말 것. 불가피하면 `# no-verify-ok <사유>`."
+    },
+    {
+      "id": "H-RESET-HARD",
+      "desc": "destructive working-tree wipes are gated",
+      "match": "git\\s+(reset\\s+--hard|clean\\s+-[a-z]*f[a-z]*d|checkout\\s+--\\s+\\.)\\b",
+      "exceptions": ["# reset-ok"],
+      "action": "block",
+      "reason": "hardcore: 작업트리 파괴 명령(git reset --hard / clean -fd / checkout -- .) 차단 — 되돌릴 수 없음. 꼭 필요하면 `# reset-ok <사유>`."
+    },
+    {
+      "id": "H-CURL-PIPE-SH",
+      "desc": "remote code execution",
+      "match": "(curl|wget)\\s+[^|]*\\|\\s*(sudo\\s+)?(ba)?sh\\b",
+      "exceptions": ["# curl-pipe-ok"],
+      "action": "block",
+      "reason": "hardcore: 원격 다운로드를 셸로 직접 파이프 금지. 받아서 검토 후 실행하거나 `# curl-pipe-ok <사유>`."
+    },
+    {
+      "id": "H-RM-RF-ROOT",
+      "desc": "rm -rf on a broad path",
+      "match": "\\brm\\s+-[a-zA-Z]*r[a-zA-Z]*f[a-zA-Z]*\\s+(/|~|\\$HOME|\\*)\\s*$",
+      "exceptions": ["# rm-ok"],
+      "action": "block",
+      "reason": "hardcore: rm -rf on / ~ $HOME / 또는 bare * 차단. 경로를 좁히거나 `# rm-ok <사유>`."
+    },
+    {
+      "id": "H-TMP-SCRATCH",
+      "desc": "임시 산출물을 /tmp 에 쓰고 날리지 말 것 — scripts/scratch 에 보관",
+      "match": "(\\bmktemp\\b|(>>?|\\btee\\b|cat\\s+>+)\\s*\\S*(/tmp/|/var/folders/|\\$TMPDIR))",
+      "exceptions": ["# scratch-ok", "scripts/scratch", "\\.harness/"],
+      "action": "warn",
+      "reason": "hardcore: 임시 파일을 /tmp(휘발)에 쓰지 말 것 — `scripts/scratch/` 에 보관(회귀추적·재현 가능). 진짜 일회성이면 `# scratch-ok <사유>`. (`harness docs scratch <name>` 가 경로 생성)"
+    },
+    {
+      "id": "H-SUDO",
+      "desc": "sudo inside agent-run commands",
+      "match": "\\bsudo\\b",
+      "exceptions": ["# sudo-ok"],
+      "action": "warn",
+      "reason": "hardcore: sudo 사용 감지 — 권한 상승은 신중히. 정당하면 `# sudo-ok <사유>`."
+    }
+  ],
+  "pre_write": [
+    {
+      "id": "H-NO-INLINE-HOOK",
+      "desc": "agent settings must delegate to harness",
+      "path_match": "\\.claude/settings.*\\.json$",
+      "content_forbidden_pattern": "\"(PreToolUse|PostToolUse|UserPromptSubmit)\"[\\s\\S]{0,400}?\"command\"\\s*:\\s*\"(?!.*harness (?:pre|post|prompt))",
+      "action": "block",
+      "reason": "hardcore: hook 은 harness pre|post|prompt 로만 delegate. 인라인 셸 금지 — 규칙은 enforcement.json 에."
+    },
+    {
+      "id": "H-ROOT-CAUSE",
+      "desc": "suppression/bypass blocked (cross-language)",
+      "path_match": "\\.(ts|tsx|js|jsx|mjs|cjs|py|rb|php|go|rs|java|kt|kts|scala|c|h|cpp|cc|cxx|hpp|m|mm|swift|dart|hexa)$",
+      "bypass_patterns": [
+        "@ts-ignore",
+        "@ts-nocheck",
+        "eslint-disable(?!-next-line)",
+        "NODE_TLS_REJECT_UNAUTHORIZED\\s*=\\s*['\"]0['\"]",
+        "catch\\s*\\([^)]*\\)\\s*\\{\\s*\\}",
+        "\\.catch\\s*\\(\\s*\\(?[^)]*\\)?\\s*=>\\s*\\{\\s*\\}\\s*\\)",
+        "if\\s*\\(\\s*false\\s*\\)",
+        "#\\s*type:\\s*ignore",
+        "#\\s*noqa",
+        "except\\s*[\\w. ,()]*:\\s*pass\\s*$",
+        "//\\s*nolint",
+        "#\\[allow\\(",
+        "//\\s*swiftlint:disable",
+        "#pragma\\s+(GCC|clang)\\s+diagnostic\\s+ignored",
+        "//\\s*NOLINT",
+        "(//|#)\\s*(TODO|FIXME|HACK|XXX)\\b"
+      ],
+      "exemption_markers": ["@root-cause-ok", "@justified"],
+      "action": "block",
+      "reason": "hardcore: 억제/우회 패턴 차단 — 근본원인을 고칠 것. 정당하면 같은 줄에 `@root-cause-ok <사유>`."
+    },
+    {
+      "id": "H-SECRET-LITERAL",
+      "desc": "hardcoded credential",
+      "path_match": "\\.(ts|tsx|js|jsx|mjs|cjs|py|rb|php|go|rs|java|kt|scala|c|h|cpp|cc|hpp|m|mm|swift|dart|hexa|env|ya?ml|json|toml)$",
+      "bypass_patterns": [
+        "(aws_secret_access_key|aws_access_key_id)\\s*[:=]\\s*['\"][A-Za-z0-9/+]{16,}",
+        "(api[_-]?key|secret|password|passwd|token)\\s*[:=]\\s*['\"][^'\"\\n]{12,}['\"]",
+        "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+        "gh[pousr]_[A-Za-z0-9]{20,}",
+        "sk-[A-Za-z0-9]{20,}"
+      ],
+      "exemption_markers": ["@secret-ok", "process.env", "example", "REDACTED", "xxxx"],
+      "action": "block",
+      "reason": "hardcore: 하드코딩 비밀키 차단 — 환경변수/시크릿 스토어 사용. placeholder 면 `// @secret-ok`."
+    },
+    {
+      "id": "H-SCATTER-DOC",
+      "desc": "흩어진 리포트/요약/노트 .md 생성 금지 — 아키텍처는 ARCHITECTURE.md(갱신), 이력은 CHANGELOG.md(append) 단일화",
+      "path_match": "(-(report|summary|notes?|audit|status|plan|analysis|design|overview|guide)\\.md$|(REPORT|SUMMARY|NOTES|TODO|AUDIT|STATUS|ANALYSIS)\\.md$|\\d{6,8}[-_].*\\.md$)",
+      "action": "warn",
+      "reason": "hardcore: 흩어진 문서 생성 감지 — AI 산출물은 **단일 문서 2개**로 통합: ①최종 아키텍처 = `ARCHITECTURE.md` (업데이트형, 덮어쓰기) ②이력/결정 = `CHANGELOG.md` (추가형). 임시 분석물은 `scripts/scratch/`. 부득이 분리해야 하면 그 문서 상단에 SSOT(ARCHITECTURE.md)로 가는 **quickref 1줄** 필수(없으면 lint DOC-NO-QUICKREF)."
+    },
+    {
+      "id": "H-DEBUG-LEFTOVER",
+      "desc": "debug print leftovers in committed source",
+      "path_match": "\\.(ts|tsx|js|jsx|mjs|cjs|rs|go)$",
+      "bypass_patterns": [
+        "console\\.(log|debug)\\s*\\(",
+        "\\bdebugger\\b",
+        "\\bdbg!\\s*\\(",
+        "fmt\\.Print(ln|f)?\\s*\\("
+      ],
+      "exemption_markers": ["@debug-ok", "@root-cause-ok"],
+      "action": "warn",
+      "reason": "hardcore: 디버그 출력 잔재 감지(console.log/debugger/dbg!/fmt.Print). 제거하거나 정식 로거 사용. 의도적이면 `// @debug-ok`."
+    }
+  ],
+  "prompt_hints": [
+    {
+      "id": "H-FIX-ROOT-CAUSE",
+      "desc": "root-cause over workaround",
+      "match_patterns": ["work\\s*around", "\\bbypass\\b", "\\bsuppress\\b", "just\\s+(ignore|skip|disable)", "임시로", "우회", "대충", "빨리"],
+      "hint": "hardcore: 억제/우회 금지(차단됨). 근본원인 수정. @ts-ignore/eslint-disable/# type:ignore/#[allow]/빈 catch/bare TODO 전부 block. 정당하면 `@root-cause-ok <사유>`."
+    },
+    {
+      "id": "H-SINGLE-DOC",
+      "desc": "문서/정리/아키텍처/리포트 작성 요청 시 단일 문서 규약 안내",
+      "match_patterns": ["문서화", "문서 ?정리", "정리해", "아키텍처", "architecture", "리포트", "report", "요약 ?문서", "설계 ?문서", "노트 ?정리", "구조 ?문서"],
+      "hint": "📄 단일 문서 규약 (hardcore): AI 산출물을 흩뿌리지 말 것. **2개 파일만** — ①`ARCHITECTURE.md` = 최종 아키텍처(업데이트형: 항상 최신 상태로 덮어씀, 추가형 아님) ②`CHANGELOG.md` = 이력/결정(추가형: append). 임시 분석/스크래치는 `scripts/scratch/`(tmp 휘발 금지). 부득이 문서를 분리하면 상단에 SSOT 로 가는 **quickref 1줄** 무조건 연결. 메인 `CLAUDE.md` 에는 **프로젝트 간략 설명 + 트리 구조(트리별 간략 설명)** 반드시 포함. 검사: `harness docs status` · 강제: lint(DOC-SCATTER/DOC-NO-QUICKREF/CLAUDE-MD-*)."
+    },
+    {
+      "id": "H-PRE-COMMIT-FLOW",
+      "desc": "hardcore commit flow",
+      "match_patterns": ["커밋", "commit", "푸시", "push", "마무리", "wrap\\s*up"],
+      "hint": "hardcore 흐름: ① feature 브랜치에서 작업(main 직접 커밋 차단) ② 코드 변경 시 CHANGELOG 동시 stage(차단) ③ pre-commit=harness lint, pre-push=harness verify+errors drain 통과 ④ --no-verify 우회 금지."
+    }
+  ]
+}
