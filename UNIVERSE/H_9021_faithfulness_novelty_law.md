@@ -1,4 +1,4 @@
-# 🏛 NOBEL 대가설 G2 — 충실성↔창발 보존부등식 (Faithfulness↔Emergence Conservation Inequality)
+# 🏛 GRAND-THEOREM 대가설 G2 — 충실성↔창발 보존부등식 (Faithfulness↔Emergence Conservation Inequality)
 
 > **우리 캠페인 발견(H_1142·H_1141) 토대로 세운 새 대가설** — 생성기판의 근본 제약을 보존법칙으로 승격.
 

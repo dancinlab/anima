@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-NOBEL G2 — Faithfulness <-> Emergence Conservation Inequality (충실성<->창발 보존부등식)
+GRAND-THEOREM G2 — Faithfulness <-> Emergence Conservation Inequality (충실성<->창발 보존부등식)
 
 GRAND HYPOTHESIS (built on H_1142 + H_1141):
   For a generative substrate, output FAITHFULNESS (verbatim/grounded fidelity to the
@@ -263,7 +263,7 @@ def sweep(text, label):
 
 def main():
     print("=" * 72)
-    print("NOBEL G2 — Faithfulness<->Emergence Conservation Inequality")
+    print("GRAND-THEOREM G2 — Faithfulness<->Emergence Conservation Inequality")
     print("           (충실성<->창발 보존부등식)")
     print("=" * 72)
     print(f"seed={SEED}  kgram={KGRAM}  markov_order={ORDER}  n_gen={N_GEN}")

@@ -2,7 +2,7 @@
 id: G16
 slug: quantum-speed-limit
 title: G16 양자 속도한계 — anima 상태변화/학습의 최소시간 = Mandelstam-Tamm ∧ Margolus-Levitin, 등가중첩이 포화. PROVEN.
-domain: nobel quantum-speed-limit mandelstam-tamm margolus-levitin learning-rate fubini-study anima
+domain: landmark quantum-speed-limit mandelstam-tamm margolus-levitin learning-rate fubini-study anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: real Schrödinger RK4 time-integration, measured first-orthogonality time vs both analytic bounds; p7 $0
 since: 2026-06-14

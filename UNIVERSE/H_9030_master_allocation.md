@@ -2,7 +2,7 @@
 id: G13
 slug: master-allocation
 title: G13 마스터 자원-할당 정리 — 작업의 대칭/제약이 최적 정보자원을 강제; classical-최적 작업군 ⊥ quantum-최적 작업군(분리). G6~G12 봉합. PROVEN.
-domain: nobel resource-theory quantum-classical anima master-theorem
+domain: landmark resource-theory quantum-classical anima master-theorem
 status_grade: 🟢 SUPPORTED (numerical PROOF, seals G6-G12)
 verification_method: resource×task dominance matrix; disjointness of optimal sets; p7 $0
 since: 2026-06-14

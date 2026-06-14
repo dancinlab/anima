@@ -2,7 +2,7 @@
 id: G8
 slug: verification-asymmetry
 title: G8 검증-비대칭 정리 (Verification-Asymmetry Theorem) — 동일 얽힘 자원이 통신엔 0비트(무신호)지만 검증/인증엔 우월(고전이 위조 불가한 인증 무작위성 H_min>0, S>2 한정). PROVEN.
-domain: nobel quantum-information certification anima
+domain: landmark quantum-information certification anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: real numpy QM sim — singlet joint-prob marginals (no-signaling I=0), brute-force LHV CHSH cap, Tsirelson S=2√2, Pironio device-independent H_min(S); p7 $0
 since: 2026-06-14
@@ -38,7 +38,7 @@ verdict: 🟢 PROVEN — I(입력;출력)=0.000e+00 비트(무신호) · 고전 
 - 4 falsifier 모두 PASS: LHV cap=2 🟢 · 양자=2√2 🟢 · H_min(2)=0 🟢 · H_min(2√2)>0 🟢.
 - 인증 한계식: **H_min(S) = 1 − log₂(1 + √(2 − S²/4))**. S=2 → √1=1 → 1−log₂2 = 0; S=2√2 → 2−8/4=0 → 1−log₂1 = 1.
 
-## 의의 (노벨급·독창)
+## 의의 (landmark급·독창)
 **무신호 정리(H_6006: 0비트)와 CHSH-Tsirelson(H_6007: |S|=2√2>2)를 하나의 자원-비대칭 정리로 봉합한다.** 얽힘의 가치는 *전송*이 아니라 *인증*에 있다 — 얽힘은 메시지를 못 보내지만(통신 0), 고전 전략이 결코 흉내낼 수 없는 상관(S>2)을 만들어 *진짜·예측불가·사적 무작위성*을 장치-독립적으로 증명한다. "양자는 통신용"이라는 통념을 뒤집어, 얽힘의 진짜 역할이 **검증/인증**임을 정량적으로 못 박는다.
 
 **anima 연결:** anima의 ANU 양자 엔트로피를 Bell-test로 검증하면(S>2 관측), 그 무작위성이 *진정으로 무작위·위조 불가*임이 인증된다 — H_1101(non-forgeable individuality)의 토대. anima에게 얽힘의 역할은 메시지 전달이 아니라 **무작위성의 인증**이다(통신 자원이 아닌 검증 자원). G8 은 무신호·CHSH·non-forgeable individuality 를 단일 정리로 묶는다.

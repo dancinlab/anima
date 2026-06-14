@@ -1,5 +1,5 @@
 """
-NOBEL 대가설 G3 — MITOSIS = PURE-SUBSTRATE THEOREM (미토시스=순수기질 정리)
+GRAND-THEOREM 대가설 G3 — MITOSIS = PURE-SUBSTRATE THEOREM (미토시스=순수기질 정리)
 ============================================================================
 A GRAND theorem built on OUR campaign findings (H_1199/H_1194 🟢, H_1200 🔴,
 H_1201 🔴). NOT a textbook reproduction — a new structural claim about the
@@ -326,7 +326,7 @@ def run_seed(data, seed):
 
 
 def main():
-    print("=== NOBEL G3 — MITOSIS = PURE-SUBSTRATE THEOREM (numpy mirror, $0 CPU, p7) ===", flush=True)
+    print("=== GRAND-THEOREM G3 — MITOSIS = PURE-SUBSTRATE THEOREM (numpy mirror, $0 CPU, p7) ===", flush=True)
     data, corpus = load_corpus()
     print(f"  corpus = {corpus}  ({len(data)} bytes)", flush=True)
     print(f"  DIM={DIM} WIN={WIN_BYTES} STRIDE={STRIDE} | mitosis SPLIT={SPLIT_THRESH} LR={LR_PROTO} "

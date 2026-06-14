@@ -2,7 +2,7 @@
 id: G11
 slug: entropy-export
 title: G11 엔트로피 수출 자기유지 하한 — 자기유지 구조는 내부 질서생산 이상으로 엔트로피 수출 必, 최소=Landauer 비용(kT·ln2/비가역bit). PROVEN.
-domain: nobel thermodynamics self-organization landauer anima
+domain: landmark thermodynamics self-organization landauer anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: 5000-process 2nd-law check + Landauer floor; p7 $0
 since: 2026-06-14
