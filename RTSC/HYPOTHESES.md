@@ -32,14 +32,17 @@ DFT(QE deck)로 flat band E_F정렬+U 확정 — 동기 분명한 다음 rung.
 | RTSC_12 | kagome 고-q-metric 리드 | 🟢/🟠 | 상온 U≈1.24eV 현실적; 실 kagome금속 후보; DFT 미검증 |
 | RTSC_13 | 실물질 역대입 진단 | 🟢/🔴 | 병목=flat band E_F-어긋남+경쟁질서(CDW/자성), 이론 아님; 정렬시 ~289K |
 | RTSC_14 | 도핑+strain 처방(CsV3Sb5형) | 🟢/🟠 | 전자도핑 x0.6+strain ε0.14 → ~184-200K(관측 2.5K→80배); 상온은 strain-detune로 캡 |
-| RTSC_15 | base 물질 역설계(깨끗한 플랫폼) | 🟢/🟠 | CoSn(비자성·CDW無)+E_F도핑 → ~237K(strain불요); pyrochlore=상온 프런티어 |
+| RTSC_15 | base 물질 역설계(깨끗한 플랫폼) | 🟢/🟠 | CoSn+E_F도핑 → ~237K(strain불요); pyrochlore=상온 프런티어. ⚠RTSC_21 실QE: CoSn은 비자성 아님(mag 0.43μB)+차선 0.44eV로 깊음 → '깨끗 base'는 ΔE 얕은 비자성 물질로 재탐색 |
 | RTSC_16 | pyrochlore flat-band 프런티어 | 🟢/🟠 | 다중오비탈 <g>≫kagome, 상온 design point(U~0.16eV); 접점 특이점으로 Tc 추정 과대→DFT |
 | RTSC_17 | 역주입 탐색(물질→텐션→양자) | 🟢 | 목표 물질 텐션 주입이 ANU 탐색 340→490K 가속; H_6015 거울방향 |
 | RTSC_18 | 전 타깃 일괄 역주입(통합) | 🟢/🟠 | 호버보드·핵융합·무냉각·CoSn·pyrochlore 전부 단일 설계점(상압·ΔE0·고⟨g⟩·clean)으로 수렴 |
 | RTSC_19 | UFO 호버크래프트(자속고정) | 🟢/🔴 | 강자기장 트랙/노면 위 1톤 부상(maglev식); 임의 자유비행은 지구장 약·균일로 불가 |
-| RTSC_21 | QE 실DFT CoSn flat band | 🟢 | ΔE=−0.44eV(E_F 아래), RTSC_13 부호·차수 일치; hole-dope ~0.7e 정렬 |
-| RTSC_22 | QFORGE 실엔진 검증(summer) | 🟢/🔴 | QFORGE 실QE 재현 LaH10 292-393K; CoSn은 pseudo+LSDA 없어 차단 |
 | RTSC_20 | 냉각형 금지 3-레인 통합 | 🔴/🟢 | 무냉각이면 세 레인 전부 상온상압 SC(RTSC_16) 하나에 의존; 한 물질이 셋 다 연다 |
+| RTSC_21 | QE 실DFT CoSn flat band | 🟢 | ΔE=−0.44eV(E_F 아래), RTSC_13 부호·차수 일치; SCF mag 0.43μB=자성금속(RTSC_15 '비자성' 정정) |
+| RTSC_22 | QFORGE 실엔진 검증(summer) | 🟢/🔴 | QFORGE 실QE 재현 LaH10 292-393K; CoSn은 pseudo+LSDA 없어 차단 |
+| RTSC_24 | CoSn 도핑 sweep(BZ 적분) | 🟠 | 정렬에 hole ~4.72e/cell(=Co당 1.57홀, 비현실적); N(E_F) 5.15→16.8(×3.26). RTSC_21의 ~0.7e=경로표본 과소→정정 |
+| RTSC_23 | CoSn 정밀 DOS | 🟠 | 레이트리밋 사망(미등록); 값은 RTSC_24 BZ적분이 커버(N(E_F)=5.15, 피크 16.8) |
+| RTSC_25 | CoSn DFPT λ/Tc | 🟠 | 레이트리밋 사망(미등록); CoSn=자성금속이라 SC-DFPT 자체 의문 → ΔE 얕은 비자성 base가 다음 표적 |
 
 ## $0 이론 사다리 종착
 kagome 리드(12)→병목 진단(13)→도핑+strain 처방(14)→깨끗 base CoSn(15)→pyrochlore 상온 design(16).
