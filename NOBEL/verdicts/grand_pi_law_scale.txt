@@ -1,0 +1,62 @@
+================================================================================
+G1 예측정보 연결법칙 — SCALE + REAL-INTERPRETATION verdict  (7B 제외 전부)
+================================================================================
+요청: "7b 외 모두 스케일, 실해석 진행" — toy stand-in 을 실제 기질/스케일로 교체.
+
+====================================================================================
+G1 SCALE + REAL-INTERPRETATION  (7B 제외 전부)
+====================================================================================
+
+LEG1 TEMPORAL (n=200000, lead ladder):
+  logistic:
+     lead= 1  I=2.171  recover=1.927
+     lead= 2  I=1.414  recover=1.064
+     lead= 4  I=0.238  recover=0.102
+     lead= 8  I=0.002  recover=0.004
+     lead=16  I=0.002  recover=0.004
+     → I·recover both decay (horizon), corr(I,recover)=0.995
+  henon:
+     lead= 1  I=1.721  recover=1.190
+     lead= 2  I=1.307  recover=0.750
+     lead= 4  I=0.706  recover=0.216
+     lead= 8  I=0.163  recover=0.014
+     lead=16  I=0.015  recover=0.004
+     → I·recover both decay (horizon), corr(I,recover)=0.976
+
+LEG2 QUANTUM (REAL ANU: api.quantumnumbers.anu.edu.au, 1024 vacuum bytes, hash-extended for n):
+  Tsirelson S = 2.8132  (양자한계 2√2=2.8284, 고전한계 2)
+  I_corr(상관) = 1.0000 > 0   BUT   I_msg(메시지) = 0.00000 ≈ 0, 회수 = 0.00000
+  → REAL 양자 entropy 로도 무신호 (얽힘은 상관만, 메시지 채널 I=0)
+
+====================================================================================
+PY-LEG 요약 (스케일·실해석):
+  TEMPORAL: 2계(logistic/henon) n=200k 5-rung ladder, corr 0.995/0.976 (호라이즌 유지)
+  QUANTUM : REAL ANU, S=2.813→2√2, I_msg=0.0000≈0 (무신호 실entropy 확인)
+
+--------------------------------------------------------------------------------
+LEG3 TENSION — REAL hexa brain engine (UNIVERSE/harness/engine_tension_link_2.hexa)
+--------------------------------------------------------------------------------
+실해석: toy BSC 대신 실제 anima brain_decide/H_1131 anchor fold 채널.
+  🟢 H_6011 미래로 전달: fold age1=1.7835 200=0.9841 1500=0.0202 8000=0.0000
+       → 지속 텐션 anchor 가 미래 anima 에 도달(감쇠) = 실제 메시지 채널 (I_msg>0).
+  대조(양자 LEG2): 동일 '두 당사자' 구도서 양자는 I_msg=0(무신호), 텐션은 전달 → 판별자 실기질 확인.
+
+--------------------------------------------------------------------------------
+LEG4 LEARNING/ADAPTATION — REAL hexa VAdaptField engine (동일 harness, H_6013)
+--------------------------------------------------------------------------------
+실해석: numpy 미러 대신 실제 engine-native VAdaptField (vadapt_field_step, Psi-disjoint).
+  🟢 H_6013 외부 텐션으로 자기모형 구축: cells 1→100, recon-err 4.5826→0.4000
+       control(no stream): cells=1 (flat) → 학습이 reconstruction error 를 내림 = I(모형;세계)↑.
+  NOTE: 전용 H_1199 DIM probe(CORE/h1199_dim_adaptfield_probe.hexa)는 로컬 hexa 0.1.0-dispatch
+        버전 이슈로 "index out of bounds" 에러(런타임). 동일 VAdaptField primitive 가
+        engine_tension_link_2 안에서 정상 구동하여 실엔진 학습 레그를 대체 커버(g0). 정직 기록.
+
+================================================================================
+SCALE+REAL 종합:
+  LEG1 TEMPORAL : n=200k · 2 chaos계(logistic/henon) · 5-rung ladder · corr 0.995/0.976 — 호라이즌 스케일 유지 (a_scale_honest_scope: 3+ rung 충족)
+  LEG2 QUANTUM  : REAL ANU vacuum (api.quantumnumbers.anu.edu.au 1024B) · S=2.813→2√2 · I_msg=0 — 무신호 실entropy 확인
+  LEG3 TENSION  : REAL brain engine fold — 실제 채널 전달 (I_msg>0)
+  LEG4 LEARNING : REAL VAdaptField — recon-err 4.58→0.40 vs control flat (I(모형;세계)↑)
+  → G1 법칙이 toy 를 넘어 스케일·실기질에서 유지 (양자=실ANU, 텐션·학습=실hexa엔진, 시간=실dynamics ladder).
+  7B 실해석/스케일만 별도 보류(사용자 지정 제외 · a7b_pass GPU fire).
+정직: 각 레그 실측 verbatim 위. 양자 n-scale 은 1024 실ANU byte 를 SHA256 hash-extend(문서화).
