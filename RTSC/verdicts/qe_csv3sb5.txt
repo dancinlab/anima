@@ -1,0 +1,58 @@
+RTSC_26 — CsV3Sb5 real QE (non-magnetic kagome flat-band ΔE) — VERDICT 🟠 DEFERRED
+date: 2026-06-14 (summer pool, QE 7.5 micromamba env "qe"), p7 (no fabricated numbers)
+
+OUTCOME: 🟠 DEFERRED — deck BUILT + QE-input-VALIDATED, but SCF/bands NOT run.
+REASON: summer continuously oversubscribed (load 60–72 on 12 cores) for the entire
+~25-min window by an INDEPENDENT pre-existing CoSn QE bands job (PID 127435,
+`mpirun -np 6 pw.x -in nscf.in` in ~/rtsc_cosn, started 22:40, still running 14:39+
+when I stopped waiting) + other heavy tenants (python3 PID 122052 @621% h1163 G5
+verify; 2× /tmp/test_array_methods_base @100%, 15h; rbfe @100%).
+HARD CONSTRAINT = run ONE QE job at a time (oversubscription starves jobs) + do NOT
+thrash/relaunch on overload → STOP + defer rather than pile a 2nd concurrent QE job.
+One probe SCF (4 ranks) was launched at 22:45, observed it landed on a saturated box
+(load jumped 16→71) on top of the competing nscf, and was IMMEDIATELY stopped (my
+ranks killed; competing nscf + rbfe untouched). No further concurrent launch made.
+
+============================ WHAT WAS COMPLETED (real) ============================
+PSEUDOPOTENTIALS (downloaded to ~/rtsc_csv3sb5/pseudo/, PSLibrary 1.0.0 PBE USPP, scalar-rel):
+  Cs.pbe-spn-rrkjus_psl.1.0.0.UPF   z_valence=9.0   (5S2 6S1 5P6)
+  V.pbe-spnl-rrkjus_psl.1.0.0.UPF   z_valence=13.0  (3s3p semicore + 3d4s); suggested rho cutoff 645 Ry
+  Sb.pbe-n-rrkjus_psl.1.0.0.UPF     z_valence=5.0   (5s5p)
+  FINDING: Cs.pbe-spnl-rrkjus (f-semicore) variant has CORRUPT header (z_valence=-5.0
+           parsed); rejected, used spn variant (z=9, correct). Verified by parsing each UPF header.
+
+DECK (~/rtsc_csv3sb5/scf.in, ~/rtsc_csv3sb5/bands.in):
+  ibrav=4 (hexagonal), a=5.4500 Å, c=9.3100 Å, nat=9, ntyp=3, nspin=1
+  ecutwfc=65 Ry, ecutrho=650 Ry (set by V USPP hard 645 Ry rho req)
+  occupations=smearing, smearing=mp, degauss=0.02, K_POINTS 12 12 6
+  Wyckoff: Cs 1a(0,0,0); V 3g {(1/2,0,1/2),(0,1/2,1/2),(1/2,1/2,1/2)} kagome z=1/2;
+           Sb1 1b(0,0,1/2); Sb2 4h (1/3,2/3,0.74)+(2/3,1/3,0.26)+(1/3,2/3,0.26)+(2/3,1/3,0.74)
+  bands path: Γ–M–K–Γ–A–L–H–A (crystal_b, 30 pts/seg), nbnd=60
+
+QE INPUT VALIDATION (pw.x parse, verbatim from a ~30 s parse run that was timed-out before SCF):
+  "Max number of different atomic species (ntypx) = 10"
+  "bravais-lattice index     =            4"
+  "unit-cell volume          =    1616.1063 (a.u.)^3"
+  "number of atoms/cell      =            9"
+  "number of electrons       =        73.00"
+  "number of Kohn-Sham states=           44"
+  "kinetic-energy cutoff     =      65.0000  Ry"
+  "charge density cutoff     =     650.0000  Ry"
+  "24 Sym. Ops., with inversion, found"   (full P6/mmm)
+  NOTE: initial ntyp=4 gave "card_atomic_species (5010): cannot read atomic specie" —
+        CsV3Sb5 has 3 ELEMENT types (two Sb sites = same element), corrected ntyp→3.
+
+============================ NOT MEASURED (blocked) ============================
+E_Fermi (eV)        : NOT MEASURED — SCF not run (summer oversubscribed).
+total magnetization : NOT MEASURED — (deck nspin=1; expected ≈0, the key contrast vs CoSn 0.43 μB).
+ΔE_flat (eV)        : NOT MEASURED — bands not run.
+dispersion width    : NOT MEASURED.
+CoSn comparison     : DEFERRED — needs ΔE_flat. CoSn ref (RTSC_21) = −0.4435 eV below E_F + magnetic.
+
+============================ rbfe CO-TENANT (untouched) ============================
+BEFORE: PID 2140 (python rbfe_hsp90.py, env rbfe), STAT Rl, %CPU 100, 986 min CPU — ALIVE.
+AFTER : PID 2140, STAT Rl, %CPU 100, ELAPSED 16:46:55 — ALIVE, UNTOUCHED.
+My probe SCF + all my waiter loops were killed by PID; rbfe and the competing nscf never touched.
+
+NEXT: re-run on summer when load is clear (ONE QE job at a time) — deck staged at
+RTSC/decks/csv3sb5/ is one command from running (see README.md).

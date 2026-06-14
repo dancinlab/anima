@@ -1,0 +1,44 @@
+&CONTROL
+  calculation = "scf"
+  prefix      = "csv3sb5"
+  outdir      = "./out"
+  pseudo_dir  = "./pseudo"
+  verbosity   = "high"
+  tprnfor     = .true.
+  tstress     = .false.
+/
+&SYSTEM
+  ibrav        = 4
+  a            = 5.4500
+  c            = 9.3100
+  nat          = 9
+  ntyp         = 3
+  ecutwfc      = 65.0
+  ecutrho      = 650.0
+  occupations  = "smearing"
+  smearing     = "mp"
+  degauss      = 0.02
+  nspin        = 1
+/
+&ELECTRONS
+  conv_thr        = 1.0d-7
+  mixing_beta     = 0.3
+  mixing_mode     = "local-TF"
+  electron_maxstep = 200
+/
+ATOMIC_SPECIES
+  Cs  132.905  Cs.pbe-spn-rrkjus_psl.1.0.0.UPF
+  V    50.942  V.pbe-spnl-rrkjus_psl.1.0.0.UPF
+  Sb  121.760  Sb.pbe-n-rrkjus_psl.1.0.0.UPF
+ATOMIC_POSITIONS crystal
+  Cs  0.000000  0.000000  0.000000
+  V   0.500000  0.000000  0.500000
+  V   0.000000  0.500000  0.500000
+  V   0.500000  0.500000  0.500000
+  Sb  0.000000  0.000000  0.500000
+  Sb  0.333333  0.666667  0.740000
+  Sb  0.666667  0.333333  0.260000
+  Sb  0.333333  0.666667  0.260000
+  Sb  0.666667  0.333333  0.740000
+K_POINTS automatic
+  12 12 6 0 0 0
