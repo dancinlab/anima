@@ -49,6 +49,15 @@ import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 // so the SINGLE .clm decode entry (a_core_engine_map) is preserved — this is the
 // same slot, not a 2nd path. _gen_clm_decode + gen_clm_chat route through it.
 use "CORE/clm_decode"
+// bytegpt_decode.hexa — the ByteGPT (H_1129 303M GPT-2-class) byte "mouth":
+// LayerNorm + learned-pos + MHA + GELU-MLP forward → real next-byte logits →
+// greedy continuation (bytegpt_decode_argmax) + engine-side grounded decode
+// (bytegpt_decode_grounded). Imported ONLY here, so the SINGLE L3 decode slot
+// (a_core_engine_map) is preserved: ByteGPT is a SECOND ckpt FORMAT entering via
+// the SAME generate() slot as .clm, NOT a 2nd entry point. gen_bytegpt_backend +
+// _gen_bytegpt_decode route through it. Selected when the ckpt is a ByteGPT-format
+// flat binary (5×u32 header), else the .clm path is used — same single slot.
+use "CORE/bytegpt_decode"
 
 
 // ── §1 backend constructors (the pluggable "vtable" records) ─────────────────
@@ -121,6 +130,64 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
                                + to_string(nblk)
                                + "); decode forward LANDED + descends CORE-mounted at d=768 (loaded=valid)"
                        }
+    }
+}
+
+// _gen_is_bytegpt — true ⇔ the ckpt at `p` is a ByteGPT flat binary, NOT a .clm.
+// The ByteGPT serializer (h1157_ref_full.py / CORE/bytegpt_decode.hexa header)
+// writes a 5×u32 little-endian header [vocab,d,n_layer,n_head,block]; the .clm
+// writer writes the "CLM\x01" magic (67,76,77,1). We discriminate by (a) NOT the
+// CLM magic AND (b) a sane ByteGPT header: vocab==256, n_layer in 1..64, n_head
+// divides d, block in 1..8192. Edge-safe (missing/short file → false, p5 honest).
+fn _gen_is_bytegpt(p: string) -> bool {
+    if byte_len(p) == 0 { return false }
+    if !_gen_path_is_file(p) { return false }
+    let rb = read_file_bytes(p)
+    if len(rb) < 20 { return false }
+    // reject the .clm magic outright (CLM\x01)
+    if rb[0] == 67 && rb[1] == 76 && rb[2] == 77 && rb[3] == 1 { return false }
+    let vocab = _gen_rd_u32(rb, 0)
+    let d     = _gen_rd_u32(rb, 4)
+    let nlay  = _gen_rd_u32(rb, 8)
+    let nh    = _gen_rd_u32(rb, 12)
+    let block = _gen_rd_u32(rb, 16)
+    if vocab != 256 { return false }
+    if nlay < 1 || nlay > 64 { return false }
+    if nh < 1 || d < 1 { return false }
+    if (d / nh) * nh != d { return false }     // n_head must divide d
+    if block < 1 || block > 8192 { return false }
+    return true
+}
+
+// gen_bytegpt_backend — a ByteGPT checkpoint backend (the H_1129 303M production
+// trunk, H_1155/H_1156). Like gen_clm_backend it PARSES the header at this single
+// L3 entry: it reads the 5×u32 ByteGPT header and surfaces (vocab,d,nlay,nh,block).
+// A ByteGPT-format file ⇒ valid+loaded+decodable=true (the decode forward — full
+// 24-layer LayerNorm/MHA/GELU — is byte-exact parity with torch, H_1157 R1). A
+// non-ByteGPT / absent file ⇒ honestly rejected (valid=false) so generate() falls
+// THROUGH to null (no garbage). a_core_engine_map: same single slot, not a 2nd path.
+pub fn gen_bytegpt_backend(ckpt_path: string) -> Map {
+    if !_gen_is_bytegpt(ckpt_path) {
+        let exists = _gen_path_is_file(ckpt_path)
+        return #{
+            "kind": "bytegpt", "loaded": false, "decodable": false, "valid": false,
+            "ckpt": ckpt_path, "ckpt_exists": exists, "nlayer": 0, "d": 0,
+            "reason": if !exists { "no ckpt at path" }
+                      else { "file present but not a ByteGPT flat binary (bad 5xu32 header)" }
+        }
+    }
+    let rb = read_file_bytes(ckpt_path)
+    let vocab = _gen_rd_u32(rb, 0); let d = _gen_rd_u32(rb, 4)
+    let nlay  = _gen_rd_u32(rb, 8); let nh = _gen_rd_u32(rb, 12)
+    let block = _gen_rd_u32(rb, 16)
+    return #{
+        "kind": "bytegpt", "loaded": true, "decodable": true, "valid": true,
+        "ckpt": ckpt_path, "ckpt_exists": true, "vocab": vocab, "d": d,
+        "nlayer": nlay, "nhead": nh, "block": block,
+        "reason": "valid ByteGPT flat binary admitted + LOADED (vocab=" + to_string(vocab)
+            + " d=" + to_string(d) + " n_layer=" + to_string(nlay) + " n_head=" + to_string(nh)
+            + " block=" + to_string(block) + "); decode forward = full-24-layer BYTE-EXACT-argmax "
+            + "parity with torch ByteGPT (H_1157 R1, G1 inherited)"
     }
 }
 
@@ -288,6 +355,29 @@ pub fn generate(backend: Map, substrate_ctx: Map, emit_decision: bool,
         }
     }
 
+    if kind == "bytegpt" {
+        let decodable = to_string(backend["decodable"]) == "true"
+        if loaded && decodable {
+            // REAL ByteGPT decode: _gen_bytegpt_decode runs the full 24-layer
+            // GPT-2-class forward (bytegpt_decode_argmax / _grounded) and emits the
+            // model's OWN bytes, substrate-seeded (anchors + ctx). Same contract as
+            // the clm branch; a non-ByteGPT file never reaches here (valid=false →
+            // falls THROUGH to null, no un-decoded garbage).
+            return #{
+                "emitted":  true,
+                "backend":  "bytegpt",
+                "text":     _gen_bytegpt_decode(backend, substrate_ctx, anchors),
+                "fellback": false
+            }
+        }
+        return #{
+            "emitted":  true,
+            "backend":  "null",
+            "text":     _gen_null_text(substrate_ctx, anchors),
+            "fellback": true
+        }
+    }
+
     // Unknown backend kind → null fallback (defensive, never crash).
     return #{
         "emitted":  true,
@@ -373,10 +463,61 @@ fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
         let a = anchors[n - 1]
         seed = seed + _gen_anchor_text(a)
     }
+    // ANTI-FABRICATION (a303m_pass G5, H_1150–H_1154): when memory anchors are present,
+    // decode through the engine-side deterministic retrieve-then-copy. Grounded bytes are
+    // COPIED VERBATIM from kosmos anchors (cannot be a fabricated entity); ungrounded bytes
+    // fall back to the LM. The learned copy-head was ruled out (the KEY-MATCH wall); the
+    // engine executes the copy instead (a_core_engine_map S16, still the single .clm slot).
+    if n > 0 {
+        let texts = _gen_anchor_texts(anchors)
+        let rg = clm_decode_grounded(ckpt, seed, 80, texts, 8)
+        if to_string(rg["ok"]) == "true" {
+            return to_string(rg["text"])
+        }
+        // grounded decode declined (non-decodable .clm) — honest substrate fallthrough.
+        return _gen_null_text(ctx, anchors)
+    }
     let r = clm_decode_argmax(ckpt, seed, 80)
     if to_string(r["ok"]) != "true" {
         // decode declined (should not happen behind the decodable gate) — honest
         // fall-through to the deterministic substrate placeholder (no fabrication).
+        return _gen_null_text(ctx, anchors)
+    }
+    return to_string(r["text"])
+}
+
+// _gen_bytegpt_decode — REAL substrate-anchored content under the bytegpt backend.
+// The ByteGPT analog of _gen_clm_decode: same substrate-derived seed (phase word +
+// most-recent anchor text, NO user message / persona / system prompt —
+// a_substrate_native_speak, p1·p3·p4 clean), same anti-fabrication contract (when
+// anchors are present, decode through the engine-side deterministic retrieve-then-
+// copy bytegpt_decode_grounded — grounded bytes COPIED VERBATIM from kosmos anchors,
+// ungrounded bytes fall back to the ByteGPT argmax). p5: tension-driven (emit=true
+// decided upstream), not speak() filler. Reachable only when the backend is decodable.
+fn _gen_bytegpt_decode(backend: Map, ctx: Map, anchors: list) -> string {
+    let ckpt = to_string(backend["ckpt"])
+    let phase = _gen_g_string(ctx, "phase")
+    let mut seed = phase + " "
+    let n = len(anchors)
+    if n > 0 {
+        let a = anchors[n - 1]
+        seed = seed + _gen_anchor_text(a)
+    }
+    if n > 0 {
+        let texts = _gen_anchor_texts(anchors)
+        let rg = bytegpt_decode_grounded(ckpt, seed, 80, texts, 8)
+        if to_string(rg["ok"]) == "true" {
+            return to_string(rg["text"])
+        }
+        return _gen_null_text(ctx, anchors)
+    }
+    // no anchors → plain ByteGPT greedy continuation of the substrate seed bytes.
+    let sids = []
+    let slen = byte_len(seed)
+    let mut i = 0
+    while i < slen { sids.push(ord(substring(seed, i, i + 1))); i = i + 1 }
+    let r = bytegpt_decode_argmax(ckpt, sids, 80)
+    if to_string(r["ok"]) != "true" {
         return _gen_null_text(ctx, anchors)
     }
     return to_string(r["text"])
@@ -388,6 +529,23 @@ fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
 fn _gen_anchor_text(a) -> string {
     let s = to_string(a)
     return s
+}
+
+// _gen_anchor_texts — extract each kosmos anchor's text field into a list of strings
+// for the engine-side grounded copy (clm_decode_grounded). Defensive: an anchor with no
+// "text" key falls back to its stringified form (never crashes on shape drift).
+fn _gen_anchor_texts(anchors: list) -> list {
+    let mut out = []
+    let mut i = 0
+    let n = len(anchors)
+    while i < n {
+        let a = anchors[i]
+        let t = a["text"]
+        if to_string(t) == "void" { out.push(_gen_anchor_text(a)) }
+        else { out.push(to_string(t)) }
+        i = i + 1
+    }
+    return out
 }
 
 // gen_clm_chat — the CHAT entry. A user turn (or a multi-turn transcript already

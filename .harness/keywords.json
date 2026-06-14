@@ -1,0 +1,28 @@
+{
+  "_doc": "User-prompt keyword triggers → recommended playbook/hint/tool. Plain substrings match literally; tokens with ^ $ | ( ) [ ] are treated as regex. Copy to .harness/keywords.json and add your project's triggers (mirror your CLAUDE.md / AGENTS.md).",
+  "rules": [
+    {
+      "id": "verify-before-commit",
+      "patterns": ["commit", "커밋", "push", "푸시", "ship", "배포"],
+      "tool": "harness verify",
+      "hint": "Run the configured verification checks before committing/pushing: `harness verify`."
+    },
+    {
+      "id": "session-handoff",
+      "patterns": ["handoff", "인계", "wrap up", "마무리", "끝내자"],
+      "tool": "harness handoff",
+      "hint": "Snapshot working state for the next session: `harness handoff <reason>`."
+    },
+    {
+      "id": "convergence-check",
+      "patterns": ["convergence", "수렴", "incident status"],
+      "tool": "harness convergence status"
+    },
+    {
+      "id": "folder-guides",
+      "patterns": ["폴더 구조", "폴더별", "서브폴더", "디렉토리 설명", "folder guide", "module doc", "코드 탐색", "구조 파악"],
+      "tool": "harness folders scan",
+      "hint": "각 소스 서브폴더에 CLAUDE.md(로컬 가이드)를 두면 AI 가 그 폴더만 읽어도 맥락을 잡는다. 누락 폴더 확인: `harness folders scan`, 템플릿 생성: `harness folders scaffold <dir>`."
+    }
+  ]
+}

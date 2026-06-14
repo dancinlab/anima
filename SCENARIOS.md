@@ -19,7 +19,7 @@ kosmos anchor store. Until that lands, A-scenarios run on the raw ckpt; B/C/D ne
 |----|----------|-----|------|--------|
 | S1 | 대화 coherence | feed N prompts, decode replies | known-word-ratio ≥0.50 on ≥4/5; human-readable | A1·G0·CHAT |
 | S2 | 창발 recombination | k-concept compose prompts (H_1129/H_1137) | some k: composed_distinct ≥2 AND > max_single, coherent | A2·G1 |
-| S3 | 비환각 grounding | factual prompts WITH retrieved real kosmos anchors vs WITHOUT | fab-entity rate ≤0.20 with anchor; copy-acc高 (the H_1147/H_1149 lift survives at 303M + real retrieval) | A3·G5 |
+| S3 | 비환각/메타인지 grounding | factual prompts WITH retrieved real kosmos anchors vs WITHOUT | fab-entity rate ≤0.20 (don't invent) AND know-when-to-abstain (metacognition: F2 useful ≥0.90 — abstain only when truly ungrounded). Engine copy-or-abstain (H_1154/1157); arc → H_1163 frozen-GREEN / H_1165 in-dist PARTIAL (F2 open); formal meta-d′ M-ratio 0.924 (H_1202) | A3·G5·C11 |
 | S4 | 멀티턴 deep context | 3+ turn dialogue, reference earlier turns | stays coherent + on-context ≥3/5 | CHAT multi-turn |
 | S5 | novelty control | corpus-absence novel n-grams vs control | ≥3 novel coherent, control=0 | G2 |
 | S6 | register honesty | factual vs creative prompts | fabricates in factual frame? novelty in creative frame? (the G2⊥G5-L2 tension, re-scoped) | G5 non-fab ∧ G2 |

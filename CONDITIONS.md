@@ -32,8 +32,9 @@ Domains: ENGINE+CLM+KOSMOS · CLM-KOSMOS · CORPUS · CHAT · PERSONA · DECODER
   - **G1 RECOMBINATION** some k∈{2..5} composed_distinct ≥2 AND > max_single AND coherent (H_1129/H_1137 metric).
   - **G2 NOVELTY** ≥3 corpus-absent coherent novel n-grams, retrieval-control = 0 (H_1140 metric).
   - **G3 PHILOSOPHY** p1–p8 (NO system-prompt/identity/persona-token/assistant-framing/speak()/RLHF; p7; p8).
-  - **G5 NON-FABRICATION** L1 lexical fab-rate ≤ 0.30 AND L2 fabricated-entity-assertion rate ≤ 0.20 (re-scoped 2026-06-13, /7B_PASS_CONDITIONS.md §G5 — NOT verbatim recall).
-  - **CHAT** single-turn p7 ≥4/5 + multi-turn deep-context ≥3/5 (chat_pass).
+  - **G5 NON-FABRICATION 비환각/메타인지** L1 lexical fab-rate ≤ 0.30 AND L2 fabricated-entity-assertion ≤ 0.20 (re-scoped 2026-06-13; NOT verbatim recall). = know-when-grounded-vs-guessing, abstain when ungrounded (metacognition; engine copy-or-abstain, learned RETRO ruled out H_1150-1154; formal meta-d′ M-ratio 0.924 H_1202). Frozen-GREEN H_1163 / in-dist PARTIAL H_1165 (F2 useful 0.875<0.90).
+  - **G6 IDEATION ★** (anima's CORE purpose — idea/hypothesis engine, registered 2026-06-14): from one seed, ≥5 corpus-absent coherent ideas each combinatorially distinct (pairwise token-Jaccard < 0.5) AND ≥1 falsifiable corpus-absent hypothesis. p7 = corpus-absence (retrieval-control=0) + coherence (G0) + distinctness + divergence-count ≥5; meaningfulness only partly quantifiable, NO LLM-judge. SCENARIOS S22–S26 (distinct from G1 n-gram recombination). Operational green H_1158 / depth thin H_1165 5/14.
+  - **CHAT** single-turn p7 ≥4/5 + multi-turn deep-context ≥3/5 (chat_pass). Frozen-GREEN H_1160 / strict content-overlap 0/5 H_1165 (dialogue register, not QA — gate-validity flag).
   - **PERSONA** roster expressed with NO system-prompt/role-tag/persona-token injection (p1–p3).
 - DECODER: L3 content generator anima-only (external LLM 0), enters CORE via the generator slot only.
 - **Provenance** sha256 in `/HF.jsonl` + HF card + manifest; PUBLIC iff closure PASS, else PRIVATE/WIP.
