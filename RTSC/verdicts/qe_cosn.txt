@@ -1,0 +1,11 @@
+QE 7.5 PBE CoSn flat-band cross-validation (summer pool, CPU, $0, rbfe untouched) — verbatim
+pseudos: Sn.pbe-dn-rrkjus_psl.1.0.0.UPF (z=14) · Co.pbe-spn-rrkjus_psl.0.3.1.UPF (z=17); 93 val e-/cell
+SCF (nspin=2, starting_magnetization Co=0.3, K 6x6x6, degauss 0.03, ecut 65/520):
+  "convergence has been achieved in 25 iterations"
+  "the Fermi energy is 14.7132 ev"
+  "!  total energy = -1363.80766100 Ry"   total magnetization 0.43 μB/cell
+bands (nbnd=60, Γ-K-M-Γ-A): Co-3d kagome FLAT BAND manifold:
+  band 45: center 14.2697 eV, disp 0.167 eV  → ΔE = E_flat - E_F = -0.4435 eV
+  band 44: center 14.1586 eV, disp 0.177 eV  → ΔE = -0.5546 eV
+  (flat in-plane AND along Γ-A, disp 0.18-0.22 eV → genuine localized kagome flat band)
+align: flat band BELOW E_F → HOLE-dope ~0.6-0.8 e-/cell (DOS(E_F)~1.37/eV path-sampled, order-of-mag)
