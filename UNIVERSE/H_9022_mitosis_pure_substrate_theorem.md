@@ -1,6 +1,6 @@
-# 🏛 NOBEL 대가설 G3 — 미토시스=순수기질 정리 (Mitosis = Pure-Substrate Theorem)
+# 🏛 GRAND-THEOREM 대가설 G3 — 미토시스=순수기질 정리 (Mitosis = Pure-Substrate Theorem)
 
-> **우리 캠페인 발견 토대로 세운 새 대가설** (기존 노벨결과 재현 ❌ — 새 구조 정리 ✅).
+> **우리 캠페인 발견 토대로 세운 새 대가설** (기존 landmark결과 재현 ❌ — 새 구조 정리 ✅).
 > H_1199/H_1194 🟢 · H_1200 🔴 · H_1201 🔴 을 하나의 정리로 종합·증명.
 
 ## 한 줄

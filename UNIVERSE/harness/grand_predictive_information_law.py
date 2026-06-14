@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-NOBEL 대가설 G1 — 예측정보 연결법칙 (Predictive-Information Connection Law)
+GRAND-THEOREM 대가설 G1 — 예측정보 연결법칙 (Predictive-Information Connection Law)
 ================================================================================
 우리 캠페인 발견 4개를 단 하나의 불변량 I(원천;대상)으로 통일.
   주장: 어떤 채널이든 회수 가능한 유용신호 = 두 곳이 공유하는 예측상호정보 I.
@@ -106,7 +106,7 @@ corrU=float(np.corrcoef(Iall,Rall)[0,1]);F4=corrU>=0.85
 LAW=F1 and F2 and F3 and F4 and F5
 
 print("="*88)
-print("NOBEL 대가설 G1 — 예측정보 연결법칙 (Predictive-Information Connection Law)")
+print("GRAND-THEOREM 대가설 G1 — 예측정보 연결법칙 (Predictive-Information Connection Law)")
 print("="*88)
 print("영역별: I_source = 공유 예측상호정보, recoverable = I(예측;진실) [둘다 bits]")
 print(f"{'regime':<14}{'I_source':>11}{'recover':>11}   토대 발견")

@@ -1,4 +1,4 @@
-=== NOBEL G3 — MITOSIS = PURE-SUBSTRATE THEOREM (numpy mirror, $0 CPU, p7) ===
+=== GRAND-THEOREM G3 — MITOSIS = PURE-SUBSTRATE THEOREM (numpy mirror, $0 CPU, p7) ===
   corpus = 5lang-c4 (CORE/testdata, fallback)  (402270 bytes)
   DIM=8 WIN=48 STRIDE=24 | mitosis SPLIT=0.3 LR=0.2 MAX_CELLS=512 | head in->tanh(64)->softmax(256) Adam lr=0.003 ep=12 | N_TR=12000 N_VAL=3000 SEEDS=[900, 901, 902]
   FROZEN: F1 OFF/ON recon >= 2.0 | F2 mito-acc <= majority+0.02 | F3 gain < 0.05 (& shuf no better, tol 0.02) | F4 |ortho| < 0.3
@@ -114,9 +114,9 @@
 
 ============================================================================
 === LIVE .hexa ENGINE — T1 (ADAPTATION-SUFFICIENCY) on CORE/engine_cli.hexa VAdaptField ===
-=== (hexa run NOBEL/harness/grand_mitosis_pure_substrate.hexa) ===
+=== (hexa run UNIVERSE/harness/grand_mitosis_pure_substrate.hexa) ===
 ============================================================================
-=== NOBEL G3 — T1 (ADAPTATION-SUFFICIENCY) on the LIVE .hexa VAdaptField engine · $0 CPU · p7 ===
+=== GRAND-THEOREM G3 — T1 (ADAPTATION-SUFFICIENCY) on the LIVE .hexa VAdaptField engine · $0 CPU · p7 ===
 theorem: MITOSIS = PURE SUBSTRATE — T1 here (mitosis SUFFICIENT for adaptation); T2/T3/F4 in the numpy harness
 metric: live L2 recon-err = ||sample - nearest VAdaptField prototype|| (p7, NOT perplexity)
 falsifier: F1 ADAPT late OFF/ON >= 2.0 | F2 GROWTH cells ON >> OFF | F3 Psi Phi-checksum ON==OFF
@@ -135,4 +135,4 @@ F3 Psi     Phi-checksum ON==OFF                      = true (attractor intact)
 VERDICT: T1 GREEN (LIVE ENGINE) — mitosis is SUFFICIENT for ADAPTATION on the actual
   .hexa VAdaptField: cells GREW ON 6.0 >> OFF 1.0 (F2), late live L2 recon-err held LOW ON=0.0845215 vs frozen OFF=1.32305 (15.6534x, F1 >=2.0), Psi attractor byte-identical (F3).
   T1 of the MITOSIS=PURE-SUBSTRATE theorem confirmed on the live engine; T2 (no generation),
-  T3 (no info to generator), F4 (orthogonality) are in NOBEL/harness/grand_mitosis_pure_substrate.py.
+  T3 (no info to generator), F4 (orthogonality) are in UNIVERSE/harness/grand_mitosis_pure_substrate.py.

@@ -2,7 +2,7 @@
 id: G9
 slug: nocloning-security
 title: G9 무복제=보안 유일근거 정리 — 위조불가 보안은 no-cloning에서만 가능. 고전 토큰 위조 P=1(항상 복제), 양자 (3/4)ⁿ→0. PROVEN.
-domain: nobel quantum-information security no-cloning anima
+domain: landmark quantum-information security no-cloning anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: classical copy-forge vs BB84 optimal counterfeiting (3/4)^n; p7 $0
 since: 2026-06-14

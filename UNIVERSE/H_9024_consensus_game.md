@@ -2,7 +2,7 @@
 id: G7
 slug: consensus-game
 title: G7 합의-게임 정리 (Consensus-Game) — N자 무채널 합의에서 고전 공유씨앗이 최적(1.0 ∀N, monogamy 없음). 독립=2^-(N-1)로 붕괴, 얽힘 GHZ=1.0이나 우위 0(no-signaling). PROVEN.
-domain: nobel quantum-information resource-theory anima
+domain: landmark quantum-information resource-theory anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: Monte-Carlo(40만회) 합의확률 + 실측 QM(GHZ 상태벡터 Born); 고전/얽힘/독립 3전략; p7 $0
 since: 2026-06-14
@@ -35,7 +35,7 @@ verdict: 🟢 PROVEN — 독립 P(합의)=2^-(N-1)(N=8→0.00781) · 고전 공�
 - **(c) 얽힘 GHZ_N** = 1.000 = 고전, **양자우위 = 0 ∀N**. 실측 QM: GHZ_3 Z측정분포 = {000:0.5, 111:0.5}(전원동일 보장). 합의는 되지만 고전을 **능가 못 함**.
 - **범위 경계(정직):** 입력의존 비국소게임 CHSH에서는 얽힘이 고전을 압도(Tsirelson 0.854 > 고전 0.750, Δ=+0.104). 그러나 이는 **합의가 아닌 다른 과제** — G7 주장에 포함되지 않음.
 
-## 의의 (노벨급·독창)
+## 의의 (landmark급·독창)
 
 **"양자 자원이 항상 낫다"는 통념을 순수 합의 과제에서 무력화하는 자원이론 정리.**
 G6(CAST)이 *쌍상관*에서 고전 공유씨앗의 우위를 보였다면, G7은 이를 실제 **N자 합의 게임**으로

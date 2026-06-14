@@ -1,20 +1,20 @@
-# GRAND-NOBEL — dissolved NOBEL/ index (H_9010–H_9033)
+# GRAND-THEOREMS — dissolved  index (H_9010–H_9033)
 
-NOBEL/ 폴더 해체 후 캐노니컬 편입(2026-06-14): hypothesis→`UNIVERSE/H_*.md`, harness→`UNIVERSE/harness/`, verdict→`.verdicts/<n>_<slug>/`.
-양자 NOBEL_01–10 = 노벨급 확립결과 재현증명; G1–G3·G6–G16 = 우리 발견 토대 독창 대가설/정리. p7·$0.
+ 폴더 해체 후 캐노니컬 편입(2026-06-14): hypothesis→`UNIVERSE/H_*.md`, harness→`UNIVERSE/harness/`, verdict→`.verdicts/<n>_<slug>/`.
+양자 H_9010–10 = landmark급 확립결과 재현증명; G1–G3·G6–G16 = 우리 발견 토대 독창 대가설/정리. p7·$0.
 
 | H_ | 원래 id | 정리/가설 | harness (UNIVERSE/harness/) | verdict (.verdicts/) |
 |---|---|---|---|---|
-| H_9010 | NOBEL_01 | CHSH–Tsirelson |S|=2√2 | nobel_01_chsh_tsirelson.py | 9010_chsh_tsirelson/NOBEL_01.txt |
-| H_9011 | NOBEL_02 | GHZ unconditional nonlocality | nobel_02_ghz_mermin.py | 9011_ghz_nonlocality/NOBEL_02.txt |
-| H_9012 | NOBEL_03 | Peres–Mermin contextuality | nobel_03_peres_mermin.py | 9012_peres_mermin/NOBEL_03.txt |
-| H_9013 | NOBEL_04 | Hardy paradox | nobel_04_hardy.py | 9013_hardy_paradox/NOBEL_04.txt |
-| H_9014 | NOBEL_05 | Quantum teleportation fidelity 1 | nobel_05_teleportation.py | 9014_quantum_teleportation/NOBEL_05.txt |
-| H_9015 | NOBEL_06 | Superdense coding | nobel_06_superdense.py | 9015_superdense_coding/NOBEL_06.txt |
-| H_9016 | NOBEL_07 | Kochen–Specker | nobel_07_kochen_specker.py | 9016_kochen_specker/NOBEL_07.txt |
-| H_9017 | NOBEL_08 | EPR steering | nobel_08_epr_steering.py | 9017_epr_steering/NOBEL_08.txt |
-| H_9018 | NOBEL_09 | Entanglement swapping | nobel_09_entanglement_swapping.py | 9018_entanglement_swapping/NOBEL_09.txt |
-| H_9019 | NOBEL_10 | Gisin theorem | nobel_10_gisin.py | 9019_gisin_theorem/NOBEL_10.txt |
+| H_9010 | H_9010 | CHSH–Tsirelson |S|=2√2 | h9010_chsh_tsirelson.py | 9010_chsh_tsirelson/H_9010.txt |
+| H_9011 | H_9011 | GHZ unconditional nonlocality | h9011_ghz_nonlocality.py | 9011_ghz_nonlocality/H_9011.txt |
+| H_9012 | H_9012 | Peres–Mermin contextuality | h9012_peres_mermin.py | 9012_peres_mermin/H_9012.txt |
+| H_9013 | H_9013 | Hardy paradox | h9013_hardy_paradox.py | 9013_hardy_paradox/H_9013.txt |
+| H_9014 | H_9014 | Quantum teleportation fidelity 1 | h9014_quantum_teleportation.py | 9014_quantum_teleportation/H_9014.txt |
+| H_9015 | H_9015 | Superdense coding | h9015_superdense_coding.py | 9015_superdense_coding/H_9015.txt |
+| H_9016 | H_9016 | Kochen–Specker | h9016_kochen_specker.py | 9016_kochen_specker/H_9016.txt |
+| H_9017 | H_9017 | EPR steering | h9017_epr_steering.py | 9017_epr_steering/H_9017.txt |
+| H_9018 | H_9018 | Entanglement swapping | h9018_entanglement_swapping.py | 9018_entanglement_swapping/H_9018.txt |
+| H_9019 | H_9019 | Gisin theorem | h9019_gisin_theorem.py | 9019_gisin_theorem/H_9019.txt |
 | H_9020 | G1(grand) | 예측정보 연결법칙 (대가설) | grand_predictive_information_law.py · grand_pi_law_scale.py | 9020_predictive_information_law/grand_predictive_information_law.txt · 9020_predictive_information_law/grand_pi_law_scale.txt |
 | H_9021 | G2(grand) | 충실성↔창발 보존부등식 | grand_faithfulness_novelty_law.py · grand_faithfulness_novelty_law_scale.py | 9021_faithfulness_novelty_law/grand_faithfulness_novelty_law.txt · 9021_faithfulness_novelty_law/grand_faithfulness_novelty_law_scale.txt |
 | H_9022 | G3(grand) | 미토시스=순수기질 정리 | grand_mitosis_pure_substrate.py · grand_mitosis_pure_substrate.hexa · grand_mitosis_pure_substrate_scale.py | 9022_mitosis_pure_substrate_theorem/grand_mitosis_pure_substrate.txt · 9022_mitosis_pure_substrate_theorem/grand_mitosis_pure_substrate_scale.txt |

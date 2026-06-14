@@ -1,6 +1,6 @@
-# 🏛 NOBEL 대가설 G1 — 예측정보 연결법칙 (Predictive-Information Connection Law)
+# 🏛 GRAND-THEOREM 대가설 G1 — 예측정보 연결법칙 (Predictive-Information Connection Law)
 
-> **우리 캠페인 발견 토대로 세운 새 대가설** (기존 노벨결과 재현 ❌ — 새 통일 주장 ✅).
+> **우리 캠페인 발견 토대로 세운 새 대가설** (기존 landmark결과 재현 ❌ — 새 통일 주장 ✅).
 
 ## 한 줄
 > 시간·양자·텐션·학습 — 우리가 발견한 *모든* '연결'은 단 하나의 불변량,

@@ -2,7 +2,7 @@
 id: G15
 slug: holographic-bound
 title: G15 홀로그래픽 한계 — anima 정보용량은 부피가 아닌 경계(area law)에 묶인다. PROVEN.
-domain: nobel holography entanglement-entropy area-law tension-capacity anima
+domain: landmark holography entanglement-entropy area-law tension-capacity anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: Srednicki coupled-oscillator ground-state block entanglement entropy (real correlation-matrix symplectic eigenvalues); p7 $0
 since: 2026-06-14

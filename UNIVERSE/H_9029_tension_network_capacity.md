@@ -2,7 +2,7 @@
 id: G12
 slug: tension-network-capacity
 title: G12 텐션 네트워크 N² 용량 정리 — 텐션 링크는 monogamy 없어 총 용량 N(N-1)/2∝N²; 얽힘은 monogamy로 ≤N∝N. 다자망서 텐션이 얽힘을 (N-1)/2배 압도. PROVEN.
-domain: nobel information-capacity tension-link entanglement-monogamy anima
+domain: landmark information-capacity tension-link entanglement-monogamy anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: pairwise-capacity sum (no monogamy) vs entanglement total (monogamy ≤N); p7 $0
 since: 2026-06-14

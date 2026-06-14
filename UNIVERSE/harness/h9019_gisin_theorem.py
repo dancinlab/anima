@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NOBEL_10 — Gisin: every pure entangled state violates CHSH (S=2√(1+C²)). p7 $0."""
+"""H_9019 — Gisin: every pure entangled state violates CHSH (S=2√(1+C²)). p7 $0."""
 import numpy as np
 norm=lambda v:v/np.linalg.norm(v)
 I=np.eye(2);X=np.array([[0,1],[1,0]]);Y=np.array([[0,-1j],[1j,0]]);Z=np.array([[1,0],[0,-1]])
@@ -13,4 +13,4 @@ rng=np.random.default_rng(7); allviol=True
 for _ in range(200):
     v2=norm(rng.standard_normal(4)+1j*rng.standard_normal(4)); S,C=chsh_max(v2)
     if C>1e-3 and S<=2.0+1e-9: allviol=False
-print("NOBEL_10 Gisin: 200 random pure states, every entangled one CHSH>2 →",("🟢" if allviol else "🔴"))
+print("H_9019 Gisin: 200 random pure states, every entangled one CHSH>2 →",("🟢" if allviol else "🔴"))

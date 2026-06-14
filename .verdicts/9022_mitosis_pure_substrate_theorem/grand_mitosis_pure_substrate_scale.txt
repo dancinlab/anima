@@ -1,4 +1,4 @@
-=== NOBEL G3 SCALE+REAL — MITOSIS=PURE-SUBSTRATE (REAL anima corpus, 5 seeds, N_TR=16k, $0 p7) ===
+=== GRAND-THEOREM G3 SCALE+REAL — MITOSIS=PURE-SUBSTRATE (REAL anima corpus, 5 seeds, N_TR=16k, $0 p7) ===
   corpus = REAL anima dialogue corpus (consciousness_anchor.txt, byte-level)  (23500115 bytes)
   DIM=8 WIN=48 STRIDE=24 | mitosis SPLIT=0.3 LR=0.2 MAX_CELLS=512 | head in->tanh(64)->softmax(256) Adam lr=0.003 ep=12 | N_TR=16000 N_VAL=3000 SEEDS=[900, 901, 902, 903, 904]
   FROZEN: F1 OFF/ON recon >= 2.0 | F2 mito-acc <= majority+0.02 | F3 gain < 0.05 (& shuf no better, tol 0.02) | F4 |ortho| < 0.3
@@ -145,7 +145,7 @@
 ================================================================
 LIVE .hexa ENGINE T1 (real VAdaptField, 3 seeds) — real-engine leg:
 ================================================================
-=== NOBEL G3 — T1 (ADAPTATION-SUFFICIENCY) on the LIVE .hexa VAdaptField engine · $0 CPU · p7 ===
+=== GRAND-THEOREM G3 — T1 (ADAPTATION-SUFFICIENCY) on the LIVE .hexa VAdaptField engine · $0 CPU · p7 ===
 theorem: MITOSIS = PURE SUBSTRATE — T1 here (mitosis SUFFICIENT for adaptation); T2/T3/F4 in the numpy harness
 metric: live L2 recon-err = ||sample - nearest VAdaptField prototype|| (p7, NOT perplexity)
 falsifier: F1 ADAPT late OFF/ON >= 2.0 | F2 GROWTH cells ON >> OFF | F3 Psi Phi-checksum ON==OFF

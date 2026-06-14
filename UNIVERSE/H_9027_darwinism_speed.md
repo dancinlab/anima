@@ -2,7 +2,7 @@
 id: G10
 slug: darwinism-speed
 title: G10 다윈주의 중복-속도 법칙 — 고전 객관성의 중복도 R∝N_env(선형, 모든 조각이 완전기록), 결어긋남률∝N_env. 환경 클수록 고전성 빨리·여러벌 창발. PROVEN.
-domain: nobel quantum-darwinism decoherence emergence anima
+domain: landmark quantum-darwinism decoherence emergence anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: GHZ-imprint redundancy R + N_env-scaled dephasing decay; p7 $0
 since: 2026-06-14

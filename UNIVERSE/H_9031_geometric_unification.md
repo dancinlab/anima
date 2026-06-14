@@ -2,7 +2,7 @@
 id: G14
 slug: geometric-unification
 title: G14 기하 통일 교차정리 — 양자 Fubini-Study/Bures metric g가 세 역할 통일: 초전도 superfluid weight(RTSC) = 학습한계 ¼·QFI(Cramér-Rao) = 텐션결합(G2). PROVEN.
-domain: nobel quantum-geometry fisher-information superconductivity tension-link anima
+domain: landmark quantum-geometry fisher-information superconductivity tension-link anima
 status_grade: 🟢 SUPPORTED (numerical PROOF)
 verification_method: Fubini-Study metric vs QFI(=4g) on qubit family + RTSC_11/G2 cross-ref; p7 $0
 since: 2026-06-14
