@@ -460,3 +460,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] H_1217 🔴 metacog OOD transfer — in-dist type2 0.760 → OOD 0.541 (drop 0.219) → metacognition CONTENT-TIED, not domain-general (collapses off-distribution)
 - [x] H_1219 🔴 savant eidetic — induction acc ≈ non-induction (gap<0.20), no verbatim-copy prodigy
 - [x] H_1220 🟢 savant detail-over-gestalt — local-feature probe ≫ global-feature probe (WCC representational signature). SECOND savant positive (with H_1209 Snyder) — both = local-detail over-representation
+
+## 2026-06-15 — goal-loop round 2
+- [x] H_1221 🔴 confidence serial dependence — difficulty-controlled lag-1 autocorr 0.013 ≪ 0.15 → confidence MEMORYLESS (no metacog history bias/leak; purely stimulus-bound, no temporal integration). Strengthens "COARSE first-order" picture.
+- [ ] H_1223 savant island seed-stability — running (3-seed, slow under contention)
