@@ -1,87 +1,22 @@
 {
+  "_note": "harness hooks (guarded — submodule 미초기화 시 조용히 통과). 활성화: git submodule update --init --recursive",
   "hooks": {
     "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "CLAUDE_TOOL_INPUT=\"$CLAUDE_TOOL_INPUT\" bash .harness-engine/bin/harness pre bash"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "CLAUDE_TOOL_INPUT=\"$CLAUDE_TOOL_INPUT\" bash .harness-engine/bin/harness pre write"
-          }
-        ]
-      }
+      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && CLAUDE_TOOL_INPUT=\"$CLAUDE_TOOL_INPUT\" bash .harness-engine/bin/harness pre bash || true" }] },
+      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && CLAUDE_TOOL_INPUT=\"$CLAUDE_TOOL_INPUT\" bash .harness-engine/bin/harness pre write || true" }] }
     ],
     "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .harness-engine/bin/harness post edit \"$CLAUDE_FILE_PATH\""
-          }
-        ]
-      }
+      { "matcher": "Write|Edit", "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && bash .harness-engine/bin/harness post edit \"$CLAUDE_FILE_PATH\" || true" }] }
     ],
     "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .harness-engine/bin/harness prompt \"$CLAUDE_USER_PROMPT\""
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .harness-engine/bin/harness prefs inject"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .harness-engine/bin/harness easy inject"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .harness-engine/bin/harness recommend inject"
-          }
-        ]
-      }
+      { "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && bash .harness-engine/bin/harness prompt \"$CLAUDE_USER_PROMPT\" || true" }] },
+      { "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && bash .harness-engine/bin/harness prefs inject || true" }] },
+      { "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && bash .harness-engine/bin/harness easy inject || true" }] },
+      { "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && bash .harness-engine/bin/harness recommend inject || true" }] }
     ],
     "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .harness-engine/bin/harness easy inject"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .harness-engine/bin/harness recommend inject"
-          }
-        ]
-      }
+      { "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && bash .harness-engine/bin/harness easy inject || true" }] },
+      { "hooks": [{ "type": "command", "command": "[ -x .harness-engine/bin/harness ] && bash .harness-engine/bin/harness recommend inject || true" }] }
     ]
   }
 }
