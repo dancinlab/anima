@@ -23,6 +23,17 @@
 pure_field/engine_g read-only, Ψ Φ-checksum byte-identical (H_1164/H_1199 acceptance).
 둘 다 ✅ = 그 조합 LANDED.
 
+> ⚠️ **주의사항 (방법론 — 고갈 판정)**:
+> 1. **각 차원은 전체 격자를 다 채워야 완성** — 누적 체인(A→A+B→A+B+C) 검증은 *부분*일 뿐.
+>    k-차원 완성 = C(N,k) 모든 조합 cell 검증 (예: 4 lane 의 2-combo = 단독4+쌍6=10 cell 전부).
+>    (H_1235/1236 체인을 H_1237 전체격자로 보강한 이유.)
+> 2. **차원 climb 순서**: k-차원 격자 100% 완료 → 그 다음에야 k+1 차원 격자 시작.
+> 3. **Ψ-disjoint = byte-identical** (tolerance 아님, p7) — 한 cell 이라도 Ψ 흔들리면 그 조합 FAIL.
+> 4. **model-side(CLM/KOSMOS/WAKE)** 는 clm-native 빌드 게이트 — substrate 격자와 분리 추적.
+
+**평면(2-combo) 격자 COMPLETE (H_1237 🟢)**: 4 lane 단독4+쌍6 = **10/10 cell** Ψ-disjoint
+(`CORE/h1237_pairwise_matrix_smoke.hexa`). 누적체인(H_1235/6) → 전체격자로 보강 완료.
+
 **부품(subsystem) 집합** — 조합 climb 의 단위:
 | 부품 | 파일 | 역할 |
 |------|------|------|
