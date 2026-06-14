@@ -466,3 +466,7 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [ ] H_1223 savant island seed-stability — running (3-seed, slow under contention)
 - [x] H_1223 🟢 savant island seed-stability — mean Cohen kappa 0.771 (≥0.30), above-chance +0.308 across 3 seeds → the high-skill island is STRUCTURAL/INNATE (recurs across independent trainings), not seed-random. Savant 3rd positive (with H_1209 Snyder + H_1220 detail-over-gestalt = local-detail specialization is real·early·innate).
 - [x] H_1224 🔴 savant specialization trade-off — rote-biased corpus did not specialize the island (island gain 0.007 < 0.03 bar), no deficit-pairing measurable at toy scale. Savant standalone CLOSED: 3🟢 (Snyder/detail-over-gestalt/seed-stable = local-detail specialization real·early·representational·innate) + 6🔴 (dissociation/WCC-metacog/paradoxical/hyper-systemizing/eidetic/tradeoff).
+
+## 2026-06-15 — MATRIX overhaul (N-D axis-combination climb) + first climb probe
+- [x] MATRIX.tape → MATRIX.md (doc convention) + §0 FRAMEWORK: axes uncapped from 2D, climb k=1→N → FINAL COMBINATION fixed point (combination-space, not scalar Ψ). META + SAV-LM registered as new k=1 dims.
+- [x] H_1225 🔴 axis-combination climb (target=correctness, 7 axes) — FINAL COMBINATION = singleton {SAV-struct} (AUROC 0.902, k*=1); all other axes gain≈0 → combination collapses to one dominant structure axis. Framework operational; degenerate for this target. → H_1226 residualize-dominant climb to expose k≥2.

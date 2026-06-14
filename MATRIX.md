@@ -30,6 +30,11 @@ integration score)이 **유한 k\* 에서 포화**(Δ < ε) ⟺ FINAL COMBINATIO
 | **META** | metacognition (neuroscience) — H_1202–1221 type-2/ERN/calibration/FOK/control/OOD/serial | active (10각도, 5🟢) — §3a |
 | **SAV-LM** | savant-as-LM-cognition — H_1207–1224 Snyder/WCC/detail/seed-stable/tradeoff | active (Snyder·detail·seed-stable 3🟢) — §3a · E축 LM 확장 |
 
+### §0a climb log (combination cells)
+| probe | target | climb result | fixed point |
+|-------|--------|--------------|-------------|
+| H_1225 🔴 | substrate correctness | k=1 SAV-struct AUROC 0.902, all other axes gain≈0 | **singleton {SAV-struct}** — combination collapses to ONE dominant axis (structure-predictability); metacog/hnorm/embodiment/prior redundant given it. Framework works; degenerate-for-this-target. → next: residualize dominant axis to expose k≥2 structure (H_1226). |
+
 > 진행 규칙: k=1 단독축 depletion 후, k 를 올려 결합 cell 을 연다. 매 cell = pre-registered
 > falsifier + $0 verify. FINAL COMBINATION 도달(포화) 시 그 조합을 SSOT 에 고정 기록.
 
