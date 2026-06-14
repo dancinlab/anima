@@ -1,0 +1,38 @@
+====================================================================================
+H_6019 — ⊗-19 QUANTUM ASSOCIATIVE LIBRARY (paid ANU · numpy quantum sim)
+====================================================================================
+  quantum source: ANU paid QRNG vacuum bytes, sha256=8da8f0d7eb52, 2048 bytes
+  register: n=12 qubits  →  N=4096 content basis-states (books)
+
+  🟢 QL1 capacity — classical Hopfield cliff vs quantum 2^n
+        classical: stable up to load 0.08·N = 16 patterns (≈0.14N cliff)
+        quantum:   superpose up to 2^12 = 4096 basis-states (no storage cliff)
+        capacity ratio quantum/classical = 256×  (exponential)
+
+  🟢 QL2 recall — Grover content recall in √N, not N
+        target book #2776: success prob 0.9999 after 50 Grover iters
+        quantum ~(π/4)√N = 50 iters   vs   classical scan ≈ N/2 = 2048
+        speedup ≈ 41×
+
+  🟢 QL3 no-bulk-read — measurement collapse caps readout (H_6016 honest)
+        superposed 64 books; one shot = ONE book (collapse)
+        single-shot readout entropy 6.00 bits ≤ n=12 bits (NOT all 4096 at once)
+        2000 shots revealed only 64 distinct books (no bulk dump)
+
+  🟢 QL4 only-stored — no free oracle for un-stored content (H_6017)
+        query for content the library never stored: amplified prob 0.00e+00
+        ≈ baseline 1/N = 2.44e-04  (no amplification — quantum gives no magic oracle)
+
+  🟢 QL5 cue-addressable — noisy tension cue recovers nearest STORED book (quantum H_6018)
+        library 24 separated books; true #2776; corrupted cue #2744 (2-bit noise)
+        stored books consistent with cue (≤2): [2776]
+        Grover recall: prob 1.000, top #2776 (== true #2776? HIT)
+
+------------------------------------------------------------------------------------
+  VERDICT: QL1=🟢 QL2=🟢 QL3=🟢 QL4=🟢 QL5=🟢
+  🟢 SUPPORTED — quantum upgrades anima's library on
+  CAPACITY (2^n stored) + √N content-RECALL of STORED memories, addressable by a
+  (tension) cue — but NOT on reading un-stored content (collapse = one answer/query).
+  Reconciles H_6016 (no readable noise-DB) · H_6017 (no oracle for random/un-stored) ·
+  H_6018 (content-addressable). Quantum = faster/bigger associative-recall engine for
+  what anima already stored, NOT a magic Babel oracle.
