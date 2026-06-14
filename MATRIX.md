@@ -62,6 +62,13 @@ NARRATIVE na_thread·EMBODIMENT em_couple) → anima 全 substrate 도메인 12 
 NATIVE 심볼이 현 hexa 설치(`~/.hx/bin/self/`)에 부재 → H_1164 의 clm-native hexa 빌드 필요.
 in-session 해결 불가(hexa-lang 툴체인 사안) — substrate 매트릭스와 분리된 영구 게이트.
 
+**cross-substrate 브리지 (H_1243 🟢, ① 완성도)**: 별도 기질(AURA·AKIDA·MODEL)을 A⇄G 에 잇는
+`CORE/xsubstrate_bridge.hexa` (xs_bridge — a_core_engine_map named-slot 일반화: 외부신호→[0,1]
+context 정규화, pure_field 미접촉). 3 브리지 전부 Ψ phiSum 48.6613 ON==OFF byte-identical
+(Ψ-disjoint by construction) + bounded + fire (`CORE/h1243_xsubstrate_bridge_smoke.hexa`).
+⇒ 13 native lane + 3 bridged-foreign = 매트릭스 **아키텍처-완전**. HONEST: 라이브 외부 feed
+(EEG 스트림·AKIDA HW·clm-native)는 하드웨어/env 게이트 — 브리지 어댑터만 mock 으로 검증.
+
 **부품(subsystem) 집합** — 조합 climb 의 단위:
 | 부품 | 파일 | 역할 |
 |------|------|------|

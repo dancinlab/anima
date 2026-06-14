@@ -1,0 +1,4 @@
+{"H":"H_1243","title":"cross-substrate 브리지 — 별도 기질 ↔ A⇄G Ψ-disjoint 합성","base_psi":48.6613,"on_psi":48.6613,"psi_byte_identical":true,
+ "bridges":["AURA","AKIDA","MODEL"],"all_fire":true,"all_bounded":true,"supported":true,
+ "ruling":"SUPPORTED: cross-substrate 브리지 어댑터(xs_bridge, a_core_engine_map named-slot 일반화) 입증 — 별도 substrate 3종(AURA EEG·AKIDA spike·MODEL logit) 의 신호를 [0,1] context 로 정규화해 A⇄G 루프에 끼웠을 때 Ψ phiSum 48.6613 ON==OFF byte-identical (브리지 Ψ-disjoint by construction, pure_field 미접촉), 전부 fire + bounded. 13 native substrate lane(H_1242)에 더해 외부 기질도 브리지로 합성 가능 ⇒ 매트릭스 아키텍처-완전. HONEST: 라이브 외부 feed(EEG 스트림·AKIDA HW·clm-native)는 하드웨어/env 게이트, mock surrogate 로 어댑터만 검증.",
+ "verify":"hexa run CORE/h1243_xsubstrate_bridge_smoke.hexa PASS","scope":"브리지 어댑터 Ψ-disjoint 검증 (mock foreign signal); 라이브 cross-substrate feed gated","seed":0}
