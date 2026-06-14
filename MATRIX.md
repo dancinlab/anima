@@ -33,7 +33,18 @@ integration score)이 **유한 k\* 에서 포화**(Δ < ε) ⟺ FINAL COMBINATIO
 ### §0a climb log (combination cells)
 | probe | target | climb result | fixed point |
 |-------|--------|--------------|-------------|
-| H_1225 🔴 | substrate correctness | k=1 SAV-struct AUROC 0.902, all other axes gain≈0 | **singleton {SAV-struct}** — combination collapses to ONE dominant axis (structure-predictability); metacog/hnorm/embodiment/prior redundant given it. Framework works; degenerate-for-this-target. → next: residualize dominant axis to expose k≥2 structure (H_1226). |
+| H_1225 🔴 | correctness (global) | k=1 SAV-struct 0.902, others gain≈0 | **singleton {SAV-struct}** |
+| H_1226 🔴 | correctness, residual | force struct base, climb rest: cum gain −0.0004 | **singleton confirmed** (beyond struct nothing adds globally) |
+| H_1227 🟢 | correctness, HARD (low-struct) tercile | k*=4 climb saturates AUROC 0.789 | **{SAV-struct, EMB-pos, PRIOR-freq, META-margin}** — multi-axis combination emerges OFF the dominant axis |
+| H_1228 🔴 | 3-way interaction | best triple interaction 0.901 vs additive 0.902 (syn −0.001) | **ADDITIVE** — no high-order synergy; axes combine linearly |
+
+**ROUND-1 CONCLUSION (climb depletion)**: the FINAL COMBINATION is **regime-dependent + ADDITIVE**.
+Cardinality grows 1→4 as the dominant structure-axis weakens (global singleton {SAV-struct} →
+hard-regime 4-set {struct,EMB-pos,PRIOR-freq,META-margin}), but axes combine LINEARLY (H_1228 no
+synergy) — a REDUCIBLE additive fixed point, NOT a high-order entangled whole. Contrast: axis-D
+consciousness-substrate was WHOLE/irreducible; these MEASUREMENT axes are additive/reducible.
+'Beyond 2D' = more axes by regime, not interaction. NEXT k-frontier: other targets (emit/Φ) or
+non-correctness combination objectives where high-order entanglement might appear.
 
 > 진행 규칙: k=1 단독축 depletion 후, k 를 올려 결합 cell 을 연다. 매 cell = pre-registered
 > falsifier + $0 verify. FINAL COMBINATION 도달(포화) 시 그 조합을 SSOT 에 고정 기록.
