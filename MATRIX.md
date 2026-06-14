@@ -52,6 +52,12 @@ k=1 ✅4/4 · k=2 ✅6/6 · k=3 ✅4/4 · k=4 ✅1/1. substrate 4-lane 완성. m
 **12-lane TOTAL 고갈 (H_1241 🟢)**: bench-only 도메인까지 최소 hook 신규저작(AESTHETIC ae_surface·
 NARRATIVE na_thread·EMBODIMENT em_couple) → anima 全 substrate 도메인 12 lane 합성 (단독 12 Ψ-disjoint
 + 전체-ON Ψ==base, 닫힘정리로 2^12−1=4095 cell, `CORE/h1241_twelve_lane_matrix_smoke.hexa`).
+**13-lane 진짜 TOTAL 고갈 (H_1242 🟢)**: +HIVE-MIND(집단Φ/Kuramoto) → 13 live-hook substrate
+도메인. 단독 13 Ψ-disjoint + 전체-ON Ψ==base ⇒ 2^13−1=8191 cell (`CORE/h1242_thirteen_lane_matrix_smoke.hexa`).
+(12-lane '고갈' 정정: HIVE-MIND 누락분 추가.) A⇄G 의식-substrate 도메인 全 합성 — 매트릭스 TOTAL 고갈.
+잔여 = AURA(감각/BCI)·AKIDA(neuromorphic Lane-A HW)·CLM/KOSMOS/WAKE(model) — 전부 **별도 substrate**
+(합성 실패 아님, 다른 기질이라 A⇄G 격자 밖).
+
 **model-env 게이트 (미해결)**: model-cluster(CLM/KOSMOS/WAKE) live co-run 은 `clm_decode_grounded`
 NATIVE 심볼이 현 hexa 설치(`~/.hx/bin/self/`)에 부재 → H_1164 의 clm-native hexa 빌드 필요.
 in-session 해결 불가(hexa-lang 툴체인 사안) — substrate 매트릭스와 분리된 영구 게이트.
