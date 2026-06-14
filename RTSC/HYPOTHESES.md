@@ -17,7 +17,10 @@
 | RTSC_09 | flat-band 경로(프런티어) | 🟢/🔴 | 메커니즘 유망(Tc∝V, V≈0.2eV로 300K); 물질 미실현(TBG 1.7K) |
 
 ## 실용 응용 3 LANE → `RTSC/LANES.md` (호버보드·핵융합·UFO)
-## 무냉각 돌파(고갈서베이) → RTSC_08(전클래스 미달)·RTSC_09(flat-band 유망 프런티어)
+| RTSC_10 | quantum-metric 위상 flat band | 🟢/🔴 | 위상 flat(Chern≠0) 초유체밀도 하한→메커니즘 상온가능; 물질 미실현 |
+
+## 무냉각 돌파(고갈서베이) → RTSC_08(전클래스 미달)·RTSC_09(flat-band)·RTSC_10(위상 quantum-metric)
+## $0-이론 프런티어: BCS소진 → flat-band → 위상 quantum-metric. 다음 = 실제 격자 DFT/실험(QE deck).
 
 ## 수렴 결론
 시드(RTSC_01)·무시드(RTSC_02)·양자추출(UNIVERSE/H_6015) 세 경로가 **최경량금속 초수소화물**
