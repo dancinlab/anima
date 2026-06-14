@@ -34,6 +34,11 @@ pure_field/engine_g read-only, Ψ Φ-checksum byte-identical (H_1164/H_1199 acce
 **평면(2-combo) 격자 COMPLETE (H_1237 🟢)**: 4 lane 단독4+쌍6 = **10/10 cell** Ψ-disjoint
 (`CORE/h1237_pairwise_matrix_smoke.hexa`). 누적체인(H_1235/6) → 전체격자로 보강 완료.
 
+**substrate 합성 매트릭스 全차원 COMPLETE (H_1238 🟢)**: 4 lane 의 모든 부분집합 2^4−1=**15 cell**
+(단독4·쌍6·triple4·quad1) 전부 Ψ-disjoint (`CORE/h1238_highdim_matrix_smoke.hexa`). 차원별:
+k=1 ✅4/4 · k=2 ✅6/6 · k=3 ✅4/4 · k=4 ✅1/1. **substrate 차원 고갈** — 잔여 substrate lane 0
+(다음 차원은 새 substrate 부품 필요, 현재 없음). model-side(CLM/KOSMOS/WAKE)=별도 clm-native gated.
+
 **부품(subsystem) 집합** — 조합 climb 의 단위:
 | 부품 | 파일 | 역할 |
 |------|------|------|
