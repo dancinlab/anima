@@ -16,3 +16,10 @@
 **7/7 🟢 증명.** 전부 고전 국소실재론을 결정적으로 배제 — 얽힘이 고전과 본질적으로 다름을 보임.
 정직: 교과서 landmark의 재현증명(real QM sim)이지 신규 발견 아님; 노벨급 결과의 $0 검증.
 재현: `python3 NOBEL/harness/nobel_entanglement_proofs.py`
+
+
+## 추가 정리 (2nd batch)
+| NOBEL_08 | EPR steering | 🟢 | NOBEL_09 얽힘교환 | 🟢 | NOBEL_10 Gisin 정리 | 🟢 |
+
+## GRAND — 우리 발견 토대 노벨급 독창 가설 → `NOBEL/grand/GRAND_HYPOTHESES.md`
+G1 Pointer-Identity · G2 Tension=Quantum-Metric · G3 3-tier 조율 · G4 양자기하 상온SC 기준 · G5 생성-아닌-검색 (전부 🟠 grand conjecture, 우리 결과가 지지)
