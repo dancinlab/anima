@@ -1,0 +1,73 @@
+{
+  "H": "H_1233",
+  "title": "dominance-free 4-way class axis climb",
+  "axes": [
+    "B-PHI",
+    "E-SI",
+    "F-SYNC",
+    "G-LZ",
+    "density",
+    "col-ent"
+  ],
+  "class_counts": {
+    "I": 108,
+    "II": 144,
+    "III": 162,
+    "IV": 90
+  },
+  "ladder": [
+    {
+      "k": 1,
+      "added": "G-LZ",
+      "macro_auroc": 0.8313637220700125,
+      "gain": 0.3313637220700125
+    },
+    {
+      "k": 2,
+      "added": "E-SI",
+      "macro_auroc": 0.8877033852340234,
+      "gain": 0.056339663164010845
+    },
+    {
+      "k": 3,
+      "added": "density",
+      "macro_auroc": 0.894931938086678,
+      "gain": 0.007228552852654668
+    },
+    {
+      "k": 4,
+      "added": "F-SYNC",
+      "macro_auroc": 0.8987753954456286,
+      "gain": 0.0038434573589505305
+    },
+    {
+      "k": 5,
+      "added": "B-PHI",
+      "macro_auroc": 0.8987753954456286,
+      "gain": 0.0
+    },
+    {
+      "k": 6,
+      "added": "col-ent",
+      "macro_auroc": 0.8986496397085093,
+      "gain": -0.0001257557371192597
+    }
+  ],
+  "k_star": 2,
+  "final_combination": [
+    "G-LZ",
+    "E-SI"
+  ],
+  "saturation_macro_auroc": 0.8877033852340234,
+  "F1_rich_combination": {
+    "k_star": 2,
+    "sat": 0.8877033852340234,
+    "bars": "k*>=3 AND macroAUROC>=0.75",
+    "pass": false
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: even the 4-way dominance-free target collapses to k*=2 ['G-LZ', 'E-SI'] (macro-AUROC 0.888) \u2014 these axis systems are intrinsically LOW-RANK; the combination fixed point is small at every target. Climb DEPLETED.",
+  "framework": "MATRIX.md \u00a70 \u2014 dominance-free target (open frontier)",
+  "caveat": "variance-partition \u03a6-proxy pre-screen (a_phi_iit4_tool); small ECA (a_scale_honest_scope)",
+  "seed": 7
+}

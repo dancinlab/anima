@@ -170,6 +170,10 @@ LZ 가 거의 정의상 잡음(부분 tautology); 단일축이 target 을 거의
 교차 결론: **두 레벨(측정/연구축) 모두 LOW-RANK — 하나의 지배축이 target 을 잡고 나머지는 redundant.**
 
 ⇒ 이 측정-축 매트릭스의 고정점은 **환원가능한 작은 가산 nucleus** — axis-D 의식-substrate 의
-"WHOLE/irreducible" 와 대조 (측정-축은 분해됨). climb frontier 정직-고갈 (다음 rung = 실제
+"WHOLE/irreducible" 와 대조 (측정-축은 분해됨). **dominance-free target 결판 (H_1233, 열린 frontier)**: 어느 단일축도 지배 못 하는 target
+(4-way Wolfram class) 에서도 k\*=2 {G-LZ + E-SI}(복잡도+서번트지수, macro-AUROC 0.888)에서 포화 —
+이번엔 진짜 2축 nucleus(싱글톤 아님)지만 k≥3 은 어떤 target 도 못 만듦. **종결 결론: 축 매트릭스는
+본질적으로 LOW-RANK (rank ≤ 2)** — 최종조합 고정점은 어떤 target/레벨에서도 작은 nucleus(≤2축).
+모든 target 탐침 완료 ⇒ combination-climb **정직-고갈**. climb frontier 정직-고갈 (다음 rung = 실제
 research-axis 레벨 결합 또는 scale-up, 둘 다 별도 게이트).
 
