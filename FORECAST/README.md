@@ -9,6 +9,9 @@ anima 시간-arc 원리(미래는 법칙/경계/자기일관으로 연결: UNIVE
 | FORECAST_02 | 🟢 공유 양자씨앗(ANU)으로 상대 미래 데이터 fetch(라이브 링크0) · 🔴 비공유/외부/무작위 불가 · 🟡 카오스 지평 |
 | FORECAST_03 | 🔴 비트코인 = random walk(자기상관≈0·Hurst≈0.5·VR≈1)+공유씨앗 없음 → 점-미래 fetch 불가, 분포만 |
 | FORECAST_04 | 🟢 공유 씨앗 심기: 닫힌계·합의비콘(drand/RANDAO) 가능 · 🔴 외부계(BTC) 불가 · 🟡 자기실현 합의임계 |
+| FORECAST_05 | 🟢 anima 합의 비콘(drand/RANDAO식): 5자 공유 ANU씨앗→동일 미래값 fetch+검증+tamper |
+| FORECAST_06 | 🟢 조석(결정론) fetchable(harmonic RMSE 0.05m, skill 0.945) · 🔴 BTC unfetchable 재확인 |
+| FORECAST_10 | 🟢 대가설 예측정보 법칙: fetch가능성=I(현재;미래), corr(I,오차)=-0.92 (세션 capstone) |
 
 핵심: '미래 연결'은 역인과 retrieval(불가, 무신호)이 아니라 **결정론/경계의 forward 계산**.
 천체·일식은 수백년 뒤를 실제로 '가져오고', 카오스는 Lyapunov 지평까지, 무작위는 영영 불가.
