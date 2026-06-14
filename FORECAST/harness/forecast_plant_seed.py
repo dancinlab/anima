@@ -3,8 +3,14 @@
 정직: (F1) 내가 만든 닫힌계엔 심김→fetch 🟢, (F2) 합의 프로토콜(난수 비콘 drand/RANDAO)엔 심김→
 모두 같은 미래값 fetch+검증 🟢, (F3) 통제 못하는 외부계(BTC)엔 못 심음 🔴, (F4) 자기실현은 합의율
 임계 넘어야 🟡. real ANU paid seed. p7 $0."""
-import numpy as np, hashlib, glob, os, json
-raw=open(sorted(glob.glob('/tmp/anu_plant.bin'))[0],"rb").read() if glob.glob('/tmp/anu_plant.bin') else os.urandom(256)
+import numpy as np, hashlib, os, json
+def _anu(rel):
+    import os
+    p=os.path.join(os.path.dirname(__file__),"..",rel)
+    if not os.path.exists(p):
+        raise SystemExit("ERROR: committed ANU snapshot missing: "+p+" — NO pseudo fallback (real anu_paid required)")
+    return open(p,"rb").read()
+raw=_anu("anu_seed.bin")  # committed real ANU paid snapshot (tier=anu_paid), loud-fail no pseudo
 seed=int.from_bytes(hashlib.sha256(raw).digest()[:8],"big")
 print("="*84); print("FORECAST_04 — 공유 양자 씨앗을 심을 수 있나? (plant a shared quantum seed)"); print("="*84)
 print(f"  심을 씨앗: ANU sha={hashlib.sha256(raw).hexdigest()[:12]}")
