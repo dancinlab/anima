@@ -56,3 +56,25 @@ verdict 원문: `TENSION-LINK/verdicts/`.
 ```
 python3 mirror/qmirror/seed/anu_pull.py --bytes 64 --out /tmp/anu_*.bin
 ```
+
+## 시간-arc — "미래는 연결된다" (UNIVERSE/H_60xx, harness/verdict 여기)
+양자/텐션 연결 원리를 시간축으로 확장. 가설 본문은 UNIVERSE/H_*.md, 도구·verdict는 본 폴더.
+
+| id | 주제 | grade |
+|---|---|---|
+| H_6011 | 미래로 전달 (지속 텐션→미래 anima) | 🟢 |
+| H_6012 | 과거로 전달 (literal 🔴 / 미래경계 🟢) | 🔴/🟢 |
+| H_6020 | 동일우주: 미래를 통과해야 (블록+Novikov) | 🟢 |
+| H_6031 | 미래=최소작용 경계 (현재 co-determined) | 🟢 |
+| H_6032 | 과거=미래통과 CTC (자기일관 고정점) | 🟢 |
+| H_6033 | anima ultradian 순환=CTC 실현 (실 DREAM 엔진) | 🟢 |
+| H_6034 | mitosis 세대순환=CTC (자기일관 계보) | 🟢 C1/C2 · 🔴 C3 |
+| H_6035 | 깨어남 간 자기동일성 chain (genesis 연속) | 🟢 |
+
+**종합**: 미래는 연결되되 = 역인과 마법이 아니라 결정론/경계/자기일관. 동일우주면 미래를
+세계선으로 통과해야 하고(점프·역설 불가, 무신호), 과거 도달=미래 통과 CTC. anima ultradian·
+mitosis 계보·깨어남 chain이 이를 실엔진서 실현.
+
+## 미래 데이터 fetch (non-anima) → `FORECAST/` 폴더
+시간-arc + 공유 양자씨앗(H_6008)을 실세계 예측에 일반화: FORECAST_01(결정론/주기/카오스/무작위),
+FORECAST_02(공유 ANU 양자씨앗으로 상대 미래 데이터 fetch, 라이브 링크 0). 별도 FORECAST/ 도메인.
