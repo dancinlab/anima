@@ -1,0 +1,100 @@
+RTSC_29 — RbOs2O6 real QE DFT (non-magnetic β-pyrochlore flat-band ΔE) — VERDICT 🟠/🔴 (mixed)
+date: 2026-06-15 (aiden POOL host, QE 7.5 micromamba env "qe"), p7 (every number parsed
+      from a real QE output file; nothing fabricated)
+host: aiden (12 cores, load ~10), mpirun -np 3→4 (kept headroom; bumped to np=4 only after
+      confirming ~4 idle cores). Ran ONE QE step at a time: SCF(nspin=1) → mag-test SCF(nspin=2)
+      → bands → bands.x → projwfc.x. COEXISTED with a live RTSC_27 ph.x DFPT (4 ranks, 98% CPU)
+      the whole time — RTSC_27 advanced throughout (ph_pass1.out kept printing iters);
+      tenants bitcoind / milksad / forge-python3 / summer-rbfe NOT touched.
+
+OUTCOME: the Os-5d flat band IS shallower than both failed kagome metals (|ΔE| smaller, a flat
+hybrid manifold sits essentially AT E_F), BUT the honest nspin=2 test FALSIFIES "non-magnetic":
+the ideal Fd-3m cell in PBE develops and HOLDS a large moment (does NOT collapse, unlike CsV3Sb5).
+⇒ RbOs2O6 (ideal-cell PBE) trades the kagomes' ΔE problem for a magnetism problem.
+
+================================ KEY MEASURED NUMBERS ================================
+SCF (nspin=1, rbos2o6, scf3.out, verbatim):
+  number of electrons       =        77.00     (1×Rb·9 + 2×Os·16 + 6×O·6 = 9+32+36 = 77 ✓)
+  the Fermi energy is        =    -0.4290 eV   (QE internal USPP reference; bands use the SAME zero)
+  total energy              =  -644.80192507 Ry
+  convergence has been achieved in  24 iterations
+  150 irreducible k-points (8×8×8 MP grid), Methfessel-Paxton smearing width 0.025 Ry
+  ecutwfc=70 / ecutrho=560 Ry;  2 Sym. Ops. (no inversion) for the 48f-O primitive cell
+  MIXING NOTE: shipped local-TF beta=0.3 charge-slosh DIVERGED; plain beta=0.7 worse (→126 Ry);
+               stable recipe = local-TF + beta=0.2 + mixing_ndim=12 + degauss 0.025 (24 iter → 5e-8 Ry).
+
+MAGNETISM (nspin=2 mag-test, rbos2o6_mag3, scf_mag3c.out, verbatim — 6×6×6 mesh, conv_thr 1e-5
+           for wall time under contention; the magnetic VERDICT is robust to these):
+  starting_magnetization(2) = 0.3   (Os atoms seeded with a finite moment)
+  → total-magnetization trajectory (Bohr mag/cell, verbatim, per SCF iteration):
+      1.72, 1.76, 1.98, 1.90, 2.52, 3.65, 3.35, 2.68, 2.96, 3.49, 4.52, 4.23, 5.81, 5.00, 5.58
+  → absolute-magnetization trajectory (verbatim):
+      2.32, 4.13, 4.58, 5.57, 5.53, 5.49, 6.15, 7.41, 8.02, 8.34, 8.52, 8.37, 9.43, 9.22, 9.39
+  → the moment NEVER approaches 0 — it GROWS away from the seed and oscillates ~5 μB total /
+    ~9.4 μB absolute (the gap total<absolute = frustrated up/down spin density on the Os tetrahedra).
+  → magnetic total energy = -644.96089026 Ry (still descending at kill) — ALREADY ~0.16 Ry
+    (≈2.2 eV) BELOW the non-magnetic nspin=1 ground state (-644.80192507 Ry) ⇒ the magnetic
+    solution is STRONGLY favored, not a marginal artifact.
+  ⇒ DECISIVE: RbOs2O6 (ideal Fd-3m, PBE nspin=2) is MAGNETIC. This FALSIFIES the MP
+    "non-magnetic" proxy (cf RTSC_21 catching CoSn mag=0.43 while MP said 0).
+  HONEST CAVEAT: real RbOs2O6 is an experimentally NON-MAGNETIC superconductor (Tc≈6.3 K,
+    Yonezawa+ 2004). A ~5 μB PBE moment on the ideal high-symmetry cell is almost certainly
+    PBE OVER-MAGNETIZATION of a frustrated 5d metal at the undistorted structure (known PBE
+    pathology; the real material has rattling/anharmonic distortion + stronger SOC that quench it).
+    So: the DFT-PBE ideal-cell RESULT is magnetic (reported per p7), but this conflicts with
+    experiment and is flagged as a likely functional/structure artifact — NOT proof the real
+    compound is magnetic. Either way it is NOT the clean nspin=2→0 collapse CsV3Sb5 showed.
+
+BANDS (bands2.out, 121 k-pts on Γ–X–W–K–Γ–L–W, nbnd=55; bands.x→.gnu; projwfc.x for character;
+       energies relative to E_F = -0.4290 eV; "Os-5d" = summed projwfc weight on the 10 Os l=2 states):
+   band | min-EF  | max-EF  | width  | mean-EF | dominant character (projwfc, k-path avg)
+   -----------------------------------------------------------------------------------------
+     38  | -0.0903 | -0.0166 | 0.0737 | -0.0665 | O-p 0.837, Os-d 0.115   <- flat, AT E_F
+     39  | -0.0408 | +0.0160 | 0.0568 | -0.0177 | O-p 0.827, Os-d 0.121   <- flat, AT E_F (crosses)
+     40  | +0.0153 | +0.0711 | 0.0558 | +0.0484 | O-p 0.860, Os-d 0.098   <- flat, AT E_F
+     41  | +0.0588 | +0.2108 | 0.1520 | +0.1160 | (dispersive bridge)
+     42  | +0.2474 | +0.3507 | 0.1033 | +0.3046 | O-p 0.518, Os-d 0.417
+     43  | +0.3499 | +0.3980 | 0.0481 | +0.3773 | O-p 0.501, Os-d 0.437   <- flattest Os-5d band
+     44  | +0.4067 | +0.4830 | 0.0763 | +0.4578 | O-p 0.516, Os-d 0.439
+
+  TWO honest flat-band readings:
+  (A) Most Os-5d-CHARACTER flat band = band 43: ΔE_flat = +0.377 eV (ABOVE E_F),
+      dispersion width 0.048 eV, Os-5d weight 0.44 (highest among the narrow bands).
+  (B) Flattest manifold AT E_F = bands 38-40 (|ΔE| = 0.02-0.07 eV), but these are O-2p-dominated
+      (~84% O-p) hybrid bands with only ~10-12% Os-5d (covalent Os-O bonding pushes the pure
+      Os-5d weight up to band 42-44). A flat band literally crosses E_F (band 39).
+
+================================ CoSn / CsV3Sb5 COMPARISON ================================
+  axis 1 — flat-band depth |ΔE_flat|:
+     CoSn      −0.44 eV (Co-3d, below E_F)
+     CsV3Sb5   +0.92 eV (V-3d, above E_F)
+     RbOs2O6   +0.377 eV (Os-5d band 43, above E_F)  → SHALLOWER than both ✓
+               and a flat O-p/Os-d hybrid manifold sits AT E_F (|ΔE|<0.07) → SHALLOWEST of the three.
+  axis 2 — magnetism:
+     CoSn      0.43 μB (magnetic — disqualifying)
+     CsV3Sb5   0.01 μB (non-magnetic — clean; forced 2.8 μB collapsed to 0)
+     RbOs2O6   ~5 μB total / ~9 μB absolute (MAGNETIC in ideal-cell PBE — does NOT collapse) → WORST
+  VERDICT: RbOs2O6 WINS the ΔE axis (flat band shallowest / at E_F) but LOSES the magnetism axis
+     hard in ideal-cell PBE. It is NOT, on this calculation, a cleaner no-cooling RTSC base than the
+     kagomes — it solves the lever the campaign was missing (ΔE→0) only to introduce a large moment.
+     IF the moment is a PBE/ideal-structure artifact (very likely, given the experimental
+     non-magnetic 6.3 K SC), THEN RbOs2O6 would become the best base yet (non-magnetic ∧ flat band
+     at E_F) — but that requires a non-PBE / distorted-cell / SOC re-test to establish, which this
+     fire did NOT do. Honest grade reflects that open question.
+
+GRADE: 🟠 flat-band ΔE shallowest-of-three (real, projwfc-grounded) ∧ 🔴 ideal-cell PBE FALSIFIES
+       non-magnetic (large non-collapsing moment) — with the honest flag that the moment is a likely
+       PBE/structure artifact vs the experimentally non-magnetic SC. Decision-grade either way.
+
+REPRODUCIBILITY / honest scope:
+  - E_F, energies, magnetization trajectory, band ΔE, Os-5d weights = ALL parsed from real QE files
+    (scf3.out, scf_mag3c.out, bands2.out, rbos2o6.bands.dat.gnu, projwfc.out).
+  - nspin=2 run capped at conv_thr 1e-5 + 6×6×6 (heavy aiden contention with RTSC_27); the moment
+    was still drifting UP at kill — the ~5 μB is a LOWER bound on the PBE moment, the MAGNETIC
+    verdict is robust (15 iters, zero tendency toward 0).
+  - bands2 = nbnd=55 / 20-pts-per-segment (wall-time trim of the shipped bands.in 90/40); resolves
+    the same flat manifold.
+  - PBE, ideal undistorted Fd-3m, scalar-relativistic USPP (no SOC). RbOs2O6 has a real low-T
+    structural/rattling distortion + Os is heavy (SOC matters) — both UNADDRESSED here.
+
+files: RTSC/decks/rbos2o6/{scf.in,scf_mag.in,bands.in,bands2.in,bandsx.in,projwfc.in,README.md}

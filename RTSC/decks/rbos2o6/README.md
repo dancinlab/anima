@@ -54,6 +54,26 @@ do NOT disturb aiden's tenants (bitcoind / milksad / python3).
 - `scf.in`  — SCF (nspin=1; MP smearing degauss 0.02; K 8×8×8; local-TF mixing).
 - `bands.in` — bands along the FCC path **Γ–X–W–K–Γ–L–W**, nbnd=90 (enough to
   span the Os-5d manifold + O-2p; flat band sits within the 5d manifold).
+- `scf_mag.in` — RTSC_29 nspin=2 magnetism test (seeded `starting_magnetization(2)=0.3`
+  on Os, `prefix=rbos2o6_mag`); the honest non-magnetic confirmation. The actually-run
+  variant used degauss 0.025 + the stable mixing (below) + a 6×6×6 mesh for wall time.
+- `bands2.in` — the actually-run bands (nbnd=55, 20 pts/segment) — a wall-time-trimmed
+  copy of `bands.in` (90 bands / 40 pts) that resolves the SAME Os-5d flat manifold near
+  E_F. Use `bands.in` for a publication-resolution path; `bands2.in` is the screening run.
+- `bandsx.in` / `projwfc.in` — post-processing (`bands.x` → flat-band identification,
+  `projwfc.x` → Os-5d orbital-character weights, `lsym=.false.`).
+
+## RTSC_29 run note (2026-06-15, aiden, mpirun -np 3, coexisting with RTSC_27 DFPT)
+- The shipped `scf.in` (`mixing_mode="local-TF"`, beta=0.3) **charge-slosh diverged**
+  on this heavy metallic Os pyrochlore (accuracy 14→0.19→6.7 Ry, runaway). `plain`
+  beta=0.7 was worse (→126 Ry). The stable recipe that **converged in 24 iter to
+  5e-8 Ry** was `local-TF` + **beta=0.2** + `mixing_ndim=12` + degauss **0.025**
+  (gentler mixing for the sloshing metal). Use that for any rerun. The ΔE physics is
+  mixing-independent (same KS ground state); only the SCF path changed.
+- Cell has only **2 Sym. Ops. (no inversion)** as written (the 48f O at x≈0.315 in
+  the FCC primitive basis breaks most cubic ops) → many irreducible k-points →
+  slow SCF. A re-derivation of the ideal Fd-3m O positions would restore symmetry
+  and speed; the measured ΔE / E_F / mag stand regardless (correct cell, just slow).
 
 ## To run (on aiden — ONE QE job at a time; do not disturb tenants)
 ```
