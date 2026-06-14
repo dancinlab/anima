@@ -1,0 +1,69 @@
+{
+  "H": "H_1227",
+  "title": "matrix climb \u2014 hard (low-structure) tercile",
+  "mode": "hardtercile",
+  "n_items": 1334,
+  "acc": 0.01649175412293853,
+  "ladder": [
+    {
+      "k": 1,
+      "added": "SAV-struct",
+      "auroc": 0.7240853658536586,
+      "gain": 0.22408536585365857
+    },
+    {
+      "k": 2,
+      "added": "EMB-pos",
+      "auroc": 0.75970066518847,
+      "gain": 0.035615299334811445
+    },
+    {
+      "k": 3,
+      "added": "PRIOR-freq",
+      "auroc": 0.783120842572062,
+      "gain": 0.023420177383592033
+    },
+    {
+      "k": 4,
+      "added": "META-margin",
+      "auroc": 0.7889412416851441,
+      "gain": 0.005820399113082075
+    },
+    {
+      "k": 5,
+      "added": "META-ent",
+      "auroc": 0.7912971175166297,
+      "gain": 0.0023558758314855544
+    },
+    {
+      "k": 6,
+      "added": "SUB-hnorm",
+      "auroc": 0.7971175166297118,
+      "gain": 0.005820399113082075
+    },
+    {
+      "k": 7,
+      "added": "META-conf",
+      "auroc": 0.7973946784922394,
+      "gain": 0.00027716186252768615
+    }
+  ],
+  "k_star": 4,
+  "final_combination": [
+    "SAV-struct",
+    "EMB-pos",
+    "PRIOR-freq",
+    "META-margin"
+  ],
+  "saturation_auroc": 0.7889412416851441,
+  "F1": {
+    "k_star": 4,
+    "sat": 0.7889412416851441,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED: in the low-structure regime a DIFFERENT multi-axis final combination emerges = ['SAV-struct', 'EMB-pos', 'PRIOR-freq', 'META-margin'] (k*=4, AUROC 0.789)",
+  "framework": "MATRIX.md \u00a70",
+  "scope": "toy ByteGPT d256/4L CPU en slice (a_scale_honest_scope)",
+  "seed": 7
+}

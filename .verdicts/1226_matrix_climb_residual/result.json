@@ -1,0 +1,65 @@
+{
+  "H": "H_1226",
+  "title": "matrix climb \u2014 residual (structure-base)",
+  "mode": "residual",
+  "base_auroc": 0.9019349334533365,
+  "ladder": [
+    {
+      "k": 1,
+      "added": "SAV-struct",
+      "auroc": 0.9019349334533365,
+      "gain": 0.40193493345333653
+    },
+    {
+      "k": 2,
+      "added": "EMB-pos",
+      "auroc": 0.9019407929816913,
+      "gain": 5.859528354745791e-06
+    },
+    {
+      "k": 3,
+      "added": "SUB-hnorm",
+      "auroc": 0.9017907890558073,
+      "gain": -0.00015000392588393474
+    },
+    {
+      "k": 4,
+      "added": "META-ent",
+      "auroc": 0.9012833539002778,
+      "gain": -0.0005074351555295342
+    },
+    {
+      "k": 5,
+      "added": "META-conf",
+      "auroc": 0.9020614992658011,
+      "gain": 0.0007781453655233417
+    },
+    {
+      "k": 6,
+      "added": "META-margin",
+      "auroc": 0.9017017242248136,
+      "gain": -0.0003597750409874978
+    },
+    {
+      "k": 7,
+      "added": "PRIOR-freq",
+      "auroc": 0.9015130474117877,
+      "gain": -0.0001886768130259231
+    }
+  ],
+  "cum_gain_over_base": -0.0004218860415488024,
+  "k_star": 1,
+  "final_combination": [
+    "SAV-struct"
+  ],
+  "F1": {
+    "k_star": 1,
+    "cum_gain": -0.0004218860415488024,
+    "pass": false
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: SAV-struct is sufficient \u2014 beyond it no axis adds >= 0.005 (cum gain -0.000 < 0.02, k*=1); singleton fixed point confirmed",
+  "framework": "MATRIX.md \u00a70",
+  "scope": "toy ByteGPT d256/4L CPU en slice (a_scale_honest_scope)",
+  "seed": 7
+}
