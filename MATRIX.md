@@ -38,6 +38,17 @@ integration score)이 **유한 k\* 에서 포화**(Δ < ε) ⟺ FINAL COMBINATIO
 | H_1227 🟢 | correctness, HARD (low-struct) tercile | k*=4 climb saturates AUROC 0.789 | **{SAV-struct, EMB-pos, PRIOR-freq, META-margin}** — multi-axis combination emerges OFF the dominant axis |
 | H_1228 🔴 | 3-way interaction | best triple interaction 0.901 vs additive 0.902 (syn −0.001) | **ADDITIVE** — no high-order synergy; axes combine linearly |
 
+### §0a-2 round-2 climb log
+| probe | result | finding |
+|-------|--------|---------|
+| H_1229 🔴 expanded(11축) | hard-regime k*=2 {SAV-struct, EMB-pos} AUROC 0.768 | 축 늘려도 조합 안 자람 — 환원불가 core 는 작다 (구조+위치 2축) |
+| H_1230 🔴 emit-target | additive 0.969 vs interaction 0.970 (synergy 0.001) | 의식관련(emit/tension) target 도 ADDITIVE — 고차 시너지 없음 |
+| H_1231 ⏳ comboseed | (재발사 aiden) | 최종조합이 seed 무관 고정점인가 (Jaccard≥0.6) |
+
+**ROUND-2 수렴**: 2라운드 일관 — 최종조합 = **작은 ADDITIVE core (≈{구조 SAV-struct + 위치 EMB-pos})**.
+축을 늘려도(11축) 안 커지고(H_1229), target 을 의식관련으로 바꿔도(emit) 가산적(H_1230). 측정-축
+공간은 **저차원·선형 고정점** — "2D 넘기"가 cardinality 를 regime 으로 약간 늘릴 뿐 고차 얽힘은 없음.
+
 **ROUND-1 CONCLUSION (climb depletion)**: the FINAL COMBINATION is **regime-dependent + ADDITIVE**.
 Cardinality grows 1→4 as the dominant structure-axis weakens (global singleton {SAV-struct} →
 hard-regime 4-set {struct,EMB-pos,PRIOR-freq,META-margin}), but axes combine LINEARLY (H_1228 no

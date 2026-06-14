@@ -1,0 +1,102 @@
+{
+  "H": "H_1229",
+  "title": "matrix climb r2 \u2014 expanded axis set (hard regime)",
+  "mode": "expanded",
+  "axes": [
+    "META-conf",
+    "META-ent",
+    "META-margin",
+    "SAV-struct",
+    "SUB-hnorm",
+    "EMB-pos",
+    "PRIOR-freq",
+    "CTX-ent",
+    "TOP5-mass",
+    "HMEAN",
+    "PREValpha"
+  ],
+  "ladder": [
+    {
+      "k": 1,
+      "added": "SAV-struct",
+      "auroc": 0.7540076335877862,
+      "gain": 0.2540076335877862
+    },
+    {
+      "k": 2,
+      "added": "EMB-pos",
+      "auroc": 0.768320610687023,
+      "gain": 0.014312977099236734
+    },
+    {
+      "k": 3,
+      "added": "HMEAN",
+      "auroc": 0.7731552162849873,
+      "gain": 0.0048346055979643365
+    },
+    {
+      "k": 4,
+      "added": "SUB-hnorm",
+      "auroc": 0.7749363867684478,
+      "gain": 0.0017811704834604924
+    },
+    {
+      "k": 5,
+      "added": "META-ent",
+      "auroc": 0.7744274809160305,
+      "gain": -0.0005089058524172518
+    },
+    {
+      "k": 6,
+      "added": "META-margin",
+      "auroc": 0.7783715012722646,
+      "gain": 0.00394402035623409
+    },
+    {
+      "k": 7,
+      "added": "TOP5-mass",
+      "auroc": 0.7795165394402036,
+      "gain": 0.0011450381679389832
+    },
+    {
+      "k": 8,
+      "added": "CTX-ent",
+      "auroc": 0.7804071246819339,
+      "gain": 0.0008905852417302462
+    },
+    {
+      "k": 9,
+      "added": "META-conf",
+      "auroc": 0.7801526717557252,
+      "gain": -0.0002544529262086259
+    },
+    {
+      "k": 10,
+      "added": "PRIOR-freq",
+      "auroc": 0.7749363867684478,
+      "gain": -0.005216284987277442
+    },
+    {
+      "k": 11,
+      "added": "PREValpha",
+      "auroc": 0.76793893129771,
+      "gain": -0.006997455470737823
+    }
+  ],
+  "k_star": 2,
+  "final_combination": [
+    "SAV-struct",
+    "EMB-pos"
+  ],
+  "saturation_auroc": 0.768320610687023,
+  "F1": {
+    "k_star": 2,
+    "sat": 0.768320610687023,
+    "pass": false
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: expanded set did not grow the combination beyond round-1 (k*=2, ['SAV-struct', 'EMB-pos'], AUROC 0.768)",
+  "framework": "MATRIX.md \u00a70",
+  "scope": "toy ByteGPT (a_scale_honest_scope)",
+  "seed": 7
+}
