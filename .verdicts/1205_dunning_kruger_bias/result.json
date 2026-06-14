@@ -1,0 +1,37 @@
+{
+  "H": "H_1205",
+  "title": "meta-bias vs meta-sensitivity / Dunning-Kruger",
+  "overall_type2_auroc": 0.7628150423849348,
+  "overall_acc": 0.783,
+  "terciles": {
+    "EASY": {
+      "bias": -0.15122973420329988,
+      "conf": 0.7549912500121133,
+      "acc": 0.9062209842154132,
+      "n": 1077
+    },
+    "MED": {
+      "bias": -0.11224577278906911,
+      "conf": 0.7015324834003819,
+      "acc": 0.813778256189451,
+      "n": 929
+    },
+    "HARD": {
+      "bias": 0.01306665257349382,
+      "conf": 0.6337909986499526,
+      "acc": 0.6207243460764588,
+      "n": 994
+    }
+  },
+  "F1_dk_signature": {
+    "dk_gap_hard_minus_easy": 0.1642963867767937,
+    "bias_hard": 0.01306665257349382,
+    "bar": 0.15,
+    "pass": true
+  },
+  "supported": true,
+  "ruling": "SUPPORTED: Dunning-Kruger signature \u2014 over-confidence is concentrated on objectively hard items (bias(HARD)-bias(EASY)>=+0.15, bias(HARD)>0); meta-bias is competence-graded and dissociates from sensitivity",
+  "neuroscience_anchor": "meta-bias vs meta-sensitivity (Fleming & Lau 2014); Dunning-Kruger 1999",
+  "scope": "toy ByteGPT d256/4L CPU en slice \u2014 scale-up UNVERIFIED (a_scale_honest_scope)",
+  "seed": 7
+}
