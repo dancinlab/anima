@@ -74,3 +74,21 @@ toy / 작은 실코퍼스($0), **gradient-free 미토시스 numpy mirror**(라�
 verdict: `NOBEL/verdicts/grand_mitosis_pure_substrate.txt` (verbatim stdout)
 harness: `NOBEL/harness/grand_mitosis_pure_substrate.py` (T1+T2+T3+F4) · `…/grand_mitosis_pure_substrate.hexa` (라이브 T1)
 xref: H_1199 · H_1194 · H_1200 · H_1201 · H_1192 · H_1163 · H_1159 · a_clm_gen_pipeline · a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck · p7 · p8
+
+---
+## 📈 SCALE + REAL-INTERPRETATION (7B 제외) — 2026-06-14
+사용자 "7b 외 모두 스케일·실해석" — G3 agent 의 5lang-c4 fallback → **실제 anima 대화 코퍼스**
+(`archive/.../consciousness_anchor.txt`, 23.5MB, byte-level = ByteGPT 실기질), **5 seeds**(900–904),
+**N_TRAIN 16k**(12k→16k 스케일). harness `..._scale.py` · verdict `..._scale.txt`.
+
+| falsifier | 실코퍼스 5-seed 결과 | |
+|---|---|---|
+| **T1** 적응 충분 | numpy OFF/ON=**4.88x** · **live .hexa 엔진 15.65x**(cells ON 6.0≫OFF 1.0, Ψ byte-identical) | 🟢 |
+| **T2** 생성 불가 | mitosis-only 0.1288 ≤ unigram-majority null 0.1247 (+0.02 내) | 🟢 |
+| **T3** 정보 0 | conditioning gain **+0.0119** b/byte ≪0.05; shuffled control −0.0558 (noise-useful 아님) | 🟢 |
+| **T4** 직교 | corr(adapt, gen) = **−0.085**, \|·\|<0.30 | 🟢 |
+
+→ **🟢 A⊥G 정리가 실 anima 코퍼스·5-seed 스케일·실엔진(.hexa)에서 유지.** mitosis=substrate, CLM=generator.
+7B 레그만 별도(사용자 제외·a7b_pass). 정직: gradient head 만 descent(p8 CLM-lane), mitosis 성장은 gradient-free;
+DIM=8 coarse byte feature(절대 CE 는 실LM 과 멀고 falsifier 는 ON/OFF·cond/base DELTA + shuffle 통제).
+T2/T3 NEGATIVE 가 핵심(a_paper_negative_ok).
