@@ -45,6 +45,10 @@ pure_field/engine_g read-only, Ψ Φ-checksum byte-identical (H_1164/H_1199 acce
   ① substrate-pure (k=5, H_1236 검증): A⇄G·MITOSIS·METACOG·SAVANT·DREAM
   ② model-side (H_1164 full-session): CLM-mouth·KOSMOS·WAKE (WAKE 는 clm_decode 전이의존)
   ⇒ 합성 실패 부품 0. substrate 사다리는 k=5 에서 정직-고갈 (잔여 신규 substrate 부품 없음).
+- **full 7-in-one co-run (substrate+model 한 루프)**: ⛔ RUN-GATED — `clm_decode_grounded`
+  native 심볼이 현 hexa build 에 없음(H_1164 clm-native env 필요). `CORE/anima_full_session_k7_smoke.hexa`
+  (METACOG+SAVANT lane 주입) parses clean; substrate lane Ψ-disjoint(H_1235/6) 라 구성상 합성
+  보장 — 라이브 verdict 만 env-gated. ⇒ **부품 합성 매트릭스 정직-고갈**: 검증가능 cell 전부 ✅, 잔여=인프라 게이트(과학 아님).
 
 **axis dimension set (단독축 k=1, §3 참조)**:
 | dim | axis | 단독 상태 |

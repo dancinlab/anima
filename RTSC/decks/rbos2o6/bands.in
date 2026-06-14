@@ -1,0 +1,46 @@
+&CONTROL
+  calculation = "bands"
+  prefix      = "rbos2o6"
+  outdir      = "./out"
+  pseudo_dir  = "./pseudo"
+  verbosity   = "high"
+/
+&SYSTEM
+  ibrav        = 2
+  celldm(1)    = 19.1845
+  nat          = 9
+  ntyp         = 3
+  ecutwfc      = 70.0
+  ecutrho      = 560.0
+  occupations  = "smearing"
+  smearing     = "mp"
+  degauss      = 0.02
+  nspin        = 1
+  nbnd         = 90
+/
+&ELECTRONS
+  conv_thr    = 1.0d-7
+/
+ATOMIC_SPECIES
+  Rb   85.468  Rb.pbe-spn-rrkjus_psl.1.0.0.UPF
+  Os  190.230  Os.pbe-spn-rrkjus_psl.1.0.0.UPF
+  O    15.999  O.pbe-n-rrkjus_psl.1.0.0.UPF
+ATOMIC_POSITIONS crystal
+  Rb   0.625000  0.375000  0.375000
+  Os   0.000000  0.000000  0.000000
+  Os   0.500000  0.500000  0.500000
+  O    0.685000  0.935000  0.315000
+  O    0.065000  0.315000  0.315000
+  O    0.685000  0.315000  0.935000
+  O    0.315000  0.065000  0.685000
+  O    0.935000  0.685000  0.685000
+  O    0.315000  0.685000  0.065000
+K_POINTS crystal_b
+7
+  0.000000 0.000000 0.000000 40   ! Gamma
+  0.500000 0.000000 0.500000 40   ! X
+  0.500000 0.250000 0.750000 40   ! W
+  0.375000 0.375000 0.750000 40   ! K
+  0.000000 0.000000 0.000000 40   ! Gamma
+  0.500000 0.500000 0.500000 40   ! L
+  0.500000 0.250000 0.750000 1    ! W
