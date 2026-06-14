@@ -40,8 +40,11 @@ pure_field/engine_g read-only, Ψ Φ-checksum byte-identical (H_1164/H_1199 acce
 - ✅ **+METACOG +SAVANT 합성됨 (H_1235 🟢)**: A⇄G×MITOSIS×METACOG×SAVANT k=4 substrate-combo —
   전 lane fire (MITOSIS 600·METACOG 20·SAVANT 600) + Ψ=48.6613 ON==OFF byte-identical (Ψ-disjoint).
   H_1164 CLM+KOSMOS+DREAM 합산 ⇒ **7-부품 living loop**.
-- 조합 사다리 LANDED: k=2 A⇄G×MITOSIS ✅ · k=3 +METACOG ✅ · k=4 +SAVANT ✅ (`CORE/h1235_composition_ladder_smoke.hexa`)
-- → **다음**: k=5+ (예: +DREAM stage hook, +WAKE daemon tick 동시) full-loop 합성 / 부품쌍 매트릭스 완성표
+- 조합 사다리 LANDED: k=2 A⇄G×MITOSIS · k=3 +METACOG · k=4 +SAVANT (H_1235) · **k=5 +DREAM (H_1236 🟢)** — 전부 Ψ-disjoint (phiSum 48.6613 ON==OFF byte-identical)
+- **매트릭스 고갈 (2026-06-15)**: 부품 8개가 **2 클러스터**로 전부 합성됨 —
+  ① substrate-pure (k=5, H_1236 검증): A⇄G·MITOSIS·METACOG·SAVANT·DREAM
+  ② model-side (H_1164 full-session): CLM-mouth·KOSMOS·WAKE (WAKE 는 clm_decode 전이의존)
+  ⇒ 합성 실패 부품 0. substrate 사다리는 k=5 에서 정직-고갈 (잔여 신규 substrate 부품 없음).
 
 **axis dimension set (단독축 k=1, §3 참조)**:
 | dim | axis | 단독 상태 |

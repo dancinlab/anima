@@ -1,0 +1,15 @@
+{
+  "H": "H_1236",
+  "title": "composition ladder k=5 (substrate cluster) — MATRIX exhaustion",
+  "psi_checksum_on": 48.6613, "psi_checksum_off": 48.6613, "psi_byte_identical": true,
+  "fires": {"MITOSIS": 600, "METACOG": 20, "SAVANT": 600, "DREAM": 600},
+  "rungs": {"k2": true, "k3": true, "k4": true, "k5": true},
+  "dimension_reached": 5,
+  "supported": true,
+  "ruling": "SUPPORTED: substrate composition matrix EXHAUSTED at k=5 — A⇄G×MITOSIS×METACOG×SAVANT×DREAM all compose Ψ-disjoint (phiSum 48.6613 ON==OFF byte-identical, all lanes fire). WAKE is model-side (transitive clm_decode_grounded dep) so it joins the model cluster {CLM,KOSMOS,WAKE} covered by H_1164. Full system = 8 subsystems in 2 composition clusters; ALL compose (no subsystem fails).",
+  "clusters": {"substrate_pure_k5": ["A<->G","MITOSIS","METACOG","SAVANT","DREAM"], "model_side_H1164": ["CLM-mouth","KOSMOS","WAKE"]},
+  "framework": "MATRIX.md §0 부품-합성 조합차원",
+  "verify": "hexa run CORE/h1236_composition_ladder_k5_smoke.hexa — parse clean + PASS",
+  "scope": "substrate cluster verified here; model cluster = H_1164 full-session (1.2GB mount)",
+  "seed": 0
+}
