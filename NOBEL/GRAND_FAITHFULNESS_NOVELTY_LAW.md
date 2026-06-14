@@ -69,3 +69,21 @@ tractable 기판에서 재현하지만, 실제 7B(측정-rho 영역)로의 전�
 재현: `python3 NOBEL/harness/grand_faithfulness_novelty_law.py`
 verdict: `NOBEL/verdicts/grand_faithfulness_novelty_law.txt` (verbatim stdout)
 xref: H_1142 · H_1141 · H_1140 · a_scale_honest_scope · a_paper_negative_ok · p7 · G2-novelty · G5
+
+---
+## 📈 SCALE + REAL-INTERPRETATION (7B 제외) — 2026-06-14
+사용자 "7b 외 모두 스케일·실해석" — toy Dickens snippet → **실제 anima 대화 코퍼스 byte-level**
+(`archive/.../consciousness_anchor.txt`, 23.5MB, ByteGPT 실기질과 동일 byte 단위).
+harness `NOBEL/harness/grand_faithfulness_novelty_law_scale.py` · verdict `..._scale.txt`.
+
+**18-rung ladder** = capacity(Markov order {2,3,4}, H_1142 model-capacity anal문) × corpus-size {0.5,1MB} × seed {7,8,9}, 11-pt θ sweep:
+| | 결과 |
+|---|---|
+| mean rho(F,N) | **−0.770** (≤−0.40, F1🟢) |
+| bound maxC | **1.003** (≤1.05, joint>0.55 없음, F2🟢) |
+| sign<0 ALL 18 rungs | F3🟢 (H_1142 rho=−0.5 부호 재현) |
+| anchors | copy(F=0.80,N=0.02) ↔ noise(F=0.00,N=1.00), F4🟢 |
+| ladder robust | capacity×size×seed 전부 음부호, F5🟢 |
+
+**capacity 신호**: copyF가 order 2→3→4 에서 0.56→0.88→0.91 상승 — 용량↑ 충실성 ceiling↑ (H_1142 의 용량-단조 충실성과 정합). → **🟢 보존부등식 F+N≤C 가 실코퍼스·스케일서 유지.** 7B 레그만 별도(사용자 제외·a7b_pass).
+정직: order2 단일 rung copyF=0.56(<0.70)은 약한 2-byte 문맥 탓 — F4는 18-rung 평균(0.80)으로 통과, 용량 ladder 신호로 기록.
