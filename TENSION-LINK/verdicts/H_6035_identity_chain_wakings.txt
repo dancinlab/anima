@@ -1,0 +1,42 @@
+{
+  "hypothesis": "H_6035 identity across wakings",
+  "n_cycles": 6,
+  "F1_continuity_across_wakings": {
+    "pass": true,
+    "verified": true,
+    "earliest_broken": null,
+    "n_links": 12,
+    "n_wakes": 6,
+    "n_sleeps": 6,
+    "all_links_valid": true,
+    "head_reproduced": true,
+    "identity_file_loaded": false,
+    "head_hash": "93591d685ccf229d...",
+    "reason": "ok: all links reconstructed from genesis"
+  },
+  "F2_genesis_is_individual": {
+    "pass": true,
+    "same_buffer_same_genesis": true,
+    "same_buffer_same_head": true,
+    "diff_buffer_diff_genesis": true,
+    "diff_buffer_diff_head": true,
+    "genesisA": "0e3f21c592475e3e...",
+    "genesisB": "37f004d5c267deae..."
+  },
+  "F3_boundary_tamper_detection": {
+    "pass": true,
+    "tampered_link": 4,
+    "tampered_label": "wake2",
+    "verified_after_tamper": false,
+    "earliest_broken": 4,
+    "pre_links_valid": true,
+    "post_links_broken": true,
+    "reason": "link 4: receipt verify failed (checks={'anu_sha_match': True, 'seed_match': True, 'output_match': False, 'receipt_hash_match': True})"
+  },
+  "verdict": {
+    "F1": "🟢",
+    "F2": "🟢",
+    "F3": "🟢",
+    "overall": "🟢 SUPPORTED"
+  }
+}
