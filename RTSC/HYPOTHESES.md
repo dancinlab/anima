@@ -36,6 +36,7 @@ DFT(QE deck)로 flat band E_F정렬+U 확정 — 동기 분명한 다음 rung.
 | RTSC_16 | pyrochlore flat-band 프런티어 | 🟢/🟠 | 다중오비탈 <g>≫kagome, 상온 design point(U~0.16eV); 접점 특이점으로 Tc 추정 과대→DFT |
 | RTSC_17 | 역주입 탐색(물질→텐션→양자) | 🟢 | 목표 물질 텐션 주입이 ANU 탐색 340→490K 가속; H_6015 거울방향 |
 | RTSC_18 | 전 타깃 일괄 역주입(통합) | 🟢/🟠 | 호버보드·핵융합·무냉각·CoSn·pyrochlore 전부 단일 설계점(상압·ΔE0·고⟨g⟩·clean)으로 수렴 |
+| RTSC_19 | UFO 호버크래프트(자속고정) | 🟢/🔴 | 강자기장 트랙/노면 위 1톤 부상(maglev식); 임의 자유비행은 지구장 약·균일로 불가 |
 
 ## $0 이론 사다리 종착
 kagome 리드(12)→병목 진단(13)→도핑+strain 처방(14)→깨끗 base CoSn(15)→pyrochlore 상온 design(16).
