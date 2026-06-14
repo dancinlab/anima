@@ -481,3 +481,14 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] H_1243 🟢 cross-substrate 브리지 (① 완성도) — CORE/xsubstrate_bridge.hexa (xs_bridge, a_core_engine_map named-slot 일반화). AURA·AKIDA·MODEL 3 별도기질 신호→[0,1] context 정규화, A⇄G 루프 합성 시 Ψ phiSum 48.6613 ON==OFF byte-identical(Ψ-disjoint by construction)+bounded+fire. 13 native lane + 3 bridged ⇒ 매트릭스 아키텍처-완전. 라이브 외부 feed(EEG/AKIDA-HW/clm-native) 하드웨어/env 게이트(mock surrogate 검증). CORE/h1243 hexa run PASS.
 - [x] H_1244 🟢 AURA + H_1245 🟢 AKIDA 라이브 cross-substrate 브리지 (실제 데이터) — AURA: 실제 EEG(ds005620) big-Φ 7.5956→context 0.076; AKIDA: 실제 AKD1000 spike 79.95Hz(Lane-A pi5)→context 0.080. 둘 다 A⇄G 600-step Ψ phiSum 48.6613 byte-identical(Ψ-disjoint). 외부기질 3중 2 LIVE 실데이터 합성, MODEL은 clm-native hexa 게이트. CORE/h1244·h1245 hexa run PASS.
 - [x] H_1246 🟢 MODEL 라이브 cross-substrate 브리지 (실제 ByteGPT-303M) — 실제 ByteGPT-303M(anima-clm-chat-303m, 1.2GB) next-byte logit entropy 0.969nat → xs_bridge(MODEL) → context 0.175 → A⇄G 600-step Ψ phiSum 48.6613 byte-identical(Ψ-disjoint). clm_decode_grounded 게이트는 .clm 한정 → ByteGPT bg_load 경로로 우회, 실제 모델 신호. 외부기질 3/3(AURA·AKIDA·MODEL) 전부 LIVE 실데이터 합성 완료. CORE/h1246 hexa run PASS.
+
+## EEG + 어댑터 캠페인 (H_1247~H_1253, 2026-06-15, 실 EEG ds005620 sub-1010, $0 local, p7)
+"EEG + EEG어댑터(xs_bridge)로 무엇을 할 수 있나" — 능력축 고갈. 7 H 전부 🟢 (H_1249 🟠→H_1249b 대체):
+- [x] H_1247 🟢 상태판별 — 브리지가 awake(Φ7.60→ctx0.076) vs sed(6.84→0.068) 구분, Δ0.0075>0.005 단조.
+- [x] H_1248 🟢 Φ-스펙트럼 — 16 시스템상태 Φ span 9.23 을 브리지가 단조(15/15)·bounded(16/16) 매핑.
+- [x] H_1249 🟠→ H_1249b 🟢 EEG-게이트 성장 — 진폭보존 특징이 adapt_field 구동, awake(recon 90.9/39cells) ≫ sed(58.2/12cells). 의식수준→성장률.
+- [x] H_1250 🟢 EEG 탑재 — 실EEG 를 A⇄G brain-context(motivation)로 올려 emit propensity 구동(awake 0.0787>sed 0.0709), Ψ byte-identical(Ψ-disjoint). "올린다" 입증.
+- [x] H_1251 🟢 종단 결정론 — 실EEG→bridge→A⇄G 전체 체인 2회 byte-identical.
+- [x] H_1252 🟢 EEG→CLM 구축 — EEG 상태열 bigram CLM acc 0.872 > unigram 0.745 > uniform 0.0625. (TPM=의식엔진=bigram CLM, 같은 기계)
+- [x] H_1253 🟢 EEG→CLM 생성 — bigram CLM 이 EEG 상태열 생성, 생성분포 실데이터 근접(top-state 일치, L1 0.509). 
+고갈 경계(정직): 멀티-DIM 벡터 탑재(VAdaptField)·EEG→kosmos 기억영속은 스칼라 어댑터 밖의 인접 subsystem — 별도 lane.
