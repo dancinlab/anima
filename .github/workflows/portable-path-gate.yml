@@ -1,0 +1,45 @@
+name: portable-path-gate
+# Fail any PR whose ADDED source lines introduce a foreign author-machine path
+# (/Users/<name>/ or /home/<name>/). Comment lines and data/state/archive/
+# knowledge buckets are excluded so the gate only guards runtime source.
+on:
+  pull_request: { branches: [main] }
+  workflow_dispatch:
+permissions: { contents: read }
+jobs:
+  no-foreign-path:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - shell: bash
+        run: |
+          set -euo pipefail
+          base="origin/${{ github.base_ref }}"
+          git fetch --quiet origin "${{ github.base_ref }}"
+          # Only ADDED lines (+, not +++) in runtime source extensions.
+          # Exclude data/experiment/archive buckets at PATH level via pathspec,
+          # then exclude comment lines and the diff header.
+          hits="$(git diff -U0 "$base...HEAD" -- \
+                    '*.hexa' '*.py' '*.sh' '*.c' \
+                    ':(exclude)state/**' \
+                    ':(exclude)state_legacy/**' \
+                    ':(exclude)archive/**' \
+                    ':(exclude)**/state/**' \
+                    ':(exclude)**/knowledge/**' \
+                    ':(exclude)**/atlas/**' \
+                    ':(exclude)**/fixtures/**' \
+                    ':(exclude)**/testdata/**' \
+                | grep -E '^\+[^+]' | sed -E 's/^\+//' \
+                | grep -E '/(Users|home)/[A-Za-z][A-Za-z0-9._-]+/' \
+                | grep -vE '^[[:space:]]*(//|#|\*)' || true)"
+          if [ -n "$hits" ]; then
+            echo "🚫 FAIL — added runtime source lines contain a foreign author-machine path:"
+            echo "$hits"
+            echo ""
+            echo "Resolve paths portably: env var first → repo-root (git rev-parse / \$ANIMA / \$HOME) → fail-fast."
+            echo "If the line is genuinely data/knowledge, move it under an excluded bucket (state/, archive/, knowledge/, atlas/, fixtures/, testdata/)."
+            exit 1
+          fi
+          echo "✅ PASS — no foreign author-machine paths in added runtime source."
