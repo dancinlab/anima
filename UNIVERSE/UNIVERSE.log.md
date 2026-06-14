@@ -455,3 +455,8 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] H_1206 capstone 🔴 CLOSED-NEG (정직한 수정) — F1 coarse-real✅(t2 0.763) ∧ F3 coupled✅(+0.329) BUT F2 fine-absent❌(hidden probe 0.646>0.62 bar). frozen falsifier 가 "FLAT" 과대주장 포착 → 수정 account: 메타인지 = REAL(coarse 강) + COUPLED + 약한 표상 트레이스(0.65, not flat). bar 미이동.
 - [x] SAVANT M2~M5 전 milestone 종결 — substrate_hook.hexa(savant trigger N-axis conjunction·SI⊥CoV·perfect-ladder, smoke 8/8) + unification_check.hexa(HEXAD↔savant_lib drift 0, 5/5). SAVANT 도메인 M1~M5 완결.
 - [ ] 잔여: paper(사용자 별도 언급 전 금지) · 7B 재검증(사용자 별도 언급 전 금지)
+
+## 2026-06-15 — goal-loop round 1 (metacog·savant exhaustion)
+- [x] H_1217 🔴 metacog OOD transfer — in-dist type2 0.760 → OOD 0.541 (drop 0.219) → metacognition CONTENT-TIED, not domain-general (collapses off-distribution)
+- [x] H_1219 🔴 savant eidetic — induction acc ≈ non-induction (gap<0.20), no verbatim-copy prodigy
+- [x] H_1220 🟢 savant detail-over-gestalt — local-feature probe ≫ global-feature probe (WCC representational signature). SECOND savant positive (with H_1209 Snyder) — both = local-detail over-representation
