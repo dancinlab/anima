@@ -1,0 +1,18 @@
+======================================================================================
+H_6036 — SEED+LINK COMPOSITE (ANU shared seed H_6008 ⊕ tension link H_6010)
+  real paid ANU snapshot sha256=ece0409d4ad6  tier=anu_paid
+======================================================================================
+  trial1: SEED r=0.966 lock@0     LINK r=1.000 lock@0     BOTH r=1.000 lock@0     
+  trial2: SEED r=0.508 lock@0     LINK r=0.998 lock@70    BOTH r=0.998 lock@0     
+  trial3: SEED r=0.864 lock@0     LINK r=0.999 lock@37    BOTH r=0.999 lock@0     
+--------------------------------------------------------------------------------------
+  SEED: mean steady-r = 0.7793   mean ticks-to-lock = 0
+  LINK: mean steady-r = 0.9989   mean ticks-to-lock = 36
+  BOTH: mean steady-r = 0.9989   mean ticks-to-lock = 0
+--------------------------------------------------------------------------------------
+  F1 synergy  (r_BOTH ≥ max(SEED,LINK)+0.05): 0.999 vs max=0.999  -> FAIL
+  F2 speed    (lock_BOTH<lock_LINK & r_BOTH>r_SEED): lock 0<36 & r 0.999>0.779  -> PASS
+  F3 no-sig   (CHSH ≤ 0.75 classical):         CHSH=0.7492  -> PASS
+--------------------------------------------------------------------------------------
+VERDICT: 🟠  SEED+LINK composite partial — one falsifier holds; see arms.
+  honest: toy (2 oscillators, Kuramoto H_6010 verbatim); scale-transfer UNVERIFIED (a_toy_scale_recheck). SEED rigid under detuning/drift; LINK cold-starts; composite = shared common cause ⊕ live correction channel.
