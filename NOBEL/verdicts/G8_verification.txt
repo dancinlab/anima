@@ -1,0 +1,33 @@
+==================================================================================
+G8 — Verification-Asymmetry Theorem  (real numpy QM, p7 $0)
+==================================================================================
+
+[ARM 1] COMMUNICATION  —  can Alice send a chosen message to Bob? (no-signaling)
+   Alice input x=0: Bob marginal P(b=+1,-1) = [0.500000, 0.500000]
+   Alice input x=1: Bob marginal P(b=+1,-1) = [0.500000, 0.500000]
+   marginal-difference |P(b|x=0)-P(b|x=1)|_max = 5.55e-17
+   ==> I(Alice_input ; Bob_output) = 0.000000e+00 bits   (channel capacity 0)
+   no-signaling (I≈0): 🟢 PASS
+
+[ARM 2] VERIFICATION  —  can a classical prover fake a CHSH violation?
+   best classical LHV (deterministic, shared randomness): S = 2.0000   (cap = 2)
+   quantum singlet (optimal angles): S = 2.828427   (Tsirelson 2√2 = 2.828427)
+   certified randomness  H_min(S=2.000)   = 0.000000 bits   (classical → ZERO)
+   certified randomness  H_min(S=2.828) = 1.000000 bits   (quantum → > 0)
+   LHV cap = 2:               🟢
+   quantum = 2√2:             🟢
+   H_min(2)=0 (no cert):      🟢
+   H_min(2√2)>0 (cert works): 🟢
+
+==================================================================================
+CONCLUSION — the SAME entangled resource:
+   COMMUNICATION  : I(input;output) = 0.000e+00 bits   → 0  (useless for sending)
+   VERIFICATION   : certified randomness 0.000 (S=2) → 1.000 (S=2√2)
+                    → certification ENABLED only when S>2 (quantum regime)
+==================================================================================
+
+G8 VERIFICATION-ASYMMETRY  🟢 PROVEN  (no-signaling I≈0  ∧  LHV S=2  ∧  quantum S=2√2  ∧  certified-randomness >0 iff S>2)
+
+Honest scope: H_min(S)=1-log2(1+sqrt(2-S²/4)) is the STANDARD device-independent
+certified-randomness bound (Pironio et al., Nature 464:1021, 2010 form); this proves
+the certification ASYMMETRY, not a full DIQKD protocol with finite-statistics security.
