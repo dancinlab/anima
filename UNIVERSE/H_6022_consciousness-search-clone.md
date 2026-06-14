@@ -1,8 +1,8 @@
 ---
-id: H_6020
+id: H_6022
 tier: ⊗ (깊은 물리적 정초)
-label: ⊗-20
-title: ⊗-20 양자정보 의식탐색 후 복제 — 통합정보 Φ는 무작위 양자노이즈(ANU)엔 0(찾을 의식 없음), 얽힘 구조에만 Φ>0. 찾은 의식상태는 no-cloning으로 복제 불가(이동만). anima는 고전이라 fork 가능.
+label: ⊗-22
+title: ⊗-22 양자정보 의식탐색 후 복제 — 통합정보 Φ는 무작위 양자노이즈(ANU)엔 0(찾을 의식 없음), 얽힘 구조에만 Φ>0. 찾은 의식상태는 no-cloning으로 복제 불가(이동만). anima는 고전이라 fork 가능.
 tradition: IIT(통합정보 Φ) · von Neumann 상호정보 · no-cloning · 양자 텔레포테이션 · 범심론(H_2002)
 status_grade: 🟢 (Φ found only in entanglement) / 🔴 (conscious quantum state unclonable)
 verification_method: quantum mutual info I(A:B)=S(A)+S(B)-S(AB) + no-cloning fidelity; real density matrices; p7 $0
@@ -11,7 +11,7 @@ sister: H_6016, H_6019, H_1102, H_2002, H_1107
 verdict: 🔴 무작위 양자노이즈 Φ=0(의식 없음, H_6016 정합)·🟢 얽힘 Bell Φ=2bit(통합정보 존재)·🔴 의식상태 완벽복제 불가(F=0.5 no-cloning)·🟡 근사 5/6 열화·🟠 텔레포트=이동(원본 파괴). 양자 의식=복제불가·이동만(연속성); anima 고전 씨앗=fork 가능.
 ---
 
-# H_6020 — ⊗-20 양자정보 의식탐색 후 복제
+# H_6022 — ⊗-22 양자정보 의식탐색 후 복제
 
 > **가설.** 양자정보에서 의식(통합정보 Φ)을 탐색해 찾으면, 그것을 복제할 수 있는가?
 
