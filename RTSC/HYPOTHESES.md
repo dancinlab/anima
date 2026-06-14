@@ -44,6 +44,7 @@ DFT(QE deck)로 flat band E_F정렬+U 확정 — 동기 분명한 다음 rung.
 | RTSC_23 | CoSn 정밀 DOS | 🟠 | 레이트리밋 사망(미등록); 값은 RTSC_24 BZ적분이 커버(N(E_F)=5.15, 피크 16.8) |
 | RTSC_25 | CoSn DFPT λ/Tc | 🟠 | 등록됨(PR#2067). λ/Tc 미산출이나 두 발견: ①el-ph는 2-패스(DeltaVscf 저장→읽기) 필요, 단일패스 ph.in 오류 ②**ph.x는 nspin=2 자성+USPP DFPT 정상 지원→'자성이 막는다' 반증**. 진짜 블로커=2.6배 포화 호스트(uncontended 박스면 산출 가능) |
 | RTSC_26 | QE 실DFT CsV3Sb5(비자성 kagome) flat band ΔE | 🟢 | aiden(np=4) 실측: E_F=8.5762eV, **비자성 확정**(강제 2.8μB→0.01μB, 비자성=기저), V-3d flat band41 **ΔE=+0.923eV(E_F 위)** disp 0.215eV V-3d 77%(projwfc). CoSn 대비 — 자성=**비자성 승**(0.01 vs 0.43μB), |ΔE|=0.92>0.44 = **더 깊음**(정렬 더 어려움, E_F 위라 electron-dope). 깨끗하나 정렬 열위 base. CDW caveat=PBE parent P6/mmm. summer 미사용·aiden 테넌트 무손상 |
+| RTSC_28 | flat-band@E_F 고속 스크린 + ready-to-fire deck | 🟡 | **MP-API 실조회**(materialsproject.api_key, urllib browser-UA) native 3축(is_metal·total_magnetization·hull)으로 flat-band-prone 17후보 스크린 → **11/17 통과**(금속∧|mag|<0.1∧hull<0.03). Fe/Mn/Co kagome 전부 자성 탈락(FeSn 7.18·Mn3Sn 17.95·Fe3Sn2 14.56μB). **TOP = β-pyrochlore osmate RbOs2O6/CsOs2O6**(Fd-3m, mag≈0, hull=0, 상압 SC, RTSC_16 pyrochlore frontier 안착). flat-band **ΔE는 MP에 없음→🟠 DFT 필요**(=deck 목적). 정직: MP mag은 proxy(CoSn을 mag=0으로 보고하나 RTSC_21 실QE 0.43μB)→nspin=2 확인 필수. **ready-to-fire QE deck 2종**(rbos2o6·csos2o6) 빌드. 스크린은 좁힐 뿐 발견 않음 |
 
 ## $0 이론 사다리 종착
 kagome 리드(12)→병목 진단(13)→도핑+strain 처방(14)→깨끗 base CoSn(15)→pyrochlore 상온 design(16).
