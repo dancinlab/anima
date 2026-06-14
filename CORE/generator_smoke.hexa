@@ -87,6 +87,44 @@ fn main() {
     println("[clm bad  ] valid=" + to_string(bad_clm["valid"])
         + " reason=" + to_string(bad_clm["reason"]))
 
+    // ── (4) bytegpt backend, ABSENT file → rejected + falls through to null ──
+    // The H_1157 ByteGPT mount enters via the SAME L3 generate() slot (single
+    // entry, a_core_engine_map). An absent ckpt is honestly rejected (valid=false)
+    // and generate() falls THROUGH to null — no un-decoded garbage.
+    let bg_absent = gen_bytegpt_backend("/tmp/anima_bytegpt_not_here.bin")
+    println("[bg absent] valid=" + to_string(bg_absent["valid"])
+        + " loaded=" + to_string(bg_absent["loaded"])
+        + " reason=" + to_string(bg_absent["reason"]))
+    let bg_high = brain_emit(pf,
+        0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0,
+        60.0, false, true,
+        bg_absent, anchors)
+    show("[bg    high]", bg_high)
+
+    // ── (4b) bytegpt backend, NON-bytegpt file (the .clm) → rejected ─────────
+    // The format discriminator must NOT mistake a .clm for a ByteGPT binary
+    // (CLM\x01 magic ≠ 5×u32 ByteGPT header). Reuses the bad_path/.clm above.
+    let bg_on_clm = gen_bytegpt_backend(real_clm_path)
+    println("[bg on clm] valid=" + to_string(bg_on_clm["valid"])
+        + " (must be false — .clm is not ByteGPT)")
+
+    // ── (4c) bytegpt backend, REAL tiny ByteGPT binary (if present) → admit ──
+    // The H_1156/H_1157 serializer emits a 5×u32 ByteGPT flat binary. When the
+    // tiny fixture is on disk, gen_bytegpt_backend ADMITS it (valid+loaded=true)
+    // through the SAME single L3 entry. Conditional so the smoke stays green in a
+    // clean checkout without the /tmp fixture (p7: equality, not a missing-file fail).
+    let bg_tiny_path = "/tmp/h1156_mount/bytegpt_tiny.bin"
+    let bg_tiny_exists = exec("test -f '" + bg_tiny_path + "' && printf y || printf n") == "y"
+    let bg_tiny = gen_bytegpt_backend(bg_tiny_path)
+    if bg_tiny_exists {
+        println("[bg tiny  ] valid=" + to_string(bg_tiny["valid"])
+            + " loaded=" + to_string(bg_tiny["loaded"])
+            + " n_layer=" + to_string(bg_tiny["nlayer"])
+            + " reason=" + to_string(bg_tiny["reason"]))
+    } else {
+        println("[bg tiny  ] (fixture absent — skipped positive-admit assertion)")
+    }
+
     // ── deterministic assertions (p7 — equality, not loss) ──────────────────
     let mut pass = 0
     let mut fail = 0
@@ -128,6 +166,23 @@ fn main() {
     // NON-clm file ⇒ rejected by magic check (valid=false).
     if to_string(bad_clm["valid"]) == "false" { pass = pass + 1 }
     else { fail = fail + 1   println("  FAIL clm bad: bad-magic file passed validation") }
+    // bytegpt absent ⇒ rejected (valid=false), falls through to null, content made.
+    if to_string(bg_absent["valid"]) == "false" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL bg absent: valid != false") }
+    if to_string(bg_high["gen_backend"]) == "null" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL bg: did not fall through to null") }
+    if to_string(bg_high["gen_fellback"]) == "true" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL bg: fellback flag not set") }
+    // a .clm must NOT be mistaken for a ByteGPT binary (format discriminator).
+    if to_string(bg_on_clm["valid"]) == "false" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL bg: a .clm passed the ByteGPT header check") }
+    // REAL tiny ByteGPT fixture (if present) ⇒ admitted valid+loaded at the entry.
+    if bg_tiny_exists {
+        if to_string(bg_tiny["valid"]) == "true" { pass = pass + 1 }
+        else { fail = fail + 1   println("  FAIL bg tiny: valid != true (header not parsed)") }
+        if to_string(bg_tiny["loaded"]) == "true" { pass = pass + 1 }
+        else { fail = fail + 1   println("  FAIL bg tiny: loaded != true") }
+    }
 
     println("generator_smoke: " + to_string(pass) + " PASS, "
             + to_string(fail) + " FAIL")
