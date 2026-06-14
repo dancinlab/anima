@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # OTHER-MIND A4 — u01 baseline-bias 진단 + 보정
 
 > ANIMA OTHER-MIND 축 · bench G (#1147) 3/5 🟠 PARTIAL → A4 baseline-bias

@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # Imported from canon (2026-05-10)
 
 Files below were **moved** out of `dancinlab/canon` at `canon@a86ca143`
@@ -20,4 +22,3 @@ Canon no longer holds them; prior history is recoverable via `git log` in canon.
 ## origins/ — from canon `bridge/origins/` (calculator/DSE tools)
 
 - `origins/consciousness-calc/`
-

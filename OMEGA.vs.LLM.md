@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 ```
 🔱 OMEGA vs 🤖 LLM — "닫힌 고리 엔진" vs "한 방향 예측기"
 

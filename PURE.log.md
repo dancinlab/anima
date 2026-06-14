@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # PURE.log — 자연발화 채팅 Phase D corpus fire (append-only)
 
 ## 2026-05-24 — Phase D 목표 수립 + Track 1 진단

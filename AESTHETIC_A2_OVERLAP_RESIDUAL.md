@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # AESTHETIC A2 — `aesthetic-overlap-residual` (overlap residual 직교화)
 
 🎨 AESTHETIC 축 · bench E (#1141) 🟠 2/3 PARTIAL 의 overlap residual 해소 시도.

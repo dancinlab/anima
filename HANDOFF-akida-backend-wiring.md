@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # HANDOFF — akida-backend-wiring (2026-05-29)
 
 anima 의 HW/SW backend switch 를 실제 AKIDA(BrainChip AKD1000) 에 코드-레벨 배선.

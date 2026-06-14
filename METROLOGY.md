@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # METROLOGY — current state
 
 @title: 📏 METROLOGY — 측정자(尺) 검증: do our Φ / integration measures actually measure the thing?

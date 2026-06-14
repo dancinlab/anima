@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # CLM_V2_ARCHIVE_ADDENDUM — mitosis-as-instrumentation 정정 (2026-05-10)
 
 ## TL;DR

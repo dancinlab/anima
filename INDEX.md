@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # INDEX.md — moved to [`HEXAD/INDEX.md`](HEXAD/INDEX.md)
 
 > User directive 2026-05-16 reorg: anima architecture index 를 HEXAD/ 트리 안으로 통합.

@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # MAIN — anima program progress hub
 
 @goal: drive the two LIVE anima tracks to closure — (A) the MITOSIS-ENGINE research

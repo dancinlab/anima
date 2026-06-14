@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # CLM_V2_ARCHIVE — anima ConsciousLM v2 시대 13-stage 영구 보관 (2026-05-09)
 
 ## ★ 핵심 한 문장

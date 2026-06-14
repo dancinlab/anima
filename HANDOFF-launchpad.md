@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # HANDOFF — LAUNCHPAD · COFFESHOP-on-AKIDA (2026-05-30)
 
 다음 세션 인계 문서. LAUNCHPAD 도메인 신설 + COFFESHOP emit/silence 결정을

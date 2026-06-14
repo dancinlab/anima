@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # OTHER-MIND — append-only step log
 
 ## 2026-05-28 — A4 u01 baseline-bias 진단 + 보정 (M3 closure)

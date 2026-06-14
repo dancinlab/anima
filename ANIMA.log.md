@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # ANIMA — log
 
 Append-only history sister of `ANIMA.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
@@ -8,4 +10,3 @@ Append-only history sister of `ANIMA.md`. Each entry starts with `## <ISO timest
 - [x] 메타도메인 layer status 집계 — **5/6 ✅** (CORE · AGENT · WAKE · MITOSIS · CHANNEL) + DECODER 1 layer 만 open
 - [x] ANIMA.log.md seed 엔트리 (이전 비어있음 → 첫 step 기록)
 - [ ] DECODER layer 작업 (사용자 명시 제외 · 별도 도메인 작업 시 carry)
-

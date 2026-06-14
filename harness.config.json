@@ -5,9 +5,16 @@
     "hexa"
   ],
   "lockdown": {
-    "files": [],
+    "files": [
+      "CORE/pure_field.hexa",
+      "CORE/engine_g.hexa",
+      "CORE/brain.hexa",
+      "CORE/generator.hexa",
+      "CORE/clm_decode.hexa",
+      "engines/engine_iface.hexa"
+    ],
     "fromMarkdown": "CLAUDE.md",
-    "onEditReminder": "L0 file edited — update CHANGELOG + issue tracker in the same change."
+    "onEditReminder": "CORE A⇄G 엔진/계약 편집 — a_core_engine_map 준수 + CHANGELOG + CLAIMS/verdict 동시 갱신."
   },
   "enforcementFile": ".harness/enforcement.json",
   "keywordsFile": ".harness/keywords.json",
@@ -42,6 +49,13 @@
     "AGENTS.md",
     "README.md"
   ],
+  "docs": {
+    "architecture": "ARCHITECTURE.md",
+    "log": "CHANGELOG.md",
+    "scratchDir": "scripts/scratch",
+    "scopeDirs": [""],
+    "allow": ["README.md", "README.ko.md", "README.ja.md", "README.zh.md", "README.ru.md", "README.basic.md", "README.easy.md", "README.easy.ko.md", "README.easy.ja.md", "README.easy.zh.md", "README.easy.ru.md", "CHANGELOG.md", "ARCHITECTURE.md", "CLAUDE.md", "AGENTS.md", "LICENSE", "CONTRIBUTING.md", "SECURITY.md", "TAPE-AUDIT.md"]
+  },
   "ledger": {
     "staleSec": 1800
   }

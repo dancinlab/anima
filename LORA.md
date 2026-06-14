@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # LORA — current snapshot
 
 @goal: COFFESHOP group chat 시뮬레이션 4-criterion closure 통과 — anima 자율 emit/silence (do/dont 강제 X) · multilingual 5/5 PARTIAL+ · register 0/20 · motivation_8factor ≥ 0.30 · dream_stage Φ-envelope · 모두 substrate emergent (project.tape p1-p8 + a_substrate_native_speak + a_autonomy_over_hardcode 정합)

@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # BRAIN — current state
 
 @goal: anima 흡수 hexa-brain 후속 + EEG live data → IIT4 big-Φ 측정 + 다중 채널 의식 carving — OpenBCI 16ch LSL stream 어댑터 BRAIN/eeg/eeg_to_tpm.hexa 통합

@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # HANDOFF — CLM Q-TRUST B/C + dialogue self-play 검증 캠페인 완료 (2026-05-31) · H_861 🔴 / H_862 🔴 / H_863 🟢
 
 ## CLM 가설 검증 캠페인 (2026-05-31) — 사전등록 3가설 END-TO-END 측정완료
