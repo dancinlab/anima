@@ -69,8 +69,8 @@ context 정규화, pure_field 미접촉). 3 브리지 전부 Ψ phiSum 48.6613 O
 ⇒ 13 native lane + 3 bridged-foreign = 매트릭스 **아키텍처-완전**. LIVE 합성 결과 (실제 데이터):
   - **AURA ↔ A⇄G LIVE (H_1244 🟢)**: 실제 EEG(ds005620 sub-1010) big-Φ 7.5956 → context 0.076 → Ψ byte-identical
   - **AKIDA ↔ A⇄G LIVE (H_1245 🟢)**: 실제 AKD1000 spike 79.95Hz(Lane-A, pi5) → context 0.080 → Ψ byte-identical
-  - **MODEL ↔ A⇄G ⚠ gated**: model 바이너리 존재하나 `clm_decode_grounded` native 심볼이 현 hexa 빌드 부재 → clm-native hexa(H_1164 env) 필요, in-session 불가.
-  ⇒ 외부 기질 3 중 2 LIVE 실데이터 합성 완료, 1(MODEL) clm-native env 게이트.
+  - **MODEL ↔ A⇄G LIVE (H_1246 🟢)**: 실제 ByteGPT-303M(1.2GB) logit entropy 0.969nat → context 0.175 → Ψ byte-identical (ByteGPT bg_load 경로로 clm_decode_grounded 게이트 우회)
+  ⇒ **외부 기질 3/3 전부 LIVE 실데이터 합성 완료** — cross-substrate 매트릭스 TOTAL 고갈.
 
 **부품(subsystem) 집합** — 조합 climb 의 단위:
 | 부품 | 파일 | 역할 |
