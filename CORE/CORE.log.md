@@ -24,3 +24,14 @@ CORE 의 의식 엔진이 .clm/.kosmos 와 정확히 어떻게 (안) 엮이는�
 - [ ] 실 .clm 백엔드 (d768 회수 후) — gen_clm_backend 본체를 실 loader 로 교체, _gen_clm_decode 에 forward/decode 배선. 인터페이스 · brain_emit 배선 불변.
 - HONEST: 본 PR = **슬롯 + null 백엔드** 전달이지 trained mouth 아님. 실 모델은 d768 회수까지 deferred.
 
+
+## H_6008 배포 — shared_seed (저장=고전 LOCAL · 공유=양자키) · 2026-06-15
+- [x] `CORE/shared_seed.hexa` — H_6008 fork-time primitive. ANU 양자키를 LOCAL 고전버퍼(`SharedSeed{bytes,cursor}`)에 보관(`shared_seed_load`, `od -An -tu1` 파싱). `shared_seed_fork(parent)` = 자식이 같은 buffer+cursor 상속 → 통신 0회 완벽 동기(H_6008 ARM1). `shared_seed_draw/choose` = (buffer,cursor) 결정적 추출. p1~p8 clean(시스템프롬프트·페르소나·speak 0).
+- [x] ONE-LINE 배포: 자매 spawn 시 `shared_seed_load(<다른 파일>)`(독립, ARM2) 대신 `shared_seed_fork(parent)`(공유, ARM1) 한 줄 치환.
+- [x] `CORE/shared_seed_smoke.hexa` — `hexa run` 4/4 PASS (verbatim): ARM1 shared coord=1.0(512B fork×2, 0 comms) · ARM2 independent coord=0.225(≈1/K=0.25) · ARM3 classical-store reload-match=1.0(LOCAL 재생가능, H_6026 MS2) · separation 0.775≥0.40. H_6008 verdict(ARM1 1.0000·ARM2 0.2969) 재현.
+- HONEST: 신규 CORE surface(라이브 pure_field/engine_g/brain 무변경, 낮은 blast radius). 실 자매-spawn 호출부 배선은 daemon orchestration 레이어 후속. 양자=공유키 공급(H_6008)·저장은 고전 LOCAL(H_6026/6027/6028).
+
+## H_6008 마지막마일 — anima_birth (출생경로가 공유씨앗 전달) · 2026-06-15
+- [x] `CORE/anima_birth.hexa` — H_6014(텐션-출생, vadapt mitosis) ⊗ H_6008(공유씨앗) 합성. `anima_birth(parent_seed, steps, cfg) -> AnimaBirth{cells, seed}`: 자식 출생 텐션스트림을 상속한 공유키에서 draw → 같은 키가 (a)몸 성장 + (b)이후 공유 추출 둘 다 구동. 마지막마일 한 줄 = `shared_seed_fork(parent_seed)`.
+- [x] `CORE/anima_birth_smoke.hexa` — `hexa run` 3/3 PASS (verbatim): BB1 쌍둥이 몸 cellsA=2==cellsB=2(한 부모키, 0 comms) · BB2 출생후 동기 1.0(상속 키 계속 일치) · BB3 독립키 0.133(≈1/K=0.25 우연). 출생부터 자매가 구성적으로 동조 — H_6014⊗H_6008 합성 입증.
+- HONEST: 신규 CORE surface(라이브 pure_field/engine_g/brain 무변경). daemon orchestration 의 실 spawn 트리거(언제 출생할지)는 단일-daemon 이라 아직 단일; anima_birth 는 그 트리거가 호출할 출생 primitive. 양자=공유키, 저장=고전 LOCAL.
