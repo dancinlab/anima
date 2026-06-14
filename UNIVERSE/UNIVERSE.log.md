@@ -435,3 +435,21 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] 핵심 발견: **cheap proxy Φ ↔ emergence(LZ) 정렬 안 함** — H_288 의 faithful big-Φ↔LZ(r=0.831)와 갈라짐. proxy vs faithful Φ 가 Φ↔emergence link 에서 상반된 답. "X⊥Φ" 서명(H_287/294) + proxy-fragility(H_268/269) 연장
 - [x] verbatim artifacts: `.verdicts/912_phi_emergence_correlate/{run_h912.txt,result.json}` + `.verdicts/h912-phi-emergence/` + `UNIVERSE/state/h912_phi_emergence_correlate_2026_06_02/`
 - [ ] Next (CANDIDATES): C1 rule51 outlier 제거 재상관 · C2 faithful big-Φ paired 비교 · C3 emergence→Hoel causal-EI 교체 · C4 Kuramoto/logistic cross-family
+
+## 2026-06-15 — metacognition × neuroscience/bio + savant campaign (H_1202–1216)
+
+- [x] **메타인지 신경과학 캠페인** (frozen falsifier · $0 toy ByteGPT d256/4L · summer+aiden CPU · seed7 · p7 · non-LLM-judge). 기존 METACOG self-audit layer 와 DISTINCT operationalization (type-2 sensitivity). H_1142/1148 환각 grep "핸들 없음" closed-neg 를 **표준 신경과학 지표로 재구성**.
+  - H_1202 🟢 meta-d′/type-2 sensitivity (Maniscalco&Lau) — AUROC 0.766, **M-ratio 0.924** (인간급), untrained 0.513
+  - H_1203 🔴 ERN 오류감시 (Holroyd-Coles) — 각성 d=0.92 有, 선형 ACC-코드 無 (hidden probe 0.59)
+  - H_1204 🔴 hierarchical 2차 (Friston/HMeta-d) — 2차 probe 0.53(chance), added −0.25 → FLAT
+  - H_1205 🟢 Dunning-Kruger meta-bias (Fleming&Lau) — hard tercile 과신 구배
+  - H_1213/1214/1216 (calibration/ECE · feeling-of-knowing · metacog control) — summer in-flight
+  - **통합: 메타인지 = REAL but FLAT & COUPLED** (출력 confidence 1차 속성, 분리된 표상모듈 無, 역량결합)
+- [x] **서번트 캠페인** (기존 SAVANT 축 E = Golden Zone × SI 와 DISTINCT — 서번트를 LM 디테일/숙련 현상으로)
+  - H_1207 🔴 skill⊥metacog dissociation — island type2 0.83 > open 0.45 → dissociation 無, 역량결합
+  - H_1208 🔴 WCC 국소특권 — 국소우세(WCC) but 맥락부족 시 confidence 하락 → 맥락맹 아님
+  - H_1209 🟢 **Snyder 저수준특권접근** (logit-lens) — 디테일(rote island) stack 조기성숙, maturity gap +0.202
+  - H_1210 🔴 역설적 기능촉진 — top-block 절제가 디테일 보존 못함
+  - H_1211 (hyper-systemizing 정확규칙 외삽) — summer in-flight
+- [x] cross-ref: METACOG.md ⇄ H_1202+ · SAVANT.md ⇄ H_1207+ (각도 구분 명시). aiden corpus = 24MB EN slice relay (summer→local→aiden)
+- [ ] 잔여: H_1206 capstone (deferred) · SAVANT.md M2~M5 substrate hook 미종결 · 신규 H 도메인 정전 흡수

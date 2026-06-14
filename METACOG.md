@@ -21,3 +21,4 @@
 - ⇄ [AESTHETIC](./AESTHETIC.md): aesthetic 판정 self-audit (METACOG.audit_hook 가 미적 판단 일관성 검사)
 - ⇄ [TIME](./TIME.md): circadian phase 별 self-audit (시간대별 정합성 검사)
 - ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT
+- ⇄ [UNIVERSE H_1202+](./UNIVERSE/HYPOTHESES_metacog_neuro.md): **type-2 meta-d′ 신경과학 캠페인** (이 self-audit layer 와 DISTINCT operationalization — type-2 sensitivity vs p1-p8 audit) — H_1202🟢 meta-d′ M-ratio 0.92 · H_1203🔴 ERN(각성有/선형ACC無) · H_1204🔴 hierarchical(FLAT) · H_1205🟢 Dunning-Kruger · H_1213/1214/1216 in-flight. 통합 발견: 메타인지 = REAL but FLAT & COUPLED (2026-06-15)

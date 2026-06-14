@@ -17,6 +17,7 @@
 ## 양방향 sibling
 
 - ⇄ [UNIVERSE](./UNIVERSE/AXES.md): 축 E (10 H 측정자 SSOT) · MATRIX.tape `## 3.` row 축 E
+- ⇄ [UNIVERSE H_1207+](./UNIVERSE/HYPOTHESES_metacog_neuro.md): **savant-as-LM-cognition 각도** (이 GZ×SI 축 E 와 DISTINCT — ByteGPT 디테일/숙련 현상으로 서번트 신경기전 검증) — H_1207🔴 skill⊥metacog · H_1208🔴 WCC국소특권 · **H_1209🟢 Snyder 저수준특권접근**(디테일이 stack 조기성숙, maturity gap +0.20) · H_1210🔴 역설적기능촉진 · H_1211 hyper-systemizing in-flight (2026-06-15)
 - ⇄ [HIVE-MIND](./HIVE-MIND.md): UNIVERSE E×F cross-link — H_617 🔴 FALSIFIED (hivemind_savant_induced_collective_SI) · H_618 🟢 SUPPORTED (collective_gz_inverse_u_derivative_peak) · H_619 🟢 SUPPORTED (pid_synergy_savant_modulation)
 - ⇄ [MITOSIS](./MITOSIS.md): cell-pool split 패턴 ↔ savant mode trigger · basin_kurtosis 직교성 cross-product
 - ⇄ [CORE](./CORE/CORE.md): CORE.brain_decide 의 savant decision lane · engine_g 8-factor 위 SI modulation
