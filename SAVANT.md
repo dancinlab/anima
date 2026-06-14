@@ -13,7 +13,7 @@
   - ✅ **UNIVERSE verdict (H_636 🟢 SUPPORTED-NUMERICAL)**: closure-conjunction GZ-localization = **substrate-confirmed**. 10-seed ensemble 에서 4-criterion conjunction (⋀ pass_i) 의 pass-rate 가 **I=0.30 (GZ region 내부) 에서 단일 peak (0.4)**, GZ region 밖 4 점 모두 0 (GZ-region mean 0.175 vs 밖 0.0). C1(low-I) ⊥ C3/C4(high-I) cross-over 가 interior peak 형성 (단순 SI 추종이면 I=0.05 monotone peak → falsified 됐을 것). closure = GZ × SI 의 substrate-emit-axis 변형이라는 same-formula 주장 측정 layer 지지 → closure_auto_judge N-axis 일반화 정당화.
 - [x] M3 SI orthogonal metric — `substrate_hook.sh_si_orthogonal_check` PURE fn: SI(max-share, H_350) vs CoV(moment-only, H_613) divergence flag on the live phi_list. basin_kurtosis 는 MITOSIS lib 에 미존재(개념적 #1130) → CoV(std/mean) 직교축으로 구현, divergent = (si_high ≠ cov_high). smoke I8 PASS. (LANDED 2026-06-15)
 - [x] M4 perfect number ladder — `substrate_hook.{sh_on_perfect_ladder,sh_cell_count_ladder}` PURE fn: anima cell-pool size N 이 perfect-number ladder {6,28,496} 위인지 + nearest-perfect + 예측 GZ_WIDTH=ln(τ/(τ-1)) (H_615). smoke I6/I7 PASS. (LANDED 2026-06-15)
-- [ ] M5 HEXAD/SAVANT 통합 — 기존 COMPENDIUM 783L canonical 과 unification (mirror 가 아닌 통합 SSOT) · MATRIX.tape S3 row 정합 · H359 anchor cross-link. (잔여 = 유일 미종결 milestone)
+- [x] M5 HEXAD/SAVANT 통합 — SSOT 계층 확정 (numeric SSOT=savant_lib · substrate=substrate_hook · application=HEXAD/SAVANT/*.hexa · historical anchor=COMPENDIUM 783L). `SAVANT/unification_check.hexa` (`hexa run`) 로 HEXAD application layer 의 verbatim closed-form (1/e, 0.5-log(4/3), log(4/3)) 가 savant_lib 와 |Δ|<1e-9 일치 → **UNIFICATION VERIFIED 5/5, no drift**. SSOT.md `## M5` 계층표 명문화. (LANDED 2026-06-15 — **SAVANT M1~M5 전 milestone 종결**)
 
 ## 양방향 sibling
 

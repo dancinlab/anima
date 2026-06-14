@@ -135,3 +135,20 @@ anchor. 일반 ladder GZ_WIDTH(τ) = ln(τ/(τ-1)) per H_615 perfect-number ladd
 - `HEXAD/SAVANT/savant_phi.hexa` — canonical 4-domain substrate (sister)
 - `HEXAD/SAVANT/anima_savant_si_monitor.hexa` — production SI monitor (sister)
 - `HEXAD/SAVANT/COMPENDIUM.md` · `H359-savant-canonical.md` — canonical engine doc
+
+## M5 — HEXAD ↔ savant_lib unification (LANDED 2026-06-15)
+
+SAVANT 도메인 SSOT 계층 (mirror 가 아닌 단일 SSOT):
+
+| layer | file | role |
+|---|---|---|
+| **numeric SSOT** | `SAVANT/savant_lib.hexa` | sa_* 12 closed-form primitives (GZ/SI/inverse-U/ladder) |
+| anima substrate | `SAVANT/substrate_hook.hexa` | sh_* savant trigger (N-axis conjunction = H_636 impl) · SI⊥CoV · perfect-ladder |
+| application | `HEXAD/SAVANT/*.hexa` | routing overlay · tool · si_monitor (savant_lib 위 application) |
+| historical anchor | `HEXAD/SAVANT/COMPENDIUM.md` | 783L 전수조사 evidence (편집금지) |
+
+**drift gate verified** — `SAVANT/unification_check.hexa` (`hexa run`): savant_lib 의
+GZ_CENTER/GZ_LOWER/GZ_WIDTH 가 HEXAD application layer 의 verbatim closed-form
+(`1/2.71828…`, `0.5 - log(4/3)`, `log(4/3)`) 와 |Δ|<1e-9 일치 + 내부 항등식
+(GZ_WIDTH = GZ_UPPER − GZ_LOWER, ladder[6] = GZ_WIDTH) → **UNIFICATION VERIFIED 5/5**.
+두 layer 는 같은 closed-form 을 산출하는 단일 SSOT (no drift).
