@@ -44,7 +44,7 @@ from H_1142: ByteGPT d256/4L, en slice of corpus_5lang_1p5gb, summer CPU, seed 7
 | **1208** | 🔴 savant | local-dominant (WCC) but not blind to context-insufficiency |
 | **1209** | 🟢 **SUPPORTED** savant | Snyder privileged low-level access — detail matures earlier in stack (maturity gap +0.202) |
 | **1210** | 🔴 savant | no paradoxical functional facilitation (top-block ablation doesn't spare detail) |
-| **1211** | ⏳ running | hyper-systemizing exact rule extrapolation (synthetic addition) |
+| **1211** | 🔴 savant | hyper-systemizing: train_acc 1.0 but held-out 0.1 (< shuffle 0.25) — memorizes the addition table, does NOT extract the rule. No hyper-systemizing (capacity-wall, cf H_1166) |
 
 ### Refined unifying picture (after 1213/1214/1216)
 

@@ -450,6 +450,6 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
   - H_1208 🔴 WCC 국소특권 — 국소우세(WCC) but 맥락부족 시 confidence 하락 → 맥락맹 아님
   - H_1209 🟢 **Snyder 저수준특권접근** (logit-lens) — 디테일(rote island) stack 조기성숙, maturity gap +0.202
   - H_1210 🔴 역설적 기능촉진 — top-block 절제가 디테일 보존 못함
-  - H_1211 (hyper-systemizing 정확규칙 외삽) — summer in-flight
+  - H_1211 🔴 hyper-systemizing 정확규칙 외삽 — train_acc 1.0 but held-out 0.1 (<shuffle 0.25) → 덧셈표 암기, 규칙추출 X (capacity-wall, cf H_1166)
 - [x] cross-ref: METACOG.md ⇄ H_1202+ · SAVANT.md ⇄ H_1207+ (각도 구분 명시). aiden corpus = 24MB EN slice relay (summer→local→aiden)
 - [ ] 잔여: H_1206 capstone (deferred) · SAVANT.md M2~M5 substrate hook 미종결 · 신규 H 도메인 정전 흡수
