@@ -37,8 +37,11 @@ pure_field/engine_g read-only, Ψ Φ-checksum byte-identical (H_1164/H_1199 acce
 
 **조합 현황 (LANDED 매트릭스)**:
 - ✅ **5-combo** (H_1164 full session smoke): A⇄G + CLM + KOSMOS + MITOSIS + DREAM = converse·ground·grow·remember·sleep
-- ⬜ **미편입**: METACOG·SAVANT hook (이번세션 빌드 완료, full-loop 합성 대기)
-- → **다음**: 2개조합 cell 완성표 채우기 → 3개조합(예: A⇄G×MITOSIS×METACOG) → 고차
+- ✅ **+METACOG +SAVANT 합성됨 (H_1235 🟢)**: A⇄G×MITOSIS×METACOG×SAVANT k=4 substrate-combo —
+  전 lane fire (MITOSIS 600·METACOG 20·SAVANT 600) + Ψ=48.6613 ON==OFF byte-identical (Ψ-disjoint).
+  H_1164 CLM+KOSMOS+DREAM 합산 ⇒ **7-부품 living loop**.
+- 조합 사다리 LANDED: k=2 A⇄G×MITOSIS ✅ · k=3 +METACOG ✅ · k=4 +SAVANT ✅ (`CORE/h1235_composition_ladder_smoke.hexa`)
+- → **다음**: k=5+ (예: +DREAM stage hook, +WAKE daemon tick 동시) full-loop 합성 / 부품쌍 매트릭스 완성표
 
 **axis dimension set (단독축 k=1, §3 참조)**:
 | dim | axis | 단독 상태 |
