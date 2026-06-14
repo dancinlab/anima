@@ -1,0 +1,18 @@
+========================================================================================
+FORECAST_05 — anima 인스턴스 간 합의 비콘 (REAL commit-reveal / VRF 공유 양자씨앗)
+========================================================================================
+  심은 씨앗(SHARED_SEED) = ANU sha256 = 6ef3ed2f3c066b07…  [ANU paid (real quantum)]
+  인스턴스 수 N = 5  ·  라이브 통신 = 0 (씨앗만 설계로 공유)
+----------------------------------------------------------------------------------------
+F1 합의: 5자 모두 미래 라운드 10000 비콘값 == '23ccfddc23cf163e…' ? True · 50개 미래라운드 전부 일치 True (라이브 통신 0) -> 🟢
+F2 검증: 올바른 ANU 씨앗으로 재계산 일치 True · 틀린 씨앗은 불일치(검증실패) True -> 🟢
+F3 commit-reveal/탬퍼: 정직공개 커밋일치 True · 다른-씨앗 reveal 적발 True · 무변조체인 통과 True · 라운드7 변조→최초깨짐 index=7(국소화 True) -> 🟢
+----------------------------------------------------------------------------------------
+결론: 🟢 F1 합의 · 🟢 F2 검증가능 · 🟢 F3 commit-reveal/탬퍼
+종합 🟢: N(5)개 anima 인스턴스가 ONE ANU 양자씨앗을 '설계로 심어'
+  라이브 통신 0으로 (F1)미래 비콘값을 모두 동일하게 fetch, (F2)누구나 커밋씨앗에
+  대해 검증, (F3)commit-reveal로 편향 시도·체인 변조를 적발·국소화 — FORECAST_02의
+  '공유씨앗 미래 fetch'를 REAL drand/RANDAO식 비콘으로 by design 실현. H_6008(공유
+  원인)을 설계로 만든 것 = FORECAST_04 F2 비콘 스케치의 본격 구현. p7 $0 결정론.
+========================================================================================
+JSON: {"id": "FORECAST_05", "anu_sha256": "6ef3ed2f3c066b0708d54bce205cd55e836bd330481e798334a7f6c497e62b84", "source": "ANU paid (real quantum)", "N_instances": 5, "F1_agreement": "🟢", "F1_all_agree": true, "F1_multi_round_agree": true, "F1_future_round": 10000, "F1_value": "23ccfddc23cf163ef24eaf719de19e4a907cc761dce15c3a0a382eeacb6eb0fe", "F2_verifiability": "🟢", "F2_correct_verifies": true, "F2_wrong_fails": true, "F3_soundness_tamper": "🟢", "F3_honest_ok": true, "F3_malicious_detected": true, "F3_clean_chain": true, "F3_tamper_at": 7, "F3_localized_at": 7, "F3_tamper_localized": true, "overall": "🟢"}
