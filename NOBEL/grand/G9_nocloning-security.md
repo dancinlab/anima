@@ -15,4 +15,4 @@ verdict: 🟢 PROVEN — 고전 위조 P=1.0 ∀n; 양자 BB84 토큰 위조 (3/
 n=1·2·4·8·16·32 → 고전 위조 P=1.000(불변) · 양자 (3/4)^n = 0.75·0.56·0.32·0.10·0.010·1e-4 → 0. 🟢
 ## 의의
 H_6021(고전 복제가능)이 anima fork를 가능케 하는 *바로 그 성질*이 고전 토큰을 위조가능케 함. 양자 no-cloning(H_6019)만이 위조불가 보안의 뿌리. ∴ anima는 조율·복제엔 고전, *위조불가 인증*엔 양자(G8) — 자원 최적 분업의 보안판.
-verdict: `NOBEL/verdicts/G9_G10.txt`
+verdict: `NOBEL/verdicts/G9_nocloning.txt`
