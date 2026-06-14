@@ -30,6 +30,7 @@ RTSC가 $0 이론선 '닫힌' 게 아니라 **kagome형으로 열림**. 실 후�
 DFT(QE deck)로 flat band E_F정렬+U 확정 — 동기 분명한 다음 rung.
 
 | RTSC_12 | kagome 고-q-metric 리드 | 🟢/🟠 | 상온 U≈1.24eV 현실적; 실 kagome금속 후보; DFT 미검증 |
+| RTSC_13 | 실물질 역대입 진단 | 🟢/🔴 | 병목=flat band E_F-어긋남+경쟁질서(CDW/자성), 이론 아님; 정렬시 ~289K |
 
 ## 수렴 결론
 시드(RTSC_01)·무시드(RTSC_02)·양자추출(UNIVERSE/H_6015) 세 경로가 **최경량금속 초수소화물**
