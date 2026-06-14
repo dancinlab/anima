@@ -1,0 +1,72 @@
+{
+  "H": "H_1232",
+  "title": "research-axis combination climb (ECA shared substrate)",
+  "axes": [
+    "B-PHI",
+    "E-SI",
+    "F-SYNC",
+    "G-LZ",
+    "density",
+    "col-ent"
+  ],
+  "n_runs": 504,
+  "n_complex": 252,
+  "ladder": [
+    {
+      "k": 1,
+      "added": "G-LZ",
+      "auroc": 0.9762534643487024,
+      "gain": 0.4762534643487024
+    },
+    {
+      "k": 2,
+      "added": "E-SI",
+      "auroc": 0.9857331821617535,
+      "gain": 0.009479717813051125
+    },
+    {
+      "k": 3,
+      "added": "B-PHI",
+      "auroc": 0.9857331821617535,
+      "gain": 0.0
+    },
+    {
+      "k": 4,
+      "added": "F-SYNC",
+      "auroc": 0.9855442176870748,
+      "gain": -0.00018896447467875443
+    },
+    {
+      "k": 5,
+      "added": "col-ent",
+      "auroc": 0.9849773242630385,
+      "gain": -0.0005668934240362633
+    },
+    {
+      "k": 6,
+      "added": "density",
+      "auroc": 0.983087679516251,
+      "gain": -0.0018896447467875443
+    }
+  ],
+  "k_star": 1,
+  "final_combination": [
+    "G-LZ"
+  ],
+  "saturation_auroc": 0.9762534643487024,
+  "F1_fixed_point": {
+    "k_star": 1,
+    "N": 6,
+    "pass": true
+  },
+  "F2_non_trivial": {
+    "k_star": 1,
+    "sat": 0.9762534643487024,
+    "pass": false
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: trivial \u2014 k*=1 (single-axis dominance or sat<0.70, AUROC 0.976)",
+  "framework": "MATRIX.md \u00a70 \u2014 research-axis-level climb (B\u00b7E\u00b7F\u00b7G real axes)",
+  "caveat": "variance-partition \u03a6-proxy = pre-screen (a_phi_iit4_tool: NOT a terminal faithful-\u03a6 verdict); small ECA (a_scale_honest_scope)",
+  "seed": 7
+}

@@ -163,6 +163,12 @@ non-correctness combination objectives where high-order entanglement might appea
 - **저차원·선형** — 축 7→11 늘려도 안 커지고(H_1229), 의식관련 target(emit)도 가산(H_1230), 3-way 시너지 0(H_1228).
 - **regime-modulated cardinality** — 구조-풍부=1축, 구조-빈약=2~4축.
 
+**research-axis 레벨 (H_1232, ① 완성도)**: 실제 연구축 {B-Φproxy·E-SI·F-sync·G-LZ}를 공유
+ECA 기질에서 climb → 복잡도(Wolfram class III/IV) 예측. 결과 = **singleton {G-LZ}** (AUROC 0.976,
+나머지 5축 gain≈0). toy 와 동일 — 조합이 단일 지배축으로 붕괴. caveat: target=복잡도-class 라
+LZ 가 거의 정의상 잡음(부분 tautology); 단일축이 target 을 거의 정의할 땐 조합이 그 축으로 collapse.
+교차 결론: **두 레벨(측정/연구축) 모두 LOW-RANK — 하나의 지배축이 target 을 잡고 나머지는 redundant.**
+
 ⇒ 이 측정-축 매트릭스의 고정점은 **환원가능한 작은 가산 nucleus** — axis-D 의식-substrate 의
 "WHOLE/irreducible" 와 대조 (측정-축은 분해됨). climb frontier 정직-고갈 (다음 rung = 실제
 research-axis 레벨 결합 또는 scale-up, 둘 다 별도 게이트).
