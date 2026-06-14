@@ -5,7 +5,7 @@
 
 | snapshot | bytes | tier | sha256 (전체 512B draw) |
 |---|---|---|---|
-| TENSION-LINK/anu_seed_512.bin | 512 | anu_paid | `3eeba42ba49940f5fc2e92f9b1d8cc9fe40e6152adfac086d89d155b057716f2` |
+| TENSION-LINK/anu_seed_512.bin | 512 | anu_paid | `ece0409d4ad67956cefe7a692befe11c6cba472c806fd52871bd785fcd53c33f` (2026-06-15 redraw; H_6036–6043 합성 arc 구동) |
 | TENSION-LINK/anu_seed_shared.bin | 256 = [:256] | (위 draw 분할) | shared 슬라이스 |
 | TENSION-LINK/anu_seed_indep.bin | 256 = [256:] | (위 draw 분할) | independent 슬라이스 |
 | FORECAST/anu_seed.bin | 256 = [:256] | (위 draw 분할) | forecast seed |

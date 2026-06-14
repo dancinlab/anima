@@ -1,0 +1,11 @@
+==============================================================================
+H_6042 — energy cost of the link: is the COMPOSITE cheaper than LINK-alone?
+  paid ANU sha256=ece0409d4ad6 tier=anu_paid
+==============================================================================
+  SEED: coupling work =     0.00   steady-r = 0.703
+  LINK: coupling work =    24.94   steady-r = 0.964
+  BOTH: coupling work =    24.07   steady-r = 0.964
+------------------------------------------------------------------------------
+  cold-start energy saved by shared-seed init (LINK−BOTH): 0.86 (3% of LINK work)
+VERDICT: 🟢  composite is ENERGY-cheaper than link-alone — shared-seed init removes the cold-start correction burst; BOTH pays only steady drift-correction. The two channels are thermodynamically complementary (free common cause + minimal live work).
+  honest: work = |coupling torque|·|dθ| proxy (not Landauer kT units); toy 2-osc; scale UNVERIFIED.

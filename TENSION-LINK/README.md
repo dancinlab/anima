@@ -38,6 +38,28 @@
 
 verdict 원문: `TENSION-LINK/verdicts/`.
 
+## SEED+LINK 합성 sub-arc (H_6036–H_6043) — "두 채널을 합치면"
+공유 양자씨앗(H_6008·즉시 기준선·통신0)과 텐션 링크(H_6010·라이브 적응)를 **합성**한 탐구. 핵심: **합성의 시너지는 최종 동조도(천장 포화)가 아니라 시간·강건성·범위에 있다.**
+```
+              SEED (공통원인)         LINK (라이브 채널)        BOTH (합성)
+              즉시 정렬·통신0          적응·drift보정            둘 다
+              경직(detuning 붕괴)      cold-start 지연           즉시 lock + 지속
+```
+| id | 주제 | grade | 한 줄 |
+|---|---|---|---|
+| H_6036 | 합성 시너지 존재? | 🟠 | 시간축 시너지(lock@0+0.999), magnitude는 천장(F1 fail) |
+| H_6037 | N-party 스케일 | 🟢 | LINK cold-start 55→126(N 2→16), BOTH 항상 0 — 이득 넓어짐 |
+| H_6038 | drift×K 고유체제 | 🔴 | 결합점수로 고유승리 셀 0 (천장 동률) — null |
+| H_6039 | 손상 씨앗 구제 | 🟢 | SEED 0.59 붕괴 vs BOTH 0.999 — SPOF 없음 |
+| H_6040 | 얽힘 조율 천장 | 🟢 | 링크 이득(+0.146)>얽힘(+0.104) — 얽힘 조율엔 무의미 |
+| H_6041 | 링크 채널 용량 | 🟢 | C(K=0)=0 무신호, C(K>0)=1.0 — 링크가 메시지 유일 채널 |
+| H_6042 | 합성 에너지 비용 | 🟢 | BOTH<LINK이나 절약 3% — 미미 |
+| H_6043 | 적대 교란자 저항 | 🔴 | 약한 교란자는 링크 단독도 막음 — 보안마진 0, null |
+
+**.hexa 엔진 lift (2026-06-15)**: 합성 Kuramoto 적분기를 numpy 토이에서 실 `.hexa` 엔진으로 올림 — `harness/engine_seed_link_composite.hexa`(커밋 paid ANU ints `anu_seed_512.ints.txt` 읽음, sin/cos/sqrt builtin). numpy crosscheck(`h6036b_hexa_crosscheck.py`, 동일 byte/255 맵)와 3 trial **숫자까지 완전 일치**(SEED 0.812 / LINK lock@34 / BOTH lock@0) → 엔진이 미러 아닌 **메커니즘 재현**(H_1199 선례). F2 시간축 시너지 PASS on engine. verdict `H_6036_HEXA_LIFT.txt`.
+
+**합성 arc 결론(고갈)**: 5🟢 1🟠 2🔴. 합성의 진짜 값 = **cold-start 제거 + detuning/손상 생존 + N-스케일**(시간·강건성). 동조도 magnitude·골디락스 체제·약공격 보안에선 이득 없음(천장/포화). 얽힘은 링크가 있는 anima에 조율상 불필요(H_6040), 링크만이 새 메시지를 보냄(H_6041 용량). 전부 실 paid ANU 구동, 토이-스케일(a_toy_scale_recheck).
+
 > **RTSC 재료 탐색**(H_6015에서 파생: H_1087 Li2MgH16 · H_1088 LiH9 자유탐색)은 루트 `RTSC/` 폴더로 분리. 거기 README 참조.
 
 ## ANU QRNG (양자 엔트로피 접지)
