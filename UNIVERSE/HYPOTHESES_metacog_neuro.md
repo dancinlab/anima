@@ -23,7 +23,7 @@ from H_1142: ByteGPT d256/4L, en slice of corpus_5lang_1p5gb, summer CPU, seed 7
 | **1203** | ERN error-monitoring (own-error spike pre-feedback) | ERN/ACC, Gehring 1993; Holroyd-Coles 2002 | surprise(error)−surprise(correct) d ≥ 0.8 AND decision-time hidden-probe AUROC ≥ 0.70 AND untrained ≤ 0.60 | — | runnable |
 | **1204** | hierarchical (second-order) metacog readout | hierarchical predictive coding (Friston); HMeta-d (Fleming) | 2nd-order probe AUROC − 1st-order entropy AUROC ≥ +0.10 AND held-out generalizes | 1202 | runnable |
 | **1205** | meta-bias ⊥ meta-sensitivity / Dunning-Kruger | Fleming meta-bias; Dunning-Kruger over-confidence | bottom-competence tercile over-confidence > top tercile (signed D-K gap) | 1202 | runnable |
-| **1206** | neuroscience metacog capstone | — | synthesize 1202–1205: does a type-2 handle exist at all? | 1202+1203 | deferred |
+| **1206** | neuroscience metacog capstone | — | F1 coarse-real(t2≥0.65) AND F2 fine-absent(probe≤0.62) AND F3 coupled(gap≥0.10) | 1202+1203 | 🔴 CLOSED-NEG — F2 flipped |
 | **1207** | savant dissociation (skill ⊥ metacog) | savant syndrome — Treffert 2009; Snyder 2009; WCC Happé&Frith 2006 | acc(island)−acc(open) ≥ +0.15 AND type2_AUROC(island) ≤ open − 0.10 | H_1202 | runnable |
 | **1208** | savant WCC × metacog (local privilege) | weak central coherence (Happé&Frith); Snyder release-from-concept | acc(local-16) ≥ acc(full-128) − 0.03 AND blind to context-insufficiency | — | runnable |
 
@@ -57,6 +57,23 @@ The metacognitive signal is **COARSE (difficulty-level), not fine-grained (error
 - So "REAL but FLAT & COUPLED" sharpens to: metacognition is a **real, well-calibrated,
   actionable, but COARSE first-order property of output confidence** — it knows roughly
   how hard/uncertain a context is, but has no fine error-localizing module.
+
+### Capstone H_1206 — the frozen falsifier REVISES the story (honest)
+
+The capstone pre-registered the compound "REAL/FLAT/COUPLED/COARSE" account and
+tested all three legs on one model. Result 🔴 CLOSED-NEG:
+- F1 COARSE-REAL  ✅ type-2 AUROC 0.763 (≥0.65)
+- F3 COUPLED      ✅ island t2 0.927 vs open t2 0.597, gap +0.329 (≥0.10)
+- F2 FINE-ABSENT  ❌ hidden error-probe **0.646 > 0.62** bar — a WEAK fine
+  representational error trace EXISTS (not chance-flat as 1203/1204's 0.53–0.59
+  suggested; the cleaner/larger capstone probe lands at 0.65).
+
+So the frozen bar caught that "FLAT" was too strong. **Revised account (honest,
+bar NOT moved):** metacognition is **REAL (strong coarse output signal) + COUPLED
+to competence + has a WEAK fine representational trace** (≈0.65, well below the
+coarse 0.76 but above chance). Not flat, not a full module — a faint one. This is
+itself the campaign's decision-grade synthesis (a_paper_negative_ok): the
+compound claim is falsified on its "no representational monitor" leg.
 
 ### Savant standalone (1209–1211, no metacog lens)
 

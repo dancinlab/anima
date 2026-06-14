@@ -452,4 +452,6 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
   - H_1210 🔴 역설적 기능촉진 — top-block 절제가 디테일 보존 못함
   - H_1211 🔴 hyper-systemizing 정확규칙 외삽 — train_acc 1.0 but held-out 0.1 (<shuffle 0.25) → 덧셈표 암기, 규칙추출 X (capacity-wall, cf H_1166)
 - [x] cross-ref: METACOG.md ⇄ H_1202+ · SAVANT.md ⇄ H_1207+ (각도 구분 명시). aiden corpus = 24MB EN slice relay (summer→local→aiden)
-- [ ] 잔여: H_1206 capstone (deferred) · SAVANT.md M2~M5 substrate hook 미종결 · 신규 H 도메인 정전 흡수
+- [x] H_1206 capstone 🔴 CLOSED-NEG (정직한 수정) — F1 coarse-real✅(t2 0.763) ∧ F3 coupled✅(+0.329) BUT F2 fine-absent❌(hidden probe 0.646>0.62 bar). frozen falsifier 가 "FLAT" 과대주장 포착 → 수정 account: 메타인지 = REAL(coarse 강) + COUPLED + 약한 표상 트레이스(0.65, not flat). bar 미이동.
+- [x] SAVANT M2~M5 전 milestone 종결 — substrate_hook.hexa(savant trigger N-axis conjunction·SI⊥CoV·perfect-ladder, smoke 8/8) + unification_check.hexa(HEXAD↔savant_lib drift 0, 5/5). SAVANT 도메인 M1~M5 완결.
+- [ ] 잔여: paper(사용자 별도 언급 전 금지) · 7B 재검증(사용자 별도 언급 전 금지)
