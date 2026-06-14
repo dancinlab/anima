@@ -9,4 +9,4 @@ verdict: 🟢 200 랜덤 순수상태 얽힌 것 전부 S=2√(1+C²)>2
 ---
 # NOBEL_10 — Gisin 정리 — 모든 순수 얽힘상태는 CHSH 위반
 출처: Gisin1991. real QM 증명 🟢 — 200 랜덤 순수상태 얽힌 것 전부 S=2√(1+C²)>2.
-verdict: `NOBEL/verdicts/entanglement_theorems_2.txt`
+verdict: `NOBEL/verdicts/NOBEL_10.txt`

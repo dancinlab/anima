@@ -9,4 +9,4 @@ verdict: 🟢 concurrence(1,4)=1.000
 ---
 # NOBEL_09 — 얽힘 교환 — 한번도 안 만난 (1,4)가 Bell측정(2,3)으로 얽힘
 출처: Zeilinger. real QM 증명 🟢 — concurrence(1,4)=1.000.
-verdict: `NOBEL/verdicts/entanglement_theorems_2.txt`
+verdict: `NOBEL/verdicts/NOBEL_09.txt`

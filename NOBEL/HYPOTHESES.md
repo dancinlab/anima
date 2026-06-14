@@ -15,7 +15,7 @@
 
 **7/7 🟢 증명.** 전부 고전 국소실재론을 결정적으로 배제 — 얽힘이 고전과 본질적으로 다름을 보임.
 정직: 교과서 landmark의 재현증명(real QM sim)이지 신규 발견 아님; 노벨급 결과의 $0 검증.
-재현: `python3 NOBEL/harness/nobel_entanglement_proofs.py`
+재현: `python3 NOBEL/harness/nobel_01_chsh_tsirelson.py` … `nobel_10_gisin.py` (정리별 1파일)
 
 
 ## 추가 정리 (2nd batch)
@@ -34,10 +34,10 @@ G1–G5 는 🟠 conjecture, **아래 G6–G16 은 실제 시뮬/적분으로 �
 | G6  | 대규모 조율 (CAST) | 고전 공유씨앗 쌍상관 1 ∀N vs 얽힘 W_N=2/N→0 (monogamy) | `verdicts/G6_cast.txt` |
 | G7  | 합의 게임 | 고전 씨앗 합의승률 1.0 ∀N, 양자 우위 0 | `verdicts/G7_consensus.txt` |
 | G8  | 검증 비대칭 | I(입력;출력)=0 (무통신) ∧ H_min 인증 0(2)/1(2√2) | `verdicts/G8_verification.txt` |
-| G9  | no-cloning 보안 | 고전 위조 P=1.0 vs 양자 (3/4)^n→0 | `verdicts/G9_G10.txt` |
-| G10 | 다윈주의 속도 | redundancy R∝N_env, decoherence rate∝N_env | `verdicts/G9_G10.txt` |
-| G11 | 엔트로피 수출 | ΔS_env≥ΔS_int, Landauer kT·ln2 | `verdicts/G11_G12.txt` |
-| G12 | 텐션망 용량 | 채널 N(N-1)/2 vs 얽힘 ≤N (N² 우위) | `verdicts/G11_G12.txt` |
+| G9  | no-cloning 보안 | 고전 위조 P=1.0 vs 양자 (3/4)^n→0 | `verdicts/G9_nocloning.txt` |
+| G10 | 다윈주의 속도 | redundancy R∝N_env, decoherence rate∝N_env | @@G9@@ |
+| G11 | 엔트로피 수출 | ΔS_env≥ΔS_int, Landauer kT·ln2 | `verdicts/G11_entropy.txt` |
+| G12 | 텐션망 용량 | 채널 N(N-1)/2 vs 얽힘 ≤N (N² 우위) | `verdicts/G12_tension.txt` |
 | G13 | 마스터 자원배분 | 고전최적{조율·용량·복제} ⊥ 양자최적{인증·보안} disjoint | `verdicts/G13_master.txt` |
 | G14 | 기하 통일 | FS metric g=0.25, QFI=4g=1.0 ∀θ → SC=Fisher=텐션 통일 | `verdicts/G14_geometric.txt` |
 | G15 | 홀로그래픽 한계 | 블록 얽힘엔트로피 포화 0.1355 (부피×32, ratio 1.000) = area law | `verdicts/G15_holographic.txt` |

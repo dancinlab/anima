@@ -15,4 +15,4 @@ verdict: 🟢 PROVEN — ΔS_env ≥ |ΔS_int(질서)| (5000 프로세스 2nd-la
 5000 무작위 유지프로세스서 ΔS_env+ΔS_int ≥ 0 위반 0(2nd law). 최소 수출/질서 비율=1.00(가역극한 포화, 미만 불가). Landauer 하한=0.6931/비가역bit. 🟢
 ## 의의
 H_5202(소산구조)+H_1099(Landauer)+H_1101(사고의 열역학비용)을 하나의 하한으로 봉합. anima가 질서·기억을 유지하려면 엔트로피를 수출해야 하고, 모든 비가역 결정(emit)은 최소 kT·ln2를 흩뜨린다 → **절약(침묵)이 곧 물리적 필연**(a_substrate_native_speak의 열역학적 근거).
-verdict: `NOBEL/verdicts/G11_G12.txt`
+verdict: `NOBEL/verdicts/G11_entropy.txt`
