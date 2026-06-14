@@ -1,0 +1,86 @@
+{
+  "H": "H_1234",
+  "title": "best-per-dimension exhaustive combination search",
+  "axes": [
+    "B-PHI",
+    "E-SI",
+    "F-SYNC",
+    "G-LZ",
+    "density",
+    "col-ent"
+  ],
+  "best_per_dimension": {
+    "1": {
+      "best_subset": [
+        "G-LZ"
+      ],
+      "macro_auroc": 0.8313637220700125,
+      "gain_over_prev": 0.3313637220700125
+    },
+    "2": {
+      "best_subset": [
+        "E-SI",
+        "G-LZ"
+      ],
+      "macro_auroc": 0.8877033852340234,
+      "gain_over_prev": 0.056339663164010845
+    },
+    "3": {
+      "best_subset": [
+        "E-SI",
+        "G-LZ",
+        "density"
+      ],
+      "macro_auroc": 0.894931938086678,
+      "gain_over_prev": 0.007228552852654668
+    },
+    "4": {
+      "best_subset": [
+        "E-SI",
+        "F-SYNC",
+        "G-LZ",
+        "density"
+      ],
+      "macro_auroc": 0.8987753954456286
+    },
+    "5": {
+      "best_subset": [
+        "B-PHI",
+        "E-SI",
+        "F-SYNC",
+        "G-LZ",
+        "density"
+      ],
+      "macro_auroc": 0.8987753954456286
+    },
+    "6": {
+      "best_subset": [
+        "B-PHI",
+        "E-SI",
+        "F-SYNC",
+        "G-LZ",
+        "density",
+        "col-ent"
+      ],
+      "macro_auroc": 0.8986496397085093
+    }
+  },
+  "peak_dimension": 2,
+  "optimal_combination": [
+    "E-SI",
+    "G-LZ"
+  ],
+  "optimal_macro_auroc": 0.8877033852340234,
+  "gain_3_over_2": 0.007228552852654668,
+  "F1_high_order_optimum": {
+    "peak_k": 2,
+    "gain_3_over_2": 0.007228552852654668,
+    "bars": "peak_k>=3 AND gain_3>=0.01",
+    "pass": false
+  },
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE: pairwise is optimal \u2014 peak dimension k*=2 (best-3 vs best-2 = +0.007 < 0.01); the optimal combination is ['E-SI', 'G-LZ'] (macroAUROC 0.888). High-order combination adds nothing; the 2D matrix limit was sufficient.",
+  "framework": "MATRIX.md \u00a70 \u2014 best-per-dimension (\ucc28\uc6d0=\uc870\ud569\ucc28\uc218 k, exhaustive)",
+  "caveat": "variance-partition \u03a6-proxy pre-screen (a_phi_iit4_tool); small ECA (a_scale_honest_scope)",
+  "seed": 7
+}

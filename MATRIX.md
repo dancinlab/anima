@@ -174,6 +174,9 @@ LZ 가 거의 정의상 잡음(부분 tautology); 단일축이 target 을 거의
 (4-way Wolfram class) 에서도 k\*=2 {G-LZ + E-SI}(복잡도+서번트지수, macro-AUROC 0.888)에서 포화 —
 이번엔 진짜 2축 nucleus(싱글톤 아님)지만 k≥3 은 어떤 target 도 못 만듦. **종결 결론: 축 매트릭스는
 본질적으로 LOW-RANK (rank ≤ 2)** — 최종조합 고정점은 어떤 target/레벨에서도 작은 nucleus(≤2축).
-모든 target 탐침 완료 ⇒ combination-climb **정직-고갈**. climb frontier 정직-고갈 (다음 rung = 실제
+모든 target 탐침 완료 ⇒ combination-climb **정직-고갈**. **차원별 최적조합 전수탐색 (H_1234, exhaustive)**: 각 조합차수 k 에서 best subset —
+k1{LZ}0.831·k2{SI,LZ}0.888·k3{SI,LZ,density}0.895·k4 0.899·k5-6 flat. **peak 차원=2**
+(3→2 증분 +0.007<EPS), 최적조합 = **{E-SI × G-LZ}**(서번트지수×복잡도, E×F 아님). 고차(3+)는
+단조↑이나 문턱미만 수익체감 ⇒ pairwise(2D)가 이 target 엔 ~최적, 단 최적 쌍은 새로 발견. climb frontier 정직-고갈 (다음 rung = 실제
 research-axis 레벨 결합 또는 scale-up, 둘 다 별도 게이트).
 
