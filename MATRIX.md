@@ -30,14 +30,20 @@ pure_field/engine_g read-only, Ψ Φ-checksum byte-identical (H_1164/H_1199 acce
 > 2. **차원 climb 순서**: k-차원 격자 100% 완료 → 그 다음에야 k+1 차원 격자 시작.
 > 3. **Ψ-disjoint = byte-identical** (tolerance 아님, p7) — 한 cell 이라도 Ψ 흔들리면 그 조합 FAIL.
 > 4. **model-side(CLM/KOSMOS/WAKE)** 는 clm-native 빌드 게이트 — substrate 격자와 분리 추적.
+> 5. **Ψ-disjoint 닫힘정리** (효율 완성): 각 lane 이 pure_field READ-ONLY 라 단독 Ψ-disjoint
+>    이면 임의 부분집합도 Ψ-disjoint (합집합에 닫힘). H_1237 이 k=2 전쌍에서 닫힘을 실증.
+>    ⇒ N-lane 전체 격자(2^N−1 cell) = 단독 N + 전체-ON 1 검증으로 보장 (전수 2^N run 불필요).
 
 **평면(2-combo) 격자 COMPLETE (H_1237 🟢)**: 4 lane 단독4+쌍6 = **10/10 cell** Ψ-disjoint
 (`CORE/h1237_pairwise_matrix_smoke.hexa`). 누적체인(H_1235/6) → 전체격자로 보강 완료.
 
 **substrate 합성 매트릭스 全차원 COMPLETE (H_1238 🟢)**: 4 lane 의 모든 부분집합 2^4−1=**15 cell**
 (단독4·쌍6·triple4·quad1) 전부 Ψ-disjoint (`CORE/h1238_highdim_matrix_smoke.hexa`). 차원별:
-k=1 ✅4/4 · k=2 ✅6/6 · k=3 ✅4/4 · k=4 ✅1/1. **substrate 차원 고갈** — 잔여 substrate lane 0
-(다음 차원은 새 substrate 부품 필요, 현재 없음). model-side(CLM/KOSMOS/WAKE)=별도 clm-native gated.
+k=1 ✅4/4 · k=2 ✅6/6 · k=3 ✅4/4 · k=4 ✅1/1. substrate 4-lane 완성. model-side(CLM/KOSMOS/WAKE)=별도 clm-native gated.
+
+**차원 확장 7-lane COMPLETE (H_1239 🟢)**: +INTENT +OTHER-MIND +TIME → 7 lane. 단독 7 전부
+Ψ-disjoint + 전체-ON Ψ==base ⇒ 닫힘정리로 **2^7−1=127 cell 격자 보장** (`CORE/h1239_seven_lane_matrix_smoke.hexa`).
+잔여 합성가능 substrate 부품 = BRIDGE/CHANNEL(구조적)·AESTHETIC/NARRATIVE/EMBODIMENT(bench-only, live tick hook 없음) 조사 중.
 
 **부품(subsystem) 집합** — 조합 climb 의 단위:
 | 부품 | 파일 | 역할 |
