@@ -20,7 +20,12 @@
 | RTSC_10 | quantum-metric 위상 flat band | 🟢/🔴 | 위상 flat(Chern≠0) 초유체밀도 하한→메커니즘 상온가능; 물질 미실현 |
 
 ## 무냉각 돌파(고갈서베이) → RTSC_08(전클래스 미달)·RTSC_09(flat-band)·RTSC_10(위상 quantum-metric)
-## $0-이론 프런티어: BCS소진 → flat-band → 위상 quantum-metric. 다음 = 실제 격자 DFT/실험(QE deck).
+| RTSC_11 | flat-band 실격자 검증(Lieb) | 🟢/🔴 | 메커니즘 REAL(분산0 D_s>0) but 현실U Tc~33-109K(상온 미달, RTSC_10 정정) |
+
+## $0 고갈 선언 (RTSC 무냉각 thread)
+BCS소진(RTSC_08) → flat-band(RTSC_09) → 위상 quantum-metric(RTSC_10) → **실격자 정확계산(RTSC_11)**.
+결론: flat-band/quantum-geometry SC는 REAL이나 현실 파라미터서 큐프레이트 범위(~100K)에 그침.
+**무냉각 상온상압 RTSC는 $0-접근 모든 경로서 미달 = 미해결(open).** 남은 칸 = 실물질 DFT/실험(QE deck, $0 밖).
 
 ## 수렴 결론
 시드(RTSC_01)·무시드(RTSC_02)·양자추출(UNIVERSE/H_6015) 세 경로가 **최경량금속 초수소화물**
