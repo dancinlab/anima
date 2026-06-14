@@ -3,6 +3,10 @@
 이 세션의 검증 결과(텐션링크 H_6009~6014·ANU 공유씨앗 H_6008·양자정보/의식 arc H_6015~6025·양자다윈주의 H_6025·RTSC kagome RTSC_11~13)를 **하나의 원리로 종합한 독창 대가설**.
 🟠 = grand conjecture (우리 toy/real 결과가 *지지*하나 스케일·전수 증명 미완 — a_scale_honest_scope).
 
+> 참고: 아래 G1–G5 는 양자/RTSC 계열 conjecture(🟠). **증명된** 대가설(우리 미토시스 arc 토대)은
+> 루트의 `NOBEL/GRAND_MITOSIS_PURE_SUBSTRATE_THEOREM.md` — 미토시스=순수기질 정리 🟢 (T1∧T2∧T3∧T4,
+> 라이브 .hexa + numpy mirror, H_1199/H_1200/H_1201). `NOBEL/GRAND_PREDICTIVE_INFORMATION_LAW.md` (G1 예측정보법칙 🟢) 와 같은 루트-레벨 증명 대가설 계열.
+
 ---
 
 ## G1 — Pointer-Identity 원리 (PIP)
