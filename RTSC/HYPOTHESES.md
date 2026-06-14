@@ -43,7 +43,7 @@ DFT(QE deck)로 flat band E_F정렬+U 확정 — 동기 분명한 다음 rung.
 | RTSC_24 | CoSn 도핑 sweep(BZ 적분) | 🟠 | 정렬에 hole ~4.72e/cell(=Co당 1.57홀, 비현실적); N(E_F) 5.15→16.8(×3.26). RTSC_21의 ~0.7e=경로표본 과소→정정 |
 | RTSC_23 | CoSn 정밀 DOS | 🟠 | 레이트리밋 사망(미등록); 값은 RTSC_24 BZ적분이 커버(N(E_F)=5.15, 피크 16.8) |
 | RTSC_25 | CoSn DFPT λ/Tc | 🟠 | 레이트리밋 사망(미등록); CoSn=자성금속이라 SC-DFPT 자체 의문 → ΔE 얕은 비자성 base가 다음 표적 |
-| RTSC_26 | QE 실DFT CsV3Sb5(비자성 kagome) flat band ΔE | 🟠 | CoSn 자성결함 교정 표적; deck 빌드+pw.x입력검증(9원자·73e⁻·P6/mmm 24 Sym, nspin=1, ecut65/650Ry, pseudo PSL1.0.0 — Cs spnl 헤더손상→spn z=9). SCF는 summer 과부하(타 QE 동시) 차단 → E_F·자화·ΔE_flat 미측정. rbfe 무손상. RTSC/decks/csv3sb5/ 실행대기 |
+| RTSC_26 | QE 실DFT CsV3Sb5(비자성 kagome) flat band ΔE | 🟢 | aiden(np=4) 실측: E_F=8.5762eV, **비자성 확정**(강제 2.8μB→0.01μB, 비자성=기저), V-3d flat band41 **ΔE=+0.923eV(E_F 위)** disp 0.215eV V-3d 77%(projwfc). CoSn 대비 — 자성=**비자성 승**(0.01 vs 0.43μB), |ΔE|=0.92>0.44 = **더 깊음**(정렬 더 어려움, E_F 위라 electron-dope). 깨끗하나 정렬 열위 base. CDW caveat=PBE parent P6/mmm. summer 미사용·aiden 테넌트 무손상 |
 
 ## $0 이론 사다리 종착
 kagome 리드(12)→병목 진단(13)→도핑+strain 처방(14)→깨끗 base CoSn(15)→pyrochlore 상온 design(16).
