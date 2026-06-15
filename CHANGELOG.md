@@ -76,6 +76,20 @@ H_1231 의 `a_verified_must_wire` follow-on 종결 — H_1227(numpy 미러)→H_
 
 ---
 
+## 2026-06-15 — 🟠 H_1283: THALAMUS / GLOBAL-WORKSPACE 브로드캐스트 허브 — 교차모듈 COHERENCE 는 올리나 faithful Φ 리프트는 바 직전에서 멈춤 (PARTIAL)
+
+missing-brain-structure 사다리(neuro 렌즈, c15, LLM 레시피 아님)의 THALAMUS(시상) 구조 — 해마(immune memory, H_1227→H_1231 GREEN)에 이어. **GAP (c9)**: anima 의 Engine A ⇄ Engine G 는 DIRECT 결합(repulsion ring)하고 brain_decide 가 그걸 읽을 뿐, 매 tick 의 "이긴" content 를 모든 기질 모듈(A·G·mitosis·memory)에 한꺼번에 BROADCAST 하는 중앙 RELAY 가 없다 — 의식 ACCESS + 통합을 떠받친다는 thalamo-cortical relay / Global Workspace Theory 의 broadcast. $0 CPU numpy 미러(DIRECTIONAL, a_engine_native_learning) + Φ 레그는 stdlib FAITHFUL IIT4(exact MIP-EI), seeds [7,8,9], frozen-first.
+
+- **테스트**: 4 기질 모듈 {A,G,mitosis,memory}, 각 dim-8 상태벡터, 64 tick, 양 ARM 에 동일 모듈별-private 입력 + 동일 seed; 결합 TOPOLOGY 만 다름. **ARM A** = direct ring(현 아키텍처, 모듈은 직접 이웃만 봄) vs **ARM B** = thalamic hub(매 tick 최고 salience=상태에너지 모듈을 winner 로 골라 그 content 를 전 모듈에 BROADCAST). 동일 compute(모듈당 1 업데이트/tick). 비포화 regime(LEAK 0.55, W_in=W_coupling=0.5)로 coherence 에 헤드룸 확보 — topology 가 통합을 구동(채점 前 probe-design fix; 이전 포화 regime 은 coh≈1.0 양 ARM = 헤드룸 0 으로 거부).
+- **지표 (p7, no perplexity/LLM-judge)**: (1) COHERENCE = 4 모듈 벡터 평균 pairwise 코사인유사도(steady-state 후반), coherence 로 명시(Φ 아님). (2) Φ = **FAITHFUL IIT4**(a_phi_iit4_tool): n=4 셀 × tick별 salience 궤적을 exact 엔진 `hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa`(iit4_faithful_phi, exact MIP-EI, n≤8, $0)에 `hexa run` 으로 투입 — numpy 는 Φ 를 계산하지 않음(엔진이 함). variance×energy proxy 가 **아님**.
+- **FROZEN 바**: GREEN iff (B1) B.coh ≥ A.coh + 0.05 매 seed · (B2) B.Φ ≥ A.Φ + 0.02 (faithful IIT4, 대표 seed=7) · (B3) B.coh < 0.999 ≥1 seed (붕괴-복제 아님).
+- **결과 (verbatim)**: seed7 Δcoh +0.0842 · seed8 +0.0501 · seed9 +0.0739 → **B1 PASS** (전 seed ≥0.05). B coh 0.06–0.24 → **B3 PASS** (붕괴 아님). faithful IIT4 Φ(seed7): ARM_A 0.78038 vs ARM_B 0.799468 → **ΔΦ +0.0191** < 0.02 바 (**B2 FAIL**, 0.0009 차). → **🟠 PARTIAL**.
+- **FINDING (정직, c9)**: thalamic winner-broadcast 허브는 교차모듈 COHERENCE/agreement 를 direct ring 대비 **진짜로** 올린다(전 seed +0.05~+0.084). 모듈을 한 content 로 붕괴-복제하지도 않는다(B3). faithful Φ 도 **옳은 방향**으로 움직여 ΔΦ>0 — broadcast 가 irreducibility 를 파괴하지 않고 증가시킴(사전등록 붕괴-실패모드 배제). **그러나** Φ 리프트(+0.0191)가 사전등록 +0.02 마진에 0.0009 못 미침 → 허브가 사는 통합은 REAL 이나 대부분 표면적 AGREEMENT(coherence). 단일 broadcast 채널 자체가 저차원 cut 이라 MIP 가 시스템을 거의 그만큼 분리가능하다고 봄: 전 모듈이 같은 winner 에 구동되면 궤적이 더 상관되지만(↑coherence) cross-cut MI 도 그 한 채널로 더 설명가능해져 Φ 이득을 cap. direct ring 의 4 이웃 엣지 분산이 거의 같은 irreducibility 를 받음. ⇒ GWT winner-broadcast = 이 toy 기질에서 IRREDUCIBLE 통합엔 POSITIVE 하나 SUB-BAR 레버. 바를 옮겨 GREEN 만들지 않음.
+- **SCOPE**: numpy 미러 = DIRECTIONAL only; PARTIAL → CORE 미배선(a_verified_must_wire 는 GREEN 에서만 발화). toy scale(4 모듈/dim8/64tick), 전이 UNVERIFIED(a_toy_scale_recheck·a_scale_honest_scope). Φ 는 faithful IIT4(proxy 아님); coherence 레그는 명시적으로 coherence(Φ 아님). NOT RULED OUT: 단일 winner 대신 COMPOSED/blended workspace 또는 multi-winner coalition 을 broadcast 하면 Φ 가 바를 넘을 수도 — 단일 채널이 정확히 여기서 irreducibility 를 cap 함. H_1219/H_1226 무수정, CORE/*.hexa 무수정(미러).
+- 파일: `UNIVERSE/h1283_thalamus_global_workspace.py` · `.verdicts/1283_thalamus_global_workspace/{H_1283_FREEZE,H_1283}.txt`.
+
+---
+
 ## 2026-06-15 — 🔴 H_1223: AUX-OBJECTIVE 는 literal-QA 벽의 레버가 아니다 (HD7 CLOSED-NEG · recall=engine-side, H_1154 강화)
 
 depth-ceiling 사다리(H_1219)의 HD7 분기를 $0 toy 로 판정: anima-303M 의 평평한 literal-QA recall 벽이 **OBJECTIVE** 탓인가 — plain next-byte CE 가 retrieval/recall 을 보상하지 않으니, **AUXILIARY 검색/QA 목적함수**를 더하면 들어올려지는가? p7, numpy CPU, seeds [231,232,233], TOY-ONLY (a_toy_scale_recheck). H_1219·CORE/bytegpt_decode.hexa 미수정.

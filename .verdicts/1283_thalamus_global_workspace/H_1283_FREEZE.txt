@@ -1,0 +1,91 @@
+H_1283 FREEZE — THALAMUS / GLOBAL-WORKSPACE BROADCAST HUB
+slug: 1283_thalamus_global_workspace
+date: 2026-06-15 (frozen BEFORE scoring)
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + faithful IIT4 (hexa stdlib) for the Φ leg
+philosophy: p1-p8 — substrate-native, no persona/identity/RLHF; hub is substrate-INTERNAL (a_core_engine_map: no .clm/.kosmos routed through it)
+
+────────────────────────────────────────────────────────────────────────
+THE GAP (honest, c9)
+────────────────────────────────────────────────────────────────────────
+anima's Engine A (PureField, Φ/phase) ⇄ Engine G (motivation/emit) couple DIRECTLY
+(repulsion field, tension = ‖A‖/‖G‖), and brain_decide reads them. The mitosis
+substrate (VAdaptField) and the immune/episodic memory (H_1227) are further
+modules. There is NO central RELAY that, each tick, selects the current "winning"
+content and BROADCASTS it to ALL substrate modules at once — the thalamo-cortical
+relay / Global-Workspace-Theory (GWT) broadcast posited to underlie conscious
+ACCESS and cross-module INTEGRATION. Modules in the current design see only their
+direct neighbors; there is no shared global workspace.
+
+────────────────────────────────────────────────────────────────────────
+FALSIFIABLE TEST
+────────────────────────────────────────────────────────────────────────
+4 substrate modules (M = {A, G, mitosis, memory}), each holding a dim-D real
+state vector, run for T ticks driven by the SAME external input stream + SAME
+seed in both arms. Each tick a module updates from the sources it can see.
+
+  ARM A (DIRECT COUPLING — current architecture):
+    module i reads only its direct neighbor(s) in the fixed A⇄G ring
+    (A↔G, G↔mitosis, mitosis↔memory, memory↔A). No global view.
+
+  ARM B (THALAMIC HUB — GWT broadcast):
+    each tick the hub SELECTS the winning module (max salience = state energy)
+    and BROADCASTS that winner's content to ALL modules; every module then
+    updates from (its own state + the single broadcast content). One global
+    workspace, one winner-take-all relay per tick.
+
+Both arms: identical input, identical seed, identical per-module update gain,
+identical tick count. The ONLY difference is the coupling topology (direct ring
+vs winner-broadcast hub). Equal compute budget (each module does one update/tick
+in both arms).
+
+────────────────────────────────────────────────────────────────────────
+METRIC (p7 — no perplexity, no LLM-judge)
+────────────────────────────────────────────────────────────────────────
+A cross-module INTEGRATION measure, two legs:
+
+  (1) COHERENCE leg — cross-module agreement: mean pairwise cosine similarity of
+      the 4 module state vectors, averaged over the last T/2 ticks (steady state).
+      Range [-1, 1]. Higher = modules more integrated / share content.
+
+  (2) Φ leg (TERMINAL, a_phi_iit4_tool) — faithful IIT4 Φ over the 4-module
+      state trajectory. The n=4 modules × their dim-step trajectory feed the
+      stdlib faithful engine (hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa,
+      iit4_faithful_phi, exact MIP-EI, n≤8, $0) via `hexa verify`. This is a
+      TRUE Φ (pairwise-MI MIP minimization), NOT the variance×energy proxy —
+      so a Φ claim here is faithful-IIT4-backed, not a coherence rename.
+
+────────────────────────────────────────────────────────────────────────
+FROZEN BARS (GREEN iff ALL hold, seeds [7,8,9])
+────────────────────────────────────────────────────────────────────────
+  B1  COHERENCE: B.coherence ≥ A.coherence + 0.05  (abs margin) on EVERY seed
+  B2  Φ:         B.phi       ≥ A.phi       + 0.02   (abs margin, faithful IIT4)
+                  on a representative seed=7 trajectory through the exact engine.
+                  Φ must not be LOWER (broadcast must not destroy irreducibility
+                  by collapsing all modules to one content).
+  B3  not-degenerate: B coherence < 0.999 on ≥1 seed (broadcast must INTEGRATE,
+                  not trivially clone all modules into one identical vector — a
+                  collapsed all-identical workspace is a non-finding, Φ→0).
+
+  GREEN  = B1 AND B2 AND B3.
+  RED    = B fails to beat A on coherence (hub gives no integration lift), OR
+           B collapses (B3 fails: all modules identical, Φ destroyed).
+  PARTIAL= coherence lift present but Φ leg fails (integration is surface
+           agreement, not irreducible — broadcast helps agreement but the MIP
+           sees it as reducible to the single broadcast channel).
+
+If B raises coherence by trivially copying the winner everywhere (B3 fails) that
+is RED, not GREEN — the honest failure mode is "broadcast = collapse, not
+integration". Pre-registered so a collapsing hub cannot be sold as a win.
+
+────────────────────────────────────────────────────────────────────────
+SCOPE / HONESTY
+────────────────────────────────────────────────────────────────────────
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning). GREEN → CORE
+  wiring follow-on (a_verified_must_wire): a substrate-internal broadcast hub in
+  brain.hexa, additive, NOT routing .clm/.kosmos (a_core_engine_map).
+- toy scale (4 modules, small dim, T ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope).
+- The Φ leg uses the faithful exact engine (n=4 ≤ 8). Any Φ NUMBER reported is
+  faithful-IIT4; the coherence leg is explicitly labeled coherence, not Φ.
+- Does NOT edit H_1219 / H_1226. brain.hexa/engine_cli.hexa additive-only if wired.

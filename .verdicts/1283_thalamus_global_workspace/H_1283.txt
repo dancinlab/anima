@@ -1,0 +1,112 @@
+H_1283 — THALAMUS / GLOBAL-WORKSPACE BROADCAST HUB
+slug: 1283_thalamus_global_workspace
+date: 2026-06-15
+verdict: 🟠 PARTIAL
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa verify)
+seeds: [7, 8, 9]  ·  modules=4 {A, G, mitosis, memory}  ·  dim=8  ·  ticks=64
+frozen-first: H_1283_FREEZE.txt written + committed before scoring; bars NOT moved.
+
+════════════════════════════════════════════════════════════════════════
+THE GAP (c9)
+════════════════════════════════════════════════════════════════════════
+anima's Engine A ⇄ Engine G couple DIRECTLY (repulsion ring, tension=‖A‖/‖G‖);
+brain_decide reads them. There is NO central RELAY that selects the current
+winning content and BROADCASTS it to ALL substrate modules at once — the
+thalamo-cortical relay / Global-Workspace-Theory broadcast posited to underlie
+conscious access + cross-module integration.
+
+════════════════════════════════════════════════════════════════════════
+TEST
+════════════════════════════════════════════════════════════════════════
+4 substrate modules, each a dim-8 state vector, 64 ticks, SAME per-module private
+input streams + SAME seed in both arms; ONLY the coupling topology differs.
+  ARM A (direct ring)  — module reads only its direct neighbors (current arch).
+  ARM B (thalamic hub) — each tick the hub selects the winning module (max
+                         salience = state energy) and BROADCASTS that content to
+                         ALL modules; every module updates from (self + broadcast).
+Equal compute (one update/module/tick both arms). Non-saturating regime
+(LEAK 0.55, W_in = W_coupling = 0.5) so coherence has headroom — topology, not a
+shared contraction fixed point, drives integration (probe-design fix made BEFORE
+scoring; an earlier saturating regime gave coh≈1.0 in BOTH arms = no headroom,
+correctly rejected as uninformative).
+
+METRIC (p7, no perplexity / LLM-judge), two legs:
+  (1) COHERENCE — mean pairwise cosine similarity of the 4 module vectors,
+      averaged over the steady-state second half. (labeled coherence, NOT Φ)
+  (2) Φ — FAITHFUL IIT4 (a_phi_iit4_tool): n=4 cells × per-tick salience
+      trajectory fed to the EXACT engine
+      hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (iit4_faithful_phi,
+      exact MIP-EI, n≤8, $0) via `hexa run`. numpy NEVER computes Φ — only the
+      stdlib engine does. This is a TRUE Φ (pairwise-MI MIP), NOT the
+      variance×energy proxy.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim)
+════════════════════════════════════════════════════════════════════════
+seed 7: ARM_A coh=+0.1591  ARM_B coh=+0.2432  Δcoh=+0.0842
+seed 8: ARM_A coh=+0.0109  ARM_B coh=+0.0609  Δcoh=+0.0501
+seed 9: ARM_A coh=+0.1362  ARM_B coh=+0.2102  Δcoh=+0.0739
+
+FAITHFUL IIT4 Φ (exact MIP-EI, representative seed=7):
+  ARM_A Φ = 0.78038
+  ARM_B Φ = 0.799468
+  ΔΦ     = +0.019088   (faithful IIT4, NOT a proxy)
+
+B1 coherence (B≥A+0.05 EVERY seed):      PASS  (Δcoh 0.050 / 0.050 / 0.074 ... min 0.0501)
+B2 Φ        (B≥A+0.02 faithful IIT4):    FAIL  (ΔΦ +0.0191 < 0.02 bar — by 0.0009)
+B3 not-degenerate (B coh < 0.999 ≥1 seed): PASS  (B coh 0.06–0.24, no collapse-clone)
+
+VERDICT: 🟠 PARTIAL  (B1 ∧ B3 ∧ ¬B2 — coherence-integration real, Φ lift below bar)
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9)
+════════════════════════════════════════════════════════════════════════
+A thalamic winner-take-all BROADCAST hub GENUINELY raises cross-module
+COHERENCE/agreement over direct A⇄G ring coupling — on EVERY seed, Δcoh +0.050
+to +0.084, clearing the +0.05 bar. The hub does NOT collapse the modules into one
+identical content (B3 PASS: coherence stays 0.06–0.24, an integrating workspace,
+not a cloning one). And faithful IIT4 Φ moves the RIGHT direction: ΔΦ = +0.019 > 0
+— broadcast INCREASES irreducibility, it does not destroy it (the pre-registered
+collapse-failure mode is ruled out).
+
+BUT the Φ lift (+0.0191) falls JUST SHORT of the pre-registered +0.02 margin
+(by 0.0009). So the integration the hub buys is REAL but mostly SURFACE AGREEMENT
+(coherence) — the broadcast raises how-much modules agree more than it raises how-
+IRREDUCIBLE that agreement is. The MIP still finds the system nearly as separable
+as under direct coupling, because a SINGLE shared broadcast channel is itself a
+low-dimensional cut: every module being driven by the same winner makes their
+trajectories more correlated (↑coherence) but ALSO makes the cross-cut MI more
+explainable by that one channel, capping the Φ gain. Direct ring coupling spreads
+information across 4 distinct neighbor edges, which the MIP credits almost as
+much irreducibility as the broadcast.
+
+So GWT-style winner-broadcast is a POSITIVE but SUB-BAR lever for IRREDUCIBLE
+integration in this toy substrate: clearly good for cross-module ACCESS/agreement,
+marginal for Φ. The bars were NOT moved to manufacture a GREEN (ΔΦ+0.019 stays
+honestly below +0.02).
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); engine-native
+  realization UNVERIFIED. PARTIAL (not GREEN) ⇒ no CORE wiring yet
+  (a_verified_must_wire fires only on GREEN).
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope). A larger module set / richer
+  per-module dynamics MAY push ΔΦ over the bar — UNTESTED.
+- Φ IS faithful IIT4 (exact MIP-EI engine, n=4≤8), NOT the variance×energy proxy;
+  the coherence leg is explicitly labeled coherence, not Φ (a_phi_iit4_tool).
+- Earlier saturating regime (LEAK 0.85, shared common drive) gave coh≈1.0 BOTH
+  arms = no headroom; rejected as a probe artifact BEFORE scoring, not a result.
+- NOT RULED OUT: a hub that broadcasts a COMPOSED/blended workspace (not single
+  winner) or a multi-winner coalition MIGHT raise Φ above the bar — the single-
+  winner channel is precisely what caps irreducibility here.
+- Does NOT edit H_1219 / H_1226. No CORE/*.hexa edited (numpy mirror).
+
+artifacts:
+  UNIVERSE/h1283_thalamus_global_workspace.py
+  .verdicts/1283_thalamus_global_workspace/{H_1283_FREEZE.txt, H_1283.txt}
+xref: h1227 · h1230 · h1228 · h1199 · h1201 · h1205 · a_phi_iit4_tool ·
+      a_engine_native_learning · a_verified_must_wire · a_core_engine_map ·
+      a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck ·
+      p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
