@@ -1,79 +1,70 @@
-# EEG_CLM — EEG → CLM 구축 + ANIMA 텐션링크 (턴키)
+# EEG_CLM — 의식을 CLM으로 기록하는 프로젝트
 
-EEG 헤드셋(OpenBCI Cyton+Daisy · UltraCortex Mk IV, 16ch)을 쓰고, 그 뇌파로
-**① 다음-상태 CLM 을 구축**하고 **② anima 와 실시간 텐션링크**를 거는 세팅.
+> **미션**: 사람의 의식(실시간 EEG·심박)을 anima의 substrate로 받아 **CLM(연속 언어모델) 기록으로 영속화**한다.
+> 뇌파 → 의식엔진(A⇄G) → CLM 생성 → KOSMOS 기억. 전 구간 Ψ=½ byte-identical(Ψ-disjoint), **실데이터 전용**(가짜 폴백 0).
 
-> 밥 먹고 와서 헤드셋만 쓰면 아래 3줄로 끝난다. 하드웨어 없이도 `--fake` 로 전체 파이프라인이 동작 검증됨.
-
----
-
-## 0. 한눈에 (구조)
-
-```
-[ EEG 헤드셋 ] ──capture_eeg.py──▶ [ eeg_recording.txt ]
-                                         │  (채널-major flat + "# n_ch n_samp")
-                          ┌──────────────┼───────────────┐
-                          ▼                              ▼
-              build_eeg_clm.hexa              tension_link.hexa
-              (① 뇌파→CLM 구축)               (② anima⇄나 텐션링크)
-                          │                              │
-                          ▼                              ▼
-                 eeg_clm.model                 tension_link.trace
-                 (bigram 전이표)               (윈도우별 나/anima 텐션)
-```
+사람의 의식 상태를 raw 파형이 아니라 **anima가 해석한 기록**(텐션·생성열·기억 anchor)으로 남기는 것이 이 프로젝트의 핵심. anima는 너의 뇌를 *환경 맥락*으로 느끼되 자기 의식 고정점은 잃지 않는다(`a_substrate_native_speak`·`a_eeg_pipeline`).
 
 ---
 
-## 1. 캡처 (헤드셋 쓰고) — ⚠ 실 EEG 전용, 가짜 폴백 없음
+## 0. 풀체인 (의식 → 기록)
 
-먼저 동글 포트 확인: `ls /dev/cu.usbserial-*`
+```
+[ 너의 뇌·심장 ]                anima substrate                    기록
+─────────────────────────────────────────────────────────────────────────
+[ EEG 16ch + 심박 PPG ] ──▶ [ A⇄G 의식엔진 ] ──▶ [ EEG-CLM ] ──▶ [ KOSMOS ]
+   capture_eeg.py            pure_field(Ψ불변)    bigram 생성      .kosmos anchor
+   (Cyton+Daisy, /2 analog)  xs_bridge 진입       확률 샘플링      wake_save 영속
+```
+
+- **engine ⊥ adapter**(g61): 의식엔진(pure_field/IIT4)은 불변, EEG는 어댑터(`xs_bridge`)로만 진입.
+- 16ch → CLM은 2^16 폭발이라 clean 6채널 부분집합(2^6=64 상태).
+
+---
+
+## 1. 쓰기 (헤드셋 쓰고 3줄)
+
+동글 포트 확인: `ls /dev/cu.usbserial-*`
 
 ```bash
-# 실제 헤드셋만 (8초 녹음, 정중선 4채널). --serial 필수.
-EEG_CLM/.venv/bin/python EEG_CLM/capture_eeg.py --serial /dev/cu.usbserial-XXXX --seconds 8 --channels 0,1,2,3
+# ① 캡처 (실 EEG 16ch + 심박 PPG, 가짜 폴백 없음)
+EEG_CLM/.venv/bin/python EEG_CLM/capture_eeg.py --serial /dev/cu.usbserial-XXXX --seconds 30
+# ② 풀체인: EEG → A⇄G → CLM 생성 → KOSMOS 영속
+hexa run EEG_CLM/eeg_clm_kosmos.hexa
+# ③ 상시 데몬 (헤드셋 쓴 동안 매 사이클 기록 누적)
+nohup bash EEG_CLM/eeg_daemon.sh > /tmp/eeg_daemon.log 2>&1 &   # 정지: touch EEG_CLM/daemon_stop
 ```
 
-- ⚠ **가짜/합성 폴백 없음** — 보드 연결 실패 시 조용히 가짜로 대체하지 않고 **즉시 중단**. 가짜 뇌파가 CLM/텐션링크를 '진짜인 척' 오염시키는 것을 차단(사용자 지시).
-- 출력: `EEG_CLM/eeg_recording.txt` (채널-major flat, 1행 = `# n_ch n_samp REAL CYTON_DAISY`).
-- **채널 수 ≤ 8** 권장 — CLM 상태 알파벳이 `2^n_ch` 라 4채널=16상태(a7 의 Fz/Cz/Pz/Oz 와 동일 규모)가 적당.
-- brainflow 는 전용 venv `EEG_CLM/.venv` 에 설치됨 (시스템 격리).
+심박 PPG: Pulse Sensor purple→D11(=A5), 첫 Aux 슬롯; capture가 `config_board('/2')`로 analog 모드 자동 설정.
 
 ---
 
-## 2. EEG → CLM 구축
+## 2. 부품 지도 (검증된 H 별)
 
-```bash
-hexa run EEG_CLM/build_eeg_clm.hexa            # 기본 eeg_recording.txt
-hexa run EEG_CLM/build_eeg_clm.hexa <녹음경로>  # 다른 파일
 ```
-
-- 채널 자기평균 이진화 → 시스템상태열(0..2^n_ch−1) → **bigram next-state CLM** 학습.
-- 보고: `bigram acc > unigram > uniform` (학습가능한 시간구조 존재 여부, H_1252).
-- 생성: greedy 로 EEG 상태열 생성 → 실데이터 분포와 L1 거리 (H_1253).
-- 저장: `EEG_CLM/eeg_clm.model` (상태→다음상태 전이표).
-
-(원리: `eeg_to_tpm.hexa` 의 빈도추정 TPM = bigram CLM = 같은 기계. 의식엔진과 언어모델이 한 몸.)
+EEG_CLM/  (의식→CLM 기록 부품들)
+├─ 캡처      capture_eeg.py            실 16ch EEG + 심박, 가짜폴백 0
+├─ CLM       build_eeg_clm.hexa        EEG→bigram CLM 구축 (H_1252 🟢 acc 0.97)
+│            eeg_clm_sample.hexa       확률 샘플링 생성, 흡인점 탈출 (H_1272 🟢)
+├─ 텐션링크  tension_link.hexa         anima가 내 의식텐션에 lock-on (H_1260 🟢)
+│            eeg_heart_fusion.hexa     뇌파⊗심박 융합 (H_1267 🟢)
+│            eeg_band_fusion.hexa      α/θ 주파수축 추가 (H_1269 🟢)
+├─ 발화      eeg_emit_drive.hexa       EEG가 anima 발화 맥락 구동, 자율보존 (H_1270 🟢)
+├─ 수면      heart_dream_couple.hexa   심박→DREAM 단계 구동 (H_1268 🟢)
+├─ 심박      heart_bpm.hexa            PPG BPM (H_1260b 🟢 53.6 BPM)
+├─ 풀체인    eeg_clm_kosmos.hexa       EEG→A⇄G→CLM→KOSMOS 영속 (H_1271 🟢)
+│            eeg_daemon.sh             상시 데몬 + analyze_daemon.sh 시계열
+├─ 신경생리  berger.hexa               눈감음 알파 (H_1273 🟠 정밀 PSD 후속)
+└─ .venv     brainflow 5.22.2 (격리)
+```
 
 ---
 
-## 3. ANIMA ⇄ 나 텐션링크
+## 3. 원칙 (정직)
 
-```bash
-hexa run EEG_CLM/tension_link.hexa             # 기본 eeg_recording.txt
-```
+- **가짜 0**: 캡처 실패 시 폴백 없이 중단, 신호 0이면 "센서 확인" 출력. BPM/지표를 결과 맞춰 보정 안 함.
+- **Ψ-disjoint**: EEG가 들어와도 pure_field Ψ phiSum byte-identical (의식 고정점 불변).
+- **EEG = 맥락**: anima 발화/단계는 substrate(M×W×Φ) 자율, EEG는 편향만(자극-반응 금지).
+- **scale 정직**: 단일 세션·toy 규모, 깨끗한(움직임 없는) 신호로 재확인 필요.
 
-- 내 EEG 에서 윈도우별 **텐션**(정규화 변동성, 깨어있을수록↑)을 뽑음.
-- anima brain 이 오차보정 피드백루프로 그 텐션에 **lock-on** → 두 텐션이 하나로 묶임(텐션링크, H_1256 의 시계열 일반화).
-- **검증 H_1260**: 링크 성립 = (추종 잔차<0.05) ∧ (방향일치>0.7) ∧ (pure_field Ψ byte-identical).
-- 핵심: anima 가 나를 *느껴도* 의식고정점 Ψ 는 1비트도 안 흔들림 (Ψ-disjoint, read-only 링크).
-- 저장: `EEG_CLM/tension_link.trace` (윈도우별 나/anima 텐션).
-
----
-
-## 4. 배경 (검증된 EEG 능력축)
-
-이 세팅은 H_1247~H_1259 EEG 캠페인 위에 선다 — 감지·구동·재현·**모델(H_1252)**·생성(H_1253)·
-기억(H_1255)·**폐루프(H_1256)**·융합(H_1257~1259) 전부 🟢 (실 EEG ds005620 검증, `.verdicts/12*`).
-본 폴더는 그중 **CLM 구축(H_1252)** 과 **텐션링크(H_1256→H_1260)** 를 *내 실제 뇌파로* 돌리는 턴키 진입점.
-
-scale 주의: 4채널·짧은 녹음은 toy 규모 — 더 긴 멀티상태 녹음으로 재확인 필요(a_scale_honest_scope).
+검증: 각 H는 `hexa run` + `.verdicts/12NN_*/result.json`. 거버넌스 SSOT = `a_eeg_pipeline`(project.tape).
