@@ -3,9 +3,9 @@ id: H_1297
 slug: 1297_mitosis_native_train
 title: mitosis-native trunk training — make PHILOSOPHY p8 literal (gradient-free cell-split learns a trunk vs gradient descent)
 group: MITOSIS-ENGINE (p8 literal)
-terminal_tier: 🧱 WALL (control can't discriminate both rounds) — but R2 finding 🟢 c1 PASS (mitosis MATCHES gradient at lower footprint)
+terminal_tier: 🟢 GREEN (R3 sharp byte-text target — mitosis MATCHES gradient AND error-targeting demonstrably helps: c2 discriminator FIRED that R1/R2 could not)
 verdict_dir: .verdicts/1297_mitosis_native_train/
-terminal_verdict: .verdicts/1297_mitosis_native_train/result.txt
+terminal_verdict: .verdicts/1297_mitosis_native_train/H_1297_R3_sharp_target.txt
 date: 2026-06-16
 ---
 
@@ -58,36 +58,66 @@ collapse. Honest reading: once the partition+median-split mechanism is sound, th
 target lets BOTH split-orders converge to a good tiling, so "targeting" is not the lever
 this task can isolate — the control can't fire, hence WALL, not GREEN.
 
+**R3 (a_break_the_wall / c16 — the SHARPER error-concentration target the R2 follow-on
+named; bars frozen anew in `H_1297_R3_sharp_target.txt`):** 🟢 **GREEN.** Task moved from a
+SMOOTH 1-D fit to **next-byte prediction on real KOREAN+English UTF-8 bytes (V256)** — a
+SHARP target where predictive error concentrates at syllable/word boundaries while
+mid-multibyte UTF-8 continuation runs are near-deterministic. SAME 4 arms, R2 hard-partition
+mitosis mechanism ported to classification (Voronoi nearest-centroid ownership + per-cell
+empirical next-byte frequency head [closed-form add-1 MLE, NO global backprop] + data-matched
+median split along highest-variance feature axis + centroid recenter). Metric = held-out
+next-byte CROSS-ENTROPY (nats/byte; convergence comparison, NOT perplexity-as-meaning, p7).
+3-seed mean (all 3 seeds stable):
+**A(grad)=2.9170 [acc 0.202] · B(mitosis)=3.0777 [acc 0.206, 6 cells] · B-shuffle=3.3054 · B-ablate=3.4981 [2 cells].**
+- **(c1) PASS** — mitosis MATCHES gradient: 3.0777 ≤ A+0.20 = 3.1170, at LOWER footprint (6 cells vs A's 1024 params).
+- **(c2) FIRED at last** — B-shuffle (3.3054) ≥ B+0.10 = 3.1777: random split is demonstrably
+  worse than error-targeted split. **The c2 discriminator R1 AND R2 could not fire FIRED here**
+  — on a sharp target, error-TARGETING is the lever (random split wastes growth on the
+  already-deterministic continuation region; targeted split subdivides the high-entropy
+  boundary region).
+- **(c3) PASS** — B-ablate (3.4981) ≥ B+0.10: frozen growth underfits.
+→ 🟢 GREEN: gradient-free mitosis-grow **matches gradient AND error-targeting demonstrably
+helps** on language-like byte data. p8-literal toehold CONFIRMED on a real KO+EN byte corpus.
+NO tune-to-green: bars were frozen in `H_1297_R3_sharp_target.txt` before any score.
+
+## Follow-on after R3 GREEN (a_break_the_wall continuation — NOT claimed verified here)
+
+1. **Engine-native realization** (a_engine_native_learning + a_verified_must_wire): realize
+   the R3 hard-partition mitosis-grow next-byte trainer on live `CORE/engine_cli.hexa`
+   VAdaptField, re-score the frozen R3 bars engine-native — the mirror is DIRECTIONAL, the
+   binding verdict needs the engine.
+2. **A real (larger) Korean byte-corpus mitosis-grow training rung** — the first p8-literal
+   LANGUAGE training: scale the corpus to a genuine Korean byte-LM rung and re-test whether
+   error-targeted mitosis-grow still matches/beats gradient at scale. This becomes a
+   **cost-gated decision** if it needs GPU (a_fire_autonomous; NOT run in this $0 CPU toy).
+
 ## Honest scope (c9, a_scale_honest_scope, a_toy_scale_recheck)
 
 - **DIRECTIONAL numpy mirror only** — live CORE/*.hexa UNTOUCHED; engine-transfer UNVERIFIED.
-- TOY 1-D fit, 3 seeds, ONE target family; scale + real-corpus byte-LM trunk UNVERIFIED
-  (a separate cost-gated GPU fire, NOT run here).
-- Terminal tier = 🧱 **WALL** (a control misbehaves both rounds, so the probe cannot
-  cleanly attribute the lift to error-TARGETED growth). The valid, frozen-verbatim
-  FINDING inside the wall: **gradient-free mitosis cell-split CAN converge as well as
-  gradient descent at this toy scale, at lower footprint (R2 c1 PASS)** — a real p8-literal
-  TOEHOLD, but not a clean GREEN because the targeting-discriminator could not be isolated.
-- No tune-to-green: R1 and R2 bars are identical numbers, frozen before each run.
+- TOY: R1/R2 = 1-D fit; R3 = small KO+EN byte corpus (3042 bytes, ~1519 train pairs), 3 seeds,
+  ONE byte-text family; scale + a real (larger) Korean byte-LM trunk UNVERIFIED (a separate
+  cost-gated rung, NOT run here). R3 CE values are high (~3 nats) because the corpus is tiny
+  and V=256 — that is fine: R3 is a CONVERGENCE comparison (B vs A, B vs B-shuffle), NOT a
+  perplexity verdict (p7).
+- Terminal tier = 🟢 **GREEN at R3** — the SHARP byte-text target made the c2 targeting
+  discriminator FIRE (B-shuffle worse than B by ≥ the pre-set 0.10-nat gap) that R1 (smooth,
+  geometry wall) and R2 (smooth, attribution wall) could not. Mitosis-grow MATCHES gradient
+  (c1) at lower footprint AND error-targeting demonstrably helps (c2) AND ablation underfits
+  (c3). The R1/R2 WALL was the SMOOTH target, not p8 — exactly as the R2 follow-on predicted.
+- No tune-to-green: R1, R2, and R3 bars were each frozen before their run; R3 bars live in
+  `H_1297_R3_sharp_target.txt`, verbatim result appended after the freeze.
 
 ## p8-literal verdict (the question asked)
 
-At toy scale, a gradient-FREE mitosis-grow trainer (hard-partition R2) **converges as
-well as gradient descent** (R2 c1 PASS) — so p8-literal trunk training is **not refuted**
-and shows a directional toehold. It is **NOT a clean GREEN**: the frozen targeting-control
-(c2) could not be isolated on this smooth task, so the lift cannot be cleanly attributed
-to error-targeted growth vs generic cell-tiling. **Conclusion:** gradient remains the
-incumbent trunk trainer pending an engine-native + harder-target re-test; mitosis-grow
-is a credible co-trainer candidate, not yet a verified replacement.
-
-## Follow-on (a_break_the_wall continuation — NOT claimed here)
-
-1. **Engine-native** (a_engine_native_learning + a_verified_must_wire): realize R2
-   hard-partition mitosis-grow training on live CORE/engine_cli.hexa VAdaptField, re-score
-   the frozen bars engine-native — the mirror is DIRECTIONAL, binding verdict needs the engine.
-2. **Harder target to fire c2**: a target with SHARP, LOCALIZED error concentration (so
-   error-targeted split must beat random) — pre-register a new c2 to test whether targeting
-   is the lever once the partition mechanism is sound.
+At toy scale on language-like byte data, a gradient-FREE mitosis-grow trainer (hard-partition,
+R3) **converges as well as gradient descent (c1 PASS) AND error-targeted growth demonstrably
+beats random growth (c2 FIRED) AND frozen growth underfits (c3 PASS)** — so p8-literal trunk
+training is **CONFIRMED at toy scale on a real KO+EN byte corpus**, with error-targeting (the
+p8-distinctive claim) isolated as the lever. **Conclusion:** mitosis-grow is a verified-at-toy
+gradient-free trainer where targeting helps; gradient remains the incumbent trunk trainer
+pending the two GREEN follow-ons below (engine-native realization + a real Korean scale rung) —
+mitosis-grow is now a credible co-trainer candidate with a clean GREEN toehold, NOT yet an
+engine-verified or production replacement.
 
 xref: p8 · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning ·
 a_verified_must_wire · a_toy_scale_recheck · a_scale_honest_scope · H_1199 (VAdaptField
