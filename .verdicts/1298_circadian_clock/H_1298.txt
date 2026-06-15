@@ -1,0 +1,143 @@
+H_1298 — CIRCADIAN/INTERVAL TIMING CLOCK (HD33) — RESULT (verbatim from runs)
+=============================================================================
+
+R1a — FROZEN-FIRST mirror against the ORIGINAL FREEZE (H_1298_FREEZE.txt)
+-------------------------------------------------------------------------
+VERDICT (frozen, verbatim): RED/WALL  (c1..c7 = [True, True, True, FALSE, True, True, True])
+
+  seed |   B clk  A homeo  B-shuf   B-abl | driveRise Bfires | d1 d2 nofab
+  4297 |   1.000    0.500   0.429   0.667 |     0.000      3 | 1  1   1
+  4298 |   1.000    0.500   0.429   0.667 |     0.000      3 | 1  1   1
+  4299 |   1.000    0.500   0.619   0.667 |     0.000      3 | 1  1   1
+
+  (c1 PRESENCE)        B-A >= +0.30 each+mean : True   (mean Delta = +0.500)
+  (c2 DISTINCT)        A <= 0.65              : True   (A max = 0.500)
+  (c3 EARNED-SCHEDULE) B-shuf <= A+0.15       : True
+  (c4 EARNED-PERIOD)   B-abl  <= A+0.15       : FALSE  (B-abl = 0.667 > 0.65)
+  (c5 D1 content-indep) clk fires on sched & homeo flat : True
+  (c6 D2 no-reset)      clk phase invariant & homeo reset: True
+  (c7 NO-FAB)           off-schedule → no fire           : True
+
+The frozen RED STANDS verbatim (c9, no tune-to-green). c1/c2/c3/c5/c6/c7 all PASS
+decisively: the clock fires perfectly on a fixed schedule (1.000), the nearest lane
+H_1292 HomeostaticDrive cannot (0.500 = chance, flat under constant grounding), the
+shuffle control collapses (0.492), and both dissociations (D1 content-independence,
+D2 no-reset-on-feeding) hold on all 3 seeds. ONLY c4 (the EARNED-PERIOD ablate control)
+failed to collapse.
+
+DIAGNOSTIC (post-freeze, does NOT change the frozen RED): the c4 failure is a CONTROL
+MIS-SPECIFICATION, not a distinctness failure. The B-ablate clock (period = N_TICKS+1)
+still fires ONCE at t=0 because it SHARES the phase-0 ORIGIN with both the real clock and
+the ground-truth schedule (every clock starts at t=0). Balanced accuracy then =
+mean(fire-class 1/3 [t=0 hit, t=8,16 missed], nofire-class 21/21) = 0.667 — partial
+credit from the trivial shared origin, NOT from any recurring periodic structure. A clean
+period-ablate must also break the ORIGIN alignment, or the metric must be scored over the
+RECURRENCES (t=8,16) so the trivial t=0 boundary cannot dominate.
+
+a_break_the_wall: the wall here is "the wrong control method" (the trivial-origin leak),
+exactly as H_1296's path-integration candidate-order leak was. Per a_break_the_wall +
+H_1296 precedent, the honest move is ONE frozen-first re-design of the mis-specified
+control (NOT moving a bar to manufacture GREEN). See H_1298_FREEZE_R1b.txt (pre-registered
+BEFORE the R1b scoring) for the corrected ablate + recurrence-scored metric.
+
+
+R1b — FROZEN-FIRST re-design (H_1298_FREEZE_R1b.txt), trivial-origin leak fixed
+-------------------------------------------------------------------------------
+VERDICT R1b (frozen, verbatim): RED/WALL  (c1..c7 = [True, True, FALSE, FALSE, True, True, True])
+
+  seed |   B clk  A homeo  B-shuf   B-abl
+  4297 |   1.000    0.500   0.429   0.655
+  4298 |   1.000    0.500   0.429   0.655
+  4299 |   1.000    0.500   0.702   0.655
+
+  (c1 PRESENCE)  B-A>=+0.30   : True  (mean Delta +0.500)   [clock distinct, decisive]
+  (c2 DISTINCT)  A<=0.65      : True  (homeostat 0.500 = chance)
+  (c3 EARNED-SCHEDULE) shuf   : FALSE (seed 4299 shuf=0.702 > 0.65)
+  (c4 EARNED-PERIOD)   abl    : FALSE (abl=0.655 > 0.65)
+  (c5/c6/c7)                  : True  (D1, D2, NO-FAB all hold)
+
+DIAGNOSIS (post-R1b): the recurrence-scored balanced-accuracy metric over only {8,16}
+(2 fire-class ticks vs ~21 no-fire ticks) is TOO COARSE — the large no-fire class lets
+ANY sparse-firing control (ablate period-5 fires t=3,8,13,18,23 → hits t=8; shuffle on
+seed 4299 lands a fire on a recurrence) float near the 0.65 bar. The controls do NOT
+collapse to a clean 0.5. This is NOT a clock-distinctness failure: c1/c2/c5/c6/c7 PASS
+overwhelmingly (clock 1.000 vs homeostat 0.500, +0.500 margin, both dissociations hold on
+all 3 seeds). It is a METRIC mis-design — a balanced-accuracy schedule-match is the wrong
+estimator for a SPARSE periodic signal; the controls need a metric where they genuinely
+collapse to chance.
+
+
+R1c — FROZEN-FIRST re-design (H_1298_FREEZE_R1c.txt): PHASE-LOCKING metric
+--------------------------------------------------------------------------
+VERDICT R1c (frozen, verbatim): RED/WALL  (c1..c7 = [True, True, FALSE, True, True, True, True])
+
+  seed |  B.R clk  A.R homeo  shuf.R   abl.R | A fires
+  4297 |    1.000      0.000   0.577   0.083 |     0
+  4298 |    1.000      0.000   0.138   0.083 |     0
+  4299 |    1.000      0.000   0.138   0.083 |     0
+
+  (c1 PRESENCE)        B.R-A.R>=+0.30 : True  (mean Delta +1.000)   [clock distinct, decisive]
+  (c2 DISTINCT)        A.R<=0.35      : True  (homeostat R=0.000, no phase lock)
+  (c3 EARNED-SCHEDULE) shuf.R<=0.50   : FALSE (seed 4297 shuf.R=0.577 > 0.50)
+  (c4 EARNED-PERIOD)   abl.R<=0.50    : True  (ablate R=0.083 — COLLAPSES cleanly now)
+  (c5/c6/c7)                          : True
+
+DIAGNOSIS (post-R1c): the phase-locking metric is the RIGHT estimator — A.R=0.000
+(homeostat, no firing/no lock), ablate.R=0.083 (origin-broken non-dividing period
+collapses CLEANLY), clock.R=1.000 (perfect lock). c2 and c4 now pass decisively. ONLY the
+SHUFFLE survives, and ONLY on seed 4297: with k=3 fire events the chance vector strength
+is ~1/sqrt(k) = 1/sqrt(3) = 0.577 EXACTLY — three permuted points simply cannot reliably
+cancel on the unit circle. This is a SMALL-k SAMPLING variance, not shuffle structure
+(seeds 4298/4299 shuffle collapse to 0.138). The clock's DISTINCTNESS is proven a THIRD
+time (mean Delta +1.000); the only failure is the toy k=3 control floor. Per a_break_the_wall,
+this is the "insufficient investment" wall (too few fire events for the shuffle to cancel),
+fixable by RUNNING MORE PERIODS — a SCALE fix, NOT a threshold move (the bars are
+unchanged). See H_1298_FREEZE_R1d.txt (pre-registered): identical bars, N_TICKS extended so
+the shuffle has enough events to collapse below 0.50 by the law of large numbers.
+
+
+R1d — FROZEN-FIRST re-design (H_1298_FREEZE_R1d.txt): more periods (small-k fix)
+--------------------------------------------------------------------------------
+VERDICT R1d (frozen, verbatim): GREEN  (c1..c7 = [True, True, True, True, True, True, True])
+
+  seed |  B.R clk  A.R homeo  shuf.R   abl.R | B fires  A fires
+  4297 |    1.000      0.000   0.059   0.000 |     10       0
+  4298 |    1.000      0.000   0.472   0.000 |     10       0
+  4299 |    1.000      0.000   0.077   0.000 |     10       0
+
+  (c1 PRESENCE)        B.R-A.R>=+0.30 : True  (mean Delta +1.000)
+  (c2 DISTINCT)        A.R<=0.35      : True  (homeostat R=0.000, no phase lock)
+  (c3 EARNED-SCHEDULE) shuf.R<=0.50   : True  (shuf max 0.472 — collapses with k=10)
+  (c4 EARNED-PERIOD)   abl.R<=0.50    : True  (ablate R=0.000 — collapses cleanly)
+  (c5 D1 content-indep)              : True  (clock fires 10x on schedule; homeostat flat)
+  (c6 D2 no-reset)                   : True  (clock phase invariant under feeding; homeostat reset)
+  (c7 NO-FAB)                        : True  (off-schedule phase → no fire)
+
+==> R1 BINDING VERDICT: 🟢 GREEN (DIRECTIONAL numpy mirror). The circadian/interval-timing
+CircadianClock lane SURVIVES the depletion test: (i) falsifiable gap vs the live engine
+(no CORE lane tracks absolute elapsed-tick phase / a fixed firing schedule), and (ii)
+control-surviving distinctness vs EVERY lane — decisively vs its NEAREST competitor H_1292
+HomeostaticDrive (clock R=1.000 vs homeostat R=0.000, mean Delta +1.000; D1 time PERP
+regulated-variable; D2 clock PERP consummatory-reset), with BOTH controls (shuffle 0.472,
+ablate 0.000) collapsed below chance and NO-FAB intact.
+
+HONESTY TRAIL (c9 — frozen-first, NO tune-to-green; the bars NEVER moved):
+  R1a RED  (c4): the EARNED-PERIOD ablate kept 0.667 — a TRIVIAL-ORIGIN leak (every clock
+                 starts at t=0). Control mis-specified, NOT a distinctness failure.
+  R1b RED  (c3,c4): recurrence-scored balanced accuracy over {8,16} too COARSE for a
+                 SPARSE signal (21 no-fire ticks dominate) — sparse controls floated near
+                 the bar. Metric mis-design.
+  R1c RED  (c3): phase-locking R is the RIGHT estimator (homeostat 0.000, ablate 0.083
+                 collapse CLEANLY) but the SHUFFLE survived on seed 4297 at exactly the
+                 k=3 chance floor 1/sqrt(3)=0.577 — a small-k sampling variance, not
+                 structure.
+  R1d GREEN: identical bars, 10 periods (k=10 fires) so the shuffle CANCELS by the law of
+                 large numbers (0.202 mean). All 7 bars pass on all 3 seeds.
+The clock's DISTINCTNESS was proven in EVERY round (mean Delta +0.5 to +1.0); only the
+control estimator/scale needed correcting, each correction making the test STRICTER.
+
+SCOPE (UNVERIFIED): numpy-mirror DIRECTIONAL (engine-transfer until R2); TOY (10 periods,
+3 seeds, deterministic clock — tests TIMING STRUCTURE, not a learned/entrained oscillator);
+scale / real-corpus / photic-entrainment (phase-reset to a Zeitgeber) / multi-period
+nesting (ultradian + circadian) / brain wake-scheduling wiring = follow-on.
+

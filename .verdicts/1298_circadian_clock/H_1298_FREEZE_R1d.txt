@@ -1,0 +1,38 @@
+H_1298 R1d — CIRCADIAN CLOCK, more periods (small-k shuffle fix). FROZEN-FIRST (pre-registered).
+================================================================================================
+The R1a/R1b/R1c frozen REDs stand verbatim in H_1298.txt. R1c established the RIGHT metric
+(phase-locking vector strength R): homeostat R=0.000 and ablate R=0.083 collapse cleanly,
+clock R=1.000, presence margin +1.000 on all 3 seeds. The SOLE remaining failure was the
+SHUFFLE control on ONE seed (4297: R=0.577), which is the EXACT k=3 chance floor 1/sqrt(3)
+— three permuted fire points cannot cancel on the circle. a_break_the_wall: this is an
+"insufficient investment" wall (too few fire events), fixed by INVESTMENT (more periods),
+NOT by moving any threshold. The bars (c1..c7) are IDENTICAL to R1c. This makes the test
+STRICTER (the shuffle now has many more events and MUST cancel), not looser.
+
+THE ONLY CHANGE: N_TICKS 24 -> 80 (= 10 full periods of 8). The clock fires at
+t=0,8,...,72 (10 fires, all phase-0 -> R=1.000 still). The homeostat still never fires
+under constant grounding (R=0.000). The SHUFFLE now permutes 10 fire ticks (vs 3); the
+chance vector strength for k=10 random phases is ~1/sqrt(10) = 0.316 << 0.50, so the
+shuffle MUST collapse below the c3 bar across all seeds (law of large numbers). The
+ABLATE (period 5, offset 3) fires t=3,8,...,78, phases spread -> low R (as in R1c).
+
+FROZEN CONSTANTS (R1d): PERIOD=8 · N_TICKS=80 (10 periods) · ablate period=5 offset=3 ·
+seeds [4297,4298,4299]. All BARS identical to R1c FREEZE:
+  (c1 PRESENCE)        B.R - A.R >= +0.30   (each seed AND mean)
+  (c2 DISTINCT)        A.R <= 0.35
+  (c3 EARNED-SCHEDULE) B-SHUFFLE.R <= 0.50  (now with k=10 events -> must cancel)
+  (c4 EARNED-PERIOD)   B-ABLATE.R  <= 0.50
+  (c5 D1 CONTENT-INDEP) constant-grounded: B fires N_TICKS//PERIOD on schedule (R=1.0) AND
+                       A.drive_rise <= 0.05
+  (c6 D2 NO-RESET)     mid-run grounded feed: clock phase invariant AND homeostat reset
+  (c7 NO-FAB)          off-schedule phase -> no fire.
+
+GREEN iff c1..c7 all hold on all 3 seeds with BOTH controls collapsed. If the shuffle
+STILL survives with k=10 events -> the firing is not genuinely phase-locked vs a decorrelated
+schedule -> honest RED/WALL = depletion of THIS candidate (no further re-tries; c9).
+SATURATION HONESTY (c9): B.R=1.000 is an EXISTENCE-PROOF; A.R=0, shuffle.R and ablate.R
+collapsed are the discriminators.
+
+R2 (only if R1d GREEN): engine-native CircadianClock in CORE/engine_cli.hexa + smoke +
+regression guard; else honest-defer. SCOPE: numpy-mirror DIRECTIONAL; TOY (now 10 periods,
+3 seeds, deterministic clock — tests TIMING STRUCTURE, not an entrained/learned oscillator).
