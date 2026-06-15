@@ -214,6 +214,63 @@ fn main() {
     let abst_g = (immune_grow_recall(mg, untaught) == "")
     if _assert_b("case_19_grow_abstains_on_untaught", true, abst_e && abst_g) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (e) AMYGDALA — SALIENCE-GATED SLEEP-REPLAY CONSOLIDATION (H_1285 R4) ──
+    // ConsolidatingMemory is ADDITIVE + Ψ-disjoint; these cases prove the lane's three
+    // moving parts deterministically: (1) a SALIENT input carries a HIGHER substrate
+    // salience tag than a plain one (the surprise boost is real, p6-substrate-derived);
+    // (2) the p6 shuffle PERMUTES the tags (population SUM invariant, importance-
+    // tracking destroyed); (3) salience-gated sleep replay REFRESHES a salient cell's
+    // recency ABOVE a non-replayed one (changes the LRU victim — the protection
+    // mechanism); (4) abstain stays intact (no fabrication, H_1227 load-bearing).
+    //   bind 4 well-separated novel keys; cell 1 is environmentally SALIENT (boost 0.8).
+    let ck0 = [1.0, 0.0, 0.0, 0.0]
+    let ck1 = [0.0, 1.0, 0.0, 0.0]
+    let ck2 = [0.0, 0.0, 1.0, 0.0]
+    let ck3 = [0.0, 0.0, 0.0, 1.0]
+    let mut cm = consolidating_memory_new(ck0, "A", 1.5, 8)          // plain seed cell
+    cm = consolidating_memory_bind_salient(cm, ck1, "B", 0.8, cfg_on) // SALIENT (boost)
+    cm = consolidating_memory_bind_salient(cm, ck2, "C", 0.0, cfg_on) // plain
+    cm = consolidating_memory_bind_salient(cm, ck3, "D", 0.0, cfg_on) // plain
+
+    // case 20 : a SALIENT cell carries a HIGHER substrate salience tag than a plain one.
+    let sal_salient = consolidating_memory_salience(cm, 1)   // boosted
+    let sal_plain   = consolidating_memory_salience(cm, 2)   // not boosted
+    if _assert_b("case_20_salient_tag_higher", true, sal_salient > sal_plain) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 21 : the p6 shuffle PRESERVES the tag-population SUM (a permutation), so it is
+    //   a clean decorrelation control (same distribution, importance tracking destroyed).
+    let mut sum_before = 0.0
+    let mut cs = 0
+    while cs < consolidating_memory_cells(cm) { sum_before = sum_before + consolidating_memory_salience(cm, cs)  cs = cs + 1 }
+    let cmsh = consolidating_shuffle_salience(cm, 12345)
+    let mut sum_after = 0.0
+    let mut cs2 = 0
+    while cs2 < consolidating_memory_cells(cmsh) { sum_after = sum_after + consolidating_memory_salience(cmsh, cs2)  cs2 = cs2 + 1 }
+    let sum_diff = if sum_after > sum_before { sum_after - sum_before } else { sum_before - sum_after }
+    if _assert_b("case_21_shuffle_preserves_tag_sum", true, sum_diff < 0.0001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 22 : salience-gated SLEEP REPLAY refreshes recency so a NOVEL bind evicts a
+    //   NON-salient cell, NOT the salient one. After replay (∝ salience) the salient cell
+    //   (1) is the most-recently-touched ⇒ a 5th novel fact into the full(8? no, 4-cell)
+    //   store... use a tight cap so eviction bites: rebuild at max_cells=4, replay, then
+    //   bind a 5th novel key and assert the salient cell's value B still recalls.
+    let mut cm2 = consolidating_memory_new(ck0, "A", 1.5, 4)
+    cm2 = consolidating_memory_bind_salient(cm2, ck1, "B", 0.8, cfg_on)  // SALIENT cell idx 1
+    cm2 = consolidating_memory_bind_salient(cm2, ck2, "C", 0.0, cfg_on)
+    cm2 = consolidating_memory_bind_salient(cm2, ck3, "D", 0.0, cfg_on)  // store now full (4)
+    // salience-gated replay heavily refreshes the salient cell (its tag dominates the CDF).
+    cm2 = consolidating_sleep_replay(cm2, 30, 777, true)
+    // a 5th novel key forces ONE LRU eviction — the salient (now most-recent) B must survive.
+    let ck4 = [0.70710678, 0.70710678, 0.0, 0.0]
+    cm2 = consolidating_memory_bind_salient(cm2, ck4, "E", 0.0, cfg_on)
+    let b_survives = (consolidating_memory_recall(cm2, ck1) == "B")
+    if _assert_b("case_22_salience_replay_protects_salient", true, b_survives) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 23 : ABSTAIN INTACT (H_1227 load-bearing) — an untaught far key fires no cell
+    //   (returns "" = no fabrication) on the consolidation faculty too.
+    let cfar = [0.5, 0.5, 0.5, 0.5]
+    if _assert_b("case_23_consolidating_abstains_on_untaught", true, consolidating_memory_recall(cm, cfar) == "") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
