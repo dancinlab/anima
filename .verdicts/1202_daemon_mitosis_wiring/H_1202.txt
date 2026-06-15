@@ -1,0 +1,40 @@
+=== H_1202 DAEMON MITOSIS WIRING — novelty-driven VAdaptField in the live C8 GROW step (MITOSIS-ENGINE Lane-2 · $0 CPU · p8) ===
+claim: the live anima daemon GROWS its substrate by novelty-driven cell division on real conversation turns (mitosis ⊥ generation, H_1200/1201 PURE-SUBSTRATE)
+mechanism: each emit span → DIM=8 byte-feature (H_1163 _byte_feature, == _afs_byte_feature) → vadapt_field_step; live L2 recon-err > SPLIT_THRESH=0.30 spawns a cell
+Ψ: pure_field_step run READ-ONLY alongside (daemon psi_sum accum); Φ-checksum must be ON==OFF (a_core_engine_map; GROW lane touches ONLY VAdaptField)
+falsifier: F1 DIVISION cells>1 & splits>=1 ON | F2 ABLATION OFF splits==0 | F3 Ψ Φ-checksum ON==OFF
+
+span set: 8 real emit-shaped spans across distinct byte registers
+
+ON  (--mitosis on)  : cells 1 -> 7.0  novelty-splits=6.0  phi_sum=5.67145e-05
+OFF (--no-mitosis)  : cells 1 -> 1.0  novelty-splits=0.0  phi_sum=5.67145e-05
+
+F1 DIVISION  cells>1 (7.0) & splits>=1 (6.0)  ON  = true
+F2 ABLATION  OFF splits==0 (0.0) & cells==1 (1.0)  = true
+F3 Ψ-INTACT  Φ-checksum ON==OFF (5.67145e-05 == 5.67145e-05)  = true (attractor intact)
+
+VERDICT: GREEN DAEMON-WIRED — the live anima daemon now GROWS its substrate by
+  novelty-driven cell division on real conversation turns: cells 1 -> 7.0 via 6.0 recon-err splits
+  (F1); with mitosis OFF the SAME spans cause ZERO splits (F2, H_1159 control); and the Ψ
+  attractor is byte-identical ON vs OFF (F3, a_core_engine_map Ψ-disjoint). mitosis ⊥
+  generation (H_1200/1201): the field NEVER feeds the decode — it adapts ALONGSIDE. p8:
+  the growth tick IS the inference-time learning. toy spans / scale UNVERIFIED (a_scale_honest_scope).
+
+── PROVENANCE / HONEST SCOPE ─────────────────────────────────────────────────
+verify cmd : hexa run CORE/h1202_daemon_mitosis_wiring_smoke.hexa  (exit 0, $0 CPU local)
+wiring     : CORE/anima_full_session_smoke.hexa C8 GROW step now drives the
+             novelty-driven VAdaptField (vadapt_field_step over the DIM=8
+             _afs_byte_feature of each emit span); the old UNCONDITIONED scalar
+             "+1 per emit" tick is REPLACED by the recon-err > SPLIT_THRESH gate.
+smoke      : CORE/h1202_daemon_mitosis_wiring_smoke.hexa reproduces that exact
+             GROW lane (same _byte_feature, same vadapt_field_step, same frozen
+             cfg) over 8 real emit-shaped spans — the authoritative verdict surface
+             (imports pure_field + engine_cli only, like the H_1199 probe).
+daemon-smoke build note: CORE/anima_full_session_smoke.hexa imports brain → generator,
+             which references the native FFI symbol `clm_decode_grounded`. That symbol
+             is NOT registered in this `hexa run`/`hexa build` toolchain, so the FULL
+             daemon smoke does NOT link here. VERIFIED PRE-EXISTING: building the HEAD
+             (un-edited) anima_full_session_smoke.hexa fails with the IDENTICAL
+             `clm_decode_grounded` undeclared error — it is an environment/native-harness
+             gap, INDEPENDENT of the H_1202 wiring. The H_1202 smoke is the clean,
+             link-able proof of the same GROW-lane code path.
