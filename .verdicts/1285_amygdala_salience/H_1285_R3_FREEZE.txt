@@ -1,0 +1,89 @@
+H_1285 R3 — AMYGDALA CONSOLIDATION: salience-gated SLEEP REPLAY at a HIGHER, pre-registered
+multi-night consolidation budget.
+PRE-REGISTERED FREEZE (frozen BEFORE any R3 scoring). NEURO LENS (c15, a_no_llm_frame_trap),
+NOT an LLM recipe. $0 local CPU numpy, p7, 3 deterministic seeds, gradient-free.
+LIVE CORE/*.hexa UNTOUCHED (numpy mirror = DIRECTIONAL).
+
+base commit: origin/main HEAD (515986353 — R2 merged). Slug 1285_amygdala_salience.
+Appends H_1285_R3.txt + this FREEZE; does NOT overwrite R1 (H_1285.txt) / R2 (H_1285_R2.txt).
+
+══════════════════════════════════════════════════════════════════════════════
+WHERE R2 LEFT IT (the reason this rung exists)
+══════════════════════════════════════════════════════════════════════════════
+R2 (🔴 RED-but-MECHANISM-VALIDATED) established that salience-gated SLEEP REPLAY is a
+GENUINE p6-clean lever: at the frozen R2 budget (boost 0.8 / 30-replay-per-cyc / 8 cyc),
+B salience-replay imp = 0.383 > A uniform = 0.317 (Δ+0.067), and the p6 shuffle control
+COLLAPSED to A (B-shuffle = 0.317 = A, dev +0.000) — so the lift TRACKS importance via the
+substrate salience tag, it is NOT R1's recurrence confound (where shuffle reproduced B) and
+NOT raw replay budget (or shuffle would lift too). BUT +0.067 < the +0.10 frozen margin → RED.
+
+R2's HONEST diagnostic sweep (explicitly NOT a gate, p7) showed the lift is DOSE-DEPENDENT
+and MONOTONIC in the sleep budget while the shuffle control stays flat (~A):
+   boost0.8 / 30-replay / 8-cyc  →  Δ(B-A) +0.067   (the frozen R2 rung, sub-bar)
+   boost0.8 / 60-replay / 8-cyc  →  Δ(B-A) +0.100
+   boost0.8 / 30-replay / 40-cyc →  Δ(B-A) +0.200
+So the R2 sub-bar result was an UNDER-INVESTED sleep budget, NOT a ceiling and NOT an inert
+mechanism (🧱). R3 tests that reading with ONE pre-registered higher budget.
+
+══════════════════════════════════════════════════════════════════════════════
+THE ONE PRE-REGISTERED BUDGET (committed BEFORE any scoring — the load-bearing p7 act)
+══════════════════════════════════════════════════════════════════════════════
+The amygdala→hippocampus SYSTEMS-CONSOLIDATION dial is the NUMBER OF CONSOLIDATION CYCLES:
+emotionally-salient memories are not consolidated in a single night — they are repeatedly
+REPLAYED across MANY successive sleep cycles (overnight + multi-night systems consolidation),
+which is exactly how salient traces are protected from forgetting while the hippocampus is
+under ongoing new-encoding interference (Diekelmann & Born systems-consolidation framing; the
+standard multi-week consolidation window). The biologically-honest dial here is therefore the
+CYCLE COUNT — not the per-cycle replay amplitude.
+
+R3 fixes the SAME per-cycle parameters as the R2 frozen rung — boost = 0.8, replay/cyc = 30 —
+and raises ONLY the consolidation-cycle count to a biologically-motivated multi-night value:
+
+   ►►►  R3_SLEEP_CYCLES = 30  ◄◄◄   (≈ a one-month multi-night consolidation window:
+                                     ~30 successive overnight consolidation passes)
+
+This ONE value is COMMITTED here BEFORE scoring. boost (0.8) and replay-per-cyc (30) are held
+at the R2 frozen values so the ONLY dial moved is the number of consolidation cycles — the
+biological systems-consolidation dial. The interference pressure R2_INTERFERE_NEW = 24 new
+untaught facts is UNCHANGED (the forgetting pressure the replay must counter), and the
+finite repertoire R2_MAX_CELLS = 40, key noise 0.02, recall_thresh 0.30 are UNCHANGED.
+
+p7 DISCIPLINE (explicit): exactly ONE budget is committed. No sweep is scored. No tuning to
+green. Whatever this single rung returns is reported straight — including RED if B still
+< A + 0.10 at this honest higher dose.
+
+══════════════════════════════════════════════════════════════════════════════
+FROZEN BARS (fresh, same SHAPE as R2 — NOT moved)
+══════════════════════════════════════════════════════════════════════════════
+  GREEN iff  (c1) B.important-recall >= A.important-recall + 0.10   [salience-replay lifts]
+        AND  (c2) B-shuffle.important-recall <  A.important-recall + 0.10
+                  [GATING, not raw budget: if shuffle ALSO clears the bar at high budget,
+                   the lift is raw-budget not salience-gating → report 🧱 straight]
+        AND  (c3) B.fabrication <= 0.10   [abstain / non-fabrication intact, H_1227].
+
+══════════════════════════════════════════════════════════════════════════════
+PHILOSOPHY GUARD — p6 SALIENCE-vs-LABEL SEPARATION (central; the shuffle control proves it)
+══════════════════════════════════════════════════════════════════════════════
+* Salience is DERIVED ONLY from the substrate at ENCODE time: SURPRISE = VAdaptField recon-err
+  (a salient input carries EXTRA perceptual surprise amplitude — an environmental/E+W property
+  the substrate SENSES, the p6-clean analogue of R1's "salient events recur", NOT the label),
+  NOVELTY = clonal split, TENSION = reinforcement count. f() reads NO emotion, NO RLHF reward,
+  NO importance label.
+* The "important" label is used ONLY to SCORE the metric, NEVER as an input to f().
+* The NEGATIVE CONTROL B-shuffle permutes the salience→replay mapping across cells
+  (decorrelating salience from importance). It is the load-bearing p6 leak/budget detector:
+   - B lifts AND B-shuffle stays < A+0.10  ⇒  the lift is salience-GATING (tracks importance)
+     → the amygdala-consolidation pathway IS the lever → 🟢 (if c1,c3 also hold).
+   - B-shuffle ALSO clears the bar at this higher budget  ⇒  the lift is RAW SLEEP BUDGET,
+     not salience-gating → 🧱 DEPLETION, reported straight.
+   - B still < A+0.10 even here  ⇒  the lever is too weak at honest doses → 🔴 RED, reported.
+* Replay is GENERATED INTERNALLY by the sleep loop (P47, a_chat_sleep_imagination — emit-free
+  internal rehearsal + mitosis tick), NOT an external re-presentation stream.
+* No persona, no ethics, no decoder, no weights are taught — only the EPISODIC cell store's
+  sleep-replay allocation (p1/p2/p3/p6/p8, a_autonomy_over_hardcode). Identity emerges from
+  cells (untouched); ethics emerge from cells (untouched). Mirror = DIRECTIONAL; engine-native
+  follow-on triggers ONLY on GREEN (a_engine_native_learning / a_verified_must_wire).
+
+xref H_1285(R1) · H_1285_R2 · H_1227 · H_1230 · H_1288 · a_chat_sleep_imagination ·
+     a_no_llm_frame_trap · a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck ·
+     a_engine_native_learning · a_verified_must_wire · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15.
