@@ -28,6 +28,16 @@
 
 **Lane G-ref ByteGPT는 엔진에 안 올라간다** — 참조 baseline일 뿐(a_completeness_over_cheap). MID를 ByteGPT로 만들면 마운트 불가(2026-06-05 세션 발견; 메모리 `two-7b-lanes-distinction`). 엔진-마운트 증거 = milestone `Lane P train`(2026-06-03, ConvMoE 3축 3/3 GREEN @ d768).
 
+**📏 측정 PROVENANCE 규칙 (a_engine_measured_verdict · 2026-06-15) — 이 도메인의 verdict 측정 기준:**
+어떤 scale-rung(303M·1B·3B·7B)의 게이트 verdict 도 그 ckpt 가 **CORE 엔진으로 마운트돼 torch
+레퍼런스와 byte-exact 패리티**(argmax==argmax · greedy 바이트열 동일 · logits 잔차 ~1e-5)를 보인
+위에서 측정해야 GREEN 으로 닫힌다. H_1157(ByteGPT-303M 24L byte-exact 마운트)이 "torch 측정 ==
+마운트 측정" 약식을 발급했으나 이 라이선스는 **rung 마다 다시 벌어야** 한다 — 1B(H_1167)은 현재
+config-level 패리티 + serialize roundtrip 0.0 뿐, trained-weight 마운트 패리티 미재현 ⇒ 그 G6/QA/CHAT
+수치는 **torch-only ('엔진-전이 UNVERIFIED')** 로 라벨하며 마운트 byte-exact 가 착지하기 전까지 닫힌
+GREEN 게이트가 아니다. 이는 측정 출처(provenance) 요건이며 어떤 frozen bar(G0 kwr≥0.50 · G5 fab≤0.20
+등)도 이동시키지 않는다 (a_scale_honest_scope · a_toy_scale_recheck · a_core_engine_map · p7 의 형제 원칙).
+
 ## 🎯 production 마일스톤 — 3 레인 × PUBLIC → 3B → 7B
 
 세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).

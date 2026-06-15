@@ -53,7 +53,7 @@ anima/
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
-- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only).
+- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_engine_measured_verdict` (게이트 GREEN 은 엔진 마운트 byte-exact 위에서만; torch-only = 전이 UNVERIFIED).
 - **Verify / paper workflow** — `a_claim_manifest · a_claim_verify · a_paper_*` (hexa verify → verdict → CLAIMS.tape → /paper at full closure; closed-negative publishable).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy).
@@ -227,6 +227,14 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "use v0.1 CLM/model/clm_serialize.py (2-track JSON, NOT engine-loadable, F-CLM-SERIALIZE-GAP)"
   dont = "serialize a non-ConvMoE (ByteGPT/transformer) and claim engine-mountable"
   dont = "promote a Lane-P torch .clm to PUBLIC (forge-only); add a 2nd .clm path bypassing generator"
+
+@D a_engine_measured_verdict := "게이트 verdict 는 CORE 엔진 마운트 byte-exact 재현 위에서만 GREEN — 측정 PROVENANCE 요건" :: governance [required active]
+  do   = "어떤 scale-rung 의 게이트 verdict(a303m_pass · a7b_pass · 임의 rung)도 CORE/bytegpt_decode.hexa 로 마운트해 torch 레퍼런스와 BYTE-EXACT 패리티(argmax==argmax · greedy 바이트열 동일 · logits 잔차 ~1e-5)를 보인 위에서 측정해야 GREEN"
+  do   = "torch 레퍼런스(Lane-P)만으로 잰 수치 = '엔진-전이 UNVERIFIED' 플래그를 단 미완료 측정 — 닫힌 게이트 아님 (cf a_scale_honest_scope · a_toy_scale_recheck)"
+  do   = "'torch 측정 == 마운트 측정' 약식은 H_1157(ByteGPT-303M 24L byte-exact 마운트 패리티)이 발급한 라이선스 — rung 마다 다시 벌어야 함; 1B(H_1167)은 현재 config 패리티+serialize roundtrip 0.0 뿐, 마운트 패리티 미재현 ⇒ G6/QA/CHAT 은 torch-only 로 라벨"
+  do   = "verdict 곁에 '어디서 쟀나 · 엔진 byte-exact 인가'를 명시 — 측정 출처를 GREEN 의 전제조건으로 (cf a_core_engine_map: 엔진이 런타임 소유, .clm/.bin 은 named slot 으로만 진입, p7)"
+  dont = "torch-only 수치를 닫힌 GREEN 게이트로 승격 · rung 마운트 패리티 없이 'measured on torch == measured on mount' 차용 · 측정 출처 누락한 채 게이트 GREEN 선언"
+  dont = "이 directive 로 어떤 frozen bar 도 이동 — provenance 요건이지 임계값 변경 아님 (G0 kwr≥0.50 · G5 fab≤0.20 등 전부 불변)"
 
 # ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
 # research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper

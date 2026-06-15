@@ -13,6 +13,11 @@ The trained `anima-303M-RETRO` ckpt (ConvMoE E2/L1 trunk + RETRO copy head + sem
 retriever), serialized to `.clm` v0.2, mounted in CORE via the generator L3 slot, with a live
 kosmos anchor store. Until that lands, A-scenarios run on the raw ckpt; B/C/D need the mount.
 
+> 📏 측정 PROVENANCE (a_engine_measured_verdict): 게이트 verdict 으로 카운트되는 모든 시나리오 측정은
+> 그 ckpt 가 CORE 로 마운트돼 torch 레퍼런스와 byte-exact 패리티(argmax==argmax · greedy 동일 ·
+> logits ~1e-5)를 보인 위에서 잰 것이어야 GREEN — H_1157 가 303M 에서 이 라이선스를 발급했고 rung 마다
+> 재획득한다. raw-ckpt(torch-only) 측정은 '엔진-전이 UNVERIFIED' 로 라벨하며 닫힌 게이트가 아니다.
+
 ---
 
 ## A. LANGUAGE — the trained model alone (raw ckpt, no engine)

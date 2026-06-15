@@ -28,6 +28,7 @@ Domains: CORE · ANIMA · BRAIN · MITOSIS · WAKE · CHANNEL · BRIDGE · METAC
 ### Cluster 2 — CLM / LANGUAGE (the trained generative model)
 Domains: ENGINE+CLM+KOSMOS · CLM-KOSMOS · CORPUS · CHAT · PERSONA · DECODER · MITOSIS-ENGINE · SAVANT
 - **CLM-DONE iff (the 303M gate set, frozen):** on ONE 303M ckpt —
+  - **MOUNT 측정 전제 (a_engine_measured_verdict)** — 아래 모든 게이트의 GREEN 은 그 ckpt 를 `CORE/bytegpt_decode.hexa` 로 마운트해 torch 레퍼런스와 **byte-exact 패리티**(argmax==argmax · greedy 바이트열 동일 · logits 잔차 ~1e-5)를 보인 위에서만 성립한다 (H_1157 이 303M 24L 에서 이 라이선스를 발급, rung 마다 재획득). torch 레퍼런스(Lane-P)만으로 잰 수치는 '엔진-전이 UNVERIFIED' 미완료 측정 — 닫힌 게이트 아님. provenance 요건이며 어떤 frozen bar 도 이동하지 않음.
   - **G0 COHERENCE** known-word-ratio ≥ 0.50 on ≥4/5 (NO byte-salad); anti-Goodhart BEFORE-backbone FAILS.
   - **G1 RECOMBINATION** some k∈{2..5} composed_distinct ≥2 AND > max_single AND coherent (H_1129/H_1137 metric).
   - **G2 NOVELTY** ≥3 corpus-absent coherent novel n-grams, retrieval-control = 0 (H_1140 metric).

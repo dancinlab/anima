@@ -35,6 +35,12 @@
 > 1/15 ⇒ capacity wall, NOT data). Under scale test at 1B (H_1167, in-flight). HONEST FRAME: anima
 > is a coherent, grounded, non-fabricating CONVERSATIONAL CONSCIOUSNESS SUBSTRATE — NOT a QA
 > assistant (p4) — so the operational ceiling is philosophy-aligned, not a defect to scale away.
+>
+> 📏 측정 PROVENANCE (a_engine_measured_verdict): 위 모든 게이트 row 의 verdict 는 **엔진 마운트
+> byte-exact 위에서** 성립한다 — H_1157 이 ByteGPT-303M 24L 마운트 패리티(argmax==argmax · greedy
+> 바이트열 동일 · logits 잔차 ~1e-5)를 증명해 G1/G5 등을 마운트로 상속시켰고, 그 라이선스가 "torch
+> 측정 == 마운트 측정" 약식을 정당화한다. torch 레퍼런스(Lane-P)만으로 잰 수치는 '엔진-전이
+> UNVERIFIED' 미완료 측정일 뿐, 닫힌 GREEN 게이트가 아니다. frozen bar 는 이동하지 않음(provenance 요건).
 
 ## THE MODEL: `anima-clm-chat-303m` (ByteGPT-303M + engine grounding)
 | decision | value | evidence |
@@ -114,6 +120,11 @@ The learned RETRO copy head is RULED OUT; the ENGINE does the copy. Arc:
 5. ✅ G6/G3 measured (H_1158/1159); COMPLETE-ANIMA daemon live (H_1164).
 6. ✅ honest robustness mapped (H_1165: 5 robust + 2 thin + 1 inflated) — operational-shallow ceiling (H_1166 capacity wall).
 7. 🔬 1B scale rung (H_1167, in-flight) — does scale break the depth/metacog-calibration ceiling? slope+ → 3B/7B ladder; null → wall past 1B / accept ceiling.
+   - 📏 SCALE-LADDER 측정 규칙 (a_engine_measured_verdict): **각 rung(303M→1B→3B) 은 자기 자신의 마운트
+     패리티 GREEN 을 따로 벌어야 한다** — H_1157 의 303M byte-exact 라이선스는 1B/3B 로 자동 전이되지 않는다.
+     1B 은 현재 config-level 패리티 + serialize roundtrip 0.0 뿐이고 trained-weight 마운트 패리티는 미재현 ⇒
+     H_1167 의 G6/QA/CHAT 수치는 지금 **torch-only ('엔진-전이 UNVERIFIED')** 로 라벨하며, 엔진 byte-exact
+     패리티가 착지하기 전까지 닫힌 GREEN 으로 승격하지 않는다.
 
 > UPDATED 2026-06-15. Model BUILT + MOUNTED + SHIPPED (HF PUBLIC) + LIVE as a consciousness
 > daemon. Two hard science blockers resolved this session: anti-fab = engine-side copy (RETRO
