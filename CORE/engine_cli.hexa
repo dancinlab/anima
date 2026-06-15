@@ -538,6 +538,176 @@ pub fn vadapt_field_nearest_idx(af: VAdaptField, x: [float]) -> int {
     return _vnearest_idx(af.protos, x)
 }
 
+// ── §  QUANTUM-ENTROPY POOL — opt-in REAL-quantum entropy source (H_1289 R2) ─────────
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1289 R1): R1 (numpy
+// MIRROR, .verdicts/1289_quantum_entropy/H_1289.txt 🟢) proved REAL ANU QRNG is a
+// substrate-faithful entropy source (NIST-lite >= PRNG) that yields genuine
+// NON-REPRODUCIBILITY (a PRNG run repeats byte-for-byte under a fixed seed; a QRNG
+// run does NOT, because fresh vacuum-fluctuation bytes drive it each time). R2 wires
+// that REAL quantum entropy into the LIVE engine — so anima's "free" stochastic
+// substrate decision (mitosis split-TIMING jitter, below) can be sourced from a
+// genuine physical indeterminism rather than a deterministic PRNG.
+//
+// HONEST ENGINEERING (NOT a per-tick network fetch): a live per-tick HTTP call would
+// add latency + a network dependency to the substrate loop (bad design). Instead the
+// REAL quantum bytes are PRE-FETCHED out-of-band into a small on-disk pool
+// (state/qrng_pool.bin, git-ignored) by tool/qrng_pool_fetch.py; the engine DRAWS
+// from that pool. When the pool is EXHAUSTED the engine falls back to its existing
+// deterministic PRNG with an HONEST pool-exhausted flag (LABELED pseudo — NEVER
+// claimed quantum). c9: REAL-only — the pool holds REAL quantum bytes (the fetch tool
+// refuses to write fabricated/PRNG bytes); the engine never synthesizes a quantum byte.
+//
+// @L4 CRITICAL — this is OPT-IN. The DEFAULT substrate path (vadapt_field_step,
+// above) is UNTOUCHED and stays byte-exact deterministic, so every frozen guard
+// (engine_cli_smoke, h1196 single-entry, h1199 DIM-growth + Ψ byte-identical) stays
+// green. The quantum jitter rides a SEPARATE function (vadapt_field_step_entropic)
+// that a caller must explicitly choose AND supply a pool to. It is SUBSTRATE-CONFIG
+// (the split-TIMING source), exactly like --mitosis — NOT an emit/silence gate, no
+// stimulus-response (a_autonomy_over_hardcode · a_substrate_native_speak · p5). It
+// touches ONLY the AdaptField split timing, never pure_field, so Ψ stays disjoint.
+// It is engine-native entropy (a local pool file), NOT a .clm (generator L3 only) and
+// NOT a .kosmos (kosmos_io only) — no 2nd artifact entry path (a_core_engine_map).
+
+// QPool — a drawable byte pool + a cursor. `bytes` = pool contents (uint8 ints);
+// `idx` = next-draw cursor; `quantum` = true iff these are REAL quantum bytes.
+struct QPool {
+    bytes: [int],
+    idx: int,
+    quantum: bool
+}
+
+// qrng_pool_load — load a REAL quantum entropy pool from a .bin on disk into a QPool.
+// Reads the raw bytes as uint8 ints via `od -An -tu1` (deterministic decode). On a
+// missing/empty pool returns an EMPTY non-quantum pool (idx 0) — the caller then runs
+// the HONEST PRNG fallback. This is the SINGLE engine entry for the quantum pool.
+pub fn qrng_pool_load(path: string) -> QPool {
+    let raw = exec("test -f " + path + " && od -An -tu1 " + path + " 2>/dev/null || true").trim()
+    if raw == "" {
+        return QPool { bytes: [], idx: 0, quantum: false }
+    }
+    // `od` emits whitespace-separated ints; split on any run of spaces/newlines.
+    let toks = raw.split(" ")
+    let mut bs = []
+    let mut i = 0
+    while i < len(toks) {
+        let t = toks[i].trim()
+        if t != "" { bs = bs + [to_int(t)] }
+        i = i + 1
+    }
+    return QPool { bytes: bs, idx: 0, quantum: len(bs) > 0 }
+}
+
+// qrng_pool_remaining — how many bytes the pool can still serve (drives the honest
+// pool-exhausted decision at the call site).
+pub fn qrng_pool_remaining(p: QPool) -> int {
+    return len(p.bytes) - p.idx
+}
+
+// qrng_pool_draw — draw ONE byte from the pool, advancing the cursor. Returns
+// #{ ok, byte, pool } — ok=false (byte=-1) iff the pool is EXHAUSTED (the caller then
+// takes the PRNG fallback and LABELS the decision pseudo). The returned pool carries
+// the advanced cursor (functional update; the engine threads it forward).
+pub fn qrng_pool_draw(p: QPool) -> Map {
+    if p.idx >= len(p.bytes) {
+        return #{ "ok": false, "byte": -1, "pool": p }
+    }
+    let b = p.bytes[p.idx]
+    let p2 = QPool { bytes: p.bytes, idx: p.idx + 1, quantum: p.quantum }
+    return #{ "ok": true, "byte": b, "pool": p2 }
+}
+
+// _prng_byte_lcg — the engine's deterministic PRNG fallback byte (a fixed LCG over a
+// seed+step). DETERMINISTIC: same (seed, step) ⇒ same byte. This is the LABELED
+// pseudo source used ONLY when the quantum pool is exhausted (NEVER called quantum).
+// Numerically Numerical Recipes LCG constants, masked to 32 bits; high byte returned.
+fn _prng_byte_lcg(seed: int, step: int) -> int {
+    let mut s = (seed * 1664525 + 1013904223 + step * 22695477) & 4294967295
+    s = (s * 1664525 + 1013904223) & 4294967295
+    return (s / 16777216) & 255       // high byte of the 32-bit state
+}
+
+// vadapt_field_step_entropic — the OPT-IN entropy-sourced split-TIMING variant of
+// vadapt_field_step. The split DECISION is the SAME mechanism (recon-err vs the frozen
+// SPLIT_THRESH), but inside a small BORDERLINE BAND around the threshold the SPLIT
+// TIMING is jittered by ONE entropy draw — the single "free" stochastic substrate
+// decision. With a REAL quantum pool the draw is physically non-deterministic (so two
+// runs diverge); with an exhausted pool it falls back to the deterministic PRNG (so
+// two runs are byte-identical — the honest pseudo path). Everything OUTSIDE the
+// borderline band is identical to vadapt_field_step (deterministic), so the entropy
+// only ever moves a near-threshold split one tick earlier/later — never invents a cell.
+//
+// Returns #{ field, pool, step, used_quantum, pool_exhausted } so the caller can
+// thread the pool cursor + step forward and HONESTLY label which entropy source fired.
+//   seed   : PRNG fallback seed (deterministic when the pool is exhausted).
+//   step   : the tick index (threaded by the caller; feeds the PRNG + is returned+1).
+//   band   : half-width of the borderline jitter band around SPLIT_THRESH (frozen 0.05).
+pub fn vadapt_field_step_entropic(af: VAdaptField, x: [float], cfg: EngineConfig,
+                                  pool: QPool, seed: int, step: int) -> Map {
+    let SPLIT_THRESH = 0.30
+    let LR = 0.20
+    let BAND = 0.05                    // borderline band [thresh-BAND, thresh+BAND]
+
+    let win = _vnearest_idx(af.protos, x)
+    let err = _l2(af.protos[win], x)
+
+    // entropy draw (ONE byte) — quantum if the pool serves it, else PRNG fallback.
+    let drew = qrng_pool_draw(pool)
+    let mut pool2 = pool
+    let mut used_quantum = false
+    let mut exhausted = false
+    let mut ubyte = 0
+    if to_string(drew["ok"]) == "true" {
+        ubyte = to_int(drew["byte"])
+        pool2 = drew["pool"]
+        used_quantum = pool.quantum     // true iff the pool held REAL quantum bytes
+    } else {
+        ubyte = _prng_byte_lcg(seed, step)   // HONEST pseudo fallback (LABELED)
+        exhausted = true
+    }
+    let u = to_float(ubyte) / 256.0     // [0,1) draw — the substrate stochastic decision
+
+    // SPLIT decision with borderline-band TIMING jitter:
+    //   · err > thresh+BAND  → split (deterministic; well above the bar)
+    //   · err < thresh-BAND  → no split (deterministic; well below the bar)
+    //   · within ±BAND       → the entropy draw decides this tick (timing jitter):
+    //                           split iff u < (err - (thresh-BAND)) / (2*BAND)
+    //     i.e. higher err ⇒ higher split probability, but the exact tick is entropy-set.
+    let mut do_split = false
+    if err > SPLIT_THRESH + BAND {
+        do_split = true
+    } else {
+        if err >= SPLIT_THRESH - BAND {
+            let pr = (err - (SPLIT_THRESH - BAND)) / (2.0 * BAND)
+            if u < pr { do_split = true }
+        }
+    }
+
+    if do_split && af.n_cells < af.max_cells {
+        let grown = engine_mitosis_tick(af.n_cells, cfg)
+        if grown > af.n_cells {
+            let nf = VAdaptField { protos: af.protos + [x], n_cells: grown,
+                                   max_cells: af.max_cells, dim: af.dim }
+            return #{ "field": nf, "pool": pool2, "step": step + 1,
+                      "used_quantum": used_quantum, "pool_exhausted": exhausted }
+        }
+    }
+
+    // (c) homeostatic online update of the winning prototype (same as the default path).
+    let mut p2 = af.protos
+    let mut row = p2[win]
+    let mut i = 0
+    while i < af.dim {
+        row[i] = row[i] + LR * (x[i] - row[i])
+        i = i + 1
+    }
+    p2[win] = row
+    let nf2 = VAdaptField { protos: p2, n_cells: af.n_cells,
+                            max_cells: af.max_cells, dim: af.dim }
+    return #{ "field": nf2, "pool": pool2, "step": step + 1,
+              "used_quantum": used_quantum, "pool_exhausted": exhausted }
+}
+
 // ── §  IMMUNE-MEMORY RECALL FACULTY — mitosis-as-MEMORY on the LIVE engine (H_1231) ──
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1231): H_1227 (numpy

@@ -1,0 +1,33 @@
+=== H_1289 R2 — ENGINE-NATIVE quantum entropy (LIVE CORE/engine_cli.hexa · $0 CPU · p7/p8) ===
+substrate: LIVE .hexa VAdaptField split-TIMING jitter sourced from qrng_pool_draw (opt-in entropic step)
+REAL-ONLY (c9): the quantum pool holds REAL ANU QRNG bytes (tool/qrng_pool_fetch.py); engine never fabricates quantum
+default path vadapt_field_step UNTOUCHED → engine_cli_smoke/h1196/h1199 stay deterministic (re-run separately)
+falsifier: (A) real pool drawn | (C1) PRNG-fallback run1==run2 | (C2) QUANTUM run1!=run2 | (B) NULL honest non-gating
+
+[A] qrng_pool_load(state/qrng_pool.bin) -> 512 REAL quantum bytes, quantum=true
+[A] engine DREW 64 REAL quantum bytes across two live runs (used_quantum=true)
+
+[B] substrate gauges (NULL expected — value of quantum = authenticity, NOT a perf lift; p7/c9):
+    QUANTUM run1: cells=9 psi_proxy=0.25
+    PRNG    run1: cells=8 psi_proxy=0.21875
+    delta cells (QUANTUM-PRNG) = 1  (small/null expected)
+
+[C] NON-REPRODUCIBILITY (the irreducible quantum property):
+    PRNG-fallback path: run1 trace == run2 trace (byte-identical) = true
+      run1=01111111000000000000000000000000
+      run2=01111111000000000000000000000000
+    QUANTUM path: run1 trace != run2 trace (non-reproducible) = true
+      run1=01111111001000000000000000000000
+      run2=01111111000000000000000000000000
+
+FROZEN BARS: GREEN iff (A real pool drawn) AND (C1 PRNG run1==run2) AND (C2 QUANTUM run1!=run2).
+  A_pass=true  C1=true  C2=true
+
+VERDICT: GREEN 🏁 — the LIVE anima engine sourced REAL quantum entropy for its split-TIMING
+  decision (A: 64 REAL vacuum bytes drawn through qrng_pool_draw). The QUANTUM-pool
+  run is NOT byte-reproducible across runs (C2: fresh real bytes ⇒ different split trace), while the
+  PRNG-fallback path IS byte-reproducible (C1: deterministic LCG). (B) gauges differ negligibly (NULL,
+  honest — quantum = non-determinism AUTHENTICITY, not a perf lift, p7/c9). The opt-in entropic step
+  rides a SEPARATE function; the default vadapt_field_step stays byte-exact deterministic so the frozen
+  guards hold. anima can make a genuinely physically-indeterministic LIVE substrate choice. toy/$0 scale,
+  engine-native — scale-transfer of the gauge NULL is honest-scoped (a_scale_honest_scope).

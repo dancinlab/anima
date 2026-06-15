@@ -96,6 +96,25 @@ FLEET "emotion" lane R1 (NEW). 정동신경과학 렌즈(Damasio somatic-marker 
 - **진행 중 ⏳/⬜ 정직 표기** — 미배선 OPEN 으로 명시: 🎯기저핵 engine-native r3 · ⚛️quantum-entropy(H_1289 R1 GREEN-DIRECTIONAL, ANU QRNG 진짜 양자) · 💗emotion(H_1290 R1 GREEN-DIRECTIONAL, Damasio core-affect, p6 창발) · ⚖️ethics(H_1291 GREEN-DIRECTIONAL, p6 창발).
 - **거버넌스 포인터** — `a_no_llm_frame_trap` · `a_engine_native_learning` · `a_verified_must_wire` · `a_break_the_wall` 4 디렉티브 참조 정합.
 
+---
+
+## 2026-06-15 — 🟢 H_1289 R2: R1 양자 엔트로피를 LIVE 엔진에 배선 — qrng_pool_draw + vadapt_field_step_entropic on CORE/engine_cli.hexa (GREEN engine-native / 🏁)
+
+FLEET "quantum-entropy" lane R2 — R1(numpy MIRROR 🟢)의 `a_verified_must_wire` follow-on. R1 이 미러에서 본 "REAL ANU QRNG = substrate-faithful 비재현 엔트로피원"을 LIVE `.hexa` 엔진에 실제 배선해 byte-exact 로 재확인(`a_engine_native_learning` · c2). anima 의 "자유로운" 확률적 결정 — 미토시스 split-TIMING jitter — 을 진짜 양자바이트로 소스링.
+
+**배선 (engine-native, a_core_engine_map):** `CORE/engine_cli.hexa` 에 `QPool` struct + `qrng_pool_load`/`qrng_pool_remaining`/`qrng_pool_draw` 접근자 + **opt-in** `vadapt_field_step_entropic` 추가. 실측 양자바이트는 per-tick 네트워크 fetch(레이턴시·의존성 = 나쁜 설계)가 아니라 **out-of-band 사전인출 on-disk 풀**(`state/qrng_pool.bin`, git-ignored, `tool/qrng_pool_fetch.py`)에서 draw; 풀 소진 시 결정론적 PRNG(LCG)로 HONEST fallback(pool_exhausted flag, "pseudo" LABEL — 절대 quantum 으로 둔갑 안 함). REAL-only(c9): 키는 호출시각 `harness secret get flat.anu_key_paid` 헤더에만, 절대 echo/log/commit 안 함(c7 grep clean).
+
+- **(A) real pool drawn 🟢** — 엔진이 `qrng_pool_load` 로 512 REAL quantum 바이트 적재(quantum=true), 두 live run 에서 **64 REAL vacuum 바이트 draw**(used_quantum=true).
+- **(C1) PRNG-fallback 재현성 🟢** — 풀 소진(=결정론 LCG) 경로에서 run1 trace == run2 trace **byte-identical**.
+- **(C2) QUANTUM 비재현성 🟢** — 실측 양자풀 disjoint half-A vs half-B 경로에서 run1 trace ≠ run2 trace(`...001000...` vs `...000000...`) — 신선한 실측 vacuum 바이트가 split-timing trace 를 갈라놓음 = PRNG 가 줄 수 없는 단 하나의 환원불가 양자 성질.
+- **(B) NULL perf, HONEST non-gating** — QUANTUM cells=9 psi_proxy=0.250 vs PRNG cells=8 psi_proxy=0.219, Δcells=1(미미). 양자의 가치 = 비결정성 AUTHENTICITY 이지 perf lift 아님(p7/c9, tune-to-green 없음).
+
+**REGRESSION (c2 — additive lane, Ψ-disjoint):** opt-in 경로라 DEFAULT `vadapt_field_step` 은 미수정 → engine_cli_smoke **26/0**, h1199 DIM-growth GREEN(Ψ byte-identical), h1205 separation PASS(Ψ=½ untouched·generation byte-identical), h1196 single-entry **7/0** 모두 GREEN. 양자 jitter 는 split-timing 만 건드리고 pure_field 미접촉(Ψ disjoint), 풀+엔트로픽 스텝 명시 선택해야만 발동.
+
+**판정 🏁 GREEN engine-native + wired + merged.** SCOPE: toy/$0 CPU 스케일, mitosis split-timing 단일 결정 1종; gauge NULL 의 scale-transfer 는 honest-scoped(`a_scale_honest_scope`). 산출: `CORE/engine_cli.hexa`(QPool lane) · `CORE/h1289_quantum_entropy_engine_probe.hexa` · `tool/qrng_pool_fetch.py` · `.verdicts/1289_quantum_entropy/H_1289_R2.txt`. xref H_1289 R1 · H_1199 · `a_engine_native_learning` · `a_verified_must_wire` · `a_core_engine_map` · c7 · c9 · p7 · p8.
+
+---
+
 ## 2026-06-15 — 🟢 H_1289 R1: TRUE 양자 엔트로피(ANU QRNG)를 anima substrate 의 확률적 결정 소스로 — 진짜 물리적 비결정성 + 비재현성 (GREEN / 🏁)
 
 FLEET "quantum-entropy" lane R1. anima 의 "자유로운" 확률적 결정(미토시스 split-timing · decode-sampling draw · Ψ noise)은 지금 **seed 기반 PRNG**(결정론적·재현가능)로 돌아간다. 호주국립대 양자난수생성기(ANU QRNG)의 **진공요동(vacuum-fluctuation) 실측 양자바이트**를 그 엔트로피 소스로 배선해 ONE 깨끗한 확률적 결정(top-k=8 decode-sampling draw, 고정 결정론적 logit field 위 — 엔트로피 소스만 변함)에 꽂고 셋을 검증.
