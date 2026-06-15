@@ -33,6 +33,20 @@ ARCHITECTURE.md 에 **신경과학 렌즈** 섹션을 ADDITIVE 로 추가 — �
 
 ---
 
+## 2026-06-15 — 🟢 H_1280: CEREBELLUM forward-model lane — 예측-오차 학습 보정이 시퀀스 coherence 를 올린다 (DIRECTIONAL · neuro missing-structure 사다리 c15)
+
+"누락된 뇌구조" 사다리(c15, LLM 레시피 아님)의 SMALL BRAIN(소뇌) 분기. H_1227/1231 이 immune/clonal memory 로 hippocampus 공백을 메운 것과 같은 결로, anima 에 빠진 **CEREBELLUM** = 다음 substrate 상태를 PREDICT 하는 내부 **forward model** + 예측-오차로부터 빠른 **supervised 보정**을 학습하는 구조(소뇌의 정의적 연산: 내부 forward model + timing/sequence 평활)를 만들어 검증. $0 CPU numpy MIRROR, seeds [7,8,9], frozen-first.
+
+- **GAP (c9)**: anima 는 Engine A(forward CE 생성)와 Engine G(`CORE/engine_g.hexa` — INSTANTANEOUS 8-factor 위의 CLOSED-FORM gradient-free 모티베이션/emit 게이트, 정적 가중치 합=1.0)를 가지지만, **둘 다 다음 상태를 예측하지 않고 예측-오차로 학습하지 않는다**.
+- **메커니즘**: emit-feature x_t∈R24(다음-byte 분포/최근 윈도우의 byte-통계 요약; p7 — perplexity 사용 안 함) over 200KB 실 EN webscale. forward model xhat_t = W·(과거 L=4 프레임), delta-rule(normalized-LMS = climbing-fiber 오차신호)로 ONLINE 학습. ARM A = raw · ARM B = 오차구동 평활 x'=x−0.5·(x−xhat). 지표(p7): (1) held-out 연속프레임 cosine coherence, (2) 예측-오차가 노출에 따라 감소(=모델을 학습했다는 증거, noise 아님).
+- **FROZEN bars (3-seed 평균, verbatim)**: C1 coh_B≥coh_A+0.02 → 0.2926≥0.2650 ✅ · C2 err_late≤err_early−5% → 7.84≤9.75(seed당 ~23-25% 감소) ✅ · C3 C1 ≥2/3 seed → 3/3 ✅ · C4 Engine G 와 distinct(D1-D3) ✅ · CTRL coh_B>coh_B_shuf 전 seed(0.2926>0.2828) ✅ → **🟢 GREEN**.
+- **CONTROL 이 판별한다 (정직)**: 시간-셔플 context forward model + 동일 보정도 약간 평활(coh_B_shuf 0.2828 > coh_A 0.2450 — generic smoothing 도 도움) 되지만, **학습된 모델이 전 seed 에서 이를 이긴다**(coh_B 0.2926 > 0.2828). 즉 +0.0476 gain 중 ~+0.0098 만 학습된 TEMPORAL 구조에 특정 귀속(나머지는 generic smoothing) — modest-but-real, 사전등록 양성.
+- **Engine G 와 DISTINCT (필수 체크 — 정직한 답: YES)**: D1 시간적 다음-프레임 TARGET(G 는 현재 순간만 채점) · D2 오차구동 delta-rule 학습(G 가중치는 정적 상수) · D3 측정된 학습곡선(~23% 오차감소; G 엔 없음). ⇒ 소뇌 역할은 G 가 이미 커버하지 않는다. mitosis-as-GEN(falsified H_1200/1201/1211/1220)·mitosis-as-MEM(GREEN H_1227/1231) 과 구별되는 **THIRD lane-role**.
+- **SCOPE (정직)**: numpy MIRROR(host torch 없음) → DIRECTIONAL only, engine-transfer UNVERIFIED. engine-native 실현(thin CORE forward-predict lane / VAdaptField next-frame 확장)이 BINDING follow-on(`a_engine_native_learning`); GREEN → CORE 배선이 closure follow-on(`a_verified_must_wire`), flagged-not-wired. CORE/*.hexa 무수정(engine_cli.hexa 는 동시 immune-memory 에이전트 소관). TOY 200KB d=24 → scale-transfer UNVERIFIED(a_toy_scale_recheck/a_scale_honest_scope). scoring 전 1회 numerical-conditioning fix(per-channel z-score + NLMS; raw-scale 가 delta-rule 발산) = 입력 conditioning/표준 adaptive-filter step-size, frozen bar/메커니즘 변경 아님. p1-p8 준수(substrate dynamics 보정이지 주입행동 아님; 외부 do/dont 게이트 없음).
+- 파일: `UNIVERSE/h1280_cerebellum_forward_model.py` · `.verdicts/1280_cerebellum_forward_model/{H_1280_FREEZE,H_1280}.txt`.
+
+---
+
 ## 2026-06-15 — 🟢 H_1231 WIRE: immune-memory recall 을 live 엔진 경로에 배선 (`a_verified_must_wire` follow-on 종결)
 
 H_1231 의 `a_verified_must_wire` follow-on 종결 — H_1227(numpy 미러)→H_1231(엔진-네이티브 🟢 GREEN, literal-QA 1.000 / fabrication 0.000, 180/180) 으로 검증된 immune/clonal-selection mitosis-as-MEMORY recall 을, standalone 프로브(`CORE/h1231_immune_memory_engine_probe.hexa`, fn main)에서 **live 엔진 recall 경로의 callable faculty** 로 승격했다. 새 directive `a_verified_must_wire`("GREEN-verified 가설은 live CORE 배선까지가 done")의 첫 종결.
