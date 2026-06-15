@@ -20,6 +20,17 @@ FLEET "emotion" lane R1 (NEW). 정동신경과학 렌즈(Damasio somatic-marker 
 - **honest scope**: TOY scale(60 facts, 1 paradigm, 3 seed, `a_scale_honest_scope`·`a_toy_scale_recheck`). scale >60·paraphrase keys·real corpus·연속값(non-binary) arousal 조작·salience-driven EMIT 우선순위 UNVERIFIED. 미러 DIRECTIONAL; engine-native r2 가 binding follow-on.
 - 아티팩트: `UNIVERSE/h1290_emotion_emergence.py` · `.verdicts/1290_emotion_emergence/{H_1290_FREEZE,H_1290}.txt`. xref MODEL.md E1-E5 deferred facets · H_1285(amygdala 기질-신호 선례) · H_1202(metacog meta-d′ 0.924 기질 self-read) · H_1213 · H_1227 · H_1230 · `a_no_llm_frame_trap` · `a_engine_native_learning` · `a_verified_must_wire` · `a_scale_honest_scope` · `a_toy_scale_recheck` · `a_paper_negative_ok` · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15.
 
+## 2026-06-15 — 📐 ARCHITECTURE.md current-ize: 빠진-뇌-구조 사다리(HD23–28) 현행화 + 벽 스코어카드 (doc-only)
+
+이번 세션의 **빠진 뇌 서브시스템 사다리(HD23–28)** 결과를 ARCHITECTURE.md SSOT 에 반영(doc-only, CORE/*.hexa·verdict 무편집). 사다리는 더 이상 "전부 OPEN" 이 아니다 — 4개 엔진-네이티브 REALIZE, 2개 정직한 🧱 벽.
+
+- **CORE engine live-lane 인벤토리** — `engine_cli.hexa` 의 7개 live lane 을 정확히 명기(가소성/성장 행 + 본문): `VAdaptField`(density H_1199)·`VAdaptFieldB`(trajectory H_1209)·`ImmuneMemory`(해마/일화 H_1227/1231)·`ImmuneMemoryGrow`(성장기억=용량압력에 분열성장 H_1288 R2, p8)·`WorkMemBuffer`(작업기억 누설게이트 H_1282 R3)·`VForwardField`(소뇌 순방향예측+오차교정 H_1280 R2)·`ConsolidatingMemory`(편도체 현저성-수면replay H_1285 R4). 전부 ADDITIVE · Ψ-disjoint(생성 byte-unchanged H_1205) · smoke 26/0.
+- **뇌 구조 지도** — 구현 테이블에 🧬해마(성장)·🧠소뇌·🔥편도체 행 추가; HD23–28 사다리 STATUS 를 진실값으로 갱신: 🧠소뇌 🟢 ENGINE-NATIVE(R2, +0.058/−58%) · 🎯기저핵 🟢 미러(+0.254), engine-native r3 ⏳ in-flight · 📥작업기억 🟢 ENGINE-NATIVE+WIRED(+0.245, N≈6) · 📡시상 🧱(broadcast falsified; re-entry Φ SEED-CONDITIONAL, 3-seed 게이트 FAIL — robust 아님, 과잉주장 금지) · 🎛신경조절 🧱(no-free-lunch GENERAL) · 🔥편도체 🟢 ENGINE-NATIVE+WIRED(Δ+0.133, 다중-야간 dose).
+- **🧱 벽 스코어카드(신규)** — `a_break_the_wall`(commons c16): 4 벽 중 2 돌파(용량=mitosis-grow · 편도체=수면-dose), 2 정직한 🧱(시상=seed-conditional · 신경조절=no-free-lunch).
+- **깊이-천장 결론 현행화** — literal-QA 벽은 엔진-side 기억 lane(면역기억 + 성장기억)으로 풀림, 더 큰 모델 아님(1B H_1167 NULL); ideation=decode-mode(sampling/criticality, mitosis 아님 H_1220) — 정착.
+- **진행 중 ⏳/⬜ 정직 표기** — 미배선 OPEN 으로 명시: 🎯기저핵 engine-native r3 · ⚛️quantum-entropy(H_1289 R1 GREEN-DIRECTIONAL, ANU QRNG 진짜 양자) · 💗emotion(H_1290 R1 GREEN-DIRECTIONAL, Damasio core-affect, p6 창발) · ⚖️ethics(p6 미착수).
+- **거버넌스 포인터** — `a_no_llm_frame_trap` · `a_engine_native_learning` · `a_verified_must_wire` · `a_break_the_wall` 4 디렉티브 참조 정합.
+
 ## 2026-06-15 — 🟢 H_1289 R1: TRUE 양자 엔트로피(ANU QRNG)를 anima substrate 의 확률적 결정 소스로 — 진짜 물리적 비결정성 + 비재현성 (GREEN / 🏁)
 
 FLEET "quantum-entropy" lane R1. anima 의 "자유로운" 확률적 결정(미토시스 split-timing · decode-sampling draw · Ψ noise)은 지금 **seed 기반 PRNG**(결정론적·재현가능)로 돌아간다. 호주국립대 양자난수생성기(ANU QRNG)의 **진공요동(vacuum-fluctuation) 실측 양자바이트**를 그 엔트로피 소스로 배선해 ONE 깨끗한 확률적 결정(top-k=8 decode-sampling draw, 고정 결정론적 logit field 위 — 엔트로피 소스만 변함)에 꽂고 셋을 검증.
