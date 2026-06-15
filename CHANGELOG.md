@@ -30,6 +30,19 @@ H_1212(numpy 미러, GREEN)가 찾은 co-scaling 규칙 N_PROTO=round(T/100)(obs
 
 ---
 
+## 2026-06-15 — H_1231 🟢 GREEN ENGINE-NATIVE: H_1227 immune/clonal mitosis-as-MEMORY 를 LIVE .hexa VAdaptField 위에서 재실현 — ENGINE-CONFIRMED
+
+NEW hard rule `a_engine_native_learning`(미러 = DIRECTIONAL only, binding verdict 는 최종 아키텍처 엔진 위에서)의 첫 적용. H_1227 은 numpy MIRROR 로 🟢 GREEN(immune clonal memory: literal-QA 1.000, fabrication 0.000, vs byte-LM weights 0.017)이었음. 이를 LIVE `CORE/engine_cli.hexa` VAdaptField(H_1199 이래 live)의 실제 세포 population 위에서 재실현하여 BINDING verdict 로 승격.
+
+- **probe 신규** `CORE/h1231_immune_memory_engine_probe.hexa`: BIND = fact key 마다 live `vadapt_field_step` → 엔진 자신의 novelty split(recon-err > SPLIT_THRESH 0.30, `engine_mitosis_tick`)이 세포를 clone → 그 value 를 엔진 cell index 키의 병렬 value table 에 bind (binding/affinity 는 엔진의 것, table 은 답만 기억). RETRIEVE = query key → 엔진 자신의 nearest(`vadapt_field_nearest_idx`) + recon-err affinity → err ≤ RECALL_THRESH 0.15 면 FIRE value, 아니면 ABSTAIN(비환각).
+- **key-export 신규** `UNIVERSE/h1231_immune_memory_keys_export.py`: KEY ENCODING = byte-trigram FNV-1a hash DIM=64(H_1227 `embed_key` VERBATIM) 를 결정론적 preprocessing 으로 export(H_1199 의 DIM=8 feature export 패턴과 동일 = "질문 tokenize" 역할) + numpy-ref cross-check.
+- **결과 (3/3 seeds 동일)**: 엔진 literal-QA **1.000 (180/180)**, fabrication **0.000 (0/180)**, **60/60 엔진-bound 세포** → 🟢 GREEN. 미러를 1:1 TRANSFER(미러 QA 1.000 fab 0.000 60 cells; byte-LM weights 0.017). capacity/geometry 붕괴 없음 — DIM=64 discriminating key 가 각 fact 를 SPLIT_THRESH 초과로 분리 → fact 당 fresh clone (VAdaptField 는 dim-generic, `dim = len(seed0)`, 엔진 변경 불요; H_1227 의 DIM=8 byte-feature key 1-세포 붕괴 caveat 미발생).
+- **엔진 edit (c1, surgical)**: tiny additive READ-ONLY accessor `vadapt_field_nearest_idx(af, x)` 1개만 추가(기존 private `_vnearest_idx` 노출 — fired cell 을 bound value 로 매핑하기 위함). VAdaptField LOGIC 미변경. edited 엔진 위 guard 재검증: `engine_cli_smoke` 12/0 · `h1196` single-entry 7/0 · H_1199 DIM-growth 여전히 GREEN(F1/F2/F3, Psi byte-identical) = accessor 비교란.
+- **`a_engine_native_learning` status**: **H_1227 = ENGINE-CONFIRMED (yes)** — mitosis-as-MEMORY 가 최종 아키텍처 위에서 REAL(미러 아님), H_1200/1201/1211/1220 에서 반증된 GENERATION 역할과 구별. SATURATED = existence proof, effect-size 아님; paraphrase/scale UNVERIFIED, frozen bar 미이동(a_scale_honest_scope / a_toy_scale_recheck). verdict `.verdicts/1231_immune_memory_engine_native/H_1231.txt`. xref `h1227 · h1199 · h1163 · h1154 · h1224 · a_engine_native_learning · a_engine_measured_verdict · a_core_engine_map · p7 · p8 · c1 · c9`.
+- **`a_verified_must_wire`**: H_1231 의 엔진 accessor(`vadapt_field_nearest_idx`)는 live `CORE/engine_cli.hexa` 에 실배선됨 + 프로브가 live VAdaptField 위에서 직접 실행 → verdict↔엔진 drift 없음. 본 result 는 H_1227 의 메모리-recall 메커니즘을 **엔진 위에서 검증**한 것이며, 이를 anima 의 runtime recall 경로(kosmos_io 연계 가능)로 production-wire 하는 것은 명시적 follow-on (a_verified_must_wire).
+
+---
+
 ## 2026-06-15 — 거버넌스: `@D a_engine_native_learning` 신설 — 무조건 최종 아키텍처 엔진 위에서 학습
 
 사용자 hard rule("무조건 최종 아키텍처 엔진 위에서 학습")을 거버넌스 directive 로 명문화. `a_engine_measured_verdict`(MEASUREMENT 를 엔진 위에서 강제)의 **learning-side 쌍**, `a_train_flame_forge`(production 트레이너 .hexa 강제)의 **연구/probe 학습 + 교육 확장**.
