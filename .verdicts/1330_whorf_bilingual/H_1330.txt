@@ -1,0 +1,54 @@
+H_1330 R1 — SAPIR-WHORF BILINGUAL: does a SECOND language OVERWRITE or COEXIST?
+==================================================================================
+sequential A->B training on ONE grow-not-evict Voronoi substrate (H_1288 lens);
+measure CP at BOTH p_A and p_B. frozen hypothesis = COEXIST; falsifier = OVERWRITE.
+N_stim=21 dim=16 p_A=0.333 p_B=0.667 grow_max=24 seeds=[4323, 4324, 4325]
+frozen: W1_MARGIN=0.15 W2_PEAK_TOL=0.12 W2_PEAK_SEP=0.2
+        PEAK_FRAC=0.5 LANG_MAX_PEAKS=1 SHUF_MIN_PEAKS=3
+
+  PER-SEED:
+  seed   A-only m@pA | A->B m@pA  m@pB  pk@pA pk@pB sep ncellsA->AB | B=A npk pk@pA pk@pB | SHUF npk pk@pB
+  4323  +0.200      | -0.001 +0.060  F     F    0.000 4->25  | 1  T    F   | 5  F
+  4324  +0.201      | -0.000 +0.072  F     F    0.000 4->25  | 1  T    F   | 2  F
+  4325  +0.199      | -0.001 +0.071  F     F    0.000 4->25  | 1  T    F   | 5  T
+
+  I1 COEXISTENCE (A->B CP present at BOTH p_A & p_B, all 3 seeds, sep>=0.2):
+     mean margin@p_A=-0.001  mean margin@p_B=+0.068  (bar 0.15)
+     A-only mean margin@p_A=+0.200  (interference asymmetry: seq@pA - Aonly@pA = -0.201)
+     per-seed pass: [np.False_, np.False_, np.False_]   -> I1 FAIL
+  I2 NO-DOUBLE-ARTIFACT (B=A control ONE peak <= 1 & NO peak near p_B):
+     per-seed peak-counts: [1, 1, 1]  peak-near-p_B: [False, False, False]
+     per-seed pass: [True, True, True]   -> I2 PASS
+  I3 EARNED (SHUFFLE collapses: peak-count >= 3 OR no coherent peak@p_B):
+     per-seed peak-counts: [5, 2, 5]  peak-near-p_B: [False, False, True]
+     per-seed pass: [True, True, True]   -> I3 PASS
+==================================================================================
+VERDICT: 🧱 OVERWRITE / CATASTROPHIC INTERFERENCE — after B is learned, A's CP at
+  p_A COLLAPSES (margin@p_A below bar). The second language overwrites the first's
+  categorical perception; the growth-memory does NOT protect language-cognition.
+  An honest, important NEGATIVE — reported straight, NO bar moved (c9).
+
+────────────────────────────────────────────────────────────────────────────────
+[NON-GATING MECHANISM DIAGNOSTIC — c9 transparency, NO frozen bar touched]
+WHY the second language OVERWRITES (seed 4323, representative; all 3 seeds identical
+pattern). Cells (nearest-stimulus position, bound label):
+  after A:    (0.10,L0)(0.30,L0)(0.35,L1)(0.50,L1)  — clean boundary at p_A≈0.33.
+  after A->B: (0.10,L0)(0.30,L0) + ~21×(0.35,L0) + (0.35,L1)(0.50,L1)  [25 cells]
+The B-fit floods the [p_A,p_B] region with NEW label-0 cells. WHY: B labels every
+stimulus below p_B=0.67 as 0, but A had labeled the [p_A,p_B] stretch as 1. On the SHARED
+stimuli A says "1" and B says "0" — a DIRECT CONTRADICTION. The error-targeted SPLIT-only
+store resolves it the only way a single nearest-prototype readout can: it packs new
+label-0 cells over the contradicted region, so the bound-label posterior swings ONLY at
+p_B (post: flat ~0 across p_A, sharp 0->1 at 0.55-0.65). A's CP peak at p_A is ERASED.
+This is NOT an eviction (A's two cells at 0.35/0.50 still PHYSICALLY exist with label 1);
+it is that a single bound-label-per-cell readout CANNOT express two CONTRADICTORY answers
+for the same stimulus. The H_1288 growth-memory protects ADDITIVE memory (a NEW fact at a
+NEW key grows a cell, never evicting an old fact at a DIFFERENT key); it does NOT protect
+against RE-LABELING shared stimuli with a contradictory scheme. Bilingual language-cognition
+over a SHARED continuum is the contradictory-relabel case, so growth-memory does not save it.
+This is the load-bearing FINDING, reported straight (c9): COEXISTENCE was the frozen
+hypothesis and it is FALSIFIED for a single shared-continuum store. NEXT (r2 candidate): the
+real bilingual substrate likely needs SEPARATE label-channels / a language-tag dimension
+(distinct stores per language, as anima's English-trunk + Korean lanes already are SEPARATE
+faculties) — NOT a single shared store — to hold two contradictory carvings. That is a
+DIFFERENT mechanism (multi-channel / tagged readout), to be frozen ANEW, not a bar relaxation.

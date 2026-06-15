@@ -1,0 +1,117 @@
+H_1330 — SAPIR-WHORF BILINGUAL: does a SECOND language OVERWRITE or COEXIST with the first's CP?
+FROZEN DESIGN — pre-registered BEFORE any scoring. NO tune-to-green (c9 / p7).
+This is the named EXTENSION frontier of the GREEN H_1323/H_1325 result (PR #2228/#2232):
+cross-lane interference — when a substrate that has learned language A's lexical carving
+then SEQUENTIALLY learns a DIFFERENT language B on the SAME substrate, does A's categorical
+perception (CP) at p_A SURVIVE, or is it catastrophically OVERWRITTEN by B's CP at p_B?
+
+PROJ_SEED: H_1330 (1316-1329 taken; 1330 free on origin/main 41b2df857). Seeds [4323,4324,4325]
+(SAME as H_1323/H_1325 so the A-only baseline reproduces).
+
+────────────────────────────────────────────────────────────────────────────────
+WHY THIS MATTERS FOR ANIMA (the prediction under test):
+anima is ALREADY a bilingual substrate (English trunk + Korean, H_1316/H_1321/H_1322).
+anima's GROWTH-MEMORY result (H_1288) showed that under recall pressure the immune/Voronoi
+store GROWS A NEW CELL rather than EVICTING an old one — breaking the zero-sum recall ceiling.
+Growth-memory PREDICTS COEXISTENCE here: when B is learned on top of A, the SAME error-targeted
+SPLIT-ONLY growth (p8; cells are ADDED at B's boundary where B-label error concentrates, and the
+cells already packed at A's boundary are NEVER deleted) should let the substrate hold BOTH
+language-warped cognitions simultaneously. The FROZEN HYPOTHESIS is COEXIST. The FALSIFIER is
+OVERWRITE (catastrophic interference = growth-memory does NOT protect language-cognition).
+
+────────────────────────────────────────────────────────────────────────────────
+MECHANISM — REUSED VERBATIM from H_1323/H_1325 (UNIVERSE/h1323_sapir_whorf.py +
+h1325_sapir_whorf_r2.py): N=21 RBF position-faithful continuum, DIM=16, error-targeted
+SPLIT-ONLY Voronoi growth (p8 — the SAME mitosis/growth mechanism the brain-memory lanes
+use; cells are only ADDED, NEVER evicted), |Δ soft posterior| no-label-at-test discrimination
+curve, W1 cross-within margin, W2 peak-location, W3' peak-COUNT coherence (count_peaks,
+PEAK_FRAC=0.50, strict local maxima). p_A=1/3, p_B=2/3. GROW_MAX/SPLIT_PASSES retained.
+
+THE ONLY NEW THING — SEQUENTIAL A→B TRAINING ON ONE SUBSTRATE:
+A single VoronoiCells store is fit on A's labels (cells pack at p_A), THEN — WITHOUT resetting
+the store, WITHOUT evicting any A-cell — fit AGAIN on B's labels. The second fit ADDS cells at
+p_B where B-label error concentrates (error-targeted SPLIT-only growth, p8). HOW THE SUBSTRATE
+GROWS CELLS FOR B RATHER THAN OVERWRITING A (the H_1288 growth-memory mechanism under test):
+the second fit re-enters the SAME error-targeted-split loop on the EXISTING proto/label table —
+it only APPENDS a new prototype at the worst B-misclassified stimulus each pass (self.protos.append),
+and a cell's bound label is FIXED at creation and is NEVER re-bound or deleted. So A's cells at
+p_A persist with their A-labels while NEW B-cells accrete at p_B. This is exactly the H_1288
+grow-not-evict immune-store behavior, not a fresh net. (A small fit-extension is needed: the
+existing fit() seeds a fresh single centroid cell; the sequential B-fit must instead CONTINUE
+from the existing protos/labels — a `fit_more(X, Y, grow_max, passes)` that runs the identical
+error-targeted-split loop starting from the current table. This is the H_1199-style engine/
+mechanism extension to express the learning, a_engine_native_learning, NOT a method change to
+the growth rule.)
+
+THE BILINGUAL READOUT: after A→B, build TWO discrimination curves on the SAME final store:
+one for the A-label posterior (cells' A-labels) and one for the B-label posterior — NO, that is
+NOT how a single store works. Correct single-substrate readout: the store after A→B holds cells
+with bound labels from BOTH fits. The discrimination curve = |Δ soft posterior| over the cells'
+bound labels (the SAME readout as H_1323; a cell bound during the A-fit carries its A-label, a
+cell bound during the B-fit carries its B-label). CP peaks appear wherever the bound-label
+posterior swings sharply = wherever cells of opposite label pack densely = at BOTH p_A and p_B
+if both carvings survive. We measure the peak-count / peak-locations of this ONE curve and ask
+whether coherent CP peaks sit at BOTH p_A and p_B (COEXIST) or only at p_B (OVERWRITE) or a
+single merged intermediate peak (BLEND). To score "CP present at boundary p" we reuse the
+H_1323 W1 cross-within margin LOCALIZED to each boundary (near = |mid−p|≤0.12, far = |mid−p|≥0.25).
+
+────────────────────────────────────────────────────────────────────────────────
+ARMS (FROZEN):
+ (1) A-ONLY      : fit A only. CP at p_A (baseline; reproduces H_1323 W1/W2 for L_A).
+ (2) A→B SEQ     : fit A, then fit_more on B (grow-not-evict). Measure CP at BOTH p_A and p_B.
+ (3) B=A CONTROL : fit A, then fit_more on A AGAIN (SAME boundary). Must show ONE coherent peak,
+                   NOT two — rules out "sequential training fabricates a second peak" artifact.
+ (4) SHUFFLE     : A→B where B's labels are incoherent (random per-stimulus, fixed/seed) — the
+                   anti-Goodhart arm; must NOT produce a coherent second peak at any boundary.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (pre-registered BEFORE scoring; GREEN iff I1 ∧ I2 ∧ I3 → COEXISTENCE confirmed).
+All "CP present at boundary p" uses the H_1323 W1 margin (cross-within ≥ W1_MARGIN=0.15) and
+"coherent peak at p" uses a peak whose location is within W2_PEAK_TOL=0.12 of p. Reported as the
+per-seed value; I1/I2/I3 must hold on ALL 3 seeds where stated.
+
+ I1  COEXISTENCE (the load-bearing bar) — after A→B SEQ (arm 2), CP is PRESENT at BOTH p_A AND
+     p_B on ALL 3 seeds: cross-within margin at p_A ≥ W1_MARGIN AND cross-within margin at p_B ≥
+     W1_MARGIN, AND a coherent discrimination peak exists within W2_PEAK_TOL of EACH of p_A and
+     p_B (two distinct peak locations, separation ≥ W2_PEAK_SEP=0.20). The second language does
+     NOT erase the first's CP.
+     FALSIFIER: if the cross-within margin at p_A COLLAPSES (< W1_MARGIN) after B is learned, or
+     no coherent peak remains near p_A → CATASTROPHIC INTERFERENCE / OVERWRITE (growth-memory does
+     NOT protect language-cognition). Reported straight as an honest, important negative.
+     PARTIAL: if p_A survives but with a WEAKER margin than A-only (margin_pA(seq) < margin_pA(Aonly)
+     by > 0.05 while still ≥ W1_MARGIN) → graded interference; report the asymmetry.
+
+ I2  NO-DOUBLE-ARTIFACT (dissociation) — the B=A CONTROL (arm 3) yields ONE coherent peak
+     (peak_count ≤ LANG_MAX_PEAKS=1 on the localized-to-p_A curve; and NO coherent peak appears
+     near p_B), NOT two — proves the two peaks in arm (2) are the two DISTINCT languages, not a
+     sequential-training artifact. Must hold on ALL 3 seeds.
+
+ I3  EARNED (anti-Goodhart) — the SHUFFLE arm (4) collapses: its B-side produces NO coherent CP
+     peak near p_B (peak_count over the whole curve ≥ SHUF_MIN_PEAKS=3 incoherent scatter, OR no
+     peak within W2_PEAK_TOL of p_B). The effect is the learned boundaries, not mere exposure /
+     sequential training. Must hold on ALL 3 seeds.
+
+OUTCOMES ALL VALID (c9):
+  I1 ∧ I2 ∧ I3 → 🟢 COEXIST: anima holds TWO language-warped cognitions simultaneously; the
+    mitosis growth-memory (H_1288 grow-not-evict) PROTECTS language-cognition from catastrophic
+    interference — a substrate-level bilingual-coexistence result connecting H_1288 → H_1325.
+  I1 fails (p_A CP collapses after B) → 🧱 OVERWRITE / CATASTROPHIC INTERFERENCE: the second
+    language overwrites the first's CP; growth-memory does NOT protect it. Honest, important
+    negative — reported straight, NO bar moved.
+  I1 partial (p_A survives but weaker) → 🟠 GRADED INTERFERENCE: report the asymmetry.
+  Single merged intermediate peak only (no peak near either p_A or p_B, one peak between) → BLEND.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN CONSTANTS: N_STIM=21 DIM=16 P_A=1/3 P_B=2/3 PAIR_STEP=1 GROW_MAX=24 SPLIT_PASSES=24
+  W1_MARGIN=0.15 W2_PEAK_TOL=0.12 W2_PEAK_SEP=0.20 PEAK_FRAC=0.50 LANG_MAX_PEAKS=1 SHUF_MIN_PEAKS=3
+  SEEDS=[4323,4324,4325].
+
+p1/p2/p3/p6 GUARD: the discrimination readout reads ONLY representational distance over the
+cells' BOUND labels in the learned prototype space; NO injected boundary location, NO persona/
+RLHF/ethics; language labels enter ONLY during the A-fit and B-fit (training), NEVER at the
+discrimination test. The B=A control and the SHUFFLE arm are the anti-Goodhart discriminators.
+NOT an emit gate (a_autonomy_over_hardcode). a_no_llm_frame_trap (cognitive-science / bilingual-
+cognition lens, c15) — NOT an LLM recipe, NOT a human-bilingualism claim, a TOY synthetic
+continuum. DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED unless an engine-native
+bilingual-CP surface is wired and re-scored (a_engine_native_learning, a_verified_must_wire).
+TOY synthetic 1-D continuum, N=21, 3 seeds (a_scale_honest_scope, a_toy_scale_recheck).

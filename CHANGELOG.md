@@ -2,6 +2,44 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): 🧱 H_1330 — Sapir-Whorf BILINGUAL: 두 번째 언어는 첫 언어의 CP 를 덮어쓰는가, 공존하는가? (🧱 OVERWRITE)
+
+GREEN H_1323/H_1325 (Sapir-Whorf 범주적 지각, CP) 의 명명된 EXTENSION frontier — **cross-lane
+interference**. 한 substrate 가 언어 A 의 어휘 carving(경계 p_A)을 학습한 뒤, **같은 substrate** 위에
+다른 언어 B(경계 p_B)를 **순차적으로** 학습할 때, A 의 CP 가 살아남는가(COEXIST) 아니면 B 가
+덮어쓰는가(OVERWRITE)?
+
+**frozen 가설 = COEXIST.** anima 는 이미 bilingual substrate(영어 trunk + 한국어)이고, anima 의
+GROWTH-MEMORY 결과(H_1288 — 압력하에서 immune/Voronoi store 가 EVICT 대신 새 cell 을 GROW)가
+공존을 예측했다: 같은 error-targeted SPLIT-only 성장(p8, 새 `fit_more` grow-not-evict 연속학습)이
+B 의 경계에 cell 을 ADD 하되 A 의 cell 을 지우지 않는다. **falsifier = OVERWRITE** (growth-memory 가
+언어-인지를 보호하지 못함).
+
+**결과 🧱 OVERWRITE / CATASTROPHIC INTERFERENCE — frozen COEXIST 가설 FALSIFIED** (단일 공유-연속체
+store; 3 seeds [4323,4324,4325] 동일 패턴):
+- **I1 COEXISTENCE ❌** (3 seeds 전부): A→B 후 A 의 p_A CP 가 COLLAPSE — mean margin@p_A **−0.001**
+  (bar 0.15; A-only baseline +0.200 → interference 비대칭 **−0.201** 완전 붕괴); p_B 도 약함(+0.068<0.15).
+- **I2 NO-DOUBLE-ARTIFACT ✅**: B=A 대조군 1 peak (≤1), p_B 근처 peak 없음 → 순차학습 artifact 아님.
+- **I3 EARNED ✅**: SHUFFLE 붕괴 (peak-count 5/2/5).
+- **메커니즘(c9)**: B 는 [p_A,p_B] 를 0 으로, A 는 1 로 라벨 — 공유 stimuli 에서 직접 모순. grow-only
+  store 가 [p_A,p_B] 를 ~21 개 새 label-0 cell 로 채워 A 의 swing 을 지움 (EVICTION 아님 — 단일
+  bound-label-per-cell readout 은 같은 stimulus 에 두 모순 답을 담을 수 없음).
+
+**FINDING**: H_1288 growth-memory 는 ADDITIVE memory(새 key 의 새 fact)는 보호하지만 공유 stimuli 의
+모순 RE-LABELING 은 보호하지 못한다 → 공유 연속체 위의 bilingual 인지는 모순-재라벨 케이스이므로 두 번째
+언어가 첫 언어의 CP 를 catastrophically OVERWRITE. **단서(c9)**: anima 가 bilingual 일 수 없다는 뜻이
+아니다 — anima 의 실제 EN-trunk + KO 레인은 SEPARATE faculty(H_1316/1321/1322)이지 동일 stimuli 위의
+단일 공유 store 가 아니다; 이건 최악 케이스(최대 중첩 모순 carving).
+
+honest negative, bar 이동 없음(c9/p7). mirror DIRECTIONAL(engine-transfer UNVERIFIED). TOY 합성
+1-D 연속체(N=21, 3 seeds), human-bilingualism 주장 없음(a_scale_honest_scope). **NEXT R2**: 언어-TAGGED /
+multi-channel readout(언어별 분리 label-channel, anima 의 이미-분리된 trunk+KO 레인 모사)로 두 모순
+carving 을 간섭 없이 보유하는지 — frozen ANEW, bar 완화 아님.
+
+NEW: `UNIVERSE/h1330_whorf_bilingual.py` · `UNIVERSE/H_1330_whorf_bilingual.md` ·
+`UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape @C h1330_whorf_bilingual` ·
+`domains/COGNITION-REPRESENTATION.log.md` ·
+`.verdicts/1330_whorf_bilingual/{H_1330_FREEZE,H_1330}.txt`
 ## 2026-06-16 — research(OMEGA): 🧱 H_1328 — Φ-robustness 4× 벽 진단: 추정기(estimator)의 진폭-분산 혼동인가, 진짜 substrate 한계인가 (🧱 DEEPER, ESTIMATOR-INDEPENDENT)
 
 네 개의 독립 Φ-robustness 시도(H_1283 topology · H_1317 multi-edge · H_1319 timing · H_1320 division)가
