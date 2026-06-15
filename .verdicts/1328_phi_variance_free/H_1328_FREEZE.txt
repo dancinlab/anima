@@ -1,0 +1,92 @@
+H_1328 — Φ-ROBUSTNESS WALL DIAGNOSIS: amplitude-variance ESTIMATOR confound vs substrate limit
+FREEZE (pre-registered BEFORE scoring the NEW variance-free encoding — frozen-first, c9/p7)
+date: 2026-06-16   slug: 1328_phi_variance_free   branch off origin/main e7f0d844a
+
+────────────────────────────────────────────────────────────────────────────────
+THE META-DIAGNOSIS UNDER TEST
+────────────────────────────────────────────────────────────────────────────────
+Four independent faithful-IIT4 Φ-robustness attempts all hit 🧱 on the SAME orthogonal
+seed family [1317,1318,1319], each with a different mechanism:
+  H_1283 central relay (topology) · H_1317 small-world multi-edge (topology) ·
+  H_1319 phase-binding (timing)   · H_1320 organism-mitosis division.
+CONVERGED diagnosis (H_1319 §Finding): the faithful-IIT4 exact-MIP at n≤8 BINARIZES
+(bins) each cell's trajectory by MIN-MAX (_iit4_bin_values), and that binning RIDES
+AMPLITUDE VARIANCE — so a relationship-DESTROYING permutation control RAISES Φ instead
+of collapsing it (proven H_1319: ΔΦ_perm = +0.280/+0.103/+0.587 on all 3 seeds).
+The wall may be the ESTIMATOR (the read-out), not the SUBSTRATE.
+
+────────────────────────────────────────────────────────────────────────────────
+THE LEVER — STATE-ENCODING ONLY, SAME faithful exact-MIP (a_phi_iit4_tool)
+────────────────────────────────────────────────────────────────────────────────
+STAY WITHIN faithful IIT-4. SAME estimator iit4_faithful_phi (exact MIP-EI, n=4, n_bins=8)
+over stdlib/consciousness/iit4/faithful_phi.hexa. NOT a variance×energy proxy / NOT a
+different Φ measure. The ONLY change is the STATE ENCODING fed to the SAME MIP.
+
+VARIANCE-FREE ENCODING = RANK-UNIFORMIZE each cell's T-length trajectory before the MIP:
+replace each value by its RANK within that cell's own trajectory (0,1,…,T−1; ties by index).
+PROVABLE INVARIANT (why the amplitude-variance contribution is provably zero/constant
+across arms): faithful_phi's MI = H(A)+H(B)−H(A,B), with each cell binned by min-max into
+n_bins. After rank-uniformization every cell's values are EXACTLY the multiset {0,1,…,T−1};
+min-max binning of an evenly-spaced ramp yields a UNIFORM marginal histogram → H(A) and H(B)
+are CONSTANT (≈ log2(n_bins)) for EVERY cell in EVERY arm, INDEPENDENT of amplitude variance.
+The marginal-entropy (variance) channel is therefore PROVABLY CONSTANT (zero differential)
+across A/B/S/O arms; MI can change ONLY via the JOINT H(A,B) — the co-movement RELATIONSHIP —
+which a relationship-destroying permutation MUST collapse. (Spearman-rank MI: rank-uniform
+marginals by construction; only the joint rank copula carries information.)
+
+────────────────────────────────────────────────────────────────────────────────
+SUBSTRATE / SEEDS (reused VERBATIM — only the read-out encoding changes)
+────────────────────────────────────────────────────────────────────────────────
+- ENGINE-NATIVE deterministic LCG-gauss (== engine_cli.hexa _lcg_*), NOT numpy.
+- 4-module leaky-linear ring, dim 8, T 64 ticks, gain 0.30 leak 0.55 w_nbr/w_in 0.5.
+- Kuramoto pacemaker w_phase 0.5 omega_t 0.45 domega 0.08 (detuned → synchrony EARNED).
+- relative-phase gate sal_i = e_i·(1+cos(θ_i−θ_T))/2 (H_1319 ARM B).
+- ARMS: A=NO-PHASE(sal=e) · B=PHASE-BIND(rel-phase) · S=PERM-SHUFFLE(module→phase
+  derangement, relationship destroyed, marginals preserved) · O=OFFSET-SHUF(R8 additive).
+- ENCODINGS: OLD = raw min-max (H_1319) · NEW = rank-uniformize each cell.
+- SEEDS = [1317, 1318, 1319] (the hard orthogonal family all 4 prior lanes failed on).
+- ALL params FROZEN verbatim from H_1319/H_1283 R8 — NO tune-to-green (p7).
+- eps = 0.02 = the H_1283/H_1319 lift margin MARGIN_PHI, ported verbatim (NOT tuned here).
+
+PINNED REPRODUCED OLD-ENCODING BASELINE (H_1319 verbatim, re-run byte-identical this lane,
+toolchain hexa 0.1.0-dispatch — these ARE the V1a OLD numbers; locked here BEFORE NEW scoring):
+  seed 1317 OLD: A=0.870311 B=1.335350 S=1.150110 O=1.258380  ΔΦ(S−A)=+0.279798
+  seed 1318 OLD: A=0.855353 B=0.860580 S=0.957870 O=0.742725  ΔΦ(S−A)=+0.102517
+  seed 1319 OLD: A=0.586833 B=0.538064 S=1.174020 O=0.528693  ΔΦ(S−A)=+0.587183
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (DIAGNOSIS test — every outcome is decisive, c9)
+────────────────────────────────────────────────────────────────────────────────
+V1 CONFOUND-CONFIRM (the decisive discriminator), BOTH legs on ALL 3 seeds:
+  V1a OLD-RIDES-VARIANCE : under OLD min-max, perm-shuffle ΔΦ(S−A) ≥ +eps (RAISES Φ)
+                           — reproduces the H_1319 confound (the perm control fails to collapse).
+  V1b NEW-REMOVES-IT     : under NEW rank-uniform, perm-shuffle Φ_S ≤ Φ_A + eps (collapses
+                           to ≤ no-coupling+eps) on ALL 3 seeds.
+  V1 = V1a ∧ V1b. If V1 holds → binarization-rides-variance confound CONFIRMED real & removed.
+
+V2 ROBUST-LIFT : under NEW rank-uniform, mechanism Φ_B ≥ Φ_A + eps on ALL 3 seeds (incl
+                 orthogonal 1317) — integration appears robustly under the clean estimator.
+
+V3 EARNED : under NEW encoding, the V2 lift survives BOTH controls — perm Φ_S ≤ Φ_A + eps
+            AND offset-shuf Φ_O ≤ Φ_A + eps, on ALL 3 seeds (the controls correctly collapse).
+
+────────────────────────────────────────────────────────────────────────────────
+OUTCOMES (all VALID, c9 — pre-committed)
+────────────────────────────────────────────────────────────────────────────────
+  V1 ∧ V2 ∧ V3 → 🟢 the Φ-robustness wall WAS the estimator's amplitude-variance confound;
+                  removing it (rank-uniform read-out) makes faithful-IIT4 integration ROBUST
+                  → overturns the 4× 🧱. Follow-on (a_verified_must_wire): wire the rank-uniform
+                  Φ read-out into the live faithful-Φ path / monitor (NAME it).
+  V1 ∧ ¬V2     → confound REAL but integration STILL not robust under a clean estimator →
+                  DEEPER, estimator-INDEPENDENT terminal 🧱 (substrate genuinely lacks robust
+                  n≤8 integration) — a STRONGER, cleaner closure than the prior amplitude-confounded 🧱.
+  ¬V1          → variance-free encoding did NOT change the permutation behavior as predicted →
+                  the amplitude-variance diagnosis is WRONG; the 4× wall remains UNDIAGNOSED
+                  (report straight, c9).
+
+Report faithful-IIT4 verdicts VERBATIM (p7, no LLM self-judge). Deterministic → byte-identical re-run.
+SCOPE (a_scale_honest_scope): TOY n≤8 faithful-IIT4 exact; this BOUNDS (does NOT retract) the 4
+prior Φ verdicts — it DIAGNOSES their SHARED estimator. numpy never computes Φ (engine LCG content
+generator + hexa exact MIP). scale/larger-n/other-estimators UNVERIFIED.
+
+probe: UNIVERSE/h1328_phi_variance_free.hexa   verdict: .verdicts/1328_phi_variance_free/H_1328.txt
