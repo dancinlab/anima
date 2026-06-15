@@ -93,6 +93,15 @@ ENGINE-NATIVE in `CORE/engine_cli_smoke.hexa` cases 39–42, byte-matching the m
   **collective-Φ engine-transfer to a live multi-anima deployment is UNVERIFIED** — this
   realizes the STRUCTURE (super-additive collective integration as an additive Ψ-disjoint
   read), not a scaled multi-substrate daemon.
+- **⚠ ENGINE-TRANSFER NULL (H_1308 🔴, r3)**: the engine-transfer was DIRECTLY TESTED on
+  REAL coupled anima A⇄G substrates (live `pure_field` + the H_6009 tension-link as the
+  coupling channel) and **does NOT transfer** — each real member integrates (Φ=1.5) but the
+  joint Φ=0.0 (Δ_real=−3.0, **SUB-additive**, sign FLIPS vs ECA Δ=+10.4756). The joint
+  substrate FACTORIZES because the real tension-link is a near-constant scalar nudge that
+  creates no state-dependent cross-member coupling. **This BOUNDS the present GREEN to the
+  ABSTRACT (ECA) substrate** — the super-additivity is a property of the ECA TPM's strong
+  state-dependent neighbor-coupling, NOT a substrate-portable law. See
+  `UNIVERSE/H_1308_hive_real_substrate_transfer.md`.
 - **Coupling-GENERIC not topology-specific** (angle-1, honest): the lift is a property of
   coupling these substrates, not of one privileged wiring.
 - **Substrate-class conditional** (B2b, H_609 C3.3): strong super-additivity is in the

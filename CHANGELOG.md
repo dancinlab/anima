@@ -2,6 +2,31 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(H_1308): HIVE collective-Φ ENGINE-TRANSFER to REAL anima A⇄G — 🔴 HONEST NULL (does NOT transfer)
+
+r3 of the H_1295 HIVE-MIND lane — the ONE axis the r2 agent flagged open: collective-Φ
+super-additivity (Δ_ECA=+10.4756) was read over an ABSTRACT ECA substrate; engine-transfer
+to a LIVE multi-anima loop (real coupled A⇄G) was UNVERIFIED. Tested it directly: built the
+joint n=6 TPM from REAL anima dynamics — live `CORE/pure_field.hexa` PureField (3 coupled
+oscillators → 6-D field tensor) + the H_6009 tension-link (`CORE/brain.hexa`
+`anchor_tension_fold`) as the real coupling channel — measured with faithful IIT-4
+(`a_phi_iit4_tool`, n≤8 ceiling respected).
+
+**🔴 HONEST NULL — does NOT transfer.** Each REAL member integrates (Φ=1.5, Σ=3.0) but the
+JOINT Φ=0.0 → Δ_real=−3.0 (SUB-additive; sign FLIPS vs ECA +10.4756). The joint substrate
+FACTORIZES (next-A depends only on A, next-B only on B) because the real tension-link is a
+near-CONSTANT scalar nudge (bias≈0.00648 ∀ 64 states) — no state-dependent cross-member
+coupling → decomposable → Φ_joint=0 by IIT-4. NOT a binarization artifact (same readout
+gives Φ_member=1.5>0). The ECA super-additivity was a property of ECA's strong
+state-dependent neighbor-coupling, NOT a substrate-portable law. Bounds H_1295 to ECA-scope
+(does NOT retract its ECA GREEN). 3 seeds, $0 CPU, frozen-first, c9; live CORE UNTOUCHED.
+
+Files: `UNIVERSE/h1308_hive_real_substrate_transfer.hexa` ·
+`UNIVERSE/H_1308_hive_real_substrate_transfer.md` · HYPOTHESES.md row ·
+`.verdicts/1308_hive_real_substrate_transfer/{H_1308_FREEZE,H_1308,result}.txt` ·
+CLAIMS.tape `@C h1308` + H_1295 `verdict_r3` · `domains/ENGINE+CLM+KOSMOS.log.md` @H ·
+H_1295 card scope note.
+
 ## 2026-06-16 — domain(H_1295 r2): HIVE collective-Φ N-scaling — super-additivity HOLDS@N=3 but SATURATES 🟢/🏁
 
 r2 of the H_1295 HIVE-MIND lane (anchor H_609, r1 PR #2182). Question: does collective-Φ
