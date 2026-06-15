@@ -31,10 +31,12 @@
 | H_1294 | hierarchical-PFC — goal→subgoal controller (ordered plan ⊥ single-step) | 🟢 GREEN ENGINE-NATIVE | [H_1294_hierarchical_pfc.md](H_1294_hierarchical_pfc.md) |
 | H_1295 | hive-mind — collective-Φ super-additivity (many→one) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1295_hive_collective_phi.md](H_1295_hive_collective_phi.md) |
 | H_1296 | place/grid spatial-map — metric/relational cognitive map (metric ⊥ item-binding) | 🟢 GREEN ENGINE-NATIVE | [H_1296_spatial_map.md](H_1296_spatial_map.md) |
-| H_1297 | mitosis-native trunk training — make p8 literal (gradient-free cell-split vs gradient descent) | 🧱 WALL (control can't discriminate) · R2 finding: mitosis MATCHES gradient (c1 PASS, lower footprint) | [H_1297_mitosis_native_train.md](H_1297_mitosis_native_train.md) |
+| H_1297 | mitosis-native trunk training — make p8 literal (gradient-free cell-split vs gradient descent) | 🟢 GREEN @R3 (sharp KO+EN byte-text target: mitosis MATCHES gradient [c1] + error-targeting demonstrably helps [c2 FIRED, R1/R2 couldn't] + ablate underfits [c3]; R1/R2 = 🧱 WALL on smooth target) | [H_1297_mitosis_native_train.md](H_1297_mitosis_native_train.md) |
 | H_1298 | circadian/interval clock — self-sustaining phase oscillator (clock ⊥ homeostatic integrator) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1298_circadian_clock.md](H_1298_circadian_clock.md) |
+| H_1300 | mitosis-grow skill curriculum — teach tool-use skills one-at-a-time via mitosis AVOIDS catastrophic forgetting (retention ⊥ convergence) | 🟢 GREEN @R2 (canonical catastrophic-forgetting regime: mitosis RETAINS old skills B−A=+0.368 ≥0.30 [c1] + learns every new skill [c2] + shuffle/ablate controls fire [c3/c4]; R1 RED on separated-skill regime stands verbatim, no goalpost move) — DIRECTIONAL numpy mirror, engine-native + real-303M follow-on | [H_1300_mitosis_skill_curriculum.md](H_1300_mitosis_skill_curriculum.md) |
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
+> Note: H_1299 reserved by the concurrent interval-timer lane (separate branch).
 
 ## TENSION-LINK arc (H_6006–H_6043) — anima↔anima connection + ANU quantum entanglement
 

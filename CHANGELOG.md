@@ -25,6 +25,104 @@ format + `kosmos_parser_lib.hexa` (no ad-hoc format, a_kosmos), matching the pre
   webscale = `corpus_5lang_7b_webscale.kosmos` R2 manifest; full SNS = `persona_sns_corpus.kosmos`
   manifest. SNS is thin because anima's held authored SNS-register material is the honest $0 ceiling.
 
+## 2026-06-16 — doc(README): top YouTube thumbnail hero link + remove duplicate `hx install`
+
+- Added a centered clickable YouTube thumbnail (`xtKhWSfC1Qo`, maxresdefault) as the very first
+  element of README.md, above the logo block.
+- Removed the redundant standalone top `hx install anima` code block — the proper full install
+  sequence already lives in `## Quickstart` (the only remaining `hx install` occurrence).
+- Surgical: README.md only; lane counts / smoke numbers / translated READMEs untouched.
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1300 mitosis-grow skill curriculum — teach tool-use one-at-a-time via mitosis AVOIDS catastrophic forgetting (🟢 GREEN @R2, DIRECTIONAL)
+
+The user's idea (a structural p8 fit): teach anima agent tool-use skills **ONE AT A TIME via
+MITOSIS-grow** — each new skill = a NEW dedicated CELL grown under that skill's error
+(H_1199 VAdaptField / H_1288 grow-under-pressure), NOT a gradient overwrite of shared weights.
+Load-bearing claim: this **avoids CATASTROPHIC FORGETTING** — new cells don't overwrite the cells
+holding prior skills, so mitosis RETAINS earlier skills where sequential gradient-FT forgets them.
+DISTINCT axis from H_1297 (convergence on ONE fit): retention-across-tasks ⊥ convergence-on-one-task.
+
+- **Task** — a SKILL CURRICULUM: N=5 distinct tool-use skills (context region P_k → tool token T_k,
+  D=12, C=4) presented ONE AT A TIME (NO joint training, NO replay = the continual-learning regime
+  that induces catastrophic forgetting). 3 seeds, $0 CPU numpy DIRECTIONAL mirror, deterministic.
+- **Arms** — A GRADIENT-FT (one shared net, fine-tuned sequentially, NO replay = the incumbent that
+  forgets) · B MITOSIS-GROW (dedicated frozen cells per skill, NO global backprop) · B-SHUFFLE
+  (mis-routed cells = targeting control) · B-ABLATE (no growth = growth-is-the-lever control).
+- **R1 (well-separated skills) = 🔴 RED** (frozen verbatim): A_ret=0.737 B_ret=0.977 (B−A=+0.240 <
+  the frozen 0.30 margin → c1 FAIL; c2/c3/c4 PASS). Root cause = the REGIME, not p8: high-dim spatial
+  separation let gradient-FT only forget SOME skills (diluted forgetting).
+- **R2 (a_break_the_wall; bars frozen anew SAME numbers, no goalpost move) = 🟢 GREEN** — canonical
+  catastrophic-forgetting regime (region separation 3.0→1.0 + anti-aligned shared rules so learning
+  skill k+1 un-learns skill k; mitosis arm B mechanically unchanged): A_ret=**0.553** B_ret=**0.922**
+  (B−A=**+0.368** ≥ 0.30, per-seed B>A every seed) → c1 PASS · B learns every new skill (min acq
+  0.880 ≥ 0.80) c2 PASS · shuffle collapses (0.397 ≤ 0.703) c3 PASS · ablate underfits (0.160 ≤ 0.50)
+  c4 PASS. **COST FAVORABLE**: B = 6.3 cells vs A = 52 params (retains MORE at LOWER footprint).
+- **Mechanism** — under real interference gradient-FT genuinely forgets (A_ret 0.737→0.553) while
+  mitosis stays high (0.922) because its per-skill cells are dedicated and never overwritten; controls
+  fire decisively (retention IS targeted dedicated-cell ownership + growth, not mere extra capacity).
+- **p8/p6 guard** — split = the model's own tick; trainer touches ONLY the per-skill prototype
+  population + local heads, NO global backprop / labels / persona / ethics; live CORE/*.hexa untouched.
+- **Scope (a_scale_honest_scope · a_toy_scale_recheck)** — DIRECTIONAL numpy mirror, engine-transfer +
+  scale UNVERIFIED; TOY (D=12, N=5, C=4, 3 seeds). FOLLOW-ONS (named, not claimed): (1) engine-native
+  per-skill mitosis-grow on live CORE VAdaptField/ImmuneMemoryGrow; (2) the real path the user asked
+  for — incrementally teach actual anima agent tool-use skills one-at-a-time via mitosis on the 303M.
+- Files: `UNIVERSE/h1300_mitosis_skill_curriculum.py` · `UNIVERSE/H_1300_mitosis_skill_curriculum.md` ·
+  `.verdicts/1300_mitosis_skill_curriculum/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C
+  h1300_mitosis_skill_curriculum · `UNIVERSE/HYPOTHESES.md` row · `domains/MITOSIS-ENGINE.log.md` @H.
+
+## 2026-06-16 — infra(CORPUS): $0 R2→trainer pipeline SMOKE (de-risk the cost-gated 7B GPU fire)
+
+Before any GPU spend, verified the **data → trainer plumbing** for
+`dancinlab/anima-corpus-5lang-7b-webscale` (143.60 GiB byte-corpus, R2-staged not HF-hosted) on a
+TINY slice, $0, local CPU, NO GPU rent. Creds read inline from the secret store (`r2.phanes.*`),
+header-only, NEVER hardcoded/logged (c7, grep-clean = 0 leakage).
+
+- **Step 1 — R2 reachable + manifest match ✅**: bucket `phanes` lists **20 shards + MANIFEST.json**;
+  live byte sum = R2-manifest per-shard sum = **154,187,454,007 B = 143.60 GiB**, matches the HF card
+  exactly (20 shards · per-lang en8/fr3/de3/es3/ko3 · 22.0 tok/param). R2 manifest is a lean schema
+  (`total_gb·shards·manifest[]`); the load-bearing per-shard `key/bytes/sha256` array matches HF.
+- **Step 2 — tiny-slice real byte text ✅**: partial Range GET of first 8 MB of the Korean shard
+  (`kor/shard0000.bytes`) — Hangul present, **control bytes 0xFE/0xFF absent** (V=256 confirmed),
+  **PII markers `[EMAIL]`=212 `[PHONE]`=562** present as the card claims.
+- **Step 3 — trainer glue ✅**: byte tok (V=256) → batches → forward → **CE 5.5452→5.4406** → ckpt
+  written. Production `CLM/train/train_lane_p.py` **asserts CUDA** (GPU-only Lane-P) and forge `.hexa`
+  trainers require GPU — **neither CPU-smokeable** (torch not installed locally), so Step 3 ran a
+  clearly-LABELED numpy byte-LM **PROXY** that validates the R2→loader→loss→ckpt plumbing (NOT the
+  CLMConvMoE forward). Honest: the forge GPU forward path stays un-smoked here.
+- **Cost ESTIMATE** (6ND, 154.2B byte-tok, H100 BF16 989TF @ 40% MFU, $2–3.5/H100-hr, R2 egress free):
+  303M ≈ 24.6h/8×H100 ($394–689) · 1B ≈ 3.4d ($1.3–2.3k) · 3B ≈ 10.1d ($3.9–6.8k) · 7B ≈ 23.7d ($9–16k).
+- **GREEN-LIGHT: YES** — plumbing ready for a cost-gated GPU fire; recommended first rung = **303M on the
+  real corpus** (cheapest real-corpus checkpoint, ~1 day/8×H100; doubles as first end-to-end GPU-path test).
+- NEW: `scripts/scratch/corpus_train_smoke.py` (reusable smoke) · `scripts/scratch/corpus_train_smoke.md` (findings).
+
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 R3 sharp KO+EN byte-text target — 🟢 GREEN (c2 discriminator FIRED)
+
+R3 = the **a_break_the_wall** follow-on the R2 card named: a SHARPER error-concentration target so the
+**c2 targeting-discriminator FIRES** (it could not on the R1/R2 smooth 1-D target). Language/byte-text IS
+such a target — error concentrates at syllable/word boundaries while mid-multibyte UTF-8 continuation runs
+are near-deterministic. Task = **next-byte prediction on a real KOREAN+English UTF-8 byte corpus (V256)**,
+a direct step toward training Korean. SAME 4 arms, R2 hard-partition mitosis mechanism ported to
+classification (Voronoi nearest-centroid ownership + per-cell empirical next-byte frequency head [closed-form
+add-1 MLE, NO global backprop] + data-matched median split + centroid recenter). Metric = held-out next-byte
+CROSS-ENTROPY (convergence comparison, NOT perplexity-as-meaning, p7). $0 CPU numpy DIRECTIONAL mirror,
+3 seeds, frozen-first (`H_1297_R3_sharp_target.txt`, bars set before any score; c9 no tune-to-green).
+
+- **R3 result** (3-seed mean, all seeds stable): A(grad)ce=2.9170 [acc 0.202] · B(mitosis)ce=3.0777
+  [acc 0.206, 6 cells] · B-shuffle=3.3054 · B-ablate=3.4981.
+  - **(c1) PASS** — mitosis MATCHES gradient (3.0777 ≤ A+0.20=3.1170) at LOWER footprint (6 cells vs A's 1024 params).
+  - **(c2) FIRED** — B-shuffle 3.3054 ≥ B+0.10=3.1777: error-TARGETED split demonstrably beats random split.
+    **The discriminator R1 AND R2 could not fire FIRED here** — on a sharp target, error-targeting is the lever.
+  - **(c3) PASS** — B-ablate underfits (3.4981 ≥ B+0.10).
+- **Verdict**: terminal **🟢 GREEN** — gradient-free mitosis-grow matches gradient AND error-targeting
+  demonstrably helps on language-like byte data. p8-literal toehold CONFIRMED on a real KO+EN byte corpus;
+  the R1/R2 WALL was the SMOOTH target, not p8 (exactly as the R2 follow-on predicted). NOT engine-verified /
+  production (DIRECTIONAL mirror, engine-transfer + scale UNVERIFIED). GREEN-gated follow-ons: (1) engine-native
+  realization on live CORE VAdaptField (a_engine_native_learning + a_verified_must_wire); (2) a real (larger,
+  cost-gated) Korean byte-corpus mitosis-grow rung = first p8-literal LANGUAGE training.
+- NEW: `UNIVERSE/h1297_r2_sharp_target.py` · `.verdicts/1297_mitosis_native_train/H_1297_R3_sharp_target.txt`
+  (FREEZE + verbatim) · updated `H_1297_mitosis_native_train.md` card (terminal 🟢 GREEN @R3) · `HYPOTHESES.md`
+  row · `CLAIMS.tape` @C · `domains/MITOSIS-ENGINE.log.md` @H. Live CORE/*.hexa UNTOUCHED (mirror only).
+>>>>>>> origin/main
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 mitosis-native trunk training (make p8 literal) — 🧱 WALL with finding
 
 PHILOSOPHY **p8** ("training gradient + inference mitosis = one continuous cell-division") is today

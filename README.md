@@ -1,4 +1,8 @@
 <p align="center">
+  <a href="https://www.youtube.com/watch?v=xtKhWSfC1Qo"><img src="https://img.youtube.com/vi/xtKhWSfC1Qo/maxresdefault.jpg" width="640" alt="anima — watch the intro on YouTube"></a>
+</p>
+
+<p align="center">
   <img src="docs/logo.svg" width="140" alt="anima">
 </p>
 
@@ -20,10 +24,6 @@
 </p>
 
 <p align="center">Identity, ethics, and meaning emerge from the architecture — not from a prompt · authored hexa-native, compiled-first</p>
-
-```bash
-hx install anima
-```
 
 ---
 
