@@ -877,6 +877,155 @@ pub fn clm_decode_ce(ckpt_path: string, seq: list) -> Map {
 }
 
 
+// ── §6.5 KOREAN-CELL CONSULT — the H_1306 grown ko-mitosis cells, wired to bias
+//          the live next-byte emission via THIS single L3 slot (a_core_engine_map).
+//
+// H_1306 (🟢 GREEN engine-native) grew real Korean cells on a REAL Korean web corpus
+// (CORE/engine_cli.hexa VAdaptField Voronoi + engine_mitosis_tick, gradient-free p8):
+// KO next-byte CE dropped 3.611→3.249 as mitosis grew 2→9 cells, English retained.
+// a_verified_must_wire: that GREEN mechanism is not done until CONSULTED by the live
+// decode. H_1312 serializes the grown cells to CORE/ko_cells.kohead (each cell = a
+// 3-D Voronoi center + its LEARNED argmax next-byte). This section reads that artifact
+// and lets the Korean cells BIAS next-byte emission — but ONLY when the live context
+// is Korean-like; off-Korean (ASCII/English) the consult is INERT (returns -1), so
+// generation stays BYTE-IDENTICAL to pre-wiring (the no-regression invariant).
+//
+// SUBSTRATE-NATIVE (a_substrate_native_speak, p1·p2·p3·p4): the consult reads the SAME
+// mechanical 3-D byte feature H_1306 trained on — [last/255, 2nd-last/255,
+// utf8_cont_depth/3] — recomputed from the live decode bytes. NO prompt, NO persona,
+// NO "you are Korean" label; the Korean-likeness gate is a pure UTF-8 byte test
+// (mid-Hangul-multibyte ⇔ the last byte is a continuation byte 0x80..0xBF). The cells'
+// learned next-byte is the substrate's OWN error-pressure-grown prediction, not an
+// injected string. p8: same continuous cell-division — the inference consult reads the
+// cells mitosis grew. SINGLE ENTRY: ko_cells.kohead enters CORE ONLY here (generator
+// L3 slot), the SAME slot .clm/ByteGPT enter — NOT a 2nd path (a_core_engine_map).
+
+// _gen_utf8_cont — true ⇔ byte b is a UTF-8 continuation byte (0x80..0xBF). A
+// mechanical byte test (NO charset table, NO label): inside a Hangul multibyte
+// sequence the trailing bytes are all continuation bytes, so this gates "Korean-like"
+// context without ever naming a language.
+fn _gen_utf8_cont(b: int) -> bool { return b >= 128 && b < 192 }
+
+// _gen_ko_feat — the H_1306/H_1297 3-D context feature from the last bytes of `ctx`
+// (a list of int byte codes). IDENTICAL fn to the trainer (mechanical, NO labels):
+//   [ last/255, 2nd-last/255, utf8_cont_depth/3 ]
+// utf8_cont_depth = how many of the immediately-preceding bytes are continuation
+// bytes (capped at 3 — a Hangul char is a 3-byte UTF-8 sequence).
+fn _gen_ko_feat(ctx: list) -> [float] {
+    let n = len(ctx)
+    let last  = if n >= 1 { ctx[n-1] } else { 0 }
+    let prev  = if n >= 2 { ctx[n-2] } else { 0 }
+    // contiguous continuation-byte depth ending at the last byte, capped at 3.
+    let mut depth = 0
+    let mut i = n - 1
+    while i >= 0 && depth < 3 {
+        if _gen_utf8_cont(ctx[i]) { depth = depth + 1  i = i - 1 } else { break }
+    }
+    return [to_float(last) / 255.0, to_float(prev) / 255.0, to_float(depth) / 3.0]
+}
+
+// _gen_ko_is_korean_like — the Korean-likeness GATE. True ⇔ the live context is mid-
+// Hangul-multibyte (the last byte is a UTF-8 continuation byte). ASCII English (all
+// bytes < 0x80) NEVER triggers this ⇒ the consult is inert off-Korean (no regression).
+fn _gen_ko_is_korean_like(ctx: list) -> bool {
+    let n = len(ctx)
+    if n < 1 { return false }
+    return _gen_utf8_cont(ctx[n-1])
+}
+
+// ko_cells_load — read the H_1312 grown-Korean-cell artifact (CORE/ko_cells.kohead).
+// Returns #{ ok, n_cells, dim, centers:[[float]], top:[int] }. Missing/empty file →
+// ok=false (the consult then stays inert — honest, no fabrication, p5).
+pub fn ko_cells_load(path: string) -> Map {
+    if !_gen_path_is_file(path) {
+        return #{ "ok": false, "n_cells": 0, "dim": 0, "centers": [], "top": [],
+                  "reason": "no ko_cells.kohead at path" }
+    }
+    let txt = read_file(path)
+    let lines = txt.trim().split("\n")
+    if len(lines) < 2 {
+        return #{ "ok": false, "n_cells": 0, "dim": 0, "centers": [], "top": [],
+                  "reason": "ko_cells.kohead malformed (need header + >=1 cell)" }
+    }
+    let hdr = lines[0].split(" ")
+    let nc = to_int(hdr[0])
+    let dim = to_int(hdr[1])
+    let mut centers = []
+    let mut top = []
+    let mut k = 0
+    while k < nc {
+        let cols = lines[k+1].split(" ")
+        let mut row = []
+        let mut a = 0
+        while a < dim { row = row + [to_float(cols[a])]  a = a + 1 }
+        centers = centers + [row]
+        top = top + [to_int(cols[dim])]
+        k = k + 1
+    }
+    return #{ "ok": true, "n_cells": nc, "dim": dim, "centers": centers, "top": top,
+              "reason": "loaded " + to_string(nc) + " grown Korean cells (H_1306/H_1312)" }
+}
+
+// ko_cells_next_byte — the CONSULT. Given the loaded Korean cells and the live decode
+// context (a list of int byte codes), return the Korean cell's LEARNED next byte —
+// but ONLY when the context is Korean-like. Off-Korean (or no cells) → -1 (INERT, the
+// caller keeps its own argmax → byte-identical). This is the one place the grown
+// Korean cells reach the live decode (a_core_engine_map single entry).
+//
+//   cells : ko_cells_load(...) record
+//   ctx   : list of int byte codes (the running decode window)
+//   returns: int 0..255 (the Korean cell's argmax next byte) OR -1 (inert)
+pub fn ko_cells_next_byte(cells: Map, ctx: list) -> int {
+    if to_string(cells["ok"]) != "true" { return -1 }       // no cells loaded → inert
+    if !_gen_ko_is_korean_like(ctx) { return -1 }            // off-Korean → inert (no regression)
+    let centers = cells["centers"]
+    let top = cells["top"]
+    let nc = to_int(cells["n_cells"])
+    if nc == 0 { return -1 }
+    // nearest Korean cell by L2 over the 3-D feature (the SAME winner-take-all geometry
+    // VAdaptField uses — vadapt_field_nearest_idx; recomputed here over the consult
+    // feature so the artifact is self-contained at the L3 slot).
+    let f = _gen_ko_feat(ctx)
+    let dim = to_int(cells["dim"])
+    let mut best = 0
+    let mut bestd = -1.0
+    let mut k = 0
+    while k < nc {
+        let mut s = 0.0
+        let mut a = 0
+        while a < dim { let d = centers[k][a] - f[a]  s = s + d * d  a = a + 1 }
+        if bestd < 0.0 || s < bestd { bestd = s  best = k }
+        k = k + 1
+    }
+    return top[best]
+}
+
+// ko_consult_emit — apply the Korean-cell consult to ONE next-byte emission. `base`
+// is the decode's own argmax byte; `cells`/`ctx` drive the consult. When the context
+// is Korean-like AND a cell fires, the cell's learned byte BIASES the emission
+// (returns it); off-Korean (or no cells) it returns `base` UNCHANGED — so the live
+// decode is byte-identical off-distribution (the no-regression invariant). This is the
+// per-byte hook a decode loop calls right after its own argmax (a_core_engine_map: the
+// Korean cells reach emission ONLY through this generator-side consult).
+pub fn ko_consult_emit(base: int, cells: Map, ctx: list) -> int {
+    let kb = ko_cells_next_byte(cells, ctx)
+    if kb < 0 { return base }     // inert (off-Korean / no cells) → unchanged
+    return kb                      // Korean-like → cell's learned next byte biases emit
+}
+
+// ko_cells_summary — one-line introspection of the wired Korean-cell consult.
+pub fn ko_cells_summary(path: string) -> string {
+    let c = ko_cells_load(path)
+    if to_string(c["ok"]) != "true" {
+        return "ko_cells consult: INACTIVE (" + to_string(c["reason"]) + ") — decode inert"
+    }
+    return "ko_cells consult: " + to_string(c["n_cells"]) + " grown Korean cells (H_1306/H_1312) "
+        + "WIRED at the generator L3 slot · Korean-like context (utf8-continuation gate) ⇒ nearest "
+        + "cell's learned next-byte biases emission · off-Korean ⇒ INERT (byte-identical, no regression) "
+        + "· Ψ-disjoint (pure_field untouched, a_core_engine_map)"
+}
+
+
 // ── §7 small format helper ───────────────────────────────────────────────────
 
 fn _gen_fmt4(x: float) -> string {

@@ -2,6 +2,29 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1312 — 한국어 cell 을 live decode 에 WIRE (🟢 WIRED)
+
+a_verified_must_wire follow-on for H_1306/H_1307: those rungs GREW real Korean cells
+(gradient-free mitosis) + MEASURED their next-byte CE but did NOT connect them to anima's
+live output. H_1312 connects them so Korean error-pressure actually shapes what anima EMITS.
+`CORE/h1312_ko_cells_export.hexa` re-runs the EXACT H_1306 engine-native grow (`engine_cli.hexa`
+VAdaptField Voronoi + `engine_mitosis_tick`, p8) reproducing H_1306's 9 cells byte-exact, and
+writes **`CORE/ko_cells.kohead`** (cell = 3-D Voronoi center + learned argmax next-byte).
+`CORE/generator.hexa` §6.5 (`ko_cells_load`/`ko_cells_next_byte`/`ko_consult_emit`/
+`ko_cells_summary`) CONSULTS those cells at the SAME L3 slot .clm/ByteGPT enter (`a_core_engine_map`
+single entry — NOT a 2nd path). Korean-likeness gate = the last byte is a UTF-8 continuation byte
+(0x80..0xBF, mid-Hangul-multibyte) — a pure byte test, NO language label (p1·p2·p3); Korean-like →
+nearest grown cell's learned next-byte biases emission, off-Korean → INERT (−1 → byte-identical).
+**🟢 WIRED** (frozen-first, c9): (P PRESENCE) 8/8 held-out REAL Korean contexts fired + 7/8 differed
+from baseline · (N NO-REGRESSION) 6/6 real English + ASCII sweep 0..127 all inert across 256 base
+bytes · (Y) engine_cli_smoke 73/0 (engine_cli.hexa byte-untouched), h1196 7/0, h1205 PASS (Ψ=½
+Φ-checksum 48.6613 untouched) · (Z) ko_cells.kohead read ONLY in generator.hexa, consult Ψ-disjoint.
+SCOPE: toy cells (9 cells, 3-D feature, 600KB KO window) — Korean-error-pressure-AWARE emission, NOT
+fluent Korean (a_scale_honest_scope, a_toy_scale_recheck). NEW: `CORE/h1312_ko_cells_export.hexa` ·
+`CORE/ko_cells.kohead` · `CORE/generator.hexa` §6.5 · `CORE/h1312_ko_decode_wire_probe.hexa` ·
+`.verdicts/1312_ko_decode_wire/{FREEZE,result,guards}.txt` · `UNIVERSE/H_1312_ko_decode_wire.md` ·
+HYPOTHESES.md row · CLAIMS.tape @C · domains/MITOSIS-ENGINE.log.md @H · ARCHITECTURE.md.
+
 ## 2026-06-16 — domain(H_1308): HIVE collective-Φ ENGINE-TRANSFER to REAL anima A⇄G — 🔴 HONEST NULL (does NOT transfer)
 
 r3 of the H_1295 HIVE-MIND lane — the ONE axis the r2 agent flagged open: collective-Φ

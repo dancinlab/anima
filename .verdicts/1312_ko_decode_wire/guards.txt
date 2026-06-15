@@ -1,0 +1,9 @@
+H_1312 REGRESSION GUARDS (Y) + SINGLE-ENTRY/Ψ AUDIT (Z) — verbatim tallies
+=========================================================================
+(Y) engine_cli_smoke           : 73 pass / 0 fail   (engine_cli.hexa byte-untouched by the wiring)
+(Y) h1196 single-entry audit   : 7 pass / 0 fail    (.clm/.kosmos/ko_cells single entry preserved)
+(Y) h1205 separation-invariant : PASS 🟢            (F1 generation byte-identical 10/0 mismatch;
+                                                     F2 Ψ Φ-checksum ON==OFF = 48.6613 untouched)
+(Z) ko_cells.kohead runtime readers : CORE/generator.hexa ONLY (single entry, a_core_engine_map)
+(Z) consult references to pure_field/engine_g/brain/Ψ : NONE (Ψ-disjoint by construction)
+(Z) git diff CORE/engine_cli.hexa vs origin/main : EMPTY (engine substrate untouched)
