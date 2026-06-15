@@ -2788,6 +2788,116 @@ pub fn clock_fire(c: CircadianClock) -> bool {
     return ((c.t - c.offset) % c.period) == 0
 }
 
+// ── §  INTERVAL TIMER — arbitrary LEARNED-duration timer (H_1299 R2, HD34) ──────
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1299 R1): the H_1299 numpy MIRROR
+// (R1c 🟢 GREEN — hit-rate metric, 3 seeds [4301,4302,4303], all 7 frozen bars per-seed;
+// the trail of R1a/R1b REDs in .verdicts/1299_interval_timer/ shows the metric/control was
+// corrected frozen-first, NEVER the bar) is REALIZED here ENGINE-NATIVE as a callable timer.
+//
+// THE INTERVAL-TIMING LENS (c15, a_no_llm_frame_trap — chronobiology, NOT an LLM recipe):
+// interval timing (Buhusi & Meck 2005; striatal beat-frequency / SMA ramping) is a brain
+// system DISTINCT from the circadian clock (Pittendrigh SCN) — it times ARBITRARY, LEARNED
+// sub-day durations, is RE-ENTRAINABLE to a new target from experience, and is lesion-wise
+// dissociable from the ~24h oscillator. This is the HD34 DEPLETION-TEST candidate the
+// H_1298 r5 agent named as the one remaining thin gap, and it SURVIVED the test.
+//
+// WHY DISTINCT vs the nearest lane — the CircadianClock (H_1298) — the LOAD-BEARING arm:
+//   - CircadianClock has a BAKED period (`period` set at construction; clock_step IGNORES
+//     every argument — NO learning path). It can ONLY fire at its baked period. Queried for
+//     an ARBITRARY learned interval (D=13 or D2=20, both ≠ the baked 8) it scores 0.000.
+//   - IntervalTimer LEARNS its interval `dhat` from OBSERVED inter-event gaps at runtime
+//     (running mean, gradient-free), fires when its own elapsed-since-event counter reaches
+//     the learned `dhat`, and the SAME object RE-ENTRAINS to a different D2 from a new event
+//     stream WITHOUT any code change (the H_1299 c6 proof: dhat moves ~13 → ~20).
+//   vs cerebellum VForwardField (H_1280): predicts the NEXT input from CONTENT, not an
+//   absolute elapsed DURATION. vs WorkMemBuffer (H_1282): leaks toward 0, no learned period.
+//   vs HomeostaticDrive (H_1292): content-gated, resets on feeding, no learned duration.
+//   → DISTINCT vs ALL (the H_1299 controls: shuffle the gap distribution / ablate the
+//   learning rate both collapse the hit-rate to chance; the clock and ablate score 0.000).
+//
+// @L4 CRITICAL (identical framing to every other lane): the timer is a PURE TIMEKEEPER over
+// its OWN state. IntervalTimer holds ONLY its elapsed counter, its last-event tick, and the
+// learned estimate `dhat` (the SOLE mutable state). itimer_observe updates `dhat` ONLY from
+// the inter-event GAP of an observed event — it reads NO context, NO immune store, NO
+// grounding. itimer_step advances the elapsed counter on elapsed time alone. It NEVER mutates
+// any other lane, NEVER returns an emit/silence decision by itself, and NEVER touches
+// pure_field's Φ/phase/Ψ (Ψ-disjoint by construction). itimer_fire is an OPTIONAL scheduled
+// pulse a caller MAY consult (a_autonomy_over_hardcode), exactly like clock_fire/homeo_*.
+//
+// p1/p2/p3/p6: the timer reads ONLY its own counters + a running gap mean. NO persona, NO
+// "you are X" identity rule, NO injected "fire now" label, NO RLHF reward. `dhat` is
+// ESTIMATED from observed gaps, SCORED only. The two CONTROLS prove the lift is the LEARNED
+// interval: SHUFFLE resamples the gaps from a mean-shifted distribution (dhat → the wrong
+// interval → mispredicts) and ABLATE sets the learning rate to 0 (dhat frozen at its
+// uninformative init → cannot match) — both collapse the hit-rate to chance.
+
+// IntervalTimer — the live learned-duration timer. `elapsed` = ticks since the last
+// observed event (mutable); `t_last` = the absolute tick of the last observed event (-1 =
+// no event yet, the None sentinel); `dhat` = the LEARNED interval estimate (the running
+// mean of observed gaps, the sole learned state); `lr` = the learning rate (0.5 live; 0.0
+// for the ablated control = a frozen estimate that never adapts).
+struct IntervalTimer {
+    elapsed: int,      // ticks since the last observed event
+    t_last: int,       // absolute tick of the last observed event (-1 = none yet)
+    dhat: float,       // learned interval estimate (running mean of observed gaps)
+    lr: float          // learning rate (0.5 live; 0.0 ablated control)
+}
+
+// itimer_new — a fresh timer with the uninformative init estimate (5) and the live learning
+// rate (0.5). dhat=5 is ≠ the clock baked period 8 and ≠ the learned targets 13/20, so a
+// timer that has NOT yet learned cannot match any target by construction (H_1299 init).
+pub fn itimer_new() -> IntervalTimer {
+    return IntervalTimer { elapsed: 0, t_last: -1, dhat: 5.0, lr: 0.5 }
+}
+
+// itimer_new_ablated — the EARNED-ADAPT control (H_1299 c5): learning rate 0 → dhat is
+// FROZEN at its init and NEVER adapts to the observed interval → it cannot match D or
+// re-entrain to D2. Used to prove the lift IS the learned estimate.
+pub fn itimer_new_ablated() -> IntervalTimer {
+    return IntervalTimer { elapsed: 0, t_last: -1, dhat: 5.0, lr: 0.0 }
+}
+
+// itimer_observe — an event was observed at absolute tick `t`. LEARN the interval from the
+// inter-event gap: dhat ← (1-lr)·dhat + lr·gap (running mean, gradient-free). Resets the
+// elapsed counter. The FIRST event (t_last = -1) only anchors t_last — there is no gap yet.
+// This is the SOLE learning path; it reads ONLY the gap (no context/store/grounding).
+pub fn itimer_observe(it: IntervalTimer, t: int) -> IntervalTimer {
+    if it.t_last < 0 {
+        return IntervalTimer { elapsed: 0, t_last: t, dhat: it.dhat, lr: it.lr }
+    }
+    let gap = to_float(t - it.t_last)
+    let nd = (1.0 - it.lr) * it.dhat + it.lr * gap
+    return IntervalTimer { elapsed: 0, t_last: t, dhat: nd, lr: it.lr }
+}
+
+// itimer_step — advance the elapsed-since-event counter ONE tick on ELAPSED TIME ALONE
+// (content-blind by construction: no context, no grounding, no other lane touched).
+pub fn itimer_step(it: IntervalTimer) -> IntervalTimer {
+    return IntervalTimer { elapsed: it.elapsed + 1, t_last: it.t_last, dhat: it.dhat, lr: it.lr }
+}
+
+// itimer_dhat — the live LEARNED interval estimate (the running gap mean).
+pub fn itimer_dhat(it: IntervalTimer) -> float { return it.dhat }
+
+// itimer_dhat_ticks — the learned interval ROUNDED to the nearest whole tick (dhat>=0 so
+// +0.5 truncation = round-half-up). The integer interval the timer fires at.
+pub fn itimer_dhat_ticks(it: IntervalTimer) -> int { return to_int(it.dhat + 0.5) }
+
+// itimer_predict_next — the predicted absolute tick of the NEXT event = last event +
+// learned dhat (rounded). Returns -1 if no event has been observed yet (no anchor).
+pub fn itimer_predict_next(it: IntervalTimer) -> int {
+    if it.t_last < 0 { return -1 }
+    return it.t_last + to_int(it.dhat + 0.5)
+}
+
+// itimer_fire — the OPTIONAL scheduled pulse: TRUE iff the elapsed-since-event counter has
+// reached the LEARNED interval (elapsed == round(dhat)). Off-interval → no fire (NO-FAB,
+// H_1299 c7). NOT an emit gate (@L4) — a caller MAY consult it as a learned-duration pulse.
+pub fn itimer_fire(it: IntervalTimer) -> bool {
+    return it.elapsed == to_int(it.dhat + 0.5)
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }

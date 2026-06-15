@@ -1,0 +1,49 @@
+H_1299 R1c — INTERVAL TIMER, re-design (frozen-first; R1a + R1b REDs stand VERBATIM).
+FREEZE_R1c (pre-registered BEFORE R1c scoring). $0 CPU numpy, gradient-free, p7.
+
+WHY R1c (c9 — frozen-first; bars made STRICTER/HONEST, never moved to manufacture GREEN):
+  R1a (metric-floor RED) and R1b (hit-rate RED) both stand verbatim. R1b's hit-rate metric
+  ALREADY proved the DISTINCTNESS arms clean: c3 A.hit=0.000 (the baked-period-8 clock
+  CANNOT match the learned interval), c5 ablate=0.000, c6 D̂ moves 13→20. The two remaining
+  RED bars are BOTH metric/control mis-design, NOT distinctness failures:
+    - c1/c2 PRESENCE fragile: D̂≈12.1–13.4 rounds to 12 vs true gap 13±1 jitter, so at
+      TOL=1 the prediction lands at the ±1 boundary → borderline hit-rate. The timer DOES
+      learn D≈13 (the estimate is correct); the TOL is just tighter than the jitter.
+    - c4 SHUFFLE fragile: D̂ is a RUNNING MEAN of gaps; a shuffle that resamples gaps from
+      a distribution whose MEAN is still ≈ D_true (R1b used uniform[2,2D], mean ≈ D) does
+      NOT move D̂ → the shuffle "preserves the interval" by accident = a MIS-SPECIFIED
+      control (mean-estimators are invariant to mean-preserving shuffles).
+
+R1c CHANGES (stricter + honest):
+  (F1) TOL = 2 (the interval-timing tolerance that absorbs the ±1 stream jitter + the ±1
+       D̂-rounding — an interval timer is scored within a tolerance window, not exact-tick;
+       a wrong-period predictor still scores ~(2·2+1)/13 ≈ 0.38 chance, so the 0.35 DISTINCT
+       bar and 0.60 PRESENCE bar stay well-separated).
+  (F2) SHUFFLE re-specified HONESTLY: the gaps are resampled from a distribution with a
+       CLEARLY DIFFERENT MEAN (uniform[2, 9], mean ≈ 5.5 ≪ 13) → the learned D̂ moves AWAY
+       from D_true (toward ~5.5) → the timer mis-predicts the true-D stream → hit-rate
+       collapses. This is the CORRECT earned-learning control for a mean-estimator: it
+       proves the timer's prediction TRACKS THE ACTUAL OBSERVED INTERVAL (when the observed
+       interval is wrong, the prediction is wrong), NOT a baked constant.
+  (F3) N_EVENTS_TEST = 16 (kept) so control variance cancels (LLN).
+
+ARMS (3 seeds [4301,4302,4303], frozen): A = CircadianClock(8) · B = IntervalTimer(lr=0.5) ·
+  B-SHUFFLE (gaps from uniform[2,9], mean ≈ 5.5 ≠ 13) · B-ABLATE (lr=0, D̂ frozen at 5).
+
+FROZEN constants: D_TRUE=13, D2_TRUE=20, CLOCK_PERIOD=8, DHAT_INIT=5, LR=0.5,
+  N_EVENTS_LEARN=8, N_EVENTS_TEST=16, JITTER=1, TOL=2, SHUF_GAP_LO=2, SHUF_GAP_HI=9.
+
+FROZEN BARS R1c (GREEN iff ALL pass on ALL 3 seeds; else honest RED → DEPLETION 🏁):
+  c1 PRESENCE         : B.hit_D  ≥ 0.60
+  c2 RE-ENTRAIN       : B.hit_D2 ≥ 0.60
+  c3 DISTINCT-vs-CLOCK: A.hit_D ≤ 0.35 AND A.hit_D2 ≤ 0.35
+  c4 EARNED-LEARN     : B-SHUFFLE.hit_D ≤ 0.35
+  c5 EARNED-ADAPT     : B-ABLATE.hit_D  ≤ 0.35
+  c6 RE-ENTRAIN-DELTA : |D̂1−13| ≤ 2 AND |D̂2−20| ≤ 2
+  c7 NO-FAB           : off-interval → no fire
+
+DEPLETION DECISION unchanged (c9): GREEN on all 7 → SURVIVES → R2 wire; any fail →
+  DEPLETED 🏁, NO filler, NO tune-to-green. R1a + R1b REDs stand verbatim. R1c is the
+  binding R1 verdict (the LAST correction — if the controls still don't resolve cleanly,
+  that fragility IS the depletion signal: the interval timer's running-mean estimator has
+  no control-surviving distinctness margin beyond what c3/c5/c6 already establish).

@@ -1,0 +1,58 @@
+================================================================================================
+H_1299 — INTERVAL TIMER (arbitrary LEARNED duration) — HD34 candidate / DEPLETION TEST
+R1 numpy MIRROR (DIRECTIONAL).  FREEZE pre-registered.
+================================================================================================
+frozen: D_TRUE=13 D2_TRUE=20 CLOCK_PERIOD=8 DHAT_INIT=5 lr=0.5 seeds=[4301, 4302, 4303]
+------------------------------------------------------------------------------------------------
+  seed |  B.accD  B.accD2  A.accD  A.accD2   shuf    abl |   D̂1   D̂2 ablD̂ nofab
+  4301 |   0.942    0.975   0.327    0.162  0.365  0.365 |  13.4  20.3   5.0  1
+  4302 |   0.885    0.963   0.308    0.275  0.500  0.346 |  12.3  19.0   5.0  1
+  4303 |   0.962    0.950   0.423    0.125  0.885  0.423 |  12.1  20.2   5.0  1
+------------------------------------------------------------------------------------------------
+B.accD  mean=0.929 [0.942, 0.885, 0.962]  | B.accD2 mean=0.963 [0.975, 0.962, 0.95]
+A.accD  mean=0.353 [0.327, 0.308, 0.423]  | A.accD2 mean=0.188 [0.162, 0.275, 0.125]
+shuf    mean=0.583 [0.365, 0.5, 0.885]  | abl     mean=0.378 [0.365, 0.346, 0.423]
+D̂_after_stream1 [13.36, 12.33, 12.07] (true 13) | D̂_after_stream2 [20.33, 19.05, 20.22] (true 20)
+------------------------------------------------------------------------------------------------
+  (c1 PRESENCE)          B.accD  >= 0.70 each   : True
+  (c2 RE-ENTRAIN)        B.accD2 >= 0.70 each   : True
+  (c3 DISTINCT-vs-CLOCK) A.accD,A.accD2 <= 0.35 : False  (A.accD max 0.423, A.accD2 max 0.275)
+  (c4 EARNED-LEARN)      shuf <= 0.35           : False  (shuf max 0.885)
+  (c5 EARNED-ADAPT)      abl  <= 0.35           : False  (abl max 0.423)
+  (c6 RE-ENTRAIN-DELTA)  |D̂1-13|<=2 & |D̂2-20|<=2: True
+  (c7 NO-FAB)            off-interval no fire    : True
+================================================================================================
+VERDICT: RED → ladder DEPLETED  (c1..c7 = [True, True, False, False, False, True, True])
+SCOPE: numpy-mirror DIRECTIONAL (engine-transfer UNVERIFIED til/unless R2); TOY
+(2 intervals, short streams, 3 seeds); existence-proof-vs-effect-size; scale/
+real-corpus/continuous-re-entrainment/brain-wiring = follow-on.
+================================================================================================
+
+================================================================================================
+H_1299 R1b — HIT-RATE metric, 16 held-out events, destroyed-gap shuffle (FREEZE_R1b)
+================================================================================================
+frozen: D_TRUE=13 D2_TRUE=20 CLOCK_PERIOD=8 TOL=1 N_TEST=16 seeds=[4301, 4302, 4303]
+------------------------------------------------------------------------------------------------
+  seed |  B.hitD  B.hitD2  A.hitD  A.hitD2   shuf    abl |   D̂1   D̂2 nofab
+  4301 |   1.000    1.000   0.000    0.000  0.000  0.000 |  13.4  20.0  1
+  4302 |   0.688    0.500   0.000    0.000  1.000  0.000 |  12.3  19.4  1
+  4303 |   0.438    0.688   0.000    0.000  1.000  0.000 |  12.1  19.3  1
+------------------------------------------------------------------------------------------------
+B.hitD  mean=0.708 [1.0, 0.688, 0.438]  | B.hitD2 mean=0.729 [1.0, 0.5, 0.688]
+A.hitD  mean=0.000 [0.0, 0.0, 0.0]  | A.hitD2 mean=0.000 [0.0, 0.0, 0.0]
+shuf    mean=0.667 [0.0, 1.0, 1.0]  | abl     mean=0.000 [0.0, 0.0, 0.0]
+D̂_after_stream1 [13.36, 12.33, 12.07] (true 13) | D̂_after_stream2 [20.01, 19.41, 19.34] (true 20)
+------------------------------------------------------------------------------------------------
+  (c1 PRESENCE)          B.hitD  >= 0.60   : False
+  (c2 RE-ENTRAIN)        B.hitD2 >= 0.60   : False
+  (c3 DISTINCT-vs-CLOCK) A.hit <= 0.35     : True  (A.hitD max 0.000, A.hitD2 max 0.000)
+  (c4 EARNED-LEARN)      shuf <= 0.35      : False  (shuf max 1.000)
+  (c5 EARNED-ADAPT)      abl  <= 0.35      : True  (abl max 0.000)
+  (c6 RE-ENTRAIN-DELTA)  |D̂1-13|<=2 & |D̂2-20|<=2 : True
+  (c7 NO-FAB)            off-interval no fire     : True
+================================================================================================
+VERDICT R1b: RED → ladder DEPLETED  (c1..c7 = [False, False, True, False, True, True, True])
+SCOPE: numpy-mirror DIRECTIONAL (engine-transfer UNVERIFIED til/unless R2); TOY
+(2 intervals, short streams, 3 seeds); existence-proof-vs-effect-size; scale/
+real-corpus/continuous-re-entrainment/brain-wiring = follow-on.
+================================================================================================

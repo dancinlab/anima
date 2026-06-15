@@ -1,0 +1,51 @@
+H_1299 — INTERVAL TIMER (HD34) — BINDING VERDICT (R1c GREEN + R2 engine-native WIRED)
+================================================================================
+
+R1 numpy mirror (DIRECTIONAL) — binding path R1c (R1a metric-floor RED + R1b
+mean-preserving-shuffle-leak RED stand verbatim in H_1299_R1*.txt; bars NEVER moved, c9):
+
+H_1299 R1c — TOL=2 + mean-shifted shuffle (FREEZE_R1c) = BINDING R1 VERDICT
+================================================================================================
+frozen: D_TRUE=13 D2_TRUE=20 CLOCK_PERIOD=8 TOL=2 shuf~U[2,9] seeds=[4301, 4302, 4303]
+------------------------------------------------------------------------------------------------
+  seed |  B.hitD  B.hitD2  A.hitD  A.hitD2   shuf    abl |   D̂1   D̂2  shD̂ nofab
+  4301 |   1.000    1.000   0.000    0.000  0.000  0.000 |  13.4  20.0   4.4  1
+  4302 |   1.000    1.000   0.000    0.000  0.000  0.000 |  12.3  19.4   5.0  1
+  4303 |   1.000    1.000   0.000    0.000  0.000  0.000 |  12.1  19.3   5.2  1
+------------------------------------------------------------------------------------------------
+B.hitD  mean=1.000 [1.0, 1.0, 1.0]  | B.hitD2 mean=1.000 [1.0, 1.0, 1.0]
+A.hitD  mean=0.000 [0.0, 0.0, 0.0]  | A.hitD2 mean=0.000 [0.0, 0.0, 0.0]
+shuf    mean=0.000 [0.0, 0.0, 0.0]  | abl     mean=0.000 [0.0, 0.0, 0.0]
+D̂_after_stream1 [13.36, 12.33, 12.07] (true 13) | D̂_after_stream2 [20.01, 19.41, 19.34] (true 20)
+------------------------------------------------------------------------------------------------
+  (c1 PRESENCE)          B.hitD  >= 0.60   : True
+  (c2 RE-ENTRAIN)        B.hitD2 >= 0.60   : True
+  (c3 DISTINCT-vs-CLOCK) A.hit <= 0.35     : True  (A.hitD max 0.000, A.hitD2 max 0.000)
+  (c4 EARNED-LEARN)      shuf <= 0.35      : True  (shuf max 0.000)
+  (c5 EARNED-ADAPT)      abl  <= 0.35      : True  (abl max 0.000)
+  (c6 RE-ENTRAIN-DELTA)  |D̂1-13|<=2 & |D̂2-20|<=2 : True
+  (c7 NO-FAB)            off-interval no fire     : True
+================================================================================================
+VERDICT R1c: GREEN — interval timer SURVIVES depletion test  (c1..c7 = [True, True, True, True, True, True, True])
+
+
+================================================================================
+R2 ENGINE-NATIVE WIRED — live CORE/engine_cli.hexa § IntervalTimer:
+  itimer_new / itimer_new_ablated / itimer_observe / itimer_step / itimer_dhat /
+  itimer_dhat_ticks / itimer_predict_next / itimer_fire
+
+REGRESSION GUARDS (no-regression):
+  engine_cli_smoke: --- engine_cli smoke summary: 60 pass / 0 fail ---
+    (+5 IntervalTimer cases 54-58: learns-interval / re-entrain / distinct-vs-clock /
+     ablate-frozen / no-fab; baseline was 55/0)
+  h1196: --- single-entry audit summary: 7 pass / 0 fail ---
+  h1205: h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. 
+
+VERDICT: 🟢 GREEN ENGINE-NATIVE + WIRED. The interval timer SURVIVES the depletion test —
+control-surviving distinctness vs CircadianClock (A=0.000 on both learned intervals) +
+cerebellum (content vs duration) + WM (leak vs learned period). The SAME object re-entrains
+13->20 (c6) which the fixed-period clock cannot. HD34 lands; ladder NOT yet depleted.
+SCOPE: numpy-mirror DIRECTIONAL (R2 byte-exact reconfirm); TOY (2 intervals, 3 seeds,
+deterministic running-mean — tests TIMING STRUCTURE not a learned net); B.hit=1.000 is an
+EXISTENCE-PROOF (the discriminators A=0/shuffle=0/ablate=0 carry the verdict); scale/
+real-corpus/continuous-re-entrainment/brain-scheduler-wiring = follow-on.

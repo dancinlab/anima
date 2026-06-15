@@ -1,0 +1,46 @@
+H_1299 R1b — INTERVAL TIMER, re-design (frozen-first; the R1a RED stands VERBATIM).
+FREEZE_R1b (pre-registered BEFORE R1b scoring). $0 CPU numpy, gradient-free, p7.
+
+WHY R1b (c9 — frozen-first, the bars are made STRICTER, never moved):
+  R1a (H_1299_R1a_mirror.txt) is a verbatim RED. Its PRESENCE + RE-ENTRAIN arms passed
+  decisively (B.accD=0.929, B.accD2=0.963, D̂ moved 13→20, c1/c2/c6 PASS) — the timer DOES
+  what the clock cannot. The RED was on the CONTROL bars c3/c4/c5, and the cause is a
+  MIS-SPECIFIED METRIC, not a genuine distinctness failure:
+    - the R1a accuracy max(0, 1 − err/D) gives a WRONG-PERIOD predictor a nonzero residual
+      (~0.3–0.4) because the held-out window is SHORT (4 events) and a wrong prediction can
+      land within D of truth by luck → the chance floor is ~0.35, exactly the bar.
+    - the R1a SHUFFLE control was built from only 7 scrambled gaps → on seed 4303 the
+      scrambled mean gap happened to land near the true interval (shuf=0.885) = small-k
+      sampling variance, NOT structure (identical failure mode to H_1298 R1c small-k shuffle).
+  Both are METRIC/CONTROL mis-design (the same class H_1298 corrected R1a→R1d), NOT a
+  distinctness failure. R1b corrects them, making the test STRICTER:
+
+R1b CHANGES (stricter):
+  (F1) METRIC = HIT-RATE within ±TOL of the true next event over MANY held-out events.
+       A predictor that fires at the wrong interval has hit-rate → ~ (2·TOL+1)/D ≈ chance
+       (≈0.21 for D=13, TOL=1) BY CONSTRUCTION — a true ~0 floor, no luck residual.
+  (F2) LONGER streams: N_EVENTS_TEST = 16 held-out events (was 4) so control variance
+       cancels by the law of large numbers (the H_1298 R1d small-k fix).
+  (F3) SHUFFLE re-built honestly: D̂ is learned from a stream whose inter-event GAPS are
+       independently resampled from a WIDE uniform [2, 2·D] (the gap distribution destroyed)
+       → learned D̂ decorrelated from the true interval → hit-rate collapses to chance.
+
+ARMS (3 seeds [4301,4302,4303], frozen — same as R1a):
+  A = CircadianClock (baked period 8) · B = IntervalTimer (learns D̂, lr=0.5) ·
+  B-SHUFFLE (gap distribution destroyed) · B-ABLATE (lr=0, D̂ frozen at init 5).
+
+FROZEN constants: D_TRUE=13, D2_TRUE=20, CLOCK_PERIOD=8, DHAT_INIT=5, LR=0.5,
+  N_EVENTS_LEARN=8, N_EVENTS_TEST=16, JITTER=1, TOL=1.
+
+FROZEN BARS R1b (GREEN iff ALL pass on ALL 3 seeds; else honest RED → DEPLETION 🏁):
+  c1 PRESENCE         : B.hit_D  ≥ 0.60  (B times the LEARNED interval D=13)
+  c2 RE-ENTRAIN       : B.hit_D2 ≥ 0.60  (the SAME object re-learns D2=20, no code change)
+  c3 DISTINCT-vs-CLOCK: A.hit_D ≤ 0.35 AND A.hit_D2 ≤ 0.35 (baked-period-8 clock cannot
+                        match the arbitrary learned intervals 13 or 20)
+  c4 EARNED-LEARN     : B-SHUFFLE.hit_D ≤ 0.35 (gap distribution destroyed → collapse)
+  c5 EARNED-ADAPT     : B-ABLATE.hit_D  ≤ 0.35 (lr=0 → D̂ frozen → cannot match)
+  c6 RE-ENTRAIN-DELTA : |D̂1−13| ≤ 2 AND |D̂2−20| ≤ 2 (same object's estimate moves 13→20)
+  c7 NO-FAB           : off-interval → no fire (the timer fires only at elapsed == D̂)
+
+DEPLETION DECISION unchanged from FREEZE (c9): GREEN on all 7 → SURVIVES → R2 wire;
+  any fail → DEPLETED 🏁, NO filler, NO tune-to-green. The R1a RED stands verbatim.
