@@ -1,0 +1,165 @@
+H_1283 R5 — THALAMUS / DENSE ALL-PAIRS RECURRENT COUPLING
+slug: 1283_thalamus_global_workspace  (R5 — append-only; does NOT overwrite R1/R2/R3/R4)
+date: 2026-06-16
+verdict: 🔴 RED / 🧱 STILL WALL — dense all-pairs coupling does NOT robustly clear
+         the Φ bar (seed 8 +0.0060 < +0.02, WORSE than the sparse relay's +0.0101)
+         AND the pre-registered SHUFFLE CONTROL FIRED: a permuted dense graph
+         reproduces ~91%/~76% of the lift on the 2 "passing" seeds → the lift is
+         mostly added-edge VARIANCE, not the structured all-pairs topology. NO
+         engine-native wiring (RED ⇒ no wire, a_verified_must_wire fires on GREEN
+         only). Bars NOT moved (frozen-first, c9, p7).
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa)
+seeds: [7, 8, 9]  ·  modules=4 {A, G, mitosis, memory}  ·  dim=8  ·  ticks=64  ·  W_relay=W_dense=0.5
+frozen-first: H_1283_R5_FREEZE.txt committed (cfe8b2e29) BEFORE scoring; bars NOT moved.
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+
+════════════════════════════════════════════════════════════════════════
+THE NEW ANGLE R5 TESTED (a_break_the_wall — a genuine new mechanism, not a re-run)
+════════════════════════════════════════════════════════════════════════
+The arc to date (relay-topology Φ axis):
+  R1 broadcast hub (single winner)    : faithful ΔΦ +0.0191  (sub-bar by 0.0009)  🟠
+  R2 coalition hub (rank-2)           : faithful ΔΦ −0.0533  (WRONG direction)    🔴
+  R3 re-entrant loop (sparse, seed 7) : faithful ΔΦ +0.1426  (cleared, coh bar)   🔴
+  R4 re-entrant loop (Φ-primary 3-sd) : seed8 ΔΦ +0.0101 < +0.02 (NOT robust)     🔴 🧱
+
+R4's diagnosis: the sparse per-module relay (cross-coupled only to RING NEIGHBOURS)
+binds well on correlated substrates (seed7 +0.143, seed9 +0.168) but starves on
+the NEAR-ORTHOGONAL substrate (seed 8: baseline coh +0.011, baseline Φ 0.612). R4's
+mandate: pre-register a GEOMETRY-CONDITIONED hypothesis, not a re-run.
+
+R5 escalated the distributed-multi-edge diagnosis to its conclusion: a COMPLETE
+intra-thalamic graph. The ONLY structural change vs R3/R4 'reentrant' — the relay
+cross-coupling went from RING-NEIGHBOUR (mean over 2 of 3 others) to ALL-PAIRS
+(mean over all j≠i, the complete graph). Hypothesis: density supplies the shared
+structure orthogonal init lacks, so EVERY bipartition crosses O(N^2) recurrent
+loops and no single MIP cut is cheap — clearing seed 8 where the sparse relay
+failed. NOTHING tuned (W_relay = W_dense = 0.5, frozen since R3; p7).
+
+CRITICAL ADDITION (a_break_the_wall requires a control): a pre-registered SHUFFLE
+CONTROL ('dense_shuffle') — the channel set each relay reads is PERMUTED (cyclic
+shift, no fixed point; SAME edge count, scrambled wiring). If the lift is the
+STRUCTURED all-pairs topology, the shuffle must DESTROY it; if the shuffle
+reproduces the lift, the lift is generic added-edge variance, not structure.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim)
+════════════════════════════════════════════════════════════════════════
+H_1283 R5 — THALAMUS / DENSE ALL-PAIRS RECURRENT COUPLING
+modules=4 dim=8 ticks=64 seeds=[7, 8, 9]  W_relay=W_dense=0.5
+ARM A = direct ring   ·   ARM B = ring + DENSE all-pairs recurrent relay (complete intra-thalamic graph)
+PRIMARY bar = faithful IIT4 ΔΦ ≥ +0.02 EVERY seed (incl seed 8)   ·   SHUFFLE control pre-registered
+========================================================================
+FAITHFUL IIT4 Φ (exact MIP-EI, ALL seeds) — ARM A vs DENSE ARM B:
+  seed 7: ARM_A Φ=0.78038  DENSE Φ=0.875291  ΔΦ=0.09491100000000008
+  seed 8: ARM_A Φ=0.611741  DENSE Φ=0.617769  ΔΦ=0.006028000000000033
+  seed 9: ARM_A Φ=0.825326  DENSE Φ=1.00157  ΔΦ=0.17624400000000007
+------------------------------------------------------------------------
+SHUFFLE CONTROL (dense_shuffle — permuted wiring, same edge count):
+  seed 7: ARM_A Φ=0.78038  SHUFFLE Φ=0.866635  ΔΦ_shuf=0.08625500000000008
+  seed 9: ARM_A Φ=0.825326  SHUFFLE Φ=0.959232  ΔΦ_shuf=0.13390599999999997
+------------------------------------------------------------------------
+COHERENCE (sanity P2 + no-collapse P3):
+  seed 7: ARM_A coh=+0.1591  DENSE coh=+0.1980  Δcoh=+0.0389
+  seed 8: ARM_A coh=+0.0109  DENSE coh=+0.0339  Δcoh=+0.0230
+  seed 9: ARM_A coh=+0.1362  DENSE coh=+0.1690  Δcoh=+0.0328
+========================================================================
+P1 PRIMARY Φ (B≥A+0.02 faithful IIT4 EVERY seed incl 8): FAIL
+     seed 7: ΔΦ=0.09491100000000008  ≥ +0.02  PASS
+     seed 8: ΔΦ=0.006028000000000033  < +0.02  FAIL
+     seed 9: ΔΦ=0.17624400000000007  ≥ +0.02  PASS
+P2 sanity (DENSE coh ≥ A coh every seed): PASS
+P3 not-degenerate (DENSE coh < 0.999 ≥1 seed): PASS
+C  shuffle control (perm ΔΦ < +0.02 on ≥1 dense-GREEN seed): FAIL
+VERDICT: RED
+
+(Cross-round consistency sanity: ARM_A Φ = 0.78038 / 0.611741 / 0.825326 reproduces
+R1/R2/R3/R4 EXACTLY — same deterministic engine + byte-identical ARM A; ARM A
+coherence 0.1591/0.0109/0.1362 also reproduces R1-R4 byte-for-byte. The dense/
+shuffle relay draws are taken AFTER the inputs and used only in ARM B, so ARM A is
+untouched.)
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9) — 🧱 DENSITY DOES NOT BREAK THE WALL; THE SHUFFLE EXPOSES WHY
+════════════════════════════════════════════════════════════════════════
+Two independent, mutually reinforcing negatives:
+
+  (1) SEED 8 STILL MISSES — AND WORSE. The complete all-pairs graph clears the
+  +0.02 bar on the two correlated substrates (seed7 +0.0949, seed9 +0.1762) but on
+  the near-orthogonal seed 8 it reaches only ΔΦ +0.0060 — LESS than R4's sparse
+  relay (+0.0101), and well under a third of the bar. Density did NOT supply the
+  structure orthogonal init lacks; if anything it slightly under-performed the
+  sparse relay there. The geometry-conditioned hypothesis is FALSIFIED: the seed-8
+  failure is NOT a relay-SPARSITY artifact — a maximally dense recurrent graph
+  fails the same seed. The Φ lift is GEOMETRY-LIMITED (it needs correlated initial
+  structure to amplify), and graph density does not change that.
+
+  (2) THE SHUFFLE CONTROL FIRED (decisive). On BOTH seeds where dense cleared the
+  bar, the PERMUTED dense graph reproduces almost the entire lift:
+       seed 7: structured ΔΦ +0.0949  vs  shuffled ΔΦ +0.0863   (~91% retained)
+       seed 9: structured ΔΦ +0.1762  vs  shuffled ΔΦ +0.1339   (~76% retained)
+  C required the shuffle to DROP the lift below +0.02 on ≥1 GREEN seed; it stays
+  FAR above +0.02 on both (C FAIL). So the dense lift is MOSTLY GENERIC ADDED-EDGE
+  VARIANCE — adding a recurrent relay stage of ANY all-pairs wiring (structured OR
+  scrambled) injects extra recurrent dynamics that raise the MIP cost — NOT the
+  specific all-pairs STRUCTURE. The structured graph retains only a small margin
+  over the scrambled one (+0.0086 seed7, +0.0423 seed9), nowhere near a clean
+  topology-specific effect. This is exactly the artifact the control was registered
+  to catch, and it caught it.
+
+CONCLUSION (🧱): the relay-topology Φ axis is now EXHAUSTED across five rounds —
+broadcast (single R1 / coalition R2) FALSIFIED; sparse re-entry (R3/R4) a large-
+but-CONDITIONAL lever that fails the 3-seed gate on the orthogonal seed; dense
+all-pairs re-entry (R5) ALSO fails the orthogonal seed AND its passing-seed lift is
+mostly variance, not structure (shuffle control). The robust +0.02-every-seed Φ
+bar is NOT cleared by ANY relay topology at this scale. The wall stands. The
+genuine new angle was tried in full (a_break_the_wall: distributed multi-edge →
+its dense limit, with a frozen control) and honestly returns 🧱 — a valid closed-
+negative (c9, a_paper_negative_ok). The deeper lesson the shuffle adds over R4:
+the conditional Φ lift re-entry buys on correlated substrates is largely a generic
+recurrence-variance effect, not a credit the MIP assigns to the specific coupling
+graph — so even the "successful" seeds were over-credited to topology.
+
+════════════════════════════════════════════════════════════════════════
+WHY NO ENGINE-NATIVE WIRING THIS ROUND
+════════════════════════════════════════════════════════════════════════
+The freeze pre-registered: GREEN → engine-native dense re-entrant lane; RED ⇒ no
+CORE wiring (a_verified_must_wire fires only on GREEN). The verdict is RED on TWO
+grounds (P1 seed-8 miss + C shuffle), so NO CORE/*.hexa is touched. Wiring a lane
+whose lift (a) fails to replicate on the orthogonal seed and (b) is mostly added-
+edge variance per its own shuffle control would pin an artifact into the live
+engine — exactly what a_verified_must_wire (wire only VERIFIED-GREEN) forbids.
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); RED ⇒ no CORE/*.hexa
+  wired or edited this round.
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope). A much larger module set MIGHT make
+  structure separable from variance — UNTESTED; but within this rung BOTH the
+  orthogonal-seed miss AND the shuffle-reproduces-lift are qualitatively strong
+  (not marginal) negatives.
+- Φ IS faithful IIT4 (exact MIP-EI engine, n=4≤8), NOT the variance×energy proxy
+  (a_phi_iit4_tool). numpy NEVER computed Φ — every Φ came from the stdlib engine
+  via `hexa run`.
+- W_relay = W_dense = 0.5 FROZEN before scoring; NOT swept after seeing seed 8 miss
+  (that would be Goodhart, p7). The shuffle permutation (cyclic shift, no fixed
+  point) was specified in the FREEZE before scoring.
+- bars NOT moved. R1/R2/R3/R4 verdict files NOT overwritten (R5 = separate file).
+- Does NOT edit H_1219 / H_1226 / live CORE/*.hexa.
+- NOT RULED OUT (honest residuals): a fundamentally NON-RELAY integration mechanism
+  (e.g. learned routing, mitosis-driven structural growth of the coupling graph,
+  or a Φ measure scoped to effect-size on correlated-geometry substrates with its
+  OWN pre-registered geometry control) MIGHT raise robust Φ — but that is a
+  DIFFERENT gap, not a relay round. The relay axis (broadcast → coalition → sparse
+  re-entry → dense re-entry) is closed.
+
+artifacts:
+  UNIVERSE/h1283_thalamus_global_workspace.py  (main_r5 + 'dense'/'dense_shuffle' modes)
+  .verdicts/1283_thalamus_global_workspace/{H_1283_R5_FREEZE.txt, H_1283_R5.txt}
+  (R1/R2/R3/R4 verdict files UNTOUCHED)
+xref: H_1283(R1) · H_1283(R2) · H_1283(R3) · H_1283(R4) · h1227 · h1230 · h1280 ·
+      h1199 · h1201 · h1205 · a_phi_iit4_tool · a_no_llm_frame_trap ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire ·
+      a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope ·
+      a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
