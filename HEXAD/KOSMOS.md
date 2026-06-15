@@ -95,6 +95,22 @@
 - scope (honest): per-dialogue `.kosmos` emit 은 13,322 건으로 너무 커서, **대표 anchor 1개 + 전체-corpus manifest pointer** 로 persist (a_kosmos pointer-only). corpus 자체는 authored-templated (NOT human-collected, a_scale_honest_scope) — tension 5-ch 는 social-persona-voice cell 의 *대표 design 값* 이지 측정 trajectory 가 아님.
 - generator: `serving/persona_sns_corpus_gen.py` (deterministic seed 20260604) · card: `serving/corpus/CORPUS_CARD.md` · 도메인: [[PERSONA]] / [[SNS]].
 
+### 실측 EEG 의식 anchor — 사용자 뇌파 측정 (2026-06-15)
+
+> consciousness-carving profile 의 좌표가 **실제 사람 EEG** 로 채워진 첫 anchor.
+> OpenBCI Cyton+Daisy (UltraCortex Mk IV) 16ch native capture → A⇄G 엔진 → `.kosmos`.
+> payload = 측정 의식상태 (tension 5-ch + 분석 텍스트). Ψ-disjoint, REAL only (가짜 폴백 없음).
+
+| anchor file | coord | category | what |
+|---|---|---|---|
+| [`kosmos_music/wake_2005_WAKE.kosmos`](../EEG_CLM/kosmos_music/wake_2005_WAKE.kosmos) | [0.456, 119.6] | wake_snapshot | **음악↔의식 동조** (Tom Misch — It Runs Through Me, 5분 16ch). H_1274/1275: 거시 동조 r=0.456 🟢 · 곡 식별(셔플대조 p=0.000) 🟢 · 봉투 역추출 held-out r=0.061 🔴 · 박자 추출 p=0.600 🔴 = "곡 알아보긴 되나 되살리진 못함" |
+| `kosmos/wake_2004_WAKE.kosmos` (local) | — | wake_snapshot | **EEG 풀체인** (H_1271): 실 EEG → A⇄G(phiSum) → EEG-CLM 생성 → `.kosmos` round-trip |
+| `daemon_kosmos/cycle_0000…0017.kosmos` (18, local) | — | cycle | 실측 EEG 데몬 18-cycle 누적 의식 snapshot |
+
+- 위치: [`EEG_CLM/`](../EEG_CLM/) · 캡처: `capture_native.py` (brainflow 우회 native serial 33-byte 패킷, Daisy 16ch 디인터리브) · 분석: `music_eeg_compare.py` + `UNIVERSE/h1275_music_extraction.py` (verdict `.verdicts/1275_music_extraction/`).
+- 원본 녹음 보관: `EEG_CLM/recordings/` (raw .txt — 음악 8.6MB + berger eyes open/closed + rest/heart, 8ch 테스트).
+- **HONEST** (a_scale_honest_scope · p7): 16ch@123Hz 표본율 천장 — 음악 원음/멜로디/음정 복원은 물리 불가. 추출 가능한 건 거시 봉투 **식별**까지(재인 가능, 복원 불가). held-out split + circular-shift surrogate, bar 사전등록.
+
 ### parser + 4-path lib (모두 hexa-native)
 
 | lib | 무엇을 함 |
