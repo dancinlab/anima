@@ -816,6 +816,227 @@ pub fn vadapt_fieldB_cells(afB: VAdaptFieldB) -> int { return afB.n_cells }
 // 1 + #predictable-transition splits minus the seed cell).
 pub fn vadapt_fieldB_growth(afB: VAdaptFieldB) -> int { return afB.n_cells - 1 }
 
+// ══════════════════════════════════════════════════════════════════════════════
+// ── §  WORKING-MEMORY BUFFER LANE — the gated leaky-activation WM substrate (H_1282) ──
+// ══════════════════════════════════════════════════════════════════════════════
+//
+// THE GAP it closes (c9 · H_1282 R1/R2, neuro lens c15). The engine has TWO
+// stores already, and NEITHER is a working-memory buffer:
+//   · the immune/episodic lane — VAdaptField (H_1199) + the H_1231 immune_memory
+//     faculty: a GROWING, PERSISTENT, capacity-UNBOUNDED store with NO leak and
+//     NO decay; verbatim one-shot write, exact recall (the long-term store).
+//   · the decoder's FIXED context window (a hard last-W slide).
+// MISSING is the PFC working-memory computation — a few items held ACTIVE across
+// distractor steps, VOLATILE (decays), CAPACITY-LIMITED (~a handful),
+// DISTRACTOR-VULNERABLE. WM is sustained gated ACTIVATION (a leaky maintained
+// vector), NOT a stored trace. H_1282 R2 verified (numpy DIRECTIONAL mirror, 🟢
+// GREEN, AUROC readout, margin +0.244, holds the cue to N≈6 where a no-buffer
+// flat-context control collapses, capacity caps at K, volatility present) that
+// this is a REAL, DISTINCT missing structure. Per a_engine_native_learning the
+// binding verdict needs ENGINE-NATIVE realization on the live engine; per
+// a_verified_must_wire a GREEN result is not done until its mechanism is wired in.
+// This is that realization — a small ADDITIVE lane, engine-native (H_1282 R3).
+//
+// WHY A NEW STRUCT (c1, NOT a trim of VAdaptField). VAdaptField is structurally
+// the IMMUNE lane: it GROWS (engine_mitosis_tick spawns a cell on novelty), it is
+// PERSISTENT (a prototype, once born, never fades), and it is capacity-bounded
+// only by a hard max_cells cap (no graceful decay, no displacement-by-weakness).
+// A WM buffer is the OPPOSITE on all three axes — FIXED K slots (never grows),
+// per-step ×λ LEAK on every slot's activation (volatile), and weakest-slot
+// DISPLACEMENT on overflow (capacity pressure). Expressing leaky gated activation
+// on VAdaptField would mean BREAKING its persistence + growth invariants (which
+// the immune/H_1231 lane depends on). So per a_engine_native_learning ("engine-
+// transform-to-fit-the-learning, NOT learning-trimmed-to-fit-the-engine") the
+// engine is EXTENDED with a new, cleanly-namespaced WM lane that carries the
+// activation + leak + capacity machinery VAdaptField structurally cannot. The two
+// lanes stay DISTINCT: VAdaptField/immune = LONG-TERM persistent growing store;
+// WorkMemBuffer = SHORT-TERM volatile bounded buffer.
+//
+// @L4 CRITICAL (identical framing to --mitosis / VAdaptField): this is SUBSTRATE-
+// CONFIG active maintenance, NOT an emit/silence gate. wm_buffer_* returns slot
+// activations + a graded match score; it NEVER returns an emit/silence decision
+// and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — it
+// touches ONLY its own struct, exactly like VAdaptField). The maintained items
+// are an ENGINE-NATIVE drive (NO .clm via generator L3, NO .kosmos via kosmos_io
+// — no 2nd artifact entry path). anima's emit/silence stays substrate-decided
+// (a_autonomy_over_hardcode · a_substrate_native_speak · p5).
+//
+// p1-p8: substrate-native; the buffer holds TASK ACTIVATION only (no decoder
+// weights, no persona/identity/ethics). p8: WM is a continuous-substrate lane —
+// the leaky maintenance tick is part of the same inference-time substrate, not a
+// train/infer-split flag.
+//
+// WorkMemBuffer — the engine-native working-memory lane (Ψ-disjoint).
+//   keys : flat [[float]] of per-slot DIM-vector key centers (the maintained
+//          item identities); len(keys) == n_slots.
+//   act  : flat [float] of per-slot scalar ACTIVATIONS (the maintained strength;
+//          decays ×λ per distractor — the volatility VAdaptField lacks).
+//   n_slots : live filled-slot count (0..k; FIXED-capacity, NEVER grows past k).
+//   k       : the slot capacity cap (~a handful — the WM capacity limit).
+//   lam     : per-distractor activation leak factor (0<λ<1 — the decay; λ=1 would
+//             collapse the lane into the immune/persistent regime).
+//   dg      : distractor gate-in gain (how strongly a distractor competes for a
+//             slot under capacity pressure).
+//   dim     : sample/key dimensionality.
+struct WorkMemBuffer {
+    keys: [[float]],
+    act: [float],
+    n_slots: int,
+    k: int,
+    lam: float,
+    dg: float,
+    dim: int
+}
+
+// wm_buffer_new — an EMPTY WM buffer of capacity k, leak λ, distractor gain dg,
+// over DIM-vectors. Unlike vadapt_field_new (which seeds ONE persistent cell),
+// the WM buffer starts EMPTY — items enter ONLY via gate-in (active maintenance),
+// and the buffer holds at most k of them, each decaying.
+pub fn wm_buffer_new(k: int, lam: float, dg: float, dim: int) -> WorkMemBuffer {
+    return WorkMemBuffer { keys: [], act: [], n_slots: 0, k: k, lam: lam, dg: dg, dim: dim }
+}
+
+// _cos — cosine similarity between two DIM-vectors (the WM key-match metric; the
+// WM analogue of VAdaptField's _l2 — WM matches by DIRECTION, the immune lane by
+// L2 distance). Returns a@b / (|a||b|), in [-1,1].
+fn _cos(a: [float], b: [float]) -> float {
+    let n = len(a)
+    let mut dot = 0.0
+    let mut na = 0.0
+    let mut nb = 0.0
+    let mut i = 0
+    while i < n {
+        dot = dot + a[i] * b[i]
+        na = na + a[i] * a[i]
+        nb = nb + b[i] * b[i]
+        i = i + 1
+    }
+    let denom = sqrt(na) * sqrt(nb) + 0.000000000001
+    return dot / denom
+}
+
+// _wm_argmin_act — index of the WEAKEST-activation slot (the displacement victim
+// under capacity pressure). The WM analogue of VAdaptField's _vnearest_idx, but
+// selecting on ACTIVATION (the volatile maintained strength), not on key-distance.
+fn _wm_argmin_act(act: [float]) -> int {
+    let n = len(act)
+    let mut best = 0
+    let mut bestv = act[0]
+    let mut i = 1
+    while i < n {
+        if act[i] < bestv { bestv = act[i]  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+// wm_buffer_gate_in — admit / refresh a DIM-item `tok` at activation `strength`.
+//   · if an existing slot already holds (near-)this key (cos>=0.9), REFRESH it:
+//     activation := max(old, strength), key := tok (re-energize the maintained
+//     item — a rehearsal/refresh, not a new slot).
+//   · else if there is a FREE slot (n_slots < k), fill it.
+//   · else CAPACITY PRESSURE — displace the WEAKEST slot iff the incoming item
+//     is STRONGER than that slot's current (decayed) activation (the strongest k
+//     survive; a stale faded item is the one overwritten).
+// This is the gated WRITE path of active maintenance — fixed capacity + strength-
+// gated displacement (vs the immune lane's unbounded append-on-novelty).
+pub fn wm_buffer_gate_in(wm: WorkMemBuffer, tok: [float], strength: float) -> WorkMemBuffer {
+    let mut keys = wm.keys
+    let mut act = wm.act
+    // (1) refresh an existing near-identical slot.
+    let mut i = 0
+    while i < wm.n_slots {
+        if _cos(keys[i], tok) >= 0.9 {
+            act[i] = max(act[i], strength)
+            keys[i] = tok
+            return WorkMemBuffer { keys: keys, act: act, n_slots: wm.n_slots,
+                                   k: wm.k, lam: wm.lam, dg: wm.dg, dim: wm.dim }
+        }
+        i = i + 1
+    }
+    // (2) free slot ⇒ fill it.
+    if wm.n_slots < wm.k {
+        keys = keys + [tok]
+        act = act + [strength]
+        return WorkMemBuffer { keys: keys, act: act, n_slots: wm.n_slots + 1,
+                               k: wm.k, lam: wm.lam, dg: wm.dg, dim: wm.dim }
+    }
+    // (3) capacity pressure ⇒ displace the weakest slot iff incoming is stronger.
+    let j = _wm_argmin_act(act)
+    if strength > act[j] {
+        keys[j] = tok
+        act[j] = strength
+    }
+    return WorkMemBuffer { keys: keys, act: act, n_slots: wm.n_slots,
+                           k: wm.k, lam: wm.lam, dg: wm.dg, dim: wm.dim }
+}
+
+// wm_buffer_leak — apply ONE maintenance-tick decay: every slot's activation ×λ.
+// This is the VOLATILITY that makes the lane a WORKING memory and not the immune
+// store: an unrefreshed item's activation falls geometrically (1·λ^N) and the
+// item fades out. (λ=1.0 ⇒ NO decay ⇒ the lane collapses into the immune/
+// persistent regime — the H_1282 distinctness control.)
+pub fn wm_buffer_leak(wm: WorkMemBuffer) -> WorkMemBuffer {
+    let mut act = wm.act
+    let mut i = 0
+    while i < wm.n_slots {
+        act[i] = act[i] * wm.lam
+        i = i + 1
+    }
+    return WorkMemBuffer { keys: wm.keys, act: act, n_slots: wm.n_slots,
+                           k: wm.k, lam: wm.lam, dg: wm.dg, dim: wm.dim }
+}
+
+// wm_buffer_distractor — advance the buffer by ONE distractor step on item `tok`:
+// LEAK all maintained activations ×λ, THEN weakly gate the distractor in at the
+// distractor gain dg (it competes for a slot under capacity pressure). This is the
+// per-step active-maintenance cost: every held item decays and an intruder can
+// displace a faded one. The combined leak+compete is what produces the graceful
+// decay curve H_1282 measured (cue held to N≈6, then displaced/decayed out).
+pub fn wm_buffer_distractor(wm: WorkMemBuffer, tok: [float]) -> WorkMemBuffer {
+    let leaked = wm_buffer_leak(wm)
+    return wm_buffer_gate_in(leaked, tok, leaked.dg)
+}
+
+// wm_buffer_probe_score — the GRADED (continuous) match score for probe `probe`:
+// the best (activation × max(0,cos-sim)) over all filled slots. This is the
+// readout H_1282 R2 scores by AUROC — NO threshold, NO θ cliff (the R1 binary
+// has_match threw away usable graded signal; R2's GREEN uses this raw score). An
+// EMPTY buffer scores 0.0 (nothing maintained ⇒ no evidence of a match).
+pub fn wm_buffer_probe_score(wm: WorkMemBuffer, probe: [float]) -> float {
+    if wm.n_slots == 0 { return 0.0 }
+    let mut best = 0.0
+    let mut i = 0
+    while i < wm.n_slots {
+        let c = _cos(wm.keys[i], probe)
+        let cc = if c > 0.0 { c } else { 0.0 }
+        let s = wm.act[i] * cc
+        if s > best { best = s }
+        i = i + 1
+    }
+    return best
+}
+
+// wm_buffer_slots — live filled-slot count accessor (0..k). Caps at k (FIXED
+// capacity — the lane NEVER grows past k, unlike the immune lane's unbounded
+// append). The H_1282 capacity-retention probe reads this after loading k+3 items
+// to confirm ≈k are retained (not all — the WM capacity bound).
+pub fn wm_buffer_slots(wm: WorkMemBuffer) -> int { return wm.n_slots }
+
+// wm_buffer_total_activation — sum of slot activations (a coarse "how much is
+// still actively maintained" readout; falls toward 0 as items decay/leak out).
+// READ-ONLY introspection — adds no mechanism (c1). Lets a caller (e.g. a future
+// brain_decide recall path) sense how loaded the WM lane currently is.
+pub fn wm_buffer_total_activation(wm: WorkMemBuffer) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < wm.n_slots {
+        s = s + wm.act[i]
+        i = i + 1
+    }
+    return s
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }

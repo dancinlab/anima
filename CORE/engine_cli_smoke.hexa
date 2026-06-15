@@ -110,6 +110,61 @@ fn main() {
     println("INFO  " + engine_config_summary(cfg_on))
     println("INFO  " + engine_config_summary(cfg_off))
 
+    // ── (c) WORKING-MEMORY BUFFER LANE (H_1282 R3) — gated leaky-activation ────
+    // The WM lane is ADDITIVE + Ψ-disjoint; these cases prove its three defining
+    // behaviors (capacity bound · decay/volatility · displacement) deterministically,
+    // and that it is DISTINCT from the immune/episodic VAdaptField lane (no leak,
+    // unbounded). No emit gate anywhere (@L4) — wm_buffer_* returns slots/score only.
+    let dim = 3
+    // two near-orthogonal unit DIM-vectors (cos ≈ 0) so probe matching is clean.
+    let va = [1.0, 0.0, 0.0]
+    let vb = [0.0, 1.0, 0.0]
+    let vc = [0.0, 0.0, 1.0]
+
+    // case 10 : a fresh buffer is EMPTY (starts with 0 slots — unlike a seeded cell).
+    let wm0 = wm_buffer_new(2, 0.85, 0.5, dim)
+    if _assert_i("case_10_wm_starts_empty", 0, wm_buffer_slots(wm0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 11 : CAPACITY BOUND — gate in 3 DISTINCT items into a K=2 buffer, slots
+    //   cap at 2 (NEVER grows past k — the WM capacity limit, vs immune unbounded).
+    let wm1a = wm_buffer_gate_in(wm0, va, 1.0)
+    let wm1b = wm_buffer_gate_in(wm1a, vb, 1.0)
+    let wm1c = wm_buffer_gate_in(wm1b, vc, 1.0)
+    if _assert_i("case_11_wm_capacity_caps_at_k", 2, wm_buffer_slots(wm1c)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 12 : MATCH READOUT — a freshly gated-in cue scores high vs itself
+    //   (graded probe score >= 0.9 at full activation, no decay yet).
+    let wm2 = wm_buffer_gate_in(wm_buffer_new(4, 0.85, 0.5, dim), va, 1.0)
+    let score_fresh = wm_buffer_probe_score(wm2, va)
+    if _assert_b("case_12_wm_fresh_cue_high_score", true, score_fresh >= 0.9) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 13 : DECAY/VOLATILITY — after several distractor steps (leak ×λ each),
+    //   the SAME cue's score FALLS strictly below its fresh score (the cue fades —
+    //   the volatility VAdaptField lacks). Use orthogonal distractors so the drop
+    //   is pure leak, not key overwrite.
+    let mut wm3 = wm2
+    let mut di = 0
+    while di < 6 { wm3 = wm_buffer_distractor(wm3, vb)  di = di + 1 }
+    let score_decayed = wm_buffer_probe_score(wm3, va)
+    if _assert_b("case_13_wm_cue_decays_below_fresh", true, score_decayed < score_fresh) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 14 : DISTINCT-FROM-IMMUNE — a λ=1.0 buffer (NO leak) does NOT decay the
+    //   cue across the SAME distractor run (it stays the immune/persistent regime).
+    //   This is the load-bearing distinctness: leak (λ<1) is what makes it WORKING.
+    let wm4_seed = wm_buffer_gate_in(wm_buffer_new(4, 1.0, 0.5, dim), va, 1.0)
+    let mut wm4 = wm4_seed
+    let mut di2 = 0
+    while di2 < 6 { wm4 = wm_buffer_distractor(wm4, vb)  di2 = di2 + 1 }
+    let score_noleak = wm_buffer_probe_score(wm4, va)
+    if _assert_b("case_14_no_leak_stays_immune_like", true, score_noleak >= 0.9) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 15 : the WM lane is GATED but NOT an emit gate (@L4) — it returns a slot
+    //   count + a score, never an emit/silence decision. (Structural assert: the
+    //   total-activation introspection is non-negative and finite, surfacing state
+    //   for a recall path WITHOUT any emit decision.)
+    let total_act = wm_buffer_total_activation(wm3)
+    if _assert_b("case_15_wm_total_activation_nonneg", true, total_act >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

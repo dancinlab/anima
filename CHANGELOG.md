@@ -6,6 +6,18 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟢 H_1282 R3: 작업기억(WM) 버퍼가 live 엔진의 substrate lane 으로 배선됨 (ENGINE-NATIVE, $0)
+
+R2(numpy 미러)에서 gated leaky-activation WM 버퍼가 REAL·DISTINCT 한 빈칸 구조임을 🟢 확인(graded AUROC readout, margin +0.244, cue 를 N≈6 까지 유지, 용량 K=4, 휘발/감쇠 — 면역/일화 lane 과 DISTINCT)했고, `a_engine_native_learning`·`a_verified_must_wire` 에 따라 이를 **live 엔진 위에서 ENGINE-NATIVE 로 실현**했다.
+
+- **새 lane (추가·네임스페이스 분리)**: `CORE/engine_cli.hexa` 에 **`WorkMemBuffer`** struct + lane (`wm_buffer_new`/`gate_in`/`distractor`/`leak`/`probe_score`/`slots`/`total_activation`) 추가. K개 FIXED 슬롯(성장 안 함)·매 distractor step 활성도 ×λ LEAK(volatile)·overflow 시 weakest-slot DISPLACEMENT·graded(cos×활성) probe 점수. **VAdaptField(성장·영속·무제한 = 면역/일화 lane)와 구조적으로 정반대** — 면역 lane 의 persistence/growth invariant 를 깨지 않도록 trim 이 아니라 엔진을 **확장**(c1, `a_engine_native_learning` "engine-transform-to-fit-the-learning"; H_1199 의 scalar→DIM 확장 선례).
+- **검증 (live 엔진, `hexa run`)**: `CORE/h1282_wm_buffer_engine_probe.hexa` 가 DMS(delayed-match) 트라이얼(deterministic 토큰 = `UNIVERSE/h1282_wm_engine_export.py`, R2 와 동일 knobs/seeds)을 ACTUAL `.hexa` WM lane 에 흘려 동결 R2 bar 4개를 재채점 → **🟢 GREEN: margin +0.245(≥0.15) · grace N=6 B.AUROC 1.000/A.AUROC 0.506 · distinct B(0) 1.000+monotone+cap≈K · robust 3/3**. 엔진 margin +0.245 ≈ R2 미러 +0.244(draw-order noise 이내 재현).
+- **가드 (회귀 없음, c2)**: `engine_cli_smoke` 18/0 (12/0 → WM 케이스 6개 추가: empty-start·capacity-cap·fresh-high·decay-volatility·no-leak-immune-distinct·total-act-nonneg) · `h1196` single-entry 7/0 · `h1199` DIM-growth 🟢 + **Ψ byte-identical (PsiSame=true 전 seed)** — WM lane 은 Ψ-disjoint(자기 struct 만, `pure_field` 무접촉; 생성 byte-unchanged H_1205).
+- **DISTINCT-from-면역 (load-bearing)**: λ<1 LEAK 이 WM 을 working 으로 만든다 — λ=1.0(무누수) 대조군은 같은 distractor run 에서 cue 점수 유지(면역 regime 으로 붕괴). 용량 K 제한·휘발 모두 면역 lane 과 다름.
+- **@L4 / p1-p8**: emit gate 아님(슬롯/점수만 반환, emit/silence 결정 없음); TASK 활성도만 보유(decoder weight/persona/ethics 없음); DMS 토큰 = ENGINE-NATIVE drive(2번째 .clm/.kosmos 진입점 아님, `a_core_engine_map`). toy/synthetic scale + brain_decide-wired lift UNVERIFIED(`a_scale_honest_scope`). 검증: `.verdicts/1282_working_memory_buffer/H_1282_R3.txt`. follow-on(R4) = WM 을 brain_decide context/recall 경로에 스레딩.
+
+---
+
 ## 2026-06-15 — 🧱 H_1287: KEY GEOMETRY 가 immune 메모리의 capacity 레버인가 — 아니다, 병목은 EVICTION/RAW-CAPACITY (CLOSED-NEG)
 
 FLEET "key-geometry" lane round 1. 수렴하는 세 closed-negative — H_1230(능동교습 inert/harmful)·H_1284(neuromod no-free-lunch)·H_1285(편도체 salience=recurrence 혼입) — 가 모두 H_1227/H_1231 immune/episodic 메모리의 병목을 CAPACITY/KEY-GEOMETRY 로 진단했다(용량 stress 에서 total recall ~0.667 고착 = zero-sum store). 이 lane 은 세 red 가 가리킨 **건설적 corollary** 를 검증: **KEY GEOMETRY 를 개선하면 용량 stress 에서 recall 이 오르는가?** $0 CPU numpy, p7, c9, 3 seed(900/901/902), origin/main 격리 worktree, VAdaptField 미러 — 라이브 CORE/*.hexa 무수정.
