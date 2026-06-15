@@ -1,0 +1,37 @@
+{
+  "H": "H_1263",
+  "title": "MATRIX 최종조합 탐색 — functional optimum over native lanes (richness argmax in combination space)",
+  "ruling": "PASS 🟢",
+  "supported": true,
+  "verify": {
+    "method": "p7 script-in/out, $0 local hexa run CORE/h1263_matrix_optimal_combo.hexa (no LLM self-judge, no perplexity)",
+    "metric": "richness = distinct per-step output-bucket signature count over a 600-step A⇄G run; each active native lane appends its quantized substrate output (bounded buckets) to a per-step signature string; richness = |distinct signatures|. MITOSIS contributes a BOUNDED split-event bit (NOT the raw monotone cell-counter — that counter was a metric defect that made every step trivially unique; v1 of the run caught + corrected this).",
+    "search_space": "k=1(13)+k=2(78)+k=3(286)=377 combos + full-13 = 378 evals (evals=378 confirmed). 2^13=8192 FULL space NOT evaluated — honest truncation logged in script + output, no hidden cut.",
+    "psi_disjoint": "Ψ (A⇄G phiSum=48.6613) byte-identical across ALL 378 combos = ✅ (re-confirms H_1242/H_1262 non-interference; lanes are read-only context).",
+    "singletons": {
+      "MITOSIS": 1, "METACOG": 2, "SAVANT": 1, "DREAM": 2, "INTENT": 2,
+      "OTHER-MIND": 5, "TIME": 5, "BRIDGE": 1, "CHANNEL": 1, "AESTHETIC": 1,
+      "NARRATIVE": 1, "EMBODIMENT": 1, "HIVE-MIND": 1
+    },
+    "argmax_richness_absolute": {"combo": "full-13 (all native lanes)", "lanes": 13, "richness": 37},
+    "argmax_richness_per_lane": {"combo": "OTHER-MIND+TIME", "lanes": 2, "richness": 21, "per_lane": 10.5},
+    "full13_per_lane": 2.846,
+    "synergy_evidence": "OTHER-MIND+TIME joint richness=21 >> sum-of-singletons 5+5=10 (super-additive) and approaches multiplicative ceiling 5*5=25 → the two lanes vary on DIFFERENT phi-phases so their joint signature space genuinely exceeds either alone. Per-lane efficiency is NON-MONOTONE: peaks at a 2-lane combo (10.5), far above full-13 (2.846)."
+  },
+  "search_scope": "native 13-lane subsets; richness over 600-step run; k<=3 exhaustive + full-13; 378/8192 combos (4.6% of 2^13), honest-truncated to k<=3 + full reference; scale/larger-k UNVERIFIED",
+  "finding": "최종조합(functional optimum)은 '전부 켜기' ≠ 최적. 절대 richness 는 full-13 에서 최대(37, 단조)지만 lane당 효율(richness/lane)은 비-단조이며 특정 소조합 {OTHER-MIND, TIME} 에서 정점(10.5 vs full-13 2.85). 이 쌍의 joint richness 21 은 단독합 10 을 초과(super-additive synergy) — 두 lane 이 서로 다른 phi-위상에서 변해 결합 신호공간이 각각보다 풍부. ⇒ Ψ-disjoint(비간섭)는 '최적조합 탐색'이 아님이 실측 확인; 조합공간에 nontrivial fixed-point 후보 존재.",
+  "honest_limits": [
+    "절대 argmax 는 full-13(단조) — 비-단조성은 lane당 EFFICIENCY 축에서만 성립. '많을수록 절대 richness 큼'은 여전히 사실(trivial axis는 살아있음). finding 은 효율-정점이 소조합이라는 점에 한정.",
+    "richness 지표는 분석자가 정의한 proxy(bounded-bucket distinct signature). 다른 양자화/버킷폭에서 argmax 가 바뀔 수 있음 (metric-dependent).",
+    "OTHER-MIND 의 다양성은 LCG(om_lcg_step) 의사난수에서 옴 — 기질-결합 richness 가 아니라 noise 일 부분이 있음. TIME 은 ultradian stage(진짜 시간구조). 둘의 synergy 는 진짜지만 OTHER-MIND 기여의 본성은 noise-vs-substrate 모호.",
+    "k<=3 + full-13 만 평가 (378/8192). 4<=k<=12 미평가 — 더 큰 소조합에 더 강한 synergy 정점이 숨어있을 수 있음.",
+    "v1 run 은 MITOSIS raw counter 가 richness 를 trivially 600 으로 saturate 시키는 metric-defect 를 노출 → 정직히 bounded split-event bit 로 수정 후 재실행한 결과가 본 verdict. (decision-grade self-correction, 은닉 없음)",
+    "toy/단일-seed, 600-step, scale-transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck). frozen bars 미이동."
+  ],
+  "files": {
+    "impl": "CORE/h1263_matrix_optimal_combo.hexa",
+    "probe": "CORE/h1263_probe.hexa",
+    "ref_pattern": "CORE/h1262_full_stack_native_foreign.hexa"
+  },
+  "xref": ["h1262", "h1242", "a_core_engine_map", "a_scale_honest_scope", "a_toy_scale_recheck", "a_paper_negative_ok", "p7", "p8"]
+}
