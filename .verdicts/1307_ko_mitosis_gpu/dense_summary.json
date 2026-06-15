@@ -1,0 +1,53 @@
+{
+  "id": "H_1307",
+  "device": "NVIDIA GeForce RTX 5070",
+  "sm": "120",
+  "torch": "2.11.0+cu130",
+  "ko_window_bytes": 29999999,
+  "en_window_bytes": 10000000,
+  "ko_window_sha256": "c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca",
+  "en_window_sha256": "31b4a5430441cfdbb496b59f392150e4aa748cde2ed1b7cedad10960f0bcaf73",
+  "ko_train_pairs": 250000,
+  "ko_test_pairs": 250000,
+  "en_test_pairs": 50000,
+  "ko_stride": 60,
+  "en_stride": 200,
+  "grow_max": 60,
+  "curve": [
+    {
+      "pt": 1,
+      "ko_train": 83333,
+      "cells": 20,
+      "ko_ce": 2.93041,
+      "en_ce": 4.23368
+    },
+    {
+      "pt": 2,
+      "ko_train": 166666,
+      "cells": 25,
+      "ko_ce": 2.92118,
+      "en_ce": 4.28213
+    },
+    {
+      "pt": 3,
+      "ko_train": 250000,
+      "cells": 31,
+      "ko_ce": 2.91777,
+      "en_ce": 4.28838
+    }
+  ],
+  "en_seed_ce": 4.23165,
+  "en_after_ce": 4.28838,
+  "ko_ce_pt1": 2.93041,
+  "ko_ce_full": 2.91777,
+  "h1306_baseline_ko_ce": 3.24897,
+  "cells_final": 31,
+  "L1_internal_learning": false,
+  "L2_scale_vs_600KB": true,
+  "R_retention": false,
+  "G_growth": true,
+  "GREEN": false,
+  "grow_wall_s": 0.2,
+  "total_wall_s": 4.82,
+  "throughput_pairs_per_s": 2780440.1
+}
