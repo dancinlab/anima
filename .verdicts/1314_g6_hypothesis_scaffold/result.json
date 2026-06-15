@@ -1,0 +1,118 @@
+{
+  "ckpt": "/Users/mini/dancinlab/anima/state/chat_303m/h1129c_chat.pt",
+  "corpus": "/private/tmp/h1314-g6-scaffold/data/corpus.txt",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "calibration": "10/10",
+  "audit_token_inject_clean": true,
+  "audit_bad": [],
+  "DIST": {
+    "SCAFFOLD": 5.0,
+    "NO_SCAFFOLD": 4.0,
+    "SHUFFLE_SLOT": 2.3333
+  },
+  "FALS": {
+    "SCAFFOLD": 0.0,
+    "NO_SCAFFOLD": 0.0,
+    "SHUFFLE_SLOT": 0.0
+  },
+  "FALS_completion_only": {
+    "SCAFFOLD": 0.0,
+    "NO_SCAFFOLD": 0.0,
+    "SHUFFLE_SLOT": 0.0
+  },
+  "NOVEL": {
+    "SCAFFOLD": 19.6667,
+    "NO_SCAFFOLD": 6.3333,
+    "SHUFFLE_SLOT": 5.6667
+  },
+  "m1_dist": true,
+  "m2_fals": false,
+  "m3_beats_noscaffold": false,
+  "m4_shuffle_collapse": false,
+  "crossed_floor": false,
+  "structure_earned": false,
+  "moved": false,
+  "tier": "WALL-CAPACITY-BOUND",
+  "verdict": "🧱-CAPACITY-BOUND — the hypothesis-form SCAFFOLD ALSO plateaus: it neither crosses the depth floor NOR beats free-sampling. Forcing the FORM does not buy reliable falsifiable depth at 303M — confirming the r2 thesis from the STRUCTURE side: G6-depth is genuinely CAPACITY/scale-bound, the fix needs a bigger model not a structure lane (terminal 🧱-ish)",
+  "r2_plateau_reference": {
+    "FALS_curiosity_plateau": 0.6667,
+    "DIST_curiosity": 4.3333,
+    "note": "H_1309 curiosity-gated budget plateau at B=4/16"
+  },
+  "per_seed": {
+    "SCAFFOLD": [
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 16,
+        "coherent": 5
+      },
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 15,
+        "coherent": 5
+      },
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 28,
+        "coherent": 5
+      }
+    ],
+    "NO_SCAFFOLD": [
+      {
+        "dist": 4,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 10,
+        "coherent": 4
+      },
+      {
+        "dist": 4,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 4,
+        "coherent": 4
+      },
+      {
+        "dist": 4,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 5,
+        "coherent": 4
+      }
+    ],
+    "SHUFFLE_SLOT": [
+      {
+        "dist": 1,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 0,
+        "coherent": 5
+      },
+      {
+        "dist": 2,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 12,
+        "coherent": 5
+      },
+      {
+        "dist": 4,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 5,
+        "coherent": 5
+      }
+    ]
+  },
+  "wall_seconds": 522.5
+}

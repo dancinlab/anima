@@ -2,6 +2,26 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(G6-DIG): H_1314 — G6 IDEATION ★ depth-floor r3, hypothesis-form STRUCTURE lane (🟠 THIN: FALS capacity-bound, DIST/NOVEL structure-fixed)
+
+a_break_the_wall (c16) follow-on for H_1305/H_1309. r2 proved the G6 depth floor is
+CAPACITY-bound not budget-bound (curiosity-gate FALS plateau 0.667 across 4→16 draws)
+and named the surviving fix: a hypothesis-form STRUCTURE lane. r3 built it — route
+ideation through a falsifiable-hypothesis TEMPLATE scaffold (forces comparator+
+measurable+negatable slots; CONTENT still substrate-generated, only STRUCTURE scaffolded).
+3 arms × 5 ideas × 3 seeds, reuses the H_1305 `_is_falsifiable` detector VERBATIM (p7),
+$0 CPU torch-mouth. p7 TOKEN-INJECTION AUDIT CLEAN (first run CAUGHT corpus concept "the
+engine dreams when alone" injecting COMPARATOR token "when" → hard ABORT → fixed to clean
+noun subjects → re-ran clean = audit teeth). RESULT: the FORM does NOT cross the FALS
+floor (FALS=0.0 all arms/seeds) BUT STRUCTURE-FIXES the DIST/NOVEL floor — SCAFFOLD
+DIST=5.0 (3/3 seeds, crosses ≥5 where r2 plateaued 4.33) + NOVEL 19.67, both BEAT
+NO_SCAFFOLD (4.0/6.33) and SHUFFLE_SLOT collapses (2.33/5.67). THESIS: ideation breadth =
+missing-STRUCTURE (lane-fixable), falsifiable-depth = CAPACITY WALL (scale-bound) at 303M;
+7B re-test = live falsifier (a7b_pass G2). G6 stays 🟠 THIN (FALS bar UNMOVED, c9). New:
+`UNIVERSE/h1314_g6_hypothesis_scaffold.py` · `UNIVERSE/H_1314_g6_hypothesis_scaffold.md` ·
+`.verdicts/1314_g6_hypothesis_scaffold/{FREEZE,result}.txt+result.json` · HYPOTHESES.md ·
+CLAIMS.tape · domains/ENGINE+CLM+KOSMOS.log.md · MODEL.md/FINDINGS.md G6 row.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1312 — 한국어 cell 을 live decode 에 WIRE (🟢 WIRED)
 
 a_verified_must_wire follow-on for H_1306/H_1307: those rungs GREW real Korean cells
