@@ -2,6 +2,29 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(KOSMOS): 303M KOSMOS set — 🇰🇷 Korean · 🇬🇧 English · 📱 SNS (3-lane carving anchors)
+
+Built a **303M-scale KOSMOS grounding/carving anchor SET** (NOT a raw training corpus) in anima's
+canonical `.kosmos` format — three register components in three lanes. Reused the existing anchor
+format + `kosmos_parser_lib.hexa` (no ad-hoc format, a_kosmos), matching the precedent corpus anchors
+(`persona_sns_corpus.kosmos`, `corpus_5lang_gb_balanced.kosmos`).
+
+- **🇰🇷 Korean** (`anchors/kr_303m.kosmos`, lane `ko_303m_058`, tier 58): 873 lines / 122,760 B, curated
+  off `serving/corpus/anima_7b_webscale.ko.head.txt` (FineWeb-2 ko, ODC-BY).
+- **🇬🇧 English** (`anchors/en_303m.kosmos`, lane `en_303m_059`, tier 59): 949 lines / 122,819 B, curated
+  off `serving/corpus/anima_7b_webscale.en.head.txt` (FineWeb en, ODC-BY).
+- **📱 SNS** (`anchors/sns_303m.kosmos`, lane `sns_303m_052`, tier 52): 217 turns / 13,132 B, off anima's
+  authored persona×SNS register (`persona_sns_corpus.sample.txt` + `persona_instagram_samples.md`).
+- byte V256, PII-clean (email→`[EMAIL]`/phone→`[PHONE]`), 0xFE/0xFF/NUL=0, UTF-8 clean, leak grep=0.
+  Parser-witness `KOSMOS/303m_kr_en_sns/validate_anchors.hexa` → 3/3 valid.
+- tension 5-ch = **REPRESENTATIVE** design values (no measured fire trajectory; honest, same caveat as
+  the sibling corpus anchors).
+- HF PUBLIC `dancinlab/anima-kosmos-303m-kr-en-sns` + joined KOSMOS collection (a_hf_collections);
+  `HF.jsonl` row added; `HEXAD/KOSMOS.md` hub row added.
+- SCOPE HONEST (a_scale_honest_scope, c9): CURATED **sample-scale** anchor set, NOT webscale — full
+  webscale = `corpus_5lang_7b_webscale.kosmos` R2 manifest; full SNS = `persona_sns_corpus.kosmos`
+  manifest. SNS is thin because anima's held authored SNS-register material is the honest $0 ceiling.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 mitosis-native trunk training (make p8 literal) — 🧱 WALL with finding
 
 PHILOSOPHY **p8** ("training gradient + inference mitosis = one continuous cell-division") is today
