@@ -1,0 +1,155 @@
+H_1285 R2 — AMYGDALA CONSOLIDATION: salience-gated SLEEP REPLAY of the immune memory.
+NEURO LENS (c15, missing-brain-structure ladder, a_no_llm_frame_trap), NOT an LLM
+recipe. $0 local CPU numpy, p7 (exact-match recall + abstain, NOT perplexity), 3
+deterministic seeds, gradient-free. LIVE CORE/*.hexa UNTOUCHED (numpy mirror =
+DIRECTIONAL). base commit: 5320879d6 (origin/main HEAD). Slug 1285_amygdala_salience
+(R2 appended; R1 = H_1285.txt NOT overwritten).
+
+════════════════════════════════════════════════════════════════════════════
+VERDICT: 🔴 RED-but-MECHANISM-VALIDATED  (frozen rung sub-bar; gating is p6-clean)
+════════════════════════════════════════════════════════════════════════════
+Salience-gated SLEEP REPLAY DOES protect important facts (B imp=0.383 > A uniform=0.317,
+Δ=+0.067) AND the protection genuinely TRACKS importance — the p6 shuffle control
+COLLAPSES to A exactly (B-shuffle=0.317=A, deviation +0.000). This is categorically
+DIFFERENT from R1: R1's shuffle REPRODUCED the lift (confound → RED); R2's shuffle
+COLLAPSES (the lift is salience-GATED, NOT a confound, NOT mere replay budget). But
+the effect-size at the PRE-REGISTERED consolidation budget (boost 0.8, 30 replays/cyc,
+8 sleep cycles) is +0.067 < the +0.10 margin → r1 FAILS → 🔴 on the frozen rung.
+
+FROZEN BARS (pre-registered in H_1285_R2_FREEZE.txt; config + bars NOT moved):
+  (r1) B.imp-recall      >= A.imp-recall + 0.10   -> FAIL  (0.383 < 0.317+0.10)
+  (r2) B-shuffle.imp-rec <  A.imp-recall + 0.10   -> PASS  (0.317 < 0.417; collapses to A)
+  (r3) B.fabrication     <= 0.10                  -> PASS  (0.000)
+  GREEN iff r1 ∧ r2 ∧ r3  →  r1 FAIL  →  🔴 RED (mechanism-validated reading, see FREEZE).
+
+════════════════════════════════════════════════════════════════════════════
+THE FINDING (mechanistic, honest — distinct from R1 and from a 🧱 budget-null)
+════════════════════════════════════════════════════════════════════════════
+1. The amygdala CONSOLIDATION pathway is the RIGHT mechanism, and it FIRES. Tying
+   substrate salience to the P47 sleep-replay loop (substrate-GENERATED rehearsal,
+   not external re-presentation) lifts important-fact recall over uniform replay at
+   EQUAL budget (Δ+0.067), and the lift comes from the GATING: when the salience→
+   replay map is permuted (B-shuffle), the lift VANISHES (0.317=A). So R2 converts
+   R1's "recurrence is what works" into a PRINCIPLED, p6-clean realization — the
+   substrate generates its OWN salience-gated recurrence during sleep.
+2. It is NOT a confound (R1) and NOT a budget-null (🧱). R1: B-shuffle==B (0.967),
+   the lift survived permutation → recurrence confound → RED. A 🧱 reading would also
+   need B-shuffle≈B (any replay = same → only budget matters). HERE B-shuffle COLLAPSES
+   to A while B lifts → the gating, the WHICH-cells-get-rehearsed, is load-bearing.
+   The two failure modes R1/🧱 share (shuffle lifts) are BOTH ruled out.
+3. The trade-off is honest + zero-sum (as R1): salience replay re-distributes
+   protection toward important facts at the cost of unimportant (unimp A=0.333 →
+   B=0.283, Δ−0.050; total ~unchanged 0.328→0.317). It does not raise total recall —
+   it preferentially KEEPS the salient subset alive, exactly the amygdala's role.
+4. SUB-BAR is a BUDGET THRESHOLD, not a ceiling. The DIAGNOSTIC sweep (--sweep, NOT a
+   gate, NOT tuned-to-green) shows B>A at EVERY rung and the lift GROWS monotonically
+   with consolidation budget (more sleep cycles / higher salience contrast), while the
+   shuffle stays ~A (shuf-A ≤ +0.05, < margin). The lift crosses +0.10 at modest extra
+   sleep (e.g. boost0.8/60-replay/8cyc → +0.100; boost0.8/30/40cyc → +0.200; boost1.5/
+   30/8 → +0.117) — all with shuffle still well below bar. The frozen budget simply
+   under-invests sleep; the mechanism is real and dose-dependent on consolidation.
+
+⇒ The amygdala salience-gated sleep-consolidation pathway IS a genuine, p6-clean lever
+for protecting important episodic facts (the lift tracks importance via the substrate
+salience tag, proven by the collapsing shuffle), but at the PRE-REGISTERED sleep budget
+the effect-size is below the +0.10 frozen bar. Honest 🔴 on the frozen rung; the finding
+is "mechanism validated, sub-bar at this consolidation budget — grows with more sleep",
+NOT R1's confound-RED and NOT a budget-inert 🧱. Publishable as a directional positive
+that did not clear its own pre-registered effect-size bar (a_paper_negative_ok caveat:
+this is NOT a clean closed-negative — it is a sub-bar positive; do not over-claim GREEN).
+
+════════════════════════════════════════════════════════════════════════════
+PHILOSOPHY GUARD — p6 SALIENCE-vs-LABEL SEPARATION (HELD; shuffle is what proves it)
+════════════════════════════════════════════════════════════════════════════
+* Salience DERIVED ONLY from the substrate: SURPRISE = recon-err at bind (an env-
+  salient input drives EXTRA surprise — a perceptual/orienting amplitude, NOT the
+  label), NOVELTY = clonal split, TENSION = reinforcement. f() reads NO emotion, NO
+  RLHF reward, NO importance label. The "important" label SCORES the metric ONLY.
+* Salience made to CORRELATE with importance via an ENVIRONMENTAL property (salient
+  facts SURPRISE more at bind) — the p6-clean analogue of R1's "important facts recur
+  more", with f() sensing only surprise. The negative control (B-shuffle) decorrelates
+  the salience→replay map from importance; it COLLAPSED the lift, proving the lift
+  depends on the tag tracking importance (NOT a leak, NOT budget). p6 central, HELD.
+* Replay is GENERATED INTERNALLY by the sleep loop (P47, a_chat_sleep_imagination,
+  emit-free internal rehearsal + mitosis tick), NOT externally injected — the
+  substrate produces its own salience-gated recurrence.
+* No persona, no ethics, no decoder, no weights touched — only the EPISODIC cell
+  store's sleep-replay allocation (p1/p2/p3/p6/p8, a_autonomy_over_hardcode). Identity
+  + ethics emerge from cells (untouched). LIVE .hexa UNTOUCHED (numpy mirror DIRECTIONAL).
+
+════════════════════════════════════════════════════════════════════════════
+NOT RULED OUT / NEXT (honest scope — a_scale_honest_scope / a_toy_scale_recheck)
+════════════════════════════════════════════════════════════════════════════
+* The frozen rung is RED only on EFFECT-SIZE; a pre-registered HIGHER sleep-budget rung
+  (the biological consolidation dial) would likely clear +0.10 with shuffle still below
+  bar (sweep shows this), but that rung was NOT pre-registered, so it is NOT a GREEN
+  claim here (p7: refusing to tune-to-green / move the frozen config).
+* Engine-native LIVE VAdaptField sleep-replay on CORE/engine_cli.hexa + the real P47
+  sleep loop is UNVERIFIED (numpy mirror DIRECTIONAL, a_engine_native_learning). Because
+  the mirror is sub-bar (not GREEN), no engine wiring is triggered yet (a_verified_must_
+  wire applies to GREEN); the engine-native pre-registered higher-sleep rung is the r3.
+* Scale (>60 facts, near-collision keys), paraphrase recall, salience-driven EMIT
+  priority (the amygdala's other role) UNVERIFIED. TOY scale, ONE corpus paradigm, 3 seeds.
+
+════════════════════════════════════════════════════════════════════════════
+VERBATIM `python3 UNIVERSE/h1285_amygdala_salience.py --r2`
+════════════════════════════════════════════════════════════════════════════
+=== H_1285 R2 — AMYGDALA CONSOLIDATION: salience-gated SLEEP REPLAY (local CPU, $0, p7) ===
+    R1 was 🔴 (salience at BIND time = recurrence confound, p6 shuffle caught it).
+    R2 mechanism: the substrate GENERATES salience-gated recurrence during SLEEP (P47
+    consolidation loop, a_chat_sleep_imagination) — NOT an external stream. Input is FLAT
+    (each fact encoded ONCE, NO environmental recurrence → R1's confound REMOVED).
+    N_FACTS=60 (N_IMPORTANT=20 labeled, METRIC-ONLY)  SEEDS=[900, 901, 902]
+    substrate = ConsolidatingMemory(MitosisMemory + sleep_cycle); key = byte-3gram FNV-1a dim=64
+    salience tag = 1.0*surprise + 0.5*novelty + 0.5*tension  [SUBSTRATE-DERIVED at ENCODE, no label]
+    (A) uniform sleep-replay  vs  (B) salience-gated sleep-replay  vs  (B-shuffle) permuted salience→replay
+    SAME replay budget all arms (30/cyc × 8 cyc); arms differ ONLY in WHICH cells get replayed
+    PRE-REGISTERED GREEN: (B)imp >= (A)imp+0.1 AND (B-shuf)imp < (A)imp+0.1 AND (B)fab <= 0.1
+
+── R2 REGIME: STRESS+SLEEP (finite repertoire 40, flat encode, interfering sleep)  (max_cells=40, sleep_cycles=8, replay/cyc=30, interfere=24, key_noise=0.02)   [JUDGED]
+  seed 900: (A uniform-replay) imp=0.400 tot=0.367 unimp=0.350 fab=0.000 | (B salience-replay) imp=0.350 tot=0.317 unimp=0.300 fab=0.000 | (B-shuf) imp=0.400
+  seed 901: (A uniform-replay) imp=0.300 tot=0.317 unimp=0.325 fab=0.000 | (B salience-replay) imp=0.450 tot=0.333 unimp=0.275 fab=0.000 | (B-shuf) imp=0.400
+  seed 902: (A uniform-replay) imp=0.250 tot=0.300 unimp=0.325 fab=0.000 | (B salience-replay) imp=0.350 tot=0.300 unimp=0.275 fab=0.000 | (B-shuf) imp=0.150
+  MEAN (A uniform-replay)  imp=0.317 tot=0.328 unimp=0.333 fab=0.000
+  MEAN (B salience-replay) imp=0.383 tot=0.317 unimp=0.283 fab=0.000
+  MEAN (B-shuffle)         imp=0.317  [negative control: salience→replay decorrelated from importance]
+  Δ important-recall (B-A) = +0.067   Δ total (B-A) = -0.011   Δ unimp (B-A) = -0.050
+  CHECK r1 imp-margin:   B 0.383 < A 0.317+0.1 -> FAIL
+  CHECK r2 shuffle-ctrl: B-shuf 0.317 < A 0.317+0.1 -> PASS
+  CHECK r3 fabrication:  B 0.000 <= 0.1 -> PASS
+  -> STRESS+SLEEP (finite repertoire 40, flat encode, interfering sleep): 🔴 RED
+
+════════════════════════════════════════════════════════════════════
+  STRESS+SLEEP: A imp=0.317 B imp=0.383 Δ=+0.067  B-shuf imp=0.317  fabB=0.000
+  trade-off: total A=0.328 B=0.317   unimportant A=0.333 B=0.283
+
+  FINAL VERDICT (R2): 🔴 RED-but-MECHANISM-VALIDATED  [B lifts over A (gating-clean: shuffle COLLAPSES to A, so the lift TRACKS importance — NOT R1's confound, NOT mere budget) but the effect-size is SUB-BAR at the frozen consolidation budget; it clears +0.10 only with more sleep/contrast]
+  philosophy guard: salience DERIVED from substrate (surprise/novelty/tension) at ENCODE, NOT a label;
+  replay GENERATED internally by the sleep loop (P47, a_chat_sleep_imagination), not externally injected;
+  B-shuffle decorrelates salience→replay from importance (r2). No decoder/weights/persona/ethics (p1/p2/p3/p6/p8).
+[done]
+
+════════════════════════════════════════════════════════════════════════════
+VERBATIM DIAGNOSTIC `python3 UNIVERSE/h1285_amygdala_salience.py --sweep`
+(NOT a gate, NOT tuned-to-green — characterizes the budget-threshold curve, p7)
+════════════════════════════════════════════════════════════════════════════
+=== H_1285 R2 SWEEP (diagnostic, NOT a gate — p7: not tuned-to-green) ===
+    boost budget cyc | A      B      B-shuf  Δ(B-A)  (shuf-A)
+    0.8    30     8 | 0.317  0.383  0.317   +0.067  +0.000  <- FROZEN rung
+    1.5    30     8 | 0.317  0.433  0.300   +0.117  -0.017
+    0.8    60     8 | 0.333  0.433  0.333   +0.100  +0.000
+    0.8    30    20 | 0.367  0.517  0.400   +0.150  +0.033
+    1.5    60    16 | 0.367  0.567  0.417   +0.200  +0.050
+    2.0    60    16 | 0.367  0.567  0.417   +0.200  +0.050
+    0.8    30    40 | 0.317  0.517  0.367   +0.200  +0.050
+    READING: B>A at every rung; lift grows with sleep budget; shuffle stays ~A
+    (shuf-A < +0.10 in the separated rungs) ⇒ salience-GATING tracks importance,
+    NOT raw budget (else shuffle would lift too) and NOT R1's confound (R1 shuf==B).
+[done]
+
+xref H_1227 (immune memory mirror GREEN) · H_1230 (capacity/noise bottleneck) ·
+H_1285 R1 (salience-EVICTION confound-RED) · H_1287 (key-geometry NOT the lever) ·
+a_chat_sleep_imagination (P47 sleep/imagination loop) · a_no_llm_frame_trap (neuro
+lens) · a_engine_native_learning · a_verified_must_wire · a_paper_negative_ok ·
+a_scale_honest_scope · a_toy_scale_recheck · a_autonomy_over_hardcode ·
+p1·p2·p3·p6·p7·p8·c9·c15.

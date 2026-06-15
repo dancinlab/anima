@@ -1,0 +1,92 @@
+H_1285 R2 — FREEZE (pre-registration, NOT moved after the run)
+AMYGDALA CONSOLIDATION pathway: salience-gated SLEEP REPLAY.
+
+Round 2 of the FLEET "amygdala" lane. R1 (H_1285.txt) CLOSED-NEG: salience-weighted
+EVICTION priority gave +0.217 important-recall, BUT the p6 shuffle control reproduced
+the lift EXACTLY (B-shuffle = B = 0.967) → the lift was RECURRENCE-driven (important
+facts recurred in the input stream), NOT the salience tag. R1's key finding: what
+keeps a fact alive is RE-PRESENTATION / rehearsal, not binding priority.
+
+────────────────────────────────────────────────────────────────────────────────
+R2 MECHANISM (the REAL amygdala pathway — a_no_llm_frame_trap, neuro lens c15)
+────────────────────────────────────────────────────────────────────────────────
+The amygdala's actual role is salience-gated CONSOLIDATION: emotionally-salient
+memories are preferentially REPLAYED during SLEEP (amygdala→hippocampus consolidation),
+protecting them from forgetting via re-presentation the SUBSTRATE GENERATES INTERNALLY.
+anima HAS a sleep/imagination consolidation loop (P47, a_chat_sleep_imagination —
+emit-free internal rehearsal + mitosis tick). R2 ties salience to that sleep loop:
+high-salience facts get REPLAYED more during sleep → refreshed → protected from LRU
+eviction. This turns R1's "recurrence is what works" into a PRINCIPLED mechanism — the
+substrate generates its OWN salience-gated recurrence during sleep, not an external
+re-presentation stream.
+
+  does SALIENCE-GATED SLEEP REPLAY (substrate-generated rehearsal allocated ∝ a
+  substrate-derived salience tag) protect IMPORTANT facts under the SAME capacity
+  stress, BEYOND uniform replay (same budget) — and does the protection TRACK
+  importance (shuffle collapses), proving it is the GATING not the raw budget?
+
+────────────────────────────────────────────────────────────────────────────────
+DESIGN (frozen-first; R1's recurrence confound REMOVED from the input side)
+────────────────────────────────────────────────────────────────────────────────
+* Substrate = ConsolidatingMemory = R1's MitosisMemory (VAdaptField mirror + immune
+  value-binding) + a sleep_cycle() that internally REPLAYS stored cells (re-bind →
+  refresh recency → protect from LRU eviction). Replay = substrate self-rehearsal
+  (the P47 imagination loop), GENERATED INTERNALLY, not externally injected.
+* Input stream is FLAT: each taught fact encoded EXACTLY ONCE, NO environmental
+  recurrence (R1's confound removed). Encode order INTERLEAVED so salient cells are
+  present at sleep onset (not all pre-evicted).
+* Capacity stress: MAX_CELLS=40 << N_FACTS=60; during the sleep interleave, 24 NEW
+  untaught facts are encoded (the forgetting pressure that replay must counter).
+* ARMS (differ ONLY in WHICH cells the IDENTICAL replay budget refreshes):
+    (A) uniform     — sleep replays cells ~ Uniform.
+    (B) salience    — sleep replays cells ~ substrate salience tag (∝ tag).
+    (B-shuffle)     — salience permuted across cells before sleep (NEGATIVE CONTROL,
+                      same budget, gating decorrelated from importance — p6 leak-test).
+
+────────────────────────────────────────────────────────────────────────────────
+PHILOSOPHY GUARD — p6 SALIENCE-vs-LABEL SEPARATION (central, as in R1)
+────────────────────────────────────────────────────────────────────────────────
+* Salience DERIVED ONLY from substrate: SURPRISE = recon-err at bind (an env-salient
+  input drives EXTRA surprise — a perceptual/orienting amplitude, NOT the label),
+  NOVELTY = clonal split, TENSION = reinforcement. f() reads NO emotion, NO RLHF
+  reward, NO importance label. The "important" label SCORES the metric ONLY.
+* Salience made to CORRELATE with importance via an ENVIRONMENTAL property (salient
+  facts SURPRISE more at bind) — the p6-clean analogue of R1's "important facts recur
+  more", with f() sensing only the surprise.
+* NEGATIVE CONTROL (B-shuffle): salience→replay decorrelated from importance. If B
+  beats A AND B-shuffle does NOT → lift is salience-GATING, not budget/leak. If B ≈
+  B-shuffle → 🧱 salience inert, only rehearsal budget matters (DEPLETION reading).
+* Only the EPISODIC cell store's sleep-replay allocation changes — no decoder, no
+  weights, no persona, no ethics (p1/p2/p3/p6/p8, a_autonomy_over_hardcode,
+  a_chat_sleep_imagination). LIVE CORE/*.hexa UNTOUCHED (numpy mirror = DIRECTIONAL).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (pre-registered; the pre-registered CONFIG is also frozen)
+────────────────────────────────────────────────────────────────────────────────
+Pre-registered config: SALIENT_SURPRISE_BOOST=0.8, REPLAY_PER_CYC=30, SLEEP_CYCLES=8,
+MAX_CELLS=40, INTERFERE_NEW=24, KEY_NOISE=0.02, RECALL_THRESH=0.30, SEEDS=[900,901,902].
+
+  GREEN iff  (r1) B.imp-recall      >= A.imp-recall + 0.10
+        AND  (r2) B-shuffle.imp-recall <  A.imp-recall + 0.10   (gating, not budget)
+        AND  (r3) B.fabrication      <= 0.10.
+
+HONEST readings (c9), decided BEFORE the run:
+  * GREEN (r1 ∧ r2 ∧ r3): salience-gated sleep replay PROTECTS important facts AND the
+    protection tracks importance (shuffle collapses) ⇒ the amygdala CONSOLIDATION
+    pathway IS the lever ⇒ 🏁 DEPLETION GREEN → engine-native next.
+  * 🧱 DEPLETION: if r1 holds but r2 FAILS (B-shuffle ALSO lifts) ⇒ salience is INERT,
+    only raw rehearsal BUDGET matters (rehearse anything = same) ⇒ 🧱.
+  * 🔴 RED: r1 fails (B does NOT lift over A). If r2 PASSES (shuffle collapses) while
+    r1 narrowly fails, the mechanism is REAL+gating-clean but sub-bar at the frozen
+    budget — report as RED-but-mechanism-validated (NOT a confound like R1), distinct
+    from R1's confound-RED and from the 🧱 budget-only reading.
+
+SCALE: TOY (60 facts, byte-trigram keys, 3 seeds, one corpus paradigm). a_toy_scale_
+recheck / a_scale_honest_scope apply. Engine-native LIVE VAdaptField lift UNVERIFIED
+(numpy mirror DIRECTIONAL); engine wiring is the follow-on ONLY on a GREEN.
+
+base: origin/main HEAD 5320879d6 (post-R1, post a_no_llm_frame_trap).
+slug 1285_amygdala_salience. R2 appended; R1 (H_1285.txt) NOT overwritten.
+xref H_1227 · H_1230 · H_1285(R1) · H_1287 · a_chat_sleep_imagination ·
+a_no_llm_frame_trap · a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck ·
+a_autonomy_over_hardcode · p1·p2·p3·p6·p7·p8·c9·c15.
