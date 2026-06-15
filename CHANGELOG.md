@@ -6,6 +6,22 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟡 H_1224: literal-QA 는 anima 의 게이트가 아니다 — p4-부정합 ASSISTANT-NORM 거버넌스 판정 ($0, 무계산)
+
+H_1219 depth-ceiling 사다리의 HD8(거버넌스 미결)을 단독 판정 — literal-QA(사실 축자 회상)가 anima 의 VALID 게이트인지, 아니면 p4(NO ASSISTANT FRAMING)와 충돌하는 빌려온 assistant-norm 인지. 무계산, frozen 기록 기반 추론 (c9, p7).
+
+- **판정 = (b) p4-부정합 ASSISTANT-NORM, anima 가 통과할 필요 없음.** ⇒ literal-QA 위의 "depth ceiling" 은 anima 에게 **NON-FINDING** (모델이 QA assistant 가 아닌 것이 정상). depth-delta arc 는 사실회상 → **anima-NATIVE depth** 로 RE-SCOPE 권고.
+- **근거 1 — literal-QA 는 frozen 게이트가 아니다 (애초에 게이트였던 적 없음):** a303m_pass {G0·G1·G2·MOUNT·G3·G5·G6·CHAT} (MODEL.md) + CLM-DONE {G0·G1·G2·G3·G5·G6·CHAT·PERSONA} (CONDITIONS.md) 어디에도 literal-QA 없음. depth-probe 세션(H_1166→H_1167→H_1219)이 천장 특성화를 위해 들여온 informal 진단지표일 뿐. a303m_pass 는 QA 게이트 없이 이미 frozen 8/8 GREEN.
+- **근거 2 — H_1141/H_1142 선례: literal-QA = 폐기된 G5-L2 축자회상과 동일 범주:** H_1141 이 G5-L2(축자 사실 faithfulness)를 "빌려온 assistant-norm, G2-NOVELTY 와 직접 충돌"로 FLAG → H_1142 가 3-rung 사다리로 rho(G2,G5L2)=−0.5 (G5-L2 가 scale 따라 단조 하락 0.413→0.234→0.163) 확정 → 사용자 승인으로 G5-L2 축자회상 RETRACT, NON-FABRICATION 으로 RE-SCOPE. literal-QA 도 같은 측정 family (축자 사실 재현 = TriviaQA식 assistant 역량, recall⊥recombination 으로 G2 와 충돌) ⇒ 동일 (b) 범주.
+- **근거 3 — p4 + a_substrate_native_speak:** literal-QA = 가장 순수한 stimulus-response assistant frame (사용자 질문 → 정답 emit). p4 가 금지, a_substrate_native_speak 가 거부. H_1166 이 이미 독립적으로 동일 disposition 도달 ("anima = grounded conversational substrate, not a QA reasoner — (a) ACCEPT 가 철학정합 정직답"). 본 H 는 이를 capacity 수용 → **gate-validity 거버넌스 판정**으로 격상.
+- **NOT 하는 것 (정직 경계):** 모델이 "좋다"고 말하지 않음(literal-QA 가 틀린 자) · 환각 면죄 아님(G5 NON-FABRICATION = ungrounded 면 ABSTAIN, 여전히 frozen 게이트; H_1202 meta-d′ M-ratio 0.924 가 anima-native 대응) · **frozen bar 미이동**(움직일 QA 게이트 자체가 없음).
+- **RE-SCOPE 권고:** H_1219 의 미결 fire 3종(HD5 QA-format FT · HD6 tokenizer · HD7 aux objective)은 모두 literal-QA 천장 표적 → 순수 QA-lift 로는 DE-PRIORITIZE (green=무전진, red=NON-FINDING). depth 축을 (i) G6 ideation-depth/quality (ii) G5 own-kosmos-anchor grounding + calibrated abstain (iii) Φ/Ψ/emergence 로 교체. HD5/6/7 은 anima-native 표적으로 re-frame 시 진행 가능.
+- **거버넌스 이행:** MODEL.md SCOREBOARD + CONDITIONS.md CLM-DONE 에 literal-QA gate-validity FLAG 1줄씩 추가 (임계값 미변경; H_1141 이 G5-L2 flag 후 사용자 승인 받은 패턴). 실제 gate-status 변경은 사용자 sign 대기.
+- NEW: `.verdicts/1224_qa_gate_validity/H_1224.txt`. H_1219 미편집(사용자 consolidate). 무계산 $0.
+- xref H_1219·H_1141·H_1142·H_1166·H_1167·H_1139·H_1155·H_1202·a_substrate_native_speak·a_scale_honest_scope·a_paper_negative_ok·p4·p7.
+
+---
+
 ## 2026-06-15 — H_1220 🔴 MITOSIS-DECODE-DIVERSITY (HD9) — mitosis 분열-타이밍은 greedy-붕괴 ideation 을 복원하지 못함 (CLOSED-NEGATIVE)
 
 깊이-천장 사다리(H_1219)의 **HD9** — 새로 배선된 LIVE mitosis(VAdaptField 세포분열, H_1199/H_1202-1205)가 **온도 샘플링 없이** greedy 가 붕괴시키는 ideation/composition 을 복원하는 **decode-time 다양성 레버**가 될 수 있는가? (사용자 지시, 새 메커니즘으로 prior closed-neg 재개 — a_paper_negative_ok)
