@@ -71,3 +71,37 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   contradiction) · **h1288** (growth-memory: store grows, never evicts — the mechanism behind the
   residual pull) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning ·
   a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · c9 · c15
+  a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · c9 · c15
+## 2026-06-16 — H_1334 🧱 Sapir-Whorf 2-D / FEATURAL: STRUCTURED-NEGATIVE (dissociation generalizes, clean bar fails)
+
+- **id**: H_1334 · slug `1334_whorf_2d` · seeds [4334,4335,4336] (H_1323-family +1 decade, PROJ_SEED provenance) · $0 CPU mirror DIRECTIONAL
+- **seed**: named EXTENSION of the GREEN 1-D H_1323/H_1325 CP result — does Whorfian categorical
+  perception GENERALIZE from a 1-D continuum to a 2-D / featural feature space, or is it 1-D-only?
+- **paradigm**: G×G=11×11 (121-stim) feature SQUARE, 2-D RBF code (6×6 centers, dim 36). Two languages
+  carve it: L_2D=LINEAR diagonal (u+v>1.0), L'_2D=L-SHAPED corner (u>0.5∧v>0.5). Per grid-EDGE
+  discrim = |Δ posterior|; high-discrim edges = CP RIDGE. Ridge-coherence metric (2-D analogue of the
+  1-D peak-count) = largest-connected-component fraction of the ridge edge-set; RIDGE-ALIGN = ridge
+  closeness to a boundary curve. 4 arms (PRE-LANG/L_2D/L'_2D/SHUFFLE).
+- **verdict-tier-target → actual**: 🟢 (CP generalizes to 2-D) → **🧱 STRUCTURED-NEGATIVE** (T1 fails;
+  deterministic over 2 re-runs). **T1 2D-CP-PRESENT ❌** — L'_2D PASSES fully (cross-within +0.275,
+  vs-baseline +0.254, ridge-align 0.802≥0.70) but **L_2D FAILS the align sub-bar (0.628<0.70)** though
+  its CP margins are the LARGEST of any arm (+0.485/+0.496). **T2 2D-DISSOCIATION ✅** — each ridge
+  tracks its OWN boundary (L_2D +0.121, L'_2D +0.161, both ≥0.10): the relativity signature SURVIVES
+  into 2-D. **T3 EARNED ❌** — shuffle ridge-coherence 0.576>0.50 (metric-space random labels → 41
+  cells → connected blob; same failure mode as 1-D H_1323 prominence); mean-lang coherence 0.682<0.70.
+- **mechanism**: the diagonal boundary crosses the square's interior where the 6×6 RBF grid is sparse →
+  ridge SPREADS off the exact diagonal (align-limited by grid resolution, NOT absence of CP — its
+  margins are the strongest); the axis-aligned L-shape is resolved sharply (6 cells, align 0.802,
+  coherence 0.833). SHUFFLE in a metric space grows a non-trivially connected high-discrim blob.
+- **finding**: Whorfian CP PARTIALLY generalizes to 2-D — DISSOCIATION + cross-within margins hold for
+  BOTH languages, clean ridge holds for axis-aligned L'_2D — but does NOT clear a clean 2-D-general
+  bar (linear-ridge align-limited by grid resolution + shuffle not incoherent in a metric space).
+  Reported straight, NO bar moved (c9/p7).
+- **next (R2 candidate, each frozen ANEW)**: denser RBF grid (K_RBF↑, isolate the diagonal align-fail) +
+  component-count / per-component-compactness shuffle null (the same metric-space-shuffle fix flagged
+  for the 1-D H_1323 R2) + engine-native realization on the live CORE Voronoi lane.
+- **claim-link**: `CLAIMS.tape @C h1334_whorf_2d` · card `UNIVERSE/cards/H_1334_whorf_2d.md`
+  · verdicts `.verdicts/1334_whorf_2d/{FREEZE,result}.txt`
+- xref: h1323 · h1325 (the GREEN 1-D result extended) · h1330 (bilingual sibling) · a_no_llm_frame_trap
+  · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope
+  · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
