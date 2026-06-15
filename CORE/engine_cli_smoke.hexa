@@ -728,6 +728,56 @@ fn main() {
     let nofab_prc = prc_fire(full) && (!prc_fire(mid))
     if _assert_b("case_68_prc_no_fab_off_boundary", true, nofab_prc) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── SCNNetwork (H_1302, HD36) — the multi-oscillator coupled-ensemble consensus lane ──────
+    // N=8 heterogeneous oscillators (intrinsic tau in [22,26]) MUTUALLY couple (Kuramoto) into a
+    // single ensemble rhythm. The coupled network reaches CONSENSUS (order parameter R -> ~1);
+    // the SAME oscillators UNCOUPLED (arm A = N independent PhaseResetClocks, the nearest-lane
+    // falsifier) never synchronize (R ~0.37). Both controls collapse it: FRUSTRATED random-sign
+    // coupling destroys the consensus field (R below uncoupled) and K=0 ablate free-runs at tau.
+    // A perturbed (de-tuned) member is PULLED BACK by the ensemble (R stays high) — network damping.
+    let SCN_N = 8
+    let SCN_STEPS = 400
+    let scn_b = scn_run(scn_new(5320, SCN_N), SCN_STEPS)          // mutual network
+    let scn_a = scn_run(scn_new_uncoupled(5320, SCN_N), SCN_STEPS) // arm A: uncoupled
+    let scn_sh = scn_run(scn_new_frustrated(5320, SCN_N), SCN_STEPS) // frustrated control
+    let scn_ab = scn_run(scn_new_ablated(5320, SCN_N), SCN_STEPS)  // K=0 ablate control
+    let scn_b_R = scn_order(scn_b)
+    let scn_a_R = scn_order(scn_a)
+    let scn_sh_R = scn_order(scn_sh)
+    let scn_ab_R = scn_order(scn_ab)
+
+    // case 69 : CONSENSUS (H_1302 c1) — the mutually-coupled ensemble synchronizes (R >= 0.90),
+    //   decisively above the uncoupled arm (B - A >= 0.30). N heterogeneous oscillators -> one rhythm.
+    let scn_consensus_ok = (scn_b_R >= 0.90) && ((scn_b_R - scn_a_R) >= 0.30)
+    if _assert_b("case_69_scn_reaches_consensus", true, scn_consensus_ok) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 70 : DISTINCT-vs-UNCOUPLED (H_1302 c2) — the SAME oscillators with NO mutual coupling
+    //   (= N independent PhaseResetClocks) CANNOT reach consensus (R <= 0.65). This is what no
+    //   single-oscillator lane (PhaseResetClock) can do: produce a shared period FROM N members.
+    let scn_distinct = scn_a_R <= 0.65
+    if _assert_b("case_70_scn_uncoupled_no_consensus", true, scn_distinct) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 71 : EARNED-FRUSTRATED (H_1302 c3) — random-SIGN coupling (same magnitude, half repel)
+    //   destroys the coherent consensus field: R collapses to <= the uncoupled arm. The lift needs
+    //   COHERENT ATTRACTIVE mutual coupling, not just any coupling of that magnitude.
+    let scn_frust_collapse = scn_sh_R <= (scn_a_R + 0.15)
+    if _assert_b("case_71_scn_frustrated_collapses", true, scn_frust_collapse) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 72 : EARNED-ABLATE (H_1302 c4) — K=0 removes the coupling, each member free-runs at its
+    //   own tau, no consensus (R <= the uncoupled arm). The mutual coupling is the load-bearing part.
+    let scn_abl_collapse = scn_ab_R <= (scn_a_R + 0.15)
+    if _assert_b("case_72_scn_ablate_collapses", true, scn_abl_collapse) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 73 : NETWORK DAMPING (H_1302 c5) — de-tune ONE member hard (+6 ticks): the ensemble
+    //   PULLS IT BACK into the synchronized cluster, so R stays high (>= 0.90) and far above the
+    //   uncoupled-perturbed arm (>= 0.30 gap). A single oscillator has no network to damp it.
+    let scn_bp = scn_run(scn_detune(scn_new(5320, SCN_N), 6.0), SCN_STEPS)
+    let scn_ap = scn_run(scn_detune(scn_new_uncoupled(5320, SCN_N), 6.0), SCN_STEPS)
+    let scn_bp_R = scn_order(scn_bp)
+    let scn_ap_R = scn_order(scn_ap)
+    let scn_damp_ok = (scn_bp_R >= 0.90) && ((scn_bp_R - scn_ap_R) >= 0.30)
+    if _assert_b("case_73_scn_network_damps_perturbed_member", true, scn_damp_ok) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

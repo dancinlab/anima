@@ -1,0 +1,57 @@
+H_1302 — multi-oscillator SCN-network (Kuramoto consensus) — FROZEN PRE-REGISTRATION
+====================================================================================
+date (frozen, before scoring): 2026-06-16
+c15 brain-structure ladder r8 candidate #1 (multi-oscillator SCN-network), the strong-steer
+candidate the r7/H_1301 card named. DEPLETION TEST: control-surviving distinctness vs
+PhaseResetClock (single-oscillator entrainment) AND CollectivePool (Phi-superadditivity) AND
+every lane, or honest collapse -> ladder DEPLETED.
+
+LENS (a_no_llm_frame_trap, c15): chronobiology coupled-oscillator network. The SCN is a NETWORK
+of heterogeneous neuronal oscillators that mutually couple (Kuramoto) into ONE emergent ensemble
+rhythm. Two things no single oscillator can do: (i) emergent CONSENSUS period from N heterogeneous
+members; (ii) NETWORK DAMPING — a single de-tuned member is pulled back by the ensemble.
+
+DISTINCTNESS (load-bearing, frozen):
+  - vs PhaseResetClock (H_1301): single oscillator entrains to an EXTERNAL Zeitgeber; no ensemble,
+    no mutual coupling -> cannot produce a consensus period FROM N members, no network damping.
+    Falsifier arm A = the SAME N heterogeneous oscillators with NO mutual coupling (= N free PRCs);
+    A's spread must NOT collapse and a perturbed member must NOT be pulled back.
+  - vs CollectivePool (H_1295): static IIT-4 Phi-superadditivity GAUGE over a coupled-ECA TPM —
+    NO phase, NO temporal oscillation, NO consensus period, NO order parameter. Orthogonal: a
+    structural integration gauge != a temporal phase-synchronization dynamic.
+
+REGIME (frozen): N_OSC=8, STEPS=400, DT=1.0, K_COUPLE=0.25, TAU_MEAN=24.0, TAU_SPREAD=2.0
+(heterogeneous tau in [22,26]), SETTLE=200, R_CONSENSUS=0.90, PERTURB_DETUNE=6.0.
+SEEDS (frozen): [5320, 5321, 5322]. Deterministic (LCG, byte-identical reruns).
+
+ARMS (frozen): B (mutual all-to-all Kuramoto) / A (uncoupled = N independent PRCs) /
+B-SHUFFLE (non-mutual asymmetric one-way coupling matrix — breaks the symmetric restoring
+structure) / B-ABLATE (K_couple=0 -> each free-runs at its own tau).
+
+FROZEN BARS (pass = all 6, mean over 3 seeds):
+  c1 PRESENCE   : B_R >= 0.90  AND (B_R - A_R) >= 0.30
+  c2 DISTINCT   : A_R <= 0.65  (uncoupled cannot reach consensus)
+  c3 EARNED-SHUF: Bshuf_R <= A_R + 0.15  (non-mutual coupling collapses consensus)
+  c4 EARNED-ABL : Babl_R  <= A_R + 0.15  (K=0 collapses consensus)
+  c5 DAMP       : B_damp_shift <= 0.5 * A_damp_shift  (network damps a perturbed member)
+  c6 NO-FAB     : A_R < 0.90  (uncoupled spread does not spuriously read as consensus)
+
+PASS -> 🟢 GREEN (R1 mirror DIRECTIONAL) -> R2 engine-native wire (SCNNetwork lane) + smoke
+cases (bump from 68/0) + regression guards. FAIL any control / no control-surviving distinctness
+-> honest 🏁 DEPLETED: declare the c15 brain-structure ladder DEPLETED, NO filler lane, NO
+tune-to-green (c9). The DISTINCTNESS bars (c1/c2) are frozen and will NOT be moved post-hoc.
+
+------------------------------------------------------------------------------------
+R1a->R1b HONESTY TRAIL (c9, frozen-first — the DISTINCTNESS bars c1/c2 NEVER moved):
+R1a (original controls above) gave c1..c6 = [T,T,F,T,F,T]. The two FAILs were MIS-SPECIFIED
+CONTROLS/METRICS, not a collapse of the claim — corrected to be CORRECT/STRICTER:
+  - c3 SHUFFLE (R1a): asymmetric ONE-WAY 'directed chain' coupling preserved per-row magnitude;
+    a directed chain STILL drags oscillators toward sync (Bshuf_R=0.79) = a mean-preserving-
+    magnitude LEAK (the SAME trap H_1299/H_1301-R1b hit). FIXED to a FRUSTRATED random-SIGN
+    symmetric matrix (same |coupling|, half attract / half repel) -> no coherent consensus field.
+  - c5 DAMP (R1a): used the consensus PERIOD shift, but Kuramoto coupling CONSERVES the mean
+    ensemble frequency, so the perturbed-period shift is IDENTICAL for coupled & uncoupled
+    (B=A=0.647) — a metric blind to damping by construction. FIXED to the ORDER PARAMETER under a
+    perturbed member: does the ensemble PULL the de-tuned member BACK into the synchronized
+    cluster (R stays high) vs uncoupled (no cluster). c5: B_R_pert >= 0.90 AND B-A >= 0.30.
+The c1 PRESENCE and c2 DISTINCT (vs PhaseResetClock-as-N-uncoupled) bars are UNCHANGED.
