@@ -1,0 +1,116 @@
+=== H_1207 recurrent (delta-augmented) split key (local CPU, $0) — DIM=8 DIM'=16 WARMUP=250 T=2400 SEEDS=[900, 901, 902] SPLIT_THRESH=0.3 LR=0.2 BETA=1.0 ===
+corpus = CORE/testdata/clm_mid_5lang_c4.txt  (recurrent gate = vadapt_field_step lifted to z_t=[x_t; beta*(x_t-x_t-1)])
+
+--- seed 900 ---
+  NOVEL    : RECURRENT growth=1345 (per-sample baseline= 168)  recurrent late recon-err=0.3243
+  REPEAT   : RECURRENT growth=   6 (per-sample baseline=   2)  recurrent late recon-err=0.0995
+  SHUFFLED : RECURRENT growth=1319 (per-sample baseline= 173)  recurrent late recon-err=0.3398
+  WALK     : RECURRENT growth= 884  (DIAGNOSTIC, non-bar)  recurrent late recon-err=0.2649
+  WALK_SHUF: RECURRENT growth=1422  (DIAGNOSTIC, non-bar)  recurrent late recon-err=0.3512
+
+--- seed 901 ---
+  NOVEL    : RECURRENT growth=1349 (per-sample baseline= 167)  recurrent late recon-err=0.3400
+  REPEAT   : RECURRENT growth=  12 (per-sample baseline=   9)  recurrent late recon-err=0.0000
+  SHUFFLED : RECURRENT growth=1343 (per-sample baseline= 163)  recurrent late recon-err=0.3292
+  WALK     : RECURRENT growth= 873  (DIAGNOSTIC, non-bar)  recurrent late recon-err=0.2629
+  WALK_SHUF: RECURRENT growth=1437  (DIAGNOSTIC, non-bar)  recurrent late recon-err=0.3581
+
+--- seed 902 ---
+  NOVEL    : RECURRENT growth=1327 (per-sample baseline= 153)  recurrent late recon-err=0.3161
+  REPEAT   : RECURRENT growth=   5 (per-sample baseline=   2)  recurrent late recon-err=0.1143
+  SHUFFLED : RECURRENT growth=1367 (per-sample baseline= 156)  recurrent late recon-err=0.3383
+  WALK     : RECURRENT growth= 888  (DIAGNOSTIC, non-bar)  recurrent late recon-err=0.2550
+  WALK_SHUF: RECURRENT growth=1412  (DIAGNOSTIC, non-bar)  recurrent late recon-err=0.3422
+
+=== 3-seed MEAN cell_growth ===
+  PRIMARY (H_1203 streams VERBATIM):
+    NOVEL    : RECURRENT=1340.33  per-sample-baseline= 162.67   (recurrent per-seed [1345, 1349, 1327])
+    REPEAT   : RECURRENT=   7.67  per-sample-baseline=   4.33   (recurrent per-seed [6, 12, 5])
+    SHUFFLED : RECURRENT=1343.00  per-sample-baseline= 164.00   (recurrent per-seed [1319, 1343, 1367])
+  WALK diagnostic (contiguous corpus walk — HAS order structure):
+    WALK     : RECURRENT= 881.67   (per-seed [884, 873, 888])
+    WALK_SHUF: RECURRENT=1423.67   (per-seed [1422, 1437, 1412])
+
+=== FROZEN FALSIFIERS (recurrent gate, PRIMARY H_1203 streams) ===
+  F1  V14 격파   NOVEL/SHUFFLED = 0.998  (bar >= 1.5)  -> FAIL
+      (H_1203 per-sample baseline reproduced: NOVEL/SHUFFLED = 0.992 == ~0.992)
+  F2  no regr.   NOVEL/REPEAT   = 174.826  (bar >= 1.5)  -> PASS
+  F3  permutation-control magnitude (Δ% division lost to shuffle):
+        PRIMARY  (i.i.d.-scattered NOVEL): Δ% = -0.20%
+        WALK     (contiguous, HAS order) : Δ% = -61.47%   (diagnostic)
+
+TIER: RED (closed-neg, a_paper_negative_ok) — even the recurrent gate stays permutation-invariant on the H_1203 PRIMARY streams (F1 FAIL). Read F3: if WALK Δ% >> PRIMARY Δ%, the gate IS trajectory-sensitive but the i.i.d.-scattered H_1203 NOVEL stream carries no trajectory to be sensitive to (a sharper V14 reading); if WALK Δ% ~ 0 too, the gate itself stays order-invariant for this feature.
+
+HONESTY: ONE corpus (clm_mid_5lang_c4), toy scale, 3 seeds, gradient-free, numpy mirror = vadapt_field_step lifted to z_t=[x_t; beta*(x_t-x_t-1)] (H_1199 mechanism-match precedent). H_1203 stream builders imported VERBATIM. Scale transfer UNVERIFIED. Frozen bars (1.5 == H_1203) not moved.
+[done]
+
+================================================================================
+H_1207 VERDICT — RECURRENT SPLIT KEY  ·  🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+================================================================================
+TIER: 🔴 RED — F1 (V14 격파) FAIL on the PRIMARY H_1203 streams. A recurrent
+(delta-augmented) split key does NOT defeat V14 for the H_1203 streams, BUT the
+F3 permutation-control diagnostic delivers a SHARPER, deeper finding than a flat
+null. The verdict is decision-grade and completes the H_1203 trajectory residual.
+
+DESIGN (root-cause c1, principled): the split key was lifted from the per-sample
+recon-err L2(x_t, nearest) to the recon-err over a DELTA-AUGMENTED sample
+z_t = [x_t ; beta*(x_t - x_{t-1})], beta=1.0 — exactly the CLM_TIME_ENCODING
+"M3 DERIVATIVE on the split TRIGGER" mechanism (the only temporal arm that beat the
+shuffle control there). Prototypes live in the 2*DIM augmented space; nearest-by-L2,
+split-seeds-at-sample, LR=0.20 winner-pull are OTHERWISE vadapt_field_step. The Δ
+term is a function of the PAIR (x_{t-1}, x_t), so the gate IS order-dependent by
+construction.
+
+NUMERIC (3-seed mean):
+  F1  V14 격파   NOVEL/SHUFFLED = 0.998  (bar >= 1.5)  -> FAIL
+      H_1203 per-sample baseline reproduced byte-faithfully: 0.992 (== H_1203 F2).
+  F2  no regr.   NOVEL/REPEAT   = 174.8  (bar >= 1.5)  -> PASS (coupling AMPLIFIED:
+      H_1203 per-sample F1 was 37.5; the delta term widens novel-vs-repeat further).
+  F3  permutation-control magnitude (Δ% division lost to shuffle):
+        PRIMARY  (i.i.d.-scattered H_1203 NOVEL): Δ% = -0.20%  (no order to destroy)
+        WALK     (contiguous corpus walk, HAS order): Δ% = -61.47%  (strongly order-
+        SENSITIVE — but in the OPPOSITE direction)
+    NOVEL=1340.3  SHUFFLED=1343.0  REPEAT=7.7  WALK=881.7  WALK_SHUF=1423.7
+
+THE FINDING (two-part, honest):
+  (1) On the H_1203 PRIMARY streams the recurrent gate stays order-invariant
+      (F1 0.998 ~ H_1203's 0.992). Confirms the PRE-REGISTERED honest prediction:
+      the H_1203 NOVEL stream draws i.i.d.-SCATTERED corpus offsets, so its
+      tick-to-tick delta distribution is ITSELF permutation-invariant — there is no
+      trajectory in that stream for ANY gate to be sensitive to. The H_1203
+      trajectory-neutrality was a property of the i.i.d. STREAM, not only of the
+      per-sample gate. This SHARPENS V14: the gate was never the whole story.
+  (2) The recurrent gate IS strongly order-sensitive — the WALK diagnostic proves
+      it (Δ% = -61.47%, far from 0) — but the dependence is INVERTED vs the V14
+      target. A genuinely ORDERED contiguous corpus walk has SMALL, SMOOTH deltas
+      (local continuity → low transition-novelty → fewer splits: 882 cells), whereas
+      SHUFFLING that walk makes every delta a large random jump (high transition-
+      novelty → MORE splits: 1424 cells). So a derivative gate rewards JAGGEDNESS,
+      not order per se: order (smoothness) SUPPRESSES division. To get "novel >>
+      shuffled" one would need a stream whose ORDERED form is MORE jagged than its
+      shuffle — which a smooth natural-text walk is not, and which an i.i.d. stream
+      cannot be (its shuffle is statistically identical).
+
+RULING (decision-grade, completes the H_1203 residual): a temporal-DERIVATIVE term
+on the split TRIGGER does NOT yield "novel-trajectory >> shuffled-trajectory" cell
+division for natural byte-feature streams. The derivative gate makes division
+sensitive to LOCAL ROUGHNESS (|Δ|), which is order-DEPENDENT but is MAXIMIZED by
+disorder (shuffle), so it cannot satisfy the V14-격파 direction (ordered > shuffled).
+RULES OUT the d/dt-augmented split key as the route to a trajectory substrate in the
+V14 sense. NOT RULED OUT: a gate keyed to PREDICTABILITY / sequence-likelihood (a
+learned next-step model's surprise, where an ORDERED stream is LOW-surprise and a
+shuffle is HIGH-surprise — but that is exactly the inverted sign again unless the
+metric rewards being-predictable), or a TRANSITION-MEMORY gate (novel PROTOTYPE-TO-
+PROTOTYPE transitions), neither tested here. Mitosis remains an order-invariant
+novelty-DENSITY adaptation lane alongside the CLM generator (consistent with
+H_1200/H_1201/H_1203: mitosis = substrate, CLM = generator).
+
+HONESTY (a_scale_honest_scope): ONE corpus (clm_mid_5lang_c4), gradient-free, toy
+scale, 3 seeds, scale transfer UNVERIFIED. numpy mirror = vadapt_field_step lifted
+to z_t=[x_t; beta*Δ] (H_1199 numpy<->hexa mechanism-match precedent). H_1203 stream
+builders imported VERBATIM (apples-to-apples). Frozen bars (1.5 == H_1203's) NOT
+moved; WALK is a declared NON-bar diagnostic. p7 (cell-count/recon-err, NOT
+perplexity); p8 (split tick == growth). Engine wiring UNCHANGED — VAdaptField stays
+byte-identical; the recurrent variant is a measurement-only numpy probe (no live
+.hexa edit needed since the verdict is a closed-negative ruling on the mechanism).
+================================================================================
