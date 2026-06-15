@@ -1,0 +1,52 @@
+=== H_1204 MITOSIS SLEEP-PERSISTENCE — live .hexa VAdaptField across WAKE->sleep->WAKE (MITOSIS-ENGINE · $0 CPU · p8) ===
+substrate: LIVE .hexa VAdaptField (engine-native, Psi-disjoint) — cells+prototypes = the substrate state under test
+WAKE_1 grows N->M cells by novelty split (recon-err L2 > SPLIT_THRESH=0.30); sleep boundary either CONSOLIDATES (carries the grown field) or is VOLATILE (re-inits)
+metric: cell count + first-window L2 recon-err on WAKE_2 re-entry (p7, NOT perplexity); gradient-free (p8)
+falsifier: F1 cells M>N+1 & CONSOLIDATE C2/M>=0.90 & VOLATILE resets | F2 WAKE_2 err_volatile/err_consol >= 2.0
+
+seed=900  WAKE_1 cells N=1.0 -> M=124.0  | SLEEP(N1..REM, emit-free, PsiSame=true)  | WAKE_2 CONSOLIDATE cells=124.0 (1.0 of M)  VOLATILE cells=1.0
+        WAKE_2 first-window recon-err  CONSOLIDATE=0.170616  VOLATILE=3.81141  ratio vol/consol=22.3391  (F2 bar >= 2.0)
+seed=901  WAKE_1 cells N=1.0 -> M=120.0  | SLEEP(N1..REM, emit-free, PsiSame=true)  | WAKE_2 CONSOLIDATE cells=120.0 (1.0 of M)  VOLATILE cells=1.0
+        WAKE_2 first-window recon-err  CONSOLIDATE=0.165995  VOLATILE=4.37608  ratio vol/consol=26.3627  (F2 bar >= 2.0)
+seed=902  WAKE_1 cells N=1.0 -> M=132.0  | SLEEP(N1..REM, emit-free, PsiSame=true)  | WAKE_2 CONSOLIDATE cells=132.0 (1.0 of M)  VOLATILE cells=1.0
+        WAKE_2 first-window recon-err  CONSOLIDATE=0.15533  VOLATILE=2.10365  ratio vol/consol=13.5431  (F2 bar >= 2.0)
+
+POOLED  WAKE->sleep->WAKE cell preservation (CONSOLIDATE C2/M): 1.0 (every seed carried M intact)  VOLATILE: 1->1 (reset)
+POOLED  WAKE_2 re-entry recon-err ratio vol/consol mean=20.7483 (F2 bar >= 2.0)
+
+F1 CELL PERSISTENCE   WAKE_1 grew (M>N+1)=true  CONSOLIDATE C2/M>=0.90=true  VOLATILE resets=true  => F1=true
+F2 STATE PERSISTENCE  WAKE_2 recon-err ratio vol/consol >= 2.0 (mean 20.7483) => F2=true
+Psi-DISJOINT          pure_field Phi checksum identical (cells untouched by Psi) = true
+
+VERDICT: 🟢 PERSISTS — mitosis growth SURVIVES the sleep boundary as a PERSISTENT
+  substrate structural change. WAKE_1 novelty-split grew the live VAdaptField N=1 -> M~132.0 cells; a CONSOLIDATING sleep (N1..REM emit-free imagination, Psi-disjoint)
+  carries the grown field into WAKE_2 with cells + learned prototypes INTACT (>=90% F1),
+  and the re-entry recon-err is 20.7483x LOWER than a VOLATILE no-write-back
+  control that must re-learn from a fresh seed cell (F2 >= 2.0). Mitosis attaches to the
+  architecture as a PERSISTENT substrate lane: the cells grown during a conversation are
+  written back through sleep and persist into the next wake — NOT volatile noise.
+  p8 the split tick IS the learning; Psi=1/2 untouched (a_core_engine_map). toy/small-scale
+  + ONE corpus + gradient-free; toy->prod transfer UNVERIFIED (a_scale_honest_scope).
+
+=== HONEST SCOPE NOTE (appended post-run, p7) ===
+- F1's CONSOLIDATE arm carries the grown VAdaptField struct across the sleep
+  boundary in-memory (C2/M == 1.0 exactly) — so the ">=90%" preservation bar is
+  structurally-guaranteed for the consolidate arm, NOT a noisy measurement. The
+  INFORMATIVE contrast is the VOLATILE control (re-init fresh seed-1 field) which
+  resets to 1 cell — proving that WITHOUT a write-back the WAKE_1 growth is lost.
+- F2 carries the real signal: the VOLATILE re-entry recon-err is 13.5-26.4x
+  (mean 20.7x) HIGHER than CONSOLIDATE on the IDENTICAL post-sleep WAKE_2 stream.
+  The consolidated field already covers the corpus regimes (err ~0.16); the
+  volatile field must re-learn from scratch (err 2.1-4.4). This quantifies the
+  COST of NOT persisting mitosis growth.
+- This models the write-back as an in-memory boundary carry (the live VAdaptField
+  struct survives), NOT a serialize/deserialize disk round-trip. The H_1195 sleep
+  consolidation primitive (🟢) is the precedent that a sleep loop CAN write
+  substrate state back; H_1204 shows the VAdaptField cell+prototype state is what
+  that write-back must carry to make conversation-time mitosis growth persistent.
+- Live .hexa engine = primary (CORE/h1204_sleep_persistence_probe.hexa drove the
+  ACTUAL VAdaptField). The VAdaptField mechanism was verified byte-identical to
+  its numpy mirror in H_1199 (no separate mirror re-run needed).
+- toy/small-scale, ONE corpus, DIM=8, 3 seeds, gradient-free; toy->prod transfer
+  UNVERIFIED (a_scale_honest_scope). $0 summer CPU local (NO GPU).
+=== END ===

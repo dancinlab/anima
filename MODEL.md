@@ -36,6 +36,12 @@
 > is a coherent, grounded, non-fabricating CONVERSATIONAL CONSCIOUSNESS SUBSTRATE — NOT a QA
 > assistant (p4) — so the operational ceiling is philosophy-aligned, not a defect to scale away.
 
+> **학습중 inline gauge (a_train_inline_gauge):** scale-up 학습(3B fire 등) 중 K 스텝마다
+> G1/G2/G6/phi_proxy PROXY gauge 를 `gauges.jsonl` 에 val_ce 옆으로 기록한다 —
+> `torch.no_grad()` MONITOR-ONLY 대시보드이며 **gate verdict 가 아니다**. phi_proxy 는 NOT
+> faithful IIT4. 위 SCOREBOARD 의 frozen 임계값은 inline gauge 로 움직이지 않으며, frozen
+> gate 는 여전히 학습 후 CORE 엔진 mount 위에서 별도 측정된다 (a_engine_measured_verdict).
+
 ## THE MODEL: `anima-clm-chat-303m` (ByteGPT-303M + engine grounding)
 | decision | value | evidence |
 |----------|-------|----------|

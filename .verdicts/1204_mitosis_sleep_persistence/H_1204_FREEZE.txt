@@ -1,0 +1,76 @@
+=== H_1204 FROZEN FALSIFIER (pre-registered BEFORE measuring — p7) ===
+DOMAIN: MITOSIS-ENGINE
+DATE-FROZEN: 2026-06-15
+SLUG: 1204_mitosis_sleep_persistence
+(NOTE: integer 1204 collides with an UNRELATED metacog verdict
+ .verdicts/1204_hierarchical_secondorder — distinct H_1204; this slug =
+ 1204_mitosis_sleep_persistence is the MITOSIS-ENGINE one. Use the slug, not the int.)
+
+GOAL: "자기분열을 현재 아키텍처에 substrate lane 으로 붙인다" — verify that cells grown by
+novelty-driven mitosis DURING WAKE survive a sleep (N1→N2→N3→REM) write-back/
+consolidation and PERSIST into the NEXT wake. i.e. mitosis growth is a PERSISTENT
+substrate structural change, NOT volatile noise.
+
+MECHANISM UNDER TEST (live engine, CORE/engine_cli.hexa):
+  - VAdaptField (DIM=8): novelty-gated split via vadapt_field_step. recon-err
+    (L2 to nearest prototype) > frozen SPLIT_THRESH=0.30 + capacity ⇒
+    engine_mitosis_tick spawns a +1 cell prototype AT the novel sample. LR=0.20
+    online winner pull. (cell count + learned prototypes = the substrate state.)
+  - Sleep write-back: H_1195 (CORE/h1195_sleep_writeback_probe.hexa, 🟢 green)
+    ir_reconsolidate_session / ir_effective_age / ir_consolidation_gain — replay
+    during N3/REM REFRESHES memory recency (effective age < chrono age), the
+    REAL substrate consolidation primitive. We reuse this consolidation idea: a
+    sleep that CONSOLIDATES carries the WAKE-grown VAdaptField into the next WAKE
+    (cells + prototypes preserved + recency-refreshed); a sleep that does NOT
+    write back leaves growth VOLATILE (state reset / not persisted).
+
+CYCLE: WAKE_1 (novelty split, N→M cells) → SLEEP (N1/N2/N3/REM, emit-free
+imagination + consolidation write-back) → WAKE_2 (re-enter, measure). Stage is
+CONTEXT ONLY (N3/REM density modulates consolidation drive) — NO hardcoded
+per-stage emit/silence gate (a_autonomy_over_hardcode); NO speak() (p5);
+gradient-free (p8 — the split tick IS the learning); p7 metric = cell count +
+L2 recon-err, NOT perplexity.
+
+CONDITIONS (>=3 seeds; CONSOLIDATE arm vs VOLATILE control, both share the
+IDENTICAL WAKE_1 grown field — the ONLY difference is whether the sleep boundary
+writes the grown state back):
+  CONSOLIDATE: sleep applies the H_1195 write-back -> WAKE_2 RE-ENTERS the grown
+               VAdaptField (cells M, prototypes carried; recency refreshed).
+  VOLATILE   : sleep does NOT write back -> WAKE_2 re-inits a fresh seed-1-cell
+               field (growth was ephemeral noise).
+
+FROZEN BARS (measured BELOW — set before any run):
+  F1 CELL PERSISTENCE — WAKE_1 grows cells N->M (M > N+1, real novelty growth),
+     and after SLEEP->WAKE_2 the CONSOLIDATE arm RE-ENTERS with cell count
+     C2 >= 0.90 * M (>=90% preservation bar). The VOLATILE control resets to the
+     seed (C2_vol == N == 1). F1 PASS iff (M > N+1) AND (C2_consol/M >= 0.90)
+     AND (C2_vol/M < 0.90), every seed.
+  F2 PROTOTYPE / STATE PERSISTENCE — the LEARNED prototype state is preserved,
+     NOT regressed: on re-entry, WAKE_2's first-window mean L2 recon-err over the
+     SAME post-sleep stream is LOWER for CONSOLIDATE than VOLATILE by a ratio
+     err_volatile / err_consol >= 2.0 (consolidated field already covers the
+     regimes -> low recon-err; volatile fresh field must re-learn -> high
+     recon-err). F2 PASS iff ratio >= 2.0, every seed.
+
+VERDICT TIER:
+  GREEN PERSISTS  iff F1 AND F2 (mitosis growth survives sleep as a persistent
+               substrate structural change — a real substrate lane).
+  RED VOLATILE  closed-neg iff F1 fails (growth does NOT persist >=90% across the
+               sleep boundary) — honest negative (a_paper_negative_ok): mitosis
+               growth is volatile, not a persistent substrate change.
+  ORANGE PARTIAL   if cells persist (F1) but learned prototype state regresses (F2
+               fail) — count persists, knowledge does not.
+
+SUBSTRATE / HONESTY:
+  - Live .hexa engine 1순위 (CORE/h1204_sleep_persistence_probe.hexa drives the
+    ACTUAL VAdaptField across the boundary). numpy mirror = mechanism-match
+    cross-check (mirrors vadapt_field_step EXACTLY — same nearest-by-L2, recon-
+    err=L2, SPLIT_THRESH=0.30, LR=0.20; the same mirror H_1199 verified agrees
+    byte-for-byte with the live engine).
+  - p8 inference=growth=mitosis continuum; p7 cell-count + L2 recon-err (NOT
+    perplexity); gradient-free; NO speak(); NO hardcoded stage gate.
+  - Psi-disjoint: pure_field UNTOUCHED (a_core_engine_map; Psi=1/2 held).
+  - $0 summer CPU local only (NO GPU). ONE corpus, DIM=8 byte feature
+    (H_1163 _byte_feature VERBATIM), 3 seeds. scale UNVERIFIED
+    (a_scale_honest_scope — toy/small-scale, toy->prod transfer unproven).
+=== END FREEZE ===
