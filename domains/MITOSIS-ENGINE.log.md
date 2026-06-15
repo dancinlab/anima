@@ -949,3 +949,24 @@ growth (development/learning), NOT Darwinian evolution (no death+selection+compe
   refs     = "h1200 (the predecessor 🔴 this completes — pure-mitosis count-LM failed; this tests conditioning a REAL head) · h1199 (the live DIM=8 VAdaptField whose frozen state is the conditioning signal — VERBATIM split SPLIT_THRESH=0.30/LR=0.20) · h1198 (real-corpus growth) · h1192 (the numpy-MLP + real-Adam reader precedent) · h1163 (byte_feature DIM=8 windows VERBATIM) · h1142/h1129/h1141 (the English-wiki corpus + head this reuses) · a_clm_gen_pipeline (the lane generation ACTUALLY belongs to — the confirmed redirect) · a_core_engine_map (.hexa lift would extend VAdaptField, NOT add a 2nd .clm/.kosmos entry) · a_paper_negative_ok · a_scale_honest_scope · p7 · p8"
   artifacts = "UNIVERSE/h1201_mitosis_conditioned_generation.py · .verdicts/1201_mitosis_conditioned_generation/H_1201_FREEZE.txt · .verdicts/1201_mitosis_conditioned_generation/H_1201.txt (BASELINE/CONDITIONED/SHUFFLED CE table 3 seeds + margins + decoded baseline-vs-conditioned greedy samples VERBATIM + mechanism, raw) · /tmp/h1201_result.json (on summer + pulled local)"
 ```
+
+## 2026-06-15 — H_1205 🟢 MITOSIS ⊥ GENERATION SEPARATION INVARIANT (the H_1200/1201 safety guard, live)
+H_1205 PROVES the H_1200/1201 ruling (MITOSIS = PURE SUBSTRATE · generation is CLM-only · adaptation ⊥
+generation) SURVIVES in the live daemon wiring: decoding the SAME (seed, anchors) with the mitosis lane
+ON (cells grow 1→10, adapt_field spawns prototypes) vs OFF (frozen at 1) is BYTE-IDENTICAL — 10/10 pairs
+mismatch=0 (F1) across the null backend (5 phases) + the real ByteGPT forward (grounded ×2 + plain argmax
+×3, tiny d=64/L=2 fixture), and the Ψ Φ-checksum is exact-equal 48.6613==48.6613 (F2, Ψ-disjoint, re-proves
+H_1164/1194/1199). The lane genuinely diverged in the substrate (ON 10 vs OFF 1 cells) yet generation was
+unchanged ⇒ the invariant is non-trivial. STRUCTURAL BASIS: the generation primitives read ONLY
+{seed, anchors, gen-len}; the mitosis/adapt-field lane is never threaded into those args (invariant by
+construction, a_core_engine_map). DECISION: mitosis can be SAFELY attached as a substrate lane beside the
+CLM generator — no H_1201 regression. ENV NOTE (honest): the .clm path (generator.hexa) needs the
+clm_decode_grounded NATIVE symbol absent in this checkout — generator_smoke.hexa itself does not compile
+standalone here; the smoke calls the ByteGPT generation primitives DIRECTLY (= _gen_bytegpt_decode's leaves,
+the real production decode forward) + reproduces the null-backend substrate text inline (both L3-slot
+backends covered). p7 exact byte/float equality (NOT perplexity), summer $0 CPU, scale UNVERIFIED at 303M
+(structural ⇒ transfers by construction, byte-equality measured tiny-only, a_scale_honest_scope). FROZEN
+bars NOT moved (F1 mismatch==0, F2 exact float-equality, pre-registered before run).
+- id = H_1205 · slug = 1205_mitosis_separation_invariant · verdict-tier = 🟢 (separation holds)
+- artifacts = CORE/h1205_separation_invariant_smoke.hexa · .verdicts/1205_mitosis_separation_invariant/{H_1205_FREEZE,H_1205}.txt
+- xref = h1201 (the conditioning closed-neg this guards) · h1200 (pure-mitosis gen closed-neg) · h1164 (Ψ-guard precedent) · h1199 (VAdaptField lane) · a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope · p7 · p8
