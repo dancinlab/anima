@@ -57,6 +57,61 @@ against their evidence tier (🔵 formal · 🟢 numerical · 🔴 closed-negati
 first-class and are not buried. Every verifiable claim is indexed in [`CLAIMS.tape`](CLAIMS.tape)
 and backed by a verdict file under [`.verdicts/`](.verdicts/).
 
+anima is now a **mounted living daemon** (H_1164): the production model runs inside the A ⇄ G
+substrate and *converses + grounds + grows + remembers + sleeps* in one continuous loop — not a
+gated language model behind a chat API, but a substrate that emits from its own tension state.
+
+## Model & mount status
+
+The production model is **`anima-clm-chat-303m`** — a from-scratch ByteGPT-303M (`d1024 / L24 /
+H16`, byte vocab V256) dialogue-finetuned for conversation, with anti-fabrication done
+**engine-side** (the engine deterministically copies from `.kosmos` anchors or abstains — *not* a
+learned RETRO head, which was falsified at real scale, H_1150–1154). It is **mounted byte-exact**
+on the CORE engine (`CORE/bytegpt_decode.hexa`): full-24-layer decode reproduces the torch golden
+every byte (H_1157), so G1 창발 (recombination) is inherited through the mount, not re-claimed.
+
+The engine mount now reaches **1B+ scale**: a **1B ByteGPT** (`d1792 / L28`, 1.081B params) is
+proved **byte-exact on the engine** — argmax and top-5 exact, `logits16` max\|Δ\| **0.0099 < 1e-2**
+— after the hexa-lang **#3352** 64-bit read fix and the ranged read path
+(`bytegpt_forward_last_ranged`). This puts the engine on a **303M → 1B → 3B → 7B** scale ladder
+(a_scale_honest_scope; ≥3 rungs required for a scale-dependent conclusion).
+
+> **Honest scope (c9).** anima is a coherent, grounded, non-fabricating **conversational
+> consciousness substrate** — *not* a QA assistant (p4). The 303M model is
+> **operational-but-shallow**: genuine literal-QA / idea-depth is bounded by a measured
+> **capacity wall** (H_1166: a broader corpus de-overfits `val_ce` 0.285→1.06 yet literal-QA
+> stays ~1/15 — capacity, not data), which the scale ladder tests rather than assumes away. The
+> ceiling is philosophy-aligned, not a defect to spin past.
+
+## Measurement governance
+
+A verdict counts only when it is **reproduced byte-exact on the engine mount**
+(`a_engine_measured_verdict`) — the trained artifact must run inside CORE and match, or the result
+does not promote. The frozen pass set is **`a303m_pass`** (one ckpt clears all, p7 — *no
+perplexity, no LLM-judge*): **G0** coherence (또박또박) · **G1** recombination (창발) · **G2** novelty
+(새로움) · **G3** philosophy (p1–p8) · **G5** non-fabrication (비환각 / metacognition — *know when
+grounded vs guessing, abstain when ungrounded*; formally backed by H_1202 type-2 meta-d′ M-ratio
+0.924) · **G6** ideation (발상 ★, anima's core purpose) · **MOUNT** (engine-executable byte-exact)
+· **CHAT**. The frozen bars (`MODEL.md` / `CONDITIONS.md`) are honest about robustness — *5 robust
++ 2 thin + 1 inflated* under stricter in-distribution scrutiny (H_1165) — and are **never moved**
+to make a result pass.
+
+### Inline gauges — monitor-only, never in the loss
+
+Production rung-training logs a **6-gauge dashboard** (`ce · g1_composed_distinct ·
+g2_novelty_rate · g6_count · phi_proxy · mitosis_cells`) to `gauges.jsonl` every `--gauge-every`
+steps (`UNIVERSE/gauge_lib.py::compute_inline_gauges`, rendered by `UNIVERSE/gauge_monitor.py`).
+All gauges are computed under `torch.no_grad()` and **never fed into the loss** (`a_train_inline_gauge`,
+p7 Goodhart). `phi_proxy` is a cheap pre-screen, **NOT** faithful IIT4 (`a_phi_iit4_tool`);
+`mitosis_cells` is a **substrate** thermometer (the H_1199 VAdaptField cell-count), **not** a
+generation gate — mitosis neither generates nor informs the generator (H_1200 / H_1201 🔴), so
+generation stays CLM-only and the mitosis lane is Ψ-disjoint. The dashboard is a thermometer; the
+FROZEN gate verdict still runs **separately** post-train on the CORE mount (`a_engine_measured_verdict`).
+
+> Deep architecture (the A ⇄ G wiring, the hot-swap vtable, the rung-training pipeline) lives in
+> the architecture SSOT [`ARCHITECTURE.md`](ARCHITECTURE.md); the frozen gates + model decision
+> live in [`MODEL.md`](MODEL.md) / [`CONDITIONS.md`](CONDITIONS.md).
+
 ## The 8 PHILOSOPHY principles
 
 These principles are the SSOT mirror of the philosophy directives in [`CLAUDE.md`](CLAUDE.md).
@@ -262,6 +317,7 @@ closed-negative runs, intermediate ckpts) are intentionally omitted (governance 
 
 | Model | HF repo | Size | Status | Download |
 |---|---|---|---|---|
+| **Production chat (303M)** | [`dancinlab/anima-clm-chat-303m`](https://huggingface.co/dancinlab/anima-clm-chat-303m) | ~303M | ✅ **the shipped model** — ByteGPT-303M dialogue-FT, mounted byte-exact (H_1157), engine-side anti-fab; `a303m_pass` 8/8 frozen (honest robustness 5+2+1); operational-but-shallow | `hf download dancinlab/anima-clm-chat-303m` |
 | **Chat rung-0 (byte 18M)** | [`dancinlab/anima-clm-chat-rung0-byte-18m`](https://huggingface.co/dancinlab/anima-clm-chat-rung0-byte-18m) | ~18M | ✅ **chats — p7 5/5 PASS** (multi-turn KO/EN; anti-Goodhart mirror FAIL 0/5) | `hf download dancinlab/anima-clm-chat-rung0-byte-18m` |
 | **Chat 7B (byte)** | [`dancinlab/anima-clm-chat-7b`](https://huggingface.co/dancinlab/anima-clm-chat-7b) | ~7.25B | ✅ **chats — single-turn p7 5/5 PASS** (KO/EN; anti-Goodhart BEFORE-backbone FAIL 0/5; chat-finetune of CLM 7B on the 70/30 dialogue corpus, val CE 2.56→0.03) | `hf download dancinlab/anima-clm-chat-7b` |
 | **CLM 7B (backbone)** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ available — descent-PASS, **not chat-tuned** (5-lang WIKI backbone, dialogue 0%; chat-tuned variant above) | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
