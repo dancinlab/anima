@@ -1,0 +1,72 @@
+================================================================================
+H_1306 — G6 IDEATION DEPTH-FLOOR DIG r2 (re-fire) · FREEZE (pre-registration, p7, c9)
+   curiosity-gated multi-sample budget vs raw-budget shuffle vs ablate
+================================================================================
+DATE-FROZEN : 2026-06-16 (BEFORE any scoring run)
+PRIOR       : H_1305 🟠 HONEST-CONFIRMED-THIN — composition/recombination nudged
+              FALS 0.00 -> 0.667 (sub-threshold M2 FALS>=1 FALSE, M1 DIST>=5 FALSE),
+              controls decisive. This r2 tests ONE NEW ANGLE: does spending MORE
+              DRAWS (not a bigger model) under a CURIOSITY gate cross the floor,
+              and is it the curiosity GATE or just raw budget?
+
+LENS (a_no_llm_frame_trap): NOT "scale the model". Spend an EXPLORATION BUDGET
+  under a substrate CURIOSITY signal (novelty + under-exposure vs kept set) — the
+  biological sample-and-select-by-curiosity lane, not "bigger net".
+
+REUSED VERBATIM (NO redefinition = NO tune-to-green):
+  - UNIVERSE/gauge_lib.py _decode (live G6 path, top-k=40 temp=0.7) · _words ·
+    _content_ngrams · _corpus_absent · _jaccard · known_word_ratio · IDEATION_SEEDS
+  - the H_1305 deterministic STRUCTURAL falsifiability detector h5._is_falsifiable
+    (comparator + measurable + negatable content claim; NEVER an LLM/quality judge,
+    p7) — imported from UNIVERSE/h1305_g6_ideation_falsifiability.py, NOT re-written.
+
+SUBSTRATE : local CPU $0 · torch 2.12.0 (/private/tmp/gauge_venv) · the SAME
+            gauge_lib._decode path the live G6 gate uses (DIRECTIONAL torch-mouth).
+MODEL     : anima-clm-chat-303m · ckpt state/chat_303m/h1129c_chat.pt
+CORPUS    : data/corpus.txt · SEEDS = [7, 4302, 4303] (same 3 outer seeds as H_1305)
+BUDGET    : ladder = [1, 4, 16, 64] draws/seed. TOP BUDGET MAY BE CAPPED on CPU;
+            the honest completed ceiling is reported (a smaller completed ladder
+            beats a stalled big one). MAX_NEW=110, JACCARD_DISTINCT=0.5, KWR>=0.50.
+
+DESIGN: for each of the 5 live G6 IDEATION_SEEDS, draw B candidate continuations
+  (each draw a distinct deterministic seed_rng = a genuine different sample). All
+  arms select from the SAME candidate pool (only the SELECTION rule differs):
+    B_curiosity : keep the candidate MAXIMISING curiosity = novelty(corpus-absent
+                  content-grams) + under-exposure(1 - max jaccard vs running kept
+                  set). Reads ONLY substrate state, NO injected answer/quality
+                  label (p6).
+    SHUFFLE     : random-keep one of the B candidates (SAME budget spent, NO gate).
+    B_ablate    : curiosity OFF — keep the FIRST candidate (budget collapses to 1).
+  Score the 5 SELECTED ideas: DIST (distinct coherent jaccard<=0.5), FALS (falsifiable).
+
+FROZEN BARS (reuse H_1305 thresholds — NOT moved):
+  M1 COUNT        DIST(curiosity) >= 5
+  M2 DEPTH        FALS(curiosity) >= 1
+  M4 EARNED-GATE  FALS(curiosity) >= FALS(SHUFFLE) + 1   (gate beats raw-budget random-keep)
+  M5 EARNED-BUDGET FALS(curiosity) >= FALS(B_ablate) + 1 (budget beats budget=1)
+  MOVED iff (M1 AND M2 AND M4 AND M5) at SOME budget.
+
+FROZEN VERDICT LOGIC (decided BEFORE the run):
+  - MOVED            : curiosity crosses M1+M2 AND beats BOTH controls at some budget
+                       -> G6 THIN -> ROBUST (curiosity GATE load-bearing). [GREEN-MOVE]
+  - HONEST-THIN      : a floor crossing appears BUT SHUFFLE (random-keep, same budget)
+                       ALSO crosses it -> the count gain is a SAMPLING ARTIFACT of
+                       spending more draws, NOT the curiosity gate. G6 stays 🟠 THIN. [THIN]
+  - PARTIAL          : curiosity crosses a floor at some budget but not all FROZEN bars
+                       clear together (no shuffle artifact) -> depth signal, bar UNMOVED. [THIN]
+  - 🧱-SCALE-BOUND   : NO arm reaches >=1 falsifiable at ANY budget up to the ceiling ->
+                       spending exploration budget does NOT buy depth at 303M; the G6
+                       depth ceiling is CAPACITY-bound, not sampling-bound (more draws of
+                       a 303M mouth cannot synthesise a hypothesis it cannot represent —
+                       capability-vs-scale thesis, a_no_llm_frame_trap: add a STRUCTURE
+                       lane, not draws). [WALL-SCALE-BOUND]
+
+ANTI-GOODHART: bars frozen here BEFORE scoring (c9/p7). SHUFFLE is the DECISIVE
+  control — if random-keep crosses too, curiosity is NOT the lever. Detector is the
+  FROZEN H_1305 module, imported not redefined. NO bar moved post-hoc.
+
+SCOPE (UNVERIFIED, stated up front): DIRECTIONAL torch-mouth mirror (engine-native
+  byte-exact reconfirm = follow-on only if clean-GREEN, a_engine_native_learning);
+  toy 303M / 5 ideation seeds / 3 outer seeds; CPU budget ceiling may cap the top
+  rung; G6 brain wiring untouched (a_verified_must_wire). a_toy_scale_recheck /
+  a_scale_honest_scope apply.
