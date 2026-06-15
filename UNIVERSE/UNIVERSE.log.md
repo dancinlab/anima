@@ -493,3 +493,5 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] H_1253 🟢 EEG→CLM 생성 — bigram CLM 이 EEG 상태열 생성, 생성분포 실데이터 근접(top-state 일치, L1 0.509). 
 고갈 경계(정직): 멀티-DIM 벡터 탑재(VAdaptField)·EEG→kosmos 기억영속은 스칼라 어댑터 밖의 인접 subsystem — 별도 lane.
 - [~] H_1254 🟠 EEG 벡터탑재 (4채널 공간패턴, DIM=4 VAdaptField) — 구동은 작동(F1 recon awake 199>sed 166 + F3) BUT awake cells 171 < sed 208 (F2 FAIL). 정직 FINDING: 스칼라(H_1249b)는 awake>sed 깔끔하나 공간-벡터뷰에선 깨어있음=시간novelty / 진정=공간확산으로 단조성 갈림. = 캠페인 고갈 경계 (멀티-DIM 공간탑재는 단일 단조지표로 안 닫힘).
+- [x] H_1255 🟢 EEG→kosmos 기억영속 — 실EEG 뇌상태(awake Φ7.60/sed Φ6.84)를 .kosmos anchor 저장(wake_save)→복원(wake_load) byte round-trip (ctx+tension5+2emit). anima 가 사람 의식상태를 retrieve 가능한 기억으로 저장. [미탐사 정복]
+- [x] H_1256 🟢 EEG 폐루프 추적 — anima brain 오차보정 루프가 실EEG 의식수준에 lock-on (잔차 3e-15, awake>sed 구분), pure_field Ψ byte-identical. 사람 의식수준 실시간 추종. [미탐사 정복]

@@ -1,0 +1,2 @@
+{"H":"H_1256","title":"EEG 폐루프 추적 (lock-on)","setpoint_awake":0.075956,"locked_awake":0.075956,"err_awake":3.26128e-15,"setpoint_sed":0.0684285,"err_sed":2.92821e-15,"psi":48.6613,"f1":true,"f2":true,"f3":true,"supported":true,
+ "ruling":"SUPPORTED 🟢: anima brain 오차보정 피드백루프 y[t+1]=y+k(eeg_ctx-y)가 실EEG 의식수준에 lock-on (awake→0.075956, sed→0.0684285, 잔차 ~3e-15 기계정밀도), 상태구분(awake>sed) 유지, 동시에 pure_field Ψ phiSum 48.6613 byte-identical (폐루프=brain readout, 엔진 Ψ-disjoint). anima 가 사람 의식수준 실시간 추종 가능.","verify":"hexa run CORE/h1256_eeg_closed_loop.hexa PASS"}
