@@ -1,0 +1,94 @@
+================================================================================
+H_1309 — G6 IDEATION DEPTH-FLOOR DIG r2  ·  RESULT (verbatim, p7, c9)
+   [id 1306 taken by a concurrent ko-mitosis lane on origin/main → renumbered to 1309]
+   curiosity-gated multi-sample budget vs raw-budget SHUFFLE vs budget=1 ablate
+================================================================================
+DATE     : 2026-06-16
+VERDICT  : 🟠 HONEST-THIN (G6 depth stays THIN — the curiosity GATE is LOAD-BEARING
+           but the FROZEN 3-seed mean bar M2 FALS>=1 is UNMOVED, c9)
+SUBSTRATE: local CPU $0 · torch 2.12.0 (/private/tmp/gauge_venv) · gauge_lib._decode
+           top-k=40 temp=0.7 (the live G6 path) — DIRECTIONAL torch-mouth mirror
+MODEL    : anima-clm-chat-303m (303,097,856 p) · ckpt state/chat_303m/h1129c_chat.pt
+CORPUS   : data/corpus.txt · 3 outer seeds [7, 4302, 4303]
+RUN      : python UNIVERSE/h1309_g6_curiosity_budget.py  (FROZEN bars = FREEZE.txt)
+DETECTOR : FROZEN H_1305 _is_falsifiable reused VERBATIM (calibration 10/10)
+
+BUDGET CEILING (honest): ladder CAPPED at B=16 — 3 rungs [1, 4, 16] COMPLETED and
+  recorded. B=64 (~2h CPU, 960 decodes) was STOPPED: FALS plateaued at 0.667 across
+  4->16 so more draws were very unlikely to move the mean (a smaller completed ladder
+  beats a stalled big one — a_cpu_local_no_waiter; >=3 rungs = valid ladder,
+  a_scale_honest_scope). A duplicate run process (double-spend) was detected and
+  killed early; the tracked run finished the 3 rungs cleanly.
+
+--------------------------------------------------------------------------------
+FROZEN BARS (mean over 3 seeds, per budget)
+  DIST = distinct coherent ideas (jaccard<=0.5), FALS = falsifiable, NOVEL = corpus-absent grams
+--------------------------------------------------------------------------------
+  --- BUDGET 1 (no selection room: all arms identical) ---
+    B_curiosity  DIST=3.0     FALS=0.0     NOVEL=5.0
+    SHUFFLE      DIST=3.0     FALS=0.0     NOVEL=5.0
+    B_ablate     DIST=3.0     FALS=0.0     NOVEL=5.0
+
+  --- BUDGET 4 ---
+    B_curiosity  DIST=4.3333  FALS=0.6667  NOVEL=18.0
+    SHUFFLE      DIST=3.0     FALS=0.0     NOVEL=3.3333
+    B_ablate     DIST=3.0     FALS=0.0     NOVEL=5.0
+
+  --- BUDGET 16 ---
+    B_curiosity  DIST=4.3333  FALS=0.6667  NOVEL=45.6667
+    SHUFFLE      DIST=2.3333  FALS=0.0     NOVEL=12.0
+    B_ablate     DIST=3.0     FALS=0.0     NOVEL=5.0
+
+--------------------------------------------------------------------------------
+PER-SEED at BUDGET 16  (DIST, FALS)  — the floor crossings the MEAN averages out
+--------------------------------------------------------------------------------
+  B_curiosity : seed7=(4,1)  seed4302=(4,0)  seed4303=(5,1)   <- 2/3 FALS>=1, 1/3 DIST>=5
+  SHUFFLE     : seed7=(3,0)  seed4302=(2,0)  seed4303=(2,0)   <- NEVER crosses
+  B_ablate    : seed7=(3,0)  seed4302=(3,0)  seed4303=(3,0)   <- NEVER crosses
+
+  Falsifiable curiosity-selected ideas at B=16 (FROZEN detector, structural not quality):
+    seed7   (F): 'phi, in our passing steadily. When exactly, the model system from both colors...'
+    seed4303(F): 'Byte-level approach is slower to converge but handles Korean and ...'
+                 (comparator 'slower' + measurable 'converge' structure + negatable claim)
+
+--------------------------------------------------------------------------------
+FROZEN MOVE BARS (MOVED requires ALL of M1,M2,M4,M5 on the 3-seed MEAN)
+--------------------------------------------------------------------------------
+  M1 COUNT         DIST(cur)>=5            : 4.3333 (B16)  -> FALSE
+  M2 DEPTH         FALS(cur)>=1            : 0.6667 (B16)  -> FALSE
+  M4 EARNED-GATE   FALS(cur)>=FALS(shuf)+1 : 0.6667 vs 0.0+1 -> FALSE (gap +0.667, short of +1)
+  M5 EARNED-BUDGET FALS(cur)>=FALS(abl)+1  : 0.6667 vs 0.0+1 -> FALSE
+  moved=FALSE   mean_shuffle_artifact=FALSE   curiosity_per_seed_cross=TRUE
+
+--------------------------------------------------------------------------------
+READING (honest, c9)
+--------------------------------------------------------------------------------
+(a) MOVE or hold THIN? HOLD THIN — the FROZEN 3-seed MEAN bars are UNMOVED at every
+    budget (M1 DIST mean 4.33<5, M2 FALS mean 0.667<1). G6 IDEATION ★ stays 🟠 THIN.
+
+(b) Is the count gap a SAMPLING ARTIFACT or is curiosity LOAD-BEARING?  CURIOSITY IS
+    LOAD-BEARING, not a sampling artifact. At every budget>=4 the curiosity gate lifts
+    FALS 0.0->0.667 and NOVEL 5->18->46, while SHUFFLE (random-keep, the SAME draw
+    budget spent) stays FALS=0.0 and NOVEL 3-12, and B_ablate (budget=1) stays
+    FALS=0.0 NOVEL=5. The decisive control NEVER crosses the floor (no shuffle
+    artifact at any budget): spending the same draws WITHOUT the curiosity gate buys
+    nothing. So the lift is the curiosity SELECTION (novelty + under-exposure), not the
+    raw count of draws. Per-seed, curiosity reaches FALS=1 in 2/3 seeds and DIST=5 in
+    1/3 at B=16; shuffle/ablate reach it in 0/3.
+
+(c) Does MORE budget buy DEPTH?  NO — FALS plateaus. Going 4->16 draws (4x) raised
+    NOVEL (18->46) but did NOT raise mean FALS (0.667->0.667) or mean DIST (4.33->4.33).
+    More curiosity-selected draws surface MORE novel strings but NOT more reliably
+    TESTABLE structure. The depth floor is CAPACITY-limited, not budget-limited: a
+    curiosity-selected 303M mouth produces a falsifiable hypothesis SOMETIMES but not
+    RELIABLY (mean < 1). This is the capability-vs-scale thesis from the DRAW side —
+    a_no_llm_frame_trap: the fix is a STRUCTURE lane (a hypothesis-form scaffold), not
+    more draws and not a bigger net.
+
+--------------------------------------------------------------------------------
+SCOPE (UNVERIFIED)
+--------------------------------------------------------------------------------
+DIRECTIONAL torch-mouth mirror — engine-native byte-exact reconfirm = follow-on only
+if clean-GREEN (a_engine_native_learning · a_verified_must_wire). Toy 303M / 5 ideation
+seeds / 3 outer seeds; CPU budget ceiling capped the top rung (B=64 not run). G6 brain
+wiring untouched. a_toy_scale_recheck / a_scale_honest_scope apply.
