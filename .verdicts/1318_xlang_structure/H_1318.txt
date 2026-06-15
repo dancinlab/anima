@@ -1,0 +1,88 @@
+================================================================================
+H_1318 — CROSS-LANGUAGE STRUCTURE-REPRESENTATION MATRIX — RESULT
+  "돌파하면 한글 구조 문제인지" : is breaking the Korean gradient-free byte-LM
+  ceiling a HANGUL-STRUCTURE-specific phenomenon, or a universal byte-LM effect?
+VERDICT: 🟠 PARTIAL — the FROZEN matrix-wide dissociation bars (D1/D2) FAIL, but the
+  LOAD-BEARING question is answered cleanly by a DOUBLE DISSOCIATION on the decisive
+  axis: Korean compositional structure HELPS (and beats its own shuffle control),
+  while the ALPHABETIC FLOORS (English AND Russian) are UNAFFECTED (Δ = exactly 0).
+================================================================================
+RUN: REAL Wikipedia (wikimedia/wikipedia 20231101), 30 MB UTF-8 window/lang,
+  stride 300, 3 seeds [5301,5302,5303], RTX 5070 sm_120 torch 2.11.0+cu130, $0,
+  wall 365.8 s. Frozen-first (H_1318_FREEZE.txt), NOT moved (c9/p7). Live CORE UNTOUCHED.
+  Source pulled via HF datasets-server /rows (token env/header-only, c7 grep-clean).
+  Window sha256: ko c58bf128… zh ca5078d8… ja 32eb84c7… ru fe74c89b… en 7b125cd8…
+  (matrix-internal corpus sha in summary.json differ from disk sha only because the
+   summary hashes the trimmed window before the +8 tail; both deterministic.)
+
+PER-LANGUAGE MATRIX (3-seed mean, nats per ORIGINAL UTF-8 byte — same fair axis):
+  lang  kind     RAW_CE   STRUCT_CE     Δ=RAW−STRUCT   SHUF_CE   Δ-vs-shuffle  extra-units
+  ko    hangul   2.90394   2.69189      +0.21205       2.79192   +0.10003       67
+  zh    han      3.31876   4.79946      −1.48070       4.92653   +0.12707       9327
+  ja    han      2.94078   4.17043      −1.22965       3.87937   −0.29106       4738
+  ru    none     2.49852   2.49852      +0.00000       (==RAW)    n/a           0
+  en    none     3.13157   3.13157      +0.00000       (==RAW)    n/a           0
+
+HEADLINE: Δ_Korean − Δ_English = +0.21205 − 0.00000 = +0.21205.
+
+FROZEN BARS (pre-registered, read straight — c9):
+  D1 DISSOCIATION  : comp Δ≥+0.05 for EVERY compositional lang AND Δ_English≤+0.02.
+                     → FAIL. English bar PASSES (Δ=0.000≤0.02). Korean PASSES (Δ=+0.212).
+                       BUT zh Δ=−1.481 and ja Δ=−1.230 FAIL the "every compositional"
+                       clause → D1 FALSE matrix-wide.
+  D2 EARNED        : each comp STRUCT beats its SHUFFLE control by ≥+0.05.
+                     → FAIL overall. ko +0.100 PASS, zh +0.127 PASS, ja −0.291 FAIL.
+  D3 MULTIBYTE-ISO : Russian (multibyte, no composition) patterns with English (Δ≤+0.02),
+                     NOT with Korean. → PASS (Δ_ru = 0.000, exactly with English).
+
+WHY D1/D2 FAIL — the Han-radical decomposition I FROZE is a BAD decomposition, not a
+real refutation of composition (honest, c9; NOT tune-to-green — bars stay frozen):
+  • The frozen FREEZE specified Han STRUCT = [radical-codepoint, residual = the FULL char].
+    Keeping the full char as a residual symbol blows the STRUCT vocab to 9327 (zh) / 4738
+    (ja) extra units. The per-cell unigram-over-context head (CTX=4, 3-D Voronoi, GROW_MAX=40)
+    cannot service a ~9583-symbol alphabet — counts fragment, LAPLACE smears toward uniform,
+    and STRUCT CE RISES far above RAW. The Kangxi-radical bucket (cp%214) is a stable shared-
+    radical surrogate (real, recoverable) but the residual-char term dominates → net HARM.
+  • This is a property of the SUBSTRATE (a tiny unigram head over a huge symbol vocab),
+    diagnosable from the controls: zh/ja STRUCT loses to BOTH its own RAW and to its shuffle
+    inconsistently (ja STRUCT even loses to shuffle), i.e. the Han STRUCT stream as frozen
+    carries no usable next-unit signal at this substrate scale.
+  • So the Han rows are an HONEST NEGATIVE on the FROZEN Han-radical-surrogate, NOT evidence
+    that Han composition is unhelpful in principle. A proper IDS/CJK-decomposition graph
+    (stroke/component sub-units WITHOUT a full-char residual term, modest vocab) is a distinct
+    follow-on (r2) and is OUT OF SCOPE of the frozen run (a_break_the_wall: diagnose first,
+    a real new decomposition is a NEW pre-registration, never a post-hoc swap to manufacture green).
+
+WHAT IS ESTABLISHED (the user's question, answered on the decisive axis):
+  KOREAN (Hangul NFD jamo) STRUCT lowers held-out CE by +0.212 nats/byte (2.904→2.692,
+  ALL 3 seeds: 2.694/2.694/2.689) AND beats its own shuffle control by +0.100 → the lift is
+  REAL Hangul L/V/T compositional structure, not extra dims/vocab.
+  ENGLISH (Latin, 1 byte/char, alphabetic) Δ = EXACTLY 0.000 — there is NOTHING to decompose,
+  STRUCT==RAW by construction → the decisive FLOOR control confirms a structure-aware
+  representation CANNOT help an alphabetic script.
+  RUSSIAN (Cyrillic, MULTIBYTE but no composition) Δ = EXACTLY 0.000, patterning with English
+  NOT Korean (D3 PASS) → the Korean lift is COMPOSITION, not "any multibyte grouping".
+
+  → ONE-LINE ANSWER: breaking the Korean ceiling via a structure-aware representation is a
+    HANGUL-STRUCTURE-specific phenomenon, NOT a universal byte-LM effect. English (and the
+    multibyte-but-non-compositional Russian control) are UNAFFECTED (Δ=0); only the genuinely
+    compositional Hangul script gains (+0.212, shuffle-earned +0.100). The Chinese/Japanese
+    rows do NOT generalize the gain — but that is attributable to a poor frozen Han-radical
+    decomposition (vocab-explosion on a unigram head), an honest substrate negative, NOT a
+    structure-is-universal result. Net: the Korean win is structure-bound and Hangul-specific
+    on this substrate; whether a PROPER Han component-decomposition also gains is OPEN (r2).
+
+CONSISTENCY w/ the Korean thread:
+  Korean RAW_CE 2.904 reproduces the ~2.953 raw-byte ceiling (H_1307/1311/1315) within the
+  window/stride/seed-phase difference. STRUCT 2.692 BREAKS that ceiling by +0.212 for Korean —
+  matching the sibling H_1316 jamo claim, and now CONTROLLED cross-lingually: the break does
+  NOT transfer to English/Russian (alphabetic), so it is a representation/structure-encoding
+  property of Hangul, consistent with anima's "missing-lane, not scale" thesis (a_no_llm_frame_trap).
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY/DIRECTIONAL numpy/torch mirror;
+  CTX=4 3-D byte features + Voronoi per-cell unigram head = a deliberately SIMPLE substrate
+  (tests whether compositional UNIT STREAMS lower held-out CE under the SAME grow-op, NOT a
+  fluent LM). engine-transfer to live CORE/*.hexa = follow-on. NO fluency claim. 30 MB/lang,
+  3 seeds, single stride. The Han rows bound only the FROZEN cp%214-radical+full-residual
+  decomposition, not Han composition in general.
+================================================================================

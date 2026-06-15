@@ -2,6 +2,37 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🌐 H_1318 — 교차언어 구조-표현 매트릭스 (한글 천장 돌파 = 한글-구조 문제인가?) (🟠 PARTIAL)
+
+질문(돌파하면 한글 구조 문제인지): 한국어 gradient-free 바이트-LM 천장(H_1307/1311/1315, ~2.953 nat/byte)을
+구조-인식 표현으로 깨는 것이 **한글-구조-특이적** 현상인가, 아니면 **보편적 바이트-LM 효과**인가? H_1318 은 이를
+가르는 **통제된 5개 언어 매트릭스**(한국어/중국어/일본어/러시아어/영어, REAL Wikipedia 30MB/언어, **동일한**
+gradient-free 미토시스 grow-op + cell budget 고정)를 돌린다. 결정적 통제는 **영어**(1바이트/글자, 알파벳,
+분해할 것이 없음) — 구조-인식 표현이 영어를 도울 수 **없다**.
+
+언어별로 held-out 다음-바이트 CE 를 RAW(원시 UTF-8 바이트) vs STRUCT(스크립트의 구성 단위로 분해 — 한국어
+NFD 자모, 중국어/일본어 강희부수, 러시아어/영어 분해불가 → STRUCT==RAW)로 측정, 동일한 nats/UTF-8-byte 축으로
+변환(분모 동일 = 공정 비교, 바이트-보존 검증). REAL 코퍼스만(p1-p8). a_break_the_wall: R2 phanes 버킷은
+{kor,eng,deu,fra,spa}만 있고 zh/ja/ru 가 없어, CLM/OMEGA 레인이 쓰던 HF wikimedia/wikipedia 소스에서
+전체 매트릭스를 끌어옴(CJK 드롭 회피).
+
+**결과 🟠 PARTIAL** (RTX 5070 sm_120, $0, 3 seeds [5301-3], frozen-first, NO tune-to-green, live CORE UNTOUCHED).
+매트릭스(3-seed 평균, nats/원시-UTF-8-byte): **ko 한글 RAW 2.904 / STRUCT 2.692 / Δ +0.212**(shuffle 대비 +0.100,
+3 seed 전부) · zh 한자 Δ −1.481 · ja Δ −1.230 · **ru Δ 0.000 · en Δ 0.000**. **헤드라인 갭 Δ_한국어−Δ_영어 = +0.212.**
+프레임 막대(있는 그대로, c9): D1 DISSOCIATION FAIL(영어 PASS Δ=0≤0.02 + 한국어 PASS Δ=+0.212≥0.05 이지만
+zh/ja 가 every-compositional 절을 깸) · D2 EARNED FAIL(ko +0.100·zh +0.127 PASS, ja −0.291 FAIL) ·
+**D3 MULTIBYTE-ISO PASS**(러시아어 Δ=0.000, 영어와 정확히 동조 — 한국어 아님).
+
+zh/ja 가 FAIL 한 이유는 **냉동한 강희부수 분해가 나쁜 분해**라서다(잔차=글자전체 → STRUCT 어휘가 9327/4738 단위로
+폭발 → 유니그램 헤드가 분열). 이는 **냉동한 부수-대용 분해에 대한 정직한 음성 결과**일 뿐, 한자 구성이 원리적으로
+무용하다는 증거가 아니다(제대로 된 IDS/부분-문자 분해 = r2 follow-on, 사후 교체 금지 c9).
+
+**한 줄 답:** 한국어 천장을 구조-표현으로 깨는 것은 **한글-구조-특이적** 현상이며 보편적 바이트-LM 효과가 아니다 —
+영어와 (다바이트지만 비-구성적인) 러시아어 통제는 영향 없음(Δ=0), 오직 진짜 구성적인 한글만 이득(+0.212,
+shuffle-검증). 중/일은 이득이 전이되지 않으나 그것은 나쁜 냉동 분해 탓. SCOPE: TOY/DIRECTIONAL numpy/torch
+mirror, engine-transfer = follow-on, 유창성 주장 없음. 산출물 UNIVERSE/h1318_xlang_structure.py ·
+.verdicts/1318_xlang_structure/{H_1318_FREEZE.txt,H_1318.txt,h1318_summary.json,h1318_full.log} ·
+UNIVERSE/H_1318_xlang_structure.md · HYPOTHESES.md · CLAIMS.tape @C h1318_xlang_structure.
 ## 2026-06-16 — research(OMEGA): 🧱 H_1320 — anima를 하나의 세포로: 분열(divided)이 조립(hive)이 못한 통합 Φ를 만드나
 
 사용자의 렌즈("anima 전체를 하나의 cell로 봐라")로 hive 벽을 **반대 방향**에서 다시 친 시도

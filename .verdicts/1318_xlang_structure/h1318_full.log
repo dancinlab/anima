@@ -1,0 +1,59 @@
+=== H_1318 — CROSS-LANGUAGE STRUCTURE MATRIX (sm_120) ===
+device=NVIDIA GeForce RTX 5070 torch=2.11.0+cu130
+kernel launch OK (sentinel -359.2)
+[corpus] 20231101.ko from cache /dev/shm/h1318_cache/ko_30000000.bytes (30000008B)
+[corpus] ko kind=hangul 30000000B sha256=3e288b7797017a28…
+[corpus] 20231101.zh offset 0 HTTP 429 -> backoff 5s (attempt 1/8)
+[corpus] 20231101.zh offset 0 HTTP 429 -> backoff 10s (attempt 2/8)
+[corpus] 20231101.zh offset 0 HTTP 429 -> backoff 20s (attempt 3/8)
+[corpus] 20231101.zh fetched 30000008B via /rows (offset reached 1900)
+[corpus] zh kind=han 29999998B sha256=c084b027a40d46e1…
+[corpus] 20231101.ja offset 1300 HTTP 429 -> backoff 5s (attempt 1/8)
+[corpus] 20231101.ja offset 1300 HTTP 429 -> backoff 10s (attempt 2/8)
+[corpus] 20231101.ja offset 1300 HTTP 429 -> backoff 20s (attempt 3/8)
+[corpus] 20231101.ja offset 1300 HTTP 429 -> backoff 40s (attempt 4/8)
+[corpus] 20231101.ja fetched 30000008B via /rows (offset reached 1400)
+[corpus] ja kind=han 30000000B sha256=a97dd068ced1150b…
+[corpus] 20231101.ru fetched 30000008B via /rows (offset reached 900)
+[corpus] ru kind=none 29999999B sha256=f40cfe76f94d87b0…
+[corpus] 20231101.en fetched 30000008B via /rows (offset reached 1500)
+[corpus] en kind=none 30000000B sha256=b097ccccfd9709b1…
+[avail] REAL corpora available: ['ko', 'zh', 'ja', 'ru', 'en']
+[ko] kind=hangul extra-units=67 vj_struct=323
+  [ko seed 5301] RAW=2.89386 STRUCT=2.69230 SHUF=2.92085  cells 14/13
+  [ko seed 5302] RAW=2.90753 STRUCT=2.69409 SHUF=2.69373  cells 12/12
+  [ko seed 5303] RAW=2.91042 STRUCT=2.68928 SHUF=2.76119  cells 11/20
+[zh] kind=han extra-units=9327 vj_struct=9583
+  [zh seed 5301] RAW=3.32538 STRUCT=4.79102 SHUF=4.93624  cells 13/40
+  [zh seed 5302] RAW=3.30914 STRUCT=4.80662 SHUF=4.91180  cells 32/40
+  [zh seed 5303] RAW=3.32175 STRUCT=4.80072 SHUF=4.93154  cells 29/40
+[ja] kind=han extra-units=4738 vj_struct=4994
+  [ja seed 5301] RAW=3.05070 STRUCT=4.18655 SHUF=4.08476  cells 12/40
+  [ja seed 5302] RAW=2.89910 STRUCT=4.15813 SHUF=3.74566  cells 19/40
+  [ja seed 5303] RAW=2.87255 STRUCT=4.16662 SHUF=3.80771  cells 24/40
+[ru] kind=none extra-units=0 vj_struct=256
+  [ru seed 5301] RAW=2.49608 STRUCT=2.49608 SHUF=2.49608  cells 2/2
+  [ru seed 5302] RAW=2.49953 STRUCT=2.49953 SHUF=2.49953  cells 2/2
+  [ru seed 5303] RAW=2.49996 STRUCT=2.49996 SHUF=2.49996  cells 2/2
+[en] kind=none extra-units=0 vj_struct=256
+  [en seed 5301] RAW=3.22132 STRUCT=3.22132 SHUF=3.22132  cells 5/5
+  [en seed 5302] RAW=3.08564 STRUCT=3.08564 SHUF=3.08564  cells 7/7
+  [en seed 5303] RAW=3.08774 STRUCT=3.08774 SHUF=3.08774  cells 7/7
+================================================================================
+PER-LANGUAGE MATRIX (3-seed mean, nats per original UTF-8 byte):
+  lang  kind        RAW_CE  STRUCT_CE     Delta   SHUF_CE  Δvs-shuf
+  ko    hangul     2.90394    2.69189  +0.21205   2.79192  +0.10003
+  zh    han        3.31876    4.79946  -1.48070   4.92653  +0.12707
+  ja    han        2.94078    4.17043  -1.22965   3.87937  -0.29106
+  ru    none       2.49852    2.49852  +0.00000   2.49852  +0.00000
+  en    none       3.13157    3.13157  +0.00000   3.13157  +0.00000
+--------------------------------------------------------------------------------
+Delta_Korean = +0.21205   Delta_English = +0.00000
+HEADLINE GAP (Delta_Korean - Delta_English) = +0.21205
+(D1) DISSOCIATION  comp>=+0.05 [False] AND en<=+0.02 [True] -> FAIL
+(D2) EARNED        each comp STRUCT beats SHUFFLE by >=0.05: {'ko': True, 'zh': True, 'ja': False} -> FAIL
+(D3) MULTIBYTE-ISO Delta_ru=0.0 -> True
+--------------------------------------------------------------------------------
+H_1318 VERDICT: 🟠 PARTIAL — dissociation incomplete (see per-bar)
+available REAL corpora: ['ko', 'zh', 'ja', 'ru', 'en']
+[done] wall=365.8s
