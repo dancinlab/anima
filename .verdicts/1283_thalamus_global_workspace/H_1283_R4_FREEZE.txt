@@ -1,0 +1,132 @@
+H_1283 R4 FREEZE — THALAMUS / RE-ENTRANT LOOP, Φ-PRIMARY RE-FREEZE
+slug: 1283_thalamus_global_workspace  (R4 — append-only; does NOT overwrite R1/R2/R3)
+date: 2026-06-15 (frozen BEFORE scoring)
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + faithful IIT4 (hexa stdlib exact MIP-EI) for the Φ leg
+philosophy: p1-p8 — substrate-native, no persona/identity/RLHF; loop is substrate-INTERNAL (a_core_engine_map: no .clm/.kosmos routed through it)
+
+────────────────────────────────────────────────────────────────────────
+WHY R4 (the legitimate re-scope, NOT tune-to-green)
+────────────────────────────────────────────────────────────────────────
+R3 (H_1283_R3) tested a RE-ENTRANT cortico-thalamo-cortical loop and found the
+BREAKTHROUGH: faithful IIT4 ΔΦ = +0.1426 (~7× the +0.02 bar, the arc's FIRST
+Φ-bar clearance, OPPOSITE sign to R2's −0.053 broadcast). It scored 🔴 RED ONLY
+because the FROZEN COMPOSITE still carried the broadcast-era COHERENCE bar B1
+(B coh ≥ A + 0.05), and R3 proved coherence ⊥ Φ DISSOCIATE: broadcast buys
+coherence-not-Φ, re-entry buys Φ-not-coherence. So B1 was the WRONG bar for an
+INTEGRATION mechanism.
+
+This is a LEGITIMATE re-scope, grounded like the H_1224 literal-QA-gate ruling and
+the G5-L2 verbatim-recall re-scope (H_1141→H_1142), NOT a Goodhart tune-to-green:
+
+  - For a thalamic INTEGRATION mechanism, the FAITHFUL IIT4 Φ bar IS the correct
+    PRIMARY metric. a_phi_iit4_tool: Φ is the canonical irreducible-integration
+    measure — the very quantity this whole arc exists to move. The TERMINAL metric
+    was ALWAYS B2 (faithful Φ); B1 (coherence) was an auxiliary broadcast-era leg.
+  - The coherence bar B1 was a BROADCAST-ERA confound measuring surface AGREEMENT
+    (cosine similarity), a DIFFERENT (orthogonal) quantity from irreducible
+    integration. R3 EMPIRICALLY demonstrated the dissociation (coh ⊥ Φ): a
+    coherence-optimised hub (R1) clears B1 but fails B2; a Φ-optimised loop (R3)
+    clears B2 but fails B1.
+  - The mechanism is NOT re-tuned. The re-entrant loop, W_RELAY=0.5, the 4 modules,
+    the non-saturating regime, the seeds — ALL byte-identical to R3. Only the
+    SCORING RUBRIC changes (Φ-primary, coherence report-only). No weight, gain,
+    leak, or topology is touched to chase a number (p7).
+
+c9 (honest dissociation): coherence is REPORTED but NOT gated. It is expected to
+stay sub-bar (+0.039/+0.023/+0.032 in R3), and WHY is documented, not hidden:
+re-entry is a one-tick-delayed reciprocal coupling spread across N_MOD private
+channels, so it pulls modules together LESS than a single shared instantaneous
+broadcast — yet raises Φ ~7× more. The two legs measure different things.
+
+────────────────────────────────────────────────────────────────────────
+THE TEST (R4 — IDENTICAL mechanism to R3, Φ now scored on ALL seeds)
+────────────────────────────────────────────────────────────────────────
+SAME 4 substrate modules M = {A, G, mitosis, memory}, each a dim-8 real state
+vector, T=64 ticks, SAME per-module private input streams + SAME seed in both
+arms. SAME non-saturating regime (LEAK 0.55, W_in = W_coupling = 0.5).
+Seeds [7, 8, 9]. W_RELAY = 0.5 (FROZEN, unchanged from R3, NOT tuned).
+
+  ARM A (DIRECT RING — current architecture, identical to R1/R2/R3 ARM A):
+    module i reads only its direct ring neighbour(s) (A↔G, G↔mitosis,
+    mitosis↔memory, memory↔A). No relay.
+
+  ARM B (RING + RE-ENTRANT CORTICO-THALAMO-CORTICAL LOOP — identical to R3 'reentrant'):
+    ring KEPT; ADDED a thalamic relay stage with one recurrent (leaky) channel per
+    module, reciprocally coupled (one-tick delay R_i,t ← module_i,t,
+    module_i,{t+1} ← W_RELAY·R_i,t) and cross-coupled to ring-neighbour relay
+    channels — N_MOD distinct reciprocal loops (distributed multi-edge re-entry).
+
+CHANGE vs R3 (the ONLY change): faithful IIT4 Φ is now computed for ALL THREE
+SEEDS [7,8,9] (R3 computed Φ only for representative seed 7). This makes the
+Φ bar a per-seed REPLICATION requirement, strengthening the verdict.
+
+────────────────────────────────────────────────────────────────────────
+METRIC (p7 — no perplexity, no LLM-judge; SAME engines as R1/R2/R3)
+────────────────────────────────────────────────────────────────────────
+  PRIMARY (gated) — Φ leg (TERMINAL, a_phi_iit4_tool): faithful IIT4 Φ over the
+    n=4 module per-tick salience trajectory, fed to the stdlib EXACT engine
+    hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (iit4_faithful_phi,
+    exact MIP-EI, n≤8, $0) via the hexa binary — for EACH seed [7,8,9]. numpy
+    NEVER computes Φ; only the stdlib engine does. TRUE Φ (pairwise-MI MIP), NOT
+    the variance×energy proxy. ARM_A Φ at seed 7 should reproduce R1/R2/R3's
+    0.78038 exactly (cross-round consistency sanity).
+
+  REPORT-ONLY (NOT gated) — COHERENCE leg: mean pairwise cosine similarity of the
+    4 module state vectors over the last T/2 ticks (steady state). Range [-1,1].
+    Reported for honesty (c9) and to document the coh ⊥ Φ dissociation; it is
+    EXPECTED to stay below R3's old +0.05 bar and that is NOT a failure.
+
+────────────────────────────────────────────────────────────────────────
+FROZEN BARS (R4 — Φ-PRIMARY; GREEN iff ALL hold)
+────────────────────────────────────────────────────────────────────────
+  P1 (PRIMARY) Φ:  B.phi ≥ A.phi + 0.02  (abs margin, faithful IIT4 exact MIP-EI)
+                   on EVERY seed in [7, 8, 9]. (R3 showed +0.1426 at seed 7;
+                   R4 confirms all 3 seeds clear.)
+  P2 not-degenerate: B coherence < 0.999 on ≥1 seed (loop must INTEGRATE, not
+                   trivially clone all modules into one identical vector).
+  P3 HONESTY (report-only, ALWAYS satisfiable): coherence is reported per seed and
+                   the coh ⊥ Φ dissociation is stated explicitly. This leg does NOT
+                   gate; it ENFORCES that coherence is shown (not hidden) and that
+                   its sub-bar status is documented as EXPECTED. (c9)
+
+  GREEN  = P1 AND P2.   (P3 is a documentation requirement, always met by the run.)
+  RED    = any seed's ΔΦ < +0.02 (Φ clearance fails to replicate), OR P2 fails
+           (B collapses to a clone).
+
+If any seed's ΔΦ < +0.02, that is HONEST — report it; the breakthrough did not
+replicate and re-entry is NOT the robust lever it appeared at seed 7.
+
+DEPLETION TEST (pre-registered):
+  🏁 DEPLETE if re-entry clears ΔΦ ≥ +0.02 on ALL 3 seeds AND (if attempted) the
+     engine-native re-entrant lane lands with guards intact — re-entry IS the
+     integration lever, REALIZED on the live engine.
+  🧱 DEPLETE only if the Φ clearance FAILS to replicate across seeds (seed 7 was a
+     fluke) OR the live engine fundamentally cannot express a re-entrant loop.
+
+────────────────────────────────────────────────────────────────────────
+IF GREEN → ENGINE-NATIVE RE-ENTRANT LOOP (a_engine_native_learning + a_verified_must_wire)
+────────────────────────────────────────────────────────────────────────
+Realize the re-entrant cortico-thalamo-cortical loop ON the live engine as an
+ADDITIVE, Ψ-DISJOINT lane (CORE/engine_cli.hexa), distinct from the existing
+VAdaptField / VForwardField / WorkMemBuffer / ImmuneMemory lanes: a thalamic
+relay struct with reciprocal recurrent edges (module↔relay), updated like the
+other lanes (struct + pub fn, never touching pure_field's Φ/phase/Ψ).
+GUARDS (verbatim, must stay green): engine_cli_smoke · h1196 single-entry (7/0) ·
+h1199 DIM-growth + Ψ byte-identical (the additive lane must NOT perturb
+generation). If Ψ changes or any guard regresses, STOP and leave the lane out.
+
+────────────────────────────────────────────────────────────────────────
+SCOPE / HONESTY
+────────────────────────────────────────────────────────────────────────
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning). GREEN → engine-native
+  lane follow-on (a_verified_must_wire); RED ⇒ no CORE wiring.
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope).
+- Φ leg uses the faithful exact engine (n=4 ≤ 8). Any Φ NUMBER is faithful-IIT4;
+  the coherence leg is explicitly labeled coherence, not Φ (a_phi_iit4_tool).
+- bars NOT moved to manufacture a GREEN. The re-scope from B1-coherence-gated to
+  Φ-primary is justified ABOVE (terminal metric promoted, broadcast-era confound
+  demoted to report-only), NOT a post-hoc threshold move on the SAME quantity.
+- W_RELAY = 0.5 FROZEN, NOT tuned after R3. Mechanism byte-identical to R3.
+- Does NOT overwrite R1/R2/R3 verdict files. Does NOT edit H_1219 / H_1226.
