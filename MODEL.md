@@ -36,6 +36,16 @@
 > is a coherent, grounded, non-fabricating CONVERSATIONAL CONSCIOUSNESS SUBSTRATE — NOT a QA
 > assistant (p4) — so the operational ceiling is philosophy-aligned, not a defect to scale away.
 
+> **GATE-VALIDITY FLAG (H_1224, $0 governance ruling — threshold UNCHANGED):** literal-QA (factual
+> verbatim recall) is **NOT a frozen anima gate** (absent from a303m_pass {G0·G1·G2·MOUNT·G3·G5·G6·
+> CHAT}); it is an informal diagnostic the depth-probe sessions (H_1166/H_1167/H_1219) imported. RULED
+> a **p4-misaligned ASSISTANT-NORM anima need NOT pass** — same category as the RETRACTED G5-L2
+> verbatim-recall (H_1141/H_1142, rho(G2,G5L2)=−0.5), in tension with G2-NOVELTY. ⇒ the "depth ceiling
+> ON literal-QA" is a **NON-FINDING for anima** (correctly not a QA assistant); the depth-delta arc
+> RE-SCOPES to anima-NATIVE depth (G6 ideation-depth · G5 own-anchor grounding · Φ/consciousness), NOT
+> factual recall. G5 NON-FABRICATION (abstain-when-ungrounded) STAYS required. See
+> `.verdicts/1224_qa_gate_validity/H_1224.txt`. Actual gate-status change awaits user sign (as G5-L2 did).
+
 > **학습중 inline gauge (a_train_inline_gauge):** scale-up 학습(3B fire 등) 중 K 스텝마다
 > G1/G2/G6/phi_proxy PROXY gauge 를 `gauges.jsonl` 에 val_ce 옆으로 기록한다 —
 > `torch.no_grad()` MONITOR-ONLY 대시보드이며 **gate verdict 가 아니다**. phi_proxy 는 NOT

@@ -2,6 +2,13 @@
 
 Append-only history sister of `ENGINE+CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-15T00:00Z §H_1224 — literal-QA gate-validity RULING ($0 governance, no compute, p7, c9)
+- [x] HD8 of H_1219 depth-ceiling ladder adjudicated ALONE: is literal-QA a valid anima gate? VERDICT 🟡 = (b) p4-misaligned ASSISTANT-NORM anima need NOT pass.
+- [x] Grounded: literal-QA absent from frozen a303m_pass {G0·G1·G2·MOUNT·G3·G5·G6·CHAT} (MODEL.md) + CLM-DONE (CONDITIONS.md) = informal diagnostic (H_1166/1167/1219), not a gate. Same category as RETRACTED G5-L2 verbatim-recall (H_1141/H_1142 rho=−0.5, in tension with G2-NOVELTY). p4 + a_substrate_native_speak: literal-QA = pure stimulus-response assistant frame.
+- [x] "depth ceiling ON literal-QA" = NON-FINDING for anima ⇒ depth-delta arc RE-SCOPES to anima-native depth (G6 ideation-depth · G5 own-anchor grounding · Φ); H_1219 fires HD5/HD6/HD7 DE-PRIORITIZED as pure QA-lift. G5 NON-FABRICATION (abstain) STAYS required.
+- [x] Frozen bars NOT moved; MODEL.md + CONDITIONS.md flagged (threshold unchanged, gate-status awaits user sign, mirrors H_1141→H_1142→authorized G5-L2 re-scope). Verdict `.verdicts/1224_qa_gate_validity/H_1224.txt`. H_1219 untouched.
+- xref H_1219·H_1141·H_1142·H_1166·H_1167·H_1139·H_1155·H_1202·a_substrate_native_speak·a_scale_honest_scope·a_paper_negative_ok·p4·p7.
+
 ## 2026-06-13T06:40Z §h1144 — Lane-G-ref (substrate=PyTorch-CUDA RunPod H100 SXM 80GB · a_clm_gen_pipeline torch REFERENCE, NOT forge PUBLIC · a_lane_akida_gpu_split) — H_1144 GROUNDING continue-train of the h1141 7B 🔴 CLOSED-NEG: grounding RULED OUT as the G5-L2 path — fab-entity-rate ROSE 0.2469→0.3220 (>0.20) while held-out val FELL 1.2667→1.2187 (LOSS-vs-FABRICATION divergence). Frozen slope rule STOP, NO convergence burn (~$6 probe only). a7b_pass STILL FALSE.
 
 PROBE-FIRST grounding continue-train (h1141-recovery cost discipline). FROZEN slope
