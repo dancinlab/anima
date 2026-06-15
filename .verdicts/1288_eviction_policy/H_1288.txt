@@ -1,0 +1,41 @@
+=== H_1288 EVICTION POLICY as the capacity lever of the immune memory (local CPU, $0) ===
+    N_FACTS=60 in-store  N_OUT=60 untaught  SEEDS=[900, 901, 902]
+    substrate = VAdaptField mirror (split>0.3, LR=0.2); key = byte-3gram FNV-1a dim=64
+    regime = H_1287 EVICTION-BOUND zero-sum rung: max_cells=40 << 60, noise=0.16, thresh=0.3
+    (A) LRU-EVICT     fixed budget 40 cells (CURRENT store, zero-sum ~0.667 ceiling)
+    (B) MITOSIS-GROW  grow new cells under pressure up to 80 (finite, p8 — break zero-sum)
+    (C) WEIGHTED-EVICT smarter heuristic (LFU+LRU) at the SAME 40-cell budget (NOT growth)
+    importance sub-metric = first tercile (taught-first = most LRU-vulnerable)
+    PRE-REGISTERED GREEN: (B)total recall >= (A) + 0.05  AND  (B)fab <= 0.1
+      [cell-count cost reported honestly; arm C attributes lift = GROWTH vs HEURISTIC]
+
+  seed 900: (A LRU) tot=0.667 imp=0.000 fab=0.000 cells=40 | (B GROW) tot=1.000 imp=1.000 fab=0.000 cells=60 | (C WTD) tot=0.667 imp=0.000 fab=0.000 cells=40
+  seed 901: (A LRU) tot=0.667 imp=0.000 fab=0.000 cells=40 | (B GROW) tot=1.000 imp=1.000 fab=0.000 cells=60 | (C WTD) tot=0.667 imp=0.000 fab=0.000 cells=40
+  seed 902: (A LRU) tot=0.667 imp=0.000 fab=0.000 cells=40 | (B GROW) tot=1.000 imp=1.000 fab=0.000 cells=60 | (C WTD) tot=0.667 imp=0.000 fab=0.000 cells=40
+
+  MEAN  (A LRU-EVICT)      tot=0.667 imp=0.000 fab=0.000 cells=40.0
+  MEAN  (B MITOSIS-GROW)   tot=1.000 imp=1.000 fab=0.000 cells=60.0
+  MEAN  (C WEIGHTED-EVICT) tot=0.667 imp=0.000 fab=0.000 cells=40.0
+  Δ total recall (B-A) = +0.333   Δ (C-A) = +0.000
+  cell-count cost: B holds 60.0 cells vs A 40.0 (Δ=+20.0) — growth trades footprint for recall
+
+  CHECK growth-lift   : B 1.000 >= A 0.667+0.05 -> PASS
+  CHECK abstain-intact: fab(B) 0.000 <= 0.1 -> PASS
+
+════════════════════════════════════════════════════════════════════
+  A LRU-EVICT (current, zero-sum) : tot=0.667  imp=0.000  cells=40.0
+  B MITOSIS-GROW (break zero-sum) : tot=1.000  imp=1.000  cells=60.0  Δ(B-A)=+0.333
+  C WEIGHTED-EVICT (heuristic)    : tot=0.667  imp=0.000  cells=40.0  Δ(C-A)=+0.000
+
+  FINAL VERDICT: 🟢 GREEN  [MITOSIS-GROWTH breaks the zero-sum LRU ceiling — growing a new
+                cell under capacity pressure (p8) lifts total recall over LRU-eviction, abstain intact]
+  HONESTY (c9): B SATURATES (tot=1.000>=0.99) — read as an EXISTENCE-PROOF (growth CAN
+                break the ceiling), NOT an effect-size; the COST is footprint (B 60.0 cells
+                vs A 40.0). The lever is CELL BUDGET, realized substrate-natively as mitosis growth.
+  ATTRIBUTION: weighted-heuristic alone does NOT lift (C Δ=+0.000) — the lift is from GROWTH (extra cells), not a free heuristic.
+  DEPLETION: 🏁 — capacity IS the lever (the REAL one the 4 reds H_1230/1284/1285/1287 pointed to).
+             NEXT: r2 = engine-native mitosis-grow eviction on the live immune_memory faculty
+             (a_engine_native_learning) + wire per a_verified_must_wire.
+  philosophy guard: AFFIRMED — mitosis split = the engine's own tick (p8); policy mutates ONLY the
+                    episodic cell population; no labels/persona/ethics/decoder; abstain re-checked + intact (p1-p8).
+[done]

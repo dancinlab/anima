@@ -1,0 +1,52 @@
+H_1288 — EVICTION POLICY (the successor the key-geometry wall pointed to)
+PRE-REGISTRATION (FROZEN before the run; bars not movable post-hoc)
+
+CONTEXT. FOUR converging closed-negatives — H_1230 (active teacher inert/harmful),
+H_1284 (neuromod no-free-lunch), H_1285 (amygdala salience = recurrence confound),
+H_1287 (key geometry does NOT lift recall) — all pinned the H_1227/H_1231 immune
+clonal memory's limit to CAPACITY. H_1287's explicit conclusion: "to lift recall
+under stress, add CELLS or change the EVICTION POLICY — not the key geometry."
+This lane tests that, on the EXACT H_1287 EVICTION-BOUND zero-sum LRU rung.
+
+REGIME (FROZEN, = H_1287 EVICTION-BOUND control):
+  N_FACTS=60, N_OUT=60, SEEDS=[900,901,902]
+  key = byte-3gram FNV-1a hash dim=64 (the H_1227/H_1230/H_1287 key; collision-free)
+  substrate = VAdaptField mirror (split>0.30, LR=0.20)
+  STRESS_MAX_CELLS=40 (<< 60, LRU eviction is the limit)
+  STRESS_KEY_NOISE=0.16 (target-L2, dim-invariant; = H_1287 EVICT_KEY_NOISE)
+  STRESS_RECALL_THRESH=0.30
+
+ARMS (FROZEN):
+  (A) LRU-EVICT     — fixed 40-cell budget, evict least-recently-used (CURRENT, zero-sum)
+  (B) MITOSIS-GROW  — grow a new cell under pressure up to GROW_MAX_CELLS=80 (finite, p8),
+                      LRU fallback only past that generous bound (break zero-sum)
+  (C) WEIGHTED-EVICT— same 40-cell budget, evict by LFU(primary)+LRU(tiebreak) heuristic
+                      (NOT growth — separates "growth lifts" from "heuristic lifts")
+
+METRICS (p7, deterministic):
+  total recall    = exact-match recall on held-out noisy-cue query of EVERY fact
+  important recall= same on first-tercile (taught-first = most LRU-vulnerable) — sub-metric
+  cell-count cost = final cell count per arm (B's growth trades footprint for recall)
+  fabrication     = fraction of untaught subjects that do NOT abstain (LOAD-BEARING, H_1227)
+
+PRE-REGISTERED GREEN (FROZEN):
+  GREEN iff  (B) total recall >= (A) total recall + 0.05   (REC_MARGIN)
+        AND  (B) fabrication-rate <= 0.10                  (FAB_BAR; abstain intact)
+  with the CELL-COUNT COST reported honestly. Arm C reported alongside to attribute
+  the lift (GROWTH vs free HEURISTIC).
+
+HONESTY (c9):
+  * If B saturates (tot >= 0.99) it is an EXISTENCE-PROOF (growth CAN break the
+    ceiling) not an effect-size — and the footprint cost is stated.
+  * If neither growth NOR the weighted heuristic lifts recall under honest capacity
+    accounting -> 🧱 (the ~0.667 ceiling is fundamental to the retrieve-then-copy
+    regime; capacity is not the lever either; the 4 reds + this lane exhaust it).
+
+GUARDS: p1-p8; mitosis split = the engine's own tick (p8, not external); policy
+mutates ONLY the episodic cell population (no labels/persona/ethics/decoder);
+abstain-when-ungrounded (H_1227) kept + re-checked; importance = deterministic fn of
+taught-order only. Mirror only — live CORE/engine_cli.hexa UNTOUCHED (engine-native
+mitosis-grow eviction = r2 per a_engine_native_learning). $0 local CPU numpy.
+
+DELIVERABLE: UNIVERSE/h1288_eviction_policy.py
+xref H_1227 · H_1230 · H_1285 · H_1287 · H_1199
