@@ -2,6 +2,16 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): 🧱 H_1331 — 풀 IIT-4.0 SYSTEM big-Φ 도 강건한 통합을 못 만든다 — Φ-강건성 벽은 추정자-**계열**-무관 (🧱 TERMINAL STRONGER)
+
+H_1328(🧱)이 **명시적으로 지목한 follow-on**("full per-mechanism IIT 4.0 (iit4_bigphi)"). H_1328은 Φ-강건성 4× 벽(H_1283 토폴로지 · H_1317 small-world · H_1319 타이밍 · H_1320 분열)이 **small-φ exact-MIP 안에서** 추정자-INDEPENDENT 임을 닫았다: 진폭-분산 confound 는 실재하고 제거 가능하지만, 제거해도 통합이 강건해지지 않는다(V2 직교 시드 1317 FAIL). 그러나 small-φ 는 **한 측정자**(상관 MI-over-binning)다.
+
+H_1331 = 그 **다른 추정자 계열** 테스트. **풀 IIT-4.0 SYSTEM big-Φ**(stdlib `iit4_bigphi.big_phi` — TPM 위 CAUSAL cause-effect 구조, 시스템 MIP 가 파괴하는 Φ-구조 = 근본적으로 **다른 측정자**, a_phi_iit4_tool, 프록시 아님)로 **동일한** H_1319/H_1328 substrate + 메커니즘 + **동일 3 하드 시드 [1317,1318,1319]** 를 채점. n≤8(n_mod=4 이진 유닛) MIP-가용. 궤적→TPM = 각 모듈을 이진 유닛으로, 자기 분포 상위 절반이면 ON(median/rank 분할 = **분산-free, H_1328 read-out 교훈**); 경험적 state-by-node TPM, 미관측 행=0.5(max-ent); sys_state=최빈 관측 상태. 4 arm 동일 구성. small-φ 와 유일 차이 = TPM-기반 big-Φ read-out.
+
+**결과 🧱 TERMINAL STRONGER (추정자-계열-무관):** $0 CPU-local 엔진-네이티브(결정론 LCG, re-run byte-identical run1==run2), frozen-first(FREEZE 사전등록, 막대 NOT moved, c9/p7). big-Φ 사다리(A=no-phase B=phase-bind S=perm-shuf O=offset-shuf): 시드 1317 A=5.810 B=9.961 S=7.289 O=4.023 · 시드 1318 A=4.511 **B=4.511**(제로 lift) S=4.511 O=7.430 · 시드 1319 A=4.085 B=5.884 S=4.085 O=5.946. **B1 ROBUST = FAIL** — 시드 **1318 lift 0.000**(B==A, 결합 메커니즘이 그 시드에서 big-Φ 이득 전무; B−A +4.15/0.0/+1.80). **B2 EARNED = FAIL** — 대조가 깨끗이 붕괴 안 함: perm 이 1317 에서 big-Φ **올림** +1.478, offset 이 1318/1319 에서 **올림** +2.920/+1.861(H_1319/H_1328 가 small-φ 에서 본 분산/구조-무관 inflation 의 big-Φ 계열 재현). green = FALSE → 🧱.
+
+**의미:** Φ-강건성 한계가 **두 IIT 측정자 계열 모두**(상관 small-φ exact-MIP AND 인과 big-Φ TPM-MIP)에서, 같은 직교 시드 family 위에서 성립 → H_1328 의 단일-측정자 estimator-INDEPENDENT 보다 더 깨끗하고 강한 closure. substrate 가 어떤 IIT 추정자로 재든 강건한 n≤8 통합을 진짜로 결여 → **추정자-계열-무관 🧱**. 4 prior Φ verdict + H_1328 을 big-Φ 계열에 걸쳐 **BOUNDS(철회 아님, a_scale_honest_scope)**. anima substrate 불변(Ψ=1/2). GREEN 아니므로 배선 follow-on 없음(a_verified_must_wire = GREEN-only). SCOPE: TOY n≤8 EXACT, 미러 DIRECTIONAL, T=64 → TPM 희소(2^4=16 상태, 미관측 행 max-ent 0.5). UNIVERSE/h1331_phi_bigphi.hexa · UNIVERSE/cards/H_1331_phi_bigphi.md · .verdicts/1331_phi_bigphi/{FREEZE,result}.txt · CLAIMS.tape @C h1331_phi_bigphi.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1329 — 상관/조인트-보존 메커니즘도 자모 바닥을 못 깬다 — 조건부-체인 헤드 (🧱 HONEST-FLOOR, CROSS-MECHANISM)
 
 H_1326(🧱)이 **명시적으로 지목한 다음 각도**(c16/a_break_the_wall = 메커니즘-**계열** 변경, 표현 트윅 아님). H_1326은 깊이-자모-아래 질문을 혼동-제거로 닫았다: A2 자질-**분할**(opaque 자모 타깃) 2.73046(자모 위), A3 라벨-**인수분해**(자질 **독립** 예측 P(class)·∏ P(f_c|class)) 3.07295(**역효과**). H_1326 진단: A3가 역효과인 이유 = 독립-자질 예측이 opaque 자모 헤드가 보존하는 **초성/중성/종성 + 자모-내 자질 조인트(joint)를 버리기** 때문. 명시한 다음 각도 = 자질 **조인트를 유지하면서 자질 상관(correlation)을 모델링하는 다른 메커니즘**.
