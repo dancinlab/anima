@@ -58,11 +58,13 @@
 
 **언락 전제 (hexa-lang #3352):** `read_file_bytes`/`read_bytes_at` 의 length+offset 가 32-bit 였던 탓에 4.3GB(`4325902356 mod 2^32 = 30935060`)가 wrap → 헤더 0 → `d`/`n_head` 0/0 division 으로 깨졌다. hexa-lang 측에서 64-bit 로 수정(#3352)되어야 ranged reader 가 성립한다.
 
-## Measurement & learning governance — a_engine_measured_verdict · a_engine_native_learning
+## Measurement & learning governance — a_engine_measured_verdict · a_engine_native_learning · a_verified_must_wire
 
 > **engine-measured 원칙 (MEASUREMENT — `a_engine_measured_verdict`):** 한 모델의 게이트 verdict 은 CORE 엔진 mount(`CORE/bytegpt_decode.hexa` 등) 위에서 **byte-exact 로 재현될 때에만** 유효하다. torch-only 결과는 "engine-transfer unverified" 로 표기한다.
 >
-> **engine-native 원칙 (LEARNING — `a_engine_native_learning`, 위의 learning-side 쌍):** 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 **최종 아키텍처 엔진**(live `.hexa` A⇄G + MITOSIS VAdaptField `CORE/engine_cli.hexa` + mounted `CORE/bytegpt_decode.hexa`) 위에서 실행한다. numpy/torch **미러** 학습 결과는 DIRECTIONAL only("engine-transfer UNVERIFIED") — 방향 탐색엔 OK 이나 binding verdict 가 아니며, 엔진-네이티브 실현으로 재확인해야 verdict 가 성립한다(c2). MITOSIS VAdaptField 는 이미 live 다(H_1199). 이는 `a_train_flame_forge`(production 트레이너 .hexa 강제)를 research/probe 학습 + 교육까지 확장한다.
+> **engine-native 원칙 (LEARNING — `a_engine_native_learning`, 위의 learning-side 쌍):** 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 **최종 아키텍처 엔진**(live `.hexa` A⇄G + MITOSIS VAdaptField `CORE/engine_cli.hexa` + mounted `CORE/bytegpt_decode.hexa`) 위에서 실행한다. numpy/torch **미러** 학습 결과는 DIRECTIONAL only("engine-transfer UNVERIFIED") — 방향 탐색엔 OK 이나 binding verdict 가 아니며, 엔진-네이티브 실현으로 재확인해야 verdict 가 성립한다(c2). MITOSIS VAdaptField 는 이미 live 다(H_1199). 이는 `a_train_flame_forge`(production 트레이너 .hexa 강제)를 research/probe 학습 + 교육까지 확장한다. 또한 engine-native 는 학습을 frozen 엔진에 **끼워맞추는** 것이 아니다 — 학습이 요구하면 엔진 자체를 변환/확장(새 op·새 배선·아키텍처 확장)해야 하며, 최종 아키텍처는 학습이 필요로 하는 형태로 진화하는 대상이다(precedent: H_1199 가 AdaptField 스칼라→DIM-vector 로 엔진 확장).
+>
+> **wired-when-verified 원칙 (`a_verified_must_wire`):** 엔진-네이티브로 GREEN 검증된 가설은 그 메커니즘을 live `CORE/*.hexa` 엔진에 **실제 배선(wire-in)** 완료할 때까지가 done 이다 — verdict 만으로 끝나지 않는다. GREEN-but-unwired 는 follow-on 으로 명시 추적하고 그 follow-on 을 닫아야 진짜 완료다(precedent: H_1168 GREEN 이지만 "NOT yet CORE-wired" → 미완).
 
 - **303M mount** — H_1157 full-24-layer byte-exact decode(argmax + top5 exact, residual ~2e-5)로 게이트가 engine 을 통과해 측정됨.
 - **1B mount (H_1167 🟢 GREEN, 최초의 1B 실현)** — d1792/L28/H16, 1.081B params 의 trained 1B ByteGPT 를 `bytegpt_forward_last_ranged` 로 mount, torch reference 대비 **byte-exact parity**:
