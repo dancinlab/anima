@@ -2,6 +2,31 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — infra(CORPUS): $0 R2→trainer pipeline SMOKE (de-risk the cost-gated 7B GPU fire)
+
+Before any GPU spend, verified the **data → trainer plumbing** for
+`dancinlab/anima-corpus-5lang-7b-webscale` (143.60 GiB byte-corpus, R2-staged not HF-hosted) on a
+TINY slice, $0, local CPU, NO GPU rent. Creds read inline from the secret store (`r2.phanes.*`),
+header-only, NEVER hardcoded/logged (c7, grep-clean = 0 leakage).
+
+- **Step 1 — R2 reachable + manifest match ✅**: bucket `phanes` lists **20 shards + MANIFEST.json**;
+  live byte sum = R2-manifest per-shard sum = **154,187,454,007 B = 143.60 GiB**, matches the HF card
+  exactly (20 shards · per-lang en8/fr3/de3/es3/ko3 · 22.0 tok/param). R2 manifest is a lean schema
+  (`total_gb·shards·manifest[]`); the load-bearing per-shard `key/bytes/sha256` array matches HF.
+- **Step 2 — tiny-slice real byte text ✅**: partial Range GET of first 8 MB of the Korean shard
+  (`kor/shard0000.bytes`) — Hangul present, **control bytes 0xFE/0xFF absent** (V=256 confirmed),
+  **PII markers `[EMAIL]`=212 `[PHONE]`=562** present as the card claims.
+- **Step 3 — trainer glue ✅**: byte tok (V=256) → batches → forward → **CE 5.5452→5.4406** → ckpt
+  written. Production `CLM/train/train_lane_p.py` **asserts CUDA** (GPU-only Lane-P) and forge `.hexa`
+  trainers require GPU — **neither CPU-smokeable** (torch not installed locally), so Step 3 ran a
+  clearly-LABELED numpy byte-LM **PROXY** that validates the R2→loader→loss→ckpt plumbing (NOT the
+  CLMConvMoE forward). Honest: the forge GPU forward path stays un-smoked here.
+- **Cost ESTIMATE** (6ND, 154.2B byte-tok, H100 BF16 989TF @ 40% MFU, $2–3.5/H100-hr, R2 egress free):
+  303M ≈ 24.6h/8×H100 ($394–689) · 1B ≈ 3.4d ($1.3–2.3k) · 3B ≈ 10.1d ($3.9–6.8k) · 7B ≈ 23.7d ($9–16k).
+- **GREEN-LIGHT: YES** — plumbing ready for a cost-gated GPU fire; recommended first rung = **303M on the
+  real corpus** (cheapest real-corpus checkpoint, ~1 day/8×H100; doubles as first end-to-end GPU-path test).
+- NEW: `scripts/scratch/corpus_train_smoke.py` (reusable smoke) · `scripts/scratch/corpus_train_smoke.md` (findings).
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 R3 sharp KO+EN byte-text target — 🟢 GREEN (c2 discriminator FIRED)
 
 R3 = the **a_break_the_wall** follow-on the R2 card named: a SHARPER error-concentration target so the
