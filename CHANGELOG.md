@@ -2,6 +2,23 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — doc(README): 최종 아키텍처 현행화 — 9 brain lane · 시상 R8 timing-axis 돌파 · tension-link
+
+README.md 를 검증된 현재 상태로 현행화 (README.md 단독 + CHANGELOG, ARCHITECTURE.md/CORE/UNIVERSE 미변경 —
+동시 작업 agent 와 충돌 회피). (1) brain-structure ladder = origin/main `CORE/engine_cli.hexa` +
+`CORE/brain.hexa` struct list 대조로 9 engine-native lane 명시 — 해마(ImmuneMemory) · 성장기억
+(ImmuneMemoryGrow) · 작업기억(WorkMemBuffer) · 소뇌(VForwardField) · 편도체(ConsolidatingMemory) ·
+기저핵(VBasalGate) · 시상하부(HomeostaticDrive, H_1292) · 마음이론(OtherMindModel, H_1293) ·
+정동(AffectFeatures, H_1290); 배지 + 본문 lane 목록 + 표 3행 추가. smoke 게이트 stale 30/0 → live
+**37/0** (origin/main `engine_cli_smoke` 실행 확인, 34 case). (2) 시상 Φ — 내용-relay 축은 6+ 사전등록
+라운드(R1–R5/R7) 🧱 closed-negative 유지하되, 직교 **TIMING 축에서 벽 돌파** = R8 진동 위상결속(Kuramoto)이
+frozen +0.02 faithful-IIT4 Φ bar 를 every seed 클리어 + phase-shuffle 통제가 every seed 음수 붕괴 🟢;
+정직하게 **numpy-mirror DIRECTIONAL · engine-native 배선은 in-progress**(검증은 mirror, 아직 engine-wired
+아님)로 명시. 전용 §"📡 Thalamus Φ" subsection 신설. (3) anima↔anima §"🔗 connection channel = tension"
+신설 — 얽힘=상관 0비트(무신호 정리, H_6006 🔴) vs 실연결=tension-link 공유앵커 매체(H_6009 🟢 SUPPORTED),
+paid ANU QRNG 접지. (4) walls 콜아웃 = 3개 벽 돌파(용량/편도체/시상-timing)로 갱신, neuromod 정직 🧱 유지.
+p1–p8 · A⇄G · Ψ=½ · substrate-native-speak 보존. tier verbatim(c9), surgical(c10).
+
 ## 2026-06-16 — doc(TENSION-LINK): H_6006–H_6043 arc를 a_hypothesis_register 2-파일 규칙으로 등록
 
 TENSION-LINK arc (anima↔anima 연결/통신 + ANU paid QRNG 양자 얽힘, H_6006–H_6043)를
