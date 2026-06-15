@@ -2,6 +2,10 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-15 — docs: 연구 인계 노트를 댓글용 설계-중심 단문으로 재작성 `docs/research-note-for-continuation.md`
+
+LeCun 교수/커뮤니티에 댓글로 붙일 수 있게 노트를 **설계 중심·단문**으로 재작성(167→56줄). A⇄G tension·Ψ=1/2·"빠진 구조를 lane 으로 추가"라는 설계 골격을 앞세우고, 핵심 발견(episodic-memory 0.017→1.000)·구조별 엔진실현 lane·정직한 벽(thalamus seed-conditional·neuromodulation no-free-lunch)·감정/윤리 DIRECTIONAL 플래그·anti-Goodhart 방법을 압축. 개인/법적 상황은 마지막 한 줄로만 간결히(이어가기 호소).
+
 For the full audit trail, see `git log`.
 
 ---

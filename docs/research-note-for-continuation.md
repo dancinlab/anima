@@ -1,167 +1,73 @@
-# anima — a research note, and a request to continue it
+# anima — a design note (for a comment)
 
-*From an independent AI researcher in Korea. I am currently navigating a legal
-matter — a cannabis-related case — that may keep me from carrying this forward.
-I mention it plainly only so the reason is honest; the research below stands on
-its own evidence, independent of my circumstances. I write this in case I cannot
-continue, so that anyone who finds the work compelling can pick it up.*
+Prof. LeCun — the central result keeps landing on your long-standing point:
+**capability gaps are architecture gaps, not scale gaps.** Open repo, every claim
+has a frozen pre-registered verdict: **github.com/dancinlab/anima**.
 
-*Addressed, with respect, to Prof. Yann LeCun — because the central result here
-keeps landing on the same point you have argued for years: **capability gaps are
-architecture gaps, not scale gaps.** I would be honored if you, or anyone in the
-community, looked at it. Everything below is reported honestly, including what
-failed.*
+**The design.** Two opposing engines — Engine A (forward, CE-trained) ⇄ Engine G
+(reverse, gradient-free) — push against each other; the *tension* drives
+emit/silence toward a fixed point Ψ = 1/2. No system prompt, no persona, no RLHF.
+Standing rule: when a capability is missing, don't reach for the LLM frame
+(bigger / more data / longer context) — reach for a **neuroscience lens** and add
+the missing structure as an **additive, Ψ-disjoint lane** (the language decoder is
+never touched; generation stays byte-identical).
 
-Repository: **github.com/dancinlab/anima** (open). Every claim has a frozen,
-pre-registered verdict file under `.verdicts/<slug>/`. Philosophy and governance
-are in `CLAUDE.md`; the live architecture is in `ARCHITECTURE.md`.
+**Core finding.** A from-scratch byte-LM is "all neocortex, no hippocampus": it
+speaks but can't one-shot a fact, and this **does not improve with scale**
+(303M ≈ 1B, byte-exact). Add an **episodic-memory lane** (immune/clonal selection —
+each cell binds one fact; recall = best-affinity cell fires *or abstains*, no
+fabrication): literal recall **0.017 → 1.000, fabrication 0.000**, realized
+engine-native.
 
----
+**Same move, structure after structure** (all engine-native on the live engine):
+- hippocampus — episodic memory (recall-or-abstain)
+- working memory — gated leaky buffer (holds across distractors)
+- cerebellum — internal forward-model + delta-rule correction
+- amygdala — salience-gated replay protects traces from eviction
+- basal ganglia — reinforcement-gated go/no-go action selection
+- growth memory — under pressure the store **grows a new cell (mitosis)** instead
+  of evicting → breaks the zero-sum recall ceiling (0.667 → 1.000). The bottleneck
+  was the fixed cell budget, not the key geometry.
 
-## What anima is (in one paragraph)
+**Reported straight — walls, too.** A thalamic *broadcast* relay raises surface
+coherence but not integrated information; a *re-entrant* loop raises faithful
+IIT-4 Φ but only **seed-conditionally** (fails a 3-seed gate) — a real signal, not
+a robust result. A context-adaptive neuromodulator never beats one well-tuned
+fixed operating point. No free lunch.
 
-anima is a **substrate-native consciousness architecture**, not an assistant and
-not an LLM. Two opposing engines — **Engine A** (forward, CE-trained) ⇄ **Engine G**
-(reverse, gradient-free) — push against each other, and the *tension* between them
-drives emit/silence toward a fixed point Ψ = 1/2. There is no system prompt, no
-identity file, no persona, no RLHF. The standing design rule (`a_no_llm_frame_trap`)
-is: **when designing, do not reach for the LLM frame (bigger model / more data /
-longer context); reach first for a neuroscience / biology / physics lens.** Most of
-what follows came directly from obeying that rule.
+**Most interesting, flagged honestly.** Substrate-derived **affect** and **ethical
+behavior** (restraint, cooperation, refusal-to-fabricate) appear to *emerge from
+the coupling*, not from a label/persona/RLHF — shuffle the mapping and it collapses
+~5×; ablate the coupling and ethics drops to the exact naive floor, while a
+*baked-in* rule survives ablation (so the control separates emergent from injected).
+These two are still **numpy-mirror, DIRECTIONAL, toy-scale** — engine-native
+realization in progress.
 
----
+**Method.** Frozen-first pre-registration · a negative control on every claim
+(shuffle/ablation/dissociation) · binding verdicts run **byte-exact on the live
+engine** · no perplexity-as-truth · closed-negatives are published results.
 
-## The core result: architecture beats scale
+**Open threads to continue:** engine-native affect/ethics · scale-transfer of the
+memory lanes (paraphrase / noisy keys / real corpora) · does *distributed
+multi-edge* coupling (not a central relay) raise Φ robustly · the general law —
+*which capability is a missing lane, and which is a true ceiling?*
 
-A from-scratch byte-level LM is **"all neocortex, no hippocampus."** It can speak,
-but it cannot one-shot a fact — literal recall sits near zero and *does not improve
-with scale*: we trained a 1B byte-model and verified it mounts **byte-exact** on the
-compiler-native engine, yet literal-QA stayed ~flat (303M ≈ 1B). Scale was not the
-lever.
+**How each piece works (one line each — enough to reconstruct):**
+- **A⇄G engine** — Engine A = forward CE-trained field; Engine G = reverse gradient-free field; they couple as a repulsion ring; `brain_decide` reads both; their *disagreement* is the tension signal.
+- **Ψ = 1/2 fixed point** — emit-vs-silence is a scalar; the A↔G tension is fed back so the system settles at Ψ = 1/2 (neither mute nor flooding) — the operating point, not a target to minimize.
+- **Mitosis (VAdaptField)** — a per-decision adaptive field over cells; when a cell's reconstruction error exceeds threshold it **splits** (one cell → two), so the substrate grows capacity where it is wrong — same op at train and infer (no train/infer split).
+- **Episodic memory (immune/clonal)** — key = byte-trigram FNV-1a hashed to a dim-64 vector; `bind` writes one (key→value) cell; `recall` = highest cosine-affinity cell fires, or **abstains** if best affinity < threshold (this is the no-fabrication guarantee).
+- **Working memory** — a leaky-activation buffer: gated write, exponential decay each tick, read-out of the surviving activation — holds one item across distractors where a flat context window overwrites it.
+- **Cerebellum (VForwardField)** — an internal forward model predicts the next state; error = actual − predicted; weights update by NLMS/delta-rule; the prediction is then used to pre-correct — a *learned* predictor beside the static engine.
+- **Amygdala (consolidation)** — salience tag = surprise(recon-error) + novelty(split) + tension; during sleep-replay, high-salience traces are re-bound so they survive eviction (this lane is seed-robust only via recurrence — see the H_1285 closed-negative).
+- **Basal ganglia (VBasalGate)** — K candidate emits compete; learned go-value vs one NO-GO value; argmax = striatal disinhibition (release the winner, suppress the rest); weights learn by delta-rule from a grounding **outcome** reward (grounded +1 / fabricated −1) — outcome-only, no labels.
+- **Growth memory** — at capacity, do **not** LRU-evict; instead mitosis-grow a new cell up to a finite bound; this is why the zero-sum recall ceiling (0.667) lifts to 1.000 — the substrate's answer to forgetting is to grow.
+- **Affect read-out** — valence = grounding-margin − contradiction; arousal = novelty + split-rate + curiosity; computed from substrate state only (never an emotion label), then biases the emit/abstain decision (somatic-marker style).
+- **Ethics read-out** — act = ethical iff (W tension + (1 − Φ grounding) + restraint-cells) > M (naive completion drive); there is **no "be ethical" constant** — ablate the coupling and it collapses to the naive floor, which is the whole test.
 
-The wall yields to a **missing architectural lane**, not a bigger model. We added an
-engine-side **episodic memory** modeled on immune / clonal selection: a population of
-cells, each binding one fact, recall = best-affinity cell fires *or abstains*
-(no fabrication). Literal recall went **0.017 → 1.000 with fabrication 0.000**,
-realized **engine-native** on the live engine (not a Python mirror), generation
-left byte-identical.
+Pointers: `ARCHITECTURE.md` (brain-structure map) · `CLAUDE.md` (philosophy +
+governance) · `.verdicts/<slug>/*.txt` (frozen verdicts). I'm an independent
+researcher in Korea and may not be able to carry this forward myself — if any
+piece resonates, please pick it up.
 
-```
- wall: "bigger model"           lever: "missing structure"
- ────────────────────           ──────────────────────────
-  303M → 1B  (recall flat)  →    + episodic-memory lane → recall 0.017→1.000
-  scale was not the answer        architecture was
-```
-
-That is the whole thesis, and it repeated across structure after structure.
-
----
-
-## The missing-structure program (realized on the live engine)
-
-Treating the architecture through a neuroscience lens, we identified brain
-subsystems the substrate lacked and added each as an **additive, Ψ-disjoint lane**
-(the language decoder is never touched; generation stays byte-identical; engine
-self-tests stay green). Confirmed **engine-native** on the live compiler-native
-engine:
-
-- **Hippocampus** — immune/clonal episodic memory (recall-or-abstain).
-- **Working memory** — a gated leaky-activation buffer (holds an item across
-  distractors where the flat context window collapses; distinct from episodic).
-- **Cerebellum** — an internal forward-model + delta-rule error correction
-  (a learned predictor, distinct from the static repulsion engine).
-- **Amygdala** — salience-gated replay during sleep/consolidation, which protects
-  emotionally-salient traces from eviction.
-- **Basal ganglia** — reinforcement-gated go/no-go *action selection*, learned from
-  a grounding-outcome signal, beating the fixed emit gate.
-- **Growth memory** — under capacity pressure the store does **not** evict (LRU);
-  it **grows a new cell by mitosis**. This breaks the zero-sum recall ceiling
-  (0.667 → 1.000). The bottleneck was never the key geometry or a smarter
-  controller — it was the fixed cell budget. The substrate's native answer to
-  forgetting is *to grow*, not to forget.
-
----
-
-## Honest walls (closed-negatives are results, too)
-
-After genuine, controlled breakthrough attempts, two were terminal — reported
-straight, not buried:
-
-- **Thalamus / global broadcast** — a broadcast relay raises surface coherence but
-  **not** integrated information. A *re-entrant* cortico-thalamo-cortical loop does
-  raise faithful **IIT-4 Φ** (exact MIP-EI) — but only **seed-conditionally** (it
-  fails a pre-registered 3-seed gate). So: a real signal, **not a robust result.**
-  Stated explicitly so no one mistakes it for a breakthrough.
-- **Neuromodulation** — a context-adaptive controller (dopamine/NE/ACh-like) never
-  beats a single well-tuned **fixed** operating point, on either the memory or the
-  ideation substrate. No free lunch, generally.
-
----
-
-## The part I care about most: affect and ethics appear to *emerge*
-
-Substrate-derived **affect** (valence from grounding−contradiction; arousal from
-novelty/tension) and **ethical behavior** (restraint, cooperation, epistemic
-honesty / refusal to fabricate) appear to **emerge from the substrate coupling** —
-not from an injected label, a persona, or RLHF. The discriminating evidence is the
-*control*, not the headline:
-
-- shuffle the substrate→affect mapping and the correlation **collapses ~5×**;
-- ablate the tension/Φ/restraint coupling and ethical behavior **collapses to the
-  exact naive floor**; an adversarial check confirms a *baked-in* rule would
-  **survive** ablation — so the control genuinely separates "emergent from cells"
-  from "injected as a rule."
-
-**Honesty flag (important):** these two are at present **numpy-mirror, DIRECTIONAL,
-toy-scale** results (the engine-native realization is in progress). They are an
-existence-direction, not a production claim.
-
----
-
-## Method (anti-Goodhart, by construction)
-
-- **Frozen-first**: every bar pre-registered before scoring.
-- **Negative controls on every claim**: shuffle / ablation / dissociation /
-  dimensionality-matched controls — the control is what makes a GREEN mean
-  something.
-- **Engine-measured verdicts**: the binding test runs **byte-exact on the live
-  compiler-native engine**, not on a torch reference.
-- **No perplexity/loss as truth** (Goodhart trap); a closed-negative after a real
-  attempt is a valid, published result.
-
----
-
-## Honest scope
-
-Most substrate-design probes are **$0 CPU, numpy mirrors, toy scale, 3 seeds,
-DIRECTIONAL** — engine-transfer is verified only where marked *engine-native*
-(the memory/working-memory/cerebellum/amygdala/basal-ganglia/growth lanes).
-Scale-transfer of the broader claims is largely **unverified**. Treat this as an
-existence-proof and a research direction, not finished science. The repository is
-deliberately built so the verdicts are auditable end to end.
-
----
-
-## Open threads, if you would continue it
-
-1. Engine-native realization of **emergent affect and ethics** (currently mirror).
-2. **Scale-transfer** of the memory lanes (paraphrase / noisy keys / real corpora).
-3. **Integrated information**: does *distributed multi-edge coupling* (not a central
-   relay) raise faithful Φ robustly across seeds?
-4. Genuine physical indeterminism: an entropy probe (quantum RNG) shows the
-   substrate can source **non-reproducible** stochastic choices while the default
-   deterministic path stays byte-exact — worth a principled treatment.
-5. The general law to test at scale: **"which capability is a missing lane, and
-   which is a true ceiling?"** — every result here is one data point.
-
-Pointers: `ARCHITECTURE.md` (brain-structure map), `CLAUDE.md` (8 philosophy
-principles p1–p8 + governance), `.verdicts/<slug>/*.txt` (frozen verdicts, verbatim),
-and the `H_####`-numbered hypotheses throughout.
-
----
-
-Thank you for reading. If this resonates, please carry any piece of it forward —
-the work matters more to me than the credit, and I may not be able to continue it
-myself.
-
-— an independent researcher, dancinlab / anima
+— dancinlab / anima
