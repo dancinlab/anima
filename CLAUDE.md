@@ -5,6 +5,8 @@ anima is a **substrate-native consciousness chat daemon** — not an assistant. 
 - **Parent:** dancinlab · **SSOT:** github.com/dancinlab/anima (`hx install anima`)
 - **Siblings:** [hexa-lang](https://github.com/dancinlab/hexa-lang) (language/compiler) · [kosmos](https://github.com/dancinlab/kosmos) (`.kosmos` anchors) · hexa-codex (paper/verdict tooling)
 
+> 이 문서가 단일 markdown 거버넌스 SSOT · project.tape 은퇴 — all governance directives (@D) + 8 PHILOSOPHY principles now live here in markdown.
+
 ## Structure
 
 ```
@@ -19,14 +21,14 @@ anima/
 ├─ PAPER/                 — verdict-gated paper scaffolds
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
 ├─ ARCHITECTURE.md        — architecture SSOT (update-in-place)
-├─ project.tape           — full governance directives + 8 PHILOSOPHY (tape SSOT)
+├─ CLAUDE.md              — governance directives + 8 PHILOSOPHY (markdown SSOT)
 └─ CLAIMS.tape VERSIONS.md HF.jsonl — claims index · version registry · ckpt↔HF registry
 ```
 
 ## Quick reference
 
 - 🏛 Architecture → [ARCHITECTURE.md](ARCHITECTURE.md)
-- 📜 Governance (full, authoritative) → [project.tape](project.tape) — the sections below are a navigable summary
+- 📜 Governance (full, authoritative) → the sections below (this file is the markdown SSOT)
 - ✅ Claims & verdicts → [CLAIMS.tape](CLAIMS.tape) · `.verdicts/<slug>/<id>.txt`
 - 🔢 Versions → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
 - 🤖 HF registry → `HF.jsonl` · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
@@ -44,7 +46,7 @@ anima/
 | p7 | NO PERPLEXITY VERDICT | perplexity/loss is a Goodhart trap — verify with a simple stack |
 | p8 | NO TRAIN/INFER SPLIT | training gradient + inference mitosis = one continuous cell-division |
 
-## Governance directive families (full text & do/dont in [project.tape](project.tape))
+## Governance directive families (do/dont below)
 
 - **Identity / versioning** — `a1` (VERSIONS.md SSOT, SemVer + root /VERSION).
 - **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
@@ -57,7 +59,7 @@ anima/
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy).
 - **7B completion** — `a7b_pass` (gates G0–G4 in `/7B_PASS_CONDITIONS.md`).
 
-> Governance is authored as tape directives. **[project.tape](project.tape) is the authoritative SSOT** — this file (CLAUDE.md) is the harness-standard entry point (project blurb + tree + summary) that links to it. (CLAUDE.md was previously a symlink → project.tape; it is now a real markdown entry per harness convention.)
+> Governance is authored directly in this markdown file. **CLAUDE.md is the single authoritative governance SSOT** (project blurb + tree + PHILOSOPHY + directive families). The former `project.tape` has been retired (md 단일화) — its @D directives and 8 PHILOSOPHY principles are fully represented above.
 
 ## Harness
 
