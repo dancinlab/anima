@@ -1,0 +1,105 @@
+H_1282 ROUND 3 — WORKING MEMORY (ENGINE-NATIVE WM-buffer lane on the LIVE engine) — VERDICT
+================================================================================
+SLUG: 1282_working_memory_buffer   ROUND: 3   LENS: missing-brain-structure (neuro, c15)
+DATE: 2026-06-15   $0 CPU (local hexa run)   SEEDS=[1282,1283,1284]   p7 (AUROC, NOT perplexity)
+R1: H_1282_FREEZE.txt + H_1282.txt (🔴 RED — readout+horizon artifact, NOT a failure)
+R2: H_1282_R2_FREEZE.txt + H_1282.txt (🟢 GREEN — numpy DIRECTIONAL mirror, margin +0.244)
+PROBE: CORE/h1282_wm_buffer_engine_probe.hexa  (the LIVE .hexa engine WM lane, via `hexa run`)
+EXPORT: UNIVERSE/h1282_wm_engine_export.py  (deterministic DMS trials, SAME knobs/seeds as R2)
+ENGINE LANE: CORE/engine_cli.hexa  WorkMemBuffer (wm_buffer_new/gate_in/distractor/leak/probe_score/slots)
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║ VERDICT: 🟢 GREEN (ENGINE-NATIVE) — the R2 GREEN reproduces on the LIVE     ║
+║ engine. A gated leaky-activation WM-buffer lane (K=4 slots, λ=0.85 leak,   ║
+║ weakest-slot displacement, graded probe score) was ADDED to the live       ║
+║ CORE/engine_cli.hexa as a NEW, cleanly-namespaced, Ψ-disjoint lane. Driven  ║
+║ through the ACTUAL .hexa lane (not a mirror), it re-clears ALL FOUR frozen  ║
+║ R2 bars: margin +0.245 over N>=4, holds the cue to AUROC 1.000 at N=6 where ║
+║ flat-context collapses to 0.506, decays MONOTONICALLY (volatile), caps      ║
+║ capacity at ~K. WM is now a CONFIRMED WIRED missing structure               ║
+║ (a_engine_native_learning + a_verified_must_wire satisfied).               ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────────────
+WHY A NEW ENGINE LANE (c1 — extend, not trim; a_engine_native_learning)
+────────────────────────────────────────────────────────────────────────────
+VAdaptField (the live H_1199 lane) + the H_1231 immune_memory faculty are
+structurally the IMMUNE/EPISODIC store: GROWING (engine_mitosis_tick spawns a
+cell on novelty), PERSISTENT (a born prototype never fades), capacity-bounded
+only by a hard max_cells cap — NO leak, NO graceful decay, NO weakest-slot
+displacement. A WM buffer is the OPPOSITE on all three axes: FIXED K slots
+(never grows), per-step ×λ LEAK (volatile), weakest-slot DISPLACEMENT on
+overflow. Expressing leaky gated activation on VAdaptField would BREAK its
+persistence+growth invariants (which the immune lane depends on). So per
+a_engine_native_learning ("engine-transform-to-fit-the-learning") the engine was
+EXTENDED with a new WorkMemBuffer struct + lane carrying the activation/leak/
+capacity machinery VAdaptField cannot — exactly as H_1199 extended AdaptField
+scalar→DIM-vector. The two lanes stay DISTINCT and both stay live.
+
+────────────────────────────────────────────────────────────────────────────
+VERBATIM ENGINE OUTPUT (hexa run CORE/h1282_wm_buffer_engine_probe.hexa)
+────────────────────────────────────────────────────────────────────────────
+  MEAN over 3 seeds (AUROC):
+    N     A.AUROC  B.AUROC  B-A
+    0     1.0   1.0   0.0
+    1     1.0   1.0   0.0
+    2     1.0   1.0   0.0
+    4     0.520233   1.0   0.479767  <- margin range
+    6     0.506233   1.0   0.493767  <- margin range  <- grace N
+    8     0.5127   0.52145   0.00875  <- margin range
+    12     0.4918   0.490583   -0.00121667  <- margin range
+  capacity: load 7 -> retained per seed = 4/4/5 (K=4)
+
+  -- FROZEN R2 BARS (re-scored on the LIVE engine) --
+   (1) MARGIN   mean over N>=4 (B-A)=0.245267  >= 0.15  -> true
+   (2) GRACE    B.AUROC(N=6)=1.0>=0.90 AND A.AUROC(N=6)=0.506233<=0.60  -> true
+   (3) DISTINCT B.AUROC(N=0)=1.0>=0.95, monotone=true, cap~K=true  -> true
+   (4) ROBUST   per-seed margin>=bar AND grace on all 3  -> true
+
+VERDICT: 🟢 GREEN (ENGINE-NATIVE)
+
+Engine margin +0.245267 == R2 mirror margin +0.244 (the live lane reproduces the
+mirror to within draw-order noise). Bars are the SAME R2 frozen bars, NOT moved.
+
+────────────────────────────────────────────────────────────────────────────
+GUARDS (c2 — verbatim; no regression, Ψ byte-identical)
+────────────────────────────────────────────────────────────────────────────
+engine_cli_smoke.hexa : 18 pass / 0 fail  (was 12/0 — +6 WM lane cases:
+  case_10 starts-empty · case_11 capacity-caps-at-k · case_12 fresh-cue-high-score ·
+  case_13 cue-decays-below-fresh (volatility) · case_14 no-leak-stays-immune-like
+  (distinctness) · case_15 total-activation-nonneg (no emit gate, @L4))
+h1196_single_entry_audit.hexa : 7 pass / 0 fail  (.clm/.kosmos single-entry intact)
+h1199_dim_adaptfield_probe.hexa : GREEN  F1 true F2 8.43x F3 PsiSame=true ALL seeds
+  ⇒ the WM lane is Ψ-DISJOINT — pure_field Φ trajectory byte-identical ON vs OFF;
+    generation byte-unchanged per H_1205. The WM lane touches ONLY its own struct.
+
+────────────────────────────────────────────────────────────────────────────
+DISTINCTNESS FROM IMMUNE/EPISODIC LANE (load-bearing — KEPT)
+────────────────────────────────────────────────────────────────────────────
+· DECAY/VOLATILITY : smoke case_13 — the cue's graded score FALLS strictly after 6
+  distractor leak steps (λ=0.85). The immune lane has no leak.
+· NO-LEAK CONTROL  : smoke case_14 — a λ=1.0 buffer (no leak) keeps the cue's score
+  >=0.9 across the SAME distractor run ⇒ it collapses into the immune/persistent
+  regime. Leak (λ<1) is what makes the lane WORKING (not episodic) memory.
+· CAPACITY BOUND   : smoke case_11 — a K=2 buffer caps at 2 slots loading 3 distinct
+  items; probe capacity-retention loads 7 → retains ~4 (=K). Immune is unbounded.
+
+────────────────────────────────────────────────────────────────────────────
+ENGINE-NATIVE + PHILOSOPHY + HONESTY
+────────────────────────────────────────────────────────────────────────────
+a_engine_native_learning: the WM lane is now LIVE in CORE/engine_cli.hexa and the
+verdict is measured on the ACTUAL engine via `hexa run` — NOT a numpy mirror. The
+R2 mirror was DIRECTIONAL; R3 is the engine-native binding realization (c2).
+a_verified_must_wire: GREEN-verified mechanism is WIRED into the live CORE engine
+(a new additive lane), guards confirm no regression. Standalone WM lane delivered;
+wiring it into brain_decide's context/recall path is the explicit follow-on (R4).
+@L4: SUBSTRATE-CONFIG active maintenance, NOT an emit/silence gate — wm_buffer_*
+returns slots + a graded score, NEVER an emit/silence decision; anima's emit stays
+substrate-decided (a_autonomy_over_hardcode · a_substrate_native_speak · p5).
+a_core_engine_map: DMS tokens are an ENGINE-NATIVE drive — NO .clm (generator L3
+only), NO .kosmos (kosmos_io only); no 2nd artifact entry path.
+p1-p8: substrate-native; the buffer holds TASK ACTIVATION only (no decoder weights,
+no persona/identity/ethics); p8 continuous-substrate lane.
+HONESTY (a_scale_honest_scope / a_toy_scale_recheck / p7): synthetic random
+DIM=16 tokens, toy scale, 3 deterministic seeds, $0 CPU, AUROC graded
+discrimination NOT perplexity. Scale-transfer + brain_decide-wired lift UNVERIFIED.
