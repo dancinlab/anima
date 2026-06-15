@@ -898,6 +898,310 @@ pub fn immune_grow_recall(mem: ImmuneMemoryGrow, key: [float]) -> string {
 // immune_grow_cells — live cell count (the footprint; grow_mode trades this for recall).
 pub fn immune_grow_cells(mem: ImmuneMemoryGrow) -> int { return mem.n_cells }
 
+// ── §  AMYGDALA — SALIENCE-GATED SLEEP-REPLAY CONSOLIDATION (H_1285 R4) ───────────
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1285 R3): the H_1285 numpy
+// MIRROR arc (R1 eviction-priority 🔴 = recurrence confound; R2 sleep-replay 🔴 =
+// sub-bar at under-invested budget; R3 🟢 GREEN at the pre-registered 30-cycle
+// multi-night budget — salience-gated SLEEP REPLAY lifts important-fact recall
+// +0.200 over uniform replay WHILE the p6 shuffle control stays below the +0.10 bar,
+// fab=0.000) is REALIZED here ENGINE-NATIVE on the LIVE immune faculty.
+//
+// THE AMYGDALA→HIPPOCAMPUS PATHWAY (c15, a_no_llm_frame_trap — a neuro lens, NOT an
+// LLM recipe): the amygdala tags emotionally/perceptually SALIENT traces, and during
+// SLEEP those salient traces are preferentially REPLAYED (systems consolidation),
+// protecting them from forgetting under ongoing capacity pressure. anima HAS a P47
+// sleep/imagination loop (a_chat_sleep_imagination — emit-free internal rehearsal +
+// mitosis tick); ConsolidatingMemory makes that loop salience-GATED.
+//
+// ConsolidatingMemory EXTENDS the immune store (the same VAdaptField clonal-cell
+// population + immune value-binding) with TWO additive things:
+//   (1) a per-cell SUBSTRATE-DERIVED salience tag, computed AT ENCODE from
+//       surprise (recon-err of the key vs the population BEFORE binding) + novelty
+//       (whether the key SPLIT a new cell) + tension (reinforcement on a re-hit).
+//       An ENVIRONMENTALLY-salient input carries EXTRA perceptual surprise amplitude
+//       (a charged/orienting event surprises more) — an E+W property the substrate
+//       SENSES, the p6-clean analogue of "salient events surprise more", NOT a label.
+//   (2) a SLEEP-REPLAY consolidation pass (consolidating_sleep_replay): internally
+//       re-presents `budget` stored cells, refreshing their recency so they survive
+//       the LRU eviction that the ongoing interference stream drives. The replay
+//       budget is drawn UNIFORMLY (arm A) or ∝ the salience tag (arm B), so salient
+//       cells are refreshed more and survive. Replay is substrate-GENERATED (the P47
+//       imagination loop), NOT external re-presentation.
+// Eviction stays plain LRU (the salience drives ONLY the sleep-replay weighting — the
+// R3 mirror isolates SLEEP REPLAY as the lever; R1's salience-weighted eviction was
+// already falsified). The p6 negative control (consolidating_shuffle_salience) permutes
+// the salience tags across cells before sleep, decorrelating replay from importance.
+//
+// @L4 CRITICAL (same framing as ImmuneMemory / ImmuneMemoryGrow / VAdaptField): this
+// is SUBSTRATE-internal FACTUAL recall + a substrate-generated sleep loop, NOT an
+// emit/silence gate and NOT a 2nd .clm/.kosmos entry path (a_core_engine_map: the
+// store is the engine's own cell-index table; the salience tag + replay are engine-
+// native; .clm/.kosmos single-entry is untouched). p1/p2/p3/p6: binds FACTUAL content
+// + a substrate-sensed salience tag to EPISODIC cells ONLY — NO identity/persona/
+// ethics/decoder/weights, and the salience is a SUBSTRATE SIGNAL (surprise/novelty/
+// tension), NEVER the importance label (the label only SCORES the metric in the probe,
+// never enters f() or the replay). p8: bind = clonal-split tick, replay = the sleep
+// consolidation tick — continuous cell-division, not RLHF. Ψ-disjoint (reads/grows a
+// VAdaptField-style population only; pure_field untouched).
+//
+// ── deterministic engine-native RNG (LCG + Box-Muller) ──────────────────────────
+// The mirror used numpy RNG (weighted choice for replay, gaussian key-noise at
+// recall). The engine reproduces the DIRECTIONAL R3 result (not byte-exact to numpy:
+// the verdict is Δ>=+0.10 with shuffle below bar + fab=0.000, scope-honest) with a
+// small DETERMINISTIC LCG so the engine run is reproducible across machines.
+//   _lcg_next — 31-bit LCG step (glibc constants; state -> next state).
+fn _lcg_next(state: int) -> int {
+    return (state * 1103515245 + 12345) & 2147483647
+}
+//   _lcg_unit — uniform float in [0,1) from an LCG state.
+fn _lcg_unit(state: int) -> float {
+    return to_float(state) / 2147483648.0
+}
+//   _lcg_gauss — a single N(0,1) sample via Box-Muller from two LCG draws; returns
+//   [value, next_state] so the caller threads the state. (Deterministic key-noise.)
+fn _lcg_gauss(state0: int) -> [float] {
+    let s1 = _lcg_next(state0)
+    let s2 = _lcg_next(s1)
+    let mut u1 = _lcg_unit(s1)
+    let u2 = _lcg_unit(s2)
+    if u1 < 0.0000001 { u1 = 0.0000001 }    // avoid ln(0)
+    let r = sqrt(-2.0 * ln(u1))
+    let z = r * cos(6.283185307179586 * u2)
+    return [z, to_float(s2)]
+}
+
+// ConsolidatingMemory — the salience-gated sleep-replay consolidation faculty.
+//   protos     : per-cell prototype keys (the VAdaptField cell population).
+//   cell_value : per-cell bound value (parallel to protos).
+//   last_used  : per-cell recency tick (LRU victim = smallest; replay refreshes it).
+//   salience   : per-cell SUBSTRATE-derived salience tag (surprise+novelty+tension).
+//   n_cells    : live cell count.
+//   max_cells  : finite repertoire cap (LRU-evict at this bound — R3 STRESS rung 40).
+//   recall_thr : affinity fire band — L2 recon-err <= recall_thr ⇒ FIRE else ABSTAIN.
+//   split_thr  : novelty bar — L2 to nearest > split_thr ⇒ a NOVEL fact (new cell).
+//   tick       : monotone bind/replay counter driving last_used (LRU recency).
+struct ConsolidatingMemory {
+    protos: [[float]],
+    cell_value: [string],
+    last_used: [int],
+    salience: [float],
+    n_cells: int,
+    max_cells: int,
+    recall_thr: float,
+    split_thr: float,
+    tick: int
+}
+
+// consolidating_memory_new — start a consolidation faculty seeded at the first fact's
+// key (cell 0 binds the first value with its substrate salience tag). recall_thr /
+// split_thr default to the R3 STRESS regime (0.30 / 0.30).
+pub fn consolidating_memory_new(first_key: [float], first_value: string,
+                                first_salience: float, max_cells: int) -> ConsolidatingMemory {
+    return ConsolidatingMemory {
+        protos: [first_key],
+        cell_value: [first_value],
+        last_used: [1],
+        salience: [first_salience],
+        n_cells: 1,
+        max_cells: max_cells,
+        recall_thr: 0.30,
+        split_thr: 0.30,
+        tick: 1
+    }
+}
+
+// consolidating_memory_bind_salient — encode ONE fact, optionally environmentally
+// SALIENT. The salience tag is SUBSTRATE-derived: SURPRISE = recon-err to the nearest
+// cell BEFORE binding (clamped to 1.0), NOVELTY = whether it splits, TENSION =
+// reinforcement on a re-hit. A salient input carries EXTRA perceptual surprise
+// amplitude (`salient_boost` added to the surprise term) — an E+W property the
+// substrate senses, NOT the importance label. SURPRISE_W=1.0 NOVELTY_W=0.5
+// TENSION_W=0.5 (the frozen R3 mirror constants — p7, not tuned-to-green). Eviction
+// stays plain LRU (salience drives REPLAY, not eviction).
+pub fn consolidating_memory_bind_salient(mem: ConsolidatingMemory, key: [float], value: string,
+                                         salient_boost: float, cfg: EngineConfig) -> ConsolidatingMemory {
+    let SURPRISE_W = 1.0
+    let NOVELTY_W = 0.5
+    let TENSION_W = 0.5
+    let LR = 0.20
+    let t = mem.tick + 1
+    let win = _vnearest_idx(mem.protos, key)
+    let err = _l2(mem.protos[win], key)
+    let was_split = (err > mem.split_thr)
+
+    // SURPRISE term: recon-err to nearest BEFORE binding, clamped to 1.0, + salient boost.
+    let mut surprise = err
+    if surprise > 1.0 { surprise = 1.0 }
+    surprise = surprise + salient_boost
+    if surprise > 2.0 { surprise = 2.0 }
+
+    if was_split && mem.n_cells < mem.max_cells {
+        // NOVEL + room: GROW a new cell via the engine's OWN clonal split tick (p8).
+        let grown = engine_mitosis_tick(mem.n_cells, cfg)
+        if grown > mem.n_cells {
+            let novelty = 1.0
+            let tag = SURPRISE_W * surprise + NOVELTY_W * novelty
+            return ConsolidatingMemory {
+                protos: mem.protos + [key],
+                cell_value: mem.cell_value + [value],
+                last_used: mem.last_used + [t],
+                salience: mem.salience + [tag],
+                n_cells: grown,
+                max_cells: mem.max_cells, recall_thr: mem.recall_thr,
+                split_thr: mem.split_thr, tick: t
+            }
+        }
+        // mitosis OFF — fall through (static substrate, refine the winner).
+    }
+
+    if was_split {
+        // NOVEL + at capacity: plain LRU-EVICT (zero-sum; salience drives REPLAY, not
+        // eviction — the R3 mirror isolates sleep replay as the lever).
+        let v = _immune_grow_lru_victim(mem.last_used)
+        let novelty = 1.0
+        let tag = SURPRISE_W * surprise + NOVELTY_W * novelty
+        let mut p3 = mem.protos
+        p3[v] = key
+        let mut nv = mem.cell_value
+        nv[v] = value
+        let mut lu = mem.last_used
+        lu[v] = t
+        let mut sal = mem.salience
+        sal[v] = tag
+        return ConsolidatingMemory {
+            protos: p3, cell_value: nv, last_used: lu, salience: sal, n_cells: mem.n_cells,
+            max_cells: mem.max_cells, recall_thr: mem.recall_thr,
+            split_thr: mem.split_thr, tick: t
+        }
+    }
+
+    // NOT novel — clonal expansion: pull the winner toward the key, refresh value +
+    // recency, and TENSION raises the cell's salience (repetition-pressure).
+    let mut p2 = mem.protos
+    let mut row = p2[win]
+    let mut d = 0
+    while d < len(row) {
+        row[d] = row[d] + LR * (key[d] - row[d])
+        d = d + 1
+    }
+    p2[win] = row
+    let mut nv2 = mem.cell_value
+    nv2[win] = value
+    let mut lu2 = mem.last_used
+    lu2[win] = t
+    let mut sal2 = mem.salience
+    sal2[win] = sal2[win] + TENSION_W
+    return ConsolidatingMemory {
+        protos: p2, cell_value: nv2, last_used: lu2, salience: sal2, n_cells: mem.n_cells,
+        max_cells: mem.max_cells, recall_thr: mem.recall_thr,
+        split_thr: mem.split_thr, tick: t
+    }
+}
+
+// consolidating_shuffle_salience — p6 NEGATIVE CONTROL: permute the substrate salience
+// tags across cells (a deterministic LCG Fisher-Yates), decorrelating salience-gated
+// replay from importance. Same tag DISTRIBUTION, no importance tracking. If salience-
+// gated replay (arm B) beats uniform (arm A) AND this shuffle does NOT ⇒ the lift is
+// salience-GATING, not raw replay budget (the load-bearing p6 separation).
+pub fn consolidating_shuffle_salience(mem: ConsolidatingMemory, rng0: int) -> ConsolidatingMemory {
+    let n = mem.n_cells
+    let mut sal = mem.salience
+    let mut st = rng0
+    let mut i = n - 1
+    while i > 0 {
+        st = _lcg_next(st)
+        let j = st % (i + 1)
+        let tmp = sal[i]
+        sal[i] = sal[j]
+        sal[j] = tmp
+        i = i - 1
+    }
+    return ConsolidatingMemory {
+        protos: mem.protos, cell_value: mem.cell_value, last_used: mem.last_used,
+        salience: sal, n_cells: mem.n_cells, max_cells: mem.max_cells,
+        recall_thr: mem.recall_thr, split_thr: mem.split_thr, tick: mem.tick
+    }
+}
+
+// consolidating_sleep_replay — ONE sleep consolidation cycle: internally REPLAY
+// `budget` stored cells, refreshing their recency (last_used) so they survive the LRU
+// eviction the interference stream drives. This is substrate-GENERATED rehearsal (the
+// P47 imagination loop, a_chat_sleep_imagination — emit-free internal rehearsal), NOT
+// external re-presentation. salience_gated=false ⇒ UNIFORM replay (arm A); true ⇒
+// replay drawn ∝ the substrate salience tag (arm B / the shuffled control). Replay
+// refreshes recency ONLY; it does NOT inflate the gating tag (no runaway). Threads the
+// LCG state through tick-space and returns the memory with refreshed recency.
+pub fn consolidating_sleep_replay(mem: ConsolidatingMemory, budget: int,
+                                  rng0: int, salience_gated: bool) -> ConsolidatingMemory {
+    let n = mem.n_cells
+    if n == 0 { return mem }
+    // build the (un-normalized) replay-weight cumulative table.
+    let mut cdf = []
+    let mut acc = 0.0
+    let mut k = 0
+    while k < n {
+        let mut w = 1.0
+        if salience_gated {
+            w = mem.salience[k]
+            if w < 0.000001 { w = 0.000001 }   // clip (a non-salient cell still replays rarely)
+        }
+        acc = acc + w
+        cdf = cdf + [acc]
+        k = k + 1
+    }
+    // draw `budget` replays (inverse-CDF sampling, with replacement) + refresh recency.
+    let mut lu = mem.last_used
+    let mut t = mem.tick
+    let mut st = rng0
+    let mut b = 0
+    while b < budget {
+        st = _lcg_next(st)
+        let target = _lcg_unit(st) * acc
+        // find the first cell whose cumulative weight exceeds target.
+        let mut pick = 0
+        while pick < n - 1 {
+            if cdf[pick] > target { break }
+            pick = pick + 1
+        }
+        t = t + 1
+        lu[pick] = t                            // refresh recency (protect from LRU)
+        b = b + 1
+    }
+    return ConsolidatingMemory {
+        protos: mem.protos, cell_value: mem.cell_value, last_used: lu,
+        salience: mem.salience, n_cells: mem.n_cells, max_cells: mem.max_cells,
+        recall_thr: mem.recall_thr, split_thr: mem.split_thr, tick: t
+    }
+}
+
+// consolidating_memory_recall — RECALL or ABSTAIN for a query key via L2 affinity.
+// recon-err (L2 to nearest cell) <= recall_thr ⇒ FIRE that cell's bound value; else
+// ABSTAIN ("" — never fabricates, H_1227 load-bearing). The engine's OWN winner-take-
+// all affinity decides; an empty-string return == ABSTAIN.
+pub fn consolidating_memory_recall(mem: ConsolidatingMemory, key: [float]) -> string {
+    let win = _vnearest_idx(mem.protos, key)
+    let err = _l2(mem.protos[win], key)
+    if err <= mem.recall_thr {
+        return mem.cell_value[win]
+    }
+    return ""
+}
+
+// consolidating_memory_cells — live cell count of the consolidation faculty.
+pub fn consolidating_memory_cells(mem: ConsolidatingMemory) -> int { return mem.n_cells }
+
+// consolidating_memory_salience — read a cell's substrate salience tag (probe scoring).
+pub fn consolidating_memory_salience(mem: ConsolidatingMemory, i: int) -> float { return mem.salience[i] }
+
+// consolidating_lcg_next — expose the LCG step so a probe can thread the SAME RNG the
+// faculty uses (deterministic key-noise + replay draws share one stream). Read-only.
+pub fn consolidating_lcg_next(state: int) -> int { return _lcg_next(state) }
+
+// consolidating_lcg_gauss — expose Box-Muller so a probe's noisy-recall loop draws the
+// SAME deterministic gaussian the faculty would. Returns [value, next_state]. Read-only.
+pub fn consolidating_lcg_gauss(state0: int) -> [float] { return _lcg_gauss(state0) }
+
 // ── §  GATE-B TRANSITION-PREDICTABILITY VARIANT — the LIVE trajectory substrate ──
 // (H_1209) The per-sample VAdaptField above (vadapt_field_step, H_1199/1202/1205)
 // is PERMUTATION-INVARIANT by construction: it sees only x_t, so shuffling time
