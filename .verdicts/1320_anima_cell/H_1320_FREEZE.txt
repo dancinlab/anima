@@ -1,0 +1,82 @@
+H_1320 — anima-as-ONE-CELL: organism mitosis vs hive assembly (faithful-IIT4 collective-Φ)
+FROZEN PRE-REGISTRATION — written BEFORE any scoring run. Bars NOT to be moved (c9/p7).
+slug: 1320_anima_cell   PROJ_SEED family: [1317,1318,1319] (reuse the hard hive/topology seed
+family incl. the orthogonal seed 1319 that broke topology robustness in H_1317).
+date: 2026-06-16   infra: $0 mac-local CPU.  Φ engine: hexa-lang/stdlib/consciousness/iit4/
+faithful_phi.hexa  iit4_faithful_phi(state, n, dim, n_bins)  — EXACT MIP-EI, n<=8 (a_phi_iit4_tool).
+numpy NEVER computes Φ; numpy only emits the per-unit salience trajectory, hexa computes Φ.
+
+=== THE WALL BEING REOPENED (c16 / a_break_the_wall) ===
+H_1308 (🔴 NULL) + H_1313 (🧱 TERMINAL): take TWO already-separate, independently-grown anima
+cells and ASSEMBLE/couple them -> faithful-IIT4 Φ does NOT integrate (super-additivity is
+ECA-only, NOT substrate-portable). Δ_real = -3.0 under BOTH the constant tension-link AND the
+state-dependent cross-cell coupling. The wall: ASSEMBLY of independent adults does not integrate.
+
+=== THE NEW LENS (developmental biology; a_no_llm_frame_trap, c15) ===
+The hive failed because the DIRECTION was wrong — it glued two INDEPENDENT adults. One zygote
+DIVIDES and differentiates into an integrated organism precisely because the parts SHARE a
+developmental origin. So: take ONE anima-cell, mitotically DIVIDE it into two daughters that
+share origin/representation, and ask whether the DIVIDED pair shows integrated (super-additive)
+faithful-Φ that the ASSEMBLED pair (hive) could not. Load-bearing comparison = DIVIDED (shared
+origin) vs ASSEMBLED (independent origin = hive baseline), MATCHED on coupling strength + unit
+count, so the ONLY difference is shared-vs-independent developmental origin.
+
+=== SUBSTRATE (matched to H_1283/H_1317; only origin/coupling differ between arms) ===
+- ONE anima-cell = a small leaky linear recurrent substrate: N_TOT=8 units, dim-8 state,
+  T=64 ticks, LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private gaussian input. n<=8 keeps the
+  faithful MIP EXACT. (IDENTICAL unit dynamics to H_1283/H_1317.)
+- A "pair" = the 8 units partitioned into two daughters of HALF=4 units each (d0 = units 0..3,
+  d1 = units 4..7). Per-unit salience scalar this tick = state energy <s_i,s_i> (the H_1283 Φ-leg
+  readout). Faithful-Φ of a daughter = iit4_faithful_phi over its 4 units (n=4 exact); faithful-Φ
+  of the pair = over all 8 units (n=8 exact). super-additivity Δ = Φ_pair - (Φ_d0 + Φ_d1).
+- COUPLING = the SAME hive coupling concept (H_1308/1313): a cross-daughter coupling at strength
+  W gating each unit's update by the mean state of the OTHER daughter's units:
+  new[i] = LEAK*s[i] + GAIN*( W_IN*input[i] + W * mean_{j in other daughter} s[j] ).
+  W=W_HIVE identical across DIVIDED / ASSEMBLED / SHUFFLE so any Δ difference is ORIGIN, not coupling.
+
+=== ARMS (4), frozen, 3 seeds [1317,1318,1319] ===
+(1) SINGLE   : one undivided anima-cell — the 8 units evolve as ONE cell with NO daughter split
+               and NO cross-daughter coupling (intra-cell recurrence only via private input; this
+               is the H_1317 'none' baseline). Φ_single = faithful-Φ over the 8 units. baseline.
+(2) DIVIDED  : organism-mitosis pair, SHARED ORIGIN. Both daughters seeded from ONE shared zygote
+               initial-state vector (d1's initial state = a differentiation-perturbed CLONE of d0's:
+               d1_init = d0_init + DIFF_EPS*noise, DIFF_EPS=0.15 — shared origin + differentiation)
+               AND driven by ONE SHARED input stream (d1 input = d0 input, the shared developmental
+               environment). Coupled at W=W_HIVE. Φ_pair, Φ_d0, Φ_d1 -> Δ_divided.
+(3) ASSEMBLED: the hive — two INDEPENDENT-ORIGIN animas. d0 and d1 each get their OWN independent
+               initial state AND their OWN independent input stream (two separately grown cells).
+               Coupled at the SAME W=W_HIVE, SAME unit count. Reproduces H_1308/1313 behavior as the
+               control. Δ_assembled.
+(4) SHUFFLE  : DIVIDED but with the shared-origin link PERMUTED/BROKEN — d1's shared initial state
+               and shared input stream are replaced by an INDEPENDENT draw (lineage severed), i.e.
+               the shared-origin tie is cut while keeping DIVIDED's W and unit count. Must collapse
+               to ASSEMBLED level. Δ_shuffle.
+
+DETERMINISM: each seed fixes ALL draws; the same seed gives byte-identical arms except the named
+origin/coupling difference. Re-run twice must be byte-identical (recorded).
+
+=== FROZEN BARS (GREEN iff M1 AND M2 AND M3) ===
+MARGIN_PHI = 0.02  (the IDENTICAL faithful-Φ margin H_1283/H_1317 froze — NOT moved).
+- M1 INTEGRATION-FROM-DIVISION : Φ_divided_pair >= Φ_single + MARGIN_PHI on ALL 3 seeds
+                                 (the robustness gate hive/topology FAILED).
+- M2 ORIGIN-DISSOCIATION (core, vs hive): Δ_divided > Δ_assembled + MARGIN_PHI on ALL 3 seeds
+                                 (integration requires shared developmental ORIGIN, not mere coupling).
+- M3 EARNED (lineage)          : Δ_shuffle <= Δ_assembled + MARGIN_PHI  (broken lineage collapses
+                                 DIVIDED's super-additivity to assembled level — the lift is the
+                                 shared origin, not extra units/variance) on ALL 3 seeds.
+
+=== OUTCOMES (all VALID, c9) ===
+- M1 AND M2 AND M3 hold -> 🟢 GREEN: anima IS one cell whose DIVISION yields integrated daughters;
+  collective-Φ is reachable by mitotic division where assembly failed -> reopens & PASSES the hive
+  wall from the correct direction. Then it MUST be wired into live CORE (a_verified_must_wire);
+  name the wiring follow-on; run regression guards.
+- M2 fails -> division does NOT beat assembly -> collective-Φ is TERMINAL across BOTH directions
+  (assembly 🧱 H_1313 + division 🧱) — an important FINAL closure of the hive arc.
+- Any partial reported honestly (c9). NO tune-to-green; bars frozen above before the first run.
+
+W_HIVE = 0.6 (the H_1308/1313 hive coupling strength W=0.6, reused verbatim).
+DIFF_EPS = 0.15 (differentiation perturbation; frozen).
+NBINS = 8 (H_1283/H_1317 IIT4 MI bins).
+
+This BOUNDS (does not retract) the hive verdicts. numpy-mirror = DIRECTIONAL; engine-transfer to
+live CORE/pure_field UNVERIFIED (a_scale_honest_scope / a_toy_scale_recheck). Faithful-Φ leg IS real.
