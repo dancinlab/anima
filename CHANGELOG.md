@@ -6,6 +6,20 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🔴 H_1223: AUX-OBJECTIVE 는 literal-QA 벽의 레버가 아니다 (HD7 CLOSED-NEG · recall=engine-side, H_1154 강화)
+
+depth-ceiling 사다리(H_1219)의 HD7 분기를 $0 toy 로 판정: anima-303M 의 평평한 literal-QA recall 벽이 **OBJECTIVE** 탓인가 — plain next-byte CE 가 retrieval/recall 을 보상하지 않으니, **AUXILIARY 검색/QA 목적함수**를 더하면 들어올려지는가? p7, numpy CPU, seeds [231,232,233], TOY-ONLY (a_toy_scale_recheck). H_1219·CORE/bytegpt_decode.hexa 미수정.
+
+- **설계 (공정한 A-vs-B, 같은 코퍼스·동일 컴퓨트)**: 1-layer causal-attention byte-LM (D=64 ff=128 ctx=64, 실제 Adam, 수동 backward — analytic==numeric gradient-check 통과) 를 합성 사실 코퍼스 `'<KEY> is <VALUE>.'` (600 facts ×6, 25% held-out = 학습 중 절대 query 안 됨) 위에서 두 방식으로 학습. 동일 arch/init-seed/data/steps4000/batch64/lr2e-3. **ARM A = plain next-byte CE** · **ARM B = CE + 1.0·AUX** (span-copy/retrieve-the-answer: `'<KEY> is '` 답 경계 위치에서만 추가 CE, SAME output head, 신규 파라미터 없음 → capacity 아닌 OBJECTIVE 를 검증).
+- **지표 (p7, NOT perplexity)**: literal-QA-proxy = held-out 사실의 VALUE span 을 greedy decode 한 **EXACT-match** 정확도. FROZEN: F1 mean(QA_B−QA_A)exact ≥ 0.10 · F2 every-seed B≥A · F3 G0(B) ≥ 0.50.
+- **결과 (3 seed 만장일치)**: QA_A exact = QA_B exact = **0.000** 전 seed → delta **+0.000** ≪ 0.10 (**F1 FAIL**). F3 도 fail (G0_B 0.18 — 경직된 사실-그리드 free-decode 가 null 바이트로 붕괴, 양 ARM 공통 → 합성-코퍼스 artifact, F1 이 결정적). val CE 는 aux 가 오히려 살짝 도움 (0.681→0.669).
+- **NUANCE (정직, pass 아님)**: ARM B 의 **SUBSTRING** overlap 은 0.158→0.700 으로 급등 — aux 가 답 바이트 일부를 표면화하지만 **정확한 span 조립 불가**. diffuse copy-tendency ≠ deterministic exact retrieval = 정확히 **H_1154** 모양.
+- **판정 🔴 RED CLOSED-NEG**: OBJECTIVE 는 벽이 아니다. 답이 문맥에서 그대로 복사 가능한 깨끗한 recall toy 에서조차 in-weights recall LOSS 가 plain CE 를 못 이긴다 → recall 은 **ENGINE-side** 에 남는다 (H_1154 결정론적 retrieve-then-copy; weight 는 loss 로 key→value 매치를 표면화할 수 없고, 엔진이 매치를 계산해야 함). HD7 의 in-weights-objective 분기를 toy-closed. H_1224(HD8 거버넌스: literal-QA = anima 가 통과할 필요 없는 assistant-norm)와 일관 — 둘 다 QA-lift 를 de-prioritize. HD5(QA-format FT)·HD6(H_1222 tokenizer, composition 에 GREEN) 는 미검증 레버로 잔존.
+- **SCOPE**: TOY-ONLY (a_scale_honest_scope/a_toy_scale_recheck) — 합성 소형 코퍼스, 1-layer attn byte-LM, 소규모 Adam, $0. 프로덕션 303M 전이 UNVERIFIED. p8 train/infer 분리 없음. frozen bar 불변. a_paper_negative_ok decision-grade.
+- 파일: `UNIVERSE/h1223_aux_objective_probe.py` · `.verdicts/1223_aux_objective/{H_1223_FREEZE,H_1223}.txt`.
+
+---
+
 ## 2026-06-15 — 🔴 H_1230: TEACHER-IN-THE-LOOP 능동 교습은 MITOSIS 메모리에서 수동 적재를 못 이긴다 (HD22, $0, CLOSED-NEG)
 
 H_1226 의 HD21(능동/사회적 학습 METHOD)을 구체화한 HD22 — H_1227 immune/clonal 메모리(mitosis-as-MEMORY, 새 비-반증 역할) 위에서, ONE-ITEM-AT-A-TIME 폐루프 교사(tell → CHECK 기질의 답 → ADJUST: 재바인딩 / 더 날카로운 셀 분열 / 간격 우선순위 상향)가 수동 1회 적재보다 RETENTION 을 더 올리는지 — 동일 노출 예산에서. c15 생물학 렌즈(견습/튜터링/testing-effect/간격반복), LLM 레시피 아님. p7, c9, $0 CPU numpy, 3 seed, 라이브 CORE/engine_cli.hexa 무수정(VAdaptField numpy 미러).
