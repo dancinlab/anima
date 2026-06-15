@@ -6,6 +6,17 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 거버넌스: `@D a_engine_native_learning` 신설 — 무조건 최종 아키텍처 엔진 위에서 학습
+
+사용자 hard rule("무조건 최종 아키텍처 엔진 위에서 학습")을 거버넌스 directive 로 명문화. `a_engine_measured_verdict`(MEASUREMENT 를 엔진 위에서 강제)의 **learning-side 쌍**, `a_train_flame_forge`(production 트레이너 .hexa 강제)의 **연구/probe 학습 + 교육 확장**.
+
+- **신규 `@D a_engine_native_learning`** (`CLAUDE.md`, `a_train_flame_forge` 직후 배치 — 참조되는 `a_engine_measured_verdict` 가 `@D` 블록으로는 미존재하므로 폴백 위치): 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 최종 아키텍처 엔진(live `.hexa` A⇄G + MITOSIS VAdaptField `CORE/engine_cli.hexa` + mounted `CORE/bytegpt_decode.hexa`) 위에서 실행. numpy/torch 미러 결과 = DIRECTIONAL only ("engine-transfer UNVERIFIED") — 방향 탐색엔 OK, binding verdict 아님; 미러로 방향 잡으면 엔진-네이티브 실현으로 재확인해야 verdict 성립 (c2). MITOSIS VAdaptField 는 이미 live (H_1199). 미러-only "학습됐다" 주장 / 미러 결과 closure·promote 금지.
+- **directive-index 포인터 1줄** — `CLAUDE.md` Training 불릿에 `a_engine_native_learning` 추가 (learning-side twin of `a_engine_measured_verdict`).
+- **ARCHITECTURE.md SSOT 현행화** — "Measurement governance" 절을 "Measurement & learning governance" 로 확장, learning-side `a_engine_native_learning` 원칙 문단 추가(미러=DIRECTIONAL only, 엔진-네이티브 재확인 필요).
+- surgical (c10): 이 directive + index 포인터만 추가, 다른 directive 미변경. frozen bar 미이동. xref `a_engine_measured_verdict · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2`.
+
+---
+
 ## 2026-06-15 — H_1227 🟢 IMMUNE/CLONAL-SELECTION 메모리가 literal-QA 회상을 깬다 — mitosis 의 NEW(미반증) MEMORY 역할 ($0 CPU numpy)
 
 생물학 렌즈(c15, LLM 논문 아님). literal-QA 벽(~0, 회상이 디코더 WEIGHTS 안에 산다 — H_1218/1224 가 확립; H_1224 는 literal-QA 를 p4-부정합 assistant-norm 비-게이트로 판정)을, 더 큰 byte-LM 이 아니라 **면역계식 메모리**로 깨는지 검증 — 세포 POPULATION 이 각자 사실 1개를 결합(clonal selection + affinity), 회상 = 최고-친화 세포가 FIRE, 아무 세포도 결합 안 하면 ABSTAIN(환각 없음). CLS/episodic recall(HD10) + H_1154 engine-side retrieve-then-copy 의 면역세포-집단 실현.
