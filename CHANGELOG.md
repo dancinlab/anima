@@ -6,6 +6,19 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 📄 PAPER supersede-in-place: `mitosis-substrate-lane` 에 H_1211 scale-recheck 통합 (a_paper_violation 거버넌스 이행)
+
+H_1211 verdict 의 PAPER-SUPERSEDE FLAG 를 이행 — 병합된 `PAPER/mitosis-substrate-lane/` 가 궤적 10.9x 를 scale-무조건 동등 절반으로 주장하던 것을 H_1211 scale-break 에 맞춰 정직하게 재구성. **새 slug 생성 안 함 (a_paper_on_discovery supersede-in-place)**.
+
+- **claim 변경 (before→after)**: 제목/abstract/결론 = "density on i.i.d., trajectory on ordered" (scale-무조건) → "**scale-robust density 기질 + scale-fragile trajectory 기질**". DENSITY 절반 = SCALE-ROBUST 승격(NOVEL/REPEAT 37.5→131.4 over 100x T, blind 0.992→1.007 고정 ~1.0). TRAJECTORY 절반 = TOY ARTIFACT 교정(WALK/WALK_SHUF 10.9→1.136 FAIL at T=240000; flores5 1.333 FAIL; 작은-알파벳 포화). 중심 명제 "결정자는 stream, gate 아님" → "**결정자는 stream AND 알파벳/관측-예산**" 으로 QUALIFY. H_1209 GREEN 은 toy rung 으로 재-scope(verdict matrix ‡ 각주).
+- **§measurement**: 새 §5.10 H_1211 subsection — 9-rung 사다리 표(verbatim) + AXIS-T 붕괴 곡선 + AXIS-P N_PROTO 복원 + 포화 mechanism. 새 그림 `fig04_scale_ladder.pdf`(AXIS-T 붕괴 + AXIS-P 복원, log 축, verbatim 수치).
+- **§finding/§limitations**: ruled-out 공간에 (b) 고정-소알파벳 scale-free 궤적 기질 추가; §limitations 에 알파벳-포화 mechanism + 두 terminal-RED bar(i.i.d. PRIMARY + H_1211 trajectory scale-stability). F3-sanity bullet = AXIS-P 가 1.75→0.000 으로 toy noise 판정 확정.
+- **gate 준수**: 10개 section claim 전부 TERMINAL (5🟢 · 3🔴 closed-neg incl H_1211 · 2🟠 folded). 어떤 claim 도 terminal verdict 와 모순 없음(a_paper_sections); closed-negative 는 closed-negative 유지(a_paper_negative_ok); frozen bar 미이동. 모든 claim → `.verdicts/<id>.txt` 링크(1211 포함, p7 verbatim).
+- **compile**: xelatex x3 + bibtex → `main.pdf` 18 페이지(≥10, g51 PASS), undefined refs/cites 0, 그림 4개. ledger(`companion/verify-ledger.json`)·`compile.txt`·`PAPER.md`·`PAPER.log.md`·`README.md`·`references.bib`(+anima_H1211) 갱신.
+- xref h1211·h1203·h1208·h1209·a_paper_violation·a_paper_sections·a_paper_negative_ok·a_paper_on_discovery·a_toy_scale_recheck·a_scale_honest_scope·p7·p8.
+
+---
+
 ## 2026-06-15 — 🔴 H_1211: dual-substrate split SCALE-UP — DENSITY 절반은 scale-robust, TRAJECTORY 절반은 toy 인공물 (MITOSIS-ENGINE)
 
 H_1202–H_1210 arc 의 단 하나 honest gap = TOY SCALE (전부 $0 CPU·DIM=8·T=2400·402KB 코퍼스·3 seed, a_scale_honest_scope 가 매번 flag). a_toy_scale_recheck 에 따라 scale-SENSITIVE 중심 finding(DENSITY-vs-TRAJECTORY 이중-기질 분리)을 3축 사다리로 재시험.
