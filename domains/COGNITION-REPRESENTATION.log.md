@@ -38,3 +38,36 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **scope**: DIRECTIONAL mirror (engine-transfer UNVERIFIED); TOY synthetic 1-D N=21 deterministic; TAG_GAIN FIXED; NO human-bilingualism claim.
 - **claim-link**: `CLAIMS.tape @C h1335_whorf_bilingual_tagged` · card `UNIVERSE/cards/H_1335_whorf_bilingual_tagged.md` · verdicts `.verdicts/1335_whorf_bilingual_tagged/{FREEZE,result}.txt`
 - xref: **h1330** (the 🧱 OVERWRITE this r2 overturns as mechanism-specific) · h1323 · h1325 (the GREEN Sapir-Whorf CP) · h1288 (growth-memory) · **h1316 · h1321 · h1322** (anima's real separate EN+KO faculties this mirrors) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
+## H_1333 — Whorfian CP: developmentally PLASTIC or RIGID? 🟠 PARTIAL (GRADED PLASTICITY)
+
+- **seed/lens**: extension of the GREEN **H_1323/H_1325** Sapir-Whorf result; developmental /
+  critical-period plasticity lens (c15, a_no_llm_frame_trap). Question: is the language-warped
+  categorical-perception (CP) boundary PLASTIC (re-locates on re-training) or RIGID (stuck where
+  first learned)? verdict-tier-target = D1∧D2∧D3 frozen.
+- **method**: reuse the H_1323 CP machinery VERBATIM (RBF embed · split-only Voronoi growth p8 ·
+  soft-posterior no-label discrim · peak-count coherence). Train language A (cut p_A=1/3), measure
+  CP peak; RE-train the SAME store on a MOVED boundary p_A'=2/3 (phase-2 grow-further, no reset),
+  measure CP peak again. 4 arms (A-trained / A→A' re-trained / NO-RETRAIN control / SHUFFLE),
+  3 seeds [4333,4334,4335], $0 CPU mirror DIRECTIONAL. Frozen-first (FREEZE.txt), NO bar moved (c9).
+- **result 🟠 PARTIAL — GRADED PLASTICITY (not rigid)** (deterministic all 3 seeds): CP peak
+  **0.325→0.525, fraction relocated +0.60**. **D2 CONTROL ✅** — no-retrain held p_A (|Δ|=0.008 →
+  the move IS the re-training, not drift) + A-trained reproduced H_1323. **D3 EARNED ✅** — shuffle
+  incoherent (peak-count **7.7**≥3), lang arms coherent (1.0/1.3/1.0≤2). **D1 PLASTIC ❌ by a hair** —
+  |peak−p_A'|=0.142>0.12 (−0.022) AND |peak−p_A|=0.192<MIN_MOVE 0.20 (**missed by 0.008**) → strict
+  D1 FAIL, but substantively a SUBSTANTIAL relocation.
+- **mechanism (c9)**: split-only growth NEVER evicts old-boundary cells (28 cells after phase-2 vs
+  4 after phase-1) → residual phase-1 packing at p_A pulls the peak back from a full move. The
+  carving re-locates substantially but a never-evicting store leaves a residual first-cut pull —
+  graded, not rigid; not first-carving primacy.
+- **one-line**: the language-warped CP boundary is developmentally **GRADED-PLASTIC** — it
+  re-locates ~60% of the way on re-training, with a residual pull from the never-evicted first cut.
+- **next (R2 candidates)**: (i) graded SHIFT-SIZE curve (≥3 shifts) mapping plasticity-fraction vs
+  shift magnitude · (ii) EVICTION/decay store variant (does removing stale old cells complete the
+  move?) · (iii) engine-native §CategoricalPerception realization on live CORE/engine_cli.hexa —
+  each frozen ANEW, not a bar relaxation.
+- **claim-link**: `CLAIMS.tape @C h1333_whorf_developmental` · card `UNIVERSE/cards/H_1333_whorf_developmental.md`
+  · verdicts `.verdicts/1333_whorf_developmental/{FREEZE,result}.txt`
+- xref: h1323 · h1325 (the GREEN result extended) · h1330 (bilingual overwrite, shared-store
+  contradiction) · **h1288** (growth-memory: store grows, never evicts — the mechanism behind the
+  residual pull) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning ·
+  a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · c9 · c15
