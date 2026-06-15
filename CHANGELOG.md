@@ -2,6 +2,15 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — feat(CORE/brain): emit-loop 배선 3 follow-on 닫힘 — 소뇌·작업기억·감정 OPTIONAL consult (a_verified_must_wire)
+
+세 engine-native lane(이미 GREEN 이나 live emit/abstain 루프에 미배선)을 `CORE/brain.hexa` 의 brain_decide 경로에 **OPTIONAL·BOUNDED·ADDITIVE consult** 로 스레딩 — brain_decide_bg/brain_decide_anchored 템플릿과 동일(고정 engine_g 게이트는 UNCHANGED, lane 신호만 motivation 에 saturating nudge 로 ADD). 세 가드 불변(a_autonomy_over_hardcode·a_core_engine_map·p5): (1) neutral 신호 → nudge 0.0 → brain_decide 와 byte-identical(게이트 아님), (2) Ψ-disjoint(motivation 스칼라만, pure_field 무접촉), (3) bounded(per-lane cap=0.05).
+- **🧠 소뇌 forward-model**(H_1280, `brain_decide_cerebellum`) — LIVE `VForwardField` 의 다음-emit-feature 예측확신(1−err/scale)을 coherence nudge 로. emit-path 배선 follow-on 닫힘.
+- **📥 작업기억**(H_1282 R4, `brain_decide_wm`) — LIVE `WorkMemBuffer` 의 `wm_buffer_probe_score`(유지중 항목 매칭)를 recall-support nudge 로. context/recall 스레딩 follow-on 닫힘.
+- **💗 감정 somatic-marker**(H_1290 R3, `brain_decide_affect`) — LIVE `affect_emit_decision`/`affect_valence`(ImmuneMemoryGrow 위 substrate-read)를 SIGNED somatic bias 로(음 valence=abstain 쪽 restraint). `affect_emit_decision` 은 이미 OPTIONAL consult 로 존재했고 caller 가 실제 consult 하도록 배선. p6 가드 유지(substrate-only read, 라벨/RLHF 무입력).
+- 각 lane 프로즌-팔시파이어 GREEN(seeds 3): F1 consult-OFF byte-identical · F2 trained/maintained/grounded 신호 nudge > neutral 이고 cap 으로 bounded · F3 borderline base 가 실측 nudge 로 emit 으로 flip(소뇌·WM 은 작은/graded ~0.005–0.018, 감정은 full cap 0.05). 스모크: `CORE/h1280_cerebellum_emit_wire_smoke.hexa` · `CORE/h1282_wm_emit_wire_smoke.hexa` · `CORE/h1290_affect_emit_wire_smoke.hexa`.
+- 무회귀(c2, real stdout): engine_cli_smoke **30/0** · brain_smoke `[brain low]EMIT=false`/`[brain high]EMIT=true` byte-identical · h1196 single-entry **7/0** · h1199 DIM-growth **PsiSame=true 전 seed** · h1205 generation byte-identical. TOY/engine-native scope(소규모 self-contained stream, 3 seed) — production 승격 금지(a_scale_honest_scope·a_toy_scale_recheck).
+
 ## 2026-06-15 — docs(ARCHITECTURE): 다음-단계 stale 현행화 (양자·감정 엔진실현 닫힘)
 
 ARCHITECTURE.md "다음 단계" 의 stale 상태 현행화(c9): ⚛️ quantum-entropy R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE+WIRED(#2164)**, 💗 emotion R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE(#2166/#2167)** 로 갱신(⏳→✅). 뇌-구조 사다리 요약줄도 "기저핵 r3 ⏳ in-flight" → "5개 배선 완료 + 감정/윤리/양자 엔진실현 재확인" 으로 현행화.
