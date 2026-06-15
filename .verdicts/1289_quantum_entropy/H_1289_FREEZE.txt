@@ -1,0 +1,95 @@
+H_1289 — quantum-entropy substrate source (FROZEN-FIRST, pre-registered)
+========================================================================
+FLEET lane: quantum-entropy · round 1 · slug 1289_quantum_entropy
+Date frozen: 2026-06-15
+Branch: h1289/quantum-entropy (off origin/main 956370a55)
+Substrate: $0-ish — REAL ANU QRNG paid API (small request budget) + CPU numpy mirror.
+torch ABSENT on host ⇒ numpy-mirror probe (DIRECTIONAL); the QRNG FETCH itself is REAL.
+
+CLAIM
+-----
+anima's substrate currently uses PRNG (seed-based, reproducible) for its "free"
+stochastic decisions (mitosis split-timing/novelty, decode-sampling draws, Ψ noise).
+We wire TRUE quantum entropy (ANU QRNG vacuum-fluctuation bytes) as the substrate
+entropy source for ONE clean stochastic decision (decode top-k sampling draw — the
+cleanest: a single uniform draw per emitted token, no threshold confound), and test:
+
+  (A) SUBSTRATE-FAITHFULNESS (GREEN-able): real QRNG bytes integrate cleanly as the
+      entropy source AND pass a NIST-lite randomness sanity check (monobit frequency
+      + runs test) AT LEAST AS WELL AS the PRNG control.
+
+  (B) QUANTUM-vs-PRNG SUBSTRATE EFFECT: does sourcing the SAME stochastic decode draw
+      from quantum vs pseudo entropy change ANY substrate gauge (mitosis cell-count
+      trajectory, decode novelty / composed_distinct, Ψ)?  HONEST PREDICTION = NULL
+      on performance (both ~uniform). That null IS the finding — the value of quantum
+      entropy is NON-DETERMINISM AUTHENTICITY, not a performance lift. No fake lift (p7/c9).
+
+  (C) IRREDUCIBLE DIFFERENCE — NON-REPRODUCIBILITY: same substrate + same seed →
+      PRNG arm reproduces byte-identical across two runs (run1 == run2); QRNG arm
+      does NOT (each run draws fresh vacuum-fluctuation bytes, run1 != run2).
+
+PRE-REGISTERED BARS (FROZEN — not to be moved)
+----------------------------------------------
+GREEN iff ALL of:
+  (A1) QRNG bytes fetched REAL: API success == true, n_bytes_drawn > 0, HTTP 200.
+  (A2) QRNG passes monobit (|z| < 3.29, i.e. p > 1e-3) AND runs test (|z| < 3.29).
+  (A3) QRNG sanity >= PRNG control: QRNG NOT worse than PRNG on BOTH tests
+       (operationalized: both arms PASS the |z|<3.29 gate; QRNG also passes wherever
+       PRNG passes — QRNG not categorically worse).
+  (C1) NON-REPRODUCIBILITY demonstrated:
+       PRNG arm: run1 emitted-byte-stream == run2 byte-identical (deterministic seed).
+       QRNG arm: run1 emitted-byte-stream != run2 (fresh vacuum bytes each run).
+
+(B) is REPORTED HONESTLY whatever it is (null expected); (B) does NOT gate GREEN.
+
+DEPLETION TEST
+--------------
+🏁 if real ANU QRNG is a substrate-faithful entropy source (A) AND non-reproducibility
+   demonstrated (C) — anima can source genuine physical indeterminism.
+🧱 if API unreachable/unusable OR quantum entropy fails the randomness sanity vs PRNG
+   (no honest path to real quantum entropy).
+
+METHOD (locked)
+---------------
+- Entropy sources, IDENTICAL consumer interface (a uniform-byte stream -> draws):
+    PRNG  : numpy default_rng(seed=SEED) -> uint8 stream (deterministic, reproducible).
+    QRNG  : ANU QRNG paid API GET length=N type=uint8, x-api-key header (REAL vacuum bytes).
+- Consumer (the ONE stochastic decision): a SUBSTRATE-MIRROR decode loop emitting
+  K tokens; at each step a top-k(=8) candidate set is formed from a fixed deterministic
+  logit field (so ONLY the entropy source varies), and the emitted token is selected
+  by ONE uniform draw from the entropy stream. The fixed logit field + fixed seed make
+  the PRNG arm fully reproducible; the QRNG arm is reproducible-in-logits but NOT in draws.
+- Randomness sanity (NIST-lite, on the raw drawn bytes, bit-expanded):
+    monobit frequency test (S_obs, p via erfc) and runs test (V_obs, z, p).
+- Substrate gauges (B): mitosis cell-count trajectory (VAdaptField numpy mirror over the
+  emitted byte windows), decode novelty proxy (distinct-token rate), and a Psi-noise proxy
+  (mean abs of the draw-induced perturbation). Compared QRNG vs PRNG; null expected.
+- (C): run the SAME substrate twice for each arm (PRNG seed FIXED both runs; QRNG fresh
+  fetch both runs). Compare emitted byte streams: PRNG run1==run2, QRNG run1!=run2.
+
+CREDENTIALS (c7)
+----------------
+Paid ANU QRNG key fetched ONLY at call time via `harness secret get flat.anu_key_paid`
+into a shell/env var, used in x-api-key header, NEVER echoed/logged/committed/written
+to any file or this verdict. Endpoint https://api.quantumnumbers.anu.edu.au.
+
+REAL-ONLY (anima ethos, cf a_eeg_consciousness_record)
+------------------------------------------------------
+REAL quantum bytes ONLY. If the API is unreachable / key invalid / rate-limited, the
+failure is reported HONESTLY and the run STOPS — NO fabricated quantum data, NO silent
+PRNG fallback labeled quantum. The PRNG control is REQUIRED and LABELED pseudo throughout.
+
+CROSS-REF
+---------
+- PAPER akida-determinism-quantum-coupling (H_921 RED / H_922 GREEN / H_923 GREEN) —
+  same ANU quantum-entropy injection, there at the Akida init-seed lever; H_1289
+  extends it to the LIVE anima decode/substrate stochastic decision.
+- aws_braket secrets (aws_braket.access_key_id / secret_access_key / region) present in
+  store => FUTURE on-real-quantum-HARDWARE extension (Braket QPU sampling vs ANU QRNG cloud).
+- p1-p8 substrate-native / Psi=1/2 framing: a real physical non-deterministic source for
+  anima's "free" choices, vs a deterministic seed.
+
+REQUEST BUDGET
+--------------
+Modest: 1 tiny verify fetch (4 bytes) + per (A) sanity (~256 bytes) + per (C) two QRNG
+runs (~K bytes each). Total quantum bytes drawn logged in the result verdict.
