@@ -13,5 +13,6 @@
 @P akida-determinism-quantum-coupling := "./PAPER/akida-determinism-quantum-coupling" :: paper [active]
 @P anima-consciousness-substrate := "./PAPER/anima-consciousness-substrate" :: paper [active]
 @P anima-living-library := "./PAPER/anima-living-library" :: paper [active]
+@P mitosis-substrate-lane := "./PAPER/mitosis-substrate-lane" :: paper [active]
 @paper phi-measure-dependence-planning := "./PAPER/phi-measure-dependence-planning"
 @paper event-tick-temporal-law := "./PAPER/event-tick-temporal-law"
