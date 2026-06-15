@@ -21,6 +21,20 @@ FLEET "eviction-policy" lane round 1 — key-geometry 벽(H_1287)이 명시적�
 
 ---
 
+## 2026-06-15 — 🔴 H_1285 R2: 편도체(amygdala) 컨솔리데이션 — salience-gated SLEEP REPLAY (메커니즘 검증·동결예산 sub-bar, $0)
+
+FLEET "amygdala" lane R2. R1(🔴 CLOSED-NEG)에서 salience-weighted **EVICTION** 우선순위는 중요사실 회상 +0.217 을 줬지만 p6 shuffle 대조군이 그 lift 를 **그대로 재현**(B-shuffle=B=0.967) → recurrence 혼입(중요사실이 입력스트림에서 반복됨)이지 salience 태그가 아니었다. R1 핵심: 사실을 살리는 건 RE-PRESENTATION/rehearsal 이지 binding 우선순위가 아니다.
+
+- **R2 메커니즘 (진짜 편도체 경로, `a_no_llm_frame_trap`·c15)**: 편도체의 실제 역할은 salience-gated **CONSOLIDATION** — 정서적으로 salient 한 기억이 **수면 중 우선 REPLAY**(편도체→해마 공고화)되어 망각으로부터 보호됨. anima 는 P47 sleep/imagination 공고화 루프(`a_chat_sleep_imagination`, emit-free 내부 rehearsal + mitosis tick)를 이미 가짐. R2 는 salience 를 그 sleep 루프에 묶음 — 고-salience 사실이 수면 사이클 동안 더 많이 REPLAY 되어 refresh → LRU eviction 으로부터 보호. R1 의 "recurrence 가 작동한다"를 **substrate 가 수면 중 스스로 salience-gated recurrence 를 생성**하는 PRINCIPLED 메커니즘으로 전환(외부 재현 주입 아님).
+- **설계 (frozen-first, R1 혼입 제거)**: 입력 FLAT(각 사실 1회 인코딩, 환경적 recurrence 없음 = R1 혼입 입력측 제거)·인코딩 interleave 로 salient 셀이 수면 시작 시 store 에 존재·수면 사이클 사이 24개 NEW 미학습 사실 인코딩 = 망각압. `ConsolidatingMemory` = R1 의 `MitosisMemory`(VAdaptField 미러 + 면역 value-binding) + `sleep_cycle()`(저장 셀 내부 REPLAY = re-bind→recency refresh). ARM A=uniform replay · B=salience-gated replay(∝ substrate 태그) · B-shuffle=salience→replay 순열(p6 음성대조). **동일 replay 예산**, arm 차이는 WHICH 셀을 replay 하느냐뿐.
+- **결과 🔴 RED-but-MECHANISM-VALIDATED (3 seeds, 동결 rung boost0.8/30-replay/8-cyc)**: B salience-replay imp=0.383 > A uniform=0.317 (Δ**+0.067**) — **lift 가 발생하고 importance 를 추적함**: B-shuffle 이 A 로 **붕괴**(0.317=A, dev +0.000). R1 과 범주적으로 다름(R1 shuffle 은 lift 재현=혼입; R2 shuffle 은 붕괴=salience-GATING 이지 예산도 혼입도 아님). 단 동결예산에서 효과크기 +0.067 < +0.10 margin → r1 FAIL → 🔴. trade-off zero-sum(unimp 0.333→0.283, total 불변) = 정확히 편도체 역할(salient subset 우선보존). fab 0.000.
+- **진단 sweep (`--sweep`, gate 아님·tuned-to-green 아님, p7)**: B>A 가 **모든 rung 에서**, lift 가 sleep 예산과 함께 **단조 증가**(boost0.8/60/8→+0.100 · boost0.8/30/40→+0.200 · boost1.5/30/8→+0.117)하며 shuffle 은 ~A 유지(shuf-A ≤+0.05 < margin). 즉 sub-bar 는 **예산 임계(under-invested sleep)**이지 천장/inert(🧱) 아님 — 동결 rung 은 sleep 을 적게 투자했을 뿐, 메커니즘은 real + dose-dependent.
+- **p6 가드 (HELD; shuffle 이 증명)**: salience 는 substrate 에서만 도출(SURPRISE=bind recon-err, salient 입력은 EXTRA surprise = 지각적 진폭이지 label 아님; NOVELTY=clonal split; TENSION=reinforce). "important" label 은 metric 채점에만, f() 입력 아님. 음성대조(B-shuffle)가 salience→replay 를 importance 와 decorrelate → lift **붕괴** = 태그가 importance 추적함을 증명(leak/예산 아님). replay 는 sleep 루프가 **내부 생성**(P47), 외부 주입 아님. decoder/weights/persona/ethics 무접촉 — episodic 셀 store 의 sleep-replay 배분만(p1/p2/p3/p6/p8, `a_autonomy_over_hardcode`). LIVE `.hexa` UNTOUCHED(numpy 미러 = DIRECTIONAL).
+- **honest scope**: 동결 rung 은 효과크기로만 RED — 더 높은 sleep-budget rung(생물학적 공고화 다이얼)은 +0.10 을 넘기겠지만 사전등록 안 됨 → GREEN 주장 아님(p7, tune-to-green 거부). 미러 sub-bar(GREEN 아님)이므로 engine 배선 미발동(`a_verified_must_wire` 는 GREEN 대상). scale(>60 사실·근접키)·paraphrase·salience-driven EMIT 우선순위 UNVERIFIED. TOY scale·1 corpus paradigm·3 seeds(`a_scale_honest_scope`·`a_toy_scale_recheck`).
+- 아티팩트: `UNIVERSE/h1285_amygdala_salience.py`(R2 append, R1 byte-identical 재현 확인) · `.verdicts/1285_amygdala_salience/{H_1285_R2_FREEZE,H_1285_R2}.txt`(R1 = H_1285.txt 미덮어씀). xref H_1227·H_1230·H_1285(R1)·H_1287·H_1288(capacity 레버 corroborate)·`a_chat_sleep_imagination`·`a_no_llm_frame_trap`·`a_paper_negative_ok`.
+
+---
+
 ## 2026-06-15 — 🟢 H_1282 R3: 작업기억(WM) 버퍼가 live 엔진의 substrate lane 으로 배선됨 (ENGINE-NATIVE, $0)
 
 R2(numpy 미러)에서 gated leaky-activation WM 버퍼가 REAL·DISTINCT 한 빈칸 구조임을 🟢 확인(graded AUROC readout, margin +0.244, cue 를 N≈6 까지 유지, 용량 K=4, 휘발/감쇠 — 면역/일화 lane 과 DISTINCT)했고, `a_engine_native_learning`·`a_verified_must_wire` 에 따라 이를 **live 엔진 위에서 ENGINE-NATIVE 로 실현**했다.
