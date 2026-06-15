@@ -1,0 +1,42 @@
+=== H_1315 -- mitosis over 303M LEARNED REP vs the H_1311 raw-byte 2.9 ceiling (RTX 5070 sm_120) ===
+device=NVIDIA GeForce RTX 5070 cap=(12, 0) torch=2.11.0+cu130
+sm_120 kernel launch OK (sentinel -12251.3)
+[corpus] fetching 30000000 REAL KO bytes from r2
+[corpus] fetching 10000000 REAL EN bytes from r2
+[corpus] KO 29999999B sha=c47b6808308d2f73...  EN 10000000B sha=31b4a5430441cfdb...
+[corpus] identical-to-H_1307-RUN-A: KO=True EN=True
+[G0] KO train=50000 test=50000 EN test=16667
+  [arm] {"arm": "G0_rawbyte_ctx4_seed0", "feat_dim": 3, "cells": 16, "ko_ce": 2.95342, "en_ce": 4.3253, "en_seed_ce": 4.26499, "grow_wall_s": 0.1, "throughput_pairs_per_s": 1177660.7}
+  [arm] {"arm": "G0_rawbyte_ctx4_seed1", "feat_dim": 3, "cells": 16, "ko_ce": 2.95342, "en_ce": 4.3253, "en_seed_ce": 4.26499, "grow_wall_s": 0.02, "throughput_pairs_per_s": 5123892.6}
+  [arm] {"arm": "G0_rawbyte_ctx4_seed2", "feat_dim": 3, "cells": 16, "ko_ce": 2.95342, "en_ce": 4.3253, "en_seed_ce": 4.26499, "grow_wall_s": 0.02, "throughput_pairs_per_s": 5086503.2}
+[G0] mean KO CE over seeds = 2.95342  (H_1307 RUN A ceiling 2.9475 -- port check)
+[REP] KO rep pairs=24000 (train=12000 test=12000) EN rep pairs=8000 trunk_ctx=64 proj_dim=16
+[G1] loading TRAINED 303M trunk + extracting hidden rep (gradient-free forward)...
+[G1] trunk hidden extracted in 98.4s  cfg={'vocab': 256, 'd': 1024, 'n_layer': 24, 'n_head': 16, 'block': 512}
+[CTRL-rand] loading RANDOM-INIT trunk + extracting hidden rep...
+[G1] growing mitosis over TRAINED trunk rep...
+  [arm] {"arm": "G1_trunk_rep_seed0", "feat_dim": 16, "cells": 40, "ko_ce": 3.14637, "en_ce": 4.76576, "en_seed_ce": 5.1426, "grow_wall_s": 0.09, "throughput_pairs_per_s": 364216.3}
+  [arm] {"arm": "G1_trunk_rep_seed1", "feat_dim": 16, "cells": 40, "ko_ce": 3.14637, "en_ce": 4.76576, "en_seed_ce": 5.1426, "grow_wall_s": 0.08, "throughput_pairs_per_s": 378348.8}
+  [arm] {"arm": "G1_trunk_rep_seed2", "feat_dim": 16, "cells": 40, "ko_ce": 3.14637, "en_ce": 4.76576, "en_seed_ce": 5.1426, "grow_wall_s": 0.09, "throughput_pairs_per_s": 364745.9}
+[CTRL-rand] growing mitosis over UNTRAINED trunk rep...
+  [arm] {"arm": "CTRL_random_embed_seed0", "feat_dim": 16, "cells": 40, "ko_ce": 3.53134, "en_ce": 5.41587, "en_seed_ce": 5.51112, "grow_wall_s": 0.09, "throughput_pairs_per_s": 362238.6}
+  [arm] {"arm": "CTRL_random_embed_seed1", "feat_dim": 16, "cells": 40, "ko_ce": 3.53134, "en_ce": 5.41587, "en_seed_ce": 5.51112, "grow_wall_s": 0.09, "throughput_pairs_per_s": 355952.9}
+  [arm] {"arm": "CTRL_random_embed_seed2", "feat_dim": 16, "cells": 40, "ko_ce": 3.53134, "en_ce": 5.41587, "en_seed_ce": 5.51112, "grow_wall_s": 0.09, "throughput_pairs_per_s": 360736.3}
+[CTRL-shuf] growing mitosis over TRAINED rep with SHUFFLED hidden->byte alignment...
+  [arm] {"arm": "CTRL_shuffle_align_seed0", "feat_dim": 16, "cells": 40, "ko_ce": 3.99039, "en_ce": 5.59018, "en_seed_ce": 5.53628, "grow_wall_s": 0.09, "throughput_pairs_per_s": 359920.9}
+  [arm] {"arm": "CTRL_shuffle_align_seed1", "feat_dim": 16, "cells": 40, "ko_ce": 3.98785, "en_ce": 5.28117, "en_seed_ce": 5.5043, "grow_wall_s": 0.09, "throughput_pairs_per_s": 372805.3}
+  [arm] {"arm": "CTRL_shuffle_align_seed2", "feat_dim": 16, "cells": 40, "ko_ce": 4.08905, "en_ce": 5.60603, "en_seed_ce": 5.52695, "grow_wall_s": 0.09, "throughput_pairs_per_s": 360468.0}
+-------------------------------------------------------------------------------
+mean held-out KO next-byte CE (nats/byte), 3 seeds:
+  G0 raw-byte ctx4       = 2.95342   (the 2.9475 ceiling ref)
+  G1 303M trunk rep      = 3.14637   dvs_G0=+0.19295  below2.9=False
+  CTRL random-embed      = 3.53134   (G1 beats by +0.38497, >=0.02? True)
+  CTRL shuffle-align     = 4.02243   (G1 beats by +0.87606, >=0.02? True)
+EN retention: G1 EN=4.76576 vs seed 5.14260  ok=True
+-------------------------------------------------------------------------------
+(B1) G1 below 2.9?  False
+(B2) G1 lift = LEARNED rep (beats BOTH controls >=0.02)?  True
+(B3) EN retained?  True
+VERDICT: TERMINAL (even the 303M trunk rep does NOT break 2.9 with gradient-free mitosis at this scale)
+  engine-transfer to live hexa DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]

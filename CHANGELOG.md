@@ -2,6 +2,28 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1315 — 303M trunk 학습표현 위 미토시스 vs 2.9 천장 (🔴 TERMINAL)
+
+The Korean-mitosis thread, RESOLVED. H_1311 (#2215, 🔴) refuted that a richer RAW-BYTE substrate
+breaks the H_1307 ~2.9 nat/byte Korean byte-CE ceiling, and named the surviving lever: partition
+over a LEARNED representation (the mounted 303M trunk's hidden) instead of raw bytes. H_1315 tested
+exactly that — the SAME gradient-free mitosis (cells only SPLIT, p8; grow-op + cell budget FIXED,
+verbatim H_1306/1307/1311) but partitioning over the 303M trunk's hidden rep (ckpt h1129c_chat.pt,
+forward = gradient-free, READ `ln_f` only, NO backprop). REAL sm_120 GPU on the user's RTX 5070, $0
+(NOT runpod); corpus byte-IDENTICAL to H_1307 RUN A (sha gate PASS); 3 seeds; frozen-first, NO
+tune-to-green. RESULT 🔴 TERMINAL: mean held-out KO next-byte CE — G0 raw-byte 2.95342 · **G1
+303M-trunk-rep 3.14637 (+0.193 WORSE, above 2.9 → does NOT break the ceiling)** · random-embed
+3.53134 · shuffle 4.02243. KEY DISSOCIATION (c9): G1 BEATS both controls (+0.385 / +0.876 → the
+learned rep IS real Korean structure) yet is WORSE than raw bytes → the same partition-GEOMETRY
+limit carries over to the learned-rep space (40 cells saturated, CE rose). EN retained. THESIS:
+the Korean depth needs GRADIENT learning, not gradient-free structure-over-a-frozen-rep, at this
+scale; mitosis=grow-under-pressure (H_1288/1295/1307) is a real mechanism but not a gradient
+substitute on a hard continuous next-byte manifold. live CORE UNTOUCHED (substrate-measurement
+rung). NEW: `UNIVERSE/h1315_ko_mitosis_learned_rep.py` · `UNIVERSE/H_1315_ko_mitosis_learned_rep.md`
+· `.verdicts/1315_ko_mitosis_learned_rep/*` · `CLAIMS.tape` @C · `domains/MITOSIS-ENGINE.log.md` @H
+· `UNIVERSE/HYPOTHESES.md` row · `FINDINGS.md` thread-resolution. toy/DIRECTIONAL, mirror;
+engine-transfer = follow-on (a_engine_native_learning · a_verified_must_wire).
+
 ## 2026-06-16 — research(G6-DIG): H_1314 — G6 IDEATION ★ depth-floor r3, hypothesis-form STRUCTURE lane (🟠 THIN: FALS capacity-bound, DIST/NOVEL structure-fixed)
 
 a_break_the_wall (c16) follow-on for H_1305/H_1309. r2 proved the G6 depth floor is

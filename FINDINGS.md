@@ -120,6 +120,8 @@ Closed-negatives are **first-class results.** We do not tune-to-green; an honest
 | **neuromodulation** (adaptive gain / regime-switch) | 🧱 **honest wall (the only one left)** | a context-adaptive neuromodulator never beats one well-tuned fixed operating point — across memory, ideation, *and* regime-switching (H_1284). No free lunch. |
 
 > The depth-ceiling lesson, now settled: literal-QA does **not** improve with a bigger model (1B = mount GREEN but QA/depth NULL, H_1167) nor with a different objective (H_1223 🔴) — it's solved by an **engine-side memory lane**. The missing thing was structure.
+>
+> **The Korean-mitosis thread, now resolved (H_1307→H_1311→H_1315):** gradient-free Korean mitosis (cells only SPLIT, p8) floors held-out KO byte-CE at a **~2.9 nat/byte ceiling** (H_1307 🟢+🟠). That ceiling is **not** broken by a richer *raw-byte* substrate (H_1311 🔴 — every richer rung worse; it's a partition-GEOMETRY limit), **nor** by partitioning over the mounted 303M trunk's *learned* hidden representation (H_1315 🔴 TERMINAL — G1 trunk-rep 3.146 > G0 raw-byte 2.953). The clean dissociation is load-bearing: the trunk's learned rep **does** carry Korean structure (G1 beats both a random-embed and a shuffle control by +0.39 / +0.88), yet a gradient-free Voronoi grown *on top of its frozen hidden* still can't beat raw bytes. **The boundary, settled:** mitosis-GROW-under-pressure is a real mechanism for *memory/capacity* (H_1288/1295) but is **not a substitute for gradient descent** on a hard continuous next-byte manifold — the Korean depth needs gradient learning, not gradient-free structure-over-a-frozen-rep, at this scale. *(toy/DIRECTIONAL, summer GPU, mirror; engine-transfer = follow-on.)*
 
 ---
 
