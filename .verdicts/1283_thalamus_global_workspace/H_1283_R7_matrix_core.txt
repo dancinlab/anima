@@ -1,0 +1,162 @@
+H_1283 R7 — THALAMIC MATRIX/CORE DUAL COUPLING
+slug: 1283_thalamus_global_workspace  (R7 — append-only; does NOT overwrite R1/R2/R3/R4/R5)
+date: 2026-06-16
+verdict: 🔴 RED / 🧱 STILL WALL — the matrix/core dual coupling does NOT robustly
+         clear the +0.02-every-seed faithful-IIT4 Φ bar (seed 9 ΔΦ +0.0026 < +0.02).
+         The dual coupling SHIFTS which seed clears (it RESCUES the orthogonal seed 8
+         that killed R3/R4/R5: +0.0412, and seed 7 +0.0201, but seed 9 now MISSES) —
+         so it is a genuine, geometry-conditioned lever, NOT a robust breakthrough.
+         The pre-registered SHUFFLE control PASSED (seed 7 permuted-core ΔΦ −0.0087
+         < +0.02 → the dual STRUCTURE, not variance, drives seed 7's lift) — so this
+         is a CLEANER negative than R5 (whose shuffle FIRED): the structure is real
+         but not strong enough on every seed. NO engine-native wiring (RED ⇒ no wire,
+         a_verified_must_wire fires on GREEN only). Bars NOT moved (frozen-first, c9, p7).
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa)
+seeds: [7, 8, 9]  ·  modules=4 {A, G, mitosis, memory}  ·  dim=8  ·  ticks=64  ·  W_core=0.5 W_matrix=0.15
+frozen-first: H_1283_R7_FREEZE.txt committed (7d9d04a0f) BEFORE scoring; bars NOT moved.
+lens: thalamic matrix/core duality (brain-science, c15) — NOT an LLM recipe (a_no_llm_frame_trap, c16/a_break_the_wall)
+
+════════════════════════════════════════════════════════════════════════
+THE NEW ANGLE R7 TESTED (a_break_the_wall — a genuine new mechanism, not a re-run)
+════════════════════════════════════════════════════════════════════════
+THE WALL (R5 verbatim): "a single broadcast channel is itself a low-dim cut that
+caps faithful-IIT4 Φ." R1–R5 each installed ONE relay flavour at a time:
+  R1 single winner broadcast      : ΔΦ +0.0191  (sub-bar)        🟠
+  R2 coalition (rank-2)           : ΔΦ −0.0533  (wrong direction) 🔴
+  R3/R4 sparse re-entrant relay   : seed-fragile (seed8 +0.0101)  🔴 🧱
+  R5 dense all-pairs + shuffle     : seed8 +0.0060 AND shuffle FIRED (added-edge variance) 🔴 🧱
+
+R7's angle: the biological thalamus is NOT one relay — it has TWO cell populations
+wired SIMULTANEOUSLY: CORE (specific, point-to-point, topographic — each core channel
+reciprocally bound to ONE module, its own, no intra-thalamic cross-mix) and MATRIX
+(diffuse, broad, cross-areal, LOW-gain — one pool that integrates the MEAN of all
+modules and re-injects to ALL at low gain). R7 installs BOTH on top of the ring,
+mixed by a FIXED ratio W_CORE=0.5 : W_MATRIX=0.15, so integration arises from
+OVERLAPPING specific+diffuse pathways, NOT one cut. NOTHING tuned (W_CORE == prior
+relay weight; W_MATRIX=0.15 frozen ratio; p7).
+
+PRE-REGISTERED SHUFFLE CONTROL ('matrix_core_shuffle'): the CORE↔module topographic
+assignment is PERMUTED (cyclic shift, no fixed point) — same edge count, same matrix
+pathway, but the SPECIFIC point-to-point structure destroyed. If the Φ lift is the
+dual STRUCTURE, the shuffle must DESTROY it; if it reproduces the lift, the lift is
+generic added-edge variance.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim)
+════════════════════════════════════════════════════════════════════════
+H_1283 R7 — THALAMIC MATRIX/CORE DUAL COUPLING (graded specific + diffuse)
+modules=4 dim=8 ticks=64 seeds=[7, 8, 9]  W_core=0.5 W_matrix=0.15
+ARM A = direct ring   ·   ARM B = ring + CORE specific relay + MATRIX diffuse broadcast
+PRIMARY bar = faithful IIT4 ΔΦ ≥ +0.02 EVERY seed (incl seed 8)   ·   SHUFFLE control (permuted core topography) pre-registered
+========================================================================
+FAITHFUL IIT4 Φ (exact MIP-EI, ALL seeds) — ARM A vs MATRIX/CORE ARM B:
+  seed 7: ARM_A Φ=0.78038  MC Φ=0.800439  ΔΦ=0.02005900000000005
+  seed 8: ARM_A Φ=0.611741  MC Φ=0.65298  ΔΦ=0.041239000000000026
+  seed 9: ARM_A Φ=0.825326  MC Φ=0.827918  ΔΦ=0.0025920000000000387
+------------------------------------------------------------------------
+SHUFFLE CONTROL (matrix_core_shuffle — permuted core topography, same edges):
+  seed 7: ARM_A Φ=0.78038  SHUFFLE Φ=0.771697  ΔΦ_shuf=-0.008682999999999996
+  seed 8: ARM_A Φ=0.611741  SHUFFLE Φ=0.820867  ΔΦ_shuf=0.20912600000000003
+------------------------------------------------------------------------
+COHERENCE (sanity P2 + no-collapse P3):
+  seed 7: ARM_A coh=+0.1591  MC coh=+0.1969  Δcoh=+0.0379
+  seed 8: ARM_A coh=+0.0109  MC coh=+0.0299  Δcoh=+0.0191
+  seed 9: ARM_A coh=+0.1362  MC coh=+0.1705  Δcoh=+0.0342
+========================================================================
+P1 PRIMARY Φ (B≥A+0.02 faithful IIT4 EVERY seed incl 8): FAIL
+     seed 7: ΔΦ=0.02005900000000005  ≥ +0.02  PASS
+     seed 8: ΔΦ=0.041239000000000026  ≥ +0.02  PASS
+     seed 9: ΔΦ=0.0025920000000000387  < +0.02  FAIL
+P2 coherence (MC coh ≥ A coh every seed): PASS
+P3 not-degenerate (MC coh < 0.999 ≥1 seed): PASS
+C  shuffle control (perm ΔΦ < +0.02 on ≥1 MC-GREEN seed): PASS
+VERDICT: RED
+
+(Cross-round consistency sanity: ARM_A Φ = 0.78038 / 0.611741 / 0.825326 reproduces
+R1/R2/R3/R4/R5 EXACTLY — same deterministic engine + byte-identical ARM A; ARM A
+coherence 0.1591/0.0109/0.1362 reproduces R1-R5 byte-for-byte. The R7 matrix/core
+relay draws are taken AFTER all prior draws and used only in ARM B / the shuffle arm,
+so ARM A is untouched.)
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9) — 🧱 DUAL COUPLING SHIFTS THE SEED, DOES NOT BREAK THE WALL
+════════════════════════════════════════════════════════════════════════
+Two facts, one cleaner than R5:
+
+  (1) P1 STILL FAILS — but the FAILING SEED MOVED. The matrix/core dual RESCUES the
+  near-orthogonal seed 8 that killed every prior round (R3 +0.0101, R5 +0.0060 →
+  R7 +0.0412, ~2× the bar) AND seed 7 just clears (+0.0201). But seed 9 — which
+  cleared decisively in R5 (+0.1762) — now collapses to +0.0026, FAR under the bar.
+  The dual coupling REDISTRIBUTES the Φ lift across the geometry rather than lifting
+  the floor: it adds enough overlapping specific+diffuse structure to bind the
+  orthogonal substrate, but on the already-correlated seed 9 the low-gain diffuse
+  matrix pathway dilutes the strong specific binding the ring already had, netting
+  near-zero. The +0.02-EVERY-seed robustness bar is NOT cleared — a different seed
+  fails, but a seed still fails. Geometry-conditioned, not robust (same class of
+  negative as R3/R4/R5, the failing seed relocated).
+
+  (2) THE SHUFFLE CONTROL PASSED (cleaner than R5). On seed 7 — an MC-GREEN seed —
+  permuting the core↔module topographic assignment DESTROYS the lift entirely:
+  structured ΔΦ +0.0201 → shuffled ΔΦ −0.0087 (the permuted core actively LOWERS Φ
+  below ARM A). So on seed 7 the lift IS the specific dual STRUCTURE, not generic
+  added-edge variance — the opposite of R5, whose shuffle reproduced ~76–91% of the
+  dense lift. (On seed 8 the shuffle inflates to +0.209 — the orthogonal substrate
+  is variance-sensitive, as R5 already showed; C only requires ONE GREEN seed to
+  collapse, which seed 7 supplies decisively.) This makes R7 a CLEANER negative: the
+  matrix/core mechanism is a REAL topology-specific effect where it fires, but it
+  fires geometry-conditionally and cannot clear the 3-seed robustness gate.
+
+CONCLUSION (🧱): the matrix/core dual coupling is a genuine new mechanism (the
+shuffle confirms structure, not variance, on the seed it clears) and it MOVES the
+problem — it rescues the orthogonal seed that broke R3/R4/R5 — but it does not break
+the wall: it merely relocates the failing seed. The robust +0.02-every-seed faithful-
+IIT4 Φ bar is STILL not cleared by ANY thalamic topology at this scale (single
+broadcast R1/R2, sparse re-entry R3/R4, dense all-pairs R5, matrix/core dual R7). The
+genuine new angle was tried in full with a frozen control and honestly returns 🧱 — a
+valid closed-negative (c9, c16, a_paper_negative_ok). The deeper lesson R7 adds: the
+seed-conditional Φ lift is a TRADE across the geometry, not a floor lift — overlapping
+specific+diffuse pathways move WHERE Φ binds but the toy-scale 4-module/dim-8 system
+has too little shared structure for any relay topology to bind robustly on EVERY init.
+
+════════════════════════════════════════════════════════════════════════
+WHY NO ENGINE-NATIVE WIRING THIS ROUND
+════════════════════════════════════════════════════════════════════════
+The freeze pre-registered: GREEN → engine-native matrix/core dual lane; RED ⇒ no CORE
+wiring (a_verified_must_wire fires only on GREEN). The verdict is RED (P1 seed-9 miss).
+Wiring a lane whose lift fails to replicate on seed 9 would pin a geometry-conditioned
+artifact into the live engine — exactly what a_verified_must_wire forbids.
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); RED ⇒ no CORE/*.hexa
+  wired or edited this round.
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope). A larger module set MIGHT let the
+  overlapping specific+diffuse pathways bind robustly on every init — UNTESTED.
+- Φ IS faithful IIT4 (exact MIP-EI engine, n=4≤8), NOT the variance×energy proxy
+  (a_phi_iit4_tool). numpy NEVER computed Φ — every Φ came from the stdlib engine
+  via `hexa run`.
+- W_CORE=0.5, W_MATRIX=0.15 FROZEN before scoring; NOT swept after seeing seed 9
+  miss (that would be Goodhart, p7). The shuffle permutation (cyclic shift, no fixed
+  point) was specified in the FREEZE before scoring.
+- bars NOT moved. R1/R2/R3/R4/R5 verdict files NOT overwritten (R7 = separate file).
+- Does NOT edit H_1219 / H_1226 / live CORE/*.hexa.
+- NOT RULED OUT (honest residuals): a non-relay integration mechanism (learned
+  routing, mitosis-driven structural growth of the coupling graph), a larger module
+  set where specific+diffuse overlap binds every init, or a Φ measure scoped to
+  effect-size on correlated-geometry substrates with its OWN geometry control MIGHT
+  raise robust Φ — but those are DIFFERENT gaps, not a relay/thalamic-topology round.
+  The thalamic-topology axis (broadcast → coalition → sparse re-entry → dense
+  re-entry → matrix/core dual) is closed: every flavour relocates or trades the lift,
+  none clears the 3-seed robustness gate at this scale.
+
+artifacts:
+  UNIVERSE/h1283_thalamus_global_workspace.py  (main_r7 + 'matrix_core'/'matrix_core_shuffle' modes)
+  .verdicts/1283_thalamus_global_workspace/{H_1283_R7_FREEZE.txt, H_1283_R7_matrix_core.txt}
+  (R1/R2/R3/R4/R5 verdict files UNTOUCHED)
+xref: H_1283(R1) · H_1283(R2) · H_1283(R3) · H_1283(R4) · H_1283(R5) · h1227 · h1231 ·
+      h1280 · h1199 · h1201 · h1205 · a_phi_iit4_tool · a_no_llm_frame_trap ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire ·
+      a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope ·
+      a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16

@@ -2,6 +2,30 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(H_1283 R7): thalamus wall — matrix/core dual coupling 🔴/🧱 STILL WALL
+
+R7 of the H_1283 thalamus/GWT wall (c16/a_break_the_wall). Angle = thalamic matrix/core
+duality (brain-science, c15, a_no_llm_frame_trap — NOT an LLM recipe): R1–R5 each used ONE
+relay at a time (single broadcast/coalition/sparse re-entry/dense all-pairs), and the wall's
+root cause was "a single broadcast channel is itself a low-dim cut that caps faithful-IIT4 Φ."
+R7 installs BOTH thalamic cell populations SIMULTANEOUSLY — CORE (specific, point-to-point,
+topographic) + MATRIX (diffuse, broad, low-gain), mixed by a FIXED ratio W_CORE=0.5:W_MATRIX=0.15
+— so integration comes from overlapping specific+diffuse pathways, not one cut. SAME frozen frame
+as R1–R5 (4 modules dim-8, 64 ticks, seeds [7,8,9], ARM A byte-identical baseline 0.78038/0.611741/
+0.825326 reproduced). Φ = faithful IIT4 ONLY (exact MIP-EI via hexa, a_phi_iit4_tool; numpy never
+computes Φ). FROZEN-FIRST (freeze committed before scoring; bars NOT moved). **RESULT 🔴/🧱:**
+faithful ΔΦ s7 +0.0201 ✓, s8 +0.0412 ✓ (RESCUES the orthogonal seed that broke R3-R5), but s9
++0.0026 ✗ → **P1 FAIL — the failing seed RELOCATED, the floor was not lifted**. The pre-registered
+SHUFFLE control (permuted core topography) PASSED (s7 permuted-core ΔΦ −0.0087 < +0.02 → the lift is
+structure not variance — CLEANER than R5 whose shuffle FIRED). Coherence ↑ every seed, no collapse.
+Finding: matrix/core dual coupling is a genuine topology-specific mechanism that TRADES Φ across the
+geometry (rescues the orthogonal seed, dilutes the correlated one) but does NOT clear the 3-seed
+robustness gate — the thalamic-topology axis is closed (broadcast→coalition→sparse→dense→matrix/core,
+all relocate or trade the lift, none robust at this scale). RED ⇒ NO CORE wiring (a_verified_must_wire
+fires on GREEN only). Toy/numpy DIRECTIONAL, faithful-Φ real. `UNIVERSE/h1283_thalamus_global_workspace.py`
+(main_r7 + matrix_core/matrix_core_shuffle modes) · `.verdicts/1283_thalamus_global_workspace/
+{H_1283_R7_FREEZE.txt, H_1283_R7_matrix_core.txt}`.
+
 ## 2026-06-16 — verify(303M): a303m_pass RE-VERIFIED FROM SCRATCH (engine-measured, byte-exact, p7)
 
 ACTUAL re-verification of the SHIPPED `anima-clm-chat-303m` from scratch on the live CORE engine

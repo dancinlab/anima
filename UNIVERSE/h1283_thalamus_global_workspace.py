@@ -56,6 +56,12 @@ W_RELAY = 0.5        # R3: cortico-thalamo-cortical RE-ENTRANT loop weight. The
                      # recurrent (leaky) state so each module↔relay coupling is a
                      # DISTINCT reciprocal edge (distributed multi-edge — exactly
                      # the integration source R2's RED diagnosis pointed to).
+W_CORE   = 0.5       # R7: SPECIFIC (core) topographic point-to-point relay weight —
+                     # same magnitude as the prior relay (FROZEN, == W_RELAY).
+W_MATRIX = 0.15      # R7: DIFFUSE (matrix) low-gain cross-areal broadcast weight —
+                     # LOW gain (≪ W_CORE) so the matrix pathway is a broad, weak,
+                     # graded projection (not a winner-take-all cut). FROZEN ratio
+                     # W_CORE:W_MATRIX = 0.5:0.15 — NOT swept (p7 / c9).
 
 MARGIN_COH = 0.05
 MARGIN_PHI = 0.02
@@ -153,6 +159,37 @@ def run_arm(seed, mode, k_coalition=2):
     # fixed point (a derangement-ish shift) so no relay reads its own structured set.
     dense_perm = (np.roll(np.arange(N_MOD), 1)).tolist()  # [N-1,0,1,...] cyclic shift
 
+    # ── R7 MATRIX/CORE DUAL COUPLING ─────────────────────────────────────────
+    # Biological thalamus has TWO cell populations coupled SIMULTANEOUSLY:
+    #   CORE   — specific, point-to-point, TOPOGRAPHIC relays (each thalamic core
+    #            channel reciprocally bound to ONE cortical module — its own).
+    #   MATRIX — diffuse, broad, CROSS-AREAL low-gain projection (a single matrix
+    #            pool that pools ALL modules and broadcasts back to ALL at low gain).
+    # R1–R5 all used a SINGLE winner-take-all / single dense relay = one cut. R7
+    # installs BOTH pathways AT ONCE, mixed by a FIXED ratio, so integration arises
+    # from OVERLAPPING specific(core)+diffuse(matrix) pathways, not one channel.
+    # Lens: thalamic matrix/core duality (a_no_llm_frame_trap, c15 — NOT an LLM
+    # recipe). Hypothesis: dual graded coupling raises faithful-IIT4 Φ above a
+    # direct ring WITHOUT the single-cut ceiling and WITHOUT collapse-cloning.
+    #
+    # State carried over ticks (recurrent, leaky):
+    #   core_relay[i] (N_MOD, DIM) — one topographic channel per module (reciprocal
+    #                                to module i ONLY; NO intra-thalamic cross-mix,
+    #                                so it is a PURE point-to-point specific edge —
+    #                                distinct from R3's neighbour-mixed relay).
+    #   matrix_pool   (DIM,)       — one diffuse pool integrating ALL modules and
+    #                                re-injecting to ALL at low gain.
+    # Both drawn from the SAME rng stream AFTER dense_perm so ARM A and every prior
+    # arm's draws are byte-UNCHANGED (these draws touch only the matrix_core branch).
+    core_relay = rng.standard_normal((N_MOD, DIM)) * 0.5
+    matrix_pool = rng.standard_normal(DIM) * 0.5
+    # R7 SHUFFLE CONTROL ('matrix_core_shuffle'): a FIXED permutation that SCRAMBLES
+    # the core↔module topographic assignment (core channel i drives a PERMUTED module
+    # instead of its own) — same edge COUNT and same matrix pool, but the SPECIFIC
+    # point-to-point structure is destroyed while the added recurrent dynamics are
+    # preserved. Cyclic shift (no fixed point) so no core channel keeps its own module.
+    mc_perm = (np.roll(np.arange(N_MOD), 1)).tolist()  # core_relay[i] → module mc_perm[i]
+
     coh_acc = []
     traj = np.zeros((N_MOD, T))
     for t in range(T):
@@ -221,6 +258,52 @@ def run_arm(seed, mode, k_coalition=2):
                                 + GAIN * (W_NBR * states[i]
                                           + W_RELAY * relay_others))
             relay = new_relay
+        elif mode in ("matrix_core", "matrix_core_shuffle"):  # R7 — MATRIX/CORE dual
+            # TWO pathways present SIMULTANEOUSLY, mixed by a FIXED ratio:
+            #   CORE   (specific, topographic): core_relay[i] is the thalamic core
+            #          channel reciprocally bound to module i ONLY (point-to-point,
+            #          NO intra-thalamic cross-mix). Cortex→core: core_relay[i]
+            #          integrates from module i; core→cortex: re-injects to module i.
+            #          In the SHUFFLE control the core↔module assignment is PERMUTED
+            #          (core_relay[i] drives module mc_perm[i]) — same edges, scrambled
+            #          topography (specific structure destroyed, dynamics preserved).
+            #   MATRIX (diffuse, cross-areal, LOW gain): matrix_pool integrates the
+            #          MEAN of all modules and re-injects to ALL modules at low gain
+            #          W_MATRIX (≪ W_CORE). Same in both arms (the diffuse pathway is
+            #          not topographic, so shuffling it would be a no-op; only the core
+            #          topography carries the structure the shuffle must destroy).
+            # core→cortex re-injection target for module i (own self vs permuted):
+            if mode == "matrix_core":
+                core_to_mod = list(range(N_MOD))          # topographic: i ← core i
+            else:
+                core_to_mod = mc_perm                      # scrambled: mc_perm[i] ← core i
+            # build the per-module core re-injection vector (which core feeds module m)
+            core_inject = [None] * N_MOD
+            for ci in range(N_MOD):
+                core_inject[core_to_mod[ci]] = core_relay[ci]
+            for i in range(N_MOD):
+                nbr = np.mean([states[k] for k in ring[i]], axis=0)
+                # ring (kept) + private input (kept) + CORE specific relay + MATRIX
+                # diffuse broadcast (low gain). Both dual pathways on top of the ring.
+                new[i] = (LEAK * states[i]
+                          + GAIN * (W_NBR * nbr
+                                    + W_IN * inputs[i, t]
+                                    + W_CORE * core_inject[i]
+                                    + W_MATRIX * matrix_pool))
+            # cortex→thalamus updates (PRE-update states → one-tick reciprocal delay):
+            # CORE: each core channel integrates from the module it is bound to (own
+            #       module in structured; the module it DRIVES in shuffle — symmetric
+            #       reciprocity so the scrambled loop stays a closed loop, same edges).
+            new_core = core_relay.copy()
+            for ci in range(N_MOD):
+                src_mod = core_to_mod[ci]
+                new_core[ci] = (LEAK * core_relay[ci]
+                                + GAIN * (W_NBR * states[src_mod]))
+            core_relay = new_core
+            # MATRIX: the diffuse pool integrates the MEAN of all modules (broad,
+            # cross-areal pooling) — same in both arms.
+            mean_state = np.mean(states, axis=0)
+            matrix_pool = LEAK * matrix_pool + GAIN * (W_NBR * mean_state)
         else:  # 'coalition' — R2 multi-winner rank-k coalition broadcast
             energy = np.array([float(np.dot(states[i], states[i])) for i in range(N_MOD)])
             kk = max(1, min(k_coalition, N_MOD))
@@ -736,6 +819,133 @@ def main_r5():
     return result
 
 
+def main_r7():
+    """ROUND 7 — THALAMIC MATRIX/CORE DUAL COUPLING (a_break_the_wall vs R1–R5).
+
+    THE WALL (R5 verbatim): "a single broadcast channel is itself a low-dim cut
+    that caps faithful-IIT4 Φ." R1–R5 all installed ONE relay flavour at a time
+    (single winner R1 / coalition R2 / sparse re-entry R3-R4 / dense all-pairs R5)
+    — every one is a single coupling channel whose MIP cut caps irreducibility,
+    and R5's shuffle proved the dense lift was mostly added-edge VARIANCE.
+
+    R7's NEW ANGLE (brain-science lens, a_no_llm_frame_trap, c15 — NOT an LLM
+    recipe): the biological thalamus is NOT one relay — it has TWO cell
+    populations wired SIMULTANEOUSLY: CORE (specific, point-to-point, topographic)
+    and MATRIX (diffuse, broad, cross-areal, low-gain). R7 installs BOTH at once,
+    mixed by a FIXED ratio (W_CORE=0.5 specific : W_MATRIX=0.15 diffuse) — so
+    integration arises from OVERLAPPING specific+diffuse pathways rather than one
+    cut. Hypothesis: the dual graded coupling raises faithful-IIT4 Φ above the
+    direct ring WITHOUT the single-cut ceiling and WITHOUT collapse-cloning.
+
+    SAME frozen frame as R1–R5: 4 modules dim-8, 64 ticks, SAME per-module private
+    input + seed both arms, ONLY topology differs; seeds [7,8,9]. NOTHING tuned
+    (W_CORE=0.5 == prior relay weight; W_MATRIX=0.15 frozen ratio; p7).
+
+    Pre-registered SHUFFLE CONTROL ('matrix_core_shuffle'): the CORE↔module
+    topographic assignment is PERMUTED (cyclic shift, no fixed point) — same edge
+    count, same matrix pathway, but the SPECIFIC point-to-point structure is
+    destroyed. If the Φ lift is the dual-coupling STRUCTURE, the shuffle must
+    DESTROY it (ΔΦ collapses < +0.02 on ≥1 GREEN seed); if the shuffle reproduces
+    the lift, the lift is generic added-edge variance → honest 🧱.
+
+    FROZEN BARS (R7 — see H_1283_R7_FREEZE.txt; IDENTICAL bar structure to R5):
+      P1 (PRIMARY)     faithful ΔΦ ≥ +0.02 on EVERY seed [7,8,9]   (== c2 / R5 P1)
+      P2 (COHERENCE)   B.coh ≥ A.coh on EVERY seed                 (== c1 / R5 P2)
+      P3 (NO-COLLAPSE) B.coh < 0.999 on ≥1 seed                    (== c3 / R5 P3)
+      C  (SHUFFLE)     matrix_core_shuffle ΔΦ < +0.02 on ≥1 dense-GREEN seed (c4)
+    GREEN = P1 AND P2 AND P3 AND C. Else RED/🧱 (closed-negative, c9; bar NOT moved)."""
+    print("H_1283 R7 — THALAMIC MATRIX/CORE DUAL COUPLING (graded specific + diffuse)")
+    print(f"modules={N_MOD} dim={DIM} ticks={T} seeds={SEEDS}  W_core={W_CORE} W_matrix={W_MATRIX}")
+    print("ARM A = direct ring   ·   ARM B = ring + CORE specific relay + MATRIX diffuse broadcast")
+    print("PRIMARY bar = faithful IIT4 ΔΦ ≥ +0.02 EVERY seed (incl seed 8)   ·   "
+          "SHUFFLE control (permuted core topography) pre-registered")
+    print("=" * 72)
+
+    per_seed = {}
+    for seed in SEEDS:
+        cohA, trajA = run_arm(seed, "direct")
+        cohB, trajB = run_arm(seed, "matrix_core")
+        cohSh, trajSh = run_arm(seed, "matrix_core_shuffle")
+        per_seed[seed] = {"cohA": cohA, "cohB": cohB, "cohSh": cohSh,
+                          "trajA": trajA, "trajB": trajB, "trajSh": trajSh}
+
+    # ---- PRIMARY Φ leg: faithful IIT4 on ALL 3 seeds (structured matrix/core) ----
+    print("FAITHFUL IIT4 Φ (exact MIP-EI, ALL seeds) — ARM A vs MATRIX/CORE ARM B:")
+    phi_all = {}
+    for seed in SEEDS:
+        phiA = faithful_phi(per_seed[seed]["trajA"], f"A_s{seed}")
+        phiB = faithful_phi(per_seed[seed]["trajB"], f"B_s{seed}")
+        dphi = (phiB - phiA) if (phiA is not None and phiB is not None) else None
+        phi_all[seed] = {"A": phiA, "B": phiB, "delta": dphi}
+        print(f"  seed {seed}: ARM_A Φ={phiA}  MC Φ={phiB}  ΔΦ={dphi}")
+
+    p1 = all(phi_all[s]["delta"] is not None and phi_all[s]["delta"] >= MARGIN_PHI
+             for s in SEEDS)
+    p2 = all(per_seed[s]["cohB"] >= per_seed[s]["cohA"] for s in SEEDS)
+    p3 = any(per_seed[s]["cohB"] < DEGEN_CAP for s in SEEDS)
+
+    # ---- SHUFFLE CONTROL: faithful Φ on the permuted-core matrix/core arm ----
+    print("-" * 72)
+    print("SHUFFLE CONTROL (matrix_core_shuffle — permuted core topography, same edges):")
+    phi_shuf = {}
+    green_seeds = [s for s in SEEDS if phi_all[s]["delta"] is not None
+                   and phi_all[s]["delta"] >= MARGIN_PHI]
+    shuf_check_seeds = green_seeds if green_seeds else SEEDS
+    for seed in shuf_check_seeds:
+        phiSh = faithful_phi(per_seed[seed]["trajSh"], f"Sh_s{seed}")
+        phiA = phi_all[seed]["A"]
+        dphiSh = (phiSh - phiA) if (phiSh is not None and phiA is not None) else None
+        phi_shuf[seed] = {"shuffle": phiSh, "A": phiA, "delta": dphiSh}
+        print(f"  seed {seed}: ARM_A Φ={phiA}  SHUFFLE Φ={phiSh}  ΔΦ_shuf={dphiSh}")
+    if green_seeds:
+        c_shuffle = any(phi_shuf[s]["delta"] is not None
+                        and phi_shuf[s]["delta"] < MARGIN_PHI for s in green_seeds)
+    else:
+        c_shuffle = True  # no MC GREEN seed → C is moot (P1 already fails)
+
+    print("-" * 72)
+    print("COHERENCE (sanity P2 + no-collapse P3):")
+    for seed in SEEDS:
+        ps = per_seed[seed]
+        print(f"  seed {seed}: ARM_A coh={ps['cohA']:+.4f}  MC coh={ps['cohB']:+.4f}  "
+              f"Δcoh={ps['cohB'] - ps['cohA']:+.4f}")
+
+    green = p1 and p2 and p3 and c_shuffle
+    verdict = "GREEN" if green else "RED"
+
+    print("=" * 72)
+    print(f"P1 PRIMARY Φ (B≥A+{MARGIN_PHI} faithful IIT4 EVERY seed incl 8): {'PASS' if p1 else 'FAIL'}")
+    for s in SEEDS:
+        d = phi_all[s]["delta"]
+        ok = (d is not None and d >= MARGIN_PHI)
+        print(f"     seed {s}: ΔΦ={d}  {'≥' if ok else '<'} +{MARGIN_PHI}  {'PASS' if ok else 'FAIL'}")
+    print(f"P2 coherence (MC coh ≥ A coh every seed): {'PASS' if p2 else 'FAIL'}")
+    print(f"P3 not-degenerate (MC coh < {DEGEN_CAP} ≥1 seed): {'PASS' if p3 else 'FAIL'}")
+    print(f"C  shuffle control (perm ΔΦ < +{MARGIN_PHI} on ≥1 MC-GREEN seed): "
+          f"{'PASS' if c_shuffle else 'FAIL'}")
+    print(f"VERDICT: {verdict}")
+
+    result = {
+        "id": "H_1283_R7", "slug": "1283_thalamus_global_workspace",
+        "round": 7, "arm_b": "thalamic matrix/core dual coupling (specific core + diffuse matrix)",
+        "rubric": "Φ-primary 3-seed robust bar (incl seed 8) + pre-registered shuffle control (permuted core topography)",
+        "verdict": verdict,
+        "seeds": SEEDS,
+        "w_core": W_CORE, "w_matrix": W_MATRIX,
+        "phi_faithful_iit4": {str(s): phi_all[s] for s in SEEDS},
+        "shuffle_control": {str(s): phi_shuf[s] for s in phi_shuf},
+        "coherence": {str(s): {"A": per_seed[s]["cohA"], "B": per_seed[s]["cohB"],
+                               "delta": per_seed[s]["cohB"] - per_seed[s]["cohA"]}
+                      for s in SEEDS},
+        "bars": {"P1_phi_primary": p1, "P2_coh_sanity": p2,
+                 "P3_not_degenerate": p3, "C_shuffle": c_shuffle},
+        "margins": {"phi_primary": MARGIN_PHI, "degen_cap": DEGEN_CAP},
+        "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n=4)",
+    }
+    print("\nRESULT_JSON=" + json.dumps(result))
+    return result
+
+
 if __name__ == "__main__":
     if "--r1" in sys.argv:
         main()
@@ -745,5 +955,7 @@ if __name__ == "__main__":
         main_r3()
     elif "--r4" in sys.argv:
         main_r4()
+    elif "--r5" in sys.argv:
+        main_r5()
     else:
-        main_r5()  # default: ROUND 5 dense all-pairs recurrent coupling
+        main_r7()  # default: ROUND 7 thalamic matrix/core dual coupling
