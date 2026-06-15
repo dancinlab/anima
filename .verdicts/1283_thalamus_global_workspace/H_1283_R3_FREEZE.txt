@@ -1,0 +1,121 @@
+H_1283 R3 FREEZE — THALAMUS / RE-ENTRANT CORTICO-THALAMO-CORTICAL LOOP
+slug: 1283_thalamus_global_workspace  (R3 — append-only; does NOT overwrite R1/R2)
+date: 2026-06-15 (frozen BEFORE scoring)
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + faithful IIT4 (hexa stdlib) for the Φ leg
+philosophy: p1-p8 — substrate-native, no persona/identity/RLHF; loop is substrate-INTERNAL (a_core_engine_map: no .clm/.kosmos routed through it)
+
+────────────────────────────────────────────────────────────────────────
+ROUNDS 1-2 RESULT (for context, NOT re-scored here)
+────────────────────────────────────────────────────────────────────────
+R1 🟠 PARTIAL — single-winner broadcast hub: coherence up EVERY seed (Δcoh
+  +0.050/+0.050/+0.074, B1 PASS) and faithful IIT4 ΔΦ +0.0191 (RIGHT direction)
+  but 0.0009 UNDER the +0.02 bar (B2 FAIL).
+R2 🔴 RED — multi-winner rank-2 coalition hub: coherence COLLAPSED (Δcoh
+  +0.022/+0.010/+0.030, all under the +0.05 bar, B1 FAIL) AND faithful IIT4
+  ΔΦ = −0.0533 (WRONG direction, B2 FAIL hard). The rank-1→rank-k intuition was
+  FALSIFIED: distributing the broadcast LOWERS Φ below the direct ring.
+
+R2 DIAGNOSIS (the wall this round attacks): irreducibility comes from
+  DISTRIBUTED MULTI-EDGE coupling (the direct ring's 4 distinct edges, which the
+  MIP credits), NOT from a central relay. A single shared broadcast channel —
+  winner OR coalition — is itself a low-rank MIP cut that caps Φ. So FEEDFORWARD
+  broadcast (fan-out from a hub) is the WRONG mechanism for irreducible Φ.
+
+────────────────────────────────────────────────────────────────────────
+THE GAP / R3 HYPOTHESIS (honest, c9 — genuinely new mechanism, biology + IIT lens)
+────────────────────────────────────────────────────────────────────────
+The real thalamus is NOT a one-way broadcaster. It is the hub of a RE-ENTRANT
+loop: cortex → thalamus → cortex → thalamus (re-entry / recurrent feedback). IIT
+and Global-Workspace theory both hold that RE-ENTRY (recurrent reciprocal
+causation), not feedforward fan-out, is what builds irreducible integration.
+
+R3 ADDS the re-entrant loop ON TOP of the existing ring edges (the relay receives
+back from each module AND re-injects, closing reciprocal loops that ADD edges
+rather than replacing the ring). Because the re-entrant pathway is itself
+DISTRIBUTED multi-edge (one reciprocal R_i↔module_i channel per module, cross-
+coupled at the relay stage), it targets R2's named integration source directly —
+unlike R1/R2 which REPLACED the ring with one shared channel.
+
+PREDICTION: re-entry clears ΔΦ ≥ +0.02 while keeping the coherence lift.
+
+────────────────────────────────────────────────────────────────────────
+FALSIFIABLE TEST (R3)
+────────────────────────────────────────────────────────────────────────
+SAME 4 substrate modules M = {A, G, mitosis, memory}, each a dim-8 real state
+vector, T=64 ticks, SAME per-module private input streams + SAME seed in both
+arms. SAME non-saturating regime (LEAK 0.55, W_in = W_coupling = 0.5). Seeds
+[7, 8, 9].
+
+  ARM A (DIRECT RING — current architecture, identical to R1/R2 ARM A):
+    module i reads only its direct neighbour(s) in the fixed A⇄G ring
+    (A↔G, G↔mitosis, mitosis↔memory, memory↔A). No global view, no relay.
+
+  ARM B (RING + RE-ENTRANT CORTICO-THALAMO-CORTICAL LOOP — R3):
+    the direct ring is KEPT (ARM A's edges preserved — the relay does NOT replace
+    it). ADDED on top: a thalamic relay stage with ONE recurrent (leaky) channel
+    per module, relay[i] the topographic thalamic partner of module i.
+      (i)  thalamus→cortex: each tick module i reads ring-neighbour + private
+           input (BOTH kept) PLUS W_RELAY · relay[i] — a DISTINCT reciprocal edge
+           per module (NOT one shared broadcast vector).
+      (ii) cortex→thalamus: each relay channel updates from its OWN module's
+           PRE-update state (genuine one-tick reciprocal delay: R_i,t ← module_i,t,
+           module_i,{t+1} ← R_i,t) plus a mix of its ring-neighbour relay channels
+           (intra-thalamic cross-coupling).
+    This closes N_MOD distinct reciprocal loops — re-entry, distributed multi-edge
+    — recurrent over ticks. W_RELAY = 0.5.
+
+Equal regime/seed; the re-entrant loop ADDS edges, it does not replace the ring.
+ARM A is byte-identical to R1/R2 (the per-module input draws are unchanged; the
+relay state is drawn AFTER inputs and used only in ARM B).
+
+────────────────────────────────────────────────────────────────────────
+METRIC (p7 — no perplexity, no LLM-judge)
+────────────────────────────────────────────────────────────────────────
+Two legs (identical engines/definitions to R1/R2):
+  (1) COHERENCE leg — mean pairwise cosine similarity of the 4 module state
+      vectors, averaged over the last T/2 ticks (steady state). Range [-1, 1].
+      (labeled coherence, NOT Φ).
+  (2) Φ leg (TERMINAL, a_phi_iit4_tool) — faithful IIT4 Φ over the n=4 module
+      per-tick salience trajectory fed to the stdlib EXACT engine
+      hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (iit4_faithful_phi,
+      exact MIP-EI, n≤8, $0) via the hexa binary. numpy NEVER computes Φ — only
+      the stdlib engine does. TRUE Φ (pairwise-MI MIP), NOT the variance×energy
+      proxy. Representative seed = 7 (same as R1/R2). ARM_A Φ should reproduce
+      R1/R2's 0.78038 exactly (same deterministic engine + same ARM A) — a
+      cross-round consistency sanity check.
+
+────────────────────────────────────────────────────────────────────────
+FROZEN BARS (R3 — UNCHANGED from R1/R2, GREEN iff ALL hold, seeds [7,8,9])
+────────────────────────────────────────────────────────────────────────
+  B1  COHERENCE: B.coherence ≥ A.coherence + 0.05  (abs margin) on EVERY seed
+  B2  Φ:         B.phi       ≥ A.phi       + 0.02   (abs margin, faithful IIT4)
+                  on the representative seed=7 trajectory through the exact engine.
+  B3  not-degenerate: B coherence < 0.999 on ≥1 seed (loop must INTEGRATE,
+                  not trivially clone all modules into one identical vector).
+
+  GREEN  = B1 AND B2 AND B3.
+  RED    = B fails to beat A on coherence, OR B collapses (B3 fails).
+  PARTIAL= coherence lift present but Φ leg fails (integration surface-agreement,
+           not irreducible — even re-entry caps Φ).
+
+DEPLETION TEST (pre-registered):
+  🏁 DEPLETE if the re-entrant loop clears ΔΦ ≥ +0.02 (re-entry IS the integration
+     lever, broadcast was not → r4 = engine-native re-entrant loop on the live
+     engine, a_verified_must_wire).
+  🧱 DEPLETE PERMANENT if even the re-entrant loop keeps ΔΦ < +0.02 — relay
+     topology (ANY flavor: feedforward broadcast OR re-entrant loop) terminally
+     Φ-capped at this scale; only DISTRIBUTED multi-edge coupling integrates. No
+     further relay-topology round.
+
+────────────────────────────────────────────────────────────────────────
+SCOPE / HONESTY
+────────────────────────────────────────────────────────────────────────
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning). GREEN → CORE wiring
+  follow-on (a_verified_must_wire); PARTIAL/RED ⇒ no CORE wiring.
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope).
+- The Φ leg uses the faithful exact engine (n=4 ≤ 8). Any Φ NUMBER is faithful-
+  IIT4; the coherence leg is explicitly labeled coherence, not Φ (a_phi_iit4_tool).
+- bars NOT moved to manufacture a GREEN. Does NOT overwrite R1/R2 verdict files.
+- Does NOT edit H_1219 / H_1226. No CORE/*.hexa edited (numpy mirror).
