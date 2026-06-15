@@ -26,6 +26,24 @@ fires on GREEN only). Toy/numpy DIRECTIONAL, faithful-Φ real. `UNIVERSE/h1283_t
 (main_r7 + matrix_core/matrix_core_shuffle modes) · `.verdicts/1283_thalamus_global_workspace/
 {H_1283_R7_FREEZE.txt, H_1283_R7_matrix_core.txt}`.
 
+## 2026-06-16 — domain(H_1283 R9): thalamus predictive information-bottleneck relay → 🔴/🧱 WALL CONFIRMED
+
+R9 of the H_1283 thalamus/GWT wall (c16/a_break_the_wall). ANGLE: make the relay cut INFORMATION-
+PRESERVING instead of arbitrary — a learned compressed PREDICTIVE CODE (information bottleneck). The
+thalamic relay learns gradient-free (delta-rule LMS, cerebellum H_1280 family) the minimal code z
+(width code_dim=3 << module dim 8 << concat 32) that best PREDICTS the other modules' next state.
+SAME frozen frame as R1-R5 (4 modules dim-8, 64 ticks, seeds [7,8,9], faithful IIT4 Φ via stdlib
+exact MIP-EI — numpy never computes Φ). FROZEN BEFORE SCORING. Arm A direct-ring vs arm B learned
+predictive-bottleneck vs **arm C random-projection of the SAME width** (load-bearing control) + SHUFFLE
+control (scrambled predictive target). RESULT 🔴/🧱: c2 PRIMARY Φ FAIL — ΔΦ(B−A) s7 −0.0067 · s8
++0.0203 · s9 +0.0097, only s8 clears +0.02 (not robust). c4 B≥C passes but TRIVIALLY: ΔΦ(B−C) =
++0.008/0.0/0.0 — the learned code is Φ-INDISTINGUISHABLE from a random projection of the same width on
+s8/s9. c5 SHUFFLE FIRED: on the lone B-green seed 8, the scrambled-target arm ΔΦ +0.0232 ≥ the
+structured arm → the tiny lift is variance/added-channel, NOT a learned predictive code. WALL CONFIRMED:
+an information-preserving (predictive-bottleneck) relay does NOT break the single-channel Φ cap at this
+scale. No wire, no tune, bar NOT moved (c9/c16/p7). Toy, numpy DIRECTIONAL, faithful-Φ REAL.
+`UNIVERSE/h1283_r9_predictive_bottleneck.py` · `.verdicts/1283_thalamus_global_workspace/H_1283_R9_predictive_bottleneck.txt`.
+
 ## 2026-06-16 — verify(303M): a303m_pass RE-VERIFIED FROM SCRATCH (engine-measured, byte-exact, p7)
 
 ACTUAL re-verification of the SHIPPED `anima-clm-chat-303m` from scratch on the live CORE engine
