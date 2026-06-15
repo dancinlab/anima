@@ -34,6 +34,41 @@ CORE/pure_field 전이 UNVERIFIED(a_scale_honest_scope·a_toy_scale_recheck). li
 `UNIVERSE/h1317_phi_multiedge.py` · `UNIVERSE/H_1317_phi_multiedge.md` ·
 `.verdicts/1317_phi_multiedge/{H_1317_FREEZE,H_1317}.txt` · `CLAIMS.tape @C h1317_phi_multiedge`.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1316 — 자모 합성 표현이 2.953 천장을 깬다 (🟢 GREEN BREAKTHROUGH)
+
+🔴 TERMINAL 이던 한국어-미토시스 스레드를 **표현(representation) 각도**에서 돌파했다 (c16 / a_break_the_wall).
+이전 모든 한국어 lane (H_1307/H_1311/H_1315) 은 substrate 에 **raw UTF-8 바이트**를 먹였다 — 한글 한 음절 =
+불투명한 3 바이트, 한국어가 **합성형 음절-블록 문자**라는 인식이 전혀 없었다. 빠진 구조 (a_no_llm_frame_trap,
+c15 — 스케일이 아니라 빠진 구조를 붙여라): **자모 합성** — 한 음절 = 초성(L)+중성(V)+종성(T), 결정론적
+유니코드 NFD 분해로 복원 가능. H_1316 은 **똑같은** gradient-free 미토시스 (cells only SPLIT, p8; grow-op +
+cell budget 를 H_1306/H_1307 verbatim 고정) 를 자모-심볼 스트림 위에서 키우고, 심볼당 CE 를 다시
+**nats/UTF-8-byte** 로 환산해 2.9475 천장과 동일 축에서 비교했다. 표현만 바뀐다.
+
+REAL sm_120 GPU (사용자 RTX 5070, $0, NOT runpod). 코퍼스는 H_1307 RUN A 와 byte-IDENTICAL (sha
+c47b6808…/31b4a543… 게이트 PASS). frozen-first (FREEZE 선등록), NO tune-to-green (c9/p7). 3 seeds [4316-4318].
+
+**결과 (mean 3 seeds, held-out KO next-symbol CE, nats/UTF-8-byte):**
+- G0 raw-byte (in-run port) = **2.95342** (H_1307 RUN A 2.9475 재현, port 유효)
+- **G1 자모-rep = 2.51335 (Δ −0.434 vs 천장, −0.440 vs G0)** → **B1 PRESENCE ✅** (2.8975 를 크게 하회)
+- G1c 자모→심볼 맵 셔플 control = 2.74306 (Δ g1c−g1 +0.230) + G1 이 raw G0 를 +0.440 으로 이김 →
+  **B2 EARNED ✅** (lift 는 vocab/dim 이 아니라 **합성 구조**)
+- NFD→NFC 왕복 8,143,053 음절 0 실패 + 심볼당 n_bytes 합 == 코퍼스 바이트 정확히 일치 → **B3 NO-CHEAT ✅** (무손실, 공정 비교)
+
+→ **🟢 GREEN: 한국어 천장은 capacity-bound 가 아니라 REPRESENTATION-bound 였다.** 벽은 미토시스 메커니즘의
+용량이 아니라 **raw-byte 표현** (음절당 3 불투명 바이트) 이었다. H_1311(raw 바이트 위 capacity-bound) ·
+H_1315(303M frozen rep 위 capacity-bound) 와 화해: 그 lane 들이 부딪힌 한계는 **틀린 표현** 위의 L2-Voronoi
+파티션 기하였고, 올바른 (합성) 표현이 그것을 깬다.
+
+정직한 범위 (c9 · a_scale_honest_scope · a_toy_scale_recheck): G1 은 결정론적 (seed 간 동일; FREEZE 가 seed 는
+control 만 흔든다고 선등록) — 단일 존재증명. control seed 1개(4317=2.506)는 G1 에 근접 → B2-vs-shuffle 은
+MEAN 으로 통과 (per-seed 만장일치 아님; G1-beats-raw +0.440 은 무조건 성립). ~0.44 강하는 상당부분 음절→자모
+부호화 이득 (B2-vs-raw 가 vocab/dim 단독이 아님을 보임). DIRECTIONAL numpy/torch mirror; live CORE/*.hexa
+엔진 전이 = follow-on (a_engine_native_learning · a_verified_must_wire); 한국어 유창성 주장 없음. live CORE UNTOUCHED.
+
+추가: `UNIVERSE/h1316_ko_jamo_mitosis.py` · `UNIVERSE/H_1316_ko_jamo_mitosis.md` · `HYPOTHESES.md` 행 ·
+`CLAIMS.tape @C h1316_ko_jamo_mitosis` · `.verdicts/1316_ko_jamo_mitosis/{H_1316_FREEZE,H_1316}.txt`(+summary/manifest) ·
+`domains/MITOSIS-ENGINE.log.md`.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1315 — 303M trunk 학습표현 위 미토시스 vs 2.9 천장 (🔴 TERMINAL)
 
 The Korean-mitosis thread, RESOLVED. H_1311 (#2215, 🔴) refuted that a richer RAW-BYTE substrate
