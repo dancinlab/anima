@@ -1,0 +1,43 @@
+================================================================================================
+H_1303 — nonphotic / arousal OPPOSITE-SIGN Zeitgeber — DEPLETION TEST r9 (c15 ladder)
+================================================================================================
+
+HARMONIC-ADDITION CHECK (anti-Goodhart, frozen):
+  photic +0.18@0.0 - nonphotic 0.1@0.3
+  net PRC fits ONE sinusoid: A=0.23135 R=0.93258, max residual = 2.22e-16
+  => two opposite-sign sinusoidal PRCs (same freq) == ONE single PRC (REDUCIBLE)
+
+--- seed 4320 ---
+  A photic-only lock   = 0.51511
+  B two-Zeitgeber lock = 0.42134
+  A-FIT (1 combined PRC, K=0.23135 ref=0.93258) lock = 0.45171
+  B-SHUFFLE lock = 0.01386   B-ABLATE lock = 0.51511
+  [breakthrough] diff-period lock = 0.15052  gated two=0.36802 vs gated-photic=0.2063
+  distances: {'B_vs_AFIT(c2)': 0.03038, 'B_vs_photic(c3)': 0.09377, 'SHUF_vs_photic(c4)': 0.49875, 'ABL_vs_photic(c5)': 0.0, 'DIFFPERIOD_vs_photic': 0.36459, 'GATED_two_vs_gated_photic': 0.16173}
+  bars c1..c6 = [True,False,True,False,True,True]  GREEN=False
+
+--- seed 4321 ---
+  A photic-only lock   = 0.51511
+  B two-Zeitgeber lock = 0.42134
+  A-FIT (1 combined PRC, K=0.23135 ref=0.93258) lock = 0.45171
+  B-SHUFFLE lock = 0.79945   B-ABLATE lock = 0.51511
+  [breakthrough] diff-period lock = 0.15052  gated two=0.36802 vs gated-photic=0.2063
+  distances: {'B_vs_AFIT(c2)': 0.03038, 'B_vs_photic(c3)': 0.09377, 'SHUF_vs_photic(c4)': 0.28434, 'ABL_vs_photic(c5)': 0.0, 'DIFFPERIOD_vs_photic': 0.36459, 'GATED_two_vs_gated_photic': 0.16173}
+  bars c1..c6 = [True,False,True,False,True,True]  GREEN=False
+
+--- seed 4322 ---
+  A photic-only lock   = 0.51511
+  B two-Zeitgeber lock = 0.42134
+  A-FIT (1 combined PRC, K=0.23135 ref=0.93258) lock = 0.45171
+  B-SHUFFLE lock = 0.18057   B-ABLATE lock = 0.51511
+  [breakthrough] diff-period lock = 0.15052  gated two=0.36802 vs gated-photic=0.2063
+  distances: {'B_vs_AFIT(c2)': 0.03038, 'B_vs_photic(c3)': 0.09377, 'SHUF_vs_photic(c4)': 0.33454, 'ABL_vs_photic(c5)': 0.0, 'DIFFPERIOD_vs_photic': 0.36459, 'GATED_two_vs_gated_photic': 0.16173}
+  bars c1..c6 = [True,False,True,False,True,True]  GREEN=False
+
+================================================================================================
+VERDICT: 🏁 COLLAPSE — the two opposite-sign Zeitgebers REDUCE to one combined PRC that PhaseResetClock already represents (c2 FAILS). No new structure.
+LADDER : c15 brain-structure ladder DEPLETED 🏁 (after HD23-HD36 + r9 honest attempt)
+GREEN seeds = 0/3  ·  c2 (distinct) all seeds = False
+================================================================================================
+
+JSON:{"hypothesis": "H_1303_nonphotic_zeitgeber", "seeds": [4320, 4321, 4322], "harmonic_addition_residual": 2.220446049250313e-16, "all_green": false, "c2_distinct_all_seeds": false, "verdict": "\ud83c\udfc1 COLLAPSE \u2014 the two opposite-sign Zeitgebers REDUCE to one combined PRC that PhaseResetClock already represents (c2 FAILS). No new structure.", "ladder": "c15 brain-structure ladder DEPLETED \ud83c\udfc1 (after HD23-HD36 + r9 honest attempt)", "per_seed": {"4320": {"A_photic_lock": 0.51511, "B_two_lock": 0.42134, "A_FIT_K": 0.23135, "A_FIT_ref": 0.93258, "A_FIT_lock": 0.45171, "sinusoid_sum_residual": 2.220446049250313e-16, "B_SHUF_lock": 0.01386, "B_ABL_lock": 0.51511, "B_DIFFPERIOD_lock": 0.15052, "B_GATED_photic_only_lock": 0.2063, "B_GATED_two_lock": 0.36802, "c_distances": {"B_vs_AFIT(c2)": 0.03038, "B_vs_photic(c3)": 0.09377, "SHUF_vs_photic(c4)": 0.49875, "ABL_vs_photic(c5)": 0.0, "DIFFPERIOD_vs_photic": 0.36459, "GATED_two_vs_gated_photic": 0.16173}, "bars": {"c1": true, "c2": false, "c3": true, "c4": false, "c5": true, "c6": true}, "GREEN": false}, "4321": {"A_photic_lock": 0.51511, "B_two_lock": 0.42134, "A_FIT_K": 0.23135, "A_FIT_ref": 0.93258, "A_FIT_lock": 0.45171, "sinusoid_sum_residual": 2.220446049250313e-16, "B_SHUF_lock": 0.79945, "B_ABL_lock": 0.51511, "B_DIFFPERIOD_lock": 0.15052, "B_GATED_photic_only_lock": 0.2063, "B_GATED_two_lock": 0.36802, "c_distances": {"B_vs_AFIT(c2)": 0.03038, "B_vs_photic(c3)": 0.09377, "SHUF_vs_photic(c4)": 0.28434, "ABL_vs_photic(c5)": 0.0, "DIFFPERIOD_vs_photic": 0.36459, "GATED_two_vs_gated_photic": 0.16173}, "bars": {"c1": true, "c2": false, "c3": true, "c4": false, "c5": true, "c6": true}, "GREEN": false}, "4322": {"A_photic_lock": 0.51511, "B_two_lock": 0.42134, "A_FIT_K": 0.23135, "A_FIT_ref": 0.93258, "A_FIT_lock": 0.45171, "sinusoid_sum_residual": 2.220446049250313e-16, "B_SHUF_lock": 0.18057, "B_ABL_lock": 0.51511, "B_DIFFPERIOD_lock": 0.15052, "B_GATED_photic_only_lock": 0.2063, "B_GATED_two_lock": 0.36802, "c_distances": {"B_vs_AFIT(c2)": 0.03038, "B_vs_photic(c3)": 0.09377, "SHUF_vs_photic(c4)": 0.33454, "ABL_vs_photic(c5)": 0.0, "DIFFPERIOD_vs_photic": 0.36459, "GATED_two_vs_gated_photic": 0.16173}, "bars": {"c1": true, "c2": false, "c3": true, "c4": false, "c5": true, "c6": true}, "GREEN": false}}}

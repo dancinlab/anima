@@ -1,0 +1,59 @@
+H_1303 — nonphotic / arousal opposite-sign Zeitgeber (HD37 candidate, c15 brain-structure ladder)
+DEPLETION TEST r9 — FROZEN PRE-REGISTRATION (all bars fixed BEFORE scoring; NO bar moves after)
+================================================================================================
+
+CANDIDATE
+  A SECOND Zeitgeber channel with an OPPOSITE-SIGN phase-response curve (PRC) vs the photic one in
+  PhaseResetClock (H_1301). The claim under test: two opposite-sign Zeitgebers acting TOGETHER reach
+  a NET phase outcome that NEITHER alone — and NO single-Zeitgeber PRC — can reach (a competitive
+  intermediate equilibrium = a genuinely new 2-input structure).
+
+FALSIFIER (the load-bearing distinctness, frozen)
+  DISTINCT iff: the two-Zeitgeber locked phase is UNREACHABLE by any single-Zeitgeber PhaseResetClock
+  (single sinusoidal PRC), AND the controls (shuffle the 2nd Zeitgeber sign/timing; ablate = remove
+  the 2nd Zeitgeber) collapse the net-phase advantage.
+  COLLAPSE (honest 🏁) iff: the two-Zeitgeber net response REDUCES to one single PRC that
+  PhaseResetClock already represents — i.e. a single PhaseResetClock with a fitted (combined K, ref)
+  reproduces the two-Zeitgeber locked phase to tolerance. Then there is NO new structure → DEPLETION.
+
+REGIME (frozen)
+  SEEDS        = [4320, 4321, 4322]
+  TAU_INTERNAL = 24.5
+  T_ZEIT       = 24.0            (both Zeitgebers periodic at T for the primary same-period test)
+  K_PHOTIC     = 0.18           (photic PRC coupling, sign +, reference phase r1 = 0.0)
+  K_NONPHOTIC  = 0.10           (nonphotic PRC coupling, sign -, reference phase r2 = 0.30)
+  N_CYCLES     = 200, dt = 0.05, SETTLE = 120 cycles before reading the locked phase
+  ARMS:
+    A     = single-Zeitgeber PhaseResetClock, PHOTIC only (the H_1301 lane = the 2-input falsifier
+            baseline that should FAIL to produce a non-reducible 2-input phase)
+    A-FIT = single-Zeitgeber PhaseResetClock with a COMBINED PRC (K_fit, r_fit) fitted to the
+            two-Zeitgeber net force (the reducibility test: can ONE PRC reproduce arm B?)
+    B     = two opposite-sign Zeitgebers (photic +K1@r1, nonphotic -K2@r2)
+    B-SHUFFLE = randomize the 2nd Zeitgeber's sign and arrival timing (kills the coherent 2nd channel)
+    B-ABLATE  = remove the 2nd Zeitgeber (K2=0) -> reduces to PhaseResetClock photic-only
+
+BARS (frozen — a bar NEVER moves after this file is written)
+  c1 PRESENCE   : B reaches a stable locked phase
+  c2 DISTINCT   : the two-Zeitgeber net PRC is NOT reproducible by a single sinusoidal PRC
+                  -> |B_lock - A_FIT_lock| > 0.05 (a single combined PRC CANNOT match B)
+                  IF |B_lock - A_FIT_lock| <= 0.05 -> c2 FAILS -> COLLAPSE (the expected depletion result)
+  c3 NEW-PHASE  : B_lock differs from BOTH single anchors:
+                  |B_lock - A_lock(photic-only)| > 0.05 AND B_lock is not == any single-Zeitgeber lock
+  c4 EARNED-SHUF: B-SHUFFLE collapses the net-phase advantage (shuf_lock ~ photic-only, |delta| < 0.05)
+  c5 EARNED-ABL : B-ABLATE == photic-only PhaseResetClock (|delta| < 1e-3)
+  c6 NO-FAB     : no fabricated lock off any anchor without a coherent 2nd channel
+
+  GREEN iff c1 and c2 and c3 and c4 and c5 and c6. If c2 FAILS (single PRC reproduces B) -> honest
+  DEPLETION (the two opposite-sign Zeitgebers collapse to one combined PRC PhaseResetClock already has).
+
+ANTI-GOODHART
+  The SUM of two sinusoidal PRCs at the SAME frequency is, by the harmonic-addition identity,
+  EXACTLY one sinusoidal PRC (combined amplitude A, reference R). This is checked numerically
+  (residual must be ~machine-eps). The breakthrough attempt (a_break_the_wall) tests three escape
+  routes that could break reducibility — (i) asymmetric K, (ii) different Zeitgeber periods T1 != T2,
+  (iii) nonlinear dead-zone gating — each must produce a control-surviving non-reducible lock or it
+  is honest DEPLETION. NO tune-to-green: bars frozen here, scored once.
+
+EXPECTATION (honest, per the r8 hand-off + the H_1301 card)
+  This is the explicit DEPLETION rung. The strong prior is COLLAPSE: two opposite-sign sinusoidal
+  PRCs at one frequency reduce to one combined PRC -> c2 FAILS -> c15 brain-structure ladder DEPLETED.
