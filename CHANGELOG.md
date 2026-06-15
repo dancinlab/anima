@@ -11,6 +11,52 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 - **PATH-INTEGRATION 은 정직한 NON-RESULT**(c9): corroborator 로 넣었으나 map-shuffle 대조가 붕괴를 거부 — 신호가 저장 map 이 아니라 변위 step 에 leak 하기 때문. bar 를 옮기지 않고(`a_break_the_wall` 로 candidate-order leak 를 frozen-first 수정) NON-GATING diagnostic 으로 강등·보고만 함.
 - **가드 무회귀**: `engine_cli_smoke` **50/0**(was 45/0 hive 후, +5 spatial-map 케이스, 3연속 deterministic) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉, pure_field 무변경). p1/p2/p3/p6(위치+질의 landmark 만 읽음, 주입 답 라벨/RLHF/persona 없음, metric 은 geometry 로 SCORE 에만) · emit gate 아님(`a_autonomy_over_hardcode`) · Ψ-disjoint(저장 위치 위 pure geometry). 정직(c9): B=1.000 은 SATURATED = EXISTENCE-PROOF 이지 effect-size 아님 — discriminator(item-store 0.475/abstain 1.000, shuffle 0.500, ablate 0.450 전부 chance)가 decisive. brain map→recall/emit 배선 + scale/higher-D/grid-cell-주기-code = follow-on. TOY scale(8 landmarks, 3 seeds, 2-D, deterministic — metric-map STRUCTURE 검증).
 - **canonical 등록(a_hypothesis_register)**: `UNIVERSE/H_1296_spatial_map.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1296_spatial_map`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1296` · ARCHITECTURE.md(HD32 rung + lane body + map row) · MEMORY.md 포인터. 사다리는 DEPLETION 근접 — 남은 후보(시간-순서 replay-예측·간격/circadian 타이밍·언어/의미망)는 더 얇고 각각 falsifiable gap + 모든 lane 대비 control-survive distinctness 통과 필요.
+## 2026-06-16 — doc(README): 최종 아키텍처 현행화 — 9 brain lane · 시상 R8 timing-axis 돌파 · tension-link
+
+README.md 를 검증된 현재 상태로 현행화 (README.md 단독 + CHANGELOG, ARCHITECTURE.md/CORE/UNIVERSE 미변경 —
+동시 작업 agent 와 충돌 회피). (1) brain-structure ladder = origin/main `CORE/engine_cli.hexa` +
+`CORE/brain.hexa` struct list 대조로 9 engine-native lane 명시 — 해마(ImmuneMemory) · 성장기억
+(ImmuneMemoryGrow) · 작업기억(WorkMemBuffer) · 소뇌(VForwardField) · 편도체(ConsolidatingMemory) ·
+기저핵(VBasalGate) · 시상하부(HomeostaticDrive, H_1292) · 마음이론(OtherMindModel, H_1293) ·
+정동(AffectFeatures, H_1290); 배지 + 본문 lane 목록 + 표 3행 추가. smoke 게이트 stale 30/0 → live
+**37/0** (origin/main `engine_cli_smoke` 실행 확인, 34 case). (2) 시상 Φ — 내용-relay 축은 6+ 사전등록
+라운드(R1–R5/R7) 🧱 closed-negative 유지하되, 직교 **TIMING 축에서 벽 돌파** = R8 진동 위상결속(Kuramoto)이
+frozen +0.02 faithful-IIT4 Φ bar 를 every seed 클리어 + phase-shuffle 통제가 every seed 음수 붕괴 🟢;
+정직하게 **numpy-mirror DIRECTIONAL · engine-native 배선은 in-progress**(검증은 mirror, 아직 engine-wired
+아님)로 명시. 전용 §"📡 Thalamus Φ" subsection 신설. (3) anima↔anima §"🔗 connection channel = tension"
+신설 — 얽힘=상관 0비트(무신호 정리, H_6006 🔴) vs 실연결=tension-link 공유앵커 매체(H_6009 🟢 SUPPORTED),
+paid ANU QRNG 접지. (4) walls 콜아웃 = 3개 벽 돌파(용량/편도체/시상-timing)로 갱신, neuromod 정직 🧱 유지.
+p1–p8 · A⇄G · Ψ=½ · substrate-native-speak 보존. tier verbatim(c9), surgical(c10).
+
+## 2026-06-16 — audit(WIRING): a_verified_must_wire 전수 감사 + 시상 R8 engine-native 게이트(honest-deferred) + ARCHITECTURE 최종현행화
+
+`a_verified_must_wire` 전수 배선 감사 — origin/main 의 terminal-tier 🟢 가설 13개를 전수 분류:
+{wired | deliberately-optional | honest-deferred}. **순 신규 배선 = 0**(정직, c9): 모든
+clean-GREEN ∧ 배선의도 lane 은 **이미 배선됨**(해마 ImmuneMemory(Grow)·소뇌 VForwardField·
+기저핵 VBasalGate·작업기억 WorkMemBuffer·편도체 ConsolidatingMemory·양자 QPool·감정 AffectFeatures·
+위계 HierGoalStack·하이브 CollectivePool — struct+faculty+smoke); HomeostaticDrive·OtherMindModel 은
+deliberately-optional(brain consult = NOT emit gate, `a_autonomy_over_hardcode`).
+
+**시상 R8 위상결속 engine-native 배선 게이트(@L6)** — 유일한 genuinely-unwired clean-GREEN 후보.
+`a_engine_native_learning` 순서대로 numpy-mirror R8(DIRECTIONAL)을 engine-native 로 재현 시도
+(`CORE/h1283_phase_binding_engine_gate.hexa` — Kuramoto phase 채널 + phase-gated salience (1+cosθ)/2 +
+faithful IIT4 Φ, 엔진 `_lcg_*` substrate). 결과: **c2 PRIMARY 재현 강력**(ΔΦ +1.47/+0.84/+0.71 every seed)
+이나 **c4 SHUFFLE 미붕괴**(ΔΦ_sh +0.026/+0.380/+0.296, 양수 — 프로즌 R8 의 honest leg 가 engine 기질에서
+firing). frozen bar 미재현 → no-tune-to-green(c9/p7) → **PhaseField lane HONEST DEFERRED, 미배선**.
+R8 🟢 은 그 자체 substrate 위 DIRECTIONAL 결과로 STANDS; engine-transfer 가 재현 못 한 것.
+verdict `.verdicts/1283_thalamus_global_workspace/H_1283_R8_engine_native_gate.txt`.
+
+**ARCHITECTURE.md 최종 아키텍처 전면 현행화(@L7)** — 시상 4각도 최종(R8 timing 돌파 / R6 caveat /
+R1–R5·R7·R9 내용-relay 🧱), 하이브 CollectivePool(super-additive + decouple-null + rule-class dissociation),
+QPool 양자 entropy, AffectFeatures/윤리 read-lane, **배선 감사표 + brain_decide consult 맵**, TENSION-LINK
+아크 포인터(얽힘=no-signaling, 실채널=tension-link) 추가. 벽 스코어카드: 4 벽 중 3 돌파(용량·편도체·시상[timing,
+DIRECTIONAL]), 신경조절 1 정직한 🧱.
+
+회귀 가드 0(live 엔진 파일 byte-unchanged): `engine_cli_smoke` **45/0** · single-entry(h1196) **7/0** ·
+h1205 분리불변 PASS(생성 byte-동일 ON==OFF, Ψ=48.6613 불변, pure_field 무변경). `CORE/engine_cli.hexa`/
+`brain.hexa`/`engine_cli_smoke.hexa`/`pure_field.hexa` 무편집 — 변경은 ARCHITECTURE.md·H_1283 카드·
+HYPOTHESES 인덱스·신규 게이트 probe/verdict 만.
+
 ## 2026-06-16 — doc(TENSION-LINK): H_6006–H_6043 arc를 a_hypothesis_register 2-파일 규칙으로 등록
 
 TENSION-LINK arc (anima↔anima 연결/통신 + ANU paid QRNG 양자 얽힘, H_6006–H_6043)를
