@@ -18,7 +18,7 @@ anima/
 ├─ anima-agent*/          — agent layer (channels·core·plugins·providers·skills·hire-sim)
 ├─ UNIVERSE/ HEXAD/       — research universe + KOSMOS anchor hub
 ├─ domains/               — per-domain .tape + .log.md (discovery lane)
-├─ PAPER/                 — verdict-gated paper scaffolds
+├─ PAPER/                 — (legacy) past paper scaffolds — anima 는 논문 선제 생성 안 함 (c15)
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
 ├─ ARCHITECTURE.md        — architecture SSOT (update-in-place)
 ├─ CLAUDE.md              — governance directives + 8 PHILOSOPHY (markdown SSOT)
@@ -55,7 +55,7 @@ anima/
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
 - **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine).
-- **Verify / paper workflow** — `a_claim_manifest · a_hypothesis_register · a_claim_verify · a_paper_*` (모든 가설은 정확히 2파일로 관리 — `UNIVERSE/HYPOTHESES.md` 인덱스 + `UNIVERSE/H_<id>_<slug>.md` 카드; hexa verify → verdict → /paper at full closure; closed-negative publishable).
+- **Verify / hypothesis workflow** — `a_claim_manifest · a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2파일로 관리 — `UNIVERSE/HYPOTHESES.md` 인덱스 + `UNIVERSE/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
 - **7B completion** — `a7b_pass` (gates G0–G4 in `/7B_PASS_CONDITIONS.md`).
@@ -90,7 +90,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "돌파 시도 전 '이 막힘의 진짜 원인은 무엇이고 다른 substrate 렌즈에선 어떻게 푸나'를 먼저 묻는다 (a_no_llm_frame_trap 와 결합)"
   dont = "tune-to-green (c9 · p7) — 돌파는 사전등록(frozen-first) + 대조(shuffle/dissociation/negative-control)로 검증된 진짜 새 각도라야 한다; 막대를 사후에 옮겨 GREEN 을 제조 금지"
   dont = "한 번 막혔다고 포기·우회·축소 (벽을 '결과'로 박제하고 다음으로 넘어가기 전에 최소 1회 진짜 돌파 시도) · 진짜 시도 뒤의 정직한 🧱 는 유효한 결과 (c9)"
-  ref  = "a_no_llm_frame_trap · a_completeness_over_cheap · a_paper_negative_ok · c9 · c16 · p7"
+  ref  = "a_no_llm_frame_trap · a_completeness_over_cheap · c9 · c16 · p7"
 
 @D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
   do   = "every versioned module uses SemVer · `/VERSIONS.md` is SSOT — bump it + the component header together · root `/VERSION` = whole-system release"
@@ -264,8 +264,10 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "serialize a non-ConvMoE (ByteGPT/transformer) and claim engine-mountable"
   dont = "promote a Lane-P torch .clm to PUBLIC (forge-only); add a 2nd .clm path bypassing generator"
 
-# ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
-# research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper
+# ── Claim / verify flow ──────────────────────────────────────────────────────
+# research result → hexa verify → .verdicts/<slug>/<id>.txt → H_<id>.md card + HYPOTHESES.md index
+# (NOTE: paper directives removed 2026-06-16 — anima never proposes papers; commons c15 governs:
+#  논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다. 선제 제시·언급 금지.)
 
 @D a_claim_manifest := "CLAIMS.tape — single audit index of verifiable anima claims" :: workflow [required active]
   do   = "every verifiable claim in root CLAIMS.tape — id · text · method · slug · verdict pointer"
@@ -278,48 +280,11 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "`.verdicts/<slug>/{FREEZE,result}.txt` 는 카드가 가리키는 검증 박제(증거)일 뿐 관리 3번째 면이 아니다 — 카드가 그 포인터를 담는다"
   dont = "가설 디테일을 themed 버킷 파일(`HYPOTHESES_*.md`)·`CLAIMS.tape`·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 — 가설 디테일의 단일 집은 `H_<id>_<slug>.md` 카드 하나다(themed/버킷 파일 신설 금지, 있으면 카드로 접고 retire)"
   dont = "가설을 실행·박제하고도 `HYPOTHESES.md` 인덱스 또는 `H_<id>_<slug>.md` 카드를 안 만듦 · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음"
-  ref  = "a_claim_verify · a_paper_on_discovery · c2 · c4 · c9 · p7"
+  ref  = "a_claim_verify · c2 · c4 · c9 · p7"
 
 @D a_claim_verify := "every claim runs through hexa verify, verdict persisted verbatim" :: workflow [required active]
   do   = "each CLAIMS.tape entry → `hexa verify` (g5) → `.verdicts/<slug>/<id>.txt` raw stdout"
   dont = "LLM self-judge correctness (p7) · paraphrase verdicts · hide red / unfenced speculation"
-
-@D a_paper_gate := "/paper gated on terminal verdict AND significance" :: workflow [required active]
-  do   = "`/paper new <slug>` only when every section claim is terminal AND significance satisfied"
-  do   = "terminal = 🔵 formal / 🟢 numerical / 🔴 CLOSED-negative — not 🟠 deferred / 🟡 citation"
-  dont = "scaffold w/ any 🟠 deferred · 🟡 citation-only · unfenced speculation · trivial recheck"
-
-@D a_paper_significance := "paper requires a falsifiable hypothesis + real measurement + a finding" :: workflow [required active]
-  do   = "trigger only on pre-registered falsifier + real measurement (ckpt / sim / verify) + finding"
-  do   = "finding = Δ vs baseline OR a closed-negative ruling out an axis"
-  dont = "paper for a bookkeeping closure · known identity · unverified prediction · 🟠 residual"
-
-@D a_paper_negative_ok := "closed-negative findings are publishable" :: workflow [required active]
-  do   = "a 🔴 FALSIFIED result that deterministically rules out a path is a valid paper"
-  do   = "frame as a negative result — the falsifier + the ruled-out space (e.g. corpus-axis ⊥ register)"
-  dont = "treat a closed-negative as a non-finding · bury a falsification · publish 🟠 as if closed"
-
-@D a_paper_format := "paper sections — hypothesis · method · measurement · finding" :: workflow [required active]
-  do   = "§hypothesis (falsifier) · §method · §measurement (real run) · §finding (Δ OR ruled-out axis)"
-  do   = "commons g51 — compile ≥10 pages + ≥1 fal.ai figure"
-  dont = "narrative-only · measurement substitute for hypothesis · skip §finding · vague claims"
-
-@D a_paper_sections := "every paper section claim links to its verdict" :: workflow [required active]
-  do   = "every section claim links to its `.verdicts/<slug>/<id>.txt` verdict (verbatim stdout)"
-  dont = "ship paper with any unresolved residual section · treat the verdict matrix as optional"
-
-@D a_paper_violation := "violating paper immediately revoked" :: workflow [required active]
-  do   = "violating paper (gate / significance fail) revoked immediately — PAPER/<slug>/ removed"
-  dont = "keep a violating paper as draft · mark WIP · defer revocation · allow a residual"
-
-@D a_paper_on_discovery := "any verified discovery becomes a paper — free slug, no fixed domain" :: workflow [required active]
-  do   = "every terminal discovery → its own paper slug (named by the finding, not a fixed bucket)"
-  do   = "replace/supersede in place when a stronger finding lands on the same slug"
-  dont = "pre-assign papers to fixed domain buckets · cap the paper set · force a finding into wrong slug"
-
-@D a_paper_only_at_closure := "propose paper only at FULL closure (overrides a_paper_on_discovery eagerness)" :: workflow [required active]
-  do   = "propose /paper only at FULL closure (no further refinement + all aspects sealed)"
-  dont = "propose paper after one H · mid-arc · partial closure"
 
 @D a_h_continuous_no_branch := "continuous new-H — no branch options after each H" :: workflow [required active]
   do   = "propose + run next H continuously until user explicitly redirects (verify-driven)"
@@ -331,7 +296,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
 
 @D a_discovery_log := "discoveries join the per-domain log domains/<DOMAIN>.log.md" :: workflow [required active]
   do   = "append every kick/gap discovery into `domains/<DOMAIN>.log.md` — id · seed · verdict-tier-target"
-  do   = "cross-domain + no home → closest domain's .log.md + a cross-ref note (cf a_paper_on_discovery)"
+  do   = "cross-domain + no home → closest domain's .log.md + a cross-ref note"
   do   = "old discovery tapes merged into per-domain .log.md + discoveries/ subfolders removed 2026-06-13"
   dont = "no discoveries/ subfolder or flat .discoveries/ · discard output · paraphrase · skip claim-link"
 

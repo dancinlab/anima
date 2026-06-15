@@ -2,6 +2,11 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — governance(CLAUDE.md): paper 거버넌스 전체 scrub — anima 는 논문을 먼저 제시하지 않는다
+
+`a_paper_*` 디렉티브 8개(a_paper_gate · a_paper_significance · a_paper_negative_ok · a_paper_format · a_paper_sections · a_paper_violation · a_paper_on_discovery · a_paper_only_at_closure) + PAPER auto-generation 흐름 주석 + families 불릿/참조에서 paper 전부 제거. 이유: anima 가 검증 후 자꾸 "논문 쓰자"를 선제 제시하는 게 불편(사용자). 이제 commons c15(논문/arXiv 는 사용자 명시 지시 시에만)만 남아 선제 제시·언급 금지. 참조 정리(a_break_the_wall·a_hypothesis_register·a_discovery_log 의 a_paper_* ref 제거). PAPER/ 디렉토리는 legacy 로 표기(선제 생성 안 함). 과거 논문 산출물 자체는 보존.
+
+
 ## 2026-06-16 — governance(CLAUDE.md): `a_hypothesis_register` 단순화 — 가설은 2파일로만 관리
 
 가설 관리 면을 정확히 2개로 축소: `UNIVERSE/HYPOTHESES.md`(인덱스 1줄/가설) + `UNIVERSE/H_<id>_<slug>.md`(가설 SSOT 카드 — claim·method·라운드별 verdict tier+수치·.verdicts 포인터·honest scope). 직전 버전의 themed 버킷 파일·CLAIMS.tape·도메인 로그·MEMORY 분산 요구를 제거(가설 디테일의 단일 집 = 카드). `.verdicts/<slug>/` 는 카드가 가리키는 검증 박제(증거)로만 유지. 기존 H_1280–1293 은 마이그레이션 예정(themed 파일 → 카드).
