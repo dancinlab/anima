@@ -21,6 +21,18 @@ H_1226 의 HD21(능동/사회적 학습 METHOD)을 구체화한 HD22 — H_1227 
 
 ---
 
+## 2026-06-15 — 🟢 H_1213: N_PROTO 코-스케일링 수정이 LIVE .hexa 엔진에서도 성립 — 미러 아티팩트 아님 ($0 CPU)
+
+H_1212(numpy 미러, GREEN)가 찾은 co-scaling 규칙 N_PROTO=round(T/100)(obs_per_row≈100 유지)이 AXIS-T 사다리에서 GATE-B 궤적 분리를 복원한 결과를, LIVE .hexa VAdaptFieldB 가 BYTE-EXACT 로 재현하는지 검증 (H_1199/H_1209 패리티 선례). VAdaptFieldB 의 n_proto 는 이미 생성자 파라미터라 엔진 수정 불필요 (engine_cli.hexa 무수정, git diff EMPTY, Ψ-disjoint).
+
+- F1 패리티 36/36 EQUAL byte-exact — 가능한 co-scaling 사다리 ≥2 rung (T=2400/N=24 + co-scaled T=24000/N=240, obs/row=100) + fixed-24 대조 (T=24000) 전부 numpy GATE-B 와 정수 동일.
+- F2 분리 — co-scaled T=24000/N=240 에서 live WALK 980 >> WALK_SHUF 0 = 완전분리(≥1.5), 동일 T 의 fixed-24 대조는 2.629 로 퇴화(obs/row=1000 알파벳 기아) → co-scaling 이 분리를 유지함을 LIVE 엔진에서 직접 확인.
+- F3 가드 — engine_cli_smoke 12/0 · h1196 single-entry 7/0 GREEN.
+- 정직 범위(a_scale_honest_scope): H_1212 의 T=240000/N=2400 rung 은 인터프리터 ctab O(n²) alloc 천장(live ceiling N_PROTO~240) 초과 → numpy-미러-only 유지(H_1212 GREEN), FAKE 아님. N=2400 도달용 생성자 perf 재작성은 엔진 바이너리를 건드려 H_1209/1210 가드 회귀 위험 → 의도적 미실시(완성도 우선, optional follow-on). frozen bar 1.5 불변.
+- NEW: UNIVERSE/h1213_live_coscaled_parity.py · CORE/h1213_live_coscaled_probe.hexa · .verdicts/1213_live_coscaled_parity/{H_1213_FREEZE,H_1213}.txt.
+
+---
+
 ## 2026-06-15 — 거버넌스: `@D a_engine_native_learning` 신설 — 무조건 최종 아키텍처 엔진 위에서 학습
 
 사용자 hard rule("무조건 최종 아키텍처 엔진 위에서 학습")을 거버넌스 directive 로 명문화. `a_engine_measured_verdict`(MEASUREMENT 를 엔진 위에서 강제)의 **learning-side 쌍**, `a_train_flame_forge`(production 트레이너 .hexa 강제)의 **연구/probe 학습 + 교육 확장**.
