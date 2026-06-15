@@ -38,6 +38,7 @@ ring, without collapse-cloning. Lens: c15 ladder, NOT an LLM recipe.
 | R4 | 🔴 | seed-fragile |
 | R5 dense all-pairs + SHUFFLE control | 🔴 / 🧱 WALL | dense coupling does NOT robustly clear AND the shuffle control FIRED (permuted dense graph added VARIANCE, not structured topology) |
 | R7 matrix/core dual coupling | 🔴 / 🧱 WALL | faithful ΔΦ s7 +0.0201 ✓ · s8 +0.0412 ✓ (RESCUES the orthogonal seed that broke R3-R5) · s9 +0.0026 ✗ → P1 FAIL (failing seed RELOCATED, not floor-lifted). SHUFFLE PASSED (s7 permuted-core ΔΦ −0.0087 → structure not variance, cleaner than R5). coherence ↑ every seed. Dual coupling TRADES Φ across geometry, does not break the wall |
+| R9 predictive/bottleneck relay | 🔴 / 🧱 WALL | learned predictive-bottleneck (delta-rule LMS, code_dim=3) faithful ΔΦ(B−A): s7 −0.0067 · s8 +0.0203 · s9 +0.0097 (only s8 clears +0.02 → NOT robust); B≥C(randproj) ΔΦ(B−C) +0.008/0.0/0.0 (learned code Φ-INDISTINCT from random projection on s8/s9); SHUFFLE FIRED (s8 scrambled-target ΔΦ +0.0232 ≥ structured) → lift = variance/added-channel, NOT the learned predictive code |
 
 Terminal tier (verbatim): **🔴 RED / 🧱 STILL WALL** → `.verdicts/1283_thalamus_global_workspace/H_1283_R5.txt`
 
