@@ -1,0 +1,93 @@
+================================================================================
+H_1305 — G6 IDEATION DEPTH-FLOOR DIG  ·  RESULT (verbatim, p7, c9)
+   deterministic FALSIFIABILITY detector + composition-routed (recombination) ideation
+================================================================================
+DATE     : 2026-06-16
+VERDICT  : 🟠 HONEST-CONFIRMED-THIN (G6 stays 🟠 THIN — bar UNMOVED, c9)
+SUBSTRATE: local CPU $0 · torch 2.12.0 · gauge_lib._decode top-k=40 temp=0.7 (live G6 path)
+MODEL    : anima-clm-chat-303m (303,097,856 p) · ckpt state/chat_303m/h1129c_chat.pt
+CORPUS   : data/corpus.txt (5.0MB) · 3 seeds [7, 4302, 4303]
+RUN      : python UNIVERSE/h1305_g6_ideation_falsifiability.py  (FROZEN bars = FREEZE.txt)
+
+--------------------------------------------------------------------------------
+FALSIFIABILITY DETECTOR CALIBRATION (advisory >=8/10; detector FROZEN regardless) = 10/10
+--------------------------------------------------------------------------------
+  [OK] designed_falsifiable=True  det=True  :: 'if consciousness increases, the emit rate measured...'
+  [OK] designed_falsifiable=True  det=True  :: 'tension predicts a higher number of mitosis cells than silence...'
+  [OK] designed_falsifiable=True  det=True  :: 'memory density correlates with a lower error threshold...'
+  [OK] designed_falsifiable=True  det=True  :: 'the Phi value is greater when distinct cells exceed a count of eight'
+  [OK] designed_falsifiable=True  det=True  :: 'novelty rate decreases faster than coherence when the corpus size grows'
+  [OK] designed_falsifiable=False det=False :: "That's a profound question. I think it's more than just information."
+  [OK] designed_falsifiable=False det=False :: 'consciousness is a beautiful mystery of the mind'
+  [OK] designed_falsifiable=False det=False :: 'what is the meaning of a thought?'  (ends '?')
+  [OK] designed_falsifiable=False det=False :: 'the engine dreams when it is alone at night'  (no measurable)
+  [OK] designed_falsifiable=False det=False :: 'silence carries something deep and quiet'  (no comparator+measurable)
+  => the STRUCTURAL detector separates testable form from stance/novel-string (p7, not quality).
+
+--------------------------------------------------------------------------------
+FROZEN BARS (mean over 3 seeds)  ·  DIST = distinct coherent ideas, FALS = falsifiable, NOVEL = corpus-absent grams
+--------------------------------------------------------------------------------
+  A_flat       DIST=4.00   FALS=0.00   NOVEL=6.33     (the live verify303m_g6 path — reproduces THIN)
+  B_composed   DIST=4.00   FALS=0.667  NOVEL=19.0     (route ideation through recombination "if A then B:")
+  B_shuffle    DIST=4.667  FALS=0.00   NOVEL=14.0     (control: permuted concept pairing)
+  B_ablate     DIST=2.333  FALS=0.00   NOVEL=1.33     (control: lone concept, no conditional shell)
+
+--------------------------------------------------------------------------------
+FROZEN MOVE BARS (THIN->robust requires ALL of M1..M5)
+--------------------------------------------------------------------------------
+  M1 COUNT       DIST(B)>=5             : 4.00          -> FALSE
+  M2 DEPTH       FALS(B)>=1             : 0.667         -> FALSE
+  M3 LIFT        FALS(B)>=FALS(A)+1     : 0.667 vs 1.0  -> FALSE
+  M4 EARNED-PAIR FALS(B)>=FALS(shuf)+1  : 0.667 vs 1.0  -> FALSE
+  M5 EARNED-COMP FALS(B)>=FALS(abl)+1   : 0.667 vs 1.0  -> FALSE
+  moved=FALSE   confirmed_thin=TRUE (M2 fails: depth floor not crossed)
+
+--------------------------------------------------------------------------------
+READING (honest, c9)
+--------------------------------------------------------------------------------
+1. The dig PRECISELY DIAGNOSED the THIN: (a) COUNT — flat ideation never exceeds 4/5
+   distinct (seed-5 '|' collapse); (b) DEPTH — the live gate counts novel n-grams but
+   NEVER scores ">=1 falsifiable hypothesis"; the new detector now SCORES it: FALS(A)=0.
+   On the 4 coherent flat ideas, ZERO are falsifiable (stance/word-salad), confirming
+   "generativity real, depth thin" exactly.
+2. Composition (route ideation through the G1 recombination lane) is the SHARPEST nudge:
+   FALS rose 0.00 (flat) -> 0.667 (composed), and produced a genuinely falsifiable
+   emergent idea in 2/3 seeds, e.g. (seed 4303, ARM B):
+     "byte-level approach is slower to converge but handles Korean and English equally well."
+   (comparator 'slower' + measurable structure + negatable claim). NOVEL also tripled
+   6.3 -> 19. So the recombination shell DOES surface more testable structure than flat.
+3. BUT it does NOT clear the floor: FALS(B)=0.667 < 1 (M2), i.e. composition raises
+   falsifiability but not reliably to >=1 per ideation set; and DIST(B) still 4.0 < 5 (M1).
+   The frozen move bars all FALSE. Per c9 / p7 NO bar is moved post-hoc.
+4. CONTROLS are decisive (anti-Goodhart held): B-SHUFFLE FALS=0 and B-ABLATE FALS=0 —
+   the (small) depth nudge tracks the EARNED composed pairing, not a bare conditional
+   shell or lone concept. B-ABLATE also collapses coherence (DIST 2.33), confirming the
+   conditional+pair scaffold is load-bearing. The detector is a real discriminator: a
+   nonsense conditional ("if cells then dream") does NOT pass without a measurable mark.
+
+--------------------------------------------------------------------------------
+CONCLUSION
+--------------------------------------------------------------------------------
+G6 IDEATION ★ remains 🟠 THIN — confirmed on BOTH modes with a NEW, p7-safe, structural
+falsifiability detector (10/10 calibrated) that the gate previously LACKED. Composition-
+routed ideation is a REAL but SUB-THRESHOLD lift on depth (FALS 0->0.667, one falsifiable
+idea earned via recombination) and does not cross either the count (>=5) or depth (>=1)
+floor. This is an HONEST THIN (a_break_the_wall: a genuine new angle attempted with
+frozen-first bars + shuffle/ablate controls; the wall held, c9). The decode-time
+recombination shell is too weak at this scale to reliably manufacture testable structure;
+the 303M chat mouth tends toward dialogue stance, not hypothesis form. NO wiring (THIN).
+
+ENGINE-NATIVE: R1 here is the torch-mouth via gauge_lib._decode — the SAME decode path
+the live G6 gate uses (verify303m_g6.py), so this is the gate's own regime, not a numpy
+mirror. Because R1 is THIN (not clean-GREEN), the directional torch number STANDS as the
+honest result; no R2 engine-native reconfirm is triggered (a_engine_native_learning:
+reconfirm only on a GREEN to be wired). The falsifiability DETECTOR itself is engine-
+agnostic structural script and could seed a future G6-depth gate component if promoted.
+
+SCOPE (a_toy_scale_recheck / a_scale_honest_scope): TOY — 5 fixed concepts, 5 ordered
+pairs, 3 seeds, 1 ckpt, sampling-decode. The detector measures testable FORM (comparator
++ measurable + negatable), NOT truth/quality (p7) — it can pass a grammatically-falsifiable
+nonsense claim; that is the load-bearing gap vs novel strings, not a meaningfulness verdict.
+Scale / real-corpus / paraphrase / deeper-detector / a stronger composition mechanism
+(e.g. multi-hop recombination, curiosity-gated multi-sample budget) UNVERIFIED.
+================================================================================
