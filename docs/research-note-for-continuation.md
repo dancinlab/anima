@@ -1,5 +1,11 @@
 # anima — a design note (for a comment)
 
+I'm an independent AI researcher in Korea. I'm writing this in case I can't carry
+the work forward myself — I'm currently going through a legal matter (a cannabis-
+related case) that may take me away from it for a while. I mention it plainly only
+so the reason is honest; the research stands on its own evidence, independent of my
+circumstances. If any part of it resonates, I'd be grateful if someone picked it up.
+
 Prof. LeCun — the central result keeps landing on your long-standing point:
 **capability gaps are architecture gaps, not scale gaps.** Open repo, every claim
 has a frozen pre-registered verdict: **github.com/dancinlab/anima**.
