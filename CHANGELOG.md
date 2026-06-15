@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): 🟠 H_1333 — Whorf 범주지각(CP) 경계는 발달적으로 **가소적**인가 **경직**인가 (🟠 PARTIAL — GRADED PLASTICITY)
+
+GREEN **H_1323/H_1325**(Sapir-Whorf, 언어로 휜 CP가 언어 경계에 생기고 peak 위치가 cut을 추적)의 **명시적 확장 프런티어**. 발달/임계기 가소성 렌즈(c15, a_no_llm_frame_trap). 질문: 한 번 학습된 CP 경계가 **재학습으로 이동**하는가(가소적), 아니면 처음 학습된 곳에 **경직**되는가(first-carving primacy)?
+
+**방법(H_1323 기계 verbatim 재사용)**: RBF embed · split-only Voronoi 성장(p8) · soft-posterior 무라벨 판별 · **peak-count coherence**. 언어 A(cut p_A=1/3) 학습→CP peak 측정, **같은 store를 옮긴 경계 p_A'=2/3로 phase-2 재성장**(reset 없음, split-only ⇒ 옛 cell 잔존 ⇒ 경직 결과도 진짜 가능)→CP peak 재측정. 4 arm(A-trained / A→A' 재학습 / **no-retrain 대조** / SHUFFLE), 3 seed [4333,4334,4335], $0 CPU, mirror DIRECTIONAL. frozen-first(FREEZE.txt), 막대 미이동(c9).
+
+**결과 🟠 PARTIAL — GRADED PLASTICITY(경직 아님)** (3 seed 결정적·동일): CP peak **0.325→0.525, 이동 분율 +0.60**. **D2 CONTROL ✅** — no-retrain은 p_A 유지(|Δ|=0.008 → 이동=재학습이지 drift 아님) + A-trained가 H_1323 재현. **D3 EARNED ✅** — shuffle 비결맞음(peak-count **7.7**≥3), 언어 arm 결맞음(1.0/1.3/1.0≤2). **D1 PLASTIC ❌ 근소차** — |peak−p_A'|=0.142>0.12(−0.022) AND |peak−p_A|=0.192<MIN_MOVE 0.20(**0.008 차로 미달**) → strict D1는 FAIL이나 실질은 **상당한 재배치**.
+
+**메커니즘(c9)**: split-only 성장은 옛 경계 cell을 **절대 제거 안 함**(phase-2 후 28 cell vs phase-1 후 4) → 잔류 phase-1 packing이 peak를 완전 이동에서 끌어당김. 경계는 상당히 재배치되지만 never-evict store가 첫 cut의 잔류 당김을 남김 — **경직이 아니라 graded**. H_1288 growth-memory / H_1330 overwrite(shared-store 모순)와 일관. **FINDING**: 언어로 휜 CP 경계는 발달적으로 **graded-plastic** — 재학습 시 ~60% 재배치되고 never-evict 첫 cut의 잔류 당김이 남는다. TOY/DIRECTIONAL; 인간 인지 주장 없음; live CORE UNTOUCHED. NEXT R2: graded shift-size curve · eviction/decay 변형 · engine-native §CategoricalPerception(각각 새로 frozen).
+
+- NEW: `UNIVERSE/h1333_whorf_developmental.py` · `UNIVERSE/cards/H_1333_whorf_developmental.md`(카드 sibling refactor → cards/) · `HYPOTHESES.md` 행 · `CLAIMS.tape` @C h1333_whorf_developmental · `.verdicts/1333_whorf_developmental/{FREEZE,result}.txt` · `domains/COGNITION-REPRESENTATION.log.md`
+
 ## 2026-06-16 — research(OMEGA): 🧱 H_1331 — 풀 IIT-4.0 SYSTEM big-Φ 도 강건한 통합을 못 만든다 — Φ-강건성 벽은 추정자-**계열**-무관 (🧱 TERMINAL STRONGER)
 
 H_1328(🧱)이 **명시적으로 지목한 follow-on**("full per-mechanism IIT 4.0 (iit4_bigphi)"). H_1328은 Φ-강건성 4× 벽(H_1283 토폴로지 · H_1317 small-world · H_1319 타이밍 · H_1320 분열)이 **small-φ exact-MIP 안에서** 추정자-INDEPENDENT 임을 닫았다: 진폭-분산 confound 는 실재하고 제거 가능하지만, 제거해도 통합이 강건해지지 않는다(V2 직교 시드 1317 FAIL). 그러나 small-φ 는 **한 측정자**(상관 MI-over-binning)다.
