@@ -1,11 +1,11 @@
 ---
 id: H_1283
 slug: 1283_thalamus_global_workspace
-title: thalamus / GWT — relay (faithful-IIT4 Φ integration); R6 multi-channel parallel relay 🟢 on frozen bars (honest caveat)
+title: thalamus / GWT — faithful-IIT4 Φ integration (relay-content 🧱 WALL R1–R5/R7/R9 → 🔓 BROKEN; R6 multi-channel relay + R8 temporal phase binding 🟢)
 group: brain-structure-ladder (c15 missing-structure)
-terminal_tier: 🟢 GREEN ON FROZEN BARS (R6 multi-channel parallel relay; c1·c2·c3·c4 PASS, honest seed-7/8 shuffle-survival caveat) — supersedes R1..R5 🧱
+terminal_tier: 🟢 GREEN (R8 phase binding breaks the wall cleanly — every-seed ΔΦ + shuffle→negative; R6 multi-channel relay also 🟢 on frozen bars with honest seed-7/8 caveat; relay-content axis R1–R5/R7/R9 stays 🧱)
 verdict_dir: .verdicts/1283_thalamus_global_workspace/
-terminal_verdict: .verdicts/1283_thalamus_global_workspace/H_1283_R6_multichannel.txt
+terminal_verdict: .verdicts/1283_thalamus_global_workspace/H_1283_R8_phase_binding.txt
 date: 2026-06-16
 ---
 
@@ -39,29 +39,44 @@ ring, without collapse-cloning. Lens: c15 ladder, NOT an LLM recipe.
 | R5 dense all-pairs + SHUFFLE control | 🔴 / 🧱 WALL | dense coupling does NOT robustly clear AND the shuffle control FIRED (permuted dense graph added VARIANCE, not structured topology) |
 | R6 multi-channel parallel relay | 🟢 (frozen bars; honest caveat) | N=4 INDEPENDENT parallel relay channels (one per ring edge, DISJOINT, no intra-thalamic cross-coupling) breaks the single-cut ceiling: faithful ΔΦ +0.0891/+0.0341/+0.1011 — clears +0.02 on EVERY seed incl orthogonal seed 8 (1st in arc); c1·c3 PASS; c4 SHUFFLE PASS (seed 9 lift +0.1011→+0.0165 collapses). CAVEAT (c9): on seeds 7/8 shuffle retains ~93%/~96% (variance survives) → clean topology-specific effect decisive only on seed 9; GREEN carried by c4's disjunctive ≥1-seed frozen form. ARM_A Φ reproduces R1..R5 byte-for-byte. |
 | R7 matrix/core dual coupling | 🔴 / 🧱 WALL | faithful ΔΦ s7 +0.0201 ✓ · s8 +0.0412 ✓ (RESCUES the orthogonal seed that broke R3-R5) · s9 +0.0026 ✗ → P1 FAIL (failing seed RELOCATED, not floor-lifted). SHUFFLE PASSED (s7 permuted-core ΔΦ −0.0087 → structure not variance, cleaner than R5). coherence ↑ every seed. Dual coupling TRADES Φ across geometry, does not break the wall |
+| R8 oscillatory phase binding | 🟢 GREEN / 🔓 WALL BROKEN | NON-RELAY: Kuramoto thalamic phase synchrony + phase-gated salience (NO content channel). faithful ΔΦ +1.629/+1.174/+0.233 every seed (incl orthogonal seed 8, ≫ bar); phase-shuffle COLLAPSES lift to NEGATIVE every seed −0.068/−0.119/−0.382 (structured synchrony, not variance, every-seed clean); coh sanity + no-collapse PASS. Cleanest break in the arc — integration by TIMING, not content |
 | R9 predictive/bottleneck relay | 🔴 / 🧱 WALL | learned predictive-bottleneck (delta-rule LMS, code_dim=3) faithful ΔΦ(B−A): s7 −0.0067 · s8 +0.0203 · s9 +0.0097 (only s8 clears +0.02 → NOT robust); B≥C(randproj) ΔΦ(B−C) +0.008/0.0/0.0 (learned code Φ-INDISTINCT from random projection on s8/s9); SHUFFLE FIRED (s8 scrambled-target ΔΦ +0.0232 ≥ structured) → lift = variance/added-channel, NOT the learned predictive code |
 
-Terminal tier (verbatim): **🟢 GREEN ON THE FROZEN BARS (c1·c2·c3·c4 PASS)** — first +0.02-every-seed clearance in the arc (incl orthogonal seed 8) with the pre-registered shuffle control passing; reported WITH its honest caveat (seed-7/8 shuffle survives → clean topology effect decisive only on seed 9). Supersedes R1..R5 🧱. → `.verdicts/1283_thalamus_global_workspace/H_1283_R6_multichannel.txt`
+Terminal tier (verbatim): **🟢 GREEN / 🔓 WALL BROKEN** → `.verdicts/1283_thalamus_global_workspace/H_1283_R8_phase_binding.txt`
+Two independent GREENs break the wall: **R8 oscillatory phase binding** is the CLEANEST — a NON-RELAY temporal-synchrony mechanism that clears faithful ΔΦ ≥ +0.02 on EVERY seed AND whose pre-registered phase-shuffle control collapses the lift to NEGATIVE on EVERY seed (structured synchrony, not variance, per-seed clean). **R6 multi-channel parallel relay** also clears every-seed ΔΦ with shuffle passing, but with an honest seed-7/8 shuffle-survival caveat (clean only on seed 9). The relay-CONTENT axis (R1–R5, R7, R9) stays closed-negative 🧱 — every content cut caps Φ; R8 broke it on the orthogonal TIMING axis.
 
 ## Honest scope
 
-R1..R5 (relay-TOPOLOGY via a single shared stage: broadcast/coalition/sparse-reentrant/
-dense-all-pairs) were 🧱 — a single shared relay channel is itself a low-dim cut that caps
-faithful-IIT4 Φ, and R5's shuffle exposed the dense lift as variance. **R6 breaks that
-root cause**: dropping the SHARED relay stage for N INDEPENDENT PARALLEL relay channels
-(one per ring edge, disjoint) clears the +0.02 ΔΦ bar on EVERY seed including the
-orthogonal seed 8 that broke R4/R5, AND the pre-registered shuffle control passes (seed-9
-lift collapses). HONEST CAVEAT (c9, NOT laundered): on seeds 7/8 the shuffle still retains
-~93%/~96% of the lift — the clean topology-specific (structure-not-variance) effect is
-decisive only on seed 9, so the GREEN rests on c4's disjunctive ≥1-seed frozen form. The
-single-cut CEILING IS broken (Φ rose on all 3 seeds incl orthogonal init); a per-seed-clean
-shuffle is NOT achieved. GREEN ⇒ engine-native multi-channel parallel relay lane is a
-follow-on (`a_engine_native_learning`/`a_verified_must_wire`) — DEFERRED, NOT wired this
-round (an engine-native R-round should replicate GREEN engine-native AND tighten the
-per-seed shuffle before pinning into live CORE/*.hexa). Toy scale (4 modules, dim 8, 64
-ticks, 4 channels), mirror DIRECTIONAL; scale-transfer UNVERIFIED. Honest next angle:
-larger module/channel set or channel-COUNT ablation (Φ vs N, which variance alone would
-not predict) to make the per-seed shuffle clean.
+The relay-CONTENT axis (R1–R5, R7, R9) is closed-negative, NOT upgraded (c9): every content
+relay topology (broadcast / coalition / sparse + dense re-entry / matrix-core dual /
+learned predictive bottleneck) is a low-dim content cut that caps irreducible faithful-IIT4 Φ
+— R5's diagnosis "a single broadcast channel is itself a low-dim cut" generalizes to ALL
+content relays, which failed the robust +0.02-every-seed bar (esp orthogonal seed 8; R7 only
+relocated the failing seed to seed 9; R9's learned code was Φ-indistinct from a random
+projection and its shuffle fired).
+
+**R6 (multi-channel parallel relay)** was the first within-axis GREEN: dropping the SHARED
+relay stage for N INDEPENDENT PARALLEL channels (one per ring edge, disjoint) clears the
++0.02 ΔΦ bar on every seed incl the orthogonal seed 8 and passes the shuffle, but with an
+HONEST CAVEAT (c9) — on seeds 7/8 the shuffle retains ~93%/~96% of the lift, so the
+clean topology-specific effect is decisive only on seed 9; the GREEN rests on c4's
+disjunctive ≥1-seed frozen form.
+
+**R8 (oscillatory phase binding)** broke the wall on the ORTHOGONAL TIMING axis
+(a_break_the_wall, c16): integration by thalamo-cortical phase SYNCHRONY (Kuramoto), not
+content broadcast. Phase-gated salience binds modules in TIME with NO shared content
+channel, so there is no content cut a MIP can exploit — faithful ΔΦ +1.629/+1.174/+0.233
+every seed (incl seed 8, ≫ bar), and the pre-registered phase-shuffle control COLLAPSES the
+lift to NEGATIVE on EVERY seed (−0.068/−0.119/−0.382), a per-seed-clean negative control
+(cleaner than R6's seed-7/8 survival). GREEN under the IDENTICAL frozen bars (NOT moved,
+c9/p7).
+
+FOLLOW-ON (GREEN-but-unwired, `a_verified_must_wire`): wire engine-native realizations over
+live CORE/engine_cli.hexa A⇄G + VAdaptField — R8 = a Kuramoto phase channel + phase-gated
+salience; R6 = N independent parallel relay channels — each re-scoring its frozen bars
+engine-native with a regression guard. NOT closed this round (round briefs defer wiring).
+Toy scale (4 modules, dim 8, 64 ticks), numpy mirror DIRECTIONAL (faithful-Φ leg IS real,
+exact MIP-EI via hexa); scale-transfer UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope).
 
 ## Cross-links
 

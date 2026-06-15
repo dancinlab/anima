@@ -33,6 +33,23 @@ UNVERIFIED. GREEN ⇒ engine-native 병렬-relay lane = follow-on (DEFERRED, 이
 engine-native 재현 + per-seed shuffle 강화 후 배선; a_verified_must_wire). 다음 정직 각도: 더 큰
 module/channel 집합 또는 channel-COUNT ablation (Φ vs N). 산출: UNIVERSE/h1283_r6_multichannel_relay.py
 · .verdicts/1283_thalamus_global_workspace/{H_1283_R6_FREEZE,H_1283_R6_multichannel}.txt · 카드 R6 행.
+## 2026-06-16 — H_1283 R8: 🟢 thalamus Φ WALL BROKEN by oscillatory phase binding (temporal synchrony)
+
+R8 of the H_1283 thalamus wall fleet (c16/a_break_the_wall). R1–R5/R7 bound modules by CONTENT
+(broadcast/coalition/sparse+dense re-entry/matrix-core dual) and all failed the robust faithful-IIT4
+ΔΦ ≥ +0.02-every-seed bar — R5's diagnosis: "a single broadcast channel is itself a low-dim cut that
+caps Φ." R8 took a genuinely NON-RELAY substrate lens (a_no_llm_frame_trap, c15): thalamo-cortical
+integration by phase SYNCHRONY (Kuramoto), not content. Each module carries a scalar phase coupled weakly
+to a thalamic pacemaker; content stays byte-identical to ARM A; only the salience read-out is phase-gated.
+Synchronized modules co-modulate their salience in TIME → temporal binding with NO shared content channel
+for a MIP to cut. **🟢 GREEN, IDENTICAL frozen bars (not moved, c9/p7)**: faithful ΔΦ +1.629/+1.174/+0.233
+every seed (incl the orthogonal seed 8 that defeated every relay round, ≫ bar); pre-registered
+phase-shuffle control COLLAPSES the lift to NEGATIVE every seed (−0.068/−0.119/−0.382) → structured
+synchrony, not amplitude variance; coherence sanity + no-collapse PASS. ARM A Φ reproduces R1–R5/R7
+byte-for-byte. Engine-native
+wiring = follow-on (a_verified_must_wire, GREEN-but-unwired). Toy/numpy DIRECTIONAL, faithful-Φ leg real
+(exact MIP-EI via hexa). `UNIVERSE/h1283_thalamus_global_workspace.py` (main_r8) ·
+`.verdicts/1283_thalamus_global_workspace/H_1283_R8_phase_binding.txt` · card row appended.
 
 ## 2026-06-16 — domain(H_1283 R7): thalamus wall — matrix/core dual coupling 🔴/🧱 STILL WALL
 
