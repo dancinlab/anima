@@ -1,0 +1,25 @@
+H_1328 — Φ-ROBUSTNESS WALL DIAGNOSIS: amplitude-variance ESTIMATOR confound vs substrate limit
+faithful IIT4 Φ (exact MIP-EI, n=4, SAME estimator) · seeds [1317,1318,1319] · eps=0.02
+ENCODINGS: OLD=raw min-max binning (H_1319) · NEW=rank-uniformize each cell (marginals provably uniform)
+ARMS: A=NO-PHASE  B=PHASE-BIND(rel-phase)  S=PERM-SHUFFLE(relationship destroyed)  O=OFFSET-SHUF
+BARS: V1a OLD perm ΔΦ(S-A)>=+eps · V1b NEW perm Φ_S<=Φ_A+eps · V2 NEW Φ_B>=Φ_A+eps · V3 NEW perm&off<=Φ_A+eps
+seed 1317 OLD: A=0.870311 B=1.33535 S=1.15011 O=1.25838 | ΔΦ(S-A)=0.279798 [V1a PASS]
+       NEW: A=1.93398 B=1.80898 S=1.72702 O=2.03952 | ΔΦ(B-A)=-0.125 [V2 FAIL] S-A=-0.206955 [V1b/V3p PASS] O-A=0.105545 [V3o FAIL]
+seed 1318 OLD: A=0.855353 B=0.86058 S=0.95787 O=0.742725 | ΔΦ(S-A)=0.102517 [V1a PASS]
+       NEW: A=2.25061 B=2.25061 S=2.20404 O=1.81311 | ΔΦ(B-A)=0.0 [V2 FAIL] S-A=-0.0465695 [V1b/V3p PASS] O-A=-0.4375 [V3o PASS]
+seed 1319 OLD: A=0.586833 B=0.538064 S=1.17402 O=0.528693 | ΔΦ(S-A)=0.587183 [V1a PASS]
+       NEW: A=2.07904 B=2.11029 S=2.04779 O=2.03952 | ΔΦ(B-A)=0.03125 [V2 PASS] S-A=-0.03125 [V1b/V3p PASS] O-A=-0.0395207 [V3o PASS]
+---
+V1 CONFOUND-CONFIRM (V1a OLD-perm-raises ALL seeds AND V1b NEW-perm-collapses ALL seeds): PASS  [V1a=PASS V1b=PASS]
+V2 ROBUST-LIFT (NEW Φ_B>=Φ_A+eps ALL seeds incl 1317): FAIL
+V3 EARNED (NEW perm&offset both <=Φ_A+eps ALL seeds): FAIL  [perm=PASS off=FAIL]
+===
+VERDICT 🧱 (DEEPER) — confound REAL & removed (V1), but integration NOT robust under the clean
+  estimator (V2/V3 fail) → estimator-INDEPENDENT substrate limit: the n<=8 substrate genuinely
+  lacks robust integration. A STRONGER, cleaner closure than the prior 4x amplitude-confounded 🧱.
+
+--- DETERMINISM ---
+re-run byte-identical (run1 == run2, toolchain hexa 0.1.0-dispatch). Deterministic engine LCG.
+--- OLD-ENCODING BASELINE CROSS-CHECK (H_1319 verbatim, reproduced this lane) ---
+seed 1317 OLD S-A=+0.279798 · seed 1318 OLD S-A=+0.102517 · seed 1319 OLD S-A=+0.587183
+== H_1319 card ΔΦ_perm +0.280/+0.103/+0.587 EXACTLY (the confound reproduces; these are V1a).
