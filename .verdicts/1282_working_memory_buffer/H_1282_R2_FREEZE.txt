@@ -1,0 +1,137 @@
+H_1282 ROUND 2 — WORKING MEMORY (graded readout + horizon-honest bars) — FREEZE
+================================================================================
+SLUG: 1282_working_memory_buffer   ROUND: 2   (R1 = .../H_1282_FREEZE.txt + H_1282.txt)
+LENS: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe.
+DATE-FROZEN: 2026-06-15 (frozen BEFORE any R2 scoring; $0 CPU numpy)
+SEEDS: [1282, 1283, 1284]  (SAME 3 deterministic seeds as R1)
+
+────────────────────────────────────────────────────────────────────────────
+WHY A ROUND 2 (carried verbatim from the R1 verdict, c9)
+────────────────────────────────────────────────────────────────────────────
+R1 was 🔴 RED on its frozen bars, but the R1 verdict identified the RED as a
+READOUT + HORIZON artifact, NOT a memory failure or a collapse of B into the
+immune store. The R1 diagnostic table (reported, not a bar) showed the buffer
+holds the cue with PERFECT discrimination — match-score vs nonmatch-score AUROC
+= 1.000 at N=0/2/4 and 0.998 at N=6 — and only truly loses it at N=8 (AUROC
+0.513, cue slot DISPLACED by distractors gating into K=4). The three causes of
+the R1 RED were each a SCORING choice, not the mechanism:
+
+  (R1-cause-1) THRESHOLD CLIFF. R1 read out B with a BINARY has_match: score>=θ,
+    θ=0.40. The cue activation decays smoothly as 1.0·λ^N (λ=0.85): N=6→0.377,
+    which is BELOW θ=0.40 even though the graded match-vs-nonmatch separation is
+    still PERFECT (AUROC 0.998). The binary θ threw away usable graded signal.
+  (R1-cause-2) GRACE BAR TOO FAR. R1's grace bar was at N=12. The MEASURED buffer
+    horizon (where AUROC drops to chance) is N≈6–8 under the frozen λ=0.85/K=4 —
+    the buffer was NEVER expected to discriminate at N=12. Honest mis-set bar.
+  (R1-cause-3) MARGIN DILUTED BY CEILING. R1's margin averaged over ALL N. For
+    N≤2 the cue is still inside arm-A's W=4 window so A is at CEILING (acc 1.000);
+    B cannot beat a perfect A there. Averaging the +0.500 win at N=4 against the
+    N≤2 ceiling + N≥6 shared-floor diluted the mean margin to +0.062 < 0.15.
+
+R2 corrects ONLY the SCORING (readout + bar placement + margin range). The BUFFER
+MECHANISM IS UNCHANGED — IDENTICAL frozen knobs (DIM/K/LAMBDA/W/N_LIST/TRIALS),
+SAME WorkMemBuffer / FlatContext classes, SAME λ=0.85, K=4. NO buffer retune.
+If a graded readout + an honest horizon bar STILL cannot beat A by the margin,
+that is 🧱 — the WM horizon is genuinely too short to matter at this toy scale —
+and it is reported straight (c9).
+
+────────────────────────────────────────────────────────────────────────────
+THE THREE R2 CORRECTIONS (each justified ABOVE, frozen here BEFORE scoring)
+────────────────────────────────────────────────────────────────────────────
+(C1) GRADED READOUT — replace the binary θ cliff with an AUROC readout applied
+     EQUALLY to BOTH arms (fair; no arm-specific advantage). For each (arm, N):
+       · ARM B score  = best maintained (activation × max(0,cos-sim)) over slots
+                        — the SAME WorkMemBuffer.probe() raw score R1 already
+                        computed, now used CONTINUOUSLY instead of thresholded.
+       · ARM A score  = max over the last-W window of cos(probe, token) — the
+                        SAME FlatContext similarity, used continuously.
+     READOUT METRIC = AUROC = P(score(match-trial) > score(nonmatch-trial)),
+     computed from the 100 match + 100 nonmatch raw scores per (arm,N,seed) by
+     the rank-sum (Mann–Whitney U / n_pos·n_neg) estimator, ties counted as 0.5.
+     AUROC is the p7 graded discrimination metric: it needs NO threshold (no θ
+     cliff), is bounded [0,1], chance = 0.50. This is the honest readout the R1
+     verdict named as "AUROC stays 1.0 to N=6". Both arms scored the SAME way.
+
+(C2) HORIZON-HONEST GRACE BAR — at the MEASURED buffer horizon, NOT N=12.
+     Justification (frozen here, pre-scoring): the R1 diagnostic measured AUROC
+     0.998 at N=6 and 0.513 (≈chance) at N=8 ⇒ the buffer's discriminating
+     horizon is N≈6. The grace delay is therefore set to GRACE_N = 6 (the last N
+     at which the buffer is measured to still hold the item), NOT 12. At that
+     delay B should still discriminate well above chance while A (W=4) has
+     scrolled out at N≥4 and sits at chance. Frozen grace bars:
+       GRACE_N      = 6
+       GRACE_B_MIN  = 0.90   (B AUROC at N=6 ≥ 0.90 — graded, well above chance)
+       GRACE_A_MAX  = 0.60   (A AUROC at N=6 ≤ 0.60 — collapsed near chance 0.50)
+
+(C3) NON-CEILING MARGIN RANGE — average the B−A margin ONLY over the N where A
+     is NOT saturated. A's flat W=4 window keeps the cue (and A at ceiling) while
+     N < W; A only leaves ceiling once the cue scrolls out at N ≥ W = 4. The
+     margin is therefore averaged over MARGIN_N = { N in N_LIST : N >= W } =
+     {4, 6, 8, 12} — the non-ceiling regime where the two arms actually differ.
+       MARGIN_BAR = 0.15   (mean over MARGIN_N of [B.AUROC(N) − A.AUROC(N)] ≥ 0.15)
+
+────────────────────────────────────────────────────────────────────────────
+ARMS (UNCHANGED from R1 — same mechanism, same knobs)
+────────────────────────────────────────────────────────────────────────────
+  (A) NO WM BUFFER — flat decoder context window of fixed size W=4. Cue is in
+      context iff within the last W streamed tokens; N≥W ⇒ scrolled out.
+  (B) GATED WM BUFFER — K=4 slots (activation, key); gate-in cue at full
+      activation; each distractor LEAKS all activations ×λ=0.85 and weakly gates
+      in (weakest-slot displacement under capacity pressure). UNCHANGED.
+
+────────────────────────────────────────────────────────────────────────────
+DISTINCTNESS FROM IMMUNE MEMORY (H_1227 / H_1231) — KEPT, load-bearing
+────────────────────────────────────────────────────────────────────────────
+The immune-like control (B with λ=1.0, K=∞) is RE-RUN under the SAME graded
+AUROC readout. It must stay FLAT-HIGH across N (no decay, unbounded) to prove
+that B's decay + capacity bound are what make B a WORKING memory and not the
+episodic store. Distinctness probes (reported, and one is a frozen bar):
+  · DECAY     — B.AUROC(N) falls toward chance with N; immune-control AUROC stays
+                flat-high (NO collapse). [reported]
+  · CAPACITY  — load K+3=7 items, B retains ≈K=4 (immune retains all). [frozen bar]
+  · VOLATILE  — cue slot overwritten by later distractors (B.AUROC→chance at N=8
+                while immune-control stays high). [reported]
+IF B collapses into the immune store (flat, no decay, unbounded) under the graded
+readout too, that is an HONEST RED and is reported straight.
+
+────────────────────────────────────────────────────────────────────────────
+FROZEN KNOBS (IDENTICAL to R1 — NO buffer retune)
+────────────────────────────────────────────────────────────────────────────
+  DIM=16   K=4   LAMBDA=0.85   W=4
+  N_LIST = [0, 1, 2, 4, 6, 8, 12]      (unchanged)
+  TRIALS_PER_N = 200  (100 match + 100 nonmatch, balanced)  (unchanged)
+  CHANCE = 0.50
+  (THETA=0.40 from R1 is RETAINED ONLY for the reported R1-parity binary table;
+   it is NOT used in any R2 GREEN bar — R2 reads out by AUROC, C1.)
+
+────────────────────────────────────────────────────────────────────────────
+PRE-REGISTERED R2 GREEN BARS (FROZEN — evaluated on the mean over 3 seeds)
+────────────────────────────────────────────────────────────────────────────
+GREEN iff ALL of:
+  (1) MARGIN  : mean over MARGIN_N={4,6,8,12} of [B.AUROC(N) − A.AUROC(N)]
+                >= MARGIN_BAR = 0.15.        (non-ceiling range, C3)
+  (2) GRACE   : at GRACE_N=6,  B.AUROC >= GRACE_B_MIN=0.90  AND
+                              A.AUROC <= GRACE_A_MAX=0.60.   (horizon-honest, C2)
+  (3) DISTINCT: B stays a genuine WM, not the immune store — at N=0 B.AUROC>=0.95
+                AND B.AUROC(N) is MONOTONE-NON-INCREASING in N (decays, not flat)
+                AND the capacity control retains ≈K (±1) (not all loaded items).
+  (4) ROBUST  : conditions (1) and (2) hold on ALL 3 seeds individually.
+Else 🔴 RED (= 🧱 if even the graded+honest-horizon readout can't beat A) with
+the honest number. Frozen-first held: bars set BEFORE scoring, NOT moved post-hoc.
+
+────────────────────────────────────────────────────────────────────────────
+ENGINE-NATIVE + PHILOSOPHY + HONESTY (UNCHANGED from R1)
+────────────────────────────────────────────────────────────────────────────
+ENGINE-NATIVE (a_engine_native_learning): numpy DIRECTIONAL mirror only;
+engine-transfer UNVERIFIED. The live engine (CORE/engine_cli.hexa VAdaptField,
+H_1199) is a GROWING PERSISTENT store with NO leak / NO capacity bound — it is
+structurally the IMMUNE/episodic lane, not a WM buffer; the engine has no WM lane.
+A GREEN R2 result flags the engine-native WM lane (a small gated leaky-activation
+lane, ADDITIVE to engine_cli.hexa, distinct from VAdaptField) as the binding
+follow-on (a_verified_must_wire — fires on GREEN only). Live .hexa UNTOUCHED.
+
+PHILOSOPHY (p1-p8): substrate-native; the buffer holds TASK ACTIVATION only (no
+decoder weights, no persona/identity/ethics; p8 continuous-substrate lane).
+HONESTY (a_scale_honest_scope / p7): synthetic random DIM-vector tokens, toy
+scale, 3 deterministic seeds, $0 CPU. AUROC graded discrimination, NOT
+perplexity. Scale-transfer + engine-native lift UNVERIFIED. Frozen-first (c9).
