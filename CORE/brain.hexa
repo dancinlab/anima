@@ -249,3 +249,193 @@ fn brain_emit_aged(pf: PureField,
     decision["gen_fellback"] = gen["fellback"]
     return decision
 }
+
+// ════════════════════════════════════════════════════════════════════════════
+// H_1281 R3 — BASAL GANGLIA go/no-go SELECTION lane (engine-native, emit/brain side)
+// ════════════════════════════════════════════════════════════════════════════
+//
+// NEURO LENS (c15, a_no_llm_frame_trap · missing-brain-structure ladder). The R1/R2
+// numpy MIRROR (H_1281 #2129/#2134) found that a reinforcement-LEARNED go/no-go
+// SELECTION gate BEATS anima's REAL (faithful, untuned) fixed engine_g emit gate by
+// +0.254 mean over a grounding signal, the lift is reward-driven (shuffle control
+// collapses it), and the learned weights align to the grounding direction (cos +0.71
+// .. +0.89). Per a_engine_native_learning the binding verdict needs an ENGINE-NATIVE
+// realization; per a_verified_must_wire a GREEN result must wire into the live path.
+// This is that realization, on the EMIT/BRAIN side (engine_g stays the PRIOR; the BG
+// lane adds a LEARNED RESIDUAL selection among competing candidate emits).
+//
+// THE GAP anima lacked (read from engine_g.hexa / brain_decide above): the emit
+// decision scores a SINGLE candidate by a FIXED convex 8-weight map and a FIXED
+// threshold (should_emit). There is no COMPETITION among rival candidate emits, no
+// go/no-go DISINHIBITION that releases the best and suppresses the rest, and no
+// LEARNING of the selection from OUTCOME (grounded vs fabricated). That is precisely
+// the basal-ganglia action-SELECTION computation — the lane added here.
+//
+// DESIGN (additive, Ψ-disjoint, substrate-LEARNED — a_autonomy_over_hardcode CENTRAL):
+//   · VBasalGate carries a learned linear go-value (go_w · go_b) over a candidate's
+//     substrate feature vector PLUS a learned NO-GO/abstain value (nogo). Among K
+//     competing candidates, the SELECTION is argmax over the K go-values vs the single
+//     NO-GO value: the highest go-value is RELEASED, or — if NO-GO wins — ALL are
+//     SUPPRESSED (abstain). This is the striatal go/no-go disinhibition.
+//   · The gate is updated GRADIENT-FREE by a delta rule from a GROUNDING OUTCOME reward
+//     only (grounded release → +1, fabricated release → −1, correct abstain → +1,
+//     missed-op abstain → −1). The reward is POST-ACTION outcome, NEVER a decide-time
+//     feature — outcome-only, NO labels, NO external do/dont rule. This IS the p8
+//     continuous learning tick, here on an emit-SELECTION target.
+//   · brain_decide_bg keeps the engine_g fixed convex gate as the PRIOR and adds the
+//     BG residual: it runs brain_decide (the fixed gate, UNCHANGED) AND the learned
+//     selection, then reports both. The fixed-gate emit on the chosen candidate is
+//     NEVER weakened — the residual only adds WHICH candidate competition + a learned
+//     veto/release, additive on top of the existing decision (no replacement).
+//
+// Ψ-DISJOINT (a_core_engine_map · H_1205 separation-invariant): the BG lane touches
+//   ONLY VBasalGate weights — it never reads/writes pure_field / the Ψ relaxation /
+//   the generator. Generation stays byte-identical; Ψ=1/2 untouched.
+// p6: the reward is the grounded-vs-fabricated substrate OUTCOME, NOT injected human
+//   values; the gate learns ONLY action-selection (WHEN/WHICH to emit), nothing about
+//   WHAT to say or WHO anima is (p1/p2/p3 untouched — no persona/identity/ethics).
+// p7: the smoke metric is a deterministic emit-appropriateness from latent ground
+//   truth — no perplexity, no LLM-judge.
+//
+// a_engine_native_learning (c1): the existing engine surfaces (VAdaptField recon-error
+//   growth, VForwardField NLMS prediction) could NOT express a REWARD-gated go/no-go
+//   SELECTION (no go-value/NO-GO competition, no outcome-reward delta rule). So the
+//   engine is EXTENDED with VBasalGate rather than the mechanism trimmed (exactly as
+//   H_1199 extended AdaptField scalar→DIM-vector, and H_1280 added VForwardField).
+//   It lives on the emit/brain side (brain.hexa), namespaced apart from the
+//   engine_cli.hexa mitosis/cerebellum/WM lanes.
+
+// VBasalGate — the engine-native BG go/no-go selection gate.
+//   go_w : learned go-value weights over a candidate's D-dim substrate feature vector.
+//   go_b : learned go-value bias.
+//   nogo : learned NO-GO (abstain) value that competes against every candidate's go.
+//   dim  : feature dimensionality D.
+//   lr   : gradient-free delta-rule learning rate (frozen; the R2 mirror value 0.05).
+struct VBasalGate {
+    go_w: [float],
+    go_b: float,
+    nogo: float,
+    dim: int,
+    lr: float
+}
+
+// vbasal_new — an UNTRAINED gate (all-zero go-weights, zero bias, zero NO-GO): with
+// no exposure every go-value is 0 == the NO-GO value, so the gate starts indifferent
+// and LEARNS the release/suppress structure from outcome reward. lr is frozen (p7;
+// not tuned-to-green — the R2 mirror value).
+pub fn vbasal_new(dim: int, lr: float) -> VBasalGate {
+    let mut w = []
+    let mut i = 0
+    while i < dim { w = w + [0.0]  i = i + 1 }
+    return VBasalGate { go_w: w, go_b: 0.0, nogo: 0.0, dim: dim, lr: lr }
+}
+
+// vbasal_go_value — the learned go-value of one candidate: go_w·feats + go_b.
+// READ-ONLY (no weight change) — the gate's current appetite to RELEASE this candidate.
+pub fn vbasal_go_value(bg: VBasalGate, feats: [float]) -> float {
+    let mut acc = bg.go_b
+    let mut c = 0
+    while c < bg.dim {
+        acc = acc + bg.go_w[c] * feats[c]
+        c = c + 1
+    }
+    return acc
+}
+
+// vbasal_select — the striatal go/no-go SELECTION among K candidates. `cands` is a flat
+// row-major K*dim feature buffer (candidate k spans cands[k*dim .. k*dim+dim]). Returns
+// the index of the RELEASED candidate in [0..K-1], or -1 to ABSTAIN (NO-GO wins / no
+// candidate's go-value beats the abstain value). This is the disinhibition: the highest
+// go-value is released iff it clears the learned NO-GO value, else all are suppressed.
+pub fn vbasal_select(bg: VBasalGate, cands: [float], k: int) -> int {
+    let mut best_j = -1
+    let mut best_v = bg.nogo            // NO-GO is the incumbent to beat (abstain default)
+    let mut j = 0
+    while j < k {
+        let base = j * bg.dim
+        let mut feats = []
+        let mut c = 0
+        while c < bg.dim { feats = feats + [cands[base + c]]  c = c + 1 }
+        let gv = vbasal_go_value(bg, feats)
+        if gv > best_v {
+            best_v = gv
+            best_j = j
+        }
+        j = j + 1
+    }
+    return best_j                       // -1 == abstain (NO-GO un-beaten)
+}
+
+// vbasal_update — ONE gradient-free delta-rule learning tick from a grounding OUTCOME
+// reward. `action` is the index the gate took (-1 == abstained); `feats` is that
+// candidate's feature vector (ignored when action==-1); `reward` is the post-action
+// grounding outcome (+1 grounded-release / correct-abstain, −1 fabricated-release /
+// missed-op-abstain). Nudges the CHOSEN value toward the reward:
+//   abstain : nogo += lr*(reward − nogo)
+//   release : err = reward − go_value ; go_w += lr*err*feats ; go_b += lr*err
+// This IS the p8 inference-time learning (a_engine_native_learning) — outcome-only, no
+// labels, no external rule (a_autonomy_over_hardcode). Returns the updated gate.
+pub fn vbasal_update(bg: VBasalGate, action: int, feats: [float], reward: float) -> VBasalGate {
+    if action < 0 {
+        // NO-GO chosen: nudge the abstain value toward the reward.
+        let ng2 = bg.nogo + bg.lr * (reward - bg.nogo)
+        return VBasalGate { go_w: bg.go_w, go_b: bg.go_b, nogo: ng2, dim: bg.dim, lr: bg.lr }
+    }
+    // release chosen: delta rule on the linear go-value (w, b) from the reward error.
+    let gv  = vbasal_go_value(bg, feats)
+    let err = reward - gv
+    let mut w2 = bg.go_w
+    let mut c = 0
+    while c < bg.dim {
+        w2[c] = w2[c] + bg.lr * err * feats[c]
+        c = c + 1
+    }
+    let b2 = bg.go_b + bg.lr * err
+    return VBasalGate { go_w: w2, go_b: b2, nogo: bg.nogo, dim: bg.dim, lr: bg.lr }
+}
+
+// vbasal_align — cosine alignment of the learned go-weights to a reference direction
+// `w_ref` (the latent grounding-signal direction). A positive alignment proves the gate
+// has LEARNED the grounding structure from outcome reward (the R2 cos +0.71..+0.89
+// finding), not merely added capacity. Read-only diagnostic.
+pub fn vbasal_align(bg: VBasalGate, w_ref: [float]) -> float {
+    let mut dot = 0.0
+    let mut nb  = 0.0
+    let mut nr  = 0.0
+    let mut c = 0
+    while c < bg.dim {
+        dot = dot + bg.go_w[c] * w_ref[c]
+        nb  = nb  + bg.go_w[c] * bg.go_w[c]
+        nr  = nr  + w_ref[c]   * w_ref[c]
+        c = c + 1
+    }
+    return dot / (sqrt(nb) * sqrt(nr) + 0.000000001)
+}
+
+// brain_decide_bg — brain_decide WITH the basal-ganglia go/no-go SELECTION residual.
+// Runs the UNCHANGED fixed gate (brain_decide → engine_g convex map + fixed threshold)
+// AND the learned BG selection over K competing candidate emits (flat K*dim buffer).
+// The fixed-gate decision is reported verbatim ("emit"/"motivation" etc); the BG lane
+// ADDS the competition: which candidate to release (bg_select) or whether to suppress
+// all (bg_select == -1). With k==0 (no competing candidates) the BG selection is a
+// pure abstain and this reduces to brain_decide — the residual is additive, never a
+// replacement of the existing emit decision (no regression on already-grounded cases).
+//
+// The 8 fixed-gate factors + safety inputs are IDENTICAL to brain_decide; `bg` is the
+// learned gate, `cands`/`k` the competing candidate features. Returns the brain_decide
+// record EXTENDED with the BG selection.
+fn brain_decide_bg(pf: PureField,
+                rel: float, gap: float, cur: float, pain: float,
+                coh: float, orig: float, bal: float, dyn_v: float,
+                seconds_since_last: float, env_off: bool, content_clean: bool,
+                bg: VBasalGate, cands: [float], k: int) -> Map {
+    // the EXISTING fixed-gate decision — UNCHANGED (no weakening; additive residual).
+    let decision = brain_decide(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                                seconds_since_last, env_off, content_clean)
+    // the learned BG go/no-go SELECTION among the competing candidates.
+    let sel = vbasal_select(bg, cands, k)
+    decision["bg_select"]       = sel                // index released, -1 == abstain
+    decision["bg_released"]     = sel >= 0
+    decision["bg_n_candidates"] = k
+    return decision
+}
