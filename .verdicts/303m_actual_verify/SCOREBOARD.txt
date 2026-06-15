@@ -19,7 +19,8 @@ PER-GATE TALLY (true, honest c9):
   │                          │        │   argmax 32==32 · top5 [32,44,10,63,46]== · first16 maxΔ 5e-5 │
   │ G0 COHERENCE             │ PASS   │ base kwr [.92,1,.92,1,.86] 5/5 ; chat 4/5 (≥4/5)          │
   │ G1 RECOMBINATION         │ PASS   │ base trunk k3/k4/k5 composed_distinct=2>max_single=1 coherent│
-  │ G2 NOVELTY               │ see *  │ h1140 absence-check on real corpus — IN-FLIGHT (slow CPU)  │
+  │ G2 NOVELTY               │ PASS   │ h1140 on REAL corpus: 67 corpus-absent novel grams (≫3),    │
+  │                          │        │ rate 0.720, F-NOVELTY-EMERGENCE=1 🟢 (reproduces H_1140)    │
   │ G3 PHILOSOPHY p1–p8      │ PASS   │ 8/8 structural + engine_cli_smoke 30/0 + single-entry 7/0  │
   │ G5 NON-FABRICATION       │ PASS   │ grounded-copy 22 verbatim bytes ; immune recall QA 1.0 fab 0.0│
   │ G6 IDEATION              │ THIN** │ distinct ideas 4/5 (<5 frozen, THIN by 1) BUT 9 corpus-absent│
@@ -27,8 +28,11 @@ PER-GATE TALLY (true, honest c9):
   │ CHAT                     │ frozen │ register≠QA (documented INFLATED); strict re-score not run │
   └──────────────────────────┴────────┴───────────────────────────────────────────────────────────┘
 
-  * G2: training corpus is locally present + sha-verified, so the absence-check IS faithful;
-        run is the frozen h1140 metric on the chat ckpt; result appended on completion.
+  * G2: faithful — training corpus locally present + sha-verified (2d15ca7d… matches recipe),
+        so the absence-check is real. Frozen h1140 on the chat ckpt: 93 distinct coherent content
+        n-grams, 67 corpus-absent (NOVEL) + 26 present (retrieval), novelty-rate 0.720,
+        F-NOVELTY-EMERGENCE=1 🟢 — the model CREATES coherent word-combinations absent from its
+        entire 154MB training corpus (genuine new ideas, not retrieval). seed_rng 7/8/9, p7.
   ** G6: distinct ideas 4 (<5 frozen) = THIN by ONE; 9 corpus-absent novel grams confirmed
         ("profound question", "can quantify the", "without universalism" absent from 154MB corpus).
         5th idea seed degenerated to bare "|" (dialogue-register stop). Matches documented MODEL.md

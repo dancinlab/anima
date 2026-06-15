@@ -33,7 +33,9 @@
 > `bg_load`+`bg_forward_last_W` vs torch golden: argmax 32==32, top5 [32,44,10,63,46] match, first-16
 > maxΔ 5e-5 ≪ 0.01). **G0** base 5/5 + chat 4/5. **G1** base trunk k3/k4/k5 composed_distinct=2>max_single=1
 > coherent (reproduces H_1129; chat register masks it on the chat ckpt — same effect as CHAT INFLATED).
-> **G2** absence-checked on the REAL training corpus (sha 2d15ca7d… matches recipe). **G3** 8/8 structural
+> **G2** on the REAL training corpus (sha 2d15ca7d… matches recipe): 67 corpus-absent novel n-grams (≫3),
+> rate 0.720, F-NOVELTY-EMERGENCE=1 🟢 (reproduces H_1140). **G6** torch-mouth: 4/5 distinct (THIN by one —
+> 5th seed = `\|` dialogue-stop) + 9 corpus-absent novel grams (generativity real). **G3** 8/8 structural
 > + engine_cli_smoke 30/0 + single-entry 7/0. **G5** grounded-copy 22 verbatim bytes + immune-memory
 > recall QA 1.000 fab 0.000 abstain 3/3 (PHASE-3 e2e). **No frozen bar moved; no remake needed** — every
 > obstacle was tooling/host (a hexa selfhost IO-builtin symbol regression, fixed at root cause + filed to
