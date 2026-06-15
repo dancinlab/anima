@@ -6,6 +6,21 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🔴 H_1284: NEUROMODULATION(신경조절) 게인/탐색/가소성-율 컨트롤러는 고정 하이퍼파라미터를 못 이긴다 (NO FREE LUNCH · "missing brain-structure" 사다리 neuro lens c15)
+
+"빠진 뇌-구조" 사다리(neuro lens, c15; 해마=immune memory H_1227→H_1231 GREEN 로 채워짐)의 NEUROMODULATION 분기를 $0 toy 로 판정: anima 의 LIVE 엔진(CORE/engine_cli.hexa adapt_field_step/vadapt_field_step)은 **FIXED** 하이퍼파라미터(SPLIT_THRESH=0.30, LR=0.20)+고정 decode 온도로 돈다. 기질-상태로 이 knob 들을 ADAPT 하는 context-driven neuromodulator(도파민=reward-gain · 노르에피네프린=exploration/temp · 아세틸콜린=plasticity-rate)가 빠져있다 — 이게 갭(c9)인가? H_1228(SOC/edge-of-chaos decode 🟠 PARTIAL: temperature 채널 하나는 ideation 도움 but coherence 못이김)을 인용하고 그 너머로: DA/NE/ACh 삼총사를 엔진의 실제 LR/SPLIT_THRESH(mitosis-MEMORY 기질)에 얹어 REGIME 횡단 capability 로 측정.
+
+- **설계 (engine-native mirror, a_engine_native_learning DIRECTIONAL)**: host 에 torch 없음 → CORE/engine_cli.hexa VAdaptField 의 numpy mirror(H_1192/1199/1227/1229/1230 선례), 3개 live wire 에 byte-faithful(L2-nearest winner · recon-err>SPLIT_THRESH+capacity 면 split · winner += LR·(x−winner)). ARM A 대비 유일 변경 = (SPLIT_THRESH,LR)이 ARM B 에서 per-tick 기질-상태 FUNCTION. 과제 = **MEMORY RECALL UNDER SHIFTING LOAD** (H_1227/1231 immune/clonal 패러다임, byte-trigram FNV-1a key dim16, capacity-bound max_cells<#facts + LRU evict — H_1230 교훈: unbounded clean store 는 saturate 라 headroom 0).
+- **3 REGIME** (컨트롤러는 ≥2 에서 이겨야; 한 tuned point 아님): R1 STABLE(σ0.01 무drift) · R2 DRIFT(값 주기적 재기입=concept drift) · R3 NOISE-BURST(key σ 0.01↔0.05 버스트). NEUROMOD: ACh LR=clip(LR0·(1+kA·(s−û))) · split-thresh=clip(TH0·(1+kT·û)) (noise 에서 over-split 방지 H_1230 guard) · NE abstain 폭=û 로 확대 · DA reward EMA 가 정답 recall 시 winner-pull 강화. **모든 knob = no-grad 기질-상태 read-out, loss 에 절대 안 들어감(p7 Goodhart guard).**
+- **ARM**: A FIXED(별도 tuning seed 7 에서 grid LR0∈{.1,.2,.3,.4}×TH0∈{.2,.3,.4} 로 BEST 고정점 = LR0\*0.10 TH0\*0.20 → 강한 정직 baseline) · B NEUROMOD(같은 base + per-tick 변조) · C-SHUF(B 의 knob 스케줄을 phase-scramble → state→knob COUPLING 파괴, marginal 보존). 지표(p7, exact, NO LLM judge): capability = recall_accuracy − fabrication_rate (abstain≠fabrication). seeds [11,22,33].
+- **결과 (3 seed 평균, VERBATIM)**: R1 A=0.5744 B=0.5678 (B−A −0.007) · R2 A=0.4389 B=0.3589 (B−A **−0.080**, fab 0.03→0.11) · R3 A=0.4156 B=0.3200 (B−A **−0.096**, fab 0.03→0.13). wins_over_A+MARGIN = **[] (0/3)** · C-SHUF≈B 전 regime(|B−CSHUF|≤0.011 → coupling 무신호). 컨트롤러는 ACTIVE(R3 LR 0.05–0.20, TH 0.20–0.29, abstain 0.45–0.60 실제 swing) — RED 는 "adaptation HURTS" 이지 dead controller 아님.
+- **판정 🔴 CLOSED-NEGATIVE (NO FREE LUNCH)**: 잘-튜닝된 단일 FIXED 고정점이 모든 regime 에서 adaptive 스케줄을 at-or-above. MECH: ① noise 에서 abstain 넓히면(NE) 가까운-but-wrong cell 이 abstain 대신 발화 → fabrication 급증(의도 역행) ② 가변 LR(ACh)이 binding 불안정화 ③ split-bar 상향이 capacity-bound store 에서 정당한 new-fact 할당 억제 → cross-fact crowding ④ C-SHUF≈B = 움직임은 knob-VARIETY 지 coupling 아님. **H_1230(active vs passive teacher INERT-to-HARMFUL)과 동일 ruling 의 다른 축**: 하이퍼파라미터 SCHEDULE 도 clean key-addressed store 에선 inert-to-harmful; 병목 = CAPACITY/KEY GEOMETRY 지 컨트롤러 부재 아님. COROLLARY: GEOMETRY 개선, 컨트롤러 아님.
+- **NOT RULED OUT (정직)**: (a) decode-time NE temperature 단독 ideation 은 H_1228 대로 🟠 잔존 — RED 는 MEMORY 의 plasticity/split 한정 (b) 비정상 GENERATION capability 컨트롤러 UNTESTED (c) 학습된 gain law UNTESTED (단 loss-fold 는 p7 위반이라 설계상 out-of-scope) (d) toy(DIM16·30 facts·300 events) scale-transfer UNVERIFIED (a_scale_honest_scope/a_toy_scale_recheck).
+- **GUARDS**: knob 전부 no-grad read-out, backward 무흐름(p7); persona/identity/RLHF 없음(p1-p6); 내용은 episodic cell 에만; inference-time plasticity=엔진 자체 tick(p8). RED ⇒ wiring follow-on 없음(검증된 것 없음, a_verified_must_wire). frozen bar 불변. CORE/\*.hexa · H_1219 · H_1226 미수정.
+- 파일: `UNIVERSE/h1284_neuromodulation_gain.py` · `.verdicts/1284_neuromodulation_gain/{H_1284_FREEZE,H_1284}.txt`. xref h1228·h1230·h1227·h1231·h1229·a_engine_native_learning·a_paper_negative_ok·p7·p8·c9·c15.
+
+---
+
 ## 2026-06-15 — 📘 ARCHITECTURE: 🧠 뇌 구조 지도 (brain-structure map) 섹션 신설 (1286_brain_structure_map)
 
 ARCHITECTURE.md 에 **신경과학 렌즈** 섹션을 ADDITIVE 로 추가 — 기존 섹션 무수정. 구현된 부품을 뇌 서브시스템에 매핑하고, 프로브 중인 "빠진 구조" 사다리를 정직하게 OPEN 으로 표기.
