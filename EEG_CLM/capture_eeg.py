@@ -35,8 +35,8 @@ def write_recording(out_path, eeg, heart, n_samp, board):
     print(f"[capture] REAL EEG {n_eeg}ch + HEART {n_heart}ch x {n_samp}samp ({board}) -> {out_path}")
 
 
-def real_capture(serial, seconds):
-    """REAL Cyton+Daisy capture — ALL 16 EEG + analog(PPG/심박). NO fallback (가짜 차단)."""
+def real_capture(serial, seconds, no_analog=False):
+    """REAL Cyton+Daisy capture — 16 EEG (+ analog PPG/심박, --no-analog 면 생략). NO fallback."""
     from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
     import time
     if not serial:
@@ -46,19 +46,35 @@ def real_capture(serial, seconds):
     board_id = BoardIds.CYTON_DAISY_BOARD.value          # Cyton+Daisy = 16ch real board
     fs = BoardShim.get_sampling_rate(board_id)
     eeg_ch = BoardShim.get_eeg_channels(board_id)        # 16 EEG channels (1..16)
-    try:
-        heart_ch = BoardShim.get_analog_channels(board_id)   # PPG/심박 = analog pins (cyton_ppg_wiring)
-    except Exception:
+    if no_analog:
         heart_ch = []
+    else:
+        try:
+            heart_ch = BoardShim.get_analog_channels(board_id)   # PPG/심박 = analog pins
+        except Exception:
+            heart_ch = []
     board = BoardShim(board_id, params)
     board.prepare_session()                              # 실패 시 예외 → 중단 (폴백 없음)
-    # PPG(심박)는 analog pin A5(=D11, purple) 첫 Aux 슬롯 → Cyton 을 analog 읽기 모드(/2)로.
-    # (cyton_ppg_wiring_official: "D11 is read as analog pin A5 and sent in the first Aux data slot")
-    try:
-        board.config_board("/2")
-        print("[capture] analog mode(/2) 설정 — PPG(A5) Aux 슬롯 활성")
-    except Exception as e:
-        print(f"[capture] analog mode 설정 실패(무시): {e}")
+    # PPG(심박)는 analog pin A5(=D11) 첫 Aux 슬롯 → Cyton analog 모드(/2). --no-analog 면 생략
+    # (config_board('/2') 가 약해진 보드에서 hang 가능 → 심박 불요 시 --no-analog 권장)
+    if not no_analog:
+        # soft reset('v') 로 보드 펌웨어 깨운 뒤 analog 모드('/2'). 강제정지 누적 stuck 완화.
+        # config 가 hang 하면(보드 stuck) → 배터리 재장착(완전 리셋)이 확실한 해결.
+        import threading
+        def _cfg(cmd, res):
+            try: board.config_board(cmd); res.append("ok")
+            except Exception as e: res.append("err:" + str(e))
+        ok = True
+        for cmd in ("v", "/2"):
+            res = []
+            th = threading.Thread(target=_cfg, args=(cmd, res), daemon=True); th.start(); th.join(8)
+            if th.is_alive():
+                print(f"[capture] config '{cmd}' HANG(8s) — 보드 배터리 재장착 필요. analog 생략하고 EEG 진행")
+                ok = False; break
+            print(f"[capture] config '{cmd}': {res}")
+            time.sleep(1.0)
+        if ok:
+            print("[capture] soft-reset + analog(/2) OK — PPG(A5) 심박 활성")
     board.start_stream()
     print(f"[capture] REAL streaming {seconds}s @ {fs}Hz board=CYTON_DAISY({board_id}) "
           f"EEG{len(eeg_ch)}ch + HEART(analog){len(heart_ch)}ch port={serial} ...")
