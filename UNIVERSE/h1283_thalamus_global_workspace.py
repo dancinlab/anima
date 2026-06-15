@@ -87,7 +87,8 @@ def mean_pairwise_cosine(states):
 
 
 def run_arm(seed, mode, k_coalition=2):
-    """mode in {'direct','hub','coalition','reentrant'}. Returns (coherence, traj)
+    """mode in {'direct','hub','coalition','reentrant','dense','dense_shuffle'}.
+    Returns (coherence, traj)
     where traj is (N_MOD, T) per-module salience (state energy) trajectory for the
     Φ leg.
 
@@ -138,6 +139,20 @@ def run_arm(seed, mode, k_coalition=2):
     # Drawn from the SAME rng stream AFTER inputs so ARM A's draws are unchanged.
     relay = rng.standard_normal((N_MOD, DIM)) * 0.5
 
+    # R5 DENSE all-pairs recurrent relay: same per-module relay channels, but the
+    # intra-thalamic cross-coupling is the COMPLETE graph (each relay_i mixes the
+    # mean of ALL other channels j≠i), not just ring neighbours (R3/R4 'reentrant').
+    # all_others[i] = list of all j != i (complete intra-thalamic graph).
+    all_others = [[j for j in range(N_MOD) if j != i] for i in range(N_MOD)]
+    # R5 SHUFFLE CONTROL ('dense_shuffle'): a FIXED random permutation of channel
+    # indices used to SCRAMBLE which channels' contributions each relay reads — same
+    # edge COUNT (still mean over N-1 others) but the WIRING is permuted, so the
+    # all-pairs structure is destroyed while the added-edge variance is preserved.
+    # Drawn AFTER relay so ARM A and the structured 'dense' arm are byte-unchanged
+    # (this draw only affects the 'dense_shuffle' branch). Permutation with no
+    # fixed point (a derangement-ish shift) so no relay reads its own structured set.
+    dense_perm = (np.roll(np.arange(N_MOD), 1)).tolist()  # [N-1,0,1,...] cyclic shift
+
     coh_acc = []
     traj = np.zeros((N_MOD, T))
     for t in range(T):
@@ -178,6 +193,33 @@ def run_arm(seed, mode, k_coalition=2):
                 new_relay[i] = (LEAK * relay[i]
                                 + GAIN * (W_NBR * states[i]
                                           + W_RELAY * relay_nbr))
+            relay = new_relay
+        elif mode in ("dense", "dense_shuffle"):  # R5 — DENSE all-pairs recurrent
+            # SAME mechanism as 'reentrant' EXCEPT the intra-thalamic cross-coupling
+            # at the relay stage is the COMPLETE graph (all j≠i) rather than ring
+            # neighbours. 'dense' = structured all-pairs; 'dense_shuffle' = the
+            # pre-registered control where the channel set each relay reads is
+            # permuted (same edge count, scrambled wiring). The cortex stage is
+            # IDENTICAL to 'reentrant' (ring + private input + per-module relay).
+            for i in range(N_MOD):
+                nbr = np.mean([states[k] for k in ring[i]], axis=0)
+                new[i] = (LEAK * states[i]
+                          + GAIN * (W_NBR * nbr
+                                    + W_IN * inputs[i, t]
+                                    + W_RELAY * relay[i]))
+            new_relay = relay.copy()
+            for i in range(N_MOD):
+                if mode == "dense":
+                    # COMPLETE intra-thalamic graph: mean over ALL other channels.
+                    relay_others = np.mean([relay[j] for j in all_others[i]], axis=0)
+                else:  # 'dense_shuffle' — scrambled wiring, same edge count
+                    src = dense_perm[i]  # permuted source index (cyclic, no fixed pt)
+                    others_of_src = all_others[src]
+                    relay_others = np.mean([relay[j] for j in others_of_src], axis=0)
+                # W_RELAY (== W_DENSE, the same frozen weight) on the dense term.
+                new_relay[i] = (LEAK * relay[i]
+                                + GAIN * (W_NBR * states[i]
+                                          + W_RELAY * relay_others))
             relay = new_relay
         else:  # 'coalition' — R2 multi-winner rank-k coalition broadcast
             energy = np.array([float(np.dot(states[i], states[i])) for i in range(N_MOD)])
@@ -571,6 +613,129 @@ def main_r4():
     return result
 
 
+def main_r5():
+    """ROUND 5 — DENSE ALL-PAIRS RECURRENT COUPLING (a_break_the_wall vs R4).
+
+    R3/R4's re-entrant relay was SPARSE: per-module relay channels cross-coupled
+    only to RING NEIGHBOURS. It cleared faithful IIT4 ΔΦ ≥ +0.02 DECISIVELY on 2/3
+    seeds (seed7 +0.143, seed9 +0.168) but FAILED the 3-seed robustness gate on
+    seed 8 (+0.0101) — the NEAR-ORTHOGONAL substrate (baseline coh +0.011). R4's
+    diagnosis: too little shared structure for a sparse relay to bind. R4's
+    mandate: a future round must pre-register a GEOMETRY-CONDITIONED hypothesis.
+
+    R5 escalates the distributed-multi-edge diagnosis to a COMPLETE intra-thalamic
+    graph: each relay channel cross-coupled to ALL other channels (mean over all
+    j≠i), not just ring neighbours — so every bipartition crosses O(N^2) recurrent
+    loops and no single MIP cut is cheap, EVEN on the orthogonal seed 8. The ONLY
+    structural change vs R3/R4 'reentrant' is ring-neighbour → all-pairs relay
+    cross-coupling. NOTHING tuned (W_RELAY=W_DENSE=0.5, frozen since R3; p7).
+
+    Pre-registered SHUFFLE CONTROL ('dense_shuffle'): the channel set each relay
+    reads is PERMUTED (same edge count, scrambled wiring) — the Φ lift must VANISH
+    on ≥1 GREEN seed, proving the lift is the STRUCTURED dense topology, not
+    generic added-edge variance.
+
+    FROZEN BARS (R5 — see H_1283_R5_FREEZE.txt): GREEN iff
+      P1 (PRIMARY) faithful ΔΦ ≥ +0.02 on EVERY seed [7,8,9] (incl seed 8)
+      P2 (SANITY)  B.coh ≥ A.coh on EVERY seed
+      P3 (NO-COLLAPSE) B.coh < 0.999 on ≥1 seed
+      C  (SHUFFLE) dense_shuffle ΔΦ < +0.02 on ≥1 seed that 'dense' GREENs
+    GREEN = P1 AND P2 AND P3 AND C. Else RED/🧱 (closed-negative, c9; bar NOT moved)."""
+    print("H_1283 R5 — THALAMUS / DENSE ALL-PAIRS RECURRENT COUPLING")
+    print(f"modules={N_MOD} dim={DIM} ticks={T} seeds={SEEDS}  W_relay=W_dense={W_RELAY}")
+    print("ARM A = direct ring   ·   ARM B = ring + DENSE all-pairs recurrent relay "
+          "(complete intra-thalamic graph)")
+    print("PRIMARY bar = faithful IIT4 ΔΦ ≥ +0.02 EVERY seed (incl seed 8)   ·   "
+          "SHUFFLE control pre-registered")
+    print("=" * 72)
+
+    per_seed = {}
+    for seed in SEEDS:
+        cohA, trajA = run_arm(seed, "direct")
+        cohB, trajB = run_arm(seed, "dense")
+        cohSh, trajSh = run_arm(seed, "dense_shuffle")
+        per_seed[seed] = {"cohA": cohA, "cohB": cohB, "cohSh": cohSh,
+                          "trajA": trajA, "trajB": trajB, "trajSh": trajSh}
+
+    # ---- PRIMARY Φ leg: faithful IIT4 on ALL 3 seeds (structured dense) ----
+    print("FAITHFUL IIT4 Φ (exact MIP-EI, ALL seeds) — ARM A vs DENSE ARM B:")
+    phi_all = {}
+    for seed in SEEDS:
+        phiA = faithful_phi(per_seed[seed]["trajA"], f"A_s{seed}")
+        phiB = faithful_phi(per_seed[seed]["trajB"], f"B_s{seed}")
+        dphi = (phiB - phiA) if (phiA is not None and phiB is not None) else None
+        phi_all[seed] = {"A": phiA, "B": phiB, "delta": dphi}
+        print(f"  seed {seed}: ARM_A Φ={phiA}  DENSE Φ={phiB}  ΔΦ={dphi}")
+
+    p1 = all(phi_all[s]["delta"] is not None and phi_all[s]["delta"] >= MARGIN_PHI
+             for s in SEEDS)
+    p2 = all(per_seed[s]["cohB"] >= per_seed[s]["cohA"] for s in SEEDS)
+    p3 = any(per_seed[s]["cohB"] < DEGEN_CAP for s in SEEDS)
+
+    # ---- SHUFFLE CONTROL: faithful Φ on the permuted dense relay ----
+    print("-" * 72)
+    print("SHUFFLE CONTROL (dense_shuffle — permuted wiring, same edge count):")
+    phi_shuf = {}
+    green_seeds = [s for s in SEEDS if phi_all[s]["delta"] is not None
+                   and phi_all[s]["delta"] >= MARGIN_PHI]
+    # compute shuffle Φ on the GREEN seeds (the control is meaningful where dense GREENs)
+    shuf_check_seeds = green_seeds if green_seeds else SEEDS
+    for seed in shuf_check_seeds:
+        phiSh = faithful_phi(per_seed[seed]["trajSh"], f"Sh_s{seed}")
+        phiA = phi_all[seed]["A"]
+        dphiSh = (phiSh - phiA) if (phiSh is not None and phiA is not None) else None
+        phi_shuf[seed] = {"shuffle": phiSh, "A": phiA, "delta": dphiSh}
+        print(f"  seed {seed}: ARM_A Φ={phiA}  SHUFFLE Φ={phiSh}  ΔΦ_shuf={dphiSh}")
+    # C PASS iff shuffle ΔΦ < +0.02 on ≥1 of the seeds dense GREENs (lift vanishes)
+    if green_seeds:
+        c_shuffle = any(phi_shuf[s]["delta"] is not None
+                        and phi_shuf[s]["delta"] < MARGIN_PHI for s in green_seeds)
+    else:
+        c_shuffle = True  # no dense GREEN seed → C is moot (P1 already fails)
+
+    print("-" * 72)
+    print("COHERENCE (sanity P2 + no-collapse P3):")
+    for seed in SEEDS:
+        ps = per_seed[seed]
+        print(f"  seed {seed}: ARM_A coh={ps['cohA']:+.4f}  DENSE coh={ps['cohB']:+.4f}  "
+              f"Δcoh={ps['cohB'] - ps['cohA']:+.4f}")
+
+    green = p1 and p2 and p3 and c_shuffle
+    verdict = "GREEN" if green else "RED"
+
+    print("=" * 72)
+    print(f"P1 PRIMARY Φ (B≥A+{MARGIN_PHI} faithful IIT4 EVERY seed incl 8): {'PASS' if p1 else 'FAIL'}")
+    for s in SEEDS:
+        d = phi_all[s]["delta"]
+        ok = (d is not None and d >= MARGIN_PHI)
+        print(f"     seed {s}: ΔΦ={d}  {'≥' if ok else '<'} +{MARGIN_PHI}  {'PASS' if ok else 'FAIL'}")
+    print(f"P2 sanity (DENSE coh ≥ A coh every seed): {'PASS' if p2 else 'FAIL'}")
+    print(f"P3 not-degenerate (DENSE coh < {DEGEN_CAP} ≥1 seed): {'PASS' if p3 else 'FAIL'}")
+    print(f"C  shuffle control (perm ΔΦ < +{MARGIN_PHI} on ≥1 dense-GREEN seed): "
+          f"{'PASS' if c_shuffle else 'FAIL'}")
+    print(f"VERDICT: {verdict}")
+
+    result = {
+        "id": "H_1283_R5", "slug": "1283_thalamus_global_workspace",
+        "round": 5, "arm_b": "dense all-pairs recurrent coupling (complete intra-thalamic graph)",
+        "rubric": "Φ-primary 3-seed robust bar (incl seed 8) + pre-registered shuffle control",
+        "verdict": verdict,
+        "seeds": SEEDS,
+        "w_relay_dense": W_RELAY,
+        "phi_faithful_iit4": {str(s): phi_all[s] for s in SEEDS},
+        "shuffle_control": {str(s): phi_shuf[s] for s in phi_shuf},
+        "coherence": {str(s): {"A": per_seed[s]["cohA"], "B": per_seed[s]["cohB"],
+                               "delta": per_seed[s]["cohB"] - per_seed[s]["cohA"]}
+                      for s in SEEDS},
+        "bars": {"P1_phi_primary": p1, "P2_coh_sanity": p2,
+                 "P3_not_degenerate": p3, "C_shuffle": c_shuffle},
+        "margins": {"phi_primary": MARGIN_PHI, "degen_cap": DEGEN_CAP},
+        "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n=4)",
+    }
+    print("\nRESULT_JSON=" + json.dumps(result))
+    return result
+
+
 if __name__ == "__main__":
     if "--r1" in sys.argv:
         main()
@@ -578,5 +743,7 @@ if __name__ == "__main__":
         main_r2()
     elif "--r3" in sys.argv:
         main_r3()
+    elif "--r4" in sys.argv:
+        main_r4()
     else:
-        main_r4()  # default: ROUND 4 Φ-primary re-freeze of the re-entrant loop
+        main_r5()  # default: ROUND 5 dense all-pairs recurrent coupling

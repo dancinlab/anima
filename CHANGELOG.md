@@ -2,6 +2,10 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — 🧱 H_1283 R5: DENSE all-pairs recurrent coupling — 시상 Φ 벽 돌파 시도(a_break_the_wall), still 🧱 (RED, closed-negative)
+
+R4 가 sparse re-entry 의 seed-8(near-orthogonal) 미달을 sparsity 탓으로 진단 → R5 가 그 진단을 끝까지(COMPLETE intra-thalamic graph: relay 가 ring-neighbour 가 아니라 ALL-PAIRS j≠i 와 교차결합) 밀어붙임. frozen-first(cfe8b2e29), faithful IIT4 Φ only(a_phi_iit4_tool), W 미튜닝(p7), **사전등록 shuffle control**. RESULT 🔴 RED — 두 가지 독립 negative: (1) seed 8 ΔΦ **+0.0060 < +0.02** (sparse 의 +0.0101 보다도 나쁨 — density 가 orthogonal init 의 부족 구조를 못 채움); (2) **shuffle control FIRED** — permuted dense graph 가 리프트의 ~91%(seed7)/~76%(seed9) 재현 → "통과" seed 의 리프트조차 구조 아닌 generic added-edge VARIANCE. relay-topology Φ 축(broadcast→coalition→sparse→dense re-entry) EXHAUSTED — 어떤 relay topology 도 robust +0.02-every-seed Φ bar 미달. ARM A Φ(0.78038/0.611741/0.825326) R1-R4 byte-identical. RED ⇒ no CORE wiring(a_verified_must_wire). bars NOT moved(c9). numpy=DIRECTIONAL·toy scale(a_scale_honest_scope). `.verdicts/1283_thalamus_global_workspace/{H_1283_R5_FREEZE,H_1283_R5}.txt` · `UNIVERSE/h1283_thalamus_global_workspace.py`(main_r5 + 'dense'/'dense_shuffle').
+
 ## 2026-06-15 — docs(ARCHITECTURE): 다음-단계 stale 현행화 (양자·감정 엔진실현 닫힘)
 
 ARCHITECTURE.md "다음 단계" 의 stale 상태 현행화(c9): ⚛️ quantum-entropy R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE+WIRED(#2164)**, 💗 emotion R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE(#2166/#2167)** 로 갱신(⏳→✅). 뇌-구조 사다리 요약줄도 "기저핵 r3 ⏳ in-flight" → "5개 배선 완료 + 감정/윤리/양자 엔진실현 재확인" 으로 현행화.
