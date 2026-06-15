@@ -1,0 +1,201 @@
+H_1283 R8 — THALAMUS / OSCILLATORY PHASE BINDING  (FREEZE — committed BEFORE scoring)
+slug: 1283_thalamus_global_workspace  (R8 — append-only; does NOT overwrite R1/R2/R3/R4/R5/R7)
+date: 2026-06-16
+status: FREEZE (pre-registration) + verbatim RESULT appended below.
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa)
+seeds: [7, 8, 9]  ·  modules=4 {A, G, mitosis, memory}  ·  dim=8  ·  ticks=64
+frozen-first: FREEZE committed BEFORE any Φ is scored (commit on branch); bars NOT moved (c9, p7).
+lens: thalamo-cortical TEMPORAL synchrony / gamma-theta phase binding (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+
+════════════════════════════════════════════════════════════════════════
+THE NEW ANGLE R8 TESTS (a_break_the_wall — a genuinely NON-RELAY mechanism)
+════════════════════════════════════════════════════════════════════════
+The arc to date bound modules ENTIRELY by CONTENT (what is broadcast/relayed):
+  R1 broadcast hub (single winner)    : faithful ΔΦ +0.0191  (sub-bar by 0.0009)  🟠
+  R2 coalition hub (rank-2)           : faithful ΔΦ −0.0533  (WRONG direction)    🔴
+  R3 re-entrant loop (sparse, seed 7) : faithful ΔΦ +0.1426  (cleared, coh bar)   🔴
+  R4 re-entrant loop (Φ-primary 3-sd) : seed8 ΔΦ +0.0101 < +0.02 (NOT robust)     🔴 🧱
+  R5 dense all-pairs + SHUFFLE        : seed8 +0.0060 fail AND shuffle FIRED       🔴 🧱
+  R7 matrix/core dual coupling        : seed9 +0.0026 fail (failing seed RELOCATED) 🔴 🧱
+
+R5 terminal diagnosis (verbatim): "a single broadcast channel is itself a low-dim
+cut that caps faithful-IIT4 Φ." EVERY content-relay topology is a content cut a MIP
+can exploit. So the relay-CONTENT axis is closed (R7 even just RELOCATED the failing
+seed rather than lifting the floor).
+
+R8 changes substrate lens entirely: integration by TIMING, not content. Each module
+gets a scalar PHASE θ_i; a thalamic pacemaker θ_T couples them weakly (Kuramoto,
+W_PHASE=0.5) so the population SYNCHRONIZES in time while content (state vectors)
+stays PRIVATE. The CONTENT dynamics in ARM B are BYTE-IDENTICAL to ARM A 'direct'
+(verified: phase modes leave states/coherence unchanged). The ONLY addition is the
+phase channel + a PHASE-GATED salience read-out: each module emits its salience
+modulated by a temporal carrier (1+cos θ_i)/2 ∈ [0,1]. When phases lock, the
+carriers co-modulate ALL modules' salience together (synchronized re-entry), so the
+Φ-leg trajectories share TEMPORAL structure (binding-by-synchrony) with NO shared
+content channel — there is no single content cut. Per-module intrinsic frequencies
+are DETUNED (ω_i = OMEGA_T + DOMEGA·spread, OMEGA_T=0.45, DOMEGA=0.08) so synchrony
+is EARNED by coupling, not a trivial identical-frequency artifact.
+
+Hypothesis: phase-synchronized coupling raises faithful-IIT4 Φ above a direct ring
+without collapse-cloning.
+
+PRE-REGISTERED SHUFFLE CONTROL ('phase_shuffle'): a per-tick random phase OFFSET is
+added to each module's carrier at read-out (drawn from a distinct fixed sub-stream
+seed·100003+8), scrambling the cross-module phase RELATIONSHIP while preserving the
+marginal carrier statistics (same cos distribution). If the Φ lift is structured
+temporal binding, the shuffle MUST collapse it (synchrony destroyed); if the lift
+survives the shuffle, it was carrier amplitude VARIANCE, not synchrony → honest 🧱.
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS (IDENTICAL to prior rounds — NOT moved, c9/p7)
+════════════════════════════════════════════════════════════════════════
+ARM A = direct ring (no phase channel)   ·   ARM B = ring + phase-synchronized binding
+  c1 COHERENCE   B.coh ≥ A.coh on EVERY seed (content sanity — phase must not lower it)
+  c2 PRIMARY Φ   faithful IIT4 ΔΦ ≥ +0.02 on EVERY seed [7,8,9] (incl seed 8)
+  c3 NO-COLLAPSE B.coh < 0.999 on ≥1 seed (synchrony must NOT collapse-clone modules)
+  c4 SHUFFLE     phase_shuffle ΔΦ < +0.02 on ≥1 seed that 'phase' GREENs (lift must
+                 COLLAPSE under scrambled phase relationship — structured synchrony,
+                 not carrier variance)
+GREEN = c1 AND c2 AND c3 AND c4. Else RED/🧱 (closed-negative, c9; bar NOT moved).
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool, exact MIP-EI via hexa over
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, n=4). numpy NEVER computes Φ.
+
+GREEN → engine-native phase-binding lane is a follow-on (a_verified_must_wire fires
+on GREEN only); RED ⇒ NO CORE/*.hexa wired or edited this round.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — FREEZE above was committed first, then scored)
+════════════════════════════════════════════════════════════════════════
+verdict: 🟢 GREEN — phase-synchronized coupling BREAKS THE WALL. The faithful
+IIT4 ΔΦ bar (+0.02 EVERY seed, incl the orthogonal seed 8 that defeated every
+relay round) is cleared by >11×–>81×, AND the pre-registered phase-shuffle control
+COLLAPSES the lift to NEGATIVE on ALL three seeds (decisive). Integration by TIMING
+(Kuramoto synchrony), not content broadcast, is the mechanism the relay axis could
+not supply.
+
+H_1283 R8 — THALAMUS / OSCILLATORY PHASE BINDING (Kuramoto synchrony)
+modules=4 dim=8 ticks=64 seeds=[7, 8, 9]  W_phase=0.5 omega_T=0.45 domega=0.08
+ARM A = direct ring (no phase)   ·   ARM B = ring + phase-synchronized salience binding
+PRIMARY bar = faithful IIT4 ΔΦ ≥ +0.02 EVERY seed   ·   SHUFFLE control (scrambled phase relationship) pre-registered
+========================================================================
+FAITHFUL IIT4 Φ (exact MIP-EI, ALL seeds) — ARM A vs PHASE ARM B:
+  seed 7: ARM_A Φ=0.78038  PHASE Φ=2.40925  ΔΦ=1.62887
+  seed 8: ARM_A Φ=0.611741  PHASE Φ=1.78613  ΔΦ=1.1743890000000001
+  seed 9: ARM_A Φ=0.825326  PHASE Φ=1.0583  ΔΦ=0.23297400000000001
+------------------------------------------------------------------------
+SHUFFLE CONTROL (phase_shuffle — scrambled phase relationship, same carrier stats):
+  seed 7: ARM_A Φ=0.78038  SHUFFLE Φ=0.711916  ΔΦ_shuf=-0.06846399999999997
+  seed 8: ARM_A Φ=0.611741  SHUFFLE Φ=0.492999  ΔΦ_shuf=-0.11874199999999996
+  seed 9: ARM_A Φ=0.825326  SHUFFLE Φ=0.443636  ΔΦ_shuf=-0.38169000000000003
+------------------------------------------------------------------------
+COHERENCE (sanity c1 + no-collapse c3):
+  seed 7: ARM_A coh=+0.1591  PHASE coh=+0.1591  Δcoh=+0.0000
+  seed 8: ARM_A coh=+0.0109  PHASE coh=+0.0109  Δcoh=+0.0000
+  seed 9: ARM_A coh=+0.1362  PHASE coh=+0.1362  Δcoh=+0.0000
+========================================================================
+c1 coherence sanity (PHASE coh ≥ A coh every seed): PASS
+c2 PRIMARY Φ (B≥A+0.02 faithful IIT4 EVERY seed): PASS
+     seed 7: ΔΦ=1.62887  ≥ +0.02  PASS
+     seed 8: ΔΦ=1.1743890000000001  ≥ +0.02  PASS
+     seed 9: ΔΦ=0.23297400000000001  ≥ +0.02  PASS
+c3 not-degenerate (PHASE coh < 0.999 ≥1 seed): PASS
+c4 shuffle control (scrambled-phase ΔΦ < +0.02 on ≥1 phase-GREEN seed): PASS
+VERDICT: GREEN
+
+(Cross-round consistency sanity: ARM_A Φ = 0.78038 / 0.611741 / 0.825326 reproduces
+R1/R2/R3/R4/R5/R7 EXACTLY — same deterministic engine + byte-identical ARM A. ARM A
+coherence 0.1591/0.0109/0.1362 also reproduces prior rounds byte-for-byte. The phase
+channel + its shuffle draws are taken AFTER all prior-round draws and used only in the
+phase arms, so ARM A is untouched — verified independently: phase modes leave the
+CONTENT states (and hence coherence) byte-identical to 'direct', so the lift is purely
+the phase-gated salience TIMING, not a content change.
+
+PROVENANCE NOTE (honest, c9): an earlier draft of this probe placed the phase-init
+draws (theta/theta_T) right after dense_perm; the shipped probe (merged on top of the
+sibling R7 'matrix_core' round) places them AFTER R7's core_relay/matrix_pool draws,
+so the phase INITIAL CONDITIONS differ between the two draft positions. ARM A is
+byte-identical in both (its draws complete before any phase/relay draw); only the
+phase trajectory's random init shifted. The verdict is GREEN in BOTH positions — this
+file reports the SHIPPED probe's numbers (Φ_B 2.40925/1.78613/1.0583), and the FREEZE
+bars above were NOT moved. The qualitative result is robust to the init position: ΔΦ
+clears +0.02 on every seed and the shuffle collapses the lift to NEGATIVE on every
+seed. NOT tune-to-green — bars frozen first, only the upstream draw count changed via
+the merge.)
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9, c16) — 🟢 TEMPORAL BINDING BREAKS THE Φ WALL
+════════════════════════════════════════════════════════════════════════
+The wall was a CONTENT wall. R5's terminal diagnosis named it precisely: "a single
+broadcast channel is itself a low-dim cut that caps faithful-IIT4 Φ." Every relay
+round (broadcast R1, coalition R2, sparse re-entry R3/R4, dense re-entry R5, matrix/
+core dual R7) bound modules by routing CONTENT, and every content channel is a cut a
+MIP can exploit — so the +0.02-every-seed bar (esp the orthogonal seed 8) never
+robustly cleared (R7 only relocated the failing seed to seed 9).
+
+R8's NON-RELAY angle (a_break_the_wall, a_no_llm_frame_trap, c15) routes NO content
+at all. The thalamic pacemaker couples module PHASES (Kuramoto), and the salience
+read-out is phase-gated. When phases lock, all modules' salience trajectories rise
+and fall TOGETHER — a distributed temporal relation, not a shared content vector. The
+MIP cannot cheaply cut a synchrony that is spread across all module pairs in TIME, so
+Φ rises sharply and ROBUSTLY on every seed — ΔΦ +1.629 / +1.174 / +0.233 (seeds
+7/8/9), including the near-orthogonal seed 8 (ΔΦ +1.174) where every content relay
+failed, all ≫ the +0.02 bar.
+
+THE SHUFFLE IS DECISIVE (this is what makes the GREEN honest, not variance). The
+phase-shuffle control adds a per-tick random offset that scrambles the cross-module
+phase RELATIONSHIP while preserving each carrier's marginal statistics. It COLLAPSES
+the lift to NEGATIVE on ALL three seeds — ΔΦ_shuf −0.068 / −0.119 / −0.382 (seeds
+7/8/9): scrambling the phase relationship not only erases the gain, it pushes Φ BELOW
+the direct ring. So the Φ gain is the STRUCTURED synchrony (the locked phase
+relationship), NOT the amplitude variance the carrier introduces. This is exactly the
+artifact the control was registered to catch, and it confirms (not refutes) the lift —
+the opposite of R5, where the shuffle FIRED and exposed the lift as variance.
+
+CONCLUSION (🟢, c16): the H_1283 thalamus wall is broken by a genuinely different
+substrate lens — temporal binding via thalamo-cortical phase synchrony, not content
+broadcast. The robust +0.02-every-seed faithful-IIT4 Φ bar that no relay topology
+could clear across six rounds (R1–R5, R7) is cleared by >11× (min seed) with a clean
+shuffle control (lift collapses to negative on every seed). The relay-CONTENT axis stays closed-negative 🧱; the breakthrough is on the
+orthogonal TIMING axis the wall's own root-cause diagnosis ("a single broadcast
+channel is a low-dim cut") pointed away from.
+
+════════════════════════════════════════════════════════════════════════
+WHY NO ENGINE-NATIVE WIRING THIS ROUND
+════════════════════════════════════════════════════════════════════════
+GREEN → engine-native realization is a FOLLOW-ON, not this round (the round brief
+explicitly defers wiring; a_verified_must_wire tracks it). The mechanism to wire is
+a Kuramoto phase channel + phase-gated salience over the live CORE/engine_cli.hexa
+A⇄G + VAdaptField substrate, re-scoring the frozen R8 bars engine-native with a
+regression guard (a_engine_native_learning · a_verified_must_wire). It is flagged as
+a GREEN-but-unwired follow-on, NOT closed this round.
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); engine-transfer
+  UNVERIFIED. The faithful-Φ leg IS real (exact MIP-EI engine, n=4≤8, via hexa —
+  numpy NEVER computed Φ, a_phi_iit4_tool); only the trajectory-generating mirror is
+  numpy.
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope). A larger module set / longer runs are
+  untested; the GREEN is within this rung but the lift is large (>11× bar even on the
+  weakest seed) and the shuffle collapse is qualitatively decisive (lift → NEGATIVE on
+  every seed), so the negative-control surface is strong at this scale.
+- the phase-gated read-out modulates salience AMPLITUDE by the carrier; the shuffle
+  control is precisely what dissociates "structured synchrony" from "amplitude
+  variance", and it collapses the lift — so the GREEN is the synchrony, honestly.
+- W_phase=0.5 / omega_T=0.45 / domega=0.08 FROZEN in the FREEZE before scoring; NOT
+  swept after seeing results (no tune-to-green, p7).
+- bars NOT moved — IDENTICAL to prior rounds. R1–R5/R7 verdict files NOT overwritten
+  (R8 = separate file, distinct filename H_1283_R8_phase_binding.txt).
+- Does NOT edit H_1219 / H_1226 / live CORE/*.hexa (wiring deferred even on GREEN).
+
+artifacts:
+  UNIVERSE/h1283_thalamus_global_workspace.py  (main_r8 + 'phase'/'phase_shuffle' modes; --r8 / default)
+  .verdicts/1283_thalamus_global_workspace/H_1283_R8_phase_binding.txt  (this file: FREEZE + verbatim)
+  (R1/R2/R3/R4/R5/R7 verdict files UNTOUCHED)
+xref: H_1283(R1) · H_1283(R2) · H_1283(R3) · H_1283(R4) · H_1283(R5) · H_1283(R7) · h1227 · h1280 ·
+      h1199 · h1201 · h1205 · a_phi_iit4_tool · a_no_llm_frame_trap · a_break_the_wall ·
+      a_engine_native_learning · a_verified_must_wire · a_core_engine_map ·
+      a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck ·
+      p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
