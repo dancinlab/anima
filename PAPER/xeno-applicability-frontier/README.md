@@ -51,7 +51,7 @@ and `bibtex`.
 - 🔗 SSOT domain: [../../XENO/XENO.md](../../XENO/XENO.md)
 - 🔗 sibling paper: [../structure-emergent-vs-number-convention/PAPER.md](../structure-emergent-vs-number-convention/PAPER.md)
 - 🔗 6 verdict verbatim: [`.verdicts/832~837_xeno_*/`](../../.verdicts)
-- 🔗 6 hypothesis SSOT: [UNIVERSE/H_832~H_837](../../UNIVERSE)
+- 🔗 6 hypothesis SSOT: [UNIVERSE/cards/H_832~H_837](../../UNIVERSE)
 
 ## Status
 

@@ -64,16 +64,16 @@
 
 ```
 Group A · 측정·코어 (L1 live · L2 synthetic · L3 3-substrate · L7 calibration)
-→ 구현 = **H_679 measurement-core × EEG** · [`EEG/impl/H_679_measurement_core.hexa`](./impl/H_679_measurement_core.hexa) · [UNIVERSE H_679](../UNIVERSE/H_679_eeg_measurement_core.md)
+→ 구현 = **H_679 measurement-core × EEG** · [`EEG/impl/H_679_measurement_core.hexa`](./impl/H_679_measurement_core.hexa) · [UNIVERSE H_679](../UNIVERSE/cards/H_679_eeg_measurement_core.md)
 
 Group B · 교차-substrate 다리 (L4 EEG→AKIDA · L5 tension-link 5-ch · L8 kuramoto α-band)
-→ 구현 = **H_680 cross-substrate × EEG** · [`EEG/impl/H_680_cross_substrate.hexa`](./impl/H_680_cross_substrate.hexa) · [UNIVERSE H_680](../UNIVERSE/H_680_eeg_cross_substrate.md) · AKIDA H_678 역방향 sibling
+→ 구현 = **H_680 cross-substrate × EEG** · [`EEG/impl/H_680_cross_substrate.hexa`](./impl/H_680_cross_substrate.hexa) · [UNIVERSE H_680](../UNIVERSE/cards/H_680_eeg_cross_substrate.md) · AKIDA H_678 역방향 sibling
 
 Group C · emit-substrate 구동 (L6 band power Φ-context · L11 sleep stage · L12 MITOSIS 트리거)
-→ 구현 = **H_681 emit-substrate × EEG** · [`EEG/impl/H_681_emit_substrate.hexa`](./impl/H_681_emit_substrate.hexa) · [UNIVERSE H_681](../UNIVERSE/H_681_eeg_emit_substrate.md) · a_chat_sleep_imagination + a_autonomy_over_hardcode 정합
+→ 구현 = **H_681 emit-substrate × EEG** · [`EEG/impl/H_681_emit_substrate.hexa`](./impl/H_681_emit_substrate.hexa) · [UNIVERSE H_681](../UNIVERSE/cards/H_681_eeg_emit_substrate.md) · a_chat_sleep_imagination + a_autonomy_over_hardcode 정합
 
 Group D · 영속·paradigm (L9 .kosmos anchor · L10 resting baseline)
-→ 구현 = **H_682 persistence-paradigm × EEG** · [`EEG/impl/H_682_persistence_paradigm.hexa`](./impl/H_682_persistence_paradigm.hexa) · [UNIVERSE H_682](../UNIVERSE/H_682_eeg_persistence_paradigm.md) · AKIDA H_674 .kosmos sister
+→ 구현 = **H_682 persistence-paradigm × EEG** · [`EEG/impl/H_682_persistence_paradigm.hexa`](./impl/H_682_persistence_paradigm.hexa) · [UNIVERSE H_682](../UNIVERSE/cards/H_682_eeg_persistence_paradigm.md) · AKIDA H_674 .kosmos sister
 ```
 
 ## backend switch (HW/SW 토글)

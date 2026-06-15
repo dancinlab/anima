@@ -31,7 +31,7 @@
 - [x] XENO/scan/panpsy_falsifier.hexa 작성 (4 micro-substrate: thermostat·2bit·walker·XOR LFSR)
 - [x] env hexa run → verbatim stdout → state/xeno_x4_panpsy_falsifier_2026_05_29/x4_smoke.log
 - [x] .verdicts/833_xeno_panpsy_falsifier/x4_run.txt (g73 per-H gate)
-- [x] UNIVERSE/H_833_xeno_panpsy_falsifier.md (10-section 한글 template)
+- [x] UNIVERSE/cards/H_833_xeno_panpsy_falsifier.md (10-section 한글 template)
 - [x] UNIVERSE/CANDIDATES.md ## Consumed Cycle #26 추가
 - [x] UNIVERSE/README.md H_833 인덱스 1행 추가
 - [x] XENO.md milestone X4 ☑ + round 2/5 note append
@@ -47,6 +47,6 @@
 - [x] verdict = 🔴 FALSIFIED-INSTRUMENT (정직 보고, threshold 재조정 0)
 - [x] 발견 (i) attention sparse spike Φ=1.213 false-conscious 분류, (ii) structured XOR (Φ=0.133) ≈ random (Φ=0.130) 역전, (iii) residual sin Φ=0.544 well-behaved 만
 - [x] regime applicability 매핑 — X7 (n=128 정상) + X4 (n=16-32 micro 깨짐) + X6 (n=64 sparse 깨짐) 3-point
-- [x] UNIVERSE/H_834 본문 작성 + README 인덱스 + CANDIDATES.md ## Consumed Cycle #27 + XENO milestone X6 ☑
+- [x] UNIVERSE/cards/H_834 본문 작성 + README 인덱스 + CANDIDATES.md ## Consumed Cycle #27 + XENO milestone X6 ☑
 - [ ] PR ship + merge (Co-Authored-By Opus 4.7) + worktree cleanup
 - [ ] INBOX 환류 0건 (사용자 명시 폐기 · UNIVERSE 직접 환류만)

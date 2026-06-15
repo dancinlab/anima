@@ -389,7 +389,7 @@ anima/
 │
 ├── engines/                        4 hot-swappable engines behind engine_iface.hexa (conv·cdv2·hexad·omega)
 ├── CLM/                            .clm pipeline — train (lane-p) → serialize v0.2 → verify
-├── UNIVERSE/                       research universe · kosmos anchors · gauge lib/monitor
+├── UNIVERSE/                       research universe (HYPOTHESES.md index + cards/H_*.md per-H 카드) · gauge lib/monitor
 ├── HEXAD/                          σ6 6-module substrate · KOSMOS hub
 ├── EEG_CLM/                        real EEG → A⇄G → CLM → .kosmos continuous record
 ├── domains/                        active research domains (<NAME>.md + .log.md)

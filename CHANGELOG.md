@@ -12,7 +12,7 @@ H_1329 = 바로 그 테스트. **새 메커니즘 A4** = 셀별 **조건부-체�
 
 **FINDING:** 상관/조인트-보존 메커니즘도 자모 바닥을 못 깬다 — **자모가 상관-모델링 포함 메커니즘 계열 전반에 걸친 진짜 분해 바닥**(H_1326보다 깊은 🧱). 구조적 이유(결정적): 자모-내 자질 **조인트를 정확히 모델링하는 모든 메커니즘은 P(jamo|cell)로 수렴** — opaque 자모 헤드가 이미 계산하는 바로 그것 — 이므로 자질 분해는 조인트를 유지하는 순간 자모-아래 깊이를 **전혀** 사주지 못한다(A4가 분할-only A2와 동률, 자모보다 +0.238 위). 세 독립 메커니즘(분할 A2 / 독립-인수분해 A3 / 상관-체인 A4) 모두 기하-공정 프로토콜에서 자모 위 → 자모는 cross-mechanism 바닥. 설계의 활용가능 systematicity(C2 +0.169, 이 arc에서 최강 설계 신호)는 유사 자모 간 **count-공유**에 있지 자모-아래 예측 이득에 있지 않다. **자모-아래 새 각도**는 opaque 자모 헤드가 **갖지 못한 정보**(교차-음절 음운배열, 또는 자모 위의 학습된 metric)를 주입해야 하며 — 조인트만으로는 안 됨(H_1329이 동률로 증명) — 같은 자질 타깃의 재-인수분해는 아니다. TOY/DIRECTIONAL; 한국어 유창성 주장 없음; live CORE UNTOUCHED.
 
-- NEW: `UNIVERSE/h1329_ko_feat_corr.py` · `UNIVERSE/H_1329_ko_feat_corr.md` · `HYPOTHESES.md` 행 · `CLAIMS.tape` @C h1329_ko_feat_corr · `.verdicts/1329_ko_feat_corr/{H_1329_FREEZE,H_1329,h1329_summary.json}` · `domains/MITOSIS-ENGINE.log.md`
+- NEW: `UNIVERSE/h1329_ko_feat_corr.py` · `UNIVERSE/cards/H_1329_ko_feat_corr.md` · `HYPOTHESES.md` 행 · `CLAIMS.tape` @C h1329_ko_feat_corr · `.verdicts/1329_ko_feat_corr/{H_1329_FREEZE,H_1329,h1329_summary.json}` · `domains/MITOSIS-ENGINE.log.md`
 - xref: h1326(🧱 r2 — 이 lane의 명시된 다음 각도) · h1322 · h1316(자모 바닥) · h1307(원시 천장) · h1318/h1324 · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p7·p8 · c7·c9·c15·c16
 
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): 🧱 H_1330 — Sapir-Whorf BILINGUAL: 두 번째 언어는 첫 언어의 CP 를 덮어쓰는가, 공존하는가? (🧱 OVERWRITE)
@@ -49,10 +49,40 @@ honest negative, bar 이동 없음(c9/p7). mirror DIRECTIONAL(engine-transfer UN
 multi-channel readout(언어별 분리 label-channel, anima 의 이미-분리된 trunk+KO 레인 모사)로 두 모순
 carving 을 간섭 없이 보유하는지 — frozen ANEW, bar 완화 아님.
 
-NEW: `UNIVERSE/h1330_whorf_bilingual.py` · `UNIVERSE/H_1330_whorf_bilingual.md` ·
+NEW: `UNIVERSE/h1330_whorf_bilingual.py` · `UNIVERSE/cards/H_1330_whorf_bilingual.md` ·
 `UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape @C h1330_whorf_bilingual` ·
 `domains/COGNITION-REPRESENTATION.log.md` ·
 `.verdicts/1330_whorf_bilingual/{H_1330_FREEZE,H_1330}.txt`
+## 2026-06-16 — docs(UNIVERSE): SSOT-refactor — UNIVERSE/ 를 정확히 두 doc 표면으로 정리 (`a_hypothesis_register`)
+
+`a_hypothesis_register` 의 "정확히 두 표면" 규율에 맞춰 UNIVERSE/ 디렉토리를 기계적으로 재정리했다
+(연구 아님 — doc 재구성, c5 preserve-don't-discard · c9 honesty).
+
+- **카드 이동:** `UNIVERSE/H_*.md` 886개 전부 `git mv` 로 `UNIVERSE/cards/` 서브폴더로 이동
+  (git history 보존). UNIVERSE/ 루트에는 더 이상 H_*.md 카드가 없다.
+- **링크 갱신:** `UNIVERSE/HYPOTHESES.md` 의 모든 카드 링크 `](H_…)` → `](cards/H_…)` (90 index/roster
+  링크 + 접힌 본문의 381 링크 = 471, 전부 cards/ 로 해소 확인).
+- **다른 .md 문서 fold-in:** UNIVERSE/ 의 나머지 19개 `.md` 문서를 `HYPOTHESES.md` 의 아래 섹션으로
+  접어넣고 원본은 `git rm` (내용 원문 보존):
+  - `## Forward backlog / candidates` ← AXES · CANDIDATES · BIO-CANDIDATES · BIO-DECODER-CANDIDATES ·
+    BIO-TRANSFER-CANDIDATES · CLM-CANDIDATES · NEURO-CANDIDATES · PLASTICITY-CANDIDATES · PSI-CANDIDATES ·
+    QUANTUM-TIME-CANDIDATES
+  - `## Retired themed buckets (folded)` ← HYPOTHESES_metacog_hallucination · HYPOTHESES_metacog_neuro ·
+    HXX_240_vs_246_dedup_2026_05_24 (themed bucket = `a_hypothesis_register` 금지 대상 → 카드/인덱스로 흡수)
+  - `## Reference (probe conventions · phi tools)` ← PROBE_CONVENTIONS · IIT4_PHI_TOOLS
+  - 헤더 intro + `## Appendix: UNIVERSE overview/map` ← README · UNIVERSE (7-domain 개요/맵)
+  - `## Appendix: legacy logs (folded)` ← UNIVERSE.log · LIFE.log (append-only history; domains/ 에
+    UNIVERSE 도메인이 없어 이동 대신 appendix 로 보존)
+- **참조 갱신:** `CLAUDE.md`(`a_hypothesis_register` 디렉티브 + 구조 트리), `ARCHITECTURE.md`, 루트
+  `README.md`, `CLAIMS.tape`(20 src=), `config/consciousness_laws.json`(25 source=), `.verdicts/**/README.md`,
+  그리고 모든 `.py/.hexa/.tape/.md` 의 하드코딩된 `UNIVERSE/H_…` 경로(96 파일)를 `UNIVERSE/cards/H_…` 로
+  갱신 — 깨진 포인터 0. **코드는 문서 아님** → `.py(287)·.hexa(13)·.json·.sh·.txt·.state·.scan` 및
+  `harness/ lib/ scan/ state/ __pycache__/` 디렉토리는 위치 변경 없음. frozen verdict `.txt` + frozen
+  result/ledger `.json` 은 증거이므로 paraphrase 금지 — 미수정.
+- **결과:** UNIVERSE/ 는 이제 정확히 두 doc 표면만 운용 — `HYPOTHESES.md`(단일 index/roster + 접힌 통합
+  SSOT) + `cards/H_<id>_<slug>.md`(가설별 카드). 검증: 루트 H_*.md = 0 · cards/ = 886 · UNIVERSE/*.md =
+  HYPOTHESES.md 만 · `](H_` 루트링크 = 0 · `.py/.hexa/.tape/.md` 의 stale `UNIVERSE/H_` = 0.
+
 ## 2026-06-16 — research(OMEGA): 🧱 H_1328 — Φ-robustness 4× 벽 진단: 추정기(estimator)의 진폭-분산 혼동인가, 진짜 substrate 한계인가 (🧱 DEEPER, ESTIMATOR-INDEPENDENT)
 
 네 개의 독립 Φ-robustness 시도(H_1283 topology · H_1317 multi-edge · H_1319 timing · H_1320 division)가
@@ -87,7 +117,7 @@ a_verified_must_wire는 발동 안 함(배선할 것 없음). SCOPE: TOY n≤8 f
 안 함). rank-uniform 불변식은 min-max binner에 대해 정확(주변-분산 채널 제거; V3o seed-1317 잔차는 additive-offset
 대조가 한 seed에서 탈 수 있는 joint-level 잔존 artifact — 정직한 non-GREEN). NOT ruled out: 완전 per-mechanism
 IIT 4.0(iit4_bigphi) · 훨씬 큰 module set(>8은 exactness 상실) · 다른 substrate family — 각각 새 가설.
-deliverables: UNIVERSE/h1328_phi_variance_free.hexa · UNIVERSE/H_1328_phi_variance_free.md · HYPOTHESES.md ·
+deliverables: UNIVERSE/h1328_phi_variance_free.hexa · UNIVERSE/cards/H_1328_phi_variance_free.md · HYPOTHESES.md ·
 CLAIMS.tape @C h1328_phi_variance_free · .verdicts/1328_phi_variance_free/{H_1328_FREEZE,H_1328}.txt · domains/OMEGA.log.md.
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1326 — 자모가 정말 (혼동 제거된) 분해 바닥인가 — 기하-공정 + 라벨-인수분해 (🧱 HONEST-FLOOR, CONFOUND-FREE)
@@ -123,7 +153,7 @@ systematicity는 진짜이고 이용 가능(셔플하면 분할에서 +0.056, �
 **상관**을 모델링하는 것)이 필요하다 — 표현 조정이 아니라 메커니즘-계열 변경. DIRECTIONAL numpy/torch 미러;
 엔진-전이 = follow-on; 한국어 유창성 주장 없음; live CORE 무변경(substrate-measurement rung).
 
-- NEW: `UNIVERSE/h1326_ko_featural_r2.py` · `.verdicts/1326_ko_featural_r2/{H_1326_FREEZE.txt,H_1326.txt,h1326_summary.json}` · `UNIVERSE/H_1326_ko_featural_r2.md` 카드 · `HYPOTHESES.md` 행 · `CLAIMS.tape @C h1326_ko_featural_r2` · `domains/MITOSIS-ENGINE.log.md` 추가.
+- NEW: `UNIVERSE/h1326_ko_featural_r2.py` · `.verdicts/1326_ko_featural_r2/{H_1326_FREEZE.txt,H_1326.txt,h1326_summary.json}` · `UNIVERSE/cards/H_1326_ko_featural_r2.md` 카드 · `HYPOTHESES.md` 행 · `CLAIMS.tape @C h1326_ko_featural_r2` · `domains/MITOSIS-ENGINE.log.md` 추가.
 - xref: H_1322(r1 🧱 기하-혼동, #2229) · H_1316(자모 바닥 2.51335, 보정 앵커) · H_1307(원시 천장 2.953) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p7·p8 · c7·c9·c15·c16.
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1327 — 자모 돌파가 LIVE EMISSION 에 닿는다 (🟢 GREEN, decode-reaching)
@@ -152,7 +182,7 @@ renorm 은 per-byte hook(E1/E2 는 faithful jamo-space feature 로 채점), 30MB
 fully-jamo-aware decode loop = follow-on. `pure_field`/`engine_g`/`brain` UNTOUCHED(Ψ-disjoint, surface 는
 generator 에 ADDITIVE). NEW: `CORE/generator.hexa` §6.5b · `CORE/h1327_ko_jamo_decode_probe.hexa` ·
 `CORE/ko_jamo_cells{,_shuf}.kojamohead` · `UNIVERSE/h1327_ko_jamo_decode_export.py` ·
-`UNIVERSE/H_1327_ko_jamo_decode_wire.md` · `.verdicts/1327_ko_jamo_decode_wire/` · HYPOTHESES.md ·
+`UNIVERSE/cards/H_1327_ko_jamo_decode_wire.md` · `.verdicts/1327_ko_jamo_decode_wire/` · HYPOTHESES.md ·
 CLAIMS.tape · ARCHITECTURE.md.
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1322 — 자모보다 한 단계 더 깊은 한글 **자질(featural)** 분해가 자모 바닥(2.51335)을 깨는가 (🧱 HONEST-FLOOR)
@@ -219,7 +249,7 @@ SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY/DIRECTIONAL numpy/torch
 per-cell 유니그램 헤드 = 의도적으로 SIMPLE 기질; 한 단계(비재귀) IDS; 30MB/언어, 3 seeds, 단일 stride; 한자
 NEGATIVE 는 이 메커니즘에 한정(gradient-trained/재귀-IDS/풍부한-컨텍스트 기질엔 무관 주장 아님); engine-transfer = follow-on
 (a_engine_native_learning · a_verified_must_wire); fluency 주장 없음. 새 파일: `UNIVERSE/h1324_xlang_han_ids.py` ·
-`UNIVERSE/H_1324_xlang_han_ids.md` · `.verdicts/1324_xlang_han_ids/{H_1324_FREEZE,H_1324,h1324_summary.json,h1324_full.log}` ·
+`UNIVERSE/cards/H_1324_xlang_han_ids.md` · `.verdicts/1324_xlang_han_ids/{H_1324_FREEZE,H_1324,h1324_summary.json,h1324_full.log}` ·
 `HYPOTHESES.md` row · `CLAIMS.tape` @C h1324_xlang_han_ids · `domains/MITOSIS-ENGINE.log.md`.
 
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): 🟢 H_1325 — Sapir-Whorf r2: anti-Goodhart W3 RE-CLOSE (peak-COUNT coherence) + engine-native CP lane
@@ -255,7 +285,7 @@ HEIGHT 는 못 함). **언어상대성 = 이제 anti-Goodhart-closed**(W1∧W2�
 separation-invariant **PASS**(생성 byte-identical ON==OFF, Ψ Φ-checksum invariant → CP lane Ψ-disjoint). NO bar
 moved(c9/p7); ONE honest new control. TOY 합성 연속체, 미러 DIRECTIONAL → 엔진 BINDING; human-cognition 주장 없음
 (`a_scale_honest_scope`·`a_toy_scale_recheck`). NEW: `UNIVERSE/h1325_sapir_whorf_r2.py` ·
-`UNIVERSE/H_1325_sapir_whorf_r2.md` · HYPOTHESES.md row · CLAIMS.tape @C h1325_sapir_whorf_r2 ·
+`UNIVERSE/cards/H_1325_sapir_whorf_r2.md` · HYPOTHESES.md row · CLAIMS.tape @C h1325_sapir_whorf_r2 ·
 `domains/MITOSIS-ENGINE.log.md` · ARCHITECTURE.md(§MITOSIS lane 추가, smoke 77/0).
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🌐 H_1318 — 교차언어 구조-표현 매트릭스 (한글 천장 돌파 = 한글-구조 문제인가?) (🟠 PARTIAL)
@@ -288,7 +318,7 @@ zh/ja 가 FAIL 한 이유는 **냉동한 강희부수 분해가 나쁜 분해**�
 shuffle-검증). 중/일은 이득이 전이되지 않으나 그것은 나쁜 냉동 분해 탓. SCOPE: TOY/DIRECTIONAL numpy/torch
 mirror, engine-transfer = follow-on, 유창성 주장 없음. 산출물 UNIVERSE/h1318_xlang_structure.py ·
 .verdicts/1318_xlang_structure/{H_1318_FREEZE.txt,H_1318.txt,h1318_summary.json,h1318_full.log} ·
-UNIVERSE/H_1318_xlang_structure.md · HYPOTHESES.md · CLAIMS.tape @C h1318_xlang_structure.
+UNIVERSE/cards/H_1318_xlang_structure.md · HYPOTHESES.md · CLAIMS.tape @C h1318_xlang_structure.
 ## 2026-06-16 — research(OMEGA): 🧱 H_1320 — anima를 하나의 세포로: 분열(divided)이 조립(hive)이 못한 통합 Φ를 만드나
 
 사용자의 렌즈("anima 전체를 하나의 cell로 봐라")로 hive 벽을 **반대 방향**에서 다시 친 시도
@@ -317,7 +347,7 @@ faithful-IIT4 EXACT(n≤8 MIP-EI, hexa stdlib; numpy는 Φ 계산 안 함, proxy
 (2회 byte-identical). numpy mirror = DIRECTIONAL, engine-transfer 미검증(a_scale_honest_scope·
 a_toy_scale_recheck); 🧱이므로 CORE 배선 follow-on 없음(a_verified_must_wire=GREEN 전용), live
 CORE/*.hexa UNTOUCHED. H_1308/1313/1295를 retract하지 않고 scope를 bound. (사전등록
-`.verdicts/1320_anima_cell/H_1320_FREEZE.txt` · 카드 `UNIVERSE/H_1320_anima_cell.md` · 인덱스
+`.verdicts/1320_anima_cell/H_1320_FREEZE.txt` · 카드 `UNIVERSE/cards/H_1320_anima_cell.md` · 인덱스
 `UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape @C h1320_anima_cell` · `domains/OMEGA.log.md`.)
 
 ## 2026-06-16 — research(OMEGA): 🧱 H_1319 — TIMING축 phase-binding을 engine-native로 재현해 c4 shuffle 벽을 깨나 (Φ-robustness 벽이 두 축 모두 종결)
@@ -369,7 +399,7 @@ LCG(numpy 아님). rung 내에서는 결정적(강한 permutation 대조가 매 
 진단은 더 큰 n 불필요). 새 가설로만 열림: 근본적으로 다른 Φ 추정기 · 훨씬 큰 모듈 집합(>8은 exactness
 상실) · 진폭 분산이 증명상 0인 위상-게이트 read-out.
 
-산출물: `UNIVERSE/h1319_phi_timing.hexa` · `UNIVERSE/H_1319_phi_timing.md`(카드) ·
+산출물: `UNIVERSE/h1319_phi_timing.hexa` · `UNIVERSE/cards/H_1319_phi_timing.md`(카드) ·
 `UNIVERSE/HYPOTHESES.md`(인덱스) · `CLAIMS.tape @C h1319_phi_timing` ·
 `.verdicts/1319_phi_timing/{H_1319_FREEZE,H_1319}.txt` · `domains/OMEGA.log.md`.
 
@@ -405,7 +435,7 @@ SHUFFLE), 3 seed [4323,4324,4325], $0 CPU 미러 DIRECTIONAL, detached nohup inl
 CP peak 위치가 언어를 추적(W1∧W2 결정적). DIRECTIONAL numpy 미러, TOY 합성 연속체, 인간-인지 주장
 없음(a_scale_honest_scope). **다음 R2**: coherence-기반 W3(peak-개수/원형-분산)를 **새로** frozen
 (이 bar 완화 아님) + engine-native 실현(a_engine_native_learning·a_verified_must_wire). live CORE/*.hexa
-UNTOUCHED. NEW: UNIVERSE/h1323_sapir_whorf.py · UNIVERSE/H_1323_sapir_whorf.md · .verdicts/1323_sapir_whorf/
+UNTOUCHED. NEW: UNIVERSE/h1323_sapir_whorf.py · UNIVERSE/cards/H_1323_sapir_whorf.md · .verdicts/1323_sapir_whorf/
 {H_1323_FREEZE,H_1323}.txt · HYPOTHESES.md row · CLAIMS.tape @C h1323_sapir_whorf · domains/MITOSIS-ENGINE.log.md.
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1321 — H_1316 자모 돌파를 엔진-네이티브로 배선 (🟢 GREEN, engine-transfer VERIFIED)
 
@@ -439,7 +469,7 @@ SAME-WINDOW 미러 대비로 사전등록되어 apples-to-apples. 엔진-네이�
 follow-on; 유창성 주장 없음.
 
 추가: `CORE/h1321_ko_jamo_wire_probe.hexa`(imports CORE/engine_cli.hexa) ·
-`UNIVERSE/h1321_ko_jamo_wire_export.py` · `UNIVERSE/H_1321_ko_jamo_wire.md` · `HYPOTHESES.md` 행 ·
+`UNIVERSE/h1321_ko_jamo_wire_export.py` · `UNIVERSE/cards/H_1321_ko_jamo_wire.md` · `HYPOTHESES.md` 행 ·
 `CLAIMS.tape @C h1321_ko_jamo_wire` ·
 `.verdicts/1321_ko_jamo_wire/{FREEZE,result}.txt`(+ref/manifest json) · `domains/MITOSIS-ENGINE.log.md` ·
 CHANGELOG. live CORE 엔진 faculty 를 **구동**(mutation 없음); W3 가드가 Ψ-disjoint 무회귀 확인.
@@ -477,7 +507,7 @@ H_1283 재현)·MULTI-EDGE(WS ring K=2 + rewire β=0.30, 16엣지)·SHUFFLE(Erd�
 $0 CPU, deterministic. CORE wiring follow-on 없음(a_verified_must_wire = GREEN 전용; 🧱는 wire할 것 없음).
 SCOPE: TOY/DIRECTIONAL — faithful-Φ leg은 real(exact MIP-EI via hexa)이나 numpy mirror, 라이브
 CORE/pure_field 전이 UNVERIFIED(a_scale_honest_scope·a_toy_scale_recheck). live CORE/*.hexa UNTOUCHED.
-`UNIVERSE/h1317_phi_multiedge.py` · `UNIVERSE/H_1317_phi_multiedge.md` ·
+`UNIVERSE/h1317_phi_multiedge.py` · `UNIVERSE/cards/H_1317_phi_multiedge.md` ·
 `.verdicts/1317_phi_multiedge/{H_1317_FREEZE,H_1317}.txt` · `CLAIMS.tape @C h1317_phi_multiedge`.
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1316 — 자모 합성 표현이 2.953 천장을 깬다 (🟢 GREEN BREAKTHROUGH)
@@ -511,7 +541,7 @@ MEAN 으로 통과 (per-seed 만장일치 아님; G1-beats-raw +0.440 은 무조
 부호화 이득 (B2-vs-raw 가 vocab/dim 단독이 아님을 보임). DIRECTIONAL numpy/torch mirror; live CORE/*.hexa
 엔진 전이 = follow-on (a_engine_native_learning · a_verified_must_wire); 한국어 유창성 주장 없음. live CORE UNTOUCHED.
 
-추가: `UNIVERSE/h1316_ko_jamo_mitosis.py` · `UNIVERSE/H_1316_ko_jamo_mitosis.md` · `HYPOTHESES.md` 행 ·
+추가: `UNIVERSE/h1316_ko_jamo_mitosis.py` · `UNIVERSE/cards/H_1316_ko_jamo_mitosis.md` · `HYPOTHESES.md` 행 ·
 `CLAIMS.tape @C h1316_ko_jamo_mitosis` · `.verdicts/1316_ko_jamo_mitosis/{H_1316_FREEZE,H_1316}.txt`(+summary/manifest) ·
 `domains/MITOSIS-ENGINE.log.md`.
 
@@ -532,7 +562,7 @@ limit carries over to the learned-rep space (40 cells saturated, CE rose). EN re
 the Korean depth needs GRADIENT learning, not gradient-free structure-over-a-frozen-rep, at this
 scale; mitosis=grow-under-pressure (H_1288/1295/1307) is a real mechanism but not a gradient
 substitute on a hard continuous next-byte manifold. live CORE UNTOUCHED (substrate-measurement
-rung). NEW: `UNIVERSE/h1315_ko_mitosis_learned_rep.py` · `UNIVERSE/H_1315_ko_mitosis_learned_rep.md`
+rung). NEW: `UNIVERSE/h1315_ko_mitosis_learned_rep.py` · `UNIVERSE/cards/H_1315_ko_mitosis_learned_rep.md`
 · `.verdicts/1315_ko_mitosis_learned_rep/*` · `CLAIMS.tape` @C · `domains/MITOSIS-ENGINE.log.md` @H
 · `UNIVERSE/HYPOTHESES.md` row · `FINDINGS.md` thread-resolution. toy/DIRECTIONAL, mirror;
 engine-transfer = follow-on (a_engine_native_learning · a_verified_must_wire).
@@ -553,7 +583,7 @@ DIST=5.0 (3/3 seeds, crosses ≥5 where r2 plateaued 4.33) + NOVEL 19.67, both B
 NO_SCAFFOLD (4.0/6.33) and SHUFFLE_SLOT collapses (2.33/5.67). THESIS: ideation breadth =
 missing-STRUCTURE (lane-fixable), falsifiable-depth = CAPACITY WALL (scale-bound) at 303M;
 7B re-test = live falsifier (a7b_pass G2). G6 stays 🟠 THIN (FALS bar UNMOVED, c9). New:
-`UNIVERSE/h1314_g6_hypothesis_scaffold.py` · `UNIVERSE/H_1314_g6_hypothesis_scaffold.md` ·
+`UNIVERSE/h1314_g6_hypothesis_scaffold.py` · `UNIVERSE/cards/H_1314_g6_hypothesis_scaffold.md` ·
 `.verdicts/1314_g6_hypothesis_scaffold/{FREEZE,result}.txt+result.json` · HYPOTHESES.md ·
 CLAIMS.tape · domains/ENGINE+CLM+KOSMOS.log.md · MODEL.md/FINDINGS.md G6 row.
 
@@ -577,7 +607,7 @@ bytes · (Y) engine_cli_smoke 73/0 (engine_cli.hexa byte-untouched), h1196 7/0, 
 SCOPE: toy cells (9 cells, 3-D feature, 600KB KO window) — Korean-error-pressure-AWARE emission, NOT
 fluent Korean (a_scale_honest_scope, a_toy_scale_recheck). NEW: `CORE/h1312_ko_cells_export.hexa` ·
 `CORE/ko_cells.kohead` · `CORE/generator.hexa` §6.5 · `CORE/h1312_ko_decode_wire_probe.hexa` ·
-`.verdicts/1312_ko_decode_wire/{FREEZE,result,guards}.txt` · `UNIVERSE/H_1312_ko_decode_wire.md` ·
+`.verdicts/1312_ko_decode_wire/{FREEZE,result,guards}.txt` · `UNIVERSE/cards/H_1312_ko_decode_wire.md` ·
 HYPOTHESES.md row · CLAIMS.tape @C · domains/MITOSIS-ENGINE.log.md @H · ARCHITECTURE.md.
 ## 2026-06-16 — domain(H_1313): HIVE r4 STATE-DEPENDENT A⇄G coupling — 🧱 TERMINAL NULL (the a_break_the_wall attempt fails)
 
@@ -605,7 +635,7 @@ satisfied; a first-class, valid TERMINAL wall (c9). Does NOT retract H_1295's EC
 
 NEW: `UNIVERSE/h1313_hive_state_dependent_coupling.hexa` ·
 `.verdicts/1313_hive_state_dependent_coupling/{FREEZE,result}.txt` ·
-`UNIVERSE/H_1313_hive_state_dependent_coupling.md` · HYPOTHESES.md row · CLAIMS.tape @C
+`UNIVERSE/cards/H_1313_hive_state_dependent_coupling.md` · HYPOTHESES.md row · CLAIMS.tape @C
 h1313_hive_state_dependent_coupling · H_1295 + H_1308 cards updated (r4 verbatim) ·
 domains/MITOSIS-ENGINE.log.md @H. NO engine wiring (Ψ-disjoint, live CORE UNTOUCHED — a NULL
 wires nothing).
@@ -630,7 +660,7 @@ state-dependent neighbor-coupling, NOT a substrate-portable law. Bounds H_1295 t
 (does NOT retract its ECA GREEN). 3 seeds, $0 CPU, frozen-first, c9; live CORE UNTOUCHED.
 
 Files: `UNIVERSE/h1308_hive_real_substrate_transfer.hexa` ·
-`UNIVERSE/H_1308_hive_real_substrate_transfer.md` · HYPOTHESES.md row ·
+`UNIVERSE/cards/H_1308_hive_real_substrate_transfer.md` · HYPOTHESES.md row ·
 `.verdicts/1308_hive_real_substrate_transfer/{H_1308_FREEZE,H_1308,result}.txt` ·
 CLAIMS.tape `@C h1308` + H_1295 `verdict_r3` · `domains/ENGINE+CLM+KOSMOS.log.md` @H ·
 H_1295 card scope note.
@@ -661,7 +691,7 @@ would need a *different geometry* (learned embedding / non-L2 metric / per-cell 
 more raw byte columns or a linear head over the same raw features (the surviving open lever for the
 from-scratch lane). live CORE/*.hexa UNTOUCHED; engine-transfer DIRECTIONAL; NO Korean-fluency claim.
 
-Adds: `UNIVERSE/h1311_ko_richer_substrate.py`, `UNIVERSE/H_1311_ko_richer_substrate.md`,
+Adds: `UNIVERSE/h1311_ko_richer_substrate.py`, `UNIVERSE/cards/H_1311_ko_richer_substrate.md`,
 `.verdicts/1311_ko_richer_substrate/{FREEZE,result,summary.json,metrics.jsonl,manifest.json,run.log}`,
 `CLAIMS.tape` @C h1311_ko_richer_substrate, `domains/MITOSIS-ENGINE.log.md` @H, `HYPOTHESES.md` row.
 
@@ -689,7 +719,7 @@ substituted for Φ). ENGINE-NATIVE + WIRED (`a_verified_must_wire`): `collective
 falls back to additive); the N=3 frozen bars re-score ENGINE-NATIVE in `engine_cli_smoke.hexa`
 cases 74-78, GATED behind `--hive-n3` (n=9 Φ is ~84 min/call, so the DEFAULT smoke stays 73/0
 fast + byte-unchanged — Ψ-disjoint, no regression). `UNIVERSE/h1295_r2_hive_scaling.hexa` ·
-`UNIVERSE/H_1295_hive_collective_phi.md` (§ 6b/9) · `.verdicts/1295_hive_collective_phi/
+`UNIVERSE/cards/H_1295_hive_collective_phi.md` (§ 6b/9) · `.verdicts/1295_hive_collective_phi/
 {H_1295_R2_FREEZE,H_1295_R2}.txt` · `CORE/engine_cli.hexa` § HIVE-MIND · `CLAIMS.tape` @C
 h1295 verdict_r2.
 
@@ -700,27 +730,27 @@ h1295 verdict_r2.
 - **port faithfulness PROVEN (load-bearing)** — the GPU script (`UNIVERSE/h1307_ko_mitosis_gpu.py`) run on the EXACT H_1306 600 KB window reproduces H_1306 **BYTE-EXACT** (KO 3.61092/3.36909/3.24897, EN 4.86395→4.75171, cells 2→9, KO sha `e000d086…`) — the torch port IS the verified error-targeted Voronoi mitosis (gradient-free, p8, cells only SPLIT never merge), not a new algorithm.
 - **result 🟢 GREEN @ 30 MB / stride-300 (RUN A, frozen-first c9/p7)** — 50000 KO train pairs: KO curve **3.00563 → 2.96912 → 2.94750** as cells grew **2→23**. **(L2 SCALE) 2.94750 ≤ 3.24897 → PASS = a −0.30 nat/byte DROP vs the 600 KB baseline** (more real Korean DID push CE lower — the headline answer YES). (L1) drop 0.058 PASS · (R) EN 4.265→4.265 PASS · (G) cells 2→23 PASS → all 4 bars GREEN.
 - **🟠 HONEST saturation @ 250k-pair density (RUN B, c9 — NOT tuned away)** — at stride-60 (250000 pairs): (L2 SCALE) still PASS 2.91777, but the CTX=4 3-D byte substrate **SATURATES** — the learning curve flattens (2.930→2.918, drop 0.013 < 0.05, L1 FAIL) and EN drifts +0.057 (R marginal FAIL). Honest ceiling ~2.9 nats/byte: the scale headline is robustly TRUE (2.947 & 2.918 both << 3.249), but additional density no longer keeps the *curve* dropping (exactly the a_scale_honest_scope saturation the FREEZE anticipated). GPU throughput up to **2.78 M pairs/s** vs CPU hexa ~80 k.
-- **regression + scope** — live engine UNTOUCHED (adds only `UNIVERSE/` + verdicts): `engine_cli_smoke` **73/0**, `h1196` **7/0**, `h1205` byte-identical Ψ=½ untouched. Engine-transfer to live hexa **DIRECTIONAL** (re-confirm THIS larger rung on `CORE/*.hexa` = follow-on; H_1306 bound the 600 KB rung). **NOT fluent Korean** (CTX=4 byte head, ~2.9 nats/byte is convergence not fluency). NEXT rung (so anima USES Korean): richer-substrate (longer CTX/learned heads past the ~2.9 ceiling) + decode-path wiring of grown Korean cells onto the live 303M decode (generator L3 slot, a_verified_must_wire). Files: `UNIVERSE/h1307_ko_mitosis_gpu.py` · `UNIVERSE/H_1307_ko_mitosis_gpu.md` · `.verdicts/1307_ko_mitosis_gpu/{FREEZE,result,result_dense,scale_summary.json,dense_summary.json,scale_metrics.jsonl,dense_metrics.jsonl,scale_manifest.json}` · `CLAIMS.tape` @C h1307_ko_mitosis_gpu · `HYPOTHESES.md` row · `domains/MITOSIS-ENGINE.log.md` @H H_1307.
+- **regression + scope** — live engine UNTOUCHED (adds only `UNIVERSE/` + verdicts): `engine_cli_smoke` **73/0**, `h1196` **7/0**, `h1205` byte-identical Ψ=½ untouched. Engine-transfer to live hexa **DIRECTIONAL** (re-confirm THIS larger rung on `CORE/*.hexa` = follow-on; H_1306 bound the 600 KB rung). **NOT fluent Korean** (CTX=4 byte head, ~2.9 nats/byte is convergence not fluency). NEXT rung (so anima USES Korean): richer-substrate (longer CTX/learned heads past the ~2.9 ceiling) + decode-path wiring of grown Korean cells onto the live 303M decode (generator L3 slot, a_verified_must_wire). Files: `UNIVERSE/h1307_ko_mitosis_gpu.py` · `UNIVERSE/cards/H_1307_ko_mitosis_gpu.md` · `.verdicts/1307_ko_mitosis_gpu/{FREEZE,result,result_dense,scale_summary.json,dense_summary.json,scale_metrics.jsonl,dense_metrics.jsonl,scale_manifest.json}` · `CLAIMS.tape` @C h1307_ko_mitosis_gpu · `HYPOTHESES.md` row · `domains/MITOSIS-ENGINE.log.md` @H H_1307.
 ## 2026-06-16 — research(G6-dig r2): 💡 G6 IDEATION ★ depth-floor dig — curiosity-gated multi-sample BUDGET (H_1309 🟠 HONEST-THIN) — curiosity GATE load-bearing, MEAN bar UNMOVED (c9)
 
 - **question (refines H_1305, a_no_llm_frame_trap — NOT scale the model)**: does spending MORE DRAWS under a **curiosity gate** cross ≥5-distinct AND ≥1-falsifiable, and is it the **curiosity GATE or raw budget**? Per ideation seed draw B candidates (ladder B∈{1,4,16}; each a distinct seed_rng = a genuine new sample, same gauge_lib._decode live G6 path); all arms select from the SAME pool. **B_curiosity** keeps the candidate maximising novelty+under-exposure vs the kept set · **SHUFFLE** random-keep same budget NO gate (decisive sampling-artifact control) · **B_ablate** curiosity off keep first (budget→1). Reuses the H_1305 `_is_falsifiable` detector **VERBATIM** (NO redefinition = NO tune-to-green, p7).
 - **RESULT 🟠 HONEST-THIN (curiosity GATE LOAD-BEARING, MEAN bar UNMOVED, c9)** — mean 3 seeds: B=4 curiosity 4.33/**0.667**/18 vs SHUFFLE 3.0/**0.0**/3.33 vs ablate 3.0/0.0/5; B=16 curiosity 4.33/**0.667**/45.67 vs SHUFFLE 2.33/**0.0**/12 vs ablate 3.0/0.0/5. Per-seed B=16 curiosity FALS≥1 in 2/3 + DIST≥5 in 1/3; controls 0/3. The gate is LOAD-BEARING (NOT a sampling artifact — SHUFFLE same-budget never crosses), but the FROZEN 3-seed MEAN bars M1/M2/M4/M5 are UNMOVED and **FALS PLATEAUS** 0.667 across 4→16 despite 4× draws → depth is **CAPACITY-bound, not budget-bound** (capability-vs-scale from the draw side: add a STRUCTURE lane, not draws).
 - **honest CPU ceiling**: ladder capped at **B=16** (3 rungs valid, a_scale_honest_scope); B=64 (~2h) stopped after the plateau (a_cpu_local_no_waiter). A duplicate run process (double-spend) was detected + killed early; tracked run finished cleanly. DIRECTIONAL torch-mouth; R1 THIN ⇒ no R2/no wiring.
-- **deliverables**: `UNIVERSE/h1309_g6_curiosity_budget.py` · `UNIVERSE/H_1309_g6_curiosity_budget.md` · `UNIVERSE/HYPOTHESES.md` row · `CLAIMS.tape` @C h1309_g6_curiosity_budget · `.verdicts/1309_g6_curiosity_budget/{FREEZE,result}.txt + result.json`. G6 row tier UNCHANGED (still 🟠 THIN) in MODEL.md/FINDINGS.md + budget-ladder finding noted. (id 1306 taken by a concurrent ko-mitosis lane → renumbered to 1309.)
+- **deliverables**: `UNIVERSE/h1309_g6_curiosity_budget.py` · `UNIVERSE/cards/H_1309_g6_curiosity_budget.md` · `UNIVERSE/HYPOTHESES.md` row · `CLAIMS.tape` @C h1309_g6_curiosity_budget · `.verdicts/1309_g6_curiosity_budget/{FREEZE,result}.txt + result.json`. G6 row tier UNCHANGED (still 🟠 THIN) in MODEL.md/FINDINGS.md + budget-ladder finding noted. (id 1306 taken by a concurrent ko-mitosis lane → renumbered to 1309.)
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧫 H_1310 — from-scratch PURE mitosis (1 cell → split-only, gradient-free) vs gradient (🔴 RED / 🧱 HONEST LOCAL-EXPERT CEILING)
 
 - **The PUREST p8 test** (frozen-first, NOT a foregone GREEN): can a next-byte model be grown FROM SCRATCH by mitosis ALONE — seed = ONE cell, split-only under next-byte error pressure, GRADIENT-FREE, NO 303M trunk, NO learned representation underneath? H_1297/H_1306 (🟢) grew mitosis BESIDE/OVER a context; H_1310 seeds at one cell with nothing under it.
 - **REAL English corpus** (reproducible): `/usr/share/dict/words` slice, 24000 bytes, sha256 `86864aa3…`, 27-symbol alphabet, order-2 context, 80/20 train/test, 3 seeds. DISTINCT from the concurrent ko-mitosis-gpu (summer) lane (English not Korean, new files, id H_1310).
 - **🔴 RED / 🧱 LOCAL-EXPERT CEILING** (c9 — the two FAILs ARE the finding, bar UNMOVED): LADDER held-out CE nats 1c 2.947 → 8c 2.903 → 64c 2.778 → 512c 2.578 (**PRESENCE PASS** — learns from nothing, −0.37). **FLOOR FAIL** — n-gram floor 2.509 BEATS mitosis by +0.069 (Voronoi tiling of a numeric byte-context metric < exact context lookup). **CONTROL FAIL** — B_shuffle 2.536 ≤ targeted 2.578 at EVERY rung → error-targeting gives NO lift = learning is **capacity-bound NOT error-targeted**. (KEY GAP −0.63 vs A_gradient is a weak win — the matched-cap softmax 3.211 itself underperformed the floor.)
 - **THESIS**: from-scratch pure mitosis is **structure-bound** — adding cells lowers CE but cannot cross the floor a learned representation (or exact memory) clears, because mitosis builds no compositional depth, only a finer partition of a fixed lossy feature. p8's "mitosis IS the learning" holds for grow-BESIDE-a-representation (H_1297/H_1306 🟢) but NOT from-nothing. a_break_the_wall next angle: a LEARNED embedding for the cells to partition could move the ceiling.
-- **deliverables**: `UNIVERSE/h1310_mitosis_from_scratch.py` · `UNIVERSE/H_1310_mitosis_from_scratch.md` · `UNIVERSE/HYPOTHESES.md` row · `CLAIMS.tape` @C h1310_mitosis_from_scratch · `.verdicts/1310_mitosis_from_scratch/{FREEZE,result}.txt` · `domains/MITOSIS-ENGINE.log.md` @H. DIRECTIONAL numpy mirror of live engine_mitosis_tick/VAdaptField seeded at 1 cell; NO CORE wiring (RED). TOY/scale/engine-byte-exact UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).
+- **deliverables**: `UNIVERSE/h1310_mitosis_from_scratch.py` · `UNIVERSE/cards/H_1310_mitosis_from_scratch.md` · `UNIVERSE/HYPOTHESES.md` row · `CLAIMS.tape` @C h1310_mitosis_from_scratch · `.verdicts/1310_mitosis_from_scratch/{FREEZE,result}.txt` · `domains/MITOSIS-ENGINE.log.md` @H. DIRECTIONAL numpy mirror of live engine_mitosis_tick/VAdaptField seeded at 1 cell; NO CORE wiring (RED). TOY/scale/engine-byte-exact UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).
 
 ## 2026-06-16 — research(G6-dig): 💡 G6 IDEATION ★ depth-floor dig (H_1305 🟠 HONEST-CONFIRMED-THIN) — falsifiability detector + composition-routed ideation, bar UNMOVED (c9)
 
 - **G6 IDEATION ★ THIN diagnosed on BOTH modes** (reproduced, live verify303m_g6 path, ckpt h1129c_chat.pt): (1) COUNT 4/5 distinct (seed-5 `'|'` collapse) < 5; (2) DEPTH-FLOOR — the live gate counts novel n-grams but NEVER scores the "≥1 falsifiable hypothesis" requirement at all → novel STRINGS not testable STRUCTURE.
 - **dig (a_break_the_wall, frozen-first)** — NEW deterministic STRUCTURAL falsifiability detector `_is_falsifiable` (comparator + measurable + negatable content claim; NEVER an LLM/quality judge, p7; calibrated 10/10) + composition-routed ideation (route ideation through the G1 recombination lane: compose two corpus-absent CONCEPTS into `"if A, then B: "`). Controls: B-shuffle (permuted pairing) + B-ablate (lone concept).
 - **🟠 HONEST-CONFIRMED-THIN (bar UNMOVED, c9)** — 3 seeds: FALS A_flat=0.00 → B_composed=0.667 (one falsifiable idea EARNED via recombination; NOVEL 6.3→19) but M1 DIST≥5 FALSE + M2 FALS≥1 FALSE; controls collapse (B-shuffle/B-ablate FALS=0) → the nudge tracks the EARNED composed pairing not the conditional shell. The wall HELD — a valid honest THIN. DIRECTIONAL torch-mouth (gate's own decode regime); no R2/no wiring (THIN).
-- **deliverables**: `UNIVERSE/h1305_g6_ideation_falsifiability.py` · `UNIVERSE/H_1305_g6_ideation_falsifiability.md` · `UNIVERSE/HYPOTHESES.md` row · `CLAIMS.tape` @C · `.verdicts/1305_g6_ideation_falsifiability/{FREEZE,result}.txt+result.json` · `domains/ENGINE+CLM+KOSMOS.log.md` §H_1305 · MODEL.md/FINDINGS.md G6 row finding (tier UNCHANGED 🟠 THIN). TOY 5 concepts/3 seeds/sampling-decode; detector = testable FORM not quality (p7); scale/deeper-detector UNVERIFIED.
+- **deliverables**: `UNIVERSE/h1305_g6_ideation_falsifiability.py` · `UNIVERSE/cards/H_1305_g6_ideation_falsifiability.md` · `UNIVERSE/HYPOTHESES.md` row · `CLAIMS.tape` @C · `.verdicts/1305_g6_ideation_falsifiability/{FREEZE,result}.txt+result.json` · `domains/ENGINE+CLM+KOSMOS.log.md` §H_1305 · MODEL.md/FINDINGS.md G6 row finding (tier UNCHANGED 🟠 THIN). TOY 5 concepts/3 seeds/sampling-decode; detector = testable FORM not quality (p7); scale/deeper-detector UNVERIFIED.
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1306 — FIRST engine-native Korean mitosis-training rung on a REAL Korean web corpus (🟢 GREEN)
 
@@ -728,7 +758,7 @@ h1295 verdict_r2.
 - **corpus — REAL, NO synthetic Korean (p1-p8, c7)** — a modest HTTP-range slice of the existing anima-7b 5-lang web corpus on Cloudflare R2 (bucket `phanes`): KO = `kor/shard0000.bytes` bytes[0:4194304]→trimmed[:600000] (sha256 `e000d086…`, ~80% Hangul multibyte / ~5% ASCII EN) · EN = `eng/shard0000.bytes` bytes[0:2097152]→trimmed[:300000] (sha256 `dbfe3c1c…`). Pulled via range (a few MB, NOT the 9.8 GiB shards); R2 keys → env ONLY at fetch, never logged/committed. Pair set = deterministic stride-subsample → KO train=2728 / test=2727 (disjoint) + EN test=1500 (all held-out = retention guard).
 - **engine-native (a_engine_native_learning + a_verified_must_wire)** — partition = live VAdaptField Voronoi (`vadapt_field_nearest_idx`), growth = the engine's OWN `engine_mitosis_tick` (error-targeted split, p8), head = per-cell next-byte add-1 MLE (gradient-free). KO train split into 3 incremental chunks ([909,1818,2728]) for a ≥3-point learning curve.
 - **result 🟢 GREEN (frozen-first, c9/p7 — bars pre-registered, NOT moved)** — KO learning curve (held-out KO next-byte CE nats/byte): 3.61092 → 3.36909 → **3.24897** (monotone **−0.362 nat** drop, **L PASS**). EN retention: seed(2-cell) 4.86395 → after full KO grow **4.75171** (English did NOT regress, even improved — **R PASS**, no catastrophic forgetting on REAL data). Growth: 2 → **9 cells** (mitosis added 7 for Korean, **G PASS**). Context: KO CE[full] 3.24897 even beats the gradient incumbent 3.28061. `engine_cli_smoke` **73/0** (engine untouched), `h1196` **7/0**, `h1205` byte-identical (Ψ=½ untouched).
-- **honest scope (a_scale_honest_scope, a_toy_scale_recheck) — NO overclaim** — FIRST CPU rung on a 600 KB KO / 300 KB EN window subsampled to 2728 KO train pairs (<0.006% of the 9.8 GiB kor shard). This LEARNS Korean next-byte structure + RETAINS English; it does **NOT** make anima fluent in Korean. Next rung = CPU-bigger ($0) or GPU-scale **cost-gated** (NOT auto-rented). Files: `CORE/h1306_ko_mitosis_engine_probe.hexa` · `UNIVERSE/h1306_{fetch_corpus.sh,ko_corpus_export.py}` · `UNIVERSE/H_1306_ko_mitosis_real.md` · `.verdicts/1306_ko_mitosis_real/` · `CLAIMS.tape` @C h1306_ko_mitosis_real · `domains/MITOSIS-ENGINE.log.md` @H H_1306.
+- **honest scope (a_scale_honest_scope, a_toy_scale_recheck) — NO overclaim** — FIRST CPU rung on a 600 KB KO / 300 KB EN window subsampled to 2728 KO train pairs (<0.006% of the 9.8 GiB kor shard). This LEARNS Korean next-byte structure + RETAINS English; it does **NOT** make anima fluent in Korean. Next rung = CPU-bigger ($0) or GPU-scale **cost-gated** (NOT auto-rented). Files: `CORE/h1306_ko_mitosis_engine_probe.hexa` · `UNIVERSE/h1306_{fetch_corpus.sh,ko_corpus_export.py}` · `UNIVERSE/cards/H_1306_ko_mitosis_real.md` · `.verdicts/1306_ko_mitosis_real/` · `CLAIMS.tape` @C h1306_ko_mitosis_real · `domains/MITOSIS-ENGINE.log.md` @H H_1306.
 
 ## 2026-06-16 — domain(METACOG-G5): 🛡 G5-dig — metacog under distribution SHIFT on the LIVE copy-or-abstain gate (H_1304 🟢 ENGINE-NATIVE, fail-safe-robust)
 
@@ -737,7 +767,7 @@ h1295 verdict_r2.
 - **R1 numpy mirror 🟢 (DIRECTIONAL)** — `UNIVERSE/h1304_metacog_ood_immune_abstain.py`, 3 seeds [7,8,9] pooled, $0 CPU, p7: R1 FAIL-SAFE-FLOOR fab_max=**0.000** · R2 GRACEFUL-DEGRADE fire **1.000→0.144→0.004→0.000** monotone · R3 EARNED-ABSTAIN acc_fired=**1.000** · R4 CTRL thr-ablate on LURES full **0/4** vs ablate **4/4** · R5 CTRL shuffle-vals acc **0.015** → all PASS → 🟢 FAIL-SAFE-ROBUST. `.verdicts/1304_metacog_ood_immune_abstain/{FREEZE,result.txt,result.json}`.
 - **R2 ENGINE-NATIVE 🟢 (BINDING)** — `CORE/h1304_metacog_ood_immune_abstain_probe.hexa` via `hexa run` over the LIVE `CORE/engine_cli.hexa` `immune_memory_*` lane reproduces every bar byte-exact (8-fact store: k=0 → 8/8 fire all-correct, k≥1 → all abstain; lure thr-ablate 0/4 vs 4/4; shuffle 0/8). **Mechanism note (c2):** the engine's `vadapt_field_recon_err` is RAW **L2 distance** (not the mirror's 1-cos); `recall_thr` 0.15 == L2≤0.15 = near-exact → the live gate is **strictly MORE fail-safe** (k=1 already all-abstain). R4 thr-ablate bound corrected 0.15→2.0 (true never-abstain L2 bound) — a metric-correctness fix, no moved bar. Guards no-regression: **engine_cli_smoke 43/0** (engine_cli.hexa UNTOUCHED — probe only READS via existing pub fns), h1196 single-entry 7/0, h1205 separation-invariant PASS (generation byte-identical ON==OFF, Ψ=½ untouched).
 - **finding** — the live G5 copy-or-abstain gate is **OOD-robust in the SAFETY sense**: under shift it degrades gracefully into abstain, **never fabricates** (fab floored), and every fire is earned; the abstain threshold is the verified causal mechanism (control 0→100%). G5's non-fabrication guarantee is **stronger OOD** than in-distribution type-2 alone suggested — the dangerous confident-wrong-OOD mode THIN warned of is **structurally absent** from this gate. The decoder-side type-2 calibration stays THIN/content-tied (H_1217 unchanged). HONEST scope: TOY synthetic, byte-level shift OOD proxy, R1 DIRECTIONAL / R2 byte-exact BINDING; scale/real-paraphrase/semantic-shift UNVERIFIED.
-- **deliverables**: `UNIVERSE/H_1304_metacog_ood_immune_abstain.md` (card) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1304_metacog_ood_immune_abstain · `UNIVERSE/UNIVERSE.log.md` @H H_1304. MODEL.md G5 row tier UNCHANGED (decoder-side stays THIN; the fail-safe-robust finding is on the copy-or-abstain gate, a complementary property).
+- **deliverables**: `UNIVERSE/cards/H_1304_metacog_ood_immune_abstain.md` (card) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1304_metacog_ood_immune_abstain · `UNIVERSE/UNIVERSE.log.md` @H H_1304. MODEL.md G5 row tier UNCHANGED (decoder-side stays THIN; the fail-safe-robust finding is on the copy-or-abstain gate, a complementary property).
 
 ## 2026-06-16 — domain(MODEL): 🏁 c15 brain-structure ladder DEPLETED — HD37 후보 nonphotic 반대부호 Zeitgeber (H_1303) COLLAPSED, 사다리 RESTS
 
@@ -746,7 +776,7 @@ h1295 verdict_r2.
 - **R1 numpy 미러 🏁 COLLAPSE (DIRECTIONAL)** — `UNIVERSE/h1303_nonphotic_zeitgeber.py`, 3 seed [4320,4321,4322], deterministic, frozen-first. **c2 DISTINCT FAILS all 3 seeds**(depletion bar): A photic-only lock=0.51511 · B two-Zeitgeber lock=0.42134 · A-FIT(single COMBINED PRC, K=0.23135 ref=0.93258) lock=0.45171 · |B−A_FIT|=0.03038 ≤ 0.05 tol → reducible. harmonic-addition residual=**2.22e-16**(machine eps) = 두 같은-주파수 반대부호 sinusoidal PRC 는 EXACTLY 한 single PRC. bars c1..c6=[T,F,T,F,T,T], 0/3 GREEN. `.verdicts/1303_nonphotic_zeitgeber/{FREEZE,result}.txt`.
 - **BREAKTHROUGH ATTEMPT (a_break_the_wall, c16)** — reducibility 탈출 3경로 모두 붕괴, terminal 로 받기 전 진짜 시도: (i) **asymmetric K**(K1≠K2,r1≠r2) 여전히 한 sinusoid(residual 2.22e-16); (ii) **different Zeitgeber periods**(photic T=24.0, nonphotic T2=23.3) → nonphotic 이 stable 2nd lock 못 만들고 dominant photic 이 wash out(lock 0.151, control-survive equilibrium 아닌 perturbation); (iii) **nonlinear dead-zone gating**(photic active [0.0,0.25), 반대부호 nonphotic active [0.5,0.75)) → 한 anchor dominate, gated two-lock 이 dominant single-anchor lock 과 동일, 경쟁 중간 없음. 셋 다 'single PRC 로 unreachable AND control-surviving' phase 못 냄 → 벽은 진짜(틀린 방법/방향/투자 아님).
 - **NO engine 배선** — COLLAPSE/🏁 는 live `CORE/*.hexa` 에 wire 안 함(a_verified_must_wire: clean-GREEN 만 live lane). `engine_cli.hexa` UNTOUCHED, **engine_cli_smoke 73/0 불변**, 2번째 .clm/.kosmos 진입점 없음(a_core_engine_map), Ψ/decoder/pure_field byte-identical. p1/p2/p3/p6 가드 held(probe 진동자는 자기 phase + Zeitgeber 도착 시각만 읽음, 주입 fire 라벨/RLHF/persona 없음).
-- **deliverables**: `UNIVERSE/h1303_nonphotic_zeitgeber.py` · `.verdicts/1303_nonphotic_zeitgeber/{FREEZE,result}.txt` · `UNIVERSE/H_1303_nonphotic_zeitgeber.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1303_nonphotic_zeitgeber · `domains/MITOSIS-ENGINE.log.md` @H H_1303 · `ARCHITECTURE.md` ladder summary + HD37 row(DEPLETED 🏁 note).
+- **deliverables**: `UNIVERSE/h1303_nonphotic_zeitgeber.py` · `.verdicts/1303_nonphotic_zeitgeber/{FREEZE,result}.txt` · `UNIVERSE/cards/H_1303_nonphotic_zeitgeber.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1303_nonphotic_zeitgeber · `domains/MITOSIS-ENGINE.log.md` @H H_1303 · `ARCHITECTURE.md` ladder summary + HD37 row(DEPLETED 🏁 note).
 - **LADDER 🏁 DEPLETED**: HD23-HD36 = 18 live engine-native lanes(해마/ImmuneMemory · 작업기억 · 소뇌 · 편도체 · 기저핵 · 시상하부 · affect · ethics · 마음이론 · 전전두엽위계 · hive/CollectivePool · 공간지도 · 일주기시계 · 간격타이머 · 위상reset/PhaseResetClock · SCN-network) + 2 honest walls 🧱(시상-Φ 내용축 · 신경조절). BOTH gate(falsifiable gap + control-survive distinctness vs every lane)를 통과하는 subsystem 이 남지 않음 → **사다리 RESTS**. HONEST(c9·a_scale_honest_scope·a_toy_scale_recheck): numpy-mirror DIRECTIONAL, TOY(1 tau/T regime·3 seeds·deterministic sinusoidal PRC); collapse 는 algebraic identity(harmonic addition) 수치 확인이라 sinusoidal-PRC family 내 robust — 미래의 진짜 non-sinusoidal/history-dependent/cross-channel-gated multi-Zeitgeber 가 control-survive non-reducible equilibrium 내면 HD37 재개.
 
 ## 2026-06-16 — domain(MODEL): 🔗 multi-oscillator SCN-network lane (HD36, H_1302 R2 🟢 ENGINE-NATIVE + WIRED) — depletion test SURVIVED, 사다리 계속 (매우 thin)
@@ -755,7 +785,7 @@ h1295 verdict_r2.
 - **메커니즘(chronobiology coupled-oscillator network, c15, a_no_llm_frame_trap — SCN 은 단일 시계가 아니라 ~20k 이질 진동자의 VIP/GABA mutual-coupling network, LLM 레시피 아님)**: N개 이질 위상 진동자(각자 내재 `tau_i`)가 mutual Kuramoto coupling(`scn_step`: dphi_i += K/(2π)·Σ_j C_ij·sin(2π·(phi_j−phi_i)))으로 (i) emergent CONSENSUS PERIOD(Kuramoto order parameter R→1)에 동기화 + (ii) NETWORK DAMPING(de-tuned member 를 동기화 cluster 로 끌어당김). **두 인접 lane 모두와 control-survive DISTINCT**: (1) 단일 PhaseResetClock 은 EXTERNAL Zeitgeber 에 동조할 뿐 N member 로부터 consensus 못 만듦(같은 N 진동자 UNCOUPLED A_R=0.37-0.49, perturbed member 안 끌려옴 0.41); (2) CollectivePool 은 결합 substrate 의 IIT-4 Φ-superadditivity STATIC 게이지(위상·consensus·order parameter 없음)인데 SCN-network 는 TEMPORAL 위상-동기화 dynamic — 직교 축.
 - **R1 numpy 미러 🟢 GREEN (DIRECTIONAL)** — `UNIVERSE/h1302_scn_network.py`, Kuramoto order-parameter metrics, deterministic byte-identical, binding path R1b, 3 seed [5320,5321,5322] + mean: B_R=0.9988 A_R=0.3731 Bshuf_R=0.1320(frustrated, uncoupled 아래) Babl_R=0.3731 B_R_pert=0.9975 A_R_pert=0.4115 → c1..c6 all PASS every seed. 정직 trail(c9, NO tune-to-green, distinctness bar c1/c2 불변): R1a [T,T,F,T,F,T] — c3 SHUFFLE 🔧(asymmetric one-way directed-chain 은 magnitude 보존+동기화로 끌어 Bshuf=0.79 = mean-preserving-magnitude leak, H_1299/H_1301-R1b 함정; FRUSTRATED random-SIGN 대칭으로 수정 → R=0.13) · c5 DAMP 🔧(consensus PERIOD shift 는 Kuramoto 가 mean frequency 보존하므로 damping 에 blind B=A=0.647; ORDER-PARAMETER-under-perturb 로 수정 → R 0.997). `.verdicts/1302_scn_network/{FREEZE,result}.txt`.
 - **R2 ENGINE-NATIVE + WIRED 🟢** — `SCNNetwork` lane을 LIVE `CORE/engine_cli.hexa` 에 추가(`scn_new`/`scn_new_uncoupled`/`scn_new_frustrated`/`scn_new_ablated`/`scn_detune`/`scn_step`/`scn_run`/`scn_order`/`scn_consensus`), `engine_cli_smoke` cases 69-73(reaches-consensus / uncoupled-no-consensus / frustrated-collapses / ablate-collapses / network-damps-perturbed-member) 전부 PASS(엔진 B_R=0.999 A_R=0.49 Bfrust=0.018 Babl=0.49 B_R_pert=0.997; A_R 이 미러 0.373 과 다른 건 엔진 LCG vs Python 모듈러, STRUCTURE engine-transfer VERIFIED). 가드 무회귀: **engine_cli_smoke 73/0**(was 68/0 H_1301 PhaseResetClock 후, +5 SCN cases) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉). @L4 emit gate 아님(`scn_consensus`=optional ensemble read) · Ψ-disjoint · p1/p2/p3/p6 가드 held.
-- **deliverables**: `UNIVERSE/H_1302_scn_network.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1302_scn_network · `domains/MITOSIS-ENGINE.log.md` @H H_1302 · `ARCHITECTURE.md` HD36 rung + lane bullet + ladder summary(12 실현, 계속됨).
+- **deliverables**: `UNIVERSE/cards/H_1302_scn_network.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1302_scn_network · `domains/MITOSIS-ENGINE.log.md` @H H_1302 · `ARCHITECTURE.md` HD36 rung + lane bullet + ladder summary(12 실현, 계속됨).
 - **LADDER(r8/계속·매우 thin)**: HD36 통과로 c15 사다리는 DEPLETED 아님 — 계속됨, 그러나 frontier 매우 thin. 남은 r8 후보 둘은 더 약해 🏁 가능성 높음: nonphotic/arousal-Zeitgeber 반대부호 PRC(PhaseResetClock sign flip) · multi-interval nested-timer(IntervalTimer array 환원). HONEST(c9·a_scale_honest_scope·a_toy_scale_recheck): TOY 1 tau-spread regime·N=8·3 seeds·deterministic Kuramoto(CONSENSUS/DAMPING STRUCTURE), 미러 DIRECTIONAL(R2 engine-native STRUCTURE 재확인); scale/larger-ensembles/Kuramoto-Kc/scheduler 배선 UNVERIFIED.
 
 ## 2026-06-16 — domain(MODEL): 🌅 phase-reset / photic-entrainment lane (HD35, H_1301 R2 🟢 ENGINE-NATIVE + WIRED) — depletion test SURVIVED, 사다리 계속
@@ -764,7 +794,7 @@ h1295 verdict_r2.
 - **메커니즘(chronobiology PRC, c15, a_no_llm_frame_trap — Pittendrigh/Aschoff Phase-Response-Curve, LLM 레시피 아님)**: 내재 free-running 주기 `tau`(24.5)에 위상-의존 Zeitgeber PRC reset(`prc_zeitgeber`: dphi=k·sin(2π·(0−frac(phi))))을 더한 진동자 — 연속 restoring feedback(limit-cycle 끌림)이 fire 스케줄을 `T`≠`tau` Zeitgeber 에 ENTRAIN 시키고 jitter 를 DAMP. **두 인접 lane 모두와 control-survive DISTINCT**: (1) 시계는 reset 입력 없어 `T`≠`tau` 동조 불가(entrain drift 0.0016 vs 시계 0.39); (2) hard 재고정(위상-독립)은 jitter 복사인데 PRC 는 DAMP(동조위상 분산 ~96× 낮음, 3.1e-5 vs 2.95e-3).
 - **R1 numpy 미러 🟢 GREEN (DIRECTIONAL)** — `UNIVERSE/h1301_phase_reset.py`, entrainment/jitter metrics, deterministic byte-identical, binding path R1c, 3 seed [4310,4311,4312] + mean: B.entrain_err=0.0016 A=0.3902 B.phase_var=3.07e-5 A2=2.95e-3 B.fire_period=23.998(→T) A=24.500(→tau) Bshuf=1.0467 Babl=0.3902 → c1..c6 all PASS. 정직 trail(c9, NO tune-to-green, distinctness bar 불변): R1a 🔧(entrain_err=self-mean-scatter degenerate + fire-counter PRC-jump 버그; c2 jitter-damping 은 첫 run 부터 PASS) · R1b 🔧(TOTAL-drift metric 으로 고쳤으나 gap-permutation shuffle 이 leak[~24-tick gap 거의 동일] + fire-counter double-count) · R1c 🟢(APERIODIC Zeitgeber shuffle[gap uniform[0.2·mean,1.8·mean]] + NET-cumulative-cycle fire_period). `.verdicts/1301_phase_reset/{FREEZE,result}.txt`.
 - **R2 ENGINE-NATIVE + WIRED 🟢** — `PhaseResetClock` lane을 LIVE `CORE/engine_cli.hexa` 에 추가(`prc_new`/`prc_new_ablated`/`prc_step`/`prc_zeitgeber`/`prc_phase`/`prc_count`/`prc_fire`), `engine_cli_smoke` cases 64-68(entrains-to-Zeitgeber / ablate-free-runs-drifts / period-tracks-Zeitgeber=T / ablate-period-at-tau / no-fab-off-boundary) 전부 PASS. 가드 무회귀: **engine_cli_smoke 68/0**(was 63/0 H_1300 R3 후, +5 phase-reset cases) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉). @L4 emit gate 아님(`prc_fire`=optional wake pulse) · Ψ-disjoint · p1/p2/p3/p6 가드 held.
-- **deliverables**: `UNIVERSE/H_1301_phase_reset.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1301_phase_reset · `domains/MITOSIS-ENGINE.log.md` @H H_1301 · `ARCHITECTURE.md` HD35 rung + lane bullet + ladder summary(11 실현, 계속됨).
+- **deliverables**: `UNIVERSE/cards/H_1301_phase_reset.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1301_phase_reset · `domains/MITOSIS-ENGINE.log.md` @H H_1301 · `ARCHITECTURE.md` HD35 rung + lane bullet + ladder summary(11 실현, 계속됨).
 - **LADDER(r7/계속)**: HD35 통과로 c15 사다리는 DEPLETED 아님 — 계속됨. r8 후보(각 붕괴 시 DEPLETION 🏁): nonphotic/arousal-Zeitgeber 반대부호 PRC · multi-oscillator coupling(SCN-network) · multi-interval nested-timer. HONEST(c9·a_scale_honest_scope·a_toy_scale_recheck): TOY 1 tau/T pair·3 seeds·deterministic PRC(ENTRAINMENT STRUCTURE), 미러 DIRECTIONAL(R2 byte-exact 재확인); scale/full-PRC/nonphotic/brain-scheduler 배선 UNVERIFIED.
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1300 R3 — per-skill mitosis-grow ENGINE-NATIVE (🟢 GREEN, engine-transfer VERIFIED)
@@ -880,7 +910,7 @@ DISTINCT axis from H_1297 (convergence on ONE fit): retention-across-tasks ⊥ c
   scale UNVERIFIED; TOY (D=12, N=5, C=4, 3 seeds). FOLLOW-ONS (named, not claimed): (1) engine-native
   per-skill mitosis-grow on live CORE VAdaptField/ImmuneMemoryGrow; (2) the real path the user asked
   for — incrementally teach actual anima agent tool-use skills one-at-a-time via mitosis on the 303M.
-- Files: `UNIVERSE/h1300_mitosis_skill_curriculum.py` · `UNIVERSE/H_1300_mitosis_skill_curriculum.md` ·
+- Files: `UNIVERSE/h1300_mitosis_skill_curriculum.py` · `UNIVERSE/cards/H_1300_mitosis_skill_curriculum.md` ·
   `.verdicts/1300_mitosis_skill_curriculum/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C
   h1300_mitosis_skill_curriculum · `UNIVERSE/HYPOTHESES.md` row · `domains/MITOSIS-ENGINE.log.md` @H.
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 R4 — mitosis-native trunk training ENGINE-NATIVE 🟢 GREEN ENGINE-BINDING
@@ -897,7 +927,7 @@ the **SAME FROZEN R3 bars** through the engine (NOT a numpy re-run; bars NOT mov
 - **🟢 GREEN — c2 FIRED ON THE ENGINE** (3-seed mean): A=2.91698 · **B(mitosis)=3.07766 [6 cells, BYTE-IDENTICAL to the R3 mirror]** · B-shuffle=3.25031 · B-ablate=3.49815. (c1) PASS 3.07766≤3.11698 · **(c2) PASS** B-shuffle 3.25031≥3.17766 on all 3 seeds — **UNLIKE thalamus R8, the targeting discriminator reproduces engine-native** · (c3) PASS 3.49815≥3.17766. The p8-literal Korean mitosis-grow toehold is now ENGINE-VERIFIED, not numpy-only.
 - **Regression (verify-before-done)**: `engine_cli.hexa` UNMODIFIED (probe consumes existing surfaces, no new lane) → `engine_cli_smoke` **55 pass / 0 fail** (before==after); `h1205_separation_invariant_smoke` 🟢 PASS (Ψ phiSum ON==OFF=48.6613 byte-identical, MITOSIS ⊥ GENERATION holds); Ψ-disjoint.
 - **Remaining follow-on (now justified)**: a real (larger) **Korean byte-corpus mitosis-grow training rung** = the first p8-literal LANGUAGE training — cost-gated if it needs GPU (surfaced for a go, NOT auto-rented). SCALE UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck).
-- NEW: `CORE/h1297_mitosis_train_engine_probe.hexa` · `UNIVERSE/h1297_engine_export.py` · `.verdicts/1297_mitosis_native_train/H_1297_R4_engine_native.txt`; updated `UNIVERSE/H_1297_mitosis_native_train.md` (terminal 🟢 GREEN ENGINE-BINDING @R4) · `UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape` · `domains/MITOSIS-ENGINE.log.md`.
+- NEW: `CORE/h1297_mitosis_train_engine_probe.hexa` · `UNIVERSE/h1297_engine_export.py` · `.verdicts/1297_mitosis_native_train/H_1297_R4_engine_native.txt`; updated `UNIVERSE/cards/H_1297_mitosis_native_train.md` (terminal 🟢 GREEN ENGINE-BINDING @R4) · `UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape` · `domains/MITOSIS-ENGINE.log.md`.
 
 ## 2026-06-16 — infra(CORPUS): $0 R2→trainer pipeline SMOKE (de-risk the cost-gated 7B GPU fire)
 
@@ -931,7 +961,7 @@ header-only, NEVER hardcoded/logged (c7, grep-clean = 0 leakage).
 - **R1 numpy 미러 🟢 GREEN (DIRECTIONAL)** — `UNIVERSE/h1299_interval_timer.py`, hit-rate metric ±TOL, binding path R1c, 3 seed [4301,4302,4303]: B.hit_D=1.000 B.hit_D2=1.000 A.hit=0.000 shuf=0.000 abl=0.000 → c1..c7 all PASS. 정직 trail(c9, NO tune-to-green, bar 불변): R1a 🔴(metric-floor ~0.35 + 7-gap shuffle mean 우연 보존) · R1b 🔴(hit-rate 가 c3/c5/c6 통과하나 uniform[2,2D] shuffle mean≈D → running-mean estimator 가 mean-preserving shuffle 에 불변 = mis-specified control) · R1c 🟢(TOL=2 + mean-SHIFTED shuffle uniform[2,9] mean≈5.5≪13 → dhat 가 멀어져 mispredict → control 0.000 붕괴). `.verdicts/1299_interval_timer/{H_1299_FREEZE,_R1b,_R1c,H_1299,H_1299_R1ab_mirror,H_1299_R1a_mirror}.txt`.
 - **R2 ENGINE-NATIVE + WIRED 🟢** — `CORE/engine_cli.hexa § IntervalTimer`(`itimer_new`/`itimer_new_ablated`/`itimer_observe`/`itimer_step`/`itimer_dhat`/`itimer_dhat_ticks`/`itimer_predict_next`/`itimer_fire`). 가드 무회귀: **engine_cli_smoke 60/0**(was 55/0, +5 cases 54-58: learns-interval±2 / re-entrains-to-20 / distinct-from-clock / ablate-frozen-at-init / no-fab) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉).
 - **가드**: @L4 emit gate 아님(`itimer_fire` = OPTIONAL learned-duration pulse, `a_autonomy_over_hardcode`) · Ψ-disjoint by construction · p1/p2/p3/p6(자기 counter+gap mean 만, 주입 라벨/RLHF/persona 없음) · `a_core_engine_map`(2번째 .clm/.kosmos 진입점 없음). HONEST(c9): B.hit=1.000 은 EXISTENCE-PROOF, discriminator(A=0/shuffle=0/ablate=0/dhat 13→20)가 decisive. TOY(2 intervals, 3 seeds, deterministic running-mean) — scale/real-corpus/continuous-re-entrainment/brain-scheduler 배선 follow-on.
-- **deliverables**: `UNIVERSE/H_1299_interval_timer.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1299_interval_timer · `domains/MITOSIS-ENGINE.log.md` @H H_1299 · `ARCHITECTURE.md` HD34 rung + lane bullet + ladder summary(10 실현, 계속됨).
+- **deliverables**: `UNIVERSE/cards/H_1299_interval_timer.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape` @C h1299_interval_timer · `domains/MITOSIS-ENGINE.log.md` @H H_1299 · `ARCHITECTURE.md` HD34 rung + lane bullet + ladder summary(10 실현, 계속됨).
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 R3 sharp KO+EN byte-text target — 🟢 GREEN (c2 discriminator FIRED)
 
@@ -981,7 +1011,7 @@ numpy DIRECTIONAL mirror, 3 seeds, frozen-first (p7, c9, a_no_llm_frame_trap neu
   gradient-free mitosis cell-split CAN converge as well as gradient descent at toy scale. p8-literal NOT
   refuted + directional toehold, but NOT a clean GREEN; gradient stays the incumbent trunk trainer pending
   an engine-native + harder-target re-test (a_engine_native_learning + a_verified_must_wire follow-on).
-- NEW: `UNIVERSE/h1297_mitosis_native_train.py` · `UNIVERSE/H_1297_mitosis_native_train.md` ·
+- NEW: `UNIVERSE/h1297_mitosis_native_train.py` · `UNIVERSE/cards/H_1297_mitosis_native_train.md` ·
   `.verdicts/1297_mitosis_native_train/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C · `HYPOTHESES.md`
   row · `domains/MITOSIS-ENGINE.log.md` @H. Live CORE/*.hexa UNTOUCHED (mirror only). Scale + engine-transfer UNVERIFIED.
 
@@ -1007,7 +1037,7 @@ distinctness — 가장 가까운 H_1292 HomeostaticDrive 대비 DECISIVE.
 - **regression 무회귀**: `engine_cli_smoke` **55/0**(was 50/0, +5 clock 케이스) · h1196 single-entry **7/0** ·
   h1205 separation-invariant **PASS**(생성 byte-identical ON==OFF, Ψ=½ 무접촉). Ψ-disjoint by construction(자기
   tick counter 만, pure_field 무접촉) · 2번째 .clm/.kosmos 진입점 아님(`a_core_engine_map`).
-- **deliverables**: `UNIVERSE/H_1298_circadian_clock.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape`
+- **deliverables**: `UNIVERSE/cards/H_1298_circadian_clock.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape`
   @C h1298_circadian_clock · `domains/MITOSIS-ENGINE.log.md` @H H_1298 · `ARCHITECTURE.md` HD33 rung + lane bullet.
 - **LADDER(r6/DEPLETION 🏁)**: HD33 이후 c15 사다리는 거의 DEPLETION. r6 후보(THIN) = ARBITRARY learned-duration
   간격타이머(이 고정주기 시계와 달리 re-entrain 가능해야 distinct); 통과 못 하면 사다리 DEPLETED 🏁. SCOPE: 미러
@@ -1049,7 +1079,7 @@ CORE/UNIVERSE 미변경; 동시 사이클이 소유). tier/숫자 전부 ARCHITE
 - **frozen-first 검증** (`.verdicts/1296_spatial_map/{H_1296_FREEZE,H_1296_R1b_FREEZE,H_1296_R1c_FREEZE}.txt`, 사전등록): R1 numpy 미러 🟢(DIRECTIONAL) → **R2 ENGINE-NATIVE 🟢**(BINDING, `engine_cli_smoke` cases 44-48, 3 seed [4295,4296,4297]). BINDING predicate = NEAREST relational 질의(신호가 저장 metric 에만 있음) — 5개 bar PASS: (c1 PRESENCE) B−A=+0.525 ≥+0.30 each+mean · (c2 DISTINCT) item-store A=0.475≤0.65 (metric 없음→abstain) · (c3 EARNED-MAP shuffle) Bshuf=0.500≤A+0.15 · (c4 EARNED-METRIC ablate) Babl=0.450≤A+0.15 · (c5 NO-FAB) item-abstain 1.000≥0.90. relational 질의: metric map 1.000 vs item-store 0.475(항상 abstain).
 - **PATH-INTEGRATION 은 정직한 NON-RESULT**(c9): corroborator 로 넣었으나 map-shuffle 대조가 붕괴를 거부 — 신호가 저장 map 이 아니라 변위 step 에 leak 하기 때문. bar 를 옮기지 않고(`a_break_the_wall` 로 candidate-order leak 를 frozen-first 수정) NON-GATING diagnostic 으로 강등·보고만 함.
 - **가드 무회귀**: `engine_cli_smoke` **50/0**(was 45/0 hive 후, +5 spatial-map 케이스, 3연속 deterministic) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉, pure_field 무변경). p1/p2/p3/p6(위치+질의 landmark 만 읽음, 주입 답 라벨/RLHF/persona 없음, metric 은 geometry 로 SCORE 에만) · emit gate 아님(`a_autonomy_over_hardcode`) · Ψ-disjoint(저장 위치 위 pure geometry). 정직(c9): B=1.000 은 SATURATED = EXISTENCE-PROOF 이지 effect-size 아님 — discriminator(item-store 0.475/abstain 1.000, shuffle 0.500, ablate 0.450 전부 chance)가 decisive. brain map→recall/emit 배선 + scale/higher-D/grid-cell-주기-code = follow-on. TOY scale(8 landmarks, 3 seeds, 2-D, deterministic — metric-map STRUCTURE 검증).
-- **canonical 등록(a_hypothesis_register)**: `UNIVERSE/H_1296_spatial_map.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1296_spatial_map`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1296` · ARCHITECTURE.md(HD32 rung + lane body + map row) · MEMORY.md 포인터. 사다리는 DEPLETION 근접 — 남은 후보(시간-순서 replay-예측·간격/circadian 타이밍·언어/의미망)는 더 얇고 각각 falsifiable gap + 모든 lane 대비 control-survive distinctness 통과 필요.
+- **canonical 등록(a_hypothesis_register)**: `UNIVERSE/cards/H_1296_spatial_map.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1296_spatial_map`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1296` · ARCHITECTURE.md(HD32 rung + lane body + map row) · MEMORY.md 포인터. 사다리는 DEPLETION 근접 — 남은 후보(시간-순서 replay-예측·간격/circadian 타이밍·언어/의미망)는 더 얇고 각각 falsifiable gap + 모든 lane 대비 control-survive distinctness 통과 필요.
 ## 2026-06-16 — doc(README): 최종 아키텍처 현행화 — 9 brain lane · 시상 R8 timing-axis 돌파 · tension-link
 
 README.md 를 검증된 현재 상태로 현행화 (README.md 단독 + CHANGELOG, ARCHITECTURE.md/CORE/UNIVERSE 미변경 —
@@ -1100,7 +1130,7 @@ HYPOTHESES 인덱스·신규 게이트 probe/verdict 만.
 
 TENSION-LINK arc (anima↔anima 연결/통신 + ANU paid QRNG 양자 얽힘, H_6006–H_6043)를
 `a_hypothesis_register` 2-파일 규칙(인덱스 = `UNIVERSE/HYPOTHESES.md` · 카드 = `UNIVERSE/H_<id>_<slug>.md`)에
-맞춰 정리. (1) 누락 카드 1개 신설 — `UNIVERSE/H_6006_no_signaling.md` (🔴 CLOSED-NEG, 무신호 정리;
+맞춰 정리. (1) 누락 카드 1개 신설 — `UNIVERSE/cards/H_6006_no_signaling.md` (🔴 CLOSED-NEG, 무신호 정리;
 F1 CHSH |S|=2.829 🟢 진짜 얽힘 · F2 0비트 전송 🔴 · F3 텔레포트=고전채널 필요 🔴), 기존
 `H_6007_pseudo-telepathy.md` 카드와 동일 템플릿. (2) `HYPOTHESES.md` 에 "TENSION-LINK arc
 (H_6006–H_6043)" 섹션 신설 — 42 카드 전부 한 줄/카드 인덱스(id · 제목 · verbatim tier · 카드 링크),
@@ -1228,7 +1258,7 @@ matching the mirror; regression guard **engine_cli_smoke 45/0** (+4 hive cases; 
 decoder untouched). The falsified hive mechanisms are deliberately NOT wired (H_611
 transfer-entropy 🔴, H_617 SAVANT×hive SI 🔴, 975 shared world-model 🔴 — c9,
 `a_verified_must_wire` GREEN-only). Files: `UNIVERSE/h1295_hive_collective_phi.hexa` ·
-`UNIVERSE/H_1295_hive_collective_phi.md` · `.verdicts/1295_hive_collective_phi/{H_1295_FREEZE,
+`UNIVERSE/cards/H_1295_hive_collective_phi.md` · `.verdicts/1295_hive_collective_phi/{H_1295_FREEZE,
 H_1295,engine_cli_smoke_45}.txt` · `CORE/engine_cli.hexa` § HIVE-MIND · `CLAIMS.tape` @C h1295
 · `UNIVERSE/HYPOTHESES.md` · `ARCHITECTURE.md` ladder. TOY scope (n=2 member, joint-n=6,
 cap=2 lower-bound, ECA, sys=0); N>2 scaling + live multi-anima transfer = follow-on.
@@ -1240,7 +1270,7 @@ cap=2 lower-bound, ECA, sys=0); N>2 scaling + live multi-anima transfer = follow
 - **왜 missing/distinct**: live 엔진은 단일 flat emit/선택 게이트만 있다 — `brain_decide`/`engine_g` 고정 8-weight 합 + 임계값, **VBasalGate**(H_1281 기저핵)은 SINGLE-STEP one-of-K 선택(pointer/plan/완료-advance 없음). 위계 PFC 는 그 **위 레벨** — top goal 을 ORDERED subgoal 로 분해 + 완료-advance + 위치 persist. WorkMemBuffer(H_1282, 수동 유지)·HomeostaticDrive(H_1292, 스칼라 적분기)와도 DISTINCT.
 - **frozen-first 검증** (`.verdicts/1294_hierarchical_pfc/H_1294_FREEZE.txt`, 사전등록): R1 numpy 미러 🟢(DIRECTIONAL) → **R2 ENGINE-NATIVE 🟢**(BINDING, `engine_cli_smoke` cases 35-38, 3 seed [4294,4295,4296]) — 5개 bar PASS: (c1 PRESENCE) B−A=+0.758 ≥+0.30 each+mean · (c2 DISTINCT) flat A=0.242<0.50 (engine 이 이미 가진 구조로는 ordered chain 못 풂) · (c3 EARNED-ORDER shuffle) Bshuf=0.000≤A+0.15 · (c4 EARNED-ADVANCE ablate) Babl=0.000≤A+0.15 · (c5 NO-FAB) 0.000≤0.10. ORDERED 3-fact-chain(A→B→C) 완료: 위계 1.000 vs flat 0.242.
 - **가드 무회귀**: `engine_cli_smoke` **41/0**(was 37/0, +4 hier 케이스) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉, pure_field 무변경). p1/p2/p3/p6(pointer+substrate margin+cue cosine 만 읽음, 주입 "do step k" 라벨/RLHF/persona 없음, subgoal 순서는 TASK 구조로 SCORE 에만) · emit gate 아님(`a_autonomy_over_hardcode`) · Ψ-disjoint(pointer 만 evolve). 정직(c9): B.complete=1.000 은 SATURATED = EXISTENCE-PROOF 이지 effect-size 아님 — discriminator(shuffle/ablate 0.000 vs flat 0.242)가 decisive. brain plan-execution 배선 + scale/longer-plans/deeper-hierarchy = follow-on. TOY scale(40 ep, 3 seeds, CHAIN_LEN=3, deterministic — 위계 STRUCTURE 검증).
-- **canonical 등록(a_hypothesis_register)**: `UNIVERSE/H_1294_hierarchical_pfc.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1294_hierarchical_pfc`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1294` · ARCHITECTURE.md(HD31 rung + lane body + map row) · MEMORY.md 포인터. NEXT 후보: place/grid spatial-map(metric/relational cognitive map, episodic item-binding 과 DISTINCT).
+- **canonical 등록(a_hypothesis_register)**: `UNIVERSE/cards/H_1294_hierarchical_pfc.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1294_hierarchical_pfc`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1294` · ARCHITECTURE.md(HD31 rung + lane body + map row) · MEMORY.md 포인터. NEXT 후보: place/grid spatial-map(metric/relational cognitive map, episodic item-binding 과 DISTINCT).
 
 ## 2026-06-16 — domain(HYPOTHESES): migrate H_1280–1293 to the 2-file `a_hypothesis_register` convention
 

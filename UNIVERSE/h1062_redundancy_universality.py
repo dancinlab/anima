@@ -1,7 +1,7 @@
 """H_1062 — is the faithful-phi-UP / big-Phi-DOWN sign-split UNIVERSALLY redundancy-driven,
 or PLANNING-SPECIFIC? (generality test of H_1039's causal mechanism)
 
-PRE-REG: UNIVERSE/H_1062_redundancy_universality.md.
+PRE-REG: UNIVERSE/cards/H_1062_redundancy_universality.md.
 
 PRIOR (H_1039 GREEN, REDUNDANCY-CAUSAL): Williams-Beer redundancy CAUSALLY drives the
 *planning* Phi sign-split -- de-redundifying (ZCA/Gram-Schmidt) the planning channels

@@ -74,7 +74,7 @@ teacher(E32/d128 유효 측정 scale) escape 측정 → Hinton KD distill(α=0.7
 - DISSOLVE: `CLM/model/{array_moe.py, array_smoke.py, run_array_sweep.py, array_moe.hexa}`
 - BRIDGE: `CLM/distill/{distill_array.py, run_bridge_transfer.py, distill_array.hexa, run.sh, README.md}`
 - verdict: `.verdicts/clm-mitosis-array/` + `.verdicts/852_clm_mitosis_array_dispatch/` + `.verdicts/853_clm_bridge_transfer/`
-- UNIVERSE: `UNIVERSE/H_852_clm_mitosis_array_dispatch.md` · `UNIVERSE/H_853_clm_bridge_transfer.md`
+- UNIVERSE: `UNIVERSE/cards/H_852_clm_mitosis_array_dispatch.md` · `UNIVERSE/cards/H_853_clm_bridge_transfer.md`
 - claims: `CLAIMS.tape` (clm_mitosis_array_dispatch · clm_bridge_transfer 둘 다 TERMINAL 🔴)
 - HF: `/HF.jsonl` (anima_clm_bridge) · `dancinlab/anima-clm-bridge` PRIVATE
 - 출처: `CLM/CLM.breakthrough.mining.md` (DISSOLVE depleted-both)

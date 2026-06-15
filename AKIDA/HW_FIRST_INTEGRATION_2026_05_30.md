@@ -74,7 +74,7 @@ ANIMA
 | C #1448 | `CORE/DECODER/DECODER.md` | AKIDA HW-first lane section + 양방향 sibling |
 | D #1449 | `PLASTICITY/plasticity_sw_approx.py` · `plasticity_lane.hexa` · verdict | SW 근사 learner + 🔴 비동치 verdict |
 | E #1450 | MITOSIS/CHANNEL/WAKE/EEG/HW-CORE/AKIDA sibling | 5도메인 백링크 + AKIDA boost |
-| F (this) | 이 SSOT · `UNIVERSE/H_679` · `H_680` · `AKIDA.log.md` | 문서 SSOT + 감사 H 2건 |
+| F (this) | 이 SSOT · `UNIVERSE/cards/H_679` · `H_680` · `AKIDA.log.md` | 문서 SSOT + 감사 H 2건 |
 
 ## 5. 크로스포인터
 
@@ -83,7 +83,7 @@ ANIMA
 - plasticity router: `PLASTICITY/plasticity_lane.hexa` · SW: `PLASTICITY/plasticity_sw_approx.py` · HW: `SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py`
 - HW edge-learn 실측: `SUB_ENGINES/AKIDA/state/edge_learn_probe_2026_05_22.json` (`edge_learning_supported=true`, BC.00.000.002)
 - verdict: `.verdicts/679_plasticity_hw_first/sw_hw_nonequivalence.txt` (🔴) · `.verdicts/672_akida_spontaneous_firing/` (decoder 🟢)
-- 감사 H: `UNIVERSE/H_679_plasticity_hw_first.md` · `UNIVERSE/H_680_decoder_hw_first.md`
+- 감사 H: `UNIVERSE/cards/H_679_plasticity_hw_first.md` · `UNIVERSE/cards/H_680_decoder_hw_first.md`
 - 선행 통합: `AKIDA/HW_SW_WIRING_2026_05_29.md` (H_672~H_678 backend switch)
 - 도메인: `AKIDA/AKIDA.md` · `PLASTICITY/PLASTICITY.md` · `CORE/DECODER/DECODER.md`
 

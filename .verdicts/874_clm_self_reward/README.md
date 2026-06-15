@@ -3,7 +3,7 @@
 Backing verdict dir for H_874 (CLM dialogue SELF-REWARD, @L6 method C).
 Committed BEFORE any .md carrying 🟢 / SUPPORTED tokens (hexa-native-guard).
 
-- Hypothesis doc: `UNIVERSE/H_874_clm_self_reward.md`
+- Hypothesis doc: `UNIVERSE/cards/H_874_clm_self_reward.md`
 - Pre-registered frozen thresholds: `.verdicts/clm-self-reward/F-CLM-SELF-REWARD_prereg.txt`
 - Verdict (post-fire): `.verdicts/clm-self-reward/F-CLM-SELF-REWARD.txt`
 - Fire driver (hexa-native, payload embedded): `CLM/train/h874_fire_mid_rung_self_reward.hexa`

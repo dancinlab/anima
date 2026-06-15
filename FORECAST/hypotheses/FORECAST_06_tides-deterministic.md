@@ -6,7 +6,7 @@ domain: forecast tides harmonic-analysis determinism random-walk lyapunov non-an
 exploration_method: 합성-사실적 조석계열(천문 분조 합+잡음) 조화분해 + 실 BTC 대조 + logistic 카오스 지평
 verification_method: 전반부 fit→후반부 held-out RMSE vs naive-persistence skill; 동일 파이프라인 BTC 적용; 외삽 진폭 안정성 + Lyapunov 지평; p7 /bin/zsh stdlib-only; 데이터 snapshot 공유
 since: 2026-06-14
-sister: FORECAST_01, FORECAST_03, UNIVERSE/H_6012
+sister: FORECAST_01, FORECAST_03, UNIVERSE/cards/H_6012
 verdict: 🟢🔴🟡 조석 미래는 진짜 fetchable — 합성 6분조 조화분해로 후반부(미래) FETCH skill 0.945·err/signal 0.06 (실 tide table 처럼 수년 앞 예측 가능); 같은 조화 fit 을 실 BTC 90일에 걸면 skill −4.21 (random walk 외삽 발산, FORECAST_03 재확인) 🔴; 조석 외삽은 1×~10× 미래까지 진폭비 ~1 유지하나 카오스(r=4)는 Lyapunov ~30step 너머 폭발 🟡. 결정론 축이 fetchability 를 가른다 — 미래는 시스템이 결정론적/주기적인 만큼만 가져올 수 있다.
 ---
 # FORECAST_06 — 결정론 성분 시계열은 미래 fetchable (조석 대조 BTC)

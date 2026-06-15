@@ -98,5 +98,5 @@ VERDICT: H_D1 SUPPORTED — LZ76 separates COLLAPSE vs HEALTHY (margin 0.636889 
 
 ## 양방향 sibling
 
-- sibling: [UNIVERSE H_288](../../UNIVERSE/H_288_kolmogorov_complexity_phi_correlate.md) — LZ76 ↔ Φ 정렬 (🟢 r=0.831 ρ=0.936)이 본 proxy 의 이론 근거. D1 은 그 LZ76 을 DECODER collapse 검출에 적용·검증.
+- sibling: [UNIVERSE H_288](../../UNIVERSE/cards/H_288_kolmogorov_complexity_phi_correlate.md) — LZ76 ↔ Φ 정렬 (🟢 r=0.831 ρ=0.936)이 본 proxy 의 이론 근거. D1 은 그 LZ76 을 DECODER collapse 검출에 적용·검증.
 - SSOT cross-link: [DECODER.md](./DECODER.md) UNIVERSE 정보-측도 arc cross-link 표 (H_287-290) — collapse 회피 verdict ← LZ 복잡도 (Shannon 단독 금지) 권고가 D1 으로 실증됨.

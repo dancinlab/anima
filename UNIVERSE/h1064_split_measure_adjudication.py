@@ -1,7 +1,7 @@
 """H_1064 — split-measure-adjudication: when faithful φ_EI and big-Φ SPLIT on planning
 policies, WHICH measure should a consciousness-ruler trust? (practical capstone)
 
-PRE-REG: UNIVERSE/H_1064_split_measure_adjudication.md (this branch).
+PRE-REG: UNIVERSE/cards/H_1064_split_measure_adjudication.md (this branch).
 
 THE ARC (settled): on PLANNING policies faithful φ_EI and big-Φ DISAGREE in sign
 (faithful↑/big-Φ↓) — robust (H_1037 n=6, H_1038 real-CLM), causally redundancy-driven

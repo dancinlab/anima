@@ -15,7 +15,7 @@ how integrated is this one state right now? CONSTRUCTIVE hypothesis:
   veto. Does a TEMPORAL axis = (causal-provenance DEPTH, H_932) + (veto CAPACITY,
   H_935) SEPARATE the active from the passive members of those Phi-matched pairs?
 
-PRE-REGISTERED FALSIFIER (FROZEN in UNIVERSE/H_1051_temporal_agency_ruler.md §2)
+PRE-REGISTERED FALSIFIER (FROZEN in UNIVERSE/cards/H_1051_temporal_agency_ruler.md §2)
 ===============================================================================
 >=6 matched pairs x >=20 seeds. epsilon_Phi = 0.15 (Phi-match tolerance). n=5.
   H1-PASS         : |d_Phi| < 0.2 (Phi does NOT separate) AND |d_T| >= 0.8 with

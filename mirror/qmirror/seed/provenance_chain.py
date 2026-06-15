@@ -18,7 +18,7 @@ output, its seed, the genesis ANU bytes, or the order of links) breaks the chain
 FROM THAT POINT FORWARD and is localizable to the EARLIEST broken link.
 
 The operational claim (falsifiable, pre-registered in
-UNIVERSE/H_932_provenance_chain_self.md):
+UNIVERSE/cards/H_932_provenance_chain_self.md):
 
     Given (a) the chain, (b) the ANU buffer, and (c) the decision_fn, an
     INDEPENDENT verifier can recompute EVERY link from genesis and confirm the

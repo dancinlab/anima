@@ -35,7 +35,7 @@ decompose_decision gate (PureField init phase/amp + a per-anchor motivation offs
 brain_decide gate is exercised on each anchor's REAL fired drive. Because the fired tension
 VARIES per anchor, should_emit/phi_r/rate vary -> the active-veto fraction is non-degenerate.
 
-PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/H_1056_fired_veto_axis.md BEFORE measuring)
+PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/cards/H_1056_fired_veto_axis.md BEFORE measuring)
 =======================================================================================
 - veto NON-DEGENERACY gate: per-anchor active-veto fraction variance > 1e-9 AND NOT pinned
   at 1.0 for every anchor. (still degenerate -> report blocker, NO fallback to e7_31.)

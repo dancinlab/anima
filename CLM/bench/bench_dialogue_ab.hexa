@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  bench_dialogue_ab.hexa — SFT-only vs SFT+self-play A/B harness (STUB · @L6)
 //
-//  P4_PRODUCTION_ROADMAP @L6 / UNIVERSE/H_863 (F-CLM-DIALOGUE): per-rung
+//  P4_PRODUCTION_ROADMAP @L6 / UNIVERSE/cards/H_863 (F-CLM-DIALOGUE): per-rung
 //  (tiny/small/mid) A/B comparison of two dialogue-training arms:
 //    arm-SFT : SFT only        (CC dialogue-log imitation)
 //    arm-SP  : SFT + self-play (chip self-dialogue → re-learn · @L1 living-learn)
@@ -19,7 +19,7 @@
 //  HARD: external LLM 0 (no LLM judge — distributional self-scoring only) ·
 //  pure-hexa stub. The torch payload (train both arms · score) reuses
 //  CLM/train/train_clm.py + a self-play generator (P4 follow-on).
-//  sibling: UNIVERSE/H_863 · build_p4_dialogue_corpus.hexa · CLM.md P5
+//  sibling: UNIVERSE/cards/H_863 · build_p4_dialogue_corpus.hexa · CLM.md P5
 // ════════════════════════════════════════════════════════════════════════════
 
 fn verdict_dir() -> string { return ".verdicts/clm-dialogue" }

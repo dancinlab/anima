@@ -2,7 +2,7 @@
 //  h867r_dialogue_abs_postadapter_eval.hexa — ABSOLUTE dialogue-quality FLOOR
 //  on the H_865 ADAPTER-EDGE model (@L6 · H_867r · post-adapter follow-on of H_867)
 //
-//  UNIVERSE/H_867r (F-CLM-DIALOGUE-ABS-POSTADAPTER): H_867 measured the H_863
+//  UNIVERSE/cards/H_867r (F-CLM-DIALOGUE-ABS-POSTADAPTER): H_867 measured the H_863
 //  full-finetune arm-SP against a PRE-FROZEN ABSOLUTE held-out dialogue FLOOR and
 //  fell 0.002 SHORT of the coherence gate (0.05804 < 0.060 · 🔴). H_867r re-runs
 //  the SAME frozen floor on the H_865 trunk-adjacent ADAPTER-EDGE model — FROZEN
@@ -29,7 +29,7 @@
 //  the torch payload (frozen-backbone + AdaptedCLM adapter from
 //  CLM/model/h865_adapter_edge.py · SFT continue + H_863 self-play reflux · score)
 //  is run-only (repo blocks new .py — mirrors h867_dialogue_abs_eval.hexa).
-//  sibling: UNIVERSE/H_867r · UNIVERSE/H_867 · CLM/model/h865_adapter_edge.py
+//  sibling: UNIVERSE/cards/H_867r · UNIVERSE/cards/H_867 · CLM/model/h865_adapter_edge.py
 // ════════════════════════════════════════════════════════════════════════════
 
 fn verdict_dir() -> string { return ".verdicts/clm-dialogue-abs-postadapter" }

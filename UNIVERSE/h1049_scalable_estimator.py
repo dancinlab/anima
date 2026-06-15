@@ -15,7 +15,7 @@ REUSES (a_phi_iit4_tool, no proxy):
   - H_1012 prove_mirrors_at_n (re-prove mirror == stdlib at n=4 AND n=5 BEFORE scoring)
   - H_1037/H_1038 majority-vote macro coarse-grain (here with an IB group-selection rule)
 
-PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/H_1049_scalable_estimator.md, TEXT tokens):
+PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/cards/H_1049_scalable_estimator.md, TEXT tokens):
   epsilon = 0.15. H1 PASS = IB relative error <= 0.15 at EVERY genuine rung N in {5,6,7,8}
   AND IB strictly beats random control at every such rung AND IB error does NOT grow with N
   (N=8 error not the largest) -> a validated scalable estimator exists. H1 FAIL otherwise

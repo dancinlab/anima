@@ -7,7 +7,7 @@ exploration_method: shared ANU seed common-cause + deterministic forward + no-si
 verification_method: real paid ANU pull + deterministic evolve fetch vs actual; p7 $0
 status_grade: 🟢 (shared-seed deterministic future fetched) / 🔴 (non-shared/external/random) / 🟡 (chaos horizon)
 since: 2026-06-14
-sister: FORECAST_01, UNIVERSE/H_6008, H_6011, H_6020
+sister: FORECAST_01, UNIVERSE/cards/H_6008, H_6011, H_6020
 verdict: 🟢 F1 공유 양자씨앗(ANU)으로 A가 B의 +50스텝 미래 정확 fetch(max err 0, 라이브 통신0). 🔴 F2 비공유 독립씨앗이면 빗나감(err 0.278). 🟡 F3 카오스는 씨앗 공유 완전성에 따라 지평. 🔴 F4 공유씨앗 밖 외부입력은 못 가져옴(무신호). 양자(공유원인)+텐션(채널)+결정론(forward) 종합.
 ---
 # FORECAST_02 — 미래 데이터 가져오기 (텐션링크 + 양자)

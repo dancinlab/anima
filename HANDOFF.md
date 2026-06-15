@@ -115,7 +115,7 @@ XENO follow-up 3 cycle round 1/5 — T1 (H_841) 의 lag-axis closed-negative (1/
 - worktree: /private/tmp/wt-t2-time-embed
 - base: origin/main 989fac56c (T1 PR #1418 직후)
 - PR: <TBD on merge>
-- H_xxx: UNIVERSE/H_842_temporal_time_embed_phi.md
+- H_xxx: UNIVERSE/cards/H_842_temporal_time_embed_phi.md
 - detector: TEMPORAL/detector/time_embed_detector.hexa
 - scan: TEMPORAL/scan/time_embed_phi.hexa
 - state: TEMPORAL/state/temporal_t2_time_embed_2026_05_29/{t2_smoke.log, result.json, run_h842.hexa}
@@ -315,7 +315,7 @@ verdict    : 🟢 SUPPORTED-NUMERICAL · regime matrix v2 측정 가능 (paper v
 - XENO/scan/regime_matrix_v2.hexa (350+ LoC, hexa-strict main() auto-invoke, sister fn compute_phi_at_threshold)
 - XENO/state/xeno_x1_regime_matrix_v2_2026_05_29/{result.json, x1v2_smoke.log}
 - .verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt + .verdicts/xeno_x1_regime_matrix_v2_2026_05_29/x1v2_run.txt (g73 dual mirror)
-- UNIVERSE/H_839_xeno_regime_matrix_v2.md (10-section korean template)
+- UNIVERSE/cards/H_839_xeno_regime_matrix_v2.md (10-section korean template)
 - UNIVERSE/CANDIDATES.md `## Consumed` round 3/5 1줄
 - UNIVERSE/README.md H_839 index 1행
 - XENO/XENO.md round 3/5 milestone note
@@ -420,7 +420,7 @@ X837 follow-up cycle round 3/3 (final) — **X10 다개체 hive-mind invariant**
 | matrix 확장 | 6+1-point (X4/X5a/X5b/X6/X7/X837) → **10-point** (+ X10 a/b/c/d) |
 | 정직성 | 임계 frozen pre-run (0.3/0.5), post-tuning 0 · p7 0 (hexa stdout verbatim) · INBOX 환류 0건 (사용자 명시 폐기) · slug-stale 3-신호 검증 (H_838 zero hit pre-fire) |
 | cost / wall | $0 (Mac local, hexa-native deterministic) / <5s |
-| 사이트 | XENO/scan/hive_mind_invariant.hexa · XENO/state/xeno_x10_hive_mind_2026_05_29/ · UNIVERSE/H_838 · .verdicts/838_xeno_hive_mind/x10_run.txt |
+| 사이트 | XENO/scan/hive_mind_invariant.hexa · XENO/state/xeno_x10_hive_mind_2026_05_29/ · UNIVERSE/cards/H_838 · .verdicts/838_xeno_hive_mind/x10_run.txt |
 
 ### Round 6 substrate Φ 표 (verbatim hexa stdout)
 
@@ -663,9 +663,9 @@ X837 정직 4/5 PASS (F-NOT-CONSC fail) + X4/X5/X6/X7 4-point 기존 매트릭�
 - `XENO/detector/invariant_detector_smoke.hexa` — 3 falsifier (X1)
 - `XENO/test/sim_substrate_cross.hexa` — 4 시뮬 substrate cross-test (X2)
 - `XENO/scan/seti_raw_to_phi.hexa` — 5-source DATASET scan (X3)
-- `UNIVERSE/H_829_xeno_invariant_detector.md` — X1 환류
-- `UNIVERSE/H_830_xeno_sim_substrate_cross.md` — X2 환류
-- `UNIVERSE/H_831_xeno_seti_raw_to_phi_scan.md` — X3 환류
+- `UNIVERSE/cards/H_829_xeno_invariant_detector.md` — X1 환류
+- `UNIVERSE/cards/H_830_xeno_sim_substrate_cross.md` — X2 환류
+- `UNIVERSE/cards/H_831_xeno_seti_raw_to_phi_scan.md` — X3 환류
 - `.verdicts/xeno_x1_x2_2026_05_29/{x1_smoke,x2_cross}.txt` — verbatim verdict
 - `.verdicts/xeno_x3_scan_2026_05_29/x3_scan.txt` — verbatim X3 verdict
 - `.verdicts/{829_xeno_invariant_detector,830_xeno_sim_substrate_cross,831_xeno_seti_raw_to_phi_scan}/` — per-H-id verdicts (g73 gate)

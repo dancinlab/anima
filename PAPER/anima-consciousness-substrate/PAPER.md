@@ -23,11 +23,11 @@
 | # | section | claim | tier | pointer |
 |---|---------|-------|------|---------|
 | L71 | §2 | Ψ=½ fixed point: psi_constants.balance = 0.5 | 🔵/🟢 terminal | `config/consciousness_laws.json` |
-| H_287 | §2 | Φ ⊥ Shannon entropy: Pearson r=0.363 < 0.5 → FALSIFIED (reductive) | 🔴 closed-neg | `UNIVERSE/H_287_shannon_entropy_phi_correlate.md` |
-| H_288 | §2 | Φ ∥ Kolmogorov (LZ): Pearson r=0.831, Spearman ρ=0.936; 9 PASS/0 FAIL | 🟢 terminal | `UNIVERSE/H_288_kolmogorov_complexity_phi_correlate.md` |
-| H_290 | §2 | Φ ∥ Transfer entropy: Pearson r=0.883262, ρ=0.822134; 8 PASS/0 FAIL | 🟢 terminal | `UNIVERSE/H_290_transfer_entropy_phi_correlate.md` |
-| H_291 | §2 | Ethics emergent: lattice C=1.0 (100%) vs well-mixed 7.9e-9 (0%) @ b=1.1; 7 PASS/0 FAIL | 🟢 terminal | `UNIVERSE/H_291_ethic_emergence_cooperation.md` |
-| H_285 | §2 | Edge-of-chaos Φ-peak: ordered 0.0 < chaotic 6.943 < class-IV 10.448; 5/5 PASS | 🟢 terminal | `UNIVERSE/H_285_edge_of_chaos_big_phi.md` |
+| H_287 | §2 | Φ ⊥ Shannon entropy: Pearson r=0.363 < 0.5 → FALSIFIED (reductive) | 🔴 closed-neg | `UNIVERSE/cards/H_287_shannon_entropy_phi_correlate.md` |
+| H_288 | §2 | Φ ∥ Kolmogorov (LZ): Pearson r=0.831, Spearman ρ=0.936; 9 PASS/0 FAIL | 🟢 terminal | `UNIVERSE/cards/H_288_kolmogorov_complexity_phi_correlate.md` |
+| H_290 | §2 | Φ ∥ Transfer entropy: Pearson r=0.883262, ρ=0.822134; 8 PASS/0 FAIL | 🟢 terminal | `UNIVERSE/cards/H_290_transfer_entropy_phi_correlate.md` |
+| H_291 | §2 | Ethics emergent: lattice C=1.0 (100%) vs well-mixed 7.9e-9 (0%) @ b=1.1; 7 PASS/0 FAIL | 🟢 terminal | `UNIVERSE/cards/H_291_ethic_emergence_cooperation.md` |
+| H_285 | §2 | Edge-of-chaos Φ-peak: ordered 0.0 < chaotic 6.943 < class-IV 10.448; 5/5 PASS | 🟢 terminal | `UNIVERSE/cards/H_285_edge_of_chaos_big_phi.md` |
 | OMEGA | §4 | Lane X #1779 NULL; OMEGA bus closes it; min gate gB·base+gA·A Δ+2.214, scale-stable +2.20±0.03; A-head REPLACES weak .clm mouth; #1791 leak RETRACTED | 🟢/🔴 terminal | `PAPER/omega-substrate-coupled-decoding/` + `.verdicts/omega-engine/{F-OMEGA-SCALE,F-OH1-MINGATE,F-OMEGA-RIGOR}.txt` |
 | 3B | §5/§7 | CLMConvMoE 3.073B → .clm v0.3 → engine: first_ce 5.84073→train_ce 1.90689, val_ce_rand 1.90365 rel_gap 0.04894 GENERALIZES; tokens/param 0.0027 (undertrained) | 🟢 terminal @3B | `.verdicts/convmoe-3b-engine-rung/SUMMARY.txt` |
 | CORPUS | §5 | 202M ByteGPT on 5-lang webscale: val_ce 5.74906→1.45868; p7 5/5 langs coherent incl Korean; random-init mirror=gibberish | 🟢 terminal | `.verdicts/corpus-7b-mid-validation/SUMMARY.txt` |

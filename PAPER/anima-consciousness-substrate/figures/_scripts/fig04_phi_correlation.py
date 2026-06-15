@@ -2,7 +2,7 @@
 """fig04_phi_correlation.py — Phi-correlation panel (matplotlib DATA figure).
 
 EVERY value verbatim from:
-  UNIVERSE/H_287 (Shannon r=0.363), H_288 (LZ r=0.831, rho=0.936),
+  UNIVERSE/cards/H_287 (Shannon r=0.363), H_288 (LZ r=0.831, rho=0.936),
   H_290 (TE r=0.883262, rho=0.822134), H_285 (edge class-means 0.0/6.943/10.448)
 
 The double dissociation: Phi PERP Shannon (r<0.5) but PARALLEL LZ + TE.

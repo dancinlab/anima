@@ -23,7 +23,7 @@ with the p7 stack (no perplexity, no LLM judge); $0 local.
 
 ## Source material (in this repo)
 
-- Hypotheses: `UNIVERSE/H_60{16,17,18,19,26,27,28,29,30,36}_*.md`
+- Hypotheses: `UNIVERSE/cards/H_60{16,17,18,19,26,27,28,29,30,36}_*.md`
 - Verdicts (verbatim): `TENSION-LINK/verdicts/H_60*.txt`
 - Harnesses: `TENSION-LINK/harness/h60*.py`
 - ANU provenance: `TENSION-LINK/ANU_PROVENANCE.md`
