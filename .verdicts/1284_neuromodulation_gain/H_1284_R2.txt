@@ -1,0 +1,153 @@
+H_1284 R2 — CONTEXT-ADAPTIVE NEUROMODULATION ON IDEATION/DECODE (re-scope of R1)
+============================================================================================
+VERDICT: 🔴 RED / 🧱 DEPLETION (NO FREE LUNCH IS GENERAL)
+  Context-adaptive neuromodulation does NOT beat the best-tuned FIXED decode point
+  even on the IDEATION lane — the one place R1's not-ruled-out clause left open
+  (H_1228 SOC decode 🟠). On the frozen combined ideation metric M, the adaptive
+  σ*-target controller is WORSE than best-fixed (M(B)-M(A) = -0.7015) and also
+  LOSES coherence (kwr 0.478 vs 0.593). The lift it does NOT win is not a coupling
+  artifact either (C-SHUF also < A). $0 CPU torch-ref, 3 scoring seeds [7,17,23] +
+  disjoint tune-seed 5, p7, frozen-first. DIRECTIONAL (a_engine_native_learning).
+
+VERBATIM METRIC OUTPUT (seed-averaged, UNIVERSE/h1284_r2_neuromod_ideation.py):
+  ARM A (best-fixed) = fixed_temp 0.5  (tuned on disjoint seed 5 by M, tune-M=4.000)
+  combined metric M = composed_distinct(G1) + g6_count(G6) + 4*(kwr_mean-0.50)_+ ; MARGIN=0.30
+
+  A_best_fixed  M=4.038  composed_distinct=0.667  g6=3.000  kwr=0.5928  g2=0.50698  σ̄=1.268
+  B_adaptive    M=3.336  composed_distinct=0.667  g6=2.667  kwr=0.4784  g2=0.77950  σ̄=2.323
+  C_shuf        M=3.708  composed_distinct=0.333  g6=3.333  kwr=0.4962  g2=0.84649  σ̄=2.361
+
+  M(B)-M(A) = -0.7015   M(C-SHUF)-M(A) = -0.3304   MARGIN = 0.30
+  frozen falsifier: M(B)>=M(A)+MARGIN = FALSE · kwr(B)>=kwr(A)-0.02 = FALSE ·
+                    M(B)>M(A) = FALSE  ⇒  M(B) <= M(A)  ⇒  🔴 RED / 🧱.
+  controller ALIVE (RED is "adaptation hurts", not dead knob): B σ*_t swung
+  [1.875, 3.500] every seed (NE/ACh raised exploration on loops, DA lowered it on
+  coherence drops) — the mechanism fired; it just made ideation WORSE.
+
+DEPLETION 🧱: neuromodulation (state-driven adaptive control) is INERT-or-HARMFUL
+  vs a single well-tuned fixed operating point on BOTH the memory substrate (R1) AND
+  the ideation/decode lane (R2). No-free-lunch is GENERAL across anima's lanes; no
+  r3. The H_1228 SOC partial lift was a property of a TUNED FIXED σ* point, not of
+  ADAPTING the target to context — a fixed temperature already sits at the optimum.
+
+────────────────────────────────────────────────────────────────────────────────
+{
+  "H": "H_1284_R2",
+  "round": 2,
+  "title": "context-adaptive neuromodulation on the ideation/decode lane (re-scope of R1)",
+  "lens": "neuromodulation (DA gain / NE exploration / ACh novelty) as a per-step decode σ*-target controller, c15, a_no_llm_frame_trap",
+  "combined_metric_M": "composed_distinct(G1) + g6_count(G6) + 4*(kwr_mean-0.50)_+",
+  "MARGIN": 0.3,
+  "arm_A_best_fixed_config": {
+    "kind": "fixed_temp",
+    "value": 0.5,
+    "tune_M": 4.0,
+    "tune_seed": 5,
+    "grid": [
+      [
+        "fixed_temp",
+        0.5
+      ],
+      [
+        "fixed_temp",
+        0.7
+      ],
+      [
+        "fixed_temp",
+        0.9
+      ],
+      [
+        "fixed_temp",
+        1.1
+      ],
+      [
+        "fixed_sigma",
+        1.8
+      ],
+      [
+        "fixed_sigma",
+        2.5
+      ],
+      [
+        "fixed_sigma",
+        3.2
+      ]
+    ]
+  },
+  "controller_gains": {
+    "kR": 0.6,
+    "kN": 0.4,
+    "kC": 0.5,
+    "W": 24,
+    "COH_FLOOR": 0.5,
+    "sigma_star_0": 2.5,
+    "sigstar_clamp": [
+      1.5,
+      3.5
+    ],
+    "KP": 0.6
+  },
+  "arms": {
+    "A_best_fixed": {
+      "M": 4.0379,
+      "composed_distinct": 0.6667,
+      "g6_count": 3.0,
+      "kwr_mean": 0.5928,
+      "g2_novelty_rate": 0.50698,
+      "sigma_mean": 1.2682
+    },
+    "B_adaptive": {
+      "M": 3.3364,
+      "composed_distinct": 0.6667,
+      "g6_count": 2.6667,
+      "kwr_mean": 0.4784,
+      "g2_novelty_rate": 0.7795,
+      "sigma_mean": 2.3226
+    },
+    "C_shuf": {
+      "M": 3.7075,
+      "composed_distinct": 0.3333,
+      "g6_count": 3.3333,
+      "kwr_mean": 0.4962,
+      "g2_novelty_rate": 0.84649,
+      "sigma_mean": 2.3605
+    }
+  },
+  "seeds": [
+    7,
+    17,
+    23
+  ],
+  "frozen_falsifier": {
+    "M(B)>=M(A)+MARGIN": false,
+    "kwr(B)>=kwr(A)-0.02": false,
+    "M(C-SHUF)<M(A)+MARGIN (coupling)": true,
+    "M(B)>M(A)": false,
+    "deltas": {
+      "M(B)-M(A)": -0.7015,
+      "M(C)-M(A)": -0.3304
+    }
+  },
+  "controller_swung": {
+    "B_sigstar_range_per_seed": [
+      [
+        1.875,
+        3.5
+      ],
+      [
+        1.875,
+        3.5
+      ],
+      [
+        1.875,
+        3.5
+      ]
+    ]
+  },
+  "supported": false,
+  "tier": "🔴 RED",
+  "depletion": "🧱",
+  "ruling": "context-adaptive neuromodulation is INERT-or-WORSE than best-fixed on IDEATION too (M(B) <= M(A)) — NO FREE LUNCH is GENERAL: a single well-tuned fixed decode point dominates the state-driven controller on generation just as on memory (R1). Neuromodulation inert everywhere; depletion 🧱, no r3.",
+  "scope": "303M torch ref (byte-exact H_1157 mount), data/corpus.txt (orig 1.5GB GONE => G2 UPPER BOUND), 3 scoring seeds + 1 disjoint tune seed, single-model toy — a_scale_honest_scope. DIRECTIONAL (a_engine_native_learning, engine-transfer UNVERIFIED). CORE/*.hexa + H_1228 UNTOUCHED. Controller is no-grad readout, NEVER folded into a loss (p7). Frozen bars NOT moved.",
+  "wall_s": 881.3
+}
