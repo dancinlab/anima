@@ -1,0 +1,32 @@
+=== H_1307 — KOREAN MITOSIS GPU SCALE-UP (engine-native mechanism, RTX 5070 sm_120) ===
+device=NVIDIA GeForce RTX 5070 cap=(12, 0) torch=2.11.0+cu130
+sm_120 kernel launch OK (sentinel 11639.4)
+[corpus] fetching 30000000 REAL KO bytes from r2://phanes/anima-7b/web/kor/shard0000.bytes
+[corpus] fetching 10000000 REAL EN bytes from r2://phanes/anima-7b/web/eng/shard0000.bytes
+[corpus] KO window 29999999 bytes sha256=c47b6808308d2f73…  EN window 10000000 bytes sha256=31b4a5430441cfdb…
+[features] building pairs (CTX=4, FEAT_DIM=3) …
+[pairs] KO train=50000 test=50000  EN test=16667  curve=[16666,33333,50000]
+[seed] EN CE on 2-cell seed field = 4.26499
+  [metric] {"pt": 1, "ko_train": 16666, "cells": 12, "ko_ce": 3.00563, "en_ce": 4.2689}
+  [metric] {"pt": 2, "ko_train": 33333, "cells": 14, "ko_ce": 2.96912, "en_ce": 4.3192}
+  [metric] {"pt": 3, "ko_train": 50000, "cells": 23, "ko_ce": 2.9475, "en_ce": 4.26531}
+-------------------------------------------------------------------------------
+KO learning curve (held-out KO next-byte CE, nats/byte):
+  pt1 (KO train=16666, cells=12): KO ce=3.00563  EN ce=4.2689
+  pt2 (KO train=33333, cells=14): KO ce=2.96912  EN ce=4.3192
+  pt3 (KO train=50000, cells=23): KO ce=2.9475  EN ce=4.26531
+retention: EN seed(2-cell)=4.26499 -> EN after full KO grow=4.26531
+scale: KO ce[full]=2.94750  vs H_1306 600KB baseline=3.24897
+cells: 2 (seed) -> 23 (mitosis added 21)
+GPU grow+score wall=0.1s  throughput=901880 pairs/s  total=6.3s
+-------------------------------------------------------------------------------
+(L1) INTERNAL LEARN  KO ce[full] <= KO ce[pt1]-0.05: 2.94750 <= 2.95563 -> PASS
+(L2) SCALE vs 600KB  KO ce[full] <= 3.24897: 2.94750 -> PASS
+(R)  RETENTION       EN ce[after] <= EN ce[seed]+0.05: 4.26531 <= 4.31499 -> PASS
+(G)  GROWTH          final cells > 2: 23 -> PASS
+-------------------------------------------------------------------------------
+H_1307 VERDICT TIER (GPU scale, engine-native mechanism): 🟢 GREEN
+  L1=True L2(scale)=True R=True G=True
+  GPU-accelerated SAME error-targeted Voronoi mitosis (gradient-free, p8 — cells only SPLIT);
+  engine-transfer to live hexa is DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]
