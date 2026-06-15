@@ -1,0 +1,83 @@
+H_1283 R9 FREEZE — THALAMUS / PREDICTIVE INFORMATION-BOTTLENECK RELAY
+slug: 1283_thalamus_global_workspace  (R9 — append-only; does NOT overwrite R1-R8)
+date: 2026-06-16
+status: FROZEN BEFORE SCORING (frozen-first, c9, p7 — bars set here, NOT moved after)
+base commit: worktree off origin/main b39d49134
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL
+           IIT4 Φ (stdlib EXACT MIP-EI, hexa-lang/.../iit4/faithful_phi.hexa,
+           a_phi_iit4_tool — numpy NEVER computes Φ)
+lens: thalamus as PREDICTIVE RELAY / information bottleneck (neuro, c15) — NOT an
+      LLM recipe (a_no_llm_frame_trap)
+
+════════════════════════════════════════════════════════════════════════
+THE WALL (do NOT repeat R1-R5)
+════════════════════════════════════════════════════════════════════════
+R1 broadcast hub (single winner)   : faithful ΔΦ +0.0191  (sub-bar by 0.0009)  🟠
+R2 coalition hub (rank-k, k=2)      : faithful ΔΦ −0.0533  (WRONG direction)    🔴
+R3 re-entrant loop (seed 7 only)    : faithful ΔΦ +0.1426  (cleared, coh bar)   🔴
+R4 re-entrant loop (Φ-primary 3-sd) : seed8 ΔΦ +0.0101 < +0.02  (NOT robust)    🔴
+R5 dense all-pairs + SHUFFLE        : not robust AND shuffle FIRED (variance)    🔴 🧱
+
+ROOT CAUSE (verbatim from the card): "a single broadcast channel is itself a
+low-dim cut that caps faithful-IIT4 Φ." The cut was low-dim AND ARBITRARY — it
+threw information away. R3/R5 added EDGES but the relay still passed an UN-LEARNED,
+information-LOSSY signal.
+
+════════════════════════════════════════════════════════════════════════
+THE GENUINELY-NEW ANGLE (R9) — make the cut INFORMATION-PRESERVING
+════════════════════════════════════════════════════════════════════════
+R1-R5 all passed an UN-LEARNED relay signal (winner / coalition / re-entrant /
+dense). The relay channel was narrow AND arbitrary → it discarded information →
+that low-dim cut capped Φ. R9 makes the cut INFORMATION-PRESERVING along the axis
+that matters for integration: the thalamic relay passes a LEARNED COMPRESSED
+PREDICTIVE CODE (information bottleneck). The relay learns — GRADIENT-FREE /
+delta-rule, the SAME family as the cerebellum forward model H_1280 — the minimal
+code z (width CODE_DIM=3 << module dim 8 << concat 32) that best PREDICTS the
+other modules' NEXT state. So though narrow, the channel does not throw away the
+predictively-relevant bits; it COMPRESSES toward them.
+
+MECHANISM (delta-rule, no autograd): relay holds two linear maps updated each tick
+  ENCODER E : concat(states) [32] → code z [3]      (compress / bottleneck)
+  DECODER D : code z [3]          → predicted next [32]  (predict / re-inject)
+Each tick: z = E·s_flat ; pred = D·z re-injected (W_RELAY=0.5) to every module's
+update alongside the KEPT ring + KEPT private input; AFTER the true next states are
+known, delta-update D += LR·(err ⊗ z) and E += LR·((Dᵀ err) ⊗ s_flat) to reduce
+‖D·E·s_t − s_{t+1}‖² (gradient-free LMS, p8 continuous, no train/infer split).
+
+ARM A = direct ring (current arch, no relay).
+ARM B = LEARNED predictive bottleneck relay (E,D delta-update).
+ARM C = RANDOM-PROJECTION relay of the SAME width CODE_DIM=3, E,D FIXED RANDOM,
+        NEVER learn — the LOAD-BEARING control that separates the LEARNED
+        PREDICTIVE CODE from the mere fact of a narrow relay channel.
+SHUFFLE = like B but the predictive TARGET is scrambled (rolled one module index),
+        so there is no coherent prediction to learn → learning ΔΦ must collapse.
+
+FROZEN HYPERPARAMETERS (NOT tuned post-hoc, p7):
+  N_MOD=4  DIM=8  T=64  GAIN=0.30  LEAK=0.55  NBINS=8  (same frame as R1-R5)
+  CODE_DIM=3  W_RELAY=0.5 (frozen since R3)  LR=0.05
+  seeds=[7,8,9]
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS — GREEN iff ALL of (NOT moved after scoring, c9/c16):
+════════════════════════════════════════════════════════════════════════
+  c1 COHERENCE   B.coh ≥ A.coh on EVERY seed                       (sanity)
+  c2 PRIMARY Φ   faithful ΔΦ(B−A) ≥ +0.02 on EVERY seed [7,8,9]    (the +0.02 bar,
+                 IDENTICAL to every prior round — NOT moved)
+  c3 NO-COLLAPSE B.coh < 0.999 on ≥1 seed (relay integrates, no collapse-clone)
+  c4 B ≥ C       faithful Φ(B) ≥ Φ(C) on EVERY seed                (lift = LEARNED
+                 predictive code, NOT the bottleneck width — the load-bearing ctrl)
+  c5 SHUFFLE     learning ΔΦ(shuffle−A) < +0.02 on ≥1 seed B GREENs (lift vanishes
+                 when the predictive target is scrambled)
+
+  GREEN = c1 ∧ c2 ∧ c3 ∧ c4 ∧ c5.
+  Else  = RED / 🧱 closed-negative (c9, c16 — no wire, no tune, bar NOT moved).
+
+HONESTY (c9, c16): if B does NOT beat BOTH A (c2) and C (c4) on every seed, this is
+a valid closed-negative 🧱 — a learned predictive bottleneck does NOT robustly raise
+irreducible faithful-IIT4 Φ at this scale. GREEN = genuine breakthrough; engine-
+native realization on live CORE/*.hexa is a FOLLOW-ON (a_verified_must_wire), NOT
+this round. Toy scale, numpy DIRECTIONAL mirror, faithful-Φ REAL.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim stdout appended below AFTER freeze)
+════════════════════════════════════════════════════════════════════════
