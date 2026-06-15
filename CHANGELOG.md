@@ -6,6 +6,23 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🧹 원격 브랜치 정리 (origin merged-PR 잔여 헤드 1,511개 삭제)
+
+squash-merge 워크플로 누적으로 origin 에 쌓인 머지-완료 PR 잔여 브랜치를 대량 정리했다. `git branch --merged` 는 squash 머지를 감지 못하므로 GitHub PR 상태 기반으로 안전 판정.
+
+- **삭제 1,511개**: `gh pr list --state merged` 의 headRefName ∩ 원격 브랜치 = 머지-완료(내용이 main 에 반영됨) 1,510개 + PR 기록 없으나 `git rev-list --count origin/main..` = 0(내용이 main 에 포함됨) 1개(`lane2-h1192-summer`). 전부 삭제 확인(원격 잔존 0, 실패 0).
+- **보존 (불확실/활성은 전부 보존, preservation-bias)**:
+  - open-PR 헤드 4개 (`engine-lane/clm-l3-header-admit-v2` · `lane-g/campaign-pivot-descent` · `lane-g/default-lane-v3-corpus` · `worktree-agent-a71787913fa62bfca`)
+  - 보호 prefix 15개 — 라이브 세션 활성 브랜치 (`h1149/*` ×3, `h1201/` · `h1207/` · `h1208/` · `h1213/` · `h1218/` · `h1221/` · `h1230/` · `h1231/` · `h1281/` · `h1283/` · `h1284/` · `h1285/`)
+  - PR 기록 없는 진짜 미머지 작업 151개 (`git rev-list --count origin/main..` > 0 = main 에 없는 커밋 보유 → 디버전트 작업으로 보존)
+  - 판정 에러 1개 (`chore/frame-trap-top`, ambiguous ref → 보존)
+  - `main` 무손상 (삭제 후 `git rev-parse origin/main` 확인)
+- **복구 로그 (c5)**: 삭제한 1,511개 전부 `<branch> <sha>` 를 `scripts/scratch/remote-branches-deleted-20260615.log` 에 기록 — 각 SHA 는 로컬 오브젝트로 검증됨, `git push origin <sha>:refs/heads/<name>` 로 복구 가능.
+- **before/after**: 세션 시작 시 원격 헤드 ~1,684개(main 포함) → 1,511 삭제. 정리 도중 2번째 라이브 세션이 새 브랜치(h1285/h1288-h1291 등)를 계속 생성 중이라 최종 `ls-remote` 헤드 수는 순감과 다름.
+- **방법 노트**: `git branch -r` 의 `refs/remotes/agent-*` 잔여 ref 7개(non-origin)는 origin 브랜치 아님 → 제외. gh api DELETE 는 백그라운드 셸에서 hang(동시성) → 포그라운드 순차 `</dev/null` 청크로 전량 삭제. solo AI 워크플로(외부 협업자 없음)라 머지-완료 브랜치 삭제는 표준 위생.
+
+---
+
 ## 2026-06-15 — 🟢 H_1285 R3: 편도체(amygdala) 컨솔리데이션 — salience-gated SLEEP REPLAY 가 사전등록된 멀티-나잇 수면예산에서 +0.10 을 넘는다 (GREEN / 🏁)
 
 FLEET "amygdala" lane R3. R2(🔴 RED-but-MECHANISM-VALIDATED)에서 salience-gated SLEEP REPLAY 는 **진짜 p6-clean 레버**임이 확인됐다 — 동결 R2 예산(boost0.8/30-replay/8-cyc)에서 B salience-replay imp=0.383 > A uniform=0.317 (Δ+0.067)이고 p6 shuffle 대조군이 A 로 **붕괴**(B-shuf=A, lift 가 importance 를 추적함 = R1 의 recurrence 혼입도 raw budget 도 아님). 단 동결예산에서 효과크기 +0.067 < +0.10 margin → RED. R2 의 HONEST 진단 sweep(gate 아님)은 lift 가 sleep 예산과 함께 **단조 증가**(30/8→+0.067·60/8→+0.100·30/40→+0.200)하고 shuffle 은 ~A 유지 → sub-bar 는 **under-invested sleep**이지 천장/inert(🧱) 아님을 보였다. R3 는 그 reading 을 ONE 사전등록된 더 높은 예산에서 검증.
