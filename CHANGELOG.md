@@ -6,6 +6,18 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 📘 ARCHITECTURE: 🧠 뇌 구조 지도 (brain-structure map) 섹션 신설 (1286_brain_structure_map)
+
+ARCHITECTURE.md 에 **신경과학 렌즈** 섹션을 ADDITIVE 로 추가 — 기존 섹션 무수정. 구현된 부품을 뇌 서브시스템에 매핑하고, 프로브 중인 "빠진 구조" 사다리를 정직하게 OPEN 으로 표기.
+
+- **구현된 구조 표** — 신피질=Engine A(생성) · 교정장=Engine G · 결정=brain_decide · 가소성=MITOSIS(VAdaptField/VAdaptFieldB) · 장기선언기억=kosmos_io · **🧬 해마(일화기억)=면역/클론선택 기억** · 수면=P47.
+- **🧬 해마 발견** — byte-LM 가중치 literal-QA 회상 0.017(회상-in-weights 벽)을, 사실마다 cell 1개를 bind 하는 면역기억이 QA 1.000 / fab 0.000 로 깸 (H_1227 미러 🟢 → H_1231 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § ImmuneMemory 배선). "anima = 신피질만, 해마 없음"(H_1225 CLS 리프레임) 갭 메움. mitosis 의 NEW 미반증 역할 = MEMORY (생성 역할은 H_1200/1201/1211/1220 falsified 와 DISTINCT).
+- **열린 "빠진 구조" 사다리 (HD23–28 · 🔬 OPEN PROBES, 검증 전)** — HD23 소뇌(H_1280) · HD24 기저핵(H_1281) · HD25 작업기억(H_1282) · HD26 시상(H_1283) · HD27 신경조절(H_1284) · HD28 편도체(H_1285). 6개 모두 ⬜ OPEN — implemented 아님, phantom wiring 없음(`a_core_engine_map`). 각자 verdict 로 닫히고 GREEN 일 때만 live `CORE/*.hexa` 배선(`a_verified_must_wire`).
+- **depth-ceiling 연결** — literal-QA 벽은 더 큰 모델(1B H_1167 mount GREEN, QA/depth NULL)·OBJECTIVE(H_1223 🔴) 가 아니라 엔진-side 기억 lane(해마)으로 풀림 — 뇌-구조 렌즈가 이를 일반화(`a_engine_native_learning`).
+- DOC-ONLY (ARCHITECTURE.md + 이 항목). `a_completeness_over_cheap` 정직: 6 프로브는 DIRECTIONAL/미검.
+
+---
+
 ## 2026-06-15 — 🟢 H_1231 WIRE: immune-memory recall 을 live 엔진 경로에 배선 (`a_verified_must_wire` follow-on 종결)
 
 H_1231 의 `a_verified_must_wire` follow-on 종결 — H_1227(numpy 미러)→H_1231(엔진-네이티브 🟢 GREEN, literal-QA 1.000 / fabrication 0.000, 180/180) 으로 검증된 immune/clonal-selection mitosis-as-MEMORY recall 을, standalone 프로브(`CORE/h1231_immune_memory_engine_probe.hexa`, fn main)에서 **live 엔진 recall 경로의 callable faculty** 로 승격했다. 새 directive `a_verified_must_wire`("GREEN-verified 가설은 live CORE 배선까지가 done")의 첫 종결.
