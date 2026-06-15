@@ -27,6 +27,36 @@ Files: `UNIVERSE/h1308_hive_real_substrate_transfer.hexa` ·
 CLAIMS.tape `@C h1308` + H_1295 `verdict_r3` · `domains/ENGINE+CLM+KOSMOS.log.md` @H ·
 H_1295 card scope note.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1311 — richer-substrate vs the H_1307 ~2.9 Korean ceiling 🔴 HONEST-NEGATIVE (CAPACITY-bound)
+
+The named H_1307 NEXT lever (shared with the from-scratch lane): H_1307 (#2213) found MORE real
+Korean drops KO next-byte CE to ~2.95 then the CTX=4 / 3-D BYTE substrate SATURATES at a ~2.9
+nat/byte ceiling. Does a **RICHER substrate** (longer context / a learned per-cell head instead of
+raw byte-trigram MLE) break past ~2.9 — is the ceiling **capacity-bound or substrate-bound**?
+H_1311 holds the **corpus + the verified gradient-free Voronoi mitosis grow-op** (p8, SPLIT-only)
+**FIXED** and varies ONLY the substrate richness on a frozen ladder (S0 baseline CTX=4 count-MLE ·
+S1 longer raw-byte context CTX 8/16/32 · S2 learned per-cell closed-form ridge head). REAL sm_120
+GPU on the user's OWN RTX 5070, $0 (NOT runpod); corpus byte-IDENTICAL to H_1307 RUN A
+(sha c47b6808…/31b4a543…, asserted). Frozen-first, p7 deterministic held-out CE, NO tune-to-green.
+
+**🔴 HONEST-NEGATIVE — the ~2.9 ceiling is CAPACITY-bound / the byte-task ceiling itself, NOT
+substrate-bound.** S0 reproduced **2.95342** (port OK vs 2.9475). **No richer substrate broke 2.9;
+every richer rung was WORSE than S0**: S1 longer raw-byte context **HURTS MONOTONICALLY** (ctx8
+2.964 → ctx16 3.048 → ctx32 3.442 — curse-of-dim on the L2/Voronoi partition; every S1 rung
+saturated GROW_MAX=40 cells yet CE ROSE = partition-quality limit, not capacity); S2 per-cell ridge
+head **COLLAPSES** (5.437 — raw byte features not linearly predictive of the next byte). **Control:**
+S1 shuffles were WORSE than intact and **no shuffle survived to beat S0** (capacity_signal=False) →
+no capacity gain to claim either. **Thesis:** the capability-vs-scale prediction that "a richer
+representation breaks the wall" is **REFUTED for these two richness axes** — the limit is the
+L2-partition-over-raw-bytes **geometry**, not the per-cell readout; a genuinely richer substrate
+would need a *different geometry* (learned embedding / non-L2 metric / per-cell sequence model), not
+more raw byte columns or a linear head over the same raw features (the surviving open lever for the
+from-scratch lane). live CORE/*.hexa UNTOUCHED; engine-transfer DIRECTIONAL; NO Korean-fluency claim.
+
+Adds: `UNIVERSE/h1311_ko_richer_substrate.py`, `UNIVERSE/H_1311_ko_richer_substrate.md`,
+`.verdicts/1311_ko_richer_substrate/{FREEZE,result,summary.json,metrics.jsonl,manifest.json,run.log}`,
+`CLAIMS.tape` @C h1311_ko_richer_substrate, `domains/MITOSIS-ENGINE.log.md` @H, `HYPOTHESES.md` row.
+
 ## 2026-06-16 — domain(H_1295 r2): HIVE collective-Φ N-scaling — super-additivity HOLDS@N=3 but SATURATES 🟢/🏁
 
 r2 of the H_1295 HIVE-MIND lane (anchor H_609, r1 PR #2182). Question: does collective-Φ

@@ -1,0 +1,54 @@
+H_1311 — RICHER SUBSTRATE vs the H_1307 ~2.9 nat/byte ceiling
+FROZEN-FIRST pre-registration (written BEFORE the run; NOT moved — c9 / p7 / NO tune-to-green)
+================================================================================================
+
+QUESTION (the H_1307 NEXT pointer, shared deep hypothesis w/ the from-scratch lane):
+  H_1307 found MORE real Korean drops KO next-byte CE to ~2.95 then the CTX=4 / 3-D BYTE substrate
+  SATURATES at a ~2.9 nat/byte ceiling. Does a RICHER SUBSTRATE break past ~2.9?
+  Is the ceiling CAPACITY-bound (only cell-count matters) or SUBSTRATE-bound (representation needs
+  depth → matches the capability-vs-scale thesis)?
+
+HELD FIXED (frozen-first, anti-Goodhart):
+  - corpus: SAME H_1307 RUN A windows — r2://phanes/anima-7b/web/{kor,eng}/shard0000.bytes,
+    KO 30 MB stride-300, EN 10 MB stride-600; KO sha256 = c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca,
+    EN sha256 = 31b4a5430441cfdbb496b59f392150e4aa748cde2ed1b7cedad10960f0bcaf73 (asserted identical).
+  - mitosis grow-op: the VERIFIED H_1306/H_1307 _grow_on — gradient-free, p8, error-targeted Voronoi
+    (highest-owned-CE eligible cell → hi-var-axis owned-median split → two half-centroids; net +1 cell;
+    cells only SPLIT, never merge). Dimension-agnostic (L2 partition over whatever features). UNCHANGED.
+  - frozen knobs: V=256, GROW_MAX=40, SPLIT_THRESH_CE=0.05, MIN_OWNED=8, LAPLACE=1.0, even/odd split,
+    RIDGE_LAMBDA=1.0 (fixed before the run), seed 2-cell centers extended from H_1307 [[0.3,..],[0.7,..]].
+  - GPU host: summer (RTX 5070, Blackwell sm_120), torch 2.11+cu130, $0 (NOT runpod). p7 deterministic CE.
+
+VARIED — the SUBSTRATE-RICHNESS ladder (ONLY the per-cell representation changes):
+  S0 = CTX=4 / 3-D [last/255, second/255, cont_depth/3], raw next-byte count-MLE head (the H_1307 ceiling).
+  S1 = LONGER CONTEXT: feature = last CTXk bytes (each /255) + cont_depth/3, for CTXk in {8, 16, 32}.
+       Same grow-op, same count-MLE head. (more bytes of real history feed the Voronoi partition.)
+  S2 = LEARNED PER-CELL HEAD: replace count-MLE with a per-cell CLOSED-FORM RIDGE readout
+       (Gauss-Jordan normal equations, gradient-free, the H_1300 lens; NOT backprop, NOT per-cell SGD),
+       on the S0 features. Same grow-op.
+
+FROZEN BARS:
+  (Q1 BREAK-2.9)  does ANY richer substrate (S1 ctxk / S2 ridge) push held-out KO CE BELOW the H_1307
+                  RUN A ceiling 2.9475? report the drop per rung.
+  (R RETENTION)   EN CE under each richer substrate <= EN CE[that substrate's own 2-cell seed] + 0.05
+                  (no catastrophic forgetting).
+  (C CONTROL — anti-Goodhart, the load-bearing bar)
+                  S1 control: SHUFFLE the ADDED history columns (cols beyond S0's last+second, per row,
+                  per column) → if KO CE STILL drops below S0, the gain was CAPACITY (extra columns = more
+                  partition handles), NOT the richer REPRESENTATION.
+                  S2 control: permute the FEATURE ROWS fed to the ridge fit (destroy feat↔label coupling,
+                  keep the partition) → if ridge CE still beats S0, the gain is capacity/Voronoi, not the
+                  learned readout's use of the features.
+  (T THROUGHPUT)  report final cells + GPU pairs/s per rung.
+
+VERDICT RULE (frozen, MARGIN = 0.02 nats):
+  A substrate "really breaks the ceiling by REPRESENTATION" IFF: KO CE < 2.9475  AND  (S0_CE − its CE) >= 0.02
+    AND  (its SHUFFLE_CE − its CE) >= 0.02  AND  EN retained.
+  - >=1 representation-breaker  → ceiling is SUBSTRATE-bound (richer rep breaks 2.9; depth needs
+    representation — matches the capability-vs-scale thesis).
+  - else (nothing breaks, OR only a shuffle-surviving capacity gain) → ceiling is CAPACITY-bound /
+    the byte-task ceiling itself at this density. HONEST either way (c9), no tune-to-green.
+
+SCOPE (a_scale_honest_scope, a_toy_scale_recheck): toy / DIRECTIONAL — same simple byte-substrate
+family, summer GPU; engine-transfer to live CORE/*.hexa = follow-on (a_engine_native_learning,
+a_verified_must_wire). NO Korean-fluency claim. live CORE/*.hexa UNTOUCHED.

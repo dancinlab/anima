@@ -1,0 +1,53 @@
+H_1311 — RICHER SUBSTRATE vs the H_1307 ~2.9 nat/byte ceiling
+RESULT (summer RTX 5070 sm_120, torch 2.11.0+cu130, $0 — NOT runpod). p7 deterministic held-out CE.
+================================================================================================
+
+CORPUS: byte-IDENTICAL to H_1307 RUN A (gate PASS) — KO 30 MB stride-300 sha c47b6808…, EN 10 MB
+        stride-600 sha 31b4a543… → a clean ceiling comparison. KO train=50000 test=50000 EN test=16667.
+GROW-OP: the verified H_1306/H_1307 _grow_on (gradient-free, p8, error-targeted Voronoi, SPLIT-only) —
+        UNCHANGED. Only the SUBSTRATE representation varied.
+
+SUBSTRATE LADDER (held-out KO next-byte CE, nats/byte; H_1307 RUN A ceiling = 2.9475):
+  substrate                 dim  cells  KO_CE     EN_CE     Δvs_S0     below_2.9   rep_break
+  S0_ctx4_mle  (baseline)    3    16    2.95342   4.32530   —          (ref)       —          ← reproduces 2.9475 ceiling (port OK)
+  S1_ctx8_mle                9    40    2.96426   4.11384   +0.01084   NO          NO
+  S1_ctx8_mle_SHUFFLE        9    40    3.10846   4.67957   (control)
+  S1_ctx16_mle              17    40    3.04788   3.61421   +0.09446   NO          NO
+  S1_ctx16_mle_SHUFFLE      17    40    3.42183   4.81274   (control)
+  S1_ctx32_mle              33    40    3.44156   3.55347   +0.48814   NO          NO
+  S1_ctx32_mle_SHUFFLE      33    40    3.41815   4.79513   (control)
+  S2_ctx4_ridge              3    16    5.43666   5.49522   +2.48324   NO          NO
+  S2_ctx4_ridge_SHUFFLE      3    10    5.50734   5.53362   (control)
+
+GPU throughput: 0.8M – 4.9M pairs/s (grow+score wall 0.01–0.14 s per rung; total run wall 77 s incl R2 fetch).
+
+FROZEN BARS:
+  (Q1 BREAK-2.9)  any richer substrate below 2.9475?  NO. EVERY S1/S2 rung is WORSE than S0:
+                  S1 longer context HURTS MONOTONICALLY (ctx8 +0.011 → ctx16 +0.094 → ctx32 +0.488):
+                  adding raw byte-history columns degrades the L2/Voronoi partition (curse of
+                  dimensionality on a fixed GROW_MAX=40 cell budget). S2 ridge head COLLAPSES (+2.48):
+                  a per-cell closed-form ridge readout over normalized byte features is far worse than
+                  the count-MLE — the features are not linearly predictive of the next byte.
+  (R RETENTION)   not the gate here (Q1 already fails for every richer rung); EN behaviour reported.
+  (C CONTROL)     S1 shuffles are WORSE than the intact S1 (ctx8/16 controls 3.108/3.422 ≫ intact
+                  2.964/3.048) → the tiny S1-ctx8 result is NOT even a capacity win; NO shuffle control
+                  beats S0 → no capacity gain to claim either. S2 ridge shuffle 5.507 ≈ intact 5.437
+                  (both collapsed). capacity_signal_present = False.
+  (T THROUGHPUT)  cells hit the GROW_MAX=40 cap for every S1 rung (the budget IS saturated) yet CE rose;
+                  more cells did NOT lower CE → consistent with a partition-quality, not capacity, limit.
+
+VERDICT: the ~2.9 ceiling is CAPACITY-bound / the BYTE-TASK ceiling itself at this density — NOT
+         substrate-bound. A richer substrate (longer raw-byte context OR a learned per-cell ridge head)
+         does NOT break 2.9; it makes held-out KO CE WORSE. There is NO representation-breaker and NO
+         shuffle-surviving capacity gain. HONEST negative (c9), frozen-first, NO tune-to-green.
+
+THESIS CONNECTION: for THIS substrate family (raw-byte Voronoi + per-cell head), depth does NOT come
+from a richer per-cell representation — the limit is the L2-partition-over-raw-bytes mechanism, not the
+per-cell readout. The "richer representation breaks the wall" prediction of the capability-vs-scale
+thesis is REFUTED for these two richness axes; a genuinely richer representation would need a different
+geometry (learned embedding / non-L2 partition / a sequence model per cell), not more raw byte columns.
+
+SCOPE (a_scale_honest_scope, a_toy_scale_recheck): toy / DIRECTIONAL — summer GPU, raw-byte substrate
+family, RIDGE_LAMBDA=1.0 fixed; a learned-embedding substrate + true sequence context are UNTESTED and
+remain the open lever. engine-transfer to live CORE/*.hexa = follow-on. NO Korean-fluency claim. live
+CORE/*.hexa UNTOUCHED.
