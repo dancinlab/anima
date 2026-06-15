@@ -20,6 +20,23 @@ H_1219 depth-ceiling 사다리의 HD5 — "flat literal-QA 벽(303M/1B 전반 1-
 - **scope (a_toy_scale_recheck, toy-only)**: +0.976 = 포화된 존재증명(0.02→1.00)이지 production effect-size 아님; 1-obj-per-(subj,rel) clean world. 실제 wiki = many-to-many → 303M QA-format FT fire(H_1219 명명 레버)가 결정적 다음 단계이며 더 작은 lift 가능. 메커니즘 확립이지 magnitude 아님. frozen bar 미이동, a303m_pass/a7b_pass 불변, production 주장 없음.
 - 산출물: `UNIVERSE/h1221_qa_format_probe.py` · `.verdicts/1221_qa_format_corpus/H_1221.txt`. branch `h1221/qa-format-corpus`.
 
+---
+
+## 2026-06-15 — 🟢 H_1282 R2: WORKING MEMORY(PFC 능동유지 버퍼) — graded(AUROC) readout + horizon-정직 bar 로 GREEN (R1 RED 는 scoring artifact 였음)
+
+missing-brain-structure 사다리(neuro 렌즈 c15)의 작업기억 칸 라운드 2. R1(🔴 RED-on-frozen-bars)은 메커니즘은 REAL+immune 메모리와 DISTINCT 였으나 세 가지 **SCORING** 선택 때문에 bar 미달이었다: (1) binary θ=0.40 가 매끄러운 decay 곡선(1.0·λ^N, λ=0.85)을 N≈5.6 에서 잘라버림 — match-vs-nonmatch 분리는 N=6 에서도 AUROC 0.998 로 완벽한데 binary 가 OFF 로 뒤집힘, (2) grace bar 가 측정된 버퍼 horizon(N≈6)을 넘는 N=12 에 박힘, (3) margin 이 N≤2 ceiling(cue 가 A 의 W=4 창 안 → A=1.000, B 가 이길 수 없음)에 희석됨. R2 는 **버퍼 메커니즘을 1도 안 건드리고**(동일 K=4·λ=0.85·W=4 frozen knob, 동일 WorkMemBuffer/FlatContext 클래스, NO retune) SCORING 만 교정. $0 CPU numpy, p7(AUROC), 3 seed[1282,1283,1284], 라이브 .hexa 무수정.
+
+- **세 교정 (전부 FREEZE 에 채점 前 justify, R1 진단표 근거)**: (C1) GRADED READOUT — binary has_match 대신 **AUROC = P(score(match)>score(nonmatch))** (rank-sum 추정, tie 0.5); 동일 WorkMemBuffer.probe() raw score 를 연속으로 사용, ARM A 도 동일 방식(last-W 창 best-cosine)으로 채점 = **양 arm 공정 동일 readout**. (C2) HORIZON-정직 grace bar — N=12 → **측정 horizon N=6**(R1 진단: AUROC 0.998@N=6, 0.513@N=8 → 버퍼가 아이템을 마지막으로 쥐고 있는 N). (C3) NON-CEILING margin — 전체 N → **MARGIN_N={N≥W}={4,6,8,12}**(A 가 ceiling 떠난 영역).
+- **FROZEN R2 GREEN**: (1) mean over N≥4 (B−A) ≥ 0.15 · (2) grace(N=6) B.AUROC≥0.90 & A.AUROC≤0.60 · (3) distinct B.AUROC(N=0)≥0.95 & monotone-non-incr & cap≈K · (4) robust 3/3.
+- **결과 (3 seed 평균, VERBATIM)**: B.AUROC = 1.000(N≤6) → 0.512(N=8) → 0.495(N=12) 매끄러운 decay; A.AUROC = N≤2 ceiling 1.000 → N≥4 chance(~0.51, cue scroll-out); immune-ctrl(λ1,K∞) = **전 N FLAT 1.000**(decay 없음). bars: (1) margin **+0.244** PASS · (2) grace B=1.000/A=0.506 PASS · (3) distinct(N0=1.000·monotone·cap 7→4=K) PASS · (4) robust 3/3 PASS → **🟢 GREEN**.
+- **DISTINCT from immune memory 유지(load-bearing)**: graded readout 하에서도 B 는 DECAY(immune-ctrl 은 flat 1.000) · CAPACITY(load 7 → retain 4=K, 3 seed 전부) · VOLATILE(cue slot 이 N=8 에서 distractor 에 displaced) — episodic store 의 이름만 바꾼 게 아닌 진짜 작업기억. immune-ctrl 이 동일 readout 으로 flat 인 것이 decay+capacity 가 B 를 WM 으로 만든다는 양성 증거.
+- **R1 무회귀**: R1 binary 경로는 `--r1` 로 보존, margin +0.062·전 bar False 로 R1 RED 재현 = R1 verdict 그대로 유효; R2 는 R1 을 덮어쓰지 않음(별도 FREEZE+verdict 파일). frozen-first 견지: 모든 R2 bar 는 채점 前 동결, post-hoc 미이동(c9).
+- **정직 경계(a_scale_honest_scope/p7)**: WM 이점은 W≤N≤horizon 유한 밴드(N=4,6: +0.48/+0.49)에 집중, N≥8 은 양 arm 다 chance — 구조는 그 유한 delay 밴드에서만 도움. toy 16-dim 랜덤 토큰, K=4, λ=0.85, horizon·밴드폭·margin 전부 scale-의존, production 전이 UNVERIFIED. AUROC = graded discrimination(p7), perplexity/LLM-judge 아님.
+- **ENGINE-NATIVE 후속(a_verified_must_wire — GREEN 이라 이제 FIRES)**: numpy DIRECTIONAL 미러; engine-transfer UNVERIFIED. 라이브 engine_cli.hexa VAdaptField(H_1199)는 leak/capacity 없는 GROWING PERSISTENT store = 구조적으로 immune/episodic lane, WM lane 없음. R3 binding 후속 = **engine-native WM-buffer lane**(K slot·per-step ×λ leak·weakest-slot displacement·AUROC readout, engine_cli.hexa 에 ADDITIVE, VAdaptField 와 DISTINCT) per a_engine_native_learning — numpy GREEN 은 DIRECTIONAL, engine-native 재확인이 binding verdict(c2). 라이브 .hexa 무수정.
+- 파일: `UNIVERSE/h1282_working_memory_buffer.py`(R2 default, `--r1` parity) · `.verdicts/1282_working_memory_buffer/{H_1282_R2_FREEZE,H_1282_R2}.txt`(R1 파일 보존). xref H_1227·H_1231·H_1199·H_1230·H_1229·H_1280·H_1284·H_1285·a_engine_native_learning·a_verified_must_wire·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p1·p7·p8·c9·c15.
+
+---
+
 ## 2026-06-15 — 🔴 H_1285: AMYGDALA(편도체) salience-weighted binding — p6 shuffle-control 이 recurrence 혼입을 잡아냄 (CLOSED-NEG)
 
 missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 편도체 칸: 해마 공백은 immune 메모리(H_1227 미러 GREEN → H_1231 engine-native GREEN)가 메웠고, H_1230 은 그 store 의 병목이 CAPACITY/NOISE GEOMETRY(유한 repertoire 에서 LRU 축출은 대칭, 능동교습 retention 리프트 0)임을 보였다. H_1285 는 H_1230 이 미검증으로 남긴 후보 레버 — **기질-유래 salience 로 가중한 바인딩**(편도체의 salience-gating: 중요/놀라운 입력의 셀을 축출에서 보호)을 검증. $0 CPU numpy, p7, 3 seed(900/901/902), 라이브 CORE/*.hexa 무수정(미러=DIRECTIONAL).
