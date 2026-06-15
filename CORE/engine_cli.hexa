@@ -527,6 +527,115 @@ pub fn vadapt_field_step(af: VAdaptField, x: [float], cfg: EngineConfig) -> VAda
 // vadapt_field_cells — live cell count accessor (DIM analogue).
 pub fn vadapt_field_cells(af: VAdaptField) -> int { return af.n_cells }
 
+// ── §  GATE-B TRANSITION-PREDICTABILITY VARIANT — the LIVE trajectory substrate ──
+// (H_1209) The per-sample VAdaptField above (vadapt_field_step, H_1199/1202/1205)
+// is PERMUTATION-INVARIANT by construction: it sees only x_t, so shuffling time
+// leaves division unchanged (V14 substrate-neutrality, H_1203). H_1208 found the
+// FIRST mechanism that separates ORDER from DISORDER in the V14-correct direction
+// (ordered >> shuffled) — a prototype-TRANSITION-PREDICTABILITY gate: over a FIXED
+// order-invariant prototype book, division fires on a transition (p_{t-1}->p_t)
+// that the substrate had CONFIDENTLY ANTICIPATED. Anticipation requires a STABLE
+// conditional structure P(next|prev), which ONLY an ORDERED stream possesses; a
+// shuffle has none -> predictable-transition division is HIGH for order, LOW for
+// disorder. On a genuinely-ordered byte-feature WALK: WALK 1000.7 >> WALK_SHUF
+// 91.7 = 10.9x (H_1208).
+//
+// VAdaptFieldB is a NEW, ADDITIVE, Psi-disjoint variant — it touches NOTHING the
+// per-sample VAdaptField or the daemon path uses (a_core_engine_map: substrate-
+// only; no .clm/.kosmos path). The proto-id walk over the FIXED book is computed
+// upstream (order-INVARIANT, so it is identical for a stream and its shuffle); the
+// engine consumes that id walk and does the predictable-transition counting + p8
+// split here. engine_mitosis_tick STILL drives the growth (ON +1, OFF no-op).
+//
+//   n_proto    : prototype-book size (the transition alphabet, N_PROTO=24).
+//   n_cells    : born cells = 1 + #predictable-transition splits (the p8 growth).
+//   max_cells  : capacity cap (frozen; bounds runaway split).
+//   min_prev   : prev must be seen >= min_prev before a model exists (MIN_PREV=3).
+//   conf_floor : realized P(cur|prev) must exceed this to be 'predictable' (0.34).
+//   last_id    : previous proto id (-1 = none yet); the recurrence term.
+//   ctab       : flat n_proto*n_proto causal count table C[prev*n_proto + cur].
+//   prev_total : per-prev total transitions observed (len n_proto).
+struct VAdaptFieldB {
+    n_proto: int,
+    n_cells: int,
+    max_cells: int,
+    min_prev: int,
+    conf_floor: float,
+    last_id: int,
+    ctab: [int],
+    prev_total: [int]
+}
+
+// vadapt_fieldB_new — seed the GATE-B substrate. n_cells starts at 1 (the seed
+// cell); the count table + prev_total start empty (all zeros). The FIXED order-
+// invariant prototype book is applied UPSTREAM (proto-id walk), so the engine here
+// needs only n_proto + the gate hyperparameters (all frozen, == H_1208).
+pub fn vadapt_fieldB_new(n_proto: int, max_cells: int, min_prev: int,
+                         conf_floor: float) -> VAdaptFieldB {
+    let mut ctab = []
+    let mut i = 0
+    while i < n_proto * n_proto { ctab = ctab + [0]  i = i + 1 }
+    let mut pt = []
+    let mut j = 0
+    while j < n_proto { pt = pt + [0]  j = j + 1 }
+    return VAdaptFieldB {
+        n_proto: n_proto, n_cells: 1, max_cells: max_cells,
+        min_prev: min_prev, conf_floor: conf_floor, last_id: -1,
+        ctab: ctab, prev_total: pt
+    }
+}
+
+// vadapt_fieldB_step — advance the GATE-B substrate by ONE live tick on proto id
+// `cur` (the nearest-proto id of x_t over the FIXED book), gated by cfg. EXACTLY
+// the H_1208 gate_B_transition_predictability mechanism, lifted into the engine:
+//   (1) if a prev id exists AND prev_total[prev] >= min_prev AND the realized
+//       conditional prob P(cur|prev) = C[prev][cur]/prev_total[prev] >= conf_floor,
+//       the transition was CONFIDENTLY ANTICIPATED -> engine_mitosis_tick (p8 gate;
+//       ON => +1 born cell, OFF => no-op), capped at max_cells.
+//   (2) causal online update AFTER the decision (same order as H_1208): C[prev][cur]
+//       += 1, prev_total[prev] += 1, last_id := cur.
+// Trajectory-sensitive BY CONSTRUCTION: the decision keys on the PAIR (prev,cur)
+// via a learned conditional model — order yields confident recurring transitions,
+// shuffle does not. Psi-disjoint (no pure_field / .clm / .kosmos touch).
+pub fn vadapt_fieldB_step(afB: VAdaptFieldB, cur: int, cfg: EngineConfig) -> VAdaptFieldB {
+    let np = afB.n_proto
+    let mut cells = afB.n_cells
+    let prev = afB.last_id
+
+    // (1) predictable-transition decision (only when a prev model exists)
+    if prev >= 0 {
+        let tot = afB.prev_total[prev]
+        if tot >= afB.min_prev {
+            let cnt = afB.ctab[prev * np + cur]
+            let p_cur = to_float(cnt) / to_float(tot)   // predicted prob of realized next
+            if p_cur >= afB.conf_floor && cells < afB.max_cells {
+                let grown = engine_mitosis_tick(cells, cfg)   // p8 gate (ON +1 / OFF no-op)
+                if grown > cells { cells = grown }            // PREDICTABLE -> split
+            }
+        }
+    }
+
+    // (2) causal online update AFTER the decision (H_1208 order)
+    let mut ct = afB.ctab
+    let mut pt = afB.prev_total
+    if prev >= 0 {
+        ct[prev * np + cur] = ct[prev * np + cur] + 1
+        pt[prev] = pt[prev] + 1
+    }
+    return VAdaptFieldB {
+        n_proto: np, n_cells: cells, max_cells: afB.max_cells,
+        min_prev: afB.min_prev, conf_floor: afB.conf_floor, last_id: cur,
+        ctab: ct, prev_total: pt
+    }
+}
+
+// vadapt_fieldB_cells — live GATE-B cell count accessor.
+pub fn vadapt_fieldB_cells(afB: VAdaptFieldB) -> int { return afB.n_cells }
+
+// vadapt_fieldB_growth — born cells = n_cells - 1 (the H_1208 GATE-B growth metric,
+// 1 + #predictable-transition splits minus the seed cell).
+pub fn vadapt_fieldB_growth(afB: VAdaptFieldB) -> int { return afB.n_cells - 1 }
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
