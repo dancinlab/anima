@@ -635,6 +635,34 @@ fn main() {
     let nofab = itimer_fire(on_int) && (!itimer_fire(off_int))
     if _assert_b("case_58_itimer_no_fab_off_interval", true, nofab) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── SKILL-CELL MEMORY (H_1300 R3 mitosis-grow continual learner) ──────────
+    // A tiny XOR skill: a non-separable region needing >1 cell (so a single cell's
+    // local linear head cannot separate it) — mitosis must SPLIT into dedicated cells.
+    let sc_cfg_on  = engine_cli_parse(["--mitosis", "on"])
+    let sc_cfg_off = engine_cli_parse(["--no-mitosis"])
+    // XOR over dim-2 (label = token 1 iff the two coords have the SAME sign, else 0):
+    // NOT linearly separable, so a single cell's local linear head CANNOT reach the
+    // SPLIT_THRESH error bar — mitosis MUST split into >1 dedicated cell to fit it.
+    let sk_x = [
+        [ 2.0,  2.0], [ 1.9,  2.1], [-2.0, -2.0], [-2.1, -1.9],
+        [ 2.0, -2.0], [ 2.1, -1.9], [-2.0,  2.0], [-1.9,  2.1]
+    ]
+    let sk_y = [1, 1, 1, 1, 0, 0, 0, 0]   // XOR: same-sign -> 1, opposite-sign -> 0
+    let sk_cells = skill_grow(sk_x, sk_y, sc_cfg_on)
+    // case 59: mitosis GROWS more than one dedicated cell under error pressure
+    if _assert_b("case_59_skill_grow_splits_under_error", true, len(sk_cells) > 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 60: the grown cells classify the TRAIN points (route + local head) correctly
+    let mut sk_hit = 0
+    let mut sk_i = 0
+    while sk_i < len(sk_x) {
+        if skill_route(sk_cells, [], sk_x[sk_i]) == sk_y[sk_i] { sk_hit = sk_hit + 1 }
+        sk_i = sk_i + 1
+    }
+    if _assert_b("case_60_skill_route_classifies_trained", true, sk_hit >= 6) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 61: mitosis OFF (ablation) does NOT split — growth frozen at one cell
+    let sk_cells_off = skill_grow(sk_x, sk_y, sc_cfg_off)
+    if _assert_b("case_61_ablate_no_split", true, len(sk_cells_off) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

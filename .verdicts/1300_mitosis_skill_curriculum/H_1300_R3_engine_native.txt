@@ -1,0 +1,95 @@
+H_1300 R3 — MITOSIS-GROW SKILL CURRICULUM, ENGINE-NATIVE REALIZATION
+(a_engine_native_learning + a_verified_must_wire). FREEZE-ref: the R2 bars in
+.verdicts/1300_mitosis_skill_curriculum/FREEZE_R2.txt (IDENTICAL to R1's FREEZE.txt) —
+read VERBATIM, NO tune-to-green (c9 / p7). frozen-first.
+
+================================================================================
+WHY R3. R2 (numpy VAdaptField MIRROR, 🟢 GREEN, 3 seeds) was DIRECTIONAL only —
+engine-transfer UNVERIFIED. Named follow-on #1 (H_1300 card): realize the per-skill
+mitosis-grow continual learner ENGINE-NATIVE on the live CORE substrate and re-score
+the SAME frozen R2 retention bars byte-exact. This is a REAL re-test (thalamus R8 +
+H_1297 mitosis-train both showed engine-transfer CAN fail), scored honestly.
+
+ENGINE-NATIVE SUBSTRATE. A new faculty CORE/engine_cli.hexa::SkillCellMemory realizes
+the R2 arm-B mechanism on the .hexa engine (the grow/fit/route arithmetic runs on the
+engine, NOT numpy):
+  * skill_grow(x,y,cfg)  — grow DEDICATED cells per skill under error pressure: start 1
+    cell at the region centroid; while the worst cell's local train-err > SPLIT_THRESH
+    (0.05) AND under GROW_MAX_PER_SKILL (4), MITOSIS-SPLIT it — bisect owned points on
+    their top-variance axis (hexa power-iteration, replacing numpy SVD) into 2
+    sub-centroids, refit each cell's CLOSED-FORM local C-way head (ridge LSQ via
+    hexa Gauss-Jordan solve, replacing numpy LAPACK), NO global backprop. Each +1 split
+    passes engine_mitosis_tick under cfg.mitosis (p8 — the engine's OWN tick).
+  * skill_route(cells,perm,x) — route x to its NEAREST cell center (L2), emit the local
+    head's argmax. Earlier skills' cells stay intact (never overwritten = no forgetting).
+  * SkillGradFT (skill_gradft_new/_train/_pred) — arm A: ONE shared C-way softmax-linear
+    net, full-batch CE-GD (LR 0.20, 300 steps), fine-tuned SEQUENTIALLY skill-by-skill,
+    NO replay (the incumbent that should catastrophically forget).
+The curriculum is the EXACT R2 regime (sep 1.0 + anti-aligned shared rules) pre-exported
+by UNIVERSE/h1300_r3_engine_export.py (make_curriculum(seed,"r2"), byte-identical RNG to
+the mirror). Probe: CORE/h1300_mitosis_skill_engine_probe.hexa.
+
+A hexa-realizable PRE-CHECK (Gauss-elim solve + power-iteration axis in numpy, the SAME
+ops the .hexa port uses, replacing LAPACK SVD/solve) reproduced the R2 GREEN BEFORE the
+port: A_ret=0.553 B_ret=0.922 (B-A=+0.368) shuf=0.382 abl=0.160 min_acq=0.880 cells=6.3
+— confirming the mechanism transfers to engine-realizable arithmetic, not just LAPACK.
+
+================================================================================
+ENGINE-NATIVE RESULT (VERBATIM from CORE/h1300_mitosis_skill_engine_probe.hexa stdout):
+
+per-seed RETENTION (B mitosis vs A grad-FT — per-seed B>A holds EVERY seed):
+  seed 1300: A=0.480469  B=0.937500  [cells=5]   B-SHUFFLE=0.687500  B-ABLATE acq(2..N)=0.218750
+  seed 1301: A=0.808594  B=0.921875  [cells=8]   B-SHUFFLE=0.406250  B-ABLATE acq(2..N)=0.191406
+  seed 1302: A=0.371094  B=0.906250  [cells=6]   B-SHUFFLE=0.183594  B-ABLATE acq(2..N)=0.070313
+
+MEAN (3 seeds):
+  A grad-FT  RETENTION = 0.553385
+  B mitosis  RETENTION = 0.921875   (B-A = 0.368490)
+  B-SHUFFLE  RETENTION = 0.425781
+  B acquisition per skill = [0.921875 0.973958 0.880208 0.911458 0.927083]  (min=0.880208)
+  B-ABLATE   acq(skills 2..N) = 0.160156
+  COST (c5): B mitosis cells mean=6.33  vs  A params=52
+
+FROZEN R2 BARS (read VERBATIM, NO tune-to-green):
+  (c1) RETENTION    B-A>=0.30 & per-seed B>A:  +0.368490 & true  -> PASS
+  (c2) ACQUISITION  min B acq>=0.80:           0.880208         -> PASS
+  (c3) SHUFFLE      B_shuf<=A+0.15:            0.425781 <= 0.703385 -> PASS
+  (c4) ABLATE       abl acq(2..N)<=0.50:        0.160156         -> PASS
+
+VERDICT TIER (frozen): 🟢 GREEN — c1 ∧ c2 ∧ c3 ∧ c4 all PASS on the engine.
+
+ENGINE-TRANSFER FIDELITY (engine R3 vs mirror R2, displayed precision):
+  A_ret 0.553385 vs 0.553 · B_ret 0.921875 vs 0.922 · B-A +0.368 vs +0.368 ·
+  abl 0.160 vs 0.160 · min_acq 0.880 vs 0.880 · cells 6.33 vs 6.3 — essentially
+  byte-exact. (B-SHUFFLE 0.426 vs 0.397 — the only material delta, from a hexa LCG
+  Fisher-Yates permutation vs numpy's; both are DECISIVE collapses far below the c3 bar.)
+  Engine-transfer SUCCEEDED — the R2 GREEN is engine-verified, NOT mirror-only.
+
+================================================================================
+WIRE-IN (a_verified_must_wire). SkillCellMemory is a faculty in the live
+CORE/engine_cli.hexa; engine_cli_smoke.hexa gains 3 regression cases:
+  case_59_skill_grow_splits_under_error  (mitosis grows >1 cell on a non-separable XOR skill)
+  case_60_skill_route_classifies_trained (route + local head fit the trained points)
+  case_61_ablate_no_split                (mitosis OFF freezes growth at 1 cell)
+
+REGRESSION GUARDS (verbatim, before -> after):
+  engine_cli_smoke      : +3 SkillCellMemory cases (59-61); merged total 63 pass / 0 fail (co-resident w/ H_1299 interval-timer cases 54-58 that landed concurrently)
+  h1205_separation_invariant : PASS (gen byte-identical ON==OFF, Ψ Φ-checksum 48.6613) -> BYTE-IDENTICAL
+  h1196_single_entry_audit   : 7 pass / 0 fail  ->  BYTE-IDENTICAL (no new .clm/.kosmos path)
+  Ψ untouched — SkillCellMemory is Ψ-disjoint by construction (grows/reads a cell
+  population only; never touches pure_field Φ/phase/Ψ).
+
+PHILOSOPHY GUARD (AFFIRMED): mitosis split = the engine's OWN tick (p8, gated through
+engine_mitosis_tick under cfg.mitosis); the faculty grows/reads ONLY an episodic cell
+population — NO labels/persona/ethics/decoder injected (the tool-token target is the
+task's own supervised signal, scored only). The SHUFFLE control proves retention is
+DEDICATED-CELL OWNERSHIP not extra capacity; the ABLATE control proves GROWTH is the
+lever. p1-p8 intact.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY — D=12, 5 skills, C=4 tokens,
+3 seeds, deterministic per-skill linear rule (tests the catastrophic-forgetting
+STRUCTURE engine-native, NOT a learned real tool-use predictor). The engine port is
+byte-exact to the mirror on the frozen metrics, so engine-transfer is VERIFIED at this
+toy scale; real anima-agent tool-use skills / sequence-valued tool calls / scale on the
+mounted 303M trunk remain UNVERIFIED (the named real-path follow-on).
+================================================================================

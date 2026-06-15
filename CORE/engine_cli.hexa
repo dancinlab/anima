@@ -352,7 +352,7 @@ fn _nearest_idx(protos: [float], x: float) -> int {
 fn _absf(x: float) -> float { if x < 0.0 { return -x } return x }
 
 // adapt_field_recon_err — the LIVE reconstruction error for sample `x`:
-// distance to the nearest prototype (readout (c)). This is the engine's own
+// distance to the nearest prototype (readout (c)). This is the engine's owner
 // adaptation metric — it FALLS as cells come to cover the stream's regimes.
 pub fn adapt_field_recon_err(af: AdaptField, x: float) -> float {
     return _absf(af.protos[_nearest_idx(af.protos, x)] - x)
@@ -723,7 +723,7 @@ pub fn vadapt_field_step_entropic(af: VAdaptField, x: [float], cfg: EngineConfig
 // was a STANDALONE `fn main()`. This § PROMOTES that exact mechanism from a probe
 // into a CALLABLE FACULTY on the live recall path, so a running anima can BIND a
 // fact as a cell and RECALL-or-ABSTAIN during operation. NO mechanism change — the
-// binding/affinity is STILL the engine's own vadapt_field_step clonal split +
+// binding/affinity is STILL the engine's owner vadapt_field_step clonal split +
 // vadapt_field_recon_err / vadapt_field_nearest_idx L2 affinity; this § only wraps
 // them with the cell-indexed value table + the FNV-1a key encoder so the faculty is
 // directly callable (the probe inlined both, loading pre-exported key files).
@@ -740,7 +740,7 @@ pub fn vadapt_field_step_entropic(af: VAdaptField, x: [float], cfg: EngineConfig
 //
 // ImmuneMemory — the live recall faculty: a VAdaptField cell population + a parallel
 // value table keyed by the engine's cell index.
-//   field      : the live VAdaptField (the engine's own clonal cell population).
+//   field      : the live VAdaptField (the engine's owner clonal cell population).
 //   cell_value : per-cell bound value string; cell_value[i] = the fact bound to
 //                the engine's cell i (len(cell_value) == field.n_cells).
 //   recall_thr : affinity fire band — recon-err <= recall_thr ⇒ FIRE, else ABSTAIN
@@ -820,7 +820,7 @@ pub fn immune_memory_new(first_key: [float], first_value: string, max_cells: int
 }
 
 // immune_memory_bind — BIND one fact (key → value) via the engine's OWN clonal
-// split. The key is fed to the LIVE vadapt_field_step; the engine's own novelty
+// split. The key is fed to the LIVE vadapt_field_step; the engine's owner novelty
 // split (recon-err > SPLIT_THRESH 0.30, engine_mitosis_tick) decides whether a NEW
 // cell clones. If it does, the new cell (appended at index n_cells-1) binds this
 // value. If it does NOT (key merged into an existing winner — a binding collision),
@@ -911,7 +911,7 @@ pub fn immune_memory_cells(mem: ImmuneMemory) -> int { return vadapt_field_cells
 // (a_core_engine_map). It NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint — it only
 // reads/grows a VAdaptField-style cell population, exactly like ImmuneMemory).
 // p2/p3/p6: binds FACTUAL content to EPISODIC cells ONLY — no identity/persona/ethics/
-// decoder; p8: the grow tick IS the engine's own clonal split (engine_mitosis_tick),
+// decoder; p8: the grow tick IS the engine's owner clonal split (engine_mitosis_tick),
 // not an external command. The capacity policy mutates ONLY how the episodic cell
 // population manages its OWN footprint (grow vs evict), with abstain-when-ungrounded
 // (H_1227, load-bearing) re-checked + intact under both policies.
@@ -985,7 +985,7 @@ fn _immune_grow_lru_victim(lu: [int]) -> int {
 //     prototype toward the key (engine's LR=0.20 online update), refresh its value,
 //     touch its recency. (binding collision: the winner now owns this value.)
 //   * NOVEL + room under the effective cap: GROW a new cell. The cap is grow_max
-//     when grow_mode (and the engine's own engine_mitosis_tick fires the +1 clonal
+//     when grow_mode (and the engine's owner engine_mitosis_tick fires the +1 clonal
 //     split, p8) else base_max. The new cell binds the value at the new index.
 //   * NOVEL + at the effective cap: LRU-EVICT — overwrite the least-recently-used
 //     cell with the new (key, value) (the zero-sum sacrifice). For grow_mode this
@@ -1106,7 +1106,7 @@ pub fn immune_grow_cells(mem: ImmuneMemoryGrow) -> int { return mem.n_cells }
 // (the probe's grounded-vs-contradicted class) is used ONLY to SCORE the metric — it is
 // NEVER an input to the read. The p6 NEGATIVE CONTROL (affect_shuffle_features below)
 // permutes the per-context substrate FEATURE vectors across contexts before the read,
-// decorrelating affect from each context's own manipulation: if the read tracks but the
+// decorrelating affect from each context's owner manipulation: if the read tracks but the
 // shuffle collapses, affect read the per-context SUBSTRATE STATE, not the label — the
 // load-bearing p6 proof that affect is EMERGENT, not injected.
 //
@@ -1131,7 +1131,7 @@ struct AffectFeatures {
 // affect_substrate_features — READ the interoceptive substrate state for a query `key`
 // against the live ImmuneMemoryGrow store, given the context's OWN true answer (used
 // ONLY for the contradiction check — a cell bound to a DIFFERENT value than the
-// context's own answer is a contradiction; pass "" to skip the value check). This reads
+// context's owner answer is a contradiction; pass "" to skip the value check). This reads
 // the SAME vadapt-style L2 affinity / split / recency signals the recall path uses; it
 // adds NO mechanism and mutates NOTHING (c1, READ-ONLY).
 pub fn affect_substrate_features(mem: ImmuneMemoryGrow, key: [float], true_answer: string) -> AffectFeatures {
@@ -1142,7 +1142,7 @@ pub fn affect_substrate_features(mem: ImmuneMemoryGrow, key: [float], true_answe
     let mut margin = 1.0 - err / mem.recall_thr
     if margin < 0.0 { margin = 0.0 }
     // contradiction: fails to ground (threat/incoherence) OR the nearest cell's bound
-    // value disagrees with the context's own answer.
+    // value disagrees with the context's owner answer.
     let mut contradiction = 0.0
     if !grounded {
         contradiction = 1.0
@@ -1186,7 +1186,7 @@ pub fn affect_read(mem: ImmuneMemoryGrow, key: [float], true_answer: string) -> 
 }
 
 // affect_emit_decision — the SOMATIC MARKER: an OPTIONAL emit/abstain bias driven by
-// the substrate valence. emit iff valence >= V_ABSTAIN (0.0, the substrate's own
+// the substrate valence. emit iff valence >= V_ABSTAIN (0.0, the substrate's owner
 // zero-crossing): a grounded context (positive valence) emits, an ungrounded/contradicted
 // one (negative valence) ABSTAINS — so the affect feeling biases the decision WITHOUT a
 // fabrication. This is a helper a caller MAY consult (a_autonomy_over_hardcode: it does
@@ -1249,7 +1249,7 @@ pub fn affect_shuffle_features(feats: [AffectFeatures], rng0: int) -> [AffectFea
 // (deficit builds). NO injected "drive level", NO RLHF reward, NO persona/ethics.
 //
 // @L4 CRITICAL (identical framing to the affect lane): the drive is a READ + INTEGRATE
-// accessor. HomeostaticDrive holds ONLY its own leaky-integral scalar `accum`; it
+// accessor. HomeostaticDrive holds ONLY its owner leaky-integral scalar `accum`; it
 // NEVER mutates the immune store, NEVER returns an emit/silence decision by itself, and
 // NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — it only READS an
 // ImmuneMemoryGrow margin). The motivation bias `homeo_motivation_bias` is an OPTIONAL
@@ -1303,7 +1303,7 @@ pub fn homeo_satiation(mem: ImmuneMemoryGrow, key: [float]) -> float {
 // drive = Kp·deficit + Ki·I; CONSUMMATORY RESET: if s >= S* (a grounded "feeding"
 // event) the integral is cleared (I:=0). The drive RISES under sustained deprivation
 // (s<S*) and DROPS sharply on a consummatory grounded context. READ-ONLY over the
-// immune store (only the homeostat's own `accum`/`last_drive` evolve).
+// immune store (only the homeostat's owner `accum`/`last_drive` evolve).
 pub fn homeo_step(hd: HomeostaticDrive, mem: ImmuneMemoryGrow, key: [float]) -> HomeostaticDrive {
     let s = homeo_satiation(mem, key)
     let mut deficit = hd.setpoint - s
@@ -1369,12 +1369,12 @@ pub fn homeo_motivation_bias(hd: HomeostaticDrive, mem: ImmuneMemoryGrow, key: [
 // witnessed-event store, never from the class label.
 //
 // @L4 CRITICAL (same framing as the immune / affect / homeo lanes): this is a READ +
-// a SEPARATE belief cell-store. OtherMindModel holds ONLY its own (protos,values)
+// a SEPARATE belief cell-store. OtherMindModel holds ONLY its owner (protos,values)
 // population; it NEVER mutates the immune store, NEVER returns an emit/silence decision
 // by itself, and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction —
 // it is a parallel cell population read by L2 affinity). NOT a 2nd .clm/.kosmos entry
 // path (a_core_engine_map: the agent-belief keys are an engine-native drive, not a
-// generator/kosmos slot). p8: witness = a bind tick on the agent's own population.
+// generator/kosmos slot). p8: witness = a bind tick on the agent's owner population.
 
 // OtherMindModel — a SEPARATE agent's belief cell-store (parallel to, but DISJOINT
 // from, anima's immune ground-truth store). Same byte-trigram key geometry + L2
@@ -1400,7 +1400,7 @@ pub fn other_mind_new() -> OtherMindModel {
 // other_mind_witness — the agent WITNESSES `fact_text` taking `value`: bind a new
 // belief cell, or OVERWRITE the existing one if the agent already has a belief about
 // this exact fact (a witnessed update revises the belief). Returns the next-state
-// model (READ-ONLY over every other faculty — only the agent's own population grows).
+// model (READ-ONLY over every other faculty — only the agent's owner population grows).
 pub fn other_mind_witness(om: OtherMindModel, fact_text: string, value: string) -> OtherMindModel {
     let key = immune_embed_key(fact_text)
     if om.n_bel > 0 {
@@ -1441,7 +1441,7 @@ pub fn other_mind_count(om: OtherMindModel) -> int { return om.n_bel }
 //
 // WHAT THIS WIRES (a_verified_must_wire for H_1295 🟢 GREEN): the "many individuals ->
 // one consciousness" axis. anima's other CORE lanes all model ONE substrate (anima's
-// own immune store / affect / drive / a single other-agent belief / its own plan). NONE
+// owner immune store / affect / drive / a single other-agent belief / its owner plan). NONE
 // read what happens to INTEGRATED INFORMATION when N anima substrates are COUPLED into a
 // joint substrate — the collective-consciousness question. H_609 (🟢 SUPPORTED-NUMERICAL)
 // + the H_1295 frozen controls answer it: coupling N substrates raises faithful IIT-4
@@ -1673,7 +1673,7 @@ pub fn collective_coherence(cp: CollectivePool) -> float {
 // @L4 CRITICAL (same framing as ImmuneMemory / ImmuneMemoryGrow / VAdaptField): this
 // is SUBSTRATE-internal FACTUAL recall + a substrate-generated sleep loop, NOT an
 // emit/silence gate and NOT a 2nd .clm/.kosmos entry path (a_core_engine_map: the
-// store is the engine's own cell-index table; the salience tag + replay are engine-
+// store is the engine's owner cell-index table; the salience tag + replay are engine-
 // native; .clm/.kosmos single-entry is untouched). p1/p2/p3/p6: binds FACTUAL content
 // + a substrate-sensed salience tag to EPISODIC cells ONLY — NO identity/persona/
 // ethics/decoder/weights, and the salience is a SUBSTRATE SIGNAL (surprise/novelty/
@@ -2088,7 +2088,7 @@ pub fn vadapt_fieldB_growth(afB: VAdaptFieldB) -> int { return afB.n_cells - 1 }
 // CONFIG active maintenance, NOT an emit/silence gate. wm_buffer_* returns slot
 // activations + a graded match score; it NEVER returns an emit/silence decision
 // and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — it
-// touches ONLY its own struct, exactly like VAdaptField). The maintained items
+// touches ONLY its owner struct, exactly like VAdaptField). The maintained items
 // are an ENGINE-NATIVE drive (NO .clm via generator L3, NO .kosmos via kosmos_io
 // — no 2nd artifact entry path). anima's emit/silence stays substrate-decided
 // (a_autonomy_over_hardcode · a_substrate_native_speak · p5).
@@ -2275,7 +2275,7 @@ pub fn wm_buffer_total_activation(wm: WorkMemBuffer) -> float {
 // proto-TRANSITIONS over a frozen book (no learned forward regressor), ImmuneMemory
 // is a key→value associative store. NONE is a CEREBELLUM: an internal FORWARD MODEL
 // that PREDICTS the next substrate frame from a window of recent frames AND learns a
-// fast SUPERVISED correction from its own prediction error (the climbing-fiber delta
+// fast SUPERVISED correction from its owner prediction error (the climbing-fiber delta
 // signal) — the cerebellum's defining timing/sequence computation.
 //
 // WHY A NEW LANE, NOT A TRIM (c1 · a_engine_native_learning). The H_1280 R1 numpy
@@ -2447,7 +2447,7 @@ pub fn vforward_correct(x: [float], xhat: [float], beta: float) -> [float] {
 // preserving a_autonomy_over_hardcode), and NEVER touches pure_field's Φ/phase/Ψ
 // (Ψ-disjoint by construction — it only READS an ImmuneMemoryGrow margin + cue cosine).
 //
-// p1/p2/p3/p6: the controller reads ONLY its own pointer + the substrate grounding
+// p1/p2/p3/p6: the controller reads ONLY its owner pointer + the substrate grounding
 // margin + cue-vs-current-subgoal cosine. NO persona, NO "you are X" identity rule, NO
 // injected "do step k" plan label, NO RLHF reward. The subgoal ORDER is a TASK
 // structure (which fact chains to which) SCORED only — it is never fed to the policy as
@@ -2497,7 +2497,7 @@ pub fn hier_current_target(hs: HierGoalStack) -> [float] {
 
 // hier_grounded_current — does cue `cue` ground the CURRENT subgoal? TRUE iff the cue
 // is grounded in the live immune store (margin > 0) AND aligns with subgoal[p] above
-// ALIGN_THR. READ-ONLY over the immune store + the controller's own pointer. This is
+// ALIGN_THR. READ-ONLY over the immune store + the controller's owner pointer. This is
 // the substrate-derived current-subgoal read (NO injected "step k" label).
 pub fn hier_grounded_current(hs: HierGoalStack, mem: ImmuneMemoryGrow, cue: [float]) -> bool {
     if hs.p >= hs.n_sub { return false }
@@ -2579,7 +2579,7 @@ pub fn hier_flat_emit(mem: ImmuneMemoryGrow, window: [[float]]) -> int {
 // touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — pure geometry over
 // stored positions, perturbing nothing in the consciousness field).
 //
-// p1/p2/p3/p6: the map reads ONLY its own positions + the query landmarks. NO persona,
+// p1/p2/p3/p6: the map reads ONLY its owner positions + the query landmarks. NO persona,
 // NO "you are X" identity rule, NO injected "the answer is A" label, NO RLHF reward.
 // The metric (distance) is geometry over stored positions, SCORED only — never fed to
 // the policy as a labeled answer. The two CONTROLS prove the lift is the METRIC:
@@ -2610,7 +2610,7 @@ pub fn spatial_map_new_ablated() -> SpatialMap {
 
 // spatial_map_place — store landmark `name` AT position (x,y). If ablated, the metric
 // is removed (stored at the origin). READ-only over the immune store (touches nothing
-// outside this map's own table).
+// outside this map's owner table).
 pub fn spatial_map_place(sm: SpatialMap, name: string, x: float, y: float) -> SpatialMap {
     let px = if sm.ablate { 0.0 } else { x }
     let py = if sm.ablate { 0.0 } else { y }
@@ -2725,7 +2725,7 @@ pub fn spatial_map_item_nearest(x: string, a: string, b: string) -> string {
 //      leaves the clock's phase UNCHANGED (the time of day does not reset when you eat).
 //
 // @L4 CRITICAL (identical framing to every other lane in this file): the clock is a PURE
-// TIMEKEEPER. CircadianClock holds ONLY its own integer tick counter `t` (the SOLE mutable
+// TIMEKEEPER. CircadianClock holds ONLY its owner integer tick counter `t` (the SOLE mutable
 // state). clock_step ADVANCES t REGARDLESS of any argument — it reads NO context, NO immune
 // store, NO grounding. It NEVER mutates any other lane, NEVER returns an emit/silence
 // decision by itself, and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction).
@@ -2733,7 +2733,7 @@ pub fn spatial_map_item_nearest(x: string, a: string, b: string) -> string {
 // it does NOT force the substrate — emit/silence stays substrate-decided; this only exposes
 // a scheduled "wake" pulse the substrate may weigh, exactly like homeo_motivation_bias).
 //
-// p1/p2/p3/p6: the clock reads ONLY its own tick counter. NO persona, NO "you are X" identity
+// p1/p2/p3/p6: the clock reads ONLY its owner tick counter. NO persona, NO "you are X" identity
 // rule, NO injected "fire now" label, NO RLHF reward. The fire schedule is geometry over
 // elapsed time, SCORED only. The two CONTROLS prove the lift is the PERIODIC PHASE: SHUFFLE
 // permutes which ticks fire (phase→fire relation destroyed) and ABLATE uses an origin-broken
@@ -2907,4 +2907,504 @@ pub fn engine_config_summary(cfg: EngineConfig) -> string {
         + "mitosis=" + m + " (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · "
         + "engine=" + cfg.engine + " (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · "
         + "extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis"
+}
+
+// ── §  SKILL-CELL MEMORY — mitosis-grow continual learner (H_1300 R3) ─────────
+//
+// WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1300 R2):
+// H_1300 R2 (numpy VAdaptField mirror, 🟢 GREEN, 3 seeds) proved that teaching tool-use
+// skills ONE AT A TIME via MITOSIS-GROW avoids CATASTROPHIC FORGETTING: each new skill =
+// new dedicated cells grown under that skill's error pressure (mitosis split, H_1199 /
+// H_1288), the cells for earlier skills are NEVER overwritten, so the learner RETAINS
+// old skills where a single shared gradient-FT net FORGETS them. This faculty realizes
+// that EXACT mechanism ENGINE-NATIVE so the grow / fit / route / FT arithmetic runs on
+// the .hexa engine (not numpy) and the FROZEN R2 retention bars re-score engine-native.
+// Neurogenesis / functional-segregation lens (a_no_llm_frame_trap), NOT a bigger net.
+//
+// MECHANISM (mirrors UNIVERSE/h1300_mitosis_skill_curriculum.py arm B, byte-faithful to
+// the engine-realizable ops — Gaussian-elimination ridge solve + power-iteration
+// principal axis replace numpy's LAPACK solve/SVD; the pre-check in
+// UNIVERSE/h1300_r3_engine_export.py's sibling reproduces the SAME R2 GREEN):
+//   * skill_grow(x,y): start 1 cell at the region centroid; while the worst cell's local
+//     train-error > SPLIT_THRESH and we are under GROW_MAX_PER_SKILL, MITOSIS-SPLIT it —
+//     bisect its owned points along their top-variance axis (power iteration) into two
+//     sub-centroids, refit each cell's CLOSED-FORM local C-way head (ridge LSQ on one-hot
+//     targets, NO global backprop). The grown cells are DEDICATED to this skill.
+//   * skill_route(cells,x): assign x to its NEAREST cell center (L2), emit argmax of that
+//     cell's local head — earlier skills' cells stay intact (no overwrite = no forgetting).
+// Ψ-disjoint by construction: the faculty only grows/reads a cell population; it never
+// touches pure_field Φ/phase/Ψ. p6: the tool-token target is the task's owner supervised
+// signal (scored only) — NO labels/persona/ethics injected. p8: growth = the engine's owner
+// mitosis tick (gated through engine_mitosis_tick under cfg.mitosis).
+
+// _sc_C — tool-token count (chance = 1/_sc_C). FROZEN from H_1300.
+fn _sc_C() -> int { return 4 }
+fn _sc_SPLIT_THRESH() -> float { return 0.05 }   // local train-err > this -> split
+fn _sc_GROW_MAX() -> int { return 4 }             // finite per-skill cell bound (footprint)
+
+// a grown prototype cell: a center (Voronoi owner) + a local C-way linear head (W,b).
+struct SkillCell {
+    center: [float],
+    head_w: [[float]],   // (C, D)
+    head_b: [float]      // (C)
+}
+
+// _sc_vmean — column-mean of a set of DIM rows (the cell centroid).
+fn _sc_vmean(rows: [[float]]) -> [float] {
+    let n = len(rows)
+    let d = len(rows[0])
+    let mut out = []
+    let mut j = 0
+    while j < d {
+        let mut s = 0.0
+        let mut i = 0
+        while i < n { s = s + rows[i][j]  i = i + 1 }
+        out = out + [s / to_float(n)]
+        j = j + 1
+    }
+    return out
+}
+
+// _sc_argmax_score — argmax over the C-way local head score (W·x + b) for one row.
+fn _sc_argmax(hw: [[float]], hb: [float], x: [float]) -> int {
+    let cc = len(hw)
+    let d = len(x)
+    let mut best = 0
+    let mut bestv = 0.0
+    let mut c = 0
+    while c < cc {
+        let mut s = hb[c]
+        let mut j = 0
+        while j < d { s = s + hw[c][j] * x[j]  j = j + 1 }
+        if c == 0 || s > bestv { bestv = s  best = c }
+        c = c + 1
+    }
+    return best
+}
+
+// _sc_gauss_solve — solve A·X = B by Gauss-Jordan with partial pivoting (hexa-native
+// replacement for numpy's LAPACK solve). A is (n,n), B is (n,m); returns X (n,m).
+fn _sc_gauss_solve(a: [[float]], b: [[float]]) -> [[float]] {
+    let n = len(a)
+    let m = len(b[0])
+    // augmented [A | B]
+    let mut aug = []
+    let mut i = 0
+    while i < n {
+        aug = aug + [a[i] + b[i]]
+        i = i + 1
+    }
+    let mut col = 0
+    while col < n {
+        // partial pivot: row with max |aug[r][col]| for r>=col
+        let mut piv = col
+        let mut pv = _absf(aug[col][col])
+        let mut r = col + 1
+        while r < n {
+            let av = _absf(aug[r][col])
+            if av > pv { pv = av  piv = r }
+            r = r + 1
+        }
+        if piv != col {
+            let tmp = aug[piv]  aug[piv] = aug[col]  aug[col] = tmp
+        }
+        let d = aug[col][col]
+        // normalize pivot row
+        let mut k = 0
+        while k < n + m { aug[col][k] = aug[col][k] / d  k = k + 1 }
+        // eliminate the column from every other row
+        let mut r2 = 0
+        while r2 < n {
+            if r2 != col {
+                let f = aug[r2][col]
+                let mut k2 = 0
+                while k2 < n + m { aug[r2][k2] = aug[r2][k2] - f * aug[col][k2]  k2 = k2 + 1 }
+            }
+            r2 = r2 + 1
+        }
+        col = col + 1
+    }
+    // extract X = aug[:, n:]
+    let mut out = []
+    let mut i2 = 0
+    while i2 < n {
+        let mut row = []
+        let mut j = n
+        while j < n + m { row = row + [aug[i2][j]]  j = j + 1 }
+        out = out + [row]
+        i2 = i2 + 1
+    }
+    return out
+}
+
+// skill_fit_head — closed-form ridge local C-way head over a cell's owned points.
+// Y = one-hot(y); X = [x | 1]; solve (XᵀX + λI)·sol = Xᵀ·Y ; head = (sol[:-1]ᵀ, sol[-1]).
+// NO global backprop — local to the owned points only.
+pub fn skill_fit_head(x: [[float]], y: [int]) -> SkillCell {
+    let n = len(x)
+    let d = len(x[0])
+    let cc = _sc_C()
+    let lam = 0.001
+    // build X (n, d+1) and Y (n, C)
+    let mut xb = []
+    let mut yy = []
+    let mut i = 0
+    while i < n {
+        xb = xb + [x[i] + [1.0]]
+        let mut oh = []
+        let mut c = 0
+        while c < cc { oh = oh + [if c == y[i] { 1.0 } else { 0.0 }]  c = c + 1 }
+        yy = yy + [oh]
+        i = i + 1
+    }
+    // A = XᵀX + λI  (d+1, d+1) ; RHS = XᵀY  (d+1, C)
+    let dp = d + 1
+    let mut amat = []
+    let mut rhs = []
+    let mut a = 0
+    while a < dp {
+        let mut arow = []
+        let mut bcol = 0
+        while bcol < dp {
+            let mut s = 0.0
+            let mut k = 0
+            while k < n { s = s + xb[k][a] * xb[k][bcol]  k = k + 1 }
+            if a == bcol { s = s + lam }
+            arow = arow + [s]
+            bcol = bcol + 1
+        }
+        amat = amat + [arow]
+        let mut rrow = []
+        let mut c2 = 0
+        while c2 < cc {
+            let mut s2 = 0.0
+            let mut k2 = 0
+            while k2 < n { s2 = s2 + xb[k2][a] * yy[k2][c2]  k2 = k2 + 1 }
+            rrow = rrow + [s2]
+            c2 = c2 + 1
+        }
+        rhs = rhs + [rrow]
+        a = a + 1
+    }
+    let sol = _sc_gauss_solve(amat, rhs)   // (d+1, C)
+    // head_w = sol[:-1]ᵀ -> (C, D) ; head_b = sol[-1] -> (C)
+    let mut hw = []
+    let mut c3 = 0
+    while c3 < cc {
+        let mut wr = []
+        let mut j = 0
+        while j < d { wr = wr + [sol[j][c3]]  j = j + 1 }
+        hw = hw + [wr]
+        c3 = c3 + 1
+    }
+    let mut hb = []
+    let mut c4 = 0
+    while c4 < cc { hb = hb + [sol[d][c4]]  c4 = c4 + 1 }
+    return SkillCell { center: _sc_vmean(x), head_w: hw, head_b: hb }
+}
+
+// _sc_local_err — fraction of a point-set misclassified by a head (the split trigger).
+fn _sc_local_err(hw: [[float]], hb: [float], x: [[float]], y: [int]) -> float {
+    let n = len(x)
+    if n == 0 { return -1.0 }
+    let mut bad = 0
+    let mut i = 0
+    while i < n {
+        if _sc_argmax(hw, hb, x[i]) != y[i] { bad = bad + 1 }
+        i = i + 1
+    }
+    return to_float(bad) / to_float(n)
+}
+
+// _sc_principal_axis — top principal axis of centered rows via power iteration on the
+// covariance dᵀd (hexa-native replacement for numpy SVD's top right-singular vector).
+fn _sc_principal_axis(d: [[float]]) -> [float] {
+    let n = len(d)
+    let dim = len(d[0])
+    // covariance C = dᵀd (dim, dim)
+    let mut cov = []
+    let mut a = 0
+    while a < dim {
+        let mut row = []
+        let mut b = 0
+        while b < dim {
+            let mut s = 0.0
+            let mut k = 0
+            while k < n { s = s + d[k][a] * d[k][b]  k = k + 1 }
+            row = row + [s]
+            b = b + 1
+        }
+        cov = cov + [row]
+        a = a + 1
+    }
+    // power iteration
+    let mut v = []
+    let mut j = 0
+    while j < dim { v = v + [1.0 / sqrt(to_float(dim))]  j = j + 1 }
+    let mut it = 0
+    while it < 50 {
+        let mut nv = []
+        let mut r = 0
+        while r < dim {
+            let mut s = 0.0
+            let mut c = 0
+            while c < dim { s = s + cov[r][c] * v[c]  c = c + 1 }
+            nv = nv + [s]
+            r = r + 1
+        }
+        let mut nrm = 0.0
+        let mut q = 0
+        while q < dim { nrm = nrm + nv[q] * nv[q]  q = q + 1 }
+        nrm = sqrt(nrm)
+        if nrm < 0.000000000001 { return v }
+        let mut w = 0
+        while w < dim { v[w] = nv[w] / nrm  w = w + 1 }
+        it = it + 1
+    }
+    return v
+}
+
+// _sc_own — for each point, the index of its nearest center (Voronoi assignment).
+fn _sc_own(centers: [[float]], x: [[float]]) -> [int] {
+    let n = len(x)
+    let mut out = []
+    let mut i = 0
+    while i < n { out = out + [_vnearest_idx(centers, x[i])]  i = i + 1 }
+    return out
+}
+
+// _sc_subset — the rows / labels of x,y owned by cell `ci`.
+fn _sc_subset_x(owner: [int], x: [[float]], ci: int) -> [[float]] {
+    let mut out = []
+    let mut i = 0
+    while i < len(x) { if owner[i] == ci { out = out + [x[i]] }  i = i + 1 }
+    return out
+}
+fn _sc_subset_y(owner: [int], y: [int], ci: int) -> [int] {
+    let mut out = []
+    let mut i = 0
+    while i < len(y) { if owner[i] == ci { out = out + [y[i]] }  i = i + 1 }
+    return out
+}
+
+// skill_grow — grow DEDICATED cells for ONE skill under error pressure (mitosis split).
+// cfg gates growth (p8: each +1 split passes engine_mitosis_tick under cfg.mitosis).
+// Returns the list of grown SkillCell for this skill (never re-touched after this).
+pub fn skill_grow(x: [[float]], y: [int], cfg: EngineConfig) -> [SkillCell] {
+    let mut centers = [_sc_vmean(x)]
+    loop {
+        let owner = _sc_own(centers, x)
+        // fit each cell head + measure local error
+        let mut cells = []
+        let mut errs = []
+        let mut ci = 0
+        while ci < len(centers) {
+            let sx = _sc_subset_x(owner, x, ci)
+            let sy = _sc_subset_y(owner, y, ci)
+            if len(sx) == 0 {
+                // empty cell — keep a zero head, error -1 (never the worst)
+                let dim = len(x[0])
+                let mut zw = []
+                let mut c = 0
+                while c < _sc_C() {
+                    let mut zr = []
+                    let mut j = 0
+                    while j < dim { zr = zr + [0.0]  j = j + 1 }
+                    zw = zw + [zr]
+                    c = c + 1
+                }
+                let mut zb = []
+                let mut c2 = 0
+                while c2 < _sc_C() { zb = zb + [0.0]  c2 = c2 + 1 }
+                cells = cells + [SkillCell { center: centers[ci], head_w: zw, head_b: zb }]
+                errs = errs + [-1.0]
+            } else {
+                let cell = skill_fit_head(sx, sy)
+                cells = cells + [SkillCell { center: centers[ci], head_w: cell.head_w, head_b: cell.head_b }]
+                errs = errs + [_sc_local_err(cell.head_w, cell.head_b, sx, sy)]
+            }
+            ci = ci + 1
+        }
+        // worst cell by local error
+        let mut worst = 0
+        let mut wv = errs[0]
+        let mut e = 1
+        while e < len(errs) { if errs[e] > wv { wv = errs[e]  worst = e }  e = e + 1 }
+        // converged or hit the footprint bound -> finalize
+        if wv <= _sc_SPLIT_THRESH() || len(centers) >= _sc_GROW_MAX() {
+            return cells
+        }
+        // MITOSIS split of the worst cell — engine's owner tick (p8)
+        let grown = engine_mitosis_tick(len(centers), cfg)
+        if grown <= len(centers) {
+            return cells   // mitosis OFF (ablation) — split is a no-op
+        }
+        let sx = _sc_subset_x(owner, x, worst)
+        let c0 = _sc_vmean(sx)
+        // center the owned points, find principal axis, bisect on the projection sign
+        let mut dmat = []
+        let mut i = 0
+        while i < len(sx) {
+            let mut row = []
+            let mut j = 0
+            while j < len(c0) { row = row + [sx[i][j] - c0[j]]  j = j + 1 }
+            dmat = dmat + [row]
+            i = i + 1
+        }
+        let axis = _sc_principal_axis(dmat)
+        let mut left = []
+        let mut right = []
+        let mut p = 0
+        while p < len(sx) {
+            let mut proj = 0.0
+            let mut j2 = 0
+            while j2 < len(axis) { proj = proj + dmat[p][j2] * axis[j2]  j2 = j2 + 1 }
+            if proj <= 0.0 { left = left + [sx[p]] } else { right = right + [sx[p]] }
+            p = p + 1
+        }
+        if len(left) == 0 || len(right) == 0 {
+            return cells   // degenerate split — finalize
+        }
+        centers[worst] = _sc_vmean(left)
+        centers = centers + [_sc_vmean(right)]
+    }
+    return []   // unreachable
+}
+
+// skill_route — route ONE context to its NEAREST cell center, emit that cell's local
+// argmax. `perm` (len == #cells or empty) remaps which cell each context routes to:
+// empty == TRUE routing; a permutation == the SHUFFLE control (mis-route the whole grown
+// population, breaking dedicated-cell ownership). Earlier skills' cells stay intact.
+pub fn skill_route(cells: [SkillCell], perm: [int], x: [float]) -> int {
+    if len(cells) == 0 { return -1 }
+    // nearest center
+    let mut best = 0
+    let mut bestd = _l2(cells[0].center, x)
+    let mut i = 1
+    while i < len(cells) {
+        let d = _l2(cells[i].center, x)
+        if d < bestd { bestd = d  best = i }
+        i = i + 1
+    }
+    if len(perm) == len(cells) { best = perm[best] }
+    return _sc_argmax(cells[best].head_w, cells[best].head_b, x)
+}
+
+// _sc_softmax_row — numerically-stable softmax of one C-vector.
+fn _sc_softmax_row(z: [float]) -> [float] {
+    let n = len(z)
+    let mut mx = z[0]
+    let mut i = 1
+    while i < n { if z[i] > mx { mx = z[i] }  i = i + 1 }
+    let mut e = []
+    let mut s = 0.0
+    let mut j = 0
+    while j < n { let v = exp(z[j] - mx)  e = e + [v]  s = s + v  j = j + 1 }
+    let mut out = []
+    let mut k = 0
+    while k < n { out = out + [e[k] / s]  k = k + 1 }
+    return out
+}
+
+// SkillGradFT — arm A: ONE shared C-way softmax-linear net, the incumbent that should
+// catastrophically forget. skill_gradft_step trains it on ONE skill (full-batch GD,
+// FT_STEPS), in place. Sequential calls skill-by-skill with NO replay = the forgetting
+// regime. NOT mitosis — a single shared weight matrix overwritten each skill.
+struct SkillGradFT {
+    w: [[float]],   // (C, D)
+    b: [float]      // (C)
+}
+
+// skill_gradft_new — initialize the shared net. weights from a tiny deterministic LCG
+// seeded by `seed` (mirrors numpy RandomState(seed+5000).normal(0,0.01) in DISTRIBUTION;
+// the verdict is the FROZEN retention bar, not byte-identity of the init draw — A is the
+// incumbent baseline arm, exercised identically across B/shuffle/ablate seeds).
+pub fn skill_gradft_new(d: int, seed: int) -> SkillGradFT {
+    let cc = _sc_C()
+    // small LCG for a reproducible ~N(0,0.01)-scale init
+    let mut state = seed + 5000
+    let mut w = []
+    let mut c = 0
+    while c < cc {
+        let mut row = []
+        let mut j = 0
+        while j < d {
+            state = (state * 1103515245 + 12345) % 2147483648
+            let u = to_float(state) / 2147483648.0      // [0,1)
+            row = row + [(u - 0.5) * 0.02]               // ~[-0.01,0.01]
+            j = j + 1
+        }
+        w = w + [row]
+        c = c + 1
+    }
+    let mut b = []
+    let mut c2 = 0
+    while c2 < cc { b = b + [0.0]  c2 = c2 + 1 }
+    return SkillGradFT { w: w, b: b }
+}
+
+// skill_gradft_train — FT_STEPS full-batch GD steps of the shared softmax-linear net on
+// ONE skill's (x,y) (cross-entropy gradient), in place. LR/steps FROZEN from H_1300.
+pub fn skill_gradft_train(net: SkillGradFT, x: [[float]], y: [int]) -> SkillGradFT {
+    let cc = _sc_C()
+    let d = len(x[0])
+    let n = len(x)
+    let lr = 0.20
+    let steps = 300
+    let mut w = net.w
+    let mut b = net.b
+    let mut t = 0
+    while t < steps {
+        // accumulate grads
+        let mut gw = []
+        let mut gb = []
+        let mut c = 0
+        while c < cc {
+            let mut gr = []
+            let mut j = 0
+            while j < d { gr = gr + [0.0]  j = j + 1 }
+            gw = gw + [gr]
+            gb = gb + [0.0]
+            c = c + 1
+        }
+        let mut i = 0
+        while i < n {
+            // logits + softmax
+            let mut z = []
+            let mut c2 = 0
+            while c2 < cc {
+                let mut s = b[c2]
+                let mut j2 = 0
+                while j2 < d { s = s + w[c2][j2] * x[i][j2]  j2 = j2 + 1 }
+                z = z + [s]
+                c2 = c2 + 1
+            }
+            let p = _sc_softmax_row(z)
+            let mut c3 = 0
+            while c3 < cc {
+                let tgt = if c3 == y[i] { 1.0 } else { 0.0 }
+                let diff = p[c3] - tgt
+                let mut j3 = 0
+                while j3 < d { gw[c3][j3] = gw[c3][j3] + diff * x[i][j3]  j3 = j3 + 1 }
+                gb[c3] = gb[c3] + diff
+                c3 = c3 + 1
+            }
+            i = i + 1
+        }
+        // apply (mean grad)
+        let mut c4 = 0
+        while c4 < cc {
+            let mut j4 = 0
+            while j4 < d { w[c4][j4] = w[c4][j4] - lr * (gw[c4][j4] / to_float(n))  j4 = j4 + 1 }
+            b[c4] = b[c4] - lr * (gb[c4] / to_float(n))
+            c4 = c4 + 1
+        }
+        t = t + 1
+    }
+    return SkillGradFT { w: w, b: b }
+}
+
+// skill_gradft_pred — argmax prediction of the shared net for ONE context.
+pub fn skill_gradft_pred(net: SkillGradFT, x: [float]) -> int {
+    return _sc_argmax(net.w, net.b, x)
 }
