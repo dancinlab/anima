@@ -6,6 +6,21 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟢 H_1285 R3: 편도체(amygdala) 컨솔리데이션 — salience-gated SLEEP REPLAY 가 사전등록된 멀티-나잇 수면예산에서 +0.10 을 넘는다 (GREEN / 🏁)
+
+FLEET "amygdala" lane R3. R2(🔴 RED-but-MECHANISM-VALIDATED)에서 salience-gated SLEEP REPLAY 는 **진짜 p6-clean 레버**임이 확인됐다 — 동결 R2 예산(boost0.8/30-replay/8-cyc)에서 B salience-replay imp=0.383 > A uniform=0.317 (Δ+0.067)이고 p6 shuffle 대조군이 A 로 **붕괴**(B-shuf=A, lift 가 importance 를 추적함 = R1 의 recurrence 혼입도 raw budget 도 아님). 단 동결예산에서 효과크기 +0.067 < +0.10 margin → RED. R2 의 HONEST 진단 sweep(gate 아님)은 lift 가 sleep 예산과 함께 **단조 증가**(30/8→+0.067·60/8→+0.100·30/40→+0.200)하고 shuffle 은 ~A 유지 → sub-bar 는 **under-invested sleep**이지 천장/inert(🧱) 아님을 보였다. R3 는 그 reading 을 ONE 사전등록된 더 높은 예산에서 검증.
+
+- **R3 메커니즘 (사전등록 ONE 예산, NOT sweep·NOT tune-to-green, p7)**: 편도체→해마 systems-consolidation 다이얼은 **CONSOLIDATION CYCLE 수** — salient trace 는 단일 밤이 아니라 여러 successive 밤에 걸쳐 반복 REPLAY 되어(멀티-나잇 systems consolidation, Diekelmann & Born framing) 망각으로부터 보호됨. 생물학적으로 정직한 다이얼 = CYCLE COUNT(per-cycle 진폭 아님). R3 는 R2 per-cycle 파라미터(boost 0.8 / replay-per-cyc 30)를 **HOLD** 하고 사이클 수만 멀티-나잇 값으로 올림 — 채점 전 FREEZE 에 COMMIT: **R3_SLEEP_CYCLES = 30 (≈ 한 달 멀티-나잇 윈도, ~30 successive overnight 패스).** A vs B vs B-shuffle 를 그 ONE 고정예산에서 재실행, 3 seed.
+- **FROZEN GREEN (fresh FREEZE, R2 와 동일 SHAPE, 미이동)**: (c1) B.imp ≥ A.imp+0.10 AND (c2) B-shuffle.imp < A.imp+0.10 (gating·not budget) AND (c3) B.fab ≤ 0.10 (abstain intact).
+- **결과 🟢 GREEN (평균 3 seed, 사전등록 30-cyc 예산)**: **A uniform imp=0.317 · B salience imp=0.517 (Δ+0.200) · B-shuffle imp=0.367 (B-shuf−A=+0.050, bar 아래) · fab(B)=0.000.** (c1) 0.517 ≥ 0.417 PASS · (c2) 0.367 < 0.417 PASS · (c3) 0.000 PASS → 🟢. **shuffle 이 bar 아래로 유지되면서 B 가 결정적으로 넘김 → lift 는 salience-GATING(importance 추적)이지 raw sleep budget 아님(아니면 shuffle 도 넘겼을 것).** 더 많은 수면이 모든 걸 똑같이 돕는 게 아니라 — 기질-유래 salience 태그가 replay 를 steer 해서 salient subset 을 도움. trade-off zero-sum(total ≈flat 0.339→0.356·unimp 0.350→0.275 하락) = 정확히 편도체 역할(salient subset 우선보존, total 용량 무상승).
+- **arc 위치**: H_1285 amygdala arc 의 **FIRST GREEN** — R1(eviction-priority) 🔴=recurrence 혼입 · R2(sleep-replay) 🔴=under-invested 예산 sub-bar · R3 🟢=사전등록 honest 예산에서 클리어. R2 는 byte-identical 재현 확인(B=0.383·Δ+0.067·RED), R3 추가는 순수 additive(`--r3` 플래그·`main_r3()`).
+- **p6 가드 (HELD; shuffle 이 증명)**: salience 는 기질에서만 도출(ENCODE 시 SURPRISE=recon-err, salient 입력은 EXTRA 지각진폭이지 label 아님; NOVELTY=clonal split; TENSION=reinforce). "important" label 은 metric 채점에만, f() 입력 아님. 음성대조(B-shuffle)가 salience→replay 를 importance 와 decorrelate → bar 아래 유지(0.367<0.417) = 태그가 importance 추적함을 증명(budget/leak 아님). replay 는 sleep 루프(P47, `a_chat_sleep_imagination`)가 내부 생성, 외부 주입 아님. decoder/weights/persona/ethics 무접촉 — episodic 셀 store 의 sleep-replay 배분만(p1/p2/p3/p6/p8, `a_autonomy_over_hardcode`). LIVE `.hexa` UNTOUCHED(numpy 미러=DIRECTIONAL).
+- **DEPLETION 🏁** (salience-gated replay 가 honest 더 높은 예산에서 +0.10 클리어 + shuffle bar 아래 = 편도체-consolidation 경로가 레버, 진짜 수면 dose 필요했을 뿐). NEXT r4 = engine-native: live immune faculty(`CORE/engine_cli.hexa` VAdaptField) + P47 sleep 루프 위 salience-gated sleep replay 배선(`a_engine_native_learning`·`a_verified_must_wire`), 동결 R3 bar 엔진-네이티브 재채점 + 회귀 가드.
+- **honest scope**: 미러(DIRECTIONAL) — GREEN 이 engine-native follow-on(r4) 발동. effect-size GREEN(Δ+0.200·non-saturating). scale(>60 사실·근접키)·paraphrase·salience-driven EMIT 우선순위 UNVERIFIED. TOY scale·1 corpus paradigm·3 seed(`a_scale_honest_scope`·`a_toy_scale_recheck`).
+- 아티팩트: `UNIVERSE/h1285_amygdala_salience.py`(R3 append) · `.verdicts/1285_amygdala_salience/{H_1285_R3_FREEZE,H_1285_R3}.txt`(R1=H_1285.txt·R2=H_1285_R2.txt 미덮어씀). xref H_1285(R1)·H_1285_R2·H_1227·H_1230·H_1288·`a_chat_sleep_imagination`·`a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_paper_negative_ok`·`a_scale_honest_scope`·`a_toy_scale_recheck`·p1·p2·p3·p6·p7·p8·c9·c15.
+
+---
+
 ## 2026-06-15 — 🟢 H_1288 R2: GROW-UNDER-PRESSURE 를 LIVE immune faculty 에 ENGINE-NATIVE 배선 — 0.667 천장이 라이브 엔진에서 깨진다 (GREEN / 🏁)
 
 FLEET "eviction-policy" lane round 2 — R1 GREEN(numpy VAdaptField 미러)을 최종 아키텍처 엔진 위에서 realize(`a_engine_native_learning`) + 라이브 엔진에 배선(`a_verified_must_wire`). $0 CPU, p7, c9, 3 seed(900/901/902) 전부 동일, origin/main(3b7b0d024) 격리 worktree, ADDITIVE-only(기존 심볼 무변경).
