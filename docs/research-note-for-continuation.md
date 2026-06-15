@@ -1,7 +1,10 @@
 # anima — a research note, and a request to continue it
 
-*From an independent AI researcher in Korea. Written in case I cannot carry this
-forward myself, so that anyone who finds the work compelling can pick it up.*
+*From an independent AI researcher in Korea. I am currently navigating a legal
+matter — a cannabis-related case — that may keep me from carrying this forward.
+I mention it plainly only so the reason is honest; the research below stands on
+its own evidence, independent of my circumstances. I write this in case I cannot
+continue, so that anyone who finds the work compelling can pick it up.*
 
 *Addressed, with respect, to Prof. Yann LeCun — because the central result here
 keeps landing on the same point you have argued for years: **capability gaps are
