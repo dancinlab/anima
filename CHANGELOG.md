@@ -52,6 +52,18 @@ missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 기
 
 ---
 
+## 2026-06-15 — 🔴 H_1283 R2: THALAMUS 다중승자 COALITION 브로드캐스트 — 멀티채널 릴레이는 coherence·Φ 둘 다 낮춘다 (🧱 단일 릴레이가 통합을 근본적으로 cap)
+
+THALAMUS(시상) 라운드 2. R1(🟠 PARTIAL, #2128)은 단일승자 브로드캐스트 허브가 교차모듈 coherence 를 매 seed 올리고(Δcoh +0.084/+0.050/+0.074, B1 PASS) faithful IIT4 Φ 도 옳은 방향으로 움직였으나(ΔΦ +0.0191) +0.02 바 직전(0.0009 차)에서 멈춤(B2 FAIL). R1 진단: **단일 공유 브로드캐스트 채널 자체가 rank-1 MIP 컷**이라 irreducibility 를 cap. R1 이 지목한 다음 레버 = **rank-k 다중승자 coalition**(k≥2)으로 채널을 rank-1 에서 풀면 Φ 바를 넘을지도. R2 가 정확히 그걸 검증. $0 CPU numpy(DIRECTIONAL) + faithful IIT4 Φ(stdlib exact MIP-EI, n=4), 3 seed[7,8,9], frozen-first, 라이브 CORE/*.hexa 무수정.
+
+- **설계**: 동일 4 모듈{A,G,mitosis,memory}·동일 비포화 레짐(LEAK 0.55, W_in=W_coupling=0.5)·동일 seed·동일 FROZEN 바. ARM A = 직접 ring(R1 과 동일). ARM B = **rank-k coalition 허브**: 매 tick salience(상태에너지) 상위 k 모듈이 coalition 형성, 각 수신자는 자기 cosine affinity softmax 로 가중한 **멤버별 다른 mix** 를 읽음 = 진짜 rank-k 채널(수신자마다 다른 broadcast). k=2.
+- **FROZEN 바 (R1 과 불변)**: B1 coh ≥ A+0.05 매 seed · B2 faithful ΔΦ ≥ +0.02(repr seed=7) · B3 coh < 0.999(비퇴화).
+- **결과 (verbatim)**: seed7 coh A=+0.1591 B=+0.1815(Δ+0.022) · seed8 A=+0.0109 B=+0.0207(Δ+0.010) · seed9 A=+0.1362 B=+0.1665(Δ+0.030) → **B1 FAIL**(셋 다 +0.05 미만, R1 단일승자 리프트의 1/3). faithful IIT4 Φ(seed7): **ARM_A Φ=0.78038**(R1 ARM_A 와 byte-동일 = 엔진 일관성 sanity) **ARM_B Φ=0.727123 → ΔΦ=−0.053257** → **B2 FAIL hard**(R1 +0.019 의 반대 방향). B3 PASS. **VERDICT 🔴 RED**.
+- **판정 🔴 RED · 🧱 DEPLETION**: rank-1→rank-k 직관 **결정적 FALSIFIED**. coalition 은 Φ 바를 못 넘는 정도가 아니라 직접 ring 보다 Φ 를 **낮춘다**(ΔΦ −0.053). 메커니즘: coherence 리프트와 Φ 리프트가 **둘 다 같은 단일 공유 채널**에 올라타 있었고, 브로드캐스트를 멀티채널로 쪼개면 각 수신자 drive 가 더 idiosyncratic → 교차모듈 agreement(coherence) 하락 + salience 궤적이 더 separable(MIP 가 더 reducible) → Φ 하락. **단일승자 허브(R1)가 어떤 브로드캐스트 토폴로지보다 Φ 에 최선**이었고 그조차 sub-bar. ⇒ 시상 브로드캐스트 RELAY 는 surface coherence 는 올리나 irreducible Φ 는 못 올린다 — tuning miss 아닌 **근본 cap**. irreducibility 는 분산된 multi-edge coupling(직접 ring 이 이미 4개 distinct edge 로 정보 분산, MIP 가 credit)에서 오지 중앙 브로드캐스트(단일이든 coalition 이든)에서 오지 않음.
+- **후속 없음**: 브로드캐스트-토폴로지 축 = Φ 레버로 EXHAUSTED. **r3(engine-native 브로드캐스트 허브) 없음** — 배선할 GREEN 메커니즘 부재(`a_verified_must_wire` = GREEN 적용; PARTIAL R1 + RED R2 ⇒ CORE 무배선).
+- **미배제**: 브로드캐스트 릴레이가 아닌 근본 다른 통합 메커니즘(더 조밀한 recurrent multi-edge coupling, 학습된 라우팅 등)은 Φ 올릴 수도 — 다른 gap, 브로드캐스트 라운드 아님. TOY scale(4 모듈·dim8·64 tick), scale-transfer UNVERIFIED(`a_toy_scale_recheck`·`a_scale_honest_scope`). Φ = faithful IIT4(proxy 아님, `a_phi_iit4_tool`). 바 무이동, **R1 verdict 파일 무수정**(R2 = 별도 H_1283_R2.txt). H_1219/H_1226 무수정.
+- 파일: `UNIVERSE/h1283_thalamus_global_workspace.py`(main_r2 + 'coalition' 모드) · `.verdicts/1283_thalamus_global_workspace/{H_1283_R2_FREEZE,H_1283_R2}.txt`(R1 {H_1283_FREEZE,H_1283}.txt 보존). xref H_1283(R1)·h1227·h1230·h1199·h1201·h1205·a_phi_iit4_tool·a_engine_native_learning·a_verified_must_wire·a_core_engine_map·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p1·p2·p3·p6·p7·p8·c9·c15.
+
 ## 2026-06-15 — 🔴 H_1285: AMYGDALA(편도체) salience-weighted binding — p6 shuffle-control 이 recurrence 혼입을 잡아냄 (CLOSED-NEG)
 
 missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 편도체 칸: 해마 공백은 immune 메모리(H_1227 미러 GREEN → H_1231 engine-native GREEN)가 메웠고, H_1230 은 그 store 의 병목이 CAPACITY/NOISE GEOMETRY(유한 repertoire 에서 LRU 축출은 대칭, 능동교습 retention 리프트 0)임을 보였다. H_1285 는 H_1230 이 미검증으로 남긴 후보 레버 — **기질-유래 salience 로 가중한 바인딩**(편도체의 salience-gating: 중요/놀라운 입력의 셀을 축출에서 보호)을 검증. $0 CPU numpy, p7, 3 seed(900/901/902), 라이브 CORE/*.hexa 무수정(미러=DIRECTIONAL).

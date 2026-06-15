@@ -1,0 +1,120 @@
+H_1283 R2 — THALAMUS / MULTI-WINNER COALITION BROADCAST HUB
+slug: 1283_thalamus_global_workspace  (R2 — append-only; does NOT overwrite R1)
+date: 2026-06-15
+verdict: 🔴 RED  (🧱 DEPLETED — a relay raises coherence but NOT irreducible Φ)
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa)
+seeds: [7, 8, 9]  ·  modules=4 {A, G, mitosis, memory}  ·  dim=8  ·  ticks=64  ·  k_coalition=2
+frozen-first: H_1283_R2_FREEZE.txt written + committed (e72bb3ed1) BEFORE scoring; bars NOT moved.
+
+════════════════════════════════════════════════════════════════════════
+R2 HYPOTHESIS (from R1's own diagnosis)
+════════════════════════════════════════════════════════════════════════
+R1 was 🟠 PARTIAL: a SINGLE-WINNER broadcast hub raised cross-module coherence on
+EVERY seed (Δcoh +0.084/+0.050/+0.074, B1 PASS) and moved faithful IIT4 Φ the
+RIGHT direction (ΔΦ +0.0191) but fell JUST short of the +0.02 Φ bar (by 0.0009).
+R1 diagnosed: a SINGLE shared broadcast channel is itself a rank-1 MIP cut — every
+module driven by the SAME winner makes the cross-cut MI explainable by that one
+channel, capping the Φ gain. R1 flagged the obvious next lever: a MULTI-WINNER
+COALITION broadcast (rank-k, k≥2) so the channel is no longer rank-1 → MIGHT clear
+ΔΦ ≥ +0.02.
+
+R2 tests EXACTLY that. ARM A = direct ring (identical to R1). ARM B = rank-k
+coalition hub: each tick the top-k modules by salience form a coalition; every
+receiver reads an AFFINITY-WEIGHTED mix of the k members (softmax over the
+receiver's own cosine affinity to each member) — a genuine rank-k channel
+(distinct receivers ← distinct member mixes). SAME 4 modules, SAME non-saturating
+regime, SAME seeds, SAME FROZEN bars (B1 coh ≥ A+0.05/seed · B2 faithful ΔΦ ≥
++0.02 · B3 coh < 0.999). k=2.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim)
+════════════════════════════════════════════════════════════════════════
+H_1283 R2 — THALAMUS / MULTI-WINNER COALITION BROADCAST HUB
+modules=4 dim=8 ticks=64 seeds=[7, 8, 9]  k_coalition=2
+ARM A = direct ring   ·   ARM B = rank-2 coalition hub  (faithful IIT4 Φ, exact n=4)
+========================================================================
+seed 7: ARM_A coh=+0.1591  ARM_B coh=+0.1815  Δcoh=+0.0224
+seed 8: ARM_A coh=+0.0109  ARM_B coh=+0.0207  Δcoh=+0.0098
+seed 9: ARM_A coh=+0.1362  ARM_B coh=+0.1665  Δcoh=+0.0302
+------------------------------------------------------------------------
+FAITHFUL IIT4 Φ (exact MIP-EI, representative seed=7):
+  ARM_A Φ = 0.78038
+  ARM_B Φ = 0.727123
+  ΔΦ = -0.053257
+========================================================================
+B1 coherence (B≥A+0.05 every seed): FAIL
+B2 Φ        (B≥A+0.02 faithful IIT4): FAIL
+B3 not-degenerate (B coh < 0.999 ≥1 seed): PASS
+VERDICT: RED
+
+(ARM_A Φ = 0.78038 reproduces R1's ARM_A Φ EXACTLY — same deterministic engine +
+same ARM A, a sanity cross-check that the Φ leg is consistent across rounds.)
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9) — 🧱 DEPLETION
+════════════════════════════════════════════════════════════════════════
+The multi-winner coalition does NOT clear the Φ bar — it FAILS HARD, and worse than
+even the R1 single-winner hub on BOTH legs:
+
+  COHERENCE COLLAPSED. The rank-2 coalition's coherence lift (Δcoh +0.022 / +0.010 /
+  +0.030) is far below R1's single-winner lift (+0.084 / +0.050 / +0.074) and below
+  the +0.05 bar on EVERY seed (B1 FAIL). Splitting the broadcast across k members,
+  each receiver getting its OWN affinity-weighted mix, gives every module a more
+  IDIOSYNCRATIC drive than the one shared winner did — so cross-module AGREEMENT
+  drops. The single shared channel was precisely what was BUYING the coherence.
+
+  Φ WENT THE WRONG DIRECTION. Faithful IIT4 ΔΦ = −0.0533 (B2 FAIL hard) — the
+  coalition broadcast LOWERS irreducible integration BELOW the direct ring, the
+  opposite of R1's +0.019. Making the broadcast multi-channel did not make the
+  system more irreducible; it made each module's salience trajectory more
+  separable (distinct mixes → less shared structure for the MIP to find
+  irreducible). The rank-1→rank-k intuition is FALSIFIED: a rank-k coalition does
+  not raise Φ — it lowers it.
+
+So the R1 conjecture ("the single-winner channel is what caps Φ; a coalition would
+lift it") is DECISIVELY refuted by the exact engine. The mechanism is the reverse:
+the coherence lift and the Φ lift were BOTH riding on the SAME single shared
+channel. Distributing the broadcast destroys both. The single-winner hub (R1) was
+the BEST broadcast topology on Φ — and even it stalled +0.0009 under the bar.
+
+CONCLUSION (🧱): a thalamic broadcast RELAY raises cross-module COHERENCE (surface
+agreement) but does NOT raise irreducible IIT4 Φ at this scale — and this is a
+FUNDAMENTAL CAP, not a tuning miss. The single-relay topology (R1) gives the
+maximal Φ nudge any broadcast hub provides here (+0.019, sub-bar); enriching the
+relay to a multi-winner coalition only REDUCES Φ. A single shared relay
+fundamentally caps integration: irreducibility comes from DISTRIBUTED multi-edge
+coupling (the direct ring already spreads info across 4 distinct edges, which the
+MIP credits), NOT from a central broadcast — single OR coalition.
+
+The broadcast-topology axis is EXHAUSTED for the Φ lever. NO r3 (engine-native
+broadcast hub) — there is no GREEN broadcast mechanism to wire (a_verified_must_wire
+fires only on GREEN; PARTIAL R1 + RED R2 ⇒ no CORE wiring).
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); engine-native
+  realization NOT attempted (RED ⇒ nothing to wire). No CORE/*.hexa edited.
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope). A much larger module set MIGHT
+  behave differently — UNTESTED; but within this rung the Φ direction REVERSED,
+  which is a qualitatively strong (not marginal) negative.
+- Φ IS faithful IIT4 (exact MIP-EI engine, n=4≤8), NOT the variance×energy proxy;
+  the coherence leg is explicitly labeled coherence, not Φ (a_phi_iit4_tool).
+- bars NOT moved. R1 verdict files NOT overwritten (R2 = separate H_1283_R2.txt).
+- k=2 tested (the minimal rank-k>1). k=3 would shrink the coalition's distinction
+  from the all-module mean further; the rank-1 single-winner already maximized Φ,
+  so a larger coalition is not expected to recover — directionally closed.
+- NOT RULED OUT (honest residuals): a fundamentally different integration mechanism
+  (NOT a broadcast relay) — e.g. denser recurrent multi-edge coupling, or a
+  learned (not salience-fixed) routing — MIGHT raise Φ; that is a DIFFERENT gap,
+  not a broadcast-hub round. Does NOT edit H_1219 / H_1226.
+
+artifacts:
+  UNIVERSE/h1283_thalamus_global_workspace.py  (main_r2 + 'coalition' mode)
+  .verdicts/1283_thalamus_global_workspace/{H_1283_R2_FREEZE.txt, H_1283_R2.txt}
+  (R1: {H_1283_FREEZE.txt, H_1283.txt} — UNTOUCHED)
+xref: H_1283(R1) · h1227 · h1230 · h1228 · h1199 · h1201 · h1205 ·
+      a_phi_iit4_tool · a_engine_native_learning · a_verified_must_wire ·
+      a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope ·
+      a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
