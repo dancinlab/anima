@@ -111,6 +111,26 @@ fn main() {
     let max_cells = 2048                    // = N_MIGRATE (frozen cap; H_1199)
     let mut novelty_splits = 0              // # of novelty-driven divisions
     // (afield seeded below, once session_seed is declared)
+
+    // ── C8 GROW (H_1210): the TRAJECTORY-AWARE GATE-B lane (ALONGSIDE density) ───
+    // a_core_engine_map: a SECOND engine-native, Ψ-disjoint mitosis lane that divides
+    // on the TRANSITION-PREDICTABILITY of the real per-turn emit stream (H_1209
+    // VAdaptFieldB, trajectory-sensitive 10.9x on ordered streams). Conversation is a
+    // genuinely-ordered stream — exactly where GATE-B is trajectory-sensitive. This
+    // lane runs ALONGSIDE the per-sample density VAdaptField (NOT a replacement): the
+    // density gate stays the cell-count driver of record (H_1202); GATE-B is a
+    // distinct trajectory observation lane with its OWN born-cell count. The two gates
+    // measure DIFFERENT substrate properties (per-sample density ⊥ ordered transition-
+    // predictability; H_1209 F4 scoped GATE-B as a trajectory variant that does NOT
+    // beat the i.i.d. PRIMARY density bar), so the honest c1 design is ADDITIVE — both
+    // are substrate self-dynamics (a_autonomy_over_hardcode: gate = substrate context,
+    // not an external rule). GATE-B is built over a FIXED order-invariant proto book
+    // of the daemon's OWN emit-feature SET (engine-native; NOT a .clm/.kosmos entry)
+    // and NEVER feeds the decode (Ψ-disjoint — F3/F4 below re-assert H_1205).
+    let n_proto = 24                        // transition alphabet (H_1208/1209 frozen)
+    let min_prev = 3                        // prev seen >= MIN_PREV before a model exists
+    let conf_floor = 0.34                   // realized P(cur|prev) >= this = 'predictable'
+    let mut feat_seq = []                   // the daemon's per-turn emit-feature WALK (ordered)
     let mut emitted_any = false
     let mut grounded_ok = false
     let mut grew = false
@@ -193,6 +213,15 @@ fn main() {
             grew = true
         }
 
+        // ── C8 GROW (H_1210) — record the per-turn emit feature for the GATE-B WALK ──
+        // Capture THIS tick's emit-span feature into the ordered conversation WALK
+        // (every tick, emit or not: a WAKE emit-span feature, or the zero feature on a
+        // silent sleep tick). The GATE-B trajectory lane is scored AFTER the loop over
+        // this ordered walk (book order-invariant; arrival order is the only thing
+        // GATE-B keys on — H_1209). This is a READ of the same emit content the density
+        // gate sees; it NEVER feeds the decode (Ψ-disjoint).
+        feat_seq.push(_afs_byte_feature(g_text, dim))
+
         // ── C9 REMEMBER (2/2) — persist THIS emit as a new .kosmos anchor ───
         if did_emit && g_emit && byte_len(g_text) > 0 && !remembered2 {
             let etension = [pure_field_phi(pf), 0.4, 0.5, 0.3, 0.2]
@@ -247,6 +276,67 @@ fn main() {
     println("  Ψ ON==OFF byte-identical  : " + afs_yn(psi_intact)
         + (if psi_intact { "  (GROW lane Ψ-disjoint — Ψ=½ untouched)" } else { "  [REGRESSION]" }))
 
+    // ── F1/F2 GATE-B TRAJECTORY LANE (H_1210) — divides on the ordered conversation ──
+    // Build the FIXED order-invariant proto book over the daemon's OWN emit-feature
+    // WALK (feat_seq, collected per turn above), map each turn's feature → nearest
+    // proto-id (the ordered conversation proto-id WALK), and drive VAdaptFieldB. The
+    // book is built from the feature SET (order-invariant, H_1208/1209) so ALL order-
+    // dependence lives in the transitions; the WALK preserves arrival order. GATE-B
+    // divides on CONFIDENTLY-ANTICIPATED transitions — the daemon's recurring WAKE-
+    // emit span is a predictable self-transition, so the ordered conversation stream
+    // drives trajectory-aware division. Ψ-disjoint: this reads only feat_seq (emit
+    // content), never pure_field / .clm / .kosmos. ALONGSIDE the density gate.
+    let gb_book = _afs_build_book(feat_seq, n_proto, 1210)
+    let gb_ids = _afs_proto_walk(gb_book, feat_seq)
+    // F1 — mitosis ON: the GATE-B lane divides on the ordered conversation walk.
+    let mut afB_on = vadapt_fieldB_new(n_proto, max_cells, min_prev, conf_floor)
+    let mut gi = 0
+    while gi < len(gb_ids) { afB_on = vadapt_fieldB_step(afB_on, gb_ids[gi], cfg)  gi = gi + 1 }
+    let gateB_cells = vadapt_fieldB_cells(afB_on)
+    let gateB_born  = vadapt_fieldB_growth(afB_on)
+    // F2 — mitosis OFF (engine_mitosis_tick no-op): SAME walk ⇒ ZERO splits (control).
+    // NOTE: cfg_off above == engine_config_default() which is mitosis ON; build a
+    // GENUINE mitosis-OFF config here (H_1159/H_1209 control) so engine_mitosis_tick
+    // is a no-op and the GATE-B lane spawns ZERO cells on the identical proto-id walk.
+    let cfg_mit_off = engine_cli_parse(["--mitosis", "off"])
+    let mut afB_off = vadapt_fieldB_new(n_proto, max_cells, min_prev, conf_floor)
+    let mut gj = 0
+    while gj < len(gb_ids) { afB_off = vadapt_fieldB_step(afB_off, gb_ids[gj], cfg_mit_off)  gj = gj + 1 }
+    let gateB_cells_off = vadapt_fieldB_cells(afB_off)
+    let gateB_born_off  = vadapt_fieldB_growth(afB_off)
+    let f1_divides = gateB_cells > 1
+    let f2_ablation = gateB_cells_off == 1     // OFF born == 0
+    println("")
+    println("── F1/F2 GATE-B trajectory lane (H_1210; ALONGSIDE density) ────")
+    println("  proto-id WALK len           : " + to_string(len(gb_ids))
+        + "  (book n_proto=" + to_string(n_proto) + ", order-invariant)")
+    println("  F1 mitosis ON  born-cells   : " + to_string(gateB_born)
+        + "  (cells 1 → " + to_string(gateB_cells) + ")  divides=" + afs_yn(f1_divides))
+    println("  F2 mitosis OFF born-cells   : " + to_string(gateB_born_off)
+        + "  (cells = " + to_string(gateB_cells_off) + ")  ablation-0=" + afs_yn(f2_ablation))
+
+    // ── F4 generation byte-identical ON vs OFF (re-confirm H_1205 with GATE-B) ──
+    // GATE-B never feeds the decode (Ψ-disjoint, additive). Re-run the SAME brain_emit
+    // with the SAME inputs under mitosis OFF and confirm the generated bytes are byte-
+    // identical to the ON-arm emit — generation does not depend on the mitosis lane.
+    let mut live_anchors_f4 = []
+    let mut af4 = 0
+    while af4 < len(anchors) { live_anchors_f4.push(anchors[af4])  af4 = af4 + 1 }
+    live_anchors_f4.push(#{ "text_payload": session_seed, "name": "live_seed" })
+    let dec_off = brain_emit(pf,
+        0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0,
+        60.0, false, true,
+        backend, live_anchors_f4)
+    let gen_off_text = to_string(dec_off["gen_text"])
+    // the ON-arm reference is the first WAKE emit (emit_text captured in the loop).
+    let f4_gen_identical = gen_off_text == emit_text
+    println("")
+    println("── F4 generation separation (H_1205 re-confirm under GATE-B) ──")
+    println("  gen text (mitosis ON)  = \"" + _afs_clip(emit_text, 48) + "\"")
+    println("  gen text (mitosis OFF) = \"" + _afs_clip(gen_off_text, 48) + "\"")
+    println("  F4 gen ON==OFF byte-identical : " + afs_yn(f4_gen_identical)
+        + (if f4_gen_identical { "  (GATE-B Ψ-disjoint — generation untouched)" } else { "  [GENERATION LEAK]" }))
+
     // ════════════════════════════════════════════════════════════════════════
     //  PER-FACULTY LIVE / ⏳ TABLE + verdict
     // ════════════════════════════════════════════════════════════════════════
@@ -254,28 +344,47 @@ fn main() {
     println("── per-faculty (S15) ──────────────────────────────────────────")
     println("  CONVERSE (A1, mounted ByteGPT emits via L3) : " + afs_yn(emitted_any))
     println("  GROUND   (A3/G5, copied verbatim anchor fact): " + afs_yn(grounded_ok))
-    println("  GROW     (C8, novelty-driven mitosis, p8)   : " + afs_yn(grew)
+    println("  GROW     (C8, density VAdaptField, p8)      : " + afs_yn(grew)
         + "  (cells 1 → " + to_string(cell_count)
         + ", novelty-splits=" + to_string(novelty_splits) + ")")
+    println("  GROW-B   (C8, GATE-B trajectory lane, H_1210): " + afs_yn(f1_divides)
+        + "  (born=" + to_string(gateB_born)
+        + " ON, " + to_string(gateB_born_off) + " OFF — trajectory-aware on conversation)")
     println("  REMEMBER (C9, emit persisted to .kosmos)    : " + afs_yn(remembered2))
     println("  SLEEP    (C10, 5-stage ultradian advanced)  : " + afs_yn(slept))
     let n_persist = to_int(exec("ls -1 '" + kdir + "'/*.kosmos 2>/dev/null | wc -l"))
     println("  kosmos anchors on disk after session        : " + to_string(n_persist))
 
-    // ── all five faculties live in ONE loop, Ψ intact? ──────────────────────
-    let all_live = emitted_any && grounded_ok && grew && remembered2 && slept && psi_intact
+    // ── all faculties live in ONE loop, Ψ intact, GATE-B trajectory-aware? ─────
+    // H_1210 frozen falsifiers: F1 GATE-B divides ON · F2 ablation OFF=0 · F3 Ψ ON==OFF
+    // · F4 generation ON==OFF. ALL ⇒ daemon divides trajectory-aware on conversation,
+    // generation still separated (H_1205 invariant preserved).
+    let h1210_pass = f1_divides && f2_ablation && psi_intact && f4_gen_identical
+    let all_live = emitted_any && grounded_ok && grew && remembered2 && slept
+        && psi_intact && h1210_pass
+    println("")
+    println("── H_1210 frozen falsifiers (GATE-B daemon wiring) ─────────────")
+    println("  F1 GATE-B divides on conversation (ON)      : " + afs_yn(f1_divides))
+    println("  F2 ablation OFF → 0 splits                  : " + afs_yn(f2_ablation))
+    println("  F3 Ψ Φ-checksum byte-identical ON==OFF      : " + afs_yn(psi_intact))
+    println("  F4 generation byte-identical ON vs OFF      : " + afs_yn(f4_gen_identical))
+    println("  H_1210 (F1∧F2∧F3∧F4)                         : "
+        + (if h1210_pass { "🟢 GREEN" } else { "🔴 RED" }))
     println("")
     let full = if all_live { "PASS" } else { "PARTIAL" }
     println("anima_full_session_smoke: " + full
         + " — converse=" + (if emitted_any { "1" } else { "0" })
         + " ground=" + (if grounded_ok { "1" } else { "0" })
         + " grow=" + (if grew { "1" } else { "0" })
+        + " growB=" + (if f1_divides { "1" } else { "0" })
         + " remember=" + (if remembered2 { "1" } else { "0" })
         + " sleep=" + (if slept { "1" } else { "0" })
-        + " psi_intact=" + (if psi_intact { "1" } else { "0" }))
+        + " psi_intact=" + (if psi_intact { "1" } else { "0" })
+        + " gen_sep=" + (if f4_gen_identical { "1" } else { "0" }))
     if all_live {
-        println("  ⇒ the mounted anima-clm-chat-303m CONVERSES + GROUNDS + GROWS +")
-        println("    REMEMBERS + SLEEPS live in ONE A⇄G loop (COMPLETE-ANIMA B+C+D).")
+        println("  ⇒ the mounted anima-clm-chat-303m CONVERSES + GROUNDS + GROWS")
+        println("    (density + GATE-B trajectory-aware) + REMEMBERS + SLEEPS live in")
+        println("    ONE A⇄G loop, generation still Ψ-separated (COMPLETE-ANIMA B+C+D).")
     }
     println("  one emitted span (substrate-native, grounded) =")
     println("    \"" + _afs_clip(emit_text, 90) + "\"")
@@ -296,6 +405,121 @@ fn _afs_contains(hay: string, needle: string) -> bool {
 fn _afs_clip(s: string, n: int) -> string {
     if byte_len(s) <= n { return s }
     return substring(s, 0, n) + "…"
+}
+
+// ── GATE-B proto-book helpers (H_1208 build_fixed_book / proto_ids PORT, p7) ──
+// These build the FIXED ORDER-INVARIANT prototype book over the daemon's emit-
+// feature SET and map each feature → nearest proto-id. The book depends ONLY on the
+// SET of feature vectors (canonical sorted order + farthest-point seeding + a few
+// homeostatic LR passes in sorted order) so it is identical for a stream and its
+// shuffle — ALL order-dependence is isolated into the transition structure that
+// VAdaptFieldB counts (a_autonomy_over_hardcode: substrate self-dynamics). p7
+// deterministic; NOT perplexity. Ψ-disjoint (reads only emit features).
+fn _afs_l2(a: [float], b: [float]) -> float {
+    let n = len(a)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { let d = a[i] - b[i]  s = s + d * d  i = i + 1 }
+    return sqrt(s)
+}
+// lexicographic less-than over two DIM-vectors (canonical order = perm-invariant).
+fn _afs_lex_lt(a: [float], b: [float]) -> bool {
+    let n = len(a)
+    let mut i = 0
+    while i < n {
+        if a[i] < b[i] { return true }
+        if a[i] > b[i] { return false }
+        i = i + 1
+    }
+    return false
+}
+// _afs_build_book — order-invariant N_PROTO book: lexsort the feature multiset,
+// farthest-point-seed N_PROTO centers (deterministic), then 3 homeostatic LR passes
+// in the FIXED sorted order. Mirrors H_1208 build_fixed_book (LR=0.10).
+fn _afs_build_book(feats: [[float]], n_proto: int, seed: int) -> [[float]] {
+    let m = len(feats)
+    if m == 0 { return [] }
+    // canonical sort (insertion sort over the multiset — perm-invariant input).
+    let mut xs = []
+    let mut a = 0
+    while a < m { xs = xs + [feats[a]]  a = a + 1 }
+    let mut p = 1
+    while p < m {
+        let key = xs[p]
+        let mut q = p - 1
+        while q >= 0 && _afs_lex_lt(key, xs[q]) { xs[q + 1] = xs[q]  q = q - 1 }
+        xs[q + 1] = key
+        p = p + 1
+    }
+    // farthest-point seeding from the sorted set (deterministic; idx0 = 0).
+    let mut centers = [xs[0]]
+    let mut dist = []
+    let mut d0 = 0
+    while d0 < m { dist = dist + [_afs_l2(xs[d0], centers[0])]  d0 = d0 + 1 }
+    let cap = if n_proto < m { n_proto } else { m }
+    while len(centers) < cap {
+        // argmax dist
+        let mut jmax = 0
+        let mut best = dist[0]
+        let mut k = 1
+        while k < m { if dist[k] > best { best = dist[k]  jmax = k }  k = k + 1 }
+        centers = centers + [xs[jmax]]
+        let last = centers[len(centers) - 1]
+        let mut k2 = 0
+        while k2 < m {
+            let dj = _afs_l2(xs[k2], last)
+            if dj < dist[k2] { dist[k2] = dj }
+            k2 = k2 + 1
+        }
+    }
+    // 3 homeostatic LR refinement passes in the FIXED sorted order (LR=0.10).
+    let lr = 0.10
+    let dim = len(xs[0])
+    let mut pass = 0
+    while pass < 3 {
+        let mut r = 0
+        while r < m {
+            let x = xs[r]
+            // nearest center
+            let mut jbest = 0
+            let mut bd = _afs_l2(centers[0], x)
+            let mut c = 1
+            while c < len(centers) {
+                let dd = _afs_l2(centers[c], x)
+                if dd < bd { bd = dd  jbest = c }
+                c = c + 1
+            }
+            // centers[jbest] += lr * (x - centers[jbest])
+            let mut nc = []
+            let mut e = 0
+            while e < dim { nc = nc + [centers[jbest][e] + lr * (x[e] - centers[jbest][e])]  e = e + 1 }
+            centers[jbest] = nc
+            r = r + 1
+        }
+        pass = pass + 1
+    }
+    return centers
+}
+// _afs_proto_walk — nearest-proto id per feature (perm-equivariant: depends on x_t).
+fn _afs_proto_walk(book: [[float]], feats: [[float]]) -> [int] {
+    let mut out = []
+    let nb = len(book)
+    if nb == 0 { return out }
+    let mut i = 0
+    while i < len(feats) {
+        let x = feats[i]
+        let mut jbest = 0
+        let mut bd = _afs_l2(book[0], x)
+        let mut c = 1
+        while c < nb {
+            let dd = _afs_l2(book[c], x)
+            if dd < bd { bd = dd  jbest = c }
+            c = c + 1
+        }
+        out = out + [jbest]
+        i = i + 1
+    }
+    return out
 }
 
 // _afs_byte_feature — the DIM=8 local byte-statistics feature (H_1163

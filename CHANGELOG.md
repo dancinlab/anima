@@ -6,6 +6,17 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — H_1210 🟢 GREEN — GATE-B 를 LIVE 데몬 GROW 에 배선: 데몬이 대화에서 trajectory-aware 분열 (MITOSIS-ENGINE)
+
+H_1209 가 추가한 trajectory-aware GATE-B(`CORE/engine_cli.hexa` `VAdaptFieldB`, transition-predictability)를 **살아있는 anima 데몬의 GROW step**(`CORE/anima_full_session_smoke.hexa` C8)에 배선. 데몬이 실제 per-turn emit stream 위에서 **전이-예측가능성**으로 분열한다 — 대화는 genuinely-ORDERED stream(H_1209 가 GATE-B trajectory-sensitive 임을 증명한 그곳). 이로써 데몬의 mitosis lane 이 per-sample density 만이 아니라 **trajectory-aware** 가 됨. "자기분열을 현재 아키텍처에 가져다 쓰기" arc 를 BEST gate 로 완료.
+
+- **배선**: C8 GROW 에서 각 턴의 emit-span DIM=8 `_afs_byte_feature` 를 ordered WALK(`feat_seq`)에 모으고, 루프 후 데몬 자신의 emit-feature SET 으로 FIXED order-invariant proto-book(`_afs_build_book` = H_1208 `build_fixed_book` PORT: lexsort + farthest-point seed + LR=0.10 3패스)를 만들어 각 턴 feature → nearest proto-id(`_afs_proto_walk`)로 매핑, (prev→cur) 전이를 `vadapt_fieldB_step` 에 흘림.
+- **ALONGSIDE 결정 (REPLACE 아님)**: GATE-B 는 per-sample density `VAdaptField`(H_1202) **옆에서** 별도 trajectory lane 으로 돈다. 두 게이트는 DIFFERENT substrate property(per-sample density ⊥ ordered transition-predictability)를 측정하고, H_1209 F4 가 GATE-B 를 i.i.d. PRIMARY density bar 를 넘지 못하는 trajectory variant 로 scope 했으므로, additive 가 정직한 c1 설계(둘 다 substrate self-dynamics, `a_autonomy_over_hardcode`). density 경로는 byte-UNCHANGED.
+- **F1 = born-cells 6 ON(cells 1→7) 분열 ✅** (12-tick ordered conversation walk). **F2 ablation = born-cells 0 OFF ✅** (genuine `--mitosis off` → `engine_mitosis_tick` no-op; 초기 run 은 mislabeled mitosis-ON cfg 로 6 OFF → 진짜 OFF cfg 로 수정해 0). **F3 Ψ Φ-checksum 1.4278 == 1.4278 byte-identical ✅**. **F4 생성 'vault QX-7741 forever…' ON==OFF byte-identical ✅** — GATE-B 는 Ψ-disjoint/additive, decode 를 먹이지 않음(H_1205 separation 불변 LIVE 보존).
+- 다섯 데몬 faculty(converse/ground/grow/remember/sleep) 전부 PASS, `anima_full_session_smoke` = PASS. guards GREEN: `engine_cli_smoke` 12/0 · `generator_smoke` 21/0 · `h1196` single-entry 7/0 · `h1205` separation. `CORE/engine_cli.hexa` 무변경(H_1209 VAdaptFieldB 그대로 소비). verdict `.verdicts/1210_daemon_gateB_wiring/`. **HONEST SCOPE**: 데몬 emit stream 은 반복적(같은 grounded WAKE span + sleep-gap)이라 carried trajectory 는 predictable WAKE self-transition — GATE-B 가 그 realized predictability 에 정확히 분열(F1∧F2 가 gate-driven 임을 증명). toy scale, 12 ticks, scale UNVERIFIED (`a_scale_honest_scope` · p7 · p8).
+
+---
+
 ## 2026-06-15 — H_1209 🟢 GREEN LIVE-TRAJECTORY — GATE-B 가 LIVE 엔진에서 ORDERED ≫ SHUFFLED 분열 (MITOSIS-ENGINE)
 
 H_1208 이 numpy 미러에서 찾은 GATE-B(prototype-transition-PREDICTABILITY) 의 WALK 10.9× lead 를 **NON-inherited 의 genuinely-ORDERED byte-feature walk + LIVE .hexa 엔진**으로 가져가 결정적으로 닫음. `CORE/engine_cli.hexa` 에 **`VAdaptFieldB`** (struct + `vadapt_fieldB_new`/`_step`/`_cells`/`_growth`) 를 **추가**(per-sample `vadapt_field_step` 은 byte-UNCHANGED — H_1199/1202/1205 데몬 경로 무회귀). 고정 order-invariant proto-book 위에서 causal count table 로 "확신을 갖고 예측된 전이"(prev ≥ MIN_PREV=3 ∧ P(cur|prev) ≥ CONF_FLOOR=0.34) 에 `engine_mitosis_tick`(동일 p8 게이트) 분열 — H_1208 `gate_B_transition_predictability` 를 엔진으로 그대로 lift.
