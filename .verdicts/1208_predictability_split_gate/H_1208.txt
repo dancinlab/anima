@@ -1,0 +1,136 @@
+=== H_1208 prototype-transition-memory / predictability split gate (local CPU, $0) — DIM=8 WARMUP=250 T=2400 SEEDS=[900, 901, 902] N_PROTO=24 MIN_PREV=3 CONF_FLOOR=0.34 ===
+corpus = CORE/testdata/clm_mid_5lang_c4.txt  (fixed order-invariant book -> order lives ONLY in proto transitions)
+
+--- seed 900 ---
+  NOVEL         : GATE-A(trans-novelty) growth= 338   GATE-B(predictability) growth=   8   uniq_proto_ids=24
+  REPEAT        : GATE-A(trans-novelty) growth=  12   GATE-B(predictability) growth=2047   uniq_proto_ids=12
+  SHUFFLED      : GATE-A(trans-novelty) growth= 363   GATE-B(predictability) growth=  10   uniq_proto_ids=24
+  WALK          : GATE-A(trans-novelty) growth= 195   GATE-B(predictability) growth=1065   uniq_proto_ids=24  (DIAGNOSTIC, non-bar)
+  WALK_SHUF     : GATE-A(trans-novelty) growth= 299   GATE-B(predictability) growth=  70   uniq_proto_ids=24  (DIAGNOSTIC, non-bar)
+  RANDGAUSS     : GATE-A(trans-novelty) growth= 440   GATE-B(predictability) growth=   2   uniq_proto_ids=24  (SANITY control)
+  RANDGAUSS_SHUF: GATE-A(trans-novelty) growth= 510   GATE-B(predictability) growth=   2   uniq_proto_ids=24  (SANITY control)
+
+--- seed 901 ---
+  NOVEL         : GATE-A(trans-novelty) growth= 286   GATE-B(predictability) growth=  24   uniq_proto_ids=24
+  REPEAT        : GATE-A(trans-novelty) growth=  12   GATE-B(predictability) growth=2047   uniq_proto_ids=12
+  SHUFFLED      : GATE-A(trans-novelty) growth= 274   GATE-B(predictability) growth=   8   uniq_proto_ids=24
+  WALK          : GATE-A(trans-novelty) growth= 140   GATE-B(predictability) growth= 907   uniq_proto_ids=24  (DIAGNOSTIC, non-bar)
+  WALK_SHUF     : GATE-A(trans-novelty) growth= 197   GATE-B(predictability) growth=  91   uniq_proto_ids=24  (DIAGNOSTIC, non-bar)
+  RANDGAUSS     : GATE-A(trans-novelty) growth= 485   GATE-B(predictability) growth=   1   uniq_proto_ids=24  (SANITY control)
+  RANDGAUSS_SHUF: GATE-A(trans-novelty) growth= 470   GATE-B(predictability) growth=   2   uniq_proto_ids=24  (SANITY control)
+
+--- seed 902 ---
+  NOVEL         : GATE-A(trans-novelty) growth= 306   GATE-B(predictability) growth=   4   uniq_proto_ids=24
+  REPEAT        : GATE-A(trans-novelty) growth=  12   GATE-B(predictability) growth=2047   uniq_proto_ids=12
+  SHUFFLED      : GATE-A(trans-novelty) growth= 273   GATE-B(predictability) growth= 120   uniq_proto_ids=24
+  WALK          : GATE-A(trans-novelty) growth= 151   GATE-B(predictability) growth=1030   uniq_proto_ids=24  (DIAGNOSTIC, non-bar)
+  WALK_SHUF     : GATE-A(trans-novelty) growth= 247   GATE-B(predictability) growth= 114   uniq_proto_ids=24  (DIAGNOSTIC, non-bar)
+  RANDGAUSS     : GATE-A(trans-novelty) growth= 516   GATE-B(predictability) growth=   4   uniq_proto_ids=24  (SANITY control)
+  RANDGAUSS_SHUF: GATE-A(trans-novelty) growth= 505   GATE-B(predictability) growth=   0   uniq_proto_ids=24  (SANITY control)
+
+=== 3-seed MEAN cell_growth ===
+  PRIMARY (H_1203 streams VERBATIM):
+    NOVEL         : GATE-A= 310.00  GATE-B=  12.00   (A per-seed [338, 286, 306] | B per-seed [8, 24, 4])
+    REPEAT        : GATE-A=  12.00  GATE-B=2047.00   (A per-seed [12, 12, 12] | B per-seed [2047, 2047, 2047])
+    SHUFFLED      : GATE-A= 303.33  GATE-B=  46.00   (A per-seed [363, 274, 273] | B per-seed [10, 8, 120])
+  WALK diagnostic (H_1207 contiguous corpus walk — HAS order structure):
+    WALK          : GATE-A= 162.00  GATE-B=1000.67   (A [195, 140, 151] | B [1065, 907, 1030])
+    WALK_SHUF     : GATE-A= 247.67  GATE-B=  91.67   (A [299, 197, 247] | B [70, 91, 114])
+  RANDGAUSS sanity control (i.i.d. noise — must NOT separate):
+    RANDGAUSS     : GATE-A= 480.33  GATE-B=   2.33   (A [440, 485, 516] | B [2, 1, 4])
+    RANDGAUSS_SHUF: GATE-A= 495.00  GATE-B=   1.33   (A [510, 470, 505] | B [2, 2, 0])
+
+=== FROZEN FALSIFIERS (bar = 1.5, inherited from H_1203/H_1207) ===
+  F1  V14 격파 PRIMARY  NOVEL/SHUFFLED  GATE-A = 1.022  -> FAIL
+  F1  V14 격파 PRIMARY  NOVEL/SHUFFLED  GATE-B = 0.261  -> FAIL
+  F2  no regr. PRIMARY  NOVEL/REPEAT    GATE-A = 25.833  -> PASS
+  F2  no regr. PRIMARY  NOVEL/REPEAT    GATE-B = 0.006  -> FAIL
+  F1w MECHANISM (WALK, non-bar)  WALK/WALK_SHUF  GATE-A = 0.654  -> no-sep
+  F1w MECHANISM (WALK, non-bar)  WALK/WALK_SHUF  GATE-B = 10.916  -> separates   (DECISIVE: V14 direction on real order)
+  F3  SANITY (RANDGAUSS/RANDGAUSS_SHUF must be < 1.5):  GATE-A = 0.970  GATE-B = 1.750  -> ARTIFACT-WARN
+
+TIER: RED (🔴 closed-neg, a_paper_negative_ok) — even a prototype-transition-memory / predictability gate does NOT yield ordered >> shuffled division (F1 PRIMARY < 1.5 AND WALK mechanism < 1.5 or sanity-flagged). The TRAJECTORY ROUTE IS EXHAUSTED: mitosis is fundamentally a novelty-DENSITY substrate, not a trajectory substrate (mitosis = substrate, CLM = generator; consistent with H_1200/H_1201/H_1203/H_1207).
+
+HONESTY (a_scale_honest_scope): ONE corpus (clm_mid_5lang_c4), toy scale, 3 seeds, gradient-free, numpy mirror (H_1199 precedent). H_1203 + H_1207 stream builders imported VERBATIM (apples-to-apples). The fixed prototype book is order-invariant (built from the feature SET), so order lives ONLY in the proto transitions. Scale transfer UNVERIFIED. Frozen bar (1.5 == H_1203/H_1207) NOT moved. WALK is a declared NON-bar mechanism diagnostic. p7 (cell/transition count, NOT perplexity), p8 (split == growth). Engine wiring UNCHANGED — VAdaptField byte-identical; this is a measurement-only numpy probe (closed-negative ruling needs no live .hexa edit).
+[done]
+
+================================================================================
+H_1208 VERDICT — PROTOTYPE-TRANSITION-MEMORY / PREDICTABILITY SPLIT GATE
+🔴 RED on the inherited PRIMARY bar · WALK mechanism leg = the DEEPEST reading
+================================================================================
+TIER: 🔴 RED on the INHERITED bar (F1 PRIMARY NOVEL/SHUFFLED < 1.5 for BOTH gates),
+with a sharper, two-part finding than a flat null. This is decision-grade and
+EXHAUSTS the trajectory axis (the last not-ruled-out mechanism H_1207 left open).
+
+GATES (root-cause c1):
+  A fixed, ORDER-INVARIANT prototype book (N_PROTO=24, built from the feature SET via
+  farthest-point seeding + LR passes in canonical sorted order) maps each tick to a
+  nearest-proto id p_t (permutation-EQUIVARIANT — depends only on x_t). ALL order-
+  dependence is therefore isolated into the prototype TRANSITIONS p_{t-1}->p_t.
+    GATE-A  TRANSITION-NOVELTY    : split on an UNSEEN ordered transition.
+    GATE-B  TRANSITION-PREDICTABILITY: split when the realized transition was
+            CONFIDENTLY ANTICIPATED (prev seen >= MIN_PREV=3 AND P(cur|prev) >=
+            CONF_FLOOR=0.34 from a causal online count table). The principled
+            sign-inverter: predictability requires stable conditional structure, which
+            only ORDER possesses.
+
+NUMERIC (3-seed mean):
+  F1  V14 격파 PRIMARY  NOVEL/SHUFFLED  GATE-A = 1.022  FAIL
+  F1  V14 격파 PRIMARY  NOVEL/SHUFFLED  GATE-B = 0.261  FAIL
+  F2  no regr. PRIMARY  NOVEL/REPEAT    GATE-A = 25.833 PASS  (GATE-B 0.006 by design,
+        REPEAT is a maximally PREDICTABLE 12-cycle -> floods GATE-B = expected, not a regr.)
+  F1w MECHANISM (WALK)  WALK/WALK_SHUF  GATE-A = 0.654  (no-sep; trans-novelty inherits
+        the H_1207 inverted sign — disorder makes MORE new edges)
+  F1w MECHANISM (WALK)  WALK/WALK_SHUF  GATE-B = 10.916  SEPARATES IN THE V14 DIRECTION
+        (WALK=1000.7 >> WALK_SHUF=91.7 — ordered division HIGH, shuffle SUPPRESSED)
+  F3  SANITY  RANDGAUSS/RANDGAUSS_SHUF  GATE-B = 1.750 (>=1.5 -> auto-flagged), BUT the
+        counts are at the NOISE FLOOR: B=[2,1,4] vs SHUF=[2,2,0] (means 2.33 vs 1.33).
+        The 1.75 ratio is SMALL-INTEGER NOISE (2.33/1.33), NOT a real separation — the
+        predictability gate essentially does NOT fire on i.i.d. Gaussian noise (no
+        stable conditional structure to learn). GATE-A sanity = 0.970 (clean).
+
+THE FINDING (two-part, honest — sharper than H_1207):
+  (1) On the INHERITED PRIMARY streams, NO transition-memory gate defeats V14
+      (F1 < 1.5 both gates). This CONFIRMS the pre-registered prediction: the H_1203
+      NOVEL stream draws i.i.d.-SCATTERED corpus offsets, so it has NO conditional
+      transition structure and its shuffle is statistically identical. The inherited
+      PRIMARY surface is STRUCTURALLY ORDER-FREE; the V14-격파 F1 there is structurally
+      unreachable for ANY gate (the deep H_1203/H_1207 reading, now triply confirmed).
+  (2) The PREDICTABILITY gate (GATE-B) is the FIRST mechanism in this campaign to
+      separate order from disorder in the CORRECT V14 direction: on a stream that
+      ACTUALLY HAS order (WALK), ordered division (1000.7) >> shuffled division (91.7),
+      ratio 10.9x. It DEFEATS the H_1207 inverted-sign problem — where a derivative
+      gate rewarded JAGGEDNESS (disorder => more division), a predictability gate
+      rewards LEARNABLE RECURRING TRANSITIONS (order => more division). The sanity
+      control confirms the gate does not fire on noise (RANDGAUSS B ~ 0).
+
+RULING (decision-grade, completes the trajectory axis):
+  - The V14-격파 INHERITED bar (F1 on the H_1203 PRIMARY streams) is NOT met and is
+    structurally UNREACHABLE: the PRIMARY NOVEL stream is i.i.d.-scattered and carries
+    no trajectory. On the INHERITED surface the verdict is 🔴 RED, terminal.
+  - The deeper scientific question "can mitosis division be made trajectory-sensitive
+    in the ordered>>shuffled direction by ANY gate?" gets, for the FIRST time, a
+    QUALIFIED YES at the MECHANISM level (GATE-B, WALK 10.9x, sanity ~0). A
+    PREDICTABILITY transition-gate IS a trajectory substrate — but only on a stream
+    that has order to predict; it cannot manufacture order in an i.i.d. stream.
+  - NET: the trajectory ROUTE on the INHERITED H_1203 streams is EXHAUSTED (RED). The
+    failure was never the gate alone — it was the i.i.d. PRIMARY stream. Mitosis as
+    applied to the H_1203/H_1207 benchmark remains a novelty-DENSITY substrate
+    (mitosis = substrate, CLM = generator; consistent with H_1200/H_1201/H_1203/H_1207).
+    The predictability mechanism is the honest exception: it CAN couple to genuine
+    order (WALK), which reframes the negative — the limit is the STREAM, not the gate.
+
+NOT RULED OUT (for a future, non-inherited surface): driving the LIVE engine on a
+genuinely ORDERED byte-feature stream (a contiguous corpus walk, not i.i.d. samples)
+with a predictability transition-gate, where WALK 10.9x suggests division WOULD track
+trajectory. That requires a NEW non-inherited benchmark + an engine_cli.hexa
+GATE-B variant; out of scope for the inherited V14 bar (which is terminal RED here).
+
+HONESTY (a_scale_honest_scope): ONE corpus (clm_mid_5lang_c4), toy scale, 3 seeds,
+gradient-free, numpy mirror (H_1199 precedent). H_1203 + H_1207 stream builders
+imported VERBATIM. Fixed prototype book is order-invariant (built from feature SET),
+isolating order into the transitions. Scale transfer UNVERIFIED. Frozen bar (1.5 ==
+H_1203/H_1207) NOT moved. WALK + RANDGAUSS are declared NON-bar diagnostics. p7
+(cell/transition count, NOT perplexity), p8 (split == growth). Engine wiring
+UNCHANGED — VAdaptField byte-identical; measurement-only numpy probe.
+================================================================================
