@@ -19,7 +19,7 @@ real-module-name imports (NO importlib custom-name); SERIAL at n<=6 toy. $0 CPU-
 GPU, not a forge binary. g5 CODE-measured (no LLM self-judge, p7). a_scale_honest_scope:
 TOY n<=6; production transfer UNVERIFIED.
 
-PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/H_1045_vector_phi_ruler.md; TEXT only):
+PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/cards/H_1045_vector_phi_ruler.md; TEXT only):
   MARGIN = +0.05 AUC. best single scalar = per-substrate-mean LOO-AUC argmax.
   PASS requires BOTH:
     (a) mean-over-substrates vector LOO-AUC >= best-single-scalar mean LOO-AUC + 0.05

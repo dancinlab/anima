@@ -178,8 +178,8 @@ memory `feedback_toy_scale_transfer` 한대로 — toy ($0·small-n·V=8) 의 PA
 
 ## 8. 양방향 sibling
 
-- ⇄ [UNIVERSE/H_686 router entropy reg](../../UNIVERSE/H_686_router_entropy_regularization.md) — 본 ablation 의 토이 검증 대상 #1
-- ⇄ [UNIVERSE/H_687 KL-to-uniform output reg](../../UNIVERSE/H_687_kl_to_uniform_output_reg.md) — 본 ablation 의 토이 검증 대상 #2
+- ⇄ [UNIVERSE/cards/H_686 router entropy reg](../../UNIVERSE/cards/H_686_router_entropy_regularization.md) — 본 ablation 의 토이 검증 대상 #1
+- ⇄ [UNIVERSE/cards/H_687 KL-to-uniform output reg](../../UNIVERSE/cards/H_687_kl_to_uniform_output_reg.md) — 본 ablation 의 토이 검증 대상 #2
 - ⇄ [E2 corpus-balance collapse](./E2_CORPUS_BALANCE_COLLAPSE.md) — 본 harness 의 base recipe (verbatim 재사용)
 - ⇄ [D1 LZ76 collapse proxy](./D1_LZ76_COLLAPSE_PROXY.md) — `lz_norm` 측정자 출처
 - ⇄ [.discoveries/decoder_collapse_undertrain.tape](../../.discoveries/decoder_collapse_undertrain.tape) — `dec_undertrain` 이 collapse driver 라는 prior

@@ -3,7 +3,7 @@ a UNIVERSAL measure-theoretic property of within-block correlation, removability
 (synthesis resolving the H_1062 puzzle: WHY does the split DIRECTION generalize when the
 cleanly-removable-redundancy MECHANISM (H_1039) does not?)
 
-PRE-REG: UNIVERSE/H_1063_phi_split_sign_universality.md.
+PRE-REG: UNIVERSE/cards/H_1063_phi_split_sign_universality.md.
 
 PRIORS:
   H_1039 (REDUNDANCY-CAUSAL): WB redundancy CAUSALLY drives the *planning* Phi sign-split;

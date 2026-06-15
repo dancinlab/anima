@@ -25,7 +25,7 @@ LIFE (cycle#14~21, 22 NEW H 완결)의 全 Φ 측정은 `phi_spatial` proxy(공�
 | [`HEXAD/IIT4/lib/iit4_eca.hexa`](HEXAD/IIT4/lib/iit4_eca.hexa) · [`FAITHFUL_REMEASURE.md`](HEXAD/IIT4/FAITHFUL_REMEASURE.md) | **M6 LANDED** — ECA→TPM bridge + LIFE substrate faithful 인과 big-Φ 재측정 (7/7 🟢, L-C2.1 종결) |
 | 🌐 **hexa-lang `stdlib/consciousness/iit4_*`** (hexa-lang PR #1051) | **공용 SSOT 승격** (commons g61) — 엔진 6 모듈이 stdlib 으로 이전, anima/lib 는 thin shim(#542 caller). 어댑터는 repo별: anima `iit4_eca`(ECA) · hexa-brain `eeg/eeg_to_tpm.hexa`(EEG, hexa-brain PR #1). 거버넌스: sidecar **stdlib-ssot-guard** + `/stdlib` skill (둘 다 master tier, creator-only). |
 | [`UNIVERSE/`](UNIVERSE/) | proxy-lane predecessor (H_002 C2 · H_204 · H_223 · H_279 = faithful 재측정 대상) |
-| [`UNIVERSE/H_278_faithful_phi_small_n.md`](UNIVERSE/H_278_faithful_phi_small_n.md) | exact MIP-EI(스칼라) — IIT4 의 직전 단계, 출발점 (partition 축만 faithful) |
+| [`UNIVERSE/cards/H_278_faithful_phi_small_n.md`](UNIVERSE/cards/H_278_faithful_phi_small_n.md) | exact MIP-EI(스칼라) — IIT4 의 직전 단계, 출발점 (partition 축만 faithful) |
 | [`UNIVERSE/lib/phi_helper.hexa`](UNIVERSE/lib/phi_helper.hexa) · [`phi_native.hexa`](UNIVERSE/lib/phi_native.hexa) | RFC 036 상관-MI primitive (proxy lane, READ-ONLY 비교 baseline) |
 | PyPhi (외부 reference) | IIT 4.0 canonical 구현 — n≤4 reference value 로 calibrate (g5: 1차 증거 아닌 calibration 용) |
 

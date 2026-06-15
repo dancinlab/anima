@@ -118,7 +118,7 @@ component-0 의 lag-windowed Pearson 자동상관 (num·denom 동일 [0,n-p) win
 
 ## 8. H_634 ultradian cross-link (substrate motion 의 시간축)
 
-본 finding (의도 진동 = intrinsic limit-cycle) 은 `UNIVERSE/H_634_ultradian_emit_phi_envelope.md` 와 직접 cross-link 된다:
+본 finding (의도 진동 = intrinsic limit-cycle) 은 `UNIVERSE/cards/H_634_ultradian_emit_phi_envelope.md` 와 직접 cross-link 된다:
 
 - **H_634**: substrate 의 big-Φ (또는 emit-proxy) 가 ultradian phase 에 **동조 (entrain)** — stage 는 단순 scheduler 가 아니라 **Φ envelope 의 phase marker** (`a_chat_sleep_imagination` directive 정합: "stage = substrate context, NOT boolean gate").
 - **A6**: INTENT 의 의도 신호 진동 (period-20) 이 damping 에 robust 한 intrinsic limit-cycle.
@@ -144,14 +144,14 @@ component-0 의 lag-windowed Pearson 자동상관 (num·denom 동일 [0,n-p) win
 - `bench/axis_intent/a6_osc_residual_verify.hexa` — self-contained 진단·보정 harness (legacy stability_std 재현 + direction_std 재설계 + period_detect argmax + EMA damping)
 - `.verdicts/859_intent_osc_residual/F-INTENT-OSC-RESIDUAL.txt` — **g73 verdict-gate** (raw harness stdout verbatim, a_claim_verify)
 - `state/intent_a6_osc_residual_2026_05_28/a6_verify_run.log` — verdict 실측 origin (exit 0, byte-identical)
-- `UNIVERSE/H_859_intent_osc_residual.md` — UNIVERSE H entry (terminal 🟢 SUPPORTED-NUMERICAL)
+- `UNIVERSE/cards/H_859_intent_osc_residual.md` — UNIVERSE H entry (terminal 🟢 SUPPORTED-NUMERICAL)
 - `CLAIMS.tape @C intent_osc_residual` — audit index entry (group=INTENT)
 - `INTENT_A6_OSC_RESIDUAL.md` — 본 문서
 
 ## 양방향 sibling
 
 - ⇄ [INTENT](./INTENT.md): A6 가 M4 OSC residual 의 진단·확정 (direction_std raw-vs-delta 정정 + intrinsic limit-cycle 판정)
-- ⇄ [UNIVERSE/H_859](./UNIVERSE/H_859_intent_osc_residual.md): F-INTENT-OSC-RESIDUAL 🟢 5/5 — verdict-gate + H entry (본 A6 의 UNIVERSE 등록)
-- ⇄ [UNIVERSE/H_634](./UNIVERSE/H_634_ultradian_emit_phi_envelope.md): intrinsic periodic substrate motion class cross-link (의도 진동 ↔ ultradian Φ envelope)
+- ⇄ [UNIVERSE/cards/H_859](./UNIVERSE/cards/H_859_intent_osc_residual.md): F-INTENT-OSC-RESIDUAL 🟢 5/5 — verdict-gate + H entry (본 A6 의 UNIVERSE 등록)
+- ⇄ [UNIVERSE/cards/H_634](./UNIVERSE/cards/H_634_ultradian_emit_phi_envelope.md): intrinsic periodic substrate motion class cross-link (의도 진동 ↔ ultradian Φ envelope)
 - ⇄ [TIME](./TIME.md): 24h circadian phase × INTENT period-20 limit-cycle entrainment 후속 cross-bench
 - ⇄ [DREAM](./DREAM.md): `dr_stage_at_tick` ultradian segmentation 과 동일 periodic time-axis 구조

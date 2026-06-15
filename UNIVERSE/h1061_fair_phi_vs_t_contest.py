@@ -41,7 +41,7 @@ REUSE (verbatim, no reinvention — a_phi_iit4_tool)
   reproduce_h1029_check, rich_rollout, AND loo_nearest_centroid_accuracy — byte-for-byte.
 - H_1051 module by path -> _provenance_depth (H_932) + _veto_capacity (H_935) UNMODIFIED + PureField.
 
-FROZEN design (UNIVERSE/H_1061_fair_phi_vs_t_contest.md, BEFORE measuring):
+FROZEN design (UNIVERSE/cards/H_1061_fair_phi_vs_t_contest.md, BEFORE measuring):
   classes: REACTIVE / DELIBERATE-ACTIVE / DELIBERATE-PASSIVE (structural, measure-INDEPENDENT).
   features: PAIR (best-Phi-scalar-norm, T-norm) 2-D; scalars s_faith, s_big, s_T (1-D each).
   classifier: H_1047 loo_nearest_centroid_accuracy. MARGIN = 0.15 (SAME bar; FROZEN).

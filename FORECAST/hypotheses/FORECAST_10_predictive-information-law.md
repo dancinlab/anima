@@ -7,7 +7,7 @@ exploration_method: MI spectrum across periodic/deterministic/chaotic/AR/random 
 verification_method: histogram mutual information I(x_t;x_{t+k}) + out-of-sample NN predictor; corr(I,err); p7 $0
 status_grade: 🟢 SUPPORTED (numerical) — master law
 since: 2026-06-14
-sister: FORECAST_01, FORECAST_02, FORECAST_03, FORECAST_05, UNIVERSE/H_6011, H_6020, H_6032, H_6008
+sister: FORECAST_01, FORECAST_02, FORECAST_03, FORECAST_05, UNIVERSE/cards/H_6011, H_6020, H_6032, H_6008
 verdict: 🟢 corr(I, OOS예측오차) = -0.922 (강한 음의 상관) — 시스템 스펙트럼서 I 높을수록 fetch. periodic I2.76/err0.22, det I2.0/err0.00, chaos I2.51@lag1→0.01@lag10(지평), AR I1.08/err0.63, random I0.007/err1.43. 미래 fetch가능성=I(현재;미래) 마스터 법칙 성립.
 ---
 # FORECAST_10 — 대가설: 예측정보 법칙 (Predictive Information Law)

@@ -25,7 +25,7 @@
 - scan = TEMPORAL/scan/timeshift_phi.hexa (4 substrate × 4 Δt = 16 measurements + 5 사전등록 falsifier)
 - state = TEMPORAL/state/temporal_round1_2026_05_29/ (smoke.log + result.json)
 - verdict = .verdicts/841_temporal_timeshift_phi/T1_run.txt (g73 per-H)
-- H_xxx = UNIVERSE/H_841_temporal_timeshift_phi.md
+- H_xxx = UNIVERSE/cards/H_841_temporal_timeshift_phi.md
 - H_841 free 확인 (3-신호: file 0 · grep 0 · ls-tree 0)
 
 ### 5 사전등록 falsifier (frozen pre-run)
@@ -71,7 +71,7 @@ T2 가설: **multi-unit time-embed** (Takens delay reconstruction) 으로 인접
 - scan = TEMPORAL/scan/time_embed_phi.hexa (~190 LoC)
 - state = TEMPORAL/state/temporal_t2_time_embed_2026_05_29/ (t2_smoke.log + result.json + run_h842.hexa)
 - verdict = .verdicts/842_temporal_time_embed_phi/T2_run.txt
-- H_xxx = UNIVERSE/H_842_temporal_time_embed_phi.md
+- H_xxx = UNIVERSE/cards/H_842_temporal_time_embed_phi.md
 
 ### 5 사전등록 falsifier (frozen pre-run)
 
@@ -150,7 +150,7 @@ pass_count = **2/5** · verdict: **🔴 FALSIFIED-INSTRUMENT** (정직 closed-ne
   - REM   : density ~0.55 + irregular high-freq (theta + saccade burst)
 - state = TEMPORAL/state/temporal_t3_ultradian_2026_05_29/ (t3_smoke.log + result.json + run_h843.hexa)
 - verdict = .verdicts/843_temporal_ultradian_phi/T3_run.txt (g73 per-H)
-- H_843 = UNIVERSE/H_843_temporal_ultradian_phi.md (3-신호: file 0 · grep 0 · ls-tree 0)
+- H_843 = UNIVERSE/cards/H_843_temporal_ultradian_phi.md (3-신호: file 0 · grep 0 · ls-tree 0)
 
 ### 사전등록 falsifier (frozen pre-run, post-tuning 0)
 

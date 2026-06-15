@@ -1,7 +1,7 @@
 """H_1066 — planning-specificity-primitive-dissection: WHAT structural property of the planning
 intervention is NECESSARY+SUFFICIENT for the ZCA-removable, median-binarization-aligned sign-split?
 
-PRE-REG: UNIVERSE/H_1066_planning_specificity_dissection.md.
+PRE-REG: UNIVERSE/cards/H_1066_planning_specificity_dissection.md.
 
 PRIOR CONTRAST (must be reproduced BEFORE scoring):
   - H_1039 GREEN (REDUNDANCY-CAUSAL): de-redundifying the PLANNING channels removes WB redundancy

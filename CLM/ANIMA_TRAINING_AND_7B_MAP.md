@@ -97,5 +97,5 @@ SBS launch ladder:  R0 closed-loop ✅ → R1 emit ✅ → R2 on-chip learn ✅ 
 | scale ladder | `CLM/P6_SCALE_LADDER_7B.md` |
 | launch ladder | `LAUNCHPAD/SBS.md` |
 | architecture / .clm format | `CLM/P0_ARCHITECTURE.md` · `CLM/CLM_FORMAT_SPEC.md` |
-| HW learning verdict | `UNIVERSE/H_904_clm_onchip_plasticity.md` |
+| HW learning verdict | `UNIVERSE/cards/H_904_clm_onchip_plasticity.md` |
 | plasticity frontier | `UNIVERSE/PLASTICITY-CANDIDATES.md` |

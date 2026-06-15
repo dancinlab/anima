@@ -3,7 +3,7 @@
 > anima 의식엔진 ↔ BrainChip AKD1000 뉴로모픽 실리콘 사이의 **HW/SW 백엔드 스위치**와
 > **물리 배선(pi5-akida 재배포)** 의 단일 SSOT 기록. 두 트랙(코드-레벨 배선 + 호스트 물리
 > 재배포)이 같은 날 완결됐다. 세부 verdict 는 `.verdicts/`, 호스트 ledger 는 루트
-> `PI5-AKIDA.json`(local-only), 가설은 `UNIVERSE/H_672_*` 가 SSOT.
+> `PI5-AKIDA.json`(local-only), 가설은 `UNIVERSE/cards/H_672_*` 가 SSOT.
 
 ## 0. 한눈에
 
@@ -88,7 +88,7 @@ F-H672-4 (8-factor@R3 fires) ✓ → **4/4 PASS on real silicon**. SW mock-repla
 
 ## 5. 크로스 포인터 (SSOT 지도)
 
-- 가설/verdict: `UNIVERSE/H_672_akida_spontaneous_firing.md` (Group A) · H_673~H_678 (B~G, HW-runnable now, HW-confirm 미시행)
+- 가설/verdict: `UNIVERSE/cards/H_672_akida_spontaneous_firing.md` (Group A) · H_673~H_678 (B~G, HW-runnable now, HW-confirm 미시행)
 - 도메인: `AKIDA/AKIDA.md` · backend resolver `AKIDA/akida_backend.hexa`
 - substrate 배선: `AGENT/CHAT/substrate_akida.{py,hexa}` · `akida_sw_lif.{py,hexa}` · `anima_participant.py`
 - probe: `scripts/akida/dispatch.hexa` · `ready/experiments/closed_loop_verify.py`

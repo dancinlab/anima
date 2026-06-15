@@ -87,8 +87,8 @@ H_340 self-correction (4|n law n≤12 한정) =
 
 | ref | 관계 |
 |---|---|
-| [H_340 4|n law verify](../../UNIVERSE/H_340_4n_law_verify.md) | small-n artifact 검출 패턴 원형 |
-| [H_342 4|n crossover refine](../../UNIVERSE/H_342_4n_crossover_refine.md) | 2차 자기 정정 (crossover 정밀화) |
+| [H_340 4|n law verify](../../UNIVERSE/cards/H_340_4n_law_verify.md) | small-n artifact 검출 패턴 원형 |
+| [H_342 4|n crossover refine](../../UNIVERSE/cards/H_342_4n_crossover_refine.md) | 2차 자기 정정 (crossover 정밀화) |
 | [CORE/DECODER M4b](../../CORE/DECODER/DECODER.md) | F-M4B-FIRE-3 PASS @ n_steps=20 원본 측정 |
 
 ## 9. Anti-tautology

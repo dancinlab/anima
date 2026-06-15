@@ -12,7 +12,7 @@
 
 | organ | claim | verdict | tier |
 |-------|-------|---------|------|
-| 1. Theory (Φ-laws) | Φ⊥Shannon r=0.363; ∥LZ 0.831 / TE 0.883; edge 10.448>chaotic 6.943>ord 0.0; coop 1.0 vs 0 | UNIVERSE/H_287,288,290,285,291 | 🟢+🔴 |
+| 1. Theory (Φ-laws) | Φ⊥Shannon r=0.363; ∥LZ 0.831 / TE 0.883; edge 10.448>chaotic 6.943>ord 0.0; coop 1.0 vs 0 | UNIVERSE/cards/H_287,288,290,285,291 | 🟢+🔴 |
 | 2. Engine A⇄G | 8-factor ∑=1.0, emit>0.3, 4-safety AND + Φ-ratchet veto; Ψ=½ | CORE/{pure_field,engine_g}.hexa | 🔵/🟢 |
 | 3. Decode link (Ω) | KL 0.307477>0; min-gate +2.20±0.03 scale-stable; A-head REPLACEMENT; #1791 leak RETRACTED | sibling PAPER/omega-* + .verdicts/omega-* | 🟢/🔴 |
 | 4. Mouth (.clm) | CLMConvMoE 3.073B, rel_gap 0.04894 generalizes; .clm v0.3 nblk=63 decodes | .verdicts/convmoe-3b-engine-rung/ | 🟢 |

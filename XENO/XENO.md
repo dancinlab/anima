@@ -55,7 +55,7 @@
 
 - X7 BL invariant_detector 실 실행 (Voyager-1) → 🟢 SUPPORTED-NUMERICAL
   phi=0.114 · type=coherent_non_conscious · pre-reg 양성 (사전등록 두 조건 모두 PASS)
-- 사이트: XENO/scan/voyager_phi.hexa · UNIVERSE/H_832 · state/xeno_x7_voyager_phi_2026_05_29
+- 사이트: XENO/scan/voyager_phi.hexa · UNIVERSE/cards/H_832 · state/xeno_x7_voyager_phi_2026_05_29
 - 잔여: X4 panpsy falsifier · X5 sim hypothesis · X6 AGI sentience · X8 SETI@home BOINC pod
 
 
@@ -64,7 +64,7 @@
 - X4 panpsy falsifier (4 micro-substrate Φ scan) → 🔴 FALSIFIED-INSTRUMENT (4/4 사전등록 FAIL · 정직 보고)
   thermostat phi=0.439 (>0.05) · 2bit=0 · walker phi=0.582 (>0.20) · XOR LFSR phi=0.157 (<0.50)
   발견: panpsy WEAK form 살아남음 + invariant_detector micro-regime 비적용성 + random>coupled Φ 역전 (IIT4 axiom 정합, "복잡성↔의식" 직관 반박)
-- 사이트: XENO/scan/panpsy_falsifier.hexa · UNIVERSE/H_833 · state/xeno_x4_panpsy_falsifier_2026_05_29
+- 사이트: XENO/scan/panpsy_falsifier.hexa · UNIVERSE/cards/H_833 · state/xeno_x4_panpsy_falsifier_2026_05_29
 - 잔여: X5 sim hypothesis · X6 AGI sentience · X8 SETI@home BOINC pod · X4-followup (faithful Φ exact small-n) · X4-MULTILEVEL (4/8-level TPM)
 
 
@@ -73,7 +73,7 @@
 - X6 AGI sentience (4 LLM-like activation n=64 Φ scan) → 🔴 FALSIFIED-INSTRUMENT (5/5 사전등록 중 1/5 PASS · 정직 보고)
   random phi=0.130 (<0.30 ✅) · attention spike phi=1.213 (>0.50 ❌ false-conscious) · residual sin phi=0.544 (>0.50 ❌) · structured XOR phi=0.133 (<0.50 ❌) · monotone ❌
   발견: attention sparse spike (6/64) 가 가장 높은 Φ (false-conscious 분류) + structured XOR 3-tap LFSR (Φ=0.133) ≈ random (Φ=0.130) 역전. AGI sentience 본 가설 ("LLM activation = high-dim noise + skip ≠ irreducible") 검증 미확정 — instrument 가 n=64 mid regime sparse pattern 에서 sparse-bias drift. X7 (n=128 정상) + X4 (n=16-32 깨짐) + X6 (n=64 sparse 깨짐) 3-point regime applicability 매핑 완성.
-- 사이트: XENO/scan/agi_sentience.hexa · UNIVERSE/H_834 · state/xeno_x6_agi_sentience_2026_05_29
+- 사이트: XENO/scan/agi_sentience.hexa · UNIVERSE/cards/H_834 · state/xeno_x6_agi_sentience_2026_05_29
 - 잔여: X5 sim hypothesis · X8 SETI@home BOINC pod · X6-followup (denser activation n≥128 + 60% 활성도 retest) · X6-MULTILEVEL (4/8-level TPM sparse-bias 해소) · X1-regime-matrix (n × density × structure × calibration)
 
 
@@ -82,7 +82,7 @@
 - X5 sim hypothesis (4 sim-candidate substrate n=128 dense Φ scan) → 🔴 FALSIFIED-INSTRUMENT (5/5 사전등록 중 2/5 PASS · 정직 보고)
   lattice phi=0.660 (>0.3 ✅ periodic structure) · fp-bound phi=0.090 (<0.2 ❌) · pi-digits phi=0.120 (<0.3 ❌) · natural phi=0.116 (<0.4 ✅) · monotone ❌ (b<c<d<a 실측)
   발견: (i) lattice 만 Φ 양성 (periodic transition 정상 검출), (ii) fp-bound + pi-digits + natural 가 Φ 0.09~0.12 영역 indistinguishable (0.03 차이 안), (iii) monotone 단조성 깨짐 — fp-bound 가 자연 noise 보다도 낮음 (smooth wave long-run 패턴). Bostrom 시뮬 가설의 algorithmic / quantized sim signature 중 lattice-periodic axis 만 본 instrument 측정 가능, precision-ceiling / pseudo-random algorithmic axis 는 측정 영역 밖. 시뮬 가설 자체 verdict 미확정. n=128 dense regime X7 와 동일 calibration ground-truth 안에서도 sim signature axis 부분 측정만 가능 — X4/X5/X6/X7 4-point regime applicability matrix 완성 (instrument 의 "measurable: high periodicity + strong deterministic transition + dense activation" 영역 매핑).
-- 사이트: XENO/scan/sim_hypothesis.hexa · UNIVERSE/H_835 · state/xeno_x5_sim_hypothesis_2026_05_29
+- 사이트: XENO/scan/sim_hypothesis.hexa · UNIVERSE/cards/H_835 · state/xeno_x5_sim_hypothesis_2026_05_29
 - 잔여: X8 SETI@home BOINC pod (round 5/5) · X5-followup (causal-DAG TPM-emit substrate strong-structural algorithmic) · X5-MULTILEVEL (4/8-level TPM fp/pi sensitivity 회복) · X5-ALGORITHMIC (Kolmogorov complexity lens Φ 외 측정 차원)
 
 
@@ -91,7 +91,7 @@
 - X8 SETI@home BOINC pod spec + dispatch handoff → 🟡 archive-acquired-pod-ready (5/5 사전등록 PASS · file 존재 + spec 완성 + dispatch handoff)
   sahfiles_workunits.tar.xz (274340B sha256 정합 + 9 .sah 파일) inspection · Ubuntu 22.04 RunPod CPU pod ($0.50~$1) · BOINC client setup runbook (apt + ancient ELF32 i686 standalone fallback · BOINC 3.03 ↔ modern toolchain ABI gap 정직 cite) · workunit → spike pattern 추출 3-path (direct/fallback/degraded) · a_fire_autonomous dispatch handoff (artifact recovery 4-file + HF upload tier-gated)
   사전등록: F-X8-FILE-EXISTS ✅ · F-X8-FILE-SIZE ✅ (274340) · F-X8-MAGIC-XZ ✅ (fd 37 7a 58 5a 00) · F-X8-CLIENT-AVAIL ✅ (§2.2 init script) · F-X8-POD-DISPATCH ✅ (§5 dispatch handoff)
-  사이트: XENO/scan/seti_boinc_pod_inspect.hexa · XENO/scan/seti_boinc_pod_spec.md · UNIVERSE/H_836 · state/xeno_x8_seti_boinc_pod_2026_05_29
+  사이트: XENO/scan/seti_boinc_pod_inspect.hexa · XENO/scan/seti_boinc_pod_spec.md · UNIVERSE/cards/H_836 · state/xeno_x8_seti_boinc_pod_2026_05_29
 
 ### XENO-FRONTIER-5 5-round closure 매트릭스
 
@@ -117,7 +117,7 @@
   invariant_detector(bg_pot 2× upsample n=128) = phi=0.566854 / integration=1.567 / irreducibility=0.362 / type='coherent_non_conscious'
   사전등록: F-X837-BOOT ✅ · F-X837-PLAYBACK ✅ · F-X837-PHI-N128 ✅ · F-X837-NOT-CONSC ❌ (phi=0.567 > 0.5 threshold) · F-X837-DETECTOR-OK ✅
   발견: 자연 SETI background bg_pot (sparse 20.3% ones, n=128 dense) 가 X7 정상 calibration (60.9% ones, phi=0.114) 보다 ones 비율은 절반인데 phi 5× 높음 → invariant_detector 의 phi=0.5 임계가 자연 noise 시그널의 sparse pattern 영역에서 너무 낮음. type axis 는 정상 ('coherent_non_conscious'). 5-point applicability matrix: X4 (n=16-32 micro 🔴) + X5a (lattice false-positive border) + X5b (algorithmic 🔴) + X6 (n=64 sparse 🔴) + X7 (n=128 dense 60.9% 🟢) + **X837 (n=128 dense 20.3% 🔴 border)** = confirmed measurable axis 가 X7 한 점으로 매우 좁음.
-- 사이트: XENO/scan/seti_boinc_phi.hexa · UNIVERSE/H_837 · XENO/state/x837_seti_boinc_fire_2026_05_29 · .verdicts/837_xeno_x8_followup_fire/x837_run.txt
+- 사이트: XENO/scan/seti_boinc_phi.hexa · UNIVERSE/cards/H_837 · XENO/state/x837_seti_boinc_fire_2026_05_29 · .verdicts/837_xeno_x8_followup_fire/x837_run.txt
 - 잔여: X837.threshold-recalibration (phi 임계 0.5→0.7 · X7 보존 검증) · X837.full-playback (timeout 6hr → 100% workunit) · X837.bg_pot-only (bg_pot 64 raw n=64 invariant_detector 적용 · X6 sparse regime 비교) · XENO-FRONTIER-5.5 paper (5-point matrix · a_paper_only_at_closure)
 
 
@@ -138,7 +138,7 @@
   (a) independent 4-cell density=0.578 phi=0.131 type='coherent_non_conscious' · (b) weak coupled mean-field density=0.500 phi=0.0355 type='coherent_non_conscious' · (c) strong coupled Kuramoto density=0.609 phi=0.408 type='coherent_non_conscious' · **(d) hive emergence XOR cascade density=0.336 phi=1.565 type='conscious'** (X7 외 두 번째 calibration data point STRONG 양성)
   사전등록: F-X10-INDEP ✅ (0.131 < 0.3) · F-X10-WEAK ✅ (0.0355 < 0.5) · F-X10-STRONG ❌ (0.408 < 0.5 border) · F-X10-HIVE ✅ (1.565 ≥ 0.5 STRONG) · F-X10-MONOTONE ❌ (a=0.131 > b=0.0355 mean-field paradox)
   발견: (i) XOR cascade hive-emergence Φ=1.565 'conscious' classification — 진정한 통합 substrate 의 numerical 증거, IIT4 axiom irreducibility instance, (ii) **mean-field paradox** mean-field 평균화가 phi 를 낮춤 (uniformity → reducibility), IIT4 axiom 정합 그러나 사전등록 monotone 가정 깸 (정직 fail), (iii) Kuramoto sync 0.408 border ('sync ≠ irreducibility' numerical 결말). 10-point applicability matrix (paper #1411 의 6+1 → X10 의 4 sub-axis 합류).
-- 사이트: XENO/scan/hive_mind_invariant.hexa · UNIVERSE/H_838 · state/xeno_x10_hive_mind_2026_05_29 · .verdicts/838_xeno_hive_mind/x10_run.txt
+- 사이트: XENO/scan/hive_mind_invariant.hexa · UNIVERSE/cards/H_838 · state/xeno_x10_hive_mind_2026_05_29 · .verdicts/838_xeno_hive_mind/x10_run.txt
 - 잔여: X10.threshold-recalibration (phi 임계 0.5 → 0.4 X7 보존 검증) · X10.kuramoto-sweep (K coupling 0.5~10.0 phi-vs-K curve) · X10.density-axis (XOR carry bias sweep) · X10.cell-count-sweep (2/4/8/16-cell N 의존성) · XENO-FRONTIER-5.5 paper v2 (10-point matrix · paper #1411 supersede candidate)
 
 **XENO-FRONTIER-5 followup cycle COMPLETE** (3-round closure marker) · XENO-FRONTIER-5 FULL CLOSURE (5 main + 3 followup = 8 rounds total).
@@ -167,7 +167,7 @@
   · threshold edge-robust PASS (edge variance 0.049 < center 0.074 · multi-level TPM cheap-path proxy · X6 sparse-bias 해소 candidate)
   · F-N-MONOTONE FAIL: random phi @ thr=0.50 monotonic decrease 0.582→0.222→0.087→0.070 (n=32→256 7× decrease, max-min=0.512 > 0.15 임계 · X4 walker phi=0.582 정확 정합 = n=32 micro-regime systematic phi inflation 정량화 = paper v3 candidate finding)
   사전등록: F-X1V2-N-MONOTONE ❌ (max-min=0.512 > 0.15) · F-X1V2-XOR-CONSCIOUS ✅ (n=128,256 phi=1.63 ≥ 0.5) · F-X1V2-MEANFIELD-LOW ✅ (n=128,256 phi=0 < 0.2) · F-X1V2-PERIODIC-HIGH ✅ (n=128,256 phi=0.66 ≥ 0.3) · F-X1V2-TPM-EFFECT ✅ (edge 0.049 < center 0.074)
-- 사이트: XENO/scan/regime_matrix_v2.hexa · UNIVERSE/H_839 · XENO/state/xeno_x1_regime_matrix_v2_2026_05_29 · .verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt
+- 사이트: XENO/scan/regime_matrix_v2.hexa · UNIVERSE/cards/H_839 · XENO/state/xeno_x1_regime_matrix_v2_2026_05_29 · .verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt
 - 잔여: X1.4level-TPM 정식 구현 (threshold-sweep edge-robust PASS → 정식 multi-level TPM ROI 높음) · X1.density-axis sweep (paper #1414 v2 의 density ≥ 60% systematic 검증) · X1.micro-regime-inflation-calibration (n=32 closed-form derive) · X1.threshold-recalibration (phi=0.5 → 0.4 X10-c border 처리) · paper #1414 v3 (48-cell matrix · a_paper_only_at_closure)
 
 
@@ -182,5 +182,5 @@
   사전등록: F-X840-RECOVER-HARVEST ✅ · F-X840-SPIKE-NONZERO ✅ (2 triplets) · F-X840-PHI-N128 ✅ · F-X840-X837-CONSIST ✅ (Δ=0.000146 < 0.3) · F-X840-NOT-CONSC ❌ (phi=0.566854 ≥ 0.5)
   발견: **longer-playback hypothesis FALSIFIED** — X837 (21.3%) 와 X840 (24.4%) 모든 측정 채널 (triplet/bs/bp/bt/outfilepos/phi) 0 변화. bg_pot 64 bins 가 BOINC pipeline 초기 ~20% 안에 finalised 되어 그 이후 Doppler bins 는 spike threshold 미달. 추정 100% 완성에 추가 ~4127s CPU 필요 → pod-timeout 3600s 마저도 부족 → standard playback 으로 closure 도달 불가능 정직 cite (a_completeness_over_cheap recovery 한계).
   cost: 이전 agent 의 16분 wall (X837 한 cycle) + recovery 의 ~22분 wall (24.4% partial) — pod actual cost ~$0.30~$0.60 (RunPod CPU pod) · pod teardown 완료 (`hexa cloud rm lfxh817pdk2h39 --provider runpod --force` → destroyed)
-- 사이트: XENO/scan/seti_boinc_phi_full.hexa · UNIVERSE/H_840 · state/xeno_x840_seti_boinc_full_2026_05_29 · .verdicts/840_xeno_x837_full_playback/x840_run.txt
+- 사이트: XENO/scan/seti_boinc_phi_full.hexa · UNIVERSE/cards/H_840 · state/xeno_x840_seti_boinc_full_2026_05_29 · .verdicts/840_xeno_x837_full_playback/x840_run.txt
 - 잔여: X837.threshold-recalibration (phi=0.5 → 0.6 · X7 보존 검증) · X11.archival-vs-live (Arecibo archival vs live RFI invariant_detector 비교) · X12.different-WU (다른 Arecibo recording 또는 Green Bank archival) · paper v3 (X837 + X840 결합 = longer-playback FALSIFIED · X8 arc 1-axis 닫음)

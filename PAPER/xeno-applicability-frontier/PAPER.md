@@ -32,4 +32,4 @@
 - sibling domain: [TEMPORAL/TEMPORAL.md](../../TEMPORAL/TEMPORAL.md) — 4D applicability extension closed-negative SSOT (T1 lag-axis + T2 embed-dim dual artifact + T3 자연 entry)
 - sibling paper: [PAPER/structure-emergent-vs-number-convention](../structure-emergent-vs-number-convention/PAPER.md) — substrate-emergent vs design-convention decomposition 자매 axis
 - SSOT verdict: [.verdicts/832~842_xeno_temporal_*/](../../.verdicts) — 10 verdict 원본 verbatim (X840/T1/T2 추가)
-- SSOT hypothesis: [UNIVERSE/H_832~H_842](../../UNIVERSE) — 환류 SSOT (H_840 + H_841 + H_842 추가)
+- SSOT hypothesis: [UNIVERSE/cards/H_832~H_842](../../UNIVERSE) — 환류 SSOT (H_840 + H_841 + H_842 추가)

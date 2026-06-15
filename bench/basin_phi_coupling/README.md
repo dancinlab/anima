@@ -62,9 +62,9 @@ Mac-local, ~30s wall, 128 `phi_structure` calls, 0 USD GPU cost.
 
 ## Cross-link
 
-- [UNIVERSE H_341](../../UNIVERSE/H_341_basin_phi_correlation.md) — n=4 exact, 4 rules, +0.776
-- [UNIVERSE H_345](../../UNIVERSE/H_345_basin_phi_n5_exact.md) — n=5 single sys_state=21, 4 rules, +0.251/−0.799
-- [UNIVERSE H_346](../../UNIVERSE/H_346_phi_state_sweep.md) — n=5 state-averaged, 4 rules, +0.550/−0.951 🟢 capstone
+- [UNIVERSE H_341](../../UNIVERSE/cards/H_341_basin_phi_correlation.md) — n=4 exact, 4 rules, +0.776
+- [UNIVERSE H_345](../../UNIVERSE/cards/H_345_basin_phi_n5_exact.md) — n=5 single sys_state=21, 4 rules, +0.251/−0.799
+- [UNIVERSE H_346](../../UNIVERSE/cards/H_346_phi_state_sweep.md) — n=5 state-averaged, 4 rules, +0.550/−0.951 🟢 capstone
 - [BENCH #1 (이 문서)](./README.md) — n=4 state-averaged, **8 rules**, −0.314/+0.122 🟠/🔴
 
 ## Honest caveats

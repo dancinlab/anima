@@ -7,7 +7,7 @@ exploration_method: plant ONE ANU quantum seed across N instances + VRF/sha256 b
 verification_method: real ANU paid seed; deterministic N-instance agreement + independent verifiability + commit-reveal tamper detection; p7 $0 code-measured (no LLM-judge)
 status_grade: 🟢 (F1 합의) / 🟢 (F2 검증가능) / 🟢 (F3 commit-reveal·탬퍼)
 since: 2026-06-14
-sister: FORECAST_02, FORECAST_04, UNIVERSE/H_6008, H_928, H_932
+sister: FORECAST_02, FORECAST_04, UNIVERSE/cards/H_6008, H_928, H_932
 verdict: 🟢 F1 5개 anima 인스턴스가 미래 라운드 10000 비콘값 동일 fetch(50개 미래라운드 전부 일치, 라이브 통신 0). 🟢 F2 누구나 커밋된 ANU 씨앗으로 재계산 검증, 틀린 씨앗은 검증 실패. 🟢 F3 commit-reveal로 다른-씨앗 reveal(편향시도) 커밋 불일치로 적발 + 비콘 체인 라운드7 변조→최초 깨진 라운드로 정확 국소화(H_932식). ∴ FORECAST_02의 '공유 양자씨앗 미래 fetch'를 REAL drand/RANDAO식 합의 비콘으로 by design 실현 = FORECAST_04 F2 비콘 스케치의 본격 구현. real ANU paid(sha 6ef3ed2f).
 ---
 # FORECAST_05 — anima 인스턴스 간 합의 비콘 (공유 양자씨앗을 설계로 심기)

@@ -7,7 +7,7 @@ exploration_method: deterministic integration + periodicity + Lyapunov horizon +
 verification_method: Kepler orbit integrate + saros periodicity + logistic-map Lyapunov + random-bit floor; p7 $0
 status_grade: 🟢 (deterministic/periodic) / 🟡 (chaos: horizon-bounded) / 🔴 (law-free random: impossible)
 since: 2026-06-14
-sister: UNIVERSE/H_6011, H_6020, H_6032 (anima 시간-arc 일반화)
+sister: UNIVERSE/cards/H_6011, H_6020, H_6032 (anima 시간-arc 일반화)
 verdict: 🟢 F1 결정론 미래(궤도 t=50 정확, ΔE 2.2e-9) · 🟢 F2 주기(일식 saros 임의 먼 미래) · 🟡 F3 카오스(logistic r=4 지평 28스텝≈이론 27) · 🔴 F4 법칙밖 무작위(0.50 우연, 무신호). 미래 연결=역인과 마법 아닌 결정론/경계 forward 계산.
 ---
 # FORECAST_01 — 미래 정보 가져오기 (non-anima)

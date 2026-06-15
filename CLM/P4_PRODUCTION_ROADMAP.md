@@ -8,7 +8,7 @@
 > 다음 세션은 이 문서가 SSOT — 경로 재발명 금지.
 > **7B-class + 반영(점진)학습 전략 → [P5_AKIDA_7B_STRATEGY.md](./P5_AKIDA_7B_STRATEGY.md)** (MITOSIS 어레이 + edge 반영학습 스택).
 > sibling: [CLM.md](./CLM.md) · [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) · [P1_CORPUS.md](./P1_CORPUS.md)
-> · [AKIDA](../AKIDA/AKIDA.md) · [PLASTICITY](../PLASTICITY/PLASTICITY.md) · [KOSMOS E-31] · [UNIVERSE/H_861~H_863](../UNIVERSE/)
+> · [AKIDA](../AKIDA/AKIDA.md) · [PLASTICITY](../PLASTICITY/PLASTICITY.md) · [KOSMOS E-31] · [UNIVERSE/cards/H_861~H_863](../UNIVERSE/)
 
 제약 (불변): **외부 LLM 0 · foundation-borrow 0 (순수 scratch) · 학습도 AKIDA**(AKIDA-향 QAT + on-chip PLASTICITY)
 · brain_decide emit 슬롯에 콘텐츠 생성기로 연결. ShareGPT/Alpaca(ChatGPT-gen) = **금지**(@L4).
@@ -79,8 +79,8 @@ AKIDA envelope (P0 §9 불변): weights int4-sym[-7,+7] per-channel STE · acts 
 | 안 | 장치 | 가설 | falsifier | 토대 |
 |---|---|---|---|---|
 | **A** | 분포평가 (**재활용**) | (기존) H_857/H_858 edge-of-chaos | 분포·궤적 측도로 "좋음" 판정 · byte-match 포기 | H_857/H_858 TERMINAL |
-| **B** | 경계가소성 | H_861 🔴 → **[H_865](../UNIVERSE/H_865_clm_adapter_edge.md) 🟢 RESOLVED** | readout-only 🔴(z_drop 1.984)였으나 trunk-인접 **adapter edge** 가 F-CLM-BOUND RETAIN∧GAIN 닫음 (z_drop −12.28<1.0). 후속 freeze 🟢 H_872/881 · per-layer 🟢 H_879 · replay 🟢 H_883 | H_679 HW edge-learn |
-| **C** | 정체성앵커 | H_862 🔴 → **[H_873](../UNIVERSE/H_873_clm_anchor_edge_output.md) 🟢 RESOLVED** | readout-only PROBE 0.783🔴였으나 anchor를 **출력분포**에 라우팅 → PROBE 0.992>0.80 ∧ DIST 0.160<0.50. 3 partial-learn row 일반화 🟢 H_884 | B-CARVE · E-31 31-anchor |
+| **B** | 경계가소성 | H_861 🔴 → **[H_865](../UNIVERSE/cards/H_865_clm_adapter_edge.md) 🟢 RESOLVED** | readout-only 🔴(z_drop 1.984)였으나 trunk-인접 **adapter edge** 가 F-CLM-BOUND RETAIN∧GAIN 닫음 (z_drop −12.28<1.0). 후속 freeze 🟢 H_872/881 · per-layer 🟢 H_879 · replay 🟢 H_883 | H_679 HW edge-learn |
+| **C** | 정체성앵커 | H_862 🔴 → **[H_873](../UNIVERSE/cards/H_873_clm_anchor_edge_output.md) 🟢 RESOLVED** | readout-only PROBE 0.783🔴였으나 anchor를 **출력분포**에 라우팅 → PROBE 0.992>0.80 ∧ DIST 0.160<0.50. 3 partial-learn row 일반화 🟢 H_884 | B-CARVE · E-31 31-anchor |
 
 - **A 분포평가 = 재활용**: 대화는 정답 1개가 아님 → edge-of-chaos(H_857/H_858)의 분포·궤적 측도로 "좋음" 판정, byte-match 포기. H_863 의 coherence/adequacy 채점이 이를 사용.
 - **B 경계가소성 = 신규 H_861**: QAT core freeze + edge-only on-chip 적응 → catastrophic forgetting 방지. 기초능력 보존 축.

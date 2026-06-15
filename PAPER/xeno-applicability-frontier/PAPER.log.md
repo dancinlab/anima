@@ -24,7 +24,7 @@
 - p7=0 / a_blue_closed: 10 verdict 원본 verbatim 인용, no post-tuning, no perplexity judge
 - a_paper_negative_ok (X840 + T1 + T2 모두 closed-negative) + a_paper_significance + a_paper_only_at_closure + a_paper_format 정합
 - a_paper_sections: 21 section_claims 전부 .verdicts/8xx_*/x*_run.txt verdict pointer 연결
-- INBOX 환류 0건 (UNIVERSE/H_840/H_841/H_842 직접 SSOT)
+- INBOX 환류 0건 (UNIVERSE/cards/H_840/H_841/H_842 직접 SSOT)
 - branch: feat/paper-v3-temporal-2026-05-29
 - author: paper-v3 fg agent (XENO follow-up 2 cycle round 4/5)
 
@@ -47,7 +47,7 @@
 - p7=0 / a_blue_closed: invariant_detector verbatim 인용, no post-tuning, no perplexity judge
 - a_paper_negative_ok + a_paper_significance + a_paper_only_at_closure + a_paper_format 정합
 - a_paper_sections: 16 section_claims 전부 .verdicts/838_xeno_hive_mind/x10_run.txt 등 verdict pointer 연결
-- INBOX 환류 0건 (UNIVERSE/H_838/H_837 직접 SSOT)
+- INBOX 환류 0건 (UNIVERSE/cards/H_838/H_837 직접 SSOT)
 - branch: feat/paper-v2-mean-field-paradox-2026-05-29
 - author: paper-v2 fg agent (XENO follow-up 2 cycle round 2/5)
 

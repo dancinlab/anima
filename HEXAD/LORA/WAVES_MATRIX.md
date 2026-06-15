@@ -5,7 +5,7 @@
 > R8/R8a/R8c spec + cluster X/Y/Z 자연실험 + LIFE H_247-249 흡수 의 read-once 표.
 > **2026-05-24 update**: V3 axis-FAN 5/7+2 partial (PR #249) · cluster X/Y/Z byte-equal (PR #251) · from_qwen audit (PR #255) · random baseline (PR #256) · R8a/R8c spec (PR #257/#250) · LIFE H_247-249 (PR #327).
 >
-> source files: `SAGA_SESSION3.md` · `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{11..16}_2026_05_23.md` · `../V3/AXIS_MAP.md` · PR #206 `AXIS_MAP_RESULTS.md` (→ #249 5/7+2) · PR #214 `AXIS_R8_BASE_WARM_INIT.md` · PR #211 `AXIS_MAP_BUG_POSTMORTEM.md` · PR #255 `from_qwen audit` · PR #256 `RANDOM_BASELINE_INIT_CE_BENCHMARK` · PR #257 `AXIS_R8A_QWEN_TARGET_MATCH_FIRE_SPEC` · PR #250 `AXIS_R8C_PROBE_UPDATE_3_CELL` · PR #327 `UNIVERSE/H_247-249`.
+> source files: `SAGA_SESSION3.md` · `../UNCLASSIFIED/state/grid_3b_s187_2026_05_21/VP21M_WAVE{11..16}_2026_05_23.md` · `../V3/AXIS_MAP.md` · PR #206 `AXIS_MAP_RESULTS.md` (→ #249 5/7+2) · PR #214 `AXIS_R8_BASE_WARM_INIT.md` · PR #211 `AXIS_MAP_BUG_POSTMORTEM.md` · PR #255 `from_qwen audit` · PR #256 `RANDOM_BASELINE_INIT_CE_BENCHMARK` · PR #257 `AXIS_R8A_QWEN_TARGET_MATCH_FIRE_SPEC` · PR #250 `AXIS_R8C_PROBE_UPDATE_3_CELL` · PR #327 `UNIVERSE/cards/H_247-249`.
 
 ## § Wave 매트릭스
 

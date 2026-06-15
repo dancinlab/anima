@@ -21,7 +21,7 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **next (R2 candidate)**: language-TAGGED / multi-channel readout (distinct label-channels per
   language) to hold two contradictory carvings WITHOUT interference — a DIFFERENT mechanism, frozen
   ANEW, not a bar relaxation. Depletion test unchanged.
-- **claim-link**: `CLAIMS.tape @C h1330_whorf_bilingual` · card `UNIVERSE/H_1330_whorf_bilingual.md`
+- **claim-link**: `CLAIMS.tape @C h1330_whorf_bilingual` · card `UNIVERSE/cards/H_1330_whorf_bilingual.md`
   · verdicts `.verdicts/1330_whorf_bilingual/{H_1330_FREEZE,H_1330}.txt`
 - xref: h1323 · h1325 (the GREEN result extended) · **h1288** (growth-memory, the prediction tested)
   · h1316 · h1321 · h1322 · a_no_llm_frame_trap · a_break_the_wall · a_scale_honest_scope · c9 · c15

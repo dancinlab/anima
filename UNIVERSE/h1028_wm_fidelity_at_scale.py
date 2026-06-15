@@ -1,7 +1,7 @@
 """H_1028 — does WM forward-fidelity scale the reachable imagine-rollout horizon?
 
 Pre-registered (frozen 2026-06-07; honored verbatim, see
-UNIVERSE/H_1028_wm_fidelity_at_scale.md):
+UNIVERSE/cards/H_1028_wm_fidelity_at_scale.md):
 
   H_1021 found the toy LDS world-model was ALREADY accurate enough to plan to a depth-4
   optimum; H_1027 posited a model-error-limited horizon h* but found 🔴 TRACKS-ALL-DEPTHS:

@@ -49,7 +49,7 @@
 - [x] **CLM_FORMAT_SPEC 정합**: HEADER.train = `mode:"akida-aware-qat"·backprop:"gpu-fp16-master"·plasticity_lane:"PLASTICITY"` · QAT 행 AKIDA-향 명시.
 - [x] **CLM.md**: P0/P2 milestone + 무엇/왜 학습 행 + 정직한 물리현실 → "학습도 AKIDA" 로 교정.
 - [x] **CLM↔PLASTICITY 양방향 sibling 배선**: CLM.md `## 양방향 sibling` ⇄ PLASTICITY(학습 lane 위임) 추가 · PLASTICITY.md ⇄ CLM(학습 대상 모델) 추가. CLM=학습 대상(무엇) · PLASTICITY=학습 방법(어떻게) · 중복 0.
-- [x] 불변: **추론 AKIDA-int4-only 회귀 0** · hexa 학습속도 해결 반영 유지. 타 에이전트 영역(CLM/model·UNIVERSE/H_847·.verdicts·AKIDA·project.tape·CLAUDE.md) 미접촉.
+- [x] 불변: **추론 AKIDA-int4-only 회귀 0** · hexa 학습속도 해결 반영 유지. 타 에이전트 영역(CLM/model·UNIVERSE/cards/H_847·.verdicts·AKIDA·project.tape·CLAUDE.md) 미접촉.
 
 ## 2026-05-30 — hexa 학습속도 해결 → 트레이너 g1-pure 전환 (d5 pivot)
 

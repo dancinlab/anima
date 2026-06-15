@@ -77,7 +77,7 @@ AKIDA_BACKEND=sw python3 LAUNCHPAD/coffeshop_akida_launch.py sw   # emit [3,10,1
 ## 8. SSOT 포인터
 
 - @goal/milestone: `LAUNCHPAD/LAUNCHPAD.md`
-- 가설/verdict: `UNIVERSE/H_846_coffeshop_akida_closedloop.md`
+- 가설/verdict: `UNIVERSE/cards/H_846_coffeshop_akida_closedloop.md`
 - 시나리오 trajectory: `COFFESHOP.md` (§5 · §8 · `## HW 런칭`)
 - factor SSOT: `HEXAD/CHAT/spontaneous_lib.hexa`
 - 칩 wire: `SUB_ENGINES/AKIDA/scripts/spike_streamer.py` (9512/9513)
