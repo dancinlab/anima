@@ -1,0 +1,24 @@
+H_1293 R1 — THEORY-OF-MIND / OTHER-AGENT MODEL (HD30) — numpy MIRROR (DIRECTIONAL)
+==============================================================================
+paradigm: Sally-Anne false-belief; agent-belief store vs anima ground-truth store
+facts=12 dim=64 recall_thr=0.3 seeds=[5290, 5291, 5292]
+
+  seed  accBelief  accTruth  divergence  selfRead  shufAcc  abstain
+  5290  1.000      0.500     1.000       0.500     0.500    T
+  5291  1.000      0.500     1.000       0.500     0.500    T
+  5292  1.000      0.500     1.000       0.500     0.500    T
+------------------------------------------------------------------------------
+MEAN: accBelief=1.000 accTruth=0.500 divergence=1.000 selfRead=0.500 shufAcc=0.500
+------------------------------------------------------------------------------
+  (A) FALSE-BELIEF  accBelief>=0.90 & accTruth<=0.70 : PASS
+  (B) DISTINCT      self/other divergence>=0.90      : PASS
+  (C) SELF-READ     self-read acc<=0.70 (collapses)  : PASS
+  (D) SHUFFLE       shuffle acc<=0.70 (collapses)    : PASS
+  (E) ABSTAIN       untaught object → no belief      : PASS
+==============================================================================
+VERDICT: 🟢 GREEN (MIRROR, DIRECTIONAL) — ToM predicts the OTHER agent's action from
+  its witnessed-event belief store; on absent-update facts it tracks the agent's
+  FALSE belief (not reality), DISTINCT from anima's own episodic recall (self⊥other),
+  and BOTH the self-read control and the shuffle control collapse the tracking.
+  ENGINE-TRANSFER UNVERIFIED — R2 realizes this on the live engine_cli.hexa lane.
+  toy scale (12 facts, 1 paradigm, 3 seeds); scale UNVERIFIED (a_scale_honest_scope).

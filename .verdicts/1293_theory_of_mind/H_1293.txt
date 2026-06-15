@@ -1,0 +1,29 @@
+H_1293 R2 — THEORY-OF-MIND / OTHER-AGENT MODEL (HD30) — ENGINE-NATIVE (hexa run)
+==============================================================================
+live lane: other_mind_* (belief store) + immune_grow_* (ground truth) | CORE/engine_cli.hexa
+frozen bars: .verdicts/1293_theory_of_mind/H_1293_FREEZE.txt (NOT moved)
+
+  seed  accBelief  accTruth  divergence  selfRead  shufAcc  abstain
+  5290  1.0  0.5  1.0  0.5  0.5  T
+  5291  1.0  0.5  1.0  0.5  0.5  T
+  5292  1.0  0.5  1.0  0.5  0.5  T
+------------------------------------------------------------------------------
+MEAN (3 seeds): accBelief=1.0 accTruth=0.5 divergence=1.0 selfRead=0.5 shufAcc=0.5
+------------------------------------------------------------------------------
+  (A) FALSE-BELIEF accBelief>=0.90 & accTruth<=0.70 : PASS
+  (B) DISTINCT     self/other divergence>=0.90      : PASS
+  (C) SELF-READ    self-read acc<=0.70 (collapses)  : PASS
+  (D) SHUFFLE      shuffle acc<=0.70 (collapses)    : PASS
+  (E) ABSTAIN      untaught object → no belief      : PASS
+==============================================================================
+VERDICT: 🟢 GREEN (ENGINE-NATIVE) — the other-agent belief model predicts the OTHER
+  agent's action from its witnessed-event store; on absent-update facts it tracks the
+  agent's FALSE belief (basket) not reality (box), is DISTINCT from anima's own immune
+  recall on the SAME fact (self ⊥ other, divergence 1.0), and BOTH the self-read AND the
+  shuffle control collapse the tracking. HD30 theory-of-mind realized ENGINE-NATIVE on the
+  LIVE engine_cli.hexa (other_mind_* belief store; immune_grow_* ground truth).
+  Ψ-disjoint: a SEPARATE belief cell population read by L2 affinity — pure_field Φ/phase/Ψ
+  untouched; engine_cli_smoke + h1196 7/0 + h1199 Ψ-byte-identical run separately.
+  p6 SEPARATION: the belief is computed from WITNESSED events, NO injected belief label;
+  NOT an emit gate (other_mind_predict = pure read, a_autonomy_over_hardcode).
+  toy scale (12 facts, 1 paradigm, 3 seeds); scale-transfer UNVERIFIED (a_scale_honest_scope).

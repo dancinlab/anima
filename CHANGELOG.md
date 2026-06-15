@@ -2,10 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(MODEL): 🪞 마음이론 타자-belief 모델 lane (HD30, H_1293 R2 🟢 ENGINE-NATIVE)
+
+빠진 뇌 서브시스템 사다리에 **HD30 마음이론(theory-of-mind · TPJ/mentalizing)** 을 추가 — 타자-agent belief 모델 lane(`OtherMindModel`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`other_mind_new`/`other_mind_witness`/`other_mind_predict`/`other_mind_count`). E3 OTHER-MIND parked facet(MODEL.md L112-113)의 첫 엔진-네이티브 실현. 면역 faculty 와 같은 byte-trigram FNV-1a key 기하 + L2 affinity + abstain band 를 쓰되, agent 가 **WITNESS 한 이벤트로만** 갱신되는 별개 belief cell-store 다 — agent 가 갱신에 부재(ABSENT)하면 belief 가 LAG 한다 = FALSE belief, `other_mind_predict` 가 STALE belief 를 반환(Sally-Anne false-belief test).
+
+- **왜 missing/distinct**: 기존 모든 lane 은 anima **자신의** substrate state 를 읽거나 적분(면역 store=anima fact=ground truth · affect H_1290=anima interoception · homeostatic drive H_1292=anima 자신의 satiation 적분 · WM=self-buffer). 어느 것도 anima 의 ground truth 와 갈라질 수 있는 **별개 agent 의 belief** 를 모델하지 않는다. ToM 은 **self ⊥ other** 축에서 DISTINCT — 부재중-이동 fact 에서 anima 자신의 immune recall(box) ≠ ToM 예측(basket), 같은 fact 에 다른 답.
+- **frozen-first 검증** (`.verdicts/1293_theory_of_mind/H_1293_FREEZE.txt`, 사전등록): R1 numpy 미러 🟢 → **R2 ENGINE-NATIVE 🟢** (`CORE/h1293_theory_of_mind_probe.hexa`, 3 seed [5290,5291,5292], R1 미러와 byte-exact) — 5개 bar PASS: (A) FALSE-BELIEF accBelief 1.000 & accTruth 0.500 · (B) DISTINCT self/other divergence 1.000 · (C) SELF-READ 대조 0.500 붕괴 · (D) SHUFFLE 대조 0.500 붕괴 · (E) ABSTAIN intact.
+- **가드 무회귀**: `engine_cli_smoke` **37/0**(+4 ToM 케이스 31-34) · h1196 single-entry 7/0 · h1199 DIM-growth Ψ byte-identical. p6/p2/p3(agent belief=WITNESS 한 이벤트에서 COMPUTED, 주입 belief 라벨 없음, true-vs-false CLASS 는 metric SCORE 에만) · emit gate 아님(`other_mind_predict`=pure read, `a_autonomy_over_hardcode`) · Ψ-disjoint(별개 belief cell population 을 L2 affinity 로 READ). brain 타자-예측 루프 배선 + scale/recursive-2nd-order-ToM = follow-on. TOY scale(12 facts, 3 seeds, deterministic — ToM STRUCTURE 검증).
+- **canonical 등록(a_hypothesis_register #2175)**: `CLAIMS.tape @C h1293_theory_of_mind` (group=BRAIN-STRUCTURE-LADDER) · `UNIVERSE/HYPOTHESES.md` brain-structure-ladder roster 행 + `HYPOTHESES_neuro_structure_ladder.md` H_1293 행 · `domains/MITOSIS-ENGINE.log.md @H H_1293` · MEMORY.md 포인터.
+
 ## 2026-06-16 — governance(CLAUDE.md): `a_hypothesis_register` — 모든 가설은 UNIVERSE 목록에 등록
 
 새 거버넌스 디렉티브 `a_hypothesis_register` 추가: 모든 가설(H_####)은 실행과 동시에 캐노니컬 UNIVERSE 가설 목록 `UNIVERSE/HYPOTHESES.md` + `CLAIMS.tape`(a_claim_manifest) + per-domain 로그에 등록해야 한다(verdict tier 무관 — 벽/negative 포함, c9). verdict 박제·ARCHITECTURE/CHANGELOG 갱신만 하고 목록 등록을 빠뜨리는 반복 누락 패턴 차단(precedent: H_1280–1292 백필 #2174). families 불릿(Verify/paper workflow)에도 반영.
-
 
 ## 2026-06-16 — domain(MODEL): 🌡 시상하부 설정점-항상성 drive lane (HD29, H_1292 R2 🟢 ENGINE-NATIVE)
 

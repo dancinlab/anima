@@ -342,6 +342,41 @@ fn main() {
     if _assert_b("case_30_ablated_does_not_accumulate", true,
                  homeo_last(ha1) == homeo_last(ha0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (h) THEORY-OF-MIND — OTHER-AGENT BELIEF MODEL (H_1293 R2, HD30) ──────────────
+    // The ToM model is ADDITIVE + Ψ-disjoint (a SEPARATE belief cell population read by
+    // L2 affinity — it mutates no immune cell and never touches pure_field). These cases
+    // prove the lane's moving parts deterministically: an agent witnesses obj_x at
+    // "basket"; reality MOVES it to "box" while the agent is ABSENT (anima's own truth
+    // store updates, the agent does NOT witness) → the ToM prediction stays "basket"
+    // (the FALSE belief) while anima's own immune recall returns "box" (self ⊥ other).
+
+    // case 31 : the agent's belief tracks what it WITNESSED — after witnessing obj_x at
+    //   "basket" the ToM prediction is "basket".
+    let om0 = other_mind_witness(other_mind_new(), "obj_x", "basket")
+    if _assert_b("case_31_tom_tracks_witnessed_belief", true,
+                 other_mind_predict(om0, "obj_x") == "basket") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 32 : FALSE BELIEF (Sally-Anne) — reality moves obj_x to "box" (anima's own
+    //   truth store re-binds the fact) while the agent is ABSENT (no witness). The ToM
+    //   prediction stays "basket" (stale) while anima's immune recall returns "box" —
+    //   same fact, two answers (self ⊥ other = the load-bearing distinctness leg).
+    let tk = immune_embed_key("obj_x")
+    let mut tt = immune_grow_new(tk, "basket", 8, 16, true)
+    tt = immune_grow_bind(tt, tk, "box", cfg_on)               // reality moves; agent absent
+    let tom_false = (other_mind_predict(om0, "obj_x") == "basket")
+                 && (immune_grow_recall(tt, tk) == "box")
+    if _assert_b("case_32_false_belief_self_differs_from_other", true, tom_false) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 33 : ABSTAIN intact — an untaught object → the agent has NO belief ("").
+    if _assert_b("case_33_tom_abstains_on_untaught", true,
+                 other_mind_predict(om0, "untaught_zzz") == "") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 34 : witnessed REVISION — if the agent LATER witnesses obj_x at "box", its
+    //   belief OVERWRITES to "box" (witnessing an update revises the model; not a 2nd cell).
+    let om1 = other_mind_witness(om0, "obj_x", "box")
+    if _assert_b("case_34_witnessed_revision_overwrites", true,
+                 other_mind_predict(om1, "obj_x") == "box" && other_mind_count(om1) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

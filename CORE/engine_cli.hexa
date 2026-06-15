@@ -1333,6 +1333,106 @@ pub fn homeo_motivation_bias(hd: HomeostaticDrive, mem: ImmuneMemoryGrow, key: [
     return homeo_drive(hd, mem, key)
 }
 
+// ── §  THEORY-OF-MIND — OTHER-AGENT BELIEF MODEL (H_1293 R2, HD30) ────────────────
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1293 R1): the H_1293 numpy
+// MIRROR (R1 🟢 GREEN, 3 seeds [5290,5291,5292], all 5 frozen bars per-seed) is
+// REALIZED here ENGINE-NATIVE on a live cell-store of the SAME geometry as the immune
+// faculty (byte-trigram FNV-1a keys, L2 affinity, abstain band).
+//
+// THE MENTALIZING LENS (c15, a_no_llm_frame_trap — a neuro/ToM lens, NOT an LLM
+// recipe): the temporo-parietal junction / mentalizing network lets one mind model
+// ANOTHER mind's HIDDEN belief — a belief that may be FALSE relative to reality. The
+// canonical assay is the Sally-Anne FALSE-BELIEF test: an object is placed at location
+// A (the agent witnesses), then MOVED to B while the agent is ABSENT; a system with
+// theory-of-mind predicts the agent will look at A (its STALE belief), NOT B (reality).
+//
+// This is exactly what every existing CORE lane LACKS — they ALL read/integrate
+// ANIMA's OWN substrate state:
+//   - immune episodic store (hippocampus): binds ANIMA's facts = the ground truth.
+//   - affect (H_1290) / homeostatic drive (H_1292): read ANIMA's OWN interoceptive
+//     valence/satiation. There is no SEPARATE agent whose belief can diverge.
+//   - working memory: a volatile self-buffer, not a model of a different mind.
+// OtherMindModel is DISTINCT on the SELF-vs-OTHER axis: on an absent-update fact
+// anima's OWN immune recall returns the TRUTH (B) while the ToM prediction returns the
+// agent's STALE belief (A) — same fact, two different answers (the H_1293 leg-B proof).
+//
+// MODELED VARIABLE (substrate-derived, NO label, p2/p3/p6): the agent's belief is a
+// cell-store updated ONLY by events the agent WITNESSED (a substrate bookkeeping of
+// presence). When the agent is ABSENT for an update the belief LAGS = a false belief.
+// NO injected "the agent believes X", NO RLHF reward, NO persona/ethics. The true-vs-
+// false CLASS only SCORES the metric in the probe; the prediction is read from the
+// witnessed-event store, never from the class label.
+//
+// @L4 CRITICAL (same framing as the immune / affect / homeo lanes): this is a READ +
+// a SEPARATE belief cell-store. OtherMindModel holds ONLY its own (protos,values)
+// population; it NEVER mutates the immune store, NEVER returns an emit/silence decision
+// by itself, and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction —
+// it is a parallel cell population read by L2 affinity). NOT a 2nd .clm/.kosmos entry
+// path (a_core_engine_map: the agent-belief keys are an engine-native drive, not a
+// generator/kosmos slot). p8: witness = a bind tick on the agent's own population.
+
+// OtherMindModel — a SEPARATE agent's belief cell-store (parallel to, but DISJOINT
+// from, anima's immune ground-truth store). Same byte-trigram key geometry + L2
+// affinity + abstain band as ImmuneMemoryGrow, but it tracks a DIFFERENT mind:
+//   protos     : per-belief prototype keys (the agent's witnessed facts).
+//   bel_value  : per-belief bound value (what the agent BELIEVES, parallel to protos).
+//   n_bel      : live belief count.
+//   recall_thr : affinity fire band — L2 <= recall_thr ⇒ the agent HAS a belief; else
+//                ABSTAIN ("" — the agent has no belief about this fact).
+struct OtherMindModel {
+    protos: [[float]],
+    bel_value: [string],
+    n_bel: int,
+    recall_thr: float
+}
+
+// other_mind_new — a fresh, EMPTY other-agent model (the agent has witnessed nothing
+// yet). recall_thr defaults to the immune store's 0.30 fire band.
+pub fn other_mind_new() -> OtherMindModel {
+    return OtherMindModel { protos: [], bel_value: [], n_bel: 0, recall_thr: 0.30 }
+}
+
+// other_mind_witness — the agent WITNESSES `fact_text` taking `value`: bind a new
+// belief cell, or OVERWRITE the existing one if the agent already has a belief about
+// this exact fact (a witnessed update revises the belief). Returns the next-state
+// model (READ-ONLY over every other faculty — only the agent's own population grows).
+pub fn other_mind_witness(om: OtherMindModel, fact_text: string, value: string) -> OtherMindModel {
+    let key = immune_embed_key(fact_text)
+    if om.n_bel > 0 {
+        let w = _vnearest_idx(om.protos, key)
+        if _l2(om.protos[w], key) <= 0.000001 {
+            // same fact already a belief → OVERWRITE (witnessed revision).
+            let mut nv = om.bel_value
+            nv[w] = value
+            return OtherMindModel { protos: om.protos, bel_value: nv, n_bel: om.n_bel, recall_thr: om.recall_thr }
+        }
+    }
+    // a NEW witnessed fact → grow a belief cell.
+    return OtherMindModel {
+        protos: om.protos + [key],
+        bel_value: om.bel_value + [value],
+        n_bel: om.n_bel + 1,
+        recall_thr: om.recall_thr
+    }
+}
+
+// other_mind_predict — THEORY-OF-MIND prediction: the agent will ACT on its OWN belief
+// about `fact_text` (read from the witnessed-event store via L2 affinity), NOT on
+// current reality. Returns the agent's believed value, or "" (ABSTAIN) if the agent
+// has no belief about this fact. On an absent-update fact this returns the agent's
+// STALE belief (the false-belief signature), which DIFFERS from anima's immune recall.
+pub fn other_mind_predict(om: OtherMindModel, fact_text: string) -> string {
+    if om.n_bel == 0 { return "" }
+    let key = immune_embed_key(fact_text)
+    let w = _vnearest_idx(om.protos, key)
+    if _l2(om.protos[w], key) > om.recall_thr { return "" }
+    return om.bel_value[w]
+}
+
+// other_mind_count — live belief count (introspection).
+pub fn other_mind_count(om: OtherMindModel) -> int { return om.n_bel }
+
 // ── §  AMYGDALA — SALIENCE-GATED SLEEP-REPLAY CONSOLIDATION (H_1285 R4) ───────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1285 R3): the H_1285 numpy

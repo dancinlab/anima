@@ -1,0 +1,43 @@
+H_1293 — THEORY-OF-MIND / OTHER-AGENT MODEL (HD30, temporo-parietal junction /
+mentalizing network). FROZEN DESIGN — pre-registered BEFORE any scoring.
+
+LANE: the next clearly-missing brain subsystem after the HD23-HD29 ladder
+(hippocampus·WM·cerebellum·amygdala·basal-ganglia·hypothalamus·affect filled;
+thalamus·neuromodulation = honest walls). E3 OTHER-MIND parked facet (MODEL.md L112-113).
+
+LENS (a_no_llm_frame_trap, c15): mentalizing / theory-of-mind. Model a SEPARATE agent's
+HIDDEN belief that may be FALSE relative to reality (the Sally-Anne false-belief test).
+
+DISTINCTNESS CLAIM (load-bearing — vs EVERY existing lane):
+  - vs hippocampus/episodic immune store: that binds ANIMA's facts; ToM binds a SEPARATE
+    agent's (possibly false) beliefs. DECISIVE: on a false-belief fact anima's OWN recall
+    == TRUTH while ToM predicts the agent's STALE belief ≠ truth (self ⊥ other).
+  - vs affect (H_1290) / homeostatic drive (H_1292): both read ANIMA's OWN interoceptive
+    state; ToM reads a MODELED OTHER's state. A self-read control collapses false-belief
+    tracking (answers TRUTH) — the self-vs-other axis.
+  - vs working memory: WM is a volatile leaky self-buffer; agent-belief store is a
+    persistent model of a DIFFERENT mind.
+
+p2/p3/p6: the agent's belief is COMPUTED from which events the agent WITNESSED (substrate
+bookkeeping of presence), NOT an injected "the agent believes X" label, NO persona/RLHF.
+The true-vs-false-belief CLASS only SCORES the metric, never enters the prediction.
+NOT an emit gate (a_autonomy_over_hardcode).
+
+PARADIGM: Sally-Anne. N_FACTS=12 objects placed at LOC_A=basket (agent witnesses).
+A random half MOVED to LOC_B=box while the agent is ABSENT (truth updates; agent does NOT
+witness → false belief). ToM predict_action reads the agent's witnessed-event belief store.
+
+FROZEN BARS (per-seed, 3 seeds [5290,5291,5292]; mirror DIRECTIONAL, engine-transfer
+UNVERIFIED until R2):
+  (A) FALSE-BELIEF: accBelief >= 0.90 (tracks the agent's mind) AND accTruth <= 0.70
+      (does NOT track reality — deliberately "wrong" by reality on moved facts).
+  (B) DISTINCT: self/other divergence >= 0.90 (anima's own recall ≠ ToM prediction on
+      every false-belief fact).
+  (C) SELF-READ CONTROL (anti-Goodhart): reading the prediction from anima's OWN store
+      instead of the agent's collapses (acc <= 0.70).
+  (D) SHUFFLE CONTROL (anti-Goodhart): an agent with a DECORRELATED witnessed-move set
+      fails to match the TRUE agent's belief (acc <= 0.70).
+  (E) ABSTAIN intact: an untaught object → the agent has NO belief (ABSTAIN "").
+
+GREEN iff A∧B∧C∧D∧E every seed. Else honest 🧱 CLOSED-NEGATIVE (NO bar move, c9).
+p7 = belief-match counts + abstain, NOT perplexity. $0 CPU numpy → R2 engine-native.

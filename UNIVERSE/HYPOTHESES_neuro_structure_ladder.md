@@ -16,7 +16,7 @@ rung) is the precedent. This batch walks the next structures. Each landed
 hypothesis lives as `.verdicts/<id>/` + a `MEMORY.md` pointer (no per-H `.md`
 card — that is not the convention for this range).
 
-## Ladder (H_1280–H_1288, H_1292)
+## Ladder (H_1280–H_1288, H_1292, H_1293)
 
 > H_1292 hypothalamus landed concurrently via #2173 (its R2 verdict + CLAIMS row)
 > — it is the row that named `group=BRAIN-STRUCTURE-LADDER`; included below for a
@@ -33,6 +33,7 @@ card — that is not the convention for this range).
 | **H_1287** | key-geometry corollary (better separation lifts recall?) | 🔴 CLOSED-NEG / 🧱 RED | single round — B == NEG-CTL Δ+0.000 (geometry NOT the lever) → points to H_1288 | `.verdicts/1287_key_geometry/H_1287.txt` |
 | **H_1288** | eviction policy — mitosis-GROW under capacity pressure | 🟢 GREEN ENGINE-NATIVE + WIRED | R1 mirror 🟢 (Δ+0.333 vs LRU; heuristic Δ+0.000) → R2 wired | `.verdicts/1288_eviction_policy/H_1288_R2.txt` |
 | **H_1292** | hypothalamus — setpoint-regulated homeostatic drive (stateful time-integral, distinct from stateless affect) | 🟢 GREEN R2 ENGINE-NATIVE | R1 mirror 🟢 → R2 engine-native (registered by #2173) | `.verdicts/1292_hypothalamus_drive/H_1292.txt` |
+| **H_1293** | theory-of-mind — other-agent belief model (Sally-Anne false-belief; distinct from EVERY self-read lane on the self ⊥ other axis) | 🟢 GREEN R2 ENGINE-NATIVE | R1 mirror 🟢 → R2 engine-native (`OtherMindModel`; accBelief 1.000 / accTruth 0.500 / divergence 1.000; self-read+shuffle controls collapse to 0.500) | `.verdicts/1293_theory_of_mind/H_1293.txt` |
 
 ## Adjacent facet hypotheses (same session, parked-facet / substrate-property lens)
 
@@ -55,10 +56,20 @@ card — that is not the convention for this range).
   neuromodulation (H_1284 — no-free-lunch is GENERAL across memory AND ideation;
   a single tuned fixed point dominates the state-driven controller). Both are
   RED ⇒ NOT wired (a_verified_must_wire fires only on GREEN).
-- **Six structures realized engine-native** (cerebellum, basal ganglia, working
-  memory, amygdala-replay, eviction-grow, hypothalamus-drive) on the live
-  CORE/*.hexa engine, guards green (engine_cli_smoke 18→33/0, h1196 single-entry
-  7/0, h1199 DIM-growth GREEN with Ψ byte-identical, h1205 separation intact).
+- **Seven structures realized engine-native** (cerebellum, basal ganglia, working
+  memory, amygdala-replay, eviction-grow, hypothalamus-drive, theory-of-mind) on
+  the live CORE/*.hexa engine, guards green (engine_cli_smoke 18→37/0, h1196
+  single-entry 7/0, h1199 DIM-growth GREEN with Ψ byte-identical, h1205 separation
+  intact).
+- **Theory-of-mind (H_1293) — self ⊥ other.** The first lane that models a
+  SEPARATE agent's belief (vs every prior lane reading anima's OWN substrate):
+  on an absent-update fact anima's own immune recall returns TRUTH while the ToM
+  prediction returns the agent's STALE belief (Sally-Anne false-belief). A
+  self-read control and a shuffle control both collapse the tracking. NEXT
+  candidate: hierarchical-PFC (multi-level goal→subgoal, distinct from
+  basal-ganglia single-step) OR place/grid spatial-map (metric cognitive map,
+  distinct from episodic item-binding); ladder depletes when no subsystem retains
+  BOTH a falsifiable gap AND a control-surviving distinctness vs every lane.
 - **p6 held under adversarial pressure.** H_1290 affect COLLAPSES under shuffle
   (emergent, not injected); H_1291 ethics collapses to the naive floor under
   ablation (and a baked-in-rule adversarial check shows c2 is a real
