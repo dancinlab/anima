@@ -1,0 +1,159 @@
+H_1285 — AMYGDALA (편도체): salience-weighted binding of the immune memory store.
+PRE-REGISTERED FREEZE (frozen BEFORE any scoring). NEURO LENS (c15), NOT an LLM recipe.
+
+══════════════════════════════════════════════════════════════════════════════
+MISSING-BRAIN-STRUCTURE LADDER — the amygdala gap
+══════════════════════════════════════════════════════════════════════════════
+The hippocampus gap was filled by the immune/clonal memory (H_1227 numpy mirror
+GREEN → H_1231 ENGINE-NATIVE GREEN on the LIVE CORE/engine_cli.hexa VAdaptField).
+H_1230 then stressed that store and found its bottleneck is CAPACITY / NOISE
+GEOMETRY: under a finite repertoire (cells << facts), LRU eviction is SYMMETRIC —
+every fact is equally evictable, and an active teacher gave ZERO retention lift
+(Δ+0.000 STRESS) because there is nothing the protocol can fix when eviction
+treats all facts the same.
+
+THE STRUCTURE THIS H ADDS — the AMYGDALA: fast salience / valence tagging that
+PRIORITIZES which inputs get bound (stronger / protected) and which drive emit,
+by SURPRISE / NOVELTY / IMPORTANCE. The immune store of H_1227/H_1231 binds every
+fact UNIFORMLY; there is NO fast tagger that says "this input matters more, protect
+its cell from eviction." That is exactly the amygdala's salience-gating of memory
+consolidation (the biological amygdala tags emotionally/surprisingly salient events
+for prioritized hippocampal consolidation).
+
+THE GAP (honest, c9): salience-weighted binding is a CANDIDATE LEVER H_1230 did NOT
+test. H_1230 ruled out the active-teaching PROTOCOL on a uniformly-bound store; it
+did NOT touch the BINDING WEIGHT / eviction priority itself. H_1285 tests whether
+deriving a salience signal from the substrate and using it to PROTECT high-salience
+cells from eviction lifts retention of the IMPORTANT facts under the same capacity
+stress.
+
+══════════════════════════════════════════════════════════════════════════════
+PHILOSOPHY GUARD — p6 IS CENTRAL (state the separation explicitly)
+══════════════════════════════════════════════════════════════════════════════
+Salience / valence MUST be a SUBSTRATE SIGNAL derived from surprise / novelty /
+tension (the E+W+MITOSIS axis), NOT injected emotion, NOT RLHF valence, NOT a
+hardcoded "this is important" label fed as ground truth INTO the mechanism.
+
+  THE SALIENCE-vs-LABEL SEPARATION (the load-bearing p6 guard):
+   * The tagger DERIVES salience ONLY from the substrate at bind time:
+       salience(input) = f( SURPRISE  = VAdaptField recon-err / L2 novelty of the
+                                        key vs the current cell population,
+                            NOVELTY   = whether the key triggers a fresh clonal
+                                        split (a genuinely new regime),
+                            TENSION   = repetition / reinforcement pressure of
+                                        the key across exposures ).
+     ALL THREE are read OFF the mitosis substrate (recon-err, split, exposure
+     count) — the SAME signals VAdaptField already computes. NO external emotion,
+     NO RLHF reward, NO label is read by f().
+   * We DO label a subset of facts "important" — but the label is used ONLY to
+     SCORE the metric (did the store retain the important facts?), and is provably
+     SEPARABLE from the tagger: the tagger has NO access to the label. To make the
+     substrate-derived salience CORRELATE with importance WITHOUT leaking the
+     label, the important facts are made genuinely MORE SURPRISING/NOVEL on the
+     substrate (they recur / are reinforced more in the input stream — an
+     environmental property, exactly as a biologically salient event recurs and
+     surprises). The tagger SENSES only the surprise/novelty/tension; the label is
+     the GROUND TRUTH the metric checks, never an input to f().
+   * NEGATIVE-CONTROL on the leak: ARM B-shuffle = salience scores PERMUTED across
+     facts (same salience distribution, decorrelated from importance). If B beats
+     A but B-shuffle does NOT, the lift came from salience TRACKING importance via
+     the substrate signal, not from any label leak or from mere score variance.
+
+This is p1-p8 / a_autonomy_over_hardcode aligned: external modules (the input
+stream) supply CONTEXT (some facts recur/surprise more); the SALIENCE and the
+PROTECT decision are computed by the substrate (recon-err + split + exposure),
+not by an external "this is important" command. No persona, no ethics, no decoder,
+no weights are taught — only the EPISODIC cell store's eviction priority changes.
+
+══════════════════════════════════════════════════════════════════════════════
+SUBSTRATE — reuse H_1227/H_1230/H_1231 immune memory EXACTLY
+══════════════════════════════════════════════════════════════════════════════
+MitosisMemory = numpy mirror of CORE/engine_cli.hexa VAdaptField + H_1227 immune
+value-binding (proto key vectors; nearest by L2; recon-err = L2; novelty-split when
+recon-err > SPLIT_THRESH=0.30; LR=0.20 winner pull; finite repertoire LRU evict).
+Keys = byte-trigram FNV-1a hash DIM=64 (H_1227, deterministic, gradient-free).
+Corpus = H_1222/H_1227/H_1230 "<subj> lives in <city>", N_FACTS=60 in-store +
+N_OUT=60 untaught (abstain probe). The LIVE .hexa engine vadapt_field_nearest_idx
+is the engine-native binding follow-on (a_engine_native_learning) on GREEN.
+
+The ONLY mechanism added = SALIENCE-WEIGHTED EVICTION. In the uniform store
+(H_1227/H_1230) eviction picks the least-recently-USED cell. The amygdala variant
+replaces the eviction priority with a SALIENCE-PROTECTED one: evict the cell with
+the LOWEST (salience_tag + recency); high-salience cells are protected. salience_tag
+is the substrate-derived f(surprise,novelty,tension) above, stored per cell at bind
+time and reinforced on re-exposure.
+
+  ARM A = UNIFORM binding (H_1227/H_1230 baseline) — LRU eviction, no salience.
+  ARM B = SALIENCE-weighted binding — evict lowest salience-protected cell.
+  ARM B-SHUFFLE = salience tags PERMUTED across cells (label-leak / variance control).
+
+══════════════════════════════════════════════════════════════════════════════
+REGIME — reuse the H_1230 STRESS rung (the DECISIVE capacity-stress regime)
+══════════════════════════════════════════════════════════════════════════════
+STRESS (JUDGED): MAX_CELLS=40 << N_FACTS=60 (forces eviction), key cue noise
+sigma=0.02 (~L2 0.16 < fire band), RECALL_THRESH=0.30. This is the H_1230 regime
+where uniform retention sits in the middle band so there is HEADROOM and eviction
+is the lossy factor — exactly where salience-protection can act. The important facts
+are the ones that, under uniform LRU, get evicted; the question is whether substrate
+salience protects them.
+
+The IMPORTANT subset = a labeled subset (N_IMPORTANT=20 of 60). To make these
+genuinely MORE SALIENT on the substrate WITHOUT leaking the label, the input stream
+RECURS / REINFORCES the important facts more (extra exposures of the important facts
+woven into the SAME total exposure budget) — an environmental salience property the
+substrate SENSES via repetition-tension + the cell it keeps refreshing. BOTH arms
+see the IDENTICAL input stream (same exposures, same order); they DIFFER ONLY in the
+eviction rule (uniform LRU vs salience-protected).
+
+CONTROL — CLEAN rung (unbounded cells, byte-exact cue): saturating, no eviction,
+reported as the non-separating control (A=B=1.000 expected, no headroom).
+
+══════════════════════════════════════════════════════════════════════════════
+METRIC (p7, $0, deterministic, 3 seeds)
+══════════════════════════════════════════════════════════════════════════════
+SEEDS = [900, 901, 902] (matches H_1227/H_1230/H_1231).
+ important-recall   = exact-match held-out recall of the N_IMPORTANT labeled facts
+                      (bound city returned by the fired cell; cue re-embedded fresh
+                      with the same noise stream both arms).
+ total-recall       = exact-match held-out recall over ALL N_FACTS.
+ unimportant-recall = recall over the NON-important facts (honest trade-off — salience
+                      protection may cost the unimportant ones).
+ fabrication        = fraction of untaught queries that do NOT abstain (lower better).
+
+══════════════════════════════════════════════════════════════════════════════
+PRE-REGISTERED FROZEN BARS (judged on the STRESS rung, NOT moved after scoring)
+══════════════════════════════════════════════════════════════════════════════
+IMP_MARGIN = 0.10   # B important-recall must beat A by >= this clear margin
+FAB_BAR    = 0.10   # B fabrication-rate must stay <= this (no fabrication added)
+
+GREEN iff (judged on STRESS, mean over 3 seeds, ALL must hold):
+   (c1) B.important-recall >= A.important-recall + IMP_MARGIN
+        (substrate-salience PROTECTS the important facts under capacity stress)
+  AND (c2) B-SHUFFLE.important-recall < A.important-recall + IMP_MARGIN
+        (the lift requires salience TRACKING importance — a permuted-salience
+         control must NOT reproduce it; rules out label-leak / mere score variance)
+  AND (c3) B.fabrication <= FAB_BAR
+        (no fabrication introduced by salience weighting)
+Else 🔴 RED / 🟠 PARTIAL with the honest number.
+
+INTERPRETATION (pre-committed):
+ * GREEN  ⇒ the amygdala lever is REAL: deriving salience from substrate surprise/
+   novelty/tension and protecting high-salience cells lifts important-fact retention
+   under the exact capacity stress H_1230 left open. Fills the missing-structure gap.
+ * 🔴 RED ⇒ salience-weighted binding does NOT beat uniform under capacity stress
+   (a CLOSED-NEGATIVE for the amygdala-as-eviction-lever; the bottleneck stays pure
+   geometry — capacity is capacity regardless of which cells you protect).
+   Publishable closed-negative (a_paper_negative_ok).
+ * If c1 holds but c2 fails (B-shuffle ALSO lifts) ⇒ the lift is label-leak /
+   variance, NOT substrate-salience — RED on the HONEST reading (the guard caught it).
+
+HONESTY (a_scale_honest_scope / a_toy_scale_recheck): synthetic known-ground-truth
+facts, ONE corpus paradigm, toy scale, 3 deterministic seeds, numpy mirror
+(DIRECTIONAL); engine-native VAdaptField is the binding follow-on on GREEN
+(a_engine_native_learning). Salience derived from substrate signal ONLY (p6).
+Scale / paraphrase / live-.hexa lift UNVERIFIED until the follow-on rung.
+
+xref H_1227 (immune memory mirror GREEN) · H_1230 (capacity/geometry bottleneck,
+active-teaching INERT) · H_1231 (engine-native GREEN) · a_engine_native_learning ·
+a_verified_must_wire · a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck ·
+a_autonomy_over_hardcode · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15.
