@@ -1,0 +1,95 @@
+H_1323 — SAPIR-WHORF / LINGUISTIC RELATIVITY via CATEGORICAL PERCEPTION (CP).
+FROZEN DESIGN — pre-registered BEFORE any scoring. NO tune-to-green (c9 / p7).
+
+LENS (a_no_llm_frame_trap, c15): cognitive-science / psycholinguistics. The
+empirical workhorse of linguistic relativity = CATEGORICAL PERCEPTION: speakers
+discriminate CROSS-category stimulus pairs better than WITHIN-category pairs at
+THEIR language's boundary (Russian two-blues → faster blue-boundary discrimination;
+the grue languages cut green/blue at DIFFERENT points → the boundary MOVES with the
+language). This is NOT an LLM-recipe and NOT a human-cognition claim — it is a toy
+substrate paradigm (like the brain-lane Sally-Anne probe H_1293), testing whether
+the language a substrate LEARNS warps its NON-LINGUISTIC discrimination.
+
+PRECEDENT (the deeper question): H_1316 (jamo) & H_1322 (featural) showed the
+REPRESENTATION of a domain changes its LEARNABILITY (compression). Sapir-Whorf is
+the deeper claim: the language's CARVING of a domain warps DOWNSTREAM, NON-LINGUISTIC
+discrimination. H_1323 asks: does the language a substrate "thinks in" measurably
+shape its COGNITION on a task with NO language labels at test?
+
+THE PARADIGM (toy stimulus continuum — synthetic, legitimate methodology; the
+"languages" are label schemes over the continuum, stated honestly, a_scale_honest_scope):
+  - STIMULUS SPACE: a continuous 1-D feature axis (a "hue" continuum), N=21 graded
+    stimuli at positions x_i = i/(N-1) in [0,1]. Same stimulus world for ALL arms.
+  - TWO LANGUAGES (the grue-style manipulation — same continuum, DIFFERENT cut):
+      L_A boundary at p_A = 1/3 (0.333) ; L_B boundary at p_B = 2/3 (0.667).
+    A language assigns each stimulus a category LABEL by which side of its boundary
+    it falls on (cat 0 below the cut, cat 1 above) — a Voronoi carving of the axis.
+  - SUBSTRATE: the SAME gradient-free mitosis cell machinery the other lanes use
+    (immune/Voronoi prototype store, error-targeted SPLIT-only growth, p8). Cells
+    bind (stimulus-embedding -> category label); nearest-prototype recall = the
+    learned category. Each stimulus x is embedded as a low-D feature vector (a
+    smooth code of position, NO boundary location handed to the substrate). Training
+    feeds (embedding, language-label) pairs; cells split where category error is high
+    -> the prototype population PACKS DENSER near the language's boundary (this is the
+    mechanistic origin of CP: finer Voronoi resolution where the language cares).
+  - DOWNSTREAM NON-LINGUISTIC TEST (NO language labels at test): a same/different
+    DISCRIMINATION task on ADJACENT stimulus PAIRS (x_i, x_{i+step}). The substrate's
+    discrimination signal for a pair = the distance, IN THE LEARNED PROTOTYPE SPACE,
+    between the two stimuli's nearest-prototype responses (a representational-distance
+    readout — larger = "more different"). NO category label is read out at test; the
+    measure is purely how far apart the two stimuli sit in the LEARNED representation.
+    discrim(position m) is plotted as a function of the pair's MIDPOINT m along the axis.
+
+ARMS (frozen):
+  (1) PRE-LANGUAGE baseline: cells grown with NO language labels (uniform/unsupervised
+      coverage of the axis) -> expect FLAT discrimination (no CP peak).
+  (2) L_A-trained -> expect a CP peak at p_A=1/3.
+  (3) L_B-trained -> expect a CP peak at p_B=2/3.
+  (4) SHUFFLE-language: labels assigned by an INCOHERENT boundary (random per-stimulus
+      label, no consistent cut; fixed per seed) -> expect NO consistent CP peak.
+
+3 seeds [4323,4324,4325]. $0 CPU-local numpy mirror (DIRECTIONAL; engine-transfer
+UNVERIFIED — this is a directional mirror of the immune/Voronoi store, same as H_1290/
+H_1293 R1). p7 = discrimination margins + peak locations, NOT perplexity.
+
+FROZEN BARS (pre-registered; GREEN iff ALL three; mean of 3 seeds unless stated):
+  W1 CP PRESENT: for BOTH L_A and L_B, the CROSS-boundary pair discrimination exceeds
+     the WITHIN-category pair discrimination by margin >= 0.15 (normalized units), AND
+     the language arm's peak discrimination exceeds the PRE-LANGUAGE baseline's
+     discrimination at the SAME position by >= 0.15. (CP is present and is caused by
+     the language, not by the stimulus axis alone.)
+  W2 WHORFIAN DISSOCIATION (decisive — the load-bearing linguistic-relativity signature):
+     the CP peak LOCATION (argmax of the discrim-vs-midpoint curve) for L_A is within
+     0.12 of p_A=1/3 AND for L_B within 0.12 of p_B=2/3, AND the two peak locations
+     DIFFER by >= 0.20 (same stimulus world, cognition follows the language).
+  W3 EARNED (anti-Goodhart): the SHUFFLE-language arm produces NO consistent CP peak —
+     its peak prominence (peak minus median discrimination) is < 0.5x the mean peak
+     prominence of L_A and L_B (the effect is the COHERENT linguistic carving, not
+     mere label exposure / extra training); AND across seeds the shuffle peak LOCATION
+     is inconsistent (std of shuffle argmax across seeds >= 0.15, vs L_A/L_B which lock
+     to their boundary).
+
+OUTCOMES ALL VALID (c9):
+  W1 & W2 & W3 -> 🟢 linguistic relativity HOLDS in the substrate (the language warps
+     non-linguistic discrimination; the boundary MOVES with the language; shuffle kills it).
+  W2 fails (CP location language-INDEPENDENT) -> UNIVERSALIST result, Whorf REFUTED in
+     this substrate — an important honest negative, reported straight.
+  W1 fails (no CP emerges at all) -> the substrate does NOT categorically perceive — also
+     a real result.
+
+p1/p2/p3/p6 GUARD: the discrimination readout reads ONLY representational distance in the
+learned prototype space; NO injected boundary location, NO "languages differ here" label,
+NO persona/RLHF/ethics. The language label enters ONLY during training (as the carving the
+cells learn), NEVER at the discrimination test. The shuffle control + the pre-language
+baseline are the anti-Goodhart discriminators: if discrimination tracked the raw stimulus
+axis (not the learned carving) the pre-language arm would peak too; if it tracked mere
+label exposure the shuffle arm would peak too. NOT an emit gate (a_autonomy_over_hardcode).
+
+SCOPE (a_scale_honest_scope, a_toy_scale_recheck): TOY 1-D synthetic continuum, N=21
+stimuli, 3 seeds, deterministic readout (tests the linguistic-relativity STRUCTURE, not a
+scaled or human-cognition claim). DIRECTIONAL numpy mirror; engine-native realization on
+the live CORE/engine_cli.hexa immune lane = follow-on (a_engine_native_learning,
+a_verified_must_wire). No claim about human language or real color cognition.
+
+Live CORE/*.hexa UNTOUCHED (substrate-measurement rung — adds only UNIVERSE/ + verdicts).
+frozen-first: this file pre-registered BEFORE scoring; bars NOT moved (c9, NO tune-to-green).
