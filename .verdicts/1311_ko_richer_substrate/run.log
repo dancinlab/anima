@@ -1,0 +1,38 @@
+=== H_1311 — RICHER SUBSTRATE vs the H_1307 ~2.9 ceiling (RTX 5070 sm_120) ===
+device=NVIDIA GeForce RTX 5070 cap=(12, 0) torch=2.11.0+cu130
+sm_120 kernel launch OK (sentinel 43073.8)
+[corpus] fetching 30000000 REAL KO bytes from r2://phanes/anima-7b/web/kor/shard0000.bytes
+[corpus] fetching 10000000 REAL EN bytes from r2://phanes/anima-7b/web/eng/shard0000.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  EN 10000000B sha=31b4a5430441cfdb…
+[corpus] identical-to-H_1307-RUN-A: KO=True EN=True (gate for a clean ceiling comparison)
+[S0] KO train=50000 test=50000 EN test=16667
+  [substrate] {"substrate": "S0_ctx4_mle", "feat_dim": 3, "head": "mle", "cells": 16, "ko_ce": 2.95342, "en_ce": 4.3253, "en_seed_ce": 4.26499, "grow_wall_s": 0.09, "throughput_pairs_per_s": 1312049.9}
+  [substrate] {"substrate": "S1_ctx8_mle", "feat_dim": 9, "head": "mle", "cells": 40, "ko_ce": 2.96426, "en_ce": 4.11384, "en_seed_ce": 4.26995, "grow_wall_s": 0.1, "throughput_pairs_per_s": 1182187.3}
+  [substrate] {"substrate": "S1_ctx8_mle_SHUFFLE", "feat_dim": 9, "head": "mle", "cells": 40, "ko_ce": 3.10846, "en_ce": 4.67957, "en_seed_ce": 4.26995, "grow_wall_s": 0.1, "throughput_pairs_per_s": 1200155.2}
+  [substrate] {"substrate": "S1_ctx16_mle", "feat_dim": 17, "head": "mle", "cells": 40, "ko_ce": 3.04788, "en_ce": 3.61421, "en_seed_ce": 4.31619, "grow_wall_s": 0.1, "throughput_pairs_per_s": 1146675.4}
+  [substrate] {"substrate": "S1_ctx16_mle_SHUFFLE", "feat_dim": 17, "head": "mle", "cells": 40, "ko_ce": 3.42183, "en_ce": 4.81274, "en_seed_ce": 4.31619, "grow_wall_s": 0.11, "throughput_pairs_per_s": 1073175.4}
+  [substrate] {"substrate": "S1_ctx32_mle", "feat_dim": 33, "head": "mle", "cells": 40, "ko_ce": 3.44156, "en_ce": 3.55347, "en_seed_ce": 4.30099, "grow_wall_s": 0.14, "throughput_pairs_per_s": 827035.2}
+  [substrate] {"substrate": "S1_ctx32_mle_SHUFFLE", "feat_dim": 33, "head": "mle", "cells": 40, "ko_ce": 3.41815, "en_ce": 4.79513, "en_seed_ce": 4.30099, "grow_wall_s": 0.12, "throughput_pairs_per_s": 994229.4}
+  [substrate] {"substrate": "S2_ctx4_ridge", "feat_dim": 3, "head": "ridge", "cells": 16, "ko_ce": 5.43666, "en_ce": 5.49522, "en_seed_ce": 5.49893, "grow_wall_s": 0.02, "throughput_pairs_per_s": 4920183.6}
+  [substrate] {"substrate": "S2_ctx4_ridge_SHUFFLE", "feat_dim": 3, "head": "ridge", "cells": 10, "ko_ce": 5.50734, "en_ce": 5.53362, "en_seed_ce": 5.53491, "grow_wall_s": 0.01, "throughput_pairs_per_s": 9888989.4}
+-------------------------------------------------------------------------------
+S0 baseline (CTX=4, 3-D, count-MLE): KO CE=2.95342  (H_1307 RUN A was 2.9475 — port check)
+substrate ladder (held-out KO next-byte CE, nats/byte):
+  S0_ctx4_mle                dim=3   cells=16  KO=2.95342  EN=4.3253   
+  S1_ctx8_mle                dim=9   cells=40  KO=2.96426  EN=4.11384    Δvs_s0=0.01084 below2.9=False repBreak=False
+  S1_ctx8_mle_SHUFFLE        dim=9   cells=40  KO=3.10846  EN=4.67957    [SHUFFLE control for S1_ctx8_mle]
+  S1_ctx16_mle               dim=17  cells=40  KO=3.04788  EN=3.61421    Δvs_s0=0.09446 below2.9=False repBreak=False
+  S1_ctx16_mle_SHUFFLE       dim=17  cells=40  KO=3.42183  EN=4.81274    [SHUFFLE control for S1_ctx16_mle]
+  S1_ctx32_mle               dim=33  cells=40  KO=3.44156  EN=3.55347    Δvs_s0=0.48814 below2.9=False repBreak=False
+  S1_ctx32_mle_SHUFFLE       dim=33  cells=40  KO=3.41815  EN=4.79513    [SHUFFLE control for S1_ctx32_mle]
+  S2_ctx4_ridge              dim=3   cells=16  KO=5.43666  EN=5.49522    Δvs_s0=2.48324 below2.9=False repBreak=False
+  S2_ctx4_ridge_SHUFFLE      dim=3   cells=10  KO=5.50734  EN=5.53362    [SHUFFLE control for S2_ctx4_ridge]
+-------------------------------------------------------------------------------
+(Q1) any richer substrate BELOW the 2.9 ceiling? False
+     representation-breakers (below 2.9 AND beat S0≥0.02 AND beat own shuffle≥0.02 AND EN held): []
+(C)  capacity-signal (a shuffle control ALSO beats S0 ≥0.02)? False
+VERDICT: the ~2.9 ceiling is capacity-bound.
+  → only cell-count / capacity matters (or nothing helps); the ~2.9 ceiling is the byte-task itself.
+total wall=77.0s
+  engine-transfer to live hexa DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]
