@@ -1,0 +1,119 @@
+================================================================================
+H_1208 FREEZE — PROTOTYPE-TRANSITION-MEMORY / PREDICTABILITY SPLIT GATE
+MITOSIS-ENGINE · pre-registered BEFORE any measurement (p7)
+================================================================================
+DATE-FROZEN: 2026-06-15
+BRANCH: h1208/predictability-split-gate (base origin/main)
+SLUG: 1208_predictability_split_gate
+PRECEDENT WALL: H_1203 (PR #2092) per-sample L2 gate — novelty-DENSITY F1=37.5x but
+  permutation-INVARIANT (F2 shuffle 0.992, V14 not defeated).
+  H_1207 (PR #2100) d/dt-augmented gate — FAILED (NOVEL/SHUFFLED=0.998). DEEP FINDING:
+  a derivative gate keys on LOCAL ROUGHNESS |Δ|, which is order-dependent but MAXIMIZED
+  by disorder (shuffle = jagged = MORE division) -> sign INVERTED vs V14 target. H_1207
+  leaves NOT-RULED-OUT exactly: "a predictability/sequence-likelihood gate or a
+  prototype-TRANSITION-memory gate." This is that final trajectory-axis attempt.
+
+--------------------------------------------------------------------------------
+THE ROUTE (the ONLY not-ruled-out trajectory mechanism after H_1207)
+--------------------------------------------------------------------------------
+A PROTOTYPE-TRANSITION-MEMORY / PREDICTABILITY split gate. Maintain a prototype
+book + a memory of observed (nearest-proto_{t-1} -> nearest-proto_t) TRANSITIONS.
+The split key fires on a TRANSITION property, NOT on sample-novelty (H_1203) and
+NOT on local |Δ| roughness (H_1207).
+
+Two transition-memory gate FORMULATIONS are measured (both pre-registered):
+  GATE-A  TRANSITION-NOVELTY  : split when the current ordered prototype-transition
+          (p_{t-1} -> p_t) is UNSEEN/rare in transition memory.
+  GATE-B  TRANSITION-PREDICTABILITY (the principled sign-inverter): the gate learns
+          a running transition model P(p_t | p_{t-1}) (count table over prototype
+          ids). Split fires when the realized transition is PREDICTABLE — i.e. the
+          gate had CONFIDENTLY anticipated it (the predicted-prob of the realized
+          next-proto exceeds a confidence floor AND the transition recurs). Ordered
+          text = coherent, learnable p->p' regularities -> model gains confidence ->
+          predictable transitions recur -> division stays HIGH. A shuffled stream =
+          incoherent pairings -> model never gains confidence -> few predictable
+          transitions -> division SUPPRESSED. This INVERTS the H_1207 sign so that
+          ORDER (predictability) yields MORE division than DISORDER -> the V14-격파
+          direction (ordered >> shuffled).
+
+WHY this can separate order from disorder where H_1203/H_1207 could not:
+  - H_1203 L2 gate sees only x_t -> permutation-invariant by construction.
+  - H_1207 |Δ| gate sees the PAIR but keys on magnitude -> disorder maximizes it
+    (inverted sign).
+  - A PREDICTABILITY gate keys on whether a transition was ANTICIPATED. Anticipation
+    requires a STABLE conditional structure P(next|prev), which ONLY an ordered stream
+    possesses; a shuffle has none. So predictable-transition division is HIGH for
+    order, LOW for disorder -> correct V14 sign IF the mechanism works at all.
+
+--------------------------------------------------------------------------------
+STREAMS (H_1203/H_1207 builders imported VERBATIM — apples-to-apples)
+--------------------------------------------------------------------------------
+PRIMARY (inherited bar surface, H_1203 make_*_stream VERBATIM):
+  NOVEL    = i.i.d.-SCATTERED corpus offsets (independent draws per tick).
+  REPEAT   = one short corpus block cycled.
+  SHUFFLED = NOVEL with time order permuted (V14 control).
+WALK diagnostic (H_1207 make_walk_* VERBATIM — a CONTIGUOUS corpus walk that
+  GENUINELY HAS local temporal order; reported NON-bar but is the mechanism test).
+
+HONEST PRE-REGISTERED EXPECTATION (stated BEFORE measuring, p7):
+  The H_1207 verdict already established that the PRIMARY NOVEL stream is i.i.d.-
+  scattered, so its time order carries NO trajectory and its shuffle is statistically
+  identical. Therefore we PREDICT the PRIMARY F1 stays ~1.0 for BOTH gates (no order
+  to separate). The DECISIVE test is the WALK stream (which HAS order): does GATE-B
+  (predictability) produce WALK/WALK_SHUF >= 1.5 (ordered division NOT suppressed,
+  the V14 direction)? If YES on WALK, transition-memory IS a trajectory substrate
+  (the H_1203 PRIMARY stream simply carried no trajectory). If NO even on WALK, the
+  trajectory route is EXHAUSTED and mitosis is confirmed a pure DENSITY substrate.
+
+--------------------------------------------------------------------------------
+FROZEN FALSIFIERS (bar = 1.5, INHERITED from H_1203/H_1207, NOT moved)
+--------------------------------------------------------------------------------
+F1  V14 격파 (PRIMARY, inherited) :  NOVEL_division / SHUFFLED_division >= 1.5
+      measured for GATE-A and GATE-B on the H_1203 PRIMARY streams.
+      PASS => transition-memory defeats V14 on the inherited surface.
+
+F1w MECHANISM (WALK, non-bar diagnostic but the decisive separation test):
+      WALK_division / WALK_SHUF_division >= 1.5 for GATE-B (predictability).
+      This is where order actually EXISTS; it tests whether the predictability
+      mechanism gives ordered >> shuffled (the H_1207 inverted-sign defeated).
+
+F2  no regression (PRIMARY)       :  NOVEL_division / REPEAT_division >= 1.5
+      (transition-memory still grows on a novel stream vs a single revisited regime).
+
+F3  MECHANISM PREDICTION + SANITY CONTROL (guards against trivial-artifact pass):
+      PREDICTION: GATE-B division(ordered) > division(shuffle) on a stream that HAS
+        order (WALK); GATE-B division(ordered) ~ division(shuffle) on an i.i.d. stream
+        (PRIMARY) because no conditional structure exists.
+      SANITY CONTROL (RANDGAUSS): a FULLY-RANDOM i.i.d. Gaussian stream (no corpus
+        structure at all) must NOT beat its own shuffle for GATE-B
+        (RANDGAUSS/RANDGAUSS_SHUF must be < 1.5). A pass here would be a trivial
+        artifact (gate firing on noise), which would INVALIDATE a WALK pass. Report
+        RANDGAUSS/RANDGAUSS_SHUF; require it < 1.5 for any GREEN to be honest.
+
+--------------------------------------------------------------------------------
+TIER RULE
+--------------------------------------------------------------------------------
+GREEN (🟢 V14 격파) iff  F1 (PRIMARY NOVEL/SHUFFLED) >= 1.5 for GATE-A OR GATE-B
+      AND F2 >= 1.5  AND the RANDGAUSS sanity control < 1.5 (not a noise artifact).
+      => mitosis CAN be a trajectory substrate via transition-memory.
+      (A WALK-only pass with PRIMARY fail is reported as a SHARPENED reading, NOT a
+       GREEN on the inherited bar — the inherited bar is the PRIMARY surface.)
+
+RED (🔴 closed-neg, a_paper_negative_ok) iff F1 PRIMARY < 1.5 for BOTH gates
+      => even transition-memory stays order-blind on the inherited surface. Read F1w:
+      if WALK also < 1.5 the trajectory route is EXHAUSTED (mitosis = pure density
+      substrate, decisive). If WALK >= 1.5 but PRIMARY < 1.5, the mechanism IS
+      trajectory-sensitive in the correct direction but the i.i.d. H_1203 stream
+      carries no trajectory for it (deepest reading — completes H_1203/H_1207).
+
+--------------------------------------------------------------------------------
+PROTOCOL
+--------------------------------------------------------------------------------
+- numpy MIRROR (H_1199 mechanism-match precedent). DIM=8, WARMUP=250, T=2400,
+  SEEDS=[900,901,902], SPLIT_THRESH/LR inherited where applicable.
+- 3 seeds. p7 (cell-count / transition metric, NOT perplexity). p8 (split tick ==
+  growth). gradient-free. $0 local CPU. NO GPU.
+- H_1203 make_novel/repeat/shuffled + H_1207 make_walk VERBATIM imports.
+- Engine wiring UNCHANGED (measurement-only probe; live VAdaptField byte-identical).
+- Scale transfer UNVERIFIED (a_scale_honest_scope). Frozen bar 1.5 NOT moved.
+================================================================================
