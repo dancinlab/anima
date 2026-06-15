@@ -48,6 +48,14 @@ LEAK    = 0.55       # state self-retention (identical both arms; <1 keeps the
 NBINS   = 8          # IIT4 MI estimator bins
 REPR_SEED = 7        # representative seed for the exact Φ leg
 K_COALITION = 2      # R2: rank-k multi-winner coalition size (k≥2 = no rank-1 cut)
+W_RELAY = 0.5        # R3: cortico-thalamo-cortical RE-ENTRANT loop weight. The
+                     # relay receives back from EACH module AND re-injects to EACH
+                     # module — reciprocal edges ADDED ON TOP of the ring (NOT a
+                     # replacement). Ring + private input + re-entrant relay all
+                     # three present together in ARM B; the relay carries its own
+                     # recurrent (leaky) state so each module↔relay coupling is a
+                     # DISTINCT reciprocal edge (distributed multi-edge — exactly
+                     # the integration source R2's RED diagnosis pointed to).
 
 MARGIN_COH = 0.05
 MARGIN_PHI = 0.02
@@ -79,11 +87,25 @@ def mean_pairwise_cosine(states):
 
 
 def run_arm(seed, mode, k_coalition=2):
-    """mode in {'direct','hub','coalition'}. Returns (coherence, traj) where traj
-    is (N_MOD, T) per-module salience (state energy) trajectory for the Φ leg.
+    """mode in {'direct','hub','coalition','reentrant'}. Returns (coherence, traj)
+    where traj is (N_MOD, T) per-module salience (state energy) trajectory for the
+    Φ leg.
 
     'direct'    — ARM A: fixed ring, each module reads only direct neighbors.
     'hub'       — R1 ARM B: single winner-take-all broadcast (rank-1 channel).
+    'reentrant' — R3 ARM B: RE-ENTRANT cortico-thalamo-cortical LOOP. The direct
+                  ring is KEPT (ARM A's edges preserved — the relay does NOT
+                  replace it). A thalamic relay node R carries its OWN recurrent
+                  (leaky) state: each tick (i) cortex→thalamus, R integrates from
+                  ALL modules; (ii) thalamus→cortex, R re-injects back to EACH
+                  module. These reciprocal R↔module edges are ADDED on top of the
+                  ring — recurrent over ticks (R_t feeds modules at t, modules
+                  feed R_t). This is the IIT/GWT re-entry mechanism (recurrent
+                  reciprocal causation), NOT feedforward fan-out: R1/R2 broadcast
+                  REPLACED the ring with one shared channel (a rank-1 MIP cut that
+                  capped Φ); R3 ADDS distinct reciprocal edges, which R2's RED
+                  diagnosis named as the true integration source (distributed
+                  multi-edge coupling). k=1 in the hub recovers the R1 single relay.
     'coalition' — R2 ARM B: rank-k MULTI-WINNER COALITION broadcast. Each tick the
                   top-k modules by salience form a coalition; every receiver reads
                   an AFFINITY-WEIGHTED mix of the k coalition members (softmax over
@@ -107,6 +129,15 @@ def run_arm(seed, mode, k_coalition=2):
     W_IN  = 0.5   # private-input weight — equal to coupling so private drive keeps
                   # modules from collapsing to a shared fixed point (headroom)
 
+    # R3 re-entrant relay: a thalamic stage with one recurrent (leaky) relay
+    # CHANNEL PER MODULE (topographic thalamo-cortical loops). relay[i] is the
+    # thalamic partner of module i — reciprocally coupled to it AND cross-mixed
+    # with the other channels at the relay stage (intra-thalamic coupling), so the
+    # re-entrant pathway is DISTRIBUTED MULTI-EDGE (N_MOD distinct reciprocal
+    # R_i↔module_i edges), NOT one shared broadcast vector (R1/R2's rank-1 cut).
+    # Drawn from the SAME rng stream AFTER inputs so ARM A's draws are unchanged.
+    relay = rng.standard_normal((N_MOD, DIM)) * 0.5
+
     coh_acc = []
     traj = np.zeros((N_MOD, T))
     for t in range(T):
@@ -121,6 +152,33 @@ def run_arm(seed, mode, k_coalition=2):
             broadcast = states[winner]
             for i in range(N_MOD):
                 new[i] = LEAK * states[i] + GAIN * (W_NBR * broadcast + W_IN * inputs[i, t])
+        elif mode == "reentrant":  # R3 — re-entrant cortico-thalamo-cortical LOOP
+            # The ring is KEPT (same nbr term as ARM A). ADDED on top: a thalamic
+            # relay stage with one channel PER module, each in a reciprocal loop
+            # with its module. (i) thalamus→cortex: relay[i] re-injects to module i
+            # only — a DISTINCT reciprocal edge per module (not one shared vector);
+            # (ii) cortex→thalamus: relay[i] integrates from module i AND its ring
+            # neighbours' relay channels (intra-thalamic cross-coupling), so each
+            # R_i is driven by the cortex it drives — re-entry, distributed across
+            # N_MOD edges (the integration source R2's RED diagnosis named).
+            for i in range(N_MOD):
+                nbr = np.mean([states[k] for k in ring[i]], axis=0)
+                # ring (kept) + private input (kept) + RE-ENTRANT per-module relay
+                new[i] = (LEAK * states[i]
+                          + GAIN * (W_NBR * nbr
+                                    + W_IN * inputs[i, t]
+                                    + W_RELAY * relay[i]))
+            # cortex→thalamus: each relay channel integrates from its OWN module
+            # (PRE-update states → genuine one-tick reciprocal delay) plus a mix of
+            # its ring-neighbour relay channels (intra-thalamic coupling). This
+            # closes N_MOD distinct reciprocal loops rather than one shared channel.
+            new_relay = relay.copy()
+            for i in range(N_MOD):
+                relay_nbr = np.mean([relay[k] for k in ring[i]], axis=0)
+                new_relay[i] = (LEAK * relay[i]
+                                + GAIN * (W_NBR * states[i]
+                                          + W_RELAY * relay_nbr))
+            relay = new_relay
         else:  # 'coalition' — R2 multi-winner rank-k coalition broadcast
             energy = np.array([float(np.dot(states[i], states[i])) for i in range(N_MOD)])
             kk = max(1, min(k_coalition, N_MOD))
@@ -324,8 +382,97 @@ def main_r2():
     return result
 
 
+def main_r3():
+    """ROUND 3 — ARM A (direct ring) vs ARM B (RE-ENTRANT cortico-thalamo-cortical
+    LOOP added ON TOP of the ring).
+
+    R1 🟠 PARTIAL (single-winner broadcast hub: Δcoh up every seed, ΔΦ +0.0191,
+    0.0009 under the bar) and R2 🔴 RED (multi-winner coalition: Δcoh collapsed,
+    ΔΦ −0.053 — WRONG direction). R2's diagnosis: irreducibility comes from
+    DISTRIBUTED MULTI-EDGE coupling (the direct ring's distinct edges), NOT a
+    central relay — a single shared channel (winner OR coalition) is itself a
+    low-rank MIP cut that caps Φ. So FEEDFORWARD broadcast is the wrong mechanism.
+
+    R3 tests a genuinely different mechanism: the real thalamus is the hub of a
+    RE-ENTRANT loop (cortex→thalamus→cortex→thalamus, recurrent reciprocal
+    causation), which IIT and GWT both hold is what builds irreducible integration
+    — NOT feedforward fan-out. ARM B ADDS a re-entrant cortico-thalamo-cortical
+    loop ON TOP of the existing ring edges: a thalamic relay stage with one
+    recurrent channel per module, each reciprocally coupled to its module and
+    cross-coupled at the relay stage — so the re-entrant pathway ADDS N_MOD
+    distinct reciprocal edges (distributed multi-edge, exactly R2's named source)
+    rather than replacing the ring with one shared channel.
+
+    SAME 4 modules, SAME non-saturating regime, SAME seeds, SAME FROZEN bars
+    (B1 coh ≥ A+0.05 every seed · B2 faithful ΔΦ ≥ +0.02 · B3 coh < 0.999).
+    Honesty (c9): if even re-entry can't clear ΔΦ+0.02, that is the terminal
+    finding — relay topology (ANY flavor: broadcast OR re-entrant loop)
+    fundamentally cannot raise irreducible Φ at this scale; only distributed
+    coupling can (🧱 permanent)."""
+    print("H_1283 R3 — THALAMUS / RE-ENTRANT CORTICO-THALAMO-CORTICAL LOOP")
+    print(f"modules={N_MOD} dim={DIM} ticks={T} seeds={SEEDS}  W_relay={W_RELAY}")
+    print("ARM A = direct ring   ·   ARM B = ring + re-entrant thalamo-cortical loop"
+          "  (faithful IIT4 Φ, exact n=4)")
+    print("=" * 72)
+
+    per_seed = {}
+    for seed in SEEDS:
+        cohA, trajA = run_arm(seed, "direct")
+        cohB, trajB = run_arm(seed, "reentrant")
+        per_seed[seed] = {"cohA": cohA, "cohB": cohB,
+                          "trajA": trajA, "trajB": trajB}
+        print(f"seed {seed}: ARM_A coh={cohA:+.4f}  ARM_B coh={cohB:+.4f}  "
+              f"Δcoh={cohB - cohA:+.4f}")
+
+    b1 = all(per_seed[s]["cohB"] >= per_seed[s]["cohA"] + MARGIN_COH for s in SEEDS)
+    b3 = any(per_seed[s]["cohB"] < DEGEN_CAP for s in SEEDS)
+
+    print("-" * 72)
+    print(f"FAITHFUL IIT4 Φ (exact MIP-EI, representative seed={REPR_SEED}):")
+    phiA = faithful_phi(per_seed[REPR_SEED]["trajA"], "A")
+    phiB = faithful_phi(per_seed[REPR_SEED]["trajB"], "B")
+    print(f"  ARM_A Φ = {phiA}")
+    print(f"  ARM_B Φ = {phiB}")
+    b2 = (phiA is not None and phiB is not None and phiB >= phiA + MARGIN_PHI)
+    dphi = (phiB - phiA) if (phiA is not None and phiB is not None) else None
+    print(f"  ΔΦ = {dphi}")
+
+    green = b1 and b2 and b3
+    partial = b1 and b3 and not b2
+    print("=" * 72)
+    print(f"B1 coherence (B≥A+{MARGIN_COH} every seed): {'PASS' if b1 else 'FAIL'}")
+    print(f"B2 Φ        (B≥A+{MARGIN_PHI} faithful IIT4): {'PASS' if b2 else 'FAIL'}")
+    print(f"B3 not-degenerate (B coh < {DEGEN_CAP} ≥1 seed): {'PASS' if b3 else 'FAIL'}")
+    if green:
+        verdict = "GREEN"
+    elif partial:
+        verdict = "PARTIAL"
+    else:
+        verdict = "RED"
+    print(f"VERDICT: {verdict}")
+
+    result = {
+        "id": "H_1283_R3", "slug": "1283_thalamus_global_workspace",
+        "round": 3, "arm_b": "re-entrant cortico-thalamo-cortical loop (ring + reciprocal relay)",
+        "verdict": verdict,
+        "seeds": SEEDS,
+        "w_relay": W_RELAY,
+        "coherence": {str(s): {"A": per_seed[s]["cohA"], "B": per_seed[s]["cohB"],
+                               "delta": per_seed[s]["cohB"] - per_seed[s]["cohA"]}
+                      for s in SEEDS},
+        "phi_faithful_iit4": {"repr_seed": REPR_SEED, "A": phiA, "B": phiB, "delta": dphi},
+        "bars": {"B1": b1, "B2": b2, "B3": b3},
+        "margins": {"coh": MARGIN_COH, "phi": MARGIN_PHI, "degen_cap": DEGEN_CAP},
+        "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n=4)",
+    }
+    print("\nRESULT_JSON=" + json.dumps(result))
+    return result
+
+
 if __name__ == "__main__":
     if "--r1" in sys.argv:
         main()
+    elif "--r2" in sys.argv:
+        main_r2()
     else:
-        main_r2()  # default: ROUND 2 multi-winner coalition
+        main_r3()  # default: ROUND 3 re-entrant cortico-thalamo-cortical loop
