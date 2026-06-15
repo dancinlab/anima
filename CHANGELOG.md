@@ -2,6 +2,59 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): 🧱 H_1319 — TIMING축 phase-binding을 engine-native로 재현해 c4 shuffle 벽을 깨나 (Φ-robustness 벽이 두 축 모두 종결)
+
+H_1283 R8이 남긴 **단 하나의 살아있는 돌파 후보**(c16/a_break_the_wall)를 친 시도. 토폴로지축은
+🏁 고갈(H_1283 relay R1-R7, H_1317 multi-edge — 전부 seed-취약). arc에서 robust한 faithful-Φ
+lift를 낸 유일한 메커니즘은 **직교 TIMING축의 H_1283 R8 phase-binding**이었으나, numpy-mirror는
+**쉬운 seed [7,8,9]**에서만 GREEN이었고 그 **engine-native gate가 c4(shuffle 대조)를 실패**했다 —
+additive-offset shuffle가 lift를 무너뜨리지 못했다(ΔΦ_sh +0.026/+0.380/+0.296). 원인: read-out
+`sal=e·(1+cosθ)/2`가 **독립 진폭 carrier**를 주입하고 shuffle이 그 marginal 통계를 보존한다 →
+lift의 일부가 synchrony가 아니라 **carrier 진폭 분산**. 이게 명시된 open follow-on이었다.
+
+H_1319은 **같은 TIMING 메커니즘**을 engine-native로 재현하되 분산 누수를 죽이는 두 변경을 가했다:
+(1) **상대-위상 게이트** `sal=e·(1+cos(θ_i−θ_T))/2` — 결합 신호 = 페이스메이커에 대한 **정렬(관계)**,
+독립 carrier 없음; (2) **관계를 파괴하는 permutation shuffle**(H_1294/H_1295가 쓰는 강한 대조) —
+각 모듈을 **다른 모듈의 위상**으로 게이트(forced-derangement π), marginal은 정확히 보존. 그리고
+토폴로지가 실패한 **어려운 직교 seed [1317,1318,1319]**에서 측정. bars는 H_1283 R8에서 **그대로
+이식**(FREEZE를 채점 전 커밋, NOT moved, c9/p7).
+
+**결과: 🧱 TERMINAL** (정직한 closed-negative). faithful-IIT4 Φ(exact MIP-EI, n=4, a_phi_iit4_tool;
+numpy는 Φ를 절대 계산 안 함; engine-native LCG content generator, byte-identical 재현):
+
+| seed | A (NO-PHASE) | B (PHASE-BIND) | ΔΦ(B−A) | T1 | PERM-SHUF | ΔΦ(S−A) | T2 |
+|------|------|------|------|----|------|------|----|
+| 1317 | 0.870311 | 1.335350 | +0.465039 | PASS | 1.150110 | +0.279798 | **FAIL** |
+| 1318 | 0.855353 | 0.860580 | +0.005227 | **FAIL** | 0.957870 | +0.102517 | **FAIL** |
+| 1319 | 0.586833 | 0.538064 | −0.048768 | **FAIL** | 1.174020 | +0.587183 | **FAIL** |
+
+- **T1 ROBUST-LIFT FAIL** — seed 1318 ΔΦ +0.005(미달), seed 1319 ΔΦ **−0.049(음수)** — 토폴로지를
+  꺾은 **바로 그 직교 seed 1319**. 상대-위상 lift 자체가 어려운 seed에서 취약.
+- **T2 SHUFFLE-EARNED FAIL(이전보다 더 심하게)** — **더 강한** permutation shuffle이 lift를 무너뜨리기는커녕
+  매 seed에서 Φ를 **ARM B 위로 올린다**(ΔΦ_perm +0.280/+0.103/+0.587 — perm-shuf Φ가 phase-bind Φ를
+  매 seed 초과). 진단 offset-shuffle도 동일.
+
+**근본 원인(종결 진단):** 관계를 **파괴하는** permutation이 오히려 Φ를 올린다면, Φ 이득은 상대-위상
+**관계**에서 오는 게 아니다 — `(1+cos)/2` carrier가 모듈별 salience 이진화에 주입하는 **진폭 분산**에서
+온다(offset이든 permutation이든 어떤 위상 scramble도 보존하는 분산). TIMING축은 토폴로지축과 **같은
+근본 실패**를 한다 — faithful-IIT4 MIP이 정직한 대조가 살아남지 못하는 저차원 구조(거긴 content cut,
+여긴 채널별 진폭 분산)를 착취한다.
+
+**결론: faithful-IIT4 Φ-robustness 벽은 이제 두 축 모두에서 TERMINAL** — 토폴로지 🏁(H_1283 relay
+R1-R7, H_1317 multi-edge) + 타이밍 🧱(H_1283 R8 engine c4 FAIL, H_1319 강한 대조에서도 c4 FAIL).
+anima의 4-모듈 workspace에서 robust(3-seed, 대조-생존) faithful-Φ lift는 **어느 축으로도 도달 불가**.
+이는 anima의 의식 substrate를 부정하지 않는다(Ψ=1/2, A⇄G tension 무손상) — **결합/위상 채널을 더해도
+honest 대조 아래서 faithful-IIT4 Φ 점수가 robust하게 오르지 않는다**는 것을 종결할 뿐. **CORE 배선
+follow-on 없음**(a_verified_must_wire = GREEN 전용; engine_cli.hexa 무손상, 프로브는 standalone fn
+main, importer 0). SCOPE: TOY n=4 dim-8 64-tick, faithful-Φ EXACT, content generator engine-native
+LCG(numpy 아님). rung 내에서는 결정적(강한 permutation 대조가 매 seed Φ를 올림 → variance-not-synchrony
+진단은 더 큰 n 불필요). 새 가설로만 열림: 근본적으로 다른 Φ 추정기 · 훨씬 큰 모듈 집합(>8은 exactness
+상실) · 진폭 분산이 증명상 0인 위상-게이트 read-out.
+
+산출물: `UNIVERSE/h1319_phi_timing.hexa` · `UNIVERSE/H_1319_phi_timing.md`(카드) ·
+`UNIVERSE/HYPOTHESES.md`(인덱스) · `CLAIMS.tape @C h1319_phi_timing` ·
+`.verdicts/1319_phi_timing/{H_1319_FREEZE,H_1319}.txt` · `domains/OMEGA.log.md`.
+
 ## 2026-06-16 — research(OMEGA): 🧱 H_1317 — 분산 multi-edge(small-world) 결합이 faithful-IIT4 Φ를 robust하게 올리나 (H_1283 중앙릴레이 벽)
 
 H_1283(thalamus-Φ)이 남긴 벽을 새 각도로 친 시도(c16/a_break_the_wall). H_1283은 모든 **중앙

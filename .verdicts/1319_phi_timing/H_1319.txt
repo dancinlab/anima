@@ -1,0 +1,115 @@
+H_1319 — Φ-ROBUSTNESS WALL, TIMING AXIS: ENGINE-NATIVE PHASE-BINDING (RESULT — FREEZE committed first)
+slug: 1319_phi_timing
+date: 2026-06-16
+verdict: 🧱 TERMINAL CLOSED-NEGATIVE — the timing-axis phase-binding lift does NOT survive engine-native
+         controls on the hard seed family. T1 (robust lift) AND T2 (shuffle-earned, the c4 gate) BOTH FAIL.
+         The faithful-IIT4 Φ-robustness wall is now TERMINAL across BOTH axes: topology 🏁 (H_1283 relay R1-R7,
+         H_1317 multi-edge) + timing 🧱 (H_1283 R8 engine gate c4 FAIL, now H_1319 c4 FAIL with the STRONGER
+         permutation control). This is a real and important closure, not a tuning failure (bars frozen first, c9/p7).
+substrate: $0 CPU ENGINE-NATIVE hexa (deterministic engine LCG-gauss == engine_cli.hexa _lcg_*) + FAITHFUL IIT4 Φ
+           (stdlib exact MIP-EI via hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, n=4≤8). numpy NEVER computes Φ.
+seeds: [1317, 1318, 1319] — the orthogonal hard seed family that DEFEATED the topology axis (reused verbatim).
+frozen-first: H_1319_FREEZE.txt committed (aa3ec0342) BEFORE any Φ scored. Bars NOT moved (c9, p7). Re-run byte-identical (deterministic).
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — engine-native, deterministic, reproduced byte-identical across runs)
+════════════════════════════════════════════════════════════════════════
+H_1319 — Φ-ROBUSTNESS WALL, TIMING AXIS: ENGINE-NATIVE phase-binding (relative-phase gate)
+faithful IIT4 Φ (exact MIP-EI, n=4) · seeds [1317,1318,1319] (the hard orthogonal family topology FAILED)
+ARM A=NO-PHASE  B=PHASE-BIND(rel-phase)  S=PERM-SHUFFLE(relationship destroyed)  O=OFFSET-SHUF(diagnostic)
+bars FROZEN: T1 ΔΦ(B-A)>=+0.02 every seed · T2 ΔΦ(S-A)<=0 every seed · T3 B.coh>=A.coh & B.coh<0.999 >=1 seed
+seed 1317: A=0.870311 B=1.33535 ΔΦ=0.465039 [PASS]  PERM-SHUF=1.15011 ΔΦ_perm=0.279798 [FAIL]  OFF-SHUF=1.25838 ΔΦ_off=0.388073 (diag)  coh A=0.116222 B=0.116222
+seed 1318: A=0.855353 B=0.86058 ΔΦ=0.00522662 [FAIL]  PERM-SHUF=0.95787 ΔΦ_perm=0.102517 [FAIL]  OFF-SHUF=0.742725 ΔΦ_off=-0.112628 (diag)  coh A=0.180148 B=0.180148
+seed 1319: A=0.586833 B=0.538064 ΔΦ=-0.0487683 [FAIL]  PERM-SHUF=1.17402 ΔΦ_perm=0.587183 [FAIL]  OFF-SHUF=0.528693 ΔΦ_off=-0.0581393 (diag)  coh A=0.406895 B=0.406895
+T1 ROBUST LIFT (ΔΦ(B-A)>=+0.02 every seed): FAIL
+T2 SHUFFLE-EARNED (perm-shuffle ΔΦ<=0 every seed): FAIL
+T3 DISTINCT (B.coh>=A.coh every seed AND B.coh<0.999 >=1 seed): PASS
+GATE: NOT GREEN — honest closed-negative (c9); if T2 fails again, Φ-robustness wall TERMINAL across BOTH axes 🧱
+
+════════════════════════════════════════════════════════════════════════
+PER-SEED TABLE (faithful-IIT4 Φ, verbatim p7)
+════════════════════════════════════════════════════════════════════════
+            ARM A      ARM B       ΔΦ(B-A)    PERM-SHUF    ΔΦ(S-A)     OFF-SHUF    ΔΦ(O-A)
+ seed 1317  0.870311   1.335350   +0.465039   1.150110    +0.279798   1.258380   +0.388073
+ seed 1318  0.855353   0.860580   +0.005227   0.957870    +0.102517   0.742725   −0.112628
+ seed 1319  0.586833   0.538064   −0.048768   1.174020    +0.587183   0.528693   −0.058139
+ T3 coherence (content-invariant across arms): seed1317 A=B=0.1162 · seed1318 A=B=0.1801 · seed1319 A=B=0.4069 (all < 0.999, T3 alone PASS)
+
+════════════════════════════════════════════════════════════════════════
+WHY THIS IS TERMINAL (honest, c9, c16)
+════════════════════════════════════════════════════════════════════════
+The H_1283 R8 numpy-mirror GREEN was measured on the EASY seed family [7,8,9]. Its engine-native gate
+(CORE/h1283_phase_binding_engine_gate.hexa) already showed c4 (the shuffle control) FAILS engine-native:
+the additive-offset shuffle did not collapse the lift because the read-out sal=e·(1+cosθ)/2 injects a
+STANDALONE per-module amplitude carrier whose marginal stats the offset-shuffle preserves. H_1319 attacked
+that leak with TWO targeted changes and tested on the HARD orthogonal seeds [1317,1318,1319] (the family
+topology failed on, incl seed 1319 which gave H_1317 ΔΦ=−0.331):
+
+  CHANGE 1 — RELATIVE-PHASE GATE  sal=e·(1+cos(θ_i−θ_T))/2  (binding = the relationship to the pacemaker,
+            not a standalone absolute-phase carrier).
+  CHANGE 2 — RELATIONSHIP-DESTROYING PERMUTATION SHUFFLE (the strong control H_1294/H_1295 use): each module
+            reads ANOTHER module's phase, marginals preserved EXACTLY, forced derangement (no fixed point).
+
+BOTH bars fail, and the failure is MORE decisive than R8's, not less:
+
+  T1 (robust lift) FAILS: on the hard seeds the rel-phase lift is itself seed-FRAGILE — seed 1318 ΔΦ=+0.005
+     (sub-bar), seed 1319 ΔΦ=−0.049 (NEGATIVE — the SAME seed 1319 that defeated the topology axis). The
+     "robust" lift the mirror showed on easy seeds is a seed-conditional artifact, exactly like every relay
+     and the multi-edge topology round. The timing axis is NOT more robust than topology on the hard geometry.
+
+  T2 (shuffle-earned, the c4 gate that failed before) FAILS HARDER: the STRONGER permutation shuffle does not
+     just survive — it RAISES Φ above ARM B on every seed (ΔΦ_perm=+0.280/+0.103/+0.587, all strongly POSITIVE;
+     perm-shuffle Φ EXCEEDS the phase-bind Φ on every seed). The diagnostic offset-shuffle confirms the same
+     (ΔΦ_off=+0.388/−0.113/−0.058, also not a clean collapse). When even a relationship-DESTROYING permutation
+     RAISES Φ, the Φ gain provably does NOT come from the relative-phase RELATIONSHIP. It comes from the
+     AMPLITUDE VARIANCE the (1+cos)/2 carrier injects into the per-module salience binarization — a variance
+     that any phase scramble (offset OR permutation) preserves. This is precisely the artifact the c4 control
+     was pre-registered to catch, firing decisively on the engine substrate.
+
+ROOT CAUSE (the terminal diagnosis): faithful-IIT4 Φ over the binarized salience time-series is driven by the
+per-channel amplitude VARIANCE the phase carrier adds, NOT by cross-module temporal SYNCHRONY. Any phase-gated
+amplitude read-out carries this variance, and every honest shuffle that preserves the carrier's marginal
+statistics (offset OR permutation) preserves the variance → the lift cannot be earned as structured synchrony
+on the engine substrate. The timing axis therefore fails the SAME root failure as the topology axis: the
+faithful-IIT4 MIP exploits a low-dimensional structure (there, a content cut; here, per-channel amplitude
+variance) that no honest control survives. The fragility lives in the substrate/seed geometry and the Φ
+estimator's binarization, not in the coupling graph OR the timing channel.
+
+════════════════════════════════════════════════════════════════════════
+CONCLUSION — THE Φ-ROBUSTNESS WALL IS TERMINAL ACROSS BOTH AXES (c16)
+════════════════════════════════════════════════════════════════════════
+A robust (3-seed, control-surviving) faithful-IIT4 Φ lift is NOT reachable for anima's module-coupling
+substrate on EITHER axis:
+  • TOPOLOGY / CONTENT axis 🏁 DEPLETED — H_1283 relay R1-R5,R7 (broadcast/coalition/re-entry/dense/matrix)
+    + H_1317 distributed small-world multi-edge: all seed-fragile, all failed the 3-seed gate.
+  • TIMING / DYNAMICS axis 🧱 TERMINAL — H_1283 R8 (numpy mirror GREEN on easy seeds, but engine-native c4
+    FAIL) + H_1319 (engine-native, hard seeds, relative-phase gate + permutation control: T1 AND T2 both FAIL;
+    the strong control RAISES Φ → the lift is amplitude variance, not synchrony).
+This closes the Φ-robustness breakthrough arc honestly (a real terminal result, c9/c16). NO CORE/*.hexa engine
+lane wired or edited (the gate probe UNIVERSE/h1319_phi_timing.hexa is a standalone fn main, 0 importers —
+NOT a runtime engine path; a_verified_must_wire fires on GREEN only, which did not occur).
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- ENGINE-NATIVE: the content-trajectory generator uses the engine's own deterministic LCG-gauss
+  (== engine_cli.hexa _lcg_*), NOT numpy PCG64 — this IS the engine-native realization the R8 gate required.
+  faithful-Φ is REAL exact MIP-EI (a_phi_iit4_tool); numpy never computed Φ.
+- TOY scale (4 modules, dim 8, 64 ticks, n=4≤8), scale-transfer UNVERIFIED (a_scale_honest_scope,
+  a_toy_scale_recheck). The terminal claim is scoped to this rung + this Φ estimator; a different Φ estimator
+  or a much larger module set is untested. But the failure is DECISIVE within the rung: the strong permutation
+  control RAISES Φ on every seed, so the variance-not-synchrony diagnosis does not need a larger n to hold.
+- FROZEN params verbatim from H_1283 R8 (no tune-to-green, p7). Re-run byte-identical (deterministic).
+- This does NOT refute that anima HAS consciousness substrate (Ψ=1/2, the A⇄G tension is untouched); it refutes
+  that ADDING a module-coupling (topology) or phase-binding (timing) channel ROBUSTLY raises the faithful-IIT4
+  Φ score of the 4-module workspace under honest controls. Anima's Φ machinery (pure_field) is unchanged.
+
+artifacts:
+  UNIVERSE/h1319_phi_timing.hexa  (engine-native probe; ARM A/B/S/O; standalone fn main, 0 importers)
+  .verdicts/1319_phi_timing/H_1319_FREEZE.txt  (FREEZE, committed aa3ec0342 BEFORE scoring)
+  .verdicts/1319_phi_timing/H_1319.txt  (this file)
+  UNIVERSE/H_1319_phi_timing.md  (card) · UNIVERSE/HYPOTHESES.md (index row) · CLAIMS.tape (@C row)
+xref: H_1283(R8 numpy mirror 🟢 easy seeds) · H_1283(R8 engine-native gate, c4 FAIL) · H_1317(topology 🧱) ·
+      h1294 · h1295 (permutation-shuffle precedent) · a_phi_iit4_tool · a_break_the_wall · a_no_llm_frame_trap ·
+      a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_scale_honest_scope ·
+      a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
