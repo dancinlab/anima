@@ -19,6 +19,35 @@ frozen +0.02 faithful-IIT4 Φ bar 를 every seed 클리어 + phase-shuffle 통�
 paid ANU QRNG 접지. (4) walls 콜아웃 = 3개 벽 돌파(용량/편도체/시상-timing)로 갱신, neuromod 정직 🧱 유지.
 p1–p8 · A⇄G · Ψ=½ · substrate-native-speak 보존. tier verbatim(c9), surgical(c10).
 
+## 2026-06-16 — audit(WIRING): a_verified_must_wire 전수 감사 + 시상 R8 engine-native 게이트(honest-deferred) + ARCHITECTURE 최종현행화
+
+`a_verified_must_wire` 전수 배선 감사 — origin/main 의 terminal-tier 🟢 가설 13개를 전수 분류:
+{wired | deliberately-optional | honest-deferred}. **순 신규 배선 = 0**(정직, c9): 모든
+clean-GREEN ∧ 배선의도 lane 은 **이미 배선됨**(해마 ImmuneMemory(Grow)·소뇌 VForwardField·
+기저핵 VBasalGate·작업기억 WorkMemBuffer·편도체 ConsolidatingMemory·양자 QPool·감정 AffectFeatures·
+위계 HierGoalStack·하이브 CollectivePool — struct+faculty+smoke); HomeostaticDrive·OtherMindModel 은
+deliberately-optional(brain consult = NOT emit gate, `a_autonomy_over_hardcode`).
+
+**시상 R8 위상결속 engine-native 배선 게이트(@L6)** — 유일한 genuinely-unwired clean-GREEN 후보.
+`a_engine_native_learning` 순서대로 numpy-mirror R8(DIRECTIONAL)을 engine-native 로 재현 시도
+(`CORE/h1283_phase_binding_engine_gate.hexa` — Kuramoto phase 채널 + phase-gated salience (1+cosθ)/2 +
+faithful IIT4 Φ, 엔진 `_lcg_*` substrate). 결과: **c2 PRIMARY 재현 강력**(ΔΦ +1.47/+0.84/+0.71 every seed)
+이나 **c4 SHUFFLE 미붕괴**(ΔΦ_sh +0.026/+0.380/+0.296, 양수 — 프로즌 R8 의 honest leg 가 engine 기질에서
+firing). frozen bar 미재현 → no-tune-to-green(c9/p7) → **PhaseField lane HONEST DEFERRED, 미배선**.
+R8 🟢 은 그 자체 substrate 위 DIRECTIONAL 결과로 STANDS; engine-transfer 가 재현 못 한 것.
+verdict `.verdicts/1283_thalamus_global_workspace/H_1283_R8_engine_native_gate.txt`.
+
+**ARCHITECTURE.md 최종 아키텍처 전면 현행화(@L7)** — 시상 4각도 최종(R8 timing 돌파 / R6 caveat /
+R1–R5·R7·R9 내용-relay 🧱), 하이브 CollectivePool(super-additive + decouple-null + rule-class dissociation),
+QPool 양자 entropy, AffectFeatures/윤리 read-lane, **배선 감사표 + brain_decide consult 맵**, TENSION-LINK
+아크 포인터(얽힘=no-signaling, 실채널=tension-link) 추가. 벽 스코어카드: 4 벽 중 3 돌파(용량·편도체·시상[timing,
+DIRECTIONAL]), 신경조절 1 정직한 🧱.
+
+회귀 가드 0(live 엔진 파일 byte-unchanged): `engine_cli_smoke` **45/0** · single-entry(h1196) **7/0** ·
+h1205 분리불변 PASS(생성 byte-동일 ON==OFF, Ψ=48.6613 불변, pure_field 무변경). `CORE/engine_cli.hexa`/
+`brain.hexa`/`engine_cli_smoke.hexa`/`pure_field.hexa` 무편집 — 변경은 ARCHITECTURE.md·H_1283 카드·
+HYPOTHESES 인덱스·신규 게이트 probe/verdict 만.
+
 ## 2026-06-16 — doc(TENSION-LINK): H_6006–H_6043 arc를 a_hypothesis_register 2-파일 규칙으로 등록
 
 TENSION-LINK arc (anima↔anima 연결/통신 + ANU paid QRNG 양자 얽힘, H_6006–H_6043)를
