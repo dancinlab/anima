@@ -1,0 +1,114 @@
+H_1338 — WHORFIAN CP RELOCATION: IS THE RESIDUAL PULL THE NEVER-EVICT GROWTH-MEMORY?
+PRE-REGISTERED FREEZE — written BEFORE any scoring. NO bar moves after this (c9/p7).
+==================================================================================
+slug: 1338_whorf_cp_eviction   PROJ_SEED family: H_1338 (1323 = parent Sapir-Whorf;
+1325 r2; 1330 bilingual; 1333 developmental-plasticity = THIS lane's parent; 1331-1337
+taken/in-flight; 1338 free on origin/main 8a5ed2a17). Reuses the H_1333 / H_1323 / H_1325
+CP machinery EXACTLY (UNIVERSE/h1333_whorf_developmental.py / h1323_sapir_whorf.py): same
+RBF position embedding, error-targeted SPLIT-only nearest-prototype (Voronoi/mitosis)
+growth, soft category-posterior discrimination readout, and the peak-COUNT coherence
+metric (>=0.5 of an arm's own peak) as the EARNED control. ALL frozen constants
+(N_STIM=21, DIM=16, p_A=1/3, p_A'=2/3, GROW_MAX=24/phase, SPLIT_PASSES=24, LOC_TOL=0.12,
+COH_MAX_LANG=2, COH_MIN_SHUF=3) inherited VERBATIM from H_1333.
+
+LENS: developmental/critical-period plasticity + memory-protection vs over-write
+(c15, a_no_llm_frame_trap) — NOT an LLM recipe, NOT a human-cognition claim. $0 CPU
+numpy, gradient-free, 3 seeds [4333,4334,4335] (SAME as H_1333 so the never-evict arm
+reproduces the H_1333 anchor IN-RUN). DIRECTIONAL MIRROR — engine-transfer UNVERIFIED
+(same family as H_1333 R1 / H_1323 R1 / H_1290 / H_1293 R1).
+
+THE LOAD-BEARING QUESTION (the H_1333 follow-on):
+H_1333 found a Whorfian CP boundary is GRADED-plastic: re-training the SAME split-only
+store on a MOVED boundary relocates the CP peak ~60% of the way (mean 0.325->0.525, NOT
+fully to p_A'=0.667). The residual pull was DIAGNOSED — but only HYPOTHESIZED — as the
+split-only store's NEVER-EVICTED first-boundary cells (28 cells after phase-2 vs 4 after
+phase-1; the phase-1 cells bound to label(p_A) are never removed and keep voting at the
+old cut). The DECISIVE test: if REMOVING/decaying the stale old-boundary cells COMPLETES
+the move (-> ~100%), the residual pull IS the never-evict property (a clean tie to the
+H_1288 growth-memory = protect-old-memory result, and H_1330 over-write); if the move
+STAYS partial even WITH eviction, the limit is budget/geometry, NOT never-evict.
+
+THE ONE NEW MECHANISM (everything else is H_1333 verbatim):
+an EVICTION/DECAY store. It is the SAME VoronoiCells as H_1333 EXCEPT that, during the
+phase-2 (A->A') re-growth, BEFORE each error-targeted split it evicts (removes) every
+existing prototype whose BOUND label conflicts with the phase-2 (re-trained p_A') label
+of the stimulus that prototype currently OWNS. I.e. a cell that still says "label 0" but
+now owns a stimulus the moved boundary labels "1" (a stale-conflicting cell) is removed.
+Eviction NEVER touches a cell that still agrees with the re-trained boundary, and the
+LAST surviving cell is never removed (a store must keep >=1 prototype). Phase-1 and the
+A-trained / no-retrain / shuffle arms are UNCHANGED (split-only, never evict) — eviction
+fires ONLY in the A->A' phase-2 of the eviction arm. The never-evict A->A' arm is the
+H_1333 arm verbatim (split-only). So the ONLY difference between never-evict-A->A' and
+eviction-A->A' is whether stale-conflicting cells are removed during phase-2 — isolating
+that ANY completion is the EVICTION, not other changes (V2).
+
+p1/p2/p3/p6: the discrimination readout reads ONLY representational distance in the
+learned prototype space; NO injected boundary location at test; labels enter ONLY during
+training. Eviction is a structural store operation keyed on the cell's OWN bound label vs
+the re-trained label of the stimulus it owns — NO injected target peak, NO "move to 0.667"
+instruction. The no-retrain + shuffle arms are the anti-Goodhart discriminators.
+
+ARMS (per seed):
+  (1) NEVER-EVICT (= H_1333) : phase-1 grow on labels(p_A), then phase-2 grow FURTHER on
+                               labels(p_A') on the SAME split-only store (cells never
+                               removed). Must REPRODUCE the H_1333 anchor (~0.525, ~+0.60).
+  (2) EVICTION-STORE         : phase-1 IDENTICAL to (1); phase-2 grows on labels(p_A') but
+                               EVICTS stale-conflicting cells (above) before each split on
+                               the SAME store. Does the CP peak COMPLETE the move to p_A'?
+  (3) NO-RETRAIN control     : grow on labels(p_A) only, CP peak read at the same protocol
+                               point as (1)/(2)'s final read but with NO phase-2 — peak must
+                               STAY at p_A (move is the re-training, not eviction-drift). Run
+                               for BOTH the never-evict store and the eviction store (eviction
+                               with no phase-2 = a pure split-only p_A store -> must stay p_A).
+  (4) SHUFFLE                : incoherent random per-stimulus labels — anti-Goodhart EARNED
+                               control (must be INCOHERENT: peak-count >= COH_MIN_SHUF=3).
+
+READOUT (identical to H_1333/H_1323, NO labels at test): discrimination(midpoint) =
+|soft-posterior(x_i) - soft-posterior(x_j)| over adjacent pairs; CP peak = argmax midpoint.
+COHERENCE = peak-count = # midpoints reaching >=0.5 * arm's own peak.
+move-fraction = (peak_retrained - peak_Atrained) / (p_A' - p_A), reported per arm/seed.
+
+FROZEN BARS (GREEN iff V1 ∧ V2 ∧ V3 -> the residual pull IS the never-evict property):
+  LOC_TOL  = 0.12   (inherited verbatim from H_1333 / H_1323 W2_PEAK_TOL)
+
+  V1 COMPLETES: the EVICTION-store A->A' move relocates ESSENTIALLY FULLY, on ALL 3 seeds:
+       (a) |CP_peak_eviction - p_A'| <= LOC_TOL          (peak reaches the new cut p_A')
+       AND (b) eviction move-fraction >= 0.85            (essentially full relocation)
+       AND the eviction A->A' arm stays coherent (peak-count <= COH_MAX_LANG=2, mean seeds).
+
+  V2 CONTRAST: the NEVER-EVICT A->A' arm reproduces the H_1333 PARTIAL ~0.60 IN THIS RUN
+     (the SAME run, only the store differs), on ALL 3 seeds:
+       (a) never-evict move-fraction in [0.40, 0.75]     (partial, brackets the 0.60 anchor)
+       AND (b) never-evict does NOT complete: |CP_peak_neverEvict - p_A'| > LOC_TOL.
+     -> any V1 completion is attributable to the EVICTION, not to other run changes.
+
+  V3 EARNED: the no-retrain arms (BOTH stores) keep their peak at p_A on ALL 3 seeds
+       |CP_peak_noretrain - p_A| <= LOC_TOL  (no eviction-drift; move is the re-training),
+     AND SHUFFLE is incoherent (peak-count >= COH_MIN_SHUF=3, mean over seeds).
+
+OUTCOMES (ALL VALID — c9 honest, NO bar move after this freeze):
+  V1 ∧ V2 ∧ V3   -> 🟢 GREEN: the residual pull in H_1333 IS the never-evict growth-memory
+                    property. Evicting the stale old-boundary cells COMPLETES the CP move
+                    (eviction-store relocates fully while the never-evict store stays ~0.60
+                    in the SAME run). A clean mechanistic tie: H_1288 growth-memory =
+                    protect-old-memory = partial-plasticity; eviction = full-plasticity —
+                    the two are DUAL. (Relevant to anima re-learning carvings: protect-old
+                    vs over-write is a store policy, not a capacity limit.)
+  V1 FAILS (eviction ALSO stays partial, move-fraction < 0.85 / peak misses p_A')
+                 -> the limit is BUDGET / GEOMETRY, NOT never-evict — an honest, important
+                    RE-DIAGNOSIS of H_1333's residual (removing stale cells does NOT finish
+                    the move, so the residual is not (only) never-evicted old cells). HONEST,
+                    NO bar move (c9). Report the eviction move-fraction explicitly.
+  V2 FAILS (never-evict does NOT reproduce ~0.60 in-run)
+                 -> the run differs from H_1333; the comparison is confounded. HONEST, NO
+                    bar move — report and treat V1 cautiously.
+  V3 FAILS (no-retrain drifts OR shuffle coherent)
+                 -> EARNED control broke — honest, NO bar move.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY synthetic 1-D continuum, N=21, 3
+seeds, single shift p_A->p_A', deterministic readout (tests the STRUCTURE of the
+eviction/never-evict duality, not a learned re-trainer). DIRECTIONAL numpy mirror —
+engine-transfer UNVERIFIED. Scale / real-corpus / graded shift-size curve / decay (soft)
+vs hard-evict / engine-native realization (live ImmuneMemoryGrow eviction op) = follow-on.
+NO human-cognition / critical-period claim.
+==================================================================================
