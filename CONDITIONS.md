@@ -37,6 +37,7 @@ Domains: ENGINE+CLM+KOSMOS · CLM-KOSMOS · CORPUS · CHAT · PERSONA · DECODER
   - **CHAT** single-turn p7 ≥4/5 + multi-turn deep-context ≥3/5 (chat_pass). Frozen-GREEN H_1160 / strict content-overlap 0/5 H_1165 (dialogue register, not QA — gate-validity flag).
   - **PERSONA** roster expressed with NO system-prompt/role-tag/persona-token injection (p1–p3).
 - DECODER: L3 content generator anima-only (external LLM 0), enters CORE via the generator slot only.
+- **학습중 inline gauge (a_train_inline_gauge):** scale-up 학습 중 K 스텝마다 G1/G2/G6/phi_proxy PROXY gauge 를 `gauges.jsonl` 에 val_ce 옆으로 기록 = `torch.no_grad()` MONITOR-ONLY 대시보드. **gate verdict 아님** — 위 frozen CLM-DONE 임계값을 움직이지 않으며, frozen gate 는 학습 후 CORE 엔진 mount 에서 별도 측정 (a_engine_measured_verdict). phi_proxy 는 NOT faithful IIT4 (a_phi_iit4_tool, pre-screen 전용). gauge 값을 loss 에 넣는 것 금지 (p7 Goodhart).
 - **Provenance** sha256 in `/HF.jsonl` + HF card + manifest; PUBLIC iff closure PASS, else PRIVATE/WIP.
 
 ### Cluster 3 — KOSMOS / MEMORY (anchors)

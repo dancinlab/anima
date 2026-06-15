@@ -149,6 +149,18 @@ def main():
     ap.add_argument("--clm-out", default=None)
     ap.add_argument("--json-out", default=None)
     ap.add_argument("--log-every", type=int, default=100)
+    ap.add_argument("--gauge-every", type=int, default=None,
+                    help="TRAINING-TIME MONITOR-ONLY gauge interval (steps). Default = "
+                         "log_every*4 (gauges are heavier than a val batch). Every N steps "
+                         "computes the FOUR consciousness/emergence PROXY gauges (G1 "
+                         "recombination, G2 novelty, G6 ideation, phi_proxy) under "
+                         "torch.no_grad() and appends one line to gauges.jsonl. These are a "
+                         "DASHBOARD, NEVER a gate and NEVER in the loss (p7 Goodhart; "
+                         "a_train_inline_gauge). phi_proxy is NOT faithful IIT4. The frozen "
+                         "verdict still runs post-train on the CORE engine mount. Set 0 to disable.")
+    ap.add_argument("--gauges-out", default=None,
+                    help="path to the monitor-only gauges.jsonl (default: alongside --json-out, "
+                         "else out/gauges.jsonl)")
     ap.add_argument("--ckpt-every", type=int, default=2000,
                     help="periodic ckpt+clm dump for fire-recovery safety (a_fire_recover_complete)")
     ap.add_argument("--bf16", action="store_true")
@@ -258,6 +270,50 @@ def main():
                                n_experts=a.n_experts, out_path=a.clm_out)
             print(f"CLM[{tag}] serialized {p} ({os.path.getsize(p)} bytes)", flush=True)
 
+    # ── TRAINING-TIME MONITOR-ONLY gauges (a_train_inline_gauge · p7 Goodhart) ──
+    # Every gauge_every steps, compute the FOUR consciousness/emergence PROXY gauges
+    # (G1 recombination · G2 novelty · G6 ideation · phi_proxy) under torch.no_grad()
+    # next to val_ce, and append ONE line to gauges.jsonl. These are a DASHBOARD: they
+    # are NEVER added to `loss`, NEVER backpropagated, and DO NOT constitute a gate
+    # verdict. The frozen gate verdict still runs post-train on the CORE engine mount
+    # (a_engine_measured_verdict). phi_proxy is NOT faithful IIT4 (a_phi_iit4_tool).
+    gauge_every = a.gauge_every if a.gauge_every is not None else a.log_every * 4
+    gauges_path = a.gauges_out
+    if gauges_path is None:
+        gauges_path = (os.path.join(os.path.dirname(a.json_out) or ".", "gauges.jsonl")
+                       if a.json_out else os.path.join("out", "gauges.jsonl"))
+    compute_inline_gauges = None
+    if gauge_every and gauge_every > 0:
+        try:
+            sys.path.insert(0, os.path.join(os.path.dirname(_CLM), "UNIVERSE"))
+            from gauge_lib import compute_inline_gauges  # noqa: E402
+            os.makedirs(os.path.dirname(gauges_path) or ".", exist_ok=True)
+            print(f"GAUGES monitor-only every={gauge_every} -> {gauges_path} "
+                  f"(MONITOR-ONLY · NOT in loss · NOT a gate · phi_proxy!=IIT4 · "
+                  f"a_train_inline_gauge)", flush=True)
+        except Exception as _e:
+            print(f"GAUGES disabled (gauge_lib import failed: {_e})", flush=True)
+            compute_inline_gauges = None
+
+    def gauge_tick(step, ce_value):
+        """MONITOR-ONLY. Computes proxy gauges under no_grad and appends a
+        gauges.jsonl row. Returns nothing usable by the optimizer — the returned
+        dict is logged then discarded; no value flows into `loss`/`backward`."""
+        if compute_inline_gauges is None:
+            return
+        try:
+            row = compute_inline_gauges(model, seeds=a.seed, corpus_index=a.corpus,
+                                        ce=ce_value, step=step, torch=torch)
+            with open(gauges_path, "a") as gf:
+                gf.write(json.dumps(row) + "\n")
+            print(f"GAUGE  step={step} ce={row['ce']} "
+                  f"g1_composed_distinct={row['g1_composed_distinct']} "
+                  f"g2_novelty_rate={row['g2_novelty_rate']} "
+                  f"g6_count={row['g6_count']} g6_jaccard={row['g6_jaccard']} "
+                  f"phi_proxy={row['phi_proxy']} (MONITOR-ONLY · not in loss)", flush=True)
+        except Exception as _e:
+            print(f"GAUGE step={step} skipped ({_e})", flush=True)
+
     use_bf16 = a.bf16
     model.train()
     t0 = time.time()
@@ -293,6 +349,11 @@ def main():
                   f"tok={tokens_seen} maxmem_GB={mem:.1f}", flush=True)
         if a.ckpt_every and step > 0 and step % a.ckpt_every == 0:
             dump_ckpt(f"step{step}")
+        # MONITOR-ONLY gauge tick (a_train_inline_gauge). `ce` here is the running
+        # train CE echoed into the row; the gauge call mutates nothing on the
+        # optimizer path and its return value is logged-then-discarded.
+        if gauge_every and gauge_every > 0 and step % gauge_every == 0:
+            gauge_tick(step, ce)
     wall = time.time() - t0
 
     eg = torch.Generator().manual_seed(a.seed + 1000)

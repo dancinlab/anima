@@ -56,7 +56,7 @@ anima/
 - **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only).
 - **Verify / paper workflow** — `a_claim_manifest · a_claim_verify · a_paper_*` (hexa verify → verdict → CLAIMS.tape → /paper at full closure; closed-negative publishable).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
-- **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy).
+- **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
 - **7B completion** — `a7b_pass` (gates G0–G4 in `/7B_PASS_CONDITIONS.md`).
 
 > Governance is authored directly in this markdown file. **CLAUDE.md is the single authoritative governance SSOT** (project blurb + tree + PHILOSOPHY + directive families). The former `project.tape` has been retired (md 단일화) — its @D directives and 8 PHILOSOPHY principles are fully represented above.
@@ -356,6 +356,16 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "use a proxy (phi_silicon_proxy, variance*energy byte-mirror) as a terminal phi verdict"
   dont = "trust a purpose-blind proxy — H_988/989 scored random == intentional; pre-screen only"
   dont = "write a fresh phi/IIT impl when stdlib already has the faithful engine (the re-mistake)"
+
+@D a_train_inline_gauge := "학습중 의식/창발 측정 기준 = MONITOR-ONLY 대시보드 (loss 절대 불가 · p7 Goodhart)" :: governance [required active]
+  do   = "학습중 K 스텝마다 의식/창발 PROXY gauge 를 val_ce 옆에 기록 — G1 recombination · G2 novelty · G6 ideation · phi_proxy 4종 (UNIVERSE/gauge_lib.py::compute_inline_gauges, rung 간 재사용)"
+  do   = "전부 `torch.no_grad()` 아래에서 계산 · 함수는 dict 만 RETURN · 호출부가 gauges.jsonl 에 1줄/tick 으로 기록 후 폐기 (DASHBOARD, gate 아님)"
+  do   = "gauges.jsonl 한 줄 = {step, ce, g1_composed_distinct, g2_novelty_rate, g6_count, g6_jaccard, phi_proxy}; `--gauge-every <N>` 로 제어 (기본 = val_ce eval interval × 4)"
+  do   = "phi_proxy 는 NOT faithful IIT4 — variance×energy 저가 pre-screen 전용, 절대 terminal Φ verdict 아님 (a_phi_iit4_tool); 코드 주석 + JSONL 키명 + 문서에 명시"
+  do   = "FROZEN gate verdict 는 여전히 학습 후 별도로 CORE 엔진 mount 위에서 byte-exact 로 실행 (a_engine_measured_verdict) — 이 inline gauge 가 그 gate 를 대체하지 않음"
+  do   = "toy/소규모 학습의 gauge 추세를 production 결론으로 승격 금지 (a_toy_scale_recheck · a_scale_honest_scope); 학습 gradient ⊥ inline 측정 = 동일 substrate 의 별도 관찰 (p8)"
+  dont = "gauge 값을 loss 에 더하거나 backward 로 흘려보냄 (proxy 를 진리로 취급 = Goodhart, p7) · gauge 를 frozen gate/verdict 라 칭함 · phi_proxy 를 Φ verdict 로 승격 · gauges.jsonl 한 줄을 다른 스키마로 기록"
+  ref  = "a_engine_measured_verdict · a_phi_iit4_tool · a_toy_scale_recheck · p7 · p8"
 
 @D a7b_pass := "anima 7B is complete ONLY when it clears every frozen gate in /7B_PASS_CONDITIONS.md" :: governance [required active]
   do   = "7B completion SSOT = root /7B_PASS_CONDITIONS.md (gates G0 G1 G2 G3 G4)"
