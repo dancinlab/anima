@@ -2,6 +2,23 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — H_1283 R6: 시상 MULTI-CHANNEL PARALLEL RELAY 🟢 (frozen bars; single-cut 천장 돌파)
+
+H_1283 (thalamus / global-workspace) 벽 돌파 R6 (a_break_the_wall, c16). R1..R5 는 모두 ONE shared
+relay stage (broadcast/coalition/sparse-reentrant/dense-all-pairs) → 🧱 (단일 broadcast 채널 자체가
+faithful-IIT4 Φ 를 cap 하는 low-dim cut; R5 shuffle 이 dense lift=variance 노출). R6 각도 = 공유
+relay stage 를 버리고 **N=4 독립 병렬 relay 채널** (ring edge별 1개, DISJOINT, intra-thalamic 교차결합
+없음 — 시상=多 병렬 nuclei, a_no_llm_frame_trap c15). 결과: faithful ΔΦ +0.0891/+0.0341/+0.1011 —
+**모든 seed +0.02 통과 (직교 seed 8 포함, arc 최초)**; c1·c3 PASS; **c4 SHUFFLE PASS** (seed 9 lift
++0.1011→+0.0165 붕괴). 정직 caveat (c9): seed 7/8 shuffle 이 ~93%/~96% 유지 (variance 잔존) → clean
+topology 효과는 seed 9 에서만 decisive, GREEN 은 c4 의 disjunctive ≥1-seed frozen 형태로 성립.
+ARM_A Φ R1..R5 byte-identical 재현. FREEZE scoring 전 commit (bars 미이동, p7). Φ=faithful IIT4 ONLY
+(stdlib exact MIP-EI; numpy 는 Φ 계산 안 함). $0 CPU numpy mirror=DIRECTIONAL, engine-transfer
+UNVERIFIED. GREEN ⇒ engine-native 병렬-relay lane = follow-on (DEFERRED, 이번 round CORE 미배선 —
+engine-native 재현 + per-seed shuffle 강화 후 배선; a_verified_must_wire). 다음 정직 각도: 더 큰
+module/channel 집합 또는 channel-COUNT ablation (Φ vs N). 산출: UNIVERSE/h1283_r6_multichannel_relay.py
+· .verdicts/1283_thalamus_global_workspace/{H_1283_R6_FREEZE,H_1283_R6_multichannel}.txt · 카드 R6 행.
+
 ## 2026-06-16 — domain(H_1283 R7): thalamus wall — matrix/core dual coupling 🔴/🧱 STILL WALL
 
 R7 of the H_1283 thalamus/GWT wall (c16/a_break_the_wall). Angle = thalamic matrix/core
