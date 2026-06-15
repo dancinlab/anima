@@ -1,0 +1,110 @@
+H_1336 — ko-crosssyllable — FROZEN PRE-REGISTRATION (write BEFORE scoring; NOT moved — c9/p7)
+================================================================================
+PROJ_SEED provenance: free-id verified on origin/main @61ce6948f (1316-1335 taken/in-flight; 1336 FREE).
+date: 2026-06-16   substrate: summer RTX 5070 sm_120 (torch 2.11.0+cu130), $0, mirror DIRECTIONAL.
+
+WHY THIS LANE (the precise diagnosis H_1329 handed forward)
+--------------------------------------------------------------------------------
+The Korean depth-below-jamo question is 🧱 floored at jamo CE 2.51335 for the
+L2-Voronoi count-MLE mechanism family. H_1329 proved re-FACTORIZATION is futile:
+  A1 jamo opaque-id (geometry-fair bank)          = 2.51335  (= the floor / calib anchor)
+  A2 featural-PARTITION (opaque jamo target)      = 2.73046  (ABOVE jamo)
+  A3 INDEPENDENT factorization                    = 3.07295  (BACKFIRED)
+  A4 CONDITIONAL-CHAIN (joint-preserving)         = 2.75109  (ABOVE jamo — C1 FAIL)
+  → 🧱 HONEST-FLOOR (cross-mechanism): ANY mechanism that models the WITHIN-jamo feature
+    JOINT asymptotes to P(jamo|cell), exactly what the opaque jamo head already computes.
+
+H_1329's EXPLICIT depletion test (verbatim): a below-jamo win must INJECT INFORMATION THE
+OPAQUE JAMO HEAD LACKS — NOT a re-factorization of the same target.
+
+THE NEW INFORMATION (the crux — genuinely new, not a re-factorization)
+--------------------------------------------------------------------------------
+The within-syllable jamo head computes P(next_jamo | Voronoi cell), and the Voronoi cell
+context (build_X_jamo) is the immediate 2 previous jamo-symbols + within-syllable UTF-8
+depth — which RESETS at every syllable boundary. So the jamo head's CTX ≈ the CURRENT
+syllable; it does NOT see CROSS-SYLLABLE phonotactic context:
+  Korean liaison (연음), 사잇소리, 자음동화 — the CODA of syllable N conditions the realized
+  onset / pronunciation of syllable N+1 (e.g. 한국어 coda ㄴ→ next onset; 신라 → [실라]
+  ㄴ+ㄹ 자음동화). This cross-syllable dependency is REAL information the within-syllable
+  jamo head structurally cannot see.
+
+THE MECHANISM (B1 — cross-syllable-coda-conditioned jamo head)
+--------------------------------------------------------------------------------
+B1 = the SAME opaque jamo head as A1 (same geometry-fair bank, same dim-3 within-syllable
+Voronoi partition, same per-cell count-MLE, same LAPLACE=1.0, same jamo target alphabet Vj),
+but the per-cell next-jamo distribution is ADDITIONALLY conditioned on the PRECEDING
+SYLLABLE's coda:
+     A1:  P(next_jamo | cell)                       [within-syllable only]
+     B1:  P(next_jamo | cell, prev_coda)            [+ cross-syllable phonotactic context]
+where prev_coda = the coda jamo-id of the most recently COMPLETED Hangul syllable (a NONE
+token at corpus start, and a distinct NO-CODA token for syllables that ended open). prev_coda
+is a CROSS-SYLLABLE variable: it carries over the syllable boundary the within-syllable head's
+context resets at, so it is information the jamo head provably lacks.
+
+ESTIMATOR (per Voronoi cell k): a count table keyed by (k, prev_coda) → distribution over
+next_jamo, Laplace-smoothed. At TEST, an unseen (k, prev_coda) BACKS OFF to the cell-marginal
+P(next_jamo | k) — which is EXACTLY the A1 jamo head (estimated on TRAIN only). So:
+  - B1 reduces to A1 on every context it has never seen → the jamo head is B1's FLOOR; any
+    BELOW-jamo win is REAL conditional cross-syllable structure, never a sparsity artifact.
+  - both the conditional table and the backoff marginal are estimated on TRAIN ONLY (even/odd
+    split) → proper held-out CE, no test peeking, same nats/UTF-8-byte axis as A1.
+  - byte (non-Hangul) symbols scored exactly as A1 (opaque next-symbol head) → the ONLY change
+    vs A1 is the cross-syllable-coda conditioning on the Hangul next-jamo prediction.
+
+LABEL = NOT gradient-free / NOT gradient-trained. B1 is a count-MLE structured head riding the
+SAME gradient-free Voronoi partition (mitosis grow-op UNCHANGED). Labeled clearly; engine-transfer
+to live CORE/*.hexa = follow-on (a_engine_native_learning, a_verified_must_wire).
+
+REUSE / PROVENANCE (byte-identical to H_1307 RUN A / H_1316 / H_1326 / H_1329)
+--------------------------------------------------------------------------------
+- SAME REAL anima-7b R2 web corpus (r2.phanes://anima-7b/web/kor/shard0000.bytes), 30MB KO window.
+- KO window sha256 ASSERTED == H_1307 RUN A:
+    c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca  → REFUSE if mismatch.
+- corpus cache /tmp/h1311_ko_raw.bytes preserved for siblings (NOT deleted). R2 keys env-only at
+  fetch time, NEVER logged/committed (c7) — grep artifacts before PR.
+- FROZEN mitosis knobs verbatim: GROW_MAX=40, SPLIT_THRESH_CE=0.05, MIN_OWNED=8, LAPLACE=1.0,
+  ko_stride=300, even/odd split, geometry-fair bank (FIX A, identical to A1 and B1).
+- 3 seeds [4336,4337,4338] (shuffle controls vary by seed; intact A1/B1 deterministic).
+- A1 jamo MUST reproduce 2.51335 byte-exact (CALIB_TOL=0.0005) = geometry-fair calibration anchor,
+  AND is reproduced IN-RUN as the within-syllable-only baseline (C3).
+
+CE CONVERSION (stated for fair comparison)
+--------------------------------------------------------------------------------
+All CE = nats/UTF-8-byte = (Σ held-out symbol NLL in nats) / (Σ n_bytes per scored symbol).
+n_bytes per jamo from syll_jamo_nbytes (3-jamo→[1,1,1], 2→[2,1], 1→[3]); raw byte = 1.
+A1 and B1 score the SAME jamo alphabet Vj on the SAME byte axis → directly comparable to opaque
+jamo 2.51335 and raw 2.95342.
+
+FROZEN BARS (pre-register; GREEN iff ALL THREE)
+--------------------------------------------------------------------------------
+X1 BELOW-JAMO: cross-syllable-context CE (B1) < jamo 2.51335 by >= 0.03 (mean 3 seeds; intact
+   B1 deterministic so "mean 3 seeds" = the deterministic value) AND < raw 2.95342.
+       i.e.  B1 < (2.51335 - 0.03) = 2.48335   AND   B1 < 2.95342.
+X2 EARNED: B1 beats a SHUFFLED-cross-syllable-context control by >= 0.05 — the preceding-coda
+   LABELS are permuted (a random bijection over the distinct coda tokens, per seed), so the
+   conditioning carries the SAME number of extra context bins but a BROKEN phonotactic mapping.
+   The win must survive the shuffle → it is the REAL coda→onset dependency, not extra context dims.
+       i.e.  (B1_shuffle_mean - B1) >= 0.05.
+X3 ATTRIBUTION: B1 beats the WITHIN-SYLLABLE-only jamo baseline (= A1, reproduced in-run) —
+   isolating that the gain is the cross-syllable INFORMATION the jamo head lacks, strict.
+       i.e.  B1 < A1.
+
+OUTCOMES (all VALID — c9)
+--------------------------------------------------------------------------------
+- X1 ∧ X2 ∧ X3 → 🟢 cross-syllable phonotactic information breaks the jamo floor: the floor was
+    an INFORMATION limit, not a mechanism limit — H_1329's depletion test PASSED (new info, not
+    re-factorization, is the answer).
+- X1 fails → even cross-syllable info does NOT beat jamo for this gradient-free predictor (a
+    DEEPER floor; report straight, 🧱).
+- X2 fails → the gain is context-DIMS not phonotactics (shuffle ties; report straight, 🟠).
+
+SCOPE HONESTY (a_scale_honest_scope, a_toy_scale_recheck)
+--------------------------------------------------------------------------------
+TOY/DIRECTIONAL numpy/torch mirror; count-MLE structured head (NOT gradient-free p8 mitosis, NOT
+gradient-trained either — labeled). Engine-transfer to live CORE/*.hexa = follow-on. NO Korean-
+fluency claim. live CORE UNTOUCHED.
+
+deliverables: UNIVERSE/h1336_ko_crosssyllable.py · UNIVERSE/cards/H_1336_ko_crosssyllable.md ·
+HYPOTHESES.md row · CLAIMS.tape @C · .verdicts/1336_ko_crosssyllable/{FREEZE,result}.txt ·
+domains/MITOSIS-ENGINE.log.md · CHANGELOG.md (Korean).
+================================================================================
