@@ -90,7 +90,7 @@
   reframe     = "SUPPORTS CLM->CE on axis ⓐ — modality-agnostic engine, not a language model"
   scope       = "toy single-config $0 CPU; scale-transfer ladder OPEN (a_scale_honest_scope)"
   verdict_ptr = ".verdicts/950_modality_agnostic/h950_run.txt"
-  doc         = "UNIVERSE/H_950_modality_agnostic.md"
+  doc         = "UNIVERSE/cards/H_950_modality_agnostic.md"
 
 ```
 
@@ -107,7 +107,7 @@
   reframe     = "SUPPORTS CLM->CE on axis ⓑ — Φ-substrate ⊥ perplexity; LM metric misses essence; consistent w/ TALK5 language⊥consciousness"
   scope       = "Φ is variance*energy PROXY NOT IIT-4; single real ckpt + toy sweep; ladder OPEN; golden absent so used clm_d768_e2l1 (real .clm, mirror-GREEN)"
   verdict_ptr = ".verdicts/951_engine_not_predictor/h951_run.txt"
-  doc         = "UNIVERSE/H_951_engine_not_predictor.md"
+  doc         = "UNIVERSE/cards/H_951_engine_not_predictor.md"
 
 ```
 
@@ -124,7 +124,7 @@
   reframe     = "REFUTES CLM->CE capstone — CLM hidden dynamics = generic conv net, NOT the A⇄G repulsion-field engine; keep the L / qualify rename"
   scope       = "dynamical-dissimilarity ONLY not wiring (a_core_engine_map); single L1 ckpt (shallow → limits I1 contraction); proxies; ladder OPEN — scale-up re-test candidate (3B L30)"
   verdict_ptr = ".verdicts/952_substrate_equivalence/h952_run.txt"
-  doc         = "UNIVERSE/H_952_substrate_equivalence.md"
+  doc         = "UNIVERSE/cards/H_952_substrate_equivalence.md"
 
 ```
 
@@ -318,7 +318,7 @@
   verdict      = "🟠 BUILD-BLOCKER · NO MEASUREMENT — PR #1397 production trainer Linux 빌드 chain 미완성. H_686+H_687 가설 evidence 0. closed-form bounds (F-H686-1~4, F-H687-1~4) 변함없이 PASS, production verify (F-H686-6) 만 deferred 유지."
   next         = "(1) hexa-lang inbox: 'Linux codegen module-aware build mode' — hexat_linux --modules 가 use 그래프 traverse single-TU emit. (2) 단기 우회: PR #1397 trainer use 본체 single .hexa inline (a_completeness_over_cheap 위배 가능). (3) 올바른 fix: hexa-lang #1527 후속."
   cost         = "H100 SXM ~90분, ≈$5 (budget $4 over by $1 in build attempts). teardown: hexa cloud down 83na0mvuq4tqao → terminated · hexa cloud list → 0 pods ✓."
-  artifacts    = "state/m5_prodaux_fire_2026_05_29/{BUILD_BLOCKER.md, shims.h, trainer_fixups.h, rent.log, RUNNING_POD.txt}. STEP_RATE_LOG.md entry (13). UNIVERSE/H_686 § 11 + UNIVERSE/H_687 § 11."
+  artifacts    = "state/m5_prodaux_fire_2026_05_29/{BUILD_BLOCKER.md, shims.h, trainer_fixups.h, rent.log, RUNNING_POD.txt}. STEP_RATE_LOG.md entry (13). UNIVERSE/cards/H_686 § 11 + UNIVERSE/cards/H_687 § 11."
 
 @N dec_h686_h687_v_scale_2026_05_29 := "H_686/H_687 V-scale escape boundary sweep — 20 cell (V ∈ {8,64,256,1024,4096} × cell ∈ {none,ent,kl,both}) 전부 4/4 distinct identity decode escape. baseline 이 V ∈ [8,4096] 전 구간 미 collapse → V*_collapse 미발견, V*(aux) N/A. V 축 단독은 OFFENDING-LEVER ⊥ 확정" :: measurement [d=2026-05-29 active]
   seed         = "PR #1395 V=8 ⚪ TOY-NULL 후 V 축 확장 — toy 가 production collapse 재현하는 V-band 존재? aux escape efficacy 측정 가능 V-band 존재?"
@@ -330,7 +330,7 @@
   verdict      = "🟠 SWEEP-OUT-OF-RANGE — V 축 ⊥ 확정. H_686/H_687 escape efficacy 는 toy 우회 불가, production fire 직접 측정 외 경로 없음 — PR #1395 결론 ('production fire = 유일 valid test') V-axis sweep 으로 재확인."
   candidates   = "잔여 OFFENDING-AXIS 후보 = d 축 (toy d=6 vs prod d=64) · E 축 (toy E=4 vs prod E=2 dead-expert) · n_layer/attention · stochastic batch · wikitext 분포 · M init seed 분포. 별 H 후속 sweep 필요."
   cost         = "$0 mac-local, sweep wall ~24min, pod=0, HF=0 (toy-only mac-local discovery)."
-  artifacts    = "CORE/DECODER/h686_h687_v_scale.hexa, CORE/DECODER/H686_H687_V_SCALE_RESULT.md, state/h686_h687_v_scale_2026_05_29/{MANIFEST.txt, run_sweep.hexa, V{V}_{cell}.out × 20}. STEP_RATE_LOG.md entry (14). UNIVERSE/H_686 + H_687 § V-scale sweep."
+  artifacts    = "CORE/DECODER/h686_h687_v_scale.hexa, CORE/DECODER/H686_H687_V_SCALE_RESULT.md, state/h686_h687_v_scale_2026_05_29/{MANIFEST.txt, run_sweep.hexa, V{V}_{cell}.out × 20}. STEP_RATE_LOG.md entry (14). UNIVERSE/cards/H_686 + H_687 § V-scale sweep."
 
 @N dec_toy_axis_sweep_2026_05_29 := "H_686/H_687 3-AXIS (corpus·d·n_layer) toy sweep — 20 cell V=8 base, baseline (cell=none) 어떤 axis 셋팅에서도 collapse 임계 (distinct_tok ≤ 2 OR LZ < 0.01) 미충족. zipf_strong 이 LZ=0.0101 으로 근접하나 distinct_tok=6 유지. V-axis (PR #1409) + corpus/d/n_layer 합 4-axis sweep 모두 ⊥ → toy harness ⊥ production collapse mechanism 확정" :: measurement [d=2026-05-29 active]
   seed         = "PR #1409 V-axis ⊥ 확정 후 — corpus distribution / d head-dim / n_layer depth-proxy 3 축 중 어느 게 collapse-lever 인지 토이 sweep 으로 식별 시도"
@@ -344,7 +344,7 @@
   diagnosis    = "V-axis (PR #1409) + corpus/d/n_layer (현 sweep) 합 4-axis sweep 모두 ⊥. M4b production collapse 는 (a) scale-coupled multi-axis interaction, (b) AdamW+warmup trajectory 의존, (c) router init mid-train state, (d) soft top-k routing dynamics 중 하나 이상 — 단축 sweep 분해 불가."
   verdict      = "🟠 SWEEP-OUT-OF-RANGE (4-axis total) — toy harness ⊥ production collapse mechanism 확정. H_686/H_687 본선 단정은 production fire 직접 단정 path 유일."
   cost         = "$0 mac-local, 20s wall, pod=0, HF=0."
-  artifacts    = "CORE/DECODER/h686_h687_axis_sweep.hexa, CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md. STEP_RATE_LOG.md entry (15). UNIVERSE/H_686 + H_687 § toy axis sweep."
+  artifacts    = "CORE/DECODER/h686_h687_axis_sweep.hexa, CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md. STEP_RATE_LOG.md entry (15). UNIVERSE/cards/H_686 + H_687 § toy axis sweep."
 
 @N dec_m5_fire_incident_2026_05_29 := "M5 production fire 1차 시도 — agent 사망 → pod recovery teardown" :: recovery-incident
   context      = "hexa-lang #2072·#2073 hexat_linux module-aware build MERGED (anima 측 4번째 blocker 해소). a_fire_autonomous · a_completeness_over_cheap 자율 production fire."

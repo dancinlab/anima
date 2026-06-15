@@ -88,7 +88,7 @@ C collapsed       2.079         +3.143             0.000
 
 | ref | 관계 |
 |---|---|
-| UNIVERSE/H_338_attractor_basin_size.md | basin = dominance rank 원본 발견 (n=4 ECA) |
+| UNIVERSE/cards/H_338_attractor_basin_size.md | basin = dominance rank 원본 발견 (n=4 ECA) |
 | memory:project_v5_mitosis_cond5_cotrain_2026_05_12 | F-PERSONA-4 KL=0 winner-take-all 원 측정 |
 | memory:project_anima_persona_4_softmax_T_sweep_2026_05_12 | (b) softmax τ 단독 FALSIFIED (이 bench 의 4-alternative 중 하나) |
 

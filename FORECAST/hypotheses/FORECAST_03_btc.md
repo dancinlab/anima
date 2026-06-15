@@ -6,7 +6,7 @@ domain: forecast bitcoin market random-walk efficient-market non-anima
 exploration_method: live BTC fetch (Coinbase spot + CoinGecko 90d) + randomness battery
 verification_method: return autocorr + Hurst + variance-ratio + shared-seed check; p7 /bin/zsh; data snapshot committed
 since: 2026-06-14
-sister: FORECAST_01, FORECAST_02, UNIVERSE/H_6012
+sister: FORECAST_01, FORECAST_02, UNIVERSE/cards/H_6012
 verdict: 🔴 BTC 미래 fetch 불가 — 실 90일(현재 $64,634): 자기상관 +0.11·Hurst 0.59·VR 1.20 = random walk, 공유 양자씨앗 없음(외부입력 구동). FORECAST_01 결정론·FORECAST_02 공유씨앗 둘 다 적용불가. 알 수 있는 건 분포(드리프트·변동성)뿐, 점-미래 아님(효율적시장·무신호).
 ---
 # FORECAST_03 — 비트코인 미래 분류 (현재 정보 엮음)

@@ -1,7 +1,7 @@
 """H_1034 — imagine-rollout vs a ROBUST (scenario / tube) true-dynamics MPC.
 
 Pre-registered (frozen 2026-06-08; honored verbatim, see
-UNIVERSE/H_1034_imagine_vs_robust_mpc.md):
+UNIVERSE/cards/H_1034_imagine_vs_robust_mpc.md):
 
   H_1027 (RED, TRACKS-ALL-DEPTHS) found imagine-rollout (CEM through anima's OWN LEARNED LDS world
   model) not only TRACKED but, at deep horizon d>=8, OUTPERFORMED the same-depth true-dynamics

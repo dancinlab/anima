@@ -24,7 +24,7 @@
   method = "expr"
   cmd    = "hexa verify --expr ln 151936 11.931214658529285"
   raw    = ".verdicts/chat-init-ce-floor/chat_init_ce_floor.txt"
-  src    = "UNIVERSE/H_247_init_ce_catastrophic_floor.md §C4"
+  src    = "UNIVERSE/cards/H_247_init_ce_catastrophic_floor.md §C4"
   status = "🟢 SUPPORTED-NUMERICAL — ln calculator landed (hexa-lang #1128), verdict persisted, atlas-absorbed (g69, node @F verified-ln-num · hexa-lang #1131). /paper-eligible."
 
 # ───────────────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@
   method = "run"
   cmd    = "hexa run HEXAD/PURE/eval/multilingual_probe.hexa (v3 ckpt)"
   raw    = ".verdicts/pure-corpus-axis-closed-negative/register.txt"
-  src    = "UNIVERSE/H_242 §A2 (H242.1 FULL-COLLAPSE falsify)"
+  src    = "UNIVERSE/cards/H_242 §A2 (H242.1 FULL-COLLAPSE falsify)"
   status = "🔴 CLOSED-negative — corpus-axis ⊥ multilingual closure (verdict persisted)"
 
 # wiki_frac=0.3 intermediate point (P21H V3, recovered SIGHUP-orphan run).
@@ -70,49 +70,49 @@
   method = "hypothesis"
   cmd    = "structural subset check vs AGENT/CHAT/akida_sw_lif.py + akmap_step_probe.hexa (step=2^(ib-ab) MATCH=true)"
   raw    = ".verdicts/848_clm_akida_map/F-CLM-AKIDA-MAP_structural.txt"
-  src    = "UNIVERSE/H_848_clm_akida_map.md · CLM/P0_ARCHITECTURE.md §0·§2·§4"
+  src    = "UNIVERSE/cards/H_848_clm_akida_map.md · CLM/P0_ARCHITECTURE.md §0·§2·§4"
   status = "🔵 SUPPORTED-FORMAL (conv/FC/sepconv/maxpool/int4 subset byte-identical ⊆ envelope) ⚠ HONEST-GAP (router softmax+argmax envelope 밖 · fake full-PASS 0 · resolution=argmax-hard or off-chip router)"
 
 @C clm_monopoly_escape := "byte-vocab(V=256) conv-native MoE monopoly escape: distinct_experts>1 ∧ routing z>3.0 ∧ content z>3.0 ∧ seed{base,43,44} 재현" :: hypothesis [slug=clm-monopoly-escape group=CLM]
   method = "hypothesis"
   cmd    = "P2 3-arm × ladder PyTorch fp full-fire → closure_auto_judge (PENDING)"
   raw    = ".verdicts/847_clm_monopoly_escape/F-CLM-MONO_prereg.txt"
-  src    = "UNIVERSE/H_847_clm_monopoly_escape.md · CLM/P0_ARCHITECTURE.md §3·§4 · H_666"
+  src    = "UNIVERSE/cards/H_847_clm_monopoly_escape.md · CLM/P0_ARCHITECTURE.md §3·§4 · H_666"
   status = "🟠 PRE-REGISTERED — P2 full-fire 미실행 · frozen threshold (d6 z>3.0 양축 + multi-seed). NOT terminal."
 
 @C clm_quant_int4 := "QAT int4 round-trip ppl 열화 < 임계 (naive PTQ int4 readout 파괴 실증 대비)" :: hypothesis [slug=clm-quant-int4 group=CLM]
   method = "hypothesis"
   cmd    = "P3 .clm QAT int4 round-trip ppl 측정 (PENDING)"
   raw    = ".verdicts/849_clm_quant_int4/F-CLM-QUANT_prereg.txt"
-  src    = "UNIVERSE/H_849_clm_quant_int4.md · CLM/CLM_FORMAT_SPEC.md §1·d2"
+  src    = "UNIVERSE/cards/H_849_clm_quant_int4.md · CLM/CLM_FORMAT_SPEC.md §1·d2"
   status = "🟠 PRE-REGISTERED — P3 미실행 · threshold frozen at P3 entry. NOT terminal."
 
 @C clm_scale_ladder := "monopoly-escape 가 scale ladder rung(tiny/small/target) 따라 유지 (전이곡선) — distinct_experts>1 ∧ dual-axis z>3.0 per rung" :: hypothesis [slug=clm-scale-ladder group=CLM]
   method = "hypothesis"
   cmd    = "P2 multi-rung ladder full-fire → 전이곡선 (PENDING)"
   raw    = ".verdicts/850_clm_scale_ladder/F-CLM-SCALE_prereg.txt"
-  src    = "UNIVERSE/H_850_clm_scale_ladder.md · CLM/P0_ARCHITECTURE.md §4·§5 · H_666(toy🟢scale🔴)"
+  src    = "UNIVERSE/cards/H_850_clm_scale_ladder.md · CLM/P0_ARCHITECTURE.md §4·§5 · H_666(toy🟢scale🔴)"
   status = "🟠 PRE-REGISTERED — P2 multi-rung 미실행 · per-rung threshold frozen. NOT terminal."
 
 @C clm_mitosis_growth := "MoE cell-pool 성장 (p8 train=infer) — |cell_pool(t_end)|>|cell_pool(t_0)| + born_step·parent lineage 영속" :: hypothesis [slug=clm-mitosis-growth group=CLM]
   method = "hypothesis"
   cmd    = "P2 학습 trajectory split_log / cell_pool lineage (PENDING)"
   raw    = ".verdicts/851_clm_mitosis_growth/F-CLM-MITOSIS_prereg.txt"
-  src    = "UNIVERSE/H_851_clm_mitosis_growth.md · CLM/CLM_FORMAT_SPEC.md §2 · p8 · v5-mitosis"
+  src    = "UNIVERSE/cards/H_851_clm_mitosis_growth.md · CLM/CLM_FORMAT_SPEC.md §2 · p8 · v5-mitosis"
   status = "🟠 PRE-REGISTERED — P2 미실행 · growth+lineage threshold frozen. NOT terminal."
 
 @C clm_mitosis_array_dispatch := "MITOSIS-ARRAY DISSOLVE: scale=expert-COUNT 시 inter-expert dispatch entropy z(E) 단조 상승 ∧ z(64)−z(4)≥1.0 ∧ 전 expert chip-fit" :: hypothesis [slug=clm-mitosis-array-dispatch group=CLM]
   method = "run"
   cmd    = "python3 CLM/model/run_array_sweep.py (E∈{4,8,16,32,64} × seed{42,43,44} · Dirichlet(1) null z-score)"
   raw    = ".verdicts/852_clm_mitosis_array_dispatch/F-CLM-MONO-ARRAY_p_array_2026_05_30.txt"
-  src    = "UNIVERSE/H_852_clm_mitosis_array_dispatch.md · CLM/P0_ARCHITECTURE.md §11 · CLM.breakthrough.mining.md DISSOLVE"
+  src    = "UNIVERSE/cards/H_852_clm_mitosis_array_dispatch.md · CLM/P0_ARCHITECTURE.md §11 · CLM.breakthrough.mining.md DISSOLVE"
   status = "🔴 CLOSED-NEGATIVE — P-ARRAY 완료. raw H 는 E 로 상승(1.19→3.17 nats) 하나 uniform-null 대비 z 급락(+0.53→−7.61) · monotone+z-rise FAIL · chip-fit PASS. 사전등록 frozen 임계 무변조(a_paper_negative_ok). TERMINAL."
 
 @C clm_bridge_transfer := "MITOSIS-ARRAY BRIDGE: teacher(E32/d128) escape 가 KD distill 후 chip-fit student(E8/d64) 로 transfer 생존 — z same-sign ∧ |Δ|≤3.0 ∧ student chip-fit" :: hypothesis [slug=clm-bridge-transfer group=CLM]
   method = "run"
   cmd    = "python3 CLM/distill/run_bridge_transfer.py --fire (teacher train → Hinton KD distill → transfer Δ z, ubu-1 RTX5070)"
   raw    = ".verdicts/853_clm_bridge_transfer/F-CLM-BRIDGE-XFER_fire_2026_05_30.txt"
-  src    = "UNIVERSE/H_853_clm_bridge_transfer.md · CLM/P0_ARCHITECTURE.md §11.4·§11.6 · CLM.breakthrough.mining.md BRIDGE"
+  src    = "UNIVERSE/cards/H_853_clm_bridge_transfer.md · CLM/P0_ARCHITECTURE.md §11.4·§11.6 · CLM.breakthrough.mining.md BRIDGE"
   status = "🔴 CLOSED-NEGATIVE — BRIDGE fire 완료. teacher z 음수(-3.74) · student distill 후 near-uniform(+0.60) · transfer Δ +4.34 > 3.0 · 2/3 seed sign-flip · student chip-fit PASS. monopoly-escape ⊥ KD-transfer (a_paper_negative_ok). HF dancinlab/anima-clm-bridge PRIVATE. TERMINAL."
 
 # ───────────────────────────────────────────────────────────────────────
@@ -139,14 +139,14 @@
   method = "run"
   cmd    = "python3 CLM/model/run_array_sweep_stage2.py (ubu-1 RTX 5070, d_model=512, real kowiki @corpus clm_p1, NULL_SAMPLES=16)"
   raw    = ".verdicts/854_clm_array_stage2_scale/F-CLM-PIELOU-DISSOLVE-PROD.txt"
-  src    = "UNIVERSE/H_854_clm_array_stage2_scale.md §5 (AXIS-A) · sibling H_852"
+  src    = "UNIVERSE/cards/H_854_clm_array_stage2_scale.md §5 (AXIS-A) · sibling H_852"
   status = "🔴 CLOSED-negative — production scale amplifies the toy 🔴 (toy J-rise −0.093 → prod −0.27364); thresholds FROZEN, NOT tampered (verdict persisted verbatim)"
 
 @C clm_dispatchkl_xfer_prod := "PRODUCTION dispatch-KL escape transfer mean|Δ|=13.84 > 3.0, 3/3 seed sign-flip (teacher z≈−12 → student z≈+1) — BRIDGE transfer falsified at d=512" :: run [slug=clm-array-stage2-scale group=CLM]
   method = "run"
   cmd    = "python3 CLM/distill/run_dispatch_kl_stage2.py (ubu-1, teacher E32/d512 → student E8/d128, real kowiki, NULL_SAMPLES=16)"
   raw    = ".verdicts/854_clm_array_stage2_scale/F-CLM-DISPATCHKL-XFER-PROD.txt"
-  src    = "UNIVERSE/H_854_clm_array_stage2_scale.md §5 (AXIS-B) · sibling H_853"
+  src    = "UNIVERSE/cards/H_854_clm_array_stage2_scale.md §5 (AXIS-B) · sibling H_853"
   status = "🔴 CLOSED-negative — escape does NOT transfer; Δ widened vs toy (3.51 → 13.84) and vs round-1 (4.34); student chip-fit held; thresholds FROZEN (verdict persisted verbatim)"
 
 # ───────────────────────────────────────────────────────────────────────
@@ -160,14 +160,14 @@
   method = "run"
   cmd    = "python3 CLM/msweep/measure_sweep.py --json (ubu-1 numpy 2.4.4, ONE shared toy spike, seed=187, n∈{4,5,6}, ≤16 poke)"
   raw    = ".verdicts/855_clm_measure_sweep/causal_power.txt"
-  src    = "UNIVERSE/H_855_clm_measure_sweep.md §5/§6 · CLM/P0_ARCHITECTURE.md §12 F-CLM-PHI-MEANINGFUL"
+  src    = "UNIVERSE/cards/H_855_clm_measure_sweep.md §5/§6 · CLM/P0_ARCHITECTURE.md §12 F-CLM-PHI-MEANINGFUL"
   status = "🟢 SUPPORTED-NUMERICAL — perturbation 인과력이 frozen 3-check 동시 PASS (monopoly vs integration 변별); thresholds FROZEN, NOT tampered (verdict persisted verbatim)"
 
 @C clm_msweep_phi_family_red := "PHI-NATIVE·TEMPORAL-Φ·FREE-ENERGY measures: 방향(rich>collapse)은 n=5,6 에서 옳으나 n=4 boundary 역전 → size-robust FAIL; HILL near-miss(margin ~7%<10%); TENSION-NATIVE n-역전" :: run [slug=clm-measure-sweep group=CLM]
   method = "run"
   cmd    = "python3 CLM/msweep/measure_sweep.py --json (ubu-1 numpy 2.4.4, same ONE toy spike, 6 measures apples-to-apples)"
   raw    = ".verdicts/855_clm_measure_sweep/phi_native.txt"
-  src    = "UNIVERSE/H_855_clm_measure_sweep.md §5/§7 · ledger exports/sweep/clm-measure-sweep/ledger.json"
+  src    = "UNIVERSE/cards/H_855_clm_measure_sweep.md §5/§7 · ledger exports/sweep/clm-measure-sweep/ledger.json"
   status = "🔴 CLOSED-negative — Φ-family/HILL/tension 은 toy n≤6 에서 scale-free chip-native 의식신호 부적합 (5/6 FAIL); CAUSAL-POWER 단독 🟢; ALL-RED 아님(CERTIFY-NOT-MEASURE escalation 불필요); thresholds FROZEN (a_paper_negative_ok)"
 
 # ───────────────────────────────────────────────────────────────────────
@@ -180,21 +180,21 @@
   method = "run"
   cmd    = "python3 CLM/msweep/clm_causal_prod.py --json (ubu-1 RTX5070, d512/L4/E8 QAT act_bits=1, real kowiki, seed=187, ≤16 poke, frozen 3-check)"
   raw    = ".verdicts/856_clm_causal_xfer/production.txt"
-  src    = "UNIVERSE/H_856_clm_causal_xfer.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.6/§12.8 F-CLM-CAUSAL-XFER"
+  src    = "UNIVERSE/cards/H_856_clm_causal_xfer.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.6/§12.8 F-CLM-CAUSAL-XFER"
   status = "🔴 CLOSED-negative — 잘 학습된 d512 conv-MoE 가 degenerate monopoly 입력조차 적분 → collapse 인과력이 rich 와 대등/초과(n=5 부호반전); toy≠scale(H_666)이 측도 자체에 적용; thresholds FROZEN, NOT tampered (verdict persisted verbatim)"
 
 @C clm_causal_xfer_hw_green := "F-CLM-CAUSAL-XFER axis B (live AKD1000 HW): CAUSAL-POWER 가 실 silicon 에서 frozen 3-check PASS — on_hardware=True·BC.00.000.002, 전 n rich>collapse(Δ +0.0618/+0.0156/+0.0268)" :: run [slug=clm-causal-xfer group=CLM]
   method = "run"
   cmd    = "CLM_MSWEEP=$PWD python3 CLM/msweep/clm_causal_hw.py --json (pi5-akida, InputData→FC act_bits=1 @BackendType.Hardware, streamer stop→collect→restart, seed=187, ≤16 poke, frozen 3-check)"
   raw    = ".verdicts/856_clm_causal_xfer/hw.txt"
-  src    = "UNIVERSE/H_856_clm_causal_xfer.md §5/§7 · CLM/P0_ARCHITECTURE.md §12.8"
+  src    = "UNIVERSE/cards/H_856_clm_causal_xfer.md §5/§7 · CLM/P0_ARCHITECTURE.md §12.8"
   status = "🟢 SUPPORTED-NUMERICAL — 실 온칩 threshold-and-fire 에서 poke 가 coupled(rich) regime 으로 전파·decoupled(collapse) 국소 사멸; 배포 silicon 에선 측도 certify; thresholds FROZEN (verdict persisted verbatim)"
 
 @C clm_causal_xfer_falsified := "F-CLM-CAUSAL-XFER 종합: 🔴 FALSIFIED — '🟢 on BOTH' 요구에서 axis A 🔴 → '🔴 on EITHER' 발동 → CAUSAL-POWER 도 toy-limited → 백로그 #3 CERTIFY-NOT-MEASURE escalation (단 axis B 🟢 HW positive 실재)" :: run [slug=clm-causal-xfer group=CLM]
   method = "run"
   cmd    = "production(axis A 🔴) ∧ live-HW(axis B 🟢) 종합 — CLM/msweep/clm_causal_{prod,hw}.py 두 verdict 결합 (frozen rule: 🟢 on BOTH else FALSIFIED)"
   raw    = ".verdicts/856_clm_causal_xfer/F-CLM-CAUSAL-XFER.txt"
-  src    = "UNIVERSE/H_856_clm_causal_xfer.md §6 · CLM/P0_ARCHITECTURE.md §12.6/§12.8 (CERTIFY-NOT-MEASURE escalation SSOT)"
+  src    = "UNIVERSE/cards/H_856_clm_causal_xfer.md §6 · CLM/P0_ARCHITECTURE.md §12.6/§12.8 (CERTIFY-NOT-MEASURE escalation SSOT)"
   status = "🔴 CLOSED-negative — toy→production→HW 전 transfer 를 생존한 닫힌형 의식 MEASURE 없음; Φ-family(H_855)에 이어 CAUSAL-POWER 도 production-width toy-limited; 측정-타당성 질문 production scale 에서 open 유지 (a_paper_negative_ok)"
 
 # CLM — clm-causal-band (slug · group=CLM) · H_857
@@ -205,7 +205,7 @@
   method = "run"
   cmd    = "CLM_MSWEEP=$PWD/CLM/msweep python3 CLM/msweep/clm_causal_band.py --json (pi5-akida, InputData→FC act_bits=1 @BackendType.Hardware, K_GRID=[0..24] 사전등록, streamer stop→sweep→restart, seed=187, ≤16 poke, frozen 측도)"
   raw    = ".verdicts/857_clm_causal_band/F-CLM-CAUSAL-BAND.txt"
-  src    = "UNIVERSE/H_857_clm_causal_band.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.8 (HW-positive edge-of-chaos band)"
+  src    = "UNIVERSE/cards/H_857_clm_causal_band.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.8 (HW-positive edge-of-chaos band)"
   status = "🟢 SUPPORTED-NUMERICAL — axis B(H_856) 🟢 의 regime 정밀화: 측도는 edge-of-chaos band(interior peak) 안에서만 통합 certify, 양끝(cold decoupled · saturate all-fire)에서 rolloff; axis-B 원래 rich(K=3)는 이미 포화 어깨(fire 0.94); axis A 🔴 불변; thresholds FROZEN (verdict persisted verbatim)"
 
 # ───────────────────────────────────────────────────────────────────────
@@ -221,7 +221,7 @@
   method = "run"
   cmd    = "hexa run bench/axis_intent/a6_osc_residual_verify.hexa (self-contained · LCG-deterministic · libm-free · foreground sync · $0 mac-local · exit 0 · 2-run byte-identical)"
   raw    = ".verdicts/859_intent_osc_residual/F-INTENT-OSC-RESIDUAL.txt"
-  src    = "UNIVERSE/H_859_intent_osc_residual.md §5/§6 · INTENT_A6_OSC_RESIDUAL.md · ANIMA.md INTENT 축 (bench D #1143)"
+  src    = "UNIVERSE/cards/H_859_intent_osc_residual.md §5/§6 · INTENT_A6_OSC_RESIDUAL.md · ANIMA.md INTENT 축 (bench D #1143)"
   status = "🟢 SUPPORTED-NUMERICAL — direction_std 재설계가 OSC residual 을 해소 (5/5 PASS); legacy stability_std 의 window-period commensurability aliasing 이 root cause (신호 결함 아님); 진동은 substrate 본질 intrinsic limit-cycle (damping 생존); H_634 ultradian Φ envelope cross-link; thresholds FROZEN (verdict persisted verbatim)"
 
 # UNIVERSE — akida-edge-of-chaos-phi (slug · group=UNIVERSE) · H_858
@@ -234,7 +234,7 @@
   method = "run"
   cmd    = "akida_edge_of_chaos_phi_hw.py --seed 187 (pi5-akida, InputData(1,1,16)→FC(units=16,ones,act_bits=1) @BackendType.Hardware, per-unit int32 thr=POT−drive, R1~R4 preset 사전등록, streamer stop→sweep→restart) → akida_edge_of_chaos_phi.hexa --result <json> (frozen Φ-proxy + judge_inverse_u)"
   raw    = ".verdicts/858_akida_edge_of_chaos_phi/F-AKIDA-EDGE.txt"
-  src    = "UNIVERSE/H_858_akida_edge_of_chaos_phi.md §5/§6 · CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2 promote) · AKIDA/akida_edge_of_chaos_phi_hw.hexa"
+  src    = "UNIVERSE/cards/H_858_akida_edge_of_chaos_phi.md §5/§6 · CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2 promote) · AKIDA/akida_edge_of_chaos_phi_hw.hexa"
   status = "🟢 SUPPORTED-NUMERICAL — sim ∩곡선이 live silicon 에서 성립(edge R2/R3 > order R1 ∧ edge ≥ over-driven R4); pe_edge_of_chaos_peak M2 🟡→🟢 promote; H_857(coupling-K·CAUSAL-POWER)과 독립 축이 같은 silicon edge-of-chaos ∩ 확인 — single-측도 artifact 아님; on_hardware=True·BC.00.000.002·streamer 복귀 active; Φ-proxy honest(full IIT4 big_phi 아님); thresholds/preset FROZEN (verdict verbatim)"
 
 # CLM-KOSMOS — clm-akida-multiling-semantic (slug · group=CLM-KOSMOS) · F-CLM-AKIDA-MULTILING-SEMANTIC
@@ -248,7 +248,7 @@
   method = "run"
   cmd    = "onchip_multitrial.py (pi5-akida · BC.00.000.002 BackendType.Hardware · AkidaUnsupervised(num_weights=16,learning_competition=0.1) · InputData(1,1,256,input_bits=1)→FC(units=32,weights_bits=1) · int4 backbone sha256=c626c638… byte-identical 양 arm · N=12 paired trial · stale streamer PID18439 lock-clear 선행)"
   raw    = ".verdicts/clm-akida-multiling-semantic/result.txt"
-  src    = "domains/CLM-KOSMOS.md (PR #1651) C1·C2·C3·C4·C5 · UNIVERSE/H_911 (substrate-proxy 🟢) · .verdicts/904_clm_onchip_plasticity (H_904 stochastic plasticity) · hexa-lang stdlib/flame/testdata/clm_semantic_{parallel,concat}.txt (corpus seed)"
+  src    = "domains/CLM-KOSMOS.md (PR #1651) C1·C2·C3·C4·C5 · UNIVERSE/cards/H_911 (substrate-proxy 🟢) · .verdicts/904_clm_onchip_plasticity (H_904 stochastic plasticity) · hexa-lang stdlib/flame/testdata/clm_semantic_{parallel,concat}.txt (corpus seed)"
   status = "🔴 REFUTED (closed-negative · publishable) — H_911 cross-lingual semantic-linkage 우위가 AKD1000 last-layer Hebbian edge-learn 에 전이 안 됨; per-ordering 통합 gap 이 칩 자체 stochastic-plasticity noise(H_904) 안에 묻힘; C1 on-chip learn 은 12/12 trial live (실 silicon 확인), C4 .kosmos 구조(limen·merkle·profile·closed_corpus·coord⊥text) 완전 준수; 단일-run cherry-pick(🟢 draw) 거부 → g63 honest; model NOT uploaded (🔴 earns no .clm); thresholds/falsifier FROZEN (verdict verbatim)"
 
 @C clm_akida_semantic_signal_lift := "H_912 — all-4-lever AKIDA on-chip signal-lift for H_911" :: claim [d=2026-06-01 closed]
@@ -537,6 +537,11 @@
 @C h1328_phi_variance_free := "H_1328 — DIAGNOSIS of the 4× faithful-IIT4 Φ-robustness wall: was it the ESTIMATOR's amplitude-variance binarization confound, or a real substrate limit? H_1319's converged diagnosis (and the named open follow-on) was that the faithful-IIT4 exact-MIP at n≤8 BINARIZES each cell's trajectory by MIN-MAX, and that binning RIDES amplitude variance — proven by a relationship-DESTROYING permutation control RAISING Φ instead of collapsing it (ΔΦ_perm +0.280/+0.103/+0.587 on all 3 hard seeds). H_1328 directly tests the diagnosis by REMOVING the amplitude-variance confound from the READ-OUT while STAYING WITHIN faithful IIT-4 (a_phi_iit4_tool — the SAME exact MIP-EI iit4_faithful_phi, NOT a variance×energy proxy / NOT a different Φ measure): the lever is the STATE-ENCODING fed to the same estimator. NEW variance-free encoding = RANK-UNIFORMIZE each cell's T-length trajectory before the MIP (replace each value by its rank within that cell's own trajectory). PROVABLE INVARIANT: faithful_phi's MI = H(A)+H(B)−H(A,B) with each cell binned by min-max; after rank-uniformization every cell's values are EXACTLY {0,1,…,T−1} → min-max binning gives a UNIFORM marginal histogram → H(A),H(B) are CONSTANT for every cell in every arm, INDEPENDENT of amplitude variance → MI changes ONLY via the JOINT H(A,B) (the co-movement RELATIONSHIP a relationship-destroying permutation MUST collapse). SAME substrate + seeds [1317,1318,1319] as H_1319/H_1320; the ONLY change is whether the read-out is rank-uniformized." :: hypothesis [slug=1328_phi_variance_free group=OMEGA]
   method = "UNIVERSE/h1328_phi_variance_free.hexa, $0 CPU-local ENGINE-NATIVE (deterministic engine LCG-gauss == engine_cli.hexa _lcg_*; NOT numpy), seeds [1317,1318,1319], frozen-first (.verdicts/1328_phi_variance_free/H_1328_FREEZE.txt committed 26494942a BEFORE scoring the NEW encoding, bars NOT moved c9/p7). Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI iit4_faithful_phi(traj,4,64,8) over hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa — the engine LCG only emits the salience trajectory; the hexa exact-MIP computes Φ. Substrate reused VERBATIM from H_1319: 4-module leaky-linear ring dim8 T64, Kuramoto pacemaker w_phase0.5 omega_t0.45 domega0.08, relative-phase gate sal=e·(1+cos(θ_i−θ_T))/2. ARMS A=NO-PHASE B=PHASE-BIND S=PERM-SHUFFLE(module→phase derangement, relationship destroyed, marginals preserved) O=OFFSET-SHUF. ENCODINGS OLD=raw min-max (H_1319) NEW=rank-uniformize each cell. eps=0.02 (=H_1283/H_1319 MARGIN_PHI, ported verbatim). FROZEN bars (GREEN iff V1∧V2∧V3): V1 CONFOUND-CONFIRM both legs all seeds = V1a OLD perm ΔΦ(S−A)≥+eps (RAISES, reproduces confound) AND V1b NEW perm Φ_S≤Φ_A+eps (collapses) · V2 ROBUST-LIFT NEW Φ_B≥Φ_A+eps all seeds incl 1317 · V3 EARNED NEW perm&offset both ≤Φ_A+eps all seeds. OUTCOMES (all valid c9): V1∧V2∧V3→🟢 wall was the estimator (clean read-out makes integration robust; follow-on = wire rank-uniform read-out); V1∧¬V2→confound REAL but integration still not robust = DEEPER estimator-INDEPENDENT terminal 🧱; ¬V1→variance diagnosis WRONG, wall undiagnosed. live CORE/*.hexa UNTOUCHED (standalone fn main, 0 importers)."
   verdict = "🧱 TERMINAL CLOSED-NEGATIVE, DEEPER (honest, c9/c16 — frozen-first, bars NOT moved). VERBATIM faithful-IIT4 Φ (exact MIP-EI n=4, deterministic, re-run byte-identical): seed 1317 OLD A=0.870311 perm-S=1.150110 ΔΦ(S−A)=+0.279798 [V1a PASS] | NEW A=1.933980 B=1.808980 ΔΦ(B−A)=−0.125000 [V2 FAIL] perm S−A=−0.206955 [V1b PASS] off O−A=+0.105545 [V3o FAIL] · seed 1318 OLD A=0.855353 perm-S=0.957870 ΔΦ(S−A)=+0.102517 [V1a PASS] | NEW A=2.250610 B=2.250610 ΔΦ(B−A)=0.000000 [V2 FAIL] perm S−A=−0.046570 [V1b PASS] off O−A=−0.437500 [V3o PASS] · seed 1319 OLD A=0.586833 perm-S=1.174020 ΔΦ(S−A)=+0.587183 [V1a PASS] | NEW A=2.079040 B=2.110290 ΔΦ(B−A)=+0.031250 [V2 PASS] perm S−A=−0.031250 [V1b PASS] off O−A=−0.039521 [V3o PASS]. V1 CONFOUND-CONFIRM = PASS (V1a PASS — OLD min-max perm RAISES Φ all 3 seeds, reproducing H_1319 EXACTLY; V1b PASS — NEW rank-uniform perm COLLAPSES Φ all 3 seeds, S−A −0.207/−0.047/−0.031 all ≤eps): the amplitude-variance binarization confound is CONFIRMED REAL and the rank-uniform encoding provably removes it — the SAME relationship-destroying permutation that RAISED Φ under min-max now CORRECTLY collapses it under the variance-free read-out. V2 ROBUST-LIFT = FAIL (under the clean estimator the phase mechanism does NOT lift robustly: B−A −0.125/0.0/+0.031, NEGATIVE on the orthogonal seed 1317, fails 2/3). V3 EARNED = FAIL (perm leg PASS all collapse, but offset leg FAILS seed 1317 O−A=+0.106). GATE NOT GREEN → 🧱 DEEPER. FINDING: the 4× Φ-robustness wall HAD a real estimator confound (V1), but removing it does NOT make integration robust (V2/V3) → the wall is an ESTIMATOR-INDEPENDENT substrate limit (the n≤8 4-module substrate genuinely lacks robust faithful-IIT4 integration even under a clean read-out). A STRONGER, cleaner closure than the prior amplitude-confounded 🧱 (now the controls are clean — perm collapses as it should — and the lift STILL is not robust). This BOUNDS (does NOT retract) the 4 prior Φ verdicts (H_1283/1317/1319/1320) — it diagnoses their SHARED estimator and shows the artifact was real while the closed-negative conclusion holds estimator-independently. Does NOT refute anima's substrate (Ψ=1/2 untouched). NO CORE wiring follow-on (a_verified_must_wire fires on GREEN only); had it been GREEN the named follow-on was to wire the rank-uniform Φ read-out into the live faithful-Φ monitor path. SCOPE (a_scale_honest_scope·a_toy_scale_recheck): TOY n=4 dim-8 64-tick faithful-Φ EXACT, engine-native deterministic LCG (NOT numpy); the rank-uniform invariant is exact for the min-max binner (removes the marginal-variance channel; the V3o seed-1317 residual shows a joint-level artifact the additive-offset control can still ride on one seed). NOT ruled out: full per-mechanism IIT 4.0 (iit4_bigphi), much larger module set (loses exactness >8), a different substrate family — each a NEW hypothesis. frozen-first, NO tune-to-green, deterministic. .verdicts/1328_phi_variance_free/H_1328.txt"
+  group  = "OMEGA"
+
+@C h1331_phi_bigphi := "H_1331 — does the FULL IIT-4.0 SYSTEM big-Φ (a fundamentally DIFFERENT Φ measure — CAUSAL cause-effect structure over a TPM, system-level irreducibility destroyed by the system MIP) show ROBUST integration where the small-φ exact-MIP could not? H_1328 closed 🧱 estimator-INDEPENDENT *under the small-φ correlational MI-over-binning measure* (faithful_phi: the amplitude-variance confound is real & removable, yet removing it does not make integration robust — V2 fails on orthogonal seed 1317), and explicitly named 'full per-mechanism IIT 4.0 (iit4_bigphi)' as a NOT-ruled-out follow-on. H_1331 directly tests that DIFFERENT estimator FAMILY: re-run the SAME H_1319/H_1328 substrate + mechanisms (engine-native leaky-linear 4-module ring, Kuramoto pacemaker, relative-phase gate) on the SAME 3 hard orthogonal seeds [1317,1318,1319], but score with stdlib iit4_bigphi.big_phi (full IIT-4.0 system big-Φ over MIP, a_phi_iit4_tool — NOT a proxy) instead of faithful_phi small-φ. n≤8 (n_mod=4 binary units) for MIP tractability. A wall under one estimator family need not hold under the other." :: hypothesis [slug=1331_phi_bigphi group=OMEGA]
+  method = "UNIVERSE/h1331_phi_bigphi.hexa, $0 CPU-local ENGINE-NATIVE (deterministic engine LCG-gauss == engine_cli.hexa _lcg_*; NOT numpy), seeds [1317,1318,1319], frozen-first (.verdicts/1331_phi_bigphi/FREEZE.txt committed BEFORE scoring, bars NOT moved c9/p7). Φ = FAITHFUL IIT-4.0 SYSTEM big-Φ ONLY (a_phi_iit4_tool, g61 stdlib SSOT): big_phi(tpm,4,sys_state) over hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (+ iit4_tpm/distinction/relation pipeline) — Σφ_d(distinctions)+Σφ_r(relations) minus the least-damaging system bipartition cut, NOT a variance×energy proxy / NOT small-φ. Substrate reused VERBATIM from H_1319/H_1328: 4-module leaky-linear ring dim8 T64, gain0.30 leak0.55 w_phase0.5 omega_t0.45 domega0.08, relative-phase gate sal=e·(1+cos(θ_i−θ_T))/2. ARMS A=NO-PHASE B=PHASE-BIND S=PERM-SHUFFLE(module→phase derangement) O=OFFSET-SHUF (IDENTICAL to H_1328). TRAJECTORY→TPM (the input big_phi requires, distinct from small-φ's trajectory-binning): each module = binary UNIT, ON at tick t iff salience in the UPPER HALF of that module's own T-length distribution (median/rank split = VARIANCE-FREE, carrying H_1328's read-out lesson, marginal ON-rate≈0.5 by construction); empirical state-by-node TPM tpm[s*n+u]=P(unit u ON at t+1|state s at t), unseen rows=0.5 (max-entropy, no fabricated dependence); sys_state=modal observed state (attractor, lowest-index tie-break); IDENTICAL construction across all 4 arms. eps=0.02 (=H_1283/H_1319/H_1328 MARGIN_PHI, ported verbatim). FROZEN bars (GREEN iff B1∧B2): B1 ROBUST big-Φ_B≥big-Φ_A+eps all seeds incl 1317 · B2 EARNED perm big-Φ_S≤big-Φ_A+eps AND offset big-Φ_O≤big-Φ_A+eps all seeds. OUTCOMES (all valid c9): B1∧B2→🟢 robust integration reachable under big-Φ (limit was small-φ-MIP-specific, different-estimator breakthrough; follow-on=wire engine-native big-Φ read-out a_verified_must_wire); B1 fails→wall holds across BOTH IIT measures→estimator-FAMILY-independent 🧱. live CORE/*.hexa UNTOUCHED (standalone fn main, 0 importers)."
+  verdict = "🧱 TERMINAL CLOSED-NEGATIVE, STRONGER (estimator-FAMILY-independent; honest, c9/c16 — frozen-first, bars NOT moved). VERBATIM full IIT-4.0 system big-Φ (exact MIP n=4, deterministic, re-run byte-identical): seed 1317 big-Φ A=5.81006 B=9.96112 S=7.28854 O=4.02273 → ΔΦ(B−A)=+4.15106 [B1 PASS] perm S−A=+1.47848 [B2perm FAIL] off O−A=−1.78733 [B2off PASS] · seed 1318 big-Φ A=4.51077 B=4.51077 S=4.51077 O=7.43049 → ΔΦ(B−A)=0.00000 [B1 FAIL] perm S−A=0.00000 [B2perm PASS] off O−A=+2.91972 [B2off FAIL] · seed 1319 big-Φ A=4.08518 B=5.88351 S=4.08518 O=5.94597 → ΔΦ(B−A)=+1.79833 [B1 PASS] perm S−A=0.00000 [B2perm PASS] off O−A=+1.86079 [B2off FAIL]. B1 ROBUST = FAIL (seed 1318 ZERO lift, B==A==4.51077 → the coupling mechanism produces NO big-Φ gain at all on that seed; same fragile seed-dependent signature as small-φ). B2 EARNED = FAIL (controls do NOT cleanly collapse: perm-shuffle RAISES big-Φ on 1317 +1.478, offset RAISES on 1318/1319 +2.920/+1.861 → lift not earned over relationship-destroying controls, the same variance/structure-agnostic inflation H_1319/H_1328 found under small-φ, reproduced in the causal big-Φ family). GATE NOT GREEN → 🧱 STRONGER. FINDING: full IIT-4.0 SYSTEM big-Φ does NOT reach robust integration where small-φ could not — the Φ-robustness limit holds across BOTH IIT measure families (correlational small-φ exact-MIP H_1328 V2 B−A −0.125/0.0/+0.031 AND causal big-Φ TPM-MIP B1 B−A +4.15/0.0/+1.80, both with seed 1318/1317 failures) on the same orthogonal seed family. This is a CLEANER, STRONGER closure than H_1328's single-measure estimator-INDEPENDENT result: the substrate genuinely lacks robust n≤8 integration regardless of which IIT estimator (correlational OR causal) measures it → estimator-FAMILY-independent 🧱. BOUNDS (does NOT retract) the 4 prior Φ verdicts (H_1283/1317/1319/1320) + H_1328 across the big-Φ measure family. Does NOT refute anima's substrate (Ψ=1/2 untouched). NO CORE wiring follow-on (a_verified_must_wire fires on GREEN only — nothing to wire). SCOPE (a_scale_honest_scope·a_toy_scale_recheck): TOY n≤8 (n_mod=4 binary units), faithful IIT-4.0 EXACT big-Φ over the system MIP, engine/numpy-mirror DIRECTIONAL (engine-transfer UNVERIFIED); T=64 → empirical TPM sparse over 2^4=16 states (unseen rows = max-ent 0.5). NOT ruled out: higher-n big-Φ (>8 needs macro-grain, H_1049 caveat), real-corpus substrate, a third estimator family, finer TPM estimation with longer T — each a NEW hypothesis. frozen-first, NO tune-to-green, deterministic. .verdicts/1331_phi_bigphi/result.txt"
   group  = "OMEGA"
 
 @C h1323_sapir_whorf := "H_1323 — Sapir-Whorf / linguistic relativity: does the LANGUAGE a substrate learns warp its NON-LINGUISTIC discrimination (not just what it can express, but its performance on a no-label same/different task)? H_1316/H_1322 showed a domain's REPRESENTATION changes its LEARNABILITY (compression); Sapir-Whorf is the deeper claim — the language's CARVING of a domain warps DOWNSTREAM non-linguistic discrimination. The empirical workhorse = CATEGORICAL PERCEPTION (cross-category pairs discriminated better than within-category at the language's boundary; the grue languages cut a continuum at DIFFERENT points). Lens: cognitive-science / psycholinguistics (a_no_llm_frame_trap, c15) — NOT an LLM recipe, NOT a human-cognition claim, a TOY synthetic continuum (legitimate methodology: the 'languages' are label schemes over the continuum)." :: hypothesis [slug=1323_sapir_whorf group=COGNITION-REPRESENTATION]

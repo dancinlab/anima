@@ -1,0 +1,28 @@
+H_1331 — Φ-ROBUSTNESS UNDER A DIFFERENT MEASURE: full IIT-4.0 SYSTEM big-Φ vs small-φ
+stdlib iit4_bigphi.big_phi (faithful IIT-4.0, system MIP, n=4 binary units) · seeds [1317,1318,1319] · eps=0.02
+TPM = empirical state-by-node from median-split (variance-free, H_1328 lesson) salience; sys_state=modal state
+ARMS: A=NO-PHASE  B=PHASE-BIND(rel-phase)  S=PERM-SHUFFLE(relationship destroyed)  O=OFFSET-SHUF
+BARS: B1 big-Φ_B>=big-Φ_A+eps ALL seeds · B2 big-Φ_S<=big-Φ_A+eps AND big-Φ_O<=big-Φ_A+eps ALL seeds
+seed 1317 big-Φ: A=5.81006 B=9.96112 S=7.28854 O=4.02273
+       ΔΦ(B-A)=4.15106 [B1 PASS]  S-A=1.47848 [B2perm FAIL]  O-A=-1.78733 [B2off PASS]
+seed 1318 big-Φ: A=4.51077 B=4.51077 S=4.51077 O=7.43049
+       ΔΦ(B-A)=0.0 [B1 FAIL]  S-A=0.0 [B2perm PASS]  O-A=2.91972 [B2off FAIL]
+seed 1319 big-Φ: A=4.08518 B=5.88351 S=4.08518 O=5.94597
+       ΔΦ(B-A)=1.79833 [B1 PASS]  S-A=0.0 [B2perm PASS]  O-A=1.86079 [B2off FAIL]
+---
+B1 ROBUST (big-Φ_B>=big-Φ_A+eps ALL seeds incl orthogonal 1317): FAIL
+B2 EARNED (perm AND offset both <=big-Φ_A+eps ALL seeds): FAIL  [perm=FAIL off=FAIL]
+===
+VERDICT 🧱 (STRONGER) — big-Φ ALSO fails the robustness gate (B1 fails, incl orthogonal 1317).
+  The substrate limit holds across BOTH IIT measures (small-φ AND big-Φ) → an estimator-
+  FAMILY-independent 🧱 closure. BOUNDS (not retracts) the 4 prior Φ verdicts + H_1328.
+
+--- DETERMINISM ---
+re-run byte-identical (run1 == run2, toolchain hexa 0.1.0-dispatch). Deterministic engine LCG.
+--- CROSS-MEASURE CONTEXT ---
+H_1328 (small-phi exact-MIP, SAME seeds): V2 ROBUST-LIFT FAILED (B-A -0.125/0.0/+0.031, fails 2/3 incl 1317).
+H_1331 (full IIT-4.0 big-Phi, SAME seeds): B1 ROBUST FAILS too (B-A +4.15/0.0/+1.80; seed 1318 ZERO lift).
+BOTH IIT measures (correlational small-phi AND causal big-Phi) fail the 3-seed robustness gate on the
+same orthogonal seed family => estimator-FAMILY-independent wall. Controls do NOT cleanly collapse the
+lift under either measure (perm RAISES big-Phi on 1317 +1.48; offset RAISES on 1318/1319) — same fragility
+signature. BOUNDS (does not retract) the 4 prior Phi verdicts + H_1328 across the big-Phi measure family.

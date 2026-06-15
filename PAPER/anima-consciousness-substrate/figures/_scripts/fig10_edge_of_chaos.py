@@ -3,7 +3,7 @@
 matplotlib DATA figure.
 
 EVERY value verbatim from:
-  UNIVERSE/H_285_edge_of_chaos_big_phi.md (= Appendix A, eq:edge):
+  UNIVERSE/cards/H_285_edge_of_chaos_big_phi.md (= Appendix A, eq:edge):
     Wolfram class-mean big-Phi:  ordered (I) 0.0 < chaotic (III) 6.943
                                  < class-IV / edge 10.448   (5/5 falsifiers PASS)
   M6 per-rule anchors (Appendix A, app:phi-edge):

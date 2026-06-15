@@ -180,12 +180,12 @@
 
 | H | 역할 | seed | closed-form 결과 | DECODER 함의 |
 |---|---|---|---|---|
-| [H_683](../../UNIVERSE/H_683_token_zero_dominant_prior.md) | M-D mechanism | token-0 marginal × greedy attractor | CE_floor = -ln(p₀) ∈ [2.30, 3.00] PASS | M4b ce_final 9.02 ≫ 3.0 → token-0 alone 으로 explain 불가, 추가 mechanism (H_684/H_685) 존재 |
-| [H_684](../../UNIVERSE/H_684_bf16_precision_attractor_drift.md) | M-F mechanism | bf16 underflow drift | normal min 1.18e-38, σ=4 정상 mode rare PASS | primary 아님 — collapse persistence amplifier (post-attractor) 후보 |
-| [H_685](../../UNIVERSE/H_685_ce_argmax_distribution_shift.md) | M-G mechanism | train CE / decode argmax shift | synthetic CE 0.828 nats 분기 PASS | escape lever 2개: H_687 (train-time) + H_688 (decode-time) sibling |
-| [H_686](../../UNIVERSE/H_686_router_entropy_regularization.md) | E-B escape | router entropy reg H(p)≥ln(K)/2 | K=2/4/8: 0.347/0.693/1.040 nats PASS | M4 MoE-fresh 본선의 aux-loss 정량 sufficient-condition · 본선 1순위 fundamental |
-| [H_687](../../UNIVERSE/H_687_kl_to_uniform_output_reg.md) | E-C escape | KL(p ‖ uniform_V) reg | ln(V=151643)=11.93 nats 정의-수준 PASS | train-time token-분포 diversity 강제 · M4 본선 결합 fire 권장 |
-| [H_688](../../UNIVERSE/H_688_decode_top_p_temperature_lever.md) | E-D escape | decode-time top-k/top-p/τ | k=2→1 bit, k=5→2.32 bit PASS | post-train weight 무변경 · $0 Mac probe 가능 (ckpt 있을 시) · 1순위 cheap |
+| [H_683](../../UNIVERSE/cards/H_683_token_zero_dominant_prior.md) | M-D mechanism | token-0 marginal × greedy attractor | CE_floor = -ln(p₀) ∈ [2.30, 3.00] PASS | M4b ce_final 9.02 ≫ 3.0 → token-0 alone 으로 explain 불가, 추가 mechanism (H_684/H_685) 존재 |
+| [H_684](../../UNIVERSE/cards/H_684_bf16_precision_attractor_drift.md) | M-F mechanism | bf16 underflow drift | normal min 1.18e-38, σ=4 정상 mode rare PASS | primary 아님 — collapse persistence amplifier (post-attractor) 후보 |
+| [H_685](../../UNIVERSE/cards/H_685_ce_argmax_distribution_shift.md) | M-G mechanism | train CE / decode argmax shift | synthetic CE 0.828 nats 분기 PASS | escape lever 2개: H_687 (train-time) + H_688 (decode-time) sibling |
+| [H_686](../../UNIVERSE/cards/H_686_router_entropy_regularization.md) | E-B escape | router entropy reg H(p)≥ln(K)/2 | K=2/4/8: 0.347/0.693/1.040 nats PASS | M4 MoE-fresh 본선의 aux-loss 정량 sufficient-condition · 본선 1순위 fundamental |
+| [H_687](../../UNIVERSE/cards/H_687_kl_to_uniform_output_reg.md) | E-C escape | KL(p ‖ uniform_V) reg | ln(V=151643)=11.93 nats 정의-수준 PASS | train-time token-분포 diversity 강제 · M4 본선 결합 fire 권장 |
+| [H_688](../../UNIVERSE/cards/H_688_decode_top_p_temperature_lever.md) | E-D escape | decode-time top-k/top-p/τ | k=2→1 bit, k=5→2.32 bit PASS | post-train weight 무변경 · $0 Mac probe 가능 (ckpt 있을 시) · 1순위 cheap |
 
 **본선 후보 우선순위 (a_completeness_over_cheap 정합)**:
 1. **H_686 + H_687 결합** (train-time fundamental) — M4 MoE-fresh 본선 fire 시 aux-loss 두 축 모두 켜고 ablation (cost-bearing)

@@ -28,7 +28,7 @@ same input → different trace (alive)     deterministic backbone envelope check
 
 The R4 large 44.68M H100 fire is a measurement rung. See
 `CLM/P6_SCALE_LADDER_7B.md` §0 ("GPU = 계측기 · 학습자 = 온칩 비경첩 가소성") ·
-`UNIVERSE/H_904` (on-chip plasticity 🟢).
+`UNIVERSE/cards/H_904` (on-chip plasticity 🟢).
 
 ## flame vs forge — usage criteria
 

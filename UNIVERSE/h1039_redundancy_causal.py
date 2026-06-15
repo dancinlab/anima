@@ -1,6 +1,6 @@
 """H_1039 — is the planning Phi sign-split CAUSED by redundancy? (CAUSAL ablation test)
 
-PRE-REG: UNIVERSE/H_1039_redundancy_causal.md (merged #1939).
+PRE-REG: UNIVERSE/cards/H_1039_redundancy_causal.md (merged #1939).
 
 PRIOR (H_1017 GREEN): planning's mutual-information rise is REDUNDANCY-DOMINATED
 (Williams-Beer I_min PID: Δredundancy >> Δsynergy). That is a CORRELATIONAL mechanism.

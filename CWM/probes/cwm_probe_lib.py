@@ -1,5 +1,5 @@
 """cwm_probe_lib.py — shared $0 CPU-local toy machinery for the CWM world-model slate
-(UNIVERSE/H_960..H_984).
+(UNIVERSE/cards/H_960..H_984).
 
 Substrate tag: CPU-mirror (numpy). a_lane_akida_gpu_split — NOTHING here runs on AKIDA;
 SUBSTRATE-axis hypotheses (H_965/966/974/977) that need a live AKD1000 are marked

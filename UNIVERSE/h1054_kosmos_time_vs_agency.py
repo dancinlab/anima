@@ -27,7 +27,7 @@ for this set (no fire trajectory) -> tension-vectors are NOT used as a T input.
       top_emotion) and NOT from its tier (honest-null guard; we ASSERT + CHECK
       input-tier-independence so a large |rho| would be substantive, not tautological).
 
-PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/H_1054_kosmos_time_vs_agency.md)
+PRE-REGISTERED FALSIFIER (frozen in UNIVERSE/cards/H_1054_kosmos_time_vs_agency.md)
 ============================================================================
 N=31; Spearman rho over all 31; near-zero band |rho| <= 0.2.
   H1-PASS (orthogonal)  : |rho(t, T)| <= 0.2 AND F-SHUFFLE control holds (T is

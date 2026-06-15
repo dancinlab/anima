@@ -1,0 +1,98 @@
+H_1331 — Φ-ROBUSTNESS UNDER A DIFFERENT MEASURE: full IIT-4.0 SYSTEM big-Φ (TPM-MIP) vs small-φ
+FREEZE (pre-registered BEFORE scoring — frozen-first, c9/p7)
+date: 2026-06-16   slug: 1331_phi_bigphi   branch off origin/main 61ce6948f
+
+────────────────────────────────────────────────────────────────────────────────
+THE QUESTION (a DIFFERENT estimator FAMILY)
+────────────────────────────────────────────────────────────────────────────────
+The Φ-robustness arc is 🧱 across topology (H_1283 relay · H_1317 small-world),
+timing (H_1319 phase-binding), and division (H_1320 mitosis). H_1328 then showed
+the 4× wall is estimator-INDEPENDENT *under the small-φ exact-MIP* (faithful_phi):
+the amplitude-variance binarization confound is REAL and removable, yet removing it
+does NOT make integration robust (V2 FAILS, orthogonal seed 1317). BUT that is ONE
+Φ measure — a CORRELATIONAL MI-over-binning small-φ.
+
+H_1331 asks: does the FULL IIT-4.0 SYSTEM big-Φ — a FUNDAMENTALLY DIFFERENT measure
+(CAUSAL cause-effect structure over a TPM, system-level irreducibility = Φ-structure
+destroyed by the system MIP) — show ROBUST integration where small-φ did not?
+
+  small-φ (faithful_phi)  : MI(A;B)=H(A)+H(B)−H(A,B) over min-max-binned trajectories,
+                            exact bipartition MIP — CORRELATIONAL, marginal-entropy driven.
+  big-Φ   (iit4_bigphi)   : Σφ_d(distinctions)+Σφ_r(relations) over a state-by-node TPM,
+                            minus the least-damaging system bipartition cut — CAUSAL,
+                            cause/effect repertoires + intrinsic difference (IIT 4.0 ≠ 3.0).
+These are different estimator FAMILIES; a wall under one need not hold under the other.
+
+────────────────────────────────────────────────────────────────────────────────
+ESTIMATOR — full IIT-4.0 system big-Φ (a_phi_iit4_tool, stdlib SSOT, g61)
+────────────────────────────────────────────────────────────────────────────────
+stdlib/consciousness/iit4_bigphi.hexa :: big_phi(tpm, n, sys_state) -> [bigΦ, total, Σφd, Σφr, nd].
+  - faithful IIT-4.0 system big-Φ over the system MIP (NOT a proxy, NOT variance×energy).
+  - n = number of binary UNITS = n_mod = 4 (≤8 for MIP tractability, a_scale_honest_scope).
+  - REQUIRES a TPM (state-by-node, conditional-independence): tpm[state*n+unit] =
+    P(unit_t+1 = ON | system state = `state` at t), 2^n rows × n cols.
+
+────────────────────────────────────────────────────────────────────────────────
+SUBSTRATE / SEEDS (reused VERBATIM — SAME as H_1319/H_1328; only the read-out is big-Φ)
+────────────────────────────────────────────────────────────────────────────────
+- ENGINE-NATIVE deterministic LCG-gauss (== engine_cli.hexa _lcg_*), NOT numpy.
+- 4-module leaky-linear ring, dim 8, T 64, Kuramoto pacemaker, relative-phase gate.
+  Body of gen_traj is BYTE-IDENTICAL to H_1319/H_1328 (gain 0.30, leak 0.55, w_nbr/w_in
+  0.5, w_phase 0.5, omega_t 0.45, domega 0.08). The per-tick per-module SALIENCE sal[i,t]
+  is the SAME quantity H_1319/H_1328 fed to small-φ.
+- SAME 3 HARD ORTHOGONAL SEEDS [1317,1318,1319] (incl 1317, the seed that broke every
+  prior topology/timing/division attempt and failed H_1328 V2).
+- ARMS (SAME as H_1328): A=NO-PHASE (no-coupling) · B=PHASE-BIND (rel-phase, the coupling
+  mechanism) · S=PERM-SHUFFLE (relationship destroyed: each module driven by a PERMUTED
+  module's phase) · O=OFFSET-SHUF (per-tick random phase offset).
+
+────────────────────────────────────────────────────────────────────────────────
+TRAJECTORY → TPM (state-by-node, the input big-Φ requires)
+────────────────────────────────────────────────────────────────────────────────
+Each module i is a binary UNIT. To avoid the H_1328 amplitude-variance confound we
+binarize VARIANCE-FREE: unit i is ON at tick t iff its salience sal[i,t] is in the
+UPPER HALF of module i's own T-length salience distribution (rank ≥ T/2 within that
+module — the rank-uniform / median split is the variance-clean read-out lesson of H_1328,
+making each unit's marginal ON-rate ≈0.5 by construction, INDEPENDENT of amplitude).
+  bit_t  = system binary state at tick t (unit i bit = ON/OFF as above).
+  Empirical state-by-node TPM (conditional-independence, max-entropy over unseen states):
+    tpm[s*n+u] = ( #{t<T-1 : bit_t = s AND unit u ON at t+1} ) / ( #{t<T-1 : bit_t = s} ).
+    Unseen state s (count 0) ⇒ tpm[s*n+u] = 0.5 (max-entropy / unbiased prior — no fabricated
+    structure; an unobserved row contributes NO causal dependence).
+  sys_state = the MOST FREQUENT observed system state (the system's attractor; deterministic,
+    lowest-index tie-break) — the state at which big-Φ's distinctions are evaluated.
+This TPM construction is IDENTICAL across all four arms; ONLY the arm's salience dynamics
+(hence its transition statistics) differ. Same binarization, same TPM rule, same sys_state
+selection rule — so any big-Φ difference is the arm's CAUSAL structure, not the read-out.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (pre-registered BEFORE scoring; eps ported VERBATIM, NOT tuned)
+────────────────────────────────────────────────────────────────────────────────
+eps = 0.02  (= H_1283/H_1319/H_1328 MARGIN_PHI, ported verbatim — NO tuning).
+
+B1 ROBUST  : under big-Φ, the coupling mechanism shows big-Φ_B ≥ big-Φ_A + eps on ALL 3
+             hard seeds (incl orthogonal 1317). [the lift the 4 prior Φ verdicts could not make robust]
+B2 EARNED  : the relationship-destroying controls COLLAPSE the lift on ALL 3 seeds —
+             perm-shuffle big-Φ_S ≤ big-Φ_A + eps AND offset-shuf big-Φ_O ≤ big-Φ_A + eps.
+             (variance-clean median-split binarization carries the H_1328 read-out lesson.)
+
+GREEN iff B1 ∧ B2.
+
+────────────────────────────────────────────────────────────────────────────────
+OUTCOMES (ALL VALID, c9 — every result decisive)
+────────────────────────────────────────────────────────────────────────────────
+  B1 ∧ B2 → 🟢 ROBUST integration IS reachable under full IIT-4.0 big-Φ — the limit was
+            small-φ-exact-MIP-SPECIFIC (a DIFFERENT-ESTIMATOR breakthrough). Then name the
+            engine-native wiring follow-on (a_verified_must_wire).
+  B1 FAILS → the substrate limit holds across BOTH IIT measures (small-φ AND big-Φ) → an
+             even STRONGER, estimator-FAMILY-independent 🧱 closure (bounds — does NOT retract —
+             the 4 prior Φ verdicts + H_1328, a_scale_honest_scope).
+
+────────────────────────────────────────────────────────────────────────────────
+SCOPE (honest, pre-stated — a_scale_honest_scope · a_toy_scale_recheck)
+────────────────────────────────────────────────────────────────────────────────
+TOY n≤8 (n_mod=4 units), faithful IIT-4.0 EXACT big-Φ over MIP, numpy/engine-mirror
+DIRECTIONAL. T=64 ticks → empirical TPM is sparse over 2^4=16 states (unseen rows = max-ent
+0.5). BOUNDS (not retracts) the 4 prior small-φ verdicts + H_1328 across the big-Φ measure.
+Engine-native big-Φ wiring into live CORE = follow-on only on a GREEN. Determinism: re-run
+byte-identical (deterministic engine LCG); report run1==run2.

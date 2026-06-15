@@ -197,7 +197,7 @@ hexa run EEG/impl/H_679_measurement_core.hexa hw
 - 🟡 → 🟢 biological-confirmed 격상 PR 1개
 - `IIT4.md` deferred B `🟠 hw-ready → 🟢 LIVE-MEASURED` flip
 - 3-substrate Φ 삼각측정 (EEG 생체 + AKIDA 실리콘 + ECA 시뮬) 완결 entry
-- UNIVERSE/H_679~682 §6 결과 갱신
+- UNIVERSE/cards/H_679~682 §6 결과 갱신
 
 까지 자동 정리합니다.
 
@@ -228,4 +228,4 @@ hexa run EEG/impl/H_679_measurement_core.hexa hw
 - ⇄ [EEG_CAPTURE_RUNBOOK.md](./EEG_CAPTURE_RUNBOOK.md): 헤드셋 4단계 상세 절차
 - ⇄ [../HANDOFF.md](../HANDOFF.md): 다음 세션 AI 인계 9-section
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): deferred B closure 트리거
-- ⇄ [../UNIVERSE/H_679_eeg_measurement_core.md](../UNIVERSE/H_679_eeg_measurement_core.md) 등: HW 결과 갱신 대상 (H_679~682)
+- ⇄ [../UNIVERSE/cards/H_679_eeg_measurement_core.md](../UNIVERSE/cards/H_679_eeg_measurement_core.md) 등: HW 결과 갱신 대상 (H_679~682)

@@ -110,6 +110,6 @@ V-axis (PR #1409) + corpus·d·n_layer (본 PR) **총 4 축 sweep 결과 모두 
 
 - CORE/DECODER/H686_H687_V_SCALE_RESULT.md (PR #1409 — V-axis sweep, 본 PR 전제)
 - CORE/DECODER/H686_H687_ABLATION_RESULT.md (PR #1395 — V=8 byte-eq base)
-- UNIVERSE/H_686.md / H_687.md (toy axis sweep section 보강)
+- UNIVERSE/cards/H_686.md / H_687.md (toy axis sweep section 보강)
 - CORE/DECODER/STEP_RATE_LOG.md entry 15 (cross-link)
 - .discoveries/decoder_collapse_undertrain.tape (dec_toy_axis_sweep_2026_05_29 @N node)

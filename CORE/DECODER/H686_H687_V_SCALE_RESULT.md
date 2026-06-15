@@ -107,8 +107,8 @@ production collapse 의 OFFENDING-AXIS 가 V 단독 아님 → toy V-scale 로�
 
 - ⇄ [CORE/DECODER/h686_h687_aux_ablation.hexa](./h686_h687_aux_ablation.hexa) — PR #1395 V=8 ⚪ TOY-NULL (sanity gate source)
 - ⇄ [CORE/DECODER/H686_H687_ABLATION_RESULT.md](./H686_H687_ABLATION_RESULT.md) — PR #1395 결과 ledger
-- ⇄ [UNIVERSE/H_686_router_entropy_regularization.md](../../UNIVERSE/H_686_router_entropy_regularization.md) — H_686 본 가설 (escape sufficient-condition)
-- ⇄ [UNIVERSE/H_687_kl_to_uniform_output_reg.md](../../UNIVERSE/H_687_kl_to_uniform_output_reg.md) — H_687 본 가설 (KL output reg)
+- ⇄ [UNIVERSE/cards/H_686_router_entropy_regularization.md](../../UNIVERSE/cards/H_686_router_entropy_regularization.md) — H_686 본 가설 (escape sufficient-condition)
+- ⇄ [UNIVERSE/cards/H_687_kl_to_uniform_output_reg.md](../../UNIVERSE/cards/H_687_kl_to_uniform_output_reg.md) — H_687 본 가설 (KL output reg)
 - ⇄ [CORE/DECODER/STEP_RATE_LOG.md](./STEP_RATE_LOG.md) entry 14 — 측정 ledger
 - ⇄ [.discoveries/decoder_collapse_undertrain.tape](../../.discoveries/decoder_collapse_undertrain.tape) — toy-axis decoder collapse 후속 measurement
 

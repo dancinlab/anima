@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  h867_dialogue_abs_eval.hexa — ABSOLUTE dialogue-quality FLOOR harness (@L6 · H_867)
 //
-//  UNIVERSE/H_867 (F-CLM-DIALOGUE-ABS): does the SFT+self-play arm-SP clear a
+//  UNIVERSE/cards/H_867 (F-CLM-DIALOGUE-ABS): does the SFT+self-play arm-SP clear a
 //  PRE-FROZEN ABSOLUTE held-out dialogue-quality FLOOR — not merely beat its own
 //  SFT arm (that was H_863, RELATIVE)? A strictly harder bar: a model can win an
 //  A/B and still be absolutely poor. Floor frozen BEFORE the fire (W2 · post-tuning 0).
@@ -23,7 +23,7 @@
 //  ShareGPT/Alpaca/ChatGPT-gen 0 (@L4 foundation-borrow 0). pure-hexa scaffold;
 //  the torch payload (reconstruct arm-SP from the HF backbone · score) reuses
 //  CLM/train/train_clm.py + the H_863 self-play reflux procedure VERBATIM.
-//  sibling: UNIVERSE/H_867 · UNIVERSE/H_863 · CLM/bench/bench_dialogue_ab.hexa
+//  sibling: UNIVERSE/cards/H_867 · UNIVERSE/cards/H_863 · CLM/bench/bench_dialogue_ab.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
 fn verdict_dir() -> string { return ".verdicts/clm-dialogue-abs" }

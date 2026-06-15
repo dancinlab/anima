@@ -130,8 +130,8 @@ anchor. 일반 ladder GZ_WIDTH(τ) = ln(τ/(τ-1)) per H_615 perfect-number ladd
 
 - `SAVANT/savant_lib.hexa` — 본체 (this M1 회수)
 - `SAVANT/savant_lib_smoke.hexa` — invariant smoke
-- `UNIVERSE/H_347_*.md` · `H_348_*.md` · `H_349_*.md` · `H_350_*.md` · `H_351_*.md` — closed-form anchor SSOT
-- `UNIVERSE/H_612_*.md` · `H_613_*.md` · `H_614_*.md` · `H_615_*.md` — round 2 follow-up
+- `UNIVERSE/cards/H_347_*.md` · `H_348_*.md` · `H_349_*.md` · `H_350_*.md` · `H_351_*.md` — closed-form anchor SSOT
+- `UNIVERSE/cards/H_612_*.md` · `H_613_*.md` · `H_614_*.md` · `H_615_*.md` — round 2 follow-up
 - `HEXAD/SAVANT/savant_phi.hexa` — canonical 4-domain substrate (sister)
 - `HEXAD/SAVANT/anima_savant_si_monitor.hexa` — production SI monitor (sister)
 - `HEXAD/SAVANT/COMPENDIUM.md` · `H359-savant-canonical.md` — canonical engine doc

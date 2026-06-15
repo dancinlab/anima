@@ -2,7 +2,7 @@
 //  h886_dialogue_floor_eval.hexa — ABSOLUTE dialogue-coherence FLOOR harness,
 //  NON-ADAPTER lever (@L6 · H_886)
 //
-//  UNIVERSE/H_886 (F-CLM-DIALOGUE-FLOOR): does a NON-ADAPTER lever clear the
+//  UNIVERSE/cards/H_886 (F-CLM-DIALOGUE-FLOOR): does a NON-ADAPTER lever clear the
 //  PRE-FROZEN ABSOLUTE held-out dialogue-coherence FLOOR that both H_867 (full
 //  finetune, 0.05804) and H_867r (adapter edge, 0.04369) FAILED? The floor is
 //  the H_867 FROZEN floor REUSED VERBATIM (commit d5103f21, post-tuning 0). No
@@ -25,7 +25,7 @@
 //  ShareGPT/Alpaca/ChatGPT-gen 0 (@L4 foundation-borrow 0). pure-hexa scaffold;
 //  the torch payload (reconstruct arm-SP-curriculum from the HF backbone · score)
 //  is .verdicts/clm-dialogue-floor/h886_run.py (committed for provenance).
-//  sibling: UNIVERSE/H_886 · UNIVERSE/H_867 · UNIVERSE/H_868 · CLM/bench/h867_dialogue_abs_eval.hexa
+//  sibling: UNIVERSE/cards/H_886 · UNIVERSE/cards/H_867 · UNIVERSE/cards/H_868 · CLM/bench/h867_dialogue_abs_eval.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
 fn verdict_dir() -> string { return ".verdicts/clm-dialogue-floor" }

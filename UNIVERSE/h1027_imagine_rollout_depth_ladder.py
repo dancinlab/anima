@@ -1,7 +1,7 @@
 """H_1027 — imagine-rollout depth ladder vs a deepening optimum.
 
 Pre-registered (frozen 2026-06-07; honored verbatim, see
-UNIVERSE/H_1027_imagine_rollout_depth_ladder.md):
+UNIVERSE/cards/H_1027_imagine_rollout_depth_ladder.md):
 
   H_1021 matched a depth-4 imagine-rollout to a depth-4 MPC, but only SAMPLED the depth
   dependence at d in {2,4}. The general question: planning through a LEARNED world model

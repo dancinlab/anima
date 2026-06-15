@@ -2,7 +2,7 @@
 VALIDATED cheap scalable ruler that rank-matches the EXACT faithful φ_EI ground-truth ACROSS
 MULTIPLE substrates, or does it hit the H_988/989 proxy-blindness wall?
 
-PRE-REG: UNIVERSE/H_1065_csp_cheap_scalable_ruler.md (this branch; FROZEN before scoring).
+PRE-REG: UNIVERSE/cards/H_1065_csp_cheap_scalable_ruler.md (this branch; FROZEN before scoring).
 
 LINEAGE: forward of H_1064 (CSP defined; rank-tracked BOTH faithful φ_EI AND big-Φ on the
 planning split: ρ_faith≈+0.815). Re-opens the H_1049 question (IB-coarse-grain 🔴 was NOT a

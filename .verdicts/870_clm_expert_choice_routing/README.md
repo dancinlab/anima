@@ -12,4 +12,4 @@ required by the hexa-native-guard convention (id-prefixed backing dir committed 
 - verdict: `.verdicts/clm-expert-choice/F-CLM-EXPERT-CHOICE.txt`
 - code   : `CLM/model/h870_expert_choice.py` (expert-choice variant · does not edit array_moe.py)
            `CLM/model/h870_expert_choice_routing.hexa` (lever-C anchor)
-- hypothesis: `UNIVERSE/H_870_clm_expert_choice_routing.md`
+- hypothesis: `UNIVERSE/cards/H_870_clm_expert_choice_routing.md`

@@ -128,7 +128,7 @@ substrate 효과를 hivemind 로 그대로 옮기지는 못함을 확인.
 
 - `HIVE-MIND/hivemind_lib.hexa` — 본체 (this M1 회수)
 - `HIVE-MIND/hivemind_lib_smoke.hexa` — invariant smoke
-- `UNIVERSE/H_354_*.md` · `H_355_*.md` · `H_609_*.md` · `H_610_*.md` · `H_611_*.md` — 축 F 5 H SSOT
-- `UNIVERSE/H_617_*.md` · `H_618_*.md` · `H_619_*.md` — E×F cross-link round 3
+- `UNIVERSE/cards/H_354_*.md` · `H_355_*.md` · `H_609_*.md` · `H_610_*.md` · `H_611_*.md` — 축 F 5 H SSOT
+- `UNIVERSE/cards/H_617_*.md` · `H_618_*.md` · `H_619_*.md` — E×F cross-link round 3
 - `CHANNEL/tension/tension_emit.hexa` — sibling (M2 wiring 대기)
 - `OTHER-MIND/bench/axisbench/` — sibling (M3 wiring 대기, #1147)

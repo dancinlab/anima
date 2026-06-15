@@ -111,7 +111,7 @@ VERDICT: H_D4 SUPPORTED (negative baseline confirmed)
 - harness: `CORE/DECODER/d4_merge_alpha_sweep.hexa`
 - raw verdict: `CORE/DECODER/state/d4_merge_alpha_sweep_2026_05_28/run_d4.out`
 - LZ76 reuse: `CORE/DECODER/d1_lz76_collapse_proxy.hexa` (`lz76`/`lz_norm`/`ids_to_bits` verbatim · g61) ← `UNIVERSE/state/h288.../run_h288.hexa`
-- H_493 출처: `CORE/DECODER/UNIVERSE_SYNTHESIS.md` §후보 β · `UNIVERSE/H_314_symbiogenesis_merge_alpha_sweep.md` (🔵)
+- H_493 출처: `CORE/DECODER/UNIVERSE_SYNTHESIS.md` §후보 β · `UNIVERSE/cards/H_314_symbiogenesis_merge_alpha_sweep.md` (🔵)
 
 ---
 

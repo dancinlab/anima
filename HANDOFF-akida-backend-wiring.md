@@ -20,7 +20,7 @@ graceful numpy-LIF SW fallback + provenance. 5 stacked PR (A~E) 모두 MERGED.
 | PR-B #1420 | SubstrateAKIDA(Substrate) plugin (HW + SW fallback + provenance) | MERGED | ✓ | `AGENT/CHAT/substrate_akida.py` (+`.hexa` stub) |
 | PR-C #1421 | substrate router 배선 (AKIDA_BACKEND env + --substrate akida) | MERGED | ✓ | `AGENT/CHAT/anima_participant.py` (build_substrate + main) |
 | PR-D #1422 | dispatch.hexa probe --json provenance + argv offset 수정 | MERGED | ✓ | `scripts/akida/dispatch.hexa` |
-| PR-E #1423 | verify — SW falsifier 5/5 PASS + F-AKWIRE-FALLBACK | MERGED | ✓ | `AGENT/CHAT/verify_substrate_akida.py` · `.verdicts/672_akida_spontaneous_firing/` · `UNIVERSE/H_672_*.md` |
+| PR-E #1423 | verify — SW falsifier 5/5 PASS + F-AKWIRE-FALLBACK | MERGED | ✓ | `AGENT/CHAT/verify_substrate_akida.py` · `.verdicts/672_akida_spontaneous_firing/` · `UNIVERSE/cards/H_672_*.md` |
 
 g47 (commons) atomic create→merge 정책으로 PR 생성 즉시 `--squash --admin --delete-branch` 자동 머지됨.
 따라서 stack 은 prior-branch base 대신 매 PR fresh origin/main 재기준(worktree `git reset/checkout -B`)으로 진행.
@@ -33,7 +33,7 @@ g47 (commons) atomic create→merge 정책으로 PR 생성 즉시 `--squash --ad
 - `AGENT/CHAT/anima_participant.py:227-258 (build_substrate)` + `:631-647 (main)` — router. `kind=="akida"` 분기 + `AKIDA_BACKEND` env override.
 - `scripts/akida/dispatch.hexa` — hexa-native probe/route. `probe --json` 가 `closed_loop_verify.py` 의 dangling 참조 충족.
 - `SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py:54-94` — 실 HW on-chip threshold-and-fire 정본 (SubstrateAKIDA HW 경로가 래핑).
-- `UNIVERSE/H_672_akida_spontaneous_firing.md` — falsifier SSOT (4 SW + F-AKWIRE-FALLBACK).
+- `UNIVERSE/cards/H_672_akida_spontaneous_firing.md` — falsifier SSOT (4 SW + F-AKWIRE-FALLBACK).
 - `PI5-AKIDA.json` — pi5-akida host ledger (governance `a_pi5_akida_registry`, READ-ONLY).
 
 ## (3) 신규 API/스위치 surface

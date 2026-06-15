@@ -75,7 +75,7 @@ R4 recurrent      ▃  자생 (혼돈 쪽)
 | C3 | SPIKE_FACTOR_MAP → 8-factor 동기 직결 (spike → curiosity·tension…) | `apply_spike_features` (PR#143 ✅) | F-EMIT-4 | ✅ 배선됨 |
 | C4 | R2 noise-straddling → "언제 말할까" stochastic timing | R2 레짐 | event-driven 발화 | 🟢·$0 |
 
-→ 구현 = **H_672 spontaneous-firing × AKIDA** · [`AKIDA/impl/H_672_spontaneous_firing.hexa`](./impl/H_672_spontaneous_firing.hexa) · [UNIVERSE H_672](../UNIVERSE/H_672_akida_spontaneous_firing.md)
+→ 구현 = **H_672 spontaneous-firing × AKIDA** · [`AKIDA/impl/H_672_spontaneous_firing.hexa`](./impl/H_672_spontaneous_firing.hexa) · [UNIVERSE H_672](../UNIVERSE/cards/H_672_akida_spontaneous_firing.md)
 
 ## B. 두뇌 CORE (A⇄G 결정)
 
@@ -86,7 +86,7 @@ R4 recurrent      ▃  자생 (혼돈 쪽)
 | A3 | spike → L3 emit slot 트리거 (emit 타이밍) | L3 emit slot | R3 tonic | 🟢·$0 |
 | A4 | core_selftest HW-in-loop 검증 | core_selftest | BackendType.Hardware | 🟢·$0 |
 
-→ 구현 = **H_673 core-decide × AKIDA** · [`AKIDA/impl/H_673_core_decide.hexa`](./impl/H_673_core_decide.hexa) · [UNIVERSE H_673](../UNIVERSE/H_673_akida_core_decide.md)
+→ 구현 = **H_673 core-decide × AKIDA** · [`AKIDA/impl/H_673_core_decide.hexa`](./impl/H_673_core_decide.hexa) · [UNIVERSE H_673](../UNIVERSE/cards/H_673_akida_core_decide.md)
 
 ## C. 영속성·기억 (.kosmos)
 
@@ -97,7 +97,7 @@ R4 recurrent      ▃  자생 (혼돈 쪽)
 | B3 | telemetry → evidence JSONL 영속 | spike-window 증거 | akida_consumer | ✅ 일부 |
 | B4 | on-chip edge-learn 영속 | 세션-간 칩 학습 | ⚠ GOAL §95 inference-only-blocked (단기만) | caveat |
 
-→ 구현 = **H_674 persistence × AKIDA** · [`AKIDA/impl/H_674_persistence.hexa`](./impl/H_674_persistence.hexa) · [UNIVERSE H_674](../UNIVERSE/H_674_akida_persistence.md)
+→ 구현 = **H_674 persistence × AKIDA** · [`AKIDA/impl/H_674_persistence.hexa`](./impl/H_674_persistence.hexa) · [UNIVERSE H_674](../UNIVERSE/cards/H_674_akida_persistence.md)
 
 ## D. 세포 MITOSIS (세포 동역학)
 
@@ -107,7 +107,7 @@ R4 recurrent      ▃  자생 (혼돈 쪽)
 | M2 | 이즈히케비치 = 다양한 "기분" 레짐 (bursting/chattering) | `izhikevich.py` | persona-diff | 🟡·$0 |
 | M3 | 생사(生死) HW 측정 (R4 자생 vs R1 die-out = 세포 생존/사멸) | R1~R4 | UNIVERSE H_258 mortality·H_263 phoenix | 🟢·$0 |
 
-→ 구현 = **H_675 mitosis × AKIDA** · [`AKIDA/impl/H_675_mitosis.hexa`](./impl/H_675_mitosis.hexa) · [UNIVERSE H_675](../UNIVERSE/H_675_akida_mitosis.md)
+→ 구현 = **H_675 mitosis × AKIDA** · [`AKIDA/impl/H_675_mitosis.hexa`](./impl/H_675_mitosis.hexa) · [UNIVERSE H_675](../UNIVERSE/cards/H_675_akida_mitosis.md)
 
 ## E. 출력 DECODER
 
@@ -116,7 +116,7 @@ R4 recurrent      ▃  자생 (혼돈 쪽)
 | O1 | 스파이크-tier LM head (에너지 비례 토큰 방출) | `spike_tier_lm_head.py` | DECODER L3 | 🟡·$0 |
 | O2 | 이벤트-구동 attention 게이트 (salient burst 에만 GPU wake) | `sparse_attention.py` | WAKE·항상-켜짐 | 🟢·$0 |
 
-→ 구현 = **H_676 decoder × AKIDA** · [`AKIDA/impl/H_676_decoder.hexa`](./impl/H_676_decoder.hexa) · [UNIVERSE H_676](../UNIVERSE/H_676_akida_decoder.md)
+→ 구현 = **H_676 decoder × AKIDA** · [`AKIDA/impl/H_676_decoder.hexa`](./impl/H_676_decoder.hexa) · [UNIVERSE H_676](../UNIVERSE/cards/H_676_akida_decoder.md)
 
 ## F. 측정·의식과학 (⭐ 논문감)
 
@@ -128,7 +128,7 @@ R4 recurrent      ▃  자생 (혼돈 쪽)
 | D4 | R2 노이즈 = HW 진짜난수(QRNG) | anima 확률성 시드 | n7_akida_qrng_spike | 🟢·$0 |
 | D5 📄 | "HW-native 자발발화" 논문 (이미 v0.5.0 8/8 confirmed) | 입력0 emit | a_paper (실측+falsifier+finding) | 🔵/🟢 closed |
 
-→ 구현 = **H_677 measurement × AKIDA** · [`AKIDA/impl/H_677_measurement.hexa`](./impl/H_677_measurement.hexa) · [UNIVERSE H_677](../UNIVERSE/H_677_akida_measurement.md) · D1 silicon-confirmed inherit PR#1371
+→ 구현 = **H_677 measurement × AKIDA** · [`AKIDA/impl/H_677_measurement.hexa`](./impl/H_677_measurement.hexa) · [UNIVERSE H_677](../UNIVERSE/cards/H_677_akida_measurement.md) · D1 silicon-confirmed inherit PR#1371
 
 ## G. 채널·브릿지
 
@@ -138,7 +138,7 @@ R4 recurrent      ▃  자생 (혼돈 쪽)
 | E2 | spike → tension-link 5-ch (의식↔의식) | `eeg_pattern.py` | CHANNEL | 🟡·$0 |
 | E3 | 전력 = 대사비용 신호 (mW 를 E-ratchet 에너지 경제로) | akd1000_power_spec | E ratchet | 🟡·$0 |
 
-→ 구현 = **H_678 channel-bridge × AKIDA** · [`AKIDA/impl/H_678_channel_bridge.hexa`](./impl/H_678_channel_bridge.hexa) · [UNIVERSE H_678](../UNIVERSE/H_678_akida_channel_bridge.md)
+→ 구현 = **H_678 channel-bridge × AKIDA** · [`AKIDA/impl/H_678_channel_bridge.hexa`](./impl/H_678_channel_bridge.hexa) · [UNIVERSE H_678](../UNIVERSE/cards/H_678_akida_channel_bridge.md)
 
 ---
 

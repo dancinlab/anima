@@ -2,7 +2,7 @@
 """verify_substrate_akida.py — re-run H_672's 4 SW falsifiers through the new
 SubstrateAKIDA SW path + F-AKWIRE-FALLBACK (akida-backend-wiring PR-E).
 
-Falsifiers (pre-registered in UNIVERSE/H_672_akida_spontaneous_firing.md §3 +
+Falsifiers (pre-registered in UNIVERSE/cards/H_672_akida_spontaneous_firing.md §3 +
 the new fallback falsifier):
 
   F-H672-1          : R3 tonic spike rate > 0

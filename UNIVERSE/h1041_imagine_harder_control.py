@@ -1,6 +1,6 @@
 """H_1041 — Does imagine-rollout STILL beat MPC on a HARDER control task? (H_1034 generalization)
 
-Pre-registered (frozen; honored verbatim, see UNIVERSE/H_1041_imagine_harder_control.md):
+Pre-registered (frozen; honored verbatim, see UNIVERSE/cards/H_1041_imagine_harder_control.md):
 
   H_1034 (GREEN) showed imagine-rollout (CEM through anima's OWN LEARNED LDS world model) still
   beats a ROBUST (scenario/SAA tube) true-dynamics MPC at deep horizon {8,16} on a stiff-linear

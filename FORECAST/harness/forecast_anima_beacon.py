@@ -23,7 +23,7 @@ FROZEN FALSIFIER (사전등록, 3축):
 honest 🟢/🔴/⚪. ANU 통계품질==chacha20(H_924/#123-A); 여기서 양자의 가치는
 PROVENANCE(물리적 공유원인의 출처감사) — '더 무작위'가 아님. 비의식(non-consciousness).
 
-xref: FORECAST_02(공유씨앗 미래 fetch), FORECAST_04(씨앗 심기), UNIVERSE/H_6008(공유원인),
+xref: FORECAST_02(공유씨앗 미래 fetch), FORECAST_04(씨앗 심기), UNIVERSE/cards/H_6008(공유원인),
        H_928(entropy_receipt: commit/verify), H_932(provenance_chain: tamper-국소화).
 """
 import hashlib, glob, os, json

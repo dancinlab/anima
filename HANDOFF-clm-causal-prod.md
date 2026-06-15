@@ -49,7 +49,7 @@ toy-limited → **백로그 #3 CERTIFY-NOT-MEASURE escalation**. 단 HW positive
 ## 산출물 (origin/main)
 
 - PR #1538 — harness: `CLM/msweep/clm_causal_{prod,hw}.{hexa,py}` + `.verdicts/clm-causal-prod/`
-- PR #1539 — `UNIVERSE/H_856_clm_causal_xfer.md` + `.verdicts/856_clm_causal_xfer/`
+- PR #1539 — `UNIVERSE/cards/H_856_clm_causal_xfer.md` + `.verdicts/856_clm_causal_xfer/`
   + `CLAIMS.tape` +3 + `CLM/P0_ARCHITECTURE.md` §12.6 판정완료 + §12.8 신설
 - frozen 측도 SSOT(재사용·재튜닝 0): `CLM/msweep/measure_sweep.py`
 
