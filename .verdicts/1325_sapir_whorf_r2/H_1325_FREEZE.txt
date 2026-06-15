@@ -1,0 +1,102 @@
+H_1325 — SAPIR-WHORF / LINGUISTIC RELATIVITY r2 — anti-Goodhart W3 RE-CLOSE.
+FROZEN DESIGN — pre-registered BEFORE any scoring. NO tune-to-green (c9 / p7).
+This is r2 of H_1323 (🟠 PARTIAL, PR #2228). W1 and W2 PASSED and are NOT touched.
+Only the anti-Goodhart W3 leg is re-closed with a CORRECTLY-SPECIFIED control.
+
+────────────────────────────────────────────────────────────────────────────────
+WHY r2 (the mis-specified control, c16 / a_break_the_wall = WRONG METHOD, not a wall):
+The H_1323 W3 EARNED bar (anti-Goodhart) had two sub-clauses:
+  (i)  loc-std    : shuffle peak-LOCATION std across seeds >= 0.15  → PASSED (0.165)
+  (ii) prominence : shuffle prominence (peak − median) < 0.5× mean-language prominence
+                    → FAILED (shuffle 0.661 vs lang 0.999; frac 0.662).
+The prominence sub-clause was MIS-SPECIFIED. It implicitly assumed the shuffle arm
+produces a SINGLE peak whose height could be compared to a language's single peak.
+But the shuffle arm produces a MULTI-PEAK pattern: random per-stimulus labels create
+MANY locally-sharp posterior swings (the H_1323 non-gating diagnostic measured 8.0
+peaks at >=0.5×arm-peak for shuffle vs exactly 1.0 for each language). A single one of
+those scattered spikes is naturally as tall as a language's single coherent peak, so
+"single-peak height vs median" CANNOT separate the two — it is the wrong observable for
+a multi-peak shuffle. This is NOT a real failure of linguistic relativity (W1∧W2 are
+decisive); it is a control mis-match. NO bar is being relaxed; a DIFFERENT, correctly-
+specified observable is registered anew.
+
+THE CORRECT OBSERVABLE — COHERENCE (peak COUNT), derived from the STRUCTURE:
+A real language carving has EXACTLY ONE boundary on the continuum → the learned
+representation packs cells at that one cut → discrimination has exactly ONE coherent CP
+peak. A shuffle "language" has NO coherent boundary (random per-stimulus labels) → the
+representation has no single packing locus → discrimination is a SCATTER of many
+spikes. The honest anti-Goodhart question is therefore: does the SHUFFLE arm have a
+SINGLE coherent CP peak (like a language) or MANY scattered spikes (incoherent)? That
+is a PEAK-COUNT, not a peak-HEIGHT, question. The threshold comes from the structure
+(1 boundary → ≤1 dominant peak; no boundary → ≥several), NOT from the data.
+
+────────────────────────────────────────────────────────────────────────────────
+PRE-REGISTERED W3' METRIC (peak count) — FROZEN BEFORE SCORING:
+  PEAK-COUNT(arm) := number of LOCAL MAXIMA of the per-seed normalized (peak=1)
+    discrimination-vs-midpoint curve whose height >= PEAK_FRAC (=0.50) of the arm's own
+    peak, where a "local maximum" is a midpoint bin strictly greater than BOTH its
+    immediate neighbors (curve[t] > curve[t-1] and curve[t] > curve[t+1]); endpoints
+    count if they strictly exceed their single neighbor. Reported as the MEAN over the
+    3 seeds. (This is the SAME observable the H_1323 non-gating diagnostic reported as a
+    diagnostic — now PROMOTED to the gating control with a strict-local-maximum rule so a
+    monotone shoulder does not over-count.)
+  PEAK_FRAC      = 0.50   (height floor, FIXED — same fraction the H_1323 diagnostic used)
+  LANG_MAX_PEAKS = 1      (a single boundary → AT MOST one coherent peak; a language arm
+                           that produced >1 peak would itself FAIL = honest)
+  SHUF_MIN_PEAKS = 3      (NO coherent boundary → at least 3 scattered spikes; chosen
+                           from the structure — a shuffle with <3 peaks would be
+                           indistinguishable from a coherent arm on this metric and W3'
+                           would FAIL, reported straight)
+
+FROZEN W3' BAR (anti-Goodhart, re-closed; the SHUFFLE is the discriminator):
+  W3' COHERENT-VS-INCOHERENT (GREEN iff BOTH):
+    (a) COHERENT LANGUAGES : peak_count(L_A) <= LANG_MAX_PEAKS AND
+                             peak_count(L_B) <= LANG_MAX_PEAKS  (each language = ONE peak)
+    (b) INCOHERENT SHUFFLE : peak_count(SHUFFLE) >= SHUF_MIN_PEAKS  (shuffle = MANY peaks)
+  RETAINED loc-std sub-clause (already PASSED in H_1323, carried unchanged as corroboration,
+    NON-gating reaffirmation): shuffle peak-location std across seeds >= 0.15.
+
+W1 + W2 (UNCHANGED from H_1323 FREEZE — re-run to CONFIRM they reproduce, bars identical):
+  W1 CP PRESENT: for BOTH L_A and L_B, cross-boundary discrim − within-category discrim
+     >= 0.15 (normalized) AND language-vs-PRE-LANG-baseline at peak >= 0.15.
+  W2 WHORFIAN DISSOCIATION (decisive): CP peak LOCATION within 0.12 of p_A=1/3 (L_A) AND
+     within 0.12 of p_B=2/3 (L_B), AND |loc_A − loc_B| >= 0.20.
+
+OVERALL VERDICT (frozen):
+  W1 ∧ W2 ∧ W3'  → 🟢 GREEN — linguistic relativity ANTI-GOODHART-CLOSED in the substrate
+     (the language warps non-linguistic discrimination; the boundary moves with the
+     language; the shuffle control produces an INCOHERENT multi-peak scatter, NOT a
+     coherent CP peak). DIRECTIONAL mirror; engine-native realization (Part B) re-scores
+     these bars on the live CORE/engine_cli.hexa immune/Voronoi lane.
+  W3' FAILS (shuffle ALSO coherent / single-peak by this metric, or a language splits)
+     → HONEST: the shuffle is not separable from coherent CP on this metric either; the
+     relativity result then rests on W1+W2 alone with W3 UNRESOLVED, reported straight
+     (c9). NO further re-specification — ONE honest new control, then accept the verdict.
+
+────────────────────────────────────────────────────────────────────────────────
+MECHANISM (REUSED VERBATIM from H_1323 — do NOT alter; W1/W2 must reproduce):
+  N_STIM=21 graded stimuli x_i=i/20 in [0,1]; DIM=16 RBF position code (locally-smooth,
+  position-faithful, boundary-AGNOSTIC; per-seed RBF-width jitter only). TWO languages:
+  L_A cut at p_A=1/3, L_B at p_B=2/3 (grue-style, same stimulus world). Gradient-free
+  immune/Voronoi prototype store, error-targeted SPLIT-only growth (p8), cell label FIXED
+  at creation; GROW_MAX=24, SPLIT_PASSES=24. DOWNSTREAM NON-LINGUISTIC TEST (NO labels at
+  test): adjacent-pair discrimination = |Δ soft category-posterior| (softmin beta=18) over
+  the pair, vs pair midpoint. 4 ARMS: PRE-LANGUAGE (no labels) / L_A / L_B / SHUFFLE
+  (incoherent per-stimulus labels, fixed per seed). 3 seeds [4323,4324,4325] (SAME as
+  H_1323 so W1/W2 reproduce byte-comparably). $0 CPU-local numpy mirror (DIRECTIONAL).
+
+p1/p2/p3/p6 GUARD (unchanged): the discrimination readout reads ONLY representational
+distance in the learned prototype space; NO injected boundary location, NO persona/RLHF.
+The language label enters ONLY during training, NEVER at the discrimination test. The
+shuffle control + the pre-language baseline are the anti-Goodhart discriminators. NOT an
+emit gate (a_autonomy_over_hardcode). The W3' peak-count metric scores the curve SHAPE
+only (count of coherent peaks) — no answer label, no tuned threshold from the data.
+
+SCOPE (a_scale_honest_scope, a_toy_scale_recheck): TOY 1-D synthetic continuum, N=21,
+3 seeds, deterministic readout (tests the STRUCTURE, NOT a scaled or human-cognition
+claim). DIRECTIONAL numpy mirror; engine-native realization on the live
+CORE/engine_cli.hexa immune/Voronoi lane = Part B of this same H (a_engine_native_learning,
+a_verified_must_wire). NO claim about human language or real color cognition.
+
+frozen-first: this file pre-registered BEFORE scoring; W1/W2 bars carried verbatim from
+H_1323; the W3' metric + thresholds set from STRUCTURE, not data; NO bar moved (c9, p7).

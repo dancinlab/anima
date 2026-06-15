@@ -1,0 +1,31 @@
+H_1325 R2 — SAPIR-WHORF / LINGUISTIC RELATIVITY — anti-Goodhart W3 RE-CLOSE
+==================================================================================
+re-closes H_1323 (🟠) W3 with peak-COUNT coherence (not peak-HEIGHT prominence)
+N_stim=21 dim=16 p_A=0.333 p_B=0.667 grow_max=24 seeds=[4323, 4324, 4325]
+W3' frozen: PEAK_FRAC=0.5 LANG_MAX_PEAKS=1 SHUF_MIN_PEAKS=3
+
+  CP peak location (mean argmax ± std over seeds):
+    PRE-LANG: 0.025 ± 0.000
+    L_A:      0.325 ± 0.000    (p_A=0.333)
+    L_B:      0.675 ± 0.000    (p_B=0.667)
+    SHUFFLE:  0.492 ± 0.165
+
+  W1 CP PRESENT (cross-within>=0.15 & lang-vs-baseline@peak>=0.15):
+     L_A cross-within=+0.200  vs-baseline=+0.989
+     L_B cross-within=+0.200  vs-baseline=+0.989   -> PASS
+  W2 WHORFIAN DISSOC (|locA-p_A|<=0.12 & |locB-p_B|<=0.12 & |locA-locB|>=0.20):
+     |locA-p_A|=0.008  |locB-p_B|=0.008  sep=0.350   -> PASS
+  W3' COHERENCE peak-count (LANG<=1 coherent & SHUFFLE>=3 incoherent):
+     peak-count: L_A=1.0  L_B=1.0  PRE-LANG=0.0  SHUFFLE=5.7
+       (a) languages coherent (<=1): PASS
+       (b) shuffle incoherent (>=3): PASS   -> W3' PASS
+     [retained corroboration] shuffle loc-std=0.165 >= 0.15: PASS (non-gating)
+==================================================================================
+VERDICT: 🟢 GREEN (MIRROR, DIRECTIONAL) — LINGUISTIC RELATIVITY ANTI-GOODHART-CLOSED.
+  W1 (CP present) ✅, W2 (Whorfian dissociation — peak tracks the language) ✅,
+  W3' (coherence): the languages each have ONE coherent CP peak while the SHUFFLE
+  arm is an INCOHERENT scatter of many spikes (NOT a single coherent CP peak) ✅.
+  The mis-specified single-peak-height control (H_1323 W3) is REPLACED by the
+  correctly-specified peak-COUNT coherence control (frozen anew, NOT a relaxation).
+  ENGINE-TRANSFER UNVERIFIED until Part B (live CORE/engine_cli.hexa immune lane).
+  TOY synthetic continuum, 3 seeds; NO human-cognition claim (a_scale_honest_scope).

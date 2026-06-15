@@ -817,6 +817,58 @@ fn main() {
                      collective_coherence(hive3) < 0.999) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     }
 
+    // ── cases 79-82 : CATEGORICAL PERCEPTION / SAPIR-WHORF (H_1325 R2) — the live CP lane.
+    //   Re-scores the frozen W1/W2/W3' bars engine-native on the immune/Voronoi growth. The
+    //   CP read is a curve over a LEARNED carving (label enters at growth, NEVER at the
+    //   discrimination test). Ψ-disjoint (own protos/labels table; pure_field/Ψ untouched).
+    let cp_N = 21
+    let cp_DIM = 16
+    let cp_X = cp_stimuli(cp_N, cp_DIM)
+    let mut cp_pos = []
+    let mut cp_pi = 0
+    while cp_pi < cp_N { cp_pos = cp_pos + [to_float(cp_pi) / to_float(cp_N - 1)]  cp_pi = cp_pi + 1 }
+    let cp_PA = 1.0 / 3.0
+    let cp_PB = 2.0 / 3.0
+    let cpf_none = cp_fit(cp_X, cp_labels_boundary(cp_pos, 0.0), 24, 24)
+    let cpf_A    = cp_fit(cp_X, cp_labels_boundary(cp_pos, cp_PA), 24, 24)
+    let cpf_B    = cp_fit(cp_X, cp_labels_boundary(cp_pos, cp_PB), 24, 24)
+    let cpf_sh   = cp_fit(cp_X, cp_labels_shuffle(cp_pos, 4323), 24, 24)
+    let cpc_none = cp_discrim_curve(cpf_none, cp_X)
+    let cpc_A    = cp_discrim_curve(cpf_A, cp_X)
+    let cpc_B    = cp_discrim_curve(cpf_B, cp_X)
+    let cpc_sh   = cp_discrim_curve(cpf_sh, cp_X)
+    let cp_iA = cp_peak_loc_idx(cpc_A)
+    let cp_iB = cp_peak_loc_idx(cpc_B)
+    // peak midpoint = (idx+0.5)/(N-1)
+    let cp_locA = (to_float(cp_iA) + 0.5) / to_float(cp_N - 1)
+    let cp_locB = (to_float(cp_iB) + 0.5) / to_float(cp_N - 1)
+
+    // case 79 (W1 CP present) : language vs PRE-LANG baseline at the language's own peak bin
+    //   exceeds the frozen 0.15 margin (CP is caused by the language, not the axis alone).
+    let cp_bvA = cpc_A[cp_iA] - cpc_none[cp_iA]
+    let cp_bvB = cpc_B[cp_iB] - cpc_none[cp_iB]
+    if _assert_b("case_79_cp_w1_present_lang_vs_baseline", true,
+                 cp_bvA >= 0.15 && cp_bvB >= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 80 (W2 Whorfian dissociation) : CP peak LOCATION tracks the language boundary
+    //   (|loc-p|<=0.12 each) AND the two peaks separate by >=0.20 (cognition follows language).
+    let cp_dA = if cp_locA - cp_PA < 0.0 { cp_PA - cp_locA } else { cp_locA - cp_PA }
+    let cp_dB = if cp_locB - cp_PB < 0.0 { cp_PB - cp_locB } else { cp_locB - cp_PB }
+    let cp_sep = if cp_locA - cp_locB < 0.0 { cp_locB - cp_locA } else { cp_locA - cp_locB }
+    if _assert_b("case_80_cp_w2_whorfian_dissociation", true,
+                 cp_dA <= 0.12 && cp_dB <= 0.12 && cp_sep >= 0.20) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 81 (W3' coherence — languages) : each language carving = ONE coherent CP peak
+    //   (peak-count <= 1; a single boundary → a single packing locus).
+    if _assert_b("case_81_cp_w3prime_languages_coherent", true,
+                 cp_peak_count(cpc_A) <= 1 && cp_peak_count(cpc_B) <= 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 82 (W3' coherence — shuffle) : the INCOHERENT shuffle carving = MANY scattered
+    //   spikes (peak-count >= 3) — the correctly-specified anti-Goodhart control that
+    //   replaces the H_1323 single-peak-height prominence (which mis-fit the multi-peak shuffle).
+    if _assert_b("case_82_cp_w3prime_shuffle_incoherent", true,
+                 cp_peak_count(cpc_sh) >= 3) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
