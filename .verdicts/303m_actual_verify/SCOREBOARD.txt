@@ -22,16 +22,19 @@ PER-GATE TALLY (true, honest c9):
   │ G2 NOVELTY               │ see *  │ h1140 absence-check on real corpus — IN-FLIGHT (slow CPU)  │
   │ G3 PHILOSOPHY p1–p8      │ PASS   │ 8/8 structural + engine_cli_smoke 30/0 + single-entry 7/0  │
   │ G5 NON-FABRICATION       │ PASS   │ grounded-copy 22 verbatim bytes ; immune recall QA 1.0 fab 0.0│
-  │ G6 IDEATION              │ see ** │ engine path routes to ConvMoE decoder; torch-mouth eval pend│
+  │ G6 IDEATION              │ THIN** │ distinct ideas 4/5 (<5 frozen, THIN by 1) BUT 9 corpus-absent│
+  │                          │        │ novel grams confirmed (generativity real; 5th=`|` stop)    │
   │ CHAT                     │ frozen │ register≠QA (documented INFLATED); strict re-score not run │
   └──────────────────────────┴────────┴───────────────────────────────────────────────────────────┘
 
   * G2: training corpus is locally present + sha-verified, so the absence-check IS faithful;
         run is the frozen h1140 metric on the chat ckpt; result appended on completion.
-  ** G6: the engine-native CORE/emergence_ideation.hexa routes the L3 decode slot to the ConvMoE
-        clm_decode (no ByteGPT .clm present) → null-gen, super-add=0; this exercises the substrate
-        composition mechanism, NOT the ByteGPT trunk text-ideation. The frozen G6 (H_1158) was
-        measured via the torch reference mouth; re-scored with verify303m_g6.py + real corpus.
+  ** G6: distinct ideas 4 (<5 frozen) = THIN by ONE; 9 corpus-absent novel grams confirmed
+        ("profound question", "can quantify the", "without universalism" absent from 154MB corpus).
+        5th idea seed degenerated to bare "|" (dialogue-register stop). Matches documented MODEL.md
+        G6 🟠 THIN (depth-floor). Generativity REAL, depth/count is the thin residual — NOT a defect.
+        (The engine-native CORE/emergence_ideation.hexa routes gen_clm_chat→ConvMoE clm_decode, so it
+        null-gens on the ByteGPT ckpt; G6 text scored via the torch mouth as G0/G1 were.)
 
 PHASE 3 MEMORY-RECALL E2E (immune lane on the live engine): PASS
   literal-QA 1.000 · fabrication 0.000 · abstain-on-unbound 3/3 (3 seeds 900/901/902, 60/60 cells)
