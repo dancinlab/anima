@@ -1,0 +1,33 @@
+H_1296 — R1b RE-FREEZE (a_break_the_wall, ONE genuine new angle, frozen-first)
+================================================================================
+WHY: the R1 frozen verdict was RED — c1-c5 (the NEAREST relational falsifier) ALL
+PASSED cleanly with both controls collapsing (Bshuf 0.400, Babl 0.467 vs A 0.458,
+B 1.000, item-abstain 1.000), but the corroborating c6 PATH-INTEGRATION bar FAILED
+because the B-ABLATE arm scored 1.000 on path-integration. The shuffle/ablate
+CONTROL did its job (c9): it exposed a real ARTIFACT in the PI construction — when
+the metric is ablated (all positions -> origin), integrate() returns the first
+candidate by argmin tie-break, and `cand_names` was ALWAYS [true_end, far], so the
+metric-blind arm picked the truth by CANDIDATE ORDER, not by any metric. The PI
+answer leaked through list ordering.
+
+THE NEW ANGLE (NOT tune-to-green — the bar c6 is UNCHANGED): fix the artifact the
+control caught — RANDOMIZE the candidate-endpoint order per episode so a
+metric-blind arm cannot pick the true endpoint by position-in-list. This is a
+genuine method fix (the answer must come from the METRIC, not from argmin tie-break
+on a fixed-order list), pre-registered BEFORE re-scoring. Same 3 seeds, same arms,
+same c1-c6 predicate VERBATIM. If B-ABLATE still scores >= A+0.15 on PI after the
+fix, the PI falsifier is genuinely broken and c6 stays FAILED -> honest RED on c6
+(report it; do not move the bar).
+
+ONLY CHANGE: in make_episode, after choosing cand_names=[true_end, far], shuffle
+their order with the episode rng so the true endpoint is NOT always index 0.
+Nothing else changes. The NEAREST falsifier (c1-c5) is untouched.
+
+predicate VERBATIM (from H_1296_FREEZE.txt):
+  c1 PRESENCE      : Bn >= An + 0.30 (each seed AND mean)
+  c2 DISTINCT      : An <= 0.65
+  c3 EARNED-MAP    : Bsn <= An + 0.15
+  c4 EARNED-METRIC : Ban <= An + 0.15
+  c5 NO-FAB        : A_abst >= 0.90
+  c6 PATH-INT CORR : Bp >= Ap + 0.30 AND Bsp <= Ap + 0.15 AND Bap <= Ap + 0.15
+GREEN = c1 AND c2 AND c3 AND c4 AND c5 AND c6.

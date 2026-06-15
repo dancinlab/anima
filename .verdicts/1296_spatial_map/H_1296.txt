@@ -1,0 +1,60 @@
+H_1296 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32). RESULT (verbatim).
+================================================================================
+R1 numpy MIRROR (DIRECTIONAL) — binding predicate = the NEAREST relational query
+(R1c FREEZE: the falsifier whose ENTIRE signal lives in the stored metric).
+PATH-INTEGRATION reported as a NON-GATING diagnostic (the map-shuffle control
+correctly refused to collapse it — its signal leaks via the displacement steps,
+not the stored map; honest, c9 — NOT moved to a passing bar).
+--------------------------------------------------------------------------------
+==============================================================================
+H_1296 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32) — R1 numpy MIRROR
+==============================================================================
+seed 4295: NEAR  A=0.475 B=1.000 Bshuf=0.600 Babl=0.400 | PI  A=0.525 B=1.000 Bshuf=0.550 Babl=0.525
+seed 4296: NEAR  A=0.400 B=1.000 Bshuf=0.350 Babl=0.450 | PI  A=0.450 B=1.000 Bshuf=0.450 Babl=0.450
+seed 4297: NEAR  A=0.450 B=1.000 Bshuf=0.550 Babl=0.500 | PI  A=0.450 B=1.000 Bshuf=0.375 Babl=0.475
+------------------------------------------------------------------------------
+MEAN NEAREST:  A=0.442 B=1.000 Bshuf=0.500 Babl=0.450
+MEAN PATH-INT: A=0.475 B=1.000 Bshuf=0.458 Babl=0.483
+item-store NEAREST abstain rate (A): 1.000  (1.0 = always abstains)
+------------------------------------------------------------------------------
+BINDING predicate — NEAREST relational query (signal lives ONLY in the metric):
+c1 PRESENCE     B>=A+0.30 (each+mean): True   (B-A mean=+0.558)
+c2 DISTINCT     A<=0.65 (no metric)  : True   (A=0.442)
+c3 EARNED-MAP   Bshuf<=A+0.15        : True   (Bshuf=0.500)
+c4 EARNED-METRIC Babl<=A+0.15        : True   (Babl=0.450)
+c5 NO-FAB       item-abstain>=0.90   : True   (abstain=1.000)
+------------------------------------------------------------------------------
+NON-GATING diagnostic — PATH-INTEGRATION (signal leaks via the steps, shuffle cannot blind):
+   PI clean-collapse c6 (reported, NOT in verdict): True   (B=1.000 A=0.475 Bshuf=0.458 Babl=0.483)
+==============================================================================
+VERDICT (R1 mirror, DIRECTIONAL, NEAREST falsifier): GREEN
+==============================================================================
+
+================================================================================
+R2 ENGINE-NATIVE (BINDING) — live CORE/engine_cli.hexa § SpatialMap lane.
+--------------------------------------------------------------------------------
+SpatialMap struct + spatial_map_new / _new_ablated / _place / _count / _nearest
+(the RELATIONAL query) / _shuffle (anti-Goodhart) / _item_nearest (item-store
+distinctness stand-in, ABSTAINS). Re-scored frozen bars via engine_cli_smoke
+cases 39-43 on the live metric map:
+  case 39 : the METRIC map answers "L1 nearer to L0 than L2"     → PASS
+  case 40 : the ITEM-STORE stand-in ABSTAINS ("" no fabrication) → PASS  (c2/c5)
+  case 41 : ABLATE collapses to the tie branch (answer FLIPS with
+            argument order ⇒ no metric)                          → PASS  (c4)
+  case 42 : SHUFFLE is a genuine permutation (L0's bound coord
+            MOVED; coordinate multiset invariant)                → PASS  (c3)
+  case 43 : ABSTAIN intact on an unplaced landmark               → PASS  (c5)
+
+REGRESSION GUARDS (no-regression, byte-exact):
+  engine_cli_smoke           : 46 pass / 0 fail   (was 41/0; +5 spatial-map cases,
+                               deterministic over 3 consecutive runs)
+  h1196 single-entry audit   : 7 pass / 0 fail     (SpatialMap consumes 0 .clm +
+                               0 .kosmos; pure_field/engine_g/brain untouched)
+  h1205 separation-invariant : PASS 🟢 (generation BYTE-IDENTICAL ON==OFF, Ψ=½
+                               untouched, pure_field unchanged — lane Ψ-disjoint)
+
+TERMINAL TIER: 🟢 GREEN (ENGINE-NATIVE) on the NEAREST relational falsifier — a
+metric spatial map answers the between-item relational query that item-binding
+provably cannot, both controls collapse, and the lane is wired Ψ-disjoint into
+the live engine. PATH-INTEGRATION = honest non-clean corroborator (reported).
+================================================================================

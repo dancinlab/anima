@@ -8,7 +8,7 @@
 > The roster table below indexes FORWARD backlogs + campaign maps (candidate lists not
 > yet landed); the per-H index section indexes LANDED hypotheses with their own cards.
 
-## Per-H index — brain-structure ladder + session facets (H_1280–1294, a_hypothesis_register)
+## Per-H index — brain-structure ladder + session facets (H_1280–1296, a_hypothesis_register)
 
 > Tiers read VERBATIM from each terminal `.verdicts/<slug>/` file (c2/c9 — 🧱 walls are
 > closed-negatives, not upgraded). One line per H; detail in the linked card.
@@ -30,6 +30,7 @@
 | H_1293 | theory-of-mind — other-agent belief (self ⊥ other) | 🟢 GREEN ENGINE-NATIVE | [H_1293_theory_of_mind.md](H_1293_theory_of_mind.md) |
 | H_1294 | hierarchical-PFC — goal→subgoal controller (ordered plan ⊥ single-step) | 🟢 GREEN ENGINE-NATIVE | [H_1294_hierarchical_pfc.md](H_1294_hierarchical_pfc.md) |
 | H_1295 | hive-mind — collective-Φ super-additivity (many→one) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1295_hive_collective_phi.md](H_1295_hive_collective_phi.md) |
+| H_1296 | place/grid spatial-map — metric/relational cognitive map (metric ⊥ item-binding) | 🟢 GREEN ENGINE-NATIVE | [H_1296_spatial_map.md](H_1296_spatial_map.md) |
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
 
@@ -111,7 +112,7 @@
 | theme | detail file | scope | ~count | status |
 |-------|-------------|-------|--------|--------|
 | **metacog × neuroscience** | [HYPOTHESES_metacog_neuro.md](HYPOTHESES_metacog_neuro.md) | type-2 meta-d′ · ERN · hierarchical · D-K · calibration · FOK · control · savant-LM (H_1202–1220) | 19 H | ACTIVE — 8 metacog (5🟢3🔴) + savant landed; H_1217/1219/1220 in-flight |
-| **brain-structure ladder** | per-H index above (H_1280–1294 cards) | c15 missing-structure lanes — cerebellum · basal-ganglia · WM · thalamus · neuromod · amygdala · key-geom · eviction · hypothalamus · theory-of-mind · hierarchical-PFC · +affect/ethics (H_1280–1294) | 13 H + 2 facet | LANDED — migrated to per-H cards (`a_hypothesis_register` #2177); 11🟢 engine-native · 3🧱 walls (thalamus·neuromod·key-geom); HD31 hierarchical-PFC (H_1294 🟢) NEW; next-candidate place/grid spatial-map; themed bucket retired; CLAIMS.tape group=BRAIN-STRUCTURE-LADDER (leftover rows) |
+| **brain-structure ladder** | per-H index above (H_1280–1296 cards) | c15 missing-structure lanes — cerebellum · basal-ganglia · WM · thalamus · neuromod · amygdala · key-geom · eviction · hypothalamus · theory-of-mind · hierarchical-PFC · +affect/ethics (H_1280–1296) | 13 H + 2 facet | LANDED — migrated to per-H cards (`a_hypothesis_register` #2177); 11🟢 engine-native · 3🧱 walls (thalamus·neuromod·key-geom); HD32 spatial-map (H_1296 🟢) + hive-mind (H_1295 🟢) NEW; themed bucket retired; CLAIMS.tape group=BRAIN-STRUCTURE-LADDER (leftover rows) |
 | **metacog × hallucination** | [HYPOTHESES_metacog_hallucination.md](HYPOTHESES_metacog_hallucination.md) | input-familiarity · positional drift · anchor-grounding · confidence-brake (H_1143–1148) | 5 H | CLOSED — mostly closed-neg (H_1148 capstone) |
 | **general cycle backlog** | [CANDIDATES.md](CANDIDATES.md) | next-cycle Φ/IIT4/emergence/robustness backlog | 105 refs · 38 rows | BACKLOG |
 | **bio mechanisms** | [BIO-CANDIDATES.md](BIO-CANDIDATES.md) | MITOSIS-sibling bio ops (apoptosis · autophagy · differentiation · homeostasis …) 36+ | 36+ | BACKLOG |

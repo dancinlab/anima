@@ -454,9 +454,69 @@ fn main() {
     if _assert_b("case_42_hive_no_collapse", true,
                  collective_coherence(hive) < 0.999) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (j) PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (H_1296 R2, HD32) ──────────────
+    // The spatial map is ADDITIVE + Ψ-disjoint (a READ + POSITION accessor over its OWN
+    // landmark table; no immune-store mutation, no pure_field touch). These cases prove
+    // the lane's moving parts deterministically: a METRIC map answers the RELATIONAL
+    // "is X nearer to A or B?" query (which needs the DISTANCE between two stored facts),
+    // the item-store stand-in (no inter-item geometry) provably ABSTAINS, and BOTH the
+    // shuffle (positions permuted) and ablate (positions → origin) controls collapse the
+    // answer to the tie/chance branch — the lift IS the metric, not item recall.
+    //
+    // Layout: L0 at (0,0), L1 at (1,0), L2 at (5,0). For x=L0: d(L0,L1)=1 < d(L0,L2)=5,
+    // so the NEAREST-to-L0 of {L1,L2} is L1 (unambiguous, margin 4 >> any noise).
+    let sm0 = spatial_map_place(spatial_map_place(spatial_map_place(
+                  spatial_map_new(), "L0", 0.0, 0.0), "L1", 1.0, 0.0), "L2", 5.0, 0.0)
+
+    // case 44 : the METRIC map answers the relational query — L1 is nearer to L0 than L2.
+    if _assert_b("case_44_spatial_map_answers_relational", true,
+                 spatial_map_nearest(sm0, "L0", "L1", "L2") == "L1") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 45 : the ITEM-STORE stand-in CANNOT answer (no inter-item geometry) — it
+    //   ABSTAINS ("" = no fabricated metric, the H_1227 abstain-intact distinctness leg).
+    if _assert_b("case_45_item_store_abstains_relational", true,
+                 spatial_map_item_nearest("L0", "L1", "L2") == "") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 46 : EARNED-METRIC (ablate dissociation) — an ablated map stores every
+    //   landmark at the ORIGIN, so d(L0,L1)==d(L0,L2)==0: the metric is gone and the
+    //   query collapses to the tie branch (returns the SECOND candidate by tie, NOT
+    //   by any distance). The lift in case 44 was the METRIC, not the lookup.
+    let sma = spatial_map_place(spatial_map_place(spatial_map_place(
+                  spatial_map_new_ablated(), "L0", 0.0, 0.0), "L1", 1.0, 0.0), "L2", 5.0, 0.0)
+    // under ablate da==db==0 → the metric is gone; nearest returns the SECOND candidate
+    // (the tie branch), so the answer FLIPS with argument order — proof it is NOT a metric.
+    let ablate_tie = (_sm_count_dummy(sma) == 3)
+        && (spatial_map_nearest(sma, "L0", "L1", "L2") == "L2")  // tie → 2nd candidate
+        && (spatial_map_nearest(sma, "L0", "L2", "L1") == "L1")  // order flips the answer ⇒ no metric
+    if _assert_b("case_46_ablate_metric_collapses_to_tie", true, ablate_tie) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 47 : EARNED-MAP (shuffle control) — permuting the stored positions across
+    //   names destroys the name<->place relation. The shuffle is a genuine PERMUTATION:
+    //   the position MULTISET is preserved (same coords, re-assigned to names) while the
+    //   name→place binding is broken. We assert (a) the coords got REORDERED (L0 no longer
+    //   sits at its true x=0.0 — the binding moved) and (b) the full coordinate SUM is
+    //   invariant (a permutation, not a deletion/fabrication) — the clean decorrelation.
+    let smsh = spatial_map_shuffle(sm0, 0)
+    let sum_true = sm0.xs[0] + sm0.xs[1] + sm0.xs[2]
+    let sum_sh   = smsh.xs[0] + smsh.xs[1] + smsh.xs[2]
+    let sum_diff = if sum_sh > sum_true { sum_sh - sum_true } else { sum_true - sum_sh }
+    let shuffled_decorrelates = (spatial_map_count(smsh) == 3)
+        && (smsh.xs[0] != sm0.xs[0])     // L0's bound coord MOVED (name↔place broken)
+        && (sum_diff < 0.0001)            // multiset preserved (permutation, not fabrication)
+    if _assert_b("case_47_shuffle_decorrelates_metric", true, shuffled_decorrelates) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 48 : ABSTAIN INTACT (H_1227 load-bearing) — a query over an UNPLACED landmark
+    //   fires no answer (returns "" = no fabrication) on the metric map too.
+    if _assert_b("case_48_spatial_map_abstains_on_unplaced", true,
+                 spatial_map_nearest(sm0, "L0", "L1", "L_absent") == "") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
+
+// _sm_count_dummy — local alias so the ablate case can read the placed count without
+// depending on the introspection import ordering (mirrors spatial_map_count).
+fn _sm_count_dummy(sm: SpatialMap) -> int { return spatial_map_count(sm) }
 
 // _env_read_smoke — local mirror of the env read, so case 1 can stay
 // deterministic regardless of the smoke's launch environment.

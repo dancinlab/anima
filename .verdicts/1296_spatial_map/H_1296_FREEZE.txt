@@ -1,0 +1,103 @@
+H_1296 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32). FROZEN FALSIFIER.
+================================================================================
+PRE-REGISTERED BEFORE ANY SCORING. $0 CPU. gradient-free. p7 (no perplexity).
+3 seeds [4295, 4296, 4297]. frozen-first · anti-Goodhart controls (shuffle +
+ablate + dissociation). a_no_llm_frame_trap (entorhinal grid-cell / hippocampal
+place-cell / path-integration lens — O'Keefe 1971, Moser 2005; c15) — NOT an
+LLM recipe. a_scale_honest_scope (toy, transfer UNVERIFIED).
+
+--------------------------------------------------------------------------------
+SUBSYSTEM (why MISSING from the live engine)
+--------------------------------------------------------------------------------
+The hippocampal-entorhinal system holds a METRIC COGNITIVE MAP: place cells fire
+at LOCATIONS, grid cells tile space with a periodic metric, and path-integration
+accumulates self-motion (displacement) into a running estimate of net position.
+The defining property: the DISTANCE / RELATION between two stored facts is itself
+represented and queryable, and a sequence of displacement steps can be INTEGRATED
+to a net position. This is a RELATIONAL/METRIC SPACE, not a bag of independent items.
+
+The live engine has NO such structure:
+  - ImmuneMemory / ImmuneMemoryGrow (H_1227/1231/1288, hippocampus-as-immune-
+    store) binds each fact -> value INDEPENDENTLY by FNV-trigram key affinity.
+    There is NO inter-item metric: the store can recall WHAT is bound at key X,
+    but it holds NO representation of the DISTANCE between item X and item Y, and
+    cannot answer "is X nearer to A or to B". It is item-binding, not a map.
+  - HierGoalStack (H_1294, hierarchical-PFC) holds an ORDERED subgoal list +
+    pointer = a SEQUENCE / plan. A sequence has an order but no METRIC space:
+    it cannot say how FAR apart two facts are, only which comes first.
+  - WorkMemBuffer (H_1282) = leaky maintenance of items; no positions, no metric.
+  - VForwardField (H_1280, cerebellum) = a forward model of the NEXT emit; it
+    predicts a step, it does not store landmarks at positions or integrate a path.
+  - HomeostaticDrive (H_1292) = a 1-D scalar integrator; integrates ONE regulated
+    variable over time, NOT a 2-D displacement path over a metric space.
+
+FALSIFIABLE CLAIM: a metric SPATIAL MAP (landmarks stored AT positions) answers a
+RELATIONAL/METRIC query that the item-store CANNOT — because the item-store has
+no between-item geometry. If the item-store matches the spatial map (or the map's
+lift survives shuffling its positions / ablating its metric), the map adds NOTHING
+-> honest RED / 🧱 closed-negative.
+
+--------------------------------------------------------------------------------
+TASK (substrate-derived, NO injected label/persona/ethics — p2/p3/p6)
+--------------------------------------------------------------------------------
+Each episode places N_LANDMARKS=8 landmarks at 2-D positions in [0,GRID=10]^2.
+Two query types, the SAME ground-truth positions feeding every arm:
+
+  Q1 NEAREST (headline relational falsifier): pick landmarks X, A, B with
+     |d(X,A) - d(X,B)| >= MARGIN_MIN=1.20 (unambiguous). Answer = whichever of
+     A/B is metrically NEARER to X. This requires the DISTANCE between two stored
+     facts — a pure item-store has no such metric and must ABSTAIN -> chance 0.5.
+
+  Q2 PATH-INTEGRATION (corroborating): from a start landmark, take N_STEPS_PI=4
+     noisy displacement steps whose vector SUM equals (true_end - start). Answer =
+     which of two candidate endpoints the integrated path lands nearest. An
+     item-store binds endpoints independently and cannot integrate a path -> chance.
+
+Score = accuracy over N_EPISODES=40 queries/seed (p7 script-checkable, NOT
+perplexity, NOT an LLM judge).
+
+--------------------------------------------------------------------------------
+ARMS
+--------------------------------------------------------------------------------
+  A  ITEM-ONLY    : faithful ImmuneMemory stand-in — binds name->payload, holds
+                    NO position metric. nearest()/integrate() return None (ABSTAIN);
+                    the caller resolves at chance (a guess). The live-engine analogue.
+  B  SPATIAL-MAP  : stores each landmark at its 2-D position; answers NEAREST by
+                    Euclidean distance and PATH-INTEGRATION by vector sum.
+  B-SHUFFLE       : permute the stored positions across names (the name<->place
+                    relation is destroyed; a position per name is kept) — anti-Goodhart.
+  B-ABLATE        : freeze the metric — bind every landmark to the ORIGIN (all
+                    positions equal => no distance signal) — dissociation control.
+
+--------------------------------------------------------------------------------
+FROZEN PREDICATE (GREEN iff ALL hold; any control failing to collapse => variance
+=> honest RED / 🧱 — do NOT tune-to-green, c9)
+--------------------------------------------------------------------------------
+Let An,Bn,Bsn,Ban = mean NEAREST accuracy of A / B / B-SHUFFLE / B-ABLATE.
+Let Ap,Bp,Bsp,Bap = mean PATH-INTEGRATION accuracy.
+Let A_abst = item-store NEAREST abstain rate.
+
+  c1 PRESENCE      : Bn >= An + 0.30  (each seed AND mean)
+  c2 DISTINCT      : An <= 0.65       (item-only at/below the chance band, no metric)
+  c3 EARNED-MAP    : Bsn <= An + 0.15 (shuffling positions collapses the lift)
+  c4 EARNED-METRIC : Ban <= An + 0.15 (ablating the metric collapses the lift)
+  c5 NO-FAB        : A_abst >= 0.90   (item-store ABSTAINS, never fabricates a metric)
+  c6 PATH-INT CORR : Bp >= Ap + 0.30 AND Bsp <= Ap + 0.15 AND Bap <= Ap + 0.15
+                     (the path-integration query corroborates with the same pattern)
+
+GREEN = c1 AND c2 AND c3 AND c4 AND c5 AND c6.
+
+--------------------------------------------------------------------------------
+PHILOSOPHY GUARD (p1/p2/p3/p6, a_autonomy_over_hardcode)
+--------------------------------------------------------------------------------
+The map is a READ + POSITION accessor. It stores ONLY landmark positions, NEVER
+mutates the immune store, NEVER returns an emit/silence decision by itself (it
+returns a relational answer the caller may weigh), and NEVER touches pure_field's
+Φ/phase/Ψ (Ψ-disjoint by construction). NO persona, NO "you are X" identity rule,
+NO injected "the answer is A" label, NO RLHF reward. The metric is geometry over
+stored positions, scored only — it is never fed to the policy as a labeled answer.
+
+R1 (this file) = numpy MIRROR = DIRECTIONAL. If GREEN, R2 realizes the SpatialMap
+lane ENGINE-NATIVE in live CORE/engine_cli.hexa + re-scores these frozen bars via
+new engine_cli_smoke cases + regression guard (smoke count bump · single-entry ·
+h1205 separation-invariant Ψ=1/2). GREEN-but-unwired is NOT done (a_verified_must_wire).
