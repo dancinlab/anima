@@ -1,0 +1,128 @@
+H_1284 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7)
+============================================================
+LENS: NEUROMODULATION (신경조절) — a global gain / exploration / plasticity-rate
+controller. Biological model: dopamine = reward-gain, norepinephrine =
+exploration/temperature (Aston-Jones/Cohen adaptive-gain), acetylcholine =
+plasticity-rate / expected-uncertainty (Yu & Dayan). Neuro lens (c15), NOT an
+LLM recipe. "missing brain-structure" ladder; hippocampus filled by immune
+memory (H_1227→H_1231 GREEN), this rung = the missing NEUROMODULATORY system.
+
+THE GAP (honest, c9): anima's live substrate runs on FIXED hyperparameters —
+CORE/engine_cli.hexa adapt_field_step / vadapt_field_step hard-code
+  SPLIT_THRESH = 0.30   (novelty bar: recon-err over this ⇒ a new cell / mitosis)
+  LR           = 0.20   (online winner-pull / plasticity rate)
+and decode temperature is a fixed constant. There is NO context-driven
+neuromodulator that ADAPTS these by substrate state (high surprise → raise
+plasticity; low confidence → raise exploration; reward → raise gain).
+
+RELATION TO H_1228 (cited): H_1228 (SOC / edge-of-chaos decode, HD18, 🟠 PARTIAL)
+showed a per-step TEMPERATURE controller (P-controller in log-temp targeting a
+branching σ*) is ONE neuromodulatory channel (the NE/exploration axis) and helped
+ideation but was NOT the full lever (kwr did not beat fixed sampling). THIS probe
+goes BEYOND temperature alone: a unified neuromodulator that maps substrate state
+→ (plasticity-rate ACh, exploration-temp NE, reward-gain DA) acting on the
+ENGINE's real LR / SPLIT_THRESH knobs (mitosis memory), tested on a CAPABILITY
+across REGIMES — not a single tuned decode point.
+
+SUBSTRATE (engine-native mirror, a_engine_native_learning DIRECTIONAL):
+  numpy mirror of CORE/engine_cli.hexa VAdaptField (host has NO torch — same
+  precedent as H_1192/1199/1227/1229/1230). The mirror is byte-faithful to the
+  three live wires: winner = L2-nearest proto; split iff recon-err > SPLIT_THRESH
+  and capacity; refine = winner += LR*(x - winner). The ONLY change vs the live
+  engine is that (SPLIT_THRESH, LR) become a per-tick FUNCTION of substrate state
+  in ARM B, vs FIXED constants in ARM A. GREEN ⇒ engine-native follow-on wires the
+  controller into adapt_field_step (additive, a_verified_must_wire).
+
+TASK — MEMORY RECALL UNDER SHIFTING LOAD (p7, exact ground truth):
+  A population store binds facts (key→value) as immune/clonal cells (H_1227/1231
+  paradigm). Keys = byte-trigram FNV-1a hashed to DIM=16 vectors (H_1227 key).
+  Each "fact" = a distinct key; recall = nearest-cell fires, ABSTAIN if recon-err
+  beyond an abstain margin (no fabrication). We stream a sequence of (write | recall)
+  events under load and measure end-to-end recall accuracy + non-fabrication.
+
+  CAPACITY-BOUNDED store (max_cells < #facts) so plasticity/split policy MATTERS —
+  on an unbounded byte-exact store everything saturates (H_1230 lesson: clean
+  associative store has no headroom). Cells evict LRU when over capacity.
+
+THREE REGIMES (the controller must win across ≥2, not one tuned point):
+  R1 STABLE      : fixed fact set, low key noise σ=0.01, no drift. Tests that
+                   adaptation does not HURT the easy stationary case.
+  R2 DRIFT       : fact values periodically REWRITTEN (concept drift) — old binding
+                   must be overwritten; high-surprise events recur. Plasticity
+                   should RISE on drift, FALL when stable (ACh expected-uncertainty).
+  R3 NOISE-BURST : key noise alternates low(0.01)↔high(0.05) in bursts; bursts are
+                   UNEXPECTED uncertainty — controller must NOT over-split on noise
+                   (the H_1230 self-inflicted-forgetting failure mode: over-eager
+                   split pins duplicate cells → crowd → LRU-evict OTHER facts).
+
+NEUROMODULATOR (ARM B) — substrate state → knobs, NO loss term (p7, p8):
+  state per tick = (surprise s = recon-err of current key, confidence margin m =
+  gap between nearest and 2nd-nearest cell, reward r = +1 on a correct recall else 0,
+  running expected-uncertainty û = EMA of surprise).
+  ACh plasticity  : LR(t)    = clip(LR0 * (1 + kA*(s - û)), 0.05, 0.60)
+                    (raise plasticity on UNEXPECTED surprise s>û; calm when s≈û)
+  ACh/novelty split: THRESH(t)= clip(TH0 * (1 + kT*û),       0.15, 0.60)
+                    (RAISE the split bar when expected-uncertainty is high = noise
+                     regime ⇒ DON'T over-split on noise, the H_1230 guard; LOWER
+                     when calm ⇒ readily allocate a cell for a genuinely new fact)
+  NE exploration  : abstain margin widened by current û (cautious under noise).
+  DA gain         : reward EMA scales the winner-pull on CORRECT recalls (consolidate
+                    what works): LR(t) *= (1 + kD * reward_ema). gain∈[1,1.5].
+  All knobs are READ-OUTS of substrate state computed under no-grad; NONE is added
+  to any objective/loss. ARM A holds (LR0, TH0) FIXED at their grid-tuned best.
+
+ARMS (identical store, seeds, fact set, event stream, capacity; ONLY policy differs):
+  A FIXED   : best (LR0*, TH0*) found by a SMALL grid on a SEPARATE tuning seed
+              (not a scored seed), then HELD CONSTANT across all 3 regimes. This is
+              the strongest honest fixed baseline (one global operating point).
+  B NEUROMOD: (LR0, TH0) = A's tuned constants as the BASE, modulated per-tick by
+              the neuromodulator above. Same base → any lift is from ADAPTATION.
+
+CONTROLS:
+  (1) param/budget matched — same max_cells, same #events, same key dim, same seeds.
+  (2) A is TUNED (grid over LR0∈{0.1,0.2,0.3,0.4}, TH0∈{0.2,0.3,0.4}) so the
+      baseline is the BEST fixed point, not a strawman.
+  (3) shuffle control C-SHUF: B's knob schedule REPLACED by a time-shuffled
+      (phase-scrambled) version of the SAME knob values — destroys the
+      state→knob COUPLING but keeps the marginal distribution. If C-SHUF ≈ B then
+      the lift is from knob VARIETY not context-COUPLING (a non-finding).
+
+METRIC (p7, exact — NO LLM judge, NO perplexity):
+  capability(regime) = recall_accuracy - fabrication_rate
+    recall_accuracy = #(correct recalls) / #(recall events)
+    fabrication_rate = #(confident WRONG recalls on out-of-store / stale keys) /
+                       #(recall events)  [abstain is NOT a fabrication]
+  Report per-regime mean over seeds for A, B, C-SHUF.
+
+≥3 seeds (rng = [11, 22, 33]); tuning seed = 7 (DISJOINT from scored seeds).
+
+FROZEN FALSIFIER:
+  MARGIN = 0.05 absolute capability.
+  GREEN     iff  B.capability >= A.capability + MARGIN  on  >= 2 of {R1,R2,R3}
+                 AND  B never WORSE than A by > 0.02 on the remaining regime
+                 AND  B.fabrication <= A.fabrication on those regimes
+                 AND  C-SHUF.capability < B.capability - MARGIN on the winning
+                      regimes (coupling, not knob-variety, is load-bearing).
+  🟠 PARTIAL iff  B beats A+MARGIN on exactly 1 regime (a single operating point —
+                 the no-free-lunch / H_1228 outcome), OR B>=A+MARGIN on >=2 but
+                 C-SHUF is NOT separated (lift is knob-variety not coupling).
+  🔴 RED     iff  B does NOT beat A+MARGIN on any regime, OR B raises fabrication,
+                 OR B only matches the best fixed point (NO FREE LUNCH — report it).
+
+HONESTY / SCOPE:
+  - numpy mirror of the LIVE VAdaptField — DIRECTIONAL only (a_engine_native_learning);
+    engine-native re-test on adapt_field_step is the binding follow-on if GREEN.
+  - toy scale (DIM=16, tens of facts, hundreds of events); scale-transfer UNVERIFIED
+    (a_scale_honest_scope, a_toy_scale_recheck). Toy GREEN ⇒ scale-up rung, not a
+    production claim.
+  - the neuromodulator is a SUBSTRATE CONTROLLER, NOT a loss term (p7 Goodhart guard):
+    every knob is a no-grad read-out of substrate state; nothing flows into a backward
+    pass. No persona/identity/RLHF (p1-p6). Teaches CONTENT to episodic cells only.
+  - if adaptive only matches the best fixed point, that is 🟠/🔴 and reported as a
+    no-free-lunch result (a_paper_negative_ok).
+  - $0 CPU summer; CORE/*.hexa NOT edited in this probe (mirror only); H_1219/H_1226
+    NOT edited. engine_cli.hexa touched only on a GREEN follow-on, additive.
+
+DELIVERABLES: UNIVERSE/h1284_neuromodulation_gain.py ·
+  .verdicts/1284_neuromodulation_gain/{H_1284_FREEZE,H_1284}.txt · memory file +
+  MEMORY.md line · CHANGELOG Korean entry · harness pr-cycle → main.
