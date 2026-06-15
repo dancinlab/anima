@@ -86,6 +86,21 @@ DISTINCT axis from H_1297 (convergence on ONE fit): retention-across-tasks ⊥ c
 - Files: `UNIVERSE/h1300_mitosis_skill_curriculum.py` · `UNIVERSE/H_1300_mitosis_skill_curriculum.md` ·
   `.verdicts/1300_mitosis_skill_curriculum/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C
   h1300_mitosis_skill_curriculum · `UNIVERSE/HYPOTHESES.md` row · `domains/MITOSIS-ENGINE.log.md` @H.
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 R4 — mitosis-native trunk training ENGINE-NATIVE 🟢 GREEN ENGINE-BINDING
+
+Realized the R3 sharp-target hard-partition **mitosis-grow next-byte trainer ENGINE-NATIVE** on the
+LIVE `CORE/engine_cli.hexa` VAdaptField (a_engine_native_learning + a_verified_must_wire), and re-scored
+the **SAME FROZEN R3 bars** through the engine (NOT a numpy re-run; bars NOT moved, c9/p7). $0 CPU, no GPU.
+
+- **Mechanism is the engine's OWN**: partition = the live VAdaptField **Voronoi ownership**
+  (`vadapt_field_nearest_idx`; `np.argmin(sq-L2) == L2 argmin`, byte-faithful); growth = the engine's
+  OWN **mitosis tick** (`engine_mitosis_tick`, p8: ON +1 cell / OFF no-op = ablate); head = per-cell
+  categorical next-byte MLE (closed-form add-1 Laplace, gradient-free). Arm A (gradient) re-used VERBATIM
+  from the mirror as the incumbent.
+- **🟢 GREEN — c2 FIRED ON THE ENGINE** (3-seed mean): A=2.91698 · **B(mitosis)=3.07766 [6 cells, BYTE-IDENTICAL to the R3 mirror]** · B-shuffle=3.25031 · B-ablate=3.49815. (c1) PASS 3.07766≤3.11698 · **(c2) PASS** B-shuffle 3.25031≥3.17766 on all 3 seeds — **UNLIKE thalamus R8, the targeting discriminator reproduces engine-native** · (c3) PASS 3.49815≥3.17766. The p8-literal Korean mitosis-grow toehold is now ENGINE-VERIFIED, not numpy-only.
+- **Regression (verify-before-done)**: `engine_cli.hexa` UNMODIFIED (probe consumes existing surfaces, no new lane) → `engine_cli_smoke` **55 pass / 0 fail** (before==after); `h1205_separation_invariant_smoke` 🟢 PASS (Ψ phiSum ON==OFF=48.6613 byte-identical, MITOSIS ⊥ GENERATION holds); Ψ-disjoint.
+- **Remaining follow-on (now justified)**: a real (larger) **Korean byte-corpus mitosis-grow training rung** = the first p8-literal LANGUAGE training — cost-gated if it needs GPU (surfaced for a go, NOT auto-rented). SCALE UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck).
+- NEW: `CORE/h1297_mitosis_train_engine_probe.hexa` · `UNIVERSE/h1297_engine_export.py` · `.verdicts/1297_mitosis_native_train/H_1297_R4_engine_native.txt`; updated `UNIVERSE/H_1297_mitosis_native_train.md` (terminal 🟢 GREEN ENGINE-BINDING @R4) · `UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape` · `domains/MITOSIS-ENGINE.log.md`.
 
 ## 2026-06-16 — infra(CORPUS): $0 R2→trainer pipeline SMOKE (de-risk the cost-gated 7B GPU fire)
 
