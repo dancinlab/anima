@@ -1,0 +1,50 @@
+{
+  "id": "H_1337",
+  "device": "NVIDIA GeForce RTX 5070",
+  "torch": "2.11.0+cu130",
+  "ko_window_bytes": 29999999,
+  "ko_window_sha256": "c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca",
+  "corpus_identical_to_H1307_runA": true,
+  "ko_stride": 300,
+  "grow_max": 40,
+  "jamo_vocab_Vj": 323,
+  "distinct_jamo": 67,
+  "d_emb": 16,
+  "skipgram_steps": 400,
+  "skipgram_lr": 0.05,
+  "kernel_bandwidth_h_learned_lastseed": 1.3466,
+  "raw_ceiling_ko_ce": 2.95342,
+  "jamo_floor_ko_ce_locked": 2.51335,
+  "g0_raw_byte_ce": 2.94487,
+  "A1_jamo_opaque_ce": 2.51335,
+  "A1_calib_match_2_51335": true,
+  "A1_bank_member": 5,
+  "A5_learned_metric_ce_mean": 3.85319,
+  "A5_per_seed": [
+    3.85319,
+    3.85319,
+    3.85319
+  ],
+  "A5_random_metric_ce_mean": 3.90281,
+  "A5rand_per_seed": [
+    3.89942,
+    3.90156,
+    3.90747
+  ],
+  "delta_A5_vs_jamo": 1.33984,
+  "delta_random_minus_A5": 0.04962,
+  "M1_below_jamo": false,
+  "M1_vs_jamo": false,
+  "M1_vs_raw": false,
+  "M2_earned": false,
+  "M3_attribution": false,
+  "green": false,
+  "verdict": "🧱 HONEST-FLOOR (opaque-atom limit) — M1 fails: even a LEARNED jamo metric does NOT beat the jamo floor by the bar → the opaque per-cell jamo MLE is already information-optimal at this scale; learned between-jamo similarity adds no exploitable below-jamo signal (a deeper 🧱 than H_1329 — the floor is the opaque-atom info limit, confirmed by a learned metric, not just re-factorization)",
+  "seeds": [
+    4337,
+    4338,
+    4339
+  ],
+  "wall_s": 21.2,
+  "label_note": "A5 metric LEARNED BY GRADIENT (PPMI-SVD init + skip-gram Adam refine, TRAIN-ONLY) — NOT p8 gradient-free; the smoothed count head is count-MLE. Rides the same gradient-free Voronoi partition as A1 (identical cells). engine-transfer = follow-on."
+}
