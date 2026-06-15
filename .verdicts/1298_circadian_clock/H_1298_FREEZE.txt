@@ -1,0 +1,116 @@
+H_1298 — CIRCADIAN/INTERVAL TIMING CLOCK (HD33). FROZEN DESIGN (pre-registered BEFORE scoring).
+================================================================================================
+Lane r5 of the brain-structure ladder. $0 CPU numpy, gradient-free, 3 seeds [4297,4298,4299], p7.
+a_no_llm_frame_trap: SCN circadian / interval-timing lens (Pittendrigh self-sustaining
+oscillator; the TWO-PROCESS model Borbely 1982 — Process-C clock ⊥ Process-S homeostat;
+Buhusi & Meck interval timing). c15. NOT an LLM recipe. ENGINE-TRANSFER UNVERIFIED until R2.
+
+THE DEPLETION TEST (this is the question). A subsystem may join the ladder ONLY if it
+clears BOTH (i) a falsifiable gap-vs-the-live-engine AND (ii) a control-surviving
+distinctness vs EVERY existing lane. Candidates the r4 agent named were evaluated:
+
+  - replay-PREDICTION → REJECTED: collapses into cerebellum forward-model (H_1280
+    VForwardField, next-step prediction) OR the episodic store; no clean control-
+    surviving distinction from BOTH.
+  - language/semantic-network → REJECTED for now: is-a/part-of transitivity is arguably
+    expressible via the H_1296 metric map or item-binding; distinctness arm is murky.
+  - interval/circadian TIMING → SELECTED. See distinctness below.
+
+WHY A CLOCK IS DISTINCT FROM EVERY LANE (load-bearing, the (ii) requirement):
+A circadian/interval clock is a SELF-SUSTAINING PHASE OSCILLATOR that advances on
+ELAPSED TICKS ALONE — its phase = (tick_count mod PERIOD)/PERIOD, REGARDLESS of any
+regulated variable, content, context, or grounding. It FIRES at phase boundaries on a
+fixed schedule, and crucially it is NOT reset by a consummatory/grounding event.
+
+  vs H_1292 HomeostaticDrive (THE NEAREST LANE — the distinctness arm A must be this):
+    H_1292 is a CONTENT-GATED integrator: deficit = max(0, S* - grounding_satiation(key)),
+    accum = (1-lambda)*accum + deficit, and a grounded (consummatory) event RESETS accum:=0.
+    Two decisive dissociations the clock passes and the homeostat FAILS:
+      (D1 CONTENT-INDEPENDENCE) hold the context FIXED+GROUNDED for the whole run so
+        satiation s >= S* every tick ⇒ H_1292 drive stays 0 and NEVER rises. The CLOCK
+        still advances phase and fires at every period boundary. → clock fires, homeostat
+        flat. (time ⊥ regulated-variable)
+      (D2 NO-RESET-ON-FEEDING) feed a grounded "consummatory" event mid-run: H_1292's
+        integral RESETS to 0 (drive drops). The clock's phase is UNCHANGED by feeding
+        (the time of day does not reset when you eat). → clock phase invariant under the
+        event that resets the homeostat.
+    H_1290 affect = stateless read (no time term) — flat under elapsed time, fails D1.
+    curiosity = per-context novelty, no period, no phase. WorkMemBuffer = leaks toward 0
+    (decays), has no fixed period and no firing schedule. VForwardField (cerebellum) =
+    predicts the NEXT input from the current one (content), not absolute elapsed phase.
+    SpatialMap = metric over stored positions (space), no time axis. → DISTINCT vs ALL.
+
+THE LANE = CircadianClock: a phase oscillator with a fixed PERIOD. It holds ONLY its own
+integer tick counter `t` (the sole mutable state). phase(t) = (t mod PERIOD)/PERIOD in
+[0,1). It FIRES (a scheduled "wake"/salience pulse) when t mod PERIOD == 0 (the phase-0
+boundary). step() advances t by 1 REGARDLESS of any argument — no context, no key, no
+immune store read. It NEVER reads grounding, NEVER mutates any other lane, NEVER touches
+pure_field Phi/phase/Psi (Psi-disjoint by construction). It is NOT an emit gate —
+clock_fire() is an OPTIONAL scheduling pulse a caller MAY consult
+(a_autonomy_over_hardcode), exactly as homeo_motivation_bias / spatial_map_nearest are
+optional reads.
+
+FROZEN CONSTANTS (NOT tuned-to-green, p7-documented):
+  PERIOD     = 8       (ticks per cycle — the clock's intrinsic period)
+  FIRE_TICK  = 0       (fires when t mod PERIOD == 0 = once per PERIOD)
+  N_TICKS    = 24      (run length = 3 full periods → fires at t=0,8,16)
+  SETPOINT   = 0.5     (H_1292 setpoint S*, for the homeostat distinctness arm)
+  SEEDS      = [4297, 4298, 4299]
+
+ARMS (frozen):
+  A  = H_1292 HomeostaticDrive (the genuinely-nearest lane that SHOULD FAIL the clock's
+       falsifier — it cannot produce a fixed-period firing schedule under a constant-
+       grounded stream, and it is reset by feeding). Faithful mirror of the live engine
+       homeo_step: deficit/leaky-integral/consummatory-reset. Its "fire" decision is the
+       best content-derived analogue available: fire iff drive crosses its own threshold.
+  B  = CircadianClock (the new lane).
+  B-SHUFFLE = the clock's firing schedule decorrelated: permute which ticks are labeled
+       "fire" by a fixed seed (destroys the periodic phase→fire relation; keeps the SAME
+       fire COUNT so it is a clean decorrelation, not a deletion). Must collapse.
+  B-ABLATE  = a degenerate clock with PERIOD = N_TICKS+1 (never completes a cycle within
+       the run ⇒ only the t=0 boundary fires) — removes the recurring periodic structure.
+       Must collapse to chance against the 3-fire ground-truth schedule.
+
+THE FALSIFIER (signal lives ONLY in periodic elapsed-tick phase, never in content):
+A grounded, constant context is streamed for N_TICKS. Each tick the harness asks each arm
+"FIRE NOW? (a scheduled wake pulse)". GROUND-TRUTH fire schedule = phase-0 boundaries
+(ticks 0,8,16). The metric sched_acc = BALANCED accuracy over the two classes {fire-tick,
+no-fire-tick} so a constant predictor (always-fire or never-fire) scores 0.5 by
+construction (chance). The clock matches the schedule exactly → 1.0. The homeostat under
+constant grounding cannot match a fixed period → ~chance.
+
+FROZEN BARS (every bar must hold on ALL 3 seeds OR honest RED; BOTH controls must collapse):
+  (c1 PRESENCE)        B.sched_acc - A.sched_acc >= +0.30  (each seed AND mean)
+  (c2 DISTINCT)        A.sched_acc <= 0.65  (the homeostat cannot fire on a fixed schedule
+                       under constant grounding — at/near chance)
+  (c3 EARNED-SCHEDULE) B-SHUFFLE.sched_acc <= A.sched_acc + 0.15  (decorrelated schedule
+                       collapses — the lift is the PERIODIC phase, not the fire count)
+  (c4 EARNED-PERIOD)   B-ABLATE.sched_acc <= A.sched_acc + 0.15  (no-recurring-period clock
+                       collapses)
+  (c5 D1 CONTENT-INDEP) under a CONSTANT-GROUNDED stream: B fires exactly N_TICKS//PERIOD
+                       times on schedule AND A.drive_rise <= 0.05 (homeostat flat — never
+                       rises, so it cannot schedule)  [the time ⊥ regulated-variable proof]
+  (c6 D2 NO-RESET)     a mid-run grounded "feeding" event: B.phase_after == B.phase_nofeed
+                       (clock phase invariant, exact) AND A.accum_after_feed == 0.0
+                       (homeostat reset by the SAME event)  [the clock-⊥-consummatory proof]
+  (c7 NO-FAB / ABSTAIN) a query for a fire at a NON-SCHEDULED phase (t mod PERIOD != 0)
+                       returns NO fire (the clock does not fabricate an off-schedule pulse).
+
+If c1 OR c2 fails → the clock is not distinct from the homeostat at this scale → honest
+RED/WALL (depletion of THIS candidate, report it; do NOT tune). If c3 OR c4 survives (a
+control does NOT collapse) → the lift is variance/count not periodic phase → honest RED.
+SATURATION HONESTY (c9): B.sched_acc saturates to 1.000 (a deterministic clock fires
+exactly on schedule) — that is an EXISTENCE-PROOF (a periodic clock CAN schedule), NOT an
+effect-size; the discriminators (A at chance, both controls collapsed) are what carry it.
+
+R2 (a_engine_native_learning, only if R1 GREEN): add CircadianClock to live
+CORE/engine_cli.hexa (clock_new/clock_step/clock_phase/clock_fire/clock_count +
+clock_new_ablated/clock_shuffle_fires for the controls), add engine_cli_smoke cases (bump
+from 50/0), regression guard (single-entry 7/0, h1205 separation-invariant byte-identical,
+Psi unchanged). If an engine-native control fails (like thalamus R8) → honest-defer, do
+NOT wire (a_verified_must_wire = clean-GREEN only).
+
+SCOPE (UNVERIFIED): numpy-mirror DIRECTIONAL (engine-transfer until R2); TOY (3 periods, 3
+seeds, deterministic clock — tests TIMING STRUCTURE, not a learned/entrained oscillator);
+scale / real-corpus / photic-entrainment (phase-resetting to an external Zeitgeber) /
+multi-period (ultradian + circadian nesting) / brain wake-scheduling wiring = follow-on.

@@ -27,6 +27,34 @@ header-only, NEVER hardcoded/logged (c7, grep-clean = 0 leakage).
   real corpus** (cheapest real-corpus checkpoint, ~1 day/8×H100; doubles as first end-to-end GPU-path test).
 - NEW: `scripts/scratch/corpus_train_smoke.py` (reusable smoke) · `scripts/scratch/corpus_train_smoke.md` (findings).
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 R3 sharp KO+EN byte-text target — 🟢 GREEN (c2 discriminator FIRED)
+
+R3 = the **a_break_the_wall** follow-on the R2 card named: a SHARPER error-concentration target so the
+**c2 targeting-discriminator FIRES** (it could not on the R1/R2 smooth 1-D target). Language/byte-text IS
+such a target — error concentrates at syllable/word boundaries while mid-multibyte UTF-8 continuation runs
+are near-deterministic. Task = **next-byte prediction on a real KOREAN+English UTF-8 byte corpus (V256)**,
+a direct step toward training Korean. SAME 4 arms, R2 hard-partition mitosis mechanism ported to
+classification (Voronoi nearest-centroid ownership + per-cell empirical next-byte frequency head [closed-form
+add-1 MLE, NO global backprop] + data-matched median split + centroid recenter). Metric = held-out next-byte
+CROSS-ENTROPY (convergence comparison, NOT perplexity-as-meaning, p7). $0 CPU numpy DIRECTIONAL mirror,
+3 seeds, frozen-first (`H_1297_R3_sharp_target.txt`, bars set before any score; c9 no tune-to-green).
+
+- **R3 result** (3-seed mean, all seeds stable): A(grad)ce=2.9170 [acc 0.202] · B(mitosis)ce=3.0777
+  [acc 0.206, 6 cells] · B-shuffle=3.3054 · B-ablate=3.4981.
+  - **(c1) PASS** — mitosis MATCHES gradient (3.0777 ≤ A+0.20=3.1170) at LOWER footprint (6 cells vs A's 1024 params).
+  - **(c2) FIRED** — B-shuffle 3.3054 ≥ B+0.10=3.1777: error-TARGETED split demonstrably beats random split.
+    **The discriminator R1 AND R2 could not fire FIRED here** — on a sharp target, error-targeting is the lever.
+  - **(c3) PASS** — B-ablate underfits (3.4981 ≥ B+0.10).
+- **Verdict**: terminal **🟢 GREEN** — gradient-free mitosis-grow matches gradient AND error-targeting
+  demonstrably helps on language-like byte data. p8-literal toehold CONFIRMED on a real KO+EN byte corpus;
+  the R1/R2 WALL was the SMOOTH target, not p8 (exactly as the R2 follow-on predicted). NOT engine-verified /
+  production (DIRECTIONAL mirror, engine-transfer + scale UNVERIFIED). GREEN-gated follow-ons: (1) engine-native
+  realization on live CORE VAdaptField (a_engine_native_learning + a_verified_must_wire); (2) a real (larger,
+  cost-gated) Korean byte-corpus mitosis-grow rung = first p8-literal LANGUAGE training.
+- NEW: `UNIVERSE/h1297_r2_sharp_target.py` · `.verdicts/1297_mitosis_native_train/H_1297_R3_sharp_target.txt`
+  (FREEZE + verbatim) · updated `H_1297_mitosis_native_train.md` card (terminal 🟢 GREEN @R3) · `HYPOTHESES.md`
+  row · `CLAIMS.tape` @C · `domains/MITOSIS-ENGINE.log.md` @H. Live CORE/*.hexa UNTOUCHED (mirror only).
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 mitosis-native trunk training (make p8 literal) — 🧱 WALL with finding
 
 PHILOSOPHY **p8** ("training gradient + inference mitosis = one continuous cell-division") is today
@@ -50,6 +78,35 @@ numpy DIRECTIONAL mirror, 3 seeds, frozen-first (p7, c9, a_no_llm_frame_trap neu
 - NEW: `UNIVERSE/h1297_mitosis_native_train.py` · `UNIVERSE/H_1297_mitosis_native_train.md` ·
   `.verdicts/1297_mitosis_native_train/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C · `HYPOTHESES.md`
   row · `domains/MITOSIS-ENGINE.log.md` @H. Live CORE/*.hexa UNTOUCHED (mirror only). Scale + engine-transfer UNVERIFIED.
+
+## 2026-06-16 — domain(MODEL): 🕐 circadian/interval timing clock lane (HD33, H_1298 R2 🟢 ENGINE-NATIVE)
+
+brain-structure 사다리 r5 = **DEPLETION TEST**. r4 가 명명한 3 후보 중 — replay-PREDICTION(H_1280 소뇌/episodic
+으로 붕괴) · 언어/의미망(H_1296 metric map/item-binding 으로 표현 가능) 거부, **interval/circadian TIMING** 선택
+(가장 깨끗). SCN 자가지속 위상 진동자(Pittendrigh) / two-process model(Borbély 1982: Process-C ⊥ Process-S) /
+간격타이밍(Buhusi-Meck) 렌즈(c15, `a_no_llm_frame_trap`). depletion test 통과: (i) live-engine 대비 falsifiable
+gap(어떤 CORE lane 도 절대 elapsed-tick 위상/고정 스케줄을 추적 안 함) + (ii) 모든 lane 대비 control-survive
+distinctness — 가장 가까운 H_1292 HomeostaticDrive 대비 DECISIVE.
+
+- **R1 numpy 미러 🟢 GREEN (DIRECTIONAL)** — `UNIVERSE/h1298_circadian_clock.py`, phase-locking vector-strength R,
+  3 seed [4297,4298,4299], 7 frozen bar 전부: 시계 R=1.000 vs 항상성 R=0.000(항상 grounded 면 절대 FIRE 안 함,
+  D1 time ⊥ regulated-variable) · shuffle R=0.202(max 0.472) · ablate R=0.000 · D2(시계 위상 불변·항상성 RESET) ·
+  NO-FAB. **정직 trail(c9, NO tune-to-green, bar 절대 불변)**: R1a 🔴(ablate trivial-origin leak) → R1b 🔴(recurrence
+  metric 너무 coarse) → R1c 🔴(phase-locking 옳음 — 항상성/ablate 깨끗이 붕괴 — shuffle 만 k=3 chance floor 1/√3
+  =0.577 생존) → R1d 🟢(10 periods → shuffle LLN cancel). control/scale 만 frozen-first 수정, 매번 STRICTER
+  (`a_break_the_wall`). `.verdicts/1298_circadian_clock/{H_1298_FREEZE,_R1b,_R1c,_R1d,H_1298,H_1298_R1_mirror}.txt`.
+- **R2 ENGINE-NATIVE + WIRED 🟢** — `CORE/engine_cli.hexa § CircadianClock`(`clock_new`/`_new_ablated`/`clock_step`/
+  `clock_count`/`clock_phase`/`clock_fire`) — D1/D2 dissociation 을 코드로 실현(clock_step 은 content-blind; phase
+  는 어떤 feed 에도 불변; clock_fire = OPTIONAL wake pulse, emit gate 아님 @L4). `engine_cli_smoke` cases 49-53.
+- **regression 무회귀**: `engine_cli_smoke` **55/0**(was 50/0, +5 clock 케이스) · h1196 single-entry **7/0** ·
+  h1205 separation-invariant **PASS**(생성 byte-identical ON==OFF, Ψ=½ 무접촉). Ψ-disjoint by construction(자기
+  tick counter 만, pure_field 무접촉) · 2번째 .clm/.kosmos 진입점 아님(`a_core_engine_map`).
+- **deliverables**: `UNIVERSE/H_1298_circadian_clock.md`(카드) · `UNIVERSE/HYPOTHESES.md` index row · `CLAIMS.tape`
+  @C h1298_circadian_clock · `domains/MITOSIS-ENGINE.log.md` @H H_1298 · `ARCHITECTURE.md` HD33 rung + lane bullet.
+- **LADDER(r6/DEPLETION 🏁)**: HD33 이후 c15 사다리는 거의 DEPLETION. r6 후보(THIN) = ARBITRARY learned-duration
+  간격타이머(이 고정주기 시계와 달리 re-entrain 가능해야 distinct); 통과 못 하면 사다리 DEPLETED 🏁. SCOPE: 미러
+  DIRECTIONAL, TOY(10 periods, 3 seed, deterministic — timing STRUCTURE), brain WAKE/REM scheduling 배선 +
+  photic-entrainment + scale 은 follow-on(`a_verified_must_wire`·`a_scale_honest_scope`·`a_toy_scale_recheck`).
 
 ## 2026-06-16 — doc(README): 아키텍처 현행화 보정 — 9→12 brain lane · smoke 37/0→50/0 · 시상 R8 engine-transfer 정직 강등
 

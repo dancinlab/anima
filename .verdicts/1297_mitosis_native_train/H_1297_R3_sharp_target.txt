@@ -1,0 +1,134 @@
+H_1297 R3 — MITOSIS-NATIVE TRUNK TRAINING, SHARP-TARGET RUNG (a_break_the_wall / c16)
+PRE-REGISTRATION (FROZEN before the R3 run; bars NOT movable post-hoc) — frozen-first, c9.
+(Named R3 because R1/R2 already occupy the 1-D-fit rounds; this is the THIRD round of H_1297,
+ the sharper error-concentration target the R2 card's own follow-on named.)
+
+WHERE R2 LEFT OFF (read verbatim, .verdicts/1297_mitosis_native_train/{FREEZE_R2,result}.txt):
+  R2 hard-partition mitosis (Voronoi nearest-assignment + data-matched median split +
+  centroid recenter) MATCHED gradient at lower footprint:
+    A(grad)=0.00415  B2(mitosis)=0.00412 [17.3 cells]  B2-shuf=0.00360  B2-abl=0.14497.
+    c1 PASS (mitosis matches gradient), c3 PASS (ablate underfits), c2 FAIL (shuffle 0.00360
+    ~= targeted 0.00412 -> NO collapse). TIER=WALL: the c2 discriminator could not fire.
+  ROOT CAUSE of the c2 wall (named in the R2 card): on a SMOOTH target (sine sum), RANDOM
+  split converges as well as ERROR-TARGETED split — any reasonable tiling of a smooth
+  function works, so "targeting" is not the lever this task can isolate. p8-literal is NOT
+  refuted; it is an ATTRIBUTION wall (can't credit the lift to error-targeting), not a
+  capability wall.
+
+R3 ANGLE (a_break_the_wall / c16 — the R2 follow-on, verbatim: "a sharper error-
+concentration target to fire c2"):
+  Use a target where error CONCENTRATES at sharp, localized boundaries so error-targeted
+  split MUST beat random split. LANGUAGE / BYTE-TEXT is exactly such a target: token /
+  morpheme / syllable boundaries + a heavy-tailed byte distribution put nearly all of the
+  predictive uncertainty at a FEW context regions (word/syllable starts) while long
+  stretches (mid-multibyte UTF-8 continuation, repeated function words) are near-
+  deterministic. A trainer that SPENDS its growth where error concentrates (boundary
+  contexts) should beat one that splits at random (which wastes cells on the already-easy
+  deterministic region). This is ALSO a direct step toward the standing goal of training
+  KOREAN: the corpus is real Korean + English UTF-8 bytes (V256), so a GREEN here makes a
+  real (larger) Korean mitosis-grow training rung a legitimate next, cost-gated rung.
+
+TASK (next-byte prediction on real Korean+English UTF-8 bytes, V256):
+  Corpus = a small fixed Korean+English byte string (declared IN the script, provenance-
+  visible; mixed Hangul 3-byte UTF-8 + ASCII English + punctuation/space). Build supervised
+  pairs (context -> next byte) over the byte stream with context length CTX=4 bytes.
+  CONTEXT FEATURE (the partition key, kept low-dim so the SAME R2 Voronoi mechanism applies):
+  for each position, a fixed deterministic feature vector phi(context) in R^3:
+    f0 = last byte value / 255.0                 (the strongest next-byte predictor)
+    f1 = (2nd-last byte value) / 255.0
+    f2 = utf8_continuation_depth / 3.0           (how deep we are inside a multibyte run:
+         0 at an ASCII / lead position, rises 1..3 across a Hangul 3-byte sequence — this
+         is the deterministic structural signal that makes mid-sequence bytes near-certain
+         and boundary bytes uncertain; computed mechanically from the byte values, NO labels)
+  This feature is a fixed function of the raw bytes (NO learned embedding, NO gradient).
+  TRAIN/TEST split: deterministic interleave (even idx -> train, odd idx -> test) so the
+  two halves cover the same contexts disjointly. 3 seeds [770,771,772] (seed perturbs only
+  tie-breaking + arm A init + shuffle-arm RNG; the corpus + features are seed-independent).
+
+ARMS:
+  A GRADIENT  — fixed-size softmax classifier over V256 on phi(context): a single linear
+    layer W (V256 x 3) + bias, full-batch CROSS-ENTROPY gradient descent (standard backprop).
+    INCUMBENT control. params = V256*(3+1) = 1024.
+  B MITOSIS-GROW — gradient-free hard-partition mitosis (R2 mechanism, ported to
+    classification): start 2 cells (centroids in feature space); each context owned by its
+    NEAREST cell centroid (Voronoi). Per-cell head = empirical next-byte frequency table
+    (closed-form MLE, add-1 Laplace smoothing over V256) on OWNED training points only —
+    the categorical analog of R2's local least-squares head, still NO global backprop.
+    SPLIT the cell with the highest LOCAL (owned) train CROSS-ENTROPY; split = bisect the
+    owned points at the MEDIAN of their highest-variance feature axis, recenter on the two
+    half-centroids (data-matched median split + centroid recenter, exactly R2). Finite
+    GROW_MAX.
+  B-SHUFFLE — split a RANDOM eligible cell (not the highest-CE one). On a sharp target this
+    MUST now collapse vs B (the c2 discriminator R1/R2 could not fire). If it STILL does not
+    collapse, that is an honest WALL + a real finding: error-targeting does not help even on
+    sharp targets.
+  B-ABLATE — growth frozen at the 2 start cells (no split ever) -> must underfit.
+
+METRIC (p7 — legitimate for a CONVERGENCE/optimization comparison, NOT perplexity-as-meaning):
+  primary = held-out next-byte CROSS-ENTROPY (nats/byte) on the test split.
+  also reported: known-byte top-1 ACCURACY (argmax next-byte == true next-byte) as a simple
+  coherence check (NOT perplexity-as-truth).
+
+FROZEN R3 KNOBS (set BEFORE the run):
+  CTX=4, V=256, FEAT_DIM=3, A_STEPS=4000, A_LR schedule 0.5->0.05 (full-batch CE),
+  GROW_MAX=40, SPLIT_THRESH_CE=0.05 (a cell with owned train CE above this nats may split),
+  MIN_OWNED=8 (a cell needs >=8 owned train points to split — data-spacing floor),
+  LAPLACE=1.0 (add-1 smoothing for the per-cell frequency head).
+
+FROZEN R3 BARS (set BEFORE the run; CE in nats/byte; lower = better):
+  (c1) COMPARABLE       : B.ce  <= A.ce + 0.20     [mitosis matches gradient within 0.20 nats]
+  (c2) SHUFFLE-COLLAPSE : B_shuf.ce >= B.ce + 0.10  [random-split is >=0.10 nats WORSE than
+        targeted -- THE discriminator R1/R2 could not fire; a sharp target should make
+        error-targeting demonstrably help]
+  (c3) ABLATE-UNDERFIT  : B_abl.ce  >= B.ce + 0.10  [frozen growth underfits by >=0.10 nats]
+  (c4) COST             : report B final cell count vs A's 1024 params (footprint honesty).
+  TIER:
+    GREEN  iff c1 & c2 & c3  (mitosis matches gradient AND error-targeting demonstrably helps
+            AND ablation underfits -> p8-literal toehold CONFIRMED on language-like data).
+    AMBER  iff c1 & c3 hold but c2 weak (0 < B_shuf.ce - B.ce < 0.10) -- targeting helps but
+            below the pre-set gap.
+    WALL   iff a control misbehaves (c2 shuffle does NOT separate, i.e. B_shuf.ce < B.ce, OR
+            c3 ablate does not underfit) -- the discriminator still cannot fire.
+    RED    iff c1 fails by > 0.20 (mitosis cannot match gradient even on the sharp target).
+
+HONEST OUTCOMES (all valid, c9 — NO tune-to-green; bars frozen here before any score):
+  GREEN -> the sharper target made error-targeting demonstrably help; mitosis-grow is a
+    verified-at-toy trainer where targeting is the lever. Two follow-ons become legitimate:
+    (1) engine-native realization on live CORE VAdaptField (a_engine_native_learning +
+        a_verified_must_wire); (2) a real (larger) KOREAN byte-corpus mitosis-grow training
+    rung as the first p8-literal language training (cost-gated if it needs GPU).
+  AMBER -> targeting helps directionally but under the gap; gradient stays trunk, mitosis a
+    candidate co-trainer.
+  WALL/RED -> mitosis can't match OR targeting never helps even on sharp targets (honest;
+    gradient stays the trunk trainer; p8-literal language training NOT yet justified).
+
+SCOPE (c9, a_scale_honest_scope, a_toy_scale_recheck): DIRECTIONAL numpy mirror only; live
+  CORE/*.hexa UNTOUCHED; engine-transfer UNVERIFIED. TOY corpus, 3 seeds, ONE byte-text
+  family; scale + real (larger) Korean corpus UNVERIFIED (a separate cost-gated rung, NOT
+  run here). $0 CPU, no GPU, no secrets.
+
+================================================================================
+VERBATIM RESULT (run AFTER the freeze above; reproduce: python3 UNIVERSE/h1297_r2_sharp_target.py)
+================================================================================
+H_1297 R3 — MITOSIS-NATIVE TRUNK TRAINING, SHARP TARGET (next-byte, KO+EN)
+==============================================================================
+corpus bytes=3042  train_pairs=1519  test_pairs=1518  V=256  CTX=4  seeds=[770, 771, 772]
+FROZEN bars: c1 COMP=0.2  c2 COLLAPSE=0.1  c3 UNDERFIT=0.1  | GROW_MAX=40  SPLIT_THRESH_CE=0.05  MIN_OWNED=8
+metric = held-out next-byte CROSS-ENTROPY (nats/byte), lower=better; +top-1 acc
+------------------------------------------------------------------------------
+seed 770: A(grad)ce=2.9170[acc0.202]  B(mitosis)ce=3.0777[acc0.206,6c]  B-shuf=3.2910  B-abl=3.4981[2c]
+seed 771: A(grad)ce=2.9170[acc0.202]  B(mitosis)ce=3.0777[acc0.206,6c]  B-shuf=3.3383  B-abl=3.4981[2c]
+seed 772: A(grad)ce=2.9170[acc0.202]  B(mitosis)ce=3.0777[acc0.206,6c]  B-shuf=3.2870  B-abl=3.4981[2c]
+------------------------------------------------------------------------------
+MEAN (3 seeds): A(grad)ce=2.9170  B(mitosis)ce=3.0777  B-shuffle=3.3054  B-ablate=3.4981
+  top-1 acc: A=0.202  B=0.206
+COST (c4): B mitosis final cells mean=6.0  vs  A fixed params=1024
+------------------------------------------------------------------------------
+(c1) COMPARABLE       B<=A+0.2:  3.0777 <= 3.1170  -> PASS
+(c2) SHUFFLE-COLLAPSE  B_shuf>=B+0.1: 3.3054 >= 3.1777 -> PASS
+(c3) ABLATE-UNDERFIT   B_abl>=B+0.1: 3.4981 >= 3.1777 -> PASS
+------------------------------------------------------------------------------
+R3 VERDICT TIER (frozen): GREEN
+  p8-literal (R3): mitosis-grow MATCHES gradient; error-targeting HELPS (c2 fired)
+  c1=True c2=True c3=True | DIRECTIONAL numpy mirror, engine-transfer+scale UNVERIFIED
+==============================================================================

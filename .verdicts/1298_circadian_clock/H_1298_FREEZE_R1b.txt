@@ -1,0 +1,50 @@
+H_1298 R1b — CIRCADIAN CLOCK, trivial-origin control leak FIXED. FROZEN-FIRST (pre-registered).
+================================================================================================
+Re-design AFTER the R1a frozen RED (c4 EARNED-PERIOD did not collapse). a_break_the_wall +
+H_1296 path-integration precedent: ONE frozen-first re-design of the MIS-SPECIFIED control,
+NOT a bar moved to manufacture GREEN. The R1a RED stands verbatim in H_1298.txt.
+
+ROOT CAUSE (from the R1a diagnostic): every clock starts at t=0, so the ablate clock
+(period N_TICKS+1) fired once at the shared phase-0 ORIGIN and kept 0.667 balanced
+accuracy purely from that trivial origin + all the no-fire ticks — NOT from any recurring
+periodic structure. The metric let the trivial t=0 boundary dominate.
+
+THE FIX (two changes, both make the test STRICTER, never looser):
+  (F1) RECURRENCE-SCORED metric: the schedule-match is scored ONLY over the RECURRING
+       fire boundaries (t = PERIOD, 2*PERIOD, ... = t=8,16) plus the no-fire ticks among
+       them — the trivial shared t=0 origin is EXCLUDED from the fire-class so a clock that
+       only fires at the origin gets NO credit for the recurrence. (This is the honest
+       definition of "fires on a recurring SCHEDULE": you must hit the RECURRENCES.)
+  (F2) ORIGIN-BROKEN ablate: B-ABLATE is now a clock with a NON-DIVIDING period that is
+       also PHASE-OFFSET from the origin (period = 5, phase offset = 3), so it does NOT
+       fire at t=0 and its fires never align with the t=8,16 recurrences. A genuinely
+       period-broken control must collapse to chance on the recurrence-scored metric.
+
+The other arms are UNCHANGED. The clock B still fires at t=0,8,16; on the recurrence-
+scored metric it must still hit t=8,16 (it does, by construction). The homeostat A under
+constant grounding still never fires → chance. The shuffle B-SHUFFLE still decorrelates.
+
+FROZEN CONSTANTS (R1b):
+  PERIOD = 8 · N_TICKS = 24 · recurrence boundaries = {8, 16} (origin t=0 EXCLUDED from
+  fire-class scoring) · ablate period = 5, phase offset = 3 · seeds = [4297,4298,4299].
+
+FROZEN BARS (R1b — same letters, recurrence-scored metric; ALL 3 seeds OR honest RED):
+  (c1 PRESENCE)        B.rec_acc - A.rec_acc >= +0.30  (each seed AND mean)
+  (c2 DISTINCT)        A.rec_acc <= 0.65   (homeostat at/near chance on recurrences)
+  (c3 EARNED-SCHEDULE) B-SHUFFLE.rec_acc <= A.rec_acc + 0.15  (decorrelated → collapse)
+  (c4 EARNED-PERIOD)   B-ABLATE.rec_acc  <= A.rec_acc + 0.15  (origin-broken non-dividing
+                       period → collapse; the R1a leak is gone)
+  (c5 D1 CONTENT-INDEP) constant-grounded stream: B fires exactly N_TICKS//PERIOD times on
+                       schedule AND A.drive_rise <= 0.05  (time PERP regulated-variable)
+  (c6 D2 NO-RESET)     mid-run grounded feed: B.phase_after == B.phase_nofeed (exact) AND
+                       A.accum_after_feed == 0.0  (clock PERP consummatory)
+  (c7 NO-FAB)          off-schedule phase (t mod PERIOD != 0) → no fire.
+
+GREEN iff c1..c7 all hold on all 3 seeds. If c4 still survives → the lift is NOT the
+recurring period → honest RED/WALL (depletion of THIS candidate; report, do not tune).
+SATURATION HONESTY (c9): B.rec_acc = 1.000 is an EXISTENCE-PROOF; the discriminators
+(A at chance, BOTH controls collapsed on the recurrence-scored metric) carry the verdict.
+
+R2 (only if R1b GREEN): engine-native CircadianClock in CORE/engine_cli.hexa + smoke cases
++ regression guard, else honest-defer (a_verified_must_wire = clean-GREEN only).
+SCOPE: numpy-mirror DIRECTIONAL; TOY (3 periods, 3 seeds, deterministic clock).
