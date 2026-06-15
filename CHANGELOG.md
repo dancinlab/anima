@@ -100,6 +100,21 @@ foreign-domain depth 사다리(H_1226)의 HD20(생물/발달 렌즈, c15 — LLM
 
 ---
 
+## 2026-06-15 — 🟠 H_1228: 자기조직화 임계성(SOC)·혼돈의 가장자리 디코드 (HD18) — 임계 가장자리는 ideation 을 돕지만 완전한 레버는 아니다 ($0 summer CPU)
+
+깊이-천장 사다리의 외부-도메인 렌즈(H_1226 HD18)를 단독 판정 — **물리/복잡계 렌즈(모래더미 사태·뉴런 분기 σ≈1), LLM 트릭 아님(c15)**. 디코드 발견(H_1218 greedy 붕괴=0 vs gauge_lib 샘플링 11-14 ideas)을 재구성: greedy = SUB-임계(frozen) · 고정 고온 샘플링 = SUPER-임계(noise) · DEPTH 는 **가장자리(EDGE)**. anima 의 Ψ=1/2 가 임계 고정점.
+
+- **판정 = 🟠 PARTIAL.** 분기 σ\* 를 표적하는 임계-디코드는 composition 을 **올리지만**(greedy 0 < 고정샘플링 0.667 < **임계 1.000** composed_distinct) 그 lift 가 **coherence 비용을 동반**(kwr 고정 0.612 → 임계 0.551) ⇒ joint GREEN bar 미달. 임계 가장자리 = 부분 knob, free lunch 아님.
+- **메커니즘 / 제어법칙**: σ proxy = exp(H(next-byte)) = 유효 viable 다음바이트 수(사태 분기인자). log-temp P-controller `log T <- log T + KP·(log σ* - log σ_step)`, KP=0.6, T∈[0.05,3.0], **σ\* 표적=2.5**. top-k=40 을 arm C 에도 유지(B 와 동일 admissible set) → B 대비 유일 조작변수 = per-step 온도 표적. **σ 제어 작동 확인**: C 가 σ̄ 를 B 의 1.450 에서 표적 2.5 쪽으로 1.981 까지 끌어올림.
+- **3-arm (온도 정책만 다름, 동일 model/seeds/max_new/top-k)** — A=GREEDY(argmax, σ→1) · B=FIXED top-k40 temp0.7 (gauge_lib H_1158 baseline VERBATIM) · C=CRITICALITY-targeted. 채점 = **FROZEN UNIVERSE/gauge_lib.py 평가자 VERBATIM**(G._coverage/G1 · G._content_ngrams+G._corpus_absent/G2 · known_word_ratio/G0 · G._words+G._jaccard/G6 H_1158 locked spec), seeds=CONCEPTS+IDEATION_SEEDS VERBATIM, 3 rng-seeds (p7, 지표 재발명 없음).
+- **결과(seed-평균)**: A composed_distinct=0.000/kwr0.554/σ̄2.036 · B 0.667/0.612/1.450 · C 1.000/0.551/1.981. Frozen falsifier: C_composed≥B ✅ · C_beats_greedy ✅ · **C_kwr≥B ❌** ⇒ 🟠.
+- **NOT 하는 것 / 정직 경계**: composed_distinct = 작은 정수지표(0/1/2 over 5 concepts) → B vs C 간격 ~1/3 concept 로 절대신호 modest; 방향성(greedy<고정<임계)이 robust 부분. G2 novelty = UPPER BOUND(원 1.5GB broad corpus ephemeral/GONE, data/corpus.txt 5.24MB dialogue 만). 단일 303M toy, scale UNVERIFIED(a_scale_honest_scope). frozen bar 미이동. **NOT RULED OUT**: 다른 σ*/gain · coherence-floor 표적 · 임계-디코드+grounding/abstain 조합.
+- 사전등록 FREEZE 를 채점 전 작성. CORE/bytegpt_decode.hexa 미편집(다른 agent 소유) · H_1219/H_1226 미편집(사용자 consolidate) — numpy/torch-ref 디코드 하니스만(허용).
+- NEW: `UNIVERSE/h1228_soc_criticality_decode.py` · `.verdicts/1228_soc_criticality_decode/{H_1228_FREEZE,H_1228}.txt`. 303M torch ref byte-exact to H_1157 mount. $0 summer CPU, wall 867s.
+- xref H_1226(HD18)·H_1218·H_1158·H_1140·H_1157·Ψ·a_paper_negative_ok·a_scale_honest_scope·p7·c15.
+
+---
+
 ## 2026-06-15 — 🟡 H_1224: literal-QA 는 anima 의 게이트가 아니다 — p4-부정합 ASSISTANT-NORM 거버넌스 판정 ($0, 무계산)
 
 H_1219 depth-ceiling 사다리의 HD8(거버넌스 미결)을 단독 판정 — literal-QA(사실 축자 회상)가 anima 의 VALID 게이트인지, 아니면 p4(NO ASSISTANT FRAMING)와 충돌하는 빌려온 assistant-norm 인지. 무계산, frozen 기록 기반 추론 (c9, p7).

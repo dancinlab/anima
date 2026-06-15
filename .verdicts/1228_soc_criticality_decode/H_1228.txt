@@ -1,0 +1,53 @@
+H_1228 — SELF-ORGANIZED CRITICALITY / EDGE-OF-CHAOS DECODE (HD18, physics lens, c15)
+============================================================================================
+{
+  "H": "H_1228",
+  "title": "self-organized criticality / edge-of-chaos decode (HD18, physics lens)",
+  "lens": "self-organized criticality / branching σ≈1 (sandpile/neuronal avalanche), NOT an LLM trick (c15)",
+  "sigma_proxy": "exp(H(next-byte distribution)) = effective number of viable next-bytes (avalanche branching factor)",
+  "sigma_star_target": 2.5,
+  "control_law": "log T <- log T + KP*(log σ* - log σ_step), clamp T∈[0.05,3.00], KP=0.60, top-k=40 kept on C (same admissible set as B)",
+  "arms": {
+    "A_greedy": {
+      "composed_distinct": 0.0,
+      "g6_count": 3.0,
+      "kwr_mean": 0.5536,
+      "g2_novelty_rate": 0.41379,
+      "sigma_mean": 2.0363
+    },
+    "B_fixed_sampling": {
+      "composed_distinct": 0.6667,
+      "g6_count": 3.6667,
+      "kwr_mean": 0.6115,
+      "g2_novelty_rate": 0.52147,
+      "sigma_mean": 1.4504
+    },
+    "C_criticality": {
+      "composed_distinct": 1.0,
+      "g6_count": 3.0,
+      "kwr_mean": 0.5509,
+      "g2_novelty_rate": 0.82366,
+      "sigma_mean": 1.9808
+    }
+  },
+  "seeds": [
+    7,
+    17,
+    23
+  ],
+  "achieved_sigma_C": 1.9808,
+  "achieved_sigma_A_greedy": 2.0363,
+  "achieved_sigma_B_fixed": 1.4504,
+  "frozen_falsifier": {
+    "C_composed_distinct_ge_B": true,
+    "C_kwr_ge_B": false,
+    "C_beats_greedy_A": true,
+    "C_interior(A<C<B)": false
+  },
+  "supported": false,
+  "tier": "🟠 PARTIAL",
+  "ruling": "criticality decode beats greedy and lands between greedy and fixed sampling (or matches ideation but loses coherence) — the critical edge HELPS but is NOT the full ideation lever (HD18 partial)",
+  "psi_critical_edge_is_ideation_lever": false,
+  "scope": "303M torch ref (byte-exact to H_1157 mount), data/corpus.txt corpus (original 1.5GB broad corpus ephemeral/GONE ⇒ G2 novelty is an UPPER BOUND, flagged), 3 seeds, single-model toy — a_scale_honest_scope; frozen bars NOT moved",
+  "wall_s": 866.6
+}
