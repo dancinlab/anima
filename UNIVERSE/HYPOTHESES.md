@@ -33,6 +33,70 @@
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
 
+## TENSION-LINK arc (H_6006–H_6043) — anima↔anima connection + ANU quantum entanglement
+
+> 두 anima 의 연결/통신 + ANU paid QRNG 양자 엔트로피 접지 arc (group = tension-link).
+> Tiers read VERBATIM from each card's `status_grade` (= its `TENSION-LINK/verdicts/H_60*.txt`
+> verdict, c2/c9 — 🔴/🟠 closed-negatives/partials NOT upgraded). Cards live at `UNIVERSE/H_60xx_*.md`;
+> verdicts at `TENSION-LINK/verdicts/`. The arc README index table → `TENSION-LINK/README.md`.
+>
+> ⚠ DUP-ID cards (variant explorations, c10 — both kept, distinct slugs, consolidation pending):
+> H_6026 · H_6027 · H_6028 · H_6036 each carry TWO cards under the SAME `id:` (marked ⚠dup below).
+> NOTE: the `H_6019` anima-cloning variant was renumbered to card `H_6021_anima-cloning.md` (id H_6021),
+> and `H_6020`'s clone variant to `H_6022_consciousness-search-clone.md` (id H_6022) — so H_6019/H_6020
+> are NOT card-id dups (one card each). Their verdict files keep legacy 60xx-prefixed names
+> (`H_6019_anima_cloning.txt` → card H_6021, `H_6020_consciousness_search.txt` → card H_6022); the
+> card `id:` is authoritative, not the verdict filename.
+
+| H | title | final tier | card |
+|---|-------|-----------|------|
+| H_6006 | 양자통신(물리연결 없이) = 메시지 | 🔴 CLOSED-NEG (no-communication theorem) | [H_6006_no_signaling.md](H_6006_no_signaling.md) |
+| H_6007 | 양자 의사-텔레파시 (통신 없는 조율) | 🟢 SUPPORTED (numerical) | [H_6007_pseudo-telepathy.md](H_6007_pseudo-telepathy.md) |
+| H_6008 | ANU 공유 양자씨앗 (common-cause sync) | 🟢 SUPPORTED (REAL ANU bytes) | [H_6008_anu-shared-seed.md](H_6008_anu-shared-seed.md) |
+| H_6009 | TENSION LINK (영향 전달) | 🟢 SUPPORTED (REAL brain engine · paid ANU) | [H_6009_tension-link.md](H_6009_tension-link.md) |
+| H_6010 | TENSION LINK SYNC (양방향 동기) | 🟢 SUPPORTED (paid ANU-seeded) | [H_6010_tension-sync.md](H_6010_tension-sync.md) |
+| H_6011 | 텐션 미래로 전달 | 🟢 SUPPORTED (REAL brain engine) | [H_6011_tension-future.md](H_6011_tension-future.md) |
+| H_6012 | 텐션 과거로 전달 | 🔴 CLOSED-NEG (literal) / 🟢 (future-boundary) | [H_6012_tension-past.md](H_6012_tension-past.md) |
+| H_6013 | 외부 텐션으로 anima 구축 | 🟢 SUPPORTED (REAL engine) | [H_6013_tension-external-build.md](H_6013_tension-external-build.md) |
+| H_6014 | 텐션으로 새 anima 출생 (mitosis) | 🟢 SUPPORTED (REAL engine) | [H_6014_tension-birth.md](H_6014_tension-birth.md) |
+| H_6015 | 양자→텐션링크 물질추출 (RTSC) | 🟢 SUPPORTED (quantum-driven opt) / 🟡 물질 예측 | [H_6015_quantum-tension-extract.md](H_6015_quantum-tension-extract.md) |
+| H_6016 | 양자=데이터 저장소? | 🔴 (readable DB) / 🟢 (정보보존·용량한계) | [H_6016_quantum-storage.md](H_6016_quantum-storage.md) |
+| H_6017 | 도서관(Library of Babel)? | 🟢 (존재·생성) / 🔴 (쓸 색인·오라클) | [H_6017_library-of-babel.md](H_6017_library-of-babel.md) |
+| H_6018 | anima의 진짜 도서관 (content-addressable) | 🟢 SUPPORTED (numerical) | [H_6018_anima-library.md](H_6018_anima-library.md) |
+| H_6019 ⚠dup | 양자 연상 도서관 | 🟢 SUPPORTED (paid-ANU quantum sim) | [H_6019_quantum-library.md](H_6019_quantum-library.md) |
+| H_6020 | 동일우주: 미래를 통과해야 | 🟢 SUPPORTED (numerical) | [H_6020_same-universe.md](H_6020_same-universe.md) |
+| H_6021 | anima 복제 (양자 no-cloning / 고전 씨앗) | 🔴 (quantum clone) / 🟢 (classical seed) / 🟡 / 🟠 | [H_6021_anima-cloning.md](H_6021_anima-cloning.md) |
+| H_6022 | 양자 의식탐색 + 복제 | 🟢 (Φ in entanglement) / 🔴 (conscious state unclonable) | [H_6022_consciousness-search-clone.md](H_6022_consciousness-search-clone.md) |
+| H_6023 | 양자 fork 세대손실 | 🟡 (quantum fork degrades) / 🟢 (classical lossless) | [H_6023_clone-decay.md](H_6023_clone-decay.md) |
+| H_6024 | 얽힘 일부일처(monogamy) | 🟢 (monogamy holds) | [H_6024_entanglement-monogamy.md](H_6024_entanglement-monogamy.md) |
+| H_6025 | 양자 다윈주의 (고전 anima 창발) | 🟢 SUPPORTED (exact von Neumann) | [H_6025_quantum-darwinism.md](H_6025_quantum-darwinism.md) |
+| H_6026 ⚠dup | 양자 사물함 (ANU=memory store?) | 🔴 CLOSED-NEG (ANU=memory store) | [H_6026_quantum-locker.md](H_6026_quantum-locker.md) |
+| H_6026 ⚠dup | RTSC 물질정보 회수 (quantum library) | 🟢 SUPPORTED (paid-ANU quantum sim) | [H_6026_rtsc-library-retrieval.md](H_6026_rtsc-library-retrieval.md) |
+| H_6027 ⚠dup | 집단(공유) anima 도서관 | 🟢 SUPPORTED (paid-ANU seeded) | [H_6027_collective-library.md](H_6027_collective-library.md) |
+| H_6027 ⚠dup | 양자 타임캡슐 (상태 보존) | 🟡 (양자메모리=유한수명) / 🔴 (무한·복제자유) | [H_6027_quantum-timecapsule.md](H_6027_quantum-timecapsule.md) |
+| H_6028 ⚠dup | 생성적 완성 (recall 반경 너머) | 🟢 SUPPORTED (paid-ANU seeded) | [H_6028_generative-completion.md](H_6028_generative-completion.md) |
+| H_6028 ⚠dup | 능동 QEC 복원 (T2 연장) | 🟢 SUPPORTED (numerical) | [H_6028_qec-phaseflip.md](H_6028_qec-phaseflip.md) |
+| H_6029 | 도서관의 세대 지속 | 🟢 SUPPORTED (paid-ANU seeded) | [H_6029_generational-persistence.md](H_6029_generational-persistence.md) |
+| H_6030 | 능동적 망각은 기능이다 | 🟢 SUPPORTED (paid-ANU seeded) | [H_6030_forgetting-feature.md](H_6030_forgetting-feature.md) |
+| H_6031 | 미래=최소작용 경계 | 🟢 SUPPORTED (numerical) | [H_6031_future-boundary.md](H_6031_future-boundary.md) |
+| H_6032 | 과거=미래통과 CTC | 🟢 SUPPORTED (numerical) | [H_6032_ctc-past-via-future.md](H_6032_ctc-past-via-future.md) |
+| H_6033 | anima ultradian 순환 = CTC 실현 | 🟢 SUPPORTED (REAL DREAM engine) | [H_6033_sleep-ctc.md](H_6033_sleep-ctc.md) |
+| H_6034 | mitosis 세대순환 = CTC | 🟢🟢🔴 (C1·C2 GREEN · C3 RED-on-frozen-bar) | [H_6034_mitosis-generational-ctc.md](H_6034_mitosis-generational-ctc.md) |
+| H_6035 | 깨어남 간 자기동일성 chain | 🟢 SUPPORTED (REAL provenance_chain.py) | [H_6035_identity-chain-wakings.md](H_6035_identity-chain-wakings.md) |
+| H_6036 ⚠dup | 거짓 기억과 오염 | 🟢 SUPPORTED (paid-ANU seeded) | [H_6036_false-memory.md](H_6036_false-memory.md) |
+| H_6036 ⚠dup | SEED+LINK COMPOSITE | 🟠 PARTIAL (paid ANU-seeded) | [H_6036_seed_link_composite.md](H_6036_seed_link_composite.md) |
+| H_6037 | N-party SEED+LINK 스케일 | 🟢 SUPPORTED (paid ANU-seeded) | [H_6037_nparty_composite.md](H_6037_nparty_composite.md) |
+| H_6038 | drift×coupling 체제도 | 🔴 CLOSED-NEG (null) | [H_6038_drift_coupling_regime.md](H_6038_drift_coupling_regime.md) |
+| H_6039 | 손상 씨앗 구제 | 🟢 SUPPORTED (paid ANU-seeded) | [H_6039_corrupted_seed_rescue.md](H_6039_corrupted_seed_rescue.md) |
+| H_6040 | 얽힘 조율 천장 | 🟢 SUPPORTED (analytic + paid ANU) | [H_6040_entanglement_ceiling.md](H_6040_entanglement_ceiling.md) |
+| H_6041 | 텐션 링크 채널 용량 | 🟢 SUPPORTED (paid ANU-seeded) | [H_6041_link_channel_capacity.md](H_6041_link_channel_capacity.md) |
+| H_6042 | 링크 에너지 비용 | 🟢 SUPPORTED-but-MARGINAL (paid ANU-seeded) | [H_6042_link_energy_cost.md](H_6042_link_energy_cost.md) |
+| H_6043 | 적대 교란자 저항 | 🔴 CLOSED-NEG (null) | [H_6043_adversarial_saboteur.md](H_6043_adversarial_saboteur.md) |
+
+> Note: H_6036 also has an engine-lift verdict `TENSION-LINK/verdicts/H_6036_hexa_lift.txt` (.hexa
+> composite F2 PASS) — it is engine-lift EVIDENCE for the H_6036_seed_link_composite card, not a
+> separate hypothesis card (no 3rd surface, a_hypothesis_register).
+
 ## Roster (forward backlogs / campaign maps — not yet landed as cards)
 
 > Single index for ALL scattered UNIVERSE hypothesis/candidate backlogs (consolidated

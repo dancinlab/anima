@@ -2,6 +2,21 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — doc(TENSION-LINK): H_6006–H_6043 arc를 a_hypothesis_register 2-파일 규칙으로 등록
+
+TENSION-LINK arc (anima↔anima 연결/통신 + ANU paid QRNG 양자 얽힘, H_6006–H_6043)를
+`a_hypothesis_register` 2-파일 규칙(인덱스 = `UNIVERSE/HYPOTHESES.md` · 카드 = `UNIVERSE/H_<id>_<slug>.md`)에
+맞춰 정리. (1) 누락 카드 1개 신설 — `UNIVERSE/H_6006_no_signaling.md` (🔴 CLOSED-NEG, 무신호 정리;
+F1 CHSH |S|=2.829 🟢 진짜 얽힘 · F2 0비트 전송 🔴 · F3 텔레포트=고전채널 필요 🔴), 기존
+`H_6007_pseudo-telepathy.md` 카드와 동일 템플릿. (2) `HYPOTHESES.md` 에 "TENSION-LINK arc
+(H_6006–H_6043)" 섹션 신설 — 42 카드 전부 한 줄/카드 인덱스(id · 제목 · verbatim tier · 카드 링크),
+tier 는 각 카드 `status_grade`(=`TENSION-LINK/verdicts/H_60*.txt` verdict)에서 verbatim (c2/c9 —
+🔴/🟠 미상향). dup-id 카드 4개(H_6026·H_6027·H_6028·H_6036, 각 id 2 카드) ⚠dup 으로 양쪽 색인(c10 미병합);
+H_6019/H_6020 클론 변종은 카드 id H_6021/H_6022 로 재번호돼 카드-id dup 아님(verdict 파일명만 legacy 60xx).
+(3) `TENSION-LINK/README.md` 의 stale "본문은 UNIVERSE/ 평면 목록" 문구를 새 HYPOTHESES.md 섹션 포인터로
+수정(surgical, c10). grep 확인: H_6006–H_6043 38 distinct id 전부 카드+색인 행 해결(42/42).
+registration-only — CORE/엔진/실험 미변경. a_hypothesis_register · a_claim_verify · c2 · c9 · c10 · c14.
+
 ## 2026-06-16 — H_1283 R6: 시상 MULTI-CHANNEL PARALLEL RELAY 🟢 (frozen bars; single-cut 천장 돌파)
 
 H_1283 (thalamus / global-workspace) 벽 돌파 R6 (a_break_the_wall, c16). R1..R5 는 모두 ONE shared
