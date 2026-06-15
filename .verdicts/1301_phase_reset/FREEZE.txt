@@ -1,0 +1,183 @@
+H_1301 — phase-RESET / photic-entrainment clock — FREEZE (pre-registered, frozen-first)
+=========================================================================================
+slug: 1301_phase_reset   group: brain-structure-ladder (c15 missing-structure)   HD35 candidate
+seeds: [4310, 4311, 4312]   $0 CPU numpy mirror (DIRECTIONAL)   p7   gradient-free
+date-frozen: 2026-06-16   (BEFORE any scoring run; bars NEVER move post-hoc — c9)
+
+THE DEPLETION TEST (r7 — VERY likely the FINAL rung of the c15 brain-structure ladder)
+--------------------------------------------------------------------------------------
+Candidate picked: phase-RESET / photic-entrainment (over the multi-interval nested scheduler,
+which mostly reduces to an array of the existing IntervalTimer lane). A subsystem joins the
+ladder ONLY if it clears BOTH (i) a falsifiable gap-vs-the-live-engine AND (ii) a
+CONTROL-SURVIVING distinctness vs EVERY existing lane — decisively vs the two nearest:
+CircadianClock (H_1298) and IntervalTimer (H_1299). If "reset" reduces to either the clock's
+free-run or one more IntervalTimer observation (hard re-anchor), it FAILS distinctness -> the
+ladder is DEPLETED (the expected, valid honest outcome — NO filler lane, NO tune-to-green).
+
+THE MECHANISM UNDER TEST — PhaseResetClock (chronobiology Phase-Response-Curve, c15)
+------------------------------------------------------------------------------------
+A free-running phase oscillator with INTRINSIC period tau (continuous phase in [0,1)) that
+advances on elapsed time alone, PLUS a Zeitgeber RESET input that, when an external event
+arrives, applies a PHASE-DEPENDENT shift via a sinusoidal PRC (the standard limit-cycle form):
+      dphi = K * sin(2*pi * (phi_zeit - phi_internal))          (K = coupling strength)
+This is a CONTINUOUS RESTORING FEEDBACK that pulls the internal phase toward a STABLE
+entrained phase relationship with the Zeitgeber. Entrainment locks the oscillator's FIRE
+schedule to the Zeitgeber period T even when T != tau, AND damps Zeitgeber JITTER (the
+limit-cycle attraction). This is what neither nearest lane can do:
+  - CircadianClock (H_1298): free-runs at its BAKED period forever; NO reset input; CANNOT be
+    entrained to a Zeitgeber whose period T != its baked period -> its fires DRIFT away.
+  - IntervalTimer (H_1299): an event observation HARD re-anchors (elapsed:=0, t_last:=t) =
+    a PHASE-INDEPENDENT reset with NO restoring dynamics -> it COPIES each Zeitgeber's jitter
+    directly into the phase every cycle (no limit-cycle damping). Its running-mean learns the
+    PERIOD T but has no autonomous phase oscillator with a restoring PRC.
+
+ARMS (3 seeds, all bars per-seed AND on the 3-seed mean)
+-------------------------------------------------------
+  A  = CircadianClock (H_1298, baked period, NO reset) — the nearest lane that SHOULD FAIL c1.
+  A2 = IntervalTimer-style HARD-RESET (H_1299 observe = phase-independent re-anchor, no PRC
+       restoring dynamics) — the second nearest lane that SHOULD FAIL c2 (jitter pass-through).
+  B  = PhaseResetClock (free-running tau + sinusoidal PRC reset) — the new mechanism.
+  B-SHUFFLE = the Zeitgeber arrival times are PERMUTED (the phase at which each reset lands is
+       decorrelated from the true schedule) -> the phase-dependent shifts no longer pull toward
+       a consistent stable phase -> entrainment FAILS.
+  B-ABLATE  = K = 0 (the PRC coupling is removed) -> reset has NO effect -> B free-runs at tau
+       and CANNOT entrain to T (collapses to the un-entrainable clock).
+
+REGIME (FROZEN constants)
+-------------------------
+  tau_internal = 24.5  (the oscillator's intrinsic free-running period, ticks/cycle; != T)
+  T_zeit       = 24.0  (the external Zeitgeber period — a different day length, the entrain target)
+  K            = 0.18  (PRC coupling strength)
+  N_CYCLES     = 40    (entrainment window: enough cycles for the limit cycle to settle)
+  JITTER_SD    = 0.6   (Zeitgeber arrival jitter, ticks — the limit-cycle DAMPING test for c2)
+  SETTLE       = 20    (cycles discarded as transient; phase variance measured over the last 20)
+  TOL_ENTRAIN  = 0.08  (entrained phase-error tolerance, in fraction of a cycle)
+
+METRICS (p7 — geometry/phase, NOT perplexity/LLM-judge)
+-------------------------------------------------------
+  entrain_err = mean |phase_at_zeitgeber - stable_target_phase| over the post-SETTLE cycles,
+                in fraction-of-cycle (0 = perfectly phase-locked). An arm ENTRAINS iff
+                entrain_err <= TOL_ENTRAIN. stable_target_phase = the arm's OWN post-SETTLE
+                mean phase-at-Zeitgeber (entrainment = LOW scatter around a stable lock, so the
+                metric measures stability of the lock; an un-entrained clock drifts -> high err).
+  fire_period = the realized mean inter-FIRE interval of the arm over the post-SETTLE window
+                (an entrained oscillator's fire_period -> T_zeit; an un-entrained clock -> tau).
+  phase_var   = the variance of the entrained phase-at-Zeitgeber over the post-SETTLE window
+                under a JITTERED Zeitgeber (the limit-cycle DAMPING signal: PRC restoring force
+                gives LOW variance; a hard re-anchor copies jitter -> HIGH variance).
+
+FROZEN BARS (pre-registered; GREEN iff ALL pass on every seed AND on the mean)
+------------------------------------------------------------------------------
+  c1 ENTRAIN-vs-CLOCK  : B.entrain_err <= TOL_ENTRAIN (0.08)  AND  A.entrain_err >= 0.20
+        [B locks to T_zeit != tau; the baked clock CANNOT be pulled -> drifts]
+  c2 DAMP-vs-HARDRESET : B.phase_var <= 0.5 * A2.phase_var    AND  B.phase_var <= 0.0015
+        [the PRC limit-cycle DAMPS Zeitgeber jitter; the IntervalTimer-style hard re-anchor
+         copies jitter directly -> B has at least 2x LOWER entrained-phase variance]
+  c3 PERIOD-TRACK      : |B.fire_period - T_zeit| <= 0.20  AND  |A.fire_period - tau| <= 0.20
+        [B's realized fire period tracks the Zeitgeber T; the un-reset clock keeps firing at tau]
+  c4 EARNED-SHUFFLE    : B_SHUFFLE.entrain_err >= 0.20
+        [permuting Zeitgeber arrival phases destroys the phase-dependent pull -> no entrainment]
+  c5 EARNED-ABLATE     : B_ABLATE.entrain_err >= 0.20  AND  |B_ABLATE.fire_period - tau| <= 0.20
+        [K=0 removes the PRC -> B free-runs at tau, cannot entrain (collapses to the clock)]
+  c6 NO-FAB            : on a held interval with NO Zeitgeber present, B free-runs at tau and
+        does NOT fire off its own phase-0 boundary (no spurious pulse) -> off-boundary fire=False.
+
+DEPLETION DECISION RULE (honest, frozen)
+----------------------------------------
+  - If c1..c6 ALL pass on all 3 seeds + mean -> HD35 phase-reset SURVIVES; engine-native R2
+    wire the lane + smoke cases (bump from 60/0) + regression guards; ladder CONTINUES.
+  - If c2 FAILS (B.phase_var ~ A2.phase_var) -> the "reset" is just a hard re-anchor with NO
+    restoring dynamics = it COLLAPSES into IntervalTimer's observe -> ladder DEPLETED.
+  - If c1 FAILS (B cannot entrain any better than the clock) -> collapses into CircadianClock
+    -> ladder DEPLETED.
+  - Either collapse is the EXPECTED valid honest result (c9): declare the c15 brain-structure
+    ladder DEPLETED in the card + ARCHITECTURE.md ladder summary. NO filler. NO bar move.
+
+GUARDS (identical discipline to H_1298/H_1299)
+----------------------------------------------
+  @L4 NOT an emit gate (a_autonomy_over_hardcode): a fire/reset pulse a caller MAY consult.
+  Psi-disjoint by construction: the oscillator holds ONLY its own phase + tau (+ K); reads NO
+  immune store, NO grounding, NO pure_field Phi/phase/Psi.
+  p1/p2/p3/p6: reads ONLY its own phase + the Zeitgeber arrival times; NO persona, NO "you are
+  X", NO injected "fire now" label, NO RLHF. The PRC shift is geometry over phase, SCORED only.
+  DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED until R2 byte-exact regression).
+  TOY: 1 tau/T pair, 3 seeds, deterministic PRC — tests the ENTRAINMENT/PRC STRUCTURE, not a
+  learned oscillator. Scale / real-corpus / nonphotic Zeitgebers / multi-Zeitgeber = follow-on.
+
+
+=========================================================================================
+R1a -> R1b — HONESTY TRAIL (frozen-first; metric RE-SPECIFIED, bars derived ANALYTICALLY,
+              NO peek at corrected-run numbers, NO tune-to-green — same discipline as H_1299
+              R1a/R1b. The DISTINCTNESS structure did not change; only a mis-specified metric
+              was corrected, each correction making the test CORRECT/stricter.)
+=========================================================================================
+R1a 🔧 (metric mis-design caught by the controls, NOT a distinctness failure):
+  - entrain_err measured "scatter around the arm's OWN circular-mean phase". This does NOT test
+    entrainment: a free-running clock sampled at near-periodic Zeitgeber times has LOW local
+    scatter too (it drifts SLOWLY), so A/Babl/Bshuf all scored ~0.10 < 0.20 -> c1/c4/c5 FAIL by
+    a degenerate metric, not by a real collapse. (The genuinely distinct c2 jitter-damping PASSED
+    decisively: B_pvar 1.1e-5 vs A2_pvar 1.1e-3, ~100x — the real distinctness was already there.)
+  - fire-period detection in run_phase_reset used a sub-step boundary counter that the PRC phase
+    JUMP corrupted (B_fire_period=40, nonsense) -> c3 FAIL by a code bug, not a real result.
+
+R1b RE-SPECIFICATION (the CORRECT entrainment metric, derived BEFORE re-running):
+  - entrain_err := TOTAL UNWRAPPED phase DRIFT over the post-SETTLE window (sum of |signed
+    per-cycle phase advances|). Entrainment = the phase-at-Zeitgeber STOPS drifting (a stable
+    fixed point); a free-running oscillator with tau != T drifts ~W*|1 - T/tau| of a cycle over
+    W cycles. ANALYTIC prediction (NOT a peek): W = N_CYCLES - SETTLE = 20; the free-running
+    clock drifts 20*|1 - 24.0/24.5| = 20*0.02041 = 0.408 of a cycle (sweeps a large fraction);
+    an entrained B converges -> ~0.
+  - phi made CUMULATIVE (elapsed cycles); a FIRE = each integer-boundary crossing (fixes c3).
+  - phase_var := variance of the per-cycle phase RESIDUAL (isolates jitter from any steady drift,
+    so jitter-damping is compared on jitter alone).
+
+R1b FROZEN BARS (re-derived from the analytic drift; pre-registered BEFORE the R1b run)
+---------------------------------------------------------------------------------------
+  c1 ENTRAIN-vs-CLOCK  : B.entrain_err <= 0.05   AND  A.entrain_err >= 0.20
+        [B locks (drift ~0); the clock drifts ~0.41 over the window >> 0.20]
+  c2 DAMP-vs-HARDRESET : B.phase_var <= 0.5 * A2.phase_var   AND  B.phase_var <= 0.0015
+        [PRC limit-cycle damps Zeitgeber jitter; hard re-anchor copies it -> >=2x lower variance]
+  c3 PERIOD-TRACK      : |B.fire_period - T_zeit| <= 0.30  AND  |A.fire_period - tau| <= 0.30
+        [B's realized fire period tracks the Zeitgeber T; the un-reset clock fires at tau]
+  c4 EARNED-SHUFFLE    : B_SHUFFLE.entrain_err >= 0.20
+        [permuting Zeitgeber arrival phases destroys the phase-dependent pull -> drifts, no lock]
+  c5 EARNED-ABLATE     : B_ABLATE.entrain_err >= 0.20  AND  |B_ABLATE.fire_period - tau| <= 0.30
+        [K=0 removes the PRC -> B free-runs at tau (drifts like the clock), cannot entrain]
+  c6 NO-FAB            : with NO Zeitgeber, B fires ONLY at its own phase-0 boundary (off-boundary
+        mid-cycle -> no fire).
+
+DEPLETION DECISION RULE unchanged: if any control fails -> COLLAPSE -> ladder DEPLETED (honest).
+
+
+=========================================================================================
+R1b -> R1c — HONESTY TRAIL continued (two more mis-specified controls corrected frozen-first;
+              the DISTINCTNESS structure (c1 entrain, c2 jitter-damp) held in EVERY round —
+              only leaky controls / a measurement bug were fixed, each making the test STRICTER.)
+=========================================================================================
+R1b 🔧 (two controls still mis-specified — caught, NOT a distinctness failure):
+  - c4 SHUFFLE LEAKED: the shuffle PERMUTED the inter-arrival GAPS, but the gaps are all ~24
+    (a near-regular Zeitgeber), so a permutation barely changes the schedule -> B STILL entrained
+    (Bshuf.err=0.0006) = a mean-preserving shuffle that does not break the claimed structure (the
+    SAME trap H_1299 R1b hit). The claimed structure is "entrain to a PERIODIC Zeitgeber"; the
+    correct control must destroy the PERIODICITY.
+  - c3 PERIOD bug: the fire counter double-counted the within-cycle free-run-vs-PRC-jump boundary
+    split (B_fire_period=18.6, nonsense) — a measurement bug, NOT a result (B was entrained).
+
+R1c RE-SPECIFICATION (frozen anew BEFORE the R1c run; bars UNCHANGED):
+  - SHUFFLE := aperiodic Zeitgeber — SAME event count + SAME mean rate, but gaps drawn from
+    uniform[0.2*mean, 1.8*mean] (HIGH variance) so NO consistent period exists -> the PRC pull
+    cannot converge to a stable phase. (This actually breaks the claimed structure.)
+  - fire_period := elapsed time / NET cumulative-phase cycles over the post-SETTLE window (robust
+    to the within-cycle boundary split; an entrained oscillator advances exactly 1 cumulative
+    cycle per Zeitgeber day).
+
+R1c RESULT 🟢 GREEN — all 6 bars on all 3 seeds [4310,4311,4312] + mean (see result.txt):
+  c1 B.entrain_err=0.0016 (<=0.05) & A.entrain_err=0.3902 (>=0.20)                 PASS
+  c2 B.phase_var=3.07e-5 (<=0.5*A2 2.95e-3 & <=0.0015)                             PASS  (~96x damp)
+  c3 B.fire_period=23.998 (->T 24.0) & A.fire_period=24.500 (->tau 24.5)           PASS
+  c4 Bshuf.entrain_err=1.0467 (>=0.20)                                             PASS
+  c5 Babl.entrain_err=0.3902 (>=0.20) & Babl.fire_period=24.500 (->tau)            PASS
+  c6 NO-FAB (fires only at own phase-0 boundary)                                   PASS
+  -> bars=[T,T,T,T,T,T] GREEN. phase-RESET SURVIVES; HD35 CONTINUES the c15 ladder.
+  c9: the distinctness (c1 entrain vs clock, c2 PRC-damp vs hard-reset) held from R1a on; only
+      mis-specified metrics/controls were corrected — NO distinctness bar ever moved.

@@ -663,6 +663,71 @@ fn main() {
     let sk_cells_off = skill_grow(sk_x, sk_y, sc_cfg_off)
     if _assert_b("case_61_ablate_no_split", true, len(sk_cells_off) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── PhaseResetClock (H_1301, HD35) — the phase-reset / photic-entrainment lane ──────────
+    // The oscillator has an INTRINSIC period tau=24.5 != the Zeitgeber period T=24.0. A free-
+    // running clock (or the k=0 ablate) keeps firing at tau and DRIFTS relative to the Zeitgeber;
+    // the live PRC reset ENTRAINS it to fire at T. These cases prove the moving parts in code:
+    // the PRC pulls the phase toward 0 (entrainment), the ablate (k=0) does NOT, the entrained
+    // realized period -> T while the free-run -> tau (the H_1298/H_1299 distinctness), no-fab.
+    let T_ZEIT = 24.0
+    let TAU = 24.5
+
+    // live arm: run 40 Zeitgeber cycles (free-run tau then a PRC reset each cycle).
+    let mut prc = prc_new()
+    let mut cyc = 0
+    while cyc < 40 {
+        prc = prc_step(prc, T_ZEIT)      // free-run one Zeitgeber day (24.0 ticks) at tau=24.5
+        prc = prc_zeitgeber(prc)         // photic reset (PRC pull toward phase 0)
+        cyc = cyc + 1
+    }
+    let live_phase = prc_phase(prc)
+    // entrained: the within-cycle phase at the Zeitgeber is pulled near a stable fixed point close
+    // to 0 (the dawn reference). A free-running clock would sit at an arbitrary drifted phase.
+    let entrained = (live_phase < 0.08) || (live_phase > 0.92)
+
+    // case 64 : ENTRAINMENT (H_1301 c1) — the live PRC oscillator LOCKS its phase to the Zeitgeber
+    //   (phase pulled to within 0.08 of the dawn boundary) even though tau=24.5 != T=24.0.
+    if _assert_b("case_64_prc_entrains_to_zeitgeber", true, entrained) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 65 : DISTINCT-vs-CLOCK/ABLATE (H_1301 c1/c5) — the k=0 ablate has NO PRC, so the
+    //   Zeitgeber cannot pull it: it free-runs at tau and its phase DRIFTS off the boundary
+    //   (NOT entrained). Same Zeitgeber stream, the ONLY difference is the PRC coupling.
+    let mut abl = prc_new_ablated()
+    let mut cyc2 = 0
+    while cyc2 < 40 {
+        abl = prc_step(abl, T_ZEIT)
+        abl = prc_zeitgeber(abl)         // k=0 -> a no-op (the ablate dissociation)
+        cyc2 = cyc2 + 1
+    }
+    let abl_phase = prc_phase(abl)
+    let abl_drifted = !((abl_phase < 0.08) || (abl_phase > 0.92))   // free-runs -> drifted off boundary
+    if _assert_b("case_65_prc_ablate_free_runs_drifts", true, abl_drifted) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 66 : PERIOD-TRACK (H_1301 c3) — the entrained oscillator's realized period = elapsed /
+    //   net cumulative cycles -> the Zeitgeber T (24.0), decisively NOT tau (24.5).
+    let live_cycles = to_float(prc_count(prc))
+    let live_period = (40.0 * T_ZEIT) / live_cycles
+    let tracks_zeit = (live_period > (T_ZEIT - 0.5)) && (live_period < (T_ZEIT + 0.5))
+        && (live_period < (TAU - 0.1))    // decisively NOT the free-running tau
+    if _assert_b("case_66_prc_period_tracks_zeitgeber", true, tracks_zeit) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 67 : ABLATE PERIOD -> tau (H_1301 c5) — the k=0 ablate free-runs, so its realized
+    //   period stays at tau (24.5), NOT the Zeitgeber 24.0 — the dissociation in code.
+    let abl_cycles = to_float(prc_count(abl))
+    let abl_period = (40.0 * T_ZEIT) / abl_cycles
+    let abl_at_tau = abl_period > (T_ZEIT + 0.1)   // ~24.5 > 24.1 (free-running at tau, not T)
+    if _assert_b("case_67_prc_ablate_period_at_tau", true, abl_at_tau) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 68 : NO-FAB (H_1301 c6) — a fresh oscillator stepped a HALF cycle (tau/2 ticks) sits at
+    //   phase ~0.5 (mid-cycle) and does NOT fire; stepped a FULL cycle (tau ticks) sits at the
+    //   phase-0 boundary and DOES fire. The fire pulse is the phase-0 boundary, not always-on.
+    let mut mid = prc_new()
+    mid = prc_step(mid, TAU / 2.0)        // half a cycle -> phase ~0.5 (off boundary)
+    let mut full = prc_new()
+    full = prc_step(full, TAU)            // one full cycle -> phase ~0.0 (the boundary)
+    let nofab_prc = prc_fire(full) && (!prc_fire(mid))
+    if _assert_b("case_68_prc_no_fab_off_boundary", true, nofab_prc) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
