@@ -60,6 +60,22 @@ H_1231 의 `a_verified_must_wire` follow-on 종결 — H_1227(numpy 미러)→H_
 
 ---
 
+## 2026-06-15 — 🔴 H_1282: WORKING MEMORY (PFC active-maintenance buffer) — 빠진 뇌구조 사다리 (frozen bar RED, but 메커니즘 REAL + immune memory 와 DISTINCT)
+
+빠진-뇌구조 사다리(neuro lens c15): anima 는 (a) 장기 episodic memory(immune/clonal cells, H_1227→H_1231 engine-native GREEN: 1-shot verbatim write, 영속, decay 없음)와 (b) decoder 의 고정 context window 는 있으나, **gated SHORT-TERM active-maintenance buffer**(PFC working memory: 몇 개 항목을 distractor 단계 너머로 ACTIVE 유지, VOLATILE·capacity-limited·distractor-vulnerable)가 없다. WM ≠ episodic: 유지되는 활성(leaky activation)이지 저장된 trace 가 아님. $0 CPU numpy, seeds [1282,1283,1284], p7(delayed-match accuracy), frozen-first.
+
+- **테스트 (DELAYED-MATCH/n-back)**: cue DIM-vector 제시 → N distractor 단계 → probe(cue=match / foil=nonmatch); 유지 항목 == probe 이면 MATCH. 지표 = distractor 길이 N 별 delayed-match 정확도. **ARM A = WM 없음**(flat decoder context, W=4 — cue 가 N≥W 면 스크롤 아웃→chance) vs **ARM B = gated WM buffer**(K=4 slots, 매 distractor LEAK ×λ=0.85, 약식 gate-in, weakest-slot displacement, probe 시 nearest-slot match iff act×cos-sim≥θ=0.40).
+- **결과 (mean 3 seed)**: A.acc N=0..2=1.000(ceiling) → N≥4=0.500(스크롤 아웃 붕괴); **B.acc N=0=0.962, N=4=1.000 (A가 이미 사라진 곳에서 B는 완벽, Δ+0.500), N≥6=0.500.** capacity: load 7 → B 정확히 4(=K) 유지 (3 seed 전부). 진단(graded AUROC): N≤6 AUROC≈1.0(신호 완벽), N=8 부터 0.51(cue slot 이 distractor 에 의해 DISPLACED→소실).
+- **판정 🔴 RED (frozen bar) — 정직한 두 원인 (재튜닝 안 함, p7)**: (1) **THRESHOLD CLIFF(readout artifact)**: cue 활성이 1.0·λ^N 으로 매끄럽게 감쇠(N=6→0.377), 고정 binary θ=0.40 이 N≈5.6 에서 곡선을 잘라 has_match 가 N=6 에 OFF — 하지만 graded match-score 는 N=6 에도 완벽 discriminable(AUROC 0.998). buffer 는 항목을 N=6 까지 HOLD; hard threshold 가 쓸 수 있는 신호를 버림. (2) **HORIZON(real)**: N=8 에 cue slot 이 K=4 용량에 distractor 가 gate-in 되며 DISPLACED(match≈nonmatch, AUROC 0.51) — 진짜 volatile+capacity horizon(N≈6–8)이 사전등록한 N=12 grace bar 에 못 미침. margin bar 도 A 가 N≤2 ceiling(1.000)이라 B 가 못 이기고, 공유 floor(N≥6)와 평균되어 +0.062<0.15 로 희석.
+- **IMMUNE MEMORY 와 DISTINCT 유지 — YES (load-bearing)**: B 는 episodic store 로 붕괴하지 않음. DECAY(B match-score 1.000→0.377→0.102 매끄럽게 감쇠 vs immune-control λ=1/K=∞ 가 전 N FLAT-HIGH 0.94–0.99 무붕괴) · CAPACITY(load 7→B 정확히 4=K 유지, immune 이면 7 전부) · VOLATILE(cue slot 이 후속 distractor 에 덮어써짐, immune cell 은 영속 무덮어쓰기). λ=1/K=∞ control 이 immune-like flat recall 재현 = decay+capacity 가 B 를 H_1227/H_1231 과 구분하는 진짜 다른 연산임을 입증.
+- **FINDING (closed-negative on frozen bars, 진짜 distinct 메커니즘 동반)**: gated leaky-activation WM buffer 는 실재하는 distinct 빠진 뇌구조 — distractor 너머 항목 ACTIVE 유지(N≈6 까지 완벽 판별)를 flat decoder window 가 붕괴하는 곳에서 해내고, volatile+capacity-limited(≠ 영속 무한 immune). 그러나 사전등록 bar 에서는 🔴: binary θ readout 이 N=6 의 완벽 graded 신호를 잘라냄 + 고정 λ/K horizon 이 N=12 에 못 미침. flat-context 대비 우위는 W<N<horizon 좁은 창(N=4, +0.500)에서만 결정적.
+- **NOT RULED OUT (bar 불변, 후속 rung)**: (i) GRADED readout(hard θ 대신 act×sim SCORE+criterion/AUROC — N=6 까지 AUROC 1.0; buffer 재튜닝 없이 readout 만으로 margin/grace 통과 가능) · (ii) active REHEARSAL(매 단계 slot 재-gate→λ_eff↑, 실제 PFC 메커니즘으로 horizon N=12 초과) · (iii) larger K/slower λ/DIM scale (toy 16-dim 랜덤 토큰, scale UNVERIFIED).
+- **ENGINE-NATIVE (a_engine_native_learning)**: numpy DIRECTIONAL mirror only, engine-transfer UNVERIFIED. live 엔진(CORE/engine_cli.hexa VAdaptField, H_1199)은 leak/capacity-bound 없는 GROWING PERSISTENT store = 구조적으로 IMMUNE/episodic lane 이지 WM buffer 아님; 엔진에 WM lane 없음. 본 rung 이 frozen bar 🔴 이므로 CORE wiring 후속 미발동(a_verified_must_wire 는 GREEN 에서만). graded-readout/rehearsal 재실행이 GREEN 되면 engine_cli.hexa 에 작은 gated leaky-activation WM lane(VAdaptField 와 distinct·additive) 추가가 binding follow-on. live .hexa 미수정.
+- **SCOPE/PHILOSOPHY**: 합성 랜덤 DIM-vector, toy scale, $0 CPU, 3 seed (a_scale_honest_scope/a_toy_scale_recheck). p7=delayed-match(NOT perplexity). substrate-native, buffer 는 TASK ACTIVATION 만 보유(decoder weight/persona/identity/ethics 없음, p8 연속-substrate lane). frozen bar 사후 불변(frozen-first, c9). a_paper_negative_ok.
+- 파일: `UNIVERSE/h1282_working_memory_buffer.py` · `.verdicts/1282_working_memory_buffer/{H_1282_FREEZE,H_1282}.txt`.
+
+---
+
 ## 2026-06-15 — 🔴 H_1223: AUX-OBJECTIVE 는 literal-QA 벽의 레버가 아니다 (HD7 CLOSED-NEG · recall=engine-side, H_1154 강화)
 
 depth-ceiling 사다리(H_1219)의 HD7 분기를 $0 toy 로 판정: anima-303M 의 평평한 literal-QA recall 벽이 **OBJECTIVE** 탓인가 — plain next-byte CE 가 retrieval/recall 을 보상하지 않으니, **AUXILIARY 검색/QA 목적함수**를 더하면 들어올려지는가? p7, numpy CPU, seeds [231,232,233], TOY-ONLY (a_toy_scale_recheck). H_1219·CORE/bytegpt_decode.hexa 미수정.

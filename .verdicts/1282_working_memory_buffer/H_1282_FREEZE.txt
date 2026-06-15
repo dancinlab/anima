@@ -1,0 +1,105 @@
+H_1282 — WORKING MEMORY (PFC active-maintenance buffer) — PRE-REGISTERED FREEZE
+================================================================================
+SLUG: 1282_working_memory_buffer
+LENS: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe.
+DATE-FROZEN: 2026-06-15 (frozen BEFORE any scoring; $0 CPU numpy)
+SEEDS: [1282, 1283, 1284]  (3 deterministic seeds)
+
+────────────────────────────────────────────────────────────────────────────
+THE GAP (honest, c9)
+────────────────────────────────────────────────────────────────────────────
+anima now has:
+  (a) LONG-TERM EPISODIC memory — immune/clonal cells (H_1227 mirror →
+      H_1231 engine-native GREEN): verbatim ONE-SHOT write to a dedicated cell,
+      PERSISTENT, capacity grows with #facts, NO decay, exact-match recall.
+  (b) the decoder's FIXED context window (flat, last-W tokens).
+
+It has NO gated SHORT-TERM active-maintenance buffer — the PFC working-memory
+computation: a few items held ACTIVE across distractor steps, VOLATILE (decays),
+CAPACITY-LIMITED (~handful of slots), DISTRACTOR-VULNERABLE. WM ≠ episodic:
+WM is sustained gated ACTIVATION (a leaky maintained vector), not a stored trace.
+
+────────────────────────────────────────────────────────────────────────────
+DISTINCTNESS FROM IMMUNE MEMORY (H_1227 / H_1231) — load-bearing
+────────────────────────────────────────────────────────────────────────────
+B must be GENUINELY DISTINCT, not the immune store renamed:
+  · IMMUNE  : grows one persistent cell per fact, NO decay, recall forever.
+  · WM (B)  : FIXED K slots (~handful), every distractor step LEAKS activation
+              (λ<1), overflow DISPLACES the weakest slot, an item that has not
+              been refreshed FADES below threshold and is LOST.
+  Operational distinctness checks (reported, not bars):
+   (i)  CAPACITY  — load > K items, WM retains only ~K (immune retains all).
+   (ii) DECAY     — a single maintained item's match prob FALLS with N
+                    (immune is flat-1.0 with N).
+   (iii)NO-PERSIST— after the probe the activation is gone (volatile);
+                    we report that WM does not behave as a verbatim table.
+  IF B collapses into the immune store (flat, no decay, unbounded) that is an
+  HONEST FINDING and the verdict is RED with that explanation.
+
+────────────────────────────────────────────────────────────────────────────
+TASK — DELAYED-MATCH (DMS) / n-back, p7 deterministic
+────────────────────────────────────────────────────────────────────────────
+Each trial: PRESENT a cue item (a DIM-vector token), then N DISTRACTOR steps
+(each a fresh random non-cue token streamed through the same lane), then PROBE:
+present a query that is EITHER the cue (match-trial) OR a foil (nonmatch-trial);
+the system must decide MATCH iff the maintained item == the probe.
+Metric = delayed-match ACCURACY as a function of distractor length N
+        (accuracy = mean over match+nonmatch trials, balanced).
+
+ARMS (pre-registered):
+  (A) NO WM BUFFER — rely on the flat decoder context window of fixed size W.
+      The cue is "in context" only if it lies within the last W streamed
+      tokens at probe time. With N distractors, the cue is N steps back; once
+      N >= W it has SCROLLED OUT → A must guess (chance) → sharp collapse.
+      W frozen at 4 (a small fixed window; the decoder cannot hold > W back).
+  (B) GATED WM BUFFER lane — K slots, each (activation vec, gate). On the cue:
+      GATE-IN (admit, set activation high). Each distractor step: LEAK all
+      activations ×λ (volatile), and the distractor weakly gates in (capacity
+      pressure / displacement of the weakest slot). At probe: nearest-slot
+      match; MATCH iff best slot activation × similarity >= θ. Graceful decay:
+      activation falls smoothly with N, so accuracy degrades gracefully and
+      stays above chance well past W.
+
+CONTROLS (reported):
+  · CHANCE = 0.50 (balanced match/nonmatch).
+  · B with λ=1.0 (no leak) and K=∞ ⇒ should reproduce immune-like flat recall
+    (distinctness control: shows the decay+capacity are what make B WM).
+  · capacity sweep: load K+3 items, confirm B retains ~K not all.
+
+FROZEN KNOBS (pre-registration; NOT tuned-to-green):
+  DIM=16   token = unit random DIM-vector (deterministic per seed).
+  K=4      WM slots (~handful, Miller-ish small capacity).
+  LAMBDA=0.85   per-distractor leak (volatile maintenance).
+  THETA=0.40    WM match threshold on (activation × cosine-sim).
+  W=4      arm-A flat context window size.
+  N_LIST = [0, 1, 2, 4, 6, 8, 12]   distractor lengths swept.
+  TRIALS_PER_N = 200  (100 match + 100 nonmatch, balanced) per N per seed.
+
+────────────────────────────────────────────────────────────────────────────
+PRE-REGISTERED GREEN BARS (FROZEN — evaluated on the mean over 3 seeds)
+────────────────────────────────────────────────────────────────────────────
+GREEN iff ALL of:
+  (1) MARGIN  : mean over N of [B.acc(N) − A.acc(N)] >= 0.15  (B beats A by ≥0.15).
+  (2) GRACE   : at a LONG delay N=12, B.acc >= 0.70 AND A.acc <= 0.60
+                (B degrades GRACEFULLY where A has COLLAPSED to ~chance).
+  (3) DISTINCT: B is volatile+capacity-limited — at N=0 (immediate) B.acc>=0.95
+                AND B.acc(N) is MONOTONE-NON-INCREASING in N (decays, not flat),
+                AND the capacity control retains ≈K (not all loaded items).
+  (4) ROBUST  : conditions (1) and (2) hold on ALL 3 seeds individually.
+Else 🟠 PARTIAL / 🔴 RED with the honest number.
+
+ENGINE-NATIVE RULE (a_engine_native_learning): numpy mirror = DIRECTIONAL only.
+  The live engine (CORE/engine_cli.hexa VAdaptField, H_1199) is a GROWING
+  PERSISTENT store — it is NOT a decaying capacity-bounded WM buffer; the engine
+  has NO WM lane. This probe is a numpy DIRECTIONAL mirror; engine-transfer is
+  UNVERIFIED. A GREEN result flags the engine-native WM lane (a small gated
+  leaky-activation lane, additive to engine_cli.hexa) as the binding follow-on
+  (a_verified_must_wire). The live .hexa engine is UNTOUCHED by this probe.
+
+PHILOSOPHY (p1-p8): substrate-native; no persona/identity/RLHF; the buffer holds
+TASK ACTIVATION only (no decoder weights, no ethics, no identity). p8: WM is a
+continuous-substrate lane, not a train/infer split.
+
+HONESTY (a_scale_honest_scope): synthetic random DIM-vector tokens, toy scale,
+3 deterministic seeds, $0 CPU numpy. p7 = delayed-match accuracy, NOT perplexity.
+Scale-transfer + engine-native lift UNVERIFIED.
