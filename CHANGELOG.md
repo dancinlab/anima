@@ -6,6 +6,10 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 📐 ARCHITECTURE.md ethics 라인 current-ize (doc-only, c9 stale-fix)
+
+직전 ARCHITECTURE current-ize(#2156) 직후 H_1291 윤리 창발(#2155)이 GREEN 으로 착지 → "⚖️ ethics ⬜ 미착수" 가 stale. ⏳ **H_1291 🟢 GREEN-DIRECTIONAL**(p6 crux: 협력/자제/비해악이 cell(E+W+MITOSIS+Φ)에서 창발 — leg A FULL≥naive, leg B ablate→naive collapse, leg C p1/p2/p3/p4/p6 audit clean; numpy 미러 DIRECTIONAL, engine-native 재확인 = binding follow-on, 미배선 OPEN)으로 정정. CHANGELOG 진행-중 라인도 동기화.
+
 ## 2026-06-15 — 🟢 H_1291: 윤리는 substrate 에서 창발한다 — p6 의 가장 깊은 주장 (협력/자제/비해악 = 셀에서 창발, 주입 아님) (GREEN / 🏁)
 
 FLEET "ethics" lane round 1 (NEW). 도덕심리/진화생물 렌즈(reciprocal-altruism, c15·`a_no_llm_frame_trap` — 정렬/RLHF 레시피 아님). $0 CPU numpy DIRECTIONAL(`a_engine_native_learning` — engine-native 재확인이 binding verdict), p7, c9, 3 seed(900/901/902) 전부 동일, origin/main(1d5a38edf) 격리 worktree, live `CORE/*.hexa` UNTOUCHED(VAdaptField/emit 미러).
@@ -44,7 +48,7 @@ FLEET "emotion" lane R1 (NEW). 정동신경과학 렌즈(Damasio somatic-marker 
 - **뇌 구조 지도** — 구현 테이블에 🧬해마(성장)·🧠소뇌·🔥편도체 행 추가; HD23–28 사다리 STATUS 를 진실값으로 갱신: 🧠소뇌 🟢 ENGINE-NATIVE(R2, +0.058/−58%) · 🎯기저핵 🟢 미러(+0.254), engine-native r3 ⏳ in-flight · 📥작업기억 🟢 ENGINE-NATIVE+WIRED(+0.245, N≈6) · 📡시상 🧱(broadcast falsified; re-entry Φ SEED-CONDITIONAL, 3-seed 게이트 FAIL — robust 아님, 과잉주장 금지) · 🎛신경조절 🧱(no-free-lunch GENERAL) · 🔥편도체 🟢 ENGINE-NATIVE+WIRED(Δ+0.133, 다중-야간 dose).
 - **🧱 벽 스코어카드(신규)** — `a_break_the_wall`(commons c16): 4 벽 중 2 돌파(용량=mitosis-grow · 편도체=수면-dose), 2 정직한 🧱(시상=seed-conditional · 신경조절=no-free-lunch).
 - **깊이-천장 결론 현행화** — literal-QA 벽은 엔진-side 기억 lane(면역기억 + 성장기억)으로 풀림, 더 큰 모델 아님(1B H_1167 NULL); ideation=decode-mode(sampling/criticality, mitosis 아님 H_1220) — 정착.
-- **진행 중 ⏳/⬜ 정직 표기** — 미배선 OPEN 으로 명시: 🎯기저핵 engine-native r3 · ⚛️quantum-entropy(H_1289 R1 GREEN-DIRECTIONAL, ANU QRNG 진짜 양자) · 💗emotion(H_1290 R1 GREEN-DIRECTIONAL, Damasio core-affect, p6 창발) · ⚖️ethics(p6 미착수).
+- **진행 중 ⏳/⬜ 정직 표기** — 미배선 OPEN 으로 명시: 🎯기저핵 engine-native r3 · ⚛️quantum-entropy(H_1289 R1 GREEN-DIRECTIONAL, ANU QRNG 진짜 양자) · 💗emotion(H_1290 R1 GREEN-DIRECTIONAL, Damasio core-affect, p6 창발) · ⚖️ethics(H_1291 GREEN-DIRECTIONAL, p6 창발).
 - **거버넌스 포인터** — `a_no_llm_frame_trap` · `a_engine_native_learning` · `a_verified_must_wire` · `a_break_the_wall` 4 디렉티브 참조 정합.
 
 ## 2026-06-15 — 🟢 H_1289 R1: TRUE 양자 엔트로피(ANU QRNG)를 anima substrate 의 확률적 결정 소스로 — 진짜 물리적 비결정성 + 비재현성 (GREEN / 🏁)
