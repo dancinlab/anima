@@ -55,22 +55,25 @@ fn main() {
         let mut t = 0
         while t < n_samp { let v = samples[base + t]; sm = sm + v; if v < mn { mn = v } if v > mx { mx = v } t = t + 1 }
         let amp = mx - mn
-        // detrend: 윈도우 이동평균(baseline) 제거 → 느린 baseline drift 제거 (PPG 표준)
+        // 밴드패스(고역): baseline ±125(=2s) 제거 → <0.5Hz 호흡/drift 제거, 박동(0.7-3.5Hz) 보존
         let mut d = []
         let mut t2 = 0
         while t2 < n_samp {
             let mut s2 = 0.0
             let mut cnt = 0
-            let mut u = t2 - 75
-            while u <= t2 + 75 { if u >= 0 && u < n_samp { s2 = s2 + samples[base + u]; cnt = cnt + 1 } u = u + 1 }
+            let mut u = t2 - 125
+            while u <= t2 + 125 { if u >= 0 && u < n_samp { s2 = s2 + samples[base + u]; cnt = cnt + 1 } u = u + 1 }
             d = d.push(samples[base + t2] - s2 / to_float(cnt))
             t2 = t2 + 1
         }
-        // 자기상관 최대 lag → 박동 주기. lag 41(180BPM)~187(40BPM) @125Hz.
-        let mut bestlag = 41
+        // 생리적 박동대역 lag[50,150] = 50~150 BPM @125Hz 안에서 자기상관 전역 최대 = 박동주기.
+        // (호흡=긴 lag·dicrotic 2배하모닉=짧은 lag 둘 다 대역 밖으로 배제; 진짜 주기 autocorr 최강)
+        let LMIN = 50
+        let LMAX = 150
+        let mut bestlag = LMIN
         let mut bestr = 0.0 - 1.0e30
-        let mut L = 41
-        while L <= 187 {
+        let mut L = LMIN
+        while L <= LMAX {
             let mut r = 0.0
             let mut t3 = 0
             while t3 < n_samp - L { r = r + d[t3] * d[t3 + L]; t3 = t3 + 1 }
