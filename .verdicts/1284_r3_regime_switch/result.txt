@@ -1,0 +1,100 @@
+H_1284_R3 — RESULT (regime-switching attempt on the HD27 neuromodulation wall)
+==============================================================================
+VERDICT: 🧱 RED_NO_LUNCH (wall HELD) — but with a sharpened, regime-tracking
+characterization. The frozen falsifier (FREEZE.txt, MARGIN 0.05, c1/c2/c3) is
+honored VERBATIM; c1 fails. NO tune-to-green (a_break_the_wall, c9).
+
+────────────────────────────────────────────────────────────────────
+THE GENUINE OPPOSITE-REGIME ENVIRONMENT (validated before scoring)
+────────────────────────────────────────────────────────────────────
+Two interleaved regimes that demand OPPOSITE write-on-cue policies (validated by
+direct probe — see result_v1/v2 notes):
+  ENCODE (drift rewrites, clean keys):  plasticity-ON 0.533 vs OFF 0.233 (+0.300)
+  RECALL (noisy cues σ=0.10, tight cap): plasticity-OFF 0.490 vs ON 0.133 (+0.357)
+=> NO single fixed policy is good at both (the structural gap H_1284 lacked).
+
+────────────────────────────────────────────────────────────────────
+FROZEN SCORED RESULT (v3, learned-polarity switcher; seeds 11/22/33)
+────────────────────────────────────────────────────────────────────
+best_fixed: writes_enabled=True, LR0=0.3, TH0=0.4 (grid, disjoint tune seed)
+switch_polarity_learned = -1 (writes-on when surprise LOW; calibrated on the
+   DISJOINT tune seed by outcome — NOT given the regime label; no score-seed leak)
+
+  A (best FIXED)        cap_mean = 0.2467   per_seed [0.1933, 0.2733, 0.2733]
+  B (regime-SWITCHER)   cap_mean = 0.2622   per_seed [0.2200, 0.2600, 0.3067]
+  B_shuffle (control)   cap_mean = 0.1467   per_seed [0.1133, 0.1133, 0.2133]
+  C (H_1284 gain-tuner) cap_mean = 0.2533   per_seed [0.2067, 0.2800, 0.2733]
+
+  B − A per seed = [+0.0267, -0.0133, +0.0333]   mean = +0.0156
+  B − B_shuffle  mean = +0.1156      C − A mean = +0.0067
+  fab: A 0.044  B 0.051  (both low, honest abstain intact)
+
+FROZEN FALSIFIER EVALUATION (verbatim):
+  c1 (B ≥ A+0.05 EVERY seed)         : FALSE  — mean lift only +0.0156, and seed
+                                       22 is NEGATIVE (-0.0133). Sub-bar.
+  c2 (shuffle collapses, Bs ≤ A+0.05): TRUE   — Bs 0.1467 ≤ 0.2967; the lift
+                                       VANISHES under phase-scramble (B−Bs +0.116).
+  c3 (gain-tuner C < A+0.05)         : TRUE   — C 0.2533 < 0.2967 (wall holds for
+                                       gain-tuning, as in H_1284).
+  => c1 FAILS → RED_NO_LUNCH. Wall HELD.
+
+────────────────────────────────────────────────────────────────────
+WHAT THIS ACTUALLY SHOWS (sharper than v1/v2; the regime signal is REAL)
+────────────────────────────────────────────────────────────────────
+1. The switch signal CARRIES GENUINE REGIME INFORMATION. With learned polarity
+   the gate is 73% correct (writes-on 77% in ENCODE, 31% in RECALL — right
+   direction). The shuffle control is DECISIVE: scrambling the signal collapses
+   B's lift by +0.116 (0.262 → 0.147). So the small lift B does get is
+   regime-TRACKING, not extra capacity / not a lucky constant (the H_1285 guard
+   passes — and it is what makes the RED honest rather than a broken instrument).
+2. BUT the lift is SUB-THRESHOLD: +0.0156 mean, < the frozen 0.05 bar, and not
+   every-seed positive. Two reasons, both honest:
+   (a) the gate is imperfect (73%, not 100%) — the median threshold + EMA lag at
+       block boundaries mis-gate ~1/4 of ticks;
+   (b) the best FIXED "always-write" policy already RECOVERS most RECALL
+       corruption via LRU eviction + honest ABSTAIN, so the headroom a perfect
+       switcher could capture is small at this scale.
+3. The POLARITY had to be LEARNED, not assumed: measurement falsified the
+   FREEZE's pre-registered sign (RECALL surprise-EMA 0.492 > ENCODE 0.329, because
+   noisy recall cues have higher recon-error than clean encode writes). A faithful
+   switcher learns its gate direction from outcome (H_1281). The v2 assumed-
+   polarity run (anti-correlated gate) is kept RED verbatim in
+   result_v2_assumed_polarity.txt.
+
+────────────────────────────────────────────────────────────────────
+CONCLUSION (HD27 status: 🧱 STILL WALL, generalization recorded)
+────────────────────────────────────────────────────────────────────
+The no-free-lunch result GENERALIZES from gain-tuning (H_1284) to regime/mode-
+switching: a substrate-derived regime-switcher that genuinely TRACKS the regime
+(shuffle-confirmed) still does NOT clear the frozen margin over the best single
+fixed policy at this scale — the fixed policy's LRU+abstain recovery leaves too
+little headroom, and an imperfect substrate gate cannot recover it. This is a
+STRONGER closed-negative than the gain-tuning wall: the lift is real and
+regime-attributable (c2 passes) but quantitatively sub-bar (c1 fails). The wall
+is kept honestly 🧱 (a_paper_negative_ok, c9). NO CORE wiring follow-on
+(a_verified_must_wire fires only on GREEN).
+
+NOT RULED OUT (a_scale_honest_scope — where regime-switching MIGHT still break it,
+for an honest future rung; NONE attempted post-hoc here):
+  • a regime where the fixed policy CANNOT recover (corruption irreversible, no
+    LRU/abstain safety net) — headroom for the switcher would be larger;
+  • a sharper switch signal (lower-lag / changepoint detector instead of EMA-vs-
+    median) closing the 73%→100% gate gap;
+  • larger scale / more facts / more regimes (toy 30 facts, 3 seeds, 1 paradigm);
+  • engine-native realization (mirror DIRECTIONAL, a_engine_native_learning).
+These are scope-honest open directions, NOT a license to move the frozen bar.
+
+ARTIFACTS:
+  UNIVERSE/h1284_r3_regime_switch.py            (v3 final, learned polarity)
+  UNIVERSE/h1284_r3_regime_switch_v1_failed_instrument.py
+  UNIVERSE/h1284_r3_regime_switch_v2_assumed_polarity.py
+  .verdicts/1284_r3_regime_switch/FREEZE.txt    (v3 freeze; FREEZE_v1/v2 archived)
+  .verdicts/1284_r3_regime_switch/result.json   (raw v3 stdout)
+  .verdicts/1284_r3_regime_switch/result_v1_failed_instrument.txt
+  .verdicts/1284_r3_regime_switch/result_v2_assumed_polarity.txt
+
+SCOPE: numpy-mirror DIRECTIONAL (engine-transfer UNVERIFIED) · TOY 30 facts / 3
+seeds / 1 paradigm · live CORE/*.hexa UNTOUCHED · $0 CPU · p1·p2·p3·p6·p7·p8 held
+(switch reads substrate write-pressure, no label/reward/persona/ethics) ·
+a_autonomy_over_hardcode (switch = substrate-read context, polarity learned from
+outcome, NOT an external do/dont gate) · c9 (RED reported RED) · c7 (no force-push).

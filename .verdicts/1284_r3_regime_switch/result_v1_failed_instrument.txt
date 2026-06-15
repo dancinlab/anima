@@ -1,0 +1,37 @@
+H_1284_R3 v1 — FAILED INSTRUMENT (frozen run, recorded verbatim; NOT a verdict)
+==============================================================================
+The v1 FREEZE (FREEZE_v1.txt) asserted "two regimes demanding OPPOSITE policies
+on the write-on-cue axis". The v1 IMPLEMENTATION did NOT realize that structure:
+its write-on-recall corruption channel was too weak, so a fixed "always write"
+policy dominated (cap 0.470) and "never write" scored 0.000 — NO tradeoff. The
+best fixed policy was therefore not compromised, and the no-free-lunch result was
+trivially recovered WITHOUT actually testing the new angle.
+
+v1 frozen output (verbatim):
+  best_fixed: writes_enabled=True, LR0=0.1, TH0=0.4, tune_cap=0.4605
+  A_cap_mean=0.4705  B_cap_mean=0.0833  B_shuffle_cap_mean=0.3281  C_gain=0.4915
+  per_seed_B_minus_A = [-0.2773, -0.362, -0.5223]   (B WORSE than A every seed)
+  c1=False c2=True c3=True  -> verdict RED_NO_LUNCH
+
+DIAGNOSIS (why v1 is a failed instrument, not a wall confirmation):
+  fixed_writes=True  caps=[0.468,0.425,0.518] mean=0.470
+  fixed_writes=False caps=[0.000,0.000,0.000] mean=0.000
+  => always-write strictly dominated; there was no opposite-policy tradeoff to
+     switch between, so the switcher could only LOSE (its read-only sub-mode
+     dropped writes that always-write kept). The probe also confirmed the
+     write-on-RECALL corruption channel barely bit (gap off-on ~ -0.02 at the
+     v1 noise level), i.e. recall-cue noise was too low to make plasticity-on
+     corrupt the store.
+
+RESOLUTION (a_break_the_wall — make a GENUINE attempt before accepting 🧱):
+  This is an instrument failure, not a hypothesis verdict. Per a_break_the_wall
+  the angle must be tested with an instrument that actually realizes the
+  pre-registered opposite-regime structure. A direct probe (recorded in
+  result.txt) shows the corruption channel DOES bite hard at recall-noise 0.10
+  with max_cells=18: RECALL plasticity-OFF=0.490 vs ON=0.133 (off wins +0.357),
+  while ENCODE plasticity-ON=0.533 vs OFF=0.233 (on wins +0.300) — a GENUINE
+  opposite-policy crossover. v2 re-freezes (FREEZE.txt) with this validated
+  instrument and the SAME frozen bars (MARGIN 0.05, c1/c2/c3), then re-runs.
+  This is NOT tune-to-green: the falsifier bars are unchanged; only the
+  environment is fixed so it actually delivers the regimes the FREEZE described.
+  v1 script kept at UNIVERSE/h1284_r3_regime_switch_v1_failed_instrument.py.
