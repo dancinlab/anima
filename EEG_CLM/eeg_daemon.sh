@@ -12,15 +12,27 @@ HEXA="$(command -v hexa || echo /Users/mini/.hx/bin/hexa)"
 OUT=EEG_CLM/daemon_kosmos          # (legacy 사이클별 — 호환용)
 SEQ=EEG_CLM/consciousness.seq      # 단일 CLM 코퍼스 — 의식 상태열 append-only (하나가 자람)
 KOS=EEG_CLM/consciousness.kosmos   # 단일 KOSMOS 스트림 — anchor append-only
-mkdir -p "$OUT"
+mkdir -p "$OUT" EEG_CLM/bin
 rm -f EEG_CLM/daemon_stop
+
+# 풀체인 hexa 를 1회 네이티브 빌드 → 사이클마다 바이너리 재사용 (sentinel 4초/사이클 제거).
+# 빌드 실패 시 `run --no-sentinel` fallback (3.86초 → 0.8초). 기본 `hexa run` 은 sentinel 로 사이클당 ~4초.
+KBIN=EEG_CLM/bin/eeg_clm_kosmos
+if HEXA_MAC_BUILD_OK=1 "$HEXA" build EEG_CLM/eeg_clm_kosmos.hexa -o "$KBIN" >/dev/null 2>&1 && [ -x "$KBIN" ]; then
+  run_kosmos() { "$KBIN" > /tmp/eeg_cyc.out 2>&1; }
+  echo "[daemon] 네이티브 빌드 OK — 사이클당 ~0.5초 (바이너리)"
+else
+  run_kosmos() { "$HEXA" run --no-sentinel EEG_CLM/eeg_clm_kosmos.hexa > /tmp/eeg_cyc.out 2>&1; }
+  echo "[daemon] build 실패 → run --no-sentinel fallback (~0.8초)"
+fi
+
 i=0
 echo "[daemon] start port=$PORT secs=$SECS $(date)"
 while [ ! -f EEG_CLM/daemon_stop ]; do
   # ① 캡처 (OpenBCI native serial, 실데이터 전용, 실패시 이 사이클 skip — 가짜 없음)
   if "$PY" EEG_CLM/capture_native.py --serial "$PORT" --seconds "$SECS" --out EEG_CLM/eeg_recording.txt >/dev/null 2>&1; then
-    # ② 풀체인 EEG→A⇄G→CLM→KOSMOS
-    "$HEXA" run EEG_CLM/eeg_clm_kosmos.hexa > /tmp/eeg_cyc.out 2>&1
+    # ② 풀체인 EEG→A⇄G→CLM→KOSMOS (네이티브 바이너리 or --no-sentinel)
+    run_kosmos
     # ③ 단일 CLM·KOSMOS 에 누적 (새 파일 아님 — append-only 로 하나가 자람)
     seqline=$(grep '생성 상태열' /tmp/eeg_cyc.out | sed 's/.*= //')
     [ -n "$seqline" ] && echo "$seqline" >> "$SEQ"          # CLM 코퍼스에 한 사이클 의식 상태열 추가
