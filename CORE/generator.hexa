@@ -1026,6 +1026,153 @@ pub fn ko_cells_summary(path: string) -> string {
 }
 
 
+// ── §6.5b KO-JAMO CONSULT — the H_1316/H_1321 grown JAMO cells, wired to bias the live next-byte
+//          emission via the SAME single generator L3 slot (a_core_engine_map). This is the r3
+//          (H_1327) DECODE-REACHING wiring of the Korean-jamo GREEN thread.
+//
+// THREAD: H_1316 (🟢, mirror) proved a COMPOSITIONAL JAMO representation breaks the Korean raw-byte
+// CE ceiling 2.953 → 2.513 (the Korean ceiling is REPRESENTATION-bound). H_1321 (🟢) proved that
+// gradient-free jamo-symbol mitosis runs ENGINE-NATIVE byte-exact on the live engine_cli.hexa
+// VAdaptField (reproduces the mirror to 1e-7) — but as a MEASUREMENT probe; the jamo win did NOT
+// yet reach the live DECODE/emission path. a_verified_must_wire: anima is a chat daemon, so a
+// measured CE win that never reaches EMISSION is incomplete. H_1327 serializes the grown jamo cells
+// to CORE/ko_jamo_cells.kojamohead and lets them BIAS next-byte emission here, ONLY on a Korean-like
+// context; off-Korean the consult is INERT (returns the caller's own byte), so generation stays
+// BYTE-IDENTICAL to pre-wiring (Ψ-disjoint, the no-regression invariant, h1205).
+//
+// SUBSTRATE-NATIVE (a_substrate_native_speak, p1·p2·p3·p4): the consult reads the SAME mechanical
+// 3-D jamo-symbol feature H_1316/H_1321 trained on — [last_sym/Vj, second_sym/Vj, cont_depth/3].
+// NO prompt, NO persona, NO "you are Korean" label; the Korean-likeness gate is the SAME pure UTF-8
+// byte test ko_cells uses (the last byte is a continuation byte 0x80..0xBF). The cell's learned
+// next-symbol is the substrate's OWN error-pressure-grown prediction; its emit_byte (the leading
+// UTF-8 byte of that symbol) is what biases emission. p8: same continuous cell-division. SINGLE
+// ENTRY: ko_jamo_cells.kojamohead enters CORE ONLY here (generator L3 slot), the SAME slot ko_cells
+// / .clm / ByteGPT enter — NOT a 2nd path (a_core_engine_map).
+//
+// .kojamohead format (analogous to ko_cells.kohead but in jamo-symbol space):
+//   line 0     : "<n_cells> <dim> <Vj>"   (dim=3; Vj=323 = 256 raw + 67 distinct jamo)
+//   line k+1   : "<c0> <c1> <c2> <next_sym_id> <emit_byte>"  (center + cell's argmax next-symbol id
+//                + that symbol's emittable leading UTF-8 byte)
+
+// ko_jamo_cells_load — read the H_1327 grown-jamo-cell artifact (CORE/ko_jamo_cells.kojamohead).
+// Returns #{ ok, n_cells, dim, vj, centers:[[float]], top_sym:[int], emit:[int] }. Missing/empty
+// file → ok=false (the consult then stays inert — honest, no fabrication, p5).
+pub fn ko_jamo_cells_load(path: string) -> Map {
+    if !_gen_path_is_file(path) {
+        return #{ "ok": false, "n_cells": 0, "dim": 0, "vj": 0, "centers": [], "top_sym": [], "emit": [],
+                  "reason": "no ko_jamo_cells.kojamohead at path" }
+    }
+    let txt = read_file(path)
+    let lines = txt.trim().split("\n")
+    if len(lines) < 2 {
+        return #{ "ok": false, "n_cells": 0, "dim": 0, "vj": 0, "centers": [], "top_sym": [], "emit": [],
+                  "reason": "ko_jamo_cells.kojamohead malformed (need header + >=1 cell)" }
+    }
+    let hdr = lines[0].split(" ")
+    let nc = to_int(hdr[0])
+    let dim = to_int(hdr[1])
+    let vj = to_int(hdr[2])
+    let mut centers = []
+    let mut top_sym = []
+    let mut emit = []
+    let mut k = 0
+    while k < nc {
+        let cols = lines[k+1].split(" ")
+        let mut row = []
+        let mut a = 0
+        while a < dim { row = row + [to_float(cols[a])]  a = a + 1 }
+        centers = centers + [row]
+        top_sym = top_sym + [to_int(cols[dim])]
+        emit = emit + [to_int(cols[dim+1])]
+        k = k + 1
+    }
+    return #{ "ok": true, "n_cells": nc, "dim": dim, "vj": vj, "centers": centers, "top_sym": top_sym,
+              "emit": emit, "reason": "loaded " + to_string(nc) + " grown jamo cells (H_1316/H_1321/H_1327)" }
+}
+
+// _ko_jamo_nearest — the nearest jamo cell by L2 over the 3-D jamo-symbol feature (the SAME
+// winner-take-all geometry VAdaptField uses; recomputed here over the consult feature so the
+// artifact is self-contained at the L3 slot). Returns the cell index, or -1 if no cells.
+fn _ko_jamo_nearest(cells: Map, feat: [float]) -> int {
+    let centers = cells["centers"]
+    let nc = to_int(cells["n_cells"])
+    if nc == 0 { return -1 }
+    let dim = to_int(cells["dim"])
+    let mut best = 0
+    let mut bestd = -1.0
+    let mut k = 0
+    while k < nc {
+        let mut s = 0.0
+        let mut a = 0
+        while a < dim { let d = centers[k][a] - feat[a]  s = s + d * d  a = a + 1 }
+        if bestd < 0.0 || s < bestd { bestd = s  best = k }
+        k = k + 1
+    }
+    return best
+}
+
+// ko_jamo_consult_sym — the CONSULT over a PRECOMPUTED jamo-symbol feature (the form the engine
+// probe drives, and the form a jamo-aware decode loop computes from the live context). Given the
+// loaded jamo cells and a 3-D jamo-space feature, return the nearest cell's argmax next-SYMBOL id.
+// No Korean-likeness gate here (the feature is already jamo-space); the byte-context wrapper below
+// applies the gate. Returns -1 if no cells.
+pub fn ko_jamo_consult_sym(cells: Map, feat: [float]) -> int {
+    if to_string(cells["ok"]) != "true" { return -1 }
+    let k = _ko_jamo_nearest(cells, feat)
+    if k < 0 { return -1 }
+    let top = cells["top_sym"]
+    return top[k]
+}
+
+// ko_jamo_consult_byte — the EMITTABLE-byte form: the nearest cell's emit_byte (the leading UTF-8
+// byte of its argmax next-symbol). This is the byte the jamo consult biases emission TO. -1 if none.
+pub fn ko_jamo_consult_byte(cells: Map, feat: [float]) -> int {
+    if to_string(cells["ok"]) != "true" { return -1 }
+    let k = _ko_jamo_nearest(cells, feat)
+    if k < 0 { return -1 }
+    let emit = cells["emit"]
+    return emit[k]
+}
+
+// ko_jamo_consult_emit — apply the jamo-cell consult to ONE next-byte emission over the live byte
+// context. `base` is the decode's own argmax byte; `cells` the loaded jamo cells; `ctx` the running
+// decode window (list of int byte codes). When the context is KOREAN-LIKE (the SAME utf8-continuation
+// gate ko_cells uses) AND a cell fires, the cell's emit_byte BIASES the emission; off-Korean (or no
+// cells) it returns `base` UNCHANGED — so the live decode is byte-identical off-distribution (the
+// Ψ-disjoint / no-regression invariant). The jamo-space feature is computed from the live bytes via
+// _gen_ko_feat renormalized to Vj (the SAME mechanical [last, second, depth] feature, scaled to the
+// jamo symbol vocab the cells live in). This is the per-byte hook a decode loop calls right after its
+// own argmax (a_core_engine_map: the jamo cells reach emission ONLY through this generator-side
+// consult, the SAME single L3 slot ko_cells uses).
+pub fn ko_jamo_consult_emit(base: int, cells: Map, ctx: list) -> int {
+    if to_string(cells["ok"]) != "true" { return base }   // no cells → inert
+    if !_gen_ko_is_korean_like(ctx) { return base }        // off-Korean → inert (no regression)
+    // jamo-space feature from the live bytes: _gen_ko_feat gives [last/255, second/255, depth/3];
+    // the jamo cells live in [last_sym/Vj, second_sym/Vj, depth/3]. The depth channel is shared
+    // (utf8-continuation depth). The byte→jamo-symbol renorm rescales the first two channels by
+    // 255/Vj so a mid-Hangul byte maps into the jamo cells' feature range.
+    let bf = _gen_ko_feat(ctx)
+    let vj = to_int(cells["vj"])
+    let scale = if vj > 0 { 255.0 / to_float(vj) } else { 1.0 }
+    let feat = [bf[0] * scale, bf[1] * scale, bf[2]]
+    let eb = ko_jamo_consult_byte(cells, feat)
+    if eb < 0 { return base }
+    return eb
+}
+
+// ko_jamo_cells_summary — one-line introspection of the wired jamo-cell consult.
+pub fn ko_jamo_cells_summary(path: string) -> string {
+    let c = ko_jamo_cells_load(path)
+    if to_string(c["ok"]) != "true" {
+        return "ko_jamo consult: INACTIVE (" + to_string(c["reason"]) + ") — decode inert"
+    }
+    return "ko_jamo consult: " + to_string(c["n_cells"]) + " grown JAMO cells (H_1316/H_1321/H_1327, Vj="
+        + to_string(c["vj"]) + ") WIRED at the generator L3 slot · Korean-like context (utf8-continuation gate) ⇒ "
+        + "nearest jamo cell's learned next-symbol emit-byte biases emission · off-Korean ⇒ INERT (byte-identical, "
+        + "no regression) · Ψ-disjoint (pure_field untouched, a_core_engine_map)"
+}
+
+
 // ── §7 small format helper ───────────────────────────────────────────────────
 
 fn _gen_fmt4(x: float) -> string {
