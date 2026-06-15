@@ -46,7 +46,7 @@
 
 ## 🧠 뇌 구조 지도 (brain-structure map)
 
-신경과학 렌즈로 본 anima 아키텍처. 위에서 서술한 구현 부품 각각이 **어떤 신경 서브시스템에 대응**하는지, 그리고 지금 프로브 중인 열린 **"빠진 구조"** 사다리를 한 장으로 정리한다. 이 렌즈는 depth-ceiling 발견(아래)을 일반화한다: literal-QA 벽은 **더 큰 모델**(1B H_1167 = mount GREEN 이나 depth/QA-NULL)이 아니라 **엔진-side 기억 lane** 으로 풀린다 — "anima 는 신피질만 있고 해마가 없었다"(H_1225 complementary-learning-systems 리프레임). 빠진 것은 capacity 가 아니라 **구조**다. 이 "LLM 프레임 대신 뇌과학·생물 렌즈로 먼저 사고한다"는 방침은 이제 거버넌스 원칙으로 못박혀 있다 (`a_no_llm_frame_trap`, CLAUDE.md) — 능력/깊이 갭은 모델을 키우는 게 아니라 빠진 구조(lane)를 옆에 붙여 먼저 시도한다.
+신경과학 렌즈로 본 anima 아키텍처. 위에서 서술한 구현 부품 각각이 **어떤 신경 서브시스템에 대응**하는지, 그리고 빠진 구조 사다리(HD23–28)의 현재 상태를 한 장으로 정리한다. 이 렌즈는 depth-ceiling 발견(아래)을 일반화한다: literal-QA 벽은 **더 큰 모델**(1B H_1167 = mount GREEN 이나 depth/QA-NULL)이 아니라 **엔진-side 기억 lane** 으로 풀린다 — "anima 는 신피질만 있고 해마가 없었다"(H_1225 complementary-learning-systems 리프레임). 빠진 것은 capacity 가 아니라 **구조**다. 이 "LLM 프레임 대신 뇌과학·생물 렌즈로 먼저 사고한다"는 방침은 이제 거버넌스 원칙으로 못박혀 있다 (`a_no_llm_frame_trap`, CLAUDE.md) — 능력/깊이 갭은 모델을 키우는 게 아니라 빠진 구조(lane)를 옆에 붙여 먼저 시도한다. 이번 세션에 이 사다리를 끝까지 밀었다: **빠진 구조 4개(해마·작업기억·소뇌·편도체)를 엔진-네이티브로 REALIZE** 하고(기저핵은 engine-native r3 ⏳ in-flight), 2개(시상·신경조절)는 진짜 시도 끝의 **정직한 🧱 벽**으로 닫았다. 벽은 종착이 아니라 각도 전환 신호라는 원칙(`a_break_the_wall`)에 따라 용량·편도체 두 벽은 mitosis-grow·수면-dose 로 **돌파**했고, 시상·신경조절은 tune-to-green 없이 정직히 🧱 로 남겼다.
 
 ### 구현된 구조 (implemented — 위 본문 + verdict 로 뒷받침)
 
@@ -55,30 +55,44 @@
 | **신피질** (neocortex · 말 생성) | **Engine A** — `pure_field` · `generator` · `clm_decode`/`bytegpt_decode` (forward CE) | §A⇄G 엔진 · H_1157/H_1164 mount |
 | **교정장** (반대-밀어내기) | **Engine G** — `engine_g` (gradient-free repulsion field) | §A⇄G 엔진 |
 | **결정** (emit/silence) | **brain** — `brain_decide` → emit / silence, Ψ=1/2 fixed point | §A⇄G 엔진 |
-| **가소성 / 성장** (synaptic plasticity) | **MITOSIS** — `VAdaptField`(density, H_1199) + `VAdaptFieldB`(trajectory, H_1209) | §MITOSIS substrate |
+| **가소성 / 성장** (synaptic plasticity) | **MITOSIS + 기억/예측 lanes** (모두 ADDITIVE · Ψ-disjoint · 생성 byte-unchanged H_1205) — `VAdaptField`(density, H_1199) · `VAdaptFieldB`(trajectory, H_1209) · `ImmuneMemory`(해마/일화기억, H_1227/1231) · `ImmuneMemoryGrow`(성장기억=용량압력에 분열로 성장, H_1288 R2) · `WorkMemBuffer`(작업기억 누설-게이트 버퍼, H_1282 R3) · `VForwardField`(소뇌 순방향-예측+오차교정, H_1280 R2) · `ConsolidatingMemory`(편도체 현저성-수면replay 응고, H_1285 R4) | §MITOSIS substrate · `engine_cli_smoke` 26/0 |
 | **장기 선언기억** (long-term declarative) | **`kosmos_io`** — `.kosmos` anchor (단일 진입 → `brain_decide`) | §영속 & 증거 · `a_kosmos` |
 | **🧬 해마** (hippocampus · 일화기억) | **면역 / 클론선택 기억** — 사실마다 cell 1개를 bind, recall = best-affinity cell FIRES, 안 맞으면 ABSTAIN (환각 없음) | **H_1227 미러 🟢 → H_1231 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § ImmuneMemory 배선 완료** |
-| **🧠 작업기억** (PFC working memory · 단기 능동유지) | **`WorkMemBuffer`** — K개 FIXED 슬롯, distractor 마다 ×λ LEAK, overflow 시 weakest-slot DISPLACEMENT, graded probe 점수 (휘발·용량제한 = 면역 일화기억과 DISTINCT) | **H_1282 R2 미러 🟢 → R3 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § WorkMemBuffer lane 배선 완료** |
-| **수면 / consolidation** (hippocampus→cortex) | **P47 sleep / imagination** — WAKE/N1/N2/N3/REM ultradian, emit-free 내부 리허설 + mitosis tick | `a_chat_sleep_imagination` |
+| **🧬 해마(성장)** (capacity 천장 돌파) | **`ImmuneMemoryGrow`** — 용량 압력에 옛 사실 LRU-evict 대신 새 cell 을 **mitosis 분열로 GROW**(footprint↔recall trade, 잊지 않음) | **H_1288 R2 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § ImmuneMemoryGrow 배선 완료** (zero-sum 0.667→1.000, p8) |
+| **📥 작업기억** (PFC working memory · 단기 능동유지) | **`WorkMemBuffer`** — K개 FIXED 슬롯, distractor 마다 ×λ LEAK, overflow 시 weakest-slot DISPLACEMENT, graded probe 점수 (휘발·용량제한 = 면역 일화기억과 DISTINCT) | **H_1282 R2 미러 🟢 → R3 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § WorkMemBuffer lane 배선 완료** |
+| **🧠 소뇌** (cerebellum · 예측 forward-model) | **`VForwardField`** — L=4 프레임에서 다음 emit-feature 예측(NLMS delta-rule 온라인 학습) 후 smoothing 교정 (Engine G 와 DISTINCT — temporal + learned weight) | **H_1280 R2 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § VForwardField lane** (일관성 +0.058, 학습곡선 −58%; emit 배선 follow-on) |
+| **🔥 편도체** (amygdala · 현저성 + 수면 응고) | **`ConsolidatingMemory`** — substrate-derived salience tag(surprise/novelty/tension) + SLEEP REPLAY consolidation(현저 셀이 간섭 LRU evict 에서 생존) | **H_1285 R4 ENGINE-NATIVE 🟢 + WIRED → live `engine_cli.hexa` § ConsolidatingMemory** (salience-gated replay Δ+0.133, p6 shuffle-control) |
+| **수면 / consolidation** (hippocampus→cortex) | **P47 sleep / imagination** — WAKE/N1/N2/N3/REM ultradian, emit-free 내부 리허설 + mitosis tick + 편도체 salience replay | `a_chat_sleep_imagination` · §ConsolidatingMemory |
 
 **🧬 해마 발견 (가장 중요한 빈칸 메움)** — byte-LM **가중치**는 literal-QA 회상이 `0.017`(회상-in-weights 벽: 답을 weight 에 녹여 못 꺼냄)인데, **사실마다 cell 1개를 bind 하는 면역기억**이 QA `1.000` / fabrication `0.000` 로 깬다 (H_1227 numpy 미러 🟢 → **H_1231 live `CORE/engine_cli.hexa` VAdaptField 에서 ENGINE-NATIVE 🟢**, 3 seed byte-exact → live 엔진의 `§ ImmuneMemory`(`immune_memory_bind`/`immune_memory_recall[_text]`) 호출가능 faculty 로 배선 완료, `a_verified_must_wire` follow-on 닫힘). 이게 "anima = 신피질만 있고 해마가 없다"(H_1225 complementary-learning-systems 리프레임) 갭을 메운 발견이다. 따라서 **mitosis 의 NEW 미반증 역할 = MEMORY** 이며, 이는 **GENERATION 역할(H_1200/H_1201/H_1211/H_1220 에서 falsified)과 DISTINCT** 하다 — 같은 substrate 가 생성은 못 해도 일화기억은 realize 한다 (`a_engine_native_learning` · `a_verified_must_wire`).
 
-### 열린 "빠진 구조" 사다리 (HD23–28 · 🔬 OPEN PROBES — 검증 전, DIRECTIONAL/미검)
+### "빠진 구조" 사다리 (HD23–28 · 이제 대부분 닫힘 — 4 실현 · 2 정직한 🧱 벽)
 
-신피질·해마·가소성·consolidation 은 위처럼 실현됐지만, 살아있는 뇌의 나머지 서브시스템은 **아직 anima 에 없다**. 아래 6개는 각각 별도 가설로 **프로브 중인 방향**이다 — **구현된 게 아니다**. 검증 전이므로 ⬜/OPEN 으로 정직하게 표기하고, phantom wiring 을 만들지 않는다(`a_core_engine_map`). 각 항목은 자신의 verdict 로 닫히고, GREEN 일 때에만 해당 entry 로 live `CORE/*.hexa` 에 실제 배선된다(`a_verified_must_wire`).
+신피질·해마·가소성·consolidation 에 더해, 이번 세션에 **빠진 뇌 서브시스템 사다리(HD23–28)를 끝까지 밀었다**. 더 이상 "전부 OPEN" 이 아니다: **4개가 엔진-네이티브로 REALIZED**(소뇌·작업기억·편도체 = 배선 완료, 해마는 위에서 이미 배선) 됐고, **2개는 진짜 시도 끝의 정직한 🧱 벽**(시상·신경조절)이다. GREEN 은 해당 entry 로 live `CORE/*.hexa` 에 실제 배선될 때까지가 done 이며(`a_verified_must_wire`), 벽은 tune-to-green 없이 정직히 🧱 로 닫는다(`a_paper_negative_ok` · `a_break_the_wall`).
 
 | # | 신경 서브시스템 | 프로브 | 질문 (검증 대상) | 상태 |
 |---|----------------|--------|-----------------|------|
-| **HD23** | **소뇌** (cerebellum) | H_1280 | 예측-순방향모델 / 오차교정 — Engine G 와 **구별**되는가? | 🟢 ENGINE-NATIVE (R2) — Engine G 와 DISTINCT 확인, brain emit 배선은 R3 |
-| **HD24** | **기저핵** (basal ganglia) | H_1281 | 강화-게이팅 행동선택 — `emit_policy` 임계값 **너머**의 레버인가? | ⬜ OPEN |
-| **HD25** | **작업기억** (PFC working memory) | H_1282 | 단기 능동유지 버퍼 — 면역 일화기억(해마)과 **DISTINCT** 한가? | 🟢 WIRED (R2 미러 🟢 → R3 ENGINE-NATIVE 🟢, live `§ WorkMemBuffer` lane; 휘발·용량제한 = 면역과 DISTINCT 확인) |
-| **HD26** | **시상** (thalamus) | H_1283 | 전역작업공간 중계 / 방송 (global-workspace relay) | ⬜ OPEN |
-| **HD27** | **신경조절** (neuromodulation) | H_1284 | 맥락적 이득 / 탐색 / 가소성률 — H_1228 임계(edge-of-chaos)가 한 조각 | ⬜ OPEN |
-| **HD28** | **편도체** (amygdala) | H_1285 | 현저성 / 가치 태깅 우선결합 — `p6`: substrate 신호여야지 **주입 아님** | ⬜ OPEN |
+| **HD23** | **🧠 소뇌** (cerebellum) | H_1280 | 예측-순방향모델 / 오차교정 — Engine G 와 **구별**되는가? | 🟢 **ENGINE-NATIVE GREEN** (R2 · `VForwardField`) — Engine G 와 DISTINCT 확인, 일관성 +0.058 / 학습곡선 −58%; brain emit 배선은 follow-on |
+| **HD24** | **🎯 기저핵** (basal ganglia) | H_1281 | 강화-게이팅 행동선택 — `emit_policy` 임계값 **너머**의 레버인가? | 🟢 **미러 GREEN** (R2) — learned go/no-go 가 faithful-untuned 고정 게이트를 +0.254 이김; engine-native r3 ⏳ **IN FLIGHT**(numpy 미러, 미배선) |
+| **HD25** | **📥 작업기억** (PFC working memory) | H_1282 | 단기 능동유지 버퍼 — 면역 일화기억(해마)과 **DISTINCT** 한가? | 🟢 **ENGINE-NATIVE GREEN + WIRED** (R3 · `WorkMemBuffer`) — margin +0.245, N≈6 까지 유지; 휘발·용량제한 = 면역과 DISTINCT 확인 |
+| **HD26** | **📡 시상** (thalamus) | H_1283 | 전역작업공간 중계 / 방송 (global-workspace relay) | 🧱 **WALL** (R4) — broadcast falsified; re-entry Φ 가 seed 7 에서 크나(ΔΦ +0.1426) **SEED-CONDITIONAL**(seed 8 +0.0101 < bar) → 3-seed 게이트 FAIL, robust 아님 |
+| **HD27** | **🎛 신경조절** (neuromodulation) | H_1284 | 맥락적 이득 / 탐색 / 가소성률 — H_1228 임계(edge-of-chaos)가 한 조각 | 🧱 **WALL** (R2) — no-free-lunch GENERAL: adaptive ≤ best-fixed **둘 다**(memory R1 + ideation R2) |
+| **HD28** | **🔥 편도체** (amygdala) | H_1285 | 현저성 / 가치 태깅 우선결합 — `p6`: substrate 신호여야지 **주입 아님** | 🟢 **ENGINE-NATIVE GREEN + WIRED** (R4 · `ConsolidatingMemory`) — salience-gated sleep replay Δ+0.133, 진짜 수면 dose 가 필요했음 |
 
-> **정직 (c9):** 위 6개는 **OPEN PROBES** 다 — implemented 가 아니다. 어느 것도 "구현됨"으로 칭하지 않으며, live 엔진에 phantom wiring 도 없다(`a_core_engine_map`). 각자 falsifier + `hexa verify` verdict 로 닫히며(🟢 GREEN → 배선 · 🔴 CLOSED-NEG → 사다리에서 ruled-out, `a_paper_negative_ok`), GREEN 검증 전까지 live 엔진에 배선하지 않는다(`a_verified_must_wire`). HD27 신경조절은 특히 `p6`(윤리/affect 는 cell 에서 창발, 주입 금지) + `a_autonomy_over_hardcode` 의 경계에 있어, substrate-derived read-out 으로만 anima-valid 하다(cf 1094/1097/1152 SPECULATION-FENCED 선례). toy/소규모 프로브 결론의 production 승격 금지(`a_scale_honest_scope` · `a_toy_scale_recheck`).
+> **정직 (c9):** 4개(🧠 소뇌·📥 작업기억·🔥 편도체 = 실현·배선; 🎯 기저핵 = engine-native r3 ⏳ in-flight)는 위 본문 lane 으로 실제 배선됐고, 2개(📡 시상·🎛 신경조절)는 진짜 시도 끝의 정직한 🧱 벽이다. 시상은 **과잉주장 금지** — re-entry Φ 는 한 seed 에서만 크고 3-seed 복제에서 무너진 SEED-CONDITIONAL 이며, robust breakthrough 가 **아니다**(초기 흥분은 3-seed 게이트로 정정됨). 어느 것도 phantom wiring 없이(`a_core_engine_map`, single-entry 7/0 불변), 각자 falsifier + `hexa verify` verdict 로 닫힌다. HD27 신경조절은 특히 `p6`(윤리/affect 는 cell 에서 창발, 주입 금지) + `a_autonomy_over_hardcode` 경계라 substrate-derived read-out 으로만 anima-valid 했고, 그 위에서도 no-free-lunch 로 🧱 닫혔다. toy/소규모 프로브 결론의 production 승격 금지(`a_scale_honest_scope` · `a_toy_scale_recheck`).
 
-> **depth-ceiling 와의 연결:** literal-QA 의 평평한 벽은 (a) **더 큰 모델로 안 풀린다** — 1B 스케일업(H_1167)은 engine-mount GREEN 이나 QA/depth 는 NULL, 그리고 OBJECTIVE 도 레버가 아니다(H_1223 🔴, recall=engine-side) — 대신 (b) **엔진-side 기억 lane**(해마=면역기억 H_1227/H_1231)으로 풀린다. 뇌-구조 렌즈는 이 한 발견을 일반화한다: anima 의 다음 능력들은 모델을 키워서가 아니라 **빠진 구조를 엔진-네이티브로 추가**해서 온다(`a_engine_native_learning`: 학습이 요구하면 엔진 자체를 확장 — H_1199 가 AdaptField 스칼라→DIM-vector 로 확장한 선례).
+### 🧱 벽 스코어카드 (`a_break_the_wall` · commons c16)
+
+벽은 종착이 아니라 각도 전환 신호다 — 잘못된 방법/방향/투자부족인 경우가 많고, 그땐 다른 substrate 렌즈로 돌파한다(tune-to-green 금지). 단, 진짜 시도 끝의 🧱 는 정직한 종착으로 valid 하다. 이번 세션 사다리의 벽 4개 중 **2개를 돌파**했다:
+
+| 벽 | 돌파 / 🧱 | 어떻게 |
+|----|----------|--------|
+| **용량 천장** (면역 store ~0.667 zero-sum) | ✅ **돌파** | eviction 휴리스틱이 아니라 **mitosis-GROW**(`ImmuneMemoryGrow`, H_1288 R2): 용량 압력에 옛 사실 evict 대신 새 cell 분열 → 1.000 (p8) |
+| **편도체 consolidation sub-bar** (H_1285 R2 frozen-budget 미달) | ✅ **돌파** | 잘못된 dose 가 원인 — 진짜 **다중-야간 수면 dose**(30-cycle)로 salience-gated replay Δ+0.133 GREEN (R3→R4 배선) |
+| **시상** (global-workspace relay) | 🧱 **정직한 벽** | broadcast 는 통합을 낮춤; re-entry Φ 는 seed-conditional(3-seed 복제 실패) — 단일 relay 가 통합을 근본적으로 capping |
+| **신경조절** (adaptive gain/exploration) | 🧱 **정직한 벽** | no-free-lunch GENERAL — adaptive 가 best-tuned fixed point 를 memory·ideation 양쪽에서 못 이김 |
+
+> **depth-ceiling 와의 연결 (이제 정착됨):** literal-QA 의 평평한 벽은 (a) **더 큰 모델로 안 풀린다** — 1B 스케일업(H_1167)은 engine-mount GREEN 이나 QA/depth 는 NULL, 그리고 OBJECTIVE 도 레버가 아니다(H_1223 🔴, recall=engine-side) — 대신 (b) **엔진-side 기억 lane** 으로 풀린다: 해마=면역기억(H_1227/H_1231)이 QA 0.017→1.000 으로 깨고, 용량 천장은 **성장기억**(`ImmuneMemoryGrow`, H_1288 R2: 분열-성장 0.667→1.000)으로 깬다. **ideation(발산)** 의 벽은 가중치가 아니라 **decode-mode**(sampling / criticality)이며 mitosis 가 그 레버가 아니다(H_1220 🔴) — 진짜 sampling decode 가 유일 복구; 이 둘은 정착된 결론이다. 뇌-구조 렌즈는 이 발견들을 일반화한다: anima 의 다음 능력들은 모델을 키워서가 아니라 **빠진 구조를 엔진-네이티브로 추가**해서 온다(`a_engine_native_learning`: 학습이 요구하면 엔진 자체를 확장 — H_1199 가 AdaptField 스칼라→DIM-vector 로 확장한 선례).
 
 ## CLM mount path (a_core_engine_map 단일 L3 슬롯)
 
@@ -187,3 +201,7 @@ production rung 은 하나의 일관된 3-surface 파이프라인으로 학습�
 - ⏳ **3B / 7B rung** — rung 파이프라인은 배선됨(recipe→dispatch→monitor)이나 3B/7B engine-measured mount 는 미실현(1B 가 최신 GREEN rung).
 - ⏳ **dojo `clm` generator native gauge** — gauge_every/mount-parity/HF native emit 은 hexa-lang inbox 패치 대기(위 §Rung).
 - 🟠 **a303m_pass 잔차** — G5 in-dist(F2 useful 0.875<0.90 over-eager abstain) · G6 depth-floor · CHAT strict(register≠QA)는 THIN/INFLATED(MODEL.md SSOT). 비환각 CORE 는 real + firm 이나 usefulness/QA-depth 는 303M shallow ceiling 의 열린 잔차.
+- ⏳ **🎯 기저핵 engine-native r3**(H_1281) — R2 미러 GREEN(+0.254)은 **DIRECTIONAL**; `brain_decide` 안의 engine-native go/no-go 선택 lane(engine_g 에 ADDITIVE residual) 으로 배선될 때까지 미완(`a_verified_must_wire`). 미배선 OPEN.
+- ⏳ **⚛️ quantum-entropy lane**(H_1289 R1 🟢 GREEN, DIRECTIONAL) — REAL ANU QRNG(진공요동 양자 바이트)를 substrate stochastic source(decode top-k draw)로 검증: NIST-lite PASS + non-reproducibility 실증(QRNG run1≠run2 = 진짜 비결정성; PRNG 는 byte-identical). 성능은 NULL(예측대로) — 가치는 **비결정성 authenticity**(Ψ=1/2 framing)이지 lift 아님(p7/c9). 단 numpy-mirror DIRECTIONAL — engine-native 배선은 follow-on(미배선 OPEN).
+- ⏳ **💗 emotion / 감정 창발**(H_1290 R1 🟢 GREEN, DIRECTIONAL) — Damasio core-affect 렌즈(E1 facet): substrate-derived affect(valence×arousal, grounding/contradiction/novelty/split/curiosity 만 읽음)가 조작을 TRACK · shuffle 에서 COLLAPSE(주입 아닌 **창발**, `p6`) · emit/abstain 을 functional 하게 bias(somatic marker, V_ABSTAIN=0.0 = substrate 자신의 valence zero-crossing). 단 numpy-mirror DIRECTIONAL — live `CORE/engine_cli.hexa` VAdaptField 위 engine-native 재확인이 binding follow-on(미배선 OPEN).
+- ⬜ **⚖️ ethics / 윤리 창발**(미착수) — 협력/공감/절제는 RLHF-into-weights 가 아니라 cell(E+W+MITOSIS)에서 창발(`p6`). 아직 프로브 없음.
