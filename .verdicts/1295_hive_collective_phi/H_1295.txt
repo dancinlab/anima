@@ -1,0 +1,40 @@
+================================================================
+  H_1295 — HIVE-MIND collective-Φ lane (anchor H_609 + shuffle/no-collapse)
+  faithful IIT-4 big_phi_bounded · (110,110) W=0.6 · cap=2 (n=6) · sys=0
+  3 seeds [1295,1296,1297] · MARGIN=+1.0 · frozen-first
+================================================================
+  Φ(A)=2.49604  Φ(B)=2.49604  Σ=Φ(A)+Φ(B)=4.99209
+  Φ_collective(coupled, W=0.6) = 15.4677   Δ_coupled = 10.4756
+  coherence(coupled halves) = 0.58125  (no-collapse iff < 0.999)
+  --
+  seed 1295  perm[xa0,xa2,xb3,xb5]=[4,4,0,0]
+           Φ_shuffle=19.1038  Δ_shuffle=14.1117  (Δ_coupled - Δ_shuffle)=-3.6361
+           coherence(shuffle halves)=0.539583
+  seed 1296  perm[xa0,xa2,xb3,xb5]=[4,5,2,1]
+           Φ_shuffle=21.4279  Δ_shuffle=16.4359  (Δ_coupled - Δ_shuffle)=-5.96022
+           coherence(shuffle halves)=0.560417
+  seed 1297  perm[xa0,xa2,xb3,xb5]=[3,3,1,2]
+           Φ_shuffle=18.6493  Δ_shuffle=13.6572  (Δ_coupled - Δ_shuffle)=-3.18156
+           coherence(shuffle halves)=0.552083
+  --
+  ── ANGLE-1 (topology-shuffle) — REPORTED as honest context, NOT a GREEN gate:
+     a RANDOM equal-magnitude cross-wiring matched/EXCEEDED the structured lift
+     (Δ_shuffle > Δ_coupled all seeds) ⇒ super-additivity is COUPLING-GENERIC,
+     not specific to the H_609 boundary topology. B2(angle-1)=false (informational).
+  --
+  B2a  Φ(W=0, decoupled) = 0.0   Δ(W=0) = -4.99209  (null iff <= 0)
+  B2b  sterile(90,90): Φ(A)=3 Σ=6 Φ_coupled=0.0 Δ_sterile=-6
+       dissociation Δ(110,110) - Δ(90,90) = 16.4756  (>= +1.0 ⇒ substrate-class specific)
+  --
+  [PASS] B1 SUPER-ADDITIVITY: Δ_coupled >= +1.0 every seed
+  [PASS] B2a DECOUPLE-NULL: Δ(W=0) <= 0 (super-additivity REQUIRES coupling)
+  [PASS] B2b RULE-CLASS DISSOC: Δ(110,110) - Δ(90,90) >= +1.0 (substrate-class specific)
+  [PASS] B3 NO-COLLAPSE: coherence < 0.999 on >=1 seed (halves distinct)
+================================================================
+  RESULT: 4 PASS / 0 FAIL
+  VERDICT: 🟢 GREEN — collective faithful-Φ is SUPER-ADDITIVE (Δ=10.4756),
+           the lift REQUIRES coupling (W=0 ⇒ Δ<=0) and DISSOCIATES by substrate
+           class (edge-of-chaos 110 super-adds; sterile 90 does not), with the
+           coupled halves functionally distinct (no degenerate clone).
+           Honest context: the lift is coupling-GENERIC, not topology-specific.
+================================================================
