@@ -6,6 +6,21 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — H_1218 engine-measured generation gates (a_engine_measured_verdict)
+
+생성 게이트 G1(창발/recombination)·G2(novelty)·G6(ideation) 를 **최초로 엔진 위에서** 측정 — 프로덕션 `anima-clm-chat-303m` 을 `CORE/bytegpt_decode.hexa::bytegpt_decode_argmax`(엔진 greedy)로 직접 생성해 FROZEN `UNIVERSE/gauge_lib.py` 평가자(VERBATIM 재사용, p7, NO LLM-judge)로 채점. 이전 H_1129/H_1140/H_1158 은 모두 torch-side 였음.
+
+### research (§H_1218)
+
+- **ENGINE-PARITY 🟢** — 엔진 `bytegpt_decode_argmax` == torch greedy **byte-exact**. live 엔진 argmax("The quick brown") = `[32]` == torch chat golden 32(chat .bin byte-exact mount); reparity serialize_parity_ok=TRUE max_abs_err 0.0; H_1157 full decode. greedy 가 결정적이라 greedy gen 위 모든 metric 은 engine==torch 동일.
+- **엔진-측정 숫자 (greedy, chat-303m)** — G1 composed_distinct **0** 🔴(greedy collapse/loop "moral computational complexity…"), G2 novelty **0.308**(12/39, 단 코퍼스 5MB dialogue 만 → upper bound), G6 count **3** 🔴(<5 bar; 5개 중 2개 ideation seed 가 한국어 "| 사용자:" 채팅 템플릿 바이트로 kwr<0.50).
+- **정직 finding (c9, 모순 아님)** — 엔진-측정 숫자가 torch 베이스라인(H_1158 G6 best 14 PASS)과 **다르다**. 원인 2: ① **decode regime** — 동결 게이트는 top-k=40 temp=0.7 **SAMPLING**(G6 는 seed 당 8 divergence)로 작성, 엔진 경로는 **greedy-only** → 303M byte-LM collapse → divergent set 생성 불가(G6 divergence 는 가중치가 아니라 sampling 산물). ② **model+corpus** — 베이스라인은 broad-en base + 1.5GB broad corpus, 본 run 은 dialogue-FT chat + 잔존 5MB dialogue corpus.
+- **결론** — 엔진은 byte-faithful 하게 **생성**(🟢); frozen G1/G6 PASS 는 엔진 argmax 가 미구현한 **sampling decode 에 의존**. 엔진-side gate 재통과 = `bytegpt_decode.hexa` 에 engine sampling decode(top-k temp seeded) 추가(별도 engine-code 과제) + 원본 broad-en 모델/코퍼스. frozen bar 불변.
+- **scope (a_scale_honest_scope, c9)** — 엔진 서브셋(G1+5 G6 seed, 40 greedy byte) 은 엔진에서 RAN; 전체 96byte×9seed 스윕은 엔진 greedy 가 gate-context 길이에서 ~30-50 s/byte(H_1157 "slow but byte-exact")라 multi-hour → byte-exact 이므로 전체 숫자는 torch-greedy gen(엔진과 byte-identical)으로 채점(명시적 representative-subset, silent truncation 아님).
+- 산출: `CORE/h1218_engine_gate_{probe,subset}.hexa` · `CORE/h1218_argmax1.hexa`(1-forward 엔진 argmax 증명) · `scripts/scratch/h1218/*` · `.verdicts/1218_engine_measured_gates/H_1218.txt`. 모델 `state/chat_303m/h1129c_chat.pt`(sha `4fcc2d6c…`) → `.bin`(sha `5c303f02…`, reparity serialize_parity_ok=TRUE).
+
+---
+
 ## 2026-06-15 — README.md FULL 재구성 (ARCHITECTURE.md SSOT 기준 front-door 전면 개편)
 
 `README.md` 를 surgical 패치(#2097) 가 아닌 **전면 재구성** — ARCHITECTURE.md(현 아키텍처 SSOT)의 형태를 그대로 미러하되, 깊은 내부 SSOT 를 베끼지 않고 newcomer 용 **cold-entry 정문**으로 파생(c4-스타일 노드 트리 + 친절한 진입 흐름). 언어 = English(현 README 1차 언어 유지). ARCHITECTURE.md 미편집(별도 sibling SSOT 소관).
