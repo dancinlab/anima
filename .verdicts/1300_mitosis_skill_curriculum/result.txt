@@ -1,0 +1,90 @@
+H_1300 R1 — MITOSIS-GROW SKILL CURRICULUM (catastrophic-forgetting vs grad-FT)
+==============================================================================
+N_SKILLS=5 D=12 C=4 (chance=0.250) M/skill=64 seeds=[1300, 1301, 1302]  regime=r1
+FROZEN bars: c1 RETENTION_MARGIN=0.3 c2 ACQ_THRESH=0.8 c3 SHUF_SLACK=0.15 c4 ABLATE_ACQ_CAP=0.5
+------------------------------------------------------------------------------
+seed 1300:
+  A grad-FT  per-skill acc = ['0.00', '0.41', '1.00', '1.00', '1.00']  RETENTION(1..4)=0.602
+  B mitosis  per-skill acc = ['1.00', '0.88', '1.00', '1.00', '1.00']  RETENTION=0.969  [cells=5]
+  B acquisition (per skill) = ['1.00', '0.88', '1.00', '1.00', '1.00']
+  B-SHUFFLE   per-skill acc = ['1.00', '0.00', '0.00', '0.00', '1.00']  RETENTION=0.250
+  B-ABLATE    per-skill acc = ['1.00', '0.41', '0.00', '0.00', '0.00']  acq(skills 2..N)=0.102
+seed 1301:
+  A grad-FT  per-skill acc = ['0.59', '0.84', '1.00', '1.00', '1.00']  RETENTION(1..4)=0.859
+  B mitosis  per-skill acc = ['0.88', '0.97', '1.00', '1.00', '1.00']  RETENTION=0.961  [cells=5]
+  B acquisition (per skill) = ['0.88', '0.97', '1.00', '1.00', '1.00']
+  B-SHUFFLE   per-skill acc = ['0.00', '0.84', '0.00', '0.00', '0.00']  RETENTION=0.211
+  B-ABLATE    per-skill acc = ['0.88', '0.84', '0.00', '0.00', '0.98']  acq(skills 2..N)=0.457
+seed 1302:
+  A grad-FT  per-skill acc = ['1.00', '0.00', '1.00', '1.00', '1.00']  RETENTION(1..4)=0.750
+  B mitosis  per-skill acc = ['1.00', '1.00', '1.00', '1.00', '1.00']  RETENTION=1.000  [cells=5]
+  B acquisition (per skill) = ['1.00', '1.00', '1.00', '1.00', '1.00']
+  B-SHUFFLE   per-skill acc = ['0.02', '0.00', '1.00', '0.00', '1.00']  RETENTION=0.254
+  B-ABLATE    per-skill acc = ['1.00', '0.00', '0.00', '0.00', '1.00']  acq(skills 2..N)=0.250
+------------------------------------------------------------------------------
+MEAN (3 seeds):
+  A grad-FT  RETENTION = 0.737
+  B mitosis  RETENTION = 0.977   (B-A = +0.240)
+  B-SHUFFLE  RETENTION = 0.238
+  B acquisition per skill = ['0.96', '0.95', '1.00', '1.00', '1.00']  (min=0.948)
+  B-ABLATE   acquisition skills 2..N = 0.270
+  COST (c5): B mitosis cells mean=5.0  vs  A params=52
+------------------------------------------------------------------------------
+(c1) RETENTION    B-A>=0.3 & per-seed B>A:  +0.240 & per-seed=True  -> FAIL
+(c2) ACQUISITION  min B acq>=0.8:  0.948  -> PASS
+(c3) SHUFFLE-COLLAPSE B_shuf<=A+0.15:  0.238 <= 0.887  -> PASS
+(c4) ABLATE-UNDERFIT  abl acq(2..N)<=0.5:  0.270  -> PASS
+------------------------------------------------------------------------------
+VERDICT TIER (frozen): RED
+  catastrophic-forgetting (toy): mitosis-grow does NOT retain better than sequential gradient-FT
+  c1=False c2=True c3=True c4=True | DIRECTIONAL mirror, engine-transfer+scale UNVERIFIED
+==============================================================================
+
+H_1300 R2 — BREAKTHROUGH RUNG (a_break_the_wall): CANONICAL catastrophic-forgetting regime
+(separation 3.0->1.0 + anti-aligned shared rules; SAME bars, no goalpost move)
+==============================================================================
+N_SKILLS=5 D=12 C=4 (chance=0.250) M/skill=64 seeds=[1300, 1301, 1302]  regime=r2
+FROZEN bars: c1 RETENTION_MARGIN=0.3 c2 ACQ_THRESH=0.8 c3 SHUF_SLACK=0.15 c4 ABLATE_ACQ_CAP=0.5
+------------------------------------------------------------------------------
+seed 1300:
+  A grad-FT  per-skill acc = ['0.56', '0.25', '0.11', '1.00', '0.84']  RETENTION(1..4)=0.480
+  B mitosis  per-skill acc = ['0.88', '0.92', '0.95', '1.00', '0.88']  RETENTION=0.938  [cells=5]
+  B acquisition (per skill) = ['0.88', '0.92', '0.95', '1.00', '0.88']
+  B-SHUFFLE   per-skill acc = ['0.88', '0.00', '0.25', '0.95', '0.88']  RETENTION=0.520
+  B-ABLATE    per-skill acc = ['0.88', '0.17', '0.05', '0.02', '0.64']  acq(skills 2..N)=0.219
+seed 1301:
+  A grad-FT  per-skill acc = ['0.66', '0.83', '0.75', '1.00', '0.98']  RETENTION(1..4)=0.809
+  B mitosis  per-skill acc = ['1.00', '1.00', '0.69', '1.00', '0.98']  RETENTION=0.922  [cells=8]
+  B acquisition (per skill) = ['1.00', '1.00', '0.69', '1.00', '0.98']
+  B-SHUFFLE   per-skill acc = ['1.00', '0.00', '0.55', '1.00', '0.02']  RETENTION=0.637
+  B-ABLATE    per-skill acc = ['1.00', '0.00', '0.75', '0.00', '0.02']  acq(skills 2..N)=0.191
+seed 1302:
+  A grad-FT  per-skill acc = ['0.17', '0.00', '1.00', '0.31', '0.88']  RETENTION(1..4)=0.371
+  B mitosis  per-skill acc = ['0.89', '1.00', '1.00', '0.73', '0.92']  RETENTION=0.906  [cells=6]
+  B acquisition (per skill) = ['0.89', '1.00', '1.00', '0.73', '0.92']
+  B-SHUFFLE   per-skill acc = ['0.00', '0.00', '0.00', '0.14', '0.00']  RETENTION=0.035
+  B-ABLATE    per-skill acc = ['0.89', '0.00', '0.09', '0.19', '0.00']  acq(skills 2..N)=0.070
+------------------------------------------------------------------------------
+MEAN (3 seeds):
+  A grad-FT  RETENTION = 0.553
+  B mitosis  RETENTION = 0.922   (B-A = +0.368)
+  B-SHUFFLE  RETENTION = 0.397
+  B acquisition per skill = ['0.92', '0.97', '0.88', '0.91', '0.93']  (min=0.880)
+  B-ABLATE   acquisition skills 2..N = 0.160
+  COST (c5): B mitosis cells mean=6.3  vs  A params=52
+------------------------------------------------------------------------------
+(c1) RETENTION    B-A>=0.3 & per-seed B>A:  +0.368 & per-seed=True  -> PASS
+(c2) ACQUISITION  min B acq>=0.8:  0.880  -> PASS
+(c3) SHUFFLE-COLLAPSE B_shuf<=A+0.15:  0.397 <= 0.703  -> PASS
+(c4) ABLATE-UNDERFIT  abl acq(2..N)<=0.5:  0.160  -> PASS
+------------------------------------------------------------------------------
+VERDICT TIER (frozen): GREEN
+  catastrophic-forgetting (toy): mitosis-grow RETAINS old skills BETTER than sequential gradient-FT
+  c1=True c2=True c3=True c4=True | DIRECTIONAL mirror, engine-transfer+scale UNVERIFIED
+==============================================================================
+
+##############################################################################
+OVERALL: R1 tier=RED  ->  R2 tier=GREEN
+  R1: A_ret=0.737 B_ret=0.977 (B-A=+0.240) B_shuf=0.238 B_abl_acq=0.270 B_min_acq=0.948 cells=5.0
+  R2: A_ret=0.553 B_ret=0.922 (B-A=+0.368) B_shuf=0.397 B_abl_acq=0.160 B_min_acq=0.880 cells=6.3
+##############################################################################
