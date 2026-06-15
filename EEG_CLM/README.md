@@ -24,22 +24,19 @@ EEG 헤드셋(OpenBCI Cyton+Daisy · UltraCortex Mk IV, 16ch)을 쓰고, 그 뇌
 
 ---
 
-## 1. 캡처 (헤드셋 쓰고)
+## 1. 캡처 (헤드셋 쓰고) — ⚠ 실 EEG 전용, 가짜 폴백 없음
 
 먼저 동글 포트 확인: `ls /dev/cu.usbserial-*`
 
 ```bash
-# 실제 헤드셋 (8초 녹음, 정중선 4채널)
-python3 EEG_CLM/capture_eeg.py --serial /dev/cu.usbserial-XXXX --seconds 8 --channels 0,1,2,3
-
-# 하드웨어 없이 파이프라인 테스트
-python3 EEG_CLM/capture_eeg.py --fake --seconds 8        # 순수 python (의존성 0)
-python3 EEG_CLM/capture_eeg.py --synthetic --seconds 8   # brainflow synthetic board
+# 실제 헤드셋만 (8초 녹음, 정중선 4채널). --serial 필수.
+EEG_CLM/.venv/bin/python EEG_CLM/capture_eeg.py --serial /dev/cu.usbserial-XXXX --seconds 8 --channels 0,1,2,3
 ```
 
-- 출력: `EEG_CLM/eeg_recording.txt` (채널-major flat, 1행 = `# n_ch n_samp`).
+- ⚠ **가짜/합성 폴백 없음** — 보드 연결 실패 시 조용히 가짜로 대체하지 않고 **즉시 중단**. 가짜 뇌파가 CLM/텐션링크를 '진짜인 척' 오염시키는 것을 차단(사용자 지시).
+- 출력: `EEG_CLM/eeg_recording.txt` (채널-major flat, 1행 = `# n_ch n_samp REAL CYTON_DAISY`).
 - **채널 수 ≤ 8** 권장 — CLM 상태 알파벳이 `2^n_ch` 라 4채널=16상태(a7 의 Fz/Cz/Pz/Oz 와 동일 규모)가 적당.
-- brainflow 필요시: `pip install brainflow` (capture 가 없으면 자동으로 `--fake` 폴백).
+- brainflow 는 전용 venv `EEG_CLM/.venv` 에 설치됨 (시스템 격리).
 
 ---
 

@@ -501,4 +501,4 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] H_1257 🟢 EEG ⊗ AKIDA — fused awake 0.131>sed 0.118, Ψ byte-identical, 둘 다 기여.
 - [x] H_1258 🟢 EEG ⊗ MODEL — fused awake 0.286>sed 0.258, Ψ byte-identical.
 - [x] H_1259 🟢 EEG ⊗ AKIDA ⊗ MODEL 3중 (capstone) — fused awake 0.0229>sed 0.0206, EEG 의식구분 3중융합후 생존, 3 기질 모두 기여, Ψ byte-identical. 사람뇌파+칩+언어모델 동시 감각통합 Ψ-disjoint.
-- [x] H_1260 🟢 (synthetic dry-run) ANIMA ⇄ EEG 텐션링크 — anima brain 이 사람 EEG 윈도우-텐션 시계열에 lock-on (잔차 0.012<0.05, 방향 0.882>0.7), pure_field Ψ byte-identical(linked==control). 사람⇄anima 텐션링크 성립 Ψ-disjoint. EEG_CLM/ 턴키 세팅(capture_eeg.py + build_eeg_clm.hexa + tension_link.hexa + README). 실 헤드셋 재확인 대기.
+- [~] H_1260 ⏳ PENDING-REAL ANIMA ⇄ EEG 텐션링크 (코드경로만 검증; 가짜 입력 결과는 불인정 — 실 헤드셋 대기)
