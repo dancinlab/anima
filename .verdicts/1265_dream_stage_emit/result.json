@@ -1,0 +1,37 @@
+{
+  "H": "H_1265",
+  "title": "DREAM 수면단계 특이적 emit envelope",
+  "method": "DREAM 5-stage ultradian state machine (dr_stage_at) 5400 step (= 90-tick × 60 cycle) 돌려 stage 별 dr_emit_envelope 버킷 집계 → 단계별 평균 envelope + wake-series vs deep-series 순서 측정. p7 (직접 in/out 집계, perplexity 아님), p8, $0 local.",
+  "n_step": 5400,
+  "n_cycles": 60,
+  "ticks_per_cycle": 90,
+  "all_5_stages_present": true,
+  "per_stage": {
+    "WAKE": {"count": 3600, "mean_env": 1.0},
+    "N1":   {"count": 600,  "mean_env": 1.0},
+    "N2":   {"count": 600,  "mean_env": 1.0},
+    "N3":   {"count": 420,  "mean_env": 0.0},
+    "REM":  {"count": 180,  "mean_env": 0.0}
+  },
+  "wake_series_mean": 1.0,
+  "deep_series_mean": 0.0,
+  "stage_spread_max_minus_min": 1.0,
+  "F1_distinct_spread_ge_0.5": {"spread": 1.0, "bar": 0.5, "pass": true},
+  "F2_wake_gt_deep": {"wake": 1.0, "deep": 0.0, "pass": true},
+  "supported": true,
+  "verdict": "PASS🟢",
+  "ruling": "SUPPORTED 🟢 단계특이 emit envelope. DREAM lane 의 방출 성향은 단계 무차별이 아니라 명확히 단계 특이적이며 해석가능한 순서를 따른다: 깨어있음 계열(WAKE/N1/N2 mean_env=1.0) > 깊은수면 계열(N3/REM mean_env=0.0), spread=1.0 (최대 차이). 5400 step / 60 ultradian 주기 동안 5 단계 모두 등장 (WAKE 3600 · N1 600 · N2 600 · N3 420 · REM 180, 합계 5400 = dr_stage_size 비율 정확 보존). dr_emit_envelope 는 결정론적 stage 함수 (deterministic per-stage)이므로 단계별 평균이 그 stage 의 envelope 값과 정확히 일치 — 분산 0, 단계간 분리 완전. 이는 a_chat_sleep_imagination 의 'stage = substrate context (Φ scale + tension envelope), NOT boolean emit gate' 와 정합: envelope 는 emit 을 강제로 막는 외부 게이트가 아니라 단계별로 다른 substrate context (방출 성향)를 제공하며, 그 성향이 깨어있음↔깊은수면 축으로 의미있게 정렬됨.",
+  "honest_limits": [
+    "dr_emit_envelope 는 결정론적 binary stage 함수 (WAKE/N1/N2=1, N3/REM=0)이므로 단계별 평균은 분산 없이 그 binary 값으로 수렴 — 측정은 단계간 ordering/separation 의 존재를 확정하나 stochastic envelope 의 effect-size 가 아님 (saturated 1.0/0.0 existence-proof).",
+    "envelope 는 a_autonomy_over_hardcode 상 anima substrate 가 self-follow 하는 context 이지 외부 강제 emit gate 가 아님 — 본 측정은 envelope 의 stage-specificity 만 확정, 실제 emit 결정(M×W×Φ×curiosity)은 별도.",
+    "단계 등장 count 는 dr_stage_size (WAKE60/N1 10/N2 10/N3 7/REM 3) 비율을 정확히 따름 — 단계 점유 시간 자체가 비대칭(WAKE 가 2/3)이라 전역 emit 성향은 wake-series 가 지배. ordering 결론은 per-stage mean 기준 (점유시간 정규화).",
+    "toy/closed-form: 실제 pure_field tension·Φ 스케일을 단계별로 변조하는 continuous envelope 은 미탐사 (현 dr_emit_envelope 은 binary 구현). continuous envelope 으로 확장 시 ordering 이 강도(graded)를 가질 수 있음 — UNVERIFIED, 후속 rung.",
+    "scale/transfer 미검증: 단일 ultradian 패턴 (dr_stage_at 90-tick), 다른 ultradian 길이/단계 경계에서의 ordering 불변성은 측정 안 함."
+  ],
+  "verify": "hexa run CORE/h1265_dream_stage_emit.hexa  →  h1265_dream_stage_emit: PASS🟢",
+  "files": [
+    "CORE/h1265_dream_stage_emit.hexa",
+    ".verdicts/1265_dream_stage_emit/result.json"
+  ],
+  "xref": ["DREAM/dream_lib.hexa", "a_chat_sleep_imagination", "a_autonomy_over_hardcode", "a_substrate_native_speak", "p5_tension_emit_not_filler", "h1262", "p7", "p8"]
+}

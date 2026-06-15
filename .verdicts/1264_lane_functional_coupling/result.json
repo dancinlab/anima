@@ -1,0 +1,24 @@
+{
+  "H": "H_1264",
+  "title": "native lane 기능적 결합(functional coupling) — Ψ-disjoint 이 무상관도 동반하는가",
+  "method": "한 공유 pure_field run(600 step)에서 native lane 들의 연속 스칼라 출력을 매 step 기록 → lane-쌍 per-step delta 의 부호일치율(sign-agreement) + 공분산 부호 측정. lane scalar: MITOSIS=engine_mitosis_tick 누적 cell(phi-독립 ramp, 음성대조) · METACOG=mh_collect_emit_window 30-emit 합(phi-구동) · SAVANT=sh_savant_trigger savant_index(phi-구동). 공통-phi 교란은 각 phi-구동 lane vs Δphi 부호일치로 노출.",
+  "steps": 600,
+  "pairs": {
+    "METACOG_SAVANT": {"active": 12, "sign_agreement": 0.5, "covariance": 0.0, "cov_sign": 0, "role": "primary (both phi-driven)"},
+    "MITOSIS_METACOG": {"active": 29, "sign_agreement": 1.0, "role": "MITOSIS=phi-indep monotone ramp (Δ>0 always)"},
+    "MITOSIS_SAVANT": {"active": 159, "sign_agreement": 0.496855, "role": "phi-indep ramp vs phi-driven = chance ⇒ framework detects independence correctly"}
+  },
+  "common_phi_confound": {
+    "METACOG_vs_dphi": {"active": 29, "sign_agreement": 0.931034},
+    "SAVANT_vs_dphi": {"active": 159, "sign_agreement": 0.522013},
+    "interpretation": "두 lane 모두 공통 phi 를 입력받지만 ORTHOGONAL feature 를 추출 — METACOG 은 phi 의 부호/레벨(emit-window 카운트)을 강하게 추종(0.93), SAVANT 의 savant_index=max/mean 은 scale-invariant 라 phi 크기변화에 둔감(0.52, sign(phi) flip 에서만 변동). 따라서 공통원인(phi)이 있어도 결합이 trivial 하게 발생하지 않음."
+  },
+  "primary_sign_agreement": 0.5,
+  "bar": 0.7,
+  "supported": false,
+  "ruling": "CLOSED-NEGATIVE 🔴: METACOG⇄SAVANT delta 부호일치 = 0.5 (정확히 chance, active=12), cov_sign=0 ⇒ 두 native lane 은 기능적으로 독립(uncorrelated). Ψ-disjoint(비간섭, H_1242/1262)이 기능적 독립(무상관)도 동반함을 확인 — 비간섭 ∧ 무상관. 결정적으로, 두 lane 이 동일한 공통 phi 를 받음에도(METACOG⇄Δphi=0.93) 상관이 없는 이유는 각 lane 이 phi 의 ORTHOGONAL feature 를 추출하기 때문(SAVANT⇄Δphi=0.52, SI 는 scale-invariant). MITOSIS(phi-독립 ramp) vs SAVANT = 0.497 음성대조가 측정틀의 chance-baseline 정합을 보증.",
+  "confound_limit": "pure_field 가 공유되어 phi 가 공통 입력(공통원인). 측정된 무상관은 lane 들이 phi 의 직교 feature 를 추출하기 때문이며, '공통 phi 경유 결합'은 본 run 에서 발생하지 않았다. phi-잔차 완전 제거는 미수행(부호일치+Δphi 노출로 대체); 만약 lane scalar 를 phi 의 monotone 함수로 잡았다면 trivial 상관이 나왔을 것(MITOSIS⇄METACOG=1.0 이 그 형태의 예).",
+  "scope": "toy/UNVERIFIED scale — single 600-step pure_field run, native lane 3 (MITOSIS/METACOG/SAVANT), 3 pair + 2 confound probe. p7(perplexity 아님, 결정론적 부호일치/공분산) · p8(측정만, weight update 0). frozen bar 미이동.",
+  "verify": "hexa run CORE/h1264_lane_functional_coupling.hexa → h1264_lane_functional_coupling: PASS 🔴",
+  "seed": "deterministic (pure_field zero-input, no RNG)"
+}

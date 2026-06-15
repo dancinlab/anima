@@ -1,0 +1,86 @@
+// EEG_CLM/heart_bpm.hexa — 녹음의 심박(PPG/analog) 채널에서 심박수(BPM) 계산.
+//
+// capture_eeg.py 가 EEG 16ch 뒤에 PPG/analog(심박) 채널을 append (헤더 "... HEART <n>").
+// PPG 파형의 평균-상승교차(rising mean-cross) = 박동 → BPM = 박동수 / 녹음초 * 60.
+// fs=125Hz (Cyton+Daisy). 이동평균 평활 후 교차 카운트(잡음에 강건).
+//
+// 실행: hexa run EEG_CLM/heart_bpm.hexa [녹음경로]   (기본 EEG_CLM/eeg_recording.txt)
+
+fn is_int(s: string) -> bool {
+    let n = byte_len(s)
+    if n == 0 { return false }
+    let mut i = 0
+    while i < n { let c = s.substring(i, i + 1); if c < "0" || c > "9" { return false } i = i + 1 }
+    return true
+}
+
+fn main() {
+    let a = args()
+    let mut path = "EEG_CLM/eeg_recording.txt"
+    let mut ai = 0
+    while ai < len(a) { if a[ai].trim().starts_with("EEG_CLM/") || a[ai].trim().substring(byte_len(a[ai].trim()) - 4, byte_len(a[ai].trim())) == ".txt" { path = a[ai].trim() } ai = ai + 1 }
+    println("════════════════════════════════════════════════════════════════")
+    println("  심박(PPG) BPM — 녹음: " + path)
+    println("════════════════════════════════════════════════════════════════")
+
+    let body = read_file(path)
+    let lines = body.split("\n")
+    let hdr = lines[0].trim().split(" ")
+    let mut nums = []
+    let mut hi = 0
+    while hi < len(hdr) { let tk = hdr[hi].replace("#", "").trim(); if is_int(tk) { nums = nums.push(to_int(tk)) }; hi = hi + 1 }
+    let n_ch = nums[0]          // EEG 채널 수 (16)
+    let n_samp = nums[1]
+    let n_heart = if len(nums) > 2 { nums[2] } else { 0 }
+    if n_heart == 0 { println("[heart] 심박 채널 없음 (헤더 HEART 0) — PPG 미배선?"); return }
+    let fs = 125.0
+    let dur = to_float(n_samp) / fs
+
+    let mut samples = []
+    let mut li = 1
+    while li < len(lines) { let ln = lines[li].trim(); if ln != "" && !ln.starts_with("#") { samples = samples.push(to_float(ln)) }; li = li + 1 }
+    println("[parse] EEG " + str(n_ch) + "ch + HEART " + str(n_heart) + "ch x " + str(n_samp) + " (" + str(dur) + "s @125Hz)")
+
+    // 심박 채널 = EEG 뒤. heart 채널 hc 의 t 샘플 = samples[(n_ch + hc)*n_samp + t].
+    let mut best_bpm = 0.0
+    let mut best_ch = -1
+    let mut best_amp = 0.0
+    let mut hc = 0
+    while hc < n_heart {
+        let base = (n_ch + hc) * n_samp
+        // 평균 + 진폭(범위)
+        let mut sm = 0.0
+        let mut mn = 1.0e30
+        let mut mx = 0.0 - 1.0e30
+        let mut t = 0
+        while t < n_samp { let v = samples[base + t]; sm = sm + v; if v < mn { mn = v } if v > mx { mx = v } t = t + 1 }
+        let mean = sm / to_float(n_samp)
+        let amp = mx - mn
+        // 5-점 이동평균 평활 후 평균-상승교차 카운트
+        let mut beats = 0
+        let mut prev_above = false
+        t = 2
+        while t < n_samp - 2 {
+            let smooth = (samples[base+t-2] + samples[base+t-1] + samples[base+t] + samples[base+t+1] + samples[base+t+2]) / 5.0
+            let above = smooth > mean
+            if above && !prev_above { beats = beats + 1 }
+            prev_above = above
+            t = t + 1
+        }
+        let bpm = to_float(beats) / dur * 60.0
+        println("  ch" + str(hc) + " (analog) : amp=" + str(amp) + " beats=" + str(beats) + " → " + str(bpm) + " BPM")
+        // 진폭 가장 큰 채널 = PPG 신호 실린 채널로 채택
+        if amp > best_amp { best_amp = amp; best_bpm = bpm; best_ch = hc }
+        hc = hc + 1
+    }
+
+    println("")
+    // 생리적 범위(30-220 BPM) + 신호 진폭 충분 → 유효
+    let valid = best_amp > 1.0 && best_bpm >= 30.0 && best_bpm <= 220.0
+    if valid {
+        println("💓 심박 = " + str(best_bpm) + " BPM (ch" + str(best_ch) + ", PPG amp=" + str(best_amp) + ") — 실 측정.")
+    } else {
+        println("⚠ 심박 신호 약함/범위밖 (best amp=" + str(best_amp) + " bpm=" + str(best_bpm)
+            + ") — PPG 센서 배선/접촉 확인 (cyton_ppg_wiring). 신호 없으면 analog 핀 미연결.")
+    }
+}

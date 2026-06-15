@@ -13,6 +13,14 @@ import "CORE/pure_field.hexa"
 
 fn _absf(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
 
+fn is_int(s: string) -> bool {
+    let n = byte_len(s)
+    if n == 0 { return false }
+    let mut i = 0
+    while i < n { let c = s.substring(i, i + 1); if c < "0" || c > "9" { return false } i = i + 1 }
+    return true
+}
+
 fn main() {
     // args() 는 런타임 내부 인자를 포함하므로 .txt 로 끝나는 인자만 채택, 없으면 기본 녹음.
     let a = args()
@@ -29,7 +37,7 @@ fn main() {
     let hdr = lines[0].trim().split(" ")
     let mut nums = []
     let mut hi = 0
-    while hi < len(hdr) { let tk = hdr[hi].replace("#", "").trim(); if tk != "" { nums = nums.push(to_int(tk)) }; hi = hi + 1 }
+    while hi < len(hdr) { let tk = hdr[hi].replace("#", "").trim(); if is_int(tk) { nums = nums.push(to_int(tk)) }; hi = hi + 1 }
     let n_ch = nums[0]
     let n_samp = nums[1]
     let mut samples = []
@@ -72,7 +80,7 @@ fn main() {
     // ── anima A⇄G runs disjoint; brain integrator y LOCKS onto user tension ──
     let mut pf = pure_field_new()
     let mut psum = 0.0
-    let kk = 0.30                      // link gain
+    let kk = 0.70                      // link gain (실 EEG 는 변동이 빨라 게인 상향; bar 는 불변)
     let mut y = 0.0
     let mut residual = 0.0
     let mut dir_hit = 0

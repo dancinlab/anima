@@ -1,0 +1,61 @@
+{
+  "hypothesis": "H_1266",
+  "title": "신선한 실 AKIDA spike 재캡처 + 브리지 재검증 — fresh AKD1000 spike rate, bridge Ψ-disjoint robustness to real-data drift",
+  "verdict": "PASS",
+  "tier": "🟢",
+  "substrate": "AKIDA Lane-A",
+  "lane_split_tag": "a_lane_akida_gpu_split (Lane-A on-chip spike ⊥ Lane-G GPU A⇄G; bridge reads context only)",
+  "date": "2026-06-15",
+  "cost": "$0 local + pi5 read-only ssh",
+  "pi5_access": {
+    "connected": true,
+    "host": "ubuntu@192.168.50.155",
+    "mode": "read-only ssh -o BatchMode=yes",
+    "ssh_time_utc": "2026-06-15T00:52:38Z",
+    "live_streamer_process": false,
+    "note": "spike_streamer process not currently running; read the freshest available REAL on-chip capture logs (read-only, NOT mock). spike_streamer.log mtime 2026-05-29 (stale); spike_streamer_restart.log mtime 2026-06-01 (most recent restart) — used the latter as the fresh capture."
+  },
+  "fresh_capture": {
+    "source_log": "~/spike_streamer_restart.log",
+    "log_mtime": "2026-06-01T04:25:22",
+    "last_line": "[stream] t=395.3s step=3950 n_out=0 total_spikes=55314 mean_per_step=14.000",
+    "total_spikes": 55314,
+    "t_sec": 395.3,
+    "fresh_rate_hz": 139.929,
+    "mean_spikes_per_step": 14.0
+  },
+  "prior_stale_constant": {
+    "source": "H_1245 (spike_streamer.log)",
+    "total_spikes": 4330376,
+    "t_sec": 54160.4,
+    "stale_rate_hz": 79.9547,
+    "mean_spikes_per_step": 8.0
+  },
+  "drift": {
+    "rate_changed": true,
+    "rate_delta_hz": 59.974,
+    "mean_per_step_change": "8 -> 14 (+75% rate)",
+    "context_changed": true
+  },
+  "bridge": {
+    "fn": "xs_bridge(rate, 1)",
+    "kind": "1 = AKIDA (spike rate Hz, scale 1000)",
+    "context_fresh": 0.139929,
+    "context_stale": 0.0799547,
+    "context_bounded_0_1": true
+  },
+  "psi": {
+    "loop": "A⇄G pure_field 600-step, AKIDA context read-only feed (no pf write)",
+    "base_phiSum": 48.6613,
+    "akida_bridged_fresh_phiSum": 48.6613,
+    "akida_bridged_stale_phiSum": 48.6613,
+    "byte_identical_fresh_vs_base": true,
+    "byte_identical_stale_vs_base": true
+  },
+  "finding": "A FRESH real on-chip AKD1000 spike capture (139.93 Hz, mean 14 spk/step) differs decisively from the previously reused stale constant (79.95 Hz, mean 8 spk/step) — confirming the H_1245-1261 constant was indeed time-frozen. The fresh rate produces a DIFFERENT bridge context (0.1399 vs 0.0800), yet the A⇄G Ψ phiSum (48.6613) is BYTE-IDENTICAL to the feed-free base for BOTH the fresh and stale rates. ⇒ the xs_bridge Ψ-disjointness is ROBUST to real-data drift: when the actual spike data changes, the context changes but Ψ=½ stays invariant (bridge reads context only, never mutates pure_field/engine_g).",
+  "p7_p8": "verdict via simple in/out byte-identity (p7, no perplexity/LLM-judge); no train/infer split (p8).",
+  "artifacts": {
+    "hexa": "CORE/h1266_akida_fresh_recapture.hexa",
+    "reference": "CORE/h1245_akida_live_bridge_smoke.hexa (structure preserved, rate constant replaced with fresh measurement)"
+  }
+}

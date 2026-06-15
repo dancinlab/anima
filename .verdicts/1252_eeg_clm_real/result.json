@@ -1,0 +1,2 @@
+{"H":"H_1252-real","title":"EEG→CLM 실데이터 확정 (사용자 16채널)","real_data":true,"n_ch":16,"clm_ch":6,"V":64,"bigram_acc":0.9709443,"unigram_acc":0.4132365,"uniform":0.015625,"supported":true,
+ "ruling":"SUPPORTED 🟢 (REAL EEG): 실제 사용자 EEG 16채널 녹음에서 clean 부분집합 6채널(2^6=64 상태)로 bigram next-state CLM 구축 — acc 0.971 ≫ unigram 0.413 ≫ uniform 0.016. 실 뇌파는 합성(0.49)보다 훨씬 강한 시간구조(0.97) = 진짜 뇌 동역학의 자기상관. 16ch 전체 상태공간(2^16)은 폭발하므로 부분집합 사용(정직). EEG_CLM/eeg_clm.model 저장.","verify":"hexa run EEG_CLM/build_eeg_clm.hexa PASS (실 16ch 녹음)"}

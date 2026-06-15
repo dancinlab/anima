@@ -11,6 +11,14 @@
 
 fn pow2(n: int) -> int { let mut v = 1; let mut b = 0; while b < n { v = v * 2; b = b + 1 } return v }
 
+fn is_int(s: string) -> bool {
+    let n = byte_len(s)
+    if n == 0 { return false }
+    let mut i = 0
+    while i < n { let c = s.substring(i, i + 1); if c < "0" || c > "9" { return false } i = i + 1 }
+    return true
+}
+
 fn main() {
     // args() 는 런타임 내부 인자를 포함하므로 .txt 로 끝나는 인자만 채택, 없으면 기본 녹음.
     let a = args()
@@ -30,7 +38,7 @@ fn main() {
     let mut hi = 0
     while hi < len(hdr) {
         let tk = hdr[hi].replace("#", "").trim()
-        if tk != "" { nums = nums.push(to_int(tk)) }
+        if is_int(tk) { nums = nums.push(to_int(tk)) }
         hi = hi + 1
     }
     let n_ch = nums[0]
@@ -43,7 +51,10 @@ fn main() {
         li = li + 1
     }
     println("[parse] n_ch=" + str(n_ch) + " n_samp=" + str(n_samp) + " samples=" + str(len(samples)))
-    let V = pow2(n_ch)
+    // CLM 상태 알파벳 = 2^CLM_CH; 16채널이면 2^16 폭발 → clean 부분집합(처음 CLM_CH 채널)으로 제한.
+    let CLM_CH = if n_ch > 6 { 6 } else { n_ch }
+    if n_ch > CLM_CH { println("[cap] n_ch=" + str(n_ch) + " > " + str(CLM_CH) + " → CLM 은 처음 " + str(CLM_CH) + " EEG 채널만 사용 (2^" + str(CLM_CH) + " 상태; 16ch 전체 상태공간은 폭발)") }
+    let V = pow2(CLM_CH)
     let T = n_samp
     if len(samples) < n_ch * n_samp {
         println("[ERR] 샘플 수 부족 (" + str(len(samples)) + " < " + str(n_ch * n_samp) + ")")
@@ -66,7 +77,7 @@ fn main() {
         let mut state = 0
         let mut c2 = 0
         let mut w = 1
-        while c2 < n_ch {
+        while c2 < CLM_CH {
             if samples[c2 * n_samp + t2] > means[c2] { state = state + w }
             w = w * 2
             c2 = c2 + 1
