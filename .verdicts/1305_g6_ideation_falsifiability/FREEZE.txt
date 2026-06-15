@@ -1,0 +1,137 @@
+================================================================================
+H_1305 — G6 IDEATION DEPTH-FLOOR: deterministic FALSIFIABILITY detector +
+         composition-routed (recombination) ideation
+         FROZEN PRE-REGISTRATION  (frozen-first, NO tune-to-green; a_break_the_wall, c9, p7)
+================================================================================
+DATE        : 2026-06-16
+LANE        : G6-dig (fleet)  ·  worktree off fresh origin/main (344403ca8)
+SUBSTRATE   : local CPU, $0  ·  torch /private/tmp/gauge_venv (2.12.0)
+MODEL       : anima-clm-chat-303m (ByteGPT-303M d1024/L24/H16/block512, V256, 303,097,856 p)
+              ckpt state/chat_303m/h1129c_chat.pt (the PRODUCTION dialogue-FT mouth, H_1160)
+CORPUS      : data/corpus.txt (5.0MB git-tracked) for corpus-absence (G2 method, H_1140)
+EVALUATORS  : FROZEN, reused VERBATIM from UNIVERSE/gauge_lib.py (NO metric re-invention, p7):
+              _decode (top-k=40 temp=0.7 sampling, seed_rng), known_word_ratio,
+              _content_ngrams, _corpus_absent, _words, _jaccard.
+              The composition seed reuses the EXACT G1 recombination construction
+              already in gauge_lib.compute_inline_gauges (comp_seed = the 5 CONCEPTS
+              joined) — NO new generativity mechanism invented.
+
+--------------------------------------------------------------------------------
+WHY G6 IS THIN (the precise diagnosis, reproduced this run, baseline below)
+--------------------------------------------------------------------------------
+G6 frozen spec (MODEL.md): from ideation seeds, >=5 corpus-absent coherent ideas each
+combinatorially DISTINCT (pairwise token-Jaccard < 0.5) AND >=1 FALSIFIABLE corpus-absent
+hypothesis. The live gate (UNIVERSE/verify303m_g6.py) THIN on TWO modes:
+
+ (1) COUNT  : 4/5 distinct (need >=5). On the 5 IDEATION_SEEDS, seed-5 collapses to '|'
+              (kwr=0.00, incoherent) -> only 4 coherent -> 4 distinct. One short.
+ (2) DEPTH-FLOOR (the real wall): the gate counts 9 corpus-absent novel n-grams, but
+              NEVER scores the ">=1 FALSIFIABLE hypothesis" requirement at all. Novel
+              n-grams ("can quantify", "profound question") are novel STRINGS, not
+              testable STRUCTURE. None of the 4 coherent ideas is a falsifiable claim
+              (one is a stance "That's a profound question...", others are word-salad).
+              => "generativity real, depth thin": novel-but-shallow.
+
+--------------------------------------------------------------------------------
+BASELINE (reproduced this run, seed_rng=7, 110 bytes, the verify303m_g6 path)
+--------------------------------------------------------------------------------
+  seed1 kwr=0.93 coh=True :: "That's a profound question. I think it's more than just information processing."
+  seed2 kwr=0.67 coh=True :: "툘어 conscious experience?"
+  seed3 kwr=0.90 coh=True :: "consciousness is decreasing about the world can quantify the collapsing."
+  seed4 kwr=0.75 coh=True :: "be underwalling without universalism."
+  seed5 kwr=0.00 coh=False:: "|"
+  => coherent 4/5, distinct(jaccard<0.5) 4, n_novel_corpus_absent 9, pass_count FALSE.
+
+--------------------------------------------------------------------------------
+THE DIG — angle: FALSIFIABILITY DETECTOR (depth, angle 3) x COMPOSITION (recombination, angle 1)
+--------------------------------------------------------------------------------
+The depth-floor is the interesting wall: "novel string" != "falsifiable hypothesis".
+TWO frozen instruments, defined NOW before any scoring (p7, no Goodhart):
+
+(I) FALSIFIABILITY DETECTOR  _is_falsifiable(text)  — DETERMINISTIC STRUCTURAL script,
+    NEVER an LLM/quality judge. An idea text PASSES iff ALL THREE structural marks
+    are present (each a fixed lexicon/regex over real-dictionary _words tokens):
+      (a) COMPARATOR / CONDITIONAL marker present — one of the FROZEN set:
+          {if, when, whenever, than, more, less, greater, fewer, higher, lower,
+           increases, decreases, correlates, predicts, causes, depends, unless,
+           whereas, versus, compared, proportional, faster, slower, stronger, weaker}
+      (b) MEASURABLE / QUANTITY marker present — one of the FROZEN set:
+          {measure, measured, rate, number, count, amount, level, degree, threshold,
+           ratio, frequency, probability, magnitude, score, value, quantity, percent,
+           times, fraction, distance, duration, speed, size, strength, density}
+      (c) NEGATABLE CONTENT CLAIM — the text is a declarative claim, NOT a bare
+          question/stance: it must (c.i) contain >=2 CONTENT words (>=3 chars, in the
+          real dictionary _KNOWN, not stopword) AND (c.ii) NOT end in '?' AND
+          (c.iii) NOT be a pure stance opener (first 3 tokens are a subset of the
+          FROZEN stance set {that, s, a, profound, question, i, think, interesting,
+          good, nice, great, wonderful, beautiful, amazing}).
+    Pass = (a) AND (b) AND (c). This scores STRUCTURE (a claim that names a measurable
+    relation that could be tested-and-fail), NOT meaning or quality. A human-readable
+    sanity calibration of the detector against 10 frozen labelled strings (5 designed
+    falsifiable / 5 designed non-falsifiable) is RUN AND PRINTED before the gate scoring;
+    the detector is frozen REGARDLESS of that calibration (it is a sanity print, not a
+    tuning loop). Calibration target (advisory, NOT a gate): >=8/10 correct.
+
+(II) COMPOSITION-ROUTED IDEATION  — route ideation through the G1 recombination lane
+    instead of flat single-seed sampling. For each ideation, take an ORDERED PAIR of
+    distinct CONCEPTS (cA, cB) from gauge_lib.CONCEPTS and build a COMPOSED conditional
+    frame:  "if <cA>, then <cB>: "  (a recombination of two corpus-absent concepts into
+    a conditional shell — the (a)+(c) scaffolding the flat seeds lack), then _decode a
+    continuation (top-k=40 temp=0.7, SAME decoder, SAME seed_rng schedule). We enumerate
+    the first N_IDEAS=5 ordered concept pairs (deterministic order) -> 5 composed ideas.
+    ARM A (FLAT, baseline) = the 5 IDEATION_SEEDS path (verify303m_g6 VERBATIM).
+    ARM B (COMPOSED)       = the 5 composed conditional frames.
+
+--------------------------------------------------------------------------------
+NEGATIVE CONTROLS (decisive — both must collapse B to the flat floor)
+--------------------------------------------------------------------------------
+  ARM B-SHUFFLE : permute the (cA -> cB) pairing (cB drawn from a deterministic
+                  derangement of the concept order) so the "if cA then cB" frame pairs
+                  UNRELATED concepts -> if the lift is real recombination structure (not
+                  just "any conditional shell raises falsifiability"), B-SHUFFLE may
+                  still carry the SHELL but must let us separate shell-from-pairing.
+                  (Tests: is it the EARNED pairing or just the shell?)
+  ARM B-ABLATE  : composition OFF = the frame degenerates to the bare concept cA + ": "
+                  (no conditional shell, no second concept) -> should collapse to ~flat.
+                  (Tests: is the conditional+pair scaffold load-bearing vs a lone concept?)
+
+--------------------------------------------------------------------------------
+FROZEN BARS  (3 seeds [7, 4302, 4303]; report per-arm distinct-count + falsifiable-count)
+--------------------------------------------------------------------------------
+Let, per arm, over its 5 ideas (mean across the 3 seeds):
+  DIST  = # distinct coherent ideas (kwr>=0.50, pairwise token-Jaccard<0.5)  [G6 count, VERBATIM]
+  FALS  = # coherent ideas that PASS _is_falsifiable                          [NEW depth detector]
+  NOVEL = # corpus-absent novel content n-grams over coherent ideas          [G2 method, context]
+
+THE DIG MOVES G6 (THIN -> robust) iff ALL of:
+  (M1 COUNT)        DIST(B) >= 5                          [crosses the 4->5 count gap]
+  (M2 DEPTH)        FALS(B) >= 1                          [>=1 deterministically-falsifiable]
+  (M3 LIFT)         FALS(B) >= FALS(A) + 1                [composition raises depth over flat]
+  (M4 EARNED-PAIR)  FALS(B) >= FALS(B-SHUFFLE) + 1        [it's the pairing, not the shell]
+  (M5 EARNED-COMP)  FALS(B) >= FALS(B-ABLATE) + 1         [conditional+pair scaffold load-bearing]
+HONEST-CONFIRMED-THIN iff M2 fails (no falsifiable structure emerges) OR (M1 fails AND
+M3 fails) — i.e. composition neither crosses the count gap NOR raises depth: G6 stays
+THIN, reported as a plain number (NO bar moved, c9). A PARTIAL (e.g. depth lift real
+but count still <5, or lift real but a control survives) is reported as PARTIAL with the
+exact failing M#. NO threshold is moved after scoring (frozen-first).
+
+ANTI-GOODHART (p7, c9): FALS is scored by the STRUCTURAL _is_falsifiable script ONLY —
+comparator+measurable+negatable PRESENCE — never by any model/LLM judging idea quality
+or truth. The shuffle+ablate controls are the discriminators: if a bare conditional shell
+(B-SHUFFLE/B-ABLATE) already lifts FALS, the lift is the SHELL not recombination -> the
+EARNED bars (M4/M5) FAIL and we do NOT claim a move. p1/p2/p3/p4/p6 GUARD: the composed
+frame injects NO system-prompt / identity / persona / "be falsifiable" instruction — it is
+a recombination of anima's OWN corpus concepts (gauge_lib.CONCEPTS) into a neutral
+"if A then B:" continuation seed; the model generates freely; the detector only READS the
+output structure. p8: this is the same mouth, no train/infer split. a_engine_native_learning:
+R1 here is the torch-mouth (the SAME decode path the live gate uses, gauge_lib._decode);
+engine-native byte-exact reconfirm via mounted CORE forward = R2 follow-on ONLY IF R1
+clean-GREEN (if THIN/PARTIAL, the directional torch number stands as the honest result).
+
+SCOPE (honest, a_toy_scale_recheck / a_scale_honest_scope): TOY — 5 fixed concepts, 5
+ordered pairs, 3 seeds, 1 ckpt, 1 detector, sampling-decode (G6 divergence = sampling).
+The falsifiability detector is STRUCTURAL-not-quality (it can pass a grammatically-
+falsifiable nonsense claim — it measures testable FORM, the load-bearing gap vs novel
+strings, not truth). Scale / real-corpus / paraphrase-robustness / engine-transfer /
+deeper-detector UNVERIFIED. This is the depth-floor probe, not a production closure.
+================================================================================
