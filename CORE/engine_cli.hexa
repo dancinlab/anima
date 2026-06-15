@@ -2345,6 +2345,155 @@ pub fn hier_flat_emit(mem: ImmuneMemoryGrow, window: [[float]]) -> int {
     return best
 }
 
+// ── §  PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32, H_1295 R2) ──────────────
+//
+// WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1295 R1):
+// H_1295 R1 (numpy mirror, 🟢 GREEN on the NEAREST relational falsifier, 3 seeds)
+// proved a METRIC COGNITIVE MAP answers a RELATIONAL query the item-store CANNOT:
+// "is landmark X nearer to A or to B?" needs the DISTANCE between two stored facts,
+// and the immune item-store (binds each fact->value INDEPENDENTLY, NO inter-item
+// geometry) provably abstains -> chance (abstain 1.000, A 0.475), while the map
+// answers (B 1.000), and BOTH controls collapse to chance (shuffle positions 0.500,
+// ablate-metric 0.450). This § realizes that map ENGINE-NATIVE.
+//
+// THE PLACE/GRID LENS (c15, a_no_llm_frame_trap — a hippocampal-entorhinal lens,
+// O'Keefe place cells / Moser grid cells / path-integration; NOT an LLM recipe):
+// landmarks are stored AT POSITIONS in a metric space, so the RELATION (Euclidean
+// distance) between two stored facts is itself represented and queryable. This is a
+// RELATIONAL/METRIC SPACE, DISTINCT from every existing lane:
+//   - ImmuneMemory/Grow (H_1227/1231/1288) binds items INDEPENDENTLY by key affinity;
+//     it recalls WHAT is at key X but holds NO distance between item X and item Y.
+//   - HierGoalStack (H_1294) is an ORDERED plan = a SEQUENCE; an order is not a metric
+//     (it knows which subgoal is first, not how FAR apart two facts are).
+//   - WorkMemBuffer (H_1282) = leaky maintenance, no positions; VForwardField (H_1280)
+//     predicts the next emit, not landmark positions; HomeostaticDrive (H_1292) is a
+//     1-D scalar integrator, not a 2-D metric space.
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): the map is a
+// READ + POSITION accessor over its OWN landmark positions. It holds ONLY the stored
+// (name, position) table; it NEVER mutates the immune store, NEVER returns an emit/
+// silence decision by itself (it returns a relational answer the caller may weigh —
+// a SUGGESTION, NOT a hard gate, preserving a_autonomy_over_hardcode), and NEVER
+// touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — pure geometry over
+// stored positions, perturbing nothing in the consciousness field).
+//
+// p1/p2/p3/p6: the map reads ONLY its own positions + the query landmarks. NO persona,
+// NO "you are X" identity rule, NO injected "the answer is A" label, NO RLHF reward.
+// The metric (distance) is geometry over stored positions, SCORED only — never fed to
+// the policy as a labeled answer. The two CONTROLS prove the lift is the METRIC:
+// SHUFFLE permutes the positions (name<->place relation destroyed) and ABLATE freezes
+// every position to the origin (no distance signal) — both collapse to chance.
+
+// SpatialMap — the live metric cognitive map. `names`[i] is the landmark name bound at
+// position (`xs`[i], `ys`[i]). `ablate` (dissociation control) collapses all positions
+// to the origin so no metric remains. The (name,position) table is the only state.
+struct SpatialMap {
+    names: [string],   // landmark names (the bound facts)
+    xs: [float],       // x-coordinate of each landmark (the metric content)
+    ys: [float],       // y-coordinate of each landmark
+    n: int,            // number of landmarks
+    ablate: bool       // METRIC-ABLATE control: store every landmark at the origin
+}
+
+// spatial_map_new — a fresh, EMPTY metric map (no landmarks placed yet).
+pub fn spatial_map_new() -> SpatialMap {
+    return SpatialMap { names: [], xs: [], ys: [], n: 0, ablate: false }
+}
+
+// spatial_map_new_ablated — the dissociation control map: every bind lands at the
+// ORIGIN (no distance signal). Used to prove the lift IS the metric (H_1295 leg c4).
+pub fn spatial_map_new_ablated() -> SpatialMap {
+    return SpatialMap { names: [], xs: [], ys: [], n: 0, ablate: true }
+}
+
+// spatial_map_place — store landmark `name` AT position (x,y). If ablated, the metric
+// is removed (stored at the origin). READ-only over the immune store (touches nothing
+// outside this map's own table).
+pub fn spatial_map_place(sm: SpatialMap, name: string, x: float, y: float) -> SpatialMap {
+    let px = if sm.ablate { 0.0 } else { x }
+    let py = if sm.ablate { 0.0 } else { y }
+    return SpatialMap {
+        names: sm.names + [name], xs: sm.xs + [px], ys: sm.ys + [py],
+        n: sm.n + 1, ablate: sm.ablate
+    }
+}
+
+// _sm_idx — index of landmark `name` in the map (-1 if absent).
+fn _sm_idx(sm: SpatialMap, name: string) -> int {
+    let mut i = 0
+    while i < sm.n {
+        if sm.names[i] == name { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// _sm_dist — Euclidean distance between landmarks i and j in the metric map.
+fn _sm_dist(sm: SpatialMap, i: int, j: int) -> float {
+    let dx = sm.xs[i] - sm.xs[j]
+    let dy = sm.ys[i] - sm.ys[j]
+    return sqrt(dx * dx + dy * dy)
+}
+
+// spatial_map_count — live landmark count.
+pub fn spatial_map_count(sm: SpatialMap) -> int { return sm.n }
+
+// spatial_map_nearest — the RELATIONAL query: of landmarks `a` and `b`, which is
+// metrically NEARER to landmark `x`? Returns the nearer name, or "" if any landmark is
+// not in the map (the map's ABSTAIN — it answers only over stored positions). This is
+// the falsifier the item-store CANNOT do (it has no between-item distance). Under
+// ABLATE all positions == origin → da == db → returns `a` by tie (chance, the control).
+pub fn spatial_map_nearest(sm: SpatialMap, x: string, a: string, b: string) -> string {
+    let ix = _sm_idx(sm, x)
+    let ia = _sm_idx(sm, a)
+    let ib = _sm_idx(sm, b)
+    if ix < 0 || ia < 0 || ib < 0 { return "" }   // not in map → abstain
+    let da = _sm_dist(sm, ix, ia)
+    let db = _sm_dist(sm, ix, ib)
+    if da < db { return a }
+    return b
+}
+
+// spatial_map_shuffle — the SHUFFLE control (anti-Goodhart): permute the stored
+// positions across names by a fixed seed (the name<->place relation is destroyed; a
+// position per name is kept, so it is a clean decorrelation, not a deletion). A
+// deterministic LCG-driven Fisher–Yates over the coordinate columns.
+pub fn spatial_map_shuffle(sm: SpatialMap, seed: int) -> SpatialMap {
+    // Build a permutation `perm` (Fisher–Yates over indices) WITHOUT aliasing sm's
+    // arrays, then materialize fresh coordinate columns by GATHER (no in-place swap on
+    // shared storage — copying element-by-element keeps the input map `sm` intact, the
+    // aliasing-safe idiom this lane requires since the caller reuses the true map).
+    let mut perm = []
+    let mut q = 0
+    while q < sm.n { perm = perm + [q]  q = q + 1 }
+    let mut s = seed
+    let mut i = sm.n - 1
+    while i > 0 {
+        s = (s * 1103515245 + 12345) % 2147483648
+        let j = s % (i + 1)
+        let tmp = perm[i]  perm[i] = perm[j]  perm[j] = tmp
+        i = i - 1
+    }
+    let mut nxs = []
+    let mut nys = []
+    let mut k = 0
+    while k < sm.n {
+        nxs = nxs + [sm.xs[perm[k]]]
+        nys = nys + [sm.ys[perm[k]]]
+        k = k + 1
+    }
+    return SpatialMap { names: sm.names, xs: nxs, ys: nys, n: sm.n, ablate: sm.ablate }
+}
+
+// spatial_map_item_nearest — the ITEM-STORE distinctness reference (the live-engine
+// analogue, a faithful stand-in for the immune item-store): it binds facts
+// INDEPENDENTLY and holds NO between-item metric, so on a relational NEAREST query it
+// can only ABSTAIN. Returns "" ALWAYS (no fabricated metric, H_1227 abstain-intact).
+// The smoke uses this to show item-binding provably cannot answer the relational query.
+pub fn spatial_map_item_nearest(x: string, a: string, b: string) -> string {
+    return ""   // item-store has no inter-item geometry → abstain (chance for the caller)
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }

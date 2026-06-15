@@ -1,0 +1,20 @@
+==============================================================================
+H_1295 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32) — R1 numpy MIRROR
+==============================================================================
+seed 4295: NEAR  A=0.525 B=1.000 Bshuf=0.450 Babl=0.400 | PI  A=0.400 B=1.000 Bshuf=0.550 Babl=0.525
+seed 4296: NEAR  A=0.550 B=1.000 Bshuf=0.575 Babl=0.450 | PI  A=0.525 B=1.000 Bshuf=0.500 Babl=0.450
+seed 4297: NEAR  A=0.475 B=1.000 Bshuf=0.600 Babl=0.500 | PI  A=0.550 B=1.000 Bshuf=0.350 Babl=0.475
+------------------------------------------------------------------------------
+MEAN NEAREST:  A=0.517 B=1.000 Bshuf=0.542 Babl=0.450
+MEAN PATH-INT: A=0.492 B=1.000 Bshuf=0.467 Babl=0.483
+item-store NEAREST abstain rate (A): 1.000  (1.0 = always abstains)
+------------------------------------------------------------------------------
+c1 PRESENCE     B>=A+0.30 (each+mean): True   (B-A mean=+0.483)
+c2 DISTINCT     A<=0.65 (no metric)  : True   (A=0.517)
+c3 EARNED-MAP   Bshuf<=A+0.15        : True   (Bshuf=0.542)
+c4 EARNED-METRIC Babl<=A+0.15        : True   (Babl=0.450)
+c5 NO-FAB       item-abstain>=0.90   : True   (abstain=1.000)
+c6 PATH-INT corroborates (B>>A,ctrls collapse): True   (B=1.000 A=0.492 Bshuf=0.467 Babl=0.483)
+==============================================================================
+VERDICT (R1 mirror, DIRECTIONAL): GREEN
+==============================================================================
