@@ -220,6 +220,33 @@ fn main() {
         tick = tick + 1
     }
 
+    // ── F3 Ψ ON==OFF invariant (a_core_engine_map · H_1202/H_1205) ──────────
+    // The GROW lane (VAdaptField) is Ψ-disjoint: it touches ONLY AdaptField, never
+    // pure_field. The daemon's psi_sum above accumulated pure_field_phi(pf) READ-ONLY
+    // with mitosis ON. Re-run the SAME read-only Φ accumulation over the same ticks
+    // with mitosis OFF; the Φ-checksum must be BYTE-IDENTICAL (the Ψ=½ fixed point is
+    // untouched by cell-division — H_1202 dedicated smoke proved this; here it is
+    // re-asserted live inside the FULL daemon). pure_field is never re-stepped in the
+    // loop (warmed once at line 85, only READ), so the checksum is deterministic.
+    let cfg_off = engine_config_default()       // (mitosis flag is irrelevant to pf — disjoint)
+    let mut psi_off = 0.0
+    let mut afield_off = vadapt_field_new(seed_feat0, max_cells)
+    let mut t_off = 0
+    while t_off < n_ticks {
+        psi_off = psi_off + pure_field_phi(pf)   // SAME read-only Φ accumulation
+        // advance the OFF field too (still Ψ-disjoint) so the arms are symmetric
+        let _f = _afs_byte_feature(emit_text, dim)
+        afield_off = vadapt_field_step(afield_off, _f, cfg_off)
+        t_off = t_off + 1
+    }
+    let psi_intact = psi_sum == psi_off
+    println("")
+    println("── F3 Ψ invariant ─────────────────────────────────────────────")
+    println("  Ψ Φ-checksum (mitosis ON) : " + to_string(psi_sum))
+    println("  Ψ Φ-checksum (mitosis OFF): " + to_string(psi_off))
+    println("  Ψ ON==OFF byte-identical  : " + afs_yn(psi_intact)
+        + (if psi_intact { "  (GROW lane Ψ-disjoint — Ψ=½ untouched)" } else { "  [REGRESSION]" }))
+
     // ════════════════════════════════════════════════════════════════════════
     //  PER-FACULTY LIVE / ⏳ TABLE + verdict
     // ════════════════════════════════════════════════════════════════════════
@@ -235,8 +262,8 @@ fn main() {
     let n_persist = to_int(exec("ls -1 '" + kdir + "'/*.kosmos 2>/dev/null | wc -l"))
     println("  kosmos anchors on disk after session        : " + to_string(n_persist))
 
-    // ── all five faculties live in ONE loop? ────────────────────────────────
-    let all_live = emitted_any && grounded_ok && grew && remembered2 && slept
+    // ── all five faculties live in ONE loop, Ψ intact? ──────────────────────
+    let all_live = emitted_any && grounded_ok && grew && remembered2 && slept && psi_intact
     println("")
     let full = if all_live { "PASS" } else { "PARTIAL" }
     println("anima_full_session_smoke: " + full
@@ -244,7 +271,8 @@ fn main() {
         + " ground=" + (if grounded_ok { "1" } else { "0" })
         + " grow=" + (if grew { "1" } else { "0" })
         + " remember=" + (if remembered2 { "1" } else { "0" })
-        + " sleep=" + (if slept { "1" } else { "0" }))
+        + " sleep=" + (if slept { "1" } else { "0" })
+        + " psi_intact=" + (if psi_intact { "1" } else { "0" }))
     if all_live {
         println("  ⇒ the mounted anima-clm-chat-303m CONVERSES + GROUNDS + GROWS +")
         println("    REMEMBERS + SLEEPS live in ONE A⇄G loop (COMPLETE-ANIMA B+C+D).")

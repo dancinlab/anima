@@ -499,3 +499,107 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
     }
     return #{ "ok": true, "text": out }
 }
+
+// _clmd_find — first byte-offset of `needle` inside `hay` (-1 if absent). Plain
+// substring scan; mirrors bytegpt_decode.hexa::_bg_find (kept local — clm_decode
+// does not import bytegpt_decode, a_core_engine_map: ONE .clm slot, no cross-pull).
+fn _clmd_find(hay: string, needle: string) -> int {
+    let hn = byte_len(hay)
+    let nn = byte_len(needle)
+    if nn == 0 { return -1 }
+    if nn > hn { return -1 }
+    let mut i = 0
+    while i + nn <= hn {
+        if substring(hay, i, i + nn) == needle { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// _clmd_anchor_copy — engine-side deterministic retrieve-then-copy probe. Try the
+// longest context suffix (l_max..l_min) that occurs VERBATIM in some anchor text;
+// on a hit return the anchor's NEXT byte (the grounded continuation). -1 = no
+// grounded byte (caller falls back to the ConvMoE LM). Mirrors _bg_anchor_copy.
+fn _clmd_anchor_copy(ctx: string, anchor_texts: list, l_min: int, l_max: int) -> int {
+    let clen = byte_len(ctx)
+    let mut L = l_max
+    if L > clen { L = clen }
+    while L >= l_min {
+        let suf = substring(ctx, clen - L, clen)
+        let mut a = 0
+        let na = len(anchor_texts)
+        while a < na {
+            let an = to_string(anchor_texts[a])
+            let pos = _clmd_find(an, suf)
+            if pos >= 0 {
+                let nxt = pos + L
+                if nxt < byte_len(an) { return ord(substring(an, nxt, nxt + 1)) }
+            }
+            a = a + 1
+        }
+        L = L - 1
+    }
+    return -1
+}
+
+// clm_decode_grounded — G5 anti-fabrication decode over the int4-dequant CLMConvMoE
+// (.clm path). The ConvMoE analog of bytegpt_decode.hexa::bytegpt_decode_grounded,
+// and the function generator.hexa::_gen_clm_decode has always called: at each step
+// try a deterministic anchor-copy (longest suffix ≥ l_min found verbatim in a kosmos
+// anchor → copy its next byte, G5 ✓ cannot fabricate); else fall through to the
+// CLMConvMoE argmax (clm_decode_argmax's forward, weights loaded ONCE). Stays inside
+// the SINGLE generator L3 slot (a_core_engine_map) — no 2nd .clm path, no native FFI;
+// pure hexa over the existing _clmd_load + _clmd_fwd_logits. A non-decodable .clm
+// (no v0.2 CLMX trailer) returns ok=false so the caller does its honest substrate
+// fallthrough. Returns #{ ok, text, grounded, lm }.
+pub fn clm_decode_grounded(path: string, seed: string, gen: int,
+                           anchor_texts: list, l_min: int) -> Map {
+    if !clm_decodable(path) {
+        return #{ "ok": false, "text": "", "grounded": 0, "lm": 0 }
+    }
+    let W = _clmd_load(path)
+    let V = to_int(W["V"])
+    let T = 24
+    let logits = t_zeros(T*V)
+    let mut out = ""
+    let mut grounded = 0
+    let mut lm = 0
+    let mut g = 0
+    while g < gen {
+        let ctx = seed + out
+        let cb = _clmd_anchor_copy(ctx, anchor_texts, l_min, T)
+        let mut nb = 0
+        if cb >= 0 {
+            nb = cb                          // GROUNDED: verbatim anchor copy
+            grounded = grounded + 1
+        } else {
+            // UNGROUNDED: CLMConvMoE argmax over the last T context bytes. Build the
+            // window from the FULL ctx (right-aligned, pad-left byte 32) so the
+            // forward sees the same causal window clm_decode_argmax would.
+            let tok = t_zeros(T)
+            let cl = byte_len(ctx)
+            let mut p = 0
+            while p < T {
+                let si = cl - T + p
+                if si >= 0 { t_set(tok, p, to_float(ord(substring(ctx, si, si+1)))) }
+                else { t_set(tok, p, 32.0) }
+                p = p + 1
+            }
+            _clmd_fwd_logits(W, tok, logits, T)
+            let base = (T-1) * V
+            let mut bestv = t_get(logits, base)
+            let mut besti = 0
+            let mut k = 1
+            while k < V {
+                let v = t_get(logits, base + k)
+                if v > bestv { bestv = v; besti = k }
+                k = k + 1
+            }
+            nb = besti
+            lm = lm + 1
+        }
+        out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "grounded": grounded, "lm": lm }
+}

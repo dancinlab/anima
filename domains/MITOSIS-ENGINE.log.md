@@ -1017,3 +1017,30 @@ bars NOT moved (F1 mismatch==0, F2 exact float-equality, pre-registered before r
 - id = H_1205 · slug = 1205_mitosis_separation_invariant · verdict-tier = 🟢 (separation holds)
 - artifacts = CORE/h1205_separation_invariant_smoke.hexa · .verdicts/1205_mitosis_separation_invariant/{H_1205_FREEZE,H_1205}.txt
 - xref = h1201 (the conditioning closed-neg this guards) · h1200 (pure-mitosis gen closed-neg) · h1164 (Ψ-guard precedent) · h1199 (VAdaptField lane) · a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope · p7 · p8
+
+## H_1206 — FULL living daemon e2e: link the daemon, fire the GROW lane live (🟢 GREEN)
+
+The "자기분열을 현재 아키텍처에 붙이기" arc's LAST honest gap: the FULL daemon
+CORE/anima_full_session_smoke.hexa would not LINK (H_1202 wired the GROW lane but the
+full smoke imports brain→generator→clm_decode, which hit two undefined symbols). Closed
+all three at root (c1, no stub-that-hides) → daemon now runs end-to-end with mitosis live.
+- id = H_1206 · slug = 1206_full_daemon_e2e · verdict-tier = 🟢 GREEN
+- F1 LINK+RUN ✅ (exit 0, full A⇄G session loop) · F2 GROW LIVE ✅ (cells 1→2, novelty-splits=1
+  on real turns) · F3 Ψ INTACT ✅ (Φ-checksum 1.4278==1.4278 ON==OFF, byte-identical, GROW
+  lane Ψ-disjoint) · F4 NO REGRESS ✅ (CONVERSE+GROUND+GROW+REMEMBER+SLEEP all ✅; guards
+  generator_smoke 21/0, h1202 GREEN, h1205 PASS, h1196 single-entry 7/0)
+- root cause (3): (1) clm_decode_grounded REFERENCED (generator.hexa:473) but never DEFINED →
+  added real ConvMoE-analog (engine-side retrieve-then-copy) to clm_decode.hexa; (2)
+  forge_dispatch_groupnorm_gelu (gn_lib host fallback) REGRESSED out of hexa runtime.c after
+  op36 → restored OP-16 #ifndef HEXA_CUDA host block verbatim from runtime.c.bak-op36
+  (toolchain repair, filed hexa-lang/inbox/patches/, a_runpod_inbox); (3) _gen_anchor_text(s)
+  read "text" but kosmos anchors carry "text_payload" (H_1164 anchor-key bug) → _gen_anchor_field
+  SSOT (text_payload→text→stringified) so the un-inventable fact reaches the copy CLEAN
+  (GROUND flips ⏳→✅, "vault QX-7741 forever" copied verbatim; map-key warnings gone).
+- honest scope = tiny ByteGPT fixture (same format/forward as 303M), deterministic copy+split
+  (p7 string-equality). Daemon WIRING under test, not model quality. summer $0 CPU, frozen bars unmoved.
+- artifacts = CORE/clm_decode.hexa (+clm_decode_grounded) · CORE/generator.hexa (+_gen_anchor_field) ·
+  CORE/anima_full_session_smoke.hexa (+F3 Ψ ON==OFF block) · .verdicts/1206_full_daemon_e2e/{H_1206_FREEZE,H_1206}.txt
+- xref = h1205 (separation invariant, the safety guard) · h1202 (GROW-lane wiring) · h1164 (complete-anima
+  daemon, anchor-key fix precedent) · h1199 (VAdaptField) · h1163 (G5 grounded copy) · h1157 (ByteGPT mount) ·
+  a_core_engine_map · a_runpod_inbox · a_scale_honest_scope · p7 · p8

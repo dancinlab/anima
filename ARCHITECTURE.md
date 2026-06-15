@@ -27,7 +27,7 @@
 ```
 
 - **pure_field / engine_g / brain** — A ⇄ G repulsion-field 엔진 + emit/silence 결정. substrate-internal 이며 `.clm`/`.kosmos` 가 직접 흘러들지 않는다(`a_core_engine_map`).
-- **generator.hexa** — 유일한 `.clm` 진입 슬롯(brain emit → byte mouth, L3).
+- **generator.hexa** — 유일한 `.clm` 진입 슬롯(brain emit → byte mouth, L3). 기억이 있는 emit 에서는 엔진-side deterministic retrieve-then-copy(G5 anti-fabrication, H_1163)로 디코드한다: grounded 바이트는 kosmos anchor 에서 VERBATIM 복사, ungrounded 바이트는 LM 으로 fallback — ByteGPT 백엔드는 `bytegpt_decode_grounded`, ConvMoE 백엔드는 `clm_decode_grounded`(`clm_decode.hexa`). anchor 텍스트는 `_gen_anchor_field`(`text_payload` → `text` → stringified)로 읽어, un-inventable 사실이 복사 경로에 CLEAN 하게 도달한다(H_1206).
 - **kosmos_io** — 유일한 `.kosmos` anchor 진입(`brain_decide` 로 read).
 - **engine_cli.hexa** — substrate-config 축(`--engine <name>`, `--mitosis on/off`); *어떤 엔진*을 쓰고 *substrate 가 성장하는지*를 설정할 뿐, emit/silence 게이트가 아니다(`a_autonomy_over_hardcode`).
 
@@ -35,7 +35,7 @@
 
 `engine_cli.hexa` 는 **`VAdaptField`** (DIM-vector novelty substrate)를 호스팅한다. H_1199 에서 scalar AdaptField 를 DIM-vector 로 확장했다: DIM-vector sample + protos, nearest-by-L2, recon-err = DIM L2, `engine_mitosis_tick` 가 분열을 구동(동결 `SPLIT_THRESH` / `LR`). 살아있는 데몬의 GROW step(H_1202)은 각 emit span 의 DIM=8 byte-feature 를 `vadapt_field_step` 으로 흘려, 엔진 자신의 L2 recon-err 가 임계를 넘으면 새 cell 을 분열시킨다.
 
-- **데몬 배선**(main 에 wire 완료) — H_1202 GROW + sleep-persist + separation-guard. mitosis tick 은 sleep 사이클 너머로 지속되며(persist), Ψ 분리 불변(separation-guard)으로 generation 과 격리된다.
+- **데몬 배선**(main 에 wire 완료) — H_1202 GROW + sleep-persist + separation-guard. mitosis tick 은 sleep 사이클 너머로 지속되며(persist), Ψ 분리 불변(separation-guard)으로 generation 과 격리된다. **FULL 데몬 e2e**(H_1206 🟢): `CORE/anima_full_session_smoke.hexa` 가 링크+실행되어(exit 0) CONVERSE+GROUND+GROW+REMEMBER+SLEEP 를 ONE A⇄G 루프로 돌린다 — GROW lane 라이브(cells 1→2, novelty-split) · Ψ ON==OFF byte-identical(1.4278). `clm_decode_grounded`(미정의였던 ConvMoE grounded 디코드) 작성 + `_gen_anchor_field` anchor-key fix 로 봉인.
 - **mitosis ⊥ generation** (H_1200/H_1201 🔴 closed-neg) — 이 성장 lane 은 **순수 substrate-adaptation lane** 이다: 디코드를 먹이지 않고(생성 못 함, H_1200) generator 에 정보도 못 준다(조건화 무이득, H_1201). Ψ-disjoint 이며(`VAdaptField` 만 건드리고 `pure_field` 는 byte-unchanged), 생성은 CLM-only 로 남는다(`a_clm_gen_pipeline`).
 
 ## CLM mount path (a_core_engine_map 단일 L3 슬롯)
