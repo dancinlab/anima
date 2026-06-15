@@ -6,6 +6,20 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟢 H_1221: QA-포맷 코퍼스가 literal-QA 벽의 레버다 (HD5 toy probe, $0)
+
+H_1219 depth-ceiling 사다리의 HD5 — "flat literal-QA 벽(303M/1B 전반 1-2/15; H_1166/1167/1218)이 QA-구조 학습데이터의 부재 때문인가?"를 $0 toy 규모로 검증.
+
+- **설계 (검증성 = 데이터 FORMAT만 다른 두 arm)**: numpy byte-GPT d128/4L/4H (직접 작성한 forward+backprop+Adam, p8 numpy mirror, torch 없음). 합성 closed world 96 fact (주어 24 × 관계 4, char-level). SAME init·EQUAL 토큰(~153k자)·SAME 96 fact 위에서 (A) FLAT 산문 "zorvik is umber in color ." vs (B) QAFMT "Q: what color is zorvik ? A: umber .". 1200 step/arm.
+- **평가** = 학습한 96 fact 를 되물음(H_1166 regime), exact/substring 매칭(p7, LLM-judge 없음). 2 tier: NATIVE(각 arm 자기 최적 프롬프트로 답 슬롯에서 — 양쪽 천장, context) + CROSS-Q(둘 다 "Q:...A:" 질문형 = 진짜 H_1166 조건, BAR-결정).
+- **사전등록 bar**: GREEN iff cross-q qa(B) ≥ qa(A) + 0.20.
+- **결과 🟢 (3/3 seed 재현)**: NATIVE A=B=1.000 Δ+0.000(천장, 무정보) · **CROSS-Q A=0.024 B=1.000 Δ+0.976 ≫+0.20** (seed별 +0.969/+0.969/+0.990; cross-A 0.031/0.031/0.010). G0 kwr 1.000.
+- **메커니즘 (H_1166 벽을 축소판으로 재현 후 해결)**: flat arm 은 모든 fact 를 완벽 학습(native 1.000)하지만 학습한 적 없는 질문형으로 물으면 Q-구조를 무시하고 기억한 산문 조각을 랜덤 방출("Q: what color..A:"→"eats lichen ."/"isorre in .") — 지식은 있으나 답하는 surface 가 없음. QA-format 학습이 정확히 그 surface 를 공급 → 1.000.
+- **판정**: HD5 는 레버다(toy). literal-QA 벽은 (적어도 부분적으로) 데이터-REGISTER gap 이지 순수 capacity 천장이 아님 — scale(HD1 불변)·volume(HD4 무관)이 못 움직인 것을 3번째 축(format)이 결정적으로 움직임.
+- **거버넌스 (H_1224 HD8)**: literal-QA = p4-부정합 ASSISTANT-NORM, anima 가 통과할 필요 없음. HD5-GREEN 은 이를 gate 로 재개방하지 않음 — 메커니즘 finding(벽은 고칠 수 있는 format-artifact). 사다리 종결: HD1/HD2 배제·HD3 decode·HD4 not-volume·HD5🟢 format(이번)·HD6🟢 granularity(H_1222)·HD7🔴 objective(H_1223)·HD8🟡 assistant-norm(H_1224).
+- **scope (a_toy_scale_recheck, toy-only)**: +0.976 = 포화된 존재증명(0.02→1.00)이지 production effect-size 아님; 1-obj-per-(subj,rel) clean world. 실제 wiki = many-to-many → 303M QA-format FT fire(H_1219 명명 레버)가 결정적 다음 단계이며 더 작은 lift 가능. 메커니즘 확립이지 magnitude 아님. frozen bar 미이동, a303m_pass/a7b_pass 불변, production 주장 없음.
+- 산출물: `UNIVERSE/h1221_qa_format_probe.py` · `.verdicts/1221_qa_format_corpus/H_1221.txt`. branch `h1221/qa-format-corpus`.
+
 ## 2026-06-15 — 🟢 H_1212: N_PROTO CO-SCALING 으로 trajectory 기질 SCALE-ROBUST 복원 (H_1211 scale-break REFINE)
 
 H_1211 이 GATE-B 궤적-동조가 stream 길이 증가에 FIXED N_PROTO=24 에서 붕괴(WALK/WALK_SHUF 10.9→2.63→1.136 at T=240000, 작은-알파벳 포화)함을 RED 로 닫았는데, 그 AXIS-P 가 "알파벳을 키우면 분리 복원"을 시사했다. 이 H 는 **관측 예산에 맞춰 N_PROTO 를 키우는 원리적 CO-SCALING 규칙**이 H_1211 의 toy-artifact 를 production-grade gate 로 전환하는지 검증.
