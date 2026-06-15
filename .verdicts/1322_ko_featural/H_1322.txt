@@ -1,0 +1,42 @@
+=== H_1322 — FEATURAL decomposition vs the jamo 2.51335 floor (sm_120) ===
+device=NVIDIA GeForce RTX 5070 cap=(12, 0) torch=2.11.0+cu130
+kernel launch OK (sentinel -17503.3)
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  identical-to-H_1307-RUN-A=True
+[nocheat] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[featmap] design-feature coverage: 67/67 jamo mapped; missing=[]
+[G0 raw-byte] {"cells": 17, "ce_per_byte": 3.26223, "train_sym": 50000, "test_sym": 50000, "test_bytes": 50000, "vocab": 256}  (H_1316 reproduced 2.95342)
+[nocheat] byte-accounting: Σ n_bytes=29999999 corpus_bytes=29999999 close=True
+[G1 jamo opaque-id] {"cells": 12, "ce_per_byte": 2.85983, "train_sym": 42503, "test_sym": 42502, "test_bytes": 50053, "vocab": 323}  (H_1316 floor=2.51335)
+[G2 featural intact] {"cells": 17, "ce_per_byte": 2.7309, "train_sym": 42503, "test_sym": 42502, "test_bytes": 50053, "vocab": 323}
+[F3 linearity] feature-space CE=4.83979  jamo-id-space CE=4.84214  Δ(jamo−feat)=0.00236
+[seed 4322] {"seed": 4322, "g0_raw_ce": 3.26223, "g1_jamo_ce": 2.85983, "g2_featural_ce": 2.7309, "g2_cells": 17, "g2c_shuffle_feat_ce": 2.81919, "g2c_cells": 27}
+[seed 4323] {"seed": 4323, "g0_raw_ce": 3.26223, "g1_jamo_ce": 2.85983, "g2_featural_ce": 2.7309, "g2_cells": 17, "g2c_shuffle_feat_ce": 2.7531, "g2c_cells": 17}
+[seed 4324] {"seed": 4324, "g0_raw_ce": 3.26223, "g1_jamo_ce": 2.85983, "g2_featural_ce": 2.7309, "g2_cells": 17, "g2c_shuffle_feat_ce": 2.7463, "g2c_cells": 18}
+-------------------------------------------------------------------------------
+CE LADDER (nats/UTF-8-byte):
+  raw-byte ceiling   = 2.95342  (in-run G0 3.26223)
+  jamo floor (H_1316)= 2.51335           (in-run jamo re-port 2.85983)
+  FEATURAL (intact)  = 2.7309              Δvs_jamo_floor=0.21755  Δvs_raw=-0.22252
+  SHUFFLE-feat ctrl  = 2.77286 (mean 3 seeds)  Δ(shuf−feat)=0.04196
+F1 DEEPER   (feat < jamo 2.51335−0.03 AND < raw): False  (vs_jamo=False vs_raw=True)
+F2 EARNED   (feat < shuffle-feat by >=0.05): False
+F3 LINEARITY(feat-space more linear by >=0.02): False  (Δ=0.00236)
+VERDICT: 🧱 HONEST-FLOOR — F1 fails: featural does NOT beat the jamo floor by the bar → jamo is the decomposition FLOOR for this mechanism (bounds the depth, c9)
+total wall=82.2s
+  engine-transfer to live hexa DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]
+
+--- DIAGNOSTIC (NOT a frozen bar; geometry-confound disclosure, c9) -----------------------------
+The in-run G0 raw (3.26223) and G1 jamo opaque-id (2.85983) re-ports do NOT match H_1316's
+2.95342 / 2.51335 because THIS script's seed_centers_dim(3)=[[0.3,0.3,0.0],[0.7,0.7,0.5]] differs
+from H_1316's [[0.3,0.5,0.0],[0.7,0.5,0.5]] (middle coord 0.5). Confirmed by direct diagnostic:
+the jamo arm with H_1316's EXACT seed centers reproduces 2.51335 (cells 11) byte-exact. So the
+gradient-free mitosis is SEED-CENTER-SENSITIVE, and the featural arm's 11-D seed centers are
+likewise an arbitrary (not matched) start. CONSEQUENCE: the locked-floor F1 comparison is
+geometry-confounded. SAME-GEOMETRY-FAMILY reading (intact featural 2.7309 vs in-run jamo 2.85983):
+featural beats the same-script jamo re-port by Δ −0.129 AND beats the shuffle-feature control by
++0.042 (just under the 0.05 F2 bar) — a WEAK design signal exists but does NOT clear the frozen
+decisive bar. Frozen-first (c9/p7): F1 was pre-registered against the locked 2.51335; intact
+featural 2.7309 does NOT beat it → F1 FALSE → 🧱 recorded as-is, NO bar moved.

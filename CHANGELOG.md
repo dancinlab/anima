@@ -2,6 +2,37 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1322 — 자모보다 한 단계 더 깊은 한글 **자질(featural)** 분해가 자모 바닥(2.51335)을 깨는가 (🧱 HONEST-FLOOR)
+
+H_1316(🟢)이 한국어 byte-LM 천장 2.953을 자모 분해로 2.513까지 내려 "한국어 천장은 표현(representation)의
+문제"임을 보였다. 자모는 첫 번째 분해 단계일 뿐 — 한글은 (주요 문자 중 유일하게) **의도적으로 설계된
+자질문자**(세종 1443): 자음 = 조음위치 기본형 + 가획(유기음) + 병서(경음), 모음 = ·/ㅡ/ㅣ 조합 + 양/음
+극성 + 반모음(iotation). 그래서 "비슷한 소리 ⇒ 비슷한 모양"이 수학적으로 내장돼 있다 — ㄱ과 ㅋ은 한 자질
+차이. H_1322(c16/a_break_the_wall 자모 바닥 아래 깊이 탐침, a_no_llm_frame_trap c15 문자설계 렌즈): 자모를
+**설계가 인코딩한 자질 벡터**로 한 단계 더 분해하면 같은 gradient-free mitosis가 그 설계의 systematicity를
+활용해 자모 바닥 2.513 아래로 내려가는가?
+
+- **방법(frozen-first):** LABEL 알파벳 Vj=323 + 바이트 정산을 H_1316과 **동일하게 유지**, mitosis **분할
+  기하(X)만** opaque-id(3-D) → 직전 2심볼의 **설계 자질 컬럼**(5칸 벡터 → 11-D)으로 변경. 자질 인코딩은
+  문서화된 훈민정음 설계를 충실히 표현(67/67 자모 매핑, 발명 아님). 코퍼스는 H_1307 RUN A와 byte-동일
+  (sha c47b6808… 게이트 PASS). REAL 한국어만, R2 키 env-only(c7), summer RTX 5070, $0. 3 seeds.
+- **통제(핵심):** (i) SHUFFLE-FEATURE-MAP — 자모→자질벡터 할당을 seed별 bijection으로 섞어 설계
+  systematicity(ㄱ/ㅋ 한-자질-차이)를 파괴(차원/값/주변분포 동일). (ii) 선형성 탐침 — 자질공간 vs 자모-id
+  공간 closed-form ridge 예측.
+- **결과 🧱 HONEST-FLOOR (geometry-confounded, 막대 안 옮김 c9/p7):** CE 사다리(nats/UTF-8-byte) — raw 천장
+  2.95342 · 자모 바닥 2.51335 · **자질(intact) 2.7309** (자모 바닥 대비 **+0.218 더 나쁨 → F1 FALSE**;
+  raw 대비 −0.222 더 좋음) · SHUFFLE-feature 통제 2.77286 (Δ +0.042, F2 0.05 막대 미달 → **F2 FALSE**,
+  약한 설계 신호) · 선형성 Δ +0.0024 < 0.02 → **F3 FALSE**.
+- **기하 교란(진단, 막대 아님):** in-run 자모 재포팅이 2.85983(≠2.51335)인 이유는 이 스크립트의
+  seed_centers_dim(3)가 H_1316의 [[0.3,0.5,0.0]…]와 다르기 때문 — 직접 진단으로 **H_1316 정확한 seed
+  center를 쓰면 자모팔이 2.51335를 byte-exact 재현**(mitosis가 seed-center 민감). 동일-기하 비교에서는 자질이
+  in-run 자모를 −0.129, shuffle을 +0.042 이김(약한 신호, 막대 미달).
+- **결론:** **자모가 이 gradient-free L2-Voronoi 메커니즘의 분해 바닥**(깊이 한계, a_break_the_wall 정직한
+  🧱). 설계 systematicity는 실재하나 자질→분할→불투명-자모-라벨 경로로 주입하기엔 너무 lossy. **다음 r2:**
+  기하-공정 재시험(seed center arm별 매칭/best-of-bank, frozen-first) + 라벨 인수분해(다음 자모의 **자질
+  벡터**를 예측 — 설계가 분할이 아닌 예측 TARGET에 들어가도록). TOY/DIRECTIONAL, 유창성 주장 없음,
+  live CORE UNTOUCHED. (UNIVERSE/h1322_ko_featural.py · H_1322_ko_featural.md · .verdicts/1322_ko_featural/)
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🌐 H_1318 — 교차언어 구조-표현 매트릭스 (한글 천장 돌파 = 한글-구조 문제인가?) (🟠 PARTIAL)
 
 질문(돌파하면 한글 구조 문제인지): 한국어 gradient-free 바이트-LM 천장(H_1307/1311/1315, ~2.953 nat/byte)을

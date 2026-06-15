@@ -1,0 +1,111 @@
+H_1322 — ko-featural — FROZEN PRE-REGISTRATION (written BEFORE the run; c9/p7, NO tune-to-green)
+================================================================================================
+PROJ_SEED provenance: H_1322 id confirmed FREE on origin/main (f15c6e75d; HYPOTHESES.md last KO
+row = H_1316 🟢 GREEN). This lane goes ONE LEVEL DEEPER than H_1316 (jamo) via a genuinely-untried
+angle: the FEATURAL VECTOR that Hangul's DESIGN encodes (Sejong 1443 featural script). c16 /
+a_break_the_wall (depth probe below the jamo floor), a_no_llm_frame_trap (linguistics/script-design
+lens, NOT scale).
+
+THE PRIOR RESULT (H_1316 🟢): decomposing each Hangul syllable to its NFD JAMO (초성 L / 중성 V /
+종성 T) dropped held-out KO next-symbol CE from the raw-byte ceiling 2.95342 to **2.51335** nats/
+UTF-8-byte (Δ −0.434), and the shuffle-jamo-map control rose to 2.74306 → the lift is the
+COMPOSITIONAL structure (B2 earned). But jamo is only the FIRST decomposition level.
+
+THE NEW ANGLE (this lane): Hangul is — uniquely among major scripts — a DELIBERATELY DESIGNED
+*featural* writing system. Each jamo's SHAPE encodes phonological/articulatory features:
+  - CONSONANTS: an articulator BASE shape (ㄱ velar, ㄴ alveolar, ㅁ bilabial, ㅅ sibilant,
+    ㅇ glottal/zero) + ADDED STROKES for aspiration (ㄱ→ㅋ, ㄷ→ㅌ, ㅂ→ㅍ, ㅈ→ㅊ) + DOUBLING for
+    tense (ㄱ→ㄲ, ㄷ→ㄸ, ㅂ→ㅃ, ㅅ→ㅆ, ㅈ→ㅉ). So "similar sound ⇒ similar shape" is built in.
+  - VOWELS: combinations of · (heaven), ㅡ (earth), ㅣ (human) with yang/yin polarity + iotation
+    (y-glide) — e.g. ㅏ/ㅓ (yang/yin), ㅑ/ㅕ (iotated), ㅗ/ㅜ horizontal axis, etc.
+NO organically-evolved script (Latin, Cyrillic, Han) has this "phoneme-feature ⇒ glyph-feature"
+systematicity. HYPOTHESIS: decomposing one level DEEPER than jamo — to the FEATURE VECTOR the
+design encodes — drops held-out KO CE BELOW the jamo 2.51335, because the predictor can exploit
+the designed systematicity (ㄱ and ㅋ are ONE FEATURE apart, not two opaque symbols). If true,
+Hangul's design is a MEASURABLE capability advantage NO organically-evolved script has.
+
+--- CORPUS (REAL only, BYTE-IDENTICAL to H_1307 RUN A / H_1316 — provenance gate, p7) ------------
+  source: r2://phanes/anima-7b/web/kor/shard0000.bytes bytes[0:30000000] trimmed[:29999999]
+          r2://phanes/anima-7b/web/eng/shard0000.bytes bytes[0:10000000] trimmed[:10000000]
+  ASSERT ko_window_sha256 == c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca
+  ASSERT en_window_sha256 == 31b4a5430441cfdbb496b59f392150e4aa748cde2ed1b7cedad10960f0bcaf73
+  If the sha differs → STOP and report honestly (NO fabricated Korean; REAL only). R2 keys via
+  `secret get r2.phanes.*` into ENV at call time ONLY — header/env-scoped, NEVER echoed/logged/
+  inlined/committed (c7). grep all committed artifacts for leaks before PR.
+
+--- FEATURAL ENCODING (the deeper lens — documented Hangul design, encoded faithfully, NOT invented) ---
+  We map each NFD CONJOINING JAMO codepoint to a small INTEGER FEATURE VECTOR. The scheme follows
+  the standard articulatory/featural description of the Hunminjeongeum design.
+
+  CONSONANT jamo (initial L block U+1100.., final T block U+11A8.. — the T cluster set reuses the
+  same articulator families). Feature columns:
+    f_artic   in {0 none/zero, 1 velar(ㄱㅋㄲ + ㆁ), 2 alveolar(ㄴㄷㅌㄸㄹ),
+                 3 bilabial(ㅁㅂㅍㅃ), 4 sibilant/dental(ㅅㅆㅈㅊㅉ), 5 glottal(ㅎ), 6 zero-ㅇ}
+    f_manner  in {0 plain/lax, 1 aspirated, 2 tense}     (the stroke-add / doubling design axis)
+    f_nasal   in {0 no, 1 nasal (ㄴㅁㅇ-ng)}
+    f_liquid  in {0 no, 1 liquid (ㄹ)}
+  This DIRECTLY encodes the design's systematicity: ㄱ=(velar,plain) ㅋ=(velar,aspirated)
+  ㄲ=(velar,tense) differ in ONE column (f_manner). ㄴ(alveolar,nasal) and ㅁ(bilabial,nasal)
+  share f_nasal. The map is a FIXED dictionary keyed by jamo codepoint (documented in the script);
+  jamo NOT in the consonant table (vowels) take the vowel columns instead.
+
+  VOWEL jamo (medial V block U+1161..). Feature columns:
+    f_vbase   in {1 vertical-axis (ㅏㅓㅑㅕ + ㅣ), 2 horizontal-axis (ㅗㅜㅛㅠ + ㅡ), 3 combined}
+    f_polar   in {0 neutral(ㅡㅣ), 1 yang/bright(ㅏㅗㅑㅛ), 2 yin/dark(ㅓㅜㅕㅠ)}
+    f_iota    in {0 plain, 1 iotated/y-glide (ㅑㅕㅛㅠ + ㅒㅖ)}
+    f_round   in {0 no, 1 has a horizontal compound (ㅘㅙㅚㅝㅞㅟㅢ etc.)}
+
+  A SYMBOL'S FEATURE VECTOR drives the mitosis PARTITION geometry (X). For a Hangul jamo, X is
+  built from the PREVIOUS symbols' design columns (NOT raw symbol id), so two jamo one feature
+  apart land NEAR each other in partition space (the designed systematicity the predictor exploits).
+  For a NON-Hangul raw byte (id 0..255), feature columns are byte-derived (so ASCII/markup stays
+  byte-LM identical, as in H_1316 — only Hangul changes representation).
+  The LABEL (Y, the next symbol to predict) stays the SAME jamo-symbol alphabet as H_1316
+  (Vj = 256 + distinct jamo) so the CE axis is IDENTICAL and directly comparable to jamo 2.51335 —
+  ONLY the partition geometry changes from opaque-id to feature-vector.
+
+--- MITOSIS MECHANISM (FROZEN, verbatim from H_1306/H_1307/H_1316; the ONLY change = X geometry) ---
+  GROW_MAX=40. SPLIT_THRESH_CE=0.05. MIN_OWNED=8. LAPLACE=1.0. Grow-op = H_1307 error-targeted
+  Voronoi split (highest-owned-CE eligible cell -> hi-var-axis owned-median split -> two
+  half-centroids; net +1 cell; gradient-free; cells only SPLIT — p8). even/odd train/test split.
+  ko_stride=300. HEAD = per-cell next-SYMBOL count-MLE (add-Laplace). SEED_CENTERS = midpoint
+  pattern lifted to the feature-vector dimension (stated in script). 3 seeds [4322,4323,4324].
+
+--- FAIR-AXIS CONVERSION (identical to H_1316; STATED EXPLICITLY) --------------------------------
+  Held-out per-SYMBOL NLL (nats) summed over all test symbols, DIVIDED by total UTF-8 BYTES those
+  test symbols account for (sum of n_bytes; raw byte=1, jamo shares its syllable's 3 bytes,
+  L=V=T=1 or L=2,V=1). => CE_per_byte = (sum -log p(sym)) / (sum n_bytes(sym)). SAME axis as jamo
+  2.51335 & raw 2.95342. The LABEL alphabet is jamo-symbol-identical to H_1316, so any CE delta is
+  the PARTITION geometry (feature vs opaque-id), NOT a vocab change.
+
+--- CONTROLS (the load-bearing part) ------------------------------------------------------------
+  (i) SHUFFLE-FEATURE-MAP (decisive anti-Goodhart): permute the jamo->feature-vector assignment
+      (a fixed random bijection over the jamo set, per seed), destroying the DESIGNED systematicity
+      (ㄱ/ㅋ no longer one-apart) while keeping the SAME number of feature dims/values/marginal.
+      If the lift is the DESIGN, shuffling must RAISE CE back toward the jamo 2.513 level.
+  (ii) LINEARITY probe (mathematical signature, non-gating): fit a LINEAR (ridge, closed-form)
+      next-symbol predictor in FEATURE space vs in JAMO-SYMBOL (one-hot id) space, on the SAME
+      train/test split; the design predicts phonotactics are MORE linearly predictable in feature
+      space. Report linear held-out CE in both spaces.
+
+--- FROZEN BARS (pre-registered; GREEN iff F1 AND F2) -------------------------------------------
+  F1 DEEPER:  featural CE < jamo 2.51335 by >= 0.03 (mean 3 seeds)  AND  < raw 2.95342.
+  F2 EARNED (decisive): featural beats SHUFFLE-feature-map by >= 0.05 — the lift is the DESIGNED
+              systematicity, not extra dims/vocab. If F2 fails (shuffle ties featural) → the gain
+              is dims-not-design; report straight (honest negative, c9).
+  F3 LINEARITY (non-gating): linear-predictability in feature space BETTER than in jamo-symbol
+              space by >= 0.02 nats/byte (the design's mathematical signature). Report even if
+              F1+F2 hold; does NOT gate the verdict.
+
+  OUTCOMES (all VALID, c9):
+   - F1 AND F2 hold → 🟢 Hangul's DESIGN is a measurable capability advantage: KO depth goes BELOW
+     jamo because it was ENGINEERED; deeper featural decomposition is the right representation.
+   - F1 fails → jamo is the decomposition FLOOR for this mechanism (honest 🧱; bounds the depth).
+   - F2 fails → the apparent featural gain is just dimensionality, NOT the design (honest negative,
+     important: the systematicity is real linguistically but not exploitable by THIS mechanism).
+
+--- SCOPE HONESTY -------------------------------------------------------------------------------
+  toy/DIRECTIONAL numpy/torch mirror; engine-transfer to live CORE/*.hexa = follow-on
+  (a_engine_native_learning, a_verified_must_wire). NO Korean-fluency claim (a_scale_honest_scope,
+  a_toy_scale_recheck). Held-out DETERMINISTIC next-symbol CE; NO perplexity-as-truth (p7).
+================================================================================================
