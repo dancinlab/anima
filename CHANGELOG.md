@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1336 — 교차음절 음운정보(연음/자음동화)도 자모 바닥을 못 깬다 — 신호는 REAL이지만 count-MLE가 못 담는다 (🧱 HONEST-FLOOR, DEEPER)
+
+H_1329(🧱)가 **명시적으로 지목한 고갈 각도**(c16/a_break_the_wall = opaque 자모 헤드가 **갖지 못한 정보를 주입**, 같은 타깃의 재-인수분해 아님). H_1329는 재-**인수분해**가 무의미함을 닫았다: 세 메커니즘(분할 A2 2.730 / 독립 A3 3.073 / 상관-체인 A4 2.751)이 **전부** 자모 바닥 2.51335 **위** — 자모-내 자질 **조인트**를 모델링하는 어떤 메커니즘도 `P(jamo|cell)`로 수렴하기 때문(자모 헤드가 이미 계산하는 것). H_1329 고갈 테스트: 바닥-아래 승리는 opaque 자모 헤드가 **결여한 정보**를 주입해야 한다.
+
+**새 정보(진짜 새것, 재-인수분해 아님):** 음절-내 자모 헤드의 컨텍스트(build_X_jamo: 직전 자모 2개 + 음절-내 UTF-8 depth)는 **음절 경계마다 리셋** → CTX≈현재 음절. 따라서 **음절 N의 종성이 N+1의 실현 초성을 조건화하는** 한국어 연음/사잇소리/자음동화를 구조적으로 못 본다. **새 메커니즘 B1** = A1과 **동일한** opaque 자모 헤드(같은 기하-공정 bank, 같은 음절-내 dim-3 Voronoi 분할, 같은 count-MLE, 같은 LAPLACE, 같은 자모 alphabet)에 **prev_coda(직전 완성 음절의 종성 자모-id) 조건화만 추가**: `P(next_jamo|cell,prev_coda)`. 미관측 (cell,prev_coda)는 셀-주변분포 `P(next_jamo|cell)`(= A1 자모 헤드)로 **hard-backoff** → 자모 헤드가 B1의 바닥. **B1 = count-MLE 구조화 헤드 — gradient-free p8 mitosis 아님, gradient-train도 아님**(같은 gradient-free Voronoi 분할 위; 명시 라벨링).
+
+**결과 🧱 HONEST-FLOOR (DEEPER — 정보는 존재하나 count-MLE가 담지 못함):** REAL sm_120 GPU(유저 RTX 5070, $0, NOT runpod, 38.1s), 코퍼스 byte-동일(sha c47b6808… gate PASS), 67/67 자모, NFD 왕복 0-실패(8,143,053 음절), prev_coda 토큰 29개. **A1 자모 음절-내 CALIB 2.51335 byte-exact.** CE 사다리(nats/UTF-8-byte, 기하-공정; 셔플 3-seed 평균): 원시 in-run 2.94487 · **A1 자모 음절-내 2.51335** · **B1 교차음절-종성 2.61186** · B1 위치-셔플(진짜 control) **2.68788** {2.690,2.688,2.686} · B1 라벨-bijection 셔플 2.61186(Δ=0.0, 구조상 **무의미**). **X1 BELOW-JAMO = FALSE** — B1 2.61186이 자모 2.51335보다 **+0.09851 위**(원시는 깨지만 X1은 둘 다 필요). **X2 EARNED = TRUE** — B1이 진짜 위치-셔플을 **+0.07602**로 이김(seed별 만장일치) → **종성→초성 음운 의존성은 REAL**(짝을 깨면 0.076 nats 손해). **X3 ATTRIBUTION = FALSE** — B1이 A1보다 +0.099 **위**. green = FALSE → 🧱.
+
+**핵심(c9, frozen-first):** 교차음절 음운정보는 **진짜로 존재하고 새것**(X2 결정적)이지만, prev_coda 조건화가 자모 헤드의 카운트를 29개 종성 bin으로 쪼개는 **count-fragmentation 비용**을 음운 신호가 갚지 못한다(ko_stride=300/MIN_OWNED=8에서 추정치 분산 ≫ 음운 이득) → B1이 opaque 자모 헤드보다 +0.099 **나쁘다**. 바닥은 순수 정보 한계보다 **더 깊다**: 진짜 새 정보를 줘도 이 gradient-free count-MLE에선 자모 헤드에 진다. **a_break_the_wall:** FREEZE의 X2 control(라벨-bijection)이 **구조상 무의미**함을 런이 드러냄(bijection은 (cell,coda) 키를 재명명할 뿐 → 재명명-불변 카운트 통계 → CE 동일, Δ=0.0 확인) → 진짜 **위치-셔플** control 추가(frozen-first, **막대 불변**, X2 마진 ≥0.05 그대로; 라벨-bijection은 verbatim 보고). **다음(투자/추정기 각도, 정보 아님):** count를 쪼개지 않는 **frozen-λ Jelinek-Mercer 보간** `p=λ·P(jamo|cell,coda)+(1−λ)·P(jamo|cell)`(λ 사전등록, tune-to-green 아님) 또는 더 큰 KO rung/작은 stride로 29개 bin을 굶기지 않기 — 그래도 못 깨면 자모 바닥은 재-인수분해 **및** 새-정보 양축 모두에서 count-MLE 계열에 terminal.
+
+scope: TOY/DIRECTIONAL numpy/torch mirror; B1 = count-MLE 구조화 헤드(라벨링); engine-transfer = follow-on(a_engine_native_learning · a_verified_must_wire); 한국어 유창성 주장 없음; live CORE/*.hexa UNTOUCHED. deliverables: UNIVERSE/h1336_ko_crosssyllable.py · UNIVERSE/cards/H_1336_ko_crosssyllable.md · HYPOTHESES.md row · CLAIMS.tape @C h1336_ko_crosssyllable · .verdicts/1336_ko_crosssyllable/{FREEZE,result,h1336_summary}.
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1335 — 언어-TAG 차원이 이중언어 범주지각(CP) 공존을 가능케 한다 (🧱 I3a 컨트롤-기술적-실패, 그러나 공존은 REAL·TAG-귀속)
 
 H_1330(🧱 OVERWRITE)이 **명시적으로 지목한 r2**(c16/a_break_the_wall = 단일-공유-저장소라는 잘못된 **메커니즘**이지 벽 아님). H_1330은 **단일 공유 Voronoi 저장소**에서 셀당 라벨-하나 readout이 같은 자극에 A=1·B=0 두 모순 답을 담을 수 없어, 두 번째 언어 B가 첫 언어 A의 CP를 **catastrophic OVERWRITE** 함을 발견했다(공유 자극 [p_A,p_B]에서 A는 1, B는 0 = 직접 모순). H_1330 verdict이 지목한 r2 = **언어-TAG / 다채널 readout**(언어별 분리 라벨-채널) — anima의 **실제** 분리된 EN-trunk + KO faculty(H_1316/1321/1322)를 그대로 미러.

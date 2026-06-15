@@ -1,0 +1,35 @@
+=== H_1336 — ko-crosssyllable (sm_120) ===
+device=NVIDIA GeForce RTX 5070 torch=2.11.0+cu130
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  identical-to-H_1307-RUN-A=True
+[nocheat] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[G0 raw-byte] ce=2.94487 cells=23 member=4  (H_1316 reproduced 2.95342)
+[nocheat] byte-accounting: Σ n_bytes=29999999 corpus_bytes=29999999 close=True
+[xsyll] distinct prev_coda tokens (incl NO_CODA/START) = 29
+[A1 jamo within-syllable] ce=2.51335 cells=11 bank_member=5 train_proxy=2.99437
+[CALIB] A1 jamo 2.51335 vs H_1316 2.51335  match(±0.0005)=True
+[B1 cross-syllable-coda] ce=2.61186 cells=11 (same partition as A1)
+[B1s coda-LABEL-shuffle seed4336] ce=2.61186 (frozen control; vacuous by construction)
+[B1s coda-POSITION-shuffle seed4336] ce=2.68989 (genuine earned-control)
+[seed 4336] {"b1s_label": 2.61186, "b1s_pos": 2.68989}
+[B1s coda-LABEL-shuffle seed4337] ce=2.61186 (frozen control; vacuous by construction)
+[B1s coda-POSITION-shuffle seed4337] ce=2.6881 (genuine earned-control)
+[seed 4337] {"b1s_label": 2.61186, "b1s_pos": 2.6881}
+[B1s coda-LABEL-shuffle seed4338] ce=2.61186 (frozen control; vacuous by construction)
+[B1s coda-POSITION-shuffle seed4338] ce=2.68564 (genuine earned-control)
+[seed 4338] {"b1s_label": 2.61186, "b1s_pos": 2.68564}
+-------------------------------------------------------------------------------
+CE LADDER (nats/UTF-8-byte, geometry-FAIR; mean 3 seeds for shuffle):
+  raw-byte ceiling             = 2.95342  (in-run G0 2.94487)
+  A1 jamo within-syllable      = 2.51335  (calib vs H_1316 2.51335 = True)
+  B1 cross-syllable-coda       = 2.61186  (cells 11)
+  B1 POSITION-shuffle (genuine)= 2.68788  Δ(shuf−B1)=0.07602
+  B1 LABEL-shuffle (frozen,vac)= 2.61186  Δ=0.0 (vacuous by construction)
+X1 BELOW-JAMO (B1 < A1−0.03 AND < raw): False  (B1 2.61186 vs A1 2.51335, Δ=-0.09851)
+X2 EARNED (B1 < position-shuffle by >=0.05): True  (Δ=0.07602)
+X3 ATTRIBUTION (B1 < A1 within-syllable): False  (Δ=-0.09851)
+VERDICT: 🧱 HONEST-FLOOR (deeper) — X1 fails: even CROSS-SYLLABLE phonotactic context does NOT beat the jamo floor by the bar for this gradient-free count-MLE predictor → the floor is deeper than an information limit at this scale/mechanism (honest, c9).
+total wall=38.1s
+  engine-transfer to live hexa DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]

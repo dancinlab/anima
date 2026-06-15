@@ -401,28 +401,48 @@ def main():
                               Xte_t, Yte_t, pcte_t, NBte, VJ, dev)
     log(f"[B1 cross-syllable-coda] ce={round(b1_ce,5)} cells={len(c)} (same partition as A1)")
 
-    # ── controls: SHUFFLE the prev_coda LABELS per seed (random bijection over distinct coda tokens) ──
-    #   Same number of extra context bins, BROKEN phonotactic coda→onset mapping → isolates X2.
+    # ── controls (X2 EARNED) ────────────────────────────────────────────────────────────────────
+    #   The FROZEN control was a LABEL-bijection over distinct coda tokens. That control is PROVABLY
+    #   VACUOUS for this hard-backoff count head: a bijection just RENAMES the (k,pc) keys → the SET of
+    #   (cell,coda) groups, their count vectors, and the backoff set are byte-identical → CE identical
+    #   (the in-run b1s_label below confirms Δ=0.0 every seed). a_break_the_wall: the control method was
+    #   wrong, NOT the bar. The GENUINE earned-control is a POSITION-shuffle — permute prev_coda ACROSS
+    #   the scored positions (breaking the real coda↔next-jamo PAIRING while preserving the coda
+    #   MARGINAL + the count-fragmentation cost). X2 is decided on the position-shuffle; the frozen
+    #   label-bijection is reported verbatim (it is uninformative by construction, c9). NO bar moved.
     distinct = sorted(set(prev_coda.tolist()))
-    real_codas = [c0 for c0 in distinct if c0 not in (NO_CODA, START_CODA)]  # permute only real codas
+    real_codas = [c0 for c0 in distinct if c0 not in (NO_CODA, START_CODA)]
     seeds = [int(s) for s in args.seeds.split(",") if s.strip()]
-    b1s_list = []
+    b1s_label_list = []   # FROZEN bijection control (verbatim — provably vacuous)
+    b1s_pos_list = []     # GENUINE position-shuffle control (X2 decided on this)
     for sd in seeds:
         rng = np.random.default_rng(sd)
+        # (a) frozen LABEL-bijection control (kept verbatim from FREEZE)
         perm = rng.permutation(len(real_codas))
         remap = {real_codas[i]: real_codas[perm[i]] for i in range(len(real_codas))}
-        # NO_CODA / START stay fixed (structural tokens), real coda IDs permuted among themselves
-        pc_shuf = np.array([remap.get(int(v), int(v)) for v in prev_coda], dtype=np.int64)
-        pc_s = pc_shuf[idxj]
-        (_, _, _, pctr_s), (_, _, _, pcte_s) = split_even_odd(Xj, Yj, NB, pc_s, stride=args.ko_stride)
-        b1s_ce = per_byte_ce_xsyll(ct, Xtr_t, Ytr_t, Xtr.shape[0],
-                                   torch.tensor(pctr_s, dtype=torch.int64, device=dev),
-                                   Xte_t, Yte_t, torch.tensor(pcte_s, dtype=torch.int64, device=dev),
-                                   NBte, VJ, dev)
-        b1s_list.append(b1s_ce)
-        log(f"[B1s coda-shuffle seed{sd}] ce={round(b1s_ce,5)}")
-        log(f"[seed {sd}] " + json.dumps({"b1s": round(b1s_ce,5)}))
-    b1s_mean = float(np.mean(b1s_list))
+        pc_lab = np.array([remap.get(int(v), int(v)) for v in prev_coda], dtype=np.int64)[idxj]
+        (_, _, _, pctr_l), (_, _, _, pcte_l) = split_even_odd(Xj, Yj, NB, pc_lab, stride=args.ko_stride)
+        b1s_lab = per_byte_ce_xsyll(ct, Xtr_t, Ytr_t, Xtr.shape[0],
+                                    torch.tensor(pctr_l, dtype=torch.int64, device=dev),
+                                    Xte_t, Yte_t, torch.tensor(pcte_l, dtype=torch.int64, device=dev),
+                                    NBte, VJ, dev)
+        b1s_label_list.append(b1s_lab)
+        # (b) GENUINE position-shuffle: permute the per-position prev_coda value over the FULL stream,
+        #     breaking the coda→next-jamo pairing; same coda marginal, same fragmentation cost.
+        pc_pos = prev_coda.copy()
+        rng.shuffle(pc_pos)
+        pc_pos = pc_pos[idxj]
+        (_, _, _, pctr_p), (_, _, _, pcte_p) = split_even_odd(Xj, Yj, NB, pc_pos, stride=args.ko_stride)
+        b1s_pos = per_byte_ce_xsyll(ct, Xtr_t, Ytr_t, Xtr.shape[0],
+                                    torch.tensor(pctr_p, dtype=torch.int64, device=dev),
+                                    Xte_t, Yte_t, torch.tensor(pcte_p, dtype=torch.int64, device=dev),
+                                    NBte, VJ, dev)
+        b1s_pos_list.append(b1s_pos)
+        log(f"[B1s coda-LABEL-shuffle seed{sd}] ce={round(b1s_lab,5)} (frozen control; vacuous by construction)")
+        log(f"[B1s coda-POSITION-shuffle seed{sd}] ce={round(b1s_pos,5)} (genuine earned-control)")
+        log(f"[seed {sd}] " + json.dumps({"b1s_label": round(b1s_lab,5), "b1s_pos": round(b1s_pos,5)}))
+    b1s_label_mean = float(np.mean(b1s_label_list))
+    b1s_mean = float(np.mean(b1s_pos_list))   # X2 decided on the genuine position-shuffle
 
     # ── FROZEN bars X1/X2/X3 ──
     x1_vs_jamo = bool(b1_ce < (a1_ce - X1_MARGIN))
@@ -460,9 +480,12 @@ def main():
         "A1_jamo_within_syllable_ce": round(a1_ce, 5), "A1_calib_match_2_51335": calib_ok,
         "A1_bank_member": mi, "cells": len(c),
         "B1_cross_syllable_ce": round(b1_ce, 5),
-        "B1s_coda_shuffle_mean": round(b1s_mean, 5), "B1s_per_seed": [round(x,5) for x in b1s_list],
+        "B1s_coda_POSITION_shuffle_mean": round(b1s_mean, 5),
+        "B1s_pos_per_seed": [round(x,5) for x in b1s_pos_list],
+        "B1s_coda_LABEL_shuffle_mean_frozen_vacuous": round(b1s_label_mean, 5),
+        "B1s_label_per_seed": [round(x,5) for x in b1s_label_list],
         "delta_B1_vs_jamo": round(b1_ce - a1_ce, 5),
-        "delta_shuffle_minus_B1": round(b1s_mean - b1_ce, 5),
+        "delta_posshuffle_minus_B1": round(b1s_mean - b1_ce, 5),
         "X1_below_jamo": x1, "X1_vs_jamo": x1_vs_jamo, "X1_vs_raw": x1_vs_raw,
         "X2_earned": x2, "X3_attribution": x3,
         "green": green, "verdict": verdict, "seeds": seeds, "wall_s": round(wall, 1),
@@ -476,10 +499,11 @@ def main():
     log(f"  raw-byte ceiling             = {H1307_CEILING_KO_CE}  (in-run G0 {round(g0,5)})")
     log(f"  A1 jamo within-syllable      = {round(a1_ce,5)}  (calib vs H_1316 2.51335 = {calib_ok})")
     log(f"  B1 cross-syllable-coda       = {round(b1_ce,5)}  (cells {len(c)})")
-    log(f"  B1 shuffle (coda labels)     = {round(b1s_mean,5)}  Δ(shuf−B1)={round(b1s_mean-b1_ce,5)}")
+    log(f"  B1 POSITION-shuffle (genuine)= {round(b1s_mean,5)}  Δ(shuf−B1)={round(b1s_mean-b1_ce,5)}")
+    log(f"  B1 LABEL-shuffle (frozen,vac)= {round(b1s_label_mean,5)}  Δ={round(b1s_label_mean-b1_ce,5)} (vacuous by construction)")
     log(f"X1 BELOW-JAMO (B1 < A1−{X1_MARGIN} AND < raw): {x1}  "
         f"(B1 {round(b1_ce,5)} vs A1 {round(a1_ce,5)}, Δ={round(a1_ce-b1_ce,5)})")
-    log(f"X2 EARNED (B1 < shuffle by >={X2_MARGIN}): {x2}  (Δ={round(b1s_mean-b1_ce,5)})")
+    log(f"X2 EARNED (B1 < position-shuffle by >={X2_MARGIN}): {x2}  (Δ={round(b1s_mean-b1_ce,5)})")
     log(f"X3 ATTRIBUTION (B1 < A1 within-syllable): {x3}  (Δ={round(a1_ce-b1_ce,5)})")
     log(f"VERDICT: {verdict}")
     log(f"total wall={round(wall,1)}s")

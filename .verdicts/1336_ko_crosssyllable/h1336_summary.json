@@ -1,0 +1,49 @@
+{
+  "id": "H_1336",
+  "device": "NVIDIA GeForce RTX 5070",
+  "torch": "2.11.0+cu130",
+  "ko_window_bytes": 29999999,
+  "ko_window_sha256": "c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca",
+  "corpus_identical_to_H1307_runA": true,
+  "ko_stride": 300,
+  "grow_max": 40,
+  "jamo_vocab_Vj": 323,
+  "distinct_jamo": 67,
+  "distinct_prev_coda_tokens": 29,
+  "raw_ceiling_ko_ce": 2.95342,
+  "jamo_floor_ko_ce_locked": 2.51335,
+  "g0_raw_byte_ce": 2.94487,
+  "A1_jamo_within_syllable_ce": 2.51335,
+  "A1_calib_match_2_51335": true,
+  "A1_bank_member": 5,
+  "cells": 11,
+  "B1_cross_syllable_ce": 2.61186,
+  "B1s_coda_POSITION_shuffle_mean": 2.68788,
+  "B1s_pos_per_seed": [
+    2.68989,
+    2.6881,
+    2.68564
+  ],
+  "B1s_coda_LABEL_shuffle_mean_frozen_vacuous": 2.61186,
+  "B1s_label_per_seed": [
+    2.61186,
+    2.61186,
+    2.61186
+  ],
+  "delta_B1_vs_jamo": 0.09851,
+  "delta_posshuffle_minus_B1": 0.07602,
+  "X1_below_jamo": false,
+  "X1_vs_jamo": false,
+  "X1_vs_raw": true,
+  "X2_earned": true,
+  "X3_attribution": false,
+  "green": false,
+  "verdict": "🧱 HONEST-FLOOR (deeper) — X1 fails: even CROSS-SYLLABLE phonotactic context does NOT beat the jamo floor by the bar for this gradient-free count-MLE predictor → the floor is deeper than an information limit at this scale/mechanism (honest, c9).",
+  "seeds": [
+    4336,
+    4337,
+    4338
+  ],
+  "wall_s": 38.1,
+  "label_note": "B1 = count-MLE cross-syllable-coda-conditioned structured head; NOT gradient-free p8 mitosis, NOT gradient-trained. Rides the same gradient-free Voronoi partition."
+}
