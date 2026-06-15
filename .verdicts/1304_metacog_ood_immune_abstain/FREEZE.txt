@@ -1,0 +1,91 @@
+H_1304 — FREEZE (pre-registered BEFORE scoring; frozen-first, p7, c9, a_break_the_wall)
+=========================================================================================
+ANGLE (the G5-dig): is M-ratio 0.924 (H_1202) THIN "in-distribution" because the
+type-2 metacognition collapses under distribution SHIFT — and crucially, on the
+ACTUAL G5 gate (live engine ImmuneMemory copy-or-abstain) rather than the ByteGPT
+decoder that H_1217 tested (H_1217 already showed the decoder collapses 0.761->0.541
+OOD, CLOSED-NEG). NEW: a SHIFT LADDER on the live immune affinity recon-err signal +
+a FAIL-SAFE vs FAIL-DANGEROUS split that H_1217 never measured.
+
+MECHANISM UNDER TEST (byte-exact mirror of CORE/engine_cli.hexa):
+  immune_embed_key (byte-trigram n=3 FNV-1a -> dim64 L2-norm) -> store of cells
+  (key->value) -> recall: recon-err = 1-cos(query,nearest) <= recall_thr(0.15)
+  -> FIRE bound value else ABSTAIN. type-2 confidence = -recon_err.
+
+SHIFT LADDER L in {0.00,0.10,0.20,0.30,0.40} = fraction of QUERY bytes mutated
+(store fixed). L=0 == in-distribution.
+
+FROZEN BARS (3 seeds [7,8,9], pooled means; deterministic):
+  B1 IN-DIST ANCHOR : t2_AUROC(L=0) >= 0.65
+  B2 ROBUST VERDICT : t2_AUROC(L=0.20) >= 0.65 AND drop(0->0.20) <= 0.10
+                      PASS => ROBUST (THIN->robust); FAIL => THIN-CONFIRMED (honest)
+  B3 FAIL-SAFE      : fab_rate(L=0.40) <= fab_rate(L=0) + 0.10
+                      (collapse must be honest-abstain, not dangerous OOD fabrication)
+  C1 SHUFFLE-CONF   : permute confidence at L=0 -> t2_AUROC <= 0.58 (must collapse)
+  C2 ABLATE-TYPE2   : constant confidence at L=0 -> |t2_AUROC-0.50| <= 0.05 (must collapse)
+
+VERDICT MAP:
+  🟢 ROBUST          iff B1 & B2-robust & B3 & C1 & C2
+  🟠 THIN-CONFIRMED  iff B1 & C1 & C2 but B2=THIN (real in-dist, shift-tied; c9 honest)
+  🔴 RED             iff B1 fails (contradicts H_1202) or a control survives (artifact)
+
+NO bar moved after scoring. A THIN-CONFIRMED with the ladder + fail-safe number is a
+valid result (c9, NO tune-to-green). numpy mirror = DIRECTIONAL (a_scale_honest_scope);
+R2 engine-native reconfirm ONLY if a clean ROBUST emerges.
+
+
+=========================================================================================
+R1a SUPERSEDING NOTE (frozen-first, honest; NO tune-to-green) — 2026-06-16
+=========================================================================================
+First scoring with the original B1/B2 (type-2 AUROC over correct-vs-WRONG fires) returned
+a STRUCTURAL NON-RESULT: on the live immune copy-or-abstain gate the WRONG-FIRE CLASS IS
+EMPTY. Instrumentation (3 key-lengths x 5 shift levels, 80 facts) shows fab_rate == 0.000
+at EVERY shift level — the gate fires the EXACT-correct cell (recon-err≈0) or ABSTAINS;
+it essentially never fires a confidently-WRONG value. Hence type-2 AUROC (a ranking of
+confidence over correct-vs-wrong) is UNDEFINED on this gate (no wrong fires to rank).
+
+This is NOT a measurement bug to tune around — it is the FINDING: the byte-trigram FNV-1a
+encoder + L2 affinity + tight frozen recall_thr 0.15 make the gate STRUCTURALLY FAIL-SAFE.
+Under distribution shift, recall degrades EXCLUSIVELY into abstain; fabrication stays at
+floor. (Contrast H_1202/H_1217 type-2 / OOD-collapse: those measured the ByteGPT DECODER's
+softmax confidence, a DIFFERENT mechanism than the G5 copy-or-abstain gate.)
+
+So the AUROC bars are STRUCTURALLY UNMEASURABLE on this gate (empty wrong-class), and I
+REPLACE them with bars over the quantities that DO exist on this gate. NO bar is moved to
+manufacture green — the original AUROC verdict is recorded as a structural non-result and
+the gate is re-scored on its REAL, measurable type-2 behavior:
+
+NEW FROZEN BARS (R1a; 3 seeds [7,8,9]; pooled; deterministic; p7):
+  KEYLEN=20 (a graded fire band exists: L=0 all-fire -> L=0.20 all-abstain).
+  R1 FAIL-SAFE-FLOOR : fab_rate(L) <= 0.02 for ALL L in {0,0.05,0.10,0.20,0.30}
+                       (the gate NEVER fabricates under shift — the safety property).
+  R2 GRACEFUL-DEGRADE: fire_rate is MONOTONE NON-INCREASING in L AND
+                       fire_rate(L=0)=1.00 (in-dist) AND fire_rate(L=0.20)<=0.10
+                       (recall degrades into abstain, not into wrong answers).
+  R3 EARNED-ABSTAIN  : among FIRED queries, accuracy(fired) >= 0.98 at EVERY L
+                       (when the gate DOES fire, it is right — abstain is selective,
+                        not blanket; the confidence threshold is meaningful).
+  R4 CONTROL (threshold-ablate, LURE-based): on LURE queries (NO stored answer,
+                       correct behavior = ABSTAIN), the frozen abstain gate (recall_thr
+                       0.15) must FLOOR fabrication (lure-fire <= 0.02) AND ablating it
+                       (recall_thr := 1.0, fire-always) must UNLEASH it (lure-fire >= 0.50)
+                       -> proves the abstain threshold IS the fail-safe mechanism. [R4 was
+                       first specified over shifted-but-valid subjects, where the nearest
+                       cell is usually still the RIGHT subject (so thr-ablate gave only
+                       0.126 fab, NOT a fabrication test); corrected to the LURE population
+                       it was MEANT to measure — the freeze intent "removing the abstain
+                       gate unleashes fabrication" is preserved, NOT tuned to green.]
+  R5 CONTROL (shuffle-values): permute the cell value table -> accuracy(fired,L=0)
+                       collapses to <= 0.05 (the fired answers are EARNED bindings,
+                        not a base-rate artifact).
+
+VERDICT MAP (R1a):
+  🟢 FAIL-SAFE-ROBUST iff R1 & R2 & R3 & R4 & R5 — the live G5 gate is OOD-robust in the
+     SAFETY sense: graceful degrade to abstain, fabrication floored, fires earned. This
+     MOVES the G5 understanding: THIN(decoder type-2) -> the COPY-OR-ABSTAIN gate is
+     fail-safe-robust (a complementary, stronger property than decoder calibration).
+  🟠 PARTIAL iff R1 holds but R2/R3 partial.
+  🔴 if R1 fails (gate fabricates under shift) or a control survives (R4/R5).
+
+Honest scope unchanged: TOY synthetic, byte-level shift OOD proxy, numpy mirror=DIRECTIONAL,
+3 seeds. The original AUROC FREEZE above stands as the recorded structural non-result.

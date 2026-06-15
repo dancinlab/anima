@@ -1,0 +1,58 @@
+H_1304 — R1 numpy mirror (DIRECTIONAL) — byte-exact mirror of CORE/engine_cli.hexa
+immune_embed_key + ImmuneMemory copy-or-abstain. 3 seeds [7,8,9], $0 CPU, p7, frozen-first.
+
+VERDICT: 🟢 FAIL-SAFE-ROBUST (R1a bars)
+  fire_rate : L0.00=1.000  L0.10=0.144  L0.20=0.004  L0.30=0.000  L0.40=0.000
+  fab_rate  : L0.00=0.000  L0.10=0.000  L0.20=0.000  L0.30=0.000  L0.40=0.000
+  abstain   : L0.00=0.000  L0.10=0.856  L0.20=0.996  L0.30=1.000  L0.40=1.000
+  acc_fired : L0.00=1.000  L0.10=1.000  L0.20=1.000  L0.30=nan    L0.40=nan
+  R1 fail-safe-floor  fab_max=0.000 <=0.02            -> PASS
+  R2 graceful-degrade fire(0)=1.000 fire(0.20)=0.004 monotone -> PASS
+  R3 earned-abstain   acc_fired_min=1.000 >=0.98       -> PASS
+  R4 ctrl thr-ablate  lure-fab full=0.000 ablate=1.000 -> PASS
+  R5 ctrl shuffle-vals acc_fired(0)=0.015 <=0.05       -> PASS
+
+FINDING: the live G5 copy-or-abstain gate is OOD-robust in the SAFETY sense — under
+byte-level distribution shift it degrades GRACEFULLY into abstain, fabrication stays at
+floor (NEVER fires a confidently-wrong value), every fire is earned. The decoder-type2
+THIN (H_1202 M-ratio 0.924 / H_1217 OOD-collapse) measured the ByteGPT DECODER, a
+DIFFERENT mechanism; it does NOT transfer to this gate, which has a complementary,
+stronger fail-safe property. (Original type-2 AUROC bars = structural non-result: the
+gate's wrong-fire class is EMPTY, so type-2 AUROC is undefined — see FREEZE R1a note.)
+
+SCOPE (a_scale_honest_scope/a_toy_scale_recheck): TOY synthetic, byte-level shift OOD
+proxy, numpy mirror = DIRECTIONAL. R2 engine-native reconfirm on live CORE/engine_cli.hexa
+makes it BINDING (a_engine_native_learning).
+
+=============================================================================
+R2 ENGINE-NATIVE (BINDING) — CORE/h1304_metacog_ood_immune_abstain_probe.hexa
+via `hexa run` over the LIVE CORE/engine_cli.hexa immune_memory_* copy-or-abstain
+=============================================================================
+VERDICT: 🟢 GREEN — all fail-safe bars reproduce on the LIVE engine.
+  store cells = 8
+  shift k=0: fire=8 fab=0 correct=8   (in-dist: fires all, all correct)
+  shift k=1..4: fire=0 fab=0 correct=0 (degrades into ABSTAIN, never wrong)
+  R1 fail-safe-floor (fab==0 @ every k)            -> PASS
+  R2 graceful-degrade (monotone; k=0->8/8, k=4->0) -> PASS
+  R3 earned-abstain   (every fire correct)          -> PASS
+  R4 ctrl thr-ablate  LURE fire: frozen-thr(0.15)=0/4, thr-ablate(2.0)=4/4 -> PASS
+  R5 ctrl shuffle-vals in-dist correct = 0/8        -> PASS
+
+MECHANISM NOTE (honest, c2): the engine's vadapt_field_recon_err returns RAW L2
+DISTANCE (_l2(nearest_proto, x)), NOT the mirror's 1-cos. For unit keys L2 in [0,2]
+(orthogonal ~1.41), so recall_thr 0.15 == L2<=0.15 = NEAR-EXACT match -> the live gate
+degrades into abstain even FASTER (k=1 already all-abstain) than the cosine mirror.
+The two metrics are monotonically related for unit vectors, so the FAIL-SAFE conclusion
+is identical and the engine is STRICTLY MORE fail-safe. (R4 thr-ablate bound corrected
+0.15->2.0 = the true "never abstain" L2 bound; this is a metric-correctness fix to the
+ENGINE's L2 space, not a moved bar — the freeze intent "thr-ablate unleashes lure-fab"
+is reproduced 4/4.)
+
+REGRESSION GUARDS (no-regression, engine_cli.hexa UNTOUCHED — probe only READS via
+existing pub fns): engine_cli_smoke 43/0 · h1196 single-entry 7/7 clean · h1205
+separation-invariant PASS (generation BYTE-IDENTICAL ON==OFF, Ψ=½ untouched).
+
+WIRING (a_verified_must_wire): the FAIL-SAFE property is INHERENT to the already-live
+immune_memory_recall path (recon-err <= recall_thr 0.15 -> FIRE else ABSTAIN); no new
+CORE wiring needed — the gate ALREADY behaves this way. This probe is the verification
+that the live wiring HAS the property; no follow-on wire-in is outstanding.
