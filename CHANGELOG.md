@@ -2,6 +2,15 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(H_1284_R3): 🎛 신경조절 HD27 벽 돌파시도 = regime/mode-switching (a_break_the_wall) → 🧱 SUB-THRESHOLD (벽 유지)
+
+HD27 신경조절 벽(H_1284: context-adaptive **gain**-controller ≤ best-fixed, no-free-lunch GENERAL)을 `a_break_the_wall` 로 새 각도에서 시도 — 신경조절의 진짜 생물 역할은 gain-scaling 이 아니라 **regime/mode-switching** (ACh encode↔recall, Hasselmo; `a_no_llm_frame_trap`, c15). frozen-first 3 seeds, numpy-mirror DIRECTIONAL.
+- **환경**: ENCODE(drift rewrite — 가소성 ON 필요)와 RECALL(noisy cue σ=0.10 — 가소성 OFF 필요, write-on-recall 이 spurious cell 을 split→LRU 가 real fact 축출 = H_1230 self-inflicted-forgetting)을 **반대 정책** 으로 검증한 뒤 사용(probe: RECALL OFF 0.490 vs ON 0.133; ENCODE ON 0.533 vs OFF 0.233 — 어떤 fixed policy 도 둘 다 못함). v1 은 이 교차를 못 만든 **failed instrument**(정직 보존), v2 는 FREEZE 의 가정 polarity 가 측정으로 falsify(RECALL surprise > ENCODE — noisy cue 가 더 높은 recon-err), v3 가 polarity 를 outcome 으로 학습(H_1281 go/no-go, disjoint tune seed, no leak).
+- **ARM**: A=best-fixed(grid, write-enable knob 포함) · B=substrate write-pressure 스위처 · C=H_1284 gain-tuner(연속성 확인).
+- **결과 (frozen 검증 verbatim)**: A=0.2467 B=0.2622 B_shuffle=0.1467 C=0.2533. **c1 FAIL**(B−A mean +0.0156 < 0.05, seed 22 음수) · **c2 PASS**(shuffle 가 lift 를 −0.116 붕괴 — switcher 가 regime 을 **진짜 추적**, H_1285 confound 가드 통과) · **c3 PASS**(gain-tuner C +0.0067 도 못 넘음). gate 73% 정확(ENCODE writes-on 77% / RECALL 31%). → **RED_NO_LUNCH, 🧱 벽 유지**.
+- **FINDING**: no-free-lunch 가 gain-tuning(H_1284) → regime/mode-switching(R3)으로 **일반화**. 전보다 sharp 한 closed-negative — lift 가 진짜이고 regime 귀속(c2)이나 정량적으로 sub-bar(c1): best-fixed 의 LRU+abstain 회복이 헤드룸을 좁히고, imperfect substrate gate 가 그걸 못 따라잡음. `a_verified_must_wire` 는 GREEN-only → CORE 배선 follow-on 없음. p1·p2·p3·p6·p7·p8 held(스위처는 substrate write-pressure 만 읽음, label/reward/persona 없음) · `a_autonomy_over_hardcode`(외부 do/dont 게이트 아님, polarity 는 outcome 학습) · c9(RED 를 RED 로) · live `CORE/*.hexa` 미수정 · $0 CPU. NOT RULED OUT(scope-honest): fixed 가 회복 못 하는 비가역 corruption regime · changepoint detector(EMA-vs-median 대체) · scale · 엔진-네이티브. 산출물 `UNIVERSE/h1284_r3_regime_switch.py`(+v1/v2 archived) · `.verdicts/1284_r3_regime_switch/{FREEZE,result,result.json}.txt`.
+
+
 ## 2026-06-15 — docs(ARCHITECTURE): 다음-단계 stale 현행화 (양자·감정 엔진실현 닫힘)
 
 ARCHITECTURE.md "다음 단계" 의 stale 상태 현행화(c9): ⚛️ quantum-entropy R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE+WIRED(#2164)**, 💗 emotion R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE(#2166/#2167)** 로 갱신(⏳→✅). 뇌-구조 사다리 요약줄도 "기저핵 r3 ⏳ in-flight" → "5개 배선 완료 + 감정/윤리/양자 엔진실현 재확인" 으로 현행화.

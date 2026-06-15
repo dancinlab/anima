@@ -1,0 +1,60 @@
+{
+  "best_fixed": {
+    "writes_enabled": true,
+    "LR0": 0.3,
+    "TH0": 0.4,
+    "tune_cap": 0.2867
+  },
+  "switch_polarity_learned": -1,
+  "switch_polarity_tune_cap": 0.3067,
+  "env": {
+    "recall_noise": 0.1,
+    "max_cells_frac": 0.6,
+    "n_blocks": 12,
+    "block_len": 25
+  },
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "MARGIN": 0.05,
+  "A_cap_mean": 0.2467,
+  "B_cap_mean": 0.2622,
+  "B_shuffle_cap_mean": 0.1467,
+  "C_gain_cap_mean": 0.2533,
+  "per_seed_A": [
+    0.1933,
+    0.2733,
+    0.2733
+  ],
+  "per_seed_B": [
+    0.22,
+    0.26,
+    0.3067
+  ],
+  "per_seed_B_shuffle": [
+    0.1133,
+    0.1133,
+    0.2133
+  ],
+  "per_seed_C_gain": [
+    0.2067,
+    0.28,
+    0.2733
+  ],
+  "per_seed_B_minus_A": [
+    0.0267,
+    -0.0133,
+    0.0333
+  ],
+  "B_minus_A_mean": 0.0156,
+  "B_minus_Bshuffle_mean": 0.1156,
+  "C_minus_A_mean": 0.0067,
+  "A_fab_mean": 0.0444,
+  "B_fab_mean": 0.0511,
+  "c1_B_beats_A_every_seed": false,
+  "c2_shuffle_collapses": true,
+  "c3_gain_tuner_loses": true,
+  "verdict": "RED_NO_LUNCH"
+}
