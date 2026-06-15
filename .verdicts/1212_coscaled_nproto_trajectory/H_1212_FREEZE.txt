@@ -1,0 +1,147 @@
+================================================================================
+H_1212 — CO-SCALED N_PROTO TRAJECTORY GATE  ·  PRE-REGISTERED FALSIFIER (FROZEN)
+domain = MITOSIS-ENGINE   ·   $0 local CPU   ·   p7 (cell-count/ratio, NOT perplexity)
+frozen BEFORE any measurement (a_toy_scale_recheck · a_scale_honest_scope · p7 — bars
+NOT movable to chase a tier; the 1.5 is INHERITED from H_1203/1208/1209/1211, NOT moved)
+DATE-FROZEN: 2026-06-15   ·   BRANCH: h1212/coscaled-nproto-trajectory (base origin/main @67af0ed9a)
+SLUG: 1212_coscaled_nproto_trajectory
+================================================================================
+
+QUESTION (the residual of H_1211)
+---------------------------------
+H_1211 (.verdicts/1211_dual_substrate_scaleup/H_1211.txt) found the GATE-B
+trajectory-coupling separation COLLAPSES along AXIS-T as stream length T grows, at a
+FIXED prototype-book size N_PROTO=24:
+    WALK/WALK_SHUF = 10.916 (T=2400) -> 2.629 (T=24000) -> 1.136 (T=240000, FAIL).
+The H_1211 RULING located the ROOT CAUSE as a finite-alphabet / finite-sample
+SATURATION of the predictability count table C[prev][cur]: with only N_PROTO=24
+symbols, as T grows EACH (prev,*) row accumulates so much mass that even a SHUFFLED
+proto-id stream pushes some realized transition across CONF_FLOOR=0.34 by chance, so
+WALK_SHUF division climbs toward WALK division and the ratio decays to ~1.0. The
+H_1211 AXIS-P diagnostic CONFIRMED the mechanism at fixed toy T=2400: ENLARGING the
+alphabet RESTORES + sharpens the separation (N_PROTO 24 -> 10.9 ; 64 -> 152.5 ;
+128 -> 28.5) and drives the i.i.d. sanity floor to 0.000.
+
+THE HYPOTHESIS (H_1212)
+-----------------------
+There exists a PRINCIPLED CO-SCALING RULE N_PROTO = f(T) such that GATE-B's
+ordered >> shuffle separation stays >= 1.5 across the SAME AXIS-T ladder where the
+fixed N_PROTO=24 book collapsed. Equivalently: the H_1211 collapse is an
+UNDER-RESOURCED-BOOK artifact (a fixed alphabet starved of symbols at long T), NOT an
+intrinsic limit of the predictability principle. Give the book enough cells (grow the
+alphabet with the observation budget) and trajectory-sensitivity is scale-robust.
+
+THE CO-SCALING RULE (pre-registered formula + derivation from the saturation mechanism)
+---------------------------------------------------------------------------------------
+DERIVATION. GATE-B fires a (false) split on a SHUFFLED stream when, for some row
+`prev` seen n = prev_total >= MIN_PREV=3 times, the empirical conditional of the
+REALIZED successor reaches P(cur|prev) = C[prev][cur]/n >= CONF_FLOOR=0.34. On a
+shuffled (i.i.d.-in-time) proto-id stream the successors of a given `prev` are drawn
+~i.i.d. over the realized alphabet, so row `prev` is a multinomial over its successor
+symbols. The chance that the running empirical conditional of the just-realized
+successor exceeds 0.34 is governed by how many observations-per-row n accumulate
+RELATIVE to the alphabet spread: when n is small vs the alphabet, the row is sparse
+and chance mass on any single successor easily exceeds 0.34 EARLY but only transiently;
+the SATURATION that H_1211 identified is that as n -> large the row fills and SOME
+successor reliably sits above 0.34 each step (the empirical mode of a multinomial over
+K cells with enough mass is >= 1/K_eff + fluctuation, and for the realized step the
+"just-seen" successor is exactly the sampled one, so its post-hoc-conditional bias
+compounds). The controlling quantity is therefore the EXPECTED OBSERVATIONS PER ROW:
+
+        obs_per_row  =  T / N_PROTO        (T transitions spread over N_PROTO `prev` rows)
+
+The TOY ANCHOR that separates cleanly is (T=2400, N_PROTO=24) => obs_per_row = 100.
+H_1211 fixed-24 saturates at (T=240000, N=24) => obs_per_row = 10000 (100x the toy).
+=> KEEP obs_per_row AT THE TOY VALUE: this is the principled rule. Define
+
+   *** PRINCIPLED (LINEAR) RULE — pre-registered as the PRIMARY co-scaling rule: ***
+        N_PROTO(T)  =  round( 24 * T / 2400 )  =  round( T / 100 )
+   so obs_per_row = T / N_PROTO ~ 100 at EVERY rung (identical to the clean toy book).
+   WHY: holds the per-row observation budget — the exact quantity the saturation
+   analysis says controls chance-predictability — CONSTANT across the ladder.
+
+   *** SUB-LINEAR PROBE — pre-registered as the STRONG-RESULT candidate: ***
+        N_PROTO(T)  =  round( 24 * sqrt(T / 2400) )
+   (alphabet grows only as sqrt(T); obs_per_row = T/N ~ 100*sqrt(T/2400) STILL GROWS,
+   so this tests whether the gate tolerates a slowly-growing per-row budget — if it
+   holds >= 1.5 across the ladder, the cost is SUB-LINEAR = the strong result.)
+
+A book can never exceed the number of distinct feature windows available, so
+N_PROTO(T) is clamped to <= the scored span length; if the clamp binds it is reported.
+
+THE LADDER (the SAME AXIS-T rungs H_1211 used; a_scale_honest_scope)
+-------------------------------------------------------------------
+  AXIS-T  T in {2400 (toy), 24000 (10x), 240000 (100x)}, WARMUP {250, 2500, 25000}
+  (warmup scaled to keep the warmup fraction; MAX_CELLS = 10**9 so growth is never
+   prematurely clipped at long T — declared, a cap would itself be a scale artifact).
+  toy corpus clm_mid_5lang_c4 (402 KB), 3 seeds {900,901,902} — IDENTICAL to H_1211
+  AXIS-T so the ONLY changed variable vs the H_1211 collapse is the N_PROTO rule.
+  The 100x rung (T=240000) is the heaviest; if genuinely infeasible on $0 CPU within a
+  reasonable wall budget it is reported as the LARGEST FEASIBLE rung with an honest
+  note (NO faked rung — a_scale_honest_scope). T=24000 (10x) is the committed floor.
+
+REUSE (VERBATIM — mechanism CODE byte-unchanged)
+------------------------------------------------
+  GATE-B  = H_1208 gate_B_transition_predictability + build_fixed_book + proto_ids
+            (UNIVERSE/h1208_predictability_split_gate.py) — VERBATIM.
+  WALK    = H_1207 make_walk_stream / make_walk_shuffled — VERBATIM.
+  SANITY  = H_1208 make_randgauss_stream / make_randgauss_shuffled — VERBATIM.
+  All constants (MIN_PREV=3, CONF_FLOOR=0.34, DIM=8, LR=0.20) INHERITED unchanged.
+  The driver ONLY monkeypatches the pre-declared scale knobs (T, WARMUP, MAX_CELLS) and
+  sets N_PROTO per the co-scaling rule above (the SAME knob H_1211 set to a fixed 24).
+  Optional cheap parity spot-check of ONE rung through live VAdaptFieldB (H_1209
+  precedent) if inexpensive.
+
+PRE-REGISTERED FALSIFIERS (frozen bars — 1.5 INHERITED, NOT moved)
+------------------------------------------------------------------
+F1 (SCALE-ROBUST RESTORATION — the central claim):
+    With the PRINCIPLED (linear) co-scaled N_PROTO, GATE-B
+        WALK / WALK_SHUF  >=  1.5   (3-seed mean)
+    at EVERY rung of the AXIS-T ladder, INCLUDING T=240000 where fixed-24 gave 1.136.
+    AND the RANDGAUSS sanity stays honest (sanity ratio reported; a WALK pass with a
+    comparable-or-larger sanity ratio is flagged, as in H_1208/1209/1211).
+    Report the full curve. PASS iff >= 1.5 at all rungs.
+
+F2 (CONTROL — fixed N_PROTO=24 still collapses, attribution):
+    Re-confirm the H_1211 fixed-24 collapse on the SAME ladder (same streams, same
+    seeds), so any F1 restoration is attributable to the co-scaling rule and NOT to a
+    stream/seed/code change. PASS-as-control iff fixed-24 WALK/WALK_SHUF reproduces the
+    H_1211 decay (in particular DROPS BELOW 1.5 at T=240000, ~1.136). (This is a control
+    re-confirmation, not a falsifier bar; a mismatch vs H_1211 INVALIDATES the comparison.)
+
+F3 (NO FREE LUNCH — honest cost of the rule):
+    Report the N_PROTO each rung actually uses and whether the alphabet must grow
+    UNBOUNDEDLY. Specifically test the SUB-LINEAR probe (N ~ sqrt(T)):
+      - if the sub-linear N_PROTO holds F1 (>= 1.5 at all rungs) => STRONG RESULT
+        (trajectory substrate is scale-robust at sub-linear book cost).
+      - if only the LINEAR rule holds and sub-linear fails => the alphabet must grow
+        ~linearly with T to hold separation; that is a REAL, honestly-stated cost
+        (the book size is not free — declared, not hidden).
+    Report obs_per_row at every rung for both rules (the saturation quantity).
+
+TIER RULING (frozen)
+--------------------
+  GREEN (🟢 scale-robust UNDER co-scaling)  iff F1 holds across the FULL ladder under
+        the principled rule (with honest sanity) AND F2 confirms the fixed-24 control
+        still collapses. => the trajectory substrate (H_1209/1210) PROMOTES from toy to
+        SCALE-QUALIFIED-GREEN; this REFINES H_1211's "toy artifact" to "fixed-book
+        artifact, fixable by a principled N_PROTO co-scaling rule". REQUIRES a
+        paper-supersede FLAG for PAPER/mitosis-substrate-lane (do NOT silently edit the
+        merged paper — a follow-on supersede handles it). F3 states the cost
+        (sub-linear = strong; linear = honest-cost green).
+  RED (🔴 honest closed-neg, a_scale_honest_scope · a_paper_negative_ok)  if F1 FAILS
+        even under co-scaling (the separation still collapses at some rung despite the
+        grown alphabet) => the saturation is INTRINSIC to the predictability gate, not a
+        book-resourcing artifact; co-scaling does not save it. A valid closed-negative:
+        report WHERE the co-scaled rule still breaks + WHY.
+
+PROTOCOL
+--------
+- numpy MIRROR (H_1199/H_1208/H_1211 precedent; gradient-free). 3 seeds = 900,901,902.
+- p7 (cell-count / ratio metrics, NOT perplexity). p8 (split tick == growth).
+- $0 local CPU. NO GPU (CPU-first; if the 100x rung needs GPU, report largest feasible
+  CPU rung + a one-line note). Builders + GATE-B imported VERBATIM from H_1207/H_1208;
+  the driver monkeypatches ONLY the pre-declared scale knobs (T, WARMUP, MAX_CELLS) and
+  sets N_PROTO via the co-scaling rule. Mechanism CODE byte-unchanged across rungs.
+- Frozen bar (1.5) NOT moved. Scale-dependent conclusion reported as the LADDER CURVE.
+================================================================================

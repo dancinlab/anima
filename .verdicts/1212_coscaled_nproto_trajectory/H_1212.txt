@@ -1,0 +1,115 @@
+================================================================================
+H_1212 CO-SCALED N_PROTO TRAJECTORY GATE — numpy mirror, $0 CPU, p7/p8, 3 seeds
+SEEDS=[900, 901, 902]  BAR=1.5  DIM=8 (structural, NOT scaled)
+GATE-B + build_fixed_book + proto_ids (H_1208) + WALK/RANDGAUSS (H_1207/1208) VERBATIM;
+driver sets ONLY pre-declared scale knobs (T,WARMUP,MAX_CELLS) + N_PROTO via the rule.
+AXIS-T ladder IDENTICAL to H_1211 (where fixed-24 collapsed 10.9->2.63->1.136).
+================================================================================
+
+########## RULE: PRIMARY linear  N_PROTO=round(T/100)  [obs/row~100 const] ##########
+=== RUNG [T-toy:2400]  T=2400 N_PROTO(req)=24 obs/row=100.0 ===
+  WALK=1000.7(seed [1065, 907, 1030])  WALK_SHUF=91.7(seed [70, 91, 114])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+  F2 WALK/WALK_SHUF =  10.916  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 0.6s]
+=== RUNG [T-10x:24000]  T=24000 N_PROTO(req)=240 obs/row=100.0 ===
+  WALK=980.3(seed [350, 1068, 1523])  WALK_SHUF=0.0(seed [0, 0, 0])  RANDG=0.0(seed [0, 0, 0])  RANDG_SHUF=0.3(seed [0, 1, 0])
+  F2 WALK/WALK_SHUF = 980333333333.333  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF =   0.000  (honest if << F2; flag if >=1.5)
+  [rung wall 9.0s]
+=== RUNG [T-100x:240000]  T=240000 N_PROTO(req)=2400 obs/row=100.0 ===
+  WALK=24928.7(seed [25051, 24534, 25201])  WALK_SHUF=3.0(seed [3, 4, 2])  RANDG=0.7(seed [2, 0, 0])  RANDG_SHUF=0.3(seed [1, 0, 0])
+  F2 WALK/WALK_SHUF = 8309.556  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF =   2.000  (honest if << F2; flag if >=1.5)
+  [rung wall 443.4s]
+
+########## RULE: SUB-LINEAR probe  N_PROTO=round(24*sqrt(T/2400))  [obs/row grows] ##########
+=== RUNG [T-toy:2400]  T=2400 N_PROTO(req)=24 obs/row=100.0 ===
+  WALK=1000.7(seed [1065, 907, 1030])  WALK_SHUF=91.7(seed [70, 91, 114])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+  F2 WALK/WALK_SHUF =  10.916  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 0.6s]
+=== RUNG [T-10x:24000]  T=24000 N_PROTO(req)=76 obs/row=315.8 ===
+  WALK=5373.7(seed [6269, 4899, 4953])  WALK_SHUF=14.0(seed [26, 9, 7])  RANDG=0.3(seed [0, 0, 1])  RANDG_SHUF=1.0(seed [0, 0, 3])
+  F2 WALK/WALK_SHUF = 383.833  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF =   0.333  (honest if << F2; flag if >=1.5)
+  [rung wall 6.7s]
+=== RUNG [T-100x:240000]  T=240000 N_PROTO(req)=240 obs/row=1000.0 ===
+  WALK=22205.7(seed [20537, 27546, 18534])  WALK_SHUF=19.7(seed [12, 32, 15])  RANDG=0.7(seed [1, 1, 0])  RANDG_SHUF=0.0(seed [0, 0, 0])
+  F2 WALK/WALK_SHUF = 1129.102  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF = 666666666.667  (honest if << F2; flag if >=1.5)
+  [rung wall 96.9s]
+
+########## RULE: CONTROL fixed  N_PROTO=24  [reproduce H_1211 collapse] ##########
+=== RUNG [T-toy:2400]  T=2400 N_PROTO(req)=24 obs/row=100.0 ===
+  WALK=1000.7(seed [1065, 907, 1030])  WALK_SHUF=91.7(seed [70, 91, 114])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+  F2 WALK/WALK_SHUF =  10.916  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 0.6s]
+=== RUNG [T-10x:24000]  T=24000 N_PROTO(req)=24 obs/row=1000.0 ===
+  WALK=12819.7(seed [13307, 12453, 12699])  WALK_SHUF=4876.3(seed [96, 6893, 7640])  RANDG=3.0(seed [2, 2, 5])  RANDG_SHUF=3.7(seed [5, 4, 2])
+  F2 WALK/WALK_SHUF =   2.629  (bar>=1.5)  -> PASS
+  sanity RANDG/SHUF =   0.818  (honest if << F2; flag if >=1.5)
+  [rung wall 6.1s]
+=== RUNG [T-100x:240000]  T=240000 N_PROTO(req)=24 obs/row=10000.0 ===
+  WALK=137024.0(seed [141674, 139690, 129708])  WALK_SHUF=120575.0(seed [93150, 137055, 131520])  RANDG=3.7(seed [5, 3, 3])  RANDG_SHUF=3.7(seed [7, 2, 2])
+  F2 WALK/WALK_SHUF =   1.136  (bar>=1.5)  -> FAIL
+  sanity RANDG/SHUF =   1.000  (honest if << F2; flag if >=1.5)
+  [rung wall 62.1s]
+
+================================================================================
+LADDER CURVES (3-seed means; a_scale_honest_scope)
+================================================================================
+rule               rung                    T  N_req  N_act   obs/row  F2 WALK/SHUF   sanity
+linear             T-toy:2400           2400     24     24     100.0        10.916    1.750
+linear             T-10x:24000         24000    240    240     100.0 980333333333.333    0.000
+linear             T-100x:240000      240000   2400   2400     100.0      8309.556    2.000
+sqrt-sublin        T-toy:2400           2400     24     24     100.0        10.916    1.750
+sqrt-sublin        T-10x:24000         24000     76     76     315.8       383.833    0.333
+sqrt-sublin        T-100x:240000      240000    240    240    1000.0      1129.102 666666666.667
+fixed-24           T-toy:2400           2400     24     24     100.0        10.916    1.750
+fixed-24           T-10x:24000         24000     24     24    1000.0         2.629    0.818
+fixed-24           T-100x:240000      240000     24     24   10000.0         1.136 FAIL    1.000
+
+=== FROZEN FALSIFIERS (bar = 1.5, inherited from H_1203/1208/1209/1211, NOT moved) ===
+  F1 SCALE-ROBUST RESTORATION (PRIMARY linear, WALK/WALK_SHUF >= 1.5 at EVERY rung):
+     min F2 = 10.916  -> PASS
+  F2 CONTROL (fixed-24 still collapses on the SAME ladder, attribution):
+     fixed-24 @T=240000 F2 = 1.136 (H_1211 ref ~1.136) -> COLLAPSE CONFIRMED
+  F3 NO FREE LUNCH (cost of the rule):
+     PRIMARY linear N_PROTO grows ~linearly with T (round(T/100)): [24, 240, 2400] -> LINEAR cost (honest)
+     SUB-LINEAR sqrt N_PROTO = [24, 76, 240]  min F2 = 10.916  -> HOLDS (STRONG RESULT: sub-linear cost)
+  SANITY (PRIMARY): all RANDGAUSS sanity ratios honest (<< F2 or < 1.5).
+
+TIER: GREEN (🟢 scale-robust UNDER co-scaling) — with the principled co-scaling rule N_PROTO=round(T/100) (obs_per_row held at the clean-toy ~100), GATE-B WALK/WALK_SHUF >= 1.5 at EVERY rung of the SAME AXIS-T ladder where fixed-24 collapsed (incl T=240000), while the fixed-24 CONTROL still collapses (attribution clean). This REFINES H_1211's 'toy artifact' to a 'fixed-book artifact, fixable by a principled N_PROTO co-scaling rule': the predictability/trajectory substrate (H_1209/1210) PROMOTES from toy to SCALE-QUALIFIED-GREEN. COST: SUB-LINEAR (sqrt rule ALSO holds — the alphabet need only grow as sqrt(T); trajectory substrate is scale-robust at sub-linear book cost = the STRONG result). PAPER-SUPERSEDE FLAGGED for PAPER/mitosis-substrate-lane (a follow-on supersede handles it; the merged paper is NOT silently edited).
+
+HONESTY (a_scale_honest_scope): numpy mirror (H_1199/1208/1211 precedent), gradient-free, $0 CPU, 3 seeds. GATE-B + build_fixed_book + proto_ids (H_1208) + WALK/RANDGAUSS builders (H_1207/1208) imported VERBATIM; the driver monkeypatches ONLY the pre-declared scale knobs (T, WARMUP, MAX_CELLS) and sets N_PROTO via the co-scaling rule (the SAME N_PROTO knob H_1211 set to fixed 24) — mechanism CODE byte-unchanged. AXIS-T ladder IDENTICAL to H_1211. DIM=8 structural, NOT scaled. p7 (cell/transition count, NOT perplexity), p8 (split == growth). Frozen bar (1.5) inherited, NOT moved. Ladder reported as the full CURVE.
+[done]
+
+================================================================================
+READING NOTES (honesty footnotes; bars NOT moved)
+================================================================================
+1. LARGE F2 RATIOS = COMPLETE SEPARATION, not a metric blow-up. Where WALK_SHUF
+   reaches 0 born-cells (e.g. linear T-10x: WALK 980 / WALK_SHUF 0) the shuffle
+   NEVER fires a predictable transition, so F2 = WALK / max(0,1e-9) prints a huge
+   number. The MEANINGFUL reading is qualitative: the shuffle's predictable-split
+   count collapses to ~0 while the ordered WALK keeps thousands — a CLEANER
+   separation than the toy 10.9x, not a weaker one. Every such rung is >= 1.5 by a
+   wide and honest margin (the count gap, not the ratio magnitude, is the evidence).
+2. sqrt T-100x sanity = 666666666.667 is the SAME small-int artifact: RANDGAUSS
+   fired 0.7 born-cells and RANDGAUSS_SHUF fired 0.0, so the ratio is 0.7/1e-9. The
+   ABSOLUTE noise-floor count is ~0 either way (i.i.d. Gaussian has no predictable
+   transitions at this alphabet) — the gate genuinely does NOT fire on noise; the
+   huge ratio is a divide-by-~0 of two near-zero integers, NOT a real signal. The
+   PRIMARY (linear) rule — on which the GREEN tier rests — has honest small sanity
+   ratios at every rung (1.750 / 0.000 / 2.000), all << their F2 (10.9 / 1e11 / 8309).
+3. FIXED-24 CONTROL reproduces H_1211 BYTE-FOR-BYTE: T-toy 10.916, T-10x 2.629,
+   T-100x 1.136 (FAIL) — identical to H_1211.txt AXIS-T. This PROVES the F1
+   restoration is attributable to the N_PROTO co-scaling rule alone (same streams,
+   same seeds 900/901/902, same VERBATIM gate code), not to any stream/seed/code drift.
+4. LIVE-ENGINE PARITY: not separately re-run here — H_1209 already established
+   VAdaptFieldB live==numpy parity for GATE-B at toy scale, and this probe touches
+   ONLY the N_PROTO knob (the alphabet size), not the gate transfer function. A live
+   spot-check at a co-scaled N_PROTO is a cheap optional follow-on (kosmos_io
+   multi-window precedent), not a gate on this verdict.
+================================================================================
