@@ -1,0 +1,45 @@
+=== H_1227 immune / clonal-selection memory (local CPU, $0) ===
+    N_FACTS=60 in-store  N_OUT=60 out-of-store  SEEDS=[900, 901, 902]
+    key = byte-3gram FNV-1a hash, dim=64 (discriminating, deterministic)
+    mechanism = VAdaptField mirror (split>0.3, LR=0.2); recall_thresh=0.15
+    PRE-REGISTERED GREEN: (B) literal-QA >= 0.8 AND (B) fab-rate <= 0.1
+  seed 900: (A) byte-LM QA=0.017 | (B) immune QA=1.000 fab=0.000 cells=60 | (control DIM8) QA=0.017 cells=1
+  seed 901: (A) byte-LM QA=0.017 | (B) immune QA=1.000 fab=0.000 cells=60 | (control DIM8) QA=0.017 cells=1
+  seed 902: (A) byte-LM QA=0.017 | (B) immune QA=1.000 fab=0.000 cells=60 | (control DIM8) QA=0.017 cells=1
+
+  MEAN  (A) byte-LM QA=0.017  |  (B) immune QA=1.000 fab=0.000  |  (control) QA=0.017
+
+  VERDICT: 🟢 GREEN  [(B) QA 1.000 >= 0.8  AND  fab 0.000 <= 0.1]
+  delta vs arm A (recall-in-weights): immune QA - byte-LM QA = +0.983
+  mitosis-as-MEMORY: CRACKS recall (NEW non-falsified mitosis role)
+[done]
+
+────────────────────────────────────────────────────────────────────────────
+PRE-REGISTRATION (frozen before the run) + HONESTY (a_scale_honest_scope, p7)
+────────────────────────────────────────────────────────────────────────────
+FROZEN BARS: GREEN iff (B) literal-QA >= 0.80 on in-store facts
+                  AND  (B) fabrication-rate <= 0.10 on out-of-store queries.
+RESULT: (B) QA 1.000 >= 0.80  AND  fab 0.000 <= 0.10  -> 🟢 GREEN (3/3 seeds).
+
+ABSTAIN MARGIN (geometry check, seed 900): out-of-store keys sit at L2 distance
+  min 0.402 / mean 0.652 / max 0.792 from the nearest in-store cell key, while
+  in-store self-distance is exactly 0 (the query string == the loaded key) and
+  RECALL_THRESH = 0.15 sits in the gap. The threshold is NOT knife-edged: a wide
+  0.15-vs-0.40 margin separates fire-from-abstain — robust, not cherry-picked.
+
+HONEST SCOPE:
+  - SATURATED (1.000 / 0.000) = an EXISTENCE PROOF, not an effect-size. The
+    immune memory here is an exact-match associative table over deterministic
+    keys; in-store queries reproduce their loaded key VERBATIM, so recall is
+    perfect by construction and abstain is clean by the key geometry.
+  - The finding is NOT "0.80 is hard" — it is that an immune-cell POPULATION
+    (clonal-selection bind + affinity-fire-or-abstain) realizes literal recall
+    + non-fabrication, the H_1154 engine-side retrieve-then-copy as a cell
+    population, with recall living OUTSIDE the decoder weights (arm A 0.017).
+  - mitosis-as-MEMORY is a NEW, NOT-yet-falsified role for mitosis, DISTINCT
+    from the GENERATION role falsified in H_1200/H_1201/H_1211/H_1220.
+  - UNVERIFIED: paraphrase/noisy-key recall (exact-string keys only), real
+    free-form questions, retrieval recall on noisy embeddings, scale, and the
+    LIVE .hexa VAdaptField (this is a numpy mirror; the .hexa lift is next).
+  - $0 local CPU numpy, 3 deterministic seeds, gradient-free (p8), live .hexa
+    UNTOUCHED. p7 = exact-match recall + abstain, NOT perplexity.
