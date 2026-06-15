@@ -1,0 +1,91 @@
+H_1284 R2 — CONTEXT-ADAPTIVE NEUROMODULATION ON IDEATION/DECODE (re-scope of R1)
+PRE-REGISTRATION (frozen BEFORE any scoring) — neuro lens (c15), a_no_llm_frame_trap
+================================================================================
+R1 RECAP (🔴 CLOSED-NEG): a context-adaptive neuromodulator (DA gain + NE
+exploration + ACh plasticity) mapping substrate state -> (plasticity-rate,
+split-thresh, abstain-margin) does NOT beat best-fixed hyperparams on the MEMORY
+substrate; on non-stationary regimes it HURTS + raises fabrication. NOT-RULED-OUT
+clause (a) of R1: "decode-time NE temperature alone on IDEATION remains 🟠 viable
+per H_1228 — RED here is for plasticity/split on MEMORY, not the decode channel".
+
+R2 RE-SCOPE (grounded in evidence, a_no_llm_frame_trap): test the neuromodulator
+where it has demonstrated LIFE — the GENERATION / IDEATION lane (H_1228 SOC decode,
+🟠 PARTIAL: per-step temperature control lifted composed_distinct). H_1228's arm C
+is a controller that always drives toward a FIXED σ*-target (=2.5). The R2 question:
+does a CONTEXT-ADAPTIVE neuromodulator — one that READS the recent output state
+(repetition / low-novelty / coherence drop) and adapts its σ*-target & exploration
+per step — beat H_1228's BEST FIXED decode point on a COMBINED ideation metric?
+
+────────────────────────────────────────────────────────────────────────────────
+SUBSTRATE (reuse H_1228 VERBATIM):
+  · 303M ByteGPT torch-ref (state/chat_303m/h1129c_chat.pt), byte-exact to H_1157
+    mount. data/corpus.txt for G2 corpus-absence (original 1.5GB GONE => G2 is an
+    UPPER BOUND, flagged). FROZEN gauge_lib.py evaluators VERBATIM (p7, no metric
+    re-invention): _coverage(G1) · known_word_ratio(G0/coherence) ·
+    _content_ngrams+_corpus_absent(G2) · _words+_jaccard(G6). Seeds [7,17,23] (>=3).
+  · σ proxy = exp(H(next-byte p)) = effective viable next-bytes (avalanche branching).
+
+ARMS (identical model/seeds/max_new/top-k=40; ONLY the temperature policy differs):
+  ARM A  = BEST FIXED decode point. Tuned over a small FIXED grid on a DISJOINT
+           tuning seed (seed=5, disjoint from scoring seeds [7,17,23]) by the SAME
+           combined ideation metric M (below). The grid spans BOTH fixed-temperature
+           sampling (the H_1228 B family: temp in {0.5,0.7,0.9,1.1}) AND fixed-σ*
+           targeting (the H_1228 C family: σ* in {1.8,2.5,3.2}, KP=0.6). The single
+           winner = ARM A "best-fixed". (This makes A a STRONGER baseline than any
+           one H_1228 arm — it is the best of H_1228's tuned fixed family.)
+  ARM B  = CONTEXT-ADAPTIVE NEUROMODULATOR. Same per-step temperature controller,
+           but the σ*-TARGET itself is modulated each step by a no-grad read-out of
+           the RECENT OUTPUT STATE (NE exploration + ACh novelty + DA coherence-gain):
+             · repetition r_t  = fraction of last W=24 emitted bytes that repeat a
+                                 byte already in the last W window (loop pressure).
+             · novelty  n_t    = distinct-byte ratio over the last W bytes (low =>
+                                 low local novelty).
+             · coherence c_t   = running known_word_ratio of the decoded-so-far text.
+           ADAPTED target (clamped σ*_t in [1.5, 3.5]):
+             σ*_t = σ*_0 * (1 + kR*r_t + kN*(1-n_t)) * (1 - kC*max(0, COH_FLOOR-c_t))
+           i.e. RAISE exploration (higher σ*) when output is repetitive or
+           low-novelty (NE/ACh), LOWER it (toward coherence) when kwr drops below
+           COH_FLOOR (DA coherence-gain). σ*_0 = ARM A's σ* if A is a σ*-arm, else
+           2.5 (the H_1228 frozen σ*). Gains kR=0.6, kN=0.4, kC=0.5, COH_FLOOR=0.50,
+           W=24, KP=0.6 — HAND-SET, FROZEN here, NOT learned/loss-folded (p7 Goodhart
+           guard; controller is a pure no-grad readout, never added to loss/backward).
+  ARM C-SHUF = COUPLING CONTROL. Identical to ARM B but the per-step adapted σ*_t
+           sequence is taken from a RANDOM PERMUTATION of B's OWN σ*_t values
+           (same knob DISTRIBUTION, decoupled from the live state). Isolates
+           state->knob COUPLING from mere knob VARIETY (the R1 C-SHUF discipline).
+
+COMBINED IDEATION METRIC (FROZEN — single scalar, seed-averaged):
+  M = composed_distinct(G1)  +  g6_count(G6)  +  4 * (kwr_mean - 0.50)_+
+  where (x)_+ = max(0,x). Rationale: ideation = recombination(G1) + distinct-idea
+  count(G6), with a coherence floor so an arm cannot win by emitting incoherent
+  high-entropy noise (the H_1228 coherence concern). The 4x weight puts a +0.10 kwr
+  gain on par with +0.4 of an idea. (G2 novelty reported but NOT in M — it is an
+  UPPER BOUND with the corpus gone, so it cannot be a deciding term.)
+
+────────────────────────────────────────────────────────────────────────────────
+PRE-REGISTERED FALSIFIER (frozen BEFORE scoring):
+  MARGIN = 0.30 on the combined metric M (~ +0.3 of one distinct idea, or +0.075
+  kwr — a real, non-noise ideation lift over the tuned fixed point).
+  GREEN   iff  M(B) >= M(A) + MARGIN                         (adaptive BEATS best-fixed)
+          AND  kwr(B) >= kwr(A) - 0.02                       (no coherence collapse)
+          AND  M(C-SHUF) < M(A) + MARGIN                     (lift is COUPLING, not variety)
+  🟠 PARTIAL iff  M(B) > M(A)  but  < M(A)+MARGIN            (helps, sub-margin)
+              OR  M(B) >= M(A)+MARGIN but C-SHUF NOT separated (variety, not coupling)
+              OR  M(B)>=M(A)+MARGIN but kwr collapses (>0.02 below A)
+  🔴 RED / 🧱 iff  M(B) <= M(A)                              (adaptive INERT-or-worse
+              vs best-fixed — NO FREE LUNCH on ideation too; neuromodulation inert
+              everywhere, no-free-lunch is GENERAL; depletion 🧱).
+  Report: the tuned ARM A config, M(A)/M(B)/M(C-SHUF), per-arm
+  composed_distinct/g6_count/kwr/g2/achieved-σ, and whether the B controller knobs
+  actually swung (σ*_t range) so RED is "adaptation inert/hurts" not "dead knob".
+
+SCOPE (a_scale_honest_scope): 303M torch ref, data/corpus.txt (G2 = UPPER BOUND),
+3 scoring seeds + 1 disjoint tuning seed, single-model toy. DIRECTIONAL only
+(a_engine_native_learning — torch-ref mirror; engine-transfer to CORE/bytegpt_
+decode.hexa UNVERIFIED; a GREEN triggers an r3 engine-native adaptive controller,
+a RED triggers no wiring). Does NOT edit CORE/*.hexa or H_1228. Frozen bars NOT
+moved. p7: NO LLM-judge, NO perplexity, controller never folded into a loss.
+$0 CPU/torch-ref.
+XREF: h1228 · h1284(R1) · h1230 · h1227 · a_no_llm_frame_trap ·
+  a_engine_native_learning · a_paper_negative_ok · a_scale_honest_scope ·
+  a_toy_scale_recheck · p1 · p4 · p7 · p8 · c9 · c15.
