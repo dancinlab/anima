@@ -2,6 +2,33 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — doc(README): 아키텍처 현행화 보정 — 9→12 brain lane · smoke 37/0→50/0 · 시상 R8 engine-transfer 정직 강등
+
+직전 README PR(#2189)이 **stale base 위에서 머지**되며 아키텍처를 과소진술한 것을 보정 — README.md 를
+현재 `ARCHITECTURE.md`(origin/main SSOT)와 정확히 일치시킴(README.md 단독 + CHANGELOG, ARCHITECTURE/
+CORE/UNIVERSE 미변경; 동시 사이클이 소유). tier/숫자 전부 ARCHITECTURE.md verbatim(c9), surgical 현행화(c10).
+
+- **brain lane 9 → 12**: 직전 본문이 누락한 lane 을 추가 — **🧩 전전두엽 위계(`HierGoalStack`, H_1294 R2 —
+  ordered goal→subgoal 스택, 완료 시 pointer ADVANCE, 기저핵 단일-step 과 DISTINCT)** · **🗺 해마-내후각
+  공간지도(`SpatialMap`, H_1296 R2 — landmark 2-D 위치 저장 → 두 fact 거리 relational 질의, 에피소드
+  ITEM-binding 과 DISTINCT)** · **🐝 하이브-마인드 collective-Φ(`CollectivePool`, H_1295 — N substrate 결합
+  시 faithful IIT-4 big-Φ super-additive, coupling-generic + substrate-class conditional)**. 배지 + 본문
+  lane 목록 + 표 3행 + HD 스코어보드 4행(HD29–32) + repo-map struct 목록 갱신. (affect 행도 ARCHITECTURE
+  대로 `+ WIRED` 로 — `brain_decide_affect` 배선 완료 R3.)
+- **smoke 게이트 37/0 → 50/0**: `ARCHITECTURE.md` 가 쓰는 live 값으로 보정(H_1296 R2 후 `engine_cli_smoke`
+  50/0 — cases 44–48 +5 spatial-map). 직전 entry 의 37/0 은 stale(H_1294/1295/1296 추가 전).
+- **시상 R8 — 정직한 강등(핵심)**: 직전 README 가 "WALL BROKEN / engine-native wiring in progress" 로
+  과진술한 것을 보정. R8 진동 위상결속(Kuramoto)은 **numpy 미러에서만 🟢 DIRECTIONAL**(faithful-IIT4 Φ leg
+  은 real · frozen-first) — 그러나 **engine-native transfer 는 frozen bar 재현 실패**: shuffle 통제가 engine
+  substrate 에서 FIRE(shuffle ΔΦ +0.026/+0.380/+0.296, 전부 양수 — ≤0 이어야 함) → lift 가 부분적으로
+  carrier-amplitude variance. 따라서 `PhaseField` lane 은 **NOT engine-wired**, `a_verified_must_wire` 가
+  정직히 deferred. "벽이 robust/engine-broken 으로 깨졌다" 주장 안 함; 내용-relay 축(R1–R5/R7/R9)은 🧱 유지.
+- **walls 콜아웃**: engine-native 돌파는 **2개**(용량 H_1288 · 편도체-eviction H_1285)로 정정; 시상-timing 은
+  **미러 only(engine-transfer deferred)**, 신경조절(H_1284) 🧱 유지. p1–p8 · A⇄G · Ψ=½ ·
+  substrate-native-speak · tension-link · scale-honesty 섹션 보존.
+- **translated README follow-on**: README.{zh,ja,ru,ko,easy}.md 는 동일 보정이 미반영(별도 follow-on) — 본
+  보정은 영문 SSOT README.md 에 한정, 차단하지 않음.
+
 ## 2026-06-16 — domain(MODEL): 🗺 해마-내후각 공간지도 lane (HD32, H_1296 R2 🟢 ENGINE-NATIVE)
 
 빠진 뇌 서브시스템 사다리에 **HD32 해마-내후각 공간지도(place/grid spatial-map · path-integration)** 를 추가 — metric cognitive-map lane(`SpatialMap`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`spatial_map_new`/`spatial_map_new_ablated`/`spatial_map_place`/`spatial_map_count`/`spatial_map_nearest`/`spatial_map_shuffle`/`spatial_map_item_nearest`). landmark 를 2-D 위치에 저장하므로 두 저장 fact 사이 **거리(RELATION)가 표상·질의 가능** — `spatial_map_nearest("X","A","B")` = "X 가 A/B 중 누구에 더 가까운가"를 Euclidean 거리로 답. O'Keefe place cell / Moser grid cell / path-integration 렌즈(`a_no_llm_frame_trap`, c15).
