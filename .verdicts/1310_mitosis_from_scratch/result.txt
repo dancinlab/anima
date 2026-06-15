@@ -1,0 +1,26 @@
+H_1310 — FROM-SCRATCH PURE MITOSIS vs GRADIENT — DIRECTIONAL numpy mirror
+==============================================================================
+corpus = /usr/share/dict/words slice | sha256=86864aa32dcf1c86... | 24000 bytes | V=27 symbols
+train ctx/next = 19198 | test = 4800 | order=2 | seeds=[13101, 13102, 13103]
+FROZEN: ladder=[1, 8, 64, 512] SPLIT_THRESH=0.55 | GAP_MATCH=0.1 GAP_NEAR=0.5 FLOOR_MARGIN=0.02 CTRL_MARGIN=0.1
+------------------------------------------------------------------------------
+LADDER (mean CE nats over 3 seeds):
+  cells |  B_scratch |  B_shuffle
+      1 |    2.94658 |    2.94658  (actual cells ~1)
+      8 |    2.90267 |    2.89427  (actual cells ~8)
+     64 |    2.77784 |    2.75107  (actual cells ~64)
+    512 |    2.57788 |    2.53592  (actual cells ~512)
+------------------------------------------------------------------------------
+A_freq  (order-2 n-gram floor) CE = 2.50884 nats
+A_gradient (matched cap=512) CE = 3.21083 nats
+------------------------------------------------------------------------------
+FROZEN BARS:
+(1) PRESENCE monotone CE drop 1>8>64>512: 2.9466>2.9027>2.7778>2.5779 -> PASS
+(2) KEY GAP  B_scratch[512]-A_gradient = 2.57788-3.21083 = -0.63295 nats -> MATCHES gradient
+(3) FLOOR    B_scratch[512] < A_freq-0.02: 2.57788 < 2.48884 -> FAIL
+(4) CONTROL  B_shuffle[512] >= B_scratch[512]+0.1: 2.53592 >= 2.67788 -> FAIL
+------------------------------------------------------------------------------
+VERDICT TIER (frozen): FLOOR-FAIL (RED)
+  from-scratch pure mitosis (1 cell -> split-only, GRADIENT-FREE): LEARNS from nothing; gap-to-gradient = -0.6329 nats (MATCHES gradient)
+  b1=True gap=-0.6329 b3=False b4=False | DIRECTIONAL mirror, engine-transfer+scale UNVERIFIED (a_toy_scale_recheck/a_scale_honest_scope)
+==============================================================================
