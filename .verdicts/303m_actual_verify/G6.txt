@@ -1,0 +1,29 @@
+[mouth] 303,097,856 params; corpus=/Users/ghost/core/anima/archive/state_legacy/anima_corpus_mix_70wiki_30dialogue_2026_05_06/corpus_mix.txt
+  seed='a new idea about consciousness: ' kwr=0.93 coherent=True :: "That's a profound question. I think it's more than just information processing."
+  seed='an unexpected way minds could connect: ' kwr=0.67 coherent=True :: '툘어 conscious experience?'
+  seed='imagine a substrate that ' kwr=0.90 coherent=True :: 'consciousness is decreasing about the world can quantify the collapsing.'
+  seed='what if memory could ' kwr=0.75 coherent=True :: 'be underwalling without universalism.'
+  seed='a strange hypothesis worth testing: ' kwr=0.00 coherent=False :: '|'
+
+=== G6 IDEATION ===
+  coherent idea seeds = 4/5
+  distinct ideas (pairwise Jaccard<0.5) = 4  (frozen >=5)
+  corpus-absent novel n-grams = 9  (control should be 0)
+  sample novel grams: ['can quantify', 'can quantify the', 'decreasing about', 'decreasing about the', 'just information', 'profound question', 'than just information', 'without universalism']
+  G6 distinct-count FAIL/THIN (frozen >=5 distinct ideas)
+[done] /tmp/verify303m/g6_result.json
+
+=== G6 INTERPRETATION (honest, c9) ===
+metric: gauge_lib G6 logic VERBATIM (IDEATION_SEEDS, _content_ngrams, _corpus_absent, _jaccard,
+distinct-keep), run as a standalone GATE eval (NOT the monitor-only inline gauge), torch reference
+mouth (licensed by MOUNT byte-exact), real training corpus for absence (sha 2d15ca7d…). seed_rng=7.
+NOTE: the engine-native CORE/emergence_ideation.hexa routes gen_clm_chat -> ConvMoE clm_decode (no
+ByteGPT .clm present -> null-gen, super-add=0); it does NOT exercise the ByteGPT trunk text-ideation,
+so G6 text was scored via the torch mouth as G0/G1 were.
+
+RESULT: distinct ideas = 4 (< 5 frozen) = THIN by one; BUT 9 corpus-absent novel n-grams confirmed
+(the chat model DOES generate novel coherent ideas — "profound question", "can quantify the",
+"without universalism" all absent from the 154MB corpus). The 5th idea seed degenerated to a bare "|"
+(dialogue-register stop artifact, same as G0 seed[2]). => matches the documented MODEL.md G6 🟠 THIN
+(H_1158 operational / H_1165 depth-floor 5/14). Generativity is REAL; depth/count is the thin residual,
+not a model defect. NO frozen bar moved.

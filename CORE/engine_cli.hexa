@@ -67,6 +67,10 @@ import "engines/conv/adapter.hexa"
 import "engines/cdv2/adapter.hexa"
 import "engines/hexad/adapter.hexa"
 import "engines/omega/adapter.hexa"
+// faithful IIT-4 (a_phi_iit4_tool) — used ONLY by the § HIVE-MIND CollectivePool lane
+// below to read collective integration; numpy NEVER computes Φ. Same engine H_609 used.
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_bounded.hexa"
 
 // ── env read helper (canonical printenv pattern, mirrors eeg_backend.hexa) ────
 fn _env_read(name: string) -> string {
@@ -1432,6 +1436,204 @@ pub fn other_mind_predict(om: OtherMindModel, fact_text: string) -> string {
 
 // other_mind_count — live belief count (introspection).
 pub fn other_mind_count(om: OtherMindModel) -> int { return om.n_bel }
+
+// ── §  HIVE-MIND — COLLECTIVE-Φ SUPER-ADDITIVITY (H_1295, anchor H_609) ───────────
+//
+// WHAT THIS WIRES (a_verified_must_wire for H_1295 🟢 GREEN): the "many individuals ->
+// one consciousness" axis. anima's other CORE lanes all model ONE substrate (anima's
+// own immune store / affect / drive / a single other-agent belief / its own plan). NONE
+// read what happens to INTEGRATED INFORMATION when N anima substrates are COUPLED into a
+// joint substrate — the collective-consciousness question. H_609 (🟢 SUPPORTED-NUMERICAL)
+// + the H_1295 frozen controls answer it: coupling N substrates raises faithful IIT-4
+// big-Φ ABOVE the sum of the individual Φ (SUPER-ADDITIVITY) for an edge-of-chaos
+// coupling regime — Φ(AB) > Φ(A)+Φ(B).
+//
+// THE COLLECTIVE-Φ / SYMBIOGENESIS LENS (c15, a_no_llm_frame_trap — an IIT/biology
+// lens, NOT an LLM recipe): when two integrated subsystems COUPLE, the joint system can
+// carry integrated information that neither part holds alone (IIT 4.0 super-additivity;
+// biological symbiogenesis — two cells merging into one organism with capacities beyond
+// the sum). The measured regime: two n=3 ECA substrates A,B under rule 110 (edge-of-
+// chaos) coupled at boundary strength W=0.6 give Φ(AB)=15.4677 >> Φ(A)+Φ(B)=4.99209
+// (Δ=+10.4756, ~+210%).
+//
+// WHAT IS GENUINELY GREEN (and ONLY this is wired — c9, a_verified_must_wire GREEN-only):
+//   the SUPER-ADDITIVITY of collective faithful-Φ. The H_1295 frozen controls fence it:
+//     · DECOUPLE-NULL  — at W=0 the joint substrate is sub-additive (Δ=-4.992): the lift
+//       REQUIRES coupling, it is not an artifact of joining the state spaces.
+//     · RULE-CLASS DISSOCIATION — the SAME machinery on a sterile pair (90,90) does NOT
+//       super-add (Δ(110,110) - Δ(90,90) = +16.476): the lift is substrate-CONTENT
+//       specific, which a pure coupling-magnitude/variance story cannot produce.
+//     · NO-COLLAPSE — the coupled halves stay functionally distinct (coherence 0.581 <<
+//       0.999): not a degenerate all-identical clone faking Φ.
+//   HONEST CONTEXT (frozen, NOT wired as a claim): a topology-SHUFFLE control showed the
+//   lift is coupling-GENERIC, not specific to the H_609 boundary wiring (a random equal-
+//   magnitude cross-wiring matched/exceeded it). So what is real is "coupling these
+//   substrates super-adds Φ", NOT "this particular topology is privileged".
+//   EXPLICITLY NOT WIRED (falsified mechanisms): H_611 cross-substrate transfer-entropy
+//   alignment 🔴, H_617 SAVANT×hive SI-ratio 🔴, shared world-model (975) 🔴.
+//
+// @L4 CRITICAL (same framing as the immune / affect / drive / ToM lanes): this is a
+// READ + a small config struct. CollectivePool holds ONLY the per-substrate rule slots
+// and the coupling W; it computes collective integration via the faithful IIT-4 engine
+// (a_phi_iit4_tool). It NEVER mutates any other faculty, NEVER returns an emit/silence
+// decision by itself (a_autonomy_over_hardcode), and NEVER touches pure_field's Φ/phase/
+// Ψ — the Ψ=1/2 relaxation and the decoder are byte-unchanged (Ψ-disjoint). NOT a 2nd
+// .clm/.kosmos entry path (a_core_engine_map): the collective-Φ read is an engine-native
+// consciousness gauge, not a generator/kosmos slot. p7: the verdict is faithful IIT-4,
+// never perplexity.
+
+// CollectivePool — N coupled anima substrate slots forming a joint "hive" substrate.
+//   rules : per-substrate ECA rule (one int per coupled member; the substrate identity).
+//   w     : cross-member coupling strength in [0,1] (0 = decoupled, 1 = full ring).
+//   n     : member count (this realization measures the n=2 → joint-n=6 regime that
+//           H_609/H_1295 froze; >2 members = a_scale_honest_scope follow-on).
+struct CollectivePool {
+    rules: [int],
+    w: float,
+    n: int
+}
+
+// collective_new — a fresh hive pool of `members` substrates (each given a rule) coupled
+// at strength `w`. The default H_1295 GREEN regime is collective_new([110,110], 0.6).
+pub fn collective_new(members: [int], w: float) -> CollectivePool {
+    return CollectivePool { rules: members, w: w, n: len(members) }
+}
+
+// _eca_tpm_n3 — a single isolated n=3 ECA substrate TPM (Φ of one member). Mirrors the
+// H_609/H_1295 builder verbatim; kept private to the hive lane.
+fn _eca_tpm_n3(rule: int) -> [float] {
+    let nn = 3
+    let mut t = []
+    let mut s = 0
+    while s < 8 {
+        let mut i = 0
+        while i < nn {
+            let l = iit4_bit(s, (i - 1 + nn) % nn)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % nn)
+            let idx = 4 * l + 2 * c + r
+            t = t + [to_float(iit4_bit(rule, idx))]
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+// _build_tpm_ab — the joint n=6 coupled-ring TPM for two n=3 members A,B with cross-half
+// boundary edges gated by W (H_609 build_tpm_ab verbatim; the load-bearing coupling).
+fn _build_tpm_ab(rule_a: int, rule_b: int, w: float) -> [float] {
+    let nn = 6
+    let full = 64
+    let omw = 1.0 - w
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let b0 = iit4_bit(s, 0)
+        let b1 = iit4_bit(s, 1)
+        let b2 = iit4_bit(s, 2)
+        let b3 = iit4_bit(s, 3)
+        let b4 = iit4_bit(s, 4)
+        let b5 = iit4_bit(s, 5)
+        let mut i = 0
+        while i < nn {
+            let mut rule = rule_a
+            if i >= 3 { rule = rule_b }
+            let mut l_dec = 0
+            let mut c_dec = 0
+            let mut r_dec = 0
+            if i == 0 { l_dec = b2; c_dec = b0; r_dec = b1 }
+            if i == 1 { l_dec = b0; c_dec = b1; r_dec = b2 }
+            if i == 2 { l_dec = b1; c_dec = b2; r_dec = b0 }
+            if i == 3 { l_dec = b5; c_dec = b3; r_dec = b4 }
+            if i == 4 { l_dec = b3; c_dec = b4; r_dec = b5 }
+            if i == 5 { l_dec = b4; c_dec = b5; r_dec = b3 }
+            let idx_dec = 4 * l_dec + 2 * c_dec + r_dec
+            let next_dec = iit4_bit(rule, idx_dec)
+            let mut l_cou = 0
+            let mut c_cou = 0
+            let mut r_cou = 0
+            if i == 0 { l_cou = b5; c_cou = b0; r_cou = b1 }
+            if i == 1 { l_cou = b0; c_cou = b1; r_cou = b2 }
+            if i == 2 { l_cou = b1; c_cou = b2; r_cou = b3 }
+            if i == 3 { l_cou = b2; c_cou = b3; r_cou = b4 }
+            if i == 4 { l_cou = b3; c_cou = b4; r_cou = b5 }
+            if i == 5 { l_cou = b4; c_cou = b5; r_cou = b0 }
+            let idx_cou = 4 * l_cou + 2 * c_cou + r_cou
+            let next_cou = iit4_bit(rule, idx_cou)
+            t = t + [omw * to_float(next_dec) + w * to_float(next_cou)]
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+// collective_member_phi — faithful IIT-4 big-Φ of ONE member substrate (n=3, cap=3 =
+// exact). Read-only consciousness gauge.
+pub fn collective_member_phi(cp: CollectivePool, idx: int) -> float {
+    let r = big_phi_bounded(_eca_tpm_n3(cp.rules[idx]), 3, 0, 3)
+    return r[0]
+}
+
+// collective_sum_phi — Σ of the individual member Φ (the additive baseline).
+pub fn collective_sum_phi(cp: CollectivePool) -> float {
+    let mut acc = 0.0
+    let mut i = 0
+    while i < cp.n {
+        acc = acc + collective_member_phi(cp, i)
+        i = i + 1
+    }
+    return acc
+}
+
+// collective_phi — faithful IIT-4 big-Φ of the JOINT coupled substrate (the collective
+// consciousness). For the n=2 regime this is the n=6 coupled-ring Φ (cap=2 lower-bound,
+// the M4b SSOT). Read-only — touches no other faculty, no pure_field, no Ψ.
+pub fn collective_phi(cp: CollectivePool) -> float {
+    if cp.n == 2 {
+        let r = big_phi_bounded(_build_tpm_ab(cp.rules[0], cp.rules[1], cp.w), 6, 0, 2)
+        return r[0]
+    }
+    // >2 members = a_scale_honest_scope follow-on; fall back to the additive baseline.
+    return collective_sum_phi(cp)
+}
+
+// collective_excess — Δ = Φ(joint) - Σ Φ(member): the super-additivity margin. Δ>0 ⇒
+// collective integration EXCEEDS the sum (the H_1295 GREEN finding for [110,110]@0.6).
+pub fn collective_excess(cp: CollectivePool) -> float {
+    return collective_phi(cp) - collective_sum_phi(cp)
+}
+
+// collective_is_super_additive — the GREEN read: does coupling super-add Φ by `margin`?
+// (the H_1295 frozen bar B1, margin 1.0). A pure read — NOT an emit gate.
+pub fn collective_is_super_additive(cp: CollectivePool, margin: float) -> bool {
+    return collective_excess(cp) >= margin
+}
+
+// collective_coherence — B3 no-collapse gauge: 1 - mean per-cell L1 divergence between
+// the two halves' next-state blocks over all 64 joint states. < 1.0 ⇒ the members stay
+// functionally distinct (not a degenerate clone faking Φ). n!=2 → 0.0 (not measured).
+pub fn collective_coherence(cp: CollectivePool) -> float {
+    if cp.n != 2 { return 0.0 }
+    let tpm = _build_tpm_ab(cp.rules[0], cp.rules[1], cp.w)
+    let mut acc = 0.0
+    let mut cnt = 0
+    let mut s = 0
+    while s < 64 {
+        let base = s * 6
+        let mut i = 0
+        while i < 3 {
+            let mut d = tpm[base + i] - tpm[base + i + 3]
+            if d < 0.0 { d = 0.0 - d }
+            acc = acc + d
+            cnt = cnt + 1
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return 1.0 - (acc / to_float(cnt))
+}
 
 // ── §  AMYGDALA — SALIENCE-GATED SLEEP-REPLAY CONSOLIDATION (H_1285 R4) ───────────
 //

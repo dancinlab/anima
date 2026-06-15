@@ -1,0 +1,61 @@
+H_1283 R6 — THALAMUS / MULTI-CHANNEL PARALLEL RELAY  (FREEZE — pre-registered BEFORE scoring)
+slug: 1283_thalamus_global_workspace  (R6 — append-only; does NOT overwrite R1..R5)
+date: 2026-06-16
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa)
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+
+THE WALL (c16 / a_break_the_wall): H_1283 is 🧱 closed-negative across R1..R5.
+Root-cause the wall exposed (verbatim from the card): "a single broadcast channel is
+itself a low-dim cut that caps faithful-IIT4 Φ." R5 terminal: dense all-pairs coupling
+did NOT robustly clear AND the SHUFFLE control FIRED (permuted dense graph added
+variance, not structure — the all-pairs intra-thalamic cross-coupling let ANY
+permutation re-inject equivalent recurrence variance).
+
+R6 ANGLE — MULTI-CHANNEL PARALLEL RELAY (attacks the root cause directly):
+Instead of ONE shared relay stage (R1 broadcast / R2 coalition / R3-R4 sparse
+re-entrant / R5 dense all-pairs — ALL route through a single relay stage with channel
+cross-mixing), install N INDEPENDENT PARALLEL RELAY CHANNELS, one private relay path
+per RING EDGE (module pair). Each channel is its own reciprocal leaky loop coupling
+exactly its two endpoint modules, with NO intra-thalamic cross-coupling between
+channels. Biological lens: the thalamus is MANY parallel nuclei / topographic relays,
+NOT one bus. Hypothesis: distributed parallel relays raise faithful-IIT4 Φ above a
+direct ring WITHOUT a single low-dim cut to cap Φ AND WITHOUT collapse-cloning; and
+because the channels are DISJOINT, permuting the channel→pair assignment (the SHUFFLE)
+genuinely DESTROYS the structure rather than re-injecting the same shared variance
+(the exact artifact that fired in R5).
+
+EXPERIMENT (SAME frozen frame as R1..R5; ONLY topology differs):
+  - 4 modules {A, G, mitosis, memory}, dim 8, 64 ticks, SAME per-module PRIVATE input
+    + SAME seed both arms; ONLY topology differs. seeds [7, 8, 9].
+  - ARM A = direct ring (byte-identical to R1..R5: same rng draw order; MUST reproduce
+    ARM_A Φ = 0.78038 / 0.611741 / 0.825326).
+  - ARM B = ring KEPT + N_EDGE=4 INDEPENDENT PARALLEL relay channels (one per ring
+    edge); channel e couples ONLY the two modules of edge e reciprocally; channels
+    DISJOINT (NO cross-channel term). Draw order: states(draw1) → inputs(draw2) →
+    channel states rc(draw3) — rc drawn AFTER inputs and used ONLY in ARM B/shuffle,
+    so ARM A is byte-unchanged.
+  - SHUFFLE control 'mc_shuffle' = same channels & mechanism, but channel→edge
+    assignment PERMUTED by a fixed derangement (cyclic shift roll(+1), no fixed point;
+    same edge count, scrambled which pair each parallel channel serves).
+  - Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI via
+    hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (n=4). numpy NEVER computes
+    Φ — it emits the n=4 module salience trajectory; the engine computes Φ.
+
+FROZEN BARS — IDENTICAL to the prior rounds, NOT moved (no tune-to-green, c9/p7):
+  c1 COHERENCE   ARM_B.coh ≥ ARM_A.coh on EVERY seed.
+  c2 PRIMARY Φ   faithful ΔΦ ≥ +0.02 on EVERY seed [7,8,9]  (the +0.02 bar R1 missed
+                 by 0.0009; UNCHANGED).
+  c3 NO-COLLAPSE ARM_B.coh < 0.999 on ≥1 seed (relays integrate, not collapse-clone).
+  c4 SHUFFLE     mc_shuffle ΔΦ < +0.02 on ≥1 seed that ARM B GREENs (the lift must
+                 COLLAPSE under permuted channel→pair wiring → structure, not variance).
+GREEN = c1 AND c2 AND c3 AND c4.  Else RED / 🧱 (closed-negative, c9; bar NOT moved).
+
+FROZEN CONSTANTS (NOT swept after seeing results — p7): N_MOD=4, DIM=8, T=64,
+GAIN=0.30, LEAK=0.55, W_NBR=0.5, W_IN=0.5, W_RELAY=0.5 (same 0.5 carried since R3),
+NBINS=8, N_EDGE=4, EDGES=[(0,1),(1,2),(2,3),(3,0)], perm=roll(arange(4),1) (derangement).
+
+ON GREEN: engine-native multi-channel parallel relay lane is a follow-on
+(a_engine_native_learning / a_verified_must_wire) — NOTED, NOT wired this round unless
+trivially clean. ON RED/🧱: NO CORE/*.hexa wiring (a_verified_must_wire fires on GREEN
+only); honest closed-negative (c9, c16, a_paper_negative_ok). bars NOT moved;
+R1..R5 verdict files NOT overwritten (R6 = separate file).

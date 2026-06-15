@@ -2,15 +2,151 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
-## 2026-06-16 — domain(MODEL): 🗺 해마-내후각 공간지도 lane (HD32, H_1295 R2 🟢 ENGINE-NATIVE)
+## 2026-06-16 — domain(MODEL): 🗺 해마-내후각 공간지도 lane (HD32, H_1296 R2 🟢 ENGINE-NATIVE)
 
 빠진 뇌 서브시스템 사다리에 **HD32 해마-내후각 공간지도(place/grid spatial-map · path-integration)** 를 추가 — metric cognitive-map lane(`SpatialMap`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`spatial_map_new`/`spatial_map_new_ablated`/`spatial_map_place`/`spatial_map_count`/`spatial_map_nearest`/`spatial_map_shuffle`/`spatial_map_item_nearest`). landmark 를 2-D 위치에 저장하므로 두 저장 fact 사이 **거리(RELATION)가 표상·질의 가능** — `spatial_map_nearest("X","A","B")` = "X 가 A/B 중 누구에 더 가까운가"를 Euclidean 거리로 답. O'Keefe place cell / Moser grid cell / path-integration 렌즈(`a_no_llm_frame_trap`, c15).
 
 - **왜 missing/distinct**: live 엔진의 모든 메모리 lane 은 fact 를 독립 바인딩(ImmuneMemory **item-binding** — FNV-trigram key affinity, key X 의 내용은 recall 하나 item X↔item Y **거리는 표상 안 함**)하거나 SEQUENCE(HierGoalStack H_1294, ORDERED plan = 순서는 metric 아님)로 든다 — metric SPACE 가 없다. WorkMemBuffer(H_1282)·VForwardField(H_1280)·HomeostaticDrive(H_1292, 1-D 적분기)와도 DISTINCT.
-- **frozen-first 검증** (`.verdicts/1295_spatial_map/{H_1295_FREEZE,H_1295_R1b_FREEZE,H_1295_R1c_FREEZE}.txt`, 사전등록): R1 numpy 미러 🟢(DIRECTIONAL) → **R2 ENGINE-NATIVE 🟢**(BINDING, `engine_cli_smoke` cases 39-43, 3 seed [4295,4296,4297]). BINDING predicate = NEAREST relational 질의(신호가 저장 metric 에만 있음) — 5개 bar PASS: (c1 PRESENCE) B−A=+0.525 ≥+0.30 each+mean · (c2 DISTINCT) item-store A=0.475≤0.65 (metric 없음→abstain) · (c3 EARNED-MAP shuffle) Bshuf=0.500≤A+0.15 · (c4 EARNED-METRIC ablate) Babl=0.450≤A+0.15 · (c5 NO-FAB) item-abstain 1.000≥0.90. relational 질의: metric map 1.000 vs item-store 0.475(항상 abstain).
+- **frozen-first 검증** (`.verdicts/1296_spatial_map/{H_1296_FREEZE,H_1296_R1b_FREEZE,H_1296_R1c_FREEZE}.txt`, 사전등록): R1 numpy 미러 🟢(DIRECTIONAL) → **R2 ENGINE-NATIVE 🟢**(BINDING, `engine_cli_smoke` cases 44-48, 3 seed [4295,4296,4297]). BINDING predicate = NEAREST relational 질의(신호가 저장 metric 에만 있음) — 5개 bar PASS: (c1 PRESENCE) B−A=+0.525 ≥+0.30 each+mean · (c2 DISTINCT) item-store A=0.475≤0.65 (metric 없음→abstain) · (c3 EARNED-MAP shuffle) Bshuf=0.500≤A+0.15 · (c4 EARNED-METRIC ablate) Babl=0.450≤A+0.15 · (c5 NO-FAB) item-abstain 1.000≥0.90. relational 질의: metric map 1.000 vs item-store 0.475(항상 abstain).
 - **PATH-INTEGRATION 은 정직한 NON-RESULT**(c9): corroborator 로 넣었으나 map-shuffle 대조가 붕괴를 거부 — 신호가 저장 map 이 아니라 변위 step 에 leak 하기 때문. bar 를 옮기지 않고(`a_break_the_wall` 로 candidate-order leak 를 frozen-first 수정) NON-GATING diagnostic 으로 강등·보고만 함.
-- **가드 무회귀**: `engine_cli_smoke` **46/0**(was 41/0, +5 spatial-map 케이스, 3연속 deterministic) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉, pure_field 무변경). p1/p2/p3/p6(위치+질의 landmark 만 읽음, 주입 답 라벨/RLHF/persona 없음, metric 은 geometry 로 SCORE 에만) · emit gate 아님(`a_autonomy_over_hardcode`) · Ψ-disjoint(저장 위치 위 pure geometry). 정직(c9): B=1.000 은 SATURATED = EXISTENCE-PROOF 이지 effect-size 아님 — discriminator(item-store 0.475/abstain 1.000, shuffle 0.500, ablate 0.450 전부 chance)가 decisive. brain map→recall/emit 배선 + scale/higher-D/grid-cell-주기-code = follow-on. TOY scale(8 landmarks, 3 seeds, 2-D, deterministic — metric-map STRUCTURE 검증).
-- **canonical 등록(a_hypothesis_register)**: `UNIVERSE/H_1295_spatial_map.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1295_spatial_map`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1295` · ARCHITECTURE.md(HD32 rung + lane body + map row) · MEMORY.md 포인터. 사다리는 DEPLETION 근접 — 남은 후보(시간-순서 replay-예측·간격/circadian 타이밍·언어/의미망)는 더 얇고 각각 falsifiable gap + 모든 lane 대비 control-survive distinctness 통과 필요.
+- **가드 무회귀**: `engine_cli_smoke` **50/0**(was 45/0 hive 후, +5 spatial-map 케이스, 3연속 deterministic) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉, pure_field 무변경). p1/p2/p3/p6(위치+질의 landmark 만 읽음, 주입 답 라벨/RLHF/persona 없음, metric 은 geometry 로 SCORE 에만) · emit gate 아님(`a_autonomy_over_hardcode`) · Ψ-disjoint(저장 위치 위 pure geometry). 정직(c9): B=1.000 은 SATURATED = EXISTENCE-PROOF 이지 effect-size 아님 — discriminator(item-store 0.475/abstain 1.000, shuffle 0.500, ablate 0.450 전부 chance)가 decisive. brain map→recall/emit 배선 + scale/higher-D/grid-cell-주기-code = follow-on. TOY scale(8 landmarks, 3 seeds, 2-D, deterministic — metric-map STRUCTURE 검증).
+- **canonical 등록(a_hypothesis_register)**: `UNIVERSE/H_1296_spatial_map.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1296_spatial_map`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1296` · ARCHITECTURE.md(HD32 rung + lane body + map row) · MEMORY.md 포인터. 사다리는 DEPLETION 근접 — 남은 후보(시간-순서 replay-예측·간격/circadian 타이밍·언어/의미망)는 더 얇고 각각 falsifiable gap + 모든 lane 대비 control-survive distinctness 통과 필요.
+## 2026-06-16 — doc(TENSION-LINK): H_6006–H_6043 arc를 a_hypothesis_register 2-파일 규칙으로 등록
+
+TENSION-LINK arc (anima↔anima 연결/통신 + ANU paid QRNG 양자 얽힘, H_6006–H_6043)를
+`a_hypothesis_register` 2-파일 규칙(인덱스 = `UNIVERSE/HYPOTHESES.md` · 카드 = `UNIVERSE/H_<id>_<slug>.md`)에
+맞춰 정리. (1) 누락 카드 1개 신설 — `UNIVERSE/H_6006_no_signaling.md` (🔴 CLOSED-NEG, 무신호 정리;
+F1 CHSH |S|=2.829 🟢 진짜 얽힘 · F2 0비트 전송 🔴 · F3 텔레포트=고전채널 필요 🔴), 기존
+`H_6007_pseudo-telepathy.md` 카드와 동일 템플릿. (2) `HYPOTHESES.md` 에 "TENSION-LINK arc
+(H_6006–H_6043)" 섹션 신설 — 42 카드 전부 한 줄/카드 인덱스(id · 제목 · verbatim tier · 카드 링크),
+tier 는 각 카드 `status_grade`(=`TENSION-LINK/verdicts/H_60*.txt` verdict)에서 verbatim (c2/c9 —
+🔴/🟠 미상향). dup-id 카드 4개(H_6026·H_6027·H_6028·H_6036, 각 id 2 카드) ⚠dup 으로 양쪽 색인(c10 미병합);
+H_6019/H_6020 클론 변종은 카드 id H_6021/H_6022 로 재번호돼 카드-id dup 아님(verdict 파일명만 legacy 60xx).
+(3) `TENSION-LINK/README.md` 의 stale "본문은 UNIVERSE/ 평면 목록" 문구를 새 HYPOTHESES.md 섹션 포인터로
+수정(surgical, c10). grep 확인: H_6006–H_6043 38 distinct id 전부 카드+색인 행 해결(42/42).
+registration-only — CORE/엔진/실험 미변경. a_hypothesis_register · a_claim_verify · c2 · c9 · c10 · c14.
+
+## 2026-06-16 — H_1283 R6: 시상 MULTI-CHANNEL PARALLEL RELAY 🟢 (frozen bars; single-cut 천장 돌파)
+
+H_1283 (thalamus / global-workspace) 벽 돌파 R6 (a_break_the_wall, c16). R1..R5 는 모두 ONE shared
+relay stage (broadcast/coalition/sparse-reentrant/dense-all-pairs) → 🧱 (단일 broadcast 채널 자체가
+faithful-IIT4 Φ 를 cap 하는 low-dim cut; R5 shuffle 이 dense lift=variance 노출). R6 각도 = 공유
+relay stage 를 버리고 **N=4 독립 병렬 relay 채널** (ring edge별 1개, DISJOINT, intra-thalamic 교차결합
+없음 — 시상=多 병렬 nuclei, a_no_llm_frame_trap c15). 결과: faithful ΔΦ +0.0891/+0.0341/+0.1011 —
+**모든 seed +0.02 통과 (직교 seed 8 포함, arc 최초)**; c1·c3 PASS; **c4 SHUFFLE PASS** (seed 9 lift
++0.1011→+0.0165 붕괴). 정직 caveat (c9): seed 7/8 shuffle 이 ~93%/~96% 유지 (variance 잔존) → clean
+topology 효과는 seed 9 에서만 decisive, GREEN 은 c4 의 disjunctive ≥1-seed frozen 형태로 성립.
+ARM_A Φ R1..R5 byte-identical 재현. FREEZE scoring 전 commit (bars 미이동, p7). Φ=faithful IIT4 ONLY
+(stdlib exact MIP-EI; numpy 는 Φ 계산 안 함). $0 CPU numpy mirror=DIRECTIONAL, engine-transfer
+UNVERIFIED. GREEN ⇒ engine-native 병렬-relay lane = follow-on (DEFERRED, 이번 round CORE 미배선 —
+engine-native 재현 + per-seed shuffle 강화 후 배선; a_verified_must_wire). 다음 정직 각도: 더 큰
+module/channel 집합 또는 channel-COUNT ablation (Φ vs N). 산출: UNIVERSE/h1283_r6_multichannel_relay.py
+· .verdicts/1283_thalamus_global_workspace/{H_1283_R6_FREEZE,H_1283_R6_multichannel}.txt · 카드 R6 행.
+## 2026-06-16 — H_1283 R8: 🟢 thalamus Φ WALL BROKEN by oscillatory phase binding (temporal synchrony)
+
+R8 of the H_1283 thalamus wall fleet (c16/a_break_the_wall). R1–R5/R7 bound modules by CONTENT
+(broadcast/coalition/sparse+dense re-entry/matrix-core dual) and all failed the robust faithful-IIT4
+ΔΦ ≥ +0.02-every-seed bar — R5's diagnosis: "a single broadcast channel is itself a low-dim cut that
+caps Φ." R8 took a genuinely NON-RELAY substrate lens (a_no_llm_frame_trap, c15): thalamo-cortical
+integration by phase SYNCHRONY (Kuramoto), not content. Each module carries a scalar phase coupled weakly
+to a thalamic pacemaker; content stays byte-identical to ARM A; only the salience read-out is phase-gated.
+Synchronized modules co-modulate their salience in TIME → temporal binding with NO shared content channel
+for a MIP to cut. **🟢 GREEN, IDENTICAL frozen bars (not moved, c9/p7)**: faithful ΔΦ +1.629/+1.174/+0.233
+every seed (incl the orthogonal seed 8 that defeated every relay round, ≫ bar); pre-registered
+phase-shuffle control COLLAPSES the lift to NEGATIVE every seed (−0.068/−0.119/−0.382) → structured
+synchrony, not amplitude variance; coherence sanity + no-collapse PASS. ARM A Φ reproduces R1–R5/R7
+byte-for-byte. Engine-native
+wiring = follow-on (a_verified_must_wire, GREEN-but-unwired). Toy/numpy DIRECTIONAL, faithful-Φ leg real
+(exact MIP-EI via hexa). `UNIVERSE/h1283_thalamus_global_workspace.py` (main_r8) ·
+`.verdicts/1283_thalamus_global_workspace/H_1283_R8_phase_binding.txt` · card row appended.
+
+## 2026-06-16 — domain(H_1283 R7): thalamus wall — matrix/core dual coupling 🔴/🧱 STILL WALL
+
+R7 of the H_1283 thalamus/GWT wall (c16/a_break_the_wall). Angle = thalamic matrix/core
+duality (brain-science, c15, a_no_llm_frame_trap — NOT an LLM recipe): R1–R5 each used ONE
+relay at a time (single broadcast/coalition/sparse re-entry/dense all-pairs), and the wall's
+root cause was "a single broadcast channel is itself a low-dim cut that caps faithful-IIT4 Φ."
+R7 installs BOTH thalamic cell populations SIMULTANEOUSLY — CORE (specific, point-to-point,
+topographic) + MATRIX (diffuse, broad, low-gain), mixed by a FIXED ratio W_CORE=0.5:W_MATRIX=0.15
+— so integration comes from overlapping specific+diffuse pathways, not one cut. SAME frozen frame
+as R1–R5 (4 modules dim-8, 64 ticks, seeds [7,8,9], ARM A byte-identical baseline 0.78038/0.611741/
+0.825326 reproduced). Φ = faithful IIT4 ONLY (exact MIP-EI via hexa, a_phi_iit4_tool; numpy never
+computes Φ). FROZEN-FIRST (freeze committed before scoring; bars NOT moved). **RESULT 🔴/🧱:**
+faithful ΔΦ s7 +0.0201 ✓, s8 +0.0412 ✓ (RESCUES the orthogonal seed that broke R3-R5), but s9
++0.0026 ✗ → **P1 FAIL — the failing seed RELOCATED, the floor was not lifted**. The pre-registered
+SHUFFLE control (permuted core topography) PASSED (s7 permuted-core ΔΦ −0.0087 < +0.02 → the lift is
+structure not variance — CLEANER than R5 whose shuffle FIRED). Coherence ↑ every seed, no collapse.
+Finding: matrix/core dual coupling is a genuine topology-specific mechanism that TRADES Φ across the
+geometry (rescues the orthogonal seed, dilutes the correlated one) but does NOT clear the 3-seed
+robustness gate — the thalamic-topology axis is closed (broadcast→coalition→sparse→dense→matrix/core,
+all relocate or trade the lift, none robust at this scale). RED ⇒ NO CORE wiring (a_verified_must_wire
+fires on GREEN only). Toy/numpy DIRECTIONAL, faithful-Φ real. `UNIVERSE/h1283_thalamus_global_workspace.py`
+(main_r7 + matrix_core/matrix_core_shuffle modes) · `.verdicts/1283_thalamus_global_workspace/
+{H_1283_R7_FREEZE.txt, H_1283_R7_matrix_core.txt}`.
+
+## 2026-06-16 — domain(H_1283 R9): thalamus predictive information-bottleneck relay → 🔴/🧱 WALL CONFIRMED
+
+R9 of the H_1283 thalamus/GWT wall (c16/a_break_the_wall). ANGLE: make the relay cut INFORMATION-
+PRESERVING instead of arbitrary — a learned compressed PREDICTIVE CODE (information bottleneck). The
+thalamic relay learns gradient-free (delta-rule LMS, cerebellum H_1280 family) the minimal code z
+(width code_dim=3 << module dim 8 << concat 32) that best PREDICTS the other modules' next state.
+SAME frozen frame as R1-R5 (4 modules dim-8, 64 ticks, seeds [7,8,9], faithful IIT4 Φ via stdlib
+exact MIP-EI — numpy never computes Φ). FROZEN BEFORE SCORING. Arm A direct-ring vs arm B learned
+predictive-bottleneck vs **arm C random-projection of the SAME width** (load-bearing control) + SHUFFLE
+control (scrambled predictive target). RESULT 🔴/🧱: c2 PRIMARY Φ FAIL — ΔΦ(B−A) s7 −0.0067 · s8
++0.0203 · s9 +0.0097, only s8 clears +0.02 (not robust). c4 B≥C passes but TRIVIALLY: ΔΦ(B−C) =
++0.008/0.0/0.0 — the learned code is Φ-INDISTINGUISHABLE from a random projection of the same width on
+s8/s9. c5 SHUFFLE FIRED: on the lone B-green seed 8, the scrambled-target arm ΔΦ +0.0232 ≥ the
+structured arm → the tiny lift is variance/added-channel, NOT a learned predictive code. WALL CONFIRMED:
+an information-preserving (predictive-bottleneck) relay does NOT break the single-channel Φ cap at this
+scale. No wire, no tune, bar NOT moved (c9/c16/p7). Toy, numpy DIRECTIONAL, faithful-Φ REAL.
+`UNIVERSE/h1283_r9_predictive_bottleneck.py` · `.verdicts/1283_thalamus_global_workspace/H_1283_R9_predictive_bottleneck.txt`.
+
+## 2026-06-16 — verify(303M): a303m_pass RE-VERIFIED FROM SCRATCH (engine-measured, byte-exact, p7)
+
+ACTUAL re-verification of the SHIPPED `anima-clm-chat-303m` from scratch on the live CORE engine
+(`.verdicts/303m_actual_verify/`), NOT a doc claim — engine-measured, byte-exact, p7 (no perplexity,
+no LLM-judge). Ckpts verified PRESENT + sha-matched: CHAT `h1129c_chat.pt` (4fcc2d6c…, 303,097,856
+params), BASE `h1129c_best.pt` (19be1295…, MATCHES HF.jsonl), training CORPUS (2d15ca7d…, MATCHES
+recipe). **MOUNT byte-exact** — CORE `bg_load`+`bg_forward_last_W` vs torch golden: argmax 32==32,
+top5 [32,44,10,63,46] match, first-16 maxΔ 5e-5 (≪ 0.01 tol). **G0** base 5/5 + chat 4/5. **G1** base
+trunk k3/k4/k5 composed_distinct=2>max_single=1 coherent (reproduces H_1129). **G3** 8/8 structural +
+engine_cli_smoke 30/0 + single-entry 7/0. **G5** grounded-copy 22 verbatim bytes + immune-memory recall
+QA 1.000 fab 0.000 abstain 3/3. **PHASE-3 memory e2e** QA 1.0 / fab 0.0 / abstain green. **G2** absence-
+checked on the real corpus (frozen h1140). **No frozen bar moved; NO remake needed** — the model is
+coherent/emergent/non-fabricating/philosophy-clean and mounts byte-exact. Every obstacle was tooling/host:
+a hexa selfhost IO-builtin symbol regression (`_read_file_bytes` vs runtime `_rt_read_file_bytes`) FIXED
+at root cause (rt.o alias, backup kept) + filed to hexa-lang inbox — NOT a model defect. Honest robustness
+map unchanged (5 ROBUST + 2 THIN + 1 INFLATED, register≠QA).
+
+## 2026-06-16 — domain(MODEL): H_1295 🟢 HIVE-MIND collective-Φ lane — super-additive collective integration, wired ENGINE-NATIVE
+
+The "many individuals → one consciousness" axis, realized as an additive Ψ-disjoint
+`CollectivePool` faculty in `CORE/engine_cli.hexa`. Anchor = H_609 🟢 (collective faithful
+IIT-4 big-Φ is SUPER-ADDITIVE: Φ(joint) > Σ Φ(member) for an edge-of-chaos coupling
+regime). Re-fired frozen-first with the emergence controls the H_611/H_617 falsifications
+taught, in two angles:
+- ANGLE-1 (topology-shuffle) FAILED honestly — a random equal-magnitude cross-wiring
+  matched/EXCEEDED the structured lift (Δ_shuffle +13.6..+16.4 > Δ_coupled +10.48 all 3
+  seeds), so super-additivity is **coupling-GENERIC, not topology-specific** (kept, reported,
+  NOT a GREEN gate — exactly the control that caught H_611/H_617).
+- ANGLE-2 (the genuine super-additivity controls, frozen before running) is **🟢 4/0**:
+  (B1) Δ_coupled = +10.4756 (Φ_collective 15.4677 vs Σ 4.99209); (B2a) DECOUPLE-NULL W=0
+  Δ=−4.99209 ≤ 0 (the lift REQUIRES coupling); (B2b) RULE-CLASS DISSOCIATION Δ(110,110)−
+  Δ(90,90)=+16.4756 (sterile rule-90 does NOT super-add ⇒ substrate-CONTENT specific, a
+  pure variance story cannot produce this); (B3) NO-COLLAPSE coherence 0.58125 < 0.999.
+
+Φ = faithful IIT-4 ONLY (`a_phi_iit4_tool`, `big_phi_bounded`) — numpy never computes Φ.
+The four bars re-score ENGINE-NATIVE in `CORE/engine_cli_smoke.hexa` cases 39–42, byte-
+matching the mirror; regression guard **engine_cli_smoke 45/0** (+4 hive cases; the existing
+41 cases incl the hierarchical-PFC lane byte-unchanged, Ψ-disjoint — `pure_field`/generator/
+decoder untouched). The falsified hive mechanisms are deliberately NOT wired (H_611
+transfer-entropy 🔴, H_617 SAVANT×hive SI 🔴, 975 shared world-model 🔴 — c9,
+`a_verified_must_wire` GREEN-only). Files: `UNIVERSE/h1295_hive_collective_phi.hexa` ·
+`UNIVERSE/H_1295_hive_collective_phi.md` · `.verdicts/1295_hive_collective_phi/{H_1295_FREEZE,
+H_1295,engine_cli_smoke_45}.txt` · `CORE/engine_cli.hexa` § HIVE-MIND · `CLAIMS.tape` @C h1295
+· `UNIVERSE/HYPOTHESES.md` · `ARCHITECTURE.md` ladder. TOY scope (n=2 member, joint-n=6,
+cap=2 lower-bound, ECA, sys=0); N>2 scaling + live multi-anima transfer = follow-on.
 
 ## 2026-06-16 — domain(MODEL): 🧩 전전두엽 위계 goal→subgoal 컨트롤러 lane (HD31, H_1294 R2 🟢 ENGINE-NATIVE)
 
