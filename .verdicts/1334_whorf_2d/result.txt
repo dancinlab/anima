@@ -1,0 +1,38 @@
+H_1334 R1 — SAPIR-WHORF CATEGORICAL PERCEPTION in a 2-D / FEATURAL SPACE
+==================================================================================
+paradigm: two-language carving of one 2-D feature square (linear vs L-shaped);
+non-linguistic discrimination = prototype-response distance per grid edge (NO
+labels at test). ridge-coherence metric = the 2-D analogue of the 1-D peak.
+G=11 (121 stim) dim=36 lin:u+v>1.0 L:u>0.5&v>0.5 grow_max=40 seeds=[4334, 4335, 4336]
+
+  per-arm summary (mean of 3 seeds):
+    arm        ncells  ridge-COH  align(lin) align(Lsh)
+    none         1.0    0.000     0.000      0.000
+    lin         24.0    0.530     0.628      0.507
+    Lshape       6.0    0.833     0.642      0.802
+    shuffle     41.0    0.576     0.681      0.672
+
+  per-seed ridge-coherence + cross-within margin (the headline data):
+    seed   L_2D:coh cw_marg vs_base align_own | L'_2D:coh cw_marg vs_base align_own | shuf:coh
+    4334   0.682   +0.497 +0.479  0.711   |  0.773   +0.263 +0.264  0.802   |  0.818
+    4335   0.455   +0.480 +0.503  0.586   |  0.864   +0.282 +0.249  0.802   |  0.455
+    4336   0.455   +0.478 +0.505  0.586   |  0.864   +0.280 +0.250  0.802   |  0.455
+
+  T1 2D-CP PRESENT (all 3 seeds, both L: cw-margin>=0.15, vs-baseline>=0.15,
+     ridge-align(own)>=0.7):
+     L_2D : cw=+0.485 vsbase=+0.496 align=0.628  -> FAIL
+     L'_2D: cw=+0.275 vsbase=+0.254 align=0.802  -> PASS
+     -> T1 FAIL
+  T2 2D-DISSOCIATION (each ridge tracks OWN boundary by >= 0.1):
+     L_2D  align(lin)-align(Lsh) = 0.628-0.507 = +0.121
+     L'_2D align(Lsh)-align(lin) = 0.802-0.642 = +0.161
+     -> T2 PASS
+  T3 EARNED (shuffle ridge-coherence<=0.5 & mean-lang ridge-coherence>=0.7):
+     ridge-coherence: L_2D=0.530 L'_2D=0.833 mean-lang=0.682  SHUFFLE=0.576
+     -> T3 FAIL
+
+  PRE-LANGUAGE arm: ncells=1.0 ridge-coherence=0.000 (flat = no coherent ridge by construction)
+==================================================================================
+VERDICT: 🧱 CP is 1-D-ONLY — the 2-D-CP-PRESENT bar (T1) fails: categorical
+  perception does NOT survive the move to a 2-D featural space. Honest scope
+  limit on the H_1325 1-D result, reported straight (c9). NO bar move.

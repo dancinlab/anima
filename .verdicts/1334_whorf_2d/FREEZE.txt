@@ -1,0 +1,102 @@
+H_1334 — SAPIR-WHORF / CATEGORICAL PERCEPTION GENERALIZES TO A 2-D / FEATURAL SPACE?
+FREEZE (pre-registered BEFORE scoring; frozen-first, c9 / p7 NO tune-to-green).
+=============================================================================
+
+PROVENANCE
+  R1 numpy MIRROR (DIRECTIONAL — engine-transfer UNVERIFIED, a_engine_native_learning).
+  $0 CPU-local, gradient-free, 3 seeds [4334, 4335, 4336], p7 (margins + ridge
+  geometry, NOT perplexity). PROJ_SEED provenance preserved: the seed family extends
+  the H_1323 family [4323,4324,4325] -> H_1334 = [4334,4335,4336] (same offset scheme,
+  +1 decade). Live CORE/*.hexa UNTOUCHED (substrate-measurement rung — adds only
+  UNIVERSE/ + .verdicts/). Lens: cognitive-science / categorical-perception (c15,
+  a_no_llm_frame_trap) — NOT an LLM recipe, NOT a human-cognition claim.
+
+THE QUESTION (extends H_1323 🟠 / H_1325 R2 line)
+  H_1323/H_1325 showed Whorfian categorical perception (CP) on a 1-D stimulus
+  continuum: the CP peak emerges AT a language's boundary and its LOCATION tracks the
+  language (L_A -> p_A, L_B -> p_B). Does CP GENERALIZE to a 2-D / featural stimulus
+  space — does CP emerge along a language's 2-D category BOUNDARY (cross-boundary
+  discrimination > within-category), concentrated along the boundary CURVE (a ridge),
+  and does the ridge TRACK the language's 2-D carving? Or is the effect 1-D-only?
+
+PARADIGM (toy synthetic 2-D continuum — legitimate methodology, stated honestly)
+  - a 2-D feature square: G x G grid of stimuli, positions (u,v) in [0,1]^2 (G=11 ->
+    121 stimuli). Each stimulus -> a 2-D RBF population code over a KxK grid of fixed
+    tuning centers (DIM = K*K), boundary-AGNOSTIC (the substrate is NEVER told where
+    any boundary lies; it sees only a smooth code of raw position). RBF width gets a
+    mild per-seed jitter (benign substrate noise, never the boundary).
+  - TWO languages carve the SAME square with DIFFERENT 2-D boundaries:
+      L_2D  = a LINEAR boundary: cat = 1 iff (u + v) > T_LIN   (a diagonal cut)
+      L'_2D = an L-SHAPED boundary: cat = 1 iff (u > T_LX and v > T_LY)  (a corner cut)
+    -> the two boundary CURVES are geometrically distinct sets in the square.
+  - the SAME gradient-free mitosis/Voronoi prototype store (error-targeted SPLIT-only
+    growth, p8; cell label FIXED at creation = stable nearest-prototype classifier)
+    learns each carving; cells PACK along the 2-D boundary curve where category error
+    concentrates (the mechanistic origin of 2-D CP). FIXED cell budget across arms.
+  - DOWNSTREAM NON-LINGUISTIC TEST (NO labels at test): for each grid EDGE (a pair of
+    4-neighbour-adjacent stimuli) the discrimination = |Δ soft category-posterior|
+    across the edge (a representational gradient, NO hard label read). Edges with high
+    discrimination form the CP RIDGE; it should lie ALONG the language's boundary curve.
+
+ARMS (4, FIXED cell budget GROW_MAX across all)
+  (1) PRE-LANGUAGE: all-zero labels -> 1 coarse cell -> constant posterior -> FLAT (no CP).
+  (2) L_2D    (linear diagonal boundary).
+  (3) L'_2D   (L-shaped corner boundary).
+  (4) SHUFFLE: incoherent per-stimulus random labels (fixed per seed) -> no coherent ridge.
+
+RIDGE-COHERENCE METRIC (reported explicitly — the 2-D analogue of the 1-D peak-count)
+  For an arm, take the per-edge discrimination field. Define the RIDGE = the top
+  RIDGE_FRAC (=0.20) fraction of edges by discrimination. Two quantities:
+    (i)  RIDGE-ALIGN(arm, boundary) = mean over ridge edges of [1 - dist(edge_midpoint,
+         boundary_curve)/D_MAX], i.e. how close the high-discrimination edges sit to the
+         GIVEN boundary curve (1 = exactly on it, 0 = max distance D_MAX=sqrt(2)/2 away).
+         dist(point, curve) computed against a dense sampling of each boundary curve.
+    (ii) RIDGE-COHERENCE(arm) = the LARGEST-connected-component fraction of the ridge
+         edge-set under 4-neighbour grid adjacency: (#edges in the largest connected
+         ridge cluster) / (#ridge edges). A real boundary ridge is ONE connected curve
+         (coherence -> 1); a shuffle ridge is scattered specks (coherence low, many tiny
+         components). This is the 2-D generalization of "1 coherent peak vs many spikes".
+
+FROZEN BARS (GREEN iff T1 ∧ T2 ∧ T3; thresholds set NOW, NOT moved later — c9/p7)
+  T1  2D-CP PRESENT (on ALL 3 seeds, for BOTH L_2D and L'_2D):
+        (a) cross-boundary minus within-category discrimination margin >= 0.15
+            (cross = mean raw discrim of edges within BAND_NEAR=0.10 of the arm's OWN
+             boundary curve; within = mean raw discrim of edges >= BAND_FAR=0.25 from it),
+        AND (b) language-vs-PRE-LANG baseline at the ridge >= 0.15 (mean raw ridge-edge
+            discrim of the language arm minus the PRE-LANG arm's discrim on the same edges),
+        AND (c) the discrimination CONCENTRATES along the boundary: RIDGE-ALIGN(arm, own
+            boundary) >= ALIGN_MIN = 0.70.
+  T2  2D-DISSOCIATION (Whorfian, decisive):
+        each language's ridge tracks its OWN boundary BETTER than the other's:
+          RIDGE-ALIGN(L_2D , lin_boundary) - RIDGE-ALIGN(L_2D , Lshape_boundary) >= DISSOC_GAP
+          RIDGE-ALIGN(L'_2D, Lshape_boundary) - RIDGE-ALIGN(L'_2D, lin_boundary) >= DISSOC_GAP
+        with DISSOC_GAP = 0.10 (mean over seeds; the two ridges DIFFER on the same world).
+  T3  EARNED (anti-Goodhart): SHUFFLE produces no coherent ridge:
+        RIDGE-COHERENCE(shuffle) <= COH_SHUF_MAX = 0.50
+        AND mean of [RIDGE-COHERENCE(L_2D), RIDGE-COHERENCE(L'_2D)] >= COH_LANG_MIN = 0.70
+        (languages give ONE connected ridge curve; shuffle gives scattered specks).
+
+OUTCOMES (all VALID, honest c9)
+  T1 ∧ T2 ∧ T3  -> 🟢 GREEN (MIRROR, DIRECTIONAL): Whorfian CP GENERALIZES to a 2-D /
+                  featural space — the relativity effect is NOT a 1-D artifact. The CP
+                  ridge emerges along the language's 2-D boundary curve and TRACKS the
+                  language's carving (linear vs L-shaped); shuffle gives no coherent ridge.
+  T1 fails      -> 🧱 CP is 1-D-ONLY (honest scope limit on the H_1325 result; the effect
+                  does not survive the move to a 2-D featural space). Reported straight.
+  T2 fails (T1 ok) -> 🔵 2-D CP present but language-INDEPENDENT ridge (Whorf refuted in 2-D).
+  T3 fails (T1∧T2 ok) -> 🟠 PARTIAL: 2-D relativity holds but the anti-Goodhart shuffle
+                  control did not fully clear (report straight, NO bar move; R2 re-freeze).
+
+FROZEN CONSTANTS
+  G_GRID=11 (121 stimuli)  K_RBF=6 (DIM=36)  RIDGE_FRAC=0.20  BAND_NEAR=0.10
+  BAND_FAR=0.25  ALIGN_MIN=0.70  DISSOC_GAP=0.10  COH_SHUF_MAX=0.50  COH_LANG_MIN=0.70
+  W1_MARGIN=0.15  T_LIN=1.0 (diagonal u+v=1.0)  T_LX=0.5 T_LY=0.5 (L-corner)
+  GROW_MAX=40  SPLIT_PASSES=40  BETA_POST=18.0  SEEDS=[4334,4335,4336]  D_MAX=sqrt(2)/2
+
+p1/p2/p3/p6 GUARD: the discrimination readout reads ONLY representational distance in
+the learned prototype space; NO injected boundary location, NO persona/RLHF/ethics
+label. The language label enters ONLY during training, NEVER at the discrimination
+test. PRE-LANGUAGE baseline + SHUFFLE control are the anti-Goodhart discriminators.
+NOT an emit gate (a_autonomy_over_hardcode). a_scale_honest_scope / a_toy_scale_recheck:
+TOY synthetic 2-D continuum, 3 seeds, deterministic readout — tests the relativity
+STRUCTURE in 2-D, NOT a scaled or human-cognition claim; engine-transfer = follow-on.
