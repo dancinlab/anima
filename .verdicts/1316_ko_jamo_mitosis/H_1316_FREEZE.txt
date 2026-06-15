@@ -1,0 +1,106 @@
+H_1316 — ko-jamo-mitosis — FROZEN PRE-REGISTRATION (written BEFORE the run; c9/p7, NO tune-to-green)
+================================================================================================
+PROJ_SEED provenance: H_1316 id confirmed FREE on origin/main (f8e1cecb3); HYPOTHESES.md last KO
+row = H_1315 (🔴 TERMINAL). This lane is the BREAKTHROUGH attempt at that declared wall
+(c16 / a_break_the_wall) via a genuinely-untried angle: COMPOSITIONAL JAMO representation.
+
+THE WALL (🔴 TERMINAL Korean-mitosis thread):
+  gradient-free mitosis cannot beat ~2.953 nat/byte held-out KO next-byte CE.
+  - H_1307 RUN A: raw UTF-8 byte ctx4 KO CE = 2.9475 (the ceiling; H_1311 S0 re-port = 2.953).
+  - H_1311: richer raw-byte substrate (ctx 8/16/32, per-cell ridge) did NOT break it (capacity/geometry-bound).
+  - H_1315: mitosis over the 303M trunk's FROZEN learned hidden rep did NOT break it (3.146, worse).
+
+THE NEW ANGLE (this lane): EVERY prior KO lane fed the substrate RAW UTF-8 bytes — 3 opaque bytes
+per Hangul syllable, ZERO awareness that Korean is a COMPOSITIONAL syllable-block script. The
+MISSING STRUCTURE (a_no_llm_frame_trap / c15 — add the missing structure, don't scale) is JAMO
+COMPOSITION: each Hangul syllable = initial(초성 L)+medial(중성 V)+final(종성 T) jamo, recoverable
+by DETERMINISTIC Unicode NFD decomposition.
+
+HYPOTHESIS: does a JAMO-DECOMPOSITION representation let gradient-free mitosis break the 2.953
+raw-byte ceiling — where raw bytes could not?
+
+--- CORPUS (REAL only, BYTE-IDENTICAL to H_1307 RUN A — provenance gate, p7) ----------------------
+  source: r2://phanes/anima-7b/web/kor/shard0000.bytes bytes[0:30000000] trimmed[:29999999]
+          r2://phanes/anima-7b/web/eng/shard0000.bytes bytes[0:10000000] trimmed[:10000000]
+  ASSERT ko_window_sha256 == c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca
+  ASSERT en_window_sha256 == 31b4a5430441cfdbb496b59f392150e4aa748cde2ed1b7cedad10960f0bcaf73
+  If the sha differs → STOP and report honestly (NO fabricated Korean; REAL only, a_eeg_consciousness_record).
+  R2 keys via `secret get r2.phanes.*` into ENV at call time ONLY — header/env-scoped, NEVER
+  echoed/logged/inlined/committed (c7). grep all committed artifacts for leaks before PR.
+
+--- REPRESENTATION (the jamo lens) --------------------------------------------------------------
+  SYMBOL STREAM: scan the UTF-8 codepoints of the corpus. For each codepoint:
+    - if it is a precomposed Hangul syllable (U+AC00..U+D7A3): NFD-decompose to its L/V/T jamo
+      sequence (2 or 3 conjoining-jamo codepoints U+1100.. / U+1161.. / U+11A8..) and emit one
+      SYMBOL per jamo.
+    - else (ASCII, spaces, punctuation, other scripts): emit one SYMBOL per the codepoint's UTF-8
+      bytes? NO — to keep the alphabet small and the next-SYMBOL task well-posed, NON-Hangul
+      codepoints are emitted as a SYMBOL per BYTE (raw byte id 0..255), so ASCII/markup is byte-LM
+      identical to the raw lane there. Hangul is the ONLY thing that changes representation.
+    => SYMBOL ALPHABET = {0..255 raw-byte ids} ∪ {distinct jamo codepoints seen}. Vocab Vj.
+  EACH SYMBOL carries n_bytes = the number of UTF-8 bytes it accounts for (raw byte=1; a jamo =
+  its share of the syllable's 3 bytes, distributed so the per-syllable jamo n_bytes SUM to exactly
+  the syllable's UTF-8 byte length (3) — L=1,V=1,T=1 for a 3-jamo syllable; L=2,V=1 (or 1,2) for a
+  2-jamo syllable so the two sum to 3). This makes the byte-accounting EXACT and lossless.
+
+--- MITOSIS MECHANISM (FROZEN, verbatim from H_1306/H_1307; the ONLY thing that varies = the rep) ---
+  V_symbol = Vj (jamo+byte alphabet). GROW_MAX=40. SPLIT_THRESH_CE=0.05. MIN_OWNED=8. LAPLACE=1.0.
+  FEAT (ctx-4 analogue, SAME geometry family as H_1307): [last_sym/Vj, second_sym/Vj, cont_depth/3]
+    where cont_depth = run-length of "inside a multi-jamo syllable" (the jamo analogue of UTF-8
+    continuation-byte depth — keeps the substrate dimension IDENTICAL to H_1307's 3-D, so the only
+    change is WHAT a symbol is, not the partition dimension). Grow-op = the H_1307 error-targeted
+    Voronoi split (highest-owned-CE eligible cell → hi-var-axis owned-median split → two
+    half-centroids; net +1 cell; gradient-free; cells only SPLIT — p8). SEED_CENTERS = the H_1307
+    [[0.3,0.5,0.0],[0.7,0.5,0.5]] pattern. even/odd train/test split. ko_stride=300, en_stride=600.
+  HEAD = per-cell next-SYMBOL count-MLE (add-Laplace), SAME as H_1307.
+
+--- FAIR-AXIS CONVERSION (jamo CE -> nats per UTF-8 byte; STATED EXPLICITLY) ---------------------
+  Held-out per-SYMBOL NLL (nats) is summed over all test symbols, then DIVIDED by the total number
+  of UTF-8 BYTES those test symbols account for (sum of each symbol's n_bytes):
+        CE_per_byte = (Σ_test  -log p(sym_i))  /  (Σ_test  n_bytes(sym_i))
+  This is the held-out cross-entropy in nats/UTF-8-byte on the SAME held-out split axis as the
+  2.9475 raw-byte ceiling — a byte-LM is exactly Σ(-log p)/Σ(bytes), so predicting the SAME text
+  as jamo-symbols and renormalizing by bytes is an apples-to-apples comparison (NOT an easier task:
+  the model must spend probability mass to emit each jamo; more symbols but each cheaper iff the
+  compositional structure is real). The raw-byte ceiling 2.9475 is reproduced in-run as G0 by
+  running the IDENTICAL mitosis on the raw-byte symbol stream (vocab 256) under the same budget.
+
+--- THREE ARMS ----------------------------------------------------------------------------------
+  G0  RAW-BYTE baseline (vocab 256, SAME mitosis/budget) — reproduce the H_1307 ceiling ~2.95.
+  G1  JAMO-rep (intact compositional jamo→symbol map).
+  G1c SHUFFLE-JAMO control: the jamo→symbol-id map is PERMUTED with a fixed seed (each distinct
+      jamo codepoint relabelled to a different symbol id, bijectively) so vocab size, dim, and cell
+      budget are IDENTICAL but the COMPOSITIONAL ALIGNMENT (which jamo follows which) is destroyed
+      consistently. (A permuted bijection keeps the per-jamo marginal but scrambles the
+      sequential L→V→T regularities the partition can exploit.)
+  Also: a raw-byte baseline at the SAME cell budget is G0 itself (vocab 256, GROW_MAX=40).
+
+--- FROZEN BARS (pre-registered; GREEN iff ALL of B1∧B2∧B3; mean over 3 seeds [4316,4317,4318]) ---
+  B1 PRESENCE:  G1 jamo held-out KO CE (nats/UTF-8-byte) < 2.9475 raw-byte ceiling by >= 0.05
+                (i.e. G1_ce <= 2.8975), mean over 3 seeds. (Also report G0 in-run ~2.95 as port check.)
+  B2 EARNED-by-structure (anti-Goodhart):  G1 beats G1c (shuffled-jamo-alignment) by >= 0.05
+                (G1c_ce - G1_ce >= 0.05) AND G1 beats the raw-byte baseline G0 by >= 0.05
+                (G0_ce - G1_ce >= 0.05). The lift must be the REAL compositional structure, not
+                extra symbols/vocab.
+  B3 NO-CHEAT:  the jamo decomposition is REVERSIBLE/LOSSLESS — for every Hangul syllable in the
+                corpus window, NFD-decompose then NFC-recompose and assert the recomposed UTF-8
+                bytes == the original syllable bytes (round-trip byte-identical over the whole KO
+                window). AND the per-symbol n_bytes sum over the window == the corpus UTF-8 byte
+                count exactly (byte accounting closes). If either fails → the CE is NOT honestly
+                comparable → B3 FAIL.
+
+--- OUTCOME LOGIC (honest, c9) ------------------------------------------------------------------
+  GREEN 🟢  iff B1 ∧ B2 ∧ B3 → the Korean ceiling is REPRESENTATION-bound (broken by compositional
+             structure); the missing structure was jamo, not capacity.
+  If B1 holds but B2 fails  → HONEST report: the gain is dims/vocab, NOT structure (NOT GREEN).
+  If B1 fails               → HONEST 🔴/🧱: the byte ceiling SURVIVES the compositional lens too →
+             the Korean ceiling is truly CAPACITY-bound (a VALID result, c9 — report it straight).
+  B3 fail at any time       → STOP; the comparison is not honest.
+
+--- SEEDS / COMPUTE / HONEST SCOPE --------------------------------------------------------------
+  3 seeds: [4316, 4317, 4318]. $0. summer (RTX 5070 sm_120, idle) preferred; CPU-local fallback.
+  Detached nohup nice -n10 + inline poll (a_cpu_local_no_waiter); preserve corpus cache for siblings;
+  clean scratch when done.
+  SCOPE-HONEST (a_scale_honest_scope, a_toy_scale_recheck): toy/DIRECTIONAL numpy/torch mirror;
+  engine-transfer to live CORE/*.hexa = follow-on; NO Korean-fluency claim. live CORE UNTOUCHED.
+================================================================================================

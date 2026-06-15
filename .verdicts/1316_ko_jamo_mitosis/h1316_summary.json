@@ -1,0 +1,66 @@
+{
+  "id": "H_1316",
+  "device": "NVIDIA GeForce RTX 5070",
+  "torch": "2.11.0+cu130",
+  "ko_window_bytes": 29999999,
+  "en_window_bytes": 10000000,
+  "ko_window_sha256": "c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca",
+  "en_window_sha256": "31b4a5430441cfdbb496b59f392150e4aa748cde2ed1b7cedad10960f0bcaf73",
+  "corpus_identical_to_H1307_runA": true,
+  "ko_stride": 300,
+  "grow_max": 40,
+  "jamo_vocab_Vj": 323,
+  "distinct_jamo": 67,
+  "h1307_ceiling_ko_ce": 2.9475,
+  "g0_raw_byte_ce": 2.95342,
+  "g1_jamo_ce_mean": 2.51335,
+  "g1c_shuffle_ce_mean": 2.74306,
+  "delta_g1_vs_ceiling": -0.43415,
+  "delta_g1_vs_shuffle": 0.22971,
+  "delta_g1_vs_raw": 0.44007,
+  "seeds": [
+    4316,
+    4317,
+    4318
+  ],
+  "per_seed": [
+    {
+      "seed": 4316,
+      "g0_raw_ce": 2.95342,
+      "g1_jamo_ce": 2.51335,
+      "g1_cells": 11,
+      "g1c_shuffle_ce": 2.87633,
+      "g1c_cells": 10
+    },
+    {
+      "seed": 4317,
+      "g0_raw_ce": 2.95342,
+      "g1_jamo_ce": 2.51335,
+      "g1_cells": 11,
+      "g1c_shuffle_ce": 2.506,
+      "g1c_cells": 16
+    },
+    {
+      "seed": 4318,
+      "g0_raw_ce": 2.95342,
+      "g1_jamo_ce": 2.51335,
+      "g1_cells": 11,
+      "g1c_shuffle_ce": 2.84684,
+      "g1c_cells": 14
+    }
+  ],
+  "b3_roundtrip": {
+    "hangul_syllables": 8143053,
+    "roundtrip_fail": 0,
+    "ok": true
+  },
+  "b3_byte_accounting_close": true,
+  "B1_presence": true,
+  "B2_earned": true,
+  "B2_vs_shuffle": true,
+  "B2_vs_raw": true,
+  "B3_nocheat": true,
+  "GREEN": true,
+  "verdict": "🟢 GREEN — REPRESENTATION-bound (jamo composition breaks the 2.9475 raw-byte ceiling)",
+  "total_wall_s": 45.22
+}

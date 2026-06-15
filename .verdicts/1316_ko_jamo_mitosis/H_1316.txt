@@ -1,0 +1,25 @@
+=== H_1316 — JAMO-COMPOSITION vs the H_1307 2.9475 raw-byte ceiling (sm_120) ===
+device=NVIDIA GeForce RTX 5070 cap=(12, 0) torch=2.11.0+cu130
+kernel launch OK (sentinel -266.2)
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] EN from cache /tmp/h1311_en_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  EN 10000000B sha=31b4a5430441cfdb…
+[corpus] identical-to-H_1307-RUN-A: KO=True EN=True
+[B3] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[G0 raw-byte] {"cells": 16, "ce_per_byte": 2.95342, "train_sym": 50000, "test_sym": 50000, "test_bytes": 50000, "vocab": 256}  (H_1307 RUN A ceiling=2.9475; port check)
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[B3] byte-accounting: Σ n_bytes(sym)=29999999  corpus_bytes=29999999  close=True
+[seed 4316] {"seed": 4316, "g0_raw_ce": 2.95342, "g1_jamo_ce": 2.51335, "g1_cells": 11, "g1c_shuffle_ce": 2.87633, "g1c_cells": 10}
+[seed 4317] {"seed": 4317, "g0_raw_ce": 2.95342, "g1_jamo_ce": 2.51335, "g1_cells": 11, "g1c_shuffle_ce": 2.506, "g1c_cells": 16}
+[seed 4318] {"seed": 4318, "g0_raw_ce": 2.95342, "g1_jamo_ce": 2.51335, "g1_cells": 11, "g1c_shuffle_ce": 2.84684, "g1c_cells": 14}
+-------------------------------------------------------------------------------
+G0 raw-byte ceiling (in-run)  KO CE = 2.95342  (H_1307 RUN A = 2.9475)
+G1 jamo-rep (mean 3 seeds) KO CE = 2.51335  Δvs_ceiling=-0.43415
+G1c shuffle-jamo control (mean)        KO CE = 2.74306  Δ(g1c-g1)=0.22971
+B1 PRESENCE  (g1 < 2.8975): True
+B2 EARNED    (g1<g1c by>=0.05 AND g1<g0 by>=0.05): True  (vs_shuffle=True vs_raw=True)
+B3 NO-CHEAT  (roundtrip lossless AND byte-acct close): True
+VERDICT: 🟢 GREEN — REPRESENTATION-bound (jamo composition breaks the 2.9475 raw-byte ceiling)
+total wall=45.2s
+  engine-transfer to live hexa DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]

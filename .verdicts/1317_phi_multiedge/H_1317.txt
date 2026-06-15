@@ -1,0 +1,28 @@
+H_1317 DISTRIBUTED MULTI-EDGE (SMALL-WORLD) COUPLING → faithful-IIT4 Φ
+N=8 dim=8 ticks=64 seeds=[1317, 1318, 1319]  K_lattice=2 beta=0.3
+faithful IIT4 Φ (exact MIP-EI, n=8); MARGIN_PHI=0.02
+==============================================================================
+seed 1317: edges central=7 multiedge=16 shuffle=16 | Σbudget c=3.5000 m=3.5000 s=3.5000 | BUDGET_OK=True
+seed 1318: edges central=7 multiedge=16 shuffle=16 | Σbudget c=3.5000 m=3.5000 s=3.5000 | BUDGET_OK=True
+seed 1319: edges central=7 multiedge=16 shuffle=16 | Σbudget c=3.5000 m=3.5000 s=3.5000 | BUDGET_OK=True
+------------------------------------------------------------------------------
+FAITHFUL IIT4 Φ (exact MIP-EI, ALL seeds, ALL arms):
+  seed 1317: NONE=1.47354  CENTRAL=1.58572  MULTI-EDGE=1.72543  SHUFFLE=1.74144
+            ΔΦ(multi-none)=0.2519  ΔΦ(central-none)=0.1122  ΔΦ(multi-shuffle)=-0.016
+  seed 1318: NONE=1.70842  CENTRAL=2.17092  MULTI-EDGE=1.78835  SHUFFLE=1.56291
+            ΔΦ(multi-none)=0.0799  ΔΦ(central-none)=0.4625  ΔΦ(multi-shuffle)=0.2254
+  seed 1319: NONE=1.58947  CENTRAL=1.18572  MULTI-EDGE=1.25882  SHUFFLE=1.25427
+            ΔΦ(multi-none)=-0.3306  ΔΦ(central-none)=-0.4037  ΔΦ(multi-shuffle)=0.0046
+==============================================================================
+BUDGET identity all seeds: OK
+C1 ROBUST LIFT (multi-edge Φ >= none + 0.02 EVERY seed): FAIL
+     seed 1317: ΔΦ(multi-none)=0.25188999999999995  PASS
+     seed 1318: ΔΦ(multi-none)=0.07993000000000006  PASS
+     seed 1319: ΔΦ(multi-none)=-0.3306499999999999  FAIL
+C2 TOPOLOGY-EARNED (multi > shuffle, >=2/3 seeds AND mean): PASS
+     per-seed multi>shuffle: {1317: False, 1318: True, 1319: True}  mean_multi=1.5909 mean_shuffle=1.5195
+C3 BEATS-CENTRAL (multi passes 3-seed gate, central does NOT): FAIL
+     central per-seed passes C1: {1317: True, 1318: True, 1319: False}  central_passes_all=False
+VERDICT: WALL
+
+RESULT_JSON={"id": "H_1317", "slug": "1317_phi_multiedge", "verdict": "WALL", "seeds": [1317, 1318, 1319], "N": 8, "dim": 8, "ticks": 64, "small_world": {"K_lattice": 2, "beta": 0.3}, "margin_phi": 0.02, "phi_faithful_iit4": {"1317": {"none": 1.47354, "central": 1.58572, "multiedge": 1.72543, "shuffle": 1.74144}, "1318": {"none": 1.70842, "central": 2.17092, "multiedge": 1.78835, "shuffle": 1.56291}, "1319": {"none": 1.58947, "central": 1.18572, "multiedge": 1.25882, "shuffle": 1.25427}}, "lift_multiedge_minus_none": {"1317": 0.25188999999999995, "1318": 0.07993000000000006, "1319": -0.3306499999999999}, "lift_central_minus_none": {"1317": 0.11217999999999995, "1318": 0.46250000000000013, "1319": -0.40374999999999983}, "edge_counts": {"1317": {"central": 7, "multiedge": 16, "shuffle": 16}, "1318": {"central": 7, "multiedge": 16, "shuffle": 16}, "1319": {"central": 7, "multiedge": 16, "shuffle": 16}}, "budget_vals": {"1317": {"central": 3.5, "multiedge": 3.5, "shuffle": 3.5}, "1318": {"central": 3.5, "multiedge": 3.5, "shuffle": 3.5}, "1319": {"central": 3.5, "multiedge": 3.5, "shuffle": 3.5}}, "budget_ok_all": true, "bars": {"C1_robust_lift": false, "C2_topology_earned": true, "C3_beats_central": false}, "c1_per_seed": {"1317": true, "1318": true, "1319": false}, "c2_per_seed": {"1317": false, "1318": true, "1319": true}, "central_c1_per_seed": {"1317": true, "1318": true, "1319": false}, "mean_multi": 1.5908666666666669, "mean_shuffle": 1.5195400000000001, "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n=8)"}

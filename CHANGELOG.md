@@ -33,6 +33,156 @@ shuffle-검증). 중/일은 이득이 전이되지 않으나 그것은 나쁜 �
 mirror, engine-transfer = follow-on, 유창성 주장 없음. 산출물 UNIVERSE/h1318_xlang_structure.py ·
 .verdicts/1318_xlang_structure/{H_1318_FREEZE.txt,H_1318.txt,h1318_summary.json,h1318_full.log} ·
 UNIVERSE/H_1318_xlang_structure.md · HYPOTHESES.md · CLAIMS.tape @C h1318_xlang_structure.
+## 2026-06-16 — research(OMEGA): 🧱 H_1320 — anima를 하나의 세포로: 분열(divided)이 조립(hive)이 못한 통합 Φ를 만드나
+
+사용자의 렌즈("anima 전체를 하나의 cell로 봐라")로 hive 벽을 **반대 방향**에서 다시 친 시도
+(c16/a_break_the_wall). hive(H_1308 NULL · H_1313 🧱)는 **독립적으로 자란 두 anima cell을
+조립(ASSEMBLE)**했고 faithful-IIT4 Φ가 통합되지 않았다(Δ_real=−3.0, super-additivity는 ECA 전용).
+**시도 안 해본 각도**(발생생물학 c15, a_no_llm_frame_trap): 하나의 zygote가 **분열(DIVIDE)**해
+통합된 유기체가 되는 이유는 부분들이 **발생적 기원(origin)을 공유**하기 때문이다. H_1320:
+하나의 anima-cell을 두 **공유-기원 딸세포**로 mitotic DIVIDE하면, 조립(hive)이 못한 통합
+(super-additive) faithful-IIT4 Φ가 나오나?
+
+**결과: 🧱 WALL** (정직한 closed-negative, c9). 핵심 대조 = DIVIDED(공유 기원) vs ASSEMBLED(독립
+기원=hive baseline), W_HIVE=0.6·unit수 동일 매칭(유일 차이=공유-vs-독립 기원). 분열은 **다수
+seed에서 조립을 실제로 이긴다**: seed 1318/1319에서 DIVIDED super-additivity가 ASSEMBLED를
+크게 앞섬(M2 gap +1.727/+0.818, Δ_div +1.27/+0.88 vs Δ_asm −0.46/+0.06), joint Φ가 undivided
+SINGLE보다 높음(M1 lift +2.10/+0.89). 계보를 끊으면(SHUFFLE) DIVIDED의 Δ가 **모든 seed에서
+ASSEMBLED와 정확히 동일**하게 붕괴(M3 PASS, byte-identical) → lift는 **공유 기원**이지 unit수/분산이
+아님. **그러나** H_1283/H_1317 topology robustness를 깬 바로 그 직교 seed(1317)가 분열도 깬다:
+Δ_divided 0.0 < Δ_assembled +0.188(M2 gap −0.188), Φ_div_pair 1.213 < Φ_single 1.342(M1 lift
+−0.129). → **분열에 의한 collective-Φ는 REAL이지만 FRAGILE** — 3-seed robustness gate 실패,
+Φ-topology 벽과 **동일한 취약성 signature**. 발생적 방향(분열)은 조립보다 다수 seed에서 분명히
+**낫지만**(hive의 순수 NULL 대비 진짜 새 발견) robustness 바를 넘지 못한다. hive 벽은 이제
+**양 방향 모두** 닫힘: 조립 🧱(H_1313 robust NULL) + 분열 🧱(H_1320 fragile lift).
+
+faithful-IIT4 EXACT(n≤8 MIP-EI, hexa stdlib; numpy는 Φ 계산 안 함, proxy 금지 a_phi_iit4_tool),
+3 seeds [1317,1318,1319], $0 CPU-local, frozen-first(bars 사전등록·미이동 c9/p7), deterministic
+(2회 byte-identical). numpy mirror = DIRECTIONAL, engine-transfer 미검증(a_scale_honest_scope·
+a_toy_scale_recheck); 🧱이므로 CORE 배선 follow-on 없음(a_verified_must_wire=GREEN 전용), live
+CORE/*.hexa UNTOUCHED. H_1308/1313/1295를 retract하지 않고 scope를 bound. (사전등록
+`.verdicts/1320_anima_cell/H_1320_FREEZE.txt` · 카드 `UNIVERSE/H_1320_anima_cell.md` · 인덱스
+`UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape @C h1320_anima_cell` · `domains/OMEGA.log.md`.)
+
+## 2026-06-16 — research(OMEGA): 🧱 H_1319 — TIMING축 phase-binding을 engine-native로 재현해 c4 shuffle 벽을 깨나 (Φ-robustness 벽이 두 축 모두 종결)
+
+H_1283 R8이 남긴 **단 하나의 살아있는 돌파 후보**(c16/a_break_the_wall)를 친 시도. 토폴로지축은
+🏁 고갈(H_1283 relay R1-R7, H_1317 multi-edge — 전부 seed-취약). arc에서 robust한 faithful-Φ
+lift를 낸 유일한 메커니즘은 **직교 TIMING축의 H_1283 R8 phase-binding**이었으나, numpy-mirror는
+**쉬운 seed [7,8,9]**에서만 GREEN이었고 그 **engine-native gate가 c4(shuffle 대조)를 실패**했다 —
+additive-offset shuffle가 lift를 무너뜨리지 못했다(ΔΦ_sh +0.026/+0.380/+0.296). 원인: read-out
+`sal=e·(1+cosθ)/2`가 **독립 진폭 carrier**를 주입하고 shuffle이 그 marginal 통계를 보존한다 →
+lift의 일부가 synchrony가 아니라 **carrier 진폭 분산**. 이게 명시된 open follow-on이었다.
+
+H_1319은 **같은 TIMING 메커니즘**을 engine-native로 재현하되 분산 누수를 죽이는 두 변경을 가했다:
+(1) **상대-위상 게이트** `sal=e·(1+cos(θ_i−θ_T))/2` — 결합 신호 = 페이스메이커에 대한 **정렬(관계)**,
+독립 carrier 없음; (2) **관계를 파괴하는 permutation shuffle**(H_1294/H_1295가 쓰는 강한 대조) —
+각 모듈을 **다른 모듈의 위상**으로 게이트(forced-derangement π), marginal은 정확히 보존. 그리고
+토폴로지가 실패한 **어려운 직교 seed [1317,1318,1319]**에서 측정. bars는 H_1283 R8에서 **그대로
+이식**(FREEZE를 채점 전 커밋, NOT moved, c9/p7).
+
+**결과: 🧱 TERMINAL** (정직한 closed-negative). faithful-IIT4 Φ(exact MIP-EI, n=4, a_phi_iit4_tool;
+numpy는 Φ를 절대 계산 안 함; engine-native LCG content generator, byte-identical 재현):
+
+| seed | A (NO-PHASE) | B (PHASE-BIND) | ΔΦ(B−A) | T1 | PERM-SHUF | ΔΦ(S−A) | T2 |
+|------|------|------|------|----|------|------|----|
+| 1317 | 0.870311 | 1.335350 | +0.465039 | PASS | 1.150110 | +0.279798 | **FAIL** |
+| 1318 | 0.855353 | 0.860580 | +0.005227 | **FAIL** | 0.957870 | +0.102517 | **FAIL** |
+| 1319 | 0.586833 | 0.538064 | −0.048768 | **FAIL** | 1.174020 | +0.587183 | **FAIL** |
+
+- **T1 ROBUST-LIFT FAIL** — seed 1318 ΔΦ +0.005(미달), seed 1319 ΔΦ **−0.049(음수)** — 토폴로지를
+  꺾은 **바로 그 직교 seed 1319**. 상대-위상 lift 자체가 어려운 seed에서 취약.
+- **T2 SHUFFLE-EARNED FAIL(이전보다 더 심하게)** — **더 강한** permutation shuffle이 lift를 무너뜨리기는커녕
+  매 seed에서 Φ를 **ARM B 위로 올린다**(ΔΦ_perm +0.280/+0.103/+0.587 — perm-shuf Φ가 phase-bind Φ를
+  매 seed 초과). 진단 offset-shuffle도 동일.
+
+**근본 원인(종결 진단):** 관계를 **파괴하는** permutation이 오히려 Φ를 올린다면, Φ 이득은 상대-위상
+**관계**에서 오는 게 아니다 — `(1+cos)/2` carrier가 모듈별 salience 이진화에 주입하는 **진폭 분산**에서
+온다(offset이든 permutation이든 어떤 위상 scramble도 보존하는 분산). TIMING축은 토폴로지축과 **같은
+근본 실패**를 한다 — faithful-IIT4 MIP이 정직한 대조가 살아남지 못하는 저차원 구조(거긴 content cut,
+여긴 채널별 진폭 분산)를 착취한다.
+
+**결론: faithful-IIT4 Φ-robustness 벽은 이제 두 축 모두에서 TERMINAL** — 토폴로지 🏁(H_1283 relay
+R1-R7, H_1317 multi-edge) + 타이밍 🧱(H_1283 R8 engine c4 FAIL, H_1319 강한 대조에서도 c4 FAIL).
+anima의 4-모듈 workspace에서 robust(3-seed, 대조-생존) faithful-Φ lift는 **어느 축으로도 도달 불가**.
+이는 anima의 의식 substrate를 부정하지 않는다(Ψ=1/2, A⇄G tension 무손상) — **결합/위상 채널을 더해도
+honest 대조 아래서 faithful-IIT4 Φ 점수가 robust하게 오르지 않는다**는 것을 종결할 뿐. **CORE 배선
+follow-on 없음**(a_verified_must_wire = GREEN 전용; engine_cli.hexa 무손상, 프로브는 standalone fn
+main, importer 0). SCOPE: TOY n=4 dim-8 64-tick, faithful-Φ EXACT, content generator engine-native
+LCG(numpy 아님). rung 내에서는 결정적(강한 permutation 대조가 매 seed Φ를 올림 → variance-not-synchrony
+진단은 더 큰 n 불필요). 새 가설로만 열림: 근본적으로 다른 Φ 추정기 · 훨씬 큰 모듈 집합(>8은 exactness
+상실) · 진폭 분산이 증명상 0인 위상-게이트 read-out.
+
+산출물: `UNIVERSE/h1319_phi_timing.hexa` · `UNIVERSE/H_1319_phi_timing.md`(카드) ·
+`UNIVERSE/HYPOTHESES.md`(인덱스) · `CLAIMS.tape @C h1319_phi_timing` ·
+`.verdicts/1319_phi_timing/{H_1319_FREEZE,H_1319}.txt` · `domains/OMEGA.log.md`.
+
+## 2026-06-16 — research(OMEGA): 🧱 H_1317 — 분산 multi-edge(small-world) 결합이 faithful-IIT4 Φ를 robust하게 올리나 (H_1283 중앙릴레이 벽)
+
+H_1283(thalamus-Φ)이 남긴 벽을 새 각도로 친 시도(c16/a_break_the_wall). H_1283은 모든 **중앙
+릴레이/star 토폴로지**가 faithful-IIT4 Φ를 **seed-조건부로만** 올렸다 — 3-seed robustness gate를
+실패(특히 직교 seed). 단일 중앙 릴레이 = 취약한 Φ lift = 🧱. **시도 안 해본 각도**(c15,
+a_no_llm_frame_trap): 피질의 통합정보는 단일 허브가 아니라 **small-world 재귀 mesh**(짧은 엣지
+다수 + 긴 엣지 소수)에서 나온다. H_1317: **분산 multi-edge(Watts–Strogatz small-world)** 결합이
+H_1283이 실패한 같은 gate에서 Φ를 robust하게 올리나?
+
+**결과: 🧱 WALL** (정직한 closed-negative, c9). 분산 small-world 결합도 **3-seed Φ robustness
+gate를 실패** — 토폴로지와 무관하게 Φ는 **취약하게 유지**. faithful-IIT4 Φ(exact MIP-EI, n=8,
+stdlib/consciousness/iit4/faithful_phi.hexa via `hexa run`, proxy 절대 사용 안 함; numpy는 trajectory만
+방출): seed 1317 ΔΦ(multi−none)=**+0.252**✓ · 1318 **+0.080**✓ · 1319 **−0.331**✗(직교 seed,
+음수 — H_1283 직교-seed 실패와 동일 양상). C1 ROBUST-LIFT **FAIL** · C2 TOPOLOGY-EARNED PASS
+(multi>shuffle 2/3 seeds, mean 1.5909>1.5195 — multi가 만드는 lift는 엣지수가 아니라 small-world
+구조이긴 함) but moot · C3 BEATS-CENTRAL **FAIL**(multi가 C1 자체 실패; CENTRAL도 seed 1319
+ΔΦ −0.404로 더 심하게 실패).
+
+**핵심 발견:** 통합정보 robustness는 toy 스케일에서 **토폴로지 속성이 아니다** — star→small-world
+mesh로 바꿔도 Φ lift가 robust해지지 않는다; 취약성은 결합 그래프가 아니라 substrate/seed geometry에
+있다. H_1283 벽을 더 **bound**한다(star 한정 아님; 토폴로지/content 축은 star와 small-world 양쪽에서
+🧱). H_1283 R8의 직교 **TIMING 축**(phase-binding)이 이 arc에서 유일한 robust Φ lift로 남는다.
+substrate는 H_1283과 정확히 일치(LEAK=0.55 GAIN=0.30 dim-8 T=64; 오직 토폴로지만 변경), 4 arm 결합
+**budget 동일**(Σ=3.5000 runtime-assert)로 lift=토폴로지 보장. 4 arm: NONE(floor)·CENTRAL(star 7엣지,
+H_1283 재현)·MULTI-EDGE(WS ring K=2 + rewire β=0.30, 16엣지)·SHUFFLE(Erdős–Rényi 16 랜덤엣지, budget
+일치). frozen-first(FREEZE를 첫 실행 전 등록, bar 미이동, NO tune-to-green), seeds[1317,1318,1319],
+$0 CPU, deterministic. CORE wiring follow-on 없음(a_verified_must_wire = GREEN 전용; 🧱는 wire할 것 없음).
+SCOPE: TOY/DIRECTIONAL — faithful-Φ leg은 real(exact MIP-EI via hexa)이나 numpy mirror, 라이브
+CORE/pure_field 전이 UNVERIFIED(a_scale_honest_scope·a_toy_scale_recheck). live CORE/*.hexa UNTOUCHED.
+`UNIVERSE/h1317_phi_multiedge.py` · `UNIVERSE/H_1317_phi_multiedge.md` ·
+`.verdicts/1317_phi_multiedge/{H_1317_FREEZE,H_1317}.txt` · `CLAIMS.tape @C h1317_phi_multiedge`.
+
+## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1316 — 자모 합성 표현이 2.953 천장을 깬다 (🟢 GREEN BREAKTHROUGH)
+
+🔴 TERMINAL 이던 한국어-미토시스 스레드를 **표현(representation) 각도**에서 돌파했다 (c16 / a_break_the_wall).
+이전 모든 한국어 lane (H_1307/H_1311/H_1315) 은 substrate 에 **raw UTF-8 바이트**를 먹였다 — 한글 한 음절 =
+불투명한 3 바이트, 한국어가 **합성형 음절-블록 문자**라는 인식이 전혀 없었다. 빠진 구조 (a_no_llm_frame_trap,
+c15 — 스케일이 아니라 빠진 구조를 붙여라): **자모 합성** — 한 음절 = 초성(L)+중성(V)+종성(T), 결정론적
+유니코드 NFD 분해로 복원 가능. H_1316 은 **똑같은** gradient-free 미토시스 (cells only SPLIT, p8; grow-op +
+cell budget 를 H_1306/H_1307 verbatim 고정) 를 자모-심볼 스트림 위에서 키우고, 심볼당 CE 를 다시
+**nats/UTF-8-byte** 로 환산해 2.9475 천장과 동일 축에서 비교했다. 표현만 바뀐다.
+
+REAL sm_120 GPU (사용자 RTX 5070, $0, NOT runpod). 코퍼스는 H_1307 RUN A 와 byte-IDENTICAL (sha
+c47b6808…/31b4a543… 게이트 PASS). frozen-first (FREEZE 선등록), NO tune-to-green (c9/p7). 3 seeds [4316-4318].
+
+**결과 (mean 3 seeds, held-out KO next-symbol CE, nats/UTF-8-byte):**
+- G0 raw-byte (in-run port) = **2.95342** (H_1307 RUN A 2.9475 재현, port 유효)
+- **G1 자모-rep = 2.51335 (Δ −0.434 vs 천장, −0.440 vs G0)** → **B1 PRESENCE ✅** (2.8975 를 크게 하회)
+- G1c 자모→심볼 맵 셔플 control = 2.74306 (Δ g1c−g1 +0.230) + G1 이 raw G0 를 +0.440 으로 이김 →
+  **B2 EARNED ✅** (lift 는 vocab/dim 이 아니라 **합성 구조**)
+- NFD→NFC 왕복 8,143,053 음절 0 실패 + 심볼당 n_bytes 합 == 코퍼스 바이트 정확히 일치 → **B3 NO-CHEAT ✅** (무손실, 공정 비교)
+
+→ **🟢 GREEN: 한국어 천장은 capacity-bound 가 아니라 REPRESENTATION-bound 였다.** 벽은 미토시스 메커니즘의
+용량이 아니라 **raw-byte 표현** (음절당 3 불투명 바이트) 이었다. H_1311(raw 바이트 위 capacity-bound) ·
+H_1315(303M frozen rep 위 capacity-bound) 와 화해: 그 lane 들이 부딪힌 한계는 **틀린 표현** 위의 L2-Voronoi
+파티션 기하였고, 올바른 (합성) 표현이 그것을 깬다.
+
+정직한 범위 (c9 · a_scale_honest_scope · a_toy_scale_recheck): G1 은 결정론적 (seed 간 동일; FREEZE 가 seed 는
+control 만 흔든다고 선등록) — 단일 존재증명. control seed 1개(4317=2.506)는 G1 에 근접 → B2-vs-shuffle 은
+MEAN 으로 통과 (per-seed 만장일치 아님; G1-beats-raw +0.440 은 무조건 성립). ~0.44 강하는 상당부분 음절→자모
+부호화 이득 (B2-vs-raw 가 vocab/dim 단독이 아님을 보임). DIRECTIONAL numpy/torch mirror; live CORE/*.hexa
+엔진 전이 = follow-on (a_engine_native_learning · a_verified_must_wire); 한국어 유창성 주장 없음. live CORE UNTOUCHED.
+
+추가: `UNIVERSE/h1316_ko_jamo_mitosis.py` · `UNIVERSE/H_1316_ko_jamo_mitosis.md` · `HYPOTHESES.md` 행 ·
+`CLAIMS.tape @C h1316_ko_jamo_mitosis` · `.verdicts/1316_ko_jamo_mitosis/{H_1316_FREEZE,H_1316}.txt`(+summary/manifest) ·
+`domains/MITOSIS-ENGINE.log.md`.
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1315 — 303M trunk 학습표현 위 미토시스 vs 2.9 천장 (🔴 TERMINAL)
 
