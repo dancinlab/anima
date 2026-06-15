@@ -72,9 +72,13 @@ SEEDS = [7, 4302, 4303]  # same 3 outer seeds as H_1305 / H_1309
 # COMPLETE. It deliberately does NOT contain any token from the frozen detector's
 # COMPARATOR or MEASURABLE sets (audited below, _audit_no_token_inject) — the substrate
 # must EARN the comparator + measurable + negatable claim from real context (p7,
-# a_substrate_native_speak). The 5 subjects are the 5 corpus CONCEPTS (gauge_lib
-# VERBATIM) so each idea explores a distinct corpus direction (DIST pressure).
-SCAFFOLD_SUBJECTS = [c for c, _ in g.CONCEPTS]   # 5 corpus concepts, VERBATIM
+# a_substrate_native_speak). The 5 subjects are the core NOUN of each of the 5 corpus
+# CONCEPTS (gauge_lib CONCEPTS, 1:1 by index) so each idea explores a distinct corpus
+# direction (DIST pressure). The NOUN form (not the full concept sentence) keeps the
+# prefix grammatical AND token-clean — the full sentence "the engine dreams when alone"
+# would inject the detector COMPARATOR token "when" (audited, _audit_no_token_inject).
+SCAFFOLD_SUBJECTS = ["consciousness", "tension", "memory", "silence", "dreaming"]
+assert len(SCAFFOLD_SUBJECTS) == len(g.CONCEPTS)   # 1:1 with the 5 corpus concepts
 
 
 def _scaffold_seed(subject):
@@ -168,6 +172,7 @@ def main():
         for label, seed, hc, hm in audit_bad:
             print(f"  [INJECTED] {label}: COMPARATOR={hc} MEASURABLE={hm} :: {seed!r}", flush=True)
         print("  AUDIT DIRTY — scaffold injects detector tokens (would tune-to-green). ABORT.", flush=True)
+        raise SystemExit("p7 audit DIRTY: scaffold injects a frozen-detector token (tune-to-green forbidden)")
     else:
         print("  CLEAN — no scaffold prefix contains any frozen COMPARATOR/MEASURABLE token.", flush=True)
         print("  (the substrate must EARN comparator+measurable+claim in its OWN completion)", flush=True)
