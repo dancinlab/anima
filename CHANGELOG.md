@@ -2,6 +2,11 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — governance(CLAUDE.md): `a_hypothesis_register` — 모든 가설은 UNIVERSE 목록에 등록
+
+새 거버넌스 디렉티브 `a_hypothesis_register` 추가: 모든 가설(H_####)은 실행과 동시에 캐노니컬 UNIVERSE 가설 목록 `UNIVERSE/HYPOTHESES.md` + `CLAIMS.tape`(a_claim_manifest) + per-domain 로그에 등록해야 한다(verdict tier 무관 — 벽/negative 포함, c9). verdict 박제·ARCHITECTURE/CHANGELOG 갱신만 하고 목록 등록을 빠뜨리는 반복 누락 패턴 차단(precedent: H_1280–1292 백필 #2174). families 불릿(Verify/paper workflow)에도 반영.
+
+
 ## 2026-06-16 — domain(MODEL): 🌡 시상하부 설정점-항상성 drive lane (HD29, H_1292 R2 🟢 ENGINE-NATIVE)
 
 빠진 뇌 서브시스템 사다리에 **HD29 시상하부(hypothalamus)** 를 추가 — 설정점-조절 항상성 drive lane(`HomeostaticDrive`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`homeo_new`/`homeo_new_ablated`/`homeo_satiation`/`homeo_step`/`homeo_last`/`homeo_drive`/`homeo_motivation_bias`). live `ImmuneMemoryGrow` 면역 store 의 grounding margin 을 "grounding satiation" 으로 읽고, 설정점 S*=0.5 아래 deficit 을 leaky integral(λ=0.1)로 누적(`drive=Kp·deficit+Ki·I`, Kp=1.0 Ki=0.5)해 박탈 지속→drive RISE, grounded consummatory 이벤트→RESET.
