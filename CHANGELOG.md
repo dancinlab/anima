@@ -113,6 +113,22 @@ FLEET "amygdala" lane R4. R3(🟢 numpy-mirror)은 사전등록 30-cycle 멀티-
 - **p6 가드 (HELD; shuffle 이 증명)** — salience 는 엔진 안에서 substrate 신호(surprise/novelty/tension)로만 도출; "important" label 은 probe 의 metric 채점에만, bind/replay 무진입. 음성대조(`consolidating_shuffle_salience`)가 bar 아래 유지 = 태그가 importance 추적함을 증명. replay 는 sleep 루프(P47, `a_chat_sleep_imagination`)가 내부 생성. decoder/weights/persona/ethics 무접촉 — episodic 셀 store 의 salience tag + sleep-replay 배분만(p1/p2/p3/p6/p8, `a_autonomy_over_hardcode`). identity/ethics 는 셀에서 창발(무접촉).
 - **가드 (회귀 없음, c2, verbatim)** — `engine_cli_smoke` **26/0**(22/0 → consolidation 케이스 4개 추가: case_20_salient_tag_higher · case_21_shuffle_preserves_tag_sum · case_22_salience_replay_protects_salient · case_23_consolidating_abstains_on_untaught) · `h1196` single-entry **7/0** · `h1231` immune wire **8/0**(기존 ImmuneMemory faculty intact) · `h1199` DIM-growth 🟢 + **Ψ byte-identical(PsiSame=true 전 seed)** — consolidation lane 은 Ψ-disjoint(자기 struct 만, `pure_field` 무접촉; 생성 byte-unchanged H_1205). 2번째 .clm/.kosmos 진입점 아님(`a_core_engine_map`).
 - **DEPLETION 🏁** (engine-native salience-gated sleep replay 가 LIVE faculty 에서 GREEN 확인 + 가드 무회귀 = amygdala-consolidation 엔진-네이티브 실현). NEXT = emit-loop integration follow-on(brain_decide/데몬 sleep 루프가 live 세션에서 `consolidating_sleep_replay` CALL), scale(>60 facts·near-collision keys)·paraphrase recall UNVERIFIED(`a_scale_honest_scope`). verdict `.verdicts/1285_amygdala_salience/H_1285_R4.txt`(R1/R2/R3 미덮음).
+---
+
+## 2026-06-15 — 🧹 원격 브랜치 정리 (origin merged-PR 잔여 헤드 1,511개 삭제)
+
+squash-merge 워크플로 누적으로 origin 에 쌓인 머지-완료 PR 잔여 브랜치를 대량 정리했다. `git branch --merged` 는 squash 머지를 감지 못하므로 GitHub PR 상태 기반으로 안전 판정.
+
+- **삭제 1,511개**: `gh pr list --state merged` 의 headRefName ∩ 원격 브랜치 = 머지-완료(내용이 main 에 반영됨) 1,510개 + PR 기록 없으나 `git rev-list --count origin/main..` = 0(내용이 main 에 포함됨) 1개(`lane2-h1192-summer`). 전부 삭제 확인(원격 잔존 0, 실패 0).
+- **보존 (불확실/활성은 전부 보존, preservation-bias)**:
+  - open-PR 헤드 4개 (`engine-lane/clm-l3-header-admit-v2` · `lane-g/campaign-pivot-descent` · `lane-g/default-lane-v3-corpus` · `worktree-agent-a71787913fa62bfca`)
+  - 보호 prefix 15개 — 라이브 세션 활성 브랜치 (`h1149/*` ×3, `h1201/` · `h1207/` · `h1208/` · `h1213/` · `h1218/` · `h1221/` · `h1230/` · `h1231/` · `h1281/` · `h1283/` · `h1284/` · `h1285/`)
+  - PR 기록 없는 진짜 미머지 작업 151개 (`git rev-list --count origin/main..` > 0 = main 에 없는 커밋 보유 → 디버전트 작업으로 보존)
+  - 판정 에러 1개 (`chore/frame-trap-top`, ambiguous ref → 보존)
+  - `main` 무손상 (삭제 후 `git rev-parse origin/main` 확인)
+- **복구 로그 (c5)**: 삭제한 1,511개 전부 `<branch> <sha>` 를 `scripts/scratch/remote-branches-deleted-20260615.log` 에 기록 — 각 SHA 는 로컬 오브젝트로 검증됨, `git push origin <sha>:refs/heads/<name>` 로 복구 가능.
+- **before/after**: 세션 시작 시 원격 헤드 ~1,684개(main 포함) → 1,511 삭제. 정리 도중 2번째 라이브 세션이 새 브랜치(h1285/h1288-h1291 등)를 계속 생성 중이라 최종 `ls-remote` 헤드 수는 순감과 다름.
+- **방법 노트**: `git branch -r` 의 `refs/remotes/agent-*` 잔여 ref 7개(non-origin)는 origin 브랜치 아님 → 제외. gh api DELETE 는 백그라운드 셸에서 hang(동시성) → 포그라운드 순차 `</dev/null` 청크로 전량 삭제. solo AI 워크플로(외부 협업자 없음)라 머지-완료 브랜치 삭제는 표준 위생.
 
 ---
 
