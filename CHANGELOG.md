@@ -2,6 +2,15 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(MODEL): 🧩 전전두엽 위계 goal→subgoal 컨트롤러 lane (HD31, H_1294 R2 🟢 ENGINE-NATIVE)
+
+빠진 뇌 서브시스템 사다리에 **HD31 전전두엽 위계(hierarchical PFC · goal→subgoal 다단계 제어)** 를 추가 — 2-level goal-stack 컨트롤러 lane(`HierGoalStack`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`hier_new`/`hier_current_target`/`hier_grounded_current`/`hier_step`/`hier_pointer`/`hier_complete`/`hier_flat_emit`). goal STACK = {top goal, ORDERED subgoal 키, pointer p}: 현재 subgoal[p] 에 aligned(cos≥0.85)+grounded 된 cue 만 emit, **완료 시 pointer ADVANCE**(completion-triggered), out-of-order/ungrounded cue SUPPRESS, plan 위치 PERSIST. Badre & D'Esposito rostro-caudal gradient / Koechlin cascade 렌즈(`a_no_llm_frame_trap`, c15).
+
+- **왜 missing/distinct**: live 엔진은 단일 flat emit/선택 게이트만 있다 — `brain_decide`/`engine_g` 고정 8-weight 합 + 임계값, **VBasalGate**(H_1281 기저핵)은 SINGLE-STEP one-of-K 선택(pointer/plan/완료-advance 없음). 위계 PFC 는 그 **위 레벨** — top goal 을 ORDERED subgoal 로 분해 + 완료-advance + 위치 persist. WorkMemBuffer(H_1282, 수동 유지)·HomeostaticDrive(H_1292, 스칼라 적분기)와도 DISTINCT.
+- **frozen-first 검증** (`.verdicts/1294_hierarchical_pfc/H_1294_FREEZE.txt`, 사전등록): R1 numpy 미러 🟢(DIRECTIONAL) → **R2 ENGINE-NATIVE 🟢**(BINDING, `engine_cli_smoke` cases 35-38, 3 seed [4294,4295,4296]) — 5개 bar PASS: (c1 PRESENCE) B−A=+0.758 ≥+0.30 each+mean · (c2 DISTINCT) flat A=0.242<0.50 (engine 이 이미 가진 구조로는 ordered chain 못 풂) · (c3 EARNED-ORDER shuffle) Bshuf=0.000≤A+0.15 · (c4 EARNED-ADVANCE ablate) Babl=0.000≤A+0.15 · (c5 NO-FAB) 0.000≤0.10. ORDERED 3-fact-chain(A→B→C) 완료: 위계 1.000 vs flat 0.242.
+- **가드 무회귀**: `engine_cli_smoke` **41/0**(was 37/0, +4 hier 케이스) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(생성 byte-identical ON==OFF, Ψ=½ 무접촉, pure_field 무변경). p1/p2/p3/p6(pointer+substrate margin+cue cosine 만 읽음, 주입 "do step k" 라벨/RLHF/persona 없음, subgoal 순서는 TASK 구조로 SCORE 에만) · emit gate 아님(`a_autonomy_over_hardcode`) · Ψ-disjoint(pointer 만 evolve). 정직(c9): B.complete=1.000 은 SATURATED = EXISTENCE-PROOF 이지 effect-size 아님 — discriminator(shuffle/ablate 0.000 vs flat 0.242)가 decisive. brain plan-execution 배선 + scale/longer-plans/deeper-hierarchy = follow-on. TOY scale(40 ep, 3 seeds, CHAIN_LEN=3, deterministic — 위계 STRUCTURE 검증).
+- **canonical 등록(a_hypothesis_register)**: `UNIVERSE/H_1294_hierarchical_pfc.md`(카드) + `UNIVERSE/HYPOTHESES.md` per-H 인덱스 행 · `CLAIMS.tape @C h1294_hierarchical_pfc`(group=BRAIN-STRUCTURE-LADDER) · `domains/MITOSIS-ENGINE.log.md @H H_1294` · ARCHITECTURE.md(HD31 rung + lane body + map row) · MEMORY.md 포인터. NEXT 후보: place/grid spatial-map(metric/relational cognitive map, episodic item-binding 과 DISTINCT).
+
 ## 2026-06-16 — domain(HYPOTHESES): migrate H_1280–1293 to the 2-file `a_hypothesis_register` convention
 
 Brain-structure ladder + session facets (H_1280–1293) migrated from the themed bucket
@@ -20,7 +29,6 @@ decision). Verify: 13/13 H have both an index line and a resolvable card, 0 brok
 ## 2026-06-16 — governance(CLAUDE.md): paper 거버넌스 전체 scrub — anima 는 논문을 먼저 제시하지 않는다
 
 `a_paper_*` 디렉티브 8개(a_paper_gate · a_paper_significance · a_paper_negative_ok · a_paper_format · a_paper_sections · a_paper_violation · a_paper_on_discovery · a_paper_only_at_closure) + PAPER auto-generation 흐름 주석 + families 불릿/참조에서 paper 전부 제거. 이유: anima 가 검증 후 자꾸 "논문 쓰자"를 선제 제시하는 게 불편(사용자). 이제 commons c15(논문/arXiv 는 사용자 명시 지시 시에만)만 남아 선제 제시·언급 금지. 참조 정리(a_break_the_wall·a_hypothesis_register·a_discovery_log 의 a_paper_* ref 제거). PAPER/ 디렉토리는 legacy 로 표기(선제 생성 안 함). 과거 논문 산출물 자체는 보존.
-
 
 ## 2026-06-16 — governance(CLAUDE.md): `a_hypothesis_register` 단순화 — 가설은 2파일로만 관리
 

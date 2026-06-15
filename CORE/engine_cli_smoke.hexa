@@ -377,6 +377,58 @@ fn main() {
     if _assert_b("case_34_witnessed_revision_overwrites", true,
                  other_mind_predict(om1, "obj_x") == "box" && other_mind_count(om1) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (i) HIERARCHICAL-PFC GOAL→SUBGOAL CONTROLLER (H_1294 R2, HD31) ──────────────
+    // The hier controller is ADDITIVE + Ψ-disjoint (a READ over the immune margin + cue
+    // cosine + its OWN pointer; no store mutation, no pure_field touch). These cases
+    // prove the lane's moving parts deterministically on the live DIM-4 `mg` grow store.
+    // The ORDERED 3-subgoal chain = gk0("A") → gk1("B") → gk2("C") (the decomposed plan);
+    // gk3/gk4/gk5 ("D"/"E"/"F") are out-of-order / distractor cues. The keys are
+    // near-orthogonal (cos(gk_i,gk_j)≈0 for distinct basis keys) so a cue cleanly aligns
+    // ONLY to its own subgoal — the substrate-derived current-subgoal read (NO label).
+
+    let hchain = [gkeys[0], gkeys[1], gkeys[2]]   // ordered subgoal target keys (A→B→C)
+
+    // case 35 : the controller COMPLETES the ordered chain — stepping the cues IN ORDER
+    //   gk0,gk1,gk2 advances the pointer 0→1→2→3, so hier_complete is true and the
+    //   pointer reached n_sub. (B.complete=1.000 in the R1 mirror, realized engine-native.)
+    let hs0 = hier_new(hchain)
+    let hs1 = hier_step(hs0, mg, gkeys[0])   // grounds subgoal 0 → advance to 1
+    let hs2 = hier_step(hs1, mg, gkeys[1])   // grounds subgoal 1 → advance to 2
+    let hs3 = hier_step(hs2, mg, gkeys[2])   // grounds subgoal 2 → advance to 3 (done)
+    if _assert_b("case_35_hier_completes_ordered_chain", true,
+                 hier_complete(hs3) && hier_pointer(hs3) == 3) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 36 : the controller SUPPRESSES out-of-order cues — at pointer 0 (pursuing
+    //   subgoal A) an out-of-order cue for subgoal C (gk2) does NOT advance the pointer
+    //   (it grounds in the store but does not ALIGN to the CURRENT subgoal). The plan
+    //   position PERSISTS across the distractor — the ordering is load-bearing.
+    let hs_oo = hier_step(hs0, mg, gkeys[2])
+    if _assert_b("case_36_hier_suppresses_out_of_order", true,
+                 hier_pointer(hs_oo) == 0 && !hier_grounded_current(hs0, mg, gkeys[2])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 37 : DISTINCT from the FLAT selector (the live-engine analogue / VBasalGate
+    //   stand-in) — the flat one-of-K selector has NO pointer: shown a window where the
+    //   out-of-order cue gk2 outranks the current subgoal, it emits gk2 REGARDLESS of plan
+    //   position (best-grounded), whereas the hier controller holds pointer 0 and refuses
+    //   gk2. A window of {gk2 (out-of-order C), gk0 (current A)}: flat emits one of them by
+    //   raw margin with no ordering; the hier controller would only accept gk0 at p=0.
+    let hwin = [gkeys[2], gkeys[0]]
+    let flat_pick = hier_flat_emit(mg, hwin)
+    // flat picks SOME grounded cue (>=0) by margin alone — it cannot encode "C only after
+    //   A"; the hier controller at p=0 rejects gk2 (index 0 of the window) as out-of-order.
+    let flat_no_order = (flat_pick >= 0) && !hier_grounded_current(hs0, mg, hwin[0])
+    if _assert_b("case_37_flat_selector_lacks_ordering", true, flat_no_order) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 38 : the LIFT is the completion-ADVANCE mechanism (dissociation control) — a
+    //   controller whose pointer NEVER advances (we re-step the SAME stack hs0 without
+    //   threading the returned state) stays pinned at subgoal 0 and NEVER completes the
+    //   chain, even fed the correct cues in order. Advancing the pointer is what earns the
+    //   completion (the R1 B-ablate arm collapsed to 0.000 by freezing the pointer).
+    let frozen_a = hier_step(hs0, mg, gkeys[0])   // advances a COPY, hs0 itself unchanged
+    let frozen_b = hier_step(hs0, mg, gkeys[1])   // gk1 does NOT ground subgoal 0 from hs0
+    if _assert_b("case_38_frozen_pointer_never_completes", true,
+                 hier_pointer(hs0) == 0 && !hier_complete(frozen_b) && hier_pointer(frozen_b) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
