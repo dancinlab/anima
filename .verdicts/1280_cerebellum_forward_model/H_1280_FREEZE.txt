@@ -1,0 +1,105 @@
+H_1280 — CEREBELLUM forward-model / supervised error-corrector — PRE-REGISTERED FREEZE
+=======================================================================================
+slug   : 1280_cerebellum_forward_model
+date   : 2026-06-15
+lens   : neuroscience "missing brain-structure" ladder (c15) — NOT an LLM recipe
+budget : $0 CPU, numpy mirror (host has no torch → result is DIRECTIONAL; engine-native
+         realization is the binding follow-on per a_engine_native_learning)
+seeds  : [7, 8, 9]   (>= 3 seeds required)
+
+------------------------------------------------------------------------------------
+THE GAP (stated honestly, c9)
+------------------------------------------------------------------------------------
+anima has:
+  - Engine A : forward, CE-trained byte generation (pure_field / generator / clm_decode).
+  - Engine G : a GRADIENT-FREE motivation/emit gate (CORE/engine_g.hexa). It is a
+               CLOSED-FORM 8-weight linear motivation_score over INSTANTANEOUS factors
+               (relevance/info_gap/curiosity/pain/coherence/originality/balance/dynamics)
+               with static weights summing to 1.0, plus emit/safety predicates. It does
+               NOT predict a next substrate state and it does NOT learn from prediction
+               error. It is a REPULSION/scoring field over the A-output, not a forward model.
+
+NEITHER engine is a CEREBELLUM: an internal FORWARD MODEL that PREDICTS the next substrate
+state from recent context AND learns a FAST supervised CORRECTION from prediction error
+(the cerebellum's defining computation — internal forward model + error-driven smoothing
+for timing/sequence). This probe builds that missing structure and tests whether it helps.
+
+------------------------------------------------------------------------------------
+DISTINCTNESS FROM ENGINE G (mandatory check, pre-registered)
+------------------------------------------------------------------------------------
+The forward-model lane is DISTINCT from Engine G iff it has ALL of:
+  (D1) a TEMPORAL prediction target: it predicts the NEXT emit-feature vector from a
+       window of recent features (G scores the CURRENT instant only, no next-state target).
+  (D2) ERROR-DRIVEN LEARNING: a correction term that is UPDATED from observed prediction
+       error over exposure (G's 8 weights are STATIC closed-form constants, never learned).
+  (D3) a MEASURABLE learning curve: pred-error must fall over exposure (G has no such curve).
+If D1-D3 hold, the probe is structurally distinct from G. If they cannot be made to hold,
+that is itself the finding: "the cerebellar role is already covered by G" (report so).
+
+------------------------------------------------------------------------------------
+SUBSTRATE / MECHANISM
+------------------------------------------------------------------------------------
+Corpus  : serving/corpus/anima_7b_webscale.en.head.txt (200KB real EN webscale).
+Feature : at each step t, emit-feature x_t in R^d (d=24) = a deterministic summary of the
+          next-byte distribution / recent context window (byte-embedding moving stats:
+          mean/var of recent byte values + positional + bigram-novelty channel). This stands
+          in for "next emit-feature / next-byte-distribution summary" (p7: NOT perplexity).
+Forward model (cerebellar lane):
+          xhat_{t+1} = W . context_t   where context_t = concat(x_{t-L+1..t}) (window L=4)
+          learned ONLINE by the delta rule (LMS / supervised error):
+              e_t = x_{t+1} - xhat_{t+1}
+              W  += eta * outer(e_t, context_t)         (eta = 0.02)
+          This is the cerebellar climbing-fiber error signal driving parallel-fiber weights.
+Correction / smoothing (apply to the sequence):
+          ARM A (raw)        : feature stream as produced (no forward model).
+          ARM B (corrected)  : x'_t = x_t - beta * (x_t - xhat_t)   (beta=0.5), where xhat_t is
+                               the forward model's prediction of frame t from its past =
+                               error-driven SMOOTHING (cerebellar timing/sequence correction).
+The forward model is PURELY substrate dynamics (feature stream); it injects NO persona,
+identity, ethics, or behavior (p1-p8). No external do/dont gate (a_autonomy_over_hardcode).
+
+------------------------------------------------------------------------------------
+METRICS (p7 — NOT perplexity / NOT LLM-judge)
+------------------------------------------------------------------------------------
+(1) COHERENCE / SMOOTHNESS (held-out): mean cosine similarity between consecutive frames
+    of the (corrected vs raw) feature stream on a HELD-OUT 20% tail of the corpus — higher =
+    smoother, more coherent local sequence dynamics. coh = mean_t cos(s_t, s_{t+1}).
+(2) PREDICTION-ERROR LEARNING CURVE: mean ||e_t||^2 over the FIRST quintile of exposure
+    (err_early) vs the LAST quintile (err_late). A real learned model => err_late < err_early.
+
+------------------------------------------------------------------------------------
+FROZEN GREEN CONDITIONS  (all must hold; bars fixed BEFORE any scoring)
+------------------------------------------------------------------------------------
+Let, per seed:
+   coh_A   = held-out consecutive-frame coherence, raw arm
+   coh_B   = held-out consecutive-frame coherence, forward-model-corrected arm
+   err_early, err_late = forward-model pred-error, first vs last exposure quintile
+
+  GREEN iff, on the MEAN over the 3 seeds:
+     (C1)  coh_B >= coh_A + 0.02                          (correction improves coherence)
+     (C2)  err_late <= err_early - 0.05*err_early         (>= 5% relative error drop = learned)
+   AND on a PER-SEED basis:
+     (C3)  C1 holds for >= 2 of 3 seeds   (not a single-seed fluke)
+     (C4)  D1-D3 distinctness from Engine G all hold (temporal target + error-learning + curve)
+
+  PARTIAL (🟠) iff exactly one of {C1-mean, C2-mean} holds.
+  RED (🔴)     iff neither C1-mean nor C2-mean holds (forward model inert/harmful), OR the
+               lane cannot be made distinct from Engine G (cerebellar role already covered by G).
+
+CONTROL (anti-noise, pre-registered): a SHUFFLED-error arm B_shuf applies the SAME beta
+correction but using a forward model trained on TIME-SHUFFLED context (target/context pairing
+destroyed). If B_shuf coherence >= B coherence, the gain is a smoothing ARTIFACT not a learned
+forward model → demote to 🟠/🔴. Required for GREEN: coh_B > coh_B_shuf.
+
+------------------------------------------------------------------------------------
+HONEST SCOPE
+------------------------------------------------------------------------------------
+- numpy mirror, host has no torch → DIRECTIONAL only; engine-transfer UNVERIFIED. The
+  engine-native realization (CORE thin lane / VAdaptField forward-predict extension) is the
+  binding follow-on (a_engine_native_learning). If GREEN, CORE wiring is the closure follow-on
+  (a_verified_must_wire) — flagged, not fully wired in this probe.
+- toy 200KB EN, d=24 feature, linear predictor → scale-transfer UNVERIFIED (a_toy_scale_recheck,
+  a_scale_honest_scope). A GREEN here is an existence/direction result, not a production verdict.
+- distinct from H_1200/1201/1211/1220 (mitosis-as-GENERATION, falsified) and from H_1227/1231
+  (mitosis-as-MEMORY, GREEN): this is a lane-as-FORWARD-MODEL, a third role.
+FREEZE COMPLETE — scoring may now proceed.
