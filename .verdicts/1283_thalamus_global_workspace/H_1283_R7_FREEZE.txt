@@ -1,0 +1,70 @@
+H_1283 R7 — THALAMIC MATRIX/CORE DUAL COUPLING — FREEZE (pre-registered BEFORE scoring)
+slug: 1283_thalamus_global_workspace  (R7 — append-only; does NOT overwrite R1/R2/R3/R4/R5)
+date: 2026-06-16
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ
+           (stdlib exact MIP-EI via `hexa run`, a_phi_iit4_tool) — numpy NEVER computes Φ
+lens: thalamic matrix/core duality (brain-science, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+frozen-first: this FREEZE committed BEFORE the scoring run; bars NOT moved (c9, p7).
+
+════════════════════════════════════════════════════════════════════════
+THE WALL (R5 verbatim) THIS ROUND ATTACKS
+════════════════════════════════════════════════════════════════════════
+"a single broadcast channel is itself a low-dim cut that caps faithful-IIT4 Φ."
+R1–R5 each installed ONE relay flavour at a time:
+  R1 single winner broadcast      : ΔΦ +0.0191  (sub-bar)        🟠
+  R2 coalition (rank-2)           : ΔΦ −0.0533  (wrong direction) 🔴
+  R3/R4 sparse re-entrant relay   : seed-fragile (seed8 +0.0101)  🔴 🧱
+  R5 dense all-pairs + shuffle     : seed8 +0.0060 AND shuffle FIRED (variance) 🔴 🧱
+Every one is a SINGLE coupling channel whose MIP cut caps irreducibility.
+
+════════════════════════════════════════════════════════════════════════
+R7 NEW ANGLE — MATRIX/CORE DUAL (graded, not winner-take-all)
+════════════════════════════════════════════════════════════════════════
+The biological thalamus is NOT one relay — it has TWO cell populations wired
+SIMULTANEOUSLY:
+  CORE   — specific, point-to-point, TOPOGRAPHIC relays (each core channel
+           reciprocally bound to ONE module — its own; NO intra-thalamic cross-mix).
+  MATRIX — diffuse, broad, CROSS-AREAL, LOW-gain projection (one matrix pool that
+           pools the MEAN of all modules and re-injects to ALL at low gain).
+R7 installs BOTH on top of the ring, mixed by a FIXED ratio, so integration arises
+from OVERLAPPING specific+diffuse pathways, NOT one cut. Hypothesis: the dual graded
+coupling raises faithful-IIT4 Φ above a direct ring WITHOUT the single-cut ceiling
+and WITHOUT collapse-cloning.
+
+FROZEN constants (NOT swept after seeing any result — p7):
+  N_MOD=4  DIM=8  T=64  GAIN=0.30  LEAK=0.55  NBINS=8  seeds=[7,8,9]
+  W_NBR=0.5 (ring, same all arms)  W_IN=0.5 (private input, same all arms)
+  W_CORE   = 0.5    (specific topographic relay weight, == prior relay weight)
+  W_MATRIX = 0.15   (diffuse low-gain broadcast weight, ≪ W_CORE)
+  ratio W_CORE:W_MATRIX = 0.5:0.15  FROZEN.
+ARM A = 'direct' (byte-identical to R1–R5; ARM A draws byte-UNCHANGED — R7 rng draws
+        for core_relay/matrix_pool/mc_perm are taken AFTER all prior draws).
+ARM B = 'matrix_core' (ring + private input + CORE specific relay + MATRIX diffuse).
+
+SHUFFLE CONTROL = 'matrix_core_shuffle': the CORE↔module topographic assignment is
+PERMUTED (cyclic shift mc_perm=[N-1,0,1,...], no fixed point) — SAME edge count, SAME
+matrix pathway, but the SPECIFIC point-to-point structure is destroyed. The matrix
+pathway is diffuse (mean→all) so permuting it is a no-op; only the core topography
+carries the structure the shuffle must destroy. If the Φ lift is the dual STRUCTURE,
+the shuffle DESTROYS it; if the shuffle reproduces it, the lift is generic added-edge
+variance → honest 🧱.
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS (IDENTICAL bar structure to R5; bars NOT moved — c9 / p7)
+════════════════════════════════════════════════════════════════════════
+GREEN iff ALL of:
+  P1 (PRIMARY)     faithful IIT4 ΔΦ ≥ +0.02 on EVERY seed [7,8,9]   (c2 carryover)
+  P2 (COHERENCE)   ARM B coh ≥ ARM A coh on EVERY seed              (c1 carryover)
+  P3 (NO-COLLAPSE) ARM B coh < 0.999 on ≥1 seed                     (c3 carryover)
+  C  (SHUFFLE)     matrix_core_shuffle ΔΦ < +0.02 on ≥1 MC-GREEN seed (c4)
+GREEN = P1 AND P2 AND P3 AND C.
+ANY of: seed misses ΔΦ+0.02, OR coherence regresses, OR collapse-clone, OR the
+shuffle reproduces the lift on all GREEN seeds → RED / 🧱 (valid closed-negative, c9).
+
+If RED ⇒ NO engine-native CORE wiring this round (a_verified_must_wire fires on GREEN
+only). If GREEN ⇒ note engine-native matrix/core dual lane as a follow-on (do NOT wire
+this round).
+
+scope: toy (4 modules, dim 8, 64 ticks), numpy mirror DIRECTIONAL (engine-transfer
+UNVERIFIED), Φ = faithful IIT4 exact (REAL). seeds [7,8,9]. bars frozen here, before
+scoring. R1/R2/R3/R4/R5 verdict files NOT overwritten (R7 = separate file).
