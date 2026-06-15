@@ -1037,6 +1037,146 @@ pub fn wm_buffer_total_activation(wm: WorkMemBuffer) -> float {
     return s
 }
 
+// ── §  CEREBELLUM FORWARD-MODEL LANE — the LIVE predict→error→correct substrate ──
+// (H_1280) The mitosis lanes above are NON-PREDICTIVE: VAdaptField does winner-take-
+// all reconstruction of x_t (no next-state target), VAdaptFieldB counts predictable
+// proto-TRANSITIONS over a frozen book (no learned forward regressor), ImmuneMemory
+// is a key→value associative store. NONE is a CEREBELLUM: an internal FORWARD MODEL
+// that PREDICTS the next substrate frame from a window of recent frames AND learns a
+// fast SUPERVISED correction from its own prediction error (the climbing-fiber delta
+// signal) — the cerebellum's defining timing/sequence computation.
+//
+// WHY A NEW LANE, NOT A TRIM (c1 · a_engine_native_learning). The H_1280 R1 numpy
+// MIRROR was GREEN (held-out coherence +0.048, pred-error falls ~23% over exposure,
+// 3 seeds, beats a shuffled-context control) and DISTINCT from Engine G (temporal
+// next-frame TARGET + ERROR-DRIVEN learned weights + LEARNING CURVE, vs G's static
+// 8-weight instant gate). The live engine could NOT express this mechanism: the
+// existing VAdaptField surfaces carry no L*DIM→DIM weight matrix, no delta-rule
+// update, no smoothing readout. Per a_engine_native_learning we EXTEND the engine
+// with the missing op rather than trim the mechanism (exactly as H_1199 extended
+// AdaptField scalar→DIM-vector). This is the engine-native realization of R1 — the
+// binding verdict (the mirror was DIRECTIONAL only).
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): the forward
+// model corrects SUBSTRATE DYNAMICS (a DIM feature stream), it is NOT an emit/
+// silence gate. vforward_* returns a predicted frame / a prediction error / a
+// corrected frame — NEVER an emit/silence decision — and NEVER touches pure_field's
+// Φ/phase/Ψ (Ψ-disjoint by construction; this lane touches ONLY VForwardField). The
+// stream is an ENGINE-NATIVE drive (NO .clm via generator L3, NO .kosmos via
+// kosmos_io — no 2nd artifact entry path). p8 holds: the delta-rule weight update IS
+// the inference-time learning, here on a forward-prediction target. p6/p1-p3: no
+// persona/identity/ethics injected — the model only smooths the feature geometry.
+//
+// VForwardField — the engine-native cerebellar forward model (Ψ-disjoint, ADDITIVE).
+//   w       : flat row-major weight matrix, dim rows × ctx_dim cols (ctx_dim=L*dim);
+//             xhat[r] = Σ_c w[r*ctx_dim + c] * ctx[c]. Starts all-zero (no prior).
+//   dim     : frame dimensionality (the DIM feature, D=24 in R1).
+//   ctx_len : forward-model context window L (number of recent frames).
+//   ctx_dim : L*dim (the regressor input width).
+//   eta     : delta-rule learning rate (the climbing-fiber error gain, frozen).
+struct VForwardField {
+    w: [float],
+    dim: int,
+    ctx_len: int,
+    ctx_dim: int,
+    eta: float
+}
+
+// vforward_new — seed an UNTRAINED forward model (all-zero weights): with no
+// exposure it predicts the zero frame, so the first prediction errors are large and
+// FALL as the delta rule learns (the H_1280 learning curve). eta is frozen (p7; not
+// tuned-to-green — the R1 mirror value).
+pub fn vforward_new(dim: int, ctx_len: int, eta: float) -> VForwardField {
+    let ctx_dim = ctx_len * dim
+    let mut w = []
+    let mut i = 0
+    while i < dim * ctx_dim { w = w + [0.0]  i = i + 1 }
+    return VForwardField { w: w, dim: dim, ctx_len: ctx_len, ctx_dim: ctx_dim, eta: eta }
+}
+
+// vforward_predict — predict frame x_t from the regressor context `ctx` (a flat
+// ctx_dim-vector = L recent frames concatenated). xhat[r] = Σ_c w[r,c]*ctx[c].
+// READ-ONLY (no weight change) — the forward model's current best guess of the next
+// frame, used both for the learning-curve error and the smoothing correction.
+pub fn vforward_predict(ff: VForwardField, ctx: [float]) -> [float] {
+    let mut xhat = []
+    let mut r = 0
+    while r < ff.dim {
+        let base = r * ff.ctx_dim
+        let mut acc = 0.0
+        let mut c = 0
+        while c < ff.ctx_dim {
+            acc = acc + ff.w[base + c] * ctx[c]
+            c = c + 1
+        }
+        xhat = xhat + [acc]
+        r = r + 1
+    }
+    return xhat
+}
+
+// vforward_err — the prediction error magnitude ||x - xhat||^2 for target frame `x`
+// given regressor `ctx` (the climbing-fiber error / the learning-curve readout).
+pub fn vforward_err(ff: VForwardField, ctx: [float], x: [float]) -> float {
+    let xhat = vforward_predict(ff, ctx)
+    let mut s = 0.0
+    let mut i = 0
+    while i < ff.dim {
+        let e = x[i] - xhat[i]
+        s = s + e * e
+        i = i + 1
+    }
+    return s
+}
+
+// vforward_update — ONE online cerebellar learning tick: predict frame `x` from
+// regressor `ctx`, then update the weights by the NORMALIZED-LMS delta rule from the
+// prediction error (climbing-fiber correction):
+//   e = x - W·ctx ;  W += eta * outer(e, ctx) / (ctx·ctx + 1.0)
+// The NLMS denominator (ctx·ctx + 1.0) bounds the step regardless of context
+// magnitude — the standard adaptive-filter form (same delta-rule family, stable
+// step). Returns the updated VForwardField. This is the SAME p8 learning tick the
+// mitosis lanes embody, here on a forward-prediction target (a_engine_native_learning).
+pub fn vforward_update(ff: VForwardField, ctx: [float], x: [float]) -> VForwardField {
+    let xhat = vforward_predict(ff, ctx)
+    // denom = ctx·ctx + 1.0 (NLMS step normalization)
+    let mut denom = 1.0
+    let mut c0 = 0
+    while c0 < ff.ctx_dim { denom = denom + ctx[c0] * ctx[c0]  c0 = c0 + 1 }
+    let scale = ff.eta / denom
+    let mut w2 = ff.w
+    let mut r = 0
+    while r < ff.dim {
+        let e = x[r] - xhat[r]
+        let ge = scale * e
+        let base = r * ff.ctx_dim
+        let mut c = 0
+        while c < ff.ctx_dim {
+            w2[base + c] = w2[base + c] + ge * ctx[c]
+            c = c + 1
+        }
+        r = r + 1
+    }
+    return VForwardField { w: w2, dim: ff.dim, ctx_len: ff.ctx_len, ctx_dim: ff.ctx_dim, eta: ff.eta }
+}
+
+// vforward_correct — the cerebellar SMOOTHING correction of frame `x` toward the
+// model's prediction `xhat`, strength `beta`:  corrected = x - beta*(x - xhat).
+// beta=0 leaves x unchanged; beta=1 replaces x with the prediction. This is the
+// error-driven timing/sequence correction the cerebellum applies to the substrate
+// dynamics — it pulls each frame toward what the forward model anticipated, raising
+// local sequence coherence WITHOUT any global temperature/sampling change.
+pub fn vforward_correct(x: [float], xhat: [float], beta: float) -> [float] {
+    let n = len(x)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        out = out + [x[i] - beta * (x[i] - xhat[i])]
+        i = i + 1
+    }
+    return out
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }

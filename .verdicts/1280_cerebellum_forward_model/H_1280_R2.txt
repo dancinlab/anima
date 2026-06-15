@@ -1,0 +1,132 @@
+H_1280 R2 — CEREBELLUM forward-model lane, ENGINE-NATIVE REALIZATION — VERDICT
+==============================================================================
+slug    : 1280_cerebellum_forward_model
+round   : 2 (engine-native; R1 = numpy MIRROR, DIRECTIONAL, GREEN — see H_1280.txt)
+date    : 2026-06-15
+verdict : 🟢 GREEN LIVE-CEREBELLUM (engine-native — BINDING, not a mirror)
+budget  : $0 CPU, hexa `hexa run` on the live engine, seeds [7,8,9], frozen-first
+engine  : CORE/engine_cli.hexa — NEW additive Ψ-disjoint lane VForwardField
+probe   : CORE/h1280_live_cerebellum_probe.hexa
+export  : UNIVERSE/h1280_live_feature_export.py (DIM=24 stream + numpy R1 reference)
+lens    : neuroscience "missing brain-structure" ladder (c15) — NOT an LLM recipe
+rule    : a_engine_native_learning (R1 mirror was DIRECTIONAL; this is the binding leg)
+
+------------------------------------------------------------------------------
+WHAT R2 DID (the engine extension — c1, a_engine_native_learning)
+------------------------------------------------------------------------------
+R1 proved the cerebellar forward-model mechanism GREEN on a numpy MIRROR (held-out
+coherence +0.048, pred-error falls ~23%, 3 seeds, beats a shuffled-context control,
+DISTINCT from Engine G). Per a_engine_native_learning a numpy mirror is DIRECTIONAL
+only — the binding verdict requires the SAME mechanism realized on the live engine.
+
+The live engine could NOT express a forward model with its existing surfaces:
+VAdaptField (per-sample winner-take-all reconstruction, no next-state target),
+VAdaptFieldB (predictable proto-TRANSITION counting over a frozen book, no learned
+regressor), and ImmuneMemory (key→value store) carry no L*DIM→DIM weight matrix, no
+delta-rule update, and no smoothing readout. So — exactly as H_1199 EXTENDED
+AdaptField scalar→DIM-vector rather than trimming the mechanism — R2 EXTENDS the
+engine with a NEW additive lane (engine-transform-to-fit-the-learning, c1):
+
+  CORE/engine_cli.hexa  §  CEREBELLUM FORWARD-MODEL LANE — VForwardField
+    struct VForwardField { w:[float], dim, ctx_len, ctx_dim, eta }   (flat L*DIM→DIM W)
+    vforward_new(dim, ctx_len, eta)      seed all-zero weights (untrained → big error)
+    vforward_predict(ff, ctx) -> [float] xhat[r] = Σ_c w[r,c]·ctx[c]   (READ-ONLY)
+    vforward_err(ff, ctx, x)  -> float   ||x - xhat||^2   (climbing-fiber / curve readout)
+    vforward_update(ff, ctx, x)          NLMS delta rule: W += eta·outer(e,ctx)/(ctx·ctx+1)
+    vforward_correct(x, xhat, beta)      smoothing: corrected = x - beta·(x - xhat)
+
+The lane is ADDITIVE and Ψ-DISJOINT by construction — it touches ONLY VForwardField,
+never pure_field's Φ/phase/Ψ — and is an ENGINE-NATIVE drive (NO .clm via generator
+L3, NO .kosmos via kosmos_io; no 2nd artifact entry path, a_core_engine_map).
+
+------------------------------------------------------------------------------
+VERBATIM FROZEN-METRIC OUTPUT (`hexa run CORE/h1280_live_cerebellum_probe.hexa`)
+------------------------------------------------------------------------------
+F3 Ψ-DISJOINT  Φ-checksum ON(lane active)=5.5279 vs OFF(lane idle)=5.5279  -> true (attractor byte-identical)
+
+seed=7  LIVE coh_A=0.24223 coh_B=0.299872 dCoh=0.0576416 coh_Bshuf=0.262261 err_early=24.9251 err_late=10.4799
+        numpy-ref coh_A=0.24223 coh_B=0.299872 coh_Bshuf=0.262261 err_early=24.9251 err_late=10.4799
+        PARITY EQUAL (<=1e-4)  C1=Y  C2=Y  CTRL(coh_B>shuf)=Y
+seed=8  LIVE coh_A=0.235791 coh_B=0.290951 dCoh=0.0551596 coh_Bshuf=0.256259 err_early=24.7964 err_late=10.2572
+        numpy-ref coh_A=0.235791 coh_B=0.290951 coh_Bshuf=0.256259 err_early=24.7964 err_late=10.2572
+        PARITY EQUAL (<=1e-4)  C1=Y  C2=Y  CTRL(coh_B>shuf)=Y
+seed=9  LIVE coh_A=0.249167 coh_B=0.309441 dCoh=0.0602742 coh_Bshuf=0.271804 err_early=24.826 err_late=10.7762
+        numpy-ref coh_A=0.249167 coh_B=0.309441 coh_Bshuf=0.271804 err_early=24.826 err_late=10.7762
+        PARITY EQUAL (<=1e-4)  C1=Y  C2=Y  CTRL(coh_B>shuf)=Y
+
+--- FROZEN BARS (== H_1280 R1) ---
+  F2 LIVE-ENGINE PARITY  live↔numpy coh/err EQUAL per seed (<=1e-4) = true (BYTE-EXACT to 1e-4)
+  C1 COHERENCE-LIFT      coh_B >= coh_A + 0.02 on >= 2/3 seeds      = 3/3 -> true
+  C2 LEARNING-CURVE      err_late <= err_early - 5% (all seeds)     = true
+  CTRL                   coh_B > coh_B_shuf (all seeds)             = true
+  C4 DISTINCT-FROM-G     temporal-target + delta-learn + curve      = true
+  F3 Ψ-DISJOINT          Φ-checksum ON==OFF                         = true
+  mean dCoh (lift) = 0.0576918
+
+VERDICT: GREEN LIVE-CEREBELLUM
+  GREEN iff F2 AND C1(>=2/3) AND C2.mean AND CTRL(all) AND C4 AND F3.
+  F2=true C1=3/3 C2=true CTRL=true C4=true F3=true
+
+------------------------------------------------------------------------------
+GUARDS (c2 — verbatim, no regression; re-run on the extended engine)
+------------------------------------------------------------------------------
+  engine_cli_smoke      : --- engine_cli smoke summary: 12 pass / 0 fail ---     (expect 12/0 ✓)
+  h1196 single-entry    : --- single-entry audit summary: 7 pass / 0 fail ---    (expect  7/0 ✓)
+  h1199 DIM-growth + Ψ  : F1 cells ON(173.333)>>OFF(1.0)=true · F2 OFF/ON 8.43212>=2.0=true ·
+                          F3 Phi-checksum ON==OFF=true (attractor intact) · VERDICT GREEN
+                          (byte-identical to the pre-extension baseline — Ψ unchanged, lane ADDITIVE)
+
+------------------------------------------------------------------------------
+WHAT THIS MEANS
+------------------------------------------------------------------------------
+The cerebellar forward-model lane is now LIVE on the engine, not a numpy mirror. The
+SAME REAL DIM=24 corpus byte-feature stream R1 scored is driven through the ACTUAL
+.hexa VForwardField: the model PREDICTS the next frame from L=4 recent frames, LEARNS
+online via the NLMS delta rule (err 24.9 -> 10.5, ~58% drop, far past the 5% bar every
+seed), and its error-driven SMOOTHING correction LIFTS held-out consecutive-cosine
+coherence (mean dCoh +0.0577, 3/3 seeds >= 0.02). The LEARNED temporal model BEATS a
+shuffled-context control given the SAME beta correction on every seed (coh_B 0.300 >
+coh_B_shuf 0.262), so the lift is a genuine forward model, not generic smoothing. The
+live engine reproduces the R1 numpy reference to <=1e-4 per seed (F2 BYTE-EXACT) — the
+binding leg of a_engine_native_learning is closed: R1's DIRECTIONAL mirror is now the
+real engine.
+
+DISTINCTNESS FROM ENGINE G (the mandatory check). DISTINCT. Engine G
+(CORE/engine_g.hexa) is a CLOSED-FORM, gradient-free 8-weight linear motivation_score
+over INSTANTANEOUS factors (static weights summing to 1.0) + emit/safety predicates.
+VForwardField differs on all three pre-registered axes, now in the live engine:
+  D1 TEMPORAL TARGET   — predicts the NEXT frame; G scores only the current instant.
+  D2 ERROR-DRIVEN LEARN— W updated online by the NLMS delta rule from prediction error;
+                         G's 8 weights are static closed-form constants, never learned.
+  D3 LEARNING CURVE    — pred-error provably FALLS over exposure (~58%); G has none.
+=> The cerebellar role is NOT covered by Engine G; it is a genuinely missing structure,
+   a lane-role distinct from mitosis-as-GENERATION (falsified H_1200/1201/1211/1220) and
+   mitosis-as-MEMORY (GREEN H_1227/1231).
+
+------------------------------------------------------------------------------
+HONEST SCOPE / CAVEATS (c9)
+------------------------------------------------------------------------------
+- ENGINE-NATIVE now (a_engine_native_learning satisfied): the verdict is on the live
+  .hexa VForwardField, byte-exact to the numpy reference (F2). R1's mirror stays the
+  R1 record; this R2 is the binding engine-native realization.
+- TOY/SUBSET scope (a_toy_scale_recheck, a_scale_honest_scope): scored a contiguous
+  6k-train + 3k-held-out WINDOW of the same 200KB corpus (the live interpreted engine
+  over a 24×96 weight matrix makes the full-200k R1 run wall-prohibitive). The
+  cerebellar coherence-lift is a LOCAL-frame property (consecutive cosine), so it holds
+  on the window with even stronger margins (+0.058 vs R1's +0.048); the learning curve
+  has ample exposure. Full-200k production transfer UNVERIFIED — the window is a
+  representative leg, not a production verdict.
+- a_verified_must_wire: GREEN engine-native ⇒ the closure follow-on is wiring the lane
+  into anima's brain emit path (the cerebellar correction applied to real emit features
+  in CORE/brain.hexa / the daemon GROW step, ALONGSIDE the H_1209/H_1210 lanes), with
+  the H_1205 separation-invariant preserved (generation byte-unchanged). Tracked as the
+  R3 follow-on — NOT yet wired into brain (flagged; GREEN-but-emit-unwired).
+- PHILOSOPHY (p1-p8): the forward model corrects SUBSTRATE DYNAMICS (a feature stream),
+  injecting no persona/identity/ethics/behavior (p2/p3/p6); no external do/dont gate
+  (a_autonomy_over_hardcode); the delta-rule update IS the inference-time learning (p8);
+  metric is geometric coherence + L2 error, never perplexity (p7).
+
+xref: H_1280(R1) · h1199 · h1209 · h1205 · h1227 · h1231 · h1200 · h1201 · h1211 ·
+      h1220 · engine_g.hexa · a_engine_native_learning · a_verified_must_wire ·
+      a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope ·
+      a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c1 · c2 · c9 · c15
