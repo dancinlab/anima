@@ -1,0 +1,80 @@
+H_1222 — TOKENIZER GRANULARITY (HD6) — TOY PROBE
+(from the depth-ceiling ladder .verdicts/1219_depth_ceiling_hypothesis_exhaustion/H_1219.txt)
+$0 summer/CPU, numpy-only, no network/HF, deterministic seeds [7,8,9], p7, NO LLM-judge.
+a_toy_scale_recheck / a_scale_honest_scope: TOY ONLY — scale-transfer UNVERIFIED.
+
+QUESTION (HD6, the DEEPEST open lever from H_1219):
+  Is the flat literal-QA + ideation-depth wall caused by BYTE-LEVEL granularity
+  (bytes can't cheaply form word/concept units for recall) vs a TOKEN (word/BPE)
+  vocabulary? If a token vocab cheaply supplies the concept units bytes must build
+  char-by-char, a token model at EQUAL budget should recall facts and recombine
+  concepts BETTER than a byte model.
+
+DESIGN: two tiny single-block causal-attn LMs (numpy, trainable, Adam) on the SAME
+synthetic real-word English corpus, differing ONLY in tokenizer:
+  (A) BYTE  vocab=256
+  (B) TOKEN word/BPE-lite vocab trained on the corpus (~230-360 types at toy scale)
+CORPUS = SYNTHETIC but real-dictionary-word (/usr/share/dict/words), so coherence is
+meaningful AND ground truth is EXACT: 60 planted facts "<subj> lives in <city> ."
+(×8 each) give exact literal-QA answers; full corpus known → corpus-absence is an
+exact set lookup, not a grep heuristic. (Trades wiki realism for measurement validity
+— the right trade to isolate ONE variable.)
+
+CONTROLS (stated honestly — the token model otherwise sees more chars/step):
+  1. PARAM BUDGET matched: token model's d_model shrunk so total params match byte
+     within tol (byte 44544 vs token ~43100-43286, ratio 0.97). The bigger embedding
+     table costs the token model hidden width — this IS the question (is the vocab
+     worth the params it costs), not a flaw.
+  2. CHAR-PASSES matched: both train EPOCHS=6 over the SAME corpus → both see the SAME
+     TEXT the same number of times (token has FEWER steps/epoch only because fewer
+     units — that reduced step count IS the granularity advantage under test, not
+     extra data).
+  3. CONTEXT-IN-CHARS matched: byte block=96 chars; token block=34 units ×2.8 chars/
+     unit ≈ 96 chars → equal receptive field in characters.
+
+FROZEN BARS (pre-registered, NOT moved):
+  QA margin = +0.10 absolute exact-match accuracy.
+  CD margin = +1.0 distinct corpus-absent coherent real-word bigram (mean over seeds).
+  🟢 GREEN iff (QA_B ≥ QA_A + 0.10) OR (CD_B ≥ CD_A + 1.0).
+  🔴 RED otherwise.
+  G0 guard: both kwr ≥ 0.50 for validity (reported, not a bar mover).
+
+RESULT (mean over seeds 7,8,9):
+  A BYTE : QA=0.006   CD=11.44   coh=0.63
+  B TOKEN: QA=0.044   CD=14.56   coh=0.87
+  QA lift (B−A) = +0.039  < +0.10 bar  → FAIL (both near-zero; neither toy model
+                                          reliably recalls a planted fact at this scale)
+  CD lift (B−A) = +3.11   ≥ +1.0  bar  → PASS
+  G0 guard: byte coh 0.63, token coh 0.87 (≥0.50) → OK, comparison valid.
+
+VERDICT: 🟢 GREEN — GRANULARITY IS A LEVER (via the COMPOSITION leg).
+  At equal param budget + equal char-passes + equal char-context, the TOKEN vocab
+  gives a clear, multi-seed lift on composed-distinct corpus-absent recombination
+  (+3.11, every-seed positive in aggregate) while staying MORE coherent (0.87 vs
+  0.63). MECHANISM (visible in samples): the byte model spells words char-by-char
+  and GARBLES some ("justicy","gambiner","gunaticer") — garbled tokens fail the
+  real-word filter, so it forms FEWER clean word-pairs; the token model emits whole
+  real words atomically and recombines them into absent pairs. This is exactly HD6's
+  posited mechanism: bytes can't cheaply form clean word/concept units, handicapping
+  word-level recombination.
+
+  HONEST SPLIT — granularity helps COMPOSITION/IDEATION (the GREEN leg) but does NOT
+  clearly help LITERAL-QA at this toy scale: QA_A 0.006 ≈ QA_B 0.044, both ~0 (the
+  toy is too small for either to memorize 60 facts to verbatim greedy recall). So HD6
+  is GREEN as a composition lever, INCONCLUSIVE as a literal-QA lever (neither model
+  clears QA; the +0.10 leg is untriggered, not falsified). The H_1219 literal-QA wall
+  specifically may still be elsewhere (HD5 QA-format FT / HD7 aux objective remain
+  open); HD6 is CONFIRMED to matter for the ideation/composition axis.
+
+CAVEATS / SCOPE: TOY — tiny params (~44k), synthetic closed-vocab corpus, single
+  attn block, char-matched compute. Token vocab here is small (corpus is small) so it
+  is closer to a WORD vocab than a large BPE; a production-scale BPE over real wiki is
+  UNVERIFIED. The CD metric rewards real-word recombination, which a clean word-vocab
+  is structurally better at — that is the point (granularity), but it also means the
+  byte model is partly penalized for spelling noise rather than for worse ideas. The
+  composition-vs-QA split is the load-bearing nuance: do NOT read GREEN as "tokens fix
+  literal-QA". Frozen bars NOT moved. Production re-test (real corpus, real BPE, equal
+  FLOPs) required before any tokenizer decision (a_toy_scale_recheck).
+
+xref H_1219·HD6·H_1158·H_1140·H_1166·H_1167·a_toy_scale_recheck·a_scale_honest_scope·a_paper_negative_ok·p4·p7.
+probe: UNIVERSE/h1222_tokenizer_granularity_probe.py  · summary: H_1222_summary.json

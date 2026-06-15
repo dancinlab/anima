@@ -1,0 +1,150 @@
+{
+  "H": "H_1220",
+  "title": "MITOSIS-DECODE-DIVERSITY (HD9) — does mitosis novelty-split TIMING recover the greedy-collapsed ideation WITHOUT temperature sampling?",
+  "perturbation_rule": "at a mitosis novelty-split step: top-k=40 temp=1.0 multinomial; else greedy argmax. NO global temperature.",
+  "frozen_bars": {
+    "GREEN": "B composed_distinct >= 5 on >=3 seeds AND C_mean <= A_mean + 0.5",
+    "else": "RED (mitosis decode-diversity does not recover ideation -> generation-disjoint)"
+  },
+  "honest_prior": "RED — H_1205 separation-guard (emit byte-identical ON/OFF mitosis) + H_1201 frozen-feature-conditioning RED + H_1211 scale-recheck. Distinct mechanism (decode-time split TIMING vs frozen-feature input), fair test.",
+  "seeds": [
+    7,
+    8,
+    9
+  ],
+  "per_seed": [
+    {
+      "seed": 7,
+      "split_budget_composed": 5,
+      "A_greedy": {
+        "g1_composed_distinct": 0,
+        "g6_count": 3,
+        "g2_novelty": 0.57692,
+        "g2_novel_grams": 15,
+        "g2_total_grams": 26,
+        "comp_perturbations": 0,
+        "idea_perturbations": 0,
+        "comp_text_head": "The moral system is one of the moral computational complexity. The moral system is one of the mo"
+      },
+      "B_mitosis": {
+        "g1_composed_distinct": 1,
+        "g6_count": 4,
+        "g2_novelty": 0.43103,
+        "g2_novel_grams": 25,
+        "g2_total_grams": 58,
+        "comp_perturbations": 5,
+        "idea_perturbations": 92,
+        "comp_text_head": "The moral system is one valudation that consciousness really in the world make problem of consci"
+      },
+      "C_shuffled": {
+        "g1_composed_distinct": 0,
+        "g6_count": 2,
+        "g2_novelty": 0.7619,
+        "g2_novel_grams": 16,
+        "g2_total_grams": 21,
+        "comp_perturbations": 5,
+        "idea_perturbations": 61,
+        "comp_text_head": "The moral system is one of the moral computational complexity. The moral system is one of the mo"
+      }
+    },
+    {
+      "seed": 8,
+      "split_budget_composed": 7,
+      "A_greedy": {
+        "g1_composed_distinct": 0,
+        "g6_count": 3,
+        "g2_novelty": 0.57692,
+        "g2_novel_grams": 15,
+        "g2_total_grams": 26,
+        "comp_perturbations": 0,
+        "idea_perturbations": 0,
+        "comp_text_head": "The moral system is one of the moral computational complexity. The moral system is one of the mo"
+      },
+      "B_mitosis": {
+        "g1_composed_distinct": 0,
+        "g6_count": 3,
+        "g2_novelty": 0.51351,
+        "g2_novel_grams": 19,
+        "g2_total_grams": 37,
+        "comp_perturbations": 7,
+        "idea_perturbations": 66,
+        "comp_text_head": "The moral system is one of the world match fundamentalist. The system from collapsing in physica"
+      },
+      "C_shuffled": {
+        "g1_composed_distinct": 1,
+        "g6_count": 3,
+        "g2_novelty": 0.37838,
+        "g2_novel_grams": 14,
+        "g2_total_grams": 37,
+        "comp_perturbations": 7,
+        "idea_perturbations": 45,
+        "comp_text_head": "The moral system is just information. The moral system from collapsing. The moral system from co"
+      }
+    },
+    {
+      "seed": 9,
+      "split_budget_composed": 6,
+      "A_greedy": {
+        "g1_composed_distinct": 0,
+        "g6_count": 3,
+        "g2_novelty": 0.57692,
+        "g2_novel_grams": 15,
+        "g2_total_grams": 26,
+        "comp_perturbations": 0,
+        "idea_perturbations": 0,
+        "comp_text_head": "The moral system is one of the moral computational complexity. The moral system is one of the mo"
+      },
+      "B_mitosis": {
+        "g1_composed_distinct": 0,
+        "g6_count": 1,
+        "g2_novelty": 0.52632,
+        "g2_novel_grams": 10,
+        "g2_total_grams": 19,
+        "comp_perturbations": 6,
+        "idea_perturbations": 177,
+        "comp_text_head": "The moral system is one of the moral computational complexity. The moral system is one of the mo"
+      },
+      "C_shuffled": {
+        "g1_composed_distinct": 0,
+        "g6_count": 3,
+        "g2_novelty": 0.37838,
+        "g2_novel_grams": 14,
+        "g2_total_grams": 37,
+        "comp_perturbations": 6,
+        "idea_perturbations": 145,
+        "comp_text_head": "The moral system is one of the moral computational complexity. The moral system is one of the mo"
+      }
+    }
+  ],
+  "verdict": {
+    "A_composed_per_seed": [
+      0,
+      0,
+      0
+    ],
+    "B_composed_per_seed": [
+      1,
+      0,
+      0
+    ],
+    "C_composed_per_seed": [
+      0,
+      1,
+      0
+    ],
+    "A_mean": 0.0,
+    "B_mean": 0.3333333333333333,
+    "C_mean": 0.3333333333333333,
+    "cond_B (B>=5 on >=3 seeds)": {
+      "n_pass": 0,
+      "pass": false
+    },
+    "cond_C (C_mean <= A_mean + eps=0.5)": {
+      "C_mean": 0.3333333333333333,
+      "A_mean+eps": 0.5,
+      "pass": true
+    },
+    "GREEN": false
+  },
+  "scope": "TOY/$0 local CPU, numpy mirror of CORE/engine_cli.hexa VAdaptField (p8, live .hexa untouched), torch ref forward of 303M ByteGPT (byte-exact per H_1157). 3 seeds, scale UNVERIFIED (a_scale_honest_scope). p7 (NO LLM-judge)."
+}

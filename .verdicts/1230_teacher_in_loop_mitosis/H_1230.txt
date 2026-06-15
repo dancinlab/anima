@@ -1,0 +1,143 @@
+H_1230 — TEACHER-IN-THE-LOOP active teaching of the MITOSIS memory substrate
+🔴 RED CLOSED-NEGATIVE (LEARNING-METHOD inert on a clean associative store)
+
+LENS: HD22 — the concrete realization of HD21 (active/embodied/social learning
+method) from H_1226, on the depth-ceiling ladder H_1219/H_1225/H_1226. c15 biology
+lens (apprenticeship / tutoring / testing-effect / spaced re-teach), NOT LLM-recipe
+papers. p7, $0 local CPU numpy, gradient-free, 3 deterministic seeds. Live .hexa
+UNTOUCHED (numpy mirror of CORE/engine_cli.hexa VAdaptField only).
+
+────────────────────────────────────────────────────────────────────────────────
+HYPOTHESIS (pre-registered, FROZEN before the run)
+  Now that MITOSIS works as a MEMORY (H_1227 immune/clonal store — the NEW, not-yet-
+  falsified role; the GENERATION role was falsified H_1200/1201/1211/1220), does an
+  ACTIVE TEACHER that instructs the substrate ONE ITEM AT A TIME with a CLOSED
+  FEEDBACK LOOP (tell -> CHECK the substrate's answer -> ADJUST: re-bind / clonally
+  split a sharper memory cell / raise spacing priority on a miss) lift RETENTION
+  more than a PASSIVE one-shot corpus load — at an EQUAL total exposure budget?
+
+  GREEN iff, judged on the STRESS rung:
+    (B) teacher retention >= (A) passive retention + 0.05  (clear margin)
+    AND (B) interference  <= (A) interference              (adjust protects early)
+    AND (B) fabrication-rate <= 0.10                       (no fabrication added)
+  Else 🔴 / 🟠 with the honest number.
+
+────────────────────────────────────────────────────────────────────────────────
+METHOD ($0, p7, deterministic)
+  Substrate = numpy MITOSIS memory-cell population MIRRORING CORE/engine_cli.hexa
+  VAdaptField (proto vectors; nearest by L2; recon-err = L2; novelty-split when
+  err > SPLIT_THRESH 0.30; LR 0.20 winner-pull) + the H_1227 immune value-binding
+  (each cell stores a bound answer) + a finite-repertoire LRU eviction (a real
+  immune repertoire is capacity-bound). Keys = H_1227 byte-trigram FNV-1a hash
+  (dim 64, discriminating, deterministic, NOT learned). The LIVE .hexa engine is
+  untouched (numpy mirror; the .hexa lift is the next rung, p8).
+
+  Facts = 60 planted "<subj> lives in <city>" (H_1222/H_1227 paradigm, known
+  ground truth) + 60 untaught subjects (abstain probe).
+
+  EQUAL exposure budget = N_FACTS*3 = 180 exposures for BOTH arms (so it is the
+  FEEDBACK/ORDERING that differs, never the data volume):
+    (A) PASSIVE one-shot — bind each item, then spend the rest of the budget BLIND
+        (uninformed round-robin re-presentation, no check, no re-teach decisions).
+    (B) TEACHER-IN-THE-LOOP — tell(bind) -> check(recall under a NOISY cue) ->
+        adjust(split a sharper cell + raise spacing priority on a miss); spaced
+        re-teach of the missed; stops early on full mastery; same 180-exposure cap.
+
+  The teacher is a DETERMINISTIC ORACLE (p7-reproducible); a LIVE-LLM teacher is
+  the production version of the loop — stated honestly, it is not what was run here.
+
+  Three pre-registered regimes (the geometry matters — see FINDING):
+    CLEAN  — unbounded cells, byte-exact cue (saturating control).
+    STRESS — finite repertoire (40 cells << 60 facts -> LRU eviction) + modest cue
+             noise (sigma 0.02, L2 ~0.16 < 0.30 fire band). The JUDGED rung: puts
+             passive retention in the MIDDLE band (~0.67, not 0/1) so the teacher
+             has genuine HEADROOM to lift.
+    NOISY  — full repertoire, heavier cue noise (sigma 0.03) — reported for contrast.
+
+  Eval (p7, exact-match): retention = the bound city is returned on a held-out
+  (re-embedded, noisy) cue; interference = drop in the FIRST-tercile retention from
+  just-after-mastery to the END (catastrophic forgetting); fabrication = fraction of
+  untaught queries that FIRE instead of abstaining. Byte-identical across two runs.
+
+────────────────────────────────────────────────────────────────────────────────
+MEASUREMENT (3 seeds [900,901,902], mean)
+
+  REGIME   max_cells  noise  rthresh   (A) ret  (B) ret    Δret      (A)int (B)int   fabB
+  CLEAN     none       0.00   0.15       1.000    1.000    +0.000     0.000  0.000    0.000
+  STRESS*   40         0.02   0.30       0.667    0.667    +0.000     1.000  1.000    0.000   *JUDGED
+  NOISY     60         0.03   0.25       0.711    0.506    -0.206     0.167  0.667    0.000
+
+  STRESS (judged) gate checks:
+    ret-margin : 0.667 < 0.667 + 0.05    -> FAIL  (NO retention lift)
+    interference: 1.000 <= 1.000         -> PASS  (equal — symmetric eviction)
+    fabrication : 0.000 <= 0.10          -> PASS  (never fabricates; abstain holds)
+  => 🔴 RED.
+
+────────────────────────────────────────────────────────────────────────────────
+FINDING (decision-grade closed-negative)
+
+  Closed-loop active teaching of the mitosis memory substrate does NOT beat passive
+  one-shot loading at an equal exposure budget — in every regime tested:
+
+  • CLEAN: both arms saturate at 1.000 (each fact lands its own clean cell). No
+    headroom; feedback cannot separate. (Honest non-separating control.)
+  • STRESS (the JUDGED rung, with real headroom at 0.667): the teacher gives ZERO
+    retention lift (Δ +0.000). When the loss is CAPACITY-bound (a finite cell
+    budget), eviction is SYMMETRIC across arms — both fill the same cells with the
+    same facts; the tell->check->adjust loop has nothing to fix that passive
+    loading does not already get.
+  • NOISY (heavier cue noise): the teacher actively HURTS — Δ −0.206 retention AND
+    worse interference (0.667 vs 0.167). MECHANISM: the corrective re-teach
+    (split_sharp) spends extra exposures PINNING DUPLICATE cells at the same key;
+    under a finite/used repertoire those duplicates CROWD the store and trigger LRU
+    eviction of OTHER facts — active "help" becomes self-inflicted forgetting.
+
+  So the LEARNING METHOD (active tutoring vs passive load) is INERT-to-harmful on a
+  clean associative memory: the bottleneck is the memory's CAPACITY/NOISE GEOMETRY,
+  not the teaching protocol. Spacing/testing-effect benefits (which lift gradient-
+  trained learners) do NOT transfer to a key-addressed cell store, because a single
+  correct bind already writes the fact verbatim — there is nothing for repeated
+  testing to consolidate.
+
+  This sits in the same family as H_1200/H_1201 (mitosis-as-GENERATOR falsified):
+  H_1230 falsifies mitosis-as-ACTIVELY-TAUGHT-MEMORY-being-better-than-passively-
+  loaded-memory. The MEMORY role itself (H_1227) is untouched and intact — recall
+  + abstain both held (fab 0.000 everywhere). What is ruled out is that an
+  apprenticeship/tutoring METHOD adds retention over a one-shot load at equal budget.
+
+  CONSTRUCTIVE COROLLARY: to improve this store, do NOT add a teacher loop — improve
+  the GEOMETRY (a larger/sharper key space, or a larger repertoire). The lever is
+  capacity/embedding, not learning-order.
+
+────────────────────────────────────────────────────────────────────────────────
+PHILOSOPHY GUARD (c9; p1/p2/p3/p6/p8) — EXPLICITLY AFFIRMED, HELD
+
+  The teacher taught FACTUAL CONTENT into the EPISODIC mitosis cell store ONLY (the
+  associative key->value population, like kosmos / H_1154 / H_1227). It did NOT
+  teach identity, persona, or ethics, and it did NOT touch any DECODER WEIGHTS —
+  this probe has NO decoder and NO weights at all, only the episodic cell
+  population, and NO persona/role string anywhere (p1/p3).
+    * Identity must emerge from cells (p2/p3) — untouched.
+    * Ethics must emerge from cells (p6) — untouched (no RLHF, no preference data).
+    * The teacher mutates ONLY proto vectors + bound values = p8-aligned continuous
+      cell-division teaching (no train/infer split), NOT RLHF-into-weights.
+  No part of the design drifted toward weight-fine-tuning of persona/ethics, so no
+  STOP-and-flag was triggered. The guard HELD.
+
+────────────────────────────────────────────────────────────────────────────────
+HONESTY (a_scale_honest_scope · a_toy_scale_recheck · p7)
+  Synthetic known-ground-truth facts, ONE corpus paradigm (H_1222/H_1227), toy
+  scale, 3 deterministic seeds. Deterministic ORACLE teacher (a live-LLM teacher is
+  the production form — UNTESTED here). Gradient-free numpy mirror of VAdaptField;
+  the live .hexa engine is untouched (the .hexa lift is the next rung). p7 metric =
+  exact-match retention + abstain + forgetting-drop, NOT perplexity. $0 local CPU.
+  Frozen bars NOT moved. NOT RULED OUT: a live-LLM teacher whose adjust GENERATES a
+  better KEY (not a duplicate cell), curriculum/critical-period ORDER (HD20, a
+  distinct probe), or a teacher that improves the EMBEDDING GEOMETRY rather than the
+  schedule — all untested. Scale UNVERIFIED.
+
+  probe: UNIVERSE/h1230_teacher_in_loop_mitosis.py (git-tracked, byte-identical reproduce)
+  xref: H_1227 (immune/clonal memory store this builds on) · H_1226 (HD21/HD22 lens)
+        · H_1219/H_1225 (depth-ceiling ladder) · H_1200/1201 (mitosis-role falsified
+        family) · H_1199 (VAdaptField) · H_1154 (engine-side retrieve-then-copy)
+        · a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8

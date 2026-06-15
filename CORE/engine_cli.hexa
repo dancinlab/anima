@@ -527,6 +527,17 @@ pub fn vadapt_field_step(af: VAdaptField, x: [float], cfg: EngineConfig) -> VAda
 // vadapt_field_cells — live cell count accessor (DIM analogue).
 pub fn vadapt_field_cells(af: VAdaptField) -> int { return af.n_cells }
 
+// vadapt_field_nearest_idx — READ-ONLY accessor exposing the engine's OWN winner
+// (the index of the prototype nearest to DIM-sample `x`, the SAME _vnearest_idx
+// vadapt_field_recon_err computes internally). Adds NO mechanism — it only surfaces
+// the engine's existing winner-take-all assignment so a caller can map the fired
+// cell back to an external per-cell binding (e.g. H_1231 immune value table keyed
+// by the engine's cell index). The affinity/binding stays the engine's; this just
+// reads which cell won. (c1: tiny additive accessor, justified.)
+pub fn vadapt_field_nearest_idx(af: VAdaptField, x: [float]) -> int {
+    return _vnearest_idx(af.protos, x)
+}
+
 // ── §  GATE-B TRANSITION-PREDICTABILITY VARIANT — the LIVE trajectory substrate ──
 // (H_1209) The per-sample VAdaptField above (vadapt_field_step, H_1199/1202/1205)
 // is PERMUTATION-INVARIANT by construction: it sees only x_t, so shuffling time

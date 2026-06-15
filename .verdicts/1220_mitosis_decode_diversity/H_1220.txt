@@ -1,0 +1,117 @@
+H_1220 — MITOSIS-DECODE-DIVERSITY (HD9 of the depth-ceiling ladder) — 🔴 RED CLOSED-NEGATIVE
+($0 local CPU, 2026-06-15, p7 NO-LLM-judge, numpy mirror p8, torch ref forward of 303M ByteGPT)
+
+TRIGGER (HD9, .verdicts/1219_depth_ceiling_hypothesis_exhaustion/H_1219.txt addendum):
+The depth-ceiling ladder split "ideation" (recoverable under sampling, HD3) from "literal-QA"
+(genuine flat wall). HD3: greedy argmax COLLAPSES the 303M byte-LM (H_1218: G1 composed_distinct=0,
+loops); top-k40 temp0.7 SAMPLING passes (H_1158: 11-14 distinct ideas) — so ideation IS in the
+weights, greedy can't surface it. HD9 asks the NEW-MECHANISM question (user direction): can the
+newly-wired LIVE mitosis (VAdaptField cell-division, H_1199/H_1202-1205) supply a DECODE-TIME
+DIVERSITY lever that recovers the greedy-collapsed ideation WITHOUT temperature sampling?
+
+NEW MECHANISM (distinct from the prior negatives, re-opened per a_paper_negative_ok):
+Use the mitosis novelty-SPLIT TIMING as the ONLY diversity source. A numpy mirror of VAdaptField
+(vadapt_field_step VERBATIM mechanism: DIM=8 byte-feature, nearest-by-L2, recon-err to nearest,
+split when recon-err > SPLIT_THRESH 0.30, else LR-0.20 winner pull) runs over the decode-context
+byte stream; at each decode step where the most-recent windowed tick FIRES a split (novelty
+crossed the threshold), the greedy pick is perturbed; at non-split steps it is pure greedy.
+
+PERTURBATION RULE (documented, fixed BEFORE running): at a novelty-split step, replace argmax
+with a SEEDED top-k=40, temp=1.0 multinomial sample over the post-softmax mass; else pure greedy
+argmax. NO global temperature schedule — diversity is GATED entirely by the mitosis split mask.
+
+THREE ARMS (identical except the diversity gate):
+  (A) PURE-GREEDY    : argmax every step (expect collapse, H_1218).
+  (B) MITOSIS-GATED  : perturb ONLY at mitosis novelty-split steps (the hypothesis).
+  (C) SHUFFLED-SPLIT : same NUMBER of perturbation events as (B) but at RANDOM timesteps
+                       (count-matched control — isolates split TIMING from perturbation COUNT).
+
+SCORE: FROZEN evaluators VERBATIM from UNIVERSE/gauge_lib.py —
+  G1 composed_distinct = len(_coverage(text))   [PRIMARY GATE]
+  G6 count             = distinct coherent ideas (kwr>=0.50, Jaccard distance<=0.25, IDEATION_SEEDS)
+  G2 novelty           = corpus-absence fraction (corroborating)
+  G0 kwr               = known_word_ratio coherence filter (gates G2/G6 inclusion)
+
+PRE-REGISTERED BARS (frozen BEFORE running, p7, NOT moved):
+  GREEN iff (B) composed_distinct >= the sampling baseline (H_1158 >= 5/seed) on >= 3 seeds
+            AND (C) SHUFFLED <= (A) baseline + eps (eps=0.5)  [lift from TIMING, not count].
+  Else 🔴 RED (decisive): mitosis-decode-diversity does NOT recover ideation -> mitosis stays
+  generation-disjoint even via this new decode mechanism, reinforcing H_1201/1205/1211.
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+RESULT — 3 SEEDS (decode-diversity RNG seeds 7, 8, 9), 303M ByteGPT (d1024/L24, byte-exact
+to the engine per H_1157), corpus = CORE/testdata/clm_mid_5lang_c4.txt:
+
+  seed 7 (mitosis split budget=5):
+    A_greedy    G1_composed=0  G6_count=3  G2_novelty=0.577  pert(comp/idea)=0/0
+    B_mitosis   G1_composed=1  G6_count=4  G2_novelty=0.431  pert(comp/idea)=5/92
+    C_shuffled  G1_composed=0  G6_count=2  G2_novelty=0.762  pert(comp/idea)=5/61
+  seed 8 (mitosis split budget=7):
+    A_greedy    G1_composed=0  G6_count=3  G2_novelty=0.577  pert(comp/idea)=0/0
+    B_mitosis   G1_composed=0  G6_count=3  G2_novelty=0.514  pert(comp/idea)=7/66
+    C_shuffled  G1_composed=1  G6_count=3  G2_novelty=0.378  pert(comp/idea)=7/45
+  seed 9 (mitosis split budget=6):
+    A_greedy    G1_composed=0  G6_count=3  G2_novelty=0.577  pert(comp/idea)=0/0
+    B_mitosis   G1_composed=0  G6_count=1  G2_novelty=0.526  pert(comp/idea)=6/177
+    C_shuffled  G1_composed=0  G6_count=3  G2_novelty=0.378  pert(comp/idea)=6/145
+
+  ── COMPOSED_DISTINCT (the PRIMARY gate) ──
+    A (pure-greedy)   : [0, 0, 0]   mean 0.000
+    B (mitosis-gated) : [1, 0, 0]   mean 0.333
+    C (shuffled)      : [0, 1, 0]   mean 0.333
+
+  ── BAR ADJUDICATION (frozen, p7) ──
+    cond_B  (B composed >= 5 on >= 3 seeds) : n_pass = 0 / 3  -> FAIL  (B max=1, bar=5)
+    cond_C  (C_mean <= A_mean + eps=0.5)    : 0.333 <= 0.5    -> pass
+    GREEN = cond_B AND cond_C = FALSE  ->  🔴 RED
+
+═══════════════════════════════════════════════════════════════════════════════════════════════
+VERDICT: 🔴 RED — CLOSED-NEGATIVE. Mitosis-decode-diversity does NOT recover the greedy-collapsed
+ideation. The primary gate is decisively missed: B composed_distinct max=1 vs the >=5 sampling
+baseline (0/3 seeds pass), and B (mean 0.333) is INDISTINGUISHABLE from the count-matched SHUFFLED
+control C (mean 0.333) — both are a single stray composed hit at different seeds, statistical
+noise around the greedy floor A (0.000). The split-TIMING carries no information the random-timing
+control lacks. The mechanism DID fire (B perturbed at 5/7/6 composed-split steps and 92/177
+ideation-split steps per seed) — it is not an inactivity artifact — yet the greedy collapse
+persists. G6 is likewise at the greedy floor (B 4/3/1 vs A 3/3/3, no lift). G2 novelty is unmoved
+across arms (~0.4-0.6, corpus-absence of meandering wiki-prose).
+
+WHY (mechanism): a sparse top-k perturbation at NOVELTY-detected steps cannot reorganize the
+trajectory the way a GLOBAL temperature does. Greedy collapse is a whole-sequence attractor (the
+"The moral system is one of the moral..." loop); perturbing ~5-7% of composed steps nudges single
+bytes but the deterministic argmax re-collapses immediately. Sampling works (H_1158) because it
+perturbs EVERY step's distribution, escaping the attractor basin; split-gated single-step
+perturbation does not. The mitosis split mask is, moreover, a deterministic lossy function of the
+SAME local byte window the LM already conditions on (echoing the H_1201 finding) — it adds no
+exogenous signal, only sparse stochasticity that the random-timing control matches exactly.
+
+HONEST PRIOR vs RESULT (a_paper_negative_ok): the honest prior was RED — H_1205 separation-guard
+(emit byte-identical ON/OFF mitosis, Ψ unchanged) + H_1201 (mitosis->generation RED via frozen
+single-window feature-conditioning) + H_1211 (scale-recheck: density half scale-robust, trajectory
+half toy artifact). This NEW mechanism (decode-time split TIMING) is genuinely distinct from
+H_1201's frozen-feature conditioning, so it was a FAIR re-test. The result CONFIRMS the prior:
+mitosis stays GENERATION-DISJOINT even through this new decode path. The ladder's HD3 conclusion
+is unchanged — ideation under greedy is a DECODE-MODE artifact recoverable ONLY by genuine
+sampling (global temperature), NOT by mitosis novelty-timing.
+
+LADDER UPDATE (HD9 of H_1219): HD9 🟠 OPEN -> 🔴 CLOSED-NEGATIVE. The mitosis decode-diversity
+lever does not lift ideation; mitosis = pure substrate (H_1201/1205/1211 reinforced). The
+$0-reachable hypothesis space for the ideation/decode axis is now EXHAUSTED with mitosis ruled
+out as a decode lever; the only ideation-recovery path remains genuine sampling (global temp).
+
+NOT RULED OUT (honest residuals): (1) a DENSER perturbation at split steps (top-k over a WIDER
+mass, or perturb a window AROUND each split rather than the single step); (2) a LEARNED mitosis->
+logit coupling (vs this gradient-free deterministic split mask); (3) the LIVE .hexa engine doing
+the same (this is a numpy mirror, p8 — though H_1205 separation-guard already shows the live emit
+is byte-identical ON/OFF mitosis, so the live path is expected to agree). None of these change the
+HD9 conclusion that the split-TIMING mechanism as specified does not beat random timing.
+
+SCOPE / HONESTY: TOY/$0 local CPU. numpy mirror of CORE/engine_cli.hexa VAdaptField (live .hexa
+UNTOUCHED — another agent owns engine-code edits this session; CORE/bytegpt_decode.hexa NOT
+edited). Torch reference forward of the 303M ByteGPT (byte-exact to the engine per H_1157). 3
+deterministic seeds, scale UNVERIFIED (a_scale_honest_scope). p7 — NO LLM-judge, NO perplexity;
+metric = the FROZEN gauge_lib G1/G2/G6/G0 evaluators VERBATIM. Frozen bars NOT moved.
+
+FILES: UNIVERSE/h1220_mitosis_decode_diversity.py (probe, git-tracked) · /tmp/h1220_result.json
+(full per-seed JSON). xref H_1219(HD9)·H_1218·H_1205·H_1201·H_1211·H_1199·H_1158·H_1157·
+a_paper_negative_ok·a_scale_honest_scope·a_clm_gen_pipeline·a_core_engine_map·p7·p8.
