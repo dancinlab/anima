@@ -1,0 +1,85 @@
+H_1221 — QA-FORMAT CORPUS as the literal-QA lever (HD5 toy probe, $0, 2026-06-15, p7)
+
+TRIGGER: HD5 from .verdicts/1219_depth_ceiling_hypothesis_exhaustion/H_1219.txt — the flat
+literal-QA wall (1-2/15 across 303M/1B, H_1166/H_1167/H_1218) was left 🟠 OPEN with the
+question: is the wall caused by the ABSENCE of QA-STRUCTURED training data? H_1219 named a
+QA-format FT rung the "cleanest untested lever". This H runs it at $0 toy scale.
+
+HYPOTHESIS (pre-registered): a tiny byte-LM fine-tuned on a Q→A-formatted corpus answers
+held-out literal-QA strictly better than the SAME LM on flat-prose. If so, QA-FORMAT is the
+lever (the wall = a data-register gap, not a capacity wall).
+
+DESIGN (validity = arms identical except the data FORMAT; H_1142/H_1148 toy class):
+  - Synthetic closed fact world: 24 subjects × 4 relations (color/home/food/sound) = 96 facts,
+    "<subject> <relation> <object>". Char-level (31-char alphabet).
+  - Tiny numpy byte-GPT d128 / 4 layers / 4 heads / block96 (hand-written fwd+backprop+Adam,
+    cosine LR, grad-clip; p8 numpy mirror — no torch/GPU on host, $0 CPU summer).
+  - TWO arms from the SAME init seed on EQUAL token budget over the SAME 96 facts, only the
+    data FORMAT differs:
+        (A) FLAT  — facts as plain declarative prose ("zorvik is umber in color .").
+        (B) QAFMT — the SAME facts as explicit "Q: <question> ? A: <object> ." pairs.
+    Equal-token: both corpora truncated to min length (~153k chars). 1200 steps each.
+  - EVAL = the 96 trained facts asked back (the H_1166 regime: train on facts, ask them back).
+    Two tiers, both scored by EXACT/SUBSTRING object match (p7, no LLM-judge):
+      * NATIVE register — each arm prompted its own best way at the answer slot (A: prose
+        lead-in "zorvik is "; B: "Q: ... ? A: "). CONTEXT only — ceilings for both arms.
+      * CROSS-QUESTION — BOTH arms prompted with the QUESTION form "Q: ... ? A: ". Arm A never
+        saw that surface; arm B did. THIS IS THE TRUE H_1166 CONDITION (model trained on prose,
+        asked free-form questions) and is the BAR-DECIDING number.
+  - 3 seeds {1221,1222,1223}; each seed re-draws the relation→object assignment.
+
+PRE-REGISTERED BAR (frozen BEFORE running):
+  GREEN iff  cross-question qa(B) >= qa(A) + 0.20   (absolute margin, held-out literal-QA).
+  RED   otherwise (format is NOT the wall → reinforces capacity/intrinsic; HD6/HD7).
+
+RESULT 🟢 GREEN (reproducible, 3/3 seeds):
+  NATIVE register     A-flat 1.000   B-qafmt 1.000   delta +0.000   (BOTH ceiling — uninformative
+                      by construction; a same-capacity LM completes the prose cloze trivially)
+  CROSS-QUESTION      A-flat 0.024   B-qafmt 1.000   delta +0.976   <== BAR-DECIDING (>> +0.20)
+    per-seed cross_delta: 1221 +0.969 · 1222 +0.969 · 1223 +0.990
+    per-seed cross A:     1221 0.031 · 1222 0.031 · 1223 0.010
+  G0 coherence (kwr) = 1.000 both arms (the world vocabulary is closed; outputs are in-vocab).
+
+MECHANISM (the H_1166 wall reproduced in miniature, then fixed):
+  The flat arm LEARNS every fact perfectly (native 1.000) but, prompted with a QUESTION it never
+  trained on, IGNORES the question structure and emits random memorized prose fragments:
+    "Q: what color is zorvik ? A: " -> "eats lichen ." / "is violet in color ." / "isorre in ."
+  i.e. it has the knowledge but no retrieve-and-answer-a-question surface. The QA-format arm,
+  trained on the Q→A mapping, answers verbatim (1.000). So the wall = a MISSING ANSWERING
+  SURFACE, supplied exactly by QA-format training. This is the toy analogue of H_1166's
+  "narrow & broad models BOTH fail literal-QA" — both H_1166 corpora were prose-register with
+  NO explicit Q→A structure.
+
+VERDICT: HD5 is a LEVER (toy-scale). The literal-QA wall is (at least partly) a DATA-REGISTER
+  gap, not purely a capacity/intrinsic wall — supplying explicit Q→A structure flips held-out
+  literal-QA from ~0.02 to 1.00 at FIXED capacity (d128/4L, same init, same tokens). This
+  RE-OPENS the H_1219 reading that "literal-QA = a GENUINE capacity wall (HD1 scale-invariant,
+  HD4 not-data-volume)": HD5 shows a third axis — data-FORMAT — moves it decisively where
+  scale (HD1) and volume (HD4) did not.
+
+SCOPE / CAVEATS (a_toy_scale_recheck, a_scale_honest_scope — toy-only):
+  - TOY ONLY: numpy d128/4L, 96 synthetic char-level facts, deterministic 1-object-per-(subj,rel)
+    closed world. The +0.976 is a saturated existence-proof (0.02→1.00), NOT a production
+    effect-size. Scale-transfer to the real 303M/1B byte-LM is UNVERIFIED.
+  - The toy world is "clean" (every fact memorizable, single answer, no distractors). A real
+    wiki corpus has many-to-many, noisy, partially-present facts — a 303M QA-format FT rung
+    (H_1219's named fire) is the decisive next step and may show a SMALLER lift. This toy
+    establishes the MECHANISM (QA-structure supplies the answering surface), not the magnitude.
+  - NATIVE-register ceiling is expected and is WHY the bar is read on the cross tier; do not
+    mis-read native delta +0.000 as "no effect".
+  - FROZEN bars NOT moved. a303m_pass/a7b_pass gates UNCHANGED. No production claim. $0 summer CPU.
+
+GOVERNANCE RECONCILIATION (H_1224, HD8): H_1224 ruled literal-QA is a p4-misaligned ASSISTANT-NORM
+  anima need NOT pass (same category as the retracted G5-L2 verbatim recall; absent from a303m_pass).
+  HD5-GREEN does NOT reopen literal-QA as an anima gate — it is a MECHANISM finding: it shows the
+  H_1166/1167/1219 flat-QA wall is (toy-scale) a FIXABLE data-FORMAT artifact, not an intrinsic
+  capacity ceiling. So the depth-ceiling ladder closes cleanly: HD1/HD2 ruled out · HD3 decode ·
+  HD4 not-volume · HD5 🟢 format-IS-a-lever (this H) · HD6 🟢 granularity-helps-composition (H_1222) ·
+  HD7 🔴 objective-not-the-wall (H_1223) · HD8 🟡 literal-QA = assistant-norm, de-prioritized (H_1224).
+  Net: were anima to WANT literal-QA, format is the cheapest lever; but per H_1224 it need not.
+
+ARTIFACTS: UNIVERSE/h1221_qa_format_probe.py (git-tracked) · /tmp/h1221_result.json (run output).
+  config: d128 L4 H4 block96 bs32 steps1200 lr3e-3 reps60 seeds[1221,1222,1223].
+
+xref H_1219·H_1218·H_1167·H_1166·H_1160·H_1142·H_1148·a_toy_scale_recheck·a_scale_honest_scope·
+     a_paper_negative_ok·p4·p7·p8.
