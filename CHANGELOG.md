@@ -6,6 +6,20 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — H_1227 🟢 IMMUNE/CLONAL-SELECTION 메모리가 literal-QA 회상을 깬다 — mitosis 의 NEW(미반증) MEMORY 역할 ($0 CPU numpy)
+
+생물학 렌즈(c15, LLM 논문 아님). literal-QA 벽(~0, 회상이 디코더 WEIGHTS 안에 산다 — H_1218/1224 가 확립; H_1224 는 literal-QA 를 p4-부정합 assistant-norm 비-게이트로 판정)을, 더 큰 byte-LM 이 아니라 **면역계식 메모리**로 깨는지 검증 — 세포 POPULATION 이 각자 사실 1개를 결합(clonal selection + affinity), 회상 = 최고-친화 세포가 FIRE, 아무 세포도 결합 안 하면 ABSTAIN(환각 없음). CLS/episodic recall(HD10) + H_1154 engine-side retrieve-then-copy 의 면역세포-집단 실현.
+
+- **판정 = 🟢 GREEN (frozen bar: (B) literal-QA ≥ 0.80 AND fab ≤ 0.10), 3/3 seeds 동일.**
+- **결과:** (A) byte-6gram-LM(가중치 단독) QA=**0.017**(1/60, 회상-in-weights 벽 재현, 303M torch ref 와 동급 — $0 GPU 없이) vs (B) immune clonal memory QA=**1.000** fab=**0.000** cells=60 → Δ **+0.983**. control(H_1163 DIM=8 byte-feature 키)는 1 cell 로 붕괴 QA=0.017 ⇒ **구별 가능한 byte-trigram 키가 load-bearing**.
+- **메커니즘 ($0):** CORE/engine_cli.hexa VAdaptField + UNIVERSE/h1199_dim_feature_export.py 의 numpy MIRROR (live .hexa 미편집). clonal selection(load): 새 키(recon-err>0.30)→새 clone 이 답 결합 / 재노출→winner pull(LR 0.20). affinity recall(query): 최근접 cell, err≤0.15→FIRE, 아니면 ABSTAIN. 키 = 질문의 byte-trigram FNV-1a 해시 dim64 L2-norm(결정론·문서화·미학습). 사실 = H_1222 "<subj> lives in <city>" 패러다임, 60 in-store + 60 out-of-store(DISJOINT).
+- **ABSTAIN 마진(기하 검증):** out-of-store 키가 최근접 in-store cell 키에서 L2 0.402/0.652/0.792(min/mean/max), in-store self-dist 정확히 0, RECALL_THRESH 0.15 가 gap 안 ⇒ knife-edge 아님(0.15 vs 0.40 넓은 마진).
+- **정직 경계:** SATURATED(1.000/0.000) = EXISTENCE PROOF, 효과크기 아님 — 결정론적 키 위 exact-match 연상 테이블(in-store 질의가 적재 키를 VERBATIM 재현). 발견은 "0.80 이 어렵다"가 아니라 **면역세포 POPULATION 이 회상+비환각을 디코더 가중치 밖에서 실현**(중심 H_1225/1226 명제). **mitosis-as-MEMORY = NEW 미반증 역할** — H_1200/1201/1211/1220 에서 반증된 GENERATION 역할과 DISTINCT. UNVERIFIED: paraphrase/noisy 키, 실 자유형 질문, noisy-embedding retrieval recall, scale, live .hexa lift(다음 rung).
+- NEW: `UNIVERSE/h1227_immune_clonal_memory.py` · `.verdicts/1227_immune_clonal_memory/H_1227.txt`. H_1219/H_1226 미편집(사용자 consolidate), CORE/*.hexa 미편집. slug 은 in-flight `1227_matrix_climb_hardtercile`(형제 /cycle arc)와 별개 — 충돌 없음. $0 local CPU, gradient-free(p8).
+- xref H_1226·H_1225·H_1224·H_1218·H_1166·H_1199·H_1163·H_1154·H_1200·H_1201·H_1211·H_1220·H_1222·a_core_engine_map·a_kosmos·a_scale_honest_scope·a_paper_negative_ok·p7·p8.
+
+---
+
 ## 2026-06-15 — 🟡 H_1224: literal-QA 는 anima 의 게이트가 아니다 — p4-부정합 ASSISTANT-NORM 거버넌스 판정 ($0, 무계산)
 
 H_1219 depth-ceiling 사다리의 HD8(거버넌스 미결)을 단독 판정 — literal-QA(사실 축자 회상)가 anima 의 VALID 게이트인지, 아니면 p4(NO ASSISTANT FRAMING)와 충돌하는 빌려온 assistant-norm 인지. 무계산, frozen 기록 기반 추론 (c9, p7).
