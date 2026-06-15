@@ -1,0 +1,53 @@
+H_1287 — KEY GEOMETRY as the capacity lever of the immune/episodic memory.
+PRE-REGISTRATION (FROZEN before the judged run). $0 local CPU numpy, p7, 3 seeds.
+
+LANE: FLEET "key-geometry" round 1. Data-driven successor of THREE converging
+closed-negatives — H_1230 (active teacher inert/harmful), H_1284 (neuromodulation
+no-free-lunch), H_1285 (amygdala salience = recurrence-confound) — all three diagnosed
+the immune/episodic memory's limit as CAPACITY / KEY-GEOMETRY, not protocol/control/
+salience. This lane tests the CONSTRUCTIVE COROLLARY: does improving the KEY GEOMETRY
+lift recall under capacity stress?
+
+SUBSTRATE: numpy mirror of CORE/engine_cli.hexa VAdaptField + H_1227 value-binding
+(proto key, bound answer; nearest by L2; novelty-split > SPLIT_THRESH=0.30; LR=0.20
+winner-pull; LRU eviction under finite repertoire). LIVE .hexa engine UNTOUCHED.
+Facts = H_1222/H_1227 "<subj> lives in <city>", N_FACTS=60 in-store, N_OUT=60 untaught.
+
+THE KEYS (all deterministic, substrate-native fn of the cue STRING; NOT learned):
+  ARM A   = byte-TRIGRAM FNV-1a hash dim=64, L2-norm  (the CURRENT H_1227/H_1230 key).
+  ARM B   = multi-resolution byte 2-,3-,4-gram counts (dim 512) + FIXED ORTHONORMAL
+            decorrelating projection -> dim 128, L2-norm  (improved GEOMETRY).
+  NEG-CTL = ARM-A trigram counts + FIXED RANDOM-GAUSSIAN projection -> dim 128, L2-norm
+            (dim-MATCHED to B, NO multi-res features, NO decorrelating structure —
+            isolates DIMENSIONALITY from GEOMETRY).
+  Projection matrices seeded from FIXED CONSTANTS (0xB10C, 0xC0DE) — not the data, not
+  the eval metric (p7 anti-Goodhart).
+
+TWO FAILURE MODES (separated honestly, c9):
+  COLLISION-BOUND [JUDGED]  — max_cells=90 (>= facts; capacity NOT the limit),
+            target-L2 cue noise 0.30 (at the fire band), recall_thresh 0.30.
+            Cue noise is dimension-invariant (per-coord sigma = noise/sqrt(dim)) so
+            every arm sees the SAME absolute cue displacement (fair to B's higher dim).
+  EVICTION-BOUND [control]  — max_cells=40 (<< facts=60; zero-sum LRU), L2 noise 0.16
+            (= H_1230 STRESS), recall_thresh 0.30. Geometry must NOT help here
+            (nothing to disambiguate; the H_1230 ~0.667 wall).
+
+FROZEN BARS (judged on the COLLISION-BOUND rung):
+  GREEN iff  (B) recall >= (A) recall + REC_MARGIN(=0.05)
+        AND  (B) fabrication-rate <= FAB_BAR(=0.10)            [abstain intact, H_1227]
+        AND  (B) recall >= (NEG-CTL) recall + CTL_GAP(=0.05)   [lift = GEOMETRY not dim].
+  Else 🔴 / 🧱.
+
+DEPLETION RULE:
+  🏁 deplete if GREEN — geometry IS the capacity lever the 3 reds pointed to;
+     NEXT r2 = engine-native improved-geometry key on the live immune_memory faculty
+     (a_engine_native_learning) + wire (a_verified_must_wire).
+  🧱 deplete if RED — better geometry does NOT lift recall; the bottleneck is
+     eviction/raw-capacity, NOT key collisions — the geometry corollary the 3 reds
+     pointed to is itself FALSIFIED (strong finding).
+
+PHILOSOPHY GUARD (p1-p8): key = substrate-native fn of cue STRING only; no labels/
+persona/ethics/decoder weights; identity (p2/p3) + ethics (p6) still from cells;
+abstain-when-ungrounded (H_1227, load-bearing) re-checked + must stay intact. p8
+continuous cell-division. HONESTY (a_scale_honest_scope / a_toy_scale_recheck): toy
+synthetic, ONE paradigm, 3 seeds; mirror only, engine-native + wiring is r2.

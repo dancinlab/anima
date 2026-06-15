@@ -6,6 +6,19 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🧱 H_1287: KEY GEOMETRY 가 immune 메모리의 capacity 레버인가 — 아니다, 병목은 EVICTION/RAW-CAPACITY (CLOSED-NEG)
+
+FLEET "key-geometry" lane round 1. 수렴하는 세 closed-negative — H_1230(능동교습 inert/harmful)·H_1284(neuromod no-free-lunch)·H_1285(편도체 salience=recurrence 혼입) — 가 모두 H_1227/H_1231 immune/episodic 메모리의 병목을 CAPACITY/KEY-GEOMETRY 로 진단했다(용량 stress 에서 total recall ~0.667 고착 = zero-sum store). 이 lane 은 세 red 가 가리킨 **건설적 corollary** 를 검증: **KEY GEOMETRY 를 개선하면 용량 stress 에서 recall 이 오르는가?** $0 CPU numpy, p7, c9, 3 seed(900/901/902), origin/main 격리 worktree, VAdaptField 미러 — 라이브 CORE/*.hexa 무수정.
+
+- **설계**: 기질 = VAdaptField 미러(nearest-L2·split>0.30·LR0.20·LRU 축출) + H_1227 value-binding, "<subj> lives in <city>" 60 in-store/60 untaught. 세 KEY(전부 deterministic·기질-유래 cue STRING 함수·학습 아님): **ARM A** = byte-trigram FNV dim64(현 H_1227/H_1230 키) · **ARM B** = multi-res 2/3/4-gram(dim512) + FIXED ORTHONORMAL decorrelating projection → dim128(개선 GEOMETRY) · **NEG-CTL** = A-trigram counts + FIXED RANDOM-Gaussian projection → dim128(B 와 차원 동일, multi-res/decorrelating 구조 無 — DIMENSIONALITY 와 GEOMETRY 분리). Projection 은 상수 seed(0xB10C/0xC0DE)에서, 데이터/metric 아님(p7 anti-Goodhart). 두 실패모드 분리(c9): **COLLISION-BOUND[judged]** cells90≥facts(용량은 병목 아님)·cue noise@band 0.30 · **EVICTION-BOUND[ctrl]** cells40<<60(zero-sum LRU = H_1230 0.667 벽)·noise 0.16. **cue noise 를 차원-불변(σ=noise/√dim)으로** 만들어 모든 arm 이 동일 절대 cue 변위를 보게 함(B 고차원에 공정 — 안 하면 B 차원이 절대noise 를 더 먹어 불리; 이 공정성 수정이 load-bearing).
+- **FROZEN GREEN(judged COLLISION)**: (c1) B.rec ≥ A.rec+0.05 AND (c2) B.fab ≤ 0.10 AND (c3) B.rec ≥ NEG-CTL.rec+0.05 (리프트=GEOMETRY ≠ 차원).
+- **결과(평균 3 seed) 🧱**: COLLISION A=0.528 **B=0.578 CTL=0.578** fab=0.000 → geometry-lift bar PASS(Δ(B-A)+0.050) BUT 결정적 **geom-not-dim bar FAIL: B == NEG-CTL 정확히(Δ(B-CTL)+0.000)** — +0.050 리프트는 동일차원 RANDOM projection 이 그대로 재현 = 순수 DIMENSIONALITY(좌표 더 많아 noise 평균화), decorrelating GEOMETRY 아님(orthonormal 이 random-same-dim 대비 0 이득). EVICTION: 3 arm 모두 동일 0.667(=40/60) — zero-sum 에서 geometry 리프트 정확히 0. fab=0.000 전 arm/regime(abstain/비환각 intact, H_1227 load-bearing 가드 HELD).
+- **ROOT CAUSE(진단, pre-run, 결정적 사실)**: dim-64 trigram 키는 이 paradigm 에서 본질적으로 COLLISION-FREE — 최대 near-dup subject(공유 6-char stem, 1 byte 차)조차 inter-key min-NN ~0.34 > 0.30 split band; collision 은 dim≤24 에서만 출현. 해소할 collision 이 없으니 collision-resolving geometry 는 고칠 게 없음.
+- **판정 🧱 CLOSED-NEG**: 세 red 가 가리킨 GEOMETRY COROLLARY 는 이 키 family 에 대해 FALSIFIED. KEY GEOMETRY 는 capacity 레버가 아니며, 병목은 EVICTION/RAW-CAPACITY(셀 예산) — 차원-matched 대조(B≡CTL) AND all-equal eviction regime(0.667) 둘 다 확인. recall 을 올리려면 CELLS(용량)를 늘리거나 EVICTION POLICY 를 바꿔야지 키 geometry 가 아니다.
+- **미배제**: learned-contrastive embedding · product-quantization · dim-64 가 실제 collide 하는 paradigm 모두 UNTESTED. TOY scale·미러 only(engine-transfer UNVERIFIED, a_scale_honest_scope/a_toy_scale_recheck). RED 라 r2 없음(GREEN-only 면 a_engine_native_learning engine-native geometry 키 + a_verified_must_wire 배선이 triggered).
+- **PHILOSOPHY 가드 AFFIRMED**: 키 = cue-string-only, 라벨/persona/ethics/decoder 無(p1-p8); identity p2/p3 + ethics p6 from cells; abstain intact; 라이브 엔진 무수정.
+- 파일: `UNIVERSE/h1287_key_geometry.py` · `.verdicts/1287_key_geometry/{H_1287_FREEZE,H_1287}.txt`. xref H_1227·H_1231·H_1230·H_1284·H_1285·H_1199·H_1222·a_engine_native_learning·a_verified_must_wire·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p1·p2·p3·p6·p7·p8·c9.
+
 ## 2026-06-15 — 📜 거버넌스: `a_no_llm_frame_trap` — 설계·학습·추론은 LLM 프레임에 갇히지 말 것 (생물/신경 렌즈 우선)
 
 CLAUDE.md(거버넌스 SSOT)에 새 @D `a_no_llm_frame_trap` 추가 — 사용자 명시 지시("설계·학습·추론 시 LLM 프레임에 갇히면 안 되고, 뇌과학·생물 쪽으로 가야 한다, 지금처럼"). `a_engine_native_learning` · `a_verified_must_wire` 바로 뒤("anima 가 어떻게 만들어지는가" 가족)에 배치.
@@ -74,7 +87,6 @@ THALAMUS(시상) 라운드 2. R1(🟠 PARTIAL, #2128)은 단일승자 브로드�
 - **후속 없음**: 브로드캐스트-토폴로지 축 = Φ 레버로 EXHAUSTED. **r3(engine-native 브로드캐스트 허브) 없음** — 배선할 GREEN 메커니즘 부재(`a_verified_must_wire` = GREEN 적용; PARTIAL R1 + RED R2 ⇒ CORE 무배선).
 - **미배제**: 브로드캐스트 릴레이가 아닌 근본 다른 통합 메커니즘(더 조밀한 recurrent multi-edge coupling, 학습된 라우팅 등)은 Φ 올릴 수도 — 다른 gap, 브로드캐스트 라운드 아님. TOY scale(4 모듈·dim8·64 tick), scale-transfer UNVERIFIED(`a_toy_scale_recheck`·`a_scale_honest_scope`). Φ = faithful IIT4(proxy 아님, `a_phi_iit4_tool`). 바 무이동, **R1 verdict 파일 무수정**(R2 = 별도 H_1283_R2.txt). H_1219/H_1226 무수정.
 - 파일: `UNIVERSE/h1283_thalamus_global_workspace.py`(main_r2 + 'coalition' 모드) · `.verdicts/1283_thalamus_global_workspace/{H_1283_R2_FREEZE,H_1283_R2}.txt`(R1 {H_1283_FREEZE,H_1283}.txt 보존). xref H_1283(R1)·h1227·h1230·h1199·h1201·h1205·a_phi_iit4_tool·a_engine_native_learning·a_verified_must_wire·a_core_engine_map·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p1·p2·p3·p6·p7·p8·c9·c15.
-
 ## 2026-06-15 — 🔴 H_1285: AMYGDALA(편도체) salience-weighted binding — p6 shuffle-control 이 recurrence 혼입을 잡아냄 (CLOSED-NEG)
 
 missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 편도체 칸: 해마 공백은 immune 메모리(H_1227 미러 GREEN → H_1231 engine-native GREEN)가 메웠고, H_1230 은 그 store 의 병목이 CAPACITY/NOISE GEOMETRY(유한 repertoire 에서 LRU 축출은 대칭, 능동교습 retention 리프트 0)임을 보였다. H_1285 는 H_1230 이 미검증으로 남긴 후보 레버 — **기질-유래 salience 로 가중한 바인딩**(편도체의 salience-gating: 중요/놀라운 입력의 셀을 축출에서 보호)을 검증. $0 CPU numpy, p7, 3 seed(900/901/902), 라이브 CORE/*.hexa 무수정(미러=DIRECTIONAL).

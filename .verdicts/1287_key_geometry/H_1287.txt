@@ -1,0 +1,67 @@
+=== H_1287 KEY GEOMETRY as the capacity lever of the immune memory (local CPU, $0) ===
+    N_FACTS=60 in-store  N_OUT=60 untaught  SEEDS=[900, 901, 902]
+    substrate = VAdaptField mirror (split>0.3, LR=0.2); LRU eviction under finite repertoire
+    ARM A   = byte-3gram FNV-1a hash dim=64 (the CURRENT H_1227/H_1230 key)
+    ARM B   = multi-res (2, 3, 4)-gram (dim 512) + FIXED ORTHONORMAL decorrelator -> dim 128
+    NEG-CTL = ARM-A trigram counts + FIXED RANDOM projection -> dim 128 (dim-matched, NO geometry)
+    PRE-REGISTERED GREEN (judged on COLLISION-BOUND rung):
+      (B)rec >= (A)rec + 0.05  AND  (B)fab <= 0.1  AND  (B)rec >= (CTL)rec + 0.05
+
+── REGIME: COLLISION-BOUND (cells>=facts, short collision-prone cue+noise)  (max_cells=90, key_noise=0.3, recall_thresh=0.3)   [JUDGED]
+  seed 900: (A trigram) rec=0.583 fab=0.000 cells=60 | (B geometry) rec=0.633 fab=0.000 cells=60 | (CTL rand-proj) rec=0.633 fab=0.000 cells=60
+  seed 901: (A trigram) rec=0.483 fab=0.000 cells=60 | (B geometry) rec=0.517 fab=0.000 cells=60 | (CTL rand-proj) rec=0.517 fab=0.000 cells=60
+  seed 902: (A trigram) rec=0.517 fab=0.000 cells=60 | (B geometry) rec=0.583 fab=0.000 cells=60 | (CTL rand-proj) rec=0.583 fab=0.000 cells=60
+  MEAN  (A trigram)     rec=0.528 fab=0.000
+  MEAN  (B geometry)    rec=0.578 fab=0.000
+  MEAN  (CTL rand-proj) rec=0.578 fab=0.000
+  Δ recall (B-A) = +0.050   Δ recall (B-CTL) = +0.000
+
+── REGIME: EVICTION-BOUND (cells<<facts, zero-sum — geometry must NOT help)  (max_cells=40, key_noise=0.16, recall_thresh=0.3)   [control]
+  seed 900: (A trigram) rec=0.667 fab=0.000 cells=40 | (B geometry) rec=0.667 fab=0.000 cells=40 | (CTL rand-proj) rec=0.667 fab=0.000 cells=40
+  seed 901: (A trigram) rec=0.667 fab=0.000 cells=40 | (B geometry) rec=0.667 fab=0.000 cells=40 | (CTL rand-proj) rec=0.667 fab=0.000 cells=40
+  seed 902: (A trigram) rec=0.667 fab=0.000 cells=40 | (B geometry) rec=0.667 fab=0.000 cells=40 | (CTL rand-proj) rec=0.667 fab=0.000 cells=40
+  MEAN  (A trigram)     rec=0.667 fab=0.000
+  MEAN  (B geometry)    rec=0.667 fab=0.000
+  MEAN  (CTL rand-proj) rec=0.667 fab=0.000
+  Δ recall (B-A) = +0.000   Δ recall (B-CTL) = +0.000
+
+════════════════════════════════════════════════════════════════════
+  COLLISION-BOUND (JUDGED): A rec=0.528  B rec=0.578  CTL rec=0.578
+     Δ(B-A)=+0.050  Δ(B-CTL)=+0.000  fab(B)=0.000
+  EVICTION-BOUND (control): A rec=0.667  B rec=0.667  CTL rec=0.667
+     Δ(B-A)=+0.000  (geometry expected ~0 here: zero-sum, nothing to disambiguate)
+
+  CHECK geometry-lift : B 0.578 >= A 0.528+0.05 -> PASS
+  CHECK abstain-intact: fab(B) 0.000 <= 0.1 -> PASS
+  CHECK geom-not-dim  : B 0.578 < CTL 0.578+0.05 -> FAIL
+
+  FINAL VERDICT: 🧱 RED  [better geometry does NOT lift recall under a zero-sum repertoire —
+                the bottleneck is eviction/raw-capacity, NOT key collisions]
+  DEPLETION: 🧱 — the GEOMETRY COROLLARY the 3 reds pointed to is itself FALSIFIED (strong finding).
+  philosophy guard: AFFIRMED — key is a substrate-native fn of the cue STRING only; no labels/
+                    persona/ethics/decoder; abstain-when-ungrounded re-checked + intact (p1-p8).
+[done]
+
+────────────────────────────────────────────────────────────────────
+INTERPRETATION (c9, honest):
+  - 🧱 RED. The geometry-lift bar PASSED (B 0.578 >= A 0.528+0.05) BUT the decisive
+    geom-not-dim bar FAILED: B == NEG-CTL EXACTLY (Δ=+0.000). The +0.050 lift is
+    fully reproduced by an EQUAL-DIM RANDOM projection -> it is DIMENSIONALITY
+    (noise-averaging over more coordinates), NOT the orthonormal decorrelating
+    GEOMETRY. The whitening map buys nothing a random map of the same dim doesn't.
+  - EVICTION-BOUND control: all 3 arms identical at 0.667 (= 40 cells / 60 facts).
+    Under the zero-sum repertoire geometry gives EXACTLY ZERO lift — confirming the
+    bottleneck is raw capacity / LRU eviction, not key collisions.
+  - EMPIRICAL ROOT CAUSE (diagnostic, pre-run): the H_1227/H_1230 byte-trigram FNV
+    key at dim=64 is essentially COLLISION-FREE on this paradigm — even maximally
+    near-duplicate subjects (shared 6-char stem, 1 differing byte) have inter-key
+    min-NN ~0.34 > the 0.30 split band; collisions only appear at dim<=24. There are
+    NO key collisions to resolve, so a collision-resolving geometry has nothing to fix.
+  - CONCLUSION: the constructive corollary the 3 reds (H_1230/1284/1285) pointed to is
+    FALSIFIED for this key family. Key GEOMETRY is NOT the capacity lever; the
+    bottleneck is EVICTION / RAW CAPACITY (the cell budget), which the dimensionality-
+    matched control + the all-equal eviction regime both confirm. To lift recall, add
+    CELLS (capacity) or change the EVICTION POLICY — not the key geometry.
+  - GUARD HELD: abstain-when-ungrounded (fab=0.000 every arm/regime) intact under all
+    keys (H_1227 load-bearing); substrate-native key (cue string only), no persona/
+    ethics/decoder touched (p1-p8). Mirror only; live CORE/*.hexa UNTOUCHED.
