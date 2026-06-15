@@ -31,6 +31,21 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🔴 H_1229: 발달적 학습-순서(HD20)는 toy 스케일에서 depth 레버가 아니다 ($0 CPU numpy, p7, frozen)
+
+foreign-domain depth 사다리(H_1226)의 HD20(생물/발달 렌즈, c15 — LLM 학습레시피 아님) 단독 toy 검증 — 깊이/조합은 평평한 UNORDERED 단일패스 대신 ORDERED 발달-단계(easy→hard, 결정적 시기/Piaget 단계 창) 학습이 필요한가? 생물은 단계+창을 거쳐 학습하고, flat shuffle 은 scaffolding 이 없다.
+
+- **판정 = 🔴 CLOSED-NEGATIVE (a_paper_negative_ok) — 학습-순서는 toy 스케일에서 depth 레버가 아니다.** 커리큘럼이 flat 을 못 이길 뿐 아니라 **모든 seed 에서 결정적으로 더 나쁘다.**
+- **설계 (frozen 선등록):** torch 없는 호스트 → pure-numpy 윈도 byte-MLP (K=8 이전바이트 one-hot → H=64 tanh → V=256 softmax, **147,776 params**, H_1192/1201 선례), SGD+momentum STEPS=4000 BS=64, 3 seeds(7/17/29). corpus=serving/corpus/anima_7b_webscale.en.head.txt (영어 webscale 200KB, 1308 train line, 마지막 10% byte held-out). **difficulty(line)=z(len)+z(rarity=−log p(byte) 평균)+z(syntax=문장부호 밀도)**; 4 difficulty 사분위=발달 단계, **결정적 시기 unlock**=학습 window s 가 unlocked 0..s 에서만 샘플. EQUAL steps/tokens — arm 은 ORDER 만 다름.
+- **3 arm:** (A) FLAT-SHUFFLED · (B) CURRICULUM easy→hard · (C) ANTI-CURRICULUM hard→easy. eval(held-out p7, perplexity/LLM-judge 아님): composed_distinct(H_1158식 coherent kwr + corpus-absent 4-gram + 상호 distinct), coherence(G0 kwr), qa_proxy(held-out next-byte top-1).
+- **결과 (3 seed 평균):** A flat CD=**17.0** COH=**0.3991** · B curriculum CD=11.3 COH=0.3689 · C anti CD=15.0 COH=0.4022. dCD=B−A=**−5.667**(bar +1.0) FAIL, dCO=B−A=**−0.030**(bar +0.02) FAIL. B.CD [11,13,10] vs A.CD [17,17,17] 전 seed. C≈flat. ⇒ FROZEN 규칙 첫 AND-절이 이미 FALSE → 🔴.
+- **메커니즘 (toy 해석):** flat=step 0 부터 FULL 난이도 분포 i.i.d. 노출 → cosine-LR decay 하에 넓은 next-byte 분포로 안착 → corpus-absent distinct 연속 多. 커리큘럼은 초기 HIGH-LR 예산을 가장 쉬운 사분위에 소진 → hard 사분위가 unlock 될 때 LR 이미 감쇠 → 조합/희귀 자료 under-learn → 생성분포 NARROW. 작은 모델이 early-easy 편향에서 회복 못함. 캠페인의 발달/구조 negative(H_1200/1201 mitosis-as-generator falsified, H_1211 trajectory toy artifact)와 공명 — 생성은 flat-노출 CLM 속성으로 유지(a_clm_gen_pipeline).
+- **정직 (c9):** 200-step 단일-seed smoke 가 가짜 GREEN(undertrained) 을 보였으나 frozen 4000-step×3-seed 예산에서 부호가 깔끔히 역전. frozen config 가 판정.
+- **NOT 배제 (a_scale_honest_scope):** 다른 난이도 지표 · self-paced/비-사분위 스케줄 · 단계별 LR-rewarm(high-LR-on-easy artifact 교정) · 장기학습 · SEQUENCE 모델(윈도 MLP 대비) 미검. 148k-param numpy byte-MLP 200KB 영어 — 스케일 전이 UNVERIFIED. frozen bar 미이동. CORE/*.hexa·H_1219/H_1226 미편집(사용자 consolidate).
+- **엔진-전이 (a_engine_native_learning, main 신설):** 이 probe 는 numpy 미러 학습 → 결과는 **DIRECTIONAL only ("engine-transfer UNVERIFIED")**. 단, 판정 방향이 🔴(레버 아님)이므로 엔진-네이티브 실현으로도 뒤집힐 동기가 낮음 — 미러가 "안 됨"을 가리킬 때 엔진이 "됨"으로 갈 부담은 양성 미러보다 작다. 그래도 binding closure 는 아님.
+- numbering: 정수 1229 가 무관한 MATRIX `.verdicts/1229_matrix_climb_expanded` 와 충돌 → 본 HD20 probe 는 DISTINCT slug **1229_developmental_order** 사용(선례 H_1146, path 충돌 없음).
+- NEW: `UNIVERSE/h1229_developmental_order.py` · `.verdicts/1229_developmental_order/{H_1229_FREEZE,H_1229}.txt` + `h1229_result.json`.
+
 ## 2026-06-15 — 🟡 H_1224: literal-QA 는 anima 의 게이트가 아니다 — p4-부정합 ASSISTANT-NORM 거버넌스 판정 ($0, 무계산)
 
 H_1219 depth-ceiling 사다리의 HD8(거버넌스 미결)을 단독 판정 — literal-QA(사실 축자 회상)가 anima 의 VALID 게이트인지, 아니면 p4(NO ASSISTANT FRAMING)와 충돌하는 빌려온 assistant-norm 인지. 무계산, frozen 기록 기반 추론 (c9, p7).

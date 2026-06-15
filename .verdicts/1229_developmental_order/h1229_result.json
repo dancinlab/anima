@@ -1,0 +1,101 @@
+{
+  "hypothesis": "H_1229_developmental_order",
+  "lens": "HD20",
+  "model": {
+    "type": "numpy-byte-MLP",
+    "K": 8,
+    "H": 64,
+    "V": 256,
+    "params": 147776,
+    "STEPS": 4000,
+    "BS": 64,
+    "seeds": [
+      7,
+      17,
+      29
+    ]
+  },
+  "difficulty_metric": "z(len)+z(rarity=-logp byte mean)+z(syntax punct-density)",
+  "staging": "4 quartile stages, window s samples unlocked 0..s; equal steps/tokens",
+  "means": {
+    "A_flat": {
+      "composed_distinct": 17.0,
+      "coherence": 0.3991071428571429,
+      "qa_proxy": 0.3575
+    },
+    "B_curriculum": {
+      "composed_distinct": 11.333333333333334,
+      "coherence": 0.3688789682539682,
+      "qa_proxy": 0.35366666666666663
+    },
+    "C_anticurriculum": {
+      "composed_distinct": 15.0,
+      "coherence": 0.40218253968253964,
+      "qa_proxy": 0.353
+    }
+  },
+  "per_seed": {
+    "A_flat": {
+      "composed_distinct": [
+        17,
+        17,
+        17
+      ],
+      "coherence": [
+        0.41369047619047616,
+        0.3880952380952381,
+        0.3955357142857143
+      ],
+      "qa_proxy": [
+        0.362,
+        0.3385,
+        0.372
+      ]
+    },
+    "B_curriculum": {
+      "composed_distinct": [
+        11,
+        13,
+        10
+      ],
+      "coherence": [
+        0.3829464285714286,
+        0.3695238095238095,
+        0.35416666666666663
+      ],
+      "qa_proxy": [
+        0.36,
+        0.341,
+        0.36
+      ]
+    },
+    "C_anticurriculum": {
+      "composed_distinct": [
+        11,
+        17,
+        17
+      ],
+      "coherence": [
+        0.34125000000000005,
+        0.425297619047619,
+        0.43999999999999995
+      ],
+      "qa_proxy": [
+        0.357,
+        0.3435,
+        0.3585
+      ]
+    }
+  },
+  "dCD": -5.666666666666666,
+  "dCO": -0.030228174603174673,
+  "margins": {
+    "CD": 1.0,
+    "CO": 0.02
+  },
+  "b_beats_a": false,
+  "c_not_better_than_a": false,
+  "verdict": "CLOSED-NEGATIVE",
+  "tier": "🔴 learning-ORDER is NOT the depth lever at toy scale (a_paper_negative_ok)",
+  "frozen_rule": "GREEN iff (dCD>=1.0 OR dCO>=0.02) AND (C.CD<=A.CD AND C.COH<=A.COH)"
+}
