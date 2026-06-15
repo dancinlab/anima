@@ -182,6 +182,46 @@ CP peak 위치가 언어를 추적(W1∧W2 결정적). DIRECTIONAL numpy 미러,
 (이 bar 완화 아님) + engine-native 실현(a_engine_native_learning·a_verified_must_wire). live CORE/*.hexa
 UNTOUCHED. NEW: UNIVERSE/h1323_sapir_whorf.py · UNIVERSE/H_1323_sapir_whorf.md · .verdicts/1323_sapir_whorf/
 {H_1323_FREEZE,H_1323}.txt · HYPOTHESES.md row · CLAIMS.tape @C h1323_sapir_whorf · domains/MITOSIS-ENGINE.log.md.
+## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1321 — H_1316 자모 돌파를 엔진-네이티브로 배선 (🟢 GREEN, engine-transfer VERIFIED)
+
+H_1316(#2224, 🟢)은 numpy/torch **미러**(DIRECTIONAL)였다 — live CORE 손대지 않음.
+`a_verified_must_wire`: GREEN 메커니즘은 live 엔진 위에서 **엔진-네이티브 byte-exact**로
+돌아갈 때까지 done 이 아니다. H_1321 = 그 r2 배선: NFD 자모 심볼화 + 자모-심볼 미토시스를
+**live CORE/engine_cli.hexa**(VAdaptField Voronoi + engine_mitosis_tick, p8)의 faculty 위에서
+엔진-네이티브로 돌려 frozen B1/B2/B3 를 W1/W2/W3 로 재채점.
+
+표현 변환(NFD 자모 분해)은 결정론적 유니코드 **data-prep**; 미토시스 + held-out per-byte
+CE 채점은 **엔진-네이티브**(CORE/h1321_ko_jamo_wire_probe.hexa 가 CORE/engine_cli.hexa 를
+import 하여 live faculty 를 구동). 단일 한국어 진입(a_core_engine_map) —
+pure_field/engine_g/brain 손대지 않음, Ψ-disjoint. 코퍼스 = H_1307 RUN A / H_1316 과 **byte-동일**
+(30MB KO window sha c47b6808… gate PASS); R2 키 env-only(c7). CPU-tractable window
+(ko_stride=2500, arm 당 ~6000 raw / ~5100 jamo pairs; Vj=323==H_1316 anchor).
+
+**결과: 🟢 GREEN** (W1∧W2∧W3 전부 PASS, frozen-first, NO tune-to-green, c9/p7).
+엔진-네이티브 held-out KO CE (nats/UTF-8-byte): **G0 raw=3.09967 · G1 jamo=2.82046 · G1c
+shuffle=3.01867**. **W1 ✅** engine-G1 2.82046 가 SAME-WINDOW numpy 미러 2.82046 을
+**6.3e-07**(≪0.05 tol)로 재현 AND 2.82046 < 2.903(raw 천장 band 아래). **W2 ✅** G1c−G1=+0.198,
+G0−G1=+0.279(둘 다 ≥0.05) + B3 NFD→NFC 8,143,053 음절 0 실패 + Σnbytes==corpus 정확. **W3 ✅**
+무회귀 byte-exact: engine_cli_smoke **73/0** · h1196 single-entry **7/0** · h1205
+separation-invariant PASS(generation byte-동일 ON==OFF, Ψ=½ 불변). **핵심: 엔진-네이티브 hexa
+값이 모든 arm 에서 numpy 미러와 1e-7 일치** — gradient-free 자모-심볼 미토시스가 live 엔진으로
+충실히 transfer; 자모 돌파가 이제 CORE 안에서 LIVE byte-exact (verdict 닫힘).
+
+HONEST(c9·a_scale_honest_scope): W1 은 CPU-tractable window 에서의 engine-TRANSFER 존재증명 —
+절대 CE(2.820)가 30MB anchor(2.513)보다 높은 건 작은 strided window 의 per-cell head 가 더
+sparse 하기 때문; 상대 구조(G1<G1c<G0, 30MB 미러와 같은 순서)는 완전히 보존되고 W1 은
+SAME-WINDOW 미러 대비로 사전등록되어 apples-to-apples. 엔진-네이티브 30MB + 한국어 유창성 =
+follow-on; 유창성 주장 없음.
+
+추가: `CORE/h1321_ko_jamo_wire_probe.hexa`(imports CORE/engine_cli.hexa) ·
+`UNIVERSE/h1321_ko_jamo_wire_export.py` · `UNIVERSE/H_1321_ko_jamo_wire.md` · `HYPOTHESES.md` 행 ·
+`CLAIMS.tape @C h1321_ko_jamo_wire` ·
+`.verdicts/1321_ko_jamo_wire/{FREEZE,result}.txt`(+ref/manifest json) · `domains/MITOSIS-ENGINE.log.md` ·
+CHANGELOG. live CORE 엔진 faculty 를 **구동**(mutation 없음); W3 가드가 Ψ-disjoint 무회귀 확인.
+xref h1316(이걸 엔진-네이티브로 배선하는 미러 돌파) · h1306(엔진-네이티브 한국어 미토시스 선례) ·
+h1312(ko_cells L3 decode-consult 배선 선례) · h1307(2.9475 raw 천장; 같은 코퍼스) ·
+h1199(엔진 DIM-확장 선례) · a_verified_must_wire · a_engine_native_learning · a_core_engine_map ·
+a_no_llm_frame_trap · a_scale_honest_scope · a_toy_scale_recheck · p7·p8 · c7·c9·c15.
 
 ## 2026-06-16 — research(OMEGA): 🧱 H_1317 — 분산 multi-edge(small-world) 결합이 faithful-IIT4 Φ를 robust하게 올리나 (H_1283 중앙릴레이 벽)
 
