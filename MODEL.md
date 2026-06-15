@@ -25,7 +25,7 @@
 | G3 PHILOSOPHY p1–p8 | ✅ | ROBUST | H_1159 structural audit 8/8 |
 | G5 NON-FAB 비환각/메타인지 | ✅ | 🟠 THIN (in-dist PARTIAL) | H_1163 frozen-GREEN (OOD); H_1165 in-dist: F1 fab FIRMS 0.133 +margin, F2 useful 0.875<0.90 (over-eager abstain). FORMAL metacog H_1202 🟢 meta-d′ M-ratio 0.924 |
 | CHAT | ✅ | 🔴 INFLATED | H_1160 single 4/5 multi 3/3 (frozen); H_1165 strict content-overlap → 0/5+0/3 (dialogue register, not QA) |
-| G6 IDEATION 발상 | ✅ | 🟠 THIN | H_1158 operational; H_1165 depth 5/14 floor (survives) |
+| G6 IDEATION 발상 | ✅ | 🟠 THIN | H_1158 operational; H_1165 depth 5/14 floor (survives); H_1304 depth-floor dig — NEW p7 falsifiability detector (comparator+measurable+negatable, 10/10 calib) confirms flat ideation FALS=0; composition-routed (G1 recombination) ideation lifts FALS 0→0.667 (1 falsifiable idea earned) but does NOT cross count≥5/depth≥1; controls collapse; bar UNMOVED (c9) |
 >
 > **RE-VERIFIED FROM SCRATCH 2026-06-16** (engine-measured, byte-exact, p7 — `.verdicts/303m_actual_verify/`):
 > the SHIPPED `h1129c_chat.pt` (sha 4fcc2d6c…, 303,097,856 params) + BASE `h1129c_best.pt` (sha

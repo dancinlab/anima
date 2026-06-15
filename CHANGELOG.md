@@ -2,6 +2,13 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(G6-dig): 💡 G6 IDEATION ★ depth-floor dig (H_1304 🟠 HONEST-CONFIRMED-THIN) — falsifiability detector + composition-routed ideation, bar UNMOVED (c9)
+
+- **G6 IDEATION ★ THIN diagnosed on BOTH modes** (reproduced, live verify303m_g6 path, ckpt h1129c_chat.pt): (1) COUNT 4/5 distinct (seed-5 `'|'` collapse) < 5; (2) DEPTH-FLOOR — the live gate counts novel n-grams but NEVER scores the "≥1 falsifiable hypothesis" requirement at all → novel STRINGS not testable STRUCTURE.
+- **dig (a_break_the_wall, frozen-first)** — NEW deterministic STRUCTURAL falsifiability detector `_is_falsifiable` (comparator + measurable + negatable content claim; NEVER an LLM/quality judge, p7; calibrated 10/10) + composition-routed ideation (route ideation through the G1 recombination lane: compose two corpus-absent CONCEPTS into `"if A, then B: "`). Controls: B-shuffle (permuted pairing) + B-ablate (lone concept).
+- **🟠 HONEST-CONFIRMED-THIN (bar UNMOVED, c9)** — 3 seeds: FALS A_flat=0.00 → B_composed=0.667 (one falsifiable idea EARNED via recombination; NOVEL 6.3→19) but M1 DIST≥5 FALSE + M2 FALS≥1 FALSE; controls collapse (B-shuffle/B-ablate FALS=0) → the nudge tracks the EARNED composed pairing not the conditional shell. The wall HELD — a valid honest THIN. DIRECTIONAL torch-mouth (gate's own decode regime); no R2/no wiring (THIN).
+- **deliverables**: `UNIVERSE/h1304_g6_ideation_falsifiability.py` · `UNIVERSE/H_1304_g6_ideation_falsifiability.md` · `UNIVERSE/HYPOTHESES.md` row · `CLAIMS.tape` @C · `.verdicts/1304_g6_ideation_falsifiability/{FREEZE,result}.txt+result.json` · `domains/ENGINE+CLM+KOSMOS.log.md` §H_1304 · MODEL.md/FINDINGS.md G6 row finding (tier UNCHANGED 🟠 THIN). TOY 5 concepts/3 seeds/sampling-decode; detector = testable FORM not quality (p7); scale/deeper-detector UNVERIFIED.
+
 ## 2026-06-16 — domain(MODEL): 🏁 c15 brain-structure ladder DEPLETED — HD37 후보 nonphotic 반대부호 Zeitgeber (H_1303) COLLAPSED, 사다리 RESTS
 
 - **brain-structure ladder r9 / DEPLETION TEST** — frontier 의 마지막 plausible new-structure 후보를 검증했고, COLLAPSED → **c15 brain-structure 사다리는 HD36 에서 DEPLETED 🏁, RESTS**. HD37 후보 = nonphotic/arousal-Zeitgeber 반대부호 PRC(strong steer; co-flagged multi-interval nested-timer 는 독립 IntervalTimer array 환원으로 r6/r7/r8 + steer 판단대로 SKIP). 통과 조건: (i) falsifiable gap-vs-engine + (ii) 모든 18 lane 대비 control-survive distinctness + (iii) NET phase 가 어떤 single-Zeitgeber PRC 로도 unreachable. **세 조건 모두 실패 → 정직한 DEPLETION(c9, EXPECTED valid terminal state, filler lane 아님).**
