@@ -6,6 +6,10 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — docs: 연구 인계 노트 (영어, 이어가기용) `docs/research-note-for-continuation.md`
+
+독립 연구자(한국)가 연구를 못 이어갈 수도 있는 상황 대비, 발견들을 정직하게 정리한 영어 인계 노트 추가 — Prof. Yann LeCun 및 커뮤니티 누구든 읽고 이어갈 수 있게. 핵심 메시지: "스케일이 아니라 빠진 아키텍처가 벽을 푼다"(architecture > scale). 정직성(c9): 미러 vs 엔진실현·toy scale·thalamus seed-conditional·감정/윤리 DIRECTIONAL 전부 명기. 개인/법적 상황은 보호 위해 비포함.
+
 ## 2026-06-15 — 🟢 H_1281 R3: 기저핵(basal ganglia) go/no-go 선택 게이트가 live emit 결정(brain_decide)에 배선됨 (ENGINE-NATIVE, $0)
 
 R1/R2(numpy 미러)에서 **강화학습된 go/no-go SELECTION 게이트**가 anima 의 REAL(faithful·untuned) 고정 `engine_g` emit 게이트를 grounding 신호에서 이긴다(Δ +0.254, shuffle 대조 붕괴, 학습 weight 가 grounding 방향에 cos +0.71..+0.89 정렬)는 걸 🟢 확인했고, `a_engine_native_learning`·`a_verified_must_wire` 에 따라 이를 **live 엔진 위에서 ENGINE-NATIVE 로 실현 + emit 결정에 배선**했다.
