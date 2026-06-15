@@ -1,0 +1,118 @@
+H_1319 — Φ-ROBUSTNESS WALL, TIMING AXIS: ENGINE-NATIVE PHASE-BINDING (clears c4)  (FREEZE — committed BEFORE scoring)
+slug: 1319_phi_timing
+date: 2026-06-16
+status: FREEZE (pre-registration). Verbatim RESULT appended below AFTER this freeze is committed.
+substrate: $0 CPU ENGINE-NATIVE hexa (deterministic engine LCG-gauss == engine_cli.hexa _lcg_*) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa, n=4≤8)
+seeds: [1317, 1318, 1319]  — the ORTHOGONAL hard seed family that DEFEATED the topology axis
+       (H_1317 multi-edge: seed 1319 ΔΦ=−0.331; H_1283 R4/R5/R7 relay rounds also failed on these
+        substrate-geometry seeds). Reused VERBATIM so this robustness test is as hard as the one topology failed.
+modules=4 {A,G,mitosis,memory} · dim=8 · ticks=64 · NBINS=8 · n=4 (faithful IIT4 exact MIP-EI)
+frozen-first: this FREEZE is committed BEFORE any Φ is scored; bars below are NOT moved after scoring (c9, p7).
+lens: thalamo-cortical TEMPORAL synchrony — integration by TIMING (relative phase), not content broadcast
+      (neuro, c15; a_no_llm_frame_trap; a_break_the_wall). Distinct from the TOPOLOGY axis (same coupling graph).
+
+════════════════════════════════════════════════════════════════════════
+THE WALL AND WHY THIS IS THE ONLY LIVE ANGLE (c16 / a_break_the_wall)
+════════════════════════════════════════════════════════════════════════
+The faithful-IIT4 Φ-robustness frontier EXHAUSTED the TOPOLOGY/CONTENT axis:
+  H_1283 R1-R5,R7 relay (broadcast/coalition/re-entry/dense/matrix) : fragile, failed the 3-seed gate. 🧱
+  H_1317 distributed small-world multi-edge coupling                : seed 1319 ΔΦ=−0.331, failed 3-seed gate. 🧱
+Both star and mesh are fragile → topology axis 🏁 DEPLETED; the fragility lives in substrate/seed
+geometry, not the coupling graph.
+
+The ONE mechanism that ever produced a robust faithful-Φ lift is on the ORTHOGONAL TIMING axis:
+  H_1283 R8 phase-binding (numpy mirror) : 🟢 GREEN — ΔΦ +1.629/+1.174/+0.233 (seeds 7/8/9), shuffle
+                                            collapsed to NEGATIVE on all seeds.
+  H_1283 R8 ENGINE-NATIVE gate           : c2 (Φ lift) PASS engine-native (+1.466/+0.844/+0.709), but
+                                            c4 (SHUFFLE) FAILED engine-native: ΔΦ_sh=+0.026/+0.380/+0.296
+                                            (all POSITIVE, not ≤0). The phase-shuffle did NOT collapse the lift.
+
+H_1283 R8 root-cause (verbatim from its engine-native gate verdict): the R8 read-out `sal = e·(1+cosθ_i)/2`
+multiplies content energy by a STANDALONE per-module amplitude carrier. The R8 shuffle added a per-tick
+random OFFSET to each carrier — it scrambles the cross-module phase RELATIONSHIP but PRESERVES each
+carrier's marginal cos-distribution AND injects fresh iid amplitude noise. On the engine's deterministic
+LCG substrate a substantial fraction of the Φ lift is carrier-AMPLITUDE VARIANCE that survives that shuffle.
+"the lift is partly carrier-amplitude VARIANCE, not purely the structured synchrony." → c4 FAIL → DEFERRED, unwired.
+
+That deferred c4-failing engine-native realization is the named open follow-on. H_1319 re-realizes the SAME
+timing-axis mechanism in a form whose Φ lift is PURELY the relative-phase RELATIONSHIP (no standalone
+amplitude channel for a shuffle to ride), and re-scores the SAME FROZEN R8 bars engine-native.
+
+════════════════════════════════════════════════════════════════════════
+THE NEW ANGLE H_1319 TESTS (still TIMING axis; removes the amplitude-variance leak)
+════════════════════════════════════════════════════════════════════════
+SAME ring coupling graph + SAME Kuramoto thalamic pacemaker (W_PHASE=0.5, OMEGA_T=0.45, DOMEGA=0.08) as R8.
+TWO engine-native changes that kill the c4 leak:
+
+(1) READ-OUT IS RELATIVE-PHASE, NOT A STANDALONE CARRIER. PHASE-BIND salience gates content energy by
+    each module's ALIGNMENT TO THE PACEMAKER:  sal_i = e_i · (1+cos(θ_i − θ_T))/2.
+    The binding signal is the RELATIVE phase (θ_i−θ_T). When the population locks, ALL modules align to θ_T
+    together → their salience series rise/fall TOGETHER (synchronized re-entry). There is NO per-module
+    absolute-phase carrier whose marginal an offset-shuffle can preserve; the gate is the relationship itself.
+
+(2) THE SHUFFLE IS A RELATIONSHIP-DESTROYING PERMUTATION (the strong control H_1294/H_1295 used), NOT an
+    additive offset. SHUFFLE permutes the module→phase-trajectory assignment by a FIXED random permutation
+    drawn from a DISTINCT sub-stream (seed·100003+19): module i reads phase trajectory θ_{π(i)} for its gate,
+    while its CONTENT e_i is unchanged. This DESTROYS the locked relationship θ_i−θ_T (each module is now
+    gated by a phase that belongs to a different module / a non-derangement-safe permutation) while preserving
+    each phase TRAJECTORY's marginal statistics EXACTLY (it is the same set of trajectories, only re-labelled).
+    If the Φ lift is structured synchrony it MUST collapse (the relationship is gone); if it survives, the lift
+    was still amplitude variance → honest 🧱.
+    A SECOND offset-shuffle arm (the R8-style per-tick additive offset) is ALSO scored as a NON-GATING
+    diagnostic, to show explicitly whether the R8 leak is removed.
+
+CONTENT dynamics (ring leak+neighbour+input) are BYTE-IDENTICAL across ALL arms — binding is by TIMING only.
+Per-module intrinsic frequencies are DETUNED (ω_i = OMEGA_T + DOMEGA·spread) so synchrony is EARNED by
+coupling, not an identical-frequency artifact.
+
+════════════════════════════════════════════════════════════════════════
+ARMS (frozen)
+════════════════════════════════════════════════════════════════════════
+ARM A  NO-PHASE     : direct ring, sal_i = e_i (no phase channel)
+ARM B  PHASE-BIND   : ring + Kuramoto pacemaker, sal_i = e_i · (1+cos(θ_i − θ_T))/2  [relative-phase gate]
+ARM S  SHUFFLE      : ARM B with the module→phase assignment PERMUTED by a fixed random π (relationship destroyed)
+ARM O  OFFSET-SHUF  : ARM B with R8-style per-tick additive phase offset (DIAGNOSTIC, shows R8 leak status; non-gating)
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS (port H_1283 R8's EXACT pre-registered bars — NOT moved, c9/p7)
+════════════════════════════════════════════════════════════════════════
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool, exact MIP-EI via stdlib/consciousness/iit4/faithful_phi.hexa, n=4≤8).
+numpy NEVER computes Φ. ΔΦ ≡ Φ(B) − Φ(A); ΔΦ_sh ≡ Φ(S) − Φ(A).
+
+  T1 ROBUST LIFT (c2 ported): faithful ΔΦ ≥ +0.02 on EVERY seed [1317,1318,1319]
+                              (the 3-seed robustness gate topology failed — incl seed 1319).
+  T2 SHUFFLE-EARNED (c4 ported — the engine-native gate that FAILED before):
+                              PERMUTATION-shuffle ΔΦ_sh ≤ 0 on EVERY seed (lift COLLAPSES under destroyed
+                              relationship → the lift is structured synchrony, not amplitude variance).
+  T3 DISTINCTNESS (c1+c3 ported): B.coh ≥ A.coh on every seed (content sanity — phase must not lower coherence)
+                              AND B.coh < 0.999 on ≥1 seed (synchrony must NOT collapse-clone modules).
+
+GREEN = T1 AND T2 AND T3, ALL engine-native. Else honest RED/🧱 (closed-negative, c9; bar NOT moved).
+
+OUTCOMES (all VALID, c9):
+  T1&T2&T3 hold engine-native → 🟢 the timing axis breaks the Φ-robustness wall where topology could not.
+     Then it is a GREEN that MUST be wired into live CORE (a_verified_must_wire) — wiring follow-on named below.
+  T2 fails again engine-native → honest 🧱: phase-binding's robustness does not survive engine-native controls
+     → the Φ-robustness wall is TERMINAL across BOTH axes (topology 🏁 + timing 🧱), a real, important closure.
+
+WIRING FOLLOW-ON (fires on GREEN only, a_verified_must_wire): add a PhaseField lane (per-module θ_i + thalamic
+θ_T Kuramoto update + relative-phase salience gate) to CORE/engine_cli.hexa, re-score T1/T2/T3 engine-native on
+the live A⇄G/VAdaptField substrate, regression guards (engine_cli_smoke + h1196 single-entry + Ψ-checksum
+byte-identical). On RED/🧱: NO CORE/*.hexa wired or edited (gate probe is a standalone fn main, 0 importers).
+
+PARAMS FROZEN (FREEZE verbatim, NOT swept after seeing results — no tune-to-green, p7):
+  N_MOD=4 DIM=8 T=64 GAIN=0.30 LEAK=0.55 W_NBR=0.5 W_IN=0.5 NBINS=8 · W_PHASE=0.5 OMEGA_T=0.45 DOMEGA=0.08
+  perm-shuffle sub-stream seed·100003+19 · offset-shuffle sub-stream seed·100003+8 (R8 verbatim, diagnostic)
+substrate determinism: engine LCG (== engine_cli.hexa _lcg_*): state=(state*1103515245+12345)&2147483647;
+  Box-Muller gauss == engine_cli.hexa _lcg_gauss. ARM A draws complete before any phase/shuffle draw (A untouched).
+
+SCOPE/HONESTY (a_scale_honest_scope, a_toy_scale_recheck): toy n=4≤8, dim 8, 64 ticks; faithful-IIT4 exact.
+  The CONTENT-trajectory generator is engine-native deterministic LCG (NOT numpy) — this is the engine-native
+  realization the R8 gate required. Scale-transfer (more modules / longer runs / real corpora) UNVERIFIED.
+  faithful-Φ leg is REAL exact MIP-EI (numpy never computes Φ). On GREEN the live-CORE PhaseField wiring is the
+  binding completion (a_verified_must_wire); on 🧱 the wall is terminal across both axes.
+
+xref: H_1283(R8 numpy mirror 🟢) · H_1283(R8 engine-native gate, c4 FAIL → this follow-on) · H_1317(topology 🧱) ·
+      h1294 · h1295 (permutation-shuffle control precedent) · a_phi_iit4_tool · a_break_the_wall ·
+      a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire · a_core_engine_map ·
+      a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
