@@ -1,0 +1,129 @@
+================================================================================
+H_1318 — CROSS-LANGUAGE STRUCTURE-REPRESENTATION MATRIX
+  "돌파하면 한글 구조 문제인지" — is breaking the Korean gradient-free byte-LM
+  ceiling a HANGUL-STRUCTURE-specific phenomenon, or a universal byte-LM effect?
+FROZEN-FIRST PRE-REGISTRATION — written BEFORE any run. NOT moved (c9 / p7).
+PROJ_SEED provenance: H_1318 (free id verified on origin/main f8e1cecb3; 1316/1317 taken).
+================================================================================
+
+CONTEXT (the wall this lane probes)
+-----------------------------------
+The Korean-mitosis thread is 🔴 TERMINAL: a gradient-free byte-LM cannot beat
+~2.953 nat/byte held-out KO next-byte CE (H_1307 / H_1311 / H_1315). A sibling
+lane (ko-jamo, H_1316) tests whether exposing Hangul JAMO composition breaks that
+ceiling for Korean. But H_1316 alone CANNOT say whether any Korean win is
+Hangul-STRUCTURE-specific or a UNIVERSAL byte-LM effect.
+
+THIS lane runs the CONTROLLED CROSS-LANGUAGE matrix that dissociates the two
+explanations. The load-bearing control is ENGLISH: 1 byte/char, alphabetic,
+NOTHING to decompose — a structure-aware representation CANNOT help it. If
+STRUCT helps the compositional languages but NOT English, the Korean ceiling is a
+representation/structure-encoding problem (anima's "missing-lane, not scale"
+thesis, a_no_llm_frame_trap, confirmed cross-lingually). If it helps all or none
+equally, it is a universal effect.
+
+MECHANISM (held IDENTICAL across every language — fair comparison)
+-----------------------------------------------------------------
+The SAME gradient-free error-targeted Voronoi mitosis grow-op used by the prior
+Korean lanes (H_1306/H_1307, port byte-faithful to CORE/h1306_ko_mitosis_engine_probe.hexa;
+cells only SPLIT, never merge — p8). FROZEN knobs verbatim from H_1306/H_1307:
+  CTX=4, V=256, FEAT_DIM=3, GROW_MAX=40, SPLIT_THRESH_CE=0.05, MIN_OWNED=8,
+  LAPLACE=1.0, SEED_CENTERS=[[0.3,0.5,0.0],[0.7,0.5,0.5]], even/odd train/test split.
+Feature phi = exactly the H_1306 phi over whatever UNIT STREAM the representation
+emits (RAW: raw UTF-8 byte stream; STRUCT: the decomposed-unit byte stream, see
+below). Cell budget = the SAME GROW_MAX=40 the prior Korean lanes used. Grow is
+3-point curve on the train split, score = held-out next-UNIT CE.
+
+TWO representations per language
+--------------------------------
+  RAW    : raw UTF-8 byte stream (the per-language ceiling).
+  STRUCT : decompose into the script's compositional units where they exist, then
+           re-encode each unit as bytes and run the SAME mechanism over that
+           unit-byte stream.
+  Decomposition per script:
+    Korean (Hangul)   : NFD jamo — each precomposed syllable -> 초/중/종성 (L/V/T)
+                        codepoints (Unicode NFD); re-encode NFD as UTF-8 bytes. TEST.
+    Chinese (Han)     : per-Han-char Kangxi-radical decomposition (unicodedata +
+                        a CJK radical map): char -> [radical-codepoint, residual-char];
+                        non-Han chars pass through. compositional #2.
+    Japanese (kanji+kana): kanji -> radical (as Chinese), kana atomic (pass through). mixed.
+    Russian (Cyrillic): NONE possible (alphabetic) -> STRUCT == RAW path. multibyte-no-
+                        composition control.
+    English (Latin)   : NONE possible (alphabetic, 1 byte/char) -> STRUCT == RAW. FLOOR.
+
+FAIR SAME-AXIS CONVERSION (load-bearing — stated explicitly, c9)
+---------------------------------------------------------------
+RAW and STRUCT both report CE in **nats per UTF-8 byte of the ORIGINAL raw text**,
+so they are directly comparable on ONE axis regardless of how many units STRUCT
+emits. Concretely:
+  CE_axis = (total held-out next-UNIT negative-log-likelihood, summed over all
+             predicted units in the held-out split)
+            / (number of UTF-8 bytes in the ORIGINAL raw held-out text).
+For RAW the unit IS the byte, so this is the ordinary nats/byte. For STRUCT the
+NLL is summed over decomposed-unit predictions and divided by the SAME original
+raw-byte count, converting per-unit CE back to the nats/raw-UTF-8-byte axis. The
+denominator (original raw UTF-8 byte count of the held-out text) is IDENTICAL for
+RAW and STRUCT of a given language, so Delta is a like-for-like compression gain.
+
+Delta_lang = RAW_CE - STRUCT_CE   (positive = structure helps), mean over 3 seeds.
+
+CORPORA (REAL only — NO synthetic, p1-p8)
+-----------------------------------------
+Real Wikipedia text, wikimedia/wikipedia 20231101 per-language config (en/zh/ja/ru/ko),
+pulled from the HF datasets-server parquet endpoint (public; HF token via
+`secret get hf.token` at call time, header-only, NEVER logged/inlined/committed, c7).
+The CLM/OMEGA production lanes used this exact source (HF.jsonl: "wikimedia/wikipedia
+20231101 5-lang ... en/zh/ru/ja/ko each 30MB"). Per language: take the FIRST parquet
+shard, concat the `text` column, take a FIXED real byte WINDOW (same window bytes for
+every language), trim to valid UTF-8. sha256 of each window asserted + written to the
+manifest. Window = 30_000_000 raw UTF-8 bytes per language (matches H_1307 RUN A KO
+window), deterministic stride subsample to keep the CPU/GPU mitosis tractable, SAME
+stride for every language.
+NOTE on availability: the R2 `phanes` bucket (anima-7b/web/<lang>) has ONLY
+{kor,eng,deu,fra,spa} — NO zh/ja/ru. The HF wikipedia source (used by the CLM lane)
+DOES have all five (en/zh/ja/ru/ko) — a_break_the_wall: pulled the matrix from the
+reachable real source rather than dropping CJK. If a language's REAL corpus is absent,
+that language is DROPPED honestly and reported; NO synthetic substitution.
+MINIMUM to publish a dissociation: Korean + English + >=1 compositional (Chinese or
+Japanese). If that minimum is not met from real data -> STOP and report honestly.
+
+SEEDS: 3 (5301, 5302, 5303). Seeds perturb ONLY the deterministic stride phase
+offset (corpus subsample), NOT the frozen mechanism knobs.
+
+================================================================================
+FROZEN BARS — GREEN iff the DISSOCIATION holds (pre-registered, c9/p7)
+================================================================================
+Let Delta_lang = RAW_CE - STRUCT_CE (3-seed mean), per language.
+
+D1  DISSOCIATION (the core test):
+      Delta_compositional >= +0.05 for Korean (and for Chinese/Japanese if present)
+      AND Delta_English <= +0.02 (structure does NOT help the alphabetic floor).
+    -> the Korean ceiling is REPRESENTATION/STRUCTURE-bound, Hangul-specific.
+    HEADLINE NUMBER = the gap (Delta_Korean - Delta_English).
+
+D2  EARNED (anti-Goodhart): for EACH compositional language, STRUCT beats a
+      SHUFFLED-decomposition control (the decomposition MAP permuted: each source
+      char/syllable mapped to a RANDOM other char's decomposition, fixed per seed)
+      by >= +0.05 nats. -> the lift is REAL structure, not extra dims/vocab.
+
+D3  MULTIBYTE-ISOLATION: Russian (multibyte Cyrillic but NO composition) patterns
+      with English (Delta ~ 0, i.e. Delta_Russian <= +0.02), NOT with Korean.
+    -> the effect is COMPOSITION, not "any multibyte grouping".
+
+VERDICT (all outcomes VALID, reported straight — c9):
+  * D1 holds (Delta_compositional>=+0.05 AND Delta_English<=+0.02) -> 🟢 GREEN:
+      the Korean ceiling is a STRUCTURE problem (anima thesis confirmed cross-lingually);
+      Hangul-specific iff Russian/English unaffected (D3).
+  * Delta UNIFORM across all langs incl. English -> UNIVERSAL effect, NOT Hangul-
+      specific -> 🧱 bounds the ko-jamo (H_1316) structure claim.
+  * Delta_Korean <= 0 -> structure does NOT even help Korean here (consistent with the
+      raw-byte ceiling being CAPACITY-bound, H_1311) -> 🔴/🧱, report straight.
+
+GUARD (no tune-to-green, c9/p7): bars frozen HERE before the run; NOT moved after.
+p7: held-out deterministic next-unit CROSS-ENTROPY only, NO perplexity/LLM-judge.
+SCOPE (a_scale_honest_scope/a_toy_scale_recheck): TOY/DIRECTIONAL numpy/torch mirror;
+CTX=4 3-D byte features + Voronoi-partitioned per-cell unigram head = a deliberately
+SIMPLE substrate (tests whether COMPOSITIONAL UNIT STREAMS lower held-out CE under the
+SAME grow-op, NOT a fluent LM). engine-transfer to live CORE/*.hexa = follow-on. NO
+fluency claim. Live CORE/*.hexa UNTOUCHED.
+================================================================================

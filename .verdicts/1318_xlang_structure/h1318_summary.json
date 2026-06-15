@@ -1,0 +1,227 @@
+{
+  "id": "H_1318",
+  "device": "NVIDIA GeForce RTX 5070",
+  "torch": "2.11.0+cu130",
+  "window_bytes": 30000000,
+  "stride": 300,
+  "grow_max": 40,
+  "seeds": [
+    5301,
+    5302,
+    5303
+  ],
+  "available_langs": [
+    "ko",
+    "zh",
+    "ja",
+    "ru",
+    "en"
+  ],
+  "dropped_langs": [],
+  "source": "wikimedia/wikipedia 20231101 via HF datasets-server parquet",
+  "sha256": {
+    "ko": "3e288b7797017a2837294ecaa465afe7c8bcdec09cba29e53a62c6748eaed381",
+    "zh": "c084b027a40d46e17c07227b0814926f54db3f1a87429d880cf19765c9911da8",
+    "ja": "a97dd068ced1150bfe126a6e3a0ba16fc321be105133552c748064b4066cfc4a",
+    "ru": "f40cfe76f94d87b0bec000d333f390c43fd4293264690e8fc8cc370dadf9293d",
+    "en": "b097ccccfd9709b1ac076deee07a664accaa1891ea22a0db0e9895ed13e67fb3"
+  },
+  "matrix": {
+    "ko": {
+      "kind": "hangul",
+      "RAW_CE": 2.90394,
+      "STRUCT_CE": 2.69189,
+      "SHUF_CE": 2.79192,
+      "Delta": 0.21205,
+      "delta_vs_shuffle": 0.10003,
+      "cells_raw": [
+        14,
+        12,
+        11
+      ],
+      "cells_struct": [
+        13,
+        12,
+        20
+      ],
+      "vj_struct": 323,
+      "n_extra": 67,
+      "raw_seeds": [
+        2.89386,
+        2.90753,
+        2.91042
+      ],
+      "struct_seeds": [
+        2.6923,
+        2.69409,
+        2.68928
+      ],
+      "shuf_seeds": [
+        2.92085,
+        2.69373,
+        2.76119
+      ]
+    },
+    "zh": {
+      "kind": "han",
+      "RAW_CE": 3.31876,
+      "STRUCT_CE": 4.79946,
+      "SHUF_CE": 4.92653,
+      "Delta": -1.4807,
+      "delta_vs_shuffle": 0.12707,
+      "cells_raw": [
+        13,
+        32,
+        29
+      ],
+      "cells_struct": [
+        40,
+        40,
+        40
+      ],
+      "vj_struct": 9583,
+      "n_extra": 9327,
+      "raw_seeds": [
+        3.32538,
+        3.30914,
+        3.32175
+      ],
+      "struct_seeds": [
+        4.79102,
+        4.80662,
+        4.80072
+      ],
+      "shuf_seeds": [
+        4.93624,
+        4.9118,
+        4.93154
+      ]
+    },
+    "ja": {
+      "kind": "han",
+      "RAW_CE": 2.94078,
+      "STRUCT_CE": 4.17043,
+      "SHUF_CE": 3.87937,
+      "Delta": -1.22965,
+      "delta_vs_shuffle": -0.29106,
+      "cells_raw": [
+        12,
+        19,
+        24
+      ],
+      "cells_struct": [
+        40,
+        40,
+        40
+      ],
+      "vj_struct": 4994,
+      "n_extra": 4738,
+      "raw_seeds": [
+        3.0507,
+        2.8991,
+        2.87255
+      ],
+      "struct_seeds": [
+        4.18655,
+        4.15813,
+        4.16662
+      ],
+      "shuf_seeds": [
+        4.08476,
+        3.74566,
+        3.80771
+      ]
+    },
+    "ru": {
+      "kind": "none",
+      "RAW_CE": 2.49852,
+      "STRUCT_CE": 2.49852,
+      "SHUF_CE": 2.49852,
+      "Delta": 0.0,
+      "delta_vs_shuffle": 0.0,
+      "cells_raw": [
+        2,
+        2,
+        2
+      ],
+      "cells_struct": [
+        2,
+        2,
+        2
+      ],
+      "vj_struct": 256,
+      "n_extra": 0,
+      "raw_seeds": [
+        2.49608,
+        2.49953,
+        2.49996
+      ],
+      "struct_seeds": [
+        2.49608,
+        2.49953,
+        2.49996
+      ],
+      "shuf_seeds": [
+        2.49608,
+        2.49953,
+        2.49996
+      ]
+    },
+    "en": {
+      "kind": "none",
+      "RAW_CE": 3.13157,
+      "STRUCT_CE": 3.13157,
+      "SHUF_CE": 3.13157,
+      "Delta": 0.0,
+      "delta_vs_shuffle": 0.0,
+      "cells_raw": [
+        5,
+        7,
+        7
+      ],
+      "cells_struct": [
+        5,
+        7,
+        7
+      ],
+      "vj_struct": 256,
+      "n_extra": 0,
+      "raw_seeds": [
+        3.22132,
+        3.08564,
+        3.08774
+      ],
+      "struct_seeds": [
+        3.22132,
+        3.08564,
+        3.08774
+      ],
+      "shuf_seeds": [
+        3.22132,
+        3.08564,
+        3.08774
+      ]
+    }
+  },
+  "Delta_Korean": 0.21205,
+  "Delta_English": 0.0,
+  "headline_gap_Delta_ko_minus_en": 0.21205,
+  "D1_dissociation": false,
+  "D1_comp_each_ge_0.05": false,
+  "D1_english_le_0.02": true,
+  "D2_earned_vs_shuffle": false,
+  "D2_per_lang": {
+    "ko": true,
+    "zh": true,
+    "ja": false
+  },
+  "D3_multibyte_isolation": true,
+  "D3_note": "Delta_ru=0.0",
+  "compositional_langs": [
+    "ko",
+    "zh",
+    "ja"
+  ],
+  "VERDICT": "🟠 PARTIAL — dissociation incomplete (see per-bar)",
+  "wall_s": 365.8
+}
