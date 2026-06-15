@@ -28,28 +28,15 @@ else
   echo "[archive] GitHub: push 실패(네트워크/인증) — 로컬 커밋은 보존됨"
 fi
 
-# ② HF PUBLIC dataset — 같은 path_in_repo 로 갱신(버전 누적, 새 파일/새 repo 아님)
-if hf whoami >/dev/null 2>&1; then
-  hf repo create "$HF_REPO" --repo-type dataset -y >/dev/null 2>&1 || true   # PUBLIC, 이미 있으면 무시
-  ok=1
-  [ -f EEG_CLM/consciousness.seq ]    && { hf upload "$HF_REPO" EEG_CLM/consciousness.seq    consciousness.seq    --repo-type=dataset >/dev/null 2>&1 || ok=0; }
-  [ -f EEG_CLM/consciousness.kosmos ] && { hf upload "$HF_REPO" EEG_CLM/consciousness.kosmos consciousness.kosmos --repo-type=dataset >/dev/null 2>&1 || ok=0; }
-  hf upload "$HF_REPO" EEG_CLM/recordings recordings --repo-type=dataset >/dev/null 2>&1 || ok=0
-  [ "$ok" = 1 ] && echo "[archive] HF: $HF_REPO (PUBLIC) 같은 파일 갱신 ✅" || echo "[archive] HF: 일부 업로드 실패 — 토큰/권한 확인"
-
-  # ③ 전용 collection 생성 + repo 등록 (a_hf_collections) — best-effort
-  "$PY" - "$HF_REPO" "$COLL_TITLE" <<'PY' 2>/dev/null && echo "[archive] HF collection: anima-eeg-consciousness 에 등록 ✅" || echo "[archive] HF collection: 건너뜀 (huggingface_hub 미설치/권한)"
-import sys
-from huggingface_hub import create_collection, add_collection_item, list_collections, whoami
-repo, title = sys.argv[1], sys.argv[2]
-me = whoami()["name"]
-coll = next((c for c in list_collections(owner=me) if c.title == title), None)
-if coll is None:
-    coll = create_collection(title=title, namespace=repo.split("/")[0], exists_ok=True)
-add_collection_item(coll.slug, item_id=repo, item_type="dataset", exists_ok=True)
-print(coll.slug)
-PY
+# ② HF PUBLIC dataset 업로드 + 전용 collection (huggingface_hub, hf CLI 버전 비의존)
+export HF_TOKEN="${HF_TOKEN:-$(cat ~/.cache/huggingface/token 2>/dev/null)}"
+if [ -n "${HF_TOKEN:-}" ]; then
+  if python3 EEG_CLM/hf_archive.py; then
+    echo "[archive] HF: $HF_REPO (PUBLIC) + collection $COLL_TITLE ✅"
+  else
+    echo "[archive] HF: 업로드 실패 — 권한/네트워크 확인 (로컬 기록은 보존)"
+  fi
 else
-  echo "[archive] HF: 미로그인 → 보관/collection 건너뜀. 활성화: hf auth login (HF=PUBLIC, 사용자 지정). 가짜 성공 없음."
+  echo "[archive] HF: 토큰 없음 → 건너뜀. 가짜 성공 없음."
 fi
 echo "[archive] === 끝 ==="
