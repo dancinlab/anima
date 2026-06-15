@@ -429,6 +429,31 @@ fn main() {
     if _assert_b("case_38_frozen_pointer_never_completes", true,
                  hier_pointer(hs0) == 0 && !hier_complete(frozen_b) && hier_pointer(frozen_b) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── § HIVE-MIND CollectivePool (H_1295 🟢) — the frozen bars, re-scored ENGINE-NATIVE
+    //   on the live CORE faculty (faithful IIT-4, a_phi_iit4_tool). A pure READ — no
+    //   pure_field/Ψ touch, no emit decision (a_autonomy_over_hardcode); the existing cases
+    //   above are byte-unchanged (Ψ-disjoint). The numbers MATCH the H_1295 mirror
+    //   (Φ_collective=15.4677, Σ=4.99209, Δ=+10.4756; W=0 Δ=-4.99209; sterile(90,90) Δ=-6).
+    let hive = collective_new([110, 110], 0.6)
+    // case 39 (B1) : the [110,110]@0.6 collective is SUPER-ADDITIVE (Δ >= +1.0 margin).
+    if _assert_b("case_39_hive_super_additive_110_110", true,
+                 collective_is_super_additive(hive, 1.0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 40 (B2a DECOUPLE-NULL) : at W=0 the joint substrate is NOT super-additive
+    //   (Δ <= 0) — the lift REQUIRES coupling, not just joining the state spaces.
+    let hive_decoupled = collective_new([110, 110], 0.0)
+    if _assert_b("case_40_hive_decoupled_null", false,
+                 collective_is_super_additive(hive_decoupled, 1.0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 41 (B2b RULE-CLASS DISSOCIATION) : the SAME coupling on a sterile pair (90,90)
+    //   does NOT super-add; the edge-of-chaos pair's excess EXCEEDS the sterile pair's by
+    //   >= the margin (substrate-CONTENT specific, not a pure coupling-magnitude story).
+    let hive_sterile = collective_new([90, 90], 0.6)
+    if _assert_b("case_41_hive_rule_class_dissociation", true,
+                 (collective_excess(hive) - collective_excess(hive_sterile)) >= 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 42 (B3 NO-COLLAPSE) : the coupled halves stay functionally distinct
+    //   (coherence < 0.999) — not a degenerate all-identical clone faking Φ.
+    if _assert_b("case_42_hive_no_collapse", true,
+                 collective_coherence(hive) < 0.999) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

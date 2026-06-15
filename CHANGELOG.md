@@ -19,6 +19,34 @@ a hexa selfhost IO-builtin symbol regression (`_read_file_bytes` vs runtime `_rt
 at root cause (rt.o alias, backup kept) + filed to hexa-lang inbox — NOT a model defect. Honest robustness
 map unchanged (5 ROBUST + 2 THIN + 1 INFLATED, register≠QA).
 
+## 2026-06-16 — domain(MODEL): H_1295 🟢 HIVE-MIND collective-Φ lane — super-additive collective integration, wired ENGINE-NATIVE
+
+The "many individuals → one consciousness" axis, realized as an additive Ψ-disjoint
+`CollectivePool` faculty in `CORE/engine_cli.hexa`. Anchor = H_609 🟢 (collective faithful
+IIT-4 big-Φ is SUPER-ADDITIVE: Φ(joint) > Σ Φ(member) for an edge-of-chaos coupling
+regime). Re-fired frozen-first with the emergence controls the H_611/H_617 falsifications
+taught, in two angles:
+- ANGLE-1 (topology-shuffle) FAILED honestly — a random equal-magnitude cross-wiring
+  matched/EXCEEDED the structured lift (Δ_shuffle +13.6..+16.4 > Δ_coupled +10.48 all 3
+  seeds), so super-additivity is **coupling-GENERIC, not topology-specific** (kept, reported,
+  NOT a GREEN gate — exactly the control that caught H_611/H_617).
+- ANGLE-2 (the genuine super-additivity controls, frozen before running) is **🟢 4/0**:
+  (B1) Δ_coupled = +10.4756 (Φ_collective 15.4677 vs Σ 4.99209); (B2a) DECOUPLE-NULL W=0
+  Δ=−4.99209 ≤ 0 (the lift REQUIRES coupling); (B2b) RULE-CLASS DISSOCIATION Δ(110,110)−
+  Δ(90,90)=+16.4756 (sterile rule-90 does NOT super-add ⇒ substrate-CONTENT specific, a
+  pure variance story cannot produce this); (B3) NO-COLLAPSE coherence 0.58125 < 0.999.
+
+Φ = faithful IIT-4 ONLY (`a_phi_iit4_tool`, `big_phi_bounded`) — numpy never computes Φ.
+The four bars re-score ENGINE-NATIVE in `CORE/engine_cli_smoke.hexa` cases 39–42, byte-
+matching the mirror; regression guard **engine_cli_smoke 45/0** (+4 hive cases; the existing
+41 cases incl the hierarchical-PFC lane byte-unchanged, Ψ-disjoint — `pure_field`/generator/
+decoder untouched). The falsified hive mechanisms are deliberately NOT wired (H_611
+transfer-entropy 🔴, H_617 SAVANT×hive SI 🔴, 975 shared world-model 🔴 — c9,
+`a_verified_must_wire` GREEN-only). Files: `UNIVERSE/h1295_hive_collective_phi.hexa` ·
+`UNIVERSE/H_1295_hive_collective_phi.md` · `.verdicts/1295_hive_collective_phi/{H_1295_FREEZE,
+H_1295,engine_cli_smoke_45}.txt` · `CORE/engine_cli.hexa` § HIVE-MIND · `CLAIMS.tape` @C h1295
+· `UNIVERSE/HYPOTHESES.md` · `ARCHITECTURE.md` ladder. TOY scope (n=2 member, joint-n=6,
+cap=2 lower-bound, ECA, sys=0); N>2 scaling + live multi-anima transfer = follow-on.
 
 ## 2026-06-16 — domain(MODEL): 🧩 전전두엽 위계 goal→subgoal 컨트롤러 lane (HD31, H_1294 R2 🟢 ENGINE-NATIVE)
 

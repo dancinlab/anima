@@ -29,6 +29,7 @@
 | H_1292 | hypothalamus — setpoint homeostatic drive | 🟢 GREEN ENGINE-NATIVE | [H_1292_hypothalamus_drive.md](H_1292_hypothalamus_drive.md) |
 | H_1293 | theory-of-mind — other-agent belief (self ⊥ other) | 🟢 GREEN ENGINE-NATIVE | [H_1293_theory_of_mind.md](H_1293_theory_of_mind.md) |
 | H_1294 | hierarchical-PFC — goal→subgoal controller (ordered plan ⊥ single-step) | 🟢 GREEN ENGINE-NATIVE | [H_1294_hierarchical_pfc.md](H_1294_hierarchical_pfc.md) |
+| H_1295 | hive-mind — collective-Φ super-additivity (many→one) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1295_hive_collective_phi.md](H_1295_hive_collective_phi.md) |
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
 
