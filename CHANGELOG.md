@@ -33,6 +33,42 @@ H_1316(🟢)이 한국어 byte-LM 천장 2.953을 자모 분해로 2.513까지 �
   벡터**를 예측 — 설계가 분할이 아닌 예측 TARGET에 들어가도록). TOY/DIRECTIONAL, 유창성 주장 없음,
   live CORE UNTOUCHED. (UNIVERSE/h1322_ko_featural.py · H_1322_ko_featural.md · .verdicts/1322_ko_featural/)
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1324 — 교차언어 구조 매트릭스 r2: 제대로 된 IDS 한자 분해 (🔴/🧱 정직한 부정)
+
+질문 (a_break_the_wall/c16, H_1318 벽 재시도): H_1318 의 중국어/일본어 NEGATIVE(Δ_zh=−1.481, Δ_ja=−1.230)는
+**잘못된 분해 방법의 ARTIFACT**였는가? H_1318 의 FROZEN 강희부수 분해는 **글자 전체를 잔차(residual) 심볼로 유지**해서
+STRUCT 어휘가 9327(zh)/4738(ja)로 폭발 → per-cell 유니그램 헤드가 분열했다. H_1324 는 **제대로 된 sub-character
+IDS-구성요소 분해**(잔차 없음, 모자란 어휘)로 — H_1318 과 **동일한** frozen gradient-free 미토시스 메커니즘 위에서 —
+**새 사전등록**으로 재검증한다. 한국어(자모) + 영어(무분해 바닥)는 **바이트 동일**하게 두어 보정 앵커로 유지(H_1318 과 직접 비교).
+
+THE FIX: 각 한자를 IDS(표의문자 기술 시퀀스) **구성요소 leaf**로 분해 (한 단계, IDC 연산자 ⿰…⿻ + &…; 엔티티 +
+[GTKV] 지역태그 제거, **글자 전체 잔차 없음**). 출처 = CHISE IDS 데이터베이스(cjkvi/cjkvi-ids ids.txt, sha256
+bfc70a8c…, 88937 엔트리, ids-miss=0). 바이트 회계: 글자 UTF-8 길이를 구성요소들에 분배 → Σ struct n_bytes ==
+원시 UTF-8 바이트 수 정확히 (공정 CE/바이트 축, RAW·STRUCT 분모 동일, shuffle 포함 검증).
+
+**결과 🔴/🧱** (RTX 5070 sm_120, $0, 3 seeds [5324-6], frozen-first, NO tune-to-green, c7 grep-clean, live CORE UNTOUCHED,
+mirror DIRECTIONAL). 매트릭스(3-seed 평균, nats/원시-UTF-8-byte): **ko 한글 RAW 2.91157 / STRUCT 2.69606 /
+Δ +0.21551**(shuffle 대비 +0.08776, comp-vocab 67) · **zh 한자 RAW 3.32756 / STRUCT 4.06493 / Δ −0.73736**
+(comp-vocab 2116) · **ja 한자 RAW 3.09273 / STRUCT 3.72098 / Δ −0.62826**(comp-vocab 1582) · **en RAW=STRUCT
+3.15925 / Δ 0.000**. FROZEN bars: **H1 한자-이득 FAIL**(zh/ja 둘 다 여전히 음수) · **H2 EARNED FAIL**(zh
+Δ-vs-shuffle −0.00099, ja −0.02495 — IDS-구성요소 STRUCT 가 자기 구성요소-shuffle 도 못 이김) · **H3 보정 PASS**
+(ko Δ=+0.21551 ≈ H_1318 +0.21205 재현, en Δ=0.000 → 파이프라인 동일).
+
+**수정은 됐고, 해(害)는 절반으로, 이득은 0 선을 못 넘었다**: 제대로 된 IDS 분해로 모자란 어휘 확보(zh 9327→2116,
+ja 4738→1582; ~88% 글자가 ≥2 leaf, 평균 ≈2.0 구성요소/글자) + H_1318 해의 절반 제거(zh −1.481→−0.737, ja
+−1.230→−0.628) — H_1318 한자 NEGATIVE 의 일부가 나쁜 분해 ARTIFACT 였음을 확인 — 그러나 부호는 안 뒤집힘.
+**한자 구성(logographic)은 이 gradient-free 유니그램 메커니즘에서 진짜로 도움이 안 된다**(H_1318 artifact 와 구별되는 REAL
+결과). WHY(c9): 한글은 작고(67) 규칙적인 L/V/T 알파벳; 한자는 크고(≈2000) 불규칙·위치의존 구성요소 inventory →
+CTX=4 Voronoi-유니그램 헤드가 잡기엔 너무 sparse, shuffle 도 점수를 거의 안 바꿈. **H_1318 한글-특이성이 더 강해졌다** —
+구조-표현 byte-LM 이득은 **작고 규칙적인 구성 알파벳(한글 자모)** 에 특이적이지, 구성적/표어 스크립트 일반에는 아님.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY/DIRECTIONAL numpy/torch mirror; CTX=4 3-D Voronoi
+per-cell 유니그램 헤드 = 의도적으로 SIMPLE 기질; 한 단계(비재귀) IDS; 30MB/언어, 3 seeds, 단일 stride; 한자
+NEGATIVE 는 이 메커니즘에 한정(gradient-trained/재귀-IDS/풍부한-컨텍스트 기질엔 무관 주장 아님); engine-transfer = follow-on
+(a_engine_native_learning · a_verified_must_wire); fluency 주장 없음. 새 파일: `UNIVERSE/h1324_xlang_han_ids.py` ·
+`UNIVERSE/H_1324_xlang_han_ids.md` · `.verdicts/1324_xlang_han_ids/{H_1324_FREEZE,H_1324,h1324_summary.json,h1324_full.log}` ·
+`HYPOTHESES.md` row · `CLAIMS.tape` @C h1324_xlang_han_ids · `domains/MITOSIS-ENGINE.log.md`.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🌐 H_1318 — 교차언어 구조-표현 매트릭스 (한글 천장 돌파 = 한글-구조 문제인가?) (🟠 PARTIAL)
 
 질문(돌파하면 한글 구조 문제인지): 한국어 gradient-free 바이트-LM 천장(H_1307/1311/1315, ~2.953 nat/byte)을

@@ -1,0 +1,56 @@
+=== H_1324 — XLANG r2: PROPER IDS HAN DECOMP (sm_120) ===
+device=NVIDIA GeForce RTX 5070 torch=2.11.0+cu130
+kernel launch OK (sentinel 3134.2)
+[ids] fetched 2161631B
+[ids] sha256=bfc70a8c09f9f5616ebf0543bd6681e67314e9f7ae2307e5ae8c6f15bdc5c6a6
+[ids] 88937 entries loaded
+[corpus] 20231101.ko fetched 30000008B via /rows (offset reached 3800)
+[corpus] ko kind=hangul 30000000B sha256=3e288b7797017a28…
+[corpus] 20231101.zh offset 100 HTTP 429 -> backoff 5s (attempt 1/8)
+[corpus] 20231101.zh offset 100 HTTP 429 -> backoff 10s (attempt 2/8)
+[corpus] 20231101.zh offset 100 HTTP 429 -> backoff 20s (attempt 3/8)
+[corpus] 20231101.zh offset 100 HTTP 429 -> backoff 40s (attempt 4/8)
+[corpus] 20231101.zh fetched 30000008B via /rows (offset reached 1900)
+[corpus] zh kind=han 29999998B sha256=c084b027a40d46e1…
+[corpus] 20231101.ja fetched 30000008B via /rows (offset reached 1400)
+[corpus] ja kind=han 30000000B sha256=a97dd068ced1150b…
+[corpus] 20231101.en offset 200 HTTP 429 -> backoff 5s (attempt 1/8)
+[corpus] 20231101.en offset 200 HTTP 429 -> backoff 10s (attempt 2/8)
+[corpus] 20231101.en offset 200 HTTP 429 -> backoff 20s (attempt 3/8)
+[corpus] 20231101.en offset 200 HTTP 429 -> backoff 40s (attempt 4/8)
+[corpus] 20231101.en fetched 30000008B via /rows (offset reached 1500)
+[corpus] en kind=none 30000000B sha256=b097ccccfd9709b1…
+[avail] REAL corpora available: ['ko', 'zh', 'ja', 'en']
+[ko] kind=hangul extra-units=67 vj_struct=323
+  [ko seed 5324] RAW=2.91810 STRUCT=2.69302 SHUF=2.77727  cells 11/11
+  [ko seed 5325] RAW=2.92109 STRUCT=2.70476 SHUF=2.79904  cells 11/13
+  [ko seed 5326] RAW=2.89551 STRUCT=2.69039 SHUF=2.77515  cells 19/12
+[zh] kind=han distinct-Han=9113 component-vocab=2116 vj_struct=2372 ids-miss=0 decomposed-chars=8929
+  [zh seed 5324] RAW=3.33013 STRUCT=4.07692 SHUF=4.09941  cells 16/29
+  [zh seed 5325] RAW=3.31710 STRUCT=4.05622 SHUF=4.02445  cells 32/38
+  [zh seed 5326] RAW=3.33546 STRUCT=4.06163 SHUF=4.06795  cells 16/40
+[ja] kind=han distinct-Han=4524 component-vocab=1582 vj_struct=1838 ids-miss=0 decomposed-chars=4390
+  [ja seed 5324] RAW=2.87692 STRUCT=3.72282 SHUF=3.68905  cells 19/40
+  [ja seed 5325] RAW=3.34638 STRUCT=3.72604 SHUF=3.69856  cells 35/40
+  [ja seed 5326] RAW=3.05488 STRUCT=3.71409 SHUF=3.70050  cells 13/35
+[en] kind=none extra-units=0 vj_struct=256
+  [en seed 5324] RAW=3.03165 STRUCT=3.03165 SHUF=3.03165  cells 40/40
+  [en seed 5325] RAW=3.22125 STRUCT=3.22125 SHUF=3.22125  cells 5/5
+  [en seed 5326] RAW=3.22485 STRUCT=3.22485 SHUF=3.22485  cells 5/5
+================================================================================
+PER-LANGUAGE MATRIX (3-seed mean, nats per ORIGINAL UTF-8 byte):
+  lang  kind        RAW_CE  STRUCT_CE     Delta   SHUF_CE  Δvs-shuf comp-vocab
+  ko    hangul     2.91157    2.69606  +0.21551   2.78382  +0.08776         67
+  zh    han        3.32756    4.06493  -0.73736   4.06394  -0.00099       2116
+  ja    han        3.09273    3.72098  -0.62826   3.69603  -0.02495       1582
+  en    none       3.15925    3.15925  +0.00000   3.15925  +0.00000          0
+--------------------------------------------------------------------------------
+Delta_Korean = +0.21551   Delta_English = +0.00000
+Delta_zh = -0.73736   Delta_ja = -0.62826
+(H1) HAN-GAIN     zh&ja each Δ>=+0.05: {'zh': False, 'ja': False} -> FAIL
+(H2) EARNED       each Han STRUCT beats SHUFFLE by >=0.05: {'zh': False, 'ja': False} -> FAIL
+(H3) CALIBRATION  ko Δ>=+0.15 [True] AND en Δ<=+0.02 [True] -> PASS
+--------------------------------------------------------------------------------
+H_1324 VERDICT: 🔴/🧱 — even under PROPER IDS decomposition, Han composition does NOT help this gradient-free unigram mechanism (REAL, distinct from the H_1318 artifact); Hangul-specificity stands STRONGER
+available REAL corpora: ['ko', 'zh', 'ja', 'en'] | IDS sha256=bfc70a8c09f9f5616ebf0543bd6681e67314e9f7ae2307e5ae8c6f15bdc5c6a6
+[done] wall=435.7s

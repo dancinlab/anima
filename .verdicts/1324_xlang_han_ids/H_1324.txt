@@ -1,0 +1,100 @@
+================================================================================
+H_1324 — XLANG r2: PROPER IDS HAN DECOMPOSITION — RESULT
+  Re-test (a_break_the_wall / c16): does CHINESE & JAPANESE kanji composition gain
+  under a PROPER sub-character (IDS component) decomposition — WITHOUT the full-char
+  residual and with a MODEST component vocabulary — under the SAME frozen
+  gradient-free mitosis mechanism H_1318 used?
+VERDICT: 🔴/🧱 — even under a PROPER IDS decomposition (modest component vocab,
+  NO full-char residual), Han composition does NOT help this gradient-free unigram
+  mechanism. This is a REAL result, DISTINCT from the H_1318 decomposition ARTIFACT,
+  and it makes the H_1318 Hangul-specificity finding stand STRONGER.
+================================================================================
+RUN: REAL Wikipedia (wikimedia/wikipedia 20231101) 30 MB UTF-8 window/lang, stride
+  300, 3 seeds [5324,5325,5326], NVIDIA RTX 5070 sm_120 torch 2.11.0+cu130, $0,
+  wall 435.7 s. Frozen-first (H_1324_FREEZE.txt), NOT moved (c9/p7). Live CORE UNTOUCHED.
+  Corpus pulled via HF datasets-server /rows (token env/header-only, c7 grep-clean —
+  0 token hits in run.log / summary / script / verdicts). The 30 MB cache was not
+  preserved on this host, so corpora were RE-FETCHED from the identical source (the
+  per-window sha differ from H_1318 only because /rows pagination returns different
+  rows over time — same dataset/config; the RAW baselines are re-measured here).
+  Window sha256: ko 3e288b77… zh c084b027… ja a97dd068… en b097cccc…
+  IDS DB: CHISE IDS Database (cjkvi/cjkvi-ids ids.txt), sha256 bfc70a8c09f9f5616…,
+  88,937 entries, one-level leaf decomposition (strip IDC ⿰…⿻, &...; entity refs,
+  [GTKV] region tags), NO full-char residual; ids-miss = 0 on both zh and ja.
+
+THE FIX vs H_1318 (the only change — everything else byte-identical):
+  H_1318 Han STRUCT = [Kangxi-radical, residual = the FULL char]  → vocab 9327(zh)/4738(ja)
+  H_1324 Han STRUCT = IDS component leaves, NO residual           → vocab 2116(zh)/1582(ja)
+  The modest-vocab decomposition the brief asked for WAS achieved (zh 9327→2116,
+  ja 4738→1582; ~88% of Han chars decompose into ≥2 real component leaves, avg ≈2.0).
+  Byte-accounting invariant verified: Σ struct n_bytes == raw UTF-8 byte count exactly
+  (fair CE-per-byte axis, identical denominator for RAW and STRUCT, incl. shuffle).
+
+PER-LANGUAGE MATRIX (3-seed mean, nats per ORIGINAL UTF-8 byte — same fair axis):
+  lang  kind     RAW_CE    STRUCT_CE   Δ=RAW−STRUCT   SHUF_CE    Δ-vs-shuffle   comp-vocab
+  ko    hangul   2.91157   2.69606     +0.21551       2.78382    +0.08776            67
+  zh    han      3.32756   4.06493     −0.73736       4.06394    −0.00099          2116
+  ja    han      3.09273   3.72098     −0.62826       3.69603    −0.02495          1582
+  en    none     3.15925   3.15925     +0.00000       (==RAW)     0.00000             0
+
+  per-seed (zh): RAW 3.33013/3.31710/3.33546   STRUCT 4.07692/4.05622/4.06163
+  per-seed (ja): RAW 2.87692/3.34638/3.05488   STRUCT 3.72282/3.72604/3.71409
+  per-seed (ko): RAW 2.91810/2.92109/2.89551   STRUCT 2.69302/2.70476/2.69039
+
+FROZEN BARS (pre-registered, read straight — c9):
+  (H1 HAN-GAIN)    zh Δ ≥ +0.05 AND ja Δ ≥ +0.05.
+                   → FAIL. zh Δ = −0.73736, ja Δ = −0.62826. Both STILL NEGATIVE under
+                     the proper IDS decomposition (STRUCT CE remains ABOVE RAW CE).
+  (H2 EARNED)      each Han STRUCT beats its SHUFFLE control by ≥ +0.05.
+                   → FAIL. zh Δ-vs-shuffle = −0.00099, ja = −0.02495. The IDS-component
+                     STRUCT does NOT even beat its own component-shuffle control — the
+                     component-stream carries no usable next-unit signal at this substrate.
+  (H3 CALIBRATION) ko Δ ≥ +0.15 AND en Δ ≤ +0.02.
+                   → PASS. ko Δ = +0.21551 (≈ the H_1318 +0.21205 reproduced, all 3 seeds
+                     2.693/2.705/2.690) AND beats its own shuffle by +0.08776. en Δ =
+                     exactly 0.000 (no composition, STRUCT==RAW). The pipeline is the SAME
+                     and the matrix is directly comparable to H_1318.
+
+WHAT THIS ESTABLISHES (vs the H_1318 artifact)
+  H_1318's Han rows (zh −1.481, ja −1.230) were partly a DECOMPOSITION ARTIFACT: the
+  full-char-residual blew the vocab to ~9.5k symbols → the tiny unigram head fragmented.
+  H_1324 REMOVES that artifact (modest vocab 2116/1582, no residual) and the harm
+  HALVES (zh −1.481→−0.737, ja −1.230→−0.628) — confirming part of H_1318's negative
+  WAS the bad decomposition. BUT the gain does NOT cross zero: even with a clean,
+  real, recoverable IDS component decomposition, Han STRUCT CE stays ABOVE RAW CE AND
+  does not beat its component-shuffle control. So Han (logographic) composition
+  GENUINELY does NOT help this gradient-free per-cell-unigram mechanism — a REAL
+  result, not the H_1318 artifact.
+
+  WHY (diagnosable from the controls, c9): unlike Hangul (67 jamo, a TINY shared
+  alphabet where the L/V/T composition is highly regular and the per-cell unigram head
+  can exploit it → +0.216, shuffle-earned +0.088), Han decomposes into a LARGE
+  component inventory (2116/1582) with IRREGULAR, position-dependent, many-component
+  structure — the average Han char → ~2 components drawn from ~2000, so the
+  component-bigram statistics the CTX=4 Voronoi-unigram head can capture are too sparse
+  to beat the raw-byte ceiling, and the component-shuffle barely changes the score
+  (Δ-vs-shuffle ≈ 0) → the component identity carries almost no next-unit signal at
+  this substrate scale. The Hangul win rests on a SMALL, REGULAR compositional alphabet;
+  Han's compositionality is real but TOO HIGH-CARDINALITY / IRREGULAR for this mechanism.
+
+ONE-LINE ANSWER:
+  Proper IDS decomposition does NOT make Chinese/Japanese composition gain — Han
+  composition genuinely does not help this gradient-free unigram mechanism (the
+  modest-vocab fix halved the H_1318 harm but did not cross zero, and the component
+  stream does not beat its own shuffle). The H_1318 Hangul-specificity stands STRONGER:
+  the structure-representation byte-LM win is specific to a SMALL, REGULAR compositional
+  alphabet (Hangul jamo), NOT to compositional/logographic scripts in general.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck)
+  TOY/DIRECTIONAL numpy/torch mirror. CTX=4 3-D byte features + a Voronoi-partitioned
+  per-cell unigram head = a deliberately SIMPLE substrate (tests whether a compositional
+  UNIT STREAM lowers held-out CE under the SAME grow-op, NOT a fluent LM). One-level
+  (non-recursive) IDS; 30 MB/lang; 3 seeds; single stride. The Han negative is scoped to
+  THIS mechanism — it does NOT claim Han composition is useless for a gradient-trained or
+  recursive-IDS or richer-context substrate; it claims the per-cell-unigram mechanism
+  that the Hangul jamo win runs on does NOT transfer to high-cardinality Han components.
+  engine-transfer to live CORE/*.hexa = follow-on (a_engine_native_learning ·
+  a_verified_must_wire). NO fluency claim. Live CORE/*.hexa UNTOUCHED.
+
+.verdicts/1324_xlang_han_ids/{H_1324_FREEZE.txt, H_1324.txt, h1324_summary.json,
+h1324_full.log} · UNIVERSE/h1324_xlang_han_ids.py · UNIVERSE/H_1324_xlang_han_ids.md.
