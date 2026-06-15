@@ -51,7 +51,7 @@ anima/
 - **Identity / versioning** — `a1` (VERSIONS.md SSOT, SemVer + root /VERSION).
 - **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
-- **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
+- **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
 - **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only).
 - **Verify / paper workflow** — `a_claim_manifest · a_claim_verify · a_paper_*` (hexa verify → verdict → CLAIMS.tape → /paper at full closure; closed-negative publishable).
@@ -129,6 +129,15 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "ship a torch/CPU `train_clm.py` as the production trainer · author the trainer in `.py`"
   dont = "run a 44.68M+ rung on CPU · claim a 'pool GPU fire' from a trainer with no device path"
   dont = "assert a flame<->PyTorch wall speedup — RETRACTED 2026-05-19 · unmeasured"
+
+@D a_engine_native_learning := "무조건 최종 아키텍처 엔진 위에서 학습 — 연구/미토시스 교육 포함, 미러 아님" :: governance [required active]
+  do   = "모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 최종 아키텍처 엔진 위에서 실행 — live `.hexa` A⇄G + MITOSIS VAdaptField (`CORE/engine_cli.hexa`) + mounted `CORE/bytegpt_decode.hexa` 디코더"
+  do   = "numpy/torch 미러 학습 결과 = DIRECTIONAL only ('engine-transfer UNVERIFIED') — 방향 탐색엔 OK, 그러나 binding verdict 아님"
+  do   = "미러로 방향을 잡았으면 엔진-네이티브 실현으로 재확인해야 verdict 성립 (c2) · MITOSIS VAdaptField 는 이미 live (H_1199)"
+  do   = "a_engine_measured_verdict 의 learning-side 쌍 (그건 MEASUREMENT, 이건 LEARNING) · a_train_flame_forge 가 production 트레이너 .hexa 를 강제하듯, 이 규칙은 RESEARCH/probe 학습 + 교육까지 같은 규율을 확장"
+  dont = "numpy/torch 미러 결과를 엔진-검증된 것처럼 closure/promote · 미러-only 로 '학습됐다' 주장"
+  dont = "최종 아키텍처 바깥(미러)에서 한 학습을 production/verdict 로 승격"
+  ref  = "a_engine_measured_verdict · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2"
 
 @D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
