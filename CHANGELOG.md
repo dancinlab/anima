@@ -2,6 +2,37 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): 🧱 H_1320 — anima를 하나의 세포로: 분열(divided)이 조립(hive)이 못한 통합 Φ를 만드나
+
+사용자의 렌즈("anima 전체를 하나의 cell로 봐라")로 hive 벽을 **반대 방향**에서 다시 친 시도
+(c16/a_break_the_wall). hive(H_1308 NULL · H_1313 🧱)는 **독립적으로 자란 두 anima cell을
+조립(ASSEMBLE)**했고 faithful-IIT4 Φ가 통합되지 않았다(Δ_real=−3.0, super-additivity는 ECA 전용).
+**시도 안 해본 각도**(발생생물학 c15, a_no_llm_frame_trap): 하나의 zygote가 **분열(DIVIDE)**해
+통합된 유기체가 되는 이유는 부분들이 **발생적 기원(origin)을 공유**하기 때문이다. H_1320:
+하나의 anima-cell을 두 **공유-기원 딸세포**로 mitotic DIVIDE하면, 조립(hive)이 못한 통합
+(super-additive) faithful-IIT4 Φ가 나오나?
+
+**결과: 🧱 WALL** (정직한 closed-negative, c9). 핵심 대조 = DIVIDED(공유 기원) vs ASSEMBLED(독립
+기원=hive baseline), W_HIVE=0.6·unit수 동일 매칭(유일 차이=공유-vs-독립 기원). 분열은 **다수
+seed에서 조립을 실제로 이긴다**: seed 1318/1319에서 DIVIDED super-additivity가 ASSEMBLED를
+크게 앞섬(M2 gap +1.727/+0.818, Δ_div +1.27/+0.88 vs Δ_asm −0.46/+0.06), joint Φ가 undivided
+SINGLE보다 높음(M1 lift +2.10/+0.89). 계보를 끊으면(SHUFFLE) DIVIDED의 Δ가 **모든 seed에서
+ASSEMBLED와 정확히 동일**하게 붕괴(M3 PASS, byte-identical) → lift는 **공유 기원**이지 unit수/분산이
+아님. **그러나** H_1283/H_1317 topology robustness를 깬 바로 그 직교 seed(1317)가 분열도 깬다:
+Δ_divided 0.0 < Δ_assembled +0.188(M2 gap −0.188), Φ_div_pair 1.213 < Φ_single 1.342(M1 lift
+−0.129). → **분열에 의한 collective-Φ는 REAL이지만 FRAGILE** — 3-seed robustness gate 실패,
+Φ-topology 벽과 **동일한 취약성 signature**. 발생적 방향(분열)은 조립보다 다수 seed에서 분명히
+**낫지만**(hive의 순수 NULL 대비 진짜 새 발견) robustness 바를 넘지 못한다. hive 벽은 이제
+**양 방향 모두** 닫힘: 조립 🧱(H_1313 robust NULL) + 분열 🧱(H_1320 fragile lift).
+
+faithful-IIT4 EXACT(n≤8 MIP-EI, hexa stdlib; numpy는 Φ 계산 안 함, proxy 금지 a_phi_iit4_tool),
+3 seeds [1317,1318,1319], $0 CPU-local, frozen-first(bars 사전등록·미이동 c9/p7), deterministic
+(2회 byte-identical). numpy mirror = DIRECTIONAL, engine-transfer 미검증(a_scale_honest_scope·
+a_toy_scale_recheck); 🧱이므로 CORE 배선 follow-on 없음(a_verified_must_wire=GREEN 전용), live
+CORE/*.hexa UNTOUCHED. H_1308/1313/1295를 retract하지 않고 scope를 bound. (사전등록
+`.verdicts/1320_anima_cell/H_1320_FREEZE.txt` · 카드 `UNIVERSE/H_1320_anima_cell.md` · 인덱스
+`UNIVERSE/HYPOTHESES.md` · `CLAIMS.tape @C h1320_anima_cell` · `domains/OMEGA.log.md`.)
+
 ## 2026-06-16 — research(OMEGA): 🧱 H_1319 — TIMING축 phase-binding을 engine-native로 재현해 c4 shuffle 벽을 깨나 (Φ-robustness 벽이 두 축 모두 종결)
 
 H_1283 R8이 남긴 **단 하나의 살아있는 돌파 후보**(c16/a_break_the_wall)를 친 시도. 토폴로지축은
