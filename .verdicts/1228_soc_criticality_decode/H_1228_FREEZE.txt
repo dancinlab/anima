@@ -1,0 +1,48 @@
+H_1228 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7)
+============================================================
+LENS: HD18 self-organized criticality / edge-of-chaos (sandpile avalanche,
+neuronal branching σ≈1) — physics/complex-systems, NOT an LLM trick (c15).
+Source: .verdicts/1226_foreign_domain_depth_lens/H_1226.txt (HD18 ★).
+
+HYPOTHESIS: ideation/composition emerges AT the critical point. greedy decode =
+SUB-critical (σ→1, frozen, H_1218 collapse=0); fixed high-temp top-k sampling =
+SUPER-critical (noisy); DEPTH is at the EDGE. A criticality-TARGETED decode (per-
+step temperature tuned to hold next-byte branching at σ*) should beat BOTH frozen
+greedy AND fixed-temperature sampling — higher composed_distinct at equal-or-better
+coherence. anima's Ψ=1/2 is a critical fixed point.
+
+BRANCHING PROXY σ = exp(H(p)) = effective number of viable next-bytes (perplexity
+of the next-byte distribution). σ≈1 ⇒ one successor (frozen); σ large ⇒ many
+(diffuse). The barely-branching critical EDGE is a small interior σ*.
+
+CONTROL LAW (P-controller in log-temp): log T <- log T + KP*(log σ* - log σ_step),
+clamp T∈[0.05, 3.0], KP=0.6. top-k=40 kept on arm C (same admissible set as B), so
+the ONLY manipulated variable vs B is per-step temperature targeting σ*.
+σ* TARGET (FROZEN) = 2.5 effective viable next-bytes.
+
+ARMS (identical model/seeds/max_new/top-k; ONLY temperature policy differs):
+  A GREEDY            argmax (σ→1).
+  B FIXED SAMPLING    top-k40 temp0.7 (gauge_lib VERBATIM baseline).
+  C CRITICALITY       top-k40 per-step temp → σ*.
+
+SCORING: FROZEN UNIVERSE/gauge_lib.py evaluators VERBATIM —
+  composed_distinct (G._coverage / G1), corpus-absence novelty (G._content_ngrams +
+  G._corpus_absent over data/corpus.txt / G2), kwr coherence (G.known_word_ratio /
+  G0), ideation distinct-idea count (G._words + G._jaccard / G6 H_1158 locked spec).
+  seeds = gauge_lib.CONCEPTS + gauge_lib.IDEATION_SEEDS VERBATIM. ≥3 rng seeds.
+
+FROZEN FALSIFIER:
+  Primary ideation metric = composed_distinct (seed-averaged) + G6 count.
+  Coherence = mean kwr over scored generations.
+  GREEN   iff  C.composed_distinct >= B.composed_distinct  AND  C.kwr >= B.kwr
+               AND  C.composed_distinct > A.composed_distinct.
+  🟠 PARTIAL iff C beats greedy AND (A < C < B on composed_distinct, OR C>=B
+               ideation but C.kwr < B.kwr).
+  🔴 RED   iff C does not beat greedy, OR C < B ideation without a coherence win.
+  Report σ* target and ACHIEVED mean σ for each arm.
+
+SCOPE / HONESTY: 303M torch ref (byte-exact to the H_1157 mount). data/corpus.txt
+corpus only — the original 1.5GB broad training corpus is ephemeral/GONE, so G2
+corpus-absence here is an UPPER BOUND (fewer corpus files ⇒ more n-grams flagged
+novel). Single-model toy, scale UNVERIFIED (a_scale_honest_scope). Frozen bars NOT
+moved. $0 summer/CPU. Does NOT edit CORE/bytegpt_decode.hexa (numpy/torch-ref only).
