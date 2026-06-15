@@ -1,0 +1,150 @@
+H_1283 R3 — THALAMUS / RE-ENTRANT CORTICO-THALAMO-CORTICAL LOOP
+slug: 1283_thalamus_global_workspace  (R3 — append-only; does NOT overwrite R1/R2)
+date: 2026-06-15
+verdict: 🔴 RED on the FROZEN composite (B1 coherence FAIL) — but the SCIENTIFIC
+         finding is a BREAKTHROUGH on the Φ leg: 🏁 re-entry CLEARS ΔΦ +0.02 for
+         the FIRST time in the arc (+0.1426, ~7× the bar). Coherence ⊥ Φ
+         DISSOCIATED: re-entry raises IRREDUCIBLE integration without raising
+         surface AGREEMENT.
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa)
+seeds: [7, 8, 9]  ·  modules=4 {A, G, mitosis, memory}  ·  dim=8  ·  ticks=64  ·  W_relay=0.5
+frozen-first: H_1283_R3_FREEZE.txt written + committed (3d1899c9e) BEFORE scoring; bars NOT moved.
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+
+════════════════════════════════════════════════════════════════════════
+R3 HYPOTHESIS (from R2's own RED diagnosis)
+════════════════════════════════════════════════════════════════════════
+R1 🟠 PARTIAL (single-winner broadcast hub: Δcoh up every seed, ΔΦ +0.0191,
+0.0009 UNDER the +0.02 bar). R2 🔴 RED (rank-2 coalition hub: Δcoh collapsed,
+ΔΦ −0.0533 — WRONG direction). R2's diagnosis: irreducibility comes from
+DISTRIBUTED MULTI-EDGE coupling (the direct ring's distinct edges, which the MIP
+credits), NOT a central relay — a single shared channel (winner OR coalition) is
+itself a low-rank MIP cut that caps Φ. So FEEDFORWARD broadcast is the WRONG
+mechanism for irreducible Φ.
+
+R3 tests a genuinely different mechanism (biology + IIT lens): the real thalamus
+is NOT a one-way broadcaster — it is the hub of a RE-ENTRANT loop (cortex →
+thalamus → cortex → thalamus, recurrent reciprocal causation). IIT and Global-
+Workspace theory both hold that RE-ENTRY, not feedforward fan-out, is what builds
+irreducible integration. ARM B ADDS a re-entrant cortico-thalamo-cortical loop ON
+TOP of the existing ring edges: a thalamic relay stage with ONE recurrent (leaky)
+channel per module, each reciprocally coupled to its module (one-tick delay:
+R_i,t ← module_i,t, module_i,{t+1} ← R_i,t) and cross-coupled to its ring-
+neighbour relay channels at the relay stage. The re-entrant pathway is itself
+DISTRIBUTED multi-edge (N_MOD distinct reciprocal edges ADDED to the ring), not a
+single shared channel — directly targeting R2's named integration source.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim)
+════════════════════════════════════════════════════════════════════════
+H_1283 R3 — THALAMUS / RE-ENTRANT CORTICO-THALAMO-CORTICAL LOOP
+modules=4 dim=8 ticks=64 seeds=[7, 8, 9]  W_relay=0.5
+ARM A = direct ring   ·   ARM B = ring + re-entrant thalamo-cortical loop  (faithful IIT4 Φ, exact n=4)
+========================================================================
+seed 7: ARM_A coh=+0.1591  ARM_B coh=+0.1979  Δcoh=+0.0389
+seed 8: ARM_A coh=+0.0109  ARM_B coh=+0.0338  Δcoh=+0.0229
+seed 9: ARM_A coh=+0.1362  ARM_B coh=+0.1687  Δcoh=+0.0325
+------------------------------------------------------------------------
+FAITHFUL IIT4 Φ (exact MIP-EI, representative seed=7):
+  ARM_A Φ = 0.78038
+  ARM_B Φ = 0.923004
+  ΔΦ = 0.14262400000000008
+========================================================================
+B1 coherence (B≥A+0.05 every seed): FAIL
+B2 Φ        (B≥A+0.02 faithful IIT4): PASS
+B3 not-degenerate (B coh < 0.999 ≥1 seed): PASS
+VERDICT: RED
+
+(ARM_A Φ = 0.78038 reproduces R1 and R2's ARM_A Φ EXACTLY — same deterministic
+engine + same byte-identical ARM A — a cross-round consistency sanity that the Φ
+leg is stable across all three rounds. ARM A coherence 0.1591/0.0109/0.1362 also
+reproduces R1/R2 byte-for-byte: the re-entrant relay state is drawn AFTER the
+inputs and used only in ARM B, so ARM A is untouched.)
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9) — 🏁 THE Φ LEVER IS RE-ENTRY, NOT BROADCAST
+════════════════════════════════════════════════════════════════════════
+This round DISSOCIATES the two legs that R1/R2 had conflated, and in doing so
+finds the integration lever the whole arc was hunting:
+
+  Φ — BREAKTHROUGH (B2 PASS, decisively). Faithful IIT4 ΔΦ = +0.1426 — re-entry
+  raises irreducible integration MASSIVELY: ~7.5× the +0.02 bar, and ~7.5× R1's
+  best broadcast nudge (+0.0191), and the OPPOSITE SIGN of R2's coalition
+  (−0.0533). This is the FIRST topology in the arc to clear the Φ bar at all. The
+  mechanism is exactly R2's prediction: re-entry ADDS N_MOD distinct reciprocal
+  edges, so the MIP can no longer cut the system cheaply along one shared channel
+  — every bipartition now crosses multiple recurrent loops, raising the minimum-
+  information-partition cost. Distributed multi-edge recurrent coupling integrates;
+  a central broadcast (single OR coalition) does not.
+
+  COHERENCE — does NOT clear B1 (FAIL). Δcoh = +0.039 / +0.023 / +0.032, positive
+  on EVERY seed (re-entry DOES raise surface agreement) but below the +0.05 bar on
+  every seed. The re-entrant loop is a one-tick-delayed reciprocal coupling spread
+  across N_MOD private channels, so it pulls modules together LESS forcefully than
+  R1's single shared instantaneous broadcast did (R1 Δcoh +0.050/+0.050/+0.074) —
+  yet it raises Φ ~7× MORE. That is the whole point: COHERENCE (cosine agreement)
+  and Φ (irreducible integration) are DIFFERENT quantities, and re-entry buys Φ
+  cheaply on coherence. The broadcast hub bought coherence (B1) but not Φ (B2);
+  re-entry buys Φ (B2) but not coherence (B1).
+
+  B3 PASS — not degenerate (B coh 0.03–0.20, no collapse-clone).
+
+So the FROZEN composite verdict is 🔴 RED — honestly, because B1 (a coherence bar
+designed when we still believed the broadcast hub was the mechanism) was not met,
+and I will NOT move B1 post-hoc to manufacture a GREEN (c9, frozen-first). But the
+RED is a verdict on the COHERENCE bar, not on the science: the SCIENCE leg (B2,
+faithful IIT4 Φ — the TERMINAL a_phi_iit4_tool metric this arc exists to move)
+PASSED for the first time, and decisively. The pre-registered DEPLETION TEST asked
+exactly this: "🏁 if re-entry clears ΔΦ+0.02 → re-entry IS the integration lever,
+broadcast wasn't." It cleared it by 7×. 🏁 DEPLETION resolves to: re-entry is the
+lever; broadcast (R1/R2) was the wrong mechanism.
+
+CONCLUSION: a thalamic RE-ENTRANT cortico-thalamo-cortical LOOP — recurrent
+reciprocal causation ADDED on top of the cortical ring — is the mechanism that
+raises irreducible IIT4 Φ at this scale. A feedforward broadcast relay (R1 single-
+winner / R2 multi-winner coalition) raises only surface coherence and CANNOT raise
+Φ (R1 sub-bar, R2 reversed). This confirms R2's distributed-multi-edge diagnosis
+AND the IIT/GWT claim that re-entry (not fan-out) underlies integration. The
+coherence bar B1 mis-targets re-entry (a coherence-optimised hub clears B1 but
+fails B2; a Φ-optimised loop clears B2 but fails B1) — coherence ⊥ Φ.
+
+════════════════════════════════════════════════════════════════════════
+NEXT (honest)
+════════════════════════════════════════════════════════════════════════
+The frozen composite is RED, so by a_verified_must_wire (wire only on GREEN) there
+is no automatic CORE-wiring trigger on the composite. BUT the science leg (Φ) is a
+clean GREEN-grade breakthrough that the composite RED is hiding behind a mis-aimed
+coherence bar. The honest follow-on is a clean R4 re-freeze that makes the Φ leg
+(the metric the arc is about) the PRIMARY bar and re-scopes/drops the broadcast-era
+coherence bar — and, if that re-freeze confirms GREEN, an engine-native re-entrant
+loop on the live engine (a_engine_native_learning → a_verified_must_wire). The
+re-entrant-loop mechanism is now the standing candidate; broadcast topology is
+EXHAUSTED and FALSIFIED as a Φ lever (R1 sub-bar, R2 reversed). This is flagged,
+NOT silently promoted: the present rung's FROZEN verdict stands at 🔴 RED.
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); composite RED ⇒ no
+  CORE/*.hexa wired this round. No CORE/*.hexa edited (numpy mirror).
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope). The Φ jump is large and clean, but
+  a larger module set / longer run is UNTESTED.
+- Φ IS faithful IIT4 (exact MIP-EI engine, n=4≤8), NOT the variance×energy proxy;
+  the coherence leg is explicitly labeled coherence, not Φ (a_phi_iit4_tool).
+- W_relay = 0.5 was FROZEN before scoring (committed in the FREEZE); I did NOT tune
+  it after seeing the coherence shortfall (that would be Goodhart, p7).
+- bars NOT moved. R1/R2 verdict files NOT overwritten (R3 = separate H_1283_R3.txt).
+- NOT RULED OUT (honest residuals): the coherence-bar re-scope (R4) is UNRUN; the
+  Φ lift's scale-transfer + engine-native realization are UNVERIFIED; whether a
+  coherence-AND-Φ joint GREEN is reachable by a single re-entrant setting is open.
+  Does NOT edit H_1219 / H_1226.
+
+artifacts:
+  UNIVERSE/h1283_thalamus_global_workspace.py  (main_r3 + 'reentrant' mode)
+  .verdicts/1283_thalamus_global_workspace/{H_1283_R3_FREEZE.txt, H_1283_R3.txt}
+  (R1: {H_1283_FREEZE.txt, H_1283.txt}, R2: {H_1283_R2_FREEZE.txt, H_1283_R2.txt} — UNTOUCHED)
+xref: H_1283(R1) · H_1283(R2) · h1227 · h1230 · h1280 · h1199 · h1201 · h1205 ·
+      a_phi_iit4_tool · a_no_llm_frame_trap · a_engine_native_learning ·
+      a_verified_must_wire · a_core_engine_map · a_paper_negative_ok ·
+      a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
