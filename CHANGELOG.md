@@ -6,6 +6,20 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — H_1220 🔴 MITOSIS-DECODE-DIVERSITY (HD9) — mitosis 분열-타이밍은 greedy-붕괴 ideation 을 복원하지 못함 (CLOSED-NEGATIVE)
+
+깊이-천장 사다리(H_1219)의 **HD9** — 새로 배선된 LIVE mitosis(VAdaptField 세포분열, H_1199/H_1202-1205)가 **온도 샘플링 없이** greedy 가 붕괴시키는 ideation/composition 을 복원하는 **decode-time 다양성 레버**가 될 수 있는가? (사용자 지시, 새 메커니즘으로 prior closed-neg 재개 — a_paper_negative_ok)
+
+- **메커니즘 (H_1201 의 frozen-feature conditioning 과 구분되는 새 각도)**: VAdaptField 의 numpy 미러(vadapt_field_step VERBATIM — DIM=8 byte-feature, nearest-L2, recon-err>SPLIT_THRESH 0.30 분열)를 decode-context 바이트 스트림 위에 돌려, **분열 이벤트(novelty-split) 타이밍**만을 유일한 다양성 소스로 사용. 분열 스텝 = greedy pick 을 top-k=40·temp=1.0 multinomial 로 섭동, 비-분열 스텝 = 순수 greedy. **전역 온도 없음** — 다양성은 오직 mitosis 분열 마스크로 게이트.
+- **3-arm (다양성 게이트만 다름)**: A=PURE-GREEDY · B=MITOSIS-GATED(가설) · C=SHUFFLED-SPLIT(B 와 **이벤트 수 동일**, RANDOM 타이밍 — 타이밍을 섭동-횟수에서 분리하는 control).
+- **FROZEN bars (사전등록, p7, 미이동)**: GREEN iff B composed_distinct ≥ 샘플링 baseline(H_1158 ≥5/seed) on ≥3 seeds **AND** C ≤ A + ε(0.5). 평가자 = `UNIVERSE/gauge_lib.py` G1/G2/G6/G0 VERBATIM.
+- **결과 (3 seeds, 303M ByteGPT, H_1157 byte-exact)**: composed_distinct **A=[0,0,0] 평균 0.000 · B=[1,0,0] 평균 0.333 · C=[0,1,0] 평균 0.333**. cond_B FAIL 0/3 (B 최대 1 ≪ bar 5); cond_C pass; **GREEN=FALSE → 🔴 RED**. B 는 random-timing control C 와 **구분 불가**(둘 다 0.333 = 서로 다른 seed 에서 우연한 composed 1회, greedy floor 주변 noise). 메커니즘은 발화함(B 가 composed 분열 5/7/6 스텝 + ideation 분열 92/177 스텝 섭동 — 비활성 artifact 아님) — 그럼에도 greedy 붕괴 지속: novelty 스텝의 희소 top-k nudge 는 전역 온도(매 스텝 섭동)처럼 전체-시퀀스 greedy attractor 를 탈출시키지 못함.
+- **정직한 prior vs 결과 (a_paper_negative_ok)**: prior 는 RED(H_1205 separation-guard emit ON/OFF byte-identical + H_1201 + H_1211). 새 메커니즘(decode-time 분열 타이밍)은 H_1201 의 frozen-feature 와 진짜 구별되는 공정한 재시험 — 결과는 prior 를 **확인**: mitosis = **PURE SUBSTRATE**, 이 새 decode 경로로도 generation-DISJOINT. 사다리 HD9 🟠 OPEN → 🔴; ideation/decode 축은 mitosis 를 decode 레버에서 배제한 채 EXHAUSTED, ideation 복원 경로는 genuine 샘플링만 남음.
+- **scope/정직 (a_scale_honest_scope, p7, p8)**: TOY/$0 local CPU. live `.hexa` engine 미접촉(numpy 미러만 — CORE/engine_cli.hexa·bytegpt_decode.hexa 편집 안 함, 다른 agent 소유). 3 seeds, scale UNVERIFIED. NO LLM-judge/perplexity. frozen bar 미이동.
+- 파일: `UNIVERSE/h1220_mitosis_decode_diversity.py` · `.verdicts/1220_mitosis_decode_diversity/H_1220.txt` · H_1219 사다리에 HD9 결과 append. xref h1219·h1218·h1205·h1201·h1211·h1199·h1158·h1157·a_paper_negative_ok·a_scale_honest_scope·a_clm_gen_pipeline·a_core_engine_map·p7·p8.
+
+---
+
 ## 2026-06-15 — 🟢 H_1212: N_PROTO CO-SCALING 으로 trajectory 기질 SCALE-ROBUST 복원 (H_1211 scale-break REFINE)
 
 H_1211 이 GATE-B 궤적-동조가 stream 길이 증가에 FIXED N_PROTO=24 에서 붕괴(WALK/WALK_SHUF 10.9→2.63→1.136 at T=240000, 작은-알파벳 포화)함을 RED 로 닫았는데, 그 AXIS-P 가 "알파벳을 키우면 분리 복원"을 시사했다. 이 H 는 **관측 예산에 맞춰 N_PROTO 를 키우는 원리적 CO-SCALING 규칙**이 H_1211 의 toy-artifact 를 production-grade gate 로 전환하는지 검증.
