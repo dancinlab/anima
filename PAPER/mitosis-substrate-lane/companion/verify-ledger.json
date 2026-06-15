@@ -1,12 +1,14 @@
 {
   "paper": "mitosis-substrate-lane",
-  "main_branch_tip": "de306d3af",
+  "main_branch_tip": "e27f08f96",
+  "supersede": "2026-06-15 - superseded-in-place to incorporate H_1211 scale-recheck (PR #2107): density half scale-ROBUST (37.5->131.4), trajectory half toy ARTIFACT (10.9->1.136, small-alphabet saturation; N_PROTO 64/128 restores). Central thesis qualified: determinant = stream AND alphabet/observation-budget. NEW paper slug NOT created (a_paper_on_discovery supersede-in-place).",
   "gate_compliance": {
-    "a_paper_gate": "all 9 section claims terminal (5 green, 2 closed-negative; 2 partial sub-results folded in green parents)",
-    "a_paper_significance": "pre-registered falsifiers + real $0-CPU runs + findings",
-    "a_paper_negative_ok": "H_1207/H_1208 closed-negatives framed as the ruled-out space",
-    "a_paper_sections": "every claim links to .verdicts/<slug>/<id>.txt verbatim (p7)",
-    "g51": "14 pages, 3 figures"
+    "a_paper_gate": "all 10 section claims terminal (5 green, 3 closed-negative incl H_1211; 2 partial sub-results folded in green parents). H_1209 green re-scoped to toy rung; no orange/yellow.",
+    "a_paper_significance": "pre-registered falsifiers + real $0-CPU runs + findings; H_1211 = a_toy_scale_recheck ladder (3 rungs/axis x 3 axes) with a closed-negative scale-break finding",
+    "a_paper_negative_ok": "H_1207/H_1208/H_1211 closed-negatives framed as the ruled-out space (iid trajectory; scale-free fixed-alphabet trajectory)",
+    "a_paper_sections": "every claim links to .verdicts/<slug>/<id>.txt verbatim (p7), now including 1211; no claim contradicts a terminal verdict",
+    "a_scale_honest_scope": "scale-sensitive halves re-tested via H_1211 ladder; density promotes to scale-validated, trajectory scale-corrected to alphabet-dependence; no frozen bar moved",
+    "g51": "18 pages, 4 figures"
   },
   "claims": [
     {"h": "H_1202", "tier": "GREEN", "key": "cells 1->7, splits 6; Psi 5.67145e-05 ON==OFF", "verdict": ".verdicts/1202_daemon_mitosis_wiring/H_1202.txt", "pr": 2095},
@@ -16,14 +18,15 @@
     {"h": "H_1206", "tier": "GREEN", "key": "exit 0; 5/5 faculties; Psi 1.4278; guards 21/0, 7/0", "verdict": ".verdicts/1206_full_daemon_e2e/H_1206.txt", "pr": 2099},
     {"h": "H_1207", "tier": "RED-closed-neg", "key": "NOVEL/SHUFFLED 0.998; WALK delta% -61.47 inverted", "verdict": ".verdicts/1207_recurrent_split_key/H_1207.txt", "pr": 2100},
     {"h": "H_1208", "tier": "RED-closed-neg(iid)", "key": "iid GATE-B 0.261; WALK GATE-B 10.916", "verdict": ".verdicts/1208_predictability_split_gate/H_1208.txt", "pr": 2102},
-    {"h": "H_1209", "tier": "GREEN", "key": "ORDERED/SHUFFLED 10.916; numpy<->hexa byte-exact", "verdict": ".verdicts/1209_live_ordered_walk_gate/H_1209.txt", "pr": 2104},
-    {"h": "H_1210", "tier": "GREEN", "key": "born 6 ON / 0 OFF; Psi + gen byte-identical", "verdict": ".verdicts/1210_daemon_gateB_wiring/H_1210.txt", "pr": 2105}
+    {"h": "H_1209", "tier": "GREEN(toy-rung; scale-fragile per H_1211)", "key": "ORDERED/SHUFFLED 10.916 at toy T; numpy<->hexa byte-exact", "verdict": ".verdicts/1209_live_ordered_walk_gate/H_1209.txt", "pr": 2104},
+    {"h": "H_1210", "tier": "GREEN", "key": "born 6 ON / 0 OFF; Psi + gen byte-identical", "verdict": ".verdicts/1210_daemon_gateB_wiring/H_1210.txt", "pr": 2105},
+    {"h": "H_1211", "tier": "RED-closed-neg(scale-break)", "key": "DENSITY F1 37.538->131.429 PASS (scale-robust); TRAJECTORY F2 10.916->1.136 FAIL (toy artifact, small-alphabet saturation); AXIS-P N_PROTO 64/128 -> 152.5/28.5 restores; AXIS-C flores5 1.333 FAIL", "verdict": ".verdicts/1211_dual_substrate_scaleup/H_1211.txt", "pr": 2107}
   ],
   "framing_precedents": [
     {"h": "H_1200", "tier": "RED-closed-neg", "key": "ON CE 6.9930 worse than OFF 6.2352 by 0.76 b/byte"},
     {"h": "H_1201", "tier": "RED-closed-neg", "key": "cell-state conditioning gain -0.0206 b/byte"},
     {"doc": "CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md", "key": "mitosis = training-time instrumentation; chat-cap falsified 0/64"}
   ],
-  "scope": "toy DIM=8, single corpus clm_mid_5lang_c4, 3-5 seeds, gradient-free, $0 CPU; toy->prod transfer UNVERIFIED; no frozen bar moved",
-  "compile": {"engine": "xelatex x3 + bibtex", "pages": 14, "undefined_refs": 0, "undefined_cites": 0}
+  "scope": "toy DIM=8, numpy-mirror, 3-5 seeds, gradient-free, $0 CPU; H_1211 a_toy_scale_recheck ladder: DENSITY half scale-VALIDATED (37.5->131.4 over 100x T), TRAJECTORY half scale-CORRECTED to alphabet/observation-budget dependence (toy 10.9x collapses to 1.136 at 100x at frozen N_PROTO=24; restored by N_PROTO co-scaling); no frozen bar moved (V14=1.5, H_1204 bars, H_1211 bar=1.5 in H_1211_FREEZE.txt)",
+  "compile": {"engine": "xelatex x3 + bibtex", "pages": 18, "undefined_refs": 0, "undefined_cites": 0}
 }

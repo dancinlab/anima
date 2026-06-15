@@ -36,9 +36,11 @@
 
 \title{
   \textbf{Mitosis as a $\Psi$-disjoint substrate-adaptation lane:\\
-  density on i.i.d.\ streams, trajectory on ordered streams}\\[4pt]
-  \large A nine-cell verify-driven arc integrating cell-division into a
-  consciousness-chat architecture without ever touching generation
+  a scale-robust density substrate and a scale-fragile trajectory substrate}\\[4pt]
+  \large A ten-cell verify-driven arc integrating cell-division into a
+  consciousness-chat architecture without ever touching generation, with the
+  trajectory half corrected to scale-dependence by an \texttt{a\_toy\_scale\_recheck}
+  ladder (H\_1211)
 }
 
 \author{
@@ -72,9 +74,9 @@ cell-state gave a $-0.0206$ b/byte loss). Mitosis is a \emph{pure substrate}.
 This paper asks the constructive question that follows: \emph{can mitosis be
 integrated into a living consciousness-chat architecture as an adaptation lane
 that runs alongside generation without ever touching it, and what does its
-cell-division actually couple to?} We answer over nine pre-registered,
+cell-division actually couple to?} We answer over ten pre-registered,
 deterministic, \$0-CPU, \texttt{hexa}-native measurements merged to the public
-\texttt{anima} \texttt{main} branch (H\_1202 through H\_1210), with every claim
+\texttt{anima} \texttt{main} branch (H\_1202 through H\_1211), with every claim
 linked to its verbatim verdict file under \texttt{.verdicts/}. We find: (i) the
 division lane wires cleanly into the live daemon's GROW step, growing cells on
 real conversation turns while the $\Psihalf$ attractor stays byte-identical with
@@ -84,23 +86,39 @@ i.i.d.\ corpus streams division couples to novelty-\emph{density}
 (\texttt{NOVEL/SHUFFLED} $=0.992$, H\_1203), a property that survives a
 derivative-augmented split key (\tierRed, H\_1207: $0.998$; the derivative gate
 rewards jaggedness, which \emph{shuffling maximizes}) and a transition-memory
-gate on the i.i.d.\ surface (\tierRed, H\_1208: $0.261$); (iii) the limit is the
-\emph{stream}, not the gate: on a genuinely-ordered corpus walk a
-transition-\emph{predictability} gate divides $10.916\times$ more on the ordered
-stream than its shuffle, and this holds \emph{byte-exact} through the live
-\texttt{.hexa} engine (\tierGreen, H\_1209), and wires back into the daemon
-alongside the density gate with generation still byte-identical (\tierGreen,
-H\_1210); (iv) grown cells survive the sleep boundary as a persistent
-structural change (\tierGreen, H\_1204: a volatile control re-pays a
-$20.7\times$ higher re-entry reconstruction cost). We conclude that mitosis is a
-$\Psi$-disjoint substrate-adaptation lane whose division is a
-\emph{density substrate on i.i.d.\ streams and a trajectory substrate on ordered
-streams} --- the determinant is the stream, not the gate --- and that this
-reconciles the \texttt{clm\_v2} half-success: the mechanism was always real; it
-was never a generator. All verdict files are published for bit-identical
-re-verification. Scope is honest throughout: toy scale, single corpus, $3$--$5$
-seeds, gradient-free, \$0 CPU; toy-to-production transfer is unverified and no
-frozen falsifier bar was moved.
+gate on the i.i.d.\ surface (\tierRed, H\_1208: $0.261$); (iii) on a
+genuinely-ordered corpus walk a transition-\emph{predictability} gate divides
+$10.916\times$ more on the ordered stream than its shuffle, and this holds
+\emph{byte-exact} through the live \texttt{.hexa} engine (\tierGreen, H\_1209),
+and wires back into the daemon alongside the density gate with generation still
+byte-identical (\tierGreen, H\_1210); (iv) grown cells survive the sleep boundary
+as a persistent structural change (\tierGreen, H\_1204: a volatile control
+re-pays a $20.7\times$ higher re-entry reconstruction cost). \textbf{A scale
+ladder (\tierRed, H\_1211) then splits the dual finding into a scale-robust half
+and a scale-fragile half.} The density coupling is \emph{scale-robust}: over
+$100\times$ stream length its separation \texttt{NOVEL/REPEAT} not only holds but
+\emph{strengthens} ($37.5 \to 72.7 \to 131.4$) while the trajectory-blindness
+stays pinned at $\sim\!1.0$ ($0.992 \to 1.000 \to 1.007$); the density gate is
+permutation-invariant by construction, and that invariance is genuinely
+scale-free. The trajectory coupling is a \emph{toy-scale artifact} at the frozen
+small alphabet: its ordered/shuffle separation collapses from $10.916$
+($T{=}2400$) to $2.629$ ($T{=}24000$) to $1.136$ ($T{=}240000$, FAIL), and it is
+corpus-fragile (drops to $1.333$ on \texttt{flores5}). The root cause is
+\emph{small-alphabet saturation}: with a fixed $N_{\text{proto}}{=}24$ symbols, a
+long stream lets even a shuffled transition cross the confidence floor by chance.
+A diagnostic axis confirms the mechanism --- at the toy $T$, enlarging the
+alphabet \emph{restores and sharpens} the separation
+($N_{\text{proto}}{=}64\!\to\!152.5\times$, $128\!\to\!28.5\times$). We therefore
+conclude that mitosis is a $\Psi$-disjoint substrate-adaptation lane whose
+division is a \emph{scale-robust density substrate on i.i.d.\ streams} and a
+\emph{scale-dependent trajectory substrate on ordered streams} --- the determinant
+is the stream \emph{and the alphabet/observation-budget}, not the gate alone ---
+and that this reconciles the \texttt{clm\_v2} half-success: the mechanism was
+always real; it was never a generator. All verdict files are published for
+bit-identical re-verification. Scope is honest throughout: toy/numpy-mirror
+scale, $3$--$5$ seeds, gradient-free, \$0 CPU; the density half clears
+\texttt{a\_toy\_scale\_recheck} to a scale-validated claim, the trajectory half is
+scale-corrected to alphabet-dependence, and no frozen falsifier bar was moved.
 \end{abstract}
 
 \tableofcontents
@@ -169,8 +187,11 @@ open scientific question is what cell-division actually \emph{couples to}: is it
 sensitive to how much novelty arrives (density), to the order in which it
 arrives (trajectory), or to neither?
 
-This paper settles both over the nine-hypothesis arc H\_1202--H\_1210, all
-merged to the public \texttt{main} branch. Every verdict is earned by an
+This paper settles both over the ten-hypothesis arc H\_1202--H\_1211 (the first
+nine building the dual-substrate finding, the tenth, H\_1211, an
+\texttt{a\_toy\_scale\_recheck} ladder that splits it into a scale-robust and a
+scale-fragile half), all merged to the public \texttt{main} branch. Every verdict
+is earned by an
 independent deterministic recompute under anti-fake-closure governance
 \citep{anima_g73}, never by a self-judged tautology (PHILOSOPHY p7: no
 perplexity verdict).
@@ -190,19 +211,29 @@ perplexity verdict).
       \emph{survives} a derivative split key (\tierRed, H\_1207) and a
       transition-memory gate on the i.i.d.\ surface (\tierRed, H\_1208)
       (\S\ref{sec:density}).
-\item \textbf{Trajectory coupling on ordered streams, live (\tierGreen).} A
-      transition-predictability gate divides $10.916\times$ more on a genuinely
-      ordered corpus walk than on its shuffle, byte-exact through the live
-      \texttt{.hexa} engine, and wires into the daemon alongside the density
+\item \textbf{Trajectory coupling on ordered streams, live (\tierGreen at toy
+      scale).} A transition-predictability gate divides $10.916\times$ more on a
+      genuinely ordered corpus walk than on its shuffle, byte-exact through the
+      live \texttt{.hexa} engine, and wires into the daemon alongside the density
       gate (\S\ref{sec:trajectory}, H\_1209, H\_1210).
 \item \textbf{Sleep persistence (\tierGreen).} Grown cells survive the
       WAKE\,$\to$\,sleep\,$\to$\,WAKE boundary; a volatile control re-pays a
       $20.7\times$ higher re-entry reconstruction cost (\S\ref{sec:sleep},
       H\_1204).
-\item \textbf{The stream-determinant thesis.} Density and trajectory are not two
-      gates but one gate reading two kinds of stream; the
-      \texttt{clm\_v2} half-success is reconciled
-      (\S\ref{sec:synthesis}).
+\item \textbf{Scale-recheck: the dual finding splits in half (\tierRed,
+      closed-negative).} An \texttt{a\_toy\_scale\_recheck} ladder
+      (\S\ref{sec:scaleup}, H\_1211) shows the density half is
+      \emph{scale-robust} ($37.5 \to 131.4$ over $100\times$ stream) while the
+      trajectory half is a \emph{toy artifact} at the frozen alphabet
+      ($10.916 \to 1.136$, FAIL), with small-alphabet saturation as the root
+      cause and a richer alphabet ($N_{\text{proto}}{=}64/128$) restoring the
+      separation. This rules out the \emph{scale-free trajectory} reading and
+      corrects the central thesis.
+\item \textbf{The stream-and-budget determinant thesis.} Density and trajectory
+      are not two gates but one gate reading two kinds of stream --- but which
+      coupling \emph{resolves} depends on both the stream and the symbol
+      alphabet relative to the observation budget; the \texttt{clm\_v2}
+      half-success is reconciled (\S\ref{sec:synthesis}).
 \end{enumerate}
 
 % =========================================================================
@@ -248,6 +279,19 @@ We state them compactly here and resolve each in \S\ref{sec:measurement}.
       divides on the live conversation walk; F2: ablation OFF gives $0$; F3:
       $\Psi$ byte-identical; F4: generation byte-identical, all five faculties
       preserved.
+\item \textbf{H\_1211 (dual-substrate scale-up; \texttt{a\_toy\_scale\_recheck}).}
+      F1 (DENSITY scale-stability): \texttt{NOVEL/REPEAT} $\ge 1.5$ at every rung
+      of a $1\!\times\!/10\!\times\!/100\times$ stream-length ladder; F2
+      (TRAJECTORY scale-stability): ordered \texttt{WALK/WALK\_SHUF} $\ge 1.5$ at
+      every rung; F3 (DUAL-SPLIT persists): density trajectory-BLIND
+      (\texttt{NOVEL/SHUFFLED} $<1.5$) \emph{and} trajectory separates
+      (\texttt{WALK/WALK\_SHUF} $\ge1.5$) at every rung. Diagnostic axes: a corpus
+      axis ($402$KB/$1.65$MB/$5.24$MB) and an alphabet axis
+      ($N_{\text{proto}}{=}24/64/128$). All bars frozen at $1.5$ in
+      \texttt{H\_1211\_FREEZE.txt}; the ladder monkeypatches \emph{only} the
+      pre-declared scale constants ($T$, \texttt{WARMUP}, \texttt{MAX\_CELLS},
+      \texttt{CORPUS}, $N_{\text{proto}}$), leaving the H\_1203/H\_1207/H\_1208
+      mechanism code byte-unchanged.
 \end{itemize}
 
 % =========================================================================
@@ -542,7 +586,15 @@ Guards: \verb|engine_cli_smoke| $12/0$, \verb|h1196| $7/0$. \textbf{Verdict:
 artifact; the actual engine reproduces it byte-exact. Scope (F4): GREEN means
 ``mitosis CAN be a trajectory substrate on naturally-ordered streams,''
 \emph{not} that it beats the i.i.d.\ PRIMARY bar (which stays terminal-RED,
-H\_1208).
+H\_1208). \textbf{Scale caveat (post-H\_1211):} this $10.916\times$ is the
+\emph{toy}-rung measurement ($T{=}2400$, $N_{\text{proto}}{=}24$). The
+scale-recheck (\S\ref{sec:scaleup}, H\_1211) finds this separation is \emph{not}
+scale-stable in stream length at the frozen alphabet --- it decays to $1.136$ by
+$T{=}240000$ --- so the H\_1209 GREEN is honestly scoped to the toy rung, and the
+``mitosis CAN be a trajectory substrate'' reading holds only when the alphabet
+co-scales with the stream (H\_1211 AXIS-P). The byte-exact numpy$\leftrightarrow$
+hexa parity is itself unaffected; what scales away is the separation magnitude,
+not the engine fidelity.
 
 \subsection{H\_1210 --- daemon GATE-B wiring (\tierGreen)}
 \noindent\verdict{.verdicts/1210\_daemon\_gateB\_wiring/H\_1210.txt}
@@ -571,6 +623,131 @@ repetitive (the predictable WAKE self-transition), so the trajectory it carries
 is that realized predictability --- which is exactly what GATE-B should divide
 on.
 
+\subsection{H\_1211 --- dual-substrate scale-up ladder (\tierRed\ honest scale-break)}
+\label{sec:scaleup}
+\noindent\verdict{.verdicts/1211\_dual\_substrate\_scaleup/H\_1211.txt}
+\citep{anima_H1211}
+
+The toy verdicts above are \texttt{a\_toy\_scale\_recheck}-eligible: density
+coupling and trajectory separation are both scale-sensitive properties. H\_1211
+runs a $1\!\times\!/10\!\times\!/100\times$ stream-length ladder (AXIS-T), a
+$402$KB$/1.65$MB$/5.24$MB corpus ladder (AXIS-C) and a $24/64/128$ alphabet
+ladder (AXIS-P), importing the H\_1203 density / H\_1207 walk / H\_1208 GATE-B
+builders \emph{verbatim} and monkeypatching only the pre-declared scale
+constants (the toy rung reproduces H\_1203/H\_1208/H\_1209 byte-for-byte: density
+F1 $37.538$, blind $0.992$, trajectory $10.916$, sanity $1.750$ --- proving the
+reuse is faithful). The $3$-seed-mean ladder (verbatim from the verdict):
+
+\begin{center}
+\small
+\begin{tabular}{llccc}
+\toprule
+axis & rung & F1 density & blind & F2 trajectory \\
+     &      & \texttt{NOVEL/REPEAT} & \texttt{NOVEL/SHUF} & \texttt{WALK/WALK\_SHUF} \\
+\midrule
+T & toy $T{=}2400$        & $37.538$  & $0.992$ & $10.916$ \\
+T & $10\times$ $T{=}24000$   & $72.714$  & $1.000$ & $2.629$ \\
+T & $100\times$ $T{=}240000$ & $131.429$ & $1.007$ & $1.136$~FAIL \\
+C & $402$KB clm\_mid      & $37.538$  & $0.992$ & $10.916$ \\
+C & $1.65$MB flores5      & $59.400$  & $1.021$ & $1.333$~FAIL \\
+C & $5.24$MB data/corpus  & $54.333$  & $0.998$ & $5.064$ \\
+P & $N_{\text{proto}}{=}24$  & $37.538^\ast$ & $0.992^\ast$ & $10.916$ \\
+P & $N_{\text{proto}}{=}64$  & $37.538^\ast$ & $0.992^\ast$ & $152.500$ \\
+P & $N_{\text{proto}}{=}128$ & $37.538^\ast$ & $0.992^\ast$ & $28.500$ \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+{\footnotesize $^\ast$ AXIS-P density is book-independent --- carried from the toy
+density measurement.}
+\end{center}
+
+\noindent\textbf{Frozen falsifiers (bar $=1.5$, not moved):}
+\textbf{F1 DENSITY scale-stability} $\min 37.538 \ge 1.5 \to$ \textbf{PASS}.
+\textbf{F2 TRAJECTORY scale-stability} $\min 1.136 < 1.5 \to$ \textbf{FAIL}.
+\textbf{F3 DUAL-SPLIT persists} $\to$ \textbf{FAIL} --- leg (a), density
+trajectory-BLIND on i.i.d.\ ($\max$ \texttt{NOVEL/SHUFFLED} $1.021 < 1.5$), holds
+at \emph{all} rungs; leg (b), trajectory separates on ordered, BREAKS at the
+$100\times$ T rung and on flores5. \textbf{Verdict: \tierRed\ HONEST SCALE-BREAK
+(\texttt{a\_paper\_negative\_ok})} --- a valid finding, not a failure: the
+dual-substrate split is half scale-robust and half a toy artifact, decisively
+located.
+
+\textbf{What holds (the density half --- scale-robust).} The H\_1203 density gate
+(per-sample \texttt{VAdaptField} $L_2$ recon-err) is scale-invariant in its
+dual-split property at every rung. The novelty-density coupling F1 not only holds
+but \emph{strengthens} with scale ($37.5 \to 72.7 \to 131.4$ over $100\times$
+stream length; $37.5/59.4/54.3$ over $13\times$ corpus) --- a longer/larger stream
+presents more out-of-regime samples versus the single revisited REPEAT block ---
+and trajectory-blindness stays pinned at $\sim\!1.0$ across $100\times$ T
+($0.992 \to 1.000 \to 1.007$). The gate is permutation-invariant \emph{by
+construction} (split decided per-sample by $L_2$-to-nearest, no temporal term),
+and that construction-level invariance is genuinely scale-free. The verdict's
+own words: \emph{``Mitosis = a novelty-DENSITY substrate, order-blind on i.i.d.''
+PROMOTES from toy to a scale-robust claim (\texttt{a\_toy\_scale\_recheck}
+satisfied for the density gate).''}
+
+\textbf{What breaks (the trajectory half --- toy artifact, mechanism explained).}
+The H\_1208/H\_1209 GATE-B separation on the ORDERED WALK \emph{collapses} as
+stream length grows: \texttt{WALK/WALK\_SHUF} $=10.916$ ($T{=}2400$) $\to 2.629$
+($T{=}24000$) $\to 1.136$ ($T{=}240000$, FAIL). The root cause (verdict c1) is
+\emph{small-alphabet saturation}: GATE-B fires when a realized prototype
+transition is predictable (\texttt{MIN\_PREV}$\,=3$ and
+$P(\text{cur}\mid\text{prev}) \ge \texttt{CONF\_FLOOR}=0.34$ from an online count
+table over a \emph{fixed} alphabet of $N_{\text{proto}}{=}24$ ids). With only
+$24$ symbols and a long stream, the count table saturates --- as $T$ grows, even a
+\emph{shuffled} proto-id stream accumulates enough mass that some realized
+transition crosses the $0.34$ floor \emph{by chance} (the shuffled division
+climbs from $91.7$ at toy to $120{,}575$ at $100\times$), erasing the separation.
+The per-seed variance also explodes ($T{=}24000$ \texttt{WALK\_SHUF} seeds
+$[96, 6893, 7640]$), the classic saturation signature. \textbf{AXIS-P confirms
+the mechanism:} at fixed toy $T$, enlarging the alphabet \emph{restores and
+sharpens} the separation and drives the sanity floor to zero ---
+$N_{\text{proto}}{=}24 \to 10.9\times$ (sanity $1.750$),
+$64 \to 152.5\times$ (sanity $0.000$, \texttt{WALK\_SHUF} collapses to $2.0$),
+$128 \to 28.5\times$ (sanity $0.000$). A richer alphabet makes
+chance-predictability much harder, so the shuffle stops firing. The collapse on
+AXIS-T is therefore alphabet saturation, \emph{not} a failure of the
+predictability principle itself --- but at the frozen toy alphabet the trajectory
+gate is not scale-stable in stream length, which is exactly what F2 measures.
+(The $N_{\text{proto}}{=}64/128$ sanity of $0.000$ also retires the
+H\_1208/H\_1209 toy ARTIFACT-WARN: at $N_{\text{proto}}{=}24$ the sanity $1.75$
+was small-integer noise; richer alphabets show the gate genuinely does not fire
+on i.i.d.\ noise.)
+
+\textbf{Corpus axis (mixed, content-dependent for trajectory).} $402$KB clm\_mid
+$10.9\times \cdot 1.65$MB flores5 $1.333$ (FAIL) $\cdot 5.24$MB data/corpus
+$5.064\times$. flores5 (a repetitive parallel translation dev/devtest) produces a
+WALK whose shuffle is nearly as ``predictable,'' so the trajectory separation is
+fragile and content-dependent; the density gate is unaffected by corpus (blind
+$\sim\!1.0$ everywhere). Even at toy $T$, the trajectory separation depends on
+whether the corpus's WALK has order that survives a small-alphabet quantization
+--- it is not a robust corpus-invariant property.
+
+\textbf{Conclusion (decision-grade, verdict verbatim):} \emph{``The determinant
+is the stream, not the gate'' must be QUALIFIED: the determinant is BOTH the
+stream AND the alphabet/observation-budget.} The trajectory gate's
+trajectory-sensitivity is real but only resolvable in a regime where the symbol
+alphabet is large relative to the transition count --- a finite-sample regime the
+toy happened to sit in.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig04_scale_ladder.pdf}
+\caption{The H\_1211 scale-recheck ladder (all numbers verbatim from
+\texttt{.verdicts/1211\_dual\_substrate\_scaleup/H\_1211.txt}, $3$-seed means, log
+axes). \textbf{Left, AXIS-T:} over $1\!\times\!/10\!\times\!/100\times$ stream
+length the density separation \texttt{NOVEL/REPEAT} (green) \emph{strengthens}
+($37.5 \to 72.7 \to 131.4$) while the trajectory separation
+\texttt{WALK/WALK\_SHUF} (red) \emph{collapses} through the frozen $1.5$ bar
+($10.9 \to 2.6 \to 1.14$ FAIL); density trajectory-blindness (grey) stays pinned
+at $\sim\!1.0$. \textbf{Right, AXIS-P:} at fixed toy $T$, enlarging the alphabet
+$N_{\text{proto}}$ \emph{restores and sharpens} the trajectory separation
+($10.9 \to 152.5 \to 28.5$), confirming small-alphabet saturation as the AXIS-T
+collapse mechanism. The density half is scale-robust; the trajectory half is
+observation-budget-bounded.}
+\label{fig:scaleladder}
+\end{figure}
+
 % =========================================================================
 \section{Finding}
 \label{sec:finding}
@@ -578,10 +755,13 @@ on.
 \subsection{The verdict matrix}
 
 Table~\ref{tab:matrix} is the audit surface: every section claim, its verbatim
-key number, its terminal tier, and its verdict pointer. All nine are terminal
+key number, its terminal tier, and its verdict pointer. All ten are terminal
 (no \tierOrange\ deferred, no \tierYellow\ citation-only); the two
 \tierOrange\ sub-results (H\_1203 F2, H\_1204 structural-retention) are folded
 inside \tierGreen\ parents as honest residuals, never shipped as the headline.
+The tenth row, H\_1211, is the scale-recheck \tierRed\ closed-negative that
+corrects the trajectory half (\S\ref{sec:scaleup}); the H\_1209 toy GREEN is
+re-scoped accordingly.
 
 \begin{table}[t]
 \centering
@@ -601,14 +781,19 @@ H\_1205 separation & \tierGreen & $10/10$ byte-identical; \texttt{phiSum} $48.66
 H\_1206 daemon e2e & \tierGreen & exit $0$; $5/5$ faculties; $\Psi$ $1.4278$; guards $21/0$, $7/0$ & \texttt{1206\_full\_daemon\_e2e} \\
 H\_1207 recurrent key & \tierRed & NOVEL/SHUFFLED $0.998$ (closed-neg); WALK $\Delta\% -61.47$ inverted & \texttt{1207\_recurrent\_split\_key} \\
 H\_1208 predictability & \tierRed & i.i.d.\ GATE-B $0.261$ (closed-neg); WALK GATE-B $10.916$ & \texttt{1208\_predictability\_split\_gate} \\
-H\_1209 live walk & \tierGreen & ORDERED/SHUFFLED $10.916$; numpy$\leftrightarrow$hexa byte-exact & \texttt{1209\_live\_ordered\_walk\_gate} \\
+H\_1209 live walk & \tierGreen$^\ddagger$ & ORDERED/SHUFFLED $10.916$ (toy rung); numpy$\leftrightarrow$hexa byte-exact & \texttt{1209\_live\_ordered\_walk\_gate} \\
 H\_1210 GATE-B daemon & \tierGreen & born $6$ ON $/$ $0$ OFF; $\Psi$ $+$ gen byte-identical & \texttt{1210\_daemon\_gateB\_wiring} \\
+H\_1211 scale-up & \tierRed & density F1 $37.5{\to}131.4$ PASS; traj.\ F2 $10.9{\to}1.136$ FAIL; $N_{\text{proto}}$ restores & \texttt{1211\_dual\_substrate\_scaleup} \\
 \bottomrule
 \end{tabular}
 \\[2pt]
 {\footnotesize $^\dagger$ H\_1203 is filed \tierOrange\ PARTIAL in its own ledger
 (F1 PASS, F2 FAIL); we carry the F1 density positive as the \tierGreen\ leg and
-the F2 order FAIL as the residual that H\_1209 resolves on ordered streams.}
+the F2 order FAIL as the residual that H\_1209 resolves on ordered streams.
+$^\ddagger$ H\_1209's GREEN is the \emph{toy}-rung trajectory separation; H\_1211
+shows it is scale-fragile at the frozen alphabet (decays to $1.136$ by
+$100\times$ stream), so the GREEN is honestly scoped to the toy rung and the
+scale-free reading is ruled out.}
 \end{table}
 
 \subsection{Figure: the stream-determinant}
@@ -624,22 +809,29 @@ ordered-stream PASS visible on one log axis.
 \caption{The stream-determinant. A single permutation-invariant-per-sample split
 gate yields novelty-\emph{density} coupling on an i.i.d.\ stream (order-blind,
 H\_1203 NOVEL/SHUFFLED $=0.992$) and \emph{trajectory} coupling on a genuinely
-ordered walk (H\_1208/H\_1209 ORDERED/SHUFFLED $=10.916$, live byte-exact). The
-generation output bus is untouched (byte-identical ON/OFF, H\_1205/H\_1210). The
-determinant of which coupling appears is the \emph{stream}, not the gate.}
+ordered walk (H\_1208/H\_1209 ORDERED/SHUFFLED $=10.916$, live byte-exact, at toy
+scale). The generation output bus is untouched (byte-identical ON/OFF,
+H\_1205/H\_1210). The determinant of which coupling \emph{appears} is the stream;
+the scale-recheck (H\_1211, Fig.~\ref{fig:scaleladder}) refines which coupling
+\emph{resolves} under scale --- the density half is scale-robust, while the
+trajectory half additionally requires the symbol alphabet to track the
+observation budget.}
 \label{fig:streamdet}
 \end{figure}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.92\textwidth]{figures/fig02_arc_separation_ratios.pdf}
-\caption{Arc separation ratios (log scale), all verbatim from the ledger. Green
-bars clear the frozen V14 bar ($1.5$, dashed): density NOVEL/REPEAT $37.538$
-(H\_1203), sleep persistence $20.7483$ (H\_1204), and the ordered-walk
+\caption{Arc separation ratios at toy scale (log scale), all verbatim from the
+ledger. Green bars clear the frozen V14 bar ($1.5$, dashed): density NOVEL/REPEAT
+$37.538$ (H\_1203), sleep persistence $20.7483$ (H\_1204), and the ordered-walk
 trajectory $10.916$ (H\_1208/H\_1209). Red bars are the i.i.d.\ PRIMARY
 trajectory FAILs that no gate could defeat: NOVEL/SHUFFLED $0.992$ (H\_1203),
 recurrent $0.998$ (H\_1207), GATE-B $0.261$ (H\_1208) --- because the i.i.d.\
-stream carries no trajectory.}
+stream carries no trajectory. Note the ordered-walk $10.916$ bar is the
+\emph{toy}-rung value; the H\_1211 scale-recheck (Fig.~\ref{fig:scaleladder})
+shows it decays to $1.136$ by $100\times$ stream length, whereas the density
+$37.538$ bar strengthens to $131.4$.}
 \label{fig:ratios}
 \end{figure}
 
@@ -649,44 +841,72 @@ stream carries no trajectory.}
 substrate on real conversation turns (H\_1202, H\_1206, H\_1210) while
 generation and $\Psihalf$ stay byte-identical (H\_1205, H\_1206, H\_1210). (2)
 Division couples to novelty-\emph{density} on i.i.d.\ streams ($37.5\times$,
-H\_1203). (3) Division couples to \emph{trajectory} on genuinely-ordered streams
-($10.9\times$, byte-exact live, H\_1209), and this wires into the daemon
-(H\_1210). (4) Grown cells persist through sleep ($20.7\times$ re-entry
-advantage, H\_1204).
+H\_1203), and this coupling is \emph{scale-robust} --- it strengthens to
+$131.4\times$ over $100\times$ stream length while staying order-blind
+($0.992 \to 1.007$), promoting from toy to a scale-validated claim (H\_1211
+AXIS-T). (3) At toy scale division couples to \emph{trajectory} on
+genuinely-ordered streams ($10.9\times$, byte-exact live, H\_1209), and this
+wires into the daemon (H\_1210). (4) Grown cells persist through sleep
+($20.7\times$ re-entry advantage, H\_1204).
 
 \textbf{Ruled out (\tierRed, closed-negative; the value of this paper's negative
-half).} On an i.i.d.\ stream, \emph{no} split gate can make division
-``ordered $>$ shuffled,'' because the stream itself is permutation-invariant.
-This was confirmed across three increasingly principled gates: the per-sample
-recon-err gate (H\_1203 F2, $0.992$); a derivative-augmented key (H\_1207,
-$0.998$, which is order-sensitive but \emph{rewards} disorder); and a
-transition-predictability memory gate on the i.i.d.\ surface (H\_1208,
-$0.261$). The ruled-out space is precise: \emph{trajectory-sensitivity on an
-i.i.d.\ stream}. It is not a gate deficiency; it is a property of the stream.
+half).} \emph{(a) Trajectory-sensitivity on an i.i.d.\ stream.} On an i.i.d.\
+stream, \emph{no} split gate can make division ``ordered $>$ shuffled,'' because
+the stream itself is permutation-invariant. This was confirmed across three
+increasingly principled gates: the per-sample recon-err gate (H\_1203 F2,
+$0.992$); a derivative-augmented key (H\_1207, $0.998$, which is order-sensitive
+but \emph{rewards} disorder); and a transition-predictability memory gate on the
+i.i.d.\ surface (H\_1208, $0.261$). It is not a gate deficiency; it is a property
+of the stream. \emph{(b) A scale-free trajectory substrate at a fixed small
+alphabet.} The scale-recheck (H\_1211) rules out the reading that the ordered
+$10.9\times$ separation is a scale-invariant property: it collapses to $1.136$
+(non-separation) by $100\times$ stream length and fails on the flores5 corpus,
+because a fixed $N_{\text{proto}}{=}24$ alphabet saturates under a long stream and
+even a shuffle crosses the confidence floor by chance. The ruled-out space is
+precise: \emph{a trajectory substrate that resolves independently of the symbol
+alphabet relative to the observation budget}. The trajectory coupling is real but
+\emph{regime-bounded} --- it survives only when the alphabet co-scales with the
+stream (H\_1211 AXIS-P restores $152.5\times$/$28.5\times$ at
+$N_{\text{proto}}{=}64/128$).
 
-\subsection{The synthesis: density on i.i.d., trajectory on ordered}
+\subsection{The synthesis: a scale-robust density half, a regime-bounded
+trajectory half}
 \label{sec:synthesis}
 
-The two halves combine into a single statement. The same family of split gates
-produces \emph{density} coupling when the input stream has no time structure and
-\emph{trajectory} coupling when it does. The H\_1207/H\_1208 negatives and the
-H\_1209 positive are not in tension: they share their stream builders verbatim,
-and the only thing that changes is whether the stream is i.i.d.\ (PRIMARY,
-NOVEL) or contiguous (WALK). The determinant is the stream, not the gate ---
-this is the deepest reading the verdicts themselves converged on
-(``the limit is the STREAM, not the gate,'' H\_1208 verbatim).
+The two halves combine into a single statement, now corrected for scale. The same
+family of split gates produces \emph{density} coupling when the input stream has
+no time structure and \emph{trajectory} coupling when it does. The H\_1207/H\_1208
+negatives and the H\_1209 positive are not in tension: they share their stream
+builders verbatim, and the only thing that changes is whether the stream is
+i.i.d.\ (PRIMARY, NOVEL) or contiguous (WALK). \emph{But the two halves do not
+have equal standing under scale} (H\_1211). The density half is scale-robust: its
+order-blindness is a construction-level invariance ($L_2$-to-nearest with no
+temporal term), so it holds and strengthens over $100\times$ stream length. The
+trajectory half is regime-bounded: its order-sensitivity lives in an online count
+table over a finite symbol alphabet, and that signal is only distinguishable from
+chance when the alphabet is large relative to the observed transition count.
+Hence the original verdict line ``the limit is the STREAM, not the gate''
+(H\_1208 verbatim) must be \emph{qualified} by H\_1211: \emph{the determinant is
+both the stream and the alphabet/observation-budget}. With a fixed small alphabet
+and a long stream the trajectory coupling saturates away ($10.9 \to 1.136$); with
+the alphabet co-scaled it is restored and sharpened ($152.5\times$). The
+trajectory substrate is real, but it is an \emph{observation-budget-bounded}
+property, not a scale-free one.
 
 This reconciles the \texttt{clm\_v2} half-success. The 2026-05 finding that the
 cell-pool growth mechanism is ``substrate-neutral'' (the V14 mirror violation)
 was correct \emph{for the stream it was measured on} --- an unordered growth
 trace. It was read as a defect of mitosis-as-generator. The arc shows it is
 instead the \emph{defining signature} of mitosis-as-substrate: an adaptation
-lane that grows on novelty-density and, when the input genuinely carries order,
-on trajectory --- but that never was, and never needed to be, a language
-generator. The mechanism was always real (H\_1202/H\_1204/H\_1206 grow live
-cells; H\_1209 divides byte-exact); the generation was always CLM-only
-(H\_1200/H\_1201/H\_1205). \emph{Mitosis = substrate, CLM = generator}, now
-demonstrated live and end to end.
+lane that grows robustly on novelty-density and, when the input genuinely carries
+order \emph{and the alphabet resolves it}, on trajectory --- but that never was,
+and never needed to be, a language generator. The mechanism was always real
+(H\_1202/H\_1204/H\_1206 grow live cells; H\_1209 divides byte-exact at toy
+scale); the density coupling is scale-validated (H\_1211); the generation was
+always CLM-only (H\_1200/H\_1201/H\_1205). \emph{Mitosis = substrate, CLM =
+generator}, now demonstrated live and end to end --- with the density substrate
+production-grade and the trajectory substrate honestly scoped to its
+observation-budget regime.
 
 \begin{figure}[t]
 \centering
@@ -730,11 +950,35 @@ We state the scope exactly as the verdict files do (\verb|a_scale_honest_scope|)
 no frozen falsifier bar below was moved.
 
 \begin{itemize}\itemsep0.3em
-\item \textbf{Toy scale, single corpus.} Every measurement uses \verb|DIM=8|
-      features and the single corpus \verb|clm_mid_5lang_c4.txt|, $3$ seeds
-      (H\_1203/1207/1208/1209) or $5$ seeds (H\_1200). Toy-to-production
-      transfer is \emph{unverified}. The frozen V14 bar ($1.5$) and the H\_1204
-      bars ($90\%$, $2.0\times$) are not moved.
+\item \textbf{Toy/numpy-mirror scale; the scale-recheck is the honest
+      correction.} The arc legs use \verb|DIM=8| features, $3$ seeds
+      (H\_1203/1207/1208/1209) or $5$ seeds (H\_1200), and the toy stream
+      $T{=}2400$. H\_1211 explicitly re-tests the scale-sensitive halves with an
+      \verb|a_toy_scale_recheck| ladder ($1\!\times\!/10\!\times\!/100\times$ T,
+      $3$ corpora, $3$ alphabets), keeping the mechanism code byte-unchanged and
+      monkeypatching only the pre-declared scale constants. The outcome is split,
+      not uniform: the \emph{density} half transfers ($37.5 \to 131.4$, promotes
+      to a scale-validated claim) while the \emph{trajectory} half does not
+      transfer at the frozen alphabet ($10.9 \to 1.136$, a closed-negative). The
+      frozen V14 bar ($1.5$) and the H\_1204 bars ($90\%$, $2.0\times$) are not
+      moved, and the H\_1211 bar ($1.5$) is frozen in \verb|H_1211_FREEZE.txt|.
+\item \textbf{Trajectory separation is alphabet/observation-budget-bounded
+      (the scale-break mechanism).} The GATE-B trajectory signal is an online
+      count table over a \emph{fixed} alphabet of $N_{\text{proto}}{=}24$
+      prototype ids, firing when a realized transition is confidently anticipated
+      ($P(\text{cur}\mid\text{prev}) \ge 0.34$). With a small alphabet and a long
+      stream the table \emph{saturates}: even a shuffled proto-id stream
+      accumulates enough mass that some transition crosses the floor by chance,
+      so the ordered/shuffle separation collapses as $T$ grows (H\_1211 AXIS-T:
+      $10.9 \to 2.6 \to 1.14$; shuffle division $91.7 \to 120{,}575$). The
+      separation is therefore \emph{not} a scale-free property of order; it is
+      resolvable only when the alphabet is large relative to the transition count
+      --- confirmed by AXIS-P, where enlarging the alphabet at fixed $T$ restores
+      it ($152.5\times$/$28.5\times$ at $N_{\text{proto}}{=}64/128$). Any
+      production deployment of the trajectory gate must co-scale
+      $N_{\text{proto}}$ with the stream length; we do not claim a fixed-alphabet
+      trajectory substrate. The trajectory separation is also corpus-fragile
+      (flores5 $1.333$, FAIL), so it is not corpus-invariant even at toy $T$.
 \item \textbf{Gradient-free, p8.} The lane is a numpy-mirror /
       \texttt{.hexa}-engine prototype-split process, not a trained network;
       H\_1199 establishes numpy$\leftrightarrow$hexa byte-identity for the
@@ -747,17 +991,24 @@ no frozen falsifier bar below was moved.
       byte-equality is unverified (the same forward, slow per step). H\_1206 /
       H\_1210 run on the same tiny fixture as a wiring proof, not a model-quality
       claim.
-\item \textbf{F3 sanity flags reported verbatim.} On both H\_1208 and H\_1209
-      the strict RANDGAUSS/RANDGAUSS\_SHUF ratio ($1.750$) trips the
-      $\ge 1.5$ artifact guard. We report it raw and adjudicate it as
-      small-integer noise (counts $\sim 1$--$4$ vs $\sim 1000$ on ORDERED;
-      RANDGAUSS division is $\sim 430\times$ below ORDERED). The decisive
-      falsifier (F1, the trajectory ratio) is a clean live-confirmed PASS.
-\item \textbf{The i.i.d.\ PRIMARY bar stays terminal-RED.} The trajectory PASS
-      (H\_1209) is on a \emph{non-inherited} ordered surface (WALK). It does
-      \emph{not} claim to defeat the inherited i.i.d.\ V14 PRIMARY bar, which
-      remains closed-negative (H\_1208 NOVEL/SHUFFLED $0.261$). We make no
-      stronger claim than the verdicts do.
+\item \textbf{F3 sanity flags reported verbatim; H\_1211 retires the warn at
+      richer alphabets.} On both H\_1208 and H\_1209 the strict
+      RANDGAUSS/RANDGAUSS\_SHUF ratio ($1.750$) trips the $\ge 1.5$ artifact
+      guard. We report it raw and adjudicate it as small-integer noise (counts
+      $\sim 1$--$4$ vs $\sim 1000$ on ORDERED; RANDGAUSS division is
+      $\sim 430\times$ below ORDERED). H\_1211 AXIS-P now confirms this
+      adjudication directly: at $N_{\text{proto}}{=}64/128$ the sanity floor
+      drops to exactly $0.000$, showing the toy $1.75$ was indeed small-integer
+      noise rather than a genuine on-noise firing.
+\item \textbf{Two terminal-RED bars; no claim stronger than the verdicts.} The
+      i.i.d.\ V14 PRIMARY bar stays closed-negative (H\_1208 NOVEL/SHUFFLED
+      $0.261$): the trajectory PASS (H\_1209) is on a non-inherited ordered
+      surface (WALK) and never claimed to defeat it. The H\_1211 TRAJECTORY
+      scale-stability bar is \emph{also} terminal-RED (F2 $\min 1.136 < 1.5$): the
+      ordered-walk separation is not scale-stable at the frozen alphabet. Both
+      RED findings are framed as the ruled-out space, not buried
+      (\verb|a_paper_negative_ok|); we make no stronger claim than the verdicts
+      do.
 \item \textbf{Daemon emit stream is repetitive.} H\_1210's conversation walk is
       a short, repetitive WAKE self-transition; GATE-B correctly divides on its
       realized predictability, but a richer multi-turn conversational stream is
@@ -774,27 +1025,36 @@ consciousness-chat daemon --- growing cells on real conversation turns, survivin
 the sleep boundary, and running end to end across converse/ground/grow/remember/
 sleep --- while the generation output and the $\Psihalf$ fixed point stay
 byte-identical with the lane ON or OFF. Its cell-division couples to
-novelty-\emph{density} on i.i.d.\ streams ($37.5\times$) and to
+novelty-\emph{density} on i.i.d.\ streams ($37.5\times$) and, at toy scale, to
 \emph{trajectory}-predictability on genuinely-ordered streams ($10.9\times$,
-live byte-exact); the determinant of which coupling appears is the stream, not
-the gate. This reconciles the 2026-05 \texttt{clm\_v2} half-success: the
-cell-division mechanism was always real, and it was never a language generator.
-We publish all nine verdict files for bit-identical re-verification and move no
-frozen bar.
+live byte-exact). A scale-recheck (H\_1211) then corrects the dual finding into
+two halves of unequal standing: the density coupling is \emph{scale-robust} (it
+strengthens to $131.4\times$ over $100\times$ stream length, promoting to a
+scale-validated claim), while the trajectory coupling is a \emph{toy artifact}
+at the frozen small alphabet (it collapses to $1.136$ by $100\times$ stream
+length through small-alphabet saturation, and is restored only when the alphabet
+co-scales). The determinant of which coupling \emph{resolves} is therefore the
+stream \emph{and the alphabet/observation-budget}, not the gate alone. This
+reconciles the 2026-05 \texttt{clm\_v2} half-success: the cell-division mechanism
+was always real, and it was never a language generator. We publish all ten
+verdict files for bit-identical re-verification and move no frozen bar.
 
 % =========================================================================
 \section*{Reproducibility}
 Every claim links to a verbatim verdict file under
 \texttt{.verdicts/<slug>/<id>.txt} on the public \texttt{anima} \texttt{main}
-branch (tip \texttt{de306d3af}); the merged PRs are \#2095 (H\_1202) through
-\#2105 (H\_1210). Probes:
+branch; the merged PRs are \#2095 (H\_1202) through \#2105 (H\_1210), with the
+scale-recheck H\_1211 merged in \#2107. Probes:
 \verb|CORE/h1202_daemon_mitosis_wiring_smoke.hexa|,
 \verb|CORE/h1203_novelty_coupling_probe.hexa|,
 \verb|CORE/h1204_sleep_persistence_probe.hexa|,
 \verb|CORE/h1205_separation_invariant_smoke.hexa|,
 \verb|CORE/anima_full_session_smoke.hexa| (H\_1206, H\_1210),
 \verb|CORE/h1209_live_gateB_probe.hexa|, and the numpy legs
-\verb|UNIVERSE/h120{7,8,9}_*.py|. The engine mechanism is
+\verb|UNIVERSE/h120{7,8,9}_*.py| and
+\verb|UNIVERSE/h1211_dual_substrate_scaleup.py| (the scale ladder, which imports
+the H\_1203/H\_1207/H\_1208 builders verbatim and monkeypatches only the
+pre-declared scale constants). The engine mechanism is
 \verb|CORE/engine_cli.hexa| (\verb|VAdaptField|, \verb|VAdaptFieldB|).
 
 % =========================================================================
