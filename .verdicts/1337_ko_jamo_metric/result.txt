@@ -1,0 +1,25 @@
+=== H_1337 — ko-jamo-metric (sm_120) ===
+device=NVIDIA GeForce RTX 5070 torch=2.11.0+cu130
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  identical-to-H_1307-RUN-A=True
+[nocheat] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[G0 raw-byte] ce=2.94487 cells=23 member=4  (H_1316 reproduced 2.95342)
+[nocheat] byte-accounting: Σ n_bytes=29999999 corpus_bytes=29999999 close=True
+[A1 jamo opaque-id] ce=2.51335 cells=11 member=5 calib-vs-2.51335(±0.0005)=True
+[seed 4337] {"A5_learned_metric": 3.85319, "A5_random_metric": 3.89942, "h_learn": 1.3466, "h_rand": 5.5719}
+[seed 4338] {"A5_learned_metric": 3.85319, "A5_random_metric": 3.90156, "h_learn": 1.3466, "h_rand": 5.4756}
+[seed 4339] {"A5_learned_metric": 3.85319, "A5_random_metric": 3.90747, "h_learn": 1.3466, "h_rand": 5.5659}
+-------------------------------------------------------------------------------
+CE LADDER (nats/UTF-8-byte, geometry-FAIR; learned/random metric mean 3 seeds):
+  raw-byte ceiling             = 2.95342  (in-run G0 2.94487)
+  A1 jamo (Fix-A protocol)     = 2.51335  (calib vs H_1316 2.51335 = True)
+  A5 learned-metric smoothed   = 3.85319  per-seed [3.85319, 3.85319, 3.85319]
+  A5 RANDOM-metric control     = 3.90281  Δ(rand−A5)=0.04962
+M1 BELOW-JAMO (A5 < A1−0.03 AND < raw): False  (A5 3.85319 vs A1 2.51335, Δ=-1.33984)
+M2 EARNED (A5 < random-metric by >=0.05): False  (Δ=0.04962)
+M3 ATTRIBUTION (A5 < A1 opaque): False  (Δ=-1.33984)
+VERDICT: 🧱 HONEST-FLOOR (opaque-atom limit) — M1 fails: even a LEARNED jamo metric does NOT beat the jamo floor by the bar → the opaque per-cell jamo MLE is already information-optimal at this scale; learned between-jamo similarity adds no exploitable below-jamo signal (a deeper 🧱 than H_1329 — the floor is the opaque-atom info limit, confirmed by a learned metric, not just re-factorization)
+total wall=21.2s
+  metric LEARNED BY GRADIENT (labeled, NOT p8). engine-transfer DIRECTIONAL (follow-on). NO fluency claim.
+[done]

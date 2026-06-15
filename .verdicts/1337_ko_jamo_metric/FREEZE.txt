@@ -1,0 +1,127 @@
+H_1337 — ko-jamo-metric — FROZEN PRE-REGISTRATION (write BEFORE scoring; NOT moved — c9/p7)
+================================================================================
+PROJ_SEED provenance: free-id verified on origin/main @61ce6948f (1316-1336 taken;
+  1331-1336 in sibling lanes per task brief; 1337 FREE). worktree off origin/main.
+date: 2026-06-16   substrate: summer RTX 5070 sm_120 (torch 2.11.0+cu130) / CPU-fallback,
+  $0 (user hw, not runpod), mirror DIRECTIONAL.
+
+WHY THIS LANE (the H_1329 depletion test's SECOND named angle)
+--------------------------------------------------------------------------------
+H_1329 🧱 (cross-mechanism HONEST-FLOOR) proved re-factorization is futile: any mechanism
+that models the within-jamo feature JOINT asymptotes to P(jamo|cell) — exactly what the
+opaque jamo head already computes — so it ties the partition and stays ABOVE jamo 2.51335.
+  CE ladder (geometry-fair, H_1329): raw 2.95342 · A1 jamo 2.51335 (FLOOR) ·
+    A2 featural-partition 2.73046 · A3 independent-factorization 3.07295 ·
+    A4 conditional-chain (joint) 2.75109.
+H_1329's DEPLETION TEST: a below-jamo win must INJECT INFO THE OPAQUE JAMO HEAD LACKS.
+The opaque jamo head treats jamo as 51 OPAQUE atoms (one-hot, NO similarity) — it does NOT
+know ㄱ and ㅋ are related. A LEARNED jamo metric / embedding (learned from corpus
+co-occurrence, jamo2vec-style) lets similar jamo SHARE statistical strength in a way the
+opaque count-MLE head cannot — GENUINELY NEW INFORMATION (a learned geometry over jamo, NOT
+a re-factorization of the featural target). This is the H_1329 card's explicitly-named
+second next-angle (line: "a learned metric over jamo that the opaque head lacks").
+
+THIS LANE (H_1337): learn a jamo distance/embedding from the REAL corpus (co-occurrence →
+low-dim embedding), then use it so the gradient-free predictor SHARES strength across
+metric-near jamo (kernel-smoothing / shrinkage toward metric-neighbors). Does this break the
+jamo floor (the floor was the opaque-ATOM info limit) or hold (a deeper limit)?
+
+THE NEW MECHANISM (A5 — learned-jamo-metric kernel-smoothed head; the crux)
+--------------------------------------------------------------------------------
+A5 = the per-cell OPAQUE-jamo count head (identical alphabet/axis to A1) but the per-cell
+next-jamo distribution is KERNEL-SMOOTHED over a LEARNED jamo metric, so a count observed for
+jamo j ALSO lends partial strength to metric-near jamo j'. The opaque head (A1) cannot do this
+— it has no notion that ㄱ~ㅋ — so any lift A5 buys over A1 is the LEARNED-METRIC INFORMATION
+the opaque head LACKS (the H_1329 depletion criterion, met by construction).
+
+  Learned metric (TRAIN-ONLY, no test peeking, learned BY GRADIENT — labeled, NOT p8 gradient-free):
+   1. Build a jamo×jamo co-occurrence matrix C over the TRAIN stream only: for each adjacent
+      jamo pair (j_t, j_{t+1}) in train, C[j_t, j_{t+1}] += 1 (directed bigram counts over the
+      jamo-id alphabet, Hangul jamo only; byte symbols excluded from the metric).
+   2. PPMI(C) = max(0, log( P(i,j) / (P(i)P(j)) )) — positive pointwise mutual information,
+      the standard jamo2vec association weighting.
+   3. low-dim embedding E (dim D_EMB=16) = truncated SVD of PPMI (E = U_D · sqrt(S_D)); the
+      jamo metric = Euclidean distance in E. THIS IS A LEARNED GEOMETRY (SVD over corpus PPMI),
+      NOT the design feature map (which H_1322/1326/1329 already exhausted). To make the
+      "learned BY GRADIENT" label LITERAL and unambiguous, E is additionally refined by a few
+      gradient steps of a skip-gram-style log-bilinear objective on the train bigrams (Adam,
+      FIXED n_steps, TRAIN-ONLY) seeded from the SVD embedding — so the metric is genuinely a
+      gradient-learned embedding (jamo2vec), not merely a closed-form SVD. Labeled clearly.
+   4. kernel weights: w(j, j') = exp( -dist_E(j,j')^2 / (2 h^2) ), bandwidth h = MEDIAN pairwise
+      train-jamo distance (Silverman-style FIXED rule, NO per-run tuning — frozen by the median
+      heuristic). Self-weight w(j,j)=1.
+
+  Kernel-smoothed per-cell head (rides the SAME gradient-free Voronoi partition as A1, FIX-A bank):
+    raw per-cell count n_k[j] (Laplace=1.0, IDENTICAL to A1's all_heads). Smoothed pseudo-count
+    ñ_k[j] = Σ_{j'} w(j, j') · n_k[j']  (kernel-pool neighbor counts over the LEARNED metric),
+    then P_k(j) = ñ_k[j] / Σ_j ñ_k[j]. Byte symbols (non-Hangul) scored EXACTLY as A1 (own
+    count head, NO smoothing) so the ONLY difference A5-vs-A1 is the jamo-space kernel smoothing
+    over the learned metric — isolating the learned-metric information.
+    Held-out CE = Σ NLL(P_k(true jamo)) / Σ n_bytes, SAME nats/UTF-8-byte axis as A1/A2/A3/A4.
+
+  WHY this is NOT an H_1329 re-factorization: A4 re-expressed the SAME target P(jamo|cell) via
+    the within-jamo feature joint → asymptotes to the opaque head (TIES). A5 changes neither the
+    target nor the partition; it INJECTS a learned between-jamo similarity the opaque head has no
+    access to, pooling counts across corpus-similar jamo. The information is NEW (learned from
+    corpus PPMI, not the design map, not the joint). If even this learned metric does not beat
+    the opaque head, the floor is the opaque-atom info limit at a deeper level still (HONEST 🧱).
+
+REUSE / PROVENANCE (byte-identical to H_1307 RUN A / H_1316 / H_1326 / H_1329)
+--------------------------------------------------------------------------------
+- SAME REAL anima-7b R2 web corpus (r2.phanes://anima-7b/web/kor/shard0000.bytes), 30MB KO window.
+- KO window sha256 ASSERTED == H_1307 RUN A:
+    c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca  → REFUSE if mismatch.
+- corpus cache /tmp/h1311_ko_raw.bytes preserved (NOT deleted). R2 keys via `harness secret get`,
+  env-only at fetch time, NEVER logged/committed (c7) — grep artifacts before PR.
+- FROZEN mitosis knobs verbatim: GROW_MAX=40, SPLIT_THRESH_CE=0.05, MIN_OWNED=8, LAPLACE=1.0,
+  ko_stride=300, even/odd split, geometry-fair bank (FIX A, identical to every arm).
+- A1 jamo MUST reproduce 2.51335 byte-exact (CALIB_TOL=0.0005) = geometry-fair calibration anchor.
+- 3 seeds [4337,4338,4339]: seeds vary the random-metric control AND the gradient embedding-refine
+  init; A1 (opaque), the SVD-metric, and A5-with-fixed-metric are otherwise deterministic per the
+  TRAIN stream. Report per-seed + mean.
+
+CE CONVERSION (stated for fair comparison)
+--------------------------------------------------------------------------------
+All CE = nats/UTF-8-byte = (Σ held-out symbol NLL in nats) / (Σ n_bytes per scored symbol).
+n_bytes per jamo from syll_jamo_nbytes (3-jamo→[1,1,1], 2→[2,1], 1→[3]); raw byte = 1. A5 scores
+the SAME jamo-id alphabet as A1 on the SAME byte axis → A5 CE is directly comparable to opaque
+jamo 2.51335 and raw 2.95342.
+
+FROZEN BARS (pre-register; GREEN iff ALL THREE)
+--------------------------------------------------------------------------------
+M1 BELOW-JAMO: learned-jamo-metric A5 CE < jamo 2.51335 by >= 0.03 (mean 3 seeds)
+   AND < raw 2.95342.
+       i.e.  A5 < (2.51335 - 0.03) = 2.48335   AND   A5 < 2.95342.
+M2 EARNED: A5 beats a RANDOM/SHUFFLED-metric control by >= 0.05 (mean 3 seeds) — the metric is
+   replaced by RANDOM distances (a random embedding of the SAME dim, same kernel + bandwidth
+   rule), so the win is the LEARNED structure, NOT mere smoothing/over-pooling.
+       i.e.  (A5_random_metric_mean - A5) >= 0.05.
+M3 ATTRIBUTION: A5 beats the OPAQUE-jamo baseline A1 (reproduced in-run, the calibration anchor)
+   — isolating that the gain is the learned-metric INFORMATION the opaque head LACKS.
+       i.e.  A5 < A1   (strict; report the delta).
+
+OUTCOMES (all VALID — c9)
+--------------------------------------------------------------------------------
+- M1 ∧ M2 ∧ M3 → 🟢 a LEARNED jamo metric breaks the jamo floor: the floor was the opaque-ATOM
+    info limit (one-hot, no similarity); learned between-jamo similarity is NEW info the opaque
+    head lacks, and it crosses below jamo (overturns the H_1329 floor as an opaque-atom limit, not
+    a terminal decomposition floor).
+- M1 fails → even a learned metric does NOT beat the opaque jamo head → a DEEPER floor (the
+    opaque head's per-cell jamo MLE is already information-optimal at this scale; learned
+    similarity does not add exploitable signal). HONEST 🧱, stronger than H_1329.
+- M2 fails → the gain is SMOOTHING (over-pooling), NOT learned structure (a random metric pools
+    just as well) → report straight (🟠 smoothing-not-structure).
+- M3 fails (A5 ties/loses vs A1) → the learned metric buys nothing over the opaque head at all.
+
+SCOPE HONESTY (a_scale_honest_scope, a_toy_scale_recheck)
+--------------------------------------------------------------------------------
+TOY/DIRECTIONAL numpy/torch mirror. The METRIC is LEARNED BY GRADIENT (PPMI-SVD init + skip-gram
+gradient refine) — so A5 is NOT p8 gradient-free; it rides the gradient-free Voronoi partition but
+the jamo metric is a gradient-learned embedding. Labeled explicitly. The smoothed COUNT head is
+count-MLE (not gradient-trained). Engine-transfer to live CORE/*.hexa = follow-on
+(a_engine_native_learning, a_verified_must_wire). NO Korean-fluency claim. live CORE UNTOUCHED.
+
+deliverables: UNIVERSE/h1337_ko_jamo_metric.py · UNIVERSE/cards/H_1337_ko_jamo_metric.md ·
+HYPOTHESES.md row · CLAIMS.tape @C · .verdicts/1337_ko_jamo_metric/{FREEZE,result}.txt ·
+domains/MITOSIS-ENGINE.log.md · CHANGELOG.md (Korean).
+================================================================================

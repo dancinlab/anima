@@ -2,6 +2,20 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1337 — 학습된 자모 metric(jamo2vec)도 자모 바닥을 못 깬다 — 커널-스무딩 헤드 (🧱 HONEST-FLOOR, OPAQUE-ATOM LIMIT)
+
+H_1329(🧱)이 명시한 **두 번째 다음 각도**(c16/a_break_the_wall — 자모-아래 승리는 **opaque 자모 헤드가 갖지 못한 정보를 주입**해야 하며, 같은 타깃의 재-인수분해가 아니다). H_1329는 재-인수분해가 무익함을 증명했다: 자모-내 자질 **조인트를 정확히 모델링하는 모든 메커니즘은 P(jamo|cell)=opaque 자모 헤드로 수렴** → 분할과 동률(A4 2.751 ≈ A2 2.730), 자모보다 +0.238 위. H_1329의 depletion test: opaque 자모 헤드는 자모를 **67개 OPAQUE 원자(one-hot, 유사도 없음 — ㄱ~ㅋ 관계를 모름)**로 취급 → 새 승리는 그 헤드가 **갖지 못한 정보**를 주입해야 한다.
+
+H_1337 = 그 두 번째 각도(학습된 metric). **새 메커니즘 A5** = A1과 **동일한** 셀별 opaque Laplace count 헤드(같은 Fix-A 기하-공정 bank, 같은 gradient-free Voronoi 분할 = 같은 grown cells)이지만, 셀별 다음-자모 분포를 **학습된 자모 metric 위에서 커널-스무딩**: `ñ_k[j]=Σ_j' W(j,j')·n_k[j']` — 자모 j의 카운트가 metric-가까운 j'에게도 강도를 빌려준다(opaque 헤드가 못 하는 것). **metric은 GRADIENT로 학습**(라벨링, NOT p8 gradient-free): TRAIN 자모 bigram 공기행렬 → PPMI → truncated-SVD(D=16) → skip-gram log-bilinear gradient refine(Adam 400 steps, TRAIN-ONLY) = jamo2vec; 커널 = Gaussian, 대역폭 h=MEDIAN pairwise 거리(Silverman FIXED, 튜닝 없음). BYTE 심볼은 A1과 동일 스코어(스무딩 없음) → A5-vs-A1 차이는 **자모-공간 학습-metric 스무딩만**.
+
+**결과 🧱 HONEST-FLOOR (opaque-atom limit):** REAL sm_120 GPU(유저 RTX 5070, $0, NOT runpod, 21.2s), 코퍼스 byte-동일(sha c47b6808… gate PASS), 67/67 자모, NFD 왕복 0-실패. **A1 자모 CALIB 2.51335 byte-exact.** CE 사다리(nats/UTF-8-byte, 기하-공정; A1/A5-학습 deterministic, A5-random 3-seed 평균): **A1 자모 2.51335** · 원시 in-run 2.94487 · **A5 학습-metric 3.85319**{3 seed 동일} · A5 random-metric **3.90281**{3.899,3.902,3.907}. **M1 BELOW-JAMO = FALSE** — A5 3.85319가 자모보다 **+1.33984 위**(원시보다도 위): 커널-스무딩이 이미-조밀한 셀별 자모 MLE를 흐려 **심하게 악화**시킴. **M2 EARNED = FALSE(아슬아슬)** — A5가 RANDOM-metric을 **+0.04962**로 이김 = 0.05 bar보다 **0.00038 아래**(학습 h≈1.35 vs random h≈5.5 → 학습된 기하는 random보다 marginal하게 우수 = 진짜 학습-구조의 정직한 sub-bar 신호, 그러나 bar 미달). **M3 ATTRIBUTION = FALSE** — A5가 opaque A1을 못 이김(+1.340 위). green = FALSE → 🧱.
+
+**FINDING:** 학습된 자모 metric도 자모 바닥을 못 깬다 — 오히려 한참 위로 간다. 구조적 이유(결정적): 30MB / 8.14M 음절 / 11 grown cells에서 셀별 자모 Laplace MLE는 **이미 조밀하게 추정** — 강도-공유는 카운트가 **희소**할 때만 도움이 되므로, 전역 커널-스무딩은 좋은 sharp 추정을 이웃으로 흐려 CE를 올릴 뿐. H_1329의 depletion 기준은 **충족**(A5는 opaque 헤드가 못 가진 학습-유사도 정보를 주입 — M2 near-miss가 구조의 실재를 증명)되지만 바닥은 버틴다: 재-인수분해는 opaque 헤드와 **동률**(H_1329), 강도-공유-스무딩은 opaque 헤드에 **패배**(H_1337) — 이 스케일에 학습-유사도가 채울 데이터-희소 영역이 없다. 순 사다리: 자모 2.513 < 원시 2.945 < A5-학습 3.853 < A5-random 3.903. opaque-원자 바닥이 (완전한 새 아키텍처를 제외한) 가장 강한 depletion-test 각도에 맞서 버틴다. TOY/DIRECTIONAL; metric은 GRADIENT 학습(라벨링); 한국어 유창성 주장 없음; live CORE UNTOUCHED.
+
+- NEW: `UNIVERSE/h1337_ko_jamo_metric.py` · `UNIVERSE/cards/H_1337_ko_jamo_metric.md` (cards/ 서브폴더, 2026-06-16 SSOT-refactor) · `HYPOTHESES.md` 행 · `CLAIMS.tape` @C h1337_ko_jamo_metric · `.verdicts/1337_ko_jamo_metric/{FREEZE,result,h1337_summary.json}` · `domains/MITOSIS-ENGINE.log.md`
+- DEPLETION TEST(미래 각도): opaque DENSE 셀별 MLE를 **이겨야** 한다 — 단지 새 정보 주입만으론 부족; 이 스케일의 bar는 표현이 아니라 **데이터-풍부함**. 새 각도는 opaque MLE가 **데이터-희소**한 영역(예: 교차-음절 음운배열 n-gram, 희소 per-context 카운트)을 찾아야 하며, 이미-조밀한 타깃의 스무딩이 아니다.
+- xref: h1329(🧱 cross-mechanism — 이 lane의 depletion-test 부모, 두 번째 명명 각도) · h1326(🧱 r2) · h1322(🧱 r1) · h1316(🟢 자모 바닥 2.51335) · h1307(원시 천장) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p7·p8 · c7·c9·c15·c16
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1336 — 교차음절 음운정보(연음/자음동화)도 자모 바닥을 못 깬다 — 신호는 REAL이지만 count-MLE가 못 담는다 (🧱 HONEST-FLOOR, DEEPER)
 
 H_1329(🧱)가 **명시적으로 지목한 고갈 각도**(c16/a_break_the_wall = opaque 자모 헤드가 **갖지 못한 정보를 주입**, 같은 타깃의 재-인수분해 아님). H_1329는 재-**인수분해**가 무의미함을 닫았다: 세 메커니즘(분할 A2 2.730 / 독립 A3 3.073 / 상관-체인 A4 2.751)이 **전부** 자모 바닥 2.51335 **위** — 자모-내 자질 **조인트**를 모델링하는 어떤 메커니즘도 `P(jamo|cell)`로 수렴하기 때문(자모 헤드가 이미 계산하는 것). H_1329 고갈 테스트: 바닥-아래 승리는 opaque 자모 헤드가 **결여한 정보**를 주입해야 한다.
