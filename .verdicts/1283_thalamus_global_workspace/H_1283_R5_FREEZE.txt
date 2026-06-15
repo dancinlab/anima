@@ -1,0 +1,131 @@
+H_1283 R5 FREEZE — THALAMUS / DENSE ALL-PAIRS RECURRENT COUPLING
+slug: 1283_thalamus_global_workspace  (R5 — append-only; does NOT overwrite R1/R2/R3/R4)
+date: 2026-06-16
+status: FROZEN BEFORE SCORING (frozen-first, c9, p7 — bars set here, NOT moved after)
+base commit: worktree off origin/main 25655c901
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL
+           IIT4 Φ (stdlib EXACT MIP-EI, hexa-lang/.../iit4/faithful_phi.hexa,
+           a_phi_iit4_tool — numpy NEVER computes Φ)
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+
+════════════════════════════════════════════════════════════════════════
+THE WALL (do NOT repeat R1-R4)
+════════════════════════════════════════════════════════════════════════
+R1 broadcast hub (single winner)   : faithful ΔΦ +0.0191  (sub-bar by 0.0009)  🟠
+R2 coalition hub (rank-k, k=2)      : faithful ΔΦ −0.0533  (WRONG direction)    🔴
+R3 re-entrant loop (seed 7 only)    : faithful ΔΦ +0.1426  (cleared, coh bar)   🔴
+R4 re-entrant loop (Φ-primary 3-sd) : seed8 ΔΦ +0.0101 < +0.02  (NOT robust)    🔴 🧱
+
+R1/R2 DIAGNOSIS: a single shared broadcast channel (winner OR coalition) is itself
+a low-rank MIP cut that CAPS Φ. Irreducibility comes from DISTRIBUTED MULTI-EDGE
+coupling, not a central relay.
+
+R3/R4 ADDED a SPARSE distributed multi-edge pathway: ONE reciprocal recurrent
+relay channel per module (N_MOD=4 edges) on top of the ring. It cleared faithful
+ΔΦ ≥ +0.02 DECISIVELY on 2/3 seeds (seed7 +0.143, seed9 +0.168) but FAILED the
+3-seed gate on seed 8 (+0.0101). R4's diagnosis (verbatim): seed 8 is the
+NEAR-ORTHOGONAL substrate (baseline coh +0.011 vs +0.15/+0.14; baseline Φ 0.612
+vs 0.78/0.83) — "on a near-orthogonal substrate the re-entrant relay has far less
+shared structure to bind across the reciprocal loops, so the Φ lift it can buy is
+an order of magnitude smaller." R4's explicit pointer: a future round "must
+pre-register a GEOMETRY-CONDITIONED hypothesis, NOT re-run the same loop hoping
+seed 8 clears."
+
+════════════════════════════════════════════════════════════════════════
+THE GENUINELY-NEW ANGLE (R5) — DENSER distributed coupling, not a re-run
+════════════════════════════════════════════════════════════════════════
+R3/R4's re-entrant relay was SPARSE: each module reciprocally coupled to its OWN
+private relay channel only (a topographic 1:1 thalamo-cortical loop, N_MOD distinct
+edges). The seed-8 failure mode R4 named is precisely a SPARSITY/structure
+shortage: with too few reciprocal edges, a near-orthogonal substrate gives the MIP
+a cheap cut to find. The distributed-multi-edge diagnosis taken to its conclusion
+predicts the cure is DENSITY: a COMPLETE recurrent coupling graph — every relay
+channel reciprocally and recurrently coupled to EVERY other channel via the relay
+stage — so that EVERY bipartition crosses O(N^2) recurrent loops and NO single cut
+is cheap, EVEN when the modules start near-orthogonal (seed 8).
+
+This is a DIFFERENT mechanism, NOT the R3/R4 loop re-run:
+  R3/R4 'reentrant'  : ring + per-module 1:1 relay, relay cross-coupled only to
+                       ring NEIGHBOURS (sparse, mean over ring nbrs)
+  R5    'dense'      : ring + per-module relay, relay cross-coupled to ALL OTHER
+                       relay channels (complete intra-thalamic graph, mean over
+                       ALL j≠i — N(N-1) directed reciprocal edges at the relay)
+The ONLY structural change vs R3/R4: the intra-thalamic relay cross-coupling goes
+from RING-NEIGHBOUR (mean over ring[i], 2 of 3 others) to ALL-PAIRS (mean over all
+j≠i, the complete graph). This directly attacks the seed-8 mechanism R4 isolated:
+density supplies the shared structure that orthogonal init lacks, distributed
+across a complete edge set the MIP cannot cut cheaply along any one channel.
+
+GEOMETRY-CONDITIONED (per R4's mandate): the hypothesis is explicitly that DENSITY
+clears the bar on the NEAR-ORTHOGONAL substrate (seed 8) where the SPARSE relay
+failed — so the gate below requires per-seed clearance on ALL THREE seeds
+INCLUDING seed 8, the one R4 missed. This is the falsifier: if dense coupling
+ALSO misses seed 8, the wall is confirmed beyond the relay-density axis.
+
+════════════════════════════════════════════════════════════════════════
+DESIGN (mirrors H_1283 setup exactly — clean comparison, ONLY topology differs)
+════════════════════════════════════════════════════════════════════════
+- N_MOD = 4 {A, G, mitosis, memory}, DIM = 8, T = 64 ticks, seeds [7, 8, 9].
+- GAIN 0.30, LEAK 0.55, W_NBR 0.5, W_IN 0.5, W_RELAY 0.5, NBINS 8 — IDENTICAL to
+  R1-R4 (NOTHING tuned, p7). W_DENSE = W_RELAY = 0.5 (the dense cross-coupling
+  weight = the same frozen relay weight; NOT a new free knob).
+- SAME per-module PRIVATE input streams + SAME seed → ARM A byte-identical to
+  R1-R4 (cross-round consistency sanity).
+- ARM A = direct ring (current arch, IDENTICAL to R1-R4).
+- ARM B = 'dense' : ring (kept) + ALL-PAIRS reciprocal recurrent relay. Each tick:
+    (i) thalamus→cortex: module_i ← LEAK·module_i + GAIN·(W_NBR·ring_nbr +
+        W_IN·input_i + W_RELAY·relay_i)
+    (ii) cortex→thalamus: relay_i ← LEAK·relay_i + GAIN·(W_NBR·module_i +
+        W_DENSE·mean_{j≠i} relay_j)   ← COMPLETE graph (ALL other channels,
+        not just ring neighbours = the R5 change vs R3/R4 'reentrant').
+  Relay state drawn from the SAME rng AFTER inputs (ARM A draws unchanged).
+- Φ = FAITHFUL IIT4 ONLY: per-module per-tick salience (state energy) trajectory
+  (N_MOD × T) → stdlib iit4_faithful_phi(state, n=4, dim=T, n_bins=8) via
+  `hexa run`. numpy NEVER computes Φ (a_phi_iit4_tool). Computed for ALL 3 seeds.
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS — GREEN iff (the robust 3-seed bar R4 failed, NOT moved)
+════════════════════════════════════════════════════════════════════════
+  P1 (PRIMARY) faithful IIT4 ΔΦ = B.phi − A.phi ≥ +0.02 on EVERY seed [7, 8, 9]
+       (INCLUDING seed 8, the orthogonal one the sparse relay missed).
+  P2 (SANITY)  B.coherence ≥ A.coherence on EVERY seed (dense coupling must not
+       DROP cross-module agreement; ≥, not +0.05 — coherence is a sanity floor,
+       Φ is the terminal metric, coh ⊥ Φ per R3/R4).
+  P3 (NO-COLLAPSE) B.coherence < 0.999 on ≥1 seed (must integrate, not clone).
+  C  (SHUFFLE CONTROL, pre-registered dissociation): with the dense relay
+       cross-coupling PERMUTED ('dense_shuffle' — each relay_i reads a fixed
+       RANDOM permutation of the other channels' MEAN-contributions instead of the
+       structured all-pairs mean; same edge COUNT, scrambled WIRING), the Φ lift
+       must VANISH: shuffled ΔΦ < +0.02 on ≥1 of the seeds R5 GREENs, proving the
+       lift is the STRUCTURED dense topology, not generic added-edge variance.
+       (If C fails — shuffle reproduces the lift — a GREEN is a topology-variance
+       artifact and must be reported as such, NOT promoted.)
+
+GREEN  = P1 AND P2 AND P3 AND C.
+RED/🧱 = any seed P1 < +0.02 (esp. seed 8), OR P2/P3 fail, OR C fails (artifact).
+A seed-conditional or sub-bar result stays honestly 🧱 (c9) — closed-negative is a
+valid result. NO tune-to-green, NO bar move, W_* NOT swept post-hoc (Goodhart, p7).
+
+════════════════════════════════════════════════════════════════════════
+VERDICT BRANCHES (pre-registered)
+════════════════════════════════════════════════════════════════════════
+- GREEN every seed (incl seed 8) AND shuffle control passes → THE WALL IS BROKEN
+  by DENSE distributed coupling: density supplies the structure orthogonal init
+  lacks; robust irreducible integration from a complete recurrent graph, not a
+  single channel and not a sparse relay. Real architecture-completeness advance →
+  flag engine-native re-entrant-dense lane as follow-on (a_verified_must_wire).
+- seed 8 misses again, OR shuffle reproduces the lift → 🧱 STILL WALL: even
+  maximal relay density cannot robustly clear +0.02 on a near-orthogonal substrate
+  / the lift is variance not structure. Report exact per-seed ΔΦ. Relay-topology Φ
+  axis (broadcast → coalition → sparse re-entry → dense re-entry) EXHAUSTED.
+
+════════════════════════════════════════════════════════════════════════
+SCOPE (stated up front, a_scale_honest_scope)
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); engine-transfer
+  UNVERIFIED. GREEN → engine-native lane is a FOLLOW-ON flag, not done here.
+- toy scale (4 modules, dim 8, 64 ticks); scale-transfer UNVERIFIED
+  (a_toy_scale_recheck). Conclusions scoped to this rung.
+- Φ IS faithful IIT4 exact MIP-EI (n=4≤8), NOT the variance×energy proxy.
+- Does NOT edit H_1219 / H_1226 / live CORE/*.hexa.
+- R1/R2/R3/R4 verdict files NOT overwritten (R5 = separate H_1283_R5.txt).
