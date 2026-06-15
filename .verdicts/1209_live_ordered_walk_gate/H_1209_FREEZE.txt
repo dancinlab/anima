@@ -1,0 +1,122 @@
+================================================================================
+H_1209 FREEZE — LIVE-ENGINE GATE-B ON A GENUINELY-ORDERED BYTE-FEATURE WALK
+MITOSIS-ENGINE · pre-registered BEFORE any measurement (p7)
+================================================================================
+DATE-FROZEN: 2026-06-15
+BRANCH: h1209/live-ordered-walk-gate (base origin/main)
+SLUG: 1209_live_ordered_walk_gate
+PRECEDENT LEAD: H_1208 (PR #2102, .verdicts/1208_predictability_split_gate/).
+  GATE-B (prototype-transition-predictability: fixed N_PROTO=24 order-invariant
+  book, causal count table C[prev][next], split when prev seen >= MIN_PREV=3 AND
+  P(cur|prev) >= CONF_FLOOR=0.34) on the inherited i.i.d. PRIMARY stream FAILED
+  (NOVEL/SHUFFLED = 0.261 — the PRIMARY stream has no order to predict). BUT on a
+  genuinely-ordered contiguous corpus WALK: GATE-B WALK=1000.7 >> WALK_SHUF=91.7 =
+  10.9x — the FIRST mechanism to separate order from disorder in the V14-correct
+  direction (ordered >> shuffled); sanity RANDGAUSS ~ noise floor. H_1208 ruling:
+  "the limit is the STREAM, not the gate"; NOT RULED OUT: "the LIVE engine + a
+  GATE-B variant on a genuinely ordered byte-feature walk."
+
+  This probe takes that lead to a NON-inherited surface AND through the LIVE .hexa
+  engine. It does NOT re-attack the inherited i.i.d. PRIMARY V14 bar (that stays
+  terminal-RED, H_1208) — F4 makes the scope explicit.
+
+--------------------------------------------------------------------------------
+THE LIVE GATE-B VARIANT (engine_cli.hexa, NEW fn + struct — H_1199 precedent)
+--------------------------------------------------------------------------------
+The existing per-sample VAdaptField gate (vadapt_field_step / _recon_err / _cells,
+H_1199/H_1202/H_1205) is kept BYTE-UNCHANGED. A NEW, ADDITIVE, Psi-disjoint variant:
+
+  struct VAdaptFieldB — carries a FIXED (order-invariant) prototype book + an online
+    causal transition count table + the last proto id + MIN_PREV / CONF_FLOOR.
+  vadapt_fieldB_new(book, max_cells, min_prev, conf_floor) — seed with the fixed book.
+  vadapt_fieldB_step(afB, x, cfg) — ONE live tick on DIM-vector x:
+    (1) assign nearest proto id cur = argmin_i L2(book[i], x)   (permutation-EQUIVARIANT)
+    (2) if a prev id exists AND prev_total[prev] >= MIN_PREV AND
+        C[prev][cur]/prev_total[prev] >= CONF_FLOOR  ->  the transition was
+        CONFIDENTLY ANTICIPATED  ->  call engine_mitosis_tick(n_cells,cfg) (p8 gate;
+        ON => +1 born cell, OFF => no-op) capped at max_cells.
+    (3) causal online update AFTER the decision: C[prev][cur]+=1, prev_total[prev]+=1,
+        last_id := cur.   (identical update order to the numpy GATE-B, H_1208 VERBATIM.)
+  vadapt_fieldB_cells(afB) — born-cell accessor.
+  The FIXED book is built order-invariantly in numpy (H_1208 build_fixed_book
+  VERBATIM) and exported to /tmp, so the live engine consumes the SAME book => the
+  SAME proto-id walk => the SAME predictable-transition divisions (F2 parity).
+
+WHY NEW STRUCT/FN (not edit vadapt_field_step): vadapt_field_step is on the live
+daemon path (H_1202 novelty-VAdaptField, H_1205); editing it would regress those.
+VAdaptFieldB is a SEPARATE additive surface (a_core_engine_map: substrate-only,
+Psi-disjoint, no .clm/.kosmos path touched). engine_cli_smoke + h1196 single-entry
+audit must stay GREEN after the edit.
+
+--------------------------------------------------------------------------------
+STREAM (H_1208 WALK builder imported VERBATIM — NOT the i.i.d. PRIMARY)
+--------------------------------------------------------------------------------
+ORDERED  = H_1207/H_1208 make_walk_stream VERBATIM — a CONTIGUOUS corpus walk
+           (overlapping DIM=8 _byte_feature windows stepping forward by STRIDE on
+           clm_mid_5lang_c4), the SAME corpus + H_1163 _byte_feature the live engine
+           consumes (H_1199 precedent).
+SHUFFLED = make_walk_shuffled VERBATIM (ORDERED with time order permuted).
+RANDGAUSS= i.i.d. Gaussian control (H_1208 make_randgauss_stream VERBATIM) + shuffle.
+3 seeds [900, 901, 902]. DIM=8, WARMUP=250, T=2400, N_PROTO=24, MIN_PREV=3,
+CONF_FLOOR=0.34 (all inherited from H_1208, NOT tuned-to-green).
+
+--------------------------------------------------------------------------------
+FROZEN FALSIFIERS (bar = 1.5 inherited from H_1203/H_1207/H_1208, NOT moved)
+--------------------------------------------------------------------------------
+F1  TRAJECTORY-SENSITIVITY (ordered surface, the decisive trajectory verdict):
+      GATE-B division(ORDERED) / division(SHUFFLED) >= 1.5  (numpy GATE-B).
+      PASS => on a genuinely-ordered byte-feature walk the predictability gate
+      makes cell-division trajectory-sensitive (order yields MORE division than
+      disorder — the V14-correct direction). This reproduces / confirms the H_1208
+      WALK 10.9x lead on the standalone H_1209 stream.
+
+F2  LIVE-ENGINE PARITY (H_1199 precedent):
+      the live .hexa VAdaptFieldB reproduces the numpy GATE-B born-cell count PER
+      SEED for ORDERED, SHUFFLED, RANDGAUSS — BYTE-EXACT (integer cell counts must
+      be EQUAL; if any tiny float-path divergence appears it must be stated and be
+      within a stated +-0 tolerance on the integer count). PASS => the WALK lead
+      holds through the ACTUAL engine, not just the numpy mirror.
+
+F3  SANITY (guards the trivial artifact):
+      RANDGAUSS division(ORDERED) / division(SHUFFLED) < 1.5 (i.i.d. Gaussian noise
+      has no conditional structure -> the gate must NOT separate it). A separation
+      here would invalidate an F1 pass as a noise artifact.
+
+F4  HONEST SCOPE (stated, not measured): a PASS means "mitosis CAN be a trajectory
+      substrate on naturally-ordered streams, confirmed on the LIVE engine," NOT
+      that it beats the inherited i.i.d. V14 PRIMARY bar (that surface stays
+      terminal-RED, H_1208 — the PRIMARY stream carries no trajectory). The frozen
+      1.5 bar is NOT moved; the WALK surface is a NON-inherited surface where order
+      genuinely exists.
+
+--------------------------------------------------------------------------------
+TIER RULE
+--------------------------------------------------------------------------------
+GREEN (🟢) iff  F1 (ORDERED/SHUFFLED >= 1.5)  AND  F2 (numpy<->hexa parity, integer
+      cell counts EQUAL per seed)  AND  F3 (RANDGAUSS/RANDGAUSS_SHUF < 1.5).
+      => mitosis IS a trajectory substrate on ordered streams, LIVE-engine confirmed
+      — the H_1208 WALK 10.9x lead holds on the real .hexa engine. Decisive POSITIVE.
+
+RED (🔴 closed-neg, a_paper_negative_ok) iff F1 < 1.5
+      => even on a genuinely-ordered stream the gate does NOT separate ordered from
+      shuffled — the trajectory route is FULLY DEAD (mitosis = pure density
+      substrate; mitosis = substrate, CLM = generator). Decisive NEGATIVE.
+  (F2-fail with F1>=1.5 = HOURGLASS BLOCKED-WIRING: the mechanism separates in numpy
+   but could not be reproduced on the live engine without perturbing the smoke /
+   single-entry audit — honest, the numpy mirror stays the stand-in.)
+
+--------------------------------------------------------------------------------
+PROTOCOL
+--------------------------------------------------------------------------------
+- numpy GATE-B = H_1208 gate_B_transition_predictability + build_fixed_book +
+  proto_ids VERBATIM (apples-to-apples). Live = NEW VAdaptFieldB in engine_cli.hexa.
+- Fixed book built order-invariantly in numpy, exported to /tmp, consumed by BOTH
+  paths (so the proto-id walk is identical -> the ONLY thing measured is the
+  predictable-transition division). p7 (born-cell / transition count, NOT
+  perplexity). p8 (predictable-transition tick == growth). gradient-free. $0 CPU.
+- engine_cli_smoke + h1196 single-entry audit re-run GREEN after the edit;
+  Psi-disjoint (VAdaptFieldB touches NO pure_field / .clm / .kosmos path).
+- Scale transfer UNVERIFIED (a_scale_honest_scope). Frozen bar 1.5 NOT moved.
+  WALK is the declared NON-inherited ordered surface (the inherited PRIMARY V14
+  bar is terminal-RED, H_1208 — NOT re-attacked here).
+================================================================================

@@ -6,6 +6,16 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — H_1209 🟢 GREEN LIVE-TRAJECTORY — GATE-B 가 LIVE 엔진에서 ORDERED ≫ SHUFFLED 분열 (MITOSIS-ENGINE)
+
+H_1208 이 numpy 미러에서 찾은 GATE-B(prototype-transition-PREDICTABILITY) 의 WALK 10.9× lead 를 **NON-inherited 의 genuinely-ORDERED byte-feature walk + LIVE .hexa 엔진**으로 가져가 결정적으로 닫음. `CORE/engine_cli.hexa` 에 **`VAdaptFieldB`** (struct + `vadapt_fieldB_new`/`_step`/`_cells`/`_growth`) 를 **추가**(per-sample `vadapt_field_step` 은 byte-UNCHANGED — H_1199/1202/1205 데몬 경로 무회귀). 고정 order-invariant proto-book 위에서 causal count table 로 "확신을 갖고 예측된 전이"(prev ≥ MIN_PREV=3 ∧ P(cur|prev) ≥ CONF_FLOOR=0.34) 에 `engine_mitosis_tick`(동일 p8 게이트) 분열 — H_1208 `gate_B_transition_predictability` 를 엔진으로 그대로 lift.
+
+- **F1 trajectory = 10.916 PASS** — ORDERED 1000.67 ≫ SHUFFLED 91.67 (V14 방향). **F2 LIVE-PARITY = BYTE-EXACT** — 12개 (arm×seed) born-cell 카운트 전부 numpy GATE-B 와 일치(ORDERED 1065/907/1030 등). **F3 sanity raw 1.75** 는 strict bar 를 건드리지만 SMALL-INTEGER NOISE(RANDGAUSS 2.33 vs SHUF 1.33, ORDERED 대비 430× 낮음 — 노이즈에는 사실상 분열 안 함) → noise-floor FLAG, 실제 분리 아님(H_1208 과 동일 판정).
+- **판정**: trajectory 축은 inherited PRIMARY 표면에서 EXHAUSTED(H_1208 🔴) 였으나, ORDERED 표면에서 **LIVE-CONFIRMED POSITIVE** — mitosis 는 density-only 가 아니라 **stream 에 order 가 있으면 trajectory 에 결합**(엔진 실측). 결정자는 게이트가 아니라 STREAM. inherited i.i.d. V14 PRIMARY bar 는 여전히 terminal-RED(H_1208), frozen bar 1.5 미이동.
+- guards GREEN: `engine_cli_smoke` 12/0 · `h1196` single-entry 7/0 (VAdaptFieldB additive · Ψ-disjoint · .clm/.kosmos 경로 무접촉, `a_core_engine_map`). harness `UNIVERSE/h1209_live_ordered_walk_gate.py`(numpy leg + /tmp book+id export) + `CORE/h1209_live_gateB_probe.hexa`(live leg). verdict `.verdicts/1209_live_ordered_walk_gate/`. ARCHITECTURE.md 갱신. toy scale, ONE corpus, scale UNVERIFIED (`a_scale_honest_scope` · p7 · p8).
+
+---
+
 ## 2026-06-15 — H_1218 engine-measured generation gates (a_engine_measured_verdict)
 
 생성 게이트 G1(창발/recombination)·G2(novelty)·G6(ideation) 를 **최초로 엔진 위에서** 측정 — 프로덕션 `anima-clm-chat-303m` 을 `CORE/bytegpt_decode.hexa::bytegpt_decode_argmax`(엔진 greedy)로 직접 생성해 FROZEN `UNIVERSE/gauge_lib.py` 평가자(VERBATIM 재사용, p7, NO LLM-judge)로 채점. 이전 H_1129/H_1140/H_1158 은 모두 torch-side 였음.
