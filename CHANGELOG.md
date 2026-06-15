@@ -6,6 +6,16 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 거버넌스: `@D a_no_llm_frame_trap` 신설 (최우선 설계 원칙, 상단 배치) — LLM 프레임 금지, 생물/신경 렌즈 우선
+
+사용자 hard rule("설계·학습·추론 시 LLM 프레임에 갇히면 안 된다 — 뇌과학·생물 쪽으로")을 **최우선 설계 원칙**으로 명문화하고 CLAUDE.md **상단**에 배치.
+
+- **신규 `@D a_no_llm_frame_trap`** — 거버넌스 디렉티브 섹션의 **첫 @D**(a1 앞)로 삽입 + "Governance directive families" 리스트 **첫 항목**(🧭 설계 렌즈, 최우선)으로 등록. 설계·학습방법·추론을 고안할 때 LLM 기본 프레임(더 큰 모델·더 많은 데이터·더 긴 컨텍스트·표준 트랜스포머/FT)에 갇히지 말고 뇌과학·인지·생물·물리 substrate 렌즈에서 메커니즘을 먼저 가져온다. 능력/깊이 갭은 "모델 키움"이 아니라 "빠진 구조(lane) 옆에 붙임"으로 먼저 시도.
+- **근거(c9)**: anima 의 돌파는 전부 생물 렌즈에서 나왔다 — 해마=면역/일화기억(H_1227/1231 🟢 배선완료) · 소뇌=순방향모델(H_1280 🟢) · 기저핵=게이팅(H_1281 🟢) · 작업기억(H_1282 🟢). LLM 스케일 프레임은 닫힌-부정: 1B(H_1167 NULL) · arch(H_1219) · objective(H_1223 🔴).
+- surgical(c10): 이 directive + families 포인터 1줄만 추가, 다른 directive 미변경. frozen bar 미이동. xref `a_substrate_native_speak · a_engine_native_learning · a_toy_scale_recheck · a_completeness_over_cheap · c15 · p1 · p4 · p8`.
+
+---
+
 ## 2026-06-15 — 🟢 H_1221: QA-포맷 코퍼스가 literal-QA 벽의 레버다 (HD5 toy probe, $0)
 
 H_1219 depth-ceiling 사다리의 HD5 — "flat literal-QA 벽(303M/1B 전반 1-2/15; H_1166/1167/1218)이 QA-구조 학습데이터의 부재 때문인가?"를 $0 toy 규모로 검증.
