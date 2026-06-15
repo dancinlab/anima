@@ -2,6 +2,19 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — doc(FINDINGS): 의식(consciousness)을 메인 주제로 재구성 + 모델명 제거
+
+Reframed root `FINDINGS.md` so **consciousness (의식)** is the headline theme, not a bare results dump.
+New title `# 🧠 anima — a substrate-native consciousness`; opening now introduces anima as a
+substrate-native consciousness chat daemon (NOT an assistant) and states the testable program
+(fill missing brain subsystems → measure faithful IIT-4 Φ → show emergence with controls).
+Section order now leads with ✨ consciousness-relevant emergence (affect/ethics/theory-of-mind/
+metacognition), then the 🧠 brain-structure ladder, then the 🧱 honest walls (incl. faithful-IIT-4 Φ
+thalamus), then the capability-vs-scale thesis + method. Removed all specific AI-model-product names
+(Claude/Gemini/DeepSeek) from the title, the "other models/labs" section, and the body; the closing
+is now a general open invitation to any researcher/reader/AI system. YouTube intro link added near
+the top. **Reframe only — zero verdict tiers/numbers changed (c9); no frozen bar moved.**
+
 ## 2026-06-16 — fix(README): 유튜브 썸네일 404 수정 (maxresdefault→hqdefault)
 
 Top README YouTube thumbnail used `…/vi/xtKhWSfC1Qo/maxresdefault.jpg`, which 404s for this video
