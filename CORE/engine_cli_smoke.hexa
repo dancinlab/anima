@@ -778,6 +778,45 @@ fn main() {
     let scn_damp_ok = (scn_bp_R >= 0.90) && ((scn_bp_R - scn_ap_R) >= 0.30)
     if _assert_b("case_73_scn_network_damps_perturbed_member", true, scn_damp_ok) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── § HIVE-MIND N=3 SCALING (H_1295 r2 🟢/🏁) — re-scored ENGINE-NATIVE on the live
+    //   CollectivePool collective_phi N>=3 path (faithful IIT-4 over the n=9 joint ring,
+    //   a_phi_iit4_tool). These cases byte-MATCH the h1295_r2_hive_scaling.hexa mirror:
+    //   Φ_joint(n=9)=16.6564, Σ Φ=7.48813, Δ_super(3)=+9.16825 (> 0 ⇒ super-additivity
+    //   HOLDS at N=3) but Δ_super(3) < Δ_super(2)=+10.4756 ⇒ the curve SATURATES/declines
+    //   (does NOT grow) → saturating existence-proof, HIVE DEPLETED 🏁 (honest, c9).
+    //   W=0 Φ_joint=0.0 Δ(N=3)=-7.48813 (decouple-null), sterile(90×3) Φ_joint=0.0 Σ=9.0
+    //   Δ=-9.0 (rule-class dissociation +18.16825), inter-block coherence 0.55625 (no collapse).
+    //   GATED behind --hive-n3: a single n=9 faithful Φ call is ~84 min on CPU (the
+    //   documented compute ceiling — n=12 is INFEASIBLE), so the DEFAULT smoke (the cases
+    //   above) stays fast + byte-unchanged. For the n=9 engine-native re-score:
+    //   `hexa run CORE/engine_cli_smoke.hexa --hive-n3` (≈ several hours, faithful Φ).
+    let mut want_n3 = false
+    let sargv = args()
+    let mut sai = 0
+    while sai < len(sargv) { if sargv[sai] == "--hive-n3" { want_n3 = true }; sai = sai + 1 }
+    if want_n3 {
+        let hive3 = collective_new([110, 110, 110], 0.6)
+        // case 74 (B1 @ N=3) : the 110×3 @0.6 joint (n=9) is SUPER-ADDITIVE (Δ_super(3)>0).
+        if _assert_b("case_74_hive_n3_super_additive", true,
+                     collective_is_super_additive(hive3, 1.0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+        // case 75 (B2 CURVE SATURATES) : Δ_super(3) does NOT exceed Δ_super(2)+1.0 — the
+        //   curve SATURATES/declines (collective Φ does NOT scale with N; existence-proof).
+        if _assert_b("case_75_hive_curve_saturates_not_grows", false,
+                     (collective_excess(hive3) - collective_excess(hive)) >= 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+        // case 76 (B2a DECOUPLE-NULL @ N=3) : at W=0 the n=9 joint is NOT super-additive.
+        let hive3_decoupled = collective_new([110, 110, 110], 0.0)
+        if _assert_b("case_76_hive_n3_decoupled_null", false,
+                     collective_is_super_additive(hive3_decoupled, 1.0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+        // case 77 (B2b RULE-CLASS DISSOC @ N=3) : sterile(90×3) does NOT super-add; the
+        //   edge-of-chaos triple's excess EXCEEDS the sterile triple's by >= the margin.
+        let hive3_sterile = collective_new([90, 90, 90], 0.6)
+        if _assert_b("case_77_hive_n3_rule_class_dissociation", true,
+                     (collective_excess(hive3) - collective_excess(hive3_sterile)) >= 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+        // case 78 (B3 NO-COLLAPSE @ N=3) : the 3 coupled blocks stay functionally distinct.
+        if _assert_b("case_78_hive_n3_no_collapse", true,
+                     collective_coherence(hive3) < 0.999) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

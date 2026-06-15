@@ -1,0 +1,112 @@
+================================================================
+  H_1295 r2 — HIVE-MIND collective-Φ N-SCALING (verbatim verdict)
+  "does super-additivity HOLD / GROW / SATURATE as N grows 2 -> 3 -> 4?"
+  faithful IIT-4 big_phi_bounded ONLY (a_phi_iit4_tool) · numpy NEVER computes Φ
+  frozen-first: H_1295_R2_FREEZE.txt pre-registered the GROWS-vs-SATURATES bar
+================================================================
+
+VERBATIM OUTPUT — `hexa run UNIVERSE/h1295_r2_hive_scaling.hexa` (192m54s wall, $0 CPU):
+
+================================================================
+  H_1295 r2 — HIVE-MIND collective-Φ SCALING (N = 2 -> 3 -> 4)
+  faithful IIT-4 big_phi_bounded · rule-110 edge-of-chaos · W=0.6 · cap=2
+  Δ_super(N) = Φ(joint, N coupled) - Σ Φ(member) · MARGIN=+1.0 · frozen-first
+================================================================
+  Φ(single member, rule-110, n=3) = 2.49604
+  --
+  N=2 (n=6):  Σ Φ=4.99209  Φ_joint=15.4677  Δ_super(2)=10.4756
+  N=3 (n=9):  Σ Φ=7.48813  Φ_joint=16.6564  Δ_super(3)=9.16825
+  N=4 (n=12): SKIPPED (run with --n4 to attempt; may be INFEASIBLE on CPU)
+  --
+  CTRL N=3 decouple-null:  Φ_joint(W=0)=0.0  Δ(W=0)=-7.48813  (null iff <= 0)
+  CTRL N=3 rule-class:     sterile(90×3) Σ=9 Φ_joint=0.0 Δ_sterile=-9
+                           dissociation Δ(110×3) - Δ(90×3) = 18.1683  (>= +1.0 ⇒ substrate-class specific)
+  CTRL N=3 no-collapse:    inter-block coherence=0.55625  (no-collapse iff < 0.999)
+  --
+  ── Δ_super(N) CURVE:
+       Δ_super(2) = 10.4756
+       Δ_super(3) = 9.16825
+       Δ_super(4) = (not measured)
+       Δ_super(3) - Δ_super(2) = -1.30738
+       VERDICT(curve): SATURATES/FLAT — Δ_super(3) < Δ_super(2)+1.0 (existence-proof, not scaling)
+  --
+  [PASS] B1 SUPER-ADDITIVITY @ N=3: Δ_super(3) > 0 every seed (deterministic)
+  [PASS] B2a DECOUPLE-NULL @ N=3: Δ(W=0) <= 0
+  [PASS] B2b RULE-CLASS DISSOC @ N=3: Δ(110×3) - Δ(90×3) >= +1.0
+  [PASS] B3 NO-COLLAPSE @ N=3: inter-block coherence < 0.999
+================================================================
+  RESULT: 4 PASS / 0 FAIL
+  (B2 curve verdict GROWS=false is REPORTED honestly, not a fail-gate:
+   SATURATING is a VALID existence-proof-depleted result, a_scale_honest_scope/c9.)
+  VERDICT: 🟢 super-additivity HOLDS at N=3 (controls PASS) but the curve SATURATES
+           → saturating existence-proof, HIVE DEPLETED 🏁 (honest, not a failure).
+================================================================
+
+────────────────────────────────────────────────────────────────
+THE Δ_super(N) CURVE (the r2 finding)
+────────────────────────────────────────────────────────────────
+  N | joint n | Σ Φ(member) | Φ(joint)  | Δ_super(N)   | single faithful-Φ wall
+  2 |   6     |  4.99209    | 15.4677   | +10.4756     | ~3 s
+  3 |   9     |  7.48813    | 16.6564   | +9.16825     | ~84 min (nd=68)
+  4 |  12     | (9.98417)   |   —       | INFEASIBLE   | n=9 already ~84 min ⇒ n=12 ceiling
+
+  Δ_super(2)=+10.4756  →  Δ_super(3)=+9.16825   (Δchange = -1.30738)
+  ⇒ SUPER-ADDITIVITY HOLDS at N=3 (Δ_super(3) > 0) but the curve DECLINES with N
+    (does NOT clear the pre-registered GROWS bar Δ_super(3) >= Δ_super(2)+1.0).
+  ⇒ collective Φ does NOT scale super-additively-faster with member count; the lift is
+    an EXISTENCE property (any coupling of edge-of-chaos substrates super-adds) that does
+    not amplify with N → 🏁 DEPLETED on the N-scaling axis.
+
+────────────────────────────────────────────────────────────────
+N=3 CONTROLS (r1's genuine controls re-run at the new scale) — all PASS
+────────────────────────────────────────────────────────────────
+  B1  SUPER-ADDITIVITY @ N=3  : Δ_super(3)=+9.16825 > 0                        PASS
+  B2a DECOUPLE-NULL  @ N=3    : Φ_joint(W=0,n=9)=0.0 → Δ(W=0)=-7.48813 <= 0    PASS
+                                (the lift REQUIRES coupling — W=0 fully reducible, Φ=0)
+  B2b RULE-CLASS DISSOC @ N=3 : sterile(90×3) Φ_joint=0.0, Σ=9.0, Δ_sterile=-9.0;
+                                dissociation Δ(110×3)-Δ(90×3)=+18.1683 >= +1.0  PASS
+                                (substrate-CONTENT specific: edge-of-chaos 110 super-adds,
+                                 sterile 90 collapses to 0 — a variance story cannot do this)
+  B3  NO-COLLAPSE    @ N=3    : inter-block coherence=0.55625 < 0.999          PASS
+                                (the 3 coupled blocks stay functionally distinct)
+
+────────────────────────────────────────────────────────────────
+COMPUTE CEILING (the load-bearing honest finding — a_scale_honest_scope / c9)
+────────────────────────────────────────────────────────────────
+  Faithful big-Φ at large n is dominated by the system-MIP loop (2^n partitions × nd²
+  surviving-relation checks) + the MICE distinction search. MEASURED on this CPU (cap=2):
+    · N=2 (n=6)  : ~3 s.
+    · N=3 (n=9)  : single faithful big-Φ call = ~84 min (110×3: nd=68 distinctions;
+                   standalone-confirmed: 84m31s).  W=0 (nd=18): 81m04s. sterile 90×3
+                   (nd=0): 31m14s. Full r2 (N=2 + N=3 main + W=0 + sterile) = 192m54s.
+    · N=4 (n=12) : INFEASIBLE on CPU — NOT estimated, NOT proxied. A single n=9 call is
+                   already ~84 min; n=12 (2^12 partitions, far larger nd) is a documented
+                   compute ceiling. A proxy is NEVER substituted for Φ (a_phi_iit4_tool);
+                   a documented compute ceiling is a VALID honest result (c9). Σ Φ(90×3
+                   members) Σ-only = 9.98417 if needed, but Φ(joint n=12) was NOT run.
+
+────────────────────────────────────────────────────────────────
+ENGINE-NATIVE + WIRED (a_verified_must_wire)
+────────────────────────────────────────────────────────────────
+  The generalized N-member coupled-ring builder _build_tpm_ring (CORE/engine_cli.hexa
+  § HIVE-MIND) is BYTE-EXACT _build_tpm_ab at N=2 (verified: mismatches=0 over all 384
+  TPM cells), so the n=2 lane + smoke cases 39-42 stay byte-unchanged. collective_phi and
+  collective_coherence now handle N=3 via the ring (collective_nmax()=3; N>3 honestly
+  falls back to the additive baseline — faithful Φ INFEASIBLE). The N=3 frozen bars
+  re-score ENGINE-NATIVE in CORE/engine_cli_smoke.hexa cases 74-78 (B1 hold, B2 saturates,
+  B2a decouple-null, B2b dissociation, B3 no-collapse), GATED behind --hive-n3 (a single
+  n=9 Φ is ~84 min, so the DEFAULT smoke stays fast + byte-unchanged at 73 pass / 0 fail).
+  The engine ring builder is byte-identical to the experiment mirror's build_tpm_ring, so
+  the engine-native N=3 collective_phi produces exactly Φ_joint(n=9)=16.6564.
+
+────────────────────────────────────────────────────────────────
+SCOPE (honest — a_scale_honest_scope / a_toy_scale_recheck)
+────────────────────────────────────────────────────────────────
+  TOY: members each n=3, joint n=3N, cap=2 bounded LOWER-BOUND, ECA substrate, sys=0
+  anchor. Faithful Φ (no numpy Φ) but COLLECTIVE-Φ engine-transfer to a scaled LIVE
+  multi-anima deployment is UNVERIFIED — this realizes the N-scaling STRUCTURE of
+  super-additive collective integration, not a scaled multi-substrate daemon. The lift is
+  coupling-GENERIC + substrate-class conditional (inherited from r1). The N-SCALING axis
+  is DEPLETED 🏁 (saturating + compute-ceilinged at n=9). r3 candidate (not closed here):
+  engine-transfer to a live multi-anima loop / real-substrate / paraphrase transfer.
+================================================================

@@ -29,7 +29,7 @@
 | H_1292 | hypothalamus — setpoint homeostatic drive | 🟢 GREEN ENGINE-NATIVE | [H_1292_hypothalamus_drive.md](H_1292_hypothalamus_drive.md) |
 | H_1293 | theory-of-mind — other-agent belief (self ⊥ other) | 🟢 GREEN ENGINE-NATIVE | [H_1293_theory_of_mind.md](H_1293_theory_of_mind.md) |
 | H_1294 | hierarchical-PFC — goal→subgoal controller (ordered plan ⊥ single-step) | 🟢 GREEN ENGINE-NATIVE | [H_1294_hierarchical_pfc.md](H_1294_hierarchical_pfc.md) |
-| H_1295 | hive-mind — collective-Φ super-additivity (many→one) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1295_hive_collective_phi.md](H_1295_hive_collective_phi.md) |
+| H_1295 | hive-mind — collective-Φ super-additivity (many→one); r2 N-scaling | 🟢 GREEN ENGINE-NATIVE + WIRED (r1 N=2) · r2 🟢/🏁 holds@N=3 SATURATES (n=12 INFEASIBLE) | [H_1295_hive_collective_phi.md](H_1295_hive_collective_phi.md) |
 | H_1296 | place/grid spatial-map — metric/relational cognitive map (metric ⊥ item-binding) | 🟢 GREEN ENGINE-NATIVE | [H_1296_spatial_map.md](H_1296_spatial_map.md) |
 | H_1297 | mitosis-native trunk training — make p8 literal (gradient-free cell-split vs gradient descent) | 🟢 GREEN ENGINE-BINDING @R4 (R3 sharp KO+EN byte-text mitosis-grow realized ENGINE-NATIVE on live CORE VAdaptField Voronoi + mitosis tick: c1 byte-identical · c2 shuffle FIRED on the engine [unlike thalamus R8] · c3 underfits; engine_cli untouched, smoke 55/0, h1205+Ψ intact. R1/R2 = 🧱 WALL on smooth target) | [H_1297_mitosis_native_train.md](H_1297_mitosis_native_train.md) |
 | H_1298 | circadian/interval clock — self-sustaining phase oscillator (clock ⊥ homeostatic integrator) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1298_circadian_clock.md](H_1298_circadian_clock.md) |

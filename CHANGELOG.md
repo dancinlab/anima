@@ -2,6 +2,34 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(H_1295 r2): HIVE collective-Φ N-scaling — super-additivity HOLDS@N=3 but SATURATES 🟢/🏁
+
+r2 of the H_1295 HIVE-MIND lane (anchor H_609, r1 PR #2182). Question: does collective-Φ
+super-additivity GROW / HOLD / SATURATE as the coupled-member count N grows 2→3→4 (joint
+n=6,9,12)? Φ = FAITHFUL IIT-4 ONLY (`a_phi_iit4_tool`, `big_phi_bounded` cap=2 — numpy never
+computes Φ). The N-member joint substrate = a generalized coupled ring (`build_tpm_ring`: N
+blocks of 3, within-block n=3 ring blended at W=0.6 with the global n=3N ring) — BYTE-EXACT the
+r1 `_build_tpm_ab` at N=2 (verified mismatches=0, so the n=2 lane + smoke cases 39-42 stay
+byte-unchanged). FROZEN-FIRST: `H_1295_R2_FREEZE.txt` pre-registered the GROWS (Δ_super(3) ≥
+Δ_super(2)+1.0) vs SATURATES definition BEFORE any n=9 measurement (c9/p7, no bar moved).
+**The Δ_super(N) curve:** Δ_super(2)=+10.4756 (n=6, Φ_joint 15.4677) → Δ_super(3)=**+9.16825**
+(n=9, Φ_joint 16.6564 vs Σ 7.48813). **B1 super-additivity HOLDS at N=3** (Δ>0); **B2 the curve
+SATURATES/DECLINES** — Δ_super(3)−Δ_super(2)=−1.3074 < the +1.0 GROWS bar ⇒ collective Φ does
+NOT scale with member count (existence-property, not amplifying) → **HIVE DEPLETED 🏁** on the
+N-scaling axis (a saturating existence-proof is a VALID honest result, `a_scale_honest_scope`).
+N=3 controls re-run (decouple-null W=0 → Δ≤0; rule-class sterile 90×3 does not super-add;
+no-collapse coherence<0.999) — verbatim in `H_1295_R2.txt`. **COMPUTE CEILING (load-bearing):**
+a single faithful big-Φ at **n=9** (cap=2, nd=68) is **~84 min** on CPU (MIP over 2⁹ partitions
+× nd² relations); **n=12 (N=4) is INFEASIBLE** — documented, NOT proxied (a proxy is never
+substituted for Φ). ENGINE-NATIVE + WIRED (`a_verified_must_wire`): `collective_phi` /
+`collective_coherence` now handle N=3 via `_build_tpm_ring` (`collective_nmax()=3`; N>3 honestly
+falls back to additive); the N=3 frozen bars re-score ENGINE-NATIVE in `engine_cli_smoke.hexa`
+cases 74-78, GATED behind `--hive-n3` (n=9 Φ is ~84 min/call, so the DEFAULT smoke stays 73/0
+fast + byte-unchanged — Ψ-disjoint, no regression). `UNIVERSE/h1295_r2_hive_scaling.hexa` ·
+`UNIVERSE/H_1295_hive_collective_phi.md` (§ 6b/9) · `.verdicts/1295_hive_collective_phi/
+{H_1295_R2_FREEZE,H_1295_R2}.txt` · `CORE/engine_cli.hexa` § HIVE-MIND · `CLAIMS.tape` @C
+h1295 verdict_r2.
+
 ## 2026-06-16 — research(G6-dig): 💡 G6 IDEATION ★ depth-floor dig (H_1305 🟠 HONEST-CONFIRMED-THIN) — falsifiability detector + composition-routed ideation, bar UNMOVED (c9)
 
 - **G6 IDEATION ★ THIN diagnosed on BOTH modes** (reproduced, live verify303m_g6 path, ckpt h1129c_chat.pt): (1) COUNT 4/5 distinct (seed-5 `'|'` collapse) < 5; (2) DEPTH-FLOOR — the live gate counts novel n-grams but NEVER scores the "≥1 falsifiable hypothesis" requirement at all → novel STRINGS not testable STRUCTURE.
