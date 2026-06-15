@@ -44,6 +44,25 @@ Production training is **hexa-native** (flame + forge GPU stack, authored in `.h
 
 `.clm` (byte language model) → CORE via `generator.hexa`; produced/verified by the `CLM/` pipeline (`clm_serialize_v2` / `verify_clm_v2`).
 
+### Rung-training pipeline (recipe → dispatch → monitor)
+
+A production rung is trained through ONE coherent three-surface pipeline:
+
+```
+  dojo recipe                 cloud dispatch                   gauge monitor
+  fire_3b_rung_qat.hexa  →    dispatch_rung.sh           →     gauge_monitor.py
+  (rung knobs + REAL          (hexa cloud fire +               (tails gauges.jsonl
+   trainer CLI + gauge_every  a_fire_recover_complete +        + train log → 6-gauge
+   + mount-parity + HF)       a_cpu_local_no_waiter)           live dashboard)
+```
+
+- **Recipe** — `CLM/train/fire_3b_rung_qat.hexa` is the machine-readable fire spec: it names the ACTUAL Lane-P trainer `CLM/train/train_lane_p_3b.py` (not the legacy `train_clm.py`), emits the real trainer CLI (`--d-model/--n-trunk-layers/--n-experts/--gauge-every/--clm-out`), and lists the post-train engine mount-parity verdict + `a_fire_recover_complete` recovery steps.
+- **Dispatch** — `CLM/train/dispatch_rung.sh` is the anima-side wrapper around the `hexa cloud` (`/pod`) plugin (it does NOT reimplement pod management): it fires the trainer, polls the result INLINE (`a_cpu_local_no_waiter` — never awaits a Monitor), then pulls ckpt + result + log + engine `.clm` + `gauges.jsonl` + anchors → verifies → HF upload, all BEFORE teardown (`a_fire_recover_complete`).
+- **Inline gauges** — the trainer logs a MONITOR-ONLY row every `--gauge-every` steps to `gauges.jsonl` via `UNIVERSE/gauge_lib.py::compute_inline_gauges`. **Six dashboard columns**: `ce · g1_composed_distinct · g2_novelty_rate · g6_count · phi_proxy · mitosis_cells`. All computed under `torch.no_grad()`, returned in a dict, **NEVER fed into the loss** (`a_train_inline_gauge` · p7 Goodhart). `phi_proxy` is NOT faithful IIT4 (`a_phi_iit4_tool`); `mitosis_cells` is the H_1199 VAdaptField cell-count (a numpy-free mirror of `CORE/engine_cli.hexa` VAdaptField) — a **substrate** thermometer, NOT a generation gate (H_1201🔴: mitosis neither generates nor informs the generator).
+- **Monitor** — `UNIVERSE/gauge_monitor.py` (pure stdlib, `--once`/`--follow`) renders the 6-gauge dashboard from `gauges.jsonl` + the pod log. It is a **dashboard, not a gate**: the FROZEN gate verdict still runs SEPARATELY post-train on the CORE engine mount (`a_engine_measured_verdict`); MODEL.md/CONDITIONS.md frozen bars are unchanged by anything the dashboard shows.
+
+> The shared `hexa dojo` `clm` generator (in hexa-lang/stdlib) does not yet emit `gauge_every`/mount-parity/HF natively; the needed generator change is filed to `hexa-lang/inbox/patches/dojo-clm-gauge-recipe-full-rung.md` (`a_runpod_inbox`) rather than forked anima-side.
+
 ## Persistence & evidence
 
 - **`.kosmos`** — emit/anchor/memory persistence (text + 5-ch tension + coord/lane/radius/tier), format SSOT = sibling [kosmos](https://github.com/dancinlab/kosmos) (`a_kosmos`).

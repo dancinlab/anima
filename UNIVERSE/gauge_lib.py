@@ -22,7 +22,7 @@ The FROZEN post-train verdict still runs SEPARATELY on the CORE engine mount
 (byte-exact parity — a_engine_measured_verdict · the H_1157 mount path). These
 inline gauges DO NOT replace that gate; they are a live-training thermometer only.
 
-THE FOUR GAUGES (+ val_ce passed through by the caller)
+THE FIVE GAUGES (+ val_ce passed through by the caller)
 =======================================================
   g1_composed_distinct  — G1 EMERGENCE / recombination (port of H_1129 / H_1155):
                           decode the composed multi-concept seed, count DISTINCT
@@ -43,6 +43,16 @@ THE FOUR GAUGES (+ val_ce passed through by the caller)
                           faithful IIT4 engine (stdlib/consciousness/iit4) is the only
                           Φ verdict. This key is named ``phi_proxy`` so it can never be
                           mistaken for a faithful Φ.
+  mitosis_cells         — ⚠ mitosis_cells — substrate lane, NOT a generation gate ⚠
+                          the H_1199 VAdaptField cell-division count: tick the live
+                          AdaptField mechanism (nearest-by-L2 winner pull, recon-err >
+                          SPLIT_THRESH splits a new cell) over the eval byte-feature
+                          stream and report how many cells the substrate grew. This is
+                          a SUBSTRATE thermometer (mitosis = pure substrate, H_1201🔴
+                          proved mitosis neither GENERATES by itself nor INFORMS the
+                          generator). It is a MONITOR-ONLY count, NEVER a gate, and the
+                          numpy mirror of CORE/engine_cli.hexa VAdaptField (the live
+                          .hexa engine is the verdict; this mirror is a dashboard).
 
 The function is model-agnostic: it adapts to both the ConvMoE forward (dict output,
 logits shape (B, V, T)) and a ByteGPT-style forward ((logits, _) tuple, (B, T, V)).
@@ -242,13 +252,89 @@ def _phi_proxy_from_logits(last_logits_list):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# mitosis_cells — ⚠ substrate lane, NOT a generation gate ⚠ (H_1199 VAdaptField)
+# ──────────────────────────────────────────────────────────────────────────────
+# H_1199 DIM=8 byte feature (VERBATIM port of UNIVERSE/h1163_tick_decode_metric.py
+# _byte_feature — the H_1160 8-d local byte statistic, *5.0 scaled). Kept here as a
+# pure-stdlib function (no numpy dependency forced on the gauge path) so the gauge
+# lib stays importable wherever the trainer runs.
+_MITOSIS_DIM = 8
+_MITOSIS_SPLIT_THRESH = 0.30   # matches CORE/engine_cli.hexa vadapt_field_step
+_MITOSIS_LR = 0.20             # matches the live engine winner-pull
+_MITOSIS_MAX_CELLS = 2048      # cap = N_MIGRATE (engine_cli.hexa)
+
+
+def _mitosis_byte_feature(window_bytes):
+    """8-d local byte-statistics over a byte window — VERBATIM H_1160/H_1163
+    _byte_feature (UNIVERSE/h1163_tick_decode_metric.py), *5.0 scaled. Pure python
+    (no numpy) so this gauge has no extra import surface."""
+    b = list(window_bytes)
+    n = len(b)
+    if n == 0:
+        return [0.0] * _MITOSIS_DIM
+    mean = sum(b) / n
+    var = sum((x - mean) ** 2 for x in b) / n
+    f = [
+        mean / 255.0,
+        sum(1 for x in b if x >= 128) / n,
+        sum(1 for x in b if 97 <= x <= 122) / n,
+        sum(1 for x in b if x == 32) / n,
+        sum(1 for x in b if 48 <= x <= 57) / n,
+        var / (255.0 ** 2),
+        sum(1 for x in b if 33 <= x <= 64) / n,
+        sum(1 for x in b if x < 64) / n,
+    ]
+    return [v * 5.0 for v in f]
+
+
+def _vadapt_field_cells(feature_rows):
+    """numpy-free MIRROR of CORE/engine_cli.hexa VAdaptField / vadapt_field_step
+    (H_1199). NOT the verdict — the live .hexa VAdaptField run is. Mirrors the
+    mechanism EXACTLY: one seed prototype, nearest-by-L2, recon-err = L2 to nearest,
+    split a new cell AT the novel sample when recon-err > SPLIT_THRESH & n<cap, else
+    online winner pull by LR. Returns the grown cell count (mitosis_cells)."""
+    if not feature_rows:
+        return 0
+    protos = [list(feature_rows[0])]          # one seed prototype (vadapt_field_new)
+    for x in feature_rows:
+        # nearest prototype by L2
+        best_j, best_d2 = 0, None
+        for j, p in enumerate(protos):
+            d2 = sum((p[k] - x[k]) ** 2 for k in range(len(x)))
+            if best_d2 is None or d2 < best_d2:
+                best_j, best_d2 = j, d2
+        err = best_d2 ** 0.5                    # recon-err = L2 to nearest
+        if err > _MITOSIS_SPLIT_THRESH and len(protos) < _MITOSIS_MAX_CELLS:
+            protos.append(list(x))             # new cell AT the novel DIM-sample
+        else:
+            p = protos[best_j]                 # online winner pull
+            for k in range(len(x)):
+                p[k] += _MITOSIS_LR * (x[k] - p[k])
+    return len(protos)
+
+
+def _mitosis_cells_from_decode(decoded_texts, window=16):
+    """⚠ substrate lane, NOT a generation gate ⚠ (H_1199 VAdaptField · mitosis=pure
+    substrate, H_1201🔴). Build the DIM=8 byte-feature stream from the gauge's own
+    decoded eval text (already produced under no_grad), tick the VAdaptField mirror,
+    and count cells. Monitor-only — the value is returned in the dict and NEVER
+    enters the loss."""
+    blob = ("\n".join(t for t in decoded_texts if t)).encode("utf-8", "ignore")
+    if len(blob) < window:
+        return 0
+    rows = [_mitosis_byte_feature(blob[i:i + window])
+            for i in range(0, len(blob) - window + 1)]
+    return _vadapt_field_cells(rows)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Public entry point
 # ──────────────────────────────────────────────────────────────────────────────
 def compute_inline_gauges(model, tokenizer_or_byte=None, seeds=None,
                           corpus_index=None, *, ce=None, step=None, torch=None,
                           max_new=96, block=512, kwr_floor=0.50,
                           jaccard_distinct=0.25):
-    """Compute the FOUR MONITOR-ONLY gauges (+ pass val_ce through).
+    """Compute the FIVE MONITOR-ONLY gauges (+ pass val_ce through).
 
     Parameters
     ----------
@@ -289,6 +375,8 @@ def compute_inline_gauges(model, tokenizer_or_byte=None, seeds=None,
         "g6_jaccard": None,
         # ⚠ phi_proxy — NOT faithful IIT4 (pre-screen only, a_phi_iit4_tool) ⚠
         "phi_proxy": None,
+        # ⚠ mitosis_cells — substrate lane, NOT a generation gate (H_1201🔴) ⚠
+        "mitosis_cells": None,
     }
 
     # EVERYTHING below runs under no_grad — MONITOR-ONLY, never enters the loss.
@@ -318,8 +406,10 @@ def compute_inline_gauges(model, tokenizer_or_byte=None, seeds=None,
 
         # ── G6 IDEATION (locked spec: distinct coherent ideas + pairwise Jaccard) ──
         idea_word_sets = []
+        idea_texts = []                       # raw decoded text (reused by mitosis_cells)
         for s in IDEATION_SEEDS:
             o = _decode(model, s, max_new, torch, block=block, seed_rng=seed_rng)
+            idea_texts.append(o)
             if known_word_ratio(o) >= kwr_floor:
                 ws = set(_words(o))
                 if ws:
@@ -357,5 +447,14 @@ def compute_inline_gauges(model, tokenizer_or_byte=None, seeds=None,
             last_means.append(float(ll.mean().item()))
         # ⚠ phi_proxy — NOT faithful IIT4 — pre-screen only (a_phi_iit4_tool) ⚠
         row["phi_proxy"] = round(_phi_proxy_from_logits(last_means), 6)
+
+        # ── mitosis_cells — ⚠ substrate lane, NOT a generation gate (H_1201🔴) ──
+        # Tick the H_1199 VAdaptField mirror over the DIM=8 byte-feature stream of
+        # THIS gauge's own decoded eval text and count cells the substrate grew.
+        # MONITOR-ONLY: still inside no_grad, returned in the dict, NEVER in loss.
+        # mitosis = pure substrate (H_1201🔴 it neither generates nor informs the
+        # generator) — this is a substrate thermometer, never a gate.
+        row["mitosis_cells"] = _mitosis_cells_from_decode(
+            [comp_out] + gen_texts + idea_texts)
 
     return row
