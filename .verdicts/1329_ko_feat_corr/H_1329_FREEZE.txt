@@ -1,0 +1,114 @@
+H_1329 — ko-feat-corr — FROZEN PRE-REGISTRATION (write BEFORE scoring; NOT moved — c9/p7)
+================================================================================
+PROJ_SEED provenance: free-id verified on origin/main @41b2df857 (1316-1328 taken; 1329 FREE).
+date: 2026-06-16   substrate: summer RTX 5070 sm_120 (torch 2.11.0+cu130), $0, mirror DIRECTIONAL.
+
+WHY THIS LANE (the precise diagnosis to overturn or confirm)
+--------------------------------------------------------------------------------
+The Korean depth-below-jamo question is 🧱 floored at jamo CE 2.51335 for the
+L2-Voronoi count-MLE mechanism family:
+  H_1316 🟢  jamo decomposition breaks raw-byte ceiling   2.95342 → 2.51335.
+  H_1322/H_1326 🧱 (confound-free, geometry-fair bank):
+    A2 featural-PARTITION (features only in the Voronoi partition, OPAQUE jamo target) = 2.73046 (ABOVE jamo).
+    A3 label-FACTORIZATION (predict features INDEPENDENTLY: P(class)·∏_c P(f_c|class)) = 3.07295 (BACKFIRED).
+  DIAGNOSIS (H_1326): A3 backfires because INDEPENDENT-feature prediction DISCARDS the
+    onset/nucleus/coda + within-jamo feature JOINT that the opaque jamo head keeps. The
+    featural systematicity is REAL (shuffling costs Δ; sub-floor for this mechanism).
+  H_1326's explicit named next angle: a DIFFERENT MECHANISM that models feature
+    CORRELATIONS while KEEPING the feature joint — a mechanism-FAMILY change, not a rep tweak.
+
+THIS LANE (H_1329): does a CORRELATION-MODELING / JOINT-PRESERVING featural mechanism break
+BELOW the jamo 2.51335 floor — where A3 independent-factorization backfired and A2 partition-only
+was sub-floor? The mechanism MUST keep the onset×nucleus×coda + within-jamo feature joint AND
+exploit feature similarity (so similar jamo share statistical strength), unlike A3 which threw
+the joint away.
+
+THE NEW MECHANISM (the crux — a different family than A3's independent factorization)
+--------------------------------------------------------------------------------
+Candidate (i) CHAIN / CONDITIONAL FACTORIZATION (chosen; justification below).
+A4 = a per-cell CONDITIONAL-CHAIN featural head over the SAME within-class feature columns as A3,
+but the columns are predicted in a CHAIN that respects Hangul's design hierarchy and KEEPS THE
+JOINT via conditioning, instead of A3's independence:
+
+  A3 (independent, joint discarded):   P(jamo) = P(class) · ∏_c P(f_c | class)
+  A4 (conditional chain, joint kept):  P(jamo) = P(class) · P(f_0|class)
+                                                          · P(f_1|class, f_0)
+                                                          · P(f_2|class, f_0, f_1) ... (full chain)
+
+  - The chain is EXACT/lossless: by the chain rule ∏_c P(f_c | class, f_<c) = P(f_0..f_{C-1}|class)
+    = P(jamo|class) exactly (no independence assumption). So A4's distribution equals the JOINT
+    over the within-class feature vector — it KEEPS the joint that A3 discarded.
+  - FEATURE-SIMILARITY STRENGTH SHARING: conditioning contexts are SHARED across jamo that share a
+    feature prefix (e.g. all velars f_0=1 share the P(f_1|class,f_0=1) context; ㄱ and ㅋ — one
+    feature apart — share the same articulator-conditioned manner head), so similar jamo pool counts.
+    This is the correlation-modeling the diagnosis named: feature×feature interactions are modeled
+    by conditioning, not assumed independent.
+  - SAME geometry-fair bank protocol (FIX A) as A1/A2/A3, SAME partition (featural X, dim 11), SAME
+    per-cell count-MLE estimators with LAPLACE=1.0 — only the TARGET factorization changes
+    (independent → conditional-chain). LABEL alphabet Vj IDENTICAL → same nats/UTF-8-byte axis.
+  - Byte symbols (non-Hangul) scored exactly as A3: P(class=BYTE)·P(byte|class=BYTE) (256-way),
+    identical across A3 and A4 → the ONLY difference between A3 and A4 is the Hangul chain vs product.
+  - CE → nats/UTF-8-byte: total held-out NLL (nats) / Σ n_bytes(sym), the lossless feature↔jamo
+    bijection (within-class column vectors are a verified bijection of jamo id, H_1326) makes the
+    factorized/chain CE directly comparable to opaque jamo 2.51335 and raw 2.95342.
+
+LABEL = NOT gradient-free. A4 is a count-MLE structured head; it is NOT the p8 mitosis (which is
+gradient-free). It rides the SAME gradient-free Voronoi PARTITION (the mitosis grow-op is unchanged),
+but the per-cell scoring head is a structured count-MLE estimator. NO gradient training is used here
+either (pure conditional counts + Laplace), so A4 does NOT claim gradient-free NOR gradient-trained —
+it is a count-MLE structured-prediction head. Labeled clearly; engine-transfer = follow-on.
+
+REUSE / PROVENANCE (byte-identical to H_1307 RUN A / H_1316 / H_1326)
+--------------------------------------------------------------------------------
+- SAME REAL anima-7b R2 web corpus (r2.phanes://anima-7b/web/kor/shard0000.bytes), 30MB KO window.
+- KO window sha256 ASSERTED == H_1307 RUN A:
+    c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca  → REFUSE if mismatch (provenance gate).
+- corpus cache /tmp/h1311_ko_raw.bytes preserved for siblings (NOT deleted). R2 keys env-only at
+  fetch time, NEVER logged/committed (c7) — grep artifacts before PR.
+- FROZEN mitosis knobs verbatim: GROW_MAX=40, SPLIT_THRESH_CE=0.05, MIN_OWNED=8, LAPLACE=1.0,
+  ko_stride=300, even/odd split, geometry-fair bank (FIX A, identical to every arm).
+- 3 seeds [4329,4330,4331] (shuffle controls vary by seed; intact arms deterministic).
+- A1 jamo MUST reproduce 2.51335 byte-exact (CALIB_TOL=0.0005) = geometry-fair calibration anchor.
+
+CE CONVERSION (stated for fair comparison)
+--------------------------------------------------------------------------------
+All CE = nats/UTF-8-byte = (Σ held-out symbol NLL in nats) / (Σ n_bytes per scored symbol).
+n_bytes per jamo from syll_jamo_nbytes (3-jamo→[1,1,1], 2→[2,1], 1→[3]); raw byte = 1. The jamo↔
+within-class-feature-vector bijection is lossless (H_1326 verified) so A1(opaque)/A3(product)/
+A4(chain) all score the SAME alphabet on the SAME byte axis.
+
+FROZEN BARS (pre-register; GREEN iff ALL THREE)
+--------------------------------------------------------------------------------
+C1 BELOW-JAMO: the correlation/joint mechanism A4's geometry-fair CE < jamo 2.51335 by >= 0.03
+   (mean 3 seeds; intact A4 is deterministic so "mean 3 seeds" = the deterministic value)
+   AND < raw 2.95342.
+       i.e.  A4 < (2.51335 - 0.03) = 2.48335   AND   A4 < 2.95342.
+C2 EARNED: A4 beats a SHUFFLED-feature-map control by >= 0.05 — the win is the DESIGNED
+   systematicity modeled via correlations, not dims/vocab. SHUFFLE = the SAME bijection-shuffle
+   control as H_1326 (permute the feature-vector assignment across jamo within the design map),
+   scored with the A4 chain head. i.e. (A4_shuffle_mean - A4) >= 0.05.
+C3 ATTRIBUTION (mechanism-isolation): A4 beats BOTH the independent-factorization A3 baseline AND
+   the partition-only A2 baseline (BOTH reproduced in-run) — isolating that the gain comes
+   specifically from MODELING THE JOINT/correlations, not from features per se.
+       i.e.  A4 < A3   AND   A4 < A2   (strict; report the deltas).
+
+OUTCOMES (all VALID — c9)
+--------------------------------------------------------------------------------
+- C1 ∧ C2 ∧ C3 → 🟢 the jamo floor is NOT terminal: a correlation/joint-modeling mechanism breaks
+    below it; Hangul's designed depth advantage IS exploitable once the mechanism keeps the joint
+    (the L2-Voronoi/independent-factorization were the WRONG mechanism; overturns H_1326 floor as
+    mechanism-specific).
+- C1 fails → jamo is the genuine floor even across mechanism families INCLUDING correlation-modeling
+    (a deeper, stronger 🧱 closure).
+- C1 holds but C3 fails (A4 ties/loses vs A2/A3) → the gain is features-not-joint (report straight, 🟠).
+
+SCOPE HONESTY (a_scale_honest_scope, a_toy_scale_recheck)
+--------------------------------------------------------------------------------
+TOY/DIRECTIONAL numpy/torch mirror; count-MLE structured head (NOT gradient-free p8 mitosis, NOT
+gradient-trained either — labeled). Engine-transfer to live CORE/*.hexa = follow-on (a_engine_native_learning,
+a_verified_must_wire). NO Korean-fluency claim. live CORE UNTOUCHED.
+
+deliverables: UNIVERSE/h1329_ko_feat_corr.py · UNIVERSE/H_1329_ko_feat_corr.md · HYPOTHESES.md row ·
+CLAIMS.tape @C · .verdicts/1329_ko_feat_corr/{H_1329_FREEZE,H_1329}.txt · domains/MITOSIS-ENGINE.log.md ·
+CHANGELOG.md (Korean).
+================================================================================
