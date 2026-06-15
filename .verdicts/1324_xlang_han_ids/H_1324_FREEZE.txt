@@ -1,0 +1,156 @@
+================================================================================
+H_1324 — CROSS-LANGUAGE STRUCTURE MATRIX, r2: PROPER IDS HAN DECOMPOSITION
+  Re-test (xlang r2): does CHINESE and JAPANESE kanji composition gain under a
+  PROPER sub-character (IDS component) decomposition — WITHOUT the full-char
+  residual and with a MODEST component vocabulary — under the SAME frozen
+  gradient-free mitosis mechanism H_1318 used?
+FROZEN-FIRST PRE-REGISTRATION — written BEFORE any run. NOT moved (c9 / p7).
+PROJ_SEED provenance: H_1324 (free id verified on origin/main b2c40dfa3;
+  1316-1323 taken; 1324 free). Branch h1324/xlang-han-ids off origin/main.
+================================================================================
+
+WHY THIS LANE EXISTS (the wall H_1318 hit, a_break_the_wall / c16)
+-----------------------------------------------------------------
+H_1318 (🟠 PARTIAL) answered its headline cleanly: breaking the Korean
+gradient-free byte-LM ceiling via a structure-aware representation is HANGUL-
+STRUCTURE-specific (English Δ=0.000, Russian Δ=0.000 controls gain nothing; only
+Hangul +0.21205, shuffle-earned +0.10003). BUT Chinese/Japanese came out
+NEGATIVE (Δ_zh=−1.48070, Δ_ja=−1.22965) ONLY because the FROZEN Kangxi-radical
+decomposition H_1318 used was BAD: it kept the FULL CHARACTER as a residual
+symbol (`char → [radical-codepoint, residual=the full char]`), which exploded
+the STRUCT vocab to 9327 (zh) / 4738 (ja) extra units → the per-cell unigram
+head fragmented (counts smear toward uniform, CE rises far above RAW). That is a
+DECOMPOSITION ARTIFACT, not evidence that Han composition does not help. The wall
+was the WRONG METHOD (bad decomposition) — a_break_the_wall: retry ONCE with a
+proper one, as a NEW pre-registration (NOT a post-hoc swap to manufacture green).
+
+THE FIX (the only change vs H_1318 — everything else byte-identical)
+--------------------------------------------------------------------
+Decompose each Han character into its IDS (Ideographic Description Sequence)
+sub-character COMPONENTS — the real structural leaves — with NO full-char
+residual token (the exact bug that broke H_1318).
+
+  Decomposition SOURCE (REAL, deterministic, recoverable):
+    CHISE IDS Database, distributed as `cjkvi/cjkvi-ids` (file ids.txt), the
+    canonical community CJK Ideographic-Description database (88,937 entries).
+    Format per line: `U+XXXX <TAB> char <TAB> IDS-string`, where the IDS string
+    is the Ideographic Description: Ideographic Description Characters
+    (IDC: ⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻) compose component leaves, e.g.
+        語 → ⿰言吾     (leaves 言, 吾)
+        明 → ⿰日月     (leaves 日, 月)
+        字 → ⿱宀子     (leaves 宀, 子)
+        日 → 日         (atomic: single leaf == self)
+    Fetched at run time from the public GitHub raw URL
+    `https://raw.githubusercontent.com/cjkvi/cjkvi-ids/master/ids.txt`,
+    cached to disk, sha256 of the IDS file asserted + recorded. NO credential.
+
+  DECOMPOSITION RULE (FROZEN — one level, leaves only, no residual):
+    For each Han codepoint (CJK Unified 0x4E00-0x9FFF or Ext-A 0x3400-0x4DBF):
+      1. look up its IDS string;
+      2. STRIP all IDC operators (⿰…⿻), all entity refs `&...;`, all region
+         tags `[GTKV...]`, and whitespace; the remaining characters are the
+         COMPONENT LEAVES (one TOP level of the IDS, NOT recursive — deterministic
+         and modest);
+      3. the Han char becomes EXACTLY that leaf sequence — NO full-char residual
+         symbol is ever emitted (the H_1318 bug is removed);
+      4. if a char is atomic (its only leaf is itself, e.g. 日, 人, 山) it stays
+         as ONE component symbol == that char (honest: an atomic char exposes no
+         composition — it contributes no decomposition signal, which is correct);
+      5. if a char is absent from the IDS DB (expected ~0 on Han basic+ext-A),
+         fall back to atomic (the char itself), counted + reported.
+    Non-Han characters (kana, Latin, punctuation, digits) pass through unchanged
+    as raw UTF-8 bytes — identical to H_1318.
+
+  EXPECTED MODEST VOCAB (the whole point — measured on the real 200 KB smoke
+  windows; FREEZE states the 30 MB numbers will be recorded in the run, and IF
+  vocab still explodes that is itself the honest finding):
+    smoke 200 KB: zh 2172 distinct Han chars → 1072 components (vs H_1318 9327);
+                  ja 1274 distinct Han chars →  784 components (vs H_1318 4738).
+    ~88% of Han tokens decompose into ≥2 components (avg ≈ 2.0 comps/char);
+    ~11–13% are atomic. IDS-miss = 0 on the smoke sample.
+
+  BYTE ACCOUNTING (load-bearing — preserves the FAIR CE-per-byte axis):
+    each Han char of UTF-8 length blen contributes its component symbols whose
+    per-symbol n_bytes SUM to blen (spread blen across the leaves; first leaf
+    carries the remainder). So Σ n_bytes over the STRUCT stream == the raw UTF-8
+    byte count of the held-out text, IDENTICAL denominator to RAW — exactly the
+    H_1318 fair-axis invariant. Unlike H_1318's Han path (radical = 0-byte leading
+    marker + residual = full blen), here the bytes are spread across the real
+    leaves; the denominator (held-out raw UTF-8 bytes) is unchanged either way.
+
+MECHANISM (held BYTE-IDENTICAL to H_1318 — fair, comparable)
+------------------------------------------------------------
+The SAME gradient-free error-targeted Voronoi mitosis grow-op (cells only SPLIT,
+p8) with the SAME FROZEN knobs verbatim:
+  CTX=4  V=256  FEAT_DIM=3  GROW_MAX=40  SPLIT_THRESH_CE=0.05  MIN_OWNED=8
+  LAPLACE=1.0  SEED_CENTERS=[[0.3,0.5,0.0],[0.7,0.5,0.5]]  even/odd train/test.
+Same per-cell unigram-over-context head, same 3-point grow curve, same held-out
+next-UNIT CE scored in nats per ORIGINAL raw UTF-8 byte (same fair axis).
+The ONLY change from H_1318 is the Han STRUCT decomposition (radical+residual →
+IDS leaves, no residual). Korean (NFD jamo) and English (no-comp floor) paths are
+BYTE-IDENTICAL to H_1318 — they are the CALIBRATION ANCHORS so the matrix is
+directly comparable to H_1318.
+
+CORPORA (REAL only — NO synthetic, p1-p8; same SOURCE as H_1318)
+----------------------------------------------------------------
+wikimedia/wikipedia 20231101 per-language config (ko/zh/ja/en), pulled via the HF
+datasets-server /rows endpoint (the SAME source H_1318 used; the 30 MB window
+cache was not preserved on this host, so it is re-fetched from the identical
+source). HF token via `harness secret get hf.token`, env/header-only, NEVER
+logged/inlined/committed (c7 grep-clean over all deliverables before PR).
+Window = 30 MB raw UTF-8 per language, stride 300, sha256 per window asserted.
+3 seeds [5324,5325,5326] perturb ONLY the stride phase. Russian is DROPPED from
+this lane (it was a pure alphabetic control that gained 0.000 in H_1318 and is
+not needed to test the Han claim; ko+en are the retained calibration anchors).
+If the REAL zh/ja corpus cannot be obtained from this source → STOP and report
+honestly (NO synthetic fallback).
+
+FROZEN BARS (pre-registered; GREEN iff ALL THREE hold for the Han claim)
+------------------------------------------------------------------------
+Let Δ_lang = RAW_CE − STRUCT_CE (3-seed mean), nats per original UTF-8 byte.
+
+  (H1 HAN-GAIN)
+     Δ_zh ≥ +0.05  AND  Δ_ja ≥ +0.05
+     → proper IDS Han composition LOWERS held-out CE where the H_1318 radical
+       surrogate RAISED it.
+
+  (H2 EARNED, anti-Goodhart)
+     for zh AND ja: STRUCT beats a SHUFFLED-component-map control by ≥ +0.05
+     (the IDS component→symbol id map permuted, fixed per seed — same component
+     COUNT/dim, structure destroyed)
+     → the gain is REAL component structure, not extra vocab/dim.
+
+  (H3 CALIBRATION, pipeline-identity vs H_1318)
+     Korean still gains: Δ_ko ≥ +0.15 (≈ the +0.21205 H_1318 reproduced)
+     AND English Δ_en ≤ +0.02 (no-composition floor unchanged)
+     → confirms the pipeline is the SAME and the matrix is comparable to H_1318.
+
+VERDICT MAP (ALL OUTCOMES VALID — c9 / a_break_the_wall)
+-------------------------------------------------------
+  • H1 ∧ H2 ∧ H3  → 🟢 GREEN: proper IDS decomposition makes Chinese AND Japanese
+    composition gain → representation-bind EXTENDS to logographic compositional
+    scripts; the "Hangul-specific" claim of H_1318 is BOUNDED to "the alphabetic /
+    multibyte controls (English, Russian) gain nothing — but other COMPOSITIONAL
+    scripts (Han) DO gain under a proper decomposition".
+  • H1 FAILS even with proper IDS (and H3 still calibrates: ko gains, en flat)
+    → Han composition GENUINELY does NOT help this gradient-free unigram
+    mechanism (a REAL result, DISTINCT from the H_1318 decomposition artifact) —
+    report straight; the Hangul-specificity of H_1318 then stands STRONGER.
+  • H1 partial (one of zh/ja gains, the other not) → 🟠 PARTIAL, report per-lang.
+  • Vocab STILL explodes under "proper" IDS (component vocab not modest, CE rises)
+    → honest METHOD-LIMIT: the modest-vocab decomposition is unavailable at this
+    substrate scale (report the measured component vocab; NOT a science claim
+    about Han composition).
+  • H3 FAILS (ko stops gaining or en gains) → pipeline drift / RED — investigate,
+    do NOT report a Han verdict on a broken pipeline.
+
+NO TUNE-TO-GREEN (c9 / p7): these bars are frozen BEFORE the run and are NOT
+moved. A failing Han result is a VALID, publishable outcome. The decomposition
+source + rule are fixed HERE; the resulting component vocab is whatever it is.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck)
+--------------------------------------------------
+TOY / DIRECTIONAL numpy/torch mirror; CTX=4 3-D Voronoi + per-cell unigram head =
+deliberately SIMPLE substrate; one-level (non-recursive) IDS decomposition; 30 MB
+window; 3 seeds. Engine-transfer to live CORE/*.hexa = follow-on. NO fluency
+claim. Live CORE/*.hexa UNTOUCHED.

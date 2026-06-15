@@ -1,0 +1,206 @@
+{
+  "id": "H_1324",
+  "device": "NVIDIA GeForce RTX 5070",
+  "torch": "2.11.0+cu130",
+  "window_bytes": 30000000,
+  "stride": 300,
+  "grow_max": 40,
+  "seeds": [
+    5324,
+    5325,
+    5326
+  ],
+  "available_langs": [
+    "ko",
+    "zh",
+    "ja",
+    "en"
+  ],
+  "dropped_langs": [],
+  "corpus_source": "wikimedia/wikipedia 20231101 via HF datasets-server /rows",
+  "ids_source": "CHISE IDS Database (cjkvi/cjkvi-ids ids.txt)",
+  "ids_sha256": "bfc70a8c09f9f5616ebf0543bd6681e67314e9f7ae2307e5ae8c6f15bdc5c6a6",
+  "sha256": {
+    "ko": "3e288b7797017a2837294ecaa465afe7c8bcdec09cba29e53a62c6748eaed381",
+    "zh": "c084b027a40d46e17c07227b0814926f54db3f1a87429d880cf19765c9911da8",
+    "ja": "a97dd068ced1150bfe126a6e3a0ba16fc321be105133552c748064b4066cfc4a",
+    "en": "b097ccccfd9709b1ac076deee07a664accaa1891ea22a0db0e9895ed13e67fb3"
+  },
+  "matrix": {
+    "ko": {
+      "kind": "hangul",
+      "RAW_CE": 2.91157,
+      "STRUCT_CE": 2.69606,
+      "SHUF_CE": 2.78382,
+      "Delta": 0.21551,
+      "delta_vs_shuffle": 0.08776,
+      "cells_raw": [
+        11,
+        11,
+        19
+      ],
+      "cells_struct": [
+        11,
+        13,
+        12
+      ],
+      "vj_struct": 323,
+      "n_extra": 67,
+      "distinct_han": 0,
+      "ids_miss": 0,
+      "raw_seeds": [
+        2.9181,
+        2.92109,
+        2.89551
+      ],
+      "struct_seeds": [
+        2.69302,
+        2.70476,
+        2.69039
+      ],
+      "shuf_seeds": [
+        2.77727,
+        2.79904,
+        2.77515
+      ]
+    },
+    "zh": {
+      "kind": "han",
+      "RAW_CE": 3.32756,
+      "STRUCT_CE": 4.06493,
+      "SHUF_CE": 4.06394,
+      "Delta": -0.73736,
+      "delta_vs_shuffle": -0.00099,
+      "cells_raw": [
+        16,
+        32,
+        16
+      ],
+      "cells_struct": [
+        29,
+        38,
+        40
+      ],
+      "vj_struct": 2372,
+      "n_extra": 2116,
+      "distinct_han": 9113,
+      "ids_miss": 0,
+      "raw_seeds": [
+        3.33013,
+        3.3171,
+        3.33546
+      ],
+      "struct_seeds": [
+        4.07692,
+        4.05622,
+        4.06163
+      ],
+      "shuf_seeds": [
+        4.09941,
+        4.02445,
+        4.06795
+      ]
+    },
+    "ja": {
+      "kind": "han",
+      "RAW_CE": 3.09273,
+      "STRUCT_CE": 3.72098,
+      "SHUF_CE": 3.69603,
+      "Delta": -0.62826,
+      "delta_vs_shuffle": -0.02495,
+      "cells_raw": [
+        19,
+        35,
+        13
+      ],
+      "cells_struct": [
+        40,
+        40,
+        35
+      ],
+      "vj_struct": 1838,
+      "n_extra": 1582,
+      "distinct_han": 4524,
+      "ids_miss": 0,
+      "raw_seeds": [
+        2.87692,
+        3.34638,
+        3.05488
+      ],
+      "struct_seeds": [
+        3.72282,
+        3.72604,
+        3.71409
+      ],
+      "shuf_seeds": [
+        3.68905,
+        3.69856,
+        3.7005
+      ]
+    },
+    "en": {
+      "kind": "none",
+      "RAW_CE": 3.15925,
+      "STRUCT_CE": 3.15925,
+      "SHUF_CE": 3.15925,
+      "Delta": 0.0,
+      "delta_vs_shuffle": 0.0,
+      "cells_raw": [
+        40,
+        5,
+        5
+      ],
+      "cells_struct": [
+        40,
+        5,
+        5
+      ],
+      "vj_struct": 256,
+      "n_extra": 0,
+      "distinct_han": 0,
+      "ids_miss": 0,
+      "raw_seeds": [
+        3.03165,
+        3.22125,
+        3.22485
+      ],
+      "struct_seeds": [
+        3.03165,
+        3.22125,
+        3.22485
+      ],
+      "shuf_seeds": [
+        3.03165,
+        3.22125,
+        3.22485
+      ]
+    }
+  },
+  "Delta_Korean": 0.21551,
+  "Delta_English": 0.0,
+  "Delta_zh": -0.73736,
+  "Delta_ja": -0.62826,
+  "H1_han_gain": false,
+  "H1_per_lang": {
+    "zh": false,
+    "ja": false
+  },
+  "H2_earned_vs_shuffle": false,
+  "H2_per_lang": {
+    "zh": false,
+    "ja": false
+  },
+  "H3_calibration": true,
+  "H3_ko_ge_0.15": true,
+  "H3_en_le_0.02": true,
+  "han_langs": [
+    "zh",
+    "ja"
+  ],
+  "component_vocab": {
+    "zh": 2116,
+    "ja": 1582
+  },
+  "VERDICT": "🔴/🧱 — even under PROPER IDS decomposition, Han composition does NOT help this gradient-free unigram mechanism (REAL, distinct from the H_1318 artifact); Hangul-specificity stands STRONGER",
+  "wall_s": 435.6
+}
