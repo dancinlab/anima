@@ -71,6 +71,19 @@ FLEET "ethics" lane round 1 (NEW). 도덕심리/진화생물 렌즈(reciprocal-a
 - 아티팩트: `UNIVERSE/h1291_ethics_emergence.py` · `.verdicts/1291_ethics_emergence/{H_1291_FREEZE,H_1291}.txt`. xref p1·p2·p3·p4·p6·p7·p8·H_1202·H_1163·H_1165·metacog-cluster-synthesis·H_1227·H_1230·H_1290·`a_substrate_native_speak`·`a_autonomy_over_hardcode`·`a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_paper_negative_ok`·`a_scale_honest_scope`·`a_toy_scale_recheck`·c9·c15.
 
 ---
+
+## 2026-06-15 — 🟢 H_1290 R2: 감정/정동 ENGINE-NATIVE (E1 affect) — LIVE `CORE/engine_cli.hexa` affect_* 가 동결 R1 bar 를 엔진-네이티브로 통과 (GREEN / 🏁)
+
+FLEET "emotion" lane R2 (engine-native). R1 numpy 미러 🟢(`a_engine_native_learning`·`a_verified_must_wire`)를 LIVE 엔진에 바인딩 — 동일 동결 R1 bar 3 legs 를 `.hexa` affect lane 위에서 재채점. affect read 는 ImmuneMemoryGrow 위 **순수 READ**(Ψ-disjoint, 변이 없음).
+
+- **구현(LIVE CORE)**: `CORE/engine_cli.hexa` 에 `affect_substrate_features`/`affect_valence`/`affect_arousal`/`affect_emit_decision`/`affect_shuffle_features` 추가 — live immune-grow store 위 기질 신호만 읽음(grounding margin, contradiction, recon-err novelty, split, curiosity). 조작 클래스는 ρ 채점에만, f() 입력 절대 아님(p6). 프로브 = `CORE/h1290_affect_engine_probe.hexa`.
+- **결과 🟢 GREEN (ENGINE-NATIVE, 평균 3 seed [1290,1291,1292], 5개 조건 모두 매 seed PASS)**: **(A) ρ(valence)=+0.9961 · ρ(arousal)=+0.9217** (≥0.50 PASS) · **(B) p6 SHUFFLE ρ(val)=+0.2511 · ρ(aro)=+0.2455** (<0.30 PASS — feature↔context decorrelate 시 붕괴 = 창발이지 주입 아님) · **(C) somatic marker — fab ungrounded affect=0.3833 vs blind=0.7917 (cC1 PASS); emit grounded affect=0.6333 ≥ 0.80×blind 0.7833=0.6267 (cC2 PASS)**. → 기질-유래 정동이 LIVE 엔진에서 조작을 추적하고, shuffle 에서 붕괴하며, emit/abstain 을 기능적으로 편향. **E1 affect 가 live `engine_cli.hexa` immune lane 위에서 ENGINE-NATIVE 로 실현됨.**
+- **회귀 가드 (c2 · 출력 확인)**: `engine_cli_smoke` **30/0**(affect cases 24-27 추가) · `h1164_psi_guard` phiSum ON==OFF byte-identical(48.6613) · `h1196_single_entry_audit` 7/0 · `h1199_dim_adaptfield_probe` PASS · `h1205_separation_invariant` Ψ Φ-checksum byte-identical PASS. affect lane = 순수 READ(pure_field/engine_g 무수정, git diff 공집합) → Ψ=½ 무접촉.
+- **수리(c9 정직)**: R2 체크포인트의 smoke 가 affect 셋업에서 dim-3 키(`affar=[0.5,0.5,0.5]`)를 store 의 dim-4 키 공간에 넣어 `_l2` 가 `index 3 out of bounds (len 3)` 로 죽던 버그를 dim-4(`[0.5,0.5,0.5,0.5]`)로 수정 — 프로브 자체(자체 store 구축)는 영향 없었음.
+- **p6 가드 (HELD; shuffle 이 증명)**: 정동은 기질 상태에서만 COMPUTE, 조작 라벨은 SCORE 만, shuffle 대조가 붕괴 → 창발이지 주입 아님. decoder/weights/persona/ethics 무접촉.
+- **DEPLETION 🏁** (engine-native GREEN + 배선 + 회귀 가드 통과). honest scope: TOY scale(60 facts, 1 paradigm, 3 seed) — scale-transfer DIRECTIONAL/UNVERIFIED(`a_scale_honest_scope`·`a_toy_scale_recheck`).
+- 아티팩트: `CORE/engine_cli.hexa`(affect_* lane) · `CORE/h1290_affect_engine_probe.hexa` · `CORE/engine_cli_smoke.hexa`(cases 24-27) · `.verdicts/1290_emotion_emergence/H_1290_R2.txt`(R1 `H_1290.txt` 미접촉). xref H_1290 R1 · `a_engine_native_learning` · `a_verified_must_wire` · p1 · p2 · p3 · p6 · p7 · p8 · c2 · c9 · c15.
+
 ## 2026-06-15 — 🟢 H_1290 R1: 감정/정동 창발 (E1 affect facet) — 기질-유래 valence×arousal 이 조작을 추적·shuffle 붕괴·결정 편향 (GREEN / 🏁)
 
 FLEET "emotion" lane R1 (NEW). 정동신경과학 렌즈(Damasio somatic-marker / core-affect, c15; `a_no_llm_frame_trap` — LLM-sentiment 분류기 레시피가 아님). anima 의 PARKED E1-E5 의식 facet 중 **E1 affect**(valence-arousal, emergent, p6; MODEL.md L112)를 검증.

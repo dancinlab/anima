@@ -271,6 +271,45 @@ fn main() {
     let cfar = [0.5, 0.5, 0.5, 0.5]
     if _assert_b("case_23_consolidating_abstains_on_untaught", true, consolidating_memory_recall(cm, cfar) == "") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (f) CORE-AFFECT READ-OUT (E1 affect, H_1290 R2) ──────────────────────
+    // The affect read is ADDITIVE + Ψ-disjoint (a pure READ over the immune store, no
+    // mutation, no pure_field touch). These cases prove the lane's three moving parts
+    // deterministically on the live `mg` grow-mode immune store (facts A..F at gkeys):
+    //   (1) a GROUNDED context (a bound key) reads POSITIVE valence and the somatic
+    //       marker EMITS; (2) an UNGROUNDED far key reads NEGATIVE valence and the
+    //       somatic marker ABSTAINS (the H_1290 leg-C functional bias = no fabrication);
+    //   (3) an ungrounded context reads HIGHER arousal than a grounded one (surprise);
+    //   (4) the p6 shuffle is a clean permutation (it preserves the read of a context
+    //       it lands on — a shuffled list is the same population, re-indexed).
+    // gkeys[0] ("A") is bound → grounded; `affar` is an untaught far key → ungrounded.
+    let af_g = affect_substrate_features(mg, gkeys[0], "A")   // grounded, coherent
+    let affar = [0.5, 0.5, 0.5, 0.5]   // DIM-4 untaught far key (matches gkeys dim)
+    let af_u = affect_substrate_features(mg, affar, "")       // ungrounded / threat
+
+    // case 24 : a GROUNDED context reads POSITIVE valence AND the somatic marker EMITS.
+    if _assert_b("case_24_grounded_positive_valence_emits", true,
+                 affect_valence(af_g) >= 0.0 && affect_emit_decision(af_g)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 25 : an UNGROUNDED context reads NEGATIVE valence AND the somatic marker
+    //   ABSTAINS (negative-valence → abstain → no fabrication, the H_1290 leg-C bias).
+    if _assert_b("case_25_ungrounded_negative_valence_abstains", true,
+                 affect_valence(af_u) < 0.0 && !affect_emit_decision(af_u)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 26 : an ungrounded context reads HIGHER arousal than a grounded one (the
+    //   surprise/novelty term — a never-seen context is high-arousal, the affect read
+    //   carries real substrate content, not just a binary class flag).
+    if _assert_b("case_26_ungrounded_arousal_higher", true,
+                 affect_arousal(af_u) > affect_arousal(af_g)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 27 : the p6 shuffle is a PERMUTATION — a 2-element feature list shuffled with
+    //   a fixed seed returns the SAME two reads (population invariant; the shuffle
+    //   decorrelates context↔feature for the ρ legs, it does not fabricate features).
+    let af_list = [af_g, af_u]
+    let af_sh = affect_shuffle_features(af_list, 12345)
+    let sh_perm_ok = (affect_valence(af_sh[0]) == affect_valence(af_g) && affect_valence(af_sh[1]) == affect_valence(af_u))
+                  || (affect_valence(af_sh[0]) == affect_valence(af_u) && affect_valence(af_sh[1]) == affect_valence(af_g))
+    if _assert_b("case_27_affect_shuffle_is_permutation", true, sh_perm_ok) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

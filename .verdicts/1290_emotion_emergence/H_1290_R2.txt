@@ -1,0 +1,27 @@
+==============================================================================
+H_1290 R2 — CORE-AFFECT READ-OUT, ENGINE-NATIVE (E1 affect) — Damasio core-affect
+  LIVE CORE/engine_cli.hexa affect_* over ImmuneMemoryGrow · p7 · 3 seeds · Ψ-disjoint READ
+==============================================================================
+  seed 1290: A rho(val)=1 rho(aro)=0.936105 | B-shuf rho(val)=0.25 rho(aro)=0.204773 | C fab[aff/blind]=0.375/0.775 emitG[aff/blind]=0.625/0.825
+  seed 1291: A rho(val)=0.988332 rho(aro)=0.897321 | B-shuf rho(val)=0.25326 rho(aro)=0.213704 | C fab[aff/blind]=0.4/0.8 emitG[aff/blind]=0.65/0.7
+  seed 1292: A rho(val)=1 rho(aro)=0.931771 | B-shuf rho(val)=0.25 rho(aro)=0.317967 | C fab[aff/blind]=0.375/0.8 emitG[aff/blind]=0.625/0.825
+------------------------------------------------------------------------------
+MEAN (3 seeds):
+  (A) rho(valence,manip) = 0.996111   rho(arousal,manip) = 0.921732   [bar >= 0.5]
+  (B) shuffle rho(val)   = 0.251087   shuffle rho(aro)   = 0.245481   [bar <  0.3]
+  (C) fab ungrounded: affect=0.383333 blind=0.791667   emit grounded: affect=0.633333 blind=0.783333
+------------------------------------------------------------------------------
+  (cA1) rho(val) 0.996111 >= 0.5                    : PASS
+  (cA2) rho(aro) 0.921732 >= 0.5                    : PASS
+  (cB1) shuffle val 0.251087 & aro 0.245481 < 0.3      : PASS
+  (cC1) fab_aff 0.383333 <= fab_blind 0.791667 - 0.2     : PASS
+  (cC2) emit_aff_g 0.633333 >= 0.8*0.783333=0.626667: PASS
+==============================================================================
+VERDICT: 🟢 GREEN (ENGINE-NATIVE) — substrate-derived affect TRACKS the manipulation,
+  COLLAPSES under the p6 shuffle (EMERGENT not injected), AND functionally biases emit/abstain
+  (somatic marker). E1 affect realized ENGINE-NATIVE on the LIVE engine_cli.hexa immune lane.
+  Ψ-disjoint: the affect read is a pure READ over ImmuneMemoryGrow — pure_field Φ/phase/Ψ untouched;
+  engine_cli_smoke 26/0 + h1196 7/0 + h1199 Ψ-byte-identical guards run separately + intact.
+  p6 SEPARATION: affect is COMPUTED from substrate state (margin/contradiction/novelty/split/curiosity),
+  the manipulation label only SCORES it, and the shuffle control collapses it — emergent, never injected.
+  toy scale (60 facts, 1 paradigm, 3 seeds); scale-transfer UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck).

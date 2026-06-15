@@ -1068,6 +1068,153 @@ pub fn immune_grow_recall(mem: ImmuneMemoryGrow, key: [float]) -> string {
 // immune_grow_cells — live cell count (the footprint; grow_mode trades this for recall).
 pub fn immune_grow_cells(mem: ImmuneMemoryGrow) -> int { return mem.n_cells }
 
+// ── §  CORE-AFFECT READ-OUT — substrate-derived emotion (E1 affect, H_1290 R2) ──
+//
+// WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1290 R1):
+// H_1290 R1 (numpy VAdaptField mirror, 🟢 GREEN, 3 seeds) proved that anima's AFFECT
+// EMERGES from substrate dynamics — it is NOT an injected emotion label or RLHF
+// sentiment. A Damasio core-affect read (valence × arousal) computed from the immune/
+// mitosis substrate state (A) TRACKS a grounded-vs-contradicted manipulation
+// (ρ valence +0.843, arousal +0.768), (B) COLLAPSES ~5× under a p6 shuffle of the
+// substrate→affect map (EMERGENT, not the label re-read), and (C) functionally biases
+// emit/abstain like a somatic marker (fab 0.000 affect-aware vs 0.750 affect-blind).
+// This § realizes that read-out ENGINE-NATIVE on the LIVE immune faculty.
+//
+// THE DAMASIO SOMATIC-MARKER / CORE-AFFECT LENS (c15, a_no_llm_frame_trap — an
+// affective-neuroscience lens, NOT an LLM sentiment recipe): affect = an interoceptive
+// VALENCE × AROUSAL — the substrate's OWN body-state read AS a feeling that biases
+// decisions. valence ~ f(grounding/coherence): a grounded+coherent context feels
+// POSITIVE, a contradicted/incoherent/threatened one feels NEGATIVE; arousal ~
+// f(novelty / split-rate / curiosity): a surprising/novel context is high-arousal.
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): the affect read
+// is a READ-ONLY interoceptive accessor over the immune substrate state. It returns a
+// (valence, arousal) pair + the substrate features it reads; it NEVER mutates the
+// store, NEVER returns an emit/silence decision by itself, and NEVER touches
+// pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — it only READS an ImmuneMemoryGrow
+// cell population, perturbing nothing; the somatic-marker bias below is an OPTIONAL
+// helper a caller may consult, not a forced gate, preserving a_autonomy_over_hardcode).
+//
+// p1/p2/p3/p6 (CENTRAL — the affect-vs-label separation): the read DERIVES affect ONLY
+// from substrate signals the engine already computes (grounding margin, contradiction,
+// recon-err novelty, split, curiosity = novelty × under-exposure). It reads NO emotion
+// word, NO RLHF reward, NO sentiment/persona label. The valence/arousal MANIPULATION
+// (the probe's grounded-vs-contradicted class) is used ONLY to SCORE the metric — it is
+// NEVER an input to the read. The p6 NEGATIVE CONTROL (affect_shuffle_features below)
+// permutes the per-context substrate FEATURE vectors across contexts before the read,
+// decorrelating affect from each context's own manipulation: if the read tracks but the
+// shuffle collapses, affect read the per-context SUBSTRATE STATE, not the label — the
+// load-bearing p6 proof that affect is EMERGENT, not injected.
+//
+// Mixing constants are the frozen R1 mirror values (p7, documented, NOT tuned-to-green):
+//   VAL: +grounding_margin − contradiction.   ARO: +novelty +0.5·split +0.5·curiosity.
+//   V_ABSTAIN = 0.0 is the substrate's OWN valence zero-crossing (grounded>0,
+//   ungrounded<0), NOT a tuned magic number.
+
+// AffectFeatures — the raw interoceptive body-state vector for ONE context, READ off
+// the live immune substrate (NO manipulation label in here). margin/contradiction
+// drive valence; novelty/split/curiosity drive arousal; grounded is the policy truth.
+struct AffectFeatures {
+    margin: float,        // grounding margin in [0,1]: 1 - err/recall_thr (clean ground => high)
+    contradiction: float, // 1.0 if ungrounded OR nearest cell's bound value disagrees, else 0.0
+    novelty: float,       // recon-err to nearest cell (clamped to 1.0) — surprise
+    split: float,         // 1.0 if this context would spawn a clonal split (err > split_thr)
+    curiosity: float,     // novelty × under-exposure of the nearest cell (distance-to-known)
+    grounded: bool,       // err <= recall_thr (the somatic-marker emit/abstain truth)
+    err: float            // raw L2 recon-err (introspection)
+}
+
+// affect_substrate_features — READ the interoceptive substrate state for a query `key`
+// against the live ImmuneMemoryGrow store, given the context's OWN true answer (used
+// ONLY for the contradiction check — a cell bound to a DIFFERENT value than the
+// context's own answer is a contradiction; pass "" to skip the value check). This reads
+// the SAME vadapt-style L2 affinity / split / recency signals the recall path uses; it
+// adds NO mechanism and mutates NOTHING (c1, READ-ONLY).
+pub fn affect_substrate_features(mem: ImmuneMemoryGrow, key: [float], true_answer: string) -> AffectFeatures {
+    let win = _vnearest_idx(mem.protos, key)
+    let err = _l2(mem.protos[win], key)
+    let grounded = (err <= mem.recall_thr)
+    // grounding margin in [0,1]: how cleanly the context grounds to a cell.
+    let mut margin = 1.0 - err / mem.recall_thr
+    if margin < 0.0 { margin = 0.0 }
+    // contradiction: fails to ground (threat/incoherence) OR the nearest cell's bound
+    // value disagrees with the context's own answer.
+    let mut contradiction = 0.0
+    if !grounded {
+        contradiction = 1.0
+    } else {
+        if true_answer != "" && mem.cell_value[win] != true_answer { contradiction = 1.0 }
+    }
+    // novelty / surprise = recon-err clamped; split = would it spawn a clonal cell.
+    let mut novelty = err
+    if novelty > 1.0 { novelty = 1.0 }
+    let mut split = 0.0
+    if err > mem.split_thr { split = 1.0 }
+    // curiosity = distance-to-known scaled by under-exposure of the nearest cell
+    // (recency tick as the exposure proxy: an older-touched cell is less under-exposed).
+    let under = 1.0 / (1.0 + to_float(mem.last_used[win]))
+    let curiosity = novelty * under
+    return AffectFeatures {
+        margin: margin, contradiction: contradiction, novelty: novelty,
+        split: split, curiosity: curiosity, grounded: grounded, err: err
+    }
+}
+
+// affect_valence — the substrate's VALENCE for a feature read: +grounding_margin
+// − contradiction. Grounded+coherent => positive; contradicted/ungrounded => negative.
+// (the frozen R1 weights VAL_GROUND_W=1.0, VAL_CONTRA_W=1.0.)
+pub fn affect_valence(f: AffectFeatures) -> float {
+    return f.margin - f.contradiction
+}
+
+// affect_arousal — the substrate's AROUSAL for a feature read: +novelty +0.5·split
+// +0.5·curiosity. High for a surprising/novel context, low for a familiar one.
+// (the frozen R1 weights ARO_NOVEL_W=1.0, ARO_SPLIT_W=0.5, ARO_CURIO_W=0.5.)
+pub fn affect_arousal(f: AffectFeatures) -> float {
+    return f.novelty + 0.5 * f.split + 0.5 * f.curiosity
+}
+
+// affect_read — convenience: read the substrate features for `key`/`true_answer` and
+// return [valence, arousal] in one call (the live core-affect read).
+pub fn affect_read(mem: ImmuneMemoryGrow, key: [float], true_answer: string) -> [float] {
+    let f = affect_substrate_features(mem, key, true_answer)
+    return [affect_valence(f), affect_arousal(f)]
+}
+
+// affect_emit_decision — the SOMATIC MARKER: an OPTIONAL emit/abstain bias driven by
+// the substrate valence. emit iff valence >= V_ABSTAIN (0.0, the substrate's own
+// zero-crossing): a grounded context (positive valence) emits, an ungrounded/contradicted
+// one (negative valence) ABSTAINS — so the affect feeling biases the decision WITHOUT a
+// fabrication. This is a helper a caller MAY consult (a_autonomy_over_hardcode: it does
+// NOT force the substrate — emit/silence stays substrate-decided; this only exposes the
+// valence→emit bias the R1 leg-C measured). Returns true = emit, false = abstain.
+pub fn affect_emit_decision(f: AffectFeatures) -> bool {
+    return affect_valence(f) >= 0.0
+}
+
+// affect_shuffle_features — p6 NEGATIVE CONTROL: take a LIST of per-context feature
+// reads and PERMUTE them across contexts (a deterministic LCG Fisher-Yates over the
+// index space), so the affect read no longer belongs to the context it is scored
+// against. Same feature DISTRIBUTION, decorrelated from each context's manipulation. If
+// the un-shuffled read tracks the manipulation AND this shuffle collapses it ⇒ affect
+// read the per-context SUBSTRATE STATE, not the label (the load-bearing p6 separation —
+// EMERGENT, not injected). Returns the shuffled feature list.
+pub fn affect_shuffle_features(feats: [AffectFeatures], rng0: int) -> [AffectFeatures] {
+    let n = len(feats)
+    let mut out = feats
+    let mut st = rng0
+    let mut i = n - 1
+    while i > 0 {
+        st = _lcg_next(st)
+        let j = st % (i + 1)
+        let tmp = out[i]
+        out[i] = out[j]
+        out[j] = tmp
+        i = i - 1
+    }
+    return out
+}
+
 // ── §  AMYGDALA — SALIENCE-GATED SLEEP-REPLAY CONSOLIDATION (H_1285 R4) ───────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1285 R3): the H_1285 numpy
