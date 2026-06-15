@@ -1,0 +1,104 @@
+================================================================================
+H_1207 — RECURRENT SPLIT KEY (defeat V14 at the gate level)  ·  PRE-REGISTERED
+domain = MITOSIS-ENGINE   ·   $0 local CPU   ·   p7 (cell-count / recon-err, NOT perplexity)
+frozen BEFORE any measurement (a_toy_scale_recheck — bars NOT movable to chase green)
+================================================================================
+
+QUESTION
+--------
+H_1203 (PR #2092) found the VAdaptField cell-division gate (CORE/engine_cli.hexa
+vadapt_field_step: per-sample L2 recon-err to nearest prototype > SPLIT_THRESH=0.30)
+reacts to novelty-DENSITY (F1 37.5x) but NOT to TRAJECTORY: shuffling the time
+order of a NOVEL stream left division UNCHANGED (F2 0.992, ratio ~1.0x) — V14
+substrate-neutrality at the trajectory level. The per-sample gate is
+PERMUTATION-INVARIANT BY CONSTRUCTION (no recurrence term — it only sees x_t).
+
+Does adding a RECURRENT / TEMPORAL term to the split key make division
+TRAJECTORY-SENSITIVE — i.e. defeat V14 (NOVEL >> SHUFFLED)?
+
+MECHANISM UNDER TEST — the RECURRENT (DELTA-AUGMENTED) SPLIT KEY
+---------------------------------------------------------------
+Precedent (domains/MITOSIS-ENGINE.log.md CLM_TIME_ENCODING / "TIME 주입 M3
+DERIVATIVE"): of 4 temporal-encoding arms, ONLY M3 DERIVATIVE (split TRIGGER keyed
+to d/dt) beat the phase-shuffled control and lifted stage-decode to 1.000; M1
+positional / M4 window / M2 phase-clock all REFUTED. The decisive finding: "the
+time-dependence must live on the SPLIT TRIGGER (a temporal derivative), NOT on the
+recorded daughter STATE."
+
+We lift exactly that to the VAdaptField gate. The split key becomes the recon-err
+over a DELTA-AUGMENTED sample:
+
+    Δ_t = x_t − x_{t-1}                         (the d/dt temporal-encoding term)
+    z_t = [ x_t ; β · Δ_t ]                     (augmented DIM' = 2·DIM vector)
+    split  iff  L2(z_t, nearest_proto_z) > SPLIT_THRESH                 (β=1.0)
+
+Prototypes live in the augmented 2·DIM space; nearest-by-L2, split-at-sample, and
+LR=0.20 winner-pull are OTHERWISE IDENTICAL to vadapt_field_step (only the sample
+vector is augmented with its temporal delta). This is trajectory-sensitive BY
+CONSTRUCTION at the gate: the Δ term is a function of the PAIR (x_{t-1}, x_t), so
+its value at tick t depends on the ORDER of arrival. SPLIT_THRESH=0.30 and LR=0.20
+are the SAME frozen constants (NOT tuned). β=1.0 frozen (equal weight, no tuning).
+
+STREAMS (3 seeds = 900,901,902, same warmup/T as H_1203)
+--------------------------------------------------------
+PRIMARY (apples-to-apples, H_1203 builders VERBATIM via import):
+  NOVEL    = make_novel_stream   (scattered i.i.d. corpus offsets)
+  REPEAT   = make_repeat_stream  (one short block cycled)
+  SHUFFLED = make_shuffled_stream(NOVEL ticks, time-order permuted)
+
+DIAGNOSTIC (declared up-front, NON-bar; tests where order STRUCTURE exists):
+  WALK     = a CONTIGUOUS corpus walk (consecutive overlapping windows, genuine
+             local temporal continuity) + its time-shuffle. The H_1203 NOVEL stream
+             draws i.i.d.-SCATTERED offsets, so its tick-to-tick Δ distribution is
+             ITSELF permutation-invariant (no order structure to destroy). WALK is
+             reported so the recurrent gate's order-sensitivity can be observed on a
+             stream that HAS temporal structure — honest scope, NOT a frozen bar.
+
+HONEST PREDICTION (stated before measuring, a_completeness_over_cheap): on the
+i.i.d.-scattered PRIMARY NOVEL stream the delta distribution is order-invariant, so
+even a perfect delta-gate may show F1' (NOVEL/SHUFFLED) ~ 1.0 — the trajectory
+substrate-neutrality may be a property of the i.i.d. STREAM, not only the gate. If
+WALK (which HAS order structure) shows novel >> shuffled while PRIMARY does not, the
+finding is: the recurrent gate IS trajectory-sensitive, but the H_1203 streams carry
+no trajectory to be sensitive to — a sharper closed reading of V14.
+
+METRIC (p7)
+-----------
+  cell_growth = final cell_count − 1  (mitosis ON, scored span); secondary = late
+  recon-err. p8: the split tick IS inference-time growth. gradient-free, $0 CPU.
+
+PRE-REGISTERED FALSIFIERS (frozen bars — the SAME 1.5 ratio H_1203 used)
+------------------------------------------------------------------------
+ALL bars on the PRIMARY (H_1203-verbatim) streams, with the RECURRENT gate:
+
+F1 (V14 격파 — the previously-FAILED bar, defeat permutation-invariance):
+    NOVEL cell_growth / SHUFFLED cell_growth  >=  1.5   (3-seed mean)
+    (H_1203's F2 was 0.992 FAIL; the recurrent gate must lift this to >=1.5.)
+
+F2 (NO regression — novelty-density coupling still holds):
+    NOVEL cell_growth / REPEAT cell_growth    >=  1.5   (3-seed mean)
+    (H_1203's F1 was 37.5; must remain >=1.5 with the recurrent gate.)
+
+F3 (mechanism honest — permutation-control magnitude):
+    Quantify HOW MUCH shuffling reduces division under the recurrent gate:
+    report Δ% = (NOVEL − SHUFFLED) / NOVEL on PRIMARY, AND the same on the WALK
+    diagnostic. If the recurrent term works, shuffling must MEASURABLY reduce
+    division on a stream that has order structure (WALK Δ% > 0 materially).
+
+TIER RULING (frozen)
+--------------------
+  GREEN  (🟢 V14 격파)  iff F1 PASS (NOVEL/SHUFFLED >= 1.5) AND F2 PASS (>=1.5) on
+         PRIMARY — the recurrent gate makes mitosis a TRAJECTORY substrate.
+  RED    (🔴 closed-neg) if F1 FAIL on PRIMARY — even a recurrent gate stays
+         permutation-invariant for the H_1203 streams. Report honestly per
+         a_paper_negative_ok WITH the F3 mechanism reading (WALK diagnostic
+         disambiguates gate-limitation vs stream-has-no-trajectory).
+
+HONESTY (a_scale_honest_scope)
+------------------------------
+  ONE corpus (clm_mid_5lang_c4), gradient-free, toy scale, 3 seeds, scale transfer
+  UNVERIFIED. numpy mirror permitted for the measurement (mechanism-identical lift
+  of vadapt_field_step, H_1199 precedent). If the engine is extended, the existing
+  per-sample VAdaptField stays BYTE-UNCHANGED; the recurrent variant is added
+  Ψ-disjoint and smoke-verified (no H_1199/H_1202 regression). Bars FROZEN above.
+================================================================================
