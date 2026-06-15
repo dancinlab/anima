@@ -165,6 +165,55 @@ fn main() {
     let total_act = wm_buffer_total_activation(wm3)
     if _assert_b("case_15_wm_total_activation_nonneg", true, total_act >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (d) GROW-UNDER-PRESSURE IMMUNE MEMORY (H_1288 R2) — the capacity lever ──
+    // ImmuneMemoryGrow is ADDITIVE + Ψ-disjoint; these cases prove the two capacity
+    // policies it adds (LRU-evict at a fixed budget vs mitosis-grow past it) and that
+    // growth breaks the zero-sum (more facts survive) WITHOUT fabricating. We bind 6
+    // well-separated novel keys into a base_max=3 store and read the cell-count cost.
+    // Keys are 4-dim near-orthogonal unit vectors (L2 between any two ~1.41 >> the
+    // 0.30 split_thr → every bind is a NOVEL fact = the capacity-stress regime).
+    let gk0 = [1.0, 0.0, 0.0, 0.0]
+    let gk1 = [0.0, 1.0, 0.0, 0.0]
+    let gk2 = [0.0, 0.0, 1.0, 0.0]
+    let gk3 = [0.0, 0.0, 0.0, 1.0]
+    let gk4 = [0.70710678, 0.70710678, 0.0, 0.0]
+    let gk5 = [0.0, 0.0, 0.70710678, 0.70710678]
+    let gkeys = [gk0, gk1, gk2, gk3, gk4, gk5]
+    let gvals = ["A", "B", "C", "D", "E", "F"]
+
+    // case 16 : FIXED-BUDGET LRU-EVICT caps cell-count at base_max (zero-sum store).
+    //   6 novel facts into a base_max=3 fixed store ⇒ NEVER more than 3 cells.
+    let mut me = immune_grow_new(gkeys[0], gvals[0], 3, 3, false)
+    let mut gi = 1
+    while gi < 6 { me = immune_grow_bind(me, gkeys[gi], gvals[gi], cfg_on)  gi = gi + 1 }
+    if _assert_i("case_16_grow_off_caps_at_base_max", 3, immune_grow_cells(me)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 17 : MITOSIS-GROW grows a NEW cell per novel fact past base_max, up to the
+    //   generous bound ⇒ all 6 distinct facts land their own cell (break the zero-sum).
+    let mut mg = immune_grow_new(gkeys[0], gvals[0], 3, 16, true)
+    let mut gj = 1
+    while gj < 6 { mg = immune_grow_bind(mg, gkeys[gj], gvals[gj], cfg_on)  gj = gj + 1 }
+    if _assert_i("case_17_grow_on_grows_past_base_max", 6, immune_grow_cells(mg)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 18 : GROWTH LIFTS RECALL — recall every taught key; the LRU-evict store can
+    //   only return <= base_max (3) facts, the grow store returns all 6 (more survive).
+    let mut hits_e = 0  let mut hits_g = 0
+    let mut gr = 0
+    while gr < 6 {
+        if immune_grow_recall(me, gkeys[gr]) == gvals[gr] { hits_e = hits_e + 1 }
+        if immune_grow_recall(mg, gkeys[gr]) == gvals[gr] { hits_g = hits_g + 1 }
+        gr = gr + 1
+    }
+    if _assert_b("case_18_grow_recalls_more_than_evict", true, hits_g > hits_e) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 19 : ABSTAIN INTACT (H_1227 load-bearing) — an UNTAUGHT, far key fires no
+    //   cell (returns "" = no fabrication) on BOTH policies. Far = a 4-dim key whose
+    //   nearest cell L2 > recall_thr 0.30.
+    let untaught = [0.5, 0.5, 0.5, 0.5]
+    let abst_e = (immune_grow_recall(me, untaught) == "")
+    let abst_g = (immune_grow_recall(mg, untaught) == "")
+    if _assert_b("case_19_grow_abstains_on_untaught", true, abst_e && abst_g) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
