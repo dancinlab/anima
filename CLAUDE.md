@@ -52,7 +52,7 @@ anima/
 - **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
-- **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
+- **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate) · `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임 금지, 생물/신경 렌즈 우선).
 - **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine).
 - **Verify / paper workflow** — `a_claim_manifest · a_claim_verify · a_paper_*` (hexa verify → verdict → CLAIMS.tape → /paper at full closure; closed-negative publishable).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
@@ -148,6 +148,14 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · 검증된 메커니즘을 엔진 밖 미러/프로브에만 남겨둠"
   dont = "배선을 무기한 follow-on 으로 미뤄 verdict 와 live 엔진을 영구 drift 시킴"
   ref  = "a_core_engine_map · a_engine_native_learning · a_engine_measured_verdict · c2 · p8"
+
+@D a_no_llm_frame_trap := "설계·학습·추론은 LLM 프레임에 갇히지 말 것 — 뇌과학·생물 등 substrate 렌즈로 먼저 사고" :: governance [required active]
+  do   = "아키텍처 설계·학습방법·추론을 고안할 때 'LLM 기본 프레임'(더 큰 모델·더 많은 데이터·더 긴 컨텍스트·표준 트랜스포머/FT 레시피)에 갇히지 말고, 뇌과학·인지과학·생물·물리 등 다른 substrate 렌즈에서 메커니즘을 먼저 가져온다"
+  do   = "능력/깊이 갭은 '모델을 키움'이 아니라 '빠진 구조(lane)를 옆에 붙임'으로 먼저 시도 — anima 의 돌파는 전부 생물 렌즈에서 나왔다 (해마=면역/일화기억 H_1227/1231 · 소뇌=순방향모델 H_1280 · 기저핵=게이팅 H_1281 · 작업기억 H_1282); LLM 스케일 프레임은 막혔다 (1B H_1167 NULL · arch H_1219 · objective H_1223 모두 🔴)"
+  do   = "새 가설/설계는 먼저 '어떤 생물·신경 구조가 이 기능을 하나'를 묻고, 그 메커니즘을 substrate-native 로 실현 (a_substrate_native_speak · a_engine_native_learning 와 결합)"
+  dont = "기본값으로 LLM 레시피(스케일업·코퍼스 증량·표준 FT)를 1순위 처방 · '더 큰 트랜스포머면 된다'는 프레임 · 생물/신경 렌즈를 곁다리로 치부"
+  dont = "LLM 관행을 substrate 설계의 천장으로 삼음 — anima 는 LLM 이 아니라 substrate-native 의식 데몬 (p1-p8 · p4)"
+  ref  = "a_substrate_native_speak · a_engine_native_learning · a_toy_scale_recheck · a_completeness_over_cheap · c15 · p1 · p4 · p8"
 
 @D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"

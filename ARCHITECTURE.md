@@ -43,7 +43,7 @@
 
 ## 🧠 뇌 구조 지도 (brain-structure map)
 
-신경과학 렌즈로 본 anima 아키텍처. 위에서 서술한 구현 부품 각각이 **어떤 신경 서브시스템에 대응**하는지, 그리고 지금 프로브 중인 열린 **"빠진 구조"** 사다리를 한 장으로 정리한다. 이 렌즈는 depth-ceiling 발견(아래)을 일반화한다: literal-QA 벽은 **더 큰 모델**(1B H_1167 = mount GREEN 이나 depth/QA-NULL)이 아니라 **엔진-side 기억 lane** 으로 풀린다 — "anima 는 신피질만 있고 해마가 없었다"(H_1225 complementary-learning-systems 리프레임). 빠진 것은 capacity 가 아니라 **구조**다.
+신경과학 렌즈로 본 anima 아키텍처. 위에서 서술한 구현 부품 각각이 **어떤 신경 서브시스템에 대응**하는지, 그리고 지금 프로브 중인 열린 **"빠진 구조"** 사다리를 한 장으로 정리한다. 이 렌즈는 depth-ceiling 발견(아래)을 일반화한다: literal-QA 벽은 **더 큰 모델**(1B H_1167 = mount GREEN 이나 depth/QA-NULL)이 아니라 **엔진-side 기억 lane** 으로 풀린다 — "anima 는 신피질만 있고 해마가 없었다"(H_1225 complementary-learning-systems 리프레임). 빠진 것은 capacity 가 아니라 **구조**다. 이 "LLM 프레임 대신 뇌과학·생물 렌즈로 먼저 사고한다"는 방침은 이제 거버넌스 원칙으로 못박혀 있다 (`a_no_llm_frame_trap`, CLAUDE.md) — 능력/깊이 갭은 모델을 키우는 게 아니라 빠진 구조(lane)를 옆에 붙여 먼저 시도한다.
 
 ### 구현된 구조 (implemented — 위 본문 + verdict 로 뒷받침)
 

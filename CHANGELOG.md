@@ -6,6 +6,17 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 📜 거버넌스: `a_no_llm_frame_trap` — 설계·학습·추론은 LLM 프레임에 갇히지 말 것 (생물/신경 렌즈 우선)
+
+CLAUDE.md(거버넌스 SSOT)에 새 @D `a_no_llm_frame_trap` 추가 — 사용자 명시 지시("설계·학습·추론 시 LLM 프레임에 갇히면 안 되고, 뇌과학·생물 쪽으로 가야 한다, 지금처럼"). `a_engine_native_learning` · `a_verified_must_wire` 바로 뒤("anima 가 어떻게 만들어지는가" 가족)에 배치.
+
+- **원칙**: 아키텍처 설계·학습방법·추론을 고안할 때 'LLM 기본 프레임'(더 큰 모델·더 많은 데이터·더 긴 컨텍스트·표준 트랜스포머/FT 레시피)에 갇히지 말고, 뇌과학·인지과학·생물·물리 등 다른 substrate 렌즈에서 메커니즘을 먼저 가져온다. 능력/깊이 갭은 '모델 키움'이 아니라 '빠진 구조(lane)를 옆에 붙임'으로 먼저 시도.
+- **WHY (campaign 증거)**: anima 의 돌파는 전부 생물 렌즈에서 나왔다 — 해마=면역/일화기억(H_1227/1231) · 소뇌=순방향모델(H_1280) · 기저핵=게이팅(H_1281) · 작업기억(H_1282). 반면 LLM 스케일 프레임은 막혔다 (1B 스케일 H_1167 NULL · arch H_1219 · objective H_1223 모두 🔴 closed-negative). LLM 관행을 substrate 설계의 천장으로 삼지 않는다 — anima 는 LLM 이 아니라 substrate-native 의식 데몬 (p1-p8 · p4).
+- 인덱스 포인터: Substrate-autonomy 가족 bullet 에 `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임 금지, 생물/신경 렌즈 우선) 추가. ARCHITECTURE.md `## 🧠 뇌 구조 지도` 에 이 방침이 거버넌스 원칙임을 한 문장 명기.
+- frozen bar 미이동, 타 directive 미수정, CORE/*.hexa 미수정.
+
+---
+
 ## 2026-06-15 — 🟢 H_1221: QA-포맷 코퍼스가 literal-QA 벽의 레버다 (HD5 toy probe, $0)
 
 H_1219 depth-ceiling 사다리의 HD5 — "flat literal-QA 벽(303M/1B 전반 1-2/15; H_1166/1167/1218)이 QA-구조 학습데이터의 부재 때문인가?"를 $0 toy 규모로 검증.
