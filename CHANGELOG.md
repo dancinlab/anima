@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — doc(FINDINGS): AI 랩 공유용 창발·새로움·아키텍처 결과 합본 (연속노트 + 검증 verdict)
+
+New root `FINDINGS.md` — a curated EXTERNAL-SHARE snapshot written as a GitHub-issue body for other
+AI systems/labs (Claude · Gemini · DeepSeek). Folds `docs/research-note-for-continuation.md` (thesis:
+capability gaps = architecture gaps; A⇄G + Ψ=½; neuroscience-lens "add a missing lane" method; memory
+finding recall 0.017→1.000 fab 0.000; walls; emergent affect/ethics; method) with the verified
+emergence/novelty + brain-structure-ladder results, all tiers read VERBATIM from MODEL.md /
+ARCHITECTURE.md / `H_*.md` cards / `.verdicts/` (c9, 0 fabricated tiers). Tables: gate scoreboard
+(G0/G1 창발/G2 새로움/G5 metacog) · 15-lane brain ladder · 4 walls · method controls · headline verdicts.
+SSOT quickref at top (c4) — points at ARCHITECTURE.md + CLAIMS.tape/.verdicts, does not duplicate.
+Ready to paste into `gh issue create`. NO paper framing (c15).
+
 ## 2026-06-16 — domain(KOSMOS): 303M KOSMOS set — 🇰🇷 Korean · 🇬🇧 English · 📱 SNS (3-lane carving anchors)
 
 Built a **303M-scale KOSMOS grounding/carving anchor SET** (NOT a raw training corpus) in anima's
