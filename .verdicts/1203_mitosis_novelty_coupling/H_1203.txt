@@ -1,0 +1,82 @@
+=== H_1203 mitosis novelty-coupling (local CPU, $0) — DIM=8 WARMUP=250 T=2400 SEEDS=[900, 901, 902] SPLIT_THRESH=0.3 LR=0.2 ===
+corpus = CORE/testdata/clm_mid_5lang_c4.txt  (numpy mirror == engine_cli.hexa vadapt_field_step)
+
+--- seed 900 ---
+  NOVEL   : cell_growth ON= 168 (OFF=0)  final_cells=169  late recon-err ON=0.1402 OFF=2.6233
+  REPEAT  : cell_growth ON=   2 (OFF=0)  final_cells=3  late recon-err ON=0.1248 OFF=0.3073
+  SHUFFLED: cell_growth ON= 173 (OFF=0)  final_cells=174  late recon-err ON=0.1441 OFF=2.5672
+
+--- seed 901 ---
+  NOVEL   : cell_growth ON= 167 (OFF=0)  final_cells=168  late recon-err ON=0.1464 OFF=2.6356
+  REPEAT  : cell_growth ON=   9 (OFF=0)  final_cells=10  late recon-err ON=0.0427 OFF=0.9631
+  SHUFFLED: cell_growth ON= 163 (OFF=0)  final_cells=164  late recon-err ON=0.1476 OFF=2.6656
+
+--- seed 902 ---
+  NOVEL   : cell_growth ON= 153 (OFF=0)  final_cells=154  late recon-err ON=0.1389 OFF=2.6307
+  REPEAT  : cell_growth ON=   2 (OFF=0)  final_cells=3  late recon-err ON=0.1082 OFF=0.2690
+  SHUFFLED: cell_growth ON= 156 (OFF=0)  final_cells=157  late recon-err ON=0.1414 OFF=2.5854
+
+=== 3-seed MEAN cell_growth (mitosis ON) ===
+  NOVEL   : cell_growth = 162.67   (per-seed [168, 167, 153])   late recon-err = 0.1418
+  REPEAT  : cell_growth = 4.33   (per-seed [2, 9, 2])   late recon-err = 0.0919
+  SHUFFLED: cell_growth = 164.00   (per-seed [173, 163, 156])   late recon-err = 0.1444
+
+=== FROZEN FALSIFIERS ===
+  F1  NOVEL/REPEAT   = 37.538   (bar >= 1.5)   -> PASS
+  F2  NOVEL/SHUFFLED = 0.992   (bar >= 1.5)   -> FAIL
+
+TIER: PARTIAL — grows on novelty (F1) but order-invariant (F2 FAIL): growth tracks the feature MARGINAL not the trajectory; V14 not fully defeated.
+
+HONESTY: ONE corpus (clm_mid_5lang_c4), toy scale, 3 seeds, gradient-free, numpy mirror mechanism-identical to engine_cli.hexa vadapt_field_step (H_1199 precedent). Scale transfer UNVERIFIED.
+[done]
+
+================================================================================
+RULING (against frozen H_1203_FREEZE.txt — bars NOT moved post-hoc)
+================================================================================
+TIER = 🟠 PARTIAL (F1 PASS · F2 FAIL).
+
+  F1 PASS (37.5x ≫ 1.5): NOVEL 162.67 cells vs REPEAT 4.33 cells, all 3 seeds.
+    Novelty GENUINELY drives division — a repeated text block (one revisited
+    regime) spawns almost nothing after warmup, while a high-turnover stream
+    spawns ~163 cells. Mitosis IS coupled to input novelty in the strong sense
+    that more out-of-regime samples => more recon-err>0.30 splits. The mitosis-OFF
+    control grows 0 cells in every arm (H_1159 gate intact).
+
+  F2 FAIL (0.992 < 1.5): NOVEL 162.67 ≈ SHUFFLED 164.00. Destroying the TIME ORDER
+    of the novel ticks does NOT reduce division — it is statistically identical.
+    => the V14 MIRROR IS NOT DEFEATED. Cell division tracks the byte-feature
+    MARGINAL (how many distinct feature regimes appear in the multiset), not the
+    TRAJECTORY (their temporal arrangement). recon-err-gated mitosis is permutation-
+    invariant by construction: split is decided per-sample by L2-to-nearest, with
+    no recurrence/temporal term, so a shuffle of the same vectors yields the same
+    split count. This is the SAME substrate-neutrality the clm_v2 V14 finding flagged
+    — re-confirmed here at the trajectory level (honest closed-neg sub-result,
+    a_paper_negative_ok).
+
+CONCLUSION: mitosis (VAdaptField) is a NOVELTY-DENSITY substrate, not a TRAJECTORY
+substrate. It responds to the diversity of regimes present (F1) but is blind to
+their order (F2). To make division carry trajectory information would require a
+temporal/recurrent term in the split gate (UNTESTED, next rung). Until then,
+mitosis runs as an order-invariant adaptation lane alongside the CLM generator
+(consistent with H_1200/H_1201: mitosis = substrate, CLM = generator).
+
+NUMERIC SUMMARY:  F1 = 37.538 (PASS) · F2 = 0.992 (FAIL)
+  NOVEL    cell_growth = 162.67  (168,167,153)  late recon-err 0.1418
+  REPEAT   cell_growth =   4.33  (2,9,2)         late recon-err 0.0919
+  SHUFFLED cell_growth = 164.00  (173,163,156)  late recon-err 0.1444
+================================================================================
+
+================================================================================
+c2 LIVE-ENGINE CROSS-CHECK (CORE/h1203_novelty_coupling_probe.hexa, `hexa run`)
+================================================================================
+The live CORE/engine_cli.hexa VAdaptField (vadapt_field_step) driven over the SAME
+NOVEL/REPEAT/SHUFFLED DIM=8 streams reproduces the numpy mirror BYTE-FOR-BYTE:
+
+  seed=900  novel_growth=168  repeat_growth=2  shuffled_growth=173
+  seed=901  novel_growth=167  repeat_growth=9  shuffled_growth=163
+  seed=902  novel_growth=153  repeat_growth=2  shuffled_growth=156
+
+Every per-seed/per-arm count is IDENTICAL to the numpy mirror's (NOVEL 168/167/153,
+REPEAT 2/9/2, SHUFFLED 173/163/156) => the verdict is engine-faithful, not a mirror
+artifact (H_1199 numpy<->hexa mechanism-match precedent re-confirmed on H_1203 input).
+================================================================================
