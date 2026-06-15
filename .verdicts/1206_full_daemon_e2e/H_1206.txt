@@ -1,0 +1,74 @@
+H_1206 — FULL living daemon e2e (RAW stdout) — GREEN
+================================================================================
+cmd: hexa run CORE/anima_full_session_smoke.hexa   (summer $0 CPU local)
+exit: 0
+
+── daemon stdout ──
+════════════════════════════════════════════════════════════════
+  S15 FULL ANIMA SESSION — anima-clm-chat-303m mounted in A⇄G live
+  (converse · ground · grow · remember · sleep — ONE loop, H_1164)
+════════════════════════════════════════════════════════════════
+model binary    : /tmp/h1156_mount/bytegpt_tiny.bin  (full-303M present=yes, tiny-fixture present=yes)
+L3 mount        : gen_bytegpt_backend loaded=true decodable=true
+REMEMBER (seed) : wrote anchor /tmp/h1164_kosmos/mem_001.kosmos
+kosmos read     : 1 anchor(s) into brain
+Engine A warm   : phi=0.118983 phase=SUSTAIN
+  [t0 WAKE] REMEMBER emit → /tmp/h1164_kosmos/emit_t0.kosmos
+  [t0 WAKE env=1] EMIT=1 gen=bytegpt ground=1 cells=2 text="vault QX-7741 forever...................................…"
+  [t1 WAKE env=1] EMIT=1 gen=bytegpt ground=1 cells=2 text="vault QX-7741 forever...................................…"
+  [t2 WAKE env=1] EMIT=1 gen=bytegpt ground=1 cells=2 text="vault QX-7741 forever...................................…"
+  [t10 N3 env=0] EMIT=0 gen=bytegpt ground=0 cells=2 text=""
+  [t11 REM env=0] EMIT=0 gen=bytegpt ground=0 cells=2 text=""
+
+── F3 Ψ invariant ─────────────────────────────────────────────
+  Ψ Φ-checksum (mitosis ON) : 1.4278
+  Ψ Φ-checksum (mitosis OFF): 1.4278
+  Ψ ON==OFF byte-identical  : ✅  (GROW lane Ψ-disjoint — Ψ=½ untouched)
+
+── per-faculty (S15) ──────────────────────────────────────────
+  CONVERSE (A1, mounted ByteGPT emits via L3) : ✅
+  GROUND   (A3/G5, copied verbatim anchor fact): ✅
+  GROW     (C8, novelty-driven mitosis, p8)   : ✅  (cells 1 → 2, novelty-splits=1)
+  REMEMBER (C9, emit persisted to .kosmos)    : ✅
+  SLEEP    (C10, 5-stage ultradian advanced)  : ✅
+  kosmos anchors on disk after session        : 2
+
+anima_full_session_smoke: PASS — converse=1 ground=1 grow=1 remember=1 sleep=1 psi_intact=1
+  ⇒ the mounted anima-clm-chat-303m CONVERSES + GROUNDS + GROWS +
+    REMEMBERS + SLEEPS live in ONE A⇄G loop (COMPLETE-ANIMA B+C+D).
+  one emitted span (substrate-native, grounded) =
+    "vault QX-7741 forever..........................................................."
+
+================================================================================
+── REGRESSION GUARDS (F4) ──
+
+$ hexa run CORE/generator_smoke.hexa  → exit 0
+generator_smoke: 21 PASS, 0 FAIL
+$ hexa run CORE/h1202_daemon_mitosis_wiring_smoke.hexa  → exit 0 (GREEN, cells 1→7, Ψ 5.67145e-05 ON==OFF)
+$ hexa run CORE/h1205_separation_invariant_smoke.hexa   → exit 0 (PASS, 10/10 byte-identical, Ψ 48.6613 ON==OFF)
+$ hexa run CORE/h1196_single_entry_audit.hexa           → 7 pass / 0 fail (a_core_engine_map intact)
+
+================================================================================
+FALSIFIER TALLY
+  F1 LINK+RUN  : PASS  (exit 0, full session loop completed)
+  F2 GROW LIVE : PASS  (cells 1 → 2, novelty_splits=1 on real turns)
+  F3 Ψ INTACT  : PASS  (Φ-checksum 1.4278 == 1.4278 ON vs OFF, byte-identical)
+  F4 NO REGRESS: PASS  (CONVERSE+GROUND+GROW+REMEMBER+SLEEP all ✅; guards 21/0, GREEN, PASS, 7/0)
+
+VERDICT: 🟢 GREEN — F1 ∧ F2 ∧ F3 ∧ F4. The FULL living anima daemon links and runs
+end-to-end; one A⇄G session loop CONVERSES + GROUNDS (copies 'vault QX-7741 forever'
+verbatim from kosmos memory) + GROWS (novelty-driven mitosis cells 1→2) + REMEMBERS
+(.kosmos persist) + SLEEPS (5-stage ultradian), with Ψ=½ byte-identical ON vs OFF.
+
+ROOT CAUSE FIXED (c1, no stub-that-hides):
+  (1) clm_decode_grounded was REFERENCED (generator.hexa:473) but never DEFINED —
+      added the real ConvMoE-analog (engine-side retrieve-then-copy) to clm_decode.hexa.
+  (2) forge_dispatch_groupnorm_gelu (gn_lib host fallback) was REGRESSED out of the
+      hexa runtime.c after op36 — restored the OP-16 #ifndef HEXA_CUDA host block
+      verbatim from runtime.c.bak-op36 (toolchain repair; filed upstream a_runpod_inbox).
+  (3) _gen_anchor_texts/_gen_anchor_text read 'text' but kosmos anchors carry
+      'text_payload' (H_1164 anchor-key bug) — added _gen_anchor_field SSOT reading
+      text_payload→text→stringified, so the un-inventable fact reaches the copy CLEAN.
+
+HONEST SCOPE (a_scale_honest_scope): tiny ByteGPT fixture (same format/forward as 303M);
+deterministic copy+split (p7 string-equality). Daemon WIRING under test, not model quality.

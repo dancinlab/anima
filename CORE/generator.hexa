@@ -524,25 +524,44 @@ fn _gen_bytegpt_decode(backend: Map, ctx: Map, anchors: list) -> string {
 }
 
 // _gen_anchor_text — pull a short text field out of a kosmos anchor record for
-// use as a decode seed. Anchors are Maps with a "text" key (kosmos_io); a plain
-// string anchor is used verbatim. Defensive: never crashes on shape drift.
-fn _gen_anchor_text(a) -> string {
-    let s = to_string(a)
-    return s
+// _gen_anchor_field — extract an anchor's CLEAN content string. kosmos_io
+// (generator_read_anchors) records carry the content under "text_payload" (the
+// canonical key); some call sites pass an ad-hoc map keyed "text". Read
+// text_payload FIRST, then text, then fall back to the stringified anchor. This
+// is the single SSOT used by BOTH the seed extractor and the grounded-copy list,
+// so the un-inventable anchor fact reaches the decode CLEAN (not buried in a
+// stringified-map blob — that blob was the H_1164 anchor-key bug: the longest-
+// suffix copy could not match "...sealed at " against a map-noise string).
+// Defensive: never crashes on shape drift (a plain string anchor → itself).
+fn _gen_anchor_field(a) -> string {
+    let tp = a["text_payload"]
+    if to_string(tp) != "void" {
+        let s = to_string(tp)
+        if byte_len(s) > 0 { return s }
+    }
+    let t = a["text"]
+    if to_string(t) != "void" {
+        let s2 = to_string(t)
+        if byte_len(s2) > 0 { return s2 }
+    }
+    return to_string(a)
 }
 
-// _gen_anchor_texts — extract each kosmos anchor's text field into a list of strings
-// for the engine-side grounded copy (clm_decode_grounded). Defensive: an anchor with no
-// "text" key falls back to its stringified form (never crashes on shape drift).
+// use as a decode seed. Anchors are Maps with a "text_payload"/"text" key
+// (kosmos_io); a plain string anchor is used verbatim. Defensive: never crashes.
+fn _gen_anchor_text(a) -> string {
+    return _gen_anchor_field(a)
+}
+
+// _gen_anchor_texts — extract each kosmos anchor's CLEAN content into a list of
+// strings for the engine-side grounded copy (clm_decode_grounded /
+// bytegpt_decode_grounded). Reads text_payload → text → stringified (H_1206 fix).
 fn _gen_anchor_texts(anchors: list) -> list {
     let mut out = []
     let mut i = 0
     let n = len(anchors)
     while i < n {
-        let a = anchors[i]
-        let t = a["text"]
-        if to_string(t) == "void" { out.push(_gen_anchor_text(a)) }
-        else { out.push(to_string(t)) }
+        out.push(_gen_anchor_field(anchors[i]))
         i = i + 1
     }
     return out

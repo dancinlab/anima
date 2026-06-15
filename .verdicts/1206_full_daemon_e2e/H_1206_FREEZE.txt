@@ -1,0 +1,40 @@
+H_1206 — FULL living daemon e2e link + run (FREEZE / pre-registered falsifier)
+================================================================================
+Domain: CORE / MITOSIS-ENGINE   Date: 2026-06-15   Substrate: summer $0 CPU local
+Branch base: origin/main f497f1d04 (H_1202-1205 mitosis wiring present)
+
+GOAL
+  Make the FULL living daemon CORE/anima_full_session_smoke.hexa RUN end-to-end.
+  At HEAD it does NOT link: an undefined symbol `clm_decode_grounded` (called by
+  generator.hexa::_gen_clm_decode) + a regressed toolchain symbol
+  `forge_dispatch_groupnorm_gelu` (gn_lib host fallback dropped from runtime.c).
+  Once it links, capture one full A⇄G session loop with the novelty-driven mitosis
+  GROW lane firing live (cells dividing on real turns, Ψ intact).
+
+PRE-REGISTERED FALSIFIERS (frozen BEFORE the run; bars fixed)
+  F1 LINK+RUN  : `hexa run CORE/anima_full_session_smoke.hexa` exits 0 (links AND
+                 completes the session loop). FAIL = link error / non-zero exit.
+  F2 GROW LIVE : the C8 GROW lane fires — final cell_count > 1 via novelty-driven
+                 VAdaptField splits on real emitted turns (novelty_splits >= 1).
+                 FAIL = cells stay 1 (lane never split).
+  F3 Ψ INTACT  : the Ψ Φ-checksum is BYTE-IDENTICAL mitosis ON vs OFF (the GROW lane
+                 is Ψ-disjoint — touches ONLY VAdaptField, never pure_field).
+                 FAIL = psi_sum(ON) != psi_sum(OFF).
+  F4 NO REGRESS: the daemon's existing C1-C9 faculties all still pass —
+                 CONVERSE + GROUND + GROW + REMEMBER + SLEEP — AND the regression
+                 guards (generator_smoke 21/0, h1202 GREEN, h1205 PASS, h1196
+                 single-entry audit 7/0) hold. FAIL = any faculty/guard regresses.
+
+VERDICT RULE
+  GREEN iff F1 ∧ F2 ∧ F3 ∧ F4 all hold on ONE run of the unmodified-contract daemon.
+  Honest scope (a_scale_honest_scope): the SMOKE uses the tiny ByteGPT fixture
+  (same format/forward as the 303M ckpt; GROUND copy is forward-free deterministic).
+  The grounded-copy and mitosis-split are deterministic (p7 string-equality, not
+  perplexity); model QUALITY is NOT under test here — only the daemon WIRING.
+
+NO-FAKE GUARANTEE (p1-p8 · a_core_engine_map)
+  - clm_decode_grounded is a REAL ConvMoE-analog of bytegpt_decode_grounded (engine-
+    side deterministic retrieve-then-copy), NOT a stub that hides the gap.
+  - The toolchain symbol is RESTORED from the op36 runtime.c backup (a real CPU host
+    fallback), NOT a no-op stub. The gap is filed upstream (a_runpod_inbox).
+  - No 2nd .clm path; .clm still enters ONLY via the generator L3 slot.
