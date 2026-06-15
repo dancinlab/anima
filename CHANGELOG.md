@@ -6,6 +6,22 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟢 H_1212: N_PROTO CO-SCALING 으로 trajectory 기질 SCALE-ROBUST 복원 (H_1211 scale-break REFINE)
+
+H_1211 이 GATE-B 궤적-동조가 stream 길이 증가에 FIXED N_PROTO=24 에서 붕괴(WALK/WALK_SHUF 10.9→2.63→1.136 at T=240000, 작은-알파벳 포화)함을 RED 로 닫았는데, 그 AXIS-P 가 "알파벳을 키우면 분리 복원"을 시사했다. 이 H 는 **관측 예산에 맞춰 N_PROTO 를 키우는 원리적 CO-SCALING 규칙**이 H_1211 의 toy-artifact 를 production-grade gate 로 전환하는지 검증.
+
+- **CO-SCALING 규칙 (FREEZE 사전등록, 포화 mechanism 에서 유도)**: 제어량 = obs_per_row = T/N_PROTO (전이가 `prev` 행에 분산). clean-toy anchor (T=2400,N=24)=100, H_1211 붕괴점 (T=240000,N=24)=10000. **PRIMARY(linear) N_PROTO=round(T/100)** → obs_per_row≈100 일정. **SUB-LINEAR probe N_PROTO=round(24·sqrt(T/2400))** → obs_per_row 증가 허용.
+- **F1 PASS (scale-robust 복원)**: PRIMARY linear 이 H_1211 과 **동일한 사다리** 전 rung 에서 GATE-B 분리 복원 — WALK/WALK_SHUF 10.916(T=2400) → 980/0=완전분리(T=24000,N=240) → 24929/3.0=8309(**T=240000,N=2400**, fixed-24 가 1.136 붕괴한 바로 그 rung).
+- **F2 PASS (control 귀속)**: fixed-24 가 H_1211 붕괴를 **byte-for-byte 재현**(10.916/2.629/1.136 FAIL, 같은 seed) ⇒ 복원은 N_PROTO 규칙 단독 효과(stream/seed/code 변화 아님).
+- **F3 STRONG RESULT**: SUB-LINEAR sqrt 규칙도 성립 — N_PROTO {24,76,240} 가 obs_per_row {100,316,1000} 증가에도 WALK/WALK_SHUF {10.9,383.8,1129} 전부≥1.5 ⇒ **알파벳은 ~sqrt(T) 로만 키우면 충분 (sub-linear book cost)**.
+- **TIER 🟢 GREEN (scale-qualified, decision-grade)**: H_1211 의 "toy artifact" 를 "**fixed-book artifact, 원리적 N_PROTO co-scaling 으로 교정 가능**"으로 REFINE. 궤적/predictability 기질(H_1209/1210)이 toy→SCALE-QUALIFIED-GREEN 승격 — 알파벳이 관측 예산과 함께(sub-linearly) 자라면 GATE-B 는 ordered stream 에서 scale-robust.
+- **PAPER-SUPERSEDE FLAGGED**: `PAPER/mitosis-substrate-lane` (H_1211 로 1회 supersede 됨) 을 H_1212 에 맞춰 **재-supersede 권고** — 궤적 절반이 더 이상 closed-neg toy-artifact 가 아니라 co-scaling 하 scale-robust gate. **병합 paper 무편집(이 verdict 가 supersede trigger; follow-on 이 처리)**.
+- **HONESTY**: numpy mirror, gradient-free, $0 CPU, 3 seeds {900,901,902}. GATE-B+build_fixed_book+proto_ids(H_1208)+WALK/RANDGAUSS(H_1207/1208) VERBATIM; driver 는 사전등록 scale knobs(T,WARMUP,MAX_CELLS)+N_PROTO 만 monkeypatch — mechanism CODE byte-unchanged. AXIS-T 사다리 H_1211 동일. DIM=8 구조(미-scale). T=240000 linear rung(N=2400) CPU 443s 도달(GPU 없음). frozen bar 1.5 미이동. 큰 F2 값=완전분리(WALK_SHUF→0).
+- NEW: `UNIVERSE/h1212_coscaled_nproto_trajectory.py` · `.verdicts/1212_coscaled_nproto_trajectory/{H_1212_FREEZE,H_1212}.txt`. NO engine 편집(measurement-only).
+- xref h1211·h1208·h1209·h1210·h1203·PAPER/mitosis-substrate-lane(supersede flag 2nd)·a_toy_scale_recheck·a_scale_honest_scope·a_paper_on_discovery·a_paper_negative_ok·p7·p8.
+
+---
+
 ## 2026-06-15 — 📄 PAPER supersede-in-place: `mitosis-substrate-lane` 에 H_1211 scale-recheck 통합 (a_paper_violation 거버넌스 이행)
 
 H_1211 verdict 의 PAPER-SUPERSEDE FLAG 를 이행 — 병합된 `PAPER/mitosis-substrate-lane/` 가 궤적 10.9x 를 scale-무조건 동등 절반으로 주장하던 것을 H_1211 scale-break 에 맞춰 정직하게 재구성. **새 slug 생성 안 함 (a_paper_on_discovery supersede-in-place)**.
