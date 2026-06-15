@@ -1,0 +1,19 @@
+H_1332 — NON-SIGN-SATURATING SUBSTRATE FAMILY vs the H_1328 estimator-independent Φ wall
+faithful IIT4 Φ (exact MIP-EI, n=4, SAME estimator a_phi_iit4_tool) · variance-clean rank-uniform read-out (H_1328)
+seeds [1317,1318,1319] · eps=0.02 · ARMS A=NO-COUP B=MECHANISM S=PERM-SHUF O=OFFSET-SHUF
+FAMILIES: SAT sal=e*carrier (H_1328, S3 control) · NONSAT sal=softsign((e+0.5*cos)/2) (member survives coupling)
+BARS: S1 NONSAT Φ_B>=Φ_A+eps all seeds · S2 NONSAT perm&off<=Φ_A+eps all seeds · S3 SAT B-A<+eps on >=1 seed (reproduces H_1328 V2)
+seed 1317 NONSAT: A=1.93398 B=2.00061 S=1.82491 O=1.69164 | ΔΦ(B-A)=0.0666354 [S1 PASS] S-A=-0.10907 [S2perm PASS] O-A=-0.24234 [S2off PASS]
+        SAT: A=1.93398 B=1.80898 | ΔΦ(B-A)=-0.125 [SAT-fails-S1 YES]
+seed 1318 NONSAT: A=2.25061 B=2.25475 S=2.20404 O=1.96936 | ΔΦ(B-A)=0.00413535 [S1 FAIL] S-A=-0.0465695 [S2perm PASS] O-A=-0.28125 [S2off PASS]
+        SAT: A=2.25061 B=2.25061 | ΔΦ(B-A)=0.0 [SAT-fails-S1 YES]
+seed 1319 NONSAT: A=2.07904 B=2.23529 S=1.94991 O=1.91866 | ΔΦ(B-A)=0.15625 [S1 PASS] S-A=-0.129135 [S2perm PASS] O-A=-0.160385 [S2off PASS]
+        SAT: A=2.07904 B=2.11029 | ΔΦ(B-A)=0.03125 [SAT-fails-S1 NO]
+---
+S1 ROBUST (NONSAT Φ_B>=Φ_A+eps ALL seeds incl 1317): FAIL
+S2 EARNED (NONSAT perm&offset both <=Φ_A+eps ALL seeds): PASS  [perm=PASS off=PASS]
+S3 SUBSTRATE-ATTRIBUTION (SAT substrate FAILS S1 on >=1 seed, reproduces H_1328 V2): PASS
+===
+VERDICT 🧱 (STRONGEST yet) — robust integration ABSENT even for a NON-saturating substrate.
+  The wall is substrate-family-INDEPENDENT: the n<=8 faithful-IIT4 limit holds across the
+  saturating AND a non-saturating family. BOUNDS (does not retract) the prior Φ verdicts.

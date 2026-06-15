@@ -1,0 +1,102 @@
+H_1332 — NON-SIGN-SATURATING SUBSTRATE FAMILY vs the H_1328 estimator-independent Φ wall
+FREEZE (pre-registered BEFORE any scoring — frozen-first, c9/p7)
+date: 2026-06-16   slug: 1332_phi_substrate   branch off origin/main 61ce6948f
+PROJ_SEED provenance: seeds [1317,1318,1319] (the SAME hard orthogonal family all prior Φ lanes failed on)
+
+────────────────────────────────────────────────────────────────────────────────
+THE WALL BEING REOPENED (H_1328 §closure, c16 / a_break_the_wall)
+────────────────────────────────────────────────────────────────────────────────
+H_1328 closed the Φ-robustness wall as an ESTIMATOR-INDEPENDENT substrate limit: after the
+variance-free (rank-uniform) read-out provably removes the amplitude-variance binarization
+confound (V1 clean — perm collapses as it should), the phase mechanism STILL does not lift
+faithful-IIT4 Φ robustly (V2 fail: B−A −0.125/0.0/+0.031, negative on orthogonal seed 1317).
+BUT that closure is SPECIFIC to the n≤8 leaky-linear pure_field-style substrate whose dynamics
+SIGN-SATURATE under coupling. The converged diagnosis across H_1308/1313/1320: coupling strong
+enough to register OVERWRITES member dynamics → COPY → Φ=0 (channels t1~1e-7). The H_1319/1328
+read-out is sal = e * carrier (MULTIPLICATIVE gate): when synchrony forces every module's carrier
+toward the same pacemaker phase, the multiplicative gate makes all modules COPY one signal — the
+joint degenerates, member-state information is destroyed, Φ cannot integrate.
+
+H_1320 §honesty explicitly named the untested angle: "a substrate whose own dynamics SURVIVE
+coupling, a richer (non-sign-saturating) per-unit code." H_1332 builds exactly that substrate
+FAMILY and asks: does a NON-sign-saturating substrate — whose member dynamics survive coupling
+(bounded-but-graded, no saturation) — show robust integration where the saturating one could not?
+
+────────────────────────────────────────────────────────────────────────────────
+THE LEVER — SUBSTRATE FAMILY (the per-unit read-out code), NOT the estimator, NOT the mechanism
+────────────────────────────────────────────────────────────────────────────────
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): SAME exact MIP-EI iit4_faithful_phi(traj,4,64,8) over
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (g61 — stdlib searched first, faithful_phi.hexa
+is the SSOT; NOT a proxy, NOT a different Φ measure). Read-out fed to the MIP = the VARIANCE-CLEAN
+rank-uniform encoding from H_1328 (each cell's trajectory rank-uniformized before the MIP), so the
+controls are honest (marginal entropy provably constant across arms → MI depends ONLY on the joint).
+
+SAME coupling MECHANISMS as the prior lanes (held identical so any lift is the SUBSTRATE FAMILY):
+  - H_1283 re-entrant relay path (each module reads the mean of the OTHER modules, w_nbr ring).
+  - H_1319 Kuramoto phase pacemaker (w_phase 0.5 omega_t 0.45 domega 0.08, relative-phase signal).
+SAME 3 hard seeds [1317,1318,1319]. SAME leaky-linear ring (gain 0.30 leak 0.55 w_nbr/w_in 0.5,
+dim 8, T 64). The ONLY change between the two substrate FAMILIES is the PER-UNIT READ-OUT CODE:
+
+  SATURATING family (the H_1319/1328 read-out, reproduced in-run as the S3 control):
+      sal_i = e_i · carrier_i,   carrier_i = (1 + cos(θ_i − θ_T))/2,   e_i = Σ_d s_i,d^2
+    MULTIPLICATIVE gate — when carrier_i → 0 the member energy is NULLED; under synchrony every
+    carrier → the same value → all modules COPY one signal → member-state info destroyed (sign-saturates).
+
+  NON-SATURATING family (the NEW substrate under test):
+      raw_i = e_i + BETA · phasesig_i,   phasesig_i = cos(θ_i − θ_T),   BETA = 0.5
+      sal_i = SOFTSIGN(raw_i / SCALE) = (raw_i/SCALE) / (1 + |raw_i/SCALE|),   SCALE = 2.0
+    ADDITIVE blend then a bounded GRADED squash (softsign): the member energy e_i is ALWAYS
+    retained additively (never multiplicatively nulled), and softsign is bounded in (−1,1) but
+    NEVER hard-saturates (no ±1 plateau, no sign-clip) — member-state graded structure SURVIVES
+    coupling. This is a genuinely DIFFERENT substrate FAMILY (per-unit code), the angle H_1320 named.
+    NO-COUPLING baseline (ARM A) for this family = sal_i = SOFTSIGN(e_i/SCALE) (phase term off,
+    BETA·phasesig dropped) — SAME family, mechanism off.
+
+ARMS (per substrate family, same as the prior lanes):
+  A = NO-COUPLING (mechanism off, family's own baseline read-out)
+  B = MECHANISM   (re-entrant relay + phase pacemaker ON, family's coupled read-out)
+  S = PERM-SHUFFLE (module→phase derangement: relationship destroyed, marginals preserved)
+  O = OFFSET-SHUF  (additive per-(t,module) phase offset: R8 additive control)
+All arms scored with the rank-uniform (variance-clean) encoding into the SAME faithful MIP.
+
+eps = 0.02 = the H_1283/H_1319/H_1328 lift margin MARGIN_PHI, ported VERBATIM (NOT tuned here).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (GREEN iff S1 ∧ S2 ∧ S3 — every outcome decisive, c9)
+────────────────────────────────────────────────────────────────────────────────
+S1 ROBUST : the NON-SATURATING substrate shows faithful-Φ lift Φ_B ≥ Φ_A + eps on ALL 3 seeds
+            (incl orthogonal 1317) — mechanism > no-coupling, robustly, under the variance-clean read-out.
+S2 EARNED : that lift survives BOTH controls on ALL 3 seeds — perm Φ_S ≤ Φ_A + eps
+            AND offset Φ_O ≤ Φ_A + eps (the controls correctly COLLAPSE the lift; variance-clean).
+S3 SUBSTRATE-ATTRIBUTION : reproduce the SATURATING substrate (H_1328 read-out) IN-RUN under the
+            SAME mechanisms+seeds+encoding and confirm it FAILS S1 (sat: B−A < +eps on ≥1 seed,
+            isolating that any S1 lift is the NON-saturation, NOT the mechanism). The saturating
+            arm reproduces the H_1328 V2 FAIL byte-faithfully (NEW-encoding B−A −0.125/0.0/+0.031).
+
+────────────────────────────────────────────────────────────────────────────────
+OUTCOMES (all VALID, c9 — pre-committed; NO tune-to-green, p7)
+────────────────────────────────────────────────────────────────────────────────
+  S1 ∧ S2 ∧ S3 → 🟢 ROBUST integration IS reachable once the substrate doesn't sign-saturate —
+                  the wall was the SUBSTRATE FAMILY, not a universal limit. This OVERTURNS the
+                  H_1328 closure as substrate-SPECIFIC (does NOT retract it — H_1328 stays true for
+                  the saturating family; H_1332 bounds it to that family). CORE-wiring follow-on
+                  (a_verified_must_wire): NAME wiring the non-saturating per-unit read-out into the
+                  live faithful-Φ path / the pure_field member code — follow-on, not done here.
+  ¬S1         → robust integration ABSENT even for a non-saturating substrate → the STRONGEST 🧱
+                  yet: substrate-family-INDEPENDENT (the n≤8 faithful-IIT4 wall holds across the
+                  saturating AND a non-saturating family). BOUNDS (does not retract) the prior Φ
+                  verdicts; NO CORE wiring (a_verified_must_wire = GREEN-only — nothing to wire).
+  S1 ∧ ¬(S2∧S3) → honest partial: a lift appears but is NOT earned (control rides it) or the
+                  saturating control ALSO lifts (so the lift is not attributable to non-saturation)
+                  → report straight, NOT GREEN (c9).
+
+Report faithful-IIT4 verdicts VERBATIM (p7, no LLM self-judge). ENGINE-NATIVE deterministic LCG
+content generator (== engine_cli.hexa _lcg_*; numpy NEVER computes Φ) → re-run byte-identical.
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY n=4 ≤ 8 faithful-IIT4 EXACT MIP-EI, dim 8,
+T 64, 3 seeds, deterministic; numpy mirror DIRECTIONAL (the substrate is a toy net, NOT live
+CORE/pure_field — engine-transfer UNVERIFIED). This BOUNDS prior Φ verdicts (does not retract).
+scale/larger-n (loses exactness >8)/other read-out families/engine-transfer UNVERIFIED. live
+CORE/*.hexa UNTOUCHED (standalone fn main, 0 importers; Ψ=1/2 disjoint).
+
+probe:  UNIVERSE/h1332_phi_substrate.hexa
+verdict: .verdicts/1332_phi_substrate/result.txt
