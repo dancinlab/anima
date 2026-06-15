@@ -1,0 +1,49 @@
+H_1315 — Korean mitosis over the 303M trunk's LEARNED hidden representation vs the raw-byte ~2.9 ceiling
+FROZEN-FIRST pre-registration (written BEFORE the GPU run scored anything; c9/p7; NO tune-to-green)
+=====================================================================================================
+
+THREAD CONTEXT
+  H_1307 (#2213): gradient-free Korean mitosis (cells only SPLIT, p8) scaled to 50x real-KO corpus
+    floors held-out KO next-byte CE at ~2.9 nat/byte (CTX=4 raw-byte substrate SATURATES). The ceiling.
+  H_1311 (#2215, RED HONEST-NEGATIVE): a RICHER RAW-BYTE substrate (longer raw-byte ctx 8/16/32, per-cell
+    ridge head) does NOT break 2.9 — every richer rung WORSE. The named surviving lever: partition over a
+    LEARNED representation instead of raw bytes — specifically the mounted 303M trunk's hidden rep.
+
+THE QUESTION (likely DECISIVE — closes the axis either way)
+  Does the SAME gradient-free Korean mitosis (grow-op + cell budget held FIXED, verbatim H_1306/1307/1311)
+  but partitioning over the MOUNTED 303M TRUNK's hidden representation at each byte position (ckpt
+  h1129c_chat.pt, forward = GRADIENT-FREE — just READ ln_f(x), NO backprop) push held-out KO CE BELOW 2.9,
+  while raw-byte mitosis (G0) can't?
+
+ARMS (same REAL KO/EN R2 window as H_1307 RUN A, sha-asserted byte-identical; same grow-op + GROW_MAX;
+  ONLY the partition INPUT varies; 3 seeds; held-out DETERMINISTIC next-byte CE)
+  G0  raw-byte ctx4 — the 2.9 ceiling ref (H_1307/H_1311 S0; count-MLE head).
+  G1  partition over the 303M TRUNK HIDDEN REP (ln_f at i-1, the learned embedding predicting byte i),
+      projected to PROJ_DIM=16 by a FIXED seeded random projection (gradient-free); same grow-op/budget.
+  CONTROL random-embed — SAME PROJ_DIM, hidden from a RANDOMLY-INIT (untrained) trunk of the IDENTICAL
+      arch, SAME projection. Isolates "LEARNED rep" from "just a higher-D non-byte space of same width".
+  CONTROL shuffle — G1's trunk hidden with the hidden->byte ALIGNMENT shuffled (feature rows permuted away
+      from labels). Leakage / partition-handle check; a real learned-rep gain must DIE under shuffle.
+
+FROZEN bars (MARGIN = 0.02 nats/byte; the H_1307 ceiling ref = 2.9475)
+  (B1 BREAK-2.9)  mean G1 KO CE (3 seeds) < 2.9475.
+  (B2 LEARNED)    mean G1 KO CE beats BOTH controls by >= 0.02 (G1 < random-embed - 0.02 AND
+                  G1 < shuffle - 0.02). The lift is the LEARNED rep, not capacity/dim/leakage.
+  (B3 RETENTION)  mean G1 EN CE <= G1 EN CE[2-cell seed] + 0.05 (no catastrophic forgetting).
+
+VERDICT MAP
+  B1 AND B2          -> REPRESENTATION-bound: the 303M trunk rep breaks 2.9 -> mitosis = structure-over-
+                        learned-rep (the trunk supplies the representation raw-byte mitosis can't build).
+  B1 AND NOT B2      -> AMBIGUOUS-capacity: G1 below 2.9 but ties a control -> lift is dim/capacity, NOT
+                        the learned rep (honest, anti-Goodhart).
+  NOT B1             -> TERMINAL axis-closure: even the trunk rep does NOT break 2.9 with gradient-free
+                        mitosis at this scale -> the Korean depth needs gradient learning, not gradient-
+                        free grow-on-top, at this scale.
+
+FROZEN knobs (NOT moved): V=256, GROW_MAX=40, SPLIT_THRESH_CE=0.05, MIN_OWNED=8, LAPLACE=1.0; even/odd
+  train/test; H_1307 RUN A window/stride. NEW before-run: PROJ_DIM=16, PROJ_SEED=1313, TRUNK_CTX=64,
+  HIDDEN_LAYER = ln_f output; rep_pairs=24000 KO / 8000 EN (trunk-forward subsample); seeds 0,1,2.
+
+SCALE-HONEST: toy/DIRECTIONAL — summer RTX 5070 (sm_120), $0; the mitosis grow-op is a numpy/torch mirror
+  (engine-transfer to live hexa = follow-on); NO fluency claim. REAL Korean only (p1-p8); R2 keys env-only,
+  never logged (c7).
