@@ -52,6 +52,13 @@ def real_capture(serial, seconds):
         heart_ch = []
     board = BoardShim(board_id, params)
     board.prepare_session()                              # 실패 시 예외 → 중단 (폴백 없음)
+    # PPG(심박)는 analog pin A5(=D11, purple) 첫 Aux 슬롯 → Cyton 을 analog 읽기 모드(/2)로.
+    # (cyton_ppg_wiring_official: "D11 is read as analog pin A5 and sent in the first Aux data slot")
+    try:
+        board.config_board("/2")
+        print("[capture] analog mode(/2) 설정 — PPG(A5) Aux 슬롯 활성")
+    except Exception as e:
+        print(f"[capture] analog mode 설정 실패(무시): {e}")
     board.start_stream()
     print(f"[capture] REAL streaming {seconds}s @ {fs}Hz board=CYTON_DAISY({board_id}) "
           f"EEG{len(eeg_ch)}ch + HEART(analog){len(heart_ch)}ch port={serial} ...")

@@ -54,29 +54,39 @@ fn main() {
         let mut mx = 0.0 - 1.0e30
         let mut t = 0
         while t < n_samp { let v = samples[base + t]; sm = sm + v; if v < mn { mn = v } if v > mx { mx = v } t = t + 1 }
-        let mean = sm / to_float(n_samp)
         let amp = mx - mn
-        // 5-점 이동평균 평활 후 평균-상승교차 카운트
-        let mut beats = 0
-        let mut prev_above = false
-        t = 2
-        while t < n_samp - 2 {
-            let smooth = (samples[base+t-2] + samples[base+t-1] + samples[base+t] + samples[base+t+1] + samples[base+t+2]) / 5.0
-            let above = smooth > mean
-            if above && !prev_above { beats = beats + 1 }
-            prev_above = above
-            t = t + 1
+        // detrend: 윈도우 이동평균(baseline) 제거 → 느린 baseline drift 제거 (PPG 표준)
+        let mut d = []
+        let mut t2 = 0
+        while t2 < n_samp {
+            let mut s2 = 0.0
+            let mut cnt = 0
+            let mut u = t2 - 75
+            while u <= t2 + 75 { if u >= 0 && u < n_samp { s2 = s2 + samples[base + u]; cnt = cnt + 1 } u = u + 1 }
+            d = d.push(samples[base + t2] - s2 / to_float(cnt))
+            t2 = t2 + 1
         }
-        let bpm = to_float(beats) / dur * 60.0
-        println("  ch" + str(hc) + " (analog) : amp=" + str(amp) + " beats=" + str(beats) + " → " + str(bpm) + " BPM")
-        // 진폭 가장 큰 채널 = PPG 신호 실린 채널로 채택
-        if amp > best_amp { best_amp = amp; best_bpm = bpm; best_ch = hc }
+        // 자기상관 최대 lag → 박동 주기. lag 41(180BPM)~187(40BPM) @125Hz.
+        let mut bestlag = 41
+        let mut bestr = 0.0 - 1.0e30
+        let mut L = 41
+        while L <= 187 {
+            let mut r = 0.0
+            let mut t3 = 0
+            while t3 < n_samp - L { r = r + d[t3] * d[t3 + L]; t3 = t3 + 1 }
+            if r > bestr { bestr = r; bestlag = L }
+            L = L + 1
+        }
+        let bpm = 60.0 * fs / to_float(bestlag)
+        println("  ch" + str(hc) + " (analog) : amp=" + str(amp) + " lag=" + str(bestlag) + " → " + str(bpm) + " BPM")
+        // PPG signal = D11=A5 = 첫 Aux 슬롯 = ch0 (cyton_ppg_wiring 확정). ch0 을 심박으로 채택.
+        if hc == 0 { best_amp = amp; best_bpm = bpm; best_ch = 0 }
         hc = hc + 1
     }
 
     println("")
     // 생리적 범위(30-220 BPM) + 신호 진폭 충분 → 유효
-    let valid = best_amp > 1.0 && best_bpm >= 30.0 && best_bpm <= 220.0
+    let valid = best_amp > 100.0 && best_bpm >= 40.0 && best_bpm <= 180.0   // F_PPG_01/02
     if valid {
         println("💓 심박 = " + str(best_bpm) + " BPM (ch" + str(best_ch) + ", PPG amp=" + str(best_amp) + ") — 실 측정.")
     } else {
