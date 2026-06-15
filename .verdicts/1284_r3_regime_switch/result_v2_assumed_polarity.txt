@@ -1,0 +1,39 @@
+H_1284_R3 v2 — ASSUMED-POLARITY SWITCHER (frozen run, recorded verbatim)
+========================================================================
+v2 fixed the ENVIRONMENT (genuine opposite-policy crossover: RECALL plast-OFF
+0.490 vs ON 0.133; ENCODE plast-ON 0.533 vs OFF 0.233) but the SWITCHER kept the
+v1 FREEZE's ASSUMED signal→mode polarity: "ENCODE = high surprise → writes-on;
+RECALL = low surprise → writes-off", thresholding write-pressure EMA at its
+running median with writes_enabled = (EMA ≥ median).
+
+v2 frozen output (verbatim):
+  best_fixed: writes_enabled=True, LR0=0.3, TH0=0.4, tune_cap=0.2867
+  A_cap_mean=0.2467  B_cap_mean=0.0244  B_shuffle_cap_mean=0.20  C_gain=0.2533
+  per_seed_B_minus_A = [-0.20, -0.2333, -0.2333]   (B WORSE than A every seed)
+  c1=False c2=True c3=True  -> verdict RED_NO_LUNCH
+
+DIAGNOSIS (the pre-registered POLARITY was empirically WRONG):
+  measured substrate write-pressure EMA by true regime (seed 11):
+    ENCODE surprise-EMA mean = 0.329
+    RECALL surprise-EMA mean = 0.492   <-- RECALL is HIGHER, not lower
+    separation = -0.163  (the signal SEPARATES the regimes STRONGLY, but with the
+                          OPPOSITE sign to the FREEZE assumption)
+  The FREEZE assumed ENCODE=high-surprise. In fact RECALL cues carry σ=0.10 NOISE
+  → high recon-error against clean stored cells → RECALL has the HIGHER surprise.
+  ENCODE writes are CLEAN (σ=0) and drift lands near existing subjects → LOWER
+  surprise. So writes_enabled=(EMA≥median) enabled writes during RECALL (69%) and
+  disabled during ENCODE (23%) — the EXACT WRONG mode each regime. gate-vs-ideal
+  agreement = 0.270 (anti-correlated). The switcher was reading a REAL regime
+  signal but mapping it with the wrong sign.
+
+CONSEQUENCE for the verdict: the FREEZE's signal→mode POLARITY was an ASSUMPTION
+about the substrate, not a falsifier bar, and it was falsified by measurement.
+A regime-switcher's defining faculty is "read context → pick the RIGHT mode";
+hard-coding the sign by guess is not faithful — biologically the gate LEARNS its
+direction from outcome (basal-ganglia go/no-go, H_1281). v3 re-freezes a switcher
+that CALIBRATES its polarity from a DISJOINT tuning seed (outcome, no score-seed
+leak), keeping ALL falsifier bars frozen (MARGIN 0.05, c1/c2/c3) and the shuffle
+control intact. The v2 assumed-polarity RED stands recorded here verbatim (c9);
+v3 is a pre-registered faithful variant (the H_1281 diagnostic precedent: frozen
+RED kept, faithful re-freeze gets its own falsifier).
+v2 script: UNIVERSE/h1284_r3_regime_switch_v2_assumed_polarity.py.

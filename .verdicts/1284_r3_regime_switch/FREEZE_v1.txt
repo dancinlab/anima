@@ -1,0 +1,158 @@
+H_1284_R3 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7, c9)
+====================================================================
+SLUG: 1284_r3_regime_switch
+LENS: NEUROMODULATION as REGIME / MODE SWITCHING (not gain-tuning).
+Neuro/biology lens (c15, a_no_llm_frame_trap), NOT an LLM recipe.
+
+────────────────────────────────────────────────────────────────────
+THE WALL THIS ATTEMPTS TO BREAK (HD27 / H_1284, kept honestly 🧱)
+────────────────────────────────────────────────────────────────────
+H_1284 tested neuromodulation as a context-adaptive GAIN controller
+(dopamine/NE/ACh-like) that tunes a gain/temperature (LR, SPLIT_THRESH,
+abstain margin) by substrate state. VERDICT: a context-adaptive gain
+controller NEVER beats a single well-tuned FIXED operating point — a
+no-free-lunch result, GENERAL, on BOTH the memory and the ideation
+substrate (H_1284_R2). Kept honestly 🧱.
+
+WHY THAT TEST CANNOT REJECT THE BIOLOGICAL ROLE: H_1284 adapted a
+CONTINUOUS gain WITHIN a regime, and the grid-search baseline already
+found the best constant gain for that regime. When a single fixed gain
+suffices, adapting it is strictly redundant (no free lunch). But the
+biological role of neuromodulation (a_no_llm_frame_trap, c15) is
+arguably REGIME / MODE SWITCHING, not gain-scaling:
+  • ACh gates ENCODE-vs-RECALL (Hasselmo: high-ACh = encode/plasticity-on
+    & suppress recurrent readout; low-ACh = consolidate/recall, readout-on).
+  • NE gates EXPLORE-vs-EXPLOIT (Aston-Jones/Cohen phasic vs tonic mode).
+  • the wake/sleep switch gates ONLINE-vs-REPLAY.
+A FIXED operating point CANNOT serve an environment that contains
+DISTINCT regimes each demanding an OPPOSITE policy. The wall only tested
+a stream where one constant policy was adequate.
+
+────────────────────────────────────────────────────────────────────
+THE NEW ANGLE (the genuinely different test, a_break_the_wall)
+────────────────────────────────────────────────────────────────────
+Build an environment that ALTERNATES between two distinct regimes that
+require OPPOSITE discrete policies in a SINGLE interleaved stream, so
+that no single fixed policy can win (it is compromised on one regime to
+serve the other). Test whether a substrate-derived REGIME-SWITCHER
+(read a context signal → switch WHICH policy is active) beats the BEST
+SINGLE FIXED policy (the strong baseline the wall used).
+
+REGIMES (opposite policies, ACh encode-vs-recall lens — Hasselmo):
+  ENCODE phase  : the stream presents NEW / REWRITTEN facts. The right
+                  policy is PLASTICITY-ON — write/split freely so new
+                  bindings are stored. Encode rewards WRITE.
+  RECALL phase  : the stream QUERIES stored facts. The right policy is
+                  PLASTICITY-OFF (READ-ONLY) — do NOT write on a recall
+                  cue, because a recall cue is a NOISY/incomplete version
+                  of a stored key; writing on it (refining the winner
+                  toward the noisy cue, or splitting a duplicate) CORRUPTS
+                  the clean stored binding and crowds the capacity-bounded
+                  store → self-inflicted forgetting (the H_1230 failure
+                  mode). Recall rewards stable READ + honest ABSTAIN on
+                  out-of-store probes.
+
+These policies are OPPOSITE on the WRITE-ON-CUE axis:
+  ENCODE wants writes_enabled = TRUE  (plasticity on)
+  RECALL wants writes_enabled = FALSE (read-only / consolidated)
+A fixed "always write" corrupts during recall (over-writes clean cells
+with noisy recall cues, crowds the store). A fixed "never write" cannot
+encode the rewritten facts (concept drift unlearned). NO single fixed
+operating point is good at both — this is the structural difference from
+H_1284, where one constant gain sufficed.
+
+THE SWITCH SIGNAL IS SUBSTRATE-DERIVED, NOT AN ORACLE LABEL
+(a_autonomy_over_hardcode): the switcher does NOT see the regime label.
+It reads a real substrate context feature and infers the mode. The
+feature = WRITE-PRESSURE = running EMA of recon-error (surprise) on the
+recent event window. ENCODE phases inject high-surprise new/rewritten
+keys → surprise EMA rises; RECALL phases present in-store keys (noisy
+copies of known cells) → surprise EMA is LOW relative to the ENCODE
+baseline. The switcher thresholds its OWN surprise EMA at its running
+median (self-calibrating, no tuned constant fed the true regime) to set
+writes_enabled. This is an interoceptive read of the substrate (the
+H_1290 affect / H_1285 salience precedent: a substrate signal, not a
+label), gated as a binary MODE, not a continuous gain.
+
+────────────────────────────────────────────────────────────────────
+ARMS
+────────────────────────────────────────────────────────────────────
+  A = BEST FIXED single policy. Grid-search over a DISJOINT tuning seed
+      the best constant (writes_enabled ∈ {True,False}) × (LR, TH,
+      abstain) operating point, scored on the SAME interleaved
+      ENCODE/RECALL stream, maximizing total capability. This is the
+      identical strong baseline construction the wall used (best fixed
+      point found by grid search) — extended to include the discrete
+      write-enable knob so the baseline is GIVEN the chance to pick the
+      best single mode.
+  B = REGIME-SWITCHER. Reads substrate write-pressure EMA, thresholds at
+      its own running median → writes_enabled per tick. When writes
+      enabled: plasticity-on policy. When disabled: read-only policy
+      (recall + abstain, no store mutation). LR/TH/abstain held at A's
+      fixed values in BOTH sub-modes (so B's only added power vs A is the
+      MODE GATE, not extra gain-tuning — isolates regime-switching from
+      H_1284's gain-tuning).
+  C = the GAIN-TUNER from H_1284 (Neuromod controller, continuous knobs,
+      writes always enabled). Confirms the wall still holds: continuous
+      gain-tuning does NOT clear the bar on this opposite-regime stream.
+
+────────────────────────────────────────────────────────────────────
+METRIC (p7, exact ground truth, NO LLM judge, NO perplexity, NO loss)
+────────────────────────────────────────────────────────────────────
+capability = recall_accuracy − fabrication_rate, measured on RECALL-phase
+events only (the queryable truth), end-to-end over the full interleaved
+stream (so ENCODE-phase corruption shows up as later RECALL failures).
+recall_accuracy = correct recalls / total recall queries.
+fabrication = confident-WRONG recalls + confident answers to
+out-of-store (ghost) probes / total recall queries (honest ABSTAIN is
+neither correct nor fabrication).
+
+────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIER (binding; written before any scoring)
+────────────────────────────────────────────────────────────────────
+SEEDS = [11, 22, 33]  (score) ; TUNE_SEED = 7 (disjoint grid-search).
+MARGIN = 0.05 capability.
+
+GREEN (the wall is BROKEN) iff ALL THREE hold:
+  (c1) B ≥ best-fixed A by ≥ MARGIN on EVERY score seed (per-seed, not
+       just the mean) — the switcher beats the best single fixed policy.
+  (c2) SHUFFLE CONTROL: re-run B with the write-pressure EMA signal
+       PHASE-SCRAMBLED (decorrelated from the true regime, same values,
+       permuted in time) → the switcher's lift over A VANISHES, i.e.
+       B_shuffle ≤ A + MARGIN on the seed-mean (the lift was regime-
+       TRACKING, not extra capacity / not a lucky constant). This is the
+       exact control that caught H_1285's recurrence confound.
+  (c3) HONEST: report B vs C; C (gain-tuner) does NOT clear the bar
+       (C < A + MARGIN on the mean) — confirms continuity with the wall
+       (gain-tuning still loses; only mode-switching wins).
+
+If c1 fails (sub-bar) OR c2 fails (shuffle does NOT collapse) → keep the
+wall honestly 🧱 as CLOSED-NEGATIVE (c9, a_paper_negative_ok). The wall's
+no-free-lunch generalizes to regime-switching too; report with numbers.
+NO tune-to-green: bars above are frozen; if RED, it is reported RED.
+
+────────────────────────────────────────────────────────────────────
+SUBSTRATE & SCOPE (a_engine_native_learning · a_scale_honest_scope)
+────────────────────────────────────────────────────────────────────
+numpy mirror of CORE/engine_cli.hexa VAdaptField (host has NO torch).
+The mirror is byte-faithful to the live wires (winner = L2-nearest proto;
+split iff recon-err > TH and capacity; refine = winner += LR·(x−winner);
+LRU evict over capacity; abstain if recon-err > margin). The ONLY arm
+difference is the per-tick writes_enabled gate (B) / continuous knobs (C)
+vs fixed constants (A). Result is DIRECTIONAL — engine-transfer
+UNVERIFIED. GREEN ⇒ engine-native follow-on wires a binary mode gate
+(ACh encode/recall switch) into adapt_field_step, re-scored engine-native
++ regression guard (a_verified_must_wire). TOY scale (30 facts, one
+paradigm, 3 seeds) — scale / paraphrase / real-corpus UNVERIFIED.
+live CORE/*.hexa UNTOUCHED. $0 CPU.
+
+GUARDS: p1/p2/p3 (no prompt/identity/persona) · p6 (switch reads
+substrate surprise, NOT a label/reward/ethics) · p7 (exact metric, no
+loss) · p8 (write/gate = engine's own tick) · a_autonomy_over_hardcode
+(switch = substrate-read context feature, NOT an external do/dont gate) ·
+c9 (RED reported RED) · c7 (no force-push).
+
+xref: H_1284 · H_1284_R2 · H_1228 · H_1230 · H_1285 · H_1288 · H_1290 ·
+a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning ·
+a_verified_must_wire · a_autonomy_over_hardcode · a_paper_negative_ok ·
+a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15.
