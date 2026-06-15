@@ -316,7 +316,10 @@ def main():
         "edge_counts": {str(s): per_seed[s]["edge_counts"] for s in SEEDS},
         "budget_vals": {str(s): per_seed[s]["budget_vals"] for s in SEEDS},
         "budget_ok_all": all_budget_ok,
-        "bars": {"C1_robust_lift": c1, "C2_topology_earned": c2, "C3_beats_central": c3},
+        "bars": {"C1_robust_lift": bool(c1), "C2_topology_earned": bool(c2), "C3_beats_central": bool(c3)},
+        "c1_per_seed": {str(s): bool(c1_per[s]) for s in SEEDS},
+        "c2_per_seed": {str(s): bool(c2_per[s]) for s in SEEDS},
+        "central_c1_per_seed": {str(s): bool(central_c1_per[s]) for s in SEEDS},
         "mean_multi": float(mean_m), "mean_shuffle": float(mean_s),
         "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n=8)",
     }
