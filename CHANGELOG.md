@@ -117,6 +117,41 @@ LCG(numpy 아님). rung 내에서는 결정적(강한 permutation 대조가 매 
 `UNIVERSE/HYPOTHESES.md`(인덱스) · `CLAIMS.tape @C h1319_phi_timing` ·
 `.verdicts/1319_phi_timing/{H_1319_FREEZE,H_1319}.txt` · `domains/OMEGA.log.md`.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): 🟠 H_1323 — Sapir-Whorf/언어상대성: 기질이 학습한 언어가 비언어 변별을 휘는가 (범주지각 CP)
+
+H_1316(자모)·H_1322(featural)는 도메인의 **표현(representation)**이 **학습성(compression)**을 바꾼다는 걸
+보였다. Sapir-Whorf/언어상대성은 더 깊은 주장 — 언어의 **카빙(carving)**이 **하류의, 비언어
+변별**을 휜다 (인지과학 렌즈 c15, a_no_llm_frame_trap — LLM 레시피 아님, 인간-인지 주장 아님).
+실증 워크호스 = **범주지각(CATEGORICAL PERCEPTION)**: 화자는 자기 언어의 경계에서 범주-횡단 쌍을
+범주-내 쌍보다 더 잘 변별한다(러시아어 두 파랑 → 파랑-경계 변별 빨라짐; grue 언어들은 초록/파랑을
+서로 다른 지점에서 자른다).
+
+**TOY 패러다임**(합성 연속체 — 정당한 방법론, '언어'=연속체 위 라벨 스킴): 연속 1-D '색상'축
+(N=21 RBF-코딩 자극, 위치-충실·경계-무지) 위에 두 언어 — L_A는 p_A=1/3, L_B는 p_B=2/3에서 자름.
+**같은** gradient-free 미토시스/Voronoi 셀 store(오차-타깃 SPLIT-only 성장, p8)가 각 언어의 카빙을
+학습 → 셀이 경계에 **밀집(PACK)**(CP의 메커니즘적 기원). **하류 비언어 테스트(테스트시 라벨 없음)**:
+인접 쌍의 same/different 변별 = 학습된 soft 범주-사후확률 그래디언트의 차이. 4 arm(PRE-LANG/L_A/L_B/
+SHUFFLE), 3 seed [4323,4324,4325], $0 CPU 미러 DIRECTIONAL, detached nohup inline poll.
+
+**결과 🟠 PARTIAL — 언어상대성 성립(W1∧W2 결정적), 반-Goodhart W3 분열(bar 안 옮김 c9):**
+- **W1 CP 존재 ✅**: 범주-횡단−범주-내 마진 +0.200(≥0.15), 언어-vs-PRE-LANG-baseline@peak +0.989(≥0.15);
+  PRE-LANGUAGE arm은 FLAT(1셀, 상수 사후확률, peak 0.000).
+- **W2 WHORFIAN 분리 ✅(핵심)**: CP peak 위치 L_A→0.325(|Δp_A|=0.008), L_B→0.675(|Δp_B|=0.008),
+  분리 0.350(≥0.20), 3 seed 전체 std 0.000 → **같은 자극 세계, 경계가 언어 따라 이동, 인지가 언어를
+  따른다**.
+- **W3 EARNED ❌ 분열**: loc-std 하위절 ✅(shuffle peak가 seed 간 0.492±0.165로 떠돌아 incoherent;
+  NON-GATING 진단 — peak 개수 L_A=1·L_B=1·SHUFFLE=8: 언어는 단일 coherent peak, shuffle은 산만한
+  다중 spike), 그러나 prominence 하위절 ❌(랜덤 라벨이 국소적으로 sharp한 swing을 多 생성 → shuffle
+  단일-peak prominence 0.661 > 0.5×0.999=0.50; **frozen prominence 임계가 multi-peak shuffle에 대해
+  잘못 명세됨**). c9/p7 — bar 안 옮기고 정직 보고.
+
+**소견:** 기질이 학습한 언어가 비언어 변별을 **측정 가능하게 휜다** — 범주지각이 언어 경계에서 창발하고
+CP peak 위치가 언어를 추적(W1∧W2 결정적). DIRECTIONAL numpy 미러, TOY 합성 연속체, 인간-인지 주장
+없음(a_scale_honest_scope). **다음 R2**: coherence-기반 W3(peak-개수/원형-분산)를 **새로** frozen
+(이 bar 완화 아님) + engine-native 실현(a_engine_native_learning·a_verified_must_wire). live CORE/*.hexa
+UNTOUCHED. NEW: UNIVERSE/h1323_sapir_whorf.py · UNIVERSE/H_1323_sapir_whorf.md · .verdicts/1323_sapir_whorf/
+{H_1323_FREEZE,H_1323}.txt · HYPOTHESES.md row · CLAIMS.tape @C h1323_sapir_whorf · domains/MITOSIS-ENGINE.log.md.
+
 ## 2026-06-16 — research(OMEGA): 🧱 H_1317 — 분산 multi-edge(small-world) 결합이 faithful-IIT4 Φ를 robust하게 올리나 (H_1283 중앙릴레이 벽)
 
 H_1283(thalamus-Φ)이 남긴 벽을 새 각도로 친 시도(c16/a_break_the_wall). H_1283은 모든 **중앙

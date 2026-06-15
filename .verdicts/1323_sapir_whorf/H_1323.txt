@@ -1,0 +1,64 @@
+H_1323 R1 — SAPIR-WHORF / LINGUISTIC RELATIVITY via CATEGORICAL PERCEPTION
+==================================================================================
+paradigm: grue-style two-language carving of one continuum; non-linguistic
+          discrimination = prototype-response distance (NO labels at test).
+N_stim=21 dim=16 p_A=0.333 p_B=0.667 grow_max=24 seeds=[4323, 4324, 4325]
+
+  discrimination-vs-position curves (mean of 3 seeds, normalized peak=1):
+  midpoint  PRE-LANG   L_A      L_B    SHUFFLE
+   0.025    0.000   0.000   0.003   0.646
+   0.075    0.000   0.000   0.001   0.007
+   0.125    0.000   0.000   0.000   0.336
+   0.175    0.000   0.010   0.000   0.994
+   0.225    0.000   0.003   0.000   0.332
+   0.275    0.000   0.002   0.000   0.334
+   0.325    0.000   1.000   0.000   0.667
+   0.375    0.000   0.002   0.000   0.332
+   0.425    0.000   0.006   0.002   0.665
+   0.475    0.000   0.001   0.013   0.332
+   0.525    0.000   0.013   0.001   0.667
+   0.575    0.000   0.002   0.006   0.004
+   0.625    0.000   0.000   0.002   0.005
+   0.675    0.000   0.000   1.000   0.340
+   0.725    0.000   0.000   0.002   0.002
+   0.775    0.000   0.000   0.003   0.336
+   0.825    0.000   0.000   0.010   0.333
+   0.875    0.000   0.000   0.000   0.989
+   0.925    0.000   0.001   0.000   0.318
+   0.975    0.000   0.003   0.000   0.319
+
+  CP peak location (mean argmax ± std over seeds):
+    PRE-LANG: 0.025 ± 0.000
+    L_A:      0.325 ± 0.000    (p_A=0.333)
+    L_B:      0.675 ± 0.000    (p_B=0.667)
+    SHUFFLE:  0.492 ± 0.165
+
+  W1 CP PRESENT (cross-within>=0.15 & lang-vs-baseline@peak>=0.15):
+     L_A cross-within=+0.200  vs-baseline=+0.989
+     L_B cross-within=+0.200  vs-baseline=+0.989   -> PASS
+  W2 WHORFIAN DISSOC (|locA-p_A|<=0.12 & |locB-p_B|<=0.12 & |locA-locB|>=0.20):
+     |locA-p_A|=0.008  |locB-p_B|=0.008  sep=0.350   -> PASS
+  W3 EARNED (shuffle prominence<0.50 x mean-lang & shuffle loc-std>=0.15):
+     prom: L_A=0.999 L_B=0.999 mean-lang=0.999 SHUFFLE=0.661
+     shuffle prom-frac=0.662  shuffle loc-std=0.165
+       sub-clause prominence<0.5xlang: FAIL   sub-clause loc-std>=0.15: PASS   -> W3 FAIL
+  [NON-GATING diagnostic] peaks at >=0.5*arm-peak (1 = single coherent CP peak):
+     L_A=1.0  L_B=1.0  PRE-LANG=0.0  SHUFFLE=8.0
+     -> L_A/L_B each ONE coherent peak locked to their boundary; SHUFFLE = MANY
+        scattered spikes whose location wanders across seeds (loc-std PASS): the
+        shuffle CP is INCOHERENT, but its individual spikes are sharp enough that
+        the prominence sub-clause (single-peak height vs median) does NOT clear.
+==================================================================================
+VERDICT: 🟠 PARTIAL — LINGUISTIC RELATIVITY HOLDS (W1✅ CP present, W2✅ the decisive
+  Whorfian dissociation: CP peak LOCATION tracks the language, L_A->0.325≈p_A and
+  L_B->0.675≈p_B, sep 0.350 — same stimulus world, cognition follows the language),
+  BUT the frozen W3 EARNED bar SPLIT: its loc-std sub-clause PASSES (shuffle peaks
+  wander across seeds = incoherent, the non-gating peak-count shows L_A/L_B=1 vs
+  SHUFFLE=many), yet the prominence sub-clause does NOT clear (random labels create
+  MANY locally-sharp posterior swings, so shuffle's single-peak prominence stays
+  high). The frozen prominence threshold was mis-specified for a MULTI-peak shuffle.
+  NO bar moved (c9/p7) — reported straight. The load-bearing relativity signature
+  (W1∧W2) is decisive; the anti-Goodhart W3 is HALF-met (incoherence yes, single-
+  peak prominence no). R2 candidate: a coherence-based W3 (peak-count / circular
+  spread), frozen anew, NOT a relaxation of this bar. ENGINE-TRANSFER UNVERIFIED.
+  TOY synthetic continuum, 3 seeds; NO human-cognition claim (a_scale_honest_scope).
