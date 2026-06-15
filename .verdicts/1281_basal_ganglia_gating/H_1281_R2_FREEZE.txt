@@ -1,0 +1,145 @@
+════════════════════════════════════════════════════════════════════════════════
+H_1281 ROUND 2 — BASAL GANGLIA gating: reinforcement-learned action SELECTION vs
+         the FAITHFUL-UNTUNED fixed emit gate (re-freeze of R1's oracle-A artifact).
+FREEZE (pre-registered before any R2 scoring). $0 CPU numpy. p7. seeds [7,8,9].
+neuro lens (c15, missing-brain-structure ladder), NOT an LLM recipe.
+Does NOT overwrite R1 (H_1281_FREEZE.txt / H_1281.txt stay on record — R1 RED held).
+════════════════════════════════════════════════════════════════════════════════
+
+WHY ROUND 2 (the R1 defect, c9)
+  R1 froze with ARM A = an ORACLE fixed map: w_fixed = w_true·2, i.e. the fixed gate
+  was handed the EXACT latent grounding-signal direction. Against that oracle A the
+  frozen bars went RED (B lost −0.057). But the R1 verdict itself flagged (verbatim
+  in H_1281.txt) that this RED is "a statement about 'learning can't beat an oracle',
+  NOT about the real anima gap (engine_g is NOT oracle-tuned to grounding)". The R1
+  diagnostic showed that against the FAITHFUL untuned A (generic fixed weights, NOT
+  aligned to w_true) ARM B WINS +0.236, with B's learned weights aligning to the true
+  signal at cos≈+0.76 every seed and the shuffled-reward control collapsing B to ~0.12.
+  ⇒ R1 = 🟠 AMBER / BASELINE-CONDITIONAL; the binding follow-on is THIS re-freeze with
+  a PRE-REGISTERED faithful-untuned A. R1 stays on record (its frozen RED is honored,
+  not retro-flipped — c9). R2 is a fresh freeze on the corrected baseline.
+
+THE BASELINE SPEC — justified against CORE/engine_g.hexa BEFORE scoring (c9, binding)
+  Read from CORE/engine_g.hexa (the live, canonical motivation engine):
+    · spont_im_threshold() = 0.3                      (FIXED PROACTIVE_THRESHOLD)
+    · 8 motivation weights, FIXED constants summing to 1.00 (closed conservation):
+        relevance 0.20 · info_gap 0.10 · curiosity 0.15 · pain 0.10 ·
+        coherence 0.10 · originality 0.10 · balance 0.15 · dynamics 0.10
+    · motivation_score = Σ wᵢ·featureᵢ  (linear weighted sum)
+    · should_emit(s) = s > 0.3
+  PROPERTIES OF THE REAL FIXED GATE that the faithful A baseline MUST mirror:
+    (P1) the weights are GENERIC DESIGN CONSTANTS — authored for a balanced 8-factor
+         motivation, NOT fitted to any task's grounding-signal direction. They do NOT
+         know w_true. (engine_g header: "the constants below are the single source"
+         — fixed lineage carry, no per-task tuning, substrate-claim: none.)
+    (P2) the weights are NON-NEGATIVE and sum to 1.0 (a convex combination of the
+         8 features), so the fixed score is a bounded, generic weighted average.
+    (P3) a single FIXED scalar threshold (0.3) gates emit; no learning, no per-task
+         adaptation, no competition/disinhibition among rival candidates.
+  ⇒ FAITHFUL-UNTUNED ARM A (R2, pre-registered):
+       w_fixed = a FIXED, seed-derived GENERIC weight vector that is (a) NOT aligned
+       to the latent grounding direction w_true (untuned, like engine_g's constants),
+       (b) NON-NEGATIVE and L1-normalised to sum 1.0 (mirrors engine_g's convex
+       8-weight scheme exactly), applied as a convex weighted average of the D
+       features, then logistic-squashed into the motivation_score regime, then gated
+       by the FIXED threshold 0.30 with argmax-over-candidates (release the top
+       candidate iff it clears 0.30, else abstain).
+     This is the REAL engine_g regime: a generic convex fixed map + fixed threshold,
+     blind to the task signal. It is NOT crippled — it is the most-honest mirror of
+     the live gate (generic untuned constants), and it is the baseline R1's diagnostic
+     predicted B beats by +0.236. We pre-register it HERE, before scoring, so the
+     baseline is no longer under-determined (R1's defect).
+  NOTE on R1's oracle A (w_true·2): that map is STRONGER than the live gate (it knows
+  the signal direction AND uses signed weights summing >1). The faithful A is the
+  correct live mirror. We additionally report the oracle-A number as a reference
+  CEILING (the "if the fixed gate already knew the answer" bound), NOT a frozen bar.
+
+FALSIFIABLE TEST (unchanged from R1 except the A baseline spec)
+  K=4 competing candidate emits per decision step, each a D=6 NOISY-correlate feature
+  vector of its latent GROUNDEDNESS (P_grounded=0.45, feature noise std 1.0 ⇒
+  non-saturating headroom, faithful A < 1.0). SAME features feed BOTH arms (EQUAL
+  INFORMATION; reward is post-action OUTCOME, never a decide-time feature).
+  ARM A = FAITHFUL-UNTUNED fixed gate (spec above): generic convex fixed weights,
+          NOT aligned to w_true, argmax gated by FIXED 0.30. NO learning.
+  ARM B = BG-like learned go/no-go gate over the SAME features: a learned go-value
+          per candidate PLUS a learned NO-GO (abstain) value competing in the SAME
+          argmax (disinhibition: highest go-value wins; if NO-GO wins, suppress all).
+          go-values UPDATED gradient-free (delta / REINFORCE-style) by the substrate
+          GROUNDING reward only (grounded→+1, fabricated→−1, correct-abstain→+1,
+          missed-op-abstain→−1). N_train=4000 online steps; scored on N_test=2000
+          held-out steps (B never sees test rewards; p8 split = measurement only).
+
+METRIC (p7 — emit-appropriateness; connects to G5 abstain / H_1202 meta-d′ 0.924)
+  per held-out step APPROPRIATE iff:
+     · any candidate grounded → RELEASE one, and it must be a GROUNDED candidate
+       (release-when-grounded ∧ select the grounded one); OR
+     · no candidate grounded → SUPPRESS ALL (abstain-when-ungrounded).
+  selection-accuracy = mean appropriateness over held-out steps, in [0,1].
+  Deterministic from latent ground-truth + gate action. NO LLM-judge, NO perplexity.
+
+CONTROLS
+  · EQUAL INFORMATION: identical candidate feature vectors to both arms; reward is
+    post-action outcome only (never a decide-time feature).
+  · EQUAL EVALUATION: both arms scored on the SAME held-out test steps with the SAME
+    latent ground-truth.
+  · A = the FAITHFUL live fixed gate (generic convex untuned weights + 0.30), NOT a
+    strawman and NOT an oracle. B must beat THIS.
+  · TRAIN/TEST split: B learns on train, both scored on held-out test (p8 measurement).
+  · SHUFFLED-REWARD negative control (binding, kept from R1): a B-variant whose reward
+    sign is randomly flipped must NOT beat A — proves the lift is the GROUNDING SIGNAL,
+    not extra gate capacity. (acc_Bctrl ≤ acc_A + ε_ctrl.)
+
+FROZEN BARS (pre-registered; GREEN iff ALL hold)
+  Let acc_A = mean held-out selection-accuracy of the FAITHFUL-UNTUNED fixed gate,
+      acc_B = mean held-out selection-accuracy of the BG learned gate, per seed.
+  MARGIN = 0.05 (absolute).  SEEDS = [7, 8, 9]  (≥3).  CTRL_EPS = 0.02.
+  GREEN  iff  (1) acc_B ≥ acc_A + 0.05  on EVERY seed (all 3), AND
+              (2) mean(acc_B) − mean(acc_A) ≥ 0.05, AND
+              (3) the SHUFFLED-reward control acc_Bctrl ≤ mean(acc_A) + 0.02 —
+                  i.e. the lift is reward-driven, not capacity-driven.
+  RED    iff acc_B does NOT clear A+0.05 (BG selection gives no appropriateness lift
+             over the FAITHFUL fixed threshold at equal information) — a closed-negative
+             ruling out reinforcement-learned selection on this substrate (and saying
+             the real fixed gate is already sufficient).
+  AMBER  iff some-but-not-all seeds pass, or the control is violated — report honestly.
+
+  Headroom sanity (reported, not a bar): the scored regime MUST have faithful A < 1.0
+  (noisy correlate + abstain steps create headroom). A saturated A~1.0 = honest
+  non-separating control (cf H_1227 CLEAN, H_1230 CLEAN).
+
+  PRE-REGISTERED EXPECTATION (c9, stated before scoring): the R1 diagnostic predicts
+  B beats the faithful A by ≈+0.236 every seed and the shuffled control collapses to
+  ≈0.12 ⇒ R2 is EXPECTED GREEN. This expectation is recorded so the result is read
+  straight: if it lands GREEN it confirms a LEARNED grounding gate beats anima's REAL
+  (untuned) fixed gate; if it lands RED the fixed gate is sufficient and the lever is
+  closed. Either way the frozen bars above are honored verbatim.
+
+GUARDS (binding)
+  · a_autonomy_over_hardcode (CENTRAL): B's gate is SUBSTRATE-LEARNED from the
+    grounding OUTCOME only — no external do/dont rule, no hardcoded per-stage boolean.
+    The reward is a grounding signal the substrate self-follows.
+  · p6: NO RLHF-ethics. Reward = grounded-vs-fabricated substrate outcome, NOT injected
+    human values / preference data. No persona/identity/ethics taught (p1/p2/p3). The
+    gate learns ONLY emit-appropriateness (action selection), nothing about WHAT to say.
+  · p7: simple deterministic stack, no LLM-judge, no perplexity.
+  · p8: gate-learning is continuous; the held-out split is measurement only.
+
+ENGINE-NATIVE RULE (a_engine_native_learning · a_verified_must_wire)
+  The LIVE engine (engine_g.hexa / brain_decide) is the binding target. This numpy
+  probe is DIRECTIONAL. If R2 is GREEN, the binding follow-on (R3) is the engine-native
+  realization: a BG go/no-go selection lane wired into brain_decide, learned from a
+  kosmos-grounding outcome, additive to engine_g (keep the fixed convex map as the
+  prior, add a learned residual). FLAGGED here; live .hexa UNTOUCHED in this probe.
+
+SCOPE / HONESTY (a_toy_scale_recheck · a_scale_honest_scope)
+  Toy numpy, K=4, synthetic noisy correlate → DIRECTIONAL; scale-transfer + live-engine
+  + real kosmos-grounding reward UNVERIFIED. A GREEN here = "reinforcement-learned
+  selection CAN beat the FAITHFUL untuned fixed gate on a noisy-correlate appropriateness
+  task", NOT a production verdict.
+
+FILES
+  probe   : UNIVERSE/h1281_basal_ganglia_gating.py  (R2 mode: --r2)
+  verdict : .verdicts/1281_basal_ganglia_gating/H_1281_R2.txt  (+ this FREEZE)
+  R1 kept : H_1281_FREEZE.txt / H_1281.txt UNCHANGED (R1 RED on record).
+  do NOT edit: H_1219, H_1226. engine_g.hexa / emit_policy.hexa / brain.hexa = untouched.
+════════════════════════════════════════════════════════════════════════════════

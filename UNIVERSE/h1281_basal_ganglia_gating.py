@@ -309,8 +309,163 @@ def diag():
     print("=" * 80)
 
 
+# ════════════════════════════════════════════════════════════════════════════════
+# ROUND 2 (--r2) — re-FREEZE with the FAITHFUL-UNTUNED fixed gate as ARM A.
+# ════════════════════════════════════════════════════════════════════════════════
+# R1's frozen ARM A was an ORACLE map (w_fixed = w_true·2 — handed the exact signal
+# direction). The R1 verdict flagged this as the defect: anima's REAL gate
+# (CORE/engine_g.hexa) uses GENERIC FIXED constants (8 weights, non-negative, summing
+# to 1.0: 0.20/0.10/0.15/0.10/0.10/0.10/0.15/0.10) that are NOT tuned to any task's
+# grounding-signal direction. R2 pre-registers the FAITHFUL baseline (H_1281_R2_FREEZE.txt):
+#
+#   FAITHFUL-UNTUNED ARM A = a fixed, seed-derived GENERIC weight vector that is
+#     (a) NOT aligned to the latent grounding direction w_true (untuned, like the
+#         engine_g constants — does NOT know the signal), and
+#     (b) NON-NEGATIVE, L1-normalised to sum 1.0 (mirrors engine_g's convex 8-weight
+#         scheme exactly — a generic weighted average of the features),
+#   applied as a convex weighted average of the D features, logistic-squashed into
+#   the motivation_score regime, gated by the FIXED threshold 0.30, argmax over the
+#   K competing candidates (release the top iff it clears 0.30, else abstain).
+#
+# This is the most-honest live mirror of engine_g (generic untuned convex map + fixed
+# threshold, blind to the task signal). NOT a strawman, NOT an oracle. We ALSO report
+# the R1 oracle-A number as a reference CEILING (NOT a frozen bar).
+
+def faithful_fixed_weights(rng, D):
+    """Generic, untuned, NON-NEGATIVE weight vector L1-normalised to sum 1.0 — the
+    faithful mirror of engine_g's 8 fixed convex constants. Seed-derived (a fixed
+    generic vector for this seed) and NOT aligned to w_true (the gate does not know
+    the grounding signal direction)."""
+    w = np.abs(rng.normal(0.0, 1.0, size=D))      # non-negative magnitudes
+    w = w / (w.sum() + 1e-12)                      # L1-normalise → convex, sums to 1.0
+    return w
+
+
+def arm_A_faithful_action(feats, w_fixed_convex):
+    """ARM A (faithful) — convex weighted-average score per candidate, logistic-
+    squashed into the motivation_score [0,1] regime, FIXED threshold 0.30, argmax."""
+    raw = feats @ w_fixed_convex                   # convex weighted average (K,)
+    s = 1.0 / (1.0 + np.exp(-raw))                 # logistic → [0,1] (motivation regime)
+    j = int(np.argmax(s))
+    if s[j] > FIXED_THRESHOLD:
+        return j
+    return -1                                      # abstain (suppress all)
+
+
+def run_seed_r2(seed, shuffle_reward=False):
+    """R2 seed: ARM A = FAITHFUL-UNTUNED fixed gate (NOT oracle). ARM B = the SAME BG
+    learned go/no-go gate as R1 (unchanged). Everything else identical to run_seed."""
+    rng = np.random.default_rng(seed)
+    w_true = rng.normal(0.0, 1.0, size=D); w_true /= np.linalg.norm(w_true)
+    # faithful generic fixed weights — untuned, NOT aligned to w_true.
+    w_fixed_convex = faithful_fixed_weights(rng, D)
+    # oracle reference (CEILING, not a bar): the R1-style aligned map.
+    w_oracle = w_true.copy() * 2.0
+
+    test_steps = [make_step(rng, w_true) for _ in range(N_TEST)]
+
+    # ARM A — FAITHFUL untuned fixed gate (the frozen baseline for R2 bars).
+    accA = np.mean([appropriate(arm_A_faithful_action(f, w_fixed_convex), g)
+                    for (f, g) in test_steps])
+    # reference CEILING — oracle fixed map (reported only, NOT a bar).
+    accA_oracle = np.mean([appropriate(arm_A_action(f, w_oracle), g)
+                           for (f, g) in test_steps])
+
+    # ARM B — BG learned gate (identical to R1).
+    gate = BGGate(D, rng)
+    for t in range(N_TRAIN):
+        f, g = make_step(rng, w_true)
+        a = gate.act(f, explore=True, eps=0.1)
+        r = grounding_reward(a, g)
+        if shuffle_reward:
+            r = r * (1.0 if rng.random() < 0.5 else -1.0)
+        gate.update(f, a, r)
+    accB = np.mean([appropriate(gate.act(f, explore=False), g) for (f, g) in test_steps])
+    align = float(np.dot(gate.w / (np.linalg.norm(gate.w) + 1e-9), w_true))
+    frac_abstain = np.mean([1.0 if g.sum() == 0 else 0.0 for (_, g) in test_steps])
+    return accA, accB, accA_oracle, align, frac_abstain
+
+
+def main_r2():
+    print("=" * 80)
+    print("H_1281 ROUND 2 — BG learned selection vs the FAITHFUL-UNTUNED fixed gate")
+    print("  ARM A = faithful engine_g mirror (generic CONVEX untuned weights, NOT")
+    print("          aligned to w_true, sum=1.0 non-negative; FIXED threshold 0.30).")
+    print("  ARM B = BG learned go/no-go gate (UNCHANGED from R1).")
+    print(f"  K={K}  D={D}  noise={NOISE}  P_grounded={P_GROUNDED}  N_train={N_TRAIN}")
+    print(f"  N_test={N_TEST}  LR={LR}  seeds={SEEDS}  MARGIN={MARGIN}  CTRL_EPS={CTRL_EPS}")
+    print("=" * 80)
+
+    rows, ctrl_rows = [], []
+    for s in SEEDS:
+        accA, accB, accA_or, align, fa = run_seed_r2(s, shuffle_reward=False)
+        _, accB_c, _, _, _ = run_seed_r2(s, shuffle_reward=True)
+        rows.append((s, accA, accB, accA_or, align, fa))
+        ctrl_rows.append((s, accB_c))
+        print(f"  seed {s}: A(faithful)={accA:.4f}  B(BG)={accB:.4f}  Δ={accB-accA:+.4f}  "
+              f"| ctrl B(shuf)={accB_c:.4f}  | B-align→signal={align:+.3f}  "
+              f"[ref oracle-A={accA_or:.4f}]  (abstain-base {fa:.3f})")
+
+    accA_all = np.array([r[1] for r in rows])
+    accB_all = np.array([r[2] for r in rows])
+    accAor_all = np.array([r[3] for r in rows])
+    accBc_all = np.array([r[1] for r in ctrl_rows])
+    mA, mB, mAor, mBc = accA_all.mean(), accB_all.mean(), accAor_all.mean(), accBc_all.mean()
+    deltas = accB_all - accA_all
+
+    print("-" * 80)
+    print(f"  mean  A(faithful)={mA:.4f}   B(BG)={mB:.4f}   Δmean={mB-mA:+.4f}")
+    print(f"  per-seed Δ: {['%+.4f' % d for d in deltas]}")
+    print(f"  shuffled-reward control: mean B_ctrl={mBc:.4f}  (must be ≤ A+{CTRL_EPS} = {mA+CTRL_EPS:.4f})")
+    print(f"  [reference CEILING — oracle-A (NOT a bar): mean={mAor:.4f}]")
+
+    cond1 = bool(np.all(deltas >= MARGIN))
+    cond2 = bool((mB - mA) >= MARGIN)
+    cond3 = bool(mBc <= mA + CTRL_EPS)
+    headroom_ok = bool(mA < 1.0)
+    green = cond1 and cond2 and cond3
+
+    print("-" * 80)
+    print("  FROZEN BARS (R2 — faithful-untuned A):")
+    print(f"    (1) every-seed Δ ≥ {MARGIN}                 : {cond1}  ({['%+.4f'%d for d in deltas]})")
+    print(f"    (2) mean Δ ≥ {MARGIN}                       : {cond2}  ({mB-mA:+.4f})")
+    print(f"    (3) shuffled-reward ctrl ≤ A+{CTRL_EPS}       : {cond3}  (B_ctrl {mBc:.4f} vs {mA+CTRL_EPS:.4f})")
+    print(f"    headroom (A<1.0, non-saturating)        : {headroom_ok}  (A={mA:.4f})")
+    print("-" * 80)
+    if not headroom_ok:
+        verdict = "⚪ NON-SEPARATING (saturated faithful-A; no headroom — honest control)"
+    elif green:
+        verdict = ("🟢 GREEN — reinforcement-learned BG selection BEATS anima's REAL "
+                   "(faithful untuned) fixed gate at equal info")
+    elif cond3 is False and (cond1 or cond2):
+        verdict = "🟠 AMBER — lift present but shuffled-reward control VIOLATED (capacity, not reward)"
+    elif np.any(deltas >= MARGIN) and not cond1:
+        verdict = "🟠 AMBER — some-but-not-all seeds clear the bar"
+    else:
+        verdict = ("🔴 CLOSED-NEGATIVE — BG selection gives NO appropriateness lift over the "
+                   "FAITHFUL fixed gate (the real fixed gate is sufficient)")
+    print(f"  VERDICT: {verdict}")
+    print("=" * 80)
+
+    summary = {
+        "hypothesis": "H_1281_R2", "seeds": SEEDS, "baseline": "faithful_untuned_convex_A",
+        "acc_A_faithful": [float(x) for x in accA_all],
+        "acc_B_bg":       [float(x) for x in accB_all],
+        "deltas":         [float(x) for x in deltas],
+        "mean_A": float(mA), "mean_B": float(mB), "mean_delta": float(mB - mA),
+        "ctrl_shuffled_reward_mean_B": float(mBc),
+        "ref_ceiling_oracle_A_mean": float(mAor),
+        "cond1_every_seed": cond1, "cond2_mean": cond2, "cond3_control": cond3,
+        "headroom_ok": headroom_ok, "green": green, "verdict": verdict,
+    }
+    print("SUMMARY_JSON " + json.dumps(summary))
+    return summary
+
+
 if __name__ == "__main__":
     if "--diag" in sys.argv:
         diag()
+    elif "--r2" in sys.argv:
+        main_r2()
     else:
         main()

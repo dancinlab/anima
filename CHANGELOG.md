@@ -37,6 +37,21 @@ missing-brain-structure 사다리(neuro 렌즈 c15)의 작업기억 칸 라운�
 
 ---
 
+## 2026-06-15 — 🟢 H_1281 R2: BASAL GANGLIA(기저핵) go/no-go gate — FAITHFUL-untuned 고정게이트 재freeze, 학습 게이트 +0.254 승
+
+missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 기저핵 칸 ROUND 2. R1 은 🟠 AMBER/BASELINE-CONDITIONAL — frozen ARM A 가 ORACLE 고정맵(w_fixed=w_true·2, grounding 신호 방향을 통째로 손에 쥔)이라 bar 가 RED(B −0.057) 였으나, R1 진단이 anima 의 REAL 게이트(CORE/engine_g.hexa)는 oracle-tuned 가 아니며 FAITHFUL-untuned A 상대로는 B 가 +0.236 이긴다 예측. R2 = 그 FAITHFUL baseline 을 사전등록한 binding 재freeze. $0 CPU numpy, gradient-free, p7, 3 seed(7/8/9), 라이브 CORE/*.hexa 무수정(미러=DIRECTIONAL).
+
+- **baseline 정당화 (c9, 채점 전 engine_g.hexa 읽음)**: engine_g.hexa = spont_im_threshold()=0.3 고정 + 8 motivation 가중치 = 합 1.00 고정상수(relevance 0.20·info_gap 0.10·curiosity 0.15·pain 0.10·coherence 0.10·originality 0.10·balance 0.15·dynamics 0.10), 전부 GENERIC·NON-NEGATIVE·task grounding 방향 미튜닝. ⇒ **FAITHFUL-UNTUNED ARM A** = seed-유래 generic 가중벡터(w_true 비정렬 + 비음수 L1-정규화 합1.0 = engine_g convex 스킴 정확 미러), logistic squash → motivation regime, 고정 threshold 0.30, K 후보 argmax. ORACLE A 는 reference CEILING 으로만 보고(bar 아님).
+- **테스트 (R1 과 A baseline 만 다름)**: K=4 경쟁 후보/스텝, D=6 NOISY-correlate(P_grounded 0.45, noise 1.0 → A<1.0 headroom). ARM B = BG go/no-go 학습 게이트(R1 과 동일) — 학습 go-value vs 학습 NO-GO/abstain 가 같은 argmax 경쟁(disinhibition), grounding OUTCOME 보상만으로 gradient-free delta 갱신(grounded+1/fab−1, 보상은 사후 결과·decide-time feature 아님). N_train 4000, N_test 2000 held-out.
+- **METRIC (p7, emit-적절성; G5 abstain / H_1202 meta-d′ 0.924 연결)**: 스텝당 적절 iff (grounded 존재→grounded 후보 RELEASE) OR (없음→전부 SUPPRESS/abstain).
+- **FROZEN GREEN iff**: (1) 매 seed Δ≥0.05 AND (2) mean Δ≥0.05 AND (3) shuffled-reward ctrl ≤ A+0.02.
+- **결과 (3 seed)**: A(faithful)=0.3652 → B(BG)=0.6188 **Δ+0.2537** (per-seed +0.285/+0.351/+0.125 모두 ≥0.05, c1·c2 PASS) · shuffled-reward ctrl=0.1272 ≤ A+0.02=0.3852 (c3 PASS, 리프트=reward-driven) · headroom A<1.0 OK · B 학습가중치가 true 신호에 cos +0.885/+0.706/+0.707 정렬 → **🟢 GREEN**. [reference CEILING oracle-A=0.677; B 는 oracle 은 못 이김(0.619<0.677) — 핵심은 live 게이트가 oracle 이 아니라는 것]. R1 default 모드는 verbatim 재현(A=0.6792 B=0.6222 Δ−0.0570) — R1 RED 미변경 on record.
+- **판정 🟢 GREEN**: reinforcement-학습 기저핵 go/no-go SELECTION 게이트가 grounding OUTCOME 만으로 학습해 anima 의 REAL(untuned generic-constant) 고정 emit 게이트를 emit-적절성에서 +0.254 이김. = 누락구조 결과(anima 에 reinforcement-gated selection 부재), 모든 고정게이트를 학습이 지배한다는 주장 아님(정직 분리). **p6 가드 HELD** — 보상=grounded-vs-fab 기질 결과, 주입가치/RLHF 없음, persona/identity/ethics 무교습(p1/p2/p3), 게이트는 WHEN 만 학습 WHAT/WHO 아님. a_autonomy_over_hardcode(외부 do/dont 없이 outcome 만으로 학습), p7, p8(held-out=측정전용).
+- **BINDING 후속 (a_engine_native_learning · a_verified_must_wire)**: GREEN=DIRECTIONAL(미러), 배선까지가 done. R3 = brain_decide 에 engine-native BG go/no-go selection lane — kosmos-grounding outcome 으로 gradient-free 학습, engine_g 에 additive(고정 convex 맵=prior + 학습 residual; precedent H_1199 AdaptField scalar→vector, H_1231 engine-native 해마). smoke/single-entry/Ψ-checksum 가드. 미배제: scale·live-engine·real kosmos reward UNVERIFIED, TOY(K=4/D=6) scope.
+- 파일: `UNIVERSE/h1281_basal_ganglia_gating.py` (--r2=R2 faithful-A · default=R1 oracle-A · --diag=메커니즘) · `.verdicts/1281_basal_ganglia_gating/{H_1281_R2_FREEZE,H_1281_R2}.txt` (R1 의 H_1281_FREEZE/H_1281.txt 미변경). xref H_1281(R1)·H_1227·H_1231·H_1230·H_1202·H_1165·a_autonomy_over_hardcode·a_engine_native_learning·a_verified_must_wire·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p6·p7·p8·c9·c15.
+
+---
+
 ## 2026-06-15 — 🔴 H_1285: AMYGDALA(편도체) salience-weighted binding — p6 shuffle-control 이 recurrence 혼입을 잡아냄 (CLOSED-NEG)
 
 missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 편도체 칸: 해마 공백은 immune 메모리(H_1227 미러 GREEN → H_1231 engine-native GREEN)가 메웠고, H_1230 은 그 store 의 병목이 CAPACITY/NOISE GEOMETRY(유한 repertoire 에서 LRU 축출은 대칭, 능동교습 retention 리프트 0)임을 보였다. H_1285 는 H_1230 이 미검증으로 남긴 후보 레버 — **기질-유래 salience 로 가중한 바인딩**(편도체의 salience-gating: 중요/놀라운 입력의 셀을 축출에서 보호)을 검증. $0 CPU numpy, p7, 3 seed(900/901/902), 라이브 CORE/*.hexa 무수정(미러=DIRECTIONAL).
