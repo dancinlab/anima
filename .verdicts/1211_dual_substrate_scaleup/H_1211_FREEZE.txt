@@ -1,0 +1,138 @@
+================================================================================
+H_1211 — DUAL-SUBSTRATE SCALE-UP  ·  PRE-REGISTERED FALSIFIER (FROZEN)
+domain = MITOSIS-ENGINE   ·   $0 local CPU   ·   p7 (cell-count/ratio, NOT perplexity)
+frozen BEFORE any measurement (a_toy_scale_recheck · a_scale_honest_scope — bars NOT
+movable to chase a tier)
+DATE-FROZEN: 2026-06-15   ·   BRANCH: h1211/dual-substrate-scaleup (base origin/main)
+SLUG: 1211_dual_substrate_scaleup
+================================================================================
+
+QUESTION (the ONE honest gap of the H_1202-1210 arc)
+----------------------------------------------------
+The whole H_1202-1210 mitosis-substrate-lane arc + PAPER/mitosis-substrate-lane was
+measured at TOY SCALE ($0 CPU, DIM=8, short streams T=2400, ONE small corpus
+clm_mid_5lang_c4 = 402 KB, 3 seeds). a_scale_honest_scope flagged this every time.
+Per a_toy_scale_recheck the scale-SENSITIVE central finding MUST be re-tested at
+larger scale: does the DENSITY-vs-TRAJECTORY DUAL-SUBSTRATE SPLIT hold as scale
+grows, or is it a toy artifact?
+
+THE FINDING UNDER STRESS-TEST (verified on main)
+------------------------------------------------
+  · H_1203 (.verdicts/1203_mitosis_novelty_coupling/): per-sample VAdaptField L2 gate
+    is novelty-DENSITY sensitive (NOVEL/REPEAT = 37.5x, F1 PASS) but trajectory-BLIND
+    (NOVEL/SHUFFLED = 0.992 ~ 1.0 on the i.i.d. PRIMARY stream, F2 FAIL).
+  · H_1208 (.verdicts/1208_predictability_split_gate/) + H_1209
+    (.verdicts/1209_live_ordered_walk_gate/): the GATE-B transition-PREDICTABILITY gate
+    on a genuinely-ORDERED stream (WALK) gives ORDERED/SHUFFLED = 10.9x (trajectory-
+    SENSITIVE, V14 direction); on the i.i.d. PRIMARY/RANDGAUSS stream it does NOT
+    separate (blind, near noise floor).
+  · SYNTHESIS (the paper's claim): "the determinant is the STREAM, not the GATE" — the
+    DENSITY gate fires on novelty-density regardless of order (i.i.d. ok); the
+    TRAJECTORY gate (GATE-B) separates ONLY where the stream actually has order (WALK).
+    BOTH measured at toy scale.
+
+MECHANISMS UNDER TEST (frozen, reused VERBATIM — NO edits to the builders/gates)
+-------------------------------------------------------------------------------
+  DENSITY gate  = H_1203 run_vadapt (UNIVERSE/h1203_mitosis_novelty_coupling.py),
+    the numpy mirror of CORE/engine_cli.hexa vadapt_field_step (nearest-by-L2,
+    recon-err > SPLIT_THRESH=0.30 spawns a cell at the sample, else LR=0.20 pull).
+    Streams: make_novel_stream / make_repeat_stream / make_shuffled_stream VERBATIM.
+  TRAJECTORY gate = H_1208 gate_B_transition_predictability + build_fixed_book +
+    proto_ids (UNIVERSE/h1208_predictability_split_gate.py), GATE-B VERBATIM.
+    Ordered surface: H_1207 make_walk_stream / make_walk_shuffled VERBATIM
+    (UNIVERSE/h1207_recurrent_split_key.py).
+    Sanity: make_randgauss_stream / make_randgauss_shuffled VERBATIM (i.i.d. noise).
+  All constants (T, WARMUP, N_PROTO, MIN_PREV=3, CONF_FLOOR=0.34, SPLIT_THRESH=0.30,
+    LR=0.20, MAX_CELLS) inherited; the SCALE LADDER varies ONLY the pre-declared scale
+    knobs below, applied by monkeypatching the imported module constants (the
+    builder/gate CODE is byte-unchanged — apples-to-apples across rungs).
+
+WHY DIM stays 8 (honest scope of the ladder axes)
+-------------------------------------------------
+DIM=8 is STRUCTURAL: H_1163 _byte_feature emits exactly 8 byte-statistics per window
+(VERBATIM H_1160 feature). Scaling DIM would require a DIFFERENT feature function =
+NOT a verbatim reuse + would change the mechanism, confounding the scale test. So the
+ladder does NOT vary DIM (stated honestly). The arc's toy-scale concerns that ARE
+testable verbatim — short stream length, one small corpus, small alphabet — are the
+ones varied. (a_scale_honest_scope: the un-scaled axis is declared, not hidden.)
+
+THE SCALE LADDER (>= 3 rungs; pre-registered; a_scale_honest_scope)
+-------------------------------------------------------------------
+Three orthogonal scale axes, each a >= 3-rung sweep. Every rung runs the FULL
+dual-split (DENSITY F1/F2 on PRIMARY i.i.d. streams + TRAJECTORY ORDERED/SHUFFLED on
+the WALK stream + RANDGAUSS sanity), 3 seeds (900,901,902), reporting the CURVE.
+
+  AXIS-T  STREAM LENGTH  T in {2400 (toy), 24000 (10x), 240000 (100x)}
+    (the arc's "short streams" gap; WARMUP scales 250 -> 2500 -> 25000 to keep the
+     warmup fraction constant; MAX_CELLS raised to 10**9 so growth is never capped
+     prematurely at long T — a cap would itself be a scale artifact, declared here).
+  AXIS-C  CORPUS  in {clm_mid_5lang_c4 (402 KB, toy), flores5_dev_devtest (1.65 MB,
+     4x), data/corpus.txt (5.24 MB, 13x)} at fixed toy T=2400 (the arc's "one small
+     corpus" gap; a bigger corpus = more scattered offsets / richer walk content).
+  AXIS-P  ALPHABET (trajectory-gate prototype book) N_PROTO in {24 (toy), 64, 128}
+     at fixed toy T=2400, toy corpus (does the trajectory split survive a richer
+     transition alphabet? a denser book = finer transitions = harder predictability).
+     [DENSITY-gate F1/F2 are book-independent, so AXIS-P reports the trajectory leg
+      + carries the toy DENSITY numbers for the dual-split check.]
+
+The 100x AXIS-T rung (T=240000) is the heaviest; if it is genuinely infeasible on
+$0 CPU within a reasonable wall budget it will be reported as the LARGEST FEASIBLE
+rung with an honest note (NO faked rung — a_scale_honest_scope, task constraint 4).
+A 10x rung (T=24000) is the floor we commit to reaching.
+
+PRE-REGISTERED FALSIFIERS (frozen bars — NOT moved post-hoc)
+------------------------------------------------------------
+F1 (DENSITY-gate scale-stability):
+    At EVERY rung of EVERY axis, the H_1203 novelty-density coupling HOLDS:
+    DENSITY NOVEL/REPEAT cell_growth ratio  >=  1.5  (3-seed mean).
+    Report the full curve. PASS iff >= 1.5 at all rungs.
+
+F2 (TRAJECTORY-gate scale-stability):
+    At EVERY rung of EVERY axis, the H_1208/H_1209 GATE-B separation HOLDS on the
+    ORDERED (WALK) stream:
+    TRAJECTORY WALK/WALK_SHUF born-cells ratio  >=  1.5  (3-seed mean),
+    AND the RANDGAUSS sanity stays honest (the WALK pass is not a noise artifact —
+    RANDGAUSS/RANDGAUSS_SHUF reported; a WALK pass with a comparable-or-larger
+    sanity ratio at the noise floor is flagged, as in H_1208/H_1209).
+    Report the full curve. PASS iff >= 1.5 at all rungs.
+
+F3 (the DUAL-SPLIT persists — the central scale-invariance claim):
+    At EVERY rung, the QUALITATIVE dual-substrate split holds simultaneously:
+      (a) the DENSITY gate stays TRAJECTORY-BLIND on the i.i.d. PRIMARY stream
+          (DENSITY NOVEL/SHUFFLED ~ 1.0, specifically < 1.5 — NOT trajectory-coupled),
+      AND
+      (b) the TRAJECTORY gate SEPARATES on the ORDERED stream (WALK/WALK_SHUF >= 1.5).
+    PASS iff BOTH (a) and (b) hold at all rungs.
+    If the split BREAKS at some rung (e.g. density gate starts separating on shuffle,
+    or trajectory gate collapses to no-sep), IDENTIFY the rung + WHY — an honest
+    scale-break is a valid closed-negative finding (a_scale_honest_scope,
+    a_paper_negative_ok), NOT a failure.
+
+TIER RULING (frozen)
+--------------------
+  GREEN (🟢 scale-robust)  iff F1 AND F2 AND F3 hold at EVERY measured rung
+        => the toy dual-substrate verdict PROMOTES to a scale-robust finding; the
+        H_1202-1210 paper's central claim survives scale-up.
+  PARTIAL (🟠)  if the dual-split holds qualitatively but a ratio dips below a bar at
+        the largest rung WITHOUT inverting the qualitative split (report the curve;
+        the toy verdict is QUALIFIED, not promoted to fully scale-robust).
+  RED (🔴 honest scale-break, a_paper_negative_ok)  if the qualitative dual-split
+        INVERTS / collapses at an identified rung (density gate becomes order-coupled,
+        OR trajectory gate stops separating on ordered streams) => the toy finding was
+        a scale artifact at that axis; report WHERE + WHY. This is a valid finding and
+        REQUIRES a paper-supersede FLAG (do NOT silently edit the merged paper).
+
+PROTOCOL
+--------
+- numpy MIRROR (H_1199 mechanism-match precedent; gradient-free). 3 seeds = 900,901,902.
+- p7 (cell-count / ratio metrics, NOT perplexity). p8 (split tick == growth).
+- $0 local CPU. NO GPU (CPU-first; if the 100x rung needs GPU, report largest feasible
+  CPU rung + the one-line cost note, a_fire_autonomous permits but try CPU first).
+- Builders + gates imported VERBATIM from H_1203/H_1207/H_1208; the ladder ONLY
+  monkeypatches the pre-declared scale constants (T, WARMUP, MAX_CELLS, CORPUS,
+  N_PROTO). The mechanism CODE is byte-unchanged across rungs.
+- Optional cheap live-engine spot-check of ONE larger rung through VAdaptField /
+  VAdaptFieldB for parity (H_1199/H_1209 precedent) if it is inexpensive.
+- Engine wiring UNCHANGED (measurement-only probe). Frozen bars (1.5) NOT moved.
+- Scale-dependent conclusions reported as the LADDER CURVE (a_scale_honest_scope).
+================================================================================

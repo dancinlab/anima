@@ -1,0 +1,249 @@
+================================================================================
+H_1211 DUAL-SUBSTRATE SCALE-UP — numpy mirror (H_1199), $0 CPU, p7/p8, 3 seeds
+SEEDS=[900, 901, 902]  BAR=1.5  DIM=8 (structural, NOT scaled — see FREEZE)
+builders+gates imported VERBATIM (H_1203 density · H_1207 walk · H_1208 GATE-B);
+the ladder ONLY monkeypatches pre-declared scale constants. Frozen bars NOT moved.
+================================================================================
+
+########## AXIS-T : STREAM LENGTH (toy / 10x / 100x) ##########
+
+=== RUNG [T-toy:2400]  T=2400 WARMUP=250 N_PROTO=24 corpus=clm_mid_5lang_c4.txt ===
+  DENSITY  NOVEL=162.7(seed [168, 167, 153])  REPEAT=4.3(seed [2, 9, 2])  SHUFFLED=164.0(seed [173, 163, 156])
+           F1 NOVEL/REPEAT   =  37.538  (bar>=1.5)  -> PASS
+           blind NOVEL/SHUF  =   0.992  (dual-split needs <1.5: trajectory-BLIND)  -> BLIND-ok
+  TRAJ-B   WALK=1000.7(seed [1065, 907, 1030])  WALK_SHUF=91.7(seed [70, 91, 114])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+           F2 WALK/WALK_SHUF =  10.916  (bar>=1.5)  -> PASS
+           sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 2.0s]
+
+=== RUNG [T-10x:24000]  T=24000 WARMUP=2500 N_PROTO=24 corpus=clm_mid_5lang_c4.txt ===
+  DENSITY  NOVEL=339.3(seed [352, 341, 325])  REPEAT=4.7(seed [3, 9, 2])  SHUFFLED=339.3(seed [346, 344, 328])
+           F1 NOVEL/REPEAT   =  72.714  (bar>=1.5)  -> PASS
+           blind NOVEL/SHUF  =   1.000  (dual-split needs <1.5: trajectory-BLIND)  -> BLIND-ok
+  TRAJ-B   WALK=12819.7(seed [13307, 12453, 12699])  WALK_SHUF=4876.3(seed [96, 6893, 7640])  RANDG=3.0(seed [2, 2, 5])  RANDG_SHUF=3.7(seed [5, 4, 2])
+           F2 WALK/WALK_SHUF =   2.629  (bar>=1.5)  -> PASS
+           sanity RANDG/SHUF =   0.818  (honest if << F2; flag if >=1.5)
+  [rung wall 33.4s]
+
+=== RUNG [T-100x:240000]  T=240000 WARMUP=25000 N_PROTO=24 corpus=clm_mid_5lang_c4.txt ===
+  DENSITY  NOVEL=613.3(seed [622, 611, 607])  REPEAT=4.7(seed [3, 9, 2])  SHUFFLED=609.0(seed [617, 599, 611])
+           F1 NOVEL/REPEAT   = 131.429  (bar>=1.5)  -> PASS
+           blind NOVEL/SHUF  =   1.007  (dual-split needs <1.5: trajectory-BLIND)  -> BLIND-ok
+  TRAJ-B   WALK=137024.0(seed [141674, 139690, 129708])  WALK_SHUF=120575.0(seed [93150, 137055, 131520])  RANDG=3.7(seed [5, 3, 3])  RANDG_SHUF=3.7(seed [7, 2, 2])
+           F2 WALK/WALK_SHUF =   1.136  (bar>=1.5)  -> FAIL
+           sanity RANDG/SHUF =   1.000  (honest if << F2; flag if >=1.5)
+  [rung wall 561.6s]
+
+########## AXIS-C : CORPUS (402KB / 1.65MB / 5.24MB) @ T=2400 ##########
+
+=== RUNG [C:clm_mid_5lang_c4(402KB)]  T=2400 WARMUP=250 N_PROTO=24 corpus=clm_mid_5lang_c4.txt ===
+  DENSITY  NOVEL=162.7(seed [168, 167, 153])  REPEAT=4.3(seed [2, 9, 2])  SHUFFLED=164.0(seed [173, 163, 156])
+           F1 NOVEL/REPEAT   =  37.538  (bar>=1.5)  -> PASS
+           blind NOVEL/SHUF  =   0.992  (dual-split needs <1.5: trajectory-BLIND)  -> BLIND-ok
+  TRAJ-B   WALK=1000.7(seed [1065, 907, 1030])  WALK_SHUF=91.7(seed [70, 91, 114])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+           F2 WALK/WALK_SHUF =  10.916  (bar>=1.5)  -> PASS
+           sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 2.0s]
+
+=== RUNG [C:flores5_devtest(1.65MB)]  T=2400 WARMUP=250 N_PROTO=24 corpus=flores5_dev_devtest.txt ===
+  DENSITY  NOVEL=99.0(seed [95, 93, 109])  REPEAT=1.7(seed [0, 3, 2])  SHUFFLED=97.0(seed [86, 95, 110])
+           F1 NOVEL/REPEAT   =  59.400  (bar>=1.5)  -> PASS
+           blind NOVEL/SHUF  =   1.021  (dual-split needs <1.5: trajectory-BLIND)  -> BLIND-ok
+  TRAJ-B   WALK=1047.7(seed [1434, 1653, 56])  WALK_SHUF=786.0(seed [1166, 1187, 5])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+           F2 WALK/WALK_SHUF =   1.333  (bar>=1.5)  -> FAIL
+           sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 1.5s]
+
+=== RUNG [C:data_corpus(5.24MB)]  T=2400 WARMUP=250 N_PROTO=24 corpus=corpus.txt ===
+  DENSITY  NOVEL=163.0(seed [160, 158, 171])  REPEAT=3.0(seed [2, 4, 3])  SHUFFLED=163.3(seed [166, 157, 167])
+           F1 NOVEL/REPEAT   =  54.333  (bar>=1.5)  -> PASS
+           blind NOVEL/SHUF  =   0.998  (dual-split needs <1.5: trajectory-BLIND)  -> BLIND-ok
+  TRAJ-B   WALK=952.0(seed [583, 1118, 1155])  WALK_SHUF=188.0(seed [161, 352, 51])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+           F2 WALK/WALK_SHUF =   5.064  (bar>=1.5)  -> PASS
+           sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 2.0s]
+
+########## AXIS-P : TRAJECTORY ALPHABET N_PROTO (24 / 64 / 128) @ T=2400 ##########
+  [density is book-independent; toy density carried: F1=37.538 blind=0.992]
+
+=== RUNG [P:N_PROTO=24]  T=2400 WARMUP=250 N_PROTO=24 corpus=clm_mid_5lang_c4.txt ===
+  TRAJ-B   WALK=1000.7(seed [1065, 907, 1030])  WALK_SHUF=91.7(seed [70, 91, 114])  RANDG=2.3(seed [2, 1, 4])  RANDG_SHUF=1.3(seed [2, 2, 0])
+           F2 WALK/WALK_SHUF =  10.916  (bar>=1.5)  -> PASS
+           sanity RANDG/SHUF =   1.750  (honest if << F2; flag if >=1.5)
+  [rung wall 0.6s]
+
+=== RUNG [P:N_PROTO=64]  T=2400 WARMUP=250 N_PROTO=64 corpus=clm_mid_5lang_c4.txt ===
+  TRAJ-B   WALK=305.0(seed [184, 341, 390])  WALK_SHUF=2.0(seed [5, 1, 0])  RANDG=0.0(seed [0, 0, 0])  RANDG_SHUF=2.0(seed [1, 5, 0])
+           F2 WALK/WALK_SHUF = 152.500  (bar>=1.5)  -> PASS
+           sanity RANDG/SHUF =   0.000  (honest if << F2; flag if >=1.5)
+  [rung wall 0.7s]
+
+=== RUNG [P:N_PROTO=128]  T=2400 WARMUP=250 N_PROTO=128 corpus=clm_mid_5lang_c4.txt ===
+  TRAJ-B   WALK=95.0(seed [107, 111, 67])  WALK_SHUF=3.3(seed [1, 2, 7])  RANDG=0.0(seed [0, 0, 0])  RANDG_SHUF=0.3(seed [0, 0, 1])
+           F2 WALK/WALK_SHUF =  28.500  (bar>=1.5)  -> PASS
+           sanity RANDG/SHUF =   0.000  (honest if << F2; flag if >=1.5)
+  [rung wall 0.8s]
+
+================================================================================
+LADDER CURVES (3-seed means; a_scale_honest_scope)
+================================================================================
+axis     rung                      F1 dens NOVEL/REP  blind NOVEL/SHUF   F2 WALK/SHUF    sanity
+AXIS-T   T-toy:2400                           37.538             0.992         10.916     1.750
+AXIS-T   T-10x:24000                          72.714             1.000          2.629     0.818
+AXIS-T   T-100x:240000                       131.429             1.007          1.136     1.000
+AXIS-C   C:clm_mid_5lang_c4(402KB)             37.538             0.992         10.916     1.750
+AXIS-C   C:flores5_devtest(1.65MB)             59.400             1.021          1.333     1.750
+AXIS-C   C:data_corpus(5.24MB)                54.333             0.998          5.064     1.750
+AXIS-P   P:N_PROTO=24                         37.538             0.992         10.916     1.750
+AXIS-P   P:N_PROTO=64                         37.538             0.992        152.500     0.000
+AXIS-P   P:N_PROTO=128                        37.538             0.992         28.500     0.000
+
+=== FROZEN FALSIFIERS (bar = 1.5, pre-registered, NOT moved) ===
+  F1 DENSITY scale-stability (NOVEL/REPEAT >= 1.5 at all rungs): min=37.538  -> PASS
+  F2 TRAJECTORY scale-stability (WALK/WALK_SHUF >= 1.5 at all rungs): min=1.136  -> FAIL
+  F3 DUAL-SPLIT persists (density BLIND <1.5 AND trajectory SEPARATES >=1.5, all rungs): -> FAIL
+     - density trajectory-BLIND on i.i.d. (max NOVEL/SHUF = 1.021 < 1.5): OK
+     - trajectory SEPARATES on ordered (all WALK/WALK_SHUF >= 1.5): BROKEN
+  SANITY note: 5 rung(s) have RANDGAUSS sanity >= 1.5 (inspect vs F2):
+     AXIS-T T-toy:2400: sanity=1.750 vs F2=10.916  (noise-floor small-int (honest, F2>>sanity))
+     AXIS-C C:clm_mid_5lang_c4(402KB): sanity=1.750 vs F2=10.916  (noise-floor small-int (honest, F2>>sanity))
+     AXIS-C C:flores5_devtest(1.65MB): sanity=1.750 vs F2=1.333  (INSPECT)
+     AXIS-C C:data_corpus(5.24MB): sanity=1.750 vs F2=5.064  (INSPECT)
+     AXIS-P P:N_PROTO=24: sanity=1.750 vs F2=10.916  (noise-floor small-int (honest, F2>>sanity))
+
+TIER: RED (🔴 honest scale-break, a_paper_negative_ok) — the dual-split BREAKS at an identified rung (see curve + per-falsifier lines for WHERE/WHY). The toy finding was a scale artifact on that axis; a paper-supersede FLAG is required (do NOT silently edit the merged PAPER/mitosis-substrate-lane).
+
+HONESTY (a_scale_honest_scope): numpy mirror (H_1199 precedent), gradient-free, $0 CPU, 3 seeds. Builders + gates (H_1203 density · H_1207 walk · H_1208 GATE-B) imported VERBATIM; the ladder monkeypatches ONLY the pre-declared scale constants (T, WARMUP, MAX_CELLS, CORPUS, N_PROTO) — mechanism CODE byte-unchanged. DIM=8 is structural and NOT scaled (declared in FREEZE: _byte_feature emits exactly 8 features). p7 (cell-count/ratio, NOT perplexity), p8 (split == growth). Frozen bar (1.5) NOT moved. Ladder reported as the full CURVE per a_scale_honest_scope.
+[done]
+
+================================================================================
+RULING (against frozen H_1211_FREEZE.txt — bars NOT moved post-hoc)
+================================================================================
+TIER = 🔴 RED — HONEST SCALE-BREAK (a_scale_honest_scope · a_paper_negative_ok).
+A valid finding, NOT a failure: the dual-substrate split is HALF scale-robust and
+HALF a toy artifact. Decisively located.
+
+THE LADDER (3-seed means; the falsifier curve)
+----------------------------------------------
+                              F1 density   blind(density)   F2 trajectory   sanity
+  axis  rung                  NOVEL/REPEAT  NOVEL/SHUFFLED   WALK/WALK_SHUF
+  T     toy   T=2400              37.538       0.992           10.916        1.750
+  T     10x   T=24000             72.714       1.000            2.629        0.818
+  T     100x  T=240000           131.429       1.007            1.136 FAIL   1.000
+  C     402KB clm_mid_5lang       37.538       0.992           10.916        1.750
+  C     1.65MB flores5            59.400       1.021            1.333 FAIL    1.750
+  C     5.24MB data/corpus        54.333       0.998            5.064        1.750
+  P     N_PROTO=24                37.538*      0.992*          10.916        1.750
+  P     N_PROTO=64                37.538*      0.992*         152.500        0.000
+  P     N_PROTO=128               37.538*      0.992*          28.500        0.000
+  (* AXIS-P density is book-INDEPENDENT — carried from the toy density measurement.)
+
+FROZEN FALSIFIERS
+-----------------
+  F1 DENSITY scale-stability     min 37.538 (>=1.5)  -> PASS
+  F2 TRAJECTORY scale-stability  min  1.136 (<1.5)   -> FAIL
+  F3 DUAL-SPLIT persists                              -> FAIL
+       (a) density trajectory-BLIND on i.i.d. (max NOVEL/SHUF 1.021 < 1.5): OK at ALL rungs
+       (b) trajectory SEPARATES on ordered (all WALK/WALK_SHUF >= 1.5): BROKEN (T-100x, C-1.65MB)
+
+WHAT HOLDS (the density half — SCALE-ROBUST, the toy verdict PROMOTES here)
+---------------------------------------------------------------------------
+The H_1203 DENSITY gate (per-sample VAdaptField L2 recon-err) is scale-INVARIANT in
+its dual-split property at EVERY rung tested:
+  · novelty-density coupling F1 not only holds but STRENGTHENS with scale (37.5 -> 72.7
+    -> 131.4 over 100x stream length; 37.5/59.4/54.3 over 13x corpus) — a longer/larger
+    stream presents more out-of-regime samples vs the single revisited REPEAT block.
+  · trajectory-BLINDNESS (NOVEL/SHUFFLED) stays pinned at ~1.0 across 100x T
+    (0.992 -> 1.000 -> 1.007) and 13x corpus (0.992 / 1.021 / 0.998). The density gate
+    is permutation-invariant BY CONSTRUCTION (split decided per-sample by L2-to-nearest,
+    no temporal term) — and that construction-level invariance is genuinely scale-free.
+  => F3 leg (a) is SCALE-ROBUST. "Mitosis = a novelty-DENSITY substrate, order-blind on
+     i.i.d." PROMOTES from toy to a scale-robust claim (a_toy_scale_recheck satisfied
+     for the density gate).
+
+WHAT BREAKS (the trajectory half — TOY ARTIFACT, located + mechanism explained)
+-------------------------------------------------------------------------------
+The H_1208/H_1209 TRAJECTORY gate (GATE-B transition-predictability) separation on the
+ORDERED WALK stream COLLAPSES as stream length grows:
+  WALK/WALK_SHUF  =  10.916 (T=2400)  ->  2.629 (T=24000)  ->  1.136 (T=240000, FAIL).
+The toy 10.9x is NOT scale-stable; by 100x it is statistically a non-separation.
+
+MECHANISM (root cause c1, why the trajectory gate decays with T):
+  GATE-B fires when a realized prototype-transition (prev->cur) is PREDICTABLE: prev
+  seen >= MIN_PREV=3 AND P(cur|prev) >= CONF_FLOOR=0.34 from an ONLINE count table over
+  a FIXED alphabet of N_PROTO=24 prototype ids. With only 24 symbols and a stream of
+  length T, the count table SATURATES: as T grows, EVEN A SHUFFLED proto-id stream
+  accumulates enough mass on each (prev,*) row that some realized transition crosses
+  the 0.34 confidence floor BY CHANCE. So WALK_SHUF division climbs toward WALK division
+  (toy WALK_SHUF mean 91.7 -> 100x 120575), erasing the separation. The trajectory gate's
+  "predictability" signal is only distinguishable from chance when the alphabet is large
+  relative to the observed transition count — a finite-alphabet / finite-sample effect,
+  not a property of order itself. (The per-seed variance also explodes: at T=24000 the
+  WALK_SHUF seeds are [96, 6893, 7640] — a regime where some shuffles saturate and some
+  don't, a classic small-alphabet saturation signature.)
+
+AXIS-P CONFIRMS THE MECHANISM (the diagnostic that nails it):
+  At fixed toy T=2400, ENLARGING the alphabet RESTORES + sharpens the separation and
+  drives the sanity floor to ZERO:
+    N_PROTO=24  -> WALK/WALK_SHUF  10.9   sanity 1.750
+    N_PROTO=64  -> WALK/WALK_SHUF 152.5   sanity 0.000   (WALK_SHUF collapses to 2.0)
+    N_PROTO=128 -> WALK/WALK_SHUF  28.5   sanity 0.000
+  A richer alphabet makes chance-predictability much harder, so the shuffle stops firing.
+  => the collapse on AXIS-T is alphabet-SATURATION (fixed 24 symbols vs long T), NOT a
+     failure of the predictability principle. With N_PROTO scaled WITH T the trajectory
+     gate would likely separate again — but at the FROZEN toy alphabet the trajectory
+     gate is NOT scale-stable in stream length, which is exactly what F2 measures. (The
+     N_PROTO=64/128 sanity of 0.000 also retires the H_1208/H_1209 toy ARTIFACT-WARN: at
+     N_PROTO=24 the sanity 1.75 was small-int noise [2.33 vs 1.33]; richer alphabets show
+     the gate genuinely does not fire on i.i.d. noise.)
+
+AXIS-C (corpus) is MIXED + corpus-dependent for the trajectory gate:
+  402KB clm_mid 10.9  ·  1.65MB flores5 1.333 (FAIL)  ·  5.24MB data/corpus 5.06.
+  The trajectory separation is fragile + content-dependent: flores5 (a translation
+  dev/devtest, highly repetitive parallel sentences) produces a WALK whose shuffle is
+  nearly as "predictable" (WALK_SHUF 786 vs WALK 1047, ratio 1.33), while data/corpus
+  (richer en text) separates 5.06x. The DENSITY gate is unaffected by corpus (blind
+  ~1.0 everywhere). So even at toy T, the trajectory gate's separation depends on
+  whether the corpus's WALK has order that survives a small-alphabet quantization — it
+  is NOT a robust corpus-invariant property.
+
+CONCLUSION (decision-grade)
+---------------------------
+The dual-substrate split is HALF scale-robust:
+  · DENSITY substrate (H_1203): SCALE-ROBUST. novelty-coupled + trajectory-blind holds
+    and strengthens across 100x stream length and 13x corpus. The paper's density claim
+    PROMOTES from toy to scale-validated.
+  · TRAJECTORY substrate (H_1208/H_1209 GATE-B): TOY-SCALE ARTIFACT at the frozen
+    N_PROTO=24 alphabet. The 10.9x ordered>>shuffled separation is a small-alphabet /
+    short-stream effect; it decays to 1.14 (non-separation) by 100x stream length and is
+    corpus-fragile (fails on flores5). It is RESCUABLE by scaling the alphabet WITH the
+    stream (AXIS-P), but as frozen it is NOT scale-stable.
+=> "The determinant is the stream, not the gate" must be QUALIFIED: the determinant is
+   BOTH the stream AND the alphabet/observation-budget. The trajectory gate's
+   trajectory-sensitivity is real but only resolvable in a regime where the symbol
+   alphabet is large relative to the transition count — a finite-sample regime the toy
+   happened to sit in.
+
+PAPER-SUPERSEDE FLAG (a_paper_violation / a_paper_only_at_closure — do NOT silent-edit)
+--------------------------------------------------------------------------------------
+PAPER/mitosis-substrate-lane currently claims the trajectory result (H_1208/H_1209
+10.9x) as a co-equal half of a scale-unqualified dual-split. This verdict shows the
+TRAJECTORY half is scale-fragile at the frozen alphabet (F2 FAIL at 100x + flores5),
+while the DENSITY half is scale-robust. The paper's central claim "determinant is the
+stream, not the gate" needs a SCALE-QUALIFICATION (add the alphabet/observation-budget
+dependence + this ladder curve). FLAGGED for a paper supersede — NOT silently edited
+here (the merged paper is left intact; this is the supersede trigger record).
+
+HONESTY (a_scale_honest_scope)
+------------------------------
+numpy mirror (H_1199 mechanism-match precedent), gradient-free, $0 CPU, 3 seeds, frozen
+bar 1.5 NOT moved. Builders + gates (H_1203 density · H_1207 walk · H_1208 GATE-B)
+imported VERBATIM — the ladder monkeypatched ONLY the pre-declared scale constants (T,
+WARMUP, MAX_CELLS, CORPUS, N_PROTO); the toy rung reproduces H_1203/H_1208/H_1209
+BYTE-FOR-BYTE (density F1 37.538 / blind 0.992; trajectory 10.916; sanity 1.750),
+proving the reuse is faithful. DIM=8 is STRUCTURAL and NOT scaled (declared in FREEZE:
+_byte_feature emits exactly 8 byte-statistics; scaling it would change the mechanism).
+The 100x AXIS-T rung (T=240000) was FEASIBLE on CPU (561.6s ~9.4min for the density
+leg, the O(T*n_cells) bottleneck); no GPU needed, no rung faked. p7 (cell-count/ratio,
+NOT perplexity), p8 (split == growth). Ladder reported as the full CURVE.
+================================================================================

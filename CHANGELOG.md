@@ -6,6 +6,20 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🔴 H_1211: dual-substrate split SCALE-UP — DENSITY 절반은 scale-robust, TRAJECTORY 절반은 toy 인공물 (MITOSIS-ENGINE)
+
+H_1202–H_1210 arc 의 단 하나 honest gap = TOY SCALE (전부 $0 CPU·DIM=8·T=2400·402KB 코퍼스·3 seed, a_scale_honest_scope 가 매번 flag). a_toy_scale_recheck 에 따라 scale-SENSITIVE 중심 finding(DENSITY-vs-TRAJECTORY 이중-기질 분리)을 3축 사다리로 재시험.
+
+- **사다리(>=3 rung/축, 측정 BEFORE frozen)**: AXIS-T 스트림 길이 T{2400, 24000, 240000} · AXIS-C 코퍼스{402KB clm_mid_5lang, 1.65MB flores5, 5.24MB data/corpus} · AXIS-P 궤적-gate 알파벳 N_PROTO{24, 64, 128}. H_1203 density gate + H_1207 walk + H_1208/H_1209 GATE-B 궤적 gate 를 VERBATIM 재사용, 사다리는 사전선언 scale 상수만 monkeypatch(mechanism CODE byte-unchanged). toy rung 이 H_1203/1208/1209 를 BYTE-FOR-BYTE 재현(37.538/0.992/10.916/1.750) → 재사용 충실 증명.
+- **결과 🔴 HONEST SCALE-BREAK(절반만 scale-robust)**: **F1 PASS** density novelty-coupling(NOVEL/REPEAT 37.5→72.7→131.4, 100x T 에서 오히려 강화). **F3(a) PASS** 모든 rung — density 가 i.i.d. 에서 궤적-BLIND 유지(blind NOVEL/SHUF 0.992→1.000→1.007 over 100x T; 13x 코퍼스 0.992/1.021/0.998 — 구성상 permutation-invariant = 진짜 scale-free). **F2 FAIL** — TRAJECTORY GATE-B 분리가 스트림 길이로 붕괴: WALK/WALK_SHUF 10.916(T=2400)→2.629(10x)→**1.136(100x, FAIL)**; 코퍼스 취약(flores5 1.65MB = 1.333 FAIL, data/corpus 5.24MB = 5.06).
+- **근본원인 c1 = 작은-알파벳 포화**: 고정 N_PROTO=24 + 긴 T 에서 predictability 카운트 테이블이 포화 → SHUFFLED 전이도 CONF_FLOOR=0.34 를 우연히 넘김(WALK_SHUF seed [96,6893,7640]@10x = 포화 서명). **AXIS-P 가 mechanism 확정**: toy T 에서 알파벳 키우면 분리 복원+선예(N_PROTO 24→10.9, 64→152.5, 128→28.5) + sanity 1.75→0.000(H_1208/1209 ARTIFACT-WARN 해소 — 풍부 알파벳이면 i.i.d. noise 에 안 발화).
+- **결론**: DENSITY 기질 = SCALE-ROBUST(toy→검증 승격). TRAJECTORY 기질(GATE-B) = 고정 N_PROTO=24 알파벳에서 TOY-SCALE 인공물(알파벳을 스트림과 함께 키우면 복원되나 frozen 상태로는 T 에 scale-stable 아님). "결정자는 gate 가 아니라 stream" → **결정자는 stream AND 알파벳/관측-예산** 으로 QUALIFY.
+- **⚠ PAPER-SUPERSEDE FLAG**: `PAPER/mitosis-substrate-lane` 가 궤적 10.9x 를 scale-무조건 동등 절반으로 주장 — scale-qualification + 이 사다리 곡선 필요. 병합 논문 silent-edit 안 함(a_paper_violation), 이 verdict 가 supersede trigger 기록.
+- **honest scope**: numpy mirror(H_1199), gradient-free, $0 CPU, 3 seed, bar 1.5 NOT moved. DIM=8 구조적이라 미-scale(선언됨), 100x rung(T=240000) CPU 가능(561.6s, GPU 불필요·rung 위조 없음). p7(cell/ratio, NOT perplexity), p8.
+- **NEW**: `UNIVERSE/h1211_dual_substrate_scaleup.py` · `.verdicts/1211_dual_substrate_scaleup/{H_1211_FREEZE,H_1211}.txt`. 엔진/builder/gate 편집 0(measurement-only). xref h1203·h1208·h1209·h1210·a_toy_scale_recheck·a_scale_honest_scope·a_paper_negative_ok·p7·p8.
+
+---
+
 ## 2026-06-15 — 📄 PAPER scaffold: `mitosis-substrate-lane` — mitosis = Ψ-disjoint substrate-adaptation lane (MITOSIS-ENGINE H_1202–H_1210 arc)
 
 MITOSIS-ENGINE arc(H_1202–H_1210, 전부 main 병합)를 verdict-gated arxiv-style 논문으로 scaffold. `PAPER/mitosis-substrate-lane/` 신설 + `PAPER.tape` roster 등록.
