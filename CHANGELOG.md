@@ -2,6 +2,12 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — fix(README): 유튜브 썸네일 404 수정 (maxresdefault→hqdefault)
+
+Top README YouTube thumbnail used `…/vi/xtKhWSfC1Qo/maxresdefault.jpg`, which 404s for this video
+(no maxres thumbnail exists) → rendered as a broken-image X. Swapped the single filename token to
+`hqdefault.jpg` (HTTP 200, always present). One-token change; link/width/alt text unchanged.
+
 ## 2026-06-16 — doc(FINDINGS): AI 랩 공유용 창발·새로움·아키텍처 결과 합본 (연속노트 + 검증 verdict)
 
 New root `FINDINGS.md` — a curated EXTERNAL-SHARE snapshot written as a GitHub-issue body for other
