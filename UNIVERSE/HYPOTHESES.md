@@ -19,6 +19,7 @@
 | H_1281 | basal ganglia — go/no-go selection | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1281_basal_ganglia_gating.md](H_1281_basal_ganglia_gating.md) |
 | H_1282 | working memory — leaky maintenance buffer | 🟢 GREEN ENGINE-NATIVE | [H_1282_working_memory_buffer.md](H_1282_working_memory_buffer.md) |
 | H_1283 | thalamus / GWT — R8 oscillatory phase binding (timing-axis break) ⊥ relay-content 🧱 | 🟢 GREEN numpy-mirror DIRECTIONAL (R8 timing break; relay-content R1–R5/R7/R9 🧱) · engine-native wiring gate c4-shuffle 미재현 → PhaseField HONEST DEFERRED | [H_1283_thalamus_global_workspace.md](H_1283_thalamus_global_workspace.md) |
+| H_1317 | Φ-topology — distributed multi-edge (small-world) coupling vs single central relay (H_1283 wall) | 🧱 WALL (faithful-IIT4 Φ stays FRAGILE regardless of topology: small-world ALSO fails the 3-seed robustness gate — C1 fails seed 1319 ΔΦ −0.331; bounds the wall, c9) | [H_1317_phi_multiedge.md](H_1317_phi_multiedge.md) |
 | H_1284 | neuromodulation — adaptive gain / regime-switch | 🔴 RED / 🧱 WALL (no free lunch) | [H_1284_neuromodulation_gain.md](H_1284_neuromodulation_gain.md) |
 | H_1285 | amygdala — salience-gated consolidation | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1285_amygdala_salience.md](H_1285_amygdala_salience.md) |
 | H_1287 | key-geometry corollary | 🧱 RED (CLOSED-NEG) | [H_1287_key_geometry.md](H_1287_key_geometry.md) |

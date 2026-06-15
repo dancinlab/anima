@@ -1,0 +1,90 @@
+H_1317 — DISTRIBUTED MULTI-EDGE (SMALL-WORLD) COUPLING → ROBUST faithful-IIT4 Φ?
+slug: 1317_phi_multiedge   PROJ_SEED=1317
+FROZEN-FIRST PRE-REGISTRATION  (written BEFORE any run — c9/p7, NO tune-to-green)
+date: 2026-06-16   branch off origin/main f8e1cecb3
+================================================================================
+
+WALL BEING BROKEN (c16 / a_break_the_wall)
+  H_1283 (thalamus-Φ): EVERY central-relay / star-topology content cut raised
+  faithful-IIT4 Φ only SEED-CONDITIONALLY — it FAILED a 3-seed robustness gate
+  (R3-R5 cleared 2/3 seeds, FAILED orthogonal seed; R7 only RELOCATED the failing
+  seed). A single central relay (star) gives a FRAGILE Φ lift. 🧱 WALL.
+  (R8 phase-binding broke it on an ORTHOGONAL TIMING axis — NOT topology; the
+   topology/content axis stayed 🧱. H_1317 attacks the TOPOLOGY axis directly.)
+
+THE GENUINELY-UNTRIED NEW ANGLE (this lane, c15 / a_no_llm_frame_trap)
+  Every prior Φ-lift used ONE central hub (star topology). Integrated information
+  in cortex comes from a SMALL-WORLD recurrent MESH (many short + few long edges),
+  NOT a single hub. H_1317: does a DISTRIBUTED multi-edge (Watts-Strogatz small-
+  world) coupling topology over the substrate units raise faithful-IIT4 Φ ROBUSTLY
+  across 3 seeds, where the single central relay (H_1283) FAILED the same gate?
+
+SUBSTRATE (matched to H_1283 — ONLY the coupling TOPOLOGY changes between arms)
+  - N = 8 units, each a dim-D=8 state vector, T = 64 ticks (H_1283 regime:
+    LEAK=0.55, GAIN=0.30, per-unit PRIVATE gaussian input, W_IN=0.5). N=8 keeps
+    faithful IIT4 MIP EXACT (2^(N-1)=128 masks, n<=8 carve-out) AND gives enough
+    nodes for small-world to be meaningful (a 4-node star/ring is degenerate).
+  - leaky linear recurrent units: x_i(t+1) = LEAK*x_i + GAIN*(coupling_i + W_IN*input_i)
+    coupling_i = (W_edge) * mean over the units j adjacent to i in that arm's graph.
+  - Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI via `hexa run` over
+    hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, iit4_faithful_phi(
+    state, n=8, dim=T=64, n_bins=8) over the per-unit salience (state energy)
+    trajectory. numpy NEVER computes Φ — it only emits the trajectory. NO
+    variance×energy proxy as a terminal Φ verdict.
+
+THREE ARMS (frozen; MATCHED TOTAL COUPLING BUDGET so lift = TOPOLOGY not more coupling)
+  baseline NO-COUPLING : units evolve with private input ONLY (W_edge term = 0).
+                         The Φ floor each arm's lift is measured AGAINST.
+  (1) CENTRAL  (star)  : the H_1283 baseline reproduced — ONE relay/hub unit
+                         (index 0) bidirectionally connected to all other N-1
+                         units; leaves are NOT inter-connected. Edge set = the
+                         N-1 hub spokes. This is the seed-conditional control.
+  (2) MULTI-EDGE (small-world, Watts-Strogatz): start from a RING LATTICE where
+                         each unit connects to its K=2 nearest neighbours on each
+                         side (4 local edges/node), then REWIRE each edge with
+                         prob BETA=0.30 to a random far target (a few long-range
+                         shortcuts). MATCHED BUDGET: same TOTAL sum of edge
+                         weights as CENTRAL (W_edge scaled so Σ weights == the
+                         star's Σ weights) — so any lift is TOPOLOGY, not budget.
+  (3) SHUFFLE  (Erdos-Renyi): the SAME NUMBER of edges as MULTI-EDGE but placed
+                         UNIFORMLY AT RANDOM (no ring/locality structure), at the
+                         MATCHED total budget. Isolates "structured small-world"
+                         from "just this many edges at this budget".
+
+  Budget identity is computed + ASSERTED at runtime: Σ_edge weights of
+  {CENTRAL, MULTI-EDGE, SHUFFLE} equal to <1e-9 (printed BUDGET_OK). If budget
+  does not match, the run is INVALID (no verdict).
+
+SEEDS [1317, 1318, 1319]. $0 CPU-local, detached nohup, poll inline.
+
+FROZEN BARS (pre-registered — GREEN iff ALL of C1 ∧ C2 ∧ C3)
+  C1 ROBUST LIFT (the gate H_1283 FAILED — the whole test):
+       MULTI-EDGE Φ  >=  NO-COUPLING Φ + MARGIN_PHI  on ALL 3 seeds.
+       MARGIN_PHI = 0.02 (the IDENTICAL faithful-Φ margin H_1283 froze; NOT moved).
+  C2 TOPOLOGY-EARNED (anti-budget-Goodhart):
+       MULTI-EDGE Φ  >  SHUFFLE Φ   (matched edge count + matched budget)
+       on a MAJORITY of seeds (>= 2 of 3) AND in the seed-MEAN.
+       (the lift is small-world STRUCTURE, not edge count / budget.)
+  C3 BEATS-CENTRAL:
+       MULTI-EDGE passes the 3-seed C1 gate (all 3 seeds >= +0.02) WHILE
+       CENTRAL does NOT (CENTRAL fails C1 on >= 1 seed — its per-seed variance
+       shown). I.e. distributed topology is robust where the star is fragile.
+
+OUTCOMES (honest, c9 — bars NOT moved post-hoc, p7)
+  ALL of C1∧C2∧C3            -> 🟢 GREEN: small-world topology BREAKS the wall;
+                               integrated-information robustness IS a topology
+                               property. CORE pure_field wiring = named follow-on
+                               (a_verified_must_wire), NOT claimed done.
+  C1 FAILS on any seed       -> 🧱 HONEST WALL: distributed coupling ALSO fails to
+                               make faithful-Φ robust — Φ stays FRAGILE regardless
+                               of topology. Bounds the wall further (VALID result).
+  C1 holds but C2 FAILS      -> report STRAIGHT: the gain is edge-COUNT/budget, not
+                               small-world structure (🟠 — not a topology break).
+  C1∧C2 but C3 fails (CENTRAL also passes) -> 🟠: distributed coupling robust BUT
+                               star is ALSO robust at this scale — no central-vs-
+                               distributed dissociation; report straight.
+
+Faithful-IIT4 verdicts reported VERBATIM (p7, no LLM self-judge). TOY scale
+(n<=8 units, dim 8, 64 ticks, faithful-Φ exact); numpy = DIRECTIONAL mirror,
+engine-transfer to live CORE/pure_field = follow-on (a_scale_honest_scope,
+a_toy_scale_recheck). frozen-first; this file written BEFORE the first run.

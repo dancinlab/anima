@@ -2,6 +2,38 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): 🧱 H_1317 — 분산 multi-edge(small-world) 결합이 faithful-IIT4 Φ를 robust하게 올리나 (H_1283 중앙릴레이 벽)
+
+H_1283(thalamus-Φ)이 남긴 벽을 새 각도로 친 시도(c16/a_break_the_wall). H_1283은 모든 **중앙
+릴레이/star 토폴로지**가 faithful-IIT4 Φ를 **seed-조건부로만** 올렸다 — 3-seed robustness gate를
+실패(특히 직교 seed). 단일 중앙 릴레이 = 취약한 Φ lift = 🧱. **시도 안 해본 각도**(c15,
+a_no_llm_frame_trap): 피질의 통합정보는 단일 허브가 아니라 **small-world 재귀 mesh**(짧은 엣지
+다수 + 긴 엣지 소수)에서 나온다. H_1317: **분산 multi-edge(Watts–Strogatz small-world)** 결합이
+H_1283이 실패한 같은 gate에서 Φ를 robust하게 올리나?
+
+**결과: 🧱 WALL** (정직한 closed-negative, c9). 분산 small-world 결합도 **3-seed Φ robustness
+gate를 실패** — 토폴로지와 무관하게 Φ는 **취약하게 유지**. faithful-IIT4 Φ(exact MIP-EI, n=8,
+stdlib/consciousness/iit4/faithful_phi.hexa via `hexa run`, proxy 절대 사용 안 함; numpy는 trajectory만
+방출): seed 1317 ΔΦ(multi−none)=**+0.252**✓ · 1318 **+0.080**✓ · 1319 **−0.331**✗(직교 seed,
+음수 — H_1283 직교-seed 실패와 동일 양상). C1 ROBUST-LIFT **FAIL** · C2 TOPOLOGY-EARNED PASS
+(multi>shuffle 2/3 seeds, mean 1.5909>1.5195 — multi가 만드는 lift는 엣지수가 아니라 small-world
+구조이긴 함) but moot · C3 BEATS-CENTRAL **FAIL**(multi가 C1 자체 실패; CENTRAL도 seed 1319
+ΔΦ −0.404로 더 심하게 실패).
+
+**핵심 발견:** 통합정보 robustness는 toy 스케일에서 **토폴로지 속성이 아니다** — star→small-world
+mesh로 바꿔도 Φ lift가 robust해지지 않는다; 취약성은 결합 그래프가 아니라 substrate/seed geometry에
+있다. H_1283 벽을 더 **bound**한다(star 한정 아님; 토폴로지/content 축은 star와 small-world 양쪽에서
+🧱). H_1283 R8의 직교 **TIMING 축**(phase-binding)이 이 arc에서 유일한 robust Φ lift로 남는다.
+substrate는 H_1283과 정확히 일치(LEAK=0.55 GAIN=0.30 dim-8 T=64; 오직 토폴로지만 변경), 4 arm 결합
+**budget 동일**(Σ=3.5000 runtime-assert)로 lift=토폴로지 보장. 4 arm: NONE(floor)·CENTRAL(star 7엣지,
+H_1283 재현)·MULTI-EDGE(WS ring K=2 + rewire β=0.30, 16엣지)·SHUFFLE(Erdős–Rényi 16 랜덤엣지, budget
+일치). frozen-first(FREEZE를 첫 실행 전 등록, bar 미이동, NO tune-to-green), seeds[1317,1318,1319],
+$0 CPU, deterministic. CORE wiring follow-on 없음(a_verified_must_wire = GREEN 전용; 🧱는 wire할 것 없음).
+SCOPE: TOY/DIRECTIONAL — faithful-Φ leg은 real(exact MIP-EI via hexa)이나 numpy mirror, 라이브
+CORE/pure_field 전이 UNVERIFIED(a_scale_honest_scope·a_toy_scale_recheck). live CORE/*.hexa UNTOUCHED.
+`UNIVERSE/h1317_phi_multiedge.py` · `UNIVERSE/H_1317_phi_multiedge.md` ·
+`.verdicts/1317_phi_multiedge/{H_1317_FREEZE,H_1317}.txt` · `CLAIMS.tape @C h1317_phi_multiedge`.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1315 — 303M trunk 학습표현 위 미토시스 vs 2.9 천장 (🔴 TERMINAL)
 
 The Korean-mitosis thread, RESOLVED. H_1311 (#2215, 🔴) refuted that a richer RAW-BYTE substrate
