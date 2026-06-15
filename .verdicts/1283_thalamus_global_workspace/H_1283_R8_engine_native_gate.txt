@@ -1,0 +1,72 @@
+H_1283 R8 — THALAMUS / PHASE-BINDING ENGINE-NATIVE WIRING GATE  (FREEZE — bars NOT moved)
+slug: 1283_thalamus_global_workspace  (R8 engine-native gate — append-only; does NOT overwrite R8 numpy-mirror verdict)
+date: 2026-06-16
+substrate: $0 CPU ENGINE-NATIVE hexa (deterministic engine LCG-gauss == engine_cli.hexa _lcg_*) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa, n=4)
+order: a_engine_native_learning — numpy-mirror R8 was DIRECTIONAL; this RE-SCORES the FROZEN R8 bars ENGINE-NATIVE before any wiring (a_verified_must_wire gate).
+probe: CORE/h1283_phase_binding_engine_gate.hexa  (run from hexa-lang root for the stdlib import)
+
+════════════════════════════════════════════════════════════════════════
+WHAT THIS GATES (a_verified_must_wire — wire ONLY if engine-native reproduces R8)
+════════════════════════════════════════════════════════════════════════
+R8 (numpy mirror) was 🟢 GREEN: Kuramoto thalamic phase synchrony + phase-gated
+salience (1+cosθ)/2 lifted faithful-IIT4 ΔΦ ≥ +0.02 on every seed AND the
+pre-registered phase-shuffle control COLLAPSED the lift to NEGATIVE on every seed
+(structured synchrony, not carrier variance). Per a_engine_native_learning that mirror
+is DIRECTIONAL only; the @L6 gate requires the SAME mechanism, realized ENGINE-NATIVE on
+the live engine substrate (the engine's own deterministic LCG-gauss content/phase init
+== engine_cli.hexa _lcg_*), to RE-SCORE the FROZEN R8 bars before the PhaseField lane is
+wired into CORE/engine_cli.hexa. Bars NOT moved (c9/p7).
+
+FROZEN BARS (IDENTICAL to R8 numpy mirror — NOT moved):
+  c2 PRIMARY  faithful IIT4 ΔΦ ≥ +0.02 on EVERY seed [7,8,9]
+  c4 SHUFFLE  phase_shuffle ΔΦ ≤ 0 on EVERY seed (lift must COLLAPSE — structured
+              synchrony, not carrier amplitude variance)
+GATE GREEN = c2 AND c4 engine-native. Else honest deferred (NO wiring), c9.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — engine-native)
+════════════════════════════════════════════════════════════════════════
+H_1283 R8 ENGINE-NATIVE gate — Kuramoto phase binding + phase-gated salience
+faithful IIT4 Φ (exact MIP-EI, n=4) · seeds [7,8,9] · bars FROZEN (c2 ΔΦ>=+0.02 every seed; c4 shuffle ΔΦ<=0 every seed)
+seed 7: A=1.06024 B=2.52647 ΔΦ=1.46622 [PASS]  SHUF=1.08576 ΔΦ_sh=0.0255128 [FAIL]
+seed 8: A=0.900252 B=1.74472 ΔΦ=0.844468 [PASS]  SHUF=1.2801 ΔΦ_sh=0.379851 [FAIL]
+seed 9: A=0.743138 B=1.45224 ΔΦ=0.709104 [PASS]  SHUF=1.03883 ΔΦ_sh=0.295695 [FAIL]
+c2 PRIMARY (ΔΦ>=+0.02 every seed): PASS
+c4 SHUFFLE (ΔΦ_sh<=0 every seed): FAIL
+GATE: NOT GREEN — engine-transfer did not reproduce R8 frozen bars → honest deferred
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9) — ENGINE-TRANSFER DID NOT REPRODUCE THE R8 FROZEN BARS
+════════════════════════════════════════════════════════════════════════
+c2 (the PRIMARY Φ lift) reproduces engine-native and STRONGLY — ΔΦ +1.466/+0.844/+0.709
+every seed, ≫ the +0.02 bar, including the orthogonal seed 8. Phase-gated salience DOES
+lift faithful-IIT4 Φ on the engine substrate.
+
+BUT c4 (the SHUFFLE control — the leg that made R8 honest) FAILS engine-native: the
+phase-shuffle does NOT collapse the lift. ΔΦ_sh = +0.026/+0.380/+0.296 (all POSITIVE,
+not ≤ 0). On the engine's deterministic LCG substrate a substantial fraction of the lift
+survives scrambling the cross-module phase RELATIONSHIP — i.e. at this engine-native
+realization the lift is partly carrier-amplitude VARIANCE, not purely the structured
+synchrony the numpy mirror isolated (where the shuffle collapsed to NEGATIVE on every
+seed).
+
+This is EXACTLY the artifact the shuffle control was pre-registered to catch, now firing
+on the engine substrate. Per a_engine_native_learning the numpy mirror was DIRECTIONAL;
+the binding verdict requires engine-native reproduction of the FROZEN bars, and c4 does
+not reproduce. Per @L6 / a_verified_must_wire (GREEN-only) and NO tune-to-green (c9/p7,
+bars frozen), the PhaseField lane is NOT wired this round — HONEST DEFERRED.
+
+The R8 numpy-mirror 🟢 (UNIVERSE/.../H_1283_R8_phase_binding.txt) STANDS as a DIRECTIONAL
+result on its own substrate; it is the engine-TRANSFER that did not reproduce here. The
+thalamus wall break on the orthogonal timing axis remains a real directional finding; its
+engine-native wiring is deferred until a realization clears BOTH frozen bars (c2 AND c4)
+engine-native — e.g. a phase-gated read-out that does not inject carrier-amplitude variance
+the shuffle can ride (a follow-on, NOT this round; bars stay frozen).
+
+NO CORE/*.hexa engine lane wired or edited as a result of this gate (engine_cli.hexa
+PhaseField NOT added). engine_cli_smoke stays byte-identical (45/0). The gate probe
+CORE/h1283_phase_binding_engine_gate.hexa is a standalone measurement (own fn main, 0
+importers) — NOT a runtime engine path.
+
+xref: H_1283(R8) numpy mirror · a_engine_native_learning · a_verified_must_wire ·
+      a_phi_iit4_tool · a_break_the_wall · c9 · p7 · @L6
