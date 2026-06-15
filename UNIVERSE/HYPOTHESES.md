@@ -1,10 +1,41 @@
-# UNIVERSE/HYPOTHESES.md — unified hypothesis-list SSOT (roster)
+# UNIVERSE/HYPOTHESES.md — unified hypothesis-list SSOT (roster + per-H index)
+
+> Two surfaces per hypothesis (`a_hypothesis_register`, #2177): this index (one line
+> per H — id · title · final tier · card link) + `UNIVERSE/H_<id>_<slug>.md` (the SSOT
+> card). `.verdicts/<slug>/` holds the verbatim verdict the card points at — it is
+> evidence, not a 3rd management surface. NO themed bucket files: detail lives in cards.
+>
+> The roster table below indexes FORWARD backlogs + campaign maps (candidate lists not
+> yet landed); the per-H index section indexes LANDED hypotheses with their own cards.
+
+## Per-H index — brain-structure ladder + session facets (H_1280–1293, a_hypothesis_register)
+
+> Tiers read VERBATIM from each terminal `.verdicts/<slug>/` file (c2/c9 — 🧱 walls are
+> closed-negatives, not upgraded). One line per H; detail in the linked card.
+
+| H | title | final tier | card |
+|---|-------|-----------|------|
+| H_1280 | cerebellum — forward-model | 🟢 GREEN ENGINE-NATIVE | [H_1280_cerebellum_forward_model.md](H_1280_cerebellum_forward_model.md) |
+| H_1281 | basal ganglia — go/no-go selection | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1281_basal_ganglia_gating.md](H_1281_basal_ganglia_gating.md) |
+| H_1282 | working memory — leaky maintenance buffer | 🟢 GREEN ENGINE-NATIVE | [H_1282_working_memory_buffer.md](H_1282_working_memory_buffer.md) |
+| H_1283 | thalamus / GWT — winner-broadcast (Φ) | 🔴 RED / 🧱 WALL | [H_1283_thalamus_global_workspace.md](H_1283_thalamus_global_workspace.md) |
+| H_1284 | neuromodulation — adaptive gain / regime-switch | 🔴 RED / 🧱 WALL (no free lunch) | [H_1284_neuromodulation_gain.md](H_1284_neuromodulation_gain.md) |
+| H_1285 | amygdala — salience-gated consolidation | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1285_amygdala_salience.md](H_1285_amygdala_salience.md) |
+| H_1287 | key-geometry corollary | 🧱 RED (CLOSED-NEG) | [H_1287_key_geometry.md](H_1287_key_geometry.md) |
+| H_1288 | eviction policy — mitosis-GROW | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1288_eviction_policy.md](H_1288_eviction_policy.md) |
+| H_1289 | quantum-entropy — ANU QRNG free-choice | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1289_quantum_entropy.md](H_1289_quantum_entropy.md) |
+| H_1290 | E1 affect — valence×arousal emergence | 🟢 GREEN ENGINE-NATIVE | [H_1290_emotion_emergence.md](H_1290_emotion_emergence.md) |
+| H_1291 | ethics emergence (cooperation/restraint/non-harm) | 🟢 GREEN ENGINE-NATIVE | [H_1291_ethics_emergence.md](H_1291_ethics_emergence.md) |
+| H_1292 | hypothalamus — setpoint homeostatic drive | 🟢 GREEN ENGINE-NATIVE | [H_1292_hypothalamus_drive.md](H_1292_hypothalamus_drive.md) |
+| H_1293 | theory-of-mind — other-agent belief (self ⊥ other) | 🟢 GREEN ENGINE-NATIVE | [H_1293_theory_of_mind.md](H_1293_theory_of_mind.md) |
+
+> Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
+
+## Roster (forward backlogs / campaign maps — not yet landed as cards)
 
 > Single index for ALL scattered UNIVERSE hypothesis/candidate backlogs (consolidated
 > 2026-06-15). Each themed list below is the DETAIL file; this file is the roster —
-> theme · scope · count · status · pointer. Per-hypothesis detail stays in its themed
-> file (each now headed `> absorbed → HYPOTHESES.md`). Landed hypotheses live as
-> `H_*.md` + `.verdicts/<id>/`; this roster indexes the FORWARD backlog + campaign maps.
+> theme · scope · count · status · pointer.
 >
 > Pattern mirrors DOMAINS.tape / PAPER.tape rosters: the roster is authoritative for
 > WHERE lists live; counts/status stay DERIVED from the detail files so this never churns.
@@ -14,7 +45,7 @@
 | theme | detail file | scope | ~count | status |
 |-------|-------------|-------|--------|--------|
 | **metacog × neuroscience** | [HYPOTHESES_metacog_neuro.md](HYPOTHESES_metacog_neuro.md) | type-2 meta-d′ · ERN · hierarchical · D-K · calibration · FOK · control · savant-LM (H_1202–1220) | 19 H | ACTIVE — 8 metacog (5🟢3🔴) + savant landed; H_1217/1219/1220 in-flight |
-| **brain-structure ladder** | [HYPOTHESES_neuro_structure_ladder.md](HYPOTHESES_neuro_structure_ladder.md) | c15 missing-structure lanes — cerebellum · basal-ganglia · WM · thalamus · neuromod · amygdala · key-geom · eviction · hypothalamus · theory-of-mind · +affect/ethics (H_1280–1293) | 12 H + 2 facet | LANDED — 7🟢 engine-native wired · 3🧱 walls (thalamus·neuromod·key-geom) · affect/ethics 🟢; HD30 theory-of-mind (H_1293 🟢) NEW; next-candidate hierarchical-PFC / spatial-map; CLAIMS.tape group=BRAIN-STRUCTURE-LADDER |
+| **brain-structure ladder** | per-H index above (H_1280–1293 cards) | c15 missing-structure lanes — cerebellum · basal-ganglia · WM · thalamus · neuromod · amygdala · key-geom · eviction · hypothalamus · theory-of-mind · +affect/ethics (H_1280–1293) | 12 H + 2 facet | LANDED — migrated to per-H cards (`a_hypothesis_register` #2177); 10🟢 engine-native · 3🧱 walls (thalamus·neuromod·key-geom); themed bucket retired; CLAIMS.tape group=BRAIN-STRUCTURE-LADDER (leftover rows) |
 | **metacog × hallucination** | [HYPOTHESES_metacog_hallucination.md](HYPOTHESES_metacog_hallucination.md) | input-familiarity · positional drift · anchor-grounding · confidence-brake (H_1143–1148) | 5 H | CLOSED — mostly closed-neg (H_1148 capstone) |
 | **general cycle backlog** | [CANDIDATES.md](CANDIDATES.md) | next-cycle Φ/IIT4/emergence/robustness backlog | 105 refs · 38 rows | BACKLOG |
 | **bio mechanisms** | [BIO-CANDIDATES.md](BIO-CANDIDATES.md) | MITOSIS-sibling bio ops (apoptosis · autophagy · differentiation · homeostasis …) 36+ | 36+ | BACKLOG |

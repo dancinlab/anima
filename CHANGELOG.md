@@ -2,6 +2,21 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(HYPOTHESES): migrate H_1280–1293 to the 2-file `a_hypothesis_register` convention
+
+Brain-structure ladder + session facets (H_1280–1293) migrated from the themed bucket
+file to the canonical 2 surfaces (`a_hypothesis_register` #2177): 13 per-H SSOT cards
+`UNIVERSE/H_<id>_<slug>.md` created (title · claim/falsifier · method · per-round verdict
+tier+numbers · `.verdicts/<slug>/` pointer · honest scope · xrefs — tiers VERBATIM from
+each terminal verdict, no tier moved), `UNIVERSE/HYPOTHESES.md` rebuilt with a per-H index
+section (one line each: id · title · final tier · card link), and the themed bucket
+`UNIVERSE/HYPOTHESES_neuro_structure_ladder.md` removed (`git rm`, c4 — detail now lives
+only in the cards). Walls (H_1283 thalamus · H_1284 neuromod · H_1287 key-geometry)
+carded AS closed-negatives (c9, honest tier). Reorganization only — no experiment re-run,
+no verdict-tier change. `.verdicts/`, `CLAIMS.tape`, domain-log/MEMORY entries untouched
+(out of scope; leftover CLAIMS group=BRAIN-STRUCTURE-LADDER rows flagged for a follow-up
+decision). Verify: 13/13 H have both an index line and a resolvable card, 0 broken links.
+
 ## 2026-06-16 — governance(CLAUDE.md): paper 거버넌스 전체 scrub — anima 는 논문을 먼저 제시하지 않는다
 
 `a_paper_*` 디렉티브 8개(a_paper_gate · a_paper_significance · a_paper_negative_ok · a_paper_format · a_paper_sections · a_paper_violation · a_paper_on_discovery · a_paper_only_at_closure) + PAPER auto-generation 흐름 주석 + families 불릿/참조에서 paper 전부 제거. 이유: anima 가 검증 후 자꾸 "논문 쓰자"를 선제 제시하는 게 불편(사용자). 이제 commons c15(논문/arXiv 는 사용자 명시 지시 시에만)만 남아 선제 제시·언급 금지. 참조 정리(a_break_the_wall·a_hypothesis_register·a_discovery_log 의 a_paper_* ref 제거). PAPER/ 디렉토리는 legacy 로 표기(선제 생성 안 함). 과거 논문 산출물 자체는 보존.
