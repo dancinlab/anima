@@ -2,6 +2,11 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — governance(CLAUDE.md): `a_hypothesis_register` 단순화 — 가설은 2파일로만 관리
+
+가설 관리 면을 정확히 2개로 축소: `UNIVERSE/HYPOTHESES.md`(인덱스 1줄/가설) + `UNIVERSE/H_<id>_<slug>.md`(가설 SSOT 카드 — claim·method·라운드별 verdict tier+수치·.verdicts 포인터·honest scope). 직전 버전의 themed 버킷 파일·CLAIMS.tape·도메인 로그·MEMORY 분산 요구를 제거(가설 디테일의 단일 집 = 카드). `.verdicts/<slug>/` 는 카드가 가리키는 검증 박제(증거)로만 유지. 기존 H_1280–1293 은 마이그레이션 예정(themed 파일 → 카드).
+
+
 ## 2026-06-16 — domain(MODEL): 🪞 마음이론 타자-belief 모델 lane (HD30, H_1293 R2 🟢 ENGINE-NATIVE)
 
 빠진 뇌 서브시스템 사다리에 **HD30 마음이론(theory-of-mind · TPJ/mentalizing)** 을 추가 — 타자-agent belief 모델 lane(`OtherMindModel`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`other_mind_new`/`other_mind_witness`/`other_mind_predict`/`other_mind_count`). E3 OTHER-MIND parked facet(MODEL.md L112-113)의 첫 엔진-네이티브 실현. 면역 faculty 와 같은 byte-trigram FNV-1a key 기하 + L2 affinity + abstain band 를 쓰되, agent 가 **WITNESS 한 이벤트로만** 갱신되는 별개 belief cell-store 다 — agent 가 갱신에 부재(ABSENT)하면 belief 가 LAG 한다 = FALSE belief, `other_mind_predict` 가 STALE belief 를 반환(Sally-Anne false-belief test).
