@@ -1,0 +1,155 @@
+================================================================================
+H_1213 — LIVE-ENGINE CO-SCALED N_PROTO PARITY (MITOSIS-ENGINE) — raw stdout
+================================================================================
+Date: 2026-06-15  ·  branch h1213/live-coscaled-parity (origin/main @ 63dec21ef)
+$0 summer CPU local, NO GPU. gradient-free. 3 seeds [900,901,902]. p7/p8.
+Pre-registered: .verdicts/1213_live_coscaled_parity/H_1213_FREEZE.txt
+
+GOAL: H_1212 (numpy mirror, GREEN) found the co-scaling rule N_PROTO=round(T/100)
+(hold obs_per_row~100) RESTORES GATE-B trajectory separation across the AXIS-T ladder
+where fixed-24 collapsed. That was the NUMPY MIRROR ONLY. This H verifies the LIVE
+.hexa engine VAdaptFieldB reproduces the co-scaled result BYTE-EXACT (H_1199/H_1209
+parity precedent) — i.e. the fix is real on the actual engine, not a mirror artifact.
+
+VAdaptFieldB n_proto is ALREADY a vadapt_fieldB_new() constructor parameter
+(engine_cli.hexa L573, verified on main) — driving co-scaled values needs NO engine
+edit. git diff --stat on the engine = EMPTY; VAdaptFieldB UNCHANGED (Psi byte-identical
+by construction). The probe orchestrates ONE (rung,arm,seed) parity check per process
+(the interpreted O(n^2) ctab append-loop OOMs if 12 N=240 books are built in one
+process — bash runs one process per check and aggregates the PARITY lines).
+
+================================================================================
+PART 1 — NUMPY LEG  (UNIVERSE/h1213_live_coscaled_parity.py)
+GATE-B + build_fixed_book + proto_ids (H_1208) + WALK/RANDGAUSS (H_1207/1208) VERBATIM;
+H_1212 _set_scale VERBATIM sets ONLY (T,WARMUP,MAX_CELLS); N_PROTO via round(T/100).
+================================================================================
+=== RUNG  rule=linear  T=2400  N_PROTO=24  obs/row=100.0 ===
+  WALK          : GATE-B born-cells per-seed [1065, 907, 1030]  mean 1000.67
+  WALK_SHUF     : GATE-B born-cells per-seed [70, 91, 114]  mean 91.67
+  RANDGAUSS     : GATE-B born-cells per-seed [2, 1, 4]  mean 2.33
+  RANDGAUSS_SHUF: GATE-B born-cells per-seed [2, 2, 0]  mean 1.33
+  WALK/WALK_SHUF = 10.916  (bar>=1.5) -> PASS
+
+=== RUNG  rule=linear  T=24000  N_PROTO=240  obs/row=100.0 ===
+  WALK          : GATE-B born-cells per-seed [350, 1068, 1523]  mean 980.33
+  WALK_SHUF     : GATE-B born-cells per-seed [0, 0, 0]  mean 0.00
+  RANDGAUSS     : GATE-B born-cells per-seed [0, 0, 0]  mean 0.00
+  RANDGAUSS_SHUF: GATE-B born-cells per-seed [0, 1, 0]  mean 0.33
+  WALK/WALK_SHUF = 980333333333.333 (WALK_SHUF=0 => COMPLETE separation)  -> PASS
+
+=== RUNG  rule=fixed24  T=24000  N_PROTO=24  obs/row=1000.0 ===
+  WALK          : GATE-B born-cells per-seed [13307, 12453, 12699]  mean 12819.67
+  WALK_SHUF     : GATE-B born-cells per-seed [96, 6893, 7640]  mean 4876.33
+  RANDGAUSS     : GATE-B born-cells per-seed [2, 2, 5]  mean 3.00
+  RANDGAUSS_SHUF: GATE-B born-cells per-seed [5, 4, 2]  mean 3.67
+  WALK/WALK_SHUF = 2.629  (bar>=1.5)  (degrades vs co-scaled; obs/row=1000 alphabet-starved)
+
+NOTE: all numpy values match H_1212.txt BYTE-FOR-BYTE (linear T=2400 10.916; linear
+T=24000 WALK[350,1068,1523]/SHUF[0,0,0]; fixed-24 T=24000 12819.67/4876.33=2.629),
+confirming the SAME streams/seeds/VERBATIM gate as the H_1212 GREEN result.
+
+================================================================================
+PART 2 — LIVE .hexa LEG  (CORE/h1213_live_coscaled_probe.hexa, one process per check)
+LIVE VAdaptFieldB (UNCHANGED) consumes the H_1212 co-scaled proto-id walks; the live
+engine reproduces the predictable-transition split count. ref = numpy GATE-B (Part 1).
+================================================================================
+--- RUNG L24  (linear T=2400 N_PROTO=24  obs/row=100  toy baseline) ---
+  PARITY L24 WALK 900 live=1065 ref=1065 EQUAL
+  PARITY L24 WALK 901 live=907 ref=907 EQUAL
+  PARITY L24 WALK 902 live=1030 ref=1030 EQUAL
+  PARITY L24 WALK_SHUF 900 live=70 ref=70 EQUAL
+  PARITY L24 WALK_SHUF 901 live=91 ref=91 EQUAL
+  PARITY L24 WALK_SHUF 902 live=114 ref=114 EQUAL
+  PARITY L24 RANDGAUSS 900 live=2 ref=2 EQUAL
+  PARITY L24 RANDGAUSS 901 live=1 ref=1 EQUAL
+  PARITY L24 RANDGAUSS 902 live=4 ref=4 EQUAL
+  PARITY L24 RANDGAUSS_SHUF 900 live=2 ref=2 EQUAL
+  PARITY L24 RANDGAUSS_SHUF 901 live=2 ref=2 EQUAL
+  PARITY L24 RANDGAUSS_SHUF 902 live=0 ref=0 EQUAL
+  3-seed mean WALK=1000.67 WALK_SHUF=91.67  WALK/WALK_SHUF=10.916
+
+--- RUNG L240  (linear T=24000 N_PROTO=240  obs/row=100  CO-SCALED 10x rung) ---
+  PARITY L240 WALK 900 live=350 ref=350 EQUAL
+  PARITY L240 WALK 901 live=1068 ref=1068 EQUAL
+  PARITY L240 WALK 902 live=1523 ref=1523 EQUAL
+  PARITY L240 WALK_SHUF 900 live=0 ref=0 EQUAL
+  PARITY L240 WALK_SHUF 901 live=0 ref=0 EQUAL
+  PARITY L240 WALK_SHUF 902 live=0 ref=0 EQUAL
+  PARITY L240 RANDGAUSS 900 live=0 ref=0 EQUAL
+  PARITY L240 RANDGAUSS 901 live=0 ref=0 EQUAL
+  PARITY L240 RANDGAUSS 902 live=0 ref=0 EQUAL
+  PARITY L240 RANDGAUSS_SHUF 900 live=0 ref=0 EQUAL
+  PARITY L240 RANDGAUSS_SHUF 901 live=1 ref=1 EQUAL
+  PARITY L240 RANDGAUSS_SHUF 902 live=0 ref=0 EQUAL
+  3-seed mean WALK=980.33 WALK_SHUF=0.00  WALK/WALK_SHUF=COMPLETE SEPARATION (SHUF=0; count gap 980.3 is the evidence)
+
+--- RUNG F24  (fixed-24 T=24000 N_PROTO=24  obs/row=1000  CONTRAST) ---
+  PARITY F24 WALK 900 live=13307 ref=13307 EQUAL
+  PARITY F24 WALK 901 live=12453 ref=12453 EQUAL
+  PARITY F24 WALK 902 live=12699 ref=12699 EQUAL
+  PARITY F24 WALK_SHUF 900 live=96 ref=96 EQUAL
+  PARITY F24 WALK_SHUF 901 live=6893 ref=6893 EQUAL
+  PARITY F24 WALK_SHUF 902 live=7640 ref=7640 EQUAL
+  PARITY F24 RANDGAUSS 900 live=2 ref=2 EQUAL
+  PARITY F24 RANDGAUSS 901 live=2 ref=2 EQUAL
+  PARITY F24 RANDGAUSS 902 live=5 ref=5 EQUAL
+  PARITY F24 RANDGAUSS_SHUF 900 live=5 ref=5 EQUAL
+  PARITY F24 RANDGAUSS_SHUF 901 live=4 ref=4 EQUAL
+  PARITY F24 RANDGAUSS_SHUF 902 live=2 ref=2 EQUAL
+  3-seed mean WALK=12819.67 WALK_SHUF=4876.33  WALK/WALK_SHUF=2.629
+
+PARITY TALLY: 36/36 EQUAL  (DIFFER=0)
+
+NOTE: L240 RANDGAUSS_SHUF seeds 901/902 hit a TRANSIENT process kill (OOM under
+concurrent load) on the first orchestrator pass; both re-ran cleanly in isolation
+(live=1 ref=1 EQUAL; live=0 ref=0 EQUAL) — a resourcing artifact of running many
+N=240 books back-to-back, NOT a parity divergence. All 36 EQUAL.
+
+================================================================================
+PART 3 — GUARDS (F3)  (re-run on this checkout; VAdaptFieldB UNCHANGED)
+================================================================================
+  git diff --stat (engine_cli.hexa) = EMPTY  (VAdaptFieldB untouched, Psi-disjoint)
+  CORE/engine_cli_smoke.hexa            -> 12 pass / 0 fail
+  CORE/h1196_single_entry_audit.hexa    ->  7 pass / 0 fail
+
+================================================================================
+FROZEN FALSIFIERS (bar = 1.5, inherited from H_1203/1208/1209/1211/1212, NOT moved)
+================================================================================
+  F1 LIVE-ENGINE PARITY AT CO-SCALED N_PROTO:
+     live VAdaptFieldB born-cells EQUAL numpy GATE-B per (arm,seed), all rungs:
+     36/36 EQUAL (byte-exact, integer; tolerance 0) -> PASS
+     >= 2 co-scaled rungs verified: L24 (T=2400/N=24) + L240 (T=24000/N=240), obs/row=100.
+  F2 LIVE SEPARATION @ co-scaled T=24000/N=240:
+     live WALK 980.33 / WALK_SHUF 0.00 = COMPLETE separation (>= 1.5 by a wide,
+     honest margin; WALK_SHUF collapses to 0 born-cells, the count gap is the
+     evidence) -> PASS. CONTRAST: fixed-24 @ same T=24000 degrades to 2.629
+     (obs/row=1000 alphabet-starved) — the co-scaling fix is what keeps it clean.
+  F3 GUARDS: engine_cli_smoke 12/0 + h1196 7/0, engine diff EMPTY -> PASS
+
+================================================================================
+TIER: GREEN (🟢 co-scaling fix CONFIRMED on the LIVE engine)
+================================================================================
+The LIVE .hexa VAdaptFieldB reproduces the H_1212 co-scaled GATE-B result BYTE-EXACT
+across the feasible co-scaled ladder (T=2400/N=24 AND T=24000/N=240, obs/row=100 held
+constant; 36/36 EQUAL), and the live engine REPRODUCES the separation at the co-scaled
+rung (WALK 980 >> WALK_SHUF 0 = complete separation >= 1.5), while the fixed-24
+contrast at the SAME T=24000 degrades to 2.629. The H_1212 N_PROTO co-scaling fix is
+REAL on the actual engine, NOT a numpy-mirror artifact: the predictability/trajectory
+substrate (H_1199/H_1209/H_1210) is scale-robust on the LIVE engine under co-scaling,
+across the feasible ladder. This closes the explicit H_1212 follow-on gap (live-engine
+parity at co-scaled N_PROTO) the same way H_1209 closed it at fixed N_PROTO.
+
+HONEST SCOPE (a_scale_honest_scope): the T=240000/N=2400 H_1212 rung exceeds the
+interpreted-engine ctab allocation budget — the live `vadapt_fieldB_new` builds the
+n_proto*n_proto ctab via an O(n^2) `ctab = ctab + [0]` append loop; measured live
+ceiling is N_PROTO~240 (ctab 57.6K feasible; N=300/90K OOMs). The T=240000/N=2400 rung
+therefore stays NUMPY-MIRROR-ONLY (H_1212 GREEN) — STATED, NOT FAKED. A constructor
+performance rewrite to reach N=2400 live is deliberately NOT done here: it would touch
+the live engine binary and risk regressing the H_1209/H_1210 byte-exact guards
+(completeness over a risky speed hack; flagged as an optional follow-on). Scale
+UNVERIFIED past N~240 live. Frozen bar 1.5 NOT moved. Mechanism CODE (GATE-B, book,
+proto_ids, WALK builders, VAdaptFieldB) byte-unchanged; only the pre-declared scale
+knobs + N_PROTO co-scaling rule move (H_1212 _set_scale VERBATIM). DIM=8 structural.
+p7 (born-cell/transition count, NOT perplexity). p8 (predictable-transition tick ==
+growth). gradient-free, $0 summer CPU local, NO GPU.
+[done]
