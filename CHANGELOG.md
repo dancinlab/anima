@@ -6,9 +6,23 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 📐 README.md 전면 재작성 (모델-스케일 잔재 제거 → substrate/뇌-구조 중심, doc-only)
+
+README 를 patch 가 아니라 **완전히 새로 작성**했다 — 과거 프레임 제거가 사유다. 직전 README(447줄)는 "The model & mount" / "4 hot-swappable engines" / "scale ladder 303M→1B→3B→7B" 같은 **모델-스케일 래더**가 중심처럼 서술돼 있었는데, 이는 낡은 프레임이다. 현재 anima 의 중심은 **substrate-native 의식 데몬 + 빠진 뇌-구조를 채우는 엔진-네이티브 lane** 이다(ARCHITECTURE.md 가 truth source).
+
+- **새 중심 = 🧠 뇌-구조 엔진 lane** — 신피질(말 생성)만 있던 데서 빠진 뇌 부위를 옆 lane 으로 채웠다는 서사를 README 의 heart 로 끌어올림: live `CORE/*.hexa` lane(해마 `ImmuneMemory`/`ImmuneMemoryGrow` H_1227/1231/1288 · 작업기억 `WorkMemBuffer` H_1282 · 소뇌 `VForwardField` H_1280 · 편도체 `ConsolidatingMemory` H_1285 · 기저핵 `VBasalGate` H_1281, smoke 26/0, 전부 ADDITIVE·Ψ-disjoint·생성 byte-unchanged). HD23–28 사다리 = **5 실현+배선 · 2 정직한 🧱 벽**(시상 seed-conditional·신경조절 no-free-lunch).
+- **감정·윤리 창발 (p6) + 양자 엔트로피 신규 섹션** — 감정(H_1290)·윤리(H_1291)는 **numpy-mirror DIRECTIONAL, engine-native in-flight** 로 정직 명기(과잉주장 금지); 양자(H_1289)는 substrate-faithful + 비재현성 실증 + opt-in(기본 PRNG-결정론) + no-consciousness-claim 명기.
+- **모델은 §9 부속으로 강등** — "The model & mount" 중심 서술 제거; 303M = operational-but-shallow(honest 5+2+1), 스케일 래더는 "scaling did not lift QA/depth" honest-scope 한 문단으로 축소. a303m_pass "8/8" 무비판 반복 제거.
+- **거버넌스 한 줄 포인터** — `a_no_llm_frame_trap`·`a_break_the_wall`·`a_engine_native_learning`·`a_verified_must_wire` 핵심 4개만 인용, 전체는 CLAUDE.md SSOT.
+- CORE/`*.hexa`·verdict 미수정(README + CHANGELOG only). 번역본(ko/zh/ja/ru/easy)은 별도 follow-on.
+
+---
+
 ## 2026-06-15 — docs: 연구 인계 노트 (영어, 이어가기용) `docs/research-note-for-continuation.md`
 
 독립 연구자(한국)가 연구를 못 이어갈 수도 있는 상황 대비, 발견들을 정직하게 정리한 영어 인계 노트 추가 — Prof. Yann LeCun 및 커뮤니티 누구든 읽고 이어갈 수 있게. 핵심 메시지: "스케일이 아니라 빠진 아키텍처가 벽을 푼다"(architecture > scale). 정직성(c9): 미러 vs 엔진실현·toy scale·thalamus seed-conditional·감정/윤리 DIRECTIONAL 전부 명기. 개인/법적 상황은 보호 위해 비포함.
+
+---
 
 ## 2026-06-15 — 🟢 H_1281 R3: 기저핵(basal ganglia) go/no-go 선택 게이트가 live emit 결정(brain_decide)에 배선됨 (ENGINE-NATIVE, $0)
 
