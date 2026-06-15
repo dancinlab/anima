@@ -1,0 +1,75 @@
+================================================================================
+H_1203 — MITOSIS NOVELTY-COUPLING  ·  PRE-REGISTERED FALSIFIER (FROZEN)
+domain = MITOSIS-ENGINE   ·   $0 local CPU   ·   p7 (recon-err/cell-count, NOT perplexity)
+frozen BEFORE any measurement (a_toy_scale_recheck — bars not movable to chase green)
+================================================================================
+
+QUESTION
+--------
+Does the NOVELTY of a real chat/text trajectory DRIVE cell division in the live
+engine substrate (CORE/engine_cli.hexa VAdaptField, H_1199)?  I.e. does mitosis
+respond to genuine INPUT STRUCTURE — or is it substrate-NEUTRAL, the way the
+clm_v2 (2026-05-10) "V14 mirror VIOLATED" finding showed (random_init produced
+the SAME division trajectory ⇒ division carried no information)?
+
+This must DEFEAT the V14 mirror: if order-destroyed input still divides the same,
+mitosis is not coupled to novelty (substrate-neutral, closed-neg).
+
+MECHANISM UNDER TEST (frozen, reused verbatim)
+----------------------------------------------
+  · VAdaptField from CORE/engine_cli.hexa: DIM=8, recon-err (L2 to nearest proto)
+    > SPLIT_THRESH=0.30 ⇒ engine_mitosis_tick spawns +1 cell seeded at the sample;
+    else LR=0.20 online winner pull. (H_1199 verified numpy<->hexa mechanism-match.)
+  · byte-feature stream = H_1163 _byte_feature DIM=8 window stat, VERBATIM
+    (WIN_BYTES=48, STRIDE=24), over CORE/testdata/clm_mid_5lang_c4.txt.
+
+THREE SEGMENTS (same total tick count T, same warmup, 3 seeds = 900,901,902)
+----------------------------------------------------------------------------
+  NOVEL    = high topic-turnover trajectory — concatenated windows drawn from many
+             SCATTERED corpus offsets (frequent regime switches => a genuinely novel
+             stream of byte-feature regimes).
+  REPEAT   = low-novelty trajectory — the SAME short text block repeated over and
+             over (one regime revisited; almost no new structure after warmup).
+  SHUFFLED = the NOVEL byte-feature ticks with their TIME ORDER permuted (V14
+             control). Same multiset of feature vectors as NOVEL, order destroyed.
+
+METRIC (per arm, mean over 3 seeds)
+-----------------------------------
+  cell_growth = final cell_count - 1   (cells born over the scored span; mitosis ON)
+  recon-err trajectory (late-window mean) as secondary readout.
+
+PRE-REGISTERED FALSIFIERS (frozen bars)
+---------------------------------------
+F1 (novelty drives division):
+    NOVEL cell_growth / REPEAT cell_growth  >=  1.5
+    (novel-region cells grow at least 1.5x the repeat-region rate, 3-seed mean.)
+    Rationale: a novel trajectory presents more out-of-regime samples => more
+    recon-err>0.30 splits than a repeated block.
+
+F2 (DEFEAT V14 mirror — division depends on input ORDER/structure, not just the
+    feature marginal):
+    NOVEL cell_growth / SHUFFLED cell_growth  >=  1.5
+    (order-destroyed control divides SIGNIFICANTLY LESS than ordered novel.)
+    If SHUFFLED ~= NOVEL => V14 reconfirmed: mitosis is substrate-neutral
+    (carries no trajectory information), CLOSED-NEGATIVE.
+
+TIER RULING (frozen)
+--------------------
+  GREEN   iff F1 PASS AND F2 PASS
+          (mitosis genuinely couples to trajectory novelty; V14 DEFEATED).
+  PARTIAL  if F1 PASS but F2 FAIL (grows on novelty but order-invariant — the
+          growth tracks the feature MARGINAL not the trajectory => V14 not fully
+          defeated; honest partial).
+  RED      if F1 FAIL (novelty does not drive division => substrate-neutral,
+          V14 reconfirmed, closed-negative, a_paper_negative_ok).
+
+HONESTY (a_scale_honest_scope)
+------------------------------
+  ONE corpus (clm_mid_5lang_c4), gradient-free, toy-ish scale, 3 seeds.
+  Scale transfer UNVERIFIED. numpy mirror permitted for measurement convenience
+  ONLY because it is mechanism-identical to engine_cli.hexa vadapt_field_step
+  (the SAME nearest-by-L2 / recon-err>0.30 split / LR=0.20 pull); H_1199 is the
+  precedent that the numpy ref reproduces the live .hexa engine. The live .hexa
+  VAdaptField is run as a cross-check guard (c2 captured output), not re-derived.
+  Bars above are FROZEN — not adjustable post-hoc to reach a tier.
+================================================================================
