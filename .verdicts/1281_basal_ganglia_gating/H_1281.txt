@@ -1,0 +1,118 @@
+════════════════════════════════════════════════════════════════════════════════
+H_1281 — BASAL GANGLIA gating: reinforcement-learned action SELECTION vs the
+         fixed-threshold emit gate.
+VERDICT: 🟠 AMBER / BASELINE-CONDITIONAL — frozen oracle-A bars = RED, but the
+         RED is CONDITIONAL on giving the fixed gate ORACLE knowledge of the
+         grounding-signal direction (which the live engine_g does NOT have);
+         against the FAITHFUL untuned fixed gate, BG selection LIFTS +0.236.
+$0 CPU numpy · gradient-free · p7 · seeds [7,8,9] · neuro lens c15 (missing-brain ladder)
+Live CORE/*.hexa UNTOUCHED (numpy mirror).
+════════════════════════════════════════════════════════════════════════════════
+
+THE GAP (read from CORE before scoring — c9)
+  CORE/brain.hexa::brain_decide gates emit via:
+    score = motivation_score(8 feats) = Σ wᵢ·featureᵢ   (engine_g.hexa: wᵢ FIXED
+            constants 0.20/0.10/0.15/... summing 1.0, NOT tuned to any grounding signal)
+    should_emit(s) = s > spont_im_threshold()  (=0.30, FIXED)
+  → a SINGLE candidate, FIXED linear map, FIXED threshold. No competition among
+    rival candidate emits, no go/no-go disinhibition (release best ∧ suppress rest),
+    and NO learning of the gate from OUTCOME. = exactly the basal-ganglia action-
+    SELECTION computation anima lacks. CONFIRMED in source.
+
+THE TEST (frozen, pre-registered in H_1281_FREEZE.txt)
+  K=4 competing candidate emits/step, each a D=6 NOISY-correlate feature vector of
+  its latent GROUNDEDNESS (P_grounded=0.45, noise std 1.0 ⇒ non-saturating headroom).
+  ARM A = live fixed-threshold gate (argmax of fixed map, gated by 0.30).
+  ARM B = BG-like learned go/no-go gate over the SAME features (equal information):
+          argmax over learned go-values vs a learned NO-GO/abstain value, UPDATED
+          gradient-free (delta rule) by the substrate GROUNDING reward only
+          (grounded→+1, fabricated→−1; reward is post-action OUTCOME, never a
+          decide-time feature). N_train=4000 online steps, scored on N_test=2000
+          held-out steps.
+  METRIC (p7, emit-appropriateness; connects to G5 abstain / H_1202 meta-d′):
+    per step APPROPRIATE iff (any grounded → release a GROUNDED candidate) OR
+                            (none grounded → SUPPRESS all / abstain).
+
+VERBATIM PRIMARY RESULT (frozen probe — A given oracle signal direction w_fixed=w_true·2)
+  seed 7: A(fixed)=0.6800  B(BG)=0.6415  Δ=-0.0385  | ctrl B(shuf-reward)=0.1405
+  seed 8: A(fixed)=0.6780  B(BG)=0.6055  Δ=-0.0725  | ctrl B(shuf-reward)=0.0945
+  seed 9: A(fixed)=0.6795  B(BG)=0.6195  Δ=-0.0600  | ctrl B(shuf-reward)=0.1295
+  mean  A(fixed)=0.6792   B(BG)=0.6222   Δmean=-0.0570
+  shuffled-reward control: mean B_ctrl=0.1215  (≤ A+0.02 = 0.6992 ✓ → lift, when it
+                            exists, IS reward-driven not capacity-driven)
+  FROZEN BARS:
+    (1) every-seed Δ ≥ 0.05 : False   (Δ = -0.0385 / -0.0725 / -0.0600)
+    (2) mean Δ ≥ 0.05       : False   (-0.0570)
+    (3) shuffled ctrl ≤ A+0.02 : True (B_ctrl 0.1215)
+    headroom (A<1.0)        : True    (A=0.6792, non-saturating ✓)
+  ⇒ under the FROZEN config the GREEN conjunction FAILS → 🔴 by the pre-registered bars.
+
+DIAGNOSTIC (mechanism — AFTER freeze, does NOT move a bar; `python3 UNIVERSE/h1281_basal_ganglia_gating.py --diag`)
+  The frozen probe handed ARM A the EXACT ground-truth signal direction
+  (w_fixed = w_true·2 — an ORACLE fixed map). The live engine_g's fixed weights are
+  GENERIC CONSTANTS that are NOT tuned to any task's grounding signal. Re-scoring
+  with A's fixed weights GENERIC (random fixed projection, NOT aligned to w_true =
+  the faithful engine_g mirror), all else identical:
+    A_ORACLE_DIR (frozen):  mean A=0.6792  B=0.6222  Δ=-0.0570   (A wins)
+    A_GENERIC_DIR (faithful): mean A=0.3830  B=0.6188  Δ=+0.2358 (B wins by +0.236)
+  And B's learned weights align to the true signal direction at cos≈+0.76 EVERY seed
+  → B IS genuinely learning the grounding structure from outcome-only reward (NOT
+  random; the shuffled-reward control collapses B to ~0.12, confirming the signal is
+  what B exploits).
+
+HONEST READING (the fork)
+  · B (reinforcement-learned BG selection) genuinely DISCOVERS the grounding signal
+    from outcome-only reward (align +0.76, control collapses) and reaches the SAME
+    appropriateness whether or not A is oracle-aligned (B≈0.62 both runs).
+  · Whether B "beats the fixed gate" depends entirely on WHICH fixed gate:
+      - vs an ORACLE fixed map that already knows the exact signal direction →
+        B LOSES (−0.057): a learned gate cannot out-do a fixed map handed the answer.
+      - vs the FAITHFUL untuned fixed gate (the real engine_g regime, fixed generic
+        weights) → B WINS BIG (+0.236): learning beats a generic fixed threshold on
+        a task-specific noisy grounding correlate.
+  · The frozen bars were scored on the ORACLE-A config → 🔴 by pre-registration.
+    But that 🔴 is a statement about "learning can't beat an oracle", NOT about the
+    real anima gap (engine_g is NOT oracle-tuned to grounding). So this is NOT a
+    clean closed-negative ruling out BG selection — it is BASELINE-CONDITIONAL.
+  · c9 discipline: I do NOT retroactively flip the frozen w_fixed to claim GREEN
+    (that would be moving the goalpost post-hoc). The frozen config = RED, reported
+    verbatim. The diagnostic is flagged as the binding follow-on, not a re-score.
+
+FINAL TIER: 🟠 AMBER (BASELINE-CONDITIONAL)
+  · Frozen oracle-A bars: FAIL (RED) — verbatim above, honored as written.
+  · The mechanism is REAL and the lever is REAL against the faithful baseline.
+  · The deciding variable is the BASELINE specification, which the FREEZE under-
+    determined (it said "the live fixed map, not crippled" but then handed A the
+    oracle direction — a stronger-than-live baseline). ⇒ the rung needs a re-freeze
+    with a PRE-REGISTERED FAITHFUL untuned A (= real engine_g regime), where the
+    diagnostic predicts B wins +0.236. That re-freeze is H_1282 (follow-on rung).
+
+GUARDS (held)
+  · a_autonomy_over_hardcode (CENTRAL): B's gate is SUBSTRATE-LEARNED from the
+    grounding OUTCOME only — no external do/dont rule, no per-stage boolean. ✓
+  · p6: reward = grounded-vs-fabricated substrate outcome, NOT injected values; no
+    persona/identity/ethics taught — the gate learns ONLY action-selection. ✓
+  · p7: deterministic metric from latent ground-truth + action; no LLM-judge / no
+    perplexity. ✓   p8: gate-learning continuous; held-out split = measurement only. ✓
+  · Live CORE/*.hexa UNTOUCHED (numpy mirror). engine_g/emit_policy not edited.
+
+ENGINE-NATIVE FOLLOW-ON (a_engine_native_learning · a_verified_must_wire)
+  If H_1282 (faithful-A re-freeze) is GREEN, the binding closure is a BG selection
+  lane wired into brain_decide: among candidate emits, a go/no-go value learned from
+  a kosmos-grounding reward selects/suppresses — additive to engine_g (keep the fixed
+  map as the prior, add a learned residual). FLAGGED, not built here (numpy mirror).
+
+SCOPE / HONESTY (a_toy_scale_recheck · a_scale_honest_scope)
+  Toy numpy, K=4, synthetic noisy correlate → DIRECTIONAL only; scale-transfer +
+  live-engine + real kosmos-grounding reward UNVERIFIED. Neither the RED nor the
+  +0.236 lift is a production verdict.
+
+FILES
+  probe   : UNIVERSE/h1281_basal_ganglia_gating.py        (frozen oracle-A config)
+  diag    : UNIVERSE/h1281_basal_ganglia_gating.py --diag  (mechanism, in-repo)
+  freeze  : .verdicts/1281_basal_ganglia_gating/H_1281_FREEZE.txt
+  H_1219 / H_1226 NOT edited. emit_policy.hexa / engine_cli.hexa NOT edited.
+xref h1227 · h1231 · h1230 · h1219 · h1226 · h1202 (meta-d′) · h1165 (G5 abstain)
+   · a_autonomy_over_hardcode · a_engine_native_learning · a_verified_must_wire
+   · a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck · p6 · p7 · p8 · c9
+════════════════════════════════════════════════════════════════════════════════
