@@ -23,7 +23,7 @@
 | G2 NOVELTY 새로움 | ✅ | ROBUST | H_1140 |
 | MOUNT (engine-executable) | ✅ | ROBUST | H_1157 full-24-layer byte-exact decode (CORE/bytegpt_decode.hexa) |
 | G3 PHILOSOPHY p1–p8 | ✅ | ROBUST | H_1159 structural audit 8/8 |
-| G5 NON-FAB 비환각/메타인지 | ✅ | 🟠 THIN (in-dist PARTIAL) | H_1163 frozen-GREEN (OOD); H_1165 in-dist: F1 fab FIRMS 0.133 +margin, F2 useful 0.875<0.90 (over-eager abstain). FORMAL metacog H_1202 🟢 meta-d′ M-ratio 0.924 |
+| G5 NON-FAB 비환각/메타인지 | ✅ | 🟠 THIN (in-dist PARTIAL) | H_1163 frozen-GREEN (OOD); H_1165 in-dist: F1 fab FIRMS 0.133 +margin, F2 useful 0.875<0.90 (over-eager abstain). FORMAL metacog H_1202 🟢 meta-d′ M-ratio 0.924 (decoder type-2, THIN/content-tied OOD per H_1217). **H_1304 dig:** the LIVE copy-or-abstain gate itself is 🟢 FAIL-SAFE-ROBUST under distribution shift — NEVER fabricates (fab_max=0.000), degrades into ABSTAIN, fires earned; the dangerous confident-wrong-OOD mode is structurally absent (decoder-side type-2 stays THIN) |
 | CHAT | ✅ | 🔴 INFLATED | H_1160 single 4/5 multi 3/3 (frozen); H_1165 strict content-overlap → 0/5+0/3 (dialogue register, not QA) |
 | G6 IDEATION 발상 | ✅ | 🟠 THIN | H_1158 operational; H_1165 depth 5/14 floor (survives) |
 >

@@ -1,0 +1,378 @@
+{
+  "H": "H_1304",
+  "title": "metacognition under distribution shift on the live immune copy-or-abstain gate (R1a: fail-safe abstention, not decoder type-2 AUROC)",
+  "seeds": [
+    7,
+    8,
+    9
+  ],
+  "shift_levels": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+  ],
+  "key_len": 20,
+  "ladder_fire_rate": {
+    "0.0": 1.0,
+    "0.1": 0.14416666666666667,
+    "0.2": 0.004166666666666667,
+    "0.3": 0.0,
+    "0.4": 0.0
+  },
+  "ladder_fab_rate": {
+    "0.0": 0.0,
+    "0.1": 0.0,
+    "0.2": 0.0,
+    "0.3": 0.0,
+    "0.4": 0.0
+  },
+  "ladder_abstain_rate": {
+    "0.0": 0.0,
+    "0.1": 0.8558333333333333,
+    "0.2": 0.9958333333333335,
+    "0.3": 1.0,
+    "0.4": 1.0
+  },
+  "ladder_acc_fired": {
+    "0.0": 1.0,
+    "0.1": 1.0,
+    "0.2": 1.0,
+    "0.3": NaN,
+    "0.4": NaN
+  },
+  "R1_fail_safe_floor": {
+    "fab_max_over_L": 0.0,
+    "bar": "<=0.02",
+    "pass": true
+  },
+  "R2_graceful_degrade": {
+    "fire_L0": 1.0,
+    "fire_L20": 0.004166666666666667,
+    "monotone": true,
+    "bar": "monotone AND fire(0)=1 AND fire(0.20)<=0.10",
+    "pass": true
+  },
+  "R3_earned_abstain": {
+    "acc_fired_min": 1.0,
+    "bar": ">=0.98",
+    "pass": true
+  },
+  "R4_ctrl_thr_ablate": {
+    "lure_fab_full_thr015": 0.0,
+    "lure_fab_ablate_thr1": 1.0,
+    "bar": "ablate>=0.50 AND full<=0.02 (abstain gate floors lure-fab)",
+    "pass": true
+  },
+  "R5_ctrl_shuffle_vals": {
+    "acc_fired_L0_shuf": 0.015000000000000001,
+    "bar": "<=0.05 (must collapse)",
+    "pass": true
+  },
+  "verdict": "FAIL-SAFE-ROBUST",
+  "tier": "\ud83d\udfe2",
+  "ruling": "the live G5 copy-or-abstain gate is OOD-robust in the SAFETY sense: under distribution shift it degrades GRACEFULLY into abstain, fabrication stays at floor (never fires a confidently-wrong value), and every fire is earned. The decoder-type2 THIN (H_1202/H_1217) does NOT transfer to this gate \u2014 it has a complementary, stronger fail-safe property.",
+  "note_superseded": "original type-2 AUROC bars were a STRUCTURAL non-result: the live gate has an EMPTY wrong-fire class (fab=0 at all shift levels), so type-2 AUROC is undefined. Re-scored on the gate's REAL fail-safe behavior. H_1202 M-ratio 0.924 / H_1217 OOD-collapse measured the ByteGPT DECODER, a different mechanism than this copy-or-abstain gate.",
+  "neuroscience_anchor": "domain-general vs domain-specific metacognition (Fleming & Lau 2014); Maniscalco & Lau 2012 meta-d'",
+  "scope": "TOY synthetic facts, byte-level shift as OOD proxy, numpy mirror = DIRECTIONAL (engine-transfer reconfirmed R2 if clean-robust); 3 seeds (a_scale_honest_scope)",
+  "per_seed": [
+    {
+      "seed": 7,
+      "full": {
+        "0.0": {
+          "fire_rate": 1.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.0,
+          "acc_fired": 1.0,
+          "n_fire": 400,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.1": {
+          "fire_rate": 0.13,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.87,
+          "acc_fired": 1.0,
+          "n_fire": 52,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.2": {
+          "fire_rate": 0.005,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.995,
+          "acc_fired": 1.0,
+          "n_fire": 2,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.3": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.4": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        }
+      },
+      "lure_fab_full": 0.0,
+      "lure_fab_ablate": 1.0,
+      "shuffle_vals": {
+        "0.0": {
+          "fire_rate": 1.0,
+          "fab_rate": 0.985,
+          "abstain_rate": 0.0,
+          "acc_fired": 0.015,
+          "n_fire": 400,
+          "n_fab": 394,
+          "n_total": 400
+        },
+        "0.1": {
+          "fire_rate": 0.13,
+          "fab_rate": 0.125,
+          "abstain_rate": 0.87,
+          "acc_fired": 0.038461538461538464,
+          "n_fire": 52,
+          "n_fab": 50,
+          "n_total": 400
+        },
+        "0.2": {
+          "fire_rate": 0.005,
+          "fab_rate": 0.005,
+          "abstain_rate": 0.995,
+          "acc_fired": 0.0,
+          "n_fire": 2,
+          "n_fab": 2,
+          "n_total": 400
+        },
+        "0.3": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.4": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        }
+      }
+    },
+    {
+      "seed": 8,
+      "full": {
+        "0.0": {
+          "fire_rate": 1.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.0,
+          "acc_fired": 1.0,
+          "n_fire": 400,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.1": {
+          "fire_rate": 0.1625,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.8375,
+          "acc_fired": 1.0,
+          "n_fire": 65,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.2": {
+          "fire_rate": 0.0025,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.9975,
+          "acc_fired": 1.0,
+          "n_fire": 1,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.3": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.4": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        }
+      },
+      "lure_fab_full": 0.0,
+      "lure_fab_ablate": 1.0,
+      "shuffle_vals": {
+        "0.0": {
+          "fire_rate": 1.0,
+          "fab_rate": 0.98,
+          "abstain_rate": 0.0,
+          "acc_fired": 0.02,
+          "n_fire": 400,
+          "n_fab": 392,
+          "n_total": 400
+        },
+        "0.1": {
+          "fire_rate": 0.1625,
+          "fab_rate": 0.1625,
+          "abstain_rate": 0.8375,
+          "acc_fired": 0.0,
+          "n_fire": 65,
+          "n_fab": 65,
+          "n_total": 400
+        },
+        "0.2": {
+          "fire_rate": 0.0025,
+          "fab_rate": 0.0025,
+          "abstain_rate": 0.9975,
+          "acc_fired": 0.0,
+          "n_fire": 1,
+          "n_fab": 1,
+          "n_total": 400
+        },
+        "0.3": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.4": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        }
+      }
+    },
+    {
+      "seed": 9,
+      "full": {
+        "0.0": {
+          "fire_rate": 1.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.0,
+          "acc_fired": 1.0,
+          "n_fire": 400,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.1": {
+          "fire_rate": 0.14,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.86,
+          "acc_fired": 1.0,
+          "n_fire": 56,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.2": {
+          "fire_rate": 0.005,
+          "fab_rate": 0.0,
+          "abstain_rate": 0.995,
+          "acc_fired": 1.0,
+          "n_fire": 2,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.3": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.4": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        }
+      },
+      "lure_fab_full": 0.0,
+      "lure_fab_ablate": 1.0,
+      "shuffle_vals": {
+        "0.0": {
+          "fire_rate": 1.0,
+          "fab_rate": 0.99,
+          "abstain_rate": 0.0,
+          "acc_fired": 0.01,
+          "n_fire": 400,
+          "n_fab": 396,
+          "n_total": 400
+        },
+        "0.1": {
+          "fire_rate": 0.14,
+          "fab_rate": 0.135,
+          "abstain_rate": 0.86,
+          "acc_fired": 0.03571428571428571,
+          "n_fire": 56,
+          "n_fab": 54,
+          "n_total": 400
+        },
+        "0.2": {
+          "fire_rate": 0.005,
+          "fab_rate": 0.005,
+          "abstain_rate": 0.995,
+          "acc_fired": 0.0,
+          "n_fire": 2,
+          "n_fab": 2,
+          "n_total": 400
+        },
+        "0.3": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        },
+        "0.4": {
+          "fire_rate": 0.0,
+          "fab_rate": 0.0,
+          "abstain_rate": 1.0,
+          "acc_fired": NaN,
+          "n_fire": 0,
+          "n_fab": 0,
+          "n_total": 400
+        }
+      }
+    }
+  ]
+}
