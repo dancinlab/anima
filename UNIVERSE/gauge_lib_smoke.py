@@ -3,8 +3,9 @@
 
 Builds a TINY random byte model (ConvMoE-shaped dict output AND a ByteGPT-shaped
 tuple output), calls compute_inline_gauges, asserts it returns the row dict with
-all FOUR gauges + ce, writes ONE gauges.jsonl line, and confirms the line round-trips.
-Pure CPU, $0, no network. MONITOR-ONLY — no loss, no backward anywhere.
+all FIVE gauges + ce (incl mitosis_cells), writes ONE gauges.jsonl line, and confirms
+the line round-trips. Pure CPU, $0, no network. MONITOR-ONLY — no loss, no backward
+anywhere (incl mitosis_cells — substrate lane, NOT a generation gate, H_1201🔴).
 """
 import json
 import os
@@ -54,7 +55,7 @@ def _check(model, label, corpus_path):
                                 ce=1.234, step=400, torch=torch, max_new=24)
     print(f"[{label}] returned dict: {json.dumps(row)}")
     for k in ("step", "ce", "g1_composed_distinct", "g2_novelty_rate",
-              "g6_count", "g6_jaccard", "phi_proxy"):
+              "g6_count", "g6_jaccard", "phi_proxy", "mitosis_cells"):
         assert k in row, f"missing key {k} in row"
     assert row["step"] == 400
     assert row["ce"] == 1.234
@@ -62,6 +63,9 @@ def _check(model, label, corpus_path):
     assert isinstance(row["g6_count"], int)
     # phi_proxy must be a real number (cheap proxy, NOT IIT4)
     assert isinstance(row["phi_proxy"], (int, float))
+    # mitosis_cells must be an int >= 1 (substrate lane, NOT a generation gate)
+    assert isinstance(row["mitosis_cells"], int) and row["mitosis_cells"] >= 1, \
+        f"mitosis_cells must be int>=1, got {row['mitosis_cells']!r}"
     return row
 
 
@@ -93,9 +97,10 @@ def main():
     assert "phi_proxy" in parsed and "phi" not in [k for k in parsed if k == "phi"]
 
     print(f"\ngauges.jsonl ({gauges_path}) line:\n  {lines[0]}")
-    print("\nSMOKE PASS — compute_inline_gauges returns the 4-gauge+ce dict and "
-          "one gauges.jsonl line round-trips (both ConvMoE-dict and ByteGPT-tuple "
-          "model shapes). MONITOR-ONLY: no loss / no backward in gauge_lib.")
+    print("\nSMOKE PASS — compute_inline_gauges returns the 5-gauge+ce dict (incl "
+          "mitosis_cells) and one gauges.jsonl line round-trips (both ConvMoE-dict and "
+          "ByteGPT-tuple model shapes). MONITOR-ONLY: no loss / no backward in gauge_lib "
+          "(mitosis_cells = substrate lane, NOT a generation gate · H_1201🔴).")
 
 
 if __name__ == "__main__":

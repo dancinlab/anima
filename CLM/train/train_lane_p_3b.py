@@ -310,7 +310,8 @@ def main():
                   f"g1_composed_distinct={row['g1_composed_distinct']} "
                   f"g2_novelty_rate={row['g2_novelty_rate']} "
                   f"g6_count={row['g6_count']} g6_jaccard={row['g6_jaccard']} "
-                  f"phi_proxy={row['phi_proxy']} (MONITOR-ONLY · not in loss)", flush=True)
+                  f"phi_proxy={row['phi_proxy']} mitosis_cells={row['mitosis_cells']} "
+                  f"(MONITOR-ONLY · not in loss · mitosis=substrate not a gate)", flush=True)
         except Exception as _e:
             print(f"GAUGE step={step} skipped ({_e})", flush=True)
 

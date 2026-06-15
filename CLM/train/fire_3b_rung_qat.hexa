@@ -1,10 +1,12 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  fire_3b_rung_qat.hexa — 3B-rung (d3584/L32/E48) AKIDA-envelope QAT fire SPEC
 //
-//  FIRE-READY — not yet fired; launch via
-//    `hexa cloud fire --provider runpod --gpu H100 --n 2 \
-//       --cmd 'torchrun --nproc_per_node=<N> CLM/train/train_clm.py --rung 3b …'`
-//    on RUNPOD H100 80GB ×2~4 (DDP · a_wall_first parallel) target.
+//  FIRE-READY — not yet fired; launch via the anima-side dispatch wrapper
+//    `bash CLM/train/dispatch_rung.sh 3b <pod-host> <corpus>`
+//  which encodes a_fire_recover_complete (pull ckpt+result+log+anchors + HF upload
+//  BEFORE teardown) and a_cpu_local_no_waiter (inline poll, never await a Monitor),
+//  and calls the ACTUAL trainer CLM/train/train_lane_p_3b.py over `hexa cloud fire`
+//  on RUNPOD H100 80GB ×2~4 (DDP · a_wall_first parallel) target.
 //
 //  P6_SCALE_LADDER_7B §1: the 3B production measurement-rung — GATED by `large`
 //  passing F-CLM-SCALE-TRANSFER (P6 §2 · no rung jump). measurement track climbs
@@ -35,9 +37,12 @@
 //
 //  HARD: pure-hexa SPEC/driver · NO external LLM · NO foundation-borrow (pure scratch QAT ·
 //  random-init · byte V=256 own-tokenizer · NO large-rung weight borrow as init).
-//  The torch payload is the LANDED CLM/train/train_clm.py (3b rung added to its LADDER:
-//  d_model=3584, n_trunk_layers=32, n_experts=48) — this driver records the dispatch
-//  contract + verdict path. sibling: train_clm.py · fire_large_rung_qat.hexa · P6_SCALE_LADDER_7B.md
+//  The torch payload is the LANDED Lane-P trainer CLM/train/train_lane_p_3b.py (the 3b
+//  rung passes d_model=3584, n_trunk_layers=32, n_experts=48 via its --d-model /
+//  --n-trunk-layers / --n-experts flags; --gauge-every drives the a_train_inline_gauge
+//  dashboard; --clm-out emits the engine-loadable .clm v0.2/v3 for the post-train CORE
+//  mount-parity verdict). This driver records the dispatch contract + verdict path.
+//  sibling: train_lane_p_3b.py · dispatch_rung.sh · fire_large_rung_qat.hexa · P6_SCALE_LADDER_7B.md
 // ════════════════════════════════════════════════════════════════════════════
 
 fn provider() -> string { return "runpod" }
@@ -63,17 +68,55 @@ fn est_cost_usd() -> string { return "~$40~120 / ~12~24h wall (H100 fleet · a_w
 fn verdict_dir() -> string { return ".verdicts/clm-prod-rung/3b" }
 fn hf_repo() -> string { return "dancinlab/anima-clm-3b" }   // measurement ckpt
 
-// the 3 router arms swept at this rung (P0 §3 ablation).
-fn arms() -> [string] { return ["A", "B", "AB"] }
+// the ACTUAL Lane-P trainer (a_clm_gen_pipeline) — NOT the legacy train_clm.py name.
+// train_lane_p_3b.py is the live gauge-hooked trainer; its 3b rung = d3584/L32/E48.
+fn trainer() -> string { return "CLM/train/train_lane_p_3b.py" }
+fn d_model() -> int { return 3584 }
+fn n_trunk_layers() -> int { return 32 }
+fn n_experts() -> int { return 48 }
+fn corpus() -> string { return "CLM/data/anima_corpus_3b.txt" }   // override per fire
 
-// per-arm fire command (the landed QAT trainer · 3b rung · DDP torchrun).
+// the 3 seed arms swept at this rung (seed-variance ablation; train_lane_p_3b.py
+// is variant="AB" fixed in CLMConfig, so the arm sweep varies the seed — distinct
+// runs, NOT a legacy --arm flag the real trainer does not accept).
+fn arms() -> [string] { return ["A", "B", "AB"] }
+fn arm_seed(arm: string) -> int {
+    if arm == "A"  { return seed() }
+    if arm == "B"  { return seed() + 1 }
+    return seed() + 2                         // "AB"
+}
+
+// per-arm fire command — the REAL trainer CLI (train_lane_p_3b.py). Flags are the
+// trainer's actual argparse: --d-model/--n-trunk-layers/--n-experts set the 3b rung,
+// --gauge-every drives the a_train_inline_gauge dashboard into --gauges-out, and
+// --clm-out emits the engine-loadable .clm for the post-train CORE mount-parity
+// verdict. DDP via torchrun (a_wall_first). NO legacy --arm/--rung/--act-bits.
 fn fire_cmd(arm: string) -> string {
+    let tag = "3b_" + arm + "_s" + to_string(arm_seed(arm));
     return "torchrun --nproc_per_node=" + to_string(n_gpu())
-        + " CLM/train/train_clm.py --arm " + arm + " --rung " + rung()
-        + " --steps " + to_string(steps()) + " --seed " + to_string(seed())
-        + " --act-bits " + to_string(act_bits())
+        + " " + trainer()
+        + " --corpus " + corpus()
+        + " --d-model " + to_string(d_model())
+        + " --n-trunk-layers " + to_string(n_trunk_layers())
+        + " --n-experts " + to_string(n_experts())
+        + " --steps " + to_string(steps())
+        + " --seed " + to_string(arm_seed(arm))
+        + " --bf16 --grad-checkpoint"
         + " --gauge-every " + to_string(gauge_every())   // MONITOR-ONLY dashboard (a_train_inline_gauge)
-        + " --json-out out/clm_3b_" + arm + "_s" + to_string(seed()) + ".json"
+        + " --gauges-out out/gauges_" + tag + ".jsonl"
+        + " --ckpt-out out/clm_" + tag + ".pt"
+        + " --clm-out out/clm_" + tag + ".clm"           // engine-loadable for mount-parity
+        + " --json-out out/clm_" + tag + ".json"
+}
+
+// post-train engine-mount parity verdict (a_engine_measured_verdict · the FROZEN gate).
+// The inline gauges are MONITOR-ONLY; the real verdict mounts the emitted .clm on the
+// CORE engine and checks byte-exact parity (the H_1157 mount path), then runs the
+// frozen G-gates. This is SEPARATE from the dashboard — gauges never gate.
+fn mount_parity_cmd(arm: string) -> string {
+    let tag = "3b_" + arm + "_s" + to_string(arm_seed(arm));
+    return "python3 CLM/model/verify_clm_v2.py out/clm_" + tag + ".clm"
+        + "  # then CORE mount byte-exact parity (a_engine_measured_verdict)";
 }
 
 // gate: this rung fires ONLY after `large` passes F-CLM-SCALE-TRANSFER (P6 §2).
@@ -92,14 +135,16 @@ fn scale_transfer_gate() -> [string] {
     ]
 }
 
-// a_fire_recover_complete checklist (pre-teardown · governance).
+// a_fire_recover_complete checklist (pre-teardown · governance). Encoded by the
+// anima-side wrapper CLM/train/dispatch_rung.sh (which runs it inline before any
+// teardown — a_cpu_local_no_waiter, never awaiting a Monitor/waiter).
 fn recover_steps() -> [string] {
     return [
-        "1. pull: out/clm_3b_*.json (result) + clm_fire.log (log) + ckpt shards + anchors",
-        "2. verify: re-read JSON · confirm last_ce finite · step_rate>0",
-        "3. write verdict → .verdicts/clm-prod-rung/3b/F-CLM-SCALE-TRANSFER.txt (verbatim)",
-        "4. HF upload COMPLETE (a_hf_complete · ALL shards) → dancinlab/anima-clm-3b",
-        "5. THEN teardown: hexa cloud rm <pod-id(s)> --provider runpod",
+        "1. pull: out/clm_3b_*.{json,clm,pt} (result+engine .clm+ckpt) + out/gauges_3b_*.jsonl (dashboard) + out/fire_3b_*.log + anchors",
+        "2. verify: re-read JSON · last_ce finite · step_rate>0 · python3 CLM/model/verify_clm_v2.py out/clm_3b_*.clm (engine-loadable)",
+        "3. post-train CORE mount-parity verdict (a_engine_measured_verdict) → .verdicts/clm-prod-rung/3b/F-CLM-SCALE-TRANSFER.txt (verbatim · gauges NEVER gate)",
+        "4. HF upload COMPLETE (a_hf_complete · a_hf_autonomous · ALL shards + .clm + gauges.jsonl + model card) → dancinlab/anima-clm-3b",
+        "5. THEN teardown: hexa cloud dispatch rm <pod-id(s)> (PULL_FAILED != pod dead — verify pull first)",
     ]
 }
 
@@ -113,11 +158,16 @@ fn main() {
     println("  EST COST = " + est_cost_usd() + " (a_fire_autonomous · state then dispatch)")
     println("  envelope = int4-sym[-7,+7] per-channel STE + act_bits=4 · inference AKIDA-int4-ONLY")
     println("  verdict_dir = " + verdict_dir() + " · HF = " + hf_repo())
+    println("  trainer = " + trainer() + " (Lane-P · a_clm_gen_pipeline · NOT legacy train_clm.py)")
     println("  gauges = MONITOR-ONLY every " + to_string(gauge_every())
-        + " steps -> gauges.jsonl (G1/G2/G6/phi_proxy + val_ce · NOT in loss · NOT a gate "
-        + "· phi_proxy!=IIT4 · a_train_inline_gauge); frozen verdict still post-train on engine mount")
-    println("dispatch (3-arm sweep · DDP):")
+        + " steps -> out/gauges_3b_*.jsonl (G1/G2/G6/phi_proxy/mitosis_cells + val_ce · "
+        + "NOT in loss · NOT a gate · phi_proxy!=IIT4 · mitosis=substrate · a_train_inline_gauge)")
+    println("  monitor = python3 UNIVERSE/gauge_monitor.py --follow out/gauges_3b_A_s42.jsonl --log out/fire_3b_A.log")
+    println("  frozen verdict still post-train on CORE engine mount (a_engine_measured_verdict):")
+    println("dispatch (3-seed-arm sweep · DDP · REAL trainer CLI):")
     for arm in arms() { println("  " + fire_cmd(arm)) }
+    println("post-train mount-parity (FROZEN gate · gauges never gate):")
+    for arm in arms() { println("  " + mount_parity_cmd(arm)) }
     println("F-CLM-SCALE-TRANSFER gate to 7B (pre-register · P6 §2):")
     for g in scale_transfer_gate() { println("  " + g) }
     println("a_fire_recover_complete (pre-teardown):")

@@ -1,0 +1,29 @@
+H_1167 — 1B ByteGPT ENGINE-MOUNT BYTE-EXACT PARITY — 🟢 GREEN (2026-06-15, $0 local CPU, p7)
+
+GOAL: realize a_engine_measured_verdict for the 1B rung — mount the trained 1B ByteGPT
+(d1792/L28/H16, 1.081B params, H_1167) on CORE/bytegpt_decode.hexa and prove BYTE-EXACT
+parity to the torch reference (the H_1157 303M proof, at 1B scale).
+
+ARTIFACT: state/h1167_mount/h1167_1b.bin (4,325,902,356 B, sha256 75c87cb0abbdb604a841930a1f8ecb5e840c350e0c9f632c343846f278311fa2,
+HF dancinlab/anima-clm-1b-h1167-bytegpt-scale-rung PRIVATE). golden = h1167_1b_golden.json (torch).
+
+TWO-STAGE UNBLOCK:
+ (1) hexa-lang #3352 — read_file_bytes/read_bytes_at 32-bit length+offset overflow fixed to
+     64-bit (the 4.3GB .bin wrapped 4325902356 mod 2^32 = 30935060 → header 0 → d/n_head 0/0 div).
+ (2) CORE/bytegpt_decode.hexa::bytegpt_forward_last_ranged — ranged per-slice weight reads via
+     read_bytes_at (whole-file boxed read = ~69GB HexaVals, infeasible; ranged peak ≈ one weight
+     slice). 303M whole-file path (bytegpt_forward_last/bg_load) UNCHANGED.
+
+FROZEN PARITY CRITERION (argmax exact ∧ top5 set exact ∧ first-16 logits within ~1e-2 abs):
+ prompt "The quick brown" (15 bytes)
+ CORE_ARGMAX  32                       == golden.argmax 32                       EXACT
+ CORE_TOP5    [32,105,115,101,44]      == golden.top5_idx [32,105,115,101,44]    EXACT (ordered)
+ CORE_FIRST16 max|Δ| = 0.009861 (idx10: 26.2561 vs 26.246239)  < 1e-2 bar       PASS
+
+VERDICT: 🟢 GREEN. The 28-layer 1B forward reproduces the torch logits byte-exact at the decode
+level (argmax+top5 exact); the float residual 0.0099 is the approximate-erf-GELU/dt_exp envelope
+accumulated over 28 layers (303M was ~2e-5; deeper → larger, still under the frozen ~1e-2 bar).
+
+CONSEQUENCE: the 1B rung verdict is now ENGINE-MEASURED, not torch-only (a_engine_measured_verdict
+satisfied for the MOUNT step). The engine mounts 1B+ models after the hexa 64-bit fix + ranged reader.
+Frozen bars NOT moved. probe: CORE/h1167_1b_parity_probe.hexa.
