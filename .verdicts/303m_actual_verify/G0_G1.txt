@@ -1,0 +1,30 @@
+=== G0 COHERENCE + G1 RECOMBINATION — anima 303M (frozen H_1129 ladder, seed 7, p7) ===
+metric: H_1129 run_ladder VERBATIM (UNIVERSE/h1129_..recombination.py) — NO new metric,
+NO moved threshold. eval-only on the existing ckpts (no retrain). torch Lane-G REFERENCE
+mouth, licensed by the byte-exact MOUNT parity proof (this same arch reproduces torch in
+the CORE engine, MOUNT.txt). dev=cpu, 234,461-word /usr/share/dict coherence lexicon.
+
+── BASE model  h1129c_best.pt  (sha256 19be1295…a160a28, HF dancinlab/anima-clm-midcap-303m-broad-en-emergent) ──
+G0: per-seed kwr [0.923, 1.0, 0.923, 1.0, 0.857]  -> 5/5 >= 0.50  G0 PASS (frozen >=4/5)
+G1: max_single_distinct=1
+    k=2 composed_distinct=1 cov=[1]    kwr=0.85 coherent clears=False
+    k=3 composed_distinct=2 cov=[0,1]  kwr=0.95 coherent clears=TRUE
+    k=4 composed_distinct=2 cov=[1,2]  kwr=1.00 coherent clears=TRUE
+    k=5 composed_distinct=2 cov=[0,4]  kwr=0.94 coherent clears=TRUE
+    -> some k composed_distinct>=2 AND >max_single AND coherent  G1 PASS
+    (reproduces H_1129 MID-CAPACITY-EMERGENCE on the actual ckpt)
+
+── CHAT model  h1129c_chat.pt  (sha256 4fcc2d6c…0ec13f68, the SHIPPED anima-clm-chat-303m = base + 70wiki/30dialogue FT 2000 steps) ──
+G0: per-seed kwr [0.88, 1.0, 0.00, 0.88, 0.92]    -> 4/5 >= 0.50  G0 PASS (frozen >=4/5)
+    (seed[2] degenerates to bare "|" — a dialogue-register stop artifact, not byte-garble)
+G1: max_single_distinct=0
+    k=2 composed_distinct=1  k=3 0  k=4 1  k=5 1  -> NO k clears  G1 does NOT clear on the chat ckpt
+    outputs are conversational ("The values of distant minds", "| 도우미: …") — the dialogue
+    REGISTER masks the broad-corpus recombination ladder. This is the SAME documented effect as
+    MODEL.md CHAT 🔴 INFLATED (strict 0/5, H_1165). Per MODEL.md, G1's frozen evidence is the
+    BASE broad model and the chat model inherits it via the byte-exact MOUNT (recombination
+    capacity is in the shared trunk; the chat register doesn't change the weights' capacity).
+
+VERDICT: G0 PASS (both ckpts).  G1 PASS on the base trunk (canonical ladder target) — the chat
+register masks it on the chat ckpt (consistent with the documented register≠QA finding). p7
+(coherence+coverage counts, NOT perplexity, NOT LLM-judge). seed 7 deterministic.

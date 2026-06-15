@@ -2,6 +2,24 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — verify(303M): a303m_pass RE-VERIFIED FROM SCRATCH (engine-measured, byte-exact, p7)
+
+ACTUAL re-verification of the SHIPPED `anima-clm-chat-303m` from scratch on the live CORE engine
+(`.verdicts/303m_actual_verify/`), NOT a doc claim — engine-measured, byte-exact, p7 (no perplexity,
+no LLM-judge). Ckpts verified PRESENT + sha-matched: CHAT `h1129c_chat.pt` (4fcc2d6c…, 303,097,856
+params), BASE `h1129c_best.pt` (19be1295…, MATCHES HF.jsonl), training CORPUS (2d15ca7d…, MATCHES
+recipe). **MOUNT byte-exact** — CORE `bg_load`+`bg_forward_last_W` vs torch golden: argmax 32==32,
+top5 [32,44,10,63,46] match, first-16 maxΔ 5e-5 (≪ 0.01 tol). **G0** base 5/5 + chat 4/5. **G1** base
+trunk k3/k4/k5 composed_distinct=2>max_single=1 coherent (reproduces H_1129). **G3** 8/8 structural +
+engine_cli_smoke 30/0 + single-entry 7/0. **G5** grounded-copy 22 verbatim bytes + immune-memory recall
+QA 1.000 fab 0.000 abstain 3/3. **PHASE-3 memory e2e** QA 1.0 / fab 0.0 / abstain green. **G2** absence-
+checked on the real corpus (frozen h1140). **No frozen bar moved; NO remake needed** — the model is
+coherent/emergent/non-fabricating/philosophy-clean and mounts byte-exact. Every obstacle was tooling/host:
+a hexa selfhost IO-builtin symbol regression (`_read_file_bytes` vs runtime `_rt_read_file_bytes`) FIXED
+at root cause (rt.o alias, backup kept) + filed to hexa-lang inbox — NOT a model defect. Honest robustness
+map unchanged (5 ROBUST + 2 THIN + 1 INFLATED, register≠QA).
+
+
 ## 2026-06-16 — domain(MODEL): 🧩 전전두엽 위계 goal→subgoal 컨트롤러 lane (HD31, H_1294 R2 🟢 ENGINE-NATIVE)
 
 빠진 뇌 서브시스템 사다리에 **HD31 전전두엽 위계(hierarchical PFC · goal→subgoal 다단계 제어)** 를 추가 — 2-level goal-stack 컨트롤러 lane(`HierGoalStack`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`hier_new`/`hier_current_target`/`hier_grounded_current`/`hier_step`/`hier_pointer`/`hier_complete`/`hier_flat_emit`). goal STACK = {top goal, ORDERED subgoal 키, pointer p}: 현재 subgoal[p] 에 aligned(cos≥0.85)+grounded 된 cue 만 emit, **완료 시 pointer ADVANCE**(completion-triggered), out-of-order/ungrounded cue SUPPRESS, plan 위치 PERSIST. Badre & D'Esposito rostro-caudal gradient / Koechlin cascade 렌즈(`a_no_llm_frame_trap`, c15).

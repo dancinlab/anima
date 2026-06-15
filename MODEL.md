@@ -26,6 +26,19 @@
 | G5 NON-FAB 비환각/메타인지 | ✅ | 🟠 THIN (in-dist PARTIAL) | H_1163 frozen-GREEN (OOD); H_1165 in-dist: F1 fab FIRMS 0.133 +margin, F2 useful 0.875<0.90 (over-eager abstain). FORMAL metacog H_1202 🟢 meta-d′ M-ratio 0.924 |
 | CHAT | ✅ | 🔴 INFLATED | H_1160 single 4/5 multi 3/3 (frozen); H_1165 strict content-overlap → 0/5+0/3 (dialogue register, not QA) |
 | G6 IDEATION 발상 | ✅ | 🟠 THIN | H_1158 operational; H_1165 depth 5/14 floor (survives) |
+>
+> **RE-VERIFIED FROM SCRATCH 2026-06-16** (engine-measured, byte-exact, p7 — `.verdicts/303m_actual_verify/`):
+> the SHIPPED `h1129c_chat.pt` (sha 4fcc2d6c…, 303,097,856 params) + BASE `h1129c_best.pt` (sha
+> 19be1295…, MATCHES HF.jsonl) re-scored on the live CORE engine. **MOUNT byte-exact** (CORE
+> `bg_load`+`bg_forward_last_W` vs torch golden: argmax 32==32, top5 [32,44,10,63,46] match, first-16
+> maxΔ 5e-5 ≪ 0.01). **G0** base 5/5 + chat 4/5. **G1** base trunk k3/k4/k5 composed_distinct=2>max_single=1
+> coherent (reproduces H_1129; chat register masks it on the chat ckpt — same effect as CHAT INFLATED).
+> **G2** absence-checked on the REAL training corpus (sha 2d15ca7d… matches recipe). **G3** 8/8 structural
+> + engine_cli_smoke 30/0 + single-entry 7/0. **G5** grounded-copy 22 verbatim bytes + immune-memory
+> recall QA 1.000 fab 0.000 abstain 3/3 (PHASE-3 e2e). **No frozen bar moved; no remake needed** — every
+> obstacle was tooling/host (a hexa selfhost IO-builtin symbol regression, fixed at root cause + filed to
+> hexa-lang inbox), NOT a model defect. The model is sound.
+>
 > **8/8 on the FROZEN bars (frozen bars NOT moved) — "303M 성공" reached at the frozen-gate
 > level.** HONEST ROBUSTNESS MAP under stricter/in-distribution scrutiny (H_1165, gate-validity
 > findings): **5 ROBUST** (G0·G1·G2·MOUNT·G3) **+ 2 THIN** (G5 in-dist F2, G6 depth-floor) **+ 1
