@@ -1,0 +1,86 @@
+H_1297 — MITOSIS-NATIVE TRUNK TRAINING (make PHILOSOPHY p8 LITERAL)
+PRE-REGISTRATION (FROZEN before the run; bars NOT movable post-hoc) — frozen-first, c9.
+
+THE QUESTION (p8 literal). anima's p8 = "training gradient + inference mitosis =
+one continuous cell-division". Today it is SPLIT: the trunk is gradient-CE-trained
+(CLM/train, forge/Lane-P) and mitosis is a separate LIVE-ENGINE inference lane
+(VAdaptField H_1199, grow-under-pressure H_1288). This lane asks whether p8 can be
+LITERAL at a SMALL TOY scale: can a MITOSIS-GROW trainer (cells split/grow under
+local error pressure, GRADIENT-FREE) learn a trunk that converges AT LEAST AS WELL
+as standard gradient descent on the SAME task?
+
+LENS (a_no_llm_frame_trap). Biology: neurogenesis / cell-division grows capacity
+WHERE the organism is failing — NOT a bigger-transformer recipe. The mitosis trainer
+adds a CELL (prototype) where local error is high, and corrects it LOCALLY (no global
+backprop). This is the training-side twin of the live VAdaptField split rule
+(CORE/engine_cli.hexa: high L2 recon-err -> +1 cell prototype, H_1199/H_1288).
+
+TASK (TOY, deterministic, convergence unambiguous):
+  1-D function-fit on a KNOWN nonlinear target with a known reachable MSE.
+  target f(x) = sin(3x) + 0.5*sin(7x) + 0.3*step(x>0.2) - 0.4*step(x>0.6)
+    (smooth sinusoid + two discontinuous steps -> needs local capacity at the breaks;
+     a fixed small net must spend its budget globally, mitosis grows it AT the breaks)
+  domain x in [-1, 1]; N_TRAIN=160, N_TEST=160 held-out (interleaved grid + jitter)
+  observation noise sigma=0.05 (Gaussian) -> NOISE FLOOR mse ~= sigma^2 = 0.0025
+    (the reachable floor: no fitter can beat ~0.0025 test MSE on noisy data)
+  SEEDS = [770, 771, 772] (3 seeds)
+
+ARMS (FROZEN):
+  (A) GRADIENT     — fixed-size param set: an RBF network with K_A=24 FIXED centers
+                     (linearly spaced) + linear readout, trained by full-batch
+                     MSE GRADIENT DESCENT (analytic d(MSE)/d(w,c,log_s)), 4000 steps,
+                     lr scheduled. The incumbent control (standard backprop, fixed
+                     capacity). 24 RBF units * (center+width+weight) ~= 72 trained params.
+  (B) MITOSIS-GROW — gradient-free. START tiny (2 prototype cells covering [-1,1]).
+                     Each prototype = (center c, width s, local linear head a*x+b).
+                     Fit each head by LOCAL weighted least-squares on its responsibility
+                     region (closed-form, NO global backprop). A cell whose LOCAL
+                     train MSE exceeds SPLIT_THRESH SPLITS into two (center perturbed
+                     +/- s/2, widths halved) -> capacity GROWS where error is high.
+                     Iterate split+local-refit until no cell exceeds threshold OR
+                     GROW_MAX=40 cells (FINITE bound, footprint honesty H_1288).
+                     Prediction = responsibility-weighted (softmax over -dist^2/s^2)
+                     mixture of local heads. p8: split = the model's own tick.
+  (B-SHUFFLE)      — IDENTICAL to B EXCEPT the cell chosen to split each round is a
+                     RANDOM cell (not the highest-LOCAL-error one). Capacity still
+                     grows the SAME total count, but in the WRONG place -> must COLLAPSE
+                     (lift comes from error-targeted growth, not from raw cell count).
+  (B-ABLATE)       — IDENTICAL to B EXCEPT growth is FROZEN at the initial 2 cells
+                     (no split ever) -> must UNDERFIT (capacity is the lever).
+
+METRICS (p7, deterministic — MSE on noisy 1-D regression, NOT perplexity/LLM-judge):
+  conv_mse  = held-out TEST MSE after training (lower = better convergence)
+  cells/params = final cell count (B) vs fixed param budget (A) — COST honesty (H_1288)
+
+PRE-REGISTERED GREEN (FROZEN, all bars set BEFORE the run):
+  (c1) COMPARABLE  : B.conv_mse <= A.conv_mse + COMP_MARGIN, COMP_MARGIN=0.0050
+                     (mitosis converges at least as well as gradient, within ~2x the
+                      noise floor 0.0025 -> "comparable" defined numerically)
+  (c2) SHUFFLE-COLLAPSE : B_SHUFFLE.conv_mse >= B.conv_mse + COLLAPSE_GAP,
+                     COLLAPSE_GAP=0.0100 (mis-targeted growth is clearly worse)
+  (c3) ABLATE-UNDERFIT  : B_ABLATE.conv_mse >= B.conv_mse + UNDERFIT_GAP,
+                     UNDERFIT_GAP=0.0100 (frozen 2-cell capacity clearly underfits)
+  (c4) COST reported: B final cell count vs A fixed param count (growth footprint).
+
+  TIER (all on the 3-seed mean, each bar must hold):
+    GREEN  iff c1 AND c2 AND c3  (mitosis MATCHES gradient + both controls behave)
+    AMBER  iff (c2 AND c3) hold but c1 misses by <= 0.0050 again
+               (mitosis CLOSE but not matching -> partial p8 toehold)
+    RED    iff c1 fails by > 0.0100 (gradient stays the trunk trainer; mitosis = inference lane)
+    WALL   iff a control misbehaves (c2 or c3 fails) -> probe can't discriminate; honest 🧱
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck):
+  * DIRECTIONAL numpy MIRROR only. NOT engine-native. engine-transfer UNVERIFIED.
+    A GREEN here names an engine-native follow-on (realize mitosis-grow training on
+    live CORE VAdaptField, re-score engine-native; a_engine_native_learning +
+    a_verified_must_wire) — it does NOT claim engine-verified.
+  * TOY 1-D fit, 3 seeds, ONE target family. Scale + real-corpus byte-LM trunk
+    UNVERIFIED (a separate cost-gated GPU fire, NOT run here).
+  * If B SATURATES at the noise floor it is an EXISTENCE-PROOF (mitosis CAN reach
+    the floor), with the cell-count cost stated honestly (H_1288 footprint discipline).
+  * No tune-to-green: bars above are frozen; the result is read VERBATIM.
+
+GUARDS: p1-p8; split = the model's own tick (p8, not an external schedule);
+mitosis trainer touches ONLY the local prototype population + local-LSQ heads
+(no labels/persona/ethics/global-backprop). Mirror only — live CORE/*.hexa UNTOUCHED.
+$0 local CPU numpy, no GPU, no secrets.

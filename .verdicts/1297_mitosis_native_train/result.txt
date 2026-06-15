@@ -1,0 +1,40 @@
+H_1297 — MITOSIS-NATIVE TRUNK TRAINING (p8 literal) — DIRECTIONAL numpy mirror
+==============================================================================
+target sin(3x)+0.5sin(7x)+steps | noise sigma=0.05 floor~0.0025 | N_train=160 N_test=160 | seeds=[770, 771, 772]
+FROZEN bars: c1 COMP_MARGIN=0.005 c2 COLLAPSE_GAP=0.01 c3 UNDERFIT_GAP=0.01 | K_A=24 GROW_MAX=40 SPLIT_THRESH=0.003
+------------------------------------------------------------------------------
+seed 770: A(grad)=0.00424  B(mitosis)=0.13027 [40 cells]  B-shuf=0.12145  B-abl=0.39696 [2 cells]
+seed 771: A(grad)=0.00451  B(mitosis)=0.11971 [40 cells]  B-shuf=0.01261  B-abl=0.40986 [2 cells]
+seed 772: A(grad)=0.00370  B(mitosis)=0.12874 [40 cells]  B-shuf=0.00562  B-abl=0.40066 [2 cells]
+------------------------------------------------------------------------------
+MEAN (3 seeds): A(grad)=0.00415  B(mitosis)=0.12624  B-shuffle=0.04656  B-ablate=0.40250
+COST (c4): B mitosis final cells mean=40.0  vs  A fixed params=73
+------------------------------------------------------------------------------
+(c1) COMPARABLE      B<=A+0.005:  0.12624 <= 0.00915  -> FAIL
+(c2) SHUFFLE-COLLAPSE B_shuf>=B+0.01: 0.04656 >= 0.13624 -> FAIL
+(c3) ABLATE-UNDERFIT  B_abl>=B+0.01: 0.40250 >= 0.13624 -> PASS
+------------------------------------------------------------------------------
+R1 VERDICT TIER (frozen): WALL
+  p8-literal (R1): mitosis-grow does NOT match gradient at this toy scale
+  c1=False c2=False c3=True | DIRECTIONAL mirror, engine-transfer+scale UNVERIFIED
+==============================================================================
+R2 BREAKTHROUGH (a_break_the_wall): hard-partition mitosis (cortical-column
+nearest-assignment + data-matched median-split + centroid-recenter)
+FROZEN R2 bars = SAME numbers as R1 | MIN_OWNED=8 (no goalpost move)
+------------------------------------------------------------------------------
+seed 770: A(grad)=0.00424  B2(mitosis)=0.00417 [20 cells]  B2-shuf=0.00394  B2-abl=0.11893 [2 cells]
+seed 771: A(grad)=0.00451  B2(mitosis)=0.00491 [14 cells]  B2-shuf=0.00437  B2-abl=0.16829 [2 cells]
+seed 772: A(grad)=0.00370  B2(mitosis)=0.00327 [18 cells]  B2-shuf=0.00251  B2-abl=0.14771 [2 cells]
+------------------------------------------------------------------------------
+MEAN (3 seeds): A(grad)=0.00415  B2(mitosis)=0.00412  B2-shuffle=0.00360  B2-ablate=0.14497
+COST (c4): B2 mitosis final cells mean=17.3  vs  A fixed params=73
+------------------------------------------------------------------------------
+(c1) COMPARABLE      B2<=A+0.005:  0.00412 <= 0.00915  -> PASS
+(c2) SHUFFLE-COLLAPSE B2_shuf>=B2+0.01: 0.00360 >= 0.01412 -> FAIL
+(c3) ABLATE-UNDERFIT  B2_abl>=B2+0.01: 0.14497 >= 0.01412 -> PASS
+------------------------------------------------------------------------------
+R2 VERDICT TIER (frozen): WALL
+  p8-literal (R2): hard-partition mitosis MATCHES gradient at this toy scale
+  c1=True c2=False c3=True | DIRECTIONAL mirror, engine-transfer+scale UNVERIFIED
+==============================================================================
+OVERALL: R1=WALL -> R2=WALL

@@ -1,0 +1,62 @@
+H_1297 R2 — MITOSIS-NATIVE TRUNK TRAINING, BREAKTHROUGH RUNG (a_break_the_wall)
+PRE-REGISTRATION (FROZEN before the R2 run; bars NOT movable post-hoc) — frozen-first, c9.
+
+R1 WALL (read verbatim, .verdicts/1297_mitosis_native_train/result.txt):
+  A(grad)=0.00415  B(mitosis)=0.12624  B-shuffle=0.04656  B-ablate=0.40250 (3-seed mean)
+  c1 FAIL (0.126 >> 0.009), c2 FAIL (shuffle 0.047 < B 0.126 -> shuffle BEATS targeted),
+  c3 PASS. TIER=WALL: the R1 split mechanism cannot match gradient AND the shuffle
+  control misbehaves (probe can't discriminate). a_break_the_wall requires ONE genuine
+  breakthrough attempt before terminal.
+
+ROOT-CAUSE DIAGNOSIS (why R1 walled — the SPLIT GEOMETRY, not p8):
+  R1 split = perturb center +/- s/2 AND halve widths; predict = softmax responsibility
+  over -dist^2/s^2. Two pathologies compound:
+   (i) WIDTH-NARROWING: every split halves widths -> after ~5 splits widths ~ 2^-5,
+       so cells become spike-like; a test point between cells falls in NO cell's
+       support -> the softmax picks the LEAST-bad far cell -> huge extrapolation error.
+   (ii) MIXTURE DEGENERACY: the global softmax mixture lets a far narrow cell with a
+        steep local-linear head dominate at points it should not own.
+  EVIDENCE this is the geometry not p8: B-SHUFFLE (random split) ACCIDENTALLY keeps a
+  few WIDE cells, so it scores BETTER than targeted (0.047 < 0.126) — the targeted rule
+  is actively hurting via narrowing. The lift mechanism is sound (ablate underfits,
+  c3 PASS); the realization is wrong.
+
+BREAKTHROUGH ANGLE (a_no_llm_frame_trap, biology lens — NOT a tuned knob):
+  Real neurogenesis tiles the RESIDUAL territory a parent fails to cover, with a
+  receptive field MATCHED to the local data spacing — and cortical columns own
+  territory by HARD nearest-assignment (a partition), not a degenerate global mixture.
+  R2 changes the MECHANISM accordingly (a principled re-design, frozen anew):
+   (1) HARD PARTITION (cortical-column ownership): each train/test point is owned by
+       its NEAREST cell center (Voronoi/k-d partition). Local head fit on OWNED points
+       only (ordinary least-squares on the owned region). No softmax mixture, no width
+       degeneracy. (This is the substrate-native "membrane / self-vs-nonsELF" tiling.)
+   (2) DATA-MATCHED SPLIT: a cell splits at the MEDIAN of its owned points' x (the
+       point that bisects its territory), spawning two children whose centers are the
+       owned-region centroids of each half — capacity grows to MATCH local data
+       density, never narrowing below the data spacing.
+   (3) split signal UNCHANGED: split the cell with the highest LOCAL (owned) train MSE
+       (the error-targeted tick, p8); ablate = no split; shuffle = split a RANDOM cell.
+  This is a genuinely DIFFERENT mechanism (hard k-d partition + median-split +
+  centroid-recenter), not a re-tuned R1. The split TRIGGER (local-error-targeted) is
+  identical, so the controls remain meaningful.
+
+TASK + ARMS + DATA: IDENTICAL to R1 (same target, noise, seeds [770,771,772], N=160/160).
+  ARM A (GRADIENT) is RE-USED VERBATIM from R1 (same incumbent control, unchanged).
+
+FROZEN R2 KNOBS (set BEFORE the R2 run):
+  GROW_MAX=40 (same finite bound), SPLIT_THRESH=0.0030 (same local-MSE split trigger),
+  MIN_OWNED=8 (a cell with < 8 owned points cannot split — guards against over-tiling
+  noise; = N_TRAIN/20, a data-spacing floor, set before the run).
+
+FROZEN R2 BARS (IDENTICAL numeric bars to R1 — NOT moved):
+  (c1) COMPARABLE      : B.mse <= A.mse + 0.0050
+  (c2) SHUFFLE-COLLAPSE: B_shuf.mse >= B.mse + 0.0100
+  (c3) ABLATE-UNDERFIT : B_abl.mse  >= B.mse + 0.0100
+  TIER: GREEN iff c1&c2&c3 ; AMBER iff c2&c3 hold & c1 misses by <=0.0050 again ;
+        RED iff c1 fails by >0.0100 ; WALL iff a control (c2/c3) misbehaves.
+
+HONESTY (c9): same scope as R1 — DIRECTIONAL numpy mirror, engine-transfer + scale
+  UNVERIFIED. The R2 mechanism is pre-registered HERE before scoring; bars are the SAME
+  numbers as R1 (no goalpost move). If R2 STILL walls or stays RED, the honest verdict
+  is: gradient stays the trunk trainer, mitosis stays the inference lane (p8 literal at
+  toy scale = NOT viable via this family). $0 CPU, no GPU, no secrets.
