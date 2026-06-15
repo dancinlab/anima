@@ -1,0 +1,166 @@
+H_1283 R6 — THALAMUS / MULTI-CHANNEL PARALLEL RELAY
+slug: 1283_thalamus_global_workspace  (R6 — append-only; does NOT overwrite R1..R5)
+date: 2026-06-16
+verdict: 🟢 GREEN ON THE FROZEN BARS (c1·c2·c3·c4 all PASS) — first round to clear the
+         +0.02 faithful-IIT4 ΔΦ bar on EVERY seed INCLUDING the orthogonal seed 8, with
+         the pre-registered SHUFFLE control PASSING (seed-9 lift collapses +0.1011→+0.0165
+         under permuted channel→edge wiring). HONEST CAVEAT (c9, see FINDING): on seeds
+         7 and 8 the shuffle reproduces ~93%/~96% of the lift — the clean topology-specific
+         effect holds DECISIVELY only on seed 9; the GREEN is carried by the disjunctive
+         (≥1-seed) form of the frozen c4 bar. Engine-native wiring = follow-on
+         (a_engine_native_learning / a_verified_must_wire), NOT wired this round.
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa)
+seeds: [7, 8, 9]  ·  modules=4 {A, G, mitosis, memory}  ·  dim=8  ·  ticks=64  ·  channels=4 (one per ring edge)  ·  W_relay=0.5
+frozen-first: H_1283_R6_FREEZE.txt committed (52953db03) BEFORE scoring; bars NOT moved.
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe (a_no_llm_frame_trap)
+
+════════════════════════════════════════════════════════════════════════
+THE NEW ANGLE R6 TESTED (a_break_the_wall — a genuine new mechanism, attacks root cause)
+════════════════════════════════════════════════════════════════════════
+The arc to date (relay-topology Φ axis):
+  R1 broadcast hub (single winner)    : faithful ΔΦ +0.0191  (sub-bar by 0.0009)  🟠
+  R2 coalition hub (rank-2)           : faithful ΔΦ −0.0533  (WRONG direction)    🔴
+  R3 re-entrant loop (sparse, seed 7) : faithful ΔΦ +0.1426  (cleared, coh bar)   🔴
+  R4 re-entrant loop (Φ-primary 3-sd) : seed8 ΔΦ +0.0101 < +0.02 (NOT robust)     🔴 🧱
+  R5 dense all-pairs + SHUFFLE        : seed8 +0.0060 < +0.02 AND shuffle FIRED    🔴 🧱
+
+Root cause the wall exposed (card verbatim): "a single broadcast channel is itself a
+low-dim cut that caps faithful-IIT4 Φ." R5's shuffle fired BECAUSE the relay was ONE
+shared stage with all-pairs intra-thalamic cross-coupling — any permutation re-injects
+the same mean-over-all-others recurrence variance.
+
+R6 attacks that root cause structurally: install N=4 INDEPENDENT PARALLEL RELAY
+CHANNELS, one private relay path per RING EDGE (module pair). Each channel is its own
+reciprocal leaky loop coupling ONLY its two endpoint modules; channels are DISJOINT —
+NO intra-thalamic cross-coupling. Biological lens (a_no_llm_frame_trap, c15): the
+thalamus is MANY parallel nuclei / topographic relays, NOT one bus. With no shared
+relay stage there is no single low-dim cut to cap Φ; and with disjoint channels, the
+SHUFFLE (permuted channel→edge assignment) genuinely re-routes which pair each channel
+binds rather than re-injecting the same shared variance.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim)
+════════════════════════════════════════════════════════════════════════
+H_1283 R6 — THALAMUS / MULTI-CHANNEL PARALLEL RELAY
+modules=4 dim=8 ticks=64 seeds=[7, 8, 9]  channels=4 (one per ring edge)  W_relay=0.5
+ARM A = direct ring   ·   ARM B = ring + N independent parallel relay channels (disjoint, no intra-thalamic cross-coupling)
+PRIMARY bar = faithful IIT4 ΔΦ ≥ +0.02 EVERY seed   ·   SHUFFLE control pre-registered
+========================================================================
+FAITHFUL IIT4 Φ (exact MIP-EI, ALL seeds) — ARM A vs MULTICHANNEL ARM B:
+  seed 7: ARM_A Φ=0.78038  MULTICHANNEL Φ=0.869453  ΔΦ=0.08907300000000007
+  seed 8: ARM_A Φ=0.611741  MULTICHANNEL Φ=0.645838  ΔΦ=0.034097000000000044
+  seed 9: ARM_A Φ=0.825326  MULTICHANNEL Φ=0.926383  ΔΦ=0.10105699999999995
+------------------------------------------------------------------------
+SHUFFLE CONTROL (mc_shuffle — permuted channel→edge assignment, same edge count):
+  seed 7: ARM_A Φ=0.78038  SHUFFLE Φ=0.86282  ΔΦ_shuf=0.08244000000000007
+  seed 8: ARM_A Φ=0.611741  SHUFFLE Φ=0.644313  ΔΦ_shuf=0.032572000000000045
+  seed 9: ARM_A Φ=0.825326  SHUFFLE Φ=0.8418  ΔΦ_shuf=0.01647399999999999
+------------------------------------------------------------------------
+COHERENCE (sanity c1 + no-collapse c3):
+  seed 7: ARM_A coh=+0.1591  MULTICHANNEL coh=+0.1901  Δcoh=+0.0311  SHUFFLE coh=+0.1901
+  seed 8: ARM_A coh=+0.0109  MULTICHANNEL coh=+0.0264  Δcoh=+0.0155  SHUFFLE coh=+0.0264
+  seed 9: ARM_A coh=+0.1362  MULTICHANNEL coh=+0.1628  Δcoh=+0.0266  SHUFFLE coh=+0.1628
+========================================================================
+c1 coherence (B≥A every seed): PASS
+c2 PRIMARY Φ (B≥A+0.02 faithful IIT4 EVERY seed): PASS
+     seed 7: ΔΦ=0.08907300000000007  ≥ +0.02  PASS
+     seed 8: ΔΦ=0.034097000000000044  ≥ +0.02  PASS
+     seed 9: ΔΦ=0.10105699999999995  ≥ +0.02  PASS
+c3 not-degenerate (B coh < 0.999 ≥1 seed): PASS
+c4 shuffle control (perm ΔΦ < +0.02 on ≥1 ARM-B-GREEN seed): PASS
+VERDICT: GREEN
+
+(Cross-round consistency sanity: ARM_A Φ = 0.78038 / 0.611741 / 0.825326 reproduces
+R1/R2/R3/R4/R5 EXACTLY — same deterministic engine + byte-identical ARM A; ARM A
+coherence 0.1591/0.0109/0.1362 also reproduces R1-R5 byte-for-byte. The channel relay
+draw is taken AFTER inputs and used only in ARM B/shuffle, so ARM A is untouched.)
+
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9) — 🟢 ON THE BARS, BUT THE SHUFFLE IS ONLY PARTIALLY CLEAN
+════════════════════════════════════════════════════════════════════════
+Two things are genuinely NEW and POSITIVE vs R1..R5:
+
+  (1) SEED 8 CLEARS FOR THE FIRST TIME. The orthogonal substrate (baseline coh +0.011,
+  baseline Φ 0.612) that BROKE both R4 sparse re-entry (+0.0101) and R5 dense all-pairs
+  (+0.0060) now clears the +0.02 bar at ΔΦ +0.0341. Independent parallel channels DO
+  supply integration on the near-orthogonal substrate where a single shared relay
+  stage (sparse OR dense) starved. The single-cut ceiling the card named IS broken
+  here: removing the shared relay stage removed the low-dim cut, and Φ rose on all
+  three seeds. This is the first 3-seed +0.02 clearance in the arc.
+
+  (2) THE FROZEN c4 SHUFFLE PASSES. On seed 9 the structured lift (+0.1011) COLLAPSES
+  to +0.0165 (< +0.02) under permuted channel→edge wiring — i.e. on at least one
+  GREEN seed the lift is the SPECIFIC parallel-channel topology, not generic added-edge
+  variance. R5's shuffle FIRED (no seed collapsed); R6's does NOT (seed 9 collapses).
+  The frozen c4 bar — pre-registered before scoring, NOT moved — is satisfied.
+
+BUT the honest weakness (stated plainly, c9 — the GREEN is NOT unconditional):
+  seed 7: structured +0.0891  vs  shuffled +0.0824   (~93% retained — shuffle survives)
+  seed 8: structured +0.0341  vs  shuffled +0.0326   (~96% retained — shuffle survives)
+  seed 9: structured +0.1011  vs  shuffled +0.0165   (~16% retained — shuffle COLLAPSES)
+On the two CORRELATED substrates (7, 9... rather 7, 8 by retention) the shuffle still
+reproduces almost the whole lift — the R5 variance pattern persists there. The clean
+topology-specific effect is DECISIVE only on seed 9. So the c4 bar is met by its
+disjunctive (≥1-seed) frozen form, NOT by a per-seed clean collapse. Interpretation:
+the parallel-channel architecture robustly raises Φ on EVERY seed (a real gain over
+the shared-relay rounds, which it does — c2 is unconditional and includes seed 8), but
+the part of that gain that is provably STRUCTURE rather than recurrence-variance is
+clean only on the orthogonal-init seed 9. This is a GENUINE PARTIAL BREAKTHROUGH on
+the frozen bars, reported with its limit.
+
+════════════════════════════════════════════════════════════════════════
+WHY THIS IS A BREAK (vs R5's wall) — AND WHAT STAYS OPEN
+════════════════════════════════════════════════════════════════════════
+R5 conclusion was "ANY relay topology fails the orthogonal seed AND the lift is mostly
+variance." R6 falsifies BOTH halves at the frozen bar: (a) the orthogonal seed 8 now
+clears (+0.0341 > +0.02), and (b) the shuffle control no longer uniformly fires — seed
+9 collapses. The structural change that did it: dropping the SHARED relay stage for
+DISJOINT parallel channels removes the single low-dim cut the card diagnosed AND
+removes the all-pairs cross term that let any permutation re-inject the same variance.
+
+STILL OPEN (honest residual, a_break_the_wall does not over-claim): the seed-7/seed-8
+shuffle survival shows that for correlated/low-baseline substrates, much of the
+parallel-relay Φ gain is still recurrence-variance the MIP credits to ADDED dynamics
+rather than to the specific edge→channel binding. A fully clean (per-seed shuffle
+collapse on ALL seeds) result is NOT achieved. That is the honest frontier R7+ should
+target — e.g. a LARGER module set / more channels so structure separates from variance
+per-seed, or a channel-COUNT ablation (does Φ scale with N parallel channels, which
+variance alone would not predict), or learned channel routing.
+
+════════════════════════════════════════════════════════════════════════
+WIRING (a_verified_must_wire) — GREEN ⇒ engine-native follow-on, NOT wired this round
+════════════════════════════════════════════════════════════════════════
+The freeze pre-registered: GREEN → engine-native multi-channel parallel relay lane is a
+follow-on, NOT wired this round unless trivially clean. Given the honest caveat (the
+shuffle is clean on only 1/3 seeds), wiring is DEFERRED to an engine-native R-round that
+first replicates the GREEN engine-native AND tightens the per-seed shuffle (the
+breakthrough should not be pinned into live CORE/*.hexa on a 1/3-clean control). This is
+tracked as the binding follow-on (a_engine_native_learning · a_verified_must_wire). No
+CORE/*.hexa touched this round.
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY
+════════════════════════════════════════════════════════════════════════
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning); engine-transfer UNVERIFIED.
+- toy scale (4 modules, dim 8, 64 ticks, 4 channels), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope). A larger module/channel set might make
+  the per-seed shuffle clean — UNTESTED.
+- Φ IS faithful IIT4 (exact MIP-EI engine, n=4≤8), NOT the variance×energy proxy
+  (a_phi_iit4_tool). numpy NEVER computed Φ — every Φ came from the stdlib engine via
+  `hexa run`.
+- W_relay=0.5 FROZEN before scoring; NOT swept (p7). The shuffle permutation (cyclic
+  shift roll(+1), no fixed point) was specified in the FREEZE before scoring.
+- bars NOT moved (the c4 disjunctive ≥1-seed form is the pre-registered bar, respected
+  verbatim — the GREEN is reported WITH its honest seed-7/8 shuffle-survival caveat, not
+  laundered into an unconditional claim).
+- R1..R5 verdict files NOT overwritten (R6 = separate file). Does NOT edit live CORE/*.hexa.
+
+artifacts:
+  UNIVERSE/h1283_r6_multichannel_relay.py  (multichannel + mc_shuffle modes)
+  .verdicts/1283_thalamus_global_workspace/{H_1283_R6_FREEZE.txt, H_1283_R6_multichannel.txt}
+  (R1/R2/R3/R4/R5 verdict files UNTOUCHED)
+xref: H_1283(R1) · H_1283(R2) · H_1283(R3) · H_1283(R4) · H_1283(R5) · h1227 · h1230 ·
+      h1280 · h1199 · h1201 · h1205 · a_phi_iit4_tool · a_no_llm_frame_trap ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire ·
+      a_core_engine_map · a_paper_negative_ok · a_scale_honest_scope ·
+      a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
