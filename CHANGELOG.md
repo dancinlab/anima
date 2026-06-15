@@ -2,6 +2,14 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(MODEL): 🌡 시상하부 설정점-항상성 drive lane (HD29, H_1292 R2 🟢 ENGINE-NATIVE)
+
+빠진 뇌 서브시스템 사다리에 **HD29 시상하부(hypothalamus)** 를 추가 — 설정점-조절 항상성 drive lane(`HomeostaticDrive`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`homeo_new`/`homeo_new_ablated`/`homeo_satiation`/`homeo_step`/`homeo_last`/`homeo_drive`/`homeo_motivation_bias`). live `ImmuneMemoryGrow` 면역 store 의 grounding margin 을 "grounding satiation" 으로 읽고, 설정점 S*=0.5 아래 deficit 을 leaky integral(λ=0.1)로 누적(`drive=Kp·deficit+Ki·I`, Kp=1.0 Ki=0.5)해 박탈 지속→drive RISE, grounded consummatory 이벤트→RESET.
+
+- **왜 missing/distinct**: 기존 drive(affect read-out·curiosity·idle)는 전부 INSTANTANEOUS/stateless. 항상성 drive 는 STATEFUL 시간-적분기 — **affect read-out lane(H_1290)과 DISTINCT**: 맥락 FIXED + elapsed time 만 변화 시 affect FLAT(시간항 없음) vs drive RISE(시간-적분 ⊥ 맥락-순간, H_1292 leg-B dissociation).
+- **frozen-first 검증** (`.verdicts/1292_hypothalamus_drive/H_1292_FREEZE.txt`, 사전등록): R1 numpy 미러 🟢 → **R2 ENGINE-NATIVE 🟢** (`CORE/h1292_hypothalamus_drive_probe.hexa`, 3 seed [4290,4291,4292], R1 미러와 byte-exact) — 6개 bar PASS: (A1) RISE +1.544 monotone · (A2) RESET 0.0 · (B) DISTINCT affFlat 0.0 & drvFixRise +1.544 · (C1) EARNED ablated rise 0.0 (적분 controller earned, stateless read 안 누적) · (C2) SHUFFLE reset 0.0 · (D) ABSTAIN intact.
+- **가드 무회귀**: `engine_cli_smoke` **33/0**(+3 homeo 케이스 28-30) · h1196 single-entry 7/0 · h1199 DIM-growth Ψ byte-identical. p6/p2/p3(조절 변수=substrate 자신 margin, 주입 라벨 없음) · emit gate 아님(`homeo_motivation_bias`=OPTIONAL gain, `a_autonomy_over_hardcode`) · Ψ-disjoint(순수 READ + 자기 scalar). brain motivation 루프 배선 + scale/multi-cycle 박탈 = follow-on. TOY scale(4 facts, 3 seeds, deterministic controller).
+
 ## 2026-06-16 — domain(H_1284_R3): 🎛 신경조절 HD27 벽 돌파시도 = regime/mode-switching (a_break_the_wall) → 🧱 SUB-THRESHOLD (벽 유지)
 
 HD27 신경조절 벽(H_1284: context-adaptive **gain**-controller ≤ best-fixed, no-free-lunch GENERAL)을 `a_break_the_wall` 로 새 각도에서 시도 — 신경조절의 진짜 생물 역할은 gain-scaling 이 아니라 **regime/mode-switching** (ACh encode↔recall, Hasselmo; `a_no_llm_frame_trap`, c15). frozen-first 3 seeds, numpy-mirror DIRECTIONAL.

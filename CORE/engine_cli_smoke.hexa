@@ -310,6 +310,38 @@ fn main() {
                   || (affect_valence(af_sh[0]) == affect_valence(af_u) && affect_valence(af_sh[1]) == affect_valence(af_g))
     if _assert_b("case_27_affect_shuffle_is_permutation", true, sh_perm_ok) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (g) HYPOTHALAMUS — SETPOINT-REGULATED HOMEOSTATIC DRIVE (H_1292 R2, HD29) ──
+    // The homeostat is ADDITIVE + Ψ-disjoint (a READ over the immune margin + its OWN
+    // scalar leaky integral, no store mutation, no pure_field touch). These cases prove
+    // the lane's moving parts deterministically on the live DIM-4 `mg` grow store
+    // (`affar` = the untaught far key = max deprivation; gkeys[0] = a grounded "feeding"
+    // context): (1) sustained deprivation BUILDS the drive (integral accumulates);
+    // (2) a consummatory grounded context RESETS it (drive drops to the bare deficit=0);
+    // (3) the ABLATED controller (Ki=0) does NOT accumulate (the H_1292 leg-C control —
+    //     it is the stateless affect-style read).
+
+    // case 28 : DEPRIVATION BUILDS the drive — two ungrounded ticks raise the drive above
+    //   the first tick (the leaky integral of the constant deficit accumulates).
+    let hd0 = homeo_step(homeo_new(), mg, affar)         // tick 1 (ungrounded)
+    let hd1 = homeo_step(hd0, mg, affar)                 // tick 2 (ungrounded) → higher
+    if _assert_b("case_28_deprivation_builds_drive", true,
+                 homeo_last(hd1) > homeo_last(hd0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 29 : a CONSUMMATORY grounded context RESETS the drive — feeding gkeys[0]
+    //   (margin >= setpoint) clears the integral, so the drive drops below the built-up
+    //   deprived drive (sharp satiation).
+    let hd2 = homeo_step(hd1, mg, gkeys[0])              // grounded → reset
+    if _assert_b("case_29_consummatory_resets_drive", true,
+                 homeo_last(hd2) < homeo_last(hd1)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 30 : the ABLATED controller (Ki=0) does NOT accumulate — two ungrounded ticks
+    //   give the SAME drive (the stateless proportional read = the affect-style read; the
+    //   H_1292 leg-C earned-by-the-integral control).
+    let ha0 = homeo_step(homeo_new_ablated(), mg, affar)
+    let ha1 = homeo_step(ha0, mg, affar)
+    if _assert_b("case_30_ablated_does_not_accumulate", true,
+                 homeo_last(ha1) == homeo_last(ha0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

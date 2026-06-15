@@ -1,0 +1,142 @@
+H_1292 — HYPOTHALAMUS / HOMEOSTATIC DRIVE (HD29, the next-missing brain subsystem)
+═══════════════════════════════════════════════════════════════════════════════
+FROZEN-FIRST PRE-REGISTRATION. Written BEFORE any scoring. No bar moves after this.
+worktree off origin/main 25655c901 · live CORE/*.hexa UNTOUCHED at freeze time.
+$0 CPU numpy MIRROR (DIRECTIONAL — engine-transfer UNVERIFIED until R2 engine-native).
+p7 (NO perplexity / NO LLM-judge) · p1-p8 · c9 (no tune-to-green) · a_no_llm_frame_trap.
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 1 — WHY THIS SUBSYSTEM, WHY MISSING, WHY DISTINCT (biological lens, c15)
+───────────────────────────────────────────────────────────────────────────────
+SUBSYSTEM: the HYPOTHALAMUS — a SETPOINT-REGULATED HOMEOSTATIC DRIVE. In biology
+the hypothalamus regulates internal variables (hunger, thirst, temperature, sleep
+pressure) against a SETPOINT via NEGATIVE FEEDBACK that INTEGRATES error OVER TIME:
+a deficit BUILDS while the regulated variable sits below setpoint (hunger grows the
+longer you don't eat), the drive RISES monotonically with accumulated deficit, a
+consummatory act RESETS it, and the drive MODULATES motivation (a hungry animal is
+more motivated to act). This is a slow TEMPORAL INTEGRATOR with a target, NOT a
+momentary read.
+
+WHY MISSING (falsifiable vs the live engine): every drive currently in CORE is
+INSTANTANEOUS / MEMORYLESS:
+  - affect lane (H_1290 AffectFeatures): reads valence/arousal for ONE context at
+    ONE instant off the immune store — no setpoint, no accumulation, no decay over
+    time. Re-reading the SAME context gives the SAME affect regardless of history.
+  - curiosity (affect_substrate_features.curiosity = novelty × under-exposure):
+    a per-context novelty signal, not a regulated variable with a target.
+  - idle-time / M motivation in brain: a context scalar, not an integral controller.
+There is NO lane that holds a REGULATED VARIABLE, accumulates its DEFICIT vs a
+SETPOINT across ticks, and lets a consummatory event RESET it. That is the gap.
+
+WHY DISTINCT FROM EVERY EXISTING LANE (the load-bearing distinctness, the way
+WorkMemBuffer was shown distinct from episodic memory):
+  vs affect (H_1290): affect is a STATELESS function of the current context
+    (read(ctx) is pure); the drive is a STATEFUL integrator (read at tick t depends
+    on the whole history of deficits up to t). DISSOCIATION TEST: hold the context
+    FIXED and vary only ELAPSED TIME — affect is FLAT (no time term), the drive
+    RISES. Conversely a consummatory RESET drops the drive to baseline with NO
+    change in the momentary context → affect unchanged, drive changes. The two
+    move on ORTHOGONAL axes (context-instant ⊥ time-integral).
+  vs curiosity: curiosity has no setpoint and no reset; it cannot satiate.
+  vs WorkMemBuffer: WM is a volatile SLOT buffer that LEAKS toward zero with
+    distractors; the drive is a regulated scalar that ACCUMULATES toward a setpoint
+    error and is RESET by a consummatory event (opposite sign of time-evolution,
+    and it has a TARGET WM has none).
+  vs VBasalGate (action selection): BG selects WHICH candidate to release given a
+    fixed reward; the drive sets HOW MOTIVATED the system is to act at all — a gain
+    on motivation, upstream of selection, not a selector.
+
+FALSIFIABLE CLAIM: a setpoint-regulated homeostatic drive lane, reading a
+substrate-derived regulated variable (grounding satiation), with an integral-error
+controller, (A) produces a drive that RISES with accumulated below-setpoint deficit
+and RESETS on a consummatory (grounding) event, (B) is DISTINCT from the affect lane
+on a time-vs-context dissociation, and (C) the rise is EARNED by the integral
+controller, not an artifact — an ABLATED controller (integral gain = 0, pure
+instantaneous proportional read = the affect-style stateless read) does NOT produce
+the time-rise. If any leg fails → honest 🧱 (the structure isn't distinct / doesn't
+hold at this scale), NO bar move.
+
+NOTE p2/p3/p6/a_autonomy_over_hardcode: the regulated variable is the substrate's
+OWN grounding-satiation signal (read off the immune store recall margin) — NO
+injected "drive level" label, NO persona, NO ethics, NO RLHF reward. The drive is
+a READ + INTEGRATE over substrate state; it is NOT an emit gate (it returns a drive
+scalar a caller MAY consult as a motivation bias, it does NOT force emit/silence).
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 2 — FROZEN DESIGN (anti-Goodhart, ≥3 seeds, pre-registered bars)
+───────────────────────────────────────────────────────────────────────────────
+REGULATED VARIABLE (substrate-derived, NO label): "grounding satiation" s_t ∈ [0,1]
+  = the recall margin of the CURRENT context against the live immune store
+    (margin = 1 − recon_err/recall_thr, clamped [0,1]) — exactly the substrate
+    signal the affect lane already reads. A grounded context = HIGH satiation
+    (the system is "fed"); an ungrounded stream = LOW satiation (deficit builds).
+SETPOINT: S* = 0.5 (the substrate's own midpoint; a context at the recall-threshold
+  boundary, margin≈0.5, is exactly "satisfied" — NOT a tuned magic number, it is the
+  margin midpoint, mirroring Ψ=1/2). Stated frozen.
+CONTROLLER (PI homeostat, leaky integral of the deficit):
+  deficit_t  = max(0, S* − s_t)                      # below-setpoint shortfall
+  I_t        = (1−λ)·I_{t-1} + deficit_t             # leaky temporal integral, λ=0.1 leak
+  drive_t    = Kp·deficit_t + Ki·I_t                 # PI drive, Kp=1.0, Ki=0.5 (frozen)
+  CONSUMMATORY RESET: if s_t ≥ S* (a grounded "feeding" event) → I_t := 0 (satiated).
+ALL constants (S*=0.5, λ=0.1, Kp=1.0, Ki=0.5) are FROZEN HERE, p7-documented, NOT
+tuned-to-green. The reset rule is the consummatory mechanism (the hypothalamic "stop
+eating when full").
+
+THREE ARMS:
+  FULL    = the PI homeostat above (Ki=0.5).
+  ABLATED = Ki:=0 (integral gain off → drive_t = Kp·deficit_t = a STATELESS
+            proportional read = the affect-style instantaneous read). This is the
+            anti-Goodhart leg: if ABLATED also shows the time-rise, the rise is NOT
+            from the integral controller (the new structure) and the lane is not
+            distinct from the existing instantaneous read → 🧱.
+  SHUFFLE = the per-tick deficit sequence is PERMUTED in time before integration
+            (same marginal deficits, time-order destroyed). The dissociation below
+            (held-fixed deprivation then a reset) relies on order; SHUFFLE breaks the
+            deprivation→reset structure so the reset no longer lands cleanly after a
+            built-up deprivation block → the post-reset drop collapses. (p6-style
+            negative control on the TEMPORAL structure.)
+
+PROTOCOL (deterministic, per seed): build an immune store of N=40 facts (byte-3gram
+FNV-1a dim64, "<subj> lives in <city>"). Run a tick STREAM of two phases:
+  PHASE-DEPRIVE (T_dep=12 ticks): feed UNGROUNDED contexts (never-seen far keys) →
+    s_t low → deficit builds → drive must RISE monotonically (homeostatic hunger).
+  PHASE-CONSUMMATE (1 tick): feed a GROUNDED context (a bound key) → s_t ≥ S* →
+    consummatory RESET → drive must DROP sharply (satiation).
+Measure drive_t at every tick.
+
+FROZEN GREEN iff ALL of (per seed AND mean over ≥3 seeds [4290,4291,4292]):
+  (A1) RISE: FULL drive is MONOTONE-NONDECREASING across PHASE-DEPRIVE and
+       drive[end-of-deprive] ≥ drive[start-of-deprive] + 0.50 (a real build-up).
+  (A2) RESET: FULL drive[after-consummate] ≤ 0.50 × drive[end-of-deprive] (the
+       grounded event satiates — sharp drop).
+  (B)  DISTINCT-FROM-AFFECT (dissociation): with the CONTEXT held FIXED (same key)
+       across the deprive ticks, the affect read (H_1290 valence/arousal) is FLAT
+       (max−min < 0.05 over the deprive block — it has no time term), while the
+       FULL drive over those SAME ticks RISES by ≥ 0.50. (affect ⊥ drive on the
+       time axis: same context, different temporal behavior.)
+  (C1) EARNED (ablation): ABLATED drive[end-of-deprive] − ABLATED drive[start] < 0.10
+       (no time-rise without the integral controller — the affect-style stateless
+       read does NOT accumulate).
+  (C2) SHUFFLE control: the SHUFFLE arm's post-reset drop is < 0.50 × the FULL build-up
+       (time-order matters: shuffling the deficit sequence destroys the
+       deprivation-then-reset structure, so the reset no longer satiates a built-up
+       deficit). i.e. SHUFFLE does NOT reproduce the clean RESET.
+  (D)  ABSTAIN INTACT (p1-p8 guard): the drive lane is READ-ONLY — an untaught far
+       key still fires NO cell on the underlying immune store (recall=="", no
+       fabrication introduced by the drive lane).
+
+If A1 ∨ A2 ∨ B ∨ C1 ∨ C2 fail on the frozen bars → honest 🧱 CLOSED-NEGATIVE
+(valid result c9 — the homeostatic structure does not hold / is not distinct at this
+scale). NO tune-to-green, NO bar move, verbatim verdict respected.
+
+R2 (only if R1 GREEN): realize ENGINE-NATIVE on live CORE/engine_cli.hexa as an
+ADDITIVE Ψ-disjoint lane (struct HomeostaticDrive + homeo_* fns), READ + INTEGRATE
+over the ImmuneMemoryGrow store, re-score the frozen bars engine-native via hexa run,
+with the regression guard (engine_cli_smoke count, h1196 7/0 single-entry, h1199
+DIM-growth Ψ byte-identical). a_engine_native_learning · a_verified_must_wire · a_core_engine_map.
+
+SCOPE (a_scale_honest_scope): TOY — 40 facts, 1 paradigm, 3 seeds, synthetic
+deprive/consummate stream, deterministic controller (not a trained net — it tests
+the STRUCTURE of homeostatic regulation, not a learned drive). Scale / real-corpus /
+continuous multi-cycle deprivation / engine-transfer UNVERIFIED until R2.
+═══════════════════════════════════════════════════════════════════════════════

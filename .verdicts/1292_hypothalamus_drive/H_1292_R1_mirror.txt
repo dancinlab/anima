@@ -1,0 +1,20 @@
+H_1292 — HYPOTHALAMUS / HOMEOSTATIC DRIVE (HD29) — R1 numpy MIRROR (DIRECTIONAL)
+===============================================================================
+frozen: S*=0.5 λ=0.1 Kp=1.0 Ki=0.5 | N=40 T_dep=12 | seeds=[4290, 4291, 4292]
+ENGINE-TRANSFER UNVERIFIED (mirror) — R2 engine-native is the binding verdict.
+
+  seed  riseFULL  mono   reset  endDep  riseABL  shufRst  affFlat  drvFixRise  abstain
+  4290    1.5439  True  0.0000  2.2939   0.0000   0.0000   0.0000      1.5439     True
+  4291    1.5439  True  0.0000  2.2939   0.0000   0.0000   0.0000      1.5439     True
+  4292    1.5439  True  0.0000  2.2939   0.0000   0.0000   0.0000      1.5439     True
+
+FROZEN BARS (all must hold per-seed):
+  (A1) RISE     monotone & rise>=0.50           : True  (mean rise=1.5439)
+  (A2) RESET    drop<=0.50*end_dep              : True  (mean reset=0.0000, mean endDep=2.2939)
+  (B)  DISTINCT affFlat<0.05 & drvFixRise>=0.50 : True  (mean affFlat=0.0000, mean drvFixRise=1.5439)
+  (C1) EARNED   ablated rise<0.10               : True  (mean riseABL=0.0000)
+  (C2) SHUFFLE  shufReset<0.50*riseFULL         : True  (mean shufReset=0.0000)
+  (D)  ABSTAIN  untaught far key fires no cell  : True
+
+VERDICT (R1 mirror, DIRECTIONAL): 🟢 GREEN
+  (engine-transfer UNVERIFIED — R2 engine-native re-score is the binding verdict)

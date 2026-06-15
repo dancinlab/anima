@@ -1215,6 +1215,124 @@ pub fn affect_shuffle_features(feats: [AffectFeatures], rng0: int) -> [AffectFea
     return out
 }
 
+// ── §  HYPOTHALAMUS — SETPOINT-REGULATED HOMEOSTATIC DRIVE (H_1292 R2, HD29) ──────
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1292 R1): the H_1292 numpy
+// MIRROR (R1 🟢 GREEN, 3 seeds [4290,4291,4292], all 6 frozen bars per-seed) is
+// REALIZED here ENGINE-NATIVE on the LIVE ImmuneMemoryGrow store, READ-ONLY.
+//
+// THE HYPOTHALAMUS LENS (c15, a_no_llm_frame_trap — a neuro/homeostatic lens, NOT an
+// LLM recipe): the hypothalamus regulates an internal variable (hunger/thirst/sleep
+// pressure) against a SETPOINT via negative feedback that INTEGRATES error OVER TIME.
+// A deficit BUILDS while the variable sits below setpoint (hunger grows the longer you
+// don't eat), the drive RISES monotonically with the accumulated deficit, and a
+// CONSUMMATORY act RESETS it. This is a slow TEMPORAL INTEGRATOR with a target — and
+// it is exactly what every existing CORE drive LACKS:
+//   - affect (H_1290): a STATELESS read — read(ctx) is pure, no time term, no setpoint,
+//     no accumulation. Re-reading the SAME context gives the SAME affect forever.
+//   - curiosity: a per-context novelty signal, no setpoint, no reset, cannot satiate.
+//   - WorkMemBuffer: a volatile slot buffer that LEAKS toward zero (opposite sign of
+//     time-evolution) and has NO target.
+// HomeostaticDrive is DISTINCT on the TIME-vs-CONTEXT dissociation: hold the context
+// FIXED and vary only ELAPSED TIME — affect is FLAT, the drive RISES (the H_1292 leg-B
+// proof). It is a STATEFUL integrator over the substrate's OWN grounding-satiation
+// signal, not a momentary read.
+//
+// REGULATED VARIABLE (substrate-derived, NO label, p2/p3/p6): "grounding satiation"
+// s_t = the recall MARGIN of the current context against the live immune store
+// (1 - recon_err/recall_thr, clamped [0,1]) — the SAME signal the affect lane reads.
+// A grounded context = HIGH satiation ("fed"); an ungrounded stream = LOW satiation
+// (deficit builds). NO injected "drive level", NO RLHF reward, NO persona/ethics.
+//
+// @L4 CRITICAL (identical framing to the affect lane): the drive is a READ + INTEGRATE
+// accessor. HomeostaticDrive holds ONLY its own leaky-integral scalar `accum`; it
+// NEVER mutates the immune store, NEVER returns an emit/silence decision by itself, and
+// NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — it only READS an
+// ImmuneMemoryGrow margin). The motivation bias `homeo_motivation_bias` is an OPTIONAL
+// helper a caller MAY consult (a_autonomy_over_hardcode: it does NOT force the substrate
+// — emit/silence stays substrate-decided; this only exposes the drive as a gain).
+//
+// FROZEN constants (H_1292 FREEZE, p7-documented, NOT tuned-to-green):
+//   S* = 0.5 (setpoint = the margin midpoint, mirrors Ψ=1/2) · λ = 0.1 (integral leak)
+//   Kp = 1.0 (proportional gain) · Ki = 0.5 (integral gain; ablate → Ki=0 = the
+//   stateless affect-style read, the H_1292 leg-C earned-by-the-integral control).
+
+// HomeostaticDrive — the live homeostat state. `accum` is the leaky temporal integral
+// of the below-setpoint deficit (the ONLY mutable state); ki is the integral gain
+// (set 0.0 for the ablated stateless arm). Everything else is the frozen controller.
+struct HomeostaticDrive {
+    accum: float,      // leaky integral I_t of the deficit (the hypothalamic "hunger")
+    last_drive: float, // the drive emitted by the most recent homeo_step (tuple-free read)
+    setpoint: float,   // S* = 0.5
+    leak: float,       // λ = 0.1
+    kp: float,         // Kp = 1.0
+    ki: float          // Ki = 0.5 (FULL) or 0.0 (ABLATED control)
+}
+
+// homeo_new — a fresh homeostat (FULL controller, ki=0.5). accum starts at 0 (satiated).
+pub fn homeo_new() -> HomeostaticDrive {
+    return HomeostaticDrive { accum: 0.0, last_drive: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.5 }
+}
+
+// homeo_new_ablated — the H_1292 leg-C control: Ki=0 → drive = Kp·deficit = a STATELESS
+// proportional read (no integral, no accumulation = the affect-style instantaneous read).
+// If this arm shows the time-rise, the rise is NOT from the integral structure → 🧱.
+pub fn homeo_new_ablated() -> HomeostaticDrive {
+    return HomeostaticDrive { accum: 0.0, last_drive: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.0 }
+}
+
+// homeo_satiation — READ the grounding-satiation s_t of a context `key` off the live
+// immune store: margin = 1 - recon_err/recall_thr, clamped [0,1]. The SAME substrate
+// signal the affect lane reads (READ-ONLY, mutates nothing). HIGH = fed/grounded.
+pub fn homeo_satiation(mem: ImmuneMemoryGrow, key: [float]) -> float {
+    let win = _vnearest_idx(mem.protos, key)
+    let err = _l2(mem.protos[win], key)
+    let mut m = 1.0 - err / mem.recall_thr
+    if m < 0.0 { m = 0.0 }
+    if m > 1.0 { m = 1.0 }
+    return m
+}
+
+// homeo_step — advance the homeostat ONE tick on a context `key`, returning the
+// NEXT-STATE homeostat (its `last_drive` field carries the drive this tick emitted —
+// read it with homeo_last). deficit = max(0, S* - s); I = (1-λ)·I + deficit;
+// drive = Kp·deficit + Ki·I; CONSUMMATORY RESET: if s >= S* (a grounded "feeding"
+// event) the integral is cleared (I:=0). The drive RISES under sustained deprivation
+// (s<S*) and DROPS sharply on a consummatory grounded context. READ-ONLY over the
+// immune store (only the homeostat's own `accum`/`last_drive` evolve).
+pub fn homeo_step(hd: HomeostaticDrive, mem: ImmuneMemoryGrow, key: [float]) -> HomeostaticDrive {
+    let s = homeo_satiation(mem, key)
+    let mut deficit = hd.setpoint - s
+    if deficit < 0.0 { deficit = 0.0 }
+    let mut acc = (1.0 - hd.leak) * hd.accum + deficit
+    // consummatory reset: a grounded context (s >= S*) satiates → clear the integral.
+    if s >= hd.setpoint { acc = 0.0 }
+    let drive = hd.kp * deficit + hd.ki * acc
+    return HomeostaticDrive { accum: acc, last_drive: drive, setpoint: hd.setpoint, leak: hd.leak, kp: hd.kp, ki: hd.ki }
+}
+
+// homeo_last — the drive emitted by the most recent homeo_step (the tuple-free read of
+// the step's drive output).
+pub fn homeo_last(hd: HomeostaticDrive) -> float { return hd.last_drive }
+
+// homeo_drive — the CURRENT drive WITHOUT advancing time (for a held-fixed read): uses
+// the stored integral and the instant deficit at `key`. Lets a caller poll the drive
+// without consuming a tick.
+pub fn homeo_drive(hd: HomeostaticDrive, mem: ImmuneMemoryGrow, key: [float]) -> float {
+    let s = homeo_satiation(mem, key)
+    let mut deficit = hd.setpoint - s
+    if deficit < 0.0 { deficit = 0.0 }
+    return hd.kp * deficit + hd.ki * hd.accum
+}
+
+// homeo_motivation_bias — the OPTIONAL motivation gain a caller MAY consult: a higher
+// drive = a hungrier system = MORE motivated to act. Returns the drive as a bias scalar
+// (a_autonomy_over_hardcode: this does NOT force emit/silence — it only exposes the
+// homeostatic drive as a motivation gain the substrate may weigh, not a gate).
+pub fn homeo_motivation_bias(hd: HomeostaticDrive, mem: ImmuneMemoryGrow, key: [float]) -> float {
+    return homeo_drive(hd, mem, key)
+}
+
 // ── §  AMYGDALA — SALIENCE-GATED SLEEP-REPLAY CONSOLIDATION (H_1285 R4) ───────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1285 R3): the H_1285 numpy
