@@ -573,6 +573,68 @@ fn main() {
         && (!clock_fire(abl16))                                // silent at live boundary t=16
     if _assert_b("case_53_ablate_period_off_schedule", true, ablate_off_schedule) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── IntervalTimer (H_1299, HD34) — the learned-duration timer lane ──────────────
+    // case 54 : PRESENCE (H_1299 c1) — the timer LEARNS an arbitrary interval D=13 from an
+    //   observed event stream (events at 0,13,26,39) and its learned estimate rounds to 13
+    //   (the running mean of the gaps), so it fires at elapsed==13. The CircadianClock (baked
+    //   period 8) cannot learn this — that distinctness is case 56.
+    let mut it1 = itimer_new()
+    it1 = itimer_observe(it1, 0)
+    it1 = itimer_observe(it1, 13)
+    it1 = itimer_observe(it1, 26)
+    it1 = itimer_observe(it1, 39)
+    // the running-mean estimate converges toward 13 (5→9→11→12 over 3 gaps); assert it has
+    // LEARNED to within the H_1299 ±2 interval-timing tolerance (12 ∈ {11..15}) — NOT the
+    // baked clock period 8 and NOT the uninformative init 5 (the distinctness the lane proves).
+    let dhat1 = itimer_dhat_ticks(it1)
+    let learned_13 = (dhat1 >= 11) && (dhat1 <= 15)
+    if _assert_b("case_54_itimer_learns_interval_13_pm2", true, learned_13) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 55 : RE-ENTRAIN (H_1299 c2/c6) — the SAME object continues onto a DIFFERENT stream
+    //   (D2=20) and re-learns its interval WITHOUT any code change: the learned estimate moves
+    //   from ~13 toward ~20. We feed events at +20 spacing and assert the estimate re-entrains
+    //   to within +-2 of 20 (the decisive proof the clock cannot give — its period is baked).
+    let mut it2 = it1
+    let mut base = 39
+    let mut r = 0
+    while r < 8 { base = base + 20  it2 = itimer_observe(it2, base)  r = r + 1 }
+    let dhat2 = itimer_dhat_ticks(it2)
+    let reentrained = (dhat2 >= 18) && (dhat2 <= 22)
+    if _assert_b("case_55_itimer_reentrains_to_20", true, reentrained) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 56 : DISTINCT-vs-CLOCK (H_1299 c3) — the CircadianClock (baked period 8) queried
+    //   to predict the next event of the D=13 stream lands at its OWN period boundary, NOT at
+    //   the learned interval: from t_last=39 the clock's next boundary is 40 (the next multiple
+    //   of 8), while the true next event is at 52 (39+13). The interval timer predicts 52. The
+    //   clock CANNOT match the arbitrary learned interval — the load-bearing distinctness.
+    let clock_next = (((39 / 8) + 1) * 8)                    // clock's next baked-period boundary = 40
+    let timer_next = itimer_predict_next(it1)                // 39 + round(~13) = 52
+    let distinct_from_clock = (clock_next != timer_next) && (timer_next >= 50) && (timer_next <= 54)
+    if _assert_b("case_56_itimer_distinct_from_clock", true, distinct_from_clock) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 57 : EARNED-ADAPT (H_1299 c5) — the ABLATED timer (lr=0) observes the SAME D=13
+    //   stream but its estimate NEVER adapts: it stays frozen at its uninformative init (5).
+    //   Proves the learned interval is EARNED by the learning rate, not a fixed constant.
+    let mut ab = itimer_new_ablated()
+    ab = itimer_observe(ab, 0)
+    ab = itimer_observe(ab, 13)
+    ab = itimer_observe(ab, 26)
+    if _assert_i("case_57_itimer_ablate_frozen_at_init", 5, itimer_dhat_ticks(ab)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 58 : NO-FAB (H_1299 c7) — the trained timer fires EXACTLY at elapsed == its LEARNED
+    //   interval (dhat_ticks, ≈12) and is SILENT off-interval (mid-interval at elapsed=7 it
+    //   does not fire). We step to the timer's OWN learned interval (not a hardcoded number),
+    //   proving the fire boundary IS the learned duration.
+    let learned_ticks = itimer_dhat_ticks(it1)               // the timer's own learned interval
+    let mut on_int = it1
+    let mut off_int = it1
+    let mut s = 0
+    while s < learned_ticks { on_int = itimer_step(on_int)  s = s + 1 }   // elapsed = learned interval
+    let mut s2 = 0
+    while s2 < 7 { off_int = itimer_step(off_int)  s2 = s2 + 1 }          // elapsed = 7 (off-interval)
+    let nofab = itimer_fire(on_int) && (!itimer_fire(off_int))
+    if _assert_b("case_58_itimer_no_fab_off_interval", true, nofab) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

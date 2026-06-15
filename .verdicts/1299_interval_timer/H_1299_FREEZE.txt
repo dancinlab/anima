@@ -1,0 +1,95 @@
+H_1299 — INTERVAL TIMER (arbitrary LEARNED duration) — HD34 candidate / DEPLETION TEST
+FREEZE (pre-registered BEFORE any scoring). $0 CPU numpy mirror (DIRECTIONAL). p7.
+3 seeds [4301, 4302, 4303]. gradient-free.
+
+LENS (c15, a_no_llm_frame_trap — chronobiology / interval-timing, NOT an LLM recipe):
+  Interval timing (Buhusi & Meck 2005; striatal beat-frequency / SMA ramping) is a brain
+  system DISTINCT from the circadian clock (Pittendrigh SCN): it times ARBITRARY, LEARNED
+  sub-day durations (seconds–minutes), is RE-ENTRAINABLE to a new target interval from
+  experience, and is dissociable lesion-wise from the ~24h circadian oscillator. The r5
+  agent (H_1298) named this as the ONE remaining thin candidate for HD34.
+
+THE DEPLETION TEST (the whole question). A subsystem joins the live engine ONLY if it
+clears BOTH:
+  (i)  a falsifiable gap-vs-the-live-engine, AND
+  (ii) a control-surviving DISTINCTNESS vs EVERY existing lane — here decisively vs the
+       just-merged CircadianClock (H_1298), the cerebellum forward-model (H_1280
+       VForwardField), and the working-memory buffer (H_1282 WorkMemBuffer).
+
+LOAD-BEARING DISTINCTNESS CLAIM (what makes it NOT the CircadianClock):
+  The CircadianClock has a BAKED period (period=8, fixed at construction; clock_step is
+  content-blind and IGNORES every argument — there is NO learning path). It can ONLY fire
+  at its baked period. An IntervalTimer's defining property is that it LEARNS its interval
+  D from OBSERVED inter-event gaps at runtime (D is ESTIMATED FROM DATA, not a constructor
+  literal), then fires at the learned D — and the SAME object RE-ENTRAINS to a different
+  D2 from a new event stream WITHOUT any code change. If "learning D" trivially reduces to
+  re-reading the clock's baked period or to a cerebellum next-step content prediction, it
+  FAILS distinctness → honest DEPLETION 🏁 (the expected, valid terminal state; g0/c9 —
+  do NOT invent a filler lane, do NOT tune to green).
+
+ARMS (3 seeds, frozen):
+  A  = CircadianClock (the nearest lane that SHOULD fail) — a FIXED baked period (8).
+       Queried to fire at an ARBITRARY learned target D it cannot match (it fires at 8).
+  B  = IntervalTimer — learns D from the observed inter-event gap stream (running estimate
+       of the mean gap), then predicts the NEXT event by firing when its own
+       elapsed-since-last-event counter reaches the LEARNED D̂. Re-entrains to D2 from a
+       second stream WITHOUT re-coding.
+  B-SHUFFLE = the observed event ticks are PERMUTED before learning (the inter-event gaps
+       are destroyed; the "interval" is decorrelated from the true period) → D̂ no longer
+       tracks the true interval → prediction collapses to chance.
+  B-ABLATE  = the learning rate is ZERO (lr=0): D̂ stays at its uninformative init and
+       NEVER adapts to the observed interval → it cannot match D or re-entrain to D2.
+
+STREAMS (per seed, fixed): two event streams with DISTINCT true intervals, BOTH ≠ the
+  CircadianClock baked period 8 (so A cannot match either by construction):
+    D_true  = 13   (stream 1; ≠ 8)
+    D2_true = 20   (stream 2 = re-entrainment target; ≠ 8 and ≠ 13)
+  Each stream: events at t = 0, D, 2D, ... over the learning window with a small
+  seed-dependent gap jitter (±1 tick, drawn from rng) so D̂ is a genuine ESTIMATE over a
+  noisy stream, not a copy of a single literal. Init D̂_0 = 5 (uninformative; ≠ 8,13,20).
+  Learning rule (running mean, gradient-free): on each observed event, gap = t − t_last;
+  D̂ ← (1−lr)·D̂ + lr·gap, lr = 0.5 (B), lr = 0.0 (B-ABLATE).
+
+METRIC (p7, the interval-timing analogue of phase-locking): TIMING ERROR =
+  mean |predicted-fire-tick − true-next-event-tick| over the HELD-OUT prediction phase
+  (events AFTER the learning window — the timer must GENERALIZE the learned D to future
+  events, not memorize training events), normalized to a [0,1] ACCURACY =
+  max(0, 1 − err / D_true) (1.0 = perfect interval timing; ~0 = wrong-period baseline).
+
+FROZEN BARS (GREEN iff ALL pass on ALL 3 seeds; else honest RED → DEPLETION 🏁):
+  c1 PRESENCE         : B.acc_D ≥ 0.70  (B times the LEARNED interval D=13)
+  c2 RE-ENTRAIN       : B.acc_D2 ≥ 0.70 (the SAME object re-learns D2=20, no code change)
+  c3 DISTINCT-vs-CLOCK: A.acc_D ≤ 0.35 AND A.acc_D2 ≤ 0.35 (the fixed-period clock, baked
+                        at 8, CANNOT match the arbitrary learned intervals 13 or 20)
+  c4 EARNED-LEARN     : B-SHUFFLE.acc_D ≤ 0.35 (permuted events → D̂ decorrelated → collapse)
+  c5 EARNED-ADAPT     : B-ABLATE.acc_D ≤ 0.35 (lr=0 → D̂ frozen at init → cannot match)
+  c6 RE-ENTRAIN-DELTA : |B.D̂_after_stream1 − D_true| ≤ 2 AND |B.D̂_after_stream2 − D2_true|
+                        ≤ 2 (the learned estimate actually MOVES from ~13 to ~20 — the
+                        decisive proof the SAME object re-entrains, which the clock cannot)
+  c7 NO-FAB           : between learned-fire boundaries the timer does NOT fire (off-interval
+                        → no pulse) — the timer fires only when its elapsed counter reaches D̂.
+
+DEPLETION DECISION (c9, frozen-first):
+  - If c1..c7 ALL pass on all seeds → the interval timer SURVIVES the depletion test →
+    🟢 GREEN ENGINE-NATIVE candidate → R2 wire an IntervalTimer lane into live
+    CORE/engine_cli.hexa + bump engine_cli_smoke (a_engine_native_learning,
+    a_verified_must_wire). HD34 continues.
+  - If ANY bar fails — ESPECIALLY if c3 fails (A matches the learned interval ⇒ the timer
+    is not distinct from the clock) or c2/c6 fails (B cannot re-entrain ⇒ it IS just a
+    fixed clock with a different literal) — that is the EXPECTED, VALID outcome → declare
+    the c15 brain-structure ladder DEPLETED 🏁. NO filler lane. NO tune-to-green. The
+    frozen bars NEVER move post-hoc (c9).
+
+GUARDS:
+  - @L4 NOT an emit gate (a_autonomy_over_hardcode): the timer's fire is an OPTIONAL
+    scheduled pulse a caller MAY consult; it does NOT force emit/silence.
+  - Ψ-disjoint by construction: the timer holds ONLY its own elapsed counter + learned D̂;
+    reads NO immune store, NO grounding, NO pure_field Φ/phase/Ψ.
+  - p1/p2/p3/p6: reads only its own counter + a running gap estimate; NO persona, NO
+    "you are X", NO injected "fire now" label, NO RLHF. D̂ is ESTIMATED from observed gaps,
+    SCORED only.
+  - a_core_engine_map: NO 2nd .clm/.kosmos entry (pure timer over its own state).
+
+SCOPE (UNVERIFIED): numpy-mirror DIRECTIONAL (engine-transfer UNVERIFIED til/unless R2);
+  TOY (2 intervals, short streams, 3 seeds); existence-proof-vs-effect-size; scale /
+  real-corpus / continuous re-entrainment / brain-wiring = follow-on.
