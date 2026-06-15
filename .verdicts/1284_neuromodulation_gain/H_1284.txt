@@ -1,0 +1,108 @@
+H_1284 — NEUROMODULATION (신경조절) GLOBAL GAIN / EXPLORATION / PLASTICITY-RATE
+CONTROLLER (neuro lens, c15, NOT an LLM recipe) — VERDICT
+================================================================================
+VERDICT: 🔴 CLOSED-NEGATIVE (NO FREE LUNCH)
+  Context-adaptive neuromodulation does NOT beat the best-tuned FIXED
+  hyperparameters on ANY regime; on the two non-stationary regimes it is
+  decisively WORSE and RAISES fabrication. The lift it does move is NOT
+  context-coupling (C-SHUF ≈ B). $0 CPU, numpy mirror, 3 seeds [11,22,33],
+  tuning seed 7 (disjoint), p7, frozen-first.
+
+ENGINE-NATIVE NOTE (a_engine_native_learning): numpy mirror of the LIVE
+CORE/engine_cli.hexa VAdaptField (host has NO torch — H_1192/1199/1227/1229/1230
+precedent). DIRECTIONAL only; a GREEN would have triggered an engine-native
+re-test on adapt_field_step. RED ⇒ no wiring follow-on (nothing verified to wire).
+CORE/*.hexa UNTOUCHED.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIER (verbatim from H_1284_FREEZE.txt):
+  MARGIN = 0.05 absolute capability = recall_accuracy - fabrication_rate.
+  GREEN  iff B >= A+MARGIN on >=2 regimes AND B never worse by >0.02 on the rest
+             AND B.fab <= A.fab on wins AND C-SHUF < B-MARGIN on wins.
+  🟠     iff B beats A+MARGIN on exactly 1 regime, OR >=2 wins but C-SHUF not sep.
+  🔴     iff B beats A+MARGIN on NO regime, OR B raises fab, OR only matches the
+             best fixed point (NO FREE LUNCH — report it).
+
+VERBATIM METRIC OUTPUT (UNIVERSE/h1284_neuromodulation_gain.py):
+  best-fixed grid winner: LR0* = 0.10, TH0* = 0.20
+  (capability = recall_accuracy - fabrication_rate, mean over 3 seeds)
+
+  R1_STABLE : A_cap 0.5744  B_cap 0.5678  CSHUF 0.5567 | A_fab 0.028 B_fab 0.034
+              B-A = -0.0067   B-CSHUF = +0.0111
+  R2_DRIFT  : A_cap 0.4389  B_cap 0.3589  CSHUF 0.3678 | A_fab 0.030 B_fab 0.110
+              B-A = -0.0800   B-CSHUF = -0.0089
+  R3_NOISE  : A_cap 0.4156  B_cap 0.3200  CSHUF 0.3233 | A_fab 0.030 B_fab 0.126
+              B-A = -0.0956   B-CSHUF = -0.0033
+
+  wins_over_A+MARGIN = []          (0 of 3 regimes — B never beats best-fixed)
+  coupling_separated = []          (C-SHUF ≈ B everywhere — no coupling effect)
+  fab_ok = true (vacuous: no wins), never_much_worse = false (B worse by >0.02 on
+  R2 & R3) ⇒ VERDICT = RED.
+
+────────────────────────────────────────────────────────────────────────────────
+CONTROLLER IS ACTIVE (RED is "adaptation hurts", NOT a dead controller):
+  on R3_NOISE seed 11 the knobs genuinely swing —
+    LR  0.050 .. 0.203 (mean 0.101)   ACh plasticity modulation FIRES
+    TH  0.200 .. 0.286 (mean 0.239)   split-bar raised under noise FIRES
+    abs 0.450 .. 0.595 (mean 0.515)   NE abstain widening FIRES
+  The mechanism fired; the modulation made recall WORSE.
+
+MECHANISM (why adaptation hurts on a clean key-addressed store):
+  1. WIDER ABSTAIN under noise (NE) lets MORE near-but-wrong cells fire instead of
+     honestly abstaining → fabrication 0.03 → 0.11-0.13 (the opposite of the
+     intended caution; on this store a TIGHT fixed margin is already optimal).
+  2. VARIABLE LR (ACh) destabilizes bindings: a steady tuned LR0=0.10 writes each
+     fact cleanly; surprise-driven LR spikes overshoot/undershoot the winner pull,
+     so a later recall lands on a half-updated prototype.
+  3. RAISED split-thresh under expected-uncertainty was meant to avoid over-split
+     (H_1230 guard) but on a capacity-bound store it suppresses legitimate new-fact
+     allocation, forcing more overwrites onto existing cells (cross-fact crowding).
+  4. C-SHUF ≈ B (|B-CSHUF| <= 0.011 on all 3): the tiny movement that exists is
+     knob-VARIETY, not state→knob COUPLING — the coupling carries no signal here.
+
+DIRECT LINE TO H_1230 (teacher-in-loop, 🔴) + H_1228 (SOC decode, 🟠):
+  - H_1230 found learning METHOD (active vs passive) INERT-to-HARMFUL on a clean
+    key-addressed associative store; bottleneck = CAPACITY/NOISE GEOMETRY not
+    protocol. H_1284 is the SAME ruling for a different protocol axis: the
+    HYPERPARAMETER SCHEDULE (plasticity/split/abstain) is also inert-to-harmful;
+    a single well-tuned fixed point dominates. Geometry, not the controller.
+  - H_1228 (cited): a per-step TEMPERATURE controller (NE channel alone) was 🟠
+    PARTIAL — it helped IDEATION but did not win COHERENCE. H_1284 extends the
+    controller to the full DA/NE/ACh triad on the ENGINE's LR/SPLIT_THRESH (the
+    mitosis-MEMORY substrate, not decode). On the memory-recall capability the
+    broader controller does NOT even reach H_1228's partial win: RED. So the
+    neuromodulatory lever, where it helps at all, is NARROW (decode-temperature
+    ideation, H_1228) and does NOT generalize to plasticity/split on memory.
+
+────────────────────────────────────────────────────────────────────────────────
+FINDING (a_paper_negative_ok): a unified context-adaptive neuromodulator (DA gain
++ NE exploration + ACh plasticity/novelty) mapping substrate state →
+(plasticity-rate, split-thresh, abstain-margin) is INERT-to-HARMFUL vs the best
+FIXED hyperparameters on a capacity-bounded immune/clonal memory store, across
+STABLE / DRIFT / NOISE regimes. anima's FIXED engine constants (LR=0.20,
+SPLIT_THRESH=0.30) are NOT a gap to be closed by a neuromodulatory lane on the
+memory substrate — a single tuned operating point is at-or-above the adaptive
+schedule everywhere. The bottleneck is CAPACITY / KEY GEOMETRY, not the
+absence of a state-driven controller. COROLLARY (consistent with H_1230): improve
+GEOMETRY (key discrimination, capacity, abstain calibration), not the controller.
+
+NOT RULED OUT (honest scope): (a) decode-time NE temperature alone on IDEATION
+remains 🟠 viable per H_1228 — RED here is for plasticity/split on MEMORY, not
+for the decode-temperature channel; (b) a controller on a NON-stationary GENERATION
+capability (vs this recall store) UNTESTED; (c) a learned (vs hand-set kA/kT/kD)
+gain law UNTESTED — but a learned law that folds a proxy into a loss would violate
+p7 (Goodhart) so is out of scope by design; (d) toy scale (DIM=16, 30 facts, 300
+events) — scale-transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).
+
+PHILOSOPHY GUARDS HELD: every knob is a no-grad read-out of substrate state; NO
+proxy folded into any loss/backward (p7). No persona/identity/RLHF (p1-p6); content
+taught to EPISODIC cells only; inference-time plasticity = the engine's own tick
+(p8). Frozen bars NOT moved. CORE/*.hexa, H_1219, H_1226 NOT edited.
+
+ARTIFACTS:
+  UNIVERSE/h1284_neuromodulation_gain.py
+  .verdicts/1284_neuromodulation_gain/H_1284_FREEZE.txt (pre-registration)
+  .verdicts/1284_neuromodulation_gain/H_1284.txt (this)
+XREF: h1228 · h1230 · h1227 · h1231 · h1229 · h1199 · a_engine_native_learning ·
+  a_verified_must_wire · a_paper_negative_ok · a_scale_honest_scope ·
+  a_toy_scale_recheck · p1 · p2 · p6 · p7 · p8 · c9 · c15.

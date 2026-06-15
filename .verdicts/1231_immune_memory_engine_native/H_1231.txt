@@ -1,0 +1,102 @@
+H_1231 — ENGINE-NATIVE realization of H_1227 (immune / clonal-selection memory
+cracks literal-QA) on the LIVE .hexa VAdaptField. a_engine_native_learning.
+
+VERDICT: 🟢 GREEN ENGINE-NATIVE — H_1227 is now ENGINE-CONFIRMED.
+The live CORE/engine_cli.hexa VAdaptField reproduces the H_1227 numpy mirror
+EXACTLY: literal-QA 1.000, fabrication 0.000, 60/60 engine-bound cells, 3 seeds.
+
+base commit: 059b83892 (origin/main, +a_engine_native_learning)
+$0 local CPU, p7 (exact value-match recall + abstain, NOT perplexity).
+
+────────────────────────────────────────────────────────────────────────────
+MIRROR (H_1227, numpy, DIRECTIONAL) vs ENGINE-NATIVE (H_1231, live .hexa, BINDING)
+────────────────────────────────────────────────────────────────────────────
+  arm                       literal-QA   fabrication   cells
+  byte-LM weights (H_1227)     0.017          —          —     (recall-in-weights wall)
+  immune mirror   (H_1227)     1.000        0.000        60     numpy VAdaptField mirror
+  immune ENGINE   (H_1231)     1.000        0.000        60     LIVE .hexa VAdaptField  ← BINDING
+
+The mirror's GREEN TRANSFERS to the engine 1:1 — same key geometry (byte-trigram
+FNV-1a hash DIM=64), same frozen knobs (SPLIT_THRESH 0.30 / LR 0.20 / RECALL_THRESH
+0.15), same bars (QA>=0.80 AND fab<=0.10). The engine's OWN clonal split bound each
+of the 60 facts to its OWN cell (60/60, NO collapse), and the engine's OWN L2
+affinity fired the right value in-store and ABSTAINED out-of-store.
+
+a_engine_native_learning STATUS: H_1227 mitosis-as-MEMORY is now ENGINE-CONFIRMED
+(not a mirror). The DIRECTIONAL mirror result is upgraded to a BINDING verdict on
+the final-architecture engine (live VAdaptField, H_1199). NO capacity/geometry
+limit found at this scale: the DIM=64 discriminating key keeps each fact's key
+> SPLIT_THRESH from every other, so each fact triggers a fresh engine clone (60
+cells for 60 facts). The H_1227 caveat — coarse DIM=8 byte-feature key collapses
+to 1 cell — is NOT hit because VAdaptField is dim-generic (dim = len(seed0)), so
+DIM=64 needs NO engine change.
+
+KEY ENCODING = preprocessing (deterministic, gradient-free, documented), exactly
+as H_1199 exported the DIM=8 byte-feature stream — the "tokenize the question"
+role. What is ENGINE-NATIVE: the BINDING (which cell clones for which key — the
+engine's recon-err>SPLIT_THRESH split + engine_mitosis_tick) and the AFFINITY
+(which cell fires — the engine's L2 recon-err + nearest-idx). The value table is
+keyed by the ENGINE'S cell index; it only remembers the answer, the binding is the
+engine's.
+
+ENGINE EDIT (c1): ONE tiny additive READ-ONLY accessor
+vadapt_field_nearest_idx(af, x) -> int  (exposes the existing private _vnearest_idx
+that vadapt_field_recon_err already computes internally) so a caller can map the
+fired cell back to its bound value. NO VAdaptField LOGIC changed. Guards re-verified
+on the edited engine: engine_cli_smoke 12/0, h1196 single-entry 7/0, H_1199
+DIM-growth STILL GREEN (F1/F2/F3, Psi byte-identical) — the accessor is non-perturbing.
+
+HONESTY (a_scale_honest_scope): synthetic known-ground-truth facts, ONE corpus
+paradigm (H_1222 "<subj> lives in <city>"), toy scale, 3 deterministic seeds.
+SATURATED = existence proof, NOT effect-size. paraphrase recall (query != exact
+fact string) and scale (>60 facts, near-collision keys) UNVERIFIED. Frozen bars
+NOT moved (== H_1227's QA_BAR 0.80 / FAB_BAR 0.10).
+
+════════════════════════════════════════════════════════════════════════════
+VERBATIM `hexa run CORE/h1231_immune_memory_engine_probe.hexa`
+════════════════════════════════════════════════════════════════════════════
+=== H_1231 ENGINE-NATIVE immune/clonal memory on the LIVE .hexa VAdaptField (MITOSIS-ENGINE · $0 CPU · p7) ===
+substrate: LIVE CORE/engine_cli.hexa VAdaptField (engine-native binding+affinity) — a_engine_native_learning
+mirror=H_1227 (numpy, GREEN QA=1.000 fab=0.000); this run = the BINDING verdict on the FINAL architecture engine
+BIND: each fact key -> live vadapt_field_step; engine's OWN split (recon-err>SPLIT_THRESH 0.30) clones a cell -> bind value
+RETRIEVE: query key -> engine's OWN nearest (vadapt_field_nearest_idx) + recon-err affinity -> FIRE value or ABSTAIN
+key = byte-3gram FNV-1a hash DIM=64 (VERBATIM H_1227 embed_key, deterministic preprocessing); value table keyed by ENGINE cell idx
+FROZEN GREEN (== H_1227): literal-QA >= 0.80 AND fabrication-rate <= 0.10, >=3 seeds
+
+seed=900  engine cells=60.0/60.0  literal-QA=1.0 (60.0/60.0)  fabrication=0.0 (0.0/60.0)
+seed=901  engine cells=60.0/60.0  literal-QA=1.0 (60.0/60.0)  fabrication=0.0 (0.0/60.0)
+seed=902  engine cells=60.0/60.0  literal-QA=1.0 (60.0/60.0)  fabrication=0.0 (0.0/60.0)
+
+POOLED  literal-QA=1.0 (180.0/180.0)   fabrication=0.0 (0.0/180.0)
+FROZEN BAR  QA >= 0.80  AND  fab <= 0.10
+
+QA  1.0 >= 0.80  PASS
+FAB 0.0 <= 0.10  PASS
+
+VERDICT: 🟢 GREEN ENGINE-NATIVE — the LIVE .hexa VAdaptField REPRODUCES the H_1227 mirror:
+  the engine's OWN clonal split bound each fact to its OWN cell, and the engine's OWN L2
+  affinity fired the right value on in-store queries (literal-QA 1.0 >= 0.80) and
+  ABSTAINED on out-of-store (fabrication 0.0 <= 0.10). a_engine_native_learning:
+  H_1227 is now ENGINE-CONFIRMED — mitosis-as-MEMORY is REAL on the final architecture, NOT a
+  mirror. SATURATED existence proof (a_scale_honest_scope); paraphrase/scale UNVERIFIED.
+
+════════════════════════════════════════════════════════════════════════════
+VERBATIM `python3 UNIVERSE/h1231_immune_memory_keys_export.py` (key-export + numpy ref cross-check)
+════════════════════════════════════════════════════════════════════════════
+=== H_1231 KEY/VALUE export — engine-native realization of H_1227 (DIM=64, SEEDS=[900, 901, 902]) ===
+    key = byte-3gram FNV-1a hash dim=64 (VERBATIM H_1227 embed_key); value = bound city
+    engine knobs SPLIT_THRESH=0.3 LR=0.2 RECALL_THRESH=0.15  GREEN iff QA>=0.8 AND fab<=0.1
+  seed 900: wrote 60 fact keys + 60 out keys (DIM=64)
+    [numpy ref] cells=60  immune QA=1.000 fab=0.000  (GREEN bar QA>=0.8 fab<=0.1)
+  seed 901: wrote 60 fact keys + 60 out keys (DIM=64)
+    [numpy ref] cells=60  immune QA=1.000 fab=0.000  (GREEN bar QA>=0.8 fab<=0.1)
+  seed 902: wrote 60 fact keys + 60 out keys (DIM=64)
+    [numpy ref] cells=60  immune QA=1.000 fab=0.000  (GREEN bar QA>=0.8 fab<=0.1)
+[done]
+
+════════════════════════════════════════════════════════════════════════════
+GUARDS (on the edited engine_cli.hexa — accessor non-perturbing)
+════════════════════════════════════════════════════════════════════════════
+engine_cli_smoke: 12 pass / 0 fail
+h1196 single-entry audit: 7 pass / 0 fail
+H_1199 DIM-growth: GREEN (F1 cells ON 173.3>>OFF 1.0 | F2 OFF/ON 8.43x>=2.0 | F3 Psi byte-identical) — UNPERTURBED

@@ -1,0 +1,98 @@
+H_1231 WIRE — a_verified_must_wire follow-on closure.
+
+The H_1231 verdict (🟢 GREEN ENGINE-NATIVE, literal-QA 1.000 / fabrication 0.000
+on the LIVE VAdaptField) added a read-only accessor (vadapt_field_nearest_idx) and
+flagged the runtime-recall production-wire as an explicit follow-on. Per the new
+directive a_verified_must_wire ("a GREEN-verified hypothesis is not done until its
+mechanism is actually wired into the live CORE/*.hexa engine"), this closes that
+follow-on: the immune-memory recall mechanism is PROMOTED from the standalone
+probe (CORE/h1231_immune_memory_engine_probe.hexa, a fn main) into a CALLABLE
+FACULTY on the live engine recall path.
+
+base commit: c6e97b9c3 (origin/main, H_1231 merge #2119)
+$0 local CPU, p7 (exact value-match recall + abstain, NOT perplexity).
+
+────────────────────────────────────────────────────────────────────────────
+WHAT WAS WIRED (CORE/engine_cli.hexa, new § IMMUNE-MEMORY RECALL FACULTY)
+────────────────────────────────────────────────────────────────────────────
+  struct ImmuneMemory { field: VAdaptField, cell_value: [string], recall_thr }
+  immune_embed_key(text)            — byte-trigram FNV-1a hash, DIM=64, L2-norm
+                                      (VERBATIM H_1227/H_1231 embed_key; verified
+                                       byte-identical to the python mirror).
+  immune_memory_new(key,val,cap)    — seed faculty at first fact's cell.
+  immune_memory_bind(mem,key,val,cfg) — BIND via the engine's OWN clonal split
+                                      (vadapt_field_step → engine_mitosis_tick,
+                                       recon-err > SPLIT_THRESH 0.30); new cell
+                                       binds the value, else overwrite the winner.
+  immune_memory_recall(mem,key)     — RECALL via the engine's OWN L2 affinity
+                                      (vadapt_field_recon_err + nearest_idx); fire
+                                       bound value if err <= 0.15, else ABSTAIN "".
+  immune_memory_{new,bind,recall}_text — string-query wrappers (running-anima entry).
+  immune_memory_cells(mem)          — live cell count.
+
+NO mechanism change vs the GREEN probe — the binding/affinity is STILL the
+engine's own vadapt_field_step + vadapt_field_recon_err + vadapt_field_nearest_idx.
+The faculty only wraps them with the cell-indexed value table + the FNV-1a key
+encoder so the path is directly callable (the probe inlined both, loading
+pre-exported key files). NO engine extension was needed — the live VAdaptField
+surfaces (already added by H_1199 + the H_1231 accessor) sufficed.
+
+a_core_engine_map: NO 2nd .clm / .kosmos path. The value store is the engine's OWN
+cell-indexed table; the key is an engine-native vector into VAdaptField (exactly
+like the H_1199 byte-feature stream). The single-entry audit (7/0, below) confirms
+the .clm/.kosmos entry sets are UNCHANGED. Ψ-disjoint: the faculty only reads/grows
+a VAdaptField, never touches pure_field's Φ/phase/Ψ.
+
+p2/p3/p6: this wires FACTUAL recall onto EPISODIC cells ONLY — no identity / persona
+/ ethics into weights. p8: the bind IS a clonal-split growth tick.
+
+────────────────────────────────────────────────────────────────────────────
+GUARDS (verbatim, post-wire — NON-PERTURBING)
+────────────────────────────────────────────────────────────────────────────
+GUARD 1 — engine_cli_smoke
+  --- engine_cli smoke summary: 12 pass / 0 fail ---
+
+GUARD 2 — h1196 single-entry audit (a_core_engine_map — single .clm/.kosmos entry)
+  --- single-entry audit summary: 7 pass / 0 fail ---
+
+GUARD 3 — h1199 DIM-growth probe (F1 GROWTH / F2 ADAPT / F3 Ψ byte-identical)
+  F1 GROWTH  cells ON(173.333) >> OFF(1.0)  = true
+  F2 ADAPT   late OFF/ON ratio=8.43212 (>=2.0)            = true
+  F3 Psi     Phi-checksum ON==OFF                          = true (attractor intact)
+  seed=900 PsiSame=true · seed=901 PsiSame=true · seed=902 PsiSame=true
+
+────────────────────────────────────────────────────────────────────────────
+END-TO-END RECALL THROUGH THE WIRED PATH (CORE/h1231_immune_memory_wire_smoke.hexa)
+────────────────────────────────────────────────────────────────────────────
+PART A — string-native bind/recall/abstain (the running-anima entry):
+  bound 5 facts -> engine cells = 5
+  PASS  recall 'Alice lives in ' -> 'Paris'  (want 'Paris')
+  PASS  recall 'Bob lives in '   -> 'Tokyo'  (want 'Tokyo')
+  PASS  recall 'Carol lives in ' -> 'Berlin' (want 'Berlin')
+  PASS  recall 'Dave lives in '  -> 'Cairo'  (want 'Cairo')
+  PASS  recall 'Eve lives in '   -> 'Lima'   (want 'Lima')
+  PASS  abstain 'Zara lives in '    -> ABSTAIN (no fabrication)
+  PASS  abstain 'Quinn lives in '   -> ABSTAIN (no fabrication)
+  PASS  abstain 'Mallory lives in ' -> ABSTAIN (no fabrication)
+
+PART B — wired faculty reproduces the H_1231 GREEN probe on its own keys (3 seeds):
+  seed=900  cells=60/60  literal-QA=1.0 (60/60)  fabrication=0.0 (0/60)
+  seed=901  cells=60/60  literal-QA=1.0 (60/60)  fabrication=0.0 (0/60)
+  seed=902  cells=60/60  literal-QA=1.0 (60/60)  fabrication=0.0 (0/60)
+  POOLED  literal-QA=1.0  fabrication=0.0   (FROZEN BAR QA>=0.80 AND fab<=0.10)
+  QA  1.0 >= 0.80  PASS   ·   FAB 0.0 <= 0.10  PASS
+
+  --- h1231 immune-memory WIRE smoke: ALL PASS ---
+  VERDICT: 🟢 WIRED — a running anima binds facts as clonal cells and
+  recalls-or-abstains through immune_memory_*, reproducing the H_1231 GREEN.
+
+────────────────────────────────────────────────────────────────────────────
+HONEST SCOPE
+────────────────────────────────────────────────────────────────────────────
+The wiring delivers the RECALL FACULTY on the live engine path. The H_1231 verdict
+remains a SATURATED existence proof (exact-match associative table, in-store keys
+verbatim). Paraphrase / noisy-key / scale robustness is UNVERIFIED and remains a
+SEPARATE follow-on. Frozen bars unmoved. The faculty is callable but not yet
+threaded into brain_decide's emit loop (a substrate that grounds a recall during
+operation) — that is a further wiring step; this closure delivers the callable
+recall faculty itself, verified non-perturbing (Ψ byte-identical, guards green).

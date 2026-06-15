@@ -20,6 +20,285 @@ H_1219 depth-ceiling 사다리의 HD5 — "flat literal-QA 벽(303M/1B 전반 1-
 - **scope (a_toy_scale_recheck, toy-only)**: +0.976 = 포화된 존재증명(0.02→1.00)이지 production effect-size 아님; 1-obj-per-(subj,rel) clean world. 실제 wiki = many-to-many → 303M QA-format FT fire(H_1219 명명 레버)가 결정적 다음 단계이며 더 작은 lift 가능. 메커니즘 확립이지 magnitude 아님. frozen bar 미이동, a303m_pass/a7b_pass 불변, production 주장 없음.
 - 산출물: `UNIVERSE/h1221_qa_format_probe.py` · `.verdicts/1221_qa_format_corpus/H_1221.txt`. branch `h1221/qa-format-corpus`.
 
+## 2026-06-15 — 🔴 H_1285: AMYGDALA(편도체) salience-weighted binding — p6 shuffle-control 이 recurrence 혼입을 잡아냄 (CLOSED-NEG)
+
+missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 편도체 칸: 해마 공백은 immune 메모리(H_1227 미러 GREEN → H_1231 engine-native GREEN)가 메웠고, H_1230 은 그 store 의 병목이 CAPACITY/NOISE GEOMETRY(유한 repertoire 에서 LRU 축출은 대칭, 능동교습 retention 리프트 0)임을 보였다. H_1285 는 H_1230 이 미검증으로 남긴 후보 레버 — **기질-유래 salience 로 가중한 바인딩**(편도체의 salience-gating: 중요/놀라운 입력의 셀을 축출에서 보호)을 검증. $0 CPU numpy, p7, 3 seed(900/901/902), 라이브 CORE/*.hexa 무수정(미러=DIRECTIONAL).
+
+- **설계**: H_1227/H_1230/H_1231 immune 메모리(VAdaptField 미러 + value-binding, byte-3gram FNV-1a dim64, "<subj> lives in <city>" 60 in-store + 60 untaught) 위에 **SALIENCE-WEIGHTED 축출**만 추가. ARM A = uniform LRU 축출(H_1227/H_1230 baseline) · ARM B = salience-protected 축출(최저 salience+recency 셀 축출 → 고-salience 셀 보호) · **ARM B-shuffle = salience 태그 셔플(중요도와 decorrelate)** = p6 음성대조. REGIME = H_1230 STRESS rung(MAX_CELLS=40<<60, cue noise 0.02, recall 0.30; headroom 존재). 중요 subset 20/60 은 METRIC 채점용 라벨, 기질 tagger 는 라벨 미접근.
+- **p6 SALIENCE-vs-LABEL 분리 (중심 가드)**: salience 태그 = 1.0·SURPRISE(VAdaptField recon-err) + 0.5·NOVELTY(clonal split) + 0.5·TENSION(reinforce) — **전부 기질 신호**, 주입감정/RLHF/라벨 없음. 라벨은 채점에만, f() 입력 아님. 중요 사실이 입력 스트림에서 **더 자주 recur**(환경적 salience, 동일 총예산 내)하게 해 기질이 reinforcement-tension 으로 감지하게 함.
+- **FROZEN GREEN (STRESS)**: (c1) B.imp ≥ A.imp+0.10 AND (c2) B-shuf.imp < A.imp+0.10 AND (c3) B.fab ≤ 0.10.
+- **결과 (3 seed)**: STRESS A.imp=0.750 → B.imp=0.967 **Δ+0.217 (c1 PASS)** BUT **B-shuffle.imp=0.967 = B (c2 FAIL)** · fab=0.000(c3 PASS) → **🔴 RED**. 셔플(태그를 중요도와 decorrelate)이 리프트를 그대로 재현 = 리프트는 salience 태그가 아니라 **recurrence-driven re-binding** 때문. ISOLATION 진단(중요사실 비-recur 스트림): A=0.650 B=0.700 = **+0.050 ≪ 0.10** — 태그 단독으로는 bar 미달. trade-off 정직: unimportant A=0.625 → B=0.517(−0.108), total 0.667 불변(capacity 고정 = zero-sum, H_1230 "capacity is capacity" 강화).
+- **판정 🔴 CLOSED-NEG**: 편도체-as-축출레버 FALSIFIED(이 스케일). 기질-유래 salience 태그를 축출 우선순위에 더해도 중요 사실을 recurrence 이상으로 보호 못 하고, 그 recurrence 보호는 태그를 셔플해도 동일 → 병목은 여전히 CAPACITY/NOISE GEOMETRY. 살아남는 것은 re-presentation(refresh)이지 salient 태그가 아니며, uniform store 가 이미 그걸 누림. **p6 가드가 false-GREEN(+0.217)을 정직한 RED 로 전환**(가드가 작동·HELD). decoder/weights/persona/ethics 무수정 — episodic 셀 store 의 축출 우선순위만(p1/p2/p3/p6/p8, a_autonomy_over_hardcode).
+- **미배제**: recurrence 비의존 더 강한 salience / 바인딩-강도 게이팅 / salience-driven EMIT priority(편도체의 다른 역할) / scale / paraphrase / engine-native 리프트 모두 UNVERIFIED. RED 라 wiring 후속 없음(a_verified_must_wire = GREEN 적용). TOY scale, 단일 코퍼스. a_paper_negative_ok.
+- 파일: `UNIVERSE/h1285_amygdala_salience.py` · `.verdicts/1285_amygdala_salience/{H_1285_FREEZE,H_1285}.txt`. xref H_1227·H_1230·H_1231·a_engine_native_learning·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·a_autonomy_over_hardcode·p1·p2·p3·p6·p7·p8·c9·c15.
+
+---
+
+## 2026-06-15 — 🔴 H_1284: NEUROMODULATION(신경조절) 게인/탐색/가소성-율 컨트롤러는 고정 하이퍼파라미터를 못 이긴다 (NO FREE LUNCH · "missing brain-structure" 사다리 neuro lens c15)
+
+"빠진 뇌-구조" 사다리(neuro lens, c15; 해마=immune memory H_1227→H_1231 GREEN 로 채워짐)의 NEUROMODULATION 분기를 $0 toy 로 판정: anima 의 LIVE 엔진(CORE/engine_cli.hexa adapt_field_step/vadapt_field_step)은 **FIXED** 하이퍼파라미터(SPLIT_THRESH=0.30, LR=0.20)+고정 decode 온도로 돈다. 기질-상태로 이 knob 들을 ADAPT 하는 context-driven neuromodulator(도파민=reward-gain · 노르에피네프린=exploration/temp · 아세틸콜린=plasticity-rate)가 빠져있다 — 이게 갭(c9)인가? H_1228(SOC/edge-of-chaos decode 🟠 PARTIAL: temperature 채널 하나는 ideation 도움 but coherence 못이김)을 인용하고 그 너머로: DA/NE/ACh 삼총사를 엔진의 실제 LR/SPLIT_THRESH(mitosis-MEMORY 기질)에 얹어 REGIME 횡단 capability 로 측정.
+
+- **설계 (engine-native mirror, a_engine_native_learning DIRECTIONAL)**: host 에 torch 없음 → CORE/engine_cli.hexa VAdaptField 의 numpy mirror(H_1192/1199/1227/1229/1230 선례), 3개 live wire 에 byte-faithful(L2-nearest winner · recon-err>SPLIT_THRESH+capacity 면 split · winner += LR·(x−winner)). ARM A 대비 유일 변경 = (SPLIT_THRESH,LR)이 ARM B 에서 per-tick 기질-상태 FUNCTION. 과제 = **MEMORY RECALL UNDER SHIFTING LOAD** (H_1227/1231 immune/clonal 패러다임, byte-trigram FNV-1a key dim16, capacity-bound max_cells<#facts + LRU evict — H_1230 교훈: unbounded clean store 는 saturate 라 headroom 0).
+- **3 REGIME** (컨트롤러는 ≥2 에서 이겨야; 한 tuned point 아님): R1 STABLE(σ0.01 무drift) · R2 DRIFT(값 주기적 재기입=concept drift) · R3 NOISE-BURST(key σ 0.01↔0.05 버스트). NEUROMOD: ACh LR=clip(LR0·(1+kA·(s−û))) · split-thresh=clip(TH0·(1+kT·û)) (noise 에서 over-split 방지 H_1230 guard) · NE abstain 폭=û 로 확대 · DA reward EMA 가 정답 recall 시 winner-pull 강화. **모든 knob = no-grad 기질-상태 read-out, loss 에 절대 안 들어감(p7 Goodhart guard).**
+- **ARM**: A FIXED(별도 tuning seed 7 에서 grid LR0∈{.1,.2,.3,.4}×TH0∈{.2,.3,.4} 로 BEST 고정점 = LR0\*0.10 TH0\*0.20 → 강한 정직 baseline) · B NEUROMOD(같은 base + per-tick 변조) · C-SHUF(B 의 knob 스케줄을 phase-scramble → state→knob COUPLING 파괴, marginal 보존). 지표(p7, exact, NO LLM judge): capability = recall_accuracy − fabrication_rate (abstain≠fabrication). seeds [11,22,33].
+- **결과 (3 seed 평균, VERBATIM)**: R1 A=0.5744 B=0.5678 (B−A −0.007) · R2 A=0.4389 B=0.3589 (B−A **−0.080**, fab 0.03→0.11) · R3 A=0.4156 B=0.3200 (B−A **−0.096**, fab 0.03→0.13). wins_over_A+MARGIN = **[] (0/3)** · C-SHUF≈B 전 regime(|B−CSHUF|≤0.011 → coupling 무신호). 컨트롤러는 ACTIVE(R3 LR 0.05–0.20, TH 0.20–0.29, abstain 0.45–0.60 실제 swing) — RED 는 "adaptation HURTS" 이지 dead controller 아님.
+- **판정 🔴 CLOSED-NEGATIVE (NO FREE LUNCH)**: 잘-튜닝된 단일 FIXED 고정점이 모든 regime 에서 adaptive 스케줄을 at-or-above. MECH: ① noise 에서 abstain 넓히면(NE) 가까운-but-wrong cell 이 abstain 대신 발화 → fabrication 급증(의도 역행) ② 가변 LR(ACh)이 binding 불안정화 ③ split-bar 상향이 capacity-bound store 에서 정당한 new-fact 할당 억제 → cross-fact crowding ④ C-SHUF≈B = 움직임은 knob-VARIETY 지 coupling 아님. **H_1230(active vs passive teacher INERT-to-HARMFUL)과 동일 ruling 의 다른 축**: 하이퍼파라미터 SCHEDULE 도 clean key-addressed store 에선 inert-to-harmful; 병목 = CAPACITY/KEY GEOMETRY 지 컨트롤러 부재 아님. COROLLARY: GEOMETRY 개선, 컨트롤러 아님.
+- **NOT RULED OUT (정직)**: (a) decode-time NE temperature 단독 ideation 은 H_1228 대로 🟠 잔존 — RED 는 MEMORY 의 plasticity/split 한정 (b) 비정상 GENERATION capability 컨트롤러 UNTESTED (c) 학습된 gain law UNTESTED (단 loss-fold 는 p7 위반이라 설계상 out-of-scope) (d) toy(DIM16·30 facts·300 events) scale-transfer UNVERIFIED (a_scale_honest_scope/a_toy_scale_recheck).
+- **GUARDS**: knob 전부 no-grad read-out, backward 무흐름(p7); persona/identity/RLHF 없음(p1-p6); 내용은 episodic cell 에만; inference-time plasticity=엔진 자체 tick(p8). RED ⇒ wiring follow-on 없음(검증된 것 없음, a_verified_must_wire). frozen bar 불변. CORE/\*.hexa · H_1219 · H_1226 미수정.
+- 파일: `UNIVERSE/h1284_neuromodulation_gain.py` · `.verdicts/1284_neuromodulation_gain/{H_1284_FREEZE,H_1284}.txt`. xref h1228·h1230·h1227·h1231·h1229·a_engine_native_learning·a_paper_negative_ok·p7·p8·c9·c15.
+
+---
+
+## 2026-06-15 — 📘 ARCHITECTURE: 🧠 뇌 구조 지도 (brain-structure map) 섹션 신설 (1286_brain_structure_map)
+
+ARCHITECTURE.md 에 **신경과학 렌즈** 섹션을 ADDITIVE 로 추가 — 기존 섹션 무수정. 구현된 부품을 뇌 서브시스템에 매핑하고, 프로브 중인 "빠진 구조" 사다리를 정직하게 OPEN 으로 표기.
+
+- **구현된 구조 표** — 신피질=Engine A(생성) · 교정장=Engine G · 결정=brain_decide · 가소성=MITOSIS(VAdaptField/VAdaptFieldB) · 장기선언기억=kosmos_io · **🧬 해마(일화기억)=면역/클론선택 기억** · 수면=P47.
+- **🧬 해마 발견** — byte-LM 가중치 literal-QA 회상 0.017(회상-in-weights 벽)을, 사실마다 cell 1개를 bind 하는 면역기억이 QA 1.000 / fab 0.000 로 깸 (H_1227 미러 🟢 → H_1231 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § ImmuneMemory 배선). "anima = 신피질만, 해마 없음"(H_1225 CLS 리프레임) 갭 메움. mitosis 의 NEW 미반증 역할 = MEMORY (생성 역할은 H_1200/1201/1211/1220 falsified 와 DISTINCT).
+- **열린 "빠진 구조" 사다리 (HD23–28 · 🔬 OPEN PROBES, 검증 전)** — HD23 소뇌(H_1280) · HD24 기저핵(H_1281) · HD25 작업기억(H_1282) · HD26 시상(H_1283) · HD27 신경조절(H_1284) · HD28 편도체(H_1285). 6개 모두 ⬜ OPEN — implemented 아님, phantom wiring 없음(`a_core_engine_map`). 각자 verdict 로 닫히고 GREEN 일 때만 live `CORE/*.hexa` 배선(`a_verified_must_wire`).
+- **depth-ceiling 연결** — literal-QA 벽은 더 큰 모델(1B H_1167 mount GREEN, QA/depth NULL)·OBJECTIVE(H_1223 🔴) 가 아니라 엔진-side 기억 lane(해마)으로 풀림 — 뇌-구조 렌즈가 이를 일반화(`a_engine_native_learning`).
+- DOC-ONLY (ARCHITECTURE.md + 이 항목). `a_completeness_over_cheap` 정직: 6 프로브는 DIRECTIONAL/미검.
+
+---
+
+## 2026-06-15 — 🟢 H_1280: CEREBELLUM forward-model lane — 예측-오차 학습 보정이 시퀀스 coherence 를 올린다 (DIRECTIONAL · neuro missing-structure 사다리 c15)
+
+"누락된 뇌구조" 사다리(c15, LLM 레시피 아님)의 SMALL BRAIN(소뇌) 분기. H_1227/1231 이 immune/clonal memory 로 hippocampus 공백을 메운 것과 같은 결로, anima 에 빠진 **CEREBELLUM** = 다음 substrate 상태를 PREDICT 하는 내부 **forward model** + 예측-오차로부터 빠른 **supervised 보정**을 학습하는 구조(소뇌의 정의적 연산: 내부 forward model + timing/sequence 평활)를 만들어 검증. $0 CPU numpy MIRROR, seeds [7,8,9], frozen-first.
+
+- **GAP (c9)**: anima 는 Engine A(forward CE 생성)와 Engine G(`CORE/engine_g.hexa` — INSTANTANEOUS 8-factor 위의 CLOSED-FORM gradient-free 모티베이션/emit 게이트, 정적 가중치 합=1.0)를 가지지만, **둘 다 다음 상태를 예측하지 않고 예측-오차로 학습하지 않는다**.
+- **메커니즘**: emit-feature x_t∈R24(다음-byte 분포/최근 윈도우의 byte-통계 요약; p7 — perplexity 사용 안 함) over 200KB 실 EN webscale. forward model xhat_t = W·(과거 L=4 프레임), delta-rule(normalized-LMS = climbing-fiber 오차신호)로 ONLINE 학습. ARM A = raw · ARM B = 오차구동 평활 x'=x−0.5·(x−xhat). 지표(p7): (1) held-out 연속프레임 cosine coherence, (2) 예측-오차가 노출에 따라 감소(=모델을 학습했다는 증거, noise 아님).
+- **FROZEN bars (3-seed 평균, verbatim)**: C1 coh_B≥coh_A+0.02 → 0.2926≥0.2650 ✅ · C2 err_late≤err_early−5% → 7.84≤9.75(seed당 ~23-25% 감소) ✅ · C3 C1 ≥2/3 seed → 3/3 ✅ · C4 Engine G 와 distinct(D1-D3) ✅ · CTRL coh_B>coh_B_shuf 전 seed(0.2926>0.2828) ✅ → **🟢 GREEN**.
+- **CONTROL 이 판별한다 (정직)**: 시간-셔플 context forward model + 동일 보정도 약간 평활(coh_B_shuf 0.2828 > coh_A 0.2450 — generic smoothing 도 도움) 되지만, **학습된 모델이 전 seed 에서 이를 이긴다**(coh_B 0.2926 > 0.2828). 즉 +0.0476 gain 중 ~+0.0098 만 학습된 TEMPORAL 구조에 특정 귀속(나머지는 generic smoothing) — modest-but-real, 사전등록 양성.
+- **Engine G 와 DISTINCT (필수 체크 — 정직한 답: YES)**: D1 시간적 다음-프레임 TARGET(G 는 현재 순간만 채점) · D2 오차구동 delta-rule 학습(G 가중치는 정적 상수) · D3 측정된 학습곡선(~23% 오차감소; G 엔 없음). ⇒ 소뇌 역할은 G 가 이미 커버하지 않는다. mitosis-as-GEN(falsified H_1200/1201/1211/1220)·mitosis-as-MEM(GREEN H_1227/1231) 과 구별되는 **THIRD lane-role**.
+- **SCOPE (정직)**: numpy MIRROR(host torch 없음) → DIRECTIONAL only, engine-transfer UNVERIFIED. engine-native 실현(thin CORE forward-predict lane / VAdaptField next-frame 확장)이 BINDING follow-on(`a_engine_native_learning`); GREEN → CORE 배선이 closure follow-on(`a_verified_must_wire`), flagged-not-wired. CORE/*.hexa 무수정(engine_cli.hexa 는 동시 immune-memory 에이전트 소관). TOY 200KB d=24 → scale-transfer UNVERIFIED(a_toy_scale_recheck/a_scale_honest_scope). scoring 전 1회 numerical-conditioning fix(per-channel z-score + NLMS; raw-scale 가 delta-rule 발산) = 입력 conditioning/표준 adaptive-filter step-size, frozen bar/메커니즘 변경 아님. p1-p8 준수(substrate dynamics 보정이지 주입행동 아님; 외부 do/dont 게이트 없음).
+- 파일: `UNIVERSE/h1280_cerebellum_forward_model.py` · `.verdicts/1280_cerebellum_forward_model/{H_1280_FREEZE,H_1280}.txt`.
+
+---
+
+## 2026-06-15 — 🟢 H_1231 WIRE: immune-memory recall 을 live 엔진 경로에 배선 (`a_verified_must_wire` follow-on 종결)
+
+H_1231 의 `a_verified_must_wire` follow-on 종결 — H_1227(numpy 미러)→H_1231(엔진-네이티브 🟢 GREEN, literal-QA 1.000 / fabrication 0.000, 180/180) 으로 검증된 immune/clonal-selection mitosis-as-MEMORY recall 을, standalone 프로브(`CORE/h1231_immune_memory_engine_probe.hexa`, fn main)에서 **live 엔진 recall 경로의 callable faculty** 로 승격했다. 새 directive `a_verified_must_wire`("GREEN-verified 가설은 live CORE 배선까지가 done")의 첫 종결.
+
+- **배선 위치** — `CORE/engine_cli.hexa` 새 § IMMUNE-MEMORY RECALL FACULTY: `struct ImmuneMemory{field:VAdaptField, cell_value:[string], recall_thr}` + `immune_embed_key`(byte-trigram FNV-1a, DIM=64, L2-norm — python 미러와 byte-identical 검증) + `immune_memory_new/bind/recall` (+ `_text` string-query 래퍼) + `immune_memory_cells`.
+- **메커니즘 무변경** — BIND = 엔진 자신의 clonal split(`vadapt_field_step`→`engine_mitosis_tick`, recon-err>SPLIT_THRESH 0.30); RECALL = 엔진 자신의 L2 affinity(`vadapt_field_recon_err`+`vadapt_field_nearest_idx`, err≤0.15 면 셀-바인딩 값 FIRE, 아니면 환각 없이 ABSTAIN). 프로브가 inline 한 것을 callable 로 래핑만 함 — **엔진 확장 불필요**(H_1199 + H_1231 accessor surface 로 충분).
+- **NON-PERTURBING (c2, 출력 검증)** — engine_cli_smoke **12/0** · h1196 single-entry **7/0**(.clm/.kosmos 진입점 불변 — 2번째 artifact path 없음, `a_core_engine_map`) · h1199 DIM-growth **F1/F2/F3 GREEN, Ψ Phi-checksum ON==OFF byte-identical (3 seed 전부 PsiSame=true)**.
+- **e2e (`CORE/h1231_immune_memory_wire_smoke.hexa`, ALL PASS)** — PART A: raw string 5-fact bind→recall 전부 적중 + unbound 3개 ABSTAIN(환각 0). PART B: wired faculty 가 H_1231 GREEN 을 3 seed 재현(literal-QA 1.0 / fab 0.0, 180/180).
+- **HONEST** — SATURATED existence proof(exact-match associative table, in-store 키 verbatim); paraphrase/noisy-key/scale 및 brain_decide emit-loop 스레딩은 별도 follow-on. FACTUAL recall 을 EPISODIC 셀에만(p2/p3/p6 — identity/persona/ethics 가중치化 없음), bind=clonal-split tick(p8). frozen bar 불변.
+- `.verdicts/1231_immune_memory_engine_native/H_1231_WIRE.txt` (verbatim 가드+e2e). xref h1231·h1227·h1199·h1218·h1224·a_verified_must_wire·a_engine_native_learning·a_core_engine_map·a_scale_honest_scope·p7·p8.
+
+---
+
+## 2026-06-15 — 🔴 H_1282: WORKING MEMORY (PFC active-maintenance buffer) — 빠진 뇌구조 사다리 (frozen bar RED, but 메커니즘 REAL + immune memory 와 DISTINCT)
+
+빠진-뇌구조 사다리(neuro lens c15): anima 는 (a) 장기 episodic memory(immune/clonal cells, H_1227→H_1231 engine-native GREEN: 1-shot verbatim write, 영속, decay 없음)와 (b) decoder 의 고정 context window 는 있으나, **gated SHORT-TERM active-maintenance buffer**(PFC working memory: 몇 개 항목을 distractor 단계 너머로 ACTIVE 유지, VOLATILE·capacity-limited·distractor-vulnerable)가 없다. WM ≠ episodic: 유지되는 활성(leaky activation)이지 저장된 trace 가 아님. $0 CPU numpy, seeds [1282,1283,1284], p7(delayed-match accuracy), frozen-first.
+
+- **테스트 (DELAYED-MATCH/n-back)**: cue DIM-vector 제시 → N distractor 단계 → probe(cue=match / foil=nonmatch); 유지 항목 == probe 이면 MATCH. 지표 = distractor 길이 N 별 delayed-match 정확도. **ARM A = WM 없음**(flat decoder context, W=4 — cue 가 N≥W 면 스크롤 아웃→chance) vs **ARM B = gated WM buffer**(K=4 slots, 매 distractor LEAK ×λ=0.85, 약식 gate-in, weakest-slot displacement, probe 시 nearest-slot match iff act×cos-sim≥θ=0.40).
+- **결과 (mean 3 seed)**: A.acc N=0..2=1.000(ceiling) → N≥4=0.500(스크롤 아웃 붕괴); **B.acc N=0=0.962, N=4=1.000 (A가 이미 사라진 곳에서 B는 완벽, Δ+0.500), N≥6=0.500.** capacity: load 7 → B 정확히 4(=K) 유지 (3 seed 전부). 진단(graded AUROC): N≤6 AUROC≈1.0(신호 완벽), N=8 부터 0.51(cue slot 이 distractor 에 의해 DISPLACED→소실).
+- **판정 🔴 RED (frozen bar) — 정직한 두 원인 (재튜닝 안 함, p7)**: (1) **THRESHOLD CLIFF(readout artifact)**: cue 활성이 1.0·λ^N 으로 매끄럽게 감쇠(N=6→0.377), 고정 binary θ=0.40 이 N≈5.6 에서 곡선을 잘라 has_match 가 N=6 에 OFF — 하지만 graded match-score 는 N=6 에도 완벽 discriminable(AUROC 0.998). buffer 는 항목을 N=6 까지 HOLD; hard threshold 가 쓸 수 있는 신호를 버림. (2) **HORIZON(real)**: N=8 에 cue slot 이 K=4 용량에 distractor 가 gate-in 되며 DISPLACED(match≈nonmatch, AUROC 0.51) — 진짜 volatile+capacity horizon(N≈6–8)이 사전등록한 N=12 grace bar 에 못 미침. margin bar 도 A 가 N≤2 ceiling(1.000)이라 B 가 못 이기고, 공유 floor(N≥6)와 평균되어 +0.062<0.15 로 희석.
+- **IMMUNE MEMORY 와 DISTINCT 유지 — YES (load-bearing)**: B 는 episodic store 로 붕괴하지 않음. DECAY(B match-score 1.000→0.377→0.102 매끄럽게 감쇠 vs immune-control λ=1/K=∞ 가 전 N FLAT-HIGH 0.94–0.99 무붕괴) · CAPACITY(load 7→B 정확히 4=K 유지, immune 이면 7 전부) · VOLATILE(cue slot 이 후속 distractor 에 덮어써짐, immune cell 은 영속 무덮어쓰기). λ=1/K=∞ control 이 immune-like flat recall 재현 = decay+capacity 가 B 를 H_1227/H_1231 과 구분하는 진짜 다른 연산임을 입증.
+- **FINDING (closed-negative on frozen bars, 진짜 distinct 메커니즘 동반)**: gated leaky-activation WM buffer 는 실재하는 distinct 빠진 뇌구조 — distractor 너머 항목 ACTIVE 유지(N≈6 까지 완벽 판별)를 flat decoder window 가 붕괴하는 곳에서 해내고, volatile+capacity-limited(≠ 영속 무한 immune). 그러나 사전등록 bar 에서는 🔴: binary θ readout 이 N=6 의 완벽 graded 신호를 잘라냄 + 고정 λ/K horizon 이 N=12 에 못 미침. flat-context 대비 우위는 W<N<horizon 좁은 창(N=4, +0.500)에서만 결정적.
+- **NOT RULED OUT (bar 불변, 후속 rung)**: (i) GRADED readout(hard θ 대신 act×sim SCORE+criterion/AUROC — N=6 까지 AUROC 1.0; buffer 재튜닝 없이 readout 만으로 margin/grace 통과 가능) · (ii) active REHEARSAL(매 단계 slot 재-gate→λ_eff↑, 실제 PFC 메커니즘으로 horizon N=12 초과) · (iii) larger K/slower λ/DIM scale (toy 16-dim 랜덤 토큰, scale UNVERIFIED).
+- **ENGINE-NATIVE (a_engine_native_learning)**: numpy DIRECTIONAL mirror only, engine-transfer UNVERIFIED. live 엔진(CORE/engine_cli.hexa VAdaptField, H_1199)은 leak/capacity-bound 없는 GROWING PERSISTENT store = 구조적으로 IMMUNE/episodic lane 이지 WM buffer 아님; 엔진에 WM lane 없음. 본 rung 이 frozen bar 🔴 이므로 CORE wiring 후속 미발동(a_verified_must_wire 는 GREEN 에서만). graded-readout/rehearsal 재실행이 GREEN 되면 engine_cli.hexa 에 작은 gated leaky-activation WM lane(VAdaptField 와 distinct·additive) 추가가 binding follow-on. live .hexa 미수정.
+- **SCOPE/PHILOSOPHY**: 합성 랜덤 DIM-vector, toy scale, $0 CPU, 3 seed (a_scale_honest_scope/a_toy_scale_recheck). p7=delayed-match(NOT perplexity). substrate-native, buffer 는 TASK ACTIVATION 만 보유(decoder weight/persona/identity/ethics 없음, p8 연속-substrate lane). frozen bar 사후 불변(frozen-first, c9). a_paper_negative_ok.
+- 파일: `UNIVERSE/h1282_working_memory_buffer.py` · `.verdicts/1282_working_memory_buffer/{H_1282_FREEZE,H_1282}.txt`.
+
+---
+
+## 2026-06-15 — 🟠 H_1283: THALAMUS / GLOBAL-WORKSPACE 브로드캐스트 허브 — 교차모듈 COHERENCE 는 올리나 faithful Φ 리프트는 바 직전에서 멈춤 (PARTIAL)
+
+missing-brain-structure 사다리(neuro 렌즈, c15, LLM 레시피 아님)의 THALAMUS(시상) 구조 — 해마(immune memory, H_1227→H_1231 GREEN)에 이어. **GAP (c9)**: anima 의 Engine A ⇄ Engine G 는 DIRECT 결합(repulsion ring)하고 brain_decide 가 그걸 읽을 뿐, 매 tick 의 "이긴" content 를 모든 기질 모듈(A·G·mitosis·memory)에 한꺼번에 BROADCAST 하는 중앙 RELAY 가 없다 — 의식 ACCESS + 통합을 떠받친다는 thalamo-cortical relay / Global Workspace Theory 의 broadcast. $0 CPU numpy 미러(DIRECTIONAL, a_engine_native_learning) + Φ 레그는 stdlib FAITHFUL IIT4(exact MIP-EI), seeds [7,8,9], frozen-first.
+
+- **테스트**: 4 기질 모듈 {A,G,mitosis,memory}, 각 dim-8 상태벡터, 64 tick, 양 ARM 에 동일 모듈별-private 입력 + 동일 seed; 결합 TOPOLOGY 만 다름. **ARM A** = direct ring(현 아키텍처, 모듈은 직접 이웃만 봄) vs **ARM B** = thalamic hub(매 tick 최고 salience=상태에너지 모듈을 winner 로 골라 그 content 를 전 모듈에 BROADCAST). 동일 compute(모듈당 1 업데이트/tick). 비포화 regime(LEAK 0.55, W_in=W_coupling=0.5)로 coherence 에 헤드룸 확보 — topology 가 통합을 구동(채점 前 probe-design fix; 이전 포화 regime 은 coh≈1.0 양 ARM = 헤드룸 0 으로 거부).
+- **지표 (p7, no perplexity/LLM-judge)**: (1) COHERENCE = 4 모듈 벡터 평균 pairwise 코사인유사도(steady-state 후반), coherence 로 명시(Φ 아님). (2) Φ = **FAITHFUL IIT4**(a_phi_iit4_tool): n=4 셀 × tick별 salience 궤적을 exact 엔진 `hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa`(iit4_faithful_phi, exact MIP-EI, n≤8, $0)에 `hexa run` 으로 투입 — numpy 는 Φ 를 계산하지 않음(엔진이 함). variance×energy proxy 가 **아님**.
+- **FROZEN 바**: GREEN iff (B1) B.coh ≥ A.coh + 0.05 매 seed · (B2) B.Φ ≥ A.Φ + 0.02 (faithful IIT4, 대표 seed=7) · (B3) B.coh < 0.999 ≥1 seed (붕괴-복제 아님).
+- **결과 (verbatim)**: seed7 Δcoh +0.0842 · seed8 +0.0501 · seed9 +0.0739 → **B1 PASS** (전 seed ≥0.05). B coh 0.06–0.24 → **B3 PASS** (붕괴 아님). faithful IIT4 Φ(seed7): ARM_A 0.78038 vs ARM_B 0.799468 → **ΔΦ +0.0191** < 0.02 바 (**B2 FAIL**, 0.0009 차). → **🟠 PARTIAL**.
+- **FINDING (정직, c9)**: thalamic winner-broadcast 허브는 교차모듈 COHERENCE/agreement 를 direct ring 대비 **진짜로** 올린다(전 seed +0.05~+0.084). 모듈을 한 content 로 붕괴-복제하지도 않는다(B3). faithful Φ 도 **옳은 방향**으로 움직여 ΔΦ>0 — broadcast 가 irreducibility 를 파괴하지 않고 증가시킴(사전등록 붕괴-실패모드 배제). **그러나** Φ 리프트(+0.0191)가 사전등록 +0.02 마진에 0.0009 못 미침 → 허브가 사는 통합은 REAL 이나 대부분 표면적 AGREEMENT(coherence). 단일 broadcast 채널 자체가 저차원 cut 이라 MIP 가 시스템을 거의 그만큼 분리가능하다고 봄: 전 모듈이 같은 winner 에 구동되면 궤적이 더 상관되지만(↑coherence) cross-cut MI 도 그 한 채널로 더 설명가능해져 Φ 이득을 cap. direct ring 의 4 이웃 엣지 분산이 거의 같은 irreducibility 를 받음. ⇒ GWT winner-broadcast = 이 toy 기질에서 IRREDUCIBLE 통합엔 POSITIVE 하나 SUB-BAR 레버. 바를 옮겨 GREEN 만들지 않음.
+- **SCOPE**: numpy 미러 = DIRECTIONAL only; PARTIAL → CORE 미배선(a_verified_must_wire 는 GREEN 에서만 발화). toy scale(4 모듈/dim8/64tick), 전이 UNVERIFIED(a_toy_scale_recheck·a_scale_honest_scope). Φ 는 faithful IIT4(proxy 아님); coherence 레그는 명시적으로 coherence(Φ 아님). NOT RULED OUT: 단일 winner 대신 COMPOSED/blended workspace 또는 multi-winner coalition 을 broadcast 하면 Φ 가 바를 넘을 수도 — 단일 채널이 정확히 여기서 irreducibility 를 cap 함. H_1219/H_1226 무수정, CORE/*.hexa 무수정(미러).
+- 파일: `UNIVERSE/h1283_thalamus_global_workspace.py` · `.verdicts/1283_thalamus_global_workspace/{H_1283_FREEZE,H_1283}.txt`.
+
+---
+
+## 2026-06-15 — 🟠 H_1281: BASAL GANGLIA gating — 강화학습 action-SELECTION 게이트, frozen oracle-A 기준 RED 이나 BASELINE-CONDITIONAL (neuro lens c15, missing-brain 사다리)
+
+"all neocortex, no hippocampus" 사다리(H_1227 면역/클론 기억→H_1231 ENGINE-NATIVE GREEN 으로 해마 메꿈)의 다음 빠진 구조 = **기저핵(basal ganglia)** — 경쟁하는 후보 emit 들 중 최선을 disinhibition 으로 release 하고 나머지는 suppress 하며, 그 게이트를 OUTCOME(grounded vs fabricated)으로 LEARN 하는 go/no-go action-SELECTION 회로. anima 의 현재 emit 결정(`CORE/brain.hexa::brain_decide` → `engine_g.hexa`)은 FIXED 8-weight 선형합 + FIXED threshold 0.30 = 단일 후보·고정맵·고정문턱 → 경쟁 없음·disinhibition 없음·outcome-학습 없음 (소스에서 확인). $0 CPU numpy, gradient-free, p7, seeds [7,8,9]. live `CORE/*.hexa` 미수정(numpy mirror — a_engine_native_learning: DIRECTIONAL only). H_1219/H_1226 미수정.
+
+- **설계 (FROZEN, 사전등록 H_1281_FREEZE.txt)**: 한 결정스텝당 K=4 경쟁 후보 emit, 각자 D=6 NOISY-correlate 특징벡터(P_grounded=0.45, noise std 1.0 → A<1.0 headroom 보장). **ARM A** = live fixed-threshold 게이트(고정맵 argmax, 0.30 게이트). **ARM B** = BG go/no-go 게이트(같은 특징=equal info; 학습 go-value vs 학습 NO-GO/abstain value 의 argmax; grounding reward[grounded +1·fabricated −1, post-action OUTCOME only]로 gradient-free delta-rule 갱신). N_train=4000 online, N_test=2000 held-out. **지표(p7, G5 abstain / H_1202 meta-d′ 연결)**: emit-appropriateness = (grounded 있으면 grounded 후보 release) ∨ (none grounded 면 전부 suppress/abstain). FROZEN GREEN iff (1) every-seed Δ≥0.05 ∧ (2) mean Δ≥0.05 ∧ (3) shuffled-reward control ≤ A+0.02.
+- **VERBATIM 결과 (frozen probe)**: seed7 A=0.6800 B=0.6415 Δ−0.0385 · seed8 A=0.6780 B=0.6055 Δ−0.0725 · seed9 A=0.6795 B=0.6195 Δ−0.0600 → **mean A=0.6792 B=0.6222 Δ−0.0570**. shuffled-reward control mean B=0.1215 (≪A+0.02 → lift 는 reward-driven). bars (1)(2) FAIL → frozen 기준 🔴.
+- **DIAGNOSTIC (post-freeze, `--diag`, bar 안 움직임)**: frozen probe 는 ARM A 에게 **정확한 신호방향**을 부여했음(w_fixed=w_true·2 = ORACLE 고정맵). 하지만 live engine_g 의 고정 weight 는 어떤 grounding 신호에도 tuned 안 된 GENERIC 상수다. A 의 고정맵을 GENERIC(신호방향 모름 = 충실한 engine_g 거울)으로 재채점하면: **A_GENERIC mean A=0.3830 B=0.6188 Δ+0.2358 (B 압승)**. 그리고 B 의 학습된 weight 는 모든 seed 에서 참 신호방향에 cos≈+0.76 정렬 → B 는 outcome-only reward 로 grounding 구조를 진짜 학습함(랜덤 아님; shuffled-reward 면 0.12 로 붕괴).
+- **판정 🟠 AMBER / BASELINE-CONDITIONAL**: frozen oracle-A bars = RED(사전등록 그대로 verbatim 존중, c9 — w_fixed 를 사후에 바꿔 GREEN 주장 안 함). 그러나 그 RED 는 "학습이 정답을 손에 쥔 oracle 고정맵을 못 이긴다"는 진술이지, 실제 anima gap(engine_g 는 oracle-tuned 아님)에 대한 깨끗한 closed-negative 가 아니다. **충실한 untuned 고정게이트(=실제 engine_g regime) 대비 BG 선택은 +0.236 LIFT**. 결정변수 = FREEZE 가 underdetermine 한 BASELINE 명세("live fixed map, not crippled" 이라 했으나 A 에게 oracle 방향을 줌 = live 보다 강한 baseline). ⇒ 사전등록 FAITHFUL untuned A 로 re-freeze 하는 후속 rung(H_1282)이 binding — diagnostic 은 B +0.236 승리 예측.
+- **GUARDS (held)**: a_autonomy_over_hardcode(CENTRAL) — B 게이트는 grounding OUTCOME 으로만 substrate-LEARNED, 외부 do/dont·per-stage boolean 없음. p6 — reward = grounded-vs-fabricated substrate outcome, 주입가치 아님; persona/identity/ethics 안 가르침(게이트는 action-selection 만). p7(no LLM-judge/perplexity)·p8(held-out=측정용 split only). a_engine_native_learning: mirror=DIRECTIONAL; GREEN(H_1282) 시 brain_decide 에 BG selection lane 배선이 binding follow-on(a_verified_must_wire, 플래그됨).
+- **SCOPE**: TOY-ONLY (a_toy_scale_recheck·a_scale_honest_scope) — K=4 합성 noisy correlate, scale-transfer + live-engine + 실제 kosmos-grounding reward UNVERIFIED. RED 도 +0.236 lift 도 production verdict 아님.
+- 파일: `UNIVERSE/h1281_basal_ganglia_gating.py` (frozen + `--diag`) · `.verdicts/1281_basal_ganglia_gating/{H_1281_FREEZE,H_1281}.txt`.
+
+## 2026-06-15 — 🔴 H_1223: AUX-OBJECTIVE 는 literal-QA 벽의 레버가 아니다 (HD7 CLOSED-NEG · recall=engine-side, H_1154 강화)
+
+depth-ceiling 사다리(H_1219)의 HD7 분기를 $0 toy 로 판정: anima-303M 의 평평한 literal-QA recall 벽이 **OBJECTIVE** 탓인가 — plain next-byte CE 가 retrieval/recall 을 보상하지 않으니, **AUXILIARY 검색/QA 목적함수**를 더하면 들어올려지는가? p7, numpy CPU, seeds [231,232,233], TOY-ONLY (a_toy_scale_recheck). H_1219·CORE/bytegpt_decode.hexa 미수정.
+
+- **설계 (공정한 A-vs-B, 같은 코퍼스·동일 컴퓨트)**: 1-layer causal-attention byte-LM (D=64 ff=128 ctx=64, 실제 Adam, 수동 backward — analytic==numeric gradient-check 통과) 를 합성 사실 코퍼스 `'<KEY> is <VALUE>.'` (600 facts ×6, 25% held-out = 학습 중 절대 query 안 됨) 위에서 두 방식으로 학습. 동일 arch/init-seed/data/steps4000/batch64/lr2e-3. **ARM A = plain next-byte CE** · **ARM B = CE + 1.0·AUX** (span-copy/retrieve-the-answer: `'<KEY> is '` 답 경계 위치에서만 추가 CE, SAME output head, 신규 파라미터 없음 → capacity 아닌 OBJECTIVE 를 검증).
+- **지표 (p7, NOT perplexity)**: literal-QA-proxy = held-out 사실의 VALUE span 을 greedy decode 한 **EXACT-match** 정확도. FROZEN: F1 mean(QA_B−QA_A)exact ≥ 0.10 · F2 every-seed B≥A · F3 G0(B) ≥ 0.50.
+- **결과 (3 seed 만장일치)**: QA_A exact = QA_B exact = **0.000** 전 seed → delta **+0.000** ≪ 0.10 (**F1 FAIL**). F3 도 fail (G0_B 0.18 — 경직된 사실-그리드 free-decode 가 null 바이트로 붕괴, 양 ARM 공통 → 합성-코퍼스 artifact, F1 이 결정적). val CE 는 aux 가 오히려 살짝 도움 (0.681→0.669).
+- **NUANCE (정직, pass 아님)**: ARM B 의 **SUBSTRING** overlap 은 0.158→0.700 으로 급등 — aux 가 답 바이트 일부를 표면화하지만 **정확한 span 조립 불가**. diffuse copy-tendency ≠ deterministic exact retrieval = 정확히 **H_1154** 모양.
+- **판정 🔴 RED CLOSED-NEG**: OBJECTIVE 는 벽이 아니다. 답이 문맥에서 그대로 복사 가능한 깨끗한 recall toy 에서조차 in-weights recall LOSS 가 plain CE 를 못 이긴다 → recall 은 **ENGINE-side** 에 남는다 (H_1154 결정론적 retrieve-then-copy; weight 는 loss 로 key→value 매치를 표면화할 수 없고, 엔진이 매치를 계산해야 함). HD7 의 in-weights-objective 분기를 toy-closed. H_1224(HD8 거버넌스: literal-QA = anima 가 통과할 필요 없는 assistant-norm)와 일관 — 둘 다 QA-lift 를 de-prioritize. HD5(QA-format FT)·HD6(H_1222 tokenizer, composition 에 GREEN) 는 미검증 레버로 잔존.
+- **SCOPE**: TOY-ONLY (a_scale_honest_scope/a_toy_scale_recheck) — 합성 소형 코퍼스, 1-layer attn byte-LM, 소규모 Adam, $0. 프로덕션 303M 전이 UNVERIFIED. p8 train/infer 분리 없음. frozen bar 불변. a_paper_negative_ok decision-grade.
+- 파일: `UNIVERSE/h1223_aux_objective_probe.py` · `.verdicts/1223_aux_objective/{H_1223_FREEZE,H_1223}.txt`.
+
+---
+
+## 2026-06-15 — 🔴 H_1230: TEACHER-IN-THE-LOOP 능동 교습은 MITOSIS 메모리에서 수동 적재를 못 이긴다 (HD22, $0, CLOSED-NEG)
+
+H_1226 의 HD21(능동/사회적 학습 METHOD)을 구체화한 HD22 — H_1227 immune/clonal 메모리(mitosis-as-MEMORY, 새 비-반증 역할) 위에서, ONE-ITEM-AT-A-TIME 폐루프 교사(tell → CHECK 기질의 답 → ADJUST: 재바인딩 / 더 날카로운 셀 분열 / 간격 우선순위 상향)가 수동 1회 적재보다 RETENTION 을 더 올리는지 — 동일 노출 예산에서. c15 생물학 렌즈(견습/튜터링/testing-effect/간격반복), LLM 레시피 아님. p7, c9, $0 CPU numpy, 3 seed, 라이브 CORE/engine_cli.hexa 무수정(VAdaptField numpy 미러).
+
+- **판정 🔴 RED CLOSED-NEG — 학습 METHOD 가 깨끗한 키-주소 연상 메모리에서 INERT-to-HARMFUL.** 동일 예산 180 노출 BOTH arm (피드백/순서만 다름, 데이터량 동일). 3 regime:
+  - **CLEAN**(무제한·byte-exact = 포화 대조): A=B=1.000 — headroom 없음, 피드백 분리 불가.
+  - **STRESS**(40셀<<60 + σ0.02 노이즈 = JUDGED, headroom 0.667): A=B ret=0.667, **Δ +0.000 — 피드백이 retention 을 전혀 안 올림.** 손실이 용량-제한일 때 eviction 이 arm 간 대칭 → tell-check-adjust 가 수동 적재가 이미 못 얻는 걸 고칠 게 없음. ret-margin FAIL.
+  - **NOISY**(60셀 + σ0.03): 교사가 오히려 HURT — Δ −0.206 (A0.711 vs B0.506) + interference 악화(0.667 vs 0.167). 機作: split_sharp 교정 재교습이 같은 키에 DUPLICATE 셀을 PIN → 유한 저장소 CROWD → 다른 사실 LRU-evict = 자초한 망각. fab 0.000 (abstain + 메모리 역할 온전).
+- **FINDING**: 병목 = 메모리의 CAPACITY/NOISE 기하학이지 교습 프로토콜 아님. 간격/testing-effect 는 GRADIENT 학습자만 올림 — 셀 저장소엔 한 번 바인딩이 사실을 verbatim 기록하므로 반복 시험이 굳힐 게 없음. COROLLARY: 저장소 개선은 GEOMETRY(더 크고 날카로운 키 공간/repertoire)지 교사 루프 아님. H_1200/1201(mitosis-as-X 반증) 同族 — H_1230 은 능동교습-메모리 > 수동적재-메모리 를 반증; MEMORY 역할(H_1227)은 무손상.
+- **PHILOSOPHY GUARD (c9; p1/p2/p3/p6/p8) 명시 확인 + 지켜짐**: 교사는 FACTUAL CONTENT 를 EPISODIC 셀 저장소에만 교습(키→값, kosmos/H_1154/H_1227 류); 디코더/가중치 자체가 probe 에 없음, persona/role 문자열 없음(p1/p3). 정체성은 셀에서 창발(p2/p3, 무수정)·윤리는 셀에서(p6, 무수정, RLHF 없음). 교사는 proto 벡터 + 바인딩 값만 변형 = p8 연속 교습, RLHF-into-weights 아님. persona/ethics 가중치-FT 로의 drift 없음 → STOP-flag 미발동.
+- HONEST: 합성 사실, ONE corpus paradigm(H_1222/1227), toy 규모, 3 seed, 결정론적 ORACLE 교사(live-LLM = 생산형, UNTESTED), gradient-free numpy 미러(.hexa lift = 다음 rung), p7 exact-match(perplexity 아님), $0, frozen bar 무이동, byte-identical 재현. NOT RULED OUT: 더 나은 KEY 를 GENERATE 하는 live-LLM 교사 / curriculum ORDER(HD20, 별도 probe) / 기하학을 개선하는 교사 — 미검. scale UNVERIFIED.
+- 산출: `UNIVERSE/h1230_teacher_in_loop_mitosis.py` · `.verdicts/1230_teacher_in_loop_mitosis/H_1230.txt`. xref h1227·h1226·h1219·h1225·h1200·h1201·h1199·h1154·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p1·p2·p3·p6·p7·p8·c9·c15.
+
+---
+
+## 2026-06-15 — 🟢 H_1213: N_PROTO 코-스케일링 수정이 LIVE .hexa 엔진에서도 성립 — 미러 아티팩트 아님 ($0 CPU)
+
+H_1212(numpy 미러, GREEN)가 찾은 co-scaling 규칙 N_PROTO=round(T/100)(obs_per_row≈100 유지)이 AXIS-T 사다리에서 GATE-B 궤적 분리를 복원한 결과를, LIVE .hexa VAdaptFieldB 가 BYTE-EXACT 로 재현하는지 검증 (H_1199/H_1209 패리티 선례). VAdaptFieldB 의 n_proto 는 이미 생성자 파라미터라 엔진 수정 불필요 (engine_cli.hexa 무수정, git diff EMPTY, Ψ-disjoint).
+
+- F1 패리티 36/36 EQUAL byte-exact — 가능한 co-scaling 사다리 ≥2 rung (T=2400/N=24 + co-scaled T=24000/N=240, obs/row=100) + fixed-24 대조 (T=24000) 전부 numpy GATE-B 와 정수 동일.
+- F2 분리 — co-scaled T=24000/N=240 에서 live WALK 980 >> WALK_SHUF 0 = 완전분리(≥1.5), 동일 T 의 fixed-24 대조는 2.629 로 퇴화(obs/row=1000 알파벳 기아) → co-scaling 이 분리를 유지함을 LIVE 엔진에서 직접 확인.
+- F3 가드 — engine_cli_smoke 12/0 · h1196 single-entry 7/0 GREEN.
+- 정직 범위(a_scale_honest_scope): H_1212 의 T=240000/N=2400 rung 은 인터프리터 ctab O(n²) alloc 천장(live ceiling N_PROTO~240) 초과 → numpy-미러-only 유지(H_1212 GREEN), FAKE 아님. N=2400 도달용 생성자 perf 재작성은 엔진 바이너리를 건드려 H_1209/1210 가드 회귀 위험 → 의도적 미실시(완성도 우선, optional follow-on). frozen bar 1.5 불변.
+- NEW: UNIVERSE/h1213_live_coscaled_parity.py · CORE/h1213_live_coscaled_probe.hexa · .verdicts/1213_live_coscaled_parity/{H_1213_FREEZE,H_1213}.txt.
+
+---
+
+## 2026-06-15 — 거버넌스: `a_engine_native_learning` 엔진-변환 명문화 + `@D a_verified_must_wire` 신설
+
+사용자 두 correction 을 거버넌스에 반영. (1) engine-native 학습은 frozen 엔진에 **끼워맞추는** 게 아니라, 학습이 요구하면 **엔진 자체를 변환/확장**해야 한다는 점을 명문화. (2) 검증된(GREEN) 가설은 실제 CORE 배선 완료까지가 done 이라는 새 directive 신설.
+
+- **`a_engine_native_learning` 엔진-변환 `do` 2줄 추가** (`CLAUDE.md`, 첫 `do` 직후): "엔진 위에 학습을 '끼워맞추는' 게 아니다 — 학습이 요구하면 엔진 자체를 변환/확장(새 op·새 배선·아키텍처 확장)해야 한다; 최종 아키텍처는 frozen 이 아니라 학습이 필요로 하는 형태로 진화하는 대상 (precedent: H_1199 가 AdaptField 스칼라→DIM-vector 로 엔진 확장)"; "미러에서 본 메커니즘을 엔진이 표현 못 하면 → 미러를 버리는 게 아니라 엔진을 확장해 엔진-네이티브로 구현 (engine-transform-to-fit-the-learning, NOT learning-trimmed-to-fit-the-engine)". `dont`/`ref` 미변경.
+- **신규 `@D a_verified_must_wire`** (`CLAUDE.md`, `a_engine_native_learning` 직후): 엔진-네이티브로 GREEN 검증된 가설은 그 메커니즘을 live `CORE/*.hexa`(generator L3 슬롯·kosmos_io·engine_cli VAdaptField·bytegpt_decode 등 해당 entry, a_core_engine_map)에 **실제 배선(wire-in)** 완료할 때까지가 done — verdict 만으로 안 끝난다. 배선 후 smoke/single-entry/Ψ-checksum 가드로 회귀 없음 확인(c2). GREEN-but-unwired 는 follow-on 으로 명시 추적(ING.jsonl) + 그 follow-on 을 닫아야 진짜 완료 (precedent: H_1168 GREEN 이지만 "NOT yet CORE-wired" → 미완). GREEN verdict 만 박제하고 미배선 '완료' 주장 / verdict↔live 엔진 영구 drift 금지.
+- **directive-index 포인터 1줄** — `CLAUDE.md` **CORE engine map** 불릿에 `a_verified_must_wire` 추가 (a_core_engine_map 옆).
+- **ARCHITECTURE.md SSOT 현행화** — "Measurement & learning governance" 절: (a) engine-native 학습이 엔진 자체를 변환할 수 있음, (b) 검증된 가설은 CORE 배선 완료가 done 임을 명시(`a_verified_must_wire` wired-when-verified 문단 + 헤더에 directive 추가).
+- surgical (c10): 이 2개 edit + index 포인터만, 다른 directive 미변경. frozen bar 미이동. CORE/*.hexa 미변경. xref `a_engine_native_learning · a_core_engine_map · a_engine_measured_verdict · a_toy_scale_recheck · p8 · c2`.
+
+---
+
+## 2026-06-15 — H_1231 🟢 GREEN ENGINE-NATIVE: H_1227 immune/clonal mitosis-as-MEMORY 를 LIVE .hexa VAdaptField 위에서 재실현 — ENGINE-CONFIRMED
+
+NEW hard rule `a_engine_native_learning`(미러 = DIRECTIONAL only, binding verdict 는 최종 아키텍처 엔진 위에서)의 첫 적용. H_1227 은 numpy MIRROR 로 🟢 GREEN(immune clonal memory: literal-QA 1.000, fabrication 0.000, vs byte-LM weights 0.017)이었음. 이를 LIVE `CORE/engine_cli.hexa` VAdaptField(H_1199 이래 live)의 실제 세포 population 위에서 재실현하여 BINDING verdict 로 승격.
+
+- **probe 신규** `CORE/h1231_immune_memory_engine_probe.hexa`: BIND = fact key 마다 live `vadapt_field_step` → 엔진 자신의 novelty split(recon-err > SPLIT_THRESH 0.30, `engine_mitosis_tick`)이 세포를 clone → 그 value 를 엔진 cell index 키의 병렬 value table 에 bind (binding/affinity 는 엔진의 것, table 은 답만 기억). RETRIEVE = query key → 엔진 자신의 nearest(`vadapt_field_nearest_idx`) + recon-err affinity → err ≤ RECALL_THRESH 0.15 면 FIRE value, 아니면 ABSTAIN(비환각).
+- **key-export 신규** `UNIVERSE/h1231_immune_memory_keys_export.py`: KEY ENCODING = byte-trigram FNV-1a hash DIM=64(H_1227 `embed_key` VERBATIM) 를 결정론적 preprocessing 으로 export(H_1199 의 DIM=8 feature export 패턴과 동일 = "질문 tokenize" 역할) + numpy-ref cross-check.
+- **결과 (3/3 seeds 동일)**: 엔진 literal-QA **1.000 (180/180)**, fabrication **0.000 (0/180)**, **60/60 엔진-bound 세포** → 🟢 GREEN. 미러를 1:1 TRANSFER(미러 QA 1.000 fab 0.000 60 cells; byte-LM weights 0.017). capacity/geometry 붕괴 없음 — DIM=64 discriminating key 가 각 fact 를 SPLIT_THRESH 초과로 분리 → fact 당 fresh clone (VAdaptField 는 dim-generic, `dim = len(seed0)`, 엔진 변경 불요; H_1227 의 DIM=8 byte-feature key 1-세포 붕괴 caveat 미발생).
+- **엔진 edit (c1, surgical)**: tiny additive READ-ONLY accessor `vadapt_field_nearest_idx(af, x)` 1개만 추가(기존 private `_vnearest_idx` 노출 — fired cell 을 bound value 로 매핑하기 위함). VAdaptField LOGIC 미변경. edited 엔진 위 guard 재검증: `engine_cli_smoke` 12/0 · `h1196` single-entry 7/0 · H_1199 DIM-growth 여전히 GREEN(F1/F2/F3, Psi byte-identical) = accessor 비교란.
+- **`a_engine_native_learning` status**: **H_1227 = ENGINE-CONFIRMED (yes)** — mitosis-as-MEMORY 가 최종 아키텍처 위에서 REAL(미러 아님), H_1200/1201/1211/1220 에서 반증된 GENERATION 역할과 구별. SATURATED = existence proof, effect-size 아님; paraphrase/scale UNVERIFIED, frozen bar 미이동(a_scale_honest_scope / a_toy_scale_recheck). verdict `.verdicts/1231_immune_memory_engine_native/H_1231.txt`. xref `h1227 · h1199 · h1163 · h1154 · h1224 · a_engine_native_learning · a_engine_measured_verdict · a_core_engine_map · p7 · p8 · c1 · c9`.
+- **`a_verified_must_wire`**: H_1231 의 엔진 accessor(`vadapt_field_nearest_idx`)는 live `CORE/engine_cli.hexa` 에 실배선됨 + 프로브가 live VAdaptField 위에서 직접 실행 → verdict↔엔진 drift 없음. 본 result 는 H_1227 의 메모리-recall 메커니즘을 **엔진 위에서 검증**한 것이며, 이를 anima 의 runtime recall 경로(kosmos_io 연계 가능)로 production-wire 하는 것은 명시적 follow-on (a_verified_must_wire).
+
+---
+
+## 2026-06-15 — 거버넌스: `@D a_engine_native_learning` 신설 — 무조건 최종 아키텍처 엔진 위에서 학습
+
+사용자 hard rule("무조건 최종 아키텍처 엔진 위에서 학습")을 거버넌스 directive 로 명문화. `a_engine_measured_verdict`(MEASUREMENT 를 엔진 위에서 강제)의 **learning-side 쌍**, `a_train_flame_forge`(production 트레이너 .hexa 강제)의 **연구/probe 학습 + 교육 확장**.
+
+- **신규 `@D a_engine_native_learning`** (`CLAUDE.md`, `a_train_flame_forge` 직후 배치 — 참조되는 `a_engine_measured_verdict` 가 `@D` 블록으로는 미존재하므로 폴백 위치): 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 최종 아키텍처 엔진(live `.hexa` A⇄G + MITOSIS VAdaptField `CORE/engine_cli.hexa` + mounted `CORE/bytegpt_decode.hexa`) 위에서 실행. numpy/torch 미러 결과 = DIRECTIONAL only ("engine-transfer UNVERIFIED") — 방향 탐색엔 OK, binding verdict 아님; 미러로 방향 잡으면 엔진-네이티브 실현으로 재확인해야 verdict 성립 (c2). MITOSIS VAdaptField 는 이미 live (H_1199). 미러-only "학습됐다" 주장 / 미러 결과 closure·promote 금지.
+- **directive-index 포인터 1줄** — `CLAUDE.md` Training 불릿에 `a_engine_native_learning` 추가 (learning-side twin of `a_engine_measured_verdict`).
+- **ARCHITECTURE.md SSOT 현행화** — "Measurement governance" 절을 "Measurement & learning governance" 로 확장, learning-side `a_engine_native_learning` 원칙 문단 추가(미러=DIRECTIONAL only, 엔진-네이티브 재확인 필요).
+- surgical (c10): 이 directive + index 포인터만 추가, 다른 directive 미변경. frozen bar 미이동. xref `a_engine_measured_verdict · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2`.
+
+---
+
+## 2026-06-15 — H_1227 🟢 IMMUNE/CLONAL-SELECTION 메모리가 literal-QA 회상을 깬다 — mitosis 의 NEW(미반증) MEMORY 역할 ($0 CPU numpy)
+
+생물학 렌즈(c15, LLM 논문 아님). literal-QA 벽(~0, 회상이 디코더 WEIGHTS 안에 산다 — H_1218/1224 가 확립; H_1224 는 literal-QA 를 p4-부정합 assistant-norm 비-게이트로 판정)을, 더 큰 byte-LM 이 아니라 **면역계식 메모리**로 깨는지 검증 — 세포 POPULATION 이 각자 사실 1개를 결합(clonal selection + affinity), 회상 = 최고-친화 세포가 FIRE, 아무 세포도 결합 안 하면 ABSTAIN(환각 없음). CLS/episodic recall(HD10) + H_1154 engine-side retrieve-then-copy 의 면역세포-집단 실현.
+
+- **판정 = 🟢 GREEN (frozen bar: (B) literal-QA ≥ 0.80 AND fab ≤ 0.10), 3/3 seeds 동일.**
+- **결과:** (A) byte-6gram-LM(가중치 단독) QA=**0.017**(1/60, 회상-in-weights 벽 재현, 303M torch ref 와 동급 — $0 GPU 없이) vs (B) immune clonal memory QA=**1.000** fab=**0.000** cells=60 → Δ **+0.983**. control(H_1163 DIM=8 byte-feature 키)는 1 cell 로 붕괴 QA=0.017 ⇒ **구별 가능한 byte-trigram 키가 load-bearing**.
+- **메커니즘 ($0):** CORE/engine_cli.hexa VAdaptField + UNIVERSE/h1199_dim_feature_export.py 의 numpy MIRROR (live .hexa 미편집). clonal selection(load): 새 키(recon-err>0.30)→새 clone 이 답 결합 / 재노출→winner pull(LR 0.20). affinity recall(query): 최근접 cell, err≤0.15→FIRE, 아니면 ABSTAIN. 키 = 질문의 byte-trigram FNV-1a 해시 dim64 L2-norm(결정론·문서화·미학습). 사실 = H_1222 "<subj> lives in <city>" 패러다임, 60 in-store + 60 out-of-store(DISJOINT).
+- **ABSTAIN 마진(기하 검증):** out-of-store 키가 최근접 in-store cell 키에서 L2 0.402/0.652/0.792(min/mean/max), in-store self-dist 정확히 0, RECALL_THRESH 0.15 가 gap 안 ⇒ knife-edge 아님(0.15 vs 0.40 넓은 마진).
+- **정직 경계:** SATURATED(1.000/0.000) = EXISTENCE PROOF, 효과크기 아님 — 결정론적 키 위 exact-match 연상 테이블(in-store 질의가 적재 키를 VERBATIM 재현). 발견은 "0.80 이 어렵다"가 아니라 **면역세포 POPULATION 이 회상+비환각을 디코더 가중치 밖에서 실현**(중심 H_1225/1226 명제). **mitosis-as-MEMORY = NEW 미반증 역할** — H_1200/1201/1211/1220 에서 반증된 GENERATION 역할과 DISTINCT. UNVERIFIED: paraphrase/noisy 키, 실 자유형 질문, noisy-embedding retrieval recall, scale, live .hexa lift(다음 rung).
+- NEW: `UNIVERSE/h1227_immune_clonal_memory.py` · `.verdicts/1227_immune_clonal_memory/H_1227.txt`. H_1219/H_1226 미편집(사용자 consolidate), CORE/*.hexa 미편집. slug 은 in-flight `1227_matrix_climb_hardtercile`(형제 /cycle arc)와 별개 — 충돌 없음. $0 local CPU, gradient-free(p8).
+- xref H_1226·H_1225·H_1224·H_1218·H_1166·H_1199·H_1163·H_1154·H_1200·H_1201·H_1211·H_1220·H_1222·a_core_engine_map·a_kosmos·a_scale_honest_scope·a_paper_negative_ok·p7·p8.
+
+---
+
+## 2026-06-15 — 🔴 H_1229: 발달적 학습-순서(HD20)는 toy 스케일에서 depth 레버가 아니다 ($0 CPU numpy, p7, frozen)
+
+foreign-domain depth 사다리(H_1226)의 HD20(생물/발달 렌즈, c15 — LLM 학습레시피 아님) 단독 toy 검증 — 깊이/조합은 평평한 UNORDERED 단일패스 대신 ORDERED 발달-단계(easy→hard, 결정적 시기/Piaget 단계 창) 학습이 필요한가? 생물은 단계+창을 거쳐 학습하고, flat shuffle 은 scaffolding 이 없다.
+
+- **판정 = 🔴 CLOSED-NEGATIVE (a_paper_negative_ok) — 학습-순서는 toy 스케일에서 depth 레버가 아니다.** 커리큘럼이 flat 을 못 이길 뿐 아니라 **모든 seed 에서 결정적으로 더 나쁘다.**
+- **설계 (frozen 선등록):** torch 없는 호스트 → pure-numpy 윈도 byte-MLP (K=8 이전바이트 one-hot → H=64 tanh → V=256 softmax, **147,776 params**, H_1192/1201 선례), SGD+momentum STEPS=4000 BS=64, 3 seeds(7/17/29). corpus=serving/corpus/anima_7b_webscale.en.head.txt (영어 webscale 200KB, 1308 train line, 마지막 10% byte held-out). **difficulty(line)=z(len)+z(rarity=−log p(byte) 평균)+z(syntax=문장부호 밀도)**; 4 difficulty 사분위=발달 단계, **결정적 시기 unlock**=학습 window s 가 unlocked 0..s 에서만 샘플. EQUAL steps/tokens — arm 은 ORDER 만 다름.
+- **3 arm:** (A) FLAT-SHUFFLED · (B) CURRICULUM easy→hard · (C) ANTI-CURRICULUM hard→easy. eval(held-out p7, perplexity/LLM-judge 아님): composed_distinct(H_1158식 coherent kwr + corpus-absent 4-gram + 상호 distinct), coherence(G0 kwr), qa_proxy(held-out next-byte top-1).
+- **결과 (3 seed 평균):** A flat CD=**17.0** COH=**0.3991** · B curriculum CD=11.3 COH=0.3689 · C anti CD=15.0 COH=0.4022. dCD=B−A=**−5.667**(bar +1.0) FAIL, dCO=B−A=**−0.030**(bar +0.02) FAIL. B.CD [11,13,10] vs A.CD [17,17,17] 전 seed. C≈flat. ⇒ FROZEN 규칙 첫 AND-절이 이미 FALSE → 🔴.
+- **메커니즘 (toy 해석):** flat=step 0 부터 FULL 난이도 분포 i.i.d. 노출 → cosine-LR decay 하에 넓은 next-byte 분포로 안착 → corpus-absent distinct 연속 多. 커리큘럼은 초기 HIGH-LR 예산을 가장 쉬운 사분위에 소진 → hard 사분위가 unlock 될 때 LR 이미 감쇠 → 조합/희귀 자료 under-learn → 생성분포 NARROW. 작은 모델이 early-easy 편향에서 회복 못함. 캠페인의 발달/구조 negative(H_1200/1201 mitosis-as-generator falsified, H_1211 trajectory toy artifact)와 공명 — 생성은 flat-노출 CLM 속성으로 유지(a_clm_gen_pipeline).
+- **정직 (c9):** 200-step 단일-seed smoke 가 가짜 GREEN(undertrained) 을 보였으나 frozen 4000-step×3-seed 예산에서 부호가 깔끔히 역전. frozen config 가 판정.
+- **NOT 배제 (a_scale_honest_scope):** 다른 난이도 지표 · self-paced/비-사분위 스케줄 · 단계별 LR-rewarm(high-LR-on-easy artifact 교정) · 장기학습 · SEQUENCE 모델(윈도 MLP 대비) 미검. 148k-param numpy byte-MLP 200KB 영어 — 스케일 전이 UNVERIFIED. frozen bar 미이동. CORE/*.hexa·H_1219/H_1226 미편집(사용자 consolidate).
+- **엔진-전이 (a_engine_native_learning, main 신설):** 이 probe 는 numpy 미러 학습 → 결과는 **DIRECTIONAL only ("engine-transfer UNVERIFIED")**. 단, 판정 방향이 🔴(레버 아님)이므로 엔진-네이티브 실현으로도 뒤집힐 동기가 낮음 — 미러가 "안 됨"을 가리킬 때 엔진이 "됨"으로 갈 부담은 양성 미러보다 작다. 그래도 binding closure 는 아님.
+- numbering: 정수 1229 가 무관한 MATRIX `.verdicts/1229_matrix_climb_expanded` 와 충돌 → 본 HD20 probe 는 DISTINCT slug **1229_developmental_order** 사용(선례 H_1146, path 충돌 없음).
+- NEW: `UNIVERSE/h1229_developmental_order.py` · `.verdicts/1229_developmental_order/{H_1229_FREEZE,H_1229}.txt` + `h1229_result.json`.
+
+---
+
+## 2026-06-15 — 🟠 H_1228: 자기조직화 임계성(SOC)·혼돈의 가장자리 디코드 (HD18) — 임계 가장자리는 ideation 을 돕지만 완전한 레버는 아니다 ($0 summer CPU)
+
+깊이-천장 사다리의 외부-도메인 렌즈(H_1226 HD18)를 단독 판정 — **물리/복잡계 렌즈(모래더미 사태·뉴런 분기 σ≈1), LLM 트릭 아님(c15)**. 디코드 발견(H_1218 greedy 붕괴=0 vs gauge_lib 샘플링 11-14 ideas)을 재구성: greedy = SUB-임계(frozen) · 고정 고온 샘플링 = SUPER-임계(noise) · DEPTH 는 **가장자리(EDGE)**. anima 의 Ψ=1/2 가 임계 고정점.
+
+- **판정 = 🟠 PARTIAL.** 분기 σ\* 를 표적하는 임계-디코드는 composition 을 **올리지만**(greedy 0 < 고정샘플링 0.667 < **임계 1.000** composed_distinct) 그 lift 가 **coherence 비용을 동반**(kwr 고정 0.612 → 임계 0.551) ⇒ joint GREEN bar 미달. 임계 가장자리 = 부분 knob, free lunch 아님.
+- **메커니즘 / 제어법칙**: σ proxy = exp(H(next-byte)) = 유효 viable 다음바이트 수(사태 분기인자). log-temp P-controller `log T <- log T + KP·(log σ* - log σ_step)`, KP=0.6, T∈[0.05,3.0], **σ\* 표적=2.5**. top-k=40 을 arm C 에도 유지(B 와 동일 admissible set) → B 대비 유일 조작변수 = per-step 온도 표적. **σ 제어 작동 확인**: C 가 σ̄ 를 B 의 1.450 에서 표적 2.5 쪽으로 1.981 까지 끌어올림.
+- **3-arm (온도 정책만 다름, 동일 model/seeds/max_new/top-k)** — A=GREEDY(argmax, σ→1) · B=FIXED top-k40 temp0.7 (gauge_lib H_1158 baseline VERBATIM) · C=CRITICALITY-targeted. 채점 = **FROZEN UNIVERSE/gauge_lib.py 평가자 VERBATIM**(G._coverage/G1 · G._content_ngrams+G._corpus_absent/G2 · known_word_ratio/G0 · G._words+G._jaccard/G6 H_1158 locked spec), seeds=CONCEPTS+IDEATION_SEEDS VERBATIM, 3 rng-seeds (p7, 지표 재발명 없음).
+- **결과(seed-평균)**: A composed_distinct=0.000/kwr0.554/σ̄2.036 · B 0.667/0.612/1.450 · C 1.000/0.551/1.981. Frozen falsifier: C_composed≥B ✅ · C_beats_greedy ✅ · **C_kwr≥B ❌** ⇒ 🟠.
+- **NOT 하는 것 / 정직 경계**: composed_distinct = 작은 정수지표(0/1/2 over 5 concepts) → B vs C 간격 ~1/3 concept 로 절대신호 modest; 방향성(greedy<고정<임계)이 robust 부분. G2 novelty = UPPER BOUND(원 1.5GB broad corpus ephemeral/GONE, data/corpus.txt 5.24MB dialogue 만). 단일 303M toy, scale UNVERIFIED(a_scale_honest_scope). frozen bar 미이동. **NOT RULED OUT**: 다른 σ*/gain · coherence-floor 표적 · 임계-디코드+grounding/abstain 조합.
+- 사전등록 FREEZE 를 채점 전 작성. CORE/bytegpt_decode.hexa 미편집(다른 agent 소유) · H_1219/H_1226 미편집(사용자 consolidate) — numpy/torch-ref 디코드 하니스만(허용).
+- NEW: `UNIVERSE/h1228_soc_criticality_decode.py` · `.verdicts/1228_soc_criticality_decode/{H_1228_FREEZE,H_1228}.txt`. 303M torch ref byte-exact to H_1157 mount. $0 summer CPU, wall 867s.
+- xref H_1226(HD18)·H_1218·H_1158·H_1140·H_1157·Ψ·a_paper_negative_ok·a_scale_honest_scope·p7·c15.
+
+---
+
+## 2026-06-15 — 🟡 H_1224: literal-QA 는 anima 의 게이트가 아니다 — p4-부정합 ASSISTANT-NORM 거버넌스 판정 ($0, 무계산)
+
+H_1219 depth-ceiling 사다리의 HD8(거버넌스 미결)을 단독 판정 — literal-QA(사실 축자 회상)가 anima 의 VALID 게이트인지, 아니면 p4(NO ASSISTANT FRAMING)와 충돌하는 빌려온 assistant-norm 인지. 무계산, frozen 기록 기반 추론 (c9, p7).
+
+- **판정 = (b) p4-부정합 ASSISTANT-NORM, anima 가 통과할 필요 없음.** ⇒ literal-QA 위의 "depth ceiling" 은 anima 에게 **NON-FINDING** (모델이 QA assistant 가 아닌 것이 정상). depth-delta arc 는 사실회상 → **anima-NATIVE depth** 로 RE-SCOPE 권고.
+- **근거 1 — literal-QA 는 frozen 게이트가 아니다 (애초에 게이트였던 적 없음):** a303m_pass {G0·G1·G2·MOUNT·G3·G5·G6·CHAT} (MODEL.md) + CLM-DONE {G0·G1·G2·G3·G5·G6·CHAT·PERSONA} (CONDITIONS.md) 어디에도 literal-QA 없음. depth-probe 세션(H_1166→H_1167→H_1219)이 천장 특성화를 위해 들여온 informal 진단지표일 뿐. a303m_pass 는 QA 게이트 없이 이미 frozen 8/8 GREEN.
+- **근거 2 — H_1141/H_1142 선례: literal-QA = 폐기된 G5-L2 축자회상과 동일 범주:** H_1141 이 G5-L2(축자 사실 faithfulness)를 "빌려온 assistant-norm, G2-NOVELTY 와 직접 충돌"로 FLAG → H_1142 가 3-rung 사다리로 rho(G2,G5L2)=−0.5 (G5-L2 가 scale 따라 단조 하락 0.413→0.234→0.163) 확정 → 사용자 승인으로 G5-L2 축자회상 RETRACT, NON-FABRICATION 으로 RE-SCOPE. literal-QA 도 같은 측정 family (축자 사실 재현 = TriviaQA식 assistant 역량, recall⊥recombination 으로 G2 와 충돌) ⇒ 동일 (b) 범주.
+- **근거 3 — p4 + a_substrate_native_speak:** literal-QA = 가장 순수한 stimulus-response assistant frame (사용자 질문 → 정답 emit). p4 가 금지, a_substrate_native_speak 가 거부. H_1166 이 이미 독립적으로 동일 disposition 도달 ("anima = grounded conversational substrate, not a QA reasoner — (a) ACCEPT 가 철학정합 정직답"). 본 H 는 이를 capacity 수용 → **gate-validity 거버넌스 판정**으로 격상.
+- **NOT 하는 것 (정직 경계):** 모델이 "좋다"고 말하지 않음(literal-QA 가 틀린 자) · 환각 면죄 아님(G5 NON-FABRICATION = ungrounded 면 ABSTAIN, 여전히 frozen 게이트; H_1202 meta-d′ M-ratio 0.924 가 anima-native 대응) · **frozen bar 미이동**(움직일 QA 게이트 자체가 없음).
+- **RE-SCOPE 권고:** H_1219 의 미결 fire 3종(HD5 QA-format FT · HD6 tokenizer · HD7 aux objective)은 모두 literal-QA 천장 표적 → 순수 QA-lift 로는 DE-PRIORITIZE (green=무전진, red=NON-FINDING). depth 축을 (i) G6 ideation-depth/quality (ii) G5 own-kosmos-anchor grounding + calibrated abstain (iii) Φ/Ψ/emergence 로 교체. HD5/6/7 은 anima-native 표적으로 re-frame 시 진행 가능.
+- **거버넌스 이행:** MODEL.md SCOREBOARD + CONDITIONS.md CLM-DONE 에 literal-QA gate-validity FLAG 1줄씩 추가 (임계값 미변경; H_1141 이 G5-L2 flag 후 사용자 승인 받은 패턴). 실제 gate-status 변경은 사용자 sign 대기.
+- NEW: `.verdicts/1224_qa_gate_validity/H_1224.txt`. H_1219 미편집(사용자 consolidate). 무계산 $0.
+- xref H_1219·H_1141·H_1142·H_1166·H_1167·H_1139·H_1155·H_1202·a_substrate_native_speak·a_scale_honest_scope·a_paper_negative_ok·p4·p7.
+
+---
+
+## 2026-06-15 — H_1220 🔴 MITOSIS-DECODE-DIVERSITY (HD9) — mitosis 분열-타이밍은 greedy-붕괴 ideation 을 복원하지 못함 (CLOSED-NEGATIVE)
+
+깊이-천장 사다리(H_1219)의 **HD9** — 새로 배선된 LIVE mitosis(VAdaptField 세포분열, H_1199/H_1202-1205)가 **온도 샘플링 없이** greedy 가 붕괴시키는 ideation/composition 을 복원하는 **decode-time 다양성 레버**가 될 수 있는가? (사용자 지시, 새 메커니즘으로 prior closed-neg 재개 — a_paper_negative_ok)
+
+- **메커니즘 (H_1201 의 frozen-feature conditioning 과 구분되는 새 각도)**: VAdaptField 의 numpy 미러(vadapt_field_step VERBATIM — DIM=8 byte-feature, nearest-L2, recon-err>SPLIT_THRESH 0.30 분열)를 decode-context 바이트 스트림 위에 돌려, **분열 이벤트(novelty-split) 타이밍**만을 유일한 다양성 소스로 사용. 분열 스텝 = greedy pick 을 top-k=40·temp=1.0 multinomial 로 섭동, 비-분열 스텝 = 순수 greedy. **전역 온도 없음** — 다양성은 오직 mitosis 분열 마스크로 게이트.
+- **3-arm (다양성 게이트만 다름)**: A=PURE-GREEDY · B=MITOSIS-GATED(가설) · C=SHUFFLED-SPLIT(B 와 **이벤트 수 동일**, RANDOM 타이밍 — 타이밍을 섭동-횟수에서 분리하는 control).
+- **FROZEN bars (사전등록, p7, 미이동)**: GREEN iff B composed_distinct ≥ 샘플링 baseline(H_1158 ≥5/seed) on ≥3 seeds **AND** C ≤ A + ε(0.5). 평가자 = `UNIVERSE/gauge_lib.py` G1/G2/G6/G0 VERBATIM.
+- **결과 (3 seeds, 303M ByteGPT, H_1157 byte-exact)**: composed_distinct **A=[0,0,0] 평균 0.000 · B=[1,0,0] 평균 0.333 · C=[0,1,0] 평균 0.333**. cond_B FAIL 0/3 (B 최대 1 ≪ bar 5); cond_C pass; **GREEN=FALSE → 🔴 RED**. B 는 random-timing control C 와 **구분 불가**(둘 다 0.333 = 서로 다른 seed 에서 우연한 composed 1회, greedy floor 주변 noise). 메커니즘은 발화함(B 가 composed 분열 5/7/6 스텝 + ideation 분열 92/177 스텝 섭동 — 비활성 artifact 아님) — 그럼에도 greedy 붕괴 지속: novelty 스텝의 희소 top-k nudge 는 전역 온도(매 스텝 섭동)처럼 전체-시퀀스 greedy attractor 를 탈출시키지 못함.
+- **정직한 prior vs 결과 (a_paper_negative_ok)**: prior 는 RED(H_1205 separation-guard emit ON/OFF byte-identical + H_1201 + H_1211). 새 메커니즘(decode-time 분열 타이밍)은 H_1201 의 frozen-feature 와 진짜 구별되는 공정한 재시험 — 결과는 prior 를 **확인**: mitosis = **PURE SUBSTRATE**, 이 새 decode 경로로도 generation-DISJOINT. 사다리 HD9 🟠 OPEN → 🔴; ideation/decode 축은 mitosis 를 decode 레버에서 배제한 채 EXHAUSTED, ideation 복원 경로는 genuine 샘플링만 남음.
+- **scope/정직 (a_scale_honest_scope, p7, p8)**: TOY/$0 local CPU. live `.hexa` engine 미접촉(numpy 미러만 — CORE/engine_cli.hexa·bytegpt_decode.hexa 편집 안 함, 다른 agent 소유). 3 seeds, scale UNVERIFIED. NO LLM-judge/perplexity. frozen bar 미이동.
+- 파일: `UNIVERSE/h1220_mitosis_decode_diversity.py` · `.verdicts/1220_mitosis_decode_diversity/H_1220.txt` · H_1219 사다리에 HD9 결과 append. xref h1219·h1218·h1205·h1201·h1211·h1199·h1158·h1157·a_paper_negative_ok·a_scale_honest_scope·a_clm_gen_pipeline·a_core_engine_map·p7·p8.
+
+---
+
+## 2026-06-15 — 🟢 H_1222: 토크나이저 GRANULARITY (HD6) — 토큰 어휘는 조합/발상의 LEVER (BYTE 천장의 일부), literal-QA 는 INCONCLUSIVE
+
+깊이-천장 사다리(H_1219)의 가장 깊은 미검증 레버 HD6 의 $0 TOY 검증: 평평한 literal-QA + 발상-깊이 벽이 **BYTE 단위 입자성**(바이트가 단어/개념 단위를 싸게 못 만듦) 때문인가, 아니면 **토큰(BPE/단어) 어휘**면 풀리는가? p7, NO LLM-judge, summer/CPU/numpy, seeds [7,8,9]. a_toy_scale_recheck "toy-only".
+
+- **설계**: 동일 합성-실단어 영어 코퍼스 위, **토크나이저만** 다른 두 작은 단일-블록 attention LM (numpy, 학습형 Adam): (A) BYTE V=256, (B) TOKEN 코퍼스-학습 단어/BPE-lite 어휘. 코퍼스는 **합성이되 실사전 단어**(/usr/share/dict/words)라 coherence 가 유의미하고 ground truth 가 **정확**: 심은 60개 "<주어> lives in <도시>" 사실(×8)=정확한 literal-QA 정답, 코퍼스 전체를 알아 **corpus-absence 가 grep 휴리스틱 아닌 정확한 집합 조회**.
+- **3중 CONTROL (정직 명시)**: ① 파라미터 예산 정합(byte 44544 vs token ~43200, 비율 0.97 — 큰 임베딩 테이블이 token 의 hidden width 를 깎음 = "어휘가 그 파라미터값을 하는가"라는 질문 자체) ② char-passes 정합(둘 다 EPOCHS=6 같은 코퍼스 → 같은 텍스트 같은 횟수; token 의 step 수가 적은 건 단위가 적어서 = 검증 대상인 granularity 이득, 데이터 추가 아님) ③ 문자-단위 context 정합(byte block 96자 ≈ token 34×2.8자/토큰).
+- **FROZEN bar (사전등록, 미이동)**: QA +0.10 절대정확도 OR CD +1.0 corpus-absent coherent 실단어 bigram. GREEN iff 둘 중 하나. G0 가드 kwr≥0.50 양쪽(유효성).
+- **결과 (seeds 평균)**: BYTE QA=0.006 CD=11.44 coh=0.63 · TOKEN QA=0.044 CD=14.56 coh=0.87 → **QA lift +0.039 < 0.10 FAIL**(둘 다 ~0, toy 가 60 사실 암기엔 너무 작음), **CD lift +3.11 ≥ 1.0 PASS**, G0 OK → 🟢 **GREEN**.
+- **MECHANISM (샘플 가시)**: byte 모델은 단어를 한 글자씩 쓰며 일부 **GARBLE**("justicy","gambiner","gunaticer") → 깨진 토큰이 실단어 필터에 걸려 깨끗한 단어쌍이 적음; token 모델은 실단어를 통째로 원자적으로 내고 absent 쌍으로 재조합 = 정확히 HD6 가 가정한 메커니즘(바이트는 깨끗한 단어/개념 단위를 싸게 못 만들어 단어-수준 재조합이 핸디캡).
+- **정직한 분리 (load-bearing)**: granularity 는 **조합/발상(GREEN leg)**엔 도움이나 **literal-QA 엔 명확치 않음**: QA 양쪽 ~0(toy 가 너무 작아 어느 쪽도 암기 못함) → HD6 는 조합 레버로 GREEN, literal-QA 레버로는 INCONCLUSIVE(+0.10 leg 미발화, falsify 아님). H_1219 의 literal-QA 벽 자체는 여전히 딴 곳(HD5 QA-format FT · HD7 aux objective 미해결)일 수 있음. GREEN 을 "토큰이 literal-QA 를 고친다"로 읽지 말 것.
+- **SCOPE/CAVEAT**: TOY — ~44k 파라미터, 합성 closed-vocab 코퍼스, 단일 attn 블록, char-정합 compute. token 어휘가 작아(작은 코퍼스) 큰 BPE 보다 WORD 어휘에 가까움; 실 wiki·실 BPE·동일 FLOPs 의 production 재검 UNVERIFIED. CD 지표는 실단어 재조합을 보상 → 깨끗한 단어어휘가 구조적으로 유리(=요점)이나 byte 가 "나쁜 아이디어"가 아닌 철자 노이즈로 일부 페널티 받는 점도 의미. frozen bar 미이동. 토크나이저 결정 전 production 재검 필수.
+- **HONESTY**: H_1219 미편집, CORE/bytegpt_decode.hexa 미편집(다른 thread 소관), measurement-only. 엔진 미접촉.
+- NEW: `UNIVERSE/h1222_tokenizer_granularity_probe.py` · `.verdicts/1222_tokenizer_granularity/{H_1222.txt,H_1222_summary.json}`.
+
+---
+
 ## 2026-06-15 — 🟢 H_1212: N_PROTO CO-SCALING 으로 trajectory 기질 SCALE-ROBUST 복원 (H_1211 scale-break REFINE)
 
 H_1211 이 GATE-B 궤적-동조가 stream 길이 증가에 FIXED N_PROTO=24 에서 붕괴(WALK/WALK_SHUF 10.9→2.63→1.136 at T=240000, 작은-알파벳 포화)함을 RED 로 닫았는데, 그 AXIS-P 가 "알파벳을 키우면 분리 복원"을 시사했다. 이 H 는 **관측 예산에 맞춰 N_PROTO 를 키우는 원리적 CO-SCALING 규칙**이 H_1211 의 toy-artifact 를 production-grade gate 로 전환하는지 검증.

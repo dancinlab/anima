@@ -1,0 +1,75 @@
+H_1229 — DEVELOPMENTAL LEARNING-ORDER (HD20) — VERDICT 🔴 CLOSED-NEGATIVE
+=========================================================================
+date: 2026-06-15  ·  $0 summer/CPU toy  ·  p7  ·  a_toy_scale_recheck "toy-only"
+lens: HD20 from .verdicts/1226_foreign_domain_depth_lens/H_1226.txt (biology/development, NOT
+      LLM training-recipe lore — c15). Pre-registration frozen in H_1229_FREEZE.txt BEFORE any score.
+probe: UNIVERSE/h1229_developmental_order.py (git-tracked)  ·  result: h1229_result.json
+slug note: integer 1229 collides w/ unrelated MATRIX .verdicts/1229_matrix_climb_expanded; this HD20
+           probe uses DISTINCT slug 1229_developmental_order (precedent H_1146). No path collision.
+
+HYPOTHESIS: depth/composition needs ORDERED, developmentally-STAGED learning (easy->hard, critical-
+period / Piaget-stage windows), not the flat UNORDERED single-pass the byte-LM got.
+
+SUBSTRATE: pure-numpy windowed byte-MLP (K=8 prev bytes one-hot -> H=64 tanh -> V=256 softmax,
+147,776 params), SGD+momentum, STEPS=4000, BS=64, 3 seeds (7,17,29).
+corpus: serving/corpus/anima_7b_webscale.en.head.txt (English webscale, 204800 bytes, 1308 train
+lines, 3010-word corpus lexicon, last 10% bytes held out — never trained).
+difficulty(line) = z(len) + z(rarity=-log p(byte) mean over global byte freq) + z(syntax=punct density).
+staging: 4 difficulty quartiles, critical-period unlock — training window s samples ONLY unlocked
+stages 0..s; equal total steps/tokens across ALL arms. EQUAL COMPUTE — arms differ ONLY in ORDER.
+
+THREE ARMS (identical init/hyperparams/budget, differ ONLY in order):
+  (A) FLAT-SHUFFLED   — sample windows uniformly from ALL lines.
+  (B) CURRICULUM      — easy->hard staged unlock.
+  (C) ANTI-CURRICULUM — hard->easy staged unlock.
+
+RESULT (mean over 3 seeds; held-out p7 metrics, NOT perplexity/LLM-judge):
+  arm                  composed_distinct   coherence(kwr)   qa_proxy(top1)
+  A_flat                        17.000          0.3991          0.3575
+  B_curriculum                  11.333          0.3689          0.3537
+  C_anticurriculum              15.000          0.4022          0.3530
+  per-seed CD:  A [17,17,17]  B [11,13,10]  C [11,17,17]
+
+PRE-REGISTERED RULE: GREEN iff (dCD>=1.0 OR dCO>=0.02) AND (C.CD<=A.CD AND C.COH<=A.COH).
+  dCD = B-A composed_distinct = -5.667   (margin +1.0)  -> B WORSE, fails margin
+  dCO = B-A coherence         = -0.030   (margin +0.02) -> B WORSE, fails margin
+  B beats A by margin: FALSE  ·  C not better than A: FALSE (C.COH 0.4022 > A 0.3991)
+  => FIRST AND-clause already FALSE.
+
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok) — developmental learning-ORDER is NOT the depth
+lever at toy scale. Not only does curriculum (B) fail to beat flat (A) — it is DECISIVELY WORSE on
+BOTH composed_distinct (-5.67) and coherence (-0.030), every seed. Anti-curriculum (C) is roughly on
+par with flat (slightly better on coherence). So ORDER does not help, and the easy->hard direction
+specifically HURTS recombination/ideation at this scale.
+
+MECHANISM (toy reading): a flat shuffle gives the model i.i.d. exposure to the FULL difficulty
+distribution from step 0, so its weights see the rare/long/compositional bytes throughout training and
+under cosine-LR decay settle on a broad next-byte distribution -> more distinct corpus-absent
+continuations. The easy->hard curriculum spends its early (high-LR) budget on the easiest quartile
+(short, high-frequency, low-punctuation lines); by the time the hard quartile unlocks the LR has
+decayed, so the compositional/rare material is under-learned, NARROWING the generative distribution
+(fewer distinct ideas, lower kwr). This is the classic curriculum-vs-i.i.d. tension surfacing at toy
+scale: staged windows trade breadth for an early-easy bias that the small model never recovers from.
+RING WITH PRIORS: matches the campaign's other developmental/structural negatives where the MITOSIS/
+staging substrate does NOT improve generation (H_1200/H_1201 mitosis-as-generator falsified; H_1211
+trajectory-half toy artifact). Generation stays a flat-exposure CLM property here (a_clm_gen_pipeline).
+
+NOTE ON SMOKE ARTIFACT (honesty c9): a 200-step single-seed smoke run showed an apparent GREEN
+(B.CD 2 vs A.CD 1) — an UNDERTRAINED artifact. At the frozen full budget (4000 steps × 3 seeds) the
+sign REVERSES cleanly and decisively. The frozen config, not the smoke, is the verdict.
+
+NOT RULED OUT (scope honesty, a_scale_honest_scope): a DIFFERENT difficulty metric, a non-quartile /
+self-paced schedule, LR-rewarming per stage (to fix the high-LR-spent-on-easy artifact), longer
+training, or a SEQUENCE model (vs windowed MLP) UNTESTED. This is a toy 148k-param numpy byte-MLP on a
+200KB English slice — scale-transfer to 303M/production UNVERIFIED. Frozen bars NOT moved. No CORE/
+*.hexa edited. No H_1219/H_1226 edited.
+
+ENGINE-TRANSFER (a_engine_native_learning, landed on main mid-session): this probe is a NUMPY MIRROR
+trainer, NOT the final-architecture engine — so per the new directive the result is DIRECTIONAL ONLY
+("engine-transfer UNVERIFIED"), not a binding engine-native closure. Mitigating note: the directional
+verdict is 🔴 (order is NOT a lever); a mirror pointing "no" is weaker evidence to overturn on the
+engine than a mirror pointing "yes", so the burden to flip this on a live A⇄G run is low. Still not a
+binding closure — an engine-native re-confirmation would firm it.
+
+xref H_1226(HD20)·H_1219·H_1200·H_1201·H_1211·H_1158·H_1142·a_clm_gen_pipeline·a_paper_negative_ok·
+a_scale_honest_scope·a_toy_scale_recheck·a_engine_native_learning·p7·p8·c9·c15.

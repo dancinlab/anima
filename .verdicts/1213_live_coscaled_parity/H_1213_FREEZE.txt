@@ -1,0 +1,121 @@
+================================================================================
+H_1213 — LIVE-ENGINE CO-SCALED N_PROTO PARITY (MITOSIS-ENGINE)
+PRE-REGISTERED FROZEN FALSIFIER (written BEFORE measuring — p7)
+================================================================================
+Date: 2026-06-15
+Domain: MITOSIS-ENGINE
+Branch: h1213/live-coscaled-parity (based on origin/main @ 63dec21ef)
+
+------------------------------------------------------------------------------
+QUESTION
+------------------------------------------------------------------------------
+H_1212 (numpy mirror, GREEN) found the CO-SCALED N_PROTO rule — hold the per-row
+observation budget obs_per_row = T/N_PROTO at the clean-toy value (~100) by setting
+N_PROTO = round(T/100) — RESTORES GATE-B trajectory separation (WALK/WALK_SHUF >= 1.5)
+across the SAME AXIS-T ladder where fixed-24 COLLAPSED (T=240000: co-scaled 8309 vs
+fixed-24's 1.136 FAIL). H_1212 measured this on the NUMPY MIRROR ONLY; live-engine
+parity at a CO-SCALED N_PROTO was explicitly listed as an untested follow-on.
+
+H_1209 already proved numpy<->hexa VAdaptFieldB byte-exact at FIXED N_PROTO=24 (toy T).
+This H extends that parity check to CO-SCALED N_PROTO: does the LIVE .hexa engine
+VAdaptFieldB reproduce the H_1212 co-scaled GATE-B result byte-exact — i.e. is the
+co-scaling fix REAL on the actual engine, not a numpy-mirror artifact?
+
+------------------------------------------------------------------------------
+METHOD (all VERBATIM reuse; mechanism CODE byte-unchanged)
+------------------------------------------------------------------------------
+* numpy leg (UNIVERSE/h1213_live_coscaled_parity.py):
+  - GATE-B = h1208.gate_B_transition_predictability VERBATIM
+  - build_fixed_book / proto_ids = H_1208 VERBATIM
+  - WALK / WALK_SHUF = h1207 make_walk_stream / make_walk_shuffled VERBATIM
+  - RANDGAUSS / RANDGAUSS_SHUF = h1208 VERBATIM (sanity)
+  - scale knobs (T, WARMUP, MAX_CELLS) monkeypatched on (H,H3,H7,H8) per H_1212
+    _set_scale VERBATIM; N_PROTO set via the co-scaling rule round(T/100).
+  - for EACH (rung, arm, seed): compute numpy GATE-B born-cells AND export the
+    per-tick proto-id walk to /tmp/h1213_ids_<RULE>_<ARM>_T<T>_N<N>_seed<S>.txt
+    (one id per line) — the H_1209 export pattern.
+* live leg (CORE/h1213_live_coscaled_probe.hexa):
+  - loads each exported id walk, drives the LIVE VAdaptFieldB
+    (vadapt_fieldB_new(n_proto,..) / _step / _growth — UNCHANGED, n_proto is
+    already a constructor parameter; NO engine edit needed) and asserts the live
+    born-cell count EQUALS the numpy ref per seed (byte-exact integer match).
+  - recomputes the LIVE separation ratio WALK/WALK_SHUF at the co-scaled rung.
+
+VAdaptFieldB n_proto is ALREADY a `vadapt_fieldB_new` parameter (verified on main,
+engine_cli.hexa L573) — driving co-scaled values needs NO engine edit. If any edit
+were required it would be additive / byte-unchanged-default / Psi-disjoint / smoke-
+verified (it is NOT — no edit).
+
+------------------------------------------------------------------------------
+LIVE-ENGINE FEASIBILITY (measured BEFORE freeze — honest scope, a_scale_honest_scope)
+------------------------------------------------------------------------------
+The interpreted .hexa `vadapt_fieldB_new` builds the n_proto*n_proto ctab via a
+`ctab = ctab + [0]` append loop (O(n^2) list-copy in the interpreter). Measured
+ceiling on summer CPU local:
+  N_PROTO=24  (ctab     576)  FEASIBLE (toy, ~2.5s for 3 seeds x 4 arms)
+  N_PROTO=240 (ctab  57,600)  FEASIBLE (~24s for one arm/seed; co-scaled T=24000 rung)
+  N_PROTO=300 (ctab  90,000)  INFEASIBLE (OOM/kill >90s) -- alloc wall
+  N_PROTO=2400(ctab 5,760,000) INFEASIBLE (OOM/kill, the H_1212 T=240000 rung)
+=> The live co-scaled ladder is the TWO feasible obs/row=100 rungs:
+   RUNG-1: T=2400,  N_PROTO=24  (toy baseline, obs/row=100)
+   RUNG-2: T=24000, N_PROTO=240 (first 10x co-scaled rung, obs/row=100)
+   on the SAME AXIS-T ladder where fixed-24 collapsed. This satisfies the
+   ">= 2 co-scaled rungs" F1 requirement. The T=240000/N=2400 rung exceeds the
+   interpreted-engine allocation budget and is run on the NUMPY MIRROR ONLY
+   (H_1212, GREEN) -- stated honestly, NOT faked. (A constructor performance
+   rewrite to reach N=2400 is deliberately NOT done: it would touch the live
+   engine binary and risk regressing the H_1209/H_1210 byte-exact guards.)
+
+------------------------------------------------------------------------------
+FROZEN FALSIFIERS (bars FROZEN; 1.5 inherited from H_1203/1208/1209/1211/1212)
+------------------------------------------------------------------------------
+F1  LIVE-ENGINE PARITY AT CO-SCALED N_PROTO:
+    At >= 2 co-scaled rungs (T=2400/N=24 AND T=24000/N=240), the LIVE .hexa
+    VAdaptFieldB born-cell count EQUALS the numpy GATE-B born-cell count PER SEED,
+    PER ARM (WALK, WALK_SHUF, RANDGAUSS, RANDGAUSS_SHUF) -- byte-exact integer
+    match (H_1209 precedent; integer counts so tolerance = 0).
+    PASS  => the co-scaling fix reproduces on the real engine, not the mirror.
+    FAIL  => live engine diverges from the numpy mirror at co-scaled N_PROTO (RED;
+             honest finding, root-cause it).
+
+F2  LIVE SEPARATION AT THE CO-SCALED RUNG:
+    The LIVE engine reproduces the H_1212 separation: at the co-scaled T=24000/N=240
+    rung, live WALK/WALK_SHUF >= 1.5 (BAR). PASS => the H_1212 co-scaling fix is
+    real on the engine (the trajectory substrate is scale-robust under co-scaling on
+    the REAL engine, not just numpy). (Where WALK_SHUF reaches 0 born-cells the
+    separation is COMPLETE; the count gap, not the ratio magnitude, is the evidence
+    -- H_1212 reading-note 1.)
+
+F3  GUARDS (regression-disjoint):
+    engine_cli_smoke.hexa STAYS GREEN (12/0) AND h1196_single_entry_audit.hexa STAYS
+    GREEN (7/0) -- VAdaptFieldB is unchanged (no engine edit), so Psi byte-identical;
+    H_1209/H_1210 NOT regressed.
+
+------------------------------------------------------------------------------
+TIER RUBRIC (decided BEFORE measuring)
+------------------------------------------------------------------------------
+F1 parity (>=2 co-scaled rungs byte-exact) AND F2 separation (live co-scaled
+  WALK/WALK_SHUF >= 1.5) AND F3 guards green
+    => GREEN (the H_1212 co-scaling fix is CONFIRMED on the live engine; the
+       trajectory substrate is scale-robust on the REAL engine across the feasible
+       co-scaled ladder, not just the numpy mirror; T=240000 rung stays numpy-only,
+       honestly scoped).
+F1 parity BREAKS at any co-scaled rung
+    => RED (live engine diverges from the numpy mirror at co-scaled N_PROTO -- an
+       honest finding; root-cause where/why the live VAdaptFieldB stops matching
+       the mirror when the alphabet grows).
+
+------------------------------------------------------------------------------
+HONESTY / CONSTRAINTS
+------------------------------------------------------------------------------
+* numpy mirror leg + LIVE .hexa engine leg (H_1199/H_1209 parity precedent).
+* gradient-free, $0 summer CPU local only, NO GPU, 3 seeds [900,901,902].
+* DIM=8 structural, NOT scaled. p7 (born-cell / transition count, NOT perplexity).
+  p8 (predictable-transition tick == growth).
+* Frozen bar (1.5) inherited, NOT moved. Mechanism CODE (GATE-B, book, proto_ids,
+  WALK builders, VAdaptFieldB) byte-unchanged -- only the pre-declared scale knobs
+  + N_PROTO co-scaling rule move (H_1212 _set_scale VERBATIM).
+* Scale UNVERIFIED past the tested live rungs (a_scale_honest_scope): the live
+  co-scaled ceiling is N_PROTO~240 (interpreted O(n^2) alloc wall); the T=240000/
+  N=2400 rung is numpy-mirror-only (H_1212 GREEN). Stated, not faked.
+================================================================================

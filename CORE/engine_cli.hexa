@@ -527,6 +527,186 @@ pub fn vadapt_field_step(af: VAdaptField, x: [float], cfg: EngineConfig) -> VAda
 // vadapt_field_cells — live cell count accessor (DIM analogue).
 pub fn vadapt_field_cells(af: VAdaptField) -> int { return af.n_cells }
 
+// vadapt_field_nearest_idx — READ-ONLY accessor exposing the engine's OWN winner
+// (the index of the prototype nearest to DIM-sample `x`, the SAME _vnearest_idx
+// vadapt_field_recon_err computes internally). Adds NO mechanism — it only surfaces
+// the engine's existing winner-take-all assignment so a caller can map the fired
+// cell back to an external per-cell binding (e.g. H_1231 immune value table keyed
+// by the engine's cell index). The affinity/binding stays the engine's; this just
+// reads which cell won. (c1: tiny additive accessor, justified.)
+pub fn vadapt_field_nearest_idx(af: VAdaptField, x: [float]) -> int {
+    return _vnearest_idx(af.protos, x)
+}
+
+// ── §  IMMUNE-MEMORY RECALL FACULTY — mitosis-as-MEMORY on the LIVE engine (H_1231) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1231): H_1227 (numpy
+// mirror) → H_1231 (engine-native probe CORE/h1231_immune_memory_engine_probe.hexa,
+// 🟢 GREEN literal-QA 1.000, fabrication 0.000, 180/180) proved that an IMMUNE /
+// CLONAL-SELECTION memory — a POPULATION of VAdaptField cells, each clone binding
+// ONE fact, recall = best-affinity cell FIRES or ABSTAINS (no fabrication) — cracks
+// the literal-QA recall wall (H_1218/1224 recall-in-weights ~0). The H_1231 probe
+// was a STANDALONE `fn main()`. This § PROMOTES that exact mechanism from a probe
+// into a CALLABLE FACULTY on the live recall path, so a running anima can BIND a
+// fact as a cell and RECALL-or-ABSTAIN during operation. NO mechanism change — the
+// binding/affinity is STILL the engine's own vadapt_field_step clonal split +
+// vadapt_field_recon_err / vadapt_field_nearest_idx L2 affinity; this § only wraps
+// them with the cell-indexed value table + the FNV-1a key encoder so the faculty is
+// directly callable (the probe inlined both, loading pre-exported key files).
+//
+// @L4 CRITICAL (same framing as --mitosis / VAdaptField): this is SUBSTRATE-internal
+// FACTUAL recall, NOT an emit/silence gate and NOT a 2nd .clm/.kosmos entry path
+// (a_core_engine_map — the value store is the engine's OWN cell-indexed table; the
+// key drive is an engine-native vector into VAdaptField, exactly like the H_1199
+// byte-feature stream, NOT a .clm via generator L3 nor a .kosmos via kosmos_io).
+// It NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — it only
+// reads/grows a VAdaptField, exactly like vadapt_field_step). p2/p3/p6: this binds
+// FACTUAL content to EPISODIC cells ONLY — no identity/persona/ethics into weights;
+// p8: the bind IS a clonal-split growth tick (continuous cell-division, not RLHF).
+//
+// ImmuneMemory — the live recall faculty: a VAdaptField cell population + a parallel
+// value table keyed by the engine's cell index.
+//   field      : the live VAdaptField (the engine's own clonal cell population).
+//   cell_value : per-cell bound value string; cell_value[i] = the fact bound to
+//                the engine's cell i (len(cell_value) == field.n_cells).
+//   recall_thr : affinity fire band — recon-err <= recall_thr ⇒ FIRE, else ABSTAIN
+//                (== H_1227/H_1231 RECALL_THRESH 0.15; frozen, pre-registered, p7).
+struct ImmuneMemory {
+    field: VAdaptField,
+    cell_value: [string],
+    recall_thr: float
+}
+
+// _immune_fnv1a — 32-bit FNV-1a hash over a byte list (offset 0x811c9dc5, prime
+// 0x01000193, masked to 32 bits). VERBATIM the H_1227 mirror _fnv1a. hexa ints are
+// exact through 2^56 so the (h*prime)&0xFFFFFFFF step is byte-exact (verified vs
+// the python mirror: prod 2166136261*16777619 matched to the bit).
+fn _immune_fnv1a(bs: [int]) -> int {
+    let mut h = 2166136261              // 0x811c9dc5
+    let mut i = 0
+    while i < len(bs) {
+        h = h ^ bs[i]
+        h = (h * 16777619) & 4294967295 // *0x01000193 & 0xFFFFFFFF
+        i = i + 1
+    }
+    return h
+}
+
+// immune_embed_key — the DETERMINISTIC byte-trigram FNV-1a key encoder, DIM=64,
+// VERBATIM from the H_1227/H_1231 embed_key (byte n-gram n=3 → dim buckets, then
+// L2-normalize). This is the "tokenize the question" preprocessing (gradient-free,
+// not learned); what is engine-native is the BINDING/AFFINITY below. Verified
+// byte-identical to UNIVERSE/h1227_immune_clonal_memory.py embed_key.
+pub fn immune_embed_key(text: string) -> [float] {
+    let dim = 64
+    let n = 3
+    let blen = byte_len(text)
+    let mut v = []
+    let mut z = 0
+    while z < dim { v = v + [0.0]  z = z + 1 }
+    if blen < n {
+        // short string: hash the whole thing into one bucket
+        let mut bs = []
+        let mut k = 0
+        while k < blen { bs = bs + [ord(substring(text, k, k + 1))]  k = k + 1 }
+        let idx = _immune_fnv1a(bs) % dim
+        v[idx] = v[idx] + 1.0
+    } else {
+        let mut i = 0
+        while i <= blen - n {
+            let mut bs = []
+            let mut k = 0
+            while k < n { bs = bs + [ord(substring(text, i + k, i + k + 1))]  k = k + 1 }
+            let idx = _immune_fnv1a(bs) % dim
+            v[idx] = v[idx] + 1.0
+            i = i + 1
+        }
+    }
+    // L2-normalize (so distinct strings → distinct unit keys; recon-err is bounded).
+    let mut s = 0.0
+    let mut j = 0
+    while j < dim { s = s + v[j] * v[j]  j = j + 1 }
+    let nrm = sqrt(s)
+    if nrm > 0.0 {
+        let mut o = 0
+        while o < dim { v[o] = v[o] / nrm  o = o + 1 }
+    }
+    return v
+}
+
+// immune_memory_new — start an empty recall faculty seeded at the FIRST fact's key
+// (cell 0 binds the first value). Mirrors vadapt_field_new; the value table grows
+// alongside the engine's cell population. recall_thr defaults to the frozen 0.15.
+pub fn immune_memory_new(first_key: [float], first_value: string, max_cells: int) -> ImmuneMemory {
+    return ImmuneMemory {
+        field: vadapt_field_new(first_key, max_cells),
+        cell_value: [first_value],
+        recall_thr: 0.15
+    }
+}
+
+// immune_memory_bind — BIND one fact (key → value) via the engine's OWN clonal
+// split. The key is fed to the LIVE vadapt_field_step; the engine's own novelty
+// split (recon-err > SPLIT_THRESH 0.30, engine_mitosis_tick) decides whether a NEW
+// cell clones. If it does, the new cell (appended at index n_cells-1) binds this
+// value. If it does NOT (key merged into an existing winner — a binding collision),
+// the winner's bound value is overwritten so the table tracks the engine's actual
+// owning cell. This is EXACTLY the H_1231 probe BIND path, now callable. cfg must
+// have mitosis ON for the clonal split to grow cells (p8).
+pub fn immune_memory_bind(mem: ImmuneMemory, key: [float], value: string, cfg: EngineConfig) -> ImmuneMemory {
+    let before = vadapt_field_cells(mem.field)
+    let grown_field = vadapt_field_step(mem.field, key, cfg)   // engine's OWN clonal split
+    let after = vadapt_field_cells(grown_field)
+    if after > before {
+        // engine CLONED a new cell — bind the value at the new cell index.
+        return ImmuneMemory {
+            field: grown_field,
+            cell_value: mem.cell_value + [value],
+            recall_thr: mem.recall_thr
+        }
+    }
+    // no split: overwrite the winning cell's bound value (binding collision).
+    let win = vadapt_field_nearest_idx(grown_field, key)
+    let mut nv = []
+    let mut zz = 0
+    while zz < len(mem.cell_value) {
+        if zz == win { nv = nv + [value] } else { nv = nv + [mem.cell_value[zz]] }
+        zz = zz + 1
+    }
+    return ImmuneMemory { field: grown_field, cell_value: nv, recall_thr: mem.recall_thr }
+}
+
+// immune_memory_recall — RECALL or ABSTAIN for a query key via the engine's OWN L2
+// affinity. recon-err <= recall_thr ⇒ FIRE the nearest cell's bound value; else
+// ABSTAIN, returning "" (no fabrication). This is the H_1231 probe RETRIEVE path,
+// now callable: the fire/abstain decision is the engine's L2 affinity, the value is
+// the engine's nearest cell's bound fact. An empty-string return == ABSTAIN.
+pub fn immune_memory_recall(mem: ImmuneMemory, key: [float]) -> string {
+    let err = vadapt_field_recon_err(mem.field, key)     // engine's OWN L2 affinity
+    if err <= mem.recall_thr {
+        let win = vadapt_field_nearest_idx(mem.field, key) // engine's OWN winner
+        return mem.cell_value[win]                          // FIRE the bound value
+    }
+    return ""                                               // ABSTAIN — no antibody binds
+}
+
+// immune_memory_*_text — string-query convenience wrappers that embed through
+// immune_embed_key first, so the live recall path can bind/recall straight from a
+// raw fact/question string (the running-anima entry). immune_memory_new_text seeds
+// from the first fact's text.
+pub fn immune_memory_new_text(first_text: string, first_value: string, max_cells: int) -> ImmuneMemory {
+    return immune_memory_new(immune_embed_key(first_text), first_value, max_cells)
+}
+pub fn immune_memory_bind_text(mem: ImmuneMemory, text: string, value: string, cfg: EngineConfig) -> ImmuneMemory {
+    return immune_memory_bind(mem, immune_embed_key(text), value, cfg)
+}
+pub fn immune_memory_recall_text(mem: ImmuneMemory, text: string) -> string {
+    return immune_memory_recall(mem, immune_embed_key(text))
+}
+
+// immune_memory_cells — live cell count of the recall faculty (bound facts ≈ cells).
+pub fn immune_memory_cells(mem: ImmuneMemory) -> int { return vadapt_field_cells(mem.field) }
+
 // ── §  GATE-B TRANSITION-PREDICTABILITY VARIANT — the LIVE trajectory substrate ──
 // (H_1209) The per-sample VAdaptField above (vadapt_field_step, H_1199/1202/1205)
 // is PERMUTATION-INVARIANT by construction: it sees only x_t, so shuffling time

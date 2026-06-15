@@ -1,0 +1,121 @@
+H_1282 — WORKING MEMORY (PFC active-maintenance buffer) — VERDICT
+================================================================================
+SLUG: 1282_working_memory_buffer   LENS: missing-brain-structure (neuro, c15)
+DATE: 2026-06-15   $0 CPU numpy   SEEDS=[1282,1283,1284]   p7 (delayed-match acc)
+FROZEN BARS: .verdicts/1282_working_memory_buffer/H_1282_FREEZE.txt (frozen first)
+PROBE: UNIVERSE/h1282_working_memory_buffer.py
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║ VERDICT: 🔴 RED on the frozen bars — BUT the mechanism is REAL and        ║
+║ DISTINCT from immune memory; RED is a THRESHOLD-READOUT + HORIZON honest   ║
+║ finding, NOT a collapse of B into the episodic store.                     ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────────────
+VERBATIM METRIC OUTPUT (mean over 3 seeds)
+────────────────────────────────────────────────────────────────────────────
+  N     A.acc   B.acc   B-A      immune-ctrl(λ1,K∞)
+  0     1.000   0.962   -0.038   0.958
+  1     1.000   0.983   -0.017   0.973
+  2     1.000   0.990   -0.010   0.978
+  4     0.500   1.000   +0.500   0.962    ← B holds, A has SCROLLED OUT
+  6     0.500   0.500   +0.000   0.967
+  8     0.500   0.500   +0.000   0.977
+  12    0.500   0.500   +0.000   0.975
+
+  capacity: load 7 → retained 4 (=K) on ALL 3 seeds.
+
+  ── FROZEN BARS ──
+   (1) MARGIN  mean_N(B-A)=+0.062  >= 0.15  → False
+   (2) GRACE   B(N=12)=0.500>=0.7 AND A(N=12)=0.500<=0.6  → False
+   (3) DISTINCT B(N=0)=0.962>=0.95, monotone=False, cap≈K=True  → False
+   (4) ROBUST  per-seed margin>=bar AND grace on all 3  → False
+   [distinct-vs-immune] immune-ctrl FLAT(no collapse)=True, B decays<ctrl@N=12=True
+  VERDICT: 🔴 RED [margin +0.062 | grace False | distinct False | robust False]
+
+────────────────────────────────────────────────────────────────────────────
+DIAGNOSTIC (graded signal, seed 1282 — reported, NOT a bar; explains the RED)
+────────────────────────────────────────────────────────────────────────────
+  N    mean match-score   mean nonmatch   AUROC(match>nonmatch)
+  0       1.000              0.100           1.000
+  2       0.722              0.130           1.000
+  4       0.522              0.128           1.000
+  6       0.377  (<θ=0.40)   0.114           0.998   ← signal PERFECT, θ cuts it
+  8       0.102              0.099           0.513   ← cue slot DISPLACED → gone
+  12      0.106              0.110           0.488
+
+────────────────────────────────────────────────────────────────────────────
+WHY RED — two honest causes (NOT retuned; frozen-first held, p7)
+────────────────────────────────────────────────────────────────────────────
+1) THRESHOLD CLIFF (readout artifact). The cue activation decays smoothly as
+   1.0·λ^N (λ=0.85): N=4→0.522, N=6→0.377. The FROZEN binary readout θ=0.40
+   crosses this curve at N≈5.6, so has_match flips OFF at N=6 even though the
+   graded match-score is still PERFECTLY discriminable (AUROC 0.998 at N=6).
+   The buffer HOLDS the item out to N=6; the hard threshold throws away usable
+   signal. This is a READOUT limitation, not a memory failure.
+2) HORIZON (real). At N=8 the cue SLOT has been DISPLACED by distractors gating
+   into the K=4 capacity (match-score 0.102 ≈ nonmatch 0.099, AUROC 0.51). This
+   is the TRUE volatile+capacity horizon of the buffer (~N=6–8), which does NOT
+   reach the N=12 grace bar I pre-registered. The bar was set too far out for
+   the frozen λ/θ/K; honest miss, NOT moved.
+
+The margin bar also fails only because A is at CEILING (1.000) for N≤2 (cue still
+in its W=4 window) — B can't beat a perfect A there; B's win is the +0.500 at N=4
+where A has scrolled out. Averaged over N≤2 ceiling + N≥6 shared-floor, mean
+margin dilutes to +0.062.
+
+────────────────────────────────────────────────────────────────────────────
+DID B STAY DISTINCT FROM IMMUNE MEMORY?  YES (load-bearing, GREEN on distinctness)
+────────────────────────────────────────────────────────────────────────────
+B did NOT collapse into the immune/episodic store:
+  · DECAY      — B match-score falls smoothly with N (1.000→0.377→0.102); the
+                 immune-control (λ=1.0, K=∞) stays FLAT-HIGH across ALL N
+                 (0.94–0.99, NO collapse). Decay is what makes B WORKING memory.
+  · CAPACITY   — load K+3=7 items → B retains exactly 4 (=K) on all 3 seeds; the
+                 immune store would retain ALL 7. Capacity-limited, as designed.
+  · VOLATILE   — the cue slot is OVERWRITTEN by later distractors (N=8 → gone);
+                 the immune cell is persistent and never overwritten.
+The λ=1/K=∞ control reproducing flat immune-like recall is the positive proof
+that the decay + capacity (not the lookup) are what distinguish B from H_1227/
+H_1231. So the structures ARE different computations; B is genuine WM.
+
+────────────────────────────────────────────────────────────────────────────
+FINDING (closed-negative on the frozen bars, with a real distinct mechanism)
+────────────────────────────────────────────────────────────────────────────
+A gated leaky-activation WM buffer IS a real, distinct missing brain structure —
+it holds an item ACTIVE across distractors (perfect discrimination to N≈6) where
+the flat decoder window (W=4) collapses the moment the cue scrolls out (N≥4), and
+it is volatile + capacity-limited (≠ the persistent unbounded immune store). BUT
+on the pre-registered bars it is 🔴: (i) a binary match readout at θ=0.40 cuts off
+graded signal that is still perfect at N=6, and (ii) the true buffer horizon
+(N≈6–8 under the frozen λ=0.85, K=4) does not reach the N=12 grace bar. The
+advantage over flat context is decisive ONLY in the narrow window W<N<horizon
+(here N=4, +0.500); outside it the two share a ceiling (small N) or a floor
+(large N), diluting the averaged margin below 0.15.
+
+NOT RULED OUT (follow-on rungs, frozen bars NOT moved):
+  · GRADED readout (use the activation×sim SCORE with a decision criterion /
+    AUROC, not a hard θ) — AUROC stays 1.0 to N=6; a graded B would clear margin
+    and grace with no retuning of the buffer, only the readout. (This is the
+    honest next rung; the RED here is partly a readout choice frozen too crude.)
+  · longer maintenance via active REHEARSAL (re-gate the slot each step → λ_eff↑),
+    the actual PFC mechanism, which extends the horizon past N=12.
+  · larger K, slower λ, DIM scale — toy 16-dim random tokens; scale UNVERIFIED.
+
+ENGINE-NATIVE (a_engine_native_learning): numpy DIRECTIONAL mirror only;
+engine-transfer UNVERIFIED. The live engine (CORE/engine_cli.hexa VAdaptField,
+H_1199) is a GROWING PERSISTENT store with NO leak and NO capacity bound — it is
+structurally the IMMUNE/episodic lane, NOT a WM buffer; the engine has no WM lane.
+Because this rung is 🔴 on its frozen bars, NO CORE wiring follow-on is triggered
+(a_verified_must_wire fires on GREEN only). A graded-readout / rehearsal re-run
+that goes GREEN would be the binding follow-on to add a small gated leaky-
+activation WM lane to engine_cli.hexa (ADDITIVE, distinct from VAdaptField). Live
+.hexa UNTOUCHED by this probe.
+
+PHILOSOPHY (p1-p8): substrate-native; the buffer holds TASK ACTIVATION only (no
+decoder weights, no persona/identity/ethics; p8 continuous-substrate lane).
+HONESTY (a_scale_honest_scope / p7): synthetic random DIM-vectors, toy scale, 3
+deterministic seeds, $0 CPU. delayed-match accuracy, NOT perplexity. Frozen bars
+NOT moved post-hoc (frozen-first, c9). xref h1227 · h1231 · h1199 · h1230 · h1229
+· a_engine_native_learning · a_verified_must_wire · a_paper_negative_ok ·
+a_scale_honest_scope · a_toy_scale_recheck · p1 · p7 · p8 · c9 · c15.

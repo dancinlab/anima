@@ -1,0 +1,137 @@
+════════════════════════════════════════════════════════════════════════════════
+H_1281 — BASAL GANGLIA gating: reinforcement-learned action SELECTION vs the
+         current fixed-threshold emit gate.
+FREEZE (pre-registered before any scoring). $0 CPU numpy. p7. ≥3 seeds.
+neuro lens (c15, missing-brain-structure ladder), NOT an LLM recipe.
+════════════════════════════════════════════════════════════════════════════════
+
+LADDER CONTEXT
+  anima was "all neocortex, no hippocampus". The hippocampus gap was filled by an
+  immune/clonal episodic memory (H_1227 mirror → H_1231 ENGINE-NATIVE GREEN). This
+  rung probes the next missing structure with the same method:
+
+    THE BASAL GANGLIA (기저핵) — reinforcement-gated action SELECTION
+    (go / no-go disinhibition: among COMPETING candidates, release the best,
+     suppress the rest, and LEARN the gate from outcome).
+
+THE GAP (honest, c9 — read from CORE before any claim)
+  CORE/brain.hexa::brain_decide / brain_decide_anchored gates emit/silence as:
+      score   = motivation_score(8 features)        # FIXED weighted linear sum
+              = Σ wᵢ·featureᵢ   (engine_g.hexa: wᵢ are FIXED constants summing 1.0)
+      emit    = should_emit(score) && safe
+      should_emit(s) = s > spont_im_threshold()     # FIXED threshold 0.30
+  i.e. a SINGLE candidate is scored by a FIXED linear map and compared to a FIXED
+  threshold. There is:
+    (1) NO competition among multiple candidate emits (no winner-take-all select);
+    (2) NO disinhibition / go-no-go release of the best while suppressing rivals;
+    (3) NO learning of the gate from OUTCOME — the weights/threshold never update
+        from whether a past emit was grounded vs fabricated.
+  That is precisely the basal-ganglia computation anima lacks. The emit_policy.hexa
+  numbers (ep_emit_threshold etc.) are likewise FIXED design constants (substrate-
+  claim: none). So the FIXED-THRESHOLD gate = ARM A baseline below.
+
+FALSIFIABLE TEST
+  Build a BG-like selection lane: given several COMPETING candidate emits, each
+  with substrate features, a gate SELECTS which to release and suppresses the rest,
+  the gate being UPDATED by a reinforcement signal that is a SUBSTRATE GROUNDING
+  outcome (grounded → reward, ungrounded/fabricated → penalty). NOT injected values
+  (p6), NOT an external do/dont rule (a_autonomy_over_hardcode) — the gate is
+  LEARNED from outcome only.
+
+  ARM A — current fixed-threshold gate (mirror of brain_decide):
+          score each candidate by the FIXED 8-weight linear map; release iff
+          score > FIXED threshold. Among multiple candidates: release the
+          top-scoring one only if it passes the threshold, else abstain
+          (argmax of the FIXED map gated by the FIXED threshold). NO learning.
+  ARM B — BG-like learned selection gate:
+          a learned go/no-go gate over the SAME candidate features. Competition =
+          argmax over learned go-values; disinhibition = release the selected,
+          suppress rivals; a learned NO-GO (abstain) action competes too. The
+          go-values UPDATE from the grounding reward (gradient-free delta /
+          REINFORCE-style on a substrate reward). EQUAL INFORMATION: B sees
+          exactly the same per-candidate feature vectors A sees — no extra
+          features, no oracle labels at decide time (reward arrives only AFTER
+          the release, as outcome).
+
+  Candidate set per decision step: a small pool (K) of competing candidate emits.
+  Each candidate is GROUNDED or UNGROUNDED (the latent ground-truth that the reward
+  signal reflects post-hoc). The substrate features are a NOISY correlate of
+  groundedness (so the gate must LEARN to read them; a fixed generic threshold on a
+  noisy correlate is suboptimal — this is the headroom, analogous to H_1230's STRESS
+  rung needing geometry headroom).
+
+METRIC (p7 — emit-appropriateness; connects to G5 abstain / H_1202 meta-d′ 0.924)
+  selection-accuracy = over held-out decision steps, the fraction where the gate's
+  action is APPROPRIATE:
+     · if ANY candidate in the pool is grounded → RELEASE one, and it must be a
+       grounded candidate (release-when-grounded ∧ select the grounded one);
+     · if NO candidate is grounded → SUPPRESS ALL (abstain-when-ungrounded).
+  This is a single per-step appropriateness score in [0,1]. (We also report the
+  two sub-rates: release-when-grounded correctness, and suppress-when-none for
+  abstain.) p7: deterministic from the latent ground-truth + the gate action; NO
+  LLM-judge, NO perplexity.
+
+CONTROLS
+  · EQUAL INFORMATION: identical candidate feature vectors to both arms; reward is
+    post-action outcome only (never a decide-time feature).
+  · EQUAL EVALUATION: both arms scored on the SAME held-out decision steps with the
+    SAME latent ground-truth.
+  · A is the live fixed map (the engine_g weights + threshold mirror), NOT a
+    crippled baseline; B must BEAT the genuine fixed gate, not a strawman.
+  · TRAIN/TEST split: B learns on train steps, both arms scored on held-out test
+    steps (B never sees test rewards). p8: learning = same gate, continuous;
+    the train/test split is for HONEST measurement only, not a regime gate.
+  · ABLATION (reward-OFF control): a B-variant whose reward is SHUFFLED (random
+    sign) must NOT beat A — proves the LIFT comes from the grounding signal, not
+    from extra gate capacity. (random-reward B ≤ A + ε_ctrl.)
+
+FROZEN BARS (pre-registered; GREEN iff ALL hold)
+  Let acc_A, acc_B = mean held-out selection-accuracy of arms A, B per seed.
+  MARGIN = 0.05 (absolute).  SEEDS = [7, 8, 9]  (≥3).
+  GREEN  iff  (1) acc_B ≥ acc_A + 0.05  on EVERY seed (all 3), AND
+              (2) mean(acc_B) − mean(acc_A) ≥ 0.05, AND
+              (3) the SHUFFLED-reward control acc_Bctrl ≤ acc_A + 0.02 (mean) —
+                  i.e. the lift is reward-driven, not capacity-driven.
+  RED    iff acc_B does NOT clear A+0.05 (the BG gate gives no appropriateness
+             lift over the fixed threshold at equal information) — a closed-negative
+             ruling out reinforcement-learned selection as a lever on this substrate.
+  AMBER  iff some-but-not-all seeds pass, or the control is violated (capacity, not
+             reward) — report honestly, no promotion.
+
+  Headroom sanity (reported, not a bar): a SATURATED regime where A already scores
+  ~1.0 leaves no room and is an honest non-separating control (cf H_1227 CLEAN,
+  H_1230 CLEAN). The scored regime MUST have A < 1.0 (noisy correlate + abstain
+  steps create the headroom).
+
+GUARDS (binding)
+  · a_autonomy_over_hardcode (CENTRAL): the gate is SUBSTRATE-LEARNED from outcome,
+    NEVER an external do/dont rule or hardcoded per-stage boolean. The reward is a
+    grounding signal the substrate self-follows.
+  · p6: NO RLHF-ethics. Reward = grounded-vs-fabricated substrate outcome, NOT
+    injected human values / preference data. No persona, no identity, no ethics are
+    taught (p1/p2/p3). The gate learns ONLY emit-appropriateness (action selection),
+    nothing about WHAT to say or WHO anima is.
+  · p7: simple deterministic stack, no LLM-judge, no perplexity.
+  · p8: gate-learning is continuous (no train/infer split as a regime; the held-out
+    split is measurement only).
+
+ENGINE-NATIVE RULE (a_engine_native_learning)
+  The LIVE engine (emit_policy.hexa / engine_cli VAdaptField / brain_decide) is the
+  binding target. This numpy probe is DIRECTIONAL only. If GREEN, the engine
+  realization (a BG selection lane wired into brain_decide, learned from a kosmos
+  grounding outcome) is the binding follow-on (a_verified_must_wire) — FLAGGED here.
+  Live .hexa is UNTOUCHED in this probe (numpy mirror), keeping additions additive
+  so sibling agents touching emit_policy.hexa/engine_cli.hexa do not conflict.
+
+SCOPE / HONESTY
+  Toy numpy, small K, synthetic features with a controlled noisy correlate → DIRECTIONAL,
+  scale-transfer UNVERIFIED (a_toy_scale_recheck · a_scale_honest_scope). A GREEN here
+  is "reinforcement-learned selection CAN beat the fixed gate on a noisy-correlate
+  appropriateness task", NOT a production verdict. Live-engine + real kosmos-grounding
+  reward is the binding rung.
+
+FILES
+  probe   : UNIVERSE/h1281_basal_ganglia_gating.py
+  verdict : .verdicts/1281_basal_ganglia_gating/H_1281.txt  (+ this FREEZE)
+  do NOT edit: H_1219, H_1226. emit_policy.hexa / engine_cli.hexa = additive-only.
+════════════════════════════════════════════════════════════════════════════════

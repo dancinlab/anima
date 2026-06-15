@@ -1,0 +1,75 @@
+H_1229 — DEVELOPMENTAL LEARNING-ORDER (HD20) — PRE-REGISTERED FALSIFIER (FROZEN BEFORE ANY SCORE)
+================================================================================================
+date_frozen: 2026-06-15
+domain lens: HD20 from .verdicts/1226_foreign_domain_depth_lens/H_1226.txt (biology/development, NOT
+             LLM training-recipe lore — c15). Organisms learn in STAGED order with critical-period
+             windows (imprinting, language window, Piaget stages); easy->hard scaffolding. The byte-LM
+             saw an UNORDERED corpus in one flat pass. Does depth/composition need ORDERED
+             (developmental-staged) learning rather than flat-shuffled?
+
+SLUG NOTE (numbering): integer 1229 collides with the unrelated MATRIX-domain
+.verdicts/1229_matrix_climb_expanded (H_1229 there). This HD20 probe uses the DISTINCT slug
+`1229_developmental_order` (precedent: H_1146 anchor-conditioned-decode collision). No path collision.
+
+SUBSTRATE ($0, summer/CPU toy, p7, a_toy_scale_recheck "toy-only"):
+  - tiny byte-LM, the H_1142/H_1222/H_1226 toy class but PURE-NUMPY (this host has no torch):
+    a 1-hidden-layer windowed byte-MLP next-byte predictor (CONTEXT prev K=8 bytes one-hot ->
+    hidden H=64 tanh -> V=256 softmax), trained by SGD+momentum. ~tens-of-k params
+    (K*V*H + H*V ~= 8*256*64 + 64*256 ~= 147k weights). This is the H_1192/H_1201 numpy-MLP
+    precedent (gradient-trained next-byte head), kept gradient-free of the live .hexa engine (p8).
+  - corpus = serving/corpus/anima_7b_webscale.en.head.txt (English webscale, ~200KB, line-structured).
+  - EQUAL TOTAL COMPUTE: all arms train for the SAME number of SGD steps (STEPS) on the SAME total
+    token budget; arms differ ONLY in the ORDER in which corpus lines (=examples) are presented.
+
+DIFFICULTY METRIC (per corpus line, documented + frozen):
+  difficulty(line) = z(length_bytes) + z(rarity) + z(syntax_complexity), where
+    length_bytes      = len(line)                                  (longer = harder)
+    rarity            = mean over the line's bytes of -log p(byte)  using GLOBAL corpus byte freq
+                        (rarer characters/words = harder)
+    syntax_complexity = (#non-alphanumeric-non-space bytes)/len     (punctuation/markup density =
+                        compositional/structural complexity proxy)
+  z() = per-feature standardize over all lines. Lines sorted ASCENDING by difficulty = easy->hard.
+
+STAGING SCHEDULE (frozen): N_STAGES = 4 developmental stages (quartiles of the difficulty-sorted
+  lines). Curriculum (B) trains stage 0 (easiest quartile) first, then unlocks stage 1, then 2, then 3
+  — at any point in training the sampler draws ONLY from already-unlocked stages (critical-period
+  window: early window = easy material; harder material enters later). STEPS split evenly across the
+  4 stage-windows (each window = STEPS/4 steps; window s samples uniformly from stages 0..s).
+  Total examples seen, total steps, total tokens are IDENTICAL to flat across all arms.
+
+THREE ARMS (identical model init seed, identical hyperparams, identical step/token budget):
+  (A) FLAT-SHUFFLED  — standard: every step samples a window uniformly from ALL lines (no staging).
+  (B) CURRICULUM     — easy->hard staged unlock (the schedule above).
+  (C) ANTI-CURRICULUM— hard->easy: stage order REVERSED (stage 3 hardest first, unlock toward easy).
+  3 seeds (7,17,29) for model init + sampling; report mean over seeds.
+
+HELD-OUT EVAL (p7, never trained on — last 10% of corpus bytes held out; metrics on held-out):
+  1. composed_distinct (H_1158-style recombination/ideation): from K=8 seed contexts drawn from
+     held-out, greedy+low-temp decode N_GEN bytes each; count DISTINCT decoded continuations that are
+     (a) coherent (known-word-ratio kwr >= KWR_BAR vs an English word set built from the corpus) AND
+     (b) corpus-absent at the 4-gram level (a generated 4-gram not present in the TRAINING text) AND
+     (c) mutually distinct (Jaccard token-overlap <= 0.5). Reported = mean distinct count.
+  2. coherence (G0 kwr): mean known-word-ratio over all decoded continuations (vs the corpus word set).
+  3. qa_proxy (literal-QA proxy): held-out next-byte top-1 accuracy averaged over held-out positions
+     (deterministic copy/recall of the held-out continuation — the literal-faithfulness proxy at toy
+     scale; p7 surface metric, NOT perplexity).
+
+PRE-REGISTERED VERDICT RULE (frozen):
+  Let dCD = mean_seed(B.composed_distinct) - mean_seed(A.composed_distinct)
+      dCO = mean_seed(B.coherence)        - mean_seed(A.coherence)
+      MARGIN_CD = 1.0 distinct idea       (clear margin on composed_distinct)
+      MARGIN_CO = 0.02 kwr                 (clear margin on coherence)
+  GREEN (developmental ORDER is a lever, toy-only) iff:
+      ( dCD >= MARGIN_CD  OR  dCO >= MARGIN_CO )                 [B beats A by a clear margin]
+    AND
+      ( mean_seed(C.composed_distinct) <= mean_seed(A.composed_distinct)
+        AND mean_seed(C.coherence)     <= mean_seed(A.coherence) )  [anti-curriculum NOT better than
+                                                                      flat => DIRECTION matters, it is
+                                                                      developmental ORDER not mere
+                                                                      re-exposure]
+  Otherwise 🔴 CLOSED-NEGATIVE (a_paper_negative_ok): learning-ORDER is NOT the depth lever at toy scale.
+
+HONESTY (c9, p7, a_scale_honest_scope): toy-only existence/direction probe. Surface p7 metrics
+(kwr + n-gram absence + top-1 acc), NOT perplexity, NOT LLM-judge. Tens-of-k-param numpy byte-MLP on
+a 200KB English slice — scale-transfer to 303M/production UNVERIFIED. Frozen bars NOT moved. No CORE/
+*.hexa edited. No H_1219/H_1226 edited (user consolidates).

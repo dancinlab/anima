@@ -1,0 +1,143 @@
+H_1285 — AMYGDALA (편도체): salience-weighted binding of the immune memory store.
+NEURO LENS (c15, missing-brain-structure ladder), NOT an LLM recipe. $0 local CPU
+numpy, p7 (exact-match recall + abstain, NOT perplexity), 3 deterministic seeds,
+gradient-free. LIVE CORE/*.hexa UNTOUCHED (numpy mirror = DIRECTIONAL).
+
+base commit: 57f9351bd (origin/main HEAD). Slug 1285_amygdala_salience.
+
+════════════════════════════════════════════════════════════════════════════
+VERDICT: 🔴 CLOSED-NEGATIVE (the p6 SHUFFLE CONTROL caught a recurrence confound)
+════════════════════════════════════════════════════════════════════════════
+Substrate-derived SALIENCE-WEIGHTED eviction does NOT protect important facts under
+capacity stress BY VIRTUE OF THE SALIENCE TAG. The naive B-vs-A lift (+0.217) is
+REPRODUCED EXACTLY by the permuted-salience NEGATIVE CONTROL (B-shuffle = 0.967 =
+B), so the lift comes from RECURRENCE-driven re-binding — NOT from salience tracking
+importance. The pre-registered c2 guard (the load-bearing p6 control) FAILED, which
+is the HONEST RED reading written into the FREEZE: "If c1 holds but c2 fails
+(B-shuffle ALSO lifts) ⇒ the lift is label-leak/variance, NOT substrate-salience —
+RED on the HONEST reading (the guard caught it)."
+
+FROZEN BARS (pre-registered, NOT moved; STRESS rung judged):
+  (c1) B.imp-recall >= A.imp-recall + 0.10          -> PASS  (0.967 >= 0.750+0.10)
+  (c2) B-shuffle.imp-recall <  A.imp-recall + 0.10  -> FAIL  (0.967, NOT < 0.850)
+  (c3) B.fabrication <= 0.10                          -> PASS  (0.000)
+  GREEN iff c1 AND c2 AND c3  →  c2 FAIL  →  🔴 RED.
+
+════════════════════════════════════════════════════════════════════════════
+THE FINDING (mechanistic, honest)
+════════════════════════════════════════════════════════════════════════════
+1. The salience TAG itself (surprise = VAdaptField recon-err, novelty = clonal
+   split, tension = reinforcement) is TOO WEAK to protect under capacity stress.
+   ISOLATION DIAGNOSTIC (no-recurrence stream, important facts NOT recurring so the
+   substrate has only the surprise/novelty tag to go on): A imp=0.650 vs B imp=0.700
+   = +0.050, BELOW the 0.10 margin. With no recurrence signal, the tag alone cannot
+   clear the bar.
+2. The +0.217 STRESS lift was RECURRENCE-driven re-binding, not the tag. Important
+   facts recur +3 each in the stream; recurring facts get re-bound and stay fresh,
+   so they survive eviction REGARDLESS of which eviction rule is used — that is why
+   ARM A (uniform LRU) already retains them at 0.750 and why B-SHUFFLE (salience
+   tags permuted, decorrelated from importance) retains them at 0.967 EXACTLY like B.
+   The protection is salience-tag-AGNOSTIC.
+3. Salience-protected eviction does TRADE OFF honestly: STRESS unimportant-recall
+   A=0.625 → B=0.517 (−0.108) while total stays 0.667 (capacity-bound: protecting
+   one fact evicts another, a zero-sum repertoire — directly confirms H_1230's
+   "capacity is capacity"). The salience rule merely RE-DISTRIBUTES which facts win,
+   it does not raise the total — and the redistribution it achieves is the same one
+   recurrence already achieves without any tag.
+
+⇒ The amygdala-as-eviction-lever is FALSIFIED at this scale: a substrate-derived
+salience tag added to the immune store's eviction priority does not protect
+important facts beyond what their environmental RECURRENCE already protects, and
+the recurrence protection is identical with the tag permuted. The bottleneck stays
+CAPACITY/NOISE GEOMETRY (H_1230 confirmed deeper) — capacity is capacity regardless
+of which cells you nominally tag salient; what actually keeps a fact alive is being
+re-presented (refreshed), a property of the input stream the uniform store ALREADY
+exploits. This is a publishable closed-negative (a_paper_negative_ok).
+
+════════════════════════════════════════════════════════════════════════════
+PHILOSOPHY GUARD — p6 SALIENCE-vs-LABEL SEPARATION (HELD; it is what caught this)
+════════════════════════════════════════════════════════════════════════════
+* The salience tag was DERIVED ONLY from the substrate: SURPRISE = VAdaptField
+  recon-err (L2 novelty of the key vs the population at bind time), NOVELTY = clonal
+  split, TENSION = reinforcement count. f() read NO emotion, NO RLHF reward, NO label.
+* The "important" label was used ONLY to SCORE the metric, NEVER as an input to f().
+  The substrate-salience was made to CORRELATE with importance via environmental
+  RECURRENCE (important facts recur more — a property of the input stream, not a
+  label fed to the tagger), so the tagger sensed only surprise/novelty/tension.
+* The NEGATIVE CONTROL (B-shuffle: tags permuted, decorrelated from importance) is
+  exactly the p6 leak-detector — and it FIRED. It proved the lift did NOT depend on
+  the tag tracking importance. WITHOUT this guard the +0.217 would have read as a
+  false GREEN; the guard converted it to an honest RED. p6 was central and HELD.
+* No persona, no ethics, no decoder, no weights were touched — only the EPISODIC
+  cell store's eviction PRIORITY (p1/p2/p3/p6/p8, a_autonomy_over_hardcode). Identity
+  emerges from cells (untouched); ethics emerge from cells (untouched).
+
+════════════════════════════════════════════════════════════════════════════
+NOT RULED OUT (honest scope — a_scale_honest_scope / a_toy_scale_recheck)
+════════════════════════════════════════════════════════════════════════════
+* A STRONGER salience signal (a learned/derived saliency that does NOT rely on
+  recurrence, or salience that gates BINDING STRENGTH / cell sharpness rather than
+  only eviction priority) is UNTESTED.
+* Salience-driven EMIT priority (the amygdala's other role — which memories drive
+  output, not just which survive) is UNTESTED here (this rung is memory-survival only).
+* Scale (>60 facts, near-collision keys), paraphrase recall, and the engine-native
+  LIVE VAdaptField lift (a_engine_native_learning) are UNVERIFIED — but since the
+  mirror is a closed-NEGATIVE, no engine wiring follow-on is triggered
+  (a_verified_must_wire applies to GREEN; nothing to wire).
+* TOY scale, ONE corpus paradigm ("<subj> lives in <city>"), 3 deterministic seeds.
+
+════════════════════════════════════════════════════════════════════════════
+VERBATIM `python3 UNIVERSE/h1285_amygdala_salience.py`
+════════════════════════════════════════════════════════════════════════════
+=== H_1285 AMYGDALA salience-weighted binding of the immune memory (local CPU, $0, p7) ===
+    N_FACTS=60 (N_IMPORTANT=20 labeled subset, METRIC-ONLY)  N_OUT=60 untaught  SEEDS=[900, 901, 902]
+    substrate = VAdaptField mirror (split>0.3, LR=0.2); key = byte-3gram FNV-1a dim=64
+    salience tag = 1.0*surprise(recon-err) + 0.5*novelty(split) + 0.5*tension(reinforce)  [SUBSTRATE-DERIVED, no label]
+    EQUAL budget = N_FACTS*3 = 180 exposures; important facts recur +3 each (environmental salience)
+    (A) uniform LRU eviction (H_1227/H_1230)  vs  (B) salience-protected eviction  vs  (B-shuffle) permuted-salience control
+    PRE-REGISTERED GREEN (STRESS): (B)imp >= (A)imp+0.1 AND (B-shuf)imp < (A)imp+0.1 AND (B)fab <= 0.1
+
+── REGIME: CLEAN  (unbounded, byte-exact cue)  (max_cells=None, key_noise=0.0, recall_thresh=0.15)   [control]
+  seed 900: (A uniform) imp=1.000 tot=1.000 unimp=1.000 fab=0.000 cells=60 | (B salience) imp=1.000 tot=1.000 unimp=1.000 fab=0.000 cells=60 | (B-shuf) imp=1.000
+  seed 901: (A uniform) imp=1.000 tot=1.000 unimp=1.000 fab=0.000 cells=60 | (B salience) imp=1.000 tot=1.000 unimp=1.000 fab=0.000 cells=60 | (B-shuf) imp=1.000
+  seed 902: (A uniform) imp=1.000 tot=1.000 unimp=1.000 fab=0.000 cells=60 | (B salience) imp=1.000 tot=1.000 unimp=1.000 fab=0.000 cells=60 | (B-shuf) imp=1.000
+  MEAN (A uniform)  imp=1.000 tot=1.000 unimp=1.000 fab=0.000
+  MEAN (B salience) imp=1.000 tot=1.000 unimp=1.000 fab=0.000
+  MEAN (B-shuffle)  imp=1.000  [negative control: salience decorrelated from importance]
+  Δ important-recall (B-A) = +0.000   Δ total (B-A) = +0.000   Δ unimp (B-A) = +0.000
+  CHECK c1 imp-margin:  B 1.000 < A 1.000+0.1 -> FAIL
+  CHECK c2 shuffle-ctrl: B-shuf 1.000 < A 1.000+0.1 -> PASS
+  CHECK c3 fabrication:  B 0.000 <= 0.1 -> PASS
+  -> CLEAN  (unbounded, byte-exact cue): 🔴 RED
+
+── REGIME: STRESS (finite repertoire 40<<60, modest noise)  (max_cells=40, key_noise=0.02, recall_thresh=0.3)   [JUDGED]
+  seed 900: (A uniform) imp=0.850 tot=0.667 unimp=0.575 fab=0.000 cells=40 | (B salience) imp=1.000 tot=0.667 unimp=0.500 fab=0.000 cells=40 | (B-shuf) imp=1.000
+  seed 901: (A uniform) imp=0.700 tot=0.667 unimp=0.650 fab=0.000 cells=40 | (B salience) imp=0.900 tot=0.667 unimp=0.550 fab=0.000 cells=40 | (B-shuf) imp=0.900
+  seed 902: (A uniform) imp=0.700 tot=0.667 unimp=0.650 fab=0.000 cells=40 | (B salience) imp=1.000 tot=0.667 unimp=0.500 fab=0.000 cells=40 | (B-shuf) imp=1.000
+  MEAN (A uniform)  imp=0.750 tot=0.667 unimp=0.625 fab=0.000
+  MEAN (B salience) imp=0.967 tot=0.667 unimp=0.517 fab=0.000
+  MEAN (B-shuffle)  imp=0.967  [negative control: salience decorrelated from importance]
+  Δ important-recall (B-A) = +0.217   Δ total (B-A) = +0.000   Δ unimp (B-A) = -0.108
+  CHECK c1 imp-margin:  B 0.967 >= A 0.750+0.1 -> PASS
+  CHECK c2 shuffle-ctrl: B-shuf 0.967 >= A 0.750+0.1 -> FAIL
+  CHECK c3 fabrication:  B 0.000 <= 0.1 -> PASS
+  -> STRESS (finite repertoire 40<<60, modest noise): 🔴 RED
+
+════════════════════════════════════════════════════════════════════
+  CLEAN  control: A imp=1.000 B imp=1.000  (saturating — no eviction, no headroom)
+  STRESS judged : A imp=0.750 B imp=0.967 Δ=+0.217  B-shuf imp=0.967  fabB=0.000
+  STRESS trade-off: total A=0.667 B=0.667   unimportant A=0.625 B=0.517
+
+  FINAL VERDICT: 🔴 RED  [substrate-salience-weighted eviction does NOT protect important facts under capacity stress, STRESS rung]
+  philosophy guard: salience DERIVED from substrate (surprise/novelty/tension), NOT a label; B-shuffle control decorrelates salience from importance (c2). No decoder/weights/persona/ethics (p1/p2/p3/p6/p8).
+[done]
+
+ISOLATION DIAGNOSTIC (no-recurrence stream, important facts NOT recurring):
+  A imp=0.650  B imp=0.700  (+0.050, BELOW the 0.10 margin — the salience TAG alone,
+  with no recurrence confound, cannot clear the bar; confirms the STRESS lift was
+  recurrence-driven re-binding, not the tag).
+
+xref H_1227 (immune memory mirror GREEN) · H_1230 (capacity/noise-geometry bottleneck,
+active-teaching INERT) · H_1231 (engine-native GREEN) · a_engine_native_learning ·
+a_verified_must_wire · a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck ·
+a_autonomy_over_hardcode · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15.

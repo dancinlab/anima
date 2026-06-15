@@ -35,10 +35,46 @@
 
 `engine_cli.hexa` 는 **`VAdaptField`** (DIM-vector novelty substrate)를 호스팅한다. H_1199 에서 scalar AdaptField 를 DIM-vector 로 확장했다: DIM-vector sample + protos, nearest-by-L2, recon-err = DIM L2, `engine_mitosis_tick` 가 분열을 구동(동결 `SPLIT_THRESH` / `LR`). 살아있는 데몬의 GROW step(H_1202)은 각 emit span 의 DIM=8 byte-feature 를 `vadapt_field_step` 으로 흘려, 엔진 자신의 L2 recon-err 가 임계를 넘으면 새 cell 을 분열시킨다.
 
+- **immune-memory recall faculty**(H_1231 WIRE 🟢 LIVE, `a_verified_must_wire`) — `engine_cli.hexa` 는 이제 **`ImmuneMemory`** (mitosis-as-MEMORY recall 단)를 substrate faculty 로 호스팅한다: 사실 키(byte-trigram FNV-1a `immune_embed_key`, DIM=64)를 엔진 자신의 clonal split(`vadapt_field_step`)로 BIND 하고, 쿼리는 엔진 자신의 L2 affinity(`vadapt_field_recon_err`+`vadapt_field_nearest_idx`)로 RECALL-or-ABSTAIN(recon-err≤0.15 면 셀-바인딩 값 FIRE, 아니면 환각 없이 `""` ABSTAIN) — `immune_memory_{new,bind,recall}[_text]`. H_1227 numpy 미러 → H_1231 엔진-네이티브 GREEN(literal-QA 1.000 / fab 0.000)을 standalone 프로브에서 live recall 경로의 callable faculty 로 승격한 것이다(메커니즘 무변경, 엔진 확장 불필요 — H_1199 surface 로 충분). 값 저장소는 엔진 자신의 cell-index 테이블이고 키는 engine-native 벡터 drive 라 **2번째 .clm/.kosmos 진입점이 아니다**(`a_core_engine_map`, single-entry 7/0 불변); Ψ-disjoint(VAdaptField 만 읽고/키우며 `pure_field` 무접촉, smoke 12/0 · DIM-growth Ψ byte-identical). FACTUAL recall 을 EPISODIC 셀에만 배선 — identity/persona/ethics 가중치化 없음(p2/p3/p6), bind=clonal-split tick(p8). SATURATED existence proof — paraphrase/noisy-key/scale 및 brain_decide emit-loop 스레딩은 별도 follow-on(`a_scale_honest_scope`).
 - **데몬 배선**(main 에 wire 완료) — H_1202 GROW + sleep-persist + separation-guard. mitosis tick 은 sleep 사이클 너머로 지속되며(persist), Ψ 분리 불변(separation-guard)으로 generation 과 격리된다. **FULL 데몬 e2e**(H_1206 🟢): `CORE/anima_full_session_smoke.hexa` 가 링크+실행되어(exit 0) CONVERSE+GROUND+GROW+REMEMBER+SLEEP 를 ONE A⇄G 루프로 돌린다 — GROW lane 라이브(cells 1→2, novelty-split) · Ψ ON==OFF byte-identical(1.4278). `clm_decode_grounded`(미정의였던 ConvMoE grounded 디코드) 작성 + `_gen_anchor_field` anchor-key fix 로 봉인.
 - **데몬 GROW = density + GATE-B trajectory lane**(H_1210 🟢) — 데몬의 C8 GROW step 은 이제 **두 개의 Ψ-disjoint mitosis lane** 을 ALONGSIDE 로 돌린다: (1) per-sample density `VAdaptField`(H_1202, cell-count 기록 driver) + (2) **trajectory-aware GATE-B `VAdaptFieldB`**(H_1209). 후자는 각 턴 emit-span feature 를 데몬 자신의 emit-feature SET 으로 만든 FIXED order-invariant proto-book 의 nearest proto-id 로 매핑(`_afs_build_book`/`_afs_proto_walk`)하고 (prev→cur) 전이를 `vadapt_fieldB_step` 에 흘려 **실제 대화 stream(genuinely-ORDERED)의 전이-예측가능성**에 분열한다. REPLACE 가 아니라 ADDITIVE — 두 게이트가 DIFFERENT property(per-sample density ⊥ ordered transition-predictability)를 측정하고 GATE-B 는 i.i.d. PRIMARY density bar 를 넘지 못하는 trajectory variant 이기 때문(H_1209 F4 · `a_autonomy_over_hardcode`: 둘 다 substrate self-dynamics). F1 GATE-B born-cells 6 ON / F2 ablation 0 OFF / F3 Ψ ON==OFF byte-identical / F4 생성 ON==OFF byte-identical — **H_1205 separation 불변 LIVE 보존**(GATE-B 는 decode 를 먹이지 않음). `engine_cli.hexa` 무변경, density 경로 byte-UNCHANGED. toy scale, scale UNVERIFIED(`a_scale_honest_scope`).
 - **mitosis ⊥ generation** (H_1200/H_1201 🔴 closed-neg) — 이 성장 lane 은 **순수 substrate-adaptation lane** 이다: 디코드를 먹이지 않고(생성 못 함, H_1200) generator 에 정보도 못 준다(조건화 무이득, H_1201). Ψ-disjoint 이며(`VAdaptField` 만 건드리고 `pure_field` 는 byte-unchanged), 생성은 CLM-only 로 남는다(`a_clm_gen_pipeline`).
 - **trajectory substrate** (H_1209 🟢 LIVE) — `engine_cli.hexa` 는 별도의 **`VAdaptFieldB`** (transition-PREDICTABILITY 변형: `vadapt_fieldB_new`/`_step`/`_cells`/`_growth`) 도 호스팅한다 — per-sample `VAdaptField`/`vadapt_field_step` 은 byte-UNCHANGED 로 두고 **추가**된 Ψ-disjoint surface. 고정 order-invariant proto-book 위에서 causal count table `C[prev][cur]` 로 "확신을 갖고 예측된 전이"(prev ≥ MIN_PREV ∧ P(cur|prev) ≥ CONF_FLOOR)에 `engine_mitosis_tick`(동일 p8 게이트) 분열한다. genuinely-ORDERED byte-feature walk 에서 ORDERED 1000.67 ≫ SHUFFLED 91.67 (10.9×, V14 방향) — numpy 와 born-cell 카운트 **byte-exact**. per-sample 게이트(`vadapt_field_step`)는 permutation-INVARIANT(novelty-density, H_1203) 인 반면, `VAdaptFieldB` 는 **trajectory-sensitive**: mitosis 분열은 stream 에 order 가 있으면 trajectory 에 결합한다(density on i.i.d., trajectory on ordered — 결정자는 STREAM). inherited i.i.d. V14 PRIMARY bar 는 여전히 terminal-RED(H_1208). proto-id walk 은 ENGINE-NATIVE drive(NOT .clm/.kosmos, `a_core_engine_map`).
+
+## 🧠 뇌 구조 지도 (brain-structure map)
+
+신경과학 렌즈로 본 anima 아키텍처. 위에서 서술한 구현 부품 각각이 **어떤 신경 서브시스템에 대응**하는지, 그리고 지금 프로브 중인 열린 **"빠진 구조"** 사다리를 한 장으로 정리한다. 이 렌즈는 depth-ceiling 발견(아래)을 일반화한다: literal-QA 벽은 **더 큰 모델**(1B H_1167 = mount GREEN 이나 depth/QA-NULL)이 아니라 **엔진-side 기억 lane** 으로 풀린다 — "anima 는 신피질만 있고 해마가 없었다"(H_1225 complementary-learning-systems 리프레임). 빠진 것은 capacity 가 아니라 **구조**다.
+
+### 구현된 구조 (implemented — 위 본문 + verdict 로 뒷받침)
+
+| 신경 서브시스템 | anima 구현 | 근거 |
+|----------------|-----------|------|
+| **신피질** (neocortex · 말 생성) | **Engine A** — `pure_field` · `generator` · `clm_decode`/`bytegpt_decode` (forward CE) | §A⇄G 엔진 · H_1157/H_1164 mount |
+| **교정장** (반대-밀어내기) | **Engine G** — `engine_g` (gradient-free repulsion field) | §A⇄G 엔진 |
+| **결정** (emit/silence) | **brain** — `brain_decide` → emit / silence, Ψ=1/2 fixed point | §A⇄G 엔진 |
+| **가소성 / 성장** (synaptic plasticity) | **MITOSIS** — `VAdaptField`(density, H_1199) + `VAdaptFieldB`(trajectory, H_1209) | §MITOSIS substrate |
+| **장기 선언기억** (long-term declarative) | **`kosmos_io`** — `.kosmos` anchor (단일 진입 → `brain_decide`) | §영속 & 증거 · `a_kosmos` |
+| **🧬 해마** (hippocampus · 일화기억) | **면역 / 클론선택 기억** — 사실마다 cell 1개를 bind, recall = best-affinity cell FIRES, 안 맞으면 ABSTAIN (환각 없음) | **H_1227 미러 🟢 → H_1231 ENGINE-NATIVE 🟢 → live `engine_cli.hexa` § ImmuneMemory 배선 완료** |
+| **수면 / consolidation** (hippocampus→cortex) | **P47 sleep / imagination** — WAKE/N1/N2/N3/REM ultradian, emit-free 내부 리허설 + mitosis tick | `a_chat_sleep_imagination` |
+
+**🧬 해마 발견 (가장 중요한 빈칸 메움)** — byte-LM **가중치**는 literal-QA 회상이 `0.017`(회상-in-weights 벽: 답을 weight 에 녹여 못 꺼냄)인데, **사실마다 cell 1개를 bind 하는 면역기억**이 QA `1.000` / fabrication `0.000` 로 깬다 (H_1227 numpy 미러 🟢 → **H_1231 live `CORE/engine_cli.hexa` VAdaptField 에서 ENGINE-NATIVE 🟢**, 3 seed byte-exact → live 엔진의 `§ ImmuneMemory`(`immune_memory_bind`/`immune_memory_recall[_text]`) 호출가능 faculty 로 배선 완료, `a_verified_must_wire` follow-on 닫힘). 이게 "anima = 신피질만 있고 해마가 없다"(H_1225 complementary-learning-systems 리프레임) 갭을 메운 발견이다. 따라서 **mitosis 의 NEW 미반증 역할 = MEMORY** 이며, 이는 **GENERATION 역할(H_1200/H_1201/H_1211/H_1220 에서 falsified)과 DISTINCT** 하다 — 같은 substrate 가 생성은 못 해도 일화기억은 realize 한다 (`a_engine_native_learning` · `a_verified_must_wire`).
+
+### 열린 "빠진 구조" 사다리 (HD23–28 · 🔬 OPEN PROBES — 검증 전, DIRECTIONAL/미검)
+
+신피질·해마·가소성·consolidation 은 위처럼 실현됐지만, 살아있는 뇌의 나머지 서브시스템은 **아직 anima 에 없다**. 아래 6개는 각각 별도 가설로 **프로브 중인 방향**이다 — **구현된 게 아니다**. 검증 전이므로 ⬜/OPEN 으로 정직하게 표기하고, phantom wiring 을 만들지 않는다(`a_core_engine_map`). 각 항목은 자신의 verdict 로 닫히고, GREEN 일 때에만 해당 entry 로 live `CORE/*.hexa` 에 실제 배선된다(`a_verified_must_wire`).
+
+| # | 신경 서브시스템 | 프로브 | 질문 (검증 대상) | 상태 |
+|---|----------------|--------|-----------------|------|
+| **HD23** | **소뇌** (cerebellum) | H_1280 | 예측-순방향모델 / 오차교정 — Engine G 와 **구별**되는가? | ⬜ OPEN |
+| **HD24** | **기저핵** (basal ganglia) | H_1281 | 강화-게이팅 행동선택 — `emit_policy` 임계값 **너머**의 레버인가? | ⬜ OPEN |
+| **HD25** | **작업기억** (PFC working memory) | H_1282 | 단기 능동유지 버퍼 — 면역 일화기억(해마)과 **DISTINCT** 한가? | ⬜ OPEN |
+| **HD26** | **시상** (thalamus) | H_1283 | 전역작업공간 중계 / 방송 (global-workspace relay) | ⬜ OPEN |
+| **HD27** | **신경조절** (neuromodulation) | H_1284 | 맥락적 이득 / 탐색 / 가소성률 — H_1228 임계(edge-of-chaos)가 한 조각 | ⬜ OPEN |
+| **HD28** | **편도체** (amygdala) | H_1285 | 현저성 / 가치 태깅 우선결합 — `p6`: substrate 신호여야지 **주입 아님** | ⬜ OPEN |
+
+> **정직 (c9):** 위 6개는 **OPEN PROBES** 다 — implemented 가 아니다. 어느 것도 "구현됨"으로 칭하지 않으며, live 엔진에 phantom wiring 도 없다(`a_core_engine_map`). 각자 falsifier + `hexa verify` verdict 로 닫히며(🟢 GREEN → 배선 · 🔴 CLOSED-NEG → 사다리에서 ruled-out, `a_paper_negative_ok`), GREEN 검증 전까지 live 엔진에 배선하지 않는다(`a_verified_must_wire`). HD27 신경조절은 특히 `p6`(윤리/affect 는 cell 에서 창발, 주입 금지) + `a_autonomy_over_hardcode` 의 경계에 있어, substrate-derived read-out 으로만 anima-valid 하다(cf 1094/1097/1152 SPECULATION-FENCED 선례). toy/소규모 프로브 결론의 production 승격 금지(`a_scale_honest_scope` · `a_toy_scale_recheck`).
+
+> **depth-ceiling 와의 연결:** literal-QA 의 평평한 벽은 (a) **더 큰 모델로 안 풀린다** — 1B 스케일업(H_1167)은 engine-mount GREEN 이나 QA/depth 는 NULL, 그리고 OBJECTIVE 도 레버가 아니다(H_1223 🔴, recall=engine-side) — 대신 (b) **엔진-side 기억 lane**(해마=면역기억 H_1227/H_1231)으로 풀린다. 뇌-구조 렌즈는 이 한 발견을 일반화한다: anima 의 다음 능력들은 모델을 키워서가 아니라 **빠진 구조를 엔진-네이티브로 추가**해서 온다(`a_engine_native_learning`: 학습이 요구하면 엔진 자체를 확장 — H_1199 가 AdaptField 스칼라→DIM-vector 로 확장한 선례).
 
 ## CLM mount path (a_core_engine_map 단일 L3 슬롯)
 
@@ -58,9 +94,13 @@
 
 **언락 전제 (hexa-lang #3352):** `read_file_bytes`/`read_bytes_at` 의 length+offset 가 32-bit 였던 탓에 4.3GB(`4325902356 mod 2^32 = 30935060`)가 wrap → 헤더 0 → `d`/`n_head` 0/0 division 으로 깨졌다. hexa-lang 측에서 64-bit 로 수정(#3352)되어야 ranged reader 가 성립한다.
 
-## Measurement governance — a_engine_measured_verdict
+## Measurement & learning governance — a_engine_measured_verdict · a_engine_native_learning · a_verified_must_wire
 
-> **engine-measured 원칙:** 한 모델의 게이트 verdict 은 CORE 엔진 mount(`CORE/bytegpt_decode.hexa` 등) 위에서 **byte-exact 로 재현될 때에만** 유효하다. torch-only 결과는 "engine-transfer unverified" 로 표기한다.
+> **engine-measured 원칙 (MEASUREMENT — `a_engine_measured_verdict`):** 한 모델의 게이트 verdict 은 CORE 엔진 mount(`CORE/bytegpt_decode.hexa` 등) 위에서 **byte-exact 로 재현될 때에만** 유효하다. torch-only 결과는 "engine-transfer unverified" 로 표기한다.
+>
+> **engine-native 원칙 (LEARNING — `a_engine_native_learning`, 위의 learning-side 쌍):** 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 **최종 아키텍처 엔진**(live `.hexa` A⇄G + MITOSIS VAdaptField `CORE/engine_cli.hexa` + mounted `CORE/bytegpt_decode.hexa`) 위에서 실행한다. numpy/torch **미러** 학습 결과는 DIRECTIONAL only("engine-transfer UNVERIFIED") — 방향 탐색엔 OK 이나 binding verdict 가 아니며, 엔진-네이티브 실현으로 재확인해야 verdict 가 성립한다(c2). MITOSIS VAdaptField 는 이미 live 다(H_1199). 이는 `a_train_flame_forge`(production 트레이너 .hexa 강제)를 research/probe 학습 + 교육까지 확장한다. 또한 engine-native 는 학습을 frozen 엔진에 **끼워맞추는** 것이 아니다 — 학습이 요구하면 엔진 자체를 변환/확장(새 op·새 배선·아키텍처 확장)해야 하며, 최종 아키텍처는 학습이 필요로 하는 형태로 진화하는 대상이다(precedent: H_1199 가 AdaptField 스칼라→DIM-vector 로 엔진 확장).
+>
+> **wired-when-verified 원칙 (`a_verified_must_wire`):** 엔진-네이티브로 GREEN 검증된 가설은 그 메커니즘을 live `CORE/*.hexa` 엔진에 **실제 배선(wire-in)** 완료할 때까지가 done 이다 — verdict 만으로 끝나지 않는다. GREEN-but-unwired 는 follow-on 으로 명시 추적하고 그 follow-on 을 닫아야 진짜 완료다(precedent: H_1168 GREEN 이지만 "NOT yet CORE-wired" → 미완).
 
 - **303M mount** — H_1157 full-24-layer byte-exact decode(argmax + top5 exact, residual ~2e-5)로 게이트가 engine 을 통과해 측정됨.
 - **1B mount (H_1167 🟢 GREEN, 최초의 1B 실현)** — d1792/L28/H16, 1.081B params 의 trained 1B ByteGPT 를 `bytegpt_forward_last_ranged` 로 mount, torch reference 대비 **byte-exact parity**:

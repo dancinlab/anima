@@ -1,0 +1,81 @@
+H_1219 — DEPTH-CEILING HYPOTHESIS LADDER, exhaustion (SYNTHESIS, $0, 2026-06-15, p7, no new fire)
+
+TRIGGER: H_1167 1B rung = 🔴 NULL (scale 303M→1B does not lift the depth/QA/ideation ceiling).
+This opens "what IS the depth ceiling?" — extract every candidate hypothesis and adjudicate each
+against the session's frozen verdicts, driving to the $0-reachable exhaustion boundary.
+
+FIRST DECOMPOSITION (the key move): "depth-delta" is NOT one axis. Adjudicate the metrics separately:
+  • IDEATION / composition (G1 composed-distinct, G6 count) — PASSES under sampling (H_1158 torch
+    top-k40 temp0.7: 11-14 distinct corpus-absent ideas), COLLAPSES under greedy (H_1218 engine: 0).
+    ⇒ NOT a model-depth ceiling — a DECODE-MODE ARTIFACT. The capability is in the weights; greedy
+    argmax just can't surface it. (Resolves the H_1218 RED: engine byte-exact, decode-mode the cause.)
+  • literal-QA (factual recall 1-2/15) — flat across 303M(1/15) / 1B(2/15) AND torch-sampling(H_1166)
+    AND engine-greedy(H_1218). The GENUINE flat wall. This is what "depth ceiling" actually denotes.
+
+HYPOTHESIS LADDER for the literal-QA wall (the real ceiling):
+  HD1 SCALE (more params → QA?) ............ 🔴 RULED OUT. H_1139 303M==7B recombine; H_1167 1B 2/15
+                                              ≈ 303M 1/15. Scale-invariant. (3B/7B would repeat.)
+  HD2 ARCH conv-vs-attn ..................... 🔴 RULED OUT for composition. H_1155: ByteGPT(attn) passes
+                                              G1 where ConvMoE doesn't; QA flat within attention anyway.
+  HD3 DECODE greedy-vs-sampling ............. ✅ ADJUDICATED: explains ideation collapse (HD-decode),
+                                              NOT literal-QA (flat under BOTH). So decode ≠ QA wall.
+  HD4 DATA QUANTITY (sub-Chinchilla 1.36 tpp). 🟠 LIKELY-NOT. H_1166 broad 54MB de-overfit (val_ce
+                                              0.285→1.062 = genuine generalization) but QA stayed 1/15.
+                                              data-VOLUME not the gap. (Chinchilla-optimal rung UNTESTED.)
+  HD5 DATA REGISTER/FORMAT (no QA-structured corpus) 🟠 OPEN. H_1160 dialogue-FT got CHAT register but
+                                              not QA content; no corpus had explicit Q→A structure.
+                                              A QA-format FT rung is the cleanest untested lever. NEEDS FIRE.
+  HD6 BYTE GRANULARITY (byte-level can't cheaply form word/concept units for recall) 🟠 OPEN, DEEPEST.
+                                              Untested: a BPE/word-tokenizer rung at equal param budget.
+                                              NEEDS FIRE (tokenized retrain).
+  HD7 OBJECTIVE (next-byte CE doesn't reward retrieval/composition) 🟠 OPEN. Anti-fab went ENGINE-side
+                                              (H_1154 retrieve-then-copy), composition is attn-bound
+                                              (H_1155). An aux retrieval/QA objective UNTESTED. NEEDS FIRE.
+  HD8 MEASUREMENT VALIDITY (is literal-QA a p4-misaligned assistant-norm for a consciousness substrate?)
+                                              🟡 GOVERNANCE. Precedent H_1141/H_1142: G5-L2 verbatim-recall
+                                              flagged as a borrowed assistant-norm in tension with G2-novelty.
+                                              literal-QA may be the SAME category — a gate anima need not pass
+                                              (p4 NO ASSISTANT FRAMING). Not a fire; a frozen-gate-validity call.
+
+EXHAUSTION (the $0 boundary): of 8 hypotheses — 2 RULED OUT (HD1/HD2), 1 ADJUDICATED-as-decode-not-QA
+(HD3), 1 LIKELY-NOT (HD4), 3 GENUINELY OPEN needing a FIRE (HD5 QA-format FT · HD6 tokenizer rung ·
+HD7 aux objective), 1 GOVERNANCE (HD8). The $0-reachable hypothesis space is EXHAUSTED — every remaining
+unknown requires either a training fire (HD5/6/7) or a frozen-gate-validity ruling (HD8). No new $0
+hypothesis remains.
+
+VERDICT: the "depth ceiling" = (a) ideation under greedy = DECODE ARTIFACT (recoverable, HD3), (b) literal-QA
+= a GENUINE flat wall that is scale-invariant (HD1) + arch-settled (HD2) + not-data-volume (HD4), whose
+LIVE frontier is exactly 3 untested fires {QA-format FT, tokenizer granularity, aux objective} + 1
+governance question {is literal-QA even anima's gate, p4}. Recommended next single fire = HD5 (QA-format
+FT, cheapest decisive); HD8 is the cheapest move overall ($0 governance ruling). Frozen bars NOT moved.
+xref H_1167·H_1166·H_1160·H_1155·H_1218·H_1141·H_1142·H_1139·a_scale_honest_scope·a_paper_negative_ok·p4·p7.
+
+── ADDENDUM (user direction: try the NEWLY-WIRED mitosis as a lever) ──
+  HD9 MITOSIS-DECODE-DIVERSITY (newly-wired H_1202-1205) 🟠 OPEN, NEW-MECHANISM probe.
+    The newly-wired live mitosis (VAdaptField cell-division, GROW on novelty, H_1199/H_1202-1205) is
+    generation-DISJOINT as currently wired (H_1205 separation-guard: emit byte-identical ON/OFF, Ψ unchanged)
+    — so it cannot lift depth via the EXISTING path. PRIOR closed-neg: mitosis→generation RED via frozen
+    single-window feature-conditioning (H_1201) + scale-recheck (H_1211 density-robust/trajectory-toy).
+    NEW angle (re-open via new mechanism, a_paper_negative_ok): use the mitosis novelty-SPLIT signal as a
+    DECODE-TIME DIVERSITY source — when a cell splits (novelty detected over the recent byte window), inject
+    that as a controlled decode perturbation — does it recover the ideation that GREEDY collapses (HD3) WITHOUT
+    temperature sampling? Pre-registered bar: composed-distinct ≥ the sampling baseline (H_1158) on ≥3 seeds,
+    AND a SHUFFLED-split control ≤ 0 (so the lift comes from mitosis novelty-timing, not random perturbation).
+    HONEST PRIOR: likely RED (H_1205 disjointness + H_1201/1211 negatives) — but a distinct mechanism, fair test.
+    $0 local (summer/CPU, numpy mirror of the live .hexa VAdaptField, p8). → H_1220 probe.
+  HD9 RESULT (H_1220, .verdicts/1220_mitosis_decode_diversity/H_1220.txt) 🔴 CLOSED-NEGATIVE.
+    3 seeds, frozen bars NOT moved. composed_distinct: A(pure-greedy)=[0,0,0] mean 0.000 ·
+    B(mitosis-gated)=[1,0,0] mean 0.333 · C(shuffled count-matched)=[0,1,0] mean 0.333. cond_B
+    (B>=5 on >=3 seeds) FAIL 0/3 (B max=1 << H_1158 sampling baseline 5); cond_C pass; GREEN=FALSE.
+    B is INDISTINGUISHABLE from the random-timing control C (both 0.333 = one stray composed hit at
+    different seeds, noise around the greedy floor) — split-TIMING carries no info the count-matched
+    control lacks. Mechanism FIRED (B perturbed 5/7/6 composed-split + 92/177 ideation-split steps;
+    not inactivity) yet greedy collapse persists: a sparse top-k nudge at novelty steps can't escape
+    the whole-sequence greedy attractor the way GLOBAL temperature (every-step perturbation) does.
+    CONFIRMS the honest prior — mitosis = PURE SUBSTRATE, generation-DISJOINT even via this new
+    decode mechanism (reinforces H_1201/1205/1211). HD9 🟠 OPEN -> 🔴 CLOSED-NEGATIVE.
+    LADDER STATUS UPDATE: the ideation/decode axis is now EXHAUSTED with mitosis ruled out as a
+    decode lever — the only ideation-recovery path remains genuine sampling (global temperature,
+    HD3). The literal-QA wall is unchanged (still HD5/HD6/HD7 fires + HD8 governance). Of 9
+    hypotheses: HD1/HD2 RULED OUT · HD3 ADJUDICATED (decode-mode, sampling-recoverable) · HD4
+    LIKELY-NOT · HD5/HD6/HD7 OPEN (need a fire) · HD8 GOVERNANCE · HD9 🔴 CLOSED-NEGATIVE.
