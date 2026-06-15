@@ -1,7 +1,7 @@
 """
-H_1295 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32). R1 numpy MIRROR (DIRECTIONAL).
+H_1296 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32). R1 numpy MIRROR (DIRECTIONAL).
 
-Frozen design: .verdicts/1295_spatial_map/H_1295_FREEZE.txt (pre-registered BEFORE
+Frozen design: .verdicts/1296_spatial_map/H_1296_FREEZE.txt (pre-registered BEFORE
 this scoring). $0 CPU numpy, gradient-free, 3 seeds [4295,4296,4297], p7.
 a_no_llm_frame_trap (entorhinal grid / hippocampal place-cell / path-integration lens
 — O'Keefe, Moser; c15) — NOT an LLM recipe. ENGINE-TRANSFER UNVERIFIED until R2.
@@ -204,7 +204,7 @@ def run_seed(seed):
 
 def main():
     print("=" * 78)
-    print("H_1295 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32) — R1 numpy MIRROR")
+    print("H_1296 — PLACE/GRID SPATIAL-MAP / PATH-INTEGRATION (HD32) — R1 numpy MIRROR")
     print("=" * 78)
     per_seed = {}
     for s in SEEDS:

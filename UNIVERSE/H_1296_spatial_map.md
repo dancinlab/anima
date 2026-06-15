@@ -1,15 +1,15 @@
 ---
-id: H_1295
-slug: 1295_spatial_map
+id: H_1296
+slug: 1296_spatial_map
 title: place/grid spatial-map — metric/relational cognitive map (vs item-binding)
 group: brain-structure-ladder (c15 missing-structure)
 terminal_tier: 🟢 GREEN ENGINE-NATIVE
-verdict_dir: .verdicts/1295_spatial_map/
-terminal_verdict: .verdicts/1295_spatial_map/H_1295.txt
+verdict_dir: .verdicts/1296_spatial_map/
+terminal_verdict: .verdicts/1296_spatial_map/H_1296.txt
 date: 2026-06-16
 ---
 
-# H_1295 — place/grid spatial-map / path-integration (HD32)
+# H_1296 — place/grid spatial-map / path-integration (HD32)
 
 ## Claim / falsifier
 
@@ -55,8 +55,8 @@ reported as a NON-GATING diagnostic, not part of the binding verdict (c9, frozen
 
 Terminal tier (verbatim): **🟢 GREEN (ENGINE-NATIVE)** — a metric spatial map answers
 the between-item relational query item-binding provably cannot; both controls collapse;
-lane wired Ψ-disjoint. → `.verdicts/1295_spatial_map/H_1295.txt`
-(frozen bars `…/H_1295_FREEZE.txt` + `…/H_1295_R1b_FREEZE.txt` + `…/H_1295_R1c_FREEZE.txt`, not moved).
+lane wired Ψ-disjoint. → `.verdicts/1296_spatial_map/H_1296.txt`
+(frozen bars `…/H_1296_FREEZE.txt` + `…/H_1296_R1b_FREEZE.txt` + `…/H_1296_R1c_FREEZE.txt`, not moved).
 
 ## Honest scope (c9 · a_scale_honest_scope · a_toy_scale_recheck)
 
@@ -78,9 +78,9 @@ lane wired Ψ-disjoint. → `.verdicts/1295_spatial_map/H_1295.txt`
 
 ## Pointers
 
-- FREEZE: `.verdicts/1295_spatial_map/H_1295_FREEZE.txt` (+ R1b, R1c re-freezes)
-- RESULT: `.verdicts/1295_spatial_map/H_1295.txt` (R1 mirror frozen, R1b, R2)
-- mirror probe: `UNIVERSE/h1295_spatial_map.py`
+- FREEZE: `.verdicts/1296_spatial_map/H_1296_FREEZE.txt` (+ R1b, R1c re-freezes)
+- RESULT: `.verdicts/1296_spatial_map/H_1296.txt` (R1 mirror frozen, R1b, R2)
+- mirror probe: `UNIVERSE/h1296_spatial_map.py`
 - engine lane: `CORE/engine_cli.hexa` § SpatialMap · smoke `CORE/engine_cli_smoke.hexa` cases 39–43
 - xref: H_1227/1231/1288 (immune item-binding, nearest distinctness) · H_1294 (hier-PFC
   sequence vs metric) · H_1282 (WM) · H_1280 (cerebellum) · H_1292 (homeostatic) ·
