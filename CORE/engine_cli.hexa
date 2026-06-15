@@ -3804,3 +3804,269 @@ pub fn skill_gradft_train(net: SkillGradFT, x: [[float]], y: [int]) -> SkillGrad
 pub fn skill_gradft_pred(net: SkillGradFT, x: [float]) -> int {
     return _sc_argmax(net.w, net.b, x)
 }
+
+// ── §  CATEGORICAL PERCEPTION / SAPIR-WHORF — the live immune/Voronoi CP lane (H_1325 R2) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire / a_engine_native_learning follow-on for H_1325):
+// the H_1325 numpy MIRROR (R2 🟢 GREEN — linguistic relativity ANTI-GOODHART-CLOSED: W1 CP
+// present, W2 Whorfian dissociation [CP peak tracks the language's boundary], W3' coherence
+// [languages = ONE coherent CP peak, shuffle = MANY scattered spikes]) is REALIZED here
+// ENGINE-NATIVE on the SAME error-targeted SPLIT-only Voronoi growth the brain lanes use.
+//
+// THE SAPIR-WHORF / CATEGORICAL-PERCEPTION LENS (c15, a_no_llm_frame_trap — psycholinguistics,
+// NOT an LLM recipe, NOT a human-cognition claim): the language a substrate LEARNS warps its
+// NON-LINGUISTIC discrimination. Cells PACK at the language's category boundary (error-driven
+// SPLIT growth, p8) → finer Voronoi resolution there → adjacent-pair discrimination PEAKS at
+// the boundary (categorical perception). The grue languages cut the SAME continuum at
+// DIFFERENT points → the CP peak MOVES with the language (the Whorfian dissociation).
+//
+// DISTINCT from every other lane: this is the ONLY lane whose readout is a DOWNSTREAM,
+// NON-LINGUISTIC discrimination curve over a learned carving (not a recall, not a plan, not a
+// metric map). The label enters ONLY at growth (cp_fit), NEVER at the discrimination test.
+//
+// p1/p2/p3/p6 GUARD: the discrimination readout reads ONLY representational distance in the
+// learned prototype space (|Δ soft posterior|); NO injected boundary location, NO persona/RLHF.
+// The shuffle control + pre-language baseline are the anti-Goodhart discriminators. NOT an emit
+// gate (a_autonomy_over_hardcode) — a pure curve read. Ψ-disjoint: own (protos,labels) table,
+// pure_field / engine_g / Ψ untouched.
+//
+// SCOPE (a_scale_honest_scope): the engine is a SINGLE deterministic instance (no per-seed RBF
+// jitter); it reproduces the SEED-INVARIANT bars the mirror reports identically across all 3
+// seeds (W1, W2, and the language / pre-language peak-COUNT = coherence). The shuffle uses the
+// engine's OWN deterministic incoherent label scheme (parity of a byte-LCG over the index) —
+// the STRUCTURAL incoherence claim (peak-count >= 3), not a numpy-PRNG byte-match.
+
+// CPField — the live CP lane. N graded stimuli on [0,1] with an RBF DIM-vector code; a
+// Voronoi prototype store (protos + bound label) grown error-targeted SPLIT-only.
+struct CPField {
+    protos: [[float]],   // prototype embeddings (the learned carving)
+    labels: [int],       // category label bound at each prototype (FIXED at creation)
+    n: int               // prototype count
+}
+
+// _cp_centers — the FIXED evenly-spaced RBF tuning centers over [0,1], DIM bins.
+fn _cp_centers(dim: int) -> [float] {
+    let mut c = []
+    let mut i = 0
+    while i < dim {
+        c = c + [to_float(i) / to_float(dim - 1)]
+        i = i + 1
+    }
+    return c
+}
+
+// cp_embed — RBF population code of scalar position x in [0,1]: a locally-smooth,
+// position-FAITHFUL, boundary-AGNOSTIC DIM-vector (width FIXED = 0.115, the mirror's
+// [0.10,0.13] midpoint; engine is one deterministic instance). L2-normalized.
+pub fn cp_embed(x: float, dim: int) -> [float] {
+    let centers = _cp_centers(dim)
+    let width = 0.115
+    let mut v = []
+    let mut nrm = 0.0
+    let mut i = 0
+    while i < dim {
+        let d = x - centers[i]
+        let e = exp(-(d * d) / (2.0 * width * width))
+        v = v + [e]
+        nrm = nrm + e * e
+        i = i + 1
+    }
+    nrm = sqrt(nrm)
+    let mut out = []
+    let mut j = 0
+    while j < dim {
+        out = out + [if nrm > 0.0 { v[j] / nrm } else { v[j] }]
+        j = j + 1
+    }
+    return out
+}
+
+// _cp_owner_idx — index of the prototype nearest to embedding `key` (L2 winner).
+fn _cp_owner_idx(cp: CPField, key: [float]) -> int {
+    return _vnearest_idx(cp.protos, key)
+}
+
+// cp_fit — grow the Voronoi store over the N stimuli `X` with labels `Y`, error-targeted
+// SPLIT-only (p8): repeatedly split the cell with the most label error AT its worst-owned
+// (boundary-adjacent) stimulus. Cell label FIXED at creation. STOPS when no error remains —
+// so an all-zero-label (pre-language) arm stays at ONE coarse cell = FLAT. Byte-faithful to
+// the H_1323/H_1325 mirror VoronoiCells.fit.
+pub fn cp_fit(X: [[float]], Y: [int], grow_max: int, passes: int) -> CPField {
+    let m = len(X)
+    let dim = len(X[0])
+    // seed: one cell at the centroid, label = the stimulus nearest the centroid.
+    let mut c0 = []
+    let mut q = 0
+    while q < dim {
+        let mut s = 0.0
+        let mut r = 0
+        while r < m { s = s + X[r][q]  r = r + 1 }
+        c0 = c0 + [s / to_float(m)]
+        q = q + 1
+    }
+    let mut nrm = 0.0
+    let mut a = 0
+    while a < dim { nrm = nrm + c0[a] * c0[a]  a = a + 1 }
+    nrm = sqrt(nrm)
+    let mut c0n = []
+    let mut b = 0
+    while b < dim { c0n = c0n + [if nrm > 0.0 { c0[b] / nrm } else { c0[b] }]  b = b + 1 }
+    // nearest stimulus to the centroid → its label seeds the first cell.
+    let mut seed_stim = 0
+    let mut sd = _l2(X[0], c0n)
+    let mut k = 1
+    while k < m {
+        let dd = _l2(X[k], c0n)
+        if dd < sd { sd = dd  seed_stim = k }
+        k = k + 1
+    }
+    let mut cp = CPField { protos: [c0n], labels: [Y[seed_stim]], n: 1 }
+    let mut p = 0
+    while p < passes {
+        if cp.n >= 1 + grow_max { return cp }
+        // owners + the most boundary-adjacent misclassified stimulus.
+        let mut worst = -1
+        let mut worstd = 0.0
+        let mut found = false
+        let mut s2 = 0
+        while s2 < m {
+            let ow = _cp_owner_idx(cp, X[s2])
+            if cp.labels[ow] != Y[s2] {
+                let dist = _l2(X[s2], cp.protos[ow])
+                if !found || dist < worstd { worstd = dist  worst = s2  found = true }
+            }
+            s2 = s2 + 1
+        }
+        if !found { return cp }   // no error left → STOP (pre-language stays coarse = FLAT)
+        cp = CPField { protos: cp.protos + [X[worst]], labels: cp.labels + [Y[worst]], n: cp.n + 1 }
+        p = p + 1
+    }
+    return cp
+}
+
+// cp_posterior — the NON-LINGUISTIC representational response at embedding `key`:
+// softmin-weighted (beta=18) vote of nearby prototypes' bound labels = P(cat=1). NO hard
+// label read; a smooth representational gradient that SWINGS where cells pack at a boundary.
+pub fn cp_posterior(cp: CPField, key: [float]) -> float {
+    let beta = 18.0
+    let mut dmin = _l2(cp.protos[0], key)
+    let mut i = 1
+    while i < cp.n {
+        let d = _l2(cp.protos[i], key)
+        if d < dmin { dmin = d }
+        i = i + 1
+    }
+    let mut wsum = 0.0
+    let mut acc = 0.0
+    let mut j = 0
+    while j < cp.n {
+        let d = _l2(cp.protos[j], key)
+        let w = exp(-beta * (d - dmin))
+        wsum = wsum + w
+        acc = acc + w * to_float(cp.labels[j])
+        j = j + 1
+    }
+    if wsum > 0.0 { return acc / wsum }
+    return acc
+}
+
+// cp_discrim_curve — the downstream discrimination curve: for each adjacent stimulus pair,
+// |Δ posterior| (NO label at test). Returns the per-pair raw values over the N-1 midpoints.
+pub fn cp_discrim_curve(cp: CPField, X: [[float]]) -> [float] {
+    let n = len(X)
+    let mut out = []
+    let mut i = 0
+    while i < n - 1 {
+        let d = _absf(cp_posterior(cp, X[i]) - cp_posterior(cp, X[i + 1]))
+        out = out + [d]
+        i = i + 1
+    }
+    return out
+}
+
+// cp_peak_loc_idx — argmax index of the discrimination curve (CP peak bin). The peak
+// MIDPOINT = (idx + 0.5)/(N-1); the caller maps idx→position to compare to a boundary.
+pub fn cp_peak_loc_idx(curve: [float]) -> int {
+    let mut best = 0
+    let mut bv = curve[0]
+    let mut i = 1
+    while i < len(curve) {
+        if curve[i] > bv { bv = curve[i]  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+// cp_peak_count — the FROZEN W3' COHERENCE metric: number of LOCAL MAXIMA of the curve at
+// height >= PEAK_FRAC (0.50) of the curve's own peak (strict-local-maximum: strictly greater
+// than both neighbors; endpoints vs their one neighbor). 1 boundary → 1 coherent peak; an
+// incoherent shuffle → many scattered peaks. Byte-faithful to the mirror count_peaks.
+pub fn cp_peak_count(curve: [float]) -> int {
+    let frac = 0.50
+    let n = len(curve)
+    let mut mx = curve[0]
+    let mut a = 1
+    while a < n { if curve[a] > mx { mx = curve[a] }  a = a + 1 }
+    if mx <= 0.0 { return 0 }
+    let thr = frac * mx
+    let mut cnt = 0
+    let mut t = 0
+    while t < n {
+        if curve[t] >= thr {
+            let mut is_max = false
+            if t == 0 {
+                is_max = curve[t] > curve[t + 1]
+            } else if t == n - 1 {
+                is_max = curve[t] > curve[t - 1]
+            } else {
+                is_max = (curve[t] > curve[t - 1]) && (curve[t] > curve[t + 1])
+            }
+            if is_max { cnt = cnt + 1 }
+        }
+        t = t + 1
+    }
+    return cnt
+}
+
+// cp_labels_boundary — language label scheme: cat 1 above a boundary fraction, cat 0 below.
+// p\_A=1/3 and p\_B=2/3 are the two grue-style carvings; 0.0 → pre-language (all zero).
+pub fn cp_labels_boundary(positions: [float], boundary: float) -> [int] {
+    let mut y = []
+    let mut i = 0
+    while i < len(positions) {
+        y = y + [if positions[i] > boundary { 1 } else { 0 }]
+        i = i + 1
+    }
+    return y
+}
+
+// cp_labels_shuffle — the SHUFFLE control: an INCOHERENT per-stimulus label (no consistent
+// cut). Engine-native deterministic incoherence = parity of the engine's OWN FNV-1a hash
+// (the SAME _immune_fnv1a the recall faculty uses) over the (seed, index) byte mix (NOT a
+// numpy-PRNG byte-match; the STRUCTURAL incoherence claim). FNV-1a avalanches so successive
+// indices flip parity IRREGULARLY (not the period-2 alternation a raw LCG mod-2 gives) →
+// a genuine label scatter with no single boundary → many scattered discrimination spikes
+// (peak-count >= 3), the structural counterpart of the mirror's random shuffle.
+pub fn cp_labels_shuffle(positions: [float], seed: int) -> [int] {
+    let mut y = []
+    let mut i = 0
+    while i < len(positions) {
+        // hash (seed, index) into a 32-bit avalanche, then take parity of a high bit so the
+        // sequence is non-periodic. Bytes = seed low byte, index, seed mixed — irregular.
+        let h = _immune_fnv1a([seed & 255, i, (seed / 256) & 255, i * 7 + 13])
+        y = y + [(h / 65536) % 2]
+        i = i + 1
+    }
+    return y
+}
+
+// cp_stimuli — the N embedded stimuli (RBF code of evenly-spaced positions on [0,1]).
+pub fn cp_stimuli(n_stim: int, dim: int) -> [[float]] {
+    let mut X = []
+    let mut i = 0
+    while i < n_stim {
+        X = X + [cp_embed(to_float(i) / to_float(n_stim - 1), dim)]
+        i = i + 1
+    }
+    return X
+}

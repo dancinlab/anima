@@ -105,6 +105,42 @@ NEGATIVE 는 이 메커니즘에 한정(gradient-trained/재귀-IDS/풍부한-�
 `UNIVERSE/H_1324_xlang_han_ids.md` · `.verdicts/1324_xlang_han_ids/{H_1324_FREEZE,H_1324,h1324_summary.json,h1324_full.log}` ·
 `HYPOTHESES.md` row · `CLAIMS.tape` @C h1324_xlang_han_ids · `domains/MITOSIS-ENGINE.log.md`.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): 🟢 H_1325 — Sapir-Whorf r2: anti-Goodhart W3 RE-CLOSE (peak-COUNT coherence) + engine-native CP lane
+
+r2 of H_1323 (🟠 PARTIAL, PR #2228). 언어상대성(Sapir-Whorf) 결과의 결정적 두 다리는 H_1323 에서 통과했다 —
+**W1**(범주지각 CP 존재) · **W2**(Whorfian dissociation: CP peak 위치가 학습한 언어의 경계를 따라 이동, L_A→0.325≈p_A,
+L_B→0.675≈p_B, sep 0.350). 유일한 약점은 anti-Goodhart **W3** 였다: 그 prominence sub-clause 는 SHUFFLE 이
+SINGLE-peak 라 가정하고 peak HEIGHT 를 언어와 비교했는데, SHUFFLE 은 사실 MULTI-peak(무작위 per-stimulus 라벨 →
+국소적으로 sharp 한 스윙 다수; H_1323 non-gating 진단이 SHUFFLE peak 8 vs 언어당 1 측정) — SHUFFLE 의 한 spike 가
+언어의 한 coherent peak 만큼 높아 single-peak HEIGHT 는 **틀린 관측량**(wrong-METHOD 벽, `a_break_the_wall`/c16),
+relativity 의 실패가 아님.
+
+**Part A (mirror, frozen-first)**: `UNIVERSE/h1325_sapir_whorf_r2.py` 가 H_1323 메커니즘을 VERBATIM 재사용하고
+(N=21 RBF 연속체, grue 두 언어 p_A=1/3·p_B=2/3, gradient-free error-targeted SPLIT-only Voronoi 성장 p8,
+NO-label 변별 곡선, 4 arm, 3 seed [4323,4324,4325]), **W3' COHERENCE 통제를 ANEW 사전등록**
+(`.verdicts/1325_sapir_whorf_r2/H_1325_FREEZE.txt`, 점수 산출 BEFORE): PEAK-COUNT = 정규화 곡선의 strict
+local maxima 중 자기 peak 의 ≥0.50 높이; threshold 는 STRUCTURE 에서(언어는 경계 1개→`LANG_MAX_PEAKS=1`,
+SHUFFLE 은 경계 없음→`SHUF_MIN_PEAKS=3`) — 기존 bar 의 완화가 아니라 멀티-peak 현실에 맞는 **올바른 관측량**.
+
+**Part B (engine-native, `a_engine_native_learning`·`a_verified_must_wire`)**: 새 live lane
+`CORE/engine_cli.hexa § CategoricalPerception`(`CPField`; `cp_embed`/`cp_stimuli`/`cp_labels_boundary`/
+`cp_labels_shuffle`/`cp_fit`/`cp_posterior`/`cp_discrim_curve`/`cp_peak_loc_idx`/`cp_peak_count`) — brain lane 들이
+쓰는 SAME error-targeted SPLIT-only Voronoi 성장을 byte-faithful 로 실현. SINGLE deterministic instance(seed-불변
+bar 재현); SHUFFLE 은 엔진 자신의 FNV-1a-parity incoherent 라벨(structural incoherence, numpy-PRNG byte-match 아님).
+probe `CORE/h1325_sapir_whorf_probe.hexa`; `engine_cli_smoke.hexa` cases 79-82 배선. Ψ-disjoint(자기 protos/labels
+table; emit gate 아님, `a_autonomy_over_hardcode`).
+
+**결과 🟢 GREEN ENGINE-NATIVE** — 미러 & 엔진-native BYTE-FAITHFUL: W1✅ cross-within +0.200 / vs-baseline +0.99;
+W2✅ L_A→0.325(|Δ|=0.008) L_B→0.675(|Δ|=0.008) sep 0.350; **W3'✅ peak-count L_A=1 L_B=1 vs SHUFFLE=5.7(미러)/
+5(엔진)≥3** — 올바르게 명세된 peak-COUNT 통제가 coherent CP(1 peak)와 멀티-peak SHUFFLE 을 깨끗이 분리(single-peak
+HEIGHT 는 못 함). **언어상대성 = 이제 anti-Goodhart-closed**(W1∧W2∧W3'). 무회귀 가드: `engine_cli_smoke` **77/0**
+(was 73/0; +4 CP cases 79-82) · h1196 single-entry **7/0**(CP lane 은 .clm/.kosmos 경로 無) · h1205
+separation-invariant **PASS**(생성 byte-identical ON==OFF, Ψ Φ-checksum invariant → CP lane Ψ-disjoint). NO bar
+moved(c9/p7); ONE honest new control. TOY 합성 연속체, 미러 DIRECTIONAL → 엔진 BINDING; human-cognition 주장 없음
+(`a_scale_honest_scope`·`a_toy_scale_recheck`). NEW: `UNIVERSE/h1325_sapir_whorf_r2.py` ·
+`UNIVERSE/H_1325_sapir_whorf_r2.md` · HYPOTHESES.md row · CLAIMS.tape @C h1325_sapir_whorf_r2 ·
+`domains/MITOSIS-ENGINE.log.md` · ARCHITECTURE.md(§MITOSIS lane 추가, smoke 77/0).
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🌐 H_1318 — 교차언어 구조-표현 매트릭스 (한글 천장 돌파 = 한글-구조 문제인가?) (🟠 PARTIAL)
 
 질문(돌파하면 한글 구조 문제인지): 한국어 gradient-free 바이트-LM 천장(H_1307/1311/1315, ~2.953 nat/byte)을

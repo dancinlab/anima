@@ -1,0 +1,26 @@
+H_1325 Part B — ENGINE-NATIVE CP re-score (live CORE immune/Voronoi lane)
+==================================================================================
+  CP peak location (engine, single deterministic instance):
+    PRE-LANG idx=0 loc=0.025
+    L_A      idx=6 loc=0.325  (p_A=0.333333)
+    L_B      idx=13 loc=0.675  (p_B=0.666667)
+    SHUFFLE  idx=4 loc=0.225
+
+  W1 CP PRESENT (cross-within>=0.15 & lang-vs-baseline@peak>=0.15):
+     L_A cross-within=0.199785  vs-baseline=0.991137
+     L_B cross-within=0.199785  vs-baseline=0.9916   -> PASS
+  W2 WHORFIAN DISSOC (|locA-p_A|<=0.12 & |locB-p_B|<=0.12 & |locA-locB|>=0.20):
+     |locA-p_A|=0.008333  |locB-p_B|=0.008333  sep=0.35   -> PASS
+  W3' COHERENCE peak-count (LANG<=1 coherent & SHUFFLE>=3 incoherent):
+     peak-count: L_A=1  L_B=1  PRE-LANG=1  SHUFFLE=5
+       (a) languages coherent (<=1): PASS
+       (b) shuffle incoherent (>=3): PASS   -> W3' PASS
+==================================================================================
+VERDICT: 🟢 GREEN (ENGINE-NATIVE) — LINGUISTIC RELATIVITY ANTI-GOODHART-CLOSED on the
+  live CORE immune/Voronoi lane. W1 CP present, W2 peak tracks the language, W3'
+  coherence (languages 1 peak, shuffle many). Mirror bars REPRODUCED engine-native.
+
+=== NO-REGRESSION GUARDS (Part B wiring) ===
+engine_cli_smoke: 77 pass / 0 fail (was 73/0; +4 CP cases 79-82)
+h1196 single-entry audit: 7 pass / 0 fail (CP lane adds NO .clm/.kosmos path)
+h1205 separation-invariant: PASS (F1 generation 10 pairs 0 mismatch byte-identical ON==OFF; F2 Ψ Φ-checksum invariant) — CP lane Ψ-disjoint
