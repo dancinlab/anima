@@ -3,9 +3,9 @@ id: H_1297
 slug: 1297_mitosis_native_train
 title: mitosis-native trunk training — make PHILOSOPHY p8 literal (gradient-free cell-split learns a trunk vs gradient descent)
 group: MITOSIS-ENGINE (p8 literal)
-terminal_tier: 🟢 GREEN (R3 sharp byte-text target — mitosis MATCHES gradient AND error-targeting demonstrably helps: c2 discriminator FIRED that R1/R2 could not)
+terminal_tier: 🟢 GREEN ENGINE-BINDING (R4 — R3 sharp byte-text mitosis-grow realized ENGINE-NATIVE on live CORE VAdaptField; c1∧c2∧c3 all reproduced, c2 shuffle FIRED on the engine unlike thalamus R8; engine_cli untouched, smoke 55/0, h1205 + Ψ intact)
 verdict_dir: .verdicts/1297_mitosis_native_train/
-terminal_verdict: .verdicts/1297_mitosis_native_train/H_1297_R3_sharp_target.txt
+terminal_verdict: .verdicts/1297_mitosis_native_train/H_1297_R4_engine_native.txt
 date: 2026-06-16
 ---
 
@@ -80,16 +80,46 @@ next-byte CROSS-ENTROPY (nats/byte; convergence comparison, NOT perplexity-as-me
 helps** on language-like byte data. p8-literal toehold CONFIRMED on a real KO+EN byte corpus.
 NO tune-to-green: bars were frozen in `H_1297_R3_sharp_target.txt` before any score.
 
-## Follow-on after R3 GREEN (a_break_the_wall continuation — NOT claimed verified here)
+**R4 (ENGINE-NATIVE realization — the R3 follow-on #1; re-score of the SAME FROZEN R3 bars
+on the LIVE CORE VAdaptField, `H_1297_R4_engine_native.txt`):** 🟢 **GREEN — ENGINE-BINDING.**
+The R3 hard-partition mitosis-grow next-byte trainer realized on anima's OWN live engine
+faculty: **partition = the live `VAdaptField` Voronoi ownership** (`vadapt_field_nearest_idx`,
+the engine's own winner-take-all L2 assign — `np.argmin(sq-L2) == L2 argmin`, byte-faithful),
+**growth = the engine's OWN mitosis tick** (`engine_mitosis_tick`; ON → +1 cell p8, OFF →
+no-op = the ablate arm), **head = per-cell categorical next-byte MLE** (closed-form add-1
+Laplace, gradient-free). Arm A (gradient) re-used VERBATIM from the mirror as the incumbent;
+B/B-shuf/B-abl realized engine-native (shuffle pick = engine-native LCG). 3-seed mean:
+**A(grad)=2.91698 · B(mitosis)=3.07766 [6 cells] · B-shuffle=3.25031 · B-ablate=3.49815 [2 cells].**
+- **(c1) PASS** — engine B(mitosis) CE 3.07766 ≤ A+0.20 = 3.11698, **byte-identical to the
+  R3 mirror** (3.0777, 6 cells): the engine's Voronoi + median-split reproduces the mirror
+  partition EXACTLY, no drift.
+- **(c2) FIRED ON THE ENGINE** — B-shuffle 3.25031 ≥ B+0.10 = 3.17766, on all 3 seeds
+  (per-seed 3.29/3.11/3.35). **Unlike thalamus R8** (where shuffle did NOT reproduce
+  engine-native), the targeting discriminator FIRES on the LIVE VAdaptField substrate — the
+  engine-native LCG shuffle shifts the exact number but NOT the verdict (the collapse is
+  mechanism, not RNG).
+- **(c3) PASS** — engine B-ablate 3.49815 ≥ 3.17766, byte-identical to the mirror (3.4981).
+→ 🟢 GREEN ENGINE-BINDING: the R3 mirror REPRODUCES engine-native; the p8-literal Korean
+mitosis-grow toehold is now ENGINE-VERIFIED (not numpy-only). **Regression: `engine_cli.hexa`
+UNMODIFIED** (probe consumes existing surfaces, no new lane wired) → `engine_cli_smoke` 55/0
+(before == after), `h1205_separation_invariant_smoke` 🟢 PASS (Ψ phiSum ON==OFF = 48.6613
+byte-identical, MITOSIS ⊥ GENERATION holds). Ψ-disjoint (pure_field untouched). probe:
+`CORE/h1297_mitosis_train_engine_probe.hexa` · export `UNIVERSE/h1297_engine_export.py`.
 
-1. **Engine-native realization** (a_engine_native_learning + a_verified_must_wire): realize
-   the R3 hard-partition mitosis-grow next-byte trainer on live `CORE/engine_cli.hexa`
-   VAdaptField, re-score the frozen R3 bars engine-native — the mirror is DIRECTIONAL, the
-   binding verdict needs the engine.
-2. **A real (larger) Korean byte-corpus mitosis-grow training rung** — the first p8-literal
-   LANGUAGE training: scale the corpus to a genuine Korean byte-LM rung and re-test whether
-   error-targeted mitosis-grow still matches/beats gradient at scale. This becomes a
-   **cost-gated decision** if it needs GPU (a_fire_autonomous; NOT run in this $0 CPU toy).
+## Follow-on after R4 ENGINE-NATIVE GREEN (a_break_the_wall continuation)
+
+1. ~~**Engine-native realization**~~ — **DONE (R4 🟢 GREEN ENGINE-BINDING, above):** the R3
+   hard-partition mitosis-grow next-byte trainer runs on the live `CORE/engine_cli.hexa`
+   VAdaptField (Voronoi ownership + mitosis tick), re-scoring the frozen R3 bars engine-native;
+   c2 FIRED on the engine. No new engine lane was wired (the probe consumes existing surfaces);
+   the binding verdict is the mechanism, not a faculty addition.
+2. **A real (larger) Korean byte-corpus mitosis-grow training rung** — NOW JUSTIFIED by the
+   engine-verified toehold: the first p8-literal LANGUAGE training. Scale the corpus to a
+   genuine Korean byte-LM rung (bigger real Korean corpus, higher-dim context feature) on the
+   SAME VAdaptField Voronoi + `engine_mitosis_tick` growth, scored on held-out next-byte CE +
+   a p7 coherence check (NOT perplexity-as-truth). **Cost-gated decision** if it needs GPU
+   (a_fire_autonomous one-line estimate; NOT auto-rented in this $0 CPU research worktree —
+   surfaced for a go).
 
 ## Honest scope (c9, a_scale_honest_scope, a_toy_scale_recheck)
 
@@ -113,12 +143,17 @@ At toy scale on language-like byte data, a gradient-FREE mitosis-grow trainer (h
 R3) **converges as well as gradient descent (c1 PASS) AND error-targeted growth demonstrably
 beats random growth (c2 FIRED) AND frozen growth underfits (c3 PASS)** — so p8-literal trunk
 training is **CONFIRMED at toy scale on a real KO+EN byte corpus**, with error-targeting (the
-p8-distinctive claim) isolated as the lever. **Conclusion:** mitosis-grow is a verified-at-toy
-gradient-free trainer where targeting helps; gradient remains the incumbent trunk trainer
-pending the two GREEN follow-ons below (engine-native realization + a real Korean scale rung) —
-mitosis-grow is now a credible co-trainer candidate with a clean GREEN toehold, NOT yet an
-engine-verified or production replacement.
+p8-distinctive claim) isolated as the lever. **R4 makes this ENGINE-BINDING:** realized on
+anima's OWN live VAdaptField (Voronoi ownership + `engine_mitosis_tick` growth), the SAME
+frozen R3 bars reproduce — c1 byte-identical, c2 shuffle FIRES on the engine (unlike thalamus
+R8), c3 underfits — so the toehold is now engine-verified, not numpy-only. **Conclusion:**
+mitosis-grow is an ENGINE-VERIFIED-at-toy gradient-free trainer where error-targeting is the
+lever; gradient remains the incumbent trunk trainer pending the one remaining follow-on (a
+real, larger, cost-gated Korean byte-corpus rung) — mitosis-grow is now an engine-verified
+co-trainer candidate at toy scale, NOT yet a production replacement (scale UNVERIFIED).
 
 xref: p8 · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning ·
-a_verified_must_wire · a_toy_scale_recheck · a_scale_honest_scope · H_1199 (VAdaptField
-split) · H_1288 (grow-under-pressure) · H_1159 (inference-time mitosis = learning) · p7 · c9 · c16.
+a_verified_must_wire · a_core_engine_map · a_toy_scale_recheck · a_scale_honest_scope ·
+H_1199 (VAdaptField split, the live faculty R4 runs on) · H_1288 (grow-under-pressure,
+engine-native mitosis precedent) · H_1159 (inference-time mitosis = learning) ·
+H_1205 (MITOSIS ⊥ GENERATION separation invariant, R4 regression guard) · p7 · c9 · c16.

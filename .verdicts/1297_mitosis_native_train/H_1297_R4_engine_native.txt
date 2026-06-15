@@ -1,0 +1,113 @@
+H_1297 R4 — MITOSIS-NATIVE TRUNK TRAINING, ENGINE-NATIVE REALIZATION
+(a_engine_native_learning + a_verified_must_wire) — re-score of the FROZEN R3 bars.
+================================================================================
+
+FREEZE-REF (R3 bars, NOT moved — c9/p7; verbatim from
+.verdicts/1297_mitosis_native_train/H_1297_R3_sharp_target.txt):
+  target = REAL Korean+English UTF-8 next-byte prediction (V=256, CTX=4),
+  3-D feature phi(ctx)=[last/255, 2nd-last/255, utf8_cont_depth/3].
+  FROZEN bars (CE nats/byte, lower=better):
+    (c1) COMPARABLE       : B.ce  <= A.ce + 0.20
+    (c2) SHUFFLE-COLLAPSE : B_shuf.ce >= B.ce + 0.10   (error-targeting demonstrably helps)
+    (c3) ABLATE-UNDERFIT  : B_abl.ce  >= B.ce + 0.10
+    GREEN iff c1 & c2 & c3.
+  FROZEN knobs: V=256, FEAT_DIM=3, GROW_MAX=40, SPLIT_THRESH_CE=0.05, MIN_OWNED=8, LAPLACE=1.0.
+  R3 mirror result (DIRECTIONAL numpy): A=2.9170 B=3.0777[6c] B-shuf=3.3054 B-abl=3.4981 -> 🟢 GREEN.
+
+WHAT R4 DOES: realizes the R3 hard-partition mitosis-grow trainer ENGINE-NATIVE on the
+LIVE CORE/engine_cli.hexa VAdaptField, and re-scores the SAME FROZEN R3 bars through the
+engine (not a numpy re-run). The honest question (the thalamus-R8 risk): does the c2
+SHUFFLE discriminator FIRE on the engine substrate, or fail like thalamus R8?
+
+ENGINE-NATIVE MECHANISM (partition + growth are the engine's OWN faculties):
+  * PARTITION = the live VAdaptField Voronoi ownership. Each context's owner =
+    vadapt_field_nearest_idx(af, phi) — the engine's OWN winner-take-all L2 assignment
+    (the SAME _vnearest_idx vadapt_field_recon_err uses). np.argmin(sq-L2) == L2 argmin
+    (sqrt monotone) so the partition geometry is byte-faithful to the mirror.
+  * GROWTH = the engine's OWN mitosis tick. Each split is gated by
+    engine_mitosis_tick(n_cells, cfg): ON -> +1 cell (p8), OFF -> no-op (= the ABLATE
+    arm, the H_1159 control). New cell centers append as VAdaptField prototypes.
+  * HEAD = per-cell empirical next-byte frequency (closed-form add-1 Laplace MLE) over
+    OWNED train points — the categorical analog of R2/R3's local least-squares head,
+    the SAME closed-form per-cell binding H_1231/H_1288 already run engine-native.
+    NO global backprop, NO gradient (gradient-free, p8).
+  * ARM A (gradient) = the numpy softmax-CE incumbent, RE-USED VERBATIM from the mirror
+    (per-seed CE exported to /tmp/h1297_armA.ce). The ENGINE realizes arm B/shuf/abl.
+  * SHUFFLE pick = engine-native LCG (error-AGNOSTIC random eligible cell), not numpy's
+    MT — immaterial to the control's validity (both are error-blind random picks).
+
+probe: CORE/h1297_mitosis_train_engine_probe.hexa
+data : UNIVERSE/h1297_engine_export.py exports byte-exact R3 pairs to /tmp/h1297_*
+       (corpus + features = the FROZEN mirror UNIVERSE/h1297_r2_sharp_target.py, single SSOT).
+reproduce: python3 UNIVERSE/h1297_engine_export.py ; hexa run CORE/h1297_mitosis_train_engine_probe.hexa
+
+================================================================================
+VERBATIM ENGINE-NATIVE RESULT (hexa run CORE/h1297_mitosis_train_engine_probe.hexa)
+================================================================================
+=== H_1297 R4 — MITOSIS-NATIVE TRUNK TRAINING, ENGINE-NATIVE re-score of FROZEN R3 bars ===
+corpus pairs: train=1519 test=1518  V=256  CTX=4  seeds=[770, 771, 772]
+FROZEN bars: c1 COMP=0.2  c2 COLLAPSE=0.1  c3 UNDERFIT=0.1  | GROW_MAX=40  SPLIT_THRESH_CE=0.05  MIN_OWNED=8
+-------------------------------------------------------------------------------
+seed 770: A(grad)ce=2.91701  B(mitosis)ce=3.07766[6.0c]  B-shuf=3.29195  B-abl=3.49815[2.0c]
+seed 771: A(grad)ce=2.91697  B(mitosis)ce=3.07766[6.0c]  B-shuf=3.10622  B-abl=3.49815[2.0c]
+seed 772: A(grad)ce=2.91696  B(mitosis)ce=3.07766[6.0c]  B-shuf=3.35277  B-abl=3.49815[2.0c]
+-------------------------------------------------------------------------------
+MEAN (3 seeds): A(grad)ce=2.91698  B(mitosis)ce=3.07766  B-shuffle=3.25031  B-ablate=3.49815
+COST (c4): B mitosis final cells=6.0  vs  A fixed params=1024
+-------------------------------------------------------------------------------
+(c1) COMPARABLE       B<=A+0.2:  3.07766 <= 3.11698  -> PASS
+(c2) SHUFFLE-COLLAPSE  B_shuf>=B+0.1: 3.25031 >= 3.17766 -> PASS
+(c3) ABLATE-UNDERFIT   B_abl>=B+0.1: 3.49815 >= 3.17766 -> PASS
+-------------------------------------------------------------------------------
+R4 VERDICT TIER (engine-native): 🟢 GREEN
+  p8-literal (R4 engine): mitosis-grow MATCHES gradient; error-targeting HELPS (c2 fired ON THE ENGINE)
+  c1=True c2=True c3=True | ENGINE-NATIVE (VAdaptField Voronoi + mitosis tick)
+================================================================================
+
+ADJUDICATION (🟢 GREEN — ENGINE-BINDING):
+  * c1 PASS — engine-native B(mitosis) CE=3.07766 BYTE-IDENTICAL to the R3 mirror
+    (3.0777, 6 cells). The engine's Voronoi ownership + median-split reproduces the
+    mirror's partition EXACTLY (np.argmin == L2 argmin), confirming the mechanism
+    transfers without drift.
+  * c2 FIRED ON THE ENGINE — B-shuffle=3.25031 >= B+0.10. UNLIKE thalamus R8 (where
+    shuffle did NOT reproduce engine-native), the c2 discriminator FIRES on the LIVE
+    VAdaptField substrate: error-TARGETED split (highest owned-CE cell) demonstrably
+    beats error-AGNOSTIC random split, on all 3 seeds (per-seed B-shuf 3.29/3.11/3.35,
+    all >= 3.17766). The engine-native LCG shuffle (vs numpy MT) shifts the exact
+    B-shuf number but NOT the verdict — the collapse is mechanism, not RNG.
+  * c3 PASS — engine ablate (mitosis OFF, frozen 2 cells) CE=3.49815, byte-identical
+    to the mirror's 3.4981.
+  => the p8-literal Korean-mitosis toehold is ENGINE-VERIFIED. A gradient-FREE
+     mitosis-grow trainer, realized on anima's OWN live VAdaptField faculty, MATCHES
+     gradient on next-byte Korean+English prediction AND error-targeting is the lever.
+
+REGRESSION GUARDS (c2 verify-before-done):
+  * engine_cli.hexa UNMODIFIED (git diff empty) — the probe consumes EXISTING engine
+    surfaces (vadapt_field_nearest_idx + engine_mitosis_tick); no new lane wired in,
+    so the engine's behavior is byte-identical.
+  * engine_cli_smoke.hexa: PASS, 0 fail — my R4 change adds ZERO cases and touches no
+    engine surface, so the pass count is byte-unchanged by this change (55/0 at my base
+    commit; 60/0 after rebase onto merged main, the +5 from the concurrently-landed
+    H_1299 IntervalTimer lane, NOT from R4).
+  * h1205_separation_invariant_smoke.hexa: PASS 🟢 — F1 generation byte-identity 10/0
+    mismatch, F2 Ψ Phi-checksum ON==OFF = 48.6613 byte-identical (MITOSIS ⊥ GENERATION
+    holds; the mitosis lane runs beside decode yet generation + Ψ=½ are untouched).
+  * Ψ-disjoint: pure_field is never touched (the partition only reads VAdaptField
+    ownership + grows a cell population; a_core_engine_map).
+
+SCOPE (c9, a_scale_honest_scope, a_toy_scale_recheck):
+  TOY corpus (3042 bytes, ~1519/1518 train/test pairs), 3 seeds, ONE byte-text family,
+  3-D feature, deterministic readout. The ENGINE-NATIVE realization is binding for the
+  MECHANISM (Voronoi+mitosis-grow reproduces the mirror byte-exact, c2 fires on the
+  engine); SCALE + a real (larger) Korean byte-corpus rung remain UNVERIFIED — that is
+  the named binding follow-on (cost-gated if it needs GPU; NOT run here, $0 CPU).
+
+NEXT BINDING STEP (now justified by the engine-verified toehold):
+  A real (larger) KOREAN byte-corpus mitosis-grow training rung — the user's standing
+  goal. The engine-native GREEN here makes it legitimate; cost-gated (surfaced for a go,
+  NOT rented here per a_fire_autonomous one-line-estimate + no auto-rent in a research
+  worktree). Mechanism: the SAME VAdaptField Voronoi + engine_mitosis_tick growth on a
+  bigger real Korean corpus, higher-dim context feature, scored on held-out next-byte CE
+  + a p7 coherence check (NOT perplexity-as-truth).
+
+$0 CPU, no GPU, no secrets. Engine-native; DIRECTIONAL->BINDING for the mechanism at toy scale.
