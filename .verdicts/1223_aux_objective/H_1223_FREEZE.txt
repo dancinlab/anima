@@ -1,0 +1,38 @@
+H_1223 — AUX-OBJECTIVE-AS-LEVER (HD7) — PRE-REGISTRATION (FROZEN BEFORE ANY SCORE)
+==================================================================================
+Date: 2026-06-15 | $0 CPU numpy toy | p7 | a_toy_scale_recheck toy-only scope
+
+QUESTION (HD7, .verdicts/1219_depth_ceiling_hypothesis_exhaustion/H_1219.txt):
+  Is the flat literal-QA recall wall caused by the OBJECTIVE — plain next-byte cross-entropy
+  doesn't reward retrieval/recall — such that an AUXILIARY retrieval/QA objective lifts it?
+
+DESIGN: a 1-layer causal-attention byte-LM trained TWO ways on the SAME synthetic fact
+corpus ('<KEY> is <VALUE>.') at EQUAL compute (same arch/init-seed/data/steps/batch/lr):
+  ARM A = plain next-byte CE only.
+  ARM B = next-byte CE + LAMBDA_AUX(=1.0) * AUX, where AUX = an EXTRA next-byte CE term
+          applied ONLY at the '<KEY> is ' answer-span boundary positions (span-copy /
+          retrieve-the-answer: directly reward the SAME output head for emitting the first
+          VALUE byte from the query boundary). No new params — tests the OBJECTIVE not capacity.
+
+PRIMARY METRIC (p7, NOT perplexity): literal-QA-proxy EXACT-match accuracy = fraction of
+HELD-OUT facts (25%, never shown as a query in training) whose greedy-decoded VALUE span
+exactly matches the stored VALUE. Substring reported as a looser companion. Val CE reported
+as context ONLY (never the gate).
+
+FROZEN BARS (NOT to be moved post-hoc):
+  F1  AUX-LIFT  : mean_seeds(QA_B_exact) - mean_seeds(QA_A_exact) >= 0.10  (the CLEAR margin)
+  F2  EVERY-SEED: QA_B_exact >= QA_A_exact on EVERY seed (directionally consistent)
+  F3  G0-FLOOR  : ARM B free-decode coherence (in-alphabet/space/. ratio) >= 0.50
+  SUPPORTED (🟢 OBJECTIVE-IS-A-LEVER) iff F1 AND F2 AND F3.
+  Otherwise 🔴 RED — objective is NOT the wall; recall stays ENGINE-side (REINFORCES H_1154).
+
+CONFIG (frozen): VOCAB=256 D_MODEL=64 D_FF=128 N_CTX=64 ; steps=4000 batch=64 lr=2e-3 ;
+  N_FACTS=600 KEY_LEN=4 VAL_LEN=4 HELDOUT_FRAC=0.25 REPEATS=6 ; SEEDS=[231,232,233].
+
+HONEST PRIOR (a_paper_negative_ok): H_1154 found anti-fabrication recall had to go
+ENGINE-side (deterministic retrieve-then-copy) because the WEIGHTS could not learn the
+key->value match from a feature — so an in-weights aux RECALL objective has a PRIOR-RED lean.
+Fair test given anyway: maybe an explicit recall LOSS (not just a feature) flips it.
+
+SCOPE: TOY-ONLY (a_scale_honest_scope / a_toy_scale_recheck). Clean recall toy where the
+answer is copyable from context; production 303M transfer UNVERIFIED either way.

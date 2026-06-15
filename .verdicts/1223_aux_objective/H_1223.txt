@@ -1,0 +1,76 @@
+H_1223 — AUX-OBJECTIVE-AS-LEVER (HD7) — 🔴 RED CLOSED-NEG (objective is NOT the wall)
+=====================================================================================
+$0 CPU numpy toy | 2026-06-15 | p7 | a_toy_scale_recheck TOY-ONLY | seeds [231,232,233]
+probe: UNIVERSE/h1223_aux_objective_probe.py | freeze: .verdicts/1223_aux_objective/H_1223_FREEZE.txt
+
+TRIGGER (HD7, .verdicts/1219_depth_ceiling_hypothesis_exhaustion/H_1219.txt):
+  The genuine flat wall in anima-303M is LITERAL-QA recall (~1-2/15, scale-invariant H_1139/
+  H_1167, arch-settled H_1155, decode-invariant H_1218). HD7 asks: is that wall the OBJECTIVE
+  — plain next-byte cross-entropy never rewards RETRIEVAL/recall — so an AUXILIARY retrieval/QA
+  objective on the SAME corpus + SAME compute LIFTS literal-QA-proxy? Honest prior (H_1154):
+  anti-fab recall went ENGINE-side because the WEIGHTS couldn't learn key->value match → an
+  in-weights aux RECALL objective has a PRIOR-RED lean; fair toy test given anyway.
+
+DESIGN (a fair, equal-compute A-vs-B on the SAME corpus):
+  CORPUS: synthetic facts '<KEY> is <VALUE>.' (key=4b val=4b, 600 facts, x6 repeats), 25%
+    held-out as NEVER-QUERIED facts (no query-format leakage). Literal-QA-proxy = greedy-decode
+    the VALUE span from the '<KEY> is ' boundary; EXACT-match accuracy is the frozen metric (p7).
+  MODEL: 1-layer causal self-attention byte-LM (D=64, ff=128, ctx=64), real mini-batch Adam,
+    manual backward (gradient-checked analytic==numeric on E/Wq/W1/Wout pre-run). Attention
+    included deliberately (H_1155: retrieval is attention-bound) so the backbone CAN copy a span.
+  ARM A = plain next-byte CE only (the production objective, p8).
+  ARM B = next-byte CE + 1.0*AUX, AUX = an EXTRA next-byte CE term applied ONLY at the
+    '<KEY> is ' answer-boundary positions (span-copy / retrieve-the-answer: directly reward the
+    SAME output head for emitting the first VALUE byte). No new params — tests the OBJECTIVE,
+    not capacity. EQUAL COMPUTE: same arch/init-seed/data/steps(4000)/batch(64)/lr(2e-3)/sampling.
+
+FROZEN FALSIFIER (pre-registered in H_1223_FREEZE.txt, bars NOT moved):
+  F1 mean(QA_B_exact) - mean(QA_A_exact) >= 0.10   | F2 QA_B>=QA_A every seed | F3 G0(B) >= 0.50
+  SUPPORTED (🟢) iff F1 AND F2 AND F3.
+
+RESULT (3 seeds, unanimous):
+  seed 231: QA_A exact 0.000 (substr 0.160) | QA_B exact 0.000 (substr 0.693) | dExact +0.000 | CE A 0.696 B 0.672 | G0 A 0.25 B 0.18
+  seed 232: QA_A exact 0.000 (substr 0.167) | QA_B exact 0.000 (substr 0.747) | dExact +0.000 | CE A 0.668 B 0.660 | G0 A 0.18 B 0.21
+  seed 233: QA_A exact 0.000 (substr 0.147) | QA_B exact 0.000 (substr 0.660) | dExact +0.000 | CE A 0.678 B 0.674 | G0 A 0.02 B 0.22
+  ----
+  QA_A exact mean = 0.000 | QA_B exact mean = 0.000 | delta = +0.000  (bar 0.10) -> F1 FAIL
+  every-seed B>=A -> F2 PASS (trivially: 0==0) | G0_B min 0.18 (bar 0.50) -> F3 FAIL
+  substr mean: A 0.158 -> B 0.700 (the aux DOES move byte-overlap, but NOT exact recall)
+  CE mean: A 0.681  B 0.669 (aux marginally HELPS LM CE — not a CE-cost story)
+
+VERDICT: 🔴 RED — the AUXILIARY retrieve-the-answer / span-copy objective does NOT lift
+literal-QA-proxy EXACT recall over plain next-byte CE at equal compute (delta +0.000 < 0.10;
+F1 FAIL). The OBJECTIVE is NOT the wall: even on a CLEAN recall toy where the answer is
+directly copyable from earlier context, an explicit in-weights recall LOSS does not produce
+exact literal recall any better than plain CE. => recall stays ENGINE-side (H_1154:
+deterministic retrieve-then-copy — the weights cannot be pushed by a loss term to surface the
+key->value match; the engine must compute the match symbolically). REINFORCES H_1154 and
+closes the in-weights-objective branch of the HD7 ladder. a_paper_negative_ok — a clean,
+decision-grade closed-negative.
+
+NUANCE (honest, not a pass): ARM B's SUBSTRING overlap jumps 0.16 -> 0.70 — the aux objective
+DOES change behavior (it surfaces SOME correct value bytes from the boundary) — but it cannot
+assemble the EXACT span. This is exactly the H_1154 shape: the weights learn a diffuse
+copy-tendency, not the precise deterministic key->value retrieval that exact recall needs.
+A diffuse loss nudge ≠ engine-grade exact copy.
+
+CAVEATS (p7 honesty):
+  - F3 also FAILED (G0_B 0.18 < 0.50) but this is a SYNTHETIC-CORPUS artifact, NOT the
+    decisive gate: the rigid '<key> is <value>.\n' corpus is so regular that greedy FREE-decode
+    off the fact-grid collapses to null/padding bytes for BOTH arms (G0_A also 0.02-0.25). F1
+    (exact lift = 0) is the decisive falsifier and fails independently of F3.
+  - delta is EXACTLY 0.000 because BOTH arms floor at 0 exact recall on held-out random
+    4-byte values — a hard recall target. The substring lift (A 0.16 -> B 0.70) is the real
+    behavioral signal and it is still SUB-bar on the exact metric the wall demands.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY-ONLY — synthetic small fact corpus,
+1-layer attention byte-LM, small Adam budget, 3 deterministic seeds, $0 CPU numpy. The
+OBJECTIVE-LEVER LINK test; production 303M transfer UNVERIFIED. p8: one continuously trained
+head, no train/infer split. Frozen bars not moved.
+
+IS THE OBJECTIVE THE LEVER? NO (toy). Recall stays ENGINE-side per H_1154. Of the 3 OPEN HD7-
+ladder fires, the in-weights aux-objective branch is now toy-closed-negative; HD5 (QA-format FT)
+and HD6 (tokenizer granularity) remain the live untested levers, and HD8 (literal-QA gate
+validity, p4) remains the $0 governance question.
+
+xref H_1219(HD7)·H_1154·H_1155·H_1167·H_1139·H_1218·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p4·p7·p8.
