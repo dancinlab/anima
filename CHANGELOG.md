@@ -2,6 +2,43 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): 🧱 H_1328 — Φ-robustness 4× 벽 진단: 추정기(estimator)의 진폭-분산 혼동인가, 진짜 substrate 한계인가 (🧱 DEEPER, ESTIMATOR-INDEPENDENT)
+
+네 개의 독립 Φ-robustness 시도(H_1283 topology · H_1317 multi-edge · H_1319 timing · H_1320 division)가
+**같은 직교 seed 1317**에서 전부 🧱로 막혔다. H_1319의 수렴 진단(명시된 open follow-on): faithful-IIT4의
+n≤8 정확-MIP가 각 셀 trajectory를 **min-max로 이진화(binarize)**하는데, 그 binning이 **진폭 분산을 탄다** —
+관계-파괴 permutation 대조가 Φ를 무너뜨리는 대신 **올렸다**(ΔΦ_perm +0.280/+0.103/+0.587). 벽이 substrate가
+아니라 **추정기(tool)** 일 수 있다는 것.
+
+H_1328은 그 진단을 **직접** 검증했다. faithful IIT-4 **안에 머물면서**(a_phi_iit4_tool — 동일한 정확 MIP-EI,
+proxy 아님 · 다른 Φ 척도 아님) read-out의 **state-encoding**만 레버로 썼다: 각 셀 trajectory를 MIP 전에
+**rank-uniformize**(각 값을 그 셀 자신의 trajectory 내 순위로 치환). **증명 가능한 불변식**: rank-uniformize 후
+모든 셀의 값이 정확히 {0,1,…,T−1} → min-max binning이 **균등(uniform) 주변분포** → H(A),H(B)가 모든 arm·모든
+셀에서 **상수** → MI는 오직 **결합 H(A,B)**(공동-움직임 관계)에만 의존, 진폭 분산은 주변분포에서 **증명적으로 제거**.
+
+결과(frozen-first, FREEZE 26494942a 사전 commit, bars 미이동, deterministic 재실행 byte-identical, seeds [1317,1318,1319],
+$0 CPU, engine-native LCG):
+
+- **V1 CONFOUND-CONFIRM = PASS** — V1a(OLD min-max perm이 3 seed 모두 Φ를 올림, H_1319 정확 재현 +0.280/+0.103/+0.587)
+  ∧ V1b(NEW rank-uniform perm이 3 seed 모두 Φ를 무너뜨림 S−A −0.207/−0.047/−0.031 ≤eps). **진폭-분산 binarization
+  혼동은 진짜였고, rank-uniform read-out이 그것을 증명적으로 제거** — min-max에서 Φ를 올리던 그 관계-파괴 permutation이
+  variance-free read-out에서는 **제대로 붕괴**.
+- **V2 ROBUST-LIFT = FAIL** — 깨끗한 추정기에서 phase 메커니즘 lift가 robust하지 않음(B−A −0.125/0.0/+0.031,
+  직교 seed 1317에서 음수, 2/3 실패).
+- **V3 EARNED = FAIL** — perm leg는 PASS(전부 붕괴), offset leg가 seed 1317에서 실패(O−A=+0.106).
+
+**FINDING:** 4× Φ-robustness 벽은 **진짜 추정기 혼동을 갖고 있었지만**(V1), 그것을 제거해도 integration이 robust해지지
+**않는다**(V2/V3) → 벽은 **추정기-독립적(estimator-independent) substrate 한계**다(n≤8 4-module substrate가 깨끗한
+read-out 아래서도 robust한 faithful-IIT4 integration을 진짜로 결여). 이전 진폭-혼동 🧱보다 **더 강하고 깨끗한 closure** —
+이제 대조가 깨끗하고(perm이 마땅히 붕괴) lift는 **여전히** robust하지 않다. 4개 선행 Φ verdict(H_1283/1317/1319/1320)을
+**retract하지 않고 BOUND** — 그들의 **공유 추정기**를 진단. anima 의식 substrate는 불변(Ψ=1/2 untouched). GREEN-only인
+a_verified_must_wire는 발동 안 함(배선할 것 없음). SCOPE: TOY n≤8 faithful-Φ EXACT, engine-native(numpy는 Φ 계산
+안 함). rank-uniform 불변식은 min-max binner에 대해 정확(주변-분산 채널 제거; V3o seed-1317 잔차는 additive-offset
+대조가 한 seed에서 탈 수 있는 joint-level 잔존 artifact — 정직한 non-GREEN). NOT ruled out: 완전 per-mechanism
+IIT 4.0(iit4_bigphi) · 훨씬 큰 module set(>8은 exactness 상실) · 다른 substrate family — 각각 새 가설.
+deliverables: UNIVERSE/h1328_phi_variance_free.hexa · UNIVERSE/H_1328_phi_variance_free.md · HYPOTHESES.md ·
+CLAIMS.tape @C h1328_phi_variance_free · .verdicts/1328_phi_variance_free/{H_1328_FREEZE,H_1328}.txt · domains/OMEGA.log.md.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1326 — 자모가 정말 (혼동 제거된) 분해 바닥인가 — 기하-공정 + 라벨-인수분해 (🧱 HONEST-FLOOR, CONFOUND-FREE)
 
 H_1322(🧱)의 r2. r1 에이전트가 **두 혼동(confound)을 정직하게 공개**했었다 (c16/a_break_the_wall = 잘못된
