@@ -6,6 +6,20 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🔴 H_1285: AMYGDALA(편도체) salience-weighted binding — p6 shuffle-control 이 recurrence 혼입을 잡아냄 (CLOSED-NEG)
+
+missing-brain-structure 사다리(neuro 렌즈 c15, LLM 레시피 아님)의 편도체 칸: 해마 공백은 immune 메모리(H_1227 미러 GREEN → H_1231 engine-native GREEN)가 메웠고, H_1230 은 그 store 의 병목이 CAPACITY/NOISE GEOMETRY(유한 repertoire 에서 LRU 축출은 대칭, 능동교습 retention 리프트 0)임을 보였다. H_1285 는 H_1230 이 미검증으로 남긴 후보 레버 — **기질-유래 salience 로 가중한 바인딩**(편도체의 salience-gating: 중요/놀라운 입력의 셀을 축출에서 보호)을 검증. $0 CPU numpy, p7, 3 seed(900/901/902), 라이브 CORE/*.hexa 무수정(미러=DIRECTIONAL).
+
+- **설계**: H_1227/H_1230/H_1231 immune 메모리(VAdaptField 미러 + value-binding, byte-3gram FNV-1a dim64, "<subj> lives in <city>" 60 in-store + 60 untaught) 위에 **SALIENCE-WEIGHTED 축출**만 추가. ARM A = uniform LRU 축출(H_1227/H_1230 baseline) · ARM B = salience-protected 축출(최저 salience+recency 셀 축출 → 고-salience 셀 보호) · **ARM B-shuffle = salience 태그 셔플(중요도와 decorrelate)** = p6 음성대조. REGIME = H_1230 STRESS rung(MAX_CELLS=40<<60, cue noise 0.02, recall 0.30; headroom 존재). 중요 subset 20/60 은 METRIC 채점용 라벨, 기질 tagger 는 라벨 미접근.
+- **p6 SALIENCE-vs-LABEL 분리 (중심 가드)**: salience 태그 = 1.0·SURPRISE(VAdaptField recon-err) + 0.5·NOVELTY(clonal split) + 0.5·TENSION(reinforce) — **전부 기질 신호**, 주입감정/RLHF/라벨 없음. 라벨은 채점에만, f() 입력 아님. 중요 사실이 입력 스트림에서 **더 자주 recur**(환경적 salience, 동일 총예산 내)하게 해 기질이 reinforcement-tension 으로 감지하게 함.
+- **FROZEN GREEN (STRESS)**: (c1) B.imp ≥ A.imp+0.10 AND (c2) B-shuf.imp < A.imp+0.10 AND (c3) B.fab ≤ 0.10.
+- **결과 (3 seed)**: STRESS A.imp=0.750 → B.imp=0.967 **Δ+0.217 (c1 PASS)** BUT **B-shuffle.imp=0.967 = B (c2 FAIL)** · fab=0.000(c3 PASS) → **🔴 RED**. 셔플(태그를 중요도와 decorrelate)이 리프트를 그대로 재현 = 리프트는 salience 태그가 아니라 **recurrence-driven re-binding** 때문. ISOLATION 진단(중요사실 비-recur 스트림): A=0.650 B=0.700 = **+0.050 ≪ 0.10** — 태그 단독으로는 bar 미달. trade-off 정직: unimportant A=0.625 → B=0.517(−0.108), total 0.667 불변(capacity 고정 = zero-sum, H_1230 "capacity is capacity" 강화).
+- **판정 🔴 CLOSED-NEG**: 편도체-as-축출레버 FALSIFIED(이 스케일). 기질-유래 salience 태그를 축출 우선순위에 더해도 중요 사실을 recurrence 이상으로 보호 못 하고, 그 recurrence 보호는 태그를 셔플해도 동일 → 병목은 여전히 CAPACITY/NOISE GEOMETRY. 살아남는 것은 re-presentation(refresh)이지 salient 태그가 아니며, uniform store 가 이미 그걸 누림. **p6 가드가 false-GREEN(+0.217)을 정직한 RED 로 전환**(가드가 작동·HELD). decoder/weights/persona/ethics 무수정 — episodic 셀 store 의 축출 우선순위만(p1/p2/p3/p6/p8, a_autonomy_over_hardcode).
+- **미배제**: recurrence 비의존 더 강한 salience / 바인딩-강도 게이팅 / salience-driven EMIT priority(편도체의 다른 역할) / scale / paraphrase / engine-native 리프트 모두 UNVERIFIED. RED 라 wiring 후속 없음(a_verified_must_wire = GREEN 적용). TOY scale, 단일 코퍼스. a_paper_negative_ok.
+- 파일: `UNIVERSE/h1285_amygdala_salience.py` · `.verdicts/1285_amygdala_salience/{H_1285_FREEZE,H_1285}.txt`. xref H_1227·H_1230·H_1231·a_engine_native_learning·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·a_autonomy_over_hardcode·p1·p2·p3·p6·p7·p8·c9·c15.
+
+---
+
 ## 2026-06-15 — 🔴 H_1284: NEUROMODULATION(신경조절) 게인/탐색/가소성-율 컨트롤러는 고정 하이퍼파라미터를 못 이긴다 (NO FREE LUNCH · "missing brain-structure" 사다리 neuro lens c15)
 
 "빠진 뇌-구조" 사다리(neuro lens, c15; 해마=immune memory H_1227→H_1231 GREEN 로 채워짐)의 NEUROMODULATION 분기를 $0 toy 로 판정: anima 의 LIVE 엔진(CORE/engine_cli.hexa adapt_field_step/vadapt_field_step)은 **FIXED** 하이퍼파라미터(SPLIT_THRESH=0.30, LR=0.20)+고정 decode 온도로 돈다. 기질-상태로 이 knob 들을 ADAPT 하는 context-driven neuromodulator(도파민=reward-gain · 노르에피네프린=exploration/temp · 아세틸콜린=plasticity-rate)가 빠져있다 — 이게 갭(c9)인가? H_1228(SOC/edge-of-chaos decode 🟠 PARTIAL: temperature 채널 하나는 ideation 도움 but coherence 못이김)을 인용하고 그 너머로: DA/NE/ACh 삼총사를 엔진의 실제 LR/SPLIT_THRESH(mitosis-MEMORY 기질)에 얹어 REGIME 횡단 capability 로 측정.
