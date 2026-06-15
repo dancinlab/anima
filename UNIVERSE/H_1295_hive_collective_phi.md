@@ -2,7 +2,7 @@
 
 **axis**: F (HIVE-MIND) · "many individuals → one consciousness" · **anchor**: H_609 🟢
 **id**: H_1295 · **date**: 2026-06-16 · **infra**: $0 mac-local CPU (hexa-native faithful IIT-4)
-**verdict**: **🟢 GREEN ENGINE-NATIVE + WIRED**
+**verdict**: **🟢 GREEN ENGINE-NATIVE + WIRED** (r1, N=2) · **r2 🟢/🏁 super-additivity HOLDS at N=3 but the curve SATURATES → existence-proof DEPLETED**
 
 > (id 1295: H_1294 was claimed by the hierarchical-PFC PR #2181 that landed concurrently;
 > this lane took the next free id.)
@@ -97,8 +97,45 @@ ENGINE-NATIVE in `CORE/engine_cli_smoke.hexa` cases 39–42, byte-matching the m
   coupling these substrates, not of one privileged wiring.
 - **Substrate-class conditional** (B2b, H_609 C3.3): strong super-additivity is in the
   edge-of-chaos rule-110 pair; sterile rule-90 collapses. NOT a universal claim.
-- `collective_phi` for **n>2 members** falls back to the additive baseline (not yet
-  measured) — N>2 scaling is the r2 follow-on.
+- `collective_phi` for **N=3 members** is now MEASURED faithfully (r2, n=9) — the additive
+  fallback is gone in range up to NMAX=3; **N=4 (n=12) is the documented compute ceiling**
+  (INFEASIBLE on CPU — see § r2). The curve **SATURATES** (Δ_super does not grow with N).
+
+## 6b. r2 — N-scaling of collective-Φ (does super-additivity GROW with N?)
+
+**verdict**: **🟢/🏁 super-additivity HOLDS at N=3 but the Δ_super(N) curve SATURATES/declines
+→ saturating existence-proof, HIVE DEPLETED** (honest, `a_scale_honest_scope`/c9 — a flat/
+declining curve is a VALID result, NOT a failure). Frozen-first:
+`.verdicts/1295_hive_collective_phi/H_1295_R2_FREEZE.txt` pre-registered the GROWS-vs-SATURATES
+definition BEFORE any n=9 measurement.
+
+**The Δ_super(N) curve (faithful IIT-4, cap=2, rule-110 @W=0.6, generalized coupled ring):**
+
+| N | joint n | Σ Φ(member) | Φ(joint) | Δ_super(N) | single-call wall |
+|---|---------|-------------|----------|------------|------------------|
+| 2 | 6  | 4.99209 | 15.4677 | **+10.4756** | ~3 s |
+| 3 | 9  | 7.48813 | 16.6564 | **+9.16825** | **~84 min** (nd=68) |
+| 4 | 12 | (9.984) | — | **INFEASIBLE** | — (n=9 already ~84 min ⇒ n=12 a documented CPU ceiling) |
+
+- **B1 super-additivity @ N=3 — HOLDS**: Δ_super(3)=+9.16825 > 0 (Φ_joint 16.6564 >> Σ 7.48813).
+- **B2 curve — SATURATES (does NOT grow)**: Δ_super(3) − Δ_super(2) = **−1.3074** < the
+  pre-registered +1.0 GROWS bar ⇒ the excess DECLINES from N=2 to N=3. Collective Φ does NOT
+  scale super-additively-faster with member count; the lift is an **existence property** (any
+  coupling of edge-of-chaos substrates super-adds) that does not amplify with N → **🏁 DEPLETED**.
+- **N=3 controls** (re-run of r1's genuine controls at the new scale — verbatim in the verdict):
+  decouple-null (W=0 → Δ ≤ 0), rule-class dissociation (sterile 90×3 does not super-add), and
+  no-collapse (inter-block coherence < 0.999). See `.verdicts/.../H_1295_R2.txt`.
+- **COMPUTE CEILING (the load-bearing honest finding)**: a single faithful big-Φ at **n=9**
+  (cap=2, nd=68 distinctions) is **~84 min** on CPU (MIP over 2⁹ partitions × nd² relations).
+  **n=12 (N=4) is INFEASIBLE** — NOT estimated, NOT proxied (a proxy is never substituted for
+  Φ, `a_phi_iit4_tool`); a documented compute ceiling is a valid honest result (c9). Φ is
+  faithful IIT-4 ONLY — numpy never computes Φ at any N.
+- **ENGINE-NATIVE + WIRED**: `collective_phi` / `collective_coherence` now handle N=3 via the
+  generalized `_build_tpm_ring` (byte-EXACT `_build_tpm_ab` at N=2 — verified mismatches=0, so
+  the n=2 lane + smoke cases 39-42 stay byte-unchanged). `collective_nmax()=3` documents the
+  feasible cap; N>3 honestly falls back to the additive baseline. The N=3 frozen bars re-score
+  ENGINE-NATIVE in `CORE/engine_cli_smoke.hexa` cases 74-78, GATED behind `--hive-n3` (the n=9
+  Φ is ~84 min/call, so the DEFAULT smoke stays 73/0 fast + byte-unchanged).
 
 ## 7. Cross-link
 
@@ -111,14 +148,23 @@ ENGINE-NATIVE in `CORE/engine_cli_smoke.hexa` cases 39–42, byte-matching the m
 
 ## 8. Artifacts
 
-- experiment: `UNIVERSE/h1295_hive_collective_phi.hexa` (frozen bars + 3 seeds + shuffle +
-  faithful-IIT4; hexa-native — Φ is hexa-only by `a_phi_iit4_tool`).
-- freeze + verdict: `.verdicts/1295_hive_collective_phi/{H_1295_FREEZE,H_1295,engine_cli_smoke}.txt`.
-- engine: `CORE/engine_cli.hexa` § HIVE-MIND CollectivePool · smoke `CORE/engine_cli_smoke.hexa` cases 39–42.
+- r1 experiment: `UNIVERSE/h1295_hive_collective_phi.hexa` (N=2 frozen bars + 3 seeds + shuffle
+  + faithful-IIT4; hexa-native — Φ is hexa-only by `a_phi_iit4_tool`).
+- **r2 experiment**: `UNIVERSE/h1295_r2_hive_scaling.hexa` (N=2/3/4 Δ_super(N) curve + N=3
+  controls; generalized `build_tpm_ring`, faithful Φ cap=2; `--n4` attempts the n=12 ceiling).
+- freeze + verdict: `.verdicts/1295_hive_collective_phi/{H_1295_FREEZE,H_1295,engine_cli_smoke_45,
+  H_1295_R2_FREEZE,H_1295_R2}.txt`.
+- engine: `CORE/engine_cli.hexa` § HIVE-MIND CollectivePool (`collective_nmax`/`_build_tpm_ring`
+  + N=3 `collective_phi`/`collective_coherence` path) · smoke `CORE/engine_cli_smoke.hexa` cases
+  39–42 (N=2, default) + 43–47 (N=3, `--hive-n3`-gated).
 
-## 9. Next (r2 + depletion test)
+## 9. Next (r3 + depletion verdict)
 
-- **r2**: N>2 scaling of collective-Φ — does super-additivity hold / grow / saturate at
-  3,4 coupled members (joint n=9,12; needs shard-parallel faithful Φ or a higher cap)? If
-  it SATURATES, this is a saturating existence-proof → DEPLETED 🏁. Alternatively:
-  real-substrate / paraphrase transfer of the collective read to a live multi-anima loop.
+- **r2 verdict: SATURATES → 🏁 DEPLETED** on the N-scaling axis: super-additivity holds at N=3
+  but Δ_super does not grow with N (it declines), and the faithful-Φ compute ceiling is at n=9
+  (n=12 INFEASIBLE). The "does collective consciousness SCALE with member count" question is
+  answered NO (existence-proof, not scaling) at this toy faithful-Φ scale.
+- **r3 candidate** (the axis r2 did NOT close): **engine-transfer to a live multi-anima loop** —
+  the collective-Φ read here is over an abstract ECA substrate; a live multi-anima collective
+  (real A⇄G substrates coupled) is UNVERIFIED. Or: paraphrase/real-substrate transfer. The
+  N-SCALING axis itself is depleted (saturating + compute-ceilinged).
