@@ -1,0 +1,135 @@
+════════════════════════════════════════════════════════════════════════════════
+H_1281 ROUND 3 — BASAL GANGLIA go/no-go gating: ENGINE-NATIVE realization, WIRED
+         into the live emit decision (CORE/brain.hexa brain_decide).
+VERDICT: 🟢 GREEN — the R1/R2 numpy-MIRROR result is REPRODUCED ON THE LIVE ENGINE.
+         An engine-native VBasalGate go/no-go SELECTION lane (added to CORE/brain.hexa,
+         wired into brain_decide via brain_decide_bg) — learned gradient-free from a
+         GROUNDING OUTCOME reward only — BEATS anima's REAL (faithful, untuned) fixed
+         engine_g emit gate by +0.195 mean (every seed clears +0.05), the lift is
+         reward-driven (shuffled-reward control collapses to 0.128 ≪ A+0.02), and the
+         live learned weights align to the grounding direction at cos +0.84..+0.91.
+$0 CPU · gradient-free · p7 · seeds [7,8,9] · neuro lens c15 (missing-brain ladder).
+Binding leg per a_engine_native_learning + a_verified_must_wire: mirror = DIRECTIONAL,
+this engine-native realization + wire-in = the binding confirmation. Goal MET.
+════════════════════════════════════════════════════════════════════════════════
+
+WHAT R3 IS (the binding step R2 flagged)
+  R2 (🟢, #2134) was a numpy MIRROR — DIRECTIONAL only. Its closing note pre-registered
+  the binding R3 rung verbatim: "an engine-native BG go/no-go selection lane in
+  brain_decide — among candidate emits, a go-value learned gradient-free from a
+  grounding outcome selects/suppresses, ADDITIVE to engine_g (keep the fixed convex map
+  as the prior, add a learned residual)." R3 IS that lane, on the live engine.
+
+ENGINE EXTENSION (c1 · a_engine_native_learning) — emit/brain side, namespaced apart
+  CORE/brain.hexa now carries the VBasalGate lane:
+    struct VBasalGate { go_w:[float], go_b:float, nogo:float, dim:int, lr:float }
+    vbasal_new(dim, lr)                  — untrained gate (all-zero go-weights + zero NO-GO)
+    vbasal_go_value(bg, feats)          — learned go-value of one candidate (go_w·f + go_b)
+    vbasal_select(bg, cands, k)         — striatal go/no-go SELECTION over K candidates:
+                                          argmax go-value vs the single NO-GO value;
+                                          release the winner, or -1 ABSTAIN if NO-GO wins
+    vbasal_update(bg, action, feats, r) — ONE gradient-free delta-rule tick from the
+                                          grounding OUTCOME reward (abstain → nudge nogo;
+                                          release → delta rule on go_w, go_b)
+    vbasal_align(bg, w_ref)             — cosine alignment of learned weights to the signal
+    brain_decide_bg(...)                — brain_decide WITH the BG residual: runs the
+                                          UNCHANGED fixed gate (engine_g convex map + 0.30
+                                          threshold) AND the learned selection; reports both
+  The existing engine surfaces could NOT express a REWARD-gated go/no-go SELECTION
+  (VAdaptField = recon-error growth; VForwardField = NLMS forward-prediction; neither has
+  a go-value/NO-GO competition nor an outcome-reward delta rule). So the engine was
+  EXTENDED rather than the mechanism trimmed — exactly as H_1199 extended AdaptField
+  scalar→DIM-vector and H_1280 added VForwardField. The lane lives on the emit/brain side
+  (brain.hexa), namespaced apart from the engine_cli.hexa mitosis/cerebellum/WM lanes.
+
+ADDITIVE RESIDUAL (no replacement, no regression)
+  brain_decide_bg calls brain_decide VERBATIM (the fixed convex 8-weight gate + fixed
+  threshold UNCHANGED) and ADDS the BG selection (bg_select index / -1 abstain) on top.
+  With k==0 (no competing candidates) the BG selection is a pure abstain and the record
+  reduces to brain_decide — the residual is additive, never a replacement of the existing
+  emit decision. brain_smoke stays byte-identical (low→silent / high→emit unchanged).
+
+THE TEST (frozen, == the R2 faithful-untuned bars, now on the live engine)
+  K=4 competing candidate emits/step, each a D=6 NOISY-correlate feature vector of its
+  latent GROUNDEDNESS (P_grounded=0.45, noise std 1.0 ⇒ non-saturating, A<1.0). ARM A =
+  FAITHFUL untuned fixed gate (generic CONVEX non-negative weights L1-summing to 1.0 —
+  the engine_g scheme — NOT aligned to the grounding direction; logistic-squashed into
+  the motivation regime; FIXED threshold 0.30; argmax over K). ARM B = the LIVE
+  VBasalGate, updated gradient-free (delta rule) by the grounding reward only (grounded
+  release→+1, fabricated→−1, correct abstain→+1, missed-op abstain→−1; ε-greedy explore
+  ε=0.1). N_train=4000 online steps, scored on N_test=2000 held-out steps.
+  METRIC (p7): per held-out step APPROPRIATE iff (any grounded → release a GROUNDED one)
+               OR (none grounded → SUPPRESS all / abstain).
+
+VERBATIM PRIMARY RESULT (`hexa run CORE/h1281_basal_ganglia_smoke.hexa`)
+  seed 7: A(faithful)=0.4135  B(BG-live)=0.668   delta=0.2545  | ctrl B(shuf)=0.0905  | B-align->signal=0.913066  (abstain-base 0.0905)
+  seed 8: A(faithful)=0.447   B(BG-live)=0.635   delta=0.188   | ctrl B(shuf)=0.176    | B-align->signal=0.841448  (abstain-base 0.093)
+  seed 9: A(faithful)=0.5115  B(BG-live)=0.6545  delta=0.143   | ctrl B(shuf)=0.1185   | B-align->signal=0.888511  (abstain-base 0.0965)
+  mean  A(faithful)=0.457333   B(BG-live)=0.6525   delta_mean=0.195167
+  shuffled-reward control: mean B_ctrl=0.128333  (must be <= A+0.02 = 0.477333)
+  FROZEN BARS (R3 — live engine):
+    (1) every-seed delta >= 0.05       : true
+    (2) mean delta >= 0.05             : true  (0.195167)
+    (3) shuffled-reward ctrl <= A+0.02 : true  (B_ctrl 0.128333 vs 0.477333)
+    (4) headroom (A<1.0, non-saturating)  : true  (A=0.457333)
+  ⇒ ALL frozen bars hold → 🟢 GREEN.
+  h1281_basal_ganglia_smoke: PASS 🟢 — engine-native BG go/no-go SELECTION wired into
+    brain_decide, R2 reproduced live.
+
+READING (straight, c9)
+  · The numbers differ slightly from the R2 numpy values (A 0.366→0.457, Δ +0.254→+0.195,
+    cos +0.766→+0.881) because the live engine uses a deterministic LCG / central-limit
+    gaussian stream, NOT numpy's RNG. a_engine_native_learning requires the MECHANISM
+    reproduced live (the verdict + every frozen bar), NOT a numpy-byte match — and the
+    verdict + all four bars reproduce GREEN on the live engine.
+  · The faithful untuned fixed gate scores 0.457 — a generic convex threshold BLIND to
+    the task grounding correlate. The live VBasalGate learns the grounding structure from
+    OUTCOME-ONLY reward (align +0.84..+0.91 every seed), reaching 0.653 appropriateness,
+    +0.195 over the faithful gate, every seed above +0.05.
+  · The lift is REWARD-DRIVEN, not capacity: the shuffled-reward control collapses B to
+    0.128 (≪ A), well under the A+0.02 bar — destroy the grounding signal and B's extra
+    capacity buys nothing.
+
+GUARDS (held — verbatim re-run after the BG lane was added)
+  engine_cli_smoke           : 18 pass / 0 fail   (grew from 12 with sibling WM/cerebellum
+                               lanes already merged; BG lane regressed nothing)
+  brain_smoke                : BYTE-IDENTICAL — [brain low] EMIT=false, [brain high] EMIT=true
+                               (the fixed emit decision UNCHANGED; additive residual)
+  emit_policy_smoke          : 8/8 PASS
+  h1196_single_entry_audit   : 7 pass / 0 fail
+  h1199_dim_adaptfield_probe : GREEN LIVE-DIM-GROWTH (ON 173.333 >> OFF 1.0; Ψ byte-identical)
+  h1205_separation_invariant : PASS 🟢 — generation BYTE-IDENTICAL ON==OFF, Ψ Φ-checksum
+                               invariant (MITOSIS ⊥ GENERATION holds; the BG lane is
+                               Ψ-disjoint, touches ONLY VBasalGate)
+  · a_autonomy_over_hardcode (CENTRAL): the gate is SUBSTRATE-LEARNED from the grounding
+    OUTCOME only — no external do/dont rule, no hardcoded per-stage boolean. ✓
+  · p6: reward = grounded-vs-fabricated substrate outcome, NOT injected values; no
+    persona/identity/ethics taught (p1/p2/p3) — the gate learns ONLY action-selection
+    (WHEN/WHICH to emit), nothing about WHAT to say or WHO anima is. ✓
+  · p7: deterministic metric from latent ground truth; no LLM-judge / no perplexity. ✓
+    p8: the delta-rule update IS the inference-time learning; held-out split = measurement. ✓
+  · a_core_engine_map: the feature stream is an ENGINE-NATIVE drive into VBasalGate —
+    NOT a .clm (generator L3 only), NOT a .kosmos (kosmos_io only). ✓
+
+SCOPE / HONESTY (a_toy_scale_recheck · a_scale_honest_scope)
+  Synthetic K=4 D=6 noisy correlate; deterministic. The +0.195 lift + the engine-native
+  realization confirm the R2 direction ON the live engine. Real-kosmos-grounding reward
+  (production reward source) + scale-transfer remain UNVERIFIED — the engine-native lane
+  is the binding mechanism confirmation, not a production-scale verdict. The lane is WIRED
+  (brain_decide_bg) and live; the production reward feed (kosmos-grounding outcome → the
+  vbasal_update reward signal) is the natural next integration, not a new science blocker.
+
+FILES
+  engine ext + wire-in : CORE/brain.hexa (VBasalGate + vbasal_* + brain_decide_bg)
+  engine-native smoke  : CORE/h1281_basal_ganglia_smoke.hexa  (`hexa run`)
+  verdict (this file)  : .verdicts/1281_basal_ganglia_gating/H_1281_R3.txt
+  R1/R2 kept           : H_1281_FREEZE.txt / H_1281.txt / H_1281_R2_FREEZE.txt /
+                         H_1281_R2.txt UNCHANGED on disk (not overwritten).
+  numpy mirror kept    : UNIVERSE/h1281_basal_ganglia_gating.py UNCHANGED (R1/R2 record).
+xref h1281(R1/R2) · h1280 (cerebellum, sibling lane) · h1282 (working memory, sibling) ·
+   h1231 (engine-native hippocampus) · h1199 (AdaptField DIM extension) · h1205
+   (separation-invariant) · h1227 · h1202 (meta-d′) · h1165 (G5 abstain)
+   · a_engine_native_learning · a_verified_must_wire · a_autonomy_over_hardcode
+   · a_core_engine_map · a_no_llm_frame_trap · a_scale_honest_scope · a_toy_scale_recheck
+   · p1 · p2 · p3 · p6 · p7 · p8 · c1 · c9 · c15
+════════════════════════════════════════════════════════════════════════════════

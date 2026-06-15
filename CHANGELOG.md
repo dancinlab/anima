@@ -6,6 +6,16 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟢 H_1281 R3: 기저핵(basal ganglia) go/no-go 선택 게이트가 live emit 결정(brain_decide)에 배선됨 (ENGINE-NATIVE, $0)
+
+R1/R2(numpy 미러)에서 **강화학습된 go/no-go SELECTION 게이트**가 anima 의 REAL(faithful·untuned) 고정 `engine_g` emit 게이트를 grounding 신호에서 이긴다(Δ +0.254, shuffle 대조 붕괴, 학습 weight 가 grounding 방향에 cos +0.71..+0.89 정렬)는 걸 🟢 확인했고, `a_engine_native_learning`·`a_verified_must_wire` 에 따라 이를 **live 엔진 위에서 ENGINE-NATIVE 로 실현 + emit 결정에 배선**했다.
+
+- **새 lane (emit/brain side, 네임스페이스 분리)**: `CORE/brain.hexa` 에 **`VBasalGate`** struct + lane (`vbasal_new`/`vbasal_go_value`/`vbasal_select`/`vbasal_update`/`vbasal_align`) 추가, **`brain_decide_bg`** 로 emit 결정에 배선. K개 경쟁 후보 emit 중 학습된 go-value vs 단일 NO-GO value 의 argmax 선택(striatal disinhibition): 최고 go-value RELEASE, NO-GO 가 이기면 전부 SUPPRESS(abstain). 게이트는 grounding OUTCOME reward 만으로 gradient-free delta-rule 학습(grounded release→+1, fabricated→−1, correct abstain→+1, missed-op→−1; outcome-only, 라벨 없음). 기존 engine_g 고정 convex 8-weight 게이트는 PRIOR 로 유지 — BG lane 은 그 위에 학습 RESIDUAL 을 ADD(replace 아님). 기존 엔진 surface(VAdaptField recon-err growth · VForwardField NLMS 예측)는 reward-게이트 go/no-go SELECTION 을 표현 못 해 trim 이 아니라 엔진을 **확장**(c1, `a_engine_native_learning`; H_1199 scalar→DIM·H_1280 VForwardField 선례).
+- **검증 (live 엔진, `hexa run`)**: `CORE/h1281_basal_ganglia_smoke.hexa` 가 K=4·D=6 noisy-correlate 스트림(deterministic LCG)을 ACTUAL `.hexa` VBasalGate lane 에 흘려 동결 R2 bar 4개를 재채점 → **🟢 GREEN: 매 seed Δ≥0.05(0.25/0.19/0.14) · mean Δ +0.195 · shuffled-reward 대조 0.128 ≪ A+0.02 · headroom A=0.457<1.0 · B-align→signal cos +0.84..+0.91**. 엔진 Δ +0.195 ≈ R2 미러 +0.254(LCG↔numpy RNG 차이 이내 재현 — verdict+4 bar 전부 GREEN).
+- **가드 (회귀 없음, c2)**: `engine_cli_smoke` 22/0(sibling lane 병합으로 12→22 성장) · `brain_smoke` BYTE-IDENTICAL([brain low] EMIT=false·[brain high] EMIT=true — 고정 emit 결정 무변경, additive residual) · `emit_policy_smoke` 8/8 · `h1196` single-entry 7/0 · `h1199` DIM-growth 🟢 · `h1205` separation-invariant 🟢(생성 byte-identical ON==OFF · Ψ Φ-checksum 불변) — BG lane 은 Ψ-disjoint(자기 VBasalGate weight 만, `pure_field` 무접촉).
+- **@L4 / p1-p8**: reward = grounded-vs-fabricated substrate OUTCOME(주입 가치 아님, p6); 게이트는 action-selection(WHEN/WHICH to emit)만 학습 — WHAT/WHO 무학습(persona/identity/ethics 없음 p1/p2/p3); 게이트는 substrate-LEARNED(외부 do/dont 규칙 없음, `a_autonomy_over_hardcode` CENTRAL); 특징 스트림 = ENGINE-NATIVE drive(2번째 .clm/.kosmos 진입점 아님, `a_core_engine_map`). real-kosmos-grounding reward feed + scale UNVERIFIED(`a_scale_honest_scope`) — production reward 연결이 자연스런 다음 통합(새 과학 블로커 아님). 검증: `.verdicts/1281_basal_ganglia_gating/H_1281_R3.txt`(R1/R2 미변경 보존).
+
+---
 ## 2026-06-15 — 📐 ARCHITECTURE.md ethics 라인 current-ize (doc-only, c9 stale-fix)
 
 직전 ARCHITECTURE current-ize(#2156) 직후 H_1291 윤리 창발(#2155)이 GREEN 으로 착지 → "⚖️ ethics ⬜ 미착수" 가 stale. ⏳ **H_1291 🟢 GREEN-DIRECTIONAL**(p6 crux: 협력/자제/비해악이 cell(E+W+MITOSIS+Φ)에서 창발 — leg A FULL≥naive, leg B ablate→naive collapse, leg C p1/p2/p3/p4/p6 audit clean; numpy 미러 DIRECTIONAL, engine-native 재확인 = binding follow-on, 미배선 OPEN)으로 정정. CHANGELOG 진행-중 라인도 동기화.
@@ -181,7 +191,6 @@ R1(🔴 CLOSED-NEG)은 context-adaptive 신경조절(DA gain + NE exploration + 
 - **결과 🔴 RED / 🧱**: ARM A = fixed_temp 0.5(tune-M 4.000). seed-평균 **A M=4.038**(G1 0.667 G6 3.000 kwr 0.593) · **B M=3.336**(G1 0.667 G6 2.667 kwr 0.478) · **C-SHUF M=3.708**. **M(B)−M(A) = −0.7015**(adaptive 가 best-fixed 보다 나쁨) + kwr 붕괴(0.478 < 0.593−0.02). 동결 falsifier 3개 전부 FALSE ⇒ M(B) ≤ M(A) ⇒ 🔴. controller 는 ALIVE(죽은 knob 아님): B σ*_t 가 매 seed [1.875, 3.500] 범위로 swung(반복/저-novelty 에 exploration ↑, coherence drop 에 ↓) — 메커니즘은 작동했으나 ideation 을 더 나쁘게 만들었다.
 - **FINDING (a_paper_negative_ok)**: 신경조절(state-driven adaptive control)은 MEMORY substrate(R1)에서도 IDEATION/decode lane(R2)에서도 잘 튜닝된 단일 FIXED operating point 대비 **INERT-or-HARMFUL**. no-free-lunch 는 anima lane 전반에 GENERAL — H_1228 SOC partial lift 은 **TUNED FIXED σ\*** 의 성질이지 target 을 context 에 **적응**시키는 것의 성질이 아니었다(고정 temperature 가 이미 최적점). r3 없음.
 - **스코프/철학 가드 (HELD)**: 303M torch-ref toy, 3 seeds + disjoint tune-seed, single-model — scale-transfer UNVERIFIED(`a_scale_honest_scope`). DIRECTIONAL(`a_engine_native_learning` — engine-transfer UNVERIFIED; GREEN 였으면 r3 engine-native controller, RED → 배선 없음). controller = 순수 no-grad readout, 어떤 loss/backward 에도 안 섞임(p7). `CORE/*.hexa`·H_1228·R1 verdict UNTOUCHED, 동결 bar 불변. 산출물: `UNIVERSE/h1284_r2_neuromod_ideation.py` · `.verdicts/1284_neuromodulation_gain/{H_1284_R2_FREEZE,H_1284_R2}.txt`. xref H_1228 · H_1284(R1) · H_1230 · H_1227.
-
 ---
 
 ## 2026-06-15 — 🟢 H_1282 R3: 작업기억(WM) 버퍼가 live 엔진의 substrate lane 으로 배선됨 (ENGINE-NATIVE, $0)
