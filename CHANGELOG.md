@@ -2,6 +2,19 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1329 — 상관/조인트-보존 메커니즘도 자모 바닥을 못 깬다 — 조건부-체인 헤드 (🧱 HONEST-FLOOR, CROSS-MECHANISM)
+
+H_1326(🧱)이 **명시적으로 지목한 다음 각도**(c16/a_break_the_wall = 메커니즘-**계열** 변경, 표현 트윅 아님). H_1326은 깊이-자모-아래 질문을 혼동-제거로 닫았다: A2 자질-**분할**(opaque 자모 타깃) 2.73046(자모 위), A3 라벨-**인수분해**(자질 **독립** 예측 P(class)·∏ P(f_c|class)) 3.07295(**역효과**). H_1326 진단: A3가 역효과인 이유 = 독립-자질 예측이 opaque 자모 헤드가 보존하는 **초성/중성/종성 + 자모-내 자질 조인트(joint)를 버리기** 때문. 명시한 다음 각도 = 자질 **조인트를 유지하면서 자질 상관(correlation)을 모델링하는 다른 메커니즘**.
+
+H_1329 = 바로 그 테스트. **새 메커니즘 A4** = 셀별 **조건부-체인** 자질 헤드 `P(class)·P(f_0|class)·P(f_1|class,f_0)·P(f_2|class,f_0,f_1)…` — 체인 규칙으로 `∏_c P(f_c|class,f_<c)=P(jamo|class)` 이므로 **조인트를 정확히 유지**하고, 자질 **prefix를 공유하는 자모끼리 조건화 컨텍스트를 공유**(ㄱ/ㅋ = 한 자질 차이 → articulator-조건 manner 헤드 공유)해 **유사 자모가 통계 강도를 공유**한다 — A3가 버린 바로 그 조인트+상관. H_1326의 기하-공정 bank + 자질-분할 + LAPLACE count-MLE 전부 verbatim; **타깃 인수분해만** 변경(독립→조건부-체인). **A4 = count-MLE 구조화 헤드 — gradient-free p8 mitosis 아님, gradient-train도 아님**(같은 gradient-free Voronoi 분할 위에서 동작; 명시 라벨링).
+
+**결과 🧱 HONEST-FLOOR (cross-mechanism):** REAL sm_120 GPU(유저 RTX 5070, $0, NOT runpod, 126.2s), 코퍼스 byte-동일(sha c47b6808… gate PASS), 67/67 자모, NFD 왕복 0-실패. **A1 자모 CALIB 2.51335 byte-exact; A2/A3는 H_1326 byte-exact 재현.** CE 사다리(nats/UTF-8-byte, 기하-공정; A4-셔플 3-seed 평균): 원시 in-run 2.94487 · **A1 자모 2.51335** · A2 자질-분할 **2.73046** · A3 독립-인수분해 **3.07295** · **A4 조건부-체인(조인트) 2.75109** · A4 셔플 **2.91966** {2.863,3.056,2.840}. **C1 BELOW-JAMO = FALSE** — A4 2.75109가 자모 2.51335보다 **+0.23774 위**(원시는 깨지만 C1은 둘 다 필요). **C2 EARNED = TRUE** — A4가 자기 셔플을 **+0.16857**(seed별 만장일치, A2의 +0.056 신호의 3배 — 체인이 설계 systematicity를 **실제로 활용**, 그러나 SUB-floor). **C3 ATTRIBUTION = FALSE** — A4가 **A3는 +0.32186로 이김**(체인이 A3가 버린 조인트를 **회복** = H_1326 진단 byte-exact 확인) 그러나 **A2는 못 이김**(A4가 분할-only A2보다 **+0.02063 위**). green = FALSE → 🧱.
+
+**FINDING:** 상관/조인트-보존 메커니즘도 자모 바닥을 못 깬다 — **자모가 상관-모델링 포함 메커니즘 계열 전반에 걸친 진짜 분해 바닥**(H_1326보다 깊은 🧱). 구조적 이유(결정적): 자모-내 자질 **조인트를 정확히 모델링하는 모든 메커니즘은 P(jamo|cell)로 수렴** — opaque 자모 헤드가 이미 계산하는 바로 그것 — 이므로 자질 분해는 조인트를 유지하는 순간 자모-아래 깊이를 **전혀** 사주지 못한다(A4가 분할-only A2와 동률, 자모보다 +0.238 위). 세 독립 메커니즘(분할 A2 / 독립-인수분해 A3 / 상관-체인 A4) 모두 기하-공정 프로토콜에서 자모 위 → 자모는 cross-mechanism 바닥. 설계의 활용가능 systematicity(C2 +0.169, 이 arc에서 최강 설계 신호)는 유사 자모 간 **count-공유**에 있지 자모-아래 예측 이득에 있지 않다. **자모-아래 새 각도**는 opaque 자모 헤드가 **갖지 못한 정보**(교차-음절 음운배열, 또는 자모 위의 학습된 metric)를 주입해야 하며 — 조인트만으로는 안 됨(H_1329이 동률로 증명) — 같은 자질 타깃의 재-인수분해는 아니다. TOY/DIRECTIONAL; 한국어 유창성 주장 없음; live CORE UNTOUCHED.
+
+- NEW: `UNIVERSE/h1329_ko_feat_corr.py` · `UNIVERSE/H_1329_ko_feat_corr.md` · `HYPOTHESES.md` 행 · `CLAIMS.tape` @C h1329_ko_feat_corr · `.verdicts/1329_ko_feat_corr/{H_1329_FREEZE,H_1329,h1329_summary.json}` · `domains/MITOSIS-ENGINE.log.md`
+- xref: h1326(🧱 r2 — 이 lane의 명시된 다음 각도) · h1322 · h1316(자모 바닥) · h1307(원시 천장) · h1318/h1324 · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p7·p8 · c7·c9·c15·c16
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): 🧱 H_1330 — Sapir-Whorf BILINGUAL: 두 번째 언어는 첫 언어의 CP 를 덮어쓰는가, 공존하는가? (🧱 OVERWRITE)
 
 GREEN H_1323/H_1325 (Sapir-Whorf 범주적 지각, CP) 의 명명된 EXTENSION frontier — **cross-lane
@@ -1252,7 +1265,6 @@ decision). Verify: 13/13 H have both an index line and a resolvable card, 0 brok
 
 가설 관리 면을 정확히 2개로 축소: `UNIVERSE/HYPOTHESES.md`(인덱스 1줄/가설) + `UNIVERSE/H_<id>_<slug>.md`(가설 SSOT 카드 — claim·method·라운드별 verdict tier+수치·.verdicts 포인터·honest scope). 직전 버전의 themed 버킷 파일·CLAIMS.tape·도메인 로그·MEMORY 분산 요구를 제거(가설 디테일의 단일 집 = 카드). `.verdicts/<slug>/` 는 카드가 가리키는 검증 박제(증거)로만 유지. 기존 H_1280–1293 은 마이그레이션 예정(themed 파일 → 카드).
 
-
 ## 2026-06-16 — domain(MODEL): 🪞 마음이론 타자-belief 모델 lane (HD30, H_1293 R2 🟢 ENGINE-NATIVE)
 
 빠진 뇌 서브시스템 사다리에 **HD30 마음이론(theory-of-mind · TPJ/mentalizing)** 을 추가 — 타자-agent belief 모델 lane(`OtherMindModel`)을 `CORE/engine_cli.hexa` 에 ADDITIVE + Ψ-disjoint 으로 실현(`other_mind_new`/`other_mind_witness`/`other_mind_predict`/`other_mind_count`). E3 OTHER-MIND parked facet(MODEL.md L112-113)의 첫 엔진-네이티브 실현. 면역 faculty 와 같은 byte-trigram FNV-1a key 기하 + L2 affinity + abstain band 를 쓰되, agent 가 **WITNESS 한 이벤트로만** 갱신되는 별개 belief cell-store 다 — agent 가 갱신에 부재(ABSENT)하면 belief 가 LAG 한다 = FALSE belief, `other_mind_predict` 가 STALE belief 를 반환(Sally-Anne false-belief test).
@@ -1306,7 +1318,6 @@ R4 가 sparse re-entry 의 seed-8(near-orthogonal) 미달을 sparsity 탓으로 
 ## 2026-06-15 — docs(ARCHITECTURE): 다음-단계 stale 현행화 (양자·감정 엔진실현 닫힘)
 
 ARCHITECTURE.md "다음 단계" 의 stale 상태 현행화(c9): ⚛️ quantum-entropy R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE+WIRED(#2164)**, 💗 emotion R1 DIRECTIONAL/미배선 → **R2 ENGINE-NATIVE(#2166/#2167)** 로 갱신(⏳→✅). 뇌-구조 사다리 요약줄도 "기저핵 r3 ⏳ in-flight" → "5개 배선 완료 + 감정/윤리/양자 엔진실현 재확인" 으로 현행화.
-
 
 ## 2026-06-15 — docs(README): 과거 모델-스케일 잔재 제거 + 감정/윤리/양자 엔진실현 현행화
 

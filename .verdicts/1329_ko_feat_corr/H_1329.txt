@@ -1,0 +1,35 @@
+=== H_1329 — ko-feat-corr (sm_120) ===
+device=NVIDIA GeForce RTX 5070 torch=2.11.0+cu130
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  identical-to-H_1307-RUN-A=True
+[nocheat] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[featmap] design-feature coverage: 67/67 jamo mapped; missing=[]
+[G0 raw-byte] ce=2.94487 cells=23 member=4  (H_1316 reproduced 2.95342)
+[nocheat] byte-accounting: Σ n_bytes=29999999 corpus_bytes=29999999 close=True
+[A1 jamo opaque-id] ce=2.51335 cells=11 bank_member=5 train_proxy=2.99437
+[CALIB] A1 jamo 2.51335 vs H_1316 2.51335  match(±0.0005)=True
+[A2 featural+opaque] ce=2.73046 cells=17 bank_member=0 train_proxy=3.23985
+[A3 featural+independent-factorized] ce=3.07295 cells=17 bank_member=0
+[A4 featural+conditional-chain (joint-preserving)] ce=2.75109 cells=17 bank_member=0
+[A4s chain-shuffle seed4329] ce=2.86325 cells=19 bank_member=2
+[seed 4329] {"a4s": 2.86325}
+[A4s chain-shuffle seed4330] ce=3.05597 cells=11 bank_member=0
+[seed 4330] {"a4s": 3.05597}
+[A4s chain-shuffle seed4331] ce=2.83976 cells=17 bank_member=0
+[seed 4331] {"a4s": 2.83976}
+-------------------------------------------------------------------------------
+CE LADDER (nats/UTF-8-byte, geometry-FAIR; mean 3 seeds for shuffle):
+  raw-byte ceiling             = 2.95342  (in-run G0 2.94487)
+  A1 jamo (Fix-A protocol)     = 2.51335  (calib vs H_1316 2.51335 = True)
+  A2 featural-partition        = 2.73046  (member 0, cells 17)
+  A3 independent-factorization = 3.07295  (member 0, cells 17)
+  A4 conditional-chain (JOINT) = 2.75109  (member 0, cells 17)
+  A4 shuffle (chain)           = 2.91966  Δ(shuf−A4)=0.16857
+C1 BELOW-JAMO (A4 < A1−0.03 AND < raw): False  (A4 2.75109 vs A1 2.51335, Δ=-0.23774)
+C2 EARNED (A4 < shuffle by >=0.05): True  (Δ=0.16857)
+C3 ATTRIBUTION (A4 < A3 AND A4 < A2): False  (vs A3 Δ=0.32186, vs A2 Δ=-0.02063)
+VERDICT: 🧱 HONEST-FLOOR (cross-mechanism) — C1 fails: even a correlation/joint-modeling (conditional-chain) mechanism does NOT beat the jamo floor by the bar → jamo is the genuine decomposition FLOOR ACROSS mechanism families incl. correlation-modeling (a deeper, stronger 🧱 closure than H_1326, c9)
+total wall=126.2s
+  engine-transfer to live hexa DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]
