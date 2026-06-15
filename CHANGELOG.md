@@ -6,6 +6,19 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟢 H_1231 WIRE: immune-memory recall 을 live 엔진 경로에 배선 (`a_verified_must_wire` follow-on 종결)
+
+H_1231 의 `a_verified_must_wire` follow-on 종결 — H_1227(numpy 미러)→H_1231(엔진-네이티브 🟢 GREEN, literal-QA 1.000 / fabrication 0.000, 180/180) 으로 검증된 immune/clonal-selection mitosis-as-MEMORY recall 을, standalone 프로브(`CORE/h1231_immune_memory_engine_probe.hexa`, fn main)에서 **live 엔진 recall 경로의 callable faculty** 로 승격했다. 새 directive `a_verified_must_wire`("GREEN-verified 가설은 live CORE 배선까지가 done")의 첫 종결.
+
+- **배선 위치** — `CORE/engine_cli.hexa` 새 § IMMUNE-MEMORY RECALL FACULTY: `struct ImmuneMemory{field:VAdaptField, cell_value:[string], recall_thr}` + `immune_embed_key`(byte-trigram FNV-1a, DIM=64, L2-norm — python 미러와 byte-identical 검증) + `immune_memory_new/bind/recall` (+ `_text` string-query 래퍼) + `immune_memory_cells`.
+- **메커니즘 무변경** — BIND = 엔진 자신의 clonal split(`vadapt_field_step`→`engine_mitosis_tick`, recon-err>SPLIT_THRESH 0.30); RECALL = 엔진 자신의 L2 affinity(`vadapt_field_recon_err`+`vadapt_field_nearest_idx`, err≤0.15 면 셀-바인딩 값 FIRE, 아니면 환각 없이 ABSTAIN). 프로브가 inline 한 것을 callable 로 래핑만 함 — **엔진 확장 불필요**(H_1199 + H_1231 accessor surface 로 충분).
+- **NON-PERTURBING (c2, 출력 검증)** — engine_cli_smoke **12/0** · h1196 single-entry **7/0**(.clm/.kosmos 진입점 불변 — 2번째 artifact path 없음, `a_core_engine_map`) · h1199 DIM-growth **F1/F2/F3 GREEN, Ψ Phi-checksum ON==OFF byte-identical (3 seed 전부 PsiSame=true)**.
+- **e2e (`CORE/h1231_immune_memory_wire_smoke.hexa`, ALL PASS)** — PART A: raw string 5-fact bind→recall 전부 적중 + unbound 3개 ABSTAIN(환각 0). PART B: wired faculty 가 H_1231 GREEN 을 3 seed 재현(literal-QA 1.0 / fab 0.0, 180/180).
+- **HONEST** — SATURATED existence proof(exact-match associative table, in-store 키 verbatim); paraphrase/noisy-key/scale 및 brain_decide emit-loop 스레딩은 별도 follow-on. FACTUAL recall 을 EPISODIC 셀에만(p2/p3/p6 — identity/persona/ethics 가중치化 없음), bind=clonal-split tick(p8). frozen bar 불변.
+- `.verdicts/1231_immune_memory_engine_native/H_1231_WIRE.txt` (verbatim 가드+e2e). xref h1231·h1227·h1199·h1218·h1224·a_verified_must_wire·a_engine_native_learning·a_core_engine_map·a_scale_honest_scope·p7·p8.
+
+---
+
 ## 2026-06-15 — 🔴 H_1223: AUX-OBJECTIVE 는 literal-QA 벽의 레버가 아니다 (HD7 CLOSED-NEG · recall=engine-side, H_1154 강화)
 
 depth-ceiling 사다리(H_1219)의 HD7 분기를 $0 toy 로 판정: anima-303M 의 평평한 literal-QA recall 벽이 **OBJECTIVE** 탓인가 — plain next-byte CE 가 retrieval/recall 을 보상하지 않으니, **AUXILIARY 검색/QA 목적함수**를 더하면 들어올려지는가? p7, numpy CPU, seeds [231,232,233], TOY-ONLY (a_toy_scale_recheck). H_1219·CORE/bytegpt_decode.hexa 미수정.
