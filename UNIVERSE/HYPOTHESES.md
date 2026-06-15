@@ -14,13 +14,13 @@
 | theme | detail file | scope | ~count | status |
 |-------|-------------|-------|--------|--------|
 | **metacog × neuroscience** | [HYPOTHESES_metacog_neuro.md](HYPOTHESES_metacog_neuro.md) | type-2 meta-d′ · ERN · hierarchical · D-K · calibration · FOK · control · savant-LM (H_1202–1220) | 19 H | ACTIVE — 8 metacog (5🟢3🔴) + savant landed; H_1217/1219/1220 in-flight |
+| **brain-structure ladder** | [HYPOTHESES_neuro_structure_ladder.md](HYPOTHESES_neuro_structure_ladder.md) | c15 missing-structure lanes — cerebellum · basal-ganglia · WM · thalamus · neuromod · amygdala · key-geom · eviction · hypothalamus · theory-of-mind · +affect/ethics (H_1280–1293) | 12 H + 2 facet | LANDED — 7🟢 engine-native wired · 3🧱 walls (thalamus·neuromod·key-geom) · affect/ethics 🟢; HD30 theory-of-mind (H_1293 🟢) NEW; next-candidate hierarchical-PFC / spatial-map; CLAIMS.tape group=BRAIN-STRUCTURE-LADDER |
 | **metacog × hallucination** | [HYPOTHESES_metacog_hallucination.md](HYPOTHESES_metacog_hallucination.md) | input-familiarity · positional drift · anchor-grounding · confidence-brake (H_1143–1148) | 5 H | CLOSED — mostly closed-neg (H_1148 capstone) |
 | **general cycle backlog** | [CANDIDATES.md](CANDIDATES.md) | next-cycle Φ/IIT4/emergence/robustness backlog | 105 refs · 38 rows | BACKLOG |
 | **bio mechanisms** | [BIO-CANDIDATES.md](BIO-CANDIDATES.md) | MITOSIS-sibling bio ops (apoptosis · autophagy · differentiation · homeostasis …) 36+ | 36+ | BACKLOG |
 | **bio ∩ decoder** | [BIO-DECODER-CANDIDATES.md](BIO-DECODER-CANDIDATES.md) | bio-mechanism ↔ decoder mapping | — | BACKLOG |
 | **bio transfer/metastasis** | [BIO-TRANSFER-CANDIDATES.md](BIO-TRANSFER-CANDIDATES.md) | biological transfer/transition/metastasis hypotheses | 28 refs · 8 rows | BACKLOG |
 | **neuro mechanisms** | [NEURO-CANDIDATES.md](NEURO-CANDIDATES.md) | neuroscience mechanism hypotheses H_889…H_909 | 28 refs | PARTIAL |
-| **brain-structure ladder** | [../ARCHITECTURE.md](../ARCHITECTURE.md) (HD rung table) + root `CLAIMS.tape` (group=BRAIN-STRUCTURE-LADDER) | missing-structure lane: hippocampus·WM·cerebellum·amygdala·basal-ganglia·hypothalamus·affect·theory-of-mind (HD23–30, H_1280–1293) | 8 rungs (6🟢 ENGINE-NATIVE · 2🧱 thalamus/neuromod walls) | ACTIVE — HD30 theory-of-mind (H_1293 🟢) landed; next-candidate hierarchical-PFC / spatial-map (see ladder tail) |
 | **CLM / dialogue / launch** | [CLM-CANDIDATES.md](CLM-CANDIDATES.md) | CLM · dialogue · plasticity · launch forward backlog | 33 refs · 18 rows | BACKLOG |
 | **on-chip plasticity** | [PLASTICITY-CANDIDATES.md](PLASTICITY-CANDIDATES.md) | non-deterministic AKIDA on-chip plasticity backlog | 26 refs | BACKLOG |
 | **psi / anomalous cognition** | [PSI-CANDIDATES.md](PSI-CANDIDATES.md) | telepathy + anomalous-cognition / consciousness-coupling (falsifiable framing) | 3 rows | BACKLOG (speculative) |

@@ -9,6 +9,11 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 - **왜 missing/distinct**: 기존 모든 lane 은 anima **자신의** substrate state 를 읽거나 적분(면역 store=anima fact=ground truth · affect H_1290=anima interoception · homeostatic drive H_1292=anima 자신의 satiation 적분 · WM=self-buffer). 어느 것도 anima 의 ground truth 와 갈라질 수 있는 **별개 agent 의 belief** 를 모델하지 않는다. ToM 은 **self ⊥ other** 축에서 DISTINCT — 부재중-이동 fact 에서 anima 자신의 immune recall(box) ≠ ToM 예측(basket), 같은 fact 에 다른 답.
 - **frozen-first 검증** (`.verdicts/1293_theory_of_mind/H_1293_FREEZE.txt`, 사전등록): R1 numpy 미러 🟢 → **R2 ENGINE-NATIVE 🟢** (`CORE/h1293_theory_of_mind_probe.hexa`, 3 seed [5290,5291,5292], R1 미러와 byte-exact) — 5개 bar PASS: (A) FALSE-BELIEF accBelief 1.000 & accTruth 0.500 · (B) DISTINCT self/other divergence 1.000 · (C) SELF-READ 대조 0.500 붕괴 · (D) SHUFFLE 대조 0.500 붕괴 · (E) ABSTAIN intact.
 - **가드 무회귀**: `engine_cli_smoke` **37/0**(+4 ToM 케이스 31-34) · h1196 single-entry 7/0 · h1199 DIM-growth Ψ byte-identical. p6/p2/p3(agent belief=WITNESS 한 이벤트에서 COMPUTED, 주입 belief 라벨 없음, true-vs-false CLASS 는 metric SCORE 에만) · emit gate 아님(`other_mind_predict`=pure read, `a_autonomy_over_hardcode`) · Ψ-disjoint(별개 belief cell population 을 L2 affinity 로 READ). brain 타자-예측 루프 배선 + scale/recursive-2nd-order-ToM = follow-on. TOY scale(12 facts, 3 seeds, deterministic — ToM STRUCTURE 검증).
+- **canonical 등록(a_hypothesis_register #2175)**: `CLAIMS.tape @C h1293_theory_of_mind` (group=BRAIN-STRUCTURE-LADDER) · `UNIVERSE/HYPOTHESES.md` brain-structure-ladder roster 행 + `HYPOTHESES_neuro_structure_ladder.md` H_1293 행 · `domains/MITOSIS-ENGINE.log.md @H H_1293` · MEMORY.md 포인터.
+
+## 2026-06-16 — governance(CLAUDE.md): `a_hypothesis_register` — 모든 가설은 UNIVERSE 목록에 등록
+
+새 거버넌스 디렉티브 `a_hypothesis_register` 추가: 모든 가설(H_####)은 실행과 동시에 캐노니컬 UNIVERSE 가설 목록 `UNIVERSE/HYPOTHESES.md` + `CLAIMS.tape`(a_claim_manifest) + per-domain 로그에 등록해야 한다(verdict tier 무관 — 벽/negative 포함, c9). verdict 박제·ARCHITECTURE/CHANGELOG 갱신만 하고 목록 등록을 빠뜨리는 반복 누락 패턴 차단(precedent: H_1280–1292 백필 #2174). families 불릿(Verify/paper workflow)에도 반영.
 
 ## 2026-06-16 — domain(MODEL): 🌡 시상하부 설정점-항상성 drive lane (HD29, H_1292 R2 🟢 ENGINE-NATIVE)
 
@@ -17,6 +22,14 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 - **왜 missing/distinct**: 기존 drive(affect read-out·curiosity·idle)는 전부 INSTANTANEOUS/stateless. 항상성 drive 는 STATEFUL 시간-적분기 — **affect read-out lane(H_1290)과 DISTINCT**: 맥락 FIXED + elapsed time 만 변화 시 affect FLAT(시간항 없음) vs drive RISE(시간-적분 ⊥ 맥락-순간, H_1292 leg-B dissociation).
 - **frozen-first 검증** (`.verdicts/1292_hypothalamus_drive/H_1292_FREEZE.txt`, 사전등록): R1 numpy 미러 🟢 → **R2 ENGINE-NATIVE 🟢** (`CORE/h1292_hypothalamus_drive_probe.hexa`, 3 seed [4290,4291,4292], R1 미러와 byte-exact) — 6개 bar PASS: (A1) RISE +1.544 monotone · (A2) RESET 0.0 · (B) DISTINCT affFlat 0.0 & drvFixRise +1.544 · (C1) EARNED ablated rise 0.0 (적분 controller earned, stateless read 안 누적) · (C2) SHUFFLE reset 0.0 · (D) ABSTAIN intact.
 - **가드 무회귀**: `engine_cli_smoke` **33/0**(+3 homeo 케이스 28-30) · h1196 single-entry 7/0 · h1199 DIM-growth Ψ byte-identical. p6/p2/p3(조절 변수=substrate 자신 margin, 주입 라벨 없음) · emit gate 아님(`homeo_motivation_bias`=OPTIONAL gain, `a_autonomy_over_hardcode`) · Ψ-disjoint(순수 READ + 자기 scalar). brain motivation 루프 배선 + scale/multi-cycle 박탈 = follow-on. TOY scale(4 facts, 3 seeds, deterministic controller).
+## 2026-06-16 — docs(REGISTRY): backfill-register the c15 neuro-structure-ladder batch (H_1280–1291) into CLAIMS.tape + HYPOTHESES.md (a_claim_manifest)
+
+Registration/bookkeeping only — NO experiment re-run, NO verdict moved. The session's missing-brain-structure lane batch was verdict-frozen + documented but never indexed (violating a_claim_manifest). Backfilled, every tier read VERBATIM from its terminal `.verdicts/<slug>/` file (honest tiers, c9/p7 — 🧱 walls registered AS closed-negatives):
+
+- **CLAIMS.tape** — 10 new `@C` rows under a new `group=BRAIN-STRUCTURE-LADDER` block: H_1280 cerebellum 🟢 · H_1281 basal-ganglia 🟢 · H_1282 working-memory 🟢 · H_1283 thalamus 🔴🧱 · H_1284 neuromodulation 🔴🧱 · H_1285 amygdala 🟢 · H_1287 key-geometry 🔴🧱 · H_1288 eviction-policy 🟢 · H_1290 affect 🟢 · H_1291 ethics 🟢 (joining #2173 H_1292 🟢 in the same group). Each points at its verified terminal verdict file.
+- **UNIVERSE/HYPOTHESES.md** — new roster row "neuro-structure ladder" + new themed detail file `HYPOTHESES_neuro_structure_ladder.md` (ladder table + findings; matches the documented "new themed file + a row" convention — NOT a 12th orphan list, NOT per-H `.md` cards which are not the convention for this range).
+- **domains/MITOSIS-ENGINE.log.md** — `@N` registration pointer (closest home domain for the engine-native wirings; no dedicated brain-structure domain exists).
+- Skipped: H_1289 quantum-entropy (already in CLAIMS since R1). H_1292 hypothalamus-drive registered separately by #2173 (its verdict landed concurrently); my 10 entries align to the same `group=BRAIN-STRUCTURE-LADDER`.
 
 ## 2026-06-16 — domain(H_1284_R3): 🎛 신경조절 HD27 벽 돌파시도 = regime/mode-switching (a_break_the_wall) → 🧱 SUB-THRESHOLD (벽 유지)
 
