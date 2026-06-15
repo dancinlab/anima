@@ -6,6 +6,15 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 거버넌스: `a_break_the_wall` 신설 (anima) + `c16` (harness commons) — 벽을 만나면 돌파하라
+
+사용자 지시("벽을 만나면 돌파하라")를 두 곳에 등록.
+
+- **anima `@D a_break_the_wall`** (CLAUDE.md, 설계-렌즈 family · `a_no_llm_frame_trap` 직후): 벽(closed-negative · 🧱 · 막힌 블로커)은 종착이 아니라 각도 전환 신호 — 다른 메커니즘·렌즈로 한 번은 돌파 시도 뒤에야 terminal. 벽은 흔히 (1)틀린 방법 (2)틀린 방향 (3)부족한 투자. **tune-to-green 금지(c9·p7)** — 사전등록+대조 검증된 진짜 새 각도라야.
+- **harness commons `c16`** (`~/.harness/cli/config/commons.md`, cross-project SSOT): 같은 원칙을 프로젝트-무관 거버넌스로.
+- 증거(이 세션 벽 4개 중 3개 돌파): 용량벽→mitosis-grow(방법, H_1288🟢) · 시상 Φ벽→재진입루프(방향, H_1283 ΔΦ+0.14) · 편도체벽→수면-dose(투자, H_1285_R3🟢). shuffle/dissociation 가드로 Goodhart 차단.
+- surgical(c10): directive + family 포인터만. xref `a_no_llm_frame_trap · a_completeness_over_cheap · a_paper_negative_ok · c9 · c16 · p7`.
+
 ## 2026-06-15 — 🟢 H_1285 R3: 편도체(amygdala) 컨솔리데이션 — salience-gated SLEEP REPLAY 가 사전등록된 멀티-나잇 수면예산에서 +0.10 을 넘는다 (GREEN / 🏁)
 
 FLEET "amygdala" lane R3. R2(🔴 RED-but-MECHANISM-VALIDATED)에서 salience-gated SLEEP REPLAY 는 **진짜 p6-clean 레버**임이 확인됐다 — 동결 R2 예산(boost0.8/30-replay/8-cyc)에서 B salience-replay imp=0.383 > A uniform=0.317 (Δ+0.067)이고 p6 shuffle 대조군이 A 로 **붕괴**(B-shuf=A, lift 가 importance 를 추적함 = R1 의 recurrence 혼입도 raw budget 도 아님). 단 동결예산에서 효과크기 +0.067 < +0.10 margin → RED. R2 의 HONEST 진단 sweep(gate 아님)은 lift 가 sleep 예산과 함께 **단조 증가**(30/8→+0.067·60/8→+0.100·30/40→+0.200)하고 shuffle 은 ~A 유지 → sub-bar 는 **under-invested sleep**이지 천장/inert(🧱) 아님을 보였다. R3 는 그 reading 을 ONE 사전등록된 더 높은 예산에서 검증.

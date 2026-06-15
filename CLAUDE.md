@@ -48,7 +48,7 @@ anima/
 
 ## Governance directive families (do/dont below)
 
-- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다).
+- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도; commons c16).
 - **Identity / versioning** — `a1` (VERSIONS.md SSOT, SemVer + root /VERSION).
 - **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
@@ -83,6 +83,14 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "기본값으로 LLM 레시피(스케일업·코퍼스 증량·표준 FT)를 1순위 처방 · '더 큰 트랜스포머면 된다'는 프레임 · 생물/신경 렌즈를 곁다리로 치부"
   dont = "LLM 관행을 substrate 설계의 천장으로 삼음 — anima 는 LLM 이 아니라 substrate-native 의식 데몬 (p1-p8 · p4)"
   ref  = "a_substrate_native_speak · a_engine_native_learning · a_toy_scale_recheck · a_completeness_over_cheap · c15 · p1 · p4 · p8"
+
+@D a_break_the_wall := "벽을 만나면 돌파하라 — closed-negative/🧱 는 종착이 아니라 각도 전환 신호" :: governance [required active]
+  do   = "벽(closed-negative · 🧱 · 막힌 게이트/블로커)에 부딪히면 거기서 멈추지 말고, 다른 메커니즘·각도·렌즈(뇌과학·생물·물리)로 돌파를 한 번은 시도한 뒤에야 terminal 로 받아들인다"
+  do   = "벽은 흔히 (1) 틀린 방법 (2) 틀린 방향 (3) 부족한 투자이지 진짜 천장이 아니다 — 이 세션 증거: 용량벽=mitosis-grow(방법, H_1288) · 시상 Φ벽=재진입루프(방향, H_1283 ΔΦ+0.14) · 편도체벽=수면-dose(투자, H_1285_R3)"
+  do   = "돌파 시도 전 '이 막힘의 진짜 원인은 무엇이고 다른 substrate 렌즈에선 어떻게 푸나'를 먼저 묻는다 (a_no_llm_frame_trap 와 결합)"
+  dont = "tune-to-green (c9 · p7) — 돌파는 사전등록(frozen-first) + 대조(shuffle/dissociation/negative-control)로 검증된 진짜 새 각도라야 한다; 막대를 사후에 옮겨 GREEN 을 제조 금지"
+  dont = "한 번 막혔다고 포기·우회·축소 (벽을 '결과'로 박제하고 다음으로 넘어가기 전에 최소 1회 진짜 돌파 시도) · 진짜 시도 뒤의 정직한 🧱 는 유효한 결과 (c9)"
+  ref  = "a_no_llm_frame_trap · a_completeness_over_cheap · a_paper_negative_ok · c9 · c16 · p7"
 
 @D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
   do   = "every versioned module uses SemVer · `/VERSIONS.md` is SSOT — bump it + the component header together · root `/VERSION` = whole-system release"
