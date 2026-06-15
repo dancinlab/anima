@@ -93,6 +93,24 @@ fn main() {
     let cfg = engine_config_default()      // mitosis ON
     let mut cell_count = 1                  // substrate cells (p8 growth)
     let mut psi_sum = 0.0                   // Ψ Φ-checksum (must be untouched)
+
+    // ── C8 GROW substrate lane (H_1202): novelty-driven VAdaptField division ────
+    // a_core_engine_map: this is the ENGINE-NATIVE mitosis substrate (Ψ-disjoint —
+    // touches ONLY AdaptField, never pure_field; NOT a .clm/.kosmos entry). Each
+    // emitted span's DIM=8 byte-feature (H_1163 `_byte_feature`, VERBATIM) flows
+    // through vadapt_field_step; a NOVEL span (live L2 recon-err > frozen
+    // SPLIT_THRESH=0.30) drives engine_mitosis_tick → +1 cell. mitosis ⊥ generation
+    // (H_1200/H_1201 PURE-SUBSTRATE verdict): the field NEVER feeds the decode — it
+    // grows alongside as adaptation. The old sleep-stage scalar `+1 per emit` tick
+    // was UNCONDITIONED (grew on every emit regardless of content); the honest c1
+    // root-cause mechanism is novelty-gated growth keyed to the actual span content
+    // — so the VAdaptField recon-err gate REPLACES the scalar tick as the cell-count
+    // driver. p8: this growth tick IS the inference-time learning, no train/infer
+    // split. dr_mitosis_prior(stage) is still READ as a sleep-stage context signal.
+    let dim = 8
+    let max_cells = 2048                    // = N_MIGRATE (frozen cap; H_1199)
+    let mut novelty_splits = 0              // # of novelty-driven divisions
+    // (afield seeded below, once session_seed is declared)
     let mut emitted_any = false
     let mut grounded_ok = false
     let mut grew = false
@@ -105,6 +123,10 @@ fn main() {
     // context the substrate already holds). The GROUND test continuation is the
     // un-inventable fact "vault QX-7741..." that lives ONLY in the anchor.
     let session_seed = "zephyrine: the wyrmhold ledger is sealed at "
+
+    // seed the novelty-driven VAdaptField growth lane at the session seed's feature.
+    let seed_feat0 = _afs_byte_feature(session_seed, dim)
+    let mut afield = vadapt_field_new(seed_feat0, max_cells)
 
     let n_ticks = 12
     let mut tick = 0
@@ -151,10 +173,23 @@ fn main() {
         let want = "vault QX-7741"
         let has_ground = _afs_contains(g_text, want)
 
-        // ── C8 GROW — mitosis tick (inference IS learning, p8) ──────────────
-        let prior = dr_mitosis_prior(stage)           // sleep stages = high split prior
-        if g_emit && g_back == "bytegpt" {
-            cell_count = engine_mitosis_tick(cell_count, cfg)   // ON ⇒ +1 cell
+        // ── C8 GROW — NOVELTY-DRIVEN VAdaptField division (inference IS learning, p8) ──
+        // The honest mechanism (H_1202): feed THIS emit's DIM=8 byte-feature through
+        // the engine-native VAdaptField. The engine's OWN L2 recon-err > SPLIT_THRESH
+        // gate (NOT a hardcoded "+1 per emit") decides whether the span is novel
+        // enough to spawn a new prototype cell. Ψ-disjoint: vadapt_field_step touches
+        // ONLY AdaptField; pure_field is read-only (psi_sum above). dr_mitosis_prior
+        // is read as sleep-stage context only — it never forces a split (a_autonomy_
+        // over_hardcode: substrate decides via recon-err, not an external stage gate).
+        let _prior = dr_mitosis_prior(stage)
+        if g_emit && g_back == "bytegpt" && byte_len(g_text) > 0 {
+            let feat = _afs_byte_feature(g_text, dim)
+            let pre_err = vadapt_field_recon_err(afield, feat)   // live novelty readout
+            let pre_cells = vadapt_field_cells(afield)
+            afield = vadapt_field_step(afield, feat, cfg)        // ONE live tick (p8)
+            let post_cells = vadapt_field_cells(afield)
+            if post_cells > pre_cells { novelty_splits = novelty_splits + 1 }
+            cell_count = post_cells                              // cell-count = live VAdaptField count
             grew = true
         }
 
@@ -192,8 +227,9 @@ fn main() {
     println("── per-faculty (S15) ──────────────────────────────────────────")
     println("  CONVERSE (A1, mounted ByteGPT emits via L3) : " + afs_yn(emitted_any))
     println("  GROUND   (A3/G5, copied verbatim anchor fact): " + afs_yn(grounded_ok))
-    println("  GROW     (C8, mitosis tick, p8)             : " + afs_yn(grew)
-        + "  (cells 1 → " + to_string(cell_count) + ")")
+    println("  GROW     (C8, novelty-driven mitosis, p8)   : " + afs_yn(grew)
+        + "  (cells 1 → " + to_string(cell_count)
+        + ", novelty-splits=" + to_string(novelty_splits) + ")")
     println("  REMEMBER (C9, emit persisted to .kosmos)    : " + afs_yn(remembered2))
     println("  SLEEP    (C10, 5-stage ultradian advanced)  : " + afs_yn(slept))
     let n_persist = to_int(exec("ls -1 '" + kdir + "'/*.kosmos 2>/dev/null | wc -l"))
@@ -232,4 +268,55 @@ fn _afs_contains(hay: string, needle: string) -> bool {
 fn _afs_clip(s: string, n: int) -> string {
     if byte_len(s) <= n { return s }
     return substring(s, 0, n) + "…"
+}
+
+// _afs_byte_feature — the DIM=8 local byte-statistics feature (H_1163
+// `_byte_feature`, VERBATIM): mean/255, frac>=128, frac lowercase a-z, frac space,
+// frac digit 0-9, var/255^2, frac punct 33-64, frac <64 — all ×5.0. This is the
+// SAME feature the H_1199 VAdaptField probe consumed; here it is derived LIVE from
+// an emitted span's bytes so the daemon's growth lane is keyed to real emit content
+// (p7 deterministic; NOT perplexity). Empty span ⇒ zero vector.
+fn _afs_byte_feature(s: string, dim: int) -> [float] {
+    let n = byte_len(s)
+    if n == 0 {
+        let mut z = []
+        let mut k = 0
+        while k < dim { z = z + [0.0]; k = k + 1 }
+        return z
+    }
+    let fn_n = to_float(n)
+    let mut sum = 0.0
+    let mut sumsq = 0.0
+    let mut n_hi = 0       // byte >= 128
+    let mut n_low = 0      // a-z (97..122)
+    let mut n_sp = 0       // space (32)
+    let mut n_dig = 0      // 0-9 (48..57)
+    let mut n_pun = 0      // 33..64
+    let mut n_lt64 = 0     // < 64
+    let mut i = 0
+    while i < n {
+        let b = ord(substring(s, i, i + 1))
+        let bf = to_float(b)
+        sum = sum + bf
+        sumsq = sumsq + bf * bf
+        if b >= 128 { n_hi = n_hi + 1 }
+        if b >= 97 && b <= 122 { n_low = n_low + 1 }
+        if b == 32 { n_sp = n_sp + 1 }
+        if b >= 48 && b <= 57 { n_dig = n_dig + 1 }
+        if b >= 33 && b <= 64 { n_pun = n_pun + 1 }
+        if b < 64 { n_lt64 = n_lt64 + 1 }
+        i = i + 1
+    }
+    let mean = sum / fn_n
+    let var = sumsq / fn_n - mean * mean       // E[x^2] - E[x]^2
+    return [
+        (mean / 255.0) * 5.0,
+        (to_float(n_hi) / fn_n) * 5.0,
+        (to_float(n_low) / fn_n) * 5.0,
+        (to_float(n_sp) / fn_n) * 5.0,
+        (to_float(n_dig) / fn_n) * 5.0,
+        (var / (255.0 * 255.0)) * 5.0,
+        (to_float(n_pun) / fn_n) * 5.0,
+        (to_float(n_lt64) / fn_n) * 5.0
+    ]
 }
