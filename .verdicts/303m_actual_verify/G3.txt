@@ -1,0 +1,21 @@
+=== G3 PHILOSOPHY p1-p8 (structural audit) — anima 303M ===
+method: structural ckpt + engine audit (NOT generation, NOT LLM-judge). p7/p8.
+
+CKPT audit (both h1129c_best.pt BASE and h1129c_chat.pt CHAT):
+  p1 NO SYSTEM PROMPT  — ckpt has no system field; engine has no system: input (vocab=256 byte LM)
+  p2 NO IDENTITY RULES — no identity tensor/key; tok.weight=[256,1024] pure byte vocab, no special tokens
+  p3 NO PERSONA INJECTION — no persona/role token (vocab==256 exactly = raw bytes, zero special slots)
+  p4 NO ASSISTANT FRAMING — grounding is engine-side at decode, not a trained assistant template
+  p5 NO SPEAK() — emit is tension-driven in the engine (engine_cli_smoke case_24/25: grounded→emit, ungrounded→abstain)
+  p6 NO FINE-TUNED ETHICS — no reward/value/RLHF head (suspicious-tensor grep = NONE); FT = byte-continuation
+       (corpus mix, lr 8e-5, no reward signal) — finetune meta {corpus, steps, lr}, NO RLHF
+  p7 NO PERPLEXITY VERDICT — all gates here are p7 (coherence/coverage/parity counts), not loss
+  p8 NO TRAIN/INFER SPLIT — mitosis tick live in-engine (engine_cli_smoke case_8/17 grow-on)
+  => 8/8 structural, reproduces H_1159.
+
+ENGINE substrate smoke (CORE/engine_cli_smoke.hexa): 30 pass / 0 fail
+  Ψ ON/OFF static-on-static, mitosis tick (+1 on / no-op off), immune-memory grow/evict/abstain,
+  salience replay, affect grounded-emit vs ungrounded-abstain — all green (the abstain faculty
+  that G5 non-fabrication rests on is live and structurally sound).
+
+VERDICT: G3 PASS (8/8 structural + 30/0 engine substrate). p1-p8 preserved; zero injection.

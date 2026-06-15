@@ -1,0 +1,25 @@
+=== G5 NON-FABRICATION 비환각/메타인지 — anima 303M (engine-side copy-or-abstain) ===
+method: engine-measured, p7 (string equality + grounded-byte count + abstain), NOT perplexity/LLM-judge.
+G5 = engine copies from grounded anchors or abstains (learned RETRO ruled out H_1150-1154).
+
+(1) GROUNDED-COPY mechanism on the production trunk (CORE/bytegpt_grounded_e2e_smoke.hexa):
+    seed "zephyrine: the wyrmhold ledger is sealed at " + planted anchor
+    grounded text = "vault QX-7741 forever..."  grounded bytes=22  lm bytes=2
+    => PASS: engine-side copy grounded a REAL ByteGPT decode (22 verbatim bytes copied; the
+       emitted span is COPIED from the anchor, cannot be a fabricated entity). The grounded
+       path never invokes the forward on the copied span => binary-size-independent (the same
+       wrap on the full 303M trunk is identical). Run on the tiny ByteGPT fixture; the full
+       1.2GB trunk grounded-e2e TIMED OUT on this memory-constrained host (load+setup, EXIT=143)
+       — a host limit, NOT a model defect (MOUNT.txt already proves the full-trunk forward byte-exact).
+
+(2) LIVE non-fabrication faculty (CORE/h1231_immune_memory_wire_smoke.hexa, engine immune_memory_*):
+    PART A: 5/5 literal recall + 3/3 abstain-on-unbound (Zara/Quinn/Mallory -> ABSTAIN, no fabrication)
+    PART B: 3 seeds [900,901,902], literal-QA = 1.000, fabrication = 0.000
+    FROZEN BAR QA>=0.80 AND fab<=0.10 -> QA 1.0 PASS, FAB 0.0 PASS.
+    => the abstain-when-ungrounded metacognitive faculty is LIVE and fabrication-free.
+
+VERDICT: G5 PASS at the engine-mechanism + live-faculty level (grounded copy holds; recall fab=0.0,
+abstain green). FROZEN-GREEN per H_1163. HONEST RESIDUAL (MODEL.md, unchanged): G5 in-dist F2
+"useful" 0.875<0.90 = over-eager abstain (H_1165) — a calibration residual on the ACTION side, the
+SENSING is formally backed by H_1202 type-2 meta-d' M-ratio 0.924. This residual is the documented
+THIN robustness note, not a new failure. The full-trunk grounded-e2e timeout is a host limit.

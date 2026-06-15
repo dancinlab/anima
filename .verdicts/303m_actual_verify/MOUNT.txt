@@ -1,0 +1,28 @@
+=== MOUNT GATE — anima-clm-chat-303m byte-exact on CORE/bytegpt_decode.hexa ===
+ckpt: state/chat_303m/h1129c_chat.pt  sha256 4fcc2d6c9b3164f478139ffb148f484465b42fc339d630956e4ea0f90ec13f68
+config: vocab=256 d=1024 n_layer=24 n_head=16 block=512  (303,097,856 params, 303.4M)
+finetune: base dancinlab/anima-clm-midcap-303m-broad-en-emergent + 70wiki/30dialogue 2000 steps (H_1160)
+prompt: "The quick brown" (bytes 84 104 101 32 113 117 105 99 107 32 98 114 111 119 110)
+
+CORE  (hexa bg_load + bg_forward_last_W, full 24-layer):
+  CORE_ARGMAX 32
+  CORE_TOP5   32 44 10 63 46
+  CORE_FIRST16 -14.9978 -39.8678 -36.5486 3.32349 0.507527 2.44278 -1.74113 4.00623 -16.9826 14.3558 25.4268 3.25477 2.01121 -40.2436 -79.4891 6.30877
+
+TORCH golden (h1129c_chat.pt, eval-mode last-position next-byte logits):
+  argmax 32   top5 [32, 44, 10, 63, 46]
+  first16 -14.997825 -39.867825 -36.548569 3.323482 0.507543 2.442782 -1.74113 4.006225 -16.982552 14.355796 25.426838 3.254792 2.01121 -40.243595 -79.48909 6.308774
+
+PARITY CRITERION (a303m_pass mount, per CORE/h1156_bytegpt_parity_probe.hexa):
+  argmax(CORE)==argmax(torch): 32==32 TRUE
+  top5 set match: [32,44,10,63,46]==[32,44,10,63,46] TRUE
+  first16 max abs diff = 5e-05  (< 0.01 erf-GELU/dt_exp tolerance)
+  greedy continuation (torch): " as the " (coherent English)
+=> MOUNT_PARITY = PASS (byte-exact, reproduces H_1157 on the SHIPPED chat ckpt)
+
+NOTE (tooling, NOT model): the local hexa build (0.1.0-dispatch, hx-selfhost-cli) emits
+codegen calls to _read_file_bytes/_read_bytes_at but rt.o exports them rt_-prefixed
+(_rt_read_file_bytes). Repaired at root cause by aliasing in ~/.hx/self/native/selfhost/rt.o
+(backup /tmp/verify303m/rt.o.bak). The bytegpt_forward_last_ranged path additionally
+SIGSEGVs on a partial slice (read_bytes_at) — not used; the full-read bg_load path is
+byte-exact. Both filed to hexa-lang inbox. The MODEL is sound (torch loads clean, 303.4M).
