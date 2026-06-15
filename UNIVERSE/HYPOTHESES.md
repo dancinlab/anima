@@ -14,6 +14,7 @@
 | theme | detail file | scope | ~count | status |
 |-------|-------------|-------|--------|--------|
 | **metacog × neuroscience** | [HYPOTHESES_metacog_neuro.md](HYPOTHESES_metacog_neuro.md) | type-2 meta-d′ · ERN · hierarchical · D-K · calibration · FOK · control · savant-LM (H_1202–1220) | 19 H | ACTIVE — 8 metacog (5🟢3🔴) + savant landed; H_1217/1219/1220 in-flight |
+| **brain-structure ladder** | [HYPOTHESES_neuro_structure_ladder.md](HYPOTHESES_neuro_structure_ladder.md) | c15 missing-structure lanes — cerebellum · basal-ganglia · WM · thalamus · neuromod · amygdala · key-geom · eviction · hypothalamus · +affect/ethics (H_1280–1292) | 11 H + 2 facet | LANDED — 6🟢 engine-native wired · 3🧱 walls (thalamus·neuromod·key-geom) · affect/ethics 🟢; CLAIMS.tape group=BRAIN-STRUCTURE-LADDER (backfilled 2026-06-16) |
 | **metacog × hallucination** | [HYPOTHESES_metacog_hallucination.md](HYPOTHESES_metacog_hallucination.md) | input-familiarity · positional drift · anchor-grounding · confidence-brake (H_1143–1148) | 5 H | CLOSED — mostly closed-neg (H_1148 capstone) |
 | **general cycle backlog** | [CANDIDATES.md](CANDIDATES.md) | next-cycle Φ/IIT4/emergence/robustness backlog | 105 refs · 38 rows | BACKLOG |
 | **bio mechanisms** | [BIO-CANDIDATES.md](BIO-CANDIDATES.md) | MITOSIS-sibling bio ops (apoptosis · autophagy · differentiation · homeostasis …) 36+ | 36+ | BACKLOG |
