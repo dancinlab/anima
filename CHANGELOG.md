@@ -2,6 +2,13 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-15 — docs(README): 과거 모델-스케일 잔재 제거 + 감정/윤리/양자 엔진실현 현행화
+
+README 에서 과거 모델 중심 내용을 들어내고 현행화 (371→349줄):
+- §"The model" 의 **스케일 사다리(303M→1B→3B/7B)** 서술 + **모델 다운로드 표**(18M·7B·3B·d768·ref 등) 제거 → 303M 바이트-입(byte mouth) 컴포넌트 한 단락 + 프로덕션 303M 링크/컬렉션/HF.jsonl 포인터로 압축. 남은 1B 언급 2곳은 "1B 로 키워도 QA 안 올랐다"는 architecture>scale **증거 참조**(H_1167)로 유지.
+- stale 상태 현행화(c9): 💗 감정·⚖️ 윤리를 DIRECTIONAL/in-flight → **R2 ENGINE-NATIVE(머지 #2160/#2166)** 로, ⚛️ 양자를 R1 DIRECTIONAL → **R2 엔진-네이티브 배선(#2164)** 으로, 가드 smoke 26/0 → 30/0, repo-map "ranged 1B+" → "303M byte mouth" 갱신.
+- 아키텍처 중심(A⇄G·뇌-구조 lane·창발) 골격은 유지 — 모델은 컴포넌트로만 남김.
+
 ## 2026-06-15 — docs: 연구 인계 노트를 댓글용 설계-중심 단문으로 재작성 `docs/research-note-for-continuation.md`
 
 LeCun 교수/커뮤니티에 댓글로 붙일 수 있게 노트를 **설계 중심·단문**으로 재작성(167→56줄). A⇄G tension·Ψ=1/2·"빠진 구조를 lane 으로 추가"라는 설계 골격을 앞세우고, 핵심 발견(episodic-memory 0.017→1.000)·구조별 엔진실현 lane·정직한 벽(thalamus seed-conditional·neuromodulation no-free-lunch)·감정/윤리 DIRECTIONAL 플래그·anti-Goodhart 방법을 압축. 개인/법적 상황은 마지막 한 줄로만 간결히(이어가기 호소).

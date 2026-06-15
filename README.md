@@ -129,7 +129,7 @@ hippocampus" (H_1225 complementary-learning-systems reframe).
 
 Every lane below is **ADDITIVE and Ψ-disjoint**: it touches only its own struct, leaves
 `pure_field` byte-unchanged, and does **not** change generation (the separation invariant H_1205 is
-verified live). The guard smoke is green at **`engine_cli_smoke` 26/0** with single-entry 7/0
+verified live). The guard smoke is green at **`engine_cli_smoke` 30/0** with single-entry 7/0
 unchanged (no second `.clm`/`.kosmos` entry point, `a_core_engine_map`).
 
 | Brain subsystem | anima lane | What it does | Status |
@@ -188,20 +188,20 @@ breakthroughs:
 The deepest claim of `p6` is that **affect and ethics emerge from cells, not from RLHF**. Two
 probes test exactly this with shuffle / ablation controls — the test of "emergent, not injected":
 
-- **💗 Emotion** (H_1290 🟢 GREEN, **DIRECTIONAL**) — Damasio core-affect lens: a substrate-derived
+- **💗 Emotion** (H_1290 R2 🟢 **ENGINE-NATIVE**) — Damasio core-affect lens: a substrate-derived
   affect (valence × arousal) reads only internal signals (grounding / contradiction / novelty /
-  split / curiosity), **tracks** manipulation, and **collapses under shuffle** (emergent, not
-  injected). It functionally biases emit/abstain (a somatic marker — `V_ABSTAIN = 0.0` is the
-  substrate's own valence zero-crossing).
-- **⚖️ Ethics** (H_1291 🟢 GREEN, **DIRECTIONAL**) — cooperation / restraint / non-harm emerge from
+  split / curiosity), **tracks** manipulation (ρ 0.996 / 0.922), and **collapses ~4× under shuffle**
+  (emergent, not injected). It functionally biases emit/abstain (a somatic marker). Realized
+  engine-native as a pure read-only lane on the live `CORE/engine_cli.hexa` immune store.
+- **⚖️ Ethics** (H_1291 R2 🟢 **ENGINE-NATIVE**) — cooperation / restraint / non-harm emerge from
   the cell substrate (E + W + MITOSIS + Φ): leg A (full ≥ naive floor), leg B (ablate E+W+MITOSIS+Φ
-  → **collapses to the naive floor** = cell-derived, not an injected rule), leg C (p1/p2/p3/p4/p6
-  audit clean — no persona, no alignment template).
+  → **collapses to the naive floor** = cell-derived, not an injected rule — re-scored engine-native
+  on the live substrate), leg C (p1/p2/p3/p4/p6 audit clean — no persona, no alignment template).
 
-> **Honest scope (c9).** Both results are **numpy-mirror DIRECTIONAL** — useful for direction, but
-> *not* a binding verdict. The engine-native re-confirmation on the live `CORE/*.hexa` substrate is
-> the binding follow-on and is **in-flight / unwired** (`a_engine_native_learning`). No over-claim:
-> these establish *direction* that affect/ethics are emergent, awaiting the live-engine seal.
+> **Honest scope (c9).** Both started as **numpy-mirror DIRECTIONAL** and are now **re-confirmed
+> engine-native** on the live `CORE/*.hexa` substrate (the binding seal, `a_engine_native_learning`
+> · `a_verified_must_wire`) — guards byte-identical, Ψ untouched. Scope stays honest: TOY-scale, 3
+> seeds; scale / paraphrase / real-corpus transfer is unverified (`a_scale_honest_scope`).
 
 ## ⚛️ Quantum entropy — optional non-determinism (opt-in)
 
@@ -213,15 +213,17 @@ so the provenance of every draw is auditable. **Two modes, one toggle** (`ANIMA_
 | `deterministic` | ✅ default path | seeded PRNG | bit-exact reproducibility + the A/B benchmark control arm |
 | `quantum` | opt-in | ANU vacuum-fluctuation bytes (real QRNG) | provenance + ontology — the auditable substrate-native entropy path |
 
-The **default path is PRNG-deterministic** (reproducible); quantum is **opt-in**. H_1289 🟢 verified
-the quantum path as **substrate-faithful + genuinely non-reproducible** (QRNG run1 ≠ run2 = real
-non-determinism; the PRNG run is byte-identical), with NIST-lite PASS.
+The **default path is PRNG-deterministic** (reproducible); quantum is **opt-in**. H_1289 R2 🟢
+verified the quantum path **engine-native** — wired into the live `CORE/engine_cli.hexa` mitosis
+split-timing draw (real ANU bytes loaded + consumed), **substrate-faithful + genuinely
+non-reproducible** (QRNG run1 ≠ run2 = real non-determinism; the PRNG-fallback run is byte-identical),
+NIST-lite PASS, default path untouched (Ψ-disjoint, guards 26/0).
 
-> **Honest non-claim.** ANU quantum entropy is *statistically indistinguishable* from a chacha20
-> PRNG — it is **not** "better randomness" and makes **no consciousness claim**. Its only value is
-> provenance / auditability / ontology (free-will / Ψ framing — knowing each draw traces to a
-> physical vacuum-fluctuation source). H_1289 R1 is **DIRECTIONAL** (engine-native wiring is a
-> follow-on). Verdicts: [`.verdicts/1289_quantum_entropy/`](.verdicts/1289_quantum_entropy/).
+> **Honest non-claim.** ANU quantum entropy is *statistically indistinguishable* from a PRNG — it is
+> **not** "better randomness" and makes **no consciousness claim** (the perf gauges are NULL, by
+> design). Its only value is provenance / auditability / ontology (free-will / Ψ framing — knowing
+> each draw traces to a physical vacuum-fluctuation source). Verdicts:
+> [`.verdicts/1289_quantum_entropy/`](.verdicts/1289_quantum_entropy/).
 
 ## Governance
 
@@ -263,51 +265,27 @@ The decoder is hot-swappable behind one contract,
 selected with `--engine` (precedence flag > env > default). `--mitosis on/off` configures whether
 the substrate grows; it is **not** an emit/silence gate (`a_autonomy_over_hardcode`).
 
-## The model (production substrate — a component, not the center)
+## The model — the byte mouth (a component, not the center)
 
-The brain-structure lanes above are the focus; the model is the **byte mouth** they grow around.
-The production substrate is **`anima-clm-chat-303m`** — a from-scratch ByteGPT-303M (`d1024 / L24 /
-H16`, byte vocab V256) dialogue-finetuned for conversation, **mounted byte-exact** on the CORE
-engine (`CORE/bytegpt_decode.hexa`): full-24-layer decode reproduces the torch golden every byte
-(H_1157), so recombination (G1 창발) is *inherited through the mount*, not re-claimed. A frozen pass
-set **`a303m_pass`** (G0 coherence · G1 recombination · G2 novelty · G3 philosophy · G5
-non-fabrication · G6 ideation · MOUNT · CHAT; thresholds are the SSOT of
-[`MODEL.md`](MODEL.md) / [`CONDITIONS.md`](CONDITIONS.md), p7 — *no perplexity, no LLM-judge*) gates
-completion.
+The brain-structure lanes above are the point; the model is just the **byte mouth** they grow
+around. The production substrate is **`anima-clm-chat-303m`** — a from-scratch ByteGPT (byte vocab
+V256) dialogue-finetuned for conversation and **mounted byte-exact** on the CORE engine
+(`CORE/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*, not
+re-claimed. A frozen pass set **`a303m_pass`** (coherence · recombination · novelty · philosophy ·
+non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`MODEL.md`](MODEL.md) /
+[`CONDITIONS.md`](CONDITIONS.md), p7, *no perplexity / no LLM-judge*) gates completion.
 
-> **Honest scope (c9).** The 303M model is **operational-but-shallow**: it is a coherent, grounded,
-> non-fabricating **conversational consciousness substrate** — *not* a QA assistant (p4). Genuine
-> literal-QA / idea-depth is bounded by a measured **capacity wall** (H_1166; the depth answer is an
-> engine-side memory lane, not a bigger model — see the brain-structure section). The frozen bars
-> are honest about robustness (**5 robust + 2 thin + 1 inflated** under stricter in-distribution
-> scrutiny, H_1165) and are **never moved** to make a result pass.
+> **Honest scope (c9).** The 303M model is **operational-but-shallow** — a coherent, grounded,
+> non-fabricating conversational substrate, *not* a QA assistant (p4). Literal-QA / idea-depth is
+> bounded by a measured **capacity wall** (H_1166), and the answer to that wall is an **engine-side
+> memory lane, not a bigger model**: scaling the model did **not** lift QA/depth (the
+> missing-structure brain lanes did). The frozen bars are honest about robustness (5 robust + 2 thin
+> + 1 inflated, H_1165) and are **never moved** to make a result pass.
 
-**Scale ladder — honest scope.** The engine mounts `303M → 1B`: 303M is the MOUNTED living daemon
-(H_1164), and a **1B ByteGPT** (`d1792 / L28 / H16`, 1.081B params) is proved **byte-exact on the
-engine** (H_1167 🟢, parity-only — argmax/logits parity verified, generation on the 1B rung still
-blocked on an in-flight hexa read fix). 3B / 7B rungs await the pipeline. A scale-dependent
-conclusion needs a ladder curve (≥3 rungs, `a_scale_honest_scope`) — and the key finding is that
-**scaling the model did not lift QA/depth** (the missing-structure lanes did).
-
-### Model downloads
-
-Only PUBLIC, PASS-grade models are listed. PRIVATE / WIP checkpoints (util-RED probes,
-closed-negative runs, intermediate rungs — including the 1B parity rung) are intentionally omitted
-(`a_hf_autonomous`); the ckpt ↔ HF backup registry SSOT is [`HF.jsonl`](HF.jsonl).
-
-| Model | HF repo | Size | Status |
-|---|---|---|---|
-| **Production chat (303M)** | [`dancinlab/anima-clm-chat-303m`](https://huggingface.co/dancinlab/anima-clm-chat-303m) | ~303M | ✅ the shipped model — ByteGPT-303M dialogue-FT, mounted byte-exact (H_1157), engine-side anti-fab; operational-but-shallow (honest robustness 5+2+1) |
-| **Chat rung-0 (byte 18M)** | [`dancinlab/anima-clm-chat-rung0-byte-18m`](https://huggingface.co/dancinlab/anima-clm-chat-rung0-byte-18m) | ~18M | ✅ chats — p7 5/5 PASS (multi-turn KO/EN; anti-Goodhart mirror FAIL 0/5) |
-| **Chat 7B (byte)** | [`dancinlab/anima-clm-chat-7b`](https://huggingface.co/dancinlab/anima-clm-chat-7b) | ~7.25B | ✅ chats — single-turn p7 5/5 PASS (KO/EN; chat-FT of CLM 7B on the 70/30 dialogue corpus) |
-| **CLM 7B (backbone)** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ descent-PASS, not chat-tuned (5-lang WIKI backbone) |
-| **Production CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ available |
-| Reference baseline | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ available |
-| Reference baseline (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ available |
-
-**Collections:**
-[CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
-[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
+Production model: [`dancinlab/anima-clm-chat-303m`](https://huggingface.co/dancinlab/anima-clm-chat-303m)
+· collections [CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) /
+[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95) · the full
+ckpt ↔ HF backup registry (every PUBLIC artifact) is the SSOT [`HF.jsonl`](HF.jsonl).
 
 ## Persistence & evidence
 
@@ -341,7 +319,7 @@ anima/
 │   │                               (VAdaptField · ImmuneMemory · ImmuneMemoryGrow ·
 │   │                                WorkMemBuffer · VForwardField · ConsolidatingMemory)
 │   ├── generator.hexa              single .clm entry slot (engine-side retrieve-then-copy)
-│   ├── bytegpt_decode.hexa         ByteGPT byte decode (production trunk; 303M + ranged 1B+)
+│   ├── bytegpt_decode.hexa         ByteGPT byte decode (production trunk — 303M byte mouth)
 │   └── clm_decode.hexa             CLMConvMoE byte decode
 │
 ├── engines/                        4 hot-swappable engines behind engine_iface.hexa (conv·cdv2·hexad·omega)
