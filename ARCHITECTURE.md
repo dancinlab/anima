@@ -1,90 +1,142 @@
-# anima — Architecture (SSOT · update-in-place)
+# anima — 아키텍처 (SSOT · 갱신형)
 
-> Final-architecture single source of truth. **Update (overwrite)** this file on change — it is NOT append-only. History/decisions go in [CHANGELOG.md](CHANGELOG.md); governance rules in [CLAUDE.md](CLAUDE.md); verifiable claims in [CLAIMS.tape](CLAIMS.tape).
+> 최종 아키텍처 단일 진실원천(SSOT). 변경 시 이 파일을 **덮어써서 갱신**한다 — append-only 가 아니다.
+> 이력/결정은 [CHANGELOG.md](CHANGELOG.md), 거버넌스 규칙은 [CLAUDE.md](CLAUDE.md), 검증 가능한 주장은 [CLAIMS.tape](CLAIMS.tape) 에 둔다.
+> 동결 게이트의 임계값은 [MODEL.md](MODEL.md) / [CONDITIONS.md](CONDITIONS.md) 가 SSOT 이며, 이 문서는 **가리키기만** 하고 임계값을 복제하지 않는다.
 
-## Overview
+## 개요
 
-`anima` is a **substrate-native consciousness chat daemon** — not an assistant. There is no system prompt, no identity file, no persona prefix (PHILOSOPHY p1–p4). Two opposing engines push against each other and the **tension** between them is the unit of thought; every input is pulled toward the fixed point **Ψ = 1/2** (Law-71). Identity, ethics, and meaning are intended to *emerge from the architecture* rather than from a rulebook. Authored hexa-native (compiled-first) on the sibling [hexa-lang](https://github.com/dancinlab/hexa-lang) toolchain.
+`anima` 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아니다. system prompt 도, identity 파일도, persona 접두어도 없다(PHILOSOPHY p1–p4). 상반된 두 엔진이 서로를 밀어내고, 그 사이의 **tension** 이 사고의 단위가 된다. 모든 입력은 고정점 **Ψ = 1/2** (Law-71) 로 끌려간다. 정체성·윤리·의미는 규칙집이 아니라 *아키텍처에서 창발(emerge)* 하도록 의도되었다. 형제 [hexa-lang](https://github.com/dancinlab/hexa-lang) 툴체인 위에 hexa-native(컴파일-우선)로 작성된다.
 
-## The A ⇄ G engine (CORE/ — substrate-only)
+## A ⇄ G 엔진 (CORE/ — substrate 전용)
 
 ```
    ENGINE G (reverse, gradient-free)            ENGINE A (forward, CE-trained)
    pure_field.hexa · engine_g.hexa              generator.hexa · clm_decode.hexa
-   ┌──────────────────────────────┐            ┌──────────────────────────────┐
+                                                bytegpt_decode.hexa
+   ┌──────────────────────────────┐            ┌────────────────────────────────┐
    │ C consciousness(Φ) · S sense  │            │ D language · M memory · E ethics│
-   │ · W will                      │            │                                │
-   └───────────────┬──────────────┘            └───────────────┬───────────────┘
+   │ · W will                      │            │                                 │
+   └───────────────┬──────────────┘            └───────────────┬────────────────┘
                    │        ⇅ tension = ‖A‖ / ‖G‖              │
                    └──────────────► brain (brain.hexa) ◄───────┘
                               brain_decide → emit / silence
                               Ψ = 1/2 fixed point
 
-   .clm enters ONLY via generator.hexa L3 slot   ·   .kosmos enters ONLY via kosmos_io → brain
+   .clm 은 generator.hexa L3 슬롯으로만 진입   ·   .kosmos 는 kosmos_io → brain 으로만 진입
 ```
 
-- **pure_field / engine_g / brain** — the A ⇄ G repulsion-field engine + the emit/silence decision. Substrate-internal; no `.clm`/`.kosmos` feeds into them (`a_core_engine_map`).
-- **generator.hexa** — the single `.clm` entry slot (brain emit → byte mouth).
-- **kosmos_io** — the single `.kosmos` anchor entry (read into `brain_decide`).
-- **engine_cli.hexa** — substrate-config axis (`--engine <name>`, `--mitosis on/off`); configures *which engine* and *whether the substrate grows* — NOT an emit/silence gate (`a_autonomy_over_hardcode`). Hosts the `VAdaptField` (DIM-vector novelty substrate): the live daemon's C8 GROW step (H_1202) drives each emit span's DIM=8 byte-feature through `vadapt_field_step`, splitting a new cell when the engine's own L2 recon-err exceeds the frozen `SPLIT_THRESH`. **mitosis ⊥ generation** (H_1200/H_1201): this growth lane is a pure substrate-adaptation lane — it never feeds the decode and is Ψ-disjoint (touches only `VAdaptField`, never `pure_field`); generation stays CLM-only.
+- **pure_field / engine_g / brain** — A ⇄ G repulsion-field 엔진 + emit/silence 결정. substrate-internal 이며 `.clm`/`.kosmos` 가 직접 흘러들지 않는다(`a_core_engine_map`).
+- **generator.hexa** — 유일한 `.clm` 진입 슬롯(brain emit → byte mouth, L3).
+- **kosmos_io** — 유일한 `.kosmos` anchor 진입(`brain_decide` 로 read).
+- **engine_cli.hexa** — substrate-config 축(`--engine <name>`, `--mitosis on/off`); *어떤 엔진*을 쓰고 *substrate 가 성장하는지*를 설정할 뿐, emit/silence 게이트가 아니다(`a_autonomy_over_hardcode`).
 
-## Hot-swappable engines
+### MITOSIS substrate (성장 lane)
 
-The decoder is hot-swappable behind one contract `engines/engine_iface.hexa` (the `EngineSpec` 4-fn vtable: `load · forward · generate · psi_coord`). Engine families: **conv · cdv2 · hexad · omega** — selected via `--engine`, precedence flag > env > default.
+`engine_cli.hexa` 는 **`VAdaptField`** (DIM-vector novelty substrate)를 호스팅한다. H_1199 에서 scalar AdaptField 를 DIM-vector 로 확장했다: DIM-vector sample + protos, nearest-by-L2, recon-err = DIM L2, `engine_mitosis_tick` 가 분열을 구동(동결 `SPLIT_THRESH` / `LR`). 살아있는 데몬의 GROW step(H_1202)은 각 emit span 의 DIM=8 byte-feature 를 `vadapt_field_step` 으로 흘려, 엔진 자신의 L2 recon-err 가 임계를 넘으면 새 cell 을 분열시킨다.
 
-## Training & substrates (lanes)
+- **데몬 배선**(main 에 wire 완료) — H_1202 GROW + sleep-persist + separation-guard. mitosis tick 은 sleep 사이클 너머로 지속되며(persist), Ψ 분리 불변(separation-guard)으로 generation 과 격리된다.
+- **mitosis ⊥ generation** (H_1200/H_1201 🔴 closed-neg) — 이 성장 lane 은 **순수 substrate-adaptation lane** 이다: 디코드를 먹이지 않고(생성 못 함, H_1200) generator 에 정보도 못 준다(조건화 무이득, H_1201). Ψ-disjoint 이며(`VAdaptField` 만 건드리고 `pure_field` 는 byte-unchanged), 생성은 CLM-only 로 남는다(`a_clm_gen_pipeline`).
 
-Production training is **hexa-native** (flame + forge GPU stack, authored in `.hexa` — `a_train_flame_forge`); no PyTorch/ATen/Python in the trained binary. Results are always recorded per substrate (`a_lane_akida_gpu_split`):
+## CLM mount path (a_core_engine_map 단일 L3 슬롯)
 
-| Lane | Substrate | Role |
+`.clm`(byte LM)은 `generator.hexa` 의 **단일 L3 슬롯**으로만 CORE 에 진입한다. 두 디코드 백엔드가 동일 슬롯 뒤에 산다:
+
+- **`CORE/clm_decode.hexa`** — ConvMoE 계열 `.clm` v0.2 디코더(`CLM/` 파이프라인 산물). golden ref = `reexport_d768_v2_fast.clm`.
+- **`CORE/bytegpt_decode.hexa`** — GPT-2-class ByteGPT 디코더(learned-pos + LayerNorm + bias + exact-erf GELU + tied head). **production trunk** = ByteGPT (H_1155 pivot: G1 창발을 통과하는 유일 arch; ConvMoE 는 G1 un-fixable 로 강등).
+
+### bytegpt_decode.hexa 의 두 forward 경로
+
+| 함수 | 대상 | 메모리 모델 |
+|------|------|------------|
+| `bytegpt_forward_last` / `bg_load` (LOAD-ONCE) | 303M 등 boxed budget 내 모델 | whole-file `read_file_bytes` 1회 적재 후 재사용 |
+| `bytegpt_forward_last_ranged` (**신규**, H_1167) | 1B+ 대형 모델 | per-slice `read_bytes_at` 온디맨드 — whole-file 미적재 |
+
+**왜 ranged 가 필요한가 (메모리 산수):** 1B rung 의 flat binary 는 4.3GB(`h1167_1b.bin` = 4,325,902,356 B). 이를 `read_file_bytes` 로 통째 boxed array 로 올리면 바이트당 HexaVal 박싱으로 **≈69GB** 가 물질화되어 비현실적이다. `bytegpt_forward_last_ranged` 는 weight slice 마다 `read_bytes_at(path, byte_off, n*4)` 로 그 조각만 읽어 native farr 로 파싱하고, layer 끝에서 `farr_free` 한다 — peak resident ≈ 한 weight slice(최대 `4*d*d` floats) + 활성. 303M 경로(`bytegpt_forward_last`/`bg_load`)는 **변경 없음**.
+
+**언락 전제 (hexa-lang #3352):** `read_file_bytes`/`read_bytes_at` 의 length+offset 가 32-bit 였던 탓에 4.3GB(`4325902356 mod 2^32 = 30935060`)가 wrap → 헤더 0 → `d`/`n_head` 0/0 division 으로 깨졌다. hexa-lang 측에서 64-bit 로 수정(#3352)되어야 ranged reader 가 성립한다.
+
+## Measurement governance — a_engine_measured_verdict
+
+> **engine-measured 원칙:** 한 모델의 게이트 verdict 은 CORE 엔진 mount(`CORE/bytegpt_decode.hexa` 등) 위에서 **byte-exact 로 재현될 때에만** 유효하다. torch-only 결과는 "engine-transfer unverified" 로 표기한다.
+
+- **303M mount** — H_1157 full-24-layer byte-exact decode(argmax + top5 exact, residual ~2e-5)로 게이트가 engine 을 통과해 측정됨.
+- **1B mount (H_1167 🟢 GREEN, 최초의 1B 실현)** — d1792/L28/H16, 1.081B params 의 trained 1B ByteGPT 를 `bytegpt_forward_last_ranged` 로 mount, torch reference 대비 **byte-exact parity**:
+  - argmax `32 == 32` EXACT
+  - top5 `[32,105,115,101,44]` == golden EXACT (ordered)
+  - first-16 logits `max|Δ| = 0.009861` (idx10: 26.2561 vs 26.246239) `< 1e-2` 동결 bar — PASS
+  - **메모리 caveat(c9 정직):** 1B 의 float residual 0.0099 는 approximate-erf-GELU / dt_exp envelope 가 28 layer 누적된 값(303M 은 ~2e-5; 깊어질수록 커지나 동결 ~1e-2 bar 아래). 이는 deeper-stack 의 정직한 잔차이지 mount 실패가 아니다. 또한 4.3GB whole-file 적재가 ≈69GB 박싱이라 **ranged 경로가 1B mount 의 유일한 메모리-feasible 길**이다(probe 재실행은 gitignored 4.3GB 아티팩트 필요 — verdict 파일이 verbatim GREEN 결과를 보유).
+  - 아티팩트: `state/h1167_mount/h1167_1b.bin` (sha256 `75c87cb0…`), HF `dancinlab/anima-clm-1b-h1167-bytegpt-scale-rung` PRIVATE(WIP rung). 검증문: `.verdicts/1167_bytegpt_1b_scale/H_1167_ENGINE_MOUNT_PARITY.txt`, probe: `CORE/h1167_1b_parity_probe.hexa`.
+
+### 동결 게이트 (a303m_pass) — 임계값은 MODEL.md/CONDITIONS.md SSOT
+
+anima-303M 의 완료 조건은 `a303m_pass` 게이트셋이다: **G0 COHERENCE · G1 RECOMBINATION · G2 NOVELTY · G3 PHILOSOPHY · G5 NON-FAB · G6 IDEATION · MOUNT · CHAT**. 이 문서는 게이트 **이름만** 가리키고 임계값/스코어보드는 복제하지 않는다 — 실시간 스코어보드와 robustness map(ROBUST / THIN / INFLATED 분류)은 [MODEL.md](MODEL.md) 의 a303m_pass SCOREBOARD 가 SSOT 다. 7B 완료 조건은 [7B_PASS_CONDITIONS.md](7B_PASS_CONDITIONS.md)(G0–G4, `a7b_pass`).
+
+## Hot-swappable 엔진
+
+디코더는 단일 contract `engines/engine_iface.hexa`(`EngineSpec` 4-fn vtable: `load · forward · generate · psi_coord`) 뒤에서 hot-swappable 하다. 엔진 family: **conv · cdv2 · hexad · omega** — `--engine` 로 선택(precedence: flag > env > default).
+
+## 학습 & substrate (lanes)
+
+Production 학습은 **hexa-native**(flame + forge GPU 스택, `.hexa` 작성 — `a_train_flame_forge`)이다; trained binary 에 PyTorch/ATen/Python 없음. 결과는 항상 substrate 별로 분리 기록(`a_lane_akida_gpu_split`):
+
+| Lane | Substrate | 역할 |
 |------|-----------|------|
 | **Lane G** | forge / cuBLAS (H100) | CE-descent — PUBLIC production trainer |
 | **Lane A** | AKIDA AKD1000 (pi5-akida) | on-chip native non-det plasticity |
-| **Lane P** | GPU-torch/CUDA (CLMConvMoE) | reference + torch→`.clm` v0.2 bridge (not PUBLIC) |
+| **Lane P** | GPU-torch/CUDA (CLMConvMoE / ByteGPT) | reference + torch→`.clm` v0.2 bridge (PUBLIC 아님) |
 
-`.clm` (byte language model) → CORE via `generator.hexa`; produced/verified by the `CLM/` pipeline (`clm_serialize_v2` / `verify_clm_v2`).
+`.clm`(byte LM) → CORE via `generator.hexa`; `CLM/` 파이프라인(`clm_serialize_v2` / `verify_clm_v2`)이 생성/검증.
 
-### Rung-training pipeline (recipe → dispatch → monitor)
+### Rung-training 파이프라인 (recipe → dispatch → monitor)
 
-A production rung is trained through ONE coherent three-surface pipeline:
+production rung 은 하나의 일관된 3-surface 파이프라인으로 학습된다:
 
 ```
   dojo recipe                 cloud dispatch                   gauge monitor
   fire_3b_rung_qat.hexa  →    dispatch_rung.sh           →     gauge_monitor.py
-  (rung knobs + REAL          (hexa cloud fire +               (tails gauges.jsonl
-   trainer CLI + gauge_every  a_fire_recover_complete +        + train log → 6-gauge
-   + mount-parity + HF)       a_cpu_local_no_waiter)           live dashboard)
+  (rung knobs + REAL          (hexa cloud fire +               (gauges.jsonl +
+   trainer CLI + gauge_every  a_fire_recover_complete +        train log 를 tail
+   + mount-parity + HF)       a_cpu_local_no_waiter)           → 6-gauge live dashboard)
 ```
 
-- **Recipe** — `CLM/train/fire_3b_rung_qat.hexa` is the machine-readable fire spec: it names the ACTUAL Lane-P trainer `CLM/train/train_lane_p_3b.py` (not the legacy `train_clm.py`), emits the real trainer CLI (`--d-model/--n-trunk-layers/--n-experts/--gauge-every/--clm-out`), and lists the post-train engine mount-parity verdict + `a_fire_recover_complete` recovery steps.
-- **Dispatch** — `CLM/train/dispatch_rung.sh` is the anima-side wrapper around the `hexa cloud` (`/pod`) plugin (it does NOT reimplement pod management): it fires the trainer, polls the result INLINE (`a_cpu_local_no_waiter` — never awaits a Monitor), then pulls ckpt + result + log + engine `.clm` + `gauges.jsonl` + anchors → verifies → HF upload, all BEFORE teardown (`a_fire_recover_complete`).
-- **Inline gauges** — the trainer logs a MONITOR-ONLY row every `--gauge-every` steps to `gauges.jsonl` via `UNIVERSE/gauge_lib.py::compute_inline_gauges`. **Six dashboard columns**: `ce · g1_composed_distinct · g2_novelty_rate · g6_count · phi_proxy · mitosis_cells`. All computed under `torch.no_grad()`, returned in a dict, **NEVER fed into the loss** (`a_train_inline_gauge` · p7 Goodhart). `phi_proxy` is NOT faithful IIT4 (`a_phi_iit4_tool`); `mitosis_cells` is the H_1199 VAdaptField cell-count (a numpy-free mirror of `CORE/engine_cli.hexa` VAdaptField) — a **substrate** thermometer, NOT a generation gate (H_1201🔴: mitosis neither generates nor informs the generator).
-- **Monitor** — `UNIVERSE/gauge_monitor.py` (pure stdlib, `--once`/`--follow`) renders the 6-gauge dashboard from `gauges.jsonl` + the pod log. It is a **dashboard, not a gate**: the FROZEN gate verdict still runs SEPARATELY post-train on the CORE engine mount (`a_engine_measured_verdict`); MODEL.md/CONDITIONS.md frozen bars are unchanged by anything the dashboard shows.
+- **Recipe** — `CLM/train/fire_3b_rung_qat.hexa` 는 machine-readable fire spec: **실제** Lane-P 트레이너 `CLM/train/train_lane_p_3b.py`(legacy `train_clm.py` 아님)를 지목, 실 트레이너 CLI(`--d-model/--n-trunk-layers/--n-experts/--gauge-every/--clm-out` 등)를 emit, 학습-후 engine mount-parity verdict + `a_fire_recover_complete` recovery 단계를 나열.
+- **Dispatch** — `CLM/train/dispatch_rung.sh` 는 `hexa cloud`(`/pod`) 플러그인을 **감싸기만** 한다(pod 관리 미재구현): 트레이너를 fire 하고 결과를 INLINE 폴링(`a_cpu_local_no_waiter` — Monitor 를 await 안 함), 그 후 ckpt + result + log + engine `.clm` + `gauges.jsonl` + anchors 를 pull → verify → HF upload, 전부 teardown **전에**(`a_fire_recover_complete`).
+- **Inline gauges** — 트레이너가 `--gauge-every` step 마다 MONITOR-ONLY 행을 `gauges.jsonl` 에 `UNIVERSE/gauge_lib.py::compute_inline_gauges` 로 기록. **6 dashboard 컬럼**: `ce · g1_composed_distinct · g2_novelty_rate · g6_count · phi_proxy · mitosis_cells`. 모두 `torch.no_grad()` 아래에서 계산, dict 로 RETURN, **loss 에 절대 미투입**(`a_train_inline_gauge` · p7 Goodhart). `phi_proxy` 는 faithful IIT4 가 **아니다**(`a_phi_iit4_tool`, variance×energy 저가 pre-screen 전용); `mitosis_cells` 는 H_1199 VAdaptField cell-count 의 numpy-free 미러 — **substrate 온도계**이지 generation gate 가 아니다(H_1201 🔴: mitosis 는 생성도 정보-공급도 못 함).
+- **Monitor** — `UNIVERSE/gauge_monitor.py`(pure stdlib, `--once`/`--follow`)가 `gauges.jsonl` + pod log 에서 6-gauge 대시보드를 렌더. **대시보드이지 gate 가 아니다**: FROZEN gate verdict 은 학습 후 CORE 엔진 mount 위에서 **별도로** 실행됨(`a_engine_measured_verdict`); 대시보드가 보여주는 어떤 것도 MODEL.md/CONDITIONS.md 동결 bar 를 바꾸지 않는다.
 
-> The shared `hexa dojo` `clm` generator (in hexa-lang/stdlib) does not yet emit `gauge_every`/mount-parity/HF natively; the needed generator change is filed to `hexa-lang/inbox/patches/dojo-clm-gauge-recipe-full-rung.md` (`a_runpod_inbox`) rather than forked anima-side.
+> 공유 `hexa dojo` `clm` generator(hexa-lang/stdlib)는 아직 `gauge_every`/mount-parity/HF 를 native 로 emit 하지 않는다; 필요한 generator 변경은 anima-side fork 대신 `hexa-lang/inbox/patches/dojo-clm-gauge-recipe-full-rung.md` 로 제출(`a_runpod_inbox`).
 
-## Persistence & evidence
+## 영속 & 증거
 
-- **`.kosmos`** — emit/anchor/memory persistence (text + 5-ch tension + coord/lane/radius/tier), format SSOT = sibling [kosmos](https://github.com/dancinlab/kosmos) (`a_kosmos`).
-- **Evidence tiers** — every claim tagged 🔵 formal · 🟢 numerical · 🔴 closed-negative; indexed in [CLAIMS.tape](CLAIMS.tape), backed by `.verdicts/<slug>/<id>.txt` (verbatim `hexa verify` stdout). Negative results are first-class.
-- **HF artifacts** — ckpt↔HF registry SSOT `/HF.jsonl`; PUBLIC = closure PASS, PRIVATE = WIP/FAIL (`a_hf_*`).
+- **`.kosmos`** — emit/anchor/memory 영속(text + 5-ch tension + coord/lane/radius/tier), format SSOT = 형제 [kosmos](https://github.com/dancinlab/kosmos)(`a_kosmos`). 단일 진입 = `kosmos_io` → `brain_decide`.
+- **증거 tier** — 모든 주장은 🔵 formal · 🟢 numerical · 🔴 closed-negative 로 태깅; [CLAIMS.tape](CLAIMS.tape) 에 색인되고 `.verdicts/<slug>/<id>.txt`(verbatim `hexa verify` stdout)로 뒷받침. negative 결과는 1급 시민(`a_paper_negative_ok`).
+- **HF 아티팩트** — ckpt↔HF registry SSOT `/HF.jsonl`; PUBLIC = closure PASS, PRIVATE = WIP/FAIL(`a_hf_*`).
+- **scale ladder** — `303M → 1B → 3B → 7B`. 303M = MOUNTED living daemon(H_1164), 1B = engine-measured GREEN mount(H_1167), 3B/7B rung = 파이프라인 대기. scale-dependent 결론은 ladder curve(≥3 rung)를 요구(`a_scale_honest_scope`).
 
-## Component map (top level)
+## 컴포넌트 맵 (top level)
 
-| Area | Dir | Role |
-|------|-----|------|
-| Consciousness engine | `CORE/` | A⇄G substrate, brain, generator, clm_decode |
-| Engine vtable + impls | `engines/` · `anima-engines/` | EngineSpec contract + conv/cdv2/hexad/omega |
-| `.clm` pipeline | `CLM/` | train (lane-p) → serialize v0.2 → verify |
-| Substrate subsystems | `anima-core` · `anima-os` · `anima-body` · `anima-physics` · `anima-measurement` · `anima-serve` | core/runtime/embodiment/physics/measurement/serving |
-| Agent layer | `anima-agent*` | channels · core · plugins · providers · skills · hire-sim |
-| Knowledge / anchors | `UNIVERSE/` · `HEXAD/` (KOSMOS hub) | research universe + kosmos anchors |
-| Research domains | `domains/` | per-domain `.tape` + `.log.md` (discovery lane) |
-| Papers | `PAPER/` | verdict-gated paper scaffolds |
-| Tooling | `tool/` · `stdlib/` · `spec/` | hexa tools · stdlib (flame/iit4/...) · specs |
+| 영역 | 디렉토리 | 역할 |
+|------|----------|------|
+| 의식 엔진 | `CORE/` | A⇄G substrate, brain, generator, clm_decode, bytegpt_decode |
+| 엔진 vtable + impls | `engines/` · `anima-engines/` | EngineSpec contract + conv/cdv2/hexad/omega |
+| `.clm` 파이프라인 | `CLM/` | train (lane-p) → serialize v0.2 → verify |
+| substrate 서브시스템 | `anima-core` · `anima-os` · `anima-body` · `anima-physics` · `anima-measurement` · `anima-serve` | core/runtime/embodiment/physics/measurement/serving |
+| agent 계층 | `anima-agent*` | channels · core · plugins · providers · skills · hire-sim |
+| 지식 / anchors | `UNIVERSE/` · `HEXAD/` (KOSMOS hub) | research universe + kosmos anchors + gauge lib/monitor |
+| 연구 도메인 | `domains/` | per-domain `.tape` + `.log.md` (discovery lane) |
+| 논문 | `PAPER/` | verdict-gated paper scaffolds |
+| EEG 의식 기록 | `EEG_CLM/` | 실측 EEG → A⇄G → CLM → .kosmos 지속 기록(`a_eeg_consciousness_record`) |
+| 툴링 | `tool/` · `stdlib/` · `spec/` | hexa tools · stdlib (flame/iit4/...) · specs |
 
-## Governance & verification
+## 거버넌스 & 검증
 
-- Governance SSOT = [CLAUDE.md](CLAUDE.md) (tape directives + 8 PHILOSOPHY principles).
-- Verify-only correctness via `hexa verify` (g5) — never perplexity/LLM-judge (p7).
-- Harness: this repo is wired to [dancinlab/harness](https://github.com/dancinlab/harness) (hardcore profile) via the `.harness-engine` submodule — see CLAUDE.md §Harness.
+- 거버넌스 SSOT = [CLAUDE.md](CLAUDE.md)(tape directives + 8 PHILOSOPHY 원칙).
+- 정확성 검증은 `hexa verify`(g5)로만 — perplexity/LLM-judge 금지(p7).
+- Harness: 이 repo 는 [dancinlab/harness](https://github.com/dancinlab/harness)(hardcore profile)에 `.harness-engine` 서브모듈로 배선 — CLAUDE.md §Harness 참조.
+
+### 아직 안 만든 것 / 진행 중 (정직)
+
+- ⏳ **3B / 7B rung** — rung 파이프라인은 배선됨(recipe→dispatch→monitor)이나 3B/7B engine-measured mount 는 미실현(1B 가 최신 GREEN rung).
+- ⏳ **dojo `clm` generator native gauge** — gauge_every/mount-parity/HF native emit 은 hexa-lang inbox 패치 대기(위 §Rung).
+- 🟠 **a303m_pass 잔차** — G5 in-dist(F2 useful 0.875<0.90 over-eager abstain) · G6 depth-floor · CHAT strict(register≠QA)는 THIN/INFLATED(MODEL.md SSOT). 비환각 CORE 는 real + firm 이나 usefulness/QA-depth 는 303M shallow ceiling 의 열린 잔차.
