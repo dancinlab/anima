@@ -1,0 +1,42 @@
+H_1333 R1 — WHORFIAN CP: DEVELOPMENTALLY PLASTIC OR RIGID?
+==================================================================================
+paradigm: train language A (cut p_A), measure CP peak; RE-train SAME store on a
+          MOVED boundary p_A', measure CP peak again. Does the boundary relocate?
+N_stim=21 dim=16 p_A=0.333 p_A'=0.667 shift=0.333 grow_max=24/phase seeds=[4333, 4334, 4335]
+
+  per-seed CP peak location  (A-trained / A->A' retrained / no-retrain / shuffle):
+    seed 4333:  A=0.325  A->A'=0.525  no-retrain=0.325  shuffle=0.475   | peak-count A=1 A->A'=1 noR=1 shuf=6
+    seed 4334:  A=0.325  A->A'=0.525  no-retrain=0.325  shuffle=0.625   | peak-count A=1 A->A'=2 noR=1 shuf=8
+    seed 4335:  A=0.325  A->A'=0.525  no-retrain=0.325  shuffle=0.525   | peak-count A=1 A->A'=1 noR=1 shuf=9
+
+  mean CP peak (over 3 seeds):
+    A-trained:    0.325   (p_A =0.333)
+    A->A' retr.:  0.525   (p_A'=0.667)
+    no-retrain:   0.325   (p_A =0.333)
+    shuffle:      0.542
+  mean peak-count: A=1.0 A->A'=1.3 no-retrain=1.0 shuffle=7.7
+  re-train cell budget: phase-1 -> phase-2 ncells [(4333, 4, 28), (4334, 4, 28), (4335, 4, 28)]
+
+  D1 PLASTIC (all 3 seeds: |peak-p_A'|<=0.12 AND |peak-p_A|>=0.2; coherent peak-count<=2):
+     A->A' per-seed |peak-p_A'| = [0.142, 0.142, 0.142]  -> reloc-to-new FAIL
+     A->A' per-seed |peak-p_A|  = [0.192, 0.192, 0.192]  -> moved-off-old FAIL
+     A->A' mean peak-count = 1.3  -> coherent PASS
+     -> D1 FAIL
+  D2 CONTROL (no-retrain stays at p_A AND A-trained reproduces H_1323; all 3 seeds |peak-p_A|<=0.12):
+     no-retrain per-seed |peak-p_A| = [0.008, 0.008, 0.008]  -> PASS
+     A-trained  per-seed |peak-p_A| = [0.008, 0.008, 0.008]  -> PASS
+     -> D2 PASS
+  D3 EARNED (shuffle incoherent peak-count>=3 & lang arms coherent peak-count<=2):
+     shuffle peak-count=7.7 -> PASS   lang(A/A->A'/noR)=(1.0/1.3/1.0) -> PASS
+     -> D3 PASS
+==================================================================================
+VERDICT: 🟠 PARTIAL — GRADED PLASTICITY. After RE-training on a MOVED boundary,
+  the CP peak MOVED substantially off the old cut: mean 0.325->0.525 (fraction relocated +0.60),
+  the no-retrain control held at p_A (the move IS the re-training, not drift),
+  and shuffle stayed incoherent — but the peak did NOT clear BOTH strict D1
+  sub-bars (|peak-p_A|=0.192 vs MIN_MOVE=0.2; |peak-p_A'|=0.142 vs LOC_TOL=0.12). So D1 is FAIL by
+  a hair, yet the substantive finding is a SUBSTANTIAL graded relocation — the
+  carving is PARTIALLY plastic; residual (split-only, never-removed) old-boundary
+  cell packing pulls the peak back from a full move. The first-learned carving
+  does NOT rigidly dominate, but it does NOT fully yield either. HONEST PARTIAL,
+  NO bar move (c9). ENGINE-TRANSFER UNVERIFIED. TOY synthetic, 3 seeds.
