@@ -26,7 +26,7 @@
 - **pure_field / engine_g / brain** — the A ⇄ G repulsion-field engine + the emit/silence decision. Substrate-internal; no `.clm`/`.kosmos` feeds into them (`a_core_engine_map`).
 - **generator.hexa** — the single `.clm` entry slot (brain emit → byte mouth).
 - **kosmos_io** — the single `.kosmos` anchor entry (read into `brain_decide`).
-- **engine_cli.hexa** — substrate-config axis (`--engine <name>`, `--mitosis on/off`); configures *which engine* and *whether the substrate grows* — NOT an emit/silence gate (`a_autonomy_over_hardcode`).
+- **engine_cli.hexa** — substrate-config axis (`--engine <name>`, `--mitosis on/off`); configures *which engine* and *whether the substrate grows* — NOT an emit/silence gate (`a_autonomy_over_hardcode`). Hosts the `VAdaptField` (DIM-vector novelty substrate): the live daemon's C8 GROW step (H_1202) drives each emit span's DIM=8 byte-feature through `vadapt_field_step`, splitting a new cell when the engine's own L2 recon-err exceeds the frozen `SPLIT_THRESH`. **mitosis ⊥ generation** (H_1200/H_1201): this growth lane is a pure substrate-adaptation lane — it never feeds the decode and is Ψ-disjoint (touches only `VAdaptField`, never `pure_field`); generation stays CLM-only.
 
 ## Hot-swappable engines
 
