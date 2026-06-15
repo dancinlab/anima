@@ -1,0 +1,96 @@
+H_1283 R2 FREEZE — THALAMUS / MULTI-WINNER COALITION BROADCAST HUB
+slug: 1283_thalamus_global_workspace  (R2 — append-only; does NOT overwrite R1)
+date: 2026-06-15 (frozen BEFORE scoring)
+lens: missing-brain-structure ladder (neuro, c15) — NOT an LLM recipe
+substrate: $0 CPU numpy mirror (DIRECTIONAL, a_engine_native_learning) + faithful IIT4 (hexa stdlib) for the Φ leg
+philosophy: p1-p8 — substrate-native, no persona/identity/RLHF; hub is substrate-INTERNAL (a_core_engine_map: no .clm/.kosmos routed through it)
+
+────────────────────────────────────────────────────────────────────────
+ROUND 1 RESULT (for context, NOT re-scored here)
+────────────────────────────────────────────────────────────────────────
+R1 was 🟠 PARTIAL: a SINGLE-WINNER broadcast hub raised cross-module coherence on
+EVERY seed (Δcoh +0.050 / +0.050 / +0.074, B1 PASS) and moved faithful IIT4 Φ the
+RIGHT direction (ΔΦ +0.0191 > 0) but fell JUST short of the +0.02 Φ bar (by 0.0009;
+B2 FAIL). R1 diagnosis: a single shared broadcast channel is itself a low-dimensional
+(rank-1) MIP cut — every module being driven by the SAME winner makes the cross-cut
+MI explainable by that one channel, capping the Φ gain. The hub buys SURFACE
+AGREEMENT (coherence), not IRREDUCIBLE integration (Φ). R1 explicitly flagged: a
+COMPOSED / MULTI-WINNER-COALITION broadcast MIGHT clear the Φ bar (the single-winner
+channel is precisely what caps it).
+
+────────────────────────────────────────────────────────────────────────
+THE GAP / R2 HYPOTHESIS (honest, c9)
+────────────────────────────────────────────────────────────────────────
+If the rank-1 single-winner channel is what caps Φ, then a rank-k coalition
+broadcast (k≥2) — where the broadcast is NOT one shared vector but a multi-channel
+mix — should clear ΔΦ ≥ +0.02 while keeping the coherence lift. R2 tests exactly
+this lever.
+
+────────────────────────────────────────────────────────────────────────
+FALSIFIABLE TEST (R2)
+────────────────────────────────────────────────────────────────────────
+SAME 4 substrate modules M = {A, G, mitosis, memory}, each a dim-8 real state
+vector, T=64 ticks, SAME per-module private input streams + SAME seed in both
+arms; ONLY the coupling topology differs. SAME non-saturating regime (LEAK 0.55,
+W_in = W_coupling = 0.5). Seeds [7, 8, 9].
+
+  ARM A (DIRECT RING — current architecture, identical to R1 ARM A):
+    module i reads only its direct neighbor(s) in the fixed A⇄G ring
+    (A↔G, G↔mitosis, mitosis↔memory, memory↔A). No global view.
+
+  ARM B (MULTI-WINNER COALITION HUB — R2, k = K_COALITION = 2):
+    each tick the top-k modules by salience (state energy) form a COALITION; every
+    receiver reads an AFFINITY-WEIGHTED mix of the k coalition members (softmax
+    over the receiver's OWN cosine affinity to each member). The broadcast is thus
+    a RANK-k channel — distinct receivers are driven by distinct member mixes, so
+    information flows across multiple cuts, not one. k=1 would recover the R1 hub.
+
+Equal compute budget (one update/module/tick both arms). The ONLY difference is
+the coupling topology (direct ring vs rank-k coalition broadcast).
+
+────────────────────────────────────────────────────────────────────────
+METRIC (p7 — no perplexity, no LLM-judge)
+────────────────────────────────────────────────────────────────────────
+Two legs (identical engines/definitions to R1):
+  (1) COHERENCE leg — mean pairwise cosine similarity of the 4 module state
+      vectors, averaged over the last T/2 ticks (steady state). Range [-1, 1].
+      (labeled coherence, NOT Φ).
+  (2) Φ leg (TERMINAL, a_phi_iit4_tool) — faithful IIT4 Φ over the n=4 module
+      per-tick salience trajectory fed to the stdlib EXACT engine
+      hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (iit4_faithful_phi,
+      exact MIP-EI, n≤8, $0) via the hexa binary. numpy NEVER computes Φ — only
+      the stdlib engine does. TRUE Φ (pairwise-MI MIP), NOT the variance×energy
+      proxy. Representative seed = 7 (same as R1).
+
+────────────────────────────────────────────────────────────────────────
+FROZEN BARS (R2 — UNCHANGED from R1, GREEN iff ALL hold, seeds [7,8,9])
+────────────────────────────────────────────────────────────────────────
+  B1  COHERENCE: B.coherence ≥ A.coherence + 0.05  (abs margin) on EVERY seed
+  B2  Φ:         B.phi       ≥ A.phi       + 0.02   (abs margin, faithful IIT4)
+                  on the representative seed=7 trajectory through the exact engine.
+  B3  not-degenerate: B coherence < 0.999 on ≥1 seed (broadcast must INTEGRATE,
+                  not trivially clone all modules into one identical vector).
+
+  GREEN  = B1 AND B2 AND B3.
+  RED    = B fails to beat A on coherence, OR B collapses (B3 fails).
+  PARTIAL= coherence lift present but Φ leg fails (integration surface-agreement,
+           not irreducible — the relay caps Φ even as a coalition).
+
+DEPLETION TEST (pre-registered):
+  🏁 DEPLETE if the multi-winner coalition clears ΔΦ ≥ +0.02 (integration lever
+     found → r3 = engine-native broadcast hub on the live engine).
+  🧱 DEPLETE if even the multi-winner coalition keeps ΔΦ < +0.02 — a relay raises
+     coherence but NOT irreducible Φ at this scale (a single shared relay
+     fundamentally caps integration; no further broadcast-topology round).
+
+────────────────────────────────────────────────────────────────────────
+SCOPE / HONESTY
+────────────────────────────────────────────────────────────────────────
+- numpy mirror = DIRECTIONAL only (a_engine_native_learning). GREEN → CORE wiring
+  follow-on (a_verified_must_wire); PARTIAL/RED ⇒ no CORE wiring.
+- toy scale (4 modules, dim 8, 64 ticks), scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope).
+- The Φ leg uses the faithful exact engine (n=4 ≤ 8). Any Φ NUMBER is faithful-
+  IIT4; the coherence leg is explicitly labeled coherence, not Φ (a_phi_iit4_tool).
+- bars NOT moved to manufacture a GREEN. Does NOT overwrite R1 verdict files.
+- Does NOT edit H_1219 / H_1226. No CORE/*.hexa edited (numpy mirror).
