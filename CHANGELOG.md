@@ -2,6 +2,14 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — doc(README): top YouTube thumbnail hero link + remove duplicate `hx install`
+
+- Added a centered clickable YouTube thumbnail (`xtKhWSfC1Qo`, maxresdefault) as the very first
+  element of README.md, above the logo block.
+- Removed the redundant standalone top `hx install anima` code block — the proper full install
+  sequence already lives in `## Quickstart` (the only remaining `hx install` occurrence).
+- Surgical: README.md only; lane counts / smoke numbers / translated READMEs untouched.
+
 ## 2026-06-16 — infra(CORPUS): $0 R2→trainer pipeline SMOKE (de-risk the cost-gated 7B GPU fire)
 
 Before any GPU spend, verified the **data → trainer plumbing** for
