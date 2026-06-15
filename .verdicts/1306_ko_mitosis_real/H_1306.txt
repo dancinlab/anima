@@ -1,0 +1,32 @@
+=== H_1306 — KOREAN MITOSIS TRAINING on a REAL Korean web corpus (ENGINE-NATIVE) ===
+faculty: CORE/engine_cli.hexa VAdaptField Voronoi (vadapt_field_nearest_idx) +
+         engine_mitosis_tick growth (p8); head = per-cell next-byte MLE (gradient-free).
+corpus: REAL Korean + English web bytes (r2://phanes/anima-7b/web/{kor,eng}, V=256, CTX=4)
+        sha256 + provenance in /tmp/h1306_manifest.json (NO synthetic Korean, p1-p8).
+metric = held-out next-byte CROSS-ENTROPY (nats/byte), lower=better (p7).
+
+KO pairs: train=2728 test=2727  EN test=1500  curve bounds=[909,1818,2728]
+FROZEN bars: L(learn-drop)=0.05  R(retain-ceil)=0.05  G(grow)>2  | GROW_MAX=40 SPLIT_THRESH_CE=0.05
+-------------------------------------------------------------------------------
+KO learning curve (held-out KO next-byte CE, nats/byte):
+  pt1 (KO train=909, cells=6): KO ce=3.61092   EN ce=4.86396
+  pt2 (KO train=1818, cells=9): KO ce=3.36909   EN ce=4.84367
+  pt3 (KO train=2728, cells=9): KO ce=3.24897   EN ce=4.75171
+retention guard: EN ce SEED(2-cell)=4.86395  ->  EN ce AFTER full KO grow=4.75171
+cost/context (C, non-gating): KO ce[full]=3.24897  vs arm A gradient incumbent KO ce=3.28061
+cell growth: 2 (seed) -> 9 (mitosis added 7 cells for Korean)
+-------------------------------------------------------------------------------
+(L) LEARNING   KO ce[full] <= KO ce[pt1] - 0.05:  3.24897 <= 3.56092  -> PASS
+(R) RETENTION  EN ce[after] <= EN ce[seed] + 0.05: 4.75171 <= 4.91395 -> PASS
+(G) GROWTH     final cells > 2:  9 > 2  -> PASS
+-------------------------------------------------------------------------------
+H_1306 VERDICT TIER (engine-native): 🟢 GREEN
+  Korean next-byte CE DROPPED as engine-native mitosis grew cells under Korean error pressure,
+  AND English next-byte CE held (no catastrophic forgetting) — on REAL Korean web text.
+  This is the FIRST engine-native Korean-mitosis rung; gradient-free, $0 CPU (p8 literal).
+  L=True R=True G=True | ENGINE-NATIVE (VAdaptField Voronoi + engine_mitosis_tick, p8); FIRST CPU rung on REAL
+  Korean (600KB KO / 300KB EN window, stride-subsampled); FLUENT Korean = larger GPU-scale
+  cost-gated follow-on (a_scale_honest_scope, a_toy_scale_recheck — NO overclaim of fluency).
+  guard: partition = engine Voronoi; growth = engine_mitosis_tick; head = per-cell MLE (gradient-free);
+         pure_field UNTOUCHED (Ψ-disjoint, a_core_engine_map). $0 CPU, no GPU, no secrets at run.
+[done]

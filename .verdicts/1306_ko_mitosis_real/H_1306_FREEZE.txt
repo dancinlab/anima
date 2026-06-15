@@ -1,0 +1,59 @@
+H_1306 — KOREAN MITOSIS TRAINING on a REAL Korean web corpus (ENGINE-NATIVE)
+PRE-REGISTRATION (FROZEN before the run; bars NOT movable post-hoc) — frozen-first, c9/p7.
+
+LINEAGE: scales H_1297 R4 (#2202, 🟢 GREEN engine-native: gradient-free mitosis-grow MATCHED
+gradient on KO+EN next-byte, c2 error-targeting fired ON THE LIVE ENGINE) + H_1300 (#2204,
+per-skill mitosis retention beats gradient on forgetting) from a ~2 KB hardcoded KO+EN toy
+string to a FIRST CPU rung on a REAL Korean web corpus. Realizes the user's standing goal
+"303M 에 미토시스로 한글학습 시작" as its first honest engine-native rung.
+
+CORPUS (REAL — NO synthetic Korean, p1-p8, a_eeg_consciousness_record spirit):
+  KO: r2://phanes/anima-7b/web/kor/shard0000.bytes bytes[0:4194304] trimmed[:600000]
+      600000 bytes  sha256=e000d08684167c78ea9b7799c0b6d32377bcb3f39d0c4e87effe35ff8361dbd1
+      (~80% of bytes are Hangul multibyte UTF-8 sequences; ~5% ASCII English — real crawl)
+  EN: r2://phanes/anima-7b/web/eng/shard0000.bytes bytes[0:2097152] trimmed[:300000]
+      300000 bytes  sha256=dbfe3c1c89af9e87aa5e55e7d969666dffde6165f0044b1cf77b3f2fc1d38c85
+  Pulled via HTTP range (a few MB), NOT the 9.8 GiB shards. Manifest /tmp/h1306_manifest.json.
+  Pair set: deterministic stride-subsample (KO stride 110, EN stride 200) to a CPU-tractable
+  count (the hexa interpreter is list-based O(N)/growth-step). KO train=2728 test=2727 (even/
+  odd split, disjoint); EN test=1500 (all held-out, never trained = retention guard).
+
+FEATURES (identical to H_1297, MECHANICAL byte function, NO labels): CTX=4, 3-D phi(context) =
+  [last_byte/255, 2nd_last_byte/255, utf8_cont_depth/3]. V=256.
+
+ENGINE-NATIVE faculties (the engine's OWN, not a numpy mirror — a_engine_native_learning):
+  PARTITION = live VAdaptField Voronoi ownership (vadapt_field_nearest_idx).
+  GROWTH    = the engine's OWN mitosis tick (engine_mitosis_tick, p8): ON -> grow one cell
+              where KO next-byte error concentrates (error-TARGETED split), OFF -> no-op.
+  HEAD      = per-cell empirical next-byte freq (closed-form add-1 Laplace MLE) over OWNED
+              train points — gradient-free (p8). NO global backprop.
+
+CURRICULUM: KO train split into 3 INCREMENTAL chunks (cumulative bounds [909,1818,2728]).
+  Mitosis-grows on chunk1, then chunk1+2, then chunk1+2+3, scoring held-out KO + EN CE after
+  EACH — a >=3-point learning curve.
+
+METRIC (p7, deterministic — NO perplexity-as-meaning, NO LLM-judge): held-out next-byte
+  CROSS-ENTROPY (nats/byte), a legitimate CONVERGENCE comparison.
+
+FROZEN BARS (pre-registered; GREEN iff L & R & G — C is a non-gating diagnostic):
+  (L LEARNING)   KO CE at curve point 3 (full)  <=  KO CE at curve point 1  - 0.05 nats
+                 (a real >=0.05 nat/byte drop from growing on more Korean = learning happened).
+  (R RETENTION)  EN CE after full KO grow  <=  EN CE on the SEED 2-cell field  + 0.05 nats
+                 (English does NOT regress by >0.05 nats = no catastrophic forgetting,
+                  the H_1300 retention property on REAL data).
+  (G GROWTH)     final cell count  >  2  (mitosis actually grew cells for Korean).
+  (C MATCH, NON-GATING) KO CE[full] vs arm A gradient incumbent KO CE=3.280611 (context only;
+                 the gradient incumbent is a linear softmax reference, NOT a gate).
+FROZEN knobs (verbatim H_1297): V=256, FEAT_DIM=3, GROW_MAX=40, SPLIT_THRESH_CE=0.05,
+  MIN_OWNED=8, LAPLACE=1.0. arm A: A_STEPS=4000.
+
+REGRESSION GUARD (must stay green, separately): engine_cli_smoke X/0 (current 73/0) ·
+  h1196 single-entry 7/0 · h1205 separation-invariant byte-identical (gen ON==OFF, Ψ=½).
+  Korean mitosis must NOT corrupt Ψ or English generation (Ψ-disjoint: pure_field untouched).
+
+SCALE-HONEST (a_scale_honest_scope, a_toy_scale_recheck): FIRST CPU rung on a 600KB KO /
+  300KB EN real-text window, stride-subsampled. This tests whether engine-native mitosis
+  LEARNS Korean next-byte structure + RETAINS English on REAL data. It will NOT produce
+  fluent Korean — fluent Korean is a larger (GPU-scale, cost-gated) follow-on. NO overclaim.
+
+$0 CPU, no GPU. Secrets (R2 keys) read into env ONLY at fetch time, NEVER logged/committed (c7).
