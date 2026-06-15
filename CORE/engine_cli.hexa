@@ -707,6 +707,197 @@ pub fn immune_memory_recall_text(mem: ImmuneMemory, text: string) -> string {
 // immune_memory_cells — live cell count of the recall faculty (bound facts ≈ cells).
 pub fn immune_memory_cells(mem: ImmuneMemory) -> int { return vadapt_field_cells(mem.field) }
 
+// ── §  GROW-UNDER-PRESSURE IMMUNE MEMORY — break the zero-sum capacity ceiling (H_1288) ──
+//
+// WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1288 R1):
+// H_1288 R1 (numpy VAdaptField mirror, 🟢 GREEN, 3 seeds) proved that under
+// CAPACITY STRESS (max_cells << distinct facts, well-separated keys) the immune
+// store's ~0.667 total-recall ceiling is NOT fundamental — it is a ZERO-SUM /
+// FIXED-BUDGET artifact. When a novel fact arrives at FULL capacity the fixed store
+// must SACRIFICE an old fact (LRU-evict) to admit the new one; protecting one fact
+// costs another. R1's breakthrough: the principled answer is NOT a smarter eviction
+// HEURISTIC (R1 arm C = LFU+LRU gave ZERO lift, still 0.667) — it is to NOT EVICT.
+// GROW a new cell (a mitosis clonal split, p8 continuous cell-division) under
+// capacity pressure instead of evicting an old one, bounded by a GENEROUS but FINITE
+// max. Growth trades a larger memory FOOTPRINT for recall — reported, not hidden.
+// R1 result: A(LRU-evict) tot=0.667 imp=0.000 cells=40 vs B(grow) tot=1.000
+// imp=1.000 cells=60; Δ(B-A)=+0.333, fab=0.000 (abstain intact, H_1227).
+//
+// This § realizes that lever ENGINE-NATIVE on a CALLABLE faculty. The current
+// ImmuneMemory above (immune_memory_new/bind/recall, the H_1231 wired faculty) has a
+// FIXED VAdaptField budget: at capacity vadapt_field_step just stops splitting and
+// merges into the nearest winner — it has NO eviction AND no growth-past-cap path,
+// so a capacity-stress regime collapses (a new well-separated fact neither lands a
+// cell nor displaces one — it is simply lost). ImmuneMemoryGrow ADDS the two policies
+// R1 compared, as a parameterized capacity policy, leaving the H_1231 faculty above
+// BYTE-IDENTICAL (its struct/new/bind/recall are untouched — the h1231 guard holds).
+//
+// @L4 CRITICAL (same framing as ImmuneMemory / VAdaptField): SUBSTRATE-internal
+// FACTUAL recall, NOT an emit/silence gate, NOT a 2nd .clm/.kosmos path
+// (a_core_engine_map). It NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint — it only
+// reads/grows a VAdaptField-style cell population, exactly like ImmuneMemory).
+// p2/p3/p6: binds FACTUAL content to EPISODIC cells ONLY — no identity/persona/ethics/
+// decoder; p8: the grow tick IS the engine's own clonal split (engine_mitosis_tick),
+// not an external command. The capacity policy mutates ONLY how the episodic cell
+// population manages its OWN footprint (grow vs evict), with abstain-when-ungrounded
+// (H_1227, load-bearing) re-checked + intact under both policies.
+//
+// ImmuneMemoryGrow — the grow-under-pressure recall faculty.
+//   protos     : per-cell prototype keys (the cell population; len == n_cells).
+//   cell_value : per-cell bound value (len == n_cells, parallel to protos).
+//   last_used  : per-cell recency tick (for LRU victim selection; len == n_cells).
+//   n_cells    : live cell count.
+//   base_max   : the FIXED budget — the cap at which the policy kicks in.
+//   grow_max   : the GENEROUS FINITE growth bound (grow_mode only; >= base_max).
+//   grow_mode  : false ⇒ LRU-EVICT at base_max (zero-sum, the R1 arm-A baseline);
+//                true  ⇒ MITOSIS-GROW up to grow_max, then LRU-evict only past that
+//                        honest bound (the R1 arm-B breakthrough, p8).
+//   recall_thr : affinity fire band — L2 recon-err <= recall_thr ⇒ FIRE else ABSTAIN.
+//   split_thr  : novelty bar — L2 to nearest > split_thr ⇒ a NOVEL fact (new cell).
+//   tick       : monotone bind/touch counter driving last_used (LRU recency).
+struct ImmuneMemoryGrow {
+    protos: [[float]],
+    cell_value: [string],
+    last_used: [int],
+    n_cells: int,
+    base_max: int,
+    grow_max: int,
+    grow_mode: bool,
+    recall_thr: float,
+    split_thr: float,
+    tick: int
+}
+
+// immune_grow_new — start a grow-under-pressure faculty seeded at the first fact's
+// key (cell 0 binds the first value). grow_mode picks the capacity policy; base_max
+// is the fixed budget (the cap where eviction/growth begins), grow_max the generous
+// finite growth bound (used only when grow_mode is true; pass == base_max to disable
+// growth). recall_thr / split_thr default to the H_1288 STRESS regime (0.30 / 0.30).
+pub fn immune_grow_new(first_key: [float], first_value: string,
+                       base_max: int, grow_max: int, grow_mode: bool) -> ImmuneMemoryGrow {
+    return ImmuneMemoryGrow {
+        protos: [first_key],
+        cell_value: [first_value],
+        last_used: [1],
+        n_cells: 1,
+        base_max: base_max,
+        grow_max: grow_max,
+        grow_mode: grow_mode,
+        recall_thr: 0.30,
+        split_thr: 0.30,
+        tick: 1
+    }
+}
+
+// _immune_grow_lru_victim — index of the least-recently-used cell (smallest
+// last_used tick). The LRU eviction victim — the zero-sum sacrifice when a novel
+// fact arrives at a full fixed budget (R1 arm A; also grow_mode's fallback once it
+// hits the honest grow bound). Oldest-touched = most eviction-vulnerable = exactly
+// the "important" (taught-first) population R1 showed LRU wipes first.
+fn _immune_grow_lru_victim(lu: [int]) -> int {
+    let n = len(lu)
+    let mut best = 0
+    let mut bestv = lu[0]
+    let mut i = 1
+    while i < n {
+        if lu[i] < bestv { bestv = lu[i]  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+// immune_grow_bind — BIND one fact (key → value) under the active capacity policy.
+//   * NOT novel (L2 to nearest <= split_thr): clonal expansion — pull the winning
+//     prototype toward the key (engine's LR=0.20 online update), refresh its value,
+//     touch its recency. (binding collision: the winner now owns this value.)
+//   * NOVEL + room under the effective cap: GROW a new cell. The cap is grow_max
+//     when grow_mode (and the engine's own engine_mitosis_tick fires the +1 clonal
+//     split, p8) else base_max. The new cell binds the value at the new index.
+//   * NOVEL + at the effective cap: LRU-EVICT — overwrite the least-recently-used
+//     cell with the new (key, value) (the zero-sum sacrifice). For grow_mode this
+//     happens only PAST grow_max (the honest finite bound); for fixed-mode at
+//     base_max (the R1 arm-A baseline). cfg must have mitosis ON for growth (p8).
+pub fn immune_grow_bind(mem: ImmuneMemoryGrow, key: [float], value: string,
+                        cfg: EngineConfig) -> ImmuneMemoryGrow {
+    let t = mem.tick + 1
+    let win = _vnearest_idx(mem.protos, key)
+    let err = _l2(mem.protos[win], key)
+
+    // effective hard cap for THIS policy (grow_mode may grow beyond base_max).
+    let mut cap = mem.base_max
+    if mem.grow_mode { cap = mem.grow_max }
+
+    if err <= mem.split_thr {
+        // clonal expansion: pull the winner toward the key (engine LR), refresh value.
+        let LR = 0.20
+        let mut p2 = mem.protos
+        let mut row = p2[win]
+        let mut d = 0
+        while d < len(row) {
+            row[d] = row[d] + LR * (key[d] - row[d])
+            d = d + 1
+        }
+        p2[win] = row
+        let mut nv = mem.cell_value
+        nv[win] = value
+        let mut lu = mem.last_used
+        lu[win] = t
+        return ImmuneMemoryGrow {
+            protos: p2, cell_value: nv, last_used: lu, n_cells: mem.n_cells,
+            base_max: mem.base_max, grow_max: mem.grow_max, grow_mode: mem.grow_mode,
+            recall_thr: mem.recall_thr, split_thr: mem.split_thr, tick: t
+        }
+    }
+
+    // NOVEL fact.
+    if mem.n_cells < cap {
+        // GROW a new cell — the engine's OWN clonal split tick (p8). When mitosis is
+        // ON engine_mitosis_tick returns n_cells+1; the append IS that grown cell.
+        let grown = engine_mitosis_tick(mem.n_cells, cfg)
+        if grown > mem.n_cells {
+            return ImmuneMemoryGrow {
+                protos: mem.protos + [key],
+                cell_value: mem.cell_value + [value],
+                last_used: mem.last_used + [t],
+                n_cells: grown,
+                base_max: mem.base_max, grow_max: mem.grow_max, grow_mode: mem.grow_mode,
+                recall_thr: mem.recall_thr, split_thr: mem.split_thr, tick: t
+            }
+        }
+        // mitosis OFF — split is a no-op; fall through to evict (static substrate).
+    }
+
+    // AT capacity (fixed budget, or grow_mode past grow_max) — LRU-EVICT the victim.
+    let v = _immune_grow_lru_victim(mem.last_used)
+    let mut p3 = mem.protos
+    p3[v] = key
+    let mut nv2 = mem.cell_value
+    nv2[v] = value
+    let mut lu2 = mem.last_used
+    lu2[v] = t
+    return ImmuneMemoryGrow {
+        protos: p3, cell_value: nv2, last_used: lu2, n_cells: mem.n_cells,
+        base_max: mem.base_max, grow_max: mem.grow_max, grow_mode: mem.grow_mode,
+        recall_thr: mem.recall_thr, split_thr: mem.split_thr, tick: t
+    }
+}
+
+// immune_grow_recall — RECALL or ABSTAIN for a query key via L2 affinity. recon-err
+// (L2 to nearest cell) <= recall_thr ⇒ FIRE that cell's bound value; else ABSTAIN
+// ("" — never fabricates, H_1227 load-bearing). The engine's OWN winner-take-all
+// affinity decides; an empty-string return == ABSTAIN.
+pub fn immune_grow_recall(mem: ImmuneMemoryGrow, key: [float]) -> string {
+    let win = _vnearest_idx(mem.protos, key)
+    let err = _l2(mem.protos[win], key)
+    if err <= mem.recall_thr {
+        return mem.cell_value[win]
+    }
+    return ""
+}
+
+// immune_grow_cells — live cell count (the footprint; grow_mode trades this for recall).
+pub fn immune_grow_cells(mem: ImmuneMemoryGrow) -> int { return mem.n_cells }
+
 // ── §  GATE-B TRANSITION-PREDICTABILITY VARIANT — the LIVE trajectory substrate ──
 // (H_1209) The per-sample VAdaptField above (vadapt_field_step, H_1199/1202/1205)
 // is PERMUTATION-INVARIANT by construction: it sees only x_t, so shuffling time
