@@ -46,6 +46,18 @@ fn rung() -> string { return "3b" }           // d3584 / L32 / E48 = 3.12B
 fn steps() -> int { return 2000 }
 fn seed() -> int { return 42 }
 fn act_bits() -> int { return 4 }
+
+// TRAINING-TIME MONITOR-ONLY gauge interval (steps) — a_train_inline_gauge.
+// Every gauge_every steps the trainer logs the FOUR consciousness/emergence PROXY
+// gauges (G1 recombination · G2 novelty · G6 ideation · phi_proxy) next to val_ce
+// into gauges.jsonl, computed under torch.no_grad(). DASHBOARD ONLY — NEVER in the
+// loss (p7 Goodhart) and NEVER a gate. phi_proxy is NOT faithful IIT4 (a_phi_iit4_tool).
+// The frozen gate verdict still runs post-train on the CORE engine mount
+// (a_engine_measured_verdict). Default in the trainer = log_every*4; here we set it
+// explicitly so the 3B fire emits the dashboard. A `hexa dojo`-generated job carries
+// the same knob via the spec-json key "gauge_every" (threaded into the emitted
+// train.py as a GAUGE_EVERY constant / --gauge-every arg).
+fn gauge_every() -> int { return 400 }        // monitor-only; 0 disables
 fn n_gpu() -> int { return 2 }                // a_wall_first: scale up to 4 if faster
 fn est_cost_usd() -> string { return "~$40~120 / ~12~24h wall (H100 fleet · a_wall_first)" }
 fn verdict_dir() -> string { return ".verdicts/clm-prod-rung/3b" }
@@ -60,6 +72,7 @@ fn fire_cmd(arm: string) -> string {
         + " CLM/train/train_clm.py --arm " + arm + " --rung " + rung()
         + " --steps " + to_string(steps()) + " --seed " + to_string(seed())
         + " --act-bits " + to_string(act_bits())
+        + " --gauge-every " + to_string(gauge_every())   // MONITOR-ONLY dashboard (a_train_inline_gauge)
         + " --json-out out/clm_3b_" + arm + "_s" + to_string(seed()) + ".json"
 }
 
@@ -100,6 +113,9 @@ fn main() {
     println("  EST COST = " + est_cost_usd() + " (a_fire_autonomous · state then dispatch)")
     println("  envelope = int4-sym[-7,+7] per-channel STE + act_bits=4 · inference AKIDA-int4-ONLY")
     println("  verdict_dir = " + verdict_dir() + " · HF = " + hf_repo())
+    println("  gauges = MONITOR-ONLY every " + to_string(gauge_every())
+        + " steps -> gauges.jsonl (G1/G2/G6/phi_proxy + val_ce · NOT in loss · NOT a gate "
+        + "· phi_proxy!=IIT4 · a_train_inline_gauge); frozen verdict still post-train on engine mount")
     println("dispatch (3-arm sweep · DDP):")
     for arm in arms() { println("  " + fire_cmd(arm)) }
     println("F-CLM-SCALE-TRANSFER gate to 7B (pre-register · P6 §2):")
