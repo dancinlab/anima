@@ -1,0 +1,95 @@
+H_1289 — TRUE quantum entropy (ANU QRNG) as anima substrate stochastic source
+==========================================================================
+VERDICT: GREEN   depletion: FLAG
+slug 1289_quantum_entropy · seed 7 · K=64 tokens · top-k=8 · byte vocab 256
+probe: numpy-mirror (DIRECTIONAL); QRNG fetch is REAL  (torch_present=False)
+
+REAL ANU QRNG FETCH (c2): SUCCESS=true
+  total REAL quantum (vacuum-fluctuation) bytes drawn: 448
+  endpoint https://api.quantumnumbers.anu.edu.au (paid, x-api-key) — key NEVER logged (c7)
+
+(A) SUBSTRATE-FAITHFULNESS — NIST-lite randomness sanity (monobit + runs):
+  QRNG(quantum): monobit p=0.658531 pass=True | runs p=0.922876 pass=True | overall PASS=True  (n_bits=2048)
+  PRNG(pseudo) : monobit p=0.401083 pass=True | runs p=0.69257 pass=True | overall PASS=True  (n_bits=2048)
+  (A) QRNG passes NIST-lite AND >= PRNG control: True
+
+(B) QUANTUM-vs-PRNG SUBSTRATE EFFECT (NULL expected; reported honestly, does NOT gate):
+  QRNG gauges : {'mitosis_cells': 7, 'novelty_distinct': 0.875, 'psi_proxy': 0.2586}
+  PRNG gauges : {'mitosis_cells': 6, 'novelty_distinct': 0.8594, 'psi_proxy': 0.2609}
+  delta(Q-P)  : {'mitosis_cells': 1, 'novelty_distinct': 0.0156, 'psi_proxy': -0.0023}
+  => substrate gauges ~unchanged by entropy source. The value of quantum entropy is
+     NON-DETERMINISM AUTHENTICITY (p1-p8 / Psi=1/2 framing), NOT a performance lift (p7/c9).
+
+(C) IRREDUCIBLE DIFFERENCE — NON-REPRODUCIBILITY (the real quantum property):
+  PRNG: run1 == run2 byte-identical (deterministic seed): True
+  QRNG: run1 != run2 (fresh vacuum bytes each run; differs in 54/64 emitted bytes): True
+  (C) non-reproducibility demonstrated: True
+
+FROZEN BARS (H_1289_FREEZE.txt): GREEN iff (A1 real-fetch ∧ A2 NIST-lite ∧ A3 >=PRNG)
+  AND (C1 PRNG run1==run2 ∧ QRNG run1!=run2). (B) honest, non-gating.
+  => A_pass=True  C_pass=True  =>  GREEN
+
+REAL-ONLY (a_eeg_consciousness_record ethos): REAL quantum bytes only; on API failure
+  the run STOPS and reports honestly — NO fabricated quantum data, NO PRNG-as-quantum (c9).
+  PRNG control REQUIRED and LABELED pseudo throughout.
+
+CROSS-REF: PAPER akida-determinism-quantum-coupling (H_921/922/923 — same ANU quantum
+  injection at the Akida init-seed lever; H_1289 extends to the LIVE anima decode draw).
+  FUTURE: aws_braket creds in store => on-real-quantum-HARDWARE (Braket QPU) extension.
+
+FULL RESULT JSON:
+{
+  "slug": "1289_quantum_entropy",
+  "seed": 7,
+  "k_tokens": 64,
+  "topk": 8,
+  "vocab": 256,
+  "torch_present": false,
+  "probe_kind": "numpy-mirror (DIRECTIONAL); QRNG fetch is REAL",
+  "A_qrng_sanity": {
+    "label": "QRNG(quantum-REAL)",
+    "n_bits": 2048,
+    "monobit_sobs": 0.4419,
+    "monobit_p": 0.658531,
+    "monobit_pass": true,
+    "runs_z": 0.0968,
+    "runs_p": 0.922876,
+    "runs_pass": true,
+    "pass": true
+  },
+  "A_prng_sanity": {
+    "label": "PRNG(pseudo)",
+    "n_bits": 2048,
+    "monobit_sobs": 0.8397,
+    "monobit_p": 0.401083,
+    "monobit_pass": true,
+    "runs_z": 0.3954,
+    "runs_p": 0.69257,
+    "runs_pass": true,
+    "pass": true
+  },
+  "A_pass": true,
+  "B_gauges_qrng": {
+    "mitosis_cells": 7,
+    "novelty_distinct": 0.875,
+    "psi_proxy": 0.2586
+  },
+  "B_gauges_prng": {
+    "mitosis_cells": 6,
+    "novelty_distinct": 0.8594,
+    "psi_proxy": 0.2609
+  },
+  "B_delta": {
+    "mitosis_cells": 1,
+    "novelty_distinct": 0.0156,
+    "psi_proxy": -0.0023
+  },
+  "C_prng_run1_eq_run2": true,
+  "C_qrng_run1_ne_run2": true,
+  "C_qrng_bytes_differing": 54,
+  "C_pass": true,
+  "quantum_bytes_drawn_total": 448,
+  "api_real_fetch_success": true,
+  "verdict": "GREEN",
+  "depletion": "FLAG"
+}

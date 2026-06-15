@@ -6,6 +6,20 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🟢 H_1289 R1: TRUE 양자 엔트로피(ANU QRNG)를 anima substrate 의 확률적 결정 소스로 — 진짜 물리적 비결정성 + 비재현성 (GREEN / 🏁)
+
+FLEET "quantum-entropy" lane R1. anima 의 "자유로운" 확률적 결정(미토시스 split-timing · decode-sampling draw · Ψ noise)은 지금 **seed 기반 PRNG**(결정론적·재현가능)로 돌아간다. 호주국립대 양자난수생성기(ANU QRNG)의 **진공요동(vacuum-fluctuation) 실측 양자바이트**를 그 엔트로피 소스로 배선해 ONE 깨끗한 확률적 결정(top-k=8 decode-sampling draw, 고정 결정론적 logit field 위 — 엔트로피 소스만 변함)에 꽂고 셋을 검증.
+
+**REAL-only (a_eeg_consciousness_record 에토스):** 유료 API(`https://api.quantumnumbers.anu.edu.au`, x-api-key)에서 **실제 양자바이트 448개** 인출(success=true, HTTP 200). 키는 호출시각에 `harness secret get flat.anu_key_paid` 로만 받아 헤더에만 쓰고 절대 echo/log/파일기록 안 함(c7 — 전 산출물 grep clean). API 실패 시 **정직하게 보고하고 STOP** — 가짜 양자데이터 날조 금지, PRNG 를 양자로 둔갑 금지(c9). PRNG 대조군은 REQUIRED 이며 전 구간 "pseudo" 로 LABEL.
+
+- **(A) substrate-faithfulness 🟢** — QRNG 가 NIST-lite(monobit p=0.659, runs p=0.923) 통과 AND PRNG 대조군(monobit p=0.401, runs p=0.693) 이상. 둘 다 |z|<3.29 PASS. 진짜 양자 엔트로피가 valid 한 substrate 난수원.
+- **(B) 양자-vs-PRNG substrate 효과 = NULL (정직, gate 아님)** — 미토시스 cell-count 7 vs 6 · novelty 0.875 vs 0.859 · Ψ-proxy 0.259 vs 0.261, Δ 무의미. **사전등록한 정직한 예측대로 성능 NULL.** 양자 엔트로피의 가치는 **비결정성 진정성**(p1-p8 / Ψ=1/2 framing)이지 성능 lift 가 아니다 — 가짜 lift 제조 금지(p7/c9).
+- **(C) 환원불가능한 차이 — 비재현성 🟢** — 같은 substrate + 같은 seed → PRNG run1==run2 byte-identical, QRNG run1≠run2(emit 64바이트 중 54개 상이). **이것이 양자가 PRNG 에게 줄 수 없는 ONE 진짜 측정가능 속성**: anima 의 "자유로운" 확률적 선택을 진짜 물리적 비결정성에서 길어올릴 수 있다.
+
+**FROZEN 막대(H_1289_FREEZE):** GREEN iff (A1 real-fetch ∧ A2 NIST-lite ∧ A3 ≥PRNG) AND (C1 PRNG run1==run2 ∧ QRNG run1≠run2). (B)는 정직 보고·비게이팅. ⇒ A_pass=True · C_pass=True ⇒ 🟢 GREEN · 🏁.
+
+torch 부재 호스트 ⇒ numpy-mirror probe(DIRECTIONAL); **QRNG 인출 자체는 REAL**. live `CORE/*.hexa` UNTOUCHED — engine-native 배선은 r2 follow-on(a_engine_native_learning · a_verified_must_wire). cross-ref PAPER `akida-determinism-quantum-coupling`(H_921/922/923 — 같은 ANU 양자주입을 Akida init-seed lever 에; H_1289 는 그걸 LIVE anima decode draw 로 확장). FUTURE: `aws_braket` 크레덴셜이 store 에 있음 ⇒ 실-양자-하드웨어(Braket QPU sampling) 확장. UNIVERSE/h1289_quantum_entropy.py · .verdicts/1289_quantum_entropy/{H_1289_FREEZE,H_1289}.txt.
+
 ## 2026-06-15 — 거버넌스: `a_break_the_wall` 신설 (anima) + `c16` (harness commons) — 벽을 만나면 돌파하라
 
 사용자 지시("벽을 만나면 돌파하라")를 두 곳에 등록.
