@@ -2,6 +2,34 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 R3 sharp KO+EN byte-text target — 🟢 GREEN (c2 discriminator FIRED)
+
+R3 = the **a_break_the_wall** follow-on the R2 card named: a SHARPER error-concentration target so the
+**c2 targeting-discriminator FIRES** (it could not on the R1/R2 smooth 1-D target). Language/byte-text IS
+such a target — error concentrates at syllable/word boundaries while mid-multibyte UTF-8 continuation runs
+are near-deterministic. Task = **next-byte prediction on a real KOREAN+English UTF-8 byte corpus (V256)**,
+a direct step toward training Korean. SAME 4 arms, R2 hard-partition mitosis mechanism ported to
+classification (Voronoi nearest-centroid ownership + per-cell empirical next-byte frequency head [closed-form
+add-1 MLE, NO global backprop] + data-matched median split + centroid recenter). Metric = held-out next-byte
+CROSS-ENTROPY (convergence comparison, NOT perplexity-as-meaning, p7). $0 CPU numpy DIRECTIONAL mirror,
+3 seeds, frozen-first (`H_1297_R3_sharp_target.txt`, bars set before any score; c9 no tune-to-green).
+
+- **R3 result** (3-seed mean, all seeds stable): A(grad)ce=2.9170 [acc 0.202] · B(mitosis)ce=3.0777
+  [acc 0.206, 6 cells] · B-shuffle=3.3054 · B-ablate=3.4981.
+  - **(c1) PASS** — mitosis MATCHES gradient (3.0777 ≤ A+0.20=3.1170) at LOWER footprint (6 cells vs A's 1024 params).
+  - **(c2) FIRED** — B-shuffle 3.3054 ≥ B+0.10=3.1777: error-TARGETED split demonstrably beats random split.
+    **The discriminator R1 AND R2 could not fire FIRED here** — on a sharp target, error-targeting is the lever.
+  - **(c3) PASS** — B-ablate underfits (3.4981 ≥ B+0.10).
+- **Verdict**: terminal **🟢 GREEN** — gradient-free mitosis-grow matches gradient AND error-targeting
+  demonstrably helps on language-like byte data. p8-literal toehold CONFIRMED on a real KO+EN byte corpus;
+  the R1/R2 WALL was the SMOOTH target, not p8 (exactly as the R2 follow-on predicted). NOT engine-verified /
+  production (DIRECTIONAL mirror, engine-transfer + scale UNVERIFIED). GREEN-gated follow-ons: (1) engine-native
+  realization on live CORE VAdaptField (a_engine_native_learning + a_verified_must_wire); (2) a real (larger,
+  cost-gated) Korean byte-corpus mitosis-grow rung = first p8-literal LANGUAGE training.
+- NEW: `UNIVERSE/h1297_r2_sharp_target.py` · `.verdicts/1297_mitosis_native_train/H_1297_R3_sharp_target.txt`
+  (FREEZE + verbatim) · updated `H_1297_mitosis_native_train.md` card (terminal 🟢 GREEN @R3) · `HYPOTHESES.md`
+  row · `CLAIMS.tape` @C · `domains/MITOSIS-ENGINE.log.md` @H. Live CORE/*.hexa UNTOUCHED (mirror only).
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 mitosis-native trunk training (make p8 literal) — 🧱 WALL with finding
 
 PHILOSOPHY **p8** ("training gradient + inference mitosis = one continuous cell-division") is today
