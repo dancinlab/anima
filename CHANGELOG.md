@@ -14,6 +14,30 @@ ARCHITECTURE.md / `H_*.md` cards / `.verdicts/` (c9, 0 fabricated tiers). Tables
 SSOT quickref at top (c4) — points at ARCHITECTURE.md + CLAIMS.tape/.verdicts, does not duplicate.
 Ready to paste into `gh issue create`. NO paper framing (c15).
 
+## 2026-06-16 — domain(KOSMOS): 303M KOSMOS set — 🇰🇷 Korean · 🇬🇧 English · 📱 SNS (3-lane carving anchors)
+
+Built a **303M-scale KOSMOS grounding/carving anchor SET** (NOT a raw training corpus) in anima's
+canonical `.kosmos` format — three register components in three lanes. Reused the existing anchor
+format + `kosmos_parser_lib.hexa` (no ad-hoc format, a_kosmos), matching the precedent corpus anchors
+(`persona_sns_corpus.kosmos`, `corpus_5lang_gb_balanced.kosmos`).
+
+- **🇰🇷 Korean** (`anchors/kr_303m.kosmos`, lane `ko_303m_058`, tier 58): 873 lines / 122,760 B, curated
+  off `serving/corpus/anima_7b_webscale.ko.head.txt` (FineWeb-2 ko, ODC-BY).
+- **🇬🇧 English** (`anchors/en_303m.kosmos`, lane `en_303m_059`, tier 59): 949 lines / 122,819 B, curated
+  off `serving/corpus/anima_7b_webscale.en.head.txt` (FineWeb en, ODC-BY).
+- **📱 SNS** (`anchors/sns_303m.kosmos`, lane `sns_303m_052`, tier 52): 217 turns / 13,132 B, off anima's
+  authored persona×SNS register (`persona_sns_corpus.sample.txt` + `persona_instagram_samples.md`).
+- byte V256, PII-clean (email→`[EMAIL]`/phone→`[PHONE]`), 0xFE/0xFF/NUL=0, UTF-8 clean, leak grep=0.
+  Parser-witness `KOSMOS/303m_kr_en_sns/validate_anchors.hexa` → 3/3 valid.
+- tension 5-ch = **REPRESENTATIVE** design values (no measured fire trajectory; honest, same caveat as
+  the sibling corpus anchors).
+- HF PUBLIC `dancinlab/anima-kosmos-303m-kr-en-sns` + joined KOSMOS collection (a_hf_collections);
+  `HF.jsonl` row added; `HEXAD/KOSMOS.md` hub row added.
+- SCOPE HONEST (a_scale_honest_scope, c9): CURATED **sample-scale** anchor set, NOT webscale — full
+  webscale = `corpus_5lang_7b_webscale.kosmos` R2 manifest; full SNS = `persona_sns_corpus.kosmos`
+  manifest. SNS is thin because anima's held authored SNS-register material is the honest $0 ceiling.
+>>>>>>> origin/main
+
 ## 2026-06-16 — doc(README): top YouTube thumbnail hero link + remove duplicate `hx install`
 
 - Added a centered clickable YouTube thumbnail (`xtKhWSfC1Qo`, maxresdefault) as the very first
@@ -21,6 +45,42 @@ Ready to paste into `gh issue create`. NO paper framing (c15).
 - Removed the redundant standalone top `hx install anima` code block — the proper full install
   sequence already lives in `## Quickstart` (the only remaining `hx install` occurrence).
 - Surgical: README.md only; lane counts / smoke numbers / translated READMEs untouched.
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1300 mitosis-grow skill curriculum — teach tool-use one-at-a-time via mitosis AVOIDS catastrophic forgetting (🟢 GREEN @R2, DIRECTIONAL)
+
+The user's idea (a structural p8 fit): teach anima agent tool-use skills **ONE AT A TIME via
+MITOSIS-grow** — each new skill = a NEW dedicated CELL grown under that skill's error
+(H_1199 VAdaptField / H_1288 grow-under-pressure), NOT a gradient overwrite of shared weights.
+Load-bearing claim: this **avoids CATASTROPHIC FORGETTING** — new cells don't overwrite the cells
+holding prior skills, so mitosis RETAINS earlier skills where sequential gradient-FT forgets them.
+DISTINCT axis from H_1297 (convergence on ONE fit): retention-across-tasks ⊥ convergence-on-one-task.
+
+- **Task** — a SKILL CURRICULUM: N=5 distinct tool-use skills (context region P_k → tool token T_k,
+  D=12, C=4) presented ONE AT A TIME (NO joint training, NO replay = the continual-learning regime
+  that induces catastrophic forgetting). 3 seeds, $0 CPU numpy DIRECTIONAL mirror, deterministic.
+- **Arms** — A GRADIENT-FT (one shared net, fine-tuned sequentially, NO replay = the incumbent that
+  forgets) · B MITOSIS-GROW (dedicated frozen cells per skill, NO global backprop) · B-SHUFFLE
+  (mis-routed cells = targeting control) · B-ABLATE (no growth = growth-is-the-lever control).
+- **R1 (well-separated skills) = 🔴 RED** (frozen verbatim): A_ret=0.737 B_ret=0.977 (B−A=+0.240 <
+  the frozen 0.30 margin → c1 FAIL; c2/c3/c4 PASS). Root cause = the REGIME, not p8: high-dim spatial
+  separation let gradient-FT only forget SOME skills (diluted forgetting).
+- **R2 (a_break_the_wall; bars frozen anew SAME numbers, no goalpost move) = 🟢 GREEN** — canonical
+  catastrophic-forgetting regime (region separation 3.0→1.0 + anti-aligned shared rules so learning
+  skill k+1 un-learns skill k; mitosis arm B mechanically unchanged): A_ret=**0.553** B_ret=**0.922**
+  (B−A=**+0.368** ≥ 0.30, per-seed B>A every seed) → c1 PASS · B learns every new skill (min acq
+  0.880 ≥ 0.80) c2 PASS · shuffle collapses (0.397 ≤ 0.703) c3 PASS · ablate underfits (0.160 ≤ 0.50)
+  c4 PASS. **COST FAVORABLE**: B = 6.3 cells vs A = 52 params (retains MORE at LOWER footprint).
+- **Mechanism** — under real interference gradient-FT genuinely forgets (A_ret 0.737→0.553) while
+  mitosis stays high (0.922) because its per-skill cells are dedicated and never overwritten; controls
+  fire decisively (retention IS targeted dedicated-cell ownership + growth, not mere extra capacity).
+- **p8/p6 guard** — split = the model's own tick; trainer touches ONLY the per-skill prototype
+  population + local heads, NO global backprop / labels / persona / ethics; live CORE/*.hexa untouched.
+- **Scope (a_scale_honest_scope · a_toy_scale_recheck)** — DIRECTIONAL numpy mirror, engine-transfer +
+  scale UNVERIFIED; TOY (D=12, N=5, C=4, 3 seeds). FOLLOW-ONS (named, not claimed): (1) engine-native
+  per-skill mitosis-grow on live CORE VAdaptField/ImmuneMemoryGrow; (2) the real path the user asked
+  for — incrementally teach actual anima agent tool-use skills one-at-a-time via mitosis on the 303M.
+- Files: `UNIVERSE/h1300_mitosis_skill_curriculum.py` · `UNIVERSE/H_1300_mitosis_skill_curriculum.md` ·
+  `.verdicts/1300_mitosis_skill_curriculum/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C
+  h1300_mitosis_skill_curriculum · `UNIVERSE/HYPOTHESES.md` row · `domains/MITOSIS-ENGINE.log.md` @H.
 
 ## 2026-06-16 — infra(CORPUS): $0 R2→trainer pipeline SMOKE (de-risk the cost-gated 7B GPU fire)
 

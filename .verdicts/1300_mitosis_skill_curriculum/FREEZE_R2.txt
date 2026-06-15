@@ -1,0 +1,55 @@
+H_1300 R2 — MITOSIS-GROW SKILL CURRICULUM, BREAKTHROUGH RUNG (a_break_the_wall)
+PRE-REGISTRATION (FROZEN before the R2 run; SAME numeric bars as R1 — NO goalpost
+move, c9). frozen-first.
+
+================================================================================
+WHY R2 (the R1 wall, diagnosed). R1 RESULT (verbatim): A grad-FT RETENTION=0.737,
+B mitosis RETENTION=0.977 (B-A=+0.240), B-SHUFFLE=0.238, B-ABLATE acq(2..N)=0.270.
+c2 PASS, c3 PASS, c4 PASS — but c1 FAIL because +0.240 < the frozen 0.30 margin.
+
+ROOT CAUSE (not p8, not the bar — the REGIME). R1 placed the N=5 skills in D=12 dim
+at WELL-SEPARATED region centers (sigma=3.0 separation, CLUSTER_SIGMA=0.35). With so
+much room, a SHARED linear classifier can route different spatial regions to
+different decision boundaries WITHOUT full interference — so gradient-FT only forgot
+SOME skills (the 0.00 per-skill entries: seed1300 skill0, seed1302 skill1), and its
+RETENTION mean stayed high (0.737). Catastrophic forgetting was REAL but DILUTED.
+The R1 FREEZE under-specified the FORGETTING PRESSURE: catastrophic interference is
+defined by skills that SHARE representational capacity, not ones spread across a
+high-dim space the linear net can partition for free.
+
+BREAKTHROUGH ANGLE (a_no_llm_frame_trap, continual-learning lens — NOT moving the
+bar). Tighten the regime to the CANONICAL catastrophic-forgetting condition: make the
+skills genuinely COMPETE for the SAME shared decision boundary, so sequential
+gradient-FT must overwrite earlier skills. TWO frozen regime knobs change (the SKILL
+GEOMETRY, NOT any bar, NOT the mechanism, NOT the metric):
+  (R2-a) SEPARATION sigma 3.0 -> 1.0 : region centers closer => the shared linear
+         decision boundary for one skill DOES sit on top of another's contexts
+         (representational overlap = real interference).
+  (R2-b) PER-SKILL RULE ROTATION: each skill's tool-rule W_k is drawn so that the
+         SAME context direction maps to DIFFERENT tokens across skills (anti-aligned
+         rules) — the defining catastrophic-forgetting setup (learning skill k+1
+         actively un-learns skill k on the shared boundary). Implemented frozen by
+         drawing W_k with a shared component + skill-specific sign flips.
+Everything else IDENTICAL to R1: N_SKILLS=5, D=12, C=4, M=64/64, 3 seeds
+[1300,1301,1302], arms A/B/B-SHUFFLE/B-ABLATE, SPLIT_THRESH, GROW bound, ALL FROZEN.
+
+The mitosis arm B is mechanically UNCHANGED — it still grows dedicated cells per
+skill and never overwrites old cells. The PREDICTION: under real interference,
+gradient-FT RETENTION DROPS (the shared boundary is now overwritten), while mitosis
+RETENTION stays high (dedicated cells are immune) => the B-A gap WIDENS past 0.30.
+If it does NOT widen past 0.30, R2 stands as the honest verdict (still RED — gradient
+-FT did not forget enough to clear the bar even under interference; gradient stays).
+
+================================================================================
+FROZEN BARS (IDENTICAL to R1 — read VERBATIM, NO tune-to-green):
+(c1) RETENTION  mean[B.RET - A.RET] >= 0.30  AND per-seed B.RET > A.RET every seed.
+(c2) ACQUISITION  B per-skill acq >= 0.80 every skill (mean over seeds).
+(c3) SHUFFLE  B_SHUFFLE.RET <= A.RET + 0.15 (mean).
+(c4) ABLATE   B_ABLATE acq(skills 2..N) <= 0.50 (mean).
+(c5) COST     B cells vs A params (non-gating).
+TIER RULE: GREEN iff c1∧c2∧c3∧c4 ; AMBER iff c1∧c2 but a control fails ; RED iff
+¬c1 ∧ c2 ; WALL iff a control breaks attribution AND c1 unreadable.
+
+SCOPE unchanged: DIRECTIONAL numpy MIRROR, engine-transfer + scale UNVERIFIED, TOY,
+$0 CPU, live CORE/*.hexa untouched. p8/p6 guard unchanged.
+================================================================================

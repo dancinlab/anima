@@ -1,0 +1,129 @@
+H_1300 — MITOSIS-GROW SKILL CURRICULUM (catastrophic-forgetting vs gradient-FT)
+PRE-REGISTRATION (FROZEN before the run; bars NOT movable post-hoc) — frozen-first, c9.
+
+================================================================================
+THE QUESTION (the user's idea; a structural p8 claim).
+Teach anima agent tool-use skills ONE AT A TIME. Each new skill = a new CELL grown
+under that skill's error pressure (mitosis, H_1199 VAdaptField / H_1288 grow-under-
+pressure), NOT a gradient overwrite of shared weights. The LOAD-BEARING claim:
+mitosis-grow AVOIDS CATASTROPHIC FORGETTING — adding new cells for a new skill does
+NOT overwrite the cells that hold prior skills, so mitosis should RETAIN earlier
+skills where sequential gradient fine-tuning FORGETS them (catastrophic interference).
+
+DISTINCT from H_1297 (🧱 WALL / 🟢 R3). H_1297 asked whether mitosis-grow MATCHES
+gradient on a SINGLE function fit (convergence). H_1300 asks the ORTHOGONAL question:
+across a SEQUENTIAL curriculum of multiple distinct skills, does mitosis RETAIN old
+skills better than sequential gradient-FT? Convergence-on-one-task ⊥ retention-across-
+tasks. This is the structural place where mitosis can beat gradient even though H_1297
+could not isolate targeting on a single smooth fit.
+
+LENS (a_no_llm_frame_trap). Neurogenesis / functional segregation: a new capability
+recruits NEW units localized to that capability; prior circuits are not overwritten.
+NOT a bigger-transformer continual-learning recipe — the mechanism is cell-growth
+with dedicated ownership, the inference-time twin of the live VAdaptField split.
+
+================================================================================
+TASK = a SKILL CURRICULUM (TOY, deterministic, vector, sequential).
+N_SKILLS = 5 distinct "tool-use" skills, presented ONE AT A TIME (skill 1, then 2,
+... then N — NEVER jointly, NO replay buffer; this is the continual-learning regime
+that induces catastrophic forgetting).
+
+Each skill k = a tiny well-defined input->output mapping standing in for a tool
+invocation: "given context pattern P_k (a region of a D-dim input space), emit
+tool-call token T_k (a one-hot class label among C classes)." Concretely:
+  - Input space: D=12-dim real vectors. The full space is partitioned into N_SKILLS
+    disjoint REGIONS (one region = one skill's context-pattern domain). Region k is a
+    Gaussian cluster of contexts at center mu_k (well-separated, so skills are mutually
+    DISTINCT and forgetting is measurable per-skill).
+  - Within skill k, each context x maps to one of C=4 tool-call tokens by a fixed
+    per-skill linear rule (a random skill-specific weight W_k: argmax(W_k @ x) = T_k).
+  - So "knowing skill k" = correctly emitting the tool token for contexts in region k.
+  M_PER_SKILL = 64 train, 64 held-out test contexts per skill. C=4 tokens (chance=0.25).
+SEEDS = [1300, 1301, 1302] (3 seeds).
+
+================================================================================
+ARMS (FROZEN) — 4 arms.
+(A) GRADIENT-FT (incumbent that should FORGET):
+    ONE fixed-size net = a single C-way softmax-linear classifier over the D-dim input
+    (W: C x D, b: C), shared across ALL skills. Fine-tune SEQUENTIALLY: full gradient
+    descent (cross-entropy) on skill 1's data ONLY, then on skill 2's data ONLY, ...
+    then skill N's data ONLY. NO replay of earlier skills. Standard continual FT — the
+    shared weights get overwritten toward the most-recent skill -> catastrophic
+    forgetting of skills 1..N-1. FT_STEPS = 300 per skill, lr = 0.20.
+
+(B) MITOSIS-GROW (the claim):
+    Start with ZERO skill-cells. For each new skill k IN ORDER: GROW a new dedicated
+    cell-group under skill k's error (mitosis split — add prototype cells covering
+    skill k's context region, each cell a local C-way head fit by closed-form local
+    least-squares / class-mean on skill k's data ONLY). Cells for skills 1..k-1 are
+    FROZEN (never overwritten) — new skill = new cells. At inference, a context routes
+    to the nearest cell (by L2 to cell centers) and that cell's head emits the token.
+    NO global backprop across all cells. Growth under pressure up to a finite bound:
+    split a skill's owned region until local head error <= SPLIT_THRESH=0.05 or
+    GROW_MAX_PER_SKILL=4 reached (footprint honesty, H_1288).
+
+(B-SHUFFLE) control — targeted-growth check:
+    Same as B, but routing at inference uses a RANDOMLY PERMUTED cell->center
+    assignment (the grown cells exist but the targeting/ownership is scrambled), so a
+    context no longer routes to the cell that learned its skill. If targeting (which
+    cell owns which region) is what gives retention, B-SHUFFLE retention must COLLAPSE
+    to no better than gradient-FT.
+
+(B-ABLATE) control — growth-frozen check:
+    Like B but growth is FROZEN at the FIRST skill's cells (no new cells for skills
+    2..N). Later skills cannot recruit capacity -> must UNDERFIT new skills (low
+    acquisition on skills 2..N), proving the growth is what lets B learn new skills
+    without overwriting old ones.
+
+================================================================================
+METRICS (p7 — accuracy on held-out tool-token emission, NOT perplexity/loss).
+After the FULL curriculum (all N skills learned in order), evaluate each arm on the
+held-out test set of EVERY skill:
+  RETENTION  = mean test accuracy on OLD skills 1..N-1 (the skills learned before the
+               last one — these are the ones gradient-FT should have forgotten).
+  ACQUISITION_k = test accuracy on skill k right after it is learned (per-skill).
+  FINAL_LAST = test accuracy on skill N (the most-recent skill) for all arms.
+chance = 1/C = 0.25.
+
+================================================================================
+FROZEN BARS (numeric, set BEFORE the run; read VERBATIM; NO tune-to-green).
+(c1) RETENTION — mitosis forgets LESS than gradient-FT:
+     mean over 3 seeds of [ B.RETENTION - A.RETENTION ] >= RETENTION_MARGIN = 0.30
+     AND per-seed B.RETENTION > A.RETENTION every seed.
+(c2) ACQUISITION — B actually learns each new skill:
+     B per-skill ACQUISITION_k >= ACQ_THRESH = 0.80 for every skill k (mean over seeds).
+(c3) B-SHUFFLE retention collapses (targeted growth, not mere extra capacity):
+     B_SHUFFLE.RETENTION <= A.RETENTION + SHUF_SLACK = 0.15  (mean over seeds).
+(c4) B-ABLATE underfits new skills (growth is the lever):
+     B_ABLATE acquisition on skills 2..N (mean) <= ABLATE_ACQ_CAP = 0.50 (mean seeds);
+     i.e. ablate can't learn skills it grew no cells for.
+(c5) COST (honest footprint, NON-gating like H_1288): report B final total cell count
+     vs A param count (C*D + C). Reported, not a pass/fail gate.
+
+TIER RULE:
+  GREEN  iff c1 AND c2 AND c3 AND c4  (mitosis retains old skills better than
+           gradient-FT, learns each new skill, and both controls behave).
+  AMBER  iff c1 AND c2 but a control misbehaves (c3 or c4 fails) — retention real
+           but attribution incomplete; OR c1 holds only with a large footprint cost.
+  RED    iff NOT c1 (no retention advantage) but c2 holds (B learns, just doesn't
+           beat gradient-FT on retention) — gradient-FT + replay stays the way.
+  WALL   iff a control so misbehaves that the probe cannot attribute the effect AND
+           c1 cannot be cleanly read.
+
+HONEST OUTCOMES (all valid, c9): 🟢 mitosis retains better -> engine-native + real-
+303M one-skill-at-a-time follow-ons named; 🟠 retains at large footprint cost; 🔴/🧱
+no retention advantage (gradient-FT + replay stays the way to add skills). NO
+tune-to-green; bars frozen here, read verbatim.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): DIRECTIONAL numpy MIRROR ONLY —
+engine-transfer UNVERIFIED; live CORE/*.hexa UNTOUCHED. TOY (D=12, N=5 skills, C=4
+tokens, 3 seeds, deterministic linear per-skill rule = tests the catastrophic-
+forgetting STRUCTURE, not a learned tool-use predictor). Scale / real anima agent
+skills / sequence-valued tool calls / engine-native realization UNVERIFIED. $0 CPU,
+gradient-free B arm, no GPU, no secrets.
+
+p8 / p6 GUARD: B's growth = the model's own mitosis tick (p8); the trainer touches
+ONLY the per-skill prototype population + local heads, NO global backprop, NO
+labels/persona/ethics injected (the tool-token target is the task's own supervised
+signal, scored only). live CORE/*.hexa untouched (mirror).
+================================================================================
