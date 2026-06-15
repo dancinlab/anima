@@ -2898,6 +2898,118 @@ pub fn itimer_fire(it: IntervalTimer) -> bool {
     return it.elapsed == to_int(it.dhat + 0.5)
 }
 
+// ── §  PHASE-RESET / PHOTIC-ENTRAINMENT CLOCK — Zeitgeber PRC reset (H_1301 R2, HD35) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1301 R1): the H_1301 numpy MIRROR
+// (R1c 🟢 GREEN — entrainment metric, 3 seeds [4310,4311,4312], all 6 frozen bars per-seed;
+// the trail of R1a/R1b REDs in .verdicts/1301_phase_reset/FREEZE.txt shows the metric/controls
+// were corrected frozen-first, NEVER the bar) is REALIZED here ENGINE-NATIVE as a callable
+// phase-reset oscillator. This is the r7 DEPLETION-TEST candidate the H_1299 card named as one
+// of two remaining thin gaps — and it SURVIVED the control-surviving distinctness test.
+//
+// THE PHASE-RESET / PHOTIC-ENTRAINMENT LENS (c15, a_no_llm_frame_trap — chronobiology, NOT an
+// LLM recipe): a circadian oscillator has an INTRINSIC free-running period tau (NOT exactly the
+// day length), and a photic Zeitgeber RESETS its PHASE via a Phase-Response-Curve (PRC): the
+// shift depends on the phase at which the stimulus arrives (Pittendrigh/Aschoff). The PRC is a
+// CONTINUOUS RESTORING FEEDBACK (limit-cycle attraction) that pulls the internal phase toward a
+// STABLE entrained phase with the Zeitgeber — locking the FIRE schedule to the Zeitgeber period
+// T even when T != tau, AND damping Zeitgeber jitter. This is what neither nearest lane can do:
+//
+// WHY DISTINCT vs the two nearest lanes (the LOAD-BEARING arms, both control-surviving):
+//   - vs CircadianClock (H_1298): the clock free-runs at its BAKED period forever and has NO
+//     reset input (clock_step ignores every argument). It CANNOT be entrained to a Zeitgeber
+//     whose period T != its baked period — its fires DRIFT away (H_1301 c1: A.entrain_err=0.39
+//     drift over the window vs B=0.0016 locked; c3: A fires at tau 24.5, B at the Zeitgeber 24.0).
+//   - vs IntervalTimer (H_1299): an event observation HARD re-anchors (elapsed:=0) = a phase-
+//     INDEPENDENT reset with NO restoring dynamics, so it COPIES each Zeitgeber's jitter directly
+//     into the phase (no limit-cycle damping). The PRC instead DAMPS jitter (H_1301 c2: B phase
+//     variance ~96x LOWER than the hard-reset arm). The hard re-anchor learns the PERIOD but has
+//     no autonomous phase oscillator with a restoring PRC.
+//   → DISTINCT vs ALL: the controls collapse it — an APERIODIC Zeitgeber (shuffle) destroys the
+//     periodic structure -> no entrainment (c4 drift 1.05); K=0 (ablate) removes the PRC ->
+//     B free-runs at tau, cannot entrain (c5 drift 0.39).
+//
+// @L4 CRITICAL (identical framing to every other lane): the oscillator is a PURE TIMEKEEPER over
+// its OWN phase. PhaseResetClock holds ONLY its cumulative phase `phi` (elapsed cycles), its
+// intrinsic period `tau`, and the PRC coupling `k` (the SOLE mutable state is `phi`). prc_step
+// advances `phi` on elapsed time alone; prc_zeitgeber applies the phase-dependent PRC shift from
+// an observed Zeitgeber — it reads NO context, NO immune store, NO grounding. It NEVER mutates
+// any other lane, NEVER returns an emit/silence decision by itself, and NEVER touches pure_field's
+// Φ/phase/Ψ (Ψ-disjoint by construction). prc_fire is an OPTIONAL scheduled pulse a caller MAY
+// consult (a_autonomy_over_hardcode), exactly like clock_fire/itimer_fire/homeo_*.
+//
+// p1/p2/p3/p6: the oscillator reads ONLY its own phase + the Zeitgeber arrival phase. NO persona,
+// NO "you are X" identity rule, NO injected "fire now" label, NO RLHF reward. The PRC shift is
+// GEOMETRY over phase (dphi = k*sin(2π·(0 - frac(phi)))), SCORED only. The two CONTROLS prove the
+// lift is the PHASE-DEPENDENT entrainment: an aperiodic Zeitgeber (no stable period) cannot be
+// locked to, and k=0 removes the PRC entirely — both collapse entrainment to free-running drift.
+
+// PhaseResetClock — the live phase-reset oscillator. `phi` is the CUMULATIVE phase in elapsed
+// cycles (the ONLY mutable state; frac(phi) = the within-cycle phase, floor(phi) = the fire
+// count); `tau` is the intrinsic free-running period (24.5 live, != the Zeitgeber 24.0); `k` is
+// the PRC coupling strength (0.18 live; 0.0 for the ablate control = no reset = free-runs at tau).
+struct PhaseResetClock {
+    phi: float,        // cumulative phase in elapsed cycles (the sole mutable state)
+    tau: float,        // intrinsic free-running period (ticks/cycle)
+    k: float           // PRC coupling strength (0.18 live; 0.0 ablate)
+}
+
+// _prc_frac — the within-cycle fractional phase in [0,1) for phi >= 0 (floor via to_int trunc).
+fn _prc_frac(phi: float) -> float {
+    return phi - to_float(to_int(phi))
+}
+
+// _prc_floor — the integer fire count = floor(phi) for phi >= 0.
+fn _prc_floor(phi: float) -> int {
+    return to_int(phi)
+}
+
+// prc_new — a fresh oscillator at phi=0 with the live intrinsic period (tau=24.5) and live PRC
+// coupling (k=0.18). tau=24.5 != the Zeitgeber period 24.0 — the oscillator must be ENTRAINED to
+// fire at 24.0 (a free-running clock would keep firing at 24.5, the H_1301 c1/c3 distinctness).
+pub fn prc_new() -> PhaseResetClock {
+    return PhaseResetClock { phi: 0.0, tau: 24.5, k: 0.18 }
+}
+
+// prc_new_ablated — the EARNED-PRC control (H_1301 c5): k=0 removes the phase-response coupling,
+// so a Zeitgeber has NO effect and the oscillator free-runs at tau (cannot entrain to T != tau).
+pub fn prc_new_ablated() -> PhaseResetClock {
+    return PhaseResetClock { phi: 0.0, tau: 24.5, k: 0.0 }
+}
+
+// prc_step — advance the cumulative phase by `dt` ticks on ELAPSED TIME ALONE (content-blind by
+// construction: no context, no grounding, no other lane touched). phi += dt/tau (cumulative).
+pub fn prc_step(c: PhaseResetClock, dt: float) -> PhaseResetClock {
+    return PhaseResetClock { phi: c.phi + dt / c.tau, tau: c.tau, k: c.k }
+}
+
+// prc_zeitgeber — a Zeitgeber event arrived (the photic pulse marks subjective dawn = reference
+// phase 0). Apply the PHASE-DEPENDENT PRC shift dphi = k*sin(2π·(0 - frac(phi))) to the FRACTIONAL
+// phase (the cumulative fire count is kept). This is the SOLE reset path; it reads ONLY the
+// oscillator's own phase (no context/store/grounding). The sinusoidal PRC is a restoring feedback
+// that pulls frac(phi) toward 0 — the limit-cycle attraction that entrains + damps jitter.
+pub fn prc_zeitgeber(c: PhaseResetClock) -> PhaseResetClock {
+    let two_pi = 6.283185307179586
+    let frac = _prc_frac(c.phi)
+    let dphi = c.k * sin(two_pi * (0.0 - frac))
+    return PhaseResetClock { phi: c.phi + dphi, tau: c.tau, k: c.k }
+}
+
+// prc_phase — the within-cycle phase in [0,1) (the pure timekeeping read).
+pub fn prc_phase(c: PhaseResetClock) -> float { return _prc_frac(c.phi) }
+
+// prc_count — the cumulative fire count = floor(phi) (the number of phase-0 boundaries crossed).
+pub fn prc_count(c: PhaseResetClock) -> int { return _prc_floor(c.phi) }
+
+// prc_fire — the OPTIONAL scheduled pulse: TRUE iff the oscillator is within EPS of a phase-0
+// boundary (frac(phi) < EPS or frac(phi) > 1-EPS). For an entrained oscillator this fires once
+// per Zeitgeber day. NOT an emit gate (@L4) — a caller MAY consult it as a wake/salience pulse.
+pub fn prc_fire(c: PhaseResetClock) -> bool {
+    let f = _prc_frac(c.phi)
+    let eps = 0.02
+    return (f < eps) || (f > (1.0 - eps))
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }

@@ -1,0 +1,62 @@
+H_1301 — phase-RESET / photic-entrainment — R1 numpy mirror RESULT (verbatim stdout)
+run: python3 UNIVERSE/h1301_phase_reset.py  (/bin/zsh CPU numpy, DIRECTIONAL, deterministic byte-identical across reruns)
+binding path: R1c (corrected entrainment metric + aperiodic shuffle + net-cycle fire period); see FREEZE.txt honesty trail
+=========================================================================================
+==========================================================================================
+H_1301 — phase-RESET / photic-entrainment clock — HD35 DEPLETION TEST (r7)
+==========================================================================================
+seeds=[4310, 4311, 4312]  tau=24.5  T_zeit=24.0  K=0.18  N_CYCLES=40
+JITTER_SD=0.6  SETTLE=20  TOL_ENTRAIN=0.08
+------------------------------------------------------------------------------------------
+PER-SEED:
+  seed 4310: B_err=0.0005 A_err=0.3553 B_pvar=0.000026 A2_pvar=0.001766
+            B_period=24.042 A_period=24.500 Bshuf_err=1.1314 Babl_err=0.3553 Babl_period=24.500
+  seed 4311: B_err=0.0013 A_err=0.4208 B_pvar=0.000011 A2_pvar=0.000873
+            B_period=23.956 A_period=24.500 Bshuf_err=1.0113 Babl_err=0.4208 Babl_period=24.500
+  seed 4312: B_err=0.0030 A_err=0.3946 B_pvar=0.000055 A2_pvar=0.006217
+            B_period=23.995 A_period=24.500 Bshuf_err=0.9973 Babl_err=0.3946 Babl_period=24.500
+------------------------------------------------------------------------------------------
+3-SEED MEAN:
+  B.entrain_err  = 0.0016   (<= 0.05 ?)   [B entrains to T!=tau; ~0 drift]
+  A.entrain_err  = 0.3902   (>= 0.20 ?)            [clock CANNOT entrain]
+  B.phase_var    = 0.000031  (<= 0.5*A2 & <= 0.0015 ?) [PRC damps jitter]
+  A2.phase_var   = 0.002952  (hard re-anchor copies jitter)
+  B.fire_period  = 23.998  (-> T_zeit 24.0)    [tracks Zeitgeber]
+  A.fire_period  = 24.500  (-> tau 24.5) [keeps baked period]
+  Bshuf.err      = 1.0467   (>= 0.20 ?)         [shuffle kills entrain]
+  Babl.err       = 0.3902   (>= 0.20 ?)         [K=0 cannot entrain]
+  Babl.period    = 24.500  (-> tau 24.5) [free-runs at tau]
+------------------------------------------------------------------------------------------
+  [PASS] c1 ENTRAIN-vs-CLOCK  (B locks to T!=tau; clock drifts)
+  [PASS] c2 DAMP-vs-HARDRESET (PRC damps jitter; hard re-anchor copies it)
+  [PASS] c3 PERIOD-TRACK      (B fires at T; clock fires at tau)
+  [PASS] c4 EARNED-SHUFFLE    (permuted Zeitgeber phases -> no entrain)
+  [PASS] c5 EARNED-ABLATE     (K=0 -> free-runs at tau, no entrain)
+  [PASS] c6 NO-FAB            (fires only at own phase-0 boundary)
+------------------------------------------------------------------------------------------
+bars = [True, True, True, True, True, True]
+VERDICT: GREEN — phase-RESET SURVIVES the depletion test; HD35 CONTINUES the ladder.
+==========================================================================================
+JSON {"seeds": [4310, 4311, 4312], "mean": {"B_entrain_err": 0.0016119709116419283, "A_entrain_err": 0.39024261530361787, "B_phase_var": 3.074719756477935e-05, "A2_phase_var": 0.0029519625610459465, "B_fire_period": 23.997728578969603, "A_fire_period": 24.499999999999996, "Bshuf_entrain_err": 1.0466771756961901, "Babl_entrain_err": 0.39024261530361787, "Babl_fire_period": 24.499999999999996}, "per_seed": [{"B_entrain_err": 0.0005304219170412239, "A_entrain_err": 0.3553404990074718, "B_phase_var": 2.5781645711700105e-05, "A2_phase_var": 0.0017663949155557004, "B_fire_period": 24.042468969831482, "A_fire_period": 24.49999999999999, "Bshuf_entrain_err": 1.1314310865017738, "Babl_entrain_err": 0.3553404990074718, "Babl_fire_period": 24.49999999999999}, {"B_entrain_err": 0.0013076242218978962, "A_entrain_err": 0.42078982842534174, "B_phase_var": 1.1151193573549388e-05, "A2_phase_var": 0.0008729614761733605, "B_fire_period": 23.95575389892249, "A_fire_period": 24.500000000000014, "Bshuf_entrain_err": 1.0113301758314535, "Babl_entrain_err": 0.42078982842534174, "Babl_fire_period": 24.500000000000014}, {"B_entrain_err": 0.0029978665959866646, "A_entrain_err": 0.39459751847804014, "B_phase_var": 5.530875340908856e-05, "A2_phase_var": 0.006216531291408778, "B_fire_period": 23.994962868154843, "A_fire_period": 24.499999999999982, "Bshuf_entrain_err": 0.9972702647553433, "Babl_entrain_err": 0.39459751847804014, "Babl_fire_period": 24.499999999999982}], "bars": {"c1": true, "c2": true, "c3": true, "c4": true, "c5": true, "c6": true}, "green": true}
+
+
+=========================================================================================
+R2 ENGINE-NATIVE + WIRED 🟢 — PhaseResetClock lane added to live CORE/engine_cli.hexa
+=========================================================================================
+lane fns: prc_new / prc_new_ablated / prc_step / prc_zeitgeber / prc_phase / prc_count / prc_fire
+mechanism realized in code: a free-running cumulative-phase oscillator (intrinsic tau=24.5) with
+a sinusoidal PRC Zeitgeber reset (dphi = k*sin(2π·(0 - frac(phi)))) that ENTRAINS the fire
+schedule to a Zeitgeber period T=24.0 != tau, while the k=0 ablate free-runs at tau (cannot
+entrain). Deterministic engine check (no-jitter, 40 cycles): live entrained frac phase=0.0023
+(near the dawn boundary), live realized period=24.0 (=T); ablate frac phase=0.184 (drifted off
+boundary), ablate period=24.62 (~tau, not T) — the H_1301 c1/c3/c5 dissociation in code.
+
+REGRESSION GUARDS (no regression):
+  engine_cli_smoke ............. 68 pass / 0 fail   (63 -> 68; +5 PhaseResetClock cases 64-68:
+        entrains-to-Zeitgeber / ablate-free-runs-drifts / period-tracks-Zeitgeber /
+        ablate-period-at-tau / no-fab-off-boundary)
+  h1196 single-entry ........... 7 pass / 0 fail    (NO 2nd .clm/.kosmos entry; pure timekeeper)
+  h1205 separation-invariant ... PASS 🟢            (generation byte-identical ON==OFF, Ψ=½ untouched)
+
+R2 byte-exact regression RECONFIRMS the R1 directional finding engine-native. HD35 phase-RESET
+SURVIVED the depletion test and is WIRED — the c15 brain-structure ladder CONTINUES past HD35.

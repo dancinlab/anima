@@ -8,7 +8,7 @@
 > The roster table below indexes FORWARD backlogs + campaign maps (candidate lists not
 > yet landed); the per-H index section indexes LANDED hypotheses with their own cards.
 
-## Per-H index — brain-structure ladder + session facets (H_1280–1300, a_hypothesis_register)
+## Per-H index — brain-structure ladder + session facets (H_1280–1301, a_hypothesis_register)
 
 > Tiers read VERBATIM from each terminal `.verdicts/<slug>/` file (c2/c9 — 🧱 walls are
 > closed-negatives, not upgraded). One line per H; detail in the linked card.
@@ -35,6 +35,7 @@
 | H_1298 | circadian/interval clock — self-sustaining phase oscillator (clock ⊥ homeostatic integrator) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1298_circadian_clock.md](H_1298_circadian_clock.md) |
 | H_1299 | interval timer — arbitrary LEARNED-duration timer (learned+re-entrainable D ⊥ the fixed-period clock) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1299_interval_timer.md](H_1299_interval_timer.md) |
 | H_1300 | mitosis-grow skill curriculum — teach tool-use skills one-at-a-time via mitosis AVOIDS catastrophic forgetting (retention ⊥ convergence) | 🟢 GREEN ENGINE-NATIVE @R3 (live CORE/engine_cli.hexa::SkillCellMemory reproduces all 4 R2 bars byte-exact: B−A=+0.368 [c1] · min acq 0.880 [c2] · shuffle 0.426 collapses [c3] · ablate 0.160 [c4]; engine-transfer VERIFIED not mirror-only; smoke cases 59-61 (merged 63/0), h1205/h1196/Ψ byte-identical. R2 mirror GREEN + R1 RED stand verbatim) — toy scale; real-303M tool-use skill rung = next follow-on | [H_1300_mitosis_skill_curriculum.md](H_1300_mitosis_skill_curriculum.md) |
+| H_1301 | phase-RESET / photic-entrainment — Zeitgeber PRC entrainment (entrain to T≠tau ⊥ un-resettable clock; PRC jitter-damping ⊥ hard-reanchor timer) | 🟢 GREEN ENGINE-NATIVE + WIRED (HD35 depletion test SURVIVED; R1c 3 seeds all 6 bars: c1 entrain drift 0.0016 vs clock 0.39 · c2 PRC var ~96× < hard-reset · c3 fires at T=24.0 not tau=24.5 · c4 aperiodic-shuffle drift 1.05 · c5 K=0-ablate drift 0.39 · c6 no-fab; smoke 68/0, h1196 7/0, h1205 PASS; honesty trail R1a/R1b metric/control fixes, no distinctness bar moved) | [H_1301_phase_reset.md](H_1301_phase_reset.md) |
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
 
