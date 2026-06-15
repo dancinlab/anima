@@ -6,6 +6,21 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 🔴 H_1230: TEACHER-IN-THE-LOOP 능동 교습은 MITOSIS 메모리에서 수동 적재를 못 이긴다 (HD22, $0, CLOSED-NEG)
+
+H_1226 의 HD21(능동/사회적 학습 METHOD)을 구체화한 HD22 — H_1227 immune/clonal 메모리(mitosis-as-MEMORY, 새 비-반증 역할) 위에서, ONE-ITEM-AT-A-TIME 폐루프 교사(tell → CHECK 기질의 답 → ADJUST: 재바인딩 / 더 날카로운 셀 분열 / 간격 우선순위 상향)가 수동 1회 적재보다 RETENTION 을 더 올리는지 — 동일 노출 예산에서. c15 생물학 렌즈(견습/튜터링/testing-effect/간격반복), LLM 레시피 아님. p7, c9, $0 CPU numpy, 3 seed, 라이브 CORE/engine_cli.hexa 무수정(VAdaptField numpy 미러).
+
+- **판정 🔴 RED CLOSED-NEG — 학습 METHOD 가 깨끗한 키-주소 연상 메모리에서 INERT-to-HARMFUL.** 동일 예산 180 노출 BOTH arm (피드백/순서만 다름, 데이터량 동일). 3 regime:
+  - **CLEAN**(무제한·byte-exact = 포화 대조): A=B=1.000 — headroom 없음, 피드백 분리 불가.
+  - **STRESS**(40셀<<60 + σ0.02 노이즈 = JUDGED, headroom 0.667): A=B ret=0.667, **Δ +0.000 — 피드백이 retention 을 전혀 안 올림.** 손실이 용량-제한일 때 eviction 이 arm 간 대칭 → tell-check-adjust 가 수동 적재가 이미 못 얻는 걸 고칠 게 없음. ret-margin FAIL.
+  - **NOISY**(60셀 + σ0.03): 교사가 오히려 HURT — Δ −0.206 (A0.711 vs B0.506) + interference 악화(0.667 vs 0.167). 機作: split_sharp 교정 재교습이 같은 키에 DUPLICATE 셀을 PIN → 유한 저장소 CROWD → 다른 사실 LRU-evict = 자초한 망각. fab 0.000 (abstain + 메모리 역할 온전).
+- **FINDING**: 병목 = 메모리의 CAPACITY/NOISE 기하학이지 교습 프로토콜 아님. 간격/testing-effect 는 GRADIENT 학습자만 올림 — 셀 저장소엔 한 번 바인딩이 사실을 verbatim 기록하므로 반복 시험이 굳힐 게 없음. COROLLARY: 저장소 개선은 GEOMETRY(더 크고 날카로운 키 공간/repertoire)지 교사 루프 아님. H_1200/1201(mitosis-as-X 반증) 同族 — H_1230 은 능동교습-메모리 > 수동적재-메모리 를 반증; MEMORY 역할(H_1227)은 무손상.
+- **PHILOSOPHY GUARD (c9; p1/p2/p3/p6/p8) 명시 확인 + 지켜짐**: 교사는 FACTUAL CONTENT 를 EPISODIC 셀 저장소에만 교습(키→값, kosmos/H_1154/H_1227 류); 디코더/가중치 자체가 probe 에 없음, persona/role 문자열 없음(p1/p3). 정체성은 셀에서 창발(p2/p3, 무수정)·윤리는 셀에서(p6, 무수정, RLHF 없음). 교사는 proto 벡터 + 바인딩 값만 변형 = p8 연속 교습, RLHF-into-weights 아님. persona/ethics 가중치-FT 로의 drift 없음 → STOP-flag 미발동.
+- HONEST: 합성 사실, ONE corpus paradigm(H_1222/1227), toy 규모, 3 seed, 결정론적 ORACLE 교사(live-LLM = 생산형, UNTESTED), gradient-free numpy 미러(.hexa lift = 다음 rung), p7 exact-match(perplexity 아님), $0, frozen bar 무이동, byte-identical 재현. NOT RULED OUT: 더 나은 KEY 를 GENERATE 하는 live-LLM 교사 / curriculum ORDER(HD20, 별도 probe) / 기하학을 개선하는 교사 — 미검. scale UNVERIFIED.
+- 산출: `UNIVERSE/h1230_teacher_in_loop_mitosis.py` · `.verdicts/1230_teacher_in_loop_mitosis/H_1230.txt`. xref h1227·h1226·h1219·h1225·h1200·h1201·h1199·h1154·a_paper_negative_ok·a_scale_honest_scope·a_toy_scale_recheck·p1·p2·p3·p6·p7·p8·c9·c15.
+
+---
+
 ## 2026-06-15 — 🟡 H_1224: literal-QA 는 anima 의 게이트가 아니다 — p4-부정합 ASSISTANT-NORM 거버넌스 판정 ($0, 무계산)
 
 H_1219 depth-ceiling 사다리의 HD8(거버넌스 미결)을 단독 판정 — literal-QA(사실 축자 회상)가 anima 의 VALID 게이트인지, 아니면 p4(NO ASSISTANT FRAMING)와 충돌하는 빌려온 assistant-norm 인지. 무계산, frozen 기록 기반 추론 (c9, p7).
