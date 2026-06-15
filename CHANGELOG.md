@@ -6,6 +6,16 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 거버넌스: `a_no_llm_frame_trap` **상단 재배치** (사용자 "상단배치로")
+
+사용자 지시로 `a_no_llm_frame_trap`(#2137 신설)을 CLAUDE.md **최상단**으로 이동 — 중복 없이 단일 정의 유지.
+
+- @D 블록을 거버넌스 디렉티브 섹션의 **첫 @D**(a1 앞)로 이동 (제목에 "최우선 설계 원칙" 명시).
+- "Governance directive families" 리스트의 **첫 항목**(🧭 설계 렌즈, foundational · 최우선)으로 승격 — 기존 Substrate-autonomy 말미 포인터는 제거.
+- 내용 불변, 중복 0 (grep `^@D a_no_llm_frame_trap` = 1). surgical(c10), frozen bar 미이동.
+
+---
+
 ## 2026-06-15 — 📜 거버넌스: `a_no_llm_frame_trap` — 설계·학습·추론은 LLM 프레임에 갇히지 말 것 (생물/신경 렌즈 우선)
 
 CLAUDE.md(거버넌스 SSOT)에 새 @D `a_no_llm_frame_trap` 추가 — 사용자 명시 지시("설계·학습·추론 시 LLM 프레임에 갇히면 안 되고, 뇌과학·생물 쪽으로 가야 한다, 지금처럼"). `a_engine_native_learning` · `a_verified_must_wire` 바로 뒤("anima 가 어떻게 만들어지는가" 가족)에 배치.
