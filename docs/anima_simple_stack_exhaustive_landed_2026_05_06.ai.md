@@ -54,14 +54,14 @@
 
 ### R2 anima-models cells64/cells128/clm-v2_latest — INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE
 
-CF mgmt API (`d4acc95862b4203c11948da5baf079bc` account, secret CLI scope) lists in `anima-models` bucket:
+CF mgmt API (`<REDACTED-R2-ACCOUNT-ID>` account, secret CLI scope) lists in `anima-models` bucket:
 - clm-v2/latest.pt (279MB)
 - clm-v2/latest/final.pt (279MB, duplicate)
 - conscious-lm/cells64/final.pt (208MB)
 - conscious-lm/cells128/step_35000.pt (208MB)
 - conscious-lm/convo-ft/convo_5k.pt (already tested PARTIAL_C2_only)
 
-Rclone config remote = `ce4bdcce7c74d4e3c78fdf944c4d1d7b` account, `anima-models` 내용물 wholly different (has `checkpoints/v14_128c_final.tar.zst`, base_models/qwen25-14b-instruct, etc. — no `conscious-lm/cells*`). CF mgmt API endpoint listing only (no object body download — HTTP 404).
+Rclone config remote = `<REDACTED-R2-ACCOUNT-ID-2>` account, `anima-models` 내용물 wholly different (has `checkpoints/v14_128c_final.tar.zst`, base_models/qwen25-14b-instruct, etc. — no `conscious-lm/cells*`). CF mgmt API endpoint listing only (no object body download — HTTP 404).
 
 → separate credential bootstrap required (d4acc R2 access keys발급 or ditch CF mgmt API for object data).
 

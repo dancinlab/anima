@@ -1,0 +1,25 @@
+=== H_1321 — ENGINE-NATIVE WIRING of the H_1316 🟢 ko-jamo breakthrough (a_verified_must_wire) ===
+faculty: CORE/engine_cli.hexa VAdaptField Voronoi (vadapt_field_nearest_idx) + engine_mitosis_tick
+         growth (p8, LIVE); head = per-cell next-symbol count-MLE (gradient-free).
+rep: deterministic NFD jamo symbolization (data-prep) — Hangul syllable → L/V/T jamo symbols.
+metric = held-out next-symbol CROSS-ENTROPY renormalized to nats/UTF-8-byte (p7, FAIR axis).
+
+data-prep same-window mirror REFERENCE (Vj=323): G0=3.09967 G1=2.82046 G1c=3.01867 | B3 lossless=True
+FROZEN bars: W1 |engine-G1 − mirror-G1| <= 0.05 AND engine-G1 < 2.903  ·  W2 G1 beats G1c & G0 by >= 0.05  ·  W3 no-regression (separate)
+-------------------------------------------------------------------------------
+ENGINE-NATIVE held-out KO next-symbol CE (nats/UTF-8-byte):
+  G0 raw-byte  CE=3.09967  cells=10  (6000tr/6000te)
+  G1 jamo      CE=2.82046  cells=10  (5101tr/5100te)
+  G1c shuffle  CE=3.01867  (mean of 3 seeds: 3.03018 3.00717 3.01865)
+-------------------------------------------------------------------------------
+(W1) ENGINE-NATIVE CE  |engine-G1 2.82046 − mirror-G1 2.82046| = 6.325e-07 <= 0.05 -> PASS  AND  engine-G1 2.82046 < 2.903 -> PASS
+(W2) CONTROLS HOLD  G1c−G1 = 0.198208 >= 0.05 -> PASS  AND  G0−G1 = 0.279206 >= 0.05 -> PASS  AND  B3 lossless -> PASS
+     (W3 no-regression — engine_cli_smoke / h1196 / h1205 — run separately, reported in the verdict.)
+-------------------------------------------------------------------------------
+H_1321 VERDICT (engine-native, W1∧W2): 🟢 GREEN — the jamo breakthrough RUNS ENGINE-NATIVE.
+  Engine-native jamo mitosis on the LIVE VAdaptField + engine_mitosis_tick reproduces the
+  mirror within tolerance AND breaks the raw-byte ceiling AND its controls hold — the H_1316
+  GREEN mechanism is now LIVE in CORE byte-exact (a_verified_must_wire; W3 guards reported separately).
+  W1=True W2=True | ENGINE-NATIVE (LIVE VAdaptField Voronoi + engine_mitosis_tick, p8); rep = deterministic NFD jamo;
+  pure_field/engine_g/brain UNTOUCHED (Ψ-disjoint, a_core_engine_map). $0 CPU, no GPU, no secrets at run.
+[done]
