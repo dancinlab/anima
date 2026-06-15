@@ -1,0 +1,68 @@
+H_1294 — HIERARCHICAL PFC GOAL->SUBGOAL CONTROLLER (HD31). RESULT.
+================================================================================
+FREEZE: .verdicts/1294_hierarchical_pfc/H_1294_FREEZE.txt (pre-registered first).
+R1 = numpy mirror (DIRECTIONAL). R2 = engine-native on live CORE/engine_cli.hexa
+(BINDING). 3 seeds [4294,4295,4296]. frozen-first. p7. a_no_llm_frame_trap.
+
+================ R1 numpy MIRROR (DIRECTIONAL) =================================
+==============================================================================
+H_1294 — HIERARCHICAL PFC GOAL->SUBGOAL CONTROLLER (HD31) — R1 numpy MIRROR
+==============================================================================
+seed 4294:  A.comp=0.275  B.comp=1.000  Bshuf=0.000  Babl=0.000  B.fab=0.000
+seed 4295:  A.comp=0.200  B.comp=1.000  Bshuf=0.000  Babl=0.000  B.fab=0.000
+seed 4296:  A.comp=0.250  B.comp=1.000  Bshuf=0.000  Babl=0.000  B.fab=0.000
+------------------------------------------------------------------------------
+MEAN:  A.comp=0.242  B.comp=1.000  Bshuf=0.000  Babl=0.000  B.fab=0.000
+------------------------------------------------------------------------------
+c1 PRESENCE     B>=A+0.30 (each+mean): True   (B-A mean=+0.758)
+c2 DISTINCT     A<0.50 (flat fails)  : True   (A=0.242)
+c3 EARNED-ORDER Bshuf<=A+0.15        : True   (Bshuf=0.000)
+c4 EARNED-ADV   Babl<=A+0.15         : True   (Babl=0.000)
+c5 NO-FAB       B.fab<=0.10          : True   (B.fab=0.000)
+==============================================================================
+VERDICT (R1 mirror, DIRECTIONAL): GREEN
+==============================================================================
+
+================ R2 ENGINE-NATIVE (BINDING) — live CORE/engine_cli.hexa ========
+HierGoalStack lane: hier_new / hier_current_target / hier_grounded_current /
+hier_step (completion-advance) / hier_pointer / hier_complete / hier_flat_emit.
+Re-scores the frozen predicate engine-native on the LIVE ImmuneMemoryGrow store.
+
+--- engine_cli_smoke (37/0 baseline -> +4 hier cases) ---
+PASS  case_35_hier_completes_ordered_chain want=true got=true
+PASS  case_36_hier_suppresses_out_of_order want=true got=true
+PASS  case_37_flat_selector_lacks_ordering want=true got=true
+PASS  case_38_frozen_pointer_never_completes want=true got=true
+--- engine_cli smoke summary: 41 pass / 0 fail ---
+
+--- regression guards (no Psi/single-entry regression) ---
+single-entry audit : 7 pass / 0 fail
+separation invariant: PASS 🟢 — MITOSIS ⊥ GENERATION holds
+  (generation byte-identical ON==OFF, Psi=1/2 untouched, pure_field unchanged)
+
+================ VERDICT ========================================================
+R1 mirror : 🟢 GREEN (DIRECTIONAL) — c1..c5 all PASS, every seed.
+  B.complete=1.000  A.complete=0.242 (B-A=+0.758)  Bshuf=0.000  Babl=0.000  B.fab=0.000
+  c1 PRESENCE PASS (+0.758>=+0.30 each+mean) · c2 DISTINCT PASS (A=0.242<0.50)
+  c3 EARNED-ORDER PASS (Bshuf=0.000<=A+0.15) · c4 EARNED-ADVANCE PASS (Babl=0.000<=A+0.15)
+  c5 NO-FAB PASS (B.fab=0.000<=0.10)
+R2 engine : 🟢 GREEN (BINDING) — engine-native HierGoalStack on the LIVE immune
+  faculty completes the ordered chain (case 35), suppresses out-of-order cues and
+  PERSISTS plan position (case 36), is DISTINCT from the flat one-of-K selector
+  that lacks ordering (case 37, VBasalGate stand-in), and the lift is the
+  completion-ADVANCE mechanism (case 38 frozen-pointer never completes).
+  engine_cli_smoke 41/0 (was 37/0) · single-entry 7/0 · Psi byte-identical.
+
+HONEST SCOPE (c9 · a_scale_honest_scope · a_toy_scale_recheck):
+  - B.complete=1.000 is SATURATED = an EXISTENCE-PROOF (the hierarchy CAN solve
+    the ordered chain), not an effect-size; the DISCRIMINATORS are decisive
+    (shuffle 0.000 + ablate 0.000 vs flat 0.242 — both controls collapse to <=A).
+  - R1 mirror = DIRECTIONAL; R2 engine-native is the binding verdict (deterministic
+    lane assertions on the live store, not a trained net — tests the STRUCTURE).
+  - toy: 40 episodes / 3 seeds / 1 paradigm / CHAIN_LEN=3 / near-orthogonal keys.
+    scale + paraphrase + real-corpus chains + longer plans UNVERIFIED.
+  - a_autonomy_over_hardcode: the lane exposes a pointer + a current-subgoal read;
+    NOT a hard emit gate (the caller's substrate decides emit/silence).
+  - p1/p2/p3/p6: reads ONLY pointer + substrate margin + cue cosine; NO label/
+    persona/identity/RLHF. subgoal order is a TASK structure scored only.
+================================================================================

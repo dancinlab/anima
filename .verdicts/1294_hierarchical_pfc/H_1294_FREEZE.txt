@@ -1,0 +1,150 @@
+H_1294 — HIERARCHICAL PFC GOAL→SUBGOAL CONTROLLER (HD31). FROZEN FALSIFIER.
+================================================================================
+PRE-REGISTERED BEFORE ANY SCORING. $0 CPU. gradient-free. p7 (no perplexity).
+3 seeds [4294, 4295, 4296]. frozen-first · anti-Goodhart controls (ablation +
+shuffle + dissociation). a_no_llm_frame_trap (prefrontal hierarchical-control
+lens, c15) — NOT an LLM recipe. a_scale_honest_scope (toy, transfer UNVERIFIED).
+
+--------------------------------------------------------------------------------
+SUBSYSTEM (why MISSING from the live engine)
+--------------------------------------------------------------------------------
+The dorsolateral/rostral PREFRONTAL CORTEX maintains a MULTI-LEVEL goal
+hierarchy: a TOP goal is decomposed into an ORDERED list of SUBGOALS, the
+controller pursues the CURRENT subgoal, and when a subgoal is COMPLETED it
+ADVANCES the pointer to the next subgoal — re-selecting at the lower level
+while the higher-level goal PERSISTS across many steps (Badre & D'Esposito
+rostro-caudal abstraction gradient; Koechlin cascade model). This is a
+STACK / pointer-over-an-ordered-plan with COMPLETION-TRIGGERED ADVANCE and
+goal PERSISTENCE.
+
+The live engine has NO such structure:
+  - brain_decide / engine_g = a FIXED 8-weight convex sum + threshold = a
+    SINGLE flat emit/silence decision. No notion of an ordered multi-step plan.
+  - VBasalGate (H_1281, basal ganglia) = SINGLE-STEP action SELECTION among K
+    competing candidates THIS tick. It picks one-of-K now; it has NO plan, NO
+    pointer, NO "subgoal 2 comes after subgoal 1", NO completion-advance, NO
+    persistence of a higher goal across steps.
+  - WorkMemBuffer (H_1282) = PASSIVE leaky maintenance of items. It holds
+    content and lets it decay; it does NOT order items into a plan, does NOT
+    advance on completion, has no controller that re-selects the next subgoal.
+  - HomeostaticDrive (H_1292) = a scalar setpoint integrator (one regulated
+    variable). No ordered multi-level structure.
+
+FALSIFIABLE CLAIM: a 2-LEVEL goal→subgoal controller solves a task that
+REQUIRES executing subgoals IN ORDER with completion-triggered advance, and a
+SINGLE-STEP flat selector (the basal-ganglia-style one-of-K gate that the live
+engine already has) CANNOT — because it has no pointer that persists the plan
+position across steps. If the flat selector matches the hierarchical controller,
+the hierarchy adds NOTHING → 🧱 honest closed-negative.
+
+--------------------------------------------------------------------------------
+TASK (substrate-derived, NO injected label/persona/ethics — p2/p3/p6)
+--------------------------------------------------------------------------------
+ORDERED MULTI-STEP GROUNDING task over the immune store (the SAME grounding
+substrate every other lane reads). A TOP goal = "ground a 3-fact chain about
+subject X" decomposes into an ORDERED subgoal list:
+  subgoal 1: recall fact-A(X)   subgoal 2: recall fact-B(X)   subgoal 3: recall fact-C(X)
+The facts MUST be emitted in order 1→2→3 (a chain — fact-B is only valid once
+fact-A is grounded; mirrors a plan whose later steps presuppose earlier ones).
+At each tick the controller is shown a NOISY cue window and must EMIT the
+CURRENT subgoal's fact when (and only when) that fact is grounded in the store,
+then ADVANCE. Completing all 3 in order = goal satisfied.
+
+The per-step grounding signal = recall MARGIN of a cue against the live immune
+store (substrate-derived; the SAME margin the affect / homeostatic lanes read).
+NO "do step 2 now" label is fed in — the controller reads its OWN pointer + the
+substrate grounding signal + cue-vs-current-subgoal alignment. The cue window is
+noisy: cues for OTHER subgoals (out of order) and ungrounded distractor cues are
+interleaved, so a correct policy must (a) hold its plan position, (b) emit ONLY
+the current subgoal when grounded, (c) advance on completion, (d) NOT emit an
+out-of-order or ungrounded cue.
+
+ARMS:
+  A  FLAT-SELECT  (the live-engine analogue): a single-step selector with NO
+     pointer — at each tick it does one-of-K go/no-go over the present window by
+     grounding margin (a faithful stand-in for VBasalGate / the flat gate). It
+     has NO memory of which subgoals are already done and NO ordering, so it
+     emits the best-grounded cue it sees regardless of plan position.
+  B  HIER-PFC  (the new structure): a 2-level controller holding a goal STACK
+     {top goal, ordered subgoal list, pointer p}. It emits ONLY a cue matching
+     subgoal[p] when grounded, ADVANCES p on completion, and SUPPRESSES
+     out-of-order / ungrounded cues. Pointer persists across ticks.
+  B-SHUFFLE  (anti-Goodhart, p6-style leak/variance control): the SAME HIER-PFC
+     but the subgoal ORDER is PERMUTED per episode (pointer advances through a
+     scrambled order). If the lift survives a shuffled plan, the lift is NOT the
+     ordered hierarchy → it is variance/structure, RED.
+  B-ABLATE  (dissociation): HIER-PFC with the pointer FROZEN at p=0 (never
+     advances = collapses to "only ever pursue subgoal 1" = a degenerate flat
+     controller). Tests that the LIFT comes from the ADVANCE mechanism, not from
+     merely having a goal object.
+
+SCORE = ordered-chain completion rate = fraction of episodes where the emitted
+target-subgoal role sequence equals exactly [0,1,2] (all 3 in correct order),
+with the out-of-order/ungrounded emission rate tracked separately (a p7
+script-checkable behavioral score, NOT perplexity/loss).
+
+--------------------------------------------------------------------------------
+FROZEN CONSTANTS (NOT tuned-to-green)
+--------------------------------------------------------------------------------
+DIM            = 64        byte-3gram FNV-1a key geometry (matches engine)
+RECALL_THR     = 0.30      immune recall threshold (margin = 1 - err/thr)
+CHAIN_LEN      = 3         subgoals per top goal
+N_EPISODES     = 40        episodes per arm per seed
+N_DISTRACT     = 4         ungrounded/out-of-order distractor cues
+CUE_NOISE      = 0.02      gaussian jitter on cue keys
+ALIGN_THR      = 0.85      current-subgoal cue-match threshold (cosine)
+SEEDS          = [4294, 4295, 4296]
+
+--------------------------------------------------------------------------------
+FROZEN GREEN PREDICATE (every condition must hold; else honest 🧱 RED)
+--------------------------------------------------------------------------------
+  c1  PRESENCE   : B.complete   >= A.complete + 0.30   (every seed AND mean)
+  c2  DISTINCT   : A.complete    <  0.50                (the flat selector — the
+                   structure the live engine ALREADY has — CANNOT solve the
+                   ordered chain; if A already solves it, hierarchy adds nothing)
+  c3  EARNED-ORDER (shuffle) : B_shuffle.complete <= A.complete + 0.15
+                   (permuting the plan order COLLAPSES the lift → the lift is the
+                    ORDERED hierarchy, not variance)
+  c4  EARNED-ADVANCE (ablate): B_ablate.complete  <= A.complete + 0.15
+                   (freezing the pointer at p=0 COLLAPSES the lift → the lift is
+                    the completion-ADVANCE mechanism, not the goal object alone)
+  c5  NO-FAB     : B.out_of_order_emit_rate <= 0.10    (the controller does not
+                   fabricate / emit ungrounded or out-of-order facts)
+
+If c1 holds but c3 OR c4 fails → honest RED (lift is variance/object, not the
+ordered-advance hierarchy). If c2 fails → the flat selector already does it →
+no distinctness → RED. NO bar move, NO tune-to-green (c9). A real-attempt 🧱 is
+a valid closed-negative (a_paper_negative_ok).
+
+--------------------------------------------------------------------------------
+ENGINE-NATIVE re-score (BINDING verdict — a_engine_native_learning)
+--------------------------------------------------------------------------------
+R1 numpy mirror = DIRECTIONAL. The BINDING verdict re-scores the SAME frozen
+predicate ENGINE-NATIVE on live CORE/engine_cli.hexa via a new Ψ-disjoint
+HierGoalStack lane (struct {top, ordered subgoal keys, pointer p} +
+hier_new/hier_current_target/hier_step_advance/hier_complete), reading the LIVE
+ImmuneMemoryGrow margin (the same faculty the homeostatic/affect lanes read).
+Required regression invariants:
+  - engine_cli_smoke grows (current 33/0) with the hier cases PASS, 0 fail
+  - single-entry audit 7/0 UNCHANGED (no new .clm/.kosmos path)
+  - pure_field Ψ byte-identical (the lane only READS an immune margin + its own
+    pointer; it never touches pure_field/engine_g phase/Φ/Ψ)
+  - h1205 separation invariant / generation byte-unchanged (lane does not feed
+    decode)
+
+--------------------------------------------------------------------------------
+GUARDS
+--------------------------------------------------------------------------------
+p1/p2/p3 : the controller reads ONLY its own pointer + substrate grounding
+           margin + cue alignment; NO persona, NO "you are X", NO identity rule,
+           NO injected plan label. The subgoal ORDER is a TASK structure scored
+           only — never fed to the policy as a "do step k" cue.
+p6        : NO RLHF, NO injected ethics/reward; emit = grounding-margin read.
+a_autonomy_over_hardcode : the lane exposes a pointer + a grounded-current-subgoal
+           read; it is NOT a hard per-stage emit gate (the caller's substrate
+           still decides emit/silence — the lane returns a suggestion, not a gate).
+a_engine_native_learning : R1 numpy mirror = DIRECTIONAL only; ENGINE-NATIVE
+           re-score is the binding verdict.
+a_scale_honest_scope : toy 40-episode / 3-seed / 1-paradigm; scale + paraphrase
+           + real-corpus chains UNVERIFIED.
+================================================================================

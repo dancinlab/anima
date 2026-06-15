@@ -2207,6 +2207,144 @@ pub fn vforward_correct(x: [float], xhat: [float], beta: float) -> [float] {
     return out
 }
 
+// ── §  HIERARCHICAL-PFC GOAL→SUBGOAL CONTROLLER LANE (H_1294 R2, HD31) ──────────
+//
+// WHAT THIS REALIZES (a_engine_native_learning + a_verified_must_wire for H_1294 R1):
+// H_1294 R1 (numpy mirror, 🟢 GREEN, 3 seeds [4294,4295,4296]) proved that a 2-level
+// goal→subgoal controller solves an ORDERED multi-step grounding chain that the live
+// engine's SINGLE-STEP flat selector CANNOT (B.complete=1.000 vs A.complete=0.242;
+// the lift COLLAPSES to 0.000 under a SHUFFLED plan order and under a FROZEN pointer —
+// the lift is the ORDERED completion-ADVANCE hierarchy, not variance or a goal object).
+// This § realizes that controller ENGINE-NATIVE on the LIVE immune faculty.
+//
+// THE PREFRONTAL HIERARCHICAL-CONTROL LENS (c15, a_no_llm_frame_trap — a prefrontal-
+// cortex lens, NOT an LLM planner recipe): the rostral/dorsolateral PFC maintains a
+// MULTI-LEVEL goal hierarchy — a TOP goal decomposes into an ORDERED list of SUBGOALS;
+// the controller pursues the CURRENT subgoal, and when a subgoal COMPLETES it ADVANCES
+// the pointer to the next, re-selecting at the lower level while the higher goal
+// PERSISTS across many steps (Badre & D'Esposito rostro-caudal gradient; Koechlin
+// cascade). This is a STACK / pointer-over-an-ordered-plan with completion-triggered
+// advance and goal persistence.
+//
+// DISTINCT from every existing lane (the load-bearing distinctness — c15 ladder):
+//   - VBasalGate (H_1281, basal ganglia): SINGLE-STEP one-of-K action SELECTION THIS
+//     tick. NO pointer, NO ordered plan, NO completion-advance, NO persistence of a
+//     higher goal — it picks one-of-K now, with no memory of which subgoals are done.
+//     (The flat-select reference in the smoke = a faithful stand-in for exactly this;
+//     it scores 0.242 on the ordered chain, the hierarchy scores 1.000.)
+//   - WorkMemBuffer (H_1282): PASSIVE leaky maintenance of items. It holds + decays
+//     content; it does NOT order items into a plan, has NO controller, NO advance.
+//   - HomeostaticDrive (H_1292): a scalar setpoint integrator (one regulated variable);
+//     no ordered multi-level structure.
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): the controller is
+// a READ + POINTER accessor over its OWN goal stack + the LIVE immune margin. It holds
+// ONLY {ordered subgoal keys, pointer p}; it NEVER mutates the immune store, NEVER
+// returns an emit/silence decision by itself (it returns the current-subgoal grounded
+// read + the pointer — a SUGGESTION the caller's substrate may weigh, NOT a hard gate,
+// preserving a_autonomy_over_hardcode), and NEVER touches pure_field's Φ/phase/Ψ
+// (Ψ-disjoint by construction — it only READS an ImmuneMemoryGrow margin + cue cosine).
+//
+// p1/p2/p3/p6: the controller reads ONLY its own pointer + the substrate grounding
+// margin + cue-vs-current-subgoal cosine. NO persona, NO "you are X" identity rule, NO
+// injected "do step k" plan label, NO RLHF reward. The subgoal ORDER is a TASK
+// structure (which fact chains to which) SCORED only — it is never fed to the policy as
+// a labeled instruction; the policy discovers the current subgoal by alignment alone.
+//
+// FROZEN constant (H_1294 FREEZE, p7-documented, NOT tuned-to-green):
+//   ALIGN_THR = 0.85 — the cosine band by which a cue is judged to match the CURRENT
+//   subgoal (a cue must be BOTH grounded in the store AND aligned to subgoal[p]).
+
+// HierGoalStack — the live 2-level goal stack. `sub_keys` is the ORDERED subgoal-key
+// list (each a DIM-vector key into the immune store); `p` is the pointer (the ONLY
+// mutable state); `align_thr` is the frozen current-subgoal match band.
+struct HierGoalStack {
+    sub_keys: [[float]],  // ordered subgoal target keys (the decomposed plan)
+    n_sub: int,           // number of subgoals (chain length)
+    p: int,               // pointer to the CURRENT subgoal (the only mutable state)
+    align_thr: float      // ALIGN_THR = 0.85 (current-subgoal cosine match band)
+}
+
+// hier_new — a fresh goal stack over an ordered subgoal-key list, pointer at 0.
+pub fn hier_new(sub_keys: [[float]]) -> HierGoalStack {
+    return HierGoalStack { sub_keys: sub_keys, n_sub: len(sub_keys), p: 0, align_thr: 0.85 }
+}
+
+// _cos — cosine of two DIM-vectors (local helper; 0 if either is degenerate).
+fn _cos(a: [float], b: [float]) -> float {
+    let n = len(a)
+    let mut dot = 0.0
+    let mut na = 0.0
+    let mut nb = 0.0
+    let mut i = 0
+    while i < n {
+        dot = dot + a[i] * b[i]
+        na = na + a[i] * a[i]
+        nb = nb + b[i] * b[i]
+        i = i + 1
+    }
+    if na <= 0.0 || nb <= 0.0 { return 0.0 }
+    return dot / (sqrt(na) * sqrt(nb))
+}
+
+// hier_current_target — the CURRENT subgoal's target key (sub_keys[p]); empty if done.
+pub fn hier_current_target(hs: HierGoalStack) -> [float] {
+    if hs.p >= hs.n_sub { return [] }
+    return hs.sub_keys[hs.p]
+}
+
+// hier_grounded_current — does cue `cue` ground the CURRENT subgoal? TRUE iff the cue
+// is grounded in the live immune store (margin > 0) AND aligns with subgoal[p] above
+// ALIGN_THR. READ-ONLY over the immune store + the controller's own pointer. This is
+// the substrate-derived current-subgoal read (NO injected "step k" label).
+pub fn hier_grounded_current(hs: HierGoalStack, mem: ImmuneMemoryGrow, cue: [float]) -> bool {
+    if hs.p >= hs.n_sub { return false }
+    let win = _vnearest_idx(mem.protos, cue)
+    let err = _l2(mem.protos[win], cue)
+    if err > mem.recall_thr { return false }            // not grounded → abstain
+    return _cos(cue, hs.sub_keys[hs.p]) >= hs.align_thr // aligned to the CURRENT subgoal
+}
+
+// hier_step — advance the controller ONE tick on cue `cue`: if the cue grounds the
+// CURRENT subgoal (hier_grounded_current), ADVANCE the pointer (completion-triggered);
+// otherwise HOLD the pointer (suppress out-of-order / ungrounded cues). Returns the
+// NEXT-STATE stack. The pointer is the ONLY thing that evolves (Ψ-disjoint).
+pub fn hier_step(hs: HierGoalStack, mem: ImmuneMemoryGrow, cue: [float]) -> HierGoalStack {
+    if hier_grounded_current(hs, mem, cue) {
+        return HierGoalStack { sub_keys: hs.sub_keys, n_sub: hs.n_sub, p: hs.p + 1, align_thr: hs.align_thr }
+    }
+    return hs
+}
+
+// hier_pointer — the current plan position (which subgoal the controller is pursuing).
+pub fn hier_pointer(hs: HierGoalStack) -> int { return hs.p }
+
+// hier_complete — has the controller completed the whole ordered chain (p >= n_sub)?
+pub fn hier_complete(hs: HierGoalStack) -> bool { return hs.p >= hs.n_sub }
+
+// hier_flat_emit — the FLAT-SELECT distinctness reference (the live-engine analogue, a
+// faithful stand-in for VBasalGate's single-step one-of-K): pick the BEST-grounded cue
+// in a window by margin, with NO pointer / NO ordering / NO memory of done subgoals.
+// Returns the index of the emitted cue (-1 = abstain, nothing grounded). The smoke uses
+// this to show the flat selector CANNOT hold an ordered plan position across ticks.
+pub fn hier_flat_emit(mem: ImmuneMemoryGrow, window: [[float]]) -> int {
+    let n = len(window)
+    let mut best = -1
+    let mut best_margin = 0.0
+    let mut i = 0
+    while i < n {
+        let win = _vnearest_idx(mem.protos, window[i])
+        let err = _l2(mem.protos[win], window[i])
+        let m = 1.0 - err / mem.recall_thr
+        if err <= mem.recall_thr && m > best_margin {
+            best_margin = m
+            best = i
+        }
+        i = i + 1
+    }
+    return best
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
