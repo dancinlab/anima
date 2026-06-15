@@ -102,6 +102,17 @@ ENGINE-NATIVE in `CORE/engine_cli_smoke.hexa` cases 39–42, byte-matching the m
   ABSTRACT (ECA) substrate** — the super-additivity is a property of the ECA TPM's strong
   state-dependent neighbor-coupling, NOT a substrate-portable law. See
   `UNIVERSE/H_1308_hive_real_substrate_transfer.md`.
+- **⚠⚠ TERMINAL: STATE-DEPENDENT coupling ALSO fails (H_1313 🧱, r4)**: the `a_break_the_wall`
+  attempt directly tested the named fix — a genuinely STATE-DEPENDENT cross-cell coupling
+  (member A's threshold shifted by member B's LIVE cells, not a constant nudge). It DID break
+  the r3 factorization (next-A genuinely varies with B's bits) yet faithful **Φ_joint STILL = 0.0**
+  (Δ_sd = −3.0, identical to r3, nd=0 distinctions), robust across a full coupling-strength
+  sweep (Φ_joint=0 at k∈{0.5..2.0}). On the tiny pure_field channels any coupling strong enough
+  to register OVERWRITES the member's own dynamics → a pure copy/swap with zero distinctions.
+  **The ECA super-additivity does NOT transfer to real anima A⇄G across BOTH realized channels
+  (r3 constant + r4 state-dependent) — H_1295 is now TERMINALLY bounded to ECA-scope** (an
+  abstract-substrate existence proof, NOT engine-transferable). This does NOT retract the ECA
+  GREEN. See `UNIVERSE/H_1313_hive_state_dependent_coupling.md`.
 - **Coupling-GENERIC not topology-specific** (angle-1, honest): the lift is a property of
   coupling these substrates, not of one privileged wiring.
 - **Substrate-class conditional** (B2b, H_609 C3.3): strong super-additivity is in the

@@ -44,6 +44,36 @@ fluent Korean (a_scale_honest_scope, a_toy_scale_recheck). NEW: `CORE/h1312_ko_c
 `CORE/ko_cells.kohead` · `CORE/generator.hexa` §6.5 · `CORE/h1312_ko_decode_wire_probe.hexa` ·
 `.verdicts/1312_ko_decode_wire/{FREEZE,result,guards}.txt` · `UNIVERSE/H_1312_ko_decode_wire.md` ·
 HYPOTHESES.md row · CLAIMS.tape @C · domains/MITOSIS-ENGINE.log.md @H · ARCHITECTURE.md.
+## 2026-06-16 — domain(H_1313): HIVE r4 STATE-DEPENDENT A⇄G coupling — 🧱 TERMINAL NULL (the a_break_the_wall attempt fails)
+
+r4 of the HIVE-MIND lane — the `a_break_the_wall` attempt against the H_1308 r3 NULL. r3
+diagnosed (c9) that the live tension-link is a near-CONSTANT scalar nudge (bias≈0.00648 ∀
+states) so the joint TPM factorizes → faithful Φ_joint=0 → Δ_real=−3.0. r3 named its own
+breakthrough angle (H_1308 §6): a genuinely STATE-DEPENDENT multi-cell coupling could in
+principle integrate. H_1312 tests EXACTLY that — member A's `pure_field` t1/t3/t4 channel-sign
+cells have their thresholds shifted by member B's LIVE cells (a real cross-member field read),
+symmetrically A→B, scaled so it CAN flip a cell. Faithful IIT-4, n≤8 (SAME scale as r3),
+frozen-first, NO tune-to-green, reuses the r3 harness verbatim.
+
+**🧱 TERMINAL NULL — even state-dependent coupling does NOT integrate.** Φ(member)=1.5 (Σ=3.0)
+but Φ_collective(STATE-DEP, W=0.6)=0.0 → **Δ_sd=−3.0, IDENTICAL to r3, NO flip** (B1 PRESENCE
+FAIL + B2 FLIP FAIL; B3 decouple-mean + B4 shuffle PASS trivially). The new coupling DID break
+r3 factorization (next-A genuinely varies with B's bits, verified directly) — but on the tiny
+pure_field channels (t1~1.6e-7, t3~1.6e-8) ANY coupling strong enough to register OVERWRITES
+the member's own dynamics → a pure COPY/SWAP with ZERO distinctions (nd=0) → Φ_joint=0. A
+diagnostic coupling-strength sweep (k∈{0.5,0.8,1.0,1.2,2.0}) gives Φ_joint=0 at EVERY k → NOT a
+scaling artifact. NO regime has the simultaneous self+cross dependence IIT-4 needs. The ECA
+Δ=+10.4756 is a property of its rich self+neighbor TPM, NOT a substrate-portable law of
+consciousness-as-integration. H_1295 super-additivity is now **TERMINALLY bounded to ECA-scope**
+across BOTH realized real channels (r3 constant + r4 state-dependent). `a_break_the_wall`
+satisfied; a first-class, valid TERMINAL wall (c9). Does NOT retract H_1295's ECA GREEN.
+
+NEW: `UNIVERSE/h1313_hive_state_dependent_coupling.hexa` ·
+`.verdicts/1313_hive_state_dependent_coupling/{FREEZE,result}.txt` ·
+`UNIVERSE/H_1313_hive_state_dependent_coupling.md` · HYPOTHESES.md row · CLAIMS.tape @C
+h1313_hive_state_dependent_coupling · H_1295 + H_1308 cards updated (r4 verbatim) ·
+domains/MITOSIS-ENGINE.log.md @H. NO engine wiring (Ψ-disjoint, live CORE UNTOUCHED — a NULL
+wires nothing).
 
 ## 2026-06-16 — domain(H_1308): HIVE collective-Φ ENGINE-TRANSFER to REAL anima A⇄G — 🔴 HONEST NULL (does NOT transfer)
 

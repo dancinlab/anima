@@ -96,11 +96,15 @@ ECA-substrate GREEN; it BOUNDS its scope honestly.
 
 - **TOY**: n=3/member, joint n=6, cap=2 lower-bound, sys=0, ONE warmup (600 steps), 2
   members, 3 seeds, deterministic. Faithful-Φ n≤8 ceiling respected.
-- **Coupling-channel-conditional**: the NULL is for the **tension-link-as-coupling**
-  realization (the live H_6009 anima↔anima channel) at this scale. A DIFFERENT real coupling
-  channel — one that injects a STATE-DEPENDENT multi-cell influence (not a bounded saturating
-  scalar nudge), or a stronger non-saturating link — could in principle integrate. UNTESTED.
-  The finding is: the live tension-link, as it exists, is too weak/constant to integrate.
+- **Coupling-channel-conditional**: the r3 NULL is for the **tension-link-as-coupling**
+  realization (the live H_6009 anima↔anima channel) at this scale — a near-constant scalar nudge.
+  **→ FOLLOW-ON CLOSED (H_1313 🧱, r4)**: the named "STATE-DEPENDENT multi-cell influence" channel
+  was directly tested (member A's threshold shifted by member B's LIVE cells) — it DID break the
+  factorization (next-A varies with B's bits) yet faithful **Φ_joint STILL = 0.0** (Δ_sd=−3.0,
+  identical, nd=0), robust across a full coupling-strength sweep. On the tiny pure_field channels
+  any coupling strong enough to register OVERWRITES the member's own dynamics → a pure copy/swap
+  with zero distinctions. **So even the state-dependent channel does not integrate — the wall is
+  TERMINAL.** See `UNIVERSE/H_1313_hive_state_dependent_coupling.md`.
 - No engine wiring (`a_verified_must_wire` is GREEN-only): a NULL wires nothing into CORE.
   The existing H_1295 CollectivePool (ECA) is left UNTOUCHED — Ψ-disjoint, no regression.
 
@@ -111,6 +115,8 @@ ECA-substrate GREEN; it BOUNDS its scope honestly.
 - **H_6009** 🟢 tension-link — the REAL anima↔anima coupling channel used here (H_6006 🔴
   no-signaling ruled entanglement out as a channel, so the tension-link is the right one).
 - **H_609** 🟢 collective-Φ super-additive — the ECA anchor that does NOT transfer.
+- **H_1313** 🧱 (r4) — the `a_break_the_wall` follow-on: tests the state-dependent coupling channel
+  this card named as UNTESTED, and finds it ALSO does not integrate → the wall is TERMINAL.
 
 ## 8. Artifacts
 
