@@ -43,6 +43,7 @@ def real_capture(serial, seconds, no_analog=False):
         raise SystemExit("[FATAL] --serial 필수 (실 헤드셋 포트). 가짜 폴백 없음.")
     params = BrainFlowInputParams()
     params.serial_port = serial
+    params.timeout = 20                                  # 보드 준비 timeout (prepare hang 방지)
     board_id = BoardIds.CYTON_DAISY_BOARD.value          # Cyton+Daisy = 16ch real board
     fs = BoardShim.get_sampling_rate(board_id)
     eeg_ch = BoardShim.get_eeg_channels(board_id)        # 16 EEG channels (1..16)
@@ -53,8 +54,24 @@ def real_capture(serial, seconds, no_analog=False):
             heart_ch = BoardShim.get_analog_channels(board_id)   # PPG/심박 = analog pins
         except Exception:
             heart_ch = []
+    # canonical fix (web research): 이전 잠긴 세션 전역 해제 → 연속 캡처 prepare hang 방지.
+    try:
+        BoardShim.release_all_sessions()
+    except Exception:
+        pass
     board = BoardShim(board_id, params)
-    board.prepare_session()                              # 실패 시 예외 → 중단 (폴백 없음)
+    # prepare 자동 재시도 (Cyton+Daisy 연속세션 잠김 복구). timeout 후 release→재시도.
+    prepared = False
+    for attempt in range(4):
+        try:
+            board.prepare_session(); prepared = True; break
+        except Exception as e:
+            print(f"[capture] prepare 실패 {attempt+1}/4: {e} → release 후 재시도")
+            try: board.release_session()
+            except Exception: pass
+            time.sleep(4)
+    if not prepared:
+        raise SystemExit("[FATAL] prepare 4회 실패 — 보드 배터리 재장착 필요. 가짜 폴백 없음.")
     # PPG(심박)는 analog pin A5(=D11) 첫 Aux 슬롯 → Cyton analog 모드(/2). --no-analog 면 생략
     # (config_board('/2') 가 약해진 보드에서 hang 가능 → 심박 불요 시 --no-analog 권장)
     if not no_analog:

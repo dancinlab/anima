@@ -43,10 +43,14 @@ fn main() {
     while hi < len(eh) { let tk = eh[hi].replace("#", "").trim(); if is_int(tk) { nums = nums.push(to_int(tk)) }; hi = hi + 1 }
     let n_ch = nums[0]
     let n_samp = nums[1]
+    // 실측 fs (헤더 "... FS <fs>") → EEG 윈도우 = 0.5s. 없으면 125Hz 가정.
+    let mut fs_eeg = 125.0
+    let mut fi = 0
+    while fi < len(eh) { if eh[fi].trim() == "FS" && fi + 1 < len(eh) { fs_eeg = to_float(eh[fi + 1].trim()) } fi = fi + 1 }
     let mut samp = []
     let mut li = 1
     while li < len(el) { let s = el[li].trim(); if s != "" && !s.starts_with("#") { samp = samp.push(to_float(s)) } li = li + 1 }
-    let ws = 62
+    let ws = to_int(0.5 * fs_eeg)            // 0.5s 윈도우 = 음악 envelope 그리드와 정렬
     let EW = n_samp / ws
     let mut ten = []
     let mut tmax = 0.0
