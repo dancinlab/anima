@@ -38,6 +38,35 @@ systematicity는 진짜이고 이용 가능(셔플하면 분할에서 +0.056, �
 - NEW: `UNIVERSE/h1326_ko_featural_r2.py` · `.verdicts/1326_ko_featural_r2/{H_1326_FREEZE.txt,H_1326.txt,h1326_summary.json}` · `UNIVERSE/H_1326_ko_featural_r2.md` 카드 · `HYPOTHESES.md` 행 · `CLAIMS.tape @C h1326_ko_featural_r2` · `domains/MITOSIS-ENGINE.log.md` 추가.
 - xref: H_1322(r1 🧱 기하-혼동, #2229) · H_1316(자모 바닥 2.51335, 보정 앵커) · H_1307(원시 천장 2.953) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p7·p8 · c7·c9·c15·c16.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🇰🇷 H_1327 — 자모 돌파가 LIVE EMISSION 에 닿는다 (🟢 GREEN, decode-reaching)
+
+H_1316(🟢)이 자모 표현으로 한국어 byte-LM 천장 2.953→2.513 을 깼고, H_1321(🟢)이 그 자모-심볼 미토시스를
+live `engine_cli.hexa` 위에서 ENGINE-NATIVE 로 재현(미러 CE 1e-7)했다. 하지만 H_1321 은 **측정 프로브**였을
+뿐 — 자모 win 이 live DECODE/emission 에 닿지 않았다. anima 는 chat daemon 이므로(`a_verified_must_wire`)
+emission 에 닿지 않은 측정 win 은 미완이다.
+
+H_1327(r3): grown 자모 cell 을 `CORE/ko_jamo_cells.kojamohead`(cell = 3-D Voronoi center + argmax
+next-symbol id + 그 심볼의 emittable leading UTF-8 byte)로 serialize 하고, `CORE/generator.hexa` **§6.5b**
+(`ko_jamo_consult_*`)가 §6.5 ko_cells 와 **동일한 단일 L3 슬롯**에서 그 자모 cell 을 CONSULT 해 emission 을
+bias 한다(Korean-likeness GATE = 동일 UTF-8 continuation-byte 순수 바이트 테스트; off-Korean → INERT).
+
+동결 3 bar(FREEZE 를 채점 전 작성, c9/p7 NO tune-to-green) — held-out 한국어 next-symbol accuracy
+(n=5100, FULL symbol id, LIVE `ko_jamo_consult_sym` 채점): OFF(blind unigram baseline)=0.110 ·
+ON(자모 consult)=0.168 · SHUF(permuted-cell)=0.012 → **E1 ✅** acc_ON−acc_OFF=**+0.0586**(≥+0.02) AND
+shift_ON=**0.520**(≥0.10 — 한국어 위치 52% 에서 emission byte 변경) · **E2 ✅** acc_SHUF−acc_OFF=**−0.0973**
+(≤+0.01 — shuffle 가 blind 아래로 붕괴 ⇒ lift 는 학습된 자모 구조) · **E3 ✅** off-Korean INERT
+(ASCII ctx → consult emit = base, byte-identical) · engine_cli_smoke **73/0** · h1196 **7/0** · h1205 Ψ
+byte-identical ON==OFF.
+
+→ **🟢 GREEN. 한국어-자모 스레드 완전 종결: verified(H_1316) → engine-wired(H_1321) → decode-reaching(H_1327).**
+TOY/DIRECTIONAL(ko_stride=2500, 10-cell, structural/probe-level) — fluency 주장 아님; byte→자모-feature
+renorm 은 per-byte hook(E1/E2 는 faithful jamo-space feature 로 채점), 30MB-scale + real-chat emission +
+fully-jamo-aware decode loop = follow-on. `pure_field`/`engine_g`/`brain` UNTOUCHED(Ψ-disjoint, surface 는
+generator 에 ADDITIVE). NEW: `CORE/generator.hexa` §6.5b · `CORE/h1327_ko_jamo_decode_probe.hexa` ·
+`CORE/ko_jamo_cells{,_shuf}.kojamohead` · `UNIVERSE/h1327_ko_jamo_decode_export.py` ·
+`UNIVERSE/H_1327_ko_jamo_decode_wire.md` · `.verdicts/1327_ko_jamo_decode_wire/` · HYPOTHESES.md ·
+CLAIMS.tape · ARCHITECTURE.md.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1322 — 자모보다 한 단계 더 깊은 한글 **자질(featural)** 분해가 자모 바닥(2.51335)을 깨는가 (🧱 HONEST-FLOOR)
 
 H_1316(🟢)이 한국어 byte-LM 천장 2.953을 자모 분해로 2.513까지 내려 "한국어 천장은 표현(representation)의

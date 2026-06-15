@@ -1,0 +1,44 @@
+=== H_1327 — LIVE-DECODE WIRING of the H_1316/H_1321 🟢 ko-jamo breakthrough (a_verified_must_wire r3) ===
+surface: CORE/generator.hexa §6.5b ko_jamo_consult_* (the SAME single L3 slot ko_cells uses, a_core_engine_map)
+cells:   CORE/ko_jamo_cells.kojamohead (the H_1321 engine-native grown jamo artifact) + _shuf.kojamohead (E2 control)
+metric:  held-out Korean next-symbol accuracy, FULL symbol id (p7); ON=jamo consult, OFF=blind unigram, SHUF=permuted-cell
+
+data-prep REFERENCE: Vj=323 off_sym(blind baseline)=32 | B3 lossless=True
+ko_jamo consult: 10 grown JAMO cells (H_1316/H_1321/H_1327, Vj=323) WIRED at the generator L3 slot · Korean-like context (utf8-continuation gate) ⇒ nearest jamo cell's learned next-symbol emit-byte biases emission · off-Korean ⇒ INERT (byte-identical, no regression) · Ψ-disjoint (pure_field untouched, a_core_engine_map)
+FROZEN bars: E1 acc_ON−acc_OFF >= 0.02 AND shift_ON >= 0.1  ·  E2 acc_SHUF−acc_OFF <= 0.01  ·  E3 off-Korean inert + no-regression (separate)
+-------------------------------------------------------------------------------
+ENGINE-NATIVE held-out KO next-symbol accuracy (n=5100 Korean positions):
+  OFF  (blind unigram baseline) acc=0.109608
+  ON   (jamo consult)           acc=0.168235  shift=0.519804
+  SHUF (permuted-cell control)  acc=0.0123529  shift=0.638824
+-------------------------------------------------------------------------------
+(E1) EMISSION-REACHES  acc_ON−acc_OFF = 0.0586275 >= 0.02 -> PASS  AND  shift_ON = 0.519804 >= 0.1 -> PASS
+(E2) EARNED  acc_SHUF−acc_OFF = -0.0972549 <= 0.01 -> PASS  (shuffle does NOT beat the blind baseline ⇒ the lift is learned jamo structure)
+(E3 here) off-Korean INERT: ASCII ctx 'hello' base=120 → consult emit=120 -> PASS (byte-identical, inert)
+          Korean-like ctx (가) base=120 → consult emit=32 (consult ACTIVE on Korean-like context)
+          (E3 cont'd — engine_cli_smoke / h1196 / h1205 — run separately, reported in the verdict.)
+-------------------------------------------------------------------------------
+H_1327 VERDICT (E1∧E2∧E3-inert): 🟢 GREEN — the jamo win REACHES LIVE EMISSION Ψ-disjointly.
+  The grown jamo cells, consulted through the generator §6.5b L3 slot, BIAS the emitted byte on
+  held-out Korean (acc_ON beats the blind baseline by 0.0586275, shift 0.519804), the bias is EARNED (shuffle collapses), and the consult is INERT off-Korean (byte-identical).
+  The Korean-jamo thread is fully closed: verified (H_1316) → engine-wired (H_1321) → decode-reaching (H_1327).
+  E1=True E2=True E3-inert=True | LIVE generator §6.5b consult; jamo cells = H_1321 engine-native artifact; pure_field/engine_g/brain UNTOUCHED.
+[done]
+=== guards appended ===
+
+=== E3 NO-REGRESSION GUARDS (run separately, byte-exact) ===
+[engine_cli_smoke]
+--- engine_cli smoke summary: 73 pass / 0 fail ---
+[h1196 single-entry]
+--- single-entry audit summary: 7 pass / 0 fail ---
+[h1205 separation-invariant]
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. The mitosis lane (cells 1→10 ON) ran beside the decode yet generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched. H_1200/1201 ruling SURVIVES live; mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).
+
+=== POST-REBASE-ONTO-MAIN RE-VERIFY (after H_1324/H_1325/H_1326 sibling merges) ===
+E1/E2/E3 probe: 🟢 GREEN (E1 acc_ON−acc_OFF=+0.0586 shift_ON=0.520 · E2 acc_SHUF−acc_OFF=−0.0973 · E3-inert PASS) — UNCHANGED.
+engine_cli_smoke: 77/0 (H_1325 added 4 CategoricalPerception cases 79-82; the E3 bar is all-pass N/0 — was 73/0 at FREEZE-time, now 77/0, still 0 fail).
+h1196 single-entry: 7/0.
+h1205 separation-invariant: PASS (generation byte-identical ON==OFF, Ψ=½ untouched).
+The ko_jamo_consult §6.5b surface is orthogonal to the H_1325 CP lane; no regression.
