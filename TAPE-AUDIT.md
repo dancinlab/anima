@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # TAPE-AUDIT — anima
 
 The canonical Class-T tape baseline (`.tape` HXC spec cites anima's r29 measurement). Multi-thousand-file convergence ledger / honesty triad / witness state. This repo is the single largest audit-surface in the cognition family.

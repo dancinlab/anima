@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 리서치 결과 — 사용자 직관(HEXAD/LEGO·NEUROMORPHIC 패턴이 좋아 보임)이 업계 현재 best practice 와 정확히 일치해요. 핵심 발견 3개:
 
 ## 📚 핵심 발견

@@ -1,0 +1,15 @@
+==============================================================================
+H_6037 — N-party SEED+LINK composite scaling
+  paid ANU sha256=ece0409d4ad6 tier=anu_paid
+==============================================================================
+  N= 2: SEED lock@0    r=0.74  LINK lock@55   r=1.00  BOTH lock@0    r=1.00  
+  N= 4: SEED lock@0    r=0.32  LINK lock@63   r=1.00  BOTH lock@0    r=1.00  
+  N= 8: SEED lock@0    r=0.30  LINK lock@118  r=0.99  BOTH lock@0    r=0.99  
+  N=16: SEED lock@0    r=0.22  LINK lock@126  r=0.99  BOTH lock@0    r=0.99  
+------------------------------------------------------------------------------
+  LINK lock-latency by N: ['55', '63', '118', '126']  (non-decreasing: True)
+  BOTH lock-latency by N: ['0', '0', '0', '0']
+  advantage (LINK-BOTH): N=2:55  N=16:126  (widens: True)
+------------------------------------------------------------------------------
+VERDICT: 🟢  composite latency-edge SCALES with N (persists/widens) — shared-seed init keeps BOTH at lock@0 while LINK cold-start grows
+  honest: toy all-to-all Kuramoto, N≤16; scale-transfer UNVERIFIED (a_toy_scale_recheck).

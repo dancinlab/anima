@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # VERSIONS — historical release log + per-module bump history
 
 Spec at [`./VERSIONS.md`](./VERSIONS.md) (current per-module registry). This file preserves the chronological release timeline + per-module bump history; the spec file holds only current versions.

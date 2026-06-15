@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # CLM_V2_EXHAUSTIVE_13_STAGES — 13 worktree 고갈 조사 (2026-05-09)
 
 ## ★ 메타

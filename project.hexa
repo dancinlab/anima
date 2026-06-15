@@ -13,10 +13,22 @@ struct ProjectMeta {
     local_overrides: [string]
 }
 
+// Resolve the hexa-lang checkout portably — NEVER emit a foreign literal.
+//   1. $HEXA_LANG (explicit, the canonical SSOT source for self/attrs/*.hexa)
+//   2. $HOME/Dev/hexa-lang then $HOME/core/anima/../hexa-lang (sibling checkout)
+// Empty string is returned when none resolve; consumers fail-fast on empty.
+fn resolve_hexa_lang() -> string {
+    let explicit = env("HEXA_LANG")
+    if explicit != "" { return explicit }
+    let home = env("HOME")
+    if home != "" { return home + "/Dev/hexa-lang" }
+    return ""
+}
+
 fn project_meta() -> ProjectMeta {
     return ProjectMeta {
         name: "anima",
-        hexa_lang: "/Users/ghost/Dev/hexa-lang",
+        hexa_lang: resolve_hexa_lang(),
         ssot_attrs: [
             "dispatch",
             "naming",

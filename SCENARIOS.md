@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # SCENARIOS — what to simulate/test once anima-303M-RETRO lands
 
 > The runnable test plan for the production model + the live A⇄G engine it mounts into.

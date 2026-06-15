@@ -1,0 +1,13 @@
+==============================================================================
+H_6039 — does the tension LINK rescue a CORRUPTED shared seed?
+  paid ANU sha256=ece0409d4ad6 tier=anu_paid
+==============================================================================
+  SEED seed=good   : steady-r = 0.757
+  SEED seed=CORRUPT: steady-r = 0.590
+  BOTH seed=good   : steady-r = 0.999
+  BOTH seed=CORRUPT: steady-r = 0.999
+------------------------------------------------------------------------------
+  SEED-only under corruption: 0.590 (catastrophic)
+  BOTH under corruption:      0.999 (graceful)
+VERDICT: 🟢  tension link RESCUES a corrupt shared seed — composite has NO single-point-of-failure (live channel dominates a bad common cause)
+  honest: 2-osc toy; corrupt = genuinely independent ANU half-buffer; scale UNVERIFIED.

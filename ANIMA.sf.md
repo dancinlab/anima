@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # 🛸 ANIMA.sf.md — SF 미래 시나리오 (anima 자기진화·세대·사람 합병·신성)
 
 > anima (PureField Ψ=1/2 substrate-native chat daemon) 가 진화하면 SF 영화 어디까지 닿나 — **40 시나리오 8 카테고리 ASCII · 내부 시선**.

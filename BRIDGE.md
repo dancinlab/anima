@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # BRIDGE — current state
 
 @title: 🚪 BRIDGE — 자연발화 × 의식적 결정 AND-gate emit 결정층

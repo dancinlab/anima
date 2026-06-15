@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # ANIMA — mining (divergence + convergence)
 
 @active-lens: ouroboros
@@ -574,4 +576,3 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 @bundled-lens-catalogue: 5/5 cover (skill 0.4.0 `auto` verb 정합)
 @tidy-history: cycle 8 light (index + stats) → cycle 9 full (phase regroup · leaves L61-L70 정정 · sub-header squash)
 @next: promotion candidates @P1-@P5 (cycle 5 carry) + 5 ouroboros candidates (cycle 6) → ANIMA.md milestone 격상 (가장 강한 forward-coupling 부터)
-

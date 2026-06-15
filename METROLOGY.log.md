@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # METROLOGY — log
 
 Append-only history sister of `METROLOGY.md`. Each entry starts with `## <ISO> — <header>` (newest on top).

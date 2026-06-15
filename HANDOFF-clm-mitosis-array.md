@@ -1,3 +1,5 @@
+> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+
 # HANDOFF — CLM MITOSIS-ARRAY 돌파엔진 (DISSOLVE + BRIDGE 양 arm) 2026-05-30
 
 ## 1. 목표 / 범위
