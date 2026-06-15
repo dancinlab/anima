@@ -36,7 +36,6 @@ format + `kosmos_parser_lib.hexa` (no ad-hoc format, a_kosmos), matching the pre
 - SCOPE HONEST (a_scale_honest_scope, c9): CURATED **sample-scale** anchor set, NOT webscale — full
   webscale = `corpus_5lang_7b_webscale.kosmos` R2 manifest; full SNS = `persona_sns_corpus.kosmos`
   manifest. SNS is thin because anima's held authored SNS-register material is the honest $0 ceiling.
->>>>>>> origin/main
 
 ## 2026-06-16 — doc(README): top YouTube thumbnail hero link + remove duplicate `hx install`
 
