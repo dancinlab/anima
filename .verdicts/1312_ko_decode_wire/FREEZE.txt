@@ -1,0 +1,38 @@
+H_1312 — KOREAN DECODE-WIRE (wire H_1306 grown Korean cells onto the live decode via
+the generator L3 slot). FROZEN BARS, pre-registered BEFORE the wiring verdict run.
+frozen-first (c9/p7), deterministic byte-level emit checks (NO perplexity/LLM-judge).
+
+CONTEXT: H_1306 (🟢 GREEN) grew 9 Korean cells (engine-native VAdaptField + mitosis,
+gradient-free p8). H_1312 serializes them to CORE/ko_cells.kohead (cell = 3-D Voronoi
+center + learned argmax next-byte) and CONSULTS them at the generator L3 slot
+(generator.hexa::ko_cells_next_byte / ko_consult_emit). a_verified_must_wire +
+a_core_engine_map (SINGLE entry — ko_cells.kohead enters CORE ONLY via generator).
+
+WIRING is GREEN iff (P) AND (N) AND (Y) AND (Z):
+
+(P PRESENCE — the wiring ROUTES Korean) : on >=1 held-out Korean-like context (last byte
+   a UTF-8 continuation byte, i.e. mid-Hangul-multibyte), ko_cells_next_byte returns a
+   byte >= 0 (a cell FIRES) AND ko_consult_emit(base, ...) differs from `base` for at
+   least one (base, ctx) pair where the Korean cell disagrees with the un-wired baseline
+   (the consult actually changes emission toward the LEARNED Korean cell byte). The fired
+   byte must equal the nearest grown Korean cell's learned top-byte (routes to the cells).
+
+(N NO-REGRESSION — inert off-Korean) : on EVERY non-Korean / ASCII-English context (all
+   bytes < 0x80), ko_cells_next_byte returns -1 AND ko_consult_emit(base, ...) == base
+   for ALL tested base bytes (the consult is byte-identical off-distribution). Tested over
+   a battery of ASCII contexts spanning the printable range.
+
+(Y REGRESSION GUARD) : engine_cli_smoke 73/0 (engine untouched by the consult — the
+   Korean-cell section is additive in generator.hexa, engine_cli.hexa unchanged) ·
+   h1196 single-entry 7/0 · h1205 separation-invariant PASS (generation byte-identical
+   ON==OFF, Ψ=½ untouched).
+
+(Z SINGLE-ENTRY / Ψ-DISJOINT AUDIT) : ko_cells.kohead is imported/read ONLY in
+   generator.hexa (the L3 slot) — no 2nd path; the consult never touches pure_field /
+   engine_g / brain (Ψ=½ untouched by construction — it reads bytes + a static artifact).
+
+HONEST (c9, NO tune-to-green): if the wiring cannot route Korean without changing English
+/ Ψ, that is an honest BLOCKER → report it, do NOT force green. The bar is GREEN-only
+wiring (a_blue_closed spirit). SCOPE: toy cells (H_1306/1307 scale, 600KB KO window,
+9 cells, 3-D feature); DIRECTIONAL→engine-exact: the consult is engine-side byte-exact,
+but fluent Korean generation + full-corpus scale remain UNVERIFIED follow-ons.
