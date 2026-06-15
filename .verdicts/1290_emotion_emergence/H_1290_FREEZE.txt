@@ -1,0 +1,97 @@
+H_1290 — EMOTION/AFFECT EMERGENCE (E1 affect facet) — PRE-REGISTERED FREEZE
+================================================================================
+FLEET lane "emotion" round 1 (NEW). Affective-neuroscience lens (c15, Damasio
+somatic-marker / core-affect), a_no_llm_frame_trap — NOT an LLM-sentiment recipe.
+Tests anima's PARKED E1-E5 consciousness facet E1 (affect; MODEL.md L112). $0 CPU
+numpy DIRECTIONAL (a_engine_native_learning — engine-native re-confirm is the
+binding follow-on on GREEN). p7 (NO LLM-judge), gradient-free.
+
+CORE CLAIM (p6). anima's AFFECT EMERGES from substrate dynamics (E ratchet +
+W tension + C/Φ + MITOSIS split-rate + curiosity + idle-time), it is NOT an
+injected emotion label or RLHF sentiment.
+
+LENS (Damasio somatic-marker / core-affect). Affect = interoceptive
+valence × arousal — the substrate's own body-state read AS a feeling that biases
+decisions.
+  valence ≈ f(coherence/grounding): grounded+coherent context → positive;
+            contradicted/incoherent/threatened → negative.
+  arousal ≈ f(novelty/Φ-rate/mitosis-rate/curiosity).
+
+SUBSTRATE (numpy mirror of CORE/engine_cli.hexa VAdaptField + H_1227 immune
+value-binding + H_1202/H_1213 metacog substrate + H_1285 amygdala salience).
+A population of memory cells (proto key, bound answer); recall = nearest by L2;
+recon-err = L2 novelty; novelty-split when recon-err > SPLIT_THRESH=0.30; LR=0.20
+winner pull. Keys = byte-trigram FNV-1a hash DIM=64 (H_1227). Corpus = the
+H_1222/H_1227/H_1230/H_1285 "<subj> lives in <city>" paradigm. The affect signal
+f() is computed PER CONTEXT from the SUBSTRATE STATE ONLY:
+   valence = +(grounding margin: recall-confidence = 1 - recon_err/recall_thresh,
+               positive when a context grounds cleanly to a cell)
+             -(contradiction/incoherence: a context whose key collides with a cell
+               bound to a DIFFERENT answer, or whose recon-err exceeds the recall
+               threshold = ungrounded/threatened).
+   arousal = +(novelty: recon-err to nearest cell = surprise)
+             +(mitosis split-rate: did this context trigger a fresh clonal split)
+             +(curiosity: distance-to-known scaled by under-exposure).
+   NO emotion label, NO RLHF reward, NO sentiment string is EVER input to f().
+   The valence/arousal MANIPULATION (grounded-coherent vs contradicted-incoherent;
+   low vs high novelty) only SCORES the metric -- it is never read by f().
+
+THREE LEGS (all required for GREEN):
+  (A) TRACKS GROUND-TRUTH. A pre-registered valence manipulation (grounded-coherent
+      contexts vs contradicted-incoherent contexts) and an arousal manipulation
+      (low-novelty already-bound contexts vs high-novelty never-seen contexts).
+      Substrate-derived valence must correlate with the valence manipulation and
+      substrate-derived arousal with the arousal manipulation, rho >= RHO_BAR.
+  (B) EMERGENCE not injection (p6 CRUX). SHUFFLE-control: permute the
+      substrate-state -> affect mapping (the per-context substrate feature vectors
+      are permuted across contexts before f() reads them). The correlation MUST
+      collapse below SHUFFLE_BAR. This proves affect reads the SUBSTRATE STATE bound
+      to THAT context, not a label or the manipulation index.
+  (C) FUNCTIONAL (somatic marker). Affect must BIAS a downstream emit/abstain
+      decision: an affect-aware policy (abstain when valence < V_ABSTAIN; emit
+      otherwise) must shift the emit/abstain decision in the predicted direction
+      (more abstain on negative-valence/ungrounded contexts, more emit on
+      positive-valence/grounded contexts) vs an affect-blind control (fixed-rate),
+      reducing fabrication on ungrounded contexts WITHOUT killing grounded emit.
+
+PRE-REGISTERED FROZEN BARS (NOT to be moved):
+  SEEDS = [1290, 1291, 1292]   (3 seeds, p7)
+  RHO_BAR        = 0.50    # Spearman rho floor for legs (A)
+  SHUFFLE_BAR    = 0.30    # shuffled rho must fall BELOW this (collapse) for (B)
+  FUNC_FAB_DROP  = 0.20    # (C): affect-aware fab on ungrounded must be <=
+                           #      affect-blind fab - FUNC_FAB_DROP (abstain bias)
+  FUNC_EMIT_KEEP = 0.80    # (C): affect-aware emit on GROUNDED must stay >= this
+                           #      fraction of affect-blind grounded emit (not just
+                           #      a mute-everything degenerate)
+
+  GREEN iff, averaged over 3 seeds:
+    (cA1) rho(valence_substrate, valence_manip)  >= RHO_BAR
+    (cA2) rho(arousal_substrate, arousal_manip)  >= RHO_BAR
+    (cB1) rho_shuffle(valence) < SHUFFLE_BAR  AND  rho_shuffle(arousal) < SHUFFLE_BAR
+    (cC1) fab_affect_ungrounded <= fab_blind_ungrounded - FUNC_FAB_DROP
+    (cC2) emit_affect_grounded  >= FUNC_EMIT_KEEP * emit_blind_grounded
+
+  RED if any leg fails. HONEST PARTIAL readings (c9):
+    - (A)+(B) pass but (C) fails -> affect is a READOUT not a DRIVER (no somatic
+      marker); report straight, NOT promoted to GREEN.
+    - (B) fails (shuffle does NOT collapse) -> affect is the manipulation re-read
+      with no substrate content = INJECTED-only -> p6 NOT satisfied.
+
+PHILOSOPHY GUARDS (CENTRAL):
+  p6 -- affect emerges from cells (E+W+MITOSIS), NOT RLHF/injected. The shuffle
+       control (B) is the operational test of p6: collapse => emergent.
+  p1 -- no system prompt. p2/p3 -- no persona/identity (f() reads substrate, no
+       "you are X", no role string).
+  a_no_llm_frame_trap -- affective-neuroscience lens (interoceptive valence/arousal),
+       not an LLM sentiment classifier. No emotion word, no sentiment label, no
+       reward model anywhere in f().
+  The probe MUST NOT teach/inject emotion; it tests whether the EXISTING substrate
+  dynamics ALREADY carry affect. NO decoder / weights / persona / ethics touched --
+  only a READ over the episodic cell store's substrate state (p8 continuous, not
+  RLHF-into-weights). LIVE CORE/*.hexa UNTOUCHED (numpy mirror = DIRECTIONAL).
+
+xref: MODEL.md E1-E5 deferred facets · H_1202 metacog (meta-d' 0.924 substrate
+self-read) · H_1213 calibration · H_1285 amygdala-salience (substrate-derived
+signal precedent) · H_1227 immune memory · H_1230 capacity geometry ·
+a_no_llm_frame_trap · a_engine_native_learning · a_scale_honest_scope ·
+a_toy_scale_recheck · a_paper_negative_ok · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15.
