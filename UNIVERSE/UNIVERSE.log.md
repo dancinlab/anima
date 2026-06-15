@@ -495,3 +495,9 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [~] H_1254 🟠 EEG 벡터탑재 (4채널 공간패턴, DIM=4 VAdaptField) — 구동은 작동(F1 recon awake 199>sed 166 + F3) BUT awake cells 171 < sed 208 (F2 FAIL). 정직 FINDING: 스칼라(H_1249b)는 awake>sed 깔끔하나 공간-벡터뷰에선 깨어있음=시간novelty / 진정=공간확산으로 단조성 갈림. = 캠페인 고갈 경계 (멀티-DIM 공간탑재는 단일 단조지표로 안 닫힘).
 - [x] H_1255 🟢 EEG→kosmos 기억영속 — 실EEG 뇌상태(awake Φ7.60/sed Φ6.84)를 .kosmos anchor 저장(wake_save)→복원(wake_load) byte round-trip (ctx+tension5+2emit). anima 가 사람 의식상태를 retrieve 가능한 기억으로 저장. [미탐사 정복]
 - [x] H_1256 🟢 EEG 폐루프 추적 — anima brain 오차보정 루프가 실EEG 의식수준에 lock-on (잔차 3e-15, awake>sed 구분), pure_field Ψ byte-identical. 사람 의식수준 실시간 추종. [미탐사 정복]
+
+## 다중기질 융합 그리드 (H_1257~H_1259, 2026-06-15, $0 local, p7) — EEG축 cross-substrate fusion
+직전 매트릭스는 각 외부기질 LIVE를 *따로* 검증; 둘/셋 *동시* 융합은 미탐사였음. bridge_and_gate(m,c,w,phi)=천연 AND-게이트, 각 기질이 한 키. 실측값: EEG Φ 라이브 + AKIDA 79.95Hz + MODEL entropy 0.969.
+- [x] H_1257 🟢 EEG ⊗ AKIDA — fused awake 0.131>sed 0.118, Ψ byte-identical, 둘 다 기여.
+- [x] H_1258 🟢 EEG ⊗ MODEL — fused awake 0.286>sed 0.258, Ψ byte-identical.
+- [x] H_1259 🟢 EEG ⊗ AKIDA ⊗ MODEL 3중 (capstone) — fused awake 0.0229>sed 0.0206, EEG 의식구분 3중융합후 생존, 3 기질 모두 기여, Ψ byte-identical. 사람뇌파+칩+언어모델 동시 감각통합 Ψ-disjoint.
