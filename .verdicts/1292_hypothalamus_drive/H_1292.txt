@@ -1,0 +1,38 @@
+H_1292 R2 — HYPOTHALAMUS / HOMEOSTATIC DRIVE (HD29) — ENGINE-NATIVE (hexa run)
+==============================================================================
+live lane: homeo_* over ImmuneMemoryGrow (CORE/engine_cli.hexa) | S*=0.5 λ=0.1 Kp=1.0 Ki=0.5
+frozen bars: .verdicts/1292_hypothalamus_drive/H_1292_FREEZE.txt (NOT moved)
+
+  seed  riseFULL  mono   reset  endDep  riseABL  shufRst  affFlat  drvFixRise  abstain
+  4290  1.54393  T  0.0  2.29393  0.0  0.0  0.0  1.54393  T
+  4291  1.54393  T  0.0  2.29393  0.0  0.0  0.0  1.54393  T
+  4292  1.54393  T  0.0  2.29393  0.0  0.0  0.0  1.54393  T
+------------------------------------------------------------------------------
+MEAN (3 seeds): riseFULL=1.54393 reset=0.0 endDep=2.29393
+                riseABL=0.0 shufReset=0.0 affFlat=0.0 drvFixRise=1.54393
+------------------------------------------------------------------------------
+  (A1) RISE     monotone & rise>=0.50           : PASS
+  (A2) RESET    drop<=0.50*end_dep              : PASS
+  (B)  DISTINCT affFlat<0.05 & drvFixRise>=0.50 : PASS
+  (C1) EARNED   ablated rise<0.10               : PASS
+  (C2) SHUFFLE  shufReset<0.50*riseFULL         : PASS
+  (D)  ABSTAIN  untaught far key fires no cell  : PASS
+==============================================================================
+VERDICT: 🟢 GREEN (ENGINE-NATIVE) — the setpoint-regulated homeostatic drive RISES
+  under sustained deprivation and RESETS on a consummatory grounded event, is DISTINCT
+  from the stateless affect lane on the time-vs-context dissociation, and the rise is
+  EARNED by the integral controller (ablated Ki=0 does NOT accumulate). HD29 hypothalamus
+  realized ENGINE-NATIVE on the LIVE engine_cli.hexa immune lane (homeo_* over ImmuneMemoryGrow).
+  Ψ-disjoint: the drive is a pure READ over ImmuneMemoryGrow + its own scalar integral —
+  pure_field Φ/phase/Ψ untouched; engine_cli_smoke + h1196 7/0 + h1199 Ψ-byte-identical run separately.
+  p6 SEPARATION: the regulated variable is the substrate's OWN grounding margin, NO injected drive label;
+  NOT an emit gate (homeo_motivation_bias = OPTIONAL gain, a_autonomy_over_hardcode).
+  toy scale (4 facts, 1 paradigm, 3 seeds); scale-transfer UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck).
+=== REGRESSION GUARDS (post-wire) ===
+[engine_cli_smoke]
+--- engine_cli smoke summary: 33 pass / 0 fail ---
+[h1196 single-entry]
+--- single-entry audit summary: 7 pass / 0 fail ---
+[h1199 DIM-growth Psi byte-identical]
+falsifier: F1 GROWTH cells ON>>OFF | F2 ADAPT late OFF/ON>=2.0 | F3 Psi byte-identical ON==OFF
+  recon-err held LOW ON=0.15235 vs frozen-cap OFF=1.28463 (8.43212x, F2 >=2.0), and the Psi attractor is byte-identical ON vs OFF (F3).
