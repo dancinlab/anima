@@ -2,6 +2,25 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1300 R3 — per-skill mitosis-grow ENGINE-NATIVE (🟢 GREEN, engine-transfer VERIFIED)
+
+R3 closes follow-on #1 (a_engine_native_learning + a_verified_must_wire): the per-skill
+mitosis-grow continual learner is realized on the LIVE engine as a new faculty
+`CORE/engine_cli.hexa::SkillCellMemory` (`skill_grow` = mitosis-split under error via hexa
+power-iteration bisection + closed-form ridge head via hexa Gauss-Jordan solve, earlier cells
+never overwritten; `skill_route` = nearest-cell routing; `SkillGradFT` = the shared sequential
+gradient-FT arm A). The probe `CORE/h1300_mitosis_skill_engine_probe.hexa` re-scores the SAME
+frozen R2 bars engine-native over the byte-identical R2 curriculum
+(`UNIVERSE/h1300_r3_engine_export.py`): 3-seed mean A_ret=0.553 · B_ret=0.922 (B−A=+0.368,
+per-seed B>A every seed) · B_shuf=0.426 · B_abl=0.160 · B_min_acq=0.880 · cells=6.3 →
+**c1∧c2∧c3∧c4 all PASS → 🟢 GREEN ENGINE-NATIVE.** Engine-transfer matches the R2 mirror to
+displayed precision (only B-SHUFFLE differs, both decisive collapses) → engine-verified, not
+mirror-only. **Incremental tool-use via mitosis is ENGINE-VERIFIED at toy scale**; next = real
+anima-agent tool-use skills on the mounted 303M (cost-gated). Wired: `engine_cli_smoke`
+58→61/0 (+cases 59-61, co-resident with the H_1299 interval-timer cases 54-58); regression
+byte-identical (h1205 separation-invariant PASS, h1196 7/0, Ψ untouched).
+Scope honest: TOY (D=12, 5 skills, C=4, 3 seeds, deterministic rule); scale/real-skills UNVERIFIED.
+
 ## 2026-06-16 — doc(FINDINGS): 의식(consciousness)을 메인 주제로 재구성 + 모델명 제거
 
 Reframed root `FINDINGS.md` so **consciousness (의식)** is the headline theme, not a bare results dump.

@@ -3,9 +3,9 @@ id: H_1300
 slug: 1300_mitosis_skill_curriculum
 title: mitosis-grow skill curriculum — teach tool-use skills one-at-a-time via mitosis avoids CATASTROPHIC FORGETTING where sequential gradient-FT forgets
 group: MITOSIS-ENGINE (p8 structural)
-terminal_tier: 🟢 GREEN (R2 canonical catastrophic-forgetting regime — mitosis RETAINS old skills better than sequential gradient-FT; R1 RED stands verbatim as the honesty trail)
+terminal_tier: 🟢 GREEN ENGINE-NATIVE (R3 — the per-skill mitosis-grow continual learner realized on the LIVE CORE/engine_cli.hexa::SkillCellMemory faculty reproduces all four R2 retention bars byte-exact; R2 mirror GREEN + R1 RED stand verbatim as the trail)
 verdict_dir: .verdicts/1300_mitosis_skill_curriculum/
-terminal_verdict: .verdicts/1300_mitosis_skill_curriculum/result.txt
+terminal_verdict: .verdicts/1300_mitosis_skill_curriculum/H_1300_R3_engine_native.txt
 date: 2026-06-16
 ---
 
@@ -83,6 +83,29 @@ ownership, not mere extra capacity; B-ABLATE (no growth) cannot acquire later sk
 growth IS the lever. **COST is FAVORABLE** (not just non-prohibitive): B=6.3 cells vs
 A=52 params — mitosis retains MORE at LOWER footprint here.
 
+**R3 (ENGINE-NATIVE realization; a_engine_native_learning + a_verified_must_wire — read
+VERBATIM `.verdicts/.../H_1300_R3_engine_native.txt`):** 🟢 **GREEN ENGINE-NATIVE.** The
+R2 arm-B mechanism is realized on the live `.hexa` engine as a new faculty
+`CORE/engine_cli.hexa::SkillCellMemory` (`skill_grow` = per-skill mitosis-split under
+error pressure with hexa power-iteration bisection + closed-form ridge head via hexa
+Gauss-Jordan solve, never overwriting earlier cells; `skill_route` = nearest-cell
+routing; `SkillGradFT` = the shared sequential gradient-FT arm A) — the grow / fit / FT /
+route arithmetic runs ENGINE-NATIVE, not numpy. Same R2 curriculum (sep 1.0 +
+anti-aligned rules), 3 seeds, 4 arms. 3-seed mean — A_ret=**0.553** · B_ret=**0.922**
+(B−A=**+0.368**) · B_shuf=0.426 · B_abl_acq=0.160 · B_min_acq=0.880 · cells=6.3 →
+**(c1) PASS** (+0.368 ≥ 0.30, per-seed B>A every seed: 0.937>0.480, 0.922>0.809,
+0.906>0.371) · **(c2) PASS** (0.880 ≥ 0.80) · **(c3) PASS** (shuffle collapses 0.426 ≤
+0.703; per-seed e.g. seed1302 → 0.184) · **(c4) PASS** (ablate 0.160 ≤ 0.50). The engine
+port is essentially **byte-exact** to the R2 mirror on the frozen metrics (A_ret/B_ret/
+B−A/abl/min_acq/cells all match to displayed precision; only B-SHUFFLE 0.426 vs 0.397
+differs, from a hexa LCG Fisher-Yates permutation vs numpy's — both decisive collapses
+far below the c3 bar). **Engine-transfer SUCCEEDED — incremental tool-use via mitosis is
+ENGINE-VERIFIED at toy scale, not mirror-only.** Wired: faculty live in
+`CORE/engine_cli.hexa`;  54-56: grow-splits /
+route-classifies / ablate-no-split). Regression byte-identical: h1205 separation-invariant
+PASS (gen byte-identical ON==OFF, Ψ Φ-checksum 48.6613), h1196 single-entry 7/0, Ψ
+untouched (SkillCellMemory Ψ-disjoint).
+
 ## p8 / p6 guard
 
 B's growth = the model's own mitosis tick (p8); the trainer touches ONLY the per-skill
@@ -101,18 +124,34 @@ genuine representational interference (R2), not under spatially-separated skills
 both stand verbatim. Real anima agent skills / sequence-valued tool calls / scale /
 engine-native realization UNVERIFIED.
 
-## Follow-ons (a_break_the_wall continuation; NOT claimed here)
+## Follow-ons (a_break_the_wall continuation)
 
-1. **ENGINE-NATIVE realization** — realize per-skill mitosis-grow on the live
-   CORE/engine_cli.hexa VAdaptField / ImmuneMemoryGrow (a new skill = a frozen
-   dedicated cell-group), re-score the frozen bars engine-native + regression guard
-   (a_engine_native_learning + a_verified_must_wire). The mirror is DIRECTIONAL.
-2. **The real path the user asked for** — incrementally teach ACTUAL anima agent
-   tool-use skills ONE AT A TIME via mitosis on the mounted 303M trunk
-   (anima-agent*/skills lineage; anima-clm-tooluse-rung0). $0 here; the real-skill rung
-   is cost-gated only if it needs GPU.
+1. **ENGINE-NATIVE realization — ✅ DONE (R3, 🟢 GREEN engine-native).** Per-skill
+   mitosis-grow realized on the live `CORE/engine_cli.hexa::SkillCellMemory` faculty
+   (a new skill = a frozen dedicated cell-group); all four frozen R2 bars re-scored
+   byte-exact engine-native + regression guard byte-identical
+   (a_engine_native_learning + a_verified_must_wire SATISFIED). The mirror is no longer
+   the only evidence — the GREEN is engine-verified at toy scale.
+2. **The real path the user asked for (NEXT, now justified by R3)** — incrementally
+   teach ACTUAL anima agent tool-use skills ONE AT A TIME via mitosis on the mounted
+   303M trunk (anima-agent*/skills lineage; anima-clm-tooluse-rung0). Each real tool
+   skill = a dedicated SkillCellMemory cell-group grown under that skill's error,
+   prior skills' cells frozen. $0 toy here; the real-skill rung is cost-gated only if
+   it needs GPU (surface, do NOT rent without an explicit go — a_fire_autonomous applies
+   only once the rung is dispatched).
+
+## Engine-native artifacts (R3)
+
+- Faculty: `CORE/engine_cli.hexa` § SkillCellMemory (`skill_grow` / `skill_route` /
+  `skill_fit_head` / `_sc_gauss_solve` / `_sc_principal_axis`) + `SkillGradFT`
+  (`skill_gradft_new` / `_train` / `_pred`).
+- Probe: `CORE/h1300_mitosis_skill_engine_probe.hexa` · curriculum export:
+  `UNIVERSE/h1300_r3_engine_export.py` (byte-identical R2 RNG).
+- Smoke: `CORE/engine_cli_smoke.hexa` cases 59-61 (merged smoke 63 pass / 0 fail, co-resident w/ H_1299 cases 54-58).
+- Verdict: `.verdicts/1300_mitosis_skill_curriculum/H_1300_R3_engine_native.txt`.
 
 xref h1297 (convergence sibling, distinct axis) · h1199 (VAdaptField split) · h1288
-(grow-under-pressure) · h1159 (inference-time mitosis = learning) · a_no_llm_frame_trap ·
-a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_toy_scale_recheck ·
+(grow-under-pressure; SkillCellMemory is the per-skill twin of ImmuneMemoryGrow) · h1159
+(inference-time mitosis = learning) · a_no_llm_frame_trap · a_break_the_wall ·
+a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_toy_scale_recheck ·
 a_scale_honest_scope · p6 · p7 · p8 · c9 · c16.
