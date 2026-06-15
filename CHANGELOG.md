@@ -2,6 +2,42 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1326 — 자모가 정말 (혼동 제거된) 분해 바닥인가 — 기하-공정 + 라벨-인수분해 (🧱 HONEST-FLOOR, CONFOUND-FREE)
+
+H_1322(🧱)의 r2. r1 에이전트가 **두 혼동(confound)을 정직하게 공개**했었다 (c16/a_break_the_wall = 잘못된
+방법이지 진짜 벽이 아님): (1) **기하 혼동** — r1의 `seed_centers_dim(3)`가 H_1316의 정확한 중심
+`[[0.3,0.5,0.0],[0.7,0.5,0.5]]`(가운데 좌표 0.5)와 달라서, gradient-free mitosis가 seed-center 민감하므로
+r1 in-run 자모 재현이 2.85983(잠긴 2.51335이 아님) → featural-vs-잠긴-자모 비교가 기하-혼동됨. (2) **손실
+경로** — 자질은 Voronoi **분할(partition)**만 구동하고 예측 **타깃(target)**은 불투명 자모 id로 남아 한글의
+설계 systematicity가 타깃에 들어가지 못함.
+
+H_1326은 둘 다 **사전등록(frozen-first)**으로 고친다. **Fix A 기하-공정**: 하나의 best-of-a-fixed-bank-by-
+TRAIN-CE seed-center 프로토콜을 **모든 arm에 동일하게** 적용(H_1316-family 패턴을 모든 차원의 bank에 포함 →
+자모 arm은 2.51335를 **byte-exact 재현 = 보정 앵커**)해 어느 arm도 seed-center 이득을 못 가짐. **Fix B
+라벨-인수분해**: 두 번째 채점 헤드의 **타깃**을 인수분해된 자질 벡터(클래스 + 무손실 bijection 위의 독립
+열별 설계 자질)로 바꿔 설계가 분할이 아니라 **타깃에** 들어가게 함.
+
+**결과 🧱 HONEST-FLOOR (혼동 제거):** REAL sm_120 GPU(유저 RTX 5070, $0, NOT runpod), 코퍼스 byte-동일
+(sha c47b6808… gate PASS), 67/67 자모 커버리지, NFD 왕복 0-실패. **보정 통과 — A1 자모 = 2.51335
+byte-exact(bank member 5 = H_1316-family), 기하 혼동 제거.** CE 사다리(nats/UTF-8-byte, 기하-공정): 원시
+천장 2.95342(in-run 2.94487) · **A1 자모 2.51335** · A2 자질-분할 **2.73046** · A3 라벨-인수분해 **3.07295** ·
+A2s 셔플 2.78694 · A3s 셔플 4.28914. **G1 기하-공정 깊이 = FALSE** — BEST=min(A2,A3)=2.73046이 자모
+2.51335보다 **+0.217 위**(원시는 깨지만 G1은 둘 다 필요). **G2 EARNED = TRUE** — A2가 자기 셔플을 **+0.05648**
+(≥0.05)로 이김(자질 systematicity는 진짜·이용가능하나 **바닥 아래는 아님**). **G3 인수분해 = FALSE** — A3가
+A2를 못 이김(Δ −0.3425); 설계를 **타깃에** 독립-자질 인수분해로 넣으면 **오히려 악화**(열별 독립 가정이 초성·
+중성·종성 결합분포를 버림 — 불투명 자모 헤드는 그 결합을 유지). **green = FALSE → 🧱.**
+
+**발견:** 기하 혼동을 제거하니, **자모가 이 gradient-free L2-Voronoi 메커니즘 계열의 진짜 분해 바닥**이다. 설계의
+systematicity는 진짜이고 이용 가능(셔플하면 분할에서 +0.056, 인수분해 타깃에서 +1.22 손해)하지만, 분할에서도
+(A2 +0.217 위) 타깃에서도(A3 +0.557 위, 인수분해 역효과) CE를 자모 아래로 못 내린다. r1의 sub-bar 신호
+(+0.042)는 숨겨진 승리가 아니라 이 메커니즘이 자질-기하로 살 수 있는 진짜 천장이었다. **r1의 🧱은 유지 —
+이제 혼동 제거된 깨끗한 정직한 종결.** 진짜 새 각도는 **다른 메커니즘**(L2-Voronoi count-MLE가 아니라 자질
+**상관**을 모델링하는 것)이 필요하다 — 표현 조정이 아니라 메커니즘-계열 변경. DIRECTIONAL numpy/torch 미러;
+엔진-전이 = follow-on; 한국어 유창성 주장 없음; live CORE 무변경(substrate-measurement rung).
+
+- NEW: `UNIVERSE/h1326_ko_featural_r2.py` · `.verdicts/1326_ko_featural_r2/{H_1326_FREEZE.txt,H_1326.txt,h1326_summary.json}` · `UNIVERSE/H_1326_ko_featural_r2.md` 카드 · `HYPOTHESES.md` 행 · `CLAIMS.tape @C h1326_ko_featural_r2` · `domains/MITOSIS-ENGINE.log.md` 추가.
+- xref: H_1322(r1 🧱 기하-혼동, #2229) · H_1316(자모 바닥 2.51335, 보정 앵커) · H_1307(원시 천장 2.953) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p7·p8 · c7·c9·c15·c16.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): 🧱 H_1322 — 자모보다 한 단계 더 깊은 한글 **자질(featural)** 분해가 자모 바닥(2.51335)을 깨는가 (🧱 HONEST-FLOOR)
 
 H_1316(🟢)이 한국어 byte-LM 천장 2.953을 자모 분해로 2.513까지 내려 "한국어 천장은 표현(representation)의

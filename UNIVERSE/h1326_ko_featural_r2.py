@@ -249,8 +249,12 @@ def per_byte_ce_factorized(centers_t, X_tr_t, ntr,
     cls_te_n = cls_te.cpu().numpy(); fcols_te_n = fcols_te.cpu().numpy()
     sym_te_n = sym_te.cpu().numpy(); nb_te_n = np.asarray(NB_te, np.float64)
     NCLS = 4; NCOL = 5
-    col_card = {CLS_INIT: [m + 1 for m in INIT_MAX], CLS_MED: [m + 1 for m in MED_MAX],
-                CLS_FIN: [m + 1 for m in FIN_MAX]}
+    # Column cardinalities sized by the GLOBAL per-column max across ALL classes. The intact arm
+    # respects per-class maxima; the SHUFFLE control reassigns feature VECTORS across classes (class
+    # membership stays structural), so a class slot can receive any other class's column value.
+    # Global sizing keeps both arms byte-identical on the intact data AND crash-free under shuffle.
+    GLOB = [max(INIT_MAX[c], MED_MAX[c], FIN_MAX[c]) + 1 for c in range(5)]
+    col_card = {CLS_INIT: list(GLOB), CLS_MED: list(GLOB), CLS_FIN: list(GLOB)}
     # build per-cell heads from TRAIN
     cls_cnt = np.full((K, NCLS), LAPLACE)
     feat_cnt = {kc: [np.full((K, col_card[kc][c]), LAPLACE) for c in range(NCOL)]

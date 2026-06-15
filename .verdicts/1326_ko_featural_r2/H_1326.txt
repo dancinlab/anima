@@ -1,0 +1,38 @@
+=== H_1326 — ko-featural r2 (sm_120) ===
+device=NVIDIA GeForce RTX 5070 torch=2.11.0+cu130
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  identical-to-H_1307-RUN-A=True
+[nocheat] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[featmap] design-feature coverage: 67/67 jamo mapped; missing=[]
+[G0 raw-byte] ce=2.94487 cells=23 member=4  (H_1316 reproduced 2.95342)
+[nocheat] byte-accounting: Σ n_bytes=29999999 corpus_bytes=29999999 close=True
+[A1 jamo opaque-id] ce=2.51335 cells=11 bank_member=5 train_proxy=2.99437
+[CALIB] A1 jamo 2.51335 vs H_1316 2.51335  match(±0.0005)=True
+[A2 featural+opaque] ce=2.73046 cells=17 bank_member=0 train_proxy=3.23985
+[A3 featural+factorized] ce=3.07295 cells=17 bank_member=0
+[A2s shuffle seed4326] ce=2.85083 cells=14 bank_member=5 train_proxy=3.39316
+[A3s shuffle seed4326] ce=4.36032 cells=14 bank_member=5
+[seed 4326] {"a2s": 2.85083, "a3s": 4.36032}
+[A2s shuffle seed4327] ce=2.78304 cells=30 bank_member=0 train_proxy=3.30804
+[A3s shuffle seed4327] ce=4.24147 cells=30 bank_member=0
+[seed 4327] {"a2s": 2.78304, "a3s": 4.24147}
+[A2s shuffle seed4328] ce=2.72694 cells=30 bank_member=0 train_proxy=3.23899
+[A3s shuffle seed4328] ce=4.26563 cells=30 bank_member=0
+[seed 4328] {"a2s": 2.72694, "a3s": 4.26563}
+-------------------------------------------------------------------------------
+CE LADDER (nats/UTF-8-byte, geometry-FAIR; mean 3 seeds for shuffle):
+  raw-byte ceiling             = 2.95342  (in-run G0 2.94487)
+  A1 jamo (Fix-A protocol)     = 2.51335  (calib vs H_1316 2.51335 = True)
+  A2 featural-partition        = 2.73046  (member 0, cells 17)
+  A3 label-factorization       = 3.07295  (member 0, cells 17)
+  A2s shuffle (featural)       = 2.78694  Δ(shuf−A2)=0.05648
+  A3s shuffle (factorized)     = 4.28914  Δ(shuf−A3)=1.21619
+  BEST = A2 = 2.73046   shuffle-of-best = 2.78694
+G1 GEOMETRY-FAIR DEPTH (BEST < A1−0.03 AND < raw): False  (BEST 2.73046 vs A1 2.51335, Δ=-0.21711)
+G2 EARNED (BEST < shuffle-of-best by >=0.05): True  (Δ=0.05648)
+G3 FACTORIZATION-ATTRIBUTION (A3 < A2): False  (A3 3.07295 vs A2 2.73046, Δ=-0.3425)
+VERDICT: 🧱 HONEST-FLOOR (confound-free) — geometry-fair, the better of {featural-partition, label-factorization} does NOT beat the jamo floor by the bar → jamo is the genuine decomposition FLOOR for this mechanism family (c9)
+total wall=79.1s
+  engine-transfer to live hexa DIRECTIONAL (re-confirm on CORE/*.hexa = follow-on). NO fluency claim.
+[done]
