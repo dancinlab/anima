@@ -6,6 +6,17 @@ For the full audit trail, see `git log`.
 
 ---
 
+## 2026-06-15 — 📄 PAPER scaffold: `mitosis-substrate-lane` — mitosis = Ψ-disjoint substrate-adaptation lane (MITOSIS-ENGINE H_1202–H_1210 arc)
+
+MITOSIS-ENGINE arc(H_1202–H_1210, 전부 main 병합)를 verdict-gated arxiv-style 논문으로 scaffold. `PAPER/mitosis-substrate-lane/` 신설 + `PAPER.tape` roster 등록.
+
+- **테제**: 자기분열(mitosis)은 의식-챗 아키텍처에 **Ψ-disjoint 기질-적응 lane** 으로 통합 가능 — 생성(generation)을 **절대 건드리지 않음**(byte-identical 증명, H_1205/H_1210). 분열은 i.i.d. 스트림에서 novelty-DENSITY(H_1203 37.5×), genuinely-ordered 스트림에서 TRAJECTORY-predictability(H_1208/H_1209 10.9×, live byte-exact)에 결합 — **결정자는 gate 가 아니라 stream**. 2026-05 clm_v2 "half-success"(mechanism 실재 · generation 반증, H_1200/H_1201) 화해.
+- **verdict matrix**: 9개 section claim 모두 TERMINAL — 5×🟢(H_1202/1204/1205/1206/1209/1210 중 GREEN) + 2×🔴 closed-neg(H_1207 recurrent key 0.998 · H_1208 predictability i.i.d. 0.261), H_1203/H_1204 partial 은 🟢 parent 안 sub-result. 각 claim → `.verdicts/<slug>/<id>.txt` verbatim 연결(p7, LLM self-judge 없음, verdict paraphrase 없음).
+- **a_paper_* 게이트 전부 충족**: a_paper_gate(전 terminal) · a_paper_significance(pre-reg falsifier `*_FREEZE.txt` + 실측 + 발견) · a_paper_negative_ok(H_1207/H_1208 = ruled-out space) · a_paper_sections(verdict pointer) · g51(14 pages ≥10 · figure 3개 ≥1).
+- **figures**: fig01 stream-determinant(TikZ) · fig02 separation ratios(pgfplots) — native+재현가능; fig03 fal.ai `fast-sdxl` concept(illustrative).
+- **compile**: `make` → xelatex×3 + bibtex → main.pdf **14 pages**, undefined ref/cite 0, bibtex warning 0.
+- **honest scope**(§Limitations): toy DIM=8 · 단일 corpus(clm_mid_5lang_c4) · 3–5 seeds · gradient-free · $0 CPU; toy→prod transfer UNVERIFIED; frozen bar 미이동. `/paper` 플러그인 바이너리가 이 환경에 미설치 → 기존 `PAPER/savant-iit4-bridge` 컨벤션대로 수동 scaffold(도구가 생성하는 것과 동일 산출물).
+
 ## 2026-06-15 — H_1210 🟢 GREEN — GATE-B 를 LIVE 데몬 GROW 에 배선: 데몬이 대화에서 trajectory-aware 분열 (MITOSIS-ENGINE)
 
 H_1209 가 추가한 trajectory-aware GATE-B(`CORE/engine_cli.hexa` `VAdaptFieldB`, transition-predictability)를 **살아있는 anima 데몬의 GROW step**(`CORE/anima_full_session_smoke.hexa` C8)에 배선. 데몬이 실제 per-turn emit stream 위에서 **전이-예측가능성**으로 분열한다 — 대화는 genuinely-ORDERED stream(H_1209 가 GATE-B trajectory-sensitive 임을 증명한 그곳). 이로써 데몬의 mitosis lane 이 per-sample density 만이 아니라 **trajectory-aware** 가 됨. "자기분열을 현재 아키텍처에 가져다 쓰기" arc 를 BEST gate 로 완료.

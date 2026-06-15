@@ -1,0 +1,7 @@
+# mitosis-substrate-lane — paper log (append-only)
+
+- 2026-06-15 — scaffold registered in PAPER.tape; slug `mitosis-substrate-lane`, dir `./PAPER/mitosis-substrate-lane`. Arc = MITOSIS-ENGINE H_1202–H_1210 (all merged to main, tip de306d3af) + framing precedents H_1200/H_1201 + CLM_V2_ARCHIVE_ADDENDUM_2026_05_10.md.
+- 2026-06-15 — verdict matrix assembled: H_1202🟢 daemon-wiring · H_1203🟠 density-coupling (F1 37.5× PASS, F2 0.992 FAIL — folded as the density leg) · H_1204🟢 sleep-persistence (20.7×) · H_1205🟢 separation invariant (10/10 byte-identical, Ψ 48.6613) · H_1206🟢 full-daemon e2e (FFI 3-bug fix) · H_1207🔴 recurrent split key closed-neg (0.998, derivative gate rewards jaggedness) · H_1208🔴 predictability gate closed-neg on i.i.d. PRIMARY (0.261) but WALK 10.9× · H_1209🟢 live ordered-walk GATE-B (10.916, numpy↔hexa byte-exact) · H_1210🟢 daemon GATE-B wiring (born=6 ON / 0 OFF, Ψ+gen byte-identical preserved).
+- 2026-06-15 — every section claim wired to its `.verdicts/<slug>/<id>.txt` (verbatim numbers, p7; no LLM self-judge). Gate compliance verified: ALL terminal (5🟢 + 2🔴 closed-neg + the 🟠 density/sleep partials are sub-results inside 🟢 parents). a_paper_gate / a_paper_significance / a_paper_negative_ok satisfied.
+- 2026-06-15 — figures: native TikZ stream-determinant diagram (fig01) + 10-H arc map (fig02); fal.ai figure attempt logged in figures/_prompts/.
+- 2026-06-15 — compile via Makefile (xelatex). page count + lint captured.
