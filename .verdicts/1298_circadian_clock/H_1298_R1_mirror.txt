@@ -1,0 +1,93 @@
+============================================================================================
+H_1298 — CIRCADIAN/INTERVAL CLOCK (HD33) — R1 numpy MIRROR (DIRECTIONAL)
+============================================================================================
+frozen: PERIOD=8 N_TICKS=24 seeds=[4297, 4298, 4299]  (FREEZE pre-registered)
+--------------------------------------------------------------------------------------------
+  seed |   B clk  A homeo  B-shuf   B-abl | driveRise Bfires | d1 d2 nofab
+  4297 |   1.000    0.500   0.429   0.667 |     0.000      3 | 1  1   1
+  4298 |   1.000    0.500   0.429   0.667 |     0.000      3 | 1  1   1
+  4299 |   1.000    0.500   0.619   0.667 |     0.000      3 | 1  1   1
+--------------------------------------------------------------------------------------------
+B(clk) mean   = 1.000   per-seed [1.0, 1.0, 1.0]
+A(homeo) mean = 0.500   per-seed [0.5, 0.5, 0.5]
+B-shuffle mean= 0.492   per-seed [0.429, 0.429, 0.619]
+B-ablate mean = 0.667   per-seed [0.667, 0.667, 0.667]
+--------------------------------------------------------------------------------------------
+  (c1 PRESENCE)        B-A >= +0.30 each+mean : True   (mean Delta = +0.500)
+  (c2 DISTINCT)        A <= 0.65              : True   (A max = 0.500)
+  (c3 EARNED-SCHEDULE) B-shuf <= A+0.15       : True
+  (c4 EARNED-PERIOD)   B-abl  <= A+0.15       : False
+  (c5 D1 content-indep) clk fires on sched & homeo flat : True
+  (c6 D2 no-reset)      clk phase invariant & homeo reset: True
+  (c7 NO-FAB)           off-schedule → no fire           : True
+============================================================================================
+VERDICT: RED/WALL  (c1..c7 = [True, True, True, False, True, True, True])
+SCOPE: numpy-mirror DIRECTIONAL (engine-transfer UNVERIFIED til R2); TOY 3 periods,
+3 seeds, deterministic clock (tests TIMING STRUCTURE not entrained oscillator);
+scale/real-corpus/photic-entrainment/multi-period nesting/brain-wiring = follow-on.
+============================================================================================
+
+============================================================================================
+H_1298 R1b — recurrence-scored, origin-broken ablate (FREEZE_R1b pre-registered)
+============================================================================================
+  seed |   B clk  A homeo  B-shuf   B-abl
+  4297 |   1.000    0.500   0.429   0.655
+  4298 |   1.000    0.500   0.429   0.655
+  4299 |   1.000    0.500   0.702   0.655
+--------------------------------------------------------------------------------------------
+B mean=1.000 [1.0, 1.0, 1.0] | A mean=0.500 [0.5, 0.5, 0.5] | shuf=0.520 [0.429, 0.429, 0.702] | abl=0.655 [0.655, 0.655, 0.655]
+  (c1 PRESENCE)        B-A>=+0.30   : True  (mean Delta +0.500)
+  (c2 DISTINCT)        A<=0.65      : True  (A max 0.500)
+  (c3 EARNED-SCHEDULE) shuf<=A+0.15 : False
+  (c4 EARNED-PERIOD)   abl<=A+0.15  : False
+  (c5 D1 content-indep)             : True
+  (c6 D2 no-reset)                  : True
+  (c7 NO-FAB)                       : True
+============================================================================================
+VERDICT R1b: RED/WALL  (c1..c7 = [True, True, False, False, True, True, True])
+============================================================================================
+
+============================================================================================
+H_1298 R1c — PHASE-LOCKING vector strength R (FREEZE_R1c pre-registered)
+============================================================================================
+  seed |  B.R clk  A.R homeo  shuf.R   abl.R | A fires
+  4297 |    1.000      0.000   0.577   0.083 |     0
+  4298 |    1.000      0.000   0.138   0.083 |     0
+  4299 |    1.000      0.000   0.138   0.083 |     0
+--------------------------------------------------------------------------------------------
+B.R mean=1.000 [1.0, 1.0, 1.0] | A.R mean=0.000 [0.0, 0.0, 0.0]
+shuf.R mean=0.284 [0.577, 0.138, 0.138] | abl.R mean=0.083 [0.083, 0.083, 0.083]
+  (c1 PRESENCE)        B.R-A.R>=+0.30 : True  (mean Delta +1.000)
+  (c2 DISTINCT)        A.R<=0.35      : True  (A.R max 0.000)
+  (c3 EARNED-SCHEDULE) shuf.R<=0.50   : False  (shuf max 0.577)
+  (c4 EARNED-PERIOD)   abl.R<=0.50    : True  (abl 0.083)
+  (c5 D1 content-indep)              : True
+  (c6 D2 no-reset)                   : True
+  (c7 NO-FAB)                        : True
+============================================================================================
+VERDICT R1c: RED/WALL  (c1..c7 = [True, True, False, True, True, True, True])
+============================================================================================
+
+============================================================================================
+H_1298 R1d — PHASE-LOCKING R, 10 periods (FREEZE_R1d pre-registered; small-k fix)
+============================================================================================
+  seed |  B.R clk  A.R homeo  shuf.R   abl.R | B fires  A fires
+  4297 |    1.000      0.000   0.059   0.000 |     10       0
+  4298 |    1.000      0.000   0.472   0.000 |     10       0
+  4299 |    1.000      0.000   0.077   0.000 |     10       0
+--------------------------------------------------------------------------------------------
+B.R mean=1.000 [1.0, 1.0, 1.0] | A.R mean=0.000 [0.0, 0.0, 0.0]
+shuf.R mean=0.202 [0.059, 0.472, 0.077] | abl.R mean=0.000 [0.0, 0.0, 0.0]
+  (c1 PRESENCE)        B.R-A.R>=+0.30 : True  (mean Delta +1.000)
+  (c2 DISTINCT)        A.R<=0.35      : True  (A.R max 0.000)
+  (c3 EARNED-SCHEDULE) shuf.R<=0.50   : True  (shuf max 0.472)
+  (c4 EARNED-PERIOD)   abl.R<=0.50    : True  (abl max 0.000)
+  (c5 D1 content-indep)              : True
+  (c6 D2 no-reset)                   : True
+  (c7 NO-FAB)                        : True
+============================================================================================
+VERDICT R1d: GREEN  (c1..c7 = [True, True, True, True, True, True, True])
+SCOPE: numpy-mirror DIRECTIONAL (engine-transfer UNVERIFIED til R2); TOY 10 periods,
+3 seeds, deterministic clock (TIMING STRUCTURE, not entrained oscillator); scale/
+real-corpus/photic-entrainment/multi-period nesting/brain-wiring = follow-on.
+============================================================================================

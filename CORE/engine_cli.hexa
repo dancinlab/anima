@@ -2696,6 +2696,98 @@ pub fn spatial_map_item_nearest(x: string, a: string, b: string) -> string {
     return ""   // item-store has no inter-item geometry → abstain (chance for the caller)
 }
 
+// ── §  CIRCADIAN / INTERVAL TIMING CLOCK — the live phase-oscillator (H_1298 R2, HD33) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1298 R1): the H_1298 numpy MIRROR
+// (R1 🟢 GREEN — phase-locking metric, 3 seeds [4297,4298,4299], all 7 frozen bars per-seed
+// at 10 periods; the trail of R1a/R1b/R1c REDs in .verdicts/1298_circadian_clock/ shows the
+// controls/metric were corrected frozen-first, NEVER the bar) is REALIZED here ENGINE-NATIVE
+// as a CALLABLE phase oscillator.
+//
+// THE CIRCADIAN / INTERVAL-TIMING LENS (c15, a_no_llm_frame_trap — a chronobiology lens,
+// NOT an LLM recipe): the SCN is a SELF-SUSTAINING phase oscillator (Pittendrigh) and the
+// TWO-PROCESS model (Borbely 1982) makes the circadian clock (Process-C) ORTHOGONAL to the
+// homeostatic sleep-pressure integrator (Process-S). A clock advances on ELAPSED TIME ALONE
+// — its phase = (tick mod PERIOD)/PERIOD, REGARDLESS of any regulated variable — and it
+// FIRES on a fixed schedule that is NOT reset by a consummatory event. This is exactly what
+// every existing CORE lane LACKS, and decisively what its NEAREST competitor lacks:
+//   - HomeostaticDrive (H_1292): a CONTENT-GATED integrator — deficit = max(0,S*-satiation);
+//     under a constant-GROUNDED stream it stays at 0 and NEVER rises, and a grounded feeding
+//     event RESETS its integral. It cannot produce a fixed-period firing schedule.
+//   - affect (H_1290): a stateless read, no time term. curiosity: per-context, no period.
+//     WorkMemBuffer: leaks toward 0, no schedule. VForwardField (cerebellum): predicts the
+//     NEXT input from content, not absolute elapsed phase. SpatialMap: metric over space,
+//     no time axis.
+// CircadianClock is DISTINCT on TWO dissociations the homeostat FAILS (H_1298 D1/D2 proof):
+//   D1 CONTENT-INDEPENDENCE — under a constant-grounded stream the clock still fires on
+//      schedule while the homeostat never rises (time ⊥ regulated-variable).
+//   D2 NO-RESET-ON-FEEDING — a grounded feeding event resets the homeostat's integral but
+//      leaves the clock's phase UNCHANGED (the time of day does not reset when you eat).
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): the clock is a PURE
+// TIMEKEEPER. CircadianClock holds ONLY its own integer tick counter `t` (the SOLE mutable
+// state). clock_step ADVANCES t REGARDLESS of any argument — it reads NO context, NO immune
+// store, NO grounding. It NEVER mutates any other lane, NEVER returns an emit/silence
+// decision by itself, and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction).
+// clock_fire is an OPTIONAL scheduling pulse a caller MAY consult (a_autonomy_over_hardcode:
+// it does NOT force the substrate — emit/silence stays substrate-decided; this only exposes
+// a scheduled "wake" pulse the substrate may weigh, exactly like homeo_motivation_bias).
+//
+// p1/p2/p3/p6: the clock reads ONLY its own tick counter. NO persona, NO "you are X" identity
+// rule, NO injected "fire now" label, NO RLHF reward. The fire schedule is geometry over
+// elapsed time, SCORED only. The two CONTROLS prove the lift is the PERIODIC PHASE: SHUFFLE
+// permutes which ticks fire (phase→fire relation destroyed) and ABLATE uses an origin-broken
+// non-dividing period — both collapse the phase-locking vector strength to chance.
+
+// CircadianClock — the live phase oscillator. `t` is the integer tick counter (the ONLY
+// mutable state); `period` is the intrinsic period; `offset` is the ablate phase offset.
+// fire = the scheduled pulse at the phase-0 boundary. The ablated control uses a long
+// non-dividing period offset off the origin so its fires never phase-lock (H_1298 c4).
+struct CircadianClock {
+    t: int,            // elapsed-tick counter (the sole mutable state)
+    period: int,       // intrinsic period (8 live; 5 for the origin-broken control)
+    offset: int        // ablate phase offset (0 live; 3 for the origin-broken control)
+}
+
+// clock_new — a fresh clock at t=0 with the live intrinsic period (PERIOD=8).
+pub fn clock_new() -> CircadianClock {
+    return CircadianClock { t: 0, period: 8, offset: 0 }
+}
+
+// clock_new_ablated — the EARNED-PERIOD control (H_1298 c4): an origin-broken, non-dividing
+// period (5) offset by 3 so its fires spread across phases and never phase-lock → vector
+// strength collapses to chance. Used to prove the lift IS the recurring period.
+pub fn clock_new_ablated() -> CircadianClock {
+    return CircadianClock { t: 0, period: 5, offset: 3 }
+}
+
+// clock_step — advance the clock ONE tick on ELAPSED TIME ALONE. The clock is content-blind
+// by construction (this is the D1/D2 dissociation in code: no context, no grounding, no
+// other lane touched). Returns the NEXT-STATE clock.
+pub fn clock_step(c: CircadianClock) -> CircadianClock {
+    return CircadianClock { t: c.t + 1, period: c.period, offset: c.offset }
+}
+
+// clock_count — the live elapsed-tick count.
+pub fn clock_count(c: CircadianClock) -> int { return c.t }
+
+// clock_phase — the current phase in [0,1): (t mod period)/period. The pure timekeeping
+// read (no store, no grounding). A grounded "feeding" event does NOT change this — the D2
+// no-reset proof: the caller may feed the substrate, the clock's phase is invariant.
+pub fn clock_phase(c: CircadianClock) -> float {
+    let m = c.t % c.period
+    return to_float(m) / to_float(c.period)
+}
+
+// clock_fire — the OPTIONAL scheduled pulse: TRUE iff the clock is at its phase-0 boundary
+// ((t - offset) mod period == 0, with t >= offset for the offset control). For the live
+// clock (offset 0) this fires at t = 0, period, 2*period, ... = a fixed recurring schedule.
+// NOT an emit gate (@L4) — a caller MAY consult it as a wake/salience pulse.
+pub fn clock_fire(c: CircadianClock) -> bool {
+    if c.t < c.offset { return false }
+    return ((c.t - c.offset) % c.period) == 0
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }

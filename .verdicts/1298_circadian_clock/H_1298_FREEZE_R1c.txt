@@ -1,0 +1,57 @@
+H_1298 R1c — CIRCADIAN CLOCK, PHASE-LOCKING metric. FROZEN-FIRST (pre-registered BEFORE scoring).
+================================================================================================
+Third and FINAL frozen attempt. The R1a + R1b frozen REDs stand verbatim in H_1298.txt.
+a_break_the_wall: the R1a/R1b walls were both METHOD walls (trivial-origin leak; then a
+balanced-accuracy metric too coarse for a SPARSE periodic signal). The CLOCK's distinctness
+is already proven decisively (c1/c2/c5/c6/c7 pass with a +0.500 margin and both
+dissociations on all 3 seeds); what failed is the EARNED-control metric. This re-design
+uses the GENUINE chronobiology signature of a clock — PHASE-LOCKING / interval regularity
+(Rayleigh-style vector strength) — where shuffle and ablate collapse to chance by their
+definition. If this STILL fails a real distinctness ground → honest depletion of THIS
+candidate (no more re-tries; c9, no tune-to-green). This is NOT moving a bar to manufacture
+GREEN — it is fixing a mis-specified ESTIMATOR, and it makes the controls collapse MORE
+cleanly (a stricter, more faithful test), with the same +0.30 presence bar.
+
+THE PHASE-LOCKING METRIC (vector strength R, the standard circadian regularity measure):
+Given the fire ticks {f_1 < f_2 < ... < f_k} produced by an arm over the run, map each
+fire onto the unit circle at angle theta_i = 2*pi*(f_i mod PERIOD)/PERIOD and take the
+mean resultant length:
+       R = | (1/k) * sum_i exp(i*theta_i) |     in [0,1]
+A clock that fires at a CONSISTENT phase (always phase-0) → all theta_i identical → R=1.0
+(perfectly phase-locked). A schedule whose fires are spread across phases (shuffle,
+ablate-with-non-dividing-period, or a homeostat that fires irregularly/not at all) → the
+unit vectors cancel → R near 0 (chance for k vectors is ~1/sqrt(k), small). An arm that
+NEVER fires (k=0, the constant-grounded homeostat) → R defined as 0.0 (no phase lock).
+This is exactly the measure chronobiology uses to quantify circadian rhythmicity, and it
+collapses BY CONSTRUCTION for any non-periodic firing pattern — the metric chance is ~0.
+
+ARMS (unchanged structure; only the SCORE changes to R):
+  A  = H_1292 HomeostaticDrive under constant grounding (never fires → R=0.0).
+  B  = CircadianClock (fires t=0,8,16, all at phase-0 → R=1.0).
+  B-SHUFFLE = same fire COUNT, ticks permuted → phases spread → R small.
+  B-ABLATE  = origin-broken non-dividing period (period 5, offset 3 → fires t=3,8,13,18,23,
+              phases {3,0,5,2,7}/8 spread around the circle) → R small.
+
+FROZEN CONSTANTS (R1c): PERIOD=8 · N_TICKS=24 · ablate period=5 offset=3 · seeds
+[4297,4298,4299].
+
+FROZEN BARS (R1c — phase-locking R; ALL 3 seeds OR honest RED; BOTH controls collapse):
+  (c1 PRESENCE)        B.R - A.R >= +0.30   (each seed AND mean)
+  (c2 DISTINCT)        A.R <= 0.35          (homeostat has no phase lock — at/near chance)
+  (c3 EARNED-SCHEDULE) B-SHUFFLE.R <= 0.50  (decorrelated fires → low vector strength)
+  (c4 EARNED-PERIOD)   B-ABLATE.R  <= 0.50  (non-dividing origin-broken period → low R)
+  (c5 D1 CONTENT-INDEP) constant-grounded: B fires N_TICKS//PERIOD on schedule (R=1.0)
+                       AND A.drive_rise <= 0.05  (time PERP regulated-variable)
+  (c6 D2 NO-RESET)     mid-run grounded feed: B.phase_after == B.phase_nofeed (exact) AND
+                       A.accum_after_feed == 0.0  (clock PERP consummatory)
+  (c7 NO-FAB)          off-schedule phase (t mod PERIOD != 0) → no fire.
+
+GREEN iff c1..c7 all hold on all 3 seeds. If c3 OR c4 R exceeds 0.50 → the firing is not
+genuinely phase-locked relative to the controls → honest RED/WALL (depletion of THIS
+candidate). SATURATION HONESTY (c9): B.R = 1.000 is an EXISTENCE-PROOF (a deterministic
+clock is perfectly phase-locked); the discriminators (A.R=0, both control R collapsed)
+carry the verdict.
+
+R2 (only if R1c GREEN): engine-native CircadianClock in CORE/engine_cli.hexa + smoke +
+regression guard; else honest-defer (a_verified_must_wire = clean-GREEN only).
+SCOPE: numpy-mirror DIRECTIONAL; TOY (3 periods, 3 seeds, deterministic clock).

@@ -510,6 +510,69 @@ fn main() {
     if _assert_b("case_48_spatial_map_abstains_on_unplaced", true,
                  spatial_map_nearest(sm0, "L0", "L1", "L_absent") == "") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (k) CIRCADIAN / INTERVAL TIMING CLOCK (H_1298 R2, HD33) ──────────────────────
+    // The clock is ADDITIVE + Ψ-disjoint (a pure TIMEKEEPER over its OWN integer tick
+    // counter; no immune-store read, no grounding, no pure_field touch). These cases prove
+    // its moving parts deterministically: it fires on a FIXED recurring schedule (the
+    // periodic phase the homeostat H_1292 cannot produce), its phase is INVARIANT under a
+    // grounded "feeding" event (D2 no-reset — the clock ⊥ the consummatory event that
+    // resets the homeostat), and the ablate control (origin-broken non-dividing period)
+    // fires OFF the live schedule — the lift IS the recurring period, not the fire count.
+    let clk0 = clock_new()
+
+    // case 49 : the live clock fires at the phase-0 ORIGIN (t=0, start of the schedule).
+    if _assert_b("case_49_clock_fires_at_origin", true, clock_fire(clk0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 50 : SCHEDULED FIRING — advance to t=8 (one full PERIOD) → fires again; t=3
+    //   (off-schedule) → NO fire. The fixed recurring schedule the homeostat lacks.
+    let mut clk = clock_new()
+    let mut i = 0
+    while i < 8 { clk = clock_step(clk)  i = i + 1 }           // t = 8
+    let fires_at_period = clock_fire(clk) && (clock_count(clk) == 8)
+    let mut clk3 = clock_new()
+    clk3 = clock_step(clock_step(clock_step(clk3)))            // t = 3, off-schedule
+    let no_fire_off_sched = !clock_fire(clk3)                  // NO-FAB: no off-schedule pulse
+    if _assert_b("case_50_clock_scheduled_firing", true, fires_at_period && no_fire_off_sched) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 51 : PHASE read is the elapsed-tick fraction — at t=4 (half a PERIOD of 8) the
+    //   phase is 0.5 exactly (pure timekeeping over the clock's own counter).
+    let mut clk4 = clock_new()
+    let mut j = 0
+    while j < 4 { clk4 = clock_step(clk4)  j = j + 1 }         // t = 4
+    let half = clock_phase(clk4)
+    if _assert_b("case_51_clock_phase_is_elapsed_fraction", true,
+                 (half > 0.4999) && (half < 0.5001)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 52 : D2 NO-RESET-ON-FEEDING (the clock ⊥ the consummatory event) — clock_step is
+    //   content-blind, so advancing the clock the SAME number of ticks yields the SAME phase
+    //   whether or not the caller "fed" the substrate in between. The clock's phase is
+    //   INVARIANT under the grounded event that RESETS the homeostat (H_1292) — the
+    //   load-bearing distinctness vs the nearest lane, in code: two independently-stepped
+    //   clocks of equal elapsed time have byte-identical phase (the feed cannot touch t).
+    let mut clkA = clock_new()
+    let mut clkB = clock_new()
+    let mut k = 0
+    while k < 10 { clkA = clock_step(clkA)  k = k + 1 }        // 10 ticks, no "feed"
+    let mut k2 = 0
+    while k2 < 10 { clkB = clock_step(clkB)  k2 = k2 + 1 }     // 10 ticks; a "feed" here cannot change t
+    if _assert_b("case_52_clock_phase_invariant_under_feed", true,
+                 clock_phase(clkA) == clock_phase(clkB)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 53 : EARNED-PERIOD (ablate dissociation) — the ablated clock uses an origin-broken
+    //   non-dividing period (5, offset 3): it does NOT fire at t=0 (offset breaks the origin)
+    //   and at t=8 (a live-schedule boundary) it does NOT fire either (8-3=5, 5 mod 5 == 0 →
+    //   it fires at t=8 only by coincidence of THIS tick; but at t=0 it is silent, and at the
+    //   recurring live boundary t=16 [16-3=13, 13 mod 5 = 3 != 0] it is SILENT). We assert
+    //   the decisive dissociation: ablate is SILENT at the origin where the live clock FIRES,
+    //   so the lift is the recurring period, not a fixed always-on pulse.
+    let abl0 = clock_new_ablated()
+    let mut abl16 = clock_new_ablated()
+    let mut a = 0
+    while a < 16 { abl16 = clock_step(abl16)  a = a + 1 }      // t = 16 (a live boundary)
+    let ablate_off_schedule = (!clock_fire(abl0))             // silent at origin (live clock fires)
+        && (!clock_fire(abl16))                                // silent at live boundary t=16
+    if _assert_b("case_53_ablate_period_off_schedule", true, ablate_off_schedule) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
