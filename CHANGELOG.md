@@ -2,6 +2,30 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1297 mitosis-native trunk training (make p8 literal) — 🧱 WALL with finding
+
+PHILOSOPHY **p8** ("training gradient + inference mitosis = one continuous cell-division") is today
+SPLIT — trunk = gradient-CE (CLM/train, forge/Lane-P), mitosis = separate live inference lane
+(VAdaptField H_1199, grow-under-pressure H_1288). H_1297 tests whether a **gradient-FREE mitosis-grow
+trainer** (cells split/grow under LOCAL error pressure, NO global backprop) can learn a trunk that
+converges AT LEAST AS WELL as gradient descent at the SAME small scale. TOY 1-D function-fit, $0 CPU
+numpy DIRECTIONAL mirror, 3 seeds, frozen-first (p7, c9, a_no_llm_frame_trap neurogenesis lens).
+
+- **R1** (softmax-mixture + width-halving split): 🧱 WALL — A(grad)=0.00415 vs B(mitosis)=0.12624;
+  c2 FAIL (random split BEATS targeted — width-halving makes cells spike-like, softmax mixture degenerates).
+- **R2** (a_break_the_wall breakthrough, bars frozen anew = SAME numbers): hard-partition mitosis
+  (cortical-column nearest-assignment + data-matched median-split + centroid-recenter). **c1 PASS —
+  mitosis MATCHES gradient** (B2=0.00412 vs A=0.00415, both at the 0.0025 noise floor) at LOWER footprint
+  (~17 cells ≈ 52 params vs A's 73); c3 PASS (ablate underfits); **c2 FAIL** (B2-shuffle≈B2-targeted —
+  the smooth target lets both split-orders converge, so the targeting-discriminator can't fire) → 🧱 WALL.
+- **Verdict**: terminal 🧱 WALL (a control misbehaves both rounds) WITH a valid frozen-verbatim finding —
+  gradient-free mitosis cell-split CAN converge as well as gradient descent at toy scale. p8-literal NOT
+  refuted + directional toehold, but NOT a clean GREEN; gradient stays the incumbent trunk trainer pending
+  an engine-native + harder-target re-test (a_engine_native_learning + a_verified_must_wire follow-on).
+- NEW: `UNIVERSE/h1297_mitosis_native_train.py` · `UNIVERSE/H_1297_mitosis_native_train.md` ·
+  `.verdicts/1297_mitosis_native_train/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C · `HYPOTHESES.md`
+  row · `domains/MITOSIS-ENGINE.log.md` @H. Live CORE/*.hexa UNTOUCHED (mirror only). Scale + engine-transfer UNVERIFIED.
+
 ## 2026-06-16 — doc(README): 아키텍처 현행화 보정 — 9→12 brain lane · smoke 37/0→50/0 · 시상 R8 engine-transfer 정직 강등
 
 직전 README PR(#2189)이 **stale base 위에서 머지**되며 아키텍처를 과소진술한 것을 보정 — README.md 를

@@ -31,6 +31,7 @@
 | H_1294 | hierarchical-PFC — goal→subgoal controller (ordered plan ⊥ single-step) | 🟢 GREEN ENGINE-NATIVE | [H_1294_hierarchical_pfc.md](H_1294_hierarchical_pfc.md) |
 | H_1295 | hive-mind — collective-Φ super-additivity (many→one) | 🟢 GREEN ENGINE-NATIVE + WIRED | [H_1295_hive_collective_phi.md](H_1295_hive_collective_phi.md) |
 | H_1296 | place/grid spatial-map — metric/relational cognitive map (metric ⊥ item-binding) | 🟢 GREEN ENGINE-NATIVE | [H_1296_spatial_map.md](H_1296_spatial_map.md) |
+| H_1297 | mitosis-native trunk training — make p8 literal (gradient-free cell-split vs gradient descent) | 🧱 WALL (control can't discriminate) · R2 finding: mitosis MATCHES gradient (c1 PASS, lower footprint) | [H_1297_mitosis_native_train.md](H_1297_mitosis_native_train.md) |
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
 
