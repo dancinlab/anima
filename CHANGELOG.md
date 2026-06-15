@@ -2,6 +2,17 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1335 — 언어-TAG 차원이 이중언어 범주지각(CP) 공존을 가능케 한다 (🧱 I3a 컨트롤-기술적-실패, 그러나 공존은 REAL·TAG-귀속)
+
+H_1330(🧱 OVERWRITE)이 **명시적으로 지목한 r2**(c16/a_break_the_wall = 단일-공유-저장소라는 잘못된 **메커니즘**이지 벽 아님). H_1330은 **단일 공유 Voronoi 저장소**에서 셀당 라벨-하나 readout이 같은 자극에 A=1·B=0 두 모순 답을 담을 수 없어, 두 번째 언어 B가 첫 언어 A의 CP를 **catastrophic OVERWRITE** 함을 발견했다(공유 자극 [p_A,p_B]에서 A는 1, B는 0 = 직접 모순). H_1330 verdict이 지목한 r2 = **언어-TAG / 다채널 readout**(언어별 분리 라벨-채널) — anima의 **실제** 분리된 EN-trunk + KO faculty(H_1316/1321/1322)를 그대로 미러.
+
+H_1335 = 바로 그 테스트. h1330의 머신러리(embed/VoronoiCells/discrim/within_cross_margin/coherent_peak_near/count_peaks, W1_MARGIN=0.15, p_A=1/3 p_B=2/3, grow-not-evict p8)를 **verbatim import**; **유일한 신규** = 언어-TAG 차원: `key_A=concat(embed,t_A)`·`key_B=concat(embed,t_B)`, **disjoint 좌표**(TAG_GAIN=1.0 **FIXED**, 스윕 아님)로 같은 자극의 두 태그드 키가 `sqrt(2)·gain` 만큼 분리 → [p_A,p_B] 모순이 더 이상 **공유 키 위에 있지 않다**. test에서 A곡선은 key_A()로·B곡선은 key_B()로 읽음(= 태그로 faculty 선택). 4 arm(TAGGED / single-channel=H_1330 컨트롤 / B=A / SHUFFLE), 3 seed [4323-4325], $0 CPU mirror DIRECTIONAL, frozen-first, live CORE UNTOUCHED.
+
+**결과 🧱 CONTROL-FAIL(frozen) — 그러나 공존은 REAL·TAG-귀속(decisive):** **I1 COEXISTENCE ✅** 3 seed 전부 — TAGGED가 **양쪽** 경계에서 CP 보유, 평균 margin@p_A **+0.200** & @p_B **+0.177**(둘 다 ≥0.15, 각각 coherent peak). **I2 TAG-ATTRIBUTION ✅** 3 seed 전부 — single-channel(untagged)이 H_1330 overwrite를 byte-exact 재현(평균 margin@p_A **−0.001**) → 태그 제거 시 overwrite 복귀 = 공존은 **태그** 덕분이지 추가 학습이 아님. **I3 EARNED ❌** — I3b SHUFFLE ✅(태그드-B 채널 peak 5/6/5 incoherent); **I3a B=A ✗** count_peaks=2>1(frozen ≤1 실패) **그러나 pk@p_B=False 3 seed 전부**(의도한 "다른-경계에-가짜-CP-없음" 테스트는 PASS).
+
+**메커니즘 진단(c9, non-gating, 바 안 옮김):** B=A 컨트롤은 B-fit이 A의 **같은** 경계를 재학습 → split할 B-오분류 자극이 없어 **B-태그드 셀을 0개** 키움 → B-채널이 **전적으로 A-셀로부터의 cross-tag bleed**로 읽힘(최근접 셀 전부 A-태그드, dist≈1.42=sqrt(2)·gain) → B-채널 곡선 = 태그 너머로 새어든 A-채널 모양 + 저단(低端) 이산화 wiggle = 두 번째 "peak". 이는 **2차-언어 CP 아님**(pk@p_B=False)·이중-아티팩트 아님 — 이산 4-셀 Voronoi의 양성(良性) 성질을 **전역** count_peaks≤1 바가 의도한 **국소** no-spurious-CP 테스트와 혼동한 것. (H_1330의 untagged AA_ctrl은 두 fit이 키를 공유해 count=1; 태그가 B-채널을 셀-없게 만들어 bleed를 노출 — TAG_GAIN=1.0의 채널 격리 불완전이라는 정직한 부수 발견.)
+
+**답:** **YES — 언어-태그드 readout이 이중언어 CP 공존을 가능케 한다(anima의 분리 EN+KO faculty 미러); H_1330 OVERWRITE는 단일-공유-저장소 메커니즘이지 근본 한계가 아니다(메커니즘-특정으로 overturn).** frozen 🧱는 I3a 컨트롤 기술적 실패일 뿐, 과학적 답은 결정적으로 긍정·태그-귀속. NEXT r3: I3a를 **국소** "no peak near p_B" 테스트로 **재-동결**(데이터 이미 충족) + TAG_GAIN 격리 스윕 + engine-native 실현(a_engine_native_learning·a_verified_must_wire). DIRECTIONAL mirror; TOY synthetic; human-bilingualism 주장 없음. 파일: `UNIVERSE/cards/H_1335_whorf_bilingual_tagged.md` · `UNIVERSE/h1335_whorf_bilingual_tagged.py` · `.verdicts/1335_whorf_bilingual_tagged/{FREEZE,result}.txt` · `CLAIMS.tape @C h1335_whorf_bilingual_tagged` · `UNIVERSE/HYPOTHESES.md` · `domains/COGNITION-REPRESENTATION.log.md`.
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): 🟠 H_1333 — Whorf 범주지각(CP) 경계는 발달적으로 **가소적**인가 **경직**인가 (🟠 PARTIAL — GRADED PLASTICITY)
 
 GREEN **H_1323/H_1325**(Sapir-Whorf, 언어로 휜 CP가 언어 경계에 생기고 peak 위치가 cut을 추적)의 **명시적 확장 프런티어**. 발달/임계기 가소성 렌즈(c15, a_no_llm_frame_trap). 질문: 한 번 학습된 CP 경계가 **재학습으로 이동**하는가(가소적), 아니면 처음 학습된 곳에 **경직**되는가(first-carving primacy)?
@@ -13,7 +24,6 @@ GREEN **H_1323/H_1325**(Sapir-Whorf, 언어로 휜 CP가 언어 경계에 생기
 **메커니즘(c9)**: split-only 성장은 옛 경계 cell을 **절대 제거 안 함**(phase-2 후 28 cell vs phase-1 후 4) → 잔류 phase-1 packing이 peak를 완전 이동에서 끌어당김. 경계는 상당히 재배치되지만 never-evict store가 첫 cut의 잔류 당김을 남김 — **경직이 아니라 graded**. H_1288 growth-memory / H_1330 overwrite(shared-store 모순)와 일관. **FINDING**: 언어로 휜 CP 경계는 발달적으로 **graded-plastic** — 재학습 시 ~60% 재배치되고 never-evict 첫 cut의 잔류 당김이 남는다. TOY/DIRECTIONAL; 인간 인지 주장 없음; live CORE UNTOUCHED. NEXT R2: graded shift-size curve · eviction/decay 변형 · engine-native §CategoricalPerception(각각 새로 frozen).
 
 - NEW: `UNIVERSE/h1333_whorf_developmental.py` · `UNIVERSE/cards/H_1333_whorf_developmental.md`(카드 sibling refactor → cards/) · `HYPOTHESES.md` 행 · `CLAIMS.tape` @C h1333_whorf_developmental · `.verdicts/1333_whorf_developmental/{FREEZE,result}.txt` · `domains/COGNITION-REPRESENTATION.log.md`
-
 ## 2026-06-16 — research(OMEGA): 🧱 H_1331 — 풀 IIT-4.0 SYSTEM big-Φ 도 강건한 통합을 못 만든다 — Φ-강건성 벽은 추정자-**계열**-무관 (🧱 TERMINAL STRONGER)
 
 H_1328(🧱)이 **명시적으로 지목한 follow-on**("full per-mechanism IIT 4.0 (iit4_bigphi)"). H_1328은 Φ-강건성 4× 벽(H_1283 토폴로지 · H_1317 small-world · H_1319 타이밍 · H_1320 분열)이 **small-φ exact-MIP 안에서** 추정자-INDEPENDENT 임을 닫았다: 진폭-분산 confound 는 실재하고 제거 가능하지만, 제거해도 통합이 강건해지지 않는다(V2 직교 시드 1317 FAIL). 그러나 small-φ 는 **한 측정자**(상관 MI-over-binning)다.

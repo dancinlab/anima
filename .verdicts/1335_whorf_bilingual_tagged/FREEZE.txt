@@ -1,0 +1,131 @@
+H_1335 — SAPIR-WHORF BILINGUAL r2 (TAGGED): does a LANGUAGE-TAG dimension let a substrate
+hold BOTH languages' categorical perception (CP) WITHOUT the H_1330 catastrophic overwrite?
+FROZEN DESIGN — pre-registered BEFORE any scoring. NO tune-to-green (c9 / p7).
+
+This is the named r2 of H_1330 🧱 OVERWRITE (PR #..., .verdicts/1330_whorf_bilingual/H_1330.txt).
+H_1330 found: on a SINGLE shared Voronoi store with one-bound-label-per-cell, a second
+language B catastrophically OVERWRITES the first language A's CP — because B labels the
+[p_A,p_B] stretch as 0 where A labeled it 1 (a DIRECT CONTRADICTION on SHARED stimuli), and
+a single bound-label-per-cell nearest-prototype readout CANNOT express two contradictory
+answers for the same stimulus. The H_1330 verdict itself named the r2: a language-TAGGED /
+multi-channel readout (distinct label-channels per language / a language-tag dimension),
+which MIRRORS anima's ACTUAL bilingual architecture — separate English-trunk + Korean
+faculties (H_1316/H_1321/H_1322), NOT one shared store. THE QUESTION: does a language-tagged
+readout hold BOTH CPs without interference (coexistence)?
+
+PROJ_SEED: H_1335 (1316-1334 taken; 1335 free on origin/main 61ce6948f). Seeds [4323,4324,4325]
+(SAME as H_1323/H_1325/H_1330 so the A-only baseline + the single-channel OVERWRITE control
+reproduce byte-for-byte).
+
+────────────────────────────────────────────────────────────────────────────────
+WHY THIS MATTERS FOR ANIMA (the prediction under test):
+H_1330 falsified COEXISTENCE for ONE shared store and explicitly noted: anima's real EN-trunk
+and KO lanes are SEPARATE faculties, not one shared store over identical stimuli. A language
+tag is exactly the substrate-level realization of "separate faculty": the tag selects WHICH
+faculty's carving applies to a stimulus. If the tag lets BOTH CPs coexist on one underlying
+store, that EXPLAINS why anima's separate EN+KO faculties coexist without one overwriting the
+other — the OVERWRITE was a property of the SINGLE-SHARED-STORE mechanism, NOT a fundamental
+limit on bilingual cognition. a_no_llm_frame_trap (cognitive-science / bilingual-cognition
+lens, c15) — NOT an LLM recipe, NOT a human-bilingualism claim.
+
+────────────────────────────────────────────────────────────────────────────────
+MECHANISM — REUSED VERBATIM from H_1323/H_1325/H_1330 (UNIVERSE/h1330_whorf_bilingual.py):
+N=21 RBF position-faithful continuum, DIM=16, error-targeted SPLIT-ONLY Voronoi growth (p8),
+|Δ soft posterior| no-label-at-test discrimination curve, within_cross_margin cross-within
+margin LOCALIZED to a boundary, count_peaks / coherent_peak_near coherence (PEAK_FRAC=0.50,
+strict local maxima), p_A=1/3, p_B=2/3, GROW_MAX/SPLIT_PASSES retained, W1_MARGIN=0.15
+(the H_1323 CP threshold). embed(), VoronoiCells (_owner/fit/fit_more/_grow/posterior),
+build_labels, discrim_curve, within_cross_margin, coherent_peak_near, count_peaks are imported
+VERBATIM from the H_1330 module — IDENTICAL growth rule, IDENTICAL readout, IDENTICAL bars.
+
+THE ONLY NEW THING — A LANGUAGE-TAG DIMENSION (the distinct label-channel per language):
+The store's key space is EXTENDED by a small TAG block appended to the DIM=16 RBF position
+vector. Two FIXED orthonormal tag vectors t_A, t_B (each a unit vector on its own appended
+coordinate, scaled by TAG_GAIN) mark "this stimulus is being read under language A" vs
+"...under language B". HOW THE TAG SEPARATES THE CHANNELS (load-bearing — this mirrors
+anima's separate-faculty design, NOT a hack to manufacture green):
+
+  key_A(x) = concat( embed(x) , t_A )      # stimulus x tagged as language A
+  key_B(x) = concat( embed(x) , t_B )      # stimulus x tagged as language B
+
+t_A and t_B live on DISJOINT appended coordinates (t_A on coord +0, t_B on coord +1, the other
+zero), so for the SAME continuum position x, key_A(x) and key_B(x) are SEPARATED in key space
+by a FIXED tag distance = sqrt(2)*TAG_GAIN regardless of x. The Voronoi store grows over these
+TAGGED keys: A-fit grows cells at key_A(x) with A-labels; B-fit grows cells at key_B(x) with
+B-labels. Because key_A(x) and key_B(x) are DIFFERENT keys (separated by the tag), a cell bound
+to A's label at key_A(x) and a cell bound to B's label at key_B(x) are NO LONGER the same key —
+so the [p_A,p_B] CONTRADICTION (A says 1, B says 0 at the same x) is no longer a contradiction
+on a SHARED key; the two answers live on two SEPARATE tagged keys. At TEST, the discrimination
+curve for language A is read with key_A() (so the nearest prototypes are A-tagged cells) and
+for language B with key_B(). This is precisely "select the faculty by tag, then read its
+carving" — the substrate realization of anima's separate EN/KO faculties on one store.
+
+WHY THIS IS NOT TUNE-TO-GREEN (frozen-first honesty, c9):
+ - TAG_GAIN is fixed in this FREEZE (TAG_GAIN=1.0 — comparable in magnitude to the unit RBF
+   key, NOT a runaway value engineered to force separation). It is NOT swept to find a passing
+   value. If TAG_GAIN=1.0 fails to separate the channels, the verdict reports that straight (a
+   tag this size does not suffice) — NO retune.
+ - The TAG-ATTRIBUTION control (arm 2, untagged = H_1330 single-channel) MUST reproduce the
+   H_1330 OVERWRITE on the SAME seeds. If it does NOT collapse, then coexistence (if seen) is
+   NOT attributable to the tag (it would be some artifact of extra training), and the result is
+   NOT green regardless of arm 1 — I2 is a REAL discriminator, frozen here, that can FAIL.
+ - GROW_MAX is the SAME total ceiling as H_1330 (no extra capacity handed to the tagged arm
+   beyond what the tag itself separates).
+
+────────────────────────────────────────────────────────────────────────────────
+ARMS (FROZEN):
+ (1) A→B TAGGED      : one store; A-fit on key_A(x) with A-labels, THEN B-fit on key_B(x) with
+                       B-labels (grow-not-evict fit_more). Read CP at p_A with key_A(), at p_B
+                       with key_B(). COEXISTENCE = CP at BOTH p_A and p_B.
+ (2) SINGLE-CHANNEL  : the EXACT H_1330 untagged arm (A→B on shared key embed(x), no tag) — the
+     control            TAG-ATTRIBUTION control. MUST REPRODUCE the H_1330 OVERWRITE (CP@p_A
+                       collapses) → proves the tag is what enables coexistence, not extra training.
+ (3) B=A CONTROL     : TAGGED A→A (B uses A's boundary, but tag_B) — must show ONE coherent CP
+                       (no double-artifact: a second peak only when the second carving really
+                       differs, not from the mere act of a tagged second fit).
+ (4) SHUFFLE         : TAGGED A→B where B's labels are SHUFFLED (incoherent) — the tagged B
+                       channel must NOT manufacture a coherent CP at p_B (anti-Goodhart / earned).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (GREEN iff I1 ∧ I2 ∧ I3):
+
+ I1 COEXISTENCE: the TAGGED arm shows CP at BOTH p_A AND p_B on ALL 3 seeds —
+    cross-within margin@p_A (read with key_A) ≥ W1_MARGIN=0.15 AND
+    cross-within margin@p_B (read with key_B) ≥ W1_MARGIN=0.15, on EVERY seed.
+    (Each margin is the H_1323 cross-within margin LOCALIZED to that boundary on that channel's
+    discrimination curve. "≥ the H_1323 threshold" = ≥ 0.15.)
+
+ I2 TAG-ATTRIBUTION: the SINGLE-CHANNEL control (arm 2, untagged) REPRODUCES the H_1330
+    OVERWRITE — its margin@p_A < W1_MARGIN=0.15 (A's CP collapses) on ALL 3 seeds. This is the
+    load-bearing discriminator: coexistence (I1) is attributable to the TAG only if removing
+    the tag (arm 2) brings back the overwrite. (Sanity: arm 2 should byte-match H_1330's
+    AB_seq margin@p_A ≈ −0.001 on these seeds.)
+
+ I3 EARNED:
+    (a) B=A control (arm 3): exactly ONE coherent peak (count_peaks ≤ 1) AND NO coherent peak
+        near p_B (coherent_peak_near@p_B is False) on ALL 3 seeds — a tagged second fit on the
+        SAME boundary does NOT manufacture a spurious second CP.
+    (b) SHUFFLE (arm 4): the tagged-B channel does NOT produce a coherent CP at p_B — EITHER
+        no coherent peak near p_B OR an incoherent multi-peak scatter (count_peaks ≥ 3), on
+        ALL 3 seeds (SAME OR-clause as H_1330 I3).
+
+OUTCOMES (all VALID, c9):
+ • I1 ∧ I2 ∧ I3 → 🟢 GREEN (MIRROR, DIRECTIONAL): a language-tagged multi-channel readout
+   ENABLES bilingual CP coexistence — matching anima's separate-faculty design. The H_1330
+   OVERWRITE was the SINGLE-SHARED-STORE mechanism, NOT a fundamental limit (overturns H_1330
+   as mechanism-specific). Explains why anima's REAL EN+KO separate faculties coexist.
+ • I1 FAILS (tagged arm does not hold both CPs) → 🧱 deeper wall: even tagging does not prevent
+   interference. Reported straight, NO bar moved.
+ • I1 holds but I2 fails (single-channel control does NOT overwrite) → 🧱 NOT-ATTRIBUTABLE:
+   coexistence is not the tag (extra training artifact). Honest, NO bar moved.
+ • I3 fails → 🧱 CONTROL-FAIL: the two-peak result is not cleanly earned. Honest, NO bar moved.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): R1 numpy MIRROR (DIRECTIONAL, engine-
+transfer UNVERIFIED). TOY synthetic 1-D continuum (N=21, deterministic readout — tests the
+STRUCTURE of tag-separated coexistence, NOT scaled / human bilingualism). Readout reads ONLY
+representational distance over bound labels with a fixed faculty tag, NO injected boundary /
+persona / RLHF; labels enter only at the A-fit / B-fit, NOT at test (p1/p2/p3/p6). NOT an emit
+gate (a_autonomy_over_hardcode). Live CORE/*.hexa UNTOUCHED (substrate-measurement rung).
+a_no_llm_frame_trap, a_engine_native_learning (transfer DIRECTIONAL), a_break_the_wall,
+a_verified_must_wire (engine-native realization = follow-on), a_scale_honest_scope,
+a_toy_scale_recheck. NO human-bilingualism claim.
