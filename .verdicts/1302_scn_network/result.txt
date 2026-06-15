@@ -1,0 +1,53 @@
+H_1302 — multi-oscillator SCN-network (Kuramoto consensus) — R1b verdict (DIRECTIONAL mirror)
+================================================================================
+date: 2026-06-16  |  seeds [5320,5321,5322]  |  $0 CPU numpy  |  byte-identical reruns
+
+==========================================================================
+H_1302 — multi-oscillator SCN-network (Kuramoto consensus) — R1 numpy mirror
+==========================================================================
+seeds=[5320, 5321, 5322]  N_OSC=8  STEPS=400  K_COUPLE=0.25
+  tau in [22.0,26.0] (heterogeneous)  SETTLE=200
+--------------------------------------------------------------------------
+metric                       B (network)   A (uncoupled)
+order param R                     0.9988          0.3731
+consensus period                 24.0248         24.0248
+B-SHUF R (frustrated)             0.1320
+B-ABL  R                          0.3731
+R under perturb                   0.9975          0.4115
+B R drop (perturb)                0.0014
+--------------------------------------------------------------------------
+c1 PRESENCE  B_R>=0.9 & B-A>=0.3: R=0.9988 gap=+0.6257  -> PASS
+c2 DISTINCT  A_R<=0.65 (uncoupled no consensus): 0.3731  -> PASS
+c3 EARNED-SHUF Bshuf<=A+0.15 (frustrated): 0.1320 <= 0.5231  -> PASS
+c4 EARNED-ABL  Babl<=A+0.15: 0.3731 <= 0.5231  -> PASS
+c5 DAMP   B_R_pert>=0.9 & B-A>=0.3: B=0.9975 A=0.4115 gap=+0.5859  -> PASS
+c6 NO-FAB A_R<0.9: 0.3731  -> PASS
+--------------------------------------------------------------------------
+c1..c6 = ['T', 'T', 'T', 'T', 'T', 'T']   VERDICT: GREEN
+==========================================================================
+
+--- per-seed (all 3 seeds, all 6 bars PASS) ---
+seed 5320: B_R=0.9990 A_R=0.3587 Bshuf=0.0741 Babl=0.3587 B_R_pert=0.9968 A_R_pert=0.3698 bars=['T', 'T', 'T', 'T', 'T', 'T']
+seed 5321: B_R=0.9990 A_R=0.3494 Bshuf=0.2354 Babl=0.3494 B_R_pert=0.9973 A_R_pert=0.4527 bars=['T', 'T', 'T', 'T', 'T', 'T']
+seed 5322: B_R=0.9985 A_R=0.4112 Bshuf=0.0866 Babl=0.4112 B_R_pert=0.9983 A_R_pert=0.4121 bars=['T', 'T', 'T', 'T', 'T', 'T']
+
+================================================================================
+R2 ENGINE-NATIVE + WIRED 🟢 — CORE/engine_cli.hexa § SCNNetwork
+================================================================================
+engine numbers (seed 5320, N=8, 400 steps):
+  B_R (mutual)     = 0.998998   A_R (uncoupled)  = 0.488700
+  Bfrust_R         = 0.017530   Babl_R           = 0.488700
+  B_R_pert         = 0.996808   A_R_pert         = 0.436084
+  -> all 6 bars hold engine-native (c1 consensus / c2 uncoupled-distinct /
+     c3 frustrated-collapse / c4 ablate-collapse / c5 damping). A_R differs from
+     the mirror's 0.373 by the engine LCG vs Python modular arithmetic; every bar
+     holds with margin -> engine-transfer VERIFIED for the STRUCTURE.
+
+engine_cli_smoke 73/0 (was 68/0 after H_1301 PhaseResetClock, +5 SCN cases 69-73):
+  PASS  case_69_scn_reaches_consensus
+  PASS  case_70_scn_uncoupled_no_consensus
+  PASS  case_71_scn_frustrated_collapses
+  PASS  case_72_scn_ablate_collapses
+  PASS  case_73_scn_network_damps_perturbed_member
+h1196 single-entry audit: 7 pass / 0 fail
+h1205 separation-invariant: PASS (generation byte-identical ON==OFF, Ψ=½ untouched)

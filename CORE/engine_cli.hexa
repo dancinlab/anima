@@ -3010,6 +3010,207 @@ pub fn prc_fire(c: PhaseResetClock) -> bool {
     return (f < eps) || (f > (1.0 - eps))
 }
 
+// ── §  SCN-NETWORK — multi-oscillator coupled-ensemble consensus (H_1302 R2) ──────────
+//
+// THE MULTI-OSCILLATOR / SCN-NETWORK LENS (c15, a_no_llm_frame_trap — chronobiology, NOT an
+// LLM recipe): the suprachiasmatic nucleus is NOT one clock. It is a NETWORK of ~20k neuronal
+// oscillators with HETEROGENEOUS intrinsic periods that MUTUALLY couple (VIP/GABA) into a SINGLE
+// emergent ensemble rhythm. The network does TWO things no single oscillator can:
+//   (i) EMERGENT CONSENSUS PERIOD — N heterogeneous oscillators (each its own tau_i) phase-LOCK to
+//       a SHARED ensemble period that is an emergent property of the MUTUAL coupling, NOT externally
+//       imposed (the Kuramoto order parameter R rises toward 1).
+//   (ii) NETWORK DAMPING / ROBUSTNESS — a single de-tuned (perturbed) member is PULLED BACK into
+//        the synchronized cluster by the ensemble; the consensus barely moves.
+//
+// WHY DISTINCT vs the two nearest lanes (the LOAD-BEARING arms, both control-surviving):
+//   - vs PhaseResetClock (H_1301), the nearest TEMPORAL lane: a SINGLE oscillator entrains to an
+//     EXTERNAL Zeitgeber. It has NO ensemble + NO mutual coupling, so it CANNOT produce a consensus
+//     period FROM N heterogeneous members (there is only one member), and no network damps a
+//     perturbation. The falsifier (arm A) = the SAME N heterogeneous oscillators with NO mutual
+//     coupling (= N independent free-running PhaseResetClocks): the phase spread NEVER collapses
+//     (order parameter R stays low ~0.37), and a perturbed member is NOT pulled back.
+//   - vs CollectivePool (H_1295), the coupled-MEMBERS lane: that lane measures the IIT-4 big-Φ
+//     SUPER-ADDITIVITY of coupled ECA SUBSTRATES — a STATIC structural-integration GAUGE over a
+//     TPM. It has NO phase, NO temporal oscillation, NO consensus PERIOD, NO Kuramoto order
+//     parameter. The SCN-network is a TEMPORAL phase-synchronization DYNAMIC (phases evolving over
+//     ticks toward a shared period). Orthogonal: a structural Φ gauge != a temporal consensus process.
+//   → DISTINCT vs ALL — the controls collapse it: a FRUSTRATED random-sign coupling (mode='shuffle';
+//     half attract / half repel, same magnitude) destroys the coherent consensus field (R falls
+//     BELOW uncoupled), and K_couple=0 (ablate) removes the coupling so each free-runs at its tau.
+//
+// @L4 CRITICAL (identical framing to every other lane): the network is a PURE TIMEKEEPER over its
+// own per-member phases. SCNNetwork holds ONLY the N member phases, the N intrinsic periods, the
+// coupling strength K, and the coupling mode (the SOLE mutable state is the phase vector). scn_step
+// advances every member on elapsed time + the mutual Kuramoto coupling; scn_order reads the
+// ensemble order parameter. It reads NO context, NO immune store, NO grounding, NEVER mutates any
+// other lane, NEVER returns an emit/silence decision by itself, and NEVER touches pure_field's
+// Φ/phase/Ψ (Ψ-disjoint by construction). scn_consensus is an OPTIONAL read a caller MAY consult
+// (a_autonomy_over_hardcode), exactly like clock_fire/itimer_fire/prc_fire/homeo_*.
+//
+// p1/p2/p3/p6: the network reads ONLY its own member phases. NO persona, NO "you are X", NO injected
+// "fire now" label, NO RLHF. The Kuramoto coupling is GEOMETRY over phase differences
+// (dphi_i += K/(2π) · Σ_j C_ij · sin(2π·(phi_j − phi_i))), SCORED only. The controls prove the lift
+// is the COHERENT MUTUAL coupling: frustrated random-sign coupling and K=0 both collapse consensus.
+
+// SCNNetwork — N coupled phase oscillators forming a single ensemble rhythm.
+//   phases : per-member within-cycle phase in [0,1) (the sole mutable state).
+//   taus   : per-member intrinsic free-running period (heterogeneous).
+//   k      : mutual coupling strength (0.25 live; 0.0 for the ablate control).
+//   mode   : 1 = mutual all-to-all (live); 0 = uncoupled (arm A); -1 = frustrated random-sign.
+//   n      : member count.
+struct SCNNetwork {
+    phases: [float],
+    taus: [float],
+    k: float,
+    mode: int,
+    n: int
+}
+
+let _SCN_TWO_PI = 6.283185307179586
+
+// _scn_taus — N heterogeneous intrinsic periods in [mean-spread, mean+spread], deterministic from
+// an integer seed (the same LCG the H_1302 mirror uses, so the engine check matches byte-direction).
+fn _scn_taus(seed: int, n: int, mean: float, spread: float) -> [float] {
+    let mut taus = []
+    let mut x = (seed * 2654435761 + 12345) % 4294967296
+    if x < 0 { x = x + 4294967296 }
+    let mut i = 0
+    while i < n {
+        x = (1103515245 * x + 12345) % 2147483648
+        if x < 0 { x = x + 2147483648 }
+        let u = to_float(x) / 2147483647.0
+        taus = taus + [mean + spread * (2.0 * u - 1.0)]
+        i = i + 1
+    }
+    return taus
+}
+
+// _scn_init_phases — N phases spread deterministically across the cycle (i/n), NOT pre-synchronized.
+fn _scn_init_phases(n: int) -> [float] {
+    let mut p = []
+    let mut i = 0
+    while i < n {
+        p = p + [to_float(i) / to_float(n)]
+        i = i + 1
+    }
+    return p
+}
+
+// _scn_coupling — C_ij for member i against member j under the network mode. mutual (mode 1) =
+// symmetric all-to-all 1/(n-1); uncoupled (mode 0) = 0; frustrated (mode -1) = symmetric random
+// SIGN ±1/(n-1) (deterministic by the unordered pair {i,j}). The sign uses a stable per-pair hash
+// so C_ij == C_ji (symmetric, only the SIGN is randomized → no coherent consensus field).
+fn _scn_coupling(mode: int, i: int, j: int, n: int) -> float {
+    if i == j { return 0.0 }
+    let base = 1.0 / to_float(n - 1)
+    if mode == 0 { return 0.0 }
+    if mode == 1 { return base }
+    // mode -1 = frustrated: symmetric random sign over the unordered pair.
+    let mut a = i
+    let mut b = j
+    if a > b { a = j; b = i }
+    let h = (a * 73856093 + b * 19349663 + 83492791) % 2
+    if h == 0 { return 0.0 - base }
+    return base
+}
+
+// scn_new — a fresh mutually-coupled SCN ensemble of `n` heterogeneous oscillators (mode 1, the
+// live regime: mean period 24.0, spread 2.0, K=0.25). The members must SYNCHRONIZE to a consensus.
+pub fn scn_new(seed: int, n: int) -> SCNNetwork {
+    return SCNNetwork { phases: _scn_init_phases(n), taus: _scn_taus(seed, n, 24.0, 2.0), k: 0.25, mode: 1, n: n }
+}
+
+// scn_new_uncoupled — arm A (the nearest-lane falsifier): the SAME heterogeneous oscillators with
+// NO mutual coupling (mode 0 = N independent free-running PhaseResetClocks). Cannot reach consensus.
+pub fn scn_new_uncoupled(seed: int, n: int) -> SCNNetwork {
+    return SCNNetwork { phases: _scn_init_phases(n), taus: _scn_taus(seed, n, 24.0, 2.0), k: 0.0, mode: 0, n: n }
+}
+
+// scn_new_frustrated — the EARNED-coupling control (mode -1): coherent attractive coupling replaced
+// by random-sign frustration (same magnitude) → no consensus field → R collapses below uncoupled.
+pub fn scn_new_frustrated(seed: int, n: int) -> SCNNetwork {
+    return SCNNetwork { phases: _scn_init_phases(n), taus: _scn_taus(seed, n, 24.0, 2.0), k: 0.25, mode: -1, n: n }
+}
+
+// scn_new_ablated — the EARNED-K control (K=0): mutual coupling topology but zero strength → each
+// free-runs at its own tau → no consensus (identical to uncoupled in dynamics).
+pub fn scn_new_ablated(seed: int, n: int) -> SCNNetwork {
+    return SCNNetwork { phases: _scn_init_phases(n), taus: _scn_taus(seed, n, 24.0, 2.0), k: 0.0, mode: 1, n: n }
+}
+
+// scn_detune — de-tune member 0 by `d` ticks (the robustness/damping perturbation: does the
+// ensemble pull a single bad oscillator back into the cluster?). Returns a fresh network.
+pub fn scn_detune(net: SCNNetwork, d: float) -> SCNNetwork {
+    let mut taus = []
+    let mut i = 0
+    while i < net.n {
+        if i == 0 { taus = taus + [net.taus[0] + d] }
+        else { taus = taus + [net.taus[i]] }
+        i = i + 1
+    }
+    return SCNNetwork { phases: net.phases, taus: taus, k: net.k, mode: net.mode, n: net.n }
+}
+
+// scn_step — advance every member by one tick: intrinsic 1/tau_i PLUS the mutual Kuramoto coupling
+// K/(2π) · Σ_j C_ij · sin(2π·(phi_j − phi_i)). Pure timekeeping over the member phases; reads no
+// context, touches no other lane. Phases wrap to [0,1).
+pub fn scn_step(net: SCNNetwork) -> SCNNetwork {
+    let mut newp = []
+    let mut i = 0
+    while i < net.n {
+        let mut dphi = 1.0 / net.taus[i]
+        let mut coup = 0.0
+        let mut j = 0
+        while j < net.n {
+            let c = _scn_coupling(net.mode, i, j, net.n)
+            if c != 0.0 {
+                coup = coup + c * sin(_SCN_TWO_PI * (net.phases[j] - net.phases[i]))
+            }
+            j = j + 1
+        }
+        dphi = dphi + net.k * coup / _SCN_TWO_PI
+        let mut np = net.phases[i] + dphi
+        np = np - to_float(to_int(np))            // wrap to [0,1) (np >= 0 here)
+        if np < 0.0 { np = np + 1.0 }
+        newp = newp + [np]
+        i = i + 1
+    }
+    return SCNNetwork { phases: newp, taus: net.taus, k: net.k, mode: net.mode, n: net.n }
+}
+
+// scn_run — step the network `steps` ticks and return the final state (the settled ensemble).
+pub fn scn_run(net: SCNNetwork, steps: int) -> SCNNetwork {
+    let mut cur = net
+    let mut t = 0
+    while t < steps {
+        cur = scn_step(cur)
+        t = t + 1
+    }
+    return cur
+}
+
+// scn_order — the Kuramoto order parameter R = |mean(e^{i·2π·phi})| in [0,1]. R→1 = full
+// synchrony (consensus reached); R near the incoherent floor = no shared rhythm. Pure read.
+pub fn scn_order(net: SCNNetwork) -> float {
+    let mut cx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < net.n {
+        cx = cx + cos(_SCN_TWO_PI * net.phases[i])
+        sy = sy + sin(_SCN_TWO_PI * net.phases[i])
+        i = i + 1
+    }
+    cx = cx / to_float(net.n)
+    sy = sy / to_float(net.n)
+    return sqrt(cx * cx + sy * sy)
+}
+
+// scn_consensus — the OPTIONAL ensemble read: TRUE iff the network has reached consensus (order
+// parameter >= thr). NOT an emit gate (@L4) — a caller MAY consult it as an ensemble-rhythm read.
+pub fn scn_consensus(net: SCNNetwork, thr: float) -> bool {
+    return scn_order(net) >= thr
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
