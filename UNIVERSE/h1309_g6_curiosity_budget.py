@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""h1306_g6_curiosity_budget.py — G6 IDEATION depth-floor dig r2 (re-fire).
+"""h1309_g6_curiosity_budget.py — G6 IDEATION depth-floor dig r2 (re-fire).
+(id 1306 was taken by a concurrent ko-mitosis lane on origin/main → renumbered to 1309.)
 
 Question (refines H_1305 🟠 THIN): a CURIOSITY-GATED MULTI-SAMPLE BUDGET — does
 spending MORE draws (NOT a bigger model) under a curiosity gate cross
@@ -58,7 +59,7 @@ KWR_FLOOR = 0.50         # G0 coherence (gauge_lib)
 MAX_NEW = 110            # verify303m_g6.py VERBATIM
 SEEDS = [7, 4302, 4303]  # same 3 outer seeds as H_1305
 # budget ladder — top budget may be CAPPED on CPU; we report the honest ceiling.
-BUDGET_LADDER = [int(x) for x in os.environ.get("H1306_BUDGETS", "1,4,16,64").split(",")]
+BUDGET_LADDER = [int(x) for x in os.environ.get("H1309_BUDGETS", "1,4,16,64").split(",")]
 SEED_TEXTS = list(g.IDEATION_SEEDS)   # the LIVE G6 ideation seeds (flat path)
 
 
@@ -155,7 +156,7 @@ def main():
     # per[budget][arm] -> list of result dicts (one per outer seed)
     per = {B: {a: [] for a in ARMS} for B in BUDGET_LADDER}
     completed_budgets = []
-    od = os.path.join(ANIMA, ".verdicts", "1306_g6_curiosity_budget")
+    od = os.path.join(ANIMA, ".verdicts", "1309_g6_curiosity_budget")
     os.makedirs(od, exist_ok=True)
 
     for B in BUDGET_LADDER:
