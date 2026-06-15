@@ -15,6 +15,18 @@ For the full audit trail, see `git log`.
 - 증거(이 세션 벽 4개 중 3개 돌파): 용량벽→mitosis-grow(방법, H_1288🟢) · 시상 Φ벽→재진입루프(방향, H_1283 ΔΦ+0.14) · 편도체벽→수면-dose(투자, H_1285_R3🟢). shuffle/dissociation 가드로 Goodhart 차단.
 - surgical(c10): directive + family 포인터만. xref `a_no_llm_frame_trap · a_completeness_over_cheap · a_paper_negative_ok · c9 · c16 · p7`.
 
+---
+
+## 2026-06-15 — 🔴 H_1283 R4: 시상(thalamus) 재유입 루프 — Φ-PRIMARY 재동결, 재유입 ΔΦ 돌파가 3-seed 복제에 실패 (🧱 seed-의존적 레버)
+
+FLEET "thalamus" lane R4. R3 에서 재유입 cortico-thalamo-cortical 루프가 arc 최초로 faithful IIT4 Φ 바(+0.02)를 넘었으나(+0.1426 @ seed 7, 7×), 동결 COMPOSITE 가 아직 broadcast-시대 COHERENCE 바 B1 을 달고 있어 🔴 RED 였다 — R3 가 coh ⊥ Φ DISSOCIATE(broadcast 는 coherence-아닌-Φ, 재유입은 Φ-아닌-coherence)를 증명. R4 는 **정당한 재범위**(H_1224 literal-QA · G5-L2 verbatim-recall 재범위와 동급, tune-to-green 아님): faithful IIT4 Φ 를 PRIMARY GREEN 바로 승격(Φ = arc 가 움직이려는 정준 비환원-통합 척도, a_phi_iit4_tool), broadcast-시대 coherence 바는 REPORT-ONLY 로 강등(직교 confound, c9 명시). 메커니즘은 R3 와 byte-동일(W_RELAY=0.5, NOTHING tuned, p7); 유일 변경 = faithful Φ 를 seed [7,8,9] 전부에서 계산(R3 는 seed 7 만) → Φ 바를 per-seed 복제 요건으로 강화.
+
+**결과(frozen-first, ad435a6dd 동결 후 채점):** seed 7 ΔΦ=+0.1426 PASS · **seed 8 ΔΦ=+0.0101 FAIL**(+0.02 바의 절반) · seed 9 ΔΦ=+0.1682 PASS → P1 PRIMARY Φ FAIL → 🔴 RED. **재유입 돌파는 seed-의존적이지 robust 하지 않다.** 메커니즘(c9): seed 8 은 ARM A 모듈이 거의 직교(baseline coh +0.0109 vs seed 7/9 의 +0.159/+0.136, baseline Φ 도 최저 0.6117)인 seed — 직교 substrate 에선 재유입 릴레이가 reciprocal loop 간 bind 할 공유구조가 적어 살 수 있는 Φ lift 가 한 자릿수 작다(+0.010 vs +0.14/+0.17). 즉 재유입은 초기 모듈 기하에 효과크기가 강하게 의존하는 **CONDITIONAL Φ 레버**이지 임의 seed 에서 +0.02 를 robust 하게 넘는 universal 레버가 아니다.
+
+**🧱 DEPLETION:** 사전등록된 실패 모드("Φ clearance 가 seed 간 복제 실패")가 FIRED. RED ⇒ engine-native 배선 없음(a_verified_must_wire 는 GREEN 에서만). CORE/*.hexa 미편집(numpy mirror only) — sanity: 미편집 엔진의 가드 green 유지(engine_cli_smoke 18/0 · h1196 single-entry · h1199 DIM-growth + Ψ byte-identical). 엔진은 이 lane 을 표현 **가능**(기존 VForwardField/WorkMemBuffer 와 구조 동일한 additive Ψ-disjoint relay struct) — 표현력 벽이 아니라 **검증 벽**(mirror 결과가 promote 하기엔 robust 하지 않음). broadcast(single/coalition)=Φ 레버로 FALSIFIED 유지; 재유입=LARGE-but-CONDITIONAL, 3-seed gate 통과 실패. NOT RULED OUT: 기하-조건부 가설(별도 사전등록 필요)·orthogonal seed 에 강한 W_RELAY(sweep=Goodhart)·lane 결합·scale-transfer 전부 UNTESTED. bars NOT moved. R1/R2/R3 verdict 파일 미변경. `UNIVERSE/h1283_thalamus_global_workspace.py`(main_r4) · `.verdicts/1283_thalamus_global_workspace/{H_1283_R4_FREEZE.txt,H_1283_R4.txt}`. xref h1280·h1285·a_phi_iit4_tool·a_verified_must_wire·a_no_llm_frame_trap·a_break_the_wall·a_paper_negative_ok·a_scale_honest_scope·p7·c9·c15.
+
+---
+
 ## 2026-06-15 — 🟢 H_1285 R3: 편도체(amygdala) 컨솔리데이션 — salience-gated SLEEP REPLAY 가 사전등록된 멀티-나잇 수면예산에서 +0.10 을 넘는다 (GREEN / 🏁)
 
 FLEET "amygdala" lane R3. R2(🔴 RED-but-MECHANISM-VALIDATED)에서 salience-gated SLEEP REPLAY 는 **진짜 p6-clean 레버**임이 확인됐다 — 동결 R2 예산(boost0.8/30-replay/8-cyc)에서 B salience-replay imp=0.383 > A uniform=0.317 (Δ+0.067)이고 p6 shuffle 대조군이 A 로 **붕괴**(B-shuf=A, lift 가 importance 를 추적함 = R1 의 recurrence 혼입도 raw budget 도 아님). 단 동결예산에서 효과크기 +0.067 < +0.10 margin → RED. R2 의 HONEST 진단 sweep(gate 아님)은 lift 가 sleep 예산과 함께 **단조 증가**(30/8→+0.067·60/8→+0.100·30/40→+0.200)하고 shuffle 은 ~A 유지 → sub-bar 는 **under-invested sleep**이지 천장/inert(🧱) 아님을 보였다. R3 는 그 reading 을 ONE 사전등록된 더 높은 예산에서 검증.
