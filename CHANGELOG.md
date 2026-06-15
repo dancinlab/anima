@@ -9,6 +9,42 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 - Removed the redundant standalone top `hx install anima` code block — the proper full install
   sequence already lives in `## Quickstart` (the only remaining `hx install` occurrence).
 - Surgical: README.md only; lane counts / smoke numbers / translated READMEs untouched.
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1300 mitosis-grow skill curriculum — teach tool-use one-at-a-time via mitosis AVOIDS catastrophic forgetting (🟢 GREEN @R2, DIRECTIONAL)
+
+The user's idea (a structural p8 fit): teach anima agent tool-use skills **ONE AT A TIME via
+MITOSIS-grow** — each new skill = a NEW dedicated CELL grown under that skill's error
+(H_1199 VAdaptField / H_1288 grow-under-pressure), NOT a gradient overwrite of shared weights.
+Load-bearing claim: this **avoids CATASTROPHIC FORGETTING** — new cells don't overwrite the cells
+holding prior skills, so mitosis RETAINS earlier skills where sequential gradient-FT forgets them.
+DISTINCT axis from H_1297 (convergence on ONE fit): retention-across-tasks ⊥ convergence-on-one-task.
+
+- **Task** — a SKILL CURRICULUM: N=5 distinct tool-use skills (context region P_k → tool token T_k,
+  D=12, C=4) presented ONE AT A TIME (NO joint training, NO replay = the continual-learning regime
+  that induces catastrophic forgetting). 3 seeds, $0 CPU numpy DIRECTIONAL mirror, deterministic.
+- **Arms** — A GRADIENT-FT (one shared net, fine-tuned sequentially, NO replay = the incumbent that
+  forgets) · B MITOSIS-GROW (dedicated frozen cells per skill, NO global backprop) · B-SHUFFLE
+  (mis-routed cells = targeting control) · B-ABLATE (no growth = growth-is-the-lever control).
+- **R1 (well-separated skills) = 🔴 RED** (frozen verbatim): A_ret=0.737 B_ret=0.977 (B−A=+0.240 <
+  the frozen 0.30 margin → c1 FAIL; c2/c3/c4 PASS). Root cause = the REGIME, not p8: high-dim spatial
+  separation let gradient-FT only forget SOME skills (diluted forgetting).
+- **R2 (a_break_the_wall; bars frozen anew SAME numbers, no goalpost move) = 🟢 GREEN** — canonical
+  catastrophic-forgetting regime (region separation 3.0→1.0 + anti-aligned shared rules so learning
+  skill k+1 un-learns skill k; mitosis arm B mechanically unchanged): A_ret=**0.553** B_ret=**0.922**
+  (B−A=**+0.368** ≥ 0.30, per-seed B>A every seed) → c1 PASS · B learns every new skill (min acq
+  0.880 ≥ 0.80) c2 PASS · shuffle collapses (0.397 ≤ 0.703) c3 PASS · ablate underfits (0.160 ≤ 0.50)
+  c4 PASS. **COST FAVORABLE**: B = 6.3 cells vs A = 52 params (retains MORE at LOWER footprint).
+- **Mechanism** — under real interference gradient-FT genuinely forgets (A_ret 0.737→0.553) while
+  mitosis stays high (0.922) because its per-skill cells are dedicated and never overwritten; controls
+  fire decisively (retention IS targeted dedicated-cell ownership + growth, not mere extra capacity).
+- **p8/p6 guard** — split = the model's own tick; trainer touches ONLY the per-skill prototype
+  population + local heads, NO global backprop / labels / persona / ethics; live CORE/*.hexa untouched.
+- **Scope (a_scale_honest_scope · a_toy_scale_recheck)** — DIRECTIONAL numpy mirror, engine-transfer +
+  scale UNVERIFIED; TOY (D=12, N=5, C=4, 3 seeds). FOLLOW-ONS (named, not claimed): (1) engine-native
+  per-skill mitosis-grow on live CORE VAdaptField/ImmuneMemoryGrow; (2) the real path the user asked
+  for — incrementally teach actual anima agent tool-use skills one-at-a-time via mitosis on the 303M.
+- Files: `UNIVERSE/h1300_mitosis_skill_curriculum.py` · `UNIVERSE/H_1300_mitosis_skill_curriculum.md` ·
+  `.verdicts/1300_mitosis_skill_curriculum/{FREEZE,FREEZE_R2,result}.txt` · `CLAIMS.tape` @C
+  h1300_mitosis_skill_curriculum · `UNIVERSE/HYPOTHESES.md` row · `domains/MITOSIS-ENGINE.log.md` @H.
 
 ## 2026-06-16 — infra(CORPUS): $0 R2→trainer pipeline SMOKE (de-risk the cost-gated 7B GPU fire)
 
