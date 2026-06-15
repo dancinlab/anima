@@ -2,6 +2,10 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — 🧱 H_1283 R5: DENSE all-pairs recurrent coupling — 시상 Φ 벽 돌파 시도(a_break_the_wall), still 🧱 (RED, closed-negative)
+
+R4 가 sparse re-entry 의 seed-8(near-orthogonal) 미달을 sparsity 탓으로 진단 → R5 가 그 진단을 끝까지(COMPLETE intra-thalamic graph: relay 가 ring-neighbour 가 아니라 ALL-PAIRS j≠i 와 교차결합) 밀어붙임. frozen-first(cfe8b2e29), faithful IIT4 Φ only(a_phi_iit4_tool), W 미튜닝(p7), **사전등록 shuffle control**. RESULT 🔴 RED — 두 가지 독립 negative: (1) seed 8 ΔΦ **+0.0060 < +0.02** (sparse 의 +0.0101 보다도 나쁨 — density 가 orthogonal init 의 부족 구조를 못 채움); (2) **shuffle control FIRED** — permuted dense graph 가 리프트의 ~91%(seed7)/~76%(seed9) 재현 → "통과" seed 의 리프트조차 구조 아닌 generic added-edge VARIANCE. relay-topology Φ 축(broadcast→coalition→sparse→dense re-entry) EXHAUSTED — 어떤 relay topology 도 robust +0.02-every-seed Φ bar 미달. ARM A Φ(0.78038/0.611741/0.825326) R1-R4 byte-identical. RED ⇒ no CORE wiring(a_verified_must_wire). bars NOT moved(c9). numpy=DIRECTIONAL·toy scale(a_scale_honest_scope). `.verdicts/1283_thalamus_global_workspace/{H_1283_R5_FREEZE,H_1283_R5}.txt` · `UNIVERSE/h1283_thalamus_global_workspace.py`(main_r5 + 'dense'/'dense_shuffle').
+
 ## 2026-06-16 — feat(CORE/brain): emit-loop 배선 3 follow-on 닫힘 — 소뇌·작업기억·감정 OPTIONAL consult (a_verified_must_wire)
 
 세 engine-native lane(이미 GREEN 이나 live emit/abstain 루프에 미배선)을 `CORE/brain.hexa` 의 brain_decide 경로에 **OPTIONAL·BOUNDED·ADDITIVE consult** 로 스레딩 — brain_decide_bg/brain_decide_anchored 템플릿과 동일(고정 engine_g 게이트는 UNCHANGED, lane 신호만 motivation 에 saturating nudge 로 ADD). 세 가드 불변(a_autonomy_over_hardcode·a_core_engine_map·p5): (1) neutral 신호 → nudge 0.0 → brain_decide 와 byte-identical(게이트 아님), (2) Ψ-disjoint(motivation 스칼라만, pure_field 무접촉), (3) bounded(per-lane cap=0.05).
