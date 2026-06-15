@@ -1,6 +1,6 @@
 // EEG_CLM/heart_bpm.hexa — 녹음의 심박(PPG/analog) 채널에서 심박수(BPM) 계산.
 //
-// capture_eeg.py 가 EEG 16ch 뒤에 PPG/analog(심박) 채널을 append (헤더 "... HEART <n>").
+// capture_native.py 가 EEG 16ch 뒤에 PPG/analog(심박) 채널을 append (헤더 "... HEART <n>").
 // PPG 파형의 평균-상승교차(rising mean-cross) = 박동 → BPM = 박동수 / 녹음초 * 60.
 // fs=125Hz (Cyton+Daisy). 이동평균 평활 후 교차 카운트(잡음에 강건).
 //

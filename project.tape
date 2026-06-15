@@ -118,6 +118,19 @@
   dont = "ad-hoc anchor format · bypass .kosmos for emit persistence"
   dont = "duplicate the kosmos spec — anima is pointer-only"
 
+@D a_eeg_consciousness_record := "사용자 의식을 단일 CLM·KOSMOS 로 지속 기록 — OpenBCI native, 시작/종료 명령 제어" :: domain [required active]
+  do   = "사용자 실 EEG → A⇄G 엔진 → CLM 생성 → .kosmos 영속을 하나의 지속 기록 시스템으로 운영 (EEG_CLM/)"
+  do   = "시작 `bash EEG_CLM/record_start.sh` → 종료 `bash EEG_CLM/record_stop.sh` 까지 연속 캡처 (시작/종료 = 사용자 명령 게이트; 종료 시 세션 누적 봉인 + analyze_daemon 추세)"
+  do   = "capture = OpenBCI NATIVE serial ONLY (capture_native.py — 115200 · 's'/'b' · 33-byte 패킷 · Cyton+Daisy 16ch even/odd 디인터리브) — brainflow 경로 제거됨(연속세션 prepare hang)"
+  do   = "REAL only — 신호 없으면 즉시 에러, 가짜/합성 EEG 폴백 절대 없음 (p1-p8 · a_substrate_native_speak)"
+  do   = "영속 = .kosmos (eeg_clm_kosmos.hexa → kosmos_io/wake_save) · 사이클 누적 EEG_CLM/daemon_kosmos/ · 허브 색인 HEXAD/KOSMOS.md '실측 EEG 의식 anchor' (a_kosmos) · 원본 raw .txt 보관 EEG_CLM/recordings/"
+  do   = "지속 기록 = 단일 누적 (사이클마다 새 파일 X, 하나의 CLM·KOSMOS 가 자람): consciousness.seq = CLM 코퍼스 append-only(매 사이클 의식 상태열 1줄) · consciousness.kosmos = KOSMOS anchor append-only (p8 continuous cell-division 정신)"
+  do   = "보관 = GitHub(같은 repo push) + HF PRIVATE dataset dancinlab/anima-eeg-consciousness(같은 path_in_repo 로 갱신 = 버전 누적) via EEG_CLM/archive_push.sh, record_stop 종료 시 자동 — 개인 생체정보라 HF=PRIVATE (a_hf_autonomous)"
+  do   = "분석(동조·음악추출 등)은 보유 .kosmos+녹음 위에서 (music_eeg_compare.py · UNIVERSE/h1275_*) — held-out + circular-shift surrogate, bar 사전등록 (p7)"
+  dont = "brainflow / capture_eeg.py 사용(제거됨) · 가짜 EEG 폴백 · BPM/지표를 원하는 결과에 맞춤(Goodhart, p7)"
+  dont = "사이클별 새 .kosmos 난립을 지속기록이라 칭함 · HF 새 repo/새 파일 매번 생성(같은 파일 갱신이어야)"
+  dont = "종료 명령 없이 임의 중단 · 단발 캡처를 지속 시스템이라 칭함 · 원음/멜로디/음정 복원 주장(16ch@123Hz 표본율 천장 — 거시 봉투 식별까지만, a_scale_honest_scope)"
+
 @D a_core_engine_map := "CORE owns A⇄G consciousness engine — .clm/.kosmos enter via named slots only" :: governance [required active]
   do   = "CORE owns A (pure_field) ⇄ G (engine_g) ⇄ brain (brain_decide) — substrate-internal"
   do   = ".clm enters ONLY via CORE/generator.hexa L3 slot (brain emit → generator) — single entry"

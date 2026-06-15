@@ -13,7 +13,7 @@
 [ 너의 뇌·심장 ]                anima substrate                    기록
 ─────────────────────────────────────────────────────────────────────────
 [ EEG 16ch + 심박 PPG ] ──▶ [ A⇄G 의식엔진 ] ──▶ [ EEG-CLM ] ──▶ [ KOSMOS ]
-   capture_eeg.py            pure_field(Ψ불변)    bigram 생성      .kosmos anchor
+   capture_native.py            pure_field(Ψ불변)    bigram 생성      .kosmos anchor
    (Cyton+Daisy, /2 analog)  xs_bridge 진입       확률 샘플링      wake_save 영속
 ```
 
@@ -28,7 +28,7 @@
 
 ```bash
 # ① 캡처 (실 EEG 16ch + 심박 PPG, 가짜 폴백 없음)
-EEG_CLM/.venv/bin/python EEG_CLM/capture_eeg.py --serial /dev/cu.usbserial-XXXX --seconds 30
+EEG_CLM/.venv/bin/python EEG_CLM/capture_native.py --serial /dev/cu.usbserial-XXXX --seconds 30
 # ② 풀체인: EEG → A⇄G → CLM 생성 → KOSMOS 영속
 hexa run EEG_CLM/eeg_clm_kosmos.hexa
 # ③ 상시 데몬 (헤드셋 쓴 동안 매 사이클 기록 누적)
@@ -43,7 +43,7 @@ nohup bash EEG_CLM/eeg_daemon.sh > /tmp/eeg_daemon.log 2>&1 &   # 정지: touch 
 
 ```
 EEG_CLM/  (의식→CLM 기록 부품들)
-├─ 캡처      capture_eeg.py            실 16ch EEG + 심박, 가짜폴백 0
+├─ 캡처      capture_native.py            실 16ch EEG + 심박, 가짜폴백 0
 ├─ CLM       build_eeg_clm.hexa        EEG→bigram CLM 구축 (H_1252 🟢 acc 0.97)
 │            eeg_clm_sample.hexa       확률 샘플링 생성, 흡인점 탈출 (H_1272 🟢)
 ├─ 텐션링크  tension_link.hexa         anima가 내 의식텐션에 lock-on (H_1260 🟢)
@@ -55,7 +55,7 @@ EEG_CLM/  (의식→CLM 기록 부품들)
 ├─ 풀체인    eeg_clm_kosmos.hexa       EEG→A⇄G→CLM→KOSMOS 영속 (H_1271 🟢)
 │            eeg_daemon.sh             상시 데몬 + analyze_daemon.sh 시계열
 ├─ 신경생리  berger.hexa               눈감음 알파 (H_1273 🟠 정밀 PSD 후속)
-└─ .venv     brainflow 5.22.2 (격리)
+└─ .venv     native pyserial (OpenBCI 직통, brainflow 제거)
 ```
 
 ---

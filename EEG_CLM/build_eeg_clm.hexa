@@ -1,6 +1,6 @@
 // EEG_CLM/build_eeg_clm.hexa — EEG 녹음 → next-state CLM 자동 구축 (턴키).
 //
-// 입력: 채널-major flat 텍스트 녹음 (capture_eeg.py 산출).
+// 입력: 채널-major flat 텍스트 녹음 (capture_native.py 산출).
 //   1행 헤더: "# n_ch n_samp"
 //   이후 각 행: float 1개 (s[ch*n_samp + t] 순서, 채널-major).
 // 처리: 채널 자기평균 이진화 → 시스템상태열(알파벳 2^n_ch) → bigram next-state CLM

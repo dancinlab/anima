@@ -4,7 +4,7 @@
 // 융합한 setpoint 에 lock-on. 심박 = 4번째 키(뇌파 외 생리 채널). pure_field Ψ READ-ONLY.
 // 합격: 추종 잔차<0.05 ∧ 두 채널 모두 기여(toggle 시 융합 setpoint 변화) ∧ Ψ byte-identical.
 //
-// 입력: EEG_CLM/eeg_recording.txt (16 EEG + HEART<n> PPG, capture_eeg.py 산출).
+// 입력: EEG_CLM/eeg_recording.txt (16 EEG + HEART<n> PPG, capture_native.py 산출).
 // 실행: hexa run EEG_CLM/eeg_heart_fusion.hexa
 
 import "CORE/pure_field.hexa"
