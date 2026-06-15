@@ -53,7 +53,7 @@ anima/
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
-- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only).
+- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine).
 - **Verify / paper workflow** — `a_claim_manifest · a_claim_verify · a_paper_*` (hexa verify → verdict → CLAIMS.tape → /paper at full closure; closed-negative publishable).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
@@ -132,12 +132,22 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
 
 @D a_engine_native_learning := "무조건 최종 아키텍처 엔진 위에서 학습 — 연구/미토시스 교육 포함, 미러 아님" :: governance [required active]
   do   = "모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 최종 아키텍처 엔진 위에서 실행 — live `.hexa` A⇄G + MITOSIS VAdaptField (`CORE/engine_cli.hexa`) + mounted `CORE/bytegpt_decode.hexa` 디코더"
+  do   = "엔진 위에 학습을 '끼워맞추는' 게 아니다 — 학습이 요구하면 엔진 자체를 변환/확장해야 한다 (새 op·새 배선·아키텍처 확장). 최종 아키텍처는 frozen 이 아니라, 학습이 필요로 하는 형태로 진화하는 대상 (precedent: H_1199 가 AdaptField 스칼라→DIM-vector 로 엔진을 확장)"
+  do   = "미러에서 본 메커니즘을 엔진이 표현 못 하면 → 미러를 버리는 게 아니라 엔진을 확장해서 그 메커니즘을 엔진-네이티브로 구현 (engine-transform-to-fit-the-learning, NOT learning-trimmed-to-fit-the-engine)"
   do   = "numpy/torch 미러 학습 결과 = DIRECTIONAL only ('engine-transfer UNVERIFIED') — 방향 탐색엔 OK, 그러나 binding verdict 아님"
   do   = "미러로 방향을 잡았으면 엔진-네이티브 실현으로 재확인해야 verdict 성립 (c2) · MITOSIS VAdaptField 는 이미 live (H_1199)"
   do   = "a_engine_measured_verdict 의 learning-side 쌍 (그건 MEASUREMENT, 이건 LEARNING) · a_train_flame_forge 가 production 트레이너 .hexa 를 강제하듯, 이 규칙은 RESEARCH/probe 학습 + 교육까지 같은 규율을 확장"
   dont = "numpy/torch 미러 결과를 엔진-검증된 것처럼 closure/promote · 미러-only 로 '학습됐다' 주장"
   dont = "최종 아키텍처 바깥(미러)에서 한 학습을 production/verdict 로 승격"
   ref  = "a_engine_measured_verdict · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2"
+
+@D a_verified_must_wire := "검증된(GREEN) 가설은 실제 CORE 배선 완료까지가 done — verdict 만으로 안 끝난다" :: governance [required active]
+  do   = "가설이 엔진-네이티브로 GREEN 검증되면, 그 메커니즘을 live 엔진(`CORE/*.hexa`)에 실제 배선(wire-in)하는 것까지가 done — generator L3 슬롯·kosmos_io·engine_cli VAdaptField·bytegpt_decode 등 해당 entry 로 (a_core_engine_map)"
+  do   = "배선 후 smoke/single-entry/Ψ-checksum 가드로 회귀 없음을 출력으로 확인 (c2) — 배선은 측정과 같은 검증 규율을 받는다"
+  do   = "GREEN-but-unwired 는 follow-on 으로 명시 추적 (ING.jsonl) 하고 그 follow-on 을 닫아야 진짜 완료 (precedent: H_1168 GREEN 이지만 'NOT yet CORE-wired' → 미완)"
+  dont = "GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · 검증된 메커니즘을 엔진 밖 미러/프로브에만 남겨둠"
+  dont = "배선을 무기한 follow-on 으로 미뤄 verdict 와 live 엔진을 영구 drift 시킴"
+  ref  = "a_core_engine_map · a_engine_native_learning · a_engine_measured_verdict · c2 · p8"
 
 @D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
