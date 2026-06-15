@@ -1,0 +1,78 @@
+H_1205 — MITOSIS ⊥ GENERATION SEPARATION INVARIANT  (FROZEN FALSIFIER, pre-registered)
+================================================================================
+domain      : MITOSIS-ENGINE
+date        : 2026-06-15
+slug        : 1205_mitosis_separation_invariant
+substrate   : summer $0 CPU local (NO GPU)
+mode        : p7 (BYTE-EQUALITY measurement — NOT perplexity / loss / LLM-judge)
+prior       : H_1200 🔴 (mitosis-growth WORSENS next-byte CE: ON 6.99 > OFF 6.24)
+              H_1201 🔴 (conditioning a gen head on mitosis cell-state does NOT
+                         beat baseline: gain -0.0206, shuffle worse) ⇒ mitosis
+                         gives NO information to a generator.
+              H_1164 🟢 (Ψ=½ attractor byte-identical under the mount's growth lane)
+verdict-tier-target : byte-identical ⇒ 🟢 ; any mismatch ⇒ 🔴
+
+────────────────────────────────────────────────────────────────────────────────
+GOAL (the safety invariant for attaching mitosis as a substrate lane)
+────────────────────────────────────────────────────────────────────────────────
+H_1200/H_1201 ruled that MITOSIS = PURE SUBSTRATE and generation is CLM-only:
+adaptation ⊥ generation. This H proves that ruling SURVIVES in the LIVE daemon
+wiring — turning the mitosis lane ON vs OFF must NOT change the CLM generation
+output by a single byte. If mitosis leaks into generation (an H_1201 regression),
+the wiring is DEFECTIVE and must be reported as a root-cause defect, NOT papered over.
+
+a_core_engine_map: .clm enters ONLY via the generator L3 slot (generate());
+A⇄G⇄brain + the mitosis/adapt-field lane are substrate-only and Ψ-disjoint. The
+generation path (generator.hexa generate / bytegpt_decode / clm_decode) reads
+ONLY {backend, substrate_ctx, emit_decision, anchors} — none of which carries
+mitosis cell-state. The invariant below is the OBSERVABLE consequence of that.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIERS (bars locked BEFORE any measurement — p7)
+────────────────────────────────────────────────────────────────────────────────
+Setup: a single mounted generator (the H_1157 ByteGPT tiny fixture + the null
+backend), decoded TWICE on the SAME (prompt, seed, anchors) — once with the
+mitosis lane ON (cfg.mitosis=true: cell_count grows, adapt_field_step spawns
+prototype cells each tick) and once with it OFF (cfg.mitosis=false: split is a
+no-op, capacity frozen). The mitosis lane ticks ALONGSIDE the decode under both
+arms; only its on/off state differs. Several prompts × seeds.
+
+F1  GENERATION BYTE-IDENTITY (primary).
+    For every (prompt, seed) pair, the decoded byte string under mitosis ON is
+    BYTE-IDENTICAL to the string under mitosis OFF.
+    PASS bar  :  byte_mismatch_count == 0  over ALL pairs (exact equality).
+    Covers BOTH backends that enter via the single L3 slot:
+      · null backend  (deterministic substrate placeholder text)
+      · bytegpt backend (real ByteGPT forward, grounded + plain argmax)
+    FAIL ⇒ mitosis state leaked into the generation path (H_1201 regression /
+           wiring defect) — report the leak site.
+
+F2  Ψ Φ-CHECKSUM INVARIANT (the substrate is Ψ-disjoint).
+    Running the SAME warmup with the mitosis lane ticking alongside, the
+    pure_field Φ-trajectory checksum is BYTE-IDENTICAL whether mitosis is ON or
+    OFF (re-proves H_1164/H_1194/H_1199 in this H's generation context).
+    PASS bar  :  phiSum_ON == phiSum_OFF   (exact float equality, no tolerance).
+    FAIL ⇒ the mitosis lane perturbed Engine A's Ψ=½ attractor (substrate defect).
+
+VERDICT RULE
+    🟢 SEPARATION HOLDS  iff  F1 (mismatch==0) AND F2 (phiSum exact-equal).
+       ⇒ mitosis can be SAFELY attached as a substrate lane; generation is
+         provably independent of it (the H_1200/1201 ruling holds live).
+    🔴 LEAK / DEFECT     iff  F1 mismatch>0  OR  F2 phiSum differs.
+       ⇒ wiring defect — root-cause the leak; do NOT attach the lane until fixed.
+
+────────────────────────────────────────────────────────────────────────────────
+p1..p8 conformance
+────────────────────────────────────────────────────────────────────────────────
+p1 no system prompt · p2 no identity rules · p3 no persona · p4 no assistant
+framing (decode externalizes substrate state, not a user reply) · p5 no speak()
+(emit decided upstream; this only checks the byte output of the existing path) ·
+p6 no fine-tuned ethics · p7 verification = exact byte/float EQUALITY (NOT
+perplexity) · p8 mitosis IS the inference-time learning tick — the invariant is
+precisely that this learning lane does not corrupt the generation it runs beside.
+
+SCALE HONESTY (a_scale_honest_scope): tiny ByteGPT fixture (d=64, L=2) + null
+backend on summer CPU. The invariant is STRUCTURAL (the generation path simply
+does not read mitosis state), so it transfers by construction to the 303M trunk —
+but the byte-identity is MEASURED only at the tiny fixture scale here. Scale-up
+byte-equality on the full 303M binary is UNVERIFIED (same forward, slow per step).

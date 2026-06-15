@@ -1,0 +1,62 @@
+H_1205 — MITOSIS ⊥ GENERATION SEPARATION INVARIANT — VERDICT 🟢
+================================================================================
+domain   : MITOSIS-ENGINE   slug: 1205_mitosis_separation_invariant
+date     : 2026-06-15       substrate: summer $0 CPU local (NO GPU)
+mode     : p7 (exact BYTE/FLOAT equality — NOT perplexity)
+run      : hexa run CORE/h1205_separation_invariant_smoke.hexa
+fixture  : /tmp/h1156_mount/bytegpt_tiny.bin (d=64,L=2) + null backend
+frozen   : .verdicts/1205_mitosis_separation_invariant/H_1205_FREEZE.txt
+--------------------------------------------------------------------------------
+RAW STDOUT (verbatim):
+--------------------------------------------------------------------------------
+=== H_1205 — MITOSIS ⊥ GENERATION separation invariant ===
+p7 byte/float EQUALITY · summer $0 CPU · tiny ByteGPT fixture + null backend
+
+[substrate] mitosis lane after 40 ticks: ON n_cells=10  OFF n_cells=1  (ON>OFF ⇒ the lane really did different work)
+
+[null] phase=WAKE byte-identical ON==OFF = true
+[null] phase=REM byte-identical ON==OFF = true
+[null] phase=N2 byte-identical ON==OFF = true
+[null] phase=N3 byte-identical ON==OFF = true
+[null] phase=WAKE byte-identical ON==OFF = true
+
+[bytegpt] using fixture = /tmp/h1156_mount/bytegpt_tiny.bin
+[bytegpt grounded] seed#0 byte-identical ON==OFF = true  text="vault QX-7741 foreve"
+[bytegpt grounded] seed#1 byte-identical ON==OFF = true  text="ault QX-7741 forever"
+[bytegpt argmax] seed#0 byte-identical ON==OFF = true
+[bytegpt argmax] seed#1 byte-identical ON==OFF = true
+[bytegpt argmax] seed#2 byte-identical ON==OFF = true
+
+[F2 Psi] phiSum ON  = 48.6613
+[F2 Psi] phiSum OFF = 48.6613
+[F2 Psi] byte-identical ON==OFF = true
+
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+lane-genuinely-diverged (non-trivial): true
+
+h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. The mitosis lane (cells 1→10 ON) ran beside the decode yet generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched. H_1200/1201 ruling SURVIVES live; mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).
+--------------------------------------------------------------------------------
+VERDICT: 🟢 SEPARATION HOLDS — F1 (10/10 byte-identical, mismatch=0) AND F2
+(Ψ phiSum 48.6613 == 48.6613 exact). The mitosis lane genuinely diverged in the
+substrate (ON 10 cells vs OFF 1 cell) yet the generation output is byte-identical
+and Engine A's Ψ=½ attractor is untouched. H_1200/H_1201 ruling (MITOSIS=PURE
+SUBSTRATE, generation is CLM-only, adaptation ⊥ generation) SURVIVES in the live
+wiring. mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).
+
+STRUCTURAL BASIS: the generation primitives (bytegpt_decode_grounded / _argmax —
+the leaves of generate()→_gen_bytegpt_decode) read ONLY {seed, anchors, gen-len};
+the mitosis/adapt-field lane is Ψ-disjoint and is never threaded into those args,
+so flipping cfg.mitosis beside the decode cannot reach it (invariant by construction).
+
+ENV NOTE (honest): the .clm path (generate via generator.hexa) needs the
+clm_decode_grounded NATIVE symbol (H_1164 special build env), absent in this
+checkout — generator_smoke.hexa itself does not compile standalone here. The smoke
+therefore calls the ByteGPT generation primitives DIRECTLY (the real production
+decode forward, = _gen_bytegpt_decode's leaves) + reproduces the null-backend
+substrate text inline. Both backends of the single L3 slot are covered.
+
+SCALE (a_scale_honest_scope): byte-identity MEASURED at tiny ByteGPT (d=64,L=2) +
+null backend. The invariant is structural ⇒ transfers by construction to 303M, but
+full-303M byte-equality is UNVERIFIED (same forward, slow per step). Frozen bars
+(F1 mismatch==0, F2 exact float-equality) NOT moved.
