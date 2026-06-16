@@ -1,3 +1,14 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1421 — MULTI-LENS breakthrough on the cerebellum×memory engine-BIND WALL (H_1417 P4 🧱 +0.0437) → LC COMPLEMENTARY-TAIL BINDS (+0.0541) + WIRED-live
+
+H_1417 P4 closed cerebellum×memory at 🧱 (net-lift +0.0437, just under the frozen +0.05 bar) with the symmetric confidence route. Per the freshly-strengthened a_break_the_wall (MULTI-LENS + ablation before a (d)-ceiling is confident-terminal), tried FOUR cerebello-hippocampal lenses (a_no_llm_frame_trap) on the SAME frozen H_1417 P4 fixture/bars, each scored with shuffle AND ablation:
+- L0 baseline (sanity) 🧱 +0.043704 (reproduces H_1417 P4 byte-exact).
+- LA surprise-gate 🧱 — net-lift −0.145 AND ablation INERT (live cerebellar reliability == frozen-0.5; the H_1416 INERT pattern).
+- LB memory-prime 🧱 +0.048889 (real movement, ablation-LIVE, but JUST under the bar — no bar moved).
+- LC COMPLEMENTARY-TAIL 🟢 BOUND — compose 0.748889 ≥ best 0.694815 + 0.05 (B1 net-lift +0.054074), oracle−best +0.261481 (B2), EARNED compose−shuffle +0.261481 (B3, shuffle 0.487), SEPARABLE only_cereb 0.339259/only_mem 0.261481, ABLATION LIVE (tail-OFF baseline 0.738519, compose−ablate +0.010370>0 — the tail-deferral is the load-bearing +0.0104).
+
+The lens (complementary-learning-systems): the cerebellar forward model is loud-but-wrong on the structurally uncapturable adversarial tail (F4); DETECT cerebellar over-confidence (loud AND memory grounded in conflict) → DEFER to the episodic store; else baseline route. The three failing lenses prove the controls have teeth (NOT tune-to-green, frozen-first c9/p7). FINDING: H_1417's 🧱 was a LENS limitation, not a (d)-subsumption ceiling — the wall fell to the right mechanism, found by trying ≥2-3.
+
+WIRED rung-3+4: §CEREBELLUM×MEMORY COMPLEMENTARY-TAIL COMPOSE ARBITER (cereb_mem_compose + cereb_mem_cerebellum_vote/_memory_vote) in CORE/engine_cli.hexa; smoke cases 149-152 → engine_cli_smoke 153/0 (+4); LIVEOP probe reproduces 0.748889 byte-exact; ARCHITECTURE.json CORE node + parent § list lockstep. Guards: h1196 clean / h1205 Ψ byte-identical PASS. Deterministic run1==run2, $0 CPU, LIVE CORE leg-reads. Brings the brain-lane-composition program to 5 WIRED compose pairs (memory×ToM · spatial×episodic · ToM×spatial · ToM×basal · cerebellum×memory). TOY 5-family fixture/3 seeds; scale/real-corpus/engine-transfer-at-scale UNVERIFIED. Card UNIVERSE/cards/H_1421_cerebellum_memory_multilens.md · .verdicts/1421_cerebellum_memory_multilens/.
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1419 — MULTI-LENS ceiling-confirmation of the memory×spatial COMPOSE WALL (H_1417 P1) 🧱 CONFIDENT-TERMINAL
 
 a_break_the_wall (#2345) 강화판을 H_1417 P1 memory×spatial 벽에 적용 — 천장 확정엔 ≥2-3 원리적
