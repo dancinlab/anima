@@ -4254,3 +4254,289 @@ pub fn cp_coherent_peak_near(curve: [float], n_stim: int, boundary: float) -> bo
     }
     return false
 }
+
+// ── § KO-JAMO COUNT-HEAD — the H_1316/H_1321 jamo-decomposition next-symbol count head,
+//     promoted to a FIRST-CLASS engine faculty (H_1351, a_verified_must_wire wire-in) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1316/H_1321): the Korean
+// jamo-decomposition compression win is GREEN-verified —
+//   H_1316 (🟢 GREEN, numpy/torch MIRROR): a COMPOSITIONAL JAMO representation breaks the
+//     Korean raw-byte CE ceiling 2.953 → 2.513 (jamo STRUCT beats raw byte); shuffle earned.
+//   H_1321 (🟢 GREEN, engine-native): the SAME gradient-free jamo-symbol mitosis reproduces
+//     the mirror CE to 1e-7 on the LIVE VAdaptField + engine_mitosis_tick.
+//   H_1327 (🟢 GREEN, decode-reaching): the grown jamo cells bias EMISSION via the generator
+//     §6.5b consult (ko_jamo_consult_*).
+// BUT the COUNT-HEAD itself — the per-cell next-symbol count-MLE + Voronoi-grown CE scorer that
+// IS the jamo-beats-raw mechanism — lived ONLY as PRIVATE helpers inside the THROWAWAY probe
+// CORE/h1321_ko_jamo_wire_probe.hexa (`_head_counts` / `_grow_on` / `_score_ce_per_byte`), NOT as
+// a first-class op IN the live engine. Per a_verified_must_wire + a_core_engine_map, a GREEN
+// mechanism is NOT done until its faculty is OWNED by the engine. This § promotes that count head
+// into engine_cli.hexa as `jamo_head_*`, re-using the engine's OWN VAdaptField Voronoi geometry +
+// engine_mitosis_tick growth (p8).
+//
+// @L4 CRITICAL (identical framing to every other lane here): the jamo head is a PURE COUNT-HEAD
+// SCORER. JamoHead holds ONLY its grown prototype centers + the per-cell next-symbol Laplace
+// counts (the SOLE state). jamo_head_grow GROWS centers via the engine's own error-targeted
+// Voronoi split gated by engine_mitosis_tick (p8). jamo_head_ce returns a held-out CROSS-ENTROPY
+// float; jamo_head_cells returns a cell count. The faculty NEVER returns an emit/silence decision,
+// NEVER mutates any other lane, NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction).
+// It is DISTINCT from the H_1327 generator §6.5b consult: that biases EMISSION; this SCORES.
+//
+// p1/p2/p3/p6: the head reads ONLY caller-supplied [feature, next-symbol-id] pairs. NO persona,
+// NO "you are X" identity rule, NO injected answer label, NO RLHF reward. The next-symbol target
+// is the STREAM's own continuation, scored only. The SHUFFLE control (jamo_head_shuffle_targets)
+// bijectively permutes the symbol-id map so the compositional alignment is destroyed — it must
+// LOSE to the intact head (earned, not mere head-activation; the anti-Goodhart leg).
+//
+// SCALE (a_scale_honest_scope / a_toy_scale_recheck): the faculty is the MECHANISM; the 30MB REAL
+// Korean 2.513 anchor lives in H_1316/H_1321 (byte-exact). The engine_cli smoke exercises it on a
+// DETERMINISTIC synthetic compositional fixture (an in-engine STRUCTURAL existence-proof that the
+// engine's own faculty reproduces jamo-beats-raw + earned-vs-shuffle), NOT a Korean-fluency claim.
+
+// JamoHead — the grown count head. `centers` = the Voronoi prototypes (DIM-vectors); `heads` =
+// per-cell next-symbol probability rows (each length `vj`, Laplace-smoothed count-MLE); `vj` = the
+// symbol vocab size; `dim` = the feature dim. The SOLE state is the grown centers + counts.
+struct JamoHead {
+    centers: [[float]],
+    heads: [[float]],
+    vj: int,
+    dim: int
+}
+
+// _jh_field — a VAdaptField over the head's current centers (the engine's OWN Voronoi geometry).
+fn _jh_field(centers: [[float]], max_cells: int) -> VAdaptField {
+    return VAdaptField { protos: centers, n_cells: len(centers), max_cells: max_cells, dim: len(centers[0]) }
+}
+
+// _jh_assign — owner cell of every feature row by the engine's vadapt_field_nearest_idx (L2 WTA).
+fn _jh_assign(af: VAdaptField, X: [[float]]) -> [int] {
+    let mut owner = []
+    let mut i = 0
+    while i < len(X) { owner = owner + [vadapt_field_nearest_idx(af, X[i])]  i = i + 1 }
+    return owner
+}
+
+// _jh_counts — the per-cell next-symbol count-MLE row for cell `k` over the first `ntr` train
+// points (Laplace-smoothed; vocab-agnostic at `vj`). The CORE of the jamo head.
+fn _jh_counts(Y: [int], owner: [int], k: int, ntr: int, vj: int, laplace: float) -> [float] {
+    let mut counts = []
+    let mut v = 0
+    while v < vj { counts = counts + [laplace]  v = v + 1 }
+    let mut total = laplace * to_float(vj)
+    let mut i = 0
+    while i < ntr {
+        if owner[i] == k { counts[Y[i]] = counts[Y[i]] + 1.0  total = total + 1.0 }
+        i = i + 1
+    }
+    let mut p = []
+    let mut w = 0
+    while w < vj { p = p + [counts[w] / total]  w = w + 1 }
+    return p
+}
+
+// _jh_owned_ce — mean train CE owned by cell `k` (the split-priority signal).
+fn _jh_owned_ce(Y: [int], owner: [int], k: int, ntr: int, p: [float]) -> float {
+    let mut s = 0.0  let mut n = 0  let mut i = 0
+    while i < ntr {
+        if owner[i] == k { s = s - ln(p[Y[i]] + 0.000000000001)  n = n + 1 }
+        i = i + 1
+    }
+    if n == 0 { return 0.0 }
+    return s / to_float(n)
+}
+
+fn _jh_owned_count(owner: [int], k: int, ntr: int) -> int {
+    let mut n = 0  let mut i = 0
+    while i < ntr { if owner[i] == k { n = n + 1 }  i = i + 1 }
+    return n
+}
+
+fn _jh_hi_var_axis(X: [[float]], owner: [int], k: int, ntr: int, dim: int) -> int {
+    let mut sum = []  let mut sq = []  let mut d = 0
+    while d < dim { sum = sum + [0.0]  sq = sq + [0.0]  d = d + 1 }
+    let mut n = 0  let mut i = 0
+    while i < ntr {
+        if owner[i] == k {
+            let mut a = 0
+            while a < dim { sum[a] = sum[a] + X[i][a]  sq[a] = sq[a] + X[i][a] * X[i][a]  a = a + 1 }
+            n = n + 1
+        }
+        i = i + 1
+    }
+    if n == 0 { return 0 }
+    let fn2 = to_float(n)
+    let mut best = 0  let mut bestv = -1.0  let mut a2 = 0
+    while a2 < dim {
+        let mean = sum[a2] / fn2
+        let var = sq[a2] / fn2 - mean * mean
+        if var > bestv { bestv = var  best = a2 }
+        a2 = a2 + 1
+    }
+    return best
+}
+
+fn _jh_owned_median(X: [[float]], owner: [int], k: int, ntr: int, ax: int) -> float {
+    let mut vals = []  let mut i = 0
+    while i < ntr { if owner[i] == k { vals = vals + [X[i][ax]] }  i = i + 1 }
+    let n = len(vals)
+    if n == 0 { return 0.0 }
+    let mut a = 1
+    while a < n {
+        let key = vals[a]  let mut b = a - 1
+        while b >= 0 && vals[b] > key { vals[b + 1] = vals[b]  b = b - 1 }
+        vals[b + 1] = key  a = a + 1
+    }
+    if n % 2 == 1 { return vals[n / 2] }
+    return (vals[n / 2 - 1] + vals[n / 2]) / 2.0
+}
+
+fn _jh_half_centroid(X: [[float]], owner: [int], k: int, ntr: int, ax: int, med: float, lo: bool, dim: int) -> [float] {
+    let mut acc = []  let mut d = 0
+    while d < dim { acc = acc + [0.0]  d = d + 1 }
+    let mut n = 0  let mut i = 0
+    while i < ntr {
+        if owner[i] == k {
+            let take = if lo { X[i][ax] <= med } else { X[i][ax] > med }
+            if take {
+                let mut a = 0
+                while a < dim { acc[a] = acc[a] + X[i][a]  a = a + 1 }
+                n = n + 1
+            }
+        }
+        i = i + 1
+    }
+    if n == 0 { return acc }
+    let mut out = []  let mut a2 = 0
+    while a2 < dim { out = out + [acc[a2] / to_float(n)]  a2 = a2 + 1 }
+    return out
+}
+
+fn _jh_half_count(X: [[float]], owner: [int], k: int, ntr: int, ax: int, med: float, lo: bool) -> int {
+    let mut n = 0  let mut i = 0
+    while i < ntr {
+        if owner[i] == k {
+            let take = if lo { X[i][ax] <= med } else { X[i][ax] > med }
+            if take { n = n + 1 }
+        }
+        i = i + 1
+    }
+    return n
+}
+
+// jamo_head_new — seed an EMPTY count head with the given seed centers (the OFF/seed state; the
+// heads are filled by jamo_head_grow). `vj` = symbol vocab, `dim` = feature dim.
+pub fn jamo_head_new(seed_centers: [[float]], vj: int, dim: int) -> JamoHead {
+    return JamoHead { centers: seed_centers, heads: [], vj: vj, dim: dim }
+}
+
+// jamo_head_cells — the live grown cell count (the footprint, p8 mitosis growth).
+pub fn jamo_head_cells(jh: JamoHead) -> int { return len(jh.centers) }
+
+// jamo_head_grow — error-targeted Voronoi GROW (SPLIT-only, p8) on the first `ntr` train points,
+// from the seed centers up to `grow_max`, GATED by the engine's OWN engine_mitosis_tick (p8). After
+// growing, the per-cell next-symbol count-MLE heads are filled. Returns the grown JamoHead. The
+// SAME gradient-free mechanism the H_1321 probe proved engine-native, now an engine faculty.
+pub fn jamo_head_grow(jh: JamoHead, Xtr: [[float]], Ytr: [int], ntr: int,
+                      grow_max: int, min_owned: int, split_thresh_ce: float,
+                      laplace: float, cfg: EngineConfig) -> JamoHead {
+    let dim = jh.dim
+    let vj = jh.vj
+    let mut centers = jh.centers
+    let mut af = _jh_field(centers, grow_max)
+    while len(centers) < grow_max {
+        let owner = _jh_assign(af, Xtr)
+        let nc = len(centers)
+        let mut local_ce = []  let mut owned_n = []  let mut k = 0
+        while k < nc {
+            let cnt = _jh_owned_count(owner, k, ntr)
+            owned_n = owned_n + [cnt]
+            if cnt > 0 {
+                let p = _jh_counts(Ytr, owner, k, ntr, vj, laplace)
+                local_ce = local_ce + [_jh_owned_ce(Ytr, owner, k, ntr, p)]
+            } else { local_ce = local_ce + [-1.0] }
+            k = k + 1
+        }
+        let mut elig = []  let mut k2 = 0
+        while k2 < nc {
+            if owned_n[k2] >= min_owned && local_ce[k2] > split_thresh_ce { elig = elig + [k2] }
+            k2 = k2 + 1
+        }
+        if len(elig) == 0 { break }
+        let mut pick = elig[0]
+        let mut bestce = local_ce[elig[0]]
+        let mut ei = 1
+        while ei < len(elig) {
+            if local_ce[elig[ei]] > bestce { bestce = local_ce[elig[ei]]  pick = elig[ei] }
+            ei = ei + 1
+        }
+        // GROWTH gated by the engine's OWN mitosis tick (p8, LIVE faculty)
+        let grown = engine_mitosis_tick(len(centers), cfg)
+        if grown <= len(centers) { break }
+        let ax = _jh_hi_var_axis(Xtr, owner, pick, ntr, dim)
+        let med = _jh_owned_median(Xtr, owner, pick, ntr, ax)
+        let nlo = _jh_half_count(Xtr, owner, pick, ntr, ax, med, true)
+        let nhi = _jh_half_count(Xtr, owner, pick, ntr, ax, med, false)
+        if nlo == 0 || nhi == 0 { break }
+        let c_lo = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, true, dim)
+        let c_hi = _jh_half_centroid(Xtr, owner, pick, ntr, ax, med, false, dim)
+        let mut new_centers = []  let mut ci = 0
+        while ci < len(centers) {
+            if ci != pick { new_centers = new_centers + [centers[ci]] }
+            ci = ci + 1
+        }
+        new_centers = new_centers + [c_lo, c_hi]
+        centers = new_centers
+        af = _jh_field(centers, grow_max)
+    }
+    // fill the per-cell heads over the final partition
+    let own_tr = _jh_assign(af, Xtr)
+    let mut heads = []  let mut k = 0
+    while k < len(centers) { heads = heads + [_jh_counts(Ytr, own_tr, k, ntr, vj, laplace)]  k = k + 1 }
+    return JamoHead { centers: centers, heads: heads, vj: vj, dim: dim }
+}
+
+// jamo_head_ce — held-out next-symbol CROSS-ENTROPY (nats/symbol) over the test set, scored
+// through the grown per-cell heads (p7: a held-out next-symbol CE on the simple stack, NOT a
+// perplexity/LLM verdict). 0.0 if the head is empty (un-grown). This is the jamo-beats-raw axis.
+pub fn jamo_head_ce(jh: JamoHead, Xte: [[float]], Yte: [int]) -> float {
+    if len(jh.heads) == 0 { return 0.0 }
+    let af = _jh_field(jh.centers, len(jh.centers))
+    let own_te = _jh_assign(af, Xte)
+    let mut s = 0.0  let mut n = 0  let mut i = 0
+    while i < len(Xte) {
+        s = s - ln(jh.heads[own_te[i]][Yte[i]] + 0.000000000001)
+        n = n + 1
+        i = i + 1
+    }
+    if n == 0 { return 0.0 }
+    return s / to_float(n)
+}
+
+// jamo_head_shuffle_targets — the SHUFFLE control (anti-Goodhart): permute the PAIRING between
+// the context features and their continuation targets by a fixed seed (Fisher–Yates LCG over the
+// position index), so vocab/dim/budget/feature-marginal are IDENTICAL but the compositional
+// alignment between a context and ITS next symbol is destroyed (the same target multiset, scattered
+// across the wrong contexts). The intact head learns the true context→continuation map; the shuffled
+// head learns a SPURIOUS map and must LOSE on the (un-shuffled) held-out test (earned). Returns the
+// position-permuted target stream, to be paired with the ORIGINAL feature order (no aliasing).
+// NOTE: a bijective RELABELING of target ids would be CE-INVARIANT (the head just learns the
+// relabeled continuation) — so the control must permute the PAIRING, not relabel the ids.
+pub fn jamo_head_shuffle_targets(Y: [int], vj: int, seed: int) -> [int] {
+    let n = len(Y)
+    // build a position permutation `perm[0..n)` (Fisher–Yates), WITHOUT aliasing the input.
+    let mut perm = []
+    let mut q = 0
+    while q < n { perm = perm + [q]  q = q + 1 }
+    let mut s = seed
+    let mut i = n - 1
+    while i > 0 {
+        s = (s * 1103515245 + 12345) % 2147483648
+        let j = s % (i + 1)
+        let tmp = perm[i]  perm[i] = perm[j]  perm[j] = tmp
+        i = i - 1
+    }
+    // gather the targets in permuted order (same multiset, mis-paired to the original features).
+    let mut out = []  let mut m = 0
+    while m < n { out = out + [Y[perm[m]]]  m = m + 1 }
+    return out
+}
