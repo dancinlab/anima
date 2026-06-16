@@ -1,0 +1,38 @@
+H_1352 R1 -- WHORFIAN CP RELOCATION: SOFT-DECAY RE-PACK (coherence-preserving)
+======================================================================================
+R2 of H_1340: at FIXED LOW budget (DIM=16/GROW2=24), does soft-decaying the residual
+              phase-1 cells recover a COHERENT full relocation (peak AT p_A', pc~1)?
+N_stim=81 DIM=16 p_A=0.333 p_A'=0.667 phase1=24 phase2=24 gamma=0.8 seeds=[4333, 4334, 4335]  (split-only never-evict + decay)
+
+  per-seed (NO-DECAY gamma=1.0 / SOFT-DECAY gamma=0.80 / NO-RETRAIN / SHUFFLE+decay):
+    seed 4333: NO-DECAY peak=0.519 pc=4 | SOFT-DECAY peak=0.619 pc=16 | no-retrain peak=0.331 | shuffle pc=17  cells(p1,p2)=4,28
+    seed 4334: NO-DECAY peak=0.531 pc=5 | SOFT-DECAY peak=0.631 pc=15 | no-retrain peak=0.331 | shuffle pc=2  cells(p1,p2)=4,28
+    seed 4335: NO-DECAY peak=0.519 pc=4 | SOFT-DECAY peak=0.619 pc=16 | no-retrain peak=0.331 | shuffle pc=2  cells(p1,p2)=4,28
+
+  NO-DECAY   (anchor): peak 0.523 |peak-p_A'| 0.144 frac +0.57 peak-count 4.3
+  SOFT-DECAY (g=0.80): peak 0.623 |peak-p_A'| 0.044 frac +0.88 peak-count 15.7
+  NO-RETRAIN: mean |peak-p_A| 0.002  |  SHUFFLE+decay: peak-count 7.0
+
+  [NON-GATING diagnostic] DECAY-LADDER (gate is scored ONLY at gamma=0.80):
+     gamma=0.70: |peak-p_A'| mean=0.009  peak-count mean=16.7
+     gamma=0.80: |peak-p_A'| mean=0.044  peak-count mean=15.7  <-- FROZEN GATE
+     gamma=0.90: |peak-p_A'| mean=0.106  peak-count mean=5.7
+
+  c1 RELOCATES (soft-decay |peak-p_A'|<=0.12 all 3 seeds):
+     per-seed = [0.048, 0.035, 0.048]  -> c1 PASS
+  c2 COHERENT (soft-decay mean peak-count<=2; H_1340 was 4.3->7.0):
+     per-seed pc = [16, 15, 16], mean 15.7  -> c2 FAIL
+  c3 EARNED (3a no-retrain holds p_A |peak-p_A|<=0.12; 3b shuffle pc>=3):
+     3a no-retrain |peak-p_A| = [0.002, 0.002, 0.002] -> PASS
+     3b shuffle peak-count = [17, 2, 2], mean 7.0 -> PASS
+     -> c3 PASS
+  c4 vs-BUDGET (4a |peak-p_A'|<=0.081 best-H1340; 4b pc<=2 < H_1340 min 4.3):
+     4a soft-decay |peak-p_A'| mean 0.044 -> PASS
+     4b soft-decay peak-count mean 15.7 -> FAIL
+     -> c4 FAIL
+
+  [anchor sanity] NO-DECAY reproduces H_1340/H_1338 partial (frac +0.57 in [0.40,0.75] AND |peak-p_A'| 0.144>0.12): OK
+======================================================================================
+VERDICT: DEEPER LIMIT -- soft-decay RELOCATES the peak but coherence is NOT
+  recovered (peak-count 15.7>2). Relocation COHERENCE is a
+  deeper limit than budget OR decay. Honest, NO bar move (c9).

@@ -272,3 +272,55 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   GREEN 1-D CP, 같은 metric-space shuffle 실패 모드) · h1340(sibling budget/geometry ceiling) · h1288
   (growth-memory) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire
   · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+### H_1352 — Whorf CP 재배치: SOFT-DECAY re-pack (coherence-preserving?) 🧱 DEEPER LIMIT (H_1340 follow-on R2)
+
+- **seed**: H_1340(🧱 DEEPER LIMIT — budget/RBF-density는 peak-DISTANCE를 monotone 당기지만 coherence를 파괴, peak-count 4.3→7.0 never ≤2)의 verdict이 직접 지목한 다음 메커니즘. budget이 아니라 re-training중 잔류 phase-1 cell을 **down-weight**(soft-decay)하면 COHERENT full relocation을 회복하는가?
+- **verdict-tier-target**: 🧱 DEEPER LIMIT — relocation COHERENCE는 budget 과 decay 두 lever를 **모두** 견딘다. mean of 3 seeds [4333,4334,4335], deterministic.
+- **결과**: NO-DECAY anchor peak 0.523 |peak-p_A'| 0.144 frac +0.57 pc 4.3 (H_1340 R0_base in-run 재현). **SOFT-DECAY (γ=0.80)** peak 0.623 |peak-p_A'| **0.044** frac **+0.88** pc **15.7**. NO-RETRAIN |peak-p_A| 0.002(p_A 유지). SHUFFLE+decay pc 7.0(붕괴). decay-ladder(NON-GATING): γ=0.70→0.009/16.7 · 0.80→0.044/15.7(gate) · 0.90→0.106/5.7 — monotone tradeoff(decay↑ = peak는 가까워지나 더 흩어짐).
+- **bars**: c1 RELOCATES ✅ (3 seed 전부 |peak-p_A'|≤0.12, frac +0.88 > budget 최고 +0.762) · c2 COHERENT ❌ (pc 15.7≫2 — decay는 profile을 더 흩뜨림) · c3 EARNED ✅ (no-retrain |peak-p_A|=0.002 p_A 유지; shuffle pc 7.0≥3 — decay가 coherent peak을 날조하지 않음) · c4 vs-BUDGET ❌ (4a ✅ 0.044≤0.081 distance에서 budget을 이김; 4b ❌ 15.7≰2 coherence에서 budget에 짐). GREEN iff c1∧c2∧c3∧c4 → **NOT GREEN**.
+- **finding (load-bearing)**: soft-decay는 DISTANCE 축에선 budget보다 **강한** lever(peak이 p_A'에 거의 정확히 착지)지만 COHERENCE 축에선 **더 나쁜** lever(pc 15.7 vs budget 7.0). resolution 증가(H_1340)도 잔류 cell down-weight(H_1352)도 moved cut에서 단일 CP peak을 회복 못 함 → 재배치 coherence 잔류는 budget OR decay보다 **깊은** 한계. 두 follow-on이 함께 드러낸 결정적 원인: phase-1 prototype은 결코 물리적으로 이동하지 않고 옛 cut에 남아 secondary peak을 주입 — budget은 새 cell로 익사시키고(distance↑/coherence↓), decay는 그 vote를 줄이지만 기하학적 존재는 못 줄임(distance↑↑/coherence↓↓). 진짜 coherent full relocation은 옛 cell을 **이동/재배치**(geometric re-pack)해야지 weight/count 조작으론 안 됨. a_break_the_wall: H_1340 budget 벽도 H_1352 decay도 둘 다 **틀린 메커니즘** — 고정 geometry의 weight/count 조작이고, 그 geometry 자체가 진짜 천장. NO bar move (c9/p7).
+- **scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, H_1333/H_1338/H_1340 R1 family); TOY synthetic 1-D continuum (N=81·3 seed·단일 shift·frozen γ=0.80·deterministic readout — soft-decay STRUCTURE 검증, scale/human-cognition claim 아님); 🧱는 정직한 사전등록 벽(진짜 a_break_the_wall NEW 메커니즘, re-run 아님 — frozen coherence bar가 올바르게 거부); injected boundary/persona/RLHF 없음, label은 training만 test 아님(p1/p2/p3/p6); emit gate 아님(a_autonomy_over_hardcode); live CORE/*.hexa UNTOUCHED.
+- **NEXT R2** (각각 ANEW 사전등록): (i) **GEOMETRIC re-pack** — 잔류 phase-1 prototype을 p_A'쪽으로 **재배치**(weight 아니라 cell을 이동) — THIS 결과가 유일하게 안 시도된 lever로 재지정 · (ii) decay 아래 multi-shift/leftward/asymmetric shift · (iii) engine-native realization on live CORE/engine_cli.hexa §CategoricalPerception lane (a_engine_native_learning · a_verified_must_wire). **DEPLETION TEST**: geometric re-pack도 coherent 단일 peak을 회복 못 하면 → 재배치는 이 RBF geometry에서 intrinsically partial-or-incoherent(c9 terminal).
+- **claim-link**: `CLAIMS.tape @C h1352_cp_soft_decay` · card `UNIVERSE/cards/H_1352_cp_soft_decay.md` · verdicts `.verdicts/1352_cp_soft_decay/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl` · code `state/cp-soft-decay/h1352_cp_soft_decay.py`
+- xref: h1340(이 lane의 직접 부모 budget-sweep deeper-limit) · h1338(eviction 재진단) · h1333(GRADED-PLASTICITY 특성화 대상) · h1341(sibling shift-ladder) · h1342(engine-native) · h1323 · h1325(family GREEN CP) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15### H_1355 — Whorfian CP 가소성: LEFTWARD + ASYMMETRIC 착지 (center-attractor vs geometry-fixed) 📈
+
+- **seed/lens**: H_1341(📈)의 load-bearing follow-on. H_1341 은 고정 anchor p_A=1/3 에서 RIGHTWARD shift 시 retrain 후 CP peak 가 shift
+  크기와 무관하게 **항상 ~0.525 에 착지**(abs-peak range 0.000)함을 발견 → GEOMETRY/BUDGET 로 읽음. 그러나 p_A=1/3 은 center(0.5) 왼쪽이고
+  모든 rung 이 RIGHTWARD(center 쪽으로/넘어)였으므로 **0.525≈center 가 confound**. 두 설명을 구분 못 함: (H-center) 0.525 가 대칭 N=21 RBF
+  lattice 의 **continuum-center attractor** 아티팩트(readout 이 lattice 중심에서 가장 풍부 → requested cut 무관 ~0.5 로 끌림) vs (H-geometry)
+  실제 **geometry-fixed budget 착지**(asymmetry 를 주면 움직임). c15 developmental/critical-period plasticity (a_no_llm_frame_trap) — LLM
+  레시피 아님, 인간인지 주장 아님, TOY synthetic.
+- **method**: H_1333/H_1341 CP 기계 EXACTLY 재사용(h1333_whorf_developmental.py 를 state/cp-leftward/ 로 verbatim 복사+import: N=21
+  RBF continuum, DIM=16, error-targeted SPLIT-only Voronoi/mitosis growth p8, phase-2 same-store no-reset re-grow, |Δ soft-posterior|
+  no-label-at-test discrimination, peak-count coherence). 신규 코드 = (anchor p_A, target p_A') PLACEMENT 을 5 rung 으로 sweep. RUNGS:
+  RIGHT-REF (0.333→0.667, H_1341 LARGE anchor) · LEFTWARD-1 (0.667→0.333, mirror) · LEFTWARD-2 (0.800→0.500) · ASYM-R (0.600→0.800,
+  둘 다 center 오른쪽) · ASYM-L (0.400→0.200, 둘 다 center 왼쪽). 4 ARMS/rung. 3 seeds [4333,4334,4335], $0 CPU, gradient-free, p7.
+  frozen .verdicts/1355_cp_leftward/FREEZE.txt (scoring 前 사전등록, NO bar move c9): **c1 REPORT**(5-rung abs-landing table) ∧
+  **c2 DISCRIMINATE**(CENTER=0.50 CENTER_TOL=0.08: CENTER-ATTRACTOR iff 모든 |L−0.5|≤0.08; GEOMETRY-FIXED iff ASYM-R L>0.58 ∧ ASYM-L
+  L<0.42 ∧ leftward<RIGHT-REF; else MIXED verbatim) ∧ **c3 EARNED**(no-retrain 이 anchor 유지 ∧ shuffle incoherent ∧ lang arms coherent).
+- **verdict 📈 CENTER-ATTRACTOR REJECTED, 착지가 GEOMETRY 를 따름**: abs-landing table(3 seed 평균): RIGHT-REF 0.525(|L−0.5|=0.025) ·
+  LEFTWARD-1 0.475(0.025) · LEFTWARD-2 0.625(0.125) · ASYM-R 0.692(0.192) · ASYM-L 0.375(0.125).
+  **c1 ✅**. **c2**: center-pinned? FALSE — max|L−0.5|=**0.192 ≫ 0.08** → **CENTER-ATTRACTOR 기각**. 착지가 placement 를 추적: RIGHT-REF
+  0.525 와 그 정확한 mirror LEFTWARD-1 0.475 가 **0.5 대칭**(geometry-mirrors-placement 시그니처, 둘 다 center 에 박힌 게 아님); ASYM-R 0.692 가
+  요청 cut 0.800 쪽 off-center-right(>0.58 ✅), ASYM-L 0.375 가 요청 cut 0.200 쪽 off-center-left(<0.42 ✅) — asymmetric away-from-center
+  sub-clause 둘 다 PASS. formal GEOMETRY-FIXED tag 는 **단 하나의 over-strict sub-clause** 에서만 빗나감: LEFTWARD-2(anchor 0.800→target
+  0.500)가 0.625(RIGHT-REF 0.525 의 오른쪽)에 착지 — 잔류 **오른쪽** first-carving 이 착지를 anchor 하기 때문(이것 자체가 geometry =
+  residual-carving-side 의존성, clause 가 encode 한 것보다 더 강한 시그널) → c2=MIXED 이나 실질은 GEOMETRY-leaning. **c3 4/5 rung 유지**:
+  RIGHT-REF/LEFTWARD-1/LEFTWARD-2/ASYM-R 전부 PASS; ASYM-L 만 lang-coherent FAIL(A→A' peak-count 3>2 on 2/3 seeds — same-side LEFTWARD
+  shift 가 readout 를 흩음) → frozen rule 대로 그 rung 착지를 **confounded 로 표기, drop 안 함**.
+- **finding**: H_1341 의 고정 ~0.525 착지는 lattice-center 아티팩트가 **아니라 진짜 GEOMETRY 착지** — placement 를 asymmetric/mirror 로
+  만들면 착지가 geometry 를 따라 움직임(0.375→0.692, RIGHT-REF⇄LEFTWARD-1 pair 는 0.5 대칭). H_1341 의 budget/geometry 판독은 **STANDS,
+  leftward/asymmetric move 로 일반화**; center-attractor confound 는 **기각**. 정직한 잔차(c9): frozen sub-clause 하나가 over-strict
+  (geometry 는 first-carving 의 side 에 anchor 되지 absolute shift 방향이 아님); ASYM-L coherence 저하 = same-side leftward cut 에서
+  split-only re-growth 의 실제 한계(lattice-resolution-bound 가능).
+- **scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, H_1333 R1/H_1341 R1 family); TOY synthetic 1-D continuum
+  (N=21·DIM=16·3 seed·5 placement rung·deterministic readout — landing-geometry STRUCTURE 검증, scale/human-cognition claim 아님);
+  center-attractor 기각은 THIS lattice 한정 — 더 미세한 lattice/dense grid/2-D continua UNVERIFIED; injected boundary/persona/RLHF 없음
+  (p1/p2/p3/p6); emit gate 아님(a_autonomy_over_hardcode); live CORE/*.hexa UNTOUCHED. NO bar move (c9/p7).
+- **NEXT** (각각 ANEW 사전등록): (i) geometry-fixed 착지의 live VAdaptField engine-native 실현(a_verified_must_wire) · (ii) lattice-resolution
+  ladder(N 증가 시 CENTER_TOL 축소 / ASYM-L coherence 회복?) · (iii) 2-D continuum placement(착지 geometry 가 축별 분리 가능?).
+- **claim-link**: `CLAIMS.tape @C h1355_cp_leftward` · card `UNIVERSE/cards/H_1355_cp_leftward.md`
+  · verdicts `.verdicts/1355_cp_leftward/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1341(parent shift-size ladder, 0.525 고정 착지) · h1340(이 lane budget-sweep deeper-limit) · h1338(budget/geometry 재진단)
+  · h1333(GRADED-PLASTICITY parent) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning
+  · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15

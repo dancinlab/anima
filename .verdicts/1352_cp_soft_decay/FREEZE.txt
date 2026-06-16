@@ -1,0 +1,88 @@
+H_1352 — WHORFIAN CP RELOCATION: SOFT-DECAY RE-PACK (coherence-preserving)
+PRE-REGISTERED FREEZE — bars fixed BEFORE any scoring (frozen-first, c9/p7, NO tune-to-green).
+=========================================================================================
+
+LANE: COGNITION-REPRESENTATION (c15 developmental-plasticity + memory-protection-vs-overwrite
+lens; a_no_llm_frame_trap, a_break_the_wall). R1 numpy MIRROR (DIRECTIONAL — engine-transfer
+UNVERIFIED, same family as H_1333/H_1338/H_1340/H_1341 R1). $0 CPU, gradient-free, p7.
+3 seeds [4333,4334,4335] (SAME as H_1333/H_1338/H_1340 so the no-decay arm reproduces the
+H_1338/H_1340 anchor IN-RUN). TOY synthetic continuum — NOT an LLM recipe, NOT a
+human-cognition claim.
+
+PROJ_SEED H_1352 (1323=parent Sapir-Whorf; 1333=developmental-plasticity grandparent;
+1338=eviction RE-DIAGNOSIS; 1340=budget-sweep DEEPER-LIMIT parent; 1341=shift-ladder sibling;
+1342=engine-native; 1352 free on origin/main).
+
+----------------------------------------------------------------------------------------
+THE QUESTION
+----------------------------------------------------------------------------------------
+H_1340 (DEEPER LIMIT) showed that raising the phase-2 split budget + RBF density buys
+peak-DISTANCE toward p_A' MONOTONICALLY (frac +0.575->+0.762, |peak-p_A'| 0.144->0.081) but
+DESTROYS coherence (peak-count 4.3->7.0, never <=2): pure budget can NOT deliver a COHERENT
+full relocation. H_1340's own verdict named the next mechanism: "a clean full relocation needs
+a DIFFERENT mechanism (soft DECAY / coherence-preserving re-pack), not more resolution."
+
+H_1352 tests exactly that. The ONE new mechanism = a SOFT-DECAY store. During phase-2 (A->A')
+re-training, the residual phase-1 prototypes are DOWN-WEIGHTED (their vote weight decays as
+phase-2 splits accrue) rather than (a) kept at full weight [never-evict = H_1333/H_1338], (b)
+hard-removed [eviction = H_1338, did not help], or (c) drowned by raw budget [H_1340, kills
+coherence]. The hypothesis: soft-decay recovers a COHERENT full relocation -- peak lands AT
+p_A' AND peak-count returns to ~1, AT A FIXED LOW BUDGET (no budget inflation).
+
+----------------------------------------------------------------------------------------
+DESIGN (reuses H_1333/H_1338/H_1340 CP machinery VERBATIM via import; ONLY new = soft-decay)
+----------------------------------------------------------------------------------------
+- Constants inherited VERBATIM: P_A=1/3, P_A'=2/3, N_STIM=81 (= H_1340), DIM=16 (LOW, = H_1340
+  R0_base), phase-1 budget=24, phase-2 budget GROW2=24 (LOW -- the H_1340 R0_base budget, NOT
+  inflated). LOC_TOL=0.12. SEEDS=[4333,4334,4335].
+- SOFT-DECAY mechanism (PRE-REGISTERED schedule, NOT tuned to a bar): a per-cell decay weight
+  d_i in (0,1] multiplies into the softmin posterior vote. Phase-1 cells start at d=1.0; during
+  phase-2, after each phase-2 split, EVERY pre-existing phase-1 cell's weight is multiplied by
+  DECAY_GAMMA per phase-2 split step. New phase-2 cells enter at d=1.0 and do not decay.
+  Equivalently d_i = DECAY_GAMMA ** (number of phase-2 splits that occurred after cell i was
+  born), with phase-2 cells held at 1.0. The posterior becomes
+  P(cat=1|key) = sum_i w_i d_i lab_i / sum_i w_i d_i   (w_i = H_1333 softmin distance weight).
+  DECAY_GAMMA is FROZEN at 0.80 here (one pre-registered value; a coarse 3-point DECAY-LADDER
+  {0.70, 0.80, 0.90} is reported as a NON-GATING diagnostic to show the bar is not a knife-edge
+  artifact -- the GATE is scored ONLY at the frozen 0.80).
+- ARMS (per seed, all at the SAME low budget DIM=16/GROW2=24):
+  (1) NO-DECAY (= H_1340 R0_base / H_1333 never-evict VERBATIM) -- the in-run anchor (~0.525).
+  (2) SOFT-DECAY (phase-1 identical; phase-2 re-grow WITH the decay schedule).
+  (3) NO-RETRAIN control (grow on p_A only, no phase-2 + no decay -> MUST hold p_A).
+  (4) SHUFFLE control (incoherent permuted labels in phase-2 + soft-decay -> MUST collapse:
+      decay must NOT manufacture a coherent peak from noise).
+- move-fraction = (peak_relocated - peak_Atrained) / (p_A' - p_A).
+- p1/p2/p3/p6: discrimination readout reads ONLY representational distance x the structural
+  decay weight; NO injected boundary location at test; decay keys on a cell's BIRTH PHASE only
+  (a structural store property, NO injected target peak / persona / RLHF); labels enter ONLY
+  during training. The no-retrain + shuffle arms are the anti-Goodhart discriminators; the
+  no-decay arm (must STAY partial in-run) is the contrast that isolates decay as the lever.
+
+----------------------------------------------------------------------------------------
+FROZEN BARS (GREEN iff c1 AND c2 AND c3 AND c4; NO bar moved c9/p7)
+----------------------------------------------------------------------------------------
+c1 RELOCATES   : SOFT-DECAY peak reaches p_A' on ALL 3 seeds -- |peak - p_A'| <= LOC_TOL=0.12 each.
+c2 COHERENT    : SOFT-DECAY post-retrain mean peak-count <= 2 (the gate H_1340 NEVER met; all
+                 H_1340 rungs were 4.3->7.0). This is the load-bearing bar.
+c3 EARNED      : (3a) NO-RETRAIN control holds p_A -- |peak - p_A| <= LOC_TOL all seeds (no drift);
+                 AND (3b) SHUFFLE control collapses -- mean peak-count >= 3 (decay does not
+                 fabricate a coherent peak from permuted labels).
+c4 vs-BUDGET   : SOFT-DECAY at the FIXED LOW budget (DIM=16/GROW2=24) BEATS the high-budget
+                 incoherent H_1340 result on BOTH axes simultaneously:
+                 (4a) soft-decay |peak-p_A'| <= best H_1340 rung distance (<= 0.081, the R4_high
+                      value) -- at least as close, AND
+                 (4b) soft-decay peak-count <= 2 < every H_1340 rung peak-count (>=4.3) -- coherent
+                      where H_1340 was scattered. (4a) AND (4b) = decay delivers what budget could not.
+
+HONEST ALTERNATIVES (NO bar move, c9):
+- c1 AND c3 but NOT c2  -> decay relocates but STILL incoherent -> relocation coherence is a
+  deeper limit (record honestly).
+- NOT c1 (peak stays short even with decay) -> relocation may be INTRINSICALLY PARTIAL under
+  this RBF geometry; soft-decay is not the lever. Honest closed-negative.
+- c3a/c3b fail -> CONFOUNDED control (drift or shuffle-fabrication) -- treat c1/c2 cautiously.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): DIRECTIONAL numpy mirror, engine-transfer
+UNVERIFIED; TOY synthetic continuum N=81 / 3 seeds / single shift p_A->p_A' / one frozen
+DECAY_GAMMA=0.80; deterministic readout (tests the soft-decay STRUCTURE, not a learned decay);
+real-corpus / multi-shift / leftward / engine-native CategoricalPerception wiring = follow-on.
+=========================================================================================
