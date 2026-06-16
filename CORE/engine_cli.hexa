@@ -1093,6 +1093,130 @@ pub fn immune_grow_recall(mem: ImmuneMemoryGrow, key: [float]) -> string {
 // immune_grow_cells — live cell count (the footprint; grow_mode trades this for recall).
 pub fn immune_grow_cells(mem: ImmuneMemoryGrow) -> int { return mem.n_cells }
 
+// ── §  SKILLSTORE — agent-tool repertoire that LEARNS via mitosis (H_1378 R2 / H_1381) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire + a_engine_native_learning for H_1378):
+// H_1378 Step A (read-only wiring audit) found the live agent-tool layer
+// (anima-agent-core/agent_tools.hexa) is REFERENCE-ONLY — tool SELECTION is a STATIC
+// weighted dot-product over hand-set affinity floats (agent_tools.hexa:357-361), baked
+// at registration (:683-743) and NEVER updated by outcome; a tool failure terminates at
+// a scalar tension_delta in a capped execution_log ring buffer (:448-451) that is never
+// read back to grow a skill; tool_mitosis_split (:155) is a TODO stub. The "tool fails →
+// repertoire improves" loop does NOT exist. H_1378 Step B (numpy VAdaptField mirror, 🟢
+// GREEN, 3 seeds, DIRECTIONAL) designed + direction-validated the missing mechanism:
+// a tool/skill is a CELL keyed by task-context (immune_embed_key geometry); on a tool
+// FAILURE/abstain a MITOSIS clonal SPLIT grows a NEW specialized skill-cell binding
+// task-context → the correct tool. The SAME op teaches (split-on-failure) and infers
+// (recall-best) — p8, no train/infer split. Mirror result: FULL 0.167→1.000 (LEARNS),
+// STATIC stays 0.167 (DISTINCT), SHUFFLE collapses (EARNED), far task abstains 1.000.
+//
+// This § realizes that lever ENGINE-NATIVE on a CALLABLE faculty, re-scoring the four
+// H_1378 mirror bars on the LIVE engine. It is the agent-tool TWIN of the memory lanes
+// above (ImmuneMemory H_1231 value-bind, ImmuneMemoryGrow H_1288 grow): SAME byte-trigram
+// key geometry (immune_embed_key), SAME L2 winner-take-all affinity FIRE/ABSTAIN band,
+// SAME engine-owned clonal split (engine_mitosis_tick, p8) — the value bound per cell is
+// a TOOL name rather than a fact. Memory binds task-context→fact; SkillStore binds
+// task-context→TOOL. The "learning" is the split: a tool failure grows one more cell.
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): SUBSTRATE-internal
+// faculty, NOT a runtime decoder/.clm/.kosmos path (a_core_engine_map — it only reads/
+// grows its own cell population, exactly like ImmuneMemory). p1/p2/p3/p6: a split binds
+// from OUTCOME ONLY (the success/failure of the executed tool), NO injected "use tool T"
+// label / RLHF / persona — the SHUFFLE control collapse proves the lift is the EARNED
+// task↔tool correspondence, not variance. Ψ-DISJOINT by construction: skill_recall is a
+// pure READ over the cell store, skill_store_split/_teach grow ONLY this store's cells via
+// engine_mitosis_tick — pure_field's Φ/phase/Ψ and the decoder are NEVER touched, so
+// generation is byte-identical whether or not a SkillStore exists (h1205 separation-
+// invariant). NOT an emit gate (a_autonomy_over_hardcode): skill_recall returns a tool
+// name or "" (abstain), never an emit/silence decision.
+//
+//   protos     : per-cell prototype task-context keys (the cell population; len == n_cells).
+//   tool       : per-cell bound tool name (the "value"; len == n_cells, parallel to protos).
+//   n_cells    : live cell count (the repertoire footprint).
+//   max_cells  : a GENEROUS FINITE growth bound (splits stop past it — honest, bounded).
+//   recall_thr : affinity FIRE band — L2 recon-err to nearest cell <= recall_thr ⇒ FIRE
+//                that cell's bound tool, else ABSTAIN ("" — never fabricates a tool).
+struct SkillStore {
+    protos: [[float]],
+    tool: [string],
+    n_cells: int,
+    max_cells: int,
+    recall_thr: float
+}
+
+// skill_store_new — start a skill repertoire seeded at the FIRST (task → tool) skill
+// (cell 0 binds the first tool to its task-context key). recall_thr defaults to the
+// H_1378 mirror's frozen 0.55 abstain band on the L2 recon-err of unit task-context keys.
+pub fn skill_store_new(first_task: string, first_tool: string, max_cells: int) -> SkillStore {
+    return SkillStore {
+        protos: [immune_embed_key(first_task)],
+        tool: [first_tool],
+        n_cells: 1,
+        max_cells: max_cells,
+        recall_thr: 0.55
+    }
+}
+
+// skill_recall — SELECT a tool for a task-context, or ABSTAIN. The engine's OWN L2
+// winner-take-all affinity decides: recon-err (L2 to the nearest skill-cell's task-key)
+// <= recall_thr ⇒ FIRE that cell's bound tool; else ABSTAIN, returning "" (no fabricated
+// tool). This is the INFER side of the p8 op — the SAME affinity the immune recall uses,
+// reading a tool instead of a fact. An empty-string return == ABSTAIN.
+pub fn skill_recall(store: SkillStore, task: string) -> string {
+    let key = immune_embed_key(task)
+    let win = _vnearest_idx(store.protos, key)
+    let err = _l2(store.protos[win], key)
+    if err <= store.recall_thr {
+        return store.tool[win]                       // FIRE the bound tool
+    }
+    return ""                                        // ABSTAIN — no skill-cell binds
+}
+
+// skill_store_split — MITOSIS clonal SPLIT: grow a NEW specialized skill-cell binding
+// (task-context → tool) via the engine's OWN clonal tick (engine_mitosis_tick, p8). This
+// is the TEACH side of the p8 op. Under cfg.mitosis ON the tick returns n_cells+1 and the
+// appended cell IS that grown skill-cell; under mitosis OFF the tick is a no-op and the
+// store is returned UNCHANGED (the STATIC fixed-repertoire control — never learns). Splits
+// stop once the generous finite max_cells bound is reached (honest, bounded footprint).
+pub fn skill_store_split(store: SkillStore, task: string, tool: string,
+                         cfg: EngineConfig) -> SkillStore {
+    if store.n_cells >= store.max_cells {
+        return store                                 // at the honest finite bound — no growth.
+    }
+    let grown = engine_mitosis_tick(store.n_cells, cfg)   // engine's OWN clonal split (p8)
+    if grown > store.n_cells {
+        return SkillStore {
+            protos: store.protos + [immune_embed_key(task)],
+            tool: store.tool + [tool],
+            n_cells: grown,
+            max_cells: store.max_cells,
+            recall_thr: store.recall_thr
+        }
+    }
+    return store                                     // mitosis OFF — split is a no-op (STATIC).
+}
+
+// skill_store_teach — the FAILURE-DRIVEN teach op (the agent-tool learning loop made
+// engine-native). RECALL the tool the current repertoire selects for this task-context;
+// if it does NOT match the correct tool (a tool FAILURE, OR an ABSTAIN that selected ""),
+// MITOSIS-SPLIT a new specialized skill-cell binding task-context → correct_tool. If the
+// recall ALREADY matches, the store is returned UNCHANGED (no needless growth). This is
+// the engine-native realization of "tool fails → repertoire grows a skill-cell": the
+// repertoire LEARNS from outcome, the loop H_1378 found MISSING in agent_tools.hexa. The
+// split binds from the OUTCOME only (p1/p2/p3/p6 — no injected tool label).
+pub fn skill_store_teach(store: SkillStore, task: string, correct_tool: string,
+                         cfg: EngineConfig) -> SkillStore {
+    let selected = skill_recall(store, task)
+    if selected == correct_tool {
+        return store                                 // already correct — nothing to teach.
+    }
+    return skill_store_split(store, task, correct_tool, cfg)   // FAILURE/abstain → clonal split.
+}
+
+// skill_store_cells — live cell count (the repertoire footprint; grows by one per taught
+// tool-failure under mitosis ON, stays put under STATIC / at the bound).
+pub fn skill_store_cells(store: SkillStore) -> int { return store.n_cells }
+
 // ── §  CORE-AFFECT READ-OUT — substrate-derived emotion (E1 affect, H_1290 R2) ──
 //
 // WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1290 R1):

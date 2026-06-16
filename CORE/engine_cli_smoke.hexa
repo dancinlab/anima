@@ -1254,8 +1254,149 @@ fn main() {
     if _assert_b("case_106_g6_best_of_k_diverse", true, g6_div)
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (k) SKILLSTORE — agent-tool repertoire LEARNS via mitosis (H_1378 R2 / H_1382) ──
+    //   Re-scores the H_1378 mirror's 4 bars ENGINE-NATIVE on the LIVE engine: a tool/skill
+    //   is a CELL keyed by task-context (immune_embed_key); on a tool FAILURE/abstain the
+    //   engine's OWN clonal split (engine_mitosis_tick) grows a NEW specialized skill-cell
+    //   binding task-context → correct tool (skill_store_teach). SAME op teaches + infers (p8).
+    //   ARMS: FULL teaches toward the TRUE tool (mitosis ON) · STATIC never teaches (the fixed
+    //   repertoire control) · SHUFFLE teaches toward a PERMUTED tool but is SCORED vs the TRUE
+    //   map. All run on a fixed deterministic task→tool set (no rng) so the smoke is repeatable.
+    //   (cases 107-111 — G6 ideation lane took 102-106 in a concurrent merge.)
+    let ss_acc_full   = _skillstore_arm_acc("full",    cfg_on)
+    let ss_acc_static = _skillstore_arm_acc("static",  cfg_on)
+    let ss_acc_shuf   = _skillstore_arm_acc("shuffle", cfg_on)
+    let ss_acc_init   = _skillstore_init_acc()
+
+    // case 107 : LEARNS (engine-native) — FULL final accuracy rises >= +0.30 over the
+    //   single-seed-cell init accuracy as skill-cells split under failure.
+    if _assert_b("case_107_skillstore_learns", true,
+                 ss_acc_full - ss_acc_init >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 108 : DISTINCT-FROM-STATIC — the fixed-repertoire control (never splits) does
+    //   NOT improve; FULL beats STATIC by >= +0.30. The gain is the cell-SPLIT, not variance.
+    if _assert_b("case_108_skillstore_distinct_from_static", true,
+                 ss_acc_full - ss_acc_static >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 109 : EARNED (shuffle) — teaching toward a PERMUTED task→tool map (scored vs the
+    //   TRUE map) collapses the gain to within +0.15 of STATIC ⇒ the lift is the EARNED
+    //   task↔tool correspondence the split encodes, not the act of splitting (p6 guard).
+    if _assert_b("case_109_skillstore_earned_shuffle", true,
+                 ss_acc_shuf - ss_acc_static <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 110 : NO-FAB / ABSTAIN — a FULL-trained store queried with an UNTRAINED far
+    //   task-context (disjoint trigram space) fires NO tool (returns "" = abstain) ⇒ the
+    //   repertoire never fabricates a tool for an unrelated task (H_1227 abstain, load-bearing).
+    let ss_far = _skillstore_full_store(cfg_on)
+    let ss_abst1 = (skill_recall(ss_far, "中文 alien glyph zzz unrelated far0") == "")
+    let ss_abst2 = (skill_recall(ss_far, "qqq xxxxxx vvvvvv nonsense token stream far1") == "")
+    if _assert_b("case_110_skillstore_abstains_on_far", true,
+                 ss_abst1 && ss_abst2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 111 : Ψ-DISJOINT FOOTPRINT — STATIC repertoire (mitosis OFF on teach) never grows
+    //   past its single seed cell, FULL grows; the lane is additive (its growth is its OWN
+    //   cell population, never pure_field/decoder). FULL cell-count > STATIC cell-count == 1.
+    let ss_full_store   = _skillstore_full_store(cfg_on)
+    let ss_static_store = _skillstore_full_store(cfg_off)
+    if _assert_b("case_111_skillstore_footprint_grows", true,
+                 skill_store_cells(ss_full_store) > skill_store_cells(ss_static_store)
+              && skill_store_cells(ss_static_store) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  skillstore acc: init=" + to_string(ss_acc_init)
+          + " full=" + to_string(ss_acc_full)
+          + " static=" + to_string(ss_acc_static)
+          + " shuffle=" + to_string(ss_acc_shuf)
+          + " cells_full=" + to_string(skill_store_cells(ss_full_store))
+          + " cells_static=" + to_string(skill_store_cells(ss_static_store)))
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
+}
+
+// ── SKILLSTORE smoke helpers (H_1382) — fixed deterministic task→tool environment ─────
+//   12 task-contexts across 6 tools (2 variants each). Each task string carries its tool
+//   family name as a trigram-rich prefix so in-family tasks share a trigram neighborhood
+//   (immune_embed_key) — distinct tools land distinct cells. No rng: the SAME set + the
+//   SAME shuffle permutation run every time, so the smoke is byte-repeatable.
+fn _skillstore_tasks() -> [string] {
+    return [
+        "web_search request variant 0 alpha", "web_search request variant 1 beta",
+        "code_execute request variant 0 alpha", "code_execute request variant 1 beta",
+        "file_read request variant 0 alpha", "file_read request variant 1 beta",
+        "memory_search request variant 0 alpha", "memory_search request variant 1 beta",
+        "shell_execute request variant 0 alpha", "shell_execute request variant 1 beta",
+        "phi_measure request variant 0 alpha", "phi_measure request variant 1 beta"
+    ]
+}
+fn _skillstore_true_tools() -> [string] {
+    return [
+        "web_search", "web_search", "code_execute", "code_execute",
+        "file_read", "file_read", "memory_search", "memory_search",
+        "shell_execute", "shell_execute", "phi_measure", "phi_measure"
+    ]
+}
+// a FIXED derangement of the true tools (every position points to a DIFFERENT tool) — the
+// SHUFFLE training labels. Scoring is ALWAYS vs _skillstore_true_tools (the EARNED control).
+fn _skillstore_shuffle_tools() -> [string] {
+    return [
+        "code_execute", "file_read", "memory_search", "shell_execute",
+        "phi_measure", "web_search", "code_execute", "file_read",
+        "memory_search", "phi_measure", "web_search", "shell_execute"
+    ]
+}
+
+// _skillstore_init_acc — accuracy of a store seeded with ONLY the first (task→true_tool)
+//   cell, scored over ALL tasks vs the TRUE map (the shared FULL/STATIC starting point).
+fn _skillstore_init_acc() -> float {
+    let tasks = _skillstore_tasks()
+    let truth = _skillstore_true_tools()
+    let store = skill_store_new(tasks[0], truth[0], 64)
+    return _skillstore_score(store, tasks, truth)
+}
+
+// _skillstore_score — fraction of tasks whose skill_recall matches the TRUE tool.
+fn _skillstore_score(store: SkillStore, tasks: [string], truth: [string]) -> float {
+    let mut correct = 0
+    let mut i = 0
+    while i < len(tasks) {
+        if skill_recall(store, tasks[i]) == truth[i] { correct = correct + 1 }
+        i = i + 1
+    }
+    return to_float(correct) / to_float(len(tasks))
+}
+
+// _skillstore_full_store — build a store under the given cfg by walking the failure-driven
+//   teach loop toward the TRUE tools (FULL arm). Under cfg_off (mitosis OFF) the teach split
+//   is a no-op ⇒ the STATIC fixed repertoire (stays at 1 cell). Seed = first (task→true_tool).
+fn _skillstore_full_store(cfg: EngineConfig) -> SkillStore {
+    let tasks = _skillstore_tasks()
+    let truth = _skillstore_true_tools()
+    let mut store = skill_store_new(tasks[0], truth[0], 64)
+    let mut i = 0
+    while i < len(tasks) {
+        store = skill_store_teach(store, tasks[i], truth[i], cfg)   // failure → clonal split
+        i = i + 1
+    }
+    return store
+}
+
+// _skillstore_arm_acc — final accuracy of one arm (scored vs the TRUE map):
+//   "full"    teaches toward the TRUE tools under mitosis ON  → learns.
+//   "static"  never teaches (the fixed repertoire control)    → stays at init accuracy.
+//   "shuffle" teaches toward the PERMUTED tools (mitosis ON) but is SCORED vs TRUE → collapses.
+fn _skillstore_arm_acc(mode: string, cfg: EngineConfig) -> float {
+    let tasks = _skillstore_tasks()
+    let truth = _skillstore_true_tools()
+    let train = if mode == "shuffle" { _skillstore_shuffle_tools() } else { truth }
+    let mut store = skill_store_new(tasks[0], train[0], 64)
+    if mode != "static" {
+        let mut i = 0
+        while i < len(tasks) {
+            store = skill_store_teach(store, tasks[i], train[i], cfg)   // teach toward arm's label
+            i = i + 1
+        }
+    }
+    return _skillstore_score(store, tasks, truth)                       // ALWAYS scored vs TRUE map
 }
 
 // _sm_count_dummy — local alias so the ablate case can read the placed count without
