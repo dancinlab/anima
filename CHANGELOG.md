@@ -1,3 +1,38 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1414 RUNG-3+4 — wire the validated memory×ToM compose arbiter into the LIVE CORE engine (a_verified_must_wire ladder rungs 3/4 → wired: WIRED-live)
+
+The a_verified_must_wire ladder rung-3 (live CORE wire-in) + rung-4 (ARCHITECTURE.json lockstep)
+for H_1414 — the FIRST brain-lane compose pair to bind engine-native. The query-routed confidence
+arbiter the H_1414 probe validated is now a CALLABLE live op in CORE/engine_cli.hexa under a new
+§MEMORY×ToM COMPOSE ARBITER section:
+  - `mem_tom_compose(mem, om, fact_text, q_is_reality, mean_mem, mean_tom) -> string` (clean
+    engine-native route cue via `mem_tom_route_cue`) + `mem_tom_compose_routed(..., route, ...)`
+    (canonical primitive, explicit route) + helpers `mem_tom_mem_margin` / `mem_tom_tom_margin`
+    (LIVE L2 affinity margins) + private `_mem_tom_affinity` / `_mem_tom_relconf`.
+  - AGREE → shared vote; CONFLICT → higher routing-modulated scale-relative substrate confidence
+    wins (NO hardcoded priority, a_autonomy_over_hardcode); BOTH-abstain → "" (no fab, p5/H_1227).
+  - READ-ONLY over the two live cell populations (ImmuneMemoryGrow + OtherMindModel), mutates
+    neither store, returns a location class (NOT an emit/silence decision), Ψ-disjoint.
+
+RUNG-3 VERIFICATION (byte-exact, c2): state/1414_memory_tom_engine_compose/h1414_memory_tom_LIVEOP_probe.hexa
+drives the SAME frozen H_1405 bars through the WIRED op (replaying the fixture route) and reproduces
+the H_1414 numbers BYTE-EXACT — compose 0.937778 (per-seed 0.931111/0.940000/0.942222), acc_memory
+0.579259, oracle−best +0.382222, all 4 bars PASS (.verdicts/1414_memory_tom_engine_compose/H_1414_R3_LIVEOP.txt).
+
+SMOKE GUARD: CORE/engine_cli_smoke.hexa cases 133-136 (agree / conflict-reality-memory-wins /
+conflict-belief-ToM-wins / both-abstain-no-fab) PASS, FAIL=0.
+
+GUARDS (no regression): single-entry (h1196) 7/0 · h1205 separation-invariant PASS (generation
+byte-identical ON==OFF, Ψ phiSum=48.6613 unchanged ON==OFF — the live op is read-only Ψ-disjoint).
+NOTE (c9, infra): engine_cli_smoke.hexa SIGKILLs (OOM) in the BPE compose tail (cases ~127+) on
+this 16 GB host — a PRE-EXISTING environment wall present on pristine origin/main too, NOT introduced
+by this wire-in; the new cases 133-136 run BEFORE the kill zone and pass (FAIL=0 throughout).
+
+RUNG-4 lockstep: ARCHITECTURE.json gains a "🧠✕🪞 Memory×ToM compose arbiter" lane node (🟢 WIRED-live)
++ the engine_cli.hexa node note names the new §MEMORY×ToM COMPOSE ARBITER op set; CORE §/op ↔
+ARCHITECTURE.json named set 1:1 (a_core_engine_map). H_1414 card + HYPOTHESES.jsonl row → wired: WIRED-live.
+
+---
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1414 — engine-native re-score of H_1405 (memory×ToM compose): 🟢 COMPOSE-LIFT BINDS engine-native (a_verified_must_wire ladder step-2, FIRST compose pair to bind)
 
 The 2nd compose-pair engine-native re-score (after H_1412 cerebellum×basal 🧱). Re-scores the

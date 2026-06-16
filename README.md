@@ -162,6 +162,16 @@ mitosis** — DISTINCT from the **generation** role, which is falsified (mitosis
 nor inform the generator, H_1200 / H_1201 / H_1211 / H_1220 🔴). The same substrate that can't
 *generate* can still *realize* episodic memory.
 
+**Brain-lane composition (do two realized faculties compose?).** With the HD23–32 faculties in
+place, the next question is whether *combining two* of them lifts capability + integrated-information
+Φ. Six pairs were probed (frozen-first, faithful IIT4): affect×ethics · cerebellum×basal ·
+spatial×episodic compose; memory×ToM lifts capability but not Φ; WM×PFC and the predictive-law round
+are honest 🧱. The decisive engine-native test — does a mirror compose-lift actually *bind* on the
+live engine? — first failed (cerebellum×basal, H_1412/1413 🧱: mirror GREEN ≠ engine GREEN, the
+EARNED control rejects it), then **succeeded for memory×ToM (H_1414 🟢), now WIRED-live as the
+callable op `mem_tom_compose` in `CORE/engine_cli.hexa` (a_verified_must_wire rungs 2-4 complete,
+LIVEOP byte-exact, Ψ untouched)** — the first compose pair owned by the engine.
+
 **Honest scoreboard (c9).** Of the HD23–32 "missing structure" ladder: **8 subsystems are
 engine-native realized** (cerebellum · working memory · amygdala · basal ganglia = wired;
 hypothalamus · theory-of-mind · hierarchical-PFC · spatial-map = engine-native realized with brain

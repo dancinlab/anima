@@ -478,6 +478,50 @@ fn main() {
     if _assert_b("case_34_witnessed_revision_overwrites", true,
                  other_mind_predict(om1, "obj_x") == "box" && other_mind_count(om1) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (h2) MEMORY×ToM COMPOSE ARBITER (H_1414 R3, rung-3 wire-in; cases 133-136) ──────
+    // The §MEMORY×ToM COMPOSE op composes the LIVE ImmuneMemoryGrow (episodic memory) and the
+    // LIVE OtherMindModel (theory-of-mind belief) on ONE WHERE-decision. ADDITIVE + Ψ-disjoint
+    // (a READ over the two cell populations; mutates neither store; returns a location class,
+    // never an emit/silence decision; never touches Ψ). These cases prove the arbiter's four
+    // branches deterministically on a 3-fact live Sally-Anne fixture (the H_1414 mechanism, now
+    // a CALLABLE live op). The full 4-bar engine-native re-score (compose 0.937778, byte-exact) =
+    // state/1414_memory_tom_engine_compose/h1414_memory_tom_LIVEOP_probe.hexa.
+    //   live memory store = anima's OWN ground truth (reality); live ToM store = the agent's
+    //   witnessed belief (LAGS on moved-while-absent facts). mean normalizers = 1.0 (the relative
+    //   confidence is exercised through the live affinity margins, not a hand-set scale).
+    //   (numbered 133-136, placed here near the ToM lane; the numbering continues past case 132.)
+    let mt_mk0 = immune_embed_key("mt_agree")
+    let mut mt_mem = immune_grow_new(mt_mk0, "basket", 64, 64, true)                 // reality: agree→basket
+    mt_mem = immune_grow_bind(mt_mem, immune_embed_key("mt_moved"), "box", cfg_on)   // reality: moved→box
+    mt_mem = immune_grow_bind(mt_mem, mt_mk0, "basket", cfg_on)
+    let mut mt_tom = other_mind_witness(other_mind_new(), "mt_agree", "basket")      // belief: agree→basket
+    mt_tom = other_mind_witness(mt_tom, "mt_moved", "basket")                        // belief: stale→basket (false)
+
+    // case 133 (AGREE → shared vote) : both faculties say "basket" for mt_agree → compose=basket.
+    if _assert_b("case_133_memtom_agree_shared_vote", true,
+                 mem_tom_compose(mt_mem, mt_tom, "mt_agree", true, 1.0, 1.0) == "basket") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 134 (CONFLICT, reality-typed → memory wins) : on the moved fact memory says "box"
+    //   (reality) but ToM says "basket" (stale belief). A reality-typed query (route→1) boosts
+    //   memory ⇒ compose = "box" (the correct reality answer). The route cue is engine-native.
+    if _assert_b("case_134_memtom_conflict_reality_memory_wins", true,
+                 mem_tom_compose(mt_mem, mt_tom, "mt_moved", true, 1.0, 1.0) == "box") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 135 (CONFLICT, belief-typed → ToM wins) : SAME conflicting moved fact, but a belief-
+    //   typed query (route→0) boosts ToM ⇒ compose = "basket" (the agent's stale belief, the
+    //   correct false-belief answer). The route DISSOCIATES the two faculties on one fact (the
+    //   load-bearing query-routing — same memory/ToM votes, opposite compose by route alone).
+    if _assert_b("case_135_memtom_conflict_belief_tom_wins", true,
+                 mem_tom_compose(mt_mem, mt_tom, "mt_moved", false, 1.0, 1.0) == "basket") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 136 (BOTH ABSTAIN → "") : an untaught fact → neither faculty fires → compose returns
+    //   "" (never fabricates, p5/H_1227). Proves the compose inherits the abstain discipline.
+    //   Also exercises the explicit-route entry mem_tom_compose_routed (route=0.5, the wrapper's
+    //   delegate) returning the SAME agree vote — wrapper ≡ routed primitive.
+    let mt_abstain = (mem_tom_compose(mt_mem, mt_tom, "mt_untaught_zzz", true, 1.0, 1.0) == "")
+                  && (mem_tom_compose_routed(mt_mem, mt_tom, "mt_agree", 0.5, 1.0, 1.0) == "basket")
+    if _assert_b("case_136_memtom_both_abstain_no_fab", true, mt_abstain) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── (i) HIERARCHICAL-PFC GOAL→SUBGOAL CONTROLLER (H_1294 R2, HD31) ──────────────
     // The hier controller is ADDITIVE + Ψ-disjoint (a READ over the immune margin + cue
     // cosine + its OWN pointer; no store mutation, no pure_field touch). These cases
