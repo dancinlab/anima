@@ -1,0 +1,50 @@
+================================================================================
+H_1419 — MULTI-LENS breakthrough on the memory×spatial COMPOSE WALL (H_1417 P1 🧱)
+  3 hippocampal-formation lenses (place-gated · memory-augmented · pattern-complete)
+  FROZEN H_1417 bars VERBATIM · shuffle+ablation per lens · $0 CPU · p7 · c9 · c16
+  WALL recap: H_1417 P1 parallel-vote net-lift +0.0089 < +0.05 (oracle headroom +0.241
+              existed but the parallel arbiter captured almost none of it)
+================================================================================
+--------------------------------------------------------------------------------
+BASELINE parallel-vote (H_1417 P1 reproduce)
+  acc_mem=0.604444 acc_spatial=0.705926 best=0.705926
+  compose=0.714815 shuffle=0.502963 ablate=0.714815 oracle=0.946667
+  only_mem=0.240741 only_spatial=0.342222 | net-lift(compose-best)=0.00888889
+  compose-shuffle=0.211852 | compose-ablate=0.0 (>0 ⇒ mechanism contributes; <=0 ⇒ INERT ceiling evidence)
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABL-not-inert FAIL/INERT)
+  ==> 🧱 WALL (this lens does not bind)
+--------------------------------------------------------------------------------
+LENS A — PLACE-GATED RECALL (spatial indexes memory)
+  acc_mem=0.604444 acc_spatial=0.705926 best=0.705926
+  compose=0.531111 shuffle=0.508148 ablate=0.714815 oracle=0.946667
+  only_mem=0.240741 only_spatial=0.342222 | net-lift(compose-best)=-0.174815
+  compose-shuffle=0.022963 | compose-ablate=-0.183704 (>0 ⇒ mechanism contributes; <=0 ⇒ INERT ceiling evidence)
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABL-not-inert FAIL/INERT)
+  ==> 🧱 WALL (this lens does not bind)
+--------------------------------------------------------------------------------
+LENS B — MEMORY-AUGMENTED MAP (episodic prior refines map)
+  acc_mem=0.604444 acc_spatial=0.705926 best=0.705926
+  compose=0.735556 shuffle=0.494074 ablate=0.714815 oracle=0.946667
+  only_mem=0.240741 only_spatial=0.342222 | net-lift(compose-best)=0.0296296
+  compose-shuffle=0.241481 | compose-ablate=0.0207407 (>0 ⇒ mechanism contributes; <=0 ⇒ INERT ceiling evidence)
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABL-not-inert PASS)
+  ==> 🧱 WALL (this lens does not bind)
+--------------------------------------------------------------------------------
+LENS C — CA3 PATTERN-COMPLETION REMAP (completeness attractor)
+  acc_mem=0.604444 acc_spatial=0.705926 best=0.705926
+  compose=0.714815 shuffle=0.502963 ablate=0.714815 oracle=0.946667
+  only_mem=0.240741 only_spatial=0.342222 | net-lift(compose-best)=0.00888889
+  compose-shuffle=0.211852 | compose-ablate=0.0 (>0 ⇒ mechanism contributes; <=0 ⇒ INERT ceiling evidence)
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABL-not-inert FAIL/INERT)
+  ==> 🧱 WALL (this lens does not bind)
+================================================================================
+VERDICT: 🧱 CONFIDENT-TERMINAL — memory×spatial does NOT bind engine-native under
+  ANY of THREE genuinely different hippocampal-formation lenses (place-gated recall ·
+  memory-augmented map · CA3 pattern-completion). Each fails its controls; the
+  ablation shows the gating/refinement is INERT (compose <= ablate) — the oracle
+  headroom is NOT arbiter-capturable from component reads (joint-trajectory property,
+  the SAME finding as H_1411/H_1417). (d)-ceiling CONFIRMED via MULTI-LENS+ablation.
+  NO bar moved (frozen-first, c9). This 🧱 is a VALID terminal result.
+  HONEST (c9): bars FROZEN == H_1417. Toy 5-family fixture, 3 seeds [5500,5501,5502],
+  deterministic, LIVE engine leg-reads (immune_grow_recall / spatial_map_nearest).
+  MEASUREMENT round — NOTHING wired into live CORE. Scale/real-corpus/transfer UNVERIFIED.

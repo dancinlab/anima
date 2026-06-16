@@ -1,3 +1,18 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1419 — MULTI-LENS ceiling-confirmation of the memory×spatial COMPOSE WALL (H_1417 P1) 🧱 CONFIDENT-TERMINAL
+
+a_break_the_wall (#2345) 강화판을 H_1417 P1 memory×spatial 벽에 적용 — 천장 확정엔 ≥2-3 원리적
+렌즈 + 각 ablation 통제가 필수. 세 hippocampal-formation 렌즈(PLACE-GATED RECALL · MEMORY-
+AUGMENTED MAP · CA3 PATTERN-COMPLETION)로 parallel-vote 를 serial-gating 토폴로지로 바꿔 재시도.
+
+- 기준선 parallel-vote = H_1417 P1 BYTE-EXACT 재현 (compose 0.714815, net-lift +0.00889, oracle headroom +0.240741).
+- Lens A 위해(net-lift −0.175, place index 가 약한 memory arm 으로 라우팅; ABL −0.184).
+- Lens B 가장 강함 — 진짜 NON-inert(ABL +0.0207) + EARNED shuffle(+0.241) 이지만 B1 +0.030 < +0.05 미달.
+- Lens C INERT — completeness 가 parallel rel-conf 로 환원(abstain≈0), ABL +0.0 byte-exact.
+- 세 렌즈 전부 B1 FAIL → 🧱 CONFIDENT-TERMINAL. oracle headroom 은 F3/F4 conflict 가족에 있고
+  conflict-correctness 를 component read 가 안 담음(joint-trajectory 속성) — H_1411/H_1417 과 동일 결정자.
+- frozen-first, NO bar moved, criteria FREEZE.txt 사전잠금, run1==run2 byte-identical, $0 CPU, live CORE/*.hexa UNTOUCHED.
+- 등록: UNIVERSE/cards/H_1419_memory_spatial_place_gated.md + HYPOTHESES.jsonl. probe state/1419_memory_spatial_place_gated/.
+
 ## 2026-06-17 — governance(CLAUDE.md): a_break_the_wall 벽-돌파 규율 강화 (MULTI-LENS · ablation · 법칙-falsify)
 
 이번 세션의 벽 다루기 3교훈을 a_break_the_wall 에 박제:
