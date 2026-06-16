@@ -230,55 +230,129 @@ def learn_bpe(base_ids, base_nby, num_merges, rng=None):
     """Learn `num_merges` merges over a sequence of base symbol ids.
     rng=None → FREQUENCY-ranked (real BPE, structure). rng given → RANDOM equal-count merges
     (shuffle control: same number of merges, pairs chosen at RANDOM from observed adjacent pairs).
-    Returns the ordered list of (a,b)->new_id merges. We learn on the TRAIN sequence ONLY."""
-    seq = list(map(int, base_ids))
-    nby = list(map(int, base_nby))   # parallel byte-cost track; merged unit byte = sum of parts
-    next_id = max(seq) + 1 if seq else 256
+    Returns the ordered list of (a,b)->new_id merges. We learn on the TRAIN sequence ONLY.
+
+    EFFICIENT incremental BPE — a doubly-linked list over positions with a LIVE adjacent-pair count
+    dict; each merge updates only the local neighbors of replaced positions (NOT a full rescan). This
+    is the standard fast BPE; the resulting merge order is IDENTICAL to the naive full-rescan version
+    (ties broken by (count, pair) max — same as naive)."""
+    sym = list(map(int, base_ids))
+    N = len(sym)
+    if N < 2:
+        return []
+    nxt = list(range(1, N)) + [-1]     # next live index (-1 = end)
+    prv = [-1] + list(range(0, N - 1))  # prev live index
+    alive = bytearray([1]) * N          # position still a live chain head?
+    pair_counts = Counter()
+    pair_pos = {}                       # pair -> set of left-index positions where it currently sits
+    for i in range(N - 1):
+        pr = (sym[i], sym[i + 1])
+        pair_counts[pr] += 1
+        pair_pos.setdefault(pr, set()).add(i)
+    next_id = max(sym) + 1
     merges = []
-    byte_of = {}                      # new_id -> utf8 byte span
+
+    def _add(p, i):
+        pair_counts[p] += 1
+        pair_pos.setdefault(p, set()).add(i)
+
+    def _rem(p, i):
+        if p in pair_pos:
+            pair_pos[p].discard(i)
+        pair_counts[p] -= 1
+        if pair_counts[p] <= 0:
+            pair_counts.pop(p, None); pair_pos.pop(p, None)
+
     for _ in range(num_merges):
-        # count adjacent pairs
-        pair_counts = Counter()
-        for i in range(len(seq) - 1):
-            pair_counts[(seq[i], seq[i + 1])] += 1
         if not pair_counts:
             break
         if rng is None:
             best = max(pair_counts.items(), key=lambda kv: (kv[1], kv[0]))[0]
         else:
-            # random merge: pick a random OBSERVED adjacent pair (uniform over distinct pairs)
             pairs = list(pair_counts.keys())
             best = pairs[int(rng.integers(0, len(pairs)))]
         a, b = best
         nid = next_id; next_id += 1
         merges.append((a, b, nid))
-        byte_of[nid] = (byte_of.get(a, None), byte_of.get(b, None))  # placeholder, resolved below
-        # apply merge in place, tracking byte cost
-        new_seq = []; new_nby = []
-        i = 0
-        L = len(seq)
-        while i < L:
-            if i < L - 1 and seq[i] == a and seq[i + 1] == b:
-                new_seq.append(nid); new_nby.append(nby[i] + nby[i + 1]); i += 2
-            else:
-                new_seq.append(seq[i]); new_nby.append(nby[i]); i += 1
-        seq = new_seq; nby = new_nby
+        # ONLY visit the live positions where this pair occurs (not a full scan)
+        positions = sorted(pair_pos.get((a, b), set()))
+        for i in positions:
+            if not alive[i]:
+                continue
+            j = nxt[i]
+            # position may have been invalidated by an adjacent merge earlier in this same loop
+            if j == -1 or not alive[j] or sym[i] != a or sym[j] != b:
+                continue
+            p = prv[i]; k = nxt[j]
+            if p != -1:
+                _rem((sym[p], sym[i]), p)
+            if k != -1:
+                _rem((sym[j], sym[k]), j)
+            _rem((a, b), i)
+            sym[i] = nid
+            nxt[i] = k
+            if k != -1:
+                prv[k] = i
+            alive[j] = 0
+            if p != -1:
+                _add((sym[p], nid), p)
+            if k != -1:
+                _add((nid, sym[k]), i)
     return merges
+
+
+def _apply_merges_linked(sym, nby, merges):
+    """Apply an ordered merge list to (sym,nby) lists. POSITION-INDEXED — for each merge we visit ONLY
+    the live positions where that pair occurs (not a full O(N) scan per merge), the same mechanics as
+    learn_bpe. Returns (unit_ids, unit_nby) numpy arrays; merged unit byte = sum of parts (conserved)."""
+    N = len(sym)
+    if N == 0:
+        return np.zeros(0, dtype=np.int64), np.zeros(0, dtype=np.int64)
+    sym = list(map(int, sym)); nby = list(map(int, nby))
+    nxt = list(range(1, N)) + [-1]
+    prv = [-1] + list(range(0, N - 1))
+    alive = bytearray([1]) * N
+    pair_pos = {}
+    for i in range(N - 1):
+        pair_pos.setdefault((sym[i], sym[i + 1]), set()).add(i)
+    for (a, b, nid) in merges:
+        positions = pair_pos.pop((a, b), None)
+        if not positions:
+            continue
+        for i in sorted(positions):
+            if not alive[i]:
+                continue
+            j = nxt[i]
+            if j == -1 or not alive[j] or sym[i] != a or sym[j] != b:
+                continue
+            p = prv[i]; k = nxt[j]
+            # drop the two boundary pairs we consume from the index
+            if p != -1 and (sym[p], sym[i]) in pair_pos:
+                pair_pos[(sym[p], sym[i])].discard(p)
+            if k != -1 and (sym[j], sym[k]) in pair_pos:
+                pair_pos[(sym[j], sym[k])].discard(j)
+            sym[i] = nid; nby[i] = nby[i] + nby[j]
+            nxt[i] = k
+            if k != -1:
+                prv[k] = i
+            alive[j] = 0
+            # register the two new boundary pairs created by the merged unit
+            if p != -1:
+                pair_pos.setdefault((sym[p], nid), set()).add(p)
+            if k != -1:
+                pair_pos.setdefault((nid, sym[k]), set()).add(i)
+    out_s = []; out_n = []
+    i = 0
+    while i != -1 and i < N:
+        if alive[i]:
+            out_s.append(sym[i]); out_n.append(nby[i])
+        i = nxt[i]
+    return np.asarray(out_s, dtype=np.int64), np.asarray(out_n, dtype=np.int64)
 
 
 def apply_bpe(base_ids, base_nby, merges):
     """Apply a learned merge list to a base sequence. Returns (unit_ids, unit_nby)."""
-    seq = list(map(int, base_ids)); nby = list(map(int, base_nby))
-    for (a, b, nid) in merges:
-        new_seq = []; new_nby = []
-        i = 0; L = len(seq)
-        while i < L:
-            if i < L - 1 and seq[i] == a and seq[i + 1] == b:
-                new_seq.append(nid); new_nby.append(nby[i] + nby[i + 1]); i += 2
-            else:
-                new_seq.append(seq[i]); new_nby.append(nby[i]); i += 1
-        seq = new_seq; nby = new_nby
-    return np.asarray(seq, dtype=np.int64), np.asarray(nby, dtype=np.int64)
+    return _apply_merges_linked(list(map(int, base_ids)), list(map(int, base_nby)), merges)
 
 
 def bpe_score(jamo_syms, jamo_nby, num_merges, nmax, stride, shift, rng=None):
