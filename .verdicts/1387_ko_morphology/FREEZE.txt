@@ -1,0 +1,98 @@
+H_1387 — ko-morphology — FROZEN BARS (pre-registered BEFORE measuring; c9/c16, NO tune-to-green)
+================================================================================================
+
+LANE: Korean below-jamo NEW ANGLE. The Korean below-jamo arc closed 🧱/🟠 across THREE levers —
+representation (H_1322), interpolation (H_1359), data-volume (H_1368/H_1380). H_1380 pinned a
+novel-context CE asymptote of ~2.747 = jamo floor (2.51335) +0.28 on REAL KO (≤480MB), and named
+the genuinely-NEW remaining angles: (1) MORPHOLOGY-AWARE units (morpheme / BPE-on-jamo, a coarser
+linguistic unit than jamo) and (2) CROSS-SYLLABLE LONG-RANGE deps (the count-head's nmax=5 may be a
+short-context ceiling). H_1387 tests whether either angle reduces the novel-context CE below the
+jamo-floor+0.28 (~2.747) that all 3 closed levers hit.
+
+CHOSEN PRIMARY ANGLE + WHY
+--------------------------
+PRIMARY = MORPHOLOGY-AWARE UNIT via BPE-ON-JAMO (data-driven sub-word merges over the jamo stream).
+  WHY: the +0.28 residual at the jamo floor is a REPRESENTATION-GRANULARITY limit. The count-head
+  models next-JAMO transitions, but Korean meaning lives at the morpheme/어절 level. BPE merges on the
+  jamo stream learn frequent jamo-sequences (de-facto morpheme-ish sub-units) → a COARSER linguistic
+  unit whose next-UNIT prediction can carry more nats/byte than next-jamo. This is precisely the
+  "morphology-aware unit (morpheme / BPE-on-jamo, a coarser linguistic unit than jamo)" H_1380 named —
+  a distinct REPRESENTATION-CHANGE hypothesis on the residual, NOT more data/representation-at-jamo.
+  It is also the cheaper, more decisive of the two (a unit change vs an nmax sweep), and it admits a
+  clean shuffle control (random equal-size merges) that isolates the LINGUISTIC structure of the merges.
+SECONDARY (cheap probe, NON-GATING) = LONGER-CONTEXT count-head (nmax ∈ {7, 9} vs frozen 5) on the
+  SAME jamo stream — tests angle (2). Reported as a diagnostic curve; does NOT change the H_1387 tier.
+
+CONFOUND-FAIR CE (load-bearing): all CE is reported in nats/UTF-8-BYTE (NOT per-unit). BPE units cover
+MORE bytes per unit, so a per-unit CE would be unfairly low; dividing the unit's total nats by the
+unit's UTF-8 byte span makes the BPE CE directly comparable to the jamo-floor and the +0.28 residual
+(byte-fair axis, the SAME axis as H_1316/H_1359/H_1368/H_1380). NOVEL-context held-out filter is the
+SAME genuine-generalization filter as H_1359 TEST A / H_1368 (top-order context absent from TRAIN).
+
+CORPUS: REAL Korean ONLY — the SAME r2://anima-7b/web/kor/shard0000.bytes prefix family as H_1380.
+  30MB-prefix sha MUST == c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca (H_1368
+  anchor). sha mismatch → STOP, NO synthetic padding. Window = 30MB (cached, no new fetch ≤30MB).
+  jamo representation / NOVEL filter / Jelinek-Mercer λ / circular-shift surrogate all FROZEN VERBATIM
+  from H_1368/H_1380 (NOT re-tuned — anti-Goodhart). 3 seeds for the shuffle/merge-order control.
+
+CONSTANTS (FROZEN):
+  H1316_JAMO_FLOOR = 2.51335 (nats/UTF-8-byte)
+  H1380_RESIDUAL   = 0.28  → RESIDUAL_CE_TARGET = 2.51335 + 0.28 = 2.79335 (the level the 3 levers hit;
+                     H_1380 measured 30MB novel-CE = 2.88190 and a ~2.747–2.80 asymptote; we use the
+                     +0.28 residual = 2.79335 as the frozen target to BEAT, the value H_1380 named.)
+  H1359_NOVEL_CE_30M = 2.88190 (jamo-floor 30MB anchor — control bar 3 must reproduce |Δ|≤0.02)
+  GAP_MARGIN = 0.05   (bar 1 frozen margin: BPE novel-CE must be < 2.79335 − 0.05 = 2.74335 to count)
+  NMAX = 5, LAMBDA = [1,2,4,8,16]/31, LAPLACE = 1.0, KO_STRIDE = 300 (all == H_1368/H_1380)
+  BPE_MERGES = 2000 (frozen target merge count; learned on TRAIN jamo stream ONLY, no test leakage)
+  SEEDS = [4387, 4388, 4389] (shuffle/random-merge control)
+
+FROZEN BARS (mapping fixed here BEFORE any measurement; tune-to-green forbidden)
+--------------------------------------------------------------------------------
+BAR 1 — GAP-REDUCED (primary, gating):
+  The BPE-on-jamo novel-context CE (byte-fair, novel-only held-out) is BELOW the +0.28 residual
+  (2.79335) by ≥ GAP_MARGIN (0.05), i.e. BPE_novel_CE ≤ 2.74335.
+  PASS → the morphology-aware unit BEATS the residual all 3 closed levers hit.
+
+BAR 2 — EARNED (shuffle control, gating):
+  Shuffling the BPE merge structure collapses any gain. Control = replace the LEARNED frequency-ranked
+  merges with RANDOM equal-COUNT merges (same number of merges, same resulting alphabet size band, but
+  the merge PAIRS chosen at random over the jamo bigram space, per seed). Shuffled novel-CE must NOT
+  beat the residual by the margin: shuffle_novel_CE ≥ 2.79335 − 0.05 = 2.74335 (i.e. shuffle does NOT
+  pass bar 1), AND the structured gain over shuffle is real: (shuffle_CE − BPE_CE) ≥ 0.03 on the mean
+  of 3 seeds. PASS → the gain is the LINGUISTIC structure of the merges, not merely a coarser unit /
+  capacity. (If shuffle ALSO beats the residual → the "gain" is just coarser granularity, NOT
+  morphology — bar 1 result is then NOT attributable to morphology; honest, c9.)
+
+BAR 3 — CONTROL (gating, sanity):
+  Re-measure on the SAME 30MB corpus: (a) the jamo floor anchor — the jamo-stream novel-CE reproduces
+  H_1380's 30MB value 2.88190 within |Δ| ≤ 0.02 (methodology-drift anchor); (b) the +0.28 residual is
+  re-stated = 2.79335. Plus the circular-shift surrogate is EARNED on the BPE stream (shift−novel ≥
+  0.05) — proves the held-out novel CE is genuine generalization, not memorized context.
+
+SECONDARY (NON-GATING diagnostic, reported only): novel-CE at nmax ∈ {5,7,9} on the jamo stream.
+  If a longer context ALSO reduces the gap below 2.74335 it is recorded as a second candidate angle;
+  but it does NOT change the H_1387 tier (the tier is set by BAR 1∧2∧3 on the PRIMARY BPE angle).
+
+TIER MAPPING (frozen; sets H_1387 verdict — pre-registered branch, NOT post-hoc)
+--------------------------------------------------------------------------------
+  bar3 FAIL (anchor drift or shift not earned)            → 🔴 INVALID-RED (methodology drift / signal suspect)
+  bar1 PASS ∧ bar2 PASS ∧ bar3 PASS                       → 🟢 GAP-REDUCED-CANDIDATE (morphology is a REAL new
+                                                            Korean lever; DIRECTIONAL, engine-transfer UNVERIFIED)
+  bar1 PASS ∧ bar2 FAIL ∧ bar3 PASS                       → 🟠 COARSER-NOT-MORPHOLOGY (a coarser unit lowers CE
+                                                            but the shuffle control ALSO beats the residual → the
+                                                            gain is granularity, not linguistic morphology; honest)
+  bar1 FAIL ∧ bar3 PASS                                   → 🧱 RESIDUAL-SURVIVES-MORPHOLOGY (the +0.28 residual
+                                                            holds under BPE-on-jamo too). If the secondary nmax
+                                                            sweep ALSO fails to beat 2.74335 → the Korean below-jamo
+                                                            question DEPLETES 🏁 — closed across data·representation·
+                                                            interpolation·morphology·long-range (clean closure, c9).
+
+HONEST SCOPE (pre-declared): DIRECTIONAL numpy, toy stride-300 byte-substrate next-symbol CE (NOT a
+fluent decoder, NO Korean-fluency claim). ONE 30MB window of ONE shard0000 prefix. Single frozen λ /
+single stride / BPE merge count = 2000 frozen. engine-transfer UNVERIFIED (a_scale_honest_scope ·
+a_toy_scale_recheck). CORE UNTOUCHED (DIRECTIONAL probe). $0 CPU. REAL KO only — NO synthetic padding.
+
+xref: H_1380 (the +0.28 residual + named morphology/long-range angles) · H_1368 (data-richness, 30MB
+anchor 2.88190) · H_1359 (interpolation 🧱, novel filter) · H_1322 (representation 🧱) · H_1316 (jamo
+floor 2.51335) · H_1307 (raw ceiling 2.95342, KO shard) · a_no_llm_frame_trap · a_break_the_wall ·
+a_scale_honest_scope · a_toy_scale_recheck · p7 · c2 · c9 · c16.
