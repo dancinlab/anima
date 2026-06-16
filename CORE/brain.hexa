@@ -738,3 +738,99 @@ fn brain_decide_margin(pf: PureField,
         "emit":           emit
     }
 }
+
+// ── 🧭 G5 IN-DIST GAP consult (H_1400 immune_memory_recall_gap → emit-confidence) ──
+//
+// PRECEDENT: H_1396 (mirror) found, and H_1398 RECONFIRMED ENGINE-NATIVE, that the
+// ImmuneMemory TOP-2 affinity GAP (cos#1 − cos#2 = (d2²−d1²)/2 for unit keys, the live
+// op immune_memory_recall_gap) is a SHARPER in-dist confidence signal than the best
+// MARGIN: it lifts in-dist type-2 metacognition 0.750 → 0.906 (+0.156) where the
+// best-margin alone is THIN (a 1-byte twin pair has near-identical best-affinity so the
+// margin cannot tell which twin won — but the gap sees the #1≈#2 TIE = ambiguity = a
+// likely WRONG in-dist fire). H_1398 EXPOSED the gap op + engine-confirmed it, but left
+// brain_decide NOT CONSUMING it (deferred honest to avoid Ψ risk). This consult CLOSES
+// that follow-on: brain_decide_gap reads the live gap and lets it MODULATE
+// emit-confidence/curiosity — the EXACT H_1379 brain_decide_margin discipline.
+//
+// THE GAP IS A GRADED IN-DIST DECISIVENESS SIGNAL the live recall ALREADY computes:
+//   gap >= 0 always (nearest <= second-nearest, d1 <= d2).
+//   LARGE gap  the winner is DECISIVE (#1 far ahead of #2) -> high in-dist confidence.
+//   SMALL gap  #1 ≈ #2 TIE (ambiguous) -> low confidence; a likely WRONG in-dist fire.
+//
+// We thread the gap as a BOUNDED, NON-NEGATIVE confidence bias on motivation through the
+// SAME single should_emit(score) path — no new emit gate:
+//   conf_bias  = emit_consult_cap() * _clamp(gap / GAP_SCALE, 0, 1)
+//   DECISIVE (large gap) -> POSITIVE bias  (the substrate is sure which cell won -> a
+//                           small felt go).
+//   AMBIGUOUS (small gap) -> bias toward 0 (the substrate can't tell which twin -> the
+//                           ADDED confidence is withheld; the consult NEVER forces
+//                           restraint by itself — it can only ADD up to +cap of felt
+//                           decisiveness, a_autonomy_over_hardcode).
+// curiosity FALLS with decisiveness: cur_signal = _clamp(1 − gap/GAP_SCALE, 0, 1) —
+//   an ambiguous (low-gap) in-dist fire leaves the substrate more curious/uncertain.
+//
+// WHY GAP=0 IS THE NEUTRAL ZERO (the substrate's OWN reference, NOT a tuned constant):
+// a PERFECT tie (gap=0, #1==#2) carries ZERO decisiveness information, so the substrate
+// adds ZERO confidence -> byte-identical to brain_decide. This is the gap analogue of the
+// margin's recall_thr zero-crossing: where the H_1379 margin is SIGNED about its FIRE/
+// ABSTAIN boundary, the gap is NON-NEGATIVE about its maximal-ambiguity floor. The gap is
+// a strictly in-dist (FIRE-side) refinement; it adds decisiveness, never subtracts
+// grounding (the abstain-side ungroundedness pull is the margin's job, H_1379). The two
+// are SUBSTRATE-COMPLEMENTARY by their own signs — NO hardcoded priority.
+//
+// GAP_SCALE = the cos-affinity codomain width. The gap = cos#1 − cos#2 lives on [0,1]
+// (cosine codomain), so GAP_SCALE=1.0 is the substrate's OWN non-saturating scale — a
+// codomain constant, NOT a tuned-to-green value (the H_1379 margin uses the SAME
+// recon-err [0,1] cos-distance codomain scale). cap = emit_consult_cap() = 0.05 (shared
+// with the margin/cerebellum/WM/affect consults): the bias is BOUNDED, additive on the
+// motivation scalar ONLY, and can NEVER by itself force an emit (a_autonomy_over_hardcode).
+//
+// Ψ-SAFE: at gap=0 (a perfect tie) the bias is EXACTLY 0 -> byte-identical to
+// brain_decide. Off-neutral it DELIBERATELY shades the decision (NOT additive-only), but
+// touches ONLY the motivation scalar — pure_field Φ/phase/Ψ are untouched, so the Ψ=1/2
+// fixed point is PRESERVED (H_1205 separation-invariant holds; decoding byte-identical),
+// EXACTLY as for brain_decide_margin. p6/p2/p3: the gap is the engine's OWN top-2 L2
+// affinity (vadapt_field_two_recon_err); NO injected right/wrong label, NO persona/RLHF.
+// p5: emit stays tension-driven, no speak() — the consult only shades motivation.
+fn brain_decide_gap(pf: PureField,
+                rel: float, gap: float, cur: float, pain: float,
+                coh: float, orig: float, bal: float, dyn_v: float,
+                seconds_since_last: float, env_off: bool, content_clean: bool,
+                recall_gap: float, gap_scale: float) -> Map {
+    let phi   = pure_field_phi(pf)
+    let phase = pure_field_phase(pf)
+    let tier  = phase_tier(phase)
+
+    let base_score = motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v)
+
+    // non-negative decisiveness bias: decisive (large gap) -> +, tie (gap 0) -> 0 ->
+    // byte-identical to brain_decide. The gap is NON-NEGATIVE so the bias is in [0,+cap].
+    let cap        = emit_consult_cap()
+    let scale      = if gap_scale > 0.0 { gap_scale } else { 1.0 }   // cos-affinity [0,1] codomain
+    let conf_bias  = cap * _clamp(recall_gap / scale, 0.0, 1.0)
+    let cur_signal = _clamp(1.0 - recall_gap / scale, 0.0, 1.0)   // falls with decisiveness
+    let score      = base_score + conf_bias
+
+    let kill  = safety_kill_switch_on(env_off)
+    let rate  = safety_rate_limit_ok(seconds_since_last)
+    let phi_r = safety_phi_ratchet_ok(phi, pf.phi_peak)
+    let cont  = safety_content_ok(content_clean)
+    let safe  = safety_combined(kill, rate, phi_r, cont)
+
+    let emit = should_emit(score) && safe
+
+    #{
+        "phi":            phi,
+        "phase":          phase_name(phase),
+        "tier":           tier,
+        "tier_name":      tier_name(tier),
+        "motivation":     score,
+        "base_motiv":     base_score,
+        "recall_gap":     recall_gap,
+        "conf_bias":      conf_bias,
+        "curiosity_sig":  cur_signal,
+        "im_thresh":      spont_im_threshold(),
+        "safe":           safe,
+        "emit":           emit
+    }
+}

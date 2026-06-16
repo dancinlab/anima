@@ -1288,6 +1288,44 @@ fn main() {
     if _assert_b("case_101_margin_brain_bias_bounded", true,
                  abs_xg <= 0.05 + 0.0000001 && abs_xu <= 0.05 + 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── cases 101b-101d : G5 IN-DIST GAP BRAIN-CONSUME (brain_decide_gap, H_1400) —
+    //   brain_decide CONSUMES the live immune_memory_recall_gap (top-2 cosine-affinity gap,
+    //   the H_1398 in-dist DECISIVENESS signal) to MODULATE emit-confidence/curiosity — the
+    //   H_1379 margin-consume pattern, now for the SHARPER in-dist gap. Like brain_decide_margin
+    //   this DELIBERATELY changes the emit decision off-neutral but touches ONLY the motivation
+    //   scalar (Ψ-disjoint). The gap is NON-NEGATIVE about its maximal-ambiguity floor (gap=0
+    //   = perfect tie = the substrate's OWN zero), so the bias is in [0,+cap]. These cases:
+    //   (101b) NEUTRAL Ψ-safe — gap=0 reduces brain_decide_gap EXACTLY to brain_decide
+    //   (byte-identical motivation+emit); (101c) GAP-MONOTONE — a DECISIVE gap (large) yields
+    //   a STRICTLY GREATER confidence bias than an AMBIGUOUS gap (small), and the curiosity
+    //   signal moves the OTHER way; (101d) BOUNDED — |conf_bias| never exceeds the cap (0.05).
+    // case 101b : NEUTRAL Ψ-SAFE — gap 0 ⇒ byte-identical to brain_decide (motivation+emit).
+    let bdg_off_lo = brain_decide(mm_pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true)
+    let bdg_con_lo = brain_decide_gap(mm_pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true, 0.0, 1.0)
+    let bdg_off_hi = brain_decide(mm_pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true)
+    let bdg_con_hi = brain_decide_gap(mm_pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true, 0.0, 1.0)
+    if _assert_b("case_101b_gap_brain_neutral_byte_identical", true,
+                 to_string(bdg_off_lo["motivation"]) == to_string(bdg_con_lo["motivation"])
+              && to_string(bdg_off_lo["emit"])       == to_string(bdg_con_lo["emit"])
+              && to_string(bdg_off_hi["motivation"]) == to_string(bdg_con_hi["motivation"])
+              && to_string(bdg_off_hi["emit"])       == to_string(bdg_con_hi["emit"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 101c : GAP-MONOTONE — a DECISIVE gap (0.30, large) gives a LARGER confidence bias
+    //   than an AMBIGUOUS gap (0.01, near-tie), and the curiosity signal is LOWER for decisive
+    //   than ambiguous (it falls with decisiveness).
+    let bdg_dec = brain_decide_gap(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.30, 1.0)
+    let bdg_amb = brain_decide_gap(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.01, 1.0)
+    if _assert_b("case_101c_gap_brain_decisive_monotone", true,
+                 to_float(bdg_dec["conf_bias"])     > to_float(bdg_amb["conf_bias"])
+              && to_float(bdg_dec["curiosity_sig"]) < to_float(bdg_amb["curiosity_sig"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 101d : BOUNDED — even a gap far beyond the codomain width saturates at +cap;
+    //   conf_bias <= 0.05 (the gap bias is non-negative, in [0,+cap]).
+    let bdg_xd = brain_decide_gap(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 1.50, 1.0)
+    let cb_xd = to_float(bdg_xd["conf_bias"])
+    if _assert_b("case_101d_gap_brain_bias_bounded", true,
+                 cb_xd <= 0.05 + 0.0000001 && cb_xd >= 0.0 - 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── H_1381 G6 IDEATION ★ WIRE-IN (cases 102-106) ─────────────────────────────────
     // Deterministic engine-native proof of the G6 scaffold wire-in — NO slow decode (the
     // 303M/ConvMoE forward is bounded only inside g6_score_arm; these cases test the

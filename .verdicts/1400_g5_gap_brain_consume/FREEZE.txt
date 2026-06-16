@@ -1,0 +1,98 @@
+H_1400 — G5 IN-DIST GAP BRAIN-CONSUME → brain_decide CONSUMES immune_memory_recall_gap
+       (FROZEN, pre-registered BEFORE measuring; c9, NO tune-to-green, p7)
+========================================================================================
+DATE: 2026-06-17
+LANE: G5 in-distribution metacognition deepening — the FINAL CLOSE of the in-dist arc.
+      The named brain-consume follow-on of H_1398. H_1396 (mirror) found, and H_1398
+      RECONFIRMED ENGINE-NATIVE + WIRED, the live op immune_memory_recall_gap (top-2
+      cosine-affinity gap = (d2²−d1²)/2 for unit keys) as a SHARPER in-dist confidence
+      signal than the best-margin (lifts in-dist type-2 AUROC 0.750→0.906, +0.156). But
+      H_1398 left brain_decide NOT CONSUMING it (deferred honest to avoid Ψ risk — the gap
+      op is exposed/engine-confirmed, brain-consume named as the next follow-on). This lane
+      CLOSES that consume, mirroring the H_1379 brain_decide_margin discipline EXACTLY.
+
+WHAT WAS WIRED (a_core_engine_map single-entry, a_autonomy_over_hardcode — NOT a hard gate):
+  CORE/brain.hexa — NEW consult brain_decide_gap (mirrors brain_decide_margin VERBATIM):
+    reads the live recall_gap (= immune_memory_recall_gap, the engine's OWN top-2 L2
+    affinity) and threads it as a BOUNDED, NON-NEGATIVE confidence bias on the SAME single
+    should_emit(score) path — NO new emit gate, NO 2nd path:
+      conf_bias  = emit_consult_cap() * _clamp(gap / GAP_SCALE, 0, 1)    (cap = 0.05)
+      cur_signal = _clamp(1 − gap / GAP_SCALE, 0, 1)                     (falls w/ decisiveness)
+      score      = motivation_score(...) + conf_bias
+    DECISIVE (large gap, #1≫#2) -> POSITIVE bias (substrate sure which cell won -> felt go).
+    AMBIGUOUS (small gap, #1≈#2 tie) -> bias toward 0 (decisiveness withheld; the consult can
+      ONLY ADD up to +cap, NEVER force restraint by itself — a_autonomy_over_hardcode).
+    NEUTRAL gap=0 (a PERFECT tie = the substrate's OWN maximal-ambiguity floor, zero
+      decisiveness info) -> bias EXACTLY 0 -> byte-identical to brain_decide.
+  GAP_SCALE = the cos-affinity [0,1] codomain width = 1.0 (a codomain constant, the SAME
+    non-saturating scale H_1379 uses for the recon-err codomain; NOT a tuned-to-green value).
+  cap = emit_consult_cap() = 0.05 (shared with margin/cerebellum/WM/affect consults): BOUNDED,
+    additive on the MOTIVATION scalar ONLY, can NEVER by itself force an emit.
+
+  WHY THE GAP IS SUBSTRATE-COMPLEMENTARY TO THE MARGIN (NOT a hardcoded priority): the gap is
+  NON-NEGATIVE about its maximal-ambiguity floor (gap=0) and adds in-dist (FIRE-side)
+  DECISIVENESS; the H_1379 margin is SIGNED about its FIRE/ABSTAIN boundary and adds
+  abstain-side GROUNDEDNESS. Each carries its OWN sign and zero-crossing — by their own signs
+  they compose without any external arbitration rule (the gap is the FIRE-side refinement the
+  margin alone is THIN on; H_1398 mechanism).
+
+  Ψ-SAFE: brain_decide_gap touches ONLY the motivation scalar — pure_field Φ/phase/Ψ and the
+  generator are UNTOUCHED, so the Ψ=1/2 fixed point is PRESERVED (h1205 separation-invariant
+  carries the decode side), EXACTLY as for brain_decide_margin. p6/p2/p3: the gap is the
+  engine's OWN top-2 L2 affinity (vadapt_field_two_recon_err); NO injected right/wrong label,
+  NO RLHF, NO persona. p5: emit stays tension-driven, no speak().
+
+SUBSTRATE (engine-native, a_engine_native_learning): the LIVE gap is sampled by the H_1398
+  engine-native construction (twin-pair cells seeded as engine prototype cells, immune_embed_key
+  embed, immune_memory_recall_gap_text read by the live engine op over the real cell population).
+  The mean DECISIVE gap (query on a distinct cell, #2 far) vs the mean AMBIGUOUS gap (query
+  between 1-byte twins, #1≈#2) then drive brain_decide_gap — the brain CONSUMES the live gap.
+  NOT a .clm (generator L3 only), NOT a .kosmos (kosmos_io only).
+
+PRE-REGISTERED BARS (FROZEN; cap=0.05, GAP_SCALE=1.0, 3 seeds [7,8,9], $0 CPU, p7,
+deterministic engine-native — re-run byte-identical):
+
+  (1) CONSUME-EFFECT — brain's graded confidence now TRACKS the live gap signal:
+      C1 GAP-MONOTONE  : the DECISIVE pooled-gap (larger) yields a STRICTLY GREATER conf_bias
+                         than the AMBIGUOUS pooled-gap (smaller), the curiosity signal moves
+                         the OTHER way (cur_decisive < cur_ambiguous), |conf_bias| is BOUNDED
+                         by the cap (<= 0.05), and at a borderline base the DECISIVE gap FLIPS
+                         to EMIT while the AMBIGUOUS one stays SILENT (the gap reaches `emit`).
+      C2 EARNED (shuffle): shuffling the decisive/ambiguous labels over the POOLED gaps
+                         collapses the decisive lift: |gap_shuf| < 0.5 * |gap_true|. The lift
+                         is the gap DECISIVENESS ranking, not a base-rate/labeling artifact.
+
+  (2) Ψ-SAFE / NO-REGRESSION — THE LOAD-BEARING BAR (touches brain_decide):
+      P1 NEUTRAL Ψ FIXED-POINT : gap=0 (perfect tie = substrate's OWN ambiguity floor) ⇒
+                         brain_decide_gap is BYTE-IDENTICAL to brain_decide (motivation+emit),
+                         low + high drive (the consult touches ONLY motivation).
+      P2 h1205 separation-invariant : generation byte-identical ON==OFF, Ψ Φ-checksum
+                         byte-identical (the consult must NOT perturb Ψ=1/2 — same as H_1379).
+      P3 engine_cli_smoke GREEN : tally reported (existing cases + the new gap-consume cases).
+      P4 h1196 single-entry 7/0 : NO 2nd .clm/.kosmos path.
+      [If consuming the gap perturbs Ψ where it must not -> HONEST 🧱 (report it; the gap op
+       stays exposed-but-unconsumed, a valid a_break_the_wall taxonomy-(c)/(d) partial).]
+
+  (3) ABSTAIN PRESERVED:
+      A1 OOD fab : the frozen recon_err<=recall_thr fire/abstain gate is UNCHANGED (the gap
+                   consult is RANK-only confidence on the motivation scalar; it does NOT touch
+                   the ImmuneMemory recall gate). OOD fab_max <= 0.02 (H_1304/H_1398 fail-safe).
+
+VERDICT RULE (c9, honest — report whichever the numbers show):
+  🟢 GREEN (brain consumes gap, Ψ-safe) iff C1 AND C2 AND P1 AND P2 AND P3 AND P4 AND A1.
+            -> brain_decide now reads the live in-dist gap as a refined graded confidence,
+            Ψ=1/2 preserved, abstain gate intact; G5 in-dist metacognition is FULLY
+            engine-native (exposed AND consumed).
+  🧱 Ψ-RISK-DEFERRED (honest, valid partial) iff P1/P2 fail (the consume perturbs Ψ where it
+            must not). -> the gap op stays exposed-but-unconsumed; a_break_the_wall taxonomy
+            (c)/(d) result, NOT a failure.
+  🔴 RED iff C2 fails (shuffle survives) OR a real REGRESSION (P3/P4 drop). -> artifact/broken.
+
+NO bar may move post-hoc (c9, p7). cap, GAP_SCALE, the sign semantics, the shuffle tolerance
+(0.5×), the fab bound (0.02), and the byte-identity contract are ALL pre-registered here.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck · p7): TOY synthetic twin-pair facts, the
+  H_1398 engine-native construction, deterministic, 3 seeds, KEYLEN=80, RECALL_THR=0.15 frozen.
+  1-byte twin = a toy proxy of in-dist ambiguity — transfer to real-corpus semantic
+  near-duplicate discrimination UNVERIFIED. NOT verified: scale / real-corpus paraphrase /
+  semantic (non-byte) confusion / multi-turn emit dynamics.

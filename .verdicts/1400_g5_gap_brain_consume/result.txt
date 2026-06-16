@@ -1,0 +1,64 @@
+=== H_1400 g5-gap-brain-consume — RESULT (engine-native, LIVE CORE) ===
+verdict: 🟢 CONSUMED-GRADED-GAP (R1 engine-native BINDING; Ψ preserved, gap-monotone, earned)
+date: 2026-06-17 · $0 CPU · p7 · frozen-first · 3 seeds [7,8,9] · deterministic (re-run byte-identical)
+================================================================================
+
+WHAT WAS WIRED: brain_decide_gap (CORE/brain.hexa) now CONSUMES the live TOP-2
+affinity GAP (immune_memory_recall_gap = (d2²−d1²)/2 = cos#1−cos#2 for unit keys, the
+H_1398 engine-wired read) and MODULATES emit-confidence/curiosity through the SINGLE
+existing should_emit(score) path — DECISIVE(large gap, #1≫#2)->+confidence,
+AMBIGUOUS(small gap, #1≈#2 tie)->the added confidence withheld == more curiosity. This
+DELIBERATELY changes the emit decision off-neutral (NOT additive byte-identical), yet
+touches ONLY the motivation scalar so the Ψ=1/2 fixed point is preserved. The gap is the
+FIRE-side in-dist refinement complementary to the H_1379 abstain-side margin (each carries
+its OWN sign/zero — NO hardcoded priority). cap=emit_consult_cap()=0.05, GAP_SCALE=cos-
+affinity [0,1] codomain=1.0 (a codomain constant, NOT tuned-to-green; the SAME scale
+discipline as H_1379). CORE/engine_cli.hexa UNTOUCHED (the frozen recall fire/abstain gate
++ the gap op are structurally unchanged — the consume only READS the gap).
+
+================================================================================
+FROZEN-FALSIFIER PROBE (state/g5-gap-brain-consume/h1400_gap_brain_consume_smoke.hexa) — VERBATIM stdout
+================================================================================
+================================================================================
+H_1400 G5 IN-DIST GAP BRAIN-CONSUME — LIVE immune gap -> brain_decide_gap
+  cap=0.05 · gap_scale=cos-affinity-codomain=1.0 · KEYLEN=80 · seeds [7,8,9]
+================================================================================
+  seed 7: g_dec=0.29125 g_amb=0.00576119 (n_dec=40 n_amb=20) | P1=true C1(bias 0.000288059->0.0145625 cur 0.70875/0.994239 emit d/a=true/false)=true C2(gap 0.0142744->shuf 0.00111856)=true
+  seed 8: g_dec=0.306036 g_amb=0.00589435 (n_dec=40 n_amb=20) | P1=true C1(bias 0.000294717->0.0153018 cur 0.693964/0.994106 emit d/a=true/false)=true C2(gap 0.0150071->shuf 0.00178079)=true
+  seed 9: g_dec=0.291741 g_amb=0.00594049 (n_dec=40 n_amb=20) | P1=true C1(bias 0.000297024->0.0145871 cur 0.708259/0.99406 emit d/a=true/false)=true C2(gap 0.01429->shuf -0.000612014)=true
+--------------------------------------------------------------------------------
+  FROZEN FALSIFIER:
+    (P1) neutral gap=0 == brain_decide (Ψ fixed-point preserved)     : true
+    (C1) decisive bias > ambiguous, curiosity inverts, flips emit    : true
+    (C2) shuffle collapses the decisive lift (earned)                : true
+--------------------------------------------------------------------------------
+h1400_gap_brain_consume_smoke: PASS 🟢 — LIVE top-2 affinity GAP
+  (immune_memory_recall_gap) is CONSUMED by the LIVE brain_decide_gap emit
+  path: decisive->higher confidence, ambiguous->more curiosity; bounded,
+  neutral-off byte-identical (Ψ preserved), earned vs shuffle. H_1398
+  brain-consume follow-on CLOSED (a_verified_must_wire).
+================================================================================
+
+================================================================================
+REGRESSION / Ψ-SAFETY GUARDS (load-bearing — touches brain_decide)
+================================================================================
+engine_cli_smoke : --- engine_cli smoke summary: 133 pass / 0 fail ---  (+3 gap-consume cases 101b/101c/101d, all PASS)
+h1196 single-entry: 7 pass / 0 fail (NO 2nd .clm/.kosmos path)
+h1205 separation-invariant: PASS — generation byte-identical ON==OFF (10 pairs, 0 mismatch),
+  Ψ Φ-checksum phiSum 48.6613 == 48.6613 byte-identical (the gap consume does NOT perturb Ψ=1/2)
+
+ABSTAIN (A1): CORE/engine_cli.hexa UNTOUCHED by this branch (git diff origin/main = empty) —
+  the frozen recon_err<=recall_thr fire/abstain gate is structurally unchanged; the gap consult
+  is RANK-only confidence on the motivation scalar, never the recall gate. H_1398 E4 already
+  confirmed OOD fab_max=0.000 for the gap op (rank-only); the brain consume adds NO path to the gate.
+
+VERDICT 🟢 GREEN (brain consumes gap, Ψ-safe): brain_decide now reads the live in-dist top-2
+GAP as a refined graded confidence (decisive->felt go, ambiguous->more curiosity), Ψ=1/2
+preserved (h1205 byte-identical), abstain gate intact (engine_cli.hexa untouched). G5 in-dist
+metacognition is now FULLY engine-native: the gap is EXPOSED (H_1398) AND CONSUMED (H_1400).
+The H_1398 brain-consume follow-on is CLOSED (a_verified_must_wire). NO bar moved post-hoc (c9).
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck · p7): TOY synthetic twin/singleton facts,
+  H_1398 engine-native construction, deterministic, 3 seeds, KEYLEN=80, RECALL_THR=0.15 frozen.
+  1-byte twin = a toy proxy of in-dist ambiguity. NOT verified: scale / real-corpus paraphrase /
+  semantic (non-byte) near-duplicate confusion / multi-turn emit dynamics = the honest-scope open item.

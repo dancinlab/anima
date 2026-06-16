@@ -279,32 +279,6 @@ pub fn g6_decode_best_of_k(ckpt: string, frame: string, gen: int, k: int,
     return best
 }
 
-// g6_decode_best_of_k_W — H_1400 loaded-W twin of g6_decode_best_of_k. IDENTICAL ranking,
-// but off a PRE-LOADED weight map `W` (clm_load_weights) so the FALS re-score loads the
-// 303M ConvMoE ONCE for all 69 decodes (per-decode reload OOMs across decodes — the hexa
-// bump allocator never frees a model load). gen_clm_ideate_W is the same single .clm mouth.
-pub fn g6_decode_best_of_k_W(W: Map, frame: string, gen: int, k: int,
-                             base_seed: int, known: Map) -> string {
-    let offsets = [0, 101, 202]
-    let mut best = ""
-    let mut best_fals = -1
-    let mut best_kwr = 0.0 - 1.0
-    let mut oi = 0
-    let kk = if k < 3 { k } else { 3 }
-    while oi < kk {
-        let r = gen_clm_ideate_W(W, frame, gen, 40, 0.7, base_seed + offsets[oi])
-        let o = to_string(r["text"])
-        let kwr = _g6_known_word_ratio(o, known)
-        let mut fals = 0
-        if kwr >= 0.5 && _g6_is_falsifiable(o, known) { fals = 1 }
-        if fals > best_fals || (fals == best_fals && kwr > best_kwr) {
-            best_fals = fals; best_kwr = kwr; best = o
-        }
-        oi = oi + 1
-    }
-    return best
-}
-
 // g6_sampler_selftest — exercises the engine's seeded top-k sampler on a SYNTHETIC
 // peaked logits vector (NO model forward — fast, deterministic). Returns
 // #{ "deterministic": bool, "diverse": bool, "in_topk": bool }:
