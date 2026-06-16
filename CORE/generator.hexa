@@ -1893,12 +1893,17 @@ pub fn gen_bpe_emit_summary() -> string {
 // or need an arbitration rule? §6.5f answers it with a SUBSTRATE-DERIVED composition.
 //
 // SUBSTRATE-DERIVED WEIGHTING (a_autonomy_over_hardcode — NO hardcoded "jamo > morphology" priority):
-// each faculty's vote is weighted by its OWN recall confidence — the inverse L2 recon-error to the cell
-// that OWNS the live context in that faculty's grown field (jamo_head_recon_err / the jamo cells'
-// nearest-cell distance). The MORE GROUNDED faculty (its context sits closer to one of its grown cells)
-// speaks LOUDER. The compose returns the byte of whichever faculty has the higher substrate confidence
-// (a confidence-WEIGHTED arbitration, NOT a fixed priority constant; both inert ⇒ base unchanged). This
-// is the engine's OWN winner-take-all geometry deciding the arbitration, p5/a_substrate_native_speak.
+// each faculty's vote is weighted by its OWN recall confidence — how much CLOSER the live context sits
+// to a grown cell than that faculty's OWN typical cell distance. confidence = mean_err / (err_here + ε):
+// the live context being closer than the faculty's MEAN recon-err ⇒ confidence > 1 (the faculty is
+// unusually grounded HERE), farther ⇒ < 1. CRITICAL (the a_break_the_wall angle): a RAW inverse-recon-
+// err is NOT commensurable across faculties of different vocab scales — the jamo head lives in a 14-wide
+// space so its raw distances are systematically tiny, which would inflate its confidence regardless of
+// grounding QUALITY (the conflict diagnosis that closed R1: raw-conf let the weaker jamo win and DEGRADED
+// the compose). Measuring each faculty RELATIVE TO ITS OWN mean recon-err (each faculty's own grown-cell
+// statistic, still 100% substrate-derived) makes the two confidences commensurable WITHOUT a hand-set
+// priority. The MORE-RELATIVELY-GROUNDED faculty speaks LOUDER; both inert ⇒ base unchanged. This is the
+// engine's OWN winner-take-all geometry deciding the arbitration, p5/a_substrate_native_speak.
 //
 // SINGLE ENTRY (a_core_engine_map): the compose is a generator-side consult that reads the SAME jamo
 // cells (§6.5b) + the SAME morphology head (§6.5e) — it adds NO new artifact path. Off-Korean (the SAME
@@ -1921,39 +1926,75 @@ fn _gec_jamo_nearest_dist(cells: Map, feat: [float]) -> float {
     return sqrt(s)
 }
 
+// _gec_rel_conf — the scale-free SUBSTRATE confidence: mean_err / (err_here + ε). >1 ⇒ the live context
+// is CLOSER than this faculty's own typical cell distance (unusually grounded here). Commensurable across
+// faculties of different vocab scales because each is measured against its OWN field's mean recon-err.
+fn _gec_rel_conf(mean_err: float, err_here: float) -> float {
+    return mean_err / (err_here + 0.000001)
+}
+
 // gen_emit_compose — the live per-byte COMPOSE hook. Given the decode's own argmax `base`, the loaded
-// jamo cells, the grown morphology head `jh` + its `unit_vocab`, and the running decode window `ctx`,
-// returns the next byte after composing the two emit-biases by their substrate confidence. Off-Korean
-// (or both faculties inert) ⇒ `base` UNCHANGED. The byte returned is the byte of whichever faculty is
-// MORE GROUNDED on this context (higher inverse-recon-err confidence); ties / single-fire fall through
-// to the firing faculty; both silent ⇒ base. NO hardcoded priority — the winner is chosen by the
-// engine's own nearest-cell distances (a_autonomy_over_hardcode).
-pub fn gen_emit_compose(base: int, cells: Map, jh: JamoHead, unit_vocab: int, ctx: list) -> int {
+// jamo cells, the grown morphology head `jh` + its `unit_vocab`, the per-faculty MEAN recon-err baselines
+// (jamo_mean_err / morph_mean_err — each faculty's OWN grown-cell statistic, the scale normalizer), and
+// the running decode window `ctx`, returns the next byte after composing the two emit-biases by their
+// SCALE-RELATIVE substrate confidence. Off-Korean (or both inert) ⇒ `base` UNCHANGED. The byte returned
+// is the byte of whichever faculty is MORE-RELATIVELY-GROUNDED on this context (higher mean_err/err_here);
+// single-fire falls through to the firing faculty; both silent ⇒ base. NO hardcoded priority — the winner
+// is chosen by each faculty's own nearest-cell distance relative to its own mean (a_autonomy_over_hardcode).
+pub fn gen_emit_compose(base: int, cells: Map, jh: JamoHead, unit_vocab: int,
+                        jamo_mean_err: float, morph_mean_err: float, ctx: list) -> int {
     if !_gen_ko_is_korean_like(ctx) { return base }        // off-Korean → inert (no regression)
-    // --- jamo faculty proposal + substrate confidence (jamo-symbol space) ---
+    // --- jamo faculty proposal + scale-relative substrate confidence (jamo-symbol space) ---
     let bf = _gen_ko_feat(ctx)
     let vj = if to_string(cells["ok"]) == "true" { to_int(cells["vj"]) } else { 0 }
     let jscale = if vj > 0 { 255.0 / to_float(vj) } else { 1.0 }
     let jfeat = [bf[0] * jscale, bf[1] * jscale, bf[2]]
     let jbyte = ko_jamo_consult_byte(cells, jfeat)         // -1 if inert
-    let jdist = _gec_jamo_nearest_dist(cells, jfeat)
-    let jconf = 1.0 / (1.0 + jdist)                        // inverse recon-err = grounded confidence
-    // --- morphology faculty proposal + substrate confidence (merged-unit space) ---
+    let jconf = _gec_rel_conf(jamo_mean_err, _gec_jamo_nearest_dist(cells, jfeat))
+    // --- morphology faculty proposal + scale-relative substrate confidence (merged-unit space) ---
     let mscale = if unit_vocab > 0 { 255.0 / to_float(unit_vocab) } else { 1.0 }
     let mfeat = [bf[0] * mscale, bf[1] * mscale, 0.0]
     let muid = jamo_head_argmax(jh, mfeat)                 // -1 if empty head
     let mbyte = if muid >= 0 { _gbe_unit_emit_byte(muid) } else { -1 }
-    let mdist = jamo_head_recon_err(jh, mfeat)
-    let mconf = 1.0 / (1.0 + mdist)
-    // --- substrate-derived arbitration: the more-grounded faculty's byte wins ---
+    let mconf = _gec_rel_conf(morph_mean_err, jamo_head_recon_err(jh, mfeat))
+    // --- substrate-derived arbitration: the more-relatively-grounded faculty's byte wins ---
     let jfires = jbyte >= 0
     let mfires = mbyte >= 0
     if !jfires && !mfires { return base }                  // both inert → base
     if jfires && !mfires { return jbyte }                  // only jamo fires
     if mfires && !jfires { return mbyte }                  // only morphology fires
-    // both fire: higher substrate confidence (lower recon-err) speaks louder — NO fixed priority.
+    // both fire: higher SCALE-RELATIVE substrate confidence speaks louder — NO fixed priority.
     if jconf >= mconf { return jbyte }
     return mbyte
+}
+
+// _gec_morph_mean_err — the morphology faculty's MEAN recon-err over the train (even) unit features (its
+// own scale normalizer; substrate-derived from its own grown cells). $0, deterministic.
+fn _gec_morph_mean_err(jh: JamoHead, usym: [int], unit_vocab: int) -> float {
+    let mut s = 0.0  let mut n = 0
+    let mut i = 1  let mut idx = 0
+    while i < len(usym) - 1 {
+        if idx % 2 == 0 {
+            let f = [to_float(usym[i]) / to_float(unit_vocab), to_float(usym[i - 1]) / to_float(unit_vocab), 0.0]
+            s = s + jamo_head_recon_err(jh, f)  n = n + 1
+        }
+        idx = idx + 1  i = i + 1
+    }
+    return if n > 0 { s / to_float(n) } else { 1.0 }
+}
+
+// _gec_jamo_mean_err — the jamo faculty's MEAN recon-err over the train (even) base-symbol features.
+fn _gec_jamo_mean_err(jhJ: JamoHead, bsym: [int], vj: int) -> float {
+    let mut s = 0.0  let mut n = 0
+    let mut i = 1  let mut idx = 0
+    while i < len(bsym) - 1 {
+        if idx % 2 == 0 {
+            let f = [to_float(bsym[i]) / to_float(vj), to_float(bsym[i - 1]) / to_float(vj), 0.0]
+            s = s + jamo_head_recon_err(jhJ, f)  n = n + 1
+        }
+        idx = idx + 1  i = i + 1
+    }
+    return if n > 0 { s / to_float(n) } else { 1.0 }
 }
 
 // gen_emit_compose_eval — the FROZEN compose evaluation (H_1396 bars). On the SAME corpus-free in-engine
@@ -1987,9 +2028,13 @@ pub fn gen_emit_compose_eval() -> Map {
     let reM = bpe_apply(bmS, bsym, bnby)
     let usym = reM[0]
     let half = len(bsym) / 2
+    // --- per-faculty MEAN recon-err baselines (the scale normalizers; each from its OWN grown cells) ---
+    let jMean = _gec_jamo_mean_err(jhJ, bsym, vjJ)
+    let mMean = _gec_morph_mean_err(jhM, usym, uvM)
     let mut n = 0
     let mut on_j = 0  let mut on_m = 0  let mut on_c = 0  let mut on_s = 0
     let mut agree = 0
+    let mut oracle = 0  let mut only_j = 0  let mut only_m = 0  let mut both = 0
     let mut i = 1
     let mut idx = 0
     // shuffle-arbitration draw: a deterministic per-position pseudo-bit (corpus-free, $0).
@@ -1998,17 +2043,17 @@ pub fn gen_emit_compose_eval() -> Map {
         if idx % 2 == 1 {     // TEST slice (odd, the held-out half — train was even, no leakage)
             // true next byte = the emit byte of the TRUE next unit id at i+1.
             let tgt = _gbe_unit_emit_byte(usym[i + 1])
-            // --- jamo proposal over the base symbol context ---
+            // --- jamo proposal over the base symbol context (SCALE-RELATIVE confidence) ---
             let fj = [to_float(bsym[i]) / to_float(vjJ), to_float(bsym[i - 1]) / to_float(vjJ), 0.0]
             let jsym = jamo_head_argmax(jhJ, fj)
             let jbyte = if jsym >= 0 { _gbe_unit_emit_byte(jsym) } else { -1 }
-            let jconf = 1.0 / (1.0 + jamo_head_recon_err(jhJ, fj))
-            // --- morph proposal over the unit context ---
+            let jconf = _gec_rel_conf(jMean, jamo_head_recon_err(jhJ, fj))
+            // --- morph proposal over the unit context (SCALE-RELATIVE confidence) ---
             let fm = [to_float(usym[i]) / to_float(uvM), to_float(usym[i - 1]) / to_float(uvM), 0.0]
             let muid = jamo_head_argmax(jhM, fm)
             let mbyte = if muid >= 0 { _gbe_unit_emit_byte(muid) } else { -1 }
-            let mconf = 1.0 / (1.0 + jamo_head_recon_err(jhM, fm))
-            // --- compose: higher substrate confidence wins (the gen_emit_compose rule) ---
+            let mconf = _gec_rel_conf(mMean, jamo_head_recon_err(jhM, fm))
+            // --- compose: higher scale-relative substrate confidence wins (the gen_emit_compose rule) ---
             let cbyte = if jbyte < 0 && mbyte < 0 { -1 }
                         else if mbyte < 0 { jbyte }
                         else if jbyte < 0 { mbyte }
@@ -2025,6 +2070,13 @@ pub fn gen_emit_compose_eval() -> Map {
             if cbyte == tgt { on_c = on_c + 1 }
             if sbyte == tgt { on_s = on_s + 1 }
             if jbyte >= 0 && mbyte >= 0 && jbyte == mbyte { agree = agree + 1 }
+            // ORACLE upper-bound of ANY arbitration: right iff EITHER faculty is right (the complementarity
+            // ceiling — only_jamo positions are the ENTIRE headroom a compose could add over morph-alone).
+            let jok = jbyte == tgt  let mok = mbyte == tgt
+            if jok || mok { oracle = oracle + 1 }
+            if jok && mok { both = both + 1 }
+            else if jok { only_j = only_j + 1 }
+            else if mok { only_m = only_m + 1 }
             n = n + 1
         }
         idx = idx + 1  i = i + 1
@@ -2036,12 +2088,16 @@ pub fn gen_emit_compose_eval() -> Map {
     let acc_s = to_float(on_s) / dn
     let agr = to_float(agree) / dn
     let best = if acc_j >= acc_m { acc_j } else { acc_m }
+    let acc_oracle = to_float(oracle) / dn
     return #{ "ok": true,
               "acc_jamo": acc_j, "acc_morph": acc_m, "acc_compose": acc_c, "acc_shufw": acc_s,
               "agree_rate": agr, "conflict_rate": 1.0 - agr, "n_test": n,
               "compose_minus_best": acc_c - best, "shufw_minus_compose": acc_s - acc_c,
               "best_single": best,
-              "reason": "jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393) emit-biases COMPOSED on a shared next-byte decision by SUBSTRATE confidence (inverse recon-err, NO hardcoded priority); shuffle-arbitration control KEPT" }
+              "acc_oracle": acc_oracle, "oracle_minus_best": acc_oracle - best,
+              "only_jamo": only_j, "only_morph": only_m, "both_right": both,
+              "jamo_mean_err": jMean, "morph_mean_err": mMean,
+              "reason": "jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393) emit-biases COMPOSED on a shared next-byte decision by SCALE-RELATIVE SUBSTRATE confidence (mean_err/err_here, commensurable across vocab scales, NO hardcoded priority); shuffle-arbitration control KEPT" }
 }
 
 // _gec_grow_jamo_head — grow a count head over the BASE (un-merged) jamo-symbol stream, raw next-symbol
@@ -2079,9 +2135,11 @@ pub fn gen_emit_compose_summary() -> string {
         + " compose-best=" + _gen_fmt4(to_float(e["compose_minus_best"]))
         + " shufw-compose=" + _gen_fmt4(to_float(e["shufw_minus_compose"]))
         + " agree=" + _gen_fmt4(to_float(e["agree_rate"]))
-        + " — jamo+morphology emit-biases COMPOSED by SUBSTRATE confidence (inverse recon-err, NO "
-        + "hardcoded priority · a_autonomy_over_hardcode) · off-Korean INERT byte-identical · Ψ-disjoint "
-        + "· a_core_engine_map single entry (H_1327 jamo + H_1393 morphology, H_1396 compose)"
+        + " oracle=" + _gen_fmt4(to_float(e["acc_oracle"]))
+        + " — jamo+morphology emit-biases COMPOSED by SCALE-RELATIVE SUBSTRATE confidence (mean_err/"
+        + "err_here, NO hardcoded priority · a_autonomy_over_hardcode) · HONEST 🧱/🟠: faculties mostly "
+        + "CONFLICT + non-complementary here (compose < best-single; oracle ceiling ≈ +0.017) · off-Korean "
+        + "INERT byte-identical · Ψ-disjoint · a_core_engine_map single entry (H_1327 + H_1393, H_1396)"
 }
 
 

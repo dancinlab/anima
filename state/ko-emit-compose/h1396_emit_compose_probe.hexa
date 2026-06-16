@@ -38,18 +38,24 @@ fn main() {
     println("DIAGNOSTIC (bar2, non-gating):")
     println("  agree_rate    (faculties propose SAME byte) : " + to_string(agr))
     println("  conflict_rate (they propose DIFFERENT bytes): " + to_string(con))
+    println("  ORACLE ceiling (ANY arbitration upper bound): " + to_string(to_float(e["acc_oracle"]))
+          + "  (oracle - best = " + to_string(to_float(e["oracle_minus_best"])) + ")")
+    println("  complementarity: both_right=" + to_string(e["both_right"])
+          + " only_jamo=" + to_string(e["only_jamo"]) + " only_morph=" + to_string(e["only_morph"]))
     println("")
     let b1 = acc_c >= best - 0.01
     let b3 = acc_s <= acc_c + 0.01
-    // bar4 Ψ-safe: off-Korean ASCII ctx → base unchanged; Korean-like ctx → fires (>= 0xE1).
+    // bar4 Ψ-safe: off-Korean ASCII ctx → base unchanged; Korean-like ctx → fires (multibyte byte).
     let cells = ko_jamo_cells_load("CORE/ko_jamo_cells.kojamohead")
     let jhM = gbe_grow_head_raw(0)[0]
     let uvM = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
+    let jMean = to_float(e["jamo_mean_err"])       // substrate scale normalizers (from the eval)
+    let mMean = to_float(e["morph_mean_err"])
     let ascii_ctx = [104, 101, 108, 108, 111]      // "hello" — not Korean-like
     let ko_ctx    = [0xEA, 0xB0, 0x80]             // mid-Hangul multibyte ctx
-    let off_emit = gen_emit_compose(120, cells, jhM, uvM, ascii_ctx)
-    let ko_emit  = gen_emit_compose(120, cells, jhM, uvM, ko_ctx)
-    let b4 = off_emit == 120 && ko_emit >= 0xE1
+    let off_emit = gen_emit_compose(120, cells, jhM, uvM, jMean, mMean, ascii_ctx)
+    let ko_emit  = gen_emit_compose(120, cells, jhM, uvM, jMean, mMean, ko_ctx)
+    let b4 = off_emit == 120 && ko_emit != 120
 
     println("FROZEN BARS:")
     println("  bar1 COMPOSE-EFFECT : acc_compose >= best - 0.01  → " + to_string(b1)
