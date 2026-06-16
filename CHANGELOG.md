@@ -2,6 +2,13 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1343 — Sapir-Whorf 2-D CP를 표상-거리 WARP로 재측정 (🟠 PARTIAL — 대각=축정렬 warp로 H_1334 geometry-read 반증, 단 unbounded-ratio로 shuffle 미붕괴)
+
+**무엇:** H_1334(🧱 ridge-ALIGN structured-negative)의 R2. H_1334는 CP를 알려진 경계 CURVE에 대한 **ridge-ALIGNMENT**로 측정 → 대각 경계가 coarse RBF grid에서 fail(0.628<0.70). 직전 H_1343 ridge 시도도 K_RBF=14까지 올려도 대각 align FAIL → metric stimulus space에 **틀린 지표**임을 확인. H_1343은 CP를 **경계-곡선-AGNOSTIC WARP**(within-category COMPRESSION + between-category EXPANSION vs pre-language baseline)로 재명세 + denser RBF grid(K_RBF ladder, prod=12) + label-permutation null(c2) + component-count control(c3, warp이 trained 2-D metric에 사는지).
+
+**방법:** H_1334 RBF/Voronoi machinery **verbatim** 재사용(2-D RBF code · split-only mitosis/Voronoi p8 · softmin posterior). 11x11=121 stim square, 두 언어 carve: L_DIAG `u+v>1.0`, L_LSHAPE `u>0.5&v>0.5`. CP-WARP = `ratio_lang - ratio_base`, ratio = mean|dg|_BETWEEN / mean|dg|_WITHIN (g=soft posterior, store의 OWN 학습 범주로 분할; 경계 위치 주입 없음). 3 seeds [4334,4335,4336], $0 CPU mirror DIRECTIONAL, frozen-first.
+
+**결과 🟠 PARTIAL** (deterministic): **c1 PRESENCE ✅** — 두 언어 every seed AND mean >= WARP_MIN 0.20(mean L_DIAG **+41.665** L_LSHAPE **+36.017**); **load-bearing: 대각 L_DIAG가 축정렬 L_LSHAPE만큼 강하게 warp** → H_1334의 "대각 CP는 grid-geometry로 약하다" read를 **직접 반증**. **c2 EARNED-SHUFFLE ❌** — label-permutation null mean **+9.282** >> CHANCE_TOL 0.05(SEP sub-clause는 PASS, +41.7/+36.0 >> q95+0.1=+14.0). **c3 COMPONENT-COUNT ❌** — L_DIAG comp +0.027 PASS, L_LSHAPE +0.119 FAIL(seed-4336 +0.236). **발견:** `ratio = BETWEEN/WITHIN`이 scale-UNBOUNDED(학습 후 WITHIN |dg|->0 → ratio ~45 폭발, 임의 carving조차 WITHIN 압축 → null mean 부상) = H_1323 prominence / H_1334 LCC와 동일한 metric-space-blob 실패 모드. warp 존재(c1)·대각=축정렬 동등성은 결정적이나 earned/component 분리는 BOUNDED 지표(Cohen's-d / separation-AUC) 재명세 필요(R3). NO bar move (c9/p7).
 ## 2026-06-16 — research(OMEGA): H_1349 — Φ-robustness 의 마지막 LIVE 각도 = REAL 기질 (live-CORE pure_field) → 🧱 TERMINAL, substrate 축 CLOSED
 
 **무엇:** Φ-robustness arc 는 8개 축(topology H_1283/1317, timing H_1319, division H_1320, estimator-confound H_1328, measure-family H_1331, substrate-family H_1332, measure-AGNOSTIC H_1348, larger-N H_1347)에서 🧱 — 그러나 **전부 동일한 합성 leaky-linear ring** 위에서 돌았다. 마지막 미검증 LIVE 각도(H_1347 의 'NOT ruled out' 가 명시적으로 지목한 NEW 가설): **REAL 기질 — live CORE Engine A `pure_field.hexa`**(3 coupled oscillator tau 2/40/400, 실제 zero-input 의식 필드, ring 아님). a_break_the_wall · a_no_llm_frame_trap.
