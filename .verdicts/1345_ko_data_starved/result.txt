@@ -1,0 +1,29 @@
+=== H_1345 — ko-data-starved ladder (learned-metric smoothing + JM-interp vs jamo) — numpy CPU ===
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  identical-to-H_1307-RUN-A=True
+[nocheat] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[nocheat] byte-accounting Σ n_bytes=29999999 corpus_bytes=29999999 close=True
+[streams] built in 4.4s  symbols=25501291 train+test rows=25501286
+[rung stride=300] {"stride": 300, "train_bytes_est": 50005, "ntr": 42503, "cells": 11, "bank_member": 5, "rung_sha16": "57973cfdb207c403", "mean_cell_jamo_count": 45.1723, "A1_jamo": 2.51335, "A5_learned_mean": 3.70884, "A5_per_seed": [3.70884, 3.70884, 3.70884], "A5_shuffle_mean": 3.94497, "JM_interp": 2.51367, "JM_shuffle_mean": 2.51435, "delta_A5_vs_jamo": 1.19549, "delta_JM_vs_jamo": 0.00032, "wall_s": 0.7}
+[rung stride=1200] {"stride": 1200, "train_bytes_est": 12472, "ntr": 10626, "cells": 14, "bank_member": 5, "rung_sha16": "83ba1fbf48589f78", "mean_cell_jamo_count": 8.8401, "A1_jamo": 2.74533, "A5_learned_mean": 3.75719, "A5_per_seed": [3.75719, 3.75719, 3.75719], "A5_shuffle_mean": 4.01824, "JM_interp": 2.74557, "JM_shuffle_mean": 2.74792, "delta_A5_vs_jamo": 1.01186, "delta_JM_vs_jamo": 0.00024, "wall_s": 0.2}
+[rung stride=4800] {"stride": 4800, "train_bytes_est": 3119, "ntr": 2657, "cells": 9, "bank_member": 5, "rung_sha16": "73c407815bc30fa0", "mean_cell_jamo_count": 3.3847, "A1_jamo": 2.96533, "A5_learned_mean": 3.78, "A5_per_seed": [3.78, 3.78, 3.78], "A5_shuffle_mean": 4.01576, "JM_interp": 2.96553, "JM_shuffle_mean": 2.97208, "delta_A5_vs_jamo": 0.81467, "delta_JM_vs_jamo": 0.0002, "wall_s": 0.1}
+[rung stride=19200] {"stride": 19200, "train_bytes_est": 780, "ntr": 665, "cells": 9, "bank_member": 2, "rung_sha16": "2e76108c2489b391", "mean_cell_jamo_count": 0.8823, "A1_jamo": 3.49976, "A5_learned_mean": 3.89117, "A5_per_seed": [3.89117, 3.89117, 3.89117], "A5_shuffle_mean": 4.14537, "JM_interp": 3.49826, "JM_shuffle_mean": 3.51593, "delta_A5_vs_jamo": 0.39141, "delta_JM_vs_jamo": -0.00151, "wall_s": 0.1}
+[rung stride=76800] {"stride": 76800, "train_bytes_est": 188, "ntr": 167, "cells": 15, "bank_member": 0, "rung_sha16": "3410dfa202cde528", "mean_cell_jamo_count": 0.1353, "A1_jamo": 4.26152, "A5_learned_mean": 4.29426, "A5_per_seed": [4.29426, 4.29426, 4.29426], "A5_shuffle_mean": 4.25303, "JM_interp": 4.1889, "JM_shuffle_mean": 4.36374, "delta_A5_vs_jamo": 0.03274, "delta_JM_vs_jamo": -0.07262, "wall_s": 0.1}
+[calib] dense A1=2.51335 vs H_1316 2.51335 within ±0.001 = True
+-------------------------------------------------------------------------------
+LADDER (dense→starved) CE per UTF-8-byte (mean 3 seeds for A5/shuffle):
+  stride   train_B cells cellJcnt   A1jamo       A5   A5shuf       JM   JMshuf     ΔA5     ΔJM
+     300     50005    11  45.1723  2.51335  3.70884  3.94497  2.51367  2.51435 1.19549 0.00032
+    1200     12472    14   8.8401  2.74533  3.75719  4.01824  2.74557  2.74792 1.01186 0.00024
+    4800      3119     9   3.3847  2.96533     3.78  4.01576  2.96553  2.97208 0.81467  0.0002
+   19200       780     9   0.8823  3.49976  3.89117  4.14537  3.49826  3.51593 0.39141 -0.00151
+   76800       188    15   0.1353  4.26152  4.29426  4.25303   4.1889  4.36374 0.03274 -0.07262
+D1 STARVED-WIN (best mech beats jamo by ≥0.03 at starved end): True  (jamo 4.26152 − best 4.1889 = 0.07262; mech=JM)
+D2 EARNED (winning mech beats its shuffle by ≥0.05): True  (Δ=0.17484)
+D3 DENSE-REPRO (mech ≥ jamo at dense end = loses, confirms crossover): True  (dense mech 2.51367 − jamo 2.51335 = 0.00032)
+CALIB dense A1 vs 2.51335: True
+VERDICT: 🟢 GREEN — the jamo floor is DATA-RICHNESS, not representation: at the STARVED end a strength-sharing/interp mechanism (JM) beats jamo by 0.07262 (D1), earns it vs its shuffle control (D2, Δ=0.17484), and at the DENSE end the SAME mechanism loses to jamo (D3) — the crossover is MAPPED; below-jamo IS reachable when the opaque MLE is starved
+total wall=6.7s
+  numpy CPU mirror; A5 metric LEARNED BY GRADIENT (labeled, NOT p8). engine-transfer follow-on. NO fluency claim.
+[done]
