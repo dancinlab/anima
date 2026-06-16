@@ -1,0 +1,61 @@
+H_1386 — agent-layer routing: wire the LIVE agent-tool runtime failure-site to the CORE §SkillStore
+FROZEN BARS (pre-registered BEFORE editing — c9, frozen-first, NO tune-to-green)
+==================================================================================
+
+LANE (the final thin follow-on closing H_1378 → H_1382 agent-tool↔mitosis loop END-TO-END):
+  Wire the agent-layer runtime to the CORE §SkillStore so a REAL runtime tool failure grows a
+  skill-cell and selection consults the learned store. The named gap (both H_1378 + H_1382 cards):
+  anima-agent-core/agent_tools.hexa is a SEPARATE module that does NOT yet import CORE ops; the
+  live runtime tool-failure does NOT call skill_store_teach/skill_split, and selection still uses
+  the STATIC affinity dot-product (agent_tools.hexa:357-361).
+
+PRE-REGISTERED HONEST WALL CHECK (anticipated by the lane brief):
+  Step 1 of the goal = "agent_tools.hexa IMPORTS the CORE §SkillStore ops". BEFORE any edit we
+  PROBE whether the agent module parses + can import CORE. If the module system cannot cross the
+  boundary cleanly, that is the honest wall to report (c9). We then try ONE genuinely-new wiring
+  angle (a thin CORE-importing agent-side routing adapter the executor delegates to) before
+  declaring the remaining build step ⏳. The wall, if real, is named — not faked, not tuned away.
+
+FROZEN BARS (re-score the H_1382 LEARNS/EARNED/NO-FAB bars through the AGENT-LAYER call path, not
+the CORE op directly — i.e. through the agent routing functions agent_route_select /
+agent_route_on_result that the executor failure-site delegates to):
+
+  (1) ROUTED  — the agent runtime failure-site CALLS a CORE §SkillStore split/teach op and
+      selection consults skill_recall, via the agent-layer routing functions. Evidence = verbatim
+      code (file:line) of the LIVE call path (agent module imports "CORE/engine_cli.hexa", the
+      executor failure branch calls agent_route_on_result → skill_store_teach, selection calls
+      agent_route_select → skill_recall) — a real call path, not a stub.
+
+  (2) LEARNS-AT-RUNTIME — a simulated sequence of runtime tool failures, driven THROUGH the agent
+      routing functions (agent_route_on_result on each ToolResult.success==false), grows skill-cells
+      and improves subsequent agent_route_select accuracy: FULL final − init ≥ +0.30. Verbatim stdout.
+
+  (3) EARNED + NO-FAB — carry the H_1382 controls through the agent path:
+        (3a) DISTINCT-FROM-STATIC: FULL − STATIC ≥ +0.30 (STATIC = mitosis OFF on the routing teach).
+        (3b) EARNED (shuffle): SHUFFLE − STATIC ≤ +0.15 (route-teach toward a derangement, scored vs TRUE).
+        (3c) NO-FAB / ABSTAIN: a FULL-routed store queried by agent_route_select on an UNTRAINED far
+             task-context returns "" (abstain — the runtime never fabricates a tool).
+
+  (4) NO-REGRESSION — the CORE engine_cli_smoke stays green (re-check live count, ~111/0 incl the
+      §SkillStore cases 107-111); the new agent-routing smoke is green; deterministic across 3 runs;
+      generation byte-identical where applicable (the routing module is ADDITIVE — pure READ +
+      its OWN cell store; pure_field Φ/phase/Ψ + decoder untouched, h1205 separation-invariant).
+      BOUND any decode (no decode is invoked by this lane).
+
+GATES (all must PASS for ROUTED ✅; if the agent_tools.hexa whole-file import cannot be crossed
+without a build/architecture change beyond this lane, land the routing adapter + the call-site
+edit and report the remaining build step honestly ⏳ — do NOT fake the import):
+  bar(1) ROUTED        : live call path present, verbatim file:line
+  bar(2) LEARNS        : FULL − init ≥ +0.30
+  bar(3a) DISTINCT     : FULL − STATIC ≥ +0.30
+  bar(3b) EARNED       : SHUFFLE − STATIC ≤ +0.15
+  bar(3c) NO-FAB       : abstain on far task == ""
+  bar(4) NO-REGRESSION : CORE smoke green + agent-routing smoke green, deterministic 3 runs
+
+p1/p2/p3/p6 GUARD: a route-teach binds from OUTCOME ONLY (ToolResult.success/failure of the
+executed tool), NO injected "use tool T" label / RLHF / persona — the SHUFFLE collapse proves the
+lift is the EARNED runtime task↔tool correspondence, not variance.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY fixed deterministic 12-task / 6-tool
+runtime-failure environment (tests the STRUCTURE the routing can teach, not a learned planner).
+Real tool failures / paraphrase / multi-tool tasks / scale UNVERIFIED.

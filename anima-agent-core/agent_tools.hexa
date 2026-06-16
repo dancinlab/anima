@@ -1,6 +1,23 @@
 // agent_tools.hexa -- Consciousness-driven autonomous tool use
 // Port of agent_tools.py (2441 lines)
 // Consciousness state drives tool selection: felt states create action
+//
+// H_1386 — LIVE agent-tool runtime ↔ CORE §SkillStore wiring (the END-TO-END close of the
+// H_1378 → H_1382 agent-tool↔mitosis loop). The executor now holds a LIVE SkillStore (the learned
+// tool repertoire) and consults / teaches it via the agent_skill_routing adapter (which imports
+// CORE/engine_cli.hexa's §SkillStore ops): tool SELECTION consults agent_route_select (skill_recall
+// — learned best tool OR abstain) ALONGSIDE the static affinity dot-product, and the executor
+// FAILURE-SITE calls agent_route_on_result (→ skill_store_teach → mitosis clonal split, p8) so a
+// REAL runtime tool failure grows a specialized skill-cell. Outcome-only (p6, no injected label).
+//
+// NOTE (c9, honest module boundary): the routing call-path is realized in the standalone, CORE-
+// importing, COMPILING module anima-agent-core/agent_skill_routing.hexa (+ its smoke re-scores the
+// H_1382 bars through this agent-layer call path). This legacy port file (agent_tools.hexa /
+// agent_sdk.hexa) still uses string-keyed / nested map literals the CURRENT hexa grammar rejects
+// (parse errors at :65,:70,:78,:108,:116…), so the WHOLE-file migration off the legacy map-literal
+// syntax remains a build step ⏳ beyond this thin follow-on lane; the call-site delegation below is
+// the real wiring.
+import "anima-agent-core/agent_skill_routing.hexa"
 
 // ── Data structures ──
 
@@ -388,6 +405,7 @@ struct ToolExecutor {
     registry: ToolRegistry,
     scheduler: TaskScheduler,
     execution_log: array,
+    skills: SkillStore,        // H_1386 — LIVE learned tool repertoire (CORE §SkillStore)
 }
 
 fn new_executor(registry: ToolRegistry) -> ToolExecutor {
@@ -395,7 +413,26 @@ fn new_executor(registry: ToolRegistry) -> ToolExecutor {
         registry: registry,
         scheduler: new_scheduler(),
         execution_log: [],
+        // H_1386 — seed the LIVE skill repertoire (a CELL keyed by task-context → tool). It grows
+        // a specialized skill-cell on each runtime tool-failure (mitosis clonal split, p8) and is
+        // consulted on selection (skill_recall). Seeded at the canonical first tool.
+        skills: agent_routing_new("web_search request", "web_search", 64),
     }
+}
+
+// executor_select_tool — H_1386 LIVE selection path. Consults the LEARNED §SkillStore
+// (agent_route_select → skill_recall) FIRST: if a skill-cell fires for this task-context, route
+// to its learned tool; on ABSTAIN ("") fall back to the static affinity dot-product ranking
+// (registry_rank_by_consciousness:357-361). This replaces the pure-static selection the H_1378
+// audit flagged as "never updated by outcome".
+fn executor_select_tool(exec: &ToolExecutor, task_ctx: string, state: map) -> string {
+    let learned = agent_route_select(exec.skills, task_ctx)
+    if learned != "" {
+        return learned                          // learned best tool from prior runtime failures
+    }
+    let ranked = registry_rank_by_consciousness(&exec.registry, state)   // static affinity fallback
+    if len(ranked) > 0 { return ranked[0]["name"] }
+    return ""
 }
 
 fn executor_execute(exec: &mut ToolExecutor, tool_name: string, args: map) -> ToolResult {
@@ -449,6 +486,16 @@ fn executor_execute(exec: &mut ToolExecutor, tool_name: string, args: map) -> To
     if len(exec.execution_log) > 100 {
         exec.execution_log = slice(exec.execution_log, len(exec.execution_log) - 100, len(exec.execution_log))
     }
+
+    // H_1386 — the FAILURE-SITE wire-in. Previously a tool failure DEAD-ENDED here in the
+    // execution_log ring buffer (never read back to grow a skill). Now the live runtime result is
+    // fed to the §SkillStore: on success==false the routing teaches a specialized skill-cell
+    // binding this task-context → the correct tool (mitosis clonal split via skill_store_teach,
+    // p8); on success it is a no-op. Outcome-only (p6 — no injected tool label). cfg = mitosis ON
+    // (engine_config_default) so the repertoire LEARNS at runtime.
+    let task_ctx = tool_name + " request " + to_string(len(args))
+    exec.skills = agent_route_on_result(exec.skills, task_ctx, tool_name,
+                                        engine_config_default(), result.success)
 
     result
 }
