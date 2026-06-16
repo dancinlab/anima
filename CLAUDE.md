@@ -55,7 +55,7 @@ anima/
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
-- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine).
+- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) (+ CORE 노드 ↔ live §섹션·op 무조건 매칭) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine) (+ 배선↔ARCHITECTURE.json 구조 1:1 lockstep).
 - **Verify / hypothesis workflow** — `a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2개 doc 표면으로 관리 — `UNIVERSE/HYPOTHESES.jsonl` 인덱스(JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. UNIVERSE/ 는 이 두 표면만 — HYPOTHESES.md 는 retire 되었고 prose overview 는 `state/universe-overview.md` 로 이전. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
@@ -171,7 +171,9 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "가설이 엔진-네이티브로 GREEN 검증되면, 그 메커니즘을 live 엔진(`CORE/*.hexa`)에 실제 배선(wire-in)하는 것까지가 done — generator L3 슬롯·kosmos_io·engine_cli VAdaptField·bytegpt_decode 등 해당 entry 로 (a_core_engine_map)"
   do   = "배선 후 smoke/single-entry/Ψ-checksum 가드로 회귀 없음을 출력으로 확인 (c2) — 배선은 측정과 같은 검증 규율을 받는다"
   do   = "GREEN-but-unwired 는 follow-on 으로 명시 추적 (ING.jsonl) 하고 그 follow-on 을 닫아야 진짜 완료 (precedent: H_1168 GREEN 이지만 'NOT yet CORE-wired' → 미완)"
+  do   = "배선(wire-in) 은 ARCHITECTURE.json 의 CORE 트리에 그 메커니즘(§섹션·op·slot)이 반영될 때까지가 done — 엔진배선 ↔ 최종 엔진구조(ARCHITECTURE.json)는 무조건 1:1 lockstep. CORE/*.hexa 에 새 § 섹션/op/generator slot 을 배선하면 같은 PR/사이클에 ARCHITECTURE.json 해당 CORE 노드의 §주석을 동시 갱신한다 (하이브리드 형식: 메커니즘을 노드 note/§주석에 명명, 480-leaf 트리 부활 금지)"
   dont = "GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · 검증된 메커니즘을 엔진 밖 미러/프로브에만 남겨둠"
+  dont = "live CORE/*.hexa 의 §섹션·op 를 배선해놓고 ARCHITECTURE.json 에 안 적어 drift 시킴 — 배선만 하고 구조도 미갱신은 done 아님 (GREEN-verdict 박제만큼이나 구조도 누락도 미완)"
   dont = "배선을 무기한 follow-on 으로 미뤄 verdict 와 live 엔진을 영구 drift 시킴"
   ref  = "a_core_engine_map · a_engine_native_learning · a_engine_measured_verdict · c2 · p8"
 
@@ -250,6 +252,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = ".kosmos anchors enter ONLY via kosmos_io read into brain_decide — single anchor entry"
   do   = "stdlib/hf/validate.hexa = artifact-validation (trains?), NOT runtime engine — distinct"
   do   = "mark generator.hexa + kosmos_io→brain wiring ⏳/❌ until built — honest, no phantom wiring"
+  do   = "ARCHITECTURE.json 의 CORE 노드(§섹션·op·slot 주석) ↔ live engine_cli.hexa/generator.hexa/brain.hexa/clm_decode.hexa 의 실제 §섹션·op 는 무조건 1:1 매칭 — 검증: grep CORE/*.hexa 의 § 섹션/op 집합과 ARCHITECTURE.json 의 명명 집합을 대조해 누락 0 이어야 한다 (드리프트 = 미완, a_verified_must_wire)"
   dont = "feed .clm/.kosmos into pure_field/engine_g/brain — A·G·brain are substrate-only"
   dont = "add a 2nd .clm path bypassing generator.hexa · a 2nd .kosmos path bypassing kosmos_io"
   dont = "conflate validate.hexa with runtime engine · claim generator/anchor wiring exists"
