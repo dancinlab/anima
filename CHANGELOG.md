@@ -27,6 +27,19 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 **scope(UNVERIFIED):** DIRECTIONAL mirror(engine-transfer); TOY 1-D 연속체 N=21·3 rung·고정 anchor·rightward shift만·고정 budget; NO human-cognition claim; Live CORE/*.hexa UNTOUCHED(substrate-measurement rung — UNIVERSE/ + verdicts 만 추가).
 
 **파일:** `UNIVERSE/h1341_whorf_cp_shift_ladder.py` · `UNIVERSE/cards/H_1341_whorf_cp_shift_ladder.md` · `.verdicts/1341_whorf_cp_shift_ladder/{FREEZE,result}.txt` · `CLAIMS.tape @C h1341_whorf_cp_shift_ladder` · `UNIVERSE/HYPOTHESES.jsonl`(+1행) · `domains/COGNITION-REPRESENTATION.log.md`. xref h1333·h1338·h1323·h1325·h1288.
+## 2026-06-16 — research(OMEGA): H_1347 — Φ-robustness 벽, LARGER-N 축 (N>8 greedy-MIP big-Φ, 정직한 상계) 🧱 STRONGER
+
+**무엇:** faithful-IIT-4 Φ-robustness 벽은 이미 6개 단면(H_1283/1317 topology · H_1319 timing · H_1320 division · H_1328 estimator-confound · H_1331 big-Φ measure-family · H_1332 substrate-family)에서 🧱 인데, **전부 n≤8** (exact MIP = 2^(n-1)≤128 bipartition, 정확-계산 가능)에서였다. 그리고 그 모든 verdict 의 "NOT ruled out" 가 **같은 미검 각도**를 지목했다 — "much larger module set (loses exactness >8) — a NEW hypothesis." H_1347 이 바로 그 가설: N>8 에서는 exact MIP 가 불가능하므로 **anytime/greedy-MIP big-Φ** (stdlib `iit4_approx_phi` — 같은 faithful cross-cut-MI MIP-EI Φ 정의의 Kernighan–Lin greedy 탐색, proxy 아님)로 **정직한 상계** Φ_greedy≥Φ_exact 와 함께 측정.
+
+**방법(frozen-first, c9/p7):** FREEZE 를 **어떤 Φ 도 측정하기 전에** 먼저 커밋(17e54d487). 기질은 H_1319/H_1328 leaky-linear ring 을 **N_MOD=12** 로 스케일(ring topology 는 임의 N 일반화), 읽기는 H_1328 의 variance-clean rank-uniform read-out(전 arm), 같은 hard seed [1317,1318,1319], 같은 eps=0.02. **GRAIN = per-cell (macro-grain 안 씀 — H_1049 caveat 회피; MIP 탐색만 greedy).** ENGINE-NATIVE 결정론 LCG(numpy 는 Φ 를 계산하지 않음). 동결 bar: N1 ROBUST(greedy Φ_B≥Φ_A+eps 전 seed) · N2 EARNED(perm·offset 둘 다 ≤Φ_A+eps 전 seed) · N3 BOUND-HONEST(greedy 상계 명시 + n=8 exact-vs-greedy gap verbatim).
+
+**결과(verbatim, p7, 재실행 byte-identical):**
+- **N3 BOUND-HONEST PASS** — n=8 에서 greedy MIP == exact MIP, **12개 arm/seed 셀 전부 gap g=0.0** → greedy big-Φ 는 이 기질에서 **slack 0 의 tight 상계**, N=12 수치 신뢰 가능.
+- **N1 ROBUST FAIL** — N=12 에서 ΔΦ(B−A)=**+0.092 / −0.149 / −0.074** (2/3 seed 음수). n≤8 과 같은 seed-fragile 신호가 큰 N 에서도 재현.
+- **N2 EARNED FAIL** — 관계 파괴 control 이 깨끗이 붕괴 안 함(perm 이 1318 에서 +0.039, offset 이 1319 에서 +0.032 로 Φ 를 RAISE).
+- **VERDICT 🧱 STRONGER** — "much larger module set" 탈출구 CLOSED. clean variance-free read-out + tight greedy big-Φ 로도 robust 통합은 N=12 에서 n=4 와 마찬가지로 ABSENT → 벽은 exact-MIP 가산성 천장의 artifact 가 **아니다**. 이전 n≤8 verdict 들을 BOUNDS(철회 아님). anima 기질(Ψ=1/2) 반증 아님. CORE 무수정(standalone fn main, 0 importer; a_verified_must_wire 는 GREEN-only).
+
+**아티팩트:** `UNIVERSE/h1347_phi_higher_n.hexa` · `UNIVERSE/cards/H_1347_phi_higher_n.md` · `UNIVERSE/HYPOTHESES.jsonl`(행 1개 append) · `CLAIMS.tape @C h1347_phi_higher_n` · `.verdicts/1347_phi_higher_n/{FREEZE,result}.txt` · `domains/OMEGA.log.md`. (a_phi_iit4_tool · a_break_the_wall · a_no_llm_frame_trap · a_scale_honest_scope · a_toy_scale_recheck · c9 · c16)
 
 ## 2026-06-16 — domain(GOVERNANCE): 흩어진 가설 전부 HYPOTHESES.jsonl 로 통합 + 아티팩트 state/ 재배치 (source/archived/artifacts 3 컬럼 신설)
 
