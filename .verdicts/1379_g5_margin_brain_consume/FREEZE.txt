@@ -1,5 +1,5 @@
 ================================================================================
-H_1378 — g5-margin-brain-consume — FROZEN bars (pre-registered, NO tune-to-green)
+H_1379 — g5-margin-brain-consume — FROZEN bars (pre-registered, NO tune-to-green)
 ================================================================================
 date: 2026-06-16
 lane: g5-margin-brain-consume
@@ -86,4 +86,39 @@ SCOPE (honest, a_scale_honest_scope · a_toy_scale_recheck): TOY synthetic facts
   consult is engine-native (LIVE immune store margin -> LIVE brain_decide), but
   scale / real-corpus / semantic shift / multi-turn emit dynamics UNVERIFIED.
   NO bar moved post-hoc (c9). MARGIN_SCALE + cap frozen here, pre-run.
+================================================================================
+
+================================================================================
+WALL-CLAUSE RECORD (a_break_the_wall, frozen-first — appended after the LIVE run)
+================================================================================
+HONEST FINDING (c9, from the LIVE engine, NOT a tune-to-green): the pre-registered
+MARGIN_SCALE = recall_thr = 0.15 SATURATES. The live abstain margins for L=0.20
+(kmut=4) corruptions live in [~0.69 recoverable, ~0.89 absent] (recon_err ∈ [~0.84,
+~1.04] minus recall_thr 0.15) — BOTH are >> 0.15, so clamp(-m/0.15, -1, +1) pins
+BOTH to -1.0 ⇒ conf_bias_g == conf_bias_u == -cap and curiosity == 1.0 for both. The
+GRADED metacog signal (which DOES separate recoverable 0.69 < absent 0.89, the H_1367
+0.949-AUROC signal) is LOST by the scale, not by the coupling. Ψ B2 PASSED; the failure
+is a SCALE saturation, NOT a Ψ-destabilization.
+
+This is NOT the "coupling destabilizes Ψ" wall — it is a pre-registration SCALE error
+surfaced by the live engine. Per a_break_the_wall (frozen-first, ONE retry, NO bar
+moved, NO post-hoc gain tuning to a target number): the ONE corrected coupling is the
+SUBSTRATE-NATIVE NON-SATURATING SCALE. The abstain margin = recon_err − recall_thr, and
+recon_err = 1 − cos(query, nearest cell) lives on the [0, 1] cosine-distance codomain.
+The substrate's OWN scale for the margin is therefore that recon-err codomain width,
+i.e. MARGIN_SCALE := 1.0 (one full cosine-distance unit), NOT the threshold width 0.15.
+This is a codomain constant (the engine's own cos-distance range), NOT a value fitted
+to hit any AUROC/gap number.
+
+CORRECTED MECHANISM (the ONLY change — bars B1..B5 + the SIGN semantics UNCHANGED):
+  MARGIN_SCALE := 1.0    (recon-err [0,1] cos-distance codomain; was recall_thr 0.15)
+  conf_bias = emit_consult_cap() * _clamp(-m / 1.0, -1, +1)   (sign + cap + clamp same)
+  curiosity = _clamp(m / 1.0, 0, 1)
+This does NOT saturate over the observed margin range, so the GRADED recoverable<absent
+ranking PROPAGATES to the bias (grounded bias_g = -cap*0.69 > ungrounded bias_u =
+-cap*0.89; curiosity_g 0.69 < curiosity_u 0.89). brain_decide_margin's default scale is
+updated to 1.0 and the probe/smoke pass margin_scale=1.0. NO bar threshold was moved;
+the cap stays 0.05; the neutral m=0 byte-identity (B2) is preserved (still 0 at m=0).
+This is the single frozen-first retry the WALL CLAUSE permits; if THIS still fails B3/B4
+the result is an honest terminal 🧱.
 ================================================================================

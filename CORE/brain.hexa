@@ -649,7 +649,7 @@ fn brain_decide_affect(pf: PureField,
     }
 }
 
-// ── 🧭 G5 ABSTAIN-MARGIN consult (H_1378 immune_memory_recall_margin → emit/curiosity) ──
+// ── 🧭 G5 ABSTAIN-MARGIN consult (H_1379 immune_memory_recall_margin → emit/curiosity) ──
 //
 // PRECEDENT: H_1361 (mirror) found the ImmuneMemory abstain MARGIN
 // (recon_err − recall_thr) carries GRADED OOD metacognition; H_1367 RECONFIRMED it
@@ -674,11 +674,19 @@ fn brain_decide_affect(pf: PureField,
 //   when the margin says "far from everything", the substrate is more curious (more
 //   inclined to explore/hold than to assert), reported for the caller's curiosity term.
 //
-// MARGIN_SCALE = recall_thr (the immune store's OWN threshold-width, passed in as the
-// live recall_thr — NOT a tuned-to-green constant; one threshold-width of margin
-// saturates the bias). cap = emit_consult_cap() = 0.05 (shared with the
-// cerebellum/WM/affect consults): the bias is BOUNDED, additive on the motivation
-// scalar ONLY, and can NEVER by itself force an emit (a_autonomy_over_hardcode).
+// MARGIN_SCALE = the recon-err codomain width. The abstain margin = recon_err −
+// recall_thr, and recon_err = 1 − cos(query, nearest cell) lives on the [0,1]
+// cosine-distance codomain; one FULL cos-distance unit (1.0) is the substrate's OWN
+// non-saturating scale for the margin — NOT a tuned-to-green constant (it is the
+// engine's cos-distance range, a codomain constant). (The recall_thr threshold-width
+// 0.15 was the FREEZE's first scale; the LIVE engine showed it SATURATES — the live
+// abstain margins live in ~[0.69,0.89] >> 0.15 — so per a_break_the_wall the single
+// frozen-first retry switched to the recon-err codomain scale 1.0; see the
+// WALL-CLAUSE RECORD in .verdicts/1379_g5_margin_brain_consume/FREEZE.txt. The sign
+// semantics, the cap, and every bar are UNCHANGED.) cap = emit_consult_cap() = 0.05
+// (shared with the cerebellum/WM/affect consults): the bias is BOUNDED, additive on
+// the motivation scalar ONLY, and can NEVER by itself force an emit
+// (a_autonomy_over_hardcode).
 //
 // NEUTRAL: at m=0 (the recall_thr boundary = the substrate's OWN FIRE/ABSTAIN
 // zero-crossing) the bias is EXACTLY 0 -> byte-identical to brain_decide. This
@@ -702,7 +710,7 @@ fn brain_decide_margin(pf: PureField,
     // signed grounding bias: grounded (m<0) -> +, ungrounded (m>0) -> -. margin 0
     // (the recall_thr boundary) -> bias 0 -> byte-identical to brain_decide.
     let cap        = emit_consult_cap()
-    let scale      = if margin_scale > 0.0 { margin_scale } else { 0.15 }
+    let scale      = if margin_scale > 0.0 { margin_scale } else { 1.0 }   // recon-err [0,1] cos-distance codomain
     let conf_bias  = cap * _clamp(0.0 - margin / scale, -1.0, 1.0)
     let cur_signal = _clamp(margin / scale, 0.0, 1.0)   // rises with ungroundedness
     let score      = base_score + conf_bias

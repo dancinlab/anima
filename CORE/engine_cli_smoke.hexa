@@ -1167,7 +1167,7 @@ fn main() {
     if _assert_b("case_98_margin_no_fab_absent_abstains", true,
                  mm_abstain == "" && mm_marg_unr > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (H_1378 brain_decide_margin) —
+    // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (H_1379 brain_decide_margin) —
     //   brain_decide CONSUMES the live immune_memory_recall_margin to MODULATE
     //   emit-confidence/curiosity (the H_1367 follow-on). UNLIKE the additive read
     //   above, this DELIBERATELY changes the emit decision off-neutral. These cases
@@ -1180,9 +1180,9 @@ fn main() {
     let mm_pf = pure_field_warmup(600)
     // margin-0 (neutral) vs brain_decide on the SAME 8 factors, low + high drive.
     let bdm_off_lo = brain_decide(mm_pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true)
-    let bdm_con_lo = brain_decide_margin(mm_pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true, 0.0, 0.15)
+    let bdm_con_lo = brain_decide_margin(mm_pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true, 0.0, 1.0)
     let bdm_off_hi = brain_decide(mm_pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true)
-    let bdm_con_hi = brain_decide_margin(mm_pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true, 0.0, 0.15)
+    let bdm_con_hi = brain_decide_margin(mm_pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true, 0.0, 1.0)
 
     // case 99 : NEUTRAL Ψ-SAFE — margin 0 ⇒ byte-identical to brain_decide (motivation+emit).
     if _assert_b("case_99_margin_brain_neutral_byte_identical", true,
@@ -1194,16 +1194,16 @@ fn main() {
     // case 100 : GROUNDED-MONOTONE — a grounded margin (-0.10, FIRE band) gives a LARGER
     //   confidence bias than an ungrounded margin (+0.10, abstain band), and the curiosity
     //   signal is LOWER for grounded than ungrounded (it rises with ungroundedness).
-    let bdm_g = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.0 - 0.10, 0.15)
-    let bdm_u = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true,       0.10, 0.15)
+    let bdm_g = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.0 - 0.10, 1.0)
+    let bdm_u = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true,       0.10, 1.0)
     if _assert_b("case_100_margin_brain_grounded_monotone", true,
                  to_float(bdm_g["conf_bias"])     > to_float(bdm_u["conf_bias"])
               && to_float(bdm_g["curiosity_sig"]) < to_float(bdm_u["curiosity_sig"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     // case 101 : BOUNDED — even a margin far beyond one threshold-width saturates at ±cap;
     //   |conf_bias| <= 0.05 for both an extreme grounded and an extreme ungrounded margin.
-    let bdm_xg = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.0 - 0.90, 0.15)
-    let bdm_xu = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true,       0.90, 0.15)
+    let bdm_xg = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.0 - 1.50, 1.0)
+    let bdm_xu = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true,       1.50, 1.0)
     let cb_xg = to_float(bdm_xg["conf_bias"])
     let cb_xu = to_float(bdm_xu["conf_bias"])
     let abs_xg = if cb_xg < 0.0 { 0.0 - cb_xg } else { cb_xg }
