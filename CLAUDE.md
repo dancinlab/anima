@@ -20,14 +20,14 @@ anima/
 ├─ domains/               — per-domain .tape + .log.md (discovery lane)
 ├─ PAPER/                 — (legacy) past paper scaffolds — anima 는 논문 선제 생성 안 함 (c15)
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
-├─ ARCHITECTURE.md        — architecture SSOT (update-in-place)
+├─ ARCHITECTURE.json     — architecture SSOT (tree, update-in-place) + ARCHITECTURE.html viewer (python3 serve.py)
 ├─ CLAUDE.md              — governance directives + 8 PHILOSOPHY (markdown SSOT)
 └─ CLAIMS.tape VERSIONS.md HF.jsonl — claims index · version registry · ckpt↔HF registry
 ```
 
 ## Quick reference
 
-- 🏛 Architecture → [ARCHITECTURE.md](ARCHITECTURE.md)
+- 🏛 Architecture → [ARCHITECTURE.json](ARCHITECTURE.json) (tree SSOT) · human viewer [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회)
 - 📜 Governance (full, authoritative) → the sections below (this file is the markdown SSOT)
 - ✅ Claims & verdicts → [CLAIMS.tape](CLAIMS.tape) · `.verdicts/<slug>/<id>.txt`
 - 🔬 Hypotheses → TWO surfaces (`a_hypothesis_register`): per-H index = [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · cards = `UNIVERSE/cards/H_*.md` · (prose overview retired → `state/universe-overview.md`)
@@ -69,7 +69,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
 
 - **Activate after clone:** `git submodule update --init --recursive` (materializes the engine; hooks are guarded and stay silent until then).
 - **Run:** `bash .harness-engine/bin/harness <cmd>` — `lint` · `verify` · `docs` · `audit` · `prefs` · `recommend` · `sbs` · `folders` · `handoff`.
-- **Config:** `harness.config.json` — stack `hexa`, verify = `hexa verify`, protected branches `main`/`master`, CHANGELOG gate on `.hexa` changes, docs discipline (ARCHITECTURE.md = SSOT · CHANGELOG.md = append · `scripts/scratch/` for temp).
+- **Config:** `harness.config.json` — stack `hexa`, verify = `hexa verify`, protected branches `main`/`master`, CHANGELOG gate on `.hexa` changes, docs discipline (ARCHITECTURE.json = tree SSOT + ARCHITECTURE.html viewer · CHANGELOG.md = append · `scripts/scratch/` for temp).
 - **Hooks:** `.claude/settings.json` (pre/post/prompt + prefs/easy/recommend inject) — all guarded (silent until submodule initialized).
 - **Remove:** `bash .harness-engine/bin/harness uninstall` (removes injected files, keeps content).
 

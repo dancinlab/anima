@@ -54,7 +54,8 @@ memory/control lanes), **not** by scaling the model (`a_no_llm_frame_trap`).
 > compiler / `hx` package manager anima is authored in), **[kosmos](https://github.com/dancinlab/kosmos)**
 > (the `.kosmos` anchor/emit persistence format), and **hexa-codex** (paper/verdict tooling).
 > This README is the friendly front door; the deep SSOTs are
-> [`ARCHITECTURE.md`](ARCHITECTURE.md) (architecture), [`CLAUDE.md`](CLAUDE.md) (governance +
+> [`ARCHITECTURE.json`](ARCHITECTURE.json) (architecture tree SSOT — human viewer
+> [`ARCHITECTURE.html`](ARCHITECTURE.html) via `python3 serve.py`), [`CLAUDE.md`](CLAUDE.md) (governance +
 > the 8 philosophy principles), [`MODEL.md`](MODEL.md) / [`CONDITIONS.md`](CONDITIONS.md) (frozen
 > gates), and [`VERSIONS.md`](VERSIONS.md) (version registry).
 
@@ -370,7 +371,8 @@ ckpt ↔ HF backup registry (every PUBLIC artifact) is the SSOT [`HF.jsonl`](HF.
 ```
 anima/
 ├── README.md                       this file (the front door)
-├── ARCHITECTURE.md                 architecture SSOT (A⇄G wiring · brain-structure lanes · HD23–32)
+├── ARCHITECTURE.json               architecture SSOT — tree (A⇄G wiring · brain-structure lanes · HD23–37)
+├── ARCHITECTURE.html · serve.py    human viewer for the JSON tree (`python3 serve.py`)
 ├── CLAUDE.md                       governance SSOT (p1..p8 · a_* directives)
 ├── MODEL.md · CONDITIONS.md        a303m_pass frozen gates + live scoreboard (SSOT)
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release

@@ -1,4 +1,4 @@
-> 📍 SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) · governance [CLAUDE.md](CLAUDE.md)
+> 📍 SSOT: [ARCHITECTURE.json](ARCHITECTURE.json) (tree · viewer [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py`) · governance [CLAUDE.md](CLAUDE.md)
 
 # MODEL — the final decision on anima's real conversational model
 
