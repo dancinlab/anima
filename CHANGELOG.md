@@ -2,6 +2,25 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1384 — CP MOVE-THE-CELLS RELOCATION ★ ENGINE-NATIVE 배선 (검증된 H_1360-family geometric re-pack 법칙을 live §CategoricalPerception 레인에 배선) — 🟢 GREEN ENGINE-NATIVE · CP-geometry arc DEPLETES 🏁
+
+**무엇 (a_verified_must_wire / a_engine_native_learning):** mirror 레벨에서 닫힌 **move-the-cells RELOCATION** 법칙(geometric re-pack — 잔존 prototype 셀을 boundary normal 따라 옮긴 경계로 물리적으로 drift → discrimination ridge 가 옮긴 경계로 RELOCATE; dimension-invariant + boundary-invariant 1-D H_1360 · 2-D H_1369 · N-D H_1375 · density H_1377, COH-distinctness 메트릭만 fragile)을 live `CORE/engine_cli.hexa` §CategoricalPerception 레인에 실제 배선. 사용자 주도 CP-geometry arc 의 **마지막 열린 thread**.
+
+**왜 막혔나 → 어떻게 뚫었나 (engine-native 실현):** live 엔진은 split-only 재성장(`cp_regrow`, H_1342)만 배선돼 ~0.525(p_A'=0.667 못 미침)로 부분 relocate — 잔존 phase-1 셀이 옛 cut 에 앉아 secondary peak 주입. H_1360 이 입증한 유일한 untried lever(셀을 boundary normal 따라 물리적으로 MOVE)를 새 op `cp_relocate` 로 엔진-네이티브 실현: phase-2 split 마다 잔존 phase-1 셀이 eta=0.15 만큼 p_A' 로 drift → 엔진 자신의 `cp_embed` 로 RE-EMBED + label RE-READ. eta=0.0 ⇒ `cp_regrow` 와 byte-identical(ablation). 단일 진입(a_core_engine_map), fresh-array re-pack(aliasing 없음, H_1295 교훈).
+
+**결과 🟢 GREEN ENGINE-NATIVE (LIVE CORE, $0 CPU, deterministic, frozen-first c9):**
+- **B1 WIRED ✅** — `cp_relocate` §CategoricalPerception 에 단일 named entry, 컴파일+실행.
+- **B2 RELOCATION ✅** (BINDING) — reloc peak **0.675** → |peak−p_A'|=**0.0083** ≤ 0.12 (mirror class ~0.008).
+- **B3 DISTINCT-FROM-SPLIT ✅** (ablation) — split-only(eta=0.0, 기존 cp_regrow) peak **0.525** → |peak−p_A'|=**0.1417** > 0.12 AND reloc 더 가까움 = gain 은 geometric MOVE.
+- **B4 Ψ-DISJOINT/NO-REGRESSION ✅** — engine_cli_smoke **105/0**(106→+4 cases 112-115) · h1196 single-entry 7/0 · h1205 separation-invariant PASS(generation byte-identical ON==OFF 10/0, Ψ Φ-checksum invariant) · deterministic 3 runs.
+- SANITY: `cp_relocate(eta=0.0)` ≡ `cp_regrow` peak EXACT(0.525==0.525, drift=ISOLATED lever). eta ladder {0.10,0.15,0.25} 모두 0.675(robust). coherence pc=1(비게이팅 — COH-distinctness 분리 메트릭은 mirror arc 에서 fragile/measurement-bound, RELOCATION 이 binding bar).
+
+**p1/p2/p3/p6 guard:** discrimination 은 표현 거리만 읽음, 경계 위치/persona/RLHF 주입 없음; re-pack 은 셀 birth-phase + source position 에 key; label 은 학습 때만. emit gate 아님. Ψ-disjoint(pure_field/engine_g/Ψ 무손상).
+
+**honest scope (a_scale_honest_scope · a_toy_scale_recheck):** ENGINE-NATIVE byte-exact 이나 1-D lattice(N=21/DIM=16/단일 eta). boundary NORMAL = 1-D 연속체 축(POINT). 2-D/N-D/diagonal(mirror-settled) 재배선 안 함; higher-D 확장 + real corpus + multi-shift + brain CP-read→emit = follow-on. NO bar moved(c9/p7). NO human-cognition claim.
+
+**파일:** `CORE/engine_cli.hexa`(§ CP MOVE-THE-CELLS RELOCATION: `cp_relocate` et al.) · `CORE/engine_cli_smoke.hexa`(cases 112-115) · `state/cp-engine-native/h1384_probe.hexa` · `.verdicts/1384_cp_engine_native/{FREEZE,result}.txt` · `UNIVERSE/cards/H_1384_cp_engine_native.md` · `UNIVERSE/HYPOTHESES.jsonl` · `domains/COGNITION-REPRESENTATION.log.md` · `ARCHITECTURE.json`(§CategoricalPerception node).
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1381 — G6 IDEATION ★ WIRE-IN (검증된 H_1362 scaffold 를 live 엔진에 배선) — 🟢 WIRED · M1 engine-native GREEN · 🟠 FALS bars 303M-ckpt-gated
 
 **무엇:** H_1362 가 🟢 GREEN DIRECTIONAL 로 입증한 G6 발상 scaffold(6 composed conditional frames + best-of-K=3)를 live 엔진 ideation/decode 경로에 실제 배선(a_verified_must_wire). H_1362 는 gauge **torch** path 에서만 돌았고 live hexa 엔진엔 UNWIRED 였다.

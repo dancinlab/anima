@@ -1,0 +1,91 @@
+H_1384 — CP MOVE-THE-CELLS RELOCATION, ENGINE-NATIVE — RESULT (verbatim engine stdout)
+=================================================================================================
+VERDICT: 🟢 GREEN — ENGINE-NATIVE. B1 ∧ B2 ∧ B3 ∧ B4 all PASS (frozen-first, NO bar moved, c9/p7).
+The mirror-verified move-the-cells RELOCATION law is wired into the live CORE/engine_cli.hexa
+§CategoricalPerception lane (new op cp_relocate), additive + Ψ-disjoint, re-scored byte-exact.
+CP-geometry arc DEPLETES 🏁 — the geometry was settled at the mirror level; this wiring was the
+last open thread.
+
+Pre-registered bars: .verdicts/1384_cp_engine_native/FREEZE.txt (fixed BEFORE any scoring).
+
+-------------------------------------------------------------------------------------------------
+B2 RELOCATION + B3 DISTINCT-FROM-SPLIT — engine-native probe (verbatim stdout)
+  state/cp-engine-native/h1384_probe.hexa  ($0 CPU, deterministic, bounded — NO decode)
+-------------------------------------------------------------------------------------------------
+=== H_1384 ENGINE-NATIVE RELOCATION (move-the-cells) ===
+N=21 DIM=16 p_A=0.333 p_A'=0.667 phase1_cells=4
+
+split-only (cp_regrow, eta=0.0): peak=0.525 |peak-p_A'|=0.141667 cells=28 pc=1
+split-only (cp_relocate eta=0.0): peak=0.525 (must == cp_regrow peak 0.525)
+RELOCATE   (cp_relocate eta=0.15): peak=0.675 |peak-p_A'|=0.008333 cells=7 pc=1
+  eta ladder (non-gating): eta=0.10 peak=0.675 | eta=0.25 peak=0.675
+
+B2 RELOCATION |peak_reloc-p_A'| <= 0.12 : PASS
+B3 DISTINCT split-only |peak-p_A'| > 0.12 : PASS
+eta=0 == cp_regrow (byte sanity): PASS
+
+  → B2 RELOCATION (BINDING): reloc peak 0.675, |peak − p_A'| = 0.0083 ≤ LOC_TOL 0.12. PASS
+    (mirror class: 1-D H_1360 ~0.002, 2-D H_1369 0.042 — engine-native lands in the success class.)
+  → B3 DISTINCT-FROM-SPLIT (ablation): split-only (eta=0.0, the engine's existing cp_regrow)
+    peak 0.525, |peak − p_A'| = 0.1417 > 0.12, AND reloc (0.0083) strictly nearer than split
+    (0.1417) — the gain is the geometric MOVE, not the regrowth. PASS
+  → SANITY: cp_relocate(eta=0.0) reproduces cp_regrow peak EXACTLY (0.525 == 0.525) — the drift
+    is the ISOLATED lever (eta=0 fires nothing). PASS
+  → NON-GATING eta ladder {0.10,0.15,0.25} all land peak 0.675 (robust, not knife-edge).
+  → NON-GATING coherence: pc=1 (single coherent peak). The COH-distinctness SEPARATION metric is
+    NON-GATING on this rung (shown fragile/measurement-bound across the mirror arc H_1369 R1 NCOMP
+    saturation / H_1374/1375/1377); RELOCATION is the binding bar (FREEZE, HONEST SCOPING).
+
+-------------------------------------------------------------------------------------------------
+B1 WIRED + B4 Ψ-DISJOINT / NO-REGRESSION — guards (verbatim)
+-------------------------------------------------------------------------------------------------
+B1 WIRED: cp_relocate present in §CategoricalPerception (CORE/engine_cli.hexa § CP MOVE-THE-CELLS
+   RELOCATION), single named entry (a_core_engine_map), engine compiles + runs. PASS.
+
+engine_cli_smoke (CORE/engine_cli_smoke.hexa) — +4 relocation cases 112-115:
+  PASS  case_112_cp_relocate_lands_on_moved_boundary want=true got=true
+  PASS  case_113_cp_relocate_distinct_from_split want=true got=true
+  PASS  case_114_cp_relocate_eta0_equals_regrow want=true got=true
+  PASS  case_115_cp_relocate_coherent want=true got=true
+  --- engine_cli smoke summary: 110 pass / 0 fail ---
+  (baseline 106/0 with H_1382 §SkillStore cases 107-111 already on origin/main → 110/0; +4 relocation cases 112-115, zero regression. Pre-existing cp lane cases 79-85 all still PASS.)
+
+h1196 single-entry audit (CORE/h1196_single_entry_audit.hexa):
+  --- single-entry audit summary: 7 pass / 0 fail ---
+  WIRED:   .clm decode L3 slot = generator.hexa · .kosmos read = generator_read_anchors→brain_emit
+  HONEST:  CORE/omega_clm_closure_probe.hexa = standalone probe (own main, 0 importers) — NOT 2nd path
+  CLEAN:   pure_field/engine_g/brain consume 0 .clm + 0 .kosmos (substrate-only)
+  (the relocation lane adds NO .clm/.kosmos path — pure §CP, single entry preserved.)
+
+h1205 separation-invariant smoke (CORE/h1205_separation_invariant_smoke.hexa):
+  F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+  F2 Psi Phi-checksum invariant: PASS
+  lane-genuinely-diverged (non-trivial): true
+  h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring.
+  (generation BYTE-IDENTICAL ON==OFF, Ψ=½ untouched → the relocation lane is Ψ-disjoint, additive.)
+
+DETERMINISM: engine_cli_smoke run 3× — BYTE-IDENTICAL (deterministic, no per-seed jitter):
+  === 3 runs ===
+  summary: 110 pass / 0 fail
+  summary: 110 pass / 0 fail
+  summary: 110 pass / 0 fail
+  === distinct lines (1 = deterministic) ===
+         1
+  (the 4 relocation case lines 107-110 PASS byte-identical in every run.)
+
+h1164 Ψ=1/2 attractor guard (CORE/h1164_psi_guard_smoke.hexa):
+  [Psi guard] phiSum mitosis-ON  = 48.6613
+  [Psi guard] phiSum mitosis-OFF = 48.6613
+  [Psi guard] byte-identical ON==OFF = true
+  h1164_psi_guard_smoke: PASS — Ψ=1/2 attractor BYTE-IDENTICAL under the mount's growth lane
+  (pure_field untouched, a_core_engine_map). → the relocation lane does NOT perturb Ψ.
+
+-------------------------------------------------------------------------------------------------
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): ENGINE-NATIVE byte-exact on the engine's
+deterministic single-instance 1-D lattice (N=21, DIM=16, one frozen eta=0.15, deterministic
+readout — tests the move-the-cells STRUCTURE engine-native, not a learned drift). Boundary NORMAL =
+the 1-D continuum axis (POINT boundary). 2-D/N-D/diagonal/curved boundaries (mirror-settled
+H_1369/1374/1375) NOT re-wired here. The COH-distinctness separation metric is non-gating (fragile/
+measurement-bound, mirror arc). Higher-D engine extension + real corpora + multi-shift + brain
+CP-read→emit wiring = follow-on. NO human-cognition claim. NO bar moved (c9/p7).
+=================================================================================================

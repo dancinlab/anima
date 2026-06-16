@@ -998,6 +998,49 @@ fn main() {
     if _assert_b("case_85_cp_regrow_coherent", true,
                  cp_peak_count(cpc_A2) <= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── cases 112-115 : CP MOVE-THE-CELLS RELOCATION / cp_relocate (H_1384) — the GEOMETRIC RE-PACK.
+    //   cp_fit on language A (cut p_A), then cp_relocate (phase-2 re-grow on the MOVED cut p_B with a
+    //   GEOMETRIC drift of the residual phase-1 cells toward p_B). The verified H_1360-family law,
+    //   engine-native: where split-only cp_regrow relocates only PARTWAY (~0.525, case 83), moving the
+    //   cells lands the discrimination ridge ON the moved boundary (|peak-p_B|<=0.12, mirror class
+    //   ~0.008). The split-only arm (eta=0.0) is the anti-Goodhart distinctness ablation. The BINDING
+    //   bar is RELOCATION (the COH-distinctness metric was shown fragile/measurement-bound across the
+    //   mirror arc H_1369/1374/1375/1377). Ψ-disjoint (own protos/labels/pos; pure_field/Ψ untouched).
+    let cp_relP1   = cp_fit(cp_X, cp_labels_boundary(cp_pos, cp_PA), 24, 24)
+    let cp_YB      = cp_labels_boundary(cp_pos, cp_PB)
+    let cp_reloc   = cp_relocate(cp_relP1, cp_X, cp_pos, cp_YB, cp_PB, 0.15, cp_relP1.n, cp_DIM, 24)
+    let cpc_reloc  = cp_discrim_curve(cp_reloc, cp_X)
+    let cp_iReloc  = cp_peak_loc_idx(cpc_reloc)
+    let cp_locReloc = (to_float(cp_iReloc) + 0.5) / to_float(cp_N - 1)
+    let cp_dReloc  = if cp_locReloc - cp_PB < 0.0 { cp_PB - cp_locReloc } else { cp_locReloc - cp_PB }
+    // split-only ablation (eta=0.0): cp_relocate must be byte-identical to cp_regrow (same peak).
+    let cp_split0  = cp_relocate(cp_relP1, cp_X, cp_pos, cp_YB, cp_PB, 0.0, cp_relP1.n, cp_DIM, 24)
+    let cpc_split0 = cp_discrim_curve(cp_split0, cp_X)
+    let cp_iSplit0 = cp_peak_loc_idx(cpc_split0)
+    let cp_locSplit0 = (to_float(cp_iSplit0) + 0.5) / to_float(cp_N - 1)
+    let cp_dSplit0 = if cp_locSplit0 - cp_PB < 0.0 { cp_PB - cp_locSplit0 } else { cp_locSplit0 - cp_PB }
+
+    // case 86 (B2 cp_relocate RELOCATES — the BINDING move-the-cells bar) : moving the residual cells
+    //   along the boundary normal lands the ridge ON the moved boundary (|peak-p_B| <= 0.12).
+    if _assert_b("case_112_cp_relocate_lands_on_moved_boundary", true,
+                 cp_dReloc <= 0.12) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 87 (B3 DISTINCT-FROM-SPLIT — the move is the lever) : split-only re-growth (eta=0.0) stays
+    //   SHORT of the moved boundary (|peak-p_B| > 0.12), AND relocation reaches strictly nearer than
+    //   split-only — the gain is the geometric MOVE, not the regrowth.
+    if _assert_b("case_113_cp_relocate_distinct_from_split", true,
+                 cp_dSplit0 > 0.12 && cp_dReloc < cp_dSplit0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 88 (eta=0.0 BYTE-IDENTITY ablation) : cp_relocate(eta=0.0) reproduces split-only cp_regrow
+    //   EXACTLY (same peak location) — the drift is the ISOLATED lever, eta=0 fires nothing.
+    if _assert_b("case_114_cp_relocate_eta0_equals_regrow", true,
+                 cp_locSplit0 == cp_locA2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 89 (RELOCATE stays COHERENT — non-gating diagnostic asserted) : the relocated arm is a
+    //   single coherent CP peak (peak-count <= 2) — a genuine relocation, not a scatter.
+    if _assert_b("case_115_cp_relocate_coherent", true,
+                 cp_peak_count(cpc_reloc) <= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── cases 86-91 : BILINGUAL TAGGED CP (H_1339 R3) — a language-TAG dimension lets ONE
     //   grow-not-evict store hold BOTH languages' CP (coexistence), overturning the H_1330
     //   single-shared-store OVERWRITE as mechanism-specific. Re-scores the frozen I1/I2/I3'

@@ -4400,6 +4400,153 @@ pub fn cp_coherent_peak_near(curve: [float], n_stim: int, boundary: float) -> bo
     return false
 }
 
+// ── §  CP MOVE-THE-CELLS RELOCATION — the H_1360-family GEOMETRIC RE-PACK, engine-native (H_1384) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire / a_engine_native_learning follow-on for the CP-geometry arc):
+// the move-the-cells RELOCATION law settled at the MIRROR level as a ROBUST, dimension-invariant +
+// boundary-invariant result (1-D H_1360 |peak−p_A'| 0.144→0.002 · 2-D-axis H_1369 0.042 · 2-D-diagonal
+// H_1374 · N-D H_1375 · density-constant H_1377). ONLY the COH-distinctness METRIC was shown
+// fragile/measurement-bound (H_1369 R1 NCOMP saturation) — NOT the relocation law. The live engine
+// already wires the SPLIT-ONLY re-growth (cp_regrow, H_1342): it relocates only PARTWAY (~0.525, short
+// of p_A'=0.667) because the residual phase-1 cells NEVER physically move — they sit at the old cut and
+// inject secondary peaks. H_1360 named + proved the ONLY untried lever: physically RELOCATE the residual
+// cells along the boundary NORMAL toward the moved boundary. This § wires THAT — the THIRD lever, the
+// verified RELOCATION law — engine-native on the engine's OWN cp_embed / CPField geometry.
+//
+// THE ONE NEW MECHANISM (cp_relocate) = a GEOMETRIC RE-PACK. Phase-1 carves p_A via cp_fit (the live
+// SPLIT-ONLY Voronoi/mitosis growth, p8). Phase-2 re-grows the SAME store on the MOVED cut p_A', but
+// after EACH phase-2 split every residual PHASE-1 cell DRIFTS one frozen fraction REPACK_ETA of the
+// remaining distance toward p_A' ALONG THE BOUNDARY NORMAL (the 1-D continuum axis), is RE-EMBEDDED at
+// the drifted position via the engine's own cp_embed, and its bound label is RE-READ from p_A'. Phase-2
+// cells (born at the new locus) do NOT drift. eta=0.0 ⇒ store == split-only re-growth (cp_regrow /
+// cp_fit_more — the ABLATION arm), so the drift is the ISOLATED lever. Byte-faithful to the H_1360
+// mirror RepackCells (a_engine_native_learning: engine-native realization of the mirror-verified law).
+//
+// p1/p2/p3/p6 GUARD: the discrimination readout reads ONLY representational distance over the learned
+// prototype space (|Δ soft posterior| via cp_discrim_curve); NO injected boundary location at test; the
+// re-pack keys on a cell's BIRTH PHASE + its own source position (a structural store property — NO
+// injected target peak / persona / RLHF); labels enter ONLY during training (re-read from the SAME p_A'
+// that trains phase-2 cells). The split-only (eta=0.0) arm is the anti-Goodhart distinctness ablation.
+// NOT an emit gate (a_autonomy_over_hardcode) — a pure curve read. Ψ-disjoint: own (protos,labels,pos)
+// table; pure_field / engine_g / Ψ untouched by construction.
+//
+// SCOPE (a_scale_honest_scope): a SINGLE deterministic engine instance on the 1-D lattice (N=21,
+// DIM=16, one frozen eta). The boundary NORMAL here is the 1-D continuum axis (a POINT boundary). 2-D/
+// N-D/diagonal boundaries (mirror-settled H_1369/1374/1375) are NOT re-wired here. The COH-distinctness
+// separation metric is non-gating (shown fragile/measurement-bound in the mirror arc). TOY synthetic
+// continuum; NO human-cognition claim.
+
+// _cp_source_pos_idx — recover the SOURCE continuum-position index of a phase-1 prototype by matching
+// its embedding to the nearest stimulus row (split-only stores X[s] exactly, so the match is the cell's
+// birth stimulus). Mirrors the H_1360 _repack_phase1 source-position recovery. Returns the index in
+// `positions` (caller maps idx→scalar). The seed/centroid cell matches its nearest stimulus too.
+fn _cp_source_pos_idx(proto: [float], X: [[float]]) -> int {
+    return _vnearest_idx(X, proto)
+}
+
+// _cp_drift_pos1 — ONE eta step of position `cur` toward `p_new`, clamped at p_new (NO overshoot in
+// either direction). The geometric drift of a single phase-1 cell's source position.
+fn _cp_drift_pos1(cur: float, p_new: float, eta: float) -> float {
+    let mut np = cur + eta * (p_new - cur)
+    if (p_new - cur) >= 0.0 { if np > p_new { np = p_new } }
+    else { if np < p_new { np = p_new } }
+    return np
+}
+
+// cp_relocate — the GEOMETRIC RE-PACK move-the-cells RELOCATION (the H_1360 family, engine-native).
+// Phase-1 store `cp0` (grown on p_A via cp_fit) is re-grown over the N stimuli `X` (source positions
+// `positions`, scalar [0,1]) on the MOVED labels `Y2` (= labels at p_new), growing up to `grow_max`
+// phase-2 splits; after EACH split every residual phase-1 cell's source position drifts a fraction
+// `eta` toward `p_new` (clamped, NO overshoot), is re-embedded via cp_embed(.,dim), and its label is
+// re-read int(pos > p_new). With eta=0.0 this is BYTE-IDENTICAL to split-only cp_regrow (the ablation).
+// `n_phase1` = the phase-1 cell count (cells [0:n_phase1) re-pack; phase-2 cells do NOT). Single entry.
+//
+// State carried across phase-2 splits: `pos` (the per-cell CURRENT drifted source position; index
+// 0..out.n-1, phase-2 cells carry their birth position and never drift). All lists are rebuilt FRESH
+// each step (gather into new arrays, never alias — the H_1295 spatial-map aliasing-bug lesson).
+pub fn cp_relocate(cp0: CPField, X: [[float]], positions: [float], Y2: [int], p_new: float,
+                   eta: float, n_phase1: int, dim: int, grow_max: int) -> CPField {
+    let m = len(X)
+    // recover each cell's SOURCE continuum position (parallel to protos). Phase-1 cells [0:n_phase1)
+    // drift; any cell >= n_phase1 (none at entry) is a phase-2 cell and is pinned at its birth pos.
+    let mut pos = []
+    let mut ip = 0
+    while ip < cp0.n {
+        pos = pos + [positions[_cp_source_pos_idx(cp0.protos[ip], X)]]
+        ip = ip + 1
+    }
+    let mut out = CPField { protos: cp0.protos, labels: cp0.labels, n: cp0.n }
+    let base = cp0.n
+    let mut p = 0
+    while p < grow_max {
+        if out.n >= base + grow_max { return out }
+        // owners + the most boundary-adjacent stimulus now misclassified under the MOVED labels Y2.
+        let mut worst = -1
+        let mut worstd = 0.0
+        let mut found = false
+        let mut s2 = 0
+        while s2 < m {
+            let ow = _cp_owner_idx(out, X[s2])
+            if out.labels[ow] != Y2[s2] {
+                let dist = _l2(X[s2], out.protos[ow])
+                if !found || dist < worstd { worstd = dist  worst = s2  found = true }
+            }
+            s2 = s2 + 1
+        }
+        if !found {
+            // no remaining error — still re-pack ONCE so the residual keeps migrating, then STOP.
+            out = _cp_repack(out, pos, p_new, eta, n_phase1, dim)
+            return out
+        }
+        // phase-2 SPLIT: append the worst stimulus as a NEW phase-2 cell (label fixed at creation),
+        // tracked at its birth position (it will NOT drift: its index >= n_phase1).
+        out = CPField { protos: out.protos + [X[worst]], labels: out.labels + [Y2[worst]], n: out.n + 1 }
+        pos = pos + [positions[worst]]
+        // MOVE the residual phase-1 cells one geometric step toward p_new (re-embed + re-label),
+        // and advance the tracked positions (FRESH arrays, no alias).
+        out = _cp_repack(out, pos, p_new, eta, n_phase1, dim)
+        pos = _cp_advance_pos(pos, p_new, eta, n_phase1)
+        p = p + 1
+    }
+    return out
+}
+
+// _cp_advance_pos — return a FRESH position list with each phase-1 prefix position [0:n_phase1)
+// drifted one eta step toward p_new; phase-2 positions (index >= n_phase1) copied unchanged.
+fn _cp_advance_pos(pos: [float], p_new: float, eta: float, n_phase1: int) -> [float] {
+    if eta <= 0.0 { return pos }
+    let mut out = []
+    let mut i = 0
+    while i < len(pos) {
+        if i < n_phase1 { out = out + [_cp_drift_pos1(pos[i], p_new, eta)] }
+        else { out = out + [pos[i]] }
+        i = i + 1
+    }
+    return out
+}
+
+// _cp_repack — RE-EMBED each phase-1 cell at its DRIFTED position (one eta step from the current `pos`)
+// via the engine's own cp_embed, and RE-READ its label from p_new. Phase-2 cells (index >= n_phase1)
+// are untouched. Builds FRESH protos/labels arrays (gather, never alias). Returns the re-packed CPField.
+fn _cp_repack(cp: CPField, pos: [float], p_new: float, eta: float, n_phase1: int, dim: int) -> CPField {
+    if eta <= 0.0 { return cp }
+    let mut protos = []
+    let mut labels = []
+    let mut i = 0
+    while i < cp.n {
+        if i < n_phase1 {
+            let np = _cp_drift_pos1(pos[i], p_new, eta)
+            protos = protos + [cp_embed(np, dim)]
+            labels = labels + [if np > p_new { 1 } else { 0 }]
+        } else {
+            protos = protos + [cp.protos[i]]
+            labels = labels + [cp.labels[i]]
+        }
+        i = i + 1
+    }
+    return CPField { protos: protos, labels: labels, n: cp.n }
+}
+
 // ── § KO-JAMO COUNT-HEAD — the H_1316/H_1321 jamo-decomposition next-symbol count head,
 //     promoted to a FIRST-CLASS engine faculty (H_1351, a_verified_must_wire wire-in) ──
 //
