@@ -124,20 +124,28 @@ class JMNgram:
         self.ctx = [dict() for _ in range(nmax + 1)]   # index by order k (1..nmax)
         self.ctx_tot = [dict() for _ in range(nmax + 1)]
 
-    def fit(self, train_syms):
-        T = train_syms
-        n = len(T)
-        for k in range(1, self.nmax + 1):
-            ck = self.ctx[k]; tk = self.ctx_tot[k]
-            for i in range(k - 1, n):
-                ctx = tuple(T[i - k + 1: i].tolist()) if k > 1 else ()
-                s = int(T[i])
+    def fit_pairs(self, stream, train_positions):
+        """Fit order-1..N counts from TRAIN positions using FULL-RESOLUTION adjacency.
+        stream = the FULL undecimated symbol stream (true adjacency).
+        train_positions = positions i (label index) selected for TRAIN (held-out split is over
+        WHICH positions, NOT over the stream resolution — so each position's (k-1)-history is the
+        TRUE immediately-preceding jamo, exactly the H_1316 'last/second sym' adjacency). Each
+        train position contributes its order-k context->label count for every k=1..N. Counts are
+        built on the FULL stream's adjacency (NO fragmentation)."""
+        S = stream
+        for i in train_positions:
+            i = int(i)
+            s = int(S[i])
+            for k in range(1, self.nmax + 1):
+                if i - (k - 1) < 0:
+                    continue
+                ctx = tuple(S[i - k + 1: i].tolist()) if k > 1 else ()
+                ck = self.ctx[k]; tk = self.ctx_tot[k]
                 d = ck.get(ctx)
                 if d is None:
                     d = {}; ck[ctx] = d; tk[ctx] = 0
                 d[s] = d.get(s, 0) + 1
                 tk[ctx] = tk[ctx] + 1
-        # precompute unigram Laplace distribution support total
         self._uni_total = self.ctx_tot[1].get((), 0)
 
     def _phat(self, k, hist):
@@ -186,34 +194,37 @@ class JMNgram:
         return p1
 
 
-def even_odd_split(syms, nby, stride):
-    s = syms[::stride]; nb = nby[::stride]
-    tr = (np.arange(len(s)) % 2 == 0)
-    te = ~tr
-    return s[tr], nb[tr], s[te], nb[te], s
+def positions_split(stream_len, nmax, stride):
+    """The held-out split is over WHICH label positions (NOT over the stream resolution — the
+    full-resolution adjacency is always preserved). Positions = label index i in [nmax-1, len-1];
+    decimate by stride, then even index = TRAIN, odd index = TEST (the H_1316 even/odd@stride
+    construction, but the n-gram context at each kept position is the TRUE adjacent jamo)."""
+    idx = np.arange(nmax - 1, stream_len)[::stride]
+    e = idx[np.arange(len(idx)) % 2 == 0]
+    o = idx[np.arange(len(idx)) % 2 == 1]
+    return e, o
 
 
-def score_ce(jm, full_decimated, test_mask_idx, test_syms, test_nby, nmax, shift=0):
-    """Score held-out TEST: for each test position, build history from the DECIMATED stream
-    (prior nmax-1 syms) and score the true next sym. shift>0 = circular-shift surrogate (A2c):
-    the history is taken from a circularly-shifted decimated stream, decoupling next-from-context.
-    Returns CE_per_byte = sum(-log p) / sum(nbytes)."""
-    n = len(full_decimated)
-    # positions in the decimated stream that are TEST (odd index)
-    te_positions = np.nonzero(np.arange(n) % 2 == 1)[0]
-    assert len(te_positions) == len(test_syms)
-    hist_src = full_decimated
-    if shift:
-        hist_src = np.roll(full_decimated, shift)
+def score_ce(jm, stream, nby, test_positions, nmax, shift=0):
+    """Score held-out TEST positions; history = TRUE full-resolution (nmax-1)-jamo adjacency.
+    shift>0 = CIRCULAR-SHIFT surrogate (A2c): the history is taken from a position circularly
+    shifted by `shift` within the TEST set, so each next-sym is scored against a DECOUPLED jamo
+    history (true marginal kept, true conditioning destroyed). Returns CE_per_byte."""
     total_nats = 0.0; total_bytes = 0
-    for j, pos in enumerate(te_positions):
-        lo = max(0, pos - (nmax - 1))
-        hist = hist_src[lo:pos].tolist()
-        s = int(test_syms[j])
+    m = len(test_positions)
+    for j in range(m):
+        pos = int(test_positions[j])
+        s = int(stream[pos])                       # true label at this test position
+        if shift:
+            hpos = int(test_positions[(j + shift) % m])  # history from a decoupled test position
+        else:
+            hpos = pos
+        lo = max(0, hpos - (nmax - 1))
+        hist = stream[lo:hpos].tolist()
         lp = jm.logp_next(hist, s)
         total_nats += -lp
-        total_bytes += int(test_nby[j])
-    return total_nats / total_bytes, total_nats, total_bytes, len(test_syms)
+        total_bytes += int(nby[pos])
+    return total_nats / total_bytes, total_nats, total_bytes, m
 
 
 def main():
@@ -223,6 +234,8 @@ def main():
     ap.add_argument("--stride", type=int, default=KO_STRIDE)
     ap.add_argument("--nmax", type=int, default=NMAX)
     ap.add_argument("--shift", type=int, default=99991)  # circular-shift offset for A2c
+    ap.add_argument("--dense-stride", type=int, default=6)        # NON-GATING density diagnostic
+    ap.add_argument("--dense-test-cap", type=int, default=80000)  # bound dense TEST scoring loop
     ap.add_argument("--out", default=".verdicts/1344_ko_jm_interpolation/H_1344.txt")
     args = ap.parse_args()
     t0 = time.time()
@@ -253,33 +266,68 @@ def main():
         f"sum_nbytes={acct['sum_nbytes']} corpus_bytes={acct['corpus_bytes']} "
         f"match={acct['sum_nbytes']==acct['corpus_bytes']}")
 
-    # ── held-out split (decimate by stride, even=TRAIN odd=TEST) ───────────────
-    tr_s, tr_nb, te_s, te_nb, decimated = even_odd_split(syms, nby, args.stride)
-    log(f"[split] decimated={len(decimated)} train={len(tr_s)} test={len(te_s)}")
+    # ── GATING arm: stride=300 held-out split (byte-fair to the 2.51335 floor) ────
+    # The split is over WHICH label positions are train/test; each kept position's n-gram history
+    # is the TRUE full-resolution adjacent jamo (NOT a decimated/fake context — that was the bug
+    # the floor's mitosis never had: H_1316 conditions on the real last/second adjacent symbol).
+    def run_arm(stride, label, cap=None):
+        tr_pos, te_pos = positions_split(len(syms), args.nmax, stride)
+        if cap is not None and len(te_pos) > cap:
+            # bound TEST scoring cost (Python loop); TRAIN counts keep full density for repeats.
+            te_pos = te_pos[:cap]
+        log(f"[{label}] split stride={stride} train_pos={len(tr_pos)} test_pos={len(te_pos)}")
+        jm = JMNgram(vj, args.nmax, LAMBDA, laplace=LAPLACE)
+        jm.fit_pairs(syms, tr_pos)
+        a1, *_ = score_ce(jm, syms, nby, te_pos, args.nmax, shift=0)
+        a2, *_ = score_ce(jm, syms, nby, te_pos, args.nmax, shift=args.shift)
+        jm0 = JMNgram(vj, args.nmax, np.array([1.0] + [0.0] * (args.nmax - 1)), laplace=LAPLACE)
+        jm0.fit_pairs(syms, tr_pos)
+        a0, *_ = score_ce(jm0, syms, nby, te_pos, args.nmax, shift=0)
+        log(f"[{label}] A0_unigram={a0:.5f}  A1_JM={a1:.5f} (Δfloor {a1 - H1316_JAMO_FLOOR:+.5f})  A2c_shift={a2:.5f}")
+        return {"stride": stride, "train_pos": int(len(tr_pos)), "test_pos": int(len(te_pos)),
+                "A0_unigram_ce": round(a0, 5), "A1_jm_interp_ce": round(a1, 5),
+                "A2c_circshift_ce": round(a2, 5)}
 
-    # ── A1: frozen-lambda JM-interp (intact) ──────────────────────────────────
-    log(f"[A1] fitting JM order 1..{args.nmax}  lambda={LAMBDA.round(5).tolist()}")
-    jm = JMNgram(vj, args.nmax, LAMBDA, laplace=LAPLACE)
-    jm.fit(tr_s)
-    a1_ce, a1_nats, a1_bytes, a1_n = score_ce(jm, decimated, None, te_s, te_nb, args.nmax, shift=0)
-    log(f"[A1] JM-interp CE = {a1_ce:.5f}  (delta vs floor {a1_ce - H1316_JAMO_FLOOR:+.5f})")
+    log(f"[A1] frozen lambda={LAMBDA.round(5).tolist()}  nmax={args.nmax}")
+    gate = run_arm(args.stride, "GATE@stride300")          # byte-fair to the floor
+    a0_ce = gate["A0_unigram_ce"]; a1_ce = gate["A1_jm_interp_ce"]; a2_ce = gate["A2c_circshift_ce"]
 
-    # ── A0: unigram-only floor-of-method (lambda=[1,0,..]) reference ──────────
-    jm0 = JMNgram(vj, args.nmax, np.array([1.0] + [0.0] * (args.nmax - 1)), laplace=LAPLACE)
-    jm0.fit(tr_s)
-    a0_ce, *_ = score_ce(jm0, decimated, None, te_s, te_nb, args.nmax, shift=0)
-    log(f"[A0] unigram-only CE = {a0_ce:.5f} (sanity ref)")
+    # ── HONESTY diagnostic (NON-GATING): split the gate TEST by whether its top-order context was
+    # SEEN in train. The corpus is repetitive web text; a high-order n-gram MEMORIZES repeated
+    # strings. This separates (i) the memorized-repetition slice from (ii) the genuine
+    # novel-context generalization slice, so the GREEN is reported with full provenance (c9). ──
+    def context_split_diag(stride):
+        tr_pos, te_pos = positions_split(len(syms), args.nmax, stride)
+        jm = JMNgram(vj, args.nmax, LAMBDA, laplace=LAPLACE)
+        jm.fit_pairs(syms, tr_pos)
+        trc = set(tuple(syms[int(i) - (args.nmax - 1): int(i)].tolist()) for i in tr_pos if int(i) >= args.nmax - 1)
+        seen_n = seen_b = 0; nov_n = nov_b = 0; n_seen = n_nov = 0
+        for i in te_pos:
+            i = int(i)
+            if i < args.nmax - 1: continue
+            ctx = tuple(syms[i - (args.nmax - 1): i].tolist())
+            s = int(syms[i]); lp = jm.logp_next(syms[max(0, i - (args.nmax - 1)):i].tolist(), s)
+            if ctx in trc:
+                seen_n += -lp; seen_b += int(nby[i]); n_seen += 1
+            else:
+                nov_n += -lp; nov_b += int(nby[i]); n_nov += 1
+        return {"seen_frac": round(n_seen / max(1, n_seen + n_nov), 4),
+                "ce_seen_ctx": round(seen_n / max(1, seen_b), 5) if seen_b else None,
+                "ce_novel_ctx": round(nov_n / max(1, nov_b), 5) if nov_b else None,
+                "n_seen": n_seen, "n_novel": n_nov}
+    ctxdiag = context_split_diag(args.stride)
+    log(f"[honesty] top-order context SEEN-in-train frac={ctxdiag['seen_frac']}  "
+        f"CE|seen={ctxdiag['ce_seen_ctx']}  CE|novel={ctxdiag['ce_novel_ctx']}")
 
-    # ── A2c: circular-shift surrogate control (EARNED) ────────────────────────
-    a2_ce, *_ = score_ce(jm, decimated, None, te_s, te_nb, args.nmax, shift=args.shift)
-    log(f"[A2c] circular-shift surrogate CE = {a2_ce:.5f} (delta vs floor {a2_ce - H1316_JAMO_FLOOR:+.5f})")
+    # ── NON-GATING density diagnostic (a_break_the_wall): give JM its genuine chance with enough
+    # data for higher orders to repeat. stride=6 = ~50x denser than the stride-300 gate (≈2M train
+    # positions; higher-order jamo contexts now actually recur). This is NOT byte-fair to the
+    # stride-300 floor (different density), so it does NOT gate — it only tells us whether the floor
+    # is an INVESTMENT artifact (too little train data) or a genuine data-richness floor. TEST is
+    # capped to bound the Python scoring loop; TRAIN counts keep full stride-6 density. ──
+    dense = run_arm(args.dense_stride, "DENSE", cap=args.dense_test_cap)
 
-    # ── NON-GATING diagnostic: EM-fit lambda* on TRAIN held-out-of-fit (context only) ──
-    # report what an oracle TRAIN-fit lambda would give, to show the frozen schedule is not
-    # cherry-picked. This does NOT gate (c1 uses ONLY the frozen LAMBDA).
-    em_note = "skipped"
-
-    # ── BARS ──────────────────────────────────────────────────────────────────
+    # ── BARS (GATING uses ONLY the stride-300 byte-fair arm + frozen lambda) ──────
     c1 = a1_ce < (H1316_JAMO_FLOOR - 0.01)        # PRESENCE: beats floor by >=0.01
     c2 = a2_ce >= (H1316_JAMO_FLOOR - 0.05)        # EARNED: surrogate does NOT also beat floor
     a1_beats_a2 = (a2_ce - a1_ce) >= 0.05
@@ -294,17 +342,20 @@ def main():
         "id": "H_1344", "slug": "ko-jm-interpolation",
         "ko_window_bytes": len(ko_win), "ko_window_sha256": ko_sha,
         "sha_match_H1316_floor": same, "Vj": vj, "distinct_jamo": len(jamo_sorted),
-        "stride": args.stride, "nmax": args.nmax,
+        "gate_stride": args.stride, "nmax": args.nmax,
         "frozen_lambda": LAMBDA.round(6).tolist(),
-        "train_sym": int(len(tr_s)), "test_sym": int(len(te_s)),
         "no_cheat": acct,
         "H1316_jamo_floor": H1316_JAMO_FLOOR, "H1307_raw_ceiling": H1307_RAW_CEILING,
+        "GATE_arm": gate,           # byte-fair stride-300 (the gating numbers)
+        "DENSE_arm": dense,         # NON-GATING density diagnostic (stride-6, higher-order data)
+        "context_seen_diag": ctxdiag,  # NON-GATING: memorized-repetition vs novel-context slice
         "A0_unigram_ce": round(a0_ce, 5),
         "A1_jm_interp_ce": round(a1_ce, 5),
         "A1_delta_vs_floor": round(a1_ce - H1316_JAMO_FLOOR, 5),
         "A2c_circshift_ce": round(a2_ce, 5),
         "A2c_delta_vs_floor": round(a2_ce - H1316_JAMO_FLOOR, 5),
         "A1_beats_A2c_by": round(a2_ce - a1_ce, 5),
+        "DENSE_A1_delta_vs_floor": round(dense["A1_jm_interp_ce"] - H1316_JAMO_FLOOR, 5),
         "bar_c1_PRESENCE": bool(c1), "bar_c1_threshold": round(H1316_JAMO_FLOOR - 0.01, 5),
         "bar_c2_EARNED": bool(c2), "bar_c2_threshold": round(H1316_JAMO_FLOOR - 0.05, 5),
         "a1_beats_a2_by_0.05": bool(a1_beats_a2),

@@ -2,6 +2,13 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1344 — ko-jm-interpolation: NON-FRAGMENTING frozen-λ Jelinek-Mercer 가 jamo 2.51335 floor 아래로 (🟢 GREEN — 단 이득은 코퍼스 반복 암기)
+
+**무엇:** 한국어 byte-LM floor(raw 2.95342 → NFD jamo **2.51335**, H_1316 🟢/wired H_1321)는 고정용량 gradient-free Voronoi MITOSIS 가 3-D(직전 2 심볼) 컨텍스트에서 도달한 값. mitosis 가 한 번도 못 묻는 진짜 LM 질문: **count-fragmentation 없는 frozen-λ Jelinek-Mercer interpolation** 이 jamo n-gram 차수(1..N=5)를 FROZEN λ 로 섞으면 held-out 한국어에서 floor 아래로 내려가는가?
+
+**방법:** REAL `r2://phanes/anima-7b/web/kor/shard0000.bytes[0:30M]` trim, sha256 ASSERTED `c47b6808…` (== H_1307 RUN A / H_1316 jamo baseline, **byte-fair**; mismatch→STOP, no synthetic; R2 키 keychain env-only c7). Representation = H_1316 동일 jamo 심볼화(Vj=323), CE axis = Σ(−log p)/Σ(n_bytes) on held-out = floor 와 동일 축. Held-out = label 위치 stride-300 even/odd; n-gram history 는 **FULL-RESOLUTION 인접 jamo**(H_1316 last/second-sym adjacency). JM: p_JM=Σλ_k·p̂_k, p̂_1 Laplace unigram, k≥2 TRAIN count-MLE + recursive back-off, count 는 FULL TRAIN(fragment 없음). **FROZEN λ**(FREEZE 사전등록, TEST 튜닝 안 함): w_k=2^(k−1)→[1,2,4,8,16]/31. Arms A1 JM · A0 unigram · A2c **circular-shift surrogate**(EARNED). $0 CPU, frozen-first, DIRECTIONAL numpy, live CORE UNTOUCHED.
+
+**결과 🟢 GREEN (단 honest scope 필수, c9):** GATE(stride-300, byte-fair): A1 JM-interp **2.00562** → Δ**−0.50773** < floor 2.51335 (**c1 PRESENCE ✅**) · A2c circular-shift **5.10874** ≥2.46335 (**c2 EARNED ✅**, A1 이 A2c 를 3.10312 차이로 이김) → GREEN. 차수 sweep nmax 2→5 = 4.319→3.326→2.584→2.006(이득 전적으로 고차). **HONEST(NON-GATING context_seen_diag):** TEST top-order(4-jamo) 컨텍스트 SEEN-in-train **70.1%**, CE|seen=**1.6474**(반복 암기), CE|novel=**2.8819**(진짜 novel 30% — floor 2.51335 보다 나쁨). 즉 30MB 한국어 web 코퍼스는 반복적이고 고차 n-gram 은 반복 jamo 문자열을 **암기**해 held-out 70%를 1.65 로 맞춘다; 고정용량 mitosis 분할은 이 반복 문자열을 구조적으로 저장 못해 floor 에 갇혔던 것. DENSE(stride-6, 2.1M train, NON-GATING) A1=1.47042. **발견:** bar 는 통과(🟢)하나 **표상 floor 를 깬 게 아니라** 메커니즘(반복 저장능력) 차이를 드러냄 — 진짜 novel 컨텍스트에선 floor 를 못 이김. '한국어 정보 floor 가 2.513 아래로 진짜 내려간다'는 강한 주장은 미증명. NO bar move(c9/p7). NEXT depletion: de-duplicated 코퍼스에서 c1 재시험. NEW: `state/ko-jm-interpolation/h1344_ko_jm_interpolation.py` · `UNIVERSE/cards/H_1344_ko_jm_interpolation.md` · HYPOTHESES.jsonl(H_1344) · CLAIMS.tape @C h1344_ko_jm_interpolation · `.verdicts/1344_ko_jm_interpolation/`.
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1343 — Sapir-Whorf 2-D CP를 표상-거리 WARP로 재측정 (🟠 PARTIAL — 대각=축정렬 warp로 H_1334 geometry-read 반증, 단 unbounded-ratio로 shuffle 미붕괴)
 
 **무엇:** H_1334(🧱 ridge-ALIGN structured-negative)의 R2. H_1334는 CP를 알려진 경계 CURVE에 대한 **ridge-ALIGNMENT**로 측정 → 대각 경계가 coarse RBF grid에서 fail(0.628<0.70). 직전 H_1343 ridge 시도도 K_RBF=14까지 올려도 대각 align FAIL → metric stimulus space에 **틀린 지표**임을 확인. H_1343은 CP를 **경계-곡선-AGNOSTIC WARP**(within-category COMPRESSION + between-category EXPANSION vs pre-language baseline)로 재명세 + denser RBF grid(K_RBF ladder, prod=12) + label-permutation null(c2) + component-count control(c3, warp이 trained 2-D metric에 사는지).
@@ -72,7 +79,6 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 **SCOPE:** DIRECTIONAL numpy mirror(faithful-Φ leg는 real exact MIP-EI via hexa; engine-transfer UNVERIFIED — H_1308/1313은 live A⇄G에서 NULL/🧱), TOY n≤8/4 daughters/3 seed, live CORE/*.hexa UNTOUCHED. NEXT: redundancy 통제하고 coupling-Φ 키우는 상보적 분화 강제 · 또는 live A⇄G engine-transfer 재시도.
 
 **산출물:** `state/hive-larger-budget/h1350_hive_larger_budget.py` · `UNIVERSE/cards/H_1350_hive_larger_budget.md` · `.verdicts/1350_hive_larger_budget/{FREEZE,result}.txt` · `CLAIMS.tape @C h1350_hive_larger_budget` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `domains/OMEGA.log.md`.
-
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1340 — Whorf CP 재배치 천장 BUDGET/RBF-DENSITY 사다리 (🧱 DEEPER LIMIT — budget/geometry는 불완전)
 
 **무엇:** H_1338(🧱 RE-DIAGNOSIS)의 R2 follow-on. H_1338은 eviction이 H_1333의 ~60% CP 재배치를 완성 못했고(peak 0.525 고정) 잔류를 **BUDGET/GEOMETRY**(RBF resolution + 고정 split budget)로 진단(가설). H_1340은 그 진단을 직접 검증 — phase-2 re-training budget + RBF density를 사다리로 올리면 재배치 peak가 coherent single peak로 p_A'(≈0.667)에 **도달**하는가?
