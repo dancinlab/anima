@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — docs(ARCHITECTURE): ARCHITECTURE.json CORE 엔진배선 재동기화 — recall_gap·§6.5f emit_compose 등 #2315 이후 착륙분 반영 + 전체 §섹션 스윕
+
+**무엇:** PR #2315 (subsystem-tree + anchor-files + §-section annotation 하이브리드 구조)의 anti-drift 설계를 보존한 채로, 그 이후 LIVE `CORE/*.hexa` 에 착륙한 엔진배선을 `ARCHITECTURE.json` CORE 노드의 §-annotation / note 필드에 surgical 재동기화. exhaustive leaf 트리(#2315 에서 의도적으로 pruned, git-ls-files delegation 노드로 대체) 는 되살리지 않음 — §-섹션/op 토큰만 갱신.
+
+**전체 §섹션 스윕으로 추가한 메커니즘 (전부 0-dangling, CORE/*.hexa 에 실재):** (1) `immune_memory_recall_gap` + `vadapt_field_two_recon_err` (H_1398, #2319) — engine_cli.hexa §ImmuneMemory 의 G5 in-dist top-2 affinity GAP op, RANK-only·ADDITIVE (frozen fire/abstain gate 불변, H_1304 OOD 보존) · (2) generator **§6.5f** `gen_emit_compose` (H_1397) — §6.5b jamo-emit + §6.5e morphology-emit 두 emit-bias 가 같은 next-byte 결정에서 SCALE-RELATIVE substrate-confidence 로 COMPOSE (hardcoded priority 없음, shuffle-arbitration control KEPT, off-Korean inert) · (3) anchor note 의 engine_cli §-목록을 ImmuneMemory(recall/margin/gap)/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(JamoHead/jamo_head_*)/KO-MORPHOLOGY BPE-ON-JAMO(BpeMerges)/HierGoalStack/SpatialMap/CategoricalPerception(cp_relocate) 로, generator 슬롯을 §6.5b-f 로 갱신. JamoHead/jamo_head_* (H_1351/H_1385) 는 이미 "KO-JAMO COUNT-HEAD" 로 반영돼 있어 라벨만 명시화.
+
+**HONEST (c9):** G5 brain-gap-consume (recall_gap → brain_decide) 는 별도 in-flight 레인 — 현재 main 의 `CORE/brain.hexa` 는 아직 gap 을 CONSUME 하지 않음(margin 만 brain_decide_margin 에서 소비). phantom wiring 금지(a_core_engine_map) 차원에서 brain_decide consult map 에는 추가하지 않음 — gap-consume 착륙 시 최종 1줄 sync 필요(아래 follow-up).
+
+**가드:** JSON valid · 0-dangling (named op 토큰 전부 grep CORE/*.hexa hit) · 19 subsystems + git-ls-files delegation 노드 intact (구조 무회귀). deliverables = `ARCHITECTURE.json` + `CHANGELOG.md` only (c10 surgical).
+
+**follow-up:** 4개 동시 진행 CORE 레인(decode-fix · deep-mouth GPU · emit-compose-realcorpus · G5 brain-gap-consume) 착륙 시 ARCHITECTURE.json CORE §-annotation 최종 1줄 재동기화 (특히 brain-gap-consume 가 brain_decide 에 gap 을 소비하면 brain_decide consult map 에 1줄 추가).
+
 ## 2026-06-17 — docs(GOVERNANCE): CLAUDE.md `a_break_the_wall` 에 벽-TAXONOMY + "천장은 측정으로 확정" + "인프라 벽은 근본수정·과학천장 박제금지" 추가
 
 **무엇:** 거버넌스 디렉티브 `@D a_break_the_wall` 을 surgical 확장 (기존 do/dont · tune-to-green 금지 전부 보존). 🧱 를 terminal 로 받기 전에 **어느 벽 종류인지 분류**하도록 5종 TAXONOMY 를 do 라인으로 인코딩 — 종류별 돌파 수가 다르기 때문: (a) 틀린 측정/metric-artifact → frozen-first 측정 수정(bar 불변) · (b) 틀린 방향/변수 혼재 → 통제 분리실험 · (c) substrate/인프라 벽(OOM·빌드실패) → substrate 근본수정(c1), 과학 ceiling 박제 금지 · (d) 진짜 천장/중복(subsumption) → 가정 말고 측정(oracle vs richer-signal) · (e) 투자 부족 → 스케일업(a_fire_autonomous·a_wall_first). 추가 do 2개: **"천장 같다" 가정 금지 — 측정으로 확정**, 그리고 **인프라 벽 ≠ 과학 결과**(근본수정 후에야 verdict). dont 1개 추가: 인프라/측정 벽을 과학 천장으로 박제 금지 · 천장을 측정 없이 가정 금지.
