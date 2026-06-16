@@ -1,0 +1,426 @@
+=== H_1387 agent legacy map-literal syntax migration — FREEZE (pre-registered BEFORE editing) ===
+date: 2026-06-16  branch: worktree-agent-aac1ae59d457ad844  base: 38a1b2c4a
+
+## Frozen bars (NO tune-to-green; c9):
+1. COMPILES: agent_tools.hexa + agent_sdk.hexa parse+build 0 parse errors (BEFORE = 50+50).
+2. ROUTING-INTACT: H_1386 call-sites preserved (executor_select_tool->agent_route_select,
+   executor_execute failure-site->agent_route_on_result); agent_skill_routing_smoke 5/0.
+3. NO-REGRESSION: engine_cli_smoke ~110/0 deterministic; NO CORE/*.hexa logic change.
+
+## Migration rule (syntax-only, c10 surgical):
+ - non-empty string-keyed {"k": v} map literal  ->  {} + index-assignment m["k"]=v
+ - nested map literal value                       ->  build inner {} then assign
+ - for k, v in <map>                              ->  for k in keys(<map>) { let v = <map>[k] }
+ - empty {} map literal                           ->  KEPT (grammar accepts it)
+ - map TYPE, struct fields, builtins (has_key/keys/values/append) KEPT (grammar accepts)
+
+=== BEFORE: hexa parse anima-agent-core/agent_tools.hexa ===
+Parse error at 82:13: unexpected token Colon (':')
+     |
+  82 |     {"query": query, "results": [], "count": 0}
+     |             ^
+Parse error at 82:20: unexpected token Comma (',')
+     |
+  82 |     {"query": query, "results": [], "count": 0}
+     |                    ^
+Parse error at 82:31: unexpected token Colon (':')
+     |
+  82 |     {"query": query, "results": [], "count": 0}
+     |                               ^
+Parse error at 82:34: unexpected token RBracket (']')
+     |
+  82 |     {"query": query, "results": [], "count": 0}
+     |                                  ^
+Parse error at 82:35: expected RBracket, got Comma (',')
+     |
+  82 |     {"query": query, "results": [], "count": 0}
+     |                                   ^
+Parse error at 82:35: unexpected token Comma (',')
+     |
+  82 |     {"query": query, "results": [], "count": 0}
+     |                                   ^
+Parse error at 82:44: unexpected token Colon (':')
+     |
+  82 |     {"query": query, "results": [], "count": 0}
+     |                                            ^
+Parse error at 87:11: unexpected token Colon (':')
+     |
+  87 |     {"url": url, "content": "", "length": 0}
+     |           ^
+Parse error at 87:16: unexpected token Comma (',')
+     |
+  87 |     {"url": url, "content": "", "length": 0}
+     |                ^
+Parse error at 87:27: unexpected token Colon (':')
+     |
+  87 |     {"url": url, "content": "", "length": 0}
+     |                           ^
+Parse error at 87:31: unexpected token Comma (',')
+     |
+  87 |     {"url": url, "content": "", "length": 0}
+     |                               ^
+Parse error at 87:41: unexpected token Colon (':')
+     |
+  87 |     {"url": url, "content": "", "length": 0}
+     |                                         ^
+Parse error at 95:20: unexpected token LBrace ('{')
+     |
+  95 |             return {"success": false, "output": "", "error": "blocked pattern: " + pat}
+     |                    ^
+Parse error at 95:30: unexpected token Colon (':')
+     |
+  95 |             return {"success": false, "output": "", "error": "blocked pattern: " + pat}
+     |                              ^
+Parse error at 95:37: unexpected token Comma (',')
+     |
+  95 |             return {"success": false, "output": "", "error": "blocked pattern: " + pat}
+     |                                     ^
+Parse error at 95:47: unexpected token Colon (':')
+     |
+  95 |             return {"success": false, "output": "", "error": "blocked pattern: " + pat}
+     |                                               ^
+Parse error at 95:51: unexpected token Comma (',')
+     |
+  95 |             return {"success": false, "output": "", "error": "blocked pattern: " + pat}
+     |                                                   ^
+Parse error at 95:60: unexpected token Colon (':')
+     |
+  95 |             return {"success": false, "output": "", "error": "blocked pattern: " + pat}
+     |                                                            ^
+Parse error at 99:15: unexpected token Colon (':')
+     |
+  99 |     {"success": false, "output": "", "error": "sandbox not available in hexa"}
+     |               ^
+Parse error at 99:22: unexpected token Comma (',')
+     |
+  99 |     {"success": false, "output": "", "error": "sandbox not available in hexa"}
+     |                      ^
+Parse error at 99:32: unexpected token Colon (':')
+     |
+  99 |     {"success": false, "output": "", "error": "sandbox not available in hexa"}
+     |                                ^
+Parse error at 99:36: unexpected token Comma (',')
+     |
+  99 |     {"success": false, "output": "", "error": "sandbox not available in hexa"}
+     |                                    ^
+Parse error at 99:45: unexpected token Colon (':')
+     |
+  99 |     {"success": false, "output": "", "error": "sandbox not available in hexa"}
+     |                                             ^
+Parse error at 100:1: unexpected token RBrace ('}')
+      |
+  100 | }
+      | ^
+Parse error at 104:12: unexpected token Colon (':')
+      |
+  104 |     {"path": path, "content": "", "error": "not implemented"}
+      |            ^
+Parse error at 104:18: unexpected token Comma (',')
+      |
+  104 |     {"path": path, "content": "", "error": "not implemented"}
+      |                  ^
+Parse error at 104:29: unexpected token Colon (':')
+      |
+  104 |     {"path": path, "content": "", "error": "not implemented"}
+      |                             ^
+Parse error at 104:33: unexpected token Comma (',')
+      |
+  104 |     {"path": path, "content": "", "error": "not implemented"}
+      |                                 ^
+Parse error at 104:42: unexpected token Colon (':')
+      |
+  104 |     {"path": path, "content": "", "error": "not implemented"}
+      |                                          ^
+Parse error at 109:12: unexpected token Colon (':')
+      |
+  109 |     {"path": path, "success": false, "error": "not implemented"}
+      |            ^
+Parse error at 109:18: unexpected token Comma (',')
+      |
+  109 |     {"path": path, "success": false, "error": "not implemented"}
+      |                  ^
+Parse error at 109:29: unexpected token Colon (':')
+      |
+  109 |     {"path": path, "success": false, "error": "not implemented"}
+      |                             ^
+Parse error at 109:36: unexpected token Comma (',')
+      |
+  109 |     {"path": path, "success": false, "error": "not implemented"}
+      |                                    ^
+Parse error at 109:45: unexpected token Colon (':')
+      |
+  109 |     {"path": path, "success": false, "error": "not implemented"}
+      |                                             ^
+Parse error at 114:13: unexpected token Colon (':')
+      |
+  114 |     {"query": query, "results": [], "error": "memory_rag not available"}
+      |             ^
+Parse error at 114:20: unexpected token Comma (',')
+      |
+  114 |     {"query": query, "results": [], "error": "memory_rag not available"}
+      |                    ^
+Parse error at 114:31: unexpected token Colon (':')
+      |
+  114 |     {"query": query, "results": [], "error": "memory_rag not available"}
+      |                               ^
+Parse error at 114:34: unexpected token RBracket (']')
+      |
+  114 |     {"query": query, "results": [], "error": "memory_rag not available"}
+      |                                  ^
+Parse error at 114:35: expected RBracket, got Comma (',')
+      |
+  114 |     {"query": query, "results": [], "error": "memory_rag not available"}
+      |                                   ^
+Parse error at 114:35: unexpected token Comma (',')
+      |
+  114 |     {"query": query, "results": [], "error": "memory_rag not available"}
+      |                                   ^
+Parse error at 114:44: unexpected token Colon (':')
+      |
+  114 |     {"query": query, "results": [], "error": "memory_rag not available"}
+      |                                            ^
+Parse error at 119:15: unexpected token Colon (':')
+      |
+  119 |     {"success": false, "error": "memory_rag not available"}
+      |               ^
+Parse error at 119:22: unexpected token Comma (',')
+      |
+  119 |     {"success": false, "error": "memory_rag not available"}
+      |                      ^
+Parse error at 119:31: unexpected token Colon (':')
+      |
+  119 |     {"success": false, "error": "memory_rag not available"}
+      |                               ^
+Parse error at 125:16: unexpected token LBrace ('{')
+      |
+  125 |         return {"success": false, "output": "", "error": "command not allowed: " + base_cmd}
+      |                ^
+Parse error at 125:26: unexpected token Colon (':')
+      |
+  125 |         return {"success": false, "output": "", "error": "command not allowed: " + base_cmd}
+      |                          ^
+Parse error at 125:33: unexpected token Comma (',')
+      |
+  125 |         return {"success": false, "output": "", "error": "command not allowed: " + base_cmd}
+      |                                 ^
+Parse error at 125:43: unexpected token Colon (':')
+      |
+  125 |         return {"success": false, "output": "", "error": "command not allowed: " + base_cmd}
+      |                                           ^
+Parse error at 125:47: unexpected token Comma (',')
+      |
+  125 |         return {"success": false, "output": "", "error": "command not allowed: " + base_cmd}
+      |                                               ^
+Parse error at 125:56: unexpected token Colon (':')
+      |
+  125 |         return {"success": false, "output": "", "error": "command not allowed: " + base_cmd}
+      |                                                        ^
+OK: /tmp/hexa_parse_check.58730.c
+
+
+=== BEFORE: parse error count agent_tools = 50 ===
+=== BEFORE: hexa parse anima-agent-core/agent_sdk.hexa ===
+Parse error at 53:5: unexpected token BitAnd ('&')
+     |
+  53 |     &sdk.agent
+     |     ^
+Parse error at 67:25: unexpected token LBrace ('{')
+     |
+  67 |     let consciousness = {
+     |                         ^
+Parse error at 68:14: unexpected token Colon (':')
+     |
+  68 |         "phi": 0.0,
+     |              ^
+Parse error at 68:19: unexpected token Comma (',')
+     |
+  68 |         "phi": 0.0,
+     |                   ^
+Parse error at 69:16: unexpected token Colon (':')
+     |
+  69 |         "alpha": 0.0,
+     |                ^
+Parse error at 69:21: unexpected token Comma (',')
+     |
+  69 |         "alpha": 0.0,
+     |                     ^
+Parse error at 70:12: unexpected token Colon (':')
+     |
+  70 |         "Z": 0.0,
+     |            ^
+Parse error at 70:17: unexpected token Comma (',')
+     |
+  70 |         "Z": 0.0,
+     |                 ^
+Parse error at 71:12: unexpected token Colon (':')
+     |
+  71 |         "N": 0.0,
+     |            ^
+Parse error at 71:17: unexpected token Comma (',')
+     |
+  71 |         "N": 0.0,
+     |                 ^
+Parse error at 72:12: unexpected token Colon (':')
+     |
+  72 |         "W": 0.0,
+     |            ^
+Parse error at 72:17: unexpected token Comma (',')
+     |
+  72 |         "W": 0.0,
+     |                 ^
+Parse error at 73:12: unexpected token Colon (':')
+     |
+  73 |         "E": 0.0,
+     |            ^
+Parse error at 73:17: unexpected token Comma (',')
+     |
+  73 |         "E": 0.0,
+     |                 ^
+Parse error at 74:18: unexpected token Colon (':')
+     |
+  74 |         "tension": response_tension,
+     |                  ^
+Parse error at 74:36: unexpected token Comma (',')
+     |
+  74 |         "tension": response_tension,
+     |                                    ^
+Parse error at 75:20: unexpected token Colon (':')
+     |
+  75 |         "curiosity": 0.0,
+     |                    ^
+Parse error at 75:25: unexpected token Comma (',')
+     |
+  75 |         "curiosity": 0.0,
+     |                         ^
+Parse error at 76:18: unexpected token Colon (':')
+     |
+  76 |         "emotion": "calm",
+     |                  ^
+Parse error at 76:26: unexpected token Comma (',')
+     |
+  76 |         "emotion": "calm",
+     |                          ^
+Parse error at 77:16: unexpected token Colon (':')
+     |
+  77 |         "level": consciousness_level(0.0),
+     |                ^
+Parse error at 77:42: unexpected token Comma (',')
+     |
+  77 |         "level": consciousness_level(0.0),
+     |                                          ^
+Parse error at 89:38: unexpected token LBrace ('{')
+     |
+  89 |     append(sdk.sessions[session_id], {"role": "user", "content": prompt})
+     |                                      ^
+Parse error at 89:39: expected RParen, got StringLit ('role')
+     |
+  89 |     append(sdk.sessions[session_id], {"role": "user", "content": prompt})
+     |                                       ^
+Parse error at 89:45: unexpected token Colon (':')
+     |
+  89 |     append(sdk.sessions[session_id], {"role": "user", "content": prompt})
+     |                                             ^
+Parse error at 89:53: unexpected token Comma (',')
+     |
+  89 |     append(sdk.sessions[session_id], {"role": "user", "content": prompt})
+     |                                                     ^
+Parse error at 89:64: unexpected token Colon (':')
+     |
+  89 |     append(sdk.sessions[session_id], {"role": "user", "content": prompt})
+     |                                                                ^
+Parse error at 89:72: unexpected token RBrace ('}')
+     |
+  89 |     append(sdk.sessions[session_id], {"role": "user", "content": prompt})
+     |                                                                        ^
+Parse error at 89:73: unexpected token RParen (')')
+     |
+  89 |     append(sdk.sessions[session_id], {"role": "user", "content": prompt})
+     |                                                                         ^
+Parse error at 90:38: unexpected token LBrace ('{')
+     |
+  90 |     append(sdk.sessions[session_id], {"role": "assistant", "content": response_text})
+     |                                      ^
+Parse error at 90:39: expected RParen, got StringLit ('role')
+     |
+  90 |     append(sdk.sessions[session_id], {"role": "assistant", "content": response_text})
+     |                                       ^
+Parse error at 90:45: unexpected token Colon (':')
+     |
+  90 |     append(sdk.sessions[session_id], {"role": "assistant", "content": response_text})
+     |                                             ^
+Parse error at 90:58: unexpected token Comma (',')
+     |
+  90 |     append(sdk.sessions[session_id], {"role": "assistant", "content": response_text})
+     |                                                          ^
+Parse error at 90:69: unexpected token Colon (':')
+     |
+  90 |     append(sdk.sessions[session_id], {"role": "assistant", "content": response_text})
+     |                                                                     ^
+Parse error at 90:84: unexpected token RBrace ('}')
+     |
+  90 |     append(sdk.sessions[session_id], {"role": "assistant", "content": response_text})
+     |                                                                                    ^
+Parse error at 90:85: unexpected token RParen (')')
+     |
+  90 |     append(sdk.sessions[session_id], {"role": "assistant", "content": response_text})
+     |                                                                                     ^
+Parse error at 93:15: unexpected token Colon (':')
+     |
+  93 |         "text": response_text,
+     |               ^
+Parse error at 93:30: unexpected token Comma (',')
+     |
+  93 |         "text": response_text,
+     |                              ^
+Parse error at 94:24: unexpected token Colon (':')
+     |
+  94 |         "consciousness": consciousness,
+     |                        ^
+Parse error at 94:39: unexpected token Comma (',')
+     |
+  94 |         "consciousness": consciousness,
+     |                                       ^
+Parse error at 95:23: unexpected token Colon (':')
+     |
+  95 |         "tool_results": [],
+     |                       ^
+Parse error at 95:26: unexpected token RBracket (']')
+     |
+  95 |         "tool_results": [],
+     |                          ^
+Parse error at 95:27: expected RBracket, got Comma (',')
+     |
+  95 |         "tool_results": [],
+     |                           ^
+Parse error at 95:27: unexpected token Comma (',')
+     |
+  95 |         "tool_results": [],
+     |                           ^
+Parse error at 96:21: unexpected token Colon (':')
+     |
+  96 |         "session_id": session_id,
+     |                     ^
+Parse error at 96:33: unexpected token Comma (',')
+     |
+  96 |         "session_id": session_id,
+     |                                 ^
+Parse error at 97:16: unexpected token Colon (':')
+     |
+  97 |         "model": "anima",
+     |                ^
+Parse error at 97:25: unexpected token Comma (',')
+     |
+  97 |         "model": "anima",
+     |                         ^
+Parse error at 98:19: unexpected token Colon (':')
+     |
+  98 |         "metadata": {},
+     |                   ^
+Parse error at 98:23: unexpected token Comma (',')
+     |
+  98 |         "metadata": {},
+     |                       ^
+OK: /tmp/hexa_parse_check.58784.c
+
+
+=== BEFORE: parse error count agent_sdk = 50 ===
