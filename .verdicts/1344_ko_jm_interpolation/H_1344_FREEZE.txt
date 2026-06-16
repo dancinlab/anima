@@ -1,0 +1,87 @@
+H_1344 — ko-jm-interpolation FREEZE (pre-registered BEFORE scoring; bars NOT moved — c9/p7)
+==============================================================================================
+
+CLAIM
+  The Korean byte-LM floor is REPRESENTATION-bound: NFD jamo decomposition dropped held-out KO
+  next-symbol CE from raw-byte 2.95342 to 2.51335 nats/UTF-8-byte (H_1316 🟢, GREEN+wired H_1321).
+  Below-jamo attempts (H_1322 featural) are 🧱 (data-richness limited; opaque count-MLE is
+  info-optimal at dense 30MB). The 2.51335 floor was reached by a FIXED-CAPACITY gradient-free
+  Voronoi MITOSIS over a 3-D context (GROW_MAX=40). The genuine *language-modeling* question it
+  never asked: a non-fragmenting frozen-λ Jelinek-Mercer interpolation that MIXES jamo-level
+  n-gram orders (1..N) with a PRE-REGISTERED λ schedule — does mixing higher-order jamo context
+  (which a single mitosis partition cannot hold) dip BELOW 2.51335, or confirm the floor?
+
+  WHY NOT MITOSIS: a single Voronoi partition with GROW_MAX cells can only condition on a fixed
+  low-D feature vector; it CANNOT smoothly back off from a sparse high-order jamo context to a
+  dense low-order one. Jelinek-Mercer interpolation is the classic NON-FRAGMENTING fix: every
+  order's count-MLE is computed on the FULL stream (no count fragmentation across cells), and a
+  FROZEN λ mixes them. If higher-order jamo structure carries exploitable signal beyond what
+  the floor captures, JM-interp dips below 2.51335; if the floor is data-richness-bound, it does
+  not (honest 🧱, valid result c9).
+
+CORPUS (REAL Korean only, NO synthetic — p1-p8)
+  r2://phanes/anima-7b/web/kor/shard0000.bytes[0:30_000_000] trimmed to UTF-8 boundary.
+  KO window sha256 ASSERTED == c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca
+  (== H_1307 RUN A / H_1316 jamo baseline; byte-fair). 29,999,999 bytes.
+  R2 keys read from keychain (secret get r2.phanes.*), env-only at fetch, NEVER logged/committed (c7).
+  A sha mismatch → STOP (REAL-only, no synthetic Korean fallback).
+
+REPRESENTATION (identical jamo symbolization to H_1316 — byte-fair axis)
+  Scan UTF-8 codepoints. Hangul syllable U+AC00..U+D7A3 → one SYMBOL per NFD jamo (id 256+rank);
+  non-Hangul codepoint → one SYMBOL per raw byte (id 0..255). Each symbol carries n_bytes that
+  SUM to the source UTF-8 bytes (3-jamo→[1,1,1], 2-jamo→[2,1], 1→[3]; raw byte→1). Lossless axis.
+  CE axis = Σ(−log p(sym)) / Σ(n_bytes(sym)) over the HELD-OUT split — the SAME nats/UTF-8-byte
+  axis as the 2.51335 floor (apples-to-apples). Vocab Vj == 323 (built over the FULL 30MB window).
+
+HELD-OUT SPLIT
+  Even/odd symbol-position split at ko_stride=300 (the SAME held-out construction the floor used:
+  decimate by stride, then even index = TRAIN, odd index = TEST). All counts built on TRAIN ONLY;
+  scored on disjoint TEST. NO test symbol contributes to any order's counts.
+
+METHOD — frozen-λ Jelinek-Mercer interpolation over jamo n-gram orders (NON-FRAGMENTING)
+  For max order N (pre-registered N=5), build order-k jamo count-MLE tables (k=1..N) on TRAIN with
+  add-LAPLACE=1.0 smoothing of the UNIGRAM only (higher orders backed off purely by interpolation,
+  the classic JM recipe — NO per-order Laplace fragmentation). The model prob of the next symbol
+  given its (N−1)-jamo history h:
+      p_JM(s|h) = Σ_{k=1..N} λ_k · p_k(s | last (k−1) symbols of h)
+  where p_k is the order-k count-MLE on TRAIN, p_1 is Laplace-smoothed unigram (no zeros), and
+  Σ λ_k = 1. Counts are computed on the FULL TRAIN stream per order (NO fragmentation across cells
+  — this is the whole non-fragmenting point vs mitosis). When an order-k context is UNSEEN on
+  TRAIN, p_k falls back to the order-(k−1) estimate INSIDE the same recursion (standard JM
+  recursive back-off), so every order always returns a proper distribution.
+
+  FROZEN λ SCHEDULE (pre-registered HERE, NOT tuned to TEST — the whole anti-Goodhart point):
+    N=5, λ = [λ1,λ2,λ3,λ4,λ5] = geometric emphasis on higher order, normalized:
+      raw weights w_k = 2^(k-1)  → w = [1,2,4,8,16], λ = w / Σw = [1/31, 2/31, 4/31, 8/31, 16/31]
+      i.e. λ ≈ [0.03226, 0.06452, 0.12903, 0.25806, 0.51613].
+    This schedule is FIXED before any TEST score is computed. It is NOT optimized, NOT EM-fit,
+    NOT grid-searched on the test set. (A separate NON-GATING diagnostic may report an EM-fit
+    λ* on TRAIN-only for context, but the GATING bar c1 uses ONLY this frozen λ.)
+
+ARMS
+  A1  JM-interp (frozen λ, intact jamo stream)                         [main]
+  A0  unigram-only floor-of-the-method (λ=[1,0,0,0,0]) — sanity        [non-gating ref]
+  A2c CIRCULAR-SHIFT surrogate control: the TEST history is circularly
+      shifted by a fixed offset (decoupling each next-symbol from its
+      true jamo history) while the SAME frozen-λ JM tables score it.
+      If A2c ALSO beats 2.51335 by ≥0.05, the gain is trivial (not from
+      real jamo-order structure) → c2 FAILS.                            [EARNED control]
+
+FROZEN BARS (GREEN iff c1 ∧ c2; else honest 🧱 per c3)
+  c1  PRESENCE   A1 held-out CE (nats/UTF-8-byte) < 2.51335 − 0.01 = 2.50335
+                 (report Δ with SIGN vs the 2.51335 jamo floor regardless).
+  c2  EARNED     The circular-shift surrogate A2c does NOT also beat the floor:
+                 A2c CE ≥ 2.51335 − 0.05 = 2.46335  (i.e. A2c must NOT improve ≥0.05).
+                 Equivalently A1 must beat A2c by ≥0.05 to credit real jamo-order structure.
+  c3  FLOOR-HONEST  if c1 FALSE (A1 does NOT beat 2.51335 − 0.01) → honest 🧱 CONFIRMING the
+                 data-richness floor — a VALID result (c9). Report Δ with sign; NO bar moved.
+
+  GREEN  iff (A1 < 2.50335) AND (A2c ≥ 2.46335).
+  🧱     iff A1 ≥ 2.50335 (floor confirmed — valid, c9).
+  TRIVIAL-RED iff A1 < 2.50335 BUT A2c also < 2.46335 (gain not from jamo-order structure).
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck)
+  DIRECTIONAL numpy. Held-out next-symbol CE on a toy stride-300 byte-substrate, NOT a fluent
+  decoder; NO Korean-fluency claim. Engine-transfer to live CORE/*.hexa = follow-on
+  (a_engine_native_learning · a_verified_must_wire) — CORE UNTOUCHED here. Single λ schedule,
+  single corpus window. λ is FROZEN above; bars NOT moved after scoring.
