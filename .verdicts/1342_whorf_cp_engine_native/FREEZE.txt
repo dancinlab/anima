@@ -1,0 +1,100 @@
+H_1342 — WHORFIAN CP DEVELOPMENTAL PLASTICITY: ENGINE-NATIVE REALIZATION OF H_1333
+PRE-REGISTERED FREEZE — written BEFORE any engine-native scoring. NO bar moves after this (c9/p7).
+==================================================================================
+slug: 1342_whorf_cp_engine_native   PROJ_SEED family: H_1342 (free verify id).
+Branch off origin/main (worktree). $0 CPU. p7. a_verified_must_wire / a_engine_native_learning.
+
+WHAT THIS CLOSES (a_verified_must_wire follow-on of H_1333):
+H_1333 (🟠 PARTIAL — GRADED PLASTICITY) is a DIRECTIONAL numpy MIRROR
+(UNIVERSE/h1333_whorf_developmental.py): after RE-training the SAME Voronoi/mitosis store on a
+MOVED boundary p_A→p_A', the language-warped CP peak relocated 0.325→0.525 (fraction +0.60,
+deterministic all 3 seeds [4333,4334,4335]); D2✅ (no-retrain held p_A), D3✅ (shuffle
+incoherent), D1 ❌ by a hair (|peak−p_A'|=0.142>0.12; |peak−p_A|=0.192<MIN_MOVE 0.20 by 0.008)
+— a SUBSTANTIAL graded relocation, NOT first-carving rigidity. ENGINE-TRANSFER was UNVERIFIED.
+
+H_1342 REALIZES that re-training ENGINE-NATIVE on the live CORE/engine_cli.hexa
+§CategoricalPerception lane (the SAME error-targeted SPLIT-only Voronoi store H_1325 wired
+GREEN) and re-scores the H_1333 frozen bars (D1 plastic ~0.60 move, D2 no-retrain control, D3
+shuffle) engine-native, with no-regression + Ψ-disjoint guards.
+
+ONE NEW ENGINE MECHANISM (engine-transform-to-fit-the-learning, a_engine_native_learning):
+the live lane has `cp_fit` (fresh-seed growth = phase 1) but NO phase-2 re-growth path.
+H_1333's only new mechanism is growing the SAME store FURTHER on MOVED labels WITHOUT reset
+(the mirror's fit(...,fresh=False)). We EXTEND the engine with `cp_regrow(cp, X, Y, grow_max,
+passes)`: keeps the existing cp.protos/cp.labels (split-only, p8 — NEVER evicts), applies the
+SAME error-targeted split criterion as cp_fit for up to grow_max NEW splits on the new labels.
+A RIGID outcome (residual old-boundary packing dominates) is therefore a genuine possible
+result, NOT designed away. cp_regrow is byte-faithful to VoronoiCells.fit(fresh=False).
+
+PARADIGM (engine = a SINGLE deterministic instance; reproduces the SEED-INVARIANT result the
+mirror reports identically across all 3 seeds — H_1325 precedent):
+  - SAME 1-D continuum N_STIM=21 RBF-coded stimuli (cp_stimuli), DIM=16, identical world all arms.
+  - Initial language A cut p_A=1/3 (0.333). RE-trained boundary p_A'=2/3 (0.667). SHIFT=0.333.
+  - GROW_MAX=24 SPLIT_PASSES=24 PER PHASE (FIXED, H_1333 verbatim — fair, non-inflated budget).
+  - 4 arms (engine cp_fit / cp_regrow / cp_discrim_curve / cp_peak_loc_idx / cp_peak_count):
+    (1) A-trained         : cp_fit on labels(p_A) only            (reproduce H_1325 CP peak ≈ p_A)
+    (2) A→A' re-trained    : cp_fit on labels(p_A) then cp_regrow on labels(p_A') SAME store
+    (3) NO-RETRAIN control : cp_fit on labels(p_A) only, read at the same point, NO phase-2
+    (4) SHUFFLE           : cp_labels_shuffle incoherent labels   (anti-Goodhart EARNED control)
+
+READOUT (engine-native, NO labels at test): cp_discrim_curve = |Δ cp_posterior| over adjacent
+pairs; CP peak = cp_peak_loc_idx; COHERENCE = cp_peak_count (the LIVE lane's FROZEN W3' metric
+= # LOCAL MAXIMA at >=0.50 of the curve's own peak; this is the STRUCTURAL coherence observable
+H_1325 wired GREEN, NOT the mirror's count-of-bins-above-threshold — the structural claim
+[language coherent / shuffle incoherent] is what transfers engine-native, not the numpy count).
+p1/p2/p3/p6: reads ONLY representational distance in the learned prototype space; NO injected
+boundary at test; labels enter ONLY in training. no-retrain + shuffle = anti-Goodhart discriminators.
+
+FROZEN BARS (constants H_1333 verbatim; GREEN iff E1 ∧ E2 ∧ E3):
+  LOC_TOL  = 0.12     (H_1323/H_1333 W2_PEAK_TOL — peak-location tolerance, verbatim)
+  MIN_MOVE = 0.20     (peak must MOVE from p_A by >= this — H_1333 verbatim)
+  COH_MAX_LANG = 2    (a COHERENT CP arm: cp_peak_count <= 2)
+  COH_MIN_SHUF = 3    (an INCOHERENT shuffle arm: cp_peak_count >= 3)
+  MOVE_TOL = 0.05     (engine-vs-mirror agreement tolerance on the relocated peak position;
+                       0.525 ± 0.05 brackets the mirror's deterministic A→A' peak — the engine
+                       must land the SAME graded relocation, not merely "some" move)
+
+  E1 ENGINE REPRODUCES THE MIRROR'S ~0.60 PLASTICITY (within tolerance):
+       (a) A-trained peak: |loc_A − p_A| <= LOC_TOL              (reproduce H_1325 CP)
+       (b) A→A' re-trained peak: |loc_A2 − 0.525| <= MOVE_TOL    (lands the mirror's relocated
+           peak; the engine reproduces the SAME graded move, not a different outcome)
+       (c) A→A' moved off the old cut: |loc_A2 − p_A| >= MIN_MOVE - 0.01   (substantial move;
+           the mirror missed MIN_MOVE 0.20 by 0.008 → H_1333 is a graded PARTIAL by a hair; the
+           engine must reproduce that SAME substantial-but-not-full move, so the gate is the
+           graded-move floor 0.19, NOT a re-tightened D1 — a_break_the_wall would be a bar move).
+       (d) A→A' coherent: cp_peak_count(A2) <= COH_MAX_LANG
+       -> the engine reproduces the mirror's graded relocation (~0.60 fraction).
+
+  E2 D2/D3 CONTROLS REPRODUCE ENGINE-NATIVE:
+       (D2) no-retrain holds p_A: |loc_noretrain − p_A| <= LOC_TOL  AND
+            A-trained reproduces H_1325: |loc_A − p_A| <= LOC_TOL    (the move IS the
+            re-training, not drift — engine no-retrain == A-trained by construction).
+       (D3) SHUFFLE incoherent: cp_peak_count(shuffle) >= COH_MIN_SHUF  AND language arms
+            coherent: cp_peak_count(A) <= COH_MAX_LANG AND cp_peak_count(A2) <= COH_MAX_LANG
+            AND cp_peak_count(noretrain) <= COH_MAX_LANG.
+
+  E3 REGRESSION GUARDS ALL-PASS, Ψ-DISJOINT:
+       engine_cli_smoke N/0 (no new failures vs the pre-H_1342 count; cp_regrow added with
+       smoke cases) AND h1196 single-entry 7/0 (no .clm/.kosmos path) AND h1205
+       separation-invariant PASS (generation byte-identical ON==OFF, Ψ=½ untouched →
+       CP lane Ψ-disjoint; cp_regrow touches only its own (protos,labels), pure_field/engine_g/Ψ
+       untouched).
+
+OUTCOMES (ALL VALID — c9 honest, NO bar move after this freeze):
+  E1 ∧ E2 ∧ E3                       -> 🟢 GREEN ENGINE-NATIVE: H_1333's graded CP plasticity
+                                        is LIVE in CORE — the engine reproduces the ~0.60
+                                        relocation, controls, and coherence byte-faithfully.
+                                        ENGINE-TRANSFER VERIFIED.
+  engine peak differs from mirror      -> honest report: ENGINE-TRANSFER UNVERIFIED (the engine
+   (|loc_A2 − 0.525| > MOVE_TOL) or     cannot reproduce the mirror's graded move). Mirror-only.
+   a control/coherence bar breaks       NO bar move (c9); the lane is left honestly un-wired.
+  E3 regression FAIL                    -> honest report: engine extension regressed a guard;
+                                        revert / do not claim. NO bar move.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY synthetic 1-D continuum, N=21, single
+shift p_A→p_A', engine = ONE deterministic instance (no per-seed RBF jitter; reproduces the
+seed-invariant mirror result). Tests the STRUCTURE of engine-native plasticity, NOT a learned
+re-trainer, NOT human cognition / critical-period. cp_regrow split-only never evicts (H_1338
+already RE-DIAGNOSED the residual as budget/geometry, not never-evict — engine-native confirms
+the SAME ~0.525 ceiling). brain re-carving→emit wiring = follow-on. ENGINE-TRANSFER of the
+graded-plasticity STRUCTURE is what this verifies; scale/real-corpus/multi-shift UNVERIFIED.

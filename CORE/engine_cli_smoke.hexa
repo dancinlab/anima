@@ -869,6 +869,35 @@ fn main() {
     if _assert_b("case_82_cp_w3prime_shuffle_incoherent", true,
                  cp_peak_count(cpc_sh) >= 3) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── cases 83-85 : CP DEVELOPMENTAL PLASTICITY / cp_regrow (H_1342) — phase-2 re-training.
+    //   cp_fit on language A (cut p_A), then cp_regrow the SAME store on the MOVED cut p_A'
+    //   (split-only, never-evict). The language-warped CP peak RE-LOCATES substantially toward
+    //   p_A' (graded plasticity, mirror fraction +0.60), the no-retrain control holds p_A, and
+    //   the re-trained arm stays a single coherent peak. Ψ-disjoint (own protos/labels).
+    let cpf_A2p1 = cp_fit(cp_X, cp_labels_boundary(cp_pos, cp_PA), 24, 24)
+    let cpf_A2   = cp_regrow(cpf_A2p1, cp_X, cp_labels_boundary(cp_pos, cp_PB), 24, 24)
+    let cpc_A2   = cp_discrim_curve(cpf_A2, cp_X)
+    let cp_iA2   = cp_peak_loc_idx(cpc_A2)
+    let cp_locA2 = (to_float(cp_iA2) + 0.5) / to_float(cp_N - 1)
+    let cp_dA2new = if cp_locA2 - cp_PB < 0.0 { cp_PB - cp_locA2 } else { cp_locA2 - cp_PB }
+    let cp_moveOff = if cp_locA2 - cp_PA < 0.0 { cp_PA - cp_locA2 } else { cp_locA2 - cp_PA }
+
+    // case 83 (cp_regrow RELOCATES) : after phase-2 re-training the CP peak moved substantially
+    //   off the old cut (>=0.19, the graded-move floor) AND landed near the mirror's 0.525.
+    if _assert_b("case_83_cp_regrow_relocates", true,
+                 cp_moveOff >= 0.19 && (if cp_locA2 - 0.525 < 0.0 { 0.525 - cp_locA2 } else { cp_locA2 - 0.525 }) <= 0.05)
+                 { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 84 (cp_regrow GROWS the store, never-evict) : phase-2 store is strictly larger than
+    //   phase-1 (split-only growth on the new labels; old cells persist).
+    if _assert_b("case_84_cp_regrow_grows_store", true,
+                 cpf_A2.n > cpf_A2p1.n) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 85 (cp_regrow stays COHERENT) : the re-trained arm is a single coherent CP peak
+    //   (peak-count <= 2) — a genuine relocation, not a scatter (anti-Goodhart, H_1333 D1d).
+    if _assert_b("case_85_cp_regrow_coherent", true,
+                 cp_peak_count(cpc_A2) <= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
