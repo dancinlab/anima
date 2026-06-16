@@ -1,0 +1,45 @@
+H_1360 R1 -- WHORFIAN CP RELOCATION: GEOMETRIC RE-PACK (move the cells)
+======================================================================================
+R2 of H_1340/H_1352: at FIXED LOW budget (DIM=16/GROW2=24), does physically DRIFTING
+              the residual phase-1 cells toward p_A' recover a COHERENT relocation?
+N_stim=81 DIM=16 p_A=0.333 p_A'=0.667 phase1=24 phase2=24 eta=0.15 seeds=[4333, 4334, 4335]  (split-only never-evict + geo re-pack)
+
+  per-seed (NO-REPACK eta=0.0 / RE-PACK eta=0.15 / NO-RETRAIN / SHUFFLE+repack):
+    seed 4333: NO-REPACK peak=0.519 pc=4 | RE-PACK peak=0.669 pc=1 | no-retrain peak=0.331 | shuffle pc=21  cells(p1,p2)=4,7
+    seed 4334: NO-REPACK peak=0.531 pc=5 | RE-PACK peak=0.669 pc=1 | no-retrain peak=0.331 | shuffle pc=16  cells(p1,p2)=4,7
+    seed 4335: NO-REPACK peak=0.519 pc=4 | RE-PACK peak=0.669 pc=1 | no-retrain peak=0.331 | shuffle pc=17  cells(p1,p2)=4,7
+
+  NO-REPACK  (anchor): peak 0.523 |peak-p_A'| 0.144 frac +0.57 peak-count 4.3
+  RE-PACK    (e=0.15): peak 0.669 |peak-p_A'| 0.002 frac +1.01 peak-count 1.0
+  NO-RETRAIN: mean |peak-p_A| 0.002  |  SHUFFLE+repack: peak-count 18.0
+
+  [NON-GATING diagnostic] RE-PACK-LADDER (gate is scored ONLY at eta=0.15):
+     eta=0.10: |peak-p_A'| mean=0.002  peak-count mean=1.0
+     eta=0.15: |peak-p_A'| mean=0.002  peak-count mean=1.0  <-- FROZEN GATE
+     eta=0.25: |peak-p_A'| mean=0.002  peak-count mean=1.0
+
+  c1 RELOCATES (re-pack |peak-p_A'|<=0.12 all 3 seeds):
+     per-seed = [0.002, 0.002, 0.002]  -> c1 PASS
+  c2 COHERENT (re-pack mean peak-count<=2; H_1340 4.3->7.0, H_1352 15.7):
+     per-seed pc = [1, 1, 1], mean 1.0  -> c2 PASS
+  c3 EARNED (3a no-retrain holds p_A |peak-p_A|<=0.12; 3b shuffle pc>=3):
+     3a no-retrain |peak-p_A| = [0.002, 0.002, 0.002] -> PASS
+     3b shuffle peak-count = [21, 16, 17], mean 18.0 -> PASS
+     -> c3 PASS
+  c4 vs-PRIOR (4a pc<=2 < H_1340 4.3/H_1352 15.7; 4b |peak-p_A'|<=0.081 best-H1340):
+     4a re-pack peak-count mean 1.0 -> PASS
+     4b re-pack |peak-p_A'| mean 0.002 -> PASS
+     -> c4 PASS
+
+  [anchor sanity] NO-REPACK reproduces H_1340/H_1352 partial (frac +0.57 in [0.40,0.75] AND |peak-p_A'| 0.144>0.12): OK
+======================================================================================
+VERDICT: GREEN (MIRROR, DIRECTIONAL) -- GEOMETRIC RE-PACK RECOVERS A COHERENT FULL
+  RELOCATION. At FIXED LOW budget (DIM=16/GROW2=24, eta=0.15),
+  physically MOVING the residual phase-1 cells toward p_A'=0.667 lands the CP
+  peak AT p_A' (|peak-p_A'|=0.002<=0.12) AND restores coherence (peak-count 1.0<=2) --
+  the gate H_1340 (budget, pc>=4.3) AND H_1352 (decay, pc=15.7) BOTH FAILED.
+  Carving relocation is MOVE-THE-CELLS: the residual was a GEOMETRIC-PLACEMENT
+  problem all along, NOT a weight (decay) or count (budget) problem. NO-RETRAIN
+  held p_A, SHUFFLE collapsed (moving cells does not fabricate a peak from noise).
+  a_break_the_wall: the H_1340/H_1352 walls were the WRONG MECHANISM, not a true
+  ceiling. ENGINE-TRANSFER UNVERIFIED. TOY synthetic, 3 seeds, one frozen eta.
