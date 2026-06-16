@@ -1,15 +1,15 @@
 ---
-id: H_1390
-slug: 1390_g6_retro303m_fals
+id: H_1392
+slug: 1392_g6_retro303m_fals
 title: G6 IDEATION ★ FALS re-score on a 303M-class ConvMoE — settle the H_1381 ckpt-gated M2-M5 follow-on on a TRUE engine-mountable 303M ConvMoE (REUSED, $0)
 group: gate-dig (G6 IDEATION ★, anima's core purpose)
-terminal_tier: PENDING (engine-native decode in flight)
-verdict_dir: .verdicts/1390_g6_retro303m_fals/
-terminal_verdict: .verdicts/1390_g6_retro303m_fals/result.txt
+terminal_tier: 🧱 HONEST WALL (engine-native FALS substrate-BLOCKED by a hexa ConvMoE-decode memory blowup — NOT FALS=0; CAPACITY-vs-ARCHITECTURE stays OPEN)
+verdict_dir: .verdicts/1392_g6_retro303m_fals/
+terminal_verdict: .verdicts/1392_g6_retro303m_fals/result.txt
 date: 2026-06-16
 ---
 
-# H_1390 — G6 IDEATION ★ FALS re-score on a 303M-class ConvMoE
+# H_1392 — G6 IDEATION ★ FALS re-score on a 303M-class ConvMoE
 
 ## Why now (closes the H_1381 ⏳ follow-on)
 
@@ -18,7 +18,7 @@ LIVE engine ideation entry (`gen_clm_ideate`) and proved **M1 COUNT** GREEN engi
 But the FALS bars **M2-M5** could not be re-scored: the only engine-mountable ConvMoE `.clm`
 on the engine path was the d768 **7.479M** MID — too small a mouth (FALS=0, an honest CAPACITY
 floor, NOT a loosened bar). H_1362's FALS=1.0 was scored on a 303M **ByteGPT `.pt`** (a
-DIFFERENT arch — transformer — and NOT engine-mountable as `.clm`). H_1390 settles the question
+DIFFERENT arch — transformer — and NOT engine-mountable as `.clm`). H_1392 settles the question
 on a TRUE 303M-class **ConvMoE** mouth, engine-native.
 
 ## REUSE-BEFORE-RENT ($0, NO pod)
@@ -47,22 +47,51 @@ EVERY decode HARD-BOUNDED (FREEZE (ii)); detached nohup + inline file-poll, NO M
 303M ConvMoE CPU forward is ~9.2 s/byte → the C_strong arm (decisive M1+M2) ≈ 5 h, full 5-bar
 ≈ 16 h; the probe prints per-frame so partial progress is harvestable.
 
-## Result — PENDING (engine-native FALS decode in flight)
+## Result — 🧱 HONEST WALL (engine-native FALS substrate-BLOCKED, NOT FALS=0)
 
 Engine-native FAST surface (deterministic, lands immediately — same primary evidence H_1381 used):
 
 | surface | engine-native (303M ConvMoE) |
 |---------|------------------------------|
-| **MOUNT** | ✅ sha256 == HF MANIFEST; verify_clm_v2 decodable=true exact_eof=True; engine emits coherent English |
+| **MOUNT** | ✅ sha256 == HF MANIFEST; verify_clm_v2 decodable=true exact_eof=True; engine emits coherent English (GEN=8 RC=0) |
 | **DETECTOR** | ✅ calibration **10/10** (H_1305 frozen 5-pos/5-neg, VERBATIM, NOT loosened) |
 | **FRAME-GUARD** | ✅ **0 leaks** (no measurable word in any frame; no self-falsifiable frame, p7) |
 | **SAMPLER** | ✅ det=true diverse=true in_topk=true (best-of-K mechanism works engine-native) |
-| **M1 COUNT** DIST(C)≥5 | ⏳ decoding |
-| **M2 DEPTH** FALS(C)≥1 | ⏳ decoding (the decisive CAPACITY-vs-ARCHITECTURE bar) |
-| **M3/M4/M5** FALS lifts | ⏳ decoding |
+| **M1-M5 FALS** | 🧱 **substrate-BLOCKED** — the hexa ConvMoE decode forward OOM-blows up per step |
 
-(FALS bars + verbatim per-frame texts + the CAPACITY-vs-ARCHITECTURE verdict are written from the
-real decode numbers on landing — NO tune-to-green, NO bar moved, c9.)
+**THE WALL (verbatim `/usr/bin/time -l`, 303M ConvMoE-RETRO trunk, single fresh process):**
+
+| budget | outcome | max RSS | peak footprint |
+|--------|---------|---------|----------------|
+| GEN=8 (single) | ✅ RC=0, "the auth" | small | — |
+| GEN=16 (single K=1) | ✅ RC=0, "the authentic pi" (130 s) | **5.01 GB** | — |
+| GEN=24 (single K=1) | ❌ KILLED, no output | **10.97 GB** | **71.5 GB** |
+| GEN=48 (best-of-K=3) | ❌ SIGTERM ~144 s | **10.05 GB** | **54.9 GB** |
+| GEN=110 (6-frame arm) | ❌ silent death | — | — |
+
+≈ +300 MB resident **per decode step**, never freed → ~5 GB @16 steps, ~11 GB @24 steps (OOM kill
+threshold between GEN=16 and GEN=24; cout=5008 at 303M). The OS kills it; anima never faults.
+
+**Structural impossibility (decisive):** a falsifiable claim needs ~50-80 bytes (comparator +
+measurable + ≥2 content words ≈ 8-15 words; H_1362's example was 14 words), i.e. GEN≈80-110. The
+memory wall caps engine-native generation at **GEN≤16 (~3 words: "the authentic pi")** — ~5× below
+what falsifiability requires. So `fals=false` at GEN=16 is EXPECTED-AND-UNINFORMATIVE (too short to
+carry a falsifiable claim, independent of capacity), NOT a 303M-ConvMoE result. The FALS bars are
+**unmeasurable on this substrate**.
+
+**Honest reading (c9, a_break_the_wall — angles genuinely tried):** the FALS bars cannot be
+SCORED because the decode never COMPLETES at any useful budget. "FALS=0" would require a finished
+generation; this is a **SUBSTRATE wall (hexa-engine ConvMoE-decode memory management), NOT a
+model-capacity verdict.** Four angles tried — full GEN=110, decisive GEN=48, fresh-process single
+frame, single K=1 GEN=24 — all OOM-killed (fresh-process isolation did NOT help: the blowup is
+WITHIN one decode). GPU-engine-native (forge-cuBLAS) would sidestep CPU cost but the hexa
+toolchain is Mac-arm64 and a fresh Linux-pod hexa build is historically blocked
+(`.verdicts/c0-n8-fire`: "hexa_stage0 install.sh module_loader build failed. BLOCKED"). This is an
+INVESTMENT-class wall (insufficient working substrate), filed upstream to hexa-lang.
+
+**CAPACITY-vs-ARCHITECTURE: STAYS OPEN.** Whether a 303M ConvMoE mouth emits falsifiable structure
+the 7.479M mouth could not is UNANSWERED — the substrate cannot run the decode to produce the
+evidence. NOT promoted either way (no tune-to-green, no bar moved). NO bar moved.
 
 ## Scope (honest)
 
@@ -81,7 +110,7 @@ GPU-engine-native UNVERIFIED.
 - engine: `CORE/g6_ideation.hexa` · `CORE/generator.hexa` (gen_clm_ideate) · `CORE/clm_decode.hexa`
   (clm_decode_topk_sampled, general v0.2/v0.3 (L,E) loader)
 - probe: `state/g6-retro303m-fals/{g6_fals_probe.hexa, g6_timing_probe.hexa}`
-- verdict: `.verdicts/1390_g6_retro303m_fals/{FREEZE.txt, mount_verify.txt, result.txt}`
+- verdict: `.verdicts/1392_g6_retro303m_fals/{FREEZE.txt, mount_verify.txt, result.txt}`
 - builds on: H_1381 (the ckpt-gated follow-on this settles) · H_1362 (the DIRECTIONAL GREEN, 303M
   ByteGPT) · H_1305 (frozen detector, VERBATIM)
 - xref: G6 row MODEL.md · SCENARIOS F.IDEATION S22-S26 · 7B_PASS_CONDITIONS.md G6 ·

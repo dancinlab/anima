@@ -1,0 +1,23 @@
+=== H_1392 engine-native decode wall — raw /usr/bin/time -l evidence (verbatim) ===
+
+--- GEN=8 (timing probe, completes) ---
+DECODE_OK text="the auth"
+GEN=8 WALL_MS=79870 MS_PER_BYTE=9983
+
+--- GEN=16 (single K=1, completes, 5.0GB) ---
+SINGLE gen=16 fals=false kwr=1.0 ms=130213
+TEXT :: the authentic pi
+          5005361152  maximum resident set size
+RC=0
+
+--- GEN=24 (single K=1, OOM-killed, 11GB/71GB) ---
+time: command terminated abnormally
+         10970087424  maximum resident set size
+         71511984696  peak memory footprint
+RC=1
+
+--- GEN=48 (best-of-K=3 one frame, SIGTERM, 10GB/55GB) ---
+time: command terminated abnormally
+         10050535424  maximum resident set size
+         54961593296  peak memory footprint
+RC=143
