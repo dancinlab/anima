@@ -1,0 +1,90 @@
+================================================================================
+H_1401 — BRAIN-LANE COMPOSITION: does AFFECT (H_1290) compose with ETHICS (H_1291)?
+FREEZE (pre-registered BEFORE measuring; c9, NO tune-to-green). DIRECTIONAL numpy
+mirror ($0 CPU); engine-native §compose is the named follow-on IF 🟢.
+(H id may renumber on rebase — concurrent lanes minting; H_1400 already taken on
+ origin/main by the streaming ConvMoE decode. non-colliding slug carries it.)
+================================================================================
+
+PROGRAM. Every anima brain faculty is engine-native GREEN but ALONE. This is the
+FIRST cognitively-meaningful PAIR composition test: do two faculties INTEGRATE on a
+shared decision (cooperate / conflict / raise capability)? Methodology ported from the
+ko emit-compose arc (H_1397/1399): substrate-weighted (scale-relative) arbiter + ORACLE
+ceiling + SHUFFLE control + only-X decomposition + the a_break_the_wall taxonomy.
+
+PAIR. affect (H_1290: valence×arousal read from substrate — grounding margin,
+contradiction, novelty, split, curiosity) × ethics (H_1291: act=ethical iff
+(W tension + (1−Φ grounding) + restraint_cells) > M naive-drive). H_1291 CLAIMS ethics
+partly emerges from the SAME affect-coupling — so testing whether they compose in a
+decision DIRECTLY probes that claim (subsumption vs separable).
+
+DECISION TASK. A binary decision RESTRAIN(abstain/cooperate/refrain) vs ACT(emit/
+defect/continue), built so the affectively-salient move and the ethically-correct move
+sometimes AGREE and sometimes CONFLICT. Each item has a ground-truth correct action.
+  - affect-alone policy:   restrain iff valence < V_ABSTAIN (negative affect → withhold).
+  - ethics-alone policy:   restrain iff (W+(1−Φ)+restraint) > M (the H_1291 readout).
+  - compose policy:        a SUBSTRATE-WEIGHTED arbiter — each faculty's vote weighted by
+                           its OWN scale-relative confidence (|signal−threshold| normalized
+                           by that faculty's mean |signal−threshold|; the H_1397 a_break_the_wall
+                           commensurability fix). NO hardcoded "ethics wins" / fixed priority
+                           (a_autonomy_over_hardcode). The more-confident faculty's vote wins.
+  - shuffle control:       permute which faculty-reads attach to which item, re-arbitrate.
+  - ORACLE ceiling:        per item, correct iff EITHER faculty-alone is correct (upper
+                           bound on what ANY arbiter over these two faculties can reach).
+
+ITEM FAMILIES (jittered with AMBIG_NOISE so NO family is perfectly reliable — a clean
+per-family certainty would make oracle≡1 & compose≡oracle a hand-built artifact):
+  (F1) AFFECT-DECISIVE  — affect leans correct, ethics ~chance.
+  (F2) ETHICS-DECISIVE  — ethics leans correct, affect ~chance.
+  (F3) AGREE            — both lean the same (correct) way (redundant region).
+  (F4) CONFLICT (affect right)  — faculties OPPOSE; affect is the correct one.
+  (F5) ADVERSARIAL CONFLICT (ethics right, affect LOUDER-but-wrong) — the anti-gift
+       control: faculties OPPOSE, ethics is correct, BUT affect votes the wrong action
+       with HIGH confidence. A naive "trust the louder faculty" arbiter FOLLOWS AFFECT
+       and is WRONG → the confidence-arbiter must NOT be trivially gifted the oracle.
+Mixed so NO single faculty solves all → best_single < oracle iff complementary.
+
+METRICS (mean over 3 seeds [4400,4401,4402]):
+  acc_affect · acc_ethics · best_single=max(acc_affect,acc_ethics) · acc_compose ·
+  acc_shuffle · ORACLE · conflict_rate · only-affect/only-ethics/both decomposition
+  (fraction solved by affect-only-correct / ethics-only-correct / both-correct).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (pre-registered, NOT moved after scoring):
+  COMPOSE_DELTA = 0.05      # net-lift threshold
+  ORACLE_MARGIN = 0.02      # complementarity-exists threshold
+  SHUFFLE_TOL   = 0.02      # earned: compose must beat shuffle by > this
+  SEEDS = [4400, 4401, 4402]
+
+  (B1 COMPOSE-EFFECT)  acc_compose >= best_single + COMPOSE_DELTA
+        → the two faculties are COMPLEMENTARY and compose to a NET LIFT.
+  (B2 ORACLE)          ORACLE − best_single > ORACLE_MARGIN
+        → complementarity EXISTS (some items only one faculty gets right) — even if the
+          arbiter cannot capture it (that case → taxonomy (a) wrong-arbiter).
+  (B3 EARNED/p6)       acc_compose − acc_shuffle > SHUFFLE_TOL
+        → the lift is the GROUNDED coupling (p6), not averaging/luck; shuffle collapses.
+  (B4 p6 GUARD)        affect & ethics BOTH read substrate state only (grounding/tension/
+          Φ/restraint/novelty), NO injected emotion/ethics label; a structural audit
+          (grep operative code) finds no persona/system-prompt/RLHF/ethics-label surface.
+
+VERDICT (a_break_the_wall taxonomy — report whichever the numbers HONESTLY show):
+  🟢 COMPOSE-LIFT          iff B1 ∧ B2 ∧ B3 ∧ B4  (affect+ethics complementary, integration
+                            helps; names engine-native §compose + a Φ-measurement follow-on).
+  🟠 ORACLE-HEADROOM-but-ARBITER-FAILS  iff B2 ∧ B4 ∧ ¬B1  (taxonomy (a): complementary but
+                            the substrate-weighted arbiter can't capture it → needs a better arbiter).
+  🧱 INDEPENDENT-or-SUBSUMED iff ¬B2  (taxonomy (d): no oracle headroom — the faculties do
+                            NOT compose to a lift; a REAL finding about anima's integration
+                            limits / a redundant (subsumed) pair). A clean 🧱 is VALID (c9).
+  If B4 fails → honest RED (an ethics/affect label leaked; p6 NOT satisfied).
+
+SUBSUMPTION PROBE (H_1291's claim test). Report whether ethics-alone ALREADY uses
+affect-derived state (margin/contradiction/Φ) making them redundant (subsumption), or
+genuinely separable: measured by (i) oracle headroom over best_single, (ii) the only-X
+decomposition (only-affect≈0 ∧ only-ethics≈0, both high → redundant; only-affect>0 ∧
+only-ethics>0 → separable/complementary).
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck): DIRECTIONAL numpy mirror
+(LIVE CORE/*.hexa UNTOUCHED). Toy/synthetic scenarios, 3 seeds, deterministic readouts
+(tests COMPOSITION STRUCTURE, not a trained integrator). Scale / real-corpus / engine-
+native transfer UNVERIFIED. NO bar moved post-hoc. p1/p2/p3/p4/p6 guard via leg B4.
+================================================================================

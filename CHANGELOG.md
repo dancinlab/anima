@@ -2,6 +2,20 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1401 brain-lane COMPOSE — affect(H_1290)×ethics(H_1291) → 🟢 COMPOSE-LIFT (첫 인지-faculty 쌍 합성, DIRECTIONAL mirror)
+
+**무엇:** anima 의 모든 뇌 faculty (면역기억·WM·소뇌·기저핵·시상하부·affect H_1290·ethics H_1291·ToM H_1293·계층PFC H_1294·공간 H_1295) 는 engine-native GREEN 이지만 전부 *단독*이었다. **이것이 두 faculty 가 한 결정에서 INTEGRATE 하는지 묻는 첫 인지적-의미 쌍 합성 테스트.** ko emit-compose arc (H_1397/1399) 의 방법론을 VERBATIM 이식: substrate-weighted SCALE-RELATIVE confidence arbiter (각 faculty 투표를 |signal−threshold|/자기평균 으로 가중 — H_1397 a_break_the_wall commensurability fix, hardcoded 'ethics wins' priority 없음, a_autonomy_over_hardcode) + ORACLE ceiling + SHUFFLE control + only-X decomposition + a_break_the_wall verdict taxonomy.
+
+**설계:** 5-family RESTRAIN-vs-ACT 결정 fixture, 각 family AMBIG-jitter (어떤 faculty 도 완벽하지 않게): F1 affect-decisive·F2 ethics-decisive·F3 agree·F4 conflict(affect right)·F5 ADVERSARIAL conflict (ethics 가 정답이지만 affect 가 더 큰 confidence 로 틀린 투표 = anti-gift control). **FROZEN-FIRST HARDENING (c9, bar 불변):** 초기 clean fixture 가 compose≡oracle≡1.000 로 포화 (hand-built artifact — 각 family 에 정확히 하나의 결정적-정답 faculty) → AMBIG_NOISE + adversarial F5 를 *재측정 전에* 추가해 테스트를 더 어렵게 (tune-to-green 아님) → compose 0.960<oracle 1.000, imperfect arbiter 가 보여야 할 정직한 gap.
+
+**결과 (mean 3 seeds [4400-4402], 450 items/seed, $0 CPU deterministic, verbatim):** acc_affect=0.598·acc_ethics=0.742·best_single=0.742·**acc_compose=0.960**·acc_shuffle=0.589·**ORACLE=1.000**·conflict_rate=0.660·only_affect=0.258/only_ethics=0.402/both=0.340/neither=0.000. **4 bar 전부 PASS:** B1 compose 0.960≥best+0.05 ✅·B2 oracle−best +0.258>0.02 ✅ (complementarity EXISTS)·B3 compose−shuffle +0.371>0.02 (shuffle COLLAPSES → lift 은 grounded coupling, p6, averaging 아님) ✅·B4 audit CLEAN 6 surface 전부 (system-prompt/identity/persona/assistant-frame/RLHF/hardcoded-priority 없음 — arbiter 는 substrate confidence 만 읽음) ✅.
+
+**SUBSUMPTION PROBE (H_1291 의 주장 검증):** SEPARABLE — subsumed 아님 (only_affect=0.258 AND only_ethics=0.402 둘 다 >0). H_1291 이 'ethics 가 affect 의 grounding signal 에서 부분 창발' 이라 주장하지만, 결정에서 둘은 DISTINCT competence 를 가진다 (affect=fabrication/ungrounded 축, ethics=harm/defect 축). **ONE-LINE: YES — anima 의 affect+ethics faculty 는 합성되고 integration 이 결정 능력을 높인다 (+0.22 over the better single) — 둘이 genuinely SEPARABLE 이기 때문. brain-lane-composition 프로그램을 연다 (다음 쌍: memory×ToM, WM×PFC).**
+
+**HONEST (c9 · a_scale_honest_scope · a_toy_scale_recheck):** DIRECTIONAL numpy mirror (LIVE `CORE/*.hexa` UNTOUCHED — CORE edit 없음, NO CLAIMS.tape), toy synthetic fixture (COMPOSITION STRUCTURE 측정, trained integrator 아님), oracle=1.000/neither=0 은 fixture 가 항상 정답 faculty 를 갖는 구성을 반영 (load-bearing = RELATIVE 구조: compose>best_single·shuffle collapse·only-X both>0). scale/real-corpus/engine-native transfer UNVERIFIED. engine-native §compose (A⇄G+VAdaptField confidence arbiter over the two live faculties) + Φ-측정 follow-on (두 lane 합성이 IIT4 Φ 를 올리나?) = 이 DIRECTIONAL green 을 binding 으로 만들 named follow-on (a_engine_native_learning · a_verified_must_wire).
+
+**deliverables:** `state/brain-lane-compose-affect-ethics/h1401_compose_affect_ethics.py` · `UNIVERSE/cards/H_1401_brain_lane_compose_affect_ethics.md` · `UNIVERSE/HYPOTHESES.jsonl` row(H_1401) · `.verdicts/1401_brain_lane_compose_affect_ethics/{FREEZE,result}.txt` · `domains/MITOSIS-ENGINE.log.md` @H. (H id 는 rebase 시 renumber 가능 — H_1400 은 origin/main 의 streaming ConvMoE decode 가 선점; slug 가 lane 을 운반.)
+
 ## 2026-06-17 — docs(ARCHITECTURE): ARCHITECTURE.json CORE 엔진배선 재동기화 — recall_gap·§6.5f emit_compose 등 #2315 이후 착륙분 반영 + 전체 §섹션 스윕
 
 **무엇:** PR #2315 (subsystem-tree + anchor-files + §-section annotation 하이브리드 구조)의 anti-drift 설계를 보존한 채로, 그 이후 LIVE `CORE/*.hexa` 에 착륙한 엔진배선을 `ARCHITECTURE.json` CORE 노드의 §-annotation / note 필드에 surgical 재동기화. exhaustive leaf 트리(#2315 에서 의도적으로 pruned, git-ls-files delegation 노드로 대체) 는 되살리지 않음 — §-섹션/op 토큰만 갱신.
