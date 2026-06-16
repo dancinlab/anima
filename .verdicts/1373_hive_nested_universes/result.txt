@@ -1,0 +1,63 @@
+H_1373 hive-nested-universes: NESTED universes-within-universes — faithful-IIT4 collective-Φ
+N_TOT=6 = 2 clusters of 3  c0={0,1,2} c1={3,4,5}  dim=8 ticks=64 seeds=[1317, 1318, 1319]
+SHARE_W(intra)=0.6 TOP_W(inter)=1.0 OVERLAP_W=0.6  faithful IIT4 Φ (exact MIP-EI, n<=8); MARGIN=0.02 TOL=0.02
+================================================================================================
+  seed 1317        FLOOR: Φ=1.27373   O-info=-0.4012
+  seed 1317       NESTED: Φ=1.67872   O-info=-0.0627
+  seed 1317  CENTRALIZED: Φ=2.40086   O-info=-0.1387
+  seed 1317      SHUFFLE: Φ=1.94625   O-info=-0.1099
+  seed 1317         FLAT: Φ=1.70044   O-info=-0.0896
+------------------------------------------------------------------------------------------------
+  seed 1318        FLOOR: Φ=1.36292   O-info=-0.4955
+  seed 1318       NESTED: Φ=1.92378   O-info=-0.0504
+  seed 1318  CENTRALIZED: Φ=2.63464   O-info=-0.3703
+  seed 1318      SHUFFLE: Φ=1.92378   O-info=-0.0504
+  seed 1318         FLAT: Φ=1.9895   O-info=-0.1648
+------------------------------------------------------------------------------------------------
+  seed 1319        FLOOR: Φ=1.28195   O-info=-0.5156
+  seed 1319       NESTED: Φ=1.38299   O-info=-0.2769
+  seed 1319  CENTRALIZED: Φ=1.86074   O-info=-0.1848
+  seed 1319      SHUFFLE: Φ=1.44453   O-info=-0.3197
+  seed 1319         FLAT: Φ=1.42483   O-info=-0.1325
+------------------------------------------------------------------------------------------------
+================================================================================================
+R1 LIFT              (Φ(NESTED) − Φ(FLOOR) >= 0.02 EVERY seed): PASS
+     seed 1317: Φ_nested=1.67872 Φ_floor=1.27373 lift=0.405  PASS
+     seed 1318: Φ_nested=1.92378 Φ_floor=1.36292 lift=0.5609  PASS
+     seed 1319: Φ_nested=1.38299 Φ_floor=1.28195 lift=0.101  PASS
+R2 BEATS-CENTRALIZED (Φ(NESTED) − Φ(CENTRALIZED) > 0 on >=2/3): FAIL  (0/3)
+     seed 1317: Φ_nested=1.67872 Φ_central=2.40086 gap=-0.7221  FAIL
+     seed 1318: Φ_nested=1.92378 Φ_central=2.63464 gap=-0.7109  FAIL
+     seed 1319: Φ_nested=1.38299 Φ_central=1.86074 gap=-0.4778  FAIL
+R3 EARNED            (Φ(SHUFFLE) <= max(floor,central)+0.02 EVERY seed): PASS
+     seed 1317: Φ_shuffle=1.94625 max(floor,central)=2.4009  PASS
+     seed 1318: Φ_shuffle=1.92378 max(floor,central)=2.6346  PASS
+     seed 1319: Φ_shuffle=1.44453 max(floor,central)=1.8607  PASS
+R4 DISTINCT-FROM-FLAT(Φ(NESTED) − Φ(FLAT) > 0 on >=2/3): FAIL  (0/3)
+     seed 1317: Φ_nested=1.67872 Φ_flat=1.70044 gap=-0.0217  FAIL
+     seed 1318: Φ_nested=1.92378 Φ_flat=1.9895 gap=-0.0657  FAIL
+     seed 1319: Φ_nested=1.38299 Φ_flat=1.42483 gap=-0.0418  FAIL
+
+O-INFO per arm (O<0=synergy O>0=redundancy):
+     seed 1317: FLOOR=-0.4012 NESTED=-0.0627 CENTRALIZED=-0.1387 SHUFFLE=-0.1099 FLAT=-0.0896
+     seed 1318: FLOOR=-0.4955 NESTED=-0.0504 CENTRALIZED=-0.3703 SHUFFLE=-0.0504 FLAT=-0.1648
+     seed 1319: FLOOR=-0.5156 NESTED=-0.2769 CENTRALIZED=-0.1848 SHUFFLE=-0.3197 FLAT=-0.1325
+
+VERDICT: NESTED_BELOW_CENTRALIZED  (R1 3/3, R2 0/3, R3 3/3, R4 0/3)
+
+RESULT_JSON={"id": "H_1373", "slug": "hive-nested-universes", "verdict": "NESTED_BELOW_CENTRALIZED", "seeds": [1317, 1318, 1319], "N_tot": 6, "n_clusters": 2, "cluster_size": 3, "dim": 8, "ticks": 64, "share_w": 0.6, "top_w": 1.0, "overlap_w": 0.6, "margin": 0.02, "tol": 0.02, "phi_faithful_iit4": {"1317": {"FLOOR": 1.27373, "NESTED": 1.67872, "CENTRALIZED": 2.40086, "SHUFFLE": 1.94625, "FLAT": 1.70044}, "1318": {"FLOOR": 1.36292, "NESTED": 1.92378, "CENTRALIZED": 2.63464, "SHUFFLE": 1.92378, "FLAT": 1.9895}, "1319": {"FLOOR": 1.28195, "NESTED": 1.38299, "CENTRALIZED": 1.86074, "SHUFFLE": 1.44453, "FLAT": 1.42483}}, "o_information": {"1317": {"FLOOR": -0.40124618176805704, "NESTED": -0.06267198335083979, "CENTRALIZED": -0.13867843161502336, "SHUFFLE": -0.10992050396525865, "FLAT": -0.08955039373936913}, "1318": {"FLOOR": -0.49548158629657646, "NESTED": -0.050401562363787455, "CENTRALIZED": -0.37033727493638224, "SHUFFLE": -0.050401562363787455, "FLAT": -0.16482050507161894}, "1319": {"FLOOR": -0.5156466561543906, "NESTED": -0.27692701528429176, "CENTRALIZED": -0.18483916417402302, "SHUFFLE": -0.3196942655156283, "FLAT": -0.13245144573126666}}, "bars": {"R1_lift": true, "R2_beats_centralized": false, "R3_earned": true, "R4_distinct_from_flat": false}, "r1_per_seed": {"1317": true, "1318": true, "1319": true}, "r2_per_seed": {"1317": false, "1318": false, "1319": false}, "r3_per_seed": {"1317": true, "1318": true, "1319": true}, "r4_per_seed": {"1317": false, "1318": false, "1319": false}, "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n<=8)"}
+
+================================================================================================
+VERDICT: 🧱 NESTED_BELOW_CENTRALIZED (R1 3/3 · R2 0/3 · R3 3/3 · R4 0/3) — TERMINAL closed-negative.
+The NESTED universes-within-universes (2 clusters of 3, local founder per cluster whose source itself
+carries a top founder) does NOT escape the redundancy ceiling: the single-scale CENTRALIZED single-
+shared-founder produces HIGHER faithful-IIT4 Φ on EVERY seed (gap NESTED−CENTRALIZED = −0.72/−0.71/−0.48).
+R4 FAIL 0/3 is load-bearing for THIS lens: a FLAT topology with the SAME shared mass but the cluster
+boundary collapsed to one global founder MATCHES/EXCEEDS nested (gap NESTED−FLAT = −0.02/−0.07/−0.04) →
+the hierarchy itself adds NOTHING; only the total/concentration of the shared source matters. SETUP
+INTEGRITY: FLOOR Φ (1.27373/1.36292/1.28195) is BYTE-IDENTICAL to H_1371 A_independent (same substrate).
+The hive-Φ arc closes 🧱 TERMINAL across single-scale (H_1356/1363/1370/1371) AND multi-scale (H_1373):
+collective-Φ in this leaky-linear + faithful-MIP substrate is maximized by CONCENTRATION of the shared
+source, irrespective of whether sharing is distributed (H_1371), hierarchically nested (H_1373), or flat.
+NO bar moved (c9/p7). DIRECTIONAL numpy-mirror (Φ leg = real exact MIP-EI via hexa); engine-transfer
+UNVERIFIED; TOY n=6 / 2×3 clusters / 3 seeds / input-level sharing only; live CORE/*.hexa UNTOUCHED.
