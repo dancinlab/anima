@@ -1,0 +1,100 @@
+H_1358 r3 — SAPIR-WHORF 2-D CATEGORICAL PERCEPTION, BOUNDED warp metric (separation-AUC)
+========================================================================================
+BOUNDED WARP = separation-AUC ∈[0,1] = P(|Δposterior|_BETWEEN > |Δposterior|_WITHIN),
+Mann-Whitney-U rank form. CHANCE = 0.5 (FIXED constant, independent of within-compression),
+so a label-shuffle null MUST collapse to 0.5 if the warp is not earned — fixing the
+H_1343 unbounded-ratio defect (null floated +9.28). c2 = label-permutation null
+(N_SHUF=200); c3 = component-shuffle (N_COMP=50); c4 = diagonal≈axis under bounded metric.
+3 seeds [4334, 4335, 4336], gradient-free, $0 CPU, DIRECTIONAL mirror.
+G=11 (121 stim) ladder K_RBF=[6, 9, 12] prod=12 (DIM=144) diag:u+v>1.0 L:u>0.5&v>0.5
+
+  DENSITY LADDER — separation-AUC vs RBF density (mean of 3 seeds):
+    K_RBF  DIM    AUC(L_DIAG)   AUC(L_LSHAPE)
+      6    36    1.0000        1.0000
+      9    81    1.0000        1.0000
+     12   144    1.0000        1.0000
+
+  PRODUCTION density K_RBF=12 (DIM=144) — per-seed detail:
+    seed | L_DIAG: AUC  d(diag)  base  comp | L_LSHAPE: AUC  d(L)  base  comp
+    4334 | 1.0000 +53.04  0.930 0.491 | 1.0000 +15.22  0.681 0.506
+    4335 | 1.0000 +49.78  0.930 0.474 | 1.0000 +15.47  0.681 0.499
+    4336 | 1.0000 +36.10  0.930 0.491 | 1.0000 +9.60  0.681 0.513
+    ncells (mean): L_DIAG=23.7  L_LSHAPE=6.0
+    baseline AUC (diagnostic, expect ~0.5): L_DIAG=0.930  L_LSHAPE=0.681
+
+  c2 label-permutation NULL (N_SHUF=200/seed, pooled 600):
+    AUC null: mean=0.9919 q95=0.9996 max=1.0000 min=0.9459
+
+  c1 PRESENCE — separation-AUC >= 0.7 each seed AND mean, both languages:
+     L_DIAG  : per-seed [1.0, 1.0, 1.0] mean 1.0000 -> PASS
+     L_LSHAPE: per-seed [1.0, 1.0, 1.0] mean 1.0000 -> PASS
+     -> c1 PASS
+  c2 EARNED-SHUFFLE — |null mean - 0.5| <= 0.05 AND each lang >= null-q95 + 0.1:
+     |null mean 0.9919 - 0.5| = 0.4919 <= 0.05 -> FAIL
+     L_DIAG  mean 1.0000 >= q95+0.1=1.0996 -> FAIL
+     L_LSHAPE mean 1.0000 >= q95+0.1=1.0996 -> FAIL
+     -> c2 FAIL
+  c3 COMPONENT-COUNT — |component-shuffle AUC - 0.5| <= 0.08, both languages:
+     L_DIAG  comp-AUC 0.4852 (|Δ|=0.0148) <= 0.08 -> PASS
+     L_LSHAPE comp-AUC 0.5062 (|Δ|=0.0062) <= 0.08 -> PASS
+     -> c3 PASS
+  c4 DIAGONAL — |AUC_diag - AUC_Lshape| <= 0.15 AND both >= 0.7:
+     |1.0000 - 1.0000| = 0.0000 <= 0.15 -> PASS
+     both >= 0.7 -> PASS
+     -> c4 PASS
+
+========================================================================================
+VERDICT: 🧱 DEEPER LIMIT — the label-shuffle null STILL floats under the BOUNDED
+  metric: the warp is present (c1) but not cleanly label-earned even with a bounded
+  chance-0.5 readout (metric-space-blob is deeper than the ratio). NO bar move (c9).
+
+================================================================================
+MECHANISTIC READ (honest, c9 — appended after scoring, NO bar move)
+================================================================================
+The BOUNDED metric did its mathematical job: separation-AUC is in [0,1] and chance
+is the FIXED constant 0.5, so the H_1343 unbounded-ratio explosion (~45) and its
+floating null (+9.28) are gone. BUT the label-shuffle null STILL floats — at 0.9919,
+nowhere near 0.5. This is a DEEPER, more honest finding than the metric defect:
+
+  ROOT CAUSE = the SELF-REFERENTIAL partition. The AUC partitions adjacent pairs into
+  WITHIN/BETWEEN by the STORE'S OWN learned category (g >= 0.5). The error-targeted
+  SPLIT-only Voronoi store PACKS prototype cells along WHATEVER boundary it is trained
+  on — INCLUDING a random/shuffled carving. So the soft posterior g ALWAYS jumps
+  sharply exactly where the store placed its boundary, and the handful of BETWEEN edges
+  (the ones straddling that learned boundary) ALWAYS have larger |Δg| than WITHIN edges.
+  AUC -> ~1.0 for ANY internally-coherent carving, shuffled or not. A label shuffle
+  produces a DIFFERENT (jagged) boundary, but the store learns THAT boundary just as
+  faithfully and the within/between separation is just as crisp -> null ~0.99.
+
+  In short: "is the metric warped relative to the store's own learned categories?" is
+  a near-tautology for a store that fits its categories well. It tests metric COHERENCE,
+  not metric WARP that is SPECIFIC to the language's TRUE boundary.
+
+DISCRIMINATING CONTROL (load-bearing): c3 COMPONENT-COUNT is the only control that uses
+an EXTERNAL, language-independent partition (a random feature-component median split,
+NOT the store's self-consistent learned category). It COLLAPSED cleanly to chance:
+L_DIAG comp-AUC 0.485, L_LSHAPE 0.506 (|Δ| 0.015 / 0.006 <= COMP_TOL 0.08). This proves
+the warp does NOT live in arbitrary raw variance — it is real and tied to a coherent
+learned partition. But c2 shows that coherence ALONE (any carving) reproduces it, so the
+AUC-vs-own-partition readout cannot ISOLATE the TRUE-language boundary from a random one.
+
+BASELINE DIAGNOSTIC corroborates: the pre-language g0 baseline AUC is already HIGH
+(L_DIAG 0.930, L_LSHAPE 0.681) under the true-label partition — because a smooth feature
+gradient also separates between vs within when the boundary is axis/diagonal aligned.
+This is exactly why H_1343 SUBTRACTED a baseline; the bounded AUC has no clean subtraction.
+
+WHAT WOULD ACTUALLY EARN IT (next angle, NOT done here — frozen-first, no post-hoc bar):
+The correct anti-Goodhart control must hold the PARTITION FIXED to the TRUE language
+boundary while varying ONLY the trained metric — i.e. score AUC of the SHUFFLE-trained
+metric g_shuffle UNDER THE TRUE-LANGUAGE WITHIN/BETWEEN partition. Then a shuffle-trained
+store (which packed cells on the WRONG boundary) would NOT separate the TRUE between/within
+pairs -> AUC -> 0.5. The H_1343/H_1358 family scored each arm under ITS OWN partition,
+which is the confound both rounds hit from opposite directions (ratio explosion / AUC
+saturation). That fixed-true-partition readout is H_1359's frozen design.
+
+VERDICT (FROZEN, NO bar move): 🧱 DEEPER LIMIT. Per the FREEZE c2-FAIL rule, the warp is
+PRESENT (c1 AUC=1.0 both langs) and component-isolated (c3 collapses) and diagonal=axis
+(c4), but is NOT cleanly label-earned even under a bounded metric, because the AUC-vs-own-
+learned-partition readout is near-tautological for a well-fitting store. The bounded metric
+REMOVED the ratio artifact but EXPOSED that the real confound is the self-referential
+partition, not the unboundedness. Honest structured-negative (c9/p7).

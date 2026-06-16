@@ -349,3 +349,41 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **scope:** DIRECTIONAL numpy mirror(engine-transfer UNVERIFIED = R2 engine-native follow-on); TOY synthetic facts·byte-shift OOD proxy·3 seed·KEYLEN=20·RECALL_THR=0.15 frozen·deterministic(재실행 byte-identical); scale/real-corpus-paraphrase/semantic-shift/engine-native-margin-exposure UNVERIFIED; live CORE/*.hexa UNTOUCHED; NO bar move(c9/p7).
 - **claim-link**: `CLAIMS.tape @C h1361_g5_graded_metacog` · card `UNIVERSE/cards/H_1361_g5_graded_metacog.md` · verdicts `.verdicts/1361_g5_graded_metacog/{FREEZE,result}.txt` · py `state/g5-graded-metacog/h1361_g5_graded_metacog.py` · index `UNIVERSE/HYPOTHESES.jsonl`
 - xref: h1304(직접 부모, fire-side binary fail-safe) · h1202(decoder type-2 M-ratio 0.924) · h1204(flat fire-side metacog, REFRAMED) · h1217(decoder OOD-collapse closed-neg) · h1227/h1231(immune store geometry) · a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_scale_honest_scope · a_toy_scale_recheck · p6 · p7 · p8 · c9 · c15
+## H_1358 — whorf-2d-bounded: 2-D CP warp 지표를 BOUNDED 형태로 재명세 (H_1343 R3) — 🧱 DEEPER LIMIT
+- **seed/target**: H_1343(🟠 PARTIAL)의 load-bearing follow-on. H_1343 의 warp 지표 `ratio = BETWEEN/WITHIN`
+  가 scale-UNBOUNDED 라 학습 후 WITHIN→0 으로 ratio 폭발(~45), 임의 carving 도 WITHIN 압축 → label-shuffle
+  null 이 +9.28 로 떠 c2 구조적 FAIL. 지표를 **BOUNDED separation-AUC∈[0,1]**(Mann-Whitney-U
+  P(|Δg|_BETWEEN>|Δg|_WITHIN), chance=0.5 고정상수)로 재명세 — null 이 깨끗이 0.5 로 collapse 하면 2-D CP 가
+  세 control 통과? 지표 CORRECTION, bar 완화 아님. R1 numpy MIRROR(DIRECTIONAL), $0 CPU, 3 seeds
+  [4334,4335,4336], deterministic(2 re-run, exit 4), p7, frozen-first. H_1343 RBF/Voronoi 기계 VERBATIM 재사용,
+  warp readout 만 교체.
+- **frozen bars** (`.verdicts/1358_whorf_2d_bounded/FREEZE.txt`, 점수화 BEFORE): c1 PRESENCE(AUC≥0.70 each
+  seed+mean 두 언어) · c2 EARNED-SHUFFLE(null |mean−0.5|≤0.05 AND 각 언어 ≥ null-q95+0.10) · c3 COMPONENT
+  (|comp-shuffle AUC−0.5|≤0.08) · c4 DIAGONAL(|AUC_diag−AUC_Lshape|≤0.15 AND 둘 다 ≥0.70). GREEN iff
+  c1∧c2∧c3∧c4; c2 FAIL(bounded 으로도 float)→honest 🧱 DEEPER LIMIT.
+- **verdict-tier-target → 🧱 DEEPER LIMIT** (mean 3 seeds): density ladder K_RBF 6/9/12 전부 L_DIAG=L_LSHAPE
+  =**1.0000**(saturated). production: AUC=1.0000 두 언어 전 seed; baseline-AUC 진단 L_DIAG 0.930 / L_LSHAPE
+  0.681; comp-AUC 0.4852 / 0.5062.
+  - **c1 PRESENCE ✅** AUC mean 1.0000 ≥0.70 두 언어.
+  - **c2 EARNED-SHUFFLE ❌** pooled null(600) **mean=0.9919** → |0.9919−0.5|=0.4919 ≫0.05 FAIL (q95=0.9996 라
+    SEP sub-clause 도 수학적으로 불가). **null 이 0.5 가 아니라 0.99 로 뜸.**
+  - **c3 COMPONENT ✅** |0.4852−0.5|=0.0148, |0.5062−0.5|=0.0062 둘 다 ≤0.08 — 외부 무작위 분할은 chance 로
+    깨끗이 collapse(load-bearing).
+  - **c4 DIAGONAL ✅** |1.0000−1.0000|=0.0000 ≤0.15, 둘 다 ≥0.70 — **H_1343 대각=축정렬 발견 BOUNDED 지표로도
+    보존**, H_1334 grid-geometry read 반증 지속.
+- **mechanistic (정직, c9, load-bearing)**: bounded AUC 는 ratio artifact(폭발+floating null)를 수학적으로
+  제거했으나 null 이 0.99 로 뜬 진짜 원인은 unboundedness 가 아니라 **SELF-REFERENTIAL 분할** — AUC 가 store 의
+  **OWN 학습 범주**로 WITHIN/BETWEEN 나눔. SPLIT-only Voronoi store 는 **어떤 경계든**(shuffle 포함) 따라 cell 을
+  PACK 하므로 g 가 그 경계에서 급격히 점프 → between>within 이 잘 fit 한 store 엔 거의 항진명제 → null≈0.99.
+  c3 만이 외부(언어 무관) 분할을 써서 collapse → warp 은 real(raw variance 아님)이나 coherence 자체(임의 carving)가
+  재현 → AUC-vs-own-partition readout 은 TRUE-언어 경계를 random 에서 분리 못 함. NO bar move (c9/p7).
+- **NEXT** (각각 ANEW 사전등록): (i) **H_1359 fixed-true-partition readout** — SHUFFLE-학습 metric g_shuffle 를
+  **TRUE-언어 WITHIN/BETWEEN 분할 하에** 채점 → 틀린 경계에 pack 한 shuffle store 는 TRUE pair 분리 못 함 →
+  AUC→0.5 collapse 예상 (H_1343/H_1358 가 양쪽 모두 각 arm 을 ITS OWN 분할로 채점한 공통 confound 를 푸는 한 수) ·
+  (ii) component-축 정의 강화 · (iii) engine-native 실현(live CORE Voronoi lane).
+- **claim-link**: `CLAIMS.tape @C h1358_whorf_2d_bounded` · card `UNIVERSE/cards/H_1358_whorf_2d_bounded.md`
+  · verdicts `.verdicts/1358_whorf_2d_bounded/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1343(R2 parent, unbounded-ratio 결함을 본 R3 가 bounded AUC 로 교정) · h1334(대각-geometry read; c4 가 계속
+  반증) · h1323/h1325(1-D Sapir-Whorf CP, 같은 self-partition 실패 모드) · h1340/h1341/h1355(sibling budget/geometry)
+  · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope
+  · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
