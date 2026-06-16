@@ -1,0 +1,30 @@
+================================================================================
+H_1418 RUNG-3 — LIVE-OP re-run: P3/P5 arbiter via WIRED tom_spatial_compose /
+  tom_basal_compose (CORE/engine_cli.hexa). MUST reproduce H_1417 P3/P5 byte-exact.
+  $0 CPU · P3 seeds [5520,5521,5522] · P5 seeds [5540,5541,5542] · a_verified_must_wire rung-3
+================================================================================
+  P3 ToM x spatial seed 5520: acc_x=0.702222 acc_y=0.697778 best=0.702222 compose=0.8 shuf=0.497778 oracle=1.0
+  P3 ToM x spatial seed 5521: acc_x=0.7 acc_y=0.693333 best=0.7 compose=0.784444 shuf=0.548889 oracle=1.0
+  P3 ToM x spatial seed 5522: acc_x=0.704444 acc_y=0.697778 best=0.704444 compose=0.788889 shuf=0.475556 oracle=1.0
+--------------------------------------------------------------------------------
+P3 ToM x spatial  MEAN (3 seeds, LIVE WIRED OP):
+  acc_x=0.702222 acc_y=0.696296 best=0.702222
+  compose=0.791111 shuffle=0.507407 oracle=1.0 (oracle-best=0.297778)
+  only_x=0.303704 only_y=0.297778 | net-lift(compose-best)=0.0888889
+  (B1 PASS) (B2 PASS) (B3 PASS) (SEP PASS)
+  ==> 🟢 BIND
+  P5 ToM x basal seed 5540: acc_x=0.695556 acc_y=0.706667 best=0.706667 compose=0.795556 shuf=0.493333 oracle=1.0
+  P5 ToM x basal seed 5541: acc_x=0.693333 acc_y=0.704444 best=0.704444 compose=0.813333 shuf=0.522222 oracle=1.0
+  P5 ToM x basal seed 5542: acc_x=0.7 acc_y=0.706667 best=0.706667 compose=0.795556 shuf=0.484444 oracle=1.0
+--------------------------------------------------------------------------------
+P5 ToM x basal  MEAN (3 seeds, LIVE WIRED OP):
+  acc_x=0.696296 acc_y=0.705926 best=0.705926
+  compose=0.801481 shuffle=0.5 oracle=1.0 (oracle-best=0.294074)
+  only_x=0.294074 only_y=0.303704 | net-lift(compose-best)=0.0955556
+  (B1 PASS) (B2 PASS) (B3 PASS) (SEP PASS)
+  ==> 🟢 BIND
+================================================================================
+VERDICT: 🟢 RUNG-3 LIVE-OP REPRODUCES H_1417 P3+P5 — the WIRED tom_spatial_compose /
+  tom_basal_compose ops give the SAME engine-native compose-lift (all 4 bars PASS each).
+  Expected byte-exact: P3 compose 0.791111 · P5 compose 0.801481 (H_1417 result.txt).
+  The two arbiters are now OWNED by the engine (a_verified_must_wire rung-3 done).
