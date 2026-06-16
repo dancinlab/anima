@@ -1,0 +1,14 @@
+CLAIMS.tape → HYPOTHESES.jsonl/cards retirement — coverage summary
+======================================================================
+TOTAL @C entries: 102
+COVERED (jsonl row + card both exist): 98
+NEEDS MIGRATION: 4
+
+Match rule: @C slug→H-id (from id 'hNNNN_*' or src/raw 'H_NNNN'),
+then jsonl row id==H_<hid> OR slug match, AND a UNIVERSE/cards/H_<hid>_*.md exists.
+
+NEEDS-MIGRATION list (the 'un-migrated' set, c9 no-loss target):
+  - pure_wiki_sweep  (slug=pure-corpus-axis-closed-negative hid=None jsonl=0 card=0)
+  - pure_wikifrac03_closed_negative  (slug=pure-corpus-axis-closed-negative hid=None jsonl=0 card=0)
+  - h1218_engine_measured_gates  (slug=1218_engine_measured_gates hid=1218 jsonl=0 card=0)
+  - h1210_daemon_gateB_wiring  (slug=1210_daemon_gateB_wiring hid=1210 jsonl=0 card=0)
