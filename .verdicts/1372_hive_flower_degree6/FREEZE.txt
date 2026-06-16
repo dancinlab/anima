@@ -1,0 +1,93 @@
+H_1372 — hive-flower-degree6 : TRUE 2-D hexagonal Flower-of-Life lattice (DEGREE-6 overlap)
+=========================================================================================================
+slug: hive_flower_degree6   seeds = [1317, 1318, 1319]   (SAME hard hive/topology seed family as
+H_1371/H_1356/H_1363/H_1370 — DIRECT apples-to-apples comparison).   $0 CPU-local.   frozen-first.
+FROZEN BEFORE any Φ score (c9/c16/p7 — NO bar moved post-hoc).
+
+THE WALL BEING ATTACKED (c16 / a_break_the_wall — break with the RIGHT geometry, NOT tune-to-green):
+H_1371 (just landed, 🧱 OVERLAP_BELOW_CENTRALIZED) tested distributed circle-overlap but used a
+RING adjacency = DEGREE-2 (each cell overlaps only its 2 ring neighbors). The user's ACTUAL idea is the
+FLOWER-OF-LIFE: a 2-D hexagonal packing where a CENTER circle is overlapped by ~6 surrounding circles
+(degree-6; the user said "원 하나에 다른 원 4개 정도 들어온다" — degree >= 4, NOT degree-2). H_1371's own
+agent flagged: "ring-only adjacency (degree-2; a true Flower-of-Life is degree-6) — the ring undertests
+the user's geometry." So the H_1371 wall MAY be the WRONG METHOD (a degree-2 chain), not a true ceiling.
+This round runs the RIGHT geometry: a center cell with DEGREE-6 distributed overlap.
+
+THE GEOMETRY (the load-bearing change vs H_1371 — DEGREE-6 not degree-2):
+The natural Flower-of-Life UNIT = 7 circles: ONE center circle (cell 0) surrounded by 6 ring circles
+(cells 1..6) on a hexagon. We scale from H_1371's n=6 to N_TOT=7 (center + 6 ring) — the natural FoL
+vertex figure — keeping n<=8 so faithful MIP stays EXACT (a_scale_honest_scope: size change noted
+honestly; n: 6 -> 7). Adjacency (each EDGE = a DISTINCT per-edge shared latent = a circle-overlap region):
+  - 6 SPOKE edges: center(0)–ring(k) for k=1..6  → CENTER has DEGREE 6 (overlapped by all 6 neighbors).
+  - 6 RIM   edges: ring(k)–ring(k+1) (hexagon cycle among the 6 ring cells).
+  => 12 undirected edges total. Center degree = 6 (the user's geometry). Each ring cell degree = 3
+     (2 rim neighbors + 1 spoke to center). This honors degree-6 at the center (the FoL claim) AND the
+     user's literal "~4" is bracketed: mean degree = (6 + 6*3)/7 = 24/7 ≈ 3.43, center=6.
+  (Optional DEGREE-4 diagnostic arm B_overlap_d4: also wire the 6 "long" hex-lattice diagonals so every
+   ring cell also overlaps the ring cell 2 steps away → ring degree 4, center degree 6 — reported as a
+   NON-GATING diagnostic to bracket the user's literal "~4"; the GATING arm is the canonical FoL above.)
+
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI via `hexa run` over
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, iit4_faithful_phi(state, n=7, dim=T, n_bins).
+numpy NEVER computes Φ — it only emits the per-unit salience (state-energy) trajectory; the hexa engine
+computes Φ via the SAME exact-MIP call H_1371 used. NO variance×energy proxy as a terminal verdict.
+
+SUBSTRATE (matched to H_1371/H_1356/H_1320/H_1283 — ONLY the OVERLAP TOPOLOGY/degree differs):
+  leaky linear recurrent units, LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private input, dim-8 state,
+  T=64 ticks. N_TOT=7 cells (center + 6 ring; n<=8 keeps faithful MIP EXACT). Each cell = ONE unit;
+  per-unit salience = state energy <s_i,s_i>. PHI(arm) = iit4_faithful_phi(7-unit salience traj,
+  n=7, dim=T, n_bins=8) = collective Φ of the whole 7-cell Flower-of-Life unit.
+  NO inter-cell recurrent coupling — the ONLY cross-cell sharing is the SHARED-INPUT overlap structure
+  (exactly H_1356/H_1371 'redundancy via shared input' design).
+
+ARMS (per-EDGE DISTINCT shared latents — the load-bearing design point):
+  - Draw 12 INDEPENDENT per-EDGE latent streams L_e (one per FoL edge), each (T,DIM). L_e = the DISTINCT
+    local region shared ONLY by the two cells on edge e (the circle-overlap area). PLUS per-cell private.
+  - A_independent (FLOOR)  : cell i input = W_IN*priv_i only (OVERLAP_W=0; no overlap).
+  - B_overlap   (DEGREE-6) : cell i input = W_IN*[priv_i + OVERLAP_W * sum_{e ∋ i} L_e] (sum over its
+                             incident FoL edges) → CENTER reads its 6 distinct spoke latents; each ring
+                             cell reads its 3 distinct latents (2 rim + 1 spoke). NO single latent read
+                             by all (each L_e read by exactly 2 cells) = distributed Flower-of-Life overlap.
+  - CENTRALIZED (single-shared-founder ceiling — the H_1371 winner) : cell i input =
+                             W_IN*[priv_i + W_central_i * F], ONE common founder F read by ALL 7 cells.
+                             PER-CELL SHARED WEIGHT MATCHED to B (so "more shared input" is NOT the lift):
+                             W_central_i = deg(i) * OVERLAP_W  (center 6*OVERLAP_W, ring 3*OVERLAP_W) —
+                             each cell's total shared-input energy equals what it gets from its incident
+                             edges in B, but concentrated in ONE global source instead of distributed.
+  - SHUFFLE     (EARNED control) : same per-cell shared count/weight as B (each cell reads deg(i) latents
+                             at OVERLAP_W) BUT the latent on each incident edge is independently re-drawn
+                             PER CELL from a random permutation of the 12 latents → the two cells on an
+                             edge no longer read the SAME latent → the consistent pairwise FoL lattice is
+                             destroyed (degree/weight preserved, COINCIDENCE destroyed).
+  - B_overlap_d4 (NON-GATING diagnostic) : as B_overlap but ALSO add 6 hex-diagonal edges (ring k – ring
+                             k+2) so each ring cell also overlaps its 2-step ring neighbor → ring degree 4,
+                             center degree 6. Brackets the user's literal "~4". REPORTED, NOT gated.
+
+  Constants (frozen, reused verbatim from H_1371): OVERLAP_W=0.6 (= H_1356 W_CONN). MARGIN=0.02
+  (H_1283/1317/1320/1356/1371 frozen Φ margin, NOT moved). TOL=0.02. seeds [1317,1318,1319].
+
+O-INFORMATION diagnostic (NON-GATING, as H_1371 did): per-unit salience O-information (Gaussian-entropy
+TC-based). O>0 redundancy / O<0 synergy. Report B_overlap vs CENTRALIZED shift only. numpy estimate, NOT
+a verdict gate.
+
+FROZEN BARS (GREEN iff R1 ∧ R2 ∧ R3, mirroring H_1371's structure for apples-to-apples):
+  R1 LIFT              : Φ(B_overlap) − Φ(A_independent)  >= MARGIN(0.02)   on ALL 3 seeds.
+  R2 BEATS-CENTRALIZED : Φ(B_overlap) − Φ(CENTRALIZED)    >  0  on >= 2/3 seeds  (THE LOAD-BEARING BAR —
+                         the bar H_1371 FAILED 0/3 with degree-2; degree-6 is the real test. Per the
+                         lane spec, R2 passes on >= 2/3 seeds).
+  R3 EARNED            : Φ(SHUFFLE)   <= Φ(A_independent) + TOL(0.02)        on ALL 3 seeds.
+
+INTERPRETATION (pre-registered, c9):
+  - If degree-6 BEATS centralized (R1 ∧ R2 ∧ R3) → 🟢 BREAKTHROUGH: the H_1371 wall WAS the wrong
+    geometry (degree-2 ring), not a true ceiling. Distributed overlap at the CORRECT degree escapes the
+    redundancy ceiling. A major result — recorded carefully with controls.
+  - If degree-6 STILL loses to centralized (R2 fails >= 2/3) → 🧱 TERMINAL: the redundancy ceiling is
+    REAL across overlap degree (not a ring artifact). Single-shared-founder concentration is the
+    floor-beating MAXIMUM of collective Φ in this leaky-linear + faithful-MIP substrate, and the hive arc
+    closes 🧱 TERMINAL. honest closed-negative (c9).
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): DIRECTIONAL numpy-mirror (faithful-Φ leg is REAL
+exact MIP-EI; numpy emits salience only). Engine-transfer to live A⇄G CORE/pure_field UNVERIFIED.
+TOY: n=7, single FoL vertex unit, 3 seeds, single OVERLAP_W=0.6, input-level overlap only (no recurrent
+inter-cell coupling). Size change n: 6 -> 7 vs H_1371 noted honestly. n>8 (approx big-Φ), recurrent
+state-sharing, generative per-edge coupling, engine-native = each a NEW H.
