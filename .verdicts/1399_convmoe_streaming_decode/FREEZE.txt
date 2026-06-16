@@ -1,5 +1,5 @@
 ================================================================================
-H_1393 — STREAMING / BOUNDED ConvMoE .clm decode (the H_1392 memory-blowup FIX)
+H_1399 — STREAMING / BOUNDED ConvMoE .clm decode (the H_1392 memory-blowup FIX)
    (p7, c9, frozen-first) — fix the substrate wall that blocked the G6 FALS re-score.
 ================================================================================
 DATE-FROZEN : 2026-06-17  (bars frozen BEFORE the G6 re-score run — frozen-first, c9)
@@ -8,7 +8,7 @@ WHY (closes the H_1392 🧱 substrate wall)
   H_1392 found the 303M ConvMoE-RETRO .clm MOUNTS + decodes but the hexa ConvMoE decode
   BLOWS UP MEMORY ~+300 MB/step (never freed) → GEN=24 OOM-killed @11GB, GEN=48 SIGTERM.
   A falsifiable G6 claim needs GEN≈80-110, so the M2-M5 FALS bars carried NO engine-native
-  score (substrate-BLOCKED, NOT FALS=0). H_1393 FIXES the decode memory so the G6 re-score
+  score (substrate-BLOCKED, NOT FALS=0). H_1399 FIXES the decode memory so the G6 re-score
   can run — answering CAPACITY-vs-ARCHITECTURE, which H_1392 left OPEN.
 
 ROOT CAUSE (measured, /usr/bin/time -l, c1)

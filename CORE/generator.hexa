@@ -623,7 +623,7 @@ pub fn gen_clm_ideate(ckpt_path: string, seed: string, max_new: int,
               "reason": "ideated via clm_decode_topk_sampled (seeded top-k, best-of-K source)" }
 }
 
-// gen_clm_ideate_W — H_1393 loaded-W ideation entry: the SAME mouth as gen_clm_ideate but
+// gen_clm_ideate_W — H_1399 loaded-W ideation entry: the SAME mouth as gen_clm_ideate but
 // off a PRE-LOADED weight map (clm_load_weights) so a multi-decode driver (the G6 FALS
 // re-score = 69 decodes) loads the 303M ConvMoE ONCE instead of per decode (the hexa bump
 // allocator never frees a model load → per-decode reload OOMs across decodes). Still the

@@ -1,8 +1,8 @@
 import "CORE/g6_ideation.hexa"
 
-// H_1393 — G6 IDEATION ★ FALS re-score, LOADED-ONCE (the H_1392 wall, now unblocked).
+// H_1399 — G6 IDEATION ★ FALS re-score, LOADED-ONCE (the H_1392 wall, now unblocked).
 // VERBATIM the H_1392 frozen probe (detector + scaffold + M1-M5 bars UNCHANGED) — the ONLY
-// difference is the streaming/bounded decode (H_1393 fix) + a SINGLE clm_load_weights so all
+// difference is the streaming/bounded decode (H_1399 fix) + a SINGLE clm_load_weights so all
 // 69 decodes reuse ONE 303M model load (the hexa bump allocator never frees a per-decode
 // reload → that was the cross-decode OOM). NO bar moved, NO tune-to-green (c9, p7).
 fn main() {
@@ -16,7 +16,7 @@ fn main() {
     let st = g6_sampler_selftest()
     println("SAMPLER det=" + to_string(st["deterministic"]) + " diverse=" + to_string(st["diverse"]) + " in_topk=" + to_string(st["in_topk"]))
 
-    // H_1393: load the 303M ConvMoE ONCE; reuse W for every decode below.
+    // H_1399: load the 303M ConvMoE ONCE; reuse W for every decode below.
     let W = clm_load_weights(ckpt)
     println("LOADED ok=" + to_string(W["ok"]) + " d=" + to_string(W["d"]) + " E=" + to_string(W["E"]) + " V=" + to_string(W["V"]) + " L=" + to_string(W["L"]))
 
@@ -105,7 +105,7 @@ fn main() {
     println("C_ablate FALS=" + to_string(fals_ab))
     println("M5_EARNED_COMP_pass=" + to_string(fals_c > fals_ab))
 
-    println("=== FROZEN BARS (engine-native, 303M ConvMoE-RETRO, seed=7, GEN=110, H_1393 streaming) ===")
+    println("=== FROZEN BARS (engine-native, 303M ConvMoE-RETRO, seed=7, GEN=110, H_1399 streaming) ===")
     println("M1_COUNT  DIST(Cs)>=5     : " + to_string(len(kept)) + " -> " + to_string(len(kept)>=5))
     println("M2_DEPTH  FALS(Cs)>=1     : " + to_string(fals_c) + " -> " + to_string(fals_c>=1))
     println("M3_LIFT   FALS(Cs)>FALS(B): " + to_string(fals_c) + ">" + to_string(fals_b) + " -> " + to_string(fals_c>fals_b))

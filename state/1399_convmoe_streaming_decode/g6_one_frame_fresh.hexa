@@ -1,5 +1,5 @@
 import "CORE/g6_ideation.hexa"
-// H_1393 fresh-process per-frame G6 decoder. ARM/IDX/GEN/SEED via env. Loads model, decodes ONE
+// H_1399 fresh-process per-frame G6 decoder. ARM/IDX/GEN/SEED via env. Loads model, decodes ONE
 // frame (best-of-K=3 for C arms, K=1 for B), prints the falsifiability score, EXITS (so the hexa
 // bump-allocator leak resets per frame — the cross-decode-in-one-process accumulation cure).
 fn main() {

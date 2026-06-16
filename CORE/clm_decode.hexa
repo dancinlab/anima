@@ -298,7 +298,7 @@ fn _clmd_load(path: string) -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// H_1393 — STREAMING / BOUNDED ConvMoE decode (the memory-blowup FIX).
+// H_1399 — STREAMING / BOUNDED ConvMoE decode (the memory-blowup FIX).
 // ------------------------------------------------------------------------
 // ROOT CAUSE (measured, /usr/bin/time -l): the hexa runtime is a one-shot
 // BUMP allocator — `free()` is a NOOP and `farr_free` releases the handle slot
@@ -319,7 +319,7 @@ fn _clmd_load(path: string) -> Map {
 // internal matmul output (~0.6 MB/step at d768) which the runtime allocates and
 // we free (noop, but the handle slot recycles) — the upstream bump-allocator
 // floor, filed to hexa-lang. The ARITHMETIC is UNCHANGED: same conv/GN/GELU/MoE
-// ops, same order, same values → generation is BYTE-IDENTICAL (H_1393 guard).
+// ops, same order, same values → generation is BYTE-IDENTICAL (H_1399 guard).
 //
 // _clmd_zero — zero a farr's first n elements in place (causal-pad reset for a
 // reused xcol; only p>=0 cols are written by the conv, the rest must read 0).
@@ -665,7 +665,7 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
         p = p + 1
     }
     let logits = t_zeros(T*V)
-    let sc = _clmd_scratch_new(W, T)        // H_1393: reusable scratch, built ONCE
+    let sc = _clmd_scratch_new(W, T)        // H_1399: reusable scratch, built ONCE
     let mut out = ""
     let mut g = 0
     while g < gen {
@@ -767,7 +767,7 @@ pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: fl
     return _clmd_topk_sample(logits, base, V, top_k, temp, rng)
 }
 
-// clm_load_weights / clm_weights_decodable — H_1393 CROSS-DECODE memory fix. The hexa
+// clm_load_weights / clm_weights_decodable — H_1399 CROSS-DECODE memory fix. The hexa
 // bump allocator NEVER frees a buffer (see _clmd_scratch_new note), so EACH call to
 // _clmd_load permanently leaks the full model weight set (~10 GB for the 303M ConvMoE).
 // A multi-decode driver (e.g. the G6 FALS re-score = 69 decodes) therefore OOMs across
@@ -799,7 +799,7 @@ pub fn clm_decode_topk_sampled_W(W: Map, seed: string, gen: int,
         p = p + 1
     }
     let logits = t_zeros(T*V)
-    let sc = _clmd_scratch_new(W, T)        // H_1393: reusable scratch, built ONCE
+    let sc = _clmd_scratch_new(W, T)        // H_1399: reusable scratch, built ONCE
     let mut out = ""
     let mut rng = _clmd_mix32(seed_rng)
     let mut g = 0
@@ -891,8 +891,8 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
     let V = to_int(W["V"])
     let T = 24
     let logits = t_zeros(T*V)
-    let tok = t_zeros(T)                     // H_1393: reused window (was per-step)
-    let sc = _clmd_scratch_new(W, T)         // H_1393: reusable scratch, built ONCE
+    let tok = t_zeros(T)                     // H_1399: reused window (was per-step)
+    let sc = _clmd_scratch_new(W, T)         // H_1399: reusable scratch, built ONCE
     let mut out = ""
     let mut grounded = 0
     let mut lm = 0
