@@ -2,6 +2,26 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(GOVERNANCE): 흩어진 가설 전부 HYPOTHESES.jsonl 로 통합 + 아티팩트 state/ 재배치 (source/archived/artifacts 3 컬럼 신설)
+
+**무엇:** #2247 의 per-H JSONL 인덱스(896 행) 위에, repo 곳곳에 **흩어져 있던 모든 가설**을 단일 `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/` 로 통합. JSONL 스키마에 **`source` · `archived` · `artifacts`** 3 컬럼 신설.
+
+**통합 소스(출처별 행 수):**
+- `hypotheses/` (활성 scattered) **20** — `H_182–191` 10개(기존 cards/ 카드와 **내용 상이한 dup-id 변형** → `git mv` 로 `cards/H_18x_<slug>_stage2var.md` 로 최소 disambiguate) + `Hc_1276–1285` 10개(cards/ 에 없던 candidate 카드 → `git mv` 로 `cards/` 로). 폴더는 비워져 제거.
+- `archive/hypotheses_snapshots/**/H_*.md` (frozen legacy) **306** — **frozen-in-place 참조**(이동 안 함): 스냅샷 디렉터리 간 basename 중복 107 + cards/ 와 충돌 193 이라 en-masse 이동은 archive 의 frozen 구조를 파괴 → `card` = 그 파일의 `archive/...` 경로, `archived:true` 로 인덱스만.
+- `TENSION-LINK/harness/*.py` **40** — 가설별 py 결과물 → `git mv` 로 **`state/tension-link-harness/`** 로 재배치, 각 `H_60xx` 행의 `artifacts` 배열에 연결. `.hexa` 엔진·verdicts·ANU seed/provenance 등 비-가설 infra 는 그대로 보존(c5·c10).
+
+**도메인 디렉터리 정직 정산(c9):** `HIVE-MIND`·`OTHER-MIND` 의 가설(H_354/355/609/610/611/617/618/619 등)과 `TENSION-LINK` 전 arc(H_6006–6043)는 **이미 cards/ + jsonl 에 색인됨** — 도메인 디렉터리는 그 검증 harness/lib 만 보유. `HW-CORE`·`HW-LIMB` 는 가설 카드가 아니라 **도메인 문서**(.md/.log.md), `SAVANT-torch` 는 **trainer/corpus infra**(가설 정체 0) → 추출할 가설 없음, c10 surgical 로 그대로 둠.
+
+**JSONL 스키마(신설 컬럼):** `{"id","slug","tier","title","card","verdict","source","archived","artifacts"}`. `source` = `UNIVERSE`(기존 cards/) | `hypotheses/`(흩어진 활성, cards/ 로 이동) | `archive`(frozen-in-place). `archived` = archive 스냅샷이면 `true`. `artifacts` = `state/<slug>/` 로 재배치된 py/result 경로 배열(`.verdicts/` 는 아님 — 그건 카드가 가리키는 frozen 증거). 샘플 행:
+`{"id":"H_6007","slug":"pseudo-telepathy","tier":"🟢 …","card":"cards/H_6007_pseudo-telepathy.md","verdict":"…","source":"UNIVERSE","archived":false,"artifacts":["state/tension-link-harness/h6007_pseudo_telepathy.py"]}`
+
+**행 수:** 896 → **1222** (+326 = hypotheses/ 20 + archive 306). 기존 896 행의 `id/slug/tier/title/verdict` 는 **byte-identical 무변경**(c9, 3 신설 컬럼만 append) · 55 행에 artifacts(총 67 경로).
+
+**검증(c2, 캡처):** (1) `json.loads` 전 줄 0 에러 ✅ · (2) `find H_*.md` cards/·archive 밖 0 ✅ · (3) 모든 `card` 경로 실재(0 missing) ✅ · (4) 모든 `artifacts` 경로 `state/` 아래 실재(67/67) ✅ · (5) 원 896 행 core 필드 무변경 ✅ · (6) cred 스캔 c7 — moved py + jsonl 에 실 credential 0(매칭은 prose/varname 의 "token"/"secret" 단어뿐) ✅ · (7) 순수 삭제 0(전부 `git mv` rename, c5) ✅.
+
+**재생성기:** `UNIVERSE/_build_hyp_jsonl.py` 확장 — cards/(H_·Hc_) + archive 스냅샷을 함께 ingest, `source`/`archived`/`artifacts` emit, idempotent(재실행 = 디스크에서 재생성). **범위 외 보고:** `hypotheses_candidates/Hc_*.md` 1179개(pre-existing draft *candidate* 풀, 디렉티브 명시 소스 아님)는 c10 surgical 로 미포함 — 별도 결정 사안.
+
 ## 2026-06-16 — domain(GOVERNANCE): per-H 인덱스를 JSONL SSOT 로 이관 (HYPOTHESES.md 표 → HYPOTHESES.jsonl) + a_hypothesis_register 컨벤션 변경
 
 **무엇:** `a_hypothesis_register` 의 per-H 인덱스 표면을 비대해진 markdown 표(`UNIVERSE/HYPOTHESES.md` 의 `| H_… | … | tier | card |` 행)에서 **`UNIVERSE/HYPOTHESES.jsonl`** (landed 카드마다 JSON object 정확히 1개, 한 줄/가설)로 이관. **가설별 두 doc 표면 = (1) `HYPOTHESES.jsonl` 인덱스 줄 + (2) `cards/H_<id>_<slug>.md` 카드** 로 갱신. `HYPOTHESES.md` 는 thin prose overview + folded appendices(forward backlog · reference · retired buckets · README/UNIVERSE overview · legacy logs)로 **강등** — 더 이상 per-H 인덱스 표면 아님.
