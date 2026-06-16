@@ -1,0 +1,95 @@
+H_1375 — CP DIMENSIONAL LADDER: does move-the-cells RELOCATION survive as feature dimension D grows?
+FROZEN PRE-REGISTRATION (written BEFORE any scoring; frozen-first, c9/c16/p7, NO tune-to-green).
+====================================================================================================
+
+LINEAGE & LENS
+  H_1360 (🟢, 1-D) : move-the-cells = physically RELOCATE residual phase-1 prototype cells toward the
+                     moved boundary lands a coherent single CP peak (1-D, boundary = a POINT).
+  H_1369 (🟢, 2-D) : GENERALIZES to a 2-D axis-aligned half-plane (cat = u>p), shifting p_A=1/3→2/3.
+                     Switched to a BOUNDED concentration metric COH2D after R1's NCOMP saturated on
+                     the shuffle smear (a known metric-space artifact). COH2D = U_CONC·(1−RIDGE_FRAC).
+  H_1374 (🧱, 2-D diagonal) : RELOCATION generalizes to a diagonal; the COH concentration-SEPARATION
+                     stringency is axis-aligned-only (split-only residual already thin on a diagonal).
+  THIS (H_1375)    : push the LADDER up a DIMENSION axis D ∈ {2,3,4,6,8}. User direction "2d 말고도
+                     차원늘려봐". Lens: a_no_llm_frame_trap (geometry-of-representation, curse-of-
+                     dimensionality), a_break_the_wall, a_scale_honest_scope.
+
+THE QUESTION
+  As feature-space dimension D grows with a CONSTANT Monte-Carlo sample size N, does the move-the-cells
+  RELOCATION (drift residual phase-1 cells along the boundary NORMAL toward a shifted (D−1)-dim
+  hyperplane cat=⟨w,x⟩>c) survive? At which D, if any, does it break? Constant-N in growing-D is the
+  curse-of-dimensionality stressor — that IS the point.
+
+THE MOVE (only D is varied; w orientation HELD CONSTANT across D, per-seed fixed unit normal)
+  • TRUE partition: cat = int(⟨w,x⟩ > c), w = fixed per-seed unit normal in R^D, x ∈ [0,1]^D.
+  • boundary shift along the normal: c_A = m·(1/3) → c_A' = m·(2/3), where m = ⟨w, 1·(1,..,1)⟩ scale
+    chosen so the cut sits at the 1/3 and 2/3 quantile of the projection ⟨w,x⟩ over [0,1]^D (so both
+    phases see a balanced split regardless of D). c_A, c_A' computed from the projection quantiles of
+    a fixed reference sample (frozen, NOT from the scored sample) — stated honestly.
+  • move-the-cells: drift residual phase-1 prototype cells' SOURCE position along +w toward the moved
+    hyperplane (project source onto w, drift the projection s_i toward c_A', re-embed, re-read label).
+    eta = 0.15 FROZEN (same as H_1369). v-axes (orthogonal-to-normal) are the irrelevant axes — not
+    drifted, not scored (a coherent ridge legitimately spans the orthogonal complement).
+
+SAMPLING (honest — full lattice infeasible past D≈4)
+  • CONSTANT N = 169 Monte-Carlo sample points per D, drawn uniform in [0,1]^D (matches H_1369's 13×13
+    =169 grid cardinality so the sample budget is identical across the ladder — the stressor). Same
+    sample for all arms within a (D,seed). RBF basis = K_CTR=64 centers drawn uniform in [0,1]^D
+    (DIM=64 fixed across D, as in H_1369). 3 seeds [4333,4334,4335].
+  • DIRECTIONAL: $0 CPU numpy mirror, gradient-free. engine-transfer UNVERIFIED.
+
+METRICS (per D)
+  • RELOCATION = |ridge_s − c_A'| where ridge_s = the projection-onto-w centroid of the discrimination
+    ridge (the N-D analog of H_1369 peak_u; measured ALONG THE NORMAL).
+  • COH_D (bounded, generalizes COH2D) = S_CONC · (1 − RIDGE_FRAC), where:
+       RIDGE_FRAC = (#ridge nodes)/N,
+       S_CONC     = 1 − min(1, s_std / S_STD_REF), s_std = std of the ridge nodes' projection s=⟨w,x⟩.
+    High COH_D = a THIN ridge concentrated at one projection value (a single coherent hyperplane);
+    low = a sample-filling smear. Only the NORMAL-projection spread is scored (the orthogonal complement
+    spread is NOT scored — same principle as COH2D not scoring v-spread). Bounded in [0,1] → no NCOMP
+    saturation (the H_1369 R1 lesson carried in by design).
+  Discrimination FIELD: D(node) = max |Δ posterior| to its k_NN=4 NEAREST sample neighbors (the N-D
+    analog of H_1369's 4-grid-neighbor field; kNN because a lattice has no neighbors off-grid).
+  ridge mask = D ≥ 0.5·D.max() (same 0.5-of-peak rule as H_1369).
+
+ARMS (per D, per seed)
+  RE-PACK   : eta=0.15, phase-2 trained on moved labels (the move-the-cells lever).
+  SPLIT-ONLY: eta=0.00, phase-2 trained on moved labels (H_1364 ablation — isolates the geometric drift).
+  NO-RETRAIN: eta=0.00, NO phase-2 (holds the OLD boundary c_A).
+  SHUFFLE   : eta=0.15, phase-2 on permuted random labels (anti-Goodhart — must NOT fabricate a ridge).
+
+FROZEN BARS (per D; verbatim mirror of H_1369 R2; NO threshold moved)
+  LOC_TOL    = 0.12     (RELOCATION reach tolerance, along the normal; = H_1360/H_1369)
+  COH_MIN    = 0.50     (COH_D presence)
+  COH_SEP    = 0.10     (COH_D earned-vs-split separation)
+  SHUF_COH_MAX = 0.20   (shuffle COH_D must collapse)
+  S_STD_REF  = 0.20     (projection-spread reference, frozen = H_1369 U_STD_REF)
+
+  Per-D pass iff ALL of:
+    (1) RELOCATION : |ridge_s − c_A'| ≤ LOC_TOL for all 3 seeds.
+    (2) COH_D      : mean COH_D ≥ COH_MIN  AND  mean COH_D ≥ split-only mean COH_D + COH_SEP.
+    (3) EARNED     : (3a) no-retrain holds c_A: |ridge_s − c_A| ≤ LOC_TOL all 3 seeds
+                     AND (3b) shuffle mean COH_D ≤ SHUF_COH_MAX.
+    (4) DISTINCT-FROM-SPLIT : split-only stays SHORT — mean |ridge_s − c_A'| > LOC_TOL
+                     (the geometric drift, not the re-growth, lands the ridge).
+
+LADDER VERDICT (declared UP FRONT, before scoring)
+  🟢 DIMENSION-INVARIANT  : ALL D ∈ {2,3,4,6,8} pass all four bars.
+  🧱 BREAKS-AT-D*         : report the SMALLEST failing D* and which bar(s) failed there; all higher D
+                            also reported. An honest break under constant-N growing-D IS a valid result
+                            (curse-of-dimensionality), c9.
+
+a_break_the_wall CONTINGENCY (frozen-first; only if it breaks at some D*)
+  ONE new angle: re-run the FULL ladder with the metric WHITENED before drift — i.e. drift+score in the
+  whitened projection frame (standardize the sample by its per-axis std so the constant-N cloud is
+  isotropic before measuring ridge concentration). Same frozen bars, re-scored in the whitened frame.
+  This is pre-registered HERE (NO bar moved); reported as a SECOND ladder block, NOT a replacement.
+  (Alternative angle scale-N-with-D is NOT taken — constant-N is the deliberate stressor; whitening
+   attacks the metric-geometry confound instead, the H_1369→H_1374 lesson.)
+
+SCOPE (honest, a_scale_honest_scope / a_toy_scale_recheck)
+  TOY: N=169 Monte-Carlo / 3 seeds / DIM=64 / one normal orientation per seed / deterministic readout
+  (tests dimensional STRUCTURE of the relocation, not a learned net). Constant-N is a chosen stressor,
+  NOT a realistic data regime. Scale / real-corpus / learned-net / per-D-N-scaling / engine-transfer
+  UNVERIFIED. live CORE/*.hexa UNTOUCHED (DIRECTIONAL probe, wires nothing).
+====================================================================================================

@@ -2,6 +2,14 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1375 — CP 차원 사다리 (move-the-cells 가 차원 D 증가에도 살아남는가, D ∈ {2,3,4,6,8}) — 🧱 BREAKS-AT-D*=3 (CONCENTRATION-ONLY; RELOCATION DIMENSION-INVARIANT)
+
+**무엇:** 사용자 직접 지시 "2d 말고도 차원늘려봐" 를 실현 — categorical-perception move-the-cells (residual phase-1 prototype 셀을 경계 NORMAL 방향으로 옮겨 이동한 (D−1)-차원 초평면 cat=⟨w,x⟩>c 에 판별 ridge 를 안착) 을 2-D 너머 차원 사다리 D ∈ {2,3,4,6,8} 로 밀어올린다. H_1360(1-D 🟢)→H_1369(2-D axis 🟢)→H_1374(2-D diagonal 🧱)에 이어 **샘플 크기 N=169 를 차원 무관하게 고정**한 채(고정-N×증가-D = 차원의 저주 stressor, 핵심) RELOCATION 과 bounded N-D 농도 COH_D(H_1369 COH2D 의 법선-투영 일반화)를 시드별 고정 법선 w∈R^D 위에서 측정. FROZEN-FIRST(FREEZE 를 scoring 전에 별도 commit, c9/c16/p7), 4 control arm(RE-PACK/SPLIT-ONLY/NO-RETRAIN/SHUFFLE), 3 시드 [4333,4334,4335].
+
+**결과:** 🧱 BREAKS-AT-D*=3. **c1 RELOCATION 은 차원-불변** — |ridge_s−c_A'| 0.008→0.018→0.034→0.041→0.052 (D=2/3/4/6/8) 전부 ≤0.12, ridge 가 이동 초평면에 항상 안착(move-the-cells 기하 법칙은 N-D 까지 robust). **c2 COHERENCE 는 D*=3 에서 깨짐** — bounded COH_D 0.714→0.428→0.201→0.079→0.038 단조 붕괴, D=3 부터 COH_MIN=0.50 미달: 고정-N=169 에서 직교여공간 부피 폭발로 샘플이 희박해져 얇은 결맞은 ridge 유지 불가(고정 샘플예산의 차원의 저주). 사전등록 a_break_the_wall WHITENED 구제는 c1 까지 깨뜨려 더 악화(FAILED rescue) → 농도 붕괴가 프레임 artifact 아닌 REAL 임을 확증. H_1374 와 같은 family 교훈(relocation robust / COH-concentration fragile)이 차원 축에서 재현. DIRECTIONAL numpy mirror, engine-transfer UNVERIFIED, TOY 고정-N STRESSOR(N-scaling-with-D 미택), $0 CPU, live CORE UNTOUCHED, NO bar moved.
+
+**왜:** 사용자 지시 + a_no_llm_frame_trap(표상-기하/차원의 저주 렌즈) + a_break_the_wall(사전등록 whitening 시도) + a_scale_honest_scope. card `UNIVERSE/cards/H_1375_cp_ndim_ladder.md` · `.verdicts/1375_cp_ndim_ladder/{FREEZE,result}.txt` · `state/cp-ndim/h1375_cp_ndim_ladder.py` · index `UNIVERSE/HYPOTHESES.jsonl`.
+
 ## 2026-06-16 — research(OMEGA): H_1373 — hive-nested-universes (🧱 NESTED_BELOW_CENTRALIZED — 다중-스케일 재귀 nesting 도 redundancy 천장 못 깸, hive arc TERMINAL closure)
 
 **무엇:** 사용자가 verbatim 제안한 "우주 안의 우주들처럼" — NESTED/재귀 universes-within-universes 토폴로지가 collective-Φ 의 단일-스케일 redundancy 천장을 탈출하는지 정면 테스트. hive arc 는 5 *단일-스케일* lever(강한 hub H_1356·약/decorrelated H_1363·nonlinear-gate H_1370·분산 원-겹침 H_1371)에 걸쳐 🧱 로 닫혔고, H_1371 의 load-bearing 결과는 CENTRALIZED 단일-공유-founder 가 탈출할 천장이 아니라 floor-beating MAXIMUM-Φ(R2 0/3)였다. H_1373 는 cosmological-nesting/matryoshka 렌즈(c15, a_no_llm_frame_trap)로 다중-스케일 재귀를 친다: N_TOT=6=2 클러스터×3, 각 클러스터가 "작은 우주"(LOCAL founder 공유)이고 클러스터-local founder 들이 "더 큰 우주"의 TOP founder 와 THEMSELVES 재귀 결합(L_eff[c]=Lc[c]+TOP_W·TOPF). Φ=FAITHFUL IIT-4 exact MIP-EI via hexa(a_phi_iit4_tool, H_1371 의 faithful_phi 호출 verbatim 재사용). FROZEN-FIRST(FREEZE 를 scoring 전에 별도 commit, c9/p7), 4 control arm(FLOOR·CENTRALIZED·SHUFFLE=경계파괴·FLAT=같은 mass·위계 없음).

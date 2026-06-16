@@ -1,0 +1,58 @@
+H_1375 — CP DIMENSIONAL LADDER: does move-the-cells RELOCATION survive growing D?
+====================================================================================================
+DIRECTIONAL numpy mirror ($0 CPU). User: '2d 말고도 차원늘려봐'. D ∈ {2,3,4,6,8}, CONSTANT N=169.
+Constant-N in growing-D = the curse-of-dimensionality stressor (the point). a_no_llm_frame_trap.
+
+PRIMARY LADDER (un-whitened):
+----------------------------------------------------------------------------------------------------
+  bars: LOC_TOL=0.12 COH_MIN=0.5 COH_SEP=0.1 SHUF_COH_MAX=0.2 S_STD_REF=0.2  (N=169 CONSTANT across D, DIM=64, eta=0.15, seeds=[4333, 4334, 4335])
+   D | reloc|rs-cA2| |        COH_D rp/split/shuf |      c_A,c_A2 |  c1  c2  c3  c4 | PASS
+   2 |         0.008 |          0.714/0.297/0.045 |   0.142,0.449 | ✅ ✅ ✅ ✅ | PASS
+   3 |         0.018 |          0.428/0.221/0.026 |   0.026,0.297 | ✅ ❌ ✅ ✅ | FAIL
+   4 |         0.034 |          0.201/0.000/0.000 |   0.166,0.443 | ✅ ❌ ✅ ✅ | FAIL
+   6 |         0.041 |          0.079/0.000/0.000 |   0.018,0.279 | ✅ ❌ ✅ ❌ | FAIL
+   8 |         0.052 |          0.038/0.000/0.000 | -0.282,-0.026 | ✅ ❌ ✅ ✅ | FAIL
+
+  per-D detail (RELOCATION per-seed |rs-c_A2|, NO-RETRAIN per-seed |rs-c_A|):
+    D=2: reloc [0.001, 0.011, 0.012] | split-only [0.264, 0.217, 0.181] | no-retrain [0.008, 0.009, 0.007] | COH rp [0.76, 0.64, 0.74] shuf [0.0, 0.089, 0.046]
+    D=3: reloc [0.019, 0.017, 0.019] | split-only [0.113, 0.223, 0.227] | no-retrain [0.02, 0.009, 0.0] | COH rp [0.422, 0.497, 0.365] shuf [0.0, 0.0, 0.078]
+    D=4: reloc [0.01, 0.06, 0.032] | split-only [0.16, 0.1, 0.154] | no-retrain [0.042, 0.003, 0.034] | COH rp [0.33, 0.131, 0.143] shuf [0.0, 0.0, 0.0]
+    D=6: reloc [0.02, 0.028, 0.077] | split-only [0.092, 0.113, 0.109] | no-retrain [0.025, 0.029, 0.005] | COH rp [0.108, 0.128, 0.0] shuf [0.0, 0.0, 0.0]
+    D=8: reloc [0.021, 0.084, 0.053] | split-only [0.134, 0.16, 0.088] | no-retrain [0.023, 0.011, 0.016] | COH rp [0.0, 0.0, 0.115] shuf [0.0, 0.0, 0.0]
+
+====================================================================================================
+LADDER VERDICT (primary): 🧱 BREAKS-AT-D*=3 — relocation/coherence first fails at D=3.
+    D=3 FAILED bars: ['c2']
+    D=4 FAILED bars: ['c2']
+    D=6 FAILED bars: ['c2', 'c4']
+    D=8 FAILED bars: ['c2']
+
+a_break_the_wall (frozen-first, pre-registered): re-run the FULL ladder WHITENED
+  (drift+score in the per-axis-standardized isotropic frame). SAME frozen bars. SECOND block:
+====================================================================================================
+WHITENED LADDER (a_break_the_wall angle):
+----------------------------------------------------------------------------------------------------
+  bars: LOC_TOL=0.12 COH_MIN=0.5 COH_SEP=0.1 SHUF_COH_MAX=0.2 S_STD_REF=0.2  (N=169 CONSTANT across D, DIM=64, eta=0.15, seeds=[4333, 4334, 4335])
+   D | reloc|rs-cA2| |        COH_D rp/split/shuf |      c_A,c_A2 |  c1  c2  c3  c4 | PASS
+   2 |         0.328 |          0.000/0.000/0.000 |  -0.560,0.500 | ❌ ❌ ❌ ✅ | FAIL
+   3 |         0.326 |          0.000/0.000/0.000 |  -0.527,0.456 | ❌ ❌ ❌ ✅ | FAIL
+   4 |         0.342 |          0.000/0.000/0.000 |  -0.381,0.582 | ❌ ❌ ❌ ✅ | FAIL
+   6 |         0.108 |          0.000/0.000/0.000 |  -0.455,0.476 | ❌ ❌ ❌ ✅ | FAIL
+   8 |         0.423 |          0.000/0.000/0.000 |  -0.394,0.481 | ❌ ❌ ❌ ✅ | FAIL
+
+  per-D detail (RELOCATION per-seed |rs-c_A2|, NO-RETRAIN per-seed |rs-c_A|):
+    D=2: reloc [0.05, 0.443, 0.492] | split-only [0.457, 0.61, 0.916] | no-retrain [0.334, 0.311, 0.064] | COH rp [0.0, 0.0, 0.0] shuf [0.0, 0.0, 0.0]
+    D=3: reloc [0.138, 0.61, 0.231] | split-only [0.17, 1.016, 0.501] | no-retrain [0.688, 0.008, 0.262] | COH rp [0.0, 0.0, 0.0] shuf [0.0, 0.0, 0.0]
+    D=4: reloc [0.382, 0.292, 0.351] | split-only [1.114, 0.957, 1.217] | no-retrain [0.305, 0.058, 0.098] | COH rp [0.0, 0.0, 0.0] shuf [0.0, 0.0, 0.0]
+    D=6: reloc [0.277, 0.02, 0.026] | split-only [0.103, 0.955, 0.12] | no-retrain [0.84, 0.177, 0.533] | COH rp [0.0, 0.0, 0.0] shuf [0.0, 0.0, 0.0]
+    D=8: reloc [0.04, 1.039, 0.19] | split-only [0.402, 0.868, 0.283] | no-retrain [0.485, 0.073, 0.239] | COH rp [0.0, 0.0, 0.0] shuf [0.0, 0.0, 0.0]
+
+====================================================================================================
+LADDER VERDICT (after a_break_the_wall): 🧱 BREAKS-AT-D*=2 EVEN WHITENED — the
+  dimensional break is REAL, not a frame artifact. Whitening does NOT rescue it. Honest
+  curse-of-dimensionality ceiling under constant-N. NO bar moved (c9/c16/p7).
+    D=2 FAILED bars: ['c1', 'c2', 'c3']
+    D=3 FAILED bars: ['c1', 'c2', 'c3']
+    D=4 FAILED bars: ['c1', 'c2', 'c3']
+    D=6 FAILED bars: ['c1', 'c2', 'c3']
+    D=8 FAILED bars: ['c1', 'c2', 'c3']
