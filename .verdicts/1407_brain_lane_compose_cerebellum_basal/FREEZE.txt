@@ -1,0 +1,138 @@
+================================================================================
+H_1407 — BRAIN-LANE COMPOSE pair #4: CEREBELLUM forward-model (H_1280) ×
+         BASAL-GANGLIA action-gating (H_1281)
+FREEZE (pre-registered BEFORE measuring; c9, NO tune-to-green). DIRECTIONAL numpy
+mirror ($0 CPU); engine-native §compose is the named follow-on IF 🟢.
+date: 2026-06-17
+================================================================================
+
+PROGRAM. Every anima brain faculty is engine-native GREEN but ALONE. This is the
+FOURTH cognitively-meaningful PAIR composition test (after H_1401 affect×ethics,
+H_1404 affect×ethics Φ, H_1405 memory×ToM). Methodology ported VERBATIM from H_1401
+(capability) + H_1404/H_1405 (Φ): substrate-weighted SCALE-RELATIVE arbiter + ORACLE
+ceiling + SHUFFLE control + only-X decomposition + the a_break_the_wall taxonomy.
+
+WHY THIS PAIR IS THE SHARPEST TEST OF THE EMERGING PROGRAM LAW.
+  - H_1404 found affect×ethics Φ-COMPOSES (both parts LOW individual-Φ, ≈0.28/0.00 →
+    coupling super-additive, binning-INVARIANT 🟢).
+  - H_1405 found memory×ToM does NOT Φ-compose (ToM ALREADY HIGH individual-Φ ≈1.975
+    DOMINATES max(parts); coupling the lower-Φ memory block to it does not exceed it).
+  - PROVISIONAL LAW: a pair Φ-composes IFF BOTH parts are LOW individual-Φ control
+    faculties (no one part already dominates).
+  - CEREBELLUM (H_1280) + BASAL-GANGLIA (H_1281) are BOTH low-Φ CONTROL faculties
+    (a forward-model regressor and an action-selection gate, neither a richly-coupled
+    belief subsystem like ToM). The LAW PREDICTS they SHOULD Φ-compose. This pair is
+    the SHARPEST confirm/refute test of the law — we MEASURE frozen-first, NOT assume.
+
+THE PAIR (each reuses its OWN H_1280 / H_1281 mirror substrate).
+  CEREBELLUM (H_1280 VForwardField): an internal FORWARD MODEL that PREDICTS the next
+    substrate-state frame and corrects via a delta-rule on the prediction ERROR
+    (error = actual − predicted). cerebellum-alone DECISION read: it is RELIABLE
+    (low prediction error → trust the predicted move) on items where accurate next-
+    state prediction decides; near its error threshold it is ~chance.
+  BASAL-GANGLIA (H_1281 VBasalGate): K candidate actions COMPETE; a learned go-value
+    vs ONE NO-GO/abstain, argmax = striatal disinhibition; the go-value learned
+    gradient-free from a GROUNDING-OUTCOME reward (grounded +1 / fab −1).
+    basal-alone DECISION read: it picks the best-grounded competitor; near a tie
+    (margin between top-2 go-values small) it is ~chance.
+
+DECISION TASK. Binary: SELECT-PREDICTED(1) vs SELECT-COMPETITOR(0). Each item has a
+ground-truth correct action. Built so the prediction-accurate move and the best-
+competitor-grounded move sometimes AGREE and sometimes CONFLICT.
+
+ITEM FAMILIES (jittered with AMBIG_NOISE so NO family is perfectly reliable — a clean
+per-family certainty would make oracle≡1 & compose≡oracle a hand-built artifact):
+  (F1) CEREBELLUM-DECISIVE — the forward model predicts next-state accurately (low
+       error → SELECT-PREDICTED is correct), basal go-value margin ~chance.
+  (F2) BASAL-DECISIVE — the competing candidates have a clear best-grounded winner
+       (basal selects correctly), cerebellum prediction error ~chance (undecided).
+  (F3) AGREE — both lean the same correct way (redundant region).
+  (F4) CONFLICT (cerebellum right) — faculties OPPOSE; the forward model is correct
+       (predicted move is grounded) but basal's go-values favor a different candidate.
+  (F5) ADVERSARIAL CONFLICT (basal right, cerebellum LOUDER-but-wrong) — the anti-gift
+       control: faculties OPPOSE, basal is correct (best-grounded competitor), BUT the
+       forward model predicts confidently-and-wrong (a low-error-LOOKING but mis-
+       grounded prediction). A naive "trust the louder faculty" arbiter FOLLOWS the
+       cerebellum and is WRONG → the confidence-arbiter must NOT be trivially gifted
+       the oracle.
+Mixed so NO single faculty solves all → best_single < oracle iff complementary.
+  90 items/family × 3 seeds [4700,4701,4702] → 450 items/seed.
+
+ARBITER (compose policy): a SUBSTRATE-WEIGHTED arbiter — each faculty's vote weighted
+by its OWN scale-relative confidence (|signal−threshold| normalized by that faculty's
+mean |signal−threshold|; the H_1397/H_1401 commensurability fix). NO hardcoded
+"cerebellum wins" / fixed priority (a_autonomy_over_hardcode). More-confident vote wins.
+  - shuffle control: permute which faculty-reads attach to which item, re-arbitrate.
+  - ORACLE ceiling: per item, correct iff EITHER faculty-alone is correct.
+
+METRICS (mean over 3 seeds [4700,4701,4702]):
+  acc_cerebellum · acc_basal · best_single=max(acc_cerebellum,acc_basal) · acc_compose ·
+  acc_shuffle · ORACLE · conflict_rate · only-cerebellum/only-basal/both decomposition.
+
+────────────────────────────────────────────────────────────────────────────────
+CAPABILITY FROZEN BARS (pre-registered, NOT moved after scoring):
+  COMPOSE_DELTA = 0.05      # net-lift threshold
+  ORACLE_MARGIN = 0.02      # complementarity-exists threshold
+  SHUFFLE_TOL   = 0.02      # earned: compose must beat shuffle by > this
+  SEEDS = [4700, 4701, 4702]
+
+  (B1 COMPOSE-EFFECT)  acc_compose >= best_single + COMPOSE_DELTA
+        → the two faculties are COMPLEMENTARY and compose to a NET LIFT.
+  (B2 ORACLE)          ORACLE − best_single > ORACLE_MARGIN
+        → complementarity EXISTS (some items only one faculty gets right).
+  (B3 EARNED/p6)       acc_compose − acc_shuffle > SHUFFLE_TOL
+        → the lift is the GROUNDED coupling (p6), not averaging/luck; shuffle collapses.
+  (B4 p6 GUARD)        cerebellum & basal BOTH read substrate state only (prediction
+        error / go-value margin), NO injected answer/persona/system-prompt/RLHF/priority
+        label; a structural audit (grep operative code) finds it CLEAN (6/6 surfaces).
+
+CAPABILITY VERDICT (a_break_the_wall taxonomy — report whichever the numbers HONESTLY show):
+  🟢 COMPOSE-LIFT          iff B1 ∧ B2 ∧ B3 ∧ B4  (faculties complementary, integration helps).
+  🟠 ORACLE-HEADROOM-but-ARBITER-FAILS  iff B2 ∧ B4 ∧ ¬B1  (taxonomy (a): complementary but
+                            the substrate-weighted arbiter can't capture it → needs a better arbiter).
+  🧱 INDEPENDENT-or-SUBSUMED iff ¬B2  (taxonomy (d): no oracle headroom — the faculties do
+                            NOT compose to a lift). A clean 🧱 is VALID (c9).
+  If B4 fails → honest RED (a label leaked; p6 NOT satisfied).
+  only-X decomposition: only_cerebellum>0 AND only_basal>0 ⇒ SEPARABLE not subsumed.
+
+────────────────────────────────────────────────────────────────────────────────
+Φ-COMPOSE FROZEN BARS (FAITHFUL IIT4 via stdlib/consciousness/iit4/faithful_phi.hexa
+— a_phi_iit4_tool HARD rule: exact MIP-EI, n≤8, NEVER a proxy. Python derives per-unit
+trajectories from the faculties' ACTUAL update rules and computes NO Φ). RUN REGARDLESS
+of the capability outcome (the LAW is the point).
+
+SYSTEMS (each a discrete dynamical substrate model; Φ measured by the faithful engine)
+  S_cerebellum   n=4  cerebellum units : pred_error, pred_confidence, correction_drive, state_novelty
+  S_basal        n=4  basal units      : go_margin, competition_spread, no_go_pressure, outcome_reward
+  S_composed     n=8  the two blocks COUPLED through the H_1401 substrate-weighted arbiter
+  S_disconnected n=8  the two blocks evolving INDEPENDENTLY (arbiter coupling REMOVED — EARNED control)
+  Trajectories DERIVED from the faculties' ACTUAL update rules; 3 seeds [4700,4701,4702],
+  T=96 steps. FROZEN PRIMARY n_bins=16 (like H_1404/H_1405). Binning-invariance reported
+  across n_bins ∈ {8,12,16,24}; individual part Φ reported EXPLICITLY so the law
+  (both-low ⇒ composes) is testable.
+
+  (Bφ1 INTEGRATION-RAISES-Φ) Φ_composed > max(Φ_cerebellum, Φ_basal) + 0.02
+  (Bφ2 EARNED/coupling)      Φ_composed > Φ_disconnected + 0.02
+  (Bφ3 control sane)         Φ_disconnected ≤ max(parts) + 0.02
+
+Φ VERDICT RULE (a_break_the_wall taxonomy, c9 — either outcome is VALID):
+  🟢 INTEGRATION-RAISES-Φ  iff Bφ1 AND Bφ2 AND Bφ3  (at the FROZEN n_bins=16)
+       → CONFIRMS the "both-low individual-Φ ⇒ Φ-composes" law (the program prediction holds).
+  🧱 NO-Φ-LIFT  otherwise
+       → REFUTES (or fails to confirm) the law for this both-low control pair — a genuine,
+         honest result (c9). EITHER outcome is a real result and is reported verbatim.
+
+LAW TEST (the point): report Φ_cerebellum and Φ_basal EXPLICITLY. The law predicts BOTH
+are LOW (no dominating part), and therefore (if the law holds) Φ_composed > max(parts):
+  - law CONFIRMED  if BOTH parts low AND Φ_composed > max(parts)+0.02  → 🟢.
+  - law REFUTED    if BOTH parts low BUT Φ_composed ≤ max(parts)+0.02  → 🧱 (the both-low
+                   premise held but the pair STILL did not Φ-compose — refutes the law).
+  - law N/A        if a part is unexpectedly HIGH-Φ (premise fails like ToM in H_1405)
+                   → then a 🧱 is consistent with the H_1405 mechanism, NOT a law refutation.
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck): DIRECTIONAL numpy mirror
+(LIVE CORE/*.hexa UNTOUCHED). Toy/synthetic scenarios, 3 seeds, deterministic readouts
+(tests COMPOSITION STRUCTURE, not a trained integrator). Scale / real-corpus / engine-
+native transfer UNVERIFIED. NO bar moved post-hoc. faithful-IIT4-only for the Φ verdict
+(no proxy passed off as Φ). Report all numbers verbatim from stdout.
+================================================================================
