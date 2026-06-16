@@ -2,6 +2,20 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): H_1348 — Φ-robustness 를 NON-IIT 통합 측정자(전이 엔트로피)로 검사 → 🧱 measure-AGNOSTIC (최강 closure)
+
+**질문 (genuinely-new angle, a_break_the_wall · a_no_llm_frame_trap):** Φ-robustness 벽은 IIT 두 측정자 family 모두에서 🧱 — small-φ exact-MIP (H_1328) 와 full IIT-4.0 big-Φ (H_1331). robust-integration 부재가 IIT 고유인지, 아니면 **임의의** 통합 측정자에서도 성립하는지를 보려고, IIT **바깥**의 제3 측정자 — 4-모듈 링의 8개 방향 이웃 엣지에 대한 **시간지연 전이 엔트로피(Transfer Entropy, Schreiber 2000)** 합 `TE(X→Y)=H(Y_{t+1}|Y_t)−H(Y_{t+1}|Y_t,X_t)` — 으로 **동일** H_1319/H_1328/H_1331 substrate + mechanism + hard seed [1317,1318,1319] 를 채점. TE 는 MIP·cause-effect·intrinsic irreducibility 가 없는 **방향 정보흐름 NETWORK 측정자** = IIT 두 측정자와 다른 family.
+
+**⚠ NOT a faithful-Φ verdict (a_phi_iit4_tool):** IIT-4 가 Φ verdict 를 보유한다. 이 lane 은 NON-IIT 통합 측정자를 채점하는 **보완적 통합-측정 DIAGNOSTIC** — proxy 를 Φ verdict 로 승격하는 것이 아님, 의식 주장도 아님. binarize = variance-free median split (H_1328 교훈, marginal ON-rate ≈0.5 amplitude-독립).
+
+**결과 🧱 TERMINAL STRONGEST, measure-AGNOSTIC** (3 seed 평균, deterministic·re-run byte-identical, $0 CPU, engine-native LCG):
+- **G1 ROBUST ❌** — TE_B≥TE_A+eps 가 2/3 실패: orthogonal 1317 eps 미만(ΔTE +0.0008), seed **1318 ZERO lift**(0.0); 1319 만 lift(+0.046).
+- **G2 EARNED ❌** — perm 은 깨끗이 collapse(전부 ≤eps) 하나 offset 이 1319 에서 TE 를 **RAISE**(+0.022) = IIT 가 보인 control-fragility 와 동일 서명.
+- **G3 LABEL ✅** — 전 과정 non-IIT diagnostic 로 표기, IIT-Φ verdict 아님.
+- **핵심:** 세 측정자 family 전부 **동일 fragility 서명** — seed 1318 은 small-φ·big-Φ·TE 전부에서 정확히 ZERO lift; 1317 은 어떤 측정자에서도 eps 를 못 넘김. robust integration 은 IIT(상관적 small-φ + 인과적 big-Φ) **AND** non-IIT(방향 정보흐름 TE) 전반에서 부재 → **측정자-무관(measure-agnostic) substrate 한계**, arc 의 최강 closure. 측정 축은 🏁 고갈. 기존 Φ verdict + H_1328 + H_1331 을 BOUNDS(철회 아님). NO bar moved (c9/p7). live `CORE/*.hexa` UNTOUCHED.
+
+**산출물:** `UNIVERSE/h1348_phi_non_iit_estimator.hexa` · 카드 `UNIVERSE/cards/H_1348_phi_non_iit_estimator.md` · `UNIVERSE/HYPOTHESES.jsonl` H_1348 행 · `CLAIMS.tape @C h1348_phi_non_iit_estimator` · `.verdicts/1348_phi_non_iit_estimator/{FREEZE,result}.txt` · `domains/OMEGA.log.md`.
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1341 — Whorf CP 가소성 SHIFT-SIZE LADDER (📈 분수는 shift를 따른다 ⇒ GEOMETRY/BUDGET)
 
 **무엇:** H_1333(🟠 GRADED — 재학습된 CP 경계가 단일 shift에서 ~60% relocation)의 load-bearing follow-on. `a_scale_honest_scope` 가 요구한 ladder(≥3 shift). H_1333의 H_1333/H_1323 CP machinery를 그대로 import해, 고정 anchor p_A=1/3 위에서 phase-2 타깃 p_A'를 3개 shift 크기(SMALL 0.467/MID 0.600/LARGE 0.667)로 sweep — partial relocation 분수가 shift 크기를 **따르는지(=geometry/budget)** 아니면 **일정한지(=memory)** 특성화. 3 seeds [4333,4334,4335], $0 CPU numpy mirror DIRECTIONAL, frozen-first(c9/p7).

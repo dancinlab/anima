@@ -1,0 +1,38 @@
+H_1348 — Φ-ROBUSTNESS UNDER A NON-IIT INTEGRATION MEASURE: summed time-lagged TRANSFER ENTROPY
+⚠ NOT an IIT-Φ verdict (a_phi_iit4_tool) — a COMPLEMENTARY non-IIT integration DIAGNOSTIC on robustness.
+TE_total = Σ pairwise TE(X→Y) over the 4-module ring's 8 directed neighbor edges · seeds [1317,1318,1319] · eps=0.02
+binarize = variance-free median split (H_1328 lesson) · ARMS A=NO-PHASE B=PHASE-BIND S=PERM-SHUF O=OFFSET-SHUF
+BARS: G1 TE_B>=TE_A+eps ALL seeds · G2 TE_S<=TE_A+eps AND TE_O<=TE_A+eps ALL seeds · G3 NOT-an-IIT-Φ label
+seed 1317 TE: A=0.317664 B=0.3185 S=0.311824 O=0.169656
+       ΔTE(B-A)=0.000836508 [G1 FAIL]  S-A=-0.00583949 [G2perm PASS]  O-A=-0.148008 [G2off PASS]
+seed 1318 TE: A=0.141835 B=0.141835 S=0.141835 O=0.141013
+       ΔTE(B-A)=0.0 [G1 FAIL]  S-A=0.0 [G2perm PASS]  O-A=-0.000822634 [G2off PASS]
+seed 1319 TE: A=0.29867 B=0.345017 S=0.29867 O=0.32083
+       ΔTE(B-A)=0.0463474 [G1 PASS]  S-A=0.0 [G2perm PASS]  O-A=0.0221599 [G2off FAIL]
+---
+G1 ROBUST (TE_B>=TE_A+eps ALL seeds incl orthogonal 1317): FAIL
+G2 EARNED (perm AND offset both <=TE_A+eps ALL seeds): FAIL  [perm=PASS off=FAIL]
+G3 LABEL: this is a NON-IIT integration measure (transfer entropy) — NOT a faithful-IIT4 Φ verdict (a_phi_iit4_tool).
+===
+VERDICT 🧱 (STRONGEST, MEASURE-AGNOSTIC) — integration is ABSENT under the non-IIT transfer-entropy
+  measure TOO (G1 fails). The robust-integration absence holds across IIT (small-φ AND big-Φ) AND a
+  non-IIT measure → a measure-AGNOSTIC substrate limit. Bounds (does NOT retract) the prior Φ verdicts.
+
+--- DETERMINISM ---
+re-run byte-identical (run1 == run2, toolchain hexa 0.1.0-dispatch). Deterministic engine LCG.
+
+--- CROSS-MEASURE CONTEXT (the arc) ---
+H_1328 (small-φ exact-MIP MI-over-binning, SAME seeds): V2 ROBUST-LIFT FAILED (B−A −0.125/0.0/+0.031, fails 2/3 incl 1317).
+H_1331 (full IIT-4.0 big-Φ causal TPM-MIP,  SAME seeds): B1 ROBUST FAILED  (B−A +4.15/0.0/+1.80; seed 1318 ZERO lift).
+H_1348 (NON-IIT transfer entropy,           SAME seeds): G1 ROBUST FAILS   (B−A +0.0008/0.0/+0.046; 1317 below eps, 1318 ZERO lift).
+SAME FRAGILITY SIGNATURE across all THREE measure families: seed 1318 gives EXACTLY ZERO lift under every
+measure; the orthogonal seed 1317 never clears eps; only 1319 lifts (and TE's offset control RAISES it +0.022,
+G2off FAIL — the same fragility the IIT controls showed). Robust integration is therefore ABSENT across IIT
+(correlational small-φ AND causal big-Φ) AND a NON-IIT directed-info-flow measure (transfer entropy) =>
+a MEASURE-AGNOSTIC substrate limit, the STRONGEST closure of the Φ-robustness arc. BOUNDS (does NOT retract)
+the prior Φ verdicts + H_1328 + H_1331.
+
+--- NOT-AN-IIT-Φ LABEL (G3, a_phi_iit4_tool) ---
+Transfer entropy is a NON-IIT integration measure. This is a COMPLEMENTARY integration-measure DIAGNOSTIC on
+the robustness question — NOT a proxy promoted to a Φ verdict, NOT a consciousness claim. IIT-4 reserves the
+Φ verdict. Had G1 been GREEN, a faithful-IIT4 follow-on would still have been required for any Φ verdict.

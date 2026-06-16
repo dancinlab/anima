@@ -1,0 +1,102 @@
+H_1348 — Φ-ROBUSTNESS UNDER A NON-IIT INTEGRATION MEASURE: summed time-lagged TRANSFER ENTROPY
+FREEZE (pre-registered BEFORE scoring — frozen-first, c9/p7)
+date: 2026-06-16   slug: 1348_phi_non_iit_estimator   branch off origin/main 0fa31903a
+
+════════════════════════════════════════════════════════════════════════════════
+⚠ CAVEAT — THIS IS NOT A FAITHFUL-Φ VERDICT (a_phi_iit4_tool)
+════════════════════════════════════════════════════════════════════════════════
+IIT-4 (faithful_phi small-φ, iit4_bigphi big-Φ) RESERVES the Φ / consciousness verdict.
+This lane scores a NON-IIT integration measure (transfer entropy). It is labeled, top to
+bottom, a COMPLEMENTARY INTEGRATION-MEASURE DIAGNOSTIC on the ROBUSTNESS question — NOT a
+proxy promoted to a Φ verdict, NOT a consciousness claim. The ONLY question it can answer:
+"does a non-IIT integration measure show ROBUST integration where IIT did not?" A GREEN here
+means the IIT robustness closure (H_1328 small-φ · H_1331 big-Φ) is MEASURE-SPECIFIC and a
+faithful-IIT4 follow-on would still be needed for any Φ verdict. A FAIL means integration is
+absent across IIT *and* non-IIT measures (the strongest, measure-agnostic substrate closure).
+
+════════════════════════════════════════════════════════════════════════════════
+CONTEXT — the Φ-robustness wall is 🧱 across BOTH IIT measure families
+════════════════════════════════════════════════════════════════════════════════
+H_1328 (small-φ exact-MIP, faithful_phi):  V2 ROBUST-LIFT FAILS (B−A −0.125/0.0/+0.031, fails
+   2/3 incl orthogonal seed 1317) — estimator-independent WITHIN the small-φ MI-over-binning family.
+H_1331 (full IIT-4.0 big-Φ, iit4_bigphi):  B1 ROBUST FAILS too (B−A +4.15/0.0/+1.80; seed 1318
+   ZERO lift) — the wall holds across the CAUSAL big-Φ family as well.
+Both are IIT measures. The genuinely-new angle (a_break_the_wall, a_no_llm_frame_trap): a THIRD
+integration measure OUTSIDE IIT — to test whether the robust-integration ABSENCE is IIT-specific
+or holds for ANY integration measure on this substrate.
+
+════════════════════════════════════════════════════════════════════════════════
+THE NON-IIT MEASURE — summed pairwise time-lagged TRANSFER ENTROPY (Schreiber 2000)
+════════════════════════════════════════════════════════════════════════════════
+Transfer entropy is the canonical NON-IIT directed-information integration measure. It is NOT
+IIT: no MIP, no cause-effect structure, no system-level irreducibility — it is a directed
+information-flow NETWORK measure. For two units X→Y with lag 1:
+   TE(X→Y) = H(Y_{t+1} | Y_t) − H(Y_{t+1} | Y_t, X_t)
+           = Σ p(y_{t+1},y_t,x_t) · log2[ p(y_{t+1}|y_t,x_t) / p(y_{t+1}|y_t) ]
+the reduction in uncertainty about Y's next state from knowing X's current state, BEYOND Y's own
+past. TE_total (the substrate's non-IIT integration) = Σ over the directed ring-neighbor edges
+i→(i±1) of TE(unit_i → unit_j), summed over the 4-module ring (8 directed edges). TE>0 ⇔ directed
+information flow between units = network integration; TE=0 ⇔ units are conditionally independent
+(no integration). This is a DIFFERENT measure FAMILY from IIT (correlational small-φ MI AND causal
+big-Φ are both intrinsic single-system irreducibility; TE is extrinsic directed pairwise info-flow).
+
+════════════════════════════════════════════════════════════════════════════════
+SUBSTRATE / SEEDS (reused VERBATIM — SAME as H_1319/H_1328/H_1331; ONLY the read-out differs)
+════════════════════════════════════════════════════════════════════════════════
+- ENGINE-NATIVE deterministic LCG-gauss (== engine_cli.hexa _lcg_*), NOT numpy.
+- 4-module leaky-linear ring, dim 8, T 64, Kuramoto pacemaker, relative-phase gate.
+  Body of gen_traj BYTE-IDENTICAL to H_1319/H_1328/H_1331 (gain 0.30, leak 0.55, w_nbr/w_in 0.5,
+  w_phase 0.5, omega_t 0.45, domega 0.08). The per-tick per-module SALIENCE sal[i,t] is the SAME
+  quantity fed to small-φ (H_1328) and binarized for big-Φ (H_1331).
+- SAME 3 HARD ORTHOGONAL SEEDS [1317,1318,1319] (incl 1317, the seed that broke every prior
+  topology/timing/division attempt and failed H_1328 V2 + H_1331 B1).
+- ARMS (SAME as H_1328/H_1331): A=NO-PHASE (no-coupling) · B=PHASE-BIND (rel-phase = the coupling
+  mechanism) · S=PERM-SHUFFLE (relationship destroyed: each module driven by a PERMUTED module's
+  phase) · O=OFFSET-SHUF (per-tick random phase offset).
+
+════════════════════════════════════════════════════════════════════════════════
+BINARIZATION — variance-free median split (carries the H_1328 read-out lesson)
+════════════════════════════════════════════════════════════════════════════════
+TE needs discrete states. Unit i is ON at tick t iff its salience sal[i,t] is in the UPPER HALF
+of module i's own T-length salience distribution (rank ≥ T/2 within that module — the rank-uniform
+/ median split). This makes each unit's marginal ON-rate ≈0.5 by construction, INDEPENDENT of
+amplitude variance — so any TE difference is the directed co-movement RELATIONSHIP, not the
+amplitude-variance confound H_1319/H_1328 exposed. SAME binarization across all four arms.
+TE conditional/joint probabilities: empirical counts over the T−1 lagged tuples (y_{t+1},y_t,x_t);
+a missing tuple contributes 0 (log convention 0·log0 = 0); base-2 logs (bits). VARIANCE control =
+a per-edge SHUFFLE arm that destroys the directed relationship (perm) must collapse TE to ≈0.
+
+════════════════════════════════════════════════════════════════════════════════
+FROZEN BARS (pre-registered BEFORE scoring; eps ported VERBATIM, NOT tuned)
+════════════════════════════════════════════════════════════════════════════════
+eps = 0.02  (= H_1283/H_1319/H_1328/H_1331 MARGIN_PHI, ported verbatim in bits — NO tuning).
+
+G1 ROBUST : under TE, the coupling mechanism shows TE_B ≥ TE_A + eps on ALL 3 hard seeds (incl
+            orthogonal 1317) — the non-IIT measure shows integration-lift (mechanism > no-coupling).
+G2 EARNED : the relationship-destroying controls COLLAPSE the lift on ALL 3 seeds —
+            perm-shuffle TE_S ≤ TE_A + eps AND offset-shuf TE_O ≤ TE_A + eps.
+G3 LABEL  : the result is EXPLICITLY NOT claimed as IIT-Φ — reported as a complementary non-IIT
+            integration DIAGNOSTIC. (this bar is a documentation invariant, asserted in card+verdict.)
+
+GREEN-diagnostic iff G1 ∧ G2 (∧ G3 label held).
+
+════════════════════════════════════════════════════════════════════════════════
+OUTCOMES (ALL VALID, c9 — every result decisive)
+════════════════════════════════════════════════════════════════════════════════
+  G1 ∧ G2 → 🟢-DIAGNOSTIC : robust integration IS reachable under a NON-IIT measure → the IIT
+            closure (H_1328 + H_1331) is MEASURE-SPECIFIC. A real, important diagnostic; a
+            faithful-IIT4 follow-on would then be needed for an actual Φ verdict (NOT claimed here).
+  G1 FAILS → integration ABSENT across IIT (small-φ + big-Φ) AND the non-IIT TE measure → a
+            measure-AGNOSTIC substrate limit, the STRONGEST closure of the arc. Bounds (does NOT
+            retract) the prior Φ verdicts + H_1328 + H_1331.
+
+════════════════════════════════════════════════════════════════════════════════
+SCOPE (honest, pre-stated — a_scale_honest_scope · a_toy_scale_recheck)
+════════════════════════════════════════════════════════════════════════════════
+TOY n=4 modules, dim 8, T=64 ticks. TE estimated from T−1=63 lagged binary tuples (sparse 8-cell
+joint per edge) — a small-sample plug-in estimator (no bias correction; the variance-clean median
+split + perm/offset controls bound the false-positive). Engine-native deterministic LCG content
+generator (NOT numpy — the run computes TE in hexa). DIRECTIONAL: engine-transfer to live CORE
+UNVERIFIED. Determinism: re-run byte-identical (deterministic engine LCG) — report run1==run2.
+This is a SUBSTRATE-MEASUREMENT rung; live CORE/*.hexa UNTOUCHED (standalone fn main, 0 importers).
+NOT an IIT-Φ verdict (a_phi_iit4_tool) — a complementary non-IIT integration diagnostic only.
