@@ -73,3 +73,23 @@ HONEST SCOPE (a_scale_honest_scope · a_toy_scale_recheck · c9)
   claim; held-out deterministic next-symbol CE; NO perplexity-as-truth (p7). The phonotactic feature is
   a CONTEXT re-keying, NOT extra label information (the coda/onset ids are read off the SAME jamo stream
   the model already sees). NO bar moved after seeing results (c9/p7).
+
+────────────────────────────────────────────────────────────────────────────────────────────────
+FREEZE ADDENDUM (a_break_the_wall — pre-registered BEFORE the breakthrough-arm scoring; bars NOT moved)
+────────────────────────────────────────────────────────────────────────────────────────────────
+The first run's cell-arm hit the c4 wall: the Voronoi partition POOLS the phonotactic contexts into a
+few DENSE cells (cellJcnt median ~10, K~33 cells) — adding (coda,onset) to the partition FEATURE does
+NOT fragment per-CELL counts to sparse. Real cause: per-CELL ≠ per-CONTEXT; the grow-op caps at
+GROW_MAX and error-targets splits, so it never creates the thousands of sparse contexts the question
+needs. a_break_the_wall: try ONE genuinely-new angle before terminal — key the count head DIRECTLY on
+the (last-coda, last-onset) phonotactic-pair VALUE (one context per observed coda→onset pair), a TRUE
+high-cardinality natural-sparse ALPHABET at FULL data. THIS is the "larger jamo-context alphabet"
+H_1345 named. The SAME c1-c4 bars are RE-USED VERBATIM (NOT moved), now evaluated on this pair-key arm:
+  c1 NAT-SPARSE-WIN : pair-key JM beats pair-key jamo MLE by >= 0.03 (jamo − JM, mean 3 seeds).
+  c2 EARNED         : pair-key JM beats its shuffle (permuted global marginal) by >= 0.05, shuffle wrong way.
+  c3 DISSOCIATION   : pair-key A5 learned-metric does NOT cross (delta_A5_vs_jamo <= 0).
+  c4 NO-STRIDE      : stride == 1 AND pair-key contexts genuinely sparse (median cellJcnt < 1.0).
+The cell-arm's c4-FAIL is recorded as the diagnostic that motivated this arm. NO bar moved (c9/p7);
+GREEN iff c1∧c2∧c3∧c4 on the pair-key arm. If the pair-key contexts are ALSO not sparse (c4 fail) → ⚠.
+If sparse but JM does NOT cross (c1 fail) → 🧱 STRIDING ARTIFACT (H_1345 win needed manufactured
+starvation). The pair-key head is a CONTEXT re-key off the SAME jamo stream — no extra label info.

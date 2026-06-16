@@ -467,6 +467,132 @@ def run_arm(name, Xj, Yj, NBj, n_jamo, VJ, seeds, dim, do_a5=True):
         out["delta_A5_vs_jamo"] = round(a1 - float(np.mean(a5_list)), 5)   # POSITIVE = A5 crosses below
     return out
 
+# ══════════ BREAKTHROUGH arm (a_break_the_wall, pre-registered FREEZE addendum) ══════════
+# The c4 wall: the Voronoi partition POOLS phonotactic contexts into a few dense cells (per-CELL counts
+# stay dense even with the phonotactic feature). The H_1345 angle ii needs a TRUE high-cardinality
+# natural-sparse ALPHABET. So key the count head DIRECTLY on the (last-coda, last-onset) phonotactic-pair
+# VALUE — one context per observed (coda,onset) pair — NOT the pooled Voronoi cell. THIS is the "larger
+# jamo-context alphabet" H_1345 named. Then test the SAME c1-c4 bars: does JM-backoff toward the global
+# jamo marginal cross below the per-context jamo MLE when the contexts are NATURALLY sparse at full data?
+def phonotactic_pair_key(syms, depth, n_jamo):
+    """Per-position context key = (last-seen CODA jamo)*(n_jamo+1) + (last-seen ONSET jamo), +1 sentinel.
+       A true high-cardinality natural-sparse alphabet over coda->onset cross-syllable transitions."""
+    n = len(syms)
+    is_jamo = (syms >= 256) & (syms < 256 + n_jamo)
+    is_coda = is_jamo & (depth == 2)
+    is_onset = is_jamo & (depth == 0)
+    key = np.full(n, 0, dtype=np.int64)
+    lc = -1; lo = -1
+    sy = syms.tolist(); icoda = is_coda.tolist(); ionset = is_onset.tolist()
+    NJ1 = n_jamo + 1
+    for i in range(n):
+        key[i] = (lc + 1) * NJ1 + (lo + 1)            # in [0 .. NJ1*NJ1)
+        if icoda[i]: lc = sy[i] - 256
+        if ionset[i]: lo = sy[i] - 256
+    return key
+
+def per_byte_ce_pairkey(ctx_tr, Y_tr, ntx_tr, ctx_te, Y_te, NB_te, n_ctx, n_jamo, vj,
+                        mode="jamo", shuffle_seed=None):
+    """Count head keyed on the phonotactic-pair CONTEXT (one row per context value). mode:
+         jamo    = per-context jamo opaque MLE (the floor, A1-analog on the pair alphabet)
+         jm      = Jelinek-Mercer interp toward the global jamo marginal (Witten-Bell FROZEN lam)
+         a5      = NOT applicable here (the learned-metric needs the cell head); handled separately.
+       Byte symbols always scored from the per-context byte block (same denominator)."""
+    # per-context Laplace count head over the FULL vocab (byte 256 + jamo n_jamo)
+    Hcnt = np.full((n_ctx, vj), LAPLACE, dtype=np.float64)
+    flat = ctx_tr[:ntx_tr] * vj + Y_tr[:ntx_tr]
+    np.add.at(Hcnt.reshape(-1), flat, 1.0)
+    # global jamo marginal (train)
+    jl = Y_tr[:ntx_tr]; is_j = (jl >= 256) & (jl < 256 + n_jamo)
+    gcnt = np.full(n_jamo, LAPLACE, dtype=np.float64)
+    np.add.at(gcnt, jl[is_j] - 256, 1.0)
+    Pglobal = gcnt / gcnt.sum()
+    if shuffle_seed is not None:
+        Pglobal = np.random.default_rng(shuffle_seed).permutation(Pglobal)
+    byte_blk = Hcnt[:, :256]
+    jamo_cnt = Hcnt[:, 256:256 + n_jamo]
+    Nk_jamo = jamo_cnt.sum(axis=1, keepdims=True)
+    Pcell_j = jamo_cnt / Nk_jamo
+    if mode == "jm":
+        Nk_raw = np.maximum(Nk_jamo - LAPLACE * n_jamo, 0.0)
+        lam = MIN_OWNED / (MIN_OWNED + Nk_raw)
+        jamo_p = (1.0 - lam) * Pcell_j + lam * Pglobal[None, :]
+    else:  # jamo opaque MLE
+        jamo_p = Pcell_j
+    Pbyte = byte_blk / byte_blk.sum(axis=1, keepdims=True)
+    full_norm = Hcnt.sum(axis=1, keepdims=True)
+    jamo_mass = jamo_cnt.sum(axis=1, keepdims=True) / full_norm
+    byte_mass = byte_blk.sum(axis=1, keepdims=True) / full_norm
+    P = np.concatenate([byte_mass * Pbyte, jamo_mass * jamo_p], axis=1)
+    P = P / P.sum(axis=1, keepdims=True)
+    p = P[ctx_te, Y_te]; nll = -np.log(p + 1e-12)
+    return float(nll.sum() / float(NB_te.sum()))
+
+def run_pairkey_arm(syms_i, depth_i, nby_i, n_jamo, VJ, seeds):
+    """BREAKTHROUGH arm: count head keyed on the phonotactic-pair context VALUE (natural-sparse alphabet),
+       FULL data (stride 1), even/odd split. Same c1-c4 bars."""
+    key = phonotactic_pair_key(syms_i, depth_i, n_jamo)
+    n = len(syms_i); idx = np.arange(4, n - 1)
+    # context for predicting position idx = the pair-key as of the PREVIOUS position (no label leak)
+    ctx = key[idx - 1]
+    Y = syms_i[idx].astype(np.int64); NB = nby_i[idx]
+    # remap observed context ids to a dense 0..n_ctx-1 (only contexts that appear)
+    uniq, ctx_d = np.unique(ctx, return_inverse=True)
+    n_ctx = len(uniq)
+    # even/odd held-out split (NO stride)
+    m = ctx_d.shape[0]; ii = np.arange(m); e = ii % 2 == 0; o = ii % 2 == 1
+    ctx_tr, Y_tr, _ = ctx_d[e], Y[e], NB[e]
+    ctx_te, Y_te, NB_te = ctx_d[o], Y[o], NB[o]
+    ntx_tr = ctx_tr.shape[0]
+    # per-context jamo sparsity distribution (TRAIN)
+    is_j = (Y_tr >= 256) & (Y_tr < 256 + n_jamo)
+    per_ctx_jrows = np.bincount(ctx_tr[is_j], minlength=n_ctx).astype(np.float64)
+    cellJcnt = per_ctx_jrows / float(n_jamo)
+    dist = {
+        "K_contexts": int(n_ctx),
+        "per_context_jamo_rows_median": float(np.median(per_ctx_jrows)),
+        "cellJcnt_median": float(np.median(cellJcnt)),
+        "cellJcnt_mean": float(cellJcnt.mean()),
+        "frac_contexts_cellJcnt_lt_1": float((cellJcnt < 1.0).mean()),
+        "frac_contexts_cellJcnt_lt_0_5": float((cellJcnt < 0.5).mean()),
+    }
+    a1 = per_byte_ce_pairkey(ctx_tr, Y_tr, ntx_tr, ctx_te, Y_te, NB_te, n_ctx, n_jamo, VJ, mode="jamo")
+    jm = per_byte_ce_pairkey(ctx_tr, Y_tr, ntx_tr, ctx_te, Y_te, NB_te, n_ctx, n_jamo, VJ, mode="jm")
+    jmsh = [per_byte_ce_pairkey(ctx_tr, Y_tr, ntx_tr, ctx_te, Y_te, NB_te, n_ctx, n_jamo, VJ,
+                                mode="jm", shuffle_seed=sd) for sd in seeds]
+    # A5 on the pair-key head: learned-metric kernel-smoothing of the per-context jamo block
+    a5_list, a5sh_list = [], []
+    Hcnt = np.full((n_ctx, VJ), LAPLACE, dtype=np.float64)
+    np.add.at(Hcnt.reshape(-1), ctx_tr * VJ + Y_tr, 1.0)
+    sym_is_jamo_tr = (Y_tr >= 256) & (Y_tr < 256 + n_jamo)
+    for sd in seeds:
+        np.random.seed(sd)
+        E = learn_jamo_embedding(Y_tr, sym_is_jamo_tr, n_jamo, sd, refine=True)
+        Wj, _ = kernel_from_embedding(E)
+        a5_list.append(_pairkey_a5_ce(Hcnt, Wj, ctx_te, Y_te, NB_te, n_jamo, VJ))
+        rng = np.random.default_rng(sd); Esh = E[rng.permutation(n_jamo)]
+        Wsh, _ = kernel_from_embedding(Esh)
+        a5sh_list.append(_pairkey_a5_ce(Hcnt, Wsh, ctx_te, Y_te, NB_te, n_jamo, VJ))
+    return {
+        "arm": "BREAKTHROUGH_pairkey_full", "stride": 1, "cells": int(n_ctx),
+        "ntr": int(ntx_tr), "nte": int(ctx_te.shape[0]), "test_bytes": int(NB_te.sum()),
+        "A1_jamo": round(a1, 5), "JM_interp": round(jm, 5),
+        "JM_shuffle_mean": round(float(np.mean(jmsh)), 5),
+        "delta_JM_vs_jamo": round(a1 - jm, 5),
+        "A5_learned_mean": round(float(np.mean(a5_list)), 5),
+        "A5_shuffle_mean": round(float(np.mean(a5sh_list)), 5),
+        "delta_A5_vs_jamo": round(a1 - float(np.mean(a5_list)), 5),
+        "context_distribution": dist,
+    }
+
+def _pairkey_a5_ce(Hcnt, Wj, ctx_te, Y_te, NB_te, n_jamo, vj):
+    byte_blk = Hcnt[:, :256]; jamo_blk = Hcnt[:, 256:256 + n_jamo]
+    jamo_sm = jamo_blk @ Wj.T
+    Hsm = np.concatenate([byte_blk, jamo_sm], axis=1)
+    P = Hsm / Hsm.sum(axis=1, keepdims=True)
+    p = P[ctx_te, Y_te]; nll = -np.log(p + 1e-12)
+    return float(nll.sum() / float(NB_te.sum()))
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ko-window", type=int, default=30_000_000)
@@ -474,6 +600,8 @@ def main():
     ap.add_argument("--seeds", default="4354,4355,4356")
     ap.add_argument("--out", default="/tmp/h1354_out")
     ap.add_argument("--ko-cache", default="/tmp/h1311_ko_raw.bytes")
+    ap.add_argument("--pairkey-only", action="store_true",
+                    help="run ONLY the breakthrough pair-key arm (reuses the c4-failed cell arms' result)")
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
 
@@ -523,21 +651,33 @@ def main():
     nat["wall_s"] = round(time.time() - tr, 1)
     log("[NATSPARSE] " + json.dumps(nat, ensure_ascii=False))
 
-    # ── FROZEN bars ──
-    nat_dist = nat["context_distribution"]
-    # c1 NAT-SPARSE-WIN: JM crosses below jamo on natural-sparse contexts by >= C1_MARGIN
-    c1_delta = nat["delta_JM_vs_jamo"]                      # jamo − JM ; positive = JM below jamo
+    # ── BREAKTHROUGH arm (a_break_the_wall): pair-key context VALUE alphabet (the real natural-sparse test).
+    #    The cell-arm c4 FAILED (Voronoi pools contexts into a few dense cells); this arm keys the count
+    #    head DIRECTLY on the (coda,onset) phonotactic-pair value → a true high-cardinality natural-sparse
+    #    alphabet at FULL data. THIS is the H_1345 "larger jamo-context alphabet" angle. Same c1-c4 bars. ──
+    tr = time.time()
+    bt = run_pairkey_arm(syms_i, depth_i, nby_i, n_jamo, VJ, seeds)
+    bt["wall_s"] = round(time.time() - tr, 1)
+    log("[BREAKTHROUGH] " + json.dumps(bt, ensure_ascii=False))
+
+    # ── FROZEN bars (evaluated on the BREAKTHROUGH pair-key arm = the natural-sparse alphabet that c4
+    #    requires; the cell-arm's c4-fail is the diagnostic that motivated this arm, recorded as nat). ──
+    cell_dist = nat["context_distribution"]
+    cell_c4 = bool(nat["stride"] == 1 and cell_dist["cellJcnt_median"] < 1.0)   # FALSE — the wall
+    bt_dist = bt["context_distribution"]
+    # c1 NAT-SPARSE-WIN: JM crosses below jamo on natural-sparse pair-key contexts by >= C1_MARGIN
+    c1_delta = bt["delta_JM_vs_jamo"]                       # jamo − JM ; positive = JM below jamo
     c1 = bool(c1_delta >= C1_MARGIN)
     # c2 EARNED: JM beats its shuffle by >= C2_MARGIN (shuffle goes wrong way = shuffle CE > jamo CE)
-    c2_delta = nat["JM_shuffle_mean"] - nat["JM_interp"]    # positive = JM better than its shuffle
-    shuffle_wrong_way = bool(nat["JM_shuffle_mean"] >= nat["A1_jamo"])   # shuffle does NOT cross below
+    c2_delta = bt["JM_shuffle_mean"] - bt["JM_interp"]      # positive = JM better than its shuffle
+    shuffle_wrong_way = bool(bt["JM_shuffle_mean"] >= bt["A1_jamo"])   # shuffle does NOT cross below
     c2 = bool(c2_delta >= C2_MARGIN and shuffle_wrong_way)
     # c3 DISSOCIATION: A5 learned-metric does NOT cross (stays >= jamo, i.e. delta_A5_vs_jamo <= 0)
-    a5_crosses = bool(nat["delta_A5_vs_jamo"] > 0.0)
+    a5_crosses = bool(bt["delta_A5_vs_jamo"] > 0.0)
     c3 = bool(not a5_crosses)
-    # c4 NO-STRIDE: sparsity is natural (stride==1) AND contexts genuinely sparse (median cellJcnt < ~1)
-    natural_sparse = bool(nat["stride"] == 1 and nat_dist["cellJcnt_median"] < 1.0)
-    c4 = natural_sparse
+    # c4 NO-STRIDE: pair-key sparsity is natural (stride==1) AND contexts genuinely sparse (median<1)
+    c4 = bool(bt["stride"] == 1 and bt_dist["cellJcnt_median"] < 1.0)
+    nat_dist = bt_dist   # the verdict's reference distribution is the pair-key arm
 
     green = bool(c1 and c2 and c3 and c4)
 
@@ -548,9 +688,9 @@ def main():
                    "A5 kernel-smoothing does NOT cross (c3 dissociation) — the H_1345 crossover SURVIVES "
                    "without artificial striding; sparse-context backoff is a real below-jamo mechanism")
     elif not c4:
-        verdict = ("⚠ NOT-NATURALLY-SPARSE — c4 fails: the phonotactic contexts are NOT sparse enough at "
-                   "full data (median cellJcnt >= 1) → cannot test the natural-sparse question; the enrich "
-                   "did not fragment the model into sparse contexts. Flag and re-design the context (c9)")
+        verdict = ("⚠ NOT-NATURALLY-SPARSE — even the pair-key alphabet's contexts are NOT sparse enough at "
+                   f"full data (median cellJcnt = {bt_dist['cellJcnt_median']:.4f} >= 1) → cannot test the "
+                   "natural-sparse question; the coda→onset alphabet did not fragment finely enough (c9)")
     elif not c1:
         verdict = ("🧱 STRIDING ARTIFACT — c1 fails: on naturally-sparse phonotactic contexts at FULL 30MB, "
                    f"JM does NOT cross below jamo (delta jamo−JM = {c1_delta} < {C1_MARGIN}). The H_1345 "
@@ -578,11 +718,15 @@ def main():
         "d_emb": D_EMB, "skipgram_steps": SKIPGRAM_STEPS,
         "jamo_floor_ko_ce_locked": H1316_JAMO_CE,
         "calib_arm": calib,
-        "natsparse_arm": nat,
+        "natsparse_cell_arm": nat,
+        "cell_arm_c4_natural_sparse": cell_c4,
+        "cell_arm_cellJcnt_median": cell_dist["cellJcnt_median"],
+        "breakthrough_pairkey_arm": bt,
+        "bars_evaluated_on": "BREAKTHROUGH_pairkey_full",
         "c1_natsparse_win": c1, "c1_delta_jamo_minus_JM": c1_delta,
         "c2_earned": c2, "c2_delta_shuffle_minus_JM": round(c2_delta, 5),
         "c2_shuffle_wrong_way": shuffle_wrong_way,
-        "c3_dissociation_A5_no_cross": c3, "c3_delta_A5_vs_jamo": nat["delta_A5_vs_jamo"],
+        "c3_dissociation_A5_no_cross": c3, "c3_delta_A5_vs_jamo": bt["delta_A5_vs_jamo"],
         "c4_natural_sparse": c4,
         "c4_context_cellJcnt_median": nat_dist["cellJcnt_median"],
         "c4_frac_contexts_lt_1": nat_dist["frac_contexts_cellJcnt_lt_1"],
@@ -597,20 +741,22 @@ def main():
     log("-" * 79)
     log("ARMS (CE nats/UTF-8-byte; A5/A5-shuf 3-seed mean; A1/JM deterministic). delta = jamo − mech (+=below jamo):")
     log(f"{'arm':>28} {'cells':>5} {'cellJcnt_med':>12} {'A1jamo':>8} {'JM':>8} {'JMshuf':>8} {'A5':>8} {'ΔJM':>8} {'ΔA5':>8}")
-    for r in (calib, nat):
+    for r in (calib, nat, bt):
         cjm = r["context_distribution"]["cellJcnt_median"]
         a5 = r.get("A5_learned_mean", float("nan"))
         da5 = r.get("delta_A5_vs_jamo", float("nan"))
-        log(f"{r['arm']:>28} {r['cells']:>5} {cjm:>12.4f} {r['A1_jamo']:>8} {r['JM_interp']:>8} "
+        log(f"{r['arm']:>28} {r['cells']:>6} {cjm:>12.4f} {r['A1_jamo']:>8} {r['JM_interp']:>8} "
             f"{r['JM_shuffle_mean']:>8} {a5:>8} {r['delta_JM_vs_jamo']:>8} {da5:>8}")
     log("-" * 79)
-    log(f"[c4 NO-STRIDE] natsparse context distribution: K={nat_dist['K_contexts']} "
+    log(f"[cell-arm c4 FAIL diagnostic] Voronoi cells pool contexts: K={cell_dist['K_contexts']} "
+        f"cellJcnt median={cell_dist['cellJcnt_median']:.4f} → c4={cell_c4} (the wall that motivated pair-key)")
+    log(f"[c4 NO-STRIDE] PAIRKEY context distribution: K={nat_dist['K_contexts']} "
         f"cellJcnt median={nat_dist['cellJcnt_median']:.4f} mean={nat_dist['cellJcnt_mean']:.4f} "
         f"frac<1={nat_dist['frac_contexts_cellJcnt_lt_1']:.3f} frac<0.5={nat_dist['frac_contexts_cellJcnt_lt_0_5']:.3f}")
     log(f"c1 NAT-SPARSE-WIN (JM crosses below jamo by ≥{C1_MARGIN}): {c1}  (jamo−JM = {c1_delta})")
     log(f"c2 EARNED (JM beats shuffle by ≥{C2_MARGIN}, shuffle wrong way): {c2}  "
         f"(Δ={round(c2_delta,5)}, shuffle_wrong_way={shuffle_wrong_way})")
-    log(f"c3 DISSOCIATION (A5 does NOT cross): {c3}  (Δ_A5_vs_jamo={nat['delta_A5_vs_jamo']}, A5_crosses={a5_crosses})")
+    log(f"c3 DISSOCIATION (A5 does NOT cross): {c3}  (Δ_A5_vs_jamo={bt['delta_A5_vs_jamo']}, A5_crosses={a5_crosses})")
     log(f"c4 NO-STRIDE (stride==1, cellJcnt median<1): {c4}  (median={nat_dist['cellJcnt_median']:.4f})")
     log(f"VERDICT: {verdict}")
     log(f"total wall={round(wall,1)}s")
