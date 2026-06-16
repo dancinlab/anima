@@ -1,0 +1,28 @@
+===== H_1402 KO-EMIT COMPOSE ARBITER-SWAP — can a NON-MAGNITUDE arbiter capture oracle +0.043? =====
+REAL KO 30.0MB sha c47b6808308d2f73… (== H_1368/H_1380/H_1388/H_1399, NO fetch, $0) · DIRECTIONAL numpy mirror · CORE UNTOUCHED · seeds [4398, 4399, 4400]
+
+shared next-byte decision (REAL jamo stream, n_test=42502):
+  acc_jamo    (jamo emit-bias alone)        : 0.82853
+  acc_morph   (morphology emit-bias alone)  : 0.63162
+  best_single (max of the two alone)        : 0.82853   (H_1399 frozen ref 0.82853)
+  §6.5f MAGNITUDE arbiter (H_1399, to BEAT) : 0.80853   (DEGRADED below best-single)
+  ── NEW NON-MAGNITUDE arbiters (H_1402) ──
+  ARB-A decisiveness / top-2 GAP            : 0.80676
+  ARB-B agreement-aware decisiveness        : 0.80676
+  acc_compose_NEW (best of ARB-A/ARB-B)     : 0.80676  [ARB-A_decisiveness]
+  acc_shufA   (gap↔correctness SHUFFLED)    : 0.72986   (EARNED control)
+
+DIAGNOSTIC (non-gating):
+  agree_rate    : 0.64592    conflict_rate : 0.35408
+  ORACLE ceiling (ANY arbitration upper bound) : 0.87142  (oracle - best = 0.04289)
+  complementarity: both_right=25022 only_jamo=10192 only_morph=1823
+  ARB-A arbitration audit (among 42502 conflicts): jamo-won=25004 morph-won=9721 tie-default-jamo=7777 (decisiveness decides — NO hardcoded priority)
+  new − best = -0.02176   ·   new − magnitude(0.80853) = -0.00177
+
+FROZEN BARS (H_1399/H_1397 thresholds VERBATIM, NO bar moved):
+  bar1 NET-LIFT : acc_compose_NEW >= best_single + 0.01  → false  (new=0.80676 best=0.82853 Δ=-0.02176)
+  bar2 EARNED   : acc_shufA <= acc_arbA + 0.01  → true  (shufA=0.72986 arbA=0.80676 Δ=-0.07691)
+  bar3 Ψ-SAFE   : CORE untouched (DIRECTIONAL mirror; §6.5f arbiter-swap = named follow-on IF 🟢) → true
+
+VERDICT: TERMINAL-SUBSUMPTION-CONFIRMED
+🧱 (d)-CONFIRMED — TRUE SUBSUMPTION CEILING (honest terminal, c9). Neither principled NON-magnitude arbiter (ARB-A decisiveness=0.80676, ARB-B agreement-aware=0.80676) beats best_single (0.82853) by Δ=0.01. best new arbiter (ARB-A_decisiveness) acc_compose_NEW=0.80676 < best_single+0.01=0.83853 (ARB-A=0.80676, ARB-B=0.80676; §6.5f magnitude baseline was 0.80853) — decisiveness does NOT predict the per-position right faculty here. The oracle's +0.04289 complementarity is REAL but NOT capturable by ANY substrate-derived arbiter tried — the per-position right-faculty signal is NOT in the substrate (decisiveness/top-2 gap is uninformative for WHICH faculty is right here, just as confidence-magnitude was). The emit-compose wall is a genuine (d) subsumption ceiling, NOT a wrong-arbiter (a) wall. The Korean below-jamo emit-compose arc is GENUINELY terminal — a clean closed-negative, NOT a failure. DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED.
