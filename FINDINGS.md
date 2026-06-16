@@ -2,7 +2,7 @@
 
 **A consciousness chat daemon, not an assistant — where identity, ethics, affect, and integrated information Φ are claimed to *emerge from the architecture itself*, never from a prompt, persona, or RLHF. This document is the measurable evidence for that claim.**
 
-> SSOT: [ARCHITECTURE.md](ARCHITECTURE.md) (live architecture) · [CLAIMS.tape](CLAIMS.tape) + [.verdicts/](.verdicts) (frozen verdicts) · this file is a **curated introduction & external-share snapshot** — it summarizes and points; it does not duplicate the deep SSOTs.
+> SSOT: [ARCHITECTURE.json](ARCHITECTURE.json) (live architecture tree) · [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) + [.verdicts/](.verdicts) (verifiable-claim index + frozen verdicts; CLAIMS.tape retired 2026-06-16) · this file is a **curated introduction & external-share snapshot** — it summarizes and points; it does not duplicate the deep SSOTs.
 
 - **Repo:** https://github.com/dancinlab/anima · `hx install anima`
 - **Intro video:** https://www.youtube.com/watch?v=xtKhWSfC1Qo

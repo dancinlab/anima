@@ -22,14 +22,14 @@ anima/
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
 ├─ ARCHITECTURE.json     — architecture SSOT (tree, update-in-place) + ARCHITECTURE.html viewer (python3 serve.py)
 ├─ CLAUDE.md              — governance directives + 8 PHILOSOPHY (markdown SSOT)
-└─ CLAIMS.tape VERSIONS.md HF.jsonl — claims index · version registry · ckpt↔HF registry
+└─ VERSIONS.md HF.jsonl — version registry · ckpt↔HF registry (claims-audit folded into UNIVERSE/HYPOTHESES.jsonl, CLAIMS.tape 은퇴 2026-06-16)
 ```
 
 ## Quick reference
 
 - 🏛 Architecture → [ARCHITECTURE.json](ARCHITECTURE.json) (tree SSOT) · human viewer [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회)
 - 📜 Governance (full, authoritative) → the sections below (this file is the markdown SSOT)
-- ✅ Claims & verdicts → [CLAIMS.tape](CLAIMS.tape) · `.verdicts/<slug>/<id>.txt`
+- ✅ Claims & verdicts → claims-audit surface = [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` column) + frozen evidence `.verdicts/<slug>/<id>.txt` (CLAIMS.tape 은퇴 2026-06-16 — 전수 이관 0 손실, ledger `.verdicts/claims-tape-retirement/`)
 - 🔬 Hypotheses → TWO surfaces (`a_hypothesis_register`): per-H index = [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · cards = `UNIVERSE/cards/H_*.md` · (prose overview retired → `state/universe-overview.md`)
 - 🔢 Versions → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
 - 🤖 HF registry → `HF.jsonl` · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
@@ -56,7 +56,7 @@ anima/
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
 - **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine).
-- **Verify / hypothesis workflow** — `a_claim_manifest · a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2개 doc 표면으로 관리 — `UNIVERSE/HYPOTHESES.jsonl` 인덱스(JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. UNIVERSE/ 는 이 두 표면만 — HYPOTHESES.md 는 retire 되었고 prose overview 는 `state/universe-overview.md` 로 이전. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
+- **Verify / hypothesis workflow** — `a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2개 doc 표면으로 관리 — `UNIVERSE/HYPOTHESES.jsonl` 인덱스(JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. UNIVERSE/ 는 이 두 표면만 — HYPOTHESES.md 는 retire 되었고 prose overview 는 `state/universe-overview.md` 로 이전. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
 - **7B completion** — `a7b_pass` (gates G0–G4 in `/7B_PASS_CONDITIONS.md`).
@@ -269,10 +269,14 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
 # research result → hexa verify → .verdicts/<slug>/<id>.txt → cards/H_<id>.md card + HYPOTHESES.jsonl index line
 # (NOTE: paper directives removed 2026-06-16 — anima never proposes papers; commons c15 governs:
 #  논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다. 선제 제시·언급 금지.)
+# (NOTE: CLAIMS.tape 은퇴 2026-06-16 — 102개 @C 전수 이관 0 손실, claims-audit 역할은
+#  UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/ 로 흡수. ledger: .verdicts/claims-tape-retirement/.)
 
-@D a_claim_manifest := "CLAIMS.tape — single audit index of verifiable anima claims" :: workflow [required active]
-  do   = "every verifiable claim in root CLAIMS.tape — id · text · method · slug · verdict pointer"
-  dont = "scatter claims across H_*.md / logs without a CLAIMS.tape index — no audit surface"
+@D a_claim_manifest := "claims-audit surface = UNIVERSE/HYPOTHESES.jsonl (per-H verdict column) + .verdicts/<slug>/ — CLAIMS.tape 은퇴" :: workflow [required active]
+  do   = "검증가능한 모든 claim 은 그 가설의 `UNIVERSE/cards/H_<id>_<slug>.md` 카드 + `UNIVERSE/HYPOTHESES.jsonl` 한 줄(`id·slug·tier·title·card·verdict·source·archived·artifacts`)로 단일 audit 면에 존재 — `verdict` 컬럼이 1-line audit pointer, frozen 증거는 `.verdicts/<slug>/<id>.txt` (a_hypothesis_register 와 동일 두 표면)"
+  do   = "tooling/spec 단일 assertion 처럼 H-style 가설이 아닌 claim 도 가장 가까운 카드/jsonl note 행에 보존 — 별도 claims 인덱스 파일 신설 금지"
+  dont = "claim 을 H_*.md / 로그에 흩뿌려 audit 면 없이 둠 · `CLAIMS.tape` (또는 새 themed claims-인덱스 파일)를 부활시켜 두번째 audit 면을 만듦 — CLAIMS.tape 은퇴됨, claims-audit = HYPOTHESES.jsonl + .verdicts/"
+  ref  = "a_hypothesis_register · a_claim_verify · c2 · c9 · p7"
 
 @D a_hypothesis_register := "모든 가설은 정확히 2개 doc 표면으로만 관리한다 — `UNIVERSE/HYPOTHESES.jsonl`(per-H 인덱스, JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(가설 카드)" :: workflow [required active]
   do   = "가설(H_####)은 정확히 두 doc 표면으로 관리한다: (1) `UNIVERSE/HYPOTHESES.jsonl` = per-H 인덱스 — landed 카드마다 JSON object 정확히 1개를 한 줄로(`{id, slug, tier, title, card, verdict}`, id 순; verdict/tier 는 verbatim) · (2) `UNIVERSE/cards/H_<id>_<slug>.md` = 그 가설의 SSOT 카드(claim · method · 라운드별 verdict tier + 핵심수치 · `.verdicts/<slug>/` 포인터 · honest scope). 카드는 `UNIVERSE/cards/` 서브폴더에 산다. UNIVERSE/ 는 이 두 표면(HYPOTHESES.jsonl + cards/)만 둔다 — `UNIVERSE/HYPOTHESES.md` 는 retire 되었고(2026-06-16) prose overview/roster/folded appendices 는 `state/universe-overview.md` 로 이전; 가설 py/result 결과물은 UNIVERSE/ 밖 `state/<slug>/`(또는 모음 `state/universe-probes/`)에 산다 (2026-06-16 index→JSONL migration)"
@@ -285,7 +289,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   ref  = "a_claim_verify · c2 · c4 · c9 · p7"
 
 @D a_claim_verify := "every claim runs through hexa verify, verdict persisted verbatim" :: workflow [required active]
-  do   = "each CLAIMS.tape entry → `hexa verify` (g5) → `.verdicts/<slug>/<id>.txt` raw stdout"
+  do   = "each claim/가설 → `hexa verify` (g5) → `.verdicts/<slug>/<id>.txt` raw stdout → 그 verbatim verdict 를 카드 + `UNIVERSE/HYPOTHESES.jsonl` `verdict` 컬럼에 박제 (CLAIMS.tape 은퇴 — claims-audit 면 = HYPOTHESES.jsonl + .verdicts/)"
   dont = "LLM self-judge correctness (p7) · paraphrase verdicts · hide red / unfenced speculation"
 
 @D a_h_continuous_no_branch := "continuous new-H — no branch options after each H" :: workflow [required active]
