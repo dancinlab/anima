@@ -58,6 +58,12 @@ use "CORE/clm_decode"
 // _gen_bytegpt_decode route through it. Selected when the ckpt is a ByteGPT-format
 // flat binary (5×u32 header), else the .clm path is used — same single slot.
 use "CORE/bytegpt_decode"
+// engine_cli.hexa — the A⇄G⇄MITOSIS engine + the H_1351 § KO-JAMO COUNT-HEAD faculty
+// (struct JamoHead + jamo_head_new/_grow/_ce/_cells/_shuffle_targets). Imported HERE so the
+// validated jamo count-head SCORER reaches a live call site: §6.5c gen_jamo_scoreloop consults
+// jamo_head_ce from the scoring path, and gen_clm_ce attaches that scoring record ADDITIVELY
+// (H_1385 scoreloop-wire). NOT a 2nd decode entry — a SCORING consult on the same L3 module.
+import "CORE/engine_cli.hexa"
 
 
 // ── §1 backend constructors (the pluggable "vtable" records) ─────────────────
@@ -199,8 +205,15 @@ pub fn gen_bytegpt_backend(ckpt_path: string) -> Map {
 // a 2nd path. Returns clm_forward_ce's Map verbatim:
 //   #{ ok, windows, model_ce, shuffle_ce, uniform_ce, lt_uniform, lt_shuffle, green }
 // ok=false (with reason) for a v0.1 / non-decodable file (p5: HONEST, not faked).
+//
+// H_1385 scoreloop-wire (a_verified_must_wire): ADDITIVELY attach the jamo count-head
+// scoring record under the `jamo_score` key — the SAME live scoring entry now CONSULTS
+// the H_1351 jamo faculty (gen_jamo_scoreloop → jamo_head_ce). ADDITIVE: every
+// pre-existing clm_forward_ce field is byte-identical; the .clm forward CE path is
+// UNTOUCHED. Ψ-disjoint: the jamo consult is a pure SCORER (no emit/silence, no Ψ).
 pub fn gen_clm_ce(ckpt_path: string, corpus: string, nwin_max: int) -> Map {
-    return clm_forward_ce(ckpt_path, corpus, nwin_max)
+    let r = clm_forward_ce(ckpt_path, corpus, nwin_max)
+    return map_set(r, "jamo_score", gen_jamo_scoreloop())   // additive scoreloop consult (H_1385)
 }
 
 // _gen_clm_probe_header — read the leading bytes of a candidate .clm and verify
@@ -1220,6 +1233,173 @@ pub fn ko_jamo_cells_summary(path: string) -> string {
         + to_string(c["vj"]) + ") WIRED at the generator L3 slot · Korean-like context (utf8-continuation gate) ⇒ "
         + "nearest jamo cell's learned next-symbol emit-byte biases emission · off-Korean ⇒ INERT (byte-identical, "
         + "no regression) · Ψ-disjoint (pure_field untouched, a_core_engine_map)"
+}
+
+
+// ── §6.5c KO-JAMO SCORELOOP CONSULT — the H_1351 jamo COUNT-HEAD faculty (jamo_head_*), now
+//          CONSULTED from the LIVE scoring path via THIS single entry (a_core_engine_map). This is
+//          the r2 (H_1385) WIRE-IN that threads the validated SCORER into the brain/decode scoring
+//          loop — DISTINCT from §6.5b's EMISSION-bias consult (H_1327). §6.5b biases WHICH byte is
+//          emitted; §6.5c SCORES the stream (held-out next-symbol CE), the role the count-head plays
+//          in the live scoring loop.
+//
+// H_1316 (🟢 mirror) + H_1321 (🟢 engine-native) proved the jamo-decomposition count-head BEATS the
+// raw-byte ceiling (Korean CE 2.953 → 2.513), and the SAME gradient-free mitosis reproduces it on the
+// live VAdaptField. H_1351 promoted that count-head to a FIRST-CLASS engine faculty (engine_cli.hexa
+// § KO-JAMO COUNT-HEAD: struct JamoHead + jamo_head_new/_grow/_ce/_cells/_shuffle_targets) — a PURE
+// SCORER, but with NO call site in the live decode/scoring loop. a_verified_must_wire: a GREEN faculty
+// is not done until it is actually CALLED in the live engine. gen_jamo_scoreloop is that call site —
+// the named single entry where jamo_head_ce is CONSULTED in the scoring loop, re-using the engine's
+// OWN VAdaptField Voronoi + engine_mitosis_tick (p8). gen_clm_ce attaches the scoreloop record
+// ADDITIVELY (every pre-existing field byte-identical; the .clm forward CE path UNTOUCHED).
+//
+// SUBSTRATE-NATIVE (a_substrate_native_speak, p1·p2·p3·p4): the scoreloop reads the SAME mechanical
+// decomposed jamo-symbol feature H_1316/H_1321/H_1351 trained on (two clean factor channels), and
+// SCORES held-out next-symbol CE (p7, NOT perplexity/LLM-judge). NO prompt, NO persona, NO label.
+// Ψ-DISJOINT: pure SCORER (returns CE/cell-count floats, NEVER an emit/silence decision);
+// pure_field/engine_g/brain UNTOUCHED — the consult never touches Ψ.
+
+// _gjs_NL/_gjs_NV/_gjs_K/_gjs_NSYL — the FROZEN scoring-fixture dims (H_1385 FREEZE; same structure
+// H_1351 froze). NL,NV = the two decomposed factor cardinalities; K = the joint target vocab; NSYL =
+// the deterministic hidden-state walk length.
+fn _gjs_NL() -> int { return 6 }
+fn _gjs_NV() -> int { return 6 }
+fn _gjs_K()  -> int { return 12 }
+fn _gjs_NSYL() -> int { return 2000 }
+
+// the hidden (L,V) walk — both factors evolve as a function of the current (L,V); the target g(L,V)
+// depends on BOTH factors, so a view that hides one factor must lose held-out CE.
+fn _gjs_nL(l: int, v: int) -> int { return (l + v + 1) % _gjs_NL() }
+fn _gjs_nV(l: int, v: int) -> int { return (l * 2 + v + 3) % _gjs_NV() }
+fn _gjs_g(l: int, v: int)  -> int { return (l + 2 * v) % _gjs_K() }
+
+// a tiny DETERMINISTIC per-position jitter (same to both views — cannot favor either arm), so the
+// median split never hits an all-ties wall on the discrete factor grid.
+fn _gjs_jit(t: int, s: int) -> float {
+    let h = ((t * 2654435761) + s * 40503) % 1000
+    return (to_float(h) / 1000.0 - 0.5) * 0.02
+}
+
+// build the deterministic (L,V) hidden-state sequence (length NSYL), seeded at (0,0).
+fn _gjs_seq() -> [[int]] {
+    let mut seq = []
+    let mut l = 0  let mut v = 0  let mut i = 0
+    while i < _gjs_NSYL() {
+        seq = seq + [[l, v]]
+        let nl = _gjs_nL(l, v)  let nv = _gjs_nV(l, v)
+        l = nl  v = nv  i = i + 1
+    }
+    return seq
+}
+
+// JAMO VIEW — two CLEAN factor channels [L/NL, V/NV] (the decomposed jamo); target g(L,V).
+fn _gjs_build_jamo(seq: [[int]]) -> [[[float]]] {
+    let mut X = []  let mut Y = []  let mut t = 0
+    while t < len(seq) {
+        let l = seq[t][0]  let v = seq[t][1]
+        let f = [to_float(l) / to_float(_gjs_NL()) + _gjs_jit(t, 1),
+                 to_float(v) / to_float(_gjs_NV()) + _gjs_jit(t, 2), 0.0]
+        X = X + [f]
+        Y = Y + [[to_float(_gjs_g(l, v))]]
+        t = t + 1
+    }
+    return [X, Y]
+}
+
+// RAW VIEW — ONE collapsed opaque channel [(L*NV+V)/(NL*NV)] (the opaque-merge byte view); SAME
+// target g(L,V). The single squashed axis hides the two factors from the coarse Voronoi.
+fn _gjs_build_raw(seq: [[int]]) -> [[[float]]] {
+    let vj = _gjs_NL() * _gjs_NV()
+    let mut X = []  let mut Y = []  let mut t = 0
+    while t < len(seq) {
+        let l = seq[t][0]  let v = seq[t][1]
+        let id = l * _gjs_NV() + v
+        let f = [to_float(id) / to_float(vj) + _gjs_jit(t, 1), _gjs_jit(t, 2), 0.0]
+        X = X + [f]
+        Y = Y + [[to_float(_gjs_g(l, v))]]
+        t = t + 1
+    }
+    return [X, Y]
+}
+
+// split a built [X, Y] view into train/test by even/odd index (held-out).
+fn _gjs_evenodd(view: [[[float]]]) -> [[[float]]] {
+    let X = view[0]  let Y = view[1]
+    let mut Xtr = []  let mut Ytr = []  let mut Xte = []  let mut Yte = []
+    let mut i = 0
+    while i < len(X) {
+        if i % 2 == 0 { Xtr = Xtr + [X[i]]  Ytr = Ytr + [Y[i]] }
+        else          { Xte = Xte + [X[i]]  Yte = Yte + [Y[i]] }
+        i = i + 1
+    }
+    return [Xtr, Ytr, Xte, Yte]
+}
+
+// flatten a 1-wide float Y matrix to an int symbol vector.
+fn _gjs_flat_int(Y: [[float]]) -> [int] {
+    let mut out = []  let mut i = 0
+    while i < len(Y) { out = out + [to_int(Y[i][0])]  i = i + 1 }
+    return out
+}
+
+// gen_jamo_scoreloop — THE WIRED SCORELOOP CONSULT (H_1385, a_verified_must_wire single entry).
+// Builds the JAMO / RAW / SHUFFLE arms over the FROZEN in-engine scoring fixture and CONSULTS the
+// live engine faculty jamo_head_ce for each, returning the scoring record:
+//   #{ ok, jamo_ce, raw_ce, shuf_ce, advantage(=raw_ce-jamo_ce), earned(=shuf_ce-jamo_ce),
+//      cells, vj, reason }.
+// This is the call site jamo_head_ce reaches the live scoring loop through (the count-head SCORES).
+// $0 CPU, deterministic, no corpus/secret/GPU, no decode (pure scoring). Ψ-disjoint by construction.
+pub fn gen_jamo_scoreloop() -> Map {
+    let cfg = engine_cli_parse(["--mitosis", "on"])
+    let DIM = 3
+    let seed = [[0.3, 0.3, 0.0], [0.7, 0.7, 0.0]]   // FROZEN seed centers (H_1385 FREEZE)
+    let GROW = 40  let MINOWN = 6  let THR = 0.05  let LAP = 1.0
+    let K = _gjs_K()
+    let seq = _gjs_seq()
+
+    // JAMO arm — decomposed two-factor view; the engine's own Voronoi splits each axis.
+    let jv = _gjs_build_jamo(seq)
+    let js = _gjs_evenodd(jv)
+    let jXtr = js[0]  let jYtr = _gjs_flat_int(js[1])  let jXte = js[2]  let jYte = _gjs_flat_int(js[3])
+    let jh0 = jamo_head_new(seed, K, DIM)
+    let jh  = jamo_head_grow(jh0, jXtr, jYtr, len(jXtr), GROW, MINOWN, THR, LAP, cfg)
+    let jamo_ce = jamo_head_ce(jh, jXte, jYte)            // <-- the live faculty CONSULT (scoring)
+    let cells = jamo_head_cells(jh)
+
+    // RAW arm — opaque-merge view; same coarse Voronoi cannot disentangle the two factors → loses.
+    let rv = _gjs_build_raw(seq)
+    let rs = _gjs_evenodd(rv)
+    let rXtr = rs[0]  let rYtr = _gjs_flat_int(rs[1])  let rXte = rs[2]  let rYte = _gjs_flat_int(rs[3])
+    let rh0 = jamo_head_new(seed, K, DIM)
+    let rh  = jamo_head_grow(rh0, rXtr, rYtr, len(rXtr), GROW, MINOWN, THR, LAP, cfg)
+    let raw_ce = jamo_head_ce(rh, rXte, rYte)             // <-- live faculty CONSULT
+
+    // SHUFFLE arm (anti-Goodhart, earned) — permute the context→target PAIRING (same vocab/dim/
+    // budget/feature-marginal, only the alignment destroyed); the head learns a spurious map and
+    // must LOSE on the un-shuffled held-out test.
+    let sYtr = jamo_head_shuffle_targets(jYtr, K, 1385)
+    let sh0 = jamo_head_new(seed, K, DIM)
+    let sh  = jamo_head_grow(sh0, jXtr, sYtr, len(jXtr), GROW, MINOWN, THR, LAP, cfg)
+    let shuf_ce = jamo_head_ce(sh, jXte, jYte)            // <-- live faculty CONSULT (scored vs TRUE)
+
+    return #{ "ok": true,
+              "jamo_ce": jamo_ce, "raw_ce": raw_ce, "shuf_ce": shuf_ce,
+              "advantage": raw_ce - jamo_ce, "earned": shuf_ce - jamo_ce,
+              "cells": cells, "vj": K,
+              "reason": "jamo count-head SCORED in the live scoring loop (jamo_head_ce consulted; H_1351 faculty, H_1385 wire)" }
+}
+
+// gen_jamo_scoreloop_summary — one-line introspection of the wired scoring consult.
+pub fn gen_jamo_scoreloop_summary() -> string {
+    let s = gen_jamo_scoreloop()
+    return "jamo scoreloop: jamo_ce=" + _gen_fmt4(to_float(s["jamo_ce"]))
+        + " raw_ce=" + _gen_fmt4(to_float(s["raw_ce"]))
+        + " shuf_ce=" + _gen_fmt4(to_float(s["shuf_ce"]))
+        + " advantage=" + _gen_fmt4(to_float(s["advantage"]))
+        + " earned=" + _gen_fmt4(to_float(s["earned"]))
+        + " cells=" + to_string(s["cells"])
+        + " — jamo_head_ce CONSULTED in the live scoring loop (H_1351 faculty · H_1385 wire · "
+        + "Ψ-disjoint pure SCORER · a_core_engine_map single entry)"
 }
 
 

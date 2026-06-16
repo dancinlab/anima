@@ -1,0 +1,56 @@
+H_1385 — jamo-scoreloop-wire — FROZEN BARS (pre-registered BEFORE any edit; c9, p7, NO tune-to-green)
+========================================================================================================
+
+LANE: jamo r2 (scoreloop-wire). Thread the faculty-owned jamo count-head scorer (H_1351
+`jamo_head_ce` in CORE/engine_cli.hexa § KO-JAMO COUNT-HEAD) into the LIVE brain/decode SCORING loop.
+
+CONTEXT (closed, NOT re-litigated): below-jamo is terminal at the jamo floor (~2.513) across
+data/representation/interpolation (H_1316/1322/1359/1368/1380) — the jamo count-MLE IS the validated
+production Korean mechanism. This lane WIRES that validated SCORER into the live scoring path. The
+H_1351 faculty (`jamo_head_*`) EXISTS but has NO call site in the live brain/decode scoring loop
+(faculty-owned, not decode-reaching). H_1327 generator §6.5b is the EMISSION-bias consult (distinct
+surface). THIS lane adds the SCORING consult.
+
+WIRE (single entry, a_core_engine_map): add `gen_jamo_scoreloop` to CORE/generator.hexa (the live
+.clm scoring path module — `gen_clm_ce` lives here). It consults `jamo_head_ce` over a deterministic
+in-engine scoring fixture (the H_1351 W2/W3 structure: JAMO decomposed view vs RAW opaque-merge view
+vs SHUFFLE pairing-permute control), re-using the engine's OWN VAdaptField Voronoi + mitosis growth.
+`gen_clm_ce` ADDITIVELY attaches the jamo scoring record to its returned Map (additive — every
+pre-existing field byte-identical; the .clm forward CE path untouched). This is the named single
+call site where `jamo_head_ce` is CONSULTED in the live scoring loop.
+
+DETERMINISTIC IN-ENGINE FIXTURE (FROZEN; $0 CPU, no corpus, no secrets, no GPU — the same structure
+H_1351 froze): NL=NV=6, K=12, NSYL=2000, even/odd held-out split, GROW_MAX=40, MIN_OWNED=6,
+SPLIT_THRESH_CE=0.05, LAPLACE=1.0, seed centers [[0.3,0.3,0],[0.7,0.7,0]], per-position jitter 0.02
+(same jitter both views), shuffle seed=1385. Hidden (L,V) walk nL=(l+v+1)%6, nV=(l*2+v+3)%6,
+target g(L,V)=(l+2v)%12 (depends on BOTH factors). Metric = held-out next-symbol CE (p7, NOT
+perplexity). REAL-corpus scoreloop is the honest remaining follow-on (cost-gated; a_scale_honest_scope,
+c9) — if reachable at $0 CPU it is used; otherwise scored on the in-engine fixture and named.
+
+FROZEN BARS — GREEN iff B1 AND B2 AND B3 AND B4:
+
+  B1 WIRED-SCORELOOP : `jamo_head_ce` is CONSULTED from the live scoring path via the named single
+                       entry `gen_jamo_scoreloop` (NOT just the faculty existing). Smoke case asserts
+                       the scoreloop record is produced by the live generator scoring consult AND
+                       gen_clm_ce additively carries it (the jamo_score field present on the live
+                       scoring Map). cells >= 2, jamo_ce > 0.
+
+  B2 JAMO-BEATS-RAW (engine-native on the call site) : raw_ce - jamo_ce >= 0.05, RE-SCORED THROUGH
+                       THE WIRED SCORELOOP (the H_1351 W2). Verbatim stdout (c2).
+
+  B3 EARNED (shuffle) : shuf_ce - jamo_ce >= 0.05 through the wired scoreloop — pairing-shuffle
+                       collapses the advantage (the H_1351 W3). Verbatim stdout (c2).
+
+  B4 PSI-DISJOINT / NO-REGRESSION : ADDITIVE — generation byte-identical ON==OFF for the non-jamo
+                       path (h1205 separation-invariant PASS, Psi Phi-checksum ON==OFF);
+                       engine_cli_smoke green (baseline 106/0) + ADD >= 2 scoreloop cases; single-entry
+                       (h1196) N/0; deterministic 3 runs identical. BOUND any decode.
+
+If the scoring loop cannot consult the scorer without breaking Psi/byte-exactness -> honest X/wait (c9);
+a_break_the_wall ONE new angle (frozen-first) before terminal. Do NOT fake the wire. Bar NOT moved post-hoc.
+
+DEPLETION TEST: the jamo thread DEPLETES when the count-head SCORES in the live decode loop on REAL
+corpus with the W-bars engine-native + Psi preserved. This lane closes the in-engine-fixture call-site
+wire; real-corpus scoreloop = named honest follow-on if > $0 CPU.
+
+baseline (fresh branch off origin/main bad301b2f): engine_cli_smoke = 106 pass / 0 fail.

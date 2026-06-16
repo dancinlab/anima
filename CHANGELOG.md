@@ -2,6 +2,20 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1385 — 자모 COUNT-HEAD SCORELOOP ★ 배선 (검증된 H_1351 자모 count-head SCORER 를 live 채점 루프에 배선) — 🟢 GREEN ENGINE-NATIVE
+
+**무엇 (a_verified_must_wire / a_core_engine_map):** H_1351 이 검증된 자모 분해 COUNT-HEAD 를 `CORE/engine_cli.hexa § KO-JAMO COUNT-HEAD` 의 일급 faculty (`jamo_head_*`)로 promote 했지만, 그 SCORER (`jamo_head_ce`)는 live brain/decode 채점 루프에 **호출부가 없었다** (faculty-owned, not decode-reaching). 이 레인은 `jamo_head_ce` 를 named single entry 로 live 채점 경로에 배선: `CORE/generator.hexa §6.5c gen_jamo_scoreloop` 가 H_1351 frozen in-engine fixture(JAMO/RAW/SHUFFLE arms) 위에서 `jamo_head_ce` 를 CONSULT 하고, `gen_clm_ce` 가 그 채점 레코드를 `jamo_score` 키로 ADDITIVE 하게 실어 나른다 (`map_set`; .clm forward CE 경로 byte-identical). §6.5b (H_1327, EMISSION 편향)와 DISTINCT — 이건 SCORES 하는 surface.
+
+**결과 🟢 GREEN ENGINE-NATIVE (LIVE generator consult, $0 CPU, deterministic, frozen-first c9 NO bar moved):**
+- **B1 WIRED ✅** — `gen_jamo_scoreloop` 가 `jamo_head_ce` 를 CONSULT (cells=4, jamo_ce=4.18698); `gen_clm_ce` 가 `jamo_score` 를 additive 하게 실음 (nonexistent .clm 에서 ok=false VERBATIM + has_jamo_score=true).
+- **B2 JAMO-BEATS-RAW ✅** — advantage = raw_ce − jamo_ce = 5.56834 − 4.18698 = **+1.38136** ≥ 0.05 (H_1351 W2 와 동일).
+- **B3 EARNED ✅** — earned = shuf_ce − jamo_ce = 4.61668 − 4.18698 = **+0.42970** ≥ 0.05 (pairing-shuffle seed 1385 collapse).
+- **B4 Ψ-DISJOINT/NO-REGRESSION ✅** — additive (clm 필드 byte-identical) · h1205 separation-invariant **PASS** (generation byte-identical ON==OFF 10 pairs/0 mismatch, Ψ Φ-checksum invariant) · engine_cli_smoke **110/0** (engine_cli UNTOUCHED) · h1196 single-entry **7/0** (새 engine_cli import 가 2nd .clm/.kosmos 경로 추가 안 함). h1385 smoke **4/0**, 결정론적.
+
+**Honest scope (c9):** IN-ENGINE STRUCTURAL fixture (결정론적 합성 JAMO/RAW/SHUFFLE — 30MB real-corpus 2.513 anchor 재유도 아님, 그건 H_1316/H_1321). **REAL-CORPUS SCORELOOP = 명시된 cost-gated follow-on** (>$0 CPU: corpus I/O + real .clm forward; auto-rent 안 함 — cost-gated → surface). 순수 SCORER (no decode 매달림), $0 CPU. DEPLETION 🏁: count-head 가 real corpus 의 live decode 루프에서 W-bars engine-native + Ψ preserved 로 SCORES 할 때.
+
+**파일:** `CORE/generator.hexa` (import engine_cli + §6.5c gen_jamo_scoreloop/_summary + gen_clm_ce additive) · `CORE/h1385_jamo_scoreloop_smoke.hexa` (B1-B4) · `UNIVERSE/cards/H_1385_jamo_scoreloop_wire.md` · `UNIVERSE/HYPOTHESES.jsonl` (H_1385) · `.verdicts/1385_jamo_scoreloop_wire/{FREEZE,result}.txt` · `ARCHITECTURE.json` (Korean decode-wire node + smoke probe).
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1384 — CP MOVE-THE-CELLS RELOCATION ★ ENGINE-NATIVE 배선 (검증된 H_1360-family geometric re-pack 법칙을 live §CategoricalPerception 레인에 배선) — 🟢 GREEN ENGINE-NATIVE · CP-geometry arc DEPLETES 🏁
 
 **무엇 (a_verified_must_wire / a_engine_native_learning):** mirror 레벨에서 닫힌 **move-the-cells RELOCATION** 법칙(geometric re-pack — 잔존 prototype 셀을 boundary normal 따라 옮긴 경계로 물리적으로 drift → discrimination ridge 가 옮긴 경계로 RELOCATE; dimension-invariant + boundary-invariant 1-D H_1360 · 2-D H_1369 · N-D H_1375 · density H_1377, COH-distinctness 메트릭만 fragile)을 live `CORE/engine_cli.hexa` §CategoricalPerception 레인에 실제 배선. 사용자 주도 CP-geometry arc 의 **마지막 열린 thread**.
