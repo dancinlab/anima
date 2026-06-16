@@ -2,6 +2,10 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1409 brain-lane COMPOSE #6 (spatial×PFC, 두-고-Φ) — 🟢능력 · 🧱Φ-차단 → refined min-cut-MI 법칙 확정
+
+**무엇:** brain-lane-composition 프로그램의 결정적 시험 — 둘 다 高-Φ인 쌍(spatial-map H_1295 × hier-PFC H_1294)이 서로 차단하나? CONFIRMED: 능력은 합성(acc_compose 0.776 ≥ best 0.707, 분리 only_sp 0.297/only_pf 0.299), Φ는 차단(Φ_spatial 3.23 > composed 1.93 = max(parts) 초과 ⇒ H_1405식 상호지배). frozen-first, no bar moved, faithful IIT4 exact-MIP-EI(a_phi_iit4_tool), binning-invariant. **법칙(6쌍 통일):** 한쪽 내부 Φ가 composed 최소절단 MI 를 넘으면 차단, 아니면 합성 — Φ합성{H_1404·1407·1408} vs Φ차단{H_1405·1409}. DIRECTIONAL mirror, engine-native+scale UNVERIFIED. .verdicts/1409_brain_lane_compose_spatial_pfc/.
+
 ## 2026-06-17 — harvest(ENGINE+CLM): deep-mouth depth-ladder (L4/L8 303M ConvMoE) 회수 완료 + pod teardown
 
 **무엇:** H_1403 follow-on 인 deep-mouth depth-isolation 사다리(conv-DEPTH 가 G6 FALS 천장에 닿나 — H_1394 L1 단일 trunk-layer FALS=0 대비)의 GPU 학습이 완주(LADDER_ALL_DONE 2026-06-16T17:19Z)했고, 전 산출물을 회수·sha256 byte-identical 검증 후 runpod pod(kcuz5s3ebgh1w7 anima-g6-deep-1399, H100-NVL $2.59/hr)를 teardown. SSH 일회용 키(/tmp/g6_sshkey)로 회수, 키는 사용 후 폐기.
