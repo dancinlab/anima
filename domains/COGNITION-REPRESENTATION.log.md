@@ -241,3 +241,46 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   shift-size ladder, geometry-driven fraction) · h1323 · h1325(family GREEN CP) · h1288(growth-memory) · a_no_llm_frame_trap
   · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck
   · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+
+### H_1355 — Whorfian CP 가소성: LEFTWARD + ASYMMETRIC 착지 (center-attractor vs geometry-fixed) 📈
+
+- **seed/lens**: H_1341(📈)의 load-bearing follow-on. H_1341 은 고정 anchor p_A=1/3 에서 RIGHTWARD shift 시 retrain 후 CP peak 가 shift
+  크기와 무관하게 **항상 ~0.525 에 착지**(abs-peak range 0.000)함을 발견 → GEOMETRY/BUDGET 로 읽음. 그러나 p_A=1/3 은 center(0.5) 왼쪽이고
+  모든 rung 이 RIGHTWARD(center 쪽으로/넘어)였으므로 **0.525≈center 가 confound**. 두 설명을 구분 못 함: (H-center) 0.525 가 대칭 N=21 RBF
+  lattice 의 **continuum-center attractor** 아티팩트(readout 이 lattice 중심에서 가장 풍부 → requested cut 무관 ~0.5 로 끌림) vs (H-geometry)
+  실제 **geometry-fixed budget 착지**(asymmetry 를 주면 움직임). c15 developmental/critical-period plasticity (a_no_llm_frame_trap) — LLM
+  레시피 아님, 인간인지 주장 아님, TOY synthetic.
+- **method**: H_1333/H_1341 CP 기계 EXACTLY 재사용(h1333_whorf_developmental.py 를 state/cp-leftward/ 로 verbatim 복사+import: N=21
+  RBF continuum, DIM=16, error-targeted SPLIT-only Voronoi/mitosis growth p8, phase-2 same-store no-reset re-grow, |Δ soft-posterior|
+  no-label-at-test discrimination, peak-count coherence). 신규 코드 = (anchor p_A, target p_A') PLACEMENT 을 5 rung 으로 sweep. RUNGS:
+  RIGHT-REF (0.333→0.667, H_1341 LARGE anchor) · LEFTWARD-1 (0.667→0.333, mirror) · LEFTWARD-2 (0.800→0.500) · ASYM-R (0.600→0.800,
+  둘 다 center 오른쪽) · ASYM-L (0.400→0.200, 둘 다 center 왼쪽). 4 ARMS/rung. 3 seeds [4333,4334,4335], $0 CPU, gradient-free, p7.
+  frozen .verdicts/1355_cp_leftward/FREEZE.txt (scoring 前 사전등록, NO bar move c9): **c1 REPORT**(5-rung abs-landing table) ∧
+  **c2 DISCRIMINATE**(CENTER=0.50 CENTER_TOL=0.08: CENTER-ATTRACTOR iff 모든 |L−0.5|≤0.08; GEOMETRY-FIXED iff ASYM-R L>0.58 ∧ ASYM-L
+  L<0.42 ∧ leftward<RIGHT-REF; else MIXED verbatim) ∧ **c3 EARNED**(no-retrain 이 anchor 유지 ∧ shuffle incoherent ∧ lang arms coherent).
+- **verdict 📈 CENTER-ATTRACTOR REJECTED, 착지가 GEOMETRY 를 따름**: abs-landing table(3 seed 평균): RIGHT-REF 0.525(|L−0.5|=0.025) ·
+  LEFTWARD-1 0.475(0.025) · LEFTWARD-2 0.625(0.125) · ASYM-R 0.692(0.192) · ASYM-L 0.375(0.125).
+  **c1 ✅**. **c2**: center-pinned? FALSE — max|L−0.5|=**0.192 ≫ 0.08** → **CENTER-ATTRACTOR 기각**. 착지가 placement 를 추적: RIGHT-REF
+  0.525 와 그 정확한 mirror LEFTWARD-1 0.475 가 **0.5 대칭**(geometry-mirrors-placement 시그니처, 둘 다 center 에 박힌 게 아님); ASYM-R 0.692 가
+  요청 cut 0.800 쪽 off-center-right(>0.58 ✅), ASYM-L 0.375 가 요청 cut 0.200 쪽 off-center-left(<0.42 ✅) — asymmetric away-from-center
+  sub-clause 둘 다 PASS. formal GEOMETRY-FIXED tag 는 **단 하나의 over-strict sub-clause** 에서만 빗나감: LEFTWARD-2(anchor 0.800→target
+  0.500)가 0.625(RIGHT-REF 0.525 의 오른쪽)에 착지 — 잔류 **오른쪽** first-carving 이 착지를 anchor 하기 때문(이것 자체가 geometry =
+  residual-carving-side 의존성, clause 가 encode 한 것보다 더 강한 시그널) → c2=MIXED 이나 실질은 GEOMETRY-leaning. **c3 4/5 rung 유지**:
+  RIGHT-REF/LEFTWARD-1/LEFTWARD-2/ASYM-R 전부 PASS; ASYM-L 만 lang-coherent FAIL(A→A' peak-count 3>2 on 2/3 seeds — same-side LEFTWARD
+  shift 가 readout 를 흩음) → frozen rule 대로 그 rung 착지를 **confounded 로 표기, drop 안 함**.
+- **finding**: H_1341 의 고정 ~0.525 착지는 lattice-center 아티팩트가 **아니라 진짜 GEOMETRY 착지** — placement 를 asymmetric/mirror 로
+  만들면 착지가 geometry 를 따라 움직임(0.375→0.692, RIGHT-REF⇄LEFTWARD-1 pair 는 0.5 대칭). H_1341 의 budget/geometry 판독은 **STANDS,
+  leftward/asymmetric move 로 일반화**; center-attractor confound 는 **기각**. 정직한 잔차(c9): frozen sub-clause 하나가 over-strict
+  (geometry 는 first-carving 의 side 에 anchor 되지 absolute shift 방향이 아님); ASYM-L coherence 저하 = same-side leftward cut 에서
+  split-only re-growth 의 실제 한계(lattice-resolution-bound 가능).
+- **scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, H_1333 R1/H_1341 R1 family); TOY synthetic 1-D continuum
+  (N=21·DIM=16·3 seed·5 placement rung·deterministic readout — landing-geometry STRUCTURE 검증, scale/human-cognition claim 아님);
+  center-attractor 기각은 THIS lattice 한정 — 더 미세한 lattice/dense grid/2-D continua UNVERIFIED; injected boundary/persona/RLHF 없음
+  (p1/p2/p3/p6); emit gate 아님(a_autonomy_over_hardcode); live CORE/*.hexa UNTOUCHED. NO bar move (c9/p7).
+- **NEXT** (각각 ANEW 사전등록): (i) geometry-fixed 착지의 live VAdaptField engine-native 실현(a_verified_must_wire) · (ii) lattice-resolution
+  ladder(N 증가 시 CENTER_TOL 축소 / ASYM-L coherence 회복?) · (iii) 2-D continuum placement(착지 geometry 가 축별 분리 가능?).
+- **claim-link**: `CLAIMS.tape @C h1355_cp_leftward` · card `UNIVERSE/cards/H_1355_cp_leftward.md`
+  · verdicts `.verdicts/1355_cp_leftward/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1341(parent shift-size ladder, 0.525 고정 착지) · h1340(이 lane budget-sweep deeper-limit) · h1338(budget/geometry 재진단)
+  · h1333(GRADED-PLASTICITY parent) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning
+  · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
