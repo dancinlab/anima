@@ -1212,6 +1212,38 @@ fn main() {
     if _assert_b("case_98_margin_no_fab_absent_abstains", true,
                  mm_abstain == "" && mm_marg_unr > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── cases 98b-98d : G5 IN-DIST TOP-2 GAP (immune_memory_recall_gap, H_1398) ──────
+    //   The RICHER in-dist confidence signal SURFACED alongside the best-margin. The gap
+    //   reads the engine's OWN nearest AND second-nearest L2 affinity
+    //   (vadapt_field_two_recon_err) and returns cos#1 − cos#2 = (d2²−d1²)/2 for the unit
+    //   keys. These cases prove the three defining properties: (98b) NON-NEGATIVE — the gap
+    //   is always >= 0 (d1 <= d2); (98c) DECISIVE — a query near a SINGLE distinct cell has
+    //   a LARGER gap than a query equidistant between two near-twin cells (a low-gap tie =
+    //   ambiguity, the in-dist confusion the best-margin alone cannot see); (98d) ADDITIVE /
+    //   Ψ-DISJOINT — reading the gap does NOT change the recall fire/abstain decision.
+    let mm_gap_fire = immune_memory_recall_gap_text(mm, "alphabravocharlie")
+    // case 98b : NON-NEGATIVE — gap >= 0 for any query (nearest <= second-nearest).
+    if _assert_b("case_98b_gap_nonnegative", true, mm_gap_fire >= 0.0 - 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 98c : DECISIVE — build a TWIN store (two 1-byte-apart cells bound to different
+    //   values). A query exactly ON one twin is DECISIVE (large gap); a query at the
+    //   MIDPOINT-ish "between" the twins is AMBIGUOUS (small gap < the decisive gap).
+    let tw_cfg = engine_config_default()
+    let tw_k0 = immune_embed_key("mississippilonghammeredsubstrateaa")
+    let tw_k1 = immune_embed_key("mississippilonghammeredsubstrateab")  // differ at last byte
+    let tw_kfar = immune_embed_key("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+    let tw_af = VAdaptField { protos: [tw_k0, tw_k1, tw_kfar], n_cells: 3, max_cells: 8, dim: 64 }
+    let tw_mem = ImmuneMemory { field: tw_af, cell_value: ["v0", "v1", "vfar"], recall_thr: 0.15 }
+    let gap_decisive = immune_memory_recall_gap_text(tw_mem, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")  // exactly the FAR cell, #2 far away
+    let gap_ambig = immune_memory_recall_gap_text(tw_mem, "mississippilonghammeredsubstrateaa")        // on twin0, #2 = twin1 (near tie)
+    if _assert_b("case_98c_gap_decisive_gt_ambiguous", true, gap_decisive > gap_ambig) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 98d : ADDITIVE / Ψ-DISJOINT — reading the gap does NOT change recall fire/abstain.
+    //   The exact taught key still FIRES its bound value after the gap read (pure READ).
+    let mm_after_gap = immune_memory_recall_text(mm, "alphabravocharlie")
+    if _assert_b("case_98d_gap_additive_recall_unchanged", true,
+                 mm_after_gap == "loc_alpha") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (brain_decide_margin) —
     //   brain_decide CONSUMES the live immune_memory_recall_margin to MODULATE
     //   emit-confidence/curiosity (the H_1367 follow-on). UNLIKE the additive read
@@ -1471,6 +1503,138 @@ fn main() {
           + " shuffle=" + to_string(us_comp_shuf)
           + " cells_full=" + to_string(usage_store_cells(us_full_store))
           + " cells_static=" + to_string(usage_store_cells(us_static_store)))
+
+    // ── H_1393 KO-MORPHOLOGY BPE-ON-JAMO ★ EMIT-BIAS WIRE-IN (cases 125-128) ─────────────
+    //   The EMIT-side follow-on of H_1390's SCORER: the morphology unit now BIASES the live
+    //   next-byte EMISSION (the §6.5b/H_1327 ko_jamo_consult_emit precedent applied to
+    //   morphology), DISTINCT from §6.5d's SCORER. gen_bpe_emit_eval_raw CONSULTS the live
+    //   emit-bias (generator §6.5e gen_bpe_consult_emit/jamo_head_argmax over the engine_cli
+    //   § KO-MORPHOLOGY faculty) on the SAME frozen corpus-free morpheme-grammar fixture: it
+    //   scores held-out RAW next-UNIT id accuracy for ON (structured morphology head) vs OFF
+    //   (representation-blind unigram) vs SHUF (shuffle-merge head). The emit-bias is an
+    //   ADDITIVE consult (a bias, not a hard gate — a_autonomy_over_hardcode), off-Korean
+    //   INERT (byte-identical, no regression), a_core_engine_map single entry. (cases 120-124
+    //   were taken by the UsageStore lane H_1391 in a concurrent merge; this lane renumbered
+    //   H_1391→H_1393 and its smoke cases 120-123→125-128.)
+    //   R2 METRIC (a_break_the_wall): the eval scores on the RAW next-unit id (gen_bpe_emit_eval_raw),
+    //   NOT R1's next-unit %K alias — R1's %K alias collapsed distinct morpheme units onto one class so
+    //   the structure-blind global mode beat the head on TOP-1 accuracy (an emit/argmax read; the alias
+    //   was fine for §6.5d's distributional CE bar but a structure-destroyer for a top-1 emit metric).
+    //   The SHUFFLE control is KEPT under the un-aliased metric (anti-tune-to-green, c9): the morphology
+    //   EMIT binds only because ON beats OFF *and* SHUF still COLLAPSES under the SAME un-aliased metric.
+    let be_eval = gen_bpe_emit_eval_raw()
+    let be_on    = to_float(be_eval["acc_on"])
+    let be_off   = to_float(be_eval["acc_off"])
+    let be_shuf  = to_float(be_eval["acc_shuf"])
+    let be_shift = to_float(be_eval["shift_on"])
+    let be_onoff = to_float(be_eval["on_minus_off"])    // acc_on - acc_off
+    let be_shoff = to_float(be_eval["shuf_minus_off"])  // acc_shuf - acc_off
+
+    // case 125 (bar1 EMIT-EFFECT) : the structured morphology emit-bias measurably shifts next-unit
+    //   emission toward the morpheme-coherent continuation vs the blind baseline — acc_on - acc_off
+    //   >= +0.02 AND shift_on >= 0.10 (the bias REACHES emission, the H_1327 emit bar shape).
+    if _assert_b("case_125_bpe_emit_effect", true,
+                 be_onoff >= 0.02 && be_shift >= 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 126 (bar2 EARNED) : the SHUFFLE-merge emit-bias does NOT beat the blind baseline
+    //   (acc_shuf - acc_off <= +0.01) — the emission shift is the LINGUISTIC morphology of the
+    //   merges, NOT generic consult activation / coarse granularity (anti-Goodhart, the control collapses).
+    if _assert_b("case_126_bpe_emit_earned", true,
+                 be_shoff <= 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 127 (bar3a Ψ-SAFE / off-Korean INERT) : on an ASCII (non-Korean) context the emit consult
+    //   returns the caller's own `base` byte UNCHANGED — generation is byte-identical off-distribution
+    //   (the Ψ-disjoint / no-regression invariant; the full bar3 = h1205/h1164 guards run separately).
+    let be_head = gbe_grow_head_raw(0)[0]   // the SAME raw-band head the R2 metric reads
+    let be_uv   = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
+    let be_ascii = [104, 101, 108, 108, 111]   // "hello" — all bytes < 0x80, not Korean-like
+    let be_emit_ascii = gen_bpe_consult_emit(120, be_head, be_uv, be_ascii)
+    if _assert_b("case_127_bpe_emit_offkorean_inert", true,
+                 be_emit_ascii == 120) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 128 (Ψ-DISJOINT / FACULTY-PRESENT) : the emit consult ran the live faculty (ok) AND, on a
+    //   KOREAN-LIKE context, it FIRES (returns a multibyte leading byte >= 0xE1, never an ASCII byte) —
+    //   the morphology unit reaches emission on Korean-like context but stays inert off-Korean. Pure
+    //   emit-bias: returns a byte, never an emit/silence decision; pure_field/engine_g/brain untouched.
+    let be_ko_ctx = [0xEA, 0xB0, 0x80]         // a mid-Hangul multibyte context (last byte continuation)
+    let be_emit_ko = gen_bpe_consult_emit(120, be_head, be_uv, be_ko_ctx)
+    if _assert_b("case_128_bpe_emit_korean_fires", true,
+                 to_string(be_eval["ok"]) == "true" && be_emit_ko >= 0xE1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  bpe morphology emit: acc_on=" + to_string(be_on)
+          + " acc_off=" + to_string(be_off)
+          + " acc_shuf=" + to_string(be_shuf)
+          + " on-off=" + to_string(be_onoff)
+          + " shuf-off=" + to_string(be_shoff)
+          + " shift_on=" + to_string(be_shift)
+          + " ascii_inert=" + to_string(be_emit_ascii == 120)
+          + " ko_fires_byte=" + to_string(be_emit_ko))
+
+    // ── H_1397 KO-EMIT COMPOSE — composing the jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393)
+    //   emit-biases on the SAME next-byte decision (cases 129-132). The genuinely-untested follow-on
+    //   H_1393 named: when BOTH emit-biases fire on one decode step, do they AGREE, CONFLICT, or need
+    //   an arbitration rule? §6.5f gen_emit_compose composes them by SCALE-RELATIVE SUBSTRATE confidence
+    //   (each faculty's mean_err/err_here — the more-relatively-grounded faculty wins; NO hardcoded
+    //   "jamo > morphology" priority, a_autonomy_over_hardcode). HONEST RESULT (c9, the closed-negative
+    //   the prompt anticipated, NO forced green): the two faculties MOSTLY CONFLICT (conflict_rate 0.913)
+    //   and are NON-COMPLEMENTARY at this granularity — the ORACLE ceiling (ANY arbitration upper bound)
+    //   is only +0.017 over morphology-alone (jamo is right alone on just 4/230 positions), so the
+    //   substrate-confidence compose (0.178) cannot beat morphology-alone (0.252): bar1 COMPOSE-EFFECT
+    //   FAILS. What DOES hold (and is the load-bearing engine-native fact these cases assert): the
+    //   grounding signal is REAL (bar3 EARNED — the compose beats a random/shuffle arbitration), the
+    //   compose hook is Ψ-SAFE (off-Korean byte-identical, bar4), and the conflict diagnostic is
+    //   measured. The compose is WIRED single-entry (a_core_engine_map) but the faculties don't compose
+    //   to a NET LIFT at this fixture granularity — a real finding, NOT a green (verdict 🧱/🟠).
+    let ce_eval = gen_emit_compose_eval()
+    let ce_j = to_float(ce_eval["acc_jamo"])
+    let ce_m = to_float(ce_eval["acc_morph"])
+    let ce_c = to_float(ce_eval["acc_compose"])
+    let ce_s = to_float(ce_eval["acc_shufw"])
+    let ce_best = to_float(ce_eval["best_single"])
+    let ce_conf = to_float(ce_eval["conflict_rate"])
+    let ce_orc  = to_float(ce_eval["acc_oracle"])
+
+    // case 129 (EARNED, bar3 — the grounding signal is real) : the SCALE-RELATIVE substrate-confidence
+    //   compose is NOT beaten by a random/shuffle arbitration (acc_shufw <= acc_compose + 0.01) — the
+    //   mean_err/err_here grounding does real arbitration work over random (a_autonomy_over_hardcode).
+    if _assert_b("case_129_compose_earned_vs_shuffle", true,
+                 ce_s <= ce_c + 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 130 (HONEST CONFLICT-OR-DEGRADES, bar1 — the measured closed-negative) : the compose does NOT
+    //   beat the better single faculty (acc_compose < best_single) AND the two faculties mostly CONFLICT
+    //   (conflict_rate >= 0.5) — the faculties are non-complementary at this granularity (c9, the bar is
+    //   NOT moved; this case asserts the FINDING that the compose degrades, the honest result).
+    if _assert_b("case_130_compose_conflict_degrades", true,
+                 ce_c < ce_best && ce_conf >= 0.5) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 131 (NON-COMPLEMENTARITY ceiling) : even a PERFECT arbitration (oracle = right iff EITHER
+    //   faculty is right) barely exceeds morphology-alone (acc_oracle - best_single <= 0.05) — the
+    //   headroom for ANY compose rule is tiny because morphology subsumes jamo's competence here.
+    if _assert_b("case_131_compose_oracle_ceiling", true,
+                 ce_orc - ce_best <= 0.05 && ce_orc >= ce_best) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 132 (Ψ-SAFE / off-Korean INERT) : on an ASCII (non-Korean) context the compose hook returns
+    //   the caller's own base byte UNCHANGED (byte-identical off-distribution, the Ψ-disjoint / no-
+    //   regression invariant; the full Ψ guard = h1205/h1164 run separately). NO hardcoded priority:
+    //   the live hook reads the substrate mean-err baselines from the eval, never a fixed jamo/morph rule.
+    let ce_cells = ko_jamo_cells_load("CORE/ko_jamo_cells.kojamohead")
+    let ce_jhM   = gbe_grow_head_raw(0)[0]
+    let ce_uv    = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
+    let ce_jMean = to_float(ce_eval["jamo_mean_err"])
+    let ce_mMean = to_float(ce_eval["morph_mean_err"])
+    let ce_ascii = [104, 101, 108, 108, 111]   // "hello" — not Korean-like
+    let ce_off   = gen_emit_compose(120, ce_cells, ce_jhM, ce_uv, ce_jMean, ce_mMean, ce_ascii)
+    if _assert_b("case_132_compose_offkorean_inert", true,
+                 ce_off == 120 && to_string(ce_eval["ok"]) == "true") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  ko emit-compose (H_1397, HONEST CONFLICT-OR-DEGRADES): acc_jamo=" + to_string(ce_j)
+          + " acc_morph=" + to_string(ce_m)
+          + " best_single=" + to_string(ce_best)
+          + " acc_compose=" + to_string(ce_c) + " (< best ⇒ degrades)"
+          + " acc_shufw=" + to_string(ce_s)
+          + " conflict_rate=" + to_string(ce_conf)
+          + " oracle=" + to_string(ce_orc)
+          + " — substrate-confidence arbitration (NO hardcoded priority); faculties NON-COMPLEMENTARY here")
 
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }

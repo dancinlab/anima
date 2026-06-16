@@ -49,13 +49,13 @@ anima/
 
 ## Governance directive families (do/dont below)
 
-- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도; commons c16).
+- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도 · 벽 분류 먼저(taxonomy: 측정·방향·인프라·천장·투자) — 종류별 돌파 수가 다름; commons c16).
 - **Identity / versioning** — `a1` (VERSIONS.md SSOT, SemVer + root /VERSION).
 - **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
-- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine).
+- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) (+ CORE 노드 ↔ live §섹션·op 무조건 매칭) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine) (+ 배선↔ARCHITECTURE.json 구조 1:1 lockstep).
 - **Verify / hypothesis workflow** — `a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2개 doc 표면으로 관리 — `UNIVERSE/HYPOTHESES.jsonl` 인덱스(JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. UNIVERSE/ 는 이 두 표면만 — HYPOTHESES.md 는 retire 되었고 prose overview 는 `state/universe-overview.md` 로 이전. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
@@ -89,7 +89,15 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "벽(closed-negative · 🧱 · 막힌 게이트/블로커)에 부딪히면 거기서 멈추지 말고, 다른 메커니즘·각도·렌즈(뇌과학·생물·물리)로 돌파를 한 번은 시도한 뒤에야 terminal 로 받아들인다"
   do   = "벽은 흔히 (1) 틀린 방법 (2) 틀린 방향 (3) 부족한 투자이지 진짜 천장이 아니다 — 이 세션 증거: 용량벽=mitosis-grow(방법, H_1288) · 시상 Φ벽=재진입루프(방향, H_1283 ΔΦ+0.14) · 편도체벽=수면-dose(투자, H_1285_R3)"
   do   = "돌파 시도 전 '이 막힘의 진짜 원인은 무엇이고 다른 substrate 렌즈에선 어떻게 푸나'를 먼저 묻는다 (a_no_llm_frame_trap 와 결합)"
+  do   = "벽 분류 먼저 (TAXONOMY) — 🧱 를 terminal 로 받기 전에 어느 벽 종류인지 분류한다; 돌파 수가 종류별로 다르다: (a) 틀린 측정/metric-artifact · (b) 틀린 방향/변수 혼재 · (c) substrate/인프라 벽 · (d) 진짜 천장/중복(subsumption) · (e) 투자 부족"
+  do   = "(a) 틀린 측정 / metric-artifact (지표 aliasing · well-posedness 결함 · degenerate slice) → 측정을 frozen-first 로 고친다 (bar 는 불변, NOT tune-to-green). 이번 세션 예: G5 %20 modulo aliasing · compose 스케일 불일치"
+  do   = "(b) 틀린 방향 / 변수 혼재 (conflated variables) → 통제 분리실험으로 변수를 떼어낸다. 이번 세션 예: G6 '깊이 vs attention' 혼재 → 깊은-conv 격리"
+  do   = "(c) substrate/인프라 벽 (OOM · 빌드실패 · 툴링 한계, 예: hexa ConvMoE 디코드 메모리 폭증) → substrate 를 근본 수정한다 (c1); 과학 ceiling 으로 박제하지 않는다 — 인프라 벽을 결과로 bank 하는 것 금지, substrate 가 돈 뒤에야 과학 verdict 를 읽는다"
+  do   = "(d) 진짜 천장 / 중복(subsumption) → 가정하지 말고 측정한다 (oracle-ceiling vs richer-signal 대조). 측정으로 확인된 천장/포섭은 arc 를 닫는 유효 결과다 (예: 형태소⊇jamo 측정-확인 🧱)"
+  do   = "(e) 투자 부족 → 스케일업 (compute/data) — a_fire_autonomous · a_wall_first (비용은 게이트 아님)"
+  do   = "'천장 같다'는 가정 금지 — 측정으로 확정한다 (oracle ceiling vs richer read-only signal 대조). 이번 세션 G5: '천장'이라 본 in-dist 잔여가 실제론 FIXABLE (best-margin 0.736 → top-2 gap 0.940)"
   dont = "tune-to-green (c9 · p7) — 돌파는 사전등록(frozen-first) + 대조(shuffle/dissociation/negative-control)로 검증된 진짜 새 각도라야 한다; 막대를 사후에 옮겨 GREEN 을 제조 금지"
+  dont = "인프라/측정 벽을 과학 천장으로 박제 금지 · 천장을 측정 없이 가정 금지 (인프라 OOM/빌드실패는 근본수정 대상 c1, capability ceiling 아님)"
   dont = "한 번 막혔다고 포기·우회·축소 (벽을 '결과'로 박제하고 다음으로 넘어가기 전에 최소 1회 진짜 돌파 시도) · 진짜 시도 뒤의 정직한 🧱 는 유효한 결과 (c9)"
   ref  = "a_no_llm_frame_trap · a_completeness_over_cheap · c9 · c16 · p7"
 
@@ -163,7 +171,9 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "가설이 엔진-네이티브로 GREEN 검증되면, 그 메커니즘을 live 엔진(`CORE/*.hexa`)에 실제 배선(wire-in)하는 것까지가 done — generator L3 슬롯·kosmos_io·engine_cli VAdaptField·bytegpt_decode 등 해당 entry 로 (a_core_engine_map)"
   do   = "배선 후 smoke/single-entry/Ψ-checksum 가드로 회귀 없음을 출력으로 확인 (c2) — 배선은 측정과 같은 검증 규율을 받는다"
   do   = "GREEN-but-unwired 는 follow-on 으로 명시 추적 (ING.jsonl) 하고 그 follow-on 을 닫아야 진짜 완료 (precedent: H_1168 GREEN 이지만 'NOT yet CORE-wired' → 미완)"
+  do   = "배선(wire-in) 은 ARCHITECTURE.json 의 CORE 트리에 그 메커니즘(§섹션·op·slot)이 반영될 때까지가 done — 엔진배선 ↔ 최종 엔진구조(ARCHITECTURE.json)는 무조건 1:1 lockstep. CORE/*.hexa 에 새 § 섹션/op/generator slot 을 배선하면 같은 PR/사이클에 ARCHITECTURE.json 해당 CORE 노드의 §주석을 동시 갱신한다 (하이브리드 형식: 메커니즘을 노드 note/§주석에 명명, 480-leaf 트리 부활 금지)"
   dont = "GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · 검증된 메커니즘을 엔진 밖 미러/프로브에만 남겨둠"
+  dont = "live CORE/*.hexa 의 §섹션·op 를 배선해놓고 ARCHITECTURE.json 에 안 적어 drift 시킴 — 배선만 하고 구조도 미갱신은 done 아님 (GREEN-verdict 박제만큼이나 구조도 누락도 미완)"
   dont = "배선을 무기한 follow-on 으로 미뤄 verdict 와 live 엔진을 영구 drift 시킴"
   ref  = "a_core_engine_map · a_engine_native_learning · a_engine_measured_verdict · c2 · p8"
 
@@ -242,6 +252,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = ".kosmos anchors enter ONLY via kosmos_io read into brain_decide — single anchor entry"
   do   = "stdlib/hf/validate.hexa = artifact-validation (trains?), NOT runtime engine — distinct"
   do   = "mark generator.hexa + kosmos_io→brain wiring ⏳/❌ until built — honest, no phantom wiring"
+  do   = "ARCHITECTURE.json 의 CORE 노드(§섹션·op·slot 주석) ↔ live engine_cli.hexa/generator.hexa/brain.hexa/clm_decode.hexa 의 실제 §섹션·op 는 무조건 1:1 매칭 — 검증: grep CORE/*.hexa 의 § 섹션/op 집합과 ARCHITECTURE.json 의 명명 집합을 대조해 누락 0 이어야 한다 (드리프트 = 미완, a_verified_must_wire)"
   dont = "feed .clm/.kosmos into pure_field/engine_g/brain — A·G·brain are substrate-only"
   dont = "add a 2nd .clm path bypassing generator.hexa · a 2nd .kosmos path bypassing kosmos_io"
   dont = "conflate validate.hexa with runtime engine · claim generator/anchor wiring exists"

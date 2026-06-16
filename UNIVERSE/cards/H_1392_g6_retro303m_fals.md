@@ -3,7 +3,7 @@ id: H_1392
 slug: 1392_g6_retro303m_fals
 title: G6 IDEATION ★ FALS re-score on a 303M-class ConvMoE — settle the H_1381 ckpt-gated M2-M5 follow-on on a TRUE engine-mountable 303M ConvMoE (REUSED, $0)
 group: gate-dig (G6 IDEATION ★, anima's core purpose)
-terminal_tier: 🧱→✅ WALL RESOLVED by H_1393 (the hexa ConvMoE-decode memory blowup is FIXED anima-side — streaming/bounded decode, byte-exact; GEN=110 now completes; the M2-M5 FALS re-score is unblocked and re-scored in H_1393)
+terminal_tier: 🧱→✅ WALL RESOLVED by H_1399 (the hexa ConvMoE-decode memory blowup is FIXED anima-side — streaming/bounded decode, byte-exact; GEN=110 now completes; the M2-M5 FALS re-score is unblocked and re-scored in H_1399)
 verdict_dir: .verdicts/1392_g6_retro303m_fals/
 terminal_verdict: .verdicts/1392_g6_retro303m_fals/result.txt
 date: 2026-06-16
@@ -89,14 +89,14 @@ toolchain is Mac-arm64 and a fresh Linux-pod hexa build is historically blocked
 (`.verdicts/c0-n8-fire`: "hexa_stage0 install.sh module_loader build failed. BLOCKED"). This is an
 INVESTMENT-class wall (insufficient working substrate), filed upstream to hexa-lang.
 
-**CAPACITY-vs-ARCHITECTURE: STAYS OPEN** *(as of H_1392; RESOLVED in H_1393)*. Whether a 303M
+**CAPACITY-vs-ARCHITECTURE: STAYS OPEN** *(as of H_1392; RESOLVED in H_1399)*. Whether a 303M
 ConvMoE mouth emits falsifiable structure the 7.479M mouth could not was UNANSWERED at H_1392 —
 the substrate could not run the decode to produce the evidence. NOT promoted either way (no
 tune-to-green, no bar moved). NO bar moved.
 
-## UPDATE (H_1393 — the wall was wrong-method, NOT a ceiling; a_break_the_wall)
+## UPDATE (H_1399 — the wall was wrong-method, NOT a ceiling; a_break_the_wall)
 
-H_1393 diagnosed + FIXED this wall **anima-side**. ROOT CAUSE: the hexa runtime bump allocator
+H_1399 diagnosed + FIXED this wall **anima-side**. ROOT CAUSE: the hexa runtime bump allocator
 (`self/runtime.c` "malloc never frees; free is a noop") never returns a `farr` buffer, so the
 ConvMoE decode's per-step conv-weight TRANSPOSE rebuild (~92% of the +63MB/step at d768, ~300MB
 at 303M) + the per-decode model reload leaked permanently. FIX: pre-transpose every conv weight +
@@ -104,12 +104,12 @@ pre-allocate all forward scratch ONCE and reuse the handles every step (streamin
 load the model ONCE for the multi-decode driver. BYTE-EXACT (logit maxΔ=0.0, argmax identical).
 RESULT: 303M GEN=24 + GEN=48 (OOM-killed here) now COMPLETE; **GEN=110 completes** (10.1GB RSS,
 peak 13.0GB vs H_1392's silent death / 71GB peak). The M2-M5 FALS bars are re-scored engine-native
-in **H_1393** (verbatim this frozen detector/scaffold/bars) → **🧱 ARCHITECTURE**: over 6/6 completed
+in **H_1399** (verbatim this frozen detector/scaffold/bars) → **🧱 ARCHITECTURE**: over 6/6 completed
 GEN=110 C_strong frames FALS(C_strong)=0 (coherent English, kwr 0.90-1.00, but no falsifiable
 structure even at full budget), so M2 FALS=0 ⇒ the lever is ARCHITECTURE, NOT capacity — capacity
 (303M) was NOT the open lever this card left. A REAL science result now that the substrate no longer
 blocks the decode (NOT a substrate wall, NOT tune-to-green, NO bar moved). H_1362's FALS=1.0 was a
-303M ByteGPT (different transformer arch). See `cards/H_1393_convmoe_streaming_decode.md`.
+303M ByteGPT (different transformer arch). See `cards/H_1399_convmoe_streaming_decode.md`.
 
 ## Scope (honest)
 

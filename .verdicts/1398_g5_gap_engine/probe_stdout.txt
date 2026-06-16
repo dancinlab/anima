@@ -1,0 +1,11 @@
+=== H_1398 g5-gap ENGINE-NATIVE (live CORE/engine_cli.hexa ImmuneMemory) ===
+  in-dist fire accuracy        : 0.9274  (n_fire=427 pooled, n_wrong=31 ; min_support=30)
+  in-dist type-2 AUROC:
+    (a) CURRENT best-margin    : 0.750285   <- live immune_memory_recall_margin
+    (b) RICHER top-2 gap       : 0.906158   (lift 0.155873)   <- live immune_memory_recall_gap
+  E1 FIXABLE   gap-margin lift 0.155873  >= Δ=0.1 -> true
+  E2 BASELINE  margin AUROC 0.750285 within |Δ|<=0.15 of mirror 0.736 -> true
+  E3 SHUFFLE   gap_shuf=0.4732 cur_shuf=0.582356  ~0.50 -> true
+  E4 ABSTAIN   OOD fab_max=0.0  <= 0.02 -> true
+  VERDICT: GREEN — the top-2 affinity GAP lifts in-dist type-2 metacog ENGINE-NATIVE
+           (live immune_memory_recall_gap AUROC=0.906158 vs best-margin 0.750285, lift +0.155873>=Δ0.10), shuffle collapses (~0.50), OOD/abstain preserved (fab_max=0.0<=0.02). H_1396 FIXABLE reconfirmed on the live engine.

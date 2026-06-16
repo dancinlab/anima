@@ -1,0 +1,12 @@
+=== H_1396 G5 IN-DIST metacog CEILING vs FIXABLE — 🟢 FIXABLE ===
+  in-dist fire accuracy        : 0.981  (n_fire=2359 pooled, n_wrong=44 = correctness variance; min_support=30)
+  in-dist type-2 AUROC:
+    (a) CURRENT best-margin    : 0.736   <- the live baseline (immune_memory_recall_margin)
+    (b) RICHER-1 top-2 gap     : 0.940   (lift +0.205)
+    (c) RICHER-2 neg-entropy   : 0.594   (lift -0.142)
+    (d) ORACLE ceiling (ref)   : 1.000   (determinate-correctness upper bound)
+  C1 ceiling-ref  gap oracle-current = 0.264
+  C2 FIXABLE      best richer 'gap' lift +0.205  >= Δ=0.1 -> True
+  C3 abstain-intact OOD fab_max = 0.000  <= 0.02 -> True
+  C4 shuffle-ctrl curr=0.489 gap=0.524 negent=0.485  ~0.50 -> True
+  RULING: a RICHER read-only confidence signal LIFTS in-dist type-2 metacognition: gap AUROC=0.940 vs CURRENT(best-margin) 0.736 (lift +0.205 >= Δ=0.1), shuffle collapses (~0.50), and the OOD/abstain property (H_1304) stays intact (fab_max=0.000<=0.02). G5 in-dist thinness is FIXABLE — the deepening is signal 'gap'. Binding follow-on (a_verified_must_wire): expose top-k affinity in the engine and wire 'gap' into immune_memory_recall_margin / brain_decide.
