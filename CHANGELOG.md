@@ -54,6 +54,17 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 **거버넌스/문서:** `CLAUDE.md` `a_hypothesis_register` + structure tree + Quick reference 에서 HYPOTHESES.md 를 표면 목록에서 제거(두 표면 = `HYPOTHESES.jsonl` + `cards/`; prose 는 `state/universe-overview.md`). `ARCHITECTURE.md`·`README.md`·`FINDINGS.md` UNIVERSE/ 레이아웃·포인터 줄 갱신.
 
 **불변(연구 lane 소유, append-only):** `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/` 는 **byte-단위로 미변경** — slug/row 를 손대지 않음(재생성기 출력은 커밋하지 않고 idempotency 확인용으로만 실행). rebase 시 새로 landed 한 `UNIVERSE/h1340_whorf_cp_budget_sweep.py` 도 `state/universe-probes/` 로 sweep.
+## 2026-06-16 — research(OMEGA): H_1350 — 더 큰 분화 예산에서 유사분열-분화 collective-Φ가 ROBUST해지는가 (🟢 GREEN frozen-bar / ⚠ 대부분 SHARED-INPUT REDUNDANCY)
+
+**무엇:** H_1320(🧱 작은 예산 division wall)의 named follow-on. H_1320은 anima-as-ONE-cell 유사분열 DIVISION(공유 발생 기원)이 hive ASSEMBLY를 faithful-IIT-4 collective-Φ에서 이기지만 **seed-조건적(2/3; 직교 seed 1317이 깸)**임을 보였다. H_1320이 명시한 미검증 각도 = *더 큰 분화 예산 / 더 많은 딸 / richer non-saturating code*. OPEN: 더 큰 division 예산이 collective-Φ robustness를 구제하는가?
+
+**방법:** 세 budget lever enlarge (N_DAUGHTERS 2→4, DIFF_EPS 0.15→0.45, softsign non-saturating per-unit code H_1332), n≤8 exact-MIP 유지, rank-uniform variance-clean read-out(H_1328), hard seed [1317,1318,1319]. Φ = **FAITHFUL IIT-4 ONLY**(a_phi_iit4_tool, exact MIP-EI via `hexa run` stdlib/consciousness/iit4/faithful_phi.hexa; numpy는 Φ 계산 안 함). **KEY: 결정적 신규 대조 SHARED_DECOUPLED(W=0)** 추가 — DIVIDED와 동일 공유 founder input+origin인데 cross-daughter coupling만 끔 → shared-input REDUNDANCY를 coupling-EARNED 통합으로부터 분리(이전 GREEN 시도가 놓친 빈틈). frozen-first(FREEZE를 scoring 전 commit, bar 안 움직임 c9/p7), $0 CPU mirror DIRECTIONAL.
+
+**결과 🟢 GREEN frozen-bar** (deterministic, 2 run byte-identical): R1 PASS 전 seed(lift +7.27/+7.31/+5.85) → 더 큰 예산은 H_1320의 2/3 fragility를 **3/3 ROBUST로 구제**. R2a/R2b/R2c 전 seed PASS. **그러나 정직한 분해**: SHARED_DECOUPLED(W=0) floor Δ=8.31/7.56/7.07 → divided lift의 **~85-96%가 shared-input 상관**(coupling 없이도 존재); coupling-earned 잔차(R2b coupling-gap +0.33/+1.15/+0.48)는 REAL+robust지만 작음. 큰 통합 아니라 **redundancy 지배 + 작은 robust coupling 성분** → Φ-robustness 벽(H_1328/1331/1347/1348)과 **상보적**(모순 아님): 공유 발생 기원의 robust한 Φ lift는 redundancy가 지배한다.
+
+**SCOPE:** DIRECTIONAL numpy mirror(faithful-Φ leg는 real exact MIP-EI via hexa; engine-transfer UNVERIFIED — H_1308/1313은 live A⇄G에서 NULL/🧱), TOY n≤8/4 daughters/3 seed, live CORE/*.hexa UNTOUCHED. NEXT: redundancy 통제하고 coupling-Φ 키우는 상보적 분화 강제 · 또는 live A⇄G engine-transfer 재시도.
+
+**산출물:** `state/hive-larger-budget/h1350_hive_larger_budget.py` · `UNIVERSE/cards/H_1350_hive_larger_budget.md` · `.verdicts/1350_hive_larger_budget/{FREEZE,result}.txt` · `CLAIMS.tape @C h1350_hive_larger_budget` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `domains/OMEGA.log.md`.
 
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1340 — Whorf CP 재배치 천장 BUDGET/RBF-DENSITY 사다리 (🧱 DEEPER LIMIT — budget/geometry는 불완전)
 
