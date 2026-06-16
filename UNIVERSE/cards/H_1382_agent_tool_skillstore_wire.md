@@ -1,12 +1,12 @@
-# H_1381 — agent-tool §SkillStore CORE wire-in (the H_1378 a_verified_must_wire follow-on)
+# H_1382 — agent-tool §SkillStore CORE wire-in (the H_1378 a_verified_must_wire follow-on)
 
 🔎 **Closes:** the REFERENCE-ONLY gap H_1378 found — the live agent-tool layer does NOT learn from outcome. This lane makes the agent-tool repertoire ACTUALLY learn via mitosis, ENGINE-NATIVE in CORE.
 
 - **slug:** agent_tool_skillstore_wire
 - **tier / verdict:** **🟢 GREEN ENGINE-NATIVE** — §SkillStore WIRED into `CORE/engine_cli.hexa`; the H_1378 mirror's 4 bars re-scored ENGINE-NATIVE on the LIVE engine + Ψ-disjoint / no-regression. NO frozen bar moved (frozen-first, c9).
 - **domain:** MITOSIS-ENGINE · **substrate:** $0 CPU, LIVE engine (hexa) · deterministic fixed task→tool env · CORE/engine_cli.hexa EDITED (additive lane)
-- **evidence:** `.verdicts/1381_agent_tool_skillstore_wire/{FREEZE.txt, result.txt}`
-- **lane:** `CORE/engine_cli.hexa § SkillStore` (skill_store_new/_split/_teach · skill_recall · skill_store_cells) · smoke cases 102–106 in `CORE/engine_cli_smoke.hexa`
+- **evidence:** `.verdicts/1382_agent_tool_skillstore_wire/{FREEZE.txt, result.txt}`
+- **lane:** `CORE/engine_cli.hexa § SkillStore` (skill_store_new/_split/_teach · skill_recall · skill_store_cells) · smoke cases 107–111 in `CORE/engine_cli_smoke.hexa`
 
 ## What was missing (H_1378 Step A, REFERENCE-ONLY)
 Tool SELECTION in `anima-agent-core/agent_tools.hexa` is a STATIC weighted dot-product over hand-set affinity floats (`:357-361`), baked at registration (`:683-743`), **never updated by outcome**. A tool FAILURE terminates at a scalar `tension_delta` in a capped `execution_log` ring buffer (`:448-451`) that is never read back to grow a skill; `tool_mitosis_split` (`:155`) is a TODO stub. The "tool fails → repertoire improves" loop does NOT exist. H_1378 Step B (numpy mirror, 🟢 DIRECTIONAL) designed + direction-validated the missing mechanism.
@@ -29,18 +29,18 @@ LIVE engine readout: `skillstore acc: init=0.166667 full=1.0 static=0.166667 shu
 
 | bar | meaning | result | gate |
 |-----|---------|--------|------|
-| (1) LEARNS (engine-native) | FULL final − init ≥ +0.30 | **+0.833** (0.166667→1.0) | ✅ PASS (case_102) |
-| (2) DISTINCT-FROM-STATIC | FULL − STATIC ≥ +0.30 | **+0.833** (static stays 0.166667, never splits) | ✅ PASS (case_103) |
-| (3) EARNED (shuffle) | SHUFFLE − STATIC ≤ +0.15 | **−0.167** (shuffle collapses to 0.0; permuted task→tool, scored vs TRUE) | ✅ PASS (case_104) |
-| (4) NO-FAB / ABSTAIN | far untrained task fires no tool | **abstains** ("" on disjoint trigram space) | ✅ PASS (case_105) |
-| (5) Ψ-DISJOINT FOOTPRINT | FULL cells > STATIC cells | **7 > 1** (split grows ONLY this store) | ✅ PASS (case_106) |
+| (1) LEARNS (engine-native) | FULL final − init ≥ +0.30 | **+0.833** (0.166667→1.0) | ✅ PASS (case_107) |
+| (2) DISTINCT-FROM-STATIC | FULL − STATIC ≥ +0.30 | **+0.833** (static stays 0.166667, never splits) | ✅ PASS (case_108) |
+| (3) EARNED (shuffle) | SHUFFLE − STATIC ≤ +0.15 | **−0.167** (shuffle collapses to 0.0; permuted task→tool, scored vs TRUE) | ✅ PASS (case_109) |
+| (4) NO-FAB / ABSTAIN | far untrained task fires no tool | **abstains** ("" on disjoint trigram space) | ✅ PASS (case_110) |
+| (5) Ψ-DISJOINT FOOTPRINT | FULL cells > STATIC cells | **7 > 1** (split grows ONLY this store) | ✅ PASS (case_111) |
 
 These reproduce the H_1378 numpy mirror (FULL 0.167→1.000, STATIC stays 0.167, SHUFFLE collapses, far task abstains) ENGINE-NATIVE. STATIC = mitosis OFF on teach → never splits → DISTINCT bar. SHUFFLE teaches toward a derangement of the task→tool map but is SCORED vs the TRUE map → collapses → EARNED bar (the lift is the EARNED task↔tool correspondence the split encodes, not the act of splitting). **p1/p2/p3/p6 guard:** a split binds from OUTCOME only (success/failure of the executed tool), NO injected "use tool T" label / RLHF / persona — the shuffle collapse proves it.
 
 ## Ψ-disjoint / no-regression (guards, verbatim)
 - **h1205 separation-invariant: PASS 🟢** — F1 generation byte-identity 10 pairs / 0 mismatch; F2 Ψ Φ-checksum invariant PASS (phiSum ON==OFF==48.6613). The §SkillStore lane is ADDITIVE — generation byte-identical ON==OFF, Ψ=½ untouched.
 - **h1196 single-entry: 7 pass / 0 fail** — a_core_engine_map single-entry preserved (no 2nd .clm/.kosmos path).
-- **engine_cli_smoke: 101 pass / 0 fail** (was 96/0 on fresh main; +5 SkillStore cases 102–106), deterministic across 3 runs.
+- **engine_cli_smoke: 106 pass / 0 fail** (101/0 on rebased main incl the concurrent G6-ideation cases 102–106; +5 SkillStore cases 107–111), deterministic across 3 runs.
 - No decode hung; no GPU; $0 CPU.
 
 ## Scope (a_scale_honest_scope · a_toy_scale_recheck) — honest (c9)

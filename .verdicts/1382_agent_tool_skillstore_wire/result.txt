@@ -1,4 +1,4 @@
-H_1381 — agent-tool §SkillStore CORE wire-in — RESULT (a_verified_must_wire follow-on of H_1378)
+H_1382 — agent-tool §SkillStore CORE wire-in — RESULT (a_verified_must_wire follow-on of H_1378)
 VERDICT: 🟢 GREEN ENGINE-NATIVE — §SkillStore WIRED into CORE/engine_cli.hexa; the H_1378 mirror's
 4 bars re-scored ENGINE-NATIVE on the LIVE engine + Ψ-disjoint / no-regression. NO frozen bar moved.
 
@@ -27,11 +27,11 @@ fixed task→tool environment, 12 tasks across 6 tools; 3 arms FULL/STATIC/SHUFF
 
   INFO  skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1
 
-  (1) LEARNS (engine-native):    full − init    = 1.0 − 0.166667 = +0.833 >= +0.30  -> PASS  (case_102)
-  (2) DISTINCT-FROM-STATIC:      full − static  = 1.0 − 0.166667 = +0.833 >= +0.30  -> PASS  (case_103)
-  (3) EARNED (shuffle):          shuffle − static = 0.0 − 0.166667 = -0.167 <= +0.15 -> PASS  (case_104)
-  (4) NO-FAB / ABSTAIN:          far untrained tasks fire NO tool ("")               -> PASS  (case_105)
-  (5) Ψ-DISJOINT FOOTPRINT:      cells_full=7 > cells_static=1 (split grows ONLY this store) -> PASS (case_106)
+  (1) LEARNS (engine-native):    full − init    = 1.0 − 0.166667 = +0.833 >= +0.30  -> PASS  (case_107)
+  (2) DISTINCT-FROM-STATIC:      full − static  = 1.0 − 0.166667 = +0.833 >= +0.30  -> PASS  (case_108)
+  (3) EARNED (shuffle):          shuffle − static = 0.0 − 0.166667 = -0.167 <= +0.15 -> PASS  (case_109)
+  (4) NO-FAB / ABSTAIN:          far untrained tasks fire NO tool ("")               -> PASS  (case_110)
+  (5) Ψ-DISJOINT FOOTPRINT:      cells_full=7 > cells_static=1 (split grows ONLY this store) -> PASS (case_111)
 
   These reproduce the H_1378 numpy mirror (FULL 0.167→1.000, STATIC stays 0.167, SHUFFLE collapses,
   far task abstains) ENGINE-NATIVE on the LIVE engine. The STATIC arm (mitosis OFF on teach) never
@@ -40,13 +40,15 @@ fixed task→tool environment, 12 tasks across 6 tools; 3 arms FULL/STATIC/SHUFF
   (the lift is the earned task↔tool correspondence the split encodes, not the act of splitting — p6).
 
 VERBATIM SMOKE CASES (CORE/engine_cli_smoke.hexa):
-  PASS  case_102_skillstore_learns want=true got=true
-  PASS  case_103_skillstore_distinct_from_static want=true got=true
-  PASS  case_104_skillstore_earned_shuffle want=true got=true
-  PASS  case_105_skillstore_abstains_on_far want=true got=true
-  PASS  case_106_skillstore_footprint_grows want=true got=true
+  PASS  case_107_skillstore_learns want=true got=true
+  PASS  case_108_skillstore_distinct_from_static want=true got=true
+  PASS  case_109_skillstore_earned_shuffle want=true got=true
+  PASS  case_110_skillstore_abstains_on_far want=true got=true
+  PASS  case_111_skillstore_footprint_grows want=true got=true
   INFO  skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1
-  --- engine_cli smoke summary: 101 pass / 0 fail ---     (was 96/0 on fresh main; +5 SkillStore cases)
+  --- engine_cli smoke summary: 106 pass / 0 fail ---     (post-merge: 101/0 on rebased main incl the concurrent G6 cases 102-106; +5 SkillStore cases 107-111)
+  NOTE: my lane's cases were 102-106 pre-merge; the concurrent H_1381 G6-ideation lane also added
+  cases 102-106, so on rebase my SkillStore cases were renumbered to 107-111 (both lanes co-resident).
 
 Ψ-DISJOINT / NO-REGRESSION GUARDS  (verbatim stdout)
 
@@ -70,10 +72,11 @@ VERBATIM SMOKE CASES (CORE/engine_cli_smoke.hexa):
     --- single-entry audit summary: 7 pass / 0 fail ---
     ⇒ a_core_engine_map single-entry preserved (no 2nd .clm/.kosmos path introduced by §SkillStore).
 
-  [determinism] engine_cli_smoke run 3× — identical SkillStore readout each run:
-    run1: skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1  | summary 101 pass / 0 fail
-    run2: <FILLED BELOW>
-    run3: <FILLED BELOW>
+  [determinism] engine_cli_smoke run 3× — BYTE-IDENTICAL SkillStore readout each run (deterministic):
+    run1 (pre-merge): skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1  | summary 101 pass / 0 fail
+    run2 (pre-merge): skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1  | summary 101 pass / 0 fail
+    run3 (post-merge, cases renumbered 107-111 co-resident with G6 102-106): skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1  | summary 106 pass / 0 fail
+    ⇒ SkillStore arm accuracies + cell counts are identical across all 3 runs (deterministic, no rng).
 
 HONEST SCOPE (c9 · a_scale_honest_scope · a_toy_scale_recheck)
   - TOY: fixed deterministic 12-task / 6-tool environment (tests the STRUCTURE mitosis can teach
