@@ -21,6 +21,7 @@
 import "CORE/engine_cli.hexa"
 import "CORE/brain.hexa"
 import "CORE/g6_ideation.hexa"   // H_1381 G6 ideation wire-in (G6 cases)
+import "CORE/generator.hexa"     // H_1390 BPE-on-jamo morphology scoreloop wire-in (cases 112-115)
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }
@@ -1351,6 +1352,63 @@ fn main() {
           + " shuffle=" + to_string(ss_acc_shuf)
           + " cells_full=" + to_string(skill_store_cells(ss_full_store))
           + " cells_static=" + to_string(skill_store_cells(ss_static_store)))
+
+    // ── H_1390 KO-MORPHOLOGY BPE-ON-JAMO ★ WIRE-IN (cases 112-115) ──────────────────────
+    //   Engine-native BINDING re-confirmation of H_1388 (🟢 GAP-REDUCED-CANDIDATE, DIRECTIONAL
+    //   numpy MIRROR over REAL 30MB KO): the morphology-aware unit (BPE-on-jamo) breaks the
+    //   Korean below-jamo residual. gen_bpe_scoreloop CONSULTS the live engine faculty
+    //   (bpe_learn_merges/_apply/_byte_fair_ce — engine_cli.hexa § KO-MORPHOLOGY) on a frozen
+    //   corpus-free in-engine morpheme-grammar fixture, re-confirming the SAME THREE STRUCTURAL
+    //   bars H_1388 froze, with H_1388's VERBATIM margin constants (GAP_MARGIN 0.05, structured
+    //   gain ≥ 0.03, shift ≥ 0.05). The mirror's absolute corpus CE (jamo floor 2.51335) is its
+    //   own substrate — the engine fixture re-confirms the STRUCTURE, not the absolute corpus CE
+    //   (== the §6.5c jamo-head precedent: structural margins, not the corpus number). Ψ-disjoint
+    //   pure SCORER (no emit/silence, no Ψ); a_core_engine_map single entry (gen_bpe_scoreloop).
+    let bs_score = gen_bpe_scoreloop()
+    let bs_bpe_ce   = to_float(bs_score["bpe_ce"])
+    let bs_shuf_ce  = to_float(bs_score["shuffle_ce"])
+    let bs_jamo_ce  = to_float(bs_score["jamo_ce"])
+    let bs_gap      = to_float(bs_score["gap_reduced"])        // jamo_ce - bpe_ce
+    let bs_earned   = to_float(bs_score["earned"])             // shuffle_ce - bpe_ce
+    let bs_shift    = to_float(bs_score["shift_minus_novel"])  // bpe_shift - bpe_ce
+
+    // case 112 (bar1 GAP-REDUCED) : the structured (frequency-ranked) BPE-on-jamo unit's byte-fair
+    //   held-out CE is BELOW the un-merged jamo anchor by >= GAP_MARGIN (0.05) — the morphology unit
+    //   REDUCES the below-jamo gap (the H_1388 PRIMARY claim, engine-native).
+    if _assert_b("case_112_bpe_gap_reduced", true,
+                 bs_gap >= 0.05 && bs_bpe_ce < bs_jamo_ce) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 113 (bar2 EARNED) : the structured gain over the SHUFFLE control (random equal-count
+    //   merges, same merge count / apply path) is >= 0.03 — the gain is the LINGUISTIC structure of
+    //   the merges, NOT mere coarse granularity (H_1388 bar2 anti-Goodhart, engine-native).
+    if _assert_b("case_113_bpe_earned_vs_shuffle", true,
+                 bs_earned >= 0.03 && bs_shuf_ce > bs_bpe_ce) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 114 (bar3 CONTROL/shift) : the circular-shift surrogate on the BPE unit stream is EARNED
+    //   (shift CE − novel CE >= 0.05) — the held-out novel CE is genuine generalization, not a
+    //   memorized-context artifact (H_1388 bar3 surrogate, engine-native).
+    if _assert_b("case_114_bpe_shift_earned", true,
+                 bs_shift >= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 115 (Ψ-DISJOINT / FACULTY-PRESENT) : the consult ran the live faculty (ok), the structured
+    //   merge stream COMPRESSED (fewer units than the un-merged jamo stream) AND fewer than the
+    //   shuffle (the structured merges find the recurring morphemes the random merges cannot) — the
+    //   compression is the morphology signal. Pure SCORER: returns floats, never an emit/silence.
+    let bs_nstruct = to_int(bs_score["n_units_struct"])
+    let bs_nshuf   = to_int(bs_score["n_units_shuf"])
+    let bs_njamo   = to_int(bs_score["n_jamo"])
+    if _assert_b("case_115_bpe_compression_present", true,
+                 to_string(bs_score["ok"]) == "true"
+              && bs_nstruct < bs_njamo && bs_nstruct < bs_nshuf) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  bpe morphology: bpe_ce=" + to_string(bs_bpe_ce)
+          + " shuffle_ce=" + to_string(bs_shuf_ce)
+          + " jamo_ce=" + to_string(bs_jamo_ce)
+          + " gap_reduced=" + to_string(bs_gap)
+          + " earned=" + to_string(bs_earned)
+          + " shift=" + to_string(bs_shift)
+          + " units(struct/shuf/jamo)=" + to_string(bs_nstruct) + "/"
+          + to_string(bs_nshuf) + "/" + to_string(bs_njamo))
 
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }

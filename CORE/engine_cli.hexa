@@ -4832,3 +4832,166 @@ pub fn jamo_head_shuffle_targets(Y: [int], vj: int, seed: int) -> [int] {
     while m < n { out = out + [Y[perm[m]]]  m = m + 1 }
     return out
 }
+
+
+// ── § KO-MORPHOLOGY BPE-ON-JAMO MERGE UNIT — the H_1388 morphology-aware unit, engine-native ──────
+//
+// H_1388 (🟢 GAP-REDUCED-CANDIDATE, DIRECTIONAL numpy MIRROR over the REAL 30MB KO shard) showed the
+// Korean below-jamo +0.28 residual (jamo floor 2.51335 + 0.28 = 2.79335) — which the three closed
+// levers (representation H_1322 🧱 · interpolation H_1359 🧱 · data-volume H_1368/H_1380 🟠) all hit —
+// BREAKS under a MORPHOLOGY-AWARE unit: data-driven BPE merges over the jamo stream learn frequent
+// jamo-sequences (de-facto morpheme-ish sub-units), and predicting the next UNIT (byte-fair, nats/
+// UTF-8-byte) carries MORE nats than predicting the next JAMO → novel-CE 2.56603 ≤ 2.74335 (beats the
+// +0.28 residual by 0.227). The SHUFFLE control (random equal-COUNT merges) does NOT (2.80159) →
+// the gain is the LINGUISTIC structure of the merges, not mere coarse granularity. engine-transfer
+// was UNVERIFIED — this faculty is its engine-native realization (a_verified_must_wire · a_engine_
+// native_learning · a_core_engine_map): the morphology MERGE UNIT becomes a first-class engine op,
+// CONSULTED from the live scoring loop (generator §6.5d gen_bpe_scoreloop → jamo_head_ce), re-using
+// the SAME byte-fair count-head CE scorer the jamo head already owns.
+//
+// @L4 (identical framing to the jamo head): bpe_* is a PURE UNIT-LAYER + SCORER. It learns a merge
+// table over an int symbol stream, re-encodes the stream into merged UNITS (each carrying its summed
+// UTF-8 byte span = the byte-fair denominator), and the live jamo_head_ce SCORES held-out next-UNIT
+// CE. The faculty NEVER returns an emit/silence decision and NEVER touches Ψ (pure_field/engine_g/
+// brain UNTOUCHED) — it is a SCORING/decode-unit lane, Ψ-disjoint by construction.
+//
+// FREQUENCY-RANKED vs RANDOM (the anti-Goodhart control, == H_1388 bar2): bpe_learn_merges with
+// rnd_seed=0 is the STRUCTURED real BPE (the most-frequent adjacent pair merges first, ties broken by
+// (count, pair) max — same as the mirror's naive full-rescan order). With rnd_seed>0 it is the
+// SHUFFLE control: the SAME number of merges, pairs chosen at RANDOM from the live adjacent-pair set
+// per step → it cannot find the recurring morpheme structure, so it does not compress and does not
+// lower the per-byte CE (bar2 earned). The implementation is the NAIVE full-rescan (O(merges·N) over
+// the small in-engine fixture, $0); its merge order is byte-identical to the mirror's fast linked-list
+// BPE (the mirror cross-checked the two).
+
+// BpeMerges — a learned merge table: an ordered list of [a, b, nid] merges (merge pair (a,b) → new
+// unit id nid). `next_id` = the next free unit id (= max base id + 1 + |merges|). The SOLE state.
+struct BpeMerges {
+    merges: [[int]],
+    next_id: int
+}
+
+// _bpe_pair_counts — count every adjacent pair in the live int stream `sym` (length n), returning
+// parallel arrays (pa, pb, pc) = the distinct pairs and their counts. Naive full scan ($0 fixture).
+fn _bpe_pair_counts(sym: [int], n: int) -> [[int]] {
+    let mut pa = []  let mut pb = []  let mut pc = []
+    let mut i = 0
+    while i < n - 1 {
+        let a = sym[i]  let b = sym[i + 1]
+        // find an existing (a,b) bucket (linear; the fixture's distinct-pair set is small)
+        let mut found = -1  let mut j = 0
+        while j < len(pa) { if pa[j] == a && pb[j] == b { found = j  j = len(pa) } else { j = j + 1 } }
+        if found >= 0 { pc[found] = pc[found] + 1 }
+        else { pa = pa + [a]  pb = pb + [b]  pc = pc + [1] }
+        i = i + 1
+    }
+    return [pa, pb, pc]
+}
+
+// _bpe_apply_one — replace every non-overlapping adjacent (a,b) in (sym,nby) by (nid, byteA+byteB),
+// returning the re-encoded [sym', nby']. Left-to-right greedy (the standard BPE apply order).
+fn _bpe_apply_one(sym: [int], nby: [int], a: int, b: int, nid: int) -> [[int]] {
+    let n = len(sym)
+    let mut osym = []  let mut onby = []
+    let mut i = 0
+    while i < n {
+        if i < n - 1 && sym[i] == a && sym[i + 1] == b {
+            osym = osym + [nid]  onby = onby + [nby[i] + nby[i + 1]]
+            i = i + 2
+        } else {
+            osym = osym + [sym[i]]  onby = onby + [nby[i]]
+            i = i + 1
+        }
+    }
+    return [osym, onby]
+}
+
+// bpe_learn_merges — learn `num_merges` merges over the base int stream `base_sym` (with per-symbol
+// UTF-8 byte cost `base_nby`). rnd_seed == 0 → FREQUENCY-RANKED (structured real BPE: most-frequent
+// adjacent pair first, ties broken by (count, a, b) max). rnd_seed > 0 → RANDOM equal-COUNT merges
+// (the shuffle control: same number of merges, the pair chosen at RANDOM from the live adjacent-pair
+// set each step). Learns on the GIVEN stream ONLY (caller passes the TRAIN slice → no test leakage).
+pub fn bpe_learn_merges(base_sym: [int], base_nby: [int], num_merges: int, base_vj: int, rnd_seed: int) -> BpeMerges {
+    let mut sym = base_sym
+    let mut nby = base_nby
+    let mut next_id = base_vj
+    let mut merges = []
+    let mut s = rnd_seed
+    let mut m = 0
+    while m < num_merges {
+        let n = len(sym)
+        if n < 2 { m = num_merges }
+        else {
+            let pc = _bpe_pair_counts(sym, n)
+            let pa = pc[0]  let pbb = pc[1]  let pcc = pc[2]
+            if len(pa) == 0 { m = num_merges }
+            else {
+                let mut pick = 0
+                if rnd_seed == 0 {
+                    // structured: max by (count, a, b) — deterministic, == mirror tie-break.
+                    let mut bc = pcc[0]  let mut ba = pa[0]  let mut bb = pbb[0]
+                    let mut k = 1
+                    while k < len(pa) {
+                        let better = pcc[k] > bc
+                            || (pcc[k] == bc && pa[k] > ba)
+                            || (pcc[k] == bc && pa[k] == ba && pbb[k] > bb)
+                        if better { bc = pcc[k]  ba = pa[k]  bb = pbb[k]  pick = k }
+                        k = k + 1
+                    }
+                } else {
+                    // shuffle control: a RANDOM live pair (LCG over the distinct-pair index).
+                    s = (s * 1103515245 + 12345) % 2147483648
+                    pick = s % len(pa)
+                }
+                let a = pa[pick]  let b = pbb[pick]  let nid = next_id
+                merges = merges + [[a, b, nid]]
+                next_id = next_id + 1
+                let re = _bpe_apply_one(sym, nby, a, b, nid)
+                sym = re[0]  nby = re[1]
+                m = m + 1
+            }
+        }
+    }
+    return BpeMerges { merges: merges, next_id: next_id }
+}
+
+// bpe_apply — re-encode a base int stream (base_sym, base_nby) by an ordered merge table, returning
+// the merged [unit_sym, unit_nby]. Each merged unit's byte span = sum of its parts (byte conserved).
+pub fn bpe_apply(bm: BpeMerges, base_sym: [int], base_nby: [int]) -> [[int]] {
+    let mut sym = base_sym
+    let mut nby = base_nby
+    let mut i = 0
+    while i < len(bm.merges) {
+        let mr = bm.merges[i]
+        let re = _bpe_apply_one(sym, nby, mr[0], mr[1], mr[2])
+        sym = re[0]  nby = re[1]
+        i = i + 1
+    }
+    return [sym, nby]
+}
+
+// bpe_unit_vocab — the unit vocab size implied by the merge table (max base id band + |merges|).
+pub fn bpe_unit_vocab(bm: BpeMerges) -> int { return bm.next_id }
+
+// bpe_n_units — the number of merged units a re-encoded stream collapses to (the compression count).
+pub fn bpe_n_units(unit_sym: [int]) -> int { return len(unit_sym) }
+
+// bpe_byte_fair_ce — the BYTE-FAIR held-out CE (nats / UTF-8 byte) of a grown count head over a unit
+// stream: divide the TOTAL held-out next-unit nats by the TOTAL held-out UTF-8 byte span. This is the
+// SAME byte-fair axis H_1316/H_1388 score on (jamo floor 2.51335, residual 2.79335). `jh` is a head
+// grown over the UNIT features; (Xte, Yte) the held-out unit features/targets; `nby_te` the per-test
+// unit UTF-8 byte cost (the denominator). Reuses jamo_head_ce's per-unit nats internally via the head
+// rows, but normalizes by BYTES (not units) — the confound-fair number. 0.0 if the head is empty.
+pub fn bpe_byte_fair_ce(jh: JamoHead, Xte: [[float]], Yte: [int], nby_te: [int]) -> float {
+    if len(jh.heads) == 0 { return 0.0 }
+    let af = _jh_field(jh.centers, len(jh.centers))
+    let own_te = _jh_assign(af, Xte)
+    let mut s = 0.0  let mut tot_bytes = 0  let mut i = 0
+    while i < len(Xte) {
+        s = s - ln(jh.heads[own_te[i]][Yte[i]] + 0.000000000001)
+        tot_bytes = tot_bytes + nby_te[i]
+        i = i + 1
+    }
+    if tot_bytes == 0 { return 0.0 }
+    return s / to_float(tot_bytes)
+}
