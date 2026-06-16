@@ -2,6 +2,14 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — docs(GOVERNANCE): CLAUDE.md `a_break_the_wall` 에 벽-TAXONOMY + "천장은 측정으로 확정" + "인프라 벽은 근본수정·과학천장 박제금지" 추가
+
+**무엇:** 거버넌스 디렉티브 `@D a_break_the_wall` 을 surgical 확장 (기존 do/dont · tune-to-green 금지 전부 보존). 🧱 를 terminal 로 받기 전에 **어느 벽 종류인지 분류**하도록 5종 TAXONOMY 를 do 라인으로 인코딩 — 종류별 돌파 수가 다르기 때문: (a) 틀린 측정/metric-artifact → frozen-first 측정 수정(bar 불변) · (b) 틀린 방향/변수 혼재 → 통제 분리실험 · (c) substrate/인프라 벽(OOM·빌드실패) → substrate 근본수정(c1), 과학 ceiling 박제 금지 · (d) 진짜 천장/중복(subsumption) → 가정 말고 측정(oracle vs richer-signal) · (e) 투자 부족 → 스케일업(a_fire_autonomous·a_wall_first). 추가 do 2개: **"천장 같다" 가정 금지 — 측정으로 확정**, 그리고 **인프라 벽 ≠ 과학 결과**(근본수정 후에야 verdict). dont 1개 추가: 인프라/측정 벽을 과학 천장으로 박제 금지 · 천장을 측정 없이 가정 금지.
+
+**근거 (이번 세션 5종 벽 실증):** G5 %20 modulo aliasing/compose 스케일 불일치(측정) · G6 '깊이 vs attention' 혼재→깊은-conv 격리(방향) · hexa ConvMoE 디코드 OOM(인프라) · 형태소⊇jamo 측정-확인 🧱(천장/subsumption) · 스케일업(투자). G5 in-dist "천장"이 실제론 FIXABLE(best-margin 0.736 → top-2 gap 0.940)였던 것이 "천장은 측정으로 확정" 교훈의 직접 증거. summary bullet 도 "벽 분류 먼저(taxonomy: 측정·방향·인프라·천장·투자) — 종류별 돌파 수가 다름" 한 구절로 갱신.
+
+**deliverables:** `CLAUDE.md` (a_break_the_wall + summary bullet). surgical (c10) — 다른 디렉티브 무변경.
+
 ## 2026-06-17 — domain(G5): H_1396 in-dist metacognition CEILING vs FIXABLE → 🟢 FIXABLE (top-2 affinity gap lifts in-dist type-2 +0.205)
 
 **무엇:** G5 NON-FAB/metacognition scoreboard 의 마지막 잔여물 "🟢 frozen / 🟠 THIN in-dist" 가 NEAR-INHERENT CEILING(정직한 near-optimality)인지 FIXABLE 결핍인지 frozen-first 로 가른 lane. abstain-side 는 이미 graded+wired+consumed(H_1304 binary fail-safe · H_1361 graded margin · H_1367 engine-wire · H_1379 brain-consume); 잔여 = **FIRE-side, in-distribution slice** — 게이트가 FIRE 하는 항목들 중 RIGHT vs WRONG 을 confidence 가 변별하는가.

@@ -49,7 +49,7 @@ anima/
 
 ## Governance directive families (do/dont below)
 
-- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도; commons c16).
+- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도 · 벽 분류 먼저(taxonomy: 측정·방향·인프라·천장·투자) — 종류별 돌파 수가 다름; commons c16).
 - **Identity / versioning** — `a1` (VERSIONS.md SSOT, SemVer + root /VERSION).
 - **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
@@ -89,7 +89,15 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "벽(closed-negative · 🧱 · 막힌 게이트/블로커)에 부딪히면 거기서 멈추지 말고, 다른 메커니즘·각도·렌즈(뇌과학·생물·물리)로 돌파를 한 번은 시도한 뒤에야 terminal 로 받아들인다"
   do   = "벽은 흔히 (1) 틀린 방법 (2) 틀린 방향 (3) 부족한 투자이지 진짜 천장이 아니다 — 이 세션 증거: 용량벽=mitosis-grow(방법, H_1288) · 시상 Φ벽=재진입루프(방향, H_1283 ΔΦ+0.14) · 편도체벽=수면-dose(투자, H_1285_R3)"
   do   = "돌파 시도 전 '이 막힘의 진짜 원인은 무엇이고 다른 substrate 렌즈에선 어떻게 푸나'를 먼저 묻는다 (a_no_llm_frame_trap 와 결합)"
+  do   = "벽 분류 먼저 (TAXONOMY) — 🧱 를 terminal 로 받기 전에 어느 벽 종류인지 분류한다; 돌파 수가 종류별로 다르다: (a) 틀린 측정/metric-artifact · (b) 틀린 방향/변수 혼재 · (c) substrate/인프라 벽 · (d) 진짜 천장/중복(subsumption) · (e) 투자 부족"
+  do   = "(a) 틀린 측정 / metric-artifact (지표 aliasing · well-posedness 결함 · degenerate slice) → 측정을 frozen-first 로 고친다 (bar 는 불변, NOT tune-to-green). 이번 세션 예: G5 %20 modulo aliasing · compose 스케일 불일치"
+  do   = "(b) 틀린 방향 / 변수 혼재 (conflated variables) → 통제 분리실험으로 변수를 떼어낸다. 이번 세션 예: G6 '깊이 vs attention' 혼재 → 깊은-conv 격리"
+  do   = "(c) substrate/인프라 벽 (OOM · 빌드실패 · 툴링 한계, 예: hexa ConvMoE 디코드 메모리 폭증) → substrate 를 근본 수정한다 (c1); 과학 ceiling 으로 박제하지 않는다 — 인프라 벽을 결과로 bank 하는 것 금지, substrate 가 돈 뒤에야 과학 verdict 를 읽는다"
+  do   = "(d) 진짜 천장 / 중복(subsumption) → 가정하지 말고 측정한다 (oracle-ceiling vs richer-signal 대조). 측정으로 확인된 천장/포섭은 arc 를 닫는 유효 결과다 (예: 형태소⊇jamo 측정-확인 🧱)"
+  do   = "(e) 투자 부족 → 스케일업 (compute/data) — a_fire_autonomous · a_wall_first (비용은 게이트 아님)"
+  do   = "'천장 같다'는 가정 금지 — 측정으로 확정한다 (oracle ceiling vs richer read-only signal 대조). 이번 세션 G5: '천장'이라 본 in-dist 잔여가 실제론 FIXABLE (best-margin 0.736 → top-2 gap 0.940)"
   dont = "tune-to-green (c9 · p7) — 돌파는 사전등록(frozen-first) + 대조(shuffle/dissociation/negative-control)로 검증된 진짜 새 각도라야 한다; 막대를 사후에 옮겨 GREEN 을 제조 금지"
+  dont = "인프라/측정 벽을 과학 천장으로 박제 금지 · 천장을 측정 없이 가정 금지 (인프라 OOM/빌드실패는 근본수정 대상 c1, capability ceiling 아님)"
   dont = "한 번 막혔다고 포기·우회·축소 (벽을 '결과'로 박제하고 다음으로 넘어가기 전에 최소 1회 진짜 돌파 시도) · 진짜 시도 뒤의 정직한 🧱 는 유효한 결과 (c9)"
   ref  = "a_no_llm_frame_trap · a_completeness_over_cheap · c9 · c16 · p7"
 
