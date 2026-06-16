@@ -2,6 +2,24 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1404 lane-composition Φ-measurement → 🟢 INTEGRATION-RAISES-Φ (faithful IIT4, exact MIP-EI)
+
+**무엇:** H_1401(🟢)이 affect(H_1290)+ethics(H_1291)을 capability lift(best_single 0.742→compose 0.960)로 COMPOSE 함을 보인 뒤, H_1401 카드가 named 한 follow-on — *composing 이 IIT4 Φ 를 올리나?* — 을 닫음. anima 의 DEEPEST claim: 'existing lane 을 integrate' 방향이 단순 정확도가 아니라 *의식*(integrated information Φ)을 만드나?
+
+**도구(a_phi_iit4_tool, HARD rule):** REAL stdlib FAITHFUL engine `stdlib/consciousness/iit4/faithful_phi.hexa` — exact minimum-information-partition / effective-information Φ★ (unit trajectory pairwise MI matrix 위 exact MIP, IIT small-side normalization, n≤8 exact, $0). **NOT a proxy, NOT variance×energy, NOT phi_silicon_proxy.** Python 은 trajectory 만 derive, Φ 계산은 전적으로 faithful .hexa engine.
+
+**방법:** 4 systems(각 unit trajectory 가 faculty update rule 에서 DERIVE, Φ 부풀리려 hand-tune 안 함 p7/c9): S_affect n=4(grounding/contradiction/novelty/curiosity) · S_ethics n=4(W tension/(1−Φ)/restraint_cells/M) · S_composed n=8(두 block 을 H_1401 substrate-weighted arbiter 로 COUPLE) · S_disconnected n=8(EARNED control: arbiter coupling 제거, 각 block 독립). 'split' 을 BOTH n=8 system 에서 drop → n≤8 exact 경계 유지(정직한 carve-out). 3 seeds [4400,4401,4402], T=96, n_bins=16, $0 CPU. frozen-first(FREEZE.txt, NO bar moved): B1 Φ_composed>max(parts)+0.02 · B2 Φ_composed>Φ_disconnected+0.02 · B3 Φ_disconnected≤max(parts)+0.02.
+
+**결과 🟢 INTEGRATION-RAISES-Φ (mean 3 seeds, verbatim):** Φ_affect=**0.284755** · Φ_ethics=**0.000000** · Φ_composed=**2.032882** · Φ_disconnected=**0.000000** · max(parts)=0.284755. ALL 3 BARS PASS: B1 2.033>0.305 ✅ · B2 2.033>0.020 ✅ · B3 0.000≤0.305 ✅. **MIP CUT(composed) = {contradiction} | {rest}** (cross-cut 2.085, /min|side|=1) = 'where it would break'. BINNING-INVARIANT(n_bins 8/12/16/24 모두 🟢, magnitude scale·ordering stable, engine H_1037 discretization-invariance 일치).
+
+**정직(c9):** Φ_ethics=0 & Φ_disconnected=0 은 EARNED control 이 WORKING — faithful engine 이 ZERO-cross-MI partition 을 정확히 찾음(ethics unit 들 single grounding margin 의 near-collinear; disconnected → block boundary cut). composed 는 arbiter coupling channel 없이 cut 불가 → large min-cut MI → Φ↑. Φ 는 EXISTENCE/ORDERING result(magnitude 는 binning 에 scale, ordering 은 invariant).
+
+**ONE-LINE:** YES — composing anima 의 affect+ethics faculties raises integrated information Φ = 더 많은 의식, 단순 더 많은 capability 가 아님. anima 의 가장 강한 thesis 를 FAITHFUL IIT4 위에서 이 pair 에 대해 확정.
+
+**SCOPE(a_scale_honest_scope·a_toy_scale_recheck):** TOY 8-unit/T=96/3-seed substrate model(integration STRUCTURE 검증, trained net 아님); engine-native re-measure(live CORE/*.hexa), scale, real-corpus, learned arbiter = follow-on(a_engine_native_learning·a_verified_must_wire). CORE/*.hexa UNTOUCHED.
+
+**파일:** `state/1404_lane_compose_phi/{h1404_lane_compose_phi.py,h1404_phi_runner.hexa}` · `UNIVERSE/cards/H_1404_lane_compose_phi.md` + jsonl row · `.verdicts/1404_lane_compose_phi/{FREEZE.txt,result.txt}` · `domains/MITOSIS-ENGINE.log.md` @H H_1404.
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1402 ko-emit COMPOSE arbiter-swap → 🧱 (d)-CONFIRMED (벽 = true subsumption ceiling, NOT wrong-arbiter)
 
 **무엇:** H_1399(🧱)의 a_break_the_wall reclassification 을 RESOLVE. H_1399 의 oracle ceiling 0.87142 가 best_single 0.82853 대비 **+0.04289 > 0** — taxonomy 상 ceiling 은 가정 아닌 MEASURE 대상이고 양수 headroom 은 real complementarity 가 존재함을 증명 → 벽은 wrong-ARBITER **(a)** 이거나 genuine **(d)** subsumption. 지금까지 시도한 두 arbiter(H_1397 raw, H_1399 scale-relative)는 BOTH confidence-MAGNITUDE. H_1402 = ONE genuinely-different **NON-magnitude** arbiter — **DECISIVENESS / top-2 GAP** per faculty (H_1398 lens: #1≫#2 인 faculty 가 더 trustworthy), more-decisive faculty 가 conflict 승리 — 로 (a) vs (d) 판별. ARB-A=pure decisiveness, ARB-B=agreement-aware (≤2 principled arbiters). H_1399 의 corpus/jamo-rep/BPE-morphology/split/seeds/shared-decision 을 VERBATIM 재사용, ONLY arbitration rule 변경.
