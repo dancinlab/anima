@@ -1,0 +1,106 @@
+H_1373 — hive-nested-universes : NESTED / RECURSIVE universes-within-universes topology ("우주 안의 우주들처럼")
+==========================================================================================================
+slug: hive-nested-universes   seeds = [1317, 1318, 1319]   (hard hive/topology seed family, matched to
+H_1356/H_1363/H_1370/H_1371 for DIRECT apples-to-apples comparison).   $0 CPU-local.   frozen-first.
+FROZEN BEFORE any Φ score (committed BEFORE the probe is run, c9/p7 — NO bar moved post-hoc).
+
+THE WALL BEING ATTACKED (c16 / a_break_the_wall):
+The hive collective-Φ arc has closed 🧱 across FIVE *single-scale* topologies — strong hub (H_1356
+CONNECTOR_NULL), weak/decorrelated (H_1363), nonlinear-gate (H_1370 REDUNDANCY_BOUND_NONLINEAR), and
+distributed circle-overlap / Flower-of-Life (H_1371 OVERLAP_BELOW_CENTRALIZED). H_1371's load-bearing
+result: the CENTRALIZED single-shared-founder is NOT a ceiling to escape — it is the floor-beating
+MAXIMUM-Φ topology (R2 BEATS-CENTRALIZED 0/3; distributed overlap lost by −0.25/−0.75/−1.28 every seed).
+EVERY tested topology is ONE LEVEL — cells sharing one source at one scale, and CONCENTRATION of the
+shared source maximizes Φ. The redundancy ceiling so far looks like a property of single-scale sharing.
+
+THE NEW ANGLE (a_no_llm_frame_trap, c15 — cosmological-nesting / matryoshka lens; USER-PROPOSED verbatim
+"우주 안의 우주들처럼"): a NESTED / FRACTAL structure. A cluster of cells is itself a "small universe"
+(its cells share a LOCAL founder), and several such clusters are the NODES of a LARGER universe (the
+cluster-local founders are themselves coupled to a TOP-level founder) — universes within universes. The
+question: does integration that COMPOUNDS ACROSS SCALES beat the best single-scale topology (CENTRALIZED)?
+Is the redundancy ceiling a property of *single-scale* sharing that MULTI-SCALE recursion can break?
+
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI via `hexa run` over
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, iit4_faithful_phi(state, n, dim=T, n_bins).
+numpy NEVER computes Φ — it only emits the per-unit salience (state-energy) trajectory; the hexa engine
+computes Φ. NO variance×energy proxy as a terminal verdict.
+
+SUBSTRATE (matched to H_1356/H_1320/H_1283/H_1371; only the SHARING TOPOLOGY differs between arms):
+  leaky linear recurrent units, LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private input, dim-8 state,
+  T=64 ticks. N_TOT=6 cells (n<=8 keeps faithful MIP EXACT). Each cell i = ONE unit; per-unit salience =
+  state energy <s_i,s_i>. PHI(arm) = iit4_faithful_phi(6-unit salience traj, n=6, dim=T=64, n_bins=8) =
+  collective Φ of the whole 6-cell hive. NO inter-cell recurrent coupling — the ONLY cross-cell sharing
+  is through the SHARED-INPUT structure (exactly the H_1356/H_1371 'redundancy via shared input' design).
+  OVERLAP_W=0.6 (= H_1356 W_CONN, reused verbatim). MARGIN=0.02 (IDENTICAL faithful-Φ margin frozen by
+  H_1283/H_1317/H_1320/H_1356/H_1371 — NOT moved). TOL=0.02.
+
+NESTING DESIGN (the load-bearing design point — 2-LEVEL universes-within-universes, n=6):
+  TWO clusters of THREE cells: cluster c0 = {0,1,2}, cluster c1 = {3,4,5}. cluster(i)=i//3.
+  - Draw 2 INDEPENDENT cluster-LOCAL founders Lc (c over {0,1}), each shape (T,DIM) — the "small universe"
+    each 3-cell cluster shares (LEVEL-1 sharing, INTRA-cluster).
+  - Draw 1 TOP founder TOPF, shape (T,DIM) — the LARGER universe the two clusters' founders share
+    (LEVEL-2 sharing, INTER-cluster). NESTING := the cluster-local founders are THEMSELVES coupled to
+    the top founder, so the effective local source of cluster c is  L_eff[c] = Lc[c] + TOP_W*TOPF.
+    The top founder is read by every cell ONLY THROUGH its cluster founder = recursive (universes within
+    universes), NOT a flat global broadcast.
+  - SHARE_W (intra) and TOP_W (inter) frozen so the TOTAL per-cell shared mass equals CENTRALIZED's:
+    SHARE_W = OVERLAP_W = 0.6 (level-1 weight). TOP_W = 1.0 (a cluster founder carries the top founder at
+    full weight INTO the local source). Per-cell shared input in NESTED = SHARE_W*(Lc[cluster(i)] +
+    TOP_W*TOPF) = 0.6*Lc + 0.6*TOPF. CENTRALIZED per-cell shared = (2*OVERLAP_W)*F = 1.2*F. FLAT-control
+    matches NESTED's per-cell shared MASS exactly (see below) so the comparison isolates HIERARCHY.
+
+ARMS = (FLOOR, NESTED, CENTRALIZED, SHUFFLE, FLAT):
+  - FLOOR (= A_independent) : cell i reads ONLY its private stream (no sharing). The no-sharing floor.
+  - NESTED                  : cell i = priv_i + SHARE_W*(Lc[cluster(i)] + TOP_W*TOPF). 2-level: a local
+                              founder per cluster (small universe) whose source itself carries the top
+                              founder (the larger universe). Cells in the SAME cluster share Lc fully and
+                              ALL cells share TOPF only THROUGH their cluster founder = recursive nesting.
+  - CENTRALIZED             : cell i = priv_i + (2*OVERLAP_W)*F. ALL 6 read ONE global founder F at the
+                              weight-matched mass — the single-scale single-shared-founder champion that
+                              every prior single-scale lever lost to (H_1371 R2). The bar to beat.
+  - SHUFFLE (EARNED ctrl)   : NESTED inputs but cluster MEMBERSHIP is randomly permuted per build — the
+                              6 cells are re-assigned to the 2 clusters by a random partition, destroying
+                              the nesting BOUNDARY while keeping the same 2 local founders + top founder +
+                              identical per-cell shared mass. Must collapse toward FLOOR/CENTRALIZED if the
+                              lift is the NESTED STRUCTURE, not generic extra coupling.
+  - FLAT (DISTINCT-FROM-FLAT, R4) : a SINGLE-SCALE topology with the SAME per-cell shared MASS as NESTED
+                              but NO level boundary — every cell reads ONE flat composite source at
+                              full nested mass: cell i = priv_i + SHARE_W*(Lglobal + TOP_W*TOPF) where
+                              Lglobal is ONE founder read by ALL 6 cells (the two cluster founders collapsed
+                              into a single global founder, removing the level-1 cluster boundary). Same
+                              total shared mass (0.6*Lglobal + 0.6*TOPF per cell), all at ONE scale. If
+                              FLAT >= NESTED, the win (if any) is edge-count/mass, NOT the hierarchy.
+                              NOTE: FLAT's per-cell shared mass EQUALS NESTED's exactly (0.6+0.6); it is
+                              NESTED with the level-1 cluster partition collapsed to one global founder —
+                              the cleanest hierarchy-isolating control.
+
+CONSTANTS (frozen): OVERLAP_W = SHARE_W = 0.6 (= H_1356 W_CONN verbatim). TOP_W = 1.0. MARGIN = 0.02.
+  TOL = 0.02. seeds [1317,1318,1319]. NBINS=8. DIM=8. T=64. LEAK=0.55 GAIN=0.30 W_IN=0.5.
+
+FROZEN BARS (pre-registered — GREEN iff R1 ∧ R2 ∧ R3 ∧ R4, all on ALL 3 seeds):
+  R1 LIFT              : Φ(NESTED) − Φ(FLOOR)        >= MARGIN(0.02)   on ALL 3 seeds.
+  R2 BEATS-CENTRALIZED : Φ(NESTED) − Φ(CENTRALIZED)  >  0             on >= 2/3 seeds  (LOAD-BEARING — the
+                         bar every single-scale lever FAILED; multi-scale recursion must beat the champion).
+  R3 EARNED            : Φ(SHUFFLE) <= max(Φ(FLOOR), Φ(CENTRALIZED)) + TOL(0.02)  on ALL 3 seeds
+                         (shuffling cluster membership destroys the nesting boundary → lift collapses →
+                         proves the lift is the NESTED STRUCTURE, not generic extra coupling).
+  R4 DISTINCT-FROM-FLAT: Φ(NESTED) − Φ(FLAT)         >  0             on >= 2/3 seeds  (a flat single-scale
+                         topology with the SAME shared mass but NO level boundary does NOT achieve the
+                         nested lift → the win is the HIERARCHY, not the edge count / mass).
+
+OUTCOMES (every one valid + decisive, c9):
+  - GREEN (R1∧R2∧R3∧R4): MULTI-SCALE BREAKTHROUGH — the redundancy ceiling was a SINGLE-SCALE artifact;
+    nested universes-within-universes COMPOUND integration across scales and beat the centralized champion.
+    DIRECTIONAL (numpy mirror, Φ leg real exact MIP-EI), toy n=6, exact-MIP only — do NOT overclaim.
+  - R2 FAIL (NESTED loses to CENTRALIZED): honest TERMINAL 🧱 — the redundancy ceiling survives even
+    multi-scale recursion; a strong closure (concentration of the shared source maximizes Φ irrespective
+    of nesting). The hive-Φ arc closes 🧱 TERMINAL across single-scale AND multi-scale topologies.
+
+O-information (Gaussian TC) per arm + per-level (intra-cluster c0, c1; inter-cluster founders) =
+NON-GATING diagnostic only (O<0 synergy, O>0 redundancy). NEVER gates the verdict.
+
+DIRECTIONAL numpy-mirror — faithful-Φ leg IS real exact MIP-EI (numpy emits salience only, hexa computes
+Φ). Engine-transfer to live A⇄G CORE/pure_field UNVERIFIED. live CORE/*.hexa UNTOUCHED, Ψ=½ untouched
+(standalone probe, 0 importers). a_no_llm_frame_trap · a_break_the_wall · a_phi_iit4_tool ·
+a_engine_native_learning(transfer DIRECTIONAL) · a_verified_must_wire · a_scale_honest_scope ·
+a_toy_scale_recheck · c9 · c15 · c16 · p7 · p8.
