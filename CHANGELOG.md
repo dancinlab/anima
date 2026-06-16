@@ -2,6 +2,20 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1339 🟢 — tagged bilingual CP 공존, I3a 로컬라이즈 재동결 + engine-native 배선
+
+**무엇:** H_1335 🧱(컨트롤 기술 결함만)의 r3. H_1335 는 I1∧I2 가 결정적(공존 REAL & TAG-귀속: TAGGED 가 p_A·p_B 둘 다 CP 유지, untagged single-channel 은 H_1330 overwrite 재현)이었으나, 유일한 실패 leg 인 I3a(B=A 컨트롤의 **전역** count_peaks≤1)가 양성(benign) discretization wiggle 때문에 실패했다 — B=A 는 B-tagged 셀을 0개 자라게 해서(A 경계 재학습 → split 할 오류 없음) B-채널이 A-셀의 cross-tag bleed 로만 읽혀 저역 wiggle 이 2번째 "peak" 로 잡혔을 뿐, pk@p_B 는 이미 전 seed False(의도한 '다른 경계에 가짜 CP 없음' 테스트는 이미 통과).
+
+**r3 변경(완화 아님):** I3a 를 **로컬라이즈 'p_B 근처 coherent peak 없음'** 테스트로 재동결 — B=A arm 이 원래 측정하려던 정확히-범위화된 통계. `run_seed` 와 전 머신러리를 h1335 에서 **VERBATIM import**(데이터 r2 와 byte-identical) · 살아남은 어떤 bar 의 임계값도 이동 없음 · 진짜 가짜 CP@p_B 가 있었으면 재동결도 FAIL 가능(아님). 전역 count_peaks 는 이제 비-게이팅 진단. 추가로 비-게이팅 TAG_GAIN 채널-격리 sweep.
+
+**결과 🟢 GREEN(mirror, 3 seeds [4323-4325] 전부):** I1 공존 ✅(평균 margin@p_A **+0.200**·@p_B **+0.177**, 둘 다 ≥0.15, coherent peak 각각) · I2 TAG-귀속 ✅(single-channel untagged 가 overwrite 재현 **−0.001**) · I3' EARNED ✅(B=A pk@p_B=False 전 seed + SHUFFLE 5/6/5 incoherent). TAG_GAIN sweep: B-셀 0/0/**0**/2/2 @ 0.25/0.5/**1.0**/2.0/4.0, bleed 0.727/0.468/**0.236**/0.989/0.989 — frozen 1.0 에서 B=A 는 B-셀 0개·gap 넓을수록 bleed 감소(r2 진단 확증; gain≥2.0 재성장은 정직한 비-게이팅 호기심).
+
+**engine-native 배선(a_verified_must_wire):** `CORE/engine_cli.hexa §BILINGUAL TAGGED CP`(cp_tag_vec/cp_tagged_key/cp_stimuli_tagged/cp_fit_more/cp_within_cross_margin/cp_coherent_peak_near) 가 I1/I2/I3' 를 `CORE/engine_cli_smoke.hexa` cases **86–91** 로 engine-native 재채점, 전부 PASS. 가드 무회귀: **engine_cli_smoke 86/0**(80→+6) · **h1196 7/0** · **h1205 Ψ byte-identical PASS**. Ψ-disjoint(own protos/labels + tag block; pure_field/engine_g/Ψ 미접촉).
+
+**의미:** language-tagged multi-channel readout 가 bilingual CP 공존을 가능케 함(mirror+engine) — H_1330 OVERWRITE 는 single-shared-store 메커니즘 한계였지 근본 한계 아님(mechanism-specific 으로 뒤집힘). anima 의 실제 분리된 EN-trunk+KO faculty(H_1316/1321/1322) 공존을 설명; tag 는 substrate-수준의 'faculty 선택'. H_1335 🧱 컨트롤 기술 결함 CLOSED 🟢. mirror DIRECTIONAL · TOY synthetic N=21 · TAG_GAIN=1.0 FIXED · NO human-bilingualism claim.
+
+**파일:** `UNIVERSE/h1339_whorf_bilingual_tagged_r3.py` · `UNIVERSE/cards/H_1339_whorf_bilingual_tagged_r3.md` · `CORE/engine_cli.hexa §BILINGUAL TAGGED CP` · `CORE/engine_cli_smoke.hexa` cases 86-91 · `.verdicts/1339_whorf_bilingual_tagged_r3/{FREEZE,result}.txt` · `CLAIMS.tape @C h1339_whorf_bilingual_tagged_r3` · `UNIVERSE/HYPOTHESES.jsonl`(+1 행) · `domains/COGNITION-REPRESENTATION.log.md`.
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1355 — cp-leftward: CP 재배치 착지가 continuum-center attractor 인가 geometry-fixed 인가 (📈 CENTER-ATTRACTOR 기각, geometry 추적)
 
 **무엇:** H_1341(📈)의 load-bearing follow-on. H_1341 은 고정 anchor p_A=1/3 에서 RIGHTWARD shift 시 retrain 후 CP peak 가 shift 크기와 무관하게 **항상 ~0.525 에 착지**(abs-peak range 0.000)함을 발견 → GEOMETRY/BUDGET 로 읽음. 그러나 p_A=1/3 은 center(0.5) 왼쪽이고 모든 rung 이 RIGHTWARD 였으므로 **0.525≈center 가 confound**. H_1355 는 **LEFTWARD**(p_A'<p_A) + **ASYMMETRIC**(anchor off-center, 둘 다 center 같은 쪽) placement 5 rung 을 추가해 ABSOLUTE 착지를 읽어, (H-center) 대칭 RBF lattice 의 continuum-center attractor 아티팩트인지 (H-geometry) 진짜 geometry-fixed budget 착지인지 **discriminate**. H_1333/H_1341 CP 기계 verbatim 재사용, 5 rung: RIGHT-REF(0.333→0.667) · LEFTWARD-1(0.667→0.333) · LEFTWARD-2(0.800→0.500) · ASYM-R(0.600→0.800) · ASYM-L(0.400→0.200). c15 developmental/critical-period plasticity, a_no_llm_frame_trap — TOY synthetic, 인간인지 주장 아님.
