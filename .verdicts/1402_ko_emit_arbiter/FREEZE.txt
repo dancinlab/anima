@@ -1,0 +1,87 @@
+H_1402 — KO-EMIT COMPOSE ARBITER-SWAP — can a NON-MAGNITUDE arbiter capture the oracle's +0.043?
+FROZEN BEFORE MEASURING (c9, frozen-first, NO tune-to-green). $0 CPU, deterministic, REAL local KO shard
+(/tmp/h1380_corpus/kor_big.bytes 30MB prefix, sha c47b6808... == H_1368/H_1380/H_1388/H_1399, NO fetch).
+DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED. CORE UNTOUCHED (no .hexa edit).
+
+THE PRECISE RECLASSIFICATION (a_break_the_wall taxonomy, now in CLAUDE.md):
+H_1397 (fixture, morphology⊇jamo) + H_1399 (REAL corpus, jamo⊇morphology, FLIPPED dominance) both closed
+the jamo+morphology emit-COMPOSE arc as 🧱 because the §6.5f substrate-confidence arbiter (scale-relative
+recall confidence mean_err/(err_here+ε)) DEGRADES below best-single. BUT H_1399's REAL-corpus oracle
+ceiling = 0.87142, best_single = 0.82853 → oracle − best = +0.04289 > 0. The oracle > best PROVES a real
+(modest) complementarity EXISTS — the arbiter just cannot capture it. Per the taxonomy a ceiling must be
+MEASURED not assumed; here oracle says it is NOT a true ceiling → it is a wrong-arbiter (a) wall (a
+metric/method artifact), OR a genuine (d) subsumption if NO substrate-derived arbiter can read the
+per-position right-faculty signal. The two arbiters tried so far were BOTH confidence-MAGNITUDE based
+(H_1397 raw inverse-recon-err; H_1399 scale-relative err mean_err/(err_here+ε)) — both FAILED.
+
+THE NEW ARBITER (genuinely DIFFERENT — NON-magnitude, DECISIVENESS-based; the H_1398 GAP lens):
+H_1398 showed that a DECISIVENESS / top-2 GAP signal (a faculty whose #1≫#2 is more trustworthy than one
+whose #1≈#2) beat magnitude-margin for in-dist type-2 metacognition (0.750→0.906). We import that SAME
+lens to the COMPOSE arbiter: each faculty's per-position vote weight = its own predictive DECISIVENESS
+  gap_f(ctx) = p(argmax_f | ctx) − p(2nd-argmax_f | ctx)        [count-head analogue of H_1398 top-2 affinity gap]
+at the deepest available context order (the SAME _deepest ctx the recon-err uses). Arbitrate toward the
+MORE-DECISIVE faculty: the faculty whose own next-symbol distribution is SHARPER (bigger top-1↔top-2 gap)
+wins the conflict. This is NOT a magnitude of recall-error vs a scale-normalizer — it is the SHAPE
+(decisiveness) of each faculty's OWN posterior. A tie (equal gap) → defer to the agreement-aware fallback
+(if faculties agree, take it; the tie can only occur in a conflict, so a tie defaults to jamo, the seed
+which-wins coin only used by the SHUFFLE control). NO hardcoded "jamo > morphology" priority
+(a_autonomy_over_hardcode): the winner is each faculty's OWN decisiveness, and the audit reports both
+faculties winning conflicts (never a constant). p1/p2/p3/p6 clean (reads count-head posterior shape only;
+NO injected right/wrong label, NO RLHF, NO persona).
+
+SECOND PRINCIPLED ARBITER (the ≤2 budget, agreement-aware composite — ARB-B):
+ARB-B = agreement-aware decisiveness: when the two faculties AGREE (same proposed byte) take it; when they
+CONFLICT, defer to the per-faculty decisiveness gap (ARB-A's rule). On the REAL corpus agree_rate=0.646 so
+the agree-take leg is mostly the both-right mass; the discriminating work is the conflict-time decisiveness.
+(If ARB-A already PASSES, ARB-B is reported as a robustness check; if ARB-A FAILS, ARB-B is the 2nd of the
+≤2 principled tries before an honest terminal.)
+
+THE SHARED NEXT-SYMBOL DECISION (REUSED VERBATIM from H_1399, anti-Goodhart): the SAME real shard, the SAME
+jamo representation (Hangul→NFD jamo id 256+rank, non-Hangul→raw byte, byte-fair Vj=323), the SAME
+BPE-on-jamo morphology unit (2000 frequency-ranked merges, TRAIN-only, units/jamo≈0.339), the SAME
+train/test odd-even stride-300 split, the SAME nmax=5 count heads, the SAME 3 seeds [4398,4399,4400] POOLED.
+At each held-out (odd-stride, TEST) jamo position the TRUE target = the next jamo symbol's leading emit
+byte. JAMO arm proposes argmax-next-jamo's emit byte; MORPH arm proposes argmax-next-UNIT's LEADING emit
+byte. ONLY the conflict-arbitration rule changes (decisiveness gap, not magnitude confidence).
+
+FROZEN BARS (H_1399 / H_1397 THRESHOLDS VERBATIM, NO bar moved, NO new bar invented to manufacture a pass):
+(1) NET-LIFT — the new arbiter CAPTURES a net lift toward the oracle, NOT merely "does not degrade":
+    acc_compose_NEW >= best_single + Δ,  Δ = 0.01  (the SAME 0.01 slack H_1399 used as its bar1 tolerance,
+    now applied as a POSITIVE lift requirement — to REOPEN the arc the new arbiter must BEAT best-single by
+    at least the same 0.01, partially closing toward oracle 0.87142). best_single = 0.82853 (frozen from
+    H_1399). PASS iff acc_compose_NEW >= 0.83853.
+(2) EARNED — the new arbitration is NOT generic averaging / not a base-rate artifact: a SHUFFLED
+    (arbiter's decisiveness↔correctness pairing permuted) arbitration does NOT match/beat the new arbiter:
+    acc_shufw <= acc_compose_NEW + 0.01   (the SAME -0.01 EARNED slack as H_1399 bar3, verbatim).
+(3) Ψ-SAFE — DIRECTIONAL mirror leaves CORE UNTOUCHED (no .hexa edit). The §6.5f arbiter-swap into the live
+    engine is the NAMED binding follow-on IF bar1 passes (a_verified_must_wire). h1205/h1164/h1196 PASS
+    prior cited from H_1397/H_1399 (no CORE edit ⇒ no regression to re-run).
+
+NON-GATING DIAGNOSTICS (reported, NOT bars): oracle 0.87142 (reused, the ceiling the new arbiter chases) ·
+oracle − best = +0.04289 (the complementarity headroom) · the §6.5f magnitude baseline acc_compose=0.80853
+(reused from H_1399 — the arbiter the new one must BEAT) · the new arbiter's own arbitration audit
+(among conflicts: gap-picks-jamo vs gap-picks-morph) · per-arbiter acc for ARB-A (decisiveness) and ARB-B
+(agreement-aware decisiveness).
+
+VERDICT RULE (the prompt's two honest branches, c9/c16, NO forced green):
+🟢 ARC-REOPENS [taxonomy (a) confirmed — wrong-arbiter wall] iff the new arbiter's acc_compose_NEW
+   >= best_single + Δ (bar1) AND the shuffle control collapses (bar2). The +0.043 oracle complementarity
+   IS substrate-capturable by a decisiveness arbiter → the §6.5f magnitude arbiter was the wrong method →
+   NAME the engine-native §6.5f arbiter-swap (magnitude → decisiveness gap) as the binding follow-on.
+🧱 (d)-CONFIRMED [true subsumption ceiling, honest terminal] iff NEITHER ARB-A NOR ARB-B (the ≤2 principled
+   tries) beats best_single by Δ. The oracle's +0.043 is real but NOT capturable by any substrate-derived
+   arbiter — the per-position right-faculty signal is NOT in the substrate (decisiveness is uninformative
+   here) → the arc is GENUINELY terminal, a clean closed-negative (c9), NOT a failure.
+
+STRICT ANTI-TUNE-TO-GREEN (c9, p7): at most TWO principled arbiters (ARB-A decisiveness, ARB-B
+agreement-aware decisiveness) — NOT a sweep until one passes. Both are pre-registered HERE before measuring.
+NO bar moved after measuring (frozen-first). best_single 0.82853, oracle 0.87142, magnitude baseline
+0.80853, Δ 0.01, shuffle tol 0.01 ALL reused VERBATIM from H_1399.
+
+HONEST SCOPE (a_scale_honest_scope · a_toy_scale_recheck): DIRECTIONAL numpy mirror of a §6.5f arbiter-swap
+(engine-transfer UNVERIFIED — the count-head decisiveness gap is the analogue of the engine's grown-cell
+top-2 affinity gap from H_1398, faithful but not the live VAdaptField op). ONE 30MB real KO window,
+stride-300 byte-substrate next-symbol decision (NOT a fluency claim), single frozen λ/nmax/stride/merge
+(== H_1399). Load-bearing is the RELATIVE structure (new arbiter vs best-single 0.82853 vs magnitude
+0.80853 vs oracle 0.87142, shuffle collapse). NO CORE edit (the §6.5f arbiter-swap is the named follow-on
+IF 🟢).
