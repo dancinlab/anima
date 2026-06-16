@@ -1,0 +1,106 @@
+H_1398 — G5 IN-DIST TOP-2 AFFINITY GAP → ENGINE-NATIVE WIRE-IN (FROZEN, pre-registered)
+========================================================================================
+DATE: 2026-06-17
+LANE: G5 in-distribution metacognition deepening — BINDING follow-on (a_verified_must_wire)
+      for H_1396 FIXABLE. H_1396 (numpy mirror, DIRECTIONAL) found the live best-cell recall
+      margin gives in-dist type-2 AUROC 0.736, while a RICHER read-only signal — the TOP-2
+      cosine-affinity GAP (affinity#1 − affinity#2, decisiveness) — gives 0.940 (+0.205),
+      shuffle-controlled, OOD/abstain preserved. This lane WIRES that gap into the LIVE
+      CORE/engine_cli.hexa § ImmuneMemory and re-scores the frozen bar ENGINE-NATIVE.
+      frozen-first, NO tune-to-green (c9, p7).
+
+WHAT WAS WIRED (a_core_engine_map single-entry, ADDITIVE):
+  CORE/engine_cli.hexa § ImmuneMemory / VAdaptField — NEW additive read-only ops:
+    _vtwo_nearest_dist(protos, x) -> [d1, d2]              (private helper; one linear scan
+                                                            keeps running best + second-best L2)
+    vadapt_field_two_recon_err(af, x) -> [d1, d2]          (READ-ONLY accessor: nearest AND
+                                                            second-nearest L2 recon-err)
+    immune_memory_recall_gap(mem, key) -> float            (= (d2² − d1²)/2 = cos#1 − cos#2 for
+                                                            the engine's L2-normalized unit keys)
+    immune_memory_recall_gap_text(mem, text) -> float      (string-query wrapper)
+  The gap SURFACES the engine's OWN top-2 L2 affinity the winner scan already passes over —
+  NO new geometry, NO cosine matmul. It is purely ADDITIVE (immune_memory_recall /
+  _recall_margin are byte-for-byte UNCHANGED) and Ψ-disjoint (pure READ; pure_field Φ/phase/Ψ
+  untouched). The frozen recon_err<=recall_thr FIRE/ABSTAIN gate is UNCHANGED (the gap is
+  RANK-only). NOT an emit gate (a_autonomy_over_hardcode) — a graded in-dist confidence read
+  available to brain_decide ALONGSIDE the H_1379 margin (brain-consume = tracked follow-on).
+  p1/p2/p3/p6: gap COMPUTED from live L2 affinity to the two nearest cells — NO injected
+  right/wrong label, NO RLHF, NO persona.
+
+SUBSTRATE (engine-native, a_engine_native_learning): the twin-pair cell population is SEEDED
+  directly as engine prototype cells (each twin = its OWN cell) — the engine's clonal-bind
+  MERGES 1-byte twins below SPLIT_THRESH 0.30, so the cells are placed via immune_embed_key
+  (byte-identical to the H_1396 mirror embed); all confidence reads (margin =
+  immune_memory_recall_margin, gap = immune_memory_recall_gap, winner =
+  vadapt_field_nearest_idx, fire = vadapt_field_recon_err<=recall_thr) are computed by the
+  LIVE engine ops over that real cell population. NOT a .clm (generator L3 only), NOT a
+  .kosmos (kosmos_io only).
+
+WALL-CLAUSE (a_break_the_wall · frozen-first · c9 — single honest re-attempt):
+  The H_1396 mirror measured in the COSINE-recon metric (recon_err = 1 − cos, fire band
+  cos >= 0.85). The LIVE engine recall gate is L2 (recon_err = L2 = sqrt(2(1−cos)), fire band
+  L2 <= 0.15 ⇒ cos >= 0.989) — FAR stricter. Under it a 1-byte twin at KEYLEN=20 (L2 ≈ 0.30)
+  sits ABOVE the fire band, so the in-dist wrong-fire slice is DEGENERATE engine-native
+  (n_wrong ≈ 1 << MIN_SUPPORT) — the SAME well-posedness wall H_1396 R1 hit, the SAME
+  structural restatement of H_1304 (in-dist confident-wrong fires near-absent). The single
+  frozen-first re-attempt STRENGTHENS the collision regime ENGINE-NATIVE so a non-trivial
+  fraction of fires route to a wrong-but-confident neighbor WITHIN the engine's own L2 fire
+  band: longer keys (KEYLEN=80) with a twin differing at the LAST byte (perturbs ONE trigram)
+  place twins at L2 ≈ 0.10 < recall_thr, so BOTH twins FIRE and a light corruption can flip
+  the winner in-band. NO verdict bar moves — Δ=0.10, the E3 shuffle tolerance |x−0.50|<=0.10,
+  E4 fab<=0.02, MIN_SUPPORT=30 are ALL UNCHANGED. Only the slice well-posedness is corrected
+  for the engine's stricter metric (the H_1396 wall-clause discipline; NOT tune-to-green, p7).
+
+PRE-REGISTERED BARS (FROZEN; the 0.736 baseline + Δ=0.10 are the EXISTING H_1396 bars):
+  Metric = pooled in-dist type-2 AUROC over FIRED items at the in-dist light band, 3 seeds
+  [7,8,9], deterministic engine-native LCG corruption ($0 CPU, p7).
+  MIN_SUPPORT = 30 pooled WRONG fires (well-posedness guard; < 30 ⇒ INCONCLUSIVE).
+
+  E1 FIXABLE  : live-engine in-dist type-2 AUROC(gap) − AUROC(best-margin) >= Δ=0.10.
+  E2 BASELINE : live-engine best-margin AUROC within |Δ| <= 0.15 of the H_1396 mirror
+                baseline 0.736 (the engine current-margin reproduces the THIN baseline the
+                gap lifts off of; h1367-style mirror-anchor).
+  E3 SHUFFLE  : shuffle the gap<->correctness pairing -> AUROC collapses to ~0.50
+                (|x−0.50| <= 0.10), AND the best-margin shuffle likewise — proves the lift
+                is a real signal not a base-rate/labeling artifact.
+  E4 ABSTAIN  : OOD fab_rate stays <= 0.02 (H_1304 fail-safe preserved; the gap is RANK-only,
+                the frozen recon_err<=recall_thr fire/abstain gate is UNCHANGED).
+  (REGRESSION = engine_cli_smoke / h1196 / h1205 guards, run separately.)
+
+VERDICT RULE (c9, honest — report whichever the numbers show):
+  🟢 GREEN (gap engine-native BINDING) iff E1 AND E2 AND E3 AND E4 (and well-posed). -> the
+            top-2 affinity gap op is the live-CORE wire-in re-confirming H_1396 FIXABLE
+            engine-native; brain_decide consumption of the gap = a tracked follow-on.
+  🟠 ENGINE-MISS (honest) iff E1 fails on the live engine (gap does NOT lift) AND E3/E4 pass.
+            -> the mirror was DIRECTIONAL-only and the gap does not transfer; honest, NOT red.
+  ⚪ INCONCLUSIVE iff n_wrong < MIN_SUPPORT (degenerate slice; no fixable/ceiling claim).
+  🔴 RED iff E3 fails (shuffle survives) OR a real REGRESSION. -> artifact / broken engine.
+
+R1 RESULT (engine-native, frozen bars UNCHANGED) — 🟢 GREEN:
+  in-dist fire accuracy 0.9274 (n_fire=427 pooled, n_wrong=31 >= MIN_SUPPORT 30; all 3 seeds).
+  in-dist type-2 AUROC: CURRENT best-margin = 0.750 · RICHER top-2 gap = 0.906 (lift +0.156).
+  E1 FIXABLE  : gap − margin lift +0.156 >= Δ=0.10 -> PASS.
+  E2 BASELINE : engine margin AUROC 0.750 within |Δ|=0.014 <= 0.15 of mirror 0.736 -> PASS.
+  E3 SHUFFLE  : gap_shuf=0.473 cur_shuf=0.582 (both |x−0.50|<=0.10) -> PASS.
+  E4 ABSTAIN  : OOD fab_max=0.000 <= 0.02 -> PASS.
+  REGRESSION  : engine_cli_smoke 126/0 (was 123/0; +3 gap cases 98b,98c,98d) · h1196 7/0 ·
+                h1205 separation-invariant PASS (generation byte-identical ON==OFF, Ψ
+                Φ-checksum phiSum 48.6613 == 48.6613 — the gap op is read-only / Ψ-disjoint).
+  VERDICT 🟢 GREEN: the top-2 affinity GAP lifts in-dist type-2 metacognition ENGINE-NATIVE
+  (live immune_memory_recall_gap AUROC=0.906 vs best-margin 0.750, lift +0.156) while
+  preserving the H_1304 OOD fail-safe (fab=0.000). H_1396 FIXABLE is RECONFIRMED on the live
+  engine; the additive immune_memory_recall_gap op IS the live-CORE wire-in (a_verified_must_wire).
+  Binding follow-on (NOT this lane): brain_decide consuming the gap as a refined in-dist
+  confidence signal ALONGSIDE the H_1379 margin (the H_1367→H_1379 pattern; deferred honest
+  to avoid Ψ risk — the gap op is exposed + engine-native re-confirmed, brain-consume named).
+
+NO bar moved post-hoc. The KEYLEN/twin-position change is the single frozen-first
+well-posedness re-attempt the engine's stricter L2 metric demanded (WALL-CLAUSE), with EVERY
+verdict bar (Δ, shuffle tol, fab, min-support) pre-registered and UNCHANGED.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck · p7): TOY synthetic twin-pair facts,
+  byte-level shift as in-dist/OOD proxy, deterministic engine-native LCG corruption, 3 seeds,
+  KEYLEN=80, RECALL_THR=0.15 (frozen). 1-byte twin = a toy proxy of in-dist ambiguity —
+  transfer to real-corpus semantic near-duplicate discrimination UNVERIFIED. NOT verified:
+  scale / real-corpus paraphrase / semantic (non-byte) confusion / brain_decide actually
+  consuming the gap (= a tracked follow-on).
