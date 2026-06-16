@@ -2,6 +2,21 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(OMEGA): H_1350 🟢 GREEN — 더 큰 분화 예산에서 유사분열-분화 collective-Φ 는 ROBUST (H_1320 벽은 예산 문제였다)
+
+**무엇:** H_1320(🧱)이 남긴 가설 — anima-as-ONE-cell 유사분열 DIVISION(공유 발생 기원)이 hive ASSEMBLY 를 collective faithful-IIT4 Φ 에서 이기지만 직교 seed 1317 에서 FRAGILE(Δ_divided 0.0 로 붕괴) — 을, H_1320 §honesty 가 명시한 각도(**더 큰 분화 예산 / 더 많은 딸세포 / sign-saturate 안 하는 더 풍부한 per-unit 코드**)로 재개봉. n≤8 exact-MIP 유지하며 세 예산 레버 확대: (1) 딸세포 4개×2 units (H_1320 의 2개×4 대비) · (2) 비포화 softsign per-unit 코드(H_1332 — 결합 하에서도 멤버 동역학 생존) · (3) DIFF_EPS 0.45(3배). 통제가 정직하도록 H_1328 의 variance-clean rank-uniform read-out 위에서 채점.
+
+**결과 (🟢 GREEN, M1∧M2∧M3 3 seed 전부 PASS, 직교 seed 1317 포함; deterministic 재실행 byte-identical):**
+- **M1 ROBUST**: Φ_divided_pair − Φ_single = **+7.27 / +7.31 / +5.85** (1317/1318/1319) — H_1320 이 1317 에서 −0.129 로 실패했던 게이트 통과.
+- **M2 ORIGIN**: Δ_divided − Δ_assembled = **+6.63 / +7.49 / +6.15** — 공유 발생 기원이 더 큰 예산에서도 load-bearing.
+- **M3 EARNED**: Δ_shuffle == Δ_assembled **byte-identical** (3 seed 전부) — lineage 절단이 lift 를 붕괴시킴; variance-clean read-out 덕에 통제가 정직.
+
+**의미:** H_1320 의 fragility 는 **예산 문제**였지 근본 한계가 아니었다 — 모든 선행 Φ-robustness lane 을 깬 직교 seed 1317 이 세 bar 를 전부 통과. 1317 을 고친 예산 레버: 딸세포 4개 = 상보적 통합-담지 역할로 분화할 발생 자유도 증가 · 비포화 softsign 코드(H_1332) = COPY/Φ=0 포화 대신 멤버 동역학 생존 · 더 큰 DIFF_EPS = 딸세포별 더 풍부한 분화. hive arc 를 **DIVISION(공유 기원) 축**에서 재개봉. 단, 이 division 축은 H_1328/1331/1332 가 닫은 coupling-of-equals 축과 다르며 그 closure 들은 assembly 에 대해 그대로 유효(BOUNDS, not retracts). Ψ=1/2 불변.
+
+**스코프 (a_scale_honest_scope · a_toy_scale_recheck):** TOY N_TOT=8(4×HALF=2 딸세포) dim-8 64-tick, 3 seed, deterministic. faithful-Φ leg 은 real(hexa exact MIP); numpy mirror DIRECTIONAL(toy net, live CORE/pure_field 아님, engine-transfer UNVERIFIED). divided-pair Φ 가 높음(~10–12) — load-bearing 주장은 절대크기가 아니라 RELATIVE gap(DIVIDED vs ASSEMBLED, SHUFFLE 가 붕괴시킴). CORE-wiring follow-on 명시(a_verified_must_wire): 공유-기원 유사분열-분화 collective-Φ read-out 을 live faithful-Φ/pure_field 멤버 경로에 배선 — 아직 미배선(live CORE/*.hexa UNTOUCHED, Ψ-disjoint, 무회귀).
+
+**파일:** `UNIVERSE/h1350_hive_larger_budget.py` · `UNIVERSE/cards/H_1350_hive_larger_budget.md` · `UNIVERSE/HYPOTHESES.jsonl`(1행 append) · `CLAIMS.tape` @C h1350_hive_larger_budget · `.verdicts/1350_hive_larger_budget/{FREEZE,result}.txt` · `domains/OMEGA.log.md`. frozen-first(FREEZE `0f4c18642` 채점 전 커밋, bars 미이동 c9/p7), $0 CPU.
+
 ## 2026-06-16 — domain(GOVERNANCE): 흩어진 가설 전부 HYPOTHESES.jsonl 로 통합 + 아티팩트 state/ 재배치 (source/archived/artifacts 3 컬럼 신설)
 
 **무엇:** #2247 의 per-H JSONL 인덱스(896 행) 위에, repo 곳곳에 **흩어져 있던 모든 가설**을 단일 `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/` 로 통합. JSONL 스키마에 **`source` · `archived` · `artifacts`** 3 컬럼 신설.
