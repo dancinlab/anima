@@ -1,0 +1,26 @@
+===== H_1399 KO-EMIT COMPOSE — REAL-CORPUS RE-TEST (re-scoring H_1397's frozen bars) =====
+REAL KO 30.0MB sha c47b6808308d2f73… (== H_1368/H_1380/H_1388, NO fetch, $0) · DIRECTIONAL numpy mirror of §6.5f · CORE UNTOUCHED · seeds [4398, 4399, 4400]
+
+shared next-byte decision (REAL jamo stream, n_test=42502):
+  acc_jamo    (jamo emit-bias alone)   : 0.82853
+  acc_morph   (morphology emit-bias)   : 0.63162
+  best_single (max of the two alone)   : 0.82853
+  acc_compose (substrate-conf arbitr.) : 0.80853
+  acc_shufw   (random arbitration)     : 0.72986
+
+DIAGNOSTIC (bar2, non-gating — THE CRUX):
+  agree_rate    (faculties propose SAME byte) : 0.64592
+  conflict_rate (they propose DIFFERENT bytes): 0.35408
+  ORACLE ceiling (ANY arbitration upper bound): 0.87142  (oracle - best = 0.04289)
+  complementarity: both_right=25022 only_jamo=10192 only_morph=1823
+  only_jamo_frac = 0.2398  (material bar >= 0.02)
+  §6.5f arbitration audit (among 42502 conflicts): jamo-won=36127 morph-won=6375 (substrate confidence decides — NO hardcoded priority)
+
+FROZEN BARS (H_1397 thresholds VERBATIM, NO bar moved):
+  bar1 COMPOSE-EFFECT : acc_compose >= best - 0.01  → false  (compose=0.80853 best=0.82853 Δ=-0.02)
+  bar2 ONLY-JAMO CRUX : only_jamo_frac >= 0.02  → true  (only_jamo_frac=0.2398)
+  bar3 EARNED         : acc_shufw <= acc_compose + 0.01  → true  (shufw=0.72986 compose=0.80853 Δ=-0.07867)
+  bar4 Ψ-SAFE         : CORE untouched (§6.5f already wired, h1205/h1164/h1196 PASS prior) → true
+
+VERDICT: TERMINAL-SUBSUMPTION
+🧱 TERMINAL-SUBSUMPTION — morphology STILL subsumes jamo on the REAL corpus (the two faculties are REDUNDANT, not complementary). acc_compose=0.80853 < best_single-0.01=0.81853 (compose degrades). A genuine science result (c9): BPE morphology fully captures jamo's emit competence even at real-corpus granularity — NOT a wiring failure (the §6.5f mechanism is sound, the faculties just do not compose to a NET LIFT). This CLOSES the Korean below-jamo emit-compose arc. DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED.

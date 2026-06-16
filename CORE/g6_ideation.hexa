@@ -279,7 +279,7 @@ pub fn g6_decode_best_of_k(ckpt: string, frame: string, gen: int, k: int,
     return best
 }
 
-// g6_decode_best_of_k_W — H_1399 loaded-W twin of g6_decode_best_of_k. IDENTICAL ranking,
+// g6_decode_best_of_k_W — H_1400 loaded-W twin of g6_decode_best_of_k. IDENTICAL ranking,
 // but off a PRE-LOADED weight map `W` (clm_load_weights) so the FALS re-score loads the
 // 303M ConvMoE ONCE for all 69 decodes (per-decode reload OOMs across decodes — the hexa
 // bump allocator never frees a model load). gen_clm_ideate_W is the same single .clm mouth.

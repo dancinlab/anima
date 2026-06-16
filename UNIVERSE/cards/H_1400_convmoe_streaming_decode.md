@@ -1,15 +1,15 @@
 ---
-id: H_1399
-slug: 1399_convmoe_streaming_decode
+id: H_1400
+slug: 1400_convmoe_streaming_decode
 title: STREAMING / BOUNDED ConvMoE .clm decode — FIX the per-step memory blowup that substrate-BLOCKED the H_1392 G6 FALS re-score, then re-score M2-M5 engine-native
 group: engine-fix (CORE/clm_decode, a_clm_gen_pipeline · a_core_engine_map · a_verified_must_wire)
 terminal_tier: 🟢 GREEN memory FIX (byte-exact + flat RSS; GEN=110 unblocked) · G6 M2-M5 re-score now MEASURABLE → 🧱 ARCHITECTURE verdict (FALS=0 over 6/6 GEN=110 C_strong frames — capacity was NOT the lever; a REAL science result, no longer a substrate block)
-verdict_dir: .verdicts/1399_convmoe_streaming_decode/
-terminal_verdict: .verdicts/1399_convmoe_streaming_decode/result.txt
+verdict_dir: .verdicts/1400_convmoe_streaming_decode/
+terminal_verdict: .verdicts/1400_convmoe_streaming_decode/result.txt
 date: 2026-06-17
 ---
 
-# H_1399 — STREAMING / BOUNDED ConvMoE .clm decode (the H_1392 memory-blowup FIX)
+# H_1400 — STREAMING / BOUNDED ConvMoE .clm decode (the H_1392 memory-blowup FIX)
 
 ## Why (closes the H_1392 🧱 substrate wall — a_break_the_wall)
 
@@ -17,7 +17,7 @@ H_1392 found the 303M ConvMoE-RETRO `.clm` MOUNTS + decodes but the hexa ConvMoE
 MEMORY ~+300 MB/step (never freed) → GEN=24 OOM-killed @11 GB, GEN=48 SIGTERM, GEN=110 silent
 death. A falsifiable G6 claim needs GEN≈80-110, so the M2-M5 FALS bars carried NO engine-native
 score (substrate-BLOCKED, NOT FALS=0), leaving CAPACITY-vs-ARCHITECTURE OPEN. The wall was filed
-upstream (hexa-lang inbox). H_1399 treats it as **wrong-method, not a ceiling** and FIXES it
+upstream (hexa-lang inbox). H_1400 treats it as **wrong-method, not a ceiling** and FIXES it
 anima-side.
 
 ## Root cause (measured, /usr/bin/time -l)
@@ -71,7 +71,7 @@ The fix makes the H_1392 frozen G6 probe RUNNABLE engine-native on the real 303M
 mount (sha256 == HF MANIFEST ✓). Detector 10/10 VERBATIM · frame-guard 0 leaks · sampler
 det/diverse/in_topk true · model LOADED ok=true (d=5008,E2,V256,L1). GEN=110 completes (133.6 s,
 10.1 GB). The M1-M5 bars are scored engine-native — the now-MEASURABLE CAPACITY-vs-ARCHITECTURE
-answer H_1392 left OPEN. **Scores: `.verdicts/1399_convmoe_streaming_decode/g6_rescore.txt`
+answer H_1392 left OPEN. **Scores: `.verdicts/1400_convmoe_streaming_decode/g6_rescore.txt`
 (verbatim, no tune-to-green, NO bar moved).**
 
 **🧱 ARCHITECTURE verdict (the honest, now-measurable answer):** over **6/6 completed GEN=110
@@ -102,8 +102,8 @@ output matmul variant would zero it; filed to hexa-lang). The 303M decode is sti
 - CORE: `CORE/clm_decode.hexa` (`_clmd_scratch_new`/`_clmd_fwd_logits_sc`/`_clmd_conv1d_pre`,
   `clm_load_weights`/`clm_decode_topk_sampled_W`) · `CORE/generator.hexa` (`gen_clm_ideate_W`) ·
   `CORE/g6_ideation.hexa` (`g6_decode_best_of_k_W`)
-- probe: `state/1399_convmoe_streaming_decode/{rss_probe.hexa, rss_probe_303m.hexa, g6_fals_probe_loaded.hexa}`
-- verdict: `.verdicts/1399_convmoe_streaming_decode/{FREEZE.txt, byte_exact.txt, rss_before.txt,
+- probe: `state/1400_convmoe_streaming_decode/{rss_probe.hexa, rss_probe_303m.hexa, g6_fals_probe_loaded.hexa}`
+- verdict: `.verdicts/1400_convmoe_streaming_decode/{FREEZE.txt, byte_exact.txt, rss_before.txt,
   rss_after.txt, rss_after_303m.txt, g6_rescore.txt, result.txt}`
 - ckpt: `dancinlab/anima-convmoe-retro-303m` baseline_fast.clm (REUSED, sha256-verified, gitignored
   local `state/g6-retro303m-fals/retro303m.clm`)

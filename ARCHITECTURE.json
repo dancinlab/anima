@@ -316,7 +316,7 @@
       "children": [
         {
           "name": "CORE/clm_decode.hexa",
-          "summary": "ConvMoE-class .clm v0.2 decoder (CLM/ pipeline product); golden ref = reexport_d768_v2_fast.clm. H_1399: STREAMING/BOUNDED decode — pre-transposes conv weights + reuses a scratch record across decode steps (_clmd_scratch_new/_clmd_fwd_logits_sc/_clmd_conv1d_pre) + clm_load_weights load-once, so RSS is FLAT per step (was ~300 MB/step leak that OOM-blocked the H_1392 303M G6 FALS re-score @ GEN>16; now GEN=110 completes, byte-exact, ~100x less per-step memory). The hexa bump allocator (free=noop) never returns a farr buffer, so per-step alloc churn was the leak; the fix bounds it to one forward's working set, unblocking the engine-native G6 M2-M5 re-score (→ 🧱 ARCHITECTURE, H_1399).",
+          "summary": "ConvMoE-class .clm v0.2 decoder (CLM/ pipeline product); golden ref = reexport_d768_v2_fast.clm. H_1400: STREAMING/BOUNDED decode — pre-transposes conv weights + reuses a scratch record across decode steps (_clmd_scratch_new/_clmd_fwd_logits_sc/_clmd_conv1d_pre) + clm_load_weights load-once, so RSS is FLAT per step (was ~300 MB/step leak that OOM-blocked the H_1392 303M G6 FALS re-score @ GEN>16; now GEN=110 completes, byte-exact, ~100x less per-step memory). The hexa bump allocator (free=noop) never returns a farr buffer, so per-step alloc churn was the leak; the fix bounds it to one forward's working set, unblocking the engine-native G6 M2-M5 re-score (→ 🧱 ARCHITECTURE, H_1400).",
           "path": "CORE/clm_decode.hexa"
         },
         {
