@@ -1,0 +1,64 @@
+H_1351 — jamo-engine-wire — RESULT  🟢 GREEN (wire-in complete; W1∧W2∧W3∧W4)
+=============================================================================
+
+WIRE-IN: the verified Hangul jamo-decomposition next-symbol COUNT-HEAD (H_1316 mirror 🟢 /
+H_1321 engine-native 🟢) is promoted to a FIRST-CLASS faculty in the live CORE engine
+CORE/engine_cli.hexa § KO-JAMO COUNT-HEAD — struct JamoHead + ops jamo_head_new / jamo_head_grow /
+jamo_head_ce / jamo_head_cells / jamo_head_shuffle_targets (+ _jh_* helpers). The faculty re-uses
+the engine's OWN VAdaptField Voronoi geometry (vadapt_field_nearest_idx) + engine_mitosis_tick
+growth (p8) + a per-cell next-symbol count-MLE — the SAME gradient-free mechanism the H_1321 probe
+proved engine-native, now OWNED by the engine instead of living as private helpers in the throwaway
+probe CORE/h1321_ko_jamo_wire_probe.hexa. ADDITIVE (new struct + new pub fns only; byte path and
+every existing faculty UNTOUCHED). Ψ-disjoint (pure count-head SCORER, returns CE / cell-count,
+NEVER an emit/silence decision; pure_field/engine_g/brain UNTOUCHED; distinct from the H_1327
+generator §6.5b decode consult which biases EMISSION — this faculty SCORES).
+
+IN-ENGINE FIXTURE (deterministic, $0, no corpus, no secrets, no GPU): a hidden (L,V) state walks
+deterministically; target g(L,V)=(L+2V) mod K depends on BOTH factors. JAMO view exposes L,V as TWO
+clean feature channels [L/NL, V/NV]; RAW view collapses them into ONE opaque channel [(L*NV+V)/(NL*NV)].
+NL=NV=6, K=12, NSYL=2000, even/odd held-out split, GROW_MAX=40, MIN_OWNED=6, SPLIT_THRESH_CE=0.05,
+LAPLACE=1.0, seed centers [[0.3,0.3,0],[0.7,0.7,0]] — all FROZEN in code before scoring (FREEZE.txt).
+
+ENGINE-NATIVE held-out next-symbol CE (nats/symbol; deterministic, identical over 3 runs):
+  arm                         CE         cells   note
+  JAMO (two factor channels)  4.18698     4      the decomposed count head learns g(L,V)
+  RAW  (opaque-merge channel) 5.56834     5      the squashed axis hides the factors
+  SHUFFLE (pairing-permuted)  4.72652    40      train pairing destroyed → spurious map, loses on test
+
+ACCEPTANCE BARS (FREEZE pre-registered; report verbatim):
+  W1 FACULTY-PRESENT — case_92: jamo head grows >= 2 cells (got 4) AND scores CE > 0 (got 4.18698).  PASS
+  W2 JAMO-BEATS-RAW  — case_93: ce_raw − ce_jamo = 5.56834 − 4.18698 = +1.38136 >= 0.05.            PASS
+  W3 EARNED          — case_94: ce_shuf − ce_jamo = 4.72652 − 4.18698 = +0.53954 >= 0.05.            PASS
+  W4 NO-REGRESSION + Ψ-DISJOINT (outputs below):                                                      PASS
+
+  GREEN iff W1 ∧ W2 ∧ W3 ∧ W4 → 🟢 GREEN (all four).
+  + case_95 (shuffle-budget parity, anti-Goodhart): shuffle uses identical feature stream/vocab K/
+    dim/seed and grows >= 2 cells (got 40) → case 94's gap is the ALIGNMENT, not a budget diff.       PASS
+
+NO-REGRESSION GUARDS (W4):
+  $ hexa run CORE/engine_cli_smoke.hexa
+    --- engine_cli smoke summary: 90 pass / 0 fail ---   (rebased onto current main; +4 jamo
+        cases 92-95; deterministic over 3 runs: 90/0, 90/0, 90/0)
+  $ hexa run CORE/h1196_single_entry_audit.hexa
+    --- single-entry audit summary: 7 pass / 0 fail ---
+    WIRED: .clm decode L3 slot = generator.hexa · .kosmos read = generator_read_anchors→brain_emit
+    CLEAN: pure_field/engine_g/brain consume 0 .clm + 0 .kosmos (substrate-only)
+    (the jamo count-head adds NO new .clm/.kosmos path — it is an engine_cli faculty, not a slot)
+  $ hexa run CORE/h1205_separation_invariant_smoke.hexa
+    F1 GENERATION byte-identity: 10 pairs, 0 mismatch ⇒ PASS
+    F2 Psi Phi-checksum invariant: PASS
+    h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds; Ψ=½ untouched.
+
+VERDICT: 🟢 GREEN. The verified Hangul jamo-decomposition count-head is now a first-class,
+ADDITIVE, Ψ-disjoint faculty in the live CORE/engine_cli.hexa engine. The decomposed view beats the
+opaque-merge view by +1.381 nats/symbol (W2) and beats its own pairing-shuffle by +0.540 (W3) on a
+deterministic in-engine fixture, and all three no-regression guards pass byte-exact (W4). The
+jamo-decomposition COUNT-HEAD ownership gap (a_verified_must_wire) is CLOSED.
+
+SCOPE (honest, c9 / a_scale_honest_scope / a_toy_scale_recheck): W2/W3 are an IN-ENGINE STRUCTURAL
+existence-proof on a deterministic synthetic fixture that the engine's OWN faculty reproduces the
+jamo-beats-raw + earned-vs-shuffle structure — NOT a re-derivation of the 30MB REAL-corpus 2.513
+anchor (that is H_1316/H_1321, byte-exact, the source of the real-corpus / scale / fluency claim).
+The shuffle grows to GROW_MAX=40 cells chasing the destroyed alignment yet still LOSES on held-out
+(a clean anti-Goodhart signal). This H closes the FACULTY-OWNERSHIP gap; it makes NO Korean-fluency
+or real-corpus claim of its own.
