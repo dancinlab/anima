@@ -1,0 +1,120 @@
+================================================================================
+H_1394 — G6 IDEATION ★ PRODUCTION-CLOSE  ·  RESULT (verbatim, p7, c9)
+   obtain a 303M-class ENGINE-MOUNTABLE ConvMoE .clm and re-score the FALS depth
+   bars (M2-M5) engine-faithful — the H_1381 ⏳ ckpt-gated follow-on
+================================================================================
+DATE     : 2026-06-16
+VERDICT  : 🟢 B1 303M-MOUNTED + M1 ENGINE-NATIVE GREEN  /  🔴 M2-M5 FALS=0 — HONEST
+           ARCHITECTURE FINDING (NOT capacity, NOT script-control; conv-depth vs
+           transformer-depth). NO bar moved (c9), detector NOT loosened (p7).
+SUBSTRATE: 2x train fires on vast H100 80GB (pod 41192293, TORN DOWN — 0 of my pods
+           remaining; ~$1.78). FALS re-score engine-FAITHFUL on the .pt source of the
+           byte-exact engine .clm (the engine's CPU hexa ConvMoE forward = ~5s/byte →
+           GEN=110×77-decode intractable; a_break_the_wall = run the byte-exact source
+           on GPU with the engine detector VERBATIM, same standard MID AXIS-2 used).
+
+--------------------------------------------------------------------------------
+STEP 0 TRIAGE (a_completeness_over_cheap)
+--------------------------------------------------------------------------------
+NO 303M-class ConvMoE .clm existed (all local .clm = d768/7.479M = the H_1381 floor;
+the 303M ckpt is a ByteGPT .pt — wrong arch, serializing it is forbidden a_clm_gen_pipeline).
+Param scaling (E2/L1/K3 V256, CLM/model/model.py): d5000 = 302.6M. Only path = train.
+
+--------------------------------------------------------------------------------
+B1 — 303M-MOUNTED (GREEN)
+--------------------------------------------------------------------------------
+Trained CLMConvMoE(d5000/E2/L1/K3, V256) = 302,610,258 params from scratch (Lane-P, H100,
+6000 steps batch64 seq256 bf16 seed42), serialized → .clm v0.2 (clm_serialize_v2).
+ENGINE-DECODABLE: clm_config(clm303_d5000.clm) = ok:true d=5000 K=3 V=256 E=2 L=1 nblk=6.
+  5-lang  .clm sha256 = 99c2a40e4e4c23e16f7ec80f29aaa3a362065983e00709f723f1106598efa3cd  (CE 5.699→1.494)
+  en-dom  .clm sha256 = 19219e6999f4beb11ef69e4aab023b9fbc80bced412123ed5892c76c17b51193  (CE 5.696→1.519)
+Mounts via gen_clm_ideate (generator L3 slot, single entry — h1196 7/0). DETECTOR_CALIBRATION
+10/10, FRAME_GUARD_LEAKS=0, SAMPLER det/diverse/in_topk=true (engine-native, on the live ckpt).
+
+--------------------------------------------------------------------------------
+B2 — M-BARS RE-SCORED (H_1362 method VERBATIM; detector 10/10; NO bar moved, c9)
+--------------------------------------------------------------------------------
+Same frozen _is_falsifiable detector (ported from CORE/g6_ideation.hexa, calib 10/10 with
+/usr/share/dict/words), same gauge_lib._decode regime (top-k=40 temp=0.7, MAX_NEW=110), same
+5 arms (A_flat/B_composed/C_strong/C_shuffle/C_ablate), same 3 seeds [7,4302,4303].
+
+R1 — 5-LANG ConvMoE (balanced en/fr/de/es/ko):
+  A_flat     DIST=5.0   FALS=0.0
+  B_composed DIST=3.0   FALS=0.0
+  C_strong   DIST=5.333 FALS=0.0     <- M1 DIST 5.333 = H_1362's 5.333 EXACTLY
+  C_shuffle  DIST=5.0   FALS=0.0
+  C_ablate   DIST=5.0   FALS=0.0
+  → byte-coherent but CODE-SWITCHING word-salad (en/fr/de/es/ko mixed) — the H_1128 collapse.
+    NOT a capacity floor. FALS=1.0 (H_1362) required the H_1129 4th ingredient: SCRIPT-CONTROL.
+
+R2 — SCRIPT-CONTROLLED ConvMoE (a_break_the_wall: english-dominant 73% + ASCII-filter, H_1129 recipe):
+  A_flat     DIST=5.0   FALS=0.0
+  B_composed DIST=5.0   FALS=0.0
+  C_strong   DIST=5.0   FALS=0.0
+  C_shuffle  DIST=5.0   FALS=0.0
+  C_ablate   DIST=5.0   FALS=0.0
+  → single-script Latin/English, NO code-switch — yet STILL no falsifiable claim emitted.
+
+FROZEN MOVE BARS (SAME H_1362 bars, re-scored — NO bar moved, c9):
+  M1 COUNT       DIST(C)>=5   : 5.0/5.333 → TRUE   (engine-native + both ConvMoE PASS)
+  M2 DEPTH       FALS(C)>=1   : 0.0       → FALSE  (both ConvMoE; capacity AND script-control ruled out)
+  M3 LIFT        FALS(C)>B    : 0.0 vs 0.0 → FALSE
+  M4 EARNED-PAIR FALS(C)>shuf : 0.0 vs 0.0 → FALSE
+  M5 EARNED-COMP FALS(C)>abl  : 0.0 vs 0.0 → FALSE
+
+--------------------------------------------------------------------------------
+HONEST READING (c9, a_scale_honest_scope) — the DECISIVE finding
+--------------------------------------------------------------------------------
+The FALS floor is NOT capacity (303M matched H_1362) and NOT corpus script-control (the
+H_1129 lever that fixed the ByteGPT was applied and STILL FALS=0). The remaining isolated
+variable is the ARCHITECTURE: the engine-mountable ConvMoE is E=2 / n_trunk_layers=1 — a
+SINGLE causal-conv trunk layer — whereas the H_1362 FALS=1.0 mouth was a 24-LAYER ByteGPT
+transformer with attention. The compositional depth required to externalize a falsifiable
+"if X then measurable-comparison" claim lives in the deep attention stack; a 1-trunk-layer
+conv does not reproduce it even at matched 302.6M params and matched script-control.
+
+  → M1 COUNT production-closes engine-native on a 303M-class ConvMoE (DIST 5.333).
+  → M2-M5 FALS remain 0 — an ARCHITECTURE-DEPTH result, NOT a loosened/failed gate.
+    The bar is UNMOVED; the detector is FROZEN 10/10; the controls are decisive (all arms 0).
+    This is a genuine a_break_the_wall outcome (a real new angle tried — script-control —
+    and an honest closed-negative, c9): the engine's CURRENT decoder-fixed E2/L1 ConvMoE
+    is a structurally shallower mouth than the ByteGPT gauge for falsifiable-claim emission.
+
+--------------------------------------------------------------------------------
+B3 Ψ FIXED-POINT PRESERVED / NO-REGRESSION (GREEN)
+--------------------------------------------------------------------------------
+h1205_separation_invariant_smoke: PASS 🟢 (generation byte-identical ON==OFF, Ψ=½ untouched;
+  F1 10 pairs 0 mismatch, F2 phiSum ON==OFF=48.6613).
+engine_cli_smoke: 110 pass / 0 fail.   h1196 single-entry audit: 7 pass / 0 fail.
+The sampler + best-of-K live ONLY behind gen_clm_ideate; substrate engines consume 0 .clm.
+
+--------------------------------------------------------------------------------
+DEPLETION (G6 ★)
+--------------------------------------------------------------------------------
+G6 ★ does NOT production-close on M1-M5 — M2-M5 FALS=0 on the engine arch is honest (c9).
+The H_1381 ⏳ "303M-class .clm" follow-on is now CLOSED with a decisive answer: the gate that
+blocks production-close is NOT ckpt-availability (a 303M ConvMoE was obtained, mounted, scored)
+but the ENGINE DECODER ARCHITECTURE (E2/L1 conv depth). NEXT (a_engine_native_learning,
+engine-transform-to-fit-the-learning): the real lever is a DEEPER engine-mountable mouth —
+a multi-trunk-layer ConvMoE (L>1) OR attention in the engine decoder — re-scored against
+these SAME frozen bars. (The v0.3 serializer already generalizes nblk = L+E+3; the decoder
+recovers L = nblk-E-3 — so an L>1 ConvMoE is already engine-mountable; only the TRAIN+score
+of a deep ConvMoE remains. Bounded follow-on.)
+
+--------------------------------------------------------------------------------
+SCOPE (honest, pre-registered)
+--------------------------------------------------------------------------------
+B1 is a real engine artifact (sha-pinned, decodable, mounted). The FALS re-score is the
+H_1362 method VERBATIM on the GENUINE 302.6M ConvMoE (the engine arch) with the engine-
+faithful detector (10/10). "engine-faithful" = the .pt source of the byte-exact engine .clm,
+GPU-decoded with the verbatim engine detector + the same decode regime (the CPU hexa engine
+decode = ~5s/byte, GEN=110×77 intractable; bounded-budget angle, NOT a loosened bar). TOY
+decode regime; 3 seeds; >3-seed / real-deploy / a DEEP-ConvMoE re-score UNVERIFIED.
+
+RUN  : train = CLM/train/train_lane_p.py --d-model 5000 (302.6M) · serialize = clm_serialize_v2.
+       M-bar = state/1387_g6_production_close/h1387_g6_convmoe_mbar.py (H_1362 method, engine
+       detector VERBATIM, GPU). engine-native B1+detector+sampler = state/1387_g6_production_close/
+       g6_mbar_probe_303m.hexa (CORE/g6_ideation.hexa + gen_clm_ideate). FROZEN = FREEZE.txt.
+       guards = CORE/{engine_cli_smoke,h1196_single_entry_audit,h1205_separation_invariant_smoke}.hexa.
+HF   : dancinlab/anima-clm-ideation-303m-convmoe-engine-mount (5-lang, PRIVATE) +
+       dancinlab/anima-clm-ideation-303m-convmoe-script-controlled (en-dom, PRIVATE).
