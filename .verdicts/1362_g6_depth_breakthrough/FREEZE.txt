@@ -1,0 +1,62 @@
+================================================================================
+H_1362 — G6 IDEATION ★ DEPTH-FLOOR BREAKTHROUGH  ·  FROZEN PRE-REGISTRATION (p7, c9)
+   strengthened composition scaffold (6 frames + best-of-K) on the SAME frozen detector
+================================================================================
+DATE-FROZEN : 2026-06-16  (BEFORE any scoring run — frozen-first)
+BUILDS ON   : H_1305 (UNIVERSE/h1305_g6_ideation_falsifiability.py) — composition lifted
+              FALS 0.00->0.667 & NOVEL 6.3->19 but missed M1 COUNT (DIST 4.0<5, seed-5 '|'
+              collapse) and M2 DEPTH (FALS 0.667<1). H_1362 attacks BOTH bars.
+SUBSTRATE   : local CPU $0 · torch · gauge_lib._decode top-k=40 temp=0.7 (the LIVE G6 path)
+MODEL       : anima-clm-chat-303m · ckpt state/chat_303m/h1129c_chat.pt (single, TOY)
+CORPUS      : data/corpus.txt (5.0MB) · 3 seeds [7, 4302, 4303]
+RUN         : python state/g6-depth-breakthrough/h1362_g6_depth_breakthrough.py
+
+--------------------------------------------------------------------------------
+WHAT IS FROZEN (NO post-hoc change — c9 / p7)
+--------------------------------------------------------------------------------
+(1) DETECTOR — _is_falsifiable is REUSED VERBATIM from H_1305 (imported, NOT re-implemented,
+    NOT loosened). It tests STRUCTURAL FORM only: (a) comparator/conditional mark
+    AND (b) measurable/quantity mark AND (c) negatable content claim (>=2 dict content
+    words, not a question, not pure stance). NEVER an LLM/quality judge (p7). The same
+    10/10 calibration set is re-printed (advisory >=8/10; detector frozen regardless).
+
+(2) SCAFFOLD (STRUCTURAL only — the frame, NOT the idea; ideas MUST emerge from decode, p7):
+    (a) COUNT fix  = N_STRONG=6 composed frames "if cA, then cB: " (one extra cyclic pair,
+        same generation rule as H_1305, NO authored content) so a single '|' collapse still
+        leaves >=5 coherent.
+    (b) DEPTH fix  = BEST-OF-K=3 curiosity-gated sampling (the exact lever H_1305 named as
+        UNVERIFIED future work). Per frame, decode K candidates at deterministic rng offsets
+        [0,+101,+202] and KEEP the one maximizing emergent structure, ranked
+        (is_falsifiable, novel_gram_count, kwr). Frame supplies ONLY the if/then FORM; the
+        MEASURABLE mark + the content claim must be EMITTED BY THE MODEL.
+    p7 FRAME GUARD asserts at runtime: NO composed frame contains a MEASURABLE-set word and
+    NO frame is _is_falsifiable on its own (else ABORT — that would let the detector fire on
+    the scaffold, faking the gate).
+
+(3) ARMS:
+    A_flat     — verify303m_g6 VERBATIM baseline (live gate path; reproduces THIN)
+    B_composed — H_1305 5-frame composition, single-sample (prior-art reference)
+    C_strong   — 6 composed frames + best-of-K=3 (the breakthrough arm)
+    C_shuffle  — control: permuted (derangement +2) concept pairing (+best-of-K)
+    C_ablate   — control: lone concept, no conditional shell (+best-of-K)
+
+(4) FROZEN MOVE BARS — the SAME MODEL.md G6 bars (NOT moved). G6 ★ CLOSES iff ALL hold:
+    M1 COUNT       DIST(C_strong)  >= 5
+    M2 DEPTH       FALS(C_strong)  >= 1
+    M3 LIFT        FALS(C_strong)  >  FALS(B_composed)
+    M4 EARNED-PAIR FALS(C_strong)  >  FALS(C_shuffle)
+    M5 EARNED-COMP FALS(C_strong)  >  FALS(C_ablate)
+    GREEN (CLOSE G6 ★) iff M1 ∧ M2 ∧ M3 ∧ M4 ∧ M5.
+    If C_strong still misses ANY bar -> HONEST 🟠 THIN (bar UNMOVED, c9) + name the precise
+    remaining wall. No bar is moved post-hoc; the detector is NOT loosened.
+
+--------------------------------------------------------------------------------
+SCOPE (a_toy_scale_recheck / a_scale_honest_scope) — pre-declared
+--------------------------------------------------------------------------------
+TOY: 5 fixed concepts, 6 ordered pairs, 3 seeds, 1 ckpt, sampling-decode, best-of-K=3.
+DIRECTIONAL torch-mouth via the SAME live G6 decode path (gauge_lib._decode), NOT a numpy
+mirror — but single-ckpt, no engine-native byte-exact reconfirm unless clean-GREEN
+(a_engine_native_learning: R2 only on a GREEN-to-be-wired). The detector measures testable
+FORM, NOT truth/quality (p7). Scale / real-corpus / paraphrase / larger-K / deeper detector
+UNVERIFIED. If GREEN: G6 ★ close is DIRECTIONAL pending an engine-native reconfirm + wire-in.
+================================================================================
