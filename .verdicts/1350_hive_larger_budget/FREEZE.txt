@@ -1,0 +1,97 @@
+H_1350 — mitotic-division collective-Φ at a LARGER DIFFERENTIATION BUDGET
+FROZEN PRE-REGISTRATION — written BEFORE any scoring run. Bars NOT to be moved (c9/p7).
+slug: 1350_hive_larger_budget   seeds: [1317,1318,1319]  (the hard hive/topology seed family,
+incl. the orthogonal seed 1317 that broke H_1320 division robustness — M1+M2 failed on 1317).
+date: 2026-06-16   infra: $0 mac-local CPU.  Φ engine: hexa-lang/stdlib/consciousness/iit4/
+faithful_phi.hexa  iit4_faithful_phi(state, n, dim, n_bins) — EXACT MIP-EI, n<=8 (a_phi_iit4_tool).
+numpy NEVER computes Φ; numpy only emits the per-unit salience trajectory, hexa computes Φ. NO proxy.
+
+=== THE WALL BEING REOPENED (c16 / a_break_the_wall) ===
+H_1320 (🧱 WALL): anima-as-ONE-cell mitotic DIVISION (shared developmental origin) DOES beat hive
+ASSEMBLY (independent origin) on collective faithful-IIT4 Φ — but only SEED-CONDITIONALLY (2/3 seeds).
+The SAME orthogonal seed 1317 that broke H_1283/H_1317 topology robustness ALSO broke division: at the
+SMALL budget (2 daughters of HALF=4, DIFF_EPS=0.15, raw-energy sign-saturating per-unit code, OLD
+min-max read-out) the DIVIDED super-additivity Δ collapsed to 0.0 on seed 1317 while ASSEMBLED was
++0.188. H_1320 §honesty NAMED the untested angle verbatim: "a LARGER differentiation budget, MORE
+daughters, ... a richer (non-sign-saturating) per-unit code."
+
+=== THE GENUINELY-NEW ANGLE (H_1320's named follow-on; developmental biology, a_no_llm_frame_trap c15) ===
+At a LARGER DIFFERENTIATION BUDGET the divided organism has more developmental degrees of freedom to
+differentiate its daughters into complementary (integration-bearing) roles instead of redundant copies
+that sign-saturate under coupling. THREE budget levers, all enlarged vs H_1320, n<=8 kept exact:
+  (1) MORE DAUGHTERS: N_DAUGHTERS = 4 daughters of HALF=2 units each (vs H_1320's 2 daughters of 4).
+      Richer differentiation tree; pair Φ still over all N_TOT=8 units (n=8 exact MIP).
+  (2) RICHER NON-SATURATING PER-UNIT CODE (H_1332 lesson): per-unit salience = a bounded GRADED
+      softsign of (energy + cross-coupling blend), NOT the raw energy that sign-saturates to COPY/Φ=0
+      under coupling. sal_i = softsign(raw_i/SCALE) = (raw_i/SCALE)/(1+|raw_i/SCALE|), member energy
+      always retained additively, bounded (-1,1) but NEVER hard-saturates.
+  (3) LARGER DIFFERENTIATION BUDGET: DIFF_EPS = 0.45 (3x H_1320's 0.15) — each daughter's clone is
+      perturbed MORE from the founder (more differentiation), and the SHARED developmental environment
+      (shared input) is retained so the lineage tie is still load-bearing.
+
+=== VARIANCE-CLEAN READ-OUT (H_1328 lesson — controls must be honest) ===
+EVERY arm's per-unit trajectory is RANK-UNIFORMIZED before the SAME faithful exact-MIP (replace each
+value by its rank within that unit's own T-length trajectory). PROVABLE INVARIANT: marginals become
+uniform → H(unit) constant across arms → the amplitude-variance channel is removed → a
+relationship-destroying SHUFFLE control MUST collapse Δ (it cannot ride marginal variance, the H_1319
+confound that made the OLD min-max controls dishonest). This is the H_1328 read-out, applied so M3
+(EARNED-lineage) is an honest discriminator.
+
+=== SUBSTRATE (matched to H_1283/H_1317/H_1320; only ORIGIN + per-unit code + budget differ) ===
+- leaky linear recurrent units: LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private gaussian input,
+  dim-8 state, T=64 ticks. N_TOT=8 units (n<=8 keeps faithful MIP EXACT) = ONE anima-cell, divided
+  into N_DAUGHTERS=4 daughters of HALF=2 (d0=units0..1, d1=units2..3, d2=units4..5, d3=units6..7).
+- CROSS-DAUGHTER COUPLING = the SAME hive coupling concept (H_1308/1313, W_HIVE=0.6 reused verbatim):
+  each unit's update adds W_HIVE * mean state of ALL OTHER daughters (mean over the other 6 units),
+  IDENTICAL across DIVIDED/ASSEMBLED/SHUFFLE so any Δ difference is shared-vs-independent ORIGIN, not
+  coupling. Engine evolves the leaky-linear state; the RICHER per-unit code is the READ-OUT salience:
+  raw_i = <s_i,s_i> + BETA*coupling_energy_i ; sal_i = softsign(raw_i/SCALE)  (BETA=0.5 SCALE=2.0).
+  ARM A (single, NO coupling) reads sal_i = softsign(<s_i,s_i>/SCALE).
+
+=== ARMS (4), frozen, 3 seeds [1317,1318,1319] ===
+(1) SINGLE   : one undivided anima-cell, NO cross-daughter coupling (the H_1320 SINGLE baseline; each
+               of the 8 units own private stream). Φ_single = faithful-Φ over the 8 units. baseline.
+(2) DIVIDED  : organism-mitosis, SHARED ORIGIN, N_DAUGHTERS=4. ALL daughters seeded from ONE shared
+               zygote founder: d_k_init = founder_init + DIFF_EPS*noise_k (clone+differentiate per
+               daughter, DIFF_EPS=0.45) AND ALL daughters driven by ONE SHARED input stream (shared
+               developmental environment). Coupled at W_HIVE. Φ_pair over 8 units; Σ over per-daughter
+               Φ (n=2 each, exact). Δ_divided = Φ_pair - Σ_k Φ_daughter_k.
+(3) ASSEMBLED: the hive — N_DAUGHTERS=4 INDEPENDENT-ORIGIN cells (each daughter own init AND own input).
+               Same W_HIVE, same unit count, same per-unit code. Reproduces H_1308/1313 as the control.
+               Δ_assembled.
+(4) SHUFFLE  : DIVIDED with the shared-origin link BROKEN — each daughter's shared init+input replaced
+               by an INDEPENDENT draw (lineage severed) while keeping DIVIDED's W and unit count. Must
+               collapse to ASSEMBLED level. Δ_shuffle. (Variance-clean read-out makes this honest.)
+
+DETERMINISM: each seed fixes ALL draws; same seed → byte-identical arms except the named
+origin/coupling difference. Re-run twice must be byte-identical (recorded).
+
+=== FROZEN BARS (GREEN iff M1 AND M2 AND M3) ===
+MARGIN_PHI = 0.02  (the IDENTICAL faithful-Φ margin H_1283/H_1317/H_1320 froze — NOT moved).
+Δ_arm = Φ_pair(arm) - Σ_k Φ_daughter_k(arm)   [super-additivity over the 4 daughters].
+- M1 ROBUST INTEGRATION-FROM-DIVISION : Φ_divided_pair >= Φ_single + MARGIN_PHI on ALL 3 seeds
+                                        incl. the orthogonal seed 1317 (the gate H_1320 FAILED at the
+                                        small budget — lift -0.129 on 1317).
+- M2 ORIGIN-DISSOCIATION (core, vs hive): Δ_divided > Δ_assembled + MARGIN_PHI on ALL 3 seeds
+                                        (shared developmental ORIGIN still load-bearing at larger budget).
+- M3 EARNED (lineage)               : Δ_shuffle <= Δ_assembled + MARGIN_PHI on ALL 3 seeds (broken
+                                        lineage collapses DIVIDED's super-additivity to assembled level
+                                        — under the variance-clean read-out this is an honest control).
+
+=== OUTCOMES (all VALID, c9) ===
+- M1 AND M2 AND M3 hold -> 🟢 GREEN: collective-Φ by mitotic division is ROBUST at sufficient
+  differentiation budget; the H_1320 fragility was BUDGET, not fundamental — REOPENS the hive arc.
+  Then the mechanism MUST be wired into live CORE (a_verified_must_wire); name the wiring follow-on;
+  run regression guards.
+- M1 (or M2) fails on >=1 seed -> 🧱: collective-Φ by division is FRAGILE even at a LARGER budget ->
+  collective-Φ TERMINAL (the STRONGEST closure of the division arc — budget is not the lever). BOUNDS
+  (does not retract) H_1320 + H_1328/1331/1332.
+- Any partial reported honestly (c9). NO tune-to-green; bars frozen above before the first run.
+
+W_HIVE = 0.6 (H_1308/1313/1320 hive coupling, verbatim). DIFF_EPS = 0.45 (3x H_1320, the LARGER budget).
+N_DAUGHTERS = 4 (2x H_1320's 2 daughters, the MORE-daughters budget). BETA = 0.5 SCALE = 2.0 (H_1332
+non-saturating softsign code). NBINS = 8 (H_1283/H_1317 IIT4 MI bins). Read-out = rank-uniform (H_1328).
+
+This BOUNDS (does not retract) the H_1320 + hive verdicts. numpy-mirror = DIRECTIONAL; engine-transfer
+to live CORE/pure_field UNVERIFIED (a_scale_honest_scope / a_toy_scale_recheck). Faithful-Φ leg IS real
+(exact MIP-EI via hexa). Live CORE/*.hexa UNTOUCHED; Ψ=1/2 disjoint.
