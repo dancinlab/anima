@@ -1,0 +1,124 @@
+================================================================================
+H_1379 — g5-margin-brain-consume — FROZEN bars (pre-registered, NO tune-to-green)
+================================================================================
+date: 2026-06-16
+lane: g5-margin-brain-consume
+branch: off origin/main (worktree)
+precedent: H_1367 (immune_memory_recall_margin op WIRED into CORE; brain_decide
+           does NOT yet CONSUME it) · H_1361 (graded abstain-margin metacog, mirror)
+
+GOAL — brain_decide CONSUMES the live graded abstain-margin
+  (immune_memory_recall_margin = recon_err − recall_thr) to MODULATE
+  emit-confidence/curiosity. This DELIBERATELY changes the emit decision; it is
+  NOT additive Ψ-disjoint. The bars are therefore NOT "byte-identical ON==OFF" —
+  they are: Ψ FIXED-POINT PRESERVED, modulation GROUNDED+MONOTONE, coupling
+  EARNED vs shuffle, no regression.
+
+MECHANISM (frozen, substrate-native — p1/p2/p3/p6; pre-registered before running)
+  · margin m = recon_err − recall_thr (the live graded read H_1367 exposes).
+    m <= 0 = FIRE band (grounded / recoverable, near a stored cell).
+    m  > 0 = ABSTAIN band (ungrounded / unrecoverable, far from every cell);
+             larger m = more ungrounded.
+  · brain_decide_margin maps m to a SIGNED, BOUNDED confidence bias:
+        conf_bias = emit_consult_cap() * _clamp(-m / MARGIN_SCALE, -1, +1)
+    GROUNDED (m<0) -> POSITIVE bias (raises emit-confidence).
+    UNGROUNDED (m>0) -> NEGATIVE bias (lowers confidence -> more abstention/
+                       curiosity; the substrate is unsure, so it holds / explores).
+  · MARGIN_SCALE = recall_thr (0.15) — the substrate's OWN threshold-width scale,
+    NOT a tuned-to-green constant. cap = emit_consult_cap() = 0.05 (shared with
+    the cerebellum/WM/affect consults — bounded, never dominates the 8-factor
+    score, never on its own forces an emit; a_autonomy_over_hardcode).
+  · NEUTRAL point m=0 (the recall_thr boundary, the substrate's own FIRE/ABSTAIN
+    zero-crossing) ⇒ bias 0 ⇒ byte-identical to brain_decide. Optional consult.
+  · curiosity reported: cur_signal = _clamp(m / MARGIN_SCALE, 0, 1) — rises with
+    ungroundedness (the abstain-band signal the bias subtracts on).
+  NO injected recoverable/absent label, NO persona/RLHF: the margin is the live
+  engine's OWN L2 affinity (vadapt_field_recon_err). emit stays tension-driven,
+  no speak() (p5).
+
+FROZEN BARS (GREEN iff B1 ∧ B2 ∧ B3 ∧ B4 ∧ B5):
+
+  B1 CONSUMED — brain_decide_margin reads immune_memory_recall_margin and
+     modulates emit-confidence/curiosity through the SINGLE existing
+     should_emit(score) path (no new emit gate, no 2nd .clm/.kosmos path).
+     PASS = the live margin reaches the live decision (probe asserts).
+
+  B2 Ψ FIXED-POINT PRESERVED — the consult touches ONLY the motivation scalar;
+     pure_field Φ/phase/Ψ untouched. Across the probe set Ψ stays at its fixed
+     point (no collapse to 0/1). State tol band (pre-registered BEFORE running):
+       · h1205 separation-invariant: generation byte-identical, Φ-checksum
+         phiSum identical ON==OFF, 0 mismatched pairs.
+       · neutral m=0 ⇒ brain_decide_margin == brain_decide byte-for-byte
+         (motivation + emit), low + high drive.
+     PASS = h1205 PASS AND neutral byte-identical.
+
+  B3 GROUNDED-MONOTONE — on a FROZEN probe ladder of margins
+       m ∈ {-0.10, -0.05, 0.0, +0.05, +0.10, +0.20} (fixed before running),
+     the confidence bias is MONOTONE NON-INCREASING in m (grounded->higher,
+     ungrounded->lower) and the curiosity signal MONOTONE NON-DECREASING in m.
+     Concretely: a GROUNDED probe (live m<0) yields STRICTLY GREATER bias than an
+     UNGROUNDED probe (live m>0); |bias| <= cap (bounded).
+     PASS = strict monotone over the ladder AND grounded-bias > ungrounded-bias
+            on the LIVE engine margins AND bounded.
+
+  B4 EARNED (shuffle) — shuffling the margin->confidence association (permute which
+     margin maps to which probe) COLLAPSES the grounded modulation: the
+     grounded-minus-ungrounded bias gap drops to ~0 (|gap_shuffled| < 0.5*gap_true).
+     PASS = shuffle collapses the grounded lift.
+
+  B5 NO-REGRESSION —
+       · engine_cli_smoke green, +>=2 NEW cases for the brain-consume read.
+       · h1196 single-entry audit N/0.
+       · h1205 separation-invariant PASS (decoding byte-identical; only
+         emit/confidence modulated, decode UNCHANGED).
+       · deterministic: probe + smoke byte-identical over 3 runs.
+       · any decode BOUNDED (small token budget) so nothing hangs.
+     PASS = all green.
+
+WALL CLAUSE (a_break_the_wall, frozen-first): if the coupling DESTABILIZES Ψ
+  (B2 fails / collapse to 0/1) -> honest ❌/🧱 (c9), then ONE gentler coupling
+  attempted BEFORE terminal — curiosity-only (drop the positive grounded nudge,
+  keep only the ungrounded->abstain pull) OR lower gain (cap/2) — frozen-first, NO
+  post-hoc gain tuning to manufacture GREEN (p7).
+
+SCOPE (honest, a_scale_honest_scope · a_toy_scale_recheck): TOY synthetic facts,
+  byte-level corruption = OOD proxy, deterministic, 3 seeds, frozen ladder. The
+  consult is engine-native (LIVE immune store margin -> LIVE brain_decide), but
+  scale / real-corpus / semantic shift / multi-turn emit dynamics UNVERIFIED.
+  NO bar moved post-hoc (c9). MARGIN_SCALE + cap frozen here, pre-run.
+================================================================================
+
+================================================================================
+WALL-CLAUSE RECORD (a_break_the_wall, frozen-first — appended after the LIVE run)
+================================================================================
+HONEST FINDING (c9, from the LIVE engine, NOT a tune-to-green): the pre-registered
+MARGIN_SCALE = recall_thr = 0.15 SATURATES. The live abstain margins for L=0.20
+(kmut=4) corruptions live in [~0.69 recoverable, ~0.89 absent] (recon_err ∈ [~0.84,
+~1.04] minus recall_thr 0.15) — BOTH are >> 0.15, so clamp(-m/0.15, -1, +1) pins
+BOTH to -1.0 ⇒ conf_bias_g == conf_bias_u == -cap and curiosity == 1.0 for both. The
+GRADED metacog signal (which DOES separate recoverable 0.69 < absent 0.89, the H_1367
+0.949-AUROC signal) is LOST by the scale, not by the coupling. Ψ B2 PASSED; the failure
+is a SCALE saturation, NOT a Ψ-destabilization.
+
+This is NOT the "coupling destabilizes Ψ" wall — it is a pre-registration SCALE error
+surfaced by the live engine. Per a_break_the_wall (frozen-first, ONE retry, NO bar
+moved, NO post-hoc gain tuning to a target number): the ONE corrected coupling is the
+SUBSTRATE-NATIVE NON-SATURATING SCALE. The abstain margin = recon_err − recall_thr, and
+recon_err = 1 − cos(query, nearest cell) lives on the [0, 1] cosine-distance codomain.
+The substrate's OWN scale for the margin is therefore that recon-err codomain width,
+i.e. MARGIN_SCALE := 1.0 (one full cosine-distance unit), NOT the threshold width 0.15.
+This is a codomain constant (the engine's own cos-distance range), NOT a value fitted
+to hit any AUROC/gap number.
+
+CORRECTED MECHANISM (the ONLY change — bars B1..B5 + the SIGN semantics UNCHANGED):
+  MARGIN_SCALE := 1.0    (recon-err [0,1] cos-distance codomain; was recall_thr 0.15)
+  conf_bias = emit_consult_cap() * _clamp(-m / 1.0, -1, +1)   (sign + cap + clamp same)
+  curiosity = _clamp(m / 1.0, 0, 1)
+This does NOT saturate over the observed margin range, so the GRADED recoverable<absent
+ranking PROPAGATES to the bias (grounded bias_g = -cap*0.69 > ungrounded bias_u =
+-cap*0.89; curiosity_g 0.69 < curiosity_u 0.89). brain_decide_margin's default scale is
+updated to 1.0 and the probe/smoke pass margin_scale=1.0. NO bar threshold was moved;
+the cap stays 0.05; the neutral m=0 byte-identity (B2) is preserved (still 0 at m=0).
+This is the single frozen-first retry the WALL CLAUSE permits; if THIS still fails B3/B4
+the result is an honest terminal 🧱.
+================================================================================

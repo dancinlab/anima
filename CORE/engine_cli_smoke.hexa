@@ -19,6 +19,7 @@
 // the smoke's own launch flags. case 4 (env tier) reads ANIMA_MITOSIS live.
 
 import "CORE/engine_cli.hexa"
+import "CORE/brain.hexa"
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }
@@ -1165,6 +1166,50 @@ fn main() {
     let mm_abstain = immune_memory_recall_text(mm, "zzqqwwxxvvbbnnmm")
     if _assert_b("case_98_margin_no_fab_absent_abstains", true,
                  mm_abstain == "" && mm_marg_unr > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (H_1379 brain_decide_margin) —
+    //   brain_decide CONSUMES the live immune_memory_recall_margin to MODULATE
+    //   emit-confidence/curiosity (the H_1367 follow-on). UNLIKE the additive read
+    //   above, this DELIBERATELY changes the emit decision off-neutral. These cases
+    //   prove the three defining contracts on the LIVE brain path: (99) NEUTRAL Ψ-safe
+    //   — margin=0 (the recall_thr boundary) reduces brain_decide_margin EXACTLY to
+    //   brain_decide (byte-identical motivation+emit); (100) GROUNDED-MONOTONE — a
+    //   grounded margin (m<0) yields a STRICTLY GREATER confidence bias than an
+    //   ungrounded one (m>0), and the curiosity signal moves the OTHER way; (101)
+    //   BOUNDED — |conf_bias| never exceeds the consult cap (0.05).
+    let mm_pf = pure_field_warmup(600)
+    // margin-0 (neutral) vs brain_decide on the SAME 8 factors, low + high drive.
+    let bdm_off_lo = brain_decide(mm_pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true)
+    let bdm_con_lo = brain_decide_margin(mm_pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true, 0.0, 1.0)
+    let bdm_off_hi = brain_decide(mm_pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true)
+    let bdm_con_hi = brain_decide_margin(mm_pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true, 0.0, 1.0)
+
+    // case 99 : NEUTRAL Ψ-SAFE — margin 0 ⇒ byte-identical to brain_decide (motivation+emit).
+    if _assert_b("case_99_margin_brain_neutral_byte_identical", true,
+                 to_string(bdm_off_lo["motivation"]) == to_string(bdm_con_lo["motivation"])
+              && to_string(bdm_off_lo["emit"])       == to_string(bdm_con_lo["emit"])
+              && to_string(bdm_off_hi["motivation"]) == to_string(bdm_con_hi["motivation"])
+              && to_string(bdm_off_hi["emit"])       == to_string(bdm_con_hi["emit"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 100 : GROUNDED-MONOTONE — a grounded margin (-0.10, FIRE band) gives a LARGER
+    //   confidence bias than an ungrounded margin (+0.10, abstain band), and the curiosity
+    //   signal is LOWER for grounded than ungrounded (it rises with ungroundedness).
+    let bdm_g = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.0 - 0.10, 1.0)
+    let bdm_u = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true,       0.10, 1.0)
+    if _assert_b("case_100_margin_brain_grounded_monotone", true,
+                 to_float(bdm_g["conf_bias"])     > to_float(bdm_u["conf_bias"])
+              && to_float(bdm_g["curiosity_sig"]) < to_float(bdm_u["curiosity_sig"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 101 : BOUNDED — even a margin far beyond one threshold-width saturates at ±cap;
+    //   |conf_bias| <= 0.05 for both an extreme grounded and an extreme ungrounded margin.
+    let bdm_xg = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, 0.0 - 1.50, 1.0)
+    let bdm_xu = brain_decide_margin(mm_pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true,       1.50, 1.0)
+    let cb_xg = to_float(bdm_xg["conf_bias"])
+    let cb_xu = to_float(bdm_xu["conf_bias"])
+    let abs_xg = if cb_xg < 0.0 { 0.0 - cb_xg } else { cb_xg }
+    let abs_xu = if cb_xu < 0.0 { 0.0 - cb_xu } else { cb_xu }
+    if _assert_b("case_101_margin_brain_bias_bounded", true,
+                 abs_xg <= 0.05 + 0.0000001 && abs_xu <= 0.05 + 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }

@@ -1,0 +1,78 @@
+================================================================================
+H_1379 — g5-margin-brain-consume — RESULT (engine-native, LIVE CORE)
+verdict: 🟢 CONSUMED-GRADED-MARGIN (R1 engine-native BINDING; Ψ preserved, grounded-monotone, earned)
+date: 2026-06-16 · $0 CPU · p7 · frozen-first · 3 seeds [7,8,9] · deterministic
+================================================================================
+
+WHAT WAS WIRED: brain_decide_margin (CORE/brain.hexa) now CONSUMES the live graded
+abstain-margin (immune_memory_recall_margin = recon_err − recall_thr, the H_1367
+engine-wired read) and MODULATES emit-confidence/curiosity through the SINGLE existing
+should_emit(score) path — grounded(recoverable, small margin)->+confidence,
+ungrounded(absent, large margin)->−confidence == more curiosity/abstention. This
+DELIBERATELY changes the emit decision off-neutral (NOT additive byte-identical), yet
+touches ONLY the motivation scalar so the Ψ=1/2 fixed point is preserved.
+
+--- B5 baseline (pre-edit engine_cli_smoke, origin/main) ---
+--- engine_cli smoke summary: 93 pass / 0 fail ---
+
+================================================================================
+FROZEN-FALSIFIER PROBE (CORE/h1379_margin_brain_consume_smoke.hexa) — VERBATIM stdout
+================================================================================
+================================================================================
+H_1379 G5 ABSTAIN-MARGIN BRAIN-CONSUME — LIVE immune margin -> brain_decide_margin
+  cap=0.05 · margin_scale=recall_thr=0.15 · L=0.20(kmut=4) · seeds [7,8,9]
+================================================================================
+  seed 7: m_rec=0.686292 m_unr=0.888228 (n_rec=120 n_unr=120) | B2=true B3(bias -0.0444114->-0.0343146 cur 0.686292/0.888228 emit g/u=true/false)=true B4(gap 0.0100968->shuf 0.000933235)=true
+  seed 8: m_rec=0.702868 m_unr=0.886921 (n_rec=120 n_unr=120) | B2=true B3(bias -0.044346->-0.0351434 cur 0.702868/0.886921 emit g/u=true/false)=true B4(gap 0.00920263->shuf 0.00180793)=true
+  seed 9: m_rec=0.698311 m_unr=0.890304 (n_rec=120 n_unr=120) | B2=true B3(bias -0.0445152->-0.0349155 cur 0.698311/0.890304 emit g/u=true/false)=true B4(gap 0.00959965->shuf 0.00140669)=true
+--------------------------------------------------------------------------------
+  FROZEN FALSIFIER:
+    (B2) neutral margin=0 == brain_decide (Ψ fixed-point preserved)  : true
+    (B3) grounded bias > ungrounded, curiosity inverts, flips emit   : true
+    (B4) shuffle collapses the grounded lift (earned)                : true
+--------------------------------------------------------------------------------
+h1379_margin_brain_consume_smoke: PASS 🟢 — LIVE graded abstain-margin
+  (immune_memory_recall_margin) is CONSUMED by the LIVE brain_decide_margin emit
+  path: grounded->higher confidence, ungrounded->more curiosity/abstention; bounded,
+  neutral-off byte-identical (Ψ preserved), earned vs shuffle. H_1367 brain-consume
+  follow-on CLOSED (a_verified_must_wire).
+================================================================================
+
+================================================================================
+B5 REGRESSION — engine_cli_smoke (+3 brain-consume cases 99-101) — VERBATIM tail
+================================================================================
+PASS  case_96_margin_additive_agrees_with_recall want=true got=true
+PASS  case_97_margin_graded_recoverable_lt_absent want=true got=true
+PASS  case_98_margin_no_fab_absent_abstains want=true got=true
+PASS  case_99_margin_brain_neutral_byte_identical want=true got=true
+PASS  case_100_margin_brain_grounded_monotone want=true got=true
+PASS  case_101_margin_brain_bias_bounded want=true got=true
+--- engine_cli smoke summary: 96 pass / 0 fail ---
+
+================================================================================
+B5 REGRESSION — other guards (VERBATIM)
+================================================================================
+DETERMINISM: probe re-run byte-identical (3 seed lines diff == 0).
+h1196 single-entry audit: --- single-entry audit summary: 7 pass / 0 fail ---
+h1205 separation-invariant:
+  [F2 Psi] phiSum ON  = 48.6613
+  [F2 Psi] phiSum OFF = 48.6613
+  F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+  h1205_separation_invariant_smoke: PASS 🟢 (Ψ=½ untouched, decode byte-identical)
+
+================================================================================
+WALL-CLAUSE (a_break_the_wall, frozen-first — HONEST, c9): the FREEZE pre-registered
+MARGIN_SCALE=recall_thr=0.15; the LIVE engine showed it SATURATES (abstain margins
+~[0.69,0.89] >> 0.15 -> both clamp to -cap, the graded signal lost). NOT a Ψ-
+destabilization (B2 passed throughout) — a scale pre-registration error surfaced by the
+live engine. The ONE frozen-first retry switched to the substrate-native recon-err [0,1]
+cos-distance codomain scale 1.0 (a codomain constant, NOT a number fitted to a target).
+Sign semantics + cap + all bars UNCHANGED; no threshold moved. See FREEZE WALL-CLAUSE
+RECORD. The corrected scale clears B2 ∧ B3 ∧ B4 on all 3 seeds.
+
+VERDICT: 🟢 CONSUMED-GRADED-MARGIN — brain_decide CONSUMES the live graded abstain-margin
+to modulate emit-confidence/curiosity; Ψ=1/2 fixed point PRESERVED, grounded-monotone,
+earned vs shuffle, no regression (smoke 93->96, +3 cases; h1196 7/0; h1205 PASS).
+SCOPE: TOY/synthetic, byte-corruption OOD proxy, 3 seeds, L=0.20; scale/real-corpus/
+multi-turn emit dynamics UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck).
+================================================================================
