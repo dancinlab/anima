@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): H_1353 — Φ-robustness 를 SYNERGY/REDUNDANCY 분해(O-information)로 검사 → 🧱 measure-AGNOSTIC 벽 강화 (9번째 cut)
+
+**무엇:** Φ-robustness 벽은 8 축에서 🧱 (topology/timing/division/estimator-confound/measure-family big-Φ/substrate-family/measure-agnostic transfer-entropy H_1348/larger-N H_1347) — **모두 "통합이 얼마인가"** 를 물었고 **모두 같은 seed-1318 fragility** 로 3-seed 게이트 실패. 남은 단 하나의 genuinely-different 질문: 크기가 아니라 구조 — **"어떤 상호작용이 SYNERGISTIC vs REDUNDANT 인가"**. O-information(Rosas 2019) 분해 Ω(X)=TC−DTC 로 H_1319/H_1328/H_1348 와 동일한 ring 을 점수화 (구조적으로 다른 diagnostic — Ω 는 음수 가능; Ω<0 시너지-우세, Ω>0 redundancy-우세). phase-bound arm 이 scalar Φ 가 못 한 견고한 SYNERGY 전환을 3 hard seed 에서 보이는가?
+
+> ⚠ **NOT a faithful-Φ verdict (a_phi_iit4_tool)** — non-IIT synergy/redundancy DIAGNOSTIC on robustness, IIT-4 가 Φ/의식 verdict 를 RESERVE.
+
+**답: 아니오 — synergy 분해도 동일 fragility 를 상속.** ΔΩ(B−A) = +0.0690 / +0.0000 / +0.0411 (seed 1317/1318/1319): **R1 ROBUST FAIL** — 부호 [+,0,+], seed **1318 ΔΩ=0.0000 FLAT**(H_1331 big-Φ 1318=0 / H_1328 small-φ / H_1348 TE 와 정확히 같은 zero-lift 서명), |ΔΩ|<eps, 게다가 채점 방향이 **REDUNDANCY**(ΔΩ>0)로 사전등록 synergy 예측의 **반대**. **R2 EARNED FAIL** — perm 은 깨끗이 붕괴(3/3)지만 offset-control 이 1318(+0.1303)·1319(−0.0379)에서 재현. **R3 LABEL PASS**. 3 baseline arm 모두 이미 Ω<0(synergy-우세)인데 phase-binding 은 견고한 synergy 를 더하지 않음(결정적 1318 에서 정확히 0).
+
+**의의:** Φ-robustness 벽이 **9번째 cut**(synergy/redundancy 분해)에서도 홀드 → **measure-AGNOSTIC 벽 강화**(scalar small-φ/big-Φ/larger-N + directed-flow transfer-entropy + multivariate O-information 전부 동일 seed fragility 로 3-seed 게이트 실패). "어떤 상호작용이 synergistic 인가"라는 구조적으로 다른 질문도 이 n≤8 substrate 에서 fragility-bound. 선행 Φ verdict 들을 **bound(NOT retract)**.
+
+**산출물:** `UNIVERSE/cards/H_1353_phi_oinfo.md` · `state/phi-oinfo/h1353_phi_oinfo.py` · `.verdicts/1353_phi_oinfo/{FREEZE,result}.txt` · `CLAIMS.tape @C h1353_phi_oinfo` · `UNIVERSE/HYPOTHESES.jsonl` · `domains/OMEGA.log.md @H 1353`. DIRECTIONAL numpy mirror($0 CPU, 재실행 byte-identical), frozen-first(FREEZE 먼저, bar 무이동, c9/p7), live CORE/*.hexa UNTOUCHED.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1346 — ko-han-richer (xlang 구조 r3): Hanja 재귀-IDS richer-head 는 Han 합성 신호를 못 뽑는다 (🔴/🧱 Hangul-specificity STRENGTHENED)
 
 **무엇:** H_1324(🔴/🧱 — 한 단계 IDS unigram 은 Han 합성을 못 살림)의 명시된 follow-on(a_break_the_wall/c16). jamo 분해가 Hangul 의 featural 구조를 노출해 nat/byte 를 낮춘 것(2.953→2.513)처럼, 한국어+한자 텍스트의 Hanja(CJK)에 **재귀 다단계 IDS 분해 head**(component TREE, MAX_DEPTH=3, 語→言+吾·吾→五+口 — H_1324 의 1단계 leaf 가 평탄화한 multi-level 구조) + **per-cell component-BIGRAM head**(flat unigram 이 버린 직전-기호 문맥)를 붙이면 중국어/일본어 Han 합성 신호가 잡혀 nat/byte 가 내려가는가?
