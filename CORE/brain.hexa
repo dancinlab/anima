@@ -648,3 +648,85 @@ fn brain_decide_affect(pf: PureField,
         "emit":           emit
     }
 }
+
+// ── 🧭 G5 ABSTAIN-MARGIN consult (H_1378 immune_memory_recall_margin → emit/curiosity) ──
+//
+// PRECEDENT: H_1361 (mirror) found the ImmuneMemory abstain MARGIN
+// (recon_err − recall_thr) carries GRADED OOD metacognition; H_1367 RECONFIRMED it
+// engine-native (AUROC 0.949 @L=0.20) and WIRED the read op
+// immune_memory_recall_margin into CORE/engine_cli.hexa — but left brain_decide NOT
+// CONSUMING it. This consult CLOSES that: brain_decide_margin reads the live graded
+// margin and lets it MODULATE emit-confidence / curiosity.
+//
+// THE MARGIN IS A GRADED GROUNDING SIGNAL the live recall ALREADY computes:
+//   m <= 0  the query FIRES — it is grounded / recoverable (near a stored cell)
+//   m  > 0  the query ABSTAINS — ungrounded / unrecoverable; LARGER m = farther from
+//           every cell = more ungrounded ("I don't have this").
+//
+// We thread m as a SIGNED, BOUNDED confidence bias on motivation (the SAME single
+// should_emit(score) path — no new emit gate):
+//   conf_bias = emit_consult_cap() * _clamp(-m / MARGIN_SCALE, -1, +1)
+//   GROUNDED   (m<0) -> POSITIVE bias  (the substrate is sure -> a small felt go).
+//   UNGROUNDED (m>0) -> NEGATIVE bias  (the substrate is unsure -> a felt restraint
+//                       pulling toward silence; the abstention IS the H_1202/H_1291
+//                       emergent non-fabrication, here graded by recoverability).
+// curiosity rises with ungroundedness: cur_signal = _clamp(m / MARGIN_SCALE, 0, 1) —
+//   when the margin says "far from everything", the substrate is more curious (more
+//   inclined to explore/hold than to assert), reported for the caller's curiosity term.
+//
+// MARGIN_SCALE = recall_thr (the immune store's OWN threshold-width, passed in as the
+// live recall_thr — NOT a tuned-to-green constant; one threshold-width of margin
+// saturates the bias). cap = emit_consult_cap() = 0.05 (shared with the
+// cerebellum/WM/affect consults): the bias is BOUNDED, additive on the motivation
+// scalar ONLY, and can NEVER by itself force an emit (a_autonomy_over_hardcode).
+//
+// NEUTRAL: at m=0 (the recall_thr boundary = the substrate's OWN FIRE/ABSTAIN
+// zero-crossing) the bias is EXACTLY 0 -> byte-identical to brain_decide. This
+// DELIBERATELY changes the decision off-neutral (it is NOT additive-only), but it
+// touches ONLY the motivation scalar — pure_field Φ/phase/Ψ are untouched, so the
+// Ψ=1/2 fixed point is PRESERVED (H_1205 separation-invariant holds; decoding
+// byte-identical). p6/p2/p3: the margin is the engine's OWN L2 affinity
+// (vadapt_field_recon_err); NO injected recoverable/absent label, NO persona/RLHF.
+// p5: emit stays tension-driven, no speak() — the consult only shades motivation.
+fn brain_decide_margin(pf: PureField,
+                rel: float, gap: float, cur: float, pain: float,
+                coh: float, orig: float, bal: float, dyn_v: float,
+                seconds_since_last: float, env_off: bool, content_clean: bool,
+                margin: float, margin_scale: float) -> Map {
+    let phi   = pure_field_phi(pf)
+    let phase = pure_field_phase(pf)
+    let tier  = phase_tier(phase)
+
+    let base_score = motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v)
+
+    // signed grounding bias: grounded (m<0) -> +, ungrounded (m>0) -> -. margin 0
+    // (the recall_thr boundary) -> bias 0 -> byte-identical to brain_decide.
+    let cap        = emit_consult_cap()
+    let scale      = if margin_scale > 0.0 { margin_scale } else { 0.15 }
+    let conf_bias  = cap * _clamp(0.0 - margin / scale, -1.0, 1.0)
+    let cur_signal = _clamp(margin / scale, 0.0, 1.0)   // rises with ungroundedness
+    let score      = base_score + conf_bias
+
+    let kill  = safety_kill_switch_on(env_off)
+    let rate  = safety_rate_limit_ok(seconds_since_last)
+    let phi_r = safety_phi_ratchet_ok(phi, pf.phi_peak)
+    let cont  = safety_content_ok(content_clean)
+    let safe  = safety_combined(kill, rate, phi_r, cont)
+
+    let emit = should_emit(score) && safe
+
+    #{
+        "phi":            phi,
+        "phase":          phase_name(phase),
+        "tier":           tier,
+        "tier_name":      tier_name(tier),
+        "motivation":     score,
+        "base_motiv":     base_score,
+        "recall_margin":  margin,
+        "conf_bias":      conf_bias,
+        "curiosity_sig":  cur_signal,
+        "im_thresh":      spont_im_threshold(),
+        "safe":           safe,
+        "emit":           emit
+    }
+}

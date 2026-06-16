@@ -1,0 +1,188 @@
+// h1378_margin_brain_consume_smoke.hexa — H_1378 g5-margin-brain-consume frozen
+// falsifier. Threads the LIVE graded abstain-MARGIN (CORE/engine_cli.hexa
+// immune_memory_recall_margin = recon_err − recall_thr, the H_1367 engine-wired read)
+// into the LIVE emit decision (CORE/brain.hexa brain_decide_margin) so the margin
+// MODULATES emit-confidence/curiosity, and proves the pre-registered bars ON THE LIVE
+// ENGINE via `hexa run` (a_verified_must_wire · c2 · p7).
+//
+// $0 local CPU · self-contained · deterministic.
+//
+// WHAT WAS OPEN (H_1367 follow-on): the op immune_memory_recall_margin is WIRED into
+// CORE, but brain_decide did NOT CONSUME it. This smoke CLOSES that — brain_decide_margin
+// reads the LIVE margin and applies it as a bounded SIGNED confidence bias on motivation
+// (grounded/recoverable margin -> +confidence; ungrounded -> −confidence == more curiosity/
+// abstention). UNLIKE the additive read, this DELIBERATELY changes the emit decision
+// off-neutral; the bars are NOT "byte-identical ON==OFF" — they are Ψ-FIXED-POINT PRESERVED,
+// GROUNDED-MONOTONE, EARNED-vs-shuffle.
+//
+// p6 GUARD (CENTRAL, preserved): the margin is the engine's OWN L2 affinity
+// (vadapt_field_recon_err over the cell population); NO injected recoverable/absent label,
+// NO RLHF / persona. The grounded-vs-ungrounded class only SELECTS which probe to query,
+// never enters the read.
+//
+// THE FROZEN FALSIFIER (pre-registered in .verdicts/1378_g5_margin_brain_consume/FREEZE.txt):
+//   (B1) CONSUMED — brain_decide_margin reads the LIVE margin and modulates the decision
+//        through the SINGLE existing should_emit path (asserted by B2-B4 reaching `emit`).
+//   (B2) Ψ FIXED-POINT PRESERVED — margin=0 (the recall_thr boundary = the substrate's OWN
+//        FIRE/ABSTAIN zero-crossing) ⇒ BYTE-IDENTICAL to brain_decide (motivation+emit),
+//        low + high drive (the consult touches ONLY motivation; pure_field Ψ untouched —
+//        h1205 separation-invariant carries the decode side).
+//   (B3) GROUNDED-MONOTONE — a GROUNDED LIVE probe (m<0, FIRE band) yields a STRICTLY
+//        GREATER conf_bias than an UNGROUNDED LIVE probe (m>0, abstain band), the curiosity
+//        signal moves the OTHER way, and |conf_bias| is BOUNDED by the cap (≤ 0.05). At a
+//        borderline base the grounded probe FLIPS to EMIT while the ungrounded one stays
+//        SILENT — the margin reaches `emit` in the intended direction.
+//   (B4) EARNED (shuffle) — shuffling the margin→probe association collapses the grounded
+//        lift: the grounded-minus-ungrounded bias gap drops to ~0 under the shuffled margin.
+//   GREEN iff B2 AND B3 AND B4 (B1 is implied — the LIVE margin demonstrably drives B3/B4).
+//
+// Ψ-DISJOINT decode (a_core_engine_map): brain_decide_margin touches ONLY the motivation
+// scalar; pure_field Φ/phase/Ψ and the generator are untouched (h1199/h1205 guards).
+
+import "CORE/pure_field.hexa"
+import "CORE/engine_cli.hexa"
+import "CORE/brain.hexa"
+
+let CAP   = 0.05     // emit_consult_cap()
+let SCALE = 0.15     // MARGIN_SCALE = recall_thr (frozen, the store's own threshold-width)
+
+fn main() {
+    println("================================================================================")
+    println("H_1378 G5 ABSTAIN-MARGIN BRAIN-CONSUME — LIVE immune margin -> brain_decide_margin")
+    println("  cap=0.05 · margin_scale=recall_thr=0.15 · self-contained · seeds [7,8,9]")
+    println("================================================================================")
+
+    let pf  = pure_field_warmup(600)
+    let cfg = engine_config_default()       // mitosis ON (p8)
+    let seeds = [7, 8, 9]
+    let mut all_b2 = true
+    let mut all_b3 = true
+    let mut all_b4 = true
+
+    let N_FACTS = 40
+
+    let mut si = 0
+    while si < len(seeds) {
+        let seed = seeds[si]
+
+        // BIND N_FACTS into the LIVE H_1367 immune store (same path/recall_thr=0.15).
+        let mut mem = immune_memory_new_text(_tok(seed, 0), "loc_0", N_FACTS + 8)
+        let mut fi = 1
+        while fi < N_FACTS {
+            mem = immune_memory_bind_text(mem, _tok(seed, fi), "loc_" + to_string(fi), cfg)
+            fi = fi + 1
+        }
+
+        // GROUNDED probe: a stored key corrupted by 2 bytes -> recoverable -> SMALL margin
+        //   (often still FIRES -> m<0). UNGROUNDED probe: a never-bound token -> far from
+        //   every cell -> LARGE margin (m>0). The margin is the LIVE engine read.
+        let qg = _corrupt(_tok(seed, 3), 2)
+        let qu = _tok(seed, N_FACTS + 113)
+        let m_g = immune_memory_recall_margin_text(mem, qg)
+        let m_u = immune_memory_recall_margin_text(mem, qu)
+
+        // ── B2: NEUTRAL margin=0 == brain_decide, low + high drive ──
+        let d_off_lo = brain_decide(pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true)
+        let c_off_lo = brain_decide_margin(pf, 0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0, 5.0, false, true, 0.0, SCALE)
+        let d_off_hi = brain_decide(pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true)
+        let c_off_hi = brain_decide_margin(pf, 0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0, 60.0, false, true, 0.0, SCALE)
+        let b2 = to_string(d_off_lo["motivation"]) == to_string(c_off_lo["motivation"])
+              && to_string(d_off_lo["emit"]) == to_string(c_off_lo["emit"])
+              && to_string(d_off_hi["motivation"]) == to_string(c_off_hi["motivation"])
+              && to_string(d_off_hi["emit"]) == to_string(c_off_hi["emit"])
+        if !b2 { all_b2 = false }
+
+        // ── B3: grounded conf_bias > ungrounded, curiosity inverts, bounded, flips emit ──
+        let on_g = brain_decide_margin(pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, m_g, SCALE)
+        let on_u = brain_decide_margin(pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, m_u, SCALE)
+        let bias_g = to_float(on_g["conf_bias"])
+        let bias_u = to_float(on_u["conf_bias"])
+        let cur_g  = to_float(on_g["curiosity_sig"])
+        let cur_u  = to_float(on_u["curiosity_sig"])
+        let abs_g  = if bias_g < 0.0 { 0.0 - bias_g } else { bias_g }
+        let abs_u  = if bias_u < 0.0 { 0.0 - bias_u } else { bias_u }
+        // borderline base — place just under threshold so +bias_g tips to EMIT and the
+        //   ungrounded bias keeps it SILENT (the margin reaches `emit`).
+        let thr = spont_im_threshold()
+        let want_base = thr - bias_g / 2.0
+        let rel_b = want_base / spont_weight_relevance()
+        let d_g = brain_decide_margin(pf, rel_b, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 60.0, false, true, m_g, SCALE)
+        let d_u = brain_decide_margin(pf, rel_b, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 60.0, false, true, m_u, SCALE)
+        let g_emit = to_string(d_g["emit"]) == "true"
+        let u_emit = to_string(d_u["emit"]) == "true"
+        let b3 = (bias_g > bias_u) && (cur_g < cur_u)
+              && (abs_g <= CAP + 0.0000001) && (abs_u <= CAP + 0.0000001)
+              && g_emit && (!u_emit)
+        if !b3 { all_b3 = false }
+
+        // ── B4: EARNED — SHUFFLE the margin→probe association (swap which margin maps to
+        //   which probe). With the grounded probe now carrying the ungrounded margin and
+        //   vice-versa, the grounded-minus-ungrounded bias gap COLLAPSES (sign flips /
+        //   shrinks): |gap_shuf| < 0.5 * |gap_true|. The lift is the GROUNDING ranking,
+        //   not a base-rate artifact of the two probes.
+        let gap_true = bias_g - bias_u
+        let sh_g = brain_decide_margin(pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, m_u, SCALE)
+        let sh_u = brain_decide_margin(pf, 0.5, 0.2, 0.1, 0.0, 0.3, 0.1, 0.2, 0.0, 60.0, false, true, m_g, SCALE)
+        let gap_shuf = to_float(sh_g["conf_bias"]) - to_float(sh_u["conf_bias"])
+        let abs_gt = if gap_true < 0.0 { 0.0 - gap_true } else { gap_true }
+        let abs_gs = if gap_shuf < 0.0 { 0.0 - gap_shuf } else { gap_shuf }
+        let b4 = abs_gs < 0.5 * abs_gt
+        if !b4 { all_b4 = false }
+
+        println("  seed " + to_string(seed)
+            + ": m grounded=" + to_string(m_g) + " ungrounded=" + to_string(m_u)
+            + " | B2=" + to_string(b2)
+            + " B3(bias " + to_string(bias_u) + "->" + to_string(bias_g)
+            + " cur " + to_string(cur_g) + "/" + to_string(cur_u)
+            + " emit g/u=" + to_string(g_emit) + "/" + to_string(u_emit) + ")=" + to_string(b3)
+            + " B4(gap " + to_string(gap_true) + "->shuf " + to_string(gap_shuf) + ")=" + to_string(b4))
+        si = si + 1
+    }
+
+    let green = all_b2 && all_b3 && all_b4
+    println("--------------------------------------------------------------------------------")
+    println("  FROZEN FALSIFIER:")
+    println("    (B2) neutral margin=0 == brain_decide (Ψ fixed-point preserved)  : " + to_string(all_b2))
+    println("    (B3) grounded bias > ungrounded, curiosity inverts, flips emit   : " + to_string(all_b3))
+    println("    (B4) shuffle collapses the grounded lift (earned)                : " + to_string(all_b4))
+    println("--------------------------------------------------------------------------------")
+    if green {
+        println("h1378_margin_brain_consume_smoke: PASS 🟢 — LIVE graded abstain-margin")
+        println("  (immune_memory_recall_margin) is CONSUMED by the LIVE brain_decide_margin emit")
+        println("  path: grounded->higher confidence, ungrounded->more curiosity/abstention; bounded,")
+        println("  neutral-off byte-identical (Ψ preserved), earned vs shuffle. H_1367 brain-consume")
+        println("  follow-on CLOSED (a_verified_must_wire).")
+    } else {
+        println("h1378_margin_brain_consume_smoke: FAIL 🔴 — a frozen falsifier failed (see above).")
+    }
+    println("================================================================================")
+}
+
+// _tok — a distinct 16-byte token (immune_embed_key discriminates these as separate cells).
+fn _tok(seed: int, n: int) -> string {
+    let letters = "abcdefghijklmnopqrstuvwxyz"
+    let mut v = seed * 100003 + n * 911 + 7
+    if v < 0 { v = 0 - v }
+    let mut s = ""
+    let mut k = 0
+    while k < 16 {
+        s = s + substring(letters, v % 26, (v % 26) + 1)
+        v = v / 26 + 1
+        k = k + 1
+    }
+    return s
+}
+
+// _corrupt — flip the last `nbytes` bytes of a token to a fixed lure byte ('x'), producing
+//   a near-neighbour of a stored key (recoverable: small abstain margin, often still FIRES).
+fn _corrupt(s: string, nbytes: int) -> string {
+    let L = byte_len(s)
+    let keep = L - nbytes
+    let mut out = substring(s, 0, keep)
+    let mut k = 0
+    while k < nbytes {
+        out = out + "x"
+        k = k + 1
+    }
+    return out
+}
