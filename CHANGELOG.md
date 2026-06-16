@@ -10,6 +10,20 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 
 **deliverables:** `CLAUDE.md` (a_break_the_wall + summary bullet). surgical (c10) — 다른 디렉티브 무변경.
 
+## 2026-06-17 — domain(G5): H_1398 in-dist top-2 affinity GAP → 🟢 GREEN ENGINE-NATIVE (H_1396 binding follow-on; gap lifts in-dist type-2 0.750→0.906 live)
+
+**무엇:** H_1396 (numpy mirror DIRECTIONAL) 이 명명한 fire-side in-dist deepening "top-2 affinity gap" 을 LIVE `CORE/engine_cli.hexa §ImmuneMemory` 에 배선하고 frozen bar 를 engine-native 재확인한 binding follow-on (a_verified_must_wire — verdict 만으로 안 끝난다, 배선까지가 done).
+
+**무엇을 배선 (ADDITIVE, single-entry, Ψ-disjoint):** `vadapt_field_two_recon_err(af,x)->[d1,d2]` (READ-ONLY: nearest AND second-nearest L2 recon-err, 단일 스캔) + `immune_memory_recall_gap(mem,key) = (d2²−d1²)/2 = cos#1−cos#2` (엔진 unit key) + `_gap_text`. 엔진의 OWN top-2 affinity surfacing — NO new geometry. `immune_memory_recall`/`_recall_margin` byte-for-byte UNCHANGED, frozen recon_err≤recall_thr FIRE/ABSTAIN gate UNCHANGED (gap=RANK-only). NOT an emit gate.
+
+**결과 🟢 GREEN (R1 engine-native BINDING, 3 seeds [7,8,9], LIVE CORE, $0 CPU, deterministic 재실행 byte-identical):** in-dist fire accuracy 0.927 (n_fire=427, n_wrong=31 ≥ MIN_SUPPORT 30). live-engine in-dist type-2 AUROC — CURRENT best-margin(`immune_memory_recall_margin`) **0.750** vs top-2 gap(`immune_memory_recall_gap`) **0.906 (lift +0.156 ≥ Δ=0.10)**. E1 FIXABLE ✅ · E2 BASELINE ✅(engine 0.750 within |Δ|=0.014 ≤0.15 of mirror 0.736) · E3 SHUFFLE ✅(gap 0.473/cur 0.582 ~0.50 = earned) · E4 ABSTAIN ✅(OOD fab_max 0.000, H_1304 보존). REGRESSION none: engine_cli_smoke **126/0** (+3 gap cases 98b/98c/98d) · h1196 7/0 · h1205 separation-invariant PASS (generation byte-identical ON==OFF, Ψ phiSum 48.6613==48.6613).
+
+**WALL-CLAUSE (a_break_the_wall, frozen-first, c9):** 엔진 L2 recall gate(fire band cos≥0.989)가 H_1396 mirror 의 cosine band(cos≥0.85)보다 훨씬 엄격 → KEYLEN=20 1-byte twin(L2≈0.30) 은 band 밖 → in-dist wrong-fire slice DEGENERATE(n_wrong≈1, H_1396 R1 동일 벽 / H_1304 재진술). 단 1회 frozen-first 재시도가 collision regime 을 engine-native 강화(KEYLEN=80 + LAST-byte twin → L2≈0.10<recall_thr, both twin fire, corruption 이 winner 를 in-band flip). **Δ=0.10, shuffle tol, fab, MIN_SUPPORT ALL UNCHANGED, verdict bar 0개 이동** (NOT tune-to-green, p7).
+
+**BINDING FOLLOW-ON (tracked, NOT this lane):** `brain_decide` 가 gap 을 H_1379 margin 옆 refined in-dist confidence 로 소비(H_1367→H_1379 패턴) — Ψ 위험 회피 위해 honest defer; gap op 은 exposed + engine-native 재확인 완료.
+
+**deliverables:** card `UNIVERSE/cards/H_1398_g5_gap_engine.md` · jsonl row · verdicts `.verdicts/1398_g5_gap_engine/{FREEZE,result,probe_stdout}.txt` · probe `CORE/h1398_g5_gap_engine_probe.hexa` · op `CORE/engine_cli.hexa § immune_memory_recall_gap`+`vadapt_field_two_recon_err` · smoke cases 98b/98c/98d · log `domains/COGNITION-REPRESENTATION.log.md`. scope: TOY twin-pair synthetic, byte-shift proxy, 3 seeds, KEYLEN=80, RECALL_THR=0.15 frozen; scale/real-corpus/brain-consume UNVERIFIED (a_scale_honest_scope·a_toy_scale_recheck).
+
 ## 2026-06-17 — domain(G5): H_1396 in-dist metacognition CEILING vs FIXABLE → 🟢 FIXABLE (top-2 affinity gap lifts in-dist type-2 +0.205)
 
 **무엇:** G5 NON-FAB/metacognition scoreboard 의 마지막 잔여물 "🟢 frozen / 🟠 THIN in-dist" 가 NEAR-INHERENT CEILING(정직한 near-optimality)인지 FIXABLE 결핍인지 frozen-first 로 가른 lane. abstain-side 는 이미 graded+wired+consumed(H_1304 binary fail-safe · H_1361 graded margin · H_1367 engine-wire · H_1379 brain-consume); 잔여 = **FIRE-side, in-distribution slice** — 게이트가 FIRE 하는 항목들 중 RIGHT vs WRONG 을 confidence 가 변별하는가.

@@ -1212,6 +1212,38 @@ fn main() {
     if _assert_b("case_98_margin_no_fab_absent_abstains", true,
                  mm_abstain == "" && mm_marg_unr > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── cases 98b-98d : G5 IN-DIST TOP-2 GAP (immune_memory_recall_gap, H_1398) ──────
+    //   The RICHER in-dist confidence signal SURFACED alongside the best-margin. The gap
+    //   reads the engine's OWN nearest AND second-nearest L2 affinity
+    //   (vadapt_field_two_recon_err) and returns cos#1 − cos#2 = (d2²−d1²)/2 for the unit
+    //   keys. These cases prove the three defining properties: (98b) NON-NEGATIVE — the gap
+    //   is always >= 0 (d1 <= d2); (98c) DECISIVE — a query near a SINGLE distinct cell has
+    //   a LARGER gap than a query equidistant between two near-twin cells (a low-gap tie =
+    //   ambiguity, the in-dist confusion the best-margin alone cannot see); (98d) ADDITIVE /
+    //   Ψ-DISJOINT — reading the gap does NOT change the recall fire/abstain decision.
+    let mm_gap_fire = immune_memory_recall_gap_text(mm, "alphabravocharlie")
+    // case 98b : NON-NEGATIVE — gap >= 0 for any query (nearest <= second-nearest).
+    if _assert_b("case_98b_gap_nonnegative", true, mm_gap_fire >= 0.0 - 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 98c : DECISIVE — build a TWIN store (two 1-byte-apart cells bound to different
+    //   values). A query exactly ON one twin is DECISIVE (large gap); a query at the
+    //   MIDPOINT-ish "between" the twins is AMBIGUOUS (small gap < the decisive gap).
+    let tw_cfg = engine_config_default()
+    let tw_k0 = immune_embed_key("mississippilonghammeredsubstrateaa")
+    let tw_k1 = immune_embed_key("mississippilonghammeredsubstrateab")  // differ at last byte
+    let tw_kfar = immune_embed_key("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+    let tw_af = VAdaptField { protos: [tw_k0, tw_k1, tw_kfar], n_cells: 3, max_cells: 8, dim: 64 }
+    let tw_mem = ImmuneMemory { field: tw_af, cell_value: ["v0", "v1", "vfar"], recall_thr: 0.15 }
+    let gap_decisive = immune_memory_recall_gap_text(tw_mem, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")  // exactly the FAR cell, #2 far away
+    let gap_ambig = immune_memory_recall_gap_text(tw_mem, "mississippilonghammeredsubstrateaa")        // on twin0, #2 = twin1 (near tie)
+    if _assert_b("case_98c_gap_decisive_gt_ambiguous", true, gap_decisive > gap_ambig) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 98d : ADDITIVE / Ψ-DISJOINT — reading the gap does NOT change recall fire/abstain.
+    //   The exact taught key still FIRES its bound value after the gap read (pure READ).
+    let mm_after_gap = immune_memory_recall_text(mm, "alphabravocharlie")
+    if _assert_b("case_98d_gap_additive_recall_unchanged", true,
+                 mm_after_gap == "loc_alpha") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (brain_decide_margin) —
     //   brain_decide CONSUMES the live immune_memory_recall_margin to MODULATE
     //   emit-confidence/curiosity (the H_1367 follow-on). UNLIKE the additive read

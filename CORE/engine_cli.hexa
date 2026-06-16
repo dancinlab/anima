@@ -477,6 +477,31 @@ fn _vnearest_idx(protos: [[float]], x: [float]) -> int {
     return best
 }
 
+// _vtwo_nearest_dist — the L2 distance to the NEAREST prototype AND to the
+// SECOND-NEAREST prototype, returned as [d1, d2] (d1 <= d2). A single linear scan
+// keeps a running best and second-best, reading the SAME _l2 affinity _vnearest_idx
+// already computes — it adds NO new geometry, only surfaces the 2nd winner the
+// engine's own scan implicitly passes over. With a single cell d2 = d1 (no second
+// prototype). This is the engine's OWN top-2 affinity, the substrate for a
+// decisiveness/gap read-only confidence signal (H_1396 g5-gap).
+fn _vtwo_nearest_dist(protos: [[float]], x: [float]) -> [float] {
+    let n = len(protos)
+    let mut d1 = _l2(protos[0], x)
+    let mut d2 = d1
+    if n > 1 {
+        let dx = _l2(protos[1], x)
+        if dx < d1 { d2 = d1  d1 = dx } else { d2 = dx }
+    }
+    let mut i = 2
+    while i < n {
+        let d = _l2(protos[i], x)
+        if d < d1 { d2 = d1  d1 = d }
+        else { if d < d2 { d2 = d } }
+        i = i + 1
+    }
+    return [d1, d2]
+}
+
 // vadapt_field_recon_err — the LIVE reconstruction error for DIM-sample `x`:
 // L2 distance to the nearest prototype (readout (c), DIM analogue). It FALLS as
 // cells come to cover the stream's regimes in DIM space.
@@ -540,6 +565,17 @@ pub fn vadapt_field_cells(af: VAdaptField) -> int { return af.n_cells }
 // reads which cell won. (c1: tiny additive accessor, justified.)
 pub fn vadapt_field_nearest_idx(af: VAdaptField, x: [float]) -> int {
     return _vnearest_idx(af.protos, x)
+}
+
+// vadapt_field_two_recon_err — READ-ONLY accessor exposing the engine's OWN nearest
+// AND second-nearest L2 reconstruction errors as [d1, d2] (d1 <= d2). Adds NO
+// mechanism — it only surfaces the second winner the engine's existing winner-take-all
+// scan already passes over (the SAME _l2 affinity vadapt_field_recon_err computes for
+// the best). The substrate for a top-2 decisiveness/gap confidence signal (H_1396):
+// when d1 << d2 the winner is DECISIVE; when d1 ≈ d2 two cells tie (ambiguous), which
+// best-margin alone (d1 only) cannot see. (c1: tiny additive accessor, justified.)
+pub fn vadapt_field_two_recon_err(af: VAdaptField, x: [float]) -> [float] {
+    return _vtwo_nearest_dist(af.protos, x)
 }
 
 // ── §  QUANTUM-ENTROPY POOL — opt-in REAL-quantum entropy source (H_1289 R2) ─────────
@@ -883,6 +919,36 @@ pub fn immune_memory_recall_margin(mem: ImmuneMemory, key: [float]) -> float {
 }
 pub fn immune_memory_recall_margin_text(mem: ImmuneMemory, text: string) -> float {
     return immune_memory_recall_margin(mem, immune_embed_key(text))
+}
+
+// immune_memory_recall_gap — the TOP-2 AFFINITY GAP (decisiveness), a RICHER read-only
+// confidence signal SURFACED alongside the H_1361/H_1367 best-margin (H_1396 g5-gap).
+// immune_memory_recall_margin reads only the BEST cell's recon-err (d1); on a 1-byte
+// twin store two near-identical cells both have best-affinity ≈ winner, so d1 alone
+// cannot tell which twin won — in-dist type-2 metacognition stays THIN. The gap reads
+// the engine's OWN nearest AND second-nearest L2 affinity (vadapt_field_two_recon_err)
+// and returns the cosine-affinity gap cos#1 − cos#2. For the engine's L2-normalized
+// unit keys cos_i = 1 − d_i²/2, so cos#1 − cos#2 = (d2² − d1²)/2 — read PURELY off the
+// two recon-errs the engine already computes, NO new geometry, NO cosine matmul. A
+// LARGER gap = the winner is DECISIVE (#1 far ahead of #2 = high confidence); a SMALL
+// gap = #1 ≈ #2 tie (ambiguous = a likely WRONG in-dist fire). H_1396 (numpy mirror)
+// showed this gap lifts in-dist type-2 AUROC 0.736→0.940 (+0.205) over best-margin while
+// the OOD/abstain property (H_1304) is preserved (gap is RANK-only; the frozen
+// recon_err<=recall_thr fire/abstain gate is UNCHANGED). Like immune_memory_recall_margin
+// this op is purely ADDITIVE (no caller of immune_memory_recall / _recall_margin is
+// touched) and Ψ-disjoint (pure READ over the cell population; pure_field's Φ/phase/Ψ
+// untouched — generation byte-identical when unused). NOT an emit gate
+// (a_autonomy_over_hardcode) — a graded in-dist confidence read available to brain_decide
+// ALONGSIDE the margin. p1/p2/p3/p6: COMPUTED from the live L2 affinity of the query key
+// to the two nearest cells, NO injected "right/wrong" label, NO RLHF, NO persona.
+pub fn immune_memory_recall_gap(mem: ImmuneMemory, key: [float]) -> float {
+    let d = vadapt_field_two_recon_err(mem.field, key)   // engine's OWN [d1, d2] L2 affinity
+    let d1 = d[0]
+    let d2 = d[1]
+    return (d2 * d2 - d1 * d1) / 2.0                      // cos#1 − cos#2 for unit keys; larger ⇒ more decisive
+}
+pub fn immune_memory_recall_gap_text(mem: ImmuneMemory, text: string) -> float {
+    return immune_memory_recall_gap(mem, immune_embed_key(text))
 }
 
 // immune_memory_*_text — string-query convenience wrappers that embed through
