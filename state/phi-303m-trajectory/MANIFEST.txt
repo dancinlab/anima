@@ -1,0 +1,21 @@
+H_1366 phi-303m-trajectory — ACTIVATION DUMP MANIFEST (R3 REAL-SOURCE sha-pinned evidence)
+================================================================================
+CKPT (HF PUBLIC):  dancinlab/anima-clm-midcap-303m-broad-en-emergent / h1129c_best.pt
+CKPT SHA256:       19be1295282d41c06db12bb890bc7c6e6d03b18565ee090ddfa208e46a160a28
+n_params:          303,097,856  (ByteGPT d=1024 n_layer=24 n_head=16 block=512, head tied to tok embed)
+val_ce:            1.224 (H_1129 GREEN-emergence ckpt)
+L_EXTRACT:         12 (mid-depth residual stream, output of block index 12; capture shape (512,1024))
+REDUCE:            d=1024 -> n=4 macro-nodes by contiguous 256-channel-block MEAN pooling; T=64 ticks
+SEEDS:             [1317,1318,1319] perturb ONLY the extraction-window start (1317:341 1318:262 1319:183)
+GPU:               RunPod SECURE RTX 4000 Ada 20GB (pod sqh3da97dlampu), torch 2.4.1+cu124, CUDA True
+
+RAW ACTIVATION SHA256 (full layer-12 (512,1024) slice):  c81ab9a60c0a0f83898d77ddecbbe00dd6a7827fcc18e3bd952c848e3b0ce562
+POOLED MACRONODE SHA256 ((512,4) reduced):               150962fe603d0265c665a92ff65c2ea6dde3475fd6bb80c810b02ec3412a0025
+
+LOCAL ARTIFACTS (sha-pinned, this worktree):
+  traj_303m_data.hexa   (generated literal float arrays per seed — the engine-native Φ probe ingests this)
+  traj_303m.json        (full dump: ckpt sha + manifest + per-seed flat trajectories)
+  dump_303m_trajectory.py  (GPU dump script — ran on pod)
+  h1366_phi_303m_trajectory.hexa  (engine-native faithful-Φ probe)
+8db4fe0178578cab1eab461626365920b9aa700602c50a7b38ce8166eb82f305  state/phi-303m-trajectory/traj_303m_data.hexa
+fb8797b56df07417f9868f2b13434a06399c95d1fe0afb34b2f58aff6d43e044  state/phi-303m-trajectory/traj_303m.json

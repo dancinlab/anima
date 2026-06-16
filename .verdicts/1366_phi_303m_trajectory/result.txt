@@ -1,0 +1,65 @@
+H_1366 — phi-303m-trajectory — RESULT (verbatim, p7 — deterministic, re-run byte-identical)
+================================================================================
+DATE: 2026-06-16
+SUBSTRATE: REAL trained-303M residual-stream trajectory (BINDING upgrade of H_1357)
+  CKPT   = dancinlab/anima-clm-midcap-303m-broad-en-emergent / h1129c_best.pt
+  CKPT SHA256        = 19be1295282d41c06db12bb890bc7c6e6d03b18565ee090ddfa208e46a160a28  (matches HF.jsonl — R3 verified)
+  n_params           = 303,097,856 (exact; arch d=1024 n_layer=24 n_head=16 block=512, load missing=[] unexpected=[])
+  L_EXTRACT          = 12 (mid-depth residual stream, shape (512,1024))
+  RAW ACTIVATION SHA = c81ab9a60c0a0f83898d77ddecbbe00dd6a7827fcc18e3bd952c848e3b0ce562
+  POOLED MACRONODE SHA = 150962fe603d0265c665a92ff65c2ea6dde3475fd6bb80c810b02ec3412a0025
+  REDUCE = d=1024 -> n=4 macro-nodes (contiguous 256-channel-block mean pooling), T=64 ticks
+  SEED WINDOW STARTS = 1317:341  1318:262  1319:183 (seed perturbs ONLY the extraction-window start)
+  GPU    = RunPod SECURE RTX 4000 Ada 20GB (pod sqh3da97dlampu), torch 2.4.1+cu124, CUDA True
+
+Φ = FAITHFUL IIT4 (exact MIP-EI, n=4<=8, a_phi_iit4_tool) over hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa
+    via state/phi-303m-trajectory/h1366_phi_303m_trajectory.hexa (standalone fn main; live CORE/*.hexa UNTOUCHED).
+    variance-clean rank-uniform read-out (H_1328) per node before the MIP. eps=0.02. seeds [1317,1318,1319].
+    ARMS A=NO-COUP B=MECHANISM(H_1283 relay + H_1319 Kuramoto pacemaker) S=PERM-SHUF O=OFFSET-SHUF —
+    ALL held byte-identical to the H_1349/H_1357 lineage; ONLY the substrate SOURCE changed to the real 303M.
+
+| seed | A (no-coup) | B (mechanism) | S (perm) | O (offset) | ΔΦ(B−A) R1 | ΔΦ(S−A) perm | ΔΦ(O−A) off |
+|------|-------------|---------------|----------|------------|------------|--------------|-------------|
+| 1317 | 2.11951     | 2.10263       | 2.06725  | 1.95404    | −0.0168799 FAIL | −0.0522653 PASS | −0.16547  PASS |
+| 1318 | 2.28756     | 2.40490       | 2.27576  | 2.11382    | +0.11734   PASS | −0.0117951 PASS | −0.173741 PASS |
+| 1319 | 2.47309     | 2.20757       | 2.20913  | 2.11185    | −0.265527  FAIL | −0.263966  PASS | −0.361241 PASS |
+
+R1 ROBUST: FAIL — ΔΦ(B−A) = −0.0169 (1317) / +0.1173 (1318) / −0.2655 (1319). Only seed 1318 lifts;
+  seeds 1317 AND 1319 go NEGATIVE. The same seed-fragile signature every prior substrate showed — and
+  here it is EVEN MORE fragile than the proxy (the lift sign-flips across seeds; not even monotone, vs
+  H_1357's monotone-shrink +1.396/+0.775/+0.318 and H_1349's +0.851/+0.695/−0.671).
+R2 EARNED: PASS [perm=PASS off=PASS] — BOTH controls collapse cleanly on all 3 seeds (perm S−A ≤ eps,
+  offset O−A ≤ eps every seed). Unlike H_1349/H_1357 where perm was DEGENERATE (Φ_S==Φ_B by symmetric-MIP
+  invariance), here the relay+carrier reconstruction makes S a genuine derangement so perm BITES and
+  collapses too. The OFFSET control collapses decisively (O−A −0.165/−0.174/−0.361). Controls are earned.
+R3 REAL-SOURCE: PASS — the substrate IS the sha-pinned real trained-303M activation trajectory
+  (ckpt sha 19be1295..., raw-act sha c81ab9a6..., pooled sha 150962fe...). NOT a proxy.
+GATE: ¬R1 -> 🧱 TERMINAL CLOSED-NEGATIVE (BINDING).
+
+MEASUREMENT-VALIDITY CONTROL (anti-artifact, c9): a pure-NOISE trajectory (random gaussian, rank-uniform)
+  SATURATES faithful-Φ at exactly 9.0 with ΔΦ=0 on every arm (degenerate). The REAL 303M trajectory scores
+  Φ ~2.1-2.5 (well below saturation) with DISCRIMINATING per-arm differences — so the measurement is real
+  and structure-sensitive, NOT a saturation artifact. (This control also caught + fixed a list->farr
+  transport bug in an earlier run that had spuriously hit the noise-saturation ceiling; bars NOT moved.)
+
+FINDING (honest, c9, c16): The REAL trained-303M learned substrate INHERITS the Φ-robustness wall — and is
+  MORE seed-fragile than the H_1357 learned-readout proxy (sign-flipping ΔΦ vs the proxy's monotone shrink).
+  This is the BINDING (engine-real, GPU+torch+checkpoint) verdict H_1357 stood in for: a genuine learned
+  substrate (trained-transformer residual stream) does NOT escape the orthogonal-seed fragility. The
+  substrate axis is FULLY closed across toy-LCG (H_1332) / real-oscillator (H_1349) / learned-readout-proxy
+  (H_1357) AND now a REAL trained-303M trajectory (H_1366). THE PROXY IS CONFIRMED FAITHFUL — H_1357's 🔶
+  shape (no escape) holds on the real substrate, and the wall holds even harder.
+  BOUNDS (does NOT retract) the prior Φ verdicts; Ψ=1/2 untouched (probe never writes CORE).
+  NO CORE wiring follow-on (a_verified_must_wire fires on GREEN only; a 🧱 has nothing to wire).
+
+SCOPE / HONESTY (a_scale_honest_scope · a_toy_scale_recheck):
+  - SUBSTRATE = REAL trained-303M (R3 BINDING), sha-pinned. This is NOT a proxy and NOT numpy — the
+    residual-stream activations of the live H_1129 trained ckpt, captured on GPU.
+  - The reduction (d=1024 -> n=4 macro-nodes by 256-channel-block mean pooling, L_EXTRACT=12, T=64) and the
+    coupling/ARMS/eps/seeds are FROZEN (FREEZE.txt, committed 3844bc03e BEFORE any Φ scored). The verdict is
+    scoped to THIS extraction (layer-12, this pooling, 3 phase-window seeds). NOT ruled out (each a NEW H):
+    other layers / finer node granularity (n=6,8) / multiple prompt sets / a different reduction. The
+    seed-fragility being WORSE here than the proxy is itself a real datum, not noise (controls collapse).
+  - DETERMINISTIC: the GPU activation dump is sha-pinned and the Φ scoring over it is byte-identical on re-run.
+  - NO tune-to-green (p7): bars frozen + committed BEFORE the first Φ scoring; the list->farr fix was a code
+    transport bug (the noise-saturation control flagged it), NO bar moved.
