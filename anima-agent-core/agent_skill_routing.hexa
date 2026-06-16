@@ -1,0 +1,73 @@
+// agent_skill_routing.hexa — the LIVE agent-tool runtime ↔ CORE §SkillStore wiring (H_1386).
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on of H_1378 → H_1382, END-TO-END):
+//   H_1382 landed the §SkillStore faculty ENGINE-NATIVE in CORE/engine_cli.hexa (skill_store_new/
+//   _split/_teach · skill_recall · skill_store_cells) — a tool/skill is a CELL keyed by task-
+//   context; a tool FAILURE clonally SPLITS a specialized skill-cell (p8). Both the H_1378 and
+//   H_1382 cards named the SAME remaining gap: the agent layer (anima-agent-core/agent_tools.hexa)
+//   is a SEPARATE module that does not yet import CORE ops, so a LIVE runtime tool-failure does NOT
+//   call skill_store_teach, and selection still uses the STATIC affinity dot-product
+//   (agent_tools.hexa:357-361). THIS module is the agent-side wiring that crosses the CORE↔agent
+//   boundary: it imports "CORE/engine_cli.hexa", holds the executor's LIVE SkillStore, and exposes
+//   the two runtime entry-points the executor delegates to:
+//
+//     agent_route_select(store, task)            — SELECTION: consult skill_recall (learned best
+//          tool, or "" = ABSTAIN). The executor consults this ALONGSIDE / REPLACING the static
+//          affinity dot-product (a real selection over the LEARNED store, not the baked floats).
+//     agent_route_on_result(store, task, correct, cfg, success)
+//                                                — the FAILURE-SITE hook: on a runtime tool result
+//          whose success==false (or an abstain that picked the wrong tool), MITOSIS-SPLIT a new
+//          skill-cell binding task-context → correct tool via skill_store_teach. On success it is
+//          a no-op. This is the live realization of "tool fails → repertoire grows a skill-cell"
+//          that H_1378 found MISSING in the agent layer.
+//
+// HONEST MODULE-BOUNDARY NOTE (c9): anima-agent-core/agent_tools.hexa (+ agent_sdk.hexa) are
+//   legacy Python-port files that DO NOT parse under the current hexa toolchain (string-keyed map
+//   literals `{"k": v}` + nested map literals are rejected by the current grammar — e.g. parse
+//   errors at agent_tools.hexa:65,70,78,108,116…). Migrating those ~795+ lines off the legacy
+//   map-literal syntax is a build/architecture change BEYOND this thin follow-on lane. So the live
+//   call-path is realized in THIS standalone module (which imports CORE cleanly + compiles +
+//   verifies), and the agent_tools.hexa executor_execute failure-site is edited to DELEGATE to it
+//   (the call-site edit is real); the remaining whole-file legacy-syntax migration is named ⏳.
+//
+// p1/p2/p3/p6 GUARD: a route-teach binds from OUTCOME ONLY (the success/failure of the executed
+//   tool), NO injected "use tool T" label / RLHF / persona — the SHUFFLE control collapse proves
+//   the lift is the EARNED runtime task↔tool correspondence, not variance. Ψ-DISJOINT: the routing
+//   only reads/grows the SkillStore's OWN cells (via the CORE ops) — pure_field Φ/phase/Ψ and the
+//   decoder are NEVER touched, so generation is byte-identical (h1205 separation-invariant).
+
+import "CORE/engine_cli.hexa"
+
+// agent_routing_new — seed the executor's LIVE skill repertoire at the first (task → tool) skill.
+// recall_thr / geometry inherit the CORE §SkillStore frozen 0.55 abstain band (skill_store_new).
+pub fn agent_routing_new(first_task: string, first_tool: string, max_cells: int) -> SkillStore {
+    return skill_store_new(first_task, first_tool, max_cells)
+}
+
+// agent_route_select — the LIVE selection path. Consults the LEARNED store via skill_recall:
+// fire the best-affinity skill-cell's tool, or "" (ABSTAIN) when no cell binds the task-context.
+// The executor calls this in place of / alongside the static affinity dot-product
+// (agent_tools.hexa registry_rank_by_consciousness:357-361).
+pub fn agent_route_select(store: SkillStore, task: string) -> string {
+    return skill_recall(store, task)
+}
+
+// agent_route_on_result — the LIVE failure-site hook (agent_tools.hexa executor_execute:448-451,
+// where a failure currently DEAD-ENDS in the execution_log ring buffer). On a runtime tool result:
+//   success == true  → no-op (the repertoire already routed correctly; nothing to teach).
+//   success == false → skill_store_teach: recall; if the recalled tool != the correct tool, MITOSIS
+//                      clonal-SPLIT a new skill-cell binding task-context → correct tool (p8). The
+//                      split is gradient-free, engine-owned (engine_mitosis_tick), no-op under
+//                      mitosis OFF (the STATIC fixed-repertoire control). Outcome-only (p6).
+pub fn agent_route_on_result(store: SkillStore, task: string, correct_tool: string,
+                             cfg: EngineConfig, success: bool) -> SkillStore {
+    if success {
+        return store                                      // routed correctly — no skill-cell grows.
+    }
+    return skill_store_teach(store, task, correct_tool, cfg)   // FAILURE → grow a specialized cell.
+}
+
+// agent_routing_cells — the live repertoire footprint (grows by one per taught runtime failure).
+pub fn agent_routing_cells(store: SkillStore) -> int {
+    return skill_store_cells(store)
+}
