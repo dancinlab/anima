@@ -16,7 +16,7 @@ anima/
 ├─ CLM/                   — .clm byte-LM pipeline (lane-p train → serialize v0.2 → verify)
 ├─ anima-core/ anima-os/ anima-body/ anima-physics/ anima-measurement/ anima-serve/ — substrate subsystems
 ├─ anima-agent*/          — agent layer (channels·core·plugins·providers·skills·hire-sim)
-├─ UNIVERSE/ HEXAD/       — research universe (TWO surfaces: HYPOTHESES.jsonl per-H index + cards/H_*.md per-H 카드; prose overview → state/universe-overview.md) + KOSMOS anchor hub
+├─ UNIVERSE/ HEXAD/       — research universe (ONLY TWO surfaces: HYPOTHESES.jsonl per-H index + cards/H_*.md per-H 카드 — NO .py/.hexa/code/result files in UNIVERSE/; probe code → state/<slug>/; prose overview → state/universe-overview.md) + KOSMOS anchor hub
 ├─ domains/               — per-domain .tape + .log.md (discovery lane)
 ├─ PAPER/                 — (legacy) past paper scaffolds — anima 는 논문 선제 생성 안 함 (c15)
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
@@ -279,6 +279,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   ref  = "a_hypothesis_register · a_claim_verify · c2 · c9 · p7"
 
 @D a_hypothesis_register := "모든 가설은 정확히 2개 doc 표면으로만 관리한다 — `UNIVERSE/HYPOTHESES.jsonl`(per-H 인덱스, JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(가설 카드)" :: workflow [required active]
+  do   = "⛔ UNIVERSE/ 에는 .py·.hexa·코드·result 파일을 *절대* 두지 않는다 — 단 둘(HYPOTHESES.jsonl + cards/)만. 가설 카드를 만들 때 프로브 .py 를 UNIVERSE/ 에 같이 쓰는 흔한 실수 금지: 카드는 cards/, 코드/결과물은 state/<slug>/ 에 두고 jsonl artifacts 로 가리킨다. (자가점검: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` 는 항상 빈 출력이어야 한다.)"
   do   = "가설(H_####)은 정확히 두 doc 표면으로 관리한다: (1) `UNIVERSE/HYPOTHESES.jsonl` = per-H 인덱스 — landed 카드마다 JSON object 정확히 1개를 한 줄로(`{id, slug, tier, title, card, verdict}`, id 순; verdict/tier 는 verbatim) · (2) `UNIVERSE/cards/H_<id>_<slug>.md` = 그 가설의 SSOT 카드(claim · method · 라운드별 verdict tier + 핵심수치 · `.verdicts/<slug>/` 포인터 · honest scope). 카드는 `UNIVERSE/cards/` 서브폴더에 산다. UNIVERSE/ 는 이 두 표면(HYPOTHESES.jsonl + cards/)만 둔다 — `UNIVERSE/HYPOTHESES.md` 는 retire 되었고(2026-06-16) prose overview/roster/folded appendices 는 `state/universe-overview.md` 로 이전; 가설 py/result 결과물은 UNIVERSE/ 밖 `state/<slug>/`(또는 모음 `state/universe-probes/`)에 산다 (2026-06-16 index→JSONL migration)"
   do   = "가설을 실행(probe/검증)하면 그 가설의 `UNIVERSE/cards/H_<id>_<slug>.md` 카드를 만들거나 갱신하고 `UNIVERSE/HYPOTHESES.jsonl` 에 그 카드의 JSON object 한 줄(`{id, slug, tier, title, card:\"cards/H_…\", verdict}`)을 append/갱신한다 — 인덱스 행은 jsonl 에 append 한다(별도 인덱스 표 없음) · verdict 박제만으로 끝나지 않는다"
   do   = "등록은 verdict tier 무관 — 🟢 GREEN · 🟠 PARTIAL · 🔴/🧱 closed-negative 전부 카드+jsonl 인덱스에 남긴다(벽도, c9). tier·수치는 `.verdicts/<slug>/` 파일에서 verbatim 으로 읽는다(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 카드+레거시 행에서 재생성 가능"

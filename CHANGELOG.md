@@ -3,6 +3,18 @@
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
 
+## 2026-06-16 — governance(a_hypothesis_register): UNIVERSE/ 떠돌이 프로브 .py → state/ 이전 + "no code in UNIVERSE/" 하드닝 (3중 가드)
+
+**무엇:** 프로브 `.py` 파일이 반복적으로 `UNIVERSE/` 루트에 떨어져 a_hypothesis_register(UNIVERSE/ = HYPOTHESES.jsonl + cards/ 단 둘) 를 위반하는 재발 문제 해결. 현재 떠돌이 = `UNIVERSE/h1339_whorf_bilingual_tagged_r3.py` 1개.
+
+**(1) 이전:** `git mv UNIVERSE/h1339_whorf_bilingual_tagged_r3.py → state/whorf-bilingual-tagged-r3/` (기존 kebab 관례 state/whorf-2d-r2 · state/cp-2d 와 일치).
+
+**(2) 참조 수정 (c1, no dangling):** `UNIVERSE/cards/H_1339_whorf_bilingual_tagged_r3.md` 프로브 포인터 → 새 state 경로 · `UNIVERSE/HYPOTHESES.jsonl` H_1339 행 `artifacts` `[]`→`["state/whorf-bilingual-tagged-r3/h1339_whorf_bilingual_tagged_r3.py"]`. `git grep` 으로 LIVE 포인터 0 확인 (잔여는 historical CHANGELOG/.verdicts 만, 의도적 보존).
+
+**(3) 거버넌스 하드닝 (재발 방지, c10 surgical):** ① CLAUDE.md `a_hypothesis_register` 맨 앞에 PROMINENT `do` 추가 — "⛔ UNIVERSE/ 에는 .py·.hexa·코드·result 파일을 *절대* 두지 않는다 … 카드는 cards/, 코드/결과물은 state/<slug>/ 에 두고 jsonl artifacts 로 가리킨다" + 자가점검 git ls-files 명령. ② structure-tree `UNIVERSE/ HEXAD/` 노드에 inline 리마인더 ("ONLY TWO surfaces … NO .py/code"). ③ **기계 가드** — `.harness/enforcement.json` `pre_write` 에 `H-UNIVERSE-CODE` block 룰 추가: path `(^|/)UNIVERSE/(?!cards/)(?!HYPOTHESES\.jsonl$).+` 매치 시 차단 (harness `pre write` hook 이 읽는 in-repo 설정 — 서브모듈 미수정). regex 8-케이스 단위검증 ALL PASS. 정직(c9): `.harness-engine` 서브모듈 미구체화 worktree 라 라이브 hook end-to-end 미실행 — 단 동일 array 의 known-active 룰과 schema 동형이라 harness 동작 환경에서 활성.
+
+산출물: `state/whorf-bilingual-tagged-r3/h1339_whorf_bilingual_tagged_r3.py`(moved) · `UNIVERSE/cards/H_1339_…md`(ptr) · `UNIVERSE/HYPOTHESES.jsonl`(artifacts) · `CLAUDE.md`(do + tree) · `.harness/enforcement.json`(H-UNIVERSE-CODE). xref a_hypothesis_register·a_claim_manifest·c1·c2·c9·c10.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1388 — ko-morphology 🇰🇷 한국어 below-jamo 잔여(+0.28)를 morphology-aware 단위(BPE-on-jamo)가 깨다 — 🟢 GAP-REDUCED-CANDIDATE (DIRECTIONAL)
 
 **무엇 (a_no_llm_frame_trap / a_break_the_wall — H_1380 이 명시한 NEW 각도):** H_1380 이 한국어 below-jamo 의 세 닫힌 레버(표상 H_1322 🧱 · interpolation H_1359 🧱 · data-volume H_1368/H_1380 🟠)가 전부 novel-context CE 를 jamo floor(2.51335) 위 **+0.28**(asymptote ~2.747, 30MB novel-CE 2.88190)에서 막았다고 봉인하고, genuinely-NEW 두 각도 — **(1) morphology-aware 단위(형태소/BPE-on-jamo)** · **(2) cross-syllable long-range(nmax>5)** — 를 NEXT 로 명시했다. H_1387 이 그 두 각도를 측정: PRIMARY=BPE-on-jamo, SECONDARY(non-gating)=nmax 스윕.
