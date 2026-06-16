@@ -321,6 +321,7 @@
 - `h1336_ko_crosssyllable.py`
 - `h1337_ko_jamo_metric.py`
 - `h1338_whorf_cp_eviction.py`
+- `h1340_whorf_cp_budget_sweep.py`
 - `h1341_whorf_cp_shift_ladder.py`
 - `h1347_phi_higher_n.hexa`
 - `h1348_phi_non_iit_estimator.hexa`
