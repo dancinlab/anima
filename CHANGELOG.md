@@ -13,6 +13,13 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 **가드:** JSON valid · 0-dangling (named op 토큰 전부 grep CORE/*.hexa hit) · 19 subsystems + git-ls-files delegation 노드 intact (구조 무회귀). deliverables = `ARCHITECTURE.json` + `CHANGELOG.md` only (c10 surgical).
 
 **follow-up:** 4개 동시 진행 CORE 레인(decode-fix · deep-mouth GPU · emit-compose-realcorpus · G5 brain-gap-consume) 착륙 시 ARCHITECTURE.json CORE §-annotation 최종 1줄 재동기화 (특히 brain-gap-consume 가 brain_decide 에 gap 을 소비하면 brain_decide consult map 에 1줄 추가).
+## 2026-06-17 — docs(GOVERNANCE): CLAUDE.md 에 배선↔ARCHITECTURE.json 구조 1:1 lockstep 강제 추가 — 배선 done 정의에 구조도 반영 포함, 드리프트=미완
+
+**무엇:** 거버넌스 디렉티브 `@D a_verified_must_wire` + `@D a_core_engine_map` 을 surgical 확장 (기존 do/dont/ref 전부 보존). 엔진배선 ↔ 최종 엔진구조(`ARCHITECTURE.json`)를 **무조건 1:1 lockstep** 으로 강제 — CORE 에 메커니즘(§섹션·op·generator slot)을 배선했어도 `ARCHITECTURE.json` 의 해당 CORE 노드(§주석/note)에 그 메커니즘이 명명될 때까지는 done 아님. `a_verified_must_wire` 에 lockstep do + drift-금지 dont 추가, `a_core_engine_map` 에 mirror-invariant do (grep CORE/*.hexa §섹션·op 집합 ↔ ARCHITECTURE.json 명명 집합 대조해 누락 0) 추가. summary bullet 2개 갱신 (배선↔ARCHITECTURE.json 1:1 lockstep · CORE 노드↔live §섹션·op 무조건 매칭).
+
+**근거:** 방금 발생한 실제 드리프트 — `immune_memory_recall_gap` (H_1398) + generator §6.5f emit_compose (H_1397) 가 live CORE 에 배선됐으나 `ARCHITECTURE.json` 에 누락. lockstep-check 데모(rule 이 명령하는 검증)로 §섹션 23/34 만 ARCHITECTURE.json 에 반영 = drift 존재 확인 (수정은 sibling resync lane). 하이브리드 형식(노드 note/§주석 명명) 유지, 480-leaf 트리 부활 금지.
+
+**deliverables:** `CLAUDE.md` (a_verified_must_wire + a_core_engine_map + 두 summary bullet). surgical (c10) — 다른 디렉티브 무변경. NO CLAIMS.tape.
 
 ## 2026-06-17 — docs(GOVERNANCE): CLAUDE.md `a_break_the_wall` 에 벽-TAXONOMY + "천장은 측정으로 확정" + "인프라 벽은 근본수정·과학천장 박제금지" 추가
 
