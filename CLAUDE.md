@@ -16,7 +16,7 @@ anima/
 ├─ CLM/                   — .clm byte-LM pipeline (lane-p train → serialize v0.2 → verify)
 ├─ anima-core/ anima-os/ anima-body/ anima-physics/ anima-measurement/ anima-serve/ — substrate subsystems
 ├─ anima-agent*/          — agent layer (channels·core·plugins·providers·skills·hire-sim)
-├─ UNIVERSE/ HEXAD/       — research universe (HYPOTHESES.md index + cards/H_*.md per-H 카드) + KOSMOS anchor hub
+├─ UNIVERSE/ HEXAD/       — research universe (HYPOTHESES.jsonl per-H index + cards/H_*.md per-H 카드; HYPOTHESES.md = prose overview) + KOSMOS anchor hub
 ├─ domains/               — per-domain .tape + .log.md (discovery lane)
 ├─ PAPER/                 — (legacy) past paper scaffolds — anima 는 논문 선제 생성 안 함 (c15)
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
@@ -30,6 +30,7 @@ anima/
 - 🏛 Architecture → [ARCHITECTURE.md](ARCHITECTURE.md)
 - 📜 Governance (full, authoritative) → the sections below (this file is the markdown SSOT)
 - ✅ Claims & verdicts → [CLAIMS.tape](CLAIMS.tape) · `.verdicts/<slug>/<id>.txt`
+- 🔬 Hypotheses → per-H index = [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · cards = `UNIVERSE/cards/H_*.md` · `UNIVERSE/HYPOTHESES.md` = prose overview (`a_hypothesis_register`)
 - 🔢 Versions → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
 - 🤖 HF registry → `HF.jsonl` · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
 
@@ -55,7 +56,7 @@ anima/
 - **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
 - **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
 - **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine).
-- **Verify / hypothesis workflow** — `a_claim_manifest · a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2개 doc 표면으로 관리 — `UNIVERSE/HYPOTHESES.md` 인덱스 + `UNIVERSE/cards/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
+- **Verify / hypothesis workflow** — `a_claim_manifest · a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2개 doc 표면으로 관리 — `UNIVERSE/HYPOTHESES.jsonl` 인덱스(JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. HYPOTHESES.md 는 prose overview 일 뿐 인덱스 표면 아님. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
 - **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
 - **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
 - **7B completion** — `a7b_pass` (gates G0–G4 in `/7B_PASS_CONDITIONS.md`).
@@ -265,7 +266,7 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "promote a Lane-P torch .clm to PUBLIC (forge-only); add a 2nd .clm path bypassing generator"
 
 # ── Claim / verify flow ──────────────────────────────────────────────────────
-# research result → hexa verify → .verdicts/<slug>/<id>.txt → H_<id>.md card + HYPOTHESES.md index
+# research result → hexa verify → .verdicts/<slug>/<id>.txt → cards/H_<id>.md card + HYPOTHESES.jsonl index line
 # (NOTE: paper directives removed 2026-06-16 — anima never proposes papers; commons c15 governs:
 #  논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다. 선제 제시·언급 금지.)
 
@@ -273,13 +274,13 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "every verifiable claim in root CLAIMS.tape — id · text · method · slug · verdict pointer"
   dont = "scatter claims across H_*.md / logs without a CLAIMS.tape index — no audit surface"
 
-@D a_hypothesis_register := "모든 가설은 정확히 2개 doc 표면으로만 관리한다 — `UNIVERSE/HYPOTHESES.md`(인덱스) + `UNIVERSE/cards/H_<id>_<slug>.md`(가설 카드)" :: workflow [required active]
-  do   = "가설(H_####)은 정확히 두 doc 표면으로 관리한다: (1) `UNIVERSE/HYPOTHESES.md` = 한 줄/가설 인덱스(id · 제목 · 최종 tier · 카드 링크) + 모든 forward backlog/reference/log 가 접혀 들어온 통합 SSOT · (2) `UNIVERSE/cards/H_<id>_<slug>.md` = 그 가설의 SSOT 카드(claim · method · 라운드별 verdict tier + 핵심수치 · `.verdicts/<slug>/` 포인터 · honest scope). 카드는 `UNIVERSE/cards/` 서브폴더에 산다 (2026-06-16 SSOT-refactor)"
-  do   = "가설을 실행(probe/검증)하면 그 가설의 `UNIVERSE/cards/H_<id>_<slug>.md` 카드를 만들거나 갱신하고 `HYPOTHESES.md` 인덱스에 한 줄(링크 `](cards/H_…)`)을 추가/갱신한다 — verdict 박제만으로 끝나지 않는다"
-  do   = "등록은 verdict tier 무관 — 🟢 GREEN · 🟠 PARTIAL · 🔴/🧱 closed-negative 전부 카드+인덱스에 남긴다(벽도, c9). tier·수치는 `.verdicts/<slug>/` 파일에서 verbatim 으로 읽는다(추측 금지, c2)"
+@D a_hypothesis_register := "모든 가설은 정확히 2개 doc 표면으로만 관리한다 — `UNIVERSE/HYPOTHESES.jsonl`(per-H 인덱스, JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(가설 카드)" :: workflow [required active]
+  do   = "가설(H_####)은 정확히 두 doc 표면으로 관리한다: (1) `UNIVERSE/HYPOTHESES.jsonl` = per-H 인덱스 — landed 카드마다 JSON object 정확히 1개를 한 줄로(`{id, slug, tier, title, card, verdict}`, id 순; verdict/tier 는 verbatim) · (2) `UNIVERSE/cards/H_<id>_<slug>.md` = 그 가설의 SSOT 카드(claim · method · 라운드별 verdict tier + 핵심수치 · `.verdicts/<slug>/` 포인터 · honest scope). 카드는 `UNIVERSE/cards/` 서브폴더에 산다. `UNIVERSE/HYPOTHESES.md` 는 prose overview/roster/folded appendices 일 뿐 per-H 인덱스 표면이 아니다 (2026-06-16 index→JSONL migration)"
+  do   = "가설을 실행(probe/검증)하면 그 가설의 `UNIVERSE/cards/H_<id>_<slug>.md` 카드를 만들거나 갱신하고 `UNIVERSE/HYPOTHESES.jsonl` 에 그 카드의 JSON object 한 줄(`{id, slug, tier, title, card:\"cards/H_…\", verdict}`)을 append/갱신한다 — 인덱스 행은 jsonl 에 추가하지 HYPOTHESES.md 표에 추가하지 않는다 · verdict 박제만으로 끝나지 않는다"
+  do   = "등록은 verdict tier 무관 — 🟢 GREEN · 🟠 PARTIAL · 🔴/🧱 closed-negative 전부 카드+jsonl 인덱스에 남긴다(벽도, c9). tier·수치는 `.verdicts/<slug>/` 파일에서 verbatim 으로 읽는다(추측 금지, c2). jsonl 은 `python3 UNIVERSE/_build_hyp_jsonl.py` 로 카드+레거시 행에서 재생성 가능"
   do   = "`.verdicts/<slug>/{FREEZE,result}.txt` 는 카드가 가리키는 검증 박제(증거)일 뿐 관리 3번째 면이 아니다 — 카드가 그 포인터를 담는다"
   dont = "가설 디테일을 themed 버킷 파일(`HYPOTHESES_*.md`)·`CLAIMS.tape`·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 — 가설 디테일의 단일 집은 `UNIVERSE/cards/H_<id>_<slug>.md` 카드 하나다(themed/버킷 파일 신설 금지, 있으면 HYPOTHESES.md 로 접고 retire)"
-  dont = "가설을 실행·박제하고도 `HYPOTHESES.md` 인덱스 또는 `UNIVERSE/cards/H_<id>_<slug>.md` 카드를 안 만듦 · 카드를 `UNIVERSE/` 루트에 둠(반드시 `cards/`) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음"
+  dont = "per-H 인덱스 행을 `HYPOTHESES.md` 의 markdown 표에 추가(인덱스는 jsonl) · 가설을 실행·박제하고도 `UNIVERSE/HYPOTHESES.jsonl` 인덱스 줄 또는 `UNIVERSE/cards/H_<id>_<slug>.md` 카드를 안 만듦 · 카드를 `UNIVERSE/` 루트에 둠(반드시 `cards/`) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음"
   ref  = "a_claim_verify · c2 · c4 · c9 · p7"
 
 @D a_claim_verify := "every claim runs through hexa verify, verdict persisted verbatim" :: workflow [required active]
