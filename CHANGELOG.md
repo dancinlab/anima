@@ -2,6 +2,16 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — docs(ARCHITECTURE): ARCHITECTURE.json 전수 파일트리 → 구조+노드별 anchor 파일 하이브리드 (전수목록 git ls-files 위임·드리프트 제거, c4)
+
+**무엇 (c4 거버넌스 shape "트리구조(노드별 한 줄)" + anchor files):** `ARCHITECTURE.json` 을 *전수 per-file 덤프*에서 **개념 아키텍처 트리 + 서브시스템별 anchor 파일** 하이브리드로 재구조화. 기존 `🌳 Engine file tree` 가지가 거의 모든 tracked `.hexa/.py/.md` 경로(~490 leaf 노드)를 손으로 나열해 — 이번 세션만 해도 CORE engine_cli.hexa §섹션·generator §6.5d/e·clm_decode 등 새 파일/섹션마다 leaf 노드를 수동 동기화해야 했던 — 반복 드리프트의 원인이었다. 전수 파일목록은 `git ls-files` (40,316 tracked, 항상 최신)로 기계적 재생산이 가능하므로 JSON 에서 손으로 들 이유가 없다.
+
+**KEEP:** 개념 서브시스템/역할 계층(CORE A⇄G 엔진·engines/decoders·CLM 파이프라인·anima-* substrate·agent layer·UNIVERSE/HEXAD·domains·stdlib/tool/spec·brain-subsystem lanes·top-level governance/registry) 전부 — top-level 노드 19개 100% 보존(file-tree 가지 1개만 교체). 각 서브시스템 노드에 그 서브시스템을 *정의/앵커하는* load-bearing 파일만 명시(CORE → pure_field/engine_g/brain/generator/clm_decode/bytegpt_decode/engine_cli/emit_policy/g6_ideation · CLM → train_lane_p.py/clm_serialize_v2.py/verify_clm_v2.py · agent → agent_tools/agent_skill_routing/agent_sdk.hexa · engines → engine_iface + conv/cdv2/hexad/omega adapter). §-섹션 주석(engine_cli § SkillStore/UsageStore/KO-MORPHOLOGY, generator §6.5b-e)은 wired mechanism 이므로 유지.
+
+**PRUNE:** `🌳 Engine file tree` 480-leaf 가지 → 단일 compact **위임 노드** `🗂 Tracked-file listing (delegated to git ls-files — NOT hand-maintained)`. 전수목록은 `git ls-files` 에서 파생(수동 sync 없음, anti-drift c4); browsable 스냅샷이 필요하면 신규 커밋 스크립트 `scripts/scratch/gen_file_index.sh` (`git ls-files | sort > FILE_INDEX.txt`)를 on-demand 실행. `FILE_INDEX.txt` 는 .gitignore(40k줄 스냅샷을 커밋하면 제거하려던 바로 그 드리프트가 재발하므로 생성물로 유지).
+
+**guards (c2, verbatim):** JSON valid ✅ · dangling anchor **0/38 checked** (모든 anchor/path 토큰이 git ls-files 에 존재) · top-level 서브시스템 19→19 (제거=`🌳 Engine file tree` 1개, 추가=위임 노드 1개) · viewer 스키마 키 무변경(name/summary/note/meta/children/path/status/tier — stray key 0, anchor 는 viewer 가 렌더하는 `note` 필드에 fold). 크기 **168KB→60KB · 2844→545 lines · 627→112 노드 · leaf-file-path 노드 491→8**. `ARCHITECTURE.html` 뷰어 스키마 변경 없음(노드 shape 동일, 새 키 없음) → 기존 JS 그대로 파싱. NEW: `scripts/scratch/gen_file_index.sh` · `.gitignore` FILE_INDEX.txt. xref c4·c10·a_no_llm_frame_trap(해당없음, 순수 docs-infra).
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1393 — ko-morphology BPE-on-jamo EMIT-BIAS WIRE-IN 🇰🇷 H_1390 의 형태론 SCORER 를 EMIT-BIAS 로 (디코더 도달) — 🟢 EMIT-BIAS ENGINE-NATIVE BINDING (R2)
 
 **무엇 (a_verified_must_wire · a_substrate_native_speak EMIT-side follow-on):** H_1390 (🟢 ENGINE-NATIVE BINDING) 은 BPE-on-jamo 형태론 MERGE UNIT 을 live SCORING consult(generator §6.5d gen_bpe_scoreloop → bpe_byte_fair_ce) 로 배선 — held-out next-unit CE 를 SCORE 하지만 EMISSION 은 아직 안 bias. jamo COUNT-HEAD 는 이미 §6.5b/H_1327 ko_jamo_consult_emit 로 디코더에 도달함(§6.5c scorer 와 DISTINCT). H_1391 은 그 emit precedent 를 형태론에 MIRROR: 자란 형태론 count-head 가 next-byte EMISSION 을 학습된 morpheme-unit 경계 완성 쪽으로 ADDITIVE bias(하드 게이트 아님 — a_autonomy_over_hardcode, emit 은 substrate-driven 유지, p5), 단일 generator L3 slot(a_core_engine_map, 2nd .clm path 없음).
