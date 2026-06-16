@@ -388,7 +388,7 @@ anima/
 │   │                                CollectivePool · SpatialMap · AffectFeatures)
 │   ├── generator.hexa              single .clm entry slot (engine-side retrieve-then-copy)
 │   ├── bytegpt_decode.hexa         ByteGPT byte decode (production trunk — 303M byte mouth)
-│   └── clm_decode.hexa             CLMConvMoE byte decode
+│   └── clm_decode.hexa             CLMConvMoE byte decode (H_1403: streaming/bounded — FLAT RSS/step, byte-exact; GEN=110 unblocked)
 │
 ├── engines/                        4 hot-swappable engines behind engine_iface.hexa (conv·cdv2·hexad·omega)
 ├── CLM/                            .clm pipeline — train (lane-p) → serialize v0.2 → verify
