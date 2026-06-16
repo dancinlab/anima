@@ -1,0 +1,18 @@
+H_1413 — BIOLOGICAL cerebellum×basal MODULATION compose (c16 new lens of H_1412 🧱)
+FROZEN PRE-REGISTRATION (bars verbatim from H_1407 — NOT moved)
+
+LENS: not another vote rule — the cerebello-thalamo-basal loop. Basal ganglia makes the
+FINAL go/no-go; cerebellar forward-model confidence FACILITATES the basal threshold by a
+BOUNDED amount: composed_go = basal_margin + tanh(z_cerebellum)*basal_std, decision PRED iff
+composed_go > GO_THR. tanh BOUNDS facilitation to ±basal_std (gain 1.0, NO free knob).
+
+PREDICTION: breaks F1 (basal-tie) toward cerebellum WITHOUT overturning strong basal vetoes
+(F5) — the bound is what arbitration (H_1412) lacked.
+
+FROZEN BARS (== H_1407, NOT moved):
+  (B1 COMPOSE-EFFECT) acc_compose >= best_single + 0.05
+  (B2 ORACLE)         acc_oracle  − best_single > 0.02
+  (B3 EARNED)         acc_compose − acc_shuffle  > 0.02   ← the anti-tune-to-green guard
+  (SEPARABLE)         only_cerebellum>0 AND only_basal>0
+SHUFFLE control: permute which cerebellar confidence modulates which basal item.
+3 seeds [4700,4701,4702] · N=450/seed · frozen knobs. If a bar fails → honest 🧱.

@@ -1,3 +1,21 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1413 — c16 biological MODULATION compose (2nd lens of H_1412 🧱): 🧱 EARNED-control 기각
+
+"다른 경로로 벽 돌파": H_1412 의 confidence-ARBITRATION 🧱 를 *다른 렌즈*(a_no_llm_frame_trap — 실제
+cerebello-thalamo-basal 루프)로 재시도. 기저핵=최종 결정자, 소뇌=bounded 문턱 조절자
+(composed_go = basal_margin + tanh(z_cere)*basal_std, gain 1.0 NO knob, frozen-first).
+
+- 결과 🧱: modulation 이 B1 순이득 벽은 PASS(+0.066, 예측 적중) — 그러나 B3 EARNED/shuffle 통제가 기각:
+  무작위 소뇌 modulation 도 shuffle 0.758 ≈ compose 0.769 → +0.011 < +0.02 FAIL. 이득은 소뇌→기저핵
+  *정렬*이 아니라 modulation *형태*(기저핵 margin 에 bounded 항 추가)에서 온 가짜. anti-tune-to-green
+  통제(B3)가 정확히 제 역할(c9).
+- 교차확인: 두 렌즈 모두 엔진-네이티브 실패 — arbitration(H_1412 B1-fail) AND modulation(H_1413 B3-fail).
+  oracle 헤드룸(+0.243)은 F5 adversarial(소뇌 확신-오답) 가족 지배 → 답을 알아야만 포착 → 어떤 substrate
+  신호도 못 earn → 진짜 (d) 천장(a_break_the_wall) 두 메커니즘으로 확정.
+- 🧱 라 새 CORE op 미배선 · probe self-contained(기존 vforward_err/vbasal_go_value) state/1413-.../.
+- TOY 5-family/3 seed/$0 CPU · scale/다른-fixture(F5-adversarial 없는)/sibling-pair(H_1404 affect×ethics
+  +0.22 큰 margin) UNVERIFIED.
+  card UNIVERSE/cards/H_1413_cerebellum_basal_modulation_compose.md
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1412 — ENGINE-NATIVE re-score of H_1407 (cerebellum×basal compose): 🧱 NON-REPRODUCTION (mirror GREEN ≠ engine GREEN)
 
 a_verified_must_wire 사다리 step-(2): H_1407 의 🟢 DIRECTIONAL-mirror COMPOSE-LIFT 를 LIVE 엔진 faculty
