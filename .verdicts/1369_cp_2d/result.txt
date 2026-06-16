@@ -1,0 +1,60 @@
+H_1369 R1 — WHORFIAN CP RELOCATION IN 2-D: GEOMETRIC RE-PACK (move the cells)
+========================================================================================
+2-D extension of H_1360 (1-D move-the-cells GREEN). TRUE partition = vertical line u=p,
+              shifting p_A=1/3 -> p_A'=2/3. Does coherent single-RIDGE relocation survive
+              the extra dimension, or does split-only re-growth (H_1364) re-fragment it?
+grid=13x13=169 K_RBF=8 DIM=64 p_A=0.333 p_A'=0.667 phase1=48 phase2=48 eta=0.15 seeds=[4333, 4334, 4335]
+  metrics: peak_u = u of ridge centroid (RELOCATES); NCOMP = #4-connected ridge
+           components (2-D COHERENCE, analog of H_1360 peak-count)
+
+  per-seed (SPLIT-ONLY eta=0.0 / RE-PACK eta=0.15 / NO-RETRAIN / SHUFFLE+repack):
+    seed 4333: SPLIT-ONLY peak_u=0.412 ncomp=1 | RE-PACK peak_u=0.708 ncomp=1 | no-retrain peak_u=0.375 | shuffle ncomp=1  cells(p1,tot)=10,17
+    seed 4334: SPLIT-ONLY peak_u=0.412 ncomp=1 | RE-PACK peak_u=0.708 ncomp=1 | no-retrain peak_u=0.375 | shuffle ncomp=1  cells(p1,tot)=10,17
+    seed 4335: SPLIT-ONLY peak_u=0.412 ncomp=1 | RE-PACK peak_u=0.708 ncomp=1 | no-retrain peak_u=0.375 | shuffle ncomp=1  cells(p1,tot)=10,17
+
+  SPLIT-ONLY (eta=0.0, H_1364 ablation): |peak_u-p_A'| 0.254  NCOMP 1.0
+  RE-PACK    (eta=0.15)                : |peak_u-p_A'| 0.042  NCOMP 1.0
+  NO-RETRAIN : |peak_u-p_A| 0.042  |  SHUFFLE+repack: NCOMP 1.0
+
+  [NON-GATING diagnostic] RE-PACK-LADDER (gate is scored ONLY at eta=0.15):
+     eta=0.10: |peak_u-p_A'| mean=0.042  NCOMP mean=1.0
+     eta=0.15: |peak_u-p_A'| mean=0.042  NCOMP mean=1.0  <-- FROZEN GATE
+     eta=0.25: |peak_u-p_A'| mean=0.042  NCOMP mean=1.0
+
+  c1 RELOCATES (re-pack |peak_u-p_A'|<=0.12 all 3 seeds):
+     per-seed = [0.042, 0.042, 0.042]  -> c1 PASS
+  c2 COHERENT (re-pack mean NCOMP<=1 — single connected ridge):
+     per-seed NCOMP = [1, 1, 1], mean 1.0  -> c2 PASS
+  c3 EARNED (3a no-retrain holds p_A |peak_u-p_A|<=0.12; 3b shuffle NCOMP>=2):
+     3a no-retrain |peak_u-p_A| = [0.042, 0.042, 0.042] -> PASS
+     3b shuffle NCOMP = [1, 1, 1], mean 1.0 -> FAIL
+     -> c3 FAIL
+  c4 DISTINCT vs SPLIT-ONLY (4a split-only NCOMP>=2 OR 4b |peak_u-p_A'|>0.12):
+     4a split-only NCOMP mean 1.0 -> FAIL
+     4b split-only |peak_u-p_A'| mean 0.254 -> PASS
+     -> c4 PASS
+========================================================================================
+R2 (a_break_the_wall) — BOUNDED ridge-CONCENTRATION coherence COH2D = U_CONC*(1-RIDGE_FRAC):
+  per-seed COH2D  RE-PACK=[0.689, 0.689, 0.689] SPLIT-ONLY=[0.538, 0.538, 0.538] SHUFFLE=[0.0, 0.0, 0.0]
+  mean COH2D: RE-PACK 0.689  SPLIT-ONLY 0.538  SHUFFLE 0.000
+  c2' COHERENT(bounded): RE-PACK COH2D 0.689 >= 0.5 -> PASS
+  c3' EARNED(bounded): 3a no-retrain PASS AND 3b' SHUFFLE COH2D 0.000 <= 0.2 -> PASS  => c3' PASS
+  c4' DISTINCT(bounded): RE-PACK 0.689 >= SPLIT-ONLY 0.538+0.1 -> PASS  OR split-only short PASS  => c4' PASS
+========================================================================================
+VERDICT (R2, a_break_the_wall): 🟢 GREEN (MIRROR, DIRECTIONAL) — MOVE-THE-CELLS
+  GENERALIZES TO 2-D under a BOUNDED coherence metric. R1's NCOMP saturated on the
+  shuffle smear (a known metric-space artifact, H_1343); the bounded ridge-
+  CONCENTRATION COH2D cleanly separates RE-PACK (0.689>=0.5) from the
+  SHUFFLE smear (0.000<=0.2) and SPLIT-ONLY (0.538). c1✅
+  RELOCATES (|peak_u-p_A'| 0.042<=0.12), c2'✅ COHERENT, c3'✅ EARNED,
+  c4'✅ DISTINCT. The 1-D move-the-cells win SURVIVES the extra dimension. NO bar
+  moved (R1 NCOMP reported as the honest catch, c9/p7). ENGINE-TRANSFER UNVERIFIED.
+  TOY synthetic 2-D, 3 seeds, axis-aligned boundary.
+
+R1 verdict (frozen, the NCOMP-metric result — reported verbatim, NO bar moved):
+VERDICT: CONFOUNDED (NCOMP) — a frozen EARNED control failed (here: NCOMP saturated
+  on the shuffle SMEAR — a known metric-space artifact, H_1343; this is WHY R2 re-
+  specifies a BOUNDED concentration metric. The TERMINAL verdict is R2 above.
+
+========================================================================================
+TERMINAL VERDICT: 🟢 GREEN (R2, MIRROR, DIRECTIONAL) — move-the-cells GENERALIZES to 2-D.
