@@ -321,9 +321,17 @@ def _chat_byte_conscious(m, cfg):
 
 
 def _chat_cdv2(m, cfg):
-    """`omega` engine — ConsciousDecoderV2 (byte). Reuses UNIVERSE/conscious_decoder."""
+    """`omega` engine — ConsciousDecoderV2 (byte). Reuses state/universe-probes/conscious_decoder.py."""
     import torch
-    from UNIVERSE.conscious_decoder import ConsciousDecoderV2  # type: ignore
+    import importlib.util
+    # conscious_decoder.py relocated 2026-06-16 UNIVERSE/ -> state/universe-probes/
+    # (dir has a hyphen, so load by file path rather than `from ... import`).
+    _cd_spec = importlib.util.spec_from_file_location(
+        "_anima_conscious_decoder",
+        str(REPO / "state" / "universe-probes" / "conscious_decoder.py"))
+    _cd_mod = importlib.util.module_from_spec(_cd_spec)
+    _cd_spec.loader.exec_module(_cd_mod)
+    ConsciousDecoderV2 = _cd_mod.ConsciousDecoderV2
     ckpt = _find_weight(m, "omega_cdv2_d384.pt")
     if ckpt is None:
         print(red("  ‹weight 파일 없음›"))

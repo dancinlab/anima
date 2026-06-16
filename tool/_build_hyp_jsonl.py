@@ -24,12 +24,17 @@ import re
 import os
 import glob
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
-CARDS_DIR = os.path.join(ROOT, "cards")
-MD = os.path.join(ROOT, "HYPOTHESES.md")
-OUT = os.path.join(ROOT, "HYPOTHESES.jsonl")
-# repo root (one level above UNIVERSE/) — archive snapshots + state/ live here.
-REPO = os.path.dirname(ROOT)
+# This script lives in tool/ (relocated 2026-06-16 from UNIVERSE/); the index +
+# cards it builds live in UNIVERSE/ (a_hypothesis_register two surfaces). tool/ and
+# UNIVERSE/ are both siblings under the repo root.
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UNIVERSE = os.path.join(REPO, "UNIVERSE")
+CARDS_DIR = os.path.join(UNIVERSE, "cards")
+# Legacy prose overview was retired from UNIVERSE/HYPOTHESES.md → state/universe-overview.md;
+# verbatim legacy md rows now survive only in the existing HYPOTHESES.jsonl (loaded below).
+MD = os.path.join(REPO, "state", "universe-overview.md")
+OUT = os.path.join(UNIVERSE, "HYPOTHESES.jsonl")
+# archive snapshots + tension-link harness live under the repo root.
 ARCHIVE_DIR = os.path.join(REPO, "archive", "hypotheses_snapshots")
 TL_HARNESS = os.path.join(REPO, "state", "tension-link-harness")
 

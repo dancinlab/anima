@@ -285,7 +285,7 @@ def main():
     compute_inline_gauges = None
     if gauge_every and gauge_every > 0:
         try:
-            sys.path.insert(0, os.path.join(os.path.dirname(_CLM), "UNIVERSE"))
+            sys.path.insert(0, os.path.join(os.path.dirname(_CLM), "tool"))
             from gauge_lib import compute_inline_gauges  # noqa: E402
             os.makedirs(os.path.dirname(gauges_path) or ".", exist_ok=True)
             print(f"GAUGES monitor-only every={gauge_every} -> {gauges_path} "

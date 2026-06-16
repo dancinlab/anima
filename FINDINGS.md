@@ -182,4 +182,4 @@ Everything is open (MIT), every claim has a frozen verdict on disk, and **closed
 
 ---
 
-*Pointers: [ARCHITECTURE.md](ARCHITECTURE.md) (brain-structure map) · [MODEL.md](MODEL.md) (gate scoreboard) · [CLAUDE.md](CLAUDE.md) (philosophy + governance) · [.verdicts/](.verdicts) (frozen verbatim verdicts) · [UNIVERSE/HYPOTHESES.md](UNIVERSE/HYPOTHESES.md) (per-H index). — dancinlab / anima*
+*Pointers: [ARCHITECTURE.md](ARCHITECTURE.md) (brain-structure map) · [MODEL.md](MODEL.md) (gate scoreboard) · [CLAUDE.md](CLAUDE.md) (philosophy + governance) · [.verdicts/](.verdicts) (frozen verbatim verdicts) · [UNIVERSE/HYPOTHESES.jsonl](UNIVERSE/HYPOTHESES.jsonl) (per-H index). — dancinlab / anima*

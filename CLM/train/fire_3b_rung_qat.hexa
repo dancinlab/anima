@@ -162,7 +162,7 @@ fn main() {
     println("  gauges = MONITOR-ONLY every " + to_string(gauge_every())
         + " steps -> out/gauges_3b_*.jsonl (G1/G2/G6/phi_proxy/mitosis_cells + val_ce · "
         + "NOT in loss · NOT a gate · phi_proxy!=IIT4 · mitosis=substrate · a_train_inline_gauge)")
-    println("  monitor = python3 UNIVERSE/gauge_monitor.py --follow out/gauges_3b_A_s42.jsonl --log out/fire_3b_A.log")
+    println("  monitor = python3 tool/gauge_monitor.py --follow out/gauges_3b_A_s42.jsonl --log out/fire_3b_A.log")
     println("  frozen verdict still post-train on CORE engine mount (a_engine_measured_verdict):")
     println("dispatch (3-seed-arm sweep · DDP · REAL trainer CLI):")
     for arm in arms() { println("  " + fire_cmd(arm)) }

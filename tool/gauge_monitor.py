@@ -31,10 +31,10 @@ THE SIX GAUGES RENDERED
 USAGE
 =====
   # render once from a gauges.jsonl (smoke / one-shot):
-  python3 UNIVERSE/gauge_monitor.py --once gauges.jsonl
+  python3 tool/gauge_monitor.py --once gauges.jsonl
 
   # live follow a running fire's gauges.jsonl (+ optionally tail the train log):
-  python3 UNIVERSE/gauge_monitor.py --follow out/gauges.jsonl --log out/fire_3b.log
+  python3 tool/gauge_monitor.py --follow out/gauges.jsonl --log out/fire_3b.log
 
 Pure stdlib (no torch / numpy / network) so it runs on a laptop while the fire runs
 on the pod (a_cpu_local_no_waiter: inline polling, never await a Monitor/waiter).
