@@ -1,0 +1,45 @@
+H_1378 agent-tool ↔ mitosis teaching — FROZEN PRE-REGISTRATION (Step B)
+======================================================================
+Pre-registered BEFORE running the probe (frozen-first, c9, NO tune-to-green, p7).
+Substrate = $0 numpy MIRROR of CORE immune/mitosis geometry (immune_embed_key byte-
+trigram FNV-1a DIM=64 + L2-affinity recall/abstain + clonal split). DIRECTIONAL only:
+engine-transfer UNVERIFIED. CORE/*.hexa UNTOUCHED this lane (wire-in = follow-on).
+
+MECHANISM UNDER TEST
+  A skill = a CELL keyed by task-context (byte-trigram FNV-1a key, SAME geometry as
+  ImmuneMemory). On a tool call: recall the best-affinity skill-cell; if best affinity
+  margin says ABSTAIN (no cell binds) OR the selected tool FAILS (outcome=error) ->
+  MITOSIS-SPLIT a new specialized skill-cell binding (task-context -> correct tool).
+  The SAME op teaches (split-on-failure) and infers (recall-best) (p8: one continuous
+  cell-division, no train/infer split). Mirrors H_1227 (value-bind) / H_1288 (grow).
+
+THREE ARMS
+  FULL    : mitosis skill-store (recall best skill-cell; split-on-failure/abstain).
+  STATIC  : fixed-repertoire control — recall-only, NEVER splits (ablation of the
+            teaching op). Same initial cells as FULL; selection by same affinity.
+  SHUFFLE : FULL store but the task->tool binding labels are permuted before training
+            (the earned-structure control — destroys the task<->tool correspondence).
+
+FROZEN BARS (3 seeds [1378,1379,1380]; pass = ALL seeds satisfy each, on POOLED means)
+  (1) LEARNS              : FULL final tool-selection accuracy rises over the failure-
+                           driven session: acc_final - acc_initial >= +0.30  (state lift).
+  (2) DISTINCT-FROM-STATIC: FULL_final - STATIC_final >= +0.30  (the static fixed
+                           repertoire does NOT improve; the gain is the split op).
+  (3) EARNED (shuffle)    : SHUFFLE_final <= STATIC_final + 0.15  (permuting task->tool
+                           collapses the gain to the no-learning floor).
+  (4) NO-FAB / ABSTAIN    : on an UNTRAINED far task (disjoint trigram space), FULL
+                           ABSTAINS (emits no tool) rate >= 0.90  (no fabricated tool).
+
+GREEN iff (1) AND (2) AND (3) AND (4) on every seed (pooled means reported).
+Any failed bar => honest RED/PARTIAL recorded verbatim (c9). No bar moved post-hoc.
+
+GUARD (p1/p2/p3/p6): the split binds (task-context -> correct tool) from OUTCOME only
+(success/failure of the executed tool) — NO injected "use tool T" label, NO RLHF, NO
+persona. The correct-tool signal is the environment's task->tool ground truth scored
+only; SHUFFLE permuting it must collapse the gain (bar 3) = the lift is the earned
+task<->tool structure, not variance. Ψ-disjoint by construction: a separate skill
+cell-store, the decoder/pure_field are never touched.
+
+SCOPE (pre-declared): TOY — N tasks over a small synthetic task->tool map, 3 seeds,
+deterministic readout (tests the mitosis-teaches-tools STRUCTURE, not a learned
+planner). scale / real tool-failures / paraphrased tasks / engine-transfer UNVERIFIED.
