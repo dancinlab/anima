@@ -1,3 +1,9 @@
+## 2026-06-17 — governance(CLAUDE.md): 가설↔배선 규율 강화 (a_verified_must_wire + a_hypothesis_register)
+
+GREEN 검증 결과가 DIRECTIONAL 미러로만 남고 엔진배선 없이 묻히는 이번-세션 실패모드(lane-합성 가족 3개 Φ-lift GREEN → 0개 wired) 재발 방지.
+- **a_verified_must_wire** — 4칸 배선 사다리 명시: (1) DIRECTIONAL 미러 GREEN → (2) 엔진-네이티브 재검증(byte-exact, frozen bar) → (3) live CORE/*.hexa wire-in → (4) ARCHITECTURE.json lockstep. 미러 GREEN 을 내면 같은 사이클에 (2)~(4) follow-on 을 ING 에 등록하는 것이 의무(미등록 후 다음 가설 진행 = 위반). 여러 GREEN 을 내는 연구 PROGRAM 은 닫을 때 각 결과의 배선상태(mirror N · wired K · 미배선 ING #id)를 열거해야 'depletion' 으로 닫힌다.
+- **a_hypothesis_register** — 🟢 GREEN 카드에 `wired:` 상태축 의무화: `DIRECTIONAL-mirror` | `engine-native` | `WIRED-live`. WIRED-live 미만이면 배선 follow-on 의 ING id 를 카드에 적어 audit 가능하게.
+
 # Changelog
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
