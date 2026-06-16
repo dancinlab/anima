@@ -116,6 +116,13 @@
       "reason": "hardcore: 흩어진 문서 생성 감지 — AI 산출물은 **단일 문서 2개**로 통합: ①최종 아키텍처 = `ARCHITECTURE.md` (업데이트형, 덮어쓰기) ②이력/결정 = `CHANGELOG.md` (추가형). 임시 분석물은 `scripts/scratch/`. 부득이 분리해야 하면 그 문서 상단에 SSOT(ARCHITECTURE.md)로 가는 **quickref 1줄** 필수(없으면 lint DOC-NO-QUICKREF)."
     },
     {
+      "id": "H-UNIVERSE-CODE",
+      "desc": "UNIVERSE/ 에 .py/.hexa/코드/result 등 비-카드 파일 생성 금지 — a_hypothesis_register (UNIVERSE/ = HYPOTHESES.jsonl + cards/ 단 둘)",
+      "path_match": "(^|/)UNIVERSE/(?!cards/)(?!HYPOTHESES\\.jsonl$).+",
+      "action": "block",
+      "reason": "a_hypothesis_register: UNIVERSE/ 에는 .py·.hexa·코드·result 파일을 두지 않는다 — 단 둘(UNIVERSE/HYPOTHESES.jsonl + UNIVERSE/cards/H_*.md)만. 가설 카드는 `UNIVERSE/cards/`, 프로브 코드/결과물은 `state/<slug>/` 에 두고 jsonl 의 그 가설 행 `artifacts` 로 가리킬 것."
+    },
+    {
       "id": "H-DEBUG-LEFTOVER",
       "desc": "debug print leftovers in committed source",
       "path_match": "\\.(ts|tsx|js|jsx|mjs|cjs|rs|go)$",

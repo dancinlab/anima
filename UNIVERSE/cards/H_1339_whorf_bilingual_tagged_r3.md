@@ -131,7 +131,7 @@ brain-side wiring of the tagged CP read into emit/recall (currently a measuremen
 
 `CLAIMS.tape @C h1339_whorf_bilingual_tagged_r3` · card
 `UNIVERSE/cards/H_1339_whorf_bilingual_tagged_r3.md` · probe
-`UNIVERSE/h1339_whorf_bilingual_tagged_r3.py` · engine
+`state/whorf-bilingual-tagged-r3/h1339_whorf_bilingual_tagged_r3.py` · engine
 `CORE/engine_cli.hexa §BILINGUAL TAGGED CP` + `CORE/engine_cli_smoke.hexa` cases 86–91 · verdicts
 `.verdicts/1339_whorf_bilingual_tagged_r3/{FREEZE,result}.txt`
 
