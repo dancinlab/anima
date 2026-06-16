@@ -5136,3 +5136,28 @@ pub fn bpe_byte_fair_ce(jh: JamoHead, Xte: [[float]], Yte: [int], nby_te: [int])
     if tot_bytes == 0 { return 0.0 }
     return s / to_float(tot_bytes)
 }
+
+// jamo_head_argmax — the EMIT-BIAS reader (H_1391, the morphology unit reaches the decoder). Given a
+// grown count head `jh` and ONE unit-space context feature `feat`, return the head's ARGMAX next-unit
+// id for the cell that OWNS `feat` (the engine's OWN VAdaptField Voronoi nearest-cell + the per-cell
+// next-unit distribution argmax). This is the morpheme-coherent continuation the count head predicts —
+// the SAME head bpe_byte_fair_ce SCORES, now read for its single most-likely next UNIT instead of CE.
+// Whereas bpe_byte_fair_ce is the SCORER role (§6.5d), jamo_head_argmax is the EMIT role: the predicted
+// next morpheme-unit is what biases the next-byte emission (generator §6.5e gen_bpe_consult_emit). The
+// head NEVER returns an emit/silence decision and NEVER touches Ψ — it returns a unit id (pure read).
+// Returns -1 if the head is empty (the consult then stays inert, no fabrication, p5).
+pub fn jamo_head_argmax(jh: JamoHead, feat: [float]) -> int {
+    if len(jh.heads) == 0 { return -1 }
+    let af = _jh_field(jh.centers, len(jh.centers))
+    let own = vadapt_field_nearest_idx(af, feat)
+    if own < 0 || own >= len(jh.heads) { return -1 }
+    let row = jh.heads[own]
+    let mut best = 0
+    let mut bestp = row[0]
+    let mut k = 1
+    while k < len(row) {
+        if row[k] > bestp { bestp = row[k]  best = k }
+        k = k + 1
+    }
+    return best
+}

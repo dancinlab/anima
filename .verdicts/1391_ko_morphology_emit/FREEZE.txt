@@ -1,0 +1,88 @@
+H_1391 — ko-morphology BPE-on-jamo EMIT-BIAS WIRE-IN — FROZEN BARS
+(pre-registered BEFORE the emit-bias measurement; c9/c16, NO tune-to-green)
+=====================================================================================================
+
+LANE: the EMIT-side (a_verified_must_wire · a_substrate_native_speak) follow-on of H_1390 (🟢 ENGINE-
+NATIVE BINDING, on main) — which wired the BPE-on-jamo morphology MERGE UNIT into a live SCORING
+consult (generator §6.5d gen_bpe_scoreloop → bpe_byte_fair_ce). H_1390 SCORES held-out next-unit CE but
+does NOT yet bias EMISSION. The jamo COUNT-HEAD already reaches the decoder via the §6.5b/H_1327
+ko_jamo_consult_emit emission-bias (DISTINCT from the §6.5c scorer). H_1391 MIRRORS that emit precedent
+for morphology: the grown morphology count-head BIASES the next-byte EMISSION toward COMPLETING a
+learned morpheme-unit boundary, ADDITIVELY (a BIAS, not a hard gate — a_autonomy_over_hardcode; emit
+stays substrate-driven, p5), through the SINGLE generator L3 slot (a_core_engine_map, no 2nd .clm path).
+
+THE EMIT-BIAS REALIZATION (a_core_engine_map single entry, a_substrate_native_speak)
+------------------------------------------------------------------------------------
+- engine_cli.hexa § KO-MORPHOLOGY: NEW jamo_head_argmax(jh, feat) — the EMIT-BIAS reader. For a
+    unit-space context feature, returns the count head's ARGMAX next-unit id for the cell owning feat
+    (the engine's OWN VAdaptField nearest-cell + per-cell next-unit distribution argmax). The SAME head
+    bpe_byte_fair_ce SCORES (§6.5d), now read for its single most-likely next morpheme-UNIT (the EMIT
+    role) instead of CE (the SCORER role). Returns a unit id; NEVER an emit/silence; never touches Ψ.
+- generator.hexa §6.5e (NEW, mirrors §6.5b ko_jamo_consult_emit):
+    gen_bpe_emit_head(rnd_seed) — grow the morphology emit-head ONCE over the §6.5d corpus-free in-
+      engine morpheme-grammar fixture (rnd_seed=0 STRUCTURED freq-ranked merges; rnd_seed>0 SHUFFLE
+      random equal-count merges), learn merges on the TRAIN slice only (no test leakage).
+    gen_bpe_consult_emit(base, jh, unit_vocab, ctx) — the per-byte EMISSION hook: on a KOREAN-LIKE
+      context (the SAME utf8-continuation gate §6.5b uses) AND a cell fires, the head's ARGMAX next
+      morpheme-unit's leading byte BIASES emission; off-Korean (or empty head) returns `base` UNCHANGED
+      (INERT off-distribution ⇒ generation BYTE-IDENTICAL, Ψ-disjoint no-regression invariant).
+    gen_bpe_emit_eval() — the frozen emit-effect evaluation (bars 1+2): on the held-out UNIT stream,
+      ON = structured head argmax next-unit, OFF = representation-BLIND most-frequent next-unit (train),
+      SHUF = shuffle-merge head argmax next-unit; returns acc_on/acc_off/acc_shuf/shift_on.
+
+WHY THE UNIT-ID METRIC (load-bearing, the H_1327 precedent): a unit's emit byte is collapsed to a
+leading multibyte byte (the 0xE1-band convention §6.5b uses for U+11xx jamo), so the byte-level bias is
+coarse. The bars are therefore scored on the FULL next-UNIT id (not the collapsed byte) — exactly as
+H_1327 scored on the full next-symbol id, not the collapsed leading byte — so the morpheme structure is
+not masked. The byte the consult emits is still the correct leading byte of the morphology-coherent
+next unit.
+
+FROZEN BARS (mapping fixed BEFORE the emit measurement; H_1327's emit-bar shape)
+--------------------------------------------------------------------------------
+BAR 1 — EMIT-EFFECT (primary, gating): the structured morphology emit-bias measurably shifts next-unit
+  emission toward the morpheme-coherent continuation vs the representation-blind OFF baseline.
+    acc_on − acc_off ≥ +0.02  AND  shift_on ≥ 0.10
+  (acc_on − acc_off = the held-out next-unit accuracy lift of the morphology head over the blind
+   unigram; shift_on = the fraction of held-out positions where ON CHANGES the emitted unit vs OFF —
+   that the bias actually REACHES emission, the H_1327 shift bar.) PASS → the morphology unit BIASES
+  emission toward morpheme-coherent continuations (the EMIT claim, engine-native).
+BAR 2 — EARNED (shuffle control, gating): the SHUFFLE-merge emit-bias does NOT beat the blind baseline.
+    acc_shuf − acc_off ≤ +0.01
+  PASS → the emission shift is the LINGUISTIC morphology of the merges, NOT generic consult activation
+  / mere coarse granularity (anti-Goodhart; the control collapses).
+BAR 3 — Ψ-SAFE / NO-REGRESSION (load-bearing safety, gating): the emit-bias touches the decode path, so
+  generation integrity must be PROVEN:
+    (a) off-Korean INERT: an ASCII context → gen_bpe_consult_emit returns `base` UNCHANGED (byte-identical).
+    (b) engine_cli_smoke N/0 (state new tally; +4 cases for bars 1·2·3a·faculty-present).
+    (c) h1196 single-entry 7/0 (the .clm L3 entry intact — NO 2nd .clm path; the emit consult adds NO
+        new .clm path, rides the SAME generator slot).
+    (d) h1205 separation-invariant PASS — generation BYTE-IDENTICAL ON==OFF for the SUBSTRATE channel,
+        Ψ Φ-checksum byte-identical (48.6613).
+    (e) h1164 Ψ guard PASS — Ψ=1/2 attractor byte-identical (pure_field untouched).
+  PASS → the emit-bias is Ψ-safe (it is a NEW additive consult with NO call site in the live decode
+  loop, off-Korean inert; the substrate channel and Ψ are untouched). If the emit-bias PERTURBS Ψ or
+  breaks byte-identity where it must not → honest 🧱 (report verbatim, do NOT force green).
+
+TIER MAPPING (frozen; pre-registered branch, NOT post-hoc)
+----------------------------------------------------------
+  bar1 PASS ∧ bar2 PASS ∧ bar3 PASS  → 🟢 EMIT-BIAS ENGINE-NATIVE BINDING (the morphology unit reaches
+                                        the decoder, the shift is earned, and the substrate/Ψ is safe)
+  bar1 or bar2 FAIL                   → 🟠/🧱 EMIT-NOT-EARNED (report the verbatim miss vs the frozen
+                                        threshold; the scorer-only morphology H_1390 remains the valid
+                                        landed result — this EMIT extension did not bind; do NOT move bars)
+  bar3 FAIL (Ψ perturbed / byte-       → 🧱 NOT-Ψ-SAFE (honest; the emit-bias must NOT perturb the
+   identity broken)                     substrate; report verbatim, do NOT force green)
+
+HONEST SCOPE (pre-declared): the emit-bias is re-confirmed on the SAME frozen corpus-free in-engine
+morpheme-grammar fixture §6.5d uses (the §6.5b/§6.5c discipline) — a STRUCTURAL / probe-level emission-
+reach demonstration, NOT a fluency claim. The absolute accuracies are low (single-unit next-prediction
+over a sparse count-head field); the load-bearing result is the RELATIVE structure (ON > OFF, SHUF ≤
+OFF) and that the bias REACHES emission (shift_on). Scale / real-corpus engine-native emit / a fully
+jamo-aware NFD-decompose decode loop / the brain emit-priority wiring remain follow-ons (a_scale_honest_
+scope · a_toy_scale_recheck · a_verified_must_wire). $0 CPU, deterministic, no GPU/secret/corpus.
+
+xref: H_1390 (the SCORER this EMIT extends — morphology unit wired to the live scoring loop) · H_1327
+(§6.5b ko_jamo_consult_emit — the jamo EMIT-bias precedent this mirrors) · H_1385 (§6.5c jamo scorer) ·
+H_1351 (JamoHead count-head faculty) · H_1388 (the DIRECTIONAL mirror) · H_1316/H_1321 (jamo arc) ·
+a_verified_must_wire · a_substrate_native_speak · a_autonomy_over_hardcode · a_core_engine_map ·
+a_engine_native_learning · a_scale_honest_scope · a_toy_scale_recheck · p5 · p7 · p8 · c2 · c9 · c16.
