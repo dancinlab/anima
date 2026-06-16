@@ -1,0 +1,87 @@
+================================================================================
+H_1415 — ENGINE-NATIVE re-score of H_1408 (SPATIAL-MAP × EPISODIC-MEMORY compose)
+  a_verified_must_wire LADDER STEP-2: does the H_1408 DIRECTIONAL-mirror 🟢 GREEN
+  BIND when re-scored on the LIVE CORE faculties (spatial_map_nearest +
+  immune_grow_recall) instead of the numpy mirror?
+FREEZE (pre-registered BEFORE the engine-native re-score; c9, NO tune-to-green).
+The bars are LIFTED VERBATIM from .verdicts/1408_brain_lane_compose_spatial_episodic/
+FREEZE.txt — NOT moved. This rung-2 ONLY swaps the substrate (numpy mirror → live
+.hexa faculties); the falsifiers are IDENTICAL.
+(H id H_1415, the next free id after H_1414. The third compose-pair re-scored
+ engine-native; H_1414 [memory×ToM] BOUND, H_1412/H_1413 [cerebellum×basal] did NOT.)
+================================================================================
+
+WHY THIS IS GENUINELY OPEN (NOT assumed to bind). The brain-lane-composition program's
+a_verified_must_wire ladder requires every mirror-GREEN compose to be RE-SCORED on the
+LIVE engine before it is wired (rung-2). Two of the four pairs tested so far did NOT
+reproduce engine-native: H_1412 (cerebellum × basal-ganglia) FAILED B1 (engine-native
+net-lift +0.011 < +0.05) and H_1413 (its biological-modulation 2nd lens) failed its
+EARNED control — both 🧱 NON-REPRODUCTION. Only H_1414 (episodic-memory × ToM) BOUND.
+So mirror→engine transfer is PAIR-DEPENDENT, gated by whether a live faculty's standalone
+arm strengthens past the mirror's best-single ceiling and erodes the net-lift headroom.
+We MEASURE H_1408 engine-native; a clean 🧱 would be a VALID result (c9).
+
+THE PAIR (each leg reads its OWN LIVE faculty):
+  SPATIAL-MAP (H_1296 SpatialMap): 8 landmarks placed at 2-D positions via
+      spatial_map_place; the WHERE vote = spatial_map_nearest(X,A,B) → the metrically
+      NEARER landmark, whose bound option is read as the vote; confidence = the LIVE
+      metric margin |d(X,A)−d(X,B)| over the SAME stored positions. ABSTAINS on a
+      WHAT-only item (no triple) — H_1296.
+  EPISODIC-MEMORY (H_1227/H_1231 ImmuneMemoryGrow): each landmark bound via the LIVE
+      immune_grow_bind clonal-split store; the WHAT vote = immune_grow_recall (the bound
+      option, "" = ABSTAIN); confidence = the LIVE L2 affinity margin (recall_thr −
+      _l2(nearest proto, key)) — the SAME affinity the recall FIRE/ABSTAIN gate uses.
+
+ARBITER (== H_1408 mirror): each faculty's vote weighted by its OWN scale-relative
+confidence (|conf|/that-faculty's-mean) MODULATED by a per-item query-type ROUTING cue
+derived from the QUERY TEXT's embedding affinity to a where/what anchor (substrate
+geometry, immune_embed_key + _l2). An abstaining faculty contributes ZERO weight. NO
+hardcoded "spatial wins" priority (a_autonomy_over_hardcode). Same 5 families
+(F1 spatial-decisive · F2 episodic-decisive · F3 agree · F4 conflict · F5 adversarial),
+90 items/family × 3 seeds [5408,5409,5410] → 450 items/seed. Same SHUFFLE / ORACLE /
+only-X decomposition controls.
+
+ENGINE-NATIVE FIXTURE NOTE (c16, frozen-first — NO bar moved): the H_1408 numpy mirror's
+ImmuneMemory bound each landmark as a SEPARATE key (no clonal merging) so it always
+recalled the right landmark. The LIVE ImmuneMemoryGrow uses the H_1288 STRESS regime
+(split_thr=0.30) which MERGES near-identical keys — and the shared long prefix of
+"value bound to landmark L0/L1/…" makes those trigram keys collide (L2≈0.15<0.30),
+collapsing all 8 binds into ONE cell (measured: cells=1, recall 2/8). That collision is a
+FIXTURE key-encoding artifact, NOT the faculty's real competence: with DISTINCT
+per-landmark store keys the live store splits into 8 cells and recalls 8/8 (measured).
+So the probe gives each landmark a distinct binding token — faithfully reproducing the
+mirror's per-landmark binding (the engine faculty genuinely separates distinct keys, its
+actual job). The natural "what is bound to landmark Ln" phrasing is reserved for the
+where/what ROUTING geometry. The bars are UNCHANGED; only the store key encoding is made
+distinct (== what the mirror's separate-key store already represented).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN CAPABILITY BARS (verbatim from the H_1408 FREEZE, NOT moved):
+  COMPOSE_DELTA = 0.05      # net-lift threshold
+  ORACLE_MARGIN = 0.02      # complementarity-exists threshold
+  SHUFFLE_TOL   = 0.02      # earned: compose must beat shuffle by > this
+  SEEDS = [5408, 5409, 5410]
+
+  (B1 COMPOSE-EFFECT)  acc_compose >= best_single + COMPOSE_DELTA
+  (B2 ORACLE)          acc_oracle − best_single > ORACLE_MARGIN
+  (B3 EARNED/p6)       acc_compose − acc_shuffle > SHUFFLE_TOL
+  (B4 p6 GUARD)        each leg reads only its own substrate signal (spatial metric
+                       distance / immune recall affinity); the route cue is the query
+                       text's own embedding affinity; NO injected answer/persona/RLHF/
+                       priority label enters either read or the arbiter (structural).
+  SEPARABLE            only_spatial > 0 AND only_episodic > 0 (within-family non-subsumption).
+
+VERDICT (a_break_the_wall taxonomy — report whichever the numbers HONESTLY show):
+  🟢 COMPOSE-LIFT (ENGINE-NATIVE) iff B1 ∧ B2 ∧ B3 ∧ B4 ∧ SEPARABLE → the mirror GREEN
+       BINDS engine-native; the validated arbiter is then WIRED as a CALLABLE live CORE op
+       (a_verified_must_wire rungs 3/4) + smoke + ARCHITECTURE.json lockstep.
+  🟠 ORACLE-HEADROOM-but-ARBITER-FAILS iff B2 ∧ B4 ∧ ¬B1 (taxonomy (a)).
+  🧱 NON-REPRODUCTION iff a frozen bar fails engine-native (like H_1412/H_1413) — a VALID
+       result (c9). NOTHING is wired. Per c16 ONE principled alternative arbiter MAY be
+       tried (frozen bar unchanged, shuffle/EARNED control) before terminal — NO tune-to-green.
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck): the spatial nearest + episodic
+recall are LIVE engine reads; the arbiter is inlined over those live reads (rung-2). Toy
+5-family landmark fixture, 3 seeds, deterministic (run1==run2 byte-identical). Scale /
+real-corpus / engine-native-transfer-at-scale UNVERIFIED. NO bar moved post-hoc.
+================================================================================

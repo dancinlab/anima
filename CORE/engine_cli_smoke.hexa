@@ -522,6 +522,57 @@ fn main() {
                   && (mem_tom_compose_routed(mt_mem, mt_tom, "mt_agree", 0.5, 1.0, 1.0) == "basket")
     if _assert_b("case_136_memtom_both_abstain_no_fab", true, mt_abstain) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (h3) SPATIAL×EPISODIC COMPOSE ARBITER (H_1415 R3, rung-3 wire-in; cases 137-140) ──
+    // The §SPATIAL×EPISODIC COMPOSE op composes the LIVE SpatialMap (H_1296 metric map) and the
+    // LIVE ImmuneMemoryGrow (H_1227/H_1231 episodic store) on ONE landmark-scene decision. ADDITIVE
+    // + Ψ-disjoint (a READ over the map positions + the cell population; mutates neither; returns an
+    // option class, never an emit/silence decision; never touches Ψ). These cases prove the
+    // arbiter's four branches deterministically on a small live 3-landmark scene (the H_1415
+    // mechanism, now a CALLABLE live op). The full 4-bar engine-native re-score (compose 0.760741,
+    // byte-exact) = state/1408_spatial_episodic_engine_compose/h1408_spatial_episodic_LIVEOP_probe.hexa.
+    //   scene: L0@(0,0) L1@(1,0) L2@(9,0). episodic store binds each landmark a DISTINCT key→option.
+    //   mean normalizers = 1.0 (the relative confidence is exercised through the live margins).
+    let mut se_map = spatial_map_place(spatial_map_new(), "L0", 0.0, 0.0)
+    se_map = spatial_map_place(se_map, "L1", 1.0, 0.0)
+    se_map = spatial_map_place(se_map, "L2", 9.0, 0.0)
+    let mut se_mem = immune_grow_new(immune_embed_key("se_landmark_key_0"), "optA", 64, 64, true)   // L0→optA
+    se_mem = immune_grow_bind(se_mem, immune_embed_key("se_landmark_key_1"), "optB", cfg_on)         // L1→optB
+    se_mem = immune_grow_bind(se_mem, immune_embed_key("se_landmark_key_2"), "optA", cfg_on)         // L2→optA
+
+    // case 137 (AGREE → shared vote) : both legs vote option 1. spatial: X=L0, nearer of (L1,L2) is
+    //   L1 → opt_a=1 (we pass opt_a=1,opt_b=0); episodic: recall L1 → "optB"=1. AGREE → compose=1.
+    let se_sv137 = spatial_episodic_spatial_vote(se_map, "L0", "L1", "L2", 1, 0)        // [vote=1, margin>0]
+    let se_ev137 = spatial_episodic_episodic_vote(se_mem, immune_embed_key("se_landmark_key_1"))  // [vote=1, ...]
+    let se_wc137 = spatial_episodic_where_cue("which landmark is nearer to L1 or L2")
+    if _assert_b("case_137_spatepi_agree_shared_vote", true,
+                 to_int(se_sv137[0]) == 1 && to_int(se_ev137[0]) == 1
+                 && spatial_episodic_compose(to_int(se_sv137[0]), se_sv137[1], to_int(se_ev137[0]), se_ev137[1], 1.0, 1.0, se_wc137) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 138 (CONFLICT, where-typed → spatial wins) : spatial votes 0, episodic votes 1; a
+    //   where-typed query (where_cue→1) boosts the spatial leg ⇒ compose = 0 (spatial's vote).
+    let se_wc138 = spatial_episodic_where_cue("which landmark is nearer to L1 or L2 for L0")
+    if _assert_b("case_138_spatepi_conflict_where_spatial_wins", true,
+                 se_wc138 > 0.5
+                 && spatial_episodic_compose(0, 5.0, 1, 5.0, 1.0, 1.0, se_wc138) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 139 (CONFLICT, what-typed → episodic wins) : SAME conflicting votes (spatial 0, episodic 1),
+    //   but a what-typed query (where_cue→0) boosts the episodic leg ⇒ compose = 1 (the episodic vote).
+    //   The cue DISSOCIATES the two legs on one decision (the load-bearing query routing).
+    let se_wc139 = spatial_episodic_where_cue("what is bound to landmark L1")
+    if _assert_b("case_139_spatepi_conflict_what_episodic_wins", true,
+                 se_wc139 < 0.5
+                 && spatial_episodic_compose(0, 5.0, 1, 5.0, 1.0, 1.0, se_wc139) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 140 (ABSTAIN discipline) : a missing-landmark spatial query ABSTAINS (-1) and an untaught
+    //   episodic key ABSTAINS (-1); compose of both-abstain returns -1 (never fabricates, p5/H_1227).
+    //   When ONE leg abstains the other's vote carries (spatial abstains → episodic 1 → compose 1).
+    let se_sv140 = spatial_episodic_spatial_vote(se_map, "Lx", "L1", "L2", 1, 0)        // missing X → abstain
+    let se_ev140 = spatial_episodic_episodic_vote(se_mem, immune_embed_key("se_untaught_zzz"))  // untaught → abstain
+    let se_abst = to_int(se_sv140[0]) < 0 && to_int(se_ev140[0]) < 0
+               && spatial_episodic_compose(0 - 1, 0.0, 0 - 1, 0.0, 1.0, 1.0, 0.5) == 0 - 1
+               && spatial_episodic_compose(0 - 1, 0.0, 1, 5.0, 1.0, 1.0, 0.5) == 1
+    if _assert_b("case_140_spatepi_abstain_discipline", true, se_abst) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── (i) HIERARCHICAL-PFC GOAL→SUBGOAL CONTROLLER (H_1294 R2, HD31) ──────────────
     // The hier controller is ADDITIVE + Ψ-disjoint (a READ over the immune margin + cue
     // cosine + its OWN pointer; no store mutation, no pure_field touch). These cases
