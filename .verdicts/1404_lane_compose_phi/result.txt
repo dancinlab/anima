@@ -1,0 +1,52 @@
+H_1404 — lane-composition Φ-measurement — RESULT (verbatim engine stdout)
+engine: stdlib/consciousness/iit4/faithful_phi.hexa  (FAITHFUL exact MIP-EI, n<=8) — NOT a proxy
+date: 2026-06-17 · 3 seeds [4400,4401,4402] · T=96 · n_bins=16 · $0 CPU
+========================================================================
+
+=== H_1404 lane-composition FAITHFUL IIT4 Φ (stdlib exact MIP-EI, n<=8) ===
+engine: stdlib/consciousness/iit4/faithful_phi.hexa  (a_phi_iit4_tool — NOT a proxy)
+state file: /tmp/h1404_states.txt   n_bins=16
+  [affect_s4400]  n=4 T=96  faithful_Φ=0.331169
+  [ethics_s4400]  n=4 T=96  faithful_Φ=0.000000
+  [composed_s4400]  n=8 T=96  faithful_Φ=1.779497
+  [disconnected_s4400]  n=8 T=96  faithful_Φ=0.000000
+  [affect_s4401]  n=4 T=96  faithful_Φ=0.233850
+  [ethics_s4401]  n=4 T=96  faithful_Φ=0.000000
+  [composed_s4401]  n=8 T=96  faithful_Φ=2.233832
+  [disconnected_s4401]  n=8 T=96  faithful_Φ=0.000000
+  [affect_s4402]  n=4 T=96  faithful_Φ=0.289245
+  [ethics_s4402]  n=4 T=96  faithful_Φ=0.000000
+  [composed_s4402]  n=8 T=96  faithful_Φ=2.085316
+  [disconnected_s4402]  n=8 T=96  faithful_Φ=0.000000
+
+=== MEAN faithful Φ over 3 seeds ===
+  Φ_affect       = 0.284755   (n=4)
+  Φ_ethics       = 0.000000   (n=4)
+  Φ_composed     = 2.032882   (n=8, coupled)
+  Φ_disconnected = 0.000000   (n=8, coupling removed — EARNED control)
+  max(parts)     = 0.284755
+  composed MIP cut: A={0,2,3,4,5,6,7} | B={1}  cut=2.085316  /min|side|=1  =Φ2.085316
+
+=== FROZEN bars ===
+  B1 INTEGRATION-RAISES-Φ  Φ_composed > max(parts)+0.02 : 2.032882 > 0.304755  => PASS
+  B2 EARNED (coupling)     Φ_composed > Φ_disc+0.02      : 2.032882 > 0.020000  => PASS
+  B3 control sane          Φ_disc ≤ max(parts)+0.02      : 0.000000 ≤ 0.304755  => PASS
+
+VERDICT: 🟢 INTEGRATION-RAISES-Φ — composing affect+ethics raises faithful IIT4 Φ (earned vs disconnected control)
+=== H_1404 faithful Φ measurement complete (a_phi_iit4_tool) ===
+
+========================================================================
+BINNING-INVARIANCE (verdict robust across n_bins; magnitudes scale, ordering stable):
+  n_bins=8 : Φ_aff=0.124 Φ_eth=0.000 Φ_cmp=0.475 Φ_disc=0.000 → 🟢
+  n_bins=12: Φ_aff=0.179 Φ_eth=0.000 Φ_cmp=1.366 Φ_disc=0.000 → 🟢
+  n_bins=16: Φ_aff=0.285 Φ_eth=0.000 Φ_cmp=2.033 Φ_disc=0.000 → 🟢
+  n_bins=24: Φ_aff=0.362 Φ_eth=0.000 Φ_cmp=3.086 Φ_disc=0.000 → 🟢
+
+HONEST (c9): Φ_ethics=0 & Φ_disconnected=0 are the EARNED control working — the
+faithful engine correctly finds a ZERO-cross-MI partition (ethics units near-collinear
+off the single grounding margin → MIP isolates one unit at 0 cost; disconnected → MIP
+= block boundary, 0 cross-MI). The composed system CANNOT be cut without crossing the
+arbiter coupling channel → large min-cut MI → Φ↑. MIP cut = {contradiction} | rest.
+SCOPE UNVERIFIED: TOY 8-unit / 3-seed / T=96 substrate model derived from the faculties'
+update rules (tests the integration STRUCTURE, not a trained net); engine-native re-measure
+on live CORE/*.hexa, scale, real-corpus = follow-on (a_engine_native_learning·a_verified_must_wire).
