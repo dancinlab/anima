@@ -8,6 +8,10 @@ GREEN 검증 결과가 DIRECTIONAL 미러로만 남고 엔진배선 없이 묻�
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1411 brain-lane 합성法則 DESCRIPTIVE→PREDICTIVE — 🧱 법칙 예측-반증 (2/5 HIT)
+
+**무엇:** 6쌍에서 post-hoc 으로 적합된 min-cut-MI 합성法則(한쪽 내부 Φ가 composed 최소절단 MI 를 넘으면 Φ차단, 아니면 Φ상승)을 DESCRIPTIVE→PREDICTIVE 로 승격. frozen-first 로 **사전등록**: 미시험 5쌍(cerebellum×tom, affect×basal, tom×basal, cerebellum×episodic, memory×ethics)의 verdict 를 component Φ 만으로 예측 → 박제 → faithful IIT4(exact MIP-EI, a_phi_iit4_tool) 로 composed 측정 → HIT/MISS 채점. landed 미러 머신(FNV dim64 + H_1401 leaky arbiter coupling)을 verbatim 재사용(import). **결과: 2/5 HIT (3 MISS, frozen n_bins=16; binning sweep 8/12→3/5, 16/24→2/5, deterministic).** 法則이 예측-반증당함 — MISS 가 페이로드(c9): P0 두-高가 차단 아닌 상승(6.50≫3.41, "two-high⇒block" 거짓), P2 ToM-지배가 차단 아닌 상승(2.22>1.98, ToM-지배는 쌍-특정), P4 두-低가 상승 아닌 차단(coupling cross-MI=0, units 공선성). **REFINED 法則:** Φ상승은 component-Φ 순위가 아니라 *coupling 이 실제 cross-block MI 를 만드는가*(joint 궤적 속성)가 결정 — component Φ 만으로는 예측 불가. post-hoc 6쌍은 unit geometry 가 우연히 Φ순위↔cross-MI 를 정렬시켜 일관됐을 뿐. 능력-합성 결과(H_1401/1405/1407/1408/1409 🟢)는 영향 없음 — Φ상승 *法則* 만 정제. DIRECTIONAL mirror, engine-transfer/shared-driver-arbiter 분리 UNVERIFIED(follow-on). .verdicts/1411_lane_compose_law_predictive/.
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1409 brain-lane COMPOSE #6 (spatial×PFC, 두-고-Φ) — 🟢능력 · 🧱Φ-차단 → refined min-cut-MI 법칙 확정
 
 **무엇:** brain-lane-composition 프로그램의 결정적 시험 — 둘 다 高-Φ인 쌍(spatial-map H_1295 × hier-PFC H_1294)이 서로 차단하나? CONFIRMED: 능력은 합성(acc_compose 0.776 ≥ best 0.707, 분리 only_sp 0.297/only_pf 0.299), Φ는 차단(Φ_spatial 3.23 > composed 1.93 = max(parts) 초과 ⇒ H_1405식 상호지배). frozen-first, no bar moved, faithful IIT4 exact-MIP-EI(a_phi_iit4_tool), binning-invariant. **법칙(6쌍 통일):** 한쪽 내부 Φ가 composed 최소절단 MI 를 넘으면 차단, 아니면 합성 — Φ합성{H_1404·1407·1408} vs Φ차단{H_1405·1409}. DIRECTIONAL mirror, engine-native+scale UNVERIFIED. .verdicts/1409_brain_lane_compose_spatial_pfc/.

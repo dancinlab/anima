@@ -1,0 +1,108 @@
+================================================================================
+H_1411 — BRAIN-LANE COMPOSITION LAW: DESCRIPTIVE → PREDICTIVE.
+FREEZE (pre-registered BEFORE the composed measurement; c9, NO tune-to-green).
+DIRECTIONAL numpy mirror ($0 CPU). faithful IIT4 only (a_phi_iit4_tool).
+date: 2026-06-17
+================================================================================
+
+THE LAW UNDER TEST (descriptively fit over 6 landed pairs H_1404/1405/1406/
+1407/1408/1409):
+  "Composing two brain-lane faculties RAISES faithful-IIT4 Φ (Φ-LIFT) IFF the
+   composed system's min-cut MI (= Φ_composed) exceeds max(component internal
+   Φ). If one component's internal Φ DOMINATES (> the composed min-cut MI),
+   Φ-composition is BLOCKED (🧱), even when capability still composes."
+  Equivalent statement: a pair Φ-composes IFF NO single part's internal
+  integration Φ exceeds the composed min-cut MI (the cross-faculty coupling
+  channel must be able to make the composed cut beat the dominant part).
+
+THE SCIENTIFIC UPGRADE. The 6 landed pairs were fit POST-HOC. Here we PRE-
+REGISTER a verdict (LIFT vs BLOCK) for 5 UNTESTED pairs PURELY from each
+component's ALREADY-MEASURED internal Φ (n_bins=16, verbatim from the landed
+results), THEN measure the composed faithful-IIT4 Φ and score HIT/MISS. A MISS
+is the MOST valuable result: it refines/falsifies the descriptive law (c9). NO
+prediction is tuned to hit; NO bar is moved after scoring.
+
+REUSE, NOT REINVENT. The composed measurement REUSES the landed mirror machinery
+VERBATIM: the byte-trigram FNV-1a embedding (dim64), each faculty's OWN per-step
+feature generator + store (imported as a library from its landed probe), and the
+IDENTICAL H_1401 substrate-weighted leaky-arbiter coupling
+(g = leaky integrator of the two faculties' scale-relative votes;
+coupling = f + 0.35*g*(f-0.5) applied to BOTH blocks). 4 systems per pair
+(partA n=4, partB n=4, composed n=8, disconnected n=8), DIM=64, STEPS=96, 3
+seeds [5411,5412,5413], n_bins=16 primary + {8,12,24} sweep. Python computes NO Φ.
+
+COMPONENT INTERNAL Φ (n_bins=16, VERBATIM from the landed results — the inputs to
+the prediction; these are NOT re-fit here):
+  cerebellum = 3.475948 (HIGH)   [H_1407]
+  tom        = 1.975480 (HIGH)   [H_1405]
+  pfc        = 0.791790 (LOW-MID)[H_1409]
+  episodic   = 0.506986 (LOW)    [H_1408]
+  affect     = 0.284755 (LOW)    [H_1404]
+  memory     = 0.176331 (LOW)    [H_1405]
+  basal      = 0.000000 (LOW)    [H_1407]
+  ethics     = 0.000000 (LOW)    [H_1404]
+NOTE (honest, c9): the SOLO block Φ is re-emitted and re-measured per pair here
+on H_1411's OWN seeds [5411,5412,5413], so the measured partA/partB Φ may differ
+in magnitude from the landed n_bins=16 values above (seed + the H_1411 shared-
+driver arbiter differ); the PREDICTION uses the landed values as the law's
+inputs, and ACTUAL uses what this run measures. The prediction is locked
+regardless.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN Φ BARS (faithful IIT4, exact MIP-EI, n≤8 — a_phi_iit4_tool, NEVER a proxy;
+IDENTICAL to every landed pair, NOT moved):
+  Bφ1 LIFT              : Φ_composed > max(Φ_partA, Φ_partB) + 0.02
+  Bφ2 EARNED (coupling) : Φ_composed > Φ_disconnected + 0.02
+  Bφ3 control sane      : Φ_disconnected ≤ max(parts) + 0.02
+  ACTUAL verdict = LIFT iff (Bφ1 ∧ Bφ2 ∧ Bφ3); else BLOCK.
+  FROZEN PRIMARY n_bins=16. Binning-invariance reported over {8,12,16,24}.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN DECISION RULE for the PREDICTION (from component Φ ONLY):
+  Let H = max(component internal Φ), the dominant part. The descriptive law says
+  the dominant part BLOCKS when its internal Φ exceeds what the coupling can lift
+  the composed cut to. Across the 6 landed pairs the empirical pattern is:
+    - BOTH parts LOW (max ≤ ~0.6): the coupling is the only cut → it always
+      dominated → LIFT  (H_1404 max=0.285 🟢 · H_1408 max=0.507 🟢).
+    - one part HIGH (max ≥ ~1.5) AND that part is a DENSE forward-model /
+      control block whose MI the coupling can STACK ABOVE itself: LIFT
+      (H_1407 cerebellum=3.476 🟢 — the composed cut isolates the degenerate
+      low partner unit, cheaper than crossing the cerebellum block, and the
+      coupling pumps composed MI to 4.956 > 3.476).
+    - one part HIGH AND that part is so internally integrated that ANY composed
+      cut crossing it costs more than the coupling can add → BLOCK
+      (H_1405 ToM=1.975 🧱 · H_1409 spatial=3.233 🧱).
+  The DISCRIMINATING feature between the H_1407 LIFT and the H_1405/1409 BLOCK
+  is whether the HIGH part is a forward-model/prediction block (cerebellum, whose
+  high-variance prediction-error units the arbiter coupling further amplifies)
+  vs a relational/belief block (ToM, spatial-map, whose internal integration is
+  already saturated and the coupling cannot exceed). PRE-REGISTERED PREDICTIONS:
+
+  PAIR 0  cerebellum(3.476 HIGH) × tom(1.975 HIGH)  → PREDICT: BLOCK
+     Two HIGH parts. ToM is a dense relational/belief block (BLOCKED in H_1405);
+     even paired with cerebellum, the law says the dominant max(parts)=3.476 will
+     exceed the composed min-cut MI (the H_1405/1409 mutual-domination regime).
+  PAIR 1  affect(0.285 LOW) × basal(0.000 LOW)      → PREDICT: LIFT
+     Both LOW (max=0.285). The coupling is the only cut (H_1404/1408 regime).
+  PAIR 2  tom(1.975 HIGH) × basal(0.000 LOW)        → PREDICT: BLOCK
+     ToM is the dominant dense block that BLOCKED in H_1405; pairing it with a
+     degenerate low partner does NOT change that ToM's internal Φ exceeds the
+     composed min-cut MI (NOT a forward-model block → coupling cannot exceed it).
+  PAIR 3  cerebellum(3.476 HIGH) × episodic(0.507 LOW) → PREDICT: LIFT
+     cerebellum is the SAME dense forward-model block that LIFTED in H_1407;
+     paired with a low partner the law (H_1407 regime) says the coupling stacks
+     the composed MI above max(parts) → LIFT.
+  PAIR 4  memory(0.176 LOW) × ethics(0.000 LOW)     → PREDICT: LIFT
+     Both LOW (max=0.176). Coupling-is-the-only-cut regime (H_1404/1408).
+
+  PREDICTED TALLY going in: LIFT for pairs {1,3,4}, BLOCK for pairs {0,2}.
+  (This is the falsifiable, pre-registered claim. The min-cut-MI law SURVIVES
+   iff actual == predicted on all 5; any MISS refines it — and is reported
+   honestly, c9.)
+
+DEGENERACY GUARD (c9, from H_1407): per-unit std reported for each solo block; a
+near-constant unit (→ spurious Φ=0) is FLAGGED verbatim, not silently faked.
+
+3 seeds, deterministic (run1==run2). $0 CPU. p7/c9. NO bar moved. DIRECTIONAL
+numpy mirror — engine-transfer UNVERIFIED.
+================================================================================

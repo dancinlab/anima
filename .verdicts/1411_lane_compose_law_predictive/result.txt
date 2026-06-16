@@ -1,0 +1,58 @@
+=== H_1411 brain-lane composition LAW — PREDICTIVE round (faithful IIT4, exact MIP-EI, n<=8) ===
+engine: stdlib/consciousness/iit4/faithful_phi.hexa  (a_phi_iit4_tool — NOT a proxy)
+state file: /tmp/h1411_states.txt
+LAW (frozen): Φ-LIFT iff Φ_composed > max(component internal Φ); else BLOCK (one part dominates).
+Predictions PRE-REGISTERED in FREEZE.txt from component Φ ONLY, BEFORE this measurement.
+
+--- FROZEN PRIMARY n_bins=16 (terminal predictive scoring) ---
+
+  PAIR 0: cerebellum__tom   (n_bins=16)
+    Φ_partA=3.406613  Φ_partB=1.982158  max(parts)=3.406613
+    Φ_composed=6.500221  Φ_disconnected=0.000000
+    Bφ1 cmp>max+0.02 : 6.500221 > 3.426613 => PASS
+    Bφ2 cmp>disc+0.02: 6.500221 > 0.020000 => PASS
+    Bφ3 disc<=max+0.02: 0.000000 <= 3.426613 => PASS
+    PREDICTED=BLOCK   ACTUAL=LIFT   => ❌ MISS
+
+  PAIR 1: affect__basal   (n_bins=16)
+    Φ_partA=0.311222  Φ_partB=0.000000  max(parts)=0.311222
+    Φ_composed=0.865520  Φ_disconnected=0.000000
+    Bφ1 cmp>max+0.02 : 0.865520 > 0.331222 => PASS
+    Bφ2 cmp>disc+0.02: 0.865520 > 0.020000 => PASS
+    Bφ3 disc<=max+0.02: 0.000000 <= 0.331222 => PASS
+    PREDICTED=LIFT   ACTUAL=LIFT   => ✅ HIT
+
+  PAIR 2: tom__basal   (n_bins=16)
+    Φ_partA=1.982158  Φ_partB=0.000000  max(parts)=1.982158
+    Φ_composed=2.217354  Φ_disconnected=0.000000
+    Bφ1 cmp>max+0.02 : 2.217354 > 2.002158 => PASS
+    Bφ2 cmp>disc+0.02: 2.217354 > 0.020000 => PASS
+    Bφ3 disc<=max+0.02: 0.000000 <= 2.002158 => PASS
+    PREDICTED=BLOCK   ACTUAL=LIFT   => ❌ MISS
+
+  PAIR 3: cerebellum__episodic   (n_bins=16)
+    Φ_partA=3.406613  Φ_partB=0.398511  max(parts)=3.406613
+    Φ_composed=6.624421  Φ_disconnected=0.000000
+    Bφ1 cmp>max+0.02 : 6.624421 > 3.426613 => PASS
+    Bφ2 cmp>disc+0.02: 6.624421 > 0.020000 => PASS
+    Bφ3 disc<=max+0.02: 0.000000 <= 3.426613 => PASS
+    PREDICTED=LIFT   ACTUAL=LIFT   => ✅ HIT
+
+  PAIR 4: memory__ethics   (n_bins=16)
+    Φ_partA=0.150498  Φ_partB=0.000000  max(parts)=0.150498
+    Φ_composed=0.000000  Φ_disconnected=0.000000
+    Bφ1 cmp>max+0.02 : 0.000000 > 0.170498 => FAIL
+    Bφ2 cmp>disc+0.02: 0.000000 > 0.020000 => FAIL
+    Bφ3 disc<=max+0.02: 0.000000 <= 0.170498 => PASS
+    PREDICTED=LIFT   ACTUAL=BLOCK   => ❌ MISS
+
+=== HIT/MISS TALLY (n_bins=16, FROZEN PRIMARY) : 2 / 5 HITS ===
+    → 3 MISS(es). A MISS REFINES/FALSIFIES the descriptive law (c9 — the valuable result).
+
+--- BINNING-INVARIANCE of the predictive tally (n_bins ∈ {8,12,16,24}) ---
+  n_bins=8 : 3 / 5 HITS
+  n_bins=12 : 3 / 5 HITS
+  n_bins=16 : 2 / 5 HITS   [FROZEN PRIMARY]
+  n_bins=24 : 2 / 5 HITS
+
+=== H_1411 predictive measurement complete (a_phi_iit4_tool) ===
