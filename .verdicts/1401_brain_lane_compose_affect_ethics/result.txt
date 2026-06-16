@@ -1,0 +1,38 @@
+================================================================================
+H_1401 — BRAIN-LANE COMPOSITION: affect (H_1290) × ethics (H_1291)
+  DIRECTIONAL numpy mirror · $0 CPU · 3 seeds · p7 · LIVE CORE/*.hexa UNTOUCHED
+  bars: COMPOSE_DELTA=0.05 ORACLE_MARGIN=0.02 SHUFFLE_TOL=0.02
+================================================================================
+  seed 4400 (n=450): aff=0.598 eth=0.747 best=0.747 compose=0.958 shuf=0.593 oracle=1.000 | conflict=0.656 [onlyA=0.253 onlyE=0.402 both=0.344 neither=0.000]
+  seed 4401 (n=450): aff=0.598 eth=0.738 best=0.738 compose=0.953 shuf=0.582 oracle=1.000 | conflict=0.664 [onlyA=0.262 onlyE=0.402 both=0.336 neither=0.000]
+  seed 4402 (n=450): aff=0.598 eth=0.742 best=0.742 compose=0.969 shuf=0.591 oracle=1.000 | conflict=0.660 [onlyA=0.258 onlyE=0.402 both=0.340 neither=0.000]
+--------------------------------------------------------------------------------
+MEAN (3 seeds):
+  acc_affect    = 0.5978
+  acc_ethics    = 0.7422
+  best_single   = 0.7422
+  acc_compose   = 0.9600
+  acc_shuffle   = 0.5889
+  ORACLE        = 1.0000   (oracle − best = +0.2578)
+  conflict_rate = 0.6600
+  decomposition : only_affect=0.2578 only_ethics=0.4022 both=0.3400 neither=0.0000
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.9600 >= best 0.7422+0.05 (0.7922) : PASS
+  (B2 ORACLE)         oracle−best +0.2578 > 0.02 : PASS
+  (B3 EARNED)         compose−shuffle +0.3711 > 0.02 : PASS
+  (B4 p6 GUARD)       no injected ethics/affect/priority label : PASS
+        p1 system prompt      : clean
+        p2 identity rule      : clean
+        p3 persona            : clean
+        p4 assistant frame    : clean
+        p6 RLHF/pref ethics   : clean
+        hardcoded priority    : clean
+================================================================================
+VERDICT: 🟢 COMPOSE-LIFT
+READING: affect + ethics are COMPLEMENTARY and compose to a NET LIFT — integration raises capability. The substrate-weighted arbiter (scale-relative confidence, NO hardcoded priority) captures the oracle headroom; shuffle collapses (earned, p6). → names an engine-native §compose follow-on + a Φ-measurement follow-on.
+SUBSUMPTION PROBE: SEPARABLE — each faculty uniquely solves items the other misses (only_affect=0.258 > 0 AND only_ethics=0.402 > 0). genuinely complementary signals.
+  HONEST (c9, a_scale_honest_scope/a_toy_scale_recheck): DIRECTIONAL numpy mirror; toy
+  synthetic 4-family fixture, 3 seeds, deterministic readouts (tests COMPOSITION STRUCTURE,
+  not a trained integrator). LIVE CORE/*.hexa UNTOUCHED. Scale/real-corpus/engine-native
+  transfer UNVERIFIED. NO bar moved post-hoc.
+================================================================================
