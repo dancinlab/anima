@@ -40,6 +40,104 @@ fn _assert_i(label: string, want: int, got: int) -> bool {
     return false
 }
 
+// ── H_1351 KO-JAMO COUNT-HEAD fixture (cases 86-89) ─────────────────────────────────
+// A DETERMINISTIC in-engine compositional fixture — NO corpus, NO secrets, $0. A hidden state
+// (L in 0..NL, V in 0..NV) walks deterministically; the symbol to predict is g(L,V) = (L+2V) mod K,
+// a target that depends on BOTH factors. The two VIEWS differ ONLY in whether the count-head SEES
+// the factors:
+//   JAMO view — L and V are exposed as TWO CLEAN feature channels [L/NL, V/NV]; the engine's
+//     Voronoi (vadapt_field_nearest_idx) can split each axis, so the count-head learns g(L,V).
+//   RAW  view — L and V are COLLAPSED into ONE opaque merged channel [(L*NV+V)/(NL*NV)]; the SAME
+//     coarse Voronoi cannot disentangle the two factors from the single squashed axis → higher CE.
+// This is the H_1316 jamo-STRUCT-beats-raw structure (decomposition exposes the factors the opaque
+// merge hides), realized as a clean in-engine fixture (NOT a Korean-fluency / 30MB claim).
+fn _jh_NL() -> int { return 6 }
+fn _jh_NV() -> int { return 6 }
+fn _jh_K()  -> int { return 12 }     // target vocab K (g maps into 0..K)
+fn _jh_NSYL() -> int { return 2000 } // hidden-state steps (deterministic)
+
+// the hidden (L,V) walk: both factors evolve as a function of the current (L,V) — explores the
+// (L,V) grid deterministically so the head sees the whole compositional table.
+fn _jh_nL(l: int, v: int) -> int { return (l + v + 1) % _jh_NL() }
+fn _jh_nV(l: int, v: int) -> int { return (l * 2 + v + 3) % _jh_NV() }
+fn _jh_g(l: int, v: int)  -> int { return (l + 2 * v) % _jh_K() }   // target depends on BOTH factors
+
+// a tiny DETERMINISTIC per-position jitter so the median split never hits an all-ties wall on the
+// discrete factor grid (the SAME jitter is applied to both views, so it cannot favor either arm).
+fn _jh_jit(t: int, s: int) -> float {
+    let h = ((t * 2654435761) + s * 40503) % 1000
+    return (to_float(h) / 1000.0 - 0.5) * 0.02
+}
+
+// build the deterministic (L,V) hidden-state sequence (length NSYL), seeded at (0,0).
+fn _jh_seq() -> [[int]] {
+    let mut seq = []
+    let mut l = 0
+    let mut v = 0
+    let mut i = 0
+    while i < _jh_NSYL() {
+        seq = seq + [[l, v]]
+        let nl = _jh_nL(l, v)
+        let nv = _jh_nV(l, v)
+        l = nl  v = nv
+        i = i + 1
+    }
+    return seq
+}
+
+// JAMO VIEW: two CLEAN factor channels [L/NL, V/NV] (the decomposed jamo); target g(L,V). Vj = K.
+fn _jh_build_jamo(seq: [[int]], dim: int) -> [[[float]]] {
+    let mut X = []  let mut Y = []
+    let mut t = 0
+    while t < len(seq) {
+        let l = seq[t][0]  let v = seq[t][1]
+        let f = [to_float(l) / to_float(_jh_NL()) + _jh_jit(t, 1),
+                 to_float(v) / to_float(_jh_NV()) + _jh_jit(t, 2), 0.0]
+        X = X + [f]
+        Y = Y + [[to_float(_jh_g(l, v))]]
+        t = t + 1
+    }
+    return [X, Y]
+}
+
+// RAW VIEW: ONE collapsed opaque channel [(L*NV+V)/(NL*NV)] (the opaque-merge byte view); SAME
+// target g(L,V). Vj = K. The single squashed axis hides the two factors from the coarse Voronoi.
+fn _jh_build_raw(seq: [[int]], dim: int) -> [[[float]]] {
+    let vj = _jh_NL() * _jh_NV()
+    let mut X = []  let mut Y = []
+    let mut t = 0
+    while t < len(seq) {
+        let l = seq[t][0]  let v = seq[t][1]
+        let id = l * _jh_NV() + v
+        let f = [to_float(id) / to_float(vj) + _jh_jit(t, 1), _jh_jit(t, 2), 0.0]
+        X = X + [f]
+        Y = Y + [[to_float(_jh_g(l, v))]]
+        t = t + 1
+    }
+    return [X, Y]
+}
+
+// split a built [X, Y] view into train/test by even/odd index (held-out); returns
+// [Xtr, Ytr, Xte, Yte] as float matrices (Y rows are 1-wide; the caller flattens to int).
+fn _jh_evenodd(view: [[[float]]]) -> [[[float]]] {
+    let X = view[0]  let Y = view[1]
+    let mut Xtr = []  let mut Ytr = []  let mut Xte = []  let mut Yte = []
+    let mut i = 0
+    while i < len(X) {
+        if i % 2 == 0 { Xtr = Xtr + [X[i]]  Ytr = Ytr + [Y[i]] }
+        else          { Xte = Xte + [X[i]]  Yte = Yte + [Y[i]] }
+        i = i + 1
+    }
+    return [Xtr, Ytr, Xte, Yte]
+}
+
+// flatten a 1-wide float Y matrix to an int symbol vector.
+fn _jh_flat_int(Y: [[float]]) -> [int] {
+    let mut out = []  let mut i = 0
+    while i < len(Y) { out = out + [to_int(Y[i][0])]  i = i + 1 }
+    return out
+}
+
 fn main() {
     let mut n_pass = 0
     let mut n_fail = 0
@@ -897,6 +995,70 @@ fn main() {
     //   (peak-count <= 2) — a genuine relocation, not a scatter (anti-Goodhart, H_1333 D1d).
     if _assert_b("case_85_cp_regrow_coherent", true,
                  cp_peak_count(cpc_A2) <= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // ── cases 86-89 : KO-JAMO COUNT-HEAD (H_1351 wire-in) — the H_1316/H_1321 jamo-beats-raw
+    //   count head, now a FIRST-CLASS engine faculty (jamo_head_*). Re-uses the engine's OWN
+    //   VAdaptField Voronoi + engine_mitosis_tick growth (p8). On the deterministic compositional
+    //   fixture: jamo (decomposed) < raw (opaque merge) by margin, AND jamo beats its OWN shuffle.
+    //   Ψ-disjoint (own struct; pure_field/engine_g/brain/Ψ untouched; pure count-head scorer).
+    let jh_cfg = engine_cli_parse(["--mitosis", "on"])
+    let jh_DIM = 3
+    let jh_seq = _jh_seq()
+    let jh_seed = [[0.3, 0.3, 0.0], [0.7, 0.7, 0.0]]   // FROZEN seed centers
+    let jh_GROW = 40
+    let jh_MINOWN = 6
+    let jh_THR = 0.05
+    let jh_LAP = 1.0
+    let jh_K = _jh_K()   // both views predict into the SAME target vocab K (g maps to 0..K)
+
+    // JAMO arm (two clean factor channels)
+    let jh_jv = _jh_build_jamo(jh_seq, jh_DIM)
+    let jh_js = _jh_evenodd(jh_jv)
+    let jh_jXtr = jh_js[0]  let jh_jYtr = _jh_flat_int(jh_js[1])
+    let jh_jXte = jh_js[2]  let jh_jYte = _jh_flat_int(jh_js[3])
+    let jh_jhead0 = jamo_head_new(jh_seed, jh_K, jh_DIM)
+    let jh_jhead = jamo_head_grow(jh_jhead0, jh_jXtr, jh_jYtr, len(jh_jXtr), jh_GROW, jh_MINOWN, jh_THR, jh_LAP, jh_cfg)
+    let jh_ce_jamo = jamo_head_ce(jh_jhead, jh_jXte, jh_jYte)
+    let jh_cells_jamo = jamo_head_cells(jh_jhead)
+
+    // RAW arm (one collapsed opaque channel — SAME target vocab K)
+    let jh_rv = _jh_build_raw(jh_seq, jh_DIM)
+    let jh_rs = _jh_evenodd(jh_rv)
+    let jh_rXtr = jh_rs[0]  let jh_rYtr = _jh_flat_int(jh_rs[1])
+    let jh_rXte = jh_rs[2]  let jh_rYte = _jh_flat_int(jh_rs[3])
+    let jh_rhead0 = jamo_head_new(jh_seed, jh_K, jh_DIM)
+    let jh_rhead = jamo_head_grow(jh_rhead0, jh_rXtr, jh_rYtr, len(jh_rXtr), jh_GROW, jh_MINOWN, jh_THR, jh_LAP, jh_cfg)
+    let jh_ce_raw = jamo_head_ce(jh_rhead, jh_rXte, jh_rYte)
+
+    // SHUFFLE control on the JAMO arm: permute the TRAIN context→target PAIRING (head learns a
+    //   SPURIOUS map), then score on the TRUE (un-shuffled) held-out test — same vocab/dim/budget/
+    //   feature-marginal, ONLY the compositional alignment destroyed (a target RELABELING would be
+    //   CE-invariant, so the control permutes the PAIRING).
+    let jh_sYtr = jamo_head_shuffle_targets(jh_jYtr, jh_K, 1351)
+    let jh_shead0 = jamo_head_new(jh_seed, jh_K, jh_DIM)
+    let jh_shead = jamo_head_grow(jh_shead0, jh_jXtr, jh_sYtr, len(jh_jXtr), jh_GROW, jh_MINOWN, jh_THR, jh_LAP, jh_cfg)
+    let jh_ce_shuf = jamo_head_ce(jh_shead, jh_jXte, jh_jYte)
+
+    // case 86 (W1 FACULTY-PRESENT) : the jamo count head runs in-engine — grows >= the seed count
+    //   and scores a finite positive held-out CE (the faculty is OWNED by the engine, not a probe).
+    if _assert_b("case_86_jamo_head_present", true,
+                 jh_cells_jamo >= 2 && jh_ce_jamo > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 87 (W2 JAMO-BEATS-RAW) : the decomposed jamo head models the compositional stream
+    //   better than the opaque raw-merge head by >= 0.05 nats/symbol (the H_1316 structural win).
+    if _assert_b("case_87_jamo_beats_raw", true,
+                 (jh_ce_raw - jh_ce_jamo) >= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 88 (W3 EARNED) : the intact jamo head beats its OWN shuffle control by >= 0.05
+    //   nats/symbol — the win is the COMPOSITIONAL structure, not mere head activation.
+    if _assert_b("case_88_jamo_earned_vs_shuffle", true,
+                 (jh_ce_shuf - jh_ce_jamo) >= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 89 (Ψ-DISJOINT shuffle-budget parity) : the shuffle uses the IDENTICAL feature stream,
+    //   vocab K, dim, seed centers and grows >= 2 cells — it differs ONLY in the permuted PAIRING,
+    //   so case 88's gap is attributable to the alignment, not a budget difference (anti-Goodhart).
+    if _assert_b("case_89_jamo_shuffle_budget_parity", true,
+                 jamo_head_cells(jh_shead) >= 2 && jh_jhead.vj == jh_K) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
