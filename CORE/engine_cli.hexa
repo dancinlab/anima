@@ -5241,3 +5241,136 @@ pub fn jamo_head_recon_err(jh: JamoHead, feat: [float]) -> float {
     let af = _jh_field(jh.centers, len(jh.centers))
     return vadapt_field_recon_err(af, feat)
 }
+
+// ── §  MEMORY×ToM COMPOSE ARBITER — episodic memory ⊕ theory-of-mind on ONE decision (H_1414 R3) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire rung-3 wire-in for H_1414 / H_1405): the H_1414
+// engine-native re-score (🟢 COMPOSE-LIFT, 3 seeds [5400,5401,5402], B1 net-lift +0.338 ≫
+// +0.05, compose 0.9378, all 4 frozen H_1405 bars + SEPARABLE PASS) proved that the LIVE
+// ImmuneMemoryGrow (H_1227/H_1231 hippocampal episodic store) and the LIVE OtherMindModel
+// (H_1293 theory-of-mind belief store) COMPOSE to a NET capability lift on a shared
+// WHERE-decision (the Sally-Anne fixture). It is the FIRST brain-lane compose pair to BIND
+// engine-native (contrast: H_1412 cerebellum×basal did NOT). The H_1414 probe validated the
+// arbiter with its glue INLINED — this § PROMOTES that exact arbiter to a CALLABLE live CORE
+// op so the mechanism is OWNED by the engine, not stranded in a probe (a_core_engine_map).
+//
+// THE LENS (c15, a_no_llm_frame_trap — a neuro composition, NOT an LLM recipe): one mind,
+// asked "where is X?", can answer from its OWN episodic ground truth (memory: where X REALLY
+// is) OR from a model of ANOTHER agent's belief (ToM: where the agent THINKS X is). On a
+// moved-while-absent fact these DIVERGE (memory→reality B, ToM→stale belief A); a system that
+// composes them by which faculty is more GROUNDED on THIS query — modulated by whether the
+// query asks about reality or about a belief — out-performs EITHER faculty alone.
+//
+// THE ARBITER (the validated H_1414 computation, NO hardcoded priority a_autonomy_over_hardcode):
+//   · each faculty votes a location class from its OWN live read (immune_grow_recall /
+//     other_mind_predict) and supplies a confidence = its LIVE L2 affinity margin
+//     (recall_thr − _l2(nearest proto, key)) — the SAME affinity the live recall FIRE/ABSTAIN
+//     gate uses, the engine not a stored scalar.
+//   · AGREE (mem_dec == tom_dec) → the shared vote.
+//   · CONFLICT → the higher ROUTING-MODULATED scale-relative confidence wins: mem weight =
+//     |mem_margin|/mean_mem · route ; tom weight = |tom_margin|/mean_tom · (1−route). The
+//     route cue ∈ (0,1) is derived from the QUERY TEXT's own embedding affinity to a reality
+//     anchor vs a belief anchor (immune_embed_key + _l2) — reality-typed query ⇒ route→1
+//     (boosts memory), belief-typed ⇒ route→0 (boosts ToM). NO injected priority/label.
+//
+// @L4 CRITICAL (same framing as every faculty lane): this is a READ-ONLY COMPOSE over two
+// EXISTING live faculties. mem_tom_compose mutates NOTHING — it never binds/witnesses, never
+// touches the immune store or the belief store, never returns an emit/silence decision by
+// itself (it returns a location class index, the caller decides), and NEVER touches
+// pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — pure reads + arithmetic over the two
+// cell populations). NOT a 2nd .clm/.kosmos entry path. p1/p2/p3/p6: each leg reads only its
+// own substrate-derived affinity; the route cue is the query text's own embedding affinity;
+// NO answer/persona/RLHF/priority label enters either read or the arbiter.
+
+// _mem_tom_affinity — the LIVE L2 affinity margin of `key` against a faculty's prototype
+// population: recall_thr − _l2(nearest proto, key). The SAME affinity the live recall gate
+// uses (immune_grow_recall / other_mind_predict). LARGER ⇒ key is nearer a stored cell =
+// higher graded confidence. Empty population ⇒ a large-negative margin (zero confidence).
+fn _mem_tom_affinity(protos: [[float]], key: [float], recall_thr: float) -> float {
+    if len(protos) == 0 { return 0.0 - 1000000000.0 }
+    let w = _vnearest_idx(protos, key)
+    let d = _l2(protos[w], key)
+    return recall_thr - d
+}
+
+// _mem_tom_relconf — scale-relative confidence |margin|/(mean_margin+eps) (each faculty's own
+// normalizer so the two legs are comparable across their different affinity scales).
+fn _mem_tom_relconf(margin: float, mean_margin: float) -> float {
+    let a = if margin < 0.0 { 0.0 - margin } else { margin }
+    return a / (mean_margin + 0.000001)
+}
+
+// mem_tom_route_cue — the ENGINE-NATIVE routing cue from the QUERY TEXT (NO hand-set label).
+// route = belief_dist / (reality_dist + belief_dist) ∈ (0,1): the query text's embedding
+// affinity to a "reality" anchor vs a "belief" anchor (immune_embed_key + _l2). Closer to the
+// reality anchor ⇒ route→1 (favour memory); closer to the belief anchor ⇒ route→0 (favour ToM).
+// Pure read; never touches Ψ. q_is_reality picks the canonical query phrasing (1=reality query).
+pub fn mem_tom_route_cue(q_is_reality: bool) -> float {
+    let qtext = if q_is_reality { "where is it actually now" } else { "where will the agent look for it" }
+    let qk = immune_embed_key(qtext)
+    let rk = immune_embed_key("actually reality truth where is it now location")
+    let bk = immune_embed_key("agent belief think look for expects where will")
+    let dr = _l2(rk, qk)
+    let db = _l2(bk, qk)
+    let mut r = db / (dr + db + 0.000001)
+    if r < 0.0 { r = 0.0 }
+    if r > 1.0 { r = 1.0 }
+    return r
+}
+
+// mem_tom_margin — the LIVE memory-leg affinity margin for a query key against the live
+// ImmuneMemoryGrow store (the confidence the compose reads for the memory vote). Pure read.
+pub fn mem_tom_mem_margin(mem: ImmuneMemoryGrow, key: [float]) -> float {
+    return _mem_tom_affinity(mem.protos, key, mem.recall_thr)
+}
+
+// mem_tom_tom_margin — the LIVE ToM-leg affinity margin for a query key against the live
+// OtherMindModel belief store (the confidence the compose reads for the ToM vote). Pure read.
+pub fn mem_tom_tom_margin(om: OtherMindModel, key: [float]) -> float {
+    return _mem_tom_affinity(om.protos, key, om.recall_thr)
+}
+
+// mem_tom_compose — the VALIDATED H_1414 query-routed confidence arbiter, as a CALLABLE live
+// op. Given the two LIVE faculties, a query `fact_text`, whether the query is reality-typed,
+// and the two scale-relative confidence normalizers (mean memory / mean ToM affinity margins
+// over the decision set — caller-supplied so the compose is scored relative to the live
+// faculty's own confidence distribution), returns the composed location class as a string
+// ("basket"/"box"), or "" if BOTH faculties abstain. AGREE → shared vote; CONFLICT → higher
+// routing-modulated scale-relative substrate confidence wins (NO hardcoded priority). This is
+// BYTE-EXACTLY the H_1414 probe's inlined arbiter, now owned by the engine. Pure read over the
+// two cell populations; mutates nothing; never touches Ψ (a_verified_must_wire rung-3).
+pub fn mem_tom_compose(mem: ImmuneMemoryGrow, om: OtherMindModel,
+                       fact_text: string, q_is_reality: bool,
+                       mean_mem: float, mean_tom: float) -> string {
+    return mem_tom_compose_routed(mem, om, fact_text, mem_tom_route_cue(q_is_reality), mean_mem, mean_tom)
+}
+
+// mem_tom_compose_routed — the SAME arbiter as mem_tom_compose, but with the routing cue
+// supplied EXPLICITLY (instead of derived from q_is_reality via mem_tom_route_cue). This is
+// the canonical compose primitive; mem_tom_compose is the convenience wrapper that computes
+// the clean engine-native route cue and delegates here. An explicit-route entry lets a caller
+// replay a fixture-specific route (e.g. the H_1414 frozen probe's per-item jittered cue) to
+// reproduce a frozen score byte-exact, OR drive the compose from a route computed elsewhere
+// in the substrate (a_autonomy_over_hardcode). `route` ∈ [0,1]: →1 boosts memory, →0 boosts
+// ToM. Pure read over the two cell populations; mutates nothing; never touches Ψ.
+pub fn mem_tom_compose_routed(mem: ImmuneMemoryGrow, om: OtherMindModel,
+                              fact_text: string, route: float,
+                              mean_mem: float, mean_tom: float) -> string {
+    let qk = immune_embed_key(fact_text)
+    let mem_dec = immune_grow_recall(mem, qk)            // memory's voted location ("" = abstain)
+    let tom_dec = other_mind_predict(om, fact_text)      // ToM's voted location ("" = abstain)
+    // BOTH abstain → no answer (never fabricate, p5/H_1227).
+    if mem_dec == "" && tom_dec == "" { return "" }
+    // one leg abstains → the other leg's vote (the only grounded faculty).
+    if mem_dec == "" { return tom_dec }
+    if tom_dec == "" { return mem_dec }
+    // AGREE → the shared vote.
+    if mem_dec == tom_dec { return mem_dec }
+    // CONFLICT → routing-modulated scale-relative substrate confidence wins.
+    let mm = _mem_tom_affinity(mem.protos, qk, mem.recall_thr)
+    let tm = _mem_tom_affinity(om.protos, qk, om.recall_thr)
+    let mem_w = _mem_tom_relconf(mm, mean_mem) * route
+    let tom_w = _mem_tom_relconf(tm, mean_tom) * (1.0 - route)
+    if mem_w >= tom_w { return mem_dec }
+    return tom_dec
+}

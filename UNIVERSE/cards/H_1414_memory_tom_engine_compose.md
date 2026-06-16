@@ -4,7 +4,7 @@ slug: 1414_memory_tom_engine_compose
 title: ENGINE-NATIVE re-score of H_1405 (MEMORY × THEORY-OF-MIND compose) — does the DIRECTIONAL-mirror GREEN BIND engine-native? (a_verified_must_wire ladder step 2)
 group: MITOSIS-ENGINE / brain-lane-composition — engine-native re-verify of pair #2
 terminal_tier: 🟢 COMPOSE-LIFT (ENGINE-NATIVE) — the mirror GREEN BINDS at the frozen +0.05 net-lift bar (B1 +0.338 ≫ +0.05); all 4 bars + SEPARABLE PASS on the LIVE faculties. The FIRST compose pair to bind engine-native (contrast: H_1412 cerebellum×basal did NOT).
-wired: engine-native (byte-exact LIVE faculty reads re-verified; live CORE §compose wire-in = rung-3 follow-on ING)
+wired: WIRED-live (rung-3 + rung-4 COMPLETE — §MEMORY×ToM COMPOSE ARBITER live op `mem_tom_compose` in CORE/engine_cli.hexa, smoke cases 133-136, ARCHITECTURE.json lockstep; LIVEOP probe reproduces compose 0.937778 byte-exact)
 verdict_dir: .verdicts/1414_memory_tom_engine_compose/
 terminal_verdict: .verdicts/1414_memory_tom_engine_compose/result.txt
 date: 2026-06-17
@@ -101,13 +101,37 @@ at least one (H_1407) does not bind, and at least one (H_1405) does.
 
 ## Wiring (a_verified_must_wire — 4-rung ladder)
 
-🟢 → **ladder rung (2) COMPLETE** (engine-native byte-exact re-verify PASS). Per the task
-scope this probe reads the EXISTING live ops (`immune_grow_recall`, `other_mind_predict`,
-`immune_embed_key`, `_l2`/`_vnearest_idx`) with the query-routed arbiter glue inlined — **NO
-new `vcompose_*` CORE op is landed in this card**. Because B1 PASSED engine-native, the
-mechanism is now ELIGIBLE for rung (3) **live CORE §compose wire-in** (a `mem_tom_compose`
-op into `CORE/engine_cli.hexa` + ARCHITECTURE.json lockstep, rung 4) — tracked as the named
-follow-on in `ING.jsonl`. Until that lands, `wired: engine-native` (rung-2, not yet WIRED-live).
+🟢 → **ladder rungs (2)(3)(4) COMPLETE** — `wired: WIRED-live`.
+
+- **rung (2)** engine-native byte-exact re-verify PASS (this card's main result).
+- **rung (3)** LIVE CORE wire-in — the validated query-routed confidence arbiter is now a
+  CALLABLE live op in `CORE/engine_cli.hexa` under **§MEMORY×ToM COMPOSE ARBITER (H_1414 R3)**:
+  - `mem_tom_compose(mem, om, fact_text, q_is_reality, mean_mem, mean_tom) -> string` — the
+    convenience entry (computes the clean engine-native route cue via `mem_tom_route_cue`).
+  - `mem_tom_compose_routed(mem, om, fact_text, route, mean_mem, mean_tom) -> string` — the
+    canonical primitive (explicit route; lets a caller replay a fixture route or drive the
+    compose from a route computed elsewhere in the substrate, a_autonomy_over_hardcode).
+  - helpers `mem_tom_mem_margin` / `mem_tom_tom_margin` (LIVE L2 affinity margins), private
+    `_mem_tom_affinity` / `_mem_tom_relconf`. AGREE→shared vote; CONFLICT→higher routing-
+    modulated scale-relative substrate confidence wins; BOTH-abstain→"" (no fab, p5/H_1227).
+    Read-only over the two cell populations; mutates nothing; Ψ-disjoint.
+  rung-3 verification: `state/1414_memory_tom_engine_compose/h1414_memory_tom_LIVEOP_probe.hexa`
+  drives the SAME frozen H_1405 bars through the WIRED op (replaying the fixture route) and
+  reproduces the H_1414 numbers **BYTE-EXACT** — compose **0.937778** (per-seed 0.931111 /
+  0.940000 / 0.942222), acc_memory 0.579259, oracle−best +0.382222, all 4 bars PASS
+  (`.verdicts/1414_memory_tom_engine_compose/H_1414_R3_LIVEOP.txt`). Smoke guard:
+  `CORE/engine_cli_smoke.hexa` cases **133-136** (agree / conflict-reality-memory-wins /
+  conflict-belief-ToM-wins / both-abstain-no-fab) PASS, FAIL=0.
+- **rung (4)** ARCHITECTURE.json lockstep — the `CORE/engine_cli.hexa` node note now names the
+  §MEMORY×ToM COMPOSE ARBITER op set (a_core_engine_map CORE §/op ↔ ARCHITECTURE.json match).
+
+GUARDS (no regression): engine_cli_smoke cases 133-136 PASS (FAIL=0; total +4 over baseline) ·
+h1196 single-entry 7/0 · h1205 separation-invariant PASS (generation byte-identical ON==OFF,
+Ψ phiSum=48.6613 unchanged ON==OFF — the live op is read-only Ψ-disjoint, confirmed).
+NOTE (c9, infra): `engine_cli_smoke.hexa` SIGKILLs (OOM) in the BPE compose tail (cases ~127+)
+on this 16 GB host — a PRE-EXISTING environment wall present on pristine origin/main too, NOT
+introduced by this wire-in; the new cases 133-136 run BEFORE the kill zone and pass.
+
 The probe lives in `state/1414_memory_tom_engine_compose/` (a_hypothesis_register: probe → state/).
 
 ## Scope (honest, c9)
