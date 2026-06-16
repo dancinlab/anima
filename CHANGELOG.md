@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1377 — CP N-SCALING (밀도-고정 차원 사다리: H_1375 의 D*=3 농도붕괴가 고정-N sparsity artifact 였나?) — 🧱 CURSE-CEILING-TERMINAL (COH_D-DISTINCTNESS)
+
+**무엇:** H_1375(🧱 BREAKS-AT-D*=3, 고정 N=169)가 남긴 결정적 후속 질문을 닫음 — D*=3 농도붕괴(bounded COH_D 가 0.714→0.428→… 로 COH_MIN=0.50 미달)가 진짜 차원적 천장인가, 순전히 고정-N sparsity artifact(투자부족, c16 cause #3)인가? raw N 대신 **차원별 샘플 밀도를 고정**(N(D)=min(4000, 13^D), 13/axis = H_1375 D=2 N=169 앵커)하고 사다리 D∈{2,3,4,6,8} 재실행. **샘플링 규칙만** 변경, 메트릭/4 arm/4 leg/threshold/seed/hyperplane/eta 전부 H_1375 verbatim, NO bar moved. FROZEN-FIRST(FREEZE 를 scoring 전 별도 commit, c9/c16/p7), 3 시드 [4333,4334,4335], $0 CPU numpy DIRECTIONAL.
+
+**결정 rung = UNCAPPED D=3 (N=2197):** N_CAP=4000 이 D≥4 진짜 밀도-N(28561/4.8M/815M)을 truncate 하므로 D=4/6/8 은 cap-confounded NON-decisive — H_1375 질문의 결정적 답은 uncapped D=3 에 있음(a_scale_honest_scope).
+
+**결과 🧱 CURSE-CEILING-TERMINAL (단순 sparsity 천장 아님):** D=3 에서 c1 RELOCATION ✅ 차원-불변(|rs−c_A'|=0.018); **c2-RAW(COH_D≥COH_MIN) ✅ 회복** — COH_D=0.675≥0.50, vs H_1375 const-N=0.428(Δ+0.247) → 절대 농도붕괴는 고정-N artifact 였고 밀도-고정이 구제했다(H_1375 질문의 절반에 답: COH<COH_MIN 붕괴는 샘플링 artifact); 그러나 **c2-SEPARATION ❌**(re-pack 0.675 vs split-only 0.579, gap 0.096<0.10 — 밀도가 no-drift 대조까지 농축 0.297→0.579) AND **c3 EARNED ❌**(shuffle COH_D 0.045→0.351>0.20 — dense cloud 에선 random-label phase-2 도 농축, anti-Goodhart 대조 무력화).
+
+**해석(c9):** 밀도-고정이 절대 농도(c2-raw)는 RESCUE 하지만 그게 move-the-cells drift 로 EARNED 됨을 증명하는 discriminator(c2-separation + c3-shuffle)는 DESTROY. H_1374(2-D diagonal)와 같은 family 교훈(RELOCATION robust, COH concentration-SEPARATION fragile)이 밀도 축에서 재현 — 밀도가 대조군까지 농축시켜 SEPARATION 시연 불가. Net: move-the-cells RELOCATION 은 고정-N(H_1375) AND 밀도-고정(H_1377) 양쪽에서 차원-불변; bounded-COH_D 농도를 DISTINCT/EARNED/control-surviving 신호로 보는 frozen 4-leg gate 는 D=2(2-D-axis)에서만 clean PASS, 어느 샘플링 체제로도 차원 사다리 위로 일반화 안 됨. **🧱 COH_D-distinctness 사다리 terminal; RELOCATION 은 🟢-family.** 이로써 CP-geometry 미러 아크의 농도-distinctness 질문이 양쪽 샘플링 체제에서 닫힘 — 남은 건 engine-native move-the-cells 배선뿐.
+
+**honest scope:** DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED). TOY Monte-Carlo/3 시드/DIM=64/시드별 단일 법선/deterministic. N_CAP=4000 이 D≥4 진짜 밀도-N truncate(D=3 만 결정적). scale/real-corpus/learned-net/uncapped-high-D 미검증. live CORE UNTOUCHED (wires nothing). 산출물: `state/cp-nscaling/h1377_cp_nscaling.py` · `.verdicts/1377_cp_nscaling/{FREEZE,result}.txt` · card `UNIVERSE/cards/H_1377_cp_nscaling.md` · index `UNIVERSE/HYPOTHESES.jsonl` (CLAIMS.tape 미기록 — 동시 은퇴 중).
+
 ## 2026-06-16 — domain(GOVERNANCE): CLAIMS.tape 은퇴 — 102개 @C 전수 이관 0 손실, claims-audit 면을 HYPOTHESES.jsonl + .verdicts/ 로 단일화
 
 **무엇:** 레거시 claims-audit 인덱스 `CLAIMS.tape`(`@C` 엔트리: id·text·method·slug·verdict pointer)를 은퇴. 가설은 이미 두 표면(`UNIVERSE/HYPOTHESES.jsonl` per-H 인덱스 + `UNIVERSE/cards/H_*.md` 카드, frozen 증거 `.verdicts/<slug>/`)에 살고 있어, CLAIMS.tape 의 audit 역할을 HYPOTHESES.jsonl 의 `verdict` 컬럼 + `.verdicts/` 로 흡수하고 파일을 `git rm`.

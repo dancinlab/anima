@@ -1,0 +1,89 @@
+H_1377 — CP N-SCALING: does the H_1375 D*=3 break VANISH under per-dimension density-constant N?
+============================================================================================================
+DIRECTIONAL numpy mirror ($0 CPU). DECISIVE follow-on to H_1375 (🧱 BREAKS-AT-D*=3 @ CONSTANT N=169).
+ONLY the sampling rule changes: N(D)=min(4000, 13^D) DENSITY-CONSTANT (13/axis = H_1375 anchor).
+D=2→169(anchor) D=3→2197(UNCAPPED, DECISIVE) D=4/6/8→4000(CAPPED, honest truncation). a_break_the_wall.
+
+    [done] D=2 N=169 reloc=0.008 COH_D=0.714 (split 0.297 shuf 0.045)
+    [done] D=3 N=2197 reloc=0.018 COH_D=0.675 (split 0.579 shuf 0.351)
+    [done] D=4 N=4000(CAP) reloc=0.027 COH_D=0.339 (split 0.110 shuf 0.271)
+    [done] D=6 N=4000(CAP) reloc=0.087 COH_D=0.013 (split 0.084 shuf 0.000)
+    [done] D=8 N=4000(CAP) reloc=0.048 COH_D=0.000 (split 0.000 shuf 0.000)
+
+DENSITY-CONSTANT LADDER (N(D)=min(4000, 13^D)):
+------------------------------------------------------------------------------------------------------------
+  bars: LOC_TOL=0.12 COH_MIN=0.5 COH_SEP=0.1 SHUF_COH_MAX=0.2 S_STD_REF=0.2  (N(D)=min(4000, 13^D) DENSITY-CONSTANT, DIM=64, eta=0.15, seeds=[4333, 4334, 4335])
+   D |      N(D) | reloc|rs-cA2| |        COH_D rp/split/shuf |  c1  c2  c3  c4 | PASS
+   2 |       169 |         0.008 |          0.714/0.297/0.045 | ✅ ✅ ✅ ✅ | PASS
+   3 |      2197 |         0.018 |          0.675/0.579/0.351 | ✅ ❌ ❌ ✅ | FAIL
+   4 | 4000(CAP) |         0.027 |          0.339/0.110/0.271 | ✅ ❌ ❌ ❌ | FAIL
+   6 | 4000(CAP) |         0.087 |          0.013/0.084/0.000 | ❌ ❌ ❌ ✅ | FAIL
+   8 | 4000(CAP) |         0.048 |          0.000/0.000/0.000 | ✅ ❌ ❌ ❌ | FAIL
+
+  per-D detail (RELOCATION per-seed |rs-c_A2|, NO-RETRAIN per-seed |rs-c_A|):
+    D=2 N=169: reloc [0.001, 0.011, 0.012] | split-only [0.264, 0.217, 0.181] | no-retrain [0.008, 0.009, 0.007] | COH rp [0.76, 0.64, 0.74] shuf [0.0, 0.089, 0.046]
+    D=3 N=2197: reloc [0.015, 0.017, 0.022] | split-only [0.221, 0.246, 0.215] | no-retrain [0.002, 0.029, 0.036] | COH rp [0.749, 0.63, 0.646] shuf [0.251, 0.352, 0.451]
+    D=4 N=4000(CAP, true density-N=28561): reloc [0.015, 0.036, 0.03] | split-only [0.005, 0.192, 0.145] | no-retrain [0.251, 0.031, 0.056] | COH rp [0.519, 0.382, 0.115] shuf [0.163, 0.202, 0.449]
+    D=6 N=4000(CAP, true density-N=4826809): reloc [0.069, 0.042, 0.151] | split-only [0.23, 0.031, 0.173] | no-retrain [0.078, 0.201, 0.075] | COH rp [0.0, 0.0, 0.04] shuf [0.0, 0.0, 0.0]
+    D=8 N=4000(CAP, true density-N=815730721): reloc [0.052, 0.042, 0.05] | split-only [0.099, 0.125, 0.037] | no-retrain [0.061, 0.17, 0.086] | COH rp [0.0, 0.0, 0.0] shuf [0.0, 0.0, 0.0]
+
+  context (NON-gating) — COH_D: density-constant (this) vs H_1375 constant-N=169:
+    D=2: COH_D density=0.714  vs  H_1375 const-N=0.714  (Δ -0.000)
+    D=3: COH_D density=0.675  vs  H_1375 const-N=0.428  (Δ +0.247)
+    D=4: COH_D density=0.339  vs  H_1375 const-N=0.201  (Δ +0.138)
+    D=6: COH_D density=0.013  vs  H_1375 const-N=0.079  (Δ -0.066)
+    D=8: COH_D density=0.000  vs  H_1375 const-N=0.038  (Δ -0.038)
+
+============================================================================================================
+LADDER VERDICT: 🧱 CURSE-CEILING-TERMINAL — COH_D STILL breaks at D*=3 even under the
+  density-constant rule. The curse-of-dimensionality concentration ceiling is REAL.
+    D=3 FAILED bars: ['c2', 'c3']
+    D=4 FAILED bars: ['c2', 'c3', 'c4']
+    D=6 FAILED bars: ['c1', 'c2', 'c3']
+    D=8 FAILED bars: ['c2', 'c3', 'c4']
+
+  DECISIVE RUNG (D=3, UNCAPPED N=2197): c2 COHERENCE FAIL ❌ (COH_D=0.675 vs H_1375 const-N=0.428).
+    → even at the UNCAPPED decisive rung the D*=3 break PERSISTED: holding density constant did
+      NOT rescue COH_D. The curse-of-dimensionality concentration ceiling is REAL/terminal.
+
+  NO bar moved (every threshold VERBATIM from H_1375 / H_1369 R2; c9/c16/p7).
+
+================================================================================
+HONEST ANALYSIS (appended; NO bar moved, frozen verdict above stands)
+================================================================================
+The frozen ladder verdict is 🧱 CURSE-CEILING-TERMINAL (no D≥3 passes all four bars).
+But the MECHANISM is NOT a simple "sparsity ceiling" — density-constant N changed the
+picture in a specific, instructive way (the H_1374 family lesson recurring on the dim axis):
+
+DECISIVE RUNG D=3 (UNCAPPED N=2197), bar by bar:
+ • c1 RELOCATION ✅ — ridge lands on the moved hyperplane (|rs−c_A'|=0.018), dimension-invariant.
+ • c2-RAW (COH_D ≥ COH_MIN) ✅ RECOVERED — COH_D=0.675 ≥ 0.50, vs H_1375 const-N=0.428 (Δ +0.247).
+     The ABSOLUTE bounded concentration the curse killed at constant-N IS restored once density
+     is held constant. So the raw "ridge can't stay thin" reading of H_1375's D*=3 break WAS a
+     constant-N sampling artifact — density rescues the absolute concentration.
+ • c2-SEP (COH_D ≥ split-only + 0.10) ❌ — re-pack 0.675 vs split-only 0.579, gap 0.096 < 0.10.
+     Density ALSO concentrates the SPLIT-ONLY residual (0.297→0.579): with a dense cloud the
+     eta=0 phase-2 splits already form a thin ridge, so the re-pack drift no longer SEPARATES
+     from the no-drift control. The distinctness, not the absolute concentration, is what fails.
+ • c3 EARNED ❌ — SHUFFLE COH_D jumped 0.045→0.351 > 0.20. On a dense sample even random phase-2
+     labels yield a concentrated discrimination ridge (the KNN field is dense everywhere), so the
+     anti-Goodhart shuffle control no longer collapses. The control telling us "this is earned"
+     is itself defeated by density.
+
+So density-constant sampling RESCUES the absolute concentration (c2-raw, the H_1375 headline metric)
+but DESTROYS the discriminators (c2-separation + c3-shuffle) that prove the concentration is EARNED
+by the move-the-cells drift rather than a generic dense-cloud artifact. This is the SAME family
+lesson as H_1374 (RELOCATION robust; the COH concentration-SEPARATION stringency is the fragile
+part) — here density makes the controls concentrate too, so the SEPARATION can't be demonstrated.
+
+Net (c9, honest): the move-the-cells RELOCATION law is dimension-invariant under BOTH constant-N
+(H_1375) and density-constant (H_1377) sampling. The bounded-COH_D CONCENTRATION as a DISTINCT,
+EARNED, control-surviving signal does NOT clear the frozen bars beyond D=2 under either regime:
+constant-N kills the absolute concentration (H_1375), density-constant rescues the absolute value
+but collapses the separation/shuffle controls (H_1377). The frozen 4-leg COH_D distinctness gate is
+a D=2 (2-D-axis) result; it does not generalize as a clean PASS up the dimensional ladder under
+either sampling regime. 🧱 terminal for the COH_D-distinctness ladder; RELOCATION remains 🟢-family.
+
+CAVEAT (a_scale_honest_scope): D=4/6/8 ran at N_CAP=4000 ≪ true density-constant N (28561/4.8M/815M),
+so their breaks are confounded by cap-truncation and are NOT decisive. D=3 (uncapped) IS decisive
+and gives the result above. NO bar moved (every threshold VERBATIM from H_1375/H_1369 R2; c9/c16/p7).

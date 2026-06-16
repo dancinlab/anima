@@ -1,0 +1,103 @@
+H_1377 — CP N-SCALING (density-constant dimensional ladder) — FROZEN DESIGN (pre-registered)
+============================================================================================
+Pre-registered BEFORE any scoring (frozen-first, c9/c16/p7, NO tune-to-green). DIRECTIONAL
+numpy mirror, $0 CPU, gradient-free, live CORE/*.hexa UNTOUCHED (wires nothing).
+
+DECISIVE FOLLOW-ON to H_1375 (🧱 BREAKS-AT-D*=3). H_1375 split the CP move-the-cells law:
+RELOCATION is dimension-invariant, but bounded CONCENTRATION COH_D collapsed monotonically
+(0.714→0.428→0.201→0.079→0.038) below COH_MIN=0.50 from D=3 — at CONSTANT N=169. That is the
+classic curse-of-dimensionality signature at a FIXED sample budget. H_1375 explicitly DEFERRED
+the question: is D*=3 a FUNDAMENTAL dimensional ceiling, or purely a constant-N SPARSITY
+artifact (insufficient investment, c16 cause #3)?
+
+THE TEST (this lane): hold per-dimension sample DENSITY constant (N scaled with D) instead of
+raw N, and re-run the ladder. If COH_D recovers ≥ COH_MIN → the break was a SAMPLING ARTIFACT
+and the law is dimension-invariant-under-realistic-sampling. If COH_D still breaks → the
+curse-of-dimensionality ceiling is REAL/terminal. Either way is a clean result.
+
+ONLY the SAMPLING RULE changes vs H_1375 — every other knob (the COH_D / RELOCATION metric
+definitions, the 4 arms, the 4 legs c1-c4, the frozen thresholds, the seeds, the hyperplane
+setup, eta) is VERBATIM from H_1375 / its source H_1369 R2. NO threshold moved.
+
+DENSITY-CONSTANT SAMPLING RULE (the ONLY change; frozen here)
+-----------------------------------------------------------
+Constant per-axis LINEAR sampling density k = N^(1/D). H_1375 anchor = D=2, N=169 = 13 per axis
+(13×13 grid budget). To hold the per-dimension density constant the sample size must grow as
+    N_density(D) = round(k^D),   k = 13   (so D=2 → 13^2 = 169 EXACTLY reproduces the H_1375 anchor)
+This is the user's "N ∝ c^D" rule made explicit, with c = k = 13. k^D values:
+    D=2 → 169   D=3 → 2197   D=4 → 28561   D=6 → 4,826,809   D=8 → 815,730,721
+COMPUTE CEILING (a_scale_honest_scope): N_CAP = 4000. The fit owner-loop is O(N·grow·ncells)
+Python; N_CAP=4000 ≈ 16 s/arm is the compute-sane ceiling for this $0 CPU mirror. Per-D budget:
+    N(D) = min(N_CAP, round(13^D))
+    D=2 → 169   (uncapped, = H_1375 anchor)
+    D=3 → 2197  (uncapped, TRUE density-constant)
+    D=4 → 4000  (CAPPED — true density-constant 28561 infeasible on $0 CPU)
+    D=6 → 4000  (CAPPED — true density-constant 4.8M infeasible)
+    D=8 → 4000  (CAPPED — true density-constant 815M infeasible)
+HONEST TRUNCATION (pre-declared, a_scale_honest_scope): at D≥4 the cap means N(D) is BELOW the
+true density-constant target, so any COH_D break at D≥4 is AMBIGUOUS (could still be residual
+under-sampling at the cap, not a true ceiling). D=3 is the DECISIVE rung — its density-constant
+N=2197 is run UNCAPPED, so D=3's COH_D directly answers H_1375's open question (did the D*=3
+break vanish once density is held constant?). The cap is reported per-D in the result table.
+
+FROZEN CONSTANTS (verbatim H_1375 except N rule)
+------------------------------------------------
+LADDER       = [2, 3, 4, 6, 8]
+N_RULE       = N(D) = min(N_CAP, round(13^D))   [the ONLY change]
+N_CAP        = 4000
+K_CTR = DIM  = 64           (RBF centers, fixed across D)
+Q_A          = 1/3          (phase-1 projection cut quantile)
+Q_A2         = 2/3          (phase-2 moved projection cut quantile)
+GROW1 = GROW2 = 48          (split budgets, FIXED LOW, same every arm)
+BETA_POST    = 18.0
+KNN          = 4            (k nearest sample neighbors for discrimination field)
+SEEDS        = [4333, 4334, 4335]   (reuse H_1375)
+REPACK_ETA   = 0.15
+
+FROZEN BAR THRESHOLDS (verbatim mirror of H_1369 R2 / H_1375; NO threshold moved)
+LOC_TOL      = 0.12
+COH_MIN      = 0.50
+COH_SEP      = 0.10
+SHUF_COH_MAX = 0.20
+S_STD_REF    = 0.20
+
+METRICS (verbatim H_1375)
+-------------------------
+RELOCATION = |ridge_s − c_A'| (projection-onto-normal centroid of the discrimination ridge).
+COH_D = S_CONC·(1−RIDGE_FRAC), S_CONC = 1−min(1, s_std/S_STD_REF); scores ONLY the
+        normal-projection spread (bounded → no NCOMP saturation, the H_1369 R1 lesson).
+Discrimination field D(node) = max|Δposterior| to its KNN=4 nearest sample neighbors.
+
+4 ARMS (verbatim H_1375): RE-PACK (eta=.15) / SPLIT-ONLY (eta=0) / NO-RETRAIN (holds c_A) /
+SHUFFLE (anti-Goodhart). 3 seeds.
+
+PER-D FROZEN BARS (verbatim H_1375 / H_1369 R2 — the 4 legs)
+-----------------------------------------------------------
+Per-D PASS iff ALL of:
+  (c1 RELOCATION) |ridge_s − c_A'| ≤ LOC_TOL (0.12) for ALL seeds.
+  (c2 COHERENCE)  COH_D(re-pack) ≥ COH_MIN (0.50)  AND  COH_D(re-pack) ≥ COH_D(split-only)+COH_SEP (0.10).
+  (c3 EARNED)     NO-RETRAIN holds c_A: |ridge_s − c_A| ≤ LOC_TOL  AND  SHUFFLE COH_D ≤ SHUF_COH_MAX (0.20).
+  (c4 DISTINCT)   SPLIT-ONLY stays short: |ridge_s − c_A'| (split-only) > LOC_TOL.
+
+LADDER VERDICT (declared up front)
+----------------------------------
+🟢 DIMENSION-INVARIANT-UNDER-DENSITY  if COH_D ≥ COH_MIN AND relocation holds across ALL D
+   (i.e. all D pass all four frozen bars under the density-constant rule) — the D*=3 break was
+   a constant-N SAMPLING ARTIFACT; the move-the-cells law (relocation + concentration) is
+   dimension-invariant under realistic per-dimension-density-constant sampling.
+🧱 CURSE-CEILING-TERMINAL  if COH_D STILL breaks at some D* even under the density-constant rule
+   — the curse-of-dimensionality concentration ceiling is REAL (honest terminal closure).
+   (Honest caveat: a break at D≥4 is ambiguous due to the N_CAP truncation; the DECISIVE rung
+   is D=3 run UNCAPPED — its COH_D directly tests whether the D*=3 break vanishes under density.)
+
+Report: per-D N(D) used + capped/uncapped flag + RELOCATION + COH_D(rp/split/shuf) + c1-c4 + PASS.
+
+a_break_the_wall: THIS density-constant ladder IS the pre-registered breakthrough attempt
+H_1375 pointed at ("scale N with D"). Frozen-first, controls (no-retrain + shuffle + split-only)
+intact, NO bar moved. If COH_D still breaks at the UNCAPPED D=3, that is the honest terminal
+closure of the curse-of-dimensionality question for this CP-geometry mirror arc.
+
+SCOPE (UNVERIFIED, pre-declared): DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED). TOY:
+Monte-Carlo sampling / 3 seeds / DIM=64 / one normal per seed / deterministic readout. N_CAP=4000
+truncates true density-constant N at D≥4 (a_scale_honest_scope). scale / real-corpus / learned-net
+/ uncapped-high-D / engine-transfer UNVERIFIED. live CORE/*.hexa UNTOUCHED.
