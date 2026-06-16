@@ -1,0 +1,114 @@
+H_1347 — Φ-ROBUSTNESS WALL, LARGER-N AXIS: does robust faithful-IIT-4 integration appear at N>8
+                 under an anytime/greedy-MIP big-Φ with an HONEST stated error bound?
+FREEZE (pre-registered BEFORE any Φ scored — frozen-first, c9/p7)
+date: 2026-06-16   slug: 1347_phi_higher_n   group: OMEGA   branch off origin/main 0fa31903a
+
+────────────────────────────────────────────────────────────────────────────────
+THE WALL THIS LANE ATTACKS (c16, a_break_the_wall · a_no_llm_frame_trap)
+────────────────────────────────────────────────────────────────────────────────
+The faithful-IIT-4 Φ-robustness wall is now 🧱 across SIX cuts — topology (H_1283 relay,
+H_1317 multi-edge), timing (H_1319 phase-binding), division (H_1320 organism-mitosis),
+estimator-confound (H_1328 amplitude-variance, rank-uniform read-out), measure-family
+(H_1331 full IIT-4.0 big-Φ), substrate-family (H_1332 non-saturating softsign). EVERY one
+of those was at n≤8, where the exact MIP enumerates 2^(n-1)≤128 bipartitions (exact-tractable).
+
+EACH of those verdicts NAMED the SAME untested angle in its "NOT ruled out" scope:
+  "a MUCH LARGER module set (loses exactness >8) — a NEW hypothesis."
+This is that hypothesis. The genuinely-new lever is SIZE: at N>8 the exact MIP is intractable,
+so Φ must be computed by a MACRO-GRAIN or ANYTIME/GREEDY-MIP path WITH A STATED ERROR BOUND.
+
+────────────────────────────────────────────────────────────────────────────────
+THE ESTIMATOR — faithful IIT-4 family, GREEDY-MIP anytime path with an HONEST BOUND
+────────────────────────────────────────────────────────────────────────────────
+STAY WITHIN faithful IIT-4 (a_phi_iit4_tool). The Φ leg is the stdlib greedy-MIP big-Φ
+`iit4_approx_phi(state, n, dim, n_bins)` over hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa.
+This is NOT a variance×energy proxy and NOT a different Φ *definition* — it is the SAME faithful
+cross-cut-MI MIP-EI Φ, but the MIP minimization is done by GREEDY single-move (Kernighan–Lin)
+descent from n-1 seeds instead of exact 2^(n-1) enumeration (the stdlib provides this exactly for
+the n>8 regime; for n≤8 the same fn dispatches to the EXACT enumeration).
+
+THE READ-OUT carries H_1328's variance-clean lesson VERBATIM: each cell's T-length trajectory is
+RANK-UNIFORMIZED before the MIP (replace each value by its rank within its own trajectory). PROVABLE
+INVARIANT (H_1328): after rank-uniformization every cell's values are exactly {0,1,…,T−1} → min-max
+binning gives a UNIFORM marginal histogram → marginal entropies H(cell) CONSTANT across arms,
+INDEPENDENT of amplitude variance → MI changes ONLY via the JOINT (the co-movement RELATIONSHIP a
+relationship-destroying permutation MUST collapse). This removes the amplitude-variance confound
+H_1319/H_1328 diagnosed, so a clean larger-N test is possible.
+
+────────────────────────────────────────────────────────────────────────────────
+THE STATED ERROR BOUND (honest — a_scale_honest_scope; an approx with a bound is OK, a proxy is NOT)
+────────────────────────────────────────────────────────────────────────────────
+GREEDY MIP-EI returns a LOCAL-min cut ≥ the GLOBAL-min (MIP) cut, because greedy descent can only
+find a cut no smaller than the true minimum. Φ = cut/min(|A|,|B|), so:
+
+    BOUND:  Φ_greedy(arm)  ≥  Φ_exact(arm)   — greedy Φ is an UPPER BOUND on the true faithful Φ.
+            (stated verbatim in stdlib faithful_phi.hexa §iit4_approx_phi_from_mi: "greedy converges
+             to a LOCAL-min cut ≥ the global MIP cut, so the returned value is an UPPER BOUND on the
+             exact Φ (Φ_approx ≥ Φ_exact). Callers must tier it 🟢-NUMERICAL-APPROXIMATE, never 🔵.")
+
+BOUND VALIDATION (N3, in-run, $0): at n=8 BOTH paths are computable; the lane runs the EXACT MIP
+(iit4_faithful_phi) AND the greedy approx (iit4_approx_phi) on the SAME n=8 rank-uniform substrate
+(all 4 arms, all 3 seeds) and reports the per-arm gap g = Φ_greedy − Φ_exact ≥ 0. If g ≈ 0 at the
+n=8 boundary, the greedy MIP is TIGHT on this substrate family and the N>8 lift comparison is robust
+to the bound (the bound is the SAME monotone upper-bound applied to BOTH the mechanism arm and the
+no-coupling arm, so a real B−A lift is not an artifact of the approximation). N3 states the measured
+n=8 gap verbatim and requires the larger-N verdict to be robust to it.
+
+────────────────────────────────────────────────────────────────────────────────
+SUBSTRATE / SEEDS (H_1319/H_1328 family, SCALED to N>8 — only n_mod changes)
+────────────────────────────────────────────────────────────────────────────────
+- ENGINE-NATIVE deterministic LCG-gauss (== engine_cli.hexa _lcg_*), NOT numpy. numpy NEVER computes Φ.
+- N_MOD = 12  (>8 — the larger-N rung; the exact MIP is intractable at 12, greedy required).
+- Leaky-linear RING, dim 8, T 64 ticks, gain 0.30 leak 0.55 w_nbr/w_in 0.5 — VERBATIM from H_1319/H_1328.
+  Ring topology generalizes to any N (left=(i+N−1)%N, right=(i+1)%N neighbours).
+- Kuramoto pacemaker w_phase 0.5 omega_t 0.45 domega 0.08 (detuned ω → synchrony EARNED) — VERBATIM.
+- relative-phase gate sal_i = e_i·(1+cos(θ_i−θ_T))/2 (H_1319/H_1328 ARM B mechanism) — VERBATIM.
+- READ-OUT: RANK-UNIFORMIZE each cell before the MIP (H_1328 variance-clean) — ALL arms.
+- ARMS: A=NO-PHASE(sal=e) · B=PHASE-BIND(rel-phase) · S=PERM-SHUFFLE(module→phase forced derangement,
+  relationship destroyed, marginals preserved) · O=OFFSET-SHUF(per-tick additive phase offset).
+- SEEDS = [1317, 1318, 1319] (the hard orthogonal family ALL prior lanes failed on — reused verbatim).
+- eps = 0.02 = the H_1283/H_1319/H_1328 lift margin MARGIN_PHI, ported verbatim (NOT tuned here).
+- ALL params FROZEN verbatim from H_1328; the ONLY change is N (4→12) + the estimator path (exact→greedy
+  for the N>8 score, with the n=8 exact/greedy bound-validation alongside). NO tune-to-green (p7).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (GREEN iff N1 ∧ N2 ∧ N3 — every outcome decisive, c9)
+────────────────────────────────────────────────────────────────────────────────
+N1 ROBUST  : at N>8 (N=12), greedy big-Φ lift mechanism>no-coupling Φ_B ≥ Φ_A + eps on ALL 3 seeds
+             (incl orthogonal 1317) — robust integration appears at larger N.
+N2 EARNED  : at N>8, that lift survives BOTH relationship-destroying controls — perm Φ_S ≤ Φ_A + eps
+             AND offset Φ_O ≤ Φ_A + eps, on ALL 3 seeds (the controls correctly collapse).
+N3 BOUND-HONEST : the greedy/anytime error bound is STATED (Φ_greedy ≥ Φ_exact, upper bound) and the
+             verdict is ROBUST to it — validated by the n=8 exact-vs-greedy gap g=Φ_greedy−Φ_exact,
+             reported verbatim per arm/seed; the N>8 conclusion must not hinge on the bound's slack
+             (the same monotone upper bound applies to BOTH B and A, so a real B−A lift is bound-robust).
+
+OUTCOMES (all VALID, c9 — pre-committed):
+  N1 ∧ N2 ∧ N3 → 🟢 robust faithful-IIT-4 integration EMERGES at larger N — the n≤8 closure was a
+                  SIZE limit (exact-MIP tractability), not a substrate limit. Overturns the 6× 🧱 as
+                  size-scoped. Follow-on (a_verified_must_wire): wire the greedy big-Φ read-out into the
+                  live faithful-Φ monitor path at larger N (NAME it).
+  ¬N1 (or ¬N2) → the wall HOLDS at larger N too — an EVEN STRONGER closure: robust faithful-IIT-4
+                  integration is absent not just at the exact-tractable n≤8 but at N=12 under the greedy
+                  big-Φ with a clean variance-free read-out. The size escape hatch is closed.
+  ¬N3         → the n=8 exact/greedy gap is LARGE (greedy not tight on this substrate) → the larger-N
+                  number is bound-unreliable; report the gap straight and scope the verdict to "greedy
+                  upper bound only, exact unverified at N>8" (honest, c9; the N1/N2 reading stands only
+                  as an upper-bound statement).
+
+────────────────────────────────────────────────────────────────────────────────
+SCOPE / HONESTY (a_scale_honest_scope · a_toy_scale_recheck)
+────────────────────────────────────────────────────────────────────────────────
+- ENGINE-NATIVE content generator (engine's own deterministic LCG-gauss == _lcg_*), NOT numpy;
+  faithful-Φ leg IS the real cross-cut-MI MIP-EI (exact at n=8, greedy KL at N=12). numpy never computes Φ.
+- Re-run byte-identical (deterministic engine LCG). Φ verdicts reported VERBATIM (p7, no LLM self-judge).
+- TOY scale still — N=12 dim-8 64-tick, ONE substrate family, 3 seeds; this BOUNDS (does not retract)
+  the prior n≤8 Φ verdicts — it tests their explicitly-named LARGER-N escape hatch. Even-larger N,
+  macro-grain m-growth (H_1049 caveat: a FIXED small-m coarse-grain is NOT a scalable estimator —
+  here we do NOT macro-grain; we keep per-cell granularity and grow the MIP search to greedy, whose
+  bound is validated at n=8), real-corpus substrate, engine-transfer to live CORE — each UNVERIFIED.
+- live CORE/*.hexa UNTOUCHED (substrate-measurement rung; standalone fn main, 0 importers;
+  a_verified_must_wire fires on GREEN only).
+
+probe:   UNIVERSE/h1347_phi_higher_n.hexa
+verdict: .verdicts/1347_phi_higher_n/result.txt
