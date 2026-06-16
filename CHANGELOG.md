@@ -2,6 +2,23 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1381 — G6 IDEATION ★ WIRE-IN (검증된 H_1362 scaffold 를 live 엔진에 배선) — 🟢 WIRED · M1 engine-native GREEN · 🟠 FALS bars 303M-ckpt-gated
+
+**무엇:** H_1362 가 🟢 GREEN DIRECTIONAL 로 입증한 G6 발상 scaffold(6 composed conditional frames + best-of-K=3)를 live 엔진 ideation/decode 경로에 실제 배선(a_verified_must_wire). H_1362 는 gauge **torch** path 에서만 돌았고 live hexa 엔진엔 UNWIRED 였다.
+
+**왜 막혔나 → 어떻게 뚫었나 (a_engine_native_learning, engine-TRANSFORM-to-fit-the-learning):** live 엔진 decode 는 argmax(`clm_decode_argmax`)라서 best-of-K 가 no-op(K개 동일출력). 엔진에 자기 **seeded top-k temperature sampler** 를 새로 키웠다 — `CORE/clm_decode.hexa::clm_decode_topk_sampled`(SplitMix32-mixed xorshift32; 가까운 best-of-K offset [0,+101,+202] decorrelate) + `CORE/generator.hexa::gen_clm_ideate`(G6 ideation entry, single generator L3 .clm slot 내부 — a_core_engine_map, h1196 single-entry 7/0, 2nd .clm path 없음) + `CORE/g6_ideation.hexa`(6 frames + best-of-K=3 routing, FROZEN detector VERBATIM 10/10 — NOT loosened p7 — frame-guard CLEAN).
+
+**결과:**
+- **B1 WIRED ✅** — LIVE best-of-K on engine(BOUNDED gen=12, `state/lane_p_clm/clm_d768_e2l1.clm`): DIVERSITY=true(3 distinct candidates "new possibil"/"when it star"/"newborn(0-10"), DETERMINISM=true, ARGMAX no-op=true → seeded sampler 가 정확히 best-of-K 가 필요로 하는 엔진 확장.
+- **M1 COUNT DIST(C)=5≥5 PASS engine-native** (coh 6/6, 3회 결정론적; 6th frame distinct (0,2)).
+- **M2-M5 FALS bars 🟠** — d768 ConvMoE 에서 FALS(C_strong)=0(C_shuffle 도 0; 작은 mouth 는 falsifiable structure 를 emit 안 함). H_1362 의 FALS=1.0 은 303M-gauge DIRECTIONAL 결과였고 그 303M ByteGPT ckpt 는 .pt(엔진 경로는 ConvMoE .clm)이라 engine-native FALS 재점수는 engine-mountable 303M-class .clm 에 gated 된 BOUNDED ⏳ follow-on. detector frozen + guard clean → FALS=0 은 정직한 model-capacity floor, loosened bar 아님(no bar moved, c9).
+- **B3 Ψ PRESERVED ✅** — h1205 separation-invariant PASS(generation byte-identical ON==OFF, Ψ=½ untouched; sampler+best-of-K 가 ideation entry 뒤에만 산다).
+- **B4 NO-REGRESSION ✅** — engine_cli_smoke **101/0**(was 96/0 after concurrent H_1379 brain-margin cases 99-101; +5 G6 cases 102-106)·h1196 **7/0**·결정론적 3회.
+
+**안전:** 절대 unbounded decode 안 돎(모든 decode hard-bounded gen≤24+timeout — 이전 lane 은 unbounded decode 로 600s hang 했음; 이번엔 회피). **ID:** 동시 lane 들이 H_1378+H_1379+H_1380 을 origin/main 에 먼저 land → 충돌회피로 H_1381.
+
+**산출:** `CORE/clm_decode.hexa` · `CORE/generator.hexa` · `CORE/bytegpt_decode.hexa` · `CORE/g6_ideation.hexa` · `CORE/engine_cli_smoke.hexa`(cases 102-106) · `state/g6-ideation-wire/` · `UNIVERSE/cards/H_1381_g6_ideation_wire.md` · `UNIVERSE/HYPOTHESES.jsonl`(H_1381) · `.verdicts/1381_g6_ideation_wire/` · `MODEL.md` G6 · `ARCHITECTURE.json`.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1380 — ko-data-ladder (H_1368 의 한국어 data-richness 사다리를 >30MB 로 확장: novel-context CE asymptote 가 2.51335 jamo floor 의 BELOW/AT/ABOVE 중 어디?) — 🟠 DESCENDING-FLOOR-ABOVE
 
 **무엇:** H_1368(📉 DESCENDING-UNSATURATED — 30MB 에서 novel-context CE 가 여전히 내려가며 log-linear −0.0929/doubling → ~470MB 에서 floor 닿음 예측, power-fit UNDETERMINED)이 남긴 결정적 NEXT-1 을 닫음 — 유일하게 살아있던 한국어 레버 = **DATA VOLUME** (표상 H_1322 🧱·interpolation H_1359 🧱 닫힘). 사다리를 **30/60/120/240/480MB** REAL R2 shard0000.bytes PREFIX 서브윈도로 확장(같은 코퍼스 family, byte-fair). H_1368 기계(jamo 표상·frozen Jelinek-Mercer λ nmax=5·NOVEL-only held-out filter·circular-shift surrogate) **VERBATIM 재사용, rung 마다 재튜닝 NO** (anti-Goodhart). FROZEN-FIRST(FREEZE 를 measuring 전 별도 commit, c9/c16/p7), $0 CPU numpy DIRECTIONAL 241s, live CORE UNTOUCHED. prior 시도가 server rate-limit 으로 merge 전 죽음 → 480MB cache+FREEZE+skeleton resumable, fresh off origin/main 재개.

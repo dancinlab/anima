@@ -587,7 +587,7 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// H_1379 — SEEDED TOP-K TEMPERATURE SAMPLER (the engine extension that makes
+// H_1381 — SEEDED TOP-K TEMPERATURE SAMPLER (the engine extension that makes
 // best-of-K EXPRESSIBLE on the engine). bytegpt_decode_argmax is deterministic
 // argmax, so best-of-K over rng offsets would yield K IDENTICAL outputs (no-op).
 // Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning) the engine

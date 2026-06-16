@@ -592,7 +592,7 @@ pub fn gen_clm_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
               "reason": "decoded via clm_decode_argmax (CLMConvMoE int4 forward)" }
 }
 
-// gen_clm_ideate — H_1379 G6 IDEATION ★ entry. The SEEDED-SAMPLING sibling of gen_clm_chat:
+// gen_clm_ideate — H_1381 G6 IDEATION ★ entry. The SEEDED-SAMPLING sibling of gen_clm_chat:
 // routes a composed ideation frame through the engine's seeded top-k sampler
 // (clm_decode_topk_sampled) so the G6 best-of-K DEPTH lever yields DIVERSE candidates
 // (argmax = a no-op for best-of-K). Stays inside the SINGLE generator L3 .clm slot
@@ -609,7 +609,7 @@ pub fn gen_clm_ideate(ckpt_path: string, seed: string, max_new: int,
               "reason": "ideated via clm_decode_topk_sampled (seeded top-k, best-of-K source)" }
 }
 
-// gen_g6_sampler_selftest — H_1379: exercise the engine's seeded top-k sampler on a
+// gen_g6_sampler_selftest — H_1381: exercise the engine's seeded top-k sampler on a
 // SYNTHETIC peaked logits vector (NO model forward — fast, deterministic, smoke-safe).
 // Returns #{ deterministic, diverse, in_topk } proving the DEPTH-lever mechanism. Lives
 // here (generator owns the clm_decode slot) so g6_ideation/smoke need no clm_decode import.

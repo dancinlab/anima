@@ -20,7 +20,7 @@
 
 import "CORE/engine_cli.hexa"
 import "CORE/brain.hexa"
-import "CORE/g6_ideation.hexa"   // H_1379 G6 ideation wire-in (G6 cases)
+import "CORE/g6_ideation.hexa"   // H_1381 G6 ideation wire-in (G6 cases)
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }
@@ -1212,12 +1212,12 @@ fn main() {
     if _assert_b("case_101_margin_brain_bias_bounded", true,
                  abs_xg <= 0.05 + 0.0000001 && abs_xu <= 0.05 + 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── H_1379 G6 IDEATION ★ WIRE-IN (cases 102-106) ─────────────────────────────────
+    // ── H_1381 G6 IDEATION ★ WIRE-IN (cases 102-106) ─────────────────────────────────
     // Deterministic engine-native proof of the G6 scaffold wire-in — NO slow decode (the
     // 303M/ConvMoE forward is bounded only inside g6_score_arm; these cases test the
     // MECHANISM: frames, frozen detector, frame-guard, and the seeded best-of-K sampler on
     // SYNTHETIC logits). The full M-bar re-score on a live ckpt is a separate bounded probe
-    // (.verdicts/1379_g6_ideation_wire/) — never run unbounded in the smoke (FREEZE (ii)).
+    // (.verdicts/1381_g6_ideation_wire/) — never run unbounded in the smoke (FREEZE (ii)).
     let g6_known = _g6_dict_load()
 
     // case 102 : DETECTOR FROZEN — the VERBATIM H_1305 falsifiability detector calibrates
