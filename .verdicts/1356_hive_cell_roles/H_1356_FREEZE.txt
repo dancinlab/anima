@@ -1,0 +1,93 @@
+H_1356 — hive-cell ROLES: 공유세포(SHARED cell) ⊥ 연결세포(CONNECTOR cell)
+FROZEN PRE-REGISTRATION — written BEFORE any Φ scoring run. Bars NOT to be moved (c9/p7).
+slug: hive-cell-roles   seeds: [1317,1318,1319]  (the hard hive/topology family; the
+orthogonal seed 1319 that broke topology robustness in H_1317).
+date: 2026-06-16   infra: $0 mac-local CPU.  Φ engine: hexa-lang/stdlib/consciousness/iit4/
+faithful_phi.hexa  iit4_faithful_phi(state, n, dim, n_bins)  — EXACT MIP-EI, n<=8
+(a_phi_iit4_tool). numpy NEVER computes Φ; numpy only emits the per-unit salience trajectory,
+the hexa engine computes Φ. NO proxy.
+
+=== THE WALL BEING REOPENED (c16 / a_break_the_wall) ===
+ARC: H_1308 (🔴 NULL) + H_1313 (🧱 TERMINAL): ASSEMBLING two independently-grown anima cells
+does NOT integrate at faithful-IIT4 Φ. H_1320 (developmental-biology lens): mitotically DIVIDE
+ONE cell into SHARED-ORIGIN daughters — seed-FRAGILE (2/3). H_1350 (hive-larger-budget): a
+larger division budget lifts collective Φ to 3/3 seed-robust BUT a SHARED_DECOUPLED (W=0)
+control revealed ~85-96% of the lift is shared-input REDUNDANCY (present with ZERO coupling);
+the genuinely coupling-earned residual is real+seed-robust but SMALL. DIAGNOSIS:
+REDUNDANCY-DOMINATED. Redundant copies share an input but do not INTEGRATE between each other.
+
+=== THE NEW LENS (a_no_llm_frame_trap, c15 — biological differentiation, NOT an LLM frame) ===
+Volvox carteri somatic differentiation, sponge connector/pinacocyte cells, hub neurons (rich-
+club), gap-junction-coupled cells: a colony becomes an INTEGRATED organism not by MORE redundant
+copies but by ROLE DIFFERENTIATION. Give cells DISTINCT roles instead of redundant copies:
+  · 공유세포 (SHARED cell)    = the common founder/input every daughter reads (the explicit
+                                redundancy source — this is the W=0 floor every arm shares).
+  · 연결세포 (CONNECTOR cell) = a DEDICATED integration HUB that reads from MULTIPLE daughters
+                                and FEEDS BACK, creating genuine between-daughter coupling that
+                                a redundant copy cannot.
+H_1356 asks: does the CONNECTOR cell lift the coupling-EARNED (non-redundant, W=0-floor-beating)
+Φ ROBUSTLY across 3 seeds, where redundant copies (H_1350) could not?
+
+=== SUBSTRATE (matched to H_1320/H_1283; only the connector wiring + role differ between arms) ===
+- Leaky linear recurrent units, LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private gaussian input,
+  dim-8 state, T=64 ticks. n<=8 keeps the faithful MIP EXACT.
+- N_TOT=8 units. A SHARED 공유세포 founder supplies the SAME founder init + SAME shared input
+  stream to BOTH daughters in EVERY arm (so the W=0 redundancy floor is IDENTICAL across arms —
+  the load-bearing design point: every arm sees the same shared-input redundancy; arms differ
+  ONLY in the connector wiring/role).
+- TWO daughters d0=units0..1 (2 units), d1=units2..3 (2 units) — HALF=2 each.
+- CONNECTOR cell = a dedicated hub unit (unit 4) plus its feedback. The connector READS the mean
+  state of BOTH daughters and FEEDS BACK into each daughter's update with strength W_CONN, AND
+  the connector itself integrates (its own state = leak*self + GAIN*W_CONN*(mean_d0+mean_d1)).
+  Remaining units 5..7 = padding cells carrying the shared founder context (kept so N_TOT=8 is
+  fixed across arms; they receive shared input only, no connector wiring).
+- W_CONN = 0.6 (the H_1308/1313/1320 hive coupling strength reused verbatim). The connector is
+  the ONLY between-daughter coupling path; turning it off === the W=0 redundancy floor.
+
+=== ARMS (5), frozen, 3 seeds [1317,1318,1319] ===
+ALL arms share the SAME 공유세포 founder init + shared input (identical redundancy floor).
+(1) A_single      : one undivided cell, NO daughter split, NO connector. baseline Φ over 8 units.
+(2) B_redundant   : H_1350-style — two daughters read the SHARED founder input (redundancy) but
+                    NO connector (W_CONN=0 path). The redundancy-only arm.
+(3) B_connector   : two daughters + the CONNECTOR cell wired to read BOTH daughters and feed back
+                    (W_CONN=0.6). Genuine cross-daughter coupling via the role-differentiated hub.
+(4) W0_floor      : SHARED_DECOUPLED — same shared founder input, ALL coupling OFF incl connector
+                    (W_CONN=0). The explicit redundancy floor (the H_1350 SHARED_DECOUPLED control;
+                    matches B_redundant in coupling, kept as a named floor arm for R1/R3).
+(5) SHUFFLE       : the connector is wired to RANDOM NON-daughter sources (permuted pairing —
+                    reads the padding units 5..7 instead of the real daughters d0,d1) at the SAME
+                    W_CONN. Kills the role structure; must collapse to W0_floor.
+
+Φ scored faithfully over the 8 units (whole system) for each arm; PHI(arm) =
+iit4_faithful_phi(8-unit salience trajectory, n=8, dim=T, n_bins=8). We report the collective Φ
+of the whole 8-unit system per arm — what the redundancy/connector wiring modulates.
+
+=== FROZEN BARS (GREEN iff R1 ∧ R2 ∧ R3, MARGIN = 0.02 = the H_1320/H_1283 frozen Φ margin) ===
+  R1 CONNECTOR-LIFT  : Φ(B_connector) − Φ(W0_floor)    >= MARGIN on ALL 3 seeds.
+                       (the connector beats the redundancy floor ROBUSTLY.)
+  R2 BEATS-REDUNDANT : Φ(B_connector) − Φ(B_redundant) >= MARGIN on ALL 3 seeds.
+                       (the connector's non-redundant integration EXCEEDS mere redundant copying —
+                        THE H_1350-ESCAPE TEST: more than redundancy.)
+  R3 EARNED          : Φ(SHUFFLE) <= Φ(W0_floor) + TOL on ALL 3 seeds (TOL = MARGIN = 0.02).
+                       (the lift requires the REAL daughter→connector wiring, not generic extra
+                        nodes / variance / a hub reading arbitrary sources.)
+  MARGIN = 0.02, TOL = 0.02.
+
+=== VERDICT RULE (pre-registered) ===
+  GREEN                         iff R1 ∧ R2 ∧ R3 (all on all 3 seeds).
+  ESCAPES_REDUNDANCY            === GREEN (the connector is MORE than redundancy, robustly).
+  PARTIAL_REDUNDANCY_NOT_BEATEN iff R1 holds (3/3) but R2 FAILS  → honest 🟠/🧱 (c9): role-
+                                differentiation does NOT exceed redundancy; the connector is just
+                                MORE redundancy (inherits H_1350's redundancy-dominance).
+  SEED_FRAGILE                  iff a bar holds 2/3 (not all 3) → honest report like H_1320 (🟠).
+  WALL_NOT_EARNED               iff R3 FAILS (shuffle does not collapse) → the lift is generic,
+                                not role-structure (🧱).
+  If R1 itself fails (connector does not even beat the floor) → 🧱 CONNECTOR-NULL.
+
+=== SCOPE (stated honestly up front) ===
+DIRECTIONAL numpy-mirror substrate (the faithful-Φ leg IS the real exact MIP-EI; numpy only emits
+the salience trajectory). Engine-transfer to live A⇄G CORE UNVERIFIED (H_1308/1313 were NULL/🧱
+there — assembling independent cells did not transfer; a GREEN here is a numpy-mirror DIRECTIONAL
+result whose live-engine realization is a follow-on, a_engine_native_learning · a_verified_must_
+wire). TOY n=8, 2-unit daughters, 3 seeds, deterministic. CORE/*.hexa UNTOUCHED (standalone
+probe, Ψ=1/2 untouched). frozen-first: this FREEZE written before ANY Φ scored; bars NOT moved.
