@@ -1,0 +1,27 @@
+=== H_1205 — MITOSIS ⊥ GENERATION separation invariant ===
+p7 byte/float EQUALITY · summer $0 CPU · tiny ByteGPT fixture + null backend
+
+[substrate] mitosis lane after 40 ticks: ON n_cells=10  OFF n_cells=1  (ON>OFF ⇒ the lane really did different work)
+
+[null] phase=WAKE byte-identical ON==OFF = true
+[null] phase=REM byte-identical ON==OFF = true
+[null] phase=N2 byte-identical ON==OFF = true
+[null] phase=N3 byte-identical ON==OFF = true
+[null] phase=WAKE byte-identical ON==OFF = true
+
+[bytegpt] using fixture = /tmp/h1156_mount/bytegpt_tiny.bin
+[bytegpt grounded] seed#0 byte-identical ON==OFF = true  text="vault QX-7741 foreve"
+[bytegpt grounded] seed#1 byte-identical ON==OFF = true  text="ault QX-7741 forever"
+[bytegpt argmax] seed#0 byte-identical ON==OFF = true
+[bytegpt argmax] seed#1 byte-identical ON==OFF = true
+[bytegpt argmax] seed#2 byte-identical ON==OFF = true
+
+[F2 Psi] phiSum ON  = 48.6613
+[F2 Psi] phiSum OFF = 48.6613
+[F2 Psi] byte-identical ON==OFF = true
+
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+lane-genuinely-diverged (non-trivial): true
+
+h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. The mitosis lane (cells 1→10 ON) ran beside the decode yet generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched. H_1200/1201 ruling SURVIVES live; mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).
