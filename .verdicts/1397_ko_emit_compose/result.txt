@@ -1,0 +1,23 @@
+===== H_1397 KO-EMIT COMPOSE — jamo (H_1327) + morphology (H_1393) =====
+ko emit-compose: acc_jamo=0.0347 acc_morph=0.2522 acc_compose=0.1783 acc_shufw=0.1609 compose-best=-0.0739 shufw-compose=-0.0173 agree=0.0869 oracle=0.2696 — jamo+morphology emit-biases COMPOSED by SCALE-RELATIVE SUBSTRATE confidence (mean_err/err_here, NO hardcoded priority · a_autonomy_over_hardcode) · HONEST 🧱/🟠: faculties mostly CONFLICT + non-complementary here (compose < best-single; oracle ceiling ≈ +0.017) · off-Korean INERT byte-identical · Ψ-disjoint · a_core_engine_map single entry (H_1327 + H_1393, H_1397)
+
+shared next-byte decision (engine fixture, n=230):
+  acc_jamo    (jamo emit-bias alone)   : 0.0347826
+  acc_morph   (morphology emit-bias)   : 0.252174
+  best_single (max of the two alone)   : 0.252174
+  acc_compose (substrate-conf arbitr.) : 0.178261
+  acc_shufw   (random arbitration)     : 0.16087
+
+DIAGNOSTIC (bar2, non-gating):
+  agree_rate    (faculties propose SAME byte) : 0.0869565
+  conflict_rate (they propose DIFFERENT bytes): 0.913043
+  ORACLE ceiling (ANY arbitration upper bound): 0.269565  (oracle - best = 0.0173913)
+  complementarity: both_right=4 only_jamo=4 only_morph=54
+
+FROZEN BARS:
+  bar1 COMPOSE-EFFECT : acc_compose >= best - 0.01  → false  (compose=0.178261 best=0.252174 Δ=-0.073913)
+  bar2 AGREE diag     : agree=0.0869565 conflict=0.913043 (non-gating)
+  bar3 EARNED         : acc_shufw <= acc_compose + 0.01  → true  (shufw=0.16087 compose=0.178261 Δ=-0.0173913)
+  bar4 Ψ-SAFE         : ascii_inert(true) ko_fires(byte=32)  → true
+
+VERDICT: CONFLICT-OR-DEGRADES — see verbatim bars above (honest, c9, no forced green)

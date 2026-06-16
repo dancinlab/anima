@@ -1538,6 +1538,72 @@ fn main() {
           + " ascii_inert=" + to_string(be_emit_ascii == 120)
           + " ko_fires_byte=" + to_string(be_emit_ko))
 
+    // ── H_1397 KO-EMIT COMPOSE — composing the jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393)
+    //   emit-biases on the SAME next-byte decision (cases 129-132). The genuinely-untested follow-on
+    //   H_1393 named: when BOTH emit-biases fire on one decode step, do they AGREE, CONFLICT, or need
+    //   an arbitration rule? §6.5f gen_emit_compose composes them by SCALE-RELATIVE SUBSTRATE confidence
+    //   (each faculty's mean_err/err_here — the more-relatively-grounded faculty wins; NO hardcoded
+    //   "jamo > morphology" priority, a_autonomy_over_hardcode). HONEST RESULT (c9, the closed-negative
+    //   the prompt anticipated, NO forced green): the two faculties MOSTLY CONFLICT (conflict_rate 0.913)
+    //   and are NON-COMPLEMENTARY at this granularity — the ORACLE ceiling (ANY arbitration upper bound)
+    //   is only +0.017 over morphology-alone (jamo is right alone on just 4/230 positions), so the
+    //   substrate-confidence compose (0.178) cannot beat morphology-alone (0.252): bar1 COMPOSE-EFFECT
+    //   FAILS. What DOES hold (and is the load-bearing engine-native fact these cases assert): the
+    //   grounding signal is REAL (bar3 EARNED — the compose beats a random/shuffle arbitration), the
+    //   compose hook is Ψ-SAFE (off-Korean byte-identical, bar4), and the conflict diagnostic is
+    //   measured. The compose is WIRED single-entry (a_core_engine_map) but the faculties don't compose
+    //   to a NET LIFT at this fixture granularity — a real finding, NOT a green (verdict 🧱/🟠).
+    let ce_eval = gen_emit_compose_eval()
+    let ce_j = to_float(ce_eval["acc_jamo"])
+    let ce_m = to_float(ce_eval["acc_morph"])
+    let ce_c = to_float(ce_eval["acc_compose"])
+    let ce_s = to_float(ce_eval["acc_shufw"])
+    let ce_best = to_float(ce_eval["best_single"])
+    let ce_conf = to_float(ce_eval["conflict_rate"])
+    let ce_orc  = to_float(ce_eval["acc_oracle"])
+
+    // case 129 (EARNED, bar3 — the grounding signal is real) : the SCALE-RELATIVE substrate-confidence
+    //   compose is NOT beaten by a random/shuffle arbitration (acc_shufw <= acc_compose + 0.01) — the
+    //   mean_err/err_here grounding does real arbitration work over random (a_autonomy_over_hardcode).
+    if _assert_b("case_129_compose_earned_vs_shuffle", true,
+                 ce_s <= ce_c + 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 130 (HONEST CONFLICT-OR-DEGRADES, bar1 — the measured closed-negative) : the compose does NOT
+    //   beat the better single faculty (acc_compose < best_single) AND the two faculties mostly CONFLICT
+    //   (conflict_rate >= 0.5) — the faculties are non-complementary at this granularity (c9, the bar is
+    //   NOT moved; this case asserts the FINDING that the compose degrades, the honest result).
+    if _assert_b("case_130_compose_conflict_degrades", true,
+                 ce_c < ce_best && ce_conf >= 0.5) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 131 (NON-COMPLEMENTARITY ceiling) : even a PERFECT arbitration (oracle = right iff EITHER
+    //   faculty is right) barely exceeds morphology-alone (acc_oracle - best_single <= 0.05) — the
+    //   headroom for ANY compose rule is tiny because morphology subsumes jamo's competence here.
+    if _assert_b("case_131_compose_oracle_ceiling", true,
+                 ce_orc - ce_best <= 0.05 && ce_orc >= ce_best) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 132 (Ψ-SAFE / off-Korean INERT) : on an ASCII (non-Korean) context the compose hook returns
+    //   the caller's own base byte UNCHANGED (byte-identical off-distribution, the Ψ-disjoint / no-
+    //   regression invariant; the full Ψ guard = h1205/h1164 run separately). NO hardcoded priority:
+    //   the live hook reads the substrate mean-err baselines from the eval, never a fixed jamo/morph rule.
+    let ce_cells = ko_jamo_cells_load("CORE/ko_jamo_cells.kojamohead")
+    let ce_jhM   = gbe_grow_head_raw(0)[0]
+    let ce_uv    = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
+    let ce_jMean = to_float(ce_eval["jamo_mean_err"])
+    let ce_mMean = to_float(ce_eval["morph_mean_err"])
+    let ce_ascii = [104, 101, 108, 108, 111]   // "hello" — not Korean-like
+    let ce_off   = gen_emit_compose(120, ce_cells, ce_jhM, ce_uv, ce_jMean, ce_mMean, ce_ascii)
+    if _assert_b("case_132_compose_offkorean_inert", true,
+                 ce_off == 120 && to_string(ce_eval["ok"]) == "true") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  ko emit-compose (H_1397, HONEST CONFLICT-OR-DEGRADES): acc_jamo=" + to_string(ce_j)
+          + " acc_morph=" + to_string(ce_m)
+          + " best_single=" + to_string(ce_best)
+          + " acc_compose=" + to_string(ce_c) + " (< best ⇒ degrades)"
+          + " acc_shufw=" + to_string(ce_s)
+          + " conflict_rate=" + to_string(ce_conf)
+          + " oracle=" + to_string(ce_orc)
+          + " — substrate-confidence arbitration (NO hardcoded priority); faculties NON-COMPLEMENTARY here")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
