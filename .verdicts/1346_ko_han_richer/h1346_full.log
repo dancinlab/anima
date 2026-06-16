@@ -1,0 +1,54 @@
+=== H_1346 — XLANG r3: RICHER HEAD (recursive-IDS depth 3 + component-BIGRAM, pure numpy CPU) ===
+[ids] fetched 2161631B
+[ids] sha256=bfc70a8c09f9f5616ebf0543bd6681e67314e9f7ae2307e5ae8c6f15bdc5c6a6
+[ids] 88937 entries loaded
+[corpus] 20231101.ko offset 3500 HTTP 429 -> backoff 5s (attempt 1/8)
+[corpus] 20231101.ko offset 3500 HTTP 429 -> backoff 10s (attempt 2/8)
+[corpus] 20231101.ko offset 3500 HTTP 429 -> backoff 20s (attempt 3/8)
+[corpus] 20231101.ko offset 3500 HTTP 429 -> backoff 40s (attempt 4/8)
+[corpus] 20231101.ko fetched 30000008B via /rows (offset reached 3800)
+[corpus] ko kind=hangul 30000000B sha256=3e288b7797017a28…
+[corpus] 20231101.zh fetched 30000008B via /rows (offset reached 1900)
+[corpus] zh kind=han 29999998B sha256=c084b027a40d46e1…
+[corpus] 20231101.ja offset 400 HTTP 429 -> backoff 5s (attempt 1/8)
+[corpus] 20231101.ja offset 400 HTTP 429 -> backoff 10s (attempt 2/8)
+[corpus] 20231101.ja offset 400 HTTP 429 -> backoff 20s (attempt 3/8)
+[corpus] 20231101.ja fetched 30000008B via /rows (offset reached 1400)
+[corpus] ja kind=han 30000000B sha256=a97dd068ced1150b…
+[corpus] 20231101.en offset 600 HTTP 502 -> backoff 5s (attempt 1/8)
+[corpus] 20231101.en fetched 30000008B via /rows (offset reached 1500)
+[corpus] en kind=none 30000000B sha256=b097ccccfd9709b1…
+[avail] REAL corpora available: ['ko', 'zh', 'ja', 'en']
+[ko] kind=hangul extra-units=67 vj_struct=323
+  [ko seed 5346] RAW=2.53014 STRUCT=2.41300 SHUF=2.41531  cells 13/11
+  [ko seed 5347] RAW=2.54066 STRUCT=2.41903 SHUF=2.42889  cells 13/11
+  [ko seed 5348] RAW=2.54698 STRUCT=2.42972 SHUF=2.42495  cells 14/40
+[zh] kind=han distinct-Han=9113 component-vocab=619 vj_struct=875 ids-miss=0 decomposed-chars=8929 avg-leaves=4.31 depth=3
+  [zh seed 5346] RAW=3.09008 STRUCT=4.54445 SHUF=4.60228  cells 20/6
+  [zh seed 5347] RAW=3.08667 STRUCT=4.52312 SHUF=4.53933  cells 14/6
+  [zh seed 5348] RAW=3.08098 STRUCT=4.53433 SHUF=4.58113  cells 18/6
+[ja] kind=han distinct-Han=4524 component-vocab=526 vj_struct=782 ids-miss=0 decomposed-chars=4390 avg-leaves=4.30 depth=3
+  [ja seed 5346] RAW=2.67674 STRUCT=3.52595 SHUF=3.63374  cells 25/5
+  [ja seed 5347] RAW=2.66618 STRUCT=3.56826 SHUF=3.53323  cells 23/5
+  [ja seed 5348] RAW=2.66287 STRUCT=3.57859 SHUF=3.64584  cells 24/5
+[en] kind=none extra-units=0 vj_struct=256
+  [en seed 5346] RAW=2.74579 STRUCT=2.74579 SHUF=2.74579  cells 5/5
+  [en seed 5347] RAW=2.74384 STRUCT=2.74384 SHUF=2.74384  cells 7/7
+  [en seed 5348] RAW=2.75301 STRUCT=2.75301 SHUF=2.75301  cells 20/20
+====================================================================================
+PER-LANGUAGE MATRIX (3-seed mean, nats per ORIGINAL UTF-8 byte; RICHER bigram head):
+  lang  kind        RAW_CE  STRUCT_CE     Delta   SHUF_CE  Δvs-shuf comp-vocab  avg-lv
+  ko    hangul     2.53926    2.42058  +0.11868   2.42305  +0.00247         67    0.00
+  zh    han        3.08591    4.53397  -1.44806   4.57425  +0.04028        619    4.31
+  ja    han        2.66859    3.55760  -0.88901   3.60427  +0.04667        526    4.30
+  en    none       2.74755    2.74755  +0.00000   2.74755  +0.00000          0    0.00
+------------------------------------------------------------------------------------
+Delta_Korean = +0.11868   Delta_English = +0.00000
+Delta_zh = -1.44806   Delta_ja = -0.88901
+(H1) HAN-GAIN     zh&ja each Δ>=+0.05: {'zh': False, 'ja': False} -> FAIL
+(H2) EARNED       each Han STRUCT beats SHUFFLE by >=0.05: {'zh': False, 'ja': False} -> FAIL
+(H3) CALIBRATION  ko Δ>=+0.15 [False] AND |en Δ|<=+0.02 [True] -> FAIL
+------------------------------------------------------------------------------------
+H_1346 VERDICT: 🔴 PIPELINE-DRIFT — calibration anchors moved under the head change (ko stopped gaining or en gained); investigate, no Han verdict
+available REAL corpora: ['ko', 'zh', 'ja', 'en'] | IDS sha256=bfc70a8c09f9f5616ebf0543bd6681e67314e9f7ae2307e5ae8c6f15bdc5c6a6
+[done] wall=417.4s
