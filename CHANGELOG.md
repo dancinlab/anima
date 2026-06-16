@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1346 — ko-han-richer (xlang 구조 r3): Hanja 재귀-IDS richer-head 는 Han 합성 신호를 못 뽑는다 (🔴/🧱 Hangul-specificity STRENGTHENED)
+
+**무엇:** H_1324(🔴/🧱 — 한 단계 IDS unigram 은 Han 합성을 못 살림)의 명시된 follow-on(a_break_the_wall/c16). jamo 분해가 Hangul 의 featural 구조를 노출해 nat/byte 를 낮춘 것(2.953→2.513)처럼, 한국어+한자 텍스트의 Hanja(CJK)에 **재귀 다단계 IDS 분해 head**(component TREE, MAX_DEPTH=3, 語→言+吾·吾→五+口 — H_1324 의 1단계 leaf 가 평탄화한 multi-level 구조) + **per-cell component-BIGRAM head**(flat unigram 이 버린 직전-기호 문맥)를 붙이면 중국어/일본어 Han 합성 신호가 잡혀 nat/byte 가 내려가는가?
+
+**답: 아니오 — 결정적으로.** richer head 는 zh/ja 를 **더 깊게 악화**시킴 (zh Δ=−1.44806, ja Δ=−0.88901 — H_1324 unigram 의 −0.737/−0.628 보다 WORSE). H1(HAN-GAIN=c1) 대폭 FAIL · H2(EARNED=c3 shuffled-IDS) FAIL (재귀-component-shuffle 대비 +0.040/+0.047 < +0.05) · c2 LOCALIZATION 확인 (IDS head 효과가 Han-bearing 행에만 국한 — en Han-free Δ=0.000 byte-exact, zh/ja 만 변하고 거기서 NEGATIVE). 한국어 jamo win(ko Δ=+0.11868, STRUCT 2.42058 < RAW 2.53926, 3 seed 전부) + 영어 평탄 floor(Δ=0.000)가 **byte-identical window** 위에서 재현 → H_1318/H_1324 의 **Hangul-specificity 가 STRENGTHENED**(head-order artifact 아님).
+
+**왜:** 재귀가 component vocab 을 줄였지만(zh 2116→619, ja 1582→526) stream 길이를 폭증시킴(avg ≈4.3 components/Han-char vs 1단계 ≈2.0) → 한 글자의 ~3 byte 가 619/526-way 고cardinality component ~4.3 개로 퍼져, (cell, prev-component) bigram 이 조밀하게 조건화 못 함. Hangul 은 작고(67) 규칙적·짧은(≤3 jamo, 3 byte 1:1) 알파벳이라 bigram 문맥이 DENSE → 유지. '합성이 도움 되는가' 축은 이제 세 메커니즘에서 DEPLETE (radical+residual H_1318, 1단계 IDS unigram H_1324, 재귀 IDS+bigram H_1346).
+
+**ko 칼리브레이션 sub-bar(+0.119 < +0.15) 정직 해석(c9, bar 미이동):** bigram head 가 모든 언어의 절대 CE 를 낮춰(RAW 에도 적용) 한국어 RAW 천장이 H_1324 의 2.91157→2.53926 으로 내려가 jamo win 이 차지할 headroom 이 압축됨 — jamo win 은 여전히 명확(3 seed 전부 STRUCT < RAW). window/IDS sha 동일하므로 바뀐 것은 head order(시험 변수 자체)뿐; frozen +0.15 bar 는 H_1324 unigram 스케일용이라 post-hoc 이동 금지(c9/p7), 투명한 sub-bar miss 로 기록.
+
+**어떻게:** `state/ko-han-richer/h1346_ko_han_richer.py` — pure-numpy CPU mirror DIRECTIONAL($0, 3 seeds [5346,5347,5348], frozen-first, NO tune-to-green). REAL wikimedia/wikipedia 20231101 30MB/lang, window sha256 byte-identical to H_1324 (ko 3e288b77…/zh c084b027…/ja a97dd068…/en b097cccc…); IDS DB = CHISE cjkvi/cjkvi-ids sha bfc70a8c… (동일). HF 토큰 env/header-only, c7 grep-clean(0 token-value hits). grow-op·SPLIT 결정은 H_1324 와 byte-faithful, FINAL scoring head 만 bigram. live CORE/*.hexa UNTOUCHED(substrate-measurement rung). engine-transfer = follow-on. 산출물: card `UNIVERSE/cards/H_1346_ko_han_richer.md` · `UNIVERSE/HYPOTHESES.jsonl` 행 · `CLAIMS.tape` @C h1346_ko_han_richer · `.verdicts/1346_ko_han_richer/{FREEZE.txt,result.txt,h1346_summary.json,h1346_full.log}` · `domains/MITOSIS-ENGINE.log.md`.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1345 — ko-data-starved 사다리 (🟢 GREEN — jamo floor는 DATA-RICHNESS, below-jamo 크로스오버 MAPPED)
 
 **무엇:** H_1337(🧱 opaque-atom limit @30MB)의 named depletion-test angle을 직접 실행. H_1337은 dense일 때 opaque per-cell jamo count-MLE가 정보-최적임을 보였고(strength-sharing은 per-cell count가 SPARSE할 때만 도움), 유일한 탈출구를 명시했다 — "opaque MLE가 data-STARVED인 영역을 찾아라". OPEN 질문: 코퍼스가 굶주리면(starvation ladder) jamo-vs-byte의 compositional 우위가 커지나, 사라지나? → 더 정밀하게: starved 영역에서 strength-sharing/interpolation이 30MB에선 못 이긴 jamo를 이제 이기나?

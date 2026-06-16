@@ -1,0 +1,143 @@
+================================================================================
+H_1346 — CROSS-LANGUAGE STRUCTURE MATRIX, r3: RICHER HEAD on HAN COMPOSITION
+  Re-test (xlang r3): does CHINESE and JAPANESE kanji composition gain under a
+  RICHER HEAD — recursive multi-level IDS decomposition (a component TREE, not
+  one-level leaves) AND a component-BIGRAM next-symbol head (the previous symbol
+  conditions the next-symbol distribution) — i.e. the richer mechanism the FLAT
+  one-level unigram head of H_1324 could not capture the multi-level Han
+  structure with?
+FROZEN-FIRST PRE-REGISTRATION — written BEFORE any run. NOT moved (c9 / p7).
+PROJ_SEED provenance: H_1346 (free id verified on origin/main 0fa31903a;
+  H_1346 free in HYPOTHESES.jsonl + CLAIMS.tape + UNIVERSE/cards/). Branch
+  h1346/ko-han-richer-head off origin/main.
+================================================================================
+
+WHY THIS LANE EXISTS (the named follow-on of H_1324, a_break_the_wall / c16)
+---------------------------------------------------------------------------
+H_1324 (🔴/🧱) answered cleanly that even under a PROPER one-level IDS component
+decomposition (CHISE cjkvi/cjkvi-ids, NO full-char residual, modest vocab
+zh 2116 / ja 1582), Chinese AND Japanese kanji composition does NOT help the
+gradient-free per-cell UNIGRAM mechanism: zh Δ=−0.73736, ja Δ=−0.62826 (both
+STILL negative), and neither beats its own component-shuffle control
+(zh Δ-vs-shuffle=−0.00099, ja=−0.02495). The modest-vocab fix HALVED the H_1318
+harm (zh −1.481→−0.737, ja −1.230→−0.628) but did NOT cross zero. Korean
+calibration reproduced (ko Δ=+0.21551, en Δ=0.000).
+
+H_1324's OWN named follow-on (card §"Next round", c9): "a richer next-unit head
+(component-bigram / recursive-IDS depth) could plausibly extract the Han
+component signal the unigram head cannot — but that is a DIFFERENT mechanism."
+H_1324's diagnosis (decisive, c9): Hangul wins because its composition is a TINY
+(67-jamo) REGULAR L/V/T alphabet a per-cell UNIGRAM head can exploit; Han
+decomposes into a LARGE (~2000) IRREGULAR component inventory where the average
+char → ~2 components drawn from ~2000, so the component-BIGRAM statistics a
+CTX=4 Voronoi-UNIGRAM head cannot capture are exactly what is needed — and the
+true Han structure is MULTI-LEVEL (語→言+吾, 吾→五+口) which a ONE-level leaf
+decomposition flattens away. H_1346 supplies BOTH richer ingredients the flat
+unigram lacked, as a NEW pre-registration (NOT a post-hoc swap for green).
+
+THE TWO RICHER-HEAD CHANGES (vs H_1324; everything else byte-comparable)
+-----------------------------------------------------------------------
+(1) RECURSIVE multi-level IDS (a component TREE, not one-level leaves).
+    Decompose each Han char to a FIXED RECURSION DEPTH (MAX_DEPTH=3): expand each
+    component leaf again via the same CHISE IDS DB until atomic (leaf == self) or
+    depth limit. e.g. 語 → ⿰言吾 → 言, 吾 ; 吾 → ⿱五口 → 五, 口 ; so at depth 2
+    語 → 言, 五, 口. Atomic / absent char → itself (counted). The emitted symbol
+    stream is the depth-MAX_DEPTH leaf frontier (deepest reachable atomic
+    components), giving a SMALLER, MORE REGULAR, MORE SHARED atomic-component
+    inventory than the one-level leaves (the multi-level structure H_1324's flat
+    head could not see). Korean (NFD jamo, already atomic) + English (no comp)
+    are UNCHANGED — exact calibration anchors.
+
+(2) COMPONENT-BIGRAM per-cell head (context-1, not context-0 unigram).
+    H_1324's per-cell head was a UNIGRAM count head P(next | cell) (Laplace MLE
+    over the next-symbol alone). H_1346's head is a per-cell BIGRAM count head
+    P(next | cell, prev-symbol) (Laplace MLE over the (prev-symbol → next-symbol)
+    transition WITHIN each grown Voronoi cell), backing off to the cell unigram
+    when a (cell, prev) pair is unseen at test (standard add-λ backoff: the
+    bigram numerator/denominator both get LAPLACE=1.0, so an unseen prev-context
+    smoothly recovers the cell-unigram marginal). This is the previous-symbol
+    context the flat unigram threw away — the component-BIGRAM statistics
+    H_1324's WHY-diagnosis named as the missing signal. Applied IDENTICALLY to
+    RAW, STRUCT, and SHUFFLE streams in EVERY language so the matrix stays fair
+    (the RAW byte baseline is ALSO re-measured under the bigram head — its own
+    fair ceiling). The grow-op (cell PARTITION) is held BYTE-IDENTICAL to H_1324.
+
+HELD BYTE-IDENTICAL to H_1324/H_1318 (so the matrix stays comparable):
+  the gradient-free error-targeted Voronoi mitosis grow-op (cells only SPLIT,
+  p8), FROZEN CTX=4 FEAT_DIM=3 GROW_MAX=40 SPLIT_THRESH_CE=0.05 MIN_OWNED=8
+  LAPLACE=1.0 SEED_CENTERS=[[0.3,0.5,0.0],[0.7,0.5,0.5]] even/odd split, CE in
+  nats per ORIGINAL raw UTF-8 byte (Σ struct n_bytes == raw UTF-8 byte count
+  exactly; identical denominator for RAW and STRUCT and SHUFFLE — the fair
+  CE-per-byte axis). VARIED vs H_1324 = ONLY (1) recursion depth of the IDS
+  decomposition + (2) the per-cell head order (unigram → bigram). The grow-op
+  scoring used for the SPLIT decision and for cell assignment is unchanged.
+
+REAL corpora ONLY (NO synthetic, p1-p8): wikimedia/wikipedia 20231101 (ko/zh/
+  ja/en) via the HF datasets-server /rows endpoint — the SAME source as
+  H_1318/H_1324 (#2227 ko, #2231 ja in the dataset roster). The 30 MB cache was
+  not preserved on this host, so corpora are RE-FETCHED from the identical
+  source (per-window sha differ only because /rows pagination returns different
+  rows over time — same dataset/config; RAW baselines re-measured under the
+  richer head). HF token via `harness secret get hf.token`, env/header-only,
+  NEVER logged/inlined/committed (c7). sha256 per window ASSERTED + manifested.
+  IDS DB = CHISE cjkvi/cjkvi-ids ids.txt (public GitHub raw URL), sha256
+  asserted. Window = 30 MB raw UTF-8/lang, stride 300. 3 seeds [5346,5347,5348]
+  perturb only the stride phase.
+
+SUBSTRATE NOTE (a_scale_honest_scope / a_toy_scale_recheck): TOY/DIRECTIONAL
+  numpy mirror (torch ABSENT on this host → the dim/vocab-agnostic grow-op is
+  re-implemented in pure numpy, byte-faithful to the torch _grow_on: same
+  error-targeted Voronoi median-split on the max-variance axis, same Laplace
+  count heads). $0 CPU. Engine-transfer to live CORE/*.hexa = follow-on
+  (a_engine_native_learning · a_verified_must_wire). NO fluency claim. Live
+  CORE/*.hexa UNTOUCHED (substrate-measurement rung — adds only UNIVERSE/ +
+  verdicts/cards/logs).
+
+FROZEN FALSIFIER BARS (pre-registered BEFORE any scoring; bars NOT moved; c9/p7)
+-------------------------------------------------------------------------------
+Let Δ_lang = RAW_CE − STRUCT_CE (3-seed mean), nats per ORIGINAL UTF-8 byte,
+BOTH RAW and STRUCT scored under the SAME richer (bigram) head.
+
+  (H1 HAN-GAIN) zh STRUCT_CE < zh RAW_CE by ≥ +0.05 (3-seed mean) AND
+                ja STRUCT_CE < ja RAW_CE by ≥ +0.05 (3-seed mean)
+                → the richer head EXTRACTS the Han signal the H_1324 unigram
+                  missed (STRUCT crosses BELOW RAW where H_1324 stayed above).
+
+  (H2 EARNED, anti-Goodhart) for zh AND ja, STRUCT beats a SHUFFLED-component-map
+                control (the recursive-IDS component→symbol id permuted, fixed
+                per seed; same count/dim, component IDENTITY destroyed) by
+                ≥ +0.05 → the gain is REAL multi-level component structure, not
+                the richer head's extra capacity / vocab / smoothing.
+
+  (H3 CALIBRATION) Korean reproduces the +0.21 gain (Δ_ko ≥ +0.15, ≈ H_1318
+                +0.21205 / H_1324 +0.21551) AND English is flat (Δ_en within
+                ±0.02 of 0) → the pipeline is comparable to H_1318/H_1324; the
+                Han rows are directly interpretable against the same anchors.
+                (Korean's per-cell head is ALSO bigram now; the bar is that the
+                jamo win survives the head change — it is anchor, not test.)
+
+VERDICT MAP (all outcomes valid, c9 — NO tune-to-green):
+  H1 ∧ H2 ∧ H3 → 🟢 GREEN. The richer (recursive-IDS + component-bigram) head
+      EXTRACTS the Han composition signal the flat unigram missed →
+      representation-bind EXTENDS to logographic scripts; bounds the H_1318/
+      H_1324 Hangul-specificity (it was a HEAD-ORDER limit, not a script
+      property).
+  H1 FAILS but H3 calibrates → 🔴/🧱. Han genuinely does NOT help even under a
+      richer head → Hangul-specificity STRENGTHENED / final (the flat-unigram
+      negative was not a head-order artifact; logographic composition does not
+      transfer to this mitosis substrate even with multi-level structure +
+      bigram context). HONEST, a valid terminal result.
+  H1 ∧ ¬H2 (with H3) → 🟠 PARTIAL. Han gains but does not beat its component
+      shuffle → the gain is the richer head's capacity, not earned Han structure.
+  ¬H3 → 🔴 PIPELINE-DRIFT. Calibration anchors moved under the head change
+      (ko stopped gaining or en started gaining) → investigate, NO Han verdict.
+
+MINIMUM TO PUBLISH (else STOP, no synthetic): Korean + English + ≥1 Han
+  (Chinese or Japanese) corpus present from REAL data. If a corpus fetch fails,
+  DROP that language honestly (NO synthetic fallback, p1-p8) and STOP if the
+  minimum matrix is not met.
+
+This file is the pre-registration. It is NOT edited after the run (c9/p7). The
+result is read straight into .verdicts/1346_ko_han_richer_head/result.txt and the
+card, whatever it says.
+================================================================================
