@@ -1,0 +1,60 @@
+H_1345 — ko-data-starved — FREEZE (pre-registered BEFORE the full ladder run; bars NOT moved — c9/p7)
+=====================================================================================================
+
+PARENT / MOTIVATION
+  H_1337 🧱 (opaque-atom limit at 30MB): a LEARNED jamo metric used via kernel-smoothing (A5) lands
+  +1.34 ABOVE the jamo 2.51335 floor. The reason H_1337 itself diagnosed: at 30MB / 11 grown cells each
+  per-cell jamo Laplace MLE is DENSELY estimated (8.14M syllables) — strength-sharing helps only when
+  per-class counts are SPARSE. H_1337's explicit depletion test (verbatim from the card):
+    "A genuinely-new angle would need to find a regime where the opaque MLE is data-STARVED ... NOT a
+     smoothing of an already-dense target. Otherwise honest 🧱."
+
+CLAIM (H_1345)
+  RUN that depletion test directly: a LADDER over data size (deterministic stride SUB-SAMPLES of the
+  SAME H_1307 RUN A 30MB window) where larger stride => fewer train rows per grown cell => SPARSE per-cell
+  jamo counts. At each rung, score two below-jamo mechanisms vs the opaque jamo head (A1):
+    A5 = LEARNED-METRIC kernel-smoothing (VERBATIM H_1337 mechanism; numpy port of the torch loop).
+    JM = JELINEK-MERCER interpolation P=(1-l)P_cell + l*P_global with l = MIN_OWNED/(MIN_OWNED+N_cell_raw)
+         (Witten-Bell-style, FROZEN, no per-run tuning; sparse cell => more backoff toward the global
+         jamo marginal). byte symbols scored EXACTLY as A1 (no interp).
+  Does strength-sharing / interpolation NOW beat jamo where it could NOT at 30MB? Map the crossover.
+
+CORPUS (REAL Korean only, p1-p8)
+  r2.phanes://anima-7b/web/kor/shard0000.bytes ; 30MB window sha256 ASSERTED ==
+  c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca  (== H_1307 RUN A; VERIFIED at fetch).
+  Each ladder rung = a deterministic stride sub-sample of THAT one sha-asserted window; each rung logs
+  its own sub-sample sha16. Mismatch on the full window => STOP, NO synthetic Korean. R2 keys env-only
+  at fetch (c7).
+
+FROZEN KNOBS (verbatim H_1316/H_1326/H_1329/H_1337)
+  GROW_MAX=40 · SPLIT_THRESH_CE=0.05 · MIN_OWNED=8 · LAPLACE=1.0 · even/odd split · Fix-A geometry-fair
+  seed bank · lossless NFD jamo decomposition · D_EMB=16 · SKIPGRAM_STEPS=400 · SKIPGRAM_LR=0.05.
+  LADDER strides (dense->starved): 300, 1200, 4800, 19200, 76800  (5 rungs, >=3 per a_scale_honest_scope).
+  Seeds [4345,4346,4347] (A5 metric-refine + A5-shuffle + JM-shuffle vary by seed; A1 & JM deterministic).
+  numpy CPU port (no torch on this host). A1 dense rung MUST reproduce 2.51335 within ±0.001 (port tol)
+  = calibration anchor.
+
+FROZEN BARS (GREEN iff D1 ∧ D2 ∧ D3 ∧ calib)
+  D1 STARVED-WIN : at the STARVED end (largest stride), best of {A5, JM} beats jamo (A1) by >= 0.03
+                   (mean over 3 seeds).
+  D2 EARNED      : that winning mechanism beats its SHUFFLE control by >= 0.05 (A5: jamo-id-permuted
+                   learned metric; JM: permuted global marginal) — the win is real backoff structure.
+  D3 DENSE-REPRO : at the DENSE end (stride 300), the SAME winning mechanism does NOT beat jamo
+                   (mechanism CE >= jamo CE; it LOSES) — reproducing H_1337's dense opaque-optimal and
+                   confirming the CROSSOVER.
+  calib          : dense A1 reproduces 2.51335 within ±0.001.
+
+OUTCOMES
+  GREEN (D1∧D2∧D3∧calib) => the jamo floor is DATA-RICHNESS, not representation; below-jamo IS reachable
+    when the opaque MLE is starved; the crossover is MAPPED.
+  D1 FAILS (jamo wins at ALL rungs) => count-MLE family truly TERMINAL across the data ladder — honest 🧱
+    (a deeper closure than H_1337: the jamo floor is NOT merely a data-richness artifact).
+  D1 but not D2 => 🟠 starved-win not earned (generic backoff mass, not structure).
+  D1∧D2 but not D3 => 🟠 no-crossover-confirm: mechanism ALSO beats jamo dense — contradicts H_1337;
+    reconcile the numpy port before claiming a crossover.
+
+SCOPE (a_scale_honest_scope, a_toy_scale_recheck, c9)
+  TOY/DIRECTIONAL numpy CPU mirror; A5 metric LEARNED BY GRADIENT (labeled, NOT p8 gradient-free); JM is
+  count-MLE with a FROZEN Witten-Bell backoff weight; both ride the gradient-free Voronoi partition.
+  engine-transfer to live CORE/*.hexa = follow-on (a_engine_native_learning, a_verified_must_wire). Live
+  CORE UNTOUCHED. NO Korean-fluency claim; held-out DETERMINISTIC next-symbol CE; NO perplexity-truth (p7).
