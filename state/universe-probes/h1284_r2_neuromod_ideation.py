@@ -37,8 +37,10 @@ import os, sys, json, math, time, argparse, random
 import torch, torch.nn as nn, torch.nn.functional as F
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+# relocated 2026-06-16 UNIVERSE/ -> state/universe-probes/; repo root is 2 up, not 1.
+ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
+sys.path.insert(0, os.path.join(ROOT, "tool"))  # gauge_lib relocated to tool/
 import gauge_lib as G   # FROZEN evaluators (VERBATIM)
 
 CKPT_DEFAULT   = os.environ.get("H1284R2_CKPT",

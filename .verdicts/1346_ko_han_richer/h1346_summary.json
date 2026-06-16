@@ -1,0 +1,214 @@
+{
+  "id": "H_1346",
+  "head": "richer: recursive-IDS depth=3 + per-cell component-BIGRAM (add-λ backoff to cell unigram)",
+  "window_bytes": 30000000,
+  "stride": 300,
+  "grow_max": 40,
+  "max_depth": 3,
+  "seeds": [
+    5346,
+    5347,
+    5348
+  ],
+  "available_langs": [
+    "ko",
+    "zh",
+    "ja",
+    "en"
+  ],
+  "dropped_langs": [],
+  "corpus_source": "wikimedia/wikipedia 20231101 via HF datasets-server /rows",
+  "ids_source": "CHISE IDS Database (cjkvi/cjkvi-ids ids.txt)",
+  "ids_sha256": "bfc70a8c09f9f5616ebf0543bd6681e67314e9f7ae2307e5ae8c6f15bdc5c6a6",
+  "sha256": {
+    "ko": "3e288b7797017a2837294ecaa465afe7c8bcdec09cba29e53a62c6748eaed381",
+    "zh": "c084b027a40d46e17c07227b0814926f54db3f1a87429d880cf19765c9911da8",
+    "ja": "a97dd068ced1150bfe126a6e3a0ba16fc321be105133552c748064b4066cfc4a",
+    "en": "b097ccccfd9709b1ac076deee07a664accaa1891ea22a0db0e9895ed13e67fb3"
+  },
+  "matrix": {
+    "ko": {
+      "kind": "hangul",
+      "RAW_CE": 2.53926,
+      "STRUCT_CE": 2.42058,
+      "SHUF_CE": 2.42305,
+      "Delta": 0.11868,
+      "delta_vs_shuffle": 0.00247,
+      "cells_raw": [
+        13,
+        13,
+        14
+      ],
+      "cells_struct": [
+        11,
+        11,
+        40
+      ],
+      "vj_struct": 323,
+      "n_extra": 67,
+      "distinct_han": 0,
+      "ids_miss": 0,
+      "avg_leaves": 0.0,
+      "raw_seeds": [
+        2.53014,
+        2.54066,
+        2.54698
+      ],
+      "struct_seeds": [
+        2.413,
+        2.41903,
+        2.42972
+      ],
+      "shuf_seeds": [
+        2.41531,
+        2.42889,
+        2.42495
+      ]
+    },
+    "zh": {
+      "kind": "han",
+      "RAW_CE": 3.08591,
+      "STRUCT_CE": 4.53397,
+      "SHUF_CE": 4.57425,
+      "Delta": -1.44806,
+      "delta_vs_shuffle": 0.04028,
+      "cells_raw": [
+        20,
+        14,
+        18
+      ],
+      "cells_struct": [
+        6,
+        6,
+        6
+      ],
+      "vj_struct": 875,
+      "n_extra": 619,
+      "distinct_han": 9113,
+      "ids_miss": 0,
+      "avg_leaves": 4.306,
+      "raw_seeds": [
+        3.09008,
+        3.08667,
+        3.08098
+      ],
+      "struct_seeds": [
+        4.54445,
+        4.52312,
+        4.53433
+      ],
+      "shuf_seeds": [
+        4.60228,
+        4.53933,
+        4.58113
+      ]
+    },
+    "ja": {
+      "kind": "han",
+      "RAW_CE": 2.66859,
+      "STRUCT_CE": 3.5576,
+      "SHUF_CE": 3.60427,
+      "Delta": -0.88901,
+      "delta_vs_shuffle": 0.04667,
+      "cells_raw": [
+        25,
+        23,
+        24
+      ],
+      "cells_struct": [
+        5,
+        5,
+        5
+      ],
+      "vj_struct": 782,
+      "n_extra": 526,
+      "distinct_han": 4524,
+      "ids_miss": 0,
+      "avg_leaves": 4.299,
+      "raw_seeds": [
+        2.67674,
+        2.66618,
+        2.66287
+      ],
+      "struct_seeds": [
+        3.52595,
+        3.56826,
+        3.57859
+      ],
+      "shuf_seeds": [
+        3.63374,
+        3.53323,
+        3.64584
+      ]
+    },
+    "en": {
+      "kind": "none",
+      "RAW_CE": 2.74755,
+      "STRUCT_CE": 2.74755,
+      "SHUF_CE": 2.74755,
+      "Delta": 0.0,
+      "delta_vs_shuffle": 0.0,
+      "cells_raw": [
+        5,
+        7,
+        20
+      ],
+      "cells_struct": [
+        5,
+        7,
+        20
+      ],
+      "vj_struct": 256,
+      "n_extra": 0,
+      "distinct_han": 0,
+      "ids_miss": 0,
+      "avg_leaves": 0.0,
+      "raw_seeds": [
+        2.74579,
+        2.74384,
+        2.75301
+      ],
+      "struct_seeds": [
+        2.74579,
+        2.74384,
+        2.75301
+      ],
+      "shuf_seeds": [
+        2.74579,
+        2.74384,
+        2.75301
+      ]
+    }
+  },
+  "Delta_Korean": 0.11868,
+  "Delta_English": 0.0,
+  "Delta_zh": -1.44806,
+  "Delta_ja": -0.88901,
+  "H1_han_gain": false,
+  "H1_per_lang": {
+    "zh": false,
+    "ja": false
+  },
+  "H2_earned_vs_shuffle": false,
+  "H2_per_lang": {
+    "zh": false,
+    "ja": false
+  },
+  "H3_calibration": false,
+  "H3_ko_ge_0.15": false,
+  "H3_en_abs_le_0.02": true,
+  "han_langs": [
+    "zh",
+    "ja"
+  ],
+  "component_vocab": {
+    "zh": 619,
+    "ja": 526
+  },
+  "avg_leaves": {
+    "zh": 4.306,
+    "ja": 4.299
+  },
+  "VERDICT": "🔴 PIPELINE-DRIFT — calibration anchors moved under the head change (ko stopped gaining or en gained); investigate, no Han verdict",
+  "wall_s": 417.4
+}

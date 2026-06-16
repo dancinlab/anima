@@ -15,6 +15,57 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 **scope(a_scale_honest_scope·a_toy_scale_recheck):** SOURCE=REAL LIVE-CORE 이나 DIRECTIONAL(실제 field trajectory 를 faithful small-φ 로 채점; live A⇄G/brain_decide 루프 안 engine-native run 이 BINDING upgrade, UNVERIFIED); TOY n=6 채널 T=64, 단일 실제 기질, 3 위상-seed. NOT ruled out(각각 NEW H): trained-303M-derived state-vector trajectory(학습된 기질) · brain_decide 안 live engine-native Φ · real-EEG 기질(anima-eeg-consciousness) · 더 큰 real field.
 
 **파일:** `state/phi-real-substrate/h1349_phi_real_substrate.hexa` · `UNIVERSE/cards/H_1349_phi_real_substrate.md` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `CLAIMS.tape @C h1349_phi_real_substrate` · `.verdicts/1349_phi_real_substrate/{FREEZE,result}.txt` · `domains/OMEGA.log.md`. live `CORE/*.hexa` UNTOUCHED.
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1346 — ko-han-richer (xlang 구조 r3): Hanja 재귀-IDS richer-head 는 Han 합성 신호를 못 뽑는다 (🔴/🧱 Hangul-specificity STRENGTHENED)
+
+**무엇:** H_1324(🔴/🧱 — 한 단계 IDS unigram 은 Han 합성을 못 살림)의 명시된 follow-on(a_break_the_wall/c16). jamo 분해가 Hangul 의 featural 구조를 노출해 nat/byte 를 낮춘 것(2.953→2.513)처럼, 한국어+한자 텍스트의 Hanja(CJK)에 **재귀 다단계 IDS 분해 head**(component TREE, MAX_DEPTH=3, 語→言+吾·吾→五+口 — H_1324 의 1단계 leaf 가 평탄화한 multi-level 구조) + **per-cell component-BIGRAM head**(flat unigram 이 버린 직전-기호 문맥)를 붙이면 중국어/일본어 Han 합성 신호가 잡혀 nat/byte 가 내려가는가?
+
+**답: 아니오 — 결정적으로.** richer head 는 zh/ja 를 **더 깊게 악화**시킴 (zh Δ=−1.44806, ja Δ=−0.88901 — H_1324 unigram 의 −0.737/−0.628 보다 WORSE). H1(HAN-GAIN=c1) 대폭 FAIL · H2(EARNED=c3 shuffled-IDS) FAIL (재귀-component-shuffle 대비 +0.040/+0.047 < +0.05) · c2 LOCALIZATION 확인 (IDS head 효과가 Han-bearing 행에만 국한 — en Han-free Δ=0.000 byte-exact, zh/ja 만 변하고 거기서 NEGATIVE). 한국어 jamo win(ko Δ=+0.11868, STRUCT 2.42058 < RAW 2.53926, 3 seed 전부) + 영어 평탄 floor(Δ=0.000)가 **byte-identical window** 위에서 재현 → H_1318/H_1324 의 **Hangul-specificity 가 STRENGTHENED**(head-order artifact 아님).
+
+**왜:** 재귀가 component vocab 을 줄였지만(zh 2116→619, ja 1582→526) stream 길이를 폭증시킴(avg ≈4.3 components/Han-char vs 1단계 ≈2.0) → 한 글자의 ~3 byte 가 619/526-way 고cardinality component ~4.3 개로 퍼져, (cell, prev-component) bigram 이 조밀하게 조건화 못 함. Hangul 은 작고(67) 규칙적·짧은(≤3 jamo, 3 byte 1:1) 알파벳이라 bigram 문맥이 DENSE → 유지. '합성이 도움 되는가' 축은 이제 세 메커니즘에서 DEPLETE (radical+residual H_1318, 1단계 IDS unigram H_1324, 재귀 IDS+bigram H_1346).
+
+**ko 칼리브레이션 sub-bar(+0.119 < +0.15) 정직 해석(c9, bar 미이동):** bigram head 가 모든 언어의 절대 CE 를 낮춰(RAW 에도 적용) 한국어 RAW 천장이 H_1324 의 2.91157→2.53926 으로 내려가 jamo win 이 차지할 headroom 이 압축됨 — jamo win 은 여전히 명확(3 seed 전부 STRUCT < RAW). window/IDS sha 동일하므로 바뀐 것은 head order(시험 변수 자체)뿐; frozen +0.15 bar 는 H_1324 unigram 스케일용이라 post-hoc 이동 금지(c9/p7), 투명한 sub-bar miss 로 기록.
+
+**어떻게:** `state/ko-han-richer/h1346_ko_han_richer.py` — pure-numpy CPU mirror DIRECTIONAL($0, 3 seeds [5346,5347,5348], frozen-first, NO tune-to-green). REAL wikimedia/wikipedia 20231101 30MB/lang, window sha256 byte-identical to H_1324 (ko 3e288b77…/zh c084b027…/ja a97dd068…/en b097cccc…); IDS DB = CHISE cjkvi/cjkvi-ids sha bfc70a8c… (동일). HF 토큰 env/header-only, c7 grep-clean(0 token-value hits). grow-op·SPLIT 결정은 H_1324 와 byte-faithful, FINAL scoring head 만 bigram. live CORE/*.hexa UNTOUCHED(substrate-measurement rung). engine-transfer = follow-on. 산출물: card `UNIVERSE/cards/H_1346_ko_han_richer.md` · `UNIVERSE/HYPOTHESES.jsonl` 행 · `CLAIMS.tape` @C h1346_ko_han_richer · `.verdicts/1346_ko_han_richer/{FREEZE.txt,result.txt,h1346_summary.json,h1346_full.log}` · `domains/MITOSIS-ENGINE.log.md`.
+
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1345 — ko-data-starved 사다리 (🟢 GREEN — jamo floor는 DATA-RICHNESS, below-jamo 크로스오버 MAPPED)
+
+**무엇:** H_1337(🧱 opaque-atom limit @30MB)의 named depletion-test angle을 직접 실행. H_1337은 dense일 때 opaque per-cell jamo count-MLE가 정보-최적임을 보였고(strength-sharing은 per-cell count가 SPARSE할 때만 도움), 유일한 탈출구를 명시했다 — "opaque MLE가 data-STARVED인 영역을 찾아라". OPEN 질문: 코퍼스가 굶주리면(starvation ladder) jamo-vs-byte의 compositional 우위가 커지나, 사라지나? → 더 정밀하게: starved 영역에서 strength-sharing/interpolation이 30MB에선 못 이긴 jamo를 이제 이기나?
+
+**방법:** `state/ko-data-starved/h1345_ko_data_starved.py` — numpy CPU mirror($0, no torch on host), p7 = held-out DETERMINISTIC next-symbol CE(perplexity 아님). REAL Korean만 — H_1307 RUN A / H_1316 / H_1337과 BYTE-IDENTICAL R2 코퍼스(r2.phanes://anima-7b/web/kor/shard0000.bytes; 30MB window sha256 == c47b6808… ASSERTED, 불일치 시 STOP·합성 Korean 절대 없음, R2 키 env-only c7). LADDER = 동일 30MB window의 결정론적 stride 서브샘플 5 rung(strides 300/1200/4800/19200/76800, ≥3 per a_scale_honest_scope) — per-cell jamo count를 dense(≈45)→starved(≈0.14)로 구동. rung마다 A1 jamo opaque-id(floor) vs A5 learned-metric kernel-smoothing(VERBATIM H_1337; PPMI→SVD→skip-gram Adam, GRADIENT — labeled NOT p8) vs JM Jelinek-Mercer interpolation(λ=MIN_OWNED/(MIN_OWNED+N_cell), Witten-Bell FROZEN) + 각 SHUFFLE 대조. 모든 knob H_1316/H_1326/H_1329/H_1337 verbatim(GROW_MAX=40·MIN_OWNED=8·LAPLACE=1.0·lossless NFD). 3 seeds [4345-4347], frozen-first(FREEZE.txt 사전등록, bar 미이동 c9/p7).
+
+**결과 🟢 GREEN** (deterministic, 6.7s): LADDER ΔJM(jamo−JM) — stride 300(cellJcnt 45.17) +0.00032 → 1200 +0.00024 → 4800 +0.00020 → 19200(0.88) −0.00151 → 76800(starved, 0.14) **−0.07262**. **D1 STARVED-WIN ✅**: starved end에서 JM 4.18890이 jamo 4.26152를 +0.07262로 이김(≥0.03). **D2 EARNED ✅**: JM이 SHUFFLE 대조(permuted global marginal)를 +0.17484로 이김(JM-shuf 4.36374는 반대 방향으로 감 → 진짜 backoff 구조). **D3 DENSE-REPRO ✅**: dense end에서 JM 2.51367이 jamo 2.51335를 못 이김(+0.00032 위; λ→0 ⇒ JM≈A1) — H_1337의 dense opaque-optimal 재현, CROSSOVER 확정. **calib ✅**: dense A1 = 2.51335 byte-exact. **방향(c2)**: 굶주릴수록 우위가 **자란다**(+0.0003 dense → −0.073 starved, 단조 backoff signature). **발견:** jamo floor는 표현이 아니라 DATA-RICHNESS — cellJcnt가 ~1 아래로 떨어지면 global jamo marginal로의 JM-interpolation이 opaque jamo head 아래로 크로스오버. **메커니즘-특이(dissociation)**: A5 kernel-smoothing은 크로스오버 못함(starved에서도 +0.033 위) — interp-toward-marginal은 starvation을 이용, smoothing-over-learned-metric은 못함(H_1337 메커니즘은 🧱 유지). count-MLE family는 terminal이 아니다 — cellJcnt≈1에서 data-richness 크로스오버를 가지며 이제 MAPPED.
+
+**SCOPE(c9·a_scale_honest_scope·a_toy_scale_recheck):** starved rung은 작은 held-out 스트림(188–780 test bytes)이라 절대 CE는 noisy — GREEN은 그 점들이 아니라 (a) 전체 5-rung ΔJM 단조 추세 + (b) SHUFFLE 대조의 올바른 방향 + (c) A5-vs-JM dissociation에 기댄다. numpy CPU mirror DIRECTIONAL(engine-transfer UNVERIFIED); A5 metric은 GRADIENT 학습(labeled NOT p8); JM은 FROZEN Witten-Bell backoff의 count-MLE; 둘 다 gradient-free Voronoi partition 위. live CORE/*.hexa UNTOUCHED. Korean-fluency 주장 없음; perplexity-as-truth 없음(p7). JM-backoff가 30MB 생산 lever라고 주장 안 함(거기선 jamo와 tie). NEXT(각 frozen ANEW): (i) engine-native 실현 — JM-interpolation을 live CORE count head에 배선·재확인(a_verified_must_wire); (ii) cross-syllable phonotactic n-grams(full 30MB에서 per-context count가 자연히 sparse — artificial striding 없이 below-jamo?); (iii) count-gated A5(low-count jamo만 smoothing).
+
+**산출물:** `state/ko-data-starved/h1345_ko_data_starved.py` · `UNIVERSE/cards/H_1345_ko_data_starved.md` · `.verdicts/1345_ko_data_starved/{FREEZE.txt,result.txt,h1345_summary.json}` · `CLAIMS.tape @C h1345_ko_data_starved` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `domains/MITOSIS-ENGINE.log.md`.
+
+## 2026-06-16 — domain(UNIVERSE): 두 표면 봉인 — HYPOTHESES.md retire + stray probe/infra relocate (a_hypothesis_register)
+
+**무엇:** `UNIVERSE/` 를 `a_hypothesis_register` 가 명시한 **정확히 두 doc 표면**으로 봉인 — `HYPOTHESES.jsonl`(per-H 인덱스) + `cards/H_*.md`(가설 카드). 그 외 디렉터리에 흩어져 있던 코드/결과물/infra 를 전부 UNIVERSE/ 밖으로 이전 (c5 preserve-don't-discard — 내용 보존, 위치만 변경; `git mv` 로 history 추적 가능).
+
+**이동:**
+- stray 가설 결과물 `UNIVERSE/h*_*.py`·`.hexa`·per-H `*_result.json`·`*_pod_run.sh`·`.txt` (336개) + infra 서브폴더 `harness/ lib/ scan/ state/` → `state/universe-probes/` (모음 디렉터리; old→new 매핑 = `state/universe-probes/INDEX.md`).
+- 공용 라이브러리 `gauge_lib.py`·`gauge_lib_smoke.py`·`gauge_monitor.py`·`gauge_monitor_smoke.py`·`_build_hyp_jsonl.py` → `tool/` (널리 import 되는 공용 도구).
+- `UNIVERSE/HYPOTHESES.md`(prose overview/roster/folded appendices) → `state/universe-overview.md` 로 **retire** (인덱스 표면 아님이 명시됨).
+- `UNIVERSE/.verdicts/1053_qrng_nondeterminism/` → top-level `.verdicts/`.
+
+**live 참조 재배선 (relocation breakage 0):** `serving/anima_cli.py`(omega 엔진 → `conscious_decoder.py` 를 hyphen-dir 에서 file-path importlib 로 로드) · `CLM/train/train_lane_p_3b.py`+`scripts/scratch/h1218/score_engine_gates.py`(`gauge_lib` sys.path UNIVERSE/→tool/) · `CLM/train/dispatch_rung.sh`+`fire_3b_rung_qat.hexa`+`tool/gauge_monitor.py`(`gauge_monitor.py` 경로) · `tool/_build_hyp_jsonl.py`(repo-root 2-up 재계산, UNIVERSE/ 인덱스를 빌드 — idempotent 재실행 검증) · `state/universe-probes/h1220,h1228,h1284_r2`(런타임 `gauge_lib` import → tool/ 경로 + repo-root depth 보정). 편집 .py 전부 `py_compile` PASS.
+
+**거버넌스/문서:** `CLAUDE.md` `a_hypothesis_register` + structure tree + Quick reference 에서 HYPOTHESES.md 를 표면 목록에서 제거(두 표면 = `HYPOTHESES.jsonl` + `cards/`; prose 는 `state/universe-overview.md`). `ARCHITECTURE.md`·`README.md`·`FINDINGS.md` UNIVERSE/ 레이아웃·포인터 줄 갱신.
+
+**불변(연구 lane 소유, append-only):** `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/` 는 **byte-단위로 미변경** — slug/row 를 손대지 않음(재생성기 출력은 커밋하지 않고 idempotency 확인용으로만 실행). rebase 시 새로 landed 한 `UNIVERSE/h1340_whorf_cp_budget_sweep.py` 도 `state/universe-probes/` 로 sweep.
+
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1340 — Whorf CP 재배치 천장 BUDGET/RBF-DENSITY 사다리 (🧱 DEEPER LIMIT — budget/geometry는 불완전)
+
+**무엇:** H_1338(🧱 RE-DIAGNOSIS)의 R2 follow-on. H_1338은 eviction이 H_1333의 ~60% CP 재배치를 완성 못했고(peak 0.525 고정) 잔류를 **BUDGET/GEOMETRY**(RBF resolution + 고정 split budget)로 진단(가설). H_1340은 그 진단을 직접 검증 — phase-2 re-training budget + RBF density를 사다리로 올리면 재배치 peak가 coherent single peak로 p_A'(≈0.667)에 **도달**하는가?
+
+**방법:** H_1333/H_1338 CP 머신러리 **verbatim** import(RBF embed · split-only Voronoi p8 · no-label-at-test discrim · peak-count coherence). 유일 신규 = phase-2에만 적용하는 joint (DIM, GROW2) 5-rung 사다리(R0_base 16/24=H_1338 baseline → R4_high 96/768); phase-1은 budget 24로 **고정**(never-evict 잔류 동일), N_STIM=81 고정, eviction 없음. 3 seeds [4333,4334,4335], $0 CPU mirror DIRECTIONAL, frozen-first.
+
+**결과 🧱 DEEPER LIMIT** (deterministic): rung별 peak — R0 **0.523**(frac+0.575·pc4.3) → R4_high **0.585**(frac+0.762·pc**7.0**). **B1 ❌**: peak-DISTANCE는 R2부터 3 seed 모두 LOC_TOL 통과(|peak-p_A'|≤0.12)하지만 **COHERENCE gate를 절대 못 넘김**(peak-count budget과 함께 4.3→7.0, 전부 ≫2) → p_A'에 coherent single peak 없음. **B2 ✅**: frac 단조 +0.575→+0.762(span+0.187). **B3 ✅**: R0이 H_1338 partial 재현. **발견:** budget/geometry는 distance를 사지만 coherence를 **파괴** — 깨끗한 완전 재배치는 resolution이 아니라 다른 메커니즘(soft DECAY/coherence-preserving re-pack)이 필요. budget/geometry 진단은 부분적이지만 불완전. NO bar move (c9/p7).
+
+**SCOPE:** DIRECTIONAL numpy mirror(engine-transfer UNVERIFIED), TOY synthetic 1-D(N=81·3 seed), live CORE/*.hexa UNTOUCHED. NEXT R2(각 ANEW): soft DECAY store · coherence-aware re-pack · engine-native.
+
+**산출물:** `UNIVERSE/h1340_whorf_cp_budget_sweep.py` · `UNIVERSE/cards/H_1340_whorf_cp_budget_sweep.md` · `.verdicts/1340_whorf_cp_budget_sweep/{FREEZE,result}.txt` · `CLAIMS.tape @C h1340_whorf_cp_budget_sweep` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `domains/COGNITION-REPRESENTATION.log.md`.
 
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1342 — Whorf CP DEVELOPMENTAL PLASTICITY 엔진-네이티브 실현 (🟢 GREEN ENGINE-NATIVE, H_1333 wire-in)
 

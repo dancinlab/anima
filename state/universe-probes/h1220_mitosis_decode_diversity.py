@@ -68,6 +68,8 @@ import torch.nn.functional as F
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+# gauge_lib relocated 2026-06-16 UNIVERSE/ -> tool/ (sibling of state/universe-probes/).
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(HERE)), "tool"))
 
 # FROZEN evaluators + byte-feature + VAdaptField mirror — VERBATIM import (no re-impl).
 import gauge_lib as G   # _coverage, _content_ngrams, _corpus_absent, known_word_ratio,

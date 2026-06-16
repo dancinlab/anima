@@ -1,0 +1,117 @@
+================================================================================
+H_1346 — XLANG r3: RICHER HEAD on HAN COMPOSITION — RESULT (read straight, c9/p7)
+  numpy CPU mirror, $0, wall 417.4s, 3 seeds [5346,5347,5348], frozen-first.
+  Bars NOT moved (FREEZE.txt pre-registered before the run).
+================================================================================
+
+PER-LANGUAGE MATRIX (3-seed mean, nats per ORIGINAL UTF-8 byte; RICHER bigram head)
+RAW and STRUCT and SHUFFLE all scored under the SAME per-cell component-BIGRAM head.
+
+  lang  kind        RAW_CE  STRUCT_CE     Delta   SHUF_CE  Δvs-shuf  comp-vocab  avg-lv
+  ko    hangul     2.53926    2.42058  +0.11868   2.42305  +0.00247         67    0.00
+  zh    han        3.08591    4.53397  -1.44806   4.57425  +0.04028        619    4.31
+  ja    han        2.66859    3.55760  -0.88901   3.60427  +0.04667        526    4.30
+  en    none       2.74755    2.74755  +0.00000   2.74755  +0.00000          0    0.00
+
+  Delta_Korean = +0.11868   Delta_English = +0.00000
+  Delta_zh     = -1.44806   Delta_ja      = -0.88901
+
+FROZEN BARS (read straight against FREEZE.txt):
+  (H1 HAN-GAIN)    zh Δ=-1.44806, ja Δ=-0.88901 — both DEEPLY NEGATIVE → FAIL.
+                   Under the richer head, STRUCT CE is FAR ABOVE RAW CE for both
+                   Han languages — WORSE than H_1324's flat unigram (zh -0.737,
+                   ja -0.628). The richer head did NOT extract the Han signal; it
+                   HURT MORE.
+  (H2 EARNED)      zh Δ-vs-shuffle=+0.04028, ja=+0.04667 — both BELOW the +0.05
+                   bar → FAIL. (Both are barely positive: the recursive-component
+                   identity carries a HAIR of next-symbol signal over its own
+                   shuffle, but not enough to clear the bar, and the absolute
+                   STRUCT CE is catastrophically above RAW regardless.)
+  (H3 CALIBRATION) ko Δ=+0.11868 (< +0.15 bar) → ko sub-bar; en Δ=0.00000
+                   (|Δ|≤0.02) → en PASS. H3 = FAIL by the ko clause.
+
+AUTO-VERDICT (verdict-map): "🔴 PIPELINE-DRIFT" (triggered because H3's ko clause
+  fell below +0.15). BUT THE HONEST READING (c9, diagnosable, NO bar moved):
+
+  This is NOT harmful pipeline drift. The richer head LOWERS the absolute CE for
+  EVERY language (it is applied to RAW too): the Korean RAW byte ceiling dropped
+  from H_1324's 2.91157 to 2.53926 under the bigram head — the bigram context is
+  itself a strong byte-LM lift. That COMPRESSES the headroom the jamo STRUCT win
+  can occupy: the jamo win is STILL CLEARLY PRESENT (ko STRUCT 2.42058 < ko RAW
+  2.53926, all 3 seeds: 2.413/2.419/2.430 < 2.530/2.541/2.547), it is just a
+  +0.119 gain on top of an already-lowered 2.539 ceiling instead of +0.215 on a
+  2.912 ceiling. The window sha256s are BYTE-IDENTICAL to H_1324 (ko 3e288b77…,
+  zh c084b027…, ja a97dd068…, en b097cccc…) and the IDS DB sha is identical
+  (bfc70a8c…) — the pipeline is the SAME corpus and SAME decomposition source;
+  what moved is the HEAD ORDER (unigram→bigram), exactly the variable under test.
+  The frozen +0.15 ko bar was written for the H_1324 UNIGRAM scale and the
+  bigram head changes that scale; per c9/p7 the bar is NOT moved post-hoc — it
+  is recorded as a sub-bar calibration miss with this transparent cause, and the
+  Han verdict is read on its own (decisively negative) terms.
+
+────────────────────────────────────────────────────────────────────────────────
+LOAD-BEARING VERDICT: 🔴 / 🧱  — Hangul-specificity STRENGTHENED.
+
+The richer head (recursive multi-level IDS depth-3 + component-BIGRAM context)
+does NOT extract the Han composition signal the H_1324 flat unigram missed — it
+makes the Han rows DEEPLY WORSE (zh Δ -0.737 → -1.448, ja -0.628 → -0.889). Both
+Han languages fail H1 by a wide margin and fail H2 (barely beat their own
+component-shuffle). The Korean jamo win and the English flat floor both still
+reproduce in DIRECTION (ko STRUCT < ko RAW all 3 seeds; en exactly flat), on
+byte-identical windows — confirming the matrix is comparable; the ko magnitude
+shrank only because the bigram head also lowered the RAW ceiling it is measured
+against. The H_1318/H_1324 Hangul-specificity is NOT a head-order artifact: even
+the richer (recursive-IDS + bigram) mechanism does not transfer the structure-
+representation byte-LM win from Hangul (tiny, regular L/V/T alphabet) to
+logographic Han composition.
+
+WHY (decisive from the matrix, c9): the recursive depth-3 decomposition did
+exactly what it was designed to — it SHRANK the component vocabulary (zh 2116 →
+619, ja 1582 → 526) into a smaller, more shared atomic-component inventory. But
+it did so by EXPLODING the stream LENGTH: avg ≈4.3 components per Han char (vs
+≈2.0 one-level in H_1324). The same ~3 bytes of a Han character now spread over
+~4.3 component symbols, so each component symbol carries ≈0.7 byte of evidence
+while the next-symbol prediction must be made over a 619/526-way component
+alphabet from a CTX=4 Voronoi cell. The bigram context cannot recover this: the
+(cell, prev-component) conditioning is itself sparse over a 4.3×-longer,
+high-cardinality component stream, so the per-cell bigram MLE smears and the
+CE-per-original-byte rises far above the raw-byte ceiling. Hangul stays a win
+because its decomposition is a TINY (67), REGULAR, SHORT (≤3 jamo/syllable, 1:1
+with the 3 bytes) alphabet where the bigram head's (cell, prev-jamo) context is
+DENSE. A richer head sharpened the wrong end: it added context order and
+recursion DEPTH, but the Han bottleneck is the high-cardinality, byte-diluted
+component STREAM, which recursion makes longer, not the head's context order.
+
+This is the H_1324 named follow-on RESOLVED in the negative: a richer head
+(recursive-IDS + component-bigram) does NOT cross Han below RAW. The
+"does composition help" axis is now DEPLETED in both the decomposition direction
+(H_1324, one-level) and the head-richness direction (H_1346, recursive + bigram).
+The Hangul win rests specifically on a small-regular-short compositional
+alphabet; logographic Han composition does not transfer to this gradient-free
+mitosis substrate under any of the three mechanisms tried (radical+residual,
+one-level IDS unigram, recursive IDS + bigram).
+
+HONEST SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY/DIRECTIONAL numpy
+mirror (torch absent → grow-op re-implemented byte-faithful in numpy: same
+error-targeted Voronoi median-split, same Laplace heads — the SPLIT decision is
+unigram-driven exactly as H_1324, only the FINAL scoring head is bigram). CTX=4
+3-D features; 30MB/lang; 3 seeds; single stride; depth-3 recursion. The Han
+negative is scoped to THIS substrate (gradient-free Voronoi-partitioned count
+head) — it does NOT claim Han composition is useless for a gradient-trained or
+end-to-end-learned representation; it claims the per-cell count head the Hangul
+jamo win runs on does not transfer to high-cardinality, byte-diluted recursive
+Han components even with bigram context. engine-transfer to live CORE/*.hexa =
+follow-on. NO fluency claim. Live CORE/*.hexa UNTOUCHED (substrate-measurement
+rung — adds only UNIVERSE/ + verdicts/cards/logs). REAL corpora only (p1-p8):
+wikimedia/wikipedia 20231101, sha256 windows byte-identical to H_1324; IDS DB
+CHISE cjkvi/cjkvi-ids sha256 bfc70a8c… identical; HF token env/header-only,
+c7 grep-clean (0 token hits over all deliverables).
+
+ONE-LINE: A richer head (recursive multi-level IDS + component-bigram) does NOT
+extract the Han signal the H_1324 unigram missed — it makes zh/ja DEEPLY worse
+(Δ_zh -1.448, Δ_ja -0.889) because recursion dilutes each char's bytes over a
+~4.3-component high-cardinality stream the bigram head cannot densely condition;
+Korean's jamo win + English's flat floor still reproduce on byte-identical
+windows → the H_1318/H_1324 Hangul-specificity is STRENGTHENED (not a head-order
+artifact). 🔴/🧱.
+================================================================================
