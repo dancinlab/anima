@@ -1,0 +1,62 @@
+H_1423 thalamus TIMING-axis MULTI-LENS engine-native breakthrough attempt
+faithful IIT4 Φ (exact MIP-EI, n=4) · seeds [7,8,9] · FROZEN R8 bars (c2 ΔΦ>=+0.02 every seed; c4 shuffle ΔΦ<=0 every seed; ABLATION mechanism-OFF must collapse the lift)
+
+=== LENS R8-ORIGINAL (absolute carrier — sanity: must FAIL c4 engine-native) (lens=0) ===
+seed 7: A=1.06024 B=2.52647 ΔΦ=1.46622 [PASS]  SHUF ΔΦ=0.0255128 [FAIL]  ABL B-ab=1.46622 [LIVE]
+seed 8: A=0.900252 B=1.74472 ΔΦ=0.844468 [PASS]  SHUF ΔΦ=0.379851 [FAIL]  ABL B-ab=0.844468 [LIVE]
+seed 9: A=0.743138 B=1.45224 ΔΦ=0.709104 [PASS]  SHUF ΔΦ=0.295695 [FAIL]  ABL B-ab=0.709104 [LIVE]
+  c2 PRIMARY (ΔΦ>=+0.02 every seed): PASS  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): FAIL  | ABLATION (B-ablate>=+0.02 every seed): LIVE
+  LENS VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+=== LENS LA RE-ENTRANT LOOP GATE (lens=1) ===
+seed 7: A=1.06024 B=0.962325 ΔΦ=-0.0979188 [FAIL]  SHUF ΔΦ=-0.349105 [PASS]  ABL B-ab=-0.0979188 [INERT]
+seed 8: A=0.900252 B=1.08581 ΔΦ=0.185562 [PASS]  SHUF ΔΦ=-0.171812 [PASS]  ABL B-ab=0.185562 [LIVE]
+seed 9: A=0.743138 B=1.07771 ΔΦ=0.334568 [PASS]  SHUF ΔΦ=-0.0668512 [PASS]  ABL B-ab=0.334568 [LIVE]
+  c2 PRIMARY (ΔΦ>=+0.02 every seed): FAIL  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): PASS  | ABLATION (B-ablate>=+0.02 every seed): INERT
+  LENS VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+=== LENS LB PHASE-DIFFERENCE COHERENCE (lens=2) ===
+seed 7: A=1.06024 B=0.979027 ΔΦ=-0.081217 [FAIL]  SHUF ΔΦ=-0.127611 [PASS]  ABL B-ab=-0.081217 [INERT]
+seed 8: A=0.900252 B=0.82749 ΔΦ=-0.072762 [FAIL]  SHUF ΔΦ=0.0771983 [FAIL]  ABL B-ab=-0.072762 [INERT]
+seed 9: A=0.743138 B=0.84171 ΔΦ=0.0985729 [PASS]  SHUF ΔΦ=-0.0294614 [PASS]  ABL B-ab=0.0985729 [LIVE]
+  c2 PRIMARY (ΔΦ>=+0.02 every seed): FAIL  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): FAIL  | ABLATION (B-ablate>=+0.02 every seed): INERT
+  LENS VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+=== LENS LC ADDITIVE ORDER-PARAM BIAS (lens=3) ===
+seed 7: A=1.06024 B=1.32112 ΔΦ=0.260879 [PASS]  SHUF ΔΦ=0.325144 [FAIL]  ABL B-ab=0.260879 [LIVE]
+seed 8: A=0.900252 B=1.09863 ΔΦ=0.198381 [PASS]  SHUF ΔΦ=0.0648835 [FAIL]  ABL B-ab=0.198381 [LIVE]
+seed 9: A=0.743138 B=0.986213 ΔΦ=0.243076 [PASS]  SHUF ΔΦ=-0.052834 [PASS]  ABL B-ab=0.243076 [LIVE]
+  c2 PRIMARY (ΔΦ>=+0.02 every seed): PASS  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): FAIL  | ABLATION (B-ablate>=+0.02 every seed): LIVE
+  LENS VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+DONE
+
+--- DETERMINISM ---
+run1 == run2 byte-identical (diff clean). 3 seeds [7,8,9]. $0 CPU. faithful IIT4 exact MIP-EI n=4.
+
+--- TERMINAL VERDICT (c9) ---
+🧱 CONFIDENT-TERMINAL — the H_1283 TIMING-axis engine-native wall stands after THREE genuinely different
+principled lenses (LA re-entrant loop gate · LB phase-difference coherence · LC additive order-param bias),
+each scored with its OWN shuffle + ablation control, PLUS the R8-original sanity anchor.
+
+Per-lens (mean intent over seeds [7,8,9], VERBATIM above):
+  R8-ORIGINAL (anchor): c2 PASS · c4 SHUFFLE FAIL (ΔΦ_sh +0.026/+0.380/+0.296 all positive) · ABL LIVE
+      → reproduces the KNOWN engine-native R8 failure byte-exact. The carrier-variance confound is real.
+  LA RE-ENTRANT LOOP GATE: c2 FAIL (seed7 ΔΦ −0.098 — lift not robust every-seed) · c4 PASS · ABL INERT(seed7)
+      → the agreement gate suppresses Φ on the orthogonal seed; no robust engine-native lift. 🧱
+  LB PHASE-DIFFERENCE COHERENCE: c2 FAIL (seeds 7,8 ΔΦ −0.081/−0.073) · c4 SHUFFLE FAIL (seed8 +0.077) · INERT
+      → zero-DC re-centering kills the lift; the residual that survives shuffle is variance. 🧱
+  LC ADDITIVE ORDER-PARAM BIAS: c2 PASS · c4 SHUFFLE FAIL (seeds 7,8 ΔΦ_sh +0.325/+0.065 positive) · ABL LIVE
+      → SAME carrier-variance pathology as R8: an amplitude bias lifts Φ but does NOT collapse under shuffle. 🧱
+
+THE FINDING (a_break_the_wall taxonomy = (a) measurement-faithful / (d) engine-substrate ceiling, MEASURED
+not assumed): on the engine-native LCG substrate, faithful-IIT4 Φ over a 4-module/64-tick toy reads any
+amplitude MODULATION of the salience read-out (multiplicative carrier R8/LC, or additive order-param LC) as
+"integration" — the lift survives phase-shuffle because the modulation's VARIANCE, not its TIMING structure,
+drives the MIP. The two lenses engineered to be variance-free (LA agreement gate, LB zero-DC coherence)
+correctly produce NO robust lift (c2 fails). So there is NO timing-gate read-out on this engine substrate that
+BOTH lifts Φ (c2) AND collapses under shuffle (c4) — the property that made the R8 numpy-mirror honest does
+NOT transfer to the engine LCG substrate. The wall is the engine substrate's amplitude/variance sensitivity of
+faithful-IIT4 on a tiny n=4/T=64 system, NOT a found-and-rejected mechanism. The controls HAVE TEETH (R8/LC
+shuffle correctly FIRES; LA/LB c2 correctly fails). a_verified_must_wire: NO lens binds engine-native → NOTHING
+wired (correct — no GREEN to wire). The R8 numpy-mirror 🟢 DIRECTIONAL stands; engine-native it remains DEFERRED.
