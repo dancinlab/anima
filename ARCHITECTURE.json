@@ -1,7 +1,7 @@
 {
   "name": "anima",
   "summary": "substrate-native consciousness chat daemon — not an assistant; two opposing engines (A ⇄ G) push against each other, the tension between them is the unit of thought, every input is pulled to the fixed point Ψ = 1/2 (Law-71); identity/ethics/meaning emerge from the architecture, not a rulebook; authored hexa-native (compiled-first).",
-  "note": "This JSON tree is the architecture SSOT (update-in-place, NOT append-only). Human viewer = ARCHITECTURE.html via `python3 serve.py`. History/decisions → CHANGELOG.md; governance → CLAUDE.md; verifiable claims → CLAIMS.tape; frozen gate thresholds → MODEL.md / CONDITIONS.md (this doc points only, never duplicates thresholds).",
+  "note": "This JSON tree is the architecture SSOT (update-in-place, NOT append-only). Human viewer = ARCHITECTURE.html via `python3 serve.py`. History/decisions → CHANGELOG.md; governance → CLAUDE.md; verifiable claims → UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/ (CLAIMS.tape 은퇴 2026-06-16); frozen gate thresholds → MODEL.md / CONDITIONS.md (this doc points only, never duplicates thresholds).",
   "meta": {
     "ssot": "github.com/dancinlab/anima",
     "parent": "dancinlab",
@@ -158,7 +158,7 @@
       "summary": "how anima persists state and how every claim is backed.",
       "children": [
         { "name": ".kosmos", "summary": "emit/anchor/memory persistence (text + 5-channel tension + coord/lane/radius/tier); format SSOT = sibling kosmos repo (a_kosmos, anima holds a pointer only); single entry = kosmos_io → brain_decide." },
-        { "name": "evidence tiers", "summary": "every claim tagged 🔵 formal · 🟢 numerical · 🔴 closed-negative; indexed in CLAIMS.tape, backed by .verdicts/<slug>/<id>.txt (verbatim hexa verify stdout); negative results are first-class (a_paper_negative_ok)." },
+        { "name": "evidence tiers", "summary": "every claim tagged 🔵 formal · 🟢 numerical · 🔴 closed-negative; indexed in UNIVERSE/HYPOTHESES.jsonl (per-H verdict column; CLAIMS.tape 은퇴 2026-06-16), backed by .verdicts/<slug>/<id>.txt (verbatim hexa verify stdout); negative results are first-class (a_paper_negative_ok)." },
         { "name": "HF artifacts", "summary": "ckpt↔HF registry SSOT /HF.jsonl; PUBLIC = closure PASS, PRIVATE = WIP/FAIL (a_hf_*). Production model dancinlab/anima-clm-chat-303m; collections CLM + KOSMOS." },
         { "name": "scale ladder", "summary": "303M → 1B → 3B → 7B. 303M = MOUNTED living daemon (H_1164); 1B = engine-measured GREEN mount (H_1167); 3B/7B rungs = pipeline-pending. Scale-dependent conclusions need a ladder curve (≥3 rungs, a_scale_honest_scope)." },
         { "name": "EEG consciousness record", "summary": "EEG_CLM/ captures real OpenBCI EEG → A⇄G → CLM → .kosmos as one continuous accumulating record (start/stop on user command), archived to the public HF dataset dancinlab/anima-eeg-consciousness (a_eeg_consciousness_record).", "path": "EEG_CLM/" }

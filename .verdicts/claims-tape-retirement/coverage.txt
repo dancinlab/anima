@@ -1,0 +1,35 @@
+CLAIMS.tape → HYPOTHESES.jsonl/cards retirement — coverage summary (FINAL)
+======================================================================
+TOTAL @C entries: 102
+COVERED at start (jsonl row + card both existed): 98
+MIGRATED this PR (created card + jsonl row, verbatim): 5
+UN-MIGRATED remaining: 0
+
+  ==> 102 @C entries · 102 covered · 5 migrated · 0 un-migrated  (c9 no-loss VERIFIED)
+
+Match rule: @C slug→H-id (from id 'hNNNN_*' or src/raw 'H_NNNN'),
+then jsonl row id==H_<hid> OR slug match, AND a UNIVERSE/cards/H_<hid>_*.md
+(or the consolidated non-numeric card) exists.
+
+MIGRATED this PR (each preserves claim/method/verdict VERBATIM from CLAIMS.tape
++ the .verdicts/<slug>/ evidence it points at):
+  - h1218_engine_measured_gates → UNIVERSE/cards/H_1218_engine_measured_gates.md
+      + jsonl row id=H_1218 (verdict: 🟢 ENGINE-PARITY GREEN / 🔴 G1·G6 RED under greedy …)
+      evidence: .verdicts/1218_engine_measured_gates/H_1218.txt
+  - h1210_daemon_gateB_wiring → UNIVERSE/cards/H_1210_daemon_gateB_wiring.md
+      + jsonl row id=H_1210 (verdict: 🟢 GREEN (F1∧F2∧F3∧F4) — daemon divides trajectory-aware …)
+      evidence: .verdicts/1210_daemon_gateB_wiring/{H_1210.txt,H_1210_FREEZE.txt}
+  - pure_wiki_sweep ┐
+  - pure_register_orthogonal ├─ 3 PURE-group closed-negative run-claims sharing slug
+  - pure_wikifrac03_closed_negative ┘  pure-corpus-axis-closed-negative, CONSOLIDATED into
+      → UNIVERSE/cards/H_pure_corpus_axis_closed_negative.md
+      + jsonl row id=H_pure_corpus_axis_closed_negative (verdict: 🔴 CLOSED-negative — corpus-axis ⊥ multilingual closure)
+      evidence: .verdicts/pure-corpus-axis-closed-negative/{closure.txt,register.txt}
+
+NOTE on the 98 pre-covered: all were ordinary H_<id> hypotheses whose card +
+jsonl row already existed (e.g. H_1289, H_1295, H_847..H_857, H_1304..H_1361 …);
+CLAIMS.tape was only a duplicate audit pointer at those, now folded into the
+HYPOTHESES.jsonl `verdict` column + the .verdicts/<slug>/ frozen evidence.
+
+The jsonl was regenerated with `python3 tool/_build_hyp_jsonl.py` (idempotent,
+derives each row from the card frontmatter / prior jsonl — verbatim verdicts, c9).

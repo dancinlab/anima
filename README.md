@@ -304,7 +304,8 @@ directive families). The load-bearing principles for the work above:
 - **`a_verified_must_wire`** — a GREEN-verified hypothesis is not *done* until its mechanism is
   actually **wired into the live `CORE/*.hexa` engine**.
 
-Every verifiable claim is indexed in [`CLAIMS.tape`](CLAIMS.tape) and backed by a verdict file under
+Every verifiable claim is indexed in [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H
+`verdict` column; CLAIMS.tape retired 2026-06-16) and backed by a verdict file under
 [`.verdicts/`](.verdicts/) (verbatim `hexa verify` stdout, p7 — *no perplexity, no LLM-judge*).
 Negative results are first-class and not buried (`a_paper_negative_ok`).
 
@@ -376,7 +377,7 @@ anima/
 ├── CLAUDE.md                       governance SSOT (p1..p8 · a_* directives)
 ├── MODEL.md · CONDITIONS.md        a303m_pass frozen gates + live scoreboard (SSOT)
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release
-├── CLAIMS.tape · HF.jsonl          verifiable-claim index · ckpt ↔ HF backup registry
+├── UNIVERSE/HYPOTHESES.jsonl · HF.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · ckpt ↔ HF backup registry
 │
 ├── CORE/                           A ⇄ G consciousness engine + brain-structure lanes
 │   ├── pure_field.hexa engine_g.hexa brain.hexa   the A/G engine + emit decision (+ VBasalGate)

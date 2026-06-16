@@ -2,6 +2,15 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(GOVERNANCE): CLAIMS.tape 은퇴 — 102개 @C 전수 이관 0 손실, claims-audit 면을 HYPOTHESES.jsonl + .verdicts/ 로 단일화
+
+**무엇:** 레거시 claims-audit 인덱스 `CLAIMS.tape`(`@C` 엔트리: id·text·method·slug·verdict pointer)를 은퇴. 가설은 이미 두 표면(`UNIVERSE/HYPOTHESES.jsonl` per-H 인덱스 + `UNIVERSE/cards/H_*.md` 카드, frozen 증거 `.verdicts/<slug>/`)에 살고 있어, CLAIMS.tape 의 audit 역할을 HYPOTHESES.jsonl 의 `verdict` 컬럼 + `.verdicts/` 로 흡수하고 파일을 `git rm`.
+
+**전수 이관 (c9 무손실):** 102개 `@C` 전수 대조 → **98개 이미 covered**(그 가설의 카드+jsonl 행 존재, CLAIMS.tape 는 중복 포인터였을 뿐) · **4개(=5개 @C) UN-MIGRATED 를 verbatim 이관**: (1) `h1218_engine_measured_gates` → 카드 `H_1218_engine_measured_gates.md`+jsonl 행 (🟢 ENGINE-PARITY GREEN / 🔴 G1·G6 RED) · (2) `h1210_daemon_gateB_wiring` → 카드 `H_1210_daemon_gateB_wiring.md`+jsonl 행 (🟢 GREEN F1∧F2∧F3∧F4) · (3) PURE-group 3 closed-negative run-claim(`pure_wiki_sweep`+`pure_register_orthogonal`+`pure_wikifrac03_closed_negative`, 동일 slug `pure-corpus-axis-closed-negative`) → 통합 카드 `H_pure_corpus_axis_closed_negative.md`+jsonl 행 (🔴 corpus-axis ⊥ multilingual closure). verdict/method 는 CLAIMS.tape + 그 `.verdicts/<slug>/` 증거에서 **VERBATIM** 복사. jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 재생성(idempotent) — **카드키 대조 결과 기존 행 0 손실 · 정확히 3행(신규 카드) 추가 · 공유행 tier/verdict 변경 0**. 최종 **102 @C · 102 covered · 5 migrated · 0 un-migrated**.
+
+**거버넌스 amend:** `a_claim_manifest`(CLAIMS.tape → claims-audit 면 = HYPOTHESES.jsonl `verdict` 컬럼 + `.verdicts/<slug>/`, CLAIMS.tape 부활 금지) + `a_claim_verify`(verdict 를 카드+jsonl `verdict` 컬럼에 박제) 재작성 · CLAUDE.md tree/quickref/디렉티브-패밀리 줄 갱신 · ARCHITECTURE.json note+evidence-tiers · README.md(영문) · FINDINGS.md · harness.config.json onEditReminder · domains/DISCOVERIES.md flow 줄의 live 포인터 surgical 정정(c10). 번역 README 미러(.zh/.ja/.ko/.ru/.easy.*/.basic) · 레거시 PAPER/* bibliography · per-domain `.log.md` claim-link breadcrumb · HANDOFF/INBOX/INTENT/PURE 등 append-only 도메인 로그 + frozen verdict + 과거 CHANGELOG 는 historical record 로 보존(미수정).
+
+**RACE 추적:** 일부 비행중 research lane 이 (구버전 프롬프트로) `@C` 를 CLAIMS.tape 에 재추가하는 stub 을 남길 수 있음 → ING 후속 등록(은퇴 PR 착륙 후 그 lane 들 착지하면 @C 가 HYPOTHESES.jsonl 반영됐는지 확인 후 git rm). ledger: `.verdicts/claims-tape-retirement/{ledger.txt,coverage.txt}`.
 
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1375 — CP 차원 사다리 (move-the-cells 가 차원 D 증가에도 살아남는가, D ∈ {2,3,4,6,8}) — 🧱 BREAKS-AT-D*=3 (CONCENTRATION-ONLY; RELOCATION DIMENSION-INVARIANT)
 
