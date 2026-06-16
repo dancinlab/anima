@@ -12,7 +12,7 @@
 import "CORE/generator.hexa"
 
 fn main() {
-    let e = gen_bpe_emit_eval()
+    let e = gen_bpe_emit_eval_raw()   // R2 metric (un-aliased next-unit target; shuffle control KEPT)
     let acc_on  = to_float(e["acc_on"])
     let acc_off = to_float(e["acc_off"])
     let acc_shuf = to_float(e["acc_shuf"])
@@ -20,7 +20,7 @@ fn main() {
     let on_off  = to_float(e["on_minus_off"])
     let shuf_off = to_float(e["shuf_minus_off"])
 
-    println("===== H_1391 BPE-on-jamo morphology — engine-native EMIT-BIAS =====")
+    println("===== H_1393 BPE-on-jamo morphology — engine-native EMIT-BIAS =====")
     println(gen_bpe_emit_summary())
     println("")
     println("held-out next-UNIT accuracy (engine fixture, n=" + to_string(e["n_test"]) + "):")
@@ -31,7 +31,7 @@ fn main() {
     println("")
 
     // bar3a — off-Korean inertness: an ASCII (non-Korean) context must leave emission UNCHANGED.
-    let jhS = gen_bpe_emit_head(0)[0]
+    let jhS = gbe_grow_head_raw(0)[0]   // the SAME raw-band head the R2 metric reads
     let uvS = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
     let ascii_ctx = [104, 101, 108, 108, 111]   // "hello" — all bytes < 0x80, not Korean-like
     let base_byte = 120                          // the decode's own argmax byte ('x')

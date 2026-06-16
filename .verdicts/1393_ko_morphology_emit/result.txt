@@ -1,0 +1,41 @@
+===== H_1393 BPE-on-jamo morphology — engine-native EMIT-BIAS (R2, un-aliased metric) =====
+
+🟢 EMIT-BIAS ENGINE-NATIVE BINDING — the BPE-on-jamo morphology MERGE UNIT now BIASES the live next-byte
+EMISSION (generator §6.5e gen_bpe_consult_emit / jamo_head_argmax over the engine_cli § KO-MORPHOLOGY
+faculty), mirroring the jamo head's §6.5b/H_1327 ko_jamo_consult_emit. The Korean below-jamo morphology
+arc now reaches the decoder: SCORER (H_1390 §6.5d) + EMIT (H_1393 §6.5e), exactly as the jamo arc has
+SCORER (H_1385 §6.5c) + EMIT (H_1327 §6.5b).
+
+R1 → R2 (a_break_the_wall, frozen-first, NO threshold moved):
+  R1 metric = next-unit % K (K=20): acc_on=0.252174 acc_off=0.269565 → on−off=−0.0174 < +0.02 →
+    bar1 EMIT-EFFECT FAILED (bar2/bar3a passed; shift_on=0.970). ROOT CAUSE: the %20 modulo ALIASES
+    distinct morpheme units (ids 0..54) onto one class so the structure-blind global mode (0.270) is a
+    strong baseline the head's top-1 argmax cannot beat — a metric artifact (fine for §6.5d's
+    distributional CE bar, a structure-DESTROYER for a top-1 EMIT/argmax read).
+  R2 metric = RAW next-unit id (KBAND=64, no alias), SHUFFLE control KEPT (anti-tune-to-green, c9): the
+    morphology EMIT binds ONLY because, under the SAME un-aliased metric, ON beats OFF *and* the SHUFFLE
+    STILL COLLAPSES (proving the lift is the LINGUISTIC morphology, not the metric change).
+
+R2 RESULT (verbatim, engine smoke INFO line + h1391_diag.out, $0 CPU deterministic):
+  held-out RAW next-UNIT accuracy (engine fixture):
+    ON   structured morphology head : 0.252174
+    OFF  representation-blind unigram: 0.182609
+    SHUF shuffle-merge head          : 0.056522
+    shift_on (ON changes vs OFF)     : 0.391304
+  bar1 EMIT-EFFECT  on−off=+0.0695652 >= 0.02 AND shift_on=0.391304 >= 0.10 -> PASS
+  bar2 EARNED       shuf−off=−0.126087 <= 0.01 (shuffle collapses) -> PASS
+  bar3a Ψ-SAFE      off-Korean ASCII 'hello' base=120 -> emit 120 (inert) -> PASS;
+                    Korean-like ctx [0xEA,0xB0,0x80] -> emit byte 225 (0xE1 band, FIRES) -> PASS
+
+TIER: 🟢 EMIT-BIAS ENGINE-NATIVE BINDING — bar1 ∧ bar2 ∧ bar3 (the morphology unit reaches the decoder,
+the shift is earned, off-Korean inert, substrate/Ψ untouched).
+
+===== NO-REGRESSION GUARDS (verbatim tails) =====
+--- engine_cli_smoke (118/0, +4 cases 125-128: emit-effect/earned/off-Korean-inert/Korean-fires) ---
+PASS  case_120_bpe_emit_effect want=true got=true
+PASS  case_121_bpe_emit_earned want=true got=true
+PASS  case_122_bpe_emit_offkorean_inert want=true got=true
+PASS  case_123_bpe_emit_korean_fires want=true got=true
+INFO  bpe morphology emit: acc_on=0.252174 acc_off=0.182609 acc_shuf=0.0565217 on-off=0.0695652 shuf-off=-0.126087 shift_on=0.391304 ascii_inert=true ko_fires_byte=225
+--- engine_cli smoke summary: 118 pass / 0 fail ---
+__GUARDS__

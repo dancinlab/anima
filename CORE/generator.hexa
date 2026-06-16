@@ -1758,6 +1758,96 @@ pub fn gen_bpe_emit_eval() -> Map {
               "reason": "BPE-on-jamo morphology emit-bias SCORED at the live emission consult (gen_bpe_consult_emit/jamo_head_argmax; H_1327 emit precedent, H_1391 wire)" }
 }
 
+// ── §6.5e-R2 — the un-aliased emit-effect eval (a_break_the_wall, the R2 FROZEN metric) ───────────
+// R1's metric (gen_bpe_emit_eval) scored on target = next-unit % K (K=20), which ALIASES distinct
+// morpheme units onto the same class → the structure-blind global mode (acc_off 0.270) beats the head's
+// per-cell argmax (acc_on 0.252) on TOP-1 accuracy, masking the morphology. The %K alias is an
+// unintended structure-DESTROYER for an EMIT (argmax) metric — it was fine for §6.5d's CE bar (the CE
+// reads the full distribution) but not for a top-1 emit read. R2 re-scores on the RAW next-unit id (no
+// %K alias), growing the head with K = unit_vocab band so each true morpheme unit is its own target.
+// CRITICAL anti-tune-to-green (c9): the SHUFFLE control is KEPT — if the un-aliased metric ALSO lets the
+// shuffle head beat blind, the change merely relabeled to green and the result is an honest 🧱; the
+// morphology EMIT only binds if ON beats OFF *and* SHUF collapses under the SAME un-aliased metric.
+
+fn _gbe_KBAND() -> int { return 64 }   // raw next-unit target band (>= max unit id 14+40=54, no alias)
+
+// _gbe_unit_features_raw — like _gbs_unit_features but target = RAW next-unit id (capped to KBAND, no
+// %K alias). X[i] = [u_i/V, u_{i-1}/V, 0], Y[i] = next unit id (clamped < KBAND). Even/odd split.
+fn _gbe_unit_features_raw(usym: [int], unby: [int], unit_vocab: int) -> [[[float]]] {
+    let V = to_float(unit_vocab)
+    let KB = _gbe_KBAND()
+    let mut Xtr = []  let mut Ytr = []  let mut Xte = []  let mut Yte = []
+    let mut i = 1  let mut idx = 0
+    while i < len(usym) - 1 {
+        let f = [to_float(usym[i]) / V, to_float(usym[i - 1]) / V, 0.0]
+        let raw = usym[i + 1]
+        let y = if raw < KB { raw } else { KB - 1 }     // clamp into the band (units < 54 < 64, no clamp in practice)
+        if idx % 2 == 0 { Xtr = Xtr + [f]  Ytr = Ytr + [[to_float(y)]] }
+        else            { Xte = Xte + [f]  Yte = Yte + [[to_float(y)]] }
+        idx = idx + 1  i = i + 1
+    }
+    return [Xtr, Ytr, Xte, Yte]
+}
+
+// gbe_grow_head_raw — grow a count head over a unit stream's RAW-target train features (KBAND vocab).
+// (pub: the smoke + the live emit consult read the SAME raw-band head the R2 metric scores.)
+pub fn gbe_grow_head_raw(rnd_seed: int) -> [JamoHead] {
+    let cfg = engine_cli_parse(["--mitosis", "on"])
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    let half = len(bsym) / 2
+    let mut trS = []  let mut trN = []  let mut i = 0
+    while i < half { trS = trS + [bsym[i]]  trN = trN + [bnby[i]]  i = i + 1 }
+    let bm = bpe_learn_merges(trS, trN, _gbs_MERGES(), _gbs_NJAMO(), rnd_seed)
+    let re = bpe_apply(bm, bsym, bnby)
+    let uv = bpe_unit_vocab(bm)
+    let DIM = 3  let KB = _gbe_KBAND()
+    let GROW = 40  let MINOWN = 4  let THR = 0.05  let LAP = 1.0
+    let seed = [[0.3, 0.3, 0.0], [0.7, 0.7, 0.0]]
+    let ft = _gbe_unit_features_raw(re[0], re[1], uv)
+    let Xtr = ft[0]  let Ytr = _gbs_flat_int(ft[1])
+    let jh0 = jamo_head_new(seed, KB, DIM)
+    let jh  = jamo_head_grow(jh0, Xtr, Ytr, len(Xtr), GROW, MINOWN, THR, LAP, cfg)
+    return [jh]
+}
+
+// gen_bpe_emit_eval_raw — the R2 FROZEN emit-effect eval (un-aliased next-unit target). Same ON/OFF/SHUF
+// arms as R1, scored on the RAW next-unit id. Returns the same record keys. The morphology EMIT binds
+// (R2 bar1) iff ON beats OFF by >= +0.02 AND shift >= 0.10, AND (R2 bar2) the SHUFFLE collapses (does
+// NOT beat OFF, <= +0.01). $0, deterministic, Ψ-disjoint pure scoring.
+pub fn gen_bpe_emit_eval_raw() -> Map {
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    let bmS = bpe_learn_merges(_gbs_first_half(bsym), _gbs_first_half(bnby), _gbs_MERGES(), _gbs_NJAMO(), 0)
+    let reS = bpe_apply(bmS, bsym, bnby)
+    let uvS = bpe_unit_vocab(bmS)
+    let ftS = _gbe_unit_features_raw(reS[0], reS[1], uvS)
+    let XteS = ftS[2]  let YteS = _gbs_flat_int(ftS[3])
+    let YtrS = _gbs_flat_int(ftS[1])
+    let jhS = gbe_grow_head_raw(0)[0]
+    let jhR = gbe_grow_head_raw(1390)[0]
+    let off_pred = _gbe_mode(YtrS, _gbe_KBAND())
+    let mut on_hit = 0  let mut off_hit = 0  let mut shuf_hit = 0  let mut shift = 0
+    let mut i = 0
+    while i < len(XteS) {
+        let pon = jamo_head_argmax(jhS, XteS[i])
+        let psh = jamo_head_argmax(jhR, XteS[i])
+        if pon == YteS[i] { on_hit = on_hit + 1 }
+        if off_pred == YteS[i] { off_hit = off_hit + 1 }
+        if psh == YteS[i] { shuf_hit = shuf_hit + 1 }
+        if pon != off_pred { shift = shift + 1 }
+        i = i + 1
+    }
+    let nt = len(XteS)
+    let dn = if nt > 0 { to_float(nt) } else { 1.0 }
+    return #{ "ok": true,
+              "acc_on": to_float(on_hit) / dn, "acc_off": to_float(off_hit) / dn,
+              "acc_shuf": to_float(shuf_hit) / dn, "shift_on": to_float(shift) / dn,
+              "n_test": nt, "on_minus_off": (to_float(on_hit) - to_float(off_hit)) / dn,
+              "shuf_minus_off": (to_float(shuf_hit) - to_float(off_hit)) / dn,
+              "reason": "BPE-on-jamo morphology emit-bias SCORED un-aliased (R2; raw next-unit target, shuffle control KEPT)" }
+}
+
 // _gbs_first_half — the train slice (first half) of an int stream (helper for gen_bpe_emit_eval).
 fn _gbs_first_half(a: [int]) -> [int] {
     let half = len(a) / 2
@@ -1777,9 +1867,10 @@ fn _gbe_mode(a: [int], K: int) -> int {
     return best
 }
 
-// gen_bpe_emit_summary — one-line introspection of the wired morphology emit-bias consult.
+// gen_bpe_emit_summary — one-line introspection of the wired morphology emit-bias consult (R2 metric,
+// the un-aliased gen_bpe_emit_eval_raw — the bound emit-effect).
 pub fn gen_bpe_emit_summary() -> string {
-    let e = gen_bpe_emit_eval()
+    let e = gen_bpe_emit_eval_raw()
     return "bpe morphology emit-bias: acc_on=" + _gen_fmt4(to_float(e["acc_on"]))
         + " acc_off=" + _gen_fmt4(to_float(e["acc_off"]))
         + " acc_shuf=" + _gen_fmt4(to_float(e["acc_shuf"]))
