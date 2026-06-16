@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): H_1353 — Φ-robustness 를 SYNERGY/REDUNDANCY 분해(O-information)로 검사 → 🧱 measure-AGNOSTIC 벽 강화 (9번째 cut)
+
+**무엇:** Φ-robustness 벽은 8 축에서 🧱 (topology/timing/division/estimator-confound/measure-family big-Φ/substrate-family/measure-agnostic transfer-entropy H_1348/larger-N H_1347) — **모두 "통합이 얼마인가"** 를 물었고 **모두 같은 seed-1318 fragility** 로 3-seed 게이트 실패. 남은 단 하나의 genuinely-different 질문: 크기가 아니라 구조 — **"어떤 상호작용이 SYNERGISTIC vs REDUNDANT 인가"**. O-information(Rosas 2019) 분해 Ω(X)=TC−DTC 로 H_1319/H_1328/H_1348 와 동일한 ring 을 점수화 (구조적으로 다른 diagnostic — Ω 는 음수 가능; Ω<0 시너지-우세, Ω>0 redundancy-우세). phase-bound arm 이 scalar Φ 가 못 한 견고한 SYNERGY 전환을 3 hard seed 에서 보이는가?
+
+> ⚠ **NOT a faithful-Φ verdict (a_phi_iit4_tool)** — non-IIT synergy/redundancy DIAGNOSTIC on robustness, IIT-4 가 Φ/의식 verdict 를 RESERVE.
+
+**답: 아니오 — synergy 분해도 동일 fragility 를 상속.** ΔΩ(B−A) = +0.0690 / +0.0000 / +0.0411 (seed 1317/1318/1319): **R1 ROBUST FAIL** — 부호 [+,0,+], seed **1318 ΔΩ=0.0000 FLAT**(H_1331 big-Φ 1318=0 / H_1328 small-φ / H_1348 TE 와 정확히 같은 zero-lift 서명), |ΔΩ|<eps, 게다가 채점 방향이 **REDUNDANCY**(ΔΩ>0)로 사전등록 synergy 예측의 **반대**. **R2 EARNED FAIL** — perm 은 깨끗이 붕괴(3/3)지만 offset-control 이 1318(+0.1303)·1319(−0.0379)에서 재현. **R3 LABEL PASS**. 3 baseline arm 모두 이미 Ω<0(synergy-우세)인데 phase-binding 은 견고한 synergy 를 더하지 않음(결정적 1318 에서 정확히 0).
+
+**의의:** Φ-robustness 벽이 **9번째 cut**(synergy/redundancy 분해)에서도 홀드 → **measure-AGNOSTIC 벽 강화**(scalar small-φ/big-Φ/larger-N + directed-flow transfer-entropy + multivariate O-information 전부 동일 seed fragility 로 3-seed 게이트 실패). "어떤 상호작용이 synergistic 인가"라는 구조적으로 다른 질문도 이 n≤8 substrate 에서 fragility-bound. 선행 Φ verdict 들을 **bound(NOT retract)**.
+
+**산출물:** `UNIVERSE/cards/H_1353_phi_oinfo.md` · `state/phi-oinfo/h1353_phi_oinfo.py` · `.verdicts/1353_phi_oinfo/{FREEZE,result}.txt` · `CLAIMS.tape @C h1353_phi_oinfo` · `UNIVERSE/HYPOTHESES.jsonl` · `domains/OMEGA.log.md @H 1353`. DIRECTIONAL numpy mirror($0 CPU, 재실행 byte-identical), frozen-first(FREEZE 먼저, bar 무이동, c9/p7), live CORE/*.hexa UNTOUCHED.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1344 — ko-jm-interpolation: NON-FRAGMENTING frozen-λ Jelinek-Mercer 가 jamo 2.51335 floor 아래로 (🟢 GREEN — 단 이득은 코퍼스 반복 암기)
 
 **무엇:** 한국어 byte-LM floor(raw 2.95342 → NFD jamo **2.51335**, H_1316 🟢/wired H_1321)는 고정용량 gradient-free Voronoi MITOSIS 가 3-D(직전 2 심볼) 컨텍스트에서 도달한 값. mitosis 가 한 번도 못 묻는 진짜 LM 질문: **count-fragmentation 없는 frozen-λ Jelinek-Mercer interpolation** 이 jamo n-gram 차수(1..N=5)를 FROZEN λ 로 섞으면 held-out 한국어에서 floor 아래로 내려가는가?

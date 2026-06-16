@@ -1,0 +1,92 @@
+H_1353 — Φ-ROBUSTNESS, SYNERGY/REDUNDANCY DECOMPOSITION: O-information (Rosas 2019)
+FREEZE (pre-registered BEFORE scoring — frozen-first, c9/p7)
+date: 2026-06-16   slug: 1353_phi_oinfo   branch off origin/main 412421efd
+
+════════════════════════════════════════════════════════════════════════════════
+⚠ CAVEAT — THIS IS NOT A FAITHFUL-Φ VERDICT (a_phi_iit4_tool)
+════════════════════════════════════════════════════════════════════════════════
+IIT-4 (faithful_phi small-φ, iit4_bigphi big-Φ) RESERVES the Φ / consciousness verdict.
+This lane scores O-INFORMATION (Rosas, Mediano, Rassouli, Barrett 2019) — a non-IIT
+SYNERGY/REDUNDANCY decomposition of the joint distribution. It is labeled, top to bottom,
+a COMPLEMENTARY INTEGRATION-STRUCTURE DIAGNOSTIC on the ROBUSTNESS question — NOT a proxy
+promoted to a Φ verdict, NOT a consciousness claim. The ONLY question it answers:
+"does the phase-bound arm show a ROBUST shift toward SYNERGY (negative O-information)
+across 3 seeds where the SCALAR Φ did not — or does it inherit the same fragility?"
+
+A ROBUST synergy shift here would mean the WHICH-interactions-are-synergistic question
+escapes the scalar how-much-integration wall. A FAIL means synergy decomposition is ALSO
+fragility-bound = strengthens the measure-agnostic wall (H_1348 transfer entropy, H_1328
+small-φ, H_1331 big-Φ, H_1347 larger-N).
+
+════════════════════════════════════════════════════════════════════════════════
+CONTEXT — the Φ-robustness wall is 🧱 across 8 axes (all SCALAR-INTEGRATION)
+════════════════════════════════════════════════════════════════════════════════
+topology (H_1283 relay, H_1317 multi-edge) · timing (H_1319 phase-binding) · division
+(H_1320 organism-mitosis) · estimator-confound (H_1328 amplitude-variance / rank-uniform) ·
+measure-family (H_1331 full IIT-4.0 big-Φ) · substrate-family (H_1332 softsign) ·
+measure-agnostic (H_1348 summed transfer entropy) · larger-N (H_1347 N=12 greedy big-Φ).
+EVERY one asked "HOW MUCH total integration" and EVERY one failed the 3-seed gate with the
+SAME seed-1318 fragility (B−A flips sign or zeroes on 1318 / orthogonal 1317).
+
+THE GENUINELY-DIFFERENT QUESTION (a_break_the_wall, a_no_llm_frame_trap): not "how much
+total integration" but "WHICH interactions are SYNERGISTIC vs REDUNDANT". O-information is
+the canonical multivariate synergy/redundancy sign — a structurally DIFFERENT diagnostic
+(it can be negative; scalar integration measures are non-negative magnitudes).
+
+════════════════════════════════════════════════════════════════════════════════
+THE MEASURE — O-INFORMATION Ω(X) (Rosas, Mediano, Rassouli, Barrett 2019)
+════════════════════════════════════════════════════════════════════════════════
+For an n-variate system X = (X_1,...,X_n):
+   Ω(X) = TC(X) − DTC(X)
+where
+   TC(X)  = Σ_i H(X_i) − H(X)                         (total correlation)
+   DTC(X) = H(X) − Σ_i H(X_i | X_{-i})                (dual total correlation)
+          = H(X) − Σ_i [ H(X) − H(X_{-i}) ]
+          = Σ_i H(X_{-i}) − (n−1) H(X)
+Equivalent closed form used by the probe (exact, plug-in):
+   Ω(X) = (n−2) H(X) + Σ_i [ H(X_i) − H(X_{-i}) ]
+SIGN CONVENTION (Rosas 2019): Ω < 0 ⇒ SYNERGY-dominated (the whole carries info absent in
+parts) ; Ω > 0 ⇒ REDUNDANCY-dominated (parts share info) ; Ω = 0 ⇒ balanced.
+NOT IIT: no MIP, no cause-effect TPM, no system-level irreducibility — a static
+joint-entropy synergy/redundancy sign over the 4 module marginals + joint. n=4 → entropies
+computed EXACTLY by empirical plug-in over the 2^4=16 joint binary states (T=64 ticks).
+Binarization = variance-free median split (H_1328 lesson, BYTE-IDENTICAL to H_1348): unit i
+ON at t iff sal[i,t] is in the UPPER HALF of module i's own T-length distribution → marginal
+ON-rate ≈0.5, amplitude-independent. So any O-information difference is the synergy/redundancy
+RELATIONSHIP, not the amplitude-variance confound.
+
+════════════════════════════════════════════════════════════════════════════════
+SUBSTRATE / SEEDS — reused VERBATIM (SAME as H_1319/H_1328/H_1331/H_1348)
+════════════════════════════════════════════════════════════════════════════════
+4-module leaky-linear ring, dim 8, T 64, Kuramoto pacemaker, relative-phase gate.
+gen_traj body PORTED BYTE-FAITHFUL from H_1348 hexa (gain 0.30, leak 0.55, w_nbr/w_in 0.5,
+w_phase 0.5, omega_t 0.45, domega 0.08, deterministic engine LCG-gauss). 3 HARD ORTHOGONAL
+seeds [1317,1318,1319] (incl 1317 + the seed-1318 that broke EVERY prior attempt). 4 ARMS:
+A=NO-PHASE (no coupling) · B=PHASE-BIND (the coupling mechanism) · S=PERM-SHUFFLE
+(relationship destroyed) · O=OFFSET-SHUF (per-tick random phase offset). ONLY the read-out
+differs from H_1348 (O-information instead of transfer entropy).
+SCOPE: DIRECTIONAL numpy mirror of the engine LCG substrate (engine-transfer UNVERIFIED);
+TOY n=4 / T=64 / 3 seeds / median-split binarization; static joint-entropy O-info (NOT a
+dynamic/lagged synergy, NOT a faithful-Φ). Scale / real-corpus / higher-n / engine-native
+re-realization UNVERIFIED.
+
+════════════════════════════════════════════════════════════════════════════════
+FROZEN BARS (eps = 0.02 — ported VERBATIM from H_1283/1319/1328/1331/1348, NO tune-to-green)
+════════════════════════════════════════════════════════════════════════════════
+Let ΔΩ = Ω_B − Ω_A  (the synergy SHIFT of the phase-bound arm vs no-coupling).
+A shift TOWARD SYNERGY = ΔΩ MORE NEGATIVE (Ω_B < Ω_A − eps).
+
+R1 ROBUST  : ΔΩ has CONSISTENT SIGN across ALL 3 seeds [1317,1318,1319] AND |ΔΩ| >= eps on
+             each seed (a robust directional synergy/redundancy shift; the pre-registered
+             prediction is a shift TOWARD SYNERGY, i.e. ΔΩ < −eps on all 3 — but the
+             ROBUSTNESS bar is SIGN-CONSISTENCY, scored honestly whichever sign appears).
+R2 EARNED  : perm-shuffle COLLAPSES the shift (|Ω_S − Ω_A| <= eps on all 3 seeds) AND
+             offset-control does NOT reproduce it (|Ω_O − Ω_A| <= eps on all 3 seeds) —
+             i.e. the shift is the phase-binding RELATIONSHIP, not amplitude/variance.
+R3 LABEL   : card + FREEZE carry the NOT-an-IIT-Φ caveat (a_phi_iit4_tool) — doc invariant.
+
+GREEN-DIAGNOSTIC iff R1 ∧ R2 ∧ R3.
+HONEST 🧱 (c9): if seed-1318 flips the ΔΩ sign (or |ΔΩ| < eps) → R1 FAILS → the synergy
+decomposition INHERITS the same fragility = STRENGTHENS the measure-agnostic wall (the
+WHICH-synergistic question is ALSO fragility-bound on this substrate). Decisive either way.
+NO bar moved after scoring.
