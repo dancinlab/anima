@@ -1,0 +1,41 @@
+H_1371 hive-circle-overlap: distributed circle-overlap (Flower-of-Life) — faithful-IIT4 collective-Φ
+N_TOT=6 hexagon-ring edges=[(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 0)] dim=8 ticks=64 seeds=[1317, 1318, 1319]
+OVERLAP_W=0.6  faithful IIT4 Φ (exact MIP-EI, n<=8); MARGIN=0.02 TOL=0.02
+============================================================================================
+  seed 1317  A_independent: Φ=1.27373   O-info=-0.4012
+  seed 1317      B_overlap: Φ=1.78096   O-info=-0.0179
+  seed 1317    CENTRALIZED: Φ=2.03085   O-info=-0.1622
+  seed 1317        SHUFFLE: Φ=1.35137   O-info=+0.0040
+--------------------------------------------------------------------------------------------
+  seed 1318  A_independent: Φ=1.36292   O-info=-0.4955
+  seed 1318      B_overlap: Φ=1.64288   O-info=-0.0198
+  seed 1318    CENTRALIZED: Φ=2.39598   O-info=-0.3840
+  seed 1318        SHUFFLE: Φ=1.56284   O-info=-0.0332
+--------------------------------------------------------------------------------------------
+  seed 1319  A_independent: Φ=1.28195   O-info=-0.5156
+  seed 1319      B_overlap: Φ=1.30101   O-info=-0.0805
+  seed 1319    CENTRALIZED: Φ=2.58087   O-info=-0.3080
+  seed 1319        SHUFFLE: Φ=1.2591   O-info=-0.1626
+--------------------------------------------------------------------------------------------
+============================================================================================
+R1 LIFT             (Φ(B_overlap) − Φ(A_independent) >= 0.02 EVERY seed): FAIL
+     seed 1317: Φ_overlap=1.78096 Φ_floor=1.27373 lift=0.5072  PASS
+     seed 1318: Φ_overlap=1.64288 Φ_floor=1.36292 lift=0.28  PASS
+     seed 1319: Φ_overlap=1.30101 Φ_floor=1.28195 lift=0.0191  FAIL
+R2 BEATS-CENTRALIZED (Φ(B_overlap) − Φ(CENTRALIZED) > 0 EVERY seed): FAIL
+     seed 1317: Φ_overlap=1.78096 Φ_central=2.03085 gap=-0.2499  FAIL
+     seed 1318: Φ_overlap=1.64288 Φ_central=2.39598 gap=-0.7531  FAIL
+     seed 1319: Φ_overlap=1.30101 Φ_central=2.58087 gap=-1.2799  FAIL
+R3 EARNED            (Φ(SHUFFLE) <= Φ(A_independent) + 0.02 EVERY seed): FAIL
+     seed 1317: Φ_shuffle=1.35137 Φ_floor=1.27373  FAIL
+     seed 1318: Φ_shuffle=1.56284 Φ_floor=1.36292  FAIL
+     seed 1319: Φ_shuffle=1.2591 Φ_floor=1.28195  PASS
+
+O-INFO shift (B_overlap vs CENTRALIZED; O<0=synergy O>0=redundancy):
+     seed 1317: O(B_overlap)=-0.0179 O(CENTRALIZED)=-0.1622 shift(B−C)=+0.1443
+     seed 1318: O(B_overlap)=-0.0198 O(CENTRALIZED)=-0.3840 shift(B−C)=+0.3642
+     seed 1319: O(B_overlap)=-0.0805 O(CENTRALIZED)=-0.3080 shift(B−C)=+0.2276
+
+VERDICT: SEED_FRAGILE  (R1 2/3, R2 0/3, R3 1/3)
+
+RESULT_JSON={"id": "H_1371", "slug": "hive-circle-overlap", "verdict": "SEED_FRAGILE", "seeds": [1317, 1318, 1319], "N_tot": 6, "edges": [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]], "dim": 8, "ticks": 64, "overlap_w": 0.6, "margin": 0.02, "tol": 0.02, "phi_faithful_iit4": {"1317": {"A_independent": 1.27373, "B_overlap": 1.78096, "CENTRALIZED": 2.03085, "SHUFFLE": 1.35137}, "1318": {"A_independent": 1.36292, "B_overlap": 1.64288, "CENTRALIZED": 2.39598, "SHUFFLE": 1.56284}, "1319": {"A_independent": 1.28195, "B_overlap": 1.30101, "CENTRALIZED": 2.58087, "SHUFFLE": 1.2591}}, "o_information": {"1317": {"A_independent": -0.40124618176805704, "B_overlap": -0.01792191703282242, "CENTRALIZED": -0.16220981849479532, "SHUFFLE": 0.004035019908693371}, "1318": {"A_independent": -0.49548158629657646, "B_overlap": -0.019772700932432663, "CENTRALIZED": -0.38396592611203495, "SHUFFLE": -0.033171187371021205}, "1319": {"A_independent": -0.5156466561543906, "B_overlap": -0.08045768226232042, "CENTRALIZED": -0.308013866183936, "SHUFFLE": -0.16255507340259356}}, "bars": {"R1_lift": false, "R2_beats_centralized": false, "R3_earned": false}, "r1_per_seed": {"1317": true, "1318": true, "1319": false}, "r2_per_seed": {"1317": false, "1318": false, "1319": false}, "r3_per_seed": {"1317": false, "1318": false, "1319": true}, "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n<=8)"}
