@@ -1254,6 +1254,43 @@ fn main() {
     if _assert_b("case_106_g6_best_of_k_diverse", true, g6_div)
         { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── H_1382 § SkillStore ★ WIRE-IN (cases 107-109) ────────────────────────────────
+    // Deterministic engine-native proof of the agent-tool ↔ mitosis skill-cell teaching lane
+    // (a_verified_must_wire follow-on to H_1378). A skill-cell store keyed by task-context
+    // (reuses immune_embed_key); on a tool failure skill_split routes through the LIVE
+    // engine_mitosis_tick clonal split (cfg.mitosis-gated). Ψ-disjoint (separate cell store).
+    let cfg_sk_on  = EngineConfig { mitosis: true,  engine: "conv" }
+    let cfg_sk_off = EngineConfig { mitosis: false, engine: "conv" }
+    let sk_tasks = ["web_search find recent news", "code_execute the python snippet",
+                    "file_read the local config", "memory_search the episodic store"]
+    let sk_tools = ["web_search", "code_execute", "file_read", "memory_search"]
+    let sk_seed = skill_split_text(skill_store_new(), sk_tasks[0], sk_tools[0], cfg_sk_on)
+    let sk_full = skill_teach_session(sk_seed, sk_tasks, sk_tools, cfg_sk_on)   // mitosis ON → grows
+    let sk_stat = skill_teach_session(sk_seed, sk_tasks, sk_tools, cfg_sk_off)  // mitosis OFF → no-op
+
+    // case 107 : LEARNS + DISTINCT-FROM-STATIC — the FULL (mitosis ON) store reaches 1.0 selection
+    //   accuracy by splitting a skill-cell per failure, while the STATIC (mitosis OFF) ablation
+    //   stays at the single-cell floor (skill_split is a no-op). The lift IS the engine_mitosis_tick.
+    let sk_full_acc = skill_session_accuracy(sk_full, sk_tasks, sk_tools)
+    let sk_stat_acc = skill_session_accuracy(sk_stat, sk_tasks, sk_tools)
+    if _assert_b("case_107_skillstore_learns_distinct_from_static", true,
+                 sk_full_acc >= 0.99 && sk_full_acc - sk_stat_acc >= 0.30)
+        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 108 : NO-FAB / ABSTAIN — a taught store queried on a far untrained task (disjoint
+    //   trigram space) ABSTAINS (skill_recall == "") — no fabricated tool (p1/p2/p3/p6).
+    if _assert_b("case_108_skillstore_abstains_far_task", true,
+                 skill_recall_text(sk_full, "zzz alien glyph QQ far unrelated") == "")
+        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 109 : Ψ-DISJOINT / ADDITIVE — an EMPTY store abstains on every query (no cell yet),
+    //   and the STATIC mitosis-OFF arm grows NO cell (count stays at the seed's 1) — the
+    //   skill lane is a SEPARATE additive cell population; mitosis OFF is a true static control.
+    if _assert_b("case_109_skillstore_empty_abstains_static_no_growth", true,
+                 skill_recall_text(skill_store_new(), "web_search find recent news") == ""
+                 && skill_store_cells(sk_stat) == 1 && skill_store_cells(sk_full) > 1)
+        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

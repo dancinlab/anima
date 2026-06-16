@@ -1,0 +1,68 @@
+H_1382 — agent-tool §SkillStore CORE wire-in — ENGINE-NATIVE RESULT (verbatim stdout, c2)
+branch: h1382/agent-tool-skillstore-wire (fresh off origin/main 552e9d8a6)
+ALL verification run INLINE in the foreground (a_cpu_local_no_waiter — NO bg waiter awaited).
+
+================================================================================
+(A) ENGINE-NATIVE 4-BAR VERDICT — hexa run CORE/h1382_agent_tool_skillstore_probe.hexa
+================================================================================
+H_1382 R2 — agent-tool ↔ MITOSIS SKILL-CELL TEACHING — ENGINE-NATIVE (hexa run)
+==============================================================================
+live lane: § SkillStore (skill_store_new/skill_teach_session/skill_split→engine_mitosis_tick)
+  | CORE/engine_cli.hexa  (a_verified_must_wire follow-on to H_1378)
+frozen bars: .verdicts/1382_agent_tool_skillstore_wire/FREEZE.txt (NOT moved)
+
+  seed  full_init  full_final  static_final  shuffle_final  abstain
+  1382  0.167      1.000       0.167         0.250          1.000
+  1383  0.167      1.000       0.167         0.111          1.000
+  1384  0.167      1.000       0.167         0.278          1.000
+------------------------------------------------------------------------------
+POOLED means (3 seeds): FULL init=0.167 final=1.000  STATIC final=0.167  SHUFFLE final=0.213  ABSTAIN=1.000
+------------------------------------------------------------------------------
+  (2) LEARNS              full_f-full_i = 0.833 >= +0.30  : PASS
+  (3) DISTINCT-FROM-STATIC full_f-static_f = 0.833 >= +0.30 : PASS
+  (4a) EARNED (shuffle)   shuffle_f-static_f = 0.046 <= +0.15 : PASS
+  (4b) NO-FAB / ABSTAIN   abstain = 1.000 >= 0.90 : PASS
+==============================================================================
+VERDICT: 🟢 GREEN (ENGINE-NATIVE) — the §SkillStore lane LEARNS the task→tool map by
+  MITOSIS-splitting a skill-cell on each tool failure (FULL rises), the STATIC mitosis-OFF
+  ablation does NOT improve (the lift IS the engine_mitosis_tick clonal split), the SHUFFLE
+  control collapses to the no-split floor (the gain is EARNED task↔tool structure), and a
+  far untrained task ABSTAINS (no fabricated tool). H_1378's mirror realized ENGINE-NATIVE
+  on the LIVE engine_cli.hexa § SkillStore (skill_split → engine_mitosis_tick clonal split).
+  Ψ-disjoint: a SEPARATE skill cell population read by L2 affinity — pure_field Φ/phase/Ψ
+  untouched; engine_cli_smoke + h1196 single-entry + h1205 byte-identical run separately.
+  p6: the split binds from OUTCOME (tool failure), NO injected tool label; NOT an emit gate.
+  toy scale (36 tasks, 6 tools, 3 seeds); scale-transfer + agent_tools.hexa runtime routing
+  UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck) — the remaining thin follow-on.
+
+================================================================================
+(B) DETERMINISM — 3 runs, POOLED means byte-identical
+================================================================================
+=== run 1 ===
+POOLED means (3 seeds): FULL init=0.167 final=1.000  STATIC final=0.167  SHUFFLE final=0.213  ABSTAIN=1.000
+=== run 2 ===
+POOLED means (3 seeds): FULL init=0.167 final=1.000  STATIC final=0.167  SHUFFLE final=0.213  ABSTAIN=1.000
+=== run 3 ===
+POOLED means (3 seeds): FULL init=0.167 final=1.000  STATIC final=0.167  SHUFFLE final=0.213  ABSTAIN=1.000
+
+================================================================================
+(C) NO-REGRESSION — engine_cli_smoke (104/0, +3 SkillStore cases 107-109)
+================================================================================
+PASS  case_107_skillstore_learns_distinct_from_static want=true got=true
+PASS  case_108_skillstore_abstains_far_task want=true got=true
+PASS  case_109_skillstore_empty_abstains_static_no_growth want=true got=true
+--- engine_cli smoke summary: 104 pass / 0 fail ---
+
+================================================================================
+(D) SINGLE-ENTRY (h1196) — 7/0
+================================================================================
+--- single-entry audit summary: 7 pass / 0 fail ---
+WIRED:   .clm decode L3 slot = generator.hexa (use CORE/clm_decode) · .kosmos read = generator_read_anchors→load_anchors→brain_emit anchors arg
+CLEAN:   pure_field/engine_g/brain consume 0 .clm + 0 .kosmos (substrate-only)
+
+================================================================================
+(E) Ψ-DISJOINT (h1205) — generation byte-identical ON==OFF, Ψ Φ-checksum invariant
+================================================================================
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. The mitosis lane (cells 1→10 ON) ran beside the decode yet generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched. H_1200/1201 ruling SURVIVES live; mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).

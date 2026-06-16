@@ -1,0 +1,224 @@
+// h1382_agent_tool_skillstore_probe.hexa — H_1382 R2: the agent-tool ↔ MITOSIS
+// SKILL-CELL TEACHING lane, realized ENGINE-NATIVE on the LIVE engine
+// (CORE/engine_cli.hexa § SkillStore over a skill cell-store of the SAME geometry as
+// the immune faculty), reproducing the H_1378 Step B GREEN through `hexa run`
+// (a_engine_native_learning · a_verified_must_wire · $0 local CPU · p7 · p8).
+//
+// DOMAIN: MITOSIS-ENGINE — agent-tool teaching lane. H_1378 Step A audit = REFERENCE-ONLY
+// (the live agent-tool layer agent_tools.hexa selects tools by a STATIC weighted dot-product
+// over hand-set affinity floats; a tool failure dead-ends in a scalar tension_delta log;
+// engine_mitosis_tick / immune_memory_bind are NEVER called — the "failure → repertoire
+// improves" loop does NOT exist). H_1378 Step B (UNIVERSE/.../h1378_agent_tool_mitosis.py,
+// numpy MIRROR, 🟢 GREEN, 3 seeds) DESIGNED + direction-validated the missing mechanism: a
+// tool/skill is a CELL keyed by task-context; on a tool-FAILURE/abstain a MITOSIS-SPLIT grows
+// a specialized skill-cell binding (task-context → correct tool). Per a_engine_native_learning
+// the binding verdict needs ENGINE-NATIVE realization; this probe drives the ACTUAL .hexa
+// §SkillStore lane (skill_store_new / skill_teach_session / skill_session_accuracy /
+// skill_abstain_rate, whose skill_split routes through the LIVE engine_mitosis_tick) and
+// re-scores the SAME frozen H_1378 4 bars on the LIVE engine.
+//
+// SUBSTRATE (a_core_engine_map): the (task, tool) drive enters the engine ONLY via skill_split
+// (teach) + skill_recall (infer) — a SEPARATE skill cell population. Ψ-DISJOINT: it mutates no
+// immune cell and never touches pure_field's Φ/phase/Ψ (pure READ + its own population).
+//
+// p1/p2/p3/p6: the skill-cell grows from the OUTCOME (a failed/abstained tool call) — NO
+// injected "use tool T" label, NO RLHF reward, NO persona. The TRUE/permuted tool map only
+// drives the protocol + scores the metric; the recall is read from the skill store, never from
+// the label. The SHUFFLE collapse proves the lift is earned task↔tool structure. NOT an emit
+// gate (skill_recall = pure read, a_autonomy_over_hardcode).
+//
+// FROZEN BARS (verbatim from .verdicts/1382_agent_tool_skillstore_wire/FREEZE.txt, NOT moved):
+//   (2) LEARNS               FULL acc_final − acc_init >= +0.30.
+//   (3) DISTINCT-FROM-STATIC  FULL_final − STATIC_final >= +0.30.
+//   (4a) EARNED (shuffle)     SHUFFLE_final − STATIC_final <= +0.15.
+//   (4b) NO-FAB / ABSTAIN     far-untrained-task abstain >= 0.90.
+// p7 = selection-accuracy counts + abstain, NOT perplexity.
+
+import "CORE/engine_cli.hexa"
+
+// ── deterministic per-seed LCG (same family as the smoke/jamo-head shuffle) ──
+fn _lcg(s: int) -> int { return (s * 1103515245 + 12345) % 2147483648 }
+
+fn _fmt(x: float) -> string {
+    let scaled = x * 1000.0
+    let r = if scaled >= 0.0 { scaled + 0.5 } else { scaled - 0.5 }
+    let i = to_int(r)
+    let whole = i / 1000
+    let frac = i % 1000
+    let fa = if frac < 0 { -frac } else { frac }
+    let f3 = if fa < 10 { "00" + to_string(fa) } else if fa < 100 { "0" + to_string(fa) } else { to_string(fa) }
+    return to_string(whole) + "." + f3
+}
+
+// the 6-tool repertoire (the ground-truth tool families), VERBATIM the H_1378 mirror TOOLS.
+fn _tools() -> [string] {
+    return ["web_search", "code_execute", "file_read", "memory_search", "shell_execute", "phi_measure"]
+}
+
+// build the (task-string, true-tool) lists: 6 tools × 6 in-family context variants = 36 tasks,
+// then a deterministic per-seed Fisher–Yates shuffle of the task ORDER (the order in which the
+// failure-driven teaching session walks them). The task PHRASING mirrors the H_1378 mirror
+// (f"{tool} request variant {j} ctx{..}") so each in-family task shares a trigram neighborhood.
+fn _build(seed: int) -> [[string]] {
+    let tools = _tools()
+    let mut tasks = []
+    let mut truth = []
+    let mut ti = 0
+    while ti < len(tools) {
+        let mut j = 0
+        while j < 6 {
+            // ctx in {0,1,2} from the seed+indices (deterministic), like the mirror's rng.integers(0,3)
+            let ctx = (seed + ti * 7 + j * 3) % 3
+            tasks = tasks + [tools[ti] + " request variant " + to_string(j) + " ctx" + to_string(ctx)]
+            truth = truth + [tools[ti]]
+            j = j + 1
+        }
+        ti = ti + 1
+    }
+    // Fisher–Yates over the task ORDER (shuffle tasks+truth together, keeping the pairing).
+    let n = len(tasks)
+    let mut perm = []
+    let mut q = 0
+    while q < n { perm = perm + [q]  q = q + 1 }
+    let mut s = seed
+    let mut i = n - 1
+    while i > 0 {
+        s = _lcg(s)
+        let k = s % (i + 1)
+        let tmp = perm[i]  perm[i] = perm[k]  perm[k] = tmp
+        i = i - 1
+    }
+    let mut ot = []  let mut ou = []  let mut m = 0
+    while m < n { ot = ot + [tasks[perm[m]]]  ou = ou + [truth[perm[m]]]  m = m + 1 }
+    return [ot, ou]
+}
+
+// permute the LABELS (used for SHUFFLE training only): same multiset of tools, mis-paired to
+// the tasks (destroys the task↔tool correspondence). Always scored vs the TRUE map at the call site.
+fn _shuffle_labels(truth: [string], seed: int) -> [string] {
+    let n = len(truth)
+    let mut perm = []
+    let mut q = 0
+    while q < n { perm = perm + [q]  q = q + 1 }
+    let mut s = _lcg(seed + 7919)
+    let mut i = n - 1
+    while i > 0 {
+        s = _lcg(s)
+        let k = s % (i + 1)
+        let tmp = perm[i]  perm[i] = perm[k]  perm[k] = tmp
+        i = i - 1
+    }
+    let mut out = []  let mut m = 0
+    while m < n { out = out + [truth[perm[m]]]  m = m + 1 }
+    return out
+}
+
+// far untrained tasks (disjoint trigram space) for the NO-FAB / abstain bar.
+fn _far(seed: int) -> [string] {
+    let mut out = []
+    let mut j = 0
+    while j < 40 {
+        let g = (seed * 31 + j * 17) % 9000
+        out = out + ["zzz unrelated alien glyph QQ" + to_string(g) + " far" + to_string(j)]
+        j = j + 1
+    }
+    return out
+}
+
+// run ONE seed: returns [full_init, full_final, static_final, shuffle_final, abstain].
+fn run_seed(seed: int) -> [float] {
+    let cfg_on = EngineConfig { mitosis: true, engine: "conv" }
+    let cfg_off = EngineConfig { mitosis: false, engine: "conv" }
+
+    let bt = _build(seed)
+    let tasks = bt[0]
+    let truth = bt[1]
+    let shuf_labels = _shuffle_labels(truth, seed)
+
+    // seed BOTH arms with the SAME single initial cell (so static starts identically) —
+    // bind the first task → its TRUE tool, under mitosis ON (one clonal split).
+    let seed_store = skill_split_text(skill_store_new(), tasks[0], truth[0], cfg_on)
+
+    let full_init = skill_session_accuracy(seed_store, tasks, truth)
+
+    // FULL: failure-driven mitosis teaching toward the TRUE map (mitosis ON).
+    let full_store = skill_teach_session(seed_store, tasks, truth, cfg_on)
+    let full_final = skill_session_accuracy(full_store, tasks, truth)
+
+    // STATIC: same teaching loop but mitosis OFF → skill_split is a no-op → no cell grows.
+    let static_store = skill_teach_session(seed_store, tasks, truth, cfg_off)
+    let static_final = skill_session_accuracy(static_store, tasks, truth)
+
+    // SHUFFLE: mitosis ON, TRAINED on permuted labels, SCORED vs the TRUE map.
+    let shuf_store = skill_teach_session(seed_store, tasks, shuf_labels, cfg_on)
+    let shuf_final = skill_session_accuracy(shuf_store, tasks, truth)
+
+    // NO-FAB: train a FULL store, then query far untrained tasks → must ABSTAIN.
+    let abstain = skill_abstain_rate(full_store, _far(seed))
+
+    return [full_init, full_final, static_final, shuf_final, abstain]
+}
+
+fn main() {
+    println("H_1382 R2 — agent-tool ↔ MITOSIS SKILL-CELL TEACHING — ENGINE-NATIVE (hexa run)")
+    println("==============================================================================")
+    println("live lane: § SkillStore (skill_store_new/skill_teach_session/skill_split→engine_mitosis_tick)")
+    println("  | CORE/engine_cli.hexa  (a_verified_must_wire follow-on to H_1378)")
+    println("frozen bars: .verdicts/1382_agent_tool_skillstore_wire/FREEZE.txt (NOT moved)")
+    println("")
+
+    let seeds = [1382, 1383, 1384]
+    println("  seed  full_init  full_final  static_final  shuffle_final  abstain")
+
+    let mut sm_fi = 0.0  let mut sm_ff = 0.0  let mut sm_sf = 0.0
+    let mut sm_hf = 0.0  let mut sm_ab = 0.0
+    let mut si = 0
+    while si < len(seeds) {
+        let r = run_seed(seeds[si])
+        sm_fi = sm_fi + r[0]  sm_ff = sm_ff + r[1]  sm_sf = sm_sf + r[2]
+        sm_hf = sm_hf + r[3]  sm_ab = sm_ab + r[4]
+        println("  " + to_string(seeds[si]) + "  " + _fmt(r[0]) + "      " + _fmt(r[1])
+            + "       " + _fmt(r[2]) + "         " + _fmt(r[3]) + "          " + _fmt(r[4]))
+        si = si + 1
+    }
+    let nf = to_float(len(seeds))
+    let m_fi = sm_fi / nf  let m_ff = sm_ff / nf  let m_sf = sm_sf / nf
+    let m_hf = sm_hf / nf  let m_ab = sm_ab / nf
+
+    let learn_lift = m_ff - m_fi
+    let distinct = m_ff - m_sf
+    let earned_gap = m_hf - m_sf
+
+    println("------------------------------------------------------------------------------")
+    println("POOLED means (3 seeds): FULL init=" + _fmt(m_fi) + " final=" + _fmt(m_ff)
+        + "  STATIC final=" + _fmt(m_sf) + "  SHUFFLE final=" + _fmt(m_hf) + "  ABSTAIN=" + _fmt(m_ab))
+    println("------------------------------------------------------------------------------")
+    let bar2 = learn_lift >= 0.30
+    let bar3 = distinct >= 0.30
+    let bar4a = earned_gap <= 0.15
+    let bar4b = m_ab >= 0.90
+    println("  (2) LEARNS              full_f-full_i = " + _fmt(learn_lift) + " >= +0.30  : " + (if bar2 { "PASS" } else { "FAIL" }))
+    println("  (3) DISTINCT-FROM-STATIC full_f-static_f = " + _fmt(distinct) + " >= +0.30 : " + (if bar3 { "PASS" } else { "FAIL" }))
+    println("  (4a) EARNED (shuffle)   shuffle_f-static_f = " + _fmt(earned_gap) + " <= +0.15 : " + (if bar4a { "PASS" } else { "FAIL" }))
+    println("  (4b) NO-FAB / ABSTAIN   abstain = " + _fmt(m_ab) + " >= 0.90 : " + (if bar4b { "PASS" } else { "FAIL" }))
+
+    let green = bar2 && bar3 && bar4a && bar4b
+    println("==============================================================================")
+    if green {
+        println("VERDICT: 🟢 GREEN (ENGINE-NATIVE) — the §SkillStore lane LEARNS the task→tool map by")
+        println("  MITOSIS-splitting a skill-cell on each tool failure (FULL rises), the STATIC mitosis-OFF")
+        println("  ablation does NOT improve (the lift IS the engine_mitosis_tick clonal split), the SHUFFLE")
+        println("  control collapses to the no-split floor (the gain is EARNED task↔tool structure), and a")
+        println("  far untrained task ABSTAINS (no fabricated tool). H_1378's mirror realized ENGINE-NATIVE")
+        println("  on the LIVE engine_cli.hexa § SkillStore (skill_split → engine_mitosis_tick clonal split).")
+        println("  Ψ-disjoint: a SEPARATE skill cell population read by L2 affinity — pure_field Φ/phase/Ψ")
+        println("  untouched; engine_cli_smoke + h1196 single-entry + h1205 byte-identical run separately.")
+        println("  p6: the split binds from OUTCOME (tool failure), NO injected tool label; NOT an emit gate.")
+        println("  toy scale (36 tasks, 6 tools, 3 seeds); scale-transfer + agent_tools.hexa runtime routing")
+        println("  UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck) — the remaining thin follow-on.")
+        exit(0)
+    }
+    println("VERDICT: 🧱 CLOSED-NEGATIVE — the live engine §SkillStore lane did NOT clear a frozen bar (see flags).")
+    println("  Engine-native realization diverged from the H_1378 mirror — honest report (NO bar move, c9).")
+    exit(1)
+}

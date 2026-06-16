@@ -2,6 +2,20 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1382 — agent-tool §SkillStore CORE wire-in (H_1378 failure-driven skill-cell teaching → live 엔진 배선) — 🟢 GREEN (ENGINE-NATIVE)
+
+**무엇:** H_1378 Step B 가 🟢 GREEN(numpy MIRROR)으로 설계·검증한 *failure-driven skill-cell SPLIT teaching* 메커니즘을 live 엔진에 실제 배선(a_verified_must_wire follow-on). H_1378 Step A audit = REFERENCE-ONLY — live agent-tool layer(`anima-agent-core/agent_tools.hexa`)는 STATIC weighted dot-product(hand-set affinity floats `:357-361`)로 tool 을 선택하고, tool failure 는 scalar `tension_delta` ring-buffer log(`:448-451`)에서 막다른 길로 끝나며, `tool_mitosis_split`(`:155`)은 TODO stub — 즉 'failure → repertoire improves' 루프가 **존재하지 않았다**.
+
+**어떻게 (a_engine_native_learning · a_core_engine_map):** `CORE/engine_cli.hexa § SkillStore` lane 을 추가(additive · Ψ-disjoint · H_1227/H_1288 immune/grow 와 동일 규율). skill/tool = task-context 로 keyed 된 **CELL**(LIVE `immune_embed_key` DIM=64 byte-trigram FNV-1a geometry 재사용); `skill_recall` = LIVE L2-affinity FIRE(recon-err ≤ RECALL_THR=0.55) 또는 ABSTAIN; `skill_split` = tool FAILURE/abstain 시 **LIVE `engine_mitosis_tick`** clonal split(`cfg.mitosis`-gated)으로 (task-context → correct tool) 바인딩 새 skill-cell 성장(ON 성장 · OFF no-op = static ablation). 같은 op 가 teach(split) + infer(recall) — p8. SINGLE ENTRY: agent-tool path 는 `skill_split`/`skill_recall` 로만 진입(2nd mitosis path 없음).
+
+**결과 (ENGINE-NATIVE, `hexa run CORE/h1382_agent_tool_skillstore_probe.hexa`, 3 seeds [1382,1383,1384], POOLED):** (2) LEARNS full_f−full_i=**+0.833**(0.167→1.000) PASS · (3) DISTINCT-FROM-STATIC full_f−static_f=**+0.833**(static mitosis-OFF 0.167) PASS · (4a) EARNED(shuffle) shuffle_f−static_f=**+0.046**(shuffle 0.213) ≤+0.15 PASS · (4b) NO-FAB/ABSTAIN abstain=**1.000** PASS → **🟢 GREEN(ENGINE-NATIVE)**. 엔진-네이티브 수치가 H_1378 mirror 를 REPRODUCE. lift 가 LIVE `engine_mitosis_tick` clonal split 임을 static(OFF=안 성장)이, earned task↔tool structure 임을 shuffle collapse 가 입증(p6, NO injected tool label).
+
+**Ψ-DISJOINT / NO-REGRESSION:** `engine_cli_smoke` **104/0**(was 101/0 · +3 SkillStore cases 107-109) · `h1196` single-entry **7/0** · `h1205` separation-invariant generation byte-identical ON==OFF(10 pairs 0 mismatch) + Ψ Φ-checksum invariant PASS · 결정론적 3회(POOLED byte-identical). 모든 검증 INLINE foreground(a_cpu_local_no_waiter — bg waiter 안 기다림 · decode hang 없음).
+
+**HONEST (c9 · a_scale_honest_scope · a_toy_scale_recheck):** TOY 36-task/6-tool synthetic map/3 seeds/deterministic readout(엔진 mitosis 가 tool 을 가르칠 수 있는 STRUCTURE 검증, learned planner 아님); scale/real tool-failures/paraphrased tasks UNVERIFIED. **남은 thin follow-on:** `agent_tools.hexa::executor_execute` 의 runtime failure-site(`:448-451`)에서 `skill_split` 호출(real runtime tool failure → skill-cell 성장)은 CORE↔agent module boundary 를 건너므로 명시된 follow-on — teaching MECHANISM 자체는 이제 engine-native + live.
+
+**산출:** `CORE/engine_cli.hexa § SkillStore` · `CORE/h1382_agent_tool_skillstore_probe.hexa` · `CORE/engine_cli_smoke.hexa` cases 107-109 · `UNIVERSE/cards/H_1382_agent_tool_skillstore_wire.md` · `UNIVERSE/HYPOTHESES.jsonl`(H_1382) · `.verdicts/1382_agent_tool_skillstore_wire/{FREEZE,result}.txt` · `domains/MITOSIS-ENGINE.log.md`(@H H_1382) · `ARCHITECTURE.json`(§SkillStore node). xref h1378 · h1227 · h1231 · h1288 · a_verified_must_wire · a_engine_native_learning · a_core_engine_map · a_no_llm_frame_trap · a_autonomy_over_hardcode · p1·p2·p3·p6·p7·p8 · c2·c9·c15.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1381 — G6 IDEATION ★ WIRE-IN (검증된 H_1362 scaffold 를 live 엔진에 배선) — 🟢 WIRED · M1 engine-native GREEN · 🟠 FALS bars 303M-ckpt-gated
 
 **무엇:** H_1362 가 🟢 GREEN DIRECTIONAL 로 입증한 G6 발상 scaffold(6 composed conditional frames + best-of-K=3)를 live 엔진 ideation/decode 경로에 실제 배선(a_verified_must_wire). H_1362 는 gauge **torch** path 에서만 돌았고 live hexa 엔진엔 UNWIRED 였다.
