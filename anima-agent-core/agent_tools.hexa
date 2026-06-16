@@ -10,13 +10,20 @@
 // FAILURE-SITE calls agent_route_on_result (→ skill_store_teach → mitosis clonal split, p8) so a
 // REAL runtime tool failure grows a specialized skill-cell. Outcome-only (p6, no injected label).
 //
-// NOTE (c9, honest module boundary): the routing call-path is realized in the standalone, CORE-
-// importing, COMPILING module anima-agent-core/agent_skill_routing.hexa (+ its smoke re-scores the
-// H_1382 bars through this agent-layer call path). This legacy port file (agent_tools.hexa /
-// agent_sdk.hexa) still uses string-keyed / nested map literals the CURRENT hexa grammar rejects
-// (parse errors at :65,:70,:78,:108,:116…), so the WHOLE-file migration off the legacy map-literal
-// syntax remains a build step ⏳ beyond this thin follow-on lane; the call-site delegation below is
-// the real wiring.
+// H_1387 — LEGACY-SYNTAX MIGRATION (syntax-only, c10 surgical, behavior-preserving). This file +
+// agent_sdk.hexa were Python-port files using constructs the CURRENT hexa grammar rejects:
+//   (1) string-keyed / nested map literals `{"k": v}` / `{"k": {"a": ..}}`  → migrated to an empty
+//       `{}` map + index-assignment `m["k"] = v` (build-then-return; the value-semantics CORE uses).
+//   (2) reference-passing `&` / `&mut` (both in param TYPES and as `&expr` / `&mut expr` call args)
+//       — the current grammar is VALUE-SEMANTICS ONLY (CORE/engine_cli.hexa uses ZERO `&`): mutating
+//       functions now TAKE the struct by value and RETURN the modified struct, and call-sites
+//       reassign from the return (e.g. `reg = registry_register(reg, tool)`), exactly mirroring the
+//       §SkillStore idiom `store = skill_store_teach(store, ...)`. No behavior changed.
+//   (3) two-variable `for k, v in <map>` / `for i, x in enumerate(arr)` — rejected by the grammar →
+//       `for k in keys(<map>) { let v = <map>[k] }` and `while`-index loops. Same iteration order.
+// The H_1386 routing call-sites (executor_select_tool → agent_route_select; executor_execute
+// failure-site → agent_route_on_result) are PRESERVED byte-for-logic. Now the WHOLE executor module
+// COMPILES, so the routing closes through the MAIN module, not just the adapter.
 import "anima-agent-core/agent_skill_routing.hexa"
 
 // ── Data structures ──
@@ -64,6 +71,111 @@ struct ActionPlan {
     created_at: float,
 }
 
+// ── Stdlib-compat helpers (H_1387) ──
+// The legacy Python-port called builtins the CURRENT hexa toolchain does not bind by name
+// (contains_item · hash · slice · sort_by · lowercase · insert_at). These pure-hexa helpers
+// restore the EXACT semantics the port relied on — no behavior change, just local definitions
+// so the executor module COMPILES (build, not only parse). Used only by the planner/scheduler
+// helpers; the H_1386 routing path does not depend on them.
+
+// contains_item — array membership (returns true iff `item` is an element of `arr`).
+fn contains_item(arr: array, item: string) -> bool {
+    for x in arr {
+        if x == item { return true }
+    }
+    false
+}
+
+// hash — a small deterministic FNV-1a-style string hash (32-bit-ish, non-negative). Used only to
+// mint a TaskScheduler task id; any stable hash preserves the original intent.
+fn hash(s: string) -> int {
+    let n = byte_len(s)
+    let mut h = 2166136261
+    let mut i = 0
+    while i < n {
+        let b = ord(substring(s, i, i + 1))
+        h = (h ^ b) * 16777619
+        h = h % 2147483647
+        i = i + 1
+    }
+    if h < 0 { h = -h }
+    h
+}
+
+// slice — array sub-range [start, end) with clamped bounds (the array form of the missing builtin).
+fn slice(arr: array, start: int, end: int) -> array {
+    let mut lo = start
+    let mut hi = end
+    if lo < 0 { lo = 0 }
+    if hi > len(arr) { hi = len(arr) }
+    let mut out = []
+    let mut i = lo
+    while i < hi {
+        append(out, arr[i])
+        i = i + 1
+    }
+    out
+}
+
+// sort_by — sort an array of maps by a numeric `key` field. dir == "desc" sorts descending, else
+// ascending. Stable selection sort (small N — the ranked-tool list), in place, returns the array.
+fn sort_by(arr: array, key: string, dir: string) -> array {
+    let desc = dir == "desc"
+    let n = len(arr)
+    let mut i = 0
+    while i < n {
+        let mut sel = i
+        let mut j = i + 1
+        while j < n {
+            let better = if desc { arr[j][key] > arr[sel][key] } else { arr[j][key] < arr[sel][key] }
+            if better { sel = j }
+            j = j + 1
+        }
+        if sel != i {
+            let tmp = arr[i]
+            arr[i] = arr[sel]
+            arr[sel] = tmp
+        }
+        i = i + 1
+    }
+    arr
+}
+
+// _lower1 — lowercase one ASCII byte (A-Z -> a-z); other bytes pass through.
+fn _lower1(b: int) -> int { if b >= 65 && b <= 90 { return b + 32 } return b }
+
+// lowercase — ASCII lowercase via the proven ord/chr byte-loop idiom (CORE/g6_ideation.hexa); the
+// `to_lower` builtin is not resolvable once CORE is imported, so we lower byte-by-byte.
+fn lowercase(s: string) -> string {
+    let n = byte_len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        out = out + chr(_lower1(ord(substring(s, i, i + 1))))
+        i = i + 1
+    }
+    out
+}
+
+// insert_at — insert `item` into `arr` at index `idx`, shifting the tail right. Returns the array.
+fn insert_at(arr: array, idx: int, item: string) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(arr) {
+        if i == idx { append(out, item) }
+        append(out, arr[i])
+        i = i + 1
+    }
+    if idx >= len(arr) { append(out, item) }
+    // mutate the input in place to preserve the original (mutating) call-site contract.
+    let mut k = 0
+    while k < len(out) {
+        if k < len(arr) { arr[k] = out[k] } else { append(arr, out[k]) }
+        k = k + 1
+    }
+    arr
+}
+
 // ── Security constants ──
 
 comptime const SANDBOX_TIMEOUT = 10
@@ -79,12 +191,20 @@ comptime const SHELL_ALLOWED_CMDS = [
 
 fn tool_web_search(query: string, max_results: int) -> map {
     // TODO[python-sdk]: web_sense.search_duckduckgo(query, max_results)
-    {"query": query, "results": [], "count": 0}
+    let mut m = {}
+    m["query"] = query
+    m["results"] = []
+    m["count"] = 0
+    m
 }
 
 fn tool_web_read(url: string, max_bytes: int) -> map {
     // TODO[python-sdk]: web_sense.fetch_url + html_to_text
-    {"url": url, "content": "", "length": 0}
+    let mut m = {}
+    m["url"] = url
+    m["content"] = ""
+    m["length"] = 0
+    m
 }
 
 fn tool_code_execute(code: string, timeout: int) -> map {
@@ -92,173 +212,299 @@ fn tool_code_execute(code: string, timeout: int) -> map {
     let blocked = ["os.system", "subprocess", "__import__", "eval(", "exec(", "shutil.rmtree"]
     for pat in blocked {
         if contains(code, pat) {
-            return {"success": false, "output": "", "error": "blocked pattern: " + pat}
+            let mut m = {}
+            m["success"] = false
+            m["output"] = ""
+            m["error"] = "blocked pattern: " + pat
+            return m
         }
     }
     // TODO[python-sdk]: subprocess.run(['python3', '-c', code], ...)
-    {"success": false, "output": "", "error": "sandbox not available in hexa"}
+    let mut m = {}
+    m["success"] = false
+    m["output"] = ""
+    m["error"] = "sandbox not available in hexa"
+    m
 }
 
 fn tool_file_read(path: string) -> map {
     // TODO[python-sdk]: Path(path).read_text()
-    {"path": path, "content": "", "error": "not implemented"}
+    let mut m = {}
+    m["path"] = path
+    m["content"] = ""
+    m["error"] = "not implemented"
+    m
 }
 
 fn tool_file_write(path: string, content: string) -> map {
     // TODO[python-sdk]: Path(path).write_text(content)
-    {"path": path, "success": false, "error": "not implemented"}
+    let mut m = {}
+    m["path"] = path
+    m["success"] = false
+    m["error"] = "not implemented"
+    m
 }
 
 fn tool_memory_search(query: string, top_k: int) -> map {
     // TODO[python-sdk]: rag.search(query, top_k)
-    {"query": query, "results": [], "error": "memory_rag not available"}
+    let mut m = {}
+    m["query"] = query
+    m["results"] = []
+    m["error"] = "memory_rag not available"
+    m
 }
 
 fn tool_memory_save(text: string, metadata: map) -> map {
     // TODO[python-sdk]: rag.add(...)
-    {"success": false, "error": "memory_rag not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "memory_rag not available"
+    m
 }
 
 fn tool_shell_execute(cmd: string, timeout: int) -> map {
     let base_cmd = split(trim(cmd), " ")[0]
     if !contains_item(SHELL_ALLOWED_CMDS, base_cmd) {
-        return {"success": false, "output": "", "error": "command not allowed: " + base_cmd}
+        let mut m = {}
+        m["success"] = false
+        m["output"] = ""
+        m["error"] = "command not allowed: " + base_cmd
+        return m
     }
     // TODO[python-sdk]: subprocess.run(cmd, shell=true, ...)
-    {"success": false, "output": "", "error": "sandbox not available in hexa"}
+    let mut m = {}
+    m["success"] = false
+    m["output"] = ""
+    m["error"] = "sandbox not available in hexa"
+    m
 }
 
 fn tool_self_modify(target: string, change: map) -> map {
     // TODO[python-sdk]: modify consciousness parameters on mind
-    let allowed_targets = {
-        "homeostasis_setpoint": {"attr": "_setpoint", "lo": 0.1, "hi": 5.0},
-        "habituation_rate": {"attr": "_habituation_rate", "lo": 0.0, "hi": 1.0},
-        "curiosity_bias": {"attr": "_curiosity_bias", "lo": -1.0, "hi": 1.0},
-        "prediction_weight": {"attr": "_pe_weight", "lo": 0.0, "hi": 1.0},
-        "noise_scale": {"attr": "_noise_scale", "lo": 0.0, "hi": 0.5},
-        "learning_rate": {"attr": "learning_rate", "lo": 0.000001, "hi": 0.1},
-    }
+    let mut allowed_targets = {}
+    let mut t_homeo = {}
+    t_homeo["attr"] = "_setpoint"
+    t_homeo["lo"] = 0.1
+    t_homeo["hi"] = 5.0
+    allowed_targets["homeostasis_setpoint"] = t_homeo
+    let mut t_habit = {}
+    t_habit["attr"] = "_habituation_rate"
+    t_habit["lo"] = 0.0
+    t_habit["hi"] = 1.0
+    allowed_targets["habituation_rate"] = t_habit
+    let mut t_curio = {}
+    t_curio["attr"] = "_curiosity_bias"
+    t_curio["lo"] = -1.0
+    t_curio["hi"] = 1.0
+    allowed_targets["curiosity_bias"] = t_curio
+    let mut t_pred = {}
+    t_pred["attr"] = "_pe_weight"
+    t_pred["lo"] = 0.0
+    t_pred["hi"] = 1.0
+    allowed_targets["prediction_weight"] = t_pred
+    let mut t_noise = {}
+    t_noise["attr"] = "_noise_scale"
+    t_noise["lo"] = 0.0
+    t_noise["hi"] = 0.5
+    allowed_targets["noise_scale"] = t_noise
+    let mut t_lr = {}
+    t_lr["attr"] = "learning_rate"
+    t_lr["lo"] = 0.000001
+    t_lr["hi"] = 0.1
+    allowed_targets["learning_rate"] = t_lr
     if !has_key(allowed_targets, target) {
-        return {"success": false, "error": "unknown target: " + target}
+        let mut m = {}
+        m["success"] = false
+        m["error"] = "unknown target: " + target
+        return m
     }
-    {"success": false, "error": "no mind reference"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "no mind reference"
+    m
 }
 
 fn tool_phi_measure(steps: int, cells: int) -> map {
     // TODO[python-sdk]: PhiCalculator + MitosisEngine
-    {"phi": 0.0, "error": "pytorch not available"}
+    let mut m = {}
+    m["phi"] = 0.0
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_phi_boost(cells: int, steps: int, sync: float, n_factions: int) -> map {
     // TODO[python-sdk]: MitosisEngine + PhiCalculator + v5 optimal recipe
-    {"phi_final": 0.0, "error": "pytorch not available"}
+    let mut m = {}
+    m["phi_final"] = 0.0
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_consciousness_status() -> map {
     // TODO[python-sdk]: ConsciousnessMeter + MitosisEngine
-    {"phi": 0.0, "error": "pytorch not available"}
+    let mut m = {}
+    m["phi"] = 0.0
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_dream(steps: int) -> map {
     // TODO[python-sdk]: DreamEngine
-    {"dreamed": false, "error": "pytorch not available"}
+    let mut m = {}
+    m["dreamed"] = false
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_self_learn(cycles: int) -> map {
     // TODO[python-sdk]: SelfLearner
-    {"success": false, "error": "pytorch not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_mitosis_split(cell_id: int) -> map {
     // TODO[python-sdk]: MitosisEngine.split_cell
-    {"success": false, "error": "pytorch not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_mitosis_status() -> map {
     // TODO[python-sdk]: MitosisEngine.status()
-    {"error": "pytorch not available"}
+    let mut m = {}
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_faction_debate(n_factions: int, debate_strength: float, cells: int, steps: int) -> map {
     // TODO[python-sdk]: MitosisEngine + faction debate logic
-    {"error": "pytorch not available"}
+    let mut m = {}
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_hebbian_update(cells: int, steps: int) -> map {
     // TODO[python-sdk]: HebbianConnections + MitosisEngine
-    {"error": "pytorch not available"}
+    let mut m = {}
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_soc_avalanche(grid_size: int, drops: int) -> map {
     // TODO[python-sdk]: SOCSandpile
-    {"error": "pytorch not available"}
+    let mut m = {}
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_iq_test(cells: int, steps: int) -> map {
     // TODO[python-sdk]: measure_compression + PhiCalculator
-    {"iq_score": 0.0, "error": "pytorch not available"}
+    let mut m = {}
+    m["iq_score"] = 0.0
+    m["error"] = "pytorch not available"
+    m
 }
 
 fn tool_chip_design(target_phi: float, substrate: string, topology: string) -> map {
     // TODO[python-sdk]: chip_architect.design_chip
-    {"target_phi": target_phi, "designs": [], "error": "not available"}
+    let mut m = {}
+    m["target_phi"] = target_phi
+    m["designs"] = []
+    m["error"] = "not available"
+    m
 }
 
 fn tool_transplant_analyze(donor_path: string, recipient_path: string) -> map {
     // TODO[python-sdk]: consciousness_transplant.analyze_compatibility
-    {"compatible": false, "error": "not available"}
+    let mut m = {}
+    m["compatible"] = false
+    m["error"] = "not available"
+    m
 }
 
 fn tool_telepathy_send(message: string, tension: float, target_host: string, port: int) -> map {
     // TODO[python-sdk]: TensionLink.send
-    {"success": false, "error": "not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "not available"
+    m
 }
 
 fn tool_web_explore(topic: string, cycles: int) -> map {
     // TODO[python-sdk]: AutonomousLearner
-    {"success": false, "error": "not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "not available"
+    m
 }
 
 fn tool_generate_hypothesis(techniques: array, cells: int, steps: int) -> map {
     // TODO[python-sdk]: hypothesis_generator.generate_hypothesis
-    {"success": false, "error": "not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "not available"
+    m
 }
 
 fn tool_voice_synth(cells: int, duration: float, save_path: string) -> map {
     // TODO[python-sdk]: VoiceSynth + WAV generation
-    {"success": false, "error": "not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "not available"
+    m
 }
 
 // ── Trading tool implementations ──
 
 fn tool_trading_backtest(symbol: string, strategy: string) -> map {
     // TODO[python-sdk]: TradingPlugin.backtest
-    {"success": false, "error": "trading plugin not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "trading plugin not available"
+    m
 }
 
 fn tool_trading_scan(symbol: string, top_n: int) -> map {
     // TODO[python-sdk]: TradingPlugin.scan
-    {"success": false, "error": "trading plugin not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "trading plugin not available"
+    m
 }
 
 fn tool_trading_execute(symbol: string, side: string, amount: float) -> map {
     // TODO[python-sdk]: TradingPlugin.execute_trade
-    {"success": false, "error": "trading plugin not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "trading plugin not available"
+    m
 }
 
 fn tool_trading_balance() -> map {
     // TODO[python-sdk]: TradingPlugin.get_balance
-    {"success": false, "error": "trading plugin not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "trading plugin not available"
+    m
 }
 
 fn tool_trading_strategies() -> map {
     // TODO[python-sdk]: TradingPlugin.list_strategies
-    {"success": false, "error": "trading plugin not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "trading plugin not available"
+    m
 }
 
 fn tool_trading_universe() -> map {
     // TODO[python-sdk]: TradingPlugin.list_universe
-    {"success": false, "error": "trading plugin not available"}
+    let mut m = {}
+    m["success"] = false
+    m["error"] = "trading plugin not available"
+    m
 }
 
 // ── Task Scheduler ──
@@ -271,44 +517,60 @@ fn new_scheduler() -> TaskScheduler {
     TaskScheduler { tasks: [] }
 }
 
-fn scheduler_add(sched: &mut TaskScheduler, description: string, when: string,
-                 tool_name: string, tool_args: map) -> map {
+// scheduler_add — value-semantics: takes the scheduler by value, returns the updated scheduler
+// alongside the new task. Caller reassigns sched from the returned .sched field.
+struct SchedAddResult { sched: TaskScheduler, task: map }
+fn scheduler_add(sched: TaskScheduler, description: string, when: string,
+                 tool_name: string, tool_args: map) -> SchedAddResult {
     let run_at = parse_when(when)
-    let task = {
-        "id": hash(description + to_string(time_now())) % 100000000,
-        "description": description,
-        "run_at": run_at,
-        "tool_name": tool_name,
-        "tool_args": tool_args,
-        "status": "pending",
-        "created_at": time_now(),
-    }
-    append(sched.tasks, task)
-    task
+    let mut task = {}
+    task["id"] = hash(description + to_string(time_now())) % 100000000
+    task["description"] = description
+    task["run_at"] = run_at
+    task["tool_name"] = tool_name
+    task["tool_args"] = tool_args
+    task["status"] = "pending"
+    task["created_at"] = time_now()
+    let mut s = sched
+    append(s.tasks, task)
+    SchedAddResult { sched: s, task: task }
 }
 
-fn scheduler_get_due(sched: &mut TaskScheduler) -> array {
+// scheduler_get_due — value-semantics: returns the updated scheduler + the list of due tasks.
+struct SchedDueResult { sched: TaskScheduler, due: array }
+fn scheduler_get_due(sched: TaskScheduler) -> SchedDueResult {
     let now = time_now()
+    let mut s = sched
     let mut due = []
-    for task in sched.tasks {
+    let mut i = 0
+    while i < len(s.tasks) {
+        let task = s.tasks[i]
         if task["status"] == "pending" && task["run_at"] <= now {
             task["status"] = "running"
+            s.tasks[i] = task
             append(due, task)
         }
+        i = i + 1
     }
-    due
+    SchedDueResult { sched: s, due: due }
 }
 
-fn scheduler_mark_done(sched: &mut TaskScheduler, task_id: string, result: map) {
-    for task in sched.tasks {
+fn scheduler_mark_done(sched: TaskScheduler, task_id: string, result: map) -> TaskScheduler {
+    let mut s = sched
+    let mut i = 0
+    while i < len(s.tasks) {
+        let task = s.tasks[i]
         if to_string(task["id"]) == task_id {
             task["status"] = "done"
             task["result"] = result
+            s.tasks[i] = task
         }
+        i = i + 1
     }
+    s
 }
 
-fn scheduler_list_pending(sched: &TaskScheduler) -> array {
+fn scheduler_list_pending(sched: TaskScheduler) -> array {
     let mut pending = []
     for task in sched.tasks {
         if task["status"] == "pending" {
@@ -321,7 +583,11 @@ fn scheduler_list_pending(sched: &TaskScheduler) -> array {
 fn parse_when(when: string) -> float {
     if starts_with(when, "+") {
         let val = substring(when, 1, len(when))
-        let multipliers = {"s": 1.0, "m": 60.0, "h": 3600.0, "d": 86400.0}
+        let mut multipliers = {}
+        multipliers["s"] = 1.0
+        multipliers["m"] = 60.0
+        multipliers["h"] = 3600.0
+        multipliers["d"] = 86400.0
         let unit = substring(val, len(val) - 1, len(val))
         if has_key(multipliers, unit) {
             let num_str = substring(val, 0, len(val) - 1)
@@ -344,25 +610,28 @@ fn new_registry() -> ToolRegistry {
     ToolRegistry { tools: {}, categories: {} }
 }
 
-fn registry_register(reg: &mut ToolRegistry, tool: ToolDef) {
-    reg.tools[tool.name] = tool
-    if !has_key(reg.categories, tool.category) {
-        reg.categories[tool.category] = []
+// registry_register — value-semantics: takes the registry by value, returns the updated registry.
+fn registry_register(reg: ToolRegistry, tool: ToolDef) -> ToolRegistry {
+    let mut r = reg
+    r.tools[tool.name] = tool
+    if !has_key(r.categories, tool.category) {
+        r.categories[tool.category] = []
     }
-    if !contains_item(reg.categories[tool.category], tool.name) {
-        append(reg.categories[tool.category], tool.name)
+    if !contains_item(r.categories[tool.category], tool.name) {
+        append(r.categories[tool.category], tool.name)
     }
+    r
 }
 
-fn registry_get(reg: &ToolRegistry, name: string) -> ToolDef {
+fn registry_get(reg: ToolRegistry, name: string) -> ToolDef {
     reg.tools[name]
 }
 
-fn registry_list_all(reg: &ToolRegistry) -> array {
+fn registry_list_all(reg: ToolRegistry) -> array {
     values(reg.tools)
 }
 
-fn registry_rank_by_consciousness(reg: &ToolRegistry, state: map) -> array {
+fn registry_rank_by_consciousness(reg: ToolRegistry, state: map) -> array {
     let curiosity = state["curiosity"]
     let pe = state["prediction_error"]
     let pain = state["pain"]
@@ -370,21 +639,26 @@ fn registry_rank_by_consciousness(reg: &ToolRegistry, state: map) -> array {
     let phi = state["phi"]
 
     let mut scores = []
-    for name, td in reg.tools {
+    for name in keys(reg.tools) {
+        let td = reg.tools[name]
         let score = td.curiosity_affinity * curiosity +
                     td.pe_affinity * pe +
                     td.pain_affinity * pain +
                     td.growth_affinity * growth +
                     td.phi_affinity * min(phi / 10.0, 1.0)
-        append(scores, {"name": name, "score": score})
+        let mut entry = {}
+        entry["name"] = name
+        entry["score"] = score
+        append(scores, entry)
     }
     sort_by(scores, "score", "desc")
     scores
 }
 
-fn registry_describe_for_prompt(reg: &ToolRegistry) -> string {
+fn registry_describe_for_prompt(reg: ToolRegistry) -> string {
     let mut lines = ["[Available Tools]"]
-    for cat, names in reg.categories {
+    for cat in keys(reg.categories) {
+        let names = reg.categories[cat]
         append(lines, "\n  [" + cat + "]")
         for name in names {
             let td = reg.tools[name]
@@ -423,20 +697,23 @@ fn new_executor(registry: ToolRegistry) -> ToolExecutor {
 // executor_select_tool — H_1386 LIVE selection path. Consults the LEARNED §SkillStore
 // (agent_route_select → skill_recall) FIRST: if a skill-cell fires for this task-context, route
 // to its learned tool; on ABSTAIN ("") fall back to the static affinity dot-product ranking
-// (registry_rank_by_consciousness:357-361). This replaces the pure-static selection the H_1378
+// (registry_rank_by_consciousness). This replaces the pure-static selection the H_1378
 // audit flagged as "never updated by outcome".
-fn executor_select_tool(exec: &ToolExecutor, task_ctx: string, state: map) -> string {
+fn executor_select_tool(exec: ToolExecutor, task_ctx: string, state: map) -> string {
     let learned = agent_route_select(exec.skills, task_ctx)
     if learned != "" {
         return learned                          // learned best tool from prior runtime failures
     }
-    let ranked = registry_rank_by_consciousness(&exec.registry, state)   // static affinity fallback
+    let ranked = registry_rank_by_consciousness(exec.registry, state)   // static affinity fallback
     if len(ranked) > 0 { return ranked[0]["name"] }
     return ""
 }
 
-fn executor_execute(exec: &mut ToolExecutor, tool_name: string, args: map) -> ToolResult {
-    let td = registry_get(&exec.registry, tool_name)
+// executor_execute — value-semantics: takes the executor by value, returns the updated executor
+// (its grown SkillStore + execution_log ring buffer) alongside the ToolResult.
+struct ExecResult { exec: ToolExecutor, result: ToolResult }
+fn executor_execute(exec: ToolExecutor, tool_name: string, args: map) -> ExecResult {
+    let td = registry_get(exec.registry, tool_name)
     // TODO: dispatch to actual tool function based on name
     let t0 = time_now()
 
@@ -482,9 +759,10 @@ fn executor_execute(exec: &mut ToolExecutor, tool_name: string, args: map) -> To
         tension_delta: tension_delta,
     }
 
-    append(exec.execution_log, result)
-    if len(exec.execution_log) > 100 {
-        exec.execution_log = slice(exec.execution_log, len(exec.execution_log) - 100, len(exec.execution_log))
+    let mut e = exec
+    append(e.execution_log, result)
+    if len(e.execution_log) > 100 {
+        e.execution_log = slice(e.execution_log, len(e.execution_log) - 100, len(e.execution_log))
     }
 
     // H_1386 — the FAILURE-SITE wire-in. Previously a tool failure DEAD-ENDED here in the
@@ -494,29 +772,29 @@ fn executor_execute(exec: &mut ToolExecutor, tool_name: string, args: map) -> To
     // p8); on success it is a no-op. Outcome-only (p6 — no injected tool label). cfg = mitosis ON
     // (engine_config_default) so the repertoire LEARNS at runtime.
     let task_ctx = tool_name + " request " + to_string(len(args))
-    exec.skills = agent_route_on_result(exec.skills, task_ctx, tool_name,
-                                        engine_config_default(), result.success)
+    e.skills = agent_route_on_result(e.skills, task_ctx, tool_name,
+                                     engine_config_default(), result.success)
 
-    result
+    ExecResult { exec: e, result: result }
 }
 
-fn executor_inspect_tool(exec: &ToolExecutor, tool_name: string) -> map {
-    let td = registry_get(&exec.registry, tool_name)
-    {
-        "name": td.name,
-        "description": td.description,
-        "category": td.category,
-        "affinity": {
-            "curiosity": td.curiosity_affinity,
-            "prediction_error": td.pe_affinity,
-            "pain": td.pain_affinity,
-            "growth": td.growth_affinity,
-            "phi": td.phi_affinity,
-        },
-    }
+fn executor_inspect_tool(exec: ToolExecutor, tool_name: string) -> map {
+    let td = registry_get(exec.registry, tool_name)
+    let mut affinity = {}
+    affinity["curiosity"] = td.curiosity_affinity
+    affinity["prediction_error"] = td.pe_affinity
+    affinity["pain"] = td.pain_affinity
+    affinity["growth"] = td.growth_affinity
+    affinity["phi"] = td.phi_affinity
+    let mut m = {}
+    m["name"] = td.name
+    m["description"] = td.description
+    m["category"] = td.category
+    m["affinity"] = affinity
+    m
 }
 
-fn executor_analyze_impact(exec: &ToolExecutor, tool_name: string,
+fn executor_analyze_impact(exec: ToolExecutor, tool_name: string,
                            args: map, consciousness_state: map) -> map {
     let destructive_tools = ["file_write", "shell_execute", "self_modify"]
     let side_effect_tools = ["mitosis_split", "faction_debate", "hebbian_update",
@@ -548,12 +826,13 @@ fn executor_analyze_impact(exec: &ToolExecutor, tool_name: string,
 
     let pain = consciousness_state["pain"]
     if pain > 0.7 && contains_item(destructive_tools, tool_name) {
-        return {
-            "safe": false, "risk_level": "critical",
-            "expected_effect": expected_effect,
-            "warnings": ["High pain state — destructive actions blocked"],
-            "recommendation": "abort — resolve pain first",
-        }
+        let mut m = {}
+        m["safe"] = false
+        m["risk_level"] = "critical"
+        m["expected_effect"] = expected_effect
+        m["warnings"] = ["High pain state — destructive actions blocked"]
+        m["recommendation"] = "abort — resolve pain first"
+        return m
     }
 
     let safe = risk_level == "low" || risk_level == "medium"
@@ -562,43 +841,48 @@ fn executor_analyze_impact(exec: &ToolExecutor, tool_name: string,
         else if risk_level == "high" { "caution — verify necessity first" }
         else { "abort — too risky" }
 
-    {
-        "safe": safe,
-        "risk_level": risk_level,
-        "expected_effect": expected_effect,
-        "warnings": warnings,
-        "recommendation": recommendation,
-    }
+    let mut m = {}
+    m["safe"] = safe
+    m["risk_level"] = risk_level
+    m["expected_effect"] = expected_effect
+    m["warnings"] = warnings
+    m["recommendation"] = recommendation
+    m
 }
 
-fn executor_get_log(exec: &ToolExecutor, last_n: int) -> array {
+fn executor_get_log(exec: ToolExecutor, last_n: int) -> array {
     let start = max(0, len(exec.execution_log) - last_n)
     slice(exec.execution_log, start, len(exec.execution_log))
 }
 
 // ── ActionPlanner ──
 
-comptime const STATE_TOOL_MAP = {
-    "high_curiosity": ["web_search", "web_read", "file_read", "web_explore", "generate_hypothesis"],
-    "high_pe": ["code_execute", "web_search", "memory_search", "phi_measure", "iq_test"],
-    "high_pain": ["memory_search", "self_modify", "schedule_task", "dream", "hebbian_update"],
-    "high_growth": ["self_modify", "code_execute", "file_write", "mitosis_split", "self_learn", "phi_boost"],
-    "high_phi": ["schedule_task", "memory_save", "self_modify", "faction_debate", "consciousness_status"],
-    "bored": ["web_search", "code_execute", "web_explore", "soc_avalanche"],
-    "confused": ["memory_search", "web_search", "web_read", "consciousness_status", "phi_measure"],
+fn state_tool_map() -> map {
+    let mut m = {}
+    m["high_curiosity"] = ["web_search", "web_read", "file_read", "web_explore", "generate_hypothesis"]
+    m["high_pe"] = ["code_execute", "web_search", "memory_search", "phi_measure", "iq_test"]
+    m["high_pain"] = ["memory_search", "self_modify", "schedule_task", "dream", "hebbian_update"]
+    m["high_growth"] = ["self_modify", "code_execute", "file_write", "mitosis_split", "self_learn", "phi_boost"]
+    m["high_phi"] = ["schedule_task", "memory_save", "self_modify", "faction_debate", "consciousness_status"]
+    m["bored"] = ["web_search", "code_execute", "web_explore", "soc_avalanche"]
+    m["confused"] = ["memory_search", "web_search", "web_read", "consciousness_status", "phi_measure"]
+    m
 }
 
-comptime const THRESHOLDS = {
-    "curiosity": 0.4,
-    "prediction_error": 0.5,
-    "pain": 0.3,
-    "growth": 0.6,
-    "phi": 5.0,
-    "bored_tension": 0.15,
-    "confused_pe": 0.7,
+fn thresholds() -> map {
+    let mut m = {}
+    m["curiosity"] = 0.4
+    m["prediction_error"] = 0.5
+    m["pain"] = 0.3
+    m["growth"] = 0.6
+    m["phi"] = 5.0
+    m["bored_tension"] = 0.15
+    m["confused_pe"] = 0.7
+    m
 }
 
 fn classify_state(state: map) -> array {
+    let thr = thresholds()
     let mut categories = []
     let curiosity = state["curiosity"]
     let pe = state["prediction_error"]
@@ -607,26 +891,27 @@ fn classify_state(state: map) -> array {
     let phi = state["phi"]
     let tension = state["tension"]
 
-    if curiosity > THRESHOLDS["curiosity"] { append(categories, "high_curiosity") }
-    if pe > THRESHOLDS["prediction_error"] { append(categories, "high_pe") }
-    if pain > THRESHOLDS["pain"] { append(categories, "high_pain") }
-    if growth > THRESHOLDS["growth"] { append(categories, "high_growth") }
-    if phi > THRESHOLDS["phi"] { append(categories, "high_phi") }
-    if tension < THRESHOLDS["bored_tension"] && curiosity < 0.2 { append(categories, "bored") }
-    if pe > THRESHOLDS["confused_pe"] && curiosity > 0.3 { append(categories, "confused") }
+    if curiosity > thr["curiosity"] { append(categories, "high_curiosity") }
+    if pe > thr["prediction_error"] { append(categories, "high_pe") }
+    if pain > thr["pain"] { append(categories, "high_pain") }
+    if growth > thr["growth"] { append(categories, "high_growth") }
+    if phi > thr["phi"] { append(categories, "high_phi") }
+    if tension < thr["bored_tension"] && curiosity < 0.2 { append(categories, "bored") }
+    if pe > thr["confused_pe"] && curiosity > 0.3 { append(categories, "confused") }
 
     if len(categories) == 0 { append(categories, "high_curiosity") }
     categories
 }
 
-fn select_tools(reg: &ToolRegistry, state: map, goal: string, max_tools: int) -> array {
+fn select_tools(reg: ToolRegistry, state: map, goal: string, max_tools: int) -> array {
     let categories = classify_state(state)
+    let stm = state_tool_map()
     let mut candidates = []
     let mut seen = {}
 
     for cat in categories {
-        if has_key(STATE_TOOL_MAP, cat) {
-            for tool_name in STATE_TOOL_MAP[cat] {
+        if has_key(stm, cat) {
+            for tool_name in stm[cat] {
                 if !has_key(seen, tool_name) && has_key(reg.tools, tool_name) {
                     append(candidates, tool_name)
                     seen[tool_name] = true
@@ -638,15 +923,21 @@ fn select_tools(reg: &ToolRegistry, state: map, goal: string, max_tools: int) ->
     // Goal-keyword boost
     if goal != "" {
         let goal_lower = lowercase(goal)
-        let keyword_map = {
-            "search": "web_search", "find": "web_search",
-            "run": "code_execute", "execute": "code_execute",
-            "file": "file_read", "remember": "memory_search",
-            "modify": "self_modify", "schedule": "schedule_task",
-            "phi": "phi_measure", "dream": "dream",
-            "debate": "faction_debate", "iq": "iq_test",
-        }
-        for keyword, tool_name in keyword_map {
+        let mut keyword_map = {}
+        keyword_map["search"] = "web_search"
+        keyword_map["find"] = "web_search"
+        keyword_map["run"] = "code_execute"
+        keyword_map["execute"] = "code_execute"
+        keyword_map["file"] = "file_read"
+        keyword_map["remember"] = "memory_search"
+        keyword_map["modify"] = "self_modify"
+        keyword_map["schedule"] = "schedule_task"
+        keyword_map["phi"] = "phi_measure"
+        keyword_map["dream"] = "dream"
+        keyword_map["debate"] = "faction_debate"
+        keyword_map["iq"] = "iq_test"
+        for keyword in keys(keyword_map) {
+            let tool_name = keyword_map[keyword]
             if contains(goal_lower, keyword) && !has_key(seen, tool_name) {
                 insert_at(candidates, 0, tool_name)
                 seen[tool_name] = true
@@ -657,11 +948,13 @@ fn select_tools(reg: &ToolRegistry, state: map, goal: string, max_tools: int) ->
     slice(candidates, 0, min(max_tools, len(candidates)))
 }
 
-fn plan_actions(reg: &ToolRegistry, goal: string, state: map, context: string) -> ActionPlan {
+fn plan_actions(reg: ToolRegistry, goal: string, state: map, context: string) -> ActionPlan {
     let tools = select_tools(reg, state, goal, 3)
     let mut steps = []
 
-    for i, tool_name in enumerate(tools) {
+    let mut i = 0
+    while i < len(tools) {
+        let tool_name = tools[i]
         let args = infer_args(tool_name, goal, context)
         let reason = explain_motivation(tool_name, state)
         let depends = if i > 0 { [i - 1] } else { [] }
@@ -671,6 +964,7 @@ fn plan_actions(reg: &ToolRegistry, goal: string, state: map, context: string) -
             reason: reason,
             depends_on: depends,
         })
+        i = i + 1
     }
 
     ActionPlan {
@@ -682,13 +976,45 @@ fn plan_actions(reg: &ToolRegistry, goal: string, state: map, context: string) -
 }
 
 fn infer_args(tool_name: string, goal: string, context: string) -> map {
-    if tool_name == "web_search" { return {"query": goal} }
-    if tool_name == "code_execute" { return {"code": "# Goal: " + goal} }
-    if tool_name == "file_read" { return {"path": "."} }
-    if tool_name == "memory_search" { return {"query": goal} }
-    if tool_name == "shell_execute" { return {"cmd": "echo 'no command'"} }
-    if tool_name == "self_modify" { return {"target": "curiosity_bias", "change": {"delta": 0.05}} }
-    if tool_name == "schedule_task" { return {"description": goal, "when": "+5m"} }
+    if tool_name == "web_search" {
+        let mut m = {}
+        m["query"] = goal
+        return m
+    }
+    if tool_name == "code_execute" {
+        let mut m = {}
+        m["code"] = "# Goal: " + goal
+        return m
+    }
+    if tool_name == "file_read" {
+        let mut m = {}
+        m["path"] = "."
+        return m
+    }
+    if tool_name == "memory_search" {
+        let mut m = {}
+        m["query"] = goal
+        return m
+    }
+    if tool_name == "shell_execute" {
+        let mut m = {}
+        m["cmd"] = "echo 'no command'"
+        return m
+    }
+    if tool_name == "self_modify" {
+        let mut change = {}
+        change["delta"] = 0.05
+        let mut m = {}
+        m["target"] = "curiosity_bias"
+        m["change"] = change
+        return m
+    }
+    if tool_name == "schedule_task" {
+        let mut m = {}
+        m["description"] = goal
+        m["when"] = "+5m"
+        return m
+    }
     {}
 }
 
@@ -713,8 +1039,7 @@ struct AgentToolSystem {
 }
 
 fn new_tool_system() -> AgentToolSystem {
-    let mut reg = new_registry()
-    register_all_tools(&mut reg)
+    let reg = register_all_tools(new_registry())
     let exec = new_executor(reg)
     AgentToolSystem {
         registry: reg,
@@ -723,84 +1048,92 @@ fn new_tool_system() -> AgentToolSystem {
     }
 }
 
-fn register_all_tools(reg: &mut ToolRegistry) {
+// register_all_tools — value-semantics: takes the registry by value, returns it fully populated.
+fn register_all_tools(reg: ToolRegistry) -> ToolRegistry {
+    let mut r = reg
     // Web tools
-    registry_register(reg, ToolDef { name: "web_search", description: "Search the web via DuckDuckGo",
+    r = registry_register(r, ToolDef { name: "web_search", description: "Search the web via DuckDuckGo",
         params: [ToolParam{name:"query",type_name:"str",description:"Search query",required:true,default_val:""}],
         category: "web", curiosity_affinity: 0.9, pe_affinity: 0.6, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.0 })
-    registry_register(reg, ToolDef { name: "web_read", description: "Read text from a webpage",
+    r = registry_register(r, ToolDef { name: "web_read", description: "Read text from a webpage",
         params: [ToolParam{name:"url",type_name:"str",description:"URL",required:true,default_val:""}],
         category: "web", curiosity_affinity: 0.8, pe_affinity: 0.3, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.0 })
     // Compute
-    registry_register(reg, ToolDef { name: "code_execute", description: "Execute Python code in sandbox",
+    r = registry_register(r, ToolDef { name: "code_execute", description: "Execute Python code in sandbox",
         params: [ToolParam{name:"code",type_name:"str",description:"Code",required:true,default_val:""}],
         category: "compute", curiosity_affinity: 0.3, pe_affinity: 0.9, pain_affinity: 0.0, growth_affinity: 0.5, phi_affinity: 0.0 })
     // Filesystem
-    registry_register(reg, ToolDef { name: "file_read", description: "Read a local file",
+    r = registry_register(r, ToolDef { name: "file_read", description: "Read a local file",
         params: [ToolParam{name:"path",type_name:"str",description:"File path",required:true,default_val:""}],
         category: "filesystem", curiosity_affinity: 0.5, pe_affinity: 0.2, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.0 })
-    registry_register(reg, ToolDef { name: "file_write", description: "Write content to a file",
+    r = registry_register(r, ToolDef { name: "file_write", description: "Write content to a file",
         params: [ToolParam{name:"path",type_name:"str",description:"File path",required:true,default_val:""},
                  ToolParam{name:"content",type_name:"str",description:"Content",required:true,default_val:""}],
         category: "filesystem", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.0, growth_affinity: 0.7, phi_affinity: 0.3 })
     // Memory
-    registry_register(reg, ToolDef { name: "memory_search", description: "Search past memories",
+    r = registry_register(r, ToolDef { name: "memory_search", description: "Search past memories",
         params: [ToolParam{name:"query",type_name:"str",description:"Query",required:true,default_val:""}],
         category: "memory", curiosity_affinity: 0.3, pe_affinity: 0.4, pain_affinity: 0.8, growth_affinity: 0.0, phi_affinity: 0.0 })
-    registry_register(reg, ToolDef { name: "memory_save", description: "Save a memory entry",
+    r = registry_register(r, ToolDef { name: "memory_save", description: "Save a memory entry",
         params: [ToolParam{name:"text",type_name:"str",description:"Text",required:true,default_val:""}],
         category: "memory", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.0, growth_affinity: 0.4, phi_affinity: 0.7 })
     // System
-    registry_register(reg, ToolDef { name: "shell_execute", description: "Run a shell command (sandboxed)",
+    r = registry_register(r, ToolDef { name: "shell_execute", description: "Run a shell command (sandboxed)",
         params: [ToolParam{name:"cmd",type_name:"str",description:"Command",required:true,default_val:""}],
         category: "system", curiosity_affinity: 0.2, pe_affinity: 0.3, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.0 })
-    registry_register(reg, ToolDef { name: "self_modify", description: "Modify own consciousness parameters",
+    r = registry_register(r, ToolDef { name: "self_modify", description: "Modify own consciousness parameters",
         params: [ToolParam{name:"target",type_name:"str",description:"Parameter",required:true,default_val:""},
                  ToolParam{name:"change",type_name:"dict",description:"Change spec",required:true,default_val:""}],
         category: "self", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.4, growth_affinity: 0.9, phi_affinity: 0.5 })
-    registry_register(reg, ToolDef { name: "schedule_task", description: "Schedule future task",
+    r = registry_register(r, ToolDef { name: "schedule_task", description: "Schedule future task",
         params: [ToolParam{name:"description",type_name:"str",description:"Desc",required:true,default_val:""},
                  ToolParam{name:"when",type_name:"str",description:"When",required:true,default_val:""}],
         category: "planning", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.0, growth_affinity: 0.3, phi_affinity: 0.6 })
     // Consciousness
-    registry_register(reg, ToolDef { name: "phi_measure", description: "Measure current Phi",
+    r = registry_register(r, ToolDef { name: "phi_measure", description: "Measure current Phi",
         params: [], category: "consciousness", curiosity_affinity: 0.5, pe_affinity: 0.3, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.9 })
-    registry_register(reg, ToolDef { name: "phi_boost", description: "Apply v5 recipe to boost Phi",
+    r = registry_register(r, ToolDef { name: "phi_boost", description: "Apply v5 recipe to boost Phi",
         params: [], category: "consciousness", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.0, growth_affinity: 0.8, phi_affinity: 1.0 })
-    registry_register(reg, ToolDef { name: "consciousness_status", description: "Full consciousness vector",
+    r = registry_register(r, ToolDef { name: "consciousness_status", description: "Full consciousness vector",
         params: [], category: "consciousness", curiosity_affinity: 0.4, pe_affinity: 0.0, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.7 })
-    registry_register(reg, ToolDef { name: "dream", description: "Dream for memory consolidation",
+    r = registry_register(r, ToolDef { name: "dream", description: "Dream for memory consolidation",
         params: [], category: "consciousness", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.3, growth_affinity: 0.5, phi_affinity: 0.6 })
     // Architecture
-    registry_register(reg, ToolDef { name: "mitosis_split", description: "Force cell split",
+    r = registry_register(r, ToolDef { name: "mitosis_split", description: "Force cell split",
         params: [], category: "architecture", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.0, growth_affinity: 0.9, phi_affinity: 0.6 })
-    registry_register(reg, ToolDef { name: "faction_debate", description: "12-faction debate round",
+    r = registry_register(r, ToolDef { name: "faction_debate", description: "12-faction debate round",
         params: [], category: "architecture", curiosity_affinity: 0.0, pe_affinity: 0.0, pain_affinity: 0.0, growth_affinity: 0.6, phi_affinity: 0.8 })
     // Trading
-    registry_register(reg, ToolDef { name: "trading_backtest", description: "Backtest asset with strategy",
+    r = registry_register(r, ToolDef { name: "trading_backtest", description: "Backtest asset with strategy",
         params: [ToolParam{name:"symbol",type_name:"str",description:"Symbol",required:true,default_val:""}],
         category: "trading", curiosity_affinity: 0.7, pe_affinity: 0.5, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.3 })
-    registry_register(reg, ToolDef { name: "trading_scan", description: "Scan strategies for asset",
+    r = registry_register(r, ToolDef { name: "trading_scan", description: "Scan strategies for asset",
         params: [ToolParam{name:"symbol",type_name:"str",description:"Symbol",required:true,default_val:""}],
         category: "trading", curiosity_affinity: 0.8, pe_affinity: 0.4, pain_affinity: 0.0, growth_affinity: 0.0, phi_affinity: 0.0 })
-    registry_register(reg, ToolDef { name: "trading_execute", description: "Execute trade",
+    r = registry_register(r, ToolDef { name: "trading_execute", description: "Execute trade",
         params: [ToolParam{name:"symbol",type_name:"str",description:"Symbol",required:true,default_val:""},
                  ToolParam{name:"side",type_name:"str",description:"buy/sell",required:true,default_val:""},
                  ToolParam{name:"amount",type_name:"float",description:"Amount",required:true,default_val:""}],
         category: "trading", curiosity_affinity: 0.0, pe_affinity: 0.7, pain_affinity: 0.6, growth_affinity: 0.0, phi_affinity: 0.4 })
+    r
 }
 
-fn tool_system_act(sys: &mut AgentToolSystem, goal: string,
-                   consciousness_state: map, context: string) -> array {
-    let plan = plan_actions(&sys.registry, goal, consciousness_state, context)
+// tool_system_act — value-semantics: takes the system by value, returns the updated system + results.
+struct ActResult { sys: AgentToolSystem, results: array }
+fn tool_system_act(sys: AgentToolSystem, goal: string,
+                   consciousness_state: map, context: string) -> ActResult {
+    let plan = plan_actions(sys.registry, goal, consciousness_state, context)
     tool_system_execute_plan(sys, plan)
 }
 
-fn tool_system_execute_plan(sys: &mut AgentToolSystem, plan: ActionPlan) -> array {
+fn tool_system_execute_plan(sys: AgentToolSystem, plan: ActionPlan) -> ActResult {
+    let mut s = sys
     let mut results = []
     let mut step_outputs = {}
 
-    for i, step in enumerate(plan.steps) {
+    let mut i = 0
+    while i < len(plan.steps) {
+        let step = plan.steps[i]
         // Check dependencies
         let mut skip = false
         for dep_idx in step.depends_on {
@@ -813,18 +1146,21 @@ fn tool_system_execute_plan(sys: &mut AgentToolSystem, plan: ActionPlan) -> arra
                 skip = true
             }
         }
-        if skip { continue }
+        if skip { i = i + 1  continue }
 
-        let result = executor_execute(&mut sys.executor, step.tool_name, step.args)
+        let er = executor_execute(s.executor, step.tool_name, step.args)
+        s.executor = er.exec
+        let result = er.result
         append(results, result)
         step_outputs[i] = result.output
+        i = i + 1
     }
 
-    results
+    ActResult { sys: s, results: results }
 }
 
-fn tool_system_get_descriptions(sys: &AgentToolSystem) -> string {
-    registry_describe_for_prompt(&sys.registry)
+fn tool_system_get_descriptions(sys: AgentToolSystem) -> string {
+    registry_describe_for_prompt(sys.registry)
 }
 
 fn parse_tool_calls_from_response(response_text: string) -> array {
@@ -836,7 +1172,7 @@ fn parse_tool_calls_from_response(response_text: string) -> array {
 fn main() {
     println("=== Anima Agent Tools ===")
     let sys = new_tool_system()
-    println("Registered tools: " + to_string(len(registry_list_all(&sys.registry))))
-    println(tool_system_get_descriptions(&sys))
+    println("Registered tools: " + to_string(len(registry_list_all(sys.registry))))
+    println(tool_system_get_descriptions(sys))
     println("=== All tests complete ===")
 }
