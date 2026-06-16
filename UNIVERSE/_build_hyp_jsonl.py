@@ -1,13 +1,23 @@
 #!/usr/bin/env python3
 """Build UNIVERSE/HYPOTHESES.jsonl — the per-hypothesis index SSOT.
 
-One JSON object per landed card (cards/H_*.md). For ids present in the legacy
-per-H index table in HYPOTHESES.md, the verbatim tier + 1-line verdict text from
-that md row is preserved (c9 — no paraphrase). For every other card, the entry
-is derived from the card's own YAML frontmatter / first heading.
+One JSON object per landed card (cards/H_*.md, cards/Hc_*.md) AND per frozen
+archive snapshot (archive/hypotheses_snapshots/**/H_*.md). For ids present in the
+legacy per-H index table in HYPOTHESES.md, the verbatim tier + 1-line verdict text
+from that md row is preserved (c9 — no paraphrase). For every other card/snapshot,
+the entry is derived from the card's own YAML frontmatter / first heading.
+
+Each row carries three provenance/relocation columns (2026-06-16 consolidation):
+  source   — origin of the scattered hypothesis: "UNIVERSE" (already in cards/),
+             "hypotheses/" (active scattered cards, git mv'd into cards/),
+             "archive" (frozen-in-place snapshot, card = archive/... path),
+             or a domain dir name (e.g. "TENSION-LINK").
+  archived — true for archive/hypotheses_snapshots snapshots (frozen-in-place).
+  artifacts— list of relocated py/result deliverable paths under state/<slug>/
+             (NOT .verdicts/ — those stay as the frozen evidence the card points at).
 
 Keyed by CARD FILE (not id) so c10 dup-id variant cards each keep a row.
-Ordered by (numeric id, card filename).
+Ordered by (numeric id, card filename). Idempotent — re-run regenerates from disk.
 """
 import json
 import re
@@ -18,6 +28,10 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 CARDS_DIR = os.path.join(ROOT, "cards")
 MD = os.path.join(ROOT, "HYPOTHESES.md")
 OUT = os.path.join(ROOT, "HYPOTHESES.jsonl")
+# repo root (one level above UNIVERSE/) — archive snapshots + state/ live here.
+REPO = os.path.dirname(ROOT)
+ARCHIVE_DIR = os.path.join(REPO, "archive", "hypotheses_snapshots")
+TL_HARNESS = os.path.join(REPO, "state", "tension-link-harness")
 
 # Idempotent regeneration: once HYPOTHESES.md is demoted (its per-H rows removed),
 # the verbatim md verdicts survive only in the EXISTING HYPOTHESES.jsonl. Load it
@@ -109,32 +123,45 @@ def parse_card(path):
     return fm, heading
 
 # ---------------------------------------------------------------------------
-# 3. One entry per card file.
+# 3. One entry per card file (+ provenance columns).
 # ---------------------------------------------------------------------------
 def num_id(s):
     m = re.search(r'H_(\d+)', s)
     return int(m.group(1)) if m else 10**9
 
-entries = []
-cards = sorted(glob.glob(os.path.join(CARDS_DIR, "H_*.md")))
-for path in cards:
+# Hypotheses' own py/result deliverables, relocated to state/<slug>/ during the
+# 2026-06-16 consolidation. Keyed by hypothesis id (H_60xx), the TENSION-LINK arc
+# harness scripts moved into state/tension-link-harness/ (the .verdicts/ frozen
+# evidence stays in TENSION-LINK/, not here).
+tl_artifacts = {}  # id -> [state/... paths]
+if os.path.isdir(TL_HARNESS):
+    for p in sorted(glob.glob(os.path.join(TL_HARNESS, "*.py"))):
+        b = os.path.basename(p)
+        m = re.match(r'h(\d{4})', b)
+        if not m:
+            continue  # discovery_batch_*.py — arc-level, not per-hypothesis
+        tl_artifacts.setdefault("H_" + m.group(1), []).append(
+            "state/tension-link-harness/" + b)
+
+
+def card_entry(path, card_rel, *, source, archived):
+    """Build one jsonl object for a card/snapshot file (verbatim tier/verdict, c9)."""
     base = os.path.basename(path)
-    mfn = re.match(r'^H_([0-9]+[a-z]?)(?:_(.+))?\.md$', base)
-    fid = "H_" + mfn.group(1) if mfn else base[:-3]
-    slug = (mfn.group(2) if (mfn and mfn.group(2)) else "")
-    card_rel = "cards/" + base
+    mfn = re.match(r'^(H[c]?)_([0-9]+[a-z]?)(?:_(.+))?\.md$', base)
+    if mfn:
+        fid = mfn.group(1) + "_" + mfn.group(2)
+        slug = mfn.group(3) or ""
+    else:
+        fid, slug = base[:-3], ""
 
     fm, heading = parse_card(path)
 
     if base in md_rows:
         row = md_rows[base]
-        rid = row["id"]
-        tier = row["tier"]
-        title = row["title"]
-        verdict = row["verdict"]  # md row's verbatim tier-col verdict / numbers
-    elif base in prior:
-        # md row already migrated away — keep the existing jsonl verbatim entry
-        po = prior[base]
+        rid, tier, title, verdict = (row["id"], row["tier"],
+                                     row["title"], row["verdict"])
+    elif card_rel in prior_by_card or base in prior:
+        po = prior_by_card.get(card_rel) or prior[base]
         rid = po.get("id", fid)
         tier = po.get("tier", "")
         title = po.get("title", "")
@@ -152,14 +179,57 @@ for path in cards:
     if not slug:
         slug = re.sub(r'^\d+_', '', (fm.get("slug") or "").strip())
 
-    entries.append({
+    # artifacts: the card's own relocated py/result deliverables (state/<slug>/).
+    artifacts = []
+    va = (fm.get("verdict_artifact") or "").strip()
+    if va.startswith("state/") and os.path.isfile(os.path.join(REPO, va)):
+        artifacts.append(va)
+    for a in tl_artifacts.get(rid, []):
+        if a not in artifacts:
+            artifacts.append(a)
+
+    return {
         "id": rid,
         "slug": slug,
         "tier": tier,
         "title": title,
         "card": card_rel,
         "verdict": verdict,
-    })
+        "source": source,
+        "archived": archived,
+        "artifacts": artifacts,
+    }
+
+
+# prior jsonl keyed by full card path too (archive cards aren't in cards/).
+prior_by_card = {o.get("card"): o for o in prior.values()}
+
+entries = []
+
+# 3a. landed cards in UNIVERSE/cards/ (H_*.md and Hc_*.md). Cards moved here from
+#     the scattered ./hypotheses/ dir are tagged source="hypotheses/": the dup-id
+#     stage-2-audit variants carry a `_stage2var` filename suffix, and the Hc_*
+#     candidate cards were not previously in cards/ at all.
+cards = sorted(glob.glob(os.path.join(CARDS_DIR, "H_*.md"))
+               + glob.glob(os.path.join(CARDS_DIR, "Hc_*.md")))
+for path in cards:
+    base = os.path.basename(path)
+    if base.endswith("_stage2var.md") or base.startswith("Hc_"):
+        source = "hypotheses/"
+    else:
+        source = "UNIVERSE"
+    entries.append(card_entry(path, "cards/" + base,
+                              source=source, archived=False))
+
+# 3b. frozen archive snapshots — referenced in-place (NOT moved: 107 intra-archive
+#     dup basenames + 193 collide with cards/, moving en masse would destroy the
+#     archive's frozen structure). Each gets a row; card = its archive/... path.
+arch = sorted(glob.glob(os.path.join(ARCHIVE_DIR, "**", "H_*.md"),
+                        recursive=True))
+for path in arch:
+    card_rel = os.path.relpath(path, REPO)
+    entries.append(card_entry(path, card_rel,
+                              source="archive", archived=True))
 
 entries.sort(key=lambda e: (num_id(e["id"]), e["card"]))
 
@@ -167,5 +237,11 @@ with open(OUT, "w", encoding="utf-8") as fh:
     for e in entries:
         fh.write(json.dumps(e, ensure_ascii=False) + "\n")
 
+by_src = {}
+for e in entries:
+    by_src[e["source"]] = by_src.get(e["source"], 0) + 1
+n_art = sum(1 for e in entries if e["artifacts"])
 print(f"[out] wrote {len(entries)} entries -> {OUT}")
-print(f"[chk] cards on disk: {len(cards)}")
+print(f"[chk] cards/ on disk: {len(cards)} · archive snapshots: {len(arch)}")
+print(f"[chk] by source: {by_src}")
+print(f"[chk] rows with artifacts: {n_art}")

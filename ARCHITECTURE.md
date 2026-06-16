@@ -263,7 +263,7 @@ production rung 은 하나의 일관된 3-surface 파이프라인으로 학습�
 | `.clm` 파이프라인 | `CLM/` | train (lane-p) → serialize v0.2 → verify |
 | substrate 서브시스템 | `anima-core` · `anima-os` · `anima-body` · `anima-physics` · `anima-measurement` · `anima-serve` | core/runtime/embodiment/physics/measurement/serving |
 | agent 계층 | `anima-agent*` | channels · core · plugins · providers · skills · hire-sim |
-| 지식 / anchors | `UNIVERSE/` (HYPOTHESES.jsonl per-H index + `cards/H_*.md` per-H 카드, `a_hypothesis_register` 두 표면; HYPOTHESES.md = prose overview/appendices) · `HEXAD/` (KOSMOS hub) | research universe + kosmos anchors + gauge lib/monitor |
+| 지식 / anchors | `UNIVERSE/` (HYPOTHESES.jsonl per-H index — **모든** 가설 1줄/카드 incl. archive 스냅샷(`archived:true`, frozen-in-place 참조) + `source`/`artifacts` 컬럼; `cards/H_*.md`·`cards/Hc_*.md` per-H 카드, `a_hypothesis_register` 두 표면; HYPOTHESES.md = prose overview/appendices) · `state/<slug>/` (가설 py/result 결과물, jsonl `artifacts` 가 가리킴) · `HEXAD/` (KOSMOS hub) | research universe + kosmos anchors + gauge lib/monitor |
 | 연구 도메인 | `domains/` | per-domain `.tape` + `.log.md` (discovery lane) |
 | 논문 | `PAPER/` | verdict-gated paper scaffolds |
 | EEG 의식 기록 | `EEG_CLM/` | 실측 EEG → A⇄G → CLM → .kosmos 지속 기록(`a_eeg_consciousness_record`) |
