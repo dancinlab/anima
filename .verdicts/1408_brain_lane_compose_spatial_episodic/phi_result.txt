@@ -1,0 +1,40 @@
+=== H_1408 lane-composition FAITHFUL IIT4 Φ (stdlib exact MIP-EI, n<=8) ===
+engine: stdlib/consciousness/iit4/faithful_phi.hexa  (a_phi_iit4_tool — NOT a proxy)
+WITHIN-FAMILY pair: spatial-map (H_1296) × episodic-memory (H_1227/H_1231)
+state file: /tmp/h1408_states.txt
+
+  [spatial_s5408]  n=4 T=96  faithful_Φ=0.000000
+  [episodic_s5408]  n=4 T=96  faithful_Φ=0.505398
+  [composed_s5408]  n=8 T=96  faithful_Φ=3.440734
+  [disconnected_s5408]  n=8 T=96  faithful_Φ=0.000000
+  [spatial_s5409]  n=4 T=96  faithful_Φ=0.000000
+  [episodic_s5409]  n=4 T=96  faithful_Φ=0.523110
+  [composed_s5409]  n=8 T=96  faithful_Φ=3.472711
+  [disconnected_s5409]  n=8 T=96  faithful_Φ=0.000000
+  [spatial_s5410]  n=4 T=96  faithful_Φ=0.000000
+  [episodic_s5410]  n=4 T=96  faithful_Φ=0.492451
+  [composed_s5410]  n=8 T=96  faithful_Φ=3.592692
+  [disconnected_s5410]  n=8 T=96  faithful_Φ=0.000000
+
+=== MEAN faithful Φ over 3 seeds (FROZEN PRIMARY n_bins=16) ===
+  Φ_spatial      = 0.000000   (n=4)
+  Φ_episodic     = 0.506986   (n=4)
+  Φ_composed     = 3.502046   (n=8, coupled)
+  Φ_disconnected = 0.000000   (n=8, coupling removed — EARNED control)
+  max(parts)     = 0.506986
+  composed MIP cut: A={0,1,2,3,4,6,7} | B={5}  cut=3.592692  /min|side|=1  =Φ3.592692
+
+=== FROZEN bars (n_bins=16) ===
+  Bφ1 INTEGRATION-RAISES-Φ  Φ_composed > max(parts)+0.02 : 3.502046 > 0.526986  => PASS
+  Bφ2 EARNED (coupling)     Φ_composed > Φ_disc+0.02      : 3.502046 > 0.020000  => PASS
+  Bφ3 control sane          Φ_disc ≤ max(parts)+0.02      : 0.000000 ≤ 0.526986  => PASS
+
+VERDICT (frozen n_bins=16): 🟢 INTEGRATION-RAISES-Φ — composing spatial-map+episodic-memory raises faithful IIT4 Φ (earned vs disconnected control)
+
+=== BINNING-INVARIANCE sweep (frozen verdict = n_bins=16; ordering robustness) ===
+  n_bins=8 : Φ_cmp=1.546365 Φ_sp=0.000000 Φ_ep=0.273852 Φ_disc=0.000000 max(parts)=0.273852  => 🟢
+  n_bins=12 : Φ_cmp=2.442341 Φ_sp=0.000000 Φ_ep=0.452334 Φ_disc=0.000000 max(parts)=0.452334  => 🟢
+  n_bins=16 : Φ_cmp=3.502046 Φ_sp=0.000000 Φ_ep=0.506986 Φ_disc=0.000000 max(parts)=0.506986  => 🟢
+  n_bins=24 : Φ_cmp=5.082456 Φ_sp=0.000000 Φ_ep=0.647721 Φ_disc=0.000000 max(parts)=0.647721  => 🟢
+
+=== H_1408 faithful Φ measurement complete (a_phi_iit4_tool) ===
