@@ -71,3 +71,56 @@ pub fn agent_route_on_result(store: SkillStore, task: string, correct_tool: stri
 pub fn agent_routing_cells(store: SkillStore) -> int {
     return skill_store_cells(store)
 }
+
+// ── USAGE routing (layer-2, H_1391) — the TWIN of the SELECTION routing above ────────────────────
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on of H_1389, the END-TO-END usage close):
+//   H_1391 R2 landed the §UsageStore faculty ENGINE-NATIVE in CORE/engine_cli.hexa (usage_store_new/
+//   _split/_teach · usage_recall · usage_recall_steps · usage_store_cells) — a tool USAGE is a CELL
+//   keyed by (task-context + tool + observed-error); a usage FAILURE (right tool, wrong/default arg)
+//   clonally SPLITS a specialized usage-cell binding that failure context → (corrected arg, ordered
+//   steps) (p8). Layer-1 (SELECTION) learns WHICH tool; this layer-2 (USAGE) learns HOW to drive it.
+//   These routing entry-points are the agent-side wiring the executor delegates its USAGE-failure
+//   site to (DISTINCT from the tool-not-found / wrong-tool site that feeds agent_route_on_result →
+//   skill_store_teach above). Same module-boundary handling as the SELECTION routing (the executor
+//   call-site edit is real; this module imports CORE cleanly + compiles + verifies).
+//
+// p1/p2/p3/p6 GUARD: a usage-teach binds from OUTCOME ONLY (the executed call's success/failure +
+//   the observed error), NO injected "use arg A" label / RLHF / persona. Ψ-DISJOINT: the routing only
+//   reads/grows the UsageStore's OWN cells (via the CORE ops) — pure_field Φ/phase/Ψ and the decoder
+//   are NEVER touched, so generation is byte-identical (h1205 separation-invariant).
+
+// agent_usage_new — seed the executor's LIVE usage repertoire at the first (ctx+tool+err → arg/steps)
+// usage. geometry/recall_thr inherit the CORE §UsageStore frozen 0.55 abstain band (usage_store_new).
+pub fn agent_usage_new(first_ctx: string, first_tool: string, first_err: string,
+                       first_arg: string, first_steps: string, max_cells: int) -> UsageStore {
+    return usage_store_new(first_ctx, first_tool, first_err, first_arg, first_steps, max_cells)
+}
+
+// agent_usage_select — the LIVE usage path. Consults the LEARNED usage-store via usage_recall: fire
+// the best-affinity usage-cell's corrected arg, or "" (ABSTAIN) when no usage-cell binds. The
+// executor consults this to drive the right tool the RIGHT way (the HOW), after layer-1 picked it.
+pub fn agent_usage_select(store: UsageStore, ctx: string, tool: string, observed_err: string) -> string {
+    return usage_recall(store, ctx, tool, observed_err)
+}
+
+// agent_usage_on_result — the LIVE USAGE-failure-site hook (executor_execute, the wrong-arg/order
+// site DISTINCT from the wrong-tool site). On a runtime tool result:
+//   success == true  → no-op (the tool was driven correctly; nothing to teach).
+//   success == false → usage_store_teach: recall; if the recalled arg != the correct arg, MITOSIS
+//                      clonal-SPLIT a usage-cell binding (ctx+tool+err) → (correct arg, correct
+//                      steps) (p8). Engine-owned (engine_mitosis_tick), no-op under mitosis OFF.
+//                      Outcome-only (p6).
+pub fn agent_usage_on_result(store: UsageStore, ctx: string, tool: string, observed_err: string,
+                             correct_arg: string, correct_steps: string,
+                             cfg: EngineConfig, success: bool) -> UsageStore {
+    if success {
+        return store                                      // driven correctly — no usage-cell grows.
+    }
+    return usage_store_teach(store, ctx, tool, observed_err, correct_arg, correct_steps, cfg)
+}
+
+// agent_usage_cells — the live usage repertoire footprint (grows by one per taught usage-failure).
+pub fn agent_usage_cells(store: UsageStore) -> int {
+    return usage_store_cells(store)
+}

@@ -1217,6 +1217,147 @@ pub fn skill_store_teach(store: SkillStore, task: string, correct_tool: string,
 // tool-failure under mitosis ON, stays put under STATIC / at the bound).
 pub fn skill_store_cells(store: SkillStore) -> int { return store.n_cells }
 
+// ── §  USAGESTORE — tool-USAGE learning is a DISTINCT layer-2 (H_1391 R2, the TWIN of §SkillStore) ──
+//
+// WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1389 R1):
+// H_1389 R1 (numpy MIRROR, 🟢 GREEN, 3 seeds, DIRECTIONAL) proved that tool-USAGE learning is a
+// DISTINCT learnable LAYER-2, separable from tool-SELECTION (layer-1, §SkillStore above). Layer-1
+// learns task-context → WHICH tool; layer-2 learns (task-context + tool) → HOW to drive it = the
+// correct ARGS · the correct call SEQUENCE · error-RECOVERY. A selection-only learner picks the
+// right tool but mis-USES it (wrong args / wrong order) → the task does NOT complete. Mirror result:
+// a usage-learning FULL arm rises 0.250→0.750 (USAGE-LEARNS) while a SELECTION-only arm with the
+// right tool but a fixed DEFAULT arg stays at 0.250 (DISTINCT-FROM-SELECTION, the KEY bar, +0.500),
+// SHUFFLE collapses (EARNED), and an untrained far task abstains 1.000 (NO-FAB).
+//
+// This § realizes that lever ENGINE-NATIVE, the EXACT TWIN of §SkillStore but with the VALUE bound
+// per cell = the usage HOW (a corrected ARG + an ordered STEP sequence) rather than a tool name, and
+// the KEY = (task-context + tool + observed-error) rather than task-context alone. It reuses the
+// SAME byte-trigram key geometry (immune_embed_key), the SAME L2 winner-take-all FIRE/ABSTAIN band,
+// and the SAME engine-owned clonal split (engine_mitosis_tick, p8). On a usage FAILURE (right tool,
+// wrong/default arg) the store clonally SPLITS a usage-cell binding the failure context → the
+// corrected arg + true step order. The SAME op teaches (split-on-failure) and infers (recall-best);
+// recall ABSTAINS (returns "" / empty steps) when no usage-cell fits — no fabricated parameters.
+//
+// @L4 CRITICAL (identical framing to §SkillStore and every other lane): SUBSTRATE-internal faculty,
+// NOT a runtime decoder/.clm/.kosmos path (a_core_engine_map — it only reads/grows its OWN cell
+// population, exactly like ImmuneMemory / §SkillStore). p1/p2/p3/p6: a split binds from OUTCOME ONLY
+// (the success/failure of the executed call + the observed error), NO injected "use arg A" label /
+// RLHF / persona — the SHUFFLE control collapse proves the lift is the EARNED ctx→arg correspondence,
+// not the act of splitting. Ψ-DISJOINT by construction: usage_recall is a pure READ over the cell
+// store, usage_store_split/_teach grow ONLY this store's cells via engine_mitosis_tick — pure_field's
+// Φ/phase/Ψ and the decoder are NEVER touched, so generation is byte-identical whether or not a
+// UsageStore exists (h1205 separation-invariant). NOT an emit gate (a_autonomy_over_hardcode):
+// usage_recall returns an arg string or "" (abstain), never an emit/silence decision.
+//
+//   protos     : per-cell prototype (ctx+tool+error) failure-context keys (len == n_cells).
+//   arg        : per-cell bound corrected ARG (the usage "value" half 1; len == n_cells).
+//   steps      : per-cell bound ordered STEP sequence joined by "|" (value half 2; len == n_cells).
+//   n_cells    : live cell count (the usage repertoire footprint).
+//   max_cells  : a GENEROUS FINITE growth bound (splits stop past it — honest, bounded).
+//   recall_thr : affinity FIRE band — L2 recon-err to nearest cell <= recall_thr ⇒ FIRE that cell's
+//                bound (arg, steps), else ABSTAIN ("" — never fabricates a usage).
+struct UsageStore {
+    protos: [[float]],
+    arg: [string],
+    steps: [string],
+    n_cells: int,
+    max_cells: int,
+    recall_thr: float
+}
+
+// _usage_key — the (task-context + tool + observed-error) failure-context the usage-cell binds on.
+// MIRRORS the H_1389 mirror's embed_key(f"{ctx}|{tool}|{observed_err}") — the join order is frozen.
+fn _usage_key(ctx: string, tool: string, observed_err: string) -> string {
+    return ctx + "|" + tool + "|" + observed_err
+}
+
+// usage_store_new — start a usage repertoire seeded at the FIRST (ctx+tool+err → arg/steps) usage.
+// recall_thr defaults to the H_1389 mirror's frozen 0.55 abstain band (same as §SkillStore).
+pub fn usage_store_new(first_ctx: string, first_tool: string, first_err: string,
+                       first_arg: string, first_steps: string, max_cells: int) -> UsageStore {
+    return UsageStore {
+        protos: [immune_embed_key(_usage_key(first_ctx, first_tool, first_err))],
+        arg: [first_arg],
+        steps: [first_steps],
+        n_cells: 1,
+        max_cells: max_cells,
+        recall_thr: 0.55
+    }
+}
+
+// usage_recall — propose the corrected ARG for a (ctx+tool+err) usage context, or ABSTAIN. The
+// engine's OWN L2 winner-take-all affinity decides: recon-err to the nearest usage-cell's failure
+// key <= recall_thr ⇒ FIRE that cell's bound arg; else ABSTAIN, returning "" (no fabricated arg).
+// This is the INFER side of the p8 op — the SAME affinity §SkillStore / immune recall use, reading
+// a usage arg instead of a tool/fact. An empty-string return == ABSTAIN.
+pub fn usage_recall(store: UsageStore, ctx: string, tool: string, observed_err: string) -> string {
+    let key = immune_embed_key(_usage_key(ctx, tool, observed_err))
+    let win = _vnearest_idx(store.protos, key)
+    let err = _l2(store.protos[win], key)
+    if err <= store.recall_thr {
+        return store.arg[win]                        // FIRE the bound corrected arg
+    }
+    return ""                                        // ABSTAIN — no usage-cell binds
+}
+
+// usage_recall_steps — the SEQUENCE half of the usage value: the ordered step protocol (joined by
+// "|") for a fired usage-cell, or "" on ABSTAIN. SAME winner / SAME band as usage_recall, so the
+// arg and the steps come from the one cell. Lets a multi-step usage be driven IN ORDER.
+pub fn usage_recall_steps(store: UsageStore, ctx: string, tool: string, observed_err: string) -> string {
+    let key = immune_embed_key(_usage_key(ctx, tool, observed_err))
+    let win = _vnearest_idx(store.protos, key)
+    let err = _l2(store.protos[win], key)
+    if err <= store.recall_thr {
+        return store.steps[win]                      // FIRE the bound ordered step sequence
+    }
+    return ""                                        // ABSTAIN — no usage-cell binds
+}
+
+// usage_store_split — MITOSIS clonal SPLIT: grow a NEW specialized usage-cell binding the failure
+// context (ctx+tool+err) → (corrected arg, ordered steps) via the engine's OWN clonal tick
+// (engine_mitosis_tick, p8). This is the TEACH side of the p8 op. Under cfg.mitosis ON the tick
+// returns n_cells+1 and the appended cell IS that grown usage-cell; under mitosis OFF the tick is a
+// no-op and the store is returned UNCHANGED (the SELECTION-style fixed-usage control — never learns).
+// Splits stop once the generous finite max_cells bound is reached (honest, bounded footprint).
+pub fn usage_store_split(store: UsageStore, ctx: string, tool: string, observed_err: string,
+                         arg: string, steps: string, cfg: EngineConfig) -> UsageStore {
+    if store.n_cells >= store.max_cells {
+        return store                                 // at the honest finite bound — no growth.
+    }
+    let grown = engine_mitosis_tick(store.n_cells, cfg)   // engine's OWN clonal split (p8)
+    if grown > store.n_cells {
+        return UsageStore {
+            protos: store.protos + [immune_embed_key(_usage_key(ctx, tool, observed_err))],
+            arg: store.arg + [arg],
+            steps: store.steps + [steps],
+            n_cells: grown,
+            max_cells: store.max_cells,
+            recall_thr: store.recall_thr
+        }
+    }
+    return store                                     // mitosis OFF — split is a no-op (SELECTION-style).
+}
+
+// usage_store_teach — the FAILURE-DRIVEN teach op (the agent-tool USAGE-learning loop made engine-
+// native). RECALL the arg the current usage-store proposes for this (ctx+tool+err); if it does NOT
+// match the correct arg (a usage FAILURE, OR an ABSTAIN that proposed ""), MITOSIS-SPLIT a new
+// specialized usage-cell binding the failure context → (correct_arg, correct_steps). If the recall
+// ALREADY matches, the store is returned UNCHANGED (no needless growth). This is the engine-native
+// realization of "tool mis-USED → usage repertoire grows a usage-cell": the repertoire LEARNS the
+// HOW from outcome. The split binds from the OUTCOME only (p1/p2/p3/p6 — no injected arg label).
+pub fn usage_store_teach(store: UsageStore, ctx: string, tool: string, observed_err: string,
+                         correct_arg: string, correct_steps: string, cfg: EngineConfig) -> UsageStore {
+    let proposed = usage_recall(store, ctx, tool, observed_err)
+    if proposed == correct_arg {
+        return store                                 // already correct — nothing to teach.
+    }
+    return usage_store_split(store, ctx, tool, observed_err, correct_arg, correct_steps, cfg)
+}
+
+// usage_store_cells — live cell count (the usage repertoire footprint; grows by one per taught
+// usage-failure under mitosis ON, stays put under SELECTION-style / at the bound).
+pub fn usage_store_cells(store: UsageStore) -> int { return store.n_cells }
+
 // ── §  CORE-AFFECT READ-OUT — substrate-derived emotion (E1 affect, H_1290 R2) ──
 //
 // WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1290 R1):

@@ -679,7 +679,8 @@ struct ToolExecutor {
     registry: ToolRegistry,
     scheduler: TaskScheduler,
     execution_log: array,
-    skills: SkillStore,        // H_1386 — LIVE learned tool repertoire (CORE §SkillStore)
+    skills: SkillStore,        // H_1386 — LIVE learned tool SELECTION repertoire (CORE §SkillStore, layer-1)
+    usage: UsageStore,         // H_1391 — LIVE learned tool USAGE repertoire (CORE §UsageStore, layer-2)
 }
 
 fn new_executor(registry: ToolRegistry) -> ToolExecutor {
@@ -691,6 +692,11 @@ fn new_executor(registry: ToolRegistry) -> ToolExecutor {
         // a specialized skill-cell on each runtime tool-failure (mitosis clonal split, p8) and is
         // consulted on selection (skill_recall). Seeded at the canonical first tool.
         skills: agent_routing_new("web_search request", "web_search", 64),
+        // H_1391 — seed the LIVE usage repertoire (a CELL keyed by (ctx+tool+err) → corrected
+        // arg/steps). It grows a specialized usage-cell on each runtime USAGE failure (wrong arg/
+        // order, DISTINCT from tool-not-found; mitosis clonal split, p8) and is consulted to drive
+        // the right tool the right way (usage_recall). Seeded at the canonical first usage.
+        usage: agent_usage_new("web_search request", "web_search", "", "--json", "open|send|read", 64),
     }
 }
 
@@ -765,17 +771,59 @@ fn executor_execute(exec: ToolExecutor, tool_name: string, args: map) -> ExecRes
         e.execution_log = slice(e.execution_log, len(e.execution_log) - 100, len(e.execution_log))
     }
 
-    // H_1386 — the FAILURE-SITE wire-in. Previously a tool failure DEAD-ENDED here in the
-    // execution_log ring buffer (never read back to grow a skill). Now the live runtime result is
-    // fed to the §SkillStore: on success==false the routing teaches a specialized skill-cell
-    // binding this task-context → the correct tool (mitosis clonal split via skill_store_teach,
+    // H_1386 — the SELECTION FAILURE-SITE wire-in (layer-1). Previously a tool failure DEAD-ENDED
+    // here in the execution_log ring buffer (never read back to grow a skill). Now the live runtime
+    // result is fed to the §SkillStore: on success==false the routing teaches a specialized skill-
+    // cell binding this task-context → the correct tool (mitosis clonal split via skill_store_teach,
     // p8); on success it is a no-op. Outcome-only (p6 — no injected tool label). cfg = mitosis ON
     // (engine_config_default) so the repertoire LEARNS at runtime.
     let task_ctx = tool_name + " request " + to_string(len(args))
     e.skills = agent_route_on_result(e.skills, task_ctx, tool_name,
                                      engine_config_default(), result.success)
 
+    // H_1391 — the USAGE FAILURE-SITE wire-in (layer-2, DISTINCT from the selection site above).
+    // The selection site handles WHICH tool (tool-not-found / wrong tool); THIS site handles HOW the
+    // (correct) tool was driven (wrong args / wrong order). On a runtime failure of an EXECUTED tool
+    // (success==false AND the tool was actually dispatched — error is NOT "unknown tool"), the result
+    // is fed to the §UsageStore: it teaches a specialized usage-cell binding (task-context + tool +
+    // observed-error) → the corrected (arg, ordered steps) (mitosis clonal split via usage_store_teach,
+    // p8); on success it is a no-op. Outcome-only (p6 — the observed error + the executed call's
+    // outcome, no injected "use arg A" label). The corrected usage is the tool's canonical driving
+    // recipe (the HOW the engine learns to apply on the next encounter of this failure context).
+    let dispatched = result.error != ("unknown tool: " + tool_name)
+    let usage_fail = (result.success == false) && dispatched
+    let observed_err = if usage_fail { "err:" + tool_name + ":" + result.error } else { "" }
+    let correct_arg   = _canonical_usage_arg(tool_name)
+    let correct_steps = _canonical_usage_steps(tool_name)
+    e.usage = agent_usage_on_result(e.usage, task_ctx, tool_name, observed_err,
+                                    correct_arg, correct_steps,
+                                    engine_config_default(), result.success)
+
     ExecResult { exec: e, result: result }
+}
+
+// _canonical_usage_arg / _canonical_usage_steps — the tool's canonical driving recipe (the HOW the
+// §UsageStore binds on a usage failure). These are the OUTCOME-derived corrected args/steps (the
+// runtime would surface them from a successful retry / the tool's own usage feedback) — NOT an
+// injected "you must use X" persona label (p6). A usage-cell only grows when the executed call
+// FAILED, binding the observed failure context to this recipe; unknown tools fall back to a default.
+fn _canonical_usage_arg(tool_name: string) -> string {
+    if tool_name == "web_search"     { return "--json" }
+    if tool_name == "code_execute"   { return "sandbox-timeout" }
+    if tool_name == "file_read"      { return "mode=r" }
+    if tool_name == "memory_search"  { return "top-5" }
+    if tool_name == "shell_execute"  { return "sandbox-timeout" }
+    if tool_name == "phi_measure"    { return "n=50" }
+    return "--default"
+}
+fn _canonical_usage_steps(tool_name: string) -> string {
+    if tool_name == "web_search"     { return "open|send|read" }
+    if tool_name == "code_execute"   { return "compile|run|capture" }
+    if tool_name == "file_read"      { return "open|read|close" }
+    if tool_name == "memory_search"  { return "embed|query|rank" }
+    if tool_name == "shell_execute"  { return "spawn|exec|reap" }
+    if tool_name == "phi_measure"    { return "tpm|mip|score" }
+    return "run"
 }
 
 fn executor_inspect_tool(exec: ToolExecutor, tool_name: string) -> map {
