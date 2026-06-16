@@ -1,0 +1,34 @@
+H_1340 R1 — WHORFIAN CP RELOCATION CEILING: BUDGET / RBF-DENSITY SWEEP
+====================================================================================
+R2 of H_1338: does raising phase-2 split budget + RBF density let the RE-LOCATED CP
+              peak REACH p_A'? (tests the H_1338 budget/geometry re-diagnosis)
+N_stim=81 p_A=0.333 p_A'=0.667 phase1_budget=24 seeds=[4333, 4334, 4335]  (NO eviction — split-only never-evict store)
+
+  per-rung relocated CP peak (phase-1 FIXED budget=24, phase-2 swept):
+    R0_base  DIM= 16 GROW2=  24: peak mean=0.523  |peak-p_A'| mean=0.144  frac=+0.57  peak-count=4.3
+             per-seed |peak-p_A'| = [0.148, 0.135, 0.148]  all≤0.12: False   cells(seed,p1,p2)=[(4333, 4, 28), (4334, 4, 28), (4335, 4, 28)]
+    R1       DIM= 32 GROW2=  96: peak mean=0.548  |peak-p_A'| mean=0.119  frac=+0.65  peak-count=5.0
+             per-seed |peak-p_A'| = [0.123, 0.11, 0.123]  all≤0.12: False   cells(seed,p1,p2)=[(4333, 4, 100), (4334, 4, 100), (4335, 4, 100)]
+    R2       DIM= 48 GROW2= 192: peak mean=0.560  |peak-p_A'| mean=0.106  frac=+0.69  peak-count=5.0
+             per-seed |peak-p_A'| = [0.11, 0.098, 0.11]  all≤0.12: True   cells(seed,p1,p2)=[(4333, 4, 196), (4334, 4, 196), (4335, 4, 196)]
+    R3       DIM= 64 GROW2= 384: peak mean=0.573  |peak-p_A'| mean=0.094  frac=+0.73  peak-count=5.7
+             per-seed |peak-p_A'| = [0.098, 0.085, 0.098]  all≤0.12: True   cells(seed,p1,p2)=[(4333, 4, 388), (4334, 4, 388), (4335, 4, 388)]
+    R4_high  DIM= 96 GROW2= 768: peak mean=0.585  |peak-p_A'| mean=0.081  frac=+0.76  peak-count=7.0
+             per-seed |peak-p_A'| = [0.085, 0.073, 0.085]  all≤0.12: True   cells(seed,p1,p2)=[(4333, 4, 772), (4334, 4, 772), (4335, 4, 772)]
+
+  B1 RELOCATES (some rung: all 3 seeds |peak-p_A'|≤0.12 AND coherent peak-count≤2):
+     NO rung reaches p_A' — highest rung R4_high: |peak-p_A'|=[0.085, 0.073, 0.085], frac=+0.76 (peak stuck short of p_A')
+     -> B1 FAIL
+  B2 EARNED-MONOTONE (frac non-decreasing R0→R4 within slack 0.01; span≥0.1):
+     frac ladder = [0.575, 0.65, 0.688, 0.725, 0.762]  -> monotone PASS
+     span (R4−R0) = +0.187  -> climb PASS
+     -> B2 PASS
+  B3 BASELINE-REPRO (R0 frac in [0.4,0.75] AND |peak-p_A'|>0.12 all 3 seeds — reproduces H_1338 partial):
+     R0 per-seed frac = [0.562, 0.6, 0.562]  -> partial-frac PASS
+     R0 per-seed |peak-p_A'| = [0.148, 0.135, 0.148]  -> not-complete PASS
+     -> B3 PASS
+====================================================================================
+VERDICT: 🧱 DEEPER LIMIT — raising budget + RBF density does NOT finish the move.
+  Even the highest rung (R4_high) leaves the relocated peak short of p_A' (|peak-p_A'|=[0.08541666666666659, 0.07291666666666663, 0.08541666666666659], frac +0.76). The H_1338
+  budget/geometry diagnosis is itself INCOMPLETE — the residual is a deeper
+  limit. Honest re-re-diagnosis, NO bar move (c9). ENGINE-TRANSFER UNVERIFIED.
