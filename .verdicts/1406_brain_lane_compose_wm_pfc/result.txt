@@ -1,0 +1,38 @@
+================================================================================
+H_1406 — BRAIN-LANE COMPOSITION (pair #3): WM (H_1282) × HIER-PFC (H_1294)
+  DIRECTIONAL numpy mirror · $0 CPU · 3 seeds · p7 · LIVE CORE/*.hexa UNTOUCHED
+  bars: COMPOSE_DELTA=0.05 ORACLE_MARGIN=0.02 SHUFFLE_TOL=0.02
+================================================================================
+  seed 4406 (n=450): wm=0.620 pfc=0.676 best=0.676 compose=0.611 shuf=0.527 oracle=0.944 | conflict=0.593 [onlyW=0.269 onlyP=0.324 both=0.351 neither=0.056]
+  seed 4407 (n=450): wm=0.640 pfc=0.671 best=0.671 compose=0.647 shuf=0.513 oracle=0.949 | conflict=0.587 [onlyW=0.278 onlyP=0.309 both=0.362 neither=0.051]
+  seed 4408 (n=450): wm=0.618 pfc=0.696 best=0.696 compose=0.629 shuf=0.484 oracle=0.942 | conflict=0.571 [onlyW=0.247 onlyP=0.324 both=0.371 neither=0.058]
+--------------------------------------------------------------------------------
+MEAN (3 seeds):
+  acc_wm        = 0.6259
+  acc_pfc       = 0.6807
+  best_single   = 0.6807
+  acc_compose   = 0.6289
+  acc_shuffle   = 0.5081
+  ORACLE        = 0.9452   (oracle − best = +0.2644)
+  conflict_rate = 0.5837
+  decomposition : only_wm=0.2644 only_pfc=0.3193 both=0.3615 neither=0.0548
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.6289 >= best 0.6807+0.05 (0.7307) : FAIL
+  (B2 ORACLE)         oracle−best +0.2644 > 0.02 : PASS
+  (B3 EARNED)         compose−shuffle +0.1207 > 0.02 : PASS
+  (B4 p6 GUARD)       no injected answer/priority/persona label : PASS
+        p1 system prompt      : clean
+        p2 identity rule      : clean
+        p3 persona            : clean
+        p4 assistant frame    : clean
+        p6 RLHF/pref label    : clean
+        hardcoded priority    : clean
+================================================================================
+VERDICT: 🟠 ORACLE-HEADROOM-but-ARBITER-FAILS
+READING: taxonomy (a) wrong-arbiter: complementarity EXISTS (oracle > best_single) but the substrate-weighted arbiter cannot capture it — the faculties compose IN PRINCIPLE but this confidence-arbiter is the wrong rule. → needs a better arbiter.
+SUBSUMPTION PROBE: SEPARABLE — each faculty uniquely solves items the other misses (only_wm=0.264 > 0 AND only_pfc=0.319 > 0). genuinely complementary signals (passive maintenance ⊥ ordered advance).
+  HONEST (c9, a_scale_honest_scope/a_toy_scale_recheck): DIRECTIONAL numpy mirror; toy
+  synthetic 5-family fixture, 3 seeds, deterministic readouts (tests COMPOSITION STRUCTURE,
+  not a trained integrator). LIVE CORE/*.hexa UNTOUCHED. Scale/real-corpus/engine-native
+  transfer UNVERIFIED. NO bar moved post-hoc.
+================================================================================

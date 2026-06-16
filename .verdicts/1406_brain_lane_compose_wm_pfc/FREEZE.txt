@@ -1,0 +1,202 @@
+================================================================================
+H_1406 — BRAIN-LANE COMPOSITION (pair #3): does WORKING-MEMORY (H_1282) compose
+with HIERARCHICAL-PFC (H_1294)?
+FREEZE (pre-registered BEFORE measuring; c9, NO tune-to-green). DIRECTIONAL numpy
+mirror ($0 CPU); engine-native §compose is the named follow-on IF 🟢.
+Sibling of H_1401 (affect×ethics, 🟢) and H_1404 (Φ-compose, 🟢). Methodology
+ported VERBATIM from H_1401 + H_1404 — substrate-weighted SCALE-RELATIVE arbiter +
+ORACLE ceiling + SHUFFLE control + only-X decomposition + a_break_the_wall taxonomy.
+================================================================================
+
+PROGRAM. Every anima brain faculty is engine-native GREEN but ALONE. H_1401 opened
+the brain-lane-composition program (affect×ethics COMPOSE + SEPARABLE) and H_1404
+showed composing them raises faithful IIT4 Φ. This is PAIR #3: do anima's WORKING-
+MEMORY and HIERARCHICAL-PFC faculties INTEGRATE on a shared multi-step task?
+
+PAIR.
+  WM (H_1282 WorkMemBuffer): a gated leaky-activation buffer that HOLDS one item
+     across distractor steps — K slots, each (key, scalar activation); every
+     distractor step LEAKS activations ×λ (volatile), capacity-limited. WM's
+     competence = remembering WHAT value was held across a long distractor gap.
+     WM-alone read: the held value's match score (activation×cos) — it answers
+     "what was the target X carried across the gap" but has NO notion of ordered
+     plan position.
+  PFC (H_1294 HierGoalStack): a 2-level goal→ORDERED-subgoal stack with a pointer
+     p that emits subgoal[p] ONLY when grounded and ADVANCES p on completion,
+     SUPPRESSING out-of-order cues. PFC's competence = executing subgoals in the
+     RIGHT ORDER amid out-of-order temptation. PFC-alone read: whether the current
+     cue matches the CURRENT-pointer subgoal — it answers "is this the right NEXT
+     step" but has NO buffer that survives a long distractor gap (it re-reads the
+     live store / window each tick; a value held only in WM, not re-presented, is
+     invisible to it).
+
+KEY QUESTION (the subsumption test). WM = PASSIVE maintenance of a value across a
+gap. PFC = ACTIVE ordered advance over a plan. H_1294's card EXPLICITLY contrasts
+them ("vs working-memory: WM passively maintains; it does not ORDER items into a
+plan or ADVANCE on completion"). So are they genuinely SEPARABLE on a shared task —
+WM solving items the PFC misses (a value must survive a long gap) AND PFC solving
+items WM misses (the right step must be chosen amid out-of-order temptation) — or
+does the goal-stack SUBSUME the buffer (PFC's grounding re-read already carries
+WM's held value)?
+
+DECISION TASK. A multi-step trial: a TARGET token X is presented, then a DISTRACTOR
+GAP of length g, then a CUE WINDOW that mixes the (gap-attenuated) target subgoal
+cue with out-of-order / ungrounded distractor cues. Binary per-trial decision:
+ACCEPT (emit the held target as the correct next subgoal) = 1, vs REJECT (this is
+NOT the held target's correct ordered step) = 0. Each item has a ground-truth
+correct action derived from the SCENARIO it instantiates, NOT set to the answer.
+  - WM-alone policy:   ACCEPT iff the maintained-buffer match score for the cue
+                       (after the gap of leaks) >= WM_THR (i.e. the buffer still
+                       holds a value matching the cue). Confidence = |score − WM_THR|.
+  - PFC-alone policy:  ACCEPT iff the cue grounds the CURRENT-pointer subgoal
+                       (align >= ALIGN_THR vs the current-subgoal target read off
+                       the live store, the H_1294 rule). Confidence = |align − ALIGN_THR|.
+  - compose policy:    a SUBSTRATE-WEIGHTED arbiter — each faculty's vote weighted
+                       by its OWN scale-relative confidence (|signal−threshold|
+                       normalized by that faculty's mean |signal−threshold|; the
+                       H_1397 a_break_the_wall commensurability fix). NO hardcoded
+                       "PFC wins" / fixed priority (a_autonomy_over_hardcode). The
+                       more-relatively-confident faculty's vote wins.
+  - shuffle control:   permute which faculty-reads attach to which item, re-arbitrate.
+  - ORACLE ceiling:    per item, correct iff EITHER faculty-alone is correct (upper
+                       bound on what ANY arbiter over these two faculties can reach).
+
+ITEM FAMILIES (jittered with AMBIG_NOISE so NO family is perfectly reliable — a
+clean per-family certainty would make oracle≡1 & compose≡oracle a hand-built
+artifact):
+  (F1) WM-DECISIVE      — a LONG distractor gap: WM's buffer still holds the target
+                          (decision rides on whether the value survived the gap), PFC
+                          is at-chance (pointer/order is ambiguous here). The correct
+                          action rides on the HELD value, not the order.
+  (F2) PFC-DECISIVE     — a SHORT gap (WM trivially full → WM can't discriminate) but
+                          an OUT-OF-ORDER temptation: a well-grounded cue is presented
+                          that is the WRONG ordered step. The decision rides on ordered
+                          pointer position, not on whether a value is held.
+  (F3) AGREE            — both lean the same correct way (redundant region): short gap,
+                          in-order grounded cue → both ACCEPT (correct).
+  (F4) CONFLICT (WM right)  — faculties OPPOSE; WM is correct. A value survived a long
+                          gap and the cue matches it, but the cue looks out-of-order to
+                          PFC's pointer (PFC REJECTs, wrong). Tests whether the arbiter
+                          trusts WM when it is confident.
+  (F5) ADVERSARIAL CONFLICT (PFC right, WM LOUDER-but-wrong) — the anti-gift control:
+                          faculties OPPOSE, the CORRECT action is PFC's (reject an
+                          out-of-order cue), BUT WM votes ACCEPT with HIGH confidence
+                          (a freshly-refreshed buffer strongly matches the cue surface).
+                          A naive "trust the louder faculty" arbiter FOLLOWS WM and is
+                          WRONG → the confidence-arbiter must NOT be trivially gifted
+                          the oracle. correct = REJECT.
+Mixed so NO single faculty solves all → best_single < oracle iff complementary.
+
+METRICS (mean over 3 seeds [4406,4407,4408]):
+  acc_wm · acc_pfc · best_single=max(acc_wm,acc_pfc) · acc_compose · acc_shuffle ·
+  ORACLE · conflict_rate · only-wm/only-pfc/both/neither decomposition.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (pre-registered, NOT moved after scoring):
+  COMPOSE_DELTA = 0.05      # net-lift threshold
+  ORACLE_MARGIN = 0.02      # complementarity-exists threshold
+  SHUFFLE_TOL   = 0.02      # earned: compose must beat shuffle by > this
+  SEEDS = [4406, 4407, 4408]
+
+  (B1 COMPOSE-EFFECT)  acc_compose >= best_single + COMPOSE_DELTA
+        → the two faculties are COMPLEMENTARY and compose to a NET LIFT.
+  (B2 ORACLE)          ORACLE − best_single > ORACLE_MARGIN
+        → complementarity EXISTS (some items only one faculty gets right) — even if the
+          arbiter cannot capture it (that case → taxonomy (a) wrong-arbiter).
+  (B3 EARNED/p6)       acc_compose − acc_shuffle > SHUFFLE_TOL
+        → the lift is the GROUNDED coupling (p6), not averaging/luck; shuffle collapses.
+  (B4 p6 GUARD)        WM & PFC BOTH read substrate state only (buffer activation/cos,
+          grounding margin, pointer, cue-vs-subgoal cosine), NO injected label; a
+          structural audit (grep operative code) finds no persona/system-prompt/RLHF/
+          answer-label/hardcoded-priority surface.
+  Plus only-X decomposition: only_wm>0 AND only_pfc>0 ⇒ SEPARABLE (not subsumed).
+
+VERDICT (a_break_the_wall taxonomy — report whichever the numbers HONESTLY show):
+  🟢 COMPOSE-LIFT          iff B1 ∧ B2 ∧ B3 ∧ B4  (WM+PFC complementary, integration
+                            helps; names engine-native §compose + a Φ-measurement follow-on).
+  🟠 ORACLE-HEADROOM-but-ARBITER-FAILS  iff B2 ∧ B4 ∧ ¬B1  (taxonomy (a): complementary but
+                            the substrate-weighted arbiter can't capture it → needs a better arbiter).
+  🧱 INDEPENDENT-or-SUBSUMED iff ¬B2  (taxonomy (d): no oracle headroom — the faculties do
+                            NOT compose to a lift; a REAL finding about anima's integration
+                            limits / a redundant (subsumed) pair). A clean 🧱 is VALID (c9).
+  If B4 fails → honest RED (a label leaked; p6 NOT satisfied).
+
+SUBSUMPTION PROBE (H_1294's claim test). Report whether PFC-alone's grounding re-read
+ALREADY recovers WM's held value (subsumption — the goal-stack subsumes the buffer),
+or genuinely separable: measured by (i) oracle headroom over best_single, (ii) the
+only-X decomposition (only-wm≈0 ∧ only-pfc≈0, both high → redundant; only-wm>0 ∧
+only-pfc>0 → separable/complementary).
+
+OPTIONAL Φ-COMPOSE LEG (H_1404 template) IF capability composes:
+  FAITHFUL IIT4 Φ via stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI,
+  n≤8, NEVER a proxy — a_phi_iit4_tool HARD rule; Python derives trajectories only,
+  computes NO Φ). 4 systems: S_wm (n=4 WM units) · S_pfc (n=4 PFC units) · S_composed
+  (n=8 coupled through the arbiter) · S_disconnected (n=8, coupling removed).
+  FROZEN Φ bars (NOT moved):
+    (Bφ1 INTEGRATION-RAISES-Φ)  Φ_composed > max(Φ_wm, Φ_pfc) + 0.02
+    (Bφ2 EARNED/coupling)       Φ_composed > Φ_disconnected + 0.02
+    (Bφ3 control sane)          Φ_disconnected ≤ max(parts) + 0.02
+  3 seeds [4406,4407,4408], T=96, n_bins=16; binning-invariance reported.
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck): DIRECTIONAL numpy mirror
+(LIVE CORE/*.hexa UNTOUCHED). Toy/synthetic scenarios, 3 seeds, deterministic readouts
+(tests COMPOSITION STRUCTURE, not a trained integrator). Scale / real-corpus / engine-
+native transfer UNVERIFIED. NO bar moved post-hoc. p1/p2/p3/p4/p6 guard via leg B4.
+================================================================================
+
+================================================================================
+R2 FREEZE ADDENDUM (a_break_the_wall — pre-registered BEFORE the R2 run, c9/p7)
+================================================================================
+R1 outcome (honest, frozen-first): 🟠 ORACLE-HEADROOM-but-ARBITER-FAILS. The
+complementarity is REAL and large (B2 oracle−best=+0.264 PASS, only_wm=0.264 AND
+only_pfc=0.319 both>0 = clearly SEPARABLE; B3 shuffle collapse +0.121 PASS; B4 audit
+clean) but the substrate-weighted confidence-MAGNITUDE arbiter cannot capture it
+(B1 FAIL: compose 0.629 < best_single 0.681 — it even DEGRADES below best-single,
+fooled by WM's loud-but-wrong vote on the F5 adversarial family).
+
+Per a_break_the_wall (a ceiling must be MEASURED not assumed; precedent H_1402): before
+banking the 🟠 wall, attempt ONE genuine breakthrough — test whether a genuinely-
+DIFFERENT, still SUBSTRATE-DERIVED, NO-hardcoded-priority arbiter can capture the
++0.264 oracle headroom. Pre-register EXACTLY TWO principled alternative arbiters here
+BEFORE measuring; NO sweep, NO bar moved. The R1 frozen bars (B1/B2/B3/B4, deltas,
+SEEDS=[4406,4407,4408]) apply VERBATIM. The DECISION TASK / families / faculty reads
+are UNCHANGED — ONLY the conflict-arbitration rule changes (anti-Goodhart).
+
+  ARB-A (saturation-capped relative confidence). Same scale-relative confidence as R1,
+    but each faculty's relative confidence is CAPPED at SAT_CAP=2.0 of its own mean
+    before comparison: rel = min(conf/mean, SAT_CAP). Rationale (substrate, no label):
+    a single adversarially-LOUD vote (F5: WM screams) should not dominate beyond a
+    saturation ceiling — the immune/affect faculties saturate, so a capped read is the
+    substrate-faithful comparison, not raw magnitude. NO label peeked; SAT_CAP frozen
+    here at 2.0 (one value, not swept).
+
+  ARB-B (agreement-calibrated routing). On DISAGREEMENT, route to the faculty whose
+    current relative confidence is higher RELATIVE TO its own typical disagreement-time
+    confidence — i.e. normalize each faculty's conf by its mean conf computed ONLY over
+    the conflict subset (conf / mean_conf_on_conflicts), then the higher wins. Rationale
+    (substrate, no label): a faculty that is unusually confident FOR A CONFLICT is more
+    likely to be the decisive one; this de-weights a faculty (WM on F5) that is loud on
+    ALL conflicts. NO label peeked (the conflict mask is decision-disagreement, not
+    ground truth); means frozen as the per-faculty conflict-time mean.
+
+VERDICT RULE (R2, a_break_the_wall taxonomy):
+  🟢 COMPOSE-LIFT (R2 arbiter) iff EITHER ARB-A OR ARB-B clears B1 verbatim
+       (acc_compose_NEW >= best_single + 0.05) AND still B2 ∧ B3 ∧ B4 — a genuine
+       breakthrough: the wall was a wrong-arbiter (a) wall, broken by a better
+       substrate-derived rule. Report WHICH arbiter and its number.
+  🧱 (a)→(d) RECLASSIFIED — TRUE SUBSUMPTION/UN-CAPTURABLE CEILING iff NEITHER ARB-A nor
+       ARB-B clears B1 (both stay below best_single+0.05) — across TWO arbiter families
+       (R1 magnitude + R2 saturation-capped + R2 agreement-calibrated) the +0.264 oracle
+       complementarity is NOT capturable by ANY substrate-derived arbiter → the per-item
+       right-faculty signal is NOT in the substrate readout → a genuine (d)-type ceiling
+       (the right faculty PER ITEM is not predictable from substrate confidence). An
+       HONEST, valid closed-negative (c9) that CONFIRMS the 🟠 wall as a real ceiling
+       for the confidence-arbiter family — WHILE the faculties remain demonstrably
+       SEPARABLE (only-X both>0) and an ORACLE lift EXISTS (a learned/Φ-aware arbiter,
+       or engine-native cross-faculty wiring, is the named headroom).
+  B3 EARNED still required for whichever arbiter is reported (shuffle collapse).
+
+NO bar moved. SAT_CAP=2.0 and the conflict-mean normalization are pre-registered here
+(single values, no sweep). If neither breaks B1, the 🟠/🧱 is the honest terminal — NOT
+forced green (p7/c9).
+================================================================================
