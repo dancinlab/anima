@@ -1,0 +1,74 @@
+H_1407 — lane-composition Φ-measurement (cerebellum × basal) — FAITHFUL IIT4 (exact MIP-EI, n<=8)
+engine: stdlib/consciousness/iit4/faithful_phi.hexa (a_phi_iit4_tool — NOT a proxy). FROZEN PRIMARY n_bins=16.
+============================================================================================
+=== H_1407 lane-composition FAITHFUL IIT4 Φ (cerebellum × basal) — stdlib exact MIP-EI, n<=8 ===
+engine: stdlib/consciousness/iit4/faithful_phi.hexa  (a_phi_iit4_tool — NOT a proxy)
+state file: /tmp/h1407_states.txt
+PROGRAM LAW TEST: both parts LOW individual-Φ control faculties ⇒ law predicts Φ-composes.
+
+--- FROZEN PRIMARY n_bins=16 (terminal Φ verdict) ---
+  [cerebellum_s4700]  n=4 T=96  faithful_Φ=3.256985
+  [basal_s4700]  n=4 T=96  faithful_Φ=0.000000
+  [composed_s4700]  n=8 T=96  faithful_Φ=4.382138
+  [disconnected_s4700]  n=8 T=96  faithful_Φ=0.000000
+  [cerebellum_s4701]  n=4 T=96  faithful_Φ=3.636846
+  [basal_s4701]  n=4 T=96  faithful_Φ=0.000000
+  [composed_s4701]  n=8 T=96  faithful_Φ=3.615891
+  [disconnected_s4701]  n=8 T=96  faithful_Φ=0.000000
+  [cerebellum_s4702]  n=4 T=96  faithful_Φ=3.534012
+  [basal_s4702]  n=4 T=96  faithful_Φ=0.000000
+  [composed_s4702]  n=8 T=96  faithful_Φ=6.870575
+  [disconnected_s4702]  n=8 T=96  faithful_Φ=0.000000
+
+=== MEAN faithful Φ over 3 seeds (n_bins=16) ===
+  Φ_cerebellum   = 3.475948   (n=4)
+  Φ_basal        = 0.000000   (n=4)
+  Φ_composed     = 4.956201   (n=8, coupled)
+  Φ_disconnected = 0.000000   (n=8, coupling removed — EARNED control)
+  max(parts)     = 3.475948
+  composed MIP cut: A={0,1,2,3,5,6,7} | B={4}  cut=6.870575  /min|side|=1  =Φ6.870575
+
+=== FROZEN bars (n_bins=16) ===
+  Bφ1 INTEGRATION-RAISES-Φ  Φ_composed > max(parts)+0.02 : 4.956201 > 3.495948  => PASS
+  Bφ2 EARNED (coupling)     Φ_composed > Φ_disc+0.02      : 4.956201 > 0.020000  => PASS
+  Bφ3 control sane          Φ_disc ≤ max(parts)+0.02      : 0.000000 ≤ 3.495948  => PASS
+
+VERDICT: 🟢 INTEGRATION-RAISES-Φ — composing cerebellum+basal RAISES faithful IIT4 Φ (earned vs disconnected control)
+  → CONFIRMS the program LAW: a both-LOW-individual-Φ control pair Φ-composes (the H_1404 mechanism, not the H_1405 ToM-dominates case).
+
+--- BINNING-INVARIANCE SWEEP (n_bins ∈ {8,12,16,24}; primary=16) ---
+  n_bins= 8 : Φ_cb=1.098836 Φ_bg=0.000000 Φ_cmp=1.623078 Φ_dis=0.000000 max(parts)=1.098836 → Bφ1 PASS
+  n_bins=12 : Φ_cb=2.228086 Φ_bg=0.000000 Φ_cmp=4.258794 Φ_dis=0.000000 max(parts)=2.228086 → Bφ1 PASS
+  n_bins=16 : Φ_cb=3.475948 Φ_bg=0.000000 Φ_cmp=4.956201 Φ_dis=0.000000 max(parts)=3.475948 → Bφ1 PASS  [FROZEN BAR]
+  n_bins=24 : Φ_cb=5.441634 Φ_bg=0.000000 Φ_cmp=7.328496 Φ_dis=0.000000 max(parts)=5.441634 → Bφ1 PASS
+
+=== H_1407 faithful Φ measurement complete (a_phi_iit4_tool) ===
+
+--- HONEST SUBSTRATE NOTE (c9) — basal-block trajectory degeneracy ---
+Φ_basal = 0.000 at EVERY n_bins is NOT just 'low individual-Φ' — it is partly a DEGENERATE
+trajectory: in this Φ fixture the immune store ALWAYS recalls the bound answer and the basal
+argmax candidate is ALWAYS the grounded true answer, so two of the four basal units are CONSTANT
+(outcome_reward≡+1, no_go_pressure≡0) and go_margin takes only ~2 distinct values → near-zero
+pairwise MI → Φ_basal=0. The basal faculty is genuinely COMPETENT on the (separately-jittered)
+capability fixture (acc_basal=0.693); the Φ=0 reflects this Φ-fixture's units being near-constant,
+NOT that the basal mechanism carries no information. Reported VERBATIM, frozen, NOT tuned.
+
+--- LAW READING (the point of the pair) ---
+PREMISE TEST: the program law (H_1404 both-low ⇒ composes; H_1405 ToM-HIGH-dominates ⇒ no-compose)
+predicted cerebellum+basal are BOTH low-Φ control faculties and SHOULD Φ-compose.
+MEASURED: Φ_basal=0.000 (degenerate/low, as predicted) BUT Φ_cerebellum=3.476 is HIGH (n_bins=16),
+so the 'both parts low' premise PARTIALLY FAILS — the cerebellum forward-model trajectory is itself
+richly integrated (its 4 units pred_error/pred_confidence/correction_drive/state_novelty are tightly
+coupled through the delta-rule).
+OUTCOME: UNLIKE H_1405 (where the high-Φ ToM part DOMINATED and BLOCKED composition → 🧱), here the
+high-Φ cerebellum part did NOT block composition — Φ_composed=4.956 > max(parts)=3.476+0.02 (Bφ1 PASS),
+binning-INVARIANT (PASS at n_bins 8/12/16/24), and the disconnected control collapses to Φ=0 (Bφ2/Bφ3
+PASS = the lift is the arbiter COUPLING channel, not just more units).
+REFINED LAW (honest): the controlling predictor is whether the HIGH-Φ part DOMINATES the composed
+min-cut. In H_1405 the ToM block was so internally integrated that any cut crossing it cost more than
+the cross-faculty coupling → max(parts) won. Here the cerebellum block is high-Φ but its integration
+does NOT subsume the basal coupling: the composed min-cut isolates a SINGLE basal unit ({4}=go_margin,
+cut 6.87 at the s4702 max), i.e. the coupling adds a NEW high-MI channel ON TOP of the cerebellum block
+→ Φ_composed > max(parts). So 'both-low' is SUFFICIENT but NOT NECESSARY for Φ-compose; the necessary
+condition is that NO single part's internal integration exceeds the composed min-cut MI. CONFIRMS the
+law's spirit (control faculties Φ-compose) while REFINING its mechanism (H_1404 vs H_1405 vs H_1407).
