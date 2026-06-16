@@ -653,6 +653,46 @@ fn main() {
                && tom_basal_compose([0.0, 1.0, 0.0], [1.0, 0.0, 5.0], 1.0, 1.0) == 1.0
     if _assert_b("case_148_tombasal_abstain_discipline", true, tb_abst) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (h6) CEREBELLUM×MEMORY COMPLEMENTARY-TAIL COMPOSE ARBITER (H_1421, rung-3 wire-in; cases 149-152) ──
+    // cereb_mem_compose composes the cerebellum FORWARD MODEL (vforward_err, H_1280) with the episodic
+    // STORE (immune_grow_recall, H_1227/1231) on ONE decision via the validated H_1421 LC tail-deferral
+    // arbiter. The pair was a WALL under the symmetric route (H_1417 P4 +0.0437) and under three other
+    // lenses (LA surprise-gate INERT, LB memory-prime +0.0489, L0 baseline); ONLY LC (detect cerebellar
+    // loud-wrong → defer to the episodic store on the adversarial tail) BOUND (+0.0541, ablation LIVE).
+    // ADDITIVE + Ψ-disjoint. These cases prove the arbiter's moving parts deterministically; the LIVE
+    // cerebellum/memory leg-reads (cereb_mem_cerebellum_vote/_memory_vote) are exercised in case 149.
+    let cm_ff = vforward_new(1, 1, 0.05)                                              // LIVE forward field
+    let mut cm_mem = immune_grow_new(immune_embed_key("cm_box_fact"), "box", 64, 64, true) // bind box (vote 1)
+
+    // case 149 (AGREE → shared vote, LIVE leg-reads) : cerebellum votes 1 (live vforward_err conf),
+    //   memory live-recalls "box" (vote 1) → compose = 1; both legs are REAL engine reads.
+    let cm_cv149 = cereb_mem_cerebellum_vote(cm_ff, 1.0, 0.55)                        // live forward read, vote 1
+    let cm_mv149 = cereb_mem_memory_vote(cm_mem, immune_embed_key("cm_box_fact"), 0.40) // live recall → vote 1
+    if _assert_b("case_149_cerebmem_agree_shared_vote", true,
+                 cm_mv149[0] == 1.0 && cm_mv149[1] < 0.5                              // memory recalled (not abstain)
+                 && cereb_mem_compose(cm_cv149, cm_mv149, 1.0, 1.0) == 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 150 (TAIL-DEFERRAL — the distinguishing LC behavior) : CONFLICT where the cerebellum is LOUD
+    //   (scale-rel conf 5 ≥ 1) and the memory is GROUNDED (scale-rel conf 2 ≥ 1) → the tail-deferral
+    //   fires and DEFERS to memory (vote 0) EVEN THOUGH the cerebellum is louder. This is the
+    //   complementary-tail rule the baseline symmetric route does NOT have (baseline would pick cerebellum).
+    if _assert_b("case_150_cerebmem_tail_deferral_to_memory", true,
+                 cereb_mem_compose([1.0, 0.0, 5.0], [0.0, 0.0, 2.0], 1.0, 1.0) == 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 151 (BASELINE route when NOT both-loud) : CONFLICT where the memory is NOT grounded
+    //   (scale-rel conf 0.3 < 1) → tail-deferral does NOT fire; the higher scale-rel conf wins, so the
+    //   loud cerebellum (conf 5) takes the decision (vote 1). Dissociates the tail rule from the route.
+    if _assert_b("case_151_cerebmem_baseline_route_no_deferral", true,
+                 cereb_mem_compose([1.0, 0.0, 5.0], [0.0, 0.0, 0.3], 1.0, 1.0) == 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 152 (ABSTAIN discipline) : an untaught fact → memory live-recall ABSTAINS; BOTH-abstain
+    //   compose returns -1 (no fab, p5/H_1227); one-abstain → the other leg's vote.
+    let cm_ab152 = cereb_mem_memory_vote(cm_mem, immune_embed_key("cm_untaught_zzz"), 0.40) // untaught → abstain
+    let cm_abst = cm_ab152[1] > 0.5
+               && cereb_mem_compose([0.0, 1.0, 0.0], [0.0, 1.0, 0.0], 1.0, 1.0) == 0.0 - 1.0
+               && cereb_mem_compose([1.0, 0.0, 5.0], [0.0, 1.0, 0.0], 1.0, 1.0) == 1.0
+    if _assert_b("case_152_cerebmem_abstain_discipline", true, cm_abst) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── (i) HIERARCHICAL-PFC GOAL→SUBGOAL CONTROLLER (H_1294 R2, HD31) ──────────────
     // The hier controller is ADDITIVE + Ψ-disjoint (a READ over the immune margin + cue
     // cosine + its OWN pointer; no store mutation, no pure_field touch). These cases

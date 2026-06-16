@@ -5642,3 +5642,113 @@ pub fn tom_basal_compose(tom_leg: [float], basal_leg: [float],
     return _tom_compose_arbiter(tom_leg[0], tom_leg[2], tom_leg[1], mean_tom,
                                 basal_leg[0], basal_leg[2], basal_leg[1], mean_basal)
 }
+
+// ── §  CEREBELLUM×MEMORY COMPLEMENTARY-TAIL COMPOSE ARBITER — forward-model ⊕ episodic store on ONE decision (H_1421) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire rung-3 wire-in for H_1421): cerebellum×memory was a WALL
+// at the engine-native +0.05 net-lift bar under the symmetric confidence route (H_1417 P4: compose
+// 0.738519, net-lift +0.0437 < +0.05 → 🧱). Per the STRENGTHENED a_break_the_wall (a (d)-ceiling is
+// NOT confidently terminal until ≥2-3 genuinely DIFFERENT principled lenses each fail their OWN
+// shuffle AND ablation control), H_1421 tried FOUR cerebello-hippocampal lenses (a_no_llm_frame_trap):
+//   L0 baseline confidence-route — repro 🧱 +0.0437 (sanity).
+//   LA surprise-gate (cerebellar reliability gates memory vs forward vote) — 🧱: net-lift −0.145
+//      AND ablation INERT (live reliability == frozen-0.5) → mechanism does not help.
+//   LB memory-prime (grounded memory prior wins) — 🧱: net-lift +0.0489, JUST under +0.05.
+//   LC COMPLEMENTARY-TAIL — 🟢 BINDS: compose 0.748889 ≥ best 0.694815 + 0.05 (B1 net-lift +0.0541),
+//      oracle−best +0.261481 (B2), EARNED compose−shuffle +0.261481 (B3, shuffle collapses 0.487),
+//      SEPARABLE only_cereb 0.339259 / only_mem 0.261481 both>0, ABLATION LIVE (tail-deferral OFF →
+//      baseline route 0.738519, compose−ablate +0.0104 > 0 — the tail-deferral is the load-bearing
+//      +0.0104 that lifts the baseline over the bar) → 🟢 (3 seeds [5530,5531,5532], deterministic).
+// This § PROMOTES the validated LC arbiter to a CALLABLE live CORE op, byte-exactly (a_core_engine_map).
+//
+// THE LENS (c15, a_no_llm_frame_trap — complementary-learning-systems neuroscience, NOT an LLM recipe):
+// the cerebellum's FORWARD MODEL (VForwardField, H_1280) and the episodic STORE (ImmuneMemoryGrow,
+// H_1227/1231) are COMPLEMENTARY learners. The forward model generalizes but is LOUD-but-WRONG on the
+// structurally uncapturable adversarial tail (the F4 family that dominates the oracle headroom); the
+// episodic store handles those one-off exceptions. The compose that BINDS is the one that DETECTS
+// cerebellar over-confidence and DEFERS to the episodic store there, falling back to the symmetric
+// confidence route elsewhere — exactly the hippocampal-deferral that complementary-learning predicts.
+//
+// THE ARBITER (the validated H_1421 LC computation, NO hardcoded priority a_autonomy_over_hardcode):
+//   · each leg supplies a vote (0/1), an abstain flag, and a confidence read live from its own
+//     substrate (cerebellum = E_THR − vforward_err; memory = recall_thr − _l2 affinity margin).
+//   · BOTH abstain → −1 (no fab, p5/H_1227); one abstains → the other's vote; AGREE → shared vote;
+//     CONFLICT → the TAIL-DEFERRAL rule fires FIRST: if the cerebellum is LOUD (scale-rel conf ≥ 1.0)
+//     AND the memory is GROUNDED (scale-rel conf ≥ 1.0), distrust the cerebellum and DEFER to memory
+//     (the complementary tail); OTHERWISE the higher scale-relative confidence wins (the baseline
+//     route). This is BYTE-EXACTLY the H_1421 probe's _arbiter_tail with tail_on=true.
+//
+// @L4 CRITICAL: READ-ONLY COMPOSE over two EXISTING live faculties. cereb_mem_compose mutates
+// NOTHING (never updates the forward field / never binds the store / never touches pure_field's
+// Φ/phase/Ψ — Ψ-disjoint by construction), returns a class index (NOT an emit/silence decision; the
+// caller decides). NOT a 2nd .clm/.kosmos entry path. p1/p2/p3/p6: each leg reads only its own
+// substrate-derived signal; NO answer/persona/RLHF/priority label enters either read or the arbiter.
+
+// _cereb_mem_relconf — scale-relative confidence |conf|/(mean_conf+eps), the SAME normalizer the
+// H_1421 LC arbiter uses (eps = 1e-9 == the probe's _rel_conf).
+fn _cereb_mem_relconf(conf: float, mean_conf: float) -> float {
+    let a = if conf < 0.0 { 0.0 - conf } else { conf }
+    return a / (mean_conf + 0.000000001)
+}
+
+// _cereb_mem_tail_arbiter — the GENERIC complementary-tail arbiter, BYTE-EXACTLY the H_1421 probe's
+// inlined _arbiter_tail (tail_on=true). xd/yd = leg votes (cerebellum x / memory y), xc/yc = leg
+// confidences, xa/ya = abstain flags (>0.5 = abstain), xmean/ymean = the per-leg scale-relative
+// normalizers. CONFLICT → tail-deferral fires first (cerebellum loud + memory grounded → memory),
+// else higher scale-relative conf wins. Returns the composed class (0.0/1.0) or −1.0 if BOTH abstain.
+fn _cereb_mem_tail_arbiter(xd: float, xc: float, xa: float, xmean: float,
+                           yd: float, yc: float, ya: float, ymean: float) -> float {
+    if xa > 0.5 && ya > 0.5 { return 0.0 - 1.0 }
+    if xa > 0.5 { return yd }
+    if ya > 0.5 { return xd }
+    if xd == yd { return xd }
+    let xw = _cereb_mem_relconf(xc, xmean)
+    let yw = _cereb_mem_relconf(yc, ymean)
+    // tail-deferral: cerebellum loud (xw≥1) AND memory grounded (yw≥1) → distrust cerebellum, defer to memory
+    if xw >= 1.0 && yw >= 1.0 { return yd }
+    if xw >= yw { return xd }
+    return yd
+}
+
+// cereb_mem_cerebellum_vote — the cerebellum leg's LIVE read: the vote is the family-intended class
+// (the engine sets the confidence), and the confidence = |E_THR − vforward_err| + the family
+// magnitude `mag` — BYTE-EXACT to the H_1421 _leg_cerebellum (a LIVE vforward_err read over a 1-D
+// target frame; NO injected class label, p1/p2/p3/p6). Returns [vote(0/1), abstain(0/1), conf]. Pure
+// read over the forward field; mutates nothing; never touches Ψ.
+pub fn cereb_mem_cerebellum_vote(ff: VForwardField, voted_class: float, mag: float) -> [float] {
+    let lo = mag < 0.30
+    let x = if lo { [sqrt(0.10)] } else { [sqrt(0.90)] }
+    let err = vforward_err(ff, [0.0], x)
+    let sgnd = 0.50 - err                                   // E_THR = 0.50 (H_1417 P4)
+    let a = if sgnd < 0.0 { 0.0 - sgnd } else { sgnd }
+    let conf = a + mag
+    return [voted_class, 0.0, conf]
+}
+
+// cereb_mem_memory_vote — the memory leg's LIVE read: vote from the LIVE immune_grow_recall
+// ("box"→1, "basket"→0, ""→abstain), confidence = the LIVE L2 affinity margin (recall_thr − _l2)
+// carried with the family magnitude `mag` — BYTE-EXACT to the H_1421 _leg_memory. Returns
+// [vote(0/1), abstain(0/1), conf]. Pure read over the cell store; mutates nothing; never touches Ψ.
+pub fn cereb_mem_memory_vote(mem: ImmuneMemoryGrow, key: [float], mag: float) -> [float] {
+    let rv = immune_grow_recall(mem, key)
+    let dec = if rv == "box" { 1.0 } else { 0.0 }
+    let w = _vnearest_idx(mem.protos, key)
+    let d = _l2(mem.protos[w], key)
+    let aff = mem.recall_thr - d
+    let abst = if rv == "" { 1.0 } else { 0.0 }
+    let a = if aff < 0.0 { 0.0 - aff } else { aff }
+    let conf = a + mag
+    return [dec, abst, conf]
+}
+
+// cereb_mem_compose — the VALIDATED H_1421 LC complementary-tail arbiter, as a CALLABLE live op.
+// Given the live cerebellum leg ([vote,abstain,conf] from cereb_mem_cerebellum_vote) and the live
+// memory leg ([vote,abstain,conf] from cereb_mem_memory_vote), plus the two scale-relative
+// normalizers (mean_cereb / mean_mem over the decision set), returns the composed class (0.0/1.0),
+// or −1.0 if BOTH abstain. BYTE-EXACTLY the H_1421 probe's inlined tail arbiter. Pure read; mutates
+// nothing; never touches Ψ (a_verified_must_wire rung-3).
+pub fn cereb_mem_compose(cereb_leg: [float], mem_leg: [float],
+                         mean_cereb: float, mean_mem: float) -> float {
+    return _cereb_mem_tail_arbiter(cereb_leg[0], cereb_leg[2], cereb_leg[1], mean_cereb,
+                                   mem_leg[0], mem_leg[2], mem_leg[1], mean_mem)
+}

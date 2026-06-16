@@ -1,0 +1,39 @@
+================================================================================
+H_1421 — MULTI-LENS breakthrough attempt on the cerebellum×memory engine-BIND WALL
+  (H_1417 P4: 🧱 net-lift +0.0437 < +0.05). a_break_the_wall MULTI-LENS + ablation.
+  fixture+bars FROZEN VERBATIM from H_1417 P4 · 3 seeds [5530,5531,5532] · $0 CPU · p7 · c9
+================================================================================
+STANDALONE (mean 3 seeds): acc_cerebellum=0.694815 acc_memory=0.617037 best=0.694815 oracle=0.956296
+  only_cereb=0.339259 only_mem=0.261481
+--------------------------------------------------------------------------------
+  LENS L0 BASELINE (H_1417 P4 confidence-routing — sanity repro)
+    best=0.694815 compose=0.738519 net-lift(compose-best)=0.0437037
+    shuffle=0.485926 (compose-shuffle=0.252593) oracle=0.956296 (oracle-best=0.261481)
+    (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABL PASS)
+    ==> 🧱 WALL
+--------------------------------------------------------------------------------
+  LENS LA SURPRISE-GATE (cerebellar reliability gates memory vs forward vote)
+    best=0.694815 compose=0.54963 net-lift(compose-best)=-0.145185
+    shuffle=0.492593 (compose-shuffle=0.057037) oracle=0.956296 (oracle-best=0.261481)
+    ablate=0.694815 (compose-ablate=-0.145185)  <- ABLATION: =0 ⇒ mechanism INERT (ceiling evidence)
+    (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABL INERT)
+    ==> 🧱 WALL
+--------------------------------------------------------------------------------
+  LENS LB MEMORY-PRIME (grounded memory prior wins; cerebellum adjudicates)
+    best=0.694815 compose=0.743704 net-lift(compose-best)=0.0488889
+    shuffle=0.488889 (compose-shuffle=0.254815) oracle=0.956296 (oracle-best=0.261481)
+    ablate=0.694815 (compose-ablate=0.0488889)  <- ABLATION: =0 ⇒ mechanism INERT (ceiling evidence)
+    (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABL PASS)
+    ==> 🧱 WALL
+--------------------------------------------------------------------------------
+  LENS LC COMPLEMENTARY-TAIL (detect cerebellar loud-wrong; defer to memory)
+    best=0.694815 compose=0.748889 net-lift(compose-best)=0.0540741
+    shuffle=0.487407 (compose-shuffle=0.261481) oracle=0.956296 (oracle-best=0.261481)
+    ablate=0.738519 (compose-ablate=0.0103704)  <- ABLATION: =0 ⇒ mechanism INERT (ceiling evidence)
+    (B1 PASS) (B2 PASS) (B3 PASS) (SEP PASS) (ABL PASS)
+    ==> 🟢 BOUND
+================================================================================
+VERDICT: 🟢 ≥1 NEW LENS BINDS — cerebellum×memory composes engine-native after all.
+  (wire the BINDing lens: named op + smoke + ARCHITECTURE.json lockstep + guards.)
+  HONEST (c9): bars FROZEN identical to H_1417/1407/1414/1415. Toy 5-family fixture,
+  3 seeds, deterministic, LIVE vforward_err + immune_grow_recall leg-reads.
