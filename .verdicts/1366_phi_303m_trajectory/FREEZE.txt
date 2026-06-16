@@ -1,0 +1,99 @@
+H_1366 — phi-303m-trajectory — FREEZE (pre-registered BEFORE any Φ scored; c9/p7)
+================================================================================
+DATE: 2026-06-16
+SLUG: 1366_phi_303m_trajectory
+ARC:  OMEGA / Φ-robustness frontier (c16 wall · substrate-SOURCE axis, BINDING upgrade of H_1357)
+BRANCH: worktree off origin/main (clean); live CORE/*.hexa UNTOUCHED (standalone probe, 0 importers)
+
+THE WALL (state of the arc, BEFORE this lane)
+---------------------------------------------
+The faithful-IIT4 Φ-robustness wall is 🧱 across NINE measure cuts (small-φ MIP-EI, big-Φ,
+transfer-entropy, O-info, variance-free estimator, ...) + size (N=12, H_1347) + substrate
+(H_1349 live-CORE pure_field OSCILLATOR Engine A) + LEARNED-readout proxy (H_1357 🔶). The
+CONSISTENT diagnosis: the wall lives in the SUBSTRATE-SEED GEOMETRY, not the measure.
+
+  H_1349 (real oscillator):   R1 cleared all 3 seeds but lift SHRANK seed-to-seed (+1.127/
+                              +0.964/+0.604), perm RODE the lift (exchangeable modules) -> 🧱.
+  H_1357 (learned-readout):   R1 PASS all 3 seeds (ΔΦ +1.396/+0.775/+0.318) but STILL shrank
+                              seed-to-seed (same fragility direction), R2 perm degenerate ->
+                              🔶 HONEST PARTIAL. CRITICALLY: the substrate was a PROXY-from-
+                              telemetry (real pure_field oscillator + a deterministic
+                              SEED-INDEPENDENT learned-readout W), NOT a trained-303M trajectory
+                              (no GPU/torch reachable under $0 CPU). H_1357 explicitly named THIS
+                              lane as its "NOT ruled out" binding follow-on:
+                              "a FULL trained-303M hidden-state trajectory as the substrate."
+
+THE BINDING UPGRADE (this lane — the engine-real verdict H_1357 stood in for)
+-----------------------------------------------------------------------------
+H_1357 could only emulate a learned substrate with a fixed hand-built readout W over oscillator
+telemetry. H_1366 uses a REAL trained-303M-derived hidden-state trajectory — a GENUINE learned
+substrate (24-layer ByteGPT, 303,097,856 params, trained to val_ce 1.224, H_1129 GREEN-emergence
+checkpoint). The residual-stream activations of a trained transformer ARE a learned correlation
+geometry imposed by trained weights — the very thing H_1357's W proxied. This is the BINDING
+(engine-real, GPU+torch+checkpoint) test of whether a learned substrate escapes the wall.
+
+SUBSTRATE SOURCE — REAL (R3), sha-pinned (a_eeg_consciousness_record REAL-only; c9)
+----------------------------------------------------------------------------------
+  CKPT  = dancinlab/anima-clm-midcap-303m-broad-en-emergent / h1129c_best.pt
+          sha256 19be1295282d41c06db12bb890bc7c6e6d03b18565ee090ddfa208e46a160a28
+          arch ByteGPT(vocab=256, d=1024, n_layer=24, n_head=16, block=512), head tied to tok embed.
+  RUN   = load on GPU (torch), feed a FIXED prompt set (the H_1129 CONCEPTS, byte-encoded), capture
+          the residual-stream hidden state x[B,T,d=1024] at a CHOSEN layer (FROZEN: layer index
+          L_EXTRACT = 12, the mid-depth residual stream — frozen BEFORE scoring, not tuned).
+  REDUCE = d=1024 -> n=4 macro-nodes by FIXED contiguous channel-block mean pooling (block j =
+           channels [j*256 .. (j+1)*256), j in 0..3); take T=64 consecutive token positions ->
+           node j's T-length trajectory. n=4 matches H_1357/H_1349 n_mod=4 for DIRECT comparison.
+           This reduced 4x64 macro-node trajectory IS the REAL learned substrate (R3). Activation
+           dump (the raw x slice) is sha-pinned in state/phi-303m-trajectory/ (manifest).
+  SEEDS = [1317,1318,1319] perturb ONLY the EXTRACTION WINDOW START (which 64 contiguous token
+          positions of the prompt-set forward pass are taken as the trajectory) — the SAME real
+          trained activations, different starting points, exactly mirroring how H_1349 seeded
+          (perturb the starting point of a deterministic real substrate, never re-train).
+  => REAL trained-303M activation trajectory (NOT a proxy, NOT numpy, NOT the oscillator). This is R3.
+
+HELD IDENTICAL to the H_1349/H_1357 lineage (so any difference is the REAL learned substrate)
+---------------------------------------------------------------------------------------------
+  - Φ = FAITHFUL IIT4 ONLY: iit4_faithful_phi(traj, 4, 64, 8) over
+    stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, a_phi_iit4_tool). numpy NEVER
+    computes Φ. n=4 <= 8 (EXACT MIP, zero greedy slack), dim=64 ticks, 8 bins. Engine-native, deterministic.
+  - variance-clean rank-uniform read-out (H_1328) per node BEFORE the MIP (byte-identical) — any
+    lift is the between-node RELATIONSHIP, not amplitude variance.
+  - coupling = H_1283 re-entrant relay (w_nbr 0.5) + H_1319 Kuramoto phase pacemaker
+    (w_phase 0.5, omega_t 0.45, domega 0.08) — IDENTICAL to H_1349/H_1357.
+  - ARMS: A=NO-COUPLING (real node trajectories isolated/no relay/no pacemaker) · B=MECHANISM
+    (relay + pacemaker applied over the REAL node saliences) · S=PERM-SHUFFLE (module->phase
+    derangement, H_1332 construction) · O=OFFSET-SHUF (per-(t,module) phase offset, H_1332).
+  - eps = 0.02 (MARGIN_PHI, ported verbatim, NOT tuned). seeds [1317,1318,1319].
+
+FROZEN BARS (GREEN iff R1 AND R2 AND R3; pre-registered BELOW BEFORE scoring)
+----------------------------------------------------------------------------
+  R1 ROBUST:   REAL-303M Φ_B >= Φ_A + eps on ALL 3 seeds (incl orthogonal 1318/1319). ESCAPE test.
+  R2 EARNED:   REAL-303M perm Φ_S <= Φ_A + eps AND offset Φ_O <= Φ_A + eps on ALL 3 seeds.
+               NOTE (carried from H_1349/H_1357, NOT a new excuse): node-permutation is Φ-INVARIANT
+               under the symmetric small-φ MI matrix with the exact MIP enumerating ALL bipartitions
+               (Φ_S == Φ_B by construction). If perm is degenerate here too, the OPERATIVE EARNED
+               discriminator is the OFFSET shift; report perm honestly as degenerate (as H_1349/1357 did).
+  R3 REAL-SOURCE: the substrate IS a real trained-303M activation trajectory (sha-pinned dump), NOT
+               a proxy. Documentation+manifest invariant; PASS = activation dump sha recorded & the
+               trajectory is the real ckpt's hidden state.
+
+GATE / OUTCOMES (decided here, BEFORE scoring — every branch is a valid result, c9):
+  - R1 AND R2 AND R3  -> 🟢 GREEN: the REAL learned substrate ESCAPES the wall where the proxy/
+                    oscillator did not. A GENUINE NEW RESULT the proxy missed -> report LOUDLY.
+                    Engine-native follow-on named (wire a real-activation Φ read-out path).
+  - R1 AND NOT R2 (perm degenerate, offset earns) -> 🔶 HONEST PARTIAL: real-303M lift robust but
+                    module-identity binding not established by perm (same estimator degeneracy as
+                    H_1349/1357); offset collapse = phase-dependent lift. The BINDING confirms the
+                    proxy's 🔶 shape on a real learned substrate.
+  - NOT R1 (>=1 seed flips, like every prior substrate) -> 🧱 HONEST WALL (BINDING, STRONGEST on the
+                    substrate axis): even a REAL trained-303M learned substrate inherits the
+                    orthogonal-seed fragility -> the substrate axis is FULLY closed on the engine-real
+                    substrate H_1357 stood in for. The proxy is CONFIRMED FAITHFUL. BOUNDS (does not
+                    retract) the prior Φ verdicts. A valid result (a_break_the_wall, c9).
+
+NO tune-to-green (p7): bars frozen + committed BEFORE the first Φ scoring; re-run byte-identical
+(the GPU activation dump is sha-pinned, the Φ scoring over it is deterministic).
+CORE/*.hexa UNTOUCHED (standalone probe, 0 importers). REAL trained-303M only — if the ckpt genuinely
+cannot be loaded/run even on GPU, STOP and report honestly (c9); NO proxy fallback called 303M.
+L_EXTRACT=12, channel-block pooling 4x256, T=64, extraction-window-start seeds [1317,1318,1319] are
+ALL frozen here BEFORE any forward pass is scored.
