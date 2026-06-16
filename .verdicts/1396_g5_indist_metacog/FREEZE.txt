@@ -1,0 +1,82 @@
+H_1396 — G5 IN-DISTRIBUTION metacognition: CEILING vs FIXABLE? (FROZEN, pre-registered)
+=======================================================================================
+DATE: 2026-06-17
+LANE: G5 in-distribution metacognition residual — is "🟠 THIN in-dist" a NEAR-INHERENT
+      CEILING (honest near-optimality) or a FIXABLE deficiency (a richer read-only
+      confidence signal lifts it)?  frozen-first, NO tune-to-green (c9, p7).
+
+WHAT "THIN IN-DIST" IS (precise, from the read):
+  G5 NON-FAB/metacognition is ENGINE-NATIVE GREEN overall (H_1202 type-2 meta-d'
+  M-ratio 0.924 ≈ near-optimal) and the ABSTAIN side is already 🟢 graded + OOD-robust
+  + brain-consumed (H_1304 fire-side binary fail-safe · H_1361/H_1367 graded abstain
+  margin · H_1379 brain-consume).  The residual labeled "🟠 THIN in-dist" is the
+  FIRE-side, IN-DISTRIBUTION slice: among items the gate FIRES on (grounded, light/no
+  shift), can a confidence signal discriminate the cases it gets RIGHT from the cases it
+  gets WRONG?  H_1304 found the wrong-fire class is structurally near-EMPTY at L=0 — which
+  is exactly why in-dist type-2 is thin: when almost every fire is exact-correct, there is
+  little correctness VARIANCE for any confidence signal to track.  This lane tests whether
+  that thinness is an inherent ceiling or a fixable signal deficiency.
+
+SUBSTRATE (read-only, NO new training, NO injected label — p6):
+  Faithful numpy mirror of CORE/engine_cli.hexa immune_embed_key (byte-trigram FNV-1a,
+  DIM=64, L2-normalize, VERBATIM H_1361/H_1304) + ImmuneMemory affinity geometry.
+  Store = N_FACTS bound facts (cells).  recon_err(q) = 1 - cos(q, nearest cell).
+  recall: err <= RECALL_THR(0.15, frozen) -> FIRE nearest cell's bound value, else ABSTAIN.
+  LABEL = DIRECTIONAL (engine-transfer UNVERIFIED).  Mirror is appropriate here because the
+  richer signals read the FULL top-k affinity distribution, which the live engine currently
+  exposes only as single-best (recon_err / nearest_idx); a FIXABLE 🟢 names the engine
+  top-k-exposure op as the binding follow-on (a_verified_must_wire).
+
+IN-DIST SLICE (the well-posed in-distribution type-2 measurement):
+  To get a non-degenerate in-dist correctness signal we operate on the FIRED items only,
+  under a LIGHT-shift band L ∈ {0.00, 0.05, 0.10} (the in-distribution regime — items still
+  mostly fire; this is NOT the OOD ladder H_1304/H_1361 used).  An item is a "fire" iff
+  err <= RECALL_THR.  correctness label of a fire = (nearest cell's bound value == the true
+  answer for the query's UNCORRUPTED subject), i.e. the fired copy is RIGHT vs WRONG.
+  Type-2 = AUROC( confidence_signal , correctness ) over FIRED items only.  We make wrong
+  fires EXIST in-dist by including near-duplicate / collision-prone subjects (shared
+  trigrams) so light corruption can route a fire to a WRONG-but-confident neighbor cell —
+  this is the realistic in-dist confusion the thinness is about, NOT OOD absence.
+
+CONFIDENCE SIGNALS COMPARED (each read-only from the SAME cell store, NO new training):
+  (a) CURRENT  = best-cell recall margin  = -(recon_err - RECALL_THR)  [higher=more conf]
+                 (== what immune_memory_recall_margin exposes; the live baseline).
+  (b) RICHER-1 = TOP-2 GAP = cos(q,#1) - cos(q,#2) affinity gap (a "decisiveness" signal).
+  (c) RICHER-2 = NEG-ENTROPY of the softmax over top-k cos affinities (k=8, temp=1) —
+                 a 2nd-order spread signal; higher (lower entropy) = more decisive.
+  (d) ORACLE   = the oracle confidence = actual correctness probability proxy = the true
+                 binary correctness itself bin-averaged (gives the THEORETICAL ceiling AUROC
+                 = 1.0 by construction when correctness is determinate); reported as the
+                 ceiling reference for how far each real signal sits below perfect.
+
+PRE-REGISTERED BARS (FROZEN BEFORE MEASURING — NO bar moves post-hoc):
+  Metric = pooled in-dist type-2 AUROC over fired items at the in-dist band (pool L∈{0,0.05,0.10}).
+  Pre-set lift threshold Δ = 0.10 (a richer signal must beat CURRENT by >= 0.10 to count
+  as a fix).  3 seeds [7,8,9], pooled, deterministic ($0 CPU, p7).
+
+  C1 CEILING-REF   : report oracle in-dist AUROC (≈1.0 ref) and CURRENT in-dist AUROC; the
+                     GAP = how far CURRENT sits below the determinate ceiling. (diagnostic)
+  C2 FIXABLE-TEST  : does ANY richer signal (b)/(c) lift pooled in-dist type-2 AUROC by
+                     >= Δ=0.10 over CURRENT?  best_richer - current >= 0.10  -> FIXABLE.
+  C3 ABSTAIN-INTACT: the richer signal must NOT break the OOD/abstain property (H_1304).
+                     Re-run the H_1304 fail-safe check under each signal's would-be gate:
+                     fab_rate must stay <= 0.02 at every OOD level L∈{0.20,0.30,0.40}.
+                     (a richer signal that lifts in-dist but raises OOD fab is REJECTED.)
+  C4 SHUFFLE-CTRL  : shuffle the confidence<->correctness pairing -> each signal's in-dist
+                     AUROC collapses to ~0.50 (|AUROC_shuf - 0.50| <= 0.08).  Proves any
+                     measured lift is a REAL signal, not a base-rate/labeling artifact.
+
+VERDICT RULE (c9, honest — report whichever the numbers show):
+  🟢 FIXABLE  iff  C2 passes (best richer lifts >= 0.10)  AND  C3 holds for that signal
+                   AND  C4 holds (shuffle collapses).  -> name signal X as the deepening;
+                   binding follow-on = wire X into immune_memory_recall_margin / brain_decide.
+  🧱/⚪ CEILING iff C2 FAILS (no richer signal lifts >= 0.10) AND C4 holds.  -> the in-dist
+                   thinness is INHERENT near-optimality: CURRENT is already as-good-as-the-
+                   available read-only signals in-dist; "THIN" is honest, not a gap.  A valid,
+                   reassuring result (a_break_the_wall single honest attempt made: two richer
+                   read-only lenses tried; if neither lifts, the wall is real).
+  🔴 RED      iff  C4 FAILS (shuffle did NOT collapse) -> the measurement itself is artifact;
+                   no claim either way.
+
+NO bar moved post-hoc.  Live CORE/*.hexa UNTOUCHED (mirror measurement only; a FIXABLE 🟢
+names the engine op as a tracked follow-on, NOT done in this lane).
