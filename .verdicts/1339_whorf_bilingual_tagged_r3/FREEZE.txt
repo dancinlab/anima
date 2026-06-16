@@ -1,0 +1,124 @@
+H_1339 — SAPIR-WHORF BILINGUAL r3 (TAGGED, control re-freeze): a language-TAG dimension lets a
+substrate hold BOTH languages' categorical perception (CP) WITHOUT the H_1330 catastrophic
+overwrite. R1 numpy MIRROR (DIRECTIONAL) + engine-native realization on live CORE.
+FROZEN DESIGN — pre-registered BEFORE any scoring. NO tune-to-green (c9 / p7).
+
+This is the named r3 of H_1335 🧱 (.verdicts/1335_whorf_bilingual_tagged/result.txt). H_1335
+found I1∧I2 DECISIVE — coexistence is REAL and TAG-ATTRIBUTABLE on all 3 seeds: the TAGGED arm
+holds CP at BOTH boundaries (mean margin@p_A +0.200, @p_B +0.177, both >= 0.15, coherent peak
+each), and the single-channel (untagged) control REPRODUCES the H_1330 overwrite byte-exact
+(mean margin@p_A -0.001). The ONLY failing leg in r2 was the frozen I3a bar (GLOBAL count_peaks
+<= 1 on the B=A control), which gave count_peaks=2 — NOT because of a second-language CP
+(coherent_peak_near@p_B was FALSE on all 3 seeds, the INTENDED no-spurious-CP-at-the-other-
+boundary test already PASSED) but because the B=A control's B-channel curve carries a benign
+low-end discretization wiggle (a 2nd local maximum). MECHANISM (r2 diagnostic, c9): the B=A
+control re-learns A's SAME boundary, so the grow-not-evict store finds no B-misclassified
+stimulus to split on under tag_B and grows ZERO B-tagged cells; its B-channel curve runs entirely
+on cross-tag BLEED from the A-tagged cells, and that bled-through A-shape carries A's own low-end
+discretization wiggle. The GLOBAL count_peaks bar conflated this benign discrete-Voronoi artifact
+with the localized spurious-CP test.
+
+PROJ_SEED: H_1339 (1330-1338 taken; 1339 free on origin/main 0fa31903a). Seeds [4323,4324,4325]
+(SAME as H_1323/H_1325/H_1330/H_1335 so the A-only baseline + the single-channel OVERWRITE control
+reproduce byte-for-byte).
+
+────────────────────────────────────────────────────────────────────────────────
+WHY THIS MATTERS FOR ANIMA (the prediction under test):
+H_1330 falsified COEXISTENCE for ONE shared store. A language tag is the substrate-level
+realization of "separate faculty": the tag selects WHICH faculty's carving applies to a stimulus.
+If the tag lets BOTH CPs coexist on one underlying store, that EXPLAINS why anima's REAL separate
+EN-trunk + KO faculties (H_1316/H_1321/H_1322) coexist without one overwriting the other — the
+OVERWRITE was a property of the SINGLE-SHARED-STORE mechanism, NOT a fundamental limit on
+bilingual cognition. a_no_llm_frame_trap (cognitive-science / bilingual-cognition lens, c15) —
+NOT an LLM recipe, NOT a human-bilingualism claim.
+
+────────────────────────────────────────────────────────────────────────────────
+MECHANISM — REUSED VERBATIM. embed, VoronoiCells (_owner/fit/fit_more/_grow/posterior),
+build_labels, discrim_curve, within_cross_margin, coherent_peak_near, count_peaks, the W1
+threshold (W1_MARGIN=0.15 = the H_1323 CP bar), the TAG block (TAG_DIM=2, TAG_GAIN=1.0 FIXED),
+tag_vec / tagged_key / discrim_curve_tagged / run_seed, and the seeds [4323,4324,4325] are
+IMPORTED VERBATIM from UNIVERSE/h1335_whorf_bilingual_tagged.py (which imports h1330 verbatim).
+NOTHING in the data generation changes from r2 — run_seed() is imported unmodified. The ONLY
+change is WHICH control statistic gates the B=A arm (I3a).
+
+────────────────────────────────────────────────────────────────────────────────
+THE r3 CHANGE (a DIFFERENT frozen bar, NOT a relaxation of the r2 bar — c9/p7):
+I3a is RE-FROZEN as the LOCALIZED "no coherent peak near p_B" test for the B=A control:
+coherent_peak_near(B=A B-channel discrim curve, p_B) is False on ALL 3 seeds. This is the
+CORRECTLY-SCOPED control. The B=A arm exists to prove that a tagged second fit on the SAME
+boundary does NOT manufacture a spurious second-language CP at the OTHER boundary p_B. The
+localized test measures EXACTLY that. The r2 GLOBAL count_peaks<=1 bar measured the whole curve
+shape (including the benign discretization wiggle) and is RETIRED for this arm.
+ - This is NOT a threshold relaxation: NO surviving bar's threshold moves. W1_MARGIN stays 0.15;
+   SHUF_MIN_PEAKS stays 3; the SHUFFLE arm's bar is kept VERBATIM. The global LANG_MAX_PEAKS<=1
+   is simply replaced for the B=A arm by the localized statistic the arm was always meant to test
+   (which already passed in r2).
+ - HONESTY guard: the data are IDENTICAL to r2 (run_seed imported unmodified). If the localized
+   B=A pk@p_B were TRUE on any seed (a real spurious CP), I3a would FAIL and the verdict would be
+   🧱 — the re-freeze can still fail. It does not, because the r2 data already satisfy it.
+
+────────────────────────────────────────────────────────────────────────────────
+ARMS (FROZEN — IDENTICAL to r2 data generation):
+ (1) A→B TAGGED      : one store; A-fit on key_A(x) with A-labels, THEN B-fit on key_B(x) with
+                       B-labels (grow-not-evict). Read CP at p_A with key_A(), at p_B with key_B().
+ (2) SINGLE-CHANNEL  : the EXACT H_1330 untagged arm (shared key, no tag). MUST REPRODUCE the
+     control            H_1330 OVERWRITE (CP@p_A collapses).
+ (3) B=A CONTROL     : TAGGED A→A (B re-uses A's boundary with tag_B). Must show NO coherent CP
+                       near p_B (localized) — a tagged second fit on the same boundary does NOT
+                       fabricate a spurious second-language CP at the OTHER boundary.
+ (4) SHUFFLE         : TAGGED A→B with B's labels SHUFFLED (incoherent). The tagged-B channel
+                       must NOT manufacture a coherent CP at p_B (r2 bar verbatim).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (GREEN iff I1 ∧ I2 ∧ I3'):
+
+ I1 COEXISTENCE: the TAGGED arm shows CP at BOTH p_A AND p_B on ALL 3 seeds —
+    cross-within margin@p_A (read via key_A) >= W1_MARGIN=0.15 AND margin@p_B (via key_B) >= 0.15,
+    coherent peak near each, on EVERY seed.
+
+ I2 TAG-ATTRIBUTION: the SINGLE-CHANNEL control (untagged) REPRODUCES the H_1330 OVERWRITE —
+    its margin@p_A < W1_MARGIN=0.15 (A's CP collapses) on ALL 3 seeds. Load-bearing discriminator:
+    coexistence (I1) is attributable to the TAG only if removing the tag brings the overwrite back.
+
+ I3' EARNED:
+    (a) B=A control (LOCALIZED, re-frozen): NO coherent peak near p_B —
+        coherent_peak_near(B=A B-channel, p_B) is False on ALL 3 seeds. (The GLOBAL count_peaks is
+        now a NON-GATING diagnostic only.)
+    (b) SHUFFLE (r2 bar VERBATIM): count_peaks >= SHUF_MIN_PEAKS=3 OR no coherent peak near p_B,
+        on ALL 3 seeds.
+
+NON-GATING DIAGNOSTIC (c9 — does NOT gate the verdict, TAG_GAIN=1.0 stays the frozen operating
+ point for the gating arms, NOT swept-to-green): a TAG_GAIN channel-isolation sweep over gains
+ [0.25,0.5,1.0,2.0,4.0] measuring, for the B=A control, the number of B-tagged cells grown and
+ the residual B-channel curve magnitude (cross-tag bleed) vs gain. Reported for transparency about
+ the imperfect channel isolation the r2 B=A bleed exposed. INFORMATIONAL ONLY.
+
+────────────────────────────────────────────────────────────────────────────────
+ENGINE-NATIVE REALIZATION (a_engine_native_learning · a_verified_must_wire):
+if I1 ∧ I2 ∧ I3' hold (mirror), the tagged bilingual-CP faculty is realized ENGINE-NATIVE on
+live CORE/engine_cli.hexa §CategoricalPerception (cp_tag_vec / cp_tagged_key / cp_fit_more /
+cp_discrim_curve_tagged + the tagged TAG_DIM-extended store), and the I1/I2/I3' bars are
+RE-SCORED engine-native in CORE/engine_cli_smoke.hexa (new cases). Regression guards that MUST
+stay green: engine_cli_smoke N/0 (no prior case regresses; baseline 77/0 before the new tagged
+cases), h1196 single-entry 7/0, h1205 separation-invariant PASS (generation byte-identical
+ON==OFF, Ψ=1/2 untouched). NOT an emit gate (a_autonomy_over_hardcode); Ψ-disjoint (own
+protos/labels table, pure_field/engine_g/Ψ untouched).
+
+────────────────────────────────────────────────────────────────────────────────
+OUTCOMES (all VALID, c9):
+ • I1 ∧ I2 ∧ I3' → 🟢 GREEN (MIRROR DIRECTIONAL + engine-native re-scored): a language-tagged
+   multi-channel readout ENABLES bilingual CP coexistence — matching anima's separate-faculty
+   design. The H_1330 OVERWRITE was the SINGLE-SHARED-STORE mechanism, NOT a fundamental limit.
+ • I1 FAILS → 🧱 deeper wall: even tagging does not prevent interference. Straight, NO bar moved.
+ • I1 holds but I2 fails → 🧱 NOT-ATTRIBUTABLE: coexistence is not the tag. Honest, NO bar moved.
+ • I3' fails (a real spurious CP near p_B in B=A, or SHUFFLE manufactures a coherent CP) →
+   🧱 CONTROL-FAIL. Honest, NO bar moved.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): R1 numpy MIRROR (DIRECTIONAL, engine-transfer
+of the mirror UNVERIFIED; the engine-native rung is a SEPARATE deterministic instance re-scoring
+the seed-invariant bars). TOY synthetic 1-D continuum (N=21, deterministic readout — tests the
+STRUCTURE of tag-separated coexistence, NOT scaled / human bilingualism). TAG_GAIN=1.0 FIXED (not
+swept; the sweep is non-gating). Readout reads ONLY representational distance over bound labels
+with a fixed faculty tag, NO injected boundary / persona / RLHF; labels enter only at the
+A-fit / B-fit, NOT at test (p1/p2/p3/p6). NOT an emit gate (a_autonomy_over_hardcode). NO
+human-bilingualism claim.
