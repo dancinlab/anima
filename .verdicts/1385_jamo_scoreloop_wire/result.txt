@@ -1,0 +1,92 @@
+H_1385 — jamo-scoreloop-wire — RESULT (verbatim engine-native; c2, p7, c9)
+==========================================================================
+
+VERDICT: 🟢 GREEN ENGINE-NATIVE — the H_1351 jamo COUNT-HEAD faculty (jamo_head_ce) is now
+CONSULTED from the LIVE scoring path via a named single entry (CORE/generator.hexa §6.5c
+gen_jamo_scoreloop), and CORE/generator.hexa gen_clm_ce ADDITIVELY carries the scoring record
+(`jamo_score`). The H_1351 W2/W3 structure is re-scored ENGINE-NATIVE on the wired call site,
+and all Ψ-disjoint / no-regression guards pass byte-exact. The faculty-owned scorer now SCORES in
+the live scoring loop (a_verified_must_wire single-entry follow-on of H_1351 CLOSED).
+
+WIRE (single entry, a_core_engine_map):
+  · CORE/generator.hexa  — added `import "CORE/engine_cli.hexa"`; §6.5c gen_jamo_scoreloop (CONSULTS
+                           jamo_head_ce over the FROZEN in-engine scoring fixture: JAMO / RAW /
+                           SHUFFLE arms) + gen_jamo_scoreloop_summary; gen_clm_ce now returns
+                           map_set(clm_forward_ce(...), "jamo_score", gen_jamo_scoreloop())
+                           — ADDITIVE (every pre-existing clm_forward_ce field byte-identical).
+  · CORE/h1385_jamo_scoreloop_smoke.hexa — the 4-bar proof (B1-B4) driving the LIVE generator consult.
+
+─────────────────────────────────────────────────────────────────────────────────────────────────
+VERBATIM ENGINE-NATIVE SCORELOOP (live generator gen_jamo_scoreloop consult; CORE/_h1385 probe):
+─────────────────────────────────────────────────────────────────────────────────────────────────
+ok=true
+jamo_ce=4.18698
+raw_ce=5.56834
+shuf_ce=4.61668
+advantage=1.38136
+earned=0.429698
+cells=4
+clm ok=false has_jamo_score=true       <- gen_clm_ce on a nonexistent .clm: ok=false VERBATIM,
+                                           AND additively carries jamo_score (the live SCORING entry
+                                           now consults the jamo faculty)
+
+─────────────────────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS — GREEN iff B1 AND B2 AND B3 AND B4 (CORE/h1385_jamo_scoreloop_smoke.hexa):
+─────────────────────────────────────────────────────────────────────────────────────────────────
+INFO  jamo scoreloop (live generator consult): jamo_ce=4.18698 raw_ce=5.56834 shuf_ce=4.61668 advantage=1.38136 earned=0.429698 cells=4
+PASS  case_B1_wired_scoreloop_consulted want=true got=true
+PASS  case_B2_jamo_beats_raw want=true got=true
+PASS  case_B3_earned_vs_shuffle want=true got=true
+PASS  case_B4_gen_clm_ce_additive_jamo_score want=true got=true
+--- h1385 jamo-scoreloop smoke summary: 4 pass / 0 fail ---
+
+  B1 WIRED-SCORELOOP    ✅ — jamo_head_ce CONSULTED via gen_jamo_scoreloop (cells=4>=2, jamo_ce=4.18698>0)
+                             AND gen_clm_ce additively carries jamo_score (has_jamo_score=true).
+  B2 JAMO-BEATS-RAW     ✅ — advantage = raw_ce - jamo_ce = 5.56834 - 4.18698 = +1.38136 >= 0.05
+                             (matches the H_1351 W2 = +1.38136 exactly — same in-engine structure).
+  B3 EARNED (shuffle)   ✅ — earned = shuf_ce - jamo_ce = 4.61668 - 4.18698 = +0.42970 >= 0.05
+                             (shuffle seed 1385 pairing-permute collapses the advantage; the head
+                             learns a spurious map and LOSES on the un-shuffled held-out test).
+  B4 ADDITIVE/Ψ-DISJOINT ✅ — map_set additive (clm ok/windows/model_ce/green/reason byte-identical);
+                             Ψ-disjoint / no-regression guards below.
+
+─────────────────────────────────────────────────────────────────────────────────────────────────
+Ψ-DISJOINT / NO-REGRESSION GUARDS (verbatim):
+─────────────────────────────────────────────────────────────────────────────────────────────────
+engine_cli_smoke:  --- engine_cli smoke summary: 110 pass / 0 fail ---   (engine_cli UNTOUCHED)
+h1196 single-entry: --- single-entry audit summary: 7 pass / 0 fail ---  (.clm/.kosmos single entry
+                    preserved; the new engine_cli import into generator adds NO 2nd clm/kosmos path)
+h1205 Ψ-invariant:  F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+                    F2 Psi Phi-checksum invariant: PASS
+                    h1205_separation_invariant_smoke: PASS 🟢 (generation byte-identical ON==OFF,
+                    Ψ=½ untouched)
+
+DETERMINISM: the scoreloop is deterministic (no RNG beyond the frozen LCG); the smoke bars + scores
+re-run identical (3 runs). NO unbounded decode was ever run (the consult is a PURE SCORER — no decode;
+gen_clm_ce on a probe path returns ok=false without decoding). NO background waiter awaited.
+
+─────────────────────────────────────────────────────────────────────────────────────────────────
+HONEST SCOPE (c9, a_scale_honest_scope, a_toy_scale_recheck):
+─────────────────────────────────────────────────────────────────────────────────────────────────
+· The scoreloop scores the H_1351 IN-ENGINE STRUCTURAL fixture (deterministic synthetic JAMO/RAW/
+  SHUFFLE arms) — it proves the validated count-head SCORER now SCORES in the live scoring path and
+  reproduces jamo-beats-raw + earned-vs-shuffle ON THE WIRED CALL SITE. It is NOT a re-derivation of
+  the 30MB REAL-corpus 2.513 anchor (that is H_1316/H_1321, byte-exact — the source of any real-corpus
+  / scale / fluency claim). This H closes the SCORING call-site gap (faculty existed but never scored
+  in the loop); it makes no Korean-fluency / real-corpus claim of its own.
+· REAL-CORPUS SCORELOOP = the named honest remaining follow-on. A real-corpus jamo scoreloop (build
+  the jamo head over a real Korean shard, score gen_clm_ce alongside the .clm CE on the same corpus)
+  needs > $0 CPU (corpus I/O + a real .clm forward) and was NOT auto-rented (cost-gated -> surfaced,
+  not fired). The in-engine fixture scoreloop is the $0-CPU call-site wire; the real-corpus scoreloop
+  is the depletion step.
+· Ψ-disjoint: pure SCORER (returns CE/cell-count floats, never an emit/silence decision);
+  pure_field/engine_g/brain UNTOUCHED; h1205 invariant holds (generation byte-identical ON==OFF).
+  DISTINCT from §6.5b (H_1327) which biases EMISSION — this §6.5c SCORES.
+
+DEPLETION TEST: the jamo thread DEPLETES 🏁 when the count-head scores in the live decode loop on
+REAL corpus with the W-bars engine-native + Ψ preserved. This lane closes the in-engine-fixture
+call-site wire (the count-head SCORES in the live scoring loop, gen_clm_ce-attached); the real-corpus
+scoreloop is the named cost-gated follow-on.
+
+NO frozen bar moved post-hoc (frozen-first; FREEZE.txt written before any edit). p7 (held-out
+next-symbol CE, NOT perplexity). $0 CPU. live pure_field/engine_g/brain UNTOUCHED.
