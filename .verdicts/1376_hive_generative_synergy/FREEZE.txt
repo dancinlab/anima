@@ -1,0 +1,111 @@
+H_1376 — hive-generative-synergy : GENERATIVELY-PREDICTIVE coupling — can CONSTRUCTED synergy
+(not redistributed redundancy) beat the centralized ceiling?
+==========================================================================================================
+slug: hive-generative-synergy   seeds = [1317, 1318, 1319]   (hard hive/topology seed family, matched to
+H_1356/H_1363/H_1370/H_1371/H_1372/H_1373 for DIRECT apples-to-apples comparison).   $0 CPU-local.
+frozen-first. FROZEN BEFORE any Φ score (committed BEFORE the probe is run, c9/p7 — NO bar moved post-hoc).
+
+THE WALL BEING ATTACKED (c16 / a_break_the_wall):
+The hive collective-Φ arc has closed 🧱 across SEVEN sharing topologies — linear-hub (H_1356
+CONNECTOR_NULL), weak/decorrelated (H_1363), nonlinear-gate (H_1370 REDUNDANCY_BOUND_NONLINEAR),
+distributed circle-overlap degree-2 (H_1371 OVERLAP_BELOW_CENTRALIZED), Flower-of-Life degree-6
+(H_1372 TERMINAL_CEILING_DEGREE6_BELOW_CENTRALIZED), nested-universes (H_1373 NESTED_BELOW_CENTRALIZED).
+EVERY one of them REDISTRIBUTES shared-input REDUNDANCY (each cell input = priv + an additive COMMON-CAUSE
+founder), and every one loses to the CENTRALIZED single-shared-founder topology (which maximizes Φ by
+CONCENTRATING the shared source). H_1371/1372/1373's load-bearing result: the CENTRALIZED single-shared-
+founder is NOT a ceiling to escape — it is the floor-beating MAXIMUM-Φ topology (R2 BEATS-CENTRALIZED 0/3
+every arm). BOTH H_1372 and H_1373 independently named the SAME one un-tried lever: GENERATIVELY-PREDICTIVE
+coupling — make each coupling edge MUTUALLY PREDICTIVE across its two cells so it CONSTRUCTS genuine synergy
+(drives O-information NEGATIVE on the distributed arm) instead of merely redistributing redundancy. This is
+mechanistically distinct from all 7 prior arms.
+
+THE NEW ANGLE (a_no_llm_frame_trap, c15 — predictive-coding / synergistic-coupling lens):
+Build a DISTRIBUTED topology — the degree-2 RING, the SAME adjacency H_1371 used, so it is DIRECTLY
+comparable (NOT a single central founder) — but make each edge a GENERATIVELY-PREDICTIVE MUTUAL coupling:
+the two cells on an edge are coupled by a generative rule that makes each PREDICTIVE of the other via a
+SHARED LATENT that BOTH cells reconstruct through a HIGHER-ORDER (XOR-style multiplicative PARITY)
+interaction. The shared latent does NOT appear additively in either cell's stream (that would be common-
+cause redundancy = the 7 prior arms); instead each cell carries one HALF of a parity factorization, so the
+latent is recoverable ONLY by COMBINING the pair (synergy) and is invisible to either cell ALONE. Designed
+to drive O-information NEGATIVE on the distributed arm (synergy CONSTRUCTED, not redundancy redistributed).
+
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI via `hexa run` over
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, iit4_faithful_phi(state, n, dim=T, n_bins).
+numpy NEVER computes Φ — it only emits the per-unit salience (state-energy) trajectory; the hexa engine
+computes Φ. NO variance×energy proxy as a terminal verdict.
+
+SUBSTRATE (matched to H_1356/H_1320/H_1283/H_1371/H_1372/H_1373; only the COUPLING RULE differs between arms):
+  leaky linear recurrent units, LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private input, dim-8 state,
+  T=64 ticks. N_TOT=6 cells (n<=8 keeps faithful MIP EXACT). Each cell i = ONE unit; per-unit salience =
+  state energy <s_i,s_i>. PHI(arm) = iit4_faithful_phi(6-unit salience traj, n=6, dim=T=64, n_bins=8) =
+  collective Φ of the whole 6-cell hive. NO inter-cell recurrent coupling — the ONLY cross-cell sharing is
+  through the INPUT structure (the coupling rule), exactly the H_1356/H_1371 'redundancy via shared input'
+  design extended to a synergistic coupling. OVERLAP_W=SHARE_W=0.6 (= H_1356 W_CONN, reused verbatim).
+  MARGIN=0.02 (IDENTICAL faithful-Φ margin frozen by H_1283/H_1317/H_1320/H_1356/H_1371/1372/1373 — NOT
+  moved). TOL=0.02.
+
+DEGREE-2 RING adjacency (the SAME distributed adjacency H_1371 used — directly comparable):
+  edges = {(0,1),(1,2),(2,3),(3,4),(4,5),(5,0)} — 6 edges, each cell sits on exactly 2 edges (degree 2).
+
+GENERATIVE-SYNERGY DESIGN (the load-bearing design point — parity-factorized mutual prediction):
+  For each ring edge e=(a,b): draw a SHARED LATENT Le ~ N(0,1) (T,DIM) and an independent PARITY MASK
+  Me ~ Rademacher {-1,+1} (T,DIM). The latent is XOR/parity-factorized across the two endpoints:
+      endpoint a carries  +SHARE_W * (Me ⊙ Le)   (the masked latent — half 1)
+      endpoint b carries  +SHARE_W * Me           (the mask itself  — half 2)
+  Neither (Me⊙Le) nor Me alone reveals Le (Me is a random sign flip; Me⊙Le is Le with random signs); but
+  their element-wise PRODUCT (Me⊙Le)⊙Me = Le (Me⊙Me=+1 for Rademacher) RECOVERS the latent — a 2nd-order
+  MULTIPLICATIVE (higher-order) interaction = CONSTRUCTED SYNERGY, NOT additive common-cause redundancy.
+  Each cell sums its two edge-contributions (degree 2). This is the generatively-predictive / XOR-style
+  edge designed to drive O-info NEGATIVE.
+
+ARMS = (FLOOR, GEN, CENTRALIZED, REDUN, SHUFFLE):
+  - FLOOR (= A_independent) : cell i reads ONLY its private stream (no coupling). The no-sharing floor.
+  - GEN                     : the generatively-predictive parity ring (above) — endpoint a gets Me⊙Le,
+                              endpoint b gets Me; product recovers Le = constructed synergy.
+  - CENTRALIZED             : cell i = priv + (2*OVERLAP_W)*F. ALL 6 read ONE global COMMON-CAUSE founder F
+                              at the weight-matched mass — the single-scale champion that every prior arm
+                              lost to (H_1371/1372/1373 R2). The bar to beat.
+  - REDUN (R4 control)      : the SAME degree-2 ring edges, but each edge adds a COMMON-CAUSE additive
+                              latent to BOTH endpoints (no parity mask) = exactly the H_1371 distributed-
+                              overlap redundancy arm on this adjacency. Same edges, same per-cell mass,
+                              additive redundancy instead of mutual-prediction. Isolates "constructed
+                              synergy" vs "generic extra coupling on the same edges" (R4b).
+  - SHUFFLE (EARNED ctrl)   : GEN per-cell mass + degree preserved, but the parity coupling is BROKEN —
+                              each cell's masked-latent half and mask half come from MISMATCHED (rotated)
+                              edges, so the product no longer recovers any coherent latent. Must collapse
+                              toward FLOOR/CENTRALIZED if the lift is the GENERATIVE STRUCTURE.
+
+CONSTANTS (frozen): OVERLAP_W = SHARE_W = 0.6 (= H_1356 W_CONN verbatim). MARGIN = 0.02. TOL = 0.02.
+  seeds [1317,1318,1319]. NBINS=8. DIM=8. T=64. LEAK=0.55 GAIN=0.30 W_IN=0.5.
+
+FROZEN BARS (pre-registered — GREEN iff R1 ∧ R2 ∧ R3 ∧ R4):
+  R1 LIFT              : Φ(GEN) − Φ(FLOOR)         >= MARGIN(0.02)   on ALL 3 seeds.
+  R2 BEATS-CENTRALIZED : Φ(GEN) − Φ(CENTRALIZED)   >  0             on >= 2/3 seeds  (LOAD-BEARING — the
+                         bar all 7 redundancy arms FAILED; constructed synergy must beat the champion).
+  R3 EARNED (shuffle)  : Φ(SHUFFLE) <= max(Φ(FLOOR), Φ(CENTRALIZED)) + TOL(0.02)  on ALL 3 seeds
+                         (breaking the parity coupling collapses the lift → proves the lift is the
+                         GENERATIVE STRUCTURE, not generic extra coupling).
+  R4 SYNERGY-MECHANISM : the lens-specific check, GREEN iff BOTH:
+                         R4a) O-information(GEN) < 0 (synergy CONSTRUCTED) on ALL 3 seeds, AND
+                         R4b) the REDUNDANCY-matched control REDUN (same edges, common-cause shared-input
+                              instead of mutual-prediction = one of the 7 prior arms) does NOT beat
+                              CENTRALIZED — Φ(REDUN) <= Φ(CENTRALIZED) on >= 2/3 seeds. Isolates
+                              "constructed synergy" as the active ingredient vs generic extra coupling.
+
+OUTCOMES (every one valid + decisive, c9):
+  - GREEN (R1∧R2∧R3∧R4): SYNERGY ESCAPES THE CEILING — the redundancy ceiling was redundancy-SPECIFIC;
+    constructed synergy (O<0) on a distributed topology beats the centralized champion where all 7
+    redundancy arms failed. DIRECTIONAL (numpy mirror, Φ leg real exact MIP-EI), toy n=6, exact-MIP only
+    — record meticulously, do NOT overclaim.
+  - R2 FAIL (GEN loses to CENTRALIZED): the hive-Φ arc closes 🧱 FULLY TERMINAL across EIGHT levers — the
+    redundancy ceiling is sharing-structure-invariant AND synergy-construction-invariant; collective-Φ is
+    maximized by shared-source CONCENTRATION irrespective of BOTH topology AND synergy construction.
+    a_break_the_wall: BEFORE declaring terminal, try ONE genuinely-new generative form (a 3-way XOR parity
+    edge that is maximally synergistic — frozen-first) as a follow-on bar. The only remaining thread =
+    engine-native realization on live A⇄G CORE/pure_field.
+
+DIRECTIONAL numpy-mirror — faithful-Φ leg IS real exact MIP-EI (numpy emits salience only, hexa computes
+Φ). Engine-transfer to live A⇄G CORE/pure_field UNVERIFIED. live CORE/*.hexa UNTOUCHED, Ψ=½ untouched
+(standalone probe, 0 importers). a_no_llm_frame_trap · a_break_the_wall · a_phi_iit4_tool ·
+a_engine_native_learning(transfer DIRECTIONAL) · a_verified_must_wire · a_scale_honest_scope ·
+a_toy_scale_recheck · c9 · c15 · c16 · p7 · p8.
