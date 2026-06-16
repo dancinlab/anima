@@ -1,0 +1,69 @@
+H_1374 R1 — CP RELOCATION ON A DIAGONAL (NON-AXIS-ALIGNED) 2-D BOUNDARY: move-the-cells?
+==========================================================================================
+Diagonal half-plane cat=(u+v)/sqrt2 > c (normal (1,1)/sqrt2), shifting c_A -> c_A'. Drift
+residual phase-1 cells ALONG THE BOUNDARY NORMAL (both u,v move). Does the ridge relocate
+ONTO the moved diagonal cut with a single coherent COH2D, or does the diagonal BREAK it?
+grid=13x13=169 K_RBF=8 DIM=64 c_A=0.4714 c_A'=0.9428
+normal=(1,1)/sqrt2 phase1=48 phase2=48 eta=0.15 seeds=[4333, 4334, 4335]
+  metrics along NORMAL s=(u+v)/sqrt2: ridge_s = s of ridge centroid (RELOCATES);
+           COH2D = bounded s-concentration (NO NCOMP gating — H_1369 proved it confounds)
+
+  per-seed (SPLIT-ONLY eta=0.0 / RE-PACK eta=0.15 / NO-RETRAIN / SHUFFLE+repack):
+    seed 4333: SPLIT-ONLY ridge_s=0.506 coh=0.733 | RE-PACK ridge_s=0.971 coh=0.767 | no-retrain ridge_s=0.502 | shuffle coh=0.041  cells(p1,tot)=21,35
+    seed 4334: SPLIT-ONLY ridge_s=0.530 coh=0.583 | RE-PACK ridge_s=0.971 coh=0.767 | no-retrain ridge_s=0.502 | shuffle coh=0.000  cells(p1,tot)=21,35
+    seed 4335: SPLIT-ONLY ridge_s=0.506 coh=0.733 | RE-PACK ridge_s=0.971 coh=0.767 | no-retrain ridge_s=0.502 | shuffle coh=0.000  cells(p1,tot)=21,35
+
+  SPLIT-ONLY (eta=0.0, ablation): |ridge_s-c_A'| 0.429  COH2D 0.683
+  RE-PACK    (eta=0.15)         : |ridge_s-c_A'| 0.028  COH2D 0.767
+  NO-RETRAIN : |ridge_s-c_A| 0.031  |  SHUFFLE+repack: COH2D 0.014
+
+  [NON-GATING diagnostic] RE-PACK-LADDER (gate is scored ONLY at eta=0.15):
+     eta=0.10: |ridge_s-c_A'| mean=0.028  COH2D mean=0.767
+     eta=0.15: |ridge_s-c_A'| mean=0.028  COH2D mean=0.767  <-- FROZEN GATE
+     eta=0.25: |ridge_s-c_A'| mean=0.028  COH2D mean=0.767
+
+  c1 RELOCATION (re-pack |ridge_s-c_A'|<=0.12 all 3 seeds):
+     per-seed = [np.float64(0.028), np.float64(0.028), np.float64(0.028)]  -> c1 PASS
+  c2 COH2D CONCENTRATION (re-pack COH2D>=0.5 AND >= split-only+0.1):
+     re-pack COH2D 0.767 >= 0.5 -> PASS
+     re-pack 0.767 >= split-only 0.683+0.1 -> FAIL
+     -> c2 FAIL
+  c3 EARNED (3a no-retrain |ridge_s-c_A|<=0.12; 3b shuffle COH2D<=0.2):
+     3a no-retrain |ridge_s-c_A| = [np.float64(0.031), np.float64(0.031), np.float64(0.031)] -> PASS
+     3b shuffle COH2D 0.014 <= 0.2 -> PASS
+     -> c3 PASS
+  c4 DISTINCT-FROM-SPLIT (split-only |ridge_s-c_A'|>0.12 — stays SHORT):
+     split-only |ridge_s-c_A'| mean 0.429 -> c4 PASS
+==========================================================================================
+VERDICT (R1): 🧱 NON-GREEN — a frozen bar FAILED on the diagonal. Honest catch:
+  c1 RELOCATION PASSED (0.028<=0.12) — the normal-direction drift DOES
+  track the moved diagonal cut (split-only stays SHORT at 0.429; c4 PASS).
+  The catch is c2b CONCENTRATION-SEPARATION: re-pack COH2D 0.767 vs split-
+  only 0.683 = gap 0.084 < 0.1. On a DIAGONAL the
+  split-only baseline is ITSELF already fairly concentrated (its residual ridge is a
+  thin diagonal smear, not the grid-filling smear an axis-aligned split-only gives),
+  so the bounded-COH2D *separation* shrinks even though RELOCATION (c1) is decisive.
+  Per the FREEZE outcome map (¬c2 → run pre-registered R2, frozen-first, NO bar moved,
+  a_break_the_wall): the NORMAL-FRAME ROTATION R2 runs below. NO bar moved (c9/p7).
+
+R2 (a_break_the_wall) — NORMAL-FRAME ROTATION (drift in (s,t) coords, purely in s):
+    seed 4333: RE-PACK(rot) ridge_s=0.971 coh=0.767 | split-only ridge_s=0.506 coh=0.733 | no-retrain ridge_s=0.502 | shuffle coh=0.041
+    seed 4334: RE-PACK(rot) ridge_s=0.971 coh=0.767 | split-only ridge_s=0.530 coh=0.583 | no-retrain ridge_s=0.502 | shuffle coh=0.000
+    seed 4335: RE-PACK(rot) ridge_s=0.971 coh=0.767 | split-only ridge_s=0.506 coh=0.733 | no-retrain ridge_s=0.502 | shuffle coh=0.000
+  RE-PACK(rot): |ridge_s-c_A'| 0.028  COH2D 0.767
+  SPLIT-ONLY  : |ridge_s-c_A'| 0.429  COH2D 0.683
+  NO-RETRAIN  : |ridge_s-c_A| 0.031  |  SHUFFLE(rot) COH2D 0.014
+  c1' RELOCATION [np.float64(0.028), np.float64(0.028), np.float64(0.028)] <= 0.12 -> PASS
+  c2' COH2D: 0.767>=0.5 -> PASS AND >= split-only 0.683+0.1 (gap 0.084) -> FAIL => c2' FAIL
+  c3' EARNED: no-retrain PASS AND shuffle COH2D 0.014<=0.2 PASS => c3' PASS
+  c4' DISTINCT: split-only |ridge_s-c_A'| 0.429>0.12 -> PASS
+==========================================================================================
+
+TERMINAL VERDICT: 🧱 CLOSED-NEGATIVE (AXIS-ALIGNED-ONLY) — move-the-cells RELOCATES on a
+  diagonal (c1' |ridge_s-c_A'| 0.028<=0.12, split-only short 0.429)
+  but does NOT clear the bounded-COH2D CONCENTRATION-SEPARATION bar (re-pack 0.767
+  vs split-only 0.683, gap 0.084<0.1) even after the
+  normal-frame rotation. On a diagonal the split-only residual ridge is ALREADY a thin
+  diagonal smear, so the concentration win does not separate. The move-the-cells
+  RELOCATION law holds on a diagonal; the COH2D-SEPARATION stringency is AXIS-ALIGNED-
+  ONLY. Honest 🧱 = valid result. NO bar moved (c9/p7).

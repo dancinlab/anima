@@ -1,0 +1,157 @@
+H_1374 — CP RELOCATION ON A DIAGONAL (NON-AXIS-ALIGNED) 2-D BOUNDARY: does move-the-cells SURVIVE?
+PRE-REGISTERED FREEZE — bars fixed BEFORE any scoring (frozen-first, c9/c16/p7, NO tune-to-green).
+=================================================================================================
+
+LANE: COGNITION-REPRESENTATION (c15 developmental-plasticity + memory-protection-vs-overwrite
+lens; a_no_llm_frame_trap, a_break_the_wall). R1 numpy MIRROR (DIRECTIONAL — engine-transfer
+UNVERIFIED, same family as H_1333/H_1340/H_1343/H_1352/H_1360/H_1364/H_1369 R1). $0 CPU, gradient-
+free, p7. 3 seeds [4333,4334,4335] (SAME family seeds, REUSED from H_1369). TOY synthetic 2-D
+continuum — NOT an LLM recipe, NOT a human-cognition claim.
+
+PROJ_SEED H_1374 (CP lane R3: 1360=move-the-cells GREEN in 1-D; 1369=GREEN in 2-D AXIS-ALIGNED
+half-plane; 1343=a DIAGONAL boundary warps the perceptual metric as strongly as axis-aligned and
+does NOT decompose onto one axis. H_1374 = the decisive falsification: a diagonal boundary).
+
+-------------------------------------------------------------------------------------------------
+THE QUESTION (decisive round)
+-------------------------------------------------------------------------------------------------
+H_1369 (🟢 GREEN, 2-D) proved move-the-cells GENERALIZES to a 2-D AXIS-ALIGNED half-plane (cat=u>p):
+drifting residual phase-1 cells' u-coordinate toward the moved vertical line landed a thin coherent
+ridge AT p_A' (bounded COH2D RE-PACK 0.689 vs SPLIT-ONLY 0.538 vs SHUFFLE 0.000). BUT H_1369's
+HONEST RESIDUAL: an axis-aligned half-plane lets the relocation DECOMPOSE onto a SINGLE relevant
+axis (u) — the v-axis is exactly irrelevant, so the move is effectively 1-D and the win UNDER-TESTS.
+
+H_1343 showed a DIAGONAL / non-axis-aligned boundary warps the perceptual metric AS STRONGLY as an
+axis-aligned one and does NOT decompose onto one axis. A diagonal boundary is therefore exactly
+where move-the-cells could GENUINELY FAIL: the drift must track a boundary whose NORMAL is not a
+coordinate axis, so BOTH u and v must move together; if the relocation can only decompose axis-wise
+the ridge will fail to track the diagonal cut, or smear into disconnected blobs.
+
+H_1374 asks: with the TRUE category partition a DIAGONAL half-plane cat = (u+v)/sqrt(2) > c (normal
+n=(1,1)/sqrt(2), NOT axis-aligned), shifting c_A -> c_A', and drifting residual phase-1 cells ALONG
+THE BOUNDARY NORMAL (the 2-D generalization of the 1-D / axis-aligned move — both u AND v move),
+does the discrimination ridge RELOCATE to land ON the moved diagonal boundary with a single coherent
+CONCENTRATION, or does the non-axis-aligned geometry BREAK the relocation?
+
+-------------------------------------------------------------------------------------------------
+DESIGN (mirrors H_1369 R2 — the bounded, control-surviving structure — on the DIAGONAL boundary)
+-------------------------------------------------------------------------------------------------
+- 2-D stimulus square G_GRID x G_GRID = 13x13 = 169 stimuli, uniform [0,1]^2 grid (IDENTICAL to H_1369).
+- 2-D RBF population code (H_1343/H_1369 family): K_RBF=8 -> DIM=64, per-seed width jitter
+  rb.uniform(0.10,0.13) on rng(seed+7000). IDENTICAL to H_1369 (only the boundary geometry changes).
+- TRUE partition (THE ONE CHANGE vs H_1369): DIAGONAL half-plane along the normal n=(1,1)/sqrt(2):
+      s(p) = (p_u + p_v) / sqrt(2)   in [0, sqrt(2)]
+      cat(p) = int( s(p) > C_CUT )
+  C_A  = phase-1 cut along the normal (chosen so the cut LINE passes through the square interior at a
+         comparable position to H_1369's p_A=1/3; see C_A/C_A2 below). C_A2 = phase-2 moved cut.
+  The boundary is the DIAGONAL LINE s = C_CUT (slope -1 in (u,v)); the normal is n=(1,1)/sqrt(2).
+  C_A and C_A2 are FROZEN HERE so that the PERPENDICULAR offset of the cut from the square centre
+  matches H_1369's axis-aligned 1/3 -> 2/3 shift in s-units: in axis-aligned H_1369 the cut moved
+  from u=1/3 to u=2/3 (a +1/3 perpendicular shift). On the diagonal, s ranges [0,sqrt(2)]; to keep
+  the SAME geometric shift and keep BOTH cut lines fully inside the square, set
+      C_A  = sqrt(2) * (1.0/3.0)   (= 0.4714)   [phase-1 diagonal cut]
+      C_A2 = sqrt(2) * (2.0/3.0)   (= 0.9428)   [phase-2 moved diagonal cut]
+  i.e. the SAME 1/3 -> 2/3 fractional position along the normal axis as H_1369, lifted onto the
+  diagonal. Both lines pass through the unit square interior. [FROZEN before running.]
+- Cells: error-targeted SPLIT-ONLY Voronoi/mitosis growth (p8), softmin-vote soft posterior, family-
+  VERBATIM (H_1343/H_1360/H_1369). Phase-1 grows on cat(C_A); phase-2 re-grows the SAME store on
+  cat(C_A2) WITHOUT reset (split-only). Budgets FIXED LOW: phase-1 = GROW1 = 48, phase-2 = GROW2 = 48
+  (NO inflation; identical across all arms — only the re-pack drift differs). IDENTICAL to H_1369.
+- GEOMETRIC RE-PACK ALONG THE NORMAL (the ONE mechanism, generalized from H_1369's u-only drift to
+  the diagonal normal): each phase-1 cell tracks its SOURCE 2-D position pos_i=(u_i,v_i) + BIRTH
+  PHASE. After EACH phase-2 split, every residual phase-1 cell is drifted toward the new boundary
+  LINE s=C_A2 ALONG THE BOUNDARY NORMAL n (BOTH u and v move; this is the 2-D generalization of the
+  1-D / axis-aligned single-axis move). Let s_i = (u_i+v_i)/sqrt(2) be the cell's signed coordinate
+  along the normal. The drift moves s_i a fraction REPACK_ETA of the way to C_A2, clamped at C_A2
+  (no overshoot), keeping the TANGENTIAL coordinate (the in-line position) fixed:
+      s_new   <-  s_i + REPACK_ETA * (C_A2 - s_i)          (clamp at C_A2, no overshoot)
+      delta_s <-  s_new - s_i
+      u_i     <-  u_i + delta_s * n_u   (n_u = 1/sqrt(2))   [BOTH coordinates move along the normal]
+      v_i     <-  v_i + delta_s * n_v   (n_v = 1/sqrt(2))
+      proto_i <-  embed((u_i, v_i), basis)
+      lab_i   <-  int( (u_i+v_i)/sqrt(2) > C_A2 )
+  Phase-2 cells are born at their own split positions and do NOT drift. REPACK_ETA FROZEN at 0.15
+  (ONE pre-registered gate value, == H_1369; a NON-GATING REPACK-LADDER {0.10,0.15,0.25} reported for
+  knife-edge diagnosis — gate scored ONLY at 0.15). eta=0.0 => store == split-only re-growth (the
+  H_1364/H_1369 ablation arm; the drift never fires). [IDENTICAL drift fraction + ablation to H_1369;
+  ONLY the drift DIRECTION generalizes from the u-axis to the diagonal normal.]
+- ARMS (per seed, same low budget): (1) SPLIT-ONLY (eta=0.0 = ablation; must stay short of the moved
+  diagonal cut) · (2) RE-PACK (eta=0.15) · (3) NO-RETRAIN (cat(C_A) only, no phase-2/drift -> must
+  hold the OLD diagonal line C_A) · (4) SHUFFLE+repack (permuted phase-2 labels + drift -> must
+  collapse: drift must NOT manufacture a coherent ridge from noise).
+- 2-D METRICS along the BOUNDARY NORMAL (the natural diagonal analog of H_1369's u-axis metrics; the
+  relevant coordinate is now s=(u+v)/sqrt(2), NOT u):
+  * DISCRIMINATION FIELD D(p): for each grid node, max |Δ posterior| to its 4 grid neighbors (the
+    2-D analog of the 1-D adjacent-pair |Δ posterior|). Boundary-AGNOSTIC, no label at test.
+    [VERBATIM from H_1369 — the field is geometry-agnostic.]
+  * RIDGE = nodes with D >= 0.5 * D.max() (same 0.5-of-own-peak rule).  [VERBATIM from H_1369.]
+  * ridge_s = the NORMAL-COORDINATE of the ridge centroid (mean s=(u+v)/sqrt(2) over ridge nodes) —
+    the relocation target metric (RELOCATES toward C_A2). [The categorically-relevant normal axis;
+    the diagonal generalization of H_1369's peak_u.]
+  * COH2D(diag) = U_CONC * (1 - RIDGE_FRAC), the SAME bounded ridge-CONCENTRATION metric H_1369 R2
+    used, but with concentration measured along the NORMAL coordinate s (NOT u):
+        RIDGE_FRAC = (#ridge nodes)/(G*G) in [0,1]      (thin line small, smear large)
+        U_CONC     = 1 - min(1, ridge_s_std / S_STD_REF) in [0,1], S_STD_REF=0.20  (concentration of
+                     the ridge along the categorically-relevant NORMAL coordinate s; a single
+                     diagonal line -> s_std~0 -> U_CONC~1; a grid-filling smear -> s_std large ->
+                     U_CONC~0). The TANGENTIAL (in-line) spread is NOT scored (a coherent diagonal
+                     ridge legitimately runs the full length of the cut line). [The diagonal analog
+                     of H_1369's "v-spread not scored".]
+    NCOMP is NOT used as a gating metric (H_1369 R1 PROVED the unbounded connectivity count confounds
+    by saturating on the shuffle smear; only the bounded COH2D family gates here, per the task).
+
+-------------------------------------------------------------------------------------------------
+FROZEN BARS (pre-registered; GREEN iff c1∧c2∧c3∧c4, NO bar moved c9/p7) — mirror H_1369 R2 exactly,
+on the DIAGONAL normal coordinate s. ALL THRESHOLDS == H_1369 R2 (no relaxation).
+-------------------------------------------------------------------------------------------------
+- c1 RELOCATION (move-the-cells): RE-PACK |ridge_s − C_A2| <= LOC_TOL = 0.12 on all 3 seeds.
+  [exact bar, stated BEFORE running: 0.12, == H_1369/H_1360 LOC_TOL. Measured along the normal s.
+  H_1369's success class was 0.042; split-only short-fall was 0.254 — same comparison here.]
+- c2 COH2D CONCENTRATION (load-bearing diagonal coherence): RE-PACK mean COH2D >= COH_MIN = 0.50
+  AND RE-PACK mean COH2D >= SPLIT-ONLY mean COH2D + COH_SEP = 0.10. [exact bars: both == H_1369 R2's
+  c2'(0.50) AND the concentration-separation leg of c4'(0.10), here folded into c2 per the task's
+  "re-pack COH2D >= 0.50 AND >= split-only + 0.10".]
+- c3 EARNED (shuffle, anti-Goodhart): SHUFFLE+repack mean COH2D <= SHUF_COH_MAX = 0.20 (the drift
+  toward C_A2 does NOT fabricate a concentrated ridge from permuted labels). AND (3a, retained from
+  H_1369 c3') NO-RETRAIN holds the OLD diagonal line: |ridge_s − C_A| <= LOC_TOL = 0.12 all seeds.
+- c4 DISTINCT-FROM-SPLIT (ablation, the H_1364/H_1369 mechanism): the SPLIT-ONLY arm (eta=0.0) does
+  NOT relocate onto the moved diagonal cut — split-only mean |ridge_s − C_A2| > LOC_TOL = 0.12
+  (split-only stays SHORT of the moved diagonal line; it does not relocate). [exact bar: 0.12.
+  This is H_1369 c4''s split-only-short leg, made the primary distinctness test on the diagonal.]
+
+OUTCOME MAP (all valid, c9; the DATA picks the branch, NO bar moved):
+  c1∧c2∧c3∧c4  → 🟢 GREEN: move-the-cells GENERALIZES to an ARBITRARY LINEAR (diagonal) boundary —
+                 normal-direction relocation lands a thin coherent ridge ON the moved diagonal cut,
+                 DISTINCT from split-only, EARNED (shuffle collapses). The law is NOT axis-aligned-only.
+  ¬c1 or ¬c2   → 🧱 closed-negative: the diagonal BREAKS the relocation (ridge fails to track the
+                 moved cut, or smears). The move-the-cells law is AXIS-ALIGNED-ONLY. Then
+                 a_break_the_wall: try ONE genuinely-new frozen angle — ROTATE the cell-coordinate
+                 frame to the boundary normal BEFORE drifting (express each cell in (s, t) normal/
+                 tangential coords, drift purely in s, re-embed) — a pre-registered R2, frozen-first,
+                 NO bar moved — BEFORE declaring terminal.
+  ¬c3 → CONFOUNDED (shuffle fabricated a concentrated ridge, or no-retrain drifted off C_A) — treat
+                 c1/c2 cautiously; honest non-GREEN, NO bar move.
+  ¬c4 → NOT-DISTINCT (split-only ALREADY relocates onto the diagonal) → the move is not the lever on
+                 a diagonal; reframe. Honest, NO bar move.
+
+p1/p2/p3/p6 GUARD: the discrimination field reads ONLY representational distance (|Δ posterior|); NO
+injected boundary location at test; the re-pack keys on a cell's BIRTH PHASE + own 2-D source
+position projected onto the boundary normal (a structural store property, NO injected target ridge /
+persona / RLHF); labels enter ONLY during training (re-read from the SAME C_A2 that trains phase-2
+cells). The NO-RETRAIN + SHUFFLE arms are the anti-Goodhart discriminators; the SPLIT-ONLY (eta=0.0)
+arm isolates the geometric drift as the lever. Live CORE/*.hexa UNTOUCHED (substrate-measurement
+rung). NOT an emit gate (a_autonomy_over_hardcode).
+
+HONEST SCOPE (a_scale_honest_scope · a_toy_scale_recheck): DIRECTIONAL numpy mirror — engine-transfer
+UNVERIFIED. TOY synthetic 2-D continuum (169 stimuli, 3 seeds, single shift, one frozen eta,
+deterministic readout — tests the diagonal move-the-cells STRUCTURE, not a learned drift). ONE
+diagonal slope (normal (1,1)/sqrt(2)); curved boundaries, arbitrary-angle sweeps, higher-D, real
+corpora, multi-shift, engine-native §CategoricalPerception wiring = follow-on. NO human-cognition
+claim. NO bar moved (c9/p7).
+
+S_STD_REF=0.20, COH_MIN=0.50, SHUF_COH_MAX=0.20, COH_SEP=0.10, LOC_TOL=0.12, REPACK_ETA=0.15 are ALL
+PRE-REGISTERED here BEFORE scoring — every threshold is taken VERBATIM from H_1369 R2 (no relaxation,
+no tuning to the diagonal). If any frozen bar fails on the diagonal, that is an honest 🧱 (axis-
+aligned-only) — report it, do NOT move the bar; then run the pre-registered R2 (normal-frame rotation)
+above before terminal.
+=================================================================================================
