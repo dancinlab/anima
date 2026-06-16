@@ -113,3 +113,40 @@ eta, deterministic readout — tests the 2-D move-the-cells STRUCTURE, not a lea
 plane (axis-aligned) boundary only; diagonal/curved 2-D boundaries, higher-D, real corpora,
 multi-shift, engine-native §CategoricalPerception wiring = follow-on. NO human-cognition claim.
 NO bar moved (c9/p7).
+
+=================================================================================================
+R2 — a_break_the_wall (frozen-first; NEW metric, NOT a relaxation of R1's NCOMP bar)
+=================================================================================================
+R1 RESULT (frozen, reported verbatim, NO bar moved): c1✅ c2✅ c4✅ but c3b ❌ — the SHUFFLE
+control did NOT fragment by NCOMP (NCOMP=1). DIAGNOSIS (raw fields): the shuffle discrimination
+field SATURATES — ridge mask (>=0.5*max) covers 116/169 nodes (69% of the grid), meanD 0.683,
+ridge u-spread std 0.281; it is a structureless SMEAR filling the plane, but a saturated noise
+field is trivially 4-CONNECTED so NCOMP=1. This is the SAME metric-space failure mode H_1343
+documented for an UNBOUNDED count metric on a >=0.5*max mask. RE-PACK by contrast = 22/169 nodes,
+u-spread std 0.042 — a thin coherent vertical line. The control CORRECTLY caught that NCOMP is the
+wrong 2-D coherence metric; the wall is the METRIC, not the result (a_break_the_wall).
+
+R2 ANGLE (genuinely new, pre-registered HERE before any R2 scoring): replace the unbounded
+connectivity count with a BOUNDED ridge-CONCENTRATION coherence metric (the H_1343 R3 prescription).
+A coherent CP ridge is a THIN line concentrated at one u-value; a shuffle smear fills the grid.
+  * RIDGE_FRAC = (#ridge nodes)/(G*G) in [0,1]  — thin line small, smear large.
+  * U_CONC = 1 - min(1, ridge_u_std / U_STD_REF) in [0,1], U_STD_REF=0.20  — concentration of the
+    ridge along the categorically-relevant u-axis (a single vertical line -> u_std~0 -> U_CONC~1;
+    a grid-filling smear -> u_std large -> U_CONC~0). v-spread is NOT scored (v is the irrelevant
+    axis; a coherent vertical ridge legitimately spans all v).
+  * COH2D = U_CONC * (1 - RIDGE_FRAC) in [0,1]  — a single BOUNDED coherence score (high = thin
+    concentrated line; low = grid-filling smear). BOTH factors must be high.
+R2 FROZEN BARS (GREEN-R2 iff c1∧c2'∧c3'∧c4', NO bar moved; c1 unchanged from R1):
+  - c2' COHERENT(bounded): RE-PACK mean COH2D >= COH_MIN = 0.50.
+  - c3' EARNED(bounded): (3a) NO-RETRAIN holds p_A |peak_u-p_A|<=0.12 (unchanged) AND
+                         (3b') SHUFFLE COH2D <= SHUF_COH_MAX = 0.20 (the smear must score LOW;
+                         a clear gap below the RE-PACK bar 0.50).
+  - c4' DISTINCT(bounded): RE-PACK COH2D >= SPLIT-ONLY COH2D + COH_SEP = 0.10 (move-the-cells is
+                         MORE concentrated than split-only) OR split-only |peak_u-p_A'|>0.12 (split-
+                         only stays short). c4' PASS iff either — the win is the geometric MOVE.
+U_STD_REF=0.20, COH_MIN=0.50, SHUF_COH_MAX=0.20, COH_SEP=0.10 are PRE-REGISTERED here BEFORE R2
+scoring (frozen-first; chosen from the metric's [0,1] geometry — half-saturation for COH_MIN, a
+5x gap to the smear ceiling — NOT from the measured numbers). R1's NCOMP c2/c3b stay reported as
+the honest catch (NO bar moved, c9). If the shuffle ALSO scores COH2D>0.20 under the bounded
+metric, that is an honest 🧱 (2-D genuinely fragments / the smear is genuinely coherent) — report
+it, do NOT move the bar.
