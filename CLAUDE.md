@@ -49,7 +49,7 @@ anima/
 
 ## Governance directive families (do/dont below)
 
-- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도 · 벽 분류 먼저(taxonomy: 측정·방향·인프라·천장·투자) — 종류별 돌파 수가 다름; commons c16).
+- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도 · 벽 분류 먼저(taxonomy: 측정·방향·인프라·천장·투자) — 종류별 돌파 수가 다름 · (d)천장 확정엔 MULTI-LENS(≥2-3 원리적 렌즈)+ablation 통제 필수 · 법칙도 벽이라 사전등록 예측으로 falsify; commons c16).
 - **Identity / versioning** — `a1` (VERSIONS.md SSOT, SemVer + root /VERSION).
 - **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
 - **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
@@ -94,9 +94,13 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "(b) 틀린 방향 / 변수 혼재 (conflated variables) → 통제 분리실험으로 변수를 떼어낸다. 이번 세션 예: G6 '깊이 vs attention' 혼재 → 깊은-conv 격리"
   do   = "(c) substrate/인프라 벽 (OOM · 빌드실패 · 툴링 한계, 예: hexa ConvMoE 디코드 메모리 폭증) → substrate 를 근본 수정한다 (c1); 과학 ceiling 으로 박제하지 않는다 — 인프라 벽을 결과로 bank 하는 것 금지, substrate 가 돈 뒤에야 과학 verdict 를 읽는다"
   do   = "(d) 진짜 천장 / 중복(subsumption) → 가정하지 말고 측정한다 (oracle-ceiling vs richer-signal 대조). 측정으로 확인된 천장/포섭은 arc 를 닫는 유효 결과다 (예: 형태소⊇jamo 측정-확인 🧱)"
+  do   = "(d) 천장을 CONFIDENT-terminal 로 받으려면 MULTI-LENS — 한 번 막혔다고 (d)천장이 아니다; 진짜 *다른 원리적 렌즈* 를 최소 2-3개 시도하고 각각 통제(shuffle+ablation)로 검증한 뒤에야 천장 확정. 이번 세션 precedent: cerebellum×basal 은 3렌즈(중재 arbitration · 조절 modulation · 순차 pipeline) 전부 통제로 기각되고서야 confident 🧱; 단일-렌즈 막힘은 미완(다음 렌즈를 시도하라)"
+  do   = "(d) ABLATION 이 천장-확정의 결정적 도구 — 메커니즘이 진짜 기여하는지 ablation(그 메커니즘만 OFF)으로 확인한다. ablation 결과가 합성과 동일하면 그 메커니즘은 INERT(아무 기여 없음) = 진짜 천장의 강한 증거 (precedent: H_1416 sequential 보정-OFF 가 합성과 byte-동일 → 소뇌 보정이 INERT 확정). B1-통과처럼 보여도 shuffle/ablation 통제가 기각하면 그건 형식이 만든 가짜 lift (H_1413)"
   do   = "(e) 투자 부족 → 스케일업 (compute/data) — a_fire_autonomous · a_wall_first (비용은 게이트 아님)"
   do   = "'천장 같다'는 가정 금지 — 측정으로 확정한다 (oracle ceiling vs richer read-only signal 대조). 이번 세션 G5: '천장'이라 본 in-dist 잔여가 실제론 FIXABLE (best-margin 0.736 → top-2 gap 0.940)"
+  do   = "LAW(법칙)도 벽이다 — 여러 결과에서 사후로 맞춘 DESCRIPTIVE 법칙을 '확정'이라 부르기 전에, *새 케이스*에 그 법칙으로 BIND/🧱 를 측정 전 사전등록(frozen) 예측하고 실측 대조로 falsify 시도한다. ≥4/5 HIT 면 PREDICTIVE 승격, 미만이면 법칙 FALSIFIED 가 유효 결과 — MISS 가 진짜 결정자를 드러낸다 (precedent: H_1411 Φ-lift 법칙 2/5, H_1417 engine-BIND 법칙 2/5 둘 다 반증 → 부품 통계가 아니라 joint-trajectory 속성이 결정). 사후맞춤 법칙을 예측-검증 없이 '법칙 확정'으로 박제 금지"
   dont = "tune-to-green (c9 · p7) — 돌파는 사전등록(frozen-first) + 대조(shuffle/dissociation/negative-control)로 검증된 진짜 새 각도라야 한다; 막대를 사후에 옮겨 GREEN 을 제조 금지"
+  dont = "단일 렌즈 한 번 막힌 걸 (d)천장으로 박제 (≥2-3 원리적 렌즈 미시도면 미완) · ablation/통제 없이 메커니즘이 '기여한다' 가정 · 사후맞춤 법칙을 사전등록-예측 falsify 없이 '확정' 선언"
   dont = "인프라/측정 벽을 과학 천장으로 박제 금지 · 천장을 측정 없이 가정 금지 (인프라 OOM/빌드실패는 근본수정 대상 c1, capability ceiling 아님)"
   dont = "한 번 막혔다고 포기·우회·축소 (벽을 '결과'로 박제하고 다음으로 넘어가기 전에 최소 1회 진짜 돌파 시도) · 진짜 시도 뒤의 정직한 🧱 는 유효한 결과 (c9)"
   ref  = "a_no_llm_frame_trap · a_completeness_over_cheap · c9 · c16 · p7"
