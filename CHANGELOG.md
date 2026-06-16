@@ -3,6 +3,22 @@
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1389 — tool-USAGE learning (tier-2) 🛠 anima 가 도구를 어떻게 쓰는지(args·sequence·error-recovery)를 mitosis 로 배우는가, 어떤 도구인지(layer-1)와 구별되게? — 🟢 GREEN (DIRECTIONAL)
+
+**무엇 (사용자 지시 "바로 go" / a_no_llm_frame_trap):** 도구 학습은 TWO 레이어. layer-1 = 도구 SELECTION(task-context → 어떤 도구) = 이미 엔진-native DONE (H_1382 §SkillStore + H_1386/H_1387 routing). layer-2 = 도구 USAGE(선택된 도구를 어떻게 구동: 올바른 ARGS · multi-step SEQUENCE · ERROR-RECOVERY) = 미학습. 사용자 프레이밍(검증함): 언어학습 = next-token PREDICTION(CE gradient, 코퍼스 supervised, DISTRIBUTION 학습); 도구학습 = ACTION + FEEDBACK(success/failure, 정답 사전부재) → motor/skill learning 처럼 mitosis cell-division 으로 학습(gradient 아님) → INSTANCE-POLICY 학습. selection-only 학습자는 도구는 맞히지만 mis-USE(틀린 args/순서)한다.
+
+**메커니즘 (action+feedback, NOT gradient):** UsageStore 가 H_1382/H_1227 cell geometry 재사용(DETERMINISTIC byte-trigram FNV-1a key DIM=64, L2 winner-take-all FIRE/ABSTAIN band RECALL_THR=0.55, engine_mitosis_tick clonal split, p8) — 단 cell 은 (task-context + tool + observed-error)로 keyed, 바인딩 VALUE 는 (corrected-arg, ordered-steps) (vs H_1382 value=도구 이름). usage FAILURE(맞는 도구, 틀린/default arg)에 usage-cell 을 clonal SPLIT → corrected args + true step order; SAME op 가 teach(split-on-failure) + infer(recall-best); 맞는 cell 없으면 ABSTAIN(args 안 만듦). 
+
+**환경 (deterministic, 3 seeds [4389,4390,4391]):** 6 tools/48 tasks, 맞는 TOOL 은 layer-2 arms 에 GIVEN(selection 해결됨), correct_arg 를 default 에서 AWAY 로 편향 → fixed-default SELECTION baseline 은 맞는 도구로도 usage 실패. SUCCESS = 맞는 arg AND (multi-step) 순서대로 step emit. Arms FULL(usage 실패마다 split) / SELECTION(맞는 도구, fixed default arg, never split — layer-2=HOW 격리) / SHUFFLE(PERMUTED ctx→arg 학습, TRUE arg 로 채점 — earned-structure 대조).
+
+**결과 🟢 GREEN (4 gating bars PASS, result.txt verbatim POOLED):** FULL 0.250→0.750 · SELECTION 0.250 · SHUFFLE 0.014 · MULTISTEP 0.750 · ABSTAIN 1.000 · cells_full 36. bar1 USAGE-LEARNS ✅ +0.500≥+0.30 · bar2 DISTINCT-FROM-SELECTION (KEY) ✅ +0.500≥+0.30 (selection-only 맞는도구/default-arg 은 no-usage floor 0.250 에 묶임, FULL 은 0.750 으로 상승 → usage 는 distinct learnable layer; layer-2 는 HOW 를 배움 not WHICH) · bar3 EARNED shuffle ✅ −0.236≤+0.15 (permuted ctx→arg 가 0.014 로 붕괴 → lift=earned ctx→arg 대응이지 split 행위 아님) · bar4 NO-FAB ✅ 1.000≥0.90 (untrained 도구/task disjoint trigram → args 안 제안). bar5 MULTI-STEP(optional/non-gating) 0.750<0.80 absolute bar = 정직(c9): env 완성 천장이 0.75(~1/4 task 가 default arg 면 됨) 인데 multi-step arm(arg AND 순서 둘 다 요구)이 single-step FULL 과 SAME 0.750 = 순서 추가요구에 ZERO degradation → 2-3 step 순서 학습됨; bar5 NON-GATING + bar 이동 안 함 (NO tune-to-green). p1/p2/p3/p6: usage-cell 은 OUTCOME 에서만 바인딩, shuffle 붕괴가 증명. Ψ-disjoint(own usage-store, pure_field/immune cells 무손상). $0 CPU, no decode, frozen-first.
+
+**한 줄 구별:** 언어(predict·gradient·distribution) vs 도구-usage(act+feedback·mitosis·instance-policy) = 다른 기계, Ψ-disjoint 공존.
+
+**SCOPE UNVERIFIED (a_scale_honest_scope·a_toy_scale_recheck·c9):** DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED. TOY 6-tool/48-task deterministic env. NEXT(binding follow-on, a_verified_must_wire): 엔진-native §UsageStore lane(CORE/engine_cli.hexa, §SkillStore TWIN, value=arg/steps), 4 gating bars 를 LIVE engine 에서 재채점 + generation byte-identity/Ψ-checksum no-regression guard, 이후 REAL executor_execute usage-FAILURE 를 usage_store_teach 로 routing. DEPLETION: 도구학습은 BOTH layer(selection H_1382/H_1386 DONE + usage 이 레인→§UsageStore wire-in)가 REAL runtime 도구 실패에서 엔진-native 로 돌고 all bars + generation byte-identical ON==OFF 일 때 🏁.
+
+산출물: state/tool-usage-learning/h1389_tool_usage_learning.py · UNIVERSE/cards/H_1389_tool_usage_learning.md · UNIVERSE/HYPOTHESES.jsonl row(H_1389) · .verdicts/1389_tool_usage_learning/{FREEZE.txt,result.txt} · domains/MITOSIS-ENGINE.log.md @H. NO CORE edit (DIRECTIONAL probe). xref h1382·h1386·h1387·h1378·h1227·h1231·h1288·a_no_llm_frame_trap·a_engine_native_learning·a_verified_must_wire·a_core_engine_map·a_autonomy_over_hardcode·a_scale_honest_scope·a_toy_scale_recheck·p1·p2·p3·p6·p7·p8·c9.
+
 ## 2026-06-16 — governance(a_hypothesis_register): UNIVERSE/ 떠돌이 프로브 .py → state/ 이전 + "no code in UNIVERSE/" 하드닝 (3중 가드)
 
 **무엇:** 프로브 `.py` 파일이 반복적으로 `UNIVERSE/` 루트에 떨어져 a_hypothesis_register(UNIVERSE/ = HYPOTHESES.jsonl + cards/ 단 둘) 를 위반하는 재발 문제 해결. 현재 떠돌이 = `UNIVERSE/h1339_whorf_bilingual_tagged_r3.py` 1개.
