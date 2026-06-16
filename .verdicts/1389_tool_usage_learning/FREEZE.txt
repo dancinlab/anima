@@ -1,0 +1,44 @@
+H_1389 — tool-USAGE learning (tier-2): does anima learn HOW to drive a tool (args · sequence · error-recovery), not just WHICH tool?
+PRE-REGISTERED FREEZE — written BEFORE any measurement (c9, NO tune-to-green, frozen-first).
+substrate: $0 CPU numpy MIRROR (DIRECTIONAL — engine-transfer UNVERIFIED; §UsageStore engine wire-in = named follow-on).
+CORE/*.hexa UNTOUCHED this lane.
+
+=== THE DISTINCTION UNDER TEST ===
+Layer-1 (DONE, H_1382/H_1386): task-context -> WHICH tool. A tool is a cell keyed by task-context FNV-1a;
+  failure -> mitosis split; recall-or-abstain.
+Layer-2 (THIS LANE): (task-context + tool) -> HOW to drive it = correct ARGS · correct call SEQUENCE · ERROR-RECOVERY.
+  A selection-only learner picks the right tool but mis-USES it (wrong args / wrong order) -> task does NOT complete.
+A usage = an ACTION with parameters in a deterministic env where SUCCESS requires the right args AND (multi-step) the right order.
+On a usage FAILURE (right tool, wrong args/order) -> MITOSIS-SPLIT a usage-cell binding (task-context + tool + observed-error)
+  -> (corrected args / next-step). SAME op teaches (split-on-failure) + infers (recall-best). p8.
+Recall best-affinity usage-cell to propose args/next-step, else ABSTAIN (no fabricated args).
+
+=== ENV (deterministic, 3 seeds [4389,4390,4391]) ===
+N_TOOLS tools; each task = (task-context string, correct_tool, correct_arg, [optional ordered step sequence]).
+SUCCESS = (selected tool == correct_tool) AND (proposed arg == correct_arg) AND (multi-step: steps emitted IN ORDER).
+The correct TOOL is provided to layer-2 arms (selection already solved by layer-1) so the ONLY remaining unknown is HOW.
+A layer-1 SELECTION-ONLY baseline uses the right tool with a FIXED DEFAULT arg (its 'usage' never adapts).
+
+Arms:
+  FULL      : usage-store splits a usage-cell on each usage failure -> learns (ctx+tool+err)->corrected-arg/next-step.
+  SELECTION : right tool, FIXED default arg, NEVER splits a usage-cell (isolates layer-2 = the HOW, not the WHICH).
+  SHUFFLE   : usage-store trained toward a PERMUTED (ctx->arg) binding, SCORED vs the TRUE arg (earned-structure control).
+
+=== FROZEN BARS (verbatim; tier mapping frozen here) ===
+(1) USAGE-LEARNS:           FULL final completion - FULL init >= +0.30        [usage rises as usage-cells split under failure]
+(2) DISTINCT-FROM-SELECTION FULL final - SELECTION final >= +0.30  (KEY BAR)  [selection-only right-tool/default-arg does NOT complete]
+(3) EARNED (shuffle):       SHUFFLE final - SELECTION final <= +0.15           [permuted ctx->arg collapses the gain]
+(4) NO-FAB / ABSTAIN:       on an UNTRAINED tool/task, abstain-rate >= 0.90    [proposes NO args rather than hallucinating]
+(5) MULTI-STEP (optional):  FULL 2-3 step ordered-sequence completion >= 0.80  [a sequence learned IN ORDER]
+
+=== TIER MAPPING (frozen) ===
+bar1 AND bar2 AND bar3 AND bar4  -> GREEN  (usage IS a distinct learnable layer; bar5 reported as the multi-step strength)
+bar1 AND NOT bar2                -> PARTIAL (usage learns but selection-only already completes => not distinct in this env)
+NOT bar1                         -> closed-negative (usage is not a learnable layer in this env)
+HONEST (c9): if SELECTION already completes (bar2 fails) report PARTIAL/wall — do NOT manufacture a gap.
+
+p1/p2/p3/p6 GUARD: a usage-cell binds from OUTCOME only (success/failure of the executed call), NO injected
+  'use arg A' label / RLHF / persona. The SHUFFLE collapse (bar3) proves the lift is the earned ctx->arg
+  correspondence the split encodes, not the act of splitting.
+verify discipline: p7 (script-checked completion, NOT perplexity/loss). Ψ-disjoint by construction (own usage-store,
+  pure_field / immune cells untouched). seeds fixed; bars NOT moved after running.
