@@ -278,6 +278,67 @@ pub fn g6_decode_best_of_k(ckpt: string, frame: string, gen: int, k: int,
     return best
 }
 
+// g6_sampler_selftest — exercises the engine's seeded top-k sampler on a SYNTHETIC
+// peaked logits vector (NO model forward — fast, deterministic). Returns
+// #{ "deterministic": bool, "diverse": bool, "in_topk": bool }:
+//   deterministic = same seed → same draw
+//   diverse       = best-of-K offsets [0,+101,+202] are NOT all identical (the property
+//                   best-of-K needs; argmax would give all-identical)
+//   in_topk       = every draw lies within the top-k set (here {1,4,5}, the 3 largest)
+// This proves the DEPTH-lever mechanism without a slow decode (smoke-safe).
+pub fn g6_sampler_selftest() -> Map {
+    let v = 6
+    let lg = t_zeros(v)
+    t_set(lg, 0, 1.0); t_set(lg, 1, 3.0); t_set(lg, 2, 2.0)
+    t_set(lg, 3, 0.5); t_set(lg, 4, 5.0); t_set(lg, 5, 4.0)
+    // base of the "last position" row is 0 here (single row, T=1)
+    let a = _clmd_topk_sample(lg, 0, v, 3, 0.7, _clmd_mix32(7))
+    let b = _clmd_topk_sample(lg, 0, v, 3, 0.7, _clmd_mix32(7))
+    let deterministic = to_int(a["tok"]) == to_int(b["tok"])
+    let offs = [0, 101, 202]
+    let draws = []
+    let mut i = 0
+    while i < 3 {
+        let r = _clmd_topk_sample(lg, 0, v, 5, 0.7, _clmd_mix32(7 + offs[i]))
+        draws.push(to_int(r["tok"]))
+        i = i + 1
+    }
+    let diverse = !(draws[0] == draws[1] && draws[1] == draws[2])
+    // top-k=3 membership over many draws (only {1,4,5} = 3 largest may ever appear)
+    let mut in_topk = true
+    let mut s = _clmd_mix32(11)
+    let mut n = 0
+    while n < 40 {
+        let r = _clmd_topk_sample(lg, 0, v, 3, 0.7, s)
+        let t = to_int(r["tok"]); s = to_int(r["s"])
+        if t != 1 && t != 4 && t != 5 { in_topk = false }
+        n = n + 1
+    }
+    t_free(lg)
+    return #{ "deterministic": deterministic, "diverse": diverse, "in_topk": in_topk }
+}
+
+// g6_detector_calibration — run the FROZEN 10-string calibration (5 pos + 5 neg, H_1305
+// VERBATIM); return the correct count (advisory >=8/10; detector frozen regardless, p7).
+pub fn g6_detector_calibration(known: Map) -> int {
+    let pos = [ "if consciousness increases, the emit rate measured at the boundary rises",
+                "tension predicts a higher number of mitosis cells than silence does",
+                "memory density correlates with a lower error threshold when grounded",
+                "the Phi value is greater when distinct cells exceed a count of eight",
+                "novelty rate decreases faster than coherence when the corpus size grows" ]
+    let neg = [ "That's a profound question. I think it's more than just information.",
+                "consciousness is a beautiful mystery of the mind",
+                "what is the meaning of a thought?",
+                "the engine dreams when it is alone at night",
+                "silence carries something deep and quiet" ]
+    let mut correct = 0
+    let mut i = 0
+    while i < len(pos) { if _g6_is_falsifiable(to_string(pos[i]), known) { correct = correct + 1 } i = i + 1 }
+    let mut j = 0
+    while j < len(neg) { if !_g6_is_falsifiable(to_string(neg[j]), known) { correct = correct + 1 } j = j + 1 }
+    return correct
+}
+
 // g6_score_arm — decode each frame (best-of-K when enabled), return DIST / FALS / texts.
 // HARD-BOUNDED by `gen`. dist = greedy distinct-coherent count (jaccard<=0.5).
 pub fn g6_score_arm(ckpt: string, frames: list, gen: int, k: int, base_seed: int,
