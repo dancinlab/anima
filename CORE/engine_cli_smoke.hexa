@@ -1410,6 +1410,68 @@ fn main() {
           + " units(struct/shuf/jamo)=" + to_string(bs_nstruct) + "/"
           + to_string(bs_nshuf) + "/" + to_string(bs_njamo))
 
+    // ── (l) USAGESTORE — tool USAGE (the HOW) LEARNS via mitosis, DISTINCT from SELECTION (H_1389 R2 / H_1391) ──
+    //   Re-scores the H_1389 mirror's 4 gating bars ENGINE-NATIVE on the LIVE engine: a tool USAGE is a
+    //   CELL keyed by (ctx+tool+observed-error) (immune_embed_key); on a usage FAILURE (right tool,
+    //   wrong/default arg) the engine's OWN clonal split (engine_mitosis_tick) grows a NEW specialized
+    //   usage-cell binding the failure context → (corrected arg, ordered steps) (usage_store_teach).
+    //   SAME op teaches + infers (p8). ARMS (scored = fraction of tasks completed = right ARG):
+    //     FULL      teaches the corrected usage on each usage failure (mitosis ON) → learns the HOW.
+    //     SELECTION right tool, fixed DEFAULT arg, NEVER teaches a usage-cell → stuck at the no-usage floor.
+    //     SHUFFLE   teaches toward a PERMUTED ctx→arg, SCORED vs the TRUE arg → collapses.
+    //   Fixed deterministic (ctx+tool)→arg env (no rng) so the smoke is byte-repeatable. (cases 120-124 —
+    //   the H_1390 ko-morphology lane took 116-119 in a concurrent merge.)
+    let us_comp_full = _usagestore_arm_comp("full",      cfg_on)
+    let us_comp_sel  = _usagestore_arm_comp("selection", cfg_on)
+    let us_comp_shuf = _usagestore_arm_comp("shuffle",   cfg_on)
+    let us_comp_init = _usagestore_init_comp()
+
+    // case 120 : USAGE-LEARNS (engine-native) — FULL completion rises >= +0.30 over init as usage-cells
+    //   split under usage failure. The HOW is learned from outcome (bar 1).
+    if _assert_b("case_120_usagestore_learns", true,
+                 us_comp_full - us_comp_init >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 121 : DISTINCT-FROM-SELECTION (KEY) — a selection-only arm (right tool, fixed default arg,
+    //   never teaches a usage-cell) does NOT complete; FULL beats SELECTION by >= +0.30. The KEY bar:
+    //   usage IS a distinct learnable layer-2 — the gain is the usage-cell SPLIT, not having the tool.
+    if _assert_b("case_121_usagestore_distinct_from_selection", true,
+                 us_comp_full - us_comp_sel >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 122 : EARNED (shuffle) — teaching toward a PERMUTED ctx→arg map (scored vs the TRUE arg)
+    //   collapses the gain to within +0.15 of SELECTION ⇒ the lift is the EARNED ctx→arg correspondence
+    //   the split encodes, not the act of splitting (p6 guard).
+    if _assert_b("case_122_usagestore_earned_shuffle", true,
+                 us_comp_shuf - us_comp_sel <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 123 : NO-FAB / ABSTAIN — a FULL-trained usage-store queried with an UNTRAINED far
+    //   (ctx+tool+err) (disjoint trigram space) proposes NO arg (returns "" = abstain) ⇒ the
+    //   repertoire never fabricates a usage for an unrelated failure context (load-bearing).
+    let us_far = _usagestore_full_store(cfg_on)
+    let us_abst1 = (usage_recall(us_far, "中文 alien glyph zzz unrelated far0", "unknown_tool_x", "err:phantom:0") == "")
+    let us_abst2 = (usage_recall(us_far, "qqq xxxxxx vvvvvv nonsense token far1", "unknown_tool_y", "err:phantom:1") == "")
+    if _assert_b("case_123_usagestore_abstains_on_far", true,
+                 us_abst1 && us_abst2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 124 : Ψ-DISJOINT FOOTPRINT + ORDERED STEPS — the SELECTION-style repertoire (mitosis OFF on
+    //   teach) never grows past its single seed cell, FULL grows (its growth is its OWN cell population,
+    //   never pure_field/decoder); AND a fired FULL usage-cell carries the ORDERED step sequence (the
+    //   multi-step HOW is bound IN ORDER, not just the arg). FULL cells > SELECTION-style cells == 1.
+    let us_full_store   = _usagestore_full_store(cfg_on)
+    let us_static_store = _usagestore_full_store(cfg_off)
+    let us_steps_ok = (usage_recall_steps(us_full_store, "sql_query job needing JOIN", "sql_query",
+                                          "err:sql_query:argmismatch:SELECT") == "connect|execute|fetch")
+    if _assert_b("case_124_usagestore_footprint_and_ordered_steps", true,
+                 usage_store_cells(us_full_store) > usage_store_cells(us_static_store)
+              && usage_store_cells(us_static_store) == 1
+              && us_steps_ok) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  usagestore comp: init=" + to_string(us_comp_init)
+          + " full=" + to_string(us_comp_full)
+          + " selection=" + to_string(us_comp_sel)
+          + " shuffle=" + to_string(us_comp_shuf)
+          + " cells_full=" + to_string(usage_store_cells(us_full_store))
+          + " cells_static=" + to_string(usage_store_cells(us_static_store)))
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
@@ -1498,6 +1560,158 @@ fn _skillstore_arm_acc(mode: string, cfg: EngineConfig) -> float {
         }
     }
     return _skillstore_score(store, tasks, truth)                       // ALWAYS scored vs TRUE map
+}
+
+// ── USAGESTORE smoke helpers (H_1391) — fixed deterministic (ctx+tool)→arg environment ────────────
+//   12 tasks across 6 tools (2 per tool). Each task = (ctx, tool, correct_arg, ordered_steps). The
+//   correct_arg is biased AWAY from the tool's DEFAULT arg (arg index 0) so a fixed-default SELECTION
+//   arm fails the usage even with the right tool — isolating layer-2 (the HOW) from layer-1 (the
+//   WHICH). No rng: the SAME set + the SAME shuffle permutation run every time (byte-repeatable).
+//   MIRRORS the H_1389 mirror env (TOOLS / ARGS_PER_TOOL / STEPS_PER_TOOL), pinned to a fixed subset.
+fn _usagestore_ctxs() -> [string] {
+    return [
+        "http_get job needing follow", "http_get job needing auth",
+        "sql_query job needing JOIN", "sql_query job needing GROUP-BY",
+        "file_write job needing append", "file_write job needing binary",
+        "git_commit job needing amend", "git_commit job needing signoff",
+        "ffmpeg_cut job needing to-end", "ffmpeg_cut job needing copy",
+        "regex_match job needing multiline", "regex_match job needing ignorecase"
+    ]
+}
+fn _usagestore_tools() -> [string] {
+    return [
+        "http_get", "http_get", "sql_query", "sql_query",
+        "file_write", "file_write", "git_commit", "git_commit",
+        "ffmpeg_cut", "ffmpeg_cut", "regex_match", "regex_match"
+    ]
+}
+// the DEFAULT arg per tool (arg index 0 of the H_1389 ARGS_PER_TOOL) — the SELECTION arm's fixed arg.
+fn _usagestore_default_arg(tool: string) -> string {
+    if tool == "http_get"    { return "--json" }
+    if tool == "sql_query"   { return "SELECT" }
+    if tool == "file_write"  { return "mode=w" }
+    if tool == "git_commit"  { return "-m" }
+    if tool == "ffmpeg_cut"  { return "-ss-start" }
+    if tool == "regex_match" { return "anchored" }
+    return "--default"
+}
+// the TRUE corrected arg per task — all NON-default (so SELECTION's fixed default never completes).
+fn _usagestore_true_args() -> [string] {
+    return [
+        "--follow-redirects", "--auth-bearer", "JOIN", "GROUP-BY",
+        "mode=a", "mode=wb", "--amend", "--signoff",
+        "-to-end", "-c-copy", "multiline", "ignorecase"
+    ]
+}
+// a FIXED derangement of the true args (every position a DIFFERENT arg) — the SHUFFLE training labels.
+// Scoring is ALWAYS vs _usagestore_true_args (the EARNED control).
+fn _usagestore_shuffle_args() -> [string] {
+    return [
+        "--auth-bearer", "JOIN", "GROUP-BY", "mode=a",
+        "mode=wb", "--amend", "--signoff", "-to-end",
+        "-c-copy", "multiline", "ignorecase", "--follow-redirects"
+    ]
+}
+// the TRUE ordered step sequence per task (joined by "|") — the SEQUENCE the usage emits IN ORDER.
+fn _usagestore_true_steps() -> [string] {
+    return [
+        "open|send|read", "open|send|read", "connect|execute|fetch", "connect|execute|fetch",
+        "open|write|close", "open|write|close", "stage|commit", "stage|commit",
+        "probe|seek|encode", "probe|seek|encode", "compile|match", "compile|match"
+    ]
+}
+// _usagestore_obs_err — the deterministic env's error signal on a usage failure (right tool, default
+//   arg != correct arg). MIRRORS the H_1389 mirror _observed_error: "err:{tool}:argmismatch:{used}".
+fn _usagestore_obs_err(tool: string) -> string {
+    return "err:" + tool + ":argmismatch:" + _usagestore_default_arg(tool)
+}
+
+// _usagestore_completes — a task COMPLETES iff the proposed arg (recall on the failure context, else
+//   the fixed default) == the TRUE arg. The correct tool is GIVEN (selection solved by layer-1).
+fn _usagestore_completes(store: UsageStore, ctx: string, tool: string, true_arg: string) -> bool {
+    let obs = _usagestore_obs_err(tool)
+    let proposed = usage_recall(store, ctx, tool, obs)
+    let arg = if proposed == "" { _usagestore_default_arg(tool) } else { proposed }   // ABSTAIN → default
+    return arg == true_arg
+}
+
+// _usagestore_comp_score — fraction of tasks that complete (right arg) under the given store.
+fn _usagestore_comp_score(store: UsageStore) -> float {
+    let ctxs  = _usagestore_ctxs()
+    let tools = _usagestore_tools()
+    let truth = _usagestore_true_args()
+    let mut done = 0
+    let mut i = 0
+    while i < len(ctxs) {
+        if _usagestore_completes(store, ctxs[i], tools[i], truth[i]) { done = done + 1 }
+        i = i + 1
+    }
+    return to_float(done) / to_float(len(ctxs))
+}
+
+// _usagestore_init_comp — completion of a store seeded with ONLY the first usage-cell, scored over
+//   ALL tasks vs the TRUE args (the shared FULL/SELECTION starting point).
+fn _usagestore_init_comp() -> float {
+    let ctxs  = _usagestore_ctxs()
+    let tools = _usagestore_tools()
+    let truth = _usagestore_true_args()
+    let steps = _usagestore_true_steps()
+    let store = usage_store_new(ctxs[0], tools[0], _usagestore_obs_err(tools[0]),
+                                truth[0], steps[0], 64)
+    return _usagestore_comp_score(store)
+}
+
+// _usagestore_full_store — build a store under the given cfg by walking the failure-driven teach loop
+//   toward the TRUE args (FULL arm). Under cfg_off (mitosis OFF) the teach split is a no-op ⇒ the
+//   SELECTION-style fixed usage (stays at 1 cell). Seed = first (ctx+tool+err → true arg/steps).
+fn _usagestore_full_store(cfg: EngineConfig) -> UsageStore {
+    let ctxs  = _usagestore_ctxs()
+    let tools = _usagestore_tools()
+    let truth = _usagestore_true_args()
+    let steps = _usagestore_true_steps()
+    let mut store = usage_store_new(ctxs[0], tools[0], _usagestore_obs_err(tools[0]),
+                                    truth[0], steps[0], 64)
+    let mut i = 0
+    while i < len(ctxs) {
+        store = usage_store_teach(store, ctxs[i], tools[i], _usagestore_obs_err(tools[i]),
+                                  truth[i], steps[i], cfg)   // usage failure → clonal split
+        i = i + 1
+    }
+    return store
+}
+
+// _usagestore_arm_comp — final completion of one arm (scored vs the TRUE args):
+//   "full"      teaches the corrected usage under mitosis ON → learns the HOW.
+//   "selection" never teaches (right tool, fixed DEFAULT arg) → stuck at the no-usage floor.
+//   "shuffle"   teaches toward the PERMUTED args (mitosis ON) but is SCORED vs TRUE → collapses.
+fn _usagestore_arm_comp(mode: string, cfg: EngineConfig) -> float {
+    let ctxs  = _usagestore_ctxs()
+    let tools = _usagestore_tools()
+    let truth = _usagestore_true_args()
+    let steps = _usagestore_true_steps()
+    let train = if mode == "shuffle" { _usagestore_shuffle_args() } else { truth }
+    let mut store = usage_store_new(ctxs[0], tools[0], _usagestore_obs_err(tools[0]),
+                                    train[0], steps[0], 64)
+    if mode != "selection" {
+        let mut i = 0
+        while i < len(ctxs) {
+            store = usage_store_teach(store, ctxs[i], tools[i], _usagestore_obs_err(tools[i]),
+                                      train[i], steps[i], cfg)   // teach toward arm's label
+            i = i + 1
+        }
+    }
+    if mode == "selection" {
+        // SELECTION arm: right tool, fixed DEFAULT arg, NEVER consults a usage-cell. Score the
+        // default-arg policy directly (no usage learning) — the no-usage floor.
+        let mut done = 0
+        let mut j = 0
+        while j < len(ctxs) {
+            if _usagestore_default_arg(tools[j]) == truth[j] { done = done + 1 }
+            j = j + 1
+        }
+        return to_float(done) / to_float(len(ctxs))
+    }
+    return _usagestore_comp_score(store)                       // ALWAYS scored vs TRUE args
 }
 
 // _sm_count_dummy — local alias so the ablate case can read the placed count without
