@@ -1,0 +1,71 @@
+H_1387 — G6 r2 PRODUCTION-CLOSE — FROZEN BARS (pre-registered, frozen-first, c9 NO tune-to-green)
+================================================================================================
+Date: 2026-06-16
+Branch: h1387/g6-production-close (off origin/main 38a1b2c4a)
+Lane: G6 r2 production-close — re-score the ★ ideation FALS depth bars (M2-M5)
+      on a 303M-class engine-mountable ConvMoE .clm.
+
+GOAL
+----
+Convert G6 ★ IDEATION from WIRED (M1-only, H_1381) to production-closed (M1-M5) by
+mounting a 303M-class ENGINE-MOUNTABLE ConvMoE .clm via the gen_clm_ideate entry and
+re-scoring the 5 M-bars ENGINE-NATIVE (bounded decode). Detector VERBATIM (do NOT loosen, p7).
+
+================================================================================================
+STEP 0 — COST-AWARE TRIAGE RESULT (c9 / a_fire_autonomous / a_completeness_over_cheap)
+================================================================================================
+Q: Does an engine-mountable 303M-class ConvMoE .clm ALREADY exist (HF.jsonl / CLM/ / local)?
+A: NO.
+   - Local .clm artifacts are ALL d768/E2/L1 = 7.479M (the capacity floor that gave FALS=0 in H_1381):
+       state/lane_p_clm/clm_d768_e2l1.clm  (4463478 B)
+       state/lane_p_clm_gen/clm_d768_gen.clm
+       state/lane_p_clm_gen2/clm_d768_gen2.clm
+   - The 303M model `dancinlab/anima-clm-midcap-303m-broad-en-emergent` (h1129c, n_params=303,097,856)
+     that gave H_1362 FALS=1.0 is a **ByteGPT (transformer .pt)** — d1024/L24/H16. The CORE engine
+     decodes **CLMConvMoE** only (clm_decode.hexa); serializing a ByteGPT to .clm is EXPLICITLY
+     FORBIDDEN (a_clm_gen_pipeline dont: "serialize a non-ConvMoE (ByteGPT/transformer) and claim
+     engine-mountable"). So the FALS=1.0 result is NOT architecture-transferable by serialization.
+
+PATH DECISION (a_completeness_over_cheap — primary = clears the bar, not the cheapest):
+   The ONLY path to an engine-mountable 303M-class ConvMoE .clm is to TRAIN a 303M ConvMoE
+   from scratch (E=2/L1/K3 V=256, the decoder-fixed arch) to coherent convergence, then
+   serialize_v2 -> .clm v0.2, mount via gen_clm_ideate, re-score M-bars engine-native.
+
+   ConvMoE E=2/L1/K3 V=256 param count vs d_model (computed from CLM/model/model.py):
+       d= 768 ->   7.48M   (current floor, FALS=0)
+       d=3072 -> 114.85M
+       d=5000 -> 302.61M   <- 303M-CLASS TARGET (d_model=5000)
+
+COST ESTIMATE (one line, a_fire_autonomous — user authorized GPU):
+   ~$15-30 / ~4-8 GPU-h on 1x H100 80GB to train a d5000 ConvMoE (302.6M, E2/L1/K3) from
+   scratch to coherent convergence (6000 steps batch64 seq256 bf16, 5-lang ODC-BY byte corpus),
+   serialize -> .clm, pull, mount, re-score engine-native. (d768 MID took 150s; ~40x params,
+   conv FLOPs ~d^2 so ~1600x/step -> multi-hour cost-bearing. PROCEED, user authorized.)
+
+================================================================================================
+FROZEN BARS (NO bar may be moved post-hoc; detector reused VERBATIM, p7)
+================================================================================================
+B1 — 303M-MOUNTED:
+   A 303M-class ConvMoE .clm (n_params >= 290M, target d5000 = 302.6M) mounts via gen_clm_ideate.
+   n_params STATED, .clm sha256-pinned, decodable=TRUE (clm_config recovers d/E/L/V from blocks).
+
+B2 — M-BARS ENGINE-NATIVE (re-score on the LIVE engine, bounded decode; verbatim stdout, c2):
+   M1 COUNT      DIST(C) >= 5
+   M2 DEPTH      FALS(C) >= 1
+   M3 LIFT       FALS(C) >  FALS(B_composed)
+   M4 EARNED-PAIR  FALS(C) >  FALS(C_shuffle)
+   M5 EARNED-COMP  FALS(C) >  FALS(C_ablate)
+   Detector = tool/gauge_lib.py _is_falsifiable VERBATIM (10/10 calibration), NOT loosened.
+   Frame-guard CLEAN (0 leaks). Arms: A_flat / B_composed / C_strong / C_shuffle / C_ablate
+   (the H_1362 frozen design). MAX_NEW bounded (110, the gate's own regime).
+
+B3 — Psi PRESERVED / NO-REGRESSION:
+   Psi=1/2 + decoder separation invariant (h1205) byte-identical for the NON-ideation path;
+   engine_cli_smoke green (~98-110 / 0); single-entry (h1196) N/0.
+
+OUTCOME RULES (c9, honest):
+   - M2-M5 all PASS engine-native on the 303M .clm with Psi preserved -> G6 ★ PRODUCTION-CLOSED, DEPLETES.
+   - 303M .clm cannot be obtained within reasonable GPU budget -> honest ⏳ + cheapest viable path
+     stated; do NOT fake FALS / loosen the detector.
+   - FALS STILL 0 on a GENUINE 303M ConvMoE .clm -> honest result about ConvMoE-vs-ByteGPT gauge
+     (the FALS lever may be arch-specific, not capacity-only); do NOT move the bar.
