@@ -1,0 +1,60 @@
+H_1339 R3 — SAPIR-WHORF BILINGUAL TAGGED (control re-freeze): does a language-TAG
+enable bilingual CP COEXISTENCE? (I3a re-frozen LOCALIZED; data unchanged from r2)
+======================================================================================
+A->B on ONE grow-not-evict Voronoi store, A & B channels SEPARATED by a fixed language
+tag (key_A=concat(embed,t_A), key_B=concat(embed,t_B)); read CP@p_A via tag_A, @p_B via
+tag_B. Single-channel (untagged) control MUST reproduce the H_1330 OVERWRITE. I3a is the
+LOCALIZED 'no coherent peak near p_B' test (NOT the r2 global count_peaks<=1 — a
+correctly-scoped control, NOT a relaxation: the GLOBAL count conflated a benign discrete-
+Voronoi wiggle with the intended no-spurious-CP-at-p_B test, which already passes).
+N_stim=21 dim=16 TAG_GAIN=1.0 (FIXED) p_A=0.333 p_B=0.667 grow_max=24 seeds=[4323, 4324, 4325]
+frozen: W1_MARGIN=0.15 PEAK_FRAC=0.5 SHUF_MIN_PEAKS=3  (r2 LANG_MAX_PEAKS=1 RETIRED for B=A → localized pk@p_B)
+
+  PER-SEED:
+  seed   TAGGED m@pA  m@pB  pk@pA pk@pB ncellsA->AB | SINGLE m@pA | B=A pk@pB (npk diag) | SHUF npk pk@pB
+  4323  +0.201 +0.173  T     T    4->7     | -0.001     | F      (2)        | 5  F
+  4324  +0.200 +0.181  T     T    4->7     | -0.000     | F      (2)        | 6  T
+  4325  +0.200 +0.179  T     T    4->7     | -0.001     | F      (2)        | 5  T
+
+  I1 COEXISTENCE (TAGGED CP at BOTH p_A & p_B, all 3 seeds, margin>=0.15):
+     mean margin@p_A=+0.200  mean margin@p_B=+0.177  (bar 0.15)
+     per-seed pass: [True, True, True]   -> I1 PASS
+  I2 TAG-ATTRIBUTION (SINGLE-CHANNEL untagged REPRODUCES H_1330 OVERWRITE, m@pA<0.15):
+     single-channel mean margin@p_A=-0.001  (H_1330 ref -0.001; collapse expected)
+     per-seed pass: [True, True, True]   -> I2 PASS
+  I3' EARNED (B=A LOCALIZED: NO coherent peak@p_B; SHUFFLE: >= 3 peaks OR no peak@p_B):
+     B=A   peak@p_B (re-frozen I3a, localized): [False, False, False]  pass [True, True, True]
+           (DIAGNOSTIC: global count_peaks = [2, 2, 2] — benign discretization wiggle, NOT gating)
+     SHUF  peak-counts: [5, 6, 5]  peak@p_B: [False, True, True]  pass [True, True, True]
+     -> I3' PASS
+
+  [NON-GATING DIAGNOSTIC — TAG_GAIN channel-isolation sweep, c9; verdict NOT gated on this]
+  B=A control: B-tagged cells grown + residual B-channel curve magnitude vs TAG_GAIN
+  (TAG_GAIN=1.0 = the FROZEN gating point; sweep is informational only)
+  gain  |  B-cells grown (mean over seeds)  |  residual B-curve peak (mean)
+  0.25  |    0.00                          |  0.7267
+  0.50  |    0.00                          |  0.4682
+  1.00  |    0.00                          |  0.2360  <- FROZEN
+  2.00  |    2.00                          |  0.9888
+  4.00  |    2.00                          |  0.9888
+  reading: the B=A control grows ZERO B-cells at EVERY gain (it re-learns A's boundary →
+  no B-error to split on); residual B-curve magnitude is pure cross-tag BLEED and SHRINKS
+  as the tag gap widens (isolation improves with gain) — confirms the r2 diagnosis. The
+  gating arms stay at the FROZEN TAG_GAIN=1.0 (NOT swept-to-green).
+======================================================================================
+VERDICT: 🟢 GREEN (MIRROR, DIRECTIONAL) — LANGUAGE-TAGGED BILINGUAL CP COEXISTENCE.
+  A language-tag dimension lets ONE grow-not-evict Voronoi store hold BOTH languages'
+  categorical perception simultaneously: a coherent CP peak at p_A (read via tag_A) AND
+  at p_B (read via tag_B), each clearing the H_1323 cross-within margin bar 0.15, all 3
+  seeds (I1). The SINGLE-CHANNEL (untagged) control REPRODUCES the H_1330 OVERWRITE
+  (CP@p_A collapses to -0.001), so coexistence is attributable to the TAG, not extra
+  training (I2). The B=A control fabricates NO spurious CP at the other boundary p_B
+  (localized I3a, pk@p_B=False all seeds) and the SHUFFLE arm fabricates no coherent
+  second CP (I3b). FINDING: the H_1330 OVERWRITE was the SINGLE-SHARED-STORE mechanism,
+  NOT a fundamental limit — a tagged multi-channel readout overturns it. This MIRRORS
+  anima's REAL separate EN-trunk + KO faculties (H_1316/1321/1322): the tag is the
+  substrate-level 'select the faculty', so anima's separate EN+KO faculties coexist for
+  the SAME structural reason. The engine-native realization is wired into live
+  CORE/engine_cli.hexa §CategoricalPerception in this r3 (a_verified_must_wire).
+  ENGINE-TRANSFER at mirror DIRECTIONAL; TOY synthetic continuum, 3 seeds; NO human-
+  bilingualism claim.

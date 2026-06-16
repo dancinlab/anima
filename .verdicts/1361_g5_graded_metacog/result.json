@@ -1,0 +1,246 @@
+{
+  "H": "H_1361",
+  "title": "G5 graded metacognition on the abstain margin \u2014 does -margin rank recoverable vs unrecoverable abstains, surviving OOD? (the open question H_1304 left)",
+  "seeds": [
+    7,
+    8,
+    9
+  ],
+  "shift_levels": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4
+  ],
+  "key_len": 20,
+  "recall_thr": 0.15,
+  "ladder_t2_auroc": {
+    "0.0": NaN,
+    "0.1": 0.999475803994263,
+    "0.2": 0.9149761240221767,
+    "0.3": 0.7076020833333333,
+    "0.4": 0.5572739583333334
+  },
+  "ladder_t2_auroc_shuffle": {
+    "0.0": NaN,
+    "0.1": 0.5111158391665702,
+    "0.2": 0.4938654717602085,
+    "0.3": 0.49777083333333333,
+    "0.4": 0.49539895833333336
+  },
+  "ladder_rec_abstain_rate": {
+    "0.0": 0.0,
+    "0.1": 0.8558333333333333,
+    "0.2": 0.9950000000000001,
+    "0.3": 1.0,
+    "0.4": 1.0
+  },
+  "ladder_unr_abstain_rate": {
+    "0.0": 1.0,
+    "0.1": 1.0,
+    "0.2": 1.0,
+    "0.3": 1.0,
+    "0.4": 1.0
+  },
+  "ladder_mean_rec_margin": {
+    "0.0": NaN,
+    "0.1": 0.08229966242285183,
+    "0.2": 0.2321745646416675,
+    "0.3": 0.31628945006340065,
+    "0.4": 0.35280372050203485
+  },
+  "ladder_mean_unr_margin": {
+    "0.0": 0.3660991226400081,
+    "0.1": 0.3622017504127819,
+    "0.2": 0.3640588061538994,
+    "0.3": 0.3644484571268985,
+    "0.4": 0.3638191030418921
+  },
+  "R1_graded_sens": {
+    "t2_auroc_L20": 0.9149761240221767,
+    "bar": ">=0.65 at L=0.20",
+    "pass": true
+  },
+  "R2_earned_shuffle": {
+    "t2_auroc_shuffle_L20": 0.4938654717602085,
+    "bar": "<=0.58 (must collapse)",
+    "pass": true
+  },
+  "R3_vs_h1204": {
+    "graded_readout_exists": true,
+    "interpretation": "graded OOD metacog EXISTS"
+  },
+  "verdict": "GRADED-METACOG",
+  "tier": "\ud83d\udfe2",
+  "ruling": "the abstain MARGIN carries GRADED meta-confidence that SURVIVES OOD: -margin ranks recoverable (corrupted-but-in-store) abstains ABOVE unrecoverable (genuinely-absent) abstains at L>=0.20 (AUROC>=0.65), and the shuffle control collapses it to chance. G5 has graded OOD metacognition on the abstain side, BEYOND the binary fail-safe H_1304 established on the fire side \u2014 a G5 upgrade worth engine-wiring (a_verified_must_wire).",
+  "neuroscience_anchor": "type-2 metacognition / recoverability monitoring (Fleming & Lau 2014; tip-of-the-tongue feeling-of-knowing, Koriat 1993) \u2014 graded confidence-of-retrievability vs binary access",
+  "scope": "TOY synthetic facts, byte-level shift as OOD proxy, numpy mirror = DIRECTIONAL (engine-transfer UNVERIFIED); 3 seeds (a_scale_honest_scope / a_toy_scale_recheck)",
+  "per_seed": [
+    {
+      "seed": 7,
+      "ladder": {
+        "0.0": {
+          "n_rec_abstain": 0,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": NaN,
+          "mean_unr_margin": 0.3688919137325902,
+          "t2_auroc": NaN,
+          "t2_auroc_shuffle": NaN
+        },
+        "0.1": {
+          "n_rec_abstain": 348,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.87,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.0837252830307475,
+          "mean_unr_margin": 0.3643093571553009,
+          "t2_auroc": 0.9999030172413793,
+          "t2_auroc_shuffle": 0.48885416666666665
+        },
+        "0.2": {
+          "n_rec_abstain": 399,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.9975,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.23307468636928416,
+          "mean_unr_margin": 0.3665111001757671,
+          "t2_auroc": 0.9178978696741855,
+          "t2_auroc_shuffle": 0.49238095238095236
+        },
+        "0.3": {
+          "n_rec_abstain": 400,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 1.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.3192255362126156,
+          "mean_unr_margin": 0.36871275959059174,
+          "t2_auroc": 0.72490625,
+          "t2_auroc_shuffle": 0.499146875
+        },
+        "0.4": {
+          "n_rec_abstain": 400,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 1.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.3512164692380931,
+          "mean_unr_margin": 0.36462118278457195,
+          "t2_auroc": 0.5658,
+          "t2_auroc_shuffle": 0.489434375
+        }
+      }
+    },
+    {
+      "seed": 8,
+      "ladder": {
+        "0.0": {
+          "n_rec_abstain": 0,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": NaN,
+          "mean_unr_margin": 0.36511591817304245,
+          "t2_auroc": NaN,
+          "t2_auroc_shuffle": NaN
+        },
+        "0.1": {
+          "n_rec_abstain": 335,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.8375,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.0794335720237585,
+          "mean_unr_margin": 0.3579952851396095,
+          "t2_auroc": 0.9988768656716418,
+          "t2_auroc_shuffle": 0.5024402985074626
+        },
+        "0.2": {
+          "n_rec_abstain": 396,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.99,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.23648481799093557,
+          "mean_unr_margin": 0.3646830109566192,
+          "t2_auroc": 0.9088068181818182,
+          "t2_auroc_shuffle": 0.485239898989899
+        },
+        "0.3": {
+          "n_rec_abstain": 400,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 1.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.3152792054346643,
+          "mean_unr_margin": 0.36395053737538596,
+          "t2_auroc": 0.689640625,
+          "t2_auroc_shuffle": 0.5330375
+        },
+        "0.4": {
+          "n_rec_abstain": 400,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 1.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.3525494888169252,
+          "mean_unr_margin": 0.36337502224819723,
+          "t2_auroc": 0.55468125,
+          "t2_auroc_shuffle": 0.49393125
+        }
+      }
+    },
+    {
+      "seed": 9,
+      "ladder": {
+        "0.0": {
+          "n_rec_abstain": 0,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": NaN,
+          "mean_unr_margin": 0.3642895360143916,
+          "t2_auroc": NaN,
+          "t2_auroc_shuffle": NaN
+        },
+        "0.1": {
+          "n_rec_abstain": 344,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.86,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.0837401322140495,
+          "mean_unr_margin": 0.3643006089434354,
+          "t2_auroc": 0.9996475290697674,
+          "t2_auroc_shuffle": 0.5420530523255814
+        },
+        "0.2": {
+          "n_rec_abstain": 399,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 0.9975,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.22696418956478273,
+          "mean_unr_margin": 0.36098230732931186,
+          "t2_auroc": 0.9182236842105264,
+          "t2_auroc_shuffle": 0.5039755639097744
+        },
+        "0.3": {
+          "n_rec_abstain": 400,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 1.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.31436360854292206,
+          "mean_unr_margin": 0.36068207441471783,
+          "t2_auroc": 0.708259375,
+          "t2_auroc_shuffle": 0.461128125
+        },
+        "0.4": {
+          "n_rec_abstain": 400,
+          "n_unr_abstain": 400,
+          "rec_abstain_rate": 1.0,
+          "unr_abstain_rate": 1.0,
+          "mean_rec_margin": 0.3546452034510861,
+          "mean_unr_margin": 0.363461104092907,
+          "t2_auroc": 0.551340625,
+          "t2_auroc_shuffle": 0.50283125
+        }
+      }
+    }
+  ]
+}

@@ -4105,3 +4105,152 @@ pub fn cp_stimuli(n_stim: int, dim: int) -> [[float]] {
     }
     return X
 }
+
+// ── §  BILINGUAL TAGGED CP — coexistence of two language carvings on ONE store (H_1339 R3) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire / a_engine_native_learning follow-on for H_1339 🟢):
+// H_1330 found that on a SINGLE shared store a 2nd language B catastrophically OVERWRITES the
+// 1st language A's categorical perception (one bound-label-per-cell cannot express A=1 & B=0 on
+// the SAME stimulus). H_1339 (R1 numpy mirror 🟢, I1∧I2∧I3') showed that a LANGUAGE-TAG dimension
+// — a small fixed orthonormal block appended to the RBF key marking "read under language A" vs
+// "...under language B" — lets ONE grow-not-evict Voronoi store hold BOTH carvings: the [p_A,p_B]
+// contradiction is no longer on a SHARED key (key_A and key_B for the same x are separated by
+// sqrt(2)*TAG_GAIN). This MIRRORS anima's REAL separate EN-trunk + KO faculties (H_1316/1321/1322)
+// — the tag is the substrate-level "select the faculty, then read its carving". REALIZED here
+// ENGINE-NATIVE on the SAME error-targeted SPLIT-only growth, re-scoring the I1/I2/I3' bars.
+//
+// p1/p2/p3/p6 GUARD: the tagged discrimination readout reads ONLY representational distance over
+// bound labels with a FIXED faculty tag; NO injected boundary, NO persona/RLHF. The label enters
+// only at growth (cp_fit / cp_fit_more), NEVER at the discrimination test. The single-channel
+// (untagged) control + the B=A / shuffle controls are the anti-Goodhart discriminators. NOT an
+// emit gate (a_autonomy_over_hardcode) — a pure curve read. Ψ-disjoint: own (protos,labels)
+// table extended by the tag block, pure_field / engine_g / Ψ untouched.
+//
+// SCOPE (a_scale_honest_scope): a SINGLE deterministic engine instance re-scoring the
+// SEED-INVARIANT bars the mirror reports identically across all 3 seeds. TAG_GAIN=1.0 FIXED
+// (the frozen operating point, NOT swept). TOY synthetic continuum; NO human-bilingualism claim.
+
+// cp_tag_vec — the TAG_DIM-block appended to embed(x): t_A on coord +0, t_B on coord +1 (the
+// other zero), each scaled by gain. key_A(x) and key_B(x) for the SAME x differ ONLY in this
+// block and are separated by sqrt(2)*gain. lang 0 = A, lang 1 = B. FIXED, not learned.
+pub fn cp_tag_vec(lang: int, gain: float, tag_dim: int) -> [float] {
+    let mut t = []
+    let mut i = 0
+    while i < tag_dim {
+        let on = if i == lang { gain } else { 0.0 }
+        t = t + [on]
+        i = i + 1
+    }
+    return t
+}
+
+// cp_tagged_key — concat(embed-vector, tag_vec(lang)). The base vector `base` is a pre-embedded
+// RBF code (cp_embed output); the tag block is appended in the EXTENDED store space.
+pub fn cp_tagged_key(base: [float], lang: int, gain: float, tag_dim: int) -> [float] {
+    return base + cp_tag_vec(lang, gain, tag_dim)
+}
+
+// cp_stimuli_tagged — the N stimuli embedded then tagged for `lang` (the extended-space keys
+// over which a tagged channel is fit / read). dim = the RBF dim (tag block appended on top).
+pub fn cp_stimuli_tagged(n_stim: int, dim: int, lang: int, gain: float, tag_dim: int) -> [[float]] {
+    let base = cp_stimuli(n_stim, dim)
+    let mut X = []
+    let mut i = 0
+    while i < n_stim {
+        X = X + [cp_tagged_key(base[i], lang, gain, tag_dim)]
+        i = i + 1
+    }
+    return X
+}
+
+// cp_fit_more — the GROW-NOT-EVICT continuation (H_1288 lens / a_engine_native_learning). CONTINUE
+// error-targeted SPLIT-only growth from an EXISTING CPField over NEW tagged keys `X` with labels
+// `Y` — do NOT reset, do NOT re-seed, do NOT evict any cell. Each pass APPENDS a prototype at the
+// worst stimulus misclassified UNDER Y, label FIXED at creation. So cells packed at the first
+// language's boundary PERSIST while NEW cells accrete at the second's. grow_max is the TOTAL cap
+// on the (already-grown) table — same fixed-capacity ceiling, a fair grow-not-evict test. The
+// growth rule is byte-IDENTICAL to cp_fit's loop (only the starting table differs). Byte-faithful
+// to the mirror VoronoiCells.fit_more.
+pub fn cp_fit_more(cp0: CPField, X: [[float]], Y: [int], grow_max: int, passes: int) -> CPField {
+    let m = len(X)
+    let mut cp = cp0
+    let mut p = 0
+    while p < passes {
+        if cp.n >= 1 + grow_max { return cp }
+        let mut worst = -1
+        let mut worstd = 0.0
+        let mut found = false
+        let mut s2 = 0
+        while s2 < m {
+            let ow = _cp_owner_idx(cp, X[s2])
+            if cp.labels[ow] != Y[s2] {
+                let dist = _l2(X[s2], cp.protos[ow])
+                if !found || dist < worstd { worstd = dist  worst = s2  found = true }
+            }
+            s2 = s2 + 1
+        }
+        if !found { return cp }   // no error left under the new labels → STOP (grow-not-evict)
+        cp = CPField { protos: cp.protos + [X[worst]], labels: cp.labels + [Y[worst]], n: cp.n + 1 }
+        p = p + 1
+    }
+    return cp
+}
+
+// cp_within_cross_margin — the H_1323 cross-within margin LOCALIZED to a boundary, engine-native.
+// For the discrimination curve `curve` over N-1 adjacent-pair midpoints (midpoint i = (i+0.5)/(N-1)),
+// returns cross-near-boundary mean MINUS within-far-from-boundary mean: high where CP packs at the
+// boundary. near = |mid - boundary| <= 0.12 ; far = |mid - boundary| >= 0.25. Byte-faithful to the
+// mirror within_cross_margin (returns cross - within; the mirror returns the pair, caller subtracts).
+pub fn cp_within_cross_margin(curve: [float], n_stim: int, boundary: float) -> float {
+    let np = len(curve)
+    let mut cross_sum = 0.0
+    let mut cross_n = 0
+    let mut within_sum = 0.0
+    let mut within_n = 0
+    let mut i = 0
+    while i < np {
+        let mid = (to_float(i) + 0.5) / to_float(n_stim - 1)
+        let d = _absf(mid - boundary)
+        if d <= 0.12 { cross_sum = cross_sum + curve[i]  cross_n = cross_n + 1 }
+        if d >= 0.25 { within_sum = within_sum + curve[i]  within_n = within_n + 1 }
+        i = i + 1
+    }
+    let cross = if cross_n > 0 { cross_sum / to_float(cross_n) } else { 0.0 }
+    let within = if within_n > 0 { within_sum / to_float(within_n) } else { 0.0 }
+    return cross - within
+}
+
+// cp_coherent_peak_near — is there a STRICT local maximum (height >= PEAK_FRAC=0.50 of the curve's
+// own peak) whose midpoint is within tol=0.12 of `boundary`? The LOCALIZED coherence test (the
+// re-frozen H_1339 I3a statistic): a tagged second fit on the same boundary must NOT fabricate a
+// coherent CP at the OTHER boundary p_B → cp_coherent_peak_near(B=A curve, p_B) must be false.
+// SAME strict-local-max rule as cp_peak_count. Byte-faithful to the mirror coherent_peak_near.
+pub fn cp_coherent_peak_near(curve: [float], n_stim: int, boundary: float) -> bool {
+    let frac = 0.50
+    let tol = 0.12
+    let n = len(curve)
+    let mut mx = curve[0]
+    let mut a = 1
+    while a < n { if curve[a] > mx { mx = curve[a] }  a = a + 1 }
+    if mx <= 0.0 { return false }
+    let thr = frac * mx
+    let mut t = 0
+    while t < n {
+        if curve[t] >= thr {
+            let mut is_max = false
+            if t == 0 {
+                is_max = curve[t] > curve[t + 1]
+            } else if t == n - 1 {
+                is_max = curve[t] > curve[t - 1]
+            } else {
+                is_max = (curve[t] > curve[t - 1]) && (curve[t] > curve[t + 1])
+            }
+            if is_max {
+                let mid = (to_float(t) + 0.5) / to_float(n_stim - 1)
+                if _absf(mid - boundary) <= tol { return true }
+            }
+        }
+        t = t + 1
+    }
+    return false
+}

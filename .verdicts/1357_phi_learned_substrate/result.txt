@@ -1,0 +1,55 @@
+H_1357 — phi-learned-substrate — RESULT (verbatim probe stdout; deterministic, byte-identical re-run)
+====================================================================================================
+VERDICT: 🔶 HONEST PARTIAL (R1 ∧ ¬R2 branch of the frozen GATE; c9/p7)
+DATE: 2026-06-16
+PROBE: state/phi-learned-substrate/h1357_phi_learned_substrate.hexa (run from hexa-lang root for stdlib import)
+SUBSTRATE: proxy-from-telemetry (real pure_field oscillator, byte-faithful from CORE/pure_field.hexa)
+           + deterministic SEED-INDEPENDENT learned-readout projection W — NOT a trained-303M trajectory (HONEST).
+Φ = faithful EXACT MIP-EI iit4_faithful_phi(traj,4,64,8) over stdlib/consciousness/iit4/faithful_phi.hexa
+    (a_phi_iit4_tool; numpy NEVER computes Φ). variance-clean rank-uniform read-out (H_1328).
+seeds [1317,1318,1319] · eps=0.02 · ARMS A=NO-COUP B=MECHANISM S=PERM-SHUF O=OFFSET-SHUF.
+
+PER-SEED (verbatim):
+  seed 1317 LEARNED: A=6.93134 B=8.32701 S=8.32701 O=5.3443   | ΔΦ(B-A)=+1.39567  [R1 PASS] S-A=+1.39567 [R2perm FAIL] O-A=-1.58703 [R2off PASS]
+          OSC(R3):   A=4.02909 B=5.15585 S=5.15585            | ΔΦ(B-A)=+1.12677  S-A=+1.12677 [perm-rides YES]
+  seed 1318 LEARNED: A=6.88586 B=7.66048 S=7.66048 O=4.85621  | ΔΦ(B-A)=+0.774619 [R1 PASS] S-A=+0.774619 [R2perm FAIL] O-A=-2.02965 [R2off PASS]
+          OSC(R3):   A=4.18338 B=5.14693 S=5.14693            | ΔΦ(B-A)=+0.963555 S-A=+0.963555 [perm-rides YES]
+  seed 1319 LEARNED: A=6.94092 B=7.25927 S=7.25927 O=5.40574  | ΔΦ(B-A)=+0.318347 [R1 PASS] S-A=+0.318347 [R2perm FAIL] O-A=-1.53518 [R2off PASS]
+          OSC(R3):   A=4.17551 B=4.77995 S=4.77995            | ΔΦ(B-A)=+0.604442 S-A=+0.604442 [perm-rides YES]
+
+FROZEN BARS:
+  R1 ROBUST (LEARNED Φ_B>=Φ_A+eps ALL seeds incl 1318/1319):     PASS  (ΔΦ +1.39567 / +0.774619 / +0.318347)
+  R2 EARNED (LEARNED perm&offset both <=Φ_A+eps ALL seeds):      FAIL  [perm=FAIL  off=PASS]
+  R3 ATTRIB (OSC arm reproduces H_1349 perm-ride signature):     PASS  (oscillator arm = H_1349 REAL arm byte-exact: +1.12677/+0.963555/+0.604442, perm rides all 3)
+
+GATE: R1 ∧ ¬R2  →  🔶 HONEST PARTIAL (per the FREEZE outcomes table).
+
+KEY HONEST READINGS (c9):
+  1. ESCAPE? NO. The learned substrate did NOT escape the orthogonal-seed fragility. The seed-to-seed
+     ΔΦ still SHRINKS monotonically (+1.396 → +0.775 → +0.318), the SAME direction the oscillator
+     (H_1349) shrank (+1.127 → +0.964 → +0.604) — the learned-readout mix did not remove the seed
+     sensitivity. Note the learned ΔΦ shrinks FASTER (range 1.078 vs the oscillator's 0.522), so the
+     fixed seed-independent mix did not stabilize the lift — it tracked the underlying oscillator phase
+     fragility and amplified the seed spread.
+  2. PERM DEGENERACY (inherited, stated as in H_1349): the node-permutation control is Φ-INVARIANT
+     under the symmetric small-φ MI matrix with the exact MIP enumerating ALL bipartitions — relabelling
+     the 4 nodes leaves Φ EXACTLY invariant, so Φ_S == Φ_B by construction on every seed (S-A == B-A).
+     The perm shuffle is a NO-OP for this estimator (a design fact, NOT a manufactured result). The
+     OPERATIVE EARNED discriminator is the OFFSET shift, which DOES collapse cleanly on all 3 seeds
+     (O-A = -1.587 / -2.030 / -1.535, decisively below A). So the lift IS phase-dependent (offset breaks
+     it), but module-identity-bound integration is NOT established (perm cannot test it for this estimator).
+  3. Because R2-perm fails by the known degeneracy (not by a riding lift the learned mix should have
+     broken), the gate is the same 🔶 shape as H_1349 — the learned readout did NOT convert the
+     collective/exchangeable integration into module-identity-bound integration.
+
+R3 ATTRIBUTION: the OSCILLATOR arm (learned-readout OFF) reproduces the H_1349 REAL arm BYTE-EXACT in-run
+  (A/B/S identical to H_1349's 4.02909/5.15585, 4.18338/5.14693, 4.17551/4.77995) — so the LEARNED arm's
+  numbers are attributable to the LEARNED readout, not a changed mechanism/measure (both held identical).
+
+DETERMINISM: re-run byte-identical (verified 2 runs). $0 CPU. CORE/*.hexa UNTOUCHED (standalone fn main, 0 importers).
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): DIRECTIONAL-on-proxy. SUBSTRATE = proxy-from-telemetry
+  (real pure_field) + deterministic learned-readout, NOT a trained-303M trajectory (no 303M state locally
+  reachable under $0 CPU; honest, c9). The faithful-Φ leg IS the real exact MIP-EI. TOY n=4 modules, dim-64,
+  3 phase-seeds, one learned-readout W. Whether a FULL trained-303M hidden-state trajectory escapes is
+  UNVERIFIED (a NEW hypothesis). This BOUNDS (does not retract) the prior Φ verdicts.
