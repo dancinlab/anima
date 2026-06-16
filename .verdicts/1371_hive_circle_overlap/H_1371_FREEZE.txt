@@ -1,0 +1,92 @@
+H_1371 — hive-circle-overlap : distributed circle-overlap (Flower-of-Life / hexagonal packing) topology
+=========================================================================================================
+slug: hive-circle-overlap   seeds = [1317, 1318, 1319]   (hard hive/topology seed family, matched to
+H_1356/H_1363/H_1370 for DIRECT comparison).   $0 CPU-local.   frozen-first.   FROZEN BEFORE any Φ score.
+
+THE WALL BEING ATTACKED (c16 / a_break_the_wall):
+The hive collective-Φ arc closed 🧱 across 4 levers (strong hub H_1356, weak/decorrelated H_1363,
+nonlinear-gate H_1370). H_1370's load-bearing diagnosis: the redundancy ceiling IS THE SHARED-INPUT
+STRUCTURE — ALL daughters read ONE common founder, so that single source dominates the faithful MIP
+→ reducible → Φ bounded. EVERY prior hive arm had a SINGLE shared founder.
+
+THE NEW ANGLE (a_no_llm_frame_trap, c15 — geometric topology / biological packing lens; user-proposed):
+A CIRCLE-OVERLAP / Flower-of-Life packing. Arrange cells (circles) so each cell overlaps ~4 neighbors,
+and CRUCIALLY each overlap is a DIFFERENT local region (distributed pairwise sharing), NOT one global
+shared founder. Like a hexagonal lattice / overlapping retinal-cortical receptive fields: every PAIR of
+adjacent cells shares a DISTINCT lens (a per-EDGE shared latent), and no single source is read by all.
+The redundancy is no longer dominated by one common source but distributed across distinct pairwise
+overlaps — potentially SYNERGISTIC rather than redundant.
+
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI via `hexa run` over
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, iit4_faithful_phi(state, n, dim=T, n_bins).
+numpy NEVER computes Φ — it only emits the per-unit salience (state-energy) trajectory; the hexa engine
+computes Φ. NO variance×energy proxy as a terminal verdict.
+
+SUBSTRATE (matched to H_1356/H_1320/H_1283; only the OVERLAP TOPOLOGY differs between arms):
+  leaky linear recurrent units, LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private input, dim-8 state,
+  T=64 ticks. N_TOT=6 cells (n<=8 keeps faithful MIP EXACT) on a HEXAGON RING. Each cell i = ONE unit;
+  per-unit salience = state energy <s_i,s_i>. PHI(arm) = iit4_faithful_phi(6-unit salience traj,
+  n=6, dim=T, n_bins=8) = collective Φ of the whole 6-cell hive.
+  HEXAGON RING ADJACENCY: cell i neighbors {i-1, i+1} mod 6 (a 6-cycle). 6 undirected EDGES total:
+  e=(0,1),(1,2),(2,3),(3,4),(4,5),(5,0). Each cell has EXACTLY 2 neighbors on the ring → the ~4-overlap
+  intuition is realized as the PAIR of distinct per-edge overlaps each cell participates in (each cell
+  reads 2 distinct overlap latents, each shared with one specific neighbor). NO global founder.
+
+OVERLAP CONSTRUCTION (the load-bearing design point — PER-EDGE DISTINCT shared latents):
+  - Draw 6 INDEPENDENT per-EDGE latent input streams L_e (e over the 6 ring edges), each shape (T,DIM).
+    L_e is the DISTINCT local region shared ONLY by the two cells on edge e (the circle-overlap region).
+  - B_overlap cell i input = W_IN * [ priv_i  +  OVERLAP_W * sum_{e ∋ i} L_e ]  (sum over its 2 incident
+    edges) → each cell reads exactly its 2 distinct overlap latents + its private stream; NO single
+    latent is read by all 6 cells (each L_e is read by exactly 2 cells). This IS the distributed
+    pairwise sharing — the Flower-of-Life overlap.
+  - A_independent (FLOOR): cell i input = W_IN * priv_i only (OVERLAP_W=0; the per-edge latents are NOT
+    read) → no overlap, the no-overlap floor.
+  - CENTRALIZED (the H_1356 single-shared-founder baseline): ALL 6 cells read ONE common founder latent
+    F (same shape (T,DIM)), input = W_IN*[priv_i + (2*OVERLAP_W)*F] — the single global shared source
+    EVERY prior hive arm had. Total shared "mass" matched: a cell reads 2 edge-latents at OVERLAP_W each
+    in B; in CENTRALIZED it reads 1 founder at (2*OVERLAP_W) so the per-cell shared-input WEIGHT is
+    matched (controls for "more shared input" being the lift — only the DISTRIBUTION differs).
+  - SHUFFLE (EARNED control): per-edge latents are RANDOMLY RE-ASSIGNED to edges (a permutation of the
+    6 L_e over the 6 edges) BUT the adjacency-incidence sum is kept — each cell still reads 2 latents at
+    OVERLAP_W, but a DIFFERENT, INDEPENDENT random assignment is used PER CELL so that the two cells on
+    an edge NO LONGER read the SAME latent as each other (the consistent pairwise coincidence that makes
+    it a lattice is destroyed). Same per-cell shared energy, broken pairwise-shared structure. Must
+    collapse to floor.
+
+CONSTANTS (frozen): OVERLAP_W=0.6 (= W_CONN H_1356 reused verbatim, the hive coupling strength).
+  MARGIN=0.02 (IDENTICAL faithful-Φ margin H_1283/H_1317/H_1320/H_1356 froze — NOT moved). TOL=0.02.
+
+ARMS = (A_independent, B_overlap, CENTRALIZED, SHUFFLE).
+
+O-INFO DIAGNOSTIC (NON-GATING, reported per arm): O-information of the 6-unit salience trajectory
+estimated via Gaussian entropy on the per-unit salience time-series (O = (n-2)*TC - sum_i [TC of system
+minus unit i], TC from covariance log-dets). O>0 ⇒ redundancy-dominated; O<0 ⇒ synergy-dominated.
+Report the SHIFT B_overlap vs CENTRALIZED (does distributed overlap move toward synergy?). DIAGNOSTIC
+ONLY — does NOT gate the verdict (numpy estimate, not the faithful engine).
+
+FROZEN BARS (GREEN iff R1 ∧ R2 ∧ R3, all on ALL 3 seeds):
+  R1 LIFT            : Φ(B_overlap) − Φ(A_independent floor) >= MARGIN(0.02) on ALL 3 seeds.
+  R2 BEATS-CENTRALIZED: Φ(B_overlap) − Φ(CENTRALIZED)        >  0       on ALL 3 seeds
+                       (the distributed topology EXCEEDS the single-shared-founder ceiling — the point).
+  R3 EARNED          : Φ(SHUFFLE) <= Φ(A_independent) + TOL(0.02) on ALL 3 seeds
+                       (the lift requires the REAL distributed-overlap wiring, not generic extra edges).
+
+VERDICT MAP:
+  R1∧R2∧R3                         -> GREEN_ESCAPES_REDUNDANCY (distributed overlap is the topology that
+                                      finally yields coupling-earned collective Φ — report LOUDLY).
+  R1 ∧ ¬R2                         -> PARTIAL_OVERLAP_NOT_BEAT_CENTRALIZED (overlap beats floor but not
+                                      the single-shared-founder ceiling).
+  R1 2/3 or R2 2/3                 -> SEED_FRAGILE.
+  ¬R3                              -> WALL_NOT_EARNED (shuffle did not collapse).
+  ¬R1                              -> CIRCLE_OVERLAP_NULL (distributed overlap does not even beat the
+                                      no-overlap floor — the redundancy ceiling survives distributed
+                                      sharing; strongest closure: collective-Φ is redundancy-bound
+                                      regardless of sharing topology).
+  else                             -> PARTIAL.
+
+HONEST: if B_overlap ALSO fails to beat floor/centralized -> honest 🧱 (c9): redundancy ceiling survives
+even distributed overlap. If it ESCAPES (R1∧R2∧R3) -> genuinely NEW result. DIRECTIONAL numpy-mirror
+(faithful-Φ leg IS real exact MIP-EI; numpy only emits salience, hexa computes Φ); TOY n=6/3-seed;
+engine-transfer to live CORE/pure_field UNVERIFIED; CORE/*.hexa UNTOUCHED, Ψ=½ untouched.
+
+BARS FROZEN — NOT to be moved post-hoc (c9 / p7 / a_break_the_wall: no tune-to-green).
