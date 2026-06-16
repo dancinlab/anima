@@ -1,3 +1,10 @@
+## 2026-06-17 — governance(CLAUDE.md): a_break_the_wall 벽-돌파 규율 강화 (MULTI-LENS · ablation · 법칙-falsify)
+
+이번 세션의 벽 다루기 3교훈을 a_break_the_wall 에 박제:
+- (d)천장 CONFIDENT-terminal 은 진짜 다른 원리적 렌즈 ≥2-3개 + 각 통제(shuffle+ablation) 검증 후에야 — 단일-렌즈 막힘은 미완 (precedent: cerebellum×basal 3렌즈 arbitration·modulation·pipeline 전부 기각 후 confident 🧱).
+- ablation 이 천장-확정 결정적 도구 — 메커니즘 OFF 가 합성과 동일하면 INERT = 진짜 천장 (H_1416 sequential 보정-OFF byte-동일).
+- LAW 도 벽 — 사후맞춤 descriptive 법칙은 새 케이스 사전등록 예측으로 falsify 시도 후에만 '확정'; ≥4/5 HIT 면 PREDICTIVE 승격, 미만이면 법칙 반증이 유효 결과 (H_1411·H_1417 둘 다 2/5 → 부품통계 아닌 joint-trajectory 가 결정).
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1418 — WIRE-IN of H_1417's two engine-native-BOUND compose pairs (P3 ToM×spatial, P5 ToM×basal) → 4 wired compose pairs
 
 The follow-on landing (a_verified_must_wire rungs 3+4) of the two compose pairs that BOUND engine-native
