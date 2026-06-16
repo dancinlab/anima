@@ -1,0 +1,38 @@
+================================================================================
+H_1408 — BRAIN-LANE COMPOSE (WITHIN memory family): spatial-map (H_1296) × episodic-memory (H_1227/H_1231)
+  DIRECTIONAL numpy mirror · $0 CPU · 3 seeds · p7 · LIVE CORE/*.hexa UNTOUCHED
+  bars: COMPOSE_DELTA=0.05 ORACLE_MARGIN=0.02 SHUFFLE_TOL=0.02
+================================================================================
+  seed 5408 (n=450): sp=0.702 ep=0.707 best=0.707 compose=0.907 shuf=0.464 oracle=1.000 | conflict=0.398 [onlyS=0.400 onlyE=0.398 both=0.202 neither=0.000]
+  seed 5409 (n=450): sp=0.713 ep=0.713 best=0.713 compose=0.884 shuf=0.553 oracle=1.000 | conflict=0.396 [onlyS=0.400 onlyE=0.396 both=0.204 neither=0.000]
+  seed 5410 (n=450): sp=0.689 ep=0.689 best=0.689 compose=0.907 shuf=0.513 oracle=1.000 | conflict=0.400 [onlyS=0.400 onlyE=0.400 both=0.200 neither=0.000]
+--------------------------------------------------------------------------------
+MEAN (3 seeds):
+  acc_spatial   = 0.7015
+  acc_episodic  = 0.7030
+  best_single   = 0.7030
+  acc_compose   = 0.8993
+  acc_shuffle   = 0.5104
+  ORACLE        = 1.0000   (oracle − best = +0.2970)
+  conflict_rate = 0.3978
+  decomposition : only_spatial=0.4000 only_episodic=0.3978 both=0.2022 neither=0.0000
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.8993 >= best 0.7030+0.05 (0.7530) : PASS
+  (B2 ORACLE)         oracle−best +0.2970 > 0.02 : PASS
+  (B3 EARNED)         compose−shuffle +0.3889 > 0.02 : PASS
+  (B4 p6 GUARD)       no injected answer/spatial/episodic/priority label : PASS
+        p1 system prompt        : clean
+        p2 identity rule        : clean
+        p3 persona              : clean
+        p4 assistant frame      : clean
+        p6 RLHF/answer label    : clean
+        hardcoded priority      : clean
+================================================================================
+VERDICT: 🟢 COMPOSE-LIFT
+READING: spatial-map + episodic-memory are COMPLEMENTARY WITHIN the memory family and compose to a NET LIFT — integration raises capability. The substrate-weighted, query-routed arbiter (scale-relative confidence, NO hardcoded priority) captures the oracle headroom; shuffle collapses (earned, p6). → names an engine-native §compose + Φ-measurement follow-on.
+WITHIN-FAMILY SUBSUMPTION PROBE: SEPARABLE — each memory faculty uniquely solves items the other misses (only_spatial=0.400 > 0 AND only_episodic=0.398 > 0). two MEMORY-FAMILY faculties stay genuinely complementary (metric SPACE ⊥ item-binding).
+  HONEST (c9, a_scale_honest_scope/a_toy_scale_recheck): DIRECTIONAL numpy mirror; toy
+  synthetic 5-family fixture, 3 seeds, deterministic readouts (tests COMPOSITION STRUCTURE,
+  not a trained integrator). LIVE CORE/*.hexa UNTOUCHED. Scale/real-corpus/engine-native
+  transfer UNVERIFIED. NO bar moved post-hoc.
+================================================================================

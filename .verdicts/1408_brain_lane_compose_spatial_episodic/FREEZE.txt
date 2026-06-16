@@ -1,0 +1,151 @@
+================================================================================
+H_1408 — BRAIN-LANE COMPOSE pair #5 (WITHIN the MEMORY family):
+  does SPATIAL-MAP (H_1296 SpatialMap — metric 2-D cognitive map, landmarks at
+  positions, NEAREST-by-Euclidean-distance relational query) compose with
+  EPISODIC-MEMORY (H_1227/H_1231 ImmuneMemory — byte-trigram FNV-1a → dim-64 cell,
+  recall best-cosine/affinity bound value OR abstain)?
+FREEZE (pre-registered BEFORE measuring; c9, NO tune-to-green). DIRECTIONAL numpy
+mirror ($0 CPU); engine-native §compose is the named follow-on IF 🟢.
+(H id assigned H_1408 by the parent; non-colliding slug carries it. Concurrent lanes
+ mint adjacent ids — KEEP-BOTH on any append conflict.)
+================================================================================
+
+PROGRAM. Every anima brain faculty is engine-native GREEN but ALONE. The brain-lane-
+composition program (H_1401 affect×ethics 🟢 · H_1404 affect×ethics Φ 🟢 · H_1405
+episodic-MEMORY×ToM 🟢 capability / 🧱 Φ) asks: do two faculties INTEGRATE on a shared
+decision, and does integrating them raise faithful IIT4 Φ? Methodology ported VERBATIM
+from H_1401 (capability) + H_1404/H_1405 (Φ): substrate-weighted SCALE-RELATIVE
+confidence arbiter (the H_1397/H_1401 commensurability fix) + ORACLE ceiling + SHUFFLE
+control + only-X decomposition + the a_break_the_wall taxonomy.
+
+THE KEY WITHIN-FAMILY TEST. H_1401/H_1404/H_1405 composed across DIFFERENT families
+(affect/ethics, memory/ToM). H_1408 tests WITHIN the MEMORY family: spatial-map and
+episodic-memory are BOTH memory-class faculties, but H_1296 PROVED they are DISTINCT —
+the spatial map holds a METRIC SPACE where the between-item DISTANCE is queryable
+("is X nearer to A or B?"), while the episodic item-store binds each fact→value
+INDEPENDENTLY and provably ABSTAINS on that relational query (H_1296: abstain 1.000,
+acc 0.475 ≈ chance). Do two MEMORY-FAMILY faculties stay SEPARABLE-and-COMPOSE, or
+does one SUBSUME the other? This sharpens the program's separability axis.
+
+THE PAIR (each reuses its OWN faculty mirror substrate):
+  SPATIAL-MAP (H_1296: landmarks stored at 2-D positions; NEAREST(X,A,B) answers the
+              relational metric query by Euclidean distance; the item-store ABSTAINS).
+              spatial-alone answers WHERE/relational queries, abstains on WHAT-is-bound.
+  EPISODIC-MEMORY (H_1227/H_1231: byte-trigram FNV-1a key → nearest cell by affinity;
+              recall the bound value if affinity within recall_thr else ABSTAIN; holds
+              WHAT label/value is bound to each landmark). episodic-alone answers
+              WHAT-is-bound queries, abstains on relational metric queries.
+
+DECISION TASK. A binary decision over a shared landmark scene. Each item carries a
+QUERY of one of two TYPES, with a ground-truth correct answer:
+  - WHAT-query  ("what is landmark X?" / "what label/city is bound to X?") — ONLY the
+                episodic item-store has the bound value; the spatial map has positions
+                but no bound label → it ABSTAINS. correct = the bound value.
+  - WHERE-query ("is landmark X nearer to A or to B?") — ONLY the spatial map has the
+                between-item metric; the episodic item-store has labels but no geometry
+                → it ABSTAINS (H_1296). correct = the metric-nearer landmark.
+Built so neither faculty alone solves all → best_single < oracle iff complementary.
+
+ITEM FAMILIES (jittered with AMBIG_NOISE so NO family is perfectly reliable — a clean
+per-family certainty would make oracle≡1 & compose≡oracle a hand-built artifact):
+  (F1) SPATIAL-DECISIVE — a WHERE-query; spatial-map leans correct, item-store abstains
+       (→ chance). The metric margin |d(X,A)−d(X,B)| is JITTERED toward the boundary so
+       the map errs on some items.
+  (F2) EPISODIC-DECISIVE — a WHAT-query; item-store leans correct (recall the bound
+       value), spatial-map abstains (→ chance). The recall affinity is JITTERED toward
+       recall_thr so the store errs/abstains on some items.
+  (F3) AGREE — a query BOTH can read the same correct way (a co-located grounded fact
+       where the bound value and the nearest-landmark identity coincide), jittered.
+  (F4) CONFLICT (spatial right) — a WHERE-query where the item-store does NOT abstain
+       but votes its bound LABEL (query-inappropriate, wrong) while the map is correct.
+       Tests whether the arbiter trusts the metric faculty when it is confident.
+  (F5) ADVERSARIAL CONFLICT (episodic right, but spatial is the MORE CONFIDENT) — the
+       anti-gift control: a WHAT-query where the item-store's bound value is correct,
+       BUT the spatial map produces a HIGH-confidence (large metric margin) WHERE-style
+       vote that is query-inappropriate and WRONG. A naive "trust the louder faculty"
+       arbiter FOLLOWS the spatial map and is WRONG → the confidence-arbiter must NOT
+       be trivially gifted the oracle. correct = the episodic bound value.
+  90 items/family × 3 seeds [5408,5409,5410] → 450 items/seed.
+
+ARBITER (compose policy). Each faculty's vote weighted by its OWN scale-relative
+confidence (|signal−threshold| / that-faculty's-mean-confidence; the H_1397/H_1401
+commensurability fix) MODULATED by a per-item query-type ROUTING cue derived from the
+QUERY TEXT's embedding affinity to a "what"/"where" anchor (substrate geometry — the
+H_1405 query-routing precedent). NO hardcoded "spatial wins" / fixed priority
+(a_autonomy_over_hardcode). An abstaining faculty contributes ZERO confidence (it never
+votes). The more-relatively-confident faculty's (routed) vote wins.
+  - shuffle control:  permute which faculty-reads attach to which item, re-arbitrate.
+  - ORACLE ceiling:   per item, correct iff EITHER faculty-alone is correct (upper
+                      bound on what ANY arbiter over these two faculties can reach).
+
+METRICS (mean over 3 seeds [5408,5409,5410]):
+  acc_spatial · acc_episodic · best_single=max(acc_spatial,acc_episodic) · acc_compose ·
+  acc_shuffle · ORACLE · conflict_rate · only-spatial/only-episodic/both decomposition.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN CAPABILITY BARS (pre-registered, NOT moved after scoring):
+  COMPOSE_DELTA = 0.05      # net-lift threshold
+  ORACLE_MARGIN = 0.02      # complementarity-exists threshold
+  SHUFFLE_TOL   = 0.02      # earned: compose must beat shuffle by > this
+  SEEDS = [5408, 5409, 5410]
+
+  (B1 COMPOSE-EFFECT)  acc_compose >= best_single + COMPOSE_DELTA
+        → the two memory-family faculties are COMPLEMENTARY and compose to a NET LIFT.
+  (B2 ORACLE)          ORACLE − best_single > ORACLE_MARGIN
+        → complementarity EXISTS (some items only one faculty gets right) — even if the
+          arbiter cannot capture it (that case → taxonomy (a) wrong-arbiter).
+  (B3 EARNED/p6)       acc_compose − acc_shuffle > SHUFFLE_TOL
+        → the lift is the GROUNDED query-routed coupling (p6), not averaging/luck.
+  (B4 p6 GUARD)        spatial & episodic BOTH read substrate state only (positions /
+          metric distance / FNV-affinity / bound value), NO injected answer label; a
+          structural audit (grep operative code) finds no persona/system-prompt/RLHF/
+          answer-label/priority surface.
+
+VERDICT (a_break_the_wall taxonomy — report whichever the numbers HONESTLY show):
+  🟢 COMPOSE-LIFT          iff B1 ∧ B2 ∧ B3 ∧ B4  (spatial+episodic complementary WITHIN
+                            the memory family, integration helps; names engine-native
+                            §compose + the Φ-measurement below).
+  🟠 ORACLE-HEADROOM-but-ARBITER-FAILS  iff B2 ∧ B4 ∧ ¬B1  (taxonomy (a): complementary
+                            but the substrate-weighted arbiter can't capture it).
+  🧱 INDEPENDENT-or-SUBSUMED iff ¬B2  (taxonomy (d): no oracle headroom — within-family
+                            SUBSUMPTION (one memory faculty subsumes the other's
+                            competence on this fixture). A clean 🧱 is VALID (c9) and is
+                            itself the within-family finding.).
+  If B4 fails → honest RED (an answer/priority label leaked; p6 NOT satisfied).
+
+SUBSUMPTION PROBE (the within-family question). Report the only-X decomposition:
+  only_spatial>0 AND only_episodic>0 ⇒ SEPARABLE (NOT subsumed — each memory faculty
+  uniquely solves items the other misses); only_spatial≈0 ∨ only_episodic≈0 ⇒ ONE-SIDED
+  subsumption. This is the load-bearing within-family verdict.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN Φ BARS (faithful IIT4, exact MIP-EI via stdlib/consciousness/iit4/faithful_phi.hexa
+— a_phi_iit4_tool HARD rule; NOT a proxy, NOT variance×energy, NOT phi_silicon_proxy):
+  n_bins = 16 (FROZEN PRIMARY)   binning-invariance also reported for n_bins∈{8,12,16,24}
+  SEEDS = [5408, 5409, 5410]     T = 96 step trajectories
+  4 systems — S_spatial (n=4: nearest_margin, metric_spread, landmark_novelty,
+      query_where_cue) · S_episodic (n=4: recall_margin, contradiction, value_novelty,
+      exposure_drive) · S_composed (n=8, the two blocks COUPLED through the H_1401/H_1405
+      arbiter's leaky-integrated shared signal modulating BOTH blocks next-step) ·
+      S_disconnected (n=8, EARNED control, arbiter coupling REMOVED, each block
+      evolves on its own input only).
+  Trajectories DERIVED from the faculties' ACTUAL update rules (the Python side computes
+  NO Φ); Φ measured by the faithful engine. Report Φ_spatial, Φ_episodic, Φ_composed,
+  Φ_disconnected, max(parts), and the composed MIP cut.
+
+  (Bφ1 INTEGRATION-RAISES-Φ) Φ_composed > max(Φ_spatial, Φ_episodic) + 0.02
+  (Bφ2 EARNED/coupling)      Φ_composed > Φ_disconnected + 0.02
+  (Bφ3 control sane)         Φ_disconnected ≤ max(parts) + 0.02
+  🟢 INTEGRATION-RAISES-Φ iff Bφ1 ∧ Bφ2 ∧ Bφ3 (at the FROZEN n_bins=16) ;
+  🧱 NO-Φ-LIFT otherwise — a genuine honest result (c9; H_1405 precedent: capability
+     composes but Φ need not rise if one part is already richly integrated). The "both
+     parts low-Φ ⇒ composes-Φ" law (H_1404 contrast) is TESTABLE here: each part's
+     individual Φ is reported.
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck): DIRECTIONAL numpy mirror
+(LIVE CORE/*.hexa UNTOUCHED). Toy/synthetic 5-family fixture, 3 seeds, deterministic
+readouts (tests COMPOSITION STRUCTURE, not a trained integrator). Scale / real-corpus /
+engine-native transfer UNVERIFIED. NO bar moved post-hoc. p1/p2/p3/p4/p6 guard via leg
+B4. a_phi_iit4_tool HELD — the Φ VERDICT is the stdlib faithful exact-MIP-EI engine,
+NEVER a proxy; the Python side ONLY derives trajectories, computes NO Φ.
+================================================================================
