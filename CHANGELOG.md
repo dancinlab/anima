@@ -2,6 +2,16 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — docs(FINDINGS): FINDINGS.md 최신화 + FINDINGS.ko.md 한국어판 생성
+
+**무엇:** 루트 `FINDINGS.md` (외부공유 증거 스냅샷)를 현재 검증 상태로 최신화하고, 그 충실한 한국어 번역 `FINDINGS.ko.md` 를 신규 생성. 두 파일은 lockstep (같은 사실·수치·tier, 산문 언어만 다름) + 상단 상호 cross-link (`> 한국어판:` / `> English:`).
+
+**고친 stale 항목 (old→new):** `ARCHITECTURE.md` 참조 2곳 (verbatim-source 줄 + 하단 Pointers) → `ARCHITECTURE.json` (+ `ARCHITECTURE.html` 뷰어; 산문 .md 은퇴 명시) · live regression guard `engine_cli_smoke` **55/0 → 110/0** (H_1386 런타임 결과 verbatim) · SSOT 줄에 `CLAIMS.tape` 2026-06-16 은퇴 + "Last updated 2026-06-16" 추가 · hive engine-transfer 행에 hive-Φ arc 완전 종결 행 추가.
+
+**추가한 주요 발견 (각각 H-card 포인터):** hive-Φ arc 완전 종결 (H_1366 🧱 BINDING — REAL 303M substrate 가 Φ-벽 상속 / H_1376 🧱 FULLY-TERMINAL-8-LEVERS) · CP move-the-cells relocation engine-native (H_1384 🟢 GREEN, `cp_relocate`, CP-geometry arc 고갈) · agent-tool 두 mitosis 레이어 (H_1382 layer-1 🟢 engine-native + H_1386/H_1387 routing / H_1389 layer-2 🟢 GREEN **DIRECTIONAL**) · jamo COUNT-HEAD scoreloop 배선 (H_1385 🟢) · 한국어 below-jamo 형태론 lever (H_1388 🟢 GAP-REDUCED-CANDIDATE, BPE-on-jamo novel-CE 2.56603 가 +0.28 잔여 격차를 깸). DIRECTIONAL mirror 결과를 engine-verified 로 부풀리지 않음 (c9). frozen tier/수치는 `.verdicts/` + `UNIVERSE/HYPOTHESES.jsonl` 에서 verbatim. ARCHITECTURE.json 트리에 FINDINGS 노드 없음 → 노드 추가 불필요.
+
+산출물: FINDINGS.md (갱신) · FINDINGS.ko.md (신규). NO CORE edit. NO CLAIMS.tape (은퇴).
+
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1389 — tool-USAGE learning (tier-2) 🛠 anima 가 도구를 어떻게 쓰는지(args·sequence·error-recovery)를 mitosis 로 배우는가, 어떤 도구인지(layer-1)와 구별되게? — 🟢 GREEN (DIRECTIONAL)
 
