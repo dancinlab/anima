@@ -1883,7 +1883,7 @@ pub fn gen_bpe_emit_summary() -> string {
 
 
 // ── §6.5f KO-EMIT COMPOSE — how the jamo emit-bias (§6.5b/H_1327) + the morphology emit-bias
-//          (§6.5e/H_1393) COMPOSE on the SAME next-byte decision (H_1396). ─────────────────────────
+//          (§6.5e/H_1393) COMPOSE on the SAME next-byte decision (H_1397). ─────────────────────────
 //
 // THE GENUINELY-UNTESTED QUESTION (the open follow-on H_1393 named): the Korean below-jamo arc now has
 // TWO emit-biases wired engine-native, each validated ALONE — §6.5b ko_jamo_consult_emit (jamo
@@ -1997,7 +1997,7 @@ fn _gec_jamo_mean_err(jhJ: JamoHead, bsym: [int], vj: int) -> float {
     return if n > 0 { s / to_float(n) } else { 1.0 }
 }
 
-// gen_emit_compose_eval — the FROZEN compose evaluation (H_1396 bars). On the SAME corpus-free in-engine
+// gen_emit_compose_eval — the FROZEN compose evaluation (H_1397 bars). On the SAME corpus-free in-engine
 // morpheme-grammar fixture (§6.5d), measures both emit-biases on a SHARED next-byte decision and how
 // they compose. The shared target = the LEADING EMIT BYTE of the TRUE next morpheme unit
 // (_gbe_unit_emit_byte of the held-out true next-unit id) — the byte each faculty is trying to emit.
@@ -2139,7 +2139,7 @@ pub fn gen_emit_compose_summary() -> string {
         + " — jamo+morphology emit-biases COMPOSED by SCALE-RELATIVE SUBSTRATE confidence (mean_err/"
         + "err_here, NO hardcoded priority · a_autonomy_over_hardcode) · HONEST 🧱/🟠: faculties mostly "
         + "CONFLICT + non-complementary here (compose < best-single; oracle ceiling ≈ +0.017) · off-Korean "
-        + "INERT byte-identical · Ψ-disjoint · a_core_engine_map single entry (H_1327 + H_1393, H_1396)"
+        + "INERT byte-identical · Ψ-disjoint · a_core_engine_map single entry (H_1327 + H_1393, H_1397)"
 }
 
 

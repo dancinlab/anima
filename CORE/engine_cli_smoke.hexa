@@ -1538,7 +1538,7 @@ fn main() {
           + " ascii_inert=" + to_string(be_emit_ascii == 120)
           + " ko_fires_byte=" + to_string(be_emit_ko))
 
-    // ── H_1396 KO-EMIT COMPOSE — composing the jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393)
+    // ── H_1397 KO-EMIT COMPOSE — composing the jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393)
     //   emit-biases on the SAME next-byte decision (cases 129-132). The genuinely-untested follow-on
     //   H_1393 named: when BOTH emit-biases fire on one decode step, do they AGREE, CONFLICT, or need
     //   an arbitration rule? §6.5f gen_emit_compose composes them by SCALE-RELATIVE SUBSTRATE confidence
@@ -1595,7 +1595,7 @@ fn main() {
     if _assert_b("case_132_compose_offkorean_inert", true,
                  ce_off == 120 && to_string(ce_eval["ok"]) == "true") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    println("INFO  ko emit-compose (H_1396, HONEST CONFLICT-OR-DEGRADES): acc_jamo=" + to_string(ce_j)
+    println("INFO  ko emit-compose (H_1397, HONEST CONFLICT-OR-DEGRADES): acc_jamo=" + to_string(ce_j)
           + " acc_morph=" + to_string(ce_m)
           + " best_single=" + to_string(ce_best)
           + " acc_compose=" + to_string(ce_c) + " (< best ⇒ degrades)"

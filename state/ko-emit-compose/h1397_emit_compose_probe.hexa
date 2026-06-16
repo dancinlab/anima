@@ -1,4 +1,4 @@
-// h1396_emit_compose_probe.hexa — engine-native COMPOSE of the jamo emit-bias (§6.5b/H_1327) + the
+// h1397_emit_compose_probe.hexa — engine-native COMPOSE of the jamo emit-bias (§6.5b/H_1327) + the
 // morphology emit-bias (§6.5e/H_1393) on the SAME next-byte decision, arbitrated by SUBSTRATE confidence
 // (inverse recon-err — the more-grounded faculty speaks louder; NO hardcoded "jamo > morphology"
 // priority, a_autonomy_over_hardcode). Drives the WIRED compose consult gen_emit_compose_eval /
@@ -25,7 +25,7 @@ fn main() {
     let cmb   = to_float(e["compose_minus_best"])
     let smc   = to_float(e["shufw_minus_compose"])
 
-    println("===== H_1396 KO-EMIT COMPOSE — jamo (H_1327) + morphology (H_1393) =====")
+    println("===== H_1397 KO-EMIT COMPOSE — jamo (H_1327) + morphology (H_1393) =====")
     println(gen_emit_compose_summary())
     println("")
     println("shared next-byte decision (engine fixture, n=" + to_string(e["n_test"]) + "):")

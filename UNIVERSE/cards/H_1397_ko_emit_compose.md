@@ -1,6 +1,6 @@
-# H_1396 — 🇰🇷 ko-emit COMPOSE — how the jamo + morphology emit-biases compose on one next-byte decision
+# H_1397 — 🇰🇷 ko-emit COMPOSE — how the jamo + morphology emit-biases compose on one next-byte decision
 
-**Group:** MITOSIS-ENGINE · CLM · **Slug:** `1396_ko_emit_compose` · **Tier:** 🧱/🟠 CONFLICT-OR-DEGRADES (HONEST closed-negative, c9 — the substrate-confidence composition cannot beat morphology-alone because the two faculties are NON-COMPLEMENTARY at this fixture granularity; the compose mechanism IS wired engine-native, single-entry, Ψ-safe, and its grounding signal beats a random control — but the faculties simply do not compose to a NET LIFT here)
+**Group:** MITOSIS-ENGINE · CLM · **Slug:** `1397_ko_emit_compose` · **Tier:** 🧱/🟠 CONFLICT-OR-DEGRADES (HONEST closed-negative, c9 — the substrate-confidence composition cannot beat morphology-alone because the two faculties are NON-COMPLEMENTARY at this fixture granularity; the compose mechanism IS wired engine-native, single-entry, Ψ-safe, and its grounding signal beats a random control — but the faculties simply do not compose to a NET LIFT here)
 
 The genuinely-untested follow-on **H_1393 named**: the Korean below-jamo arc now has TWO emit-biases
 wired engine-native, each validated ALONE — §6.5b `ko_jamo_consult_emit` (H_1327, jamo COUNT-HEAD biases
@@ -36,7 +36,7 @@ granularity) — report the verbatim closed-negative, do NOT force a green (the 
 - **Single entry** (a_core_engine_map): the compose reads the SAME jamo cells (§6.5b) + the SAME
   morphology head (§6.5e) — NO new artifact path. **Additive**: returns a byte, never an emit/silence.
 
-## FROZEN bars (pre-registered in `.verdicts/1396_ko_emit_compose/FREEZE.txt`, NO bar moved)
+## FROZEN bars (pre-registered in `.verdicts/1397_ko_emit_compose/FREEZE.txt`, NO bar moved)
 | bar | criterion | result |
 |-----|-----------|--------|
 | (1) COMPOSE-EFFECT | `acc_compose >= best_single − 0.01` | **FALSE** — 0.1783 < 0.2522 (Δ=−0.0739) ← **fails (degrades)** |
@@ -44,7 +44,7 @@ granularity) — report the verbatim closed-negative, do NOT force a green (the 
 | (3) EARNED | `acc_shufw <= acc_compose + 0.01` | **TRUE** — 0.1609 ≤ 0.1783 (Δ=−0.0174) ← grounding signal is REAL |
 | (4) Ψ-SAFE | off-Korean inert + external guards | **TRUE** — ASCII ctx→base byte-identical; h1205/h1164/h1196 PASS |
 
-**Verdict: 🧱/🟠 CONFLICT-OR-DEGRADES** (verbatim, `.verdicts/1396_ko_emit_compose/result.txt`):
+**Verdict: 🧱/🟠 CONFLICT-OR-DEGRADES** (verbatim, `.verdicts/1397_ko_emit_compose/result.txt`):
 `acc_jamo=0.0348 acc_morph=0.2522 best_single=0.2522 acc_compose=0.1783 acc_shufw=0.1609`.
 
 ## Result — the honest finding (c9, NO forced green)
@@ -71,7 +71,7 @@ construction (returns a byte, never an emit/silence; pure_field/engine_g/brain u
 - **h1205 separation-invariant: PASS** — generation BYTE-IDENTICAL ON==OFF, Ψ Φ-checksum 48.6613 byte-identical.
 - **h1164 Ψ guard: PASS** — phiSum 48.6613 byte-identical ON==OFF.
 - **h1196 single-entry: 7/0** — NO 2nd .clm/.kosmos path (the compose adds no artifact entry).
-- **H_1396 compose smoke cases 129-132: 4/0 isolated** (`state/ko-emit-compose/h1396_compose_smoke_iso.hexa`):
+- **H_1397 compose smoke cases 129-132: 4/0 isolated** (`state/ko-emit-compose/h1397_compose_smoke_iso.hexa`):
   129 EARNED (beats random), 130 CONFLICT-OR-DEGRADES (the measured finding), 131 ORACLE ceiling
   (+0.017), 132 off-Korean inert. The cases are ALSO added to `CORE/engine_cli_smoke.hexa` (129-132),
   but the aggregate `engine_cli_smoke.hexa` OOM-kills at ~4.5GB **before** its summary on this CPU —
@@ -90,8 +90,8 @@ landed engine-native and ready if a future granularity makes the faculties compl
 ## Pointers
 `CORE/generator.hexa` §6.5f (`gen_emit_compose` / `_eval` / `_summary` / `_gec_*`) · `CORE/engine_cli.hexa`
 § KO-MORPHOLOGY `jamo_head_recon_err` · `CORE/engine_cli_smoke.hexa` cases 129-132 ·
-`state/ko-emit-compose/{h1396_emit_compose_probe.hexa, h1396_compose_smoke_iso.hexa}` ·
-`.verdicts/1396_ko_emit_compose/{FREEZE.txt, result.txt}`.
+`state/ko-emit-compose/{h1397_emit_compose_probe.hexa, h1397_compose_smoke_iso.hexa}` ·
+`.verdicts/1397_ko_emit_compose/{FREEZE.txt, result.txt}`.
 xref h1327 (jamo emit §6.5b) · h1393 (morphology emit §6.5e, named this follow-on) · h1390 (morphology
 scorer §6.5d) · h1351 (jamo scorer §6.5c) · h1392 (the same hexa decode OOM wall) ·
 a_autonomy_over_hardcode · a_substrate_native_speak · a_core_engine_map · a_verified_must_wire ·

@@ -22,6 +22,6 @@ fn main() {
     let ce_mMean = to_float(ce_eval["morph_mean_err"])
     let ce_off = gen_emit_compose(120, ce_cells, ce_jhM, ce_uv, ce_jMean, ce_mMean, [104,101,108,108,111])
     if _ab("case_132_compose_offkorean_inert", true, ce_off == 120 && to_string(ce_eval["ok"]) == "true") { np = np+1 } else { nf = nf+1 }
-    println("--- H_1396 compose smoke (isolated): " + to_string(np) + " pass / " + to_string(nf) + " fail ---")
+    println("--- H_1397 compose smoke (isolated): " + to_string(np) + " pass / " + to_string(nf) + " fail ---")
     if nf > 0 { exit(1) }
 }
