@@ -5374,3 +5374,125 @@ pub fn mem_tom_compose_routed(mem: ImmuneMemoryGrow, om: OtherMindModel,
     if mem_w >= tom_w { return mem_dec }
     return tom_dec
 }
+
+// ── §  SPATIAL×EPISODIC COMPOSE ARBITER — metric map ⊕ episodic store on ONE decision (H_1415 R3) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire rung-3 wire-in for H_1415 / H_1408): the H_1415
+// engine-native re-score (🟢 COMPOSE-LIFT, 3 seeds [5408,5409,5410], compose 0.7607 ≥ best
+// 0.7030 + 0.05, all 4 frozen H_1408 bars + SEPARABLE PASS) proved that the LIVE SpatialMap
+// (H_1296 place/grid metric cognitive map) and the LIVE ImmuneMemoryGrow (H_1227/H_1231
+// hippocampal episodic store) COMPOSE to a NET capability lift on a shared landmark-scene
+// decision — the WITHIN-the-memory-family compose. It is the SECOND brain-lane compose pair to
+// BIND engine-native (after H_1414 memory×ToM; contrast: H_1412/H_1413 cerebellum×basal did
+// NOT). The H_1415 probe validated the arbiter with its glue INLINED — this § PROMOTES that
+// exact arbiter to a CALLABLE live CORE op so the mechanism is OWNED by the engine, not stranded
+// in a probe (a_core_engine_map).
+//
+// THE LENS (c15, a_no_llm_frame_trap — a neuro composition, NOT an LLM recipe): two MEMORY-family
+// faculties are DISTINCT (H_1296 proof) — the spatial map holds a METRIC SPACE where the
+// between-item DISTANCE is queryable ("is X nearer to A or B?"), while the episodic item-store
+// binds each landmark→value INDEPENDENTLY and provably ABSTAINS on that relational query. A
+// WHERE-query is answerable ONLY by the map; a WHAT-query ("what is bound to X?") ONLY by the
+// store. A system that composes them by which faculty is more GROUNDED on THIS query — modulated
+// by whether the query asks WHERE or WHAT — out-performs EITHER faculty alone, and they stay
+// SEPARABLE (each uniquely solves items the other misses) — within-family NON-subsumption.
+//
+// THE ARBITER (the validated H_1415 computation, NO hardcoded priority a_autonomy_over_hardcode):
+//   · the SPATIAL leg votes a location/option class from spatial_map_nearest (the metrically
+//     nearer landmark's bound option) with confidence = the LIVE metric margin |d(X,A)−d(X,B)|;
+//     it ABSTAINS on a WHAT-only item (no triple).
+//   · the EPISODIC leg votes the bound option from immune_grow_recall with confidence = its LIVE
+//     L2 affinity margin (recall_thr − _l2(nearest proto, key)); it ABSTAINS ("" → no triple
+//     recall) when no cell fires within recall_thr.
+//   · AGREE (sp_dec == ep_dec) → the shared vote. CONFLICT → the higher ROUTING-MODULATED
+//     scale-relative confidence wins: sp weight = |sp_margin|/mean_sp · where_cue ; ep weight =
+//     |ep_margin|/mean_ep · (1−where_cue). where_cue ∈ (0,1) is derived from the QUERY TEXT's own
+//     embedding affinity to a where-anchor vs a what-anchor (immune_embed_key + _l2) — a
+//     where-typed query ⇒ where_cue→1 (boosts spatial), a what-typed query ⇒ where_cue→0 (boosts
+//     episodic). NO injected priority/label.
+//
+// @L4 CRITICAL (same framing as every faculty lane): this is a READ-ONLY COMPOSE over two
+// EXISTING live faculties. spatial_episodic_compose mutates NOTHING — it never places/binds,
+// never touches the SpatialMap or the immune store, never returns an emit/silence decision by
+// itself (it returns an option class, the caller decides), and NEVER touches pure_field's
+// Φ/phase/Ψ (Ψ-disjoint by construction — pure reads + arithmetic). NOT a 2nd .clm/.kosmos entry
+// path. p1/p2/p3/p6: each leg reads only its own substrate-derived signal (spatial metric
+// distance / immune recall affinity); the where_cue is the query text's own embedding affinity;
+// NO answer/persona/RLHF/priority label enters either read or the arbiter.
+
+// _spat_epi_relconf — scale-relative confidence |conf|/(mean_conf+eps) (each leg's own normalizer
+// so the spatial metric margin and the immune affinity margin are comparable across their scales).
+fn _spat_epi_relconf(conf: float, mean_conf: float) -> float {
+    let a = if conf < 0.0 { 0.0 - conf } else { conf }
+    return a / (mean_conf + 0.000000001)
+}
+
+// spatial_episodic_where_cue — the ENGINE-NATIVE routing cue from the QUERY TEXT (NO hand-set
+// label). where_cue = what_dist / (where_dist + what_dist) ∈ (0,1): the query text's embedding
+// affinity to a "where" anchor vs a "what" anchor (immune_embed_key + _l2). Closer to the
+// where-anchor ⇒ where_cue→1 (favour the spatial map); closer to the what-anchor ⇒ where_cue→0
+// (favour the episodic store). Pure read; never touches Ψ.
+pub fn spatial_episodic_where_cue(query_text: string) -> float {
+    let qk = immune_embed_key(query_text)
+    let wk = immune_embed_key("which landmark is nearer to")
+    let tk = immune_embed_key("what is bound to landmark")
+    let dw = _l2(wk, qk)
+    let dt = _l2(tk, qk)
+    let mut r = dt / (dw + dt + 0.000001)
+    if r < 0.0 { r = 0.0 }
+    if r > 1.0 { r = 1.0 }
+    return r
+}
+
+// spatial_episodic_spatial_vote — the SPATIAL (WHERE) leg's voted option + confidence over the
+// LIVE map. Given the landmark triple (x,a,b) and the two candidate landmarks' bound options
+// (sp_opt_a / sp_opt_b — read from the scene by the caller, the metric MAP does not store a
+// label), returns the nearer landmark's option as the vote; confidence = the metric margin
+// |d(X,A)−d(X,B)|. ABSTAINS (returns -1) if any landmark is not in the map. Pure read.
+pub fn spatial_episodic_spatial_vote(sm: SpatialMap, x: string, a: string, b: string,
+                                     sp_opt_a: int, sp_opt_b: int) -> [float] {
+    let near = spatial_map_nearest(sm, x, a, b)
+    if near == "" { return [0.0 - 1.0, 0.0] }                 // abstain: [-1, 0]
+    let ix = _sm_idx(sm, x)  let ia = _sm_idx(sm, a)  let ib = _sm_idx(sm, b)
+    let da = _sm_dist(sm, ix, ia)
+    let db = _sm_dist(sm, ix, ib)
+    let margin = if da < db { db - da } else { da - db }
+    let vote = if near == a { sp_opt_a } else { sp_opt_b }
+    return [to_float(vote), margin]
+}
+
+// spatial_episodic_episodic_vote — the EPISODIC (WHAT) leg's voted option + confidence over the
+// LIVE ImmuneMemoryGrow store. Given the query key, returns the recalled option (0=optA,1=optB)
+// and confidence = the LIVE affinity margin (recall_thr − _l2). ABSTAINS (returns -1) when the
+// store does not fire ("" recall). Pure read.
+pub fn spatial_episodic_episodic_vote(mem: ImmuneMemoryGrow, key: [float]) -> [float] {
+    let rv = immune_grow_recall(mem, key)
+    if rv == "" { return [0.0 - 1.0, 0.0] }                   // abstain: [-1, 0]
+    let vote = if rv == "optB" { 1.0 } else { 0.0 }
+    let margin = _mem_tom_affinity(mem.protos, key, mem.recall_thr)   // recall_thr − _l2 (live)
+    return [vote, margin]
+}
+
+// spatial_episodic_compose — the VALIDATED H_1415 query-routed confidence arbiter, as a CALLABLE
+// live op. Given each leg's voted option (sp_dec / ep_dec; -1 = ABSTAIN), confidence (sp_conf /
+// ep_conf), the two scale-relative confidence normalizers (mean_sp / mean_ep — caller-supplied so
+// the compose is scored relative to each live faculty's own confidence distribution), and a
+// routing cue (where_cue ∈ [0,1], →1 boosts spatial / →0 boosts episodic), returns the composed
+// option class (0/1), or -1 if BOTH legs abstain. AGREE → shared vote; one leg abstains → the
+// other's vote; CONFLICT → higher routing-modulated scale-relative substrate confidence wins (NO
+// hardcoded priority). This is BYTE-EXACTLY the H_1415 probe's inlined arbiter, now owned by the
+// engine. Pure read; mutates nothing; never touches Ψ (a_verified_must_wire rung-3).
+pub fn spatial_episodic_compose(sp_dec: int, sp_conf: float,
+                                ep_dec: int, ep_conf: float,
+                                mean_sp: float, mean_ep: float, where_cue: float) -> int {
+    let sp_abst = sp_dec < 0
+    let ep_abst = ep_dec < 0
+    if sp_abst && ep_abst { return -1 }
+    if sp_abst { return ep_dec }
+    if ep_abst { return sp_dec }
+    if sp_dec == ep_dec { return sp_dec }
+    let sp_w = _spat_epi_relconf(sp_conf, mean_sp) * where_cue
+    let ep_w = _spat_epi_relconf(ep_conf, mean_ep) * (1.0 - where_cue)
+    if sp_w >= ep_w { return sp_dec }
+    return ep_dec
+}

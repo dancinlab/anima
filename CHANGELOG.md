@@ -1,3 +1,54 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1415 — engine-native re-score of H_1408 (spatial-map × episodic-memory compose, WITHIN the memory family) 🟢 COMPOSE-LIFT BINDS + WIRED-live (a_verified_must_wire ladder rungs 2/3/4)
+
+The a_verified_must_wire ladder step-2 for H_1408 (the WITHIN-the-memory-family compose pair) —
+the THIRD compose pair re-scored on the LIVE engine, and the SECOND to BIND (after H_1414; contrast
+H_1412/H_1413 cerebellum×basal did NOT). The H_1408 mirror GREEN (acc_compose=0.8993 > best 0.7030)
+is re-scored on the LIVE faculties — `spatial_map_nearest` (the WHERE leg, nearer-landmark option +
+live metric margin |d(X,A)−d(X,B)|) and `immune_grow_recall` (the WHAT leg, recalled option + live
+recall_thr−_l2 affinity margin) — with the same 5-family fixture, 3 seeds [5408,5409,5410], same
+SHUFFLE/ORACLE/decomposition controls and same frozen bars.
+
+🟢 BINDS engine-native (all 4 frozen H_1408 bars, NOT moved):
+  - (B1 COMPOSE-EFFECT) compose 0.760741 ≥ best 0.702963 + 0.05 (0.752963) — net-lift +0.057778 > +0.05
+  - (B2 ORACLE) oracle−best +0.286667 > 0.02
+  - (B3 EARNED) compose−shuffle +0.254074 > 0.02 (shuffle collapses 0.761→0.507)
+  - (SEPARABLE) only_spatial=0.400 AND only_episodic=0.380 both>0 (within-family non-subsumption:
+    metric SPACE ⊥ item-binding, confirming H_1296 distinctness ON A DECISION, engine-native)
+  3 seeds deterministic (run1==run2 byte-identical), $0 CPU.
+
+FIXTURE NOTE (c16 frozen-first, a_break_the_wall taxonomy-a measurement artifact, NO bar moved): the
+first run came back 🟠 (compose 0.588 < best 0.703) because the live ImmuneMemoryGrow STRESS regime
+(split_thr=0.30) MERGES near-identical keys — the shared "value bound to landmark L…" prefix collided
+all 8 binds into ONE cell (cells=1, recall 2/8). That is a fixture key-encoding artifact, not the
+faculty's competence: distinct per-landmark keys → 8 cells, recall 8/8 (faithfully reproducing the
+mirror's separate-key binding). Bars UNCHANGED, only the store key encoding made distinct.
+
+WIRED (rungs 3/4) — the validated arbiter is now a CALLABLE live op in CORE/engine_cli.hexa under a
+new §SPATIAL×EPISODIC COMPOSE ARBITER section:
+  - `spatial_episodic_compose(sp_dec, sp_conf, ep_dec, ep_conf, mean_sp, mean_ep, where_cue) -> int`
+    (AGREE→shared vote; one leg abstains→the other's; CONFLICT→higher routing-modulated scale-relative
+    substrate confidence wins; BOTH-abstain→−1, no fab p5/H_1227; NO hardcoded priority)
+  - `spatial_episodic_spatial_vote` / `spatial_episodic_episodic_vote` (live votes + margins) +
+    `spatial_episodic_where_cue` (query-text where/what routing cue) + private `_spat_epi_relconf`.
+  Read-only over the map positions + the cell population; mutates nothing; Ψ-disjoint.
+  LIVEOP probe (state/1408_spatial_episodic_engine_compose/h1408_spatial_episodic_LIVEOP_probe.hexa)
+  drives the frozen bars through the WIRED ops and reproduces compose 0.760741 BYTE-EXACT.
+  ARCHITECTURE.json lockstep: engine_cli node §-note + a dedicated child node + guard_baseline 141/0.
+
+GUARDS (no regression): engine_cli_smoke 141 pass / 0 fail (cases 137-140: agree / conflict-where-
+spatial-wins / conflict-what-episodic-wins / abstain-discipline) · h1196 single-entry 7/0 · h1205
+separation-invariant PASS (generation byte-identical ON==OFF, Ψ=½ untouched).
+
+Significance: mirror→engine non-reproduction is PAIR-DEPENDENT, not universal — a pair binds iff
+neither live single faculty strengthens past the mirror best-single ceiling (which would erode the
++0.05 net-lift headroom). Both MEMORY-adjacent pairs (memory×ToM, spatial×episodic-within-memory) bind.
+
+Artifacts: UNIVERSE/cards/H_1415_spatial_episodic_engine_compose.md · UNIVERSE/HYPOTHESES.jsonl (H_1415
+row) · state/1408_spatial_episodic_engine_compose/{engine,LIVEOP}_probe.hexa ·
+.verdicts/1408_spatial_episodic_engine_compose/{FREEZE,result,H_1415_R3_LIVEOP}.txt ·
+CORE/engine_cli.hexa §SPATIAL×EPISODIC COMPOSE ARBITER · CORE/engine_cli_smoke.hexa cases 137-140 ·
+ARCHITECTURE.json. a_verified_must_wire · a_engine_native_learning · a_core_engine_map · c2 · c9 · c16 · p7 · p8.
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1414 RUNG-3+4 — wire the validated memory×ToM compose arbiter into the LIVE CORE engine (a_verified_must_wire ladder rungs 3/4 → wired: WIRED-live)
 
 The a_verified_must_wire ladder rung-3 (live CORE wire-in) + rung-4 (ARCHITECTURE.json lockstep)

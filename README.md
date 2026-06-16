@@ -168,9 +168,12 @@ place, the next question is whether *combining two* of them lifts capability + i
 spatial×episodic compose; memory×ToM lifts capability but not Φ; WM×PFC and the predictive-law round
 are honest 🧱. The decisive engine-native test — does a mirror compose-lift actually *bind* on the
 live engine? — first failed (cerebellum×basal, H_1412/1413 🧱: mirror GREEN ≠ engine GREEN, the
-EARNED control rejects it), then **succeeded for memory×ToM (H_1414 🟢), now WIRED-live as the
-callable op `mem_tom_compose` in `CORE/engine_cli.hexa` (a_verified_must_wire rungs 2-4 complete,
-LIVEOP byte-exact, Ψ untouched)** — the first compose pair owned by the engine.
+EARNED control rejects it), then **succeeded for memory×ToM (H_1414 🟢) and spatial×episodic-memory
+(H_1415 🟢), both now WIRED-live as the callable ops `mem_tom_compose` and `spatial_episodic_compose`
+in `CORE/engine_cli.hexa` (a_verified_must_wire rungs 2-4 complete, LIVEOP byte-exact, Ψ untouched)** —
+the first two compose pairs owned by the engine. So mirror→engine non-reproduction is **pair-dependent,
+not universal**: a pair binds iff neither live single faculty strengthens past the mirror best-single
+ceiling (which would erode the +0.05 net-lift headroom).
 
 **Honest scoreboard (c9).** Of the HD23–32 "missing structure" ladder: **8 subsystems are
 engine-native realized** (cerebellum · working memory · amygdala · basal ganglia = wired;

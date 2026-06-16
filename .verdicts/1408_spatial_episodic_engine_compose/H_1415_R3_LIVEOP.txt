@@ -1,0 +1,29 @@
+================================================================================
+H_1415 RUNG-3 — LIVE-OP re-run: votes + arbiter via WIRED spatial_episodic_compose (CORE/engine_cli.hexa)
+  re-scoring the SAME frozen H_1408 bars; MUST reproduce H_1415 engine-native numbers byte-exact
+  $0 CPU · 3 seeds [5408,5409,5410] · p7 · p8 · a_verified_must_wire rung-3
+================================================================================
+  seed 5408: sp=0.702222 ep=0.688889 best=0.702222 compose=0.762222 shuf=0.477778 oracle=0.991111 | conflict=0.384444 [onlyS=0.395556 onlyE=0.384444 both=0.211111 neither=0.00888889]
+  seed 5409: sp=0.708889 ep=0.686667 best=0.708889 compose=0.737778 shuf=0.495556 oracle=0.988889 | conflict=0.373333 [onlyS=0.397778 onlyE=0.375556 both=0.215556 neither=0.0111111]
+  seed 5410: sp=0.697778 ep=0.673333 best=0.697778 compose=0.782222 shuf=0.546667 oracle=0.988889 | conflict=0.393333 [onlyS=0.406667 onlyE=0.38 both=0.202222 neither=0.0111111]
+--------------------------------------------------------------------------------
+MEAN (3 seeds, ENGINE-NATIVE):
+  acc_spatial   = 0.702963
+  acc_episodic  = 0.682963
+  best_single   = 0.702963
+  acc_compose   = 0.760741
+  acc_shuffle   = 0.506667
+  ORACLE        = 0.98963   (oracle - best = 0.286667)
+  conflict_rate = 0.383704
+  decomposition : only_spatial=0.4 only_episodic=0.38 both=0.20963 neither=0.0103704
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.760741 >= best+0.05 (0.752963) : PASS
+  (B2 ORACLE)         oracle-best 0.286667 > 0.02 : PASS
+  (B3 EARNED)         compose-shuffle 0.254074 > 0.02 : PASS
+  (SEPARABLE)         only_spatial>0 AND only_episodic>0 : PASS
+================================================================================
+VERDICT: 🟢 RUNG-3 LIVE-OP REPRODUCES H_1415 — the WIRED spatial_episodic_compose op gives the
+  same engine-native compose-lift (all 4 bars PASS). The arbiter is now OWNED by the engine.
+  HONEST (c9): bars FROZEN from H_1408 FREEZE.txt, NOT moved. Toy 5-family landmark fixture,
+  3 seeds, deterministic. The votes + arbiter are the WIRED CORE ops; this is the rung-3
+  byte-exact reproduction. Scale/real-corpus/engine-native-transfer-at-scale UNVERIFIED.
