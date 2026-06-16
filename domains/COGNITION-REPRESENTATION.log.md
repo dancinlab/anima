@@ -339,6 +339,37 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   · h1333(GRADED-PLASTICITY parent) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning
   · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
 
+## H_1360 — cp-geometric-repack: CP 재배치 = MOVE-THE-CELLS (🟢 GREEN, 3-lever trilemma 종결)
+
+- **seed**: H_1352(🧱 soft-decay DEEPER-LIMIT)의 verbatim follow-on. H_1340(budget=count)와 H_1352(decay=weight) 두 lever 가
+  모두 honest 🧱 으로 소진됐고, 둘 다 같은 원인을 노출했다 — phase-1 prototype 이 **물리적으로 재배치된 적이 없어** 옛 cut 에
+  앉아 secondary peak 를 주입한다. H_1352 카드가 마지막 미시도 lever 를 verbatim 으로 지목: "옛 세포를 MOVE/re-position
+  (GEOMETRIC re-pack) 해야 한다, 단지 down-weight 하거나 out-vote 하지 말고." H_1360 이 그 THIRD lever(geometry)를 시험.
+- **mechanism**: H_1333/H_1340/H_1352 CP 기계 verbatim import. ONLY NEW = RepackCells — 각 세포의 SOURCE 연속체 위치 + BIRTH
+  PHASE 추적; phase-2 매 split 후 잔류 phase-1 세포 위치를 pos_i ← pos_i + η·(p_A'−pos_i) (p_A' clamp, overshoot 없음) 로
+  drift, 그 위치에서 RE-EMBED, label 을 p_A' 에서 RE-READ; phase-2 세포는 drift 안 함. η=0 ⇒ store 가 H_1333 과 byte-identical
+  (NO-REPACK arm == anchor). 예산은 H_1340 R0_base LOW(DIM16/GROW2 24, H_1352 와 EQUAL)에 고정 — 유일 변화는 geometric drift.
+  4 arm: NO-REPACK(η=0) · RE-PACK(η=0.15 FROZEN) · NO-RETRAIN(p_A only) · SHUFFLE+repack. ladder {0.10,0.15,0.25}=NON-GATING.
+- **답: 🟢 GREEN — 세포를 옮기면 coherent full relocation 회복.** mean(3 seed): NO-REPACK peak 0.523 |peak−p_A'| 0.144 frac
+  +0.57 pc **4.3**(H_1340/H_1352 partial anchor 재현) → RE-PACK(η=0.15) peak **0.669** |peak−p_A'| **0.002** frac **+1.01**
+  pc **1.0**. c1 RELOCATES ✅ per-seed [0.002,0.002,0.002]≤0.12 (FULL move) · c2 COHERENT ✅ pc 1.0 single peak(budget 4.3,
+  decay 15.7 둘 다 실패한 gate) · c3 EARNED ✅ no-retrain |peak−p_A| 0.002 유지 + shuffle pc **18.0**(세포를 p_A' 로 옮겨도
+  noise 에서 coherent peak 조작 안 함) · c4 vs-PRIOR ✅ pc 1.0 < H_1340 4.3 AND H_1352 15.7 (둘 다 산란한 곳에서 coherent)
+  + |peak−p_A'| 0.002 ≤ 0.081 (equal/lower budget 에서 더 가까움). ladder η=0.10/0.15/0.25 모두 0.002/pc1.0 — knife-edge 아님.
+- **왜**: 재배치 잔차는 처음부터 **GEOMETRIC-PLACEMENT 문제** — 옛 cut 에 앉은 옛 세포. budget 은 out-count(거리↑ coherence↓),
+  decay 는 out-vote(거리↑↑ coherence↓↓), 유일 해법은 MOVE. a_break_the_wall 입증: H_1340/H_1352 벽은 WRONG MECHANISM
+  (고정 geometry 의 weight/count 조작)이지 진짜 천장이 아니었다 — geometry 를 바꾸니 벽이 녹았다. **budget/decay/geometry 3-lever
+  trilemma 가 positive 로 종결.** p1/p2/p3/p6: re-pack 은 BIRTH PHASE+자기 위치만(structural), readout 은 표현거리만, test 시
+  injected boundary 없음(label 은 phase-2 를 학습시키는 SAME p_A' 에서 re-read), live CORE/*.hexa UNTOUCHED. NO bar move (c9/p7).
+- **NEXT** (각각 ANEW 사전등록): (i) engine-native §CategoricalPerception move-the-cells — live A⇄G immune store 에서 세포 위치
+  drift 실현(a_verified_must_wire) · (ii) LEARNED(gradient) drift vs 이 deterministic rule 비교 · (iii) multi-shift / leftward
+  re-pack / real-corpus 일반화.
+- **claim-link**: `CLAIMS.tape @C h1360_cp_geometric_repack` · card `UNIVERSE/cards/H_1360_cp_geometric_repack.md`
+  · verdicts `.verdicts/1360_cp_geometric_repack/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1352(soft-decay deeper-limit parent, 이 lever 지목) · h1340(budget-sweep deeper-limit) · h1338(budget/geometry 재진단)
+  · h1341(shift-ladder) · h1355(leftward geometry) · h1333(GRADED-PLASTICITY) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap
+  · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15
+
 ## 2026-06-16 — research(METACOG-G5, cross-ref): H_1361 — g5-graded-metacog: G5 의 metacognition 은 binary 인가, abstain MARGIN 에 graded 신호가 있는가 (🟢 GRADED-METACOG)
 
 > cross-ref note: 본 H 는 METACOG-G5 테마(전용 domain 없음) → 최근접 COGNITION-REPRESENTATION 로그에 기록 (a_discovery_log). 직접 부모 = H_1304(fire-side binary fail-safe).
