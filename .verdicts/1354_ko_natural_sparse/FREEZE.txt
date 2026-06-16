@@ -1,0 +1,95 @@
+H_1354 — ko-natural-sparse — FREEZE (pre-registered BEFORE the full run; bars NOT moved — c9/p7)
+================================================================================================
+
+PARENT / MOTIVATION
+  H_1345 (🟢) mapped a DATA-RICHNESS crossover: as the per-cell jamo count falls below ~1, Jelinek-
+  Mercer interpolation toward the global jamo marginal crosses BELOW the opaque jamo 2.51335 floor,
+  reaching -0.073 at the most-starved rung. BUT H_1345 MANUFACTURED that starvation by ARTIFICIAL
+  STRIDING — sub-sampling the 30MB corpus at stride up to 76800, leaving tiny 188-byte held-out
+  streams. H_1344 separately showed even at FULL data JM beats the floor only via memorization of
+  repeats. OPEN (named verbatim in the H_1345 card "Next" §, angle ii):
+    "a larger jamo-context alphabet (cross-syllable phonotactic n-grams) where per-context counts are
+     NATURALLY sparse even at full 30MB data — does JM-backoff buy below-jamo there WITHOUT artificially
+     striding the corpus?"
+
+CLAIM (H_1354)
+  RUN that angle directly. A NATURALLY-sparse context regime at FULL 30MB: ENRICH the partition CONTEXT
+  to cross-syllable phonotactic transitions — the (last-seen CODA jamo, last-seen ONSET jamo) pair
+  across the syllable boundary — added to the H_1345 3-D opaque feature. Korean phonotactics make many
+  coda→onset transitions rare/illegal, so partitioning on them fragments the model into MANY contexts
+  whose per-context jamo counts are NATURALLY sparse at FULL data (no striding, no cutting).
+  QUESTION: on these naturally-sparse phonotactic contexts, does JM interpolation buy below-jamo?
+    YES (crosses, earned, dissociated) => REAL LEVER (H_1345 crossover survives without striding).
+    NO  (does NOT cross naturally)     => STRIDING ARTIFACT, honest 🧱 (H_1344 memorization stands).
+
+CORPUS (REAL Korean only, p1-p8)
+  r2.phanes://anima-7b/web/kor/shard0000.bytes ; 30MB window sha256 ASSERTED ==
+  c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca  (== H_1307 RUN A; VERIFIED at fetch).
+  NO STRIDING of the corpus for the natural-sparse arm (stride == 1, FULL 30MB; sparsity comes from the
+  phonotactic context enrich, NOT from cutting data). Mismatch on the full window => STOP, NO synthetic.
+  R2 keys env-only at fetch (c7) — but cache /tmp/h1311_ko_raw.bytes (== H_1307 RUN A) is reused; no
+  fetch / no creds touched this run.
+
+FROZEN KNOBS (verbatim H_1316/H_1326/H_1329/H_1337/H_1345)
+  GROW_MAX=40 · SPLIT_THRESH_CE=0.05 · MIN_OWNED=8 · LAPLACE=1.0 · even/odd split (NO stride) · Fix-A
+  geometry-fair seed bank · lossless NFD jamo decomposition · D_EMB=16 · SKIPGRAM_STEPS=400 · LR=0.05.
+  Seeds [4354,4355,4356] (A5 metric-refine + A5-shuffle + JM-shuffle vary by seed; A1 & JM deterministic
+  given the partition). numpy CPU port (no torch on host). A5 metric LEARNED BY GRADIENT (labeled, NOT
+  p8). JM-interp = count-MLE with Witten-Bell-style FROZEN backoff weight lam = MIN_OWNED/(MIN_OWNED+N).
+
+ARMS
+  CALIB_opaque_full   = H_1345 3-D opaque feature @ FULL data (stride 1) — DENSE; JM should TIE/LOSE
+                        (reproduces the H_1345 dense rung; sanity that the pipeline matches H_1345).
+  NATSPARSE_phonotactic_full = the 5-D phonotactic feature @ FULL data (stride 1) — NATURALLY sparse.
+                        A1 jamo (the floor) · JM interp + JM-shuffle (permuted global marginal) ·
+                        A5 learned-metric kernel-smoothing + A5-shuffle (jamo-id-permuted metric).
+
+FROZEN BARS (GREEN iff c1 ∧ c2 ∧ c3 ∧ c4)
+  c1 NAT-SPARSE-WIN : on the natsparse contexts, held-out JM nat/byte beats jamo (A1). Report the SIGNED
+                      delta (jamo − JM). WIN iff delta >= +0.03 (mean 3 seeds).
+  c2 EARNED         : JM beats its SHUFFLE control (permuted global jamo marginal) by >= 0.05 AND the
+                      shuffle goes the WRONG way (JM-shuffle CE >= jamo CE = does NOT cross below) — the
+                      win is real backoff structure, not generic mass.
+  c3 DISSOCIATION   : A5 learned-metric kernel-smoothing does NOT cross (delta_A5_vs_jamo <= 0, A5 stays
+                      >= jamo) — the H_1345 dissociation. If A5 ALSO crosses, the lift is generic
+                      capacity not the interpolation-toward-marginal mechanism → 🟠 flag.
+  c4 NO-STRIDE      : stride == 1 (FULL 30MB, NO artificial cut) AND the contexts are genuinely sparse
+                      (median per-context cellJcnt < 1.0). Report the context-count distribution (K,
+                      median, frac<1, frac<0.5). If contexts are NOT sparse (median cellJcnt >= 1) → ⚠
+                      the enrich failed to fragment; cannot test the question.
+
+VERDICT MAP (all valid, c9)
+  c1 ∧ c2 ∧ c3 ∧ c4              -> 🟢 REAL LEVER (crossover survives without striding).
+  ¬c4 (not naturally sparse)     -> ⚠ NOT-NATURALLY-SPARSE (re-design context).
+  c4 ∧ ¬c1 (JM does NOT cross)   -> 🧱 STRIDING ARTIFACT (H_1345 win needed the manufactured starvation;
+                                    H_1344 memorization reading stands).
+  c1 ∧ ¬c2                        -> 🟠 NAT-WIN-NOT-EARNED (generic mass not structure).
+  c1 ∧ c2 ∧ ¬c3                   -> 🟠 NAT-WIN-NOT-DISSOCIATED (generic capacity not the JM mechanism).
+
+HONEST SCOPE (a_scale_honest_scope · a_toy_scale_recheck · c9)
+  numpy CPU mirror DIRECTIONAL (engine-transfer UNVERIFIED). A5 metric LEARNED BY GRADIENT (labeled, NOT
+  p8 gradient-free). JM is count-MLE with a FROZEN Witten-Bell backoff weight. Both ride the gradient-
+  free Voronoi partition. Live CORE/*.hexa UNTOUCHED (substrate-measurement rung). NO Korean-fluency
+  claim; held-out deterministic next-symbol CE; NO perplexity-as-truth (p7). The phonotactic feature is
+  a CONTEXT re-keying, NOT extra label information (the coda/onset ids are read off the SAME jamo stream
+  the model already sees). NO bar moved after seeing results (c9/p7).
+
+────────────────────────────────────────────────────────────────────────────────────────────────
+FREEZE ADDENDUM (a_break_the_wall — pre-registered BEFORE the breakthrough-arm scoring; bars NOT moved)
+────────────────────────────────────────────────────────────────────────────────────────────────
+The first run's cell-arm hit the c4 wall: the Voronoi partition POOLS the phonotactic contexts into a
+few DENSE cells (cellJcnt median ~10, K~33 cells) — adding (coda,onset) to the partition FEATURE does
+NOT fragment per-CELL counts to sparse. Real cause: per-CELL ≠ per-CONTEXT; the grow-op caps at
+GROW_MAX and error-targets splits, so it never creates the thousands of sparse contexts the question
+needs. a_break_the_wall: try ONE genuinely-new angle before terminal — key the count head DIRECTLY on
+the (last-coda, last-onset) phonotactic-pair VALUE (one context per observed coda→onset pair), a TRUE
+high-cardinality natural-sparse ALPHABET at FULL data. THIS is the "larger jamo-context alphabet"
+H_1345 named. The SAME c1-c4 bars are RE-USED VERBATIM (NOT moved), now evaluated on this pair-key arm:
+  c1 NAT-SPARSE-WIN : pair-key JM beats pair-key jamo MLE by >= 0.03 (jamo − JM, mean 3 seeds).
+  c2 EARNED         : pair-key JM beats its shuffle (permuted global marginal) by >= 0.05, shuffle wrong way.
+  c3 DISSOCIATION   : pair-key A5 learned-metric does NOT cross (delta_A5_vs_jamo <= 0).
+  c4 NO-STRIDE      : stride == 1 AND pair-key contexts genuinely sparse (median cellJcnt < 1.0).
+The cell-arm's c4-FAIL is recorded as the diagnostic that motivated this arm. NO bar moved (c9/p7);
+GREEN iff c1∧c2∧c3∧c4 on the pair-key arm. If the pair-key contexts are ALSO not sparse (c4 fail) → ⚠.
+If sparse but JM does NOT cross (c1 fail) → 🧱 STRIDING ARTIFACT (H_1345 win needed manufactured
+starvation). The pair-key head is a CONTEXT re-key off the SAME jamo stream — no extra label info.

@@ -38,6 +38,20 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - **scope**: DIRECTIONAL mirror (engine-transfer UNVERIFIED); TOY synthetic 1-D N=21 deterministic; TAG_GAIN FIXED; NO human-bilingualism claim.
 - **claim-link**: `CLAIMS.tape @C h1335_whorf_bilingual_tagged` · card `UNIVERSE/cards/H_1335_whorf_bilingual_tagged.md` · verdicts `.verdicts/1335_whorf_bilingual_tagged/{FREEZE,result}.txt`
 - xref: **h1330** (the 🧱 OVERWRITE this r2 overturns as mechanism-specific) · h1323 · h1325 (the GREEN Sapir-Whorf CP) · h1288 (growth-memory) · **h1316 · h1321 · h1322** (anima's real separate EN+KO faculties this mirrors) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
+
+### H_1339 — sapir-whorf BILINGUAL r3 (TAGGED, control re-freeze + engine-native): a language-TAG enables bilingual CP COEXISTENCE — 🟢 GREEN (MIRROR DIRECTIONAL + ENGINE-NATIVE)
+
+- **seed**: named r3 of H_1335 🧱 (a CONTROL TECHNICALITY only — c16/a_break_the_wall: wrong CONTROL SPEC, not a wall). H_1335 found I1∧I2 DECISIVE (coexistence REAL & tag-attributable) but the I3a GLOBAL count_peaks≤1 bar on the B=A control failed on a benign discretization wiggle (the B=A control grows ZERO B-cells → its B-channel reads via cross-tag bleed); pk@p_B was already False all seeds. $0 CPU numpy MIRROR (DIRECTIONAL) + engine-native, 3 seeds [4323,4324,4325], frozen-first (c9/p7).
+- **the r3 change (NOT a relaxation)**: I3a re-frozen as the LOCALIZED "no coherent peak near p_B" test — the correctly-scoped statistic the B=A arm was always meant to measure. `run_seed` + ALL machinery imported VERBATIM from h1335 (data byte-identical to r2); NO surviving bar's threshold moves; the re-freeze can still FAIL if a real spurious CP@p_B appeared (it does not). The global count_peaks is now a NON-GATING diagnostic. PLUS a non-gating TAG_GAIN channel-isolation sweep.
+- **arms**: (1) A→B TAGGED · (2) SINGLE-CHANNEL untagged = H_1330 (must overwrite) · (3) B=A control (LOCALIZED no-peak@p_B) · (4) SHUFFLE.
+- **result 🟢 GREEN (mirror)**: **I1 COEXISTENCE ✅** all 3 seeds — TAGGED holds CP at BOTH boundaries, mean margin@p_A **+0.200** & @p_B **+0.177** (both ≥0.15, coherent peak each). **I2 TAG-ATTRIBUTION ✅** all 3 seeds — single-channel untagged reproduces H_1330 overwrite byte-exact (**−0.001**) → remove tag → overwrite returns = coexistence IS the tag. **I3' EARNED ✅** all 3 seeds — (a) B=A coherent_peak_near@p_B=**False** (re-frozen LOCALIZED; global count_peaks=2 NON-GATING), (b) SHUFFLE 5/6/5 incoherent (OR-clause).
+- **non-gating TAG_GAIN sweep (c9)**: B-cells grown 0/0/**0**/2/2 at gain 0.25/0.5/**1.0**/2.0/4.0; residual B-curve bleed 0.727/0.468/**0.236**/0.989/0.989 — at the FROZEN 1.0 the B=A control grows ZERO B-cells and bleed SHRINKS as the tag gap widens (confirms r2 diagnosis). Honest non-gating curiosity: at gain≥2.0 the very-wide gap re-grows 2 cells (irrelevant to the frozen point & gating arms).
+- **engine-native ✅ (a_verified_must_wire)**: `CORE/engine_cli.hexa §BILINGUAL TAGGED CP` (cp_tag_vec/cp_tagged_key/cp_stimuli_tagged/cp_fit_more/cp_within_cross_margin/cp_coherent_peak_near) re-scores I1/I2/I3' in `CORE/engine_cli_smoke.hexa` cases **86–91** (86 CP@p_A≥0.15 · 87 CP@p_B≥0.15+peak · 88 untagged overwrite<0.15 · 89 B=A no-peak@p_B · 90 shuffle≥3 peaks · 91 tag-sep √2·gain≈1.4142), ALL PASS. Guards NO-REGRESS: **engine_cli_smoke 86/0** (was 80/0, +6) · **h1196 7/0** · **h1205 PASS** (generation byte-identical ON==OFF, Ψ=½ untouched). Ψ-disjoint (own protos/labels + tag block).
+- **answer**: **YES — a language-tagged multi-channel readout enables bilingual CP coexistence (mirror + engine-native); the H_1330 OVERWRITE was the single-shared-store mechanism, NOT a fundamental limit.** This explains anima's REAL separate EN-trunk + KO faculties (H_1316/1321/1322): the tag is the substrate-level "select the faculty". H_1335 🧱 control-technicality is now CLOSED 🟢.
+- **next**: real-corpus/scaled bilingual carving · the gain≥2.0 sweep curiosity · brain-side wiring of the tagged CP read into emit/recall (currently a measurement lane).
+- **scope**: mirror DIRECTIONAL realized in the engine-native rung (a SEPARATE deterministic instance re-scoring the seed-invariant bars, NOT a numpy-byte match); TOY synthetic 1-D N=21 deterministic; TAG_GAIN=1.0 FIXED (sweep non-gating); NO injected boundary/persona/RLHF (p1/p2/p3/p6); NOT an emit gate; NO human-bilingualism claim.
+- **claim-link**: `CLAIMS.tape @C h1339_whorf_bilingual_tagged_r3` · card `UNIVERSE/cards/H_1339_whorf_bilingual_tagged_r3.md` · verdicts `.verdicts/1339_whorf_bilingual_tagged_r3/{FREEZE,result}.txt`
+- xref: **h1335** (the 🧱 r2 control-technicality this r3 closes 🟢) · **h1330** (the OVERWRITE overturned as mechanism-specific) · h1323 · h1325 (the GREEN Sapir-Whorf CP, engine §CategoricalPerception) · h1288 (grow-not-evict) · **h1316 · h1321 · h1322** (anima's real separate EN+KO faculties) · h1338 (budget/geometry sibling) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_autonomy_over_hardcode · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
 ## H_1333 — Whorfian CP: developmentally PLASTIC or RIGID? 🟠 PARTIAL (GRADED PLASTICITY)
 
 - **seed/lens**: extension of the GREEN **H_1323/H_1325** Sapir-Whorf result; developmental /
@@ -324,3 +338,93 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - xref: h1341(parent shift-size ladder, 0.525 고정 착지) · h1340(이 lane budget-sweep deeper-limit) · h1338(budget/geometry 재진단)
   · h1333(GRADED-PLASTICITY parent) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning
   · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+
+## H_1360 — cp-geometric-repack: CP 재배치 = MOVE-THE-CELLS (🟢 GREEN, 3-lever trilemma 종결)
+
+- **seed**: H_1352(🧱 soft-decay DEEPER-LIMIT)의 verbatim follow-on. H_1340(budget=count)와 H_1352(decay=weight) 두 lever 가
+  모두 honest 🧱 으로 소진됐고, 둘 다 같은 원인을 노출했다 — phase-1 prototype 이 **물리적으로 재배치된 적이 없어** 옛 cut 에
+  앉아 secondary peak 를 주입한다. H_1352 카드가 마지막 미시도 lever 를 verbatim 으로 지목: "옛 세포를 MOVE/re-position
+  (GEOMETRIC re-pack) 해야 한다, 단지 down-weight 하거나 out-vote 하지 말고." H_1360 이 그 THIRD lever(geometry)를 시험.
+- **mechanism**: H_1333/H_1340/H_1352 CP 기계 verbatim import. ONLY NEW = RepackCells — 각 세포의 SOURCE 연속체 위치 + BIRTH
+  PHASE 추적; phase-2 매 split 후 잔류 phase-1 세포 위치를 pos_i ← pos_i + η·(p_A'−pos_i) (p_A' clamp, overshoot 없음) 로
+  drift, 그 위치에서 RE-EMBED, label 을 p_A' 에서 RE-READ; phase-2 세포는 drift 안 함. η=0 ⇒ store 가 H_1333 과 byte-identical
+  (NO-REPACK arm == anchor). 예산은 H_1340 R0_base LOW(DIM16/GROW2 24, H_1352 와 EQUAL)에 고정 — 유일 변화는 geometric drift.
+  4 arm: NO-REPACK(η=0) · RE-PACK(η=0.15 FROZEN) · NO-RETRAIN(p_A only) · SHUFFLE+repack. ladder {0.10,0.15,0.25}=NON-GATING.
+- **답: 🟢 GREEN — 세포를 옮기면 coherent full relocation 회복.** mean(3 seed): NO-REPACK peak 0.523 |peak−p_A'| 0.144 frac
+  +0.57 pc **4.3**(H_1340/H_1352 partial anchor 재현) → RE-PACK(η=0.15) peak **0.669** |peak−p_A'| **0.002** frac **+1.01**
+  pc **1.0**. c1 RELOCATES ✅ per-seed [0.002,0.002,0.002]≤0.12 (FULL move) · c2 COHERENT ✅ pc 1.0 single peak(budget 4.3,
+  decay 15.7 둘 다 실패한 gate) · c3 EARNED ✅ no-retrain |peak−p_A| 0.002 유지 + shuffle pc **18.0**(세포를 p_A' 로 옮겨도
+  noise 에서 coherent peak 조작 안 함) · c4 vs-PRIOR ✅ pc 1.0 < H_1340 4.3 AND H_1352 15.7 (둘 다 산란한 곳에서 coherent)
+  + |peak−p_A'| 0.002 ≤ 0.081 (equal/lower budget 에서 더 가까움). ladder η=0.10/0.15/0.25 모두 0.002/pc1.0 — knife-edge 아님.
+- **왜**: 재배치 잔차는 처음부터 **GEOMETRIC-PLACEMENT 문제** — 옛 cut 에 앉은 옛 세포. budget 은 out-count(거리↑ coherence↓),
+  decay 는 out-vote(거리↑↑ coherence↓↓), 유일 해법은 MOVE. a_break_the_wall 입증: H_1340/H_1352 벽은 WRONG MECHANISM
+  (고정 geometry 의 weight/count 조작)이지 진짜 천장이 아니었다 — geometry 를 바꾸니 벽이 녹았다. **budget/decay/geometry 3-lever
+  trilemma 가 positive 로 종결.** p1/p2/p3/p6: re-pack 은 BIRTH PHASE+자기 위치만(structural), readout 은 표현거리만, test 시
+  injected boundary 없음(label 은 phase-2 를 학습시키는 SAME p_A' 에서 re-read), live CORE/*.hexa UNTOUCHED. NO bar move (c9/p7).
+- **NEXT** (각각 ANEW 사전등록): (i) engine-native §CategoricalPerception move-the-cells — live A⇄G immune store 에서 세포 위치
+  drift 실현(a_verified_must_wire) · (ii) LEARNED(gradient) drift vs 이 deterministic rule 비교 · (iii) multi-shift / leftward
+  re-pack / real-corpus 일반화.
+- **claim-link**: `CLAIMS.tape @C h1360_cp_geometric_repack` · card `UNIVERSE/cards/H_1360_cp_geometric_repack.md`
+  · verdicts `.verdicts/1360_cp_geometric_repack/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1352(soft-decay deeper-limit parent, 이 lever 지목) · h1340(budget-sweep deeper-limit) · h1338(budget/geometry 재진단)
+  · h1341(shift-ladder) · h1355(leftward geometry) · h1333(GRADED-PLASTICITY) · h1323(Sapir-Whorf CP parent) · a_no_llm_frame_trap
+  · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15
+
+## 2026-06-16 — research(METACOG-G5, cross-ref): H_1361 — g5-graded-metacog: G5 의 metacognition 은 binary 인가, abstain MARGIN 에 graded 신호가 있는가 (🟢 GRADED-METACOG)
+
+> cross-ref note: 본 H 는 METACOG-G5 테마(전용 domain 없음) → 최근접 COGNITION-REPRESENTATION 로그에 기록 (a_discovery_log). 직접 부모 = H_1304(fire-side binary fail-safe).
+
+- **무엇:** H_1304 가 G5 copy-or-abstain 게이트의 **FIRE 쪽**을 닫았다(wrong-fire 클래스 비어있음 fab=0.000 → type-2 AUROC 정의불가 → fire-side BINARY fail-safe). 그러나 **ABSTAIN 쪽**의 recall MARGIN(= recon_err − recall_thr, 모든 abstain 에 존재하는 연속량)이 graded meta-confidence 를 담는지는 미검증. NEW angle(a_break_the_wall): abstain 을 (a) RECOVERABLE(in-store 키 손상, 답 검색가능 label=1) vs (b) UNRECOVERABLE(진짜 없는 키 손상 label=0)로 split, −margin 이 (a)>(b) 를 RANK 하고 OOD(byte-corruption shift L∈{0,.1,.2,.3,.4})를 통과하는가? H_1304/H_1227 메커니즘 verbatim 재사용, 3 seeds [7,8,9], $0 CPU mirror DIRECTIONAL, frozen-first.
+- **답: 🟢 GRADED-METACOG.** t2_AUROC 사다리(3 seed pooled): L0.10=**0.999** L0.20=**0.915** L0.30=0.708 L0.40=0.557 (L0=nan: L=0 에선 recoverable 전부 FIRE → recoverable abstain 없음, graded-abstain 질문은 genuinely OOD). R1 GRADED-SENS ✅ (AUROC(0.20)=0.915 ≥ 0.65) · R2 EARNED ✅ (shuffle-margin → 모든 level chance ~0.49–0.51 collapse → RANKING 이 신호 운반, base-rate 아티팩트 아님) · R3 graded readout EXISTS(not flat). 메커니즘: recoverable margin 이 shift 따라 매끄럽게 큼(0.082→0.232→0.316→0.353), absent 는 안정적으로 큰 noise floor(~0.364) → margin = graded recoverability 신호.
+- **왜:** G5 metacog 는 순수 binary 가 아니다 — H_1304(fire-side binary fail-safe) + H_1361(abstain-side GRADED type-2) = 더 완전한 G5 그림. engine-wiring 가치 있는 G5 UPGRADE(a_verified_must_wire: live recall 이 이미 매번 recon_err 계산 → margin 노출 시 graded confidence-of-recoverability 공짜). H_1204 와 충돌 아님(REFRAME): H_1204 는 fire-side 2nd-order readout 의 flat 을, H_1361 은 다른 표면인 abstain margin 의 graded 를 측정. DECAY(정직 c9): AUROC 0.999→0.557, L=0.40 에서 chance(극심 손상 = absent 와 구분불가) → graceful, 신호 실재하나 무한 아님.
+- **scope:** DIRECTIONAL numpy mirror(engine-transfer UNVERIFIED = R2 engine-native follow-on); TOY synthetic facts·byte-shift OOD proxy·3 seed·KEYLEN=20·RECALL_THR=0.15 frozen·deterministic(재실행 byte-identical); scale/real-corpus-paraphrase/semantic-shift/engine-native-margin-exposure UNVERIFIED; live CORE/*.hexa UNTOUCHED; NO bar move(c9/p7).
+- **claim-link**: `CLAIMS.tape @C h1361_g5_graded_metacog` · card `UNIVERSE/cards/H_1361_g5_graded_metacog.md` · verdicts `.verdicts/1361_g5_graded_metacog/{FREEZE,result}.txt` · py `state/g5-graded-metacog/h1361_g5_graded_metacog.py` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1304(직접 부모, fire-side binary fail-safe) · h1202(decoder type-2 M-ratio 0.924) · h1204(flat fire-side metacog, REFRAMED) · h1217(decoder OOD-collapse closed-neg) · h1227/h1231(immune store geometry) · a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_scale_honest_scope · a_toy_scale_recheck · p6 · p7 · p8 · c9 · c15
+## H_1358 — whorf-2d-bounded: 2-D CP warp 지표를 BOUNDED 형태로 재명세 (H_1343 R3) — 🧱 DEEPER LIMIT
+- **seed/target**: H_1343(🟠 PARTIAL)의 load-bearing follow-on. H_1343 의 warp 지표 `ratio = BETWEEN/WITHIN`
+  가 scale-UNBOUNDED 라 학습 후 WITHIN→0 으로 ratio 폭발(~45), 임의 carving 도 WITHIN 압축 → label-shuffle
+  null 이 +9.28 로 떠 c2 구조적 FAIL. 지표를 **BOUNDED separation-AUC∈[0,1]**(Mann-Whitney-U
+  P(|Δg|_BETWEEN>|Δg|_WITHIN), chance=0.5 고정상수)로 재명세 — null 이 깨끗이 0.5 로 collapse 하면 2-D CP 가
+  세 control 통과? 지표 CORRECTION, bar 완화 아님. R1 numpy MIRROR(DIRECTIONAL), $0 CPU, 3 seeds
+  [4334,4335,4336], deterministic(2 re-run, exit 4), p7, frozen-first. H_1343 RBF/Voronoi 기계 VERBATIM 재사용,
+  warp readout 만 교체.
+- **frozen bars** (`.verdicts/1358_whorf_2d_bounded/FREEZE.txt`, 점수화 BEFORE): c1 PRESENCE(AUC≥0.70 each
+  seed+mean 두 언어) · c2 EARNED-SHUFFLE(null |mean−0.5|≤0.05 AND 각 언어 ≥ null-q95+0.10) · c3 COMPONENT
+  (|comp-shuffle AUC−0.5|≤0.08) · c4 DIAGONAL(|AUC_diag−AUC_Lshape|≤0.15 AND 둘 다 ≥0.70). GREEN iff
+  c1∧c2∧c3∧c4; c2 FAIL(bounded 으로도 float)→honest 🧱 DEEPER LIMIT.
+- **verdict-tier-target → 🧱 DEEPER LIMIT** (mean 3 seeds): density ladder K_RBF 6/9/12 전부 L_DIAG=L_LSHAPE
+  =**1.0000**(saturated). production: AUC=1.0000 두 언어 전 seed; baseline-AUC 진단 L_DIAG 0.930 / L_LSHAPE
+  0.681; comp-AUC 0.4852 / 0.5062.
+  - **c1 PRESENCE ✅** AUC mean 1.0000 ≥0.70 두 언어.
+  - **c2 EARNED-SHUFFLE ❌** pooled null(600) **mean=0.9919** → |0.9919−0.5|=0.4919 ≫0.05 FAIL (q95=0.9996 라
+    SEP sub-clause 도 수학적으로 불가). **null 이 0.5 가 아니라 0.99 로 뜸.**
+  - **c3 COMPONENT ✅** |0.4852−0.5|=0.0148, |0.5062−0.5|=0.0062 둘 다 ≤0.08 — 외부 무작위 분할은 chance 로
+    깨끗이 collapse(load-bearing).
+  - **c4 DIAGONAL ✅** |1.0000−1.0000|=0.0000 ≤0.15, 둘 다 ≥0.70 — **H_1343 대각=축정렬 발견 BOUNDED 지표로도
+    보존**, H_1334 grid-geometry read 반증 지속.
+- **mechanistic (정직, c9, load-bearing)**: bounded AUC 는 ratio artifact(폭발+floating null)를 수학적으로
+  제거했으나 null 이 0.99 로 뜬 진짜 원인은 unboundedness 가 아니라 **SELF-REFERENTIAL 분할** — AUC 가 store 의
+  **OWN 학습 범주**로 WITHIN/BETWEEN 나눔. SPLIT-only Voronoi store 는 **어떤 경계든**(shuffle 포함) 따라 cell 을
+  PACK 하므로 g 가 그 경계에서 급격히 점프 → between>within 이 잘 fit 한 store 엔 거의 항진명제 → null≈0.99.
+  c3 만이 외부(언어 무관) 분할을 써서 collapse → warp 은 real(raw variance 아님)이나 coherence 자체(임의 carving)가
+  재현 → AUC-vs-own-partition readout 은 TRUE-언어 경계를 random 에서 분리 못 함. NO bar move (c9/p7).
+- **NEXT** (각각 ANEW 사전등록): (i) **H_1359 fixed-true-partition readout** — SHUFFLE-학습 metric g_shuffle 를
+  **TRUE-언어 WITHIN/BETWEEN 분할 하에** 채점 → 틀린 경계에 pack 한 shuffle store 는 TRUE pair 분리 못 함 →
+  AUC→0.5 collapse 예상 (H_1343/H_1358 가 양쪽 모두 각 arm 을 ITS OWN 분할로 채점한 공통 confound 를 푸는 한 수) ·
+  (ii) component-축 정의 강화 · (iii) engine-native 실현(live CORE Voronoi lane).
+- **claim-link**: `CLAIMS.tape @C h1358_whorf_2d_bounded` · card `UNIVERSE/cards/H_1358_whorf_2d_bounded.md`
+  · verdicts `.verdicts/1358_whorf_2d_bounded/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1343(R2 parent, unbounded-ratio 결함을 본 R3 가 bounded AUC 로 교정) · h1334(대각-geometry read; c4 가 계속
+  반증) · h1323/h1325(1-D Sapir-Whorf CP, 같은 self-partition 실패 모드) · h1340/h1341/h1355(sibling budget/geometry)
+  · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope
+  · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+
+## 2026-06-16 — H_1364 — Whorfian CP 격자 해상도 사다리: ASYM-L 비결맞음은 이산화 아티팩트인가 본질인가? 📈 INTRINSIC
+
+- **무엇:** H_1355(cp-leftward 📈)는 CP 재배치 착지가 geometry-tracking(center-attractor 기각)임을 특성화했으나, ASYM-L rung(같은-쪽 좌향 cut, p_A=0.400→p_A'=0.200, 양 cut 중심 왼쪽)이 N=21 에서 비결맞음(post-retrain peak-count 3>COH_MAX_LANG=2 on seeds 4333/4335; seed 4334 만 결맞게 재배치)으로 'split-only 재성장의 실제 한계'로 플래그됨. 열린 질문(H_1355 NEXT (ii)): 이 잔존 비결맞음이 LATTICE-RESOLUTION-bound(더 미세한 연속체가 고침)인가 INTRINSIC 인가? NEW angle(a_break_the_wall): **격자 해상도 사다리** N∈[21,41,81] — N_STIM + RBF density DIM + phase당 분할 예산 GROW_MAX/SPLIT_PASSES 를 **비례 스케일**(anti-budget-starvation, 변하는 유일 축 = grid 미세함), 각 N 에서 H_1355 5 placement 재실행, ASYM-L peak-count + CENTER_TOL(N)=max_rung|L-0.5| 측정. H_1333/1341/1355 기계 verbatim 매개변수화(N=21 self-check 가 H_1355 정확 재현), 3 seeds [4333,4334,4335], $0 CPU mirror DIRECTIONAL, frozen-first. H_1360 cp-geometric-repack(세포 이동)과 상보(이건 grid 정련).
+- **답: 📈 INTRINSIC (격자 해상도 무관).** ASYM-L peak-count(seeds) vs N: N=21 [3,1,3](mean 2.33, 2/3 incoh, L=0.375) · N=41 [4,2,4](mean 3.33, 2/3 incoh, L=0.413) · N=81 [4,3,3](mean 3.33, **3/3 incoh**, L=0.406). CENTER_TOL vs N = **0.192/0.196/0.198**. **c1** 곡선 측정 ✅ (N=21 self-check H_1355 정확 재현). **c2** DISCRIMINATE → INTRINSIC: (i) 결맞음 회복? **FALSE** (N=81 mean pc=3.33>2 AND 비결맞음 seed 2→3 악화) · (ii) CENTER_TOL 축소? **FALSE** (0.192→0.198 단조 비증가 아님, 오히려 미세 증가) → 두 RESOLUTION-BOUND sub-clause 모두 실패 ⇒ INTRINSIC. **c3** EARNED PASS(N=21)·FAIL(N=41/81, 비-ASYM-L lang arm).
+- **왜:** 같은-쪽 좌향 재성장에서 phase-1 first-carving 세포(≈0.4)가 제거 안 됨(split-only, p8) → 격자 미세화는 옛 봉우리와 새 봉우리를 **둘 다 더 선명히** 해상할 뿐이라 곡선이 계속 분절(peak-count ≥3); N=81 에서 seed 4334 까지 비결맞음으로 넘어가 2/3→3/3 악화. 착지는 N 전반 geometry-fixed 로 안정(ASYM-R~0.698 ASYM-L~0.41) → H_1355 geometry-tracking 결론은 더 미세 격자에서도 **확인**되고, ASYM-L 비결맞음만 격자-무관임이 확정. 격자 해상도 레버 = ASYM-L 비결맞음에 **죽은 레버**, 정직히 닫음.
+- **정직 c9 (c3 FAIL):** N=41/81 에서 비-ASYM-L lang arm(RIGHT-REF/LEFTWARD-1/LEFTWARD-2)이 c3 FAIL — peak-count 가 mid-point **절대 개수**(≥0.5·peak)라 격자 미세화로 자연 상승(shuffle baseline 7.7→18.3→38.0), frozen COH_MAX_LANG=2 가 N 스케일 안 함 = **알려진 N-스케일 아티팩트**. H-lattice 살리지 못함: ASYM-L 은 상승 baseline 대비 여전히 비결맞음 끝(비결맞음-seed 절대 안 줄어듦)이고, 핵심 판별 CENTER_TOL(peak-위치 메트릭, 카운트-스케일 면역)도 축소 안 됨. frozen bar 이동 안 함(c9/p7), c3 FAIL 을 아티팩트로 정직 보고.
+- **scope:** DIRECTIONAL numpy mirror(engine-transfer UNVERIFIED = engine-native follow-on); TOY 합성 1-D 연속체·5 placement×3 N rung·3 seed·deterministic; peak-count 메트릭의 N-스케일 의존(절대 카운트)은 알려진 한계; N-정규화 결맞음·고차원 embed·실제 코퍼스·비균일 grid UNVERIFIED; NO 인간 인지 주장; live CORE/*.hexa UNTOUCHED; NO bar move(c9/p7).
+- **claim-link**: `CLAIMS.tape @C h1364_cp_lattice_resolution` · card `UNIVERSE/cards/H_1364_cp_lattice_resolution.md` · verdicts `.verdicts/1364_cp_lattice_resolution/{FREEZE,result}.txt` · py `state/cp-lattice-resolution/h1364_cp_lattice_resolution.py` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1355(직접 부모, cp-leftward geometry-tracking + ASYM-L 비결맞음) · h1341(shift-size 사다리) · h1333(발달 가소성) · h1323(Sapir-Whorf) · h1360(cp-geometric-repack, 상보) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_scale_honest_scope · a_toy_scale_recheck · p7 · p8 · c9 · c15

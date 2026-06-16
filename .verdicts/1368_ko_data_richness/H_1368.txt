@@ -1,0 +1,137 @@
+{
+  "id": "H_1368",
+  "slug": "ko-data-richness",
+  "ko_full_window_bytes": 29999999,
+  "ko_full_window_sha256": "c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca",
+  "sha_match_H1316_floor": true,
+  "Vj": 323,
+  "distinct_jamo": 67,
+  "gate_stride": 300,
+  "nmax": 5,
+  "frozen_lambda": [
+    0.032258,
+    0.064516,
+    0.129032,
+    0.258065,
+    0.516129
+  ],
+  "H1316_jamo_floor": 2.51335,
+  "H1307_raw_ceiling": 2.95342,
+  "H1359_novel_ce_30M_anchor": 2.8819,
+  "ladder_mb": [
+    3.75,
+    7.5,
+    15.0,
+    30.0
+  ],
+  "rungs": [
+    {
+      "train_pos": 5322,
+      "test_pos": 5322,
+      "m_novel": 3239,
+      "m_seen": 2083,
+      "novel_frac": 0.6086,
+      "ce_novel": 3.15254,
+      "delta_vs_floor": 0.63919,
+      "ce_shift": 5.60066,
+      "shift_minus_novel": 2.44811,
+      "window_mb": 3.75,
+      "window_bytes": 3749999,
+      "stream_len": 3192955
+    },
+    {
+      "train_pos": 10646,
+      "test_pos": 10645,
+      "m_novel": 5263,
+      "m_seen": 5382,
+      "novel_frac": 0.4944,
+      "ce_novel": 3.07077,
+      "delta_vs_floor": 0.55742,
+      "ce_shift": 5.62226,
+      "shift_minus_novel": 2.55149,
+      "window_mb": 7.5,
+      "window_bytes": 7499998,
+      "stream_len": 6387044
+    },
+    {
+      "train_pos": 21256,
+      "test_pos": 21256,
+      "m_novel": 8395,
+      "m_seen": 12861,
+      "novel_frac": 0.3949,
+      "ce_novel": 2.95376,
+      "delta_vs_floor": 0.44041,
+      "ce_shift": 5.71864,
+      "shift_minus_novel": 2.76489,
+      "window_mb": 15.0,
+      "window_bytes": 14999998,
+      "stream_len": 12753603
+    },
+    {
+      "train_pos": 42503,
+      "test_pos": 42502,
+      "m_novel": 12706,
+      "m_seen": 29796,
+      "novel_frac": 0.299,
+      "ce_novel": 2.8819,
+      "delta_vs_floor": 0.36855,
+      "ce_shift": 5.8104,
+      "shift_minus_novel": 2.9285,
+      "window_mb": 30.0,
+      "window_bytes": 29999999,
+      "stream_len": 25501291
+    }
+  ],
+  "novel_ce_curve": [
+    3.15254,
+    3.07077,
+    2.95376,
+    2.8819
+  ],
+  "step_delta_ce": [
+    -0.08177,
+    -0.11701,
+    -0.07186
+  ],
+  "bar_c1_CURVE": true,
+  "c1_30MB_anchor_ok": true,
+  "c1_30MB_novel_ce": 2.8819,
+  "c1_anchor_abs_delta": 0.0,
+  "bar_c2_DIRECTION": "DECREASING",
+  "c2_decreasing": true,
+  "bar_c3_asymptote_fit": {
+    "log_fit": {
+      "a": 5.18272,
+      "b_slope_per_log2W": -0.09289,
+      "r2": 0.99201,
+      "ce_at_2x30MB": 2.78251,
+      "ce_at_10x30MB": 2.56682,
+      "doublings_30MB_to_floor": 3.968,
+      "window_to_floor_bytes": 469339029.99169916
+    },
+    "power_fit": {
+      "c_inf": 1.0989,
+      "amp": 5.93625,
+      "p": 0.07,
+      "r2": 0.99253,
+      "p_at_grid_edge": false,
+      "c_inf_implausible_below_floor": true,
+      "reliable": false
+    },
+    "c_inf_estimate": 1.0989,
+    "asymptote_reliable": false
+  },
+  "c3_c_inf": 1.0989,
+  "c3_asymptote_class": "UNDETERMINED",
+  "c3_asymptote_note": "4-rung power-law extrapolation is under-constrained (physically-implausible c_inf and/or p pinned at grid edge) — descent is real but the asymptote cannot be pinned with 4 points",
+  "bar_c4_EARNED": true,
+  "c4_per_rung_earned": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "tier": "DESCENDING-UNSATURATED",
+  "verdict": "📉 DESCENDING-UNSATURATED — novel-context CE DECREASES monotonically with corpus window (3.15254→2.8819 over 3.75→30MB, ~-0.09289 nats/doubling), so 30MB was NOT saturated and the data-richness lever is LIVE; but a 4-rung extrapolation CANNOT pin the asymptote (power-fit under-constrained). The log-linear descent would need ~3.968 further window-doublings to merely TOUCH the 2.51335 floor — i.e. data helps but reaching the floor demands far more corpus than this 30MB-bounded ladder holds. Whether the true asymptote sits AT, ABOVE, or BELOW the floor is UNRESOLVED — needs a >30MB ladder (honest, c9; NO over-claim of GREEN)",
+  "wall_sec": 11.0
+}

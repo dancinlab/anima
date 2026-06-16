@@ -1,0 +1,45 @@
+H_1368 — ko-data-richness — FROZEN BARS (pre-registered BEFORE scoring)
+=======================================================================
+Authored: 2026-06-16 (frozen-first; this file written BEFORE the scoring run).
+
+QUESTION (the ONE remaining lever after representation H_1322 🧱 and interpolation
+H_1359 🧱): is the 2.51335 jamo floor a HARD representation floor, or just where the
+30MB window lands on a DESCENDING data-richness curve? H_1359 explicitly named this
+as NEXT-1: does the NOVEL-context CE (its 2.88190 at 30MB) DROP toward the floor as
+the corpus WINDOW grows?
+
+SUBSTRATE (REAL Korean only, byte-fair, == H_1316/H_1344/H_1359):
+- REAL R2 KO corpus, 30MB window, sha256 ASSERTED == c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca
+  (the FULL 30MB window; each ladder rung is a PREFIX sub-window of this exact corpus). sha mismatch → STOP, NO synthetic.
+- jamo: Hangul→NFD jamo(id 256+rank), non-Hangul→raw byte; n_bytes = original UTF-8 byte (byte-fair CE). IDENTICAL to H_1316/H_1359.
+- JM: frozen-λ Jelinek-Mercer recursive interpolation, λ=[1,2,4,8,16]/31, nmax=5, Laplace 1.0. IDENTICAL to H_1344/H_1359. λ FROZEN — NOT re-tuned per rung (anti-Goodhart).
+- NOVEL filter: at each rung, stride=300 even=TRAIN/odd=TEST; score ONLY TEST positions whose top-order (4-jamo) context is NOT in the TRAIN top-order set. IDENTICAL to H_1359 TEST A.
+
+DATA-RICHNESS LADDER (>=3 rungs, a_scale_honest_scope):
+- 4 rungs = prefix sub-windows of the 30MB corpus: 3.75MB, 7.5MB, 15MB, 30MB.
+- The 30MB rung MUST reproduce H_1359's novel-only CE ~= 2.88190 (+-0.02) as a sanity anchor; mismatch → STOP, methodology drift.
+
+FROZEN BARS (verbatim, no post-hoc move):
+- c1 CURVE (>=3 rungs): report novel-CE vs window-size for all 4 rungs. PASS = all 4 rungs scored on REAL data with the SAME novel-filter + 30MB anchor reproduces 2.88190 (+-0.02). [existence of the ladder]
+- c2 DIRECTION (pre-registered): does novel-CE DECREASE monotonically as window grows? PASS-DECREASING iff CE(3.75) > CE(7.5) > CE(15) > CE(30) (strictly, each step Δ <= -0.001). If NOT monotone-decreasing → report HONESTLY whichever way (flat / non-monotone / increasing); a flat/increasing curve is a VALID floor-hard result (c9).
+- c3 ASYMPTOTE: fit novel-CE as a function of window. Estimate the asymptote (limit as window→inf) via two pre-registered estimators:
+    (i) log-window linear fit  CE = a + b*log2(W) → extrapolated trend + slope b;
+    (ii) power-law decay fit    CE = c_inf + A*W^(-p)  (least-squares over 4 rungs) → c_inf = asymptote estimate.
+  CLASSIFY the asymptote c_inf vs 2.51335:
+    - c_inf ABOVE 2.51335 (> 2.523, i.e. >floor+0.01) → DATA-RICHNESS FLOOR IS REAL above jamo floor (30MB had not saturated but won't reach floor).
+    - c_inf AT 2.51335 (within +-0.01) → 30MB simply had not saturated; floor is the data-richness limit.
+    - c_inf BELOW 2.51335 (< 2.503) → representation lever REOPENS (enough data beats the jamo floor on novel context).
+  HONEST: with 4 rungs the asymptote is an ESTIMATE with wide CI; report both estimators + R^2 + caveat (a_scale_honest_scope).
+- c4 EARNED (anti-Goodhart, per rung): a circular-shift surrogate (history from a decoupled test position) must go the WRONG way at EVERY rung — CE_shift(rung) >= CE_novel(rung) + 0.05 each. PASS = all 4 rungs earned.
+
+TIER DECISION (pre-registered branches):
+- If c1 PASS ∧ c4 all-earned ∧ c2 DECREASING ∧ c3 c_inf BELOW 2.503 → 🟢 GREEN (data-richness reopens the floor).
+- If c1 PASS ∧ c4 all-earned ∧ c2 DECREASING ∧ c3 c_inf AT/ABOVE floor → 🟠 DESCENDING-FLOOR (curve descends but asymptotes >= floor; data helps but floor holds in the limit).
+- If c1 PASS ∧ c4 all-earned ∧ c2 NOT-DECREASING (flat/increasing) → 🧱 FLOOR-HARD (more data does NOT lower novel-context CE in this window range; the data-richness lever is DEPLETED → 2.51335 confirmed a hard floor across all three levers).
+- If c4 any rung fails OR c1 anchor mismatch → 🔴 INVALID (methodology break).
+Whatever the curve shows, report it honestly (c9, p7 — NO tune-to-green).
+
+SCOPE: DIRECTIONAL numpy, toy stride-300 byte-substrate next-symbol CE (not a fluent decoder).
+Ladder is PREFIX sub-windows of ONE 30MB corpus (a within-corpus richness ladder — bounded above
+by 30MB; does NOT test >30MB richness). Single frozen λ, single stride, single representation (jamo).
+Asymptote = a 4-point extrapolation estimate (wide CI). engine-transfer UNVERIFIED.

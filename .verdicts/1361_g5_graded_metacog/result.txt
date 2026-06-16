@@ -1,0 +1,62 @@
+H_1361 — g5-graded-metacog — R1 numpy mirror (DIRECTIONAL) — byte-exact mirror of
+CORE/engine_cli.hexa immune_embed_key + ImmuneMemory copy-or-abstain (VERBATIM H_1304).
+3 seeds [7,8,9], $0 CPU, p7, frozen-first, deterministic (re-run byte-identical).
+
+VERDICT: 🟢 GRADED-METACOG (graded OOD metacognition EXISTS on the abstain margin)
+
+The open question H_1304 left: H_1304 closed the FIRE side (gate is BINARY fail-safe,
+wrong-fire class EMPTY, type-2 AUROC over fires UNDEFINED). H_1361 tests the ABSTAIN
+side: does the recall MARGIN (= recon_err - recall_thr, present on EVERY abstain) RANK
+recoverable abstains (corrupted-but-in-store, answer retrievable) ABOVE unrecoverable
+ones (genuinely-absent, nothing to retrieve), surviving OOD? -> YES.
+
+LADDER (pooled 3 seeds; L = fraction of query bytes mutated on-alphabet):
+  t2_AUROC      : L0.00=nan   L0.10=0.999  L0.20=0.915  L0.30=0.708  L0.40=0.557
+  t2_AUROC_shuf : L0.00=nan   L0.10=0.511  L0.20=0.494  L0.30=0.498  L0.40=0.495
+  rec_abstain   : L0.00=0.000 L0.10=0.856  L0.20=0.995  L0.30=1.000  L0.40=1.000
+  unr_abstain   : L0.00=1.000 L0.10=1.000  L0.20=1.000  L0.30=1.000  L0.40=1.000
+  mean_rec_marg : L0.00=nan   L0.10=0.082  L0.20=0.232  L0.30=0.316  L0.40=0.353
+  mean_unr_marg : L0.00=0.366 L0.10=0.362  L0.20=0.364  L0.30=0.364  L0.40=0.364
+  (L=0.00 t2_AUROC=nan because recoverables all FIRE at L=0 -> no recoverable abstains;
+   the graded-abstain question is genuinely an OOD question, support starts at L>=0.10.)
+
+FROZEN BARS:
+  R1 GRADED-SENS  t2_AUROC(L=0.20)=0.915 >= 0.65                      -> PASS
+  R2 EARNED-SHUF  t2_AUROC_shuffle(L=0.20)=0.494 <= 0.58 (collapses)  -> PASS
+  R3 vs H_1204    graded_readout EXISTS (NOT flat)                    -> graded
+
+MECHANISM (why it ranks): recoverable abstains keep a SMALL margin that grows smoothly
+with shift (mean 0.082 -> 0.232 -> 0.316 -> 0.353), while unrecoverable (absent) keys sit
+at a STABLE LARGE margin (~0.364, the random-token noise floor) independent of shift. The
+margin is therefore a GRADED recoverability signal: "how corrupted but still near a real
+cell" vs "just far from everything". -margin ranks them, and the shuffle control
+(permuting margin across the pooled abstains) collapses AUROC to chance (~0.49-0.51) at
+EVERY level -> the RANKING, not a base-rate artifact, carries the signal (earned).
+
+DECAY (honest, c9): t2_AUROC falls 0.999 -> 0.915 -> 0.708 -> 0.557 across the ladder; at
+L=0.40 (extreme corruption) it reaches chance — when a recoverable key is mutated as far as
+a genuinely-absent one, the two become indistinguishable. The graded signal is real and
+SURVIVES a real shift (decisively past the L>=0.20 bar) but is NOT unbounded; it degrades
+gracefully toward chance as the corrupted key leaves the store's neighborhood entirely.
+
+FINDING: G5 metacognition is NOT purely binary. H_1304 established binary fail-safe on the
+FIRE side; H_1361 establishes a complementary GRADED type-2 readout on the ABSTAIN side —
+the margin ranks recoverable-vs-unrecoverable abstains and survives OOD. This is a G5
+UPGRADE worth engine-wiring (a_verified_must_wire): the live gate already COMPUTES recon_err
+on every recall; exposing the margin (not just the fire/abstain boolean) gives a graded
+confidence-of-recoverability signal. It also REFRAMES H_1204: metacog is flat on the FIRE
+2nd-order readout but a separable GRADED signal DOES live in the abstain margin — the two
+are not in conflict (H_1204 measured the fire-side 2nd-order readout; the graded signal is
+on the abstain side).
+
+R3 vs H_1204: NOT a flat refutation. H_1204 found no separable 2nd-order readout on the
+output/fire confidence; H_1361 finds the graded readout on the ABSTAIN MARGIN (a distinct
+surface). H_1304 (binary fire) + H_1361 (graded abstain) together give a fuller G5 picture:
+fire-side binary fail-safe + abstain-side graded recoverability metacognition.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY synthetic facts, byte-level shift
+as the OOD proxy, numpy mirror = DIRECTIONAL (engine-transfer UNVERIFIED — R2 engine-native
+reconfirm on live CORE/engine_cli.hexa immune_memory_recall margin = follow-on). 3 seeds,
+KEYLEN=20, RECALL_THR=0.15 (frozen). NOT verified: scale / real-corpus paraphrase / semantic
+(not byte-level) shift / engine-native margin exposure / brain-side use of the graded signal.
+NO bar moved post-hoc (c9, NO tune-to-green).
