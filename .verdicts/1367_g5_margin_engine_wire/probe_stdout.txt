@@ -1,0 +1,26 @@
+=== H_1367 g5-margin ENGINE-NATIVE (live CORE/engine_cli.hexa ImmuneMemory) ===
+  seed 7 L0.00 auroc=0.5 shuf=0.5 n_rec=0.0 n_unr=120.0 m_rec=0.0 m_unr=0.891548
+  seed 7 L0.10 auroc=0.999965 shuf=0.583299 n_rec=120.0 n_unr=120.0 m_rec=0.506722 m_unr=0.881106
+  seed 7 L0.20 auroc=0.958299 shuf=0.534271 n_rec=120.0 n_unr=120.0 m_rec=0.686292 m_unr=0.888228
+  seed 7 L0.30 auroc=0.708507 shuf=0.532813 n_rec=120.0 n_unr=120.0 m_rec=0.82648 m_unr=0.882235
+  seed 7 L0.40 auroc=0.583021 shuf=0.479063 n_rec=120.0 n_unr=120.0 m_rec=0.859974 m_unr=0.87933
+  seed 8 L0.00 auroc=0.5 shuf=0.5 n_rec=0.0 n_unr=120.0 m_rec=0.0 m_unr=0.886925
+  seed 8 L0.10 auroc=1.0 shuf=0.594398 n_rec=119.0 n_unr=120.0 m_rec=0.507734 m_unr=0.879605
+  seed 8 L0.20 auroc=0.951215 shuf=0.596944 n_rec=120.0 n_unr=120.0 m_rec=0.702868 m_unr=0.886921
+  seed 8 L0.30 auroc=0.742882 shuf=0.537014 n_rec=120.0 n_unr=120.0 m_rec=0.816628 m_unr=0.884177
+  seed 8 L0.40 auroc=0.586354 shuf=0.470035 n_rec=120.0 n_unr=120.0 m_rec=0.871218 m_unr=0.891932
+  seed 9 L0.00 auroc=0.5 shuf=0.5 n_rec=0.0 n_unr=120.0 m_rec=0.0 m_unr=0.89504
+  seed 9 L0.10 auroc=1.0 shuf=0.544643 n_rec=119.0 n_unr=120.0 m_rec=0.49999 m_unr=0.889701
+  seed 9 L0.20 auroc=0.937986 shuf=0.551076 n_rec=120.0 n_unr=120.0 m_rec=0.698311 m_unr=0.890304
+  seed 9 L0.30 auroc=0.69191 shuf=0.592917 n_rec=120.0 n_unr=120.0 m_rec=0.827735 m_unr=0.883923
+  seed 9 L0.40 auroc=0.598681 shuf=0.545694 n_rec=120.0 n_unr=120.0 m_rec=0.871338 m_unr=0.892292
+--- pooled ladder (mean over seeds with both-class support) ---
+  L0.00  t2_auroc=0.0  shuffle=0.0  mean_rec_marg=0.0  mean_unr_marg=0.0  support_seeds=0.0
+  L0.10  t2_auroc=0.999988  shuffle=0.574113  mean_rec_marg=0.504815  mean_unr_marg=0.883471  support_seeds=3.0
+  L0.20  t2_auroc=0.949167  shuffle=0.560764  mean_rec_marg=0.695824  mean_unr_marg=0.888484  support_seeds=3.0
+  L0.30  t2_auroc=0.714433  shuffle=0.554248  mean_rec_marg=0.823614  mean_unr_marg=0.883445  support_seeds=3.0
+  L0.40  t2_auroc=0.589352  shuffle=0.498264  mean_rec_marg=0.86751  mean_unr_marg=0.887851  support_seeds=3.0
+--- FROZEN BARS (engine-native, L=0.20) ---
+  E1 GRADED-SENS : t2_auroc(0.20)=0.949167 >=0.65 -> true ; |Δ mirror(0.914976)|<=0.15 -> true ; E1 -> true
+  E2 EARNED-SHUF : shuffle(0.20)=0.560764 <=0.58 -> true
+VERDICT: WIRED-GRADED-METACOG (engine-native reconfirm PASS) — E1 PASS E2 PASS
