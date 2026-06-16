@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1341 — Whorf CP 가소성 SHIFT-SIZE LADDER (📈 분수는 shift를 따른다 ⇒ GEOMETRY/BUDGET)
+
+**무엇:** H_1333(🟠 GRADED — 재학습된 CP 경계가 단일 shift에서 ~60% relocation)의 load-bearing follow-on. `a_scale_honest_scope` 가 요구한 ladder(≥3 shift). H_1333의 H_1333/H_1323 CP machinery를 그대로 import해, 고정 anchor p_A=1/3 위에서 phase-2 타깃 p_A'를 3개 shift 크기(SMALL 0.467/MID 0.600/LARGE 0.667)로 sweep — partial relocation 분수가 shift 크기를 **따르는지(=geometry/budget)** 아니면 **일정한지(=memory)** 특성화. 3 seeds [4333,4334,4335], $0 CPU numpy mirror DIRECTIONAL, frozen-first(c9/p7).
+
+**결과(📈 CHARACTERIZATION — GREEN/RED 제조 없음, c9):** 분수는 shift를 **따른다 ⇒ GEOMETRY/BUDGET-LIMITED**. CURVE(mean frac, 3 seeds 결정적): SMALL(shift 0.133) **+1.496** · MID(0.267) **+0.750** · LARGE(0.333) **+0.599** — monotone-DECREASING, frac range 0.897 ≥ TRACK_TOL 0.15. **smoking gun:** 재학습 후 ABSOLUTE peak이 모든 rung에서 **0.525 (range 0.000)** — 경계가 얼마나 멀리 이동을 요구받든 항상 같은 절대 위치에 착지하므로 분수가 기계적으로 shift를 따름(작은 이동은 OVERSHOOT해 frac>1, 큰 이동은 미달해 frac 0.60). L1✅(곡선 매핑) L2✅ EARNED(no-retrain rung마다 p_A 유지 |Δ|=0.008; shuffle 비응집 7.7≥3; lang 응집 ≤2) L3=GEOMETRY/BUDGET.
+
+**의미:** H_1333의 ~60% partial은 첫 carving으로부터의 memory pull-back이 **아니라** 이 RBF geometry+고정 split budget의 고정 착지점(~0.525)이며 모든 shift에서 동일 — H_1338의 budget/geometry 발견(LARGE rung 한정)을 shift 전 범위로 일반화하고, constant-fraction MEMORY 가설을 결정적으로 기각. MEMORY면 분수가 일정하고 절대 peak이 타깃을 따라 움직였어야 하는데 정반대.
+
+**scope(UNVERIFIED):** DIRECTIONAL mirror(engine-transfer); TOY 1-D 연속체 N=21·3 rung·고정 anchor·rightward shift만·고정 budget; NO human-cognition claim; Live CORE/*.hexa UNTOUCHED(substrate-measurement rung — UNIVERSE/ + verdicts 만 추가).
+
+**파일:** `UNIVERSE/h1341_whorf_cp_shift_ladder.py` · `UNIVERSE/cards/H_1341_whorf_cp_shift_ladder.md` · `.verdicts/1341_whorf_cp_shift_ladder/{FREEZE,result}.txt` · `CLAIMS.tape @C h1341_whorf_cp_shift_ladder` · `UNIVERSE/HYPOTHESES.jsonl`(+1행) · `domains/COGNITION-REPRESENTATION.log.md`. xref h1333·h1338·h1323·h1325·h1288.
+
 ## 2026-06-16 — domain(GOVERNANCE): 흩어진 가설 전부 HYPOTHESES.jsonl 로 통합 + 아티팩트 state/ 재배치 (source/archived/artifacts 3 컬럼 신설)
 
 **무엇:** #2247 의 per-H JSONL 인덱스(896 행) 위에, repo 곳곳에 **흩어져 있던 모든 가설**을 단일 `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/` 로 통합. JSONL 스키마에 **`source` · `archived` · `artifacts`** 3 컬럼 신설.

@@ -1,0 +1,128 @@
+H_1341 — WHORFIAN CP PLASTICITY: SHIFT-SIZE LADDER (fraction-vs-shift curve)
+PRE-REGISTERED FREEZE — written BEFORE any scoring. NO bar moves after this (c9/p7).
+==================================================================================
+slug: 1341_whorf_cp_shift_ladder   PROJ_SEED family: H_1341 (1323=parent Sapir-Whorf;
+1333=developmental-plasticity parent; 1338=eviction re-diagnosis; 1339/1340 free; 1341
+free on origin/main 0fa31903a). Reuses the H_1333 CP machinery EXACTLY
+(UNIVERSE/h1333_whorf_developmental.py / UNIVERSE/h1323_sapir_whorf.py): same RBF
+position embedding, error-targeted SPLIT-only Voronoi/mitosis prototype growth, soft
+category-posterior discrimination readout, the peak-count COHERENCE metric, and the
+phase-2 re-growth (grow the SAME store further on a MOVED boundary, split-only, no reset).
+
+LENS: developmental/critical-period plasticity (c15, a_no_llm_frame_trap) — NOT an LLM
+recipe, NOT a human-cognition claim. $0 CPU numpy, gradient-free, 3 seeds [4333,4334,4335]
+(SAME seeds as H_1333/H_1338 so the SHIFT=0.333 rung reproduces those anchors in-run).
+DIRECTIONAL MIRROR — engine-transfer UNVERIFIED (same family as H_1323 R1, H_1290/H_1293 R1).
+
+==================================================================================
+THE QUESTION (the H_1333 load-bearing follow-on, a_scale_honest_scope ladder):
+H_1333 showed a RE-trained CP boundary relocates ~60% of the way for a SINGLE shift
+(p_A=1/3 -> p_A'=2/3, SHIFT=0.333; peak 0.325 -> 0.525, fraction +0.60). H_1338 then
+RE-DIAGNOSED that residual: it is NOT the never-evict growth-memory (eviction dropped
+28->3 cells yet the peak stayed at 0.525) — it is a BUDGET/GEOMETRY ceiling at the new cut.
+
+H_1341 maps the plasticity-fraction vs SHIFT-SIZE CURVE across >=3 shift magnitudes
+(small / mid / large boundary moves). The DISCRIMINATING question:
+
+  Does the partial relocation fraction TRACK shift magnitude
+     ( fraction ~ f(shift), monotone-with-shift )   => GEOMETRY / BUDGET signature
+                                                        (the absolute-position landing
+                                                         is what's budget-limited; a
+                                                         bigger move leaves a bigger
+                                                         residual gap => smaller fraction),
+  or stay CONSTANT across shift sizes
+     ( fraction ~ const, shift-independent )         => MEMORY signature
+                                                        (a fixed proportional pull-back
+                                                         from the first carving, scale-free).
+
+This is a CHARACTERIZATION ladder. ALL outcomes are VALID (c9). There is NO GREEN/RED bar
+to manufacture. The deliverable is the HONEST fraction-vs-shift relationship, reported
+verbatim, plus its geometry-vs-memory interpretation (ties to the H_1338 budget/geometry
+finding).
+
+==================================================================================
+PARADIGM:
+  - SAME 1-D continuum, N_STIM=21 RBF-coded stimuli, DIM=16, identical stimulus world all
+    arms and all rungs (basis fixed by seed exactly as H_1333). Boundary-AGNOSTIC embed.
+  - FIXED initial language A cut p_A = 1/3 (0.333) for EVERY rung (the anchor never moves;
+    only the SHIFTED target p_A' varies). This isolates shift MAGNITUDE as the sole lever.
+  - THREE shift rungs (>=3, as required), all RIGHTWARD from p_A=1/3 so the move never
+    clips the [0,1] edge and all rungs share the same first carving:
+        SMALL : p_A' = 0.467  (SHIFT = 0.133)
+        MID   : p_A' = 0.600  (SHIFT = 0.267)
+        LARGE : p_A' = 0.667  (SHIFT = 0.333)   <- the H_1333/H_1338 anchor rung (frac +0.60)
+    (rungs chosen on the continuum grid spacing 1/20=0.05 so the moved cut sits cleanly
+    between stimuli; LARGE == the published H_1333 shift so the ladder reproduces it in-run.)
+  - For EACH rung, the SAME Voronoi/mitosis store is grown to convergence on labels(p_A)
+    [phase 1], CP peak measured; then WITHOUT resetting the store grown FURTHER on
+    labels(p_A') [phase 2: error-targeted split on the NEW labels], CP peak re-measured.
+    Cells NEVER removed (split-only, p8 — same as H_1333). GROW_MAX=24, SPLIT_PASSES=24
+    PER PHASE (same FIXED budget every rung — budget is held constant so the curve isolates
+    shift magnitude, NOT budget).
+  - move-fraction(rung) = (peak_retrained - peak_Atrained) / (p_A' - p_A), per rung/seed.
+
+ARMS (per rung, per seed):
+  (1) A-trained          : grow on labels(p_A) only. CP peak should ~ p_A (anchor; reused
+                           across rungs — IDENTICAL every rung since p_A is fixed).
+  (2) A->A' re-trained    : phase-1 on p_A, phase-2 grow further on labels(p_A') (this rung's
+                           shifted cut). CP peak measured AFTER phase 2. -> move-fraction.
+  (3) NO-RETRAIN control  : identical to (1) (grow on p_A), peak measured at the same
+                           protocol point as (2) but NO phase-2 -> peak must STAY at p_A
+                           (per rung; rules out drift; the L2 EARNED flat control).
+  (4) SHUFFLE             : incoherent random per-stimulus labels (no consistent cut) — the
+                           anti-Goodhart EARNED control (must be INCOHERENT, peak-count >=3).
+
+READOUT (identical to H_1323/H_1333, NO labels at test): discrimination(midpoint) =
+|soft-posterior(x_i) - soft-posterior(x_j)| over adjacent pairs; CP peak = argmax midpoint.
+COHERENCE = peak-count = # midpoints reaching >=0.5 * arm's own peak (1 = single coherent CP
+peak; >=3 = incoherent/scattered). p1/p2/p3/p6: readout reads ONLY representational distance
+in the learned prototype space; NO injected boundary location at test; labels enter ONLY in
+training; the no-retrain + shuffle arms are the anti-Goodhart discriminators.
+
+==================================================================================
+FROZEN BARS (this is a CHARACTERIZATION ladder — NO GREEN/RED to manufacture, c9):
+
+  L1 CURVE MEASURED: the plasticity move-fraction is measured at ALL >=3 shift rungs
+     (SMALL/MID/LARGE), 3 seeds each, and the fraction-vs-shift relationship is
+     CHARACTERIZED (the monotone trend reported verbatim: is fraction rising, falling, or
+     flat as shift grows?). A complete 3-rung curve = L1 satisfied. (No threshold — the
+     curve IS the deliverable.)
+
+  L2 EARNED (anti-Goodhart, MUST hold for the curve to be valid, all rungs, all 3 seeds):
+     (a) NO-RETRAIN control flat at each rung: |peak_noretrain - p_A| <= LOC_TOL = 0.12
+         (the move at each rung is the re-training, not drift).
+     (b) SHUFFLE incoherent: peak-count >= COH_MIN_SHUF = 3 ; language arms coherent
+         (A / A->A' / no-retrain peak-count <= COH_MAX_LANG = 2).
+     If L2 fails at any rung that rung's fraction is CONFOUNDED and is reported as such
+     (honest), NOT silently dropped.
+
+  L3 INTERPRETATION (the geometry-vs-memory read, decided by the MEASURED curve, no bar
+     moved): classify the fraction-vs-shift relationship by a PRE-SET, frozen rule on the
+     fraction RANGE across the 3 rungs (range = max_frac - min_frac):
+        - frac TRACKS shift (range >= TRACK_TOL = 0.15, monotone-decreasing in shift, i.e.
+          smaller shift => larger fraction)            => GEOMETRY/BUDGET-LIMITED
+          (the boundary lands at a near-fixed ABSOLUTE position set by RBF resolution +
+          fixed split budget, so a bigger requested move leaves a bigger residual gap =>
+          smaller completion fraction; ties to + extends the H_1338 budget/geometry finding).
+        - frac ~ CONSTANT (range < CONST_TOL = 0.10, shift-independent)
+                                                        => MEMORY-LIMITED
+          (a fixed proportional pull-back from the first carving, scale-free; the never-
+          evict residual the H_1333 card originally hypothesized).
+        - intermediate / non-monotone (CONST_TOL <= range < TRACK_TOL, or non-monotone)
+                                                        => MIXED / report verbatim, no forced
+          label.
+     The classification is read off the data; the THRESHOLDS above are frozen here and NOT
+     moved after scoring. The geometry vs memory call ties directly to H_1338 (which found,
+     at the LARGE rung only, budget/geometry not never-evict; H_1341 tests whether that
+     generalizes across shift magnitude).
+
+  frozen constants (reused from H_1323/H_1333 verbatim where applicable):
+     N_STIM=21  DIM=16  P_A=1/3  GROW_MAX=24  SPLIT_PASSES=24  PAIR_STEP=1
+     LOC_TOL=0.12  COH_MAX_LANG=2  COH_MIN_SHUF=3  SEEDS=[4333,4334,4335]
+     SHIFT rungs (p_A'): SMALL 0.467, MID 0.600, LARGE 0.667
+     L3 thresholds: TRACK_TOL=0.15  CONST_TOL=0.10
+
+HONEST SCOPE: DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED. TOY synthetic 1-D
+continuum, N=21, 3 seeds, deterministic readout, 3 shift rungs, single fixed anchor p_A,
+rightward shifts only. NO human-cognition / critical-period claim. Live CORE/*.hexa
+UNTOUCHED (substrate-measurement rung — adds only UNIVERSE/ + verdicts).

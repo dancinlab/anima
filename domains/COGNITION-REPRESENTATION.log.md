@@ -143,3 +143,36 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   store grows never evicts — 이 lane이 테스트하고 원인으로는 FALSIFY한 dual 직관) · h1330(bilingual overwrite)
   · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire
   · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+
+## 2026-06-16 — H_1341 📈 Whorf CP plasticity SHIFT-SIZE LADDER: 분수는 shift를 따른다 ⇒ GEOMETRY/BUDGET
+
+- **id**: H_1341 · slug `1341_whorf_cp_shift_ladder` · seeds [4333,4334,4335] · $0 CPU mirror DIRECTIONAL
+- **seed**: H_1333(🟠 GRADED, 단일 shift ~60% relocation)의 load-bearing follow-on — a_scale_honest_scope
+  가 요구한 ladder(≥3 shift). H_1338(🧱)이 LARGE shift에서만 그 잔류를 budget/geometry로 재진단했는데,
+  shift 크기 전 범위로 일반화되나? partial 분수가 shift를 **따르면=geometry/budget**, **일정하면=memory**.
+- **verdict-tier-target → actual**: CHARACTERIZATION ladder(GREEN/RED 없음, c9) → **📈 GEOMETRY/BUDGET-LIMITED**.
+  CURVE(mean frac, 3 seeds 결정적): SMALL(shift 0.133) **+1.496** · MID(0.267) **+0.750** · LARGE(0.333)
+  **+0.599** — shift에 대해 monotone-DECREASING, frac range 0.897 ≥ TRACK_TOL 0.15.
+- **smoking gun**: 재학습 후 **ABSOLUTE peak이 모든 rung에서 0.525 (range 0.000)** — 경계가 얼마나 멀리
+  이동을 요구받든 항상 같은 절대 위치에 착지. 그래서 분수가 기계적으로 shift를 따른다 (작은 이동 0.133→0.525가
+  0.467 타깃을 OVERSHOOT해 frac>1; 큰 이동 0.333→0.525가 미달해 frac 0.60). MEMORY(고정 비율 pull-back)면
+  분수가 일정하고 절대 peak이 타깃을 따라 움직였어야 — 측정된 고정착지와 정반대.
+- **bars**: L1 CURVE ✅ (3 rung × 3 seeds 곡선 매핑) · L2 EARNED ✅ (no-retrain rung마다 p_A 유지 |Δ|=0.008;
+  shuffle 비응집 peak-count 7.7≥3; lang arms 응집 ≤2 — 곡선 valid, unconfounded) · L3 = GEOMETRY/BUDGET.
+- **mechanism / 의미**: H_1333의 ~60% partial은 첫 carving으로부터의 memory pull-back이 **아니다** — 이 RBF
+  geometry(DIM=16) + 고정 split budget 하에서 경계가 넘어 packing할 수 없는 고정 착지점(~0.525)이며 모든
+  shift에서 동일. H_1338의 budget/geometry 발견(LARGE rung 한정)을 shift 전 범위로 **일반화**하고, H_1333
+  카드가 띄웠던 constant-fraction MEMORY 가설을 **결정적으로 기각**. SMALL overshoot(frac +1.496>1)이 고정착지
+  reading의 가장 깨끗한 증거 — 그대로 보고(c9).
+- **scope (UNVERIFIED)**: DIRECTIONAL mirror(engine-transfer); TOY 1-D 연속체 N=21·3 seeds·3 rung·고정 anchor·
+  rightward shift만·고정 budget; 고정착지 0.525는 이 RBF geometry+budget 특정; NO human-cognition claim.
+  Live CORE/*.hexa UNTOUCHED.
+- **next (R2 candidate, 각각 frozen ANEW)**: (i) budget/RBF-resolution sweep — cells/basis를 늘리면 착지점이
+  p_A'로 이동하나? (budget ⊥ intrinsic resolution 분리) · (ii) leftward/asymmetric shift — 0.525가 연속체-중심
+  attractor인지 진짜 고정착지인지 · (iii) engine-native §CategoricalPerception 실현.
+- **claim-link**: `CLAIMS.tape @C h1341_whorf_cp_shift_ladder` · card `UNIVERSE/cards/H_1341_whorf_cp_shift_ladder.md`
+  · verdicts `.verdicts/1341_whorf_cp_shift_ladder/{FREEZE,result}.txt`
+- xref: h1333(이 ladder가 설명하는 ~60% partial) · h1338(budget/geometry 재진단 — H_1341이 shift 전 범위로
+  일반화) · h1323 · h1325(family의 GREEN CP) · h1288(growth-memory: 이 ladder가 기각하는 never-evict 직관)
+  · h1330(bilingual overwrite) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning
+  · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
