@@ -104,7 +104,12 @@ pre-allocate all forward scratch ONCE and reuse the handles every step (streamin
 load the model ONCE for the multi-decode driver. BYTE-EXACT (logit maxΔ=0.0, argmax identical).
 RESULT: 303M GEN=24 + GEN=48 (OOM-killed here) now COMPLETE; **GEN=110 completes** (10.1GB RSS,
 peak 13.0GB vs H_1392's silent death / 71GB peak). The M2-M5 FALS bars are re-scored engine-native
-in **H_1393** (verbatim this frozen detector/scaffold/bars). See `cards/H_1393_convmoe_streaming_decode.md`.
+in **H_1393** (verbatim this frozen detector/scaffold/bars) → **🧱 ARCHITECTURE**: over 6/6 completed
+GEN=110 C_strong frames FALS(C_strong)=0 (coherent English, kwr 0.90-1.00, but no falsifiable
+structure even at full budget), so M2 FALS=0 ⇒ the lever is ARCHITECTURE, NOT capacity — capacity
+(303M) was NOT the open lever this card left. A REAL science result now that the substrate no longer
+blocks the decode (NOT a substrate wall, NOT tune-to-green, NO bar moved). H_1362's FALS=1.0 was a
+303M ByteGPT (different transformer arch). See `cards/H_1393_convmoe_streaming_decode.md`.
 
 ## Scope (honest)
 

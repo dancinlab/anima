@@ -3,7 +3,7 @@ id: H_1393
 slug: 1393_convmoe_streaming_decode
 title: STREAMING / BOUNDED ConvMoE .clm decode — FIX the per-step memory blowup that substrate-BLOCKED the H_1392 G6 FALS re-score, then re-score M2-M5 engine-native
 group: engine-fix (CORE/clm_decode, a_clm_gen_pipeline · a_core_engine_map · a_verified_must_wire)
-terminal_tier: 🟢 GREEN (memory FIX byte-exact + flat RSS; GEN=110 unblocked) · G6 re-score = the now-MEASURABLE CAPACITY-vs-ARCHITECTURE verdict (see Result)
+terminal_tier: 🟢 GREEN memory FIX (byte-exact + flat RSS; GEN=110 unblocked) · G6 M2-M5 re-score now MEASURABLE → 🧱 ARCHITECTURE verdict (FALS=0 over 6/6 GEN=110 C_strong frames — capacity was NOT the lever; a REAL science result, no longer a substrate block)
 verdict_dir: .verdicts/1393_convmoe_streaming_decode/
 terminal_verdict: .verdicts/1393_convmoe_streaming_decode/result.txt
 date: 2026-06-17
@@ -69,14 +69,23 @@ single `.clm` slot reached only via the generator L3 slot (h1196 7/0).
 
 The fix makes the H_1392 frozen G6 probe RUNNABLE engine-native on the real 303M ConvMoE-RETRO
 mount (sha256 == HF MANIFEST ✓). Detector 10/10 VERBATIM · frame-guard 0 leaks · sampler
-det/diverse/in_topk true · model LOADED ok=true (d=5008,E2,V256,L1). The M1-M5 bars are scored
-engine-native — the now-MEASURABLE CAPACITY-vs-ARCHITECTURE answer H_1392 left OPEN. **Scores: see
-`.verdicts/1393_convmoe_streaming_decode/g6_rescore.txt` (verbatim, no tune-to-green).**
+det/diverse/in_topk true · model LOADED ok=true (d=5008,E2,V256,L1). GEN=110 completes (133.6 s,
+10.1 GB). The M1-M5 bars are scored engine-native — the now-MEASURABLE CAPACITY-vs-ARCHITECTURE
+answer H_1392 left OPEN. **Scores: `.verdicts/1393_convmoe_streaming_decode/g6_rescore.txt`
+(verbatim, no tune-to-green, NO bar moved).**
 
-> The memory wall is decisively broken (G1-G5 all green, byte-exact). The G6 FALS verdict is
-> whatever the frozen bars honestly report on the now-completable decode — 🟢 if the 303M ConvMoE
-> mouth clears M2-M5 (capacity was the lever), 🧱 if it stays thin at full budget (architecture is
-> the wall, now a real science result not a substrate block). NO bar moved either way (c9, p7).
+**🧱 ARCHITECTURE verdict (the honest, now-measurable answer):** over **6/6 completed GEN=110
+C_strong best-of-K=3 frames**, **FALS(C_strong) = 0** — the 303M ConvMoE mouth produces COHERENT
+English (kwr 0.90-1.00) but NO falsifiable structure (no comparator+measurable+≥2-content-word
+claim) even at the FULL falsifiability budget. Per the pre-registered FREEZE rule, M2 FALS=0
+(no longer memory-capped) ⇒ **the lever is ARCHITECTURE, not capacity** — capacity (303M) was NOT
+the open lever H_1392 left. H_1362's FALS=1.0 was a 303M **ByteGPT** (a different, transformer
+arch); the ConvMoE does not reproduce it engine-native. M3-M5 (lift/earned over FALS=0) are moot.
+This is a **REAL science result** now that the substrate no longer blocks the decode — NOT a
+substrate wall (H_1392), NOT tune-to-green. C_strong[0] reproduced byte-identical in a fresh
+process (determinism confirmed). The full multi-arm fresh-process re-score (run_g6_fresh.sh, one
+process/frame so the bump-allocator leak resets per frame) continues landing the control arms for
+completeness; they cannot overturn M2=0.
 
 ## Scope (honest)
 
