@@ -1,0 +1,84 @@
+================================================================================
+H_1417 — brain-lane COMPOSE engine-BIND LAW: DESCRIPTIVE -> PREDICTIVE (FREEZE)
+  pre-registered predictions LOCKED before measuring (frozen-first, c9/c16/p7)
+  date: 2026-06-17
+================================================================================
+
+This is the a_verified_must_wire scientific-upgrade of the engine-BIND law that
+emerged DESCRIPTIVELY across the first 4 engine-native compose re-scores:
+  H_1412 cerebellum x basal  -> 🧱 did NOT bind (B1 net-lift +0.011 < +0.05)
+  H_1413 cerebellum x basal (modulation lens) -> 🧱 (EARNED control rejected)
+  H_1414 memory x ToM        -> 🟢 BOUND (B1 +0.338)
+  H_1415 spatial x episodic  -> 🟢 BOUND (B1 +0.058)
+
+THE DESCRIPTIVE LAW UNDER TEST (verbatim from the H_1414/H_1415 cards):
+> A mirror compose-GREEN binds engine-native IFF neither live standalone faculty
+> strengthens PAST the mirror best-single ceiling by more than the +0.05 net-lift
+> headroom. ceiling-PINNED (both live arms stay <= ceiling+0.05) -> the oracle
+> headroom is available for the arbiter to capture -> BINDS 🟢. ceiling-ERODING
+> (one live arm strengthens past ceiling) -> the strong standalone arm eats the
+> +0.05 net-lift headroom (B1 = compose vs best_single) -> does NOT bind 🧱.
+> cerebellum x basal failed because the live gradient-free VBasalGate is a STRONG
+> standalone arm (acc_basal 0.703 > mirror ceiling 0.693).
+
+--------------------------------------------------------------------------------
+PRE-REGISTERED PREDICTOR (operationalized, threshold LOCKED before any measure):
+--------------------------------------------------------------------------------
+For a candidate pair (X,Y):
+  ceiling_mirror = the mirror's best-single accuracy ceiling for the pair's
+                   construction (by-construction single-faculty ceiling; the
+                   landed compose probes pin acc_X, acc_Y near a shared ~0.60-0.70
+                   ceiling. We adopt ceiling_mirror = 0.70 as the family ceiling,
+                   the value the H_1414/H_1415 fixtures realize; basal is the only
+                   faculty MEASURED to strengthen past it, to 0.703-0.71).
+  acc_X_live, acc_Y_live = each faculty's LIVE standalone accuracy on the engine.
+  strength_excess = max(acc_X_live, acc_Y_live) - ceiling_mirror.
+
+  PREDICT BIND (🟢)  iff  strength_excess <= +0.05   (no live arm erodes headroom)
+  PREDICT 🧱         iff  strength_excess >  +0.05   (a live arm erodes headroom)
+
+The +0.05 threshold is the law's own net-lift bar made quantitative: a standalone
+arm that rises more than +0.05 past the ceiling consumes the entire B1 headroom.
+
+PREDICTION INPUTS (faculty live-strength priors, from PRIOR engine measurements
+ONLY -- NOT from running this round's compose; blind to the H_1417 outcomes):
+  memory  (immune_grow_recall)   : PINNED ~0.58-0.70  (H_1414 0.579, H_1415 0.683) -> does NOT strengthen past ceiling
+  ToM     (other_mind_predict)   : PINNED 0.600       (H_1414) -> does NOT strengthen past ceiling
+  spatial (spatial_map_nearest)  : PINNED ~0.70       (H_1415 0.703) -> at ceiling, not past
+  cereb.  (vforward_err)         : WEAK 0.638         (H_1412) -> below ceiling
+  basal   (vbasal_go_value)      : STRONG 0.703-0.71  (H_1412 0.703) -> STRENGTHENS PAST ceiling (the eroder)
+
+--------------------------------------------------------------------------------
+5 NEW PAIRS (NOT yet engine-tested) + LOCKED predictions (computed from priors):
+--------------------------------------------------------------------------------
+  P1  memory x spatial    : both PINNED  -> strength_excess ~ 0   -> PREDICT 🟢 BIND
+  P2  memory x basal      : basal STRONG -> strength_excess >+0.05 -> PREDICT 🧱
+  P3  ToM x spatial       : both PINNED  -> strength_excess ~ 0   -> PREDICT 🟢 BIND
+  P4  cerebellum x memory : both <=ceil  -> strength_excess ~ 0   -> PREDICT 🟢 BIND
+  P5  ToM x basal         : basal STRONG -> strength_excess >+0.05 -> PREDICT 🧱
+
+  Tally of predictions: 3 BIND (P1,P3,P4) · 2 🧱 (P2,P5).
+
+--------------------------------------------------------------------------------
+FROZEN COMPOSE BARS (IDENTICAL to every landed pair H_1407/1414/1415 -- NOT moved):
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) acc_compose >= best_single + 0.05
+  (B2 ORACLE)         acc_oracle - best_single > 0.02
+  (B3 EARNED/p6)      acc_compose - acc_shuffle > 0.02
+  (SEPARABLE)         only_X > 0 AND only_Y > 0
+  ACTUAL = 🟢 BIND iff (B1 AND B2 AND B3 AND SEPARABLE) ; else 🧱.
+
+Fixture: 5-family structure (F1 X-decisive · F2 Y-decisive · F3 agree ·
+F4 conflict-X-right · F5 adversarial-X-loud-but-wrong), N_PER_FAMILY=90 -> 450
+items/seed, 3 seeds per pair, deterministic. Each leg = a LIVE engine read
+(immune_grow_recall / other_mind_predict / spatial_map_nearest / vforward_err /
+vbasal_go_value); arbiter = inlined scale-relative confidence (agree->shared;
+conflict->higher rel-conf wins). NO bar moved post-hoc.
+
+--------------------------------------------------------------------------------
+SCORING (the falsifier):
+--------------------------------------------------------------------------------
+HIT iff predicted == actual. Law SURVIVES (DESCRIPTIVE->PREDICTIVE 🟢) iff >=4/5
+HITS. Law FALSIFIED 🧱 iff <4/5 (like H_1411's 2/5). A MISS is the most valuable
+data -- it names the real determinant. NO prediction or bar changed after measuring.
+================================================================================

@@ -1,0 +1,47 @@
+================================================================================
+H_1417 — PREDICTIVE-FALSIFICATION of the engine-BIND LAW (5 NEW pairs)
+  law: binds IFF no live arm strengthens past mirror ceiling (0.70) by >+0.05
+  predictions LOCKED in FREEZE.txt BEFORE this run · $0 CPU · p7 · c9 · c16
+================================================================================
+--------------------------------------------------------------------------------
+P1 memory x spatial  [PRED BIND]
+  acc_x=0.604444 acc_y=0.705926 best=0.705926 | strongest-ceiling(0.7)=0.00592593 (>+0.05 ⇒ predict WALL)
+  compose=0.714815 shuffle=0.502963 oracle=0.946667 (oracle-best=0.240741)
+  only_x=0.240741 only_y=0.342222 | net-lift(compose-best)=0.00888889
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS)
+  ACTUAL=WALL  PRED=BIND  ==> ❌ MISS
+--------------------------------------------------------------------------------
+P2 memory x basal  [PRED WALL]
+  acc_x=0.645926 acc_y=0.702222 best=0.702222 | strongest-ceiling(0.7)=0.00222222 (>+0.05 ⇒ predict WALL)
+  compose=0.751852 shuffle=0.517037 oracle=0.968148 (oracle-best=0.265926)
+  only_x=0.265926 only_y=0.322222 | net-lift(compose-best)=0.0496296
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS)
+  ACTUAL=WALL  PRED=WALL  ==> ✅ HIT
+--------------------------------------------------------------------------------
+P3 ToM x spatial  [PRED BIND]
+  acc_x=0.702222 acc_y=0.696296 best=0.702222 | strongest-ceiling(0.7)=0.00222222 (>+0.05 ⇒ predict WALL)
+  compose=0.791111 shuffle=0.507407 oracle=1.0 (oracle-best=0.297778)
+  only_x=0.303704 only_y=0.297778 | net-lift(compose-best)=0.0888889
+  (B1 PASS) (B2 PASS) (B3 PASS) (SEP PASS)
+  ACTUAL=BIND  PRED=BIND  ==> ✅ HIT
+--------------------------------------------------------------------------------
+P4 cerebellum x memory  [PRED BIND]
+  acc_x=0.694815 acc_y=0.617037 best=0.694815 | strongest-ceiling(0.7)=-0.00518519 (>+0.05 ⇒ predict WALL)
+  compose=0.738519 shuffle=0.485926 oracle=0.956296 (oracle-best=0.261481)
+  only_x=0.339259 only_y=0.261481 | net-lift(compose-best)=0.0437037
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS)
+  ACTUAL=WALL  PRED=BIND  ==> ❌ MISS
+--------------------------------------------------------------------------------
+P5 ToM x basal  [PRED WALL]
+  acc_x=0.696296 acc_y=0.705926 best=0.705926 | strongest-ceiling(0.7)=0.00592593 (>+0.05 ⇒ predict WALL)
+  compose=0.801481 shuffle=0.5 oracle=1.0 (oracle-best=0.294074)
+  only_x=0.294074 only_y=0.303704 | net-lift(compose-best)=0.0955556
+  (B1 PASS) (B2 PASS) (B3 PASS) (SEP PASS)
+  ACTUAL=BIND  PRED=WALL  ==> ❌ MISS
+================================================================================
+HIT/MISS TALLY: 2 / 5
+VERDICT: 🧱 LAW PREDICTIVELY-FALSIFIED (<4/5) — like H_1411. The MISSES name the
+  real determinant (see card). NO bar moved, predictions LOCKED pre-measure (c9).
+  HONEST (c9): bars FROZEN, predictions in FREEZE.txt locked BEFORE measuring. Toy
+  5-family fixture, 3 seeds/pair, deterministic, LIVE engine leg-reads. MEASUREMENT
+  round — NOTHING wired into live CORE. Scale/real-corpus/transfer UNVERIFIED.

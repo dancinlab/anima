@@ -1,3 +1,41 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1417 — brain-lane COMPOSE engine-BIND LAW: DESCRIPTIVE → PREDICTIVE 🧱 PREDICTIVELY-FALSIFIED (2/5 HITS)
+
+The engine-native twin of H_1411 (which did the same predictive-falsification for the OLD Φ-lift law,
+also 2/5). After the first 4 engine-native compose re-scores a BIND law emerged DESCRIPTIVELY —
+"a mirror compose-GREEN binds engine-native IFF neither live standalone faculty strengthens past the
+mirror best-single ceiling by more than the +0.05 net-lift headroom (ceiling-PINNED → binds; ceiling-
+ERODING → strong arm eats the headroom → 🧱); cerebellum×basal failed because live VBasalGate was a
+strong standalone arm (H_1412)". H_1417 promotes it descriptive→predictive: operationalize a
+ceiling-erosion PREDICTOR (predict BIND iff strength_excess = max(acc_X_live, acc_Y_live) − 0.70 ≤ +0.05),
+PRE-REGISTER a BIND/🧱 verdict for 5 NEW engine pairs in FREEZE.txt BEFORE measuring, then engine-native
+compose re-score (LIVE legs immune_grow_recall / other_mind_predict / spatial_map_nearest / vforward_err /
+vbasal_go_value; frozen H_1407/1414/1415 bars NOT moved), then score HIT/MISS.
+
+🧱 LAW FALSIFIED — 2/5 HITS (predicted vs actual, mean 3 seeds/pair, deterministic run1==run2 byte-identical):
+  - P1 memory×spatial    PRED BIND → 🧱 WALL (net-lift +0.009)  ❌ MISS
+  - P2 memory×basal      PRED 🧱   → 🧱 WALL (net-lift +0.050)  ✅ HIT
+  - P3 ToM×spatial       PRED BIND → 🟢 BIND (net-lift +0.089)  ✅ HIT
+  - P4 cerebellum×memory PRED BIND → 🧱 WALL (net-lift +0.044)  ❌ MISS
+  - P5 ToM×basal         PRED 🧱   → 🟢 BIND (net-lift +0.096)  ❌ MISS
+
+The MISSES name the REAL determinant (the payload, c9): engine-bind is gated by whether the routing
+ARBITER actually CAPTURES the oracle headroom (a JOINT-trajectory property), NOT by standalone-arm
+strength. All 5 pairs had near-identical strength_excess (|·|≤0.006 — basal did NOT strengthen past
+ceiling here, FALSIFYING the "basal=eroder" prior from H_1412) and large oracle headroom (+0.24~+0.30)
++ EARNED shuffle-collapse, yet B1 net-lift split entirely on capture rate (+0.009 to +0.096). H_1412's
+🧱 is re-read as an F5-adversarial capture-failure, not an arm-strength erosion. Same convergence as
+H_1411: component statistics don't predict; the joint composed trajectory does.
+
+MEASUREMENT round — live CORE/*.hexa UNTOUCHED, NOTHING wired (testing a law, not landing a mechanism).
+The 2 NEW pairs that bound engine-native (P3 ToM×spatial, P5 ToM×basal) are logged as wire-in follow-ons
+in ING.jsonl, not wired here. NO bar moved, predictions locked pre-measure (frozen-first, c9/c16/p7).
+The compose-program capability findings (H_1401/1405/1407/1408/1409 🟢) are UNAFFECTED — only the
+engine-BIND *law* is falsified. $0 CPU, 3 seeds/pair, toy 5-family fixture, scale/transfer UNVERIFIED.
+
+probe: state/1417_compose_bind_law_predictive/h1417_compose_bind_law_probe.hexa ·
+FREEZE/result: .verdicts/1417_compose_bind_law_predictive/{FREEZE,result,result_run2}.txt ·
+card: UNIVERSE/cards/H_1417_compose_bind_law_predictive.md
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1416 — engine-native SEQUENTIAL cerebellum→basal PIPELINE compose (3rd lens on the cerebellum×basal wall) 🧱 THIRD-LENS TERMINAL (a_break_the_wall c16, frozen-first)
 
 The THIRD genuinely-different lens on the engine-native cerebellum×basal compose WALL, after
