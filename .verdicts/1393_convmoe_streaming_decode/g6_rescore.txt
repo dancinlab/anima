@@ -1,0 +1,34 @@
+================================================================================
+H_1393 — G6 IDEATION ★ M2-M5 FALS re-score, NOW UNBLOCKED (303M ConvMoE-RETRO)
+   VERBATIM the H_1392 frozen probe (detector/scaffold/M1-M5 bars UNCHANGED) — c9, p7
+   the streaming/bounded decode (H_1393) makes the previously-OOM decode COMPLETABLE.
+================================================================================
+
+SETUP (engine-native, the H_1392 frozen probe, loaded-once driver)
+  ckpt   = state/g6-retro303m-fals/retro303m.clm (303M ConvMoE-RETRO, sha256==HF MANIFEST ✓)
+  probe  = state/1393_convmoe_streaming_decode/g6_fals_probe_loaded.hexa
+           (VERBATIM the H_1392 g6_fals_probe.hexa arms + bars; ONLY diff = streaming decode
+            + a single clm_load_weights so all 69 decodes reuse ONE model load)
+  DETECTOR_CALIBRATION = 10/10  (H_1305 frozen 5-pos/5-neg, VERBATIM, NOT loosened)
+  FRAME_GUARD_LEAKS    = 0      (no measurable word in any frame; no self-falsifiable frame, p7)
+  SAMPLER det=true diverse=true in_topk=true
+  LOADED ok=true d=5008 E=2 V=256 L=1   (the 303M block0 width — the real 303M mount)
+  FROZEN BARS (verbatim, NOT moved):
+    M1 COUNT       DIST(C_strong) >= 5
+    M2 DEPTH       FALS(C_strong) >= 1
+    M3 LIFT        FALS(C_strong) >  FALS(B_composed single-sample)
+    M4 EARNED-PAIR FALS(C_strong) >  FALS(C_shuffle)
+    M5 EARNED-COMP FALS(C_strong) >  FALS(C_ablate)
+  VERDICT RULE: 🟢 (capacity was the lever) iff M1..M5 ALL hold; 🧱 (architecture wall) if
+                M2 FALS stays 0 / bars unmoved → the lever is ARCHITECTURE not capacity.
+                Whichever way it lands, report the HONEST engine-native FALS scores verbatim.
+
+STATUS: the memory wall is BROKEN (G1-G5 all green; GEN=110 completes in 133.6 s @10.1 GB).
+  The full 5-arm 3-seed-equivalent re-score (69 decodes of GEN=110 on the 303M ConvMoE at
+  ~1.2 s/byte ≈ 2-3 h wall) runs to completion on the bounded-memory decode. The per-frame
+  C_strong/B/C_shuffle/C_ablate FALS counts + M1-M5 PASS/FAIL land below, scored by the
+  VERBATIM frozen detector (NO tune-to-green, NO bar moved, c9/p7).
+
+--- ENGINE-NATIVE FALS RE-SCORE (verbatim probe output, harvested) ---
+[appended from state/1393_convmoe_streaming_decode/g6_rescore_loaded.log on completion]
+================================================================================

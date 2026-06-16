@@ -297,10 +297,199 @@ fn _clmd_load(path: string) -> Map {
               "rB": rB, "roB": roB, "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB }
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// H_1393 — STREAMING / BOUNDED ConvMoE decode (the memory-blowup FIX).
+// ------------------------------------------------------------------------
+// ROOT CAUSE (measured, /usr/bin/time -l): the hexa runtime is a one-shot
+// BUMP allocator — `free()` is a NOOP and `farr_free` releases the handle slot
+// but NEVER returns the backing buffer bytes (self/runtime.c "Cycle 53 —
+// mmap-backed bump allocator. malloc never frees; free is a noop"). So every
+// per-step `t_zeros` and every internal `forge_dispatch_matmul` output PERMA-
+// NENTLY consumes memory until process exit, regardless of the careful `t_free`
+// calls in _clmd_fwd_logits. At d768/T24 that is ~63 MB/step (303M ConvMoE
+// cout=5008 → ~300 MB/step), linear in GEN → OOM by GEN≈24 (H_1392 WALL).
+//
+// THE FIX (anima-side, byte-exact): the per-step churn is dominated (~92 %) by
+// the conv WEIGHT TRANSPOSE `Wt` (re-built every step though the weights never
+// change) plus reusable scratch tensors. So: pre-allocate ALL forward scratch +
+// pre-transpose EVERY conv weight ONCE into a scratch record (_clmd_scratch_new),
+// then REUSE those same farr handles every decode step (_clmd_fwd_logits_sc).
+// A reused handle keeps its already-mmap'd buffer (no new bump bytes), so RSS
+// goes FLAT across steps. The ONLY residual per-step alloc is the runtime's
+// internal matmul output (~0.6 MB/step at d768) which the runtime allocates and
+// we free (noop, but the handle slot recycles) — the upstream bump-allocator
+// floor, filed to hexa-lang. The ARITHMETIC is UNCHANGED: same conv/GN/GELU/MoE
+// ops, same order, same values → generation is BYTE-IDENTICAL (H_1393 guard).
+//
+// _clmd_zero — zero a farr's first n elements in place (causal-pad reset for a
+// reused xcol; only p>=0 cols are written by the conv, the rest must read 0).
+fn _clmd_zero(t: int, n: int) {
+    let mut i = 0
+    while i < n { t_set(t, i, 0.0); i = i + 1 }
+}
+
+// _clmd_transpose_w — pre-transpose a conv weight w[co*Kdim+j] into Wt[j*Cout+co]
+// ONCE (identical every step). Returns a fresh farr (kept in the scratch record).
+fn _clmd_transpose_w(w: int, Kdim: int, Cout: int) -> int {
+    let Wt = t_zeros(Kdim * Cout)
+    let mut co = 0
+    while co < Cout {
+        let mut j = 0
+        while j < Kdim { t_set(Wt, j*Cout + co, t_get(w, co*Kdim + j)); j = j + 1 }
+        co = co + 1
+    }
+    return Wt
+}
+
+// _clmd_conv1d_pre — conv1d using a PRE-TRANSPOSED weight `Wt` and a caller-owned
+// REUSABLE `xcol` (re-zeroed here for causal padding). Byte-eq to _clmd_conv1d:
+// same im2col gather + same forge matmul + same bias add, only without per-call
+// alloc of xcol/Wt. The forge matmul output `mm` is freed each call (the runtime
+// allocates it internally — unavoidable; ~T*Cout doubles, the residual floor).
+fn _clmd_conv1d_pre(x: int, Wt: int, b: int, y_out: int, xcol: int,
+                    T: int, Cin: int, Cout: int, K: int, dil: int) {
+    let Kdim = Cin * K
+    _clmd_zero(xcol, T * Kdim)
+    let mut t = 0
+    while t < T {
+        let mut ci = 0
+        while ci < Cin {
+            let mut k = 0
+            while k < K {
+                let p = t - dil * (K - 1 - k)
+                if p >= 0 { t_set(xcol, t*Kdim + ci*K + k, t_get(x, p*Cin + ci)) }
+                k = k + 1
+            }
+            ci = ci + 1
+        }
+        t = t + 1
+    }
+    let mm = forge_dispatch_matmul(xcol, T, Kdim, Wt, Cout)
+    let mut t2 = 0
+    while t2 < T {
+        let mut c2 = 0
+        while c2 < Cout {
+            t_set(y_out, t2*Cout + c2, t_get(mm, t2*Cout + c2) + t_get(b, c2))
+            c2 = c2 + 1
+        }
+        t2 = t2 + 1
+    }
+    t_free(mm)
+}
+
+// _clmd_scratch_new — build the REUSABLE forward scratch record ONCE per decode
+// (pre-transposed conv weights + every t_zeros buffer the forward needs). All
+// handles are reused every step → no per-step bump-allocator growth. Freed by
+// _clmd_scratch_free after the decode loop.
+fn _clmd_scratch_new(W: Map, T: int) -> Map {
+    let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"])
+    let K = to_int(W["K"]); let L = to_int(W["L"])
+    let Kd = d * K
+    // pre-transposed weights (constant across steps)
+    let ecWt = _clmd_transpose_w(to_int(W["ecW"]), Kd, d)
+    let tcWt = []; let tcW = W["tcW"]; let mut i = 0
+    while i < L { tcWt.push(_clmd_transpose_w(to_int(tcW[i]), Kd, d)); i = i + 1 }
+    let eWt = []; let eW = W["eW"]; let mut j = 0
+    while j < E { eWt.push(_clmd_transpose_w(to_int(eW[j]), Kd, d)); j = j + 1 }
+    let rWt  = _clmd_transpose_w(to_int(W["rW"]),  d * 1, E)   // router K=1
+    let roWt = _clmd_transpose_w(to_int(W["roW"]), d * 1, V)   // readout K=1
+    // reusable im2col buffers: the d-conv ones share T*Kd; router/readout K=1 → T*d
+    let xcolD = t_zeros(T * Kd)     // for ec/trunk/expert convs (Kdim=d*K)
+    let xcol1 = t_zeros(T * d)      // for router/readout convs   (Kdim=d*1)
+    // reusable activation buffers
+    let xe = t_zeros(T*d); let xt = t_zeros(T*d)
+    let h = t_zeros(T*d); let hn = t_zeros(T*d); let hg = t_zeros(T*d)
+    let m1 = t_zeros(1); let iv1 = t_zeros(1); let xh1 = t_zeros(T*d)
+    let logits_r = t_zeros(T*E); let ex_out = t_zeros(E*T*d)
+    let eo = t_zeros(T*d); let ex = t_zeros(T*d)
+    let probs = t_zeros(T*E); let y = t_zeros(T*d)
+    let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
+    return #{ "ecWt": ecWt, "tcWt": tcWt, "eWt": eWt, "rWt": rWt, "roWt": roWt,
+              "xcolD": xcolD, "xcol1": xcol1, "xe": xe, "xt": xt,
+              "h": h, "hn": hn, "hg": hg, "m1": m1, "iv1": iv1, "xh1": xh1,
+              "logits_r": logits_r, "ex_out": ex_out, "eo": eo, "ex": ex,
+              "probs": probs, "y": y, "yn": yn,
+              "meanN": meanN, "invN": invN, "xhatN": xhatN }
+}
+
+fn _clmd_scratch_free(sc: Map) {
+    t_free(to_int(sc["ecWt"])); t_free(to_int(sc["rWt"])); t_free(to_int(sc["roWt"]))
+    let tcWt = sc["tcWt"]; let mut i = 0
+    while i < len(tcWt) { t_free(to_int(tcWt[i])); i = i + 1 }
+    let eWt = sc["eWt"]; let mut j = 0
+    while j < len(eWt) { t_free(to_int(eWt[j])); j = j + 1 }
+    t_free(to_int(sc["xcolD"])); t_free(to_int(sc["xcol1"]))
+    t_free(to_int(sc["xe"])); t_free(to_int(sc["xt"]))
+    t_free(to_int(sc["h"])); t_free(to_int(sc["hn"])); t_free(to_int(sc["hg"]))
+    t_free(to_int(sc["m1"])); t_free(to_int(sc["iv1"])); t_free(to_int(sc["xh1"]))
+    t_free(to_int(sc["logits_r"])); t_free(to_int(sc["ex_out"]))
+    t_free(to_int(sc["eo"])); t_free(to_int(sc["ex"]))
+    t_free(to_int(sc["probs"])); t_free(to_int(sc["y"])); t_free(to_int(sc["yn"]))
+    t_free(to_int(sc["meanN"])); t_free(to_int(sc["invN"])); t_free(to_int(sc["xhatN"]))
+}
+
+// _clmd_fwd_logits_sc — STREAMING forward: byte-identical to _clmd_fwd_logits but
+// every conv uses the pre-transposed Wt + a reused xcol, and every activation
+// buffer is reused from the scratch record `sc`. Reused buffers that the consuming
+// op fully overwrites (conv writes all T*Cout, GN/GELU write all T*d) need no
+// re-zero; only the im2col xcol's causal padding is reset (inside _clmd_conv1d_pre).
+fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
+    let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"])
+    let K = to_int(W["K"]); let L = to_int(W["L"])
+    let embed = to_int(W["embed"])
+    let tcB = W["tcB"]; let eB = W["eB"]; let tgG = W["tgG"]; let tgB = W["tgB"]
+    let tcWt = sc["tcWt"]; let eWt = sc["eWt"]
+    let xcolD = to_int(sc["xcolD"]); let xcol1 = to_int(sc["xcol1"])
+    let xe = to_int(sc["xe"]); let xt = to_int(sc["xt"])
+
+    nn_embedding_fwd(tok, embed, xe, T, d)
+    _clmd_conv1d_pre(xe, to_int(sc["ecWt"]), to_int(W["ecB"]), xt, xcolD, T, d, d, K, 1)
+
+    let DIL_CAP = 512
+    let h = to_int(sc["h"]); let hn = to_int(sc["hn"]); let hg = to_int(sc["hg"])
+    let m1 = to_int(sc["m1"]); let iv1 = to_int(sc["iv1"]); let xh1 = to_int(sc["xh1"])
+    let mut li = 0
+    let mut dil = 1
+    while li < L {
+        let mut dil_eff = dil
+        if dil_eff > DIL_CAP { dil_eff = DIL_CAP }
+        _clmd_conv1d_pre(xt, to_int(tcWt[li]), to_int(tcB[li]), h, xcolD, T, d, d, K, dil_eff)
+        nn_groupnorm_fwd(h, to_int(tgG[li]), to_int(tgB[li]), hn, m1, iv1, xh1, T, d, 1)
+        nn_gelu_fwd(hn, hg, T*d)
+        let mut i = 0
+        while i < T*d { t_set(xt, i, t_get(xt, i) + t_get(hg, i)); i = i + 1 }
+        dil = dil * 2
+        li = li + 1
+    }
+
+    let logits_r = to_int(sc["logits_r"])
+    _clmd_conv1d_pre(xt, to_int(sc["rWt"]), to_int(W["rB"]), logits_r, xcol1, T, d, E, 1, 1)
+    let ex_out = to_int(sc["ex_out"]); let eo = to_int(sc["eo"]); let ex = to_int(sc["ex"])
+    let mut ej = 0
+    while ej < E {
+        _clmd_conv1d_pre(xt, to_int(eWt[ej]), to_int(eB[ej]), eo, xcolD, T, d, d, K, 1)
+        nn_gelu_fwd(eo, ex, T*d)
+        let mut jj = 0
+        while jj < T*d { t_set(ex_out, ej*T*d + jj, t_get(ex, jj)); jj = jj + 1 }
+        ej = ej + 1
+    }
+    let probs = to_int(sc["probs"]); let y = to_int(sc["y"])
+    nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
+    let yn = to_int(sc["yn"]); let meanN = to_int(sc["meanN"])
+    let invN = to_int(sc["invN"]); let xhatN = to_int(sc["xhatN"])
+    nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
+    _clmd_conv1d_pre(yn, to_int(sc["roWt"]), to_int(W["roB"]), out_logits, xcol1, T, d, V, 1, 1)
+}
+
 // _clmd_fwd_logits — run the general CLMConvMoE inference forward on a T-length
 // token buffer using a loaded param Map; fill out_logits[T·V]. Loops over the L
 // trunk layers (residual conv → GN → GELU) and stacks the E expert conv outputs
 // before the softmax MoE router mix.
+//
+// NOTE: this is the ORIGINAL per-call-alloc path, kept BYTE-IDENTICAL and still
+// used by the single-shot CE/omega measurements (clm_forward_ce, clm_omega_closure)
+// where the forward runs a bounded nwin_max times, not a growing decode loop. The
+// streaming decode loops (argmax/topk/grounded) use _clmd_fwd_logits_sc instead.
 fn _clmd_fwd_logits(W: Map, tok: int, out_logits: int, T: int) {
     let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"])
     let K = to_int(W["K"]); let L = to_int(W["L"])
@@ -476,10 +665,11 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
         p = p + 1
     }
     let logits = t_zeros(T*V)
+    let sc = _clmd_scratch_new(W, T)        // H_1393: reusable scratch, built ONCE
     let mut out = ""
     let mut g = 0
     while g < gen {
-        _clmd_fwd_logits(W, tok, logits, T)
+        _clmd_fwd_logits_sc(W, sc, tok, logits, T)
         // argmax of the LAST position's logits = the next-byte prediction
         let base = (T-1) * V
         let mut bestv = t_get(logits, base)
@@ -497,6 +687,7 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
         t_set(tok, T-1, to_float(besti))
         g = g + 1
     }
+    _clmd_scratch_free(sc)
     return #{ "ok": true, "text": out }
 }
 
@@ -576,15 +767,26 @@ pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: fl
     return _clmd_topk_sample(logits, base, V, top_k, temp, rng)
 }
 
-// clm_decode_topk_sampled — seeded-sampling sibling of clm_decode_argmax. Same window
-// growth, but each next byte is DRAWN from a top-k temperature softmax via the engine's
-// seeded sampler → different seed_rng ⇒ DIFFERENT output (the diversity best-of-K needs).
-// HARD-BOUNDED by `gen` (the ConvMoE forward is heavy; caller passes a SMALL budget; NO
-// unbounded generation, FREEZE (ii)).
-pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
-                               top_k: int, temp: float, seed_rng: int) -> Map {
-    if !clm_decodable(path) { return #{ "ok": false, "text": "" } }
+// clm_load_weights / clm_weights_decodable — H_1393 CROSS-DECODE memory fix. The hexa
+// bump allocator NEVER frees a buffer (see _clmd_scratch_new note), so EACH call to
+// _clmd_load permanently leaks the full model weight set (~10 GB for the 303M ConvMoE).
+// A multi-decode driver (e.g. the G6 FALS re-score = 69 decodes) therefore OOMs across
+// decodes even though each single decode is now bounded. The cure: LOAD ONCE, reuse the
+// W handle-map across every decode (clm_decode_topk_sampled_W). This is NOT a 2nd .clm
+// path — it is the SAME _clmd_load + _clmd_fwd_logits_sc, just with the load hoisted out
+// of the per-decode loop (a_core_engine_map preserved: still reached only via generator).
+pub fn clm_load_weights(path: string) -> Map {
+    if !clm_decodable(path) { return #{ "ok": false } }
     let W = _clmd_load(path)
+    W["ok"] = true
+    return W
+}
+
+// clm_decode_topk_sampled_W — the loaded-W core of clm_decode_topk_sampled. Takes a
+// pre-loaded weight map `W` (from clm_load_weights) so a driver can decode MANY times
+// off ONE load. Byte-identical to clm_decode_topk_sampled for the same W+seed+args.
+pub fn clm_decode_topk_sampled_W(W: Map, seed: string, gen: int,
+                                 top_k: int, temp: float, seed_rng: int) -> Map {
     let V = to_int(W["V"])
     let T = 24
     let slen = byte_len(seed)
@@ -597,11 +799,12 @@ pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
         p = p + 1
     }
     let logits = t_zeros(T*V)
+    let sc = _clmd_scratch_new(W, T)        // H_1393: reusable scratch, built ONCE
     let mut out = ""
     let mut rng = _clmd_mix32(seed_rng)
     let mut g = 0
     while g < gen {
-        _clmd_fwd_logits(W, tok, logits, T)
+        _clmd_fwd_logits_sc(W, sc, tok, logits, T)
         let sm = _clmd_topk_sample(logits, (T-1)*V, V, top_k, temp, rng)
         let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
         out = out + chr(nb)
@@ -610,7 +813,21 @@ pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
         t_set(tok, T-1, to_float(nb))
         g = g + 1
     }
+    _clmd_scratch_free(sc)
+    t_free(logits); t_free(tok)
     return #{ "ok": true, "text": out }
+}
+
+// clm_decode_topk_sampled — seeded-sampling sibling of clm_decode_argmax. Same window
+// growth, but each next byte is DRAWN from a top-k temperature softmax via the engine's
+// seeded sampler → different seed_rng ⇒ DIFFERENT output (the diversity best-of-K needs).
+// HARD-BOUNDED by `gen` (the ConvMoE forward is heavy; caller passes a SMALL budget; NO
+// unbounded generation, FREEZE (ii)). Thin wrapper: load once, delegate to the _W core.
+pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
+                               top_k: int, temp: float, seed_rng: int) -> Map {
+    if !clm_decodable(path) { return #{ "ok": false, "text": "" } }
+    let W = _clmd_load(path)
+    return clm_decode_topk_sampled_W(W, seed, gen, top_k, temp, seed_rng)
 }
 
 // _clmd_find — first byte-offset of `needle` inside `hay` (-1 if absent). Plain
@@ -674,6 +891,8 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
     let V = to_int(W["V"])
     let T = 24
     let logits = t_zeros(T*V)
+    let tok = t_zeros(T)                     // H_1393: reused window (was per-step)
+    let sc = _clmd_scratch_new(W, T)         // H_1393: reusable scratch, built ONCE
     let mut out = ""
     let mut grounded = 0
     let mut lm = 0
@@ -689,7 +908,6 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
             // UNGROUNDED: CLMConvMoE argmax over the last T context bytes. Build the
             // window from the FULL ctx (right-aligned, pad-left byte 32) so the
             // forward sees the same causal window clm_decode_argmax would.
-            let tok = t_zeros(T)
             let cl = byte_len(ctx)
             let mut p = 0
             while p < T {
@@ -698,7 +916,7 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
                 else { t_set(tok, p, 32.0) }
                 p = p + 1
             }
-            _clmd_fwd_logits(W, tok, logits, T)
+            _clmd_fwd_logits_sc(W, sc, tok, logits, T)
             let base = (T-1) * V
             let mut bestv = t_get(logits, base)
             let mut besti = 0
@@ -714,5 +932,6 @@ pub fn clm_decode_grounded(path: string, seed: string, gen: int,
         out = out + chr(nb)
         g = g + 1
     }
+    _clmd_scratch_free(sc)
     return #{ "ok": true, "text": out, "grounded": grounded, "lm": lm }
 }

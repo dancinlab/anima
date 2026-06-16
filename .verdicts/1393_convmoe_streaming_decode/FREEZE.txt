@@ -1,0 +1,50 @@
+================================================================================
+H_1393 — STREAMING / BOUNDED ConvMoE .clm decode (the H_1392 memory-blowup FIX)
+   (p7, c9, frozen-first) — fix the substrate wall that blocked the G6 FALS re-score.
+================================================================================
+DATE-FROZEN : 2026-06-17  (bars frozen BEFORE the G6 re-score run — frozen-first, c9)
+
+WHY (closes the H_1392 🧱 substrate wall)
+  H_1392 found the 303M ConvMoE-RETRO .clm MOUNTS + decodes but the hexa ConvMoE decode
+  BLOWS UP MEMORY ~+300 MB/step (never freed) → GEN=24 OOM-killed @11GB, GEN=48 SIGTERM.
+  A falsifiable G6 claim needs GEN≈80-110, so the M2-M5 FALS bars carried NO engine-native
+  score (substrate-BLOCKED, NOT FALS=0). H_1393 FIXES the decode memory so the G6 re-score
+  can run — answering CAPACITY-vs-ARCHITECTURE, which H_1392 left OPEN.
+
+ROOT CAUSE (measured, /usr/bin/time -l, c1)
+  The hexa runtime (self/runtime.c) is a one-shot BUMP allocator: `free()` is a NOOP
+  ("Cycle 53 — mmap-backed bump allocator. malloc never frees; free is a noop") and
+  `hexa_farr_free` recycles the handle SLOT but the backing buffer bytes are NEVER returned.
+  So every per-step `t_zeros` + every internal `forge_dispatch_matmul` output permanently
+  consumes memory, regardless of the careful t_free calls in _clmd_fwd_logits.
+  Per-step alloc breakdown (d768/T24, computed == measured 63.1 MB/step):
+    Wt conv-weight TRANSPOSE  = 58.2 MB/step (92%)  — REBUILT every step though weights are CONSTANT
+    xcol im2col               =  1.3 MB/step
+    forge matmul outputs (mm) =  0.6 MB/step  — runtime-internal, the residual floor
+    other activation scratch  =  2.2 MB/step
+
+THE FIX (anima-side, CORE/clm_decode.hexa — BYTE-EXACT, NOT an arithmetic change)
+  Pre-allocate ALL forward scratch + pre-transpose EVERY conv weight ONCE into a scratch
+  record (_clmd_scratch_new), then REUSE those same farr handles every decode step
+  (_clmd_fwd_logits_sc). A reused handle keeps its already-mmap'd buffer → no new bump bytes
+  → RSS goes FLAT. The 3 decode loops (argmax / topk_sampled / grounded) build the scratch
+  once before the loop. The original _clmd_fwd_logits is kept BYTE-IDENTICAL for the bounded
+  single-shot CE/omega measurements (clm_forward_ce, clm_omega_closure).
+
+FROZEN GUARD BARS (pre-registered — the fix is valid ONLY if ALL hold)
+  (G1 BYTE-EXACT FORWARD)  _clmd_fwd_logits_sc vs _clmd_fwd_logits on the SAME tok window:
+                           maxΔ over all T*V logits == 0.0  (bit-exact, no arithmetic change)
+  (G2 BYTE-EXACT DECODE)   clm_decode_argmax output byte-identical to the BEFORE path at the
+                           GEN where the old path completed (GEN<=16): argmax sequence identical
+  (G3 FLAT RSS)            max RSS per step must drop from ~63 MB/step (d768) to <~1 MB/step
+                           (the runtime matmul-output floor only); GEN=128 must NOT scale to GBs
+  (G4 REGRESSION)          engine_cli_smoke green · h1196 single-entry 7/0 · h1205
+                           separation-invariant PASS (generation byte-identical ON==OFF, Ψ=½)
+  (G5 303M UNBLOCK)        the 303M ConvMoE GEN=24 + GEN=48 (OOM-killed in H_1392) must COMPLETE
+
+G6 RE-SCORE (the payoff — VERBATIM the H_1392 frozen probe, NO bar moved, NO tune-to-green)
+  state/g6-retro303m-fals/g6_fals_probe.hexa unchanged (FROZEN detector + scaffold + M1-M5
+  bars from H_1392/H_1381/H_1362). Run on the bounded-memory streaming decode; report the
+  HONEST engine-native FALS scores verbatim — whichever way M1-M5 land (🟢 capacity confirmed
+  or 🧱 architecture wall, now finally MEASURABLE).
+================================================================================

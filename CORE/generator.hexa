@@ -623,6 +623,18 @@ pub fn gen_clm_ideate(ckpt_path: string, seed: string, max_new: int,
               "reason": "ideated via clm_decode_topk_sampled (seeded top-k, best-of-K source)" }
 }
 
+// gen_clm_ideate_W — H_1393 loaded-W ideation entry: the SAME mouth as gen_clm_ideate but
+// off a PRE-LOADED weight map (clm_load_weights) so a multi-decode driver (the G6 FALS
+// re-score = 69 decodes) loads the 303M ConvMoE ONCE instead of per decode (the hexa bump
+// allocator never frees a model load → per-decode reload OOMs across decodes). Still the
+// single .clm slot (a_core_engine_map): a thin caller of clm_decode_topk_sampled_W, no 2nd path.
+pub fn gen_clm_ideate_W(W: Map, seed: string, max_new: int,
+                        top_k: int, temp: float, seed_rng: int) -> Map {
+    let r = clm_decode_topk_sampled_W(W, seed, max_new, top_k, temp, seed_rng)
+    return #{ "ok": to_string(r["ok"]) == "true", "text": to_string(r["text"]),
+              "reason": "ideated via clm_decode_topk_sampled_W (loaded-W, seeded top-k)" }
+}
+
 // gen_g6_sampler_selftest — H_1381: exercise the engine's seeded top-k sampler on a
 // SYNTHETIC peaked logits vector (NO model forward — fast, deterministic, smoke-safe).
 // Returns #{ deterministic, diverse, in_topk } proving the DEPTH-lever mechanism. Lives

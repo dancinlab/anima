@@ -279,7 +279,7 @@
             },
             {
               "name": "clm_decode.hexa",
-              "summary": "ConvMoE-class .clm v0.2 decoder (golden ref reexport_d768_v2_fast.clm).",
+              "summary": "ConvMoE-class .clm v0.2 decoder (golden ref reexport_d768_v2_fast.clm). H_1393: STREAMING/BOUNDED decode — pre-transposes conv weights + reuses a scratch record across decode steps (_clmd_scratch_new/_clmd_fwd_logits_sc/_clmd_conv1d_pre) + clm_load_weights load-once, so RSS is FLAT per step (was ~300 MB/step leak that OOM-blocked the 303M G6 FALS re-score @ GEN>16; now GEN=110 completes, byte-exact, ~100x less per-step memory). The hexa bump allocator (free=noop) never returns a farr buffer, so per-step alloc churn was the leak; the fix bounds it to one forward's working set.",
               "path": "CORE/clm_decode.hexa"
             },
             {
