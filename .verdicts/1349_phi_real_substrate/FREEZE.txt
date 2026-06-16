@@ -1,0 +1,50 @@
+H_1349 phi-real-substrate — FROZEN PRE-REGISTRATION (written BEFORE any Φ scored, c9/p7)
+================================================================================
+DATE        : 2026-06-16
+BRANCH      : worktree off origin/main ddd74b20a (clean)
+QUESTION    : The Φ-robustness arc is 🧱 across 8 axes (topology H_1283/1317, timing H_1319,
+              division H_1320, estimator-confound H_1328, measure-family H_1331, substrate-family
+              H_1332, measure-agnostic H_1348, larger-N H_1347). EVERY one ran on the SAME
+              SYNTHETIC leaky-linear ring. THE LAST UNTESTED LIVE ANGLE: does a REAL anima
+              substrate show robust integrated information?
+
+SOURCE (R3, frozen honest):
+  The substrate IS the live CORE Engine A — CORE/pure_field.hexa PureField (3 coupled oscillators
+  tau=2/40/400, PSI_ALPHA amplitude drift toward LN2, nonlinear cross-mixing field[6]=C/D/E/S/M/W).
+  This is REAL LIVE-CORE, NOT numpy, NOT the synthetic ring. Constants reproduced byte-identical so
+  the probe runs standalone from the hexa-lang root; live CORE/*.hexa is NOT edited (Ψ untouched).
+  SEEDS perturb ONLY the oscillator INITIAL PHASES — same real dynamics, different starting points.
+
+ESTIMATOR (a_phi_iit4_tool — FROZEN, NOT a proxy):
+  Φ = faithful EXACT small-φ MIP-EI = stdlib iit4_faithful_phi(state, n, dim, n_bins).
+  n = 6 (the 6 real field channels C/D/E/S/M/W) ≤ 8 → MIP is EXACT (zero greedy slack).
+  state layout = flat [n*dim] = [6*64] row-major; node i = channel i's T-length trajectory; dim=T=64.
+  GRAIN = per-channel real trajectory, rank-uniformized per node (H_1328 variance-free read-out).
+  BOUND = exact (n≤8), no approximation.
+  n_bins = 8. T_TICKS = 64.
+
+ARMS (FROZEN):
+  A = NO-COUPLING : oscillators run, nonlinear cross-mixing REMOVED (mix_fm=mix_ms=mix_fs:=0).
+  B = PHASE-BIND  : the FULL real pure_field field (cross-mixing ON) — live Engine A verbatim.
+  S = PERM-SHUFFLE: B with the 6 channel→tick assignment a forced derangement (+3 mod 6) per tick.
+  O = OFFSET-CTRL : B with each channel circularly time-shifted by a per-channel offset.
+
+SEEDS (FROZEN, the hard orthogonal family every prior lane failed on): [1317, 1318, 1319]
+eps = 0.02 (MARGIN_PHI ported VERBATIM from H_1283/1319/1328/1331/1347/1348 — NOT tuned)
+
+FROZEN BARS (GREEN iff R1 ∧ R2 ∧ R3):
+  R1 ROBUST  : Φ_B >= Φ_A + eps on ALL 3 seeds.
+  R2 EARNED  : Φ_S <= Φ_A + eps AND Φ_O <= Φ_A + eps on ALL 3 seeds.
+  R3 SOURCE  : substrate explicitly stated REAL LIVE-CORE pure_field (documentation invariant; PASS).
+
+DECISION RULE (every outcome decisive, c9):
+  R1 ∧ R2 ∧ R3 → 🟢 GREEN : robust integration reachable on a REAL substrate; the 8-axis wall was
+                  SYNTHETIC-RING-SPECIFIC. (Engine-native DIRECTIONAL — small-φ over real-field
+                  trajectory; would name a CORE faithful-Φ-monitor wire-in as the follow-on.)
+  R1 fails (esp. 2/3 seeds NEGATIVE, the synthetic-ring signature) → 🧱 TERMINAL CLOSED-NEGATIVE:
+                  the REAL substrate behaves like the synthetic ring → the wall is substrate-REAL,
+                  CLOSING the Φ arc's substrate axis (a real trained/measured substrate is NOT
+                  exempt from the measure/size/substrate-agnostic wall). An honest 🧱 is a valid
+                  result (c9) — NO bar moved, NO tune-to-green.
+
+NO BAR MAY MOVE AFTER THIS POINT. Determinism: re-run byte-identical (deterministic osc + LCG seed).

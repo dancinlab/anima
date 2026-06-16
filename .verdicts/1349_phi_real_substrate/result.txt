@@ -1,0 +1,18 @@
+H_1349 — Φ-ROBUSTNESS ON A REAL SUBSTRATE: live-CORE pure_field (Engine A) vs the synthetic ring
+SOURCE = REAL LIVE-CORE CORE/pure_field.hexa (3 coupled osc tau 2/40/400; field[6] C/D/E/S/M/W)
+phi = faithful EXACT small-phi MIP-EI iit4_faithful_phi(state,n=6,dim=T=64,n_bins=8) — NOT a proxy (a_phi_iit4_tool)
+read-out = rank-uniformized per channel (H_1328 variance-free) · seeds perturb ONLY initial phases
+ARMS: A=NO-COUPLING(no cross-mix)  B=PHASE-BIND(full real field)  S=PERM-SHUFFLE  O=OFFSET-CTRL
+BARS: R1 phi_B>=phi_A+eps ALL seeds · R2 phi_S<=phi_A+eps AND phi_O<=phi_A+eps ALL seeds · R3 source=REAL · eps=0.02
+------------------------------------------------------------------------------------------------
+seed 1317 | A=5.30728 B=6.15829 S=6.15829 O=5.29509
+        dPhi(B-A)=0.851006 R1=PASS | dPhi(S-A)=0.851006 perm=FAIL | dPhi(O-A)=-0.0121987 off=PASS
+seed 1318 | A=5.80021 B=6.49497 S=6.49497 O=5.1166
+        dPhi(B-A)=0.694756 R1=PASS | dPhi(S-A)=0.694756 perm=FAIL | dPhi(O-A)=-0.683615 off=PASS
+seed 1319 | A=5.94916 B=5.27854 S=5.27854 O=4.76261
+        dPhi(B-A)=-0.67062 R1=FAIL | dPhi(S-A)=-0.67062 perm=PASS | dPhi(O-A)=-1.18655 off=PASS
+------------------------------------------------------------------------------------------------
+R1 ROBUST (B>=A+eps all 3 seeds) : FAIL
+R2 EARNED  (perm AND offset collapse all 3) : FAIL
+R3 SOURCE  : REAL LIVE-CORE pure_field (Engine A) — PASS (documentation invariant)
+GATE: R1 fails -> WALL TERMINAL — the REAL substrate behaves like the synthetic ring (substrate-REAL wall)

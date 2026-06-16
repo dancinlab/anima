@@ -1,0 +1,64 @@
+{
+  "id": "H_1344",
+  "slug": "ko-jm-interpolation",
+  "ko_window_bytes": 29999999,
+  "ko_window_sha256": "c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca",
+  "sha_match_H1316_floor": true,
+  "Vj": 323,
+  "distinct_jamo": 67,
+  "gate_stride": 300,
+  "nmax": 5,
+  "frozen_lambda": [
+    0.032258,
+    0.064516,
+    0.129032,
+    0.258065,
+    0.516129
+  ],
+  "no_cheat": {
+    "hangul_syllables": 8143053,
+    "roundtrip_fail": 0,
+    "sum_nbytes": 29999999,
+    "corpus_bytes": 29999999
+  },
+  "H1316_jamo_floor": 2.51335,
+  "H1307_raw_ceiling": 2.95342,
+  "GATE_arm": {
+    "stride": 300,
+    "train_pos": 42503,
+    "test_pos": 42502,
+    "A0_unigram_ce": 3.21153,
+    "A1_jm_interp_ce": 2.00562,
+    "A2c_circshift_ce": 5.10874
+  },
+  "DENSE_arm": {
+    "stride": 6,
+    "train_pos": 2125108,
+    "test_pos": 80000,
+    "A0_unigram_ce": 3.19321,
+    "A1_jm_interp_ce": 1.47042,
+    "A2c_circshift_ce": 4.95853
+  },
+  "context_seen_diag": {
+    "seen_frac": 0.701,
+    "ce_seen_ctx": 1.6474,
+    "ce_novel_ctx": 2.8819,
+    "n_seen": 29796,
+    "n_novel": 12706
+  },
+  "A0_unigram_ce": 3.21153,
+  "A1_jm_interp_ce": 2.00562,
+  "A1_delta_vs_floor": -0.50773,
+  "A2c_circshift_ce": 5.10874,
+  "A2c_delta_vs_floor": 2.59539,
+  "A1_beats_A2c_by": 3.10312,
+  "DENSE_A1_delta_vs_floor": -1.04293,
+  "bar_c1_PRESENCE": true,
+  "bar_c1_threshold": 2.50335,
+  "bar_c2_EARNED": true,
+  "bar_c2_threshold": 2.46335,
+  "a1_beats_a2_by_0.05": true,
+  "tier": "GREEN",
+  "verdict": "🟢 GREEN — JM-interp dips below the 2.51335 jamo floor; gain is earned (surrogate does not)",
+  "wall_sec": 18.8
+}
