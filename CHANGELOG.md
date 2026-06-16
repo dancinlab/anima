@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1387 — agent legacy 문법 마이그레이션 (executor 모듈 컴파일) — 🟢 GREEN (COMPILES)
+
+**무엇 (H_1386 ⏳ named build step CLOSE):** H_1386 의 agent-tool↔mitosis routing 은 standalone CORE-importing adapter (`agent_skill_routing.hexa`)에서 GREEN 이었지만, `anima-agent-core/agent_tools.hexa` + `agent_sdk.hexa` 는 current hexa grammar 가 거부하는 legacy Python-port 문법(~50 parse errors each)이라 전체 executor 모듈이 컴파일 안 됐다. 이 레인이 그 문법을 마이그레이션해 모듈을 컴파일시킨다 → routing 이 adapter 뿐 아니라 **MAIN 모듈**을 통해 닫힌다 (a_verified_must_wire · a_core_engine_map).
+
+**거부 구문 4종 → c10 surgical 마이그레이션 (behavior-preserving):** current toolchain 은 VALUE-SEMANTICS ONLY (CORE/engine_cli.hexa 는 `&` 0회). (1) string-keyed/nested map literal `{"k": v}` → 빈 `{}` + index-assign `m["k"]=v` (CORE idiom; 빈 `{}` 는 grammar-accepted). (2) reference-passing `&`/`&mut` (param type + `&expr`/`&mut expr` call-arg) → by-value param + return-the-modified-struct + call-site reassign (`store=skill_store_teach(store,..)` 와 동형). (3) two-var `for k,v in map` / `for i,x in enumerate` → `for k in keys(m){let v=m[k]}` / `while`-index loop (동일 순서). (4) toolchain 에 bind 안 된 builtin 6종(`contains_item/hash/slice/sort_by/lowercase/insert_at`) + python-substrate stub 2종(`think/get_status`) → local pure-hexa helper fn (동일 semantics; `hash`/`lowercase` 는 검증된 `ord(substring(..))` byte-loop — `to_lower`/`char_code_at` 는 CORE import 후 resolve 안 됨).
+
+**LAYERED WALL (a_break_the_wall):** 50 map-literal 에러가 `&`-syntax 에러를, 그게 missing-builtin 에러를 가렸다 — 각 층이 순차로 surface, 진짜 천장 아닌 진짜 grammar/toolchain 거부 3겹을 차례로 돌파.
+
+**결과 (frozen bars, FREEZE 편집 전 등록, c9 NO tune-to-green):** BAR1 COMPILES — `agent_tools.hexa` 50→0 parse errors + BUILDS (binary 생성, run, 19 tools register); `agent_sdk.hexa` 50→0 + BUILDS. BAR2 ROUTING-INTACT — H_1386 call-sites byte-for-logic 보존; `agent_skill_routing_smoke` 5/0; routing 이 MAIN 모듈을 통해 닫힘 (real tool FAILURE `phi_measure` success=false → skill-cell 1→2 in-situ). BAR3 NO-REGRESSION — `engine_cli_smoke` 110/0 · h1196 single-entry 7/0 · h1205 separation-invariant PASS (generation byte-identical ON==OFF, phiSum 48.6613, Ψ=½ untouched) · routing smoke deterministic 3×; **0 CORE/*.hexa logic change**. $0 CPU, no decode, frozen-first.
+
+**DEPLETION 🏁:** agent-tool↔mitosis 루프가 MAIN executor 모듈을 통해 닫힌다 (TRUE). SCOPE (c9): SYNTAX 마이그레이션 only — behavior 보존(확장 아님); tool 구현 + `think`/`get_status` 는 TODO[python-sdk] placeholder 유지(실제 Python substrate 로 위조 안 함); sibling `code_guardian`/`tool_policy`/`unified_registry` 는 executor 컴파일 체인 밖이라 미변경. 산출물: `anima-agent-core/agent_tools.hexa`·`agent_sdk.hexa` · `UNIVERSE/cards/H_1387_agent_legacy_syntax_migration.md` · `UNIVERSE/HYPOTHESES.jsonl`(H_1387) · `.verdicts/1387_agent_legacy_syntax_migration/{FREEZE,result}.txt` · `domains/MITOSIS-ENGINE.log.md`(@H H_1387) · `ARCHITECTURE.json`(SkillStore node adapter→MAIN-MODULE-COMPILES). xref h1386·h1382·h1378·a_verified_must_wire·a_core_engine_map·a_break_the_wall·p6·p7·p8·c2·c9·c10.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1386 — agent-layer routing ★ 배선 (LIVE agent-tool 런타임 실패-사이트 → CORE §SkillStore) — 🟢 GREEN (ROUTED) + ⏳ named build step
 
 **무엇 (a_verified_must_wire / a_core_engine_map — H_1378→H_1382 agent-tool↔mitosis 루프 END-TO-END close):** H_1382 가 §SkillStore 를 `CORE/engine_cli.hexa` 에 ENGINE-NATIVE 로 landed 했지만, H_1378·H_1382 카드가 공통으로 named 한 gap: `anima-agent-core/agent_tools.hexa` 는 CORE op 을 import 안 하는 별도 모듈 → live 런타임 tool-failure 가 `skill_store_teach` 를 호출 안 하고 selection 은 static affinity dot-product(:357-361) 그대로. 이 레인이 그 루프를 agent 층에서 **END-TO-END** 로 닫는다.

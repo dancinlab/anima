@@ -1,0 +1,92 @@
+=== H_1387 agent legacy map-literal syntax migration — RESULT (AFTER editing) ===
+date: 2026-06-16  commit: cdbc57713  base: 38a1b2c4a
+
+########################################################################
+# BAR 1 — COMPILES (parse + build, 0 parse errors)
+########################################################################
+
+--- BEFORE (from FREEZE.txt): agent_tools=50 parse errors, agent_sdk=50 parse errors ---
+
+=== AFTER: hexa parse anima-agent-core/agent_tools.hexa ===
+OK: anima-agent-core/agent_tools.hexa parses cleanly
+AFTER parse-error count agent_tools = 0
+
+=== AFTER: hexa parse anima-agent-core/agent_sdk.hexa ===
+OK: anima-agent-core/agent_sdk.hexa parses cleanly
+AFTER parse-error count agent_sdk = 0
+
+=== AFTER: hexa build anima-agent-core/agent_tools.hexa (executor module — full build) ===
+  [2/2] clang -O2 -DHEXA_HAS_LIBSODIUM -I/opt/homebrew/Cellar/libsodium/1.0.22/include -DHEXA_HAS_OPENSSL -I/opt/homebrew/Cellar/openssl@3/3.6.2/include -Wno-trigraphs -fbracket-depth=4096 -I '/Users/mini/.hx/bin/self' build/artifacts/app.c '/Users/mini/.hexa-cache/runtime.80d28254d22d8358c5fe7f707c247331b417fde2.o' -o 'build/artifacts/app.tmp.81414' -lpthread -L/opt/homebrew/Cellar/libsodium/1.0.22/lib -lsodium -L/opt/homebrew/Cellar/openssl@3/3.6.2/lib -lssl -lcrypto 2>&1
+    In file included from build/artifacts/app.c:2:
+  422 | /* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+  423 |  * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+
+OK: built build/artifacts/app
+
+=== AFTER: hexa build anima-agent-core/agent_sdk.hexa ===
+  422 | /* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+  423 |  * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+
+OK: built build/artifacts/app
+
+=== AFTER: hexa run anima-agent-core/agent_tools.hexa (executor main — 19 tools register) ===
+=== Anima Agent Tools ===
+Registered tools: 19
+[Available Tools]
+
+  [web]
+...
+
+########################################################################
+# BAR 2 — ROUTING-INTACT (H_1386 call-sites preserved; smoke through compiling module)
+########################################################################
+
+=== agent_skill_routing_smoke.hexa ===
+PASS  case_r1_routing_learns_at_runtime
+PASS  case_r2_routing_distinct_from_static
+PASS  case_r3_routing_earned_shuffle
+PASS  case_r4_routing_abstains_on_far
+PASS  case_r5_routing_footprint_grows
+INFO  agent-routing acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1
+--- agent_skill_routing smoke summary: 5 pass / 0 fail ---
+
+=== H_1386 routing closes through the MAIN executor module (not just the adapter): ===
+    executor_select_tool -> agent_route_select -> skill_recall
+    executor_execute failure-site -> agent_route_on_result -> skill_store_teach (mitosis split)
+MAIN-MODULE select_tool -> web_search
+MAIN-MODULE executor_execute success=true cells 1->1
+CLOSE-THROUGH-MAIN-MODULE: OK
+FAILURE-SITE through MAIN: success=false cells 1->2 (grew=true)
+
+########################################################################
+# BAR 3 — NO-REGRESSION (deterministic; no CORE/*.hexa logic change)
+########################################################################
+
+=== CORE engine_cli_smoke ===
+--- engine_cli smoke summary: 110 pass / 0 fail ---
+=== h1196 single-entry audit ===
+--- single-entry audit summary: 7 pass / 0 fail ---
+=== h1205 separation-invariant ===
+[null] phase=WAKE byte-identical ON==OFF = true
+[null] phase=REM byte-identical ON==OFF = true
+[null] phase=N2 byte-identical ON==OFF = true
+[null] phase=N3 byte-identical ON==OFF = true
+[null] phase=WAKE byte-identical ON==OFF = true
+[bytegpt grounded] seed#0 byte-identical ON==OFF = true  text="vault QX-7741 foreve"
+[bytegpt grounded] seed#1 byte-identical ON==OFF = true  text="ault QX-7741 forever"
+[bytegpt argmax] seed#0 byte-identical ON==OFF = true
+[bytegpt argmax] seed#1 byte-identical ON==OFF = true
+[bytegpt argmax] seed#2 byte-identical ON==OFF = true
+[F2 Psi] byte-identical ON==OFF = true
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+=== determinism: routing smoke 3x identical ===
+--- agent_skill_routing smoke summary: 5 pass / 0 fail ---
+--- agent_skill_routing smoke summary: 5 pass / 0 fail ---
+--- agent_skill_routing smoke summary: 5 pass / 0 fail ---
+
+=== CORE/*.hexa logic change check (git diff names) ===
+  (none — no CORE/*.hexa modified)
+
+VERDICT: 🟢 GREEN — executor module COMPILES (0 parse errors, builds); H_1386 routing closes
+through the MAIN module; all regression guards green; no CORE logic change.
