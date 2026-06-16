@@ -1,3 +1,42 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1416 — engine-native SEQUENTIAL cerebellum→basal PIPELINE compose (3rd lens on the cerebellum×basal wall) 🧱 THIRD-LENS TERMINAL (a_break_the_wall c16, frozen-first)
+
+The THIRD genuinely-different lens on the engine-native cerebellum×basal compose WALL, after
+H_1412 (arbitration 🧱) and H_1413 (modulation 🧱). a_no_llm_frame_trap / real neuroscience: the
+prior two lenses both COMBINED the two confidence signals at decision time. This lens is the
+cerebello-basal-thalamo-cortical LOOP — the cerebellum's forward model REFINES the cortical STATE
+ESTIMATE the basal gate READS, BEFORE the single gate fires (a SEQUENTIAL pipeline cerebellum→basal,
+not parallel arbitration/modulation). Engine-native over the SAME live faculties (vforward_err H_1280
++ vbasal_go_value H_1281), the SAME H_1407 5-family fixture, 3 seeds [4700,4701,4702], frozen bars.
+
+  rel = clamp((E_THR − vforward_err)/E_THR, 0, 1)        // cerebellum reliability (LIVE)
+  refined_pred_feat = pred_feat + REFINE_GAIN·rel        // cerebellum refines the basal INPUT
+  decision = SELECT-PRED iff vbasal_go_value(refined_pred) − vbasal_go_value(comp) > GO_THR
+  REFINE_GAIN frozen at the gate's go-value unit (1.0) — NO tuned knob.
+
+🧱 THIRD-LENS TERMINAL — the pipeline FAILS all three discriminators at once (most decisive lens):
+  - (B1 COMPOSE-EFFECT) seqcompose 0.701481 ≥ best 0.702963 + 0.05 (0.752963) — net-lift ≈ +0.00 (−0.0015): FAIL
+  - (B3 EARNED) seqcompose−shuffle +0.0156 > 0.02 — shuffled reliability scores nearly as high: FAIL
+  - (ABLATION) seqcompose−ablate −0.0015 > 0 — refinement OFF scores IDENTICAL (0.702963): FAIL
+    → the cerebellar refinement is INERT: the decisive basal go-margins (|0.45–0.6|) sit FAR from the
+      gate's hard threshold (GO_THR=0), so the bounded rel·1.0 input nudge flips NO decision.
+  - (B2 ORACLE) oracle−best +0.242963 (PASS) · (SEPARABLE) onlyCB 0.243 / onlyBG 0.308 (PASS)
+
+The cerebellum×basal pair does NOT bind engine-native under ANY of THREE lenses (arbitration B1-fail ·
+modulation B3-fail · sequential pipeline B1+B3+ABL-fail). Root cause triply confirmed: the LIVE
+VBasalGate (gw0=0.5 gradient-free) is a strong standalone arm (acc 0.703) whose decisive margins are
+thresholded far from GO_THR, so no cerebellar signal — voting, margin-modulating, or input-refining —
+moves the decision; the +0.243 oracle headroom is the F5 adversarial family (cerebellum confidently
+WRONG, basal right), capturable only by knowing the answer. Genuine (d) ceiling / strong-standalone-arm
+subsumption (a_break_the_wall taxonomy). Contrast: the MEMORY-adjacent pairs H_1414 (memory×ToM +0.338)
+and H_1415 (spatial×episodic +0.058) BOTH bound+wired engine-native — mirror→engine non-reproduction is
+PAIR-DEPENDENT (gated by whether one standalone arm dominates), not universal.
+
+Honest 🧱 after a real frozen-first attempt with shuffle + ablation controls = a VALID result (c9/c16).
+NO live CORE op landed (would wire an unverified mechanism). wired: N/A. $0 CPU, deterministic, NO bar moved.
+  · probe: state/1416-cerebellum-basal-sequential-compose/h1416_cerebellum_basal_sequential_probe.hexa
+  · card: UNIVERSE/cards/H_1416_cerebellum_basal_sequential_compose.md · jsonl: UNIVERSE/HYPOTHESES.jsonl (H_1416)
+  · verdict: .verdicts/1416_cerebellum_basal_sequential_compose/{FREEZE,result}.txt
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1415 — engine-native re-score of H_1408 (spatial-map × episodic-memory compose, WITHIN the memory family) 🟢 COMPOSE-LIFT BINDS + WIRED-live (a_verified_must_wire ladder rungs 2/3/4)
 
 The a_verified_must_wire ladder step-2 for H_1408 (the WITHIN-the-memory-family compose pair) —

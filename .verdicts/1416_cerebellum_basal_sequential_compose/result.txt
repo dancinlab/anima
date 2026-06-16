@@ -1,0 +1,36 @@
+================================================================================
+H_1416 — ENGINE-NATIVE cerebellum (H_1280 VForwardField) × basal (H_1281 VBasalGate)
+  LENS #3: SEQUENTIAL cerebello-basal PIPELINE (cerebellum REFINES the basal INPUT, then
+  the LIVE gate fires) — re-scoring frozen H_1407 bars. After arbitration (H_1412 🧱)
+  and modulation (H_1413 🧱). $0 CPU · 3 seeds · p7 · p8 · a_break_the_wall · c16
+================================================================================
+  seed 4700: cb=0.622222 bg=0.704444 best=0.704444 seq=0.711111 shuf=0.7 oracle=0.951111 ablate=0.704444 | conflict=0.575556 [onlyCB=0.246667 onlyBG=0.328889 both=0.375556 neither=0.0488889] gw0=0.5
+  seed 4701: cb=0.646667 bg=0.704444 best=0.704444 seq=0.697778 shuf=0.668889 oracle=0.94 ablate=0.704444 | conflict=0.528889 [onlyCB=0.235556 onlyBG=0.293333 both=0.411111 neither=0.06] gw0=0.5
+  seed 4702: cb=0.644444 bg=0.7 best=0.7 seq=0.695556 shuf=0.688889 oracle=0.946667 ablate=0.7 | conflict=0.548889 [onlyCB=0.246667 onlyBG=0.302222 both=0.397778 neither=0.0533333] gw0=0.5
+--------------------------------------------------------------------------------
+MEAN (3 seeds, ENGINE-NATIVE, SEQUENTIAL PIPELINE):
+  acc_cerebellum = 0.637778
+  acc_basal      = 0.702963
+  best_single    = 0.702963
+  acc_seqcompose = 0.701481
+  acc_shuffle    = 0.685926   (compose - shuffle = 0.0155556)
+  acc_ablate     = 0.702963   (compose - ablate  = -0.00148148)
+  ORACLE         = 0.945926   (oracle - best = 0.242963)
+  conflict_rate  = 0.551111
+  decomposition  : only_cerebellum=0.242963 only_basal=0.308148 both=0.394815 neither=0.0540741
+  (LIVE gate learned go-weight gw0 = 0.5 > 0 ⇒ basal margins are the gate's OWN go-value)
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) seqcompose 0.701481 >= best+0.05 (0.752963) : FAIL
+  (B2 ORACLE)         oracle-best 0.242963 > 0.02 : PASS
+  (B3 EARNED)         seqcompose-shuffle 0.0155556 > 0.02 : FAIL
+  (ABLATION)          seqcompose-ablate -0.00148148 > 0 : FAIL
+  (SEPARABLE)         only_cerebellum>0 AND only_basal>0 : PASS
+================================================================================
+VERDICT: 🧱 THIRD-LENS TERMINAL — a frozen bar did not reproduce engine-native.
+  The cerebellum×basal wall is confirmed terminal across THREE genuinely different
+  lenses (arbitration H_1412, modulation H_1413, sequential pipeline H_1416):
+  a strong-standalone-arm pair does NOT bind engine-native. Honest 🧱 = valid (c9/c16).
+  HONEST (c9): bars FROZEN from H_1407 FREEZE.txt, NOT moved. Toy 5-family fixture, 3 seeds,
+  deterministic. cerebellum reliability = LIVE vforward_err; basal decision = LIVE vbasal_go_value
+  on the cerebellum-REFINED input. REFINE_GAIN frozen at the gate's go-value unit (1.0), no tuned
+  knob. Scale/real-corpus/engine-transfer UNVERIFIED.
