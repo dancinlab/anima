@@ -2,6 +2,30 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1386 — agent-layer routing ★ 배선 (LIVE agent-tool 런타임 실패-사이트 → CORE §SkillStore) — 🟢 GREEN (ROUTED) + ⏳ named build step
+
+**무엇 (a_verified_must_wire / a_core_engine_map — H_1378→H_1382 agent-tool↔mitosis 루프 END-TO-END close):** H_1382 가 §SkillStore 를 `CORE/engine_cli.hexa` 에 ENGINE-NATIVE 로 landed 했지만, H_1378·H_1382 카드가 공통으로 named 한 gap: `anima-agent-core/agent_tools.hexa` 는 CORE op 을 import 안 하는 별도 모듈 → live 런타임 tool-failure 가 `skill_store_teach` 를 호출 안 하고 selection 은 static affinity dot-product(:357-361) 그대로. 이 레인이 그 루프를 agent 층에서 **END-TO-END** 로 닫는다.
+
+**정직한 module-boundary 벽 (c9, 편집 전 PROBE):** `hexa parse anima-agent-core/agent_tools.hexa` → **50 parse errors** (`agent_sdk.hexa` 동일). ROOT CAUSE = legacy Python-port 파일이 string-keyed/nested map literal (`{"k": v}`, :116-123 nested)을 쓰는데 CURRENT hexa grammar 가 거부 → 전체 모듈이 컴파일 안 됨. agent_tools.hexa 에 깨끗한 `import "CORE/engine_cli.hexa"` 를 넣어도 ~795+ 줄을 legacy 문법에서 마이그레이션하지 않으면 전체 파일이 컴파일 안 된다 = 이 thin follow-on 레인 범위 밖의 build/arch 변경.
+
+**genuinely-new angle (a_break_the_wall, 벽 선언 전 시도):** CORE 를 import 하는 thin agent-side routing ADAPTER `anima-agent-core/agent_skill_routing.hexa` (CORE struct/array idiom → 컴파일됨) — executor 가 위임하는 정확한 call-path 노출: `agent_route_select`→`skill_recall` (SELECTION), `agent_route_on_result`→`skill_store_teach` (FAILURE-SITE, mitosis split p8). PLUS 실제 call-site 편집: `agent_tools.hexa` import adapter · `ToolExecutor.skills:SkillStore` (new_executor seed) · `executor_select_tool` (recall FIRST, static = abstain fallback) · `executor_execute :448-451` failure-site (former dead-end ring buffer) → `exec.skills=agent_route_on_result(...,result.success)`.
+
+**결과 🟢 GREEN (ROUTED) (agent-layer call path 위 re-score, $0 CPU, deterministic 3 runs, frozen-first c9 NO bar moved):** `agent-routing acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1`
+- **(1) ROUTED ✅** — live call path verbatim (adapter import CORE + select→recall + on_result→teach; executor failure-site → agent_route_on_result).
+- **(2) LEARNS-AT-RUNTIME ✅** — full − init = 1.0 − 0.166667 = **+0.833** ≥ +0.30 (런타임 tool-failure 가 skill-cell 을 키움).
+- **(3a) DISTINCT-FROM-STATIC ✅** — full − static = **+0.833** (STATIC=mitosis OFF, 절대 split 안 함).
+- **(3b) EARNED (shuffle) ✅** — shuf − static = **−0.167** ≤ +0.15 (derangement 으로 teach → TRUE 기준 채점 시 0.0 으로 collapse).
+- **(3c) NO-FAB / ABSTAIN ✅** — far untrained task → `agent_route_select` == "" (×2 disjoint).
+- **(Ψ) FOOTPRINT ✅** — full cells 7 > static 1.
+
+H_1382 CORE bars 를 agent 층 routing 함수로 EXACTLY 재현. p1/p2/p3/p6: route-teach 는 OUTCOME(실행된 tool 의 성공/실패)에서만 binding, 주입된 tool label/RLHF/persona 없음 — shuffle collapse 가 증명.
+
+**GUARDS (no-regression):** CORE `engine_cli_smoke` **110/0** (SkillStore 107-111 intact, skillstore acc 불변) · agent-routing smoke **5/0** deterministic 3 runs · Ψ-disjoint h1205 (additive — pure_field/decoder 미접촉, generation byte-identical) · no decode invoked (BOUND — bound 할 것 없음) · no bg waiter awaited.
+
+**DEPLETION 🏁 (routing level):** agent-tool↔mitosis 루프가 agent 층에서 END-TO-END 동작 — live 런타임 tool failure → `agent_route_on_result` → `skill_store_teach` → mitosis clonal split. **⏳ 마지막 build step (named, 안 fake):** legacy `agent_tools.hexa`+`agent_sdk.hexa` 를 string-keyed/nested map-literal 문법에서 마이그레이션해 전체 executor 모듈이 현 grammar 로 컴파일되게 — 그러면 여기서 이미 배선한 call-site delegation 이 추가 편집 없이 in-situ 컴파일. **SCOPE (c9·a_scale_honest_scope·a_toy_scale_recheck):** TOY 12-task/6-tool deterministic runtime-failure env (STRUCTURE, learned planner 아님); full=1.000 SATURATED=existence-proof; real-failures/paraphrase/multi-tool/scale UNVERIFIED.
+
+**파일:** NEW `anima-agent-core/agent_skill_routing.hexa` · `anima-agent-core/agent_skill_routing_smoke.hexa` · `UNIVERSE/cards/H_1386_agent_layer_routing.md` · `UNIVERSE/HYPOTHESES.jsonl`(H_1386 row) · `.verdicts/1386_agent_layer_routing/{FREEZE.txt,result.txt}`. EDIT `anima-agent-core/agent_tools.hexa` · `ARCHITECTURE.json` · `domains/MITOSIS-ENGINE.log.md`.
+
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1385 — 자모 COUNT-HEAD SCORELOOP ★ 배선 (검증된 H_1351 자모 count-head SCORER 를 live 채점 루프에 배선) — 🟢 GREEN ENGINE-NATIVE
 
 **무엇 (a_verified_must_wire / a_core_engine_map):** H_1351 이 검증된 자모 분해 COUNT-HEAD 를 `CORE/engine_cli.hexa § KO-JAMO COUNT-HEAD` 의 일급 faculty (`jamo_head_*`)로 promote 했지만, 그 SCORER (`jamo_head_ce`)는 live brain/decode 채점 루프에 **호출부가 없었다** (faculty-owned, not decode-reaching). 이 레인은 `jamo_head_ce` 를 named single entry 로 live 채점 경로에 배선: `CORE/generator.hexa §6.5c gen_jamo_scoreloop` 가 H_1351 frozen in-engine fixture(JAMO/RAW/SHUFFLE arms) 위에서 `jamo_head_ce` 를 CONSULT 하고, `gen_clm_ce` 가 그 채점 레코드를 `jamo_score` 키로 ADDITIVE 하게 실어 나른다 (`map_set`; .clm forward CE 경로 byte-identical). §6.5b (H_1327, EMISSION 편향)와 DISTINCT — 이건 SCORES 하는 surface.
