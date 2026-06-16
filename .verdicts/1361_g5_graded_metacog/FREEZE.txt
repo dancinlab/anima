@@ -1,0 +1,81 @@
+H_1361 — g5-graded-metacog — FROZEN FALSIFIER (pre-registered BEFORE scoring)
+=============================================================================
+Date: 2026-06-16. 3 seeds [7,8,9]. $0 CPU. numpy mirror = DIRECTIONAL. p7.
+frozen-first, NO tune-to-green (c9). Live CORE/*.hexa UNTOUCHED (mirror only).
+
+CONTEXT (the open question H_1304 left)
+-----------------------------------------------------------------------------
+H_1304 closed the FIRE side: the live G5 copy-or-abstain gate is structurally
+FAIL-SAFE — the wrong-fire class is EMPTY (fab=0.000 at every shift level), so
+type-2 AUROC over correct-vs-WRONG *fires* is UNDEFINED. The gate is binary on
+the fire side (fire-exact or abstain). 🟢 fail-safe-robust, but BINARY.
+
+But that closure leaves a DIFFERENT, well-posed question untested: on the
+ABSTAIN side, the recall MARGIN (how far recon-err sits ABOVE recall_thr) is a
+CONTINUOUS quantity that EXISTS for every abstain event. Does that margin carry
+GRADED meta-confidence — does it RANK recoverable abstains (a corrupted version
+of an actually-in-store key, the answer IS retrievable) ABOVE unrecoverable ones
+(a genuinely-absent fact, nothing to retrieve)? And does that ranking SURVIVE OOD
+(byte-corruption shift)? If yes -> graded metacognition beyond binary fail-safe
+(a G5 upgrade worth engine-wiring). If flat -> honest confirm (H_1204 prediction)
+that metacog on this gate is structurally BINARY (c9, valid closure).
+
+MECHANISM (byte-exact mirror of CORE/engine_cli.hexa, reused from H_1304)
+-----------------------------------------------------------------------------
+- embed_key: byte-trigram (n=3) FNV-1a -> dim=64 buckets, L2-normalize (VERBATIM).
+- store: bind N_FACTS facts as cells; recon_err(q) = 1 - cos(q, nearest cell key)
+  in L2-normalized space; recall: err <= recall_thr (0.15, frozen) -> FIRE else ABSTAIN.
+- MARGIN = recon_err - recall_thr  (>0 on every abstain; SMALLER = "nearer", the
+  graded meta-confidence that the answer is recoverable). The type-2 signal is the
+  NEGATED margin (-margin): higher confidence-of-recoverability = smaller margin.
+
+ABSTAIN SPLIT (the two classes the margin must rank)
+-----------------------------------------------------------------------------
+For each shift level L, draw two disjoint abstain populations:
+  (a) RECOVERABLE  = corrupt an IN-STORE key by frac L (mutate within alphabet).
+      The true answer IS in the store; only abstains (err>thr) are counted.
+  (b) UNRECOVERABLE = a genuinely-absent key (random token NOT in store), corrupted
+      by the SAME frac L. No stored answer exists. Only abstains are counted.
+  Label = 1 for recoverable, 0 for unrecoverable. Score = -margin (= -(err-thr)).
+  type-2 AUROC = AUROC(score, label) over the POOLED abstain events at level L.
+
+SHIFT LADDER (reused from H_1304): L in {0.00,0.10,0.20,0.30,0.40}. At L=0 the
+recoverable side mostly FIRES (not abstain), so the abstain-ranking question is
+genuinely an OOD question — it only has support at L>=0.10 where recoverables
+start abstaining. Bars target L>=0.20 (the H_1304 robustness anchor).
+
+FROZEN BARS (pre-registered; pooled over 3 seeds)
+-----------------------------------------------------------------------------
+R1 GRADED-SENS (the decisive bar):
+    type-2 AUROC of -margin ranking recoverable-vs-unrecoverable abstains
+    >= 0.65 at shift L>=0.20 (i.e. AUROC(0.20) >= 0.65; report whole ladder).
+    PASS => graded OOD metacognition EXISTS on the abstain side (G5 upgrade).
+    FAIL => margin does NOT rank recoverable above unrecoverable OOD; the gate's
+            metacog is BINARY-fail-safe-only (honest confirm of H_1204, c9).
+
+R2 EARNED (negative control, must break the structure):
+    SHUFFLE-MARGIN: permute the margin values across the pooled abstain events at
+    L=0.20 -> type-2 AUROC must collapse to <= 0.58 (|AUROC_shuf - 0.50| small).
+    If the shuffled control SURVIVES (>0.58), R1's signal is an artifact -> RED.
+
+R3 vs H_1204 (the explicit ruling, scored regardless of R1):
+    Report whether a graded readout EXISTS (R1 pass, AUROC>=0.65 OOD) or is FLAT
+    (R1 fail, AUROC ~0.5 OOD) on this gate. A FLAT result HONESTLY CONFIRMS H_1204
+    (metacog structurally binary on the live gate) — a valid closure (c9), NOT red.
+
+VERDICT MAP
+-----------------------------------------------------------------------------
+  GRADED-METACOG (green) iff R1 pass (AUROC(>=0.20) >= 0.65) AND R2 pass (shuffle
+      collapses <= 0.58). => graded OOD metacognition real on the abstain margin;
+      G5 upgrade beyond binary fail-safe; engine-wiring follow-on worth it.
+  BINARY-CONFIRMED (orange, honest, c9) iff R1 fail (AUROC ~0.5 OOD) AND R2 pass.
+      => the margin does NOT carry recoverable-vs-absent rank OOD; metacog on this
+      gate is structurally binary (fail-safe only), confirming H_1204. Valid closure.
+  RED iff R2 fails (shuffle control survives) — R1's signal would be an artifact.
+
+a_break_the_wall: the abstain MARGIN is a NEW angle H_1304 (fire-side) and H_1217
+(decoder softmax) never measured. frozen-first; NO bar moved post-hoc; a flat
+result is an honest valid closure (c9, NO tune-to-green).
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY synthetic facts, byte-level
+shift as OOD proxy, numpy mirror = DIRECTIONAL (engine-transfer UNVERIFIED). 3 seeds.

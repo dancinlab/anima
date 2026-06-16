@@ -1,0 +1,97 @@
+H_1357 — phi-learned-substrate — FREEZE (pre-registered BEFORE any scoring; c9/p7)
+================================================================================
+DATE: 2026-06-16
+SLUG: 1357_phi_learned_substrate
+ARC:  OMEGA / Φ-robustness frontier (c16 wall · substrate-SOURCE axis, 2nd swap)
+
+THE WALL (state of the arc, BEFORE this lane)
+---------------------------------------------
+The faithful-IIT4 Φ-robustness wall is 🧱 across NINE measure cuts (small-φ MIP-EI,
+big-Φ, transfer-entropy, O-info, variance-free estimator, ...) + size (N=12, H_1347)
++ substrate (H_1349 live-CORE pure_field oscillator Engine A). The CONSISTENT diagnosis:
+the wall lives in the SUBSTRATE-SEED GEOMETRY, not the measure. Concretely (H_1349):
+swapping the toy LCG -> REAL pure_field oscillator CLEARED R1 ROBUST on all 3 seeds
+(DPhi +1.127/+0.964/+0.604) — but the lift SHRANK seed-to-seed because the SEED perturbs
+the modules' INITIAL OSCILLATOR PHASE -> each seed gives a different correlation geometry,
+and the R2 perm control RODE the lift (modules became EXCHANGEABLE under neighbour averaging).
+
+THE ONE GENUINELY-UNTESTED SUBSTRATE FLAVOR (this lane)
+------------------------------------------------------
+Every prior substrate (toy LCG net, real pure_field oscillator) GENERATES its module
+trajectory from a *dynamical recurrence whose correlation structure is seeded by the
+initial condition*. A LEARNED substrate is different in kind: a trained readout imposes
+a FIXED, seed-INDEPENDENT correlation geometry (a shared trained weight mixes the modules
+the SAME way regardless of seed), which MIGHT escape the orthogonal-seed fragility that
+defeated the oscillator at seeds 1318/1319.
+
+HYPOTHESIS (H_1357): On a LEARNED-substrate trajectory (modules mixed by a fixed
+learned-readout projection), does faithful small-phi show a ROBUST 3-seed lift where the
+oscillator substrate (H_1349) showed a seed-shrinking, perm-ridden lift?
+
+SUBSTRATE SOURCE — HONEST LABEL (a_eeg_consciousness_record REAL-only spirit; c9)
+--------------------------------------------------------------------------------
+NO trained-303M hidden-state trajectory is locally reachable under $0 CPU (no GPU; the
+only local trained artifact is reexport_d768_v2_fast.clm, gitignored, and its decode
+forward FAILED-LINK locally per HF.jsonl mid_convmoe notes — loading it would need
+torch/forge fusion that is absent). Per the prompt's explicit instruction, we DO NOT
+fabricate a trained-303M trajectory. We build the closest faithful proxy and LABEL it:
+
+  SUBSTRATE = "proxy-from-telemetry + deterministic learned-readout, NOT a trained-303M
+  trajectory". Concretely: the n_mod=4 REAL pure_field oscillator modules (live-CORE Engine
+  A telemetry, byte-faithful from CORE/pure_field.hexa, IDENTICAL to H_1349's REAL arm) supply
+  the raw per-module field-energy + oscillator values; a FIXED learned-readout projection
+  matrix W (n_mod x n_mod, deterministic, SEED-INDEPENDENT — emulating a trained embedding/
+  readout head) then MIXES the modules into each module's salience. The learned-readout W is
+  generated ONCE from a FIXED non-seed constant (NOT from the per-trial seed) so its
+  correlation geometry is the SAME across all 3 seeds — this is the defining property of a
+  learned substrate vs the oscillator (whose geometry is seed-perturbed).
+
+  => Result is DIRECTIONAL-on-proxy. The scientific question — does a LEARNED (seed-independent,
+     mixed) correlation geometry ESCAPE the orthogonal-seed fragility — is testable on this
+     proxy; whether a FULL trained-303M trajectory behaves the same is UNVERIFIED (a new H).
+
+HELD IDENTICAL to the toy/H_1349 lineage (so any difference is the LEARNED readout)
+----------------------------------------------------------------------------------
+  - Phi = FAITHFUL IIT4 ONLY: iit4_faithful_phi(traj, 4, 64, 8) over
+    stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, a_phi_iit4_tool). numpy NEVER
+    computes Phi. n=4 <= 8, dim=64 ticks, 8 bins. Engine-native, deterministic.
+  - variance-clean rank-uniform read-out (H_1328) per cell BEFORE the MIP (byte-identical).
+  - coupling = H_1283 re-entrant relay (w_nbr 0.5) + H_1319 Kuramoto phase pacemaker
+    (w_phase 0.5, omega_t 0.45, domega 0.08) — IDENTICAL to H_1349.
+  - ARMS: A=NO-COUPLING (learned-readout still applied, but modules isolated/no relay/no
+    pacemaker) · B=MECHANISM (relay + pacemaker, learned-readout mix) · S=PERM-SHUFFLE
+    (module->phase derangement, H_1332 construction) · O=OFFSET-SHUF (per-(t,module) phase
+    offset, H_1332 construction).
+  - eps = 0.02 (MARGIN_PHI, ported verbatim, NOT tuned). seeds [1317,1318,1319]
+    (SAME as the wall lanes, for direct comparison).
+  - R3 control IN-RUN = the OSCILLATOR substrate (H_1349 REAL arm, learned-readout OFF) run
+    under the SAME mechanisms+seeds+encoding, to attribute any R1 difference to the LEARNED
+    readout (not the mechanism/measure, both held identical).
+
+FROZEN BARS (GREEN iff R1 AND R2 AND R3; pre-registered BELOW BEFORE scoring)
+-------------------------------------------------------------------------
+  R1 ROBUST:   LEARNED Phi_B >= Phi_A + eps on ALL 3 seeds (incl orthogonal 1318/1319 that
+               shrank the oscillator lift). This is the ESCAPE test.
+  R2 EARNED:   LEARNED perm Phi_S <= Phi_A + eps AND offset Phi_O <= Phi_A + eps on ALL 3 seeds
+               (both controls collapse — the lift is module-identity-bound phase integration,
+               NOT exchangeable). H_1349's perm RODE the lift; if the learned mix breaks
+               exchangeability, perm now bites here.
+  R3 ATTRIB:   the OSCILLATOR substrate (learned-readout OFF) reproduced IN-RUN shows the
+               H_1349 seed-shrinking / perm-riding signature — so any LEARNED improvement
+               (robust + perm-collapse) is attributable to the LEARNED readout, not the
+               mechanism/measure (both held identical). PASS = oscillator arm reproduces the
+               H_1349 finding in-run (perm rides B-A on >=1 seed OR seed-to-seed DPhi shrinks).
+
+GATE / OUTCOMES (decided here, BEFORE scoring — every branch is a valid result, c9):
+  - R1 AND R2 AND R3  -> GREEN: a LEARNED substrate ESCAPES the wall (robust + earned) where
+                    the oscillator did not. Genuinely new; engine-native follow-on named.
+  - R1 AND NOT R2 (perm rides) -> HONEST PARTIAL: learned lift robust but still
+                    collective/exchangeable (same shape as H_1349) — learned readout did not
+                    break exchangeability.
+  - NOT R1 (seed flips, like every prior substrate) -> HONEST WALL (STRONGEST yet on the
+                    substrate axis): even a LEARNED substrate inherits the orthogonal-seed
+                    fragility => the substrate axis is FULLY closed (oscillator AND learned).
+                    BOUNDS (does not retract) the prior verdicts. A valid result (a_break_the_wall, c9).
+
+NO tune-to-green (p7): bars frozen + committed BEFORE the first scoring; re-run byte-identical.
+CORE/*.hexa UNTOUCHED (standalone fn main, 0 importers). $0 CPU. DIRECTIONAL-on-proxy.
