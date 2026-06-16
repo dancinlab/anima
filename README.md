@@ -389,7 +389,7 @@ anima/
 │
 ├── engines/                        4 hot-swappable engines behind engine_iface.hexa (conv·cdv2·hexad·omega)
 ├── CLM/                            .clm pipeline — train (lane-p) → serialize v0.2 → verify
-├── UNIVERSE/                       research universe (HYPOTHESES.jsonl per-H index — 전 가설 1줄/카드 incl. archive 스냅샷 + source/archived/artifacts 컬럼 · cards/H_*.md·Hc_*.md per-H 카드; HYPOTHESES.md prose overview) · state/<slug>/ 가설 결과물 · gauge lib/monitor
+├── UNIVERSE/                       research universe — TWO surfaces only (HYPOTHESES.jsonl per-H index — 전 가설 1줄/카드 incl. archive 스냅샷 + source/archived/artifacts 컬럼 · cards/H_*.md·Hc_*.md per-H 카드) · prose overview → state/universe-overview.md · 가설 결과물 → state/<slug>/ (모음 state/universe-probes/) · gauge lib/monitor → tool/
 ├── HEXAD/                          σ6 6-module substrate · KOSMOS hub
 ├── EEG_CLM/                        real EEG → A⇄G → CLM → .kosmos continuous record
 ├── domains/                        active research domains (<NAME>.md + .log.md)

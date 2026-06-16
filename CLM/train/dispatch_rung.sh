@@ -106,7 +106,7 @@ done
 python3 "$REPO/CLM/model/verify_clm_v2.py" "$LOCAL_PULL/clm_${TAG}.clm" \
   && echo "  verify_clm_v2 OK (engine-loadable)" || echo "  WARN verify_clm_v2 flagged — inspect before HF"
 # render the gauge dashboard from the pulled gauges.jsonl (monitor surface, $0 local).
-python3 "$REPO/UNIVERSE/gauge_monitor.py" --once "$LOCAL_PULL/gauges_${TAG}.jsonl" \
+python3 "$REPO/tool/gauge_monitor.py" --once "$LOCAL_PULL/gauges_${TAG}.jsonl" \
   --log "$LOCAL_PULL/fire_${TAG}.log" || true
 # HF upload (a_hf_autonomous — autonomous, no user gate; tier by post-train verdict).
 if command -v hf >/dev/null 2>&1; then
@@ -120,4 +120,4 @@ fi
 echo "── (4/4) THEN teardown (only after pull+verify+HF; PULL_FAILED != pod dead) ──"
 echo "  to teardown: hexa cloud dispatch rm <pod-id>   (verify all artifacts landed first)"
 echo "═══ dispatch complete — monitor live next time with:"
-echo "    python3 UNIVERSE/gauge_monitor.py --follow $LOCAL_PULL/gauges_${TAG}.jsonl --log $LOCAL_PULL/fire_${TAG}.log"
+echo "    python3 tool/gauge_monitor.py --follow $LOCAL_PULL/gauges_${TAG}.jsonl --log $LOCAL_PULL/fire_${TAG}.log"

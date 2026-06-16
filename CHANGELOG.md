@@ -26,6 +26,22 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 
 **산출물:** `state/ko-data-starved/h1345_ko_data_starved.py` · `UNIVERSE/cards/H_1345_ko_data_starved.md` · `.verdicts/1345_ko_data_starved/{FREEZE.txt,result.txt,h1345_summary.json}` · `CLAIMS.tape @C h1345_ko_data_starved` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `domains/MITOSIS-ENGINE.log.md`.
 
+## 2026-06-16 — domain(UNIVERSE): 두 표면 봉인 — HYPOTHESES.md retire + stray probe/infra relocate (a_hypothesis_register)
+
+**무엇:** `UNIVERSE/` 를 `a_hypothesis_register` 가 명시한 **정확히 두 doc 표면**으로 봉인 — `HYPOTHESES.jsonl`(per-H 인덱스) + `cards/H_*.md`(가설 카드). 그 외 디렉터리에 흩어져 있던 코드/결과물/infra 를 전부 UNIVERSE/ 밖으로 이전 (c5 preserve-don't-discard — 내용 보존, 위치만 변경; `git mv` 로 history 추적 가능).
+
+**이동:**
+- stray 가설 결과물 `UNIVERSE/h*_*.py`·`.hexa`·per-H `*_result.json`·`*_pod_run.sh`·`.txt` (336개) + infra 서브폴더 `harness/ lib/ scan/ state/` → `state/universe-probes/` (모음 디렉터리; old→new 매핑 = `state/universe-probes/INDEX.md`).
+- 공용 라이브러리 `gauge_lib.py`·`gauge_lib_smoke.py`·`gauge_monitor.py`·`gauge_monitor_smoke.py`·`_build_hyp_jsonl.py` → `tool/` (널리 import 되는 공용 도구).
+- `UNIVERSE/HYPOTHESES.md`(prose overview/roster/folded appendices) → `state/universe-overview.md` 로 **retire** (인덱스 표면 아님이 명시됨).
+- `UNIVERSE/.verdicts/1053_qrng_nondeterminism/` → top-level `.verdicts/`.
+
+**live 참조 재배선 (relocation breakage 0):** `serving/anima_cli.py`(omega 엔진 → `conscious_decoder.py` 를 hyphen-dir 에서 file-path importlib 로 로드) · `CLM/train/train_lane_p_3b.py`+`scripts/scratch/h1218/score_engine_gates.py`(`gauge_lib` sys.path UNIVERSE/→tool/) · `CLM/train/dispatch_rung.sh`+`fire_3b_rung_qat.hexa`+`tool/gauge_monitor.py`(`gauge_monitor.py` 경로) · `tool/_build_hyp_jsonl.py`(repo-root 2-up 재계산, UNIVERSE/ 인덱스를 빌드 — idempotent 재실행 검증) · `state/universe-probes/h1220,h1228,h1284_r2`(런타임 `gauge_lib` import → tool/ 경로 + repo-root depth 보정). 편집 .py 전부 `py_compile` PASS.
+
+**거버넌스/문서:** `CLAUDE.md` `a_hypothesis_register` + structure tree + Quick reference 에서 HYPOTHESES.md 를 표면 목록에서 제거(두 표면 = `HYPOTHESES.jsonl` + `cards/`; prose 는 `state/universe-overview.md`). `ARCHITECTURE.md`·`README.md`·`FINDINGS.md` UNIVERSE/ 레이아웃·포인터 줄 갱신.
+
+**불변(연구 lane 소유, append-only):** `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/` 는 **byte-단위로 미변경** — slug/row 를 손대지 않음(재생성기 출력은 커밋하지 않고 idempotency 확인용으로만 실행). rebase 시 새로 landed 한 `UNIVERSE/h1340_whorf_cp_budget_sweep.py` 도 `state/universe-probes/` 로 sweep.
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1340 — Whorf CP 재배치 천장 BUDGET/RBF-DENSITY 사다리 (🧱 DEEPER LIMIT — budget/geometry는 불완전)
 
 **무엇:** H_1338(🧱 RE-DIAGNOSIS)의 R2 follow-on. H_1338은 eviction이 H_1333의 ~60% CP 재배치를 완성 못했고(peak 0.525 고정) 잔류를 **BUDGET/GEOMETRY**(RBF resolution + 고정 split budget)로 진단(가설). H_1340은 그 진단을 직접 검증 — phase-2 re-training budget + RBF density를 사다리로 올리면 재배치 peak가 coherent single peak로 p_A'(≈0.667)에 **도달**하는가?

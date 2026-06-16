@@ -18,7 +18,7 @@ So the *evaluators* are frozen-verbatim; the *decode* is greedy (deterministic,
 engine-parity) NOT the sampled gauge decode. Reported honestly.
 """
 import argparse, json, sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "UNIVERSE"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "tool"))
 import gauge_lib as G
 
 def score(rows, corpus_paths, kwr_floor=0.50, jaccard_distinct=0.25):

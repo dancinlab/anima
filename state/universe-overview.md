@@ -1,27 +1,31 @@
-# UNIVERSE/HYPOTHESES.md — hypothesis prose overview (roster + folded appendices)
+# UNIVERSE hypothesis prose overview — roster + folded appendices (relocated from UNIVERSE/HYPOTHESES.md)
 
+> **RELOCATED 2026-06-16:** `UNIVERSE/HYPOTHESES.md` 는 retire 되었고 그 prose
+> overview 가 이 파일(`state/universe-overview.md`)로 이전되었다. 목적: UNIVERSE/ 를
+> `a_hypothesis_register` 의 **정확히 두 표면**(`HYPOTHESES.jsonl` + `cards/`)으로
+> 봉인하기 위함. 이 파일은 인간용 prose 개요/folded appendices 일 뿐 **관리 표면이
+> 아니다** — per-H 인덱스는 `UNIVERSE/HYPOTHESES.jsonl`, 가설 SSOT 는 카드.
+>
 > **Per-H index SSOT = `UNIVERSE/HYPOTHESES.jsonl` (#2245 · index→JSONL migration
-> 2026-06-16):** the per-hypothesis INDEX is now a JSONL — exactly ONE JSON object
+> 2026-06-16):** the per-hypothesis INDEX is a JSONL — exactly ONE JSON object
 > per landed card (`{id, slug, tier, title, card, verdict}`, one per line, ordered by
-> id). This `.md` is DEMOTED to a thin human overview + the folded prose appendices;
-> it is NO LONGER a per-H index surface. **Append a new hypothesis as ONE jsonl line,
-> never a table row here.**
+> id). **Append a new hypothesis as ONE jsonl line, never a table row here.**
 >
 > **Two doc surfaces per `a_hypothesis_register`:**
 > (1) `UNIVERSE/HYPOTHESES.jsonl` = the per-H index (one JSON object / landed card), and
 > (2) `UNIVERSE/cards/H_<id>_<slug>.md` = 가설별 SSOT 카드 (cards/ 서브폴더).
 > `.verdicts/<slug>/` 는 카드가 가리키는 verbatim verdict (증거일 뿐, 관리 표면 아님).
-> **themed bucket file 금지** — 가설 디테일은 카드에 산다. The HYPOTHESES.md prose
+> **themed bucket file 금지** — 가설 디테일은 카드에 산다. The prose
 > overview/appendices below are NOT a per-H index surface.
 >
-> Regenerate the JSONL with `python3 UNIVERSE/_build_hyp_jsonl.py` (rebuilds from the
+> Regenerate the JSONL with `python3 tool/_build_hyp_jsonl.py` (rebuilds from the
 > cards + any legacy md rows still in git history).
 >
 > 2026-06-16 SSOT-refactor (prior): UNIVERSE/ 의 다른 모든 `.md`
 > 문서(candidate/reference/overview/log)는 이 파일의 아래 섹션으로 접혀 들어왔고 원본은
 > retire 되었다 (c5 preserve-don't-discard — 내용 보존, 원본 삭제). 코드(`.py`/`.hexa`/
-> `.json`/`.sh`/`.txt`/`.state`/`.scan` + `harness/ lib/ scan/ state/`)는 문서가 아니므로
-> 위치 변경 없음.
+> `.json`/`.sh`/`.txt`) 와 infra 서브폴더(`harness/ lib/ scan/ state/`)는 2026-06-16
+> 후속 정리에서 UNIVERSE/ 밖 `state/universe-probes/`(+ 공용 lib 는 `tool/`)로 이전됨.
 >
 > The roster table below indexes FORWARD backlogs + campaign maps (candidate lists not
 > yet landed as cards); the LANDED per-H index lives in `HYPOTHESES.jsonl`.
@@ -39,7 +43,7 @@
 > Tiers read VERBATIM from each terminal `.verdicts/<slug>/` file (c2/c9 — 🧱 walls are
 > closed-negatives, not upgraded). One line per H; detail in the linked card.
 
-> **Per-H index moved to `UNIVERSE/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 UNIVERSE/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
+> **Per-H index moved to `UNIVERSE/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 tool/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
 
 
 > Note: H_1286 was not assigned in this ladder (numbering gap, no verdict dir).
@@ -59,7 +63,7 @@
 > (`H_6019_anima_cloning.txt` → card H_6021, `H_6020_consciousness_search.txt` → card H_6022); the
 > card `id:` is authoritative, not the verdict filename.
 
-> **Per-H index moved to `UNIVERSE/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 UNIVERSE/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
+> **Per-H index moved to `UNIVERSE/HYPOTHESES.jsonl`** (one JSON object per landed card — `{id, slug, tier, title, card, verdict}`, ordered by id; `a_hypothesis_register` SSOT). The per-H table that used to live here is now that JSONL; this section keeps only its prose intro. Regenerate via `python3 tool/_build_hyp_jsonl.py`. Append a new hypothesis as ONE jsonl line, never a table row here.
 
 
 > Note: H_6036 also has an engine-lift verdict `TENSION-LINK/verdicts/H_6036_hexa_lift.txt` (.hexa
