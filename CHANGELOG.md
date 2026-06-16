@@ -2,6 +2,14 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — harvest(ENGINE+CLM): deep-mouth depth-ladder (L4/L8 303M ConvMoE) 회수 완료 + pod teardown
+
+**무엇:** H_1403 follow-on 인 deep-mouth depth-isolation 사다리(conv-DEPTH 가 G6 FALS 천장에 닿나 — H_1394 L1 단일 trunk-layer FALS=0 대비)의 GPU 학습이 완주(LADDER_ALL_DONE 2026-06-16T17:19Z)했고, 전 산출물을 회수·sha256 byte-identical 검증 후 runpod pod(kcuz5s3ebgh1w7 anima-g6-deep-1399, H100-NVL $2.59/hr)를 teardown. SSH 일회용 키(/tmp/g6_sshkey)로 회수, 키는 사용 후 폐기.
+
+**산출물 (a_fire_recover_complete · a_hf_registry):** L4(d3784/4층, 302.701M, eval_ce 1.37688) + L8(d3020/8층, 302.613M, eval_ce 1.36468) 각 .clm(148M)+.pt(1.2G), 4/4 sha byte-identical. ckpt = gitignored HF-only + HF.jsonl 2행(pending_upload, PRIVATE 연구중간물). json+log+manifest = git-tracked (state/g6-deep-mouth-ladder/). 깊이는 next-byte CE 를 거의 안 움직임(L8 1.365 ≈ L4 1.377 ≈ L1).
+
+**NEXT (과학 페이오프):** 각 .clm 을 H_1403 스트리밍 디코드로 decode + H_1392/H_1403 FROZEN G6 FALS detector VERBATIM 재실행 → conv-DEPTH(L4/L8)가 L1 H_1394 의 FALS=0 을 올리나? (a_toy_scale_recheck · a_verified_must_wire). xref H_1403 · H_1394 · H_1392 · H_1362 · a_fire_recover_complete · a_hf_registry · a_break_the_wall.
+
 ## 2026-06-17 — domain(MITOSIS-ENGINE): H_1407 — brain-lane COMPOSE pair #4 (CEREBELLUM × BASAL-GANGLIA): 🟢 COMPOSE-LIFT (capability) · 🟢 INTEGRATION-RAISES-Φ (faithful IIT4 Φ, frozen n_bins=16, binning-INVARIANT) — the program LAW CONFIRMED-but-REFINED
 
 **무엇:** brain-lane-composition program PAIR #4, the SHARPEST test of the emerging LAW (H_1404 affect×ethics 둘다-low-Φ ⇒ Φ-composes 🟢 vs H_1405 memory×ToM ToM-HIGH-Φ-dominates ⇒ no-Φ-compose 🧱). **PAIR:** CEREBELLUM(H_1280 VForwardField — next-substrate-state 예측, error=actual−predicted, delta-rule correction) × BASAL-GANGLIA(H_1281 VBasalGate — K candidate 경쟁, learned go-value vs one NO-GO, argmax=striatal disinhibition, grounding-outcome reward). 둘 다 LOW-Φ CONTROL faculty → law 가 Φ-compose 를 PREDICT; frozen-first 로 MEASURE(assume 금지). methodology H_1401(capability) + H_1404/H_1405(Φ) 에서 VERBATIM port. DIRECTIONAL numpy mirror, LIVE CORE/*.hexa UNTOUCHED, $0 CPU, 3 seeds [4700,4701,4702], deterministic run1==run2.
