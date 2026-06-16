@@ -898,6 +898,76 @@ fn main() {
     if _assert_b("case_85_cp_regrow_coherent", true,
                  cp_peak_count(cpc_A2) <= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── cases 86-91 : BILINGUAL TAGGED CP (H_1339 R3) — a language-TAG dimension lets ONE
+    //   grow-not-evict store hold BOTH languages' CP (coexistence), overturning the H_1330
+    //   single-shared-store OVERWRITE as mechanism-specific. Re-scores the frozen I1/I2/I3'
+    //   bars engine-native on the SAME error-targeted SPLIT growth, TAG_GAIN=1.0 FIXED. The
+    //   tag is the substrate-level 'select the faculty' — mirrors anima's separate EN+KO
+    //   faculties. Ψ-disjoint (own protos/labels + tag block; pure_field/Ψ untouched).
+    let cp_TAG_GAIN = 1.0
+    let cp_TAG_DIM = 2
+    // tagged stimuli: A-channel keys (tag on coord +0) and B-channel keys (tag on coord +1).
+    let cp_XA = cp_stimuli_tagged(cp_N, cp_DIM, 0, cp_TAG_GAIN, cp_TAG_DIM)
+    let cp_XB = cp_stimuli_tagged(cp_N, cp_DIM, 1, cp_TAG_GAIN, cp_TAG_DIM)
+    let cp_YA = cp_labels_boundary(cp_pos, cp_PA)
+    let cp_YB = cp_labels_boundary(cp_pos, cp_PB)
+    let cp_Ysh = cp_labels_shuffle(cp_pos, 4323)
+    // (1) TAGGED arm: A-fit on tagged-A keys, THEN B-fit on tagged-B keys (grow-not-evict).
+    //   Read CP@p_A via tag_A keys, @p_B via tag_B keys.
+    let cp_tagged_A = cp_fit(cp_XA, cp_YA, 24, 24)
+    let cp_tagged_AB = cp_fit_more(cp_tagged_A, cp_XB, cp_YB, 24, 24)
+    let cp_curveA = cp_discrim_curve(cp_tagged_AB, cp_XA)   // read p_A via tag_A
+    let cp_curveB = cp_discrim_curve(cp_tagged_AB, cp_XB)   // read p_B via tag_B
+    let cp_mA = cp_within_cross_margin(cp_curveA, cp_N, cp_PA)
+    let cp_mB = cp_within_cross_margin(cp_curveB, cp_N, cp_PB)
+    // (2) SINGLE-CHANNEL control (untagged = H_1330): A-fit then B-fit on the SHARED key.
+    let cp_sc_A = cp_fit(cp_X, cp_YA, 24, 24)
+    let cp_sc_AB = cp_fit_more(cp_sc_A, cp_X, cp_YB, 24, 24)
+    let cp_curve_sc = cp_discrim_curve(cp_sc_AB, cp_X)
+    let cp_m_sc_A = cp_within_cross_margin(cp_curve_sc, cp_N, cp_PA)
+    // (3) B=A control: TAGGED A->A (B re-learns A's boundary with tag_B). Localized: no peak@p_B.
+    let cp_aa_A = cp_fit(cp_XA, cp_YA, 24, 24)
+    let cp_aa_AB = cp_fit_more(cp_aa_A, cp_XB, cp_YA, 24, 24)
+    let cp_curve_aa = cp_discrim_curve(cp_aa_AB, cp_XB)
+    // (4) SHUFFLE: TAGGED A->B with B labels shuffled. Tagged-B channel must not fabricate a CP@p_B.
+    let cp_sh_A = cp_fit(cp_XA, cp_YA, 24, 24)
+    let cp_sh_AB = cp_fit_more(cp_sh_A, cp_XB, cp_Ysh, 24, 24)
+    let cp_curve_sh = cp_discrim_curve(cp_sh_AB, cp_XB)
+
+    // case 86 (I1a COEXISTENCE @ p_A) : the TAGGED arm holds CP at p_A (read via tag_A) —
+    //   cross-within margin >= the H_1323 bar 0.15 (A's cognition survives the 2nd language).
+    if _assert_b("case_86_cp_tagged_coexist_pA", true,
+                 cp_mA >= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 87 (I1b COEXISTENCE @ p_B) : the TAGGED arm ALSO holds CP at p_B (read via tag_B) —
+    //   margin >= 0.15 AND a coherent peak sits near p_B (B's cognition coexists with A's).
+    if _assert_b("case_87_cp_tagged_coexist_pB", true,
+                 cp_mB >= 0.15 && cp_coherent_peak_near(cp_curveB, cp_N, cp_PB)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 88 (I2 TAG-ATTRIBUTION) : the SINGLE-CHANNEL (untagged) control REPRODUCES the H_1330
+    //   OVERWRITE — A's CP@p_A COLLAPSES below 0.15. Removing the tag brings the overwrite back =
+    //   coexistence is attributable to the TAG, not extra training (load-bearing discriminator).
+    if _assert_b("case_88_cp_untagged_overwrite", false,
+                 cp_m_sc_A >= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 89 (I3'a B=A LOCALIZED) : the B=A control fabricates NO coherent CP at the OTHER
+    //   boundary p_B (the re-frozen H_1339 I3a — localized, NOT the r2 global count which a benign
+    //   discretization wiggle tripped). A tagged second fit on A's boundary adds no spurious CP@p_B.
+    if _assert_b("case_89_cp_ba_no_spurious_cp_at_pB", false,
+                 cp_coherent_peak_near(cp_curve_aa, cp_N, cp_PB)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 90 (I3'b SHUFFLE) : the SHUFFLE arm's tagged-B channel does NOT manufacture a coherent
+    //   CP — an INCOHERENT multi-peak scatter (peak-count >= 3), the anti-Goodhart earned control.
+    if _assert_b("case_90_cp_shuffle_incoherent", true,
+                 cp_peak_count(cp_curve_sh) >= 3) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 91 (TAG SEPARATION) : the tag actually separates the channels — key_A and key_B for the
+    //   SAME stimulus differ by sqrt(2)*TAG_GAIN. Sanity that the coexistence is the tag geometry
+    //   (the untagged keys would be IDENTICAL → the overwrite of case 88). Distance ~1.4142.
+    let cp_sep_d = _l2(cp_XA[0], cp_XB[0])
+    if _assert_b("case_91_cp_tag_separation", true,
+                 cp_sep_d > 1.41 && cp_sep_d < 1.42) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
