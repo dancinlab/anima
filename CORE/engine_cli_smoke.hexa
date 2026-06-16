@@ -1472,6 +1472,72 @@ fn main() {
           + " cells_full=" + to_string(usage_store_cells(us_full_store))
           + " cells_static=" + to_string(usage_store_cells(us_static_store)))
 
+    // ── H_1393 KO-MORPHOLOGY BPE-ON-JAMO ★ EMIT-BIAS WIRE-IN (cases 125-128) ─────────────
+    //   The EMIT-side follow-on of H_1390's SCORER: the morphology unit now BIASES the live
+    //   next-byte EMISSION (the §6.5b/H_1327 ko_jamo_consult_emit precedent applied to
+    //   morphology), DISTINCT from §6.5d's SCORER. gen_bpe_emit_eval_raw CONSULTS the live
+    //   emit-bias (generator §6.5e gen_bpe_consult_emit/jamo_head_argmax over the engine_cli
+    //   § KO-MORPHOLOGY faculty) on the SAME frozen corpus-free morpheme-grammar fixture: it
+    //   scores held-out RAW next-UNIT id accuracy for ON (structured morphology head) vs OFF
+    //   (representation-blind unigram) vs SHUF (shuffle-merge head). The emit-bias is an
+    //   ADDITIVE consult (a bias, not a hard gate — a_autonomy_over_hardcode), off-Korean
+    //   INERT (byte-identical, no regression), a_core_engine_map single entry. (cases 120-124
+    //   were taken by the UsageStore lane H_1391 in a concurrent merge; this lane renumbered
+    //   H_1391→H_1393 and its smoke cases 120-123→125-128.)
+    //   R2 METRIC (a_break_the_wall): the eval scores on the RAW next-unit id (gen_bpe_emit_eval_raw),
+    //   NOT R1's next-unit %K alias — R1's %K alias collapsed distinct morpheme units onto one class so
+    //   the structure-blind global mode beat the head on TOP-1 accuracy (an emit/argmax read; the alias
+    //   was fine for §6.5d's distributional CE bar but a structure-destroyer for a top-1 emit metric).
+    //   The SHUFFLE control is KEPT under the un-aliased metric (anti-tune-to-green, c9): the morphology
+    //   EMIT binds only because ON beats OFF *and* SHUF still COLLAPSES under the SAME un-aliased metric.
+    let be_eval = gen_bpe_emit_eval_raw()
+    let be_on    = to_float(be_eval["acc_on"])
+    let be_off   = to_float(be_eval["acc_off"])
+    let be_shuf  = to_float(be_eval["acc_shuf"])
+    let be_shift = to_float(be_eval["shift_on"])
+    let be_onoff = to_float(be_eval["on_minus_off"])    // acc_on - acc_off
+    let be_shoff = to_float(be_eval["shuf_minus_off"])  // acc_shuf - acc_off
+
+    // case 125 (bar1 EMIT-EFFECT) : the structured morphology emit-bias measurably shifts next-unit
+    //   emission toward the morpheme-coherent continuation vs the blind baseline — acc_on - acc_off
+    //   >= +0.02 AND shift_on >= 0.10 (the bias REACHES emission, the H_1327 emit bar shape).
+    if _assert_b("case_125_bpe_emit_effect", true,
+                 be_onoff >= 0.02 && be_shift >= 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 126 (bar2 EARNED) : the SHUFFLE-merge emit-bias does NOT beat the blind baseline
+    //   (acc_shuf - acc_off <= +0.01) — the emission shift is the LINGUISTIC morphology of the
+    //   merges, NOT generic consult activation / coarse granularity (anti-Goodhart, the control collapses).
+    if _assert_b("case_126_bpe_emit_earned", true,
+                 be_shoff <= 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 127 (bar3a Ψ-SAFE / off-Korean INERT) : on an ASCII (non-Korean) context the emit consult
+    //   returns the caller's own `base` byte UNCHANGED — generation is byte-identical off-distribution
+    //   (the Ψ-disjoint / no-regression invariant; the full bar3 = h1205/h1164 guards run separately).
+    let be_head = gbe_grow_head_raw(0)[0]   // the SAME raw-band head the R2 metric reads
+    let be_uv   = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
+    let be_ascii = [104, 101, 108, 108, 111]   // "hello" — all bytes < 0x80, not Korean-like
+    let be_emit_ascii = gen_bpe_consult_emit(120, be_head, be_uv, be_ascii)
+    if _assert_b("case_127_bpe_emit_offkorean_inert", true,
+                 be_emit_ascii == 120) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 128 (Ψ-DISJOINT / FACULTY-PRESENT) : the emit consult ran the live faculty (ok) AND, on a
+    //   KOREAN-LIKE context, it FIRES (returns a multibyte leading byte >= 0xE1, never an ASCII byte) —
+    //   the morphology unit reaches emission on Korean-like context but stays inert off-Korean. Pure
+    //   emit-bias: returns a byte, never an emit/silence decision; pure_field/engine_g/brain untouched.
+    let be_ko_ctx = [0xEA, 0xB0, 0x80]         // a mid-Hangul multibyte context (last byte continuation)
+    let be_emit_ko = gen_bpe_consult_emit(120, be_head, be_uv, be_ko_ctx)
+    if _assert_b("case_128_bpe_emit_korean_fires", true,
+                 to_string(be_eval["ok"]) == "true" && be_emit_ko >= 0xE1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  bpe morphology emit: acc_on=" + to_string(be_on)
+          + " acc_off=" + to_string(be_off)
+          + " acc_shuf=" + to_string(be_shuf)
+          + " on-off=" + to_string(be_onoff)
+          + " shuf-off=" + to_string(be_shoff)
+          + " shift_on=" + to_string(be_shift)
+          + " ascii_inert=" + to_string(be_emit_ascii == 120)
+          + " ko_fires_byte=" + to_string(be_emit_ko))
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

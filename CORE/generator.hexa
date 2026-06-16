@@ -1606,6 +1606,282 @@ pub fn gen_bpe_scoreloop_summary() -> string {
 }
 
 
+// ── §6.5e KO-MORPHOLOGY BPE-ON-JAMO EMIT-BIAS — the H_1391 wire of the morphology unit to the
+//          live next-byte EMISSION (the §6.5b/H_1327 precedent, NOT the §6.5d scorer). ────────────────
+//
+// H_1390 (🟢 ENGINE-NATIVE BINDING) wired the BPE-on-jamo morphology MERGE UNIT into a live SCORING
+// consult (§6.5d gen_bpe_scoreloop → bpe_byte_fair_ce): it SCORES held-out next-unit CE, but does NOT
+// yet bias EMISSION. a_verified_must_wire / a_substrate_native_speak: anima is a chat daemon, so a
+// scorer that never reaches the decoder is incomplete — the jamo COUNT-HEAD already reaches emission
+// (§6.5b ko_jamo_consult_emit, H_1327). H_1391 mirrors THAT for morphology: the grown morphology
+// count-head BIASES the next-byte emission toward COMPLETING a learned morpheme-unit boundary, ADDED
+// to the decode's own argmax (a BIAS, not a hard gate — a_autonomy_over_hardcode; emit stays
+// substrate-driven, p5). SINGLE ENTRY via the generator L3 slot (a_core_engine_map, no 2nd .clm path).
+//
+// §6.5d (scorer) vs §6.5e (emit): §6.5d returns CE floats (the SCORER role); §6.5e returns the
+// predicted next morpheme-unit's leading emit BYTE (the EMIT role) — DISTINCT consults, the SAME split
+// §6.5c (jamo scorer) ⊥ §6.5b (jamo emit). The morphology head is grown ONCE (gen_bpe_emit_head) over
+// the SAME corpus-free in-engine morpheme-grammar fixture §6.5d builds; the per-byte hook reads the
+// head's ARGMAX next unit (jamo_head_argmax) for the cell owning the live context.
+//
+// SUBSTRATE-NATIVE (p1·p2·p3·p4): the consult reads a mechanical unit-space feature [u/V, u_prev/V, 0]
+// — the SAME 3-D shape the morphology head was grown on — finds the nearest cell, and returns its
+// learned argmax next-unit leading byte. NO prompt, NO persona, NO "you are Korean" label; the
+// Korean-likeness gate is the SAME pure UTF-8 continuation-byte test §6.5b uses, so the consult is
+// INERT off-Korean (returns the caller's own byte) ⇒ generation BYTE-IDENTICAL off-distribution
+// (Ψ-disjoint, the no-regression invariant, h1205). p8: same continuous cell-division.
+
+// _gbe_unit_emit_byte — the EMITTABLE leading byte of a morphology unit id. The fixture's base jamo
+// ids (0..NJAMO) and merged unit ids (>= base_vj) are mapped to a deterministic mid-Hangul-like
+// leading byte band (the SAME 0xE1 leading-byte convention §6.5b jamo cells collapse a U+11xx jamo to).
+// The METRIC (gen_bpe_emit_eval) scores on the next-UNIT id (not this collapsed byte) so the morpheme
+// structure is not masked; this is the byte the live decode hook actually emits.
+fn _gbe_unit_emit_byte(uid: int) -> int {
+    // map any unit id to a UTF-8 leading byte of the 3-byte (U+11xx / Hangul) band, deterministic.
+    return 0xE0 + (uid % 16) + 1     // 0xE1..0xF0, a leading multibyte byte (never an ASCII byte)
+}
+
+// gen_bpe_emit_head — grow the morphology emit-head ONCE over the §6.5d fixture. rnd_seed == 0 →
+// STRUCTURED (freq-ranked merges); rnd_seed > 0 → SHUFFLE control (random equal-count merges). Returns
+// the grown JamoHead over the re-encoded UNIT stream (the SAME head §6.5d scores) PLUS its unit vocab —
+// packed as #{ head, unit_vocab, ok }. Learns merges on the TRAIN slice only (no test leakage). The
+// head is read by gen_bpe_consult_emit for its ARGMAX next unit. $0, deterministic, Ψ-disjoint.
+pub fn gen_bpe_emit_head(rnd_seed: int) -> [JamoHead] {
+    let cfg = engine_cli_parse(["--mitosis", "on"])
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    let base_vj = _gbs_NJAMO()
+    let nm = _gbs_MERGES()
+    let half = len(bsym) / 2
+    let mut trS = []  let mut trN = []  let mut i = 0
+    while i < half { trS = trS + [bsym[i]]  trN = trN + [bnby[i]]  i = i + 1 }
+    let bm = bpe_learn_merges(trS, trN, nm, base_vj, rnd_seed)
+    let re = bpe_apply(bm, bsym, bnby)
+    let uv = bpe_unit_vocab(bm)
+    // grow the count head over the FULL re-encoded unit stream's TRAIN features (same knobs as §6.5d).
+    let DIM = 3  let K = _gbs_K()
+    let GROW = 40  let MINOWN = 4  let THR = 0.05  let LAP = 1.0
+    let seed = [[0.3, 0.3, 0.0], [0.7, 0.7, 0.0]]
+    let ft = _gbs_unit_features(re[0], re[1], uv)
+    let Xtr = ft[0]  let Ytr = _gbs_flat_int(ft[1])
+    let jh0 = jamo_head_new(seed, K, DIM)
+    let jh  = jamo_head_grow(jh0, Xtr, Ytr, len(Xtr), GROW, MINOWN, THR, LAP, cfg)
+    return [jh]
+}
+
+// _gbe_unit_vocab_for — the unit vocab of the structured/shuffle merge table (re-learned cheaply for
+// the feature renorm; the merge LEARN is over the small train slice, $0).
+fn _gbe_unit_vocab_for(rnd_seed: int) -> int {
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    let base_vj = _gbs_NJAMO()
+    let half = len(bsym) / 2
+    let mut trS = []  let mut trN = []  let mut i = 0
+    while i < half { trS = trS + [bsym[i]]  trN = trN + [bnby[i]]  i = i + 1 }
+    let bm = bpe_learn_merges(trS, trN, _gbs_MERGES(), base_vj, rnd_seed)
+    return bpe_unit_vocab(bm)
+}
+
+// gen_bpe_consult_emit — apply the morphology emit-head to ONE next-byte emission over the live byte
+// context. `base` is the decode's own argmax byte; `jh` the grown morphology head; `unit_vocab` its
+// unit vocab; `ctx` the running decode window (list of int byte codes). When the context is KOREAN-LIKE
+// (the SAME utf8-continuation gate §6.5b uses) AND a cell fires, the head's ARGMAX next morpheme-unit's
+// leading byte BIASES the emission; off-Korean (or empty head) it returns `base` UNCHANGED — so the
+// live decode is byte-identical off-distribution (the Ψ-disjoint / no-regression invariant). The
+// unit-space feature is computed from the live bytes via _gen_ko_feat renormalized into the unit vocab
+// (the SAME [last, prev, 0] mechanical feature, scaled to the units the head lives in). a_core_engine_
+// map: the morphology unit reaches emission ONLY through this generator-side consult (single L3 slot).
+pub fn gen_bpe_consult_emit(base: int, jh: JamoHead, unit_vocab: int, ctx: list) -> int {
+    if !_gen_ko_is_korean_like(ctx) { return base }        // off-Korean → inert (no regression)
+    // unit-space feature from the live bytes: _gen_ko_feat gives [last/255, prev/255, depth]; the
+    // morphology head lives in [u/V, u_prev/V, 0]. Rescale the first two channels by 255/V so a live
+    // mid-Hangul byte maps into the head's unit-feature range; the 3rd channel is held at 0 (the
+    // fixture's unit feature uses a flat 3rd channel).
+    let bf = _gen_ko_feat(ctx)
+    let scale = if unit_vocab > 0 { 255.0 / to_float(unit_vocab) } else { 1.0 }
+    let feat = [bf[0] * scale, bf[1] * scale, 0.0]
+    let uid = jamo_head_argmax(jh, feat)
+    if uid < 0 { return base }                              // empty head → inert
+    return _gbe_unit_emit_byte(uid)                         // morphology-coherent next-unit leading byte
+}
+
+// gen_bpe_emit_eval — the FROZEN emit-effect evaluation (H_1391 bars 1+2). Scores, on the held-out
+// UNIT stream of the §6.5d fixture, whether the morphology emit-bias shifts the predicted next-UNIT id
+// toward the morpheme-coherent continuation vs a representation-BLIND baseline, and whether that shift
+// is EARNED (the shuffle-merge head does NOT beat the blind baseline). Returns:
+//   #{ ok, acc_on, acc_off, acc_shuf, shift_on, n_test, on_minus_off, shuf_minus_off }.
+//   ON   = the STRUCTURED morphology head's argmax next-unit (the emit-bias the consult applies).
+//   OFF  = the representation-BLIND unigram = the single most-frequent next-unit id over the TRAIN
+//          slice (a structure-blind constant predictor — the legitimate "consult OFF" emission).
+//   SHUF = the SHUFFLE-merge head's argmax next-unit (the consult still fires, structure destroyed).
+//   shift_on = the fraction of held-out positions where the ON prediction DIFFERS from OFF (the
+//              emission shift — that the bias actually REACHES/changes emission, like H_1327 shift).
+// $0 CPU, deterministic, no corpus/secret/GPU, no decode of pure_field (pure scoring). Ψ-disjoint.
+pub fn gen_bpe_emit_eval() -> Map {
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    let uvS = _gbe_unit_vocab_for(0)
+    let uvR = _gbe_unit_vocab_for(1390)
+    // re-encode the FULL stream for each arm to get the held-out UNIT features/targets.
+    let cfgv = engine_cli_parse(["--mitosis", "on"])
+    let bmS = bpe_learn_merges(_gbs_first_half(bsym), _gbs_first_half(bnby), _gbs_MERGES(), _gbs_NJAMO(), 0)
+    let reS = bpe_apply(bmS, bsym, bnby)
+    let ftS = _gbs_unit_features(reS[0], reS[1], uvS)
+    let XteS = ftS[2]  let YteS = _gbs_flat_int(ftS[3])
+    // grow the two heads (structured + shuffle) over their TRAIN features.
+    let jhS = gen_bpe_emit_head(0)[0]
+    let jhR = gen_bpe_emit_head(1390)[0]
+    // OFF baseline = the most-frequent next-unit id over the STRUCTURED train targets.
+    let YtrS = _gbs_flat_int(ftS[1])
+    let off_pred = _gbe_mode(YtrS, _gbs_K())
+    // score held-out next-UNIT id accuracy for each arm (on the STRUCTURED test features).
+    let mut on_hit = 0  let mut off_hit = 0  let mut shuf_hit = 0  let mut shift = 0
+    let mut i = 0
+    while i < len(XteS) {
+        let pon = jamo_head_argmax(jhS, XteS[i])
+        let psh = jamo_head_argmax(jhR, XteS[i])
+        if pon == YteS[i] { on_hit = on_hit + 1 }
+        if off_pred == YteS[i] { off_hit = off_hit + 1 }
+        if psh == YteS[i] { shuf_hit = shuf_hit + 1 }
+        if pon != off_pred { shift = shift + 1 }
+        i = i + 1
+    }
+    let nt = len(XteS)
+    let dn = if nt > 0 { to_float(nt) } else { 1.0 }
+    let acc_on = to_float(on_hit) / dn
+    let acc_off = to_float(off_hit) / dn
+    let acc_shuf = to_float(shuf_hit) / dn
+    let shift_on = to_float(shift) / dn
+    return #{ "ok": true,
+              "acc_on": acc_on, "acc_off": acc_off, "acc_shuf": acc_shuf, "shift_on": shift_on,
+              "n_test": nt, "on_minus_off": acc_on - acc_off, "shuf_minus_off": acc_shuf - acc_off,
+              "reason": "BPE-on-jamo morphology emit-bias SCORED at the live emission consult (gen_bpe_consult_emit/jamo_head_argmax; H_1327 emit precedent, H_1391 wire)" }
+}
+
+// ── §6.5e-R2 — the un-aliased emit-effect eval (a_break_the_wall, the R2 FROZEN metric) ───────────
+// R1's metric (gen_bpe_emit_eval) scored on target = next-unit % K (K=20), which ALIASES distinct
+// morpheme units onto the same class → the structure-blind global mode (acc_off 0.270) beats the head's
+// per-cell argmax (acc_on 0.252) on TOP-1 accuracy, masking the morphology. The %K alias is an
+// unintended structure-DESTROYER for an EMIT (argmax) metric — it was fine for §6.5d's CE bar (the CE
+// reads the full distribution) but not for a top-1 emit read. R2 re-scores on the RAW next-unit id (no
+// %K alias), growing the head with K = unit_vocab band so each true morpheme unit is its own target.
+// CRITICAL anti-tune-to-green (c9): the SHUFFLE control is KEPT — if the un-aliased metric ALSO lets the
+// shuffle head beat blind, the change merely relabeled to green and the result is an honest 🧱; the
+// morphology EMIT only binds if ON beats OFF *and* SHUF collapses under the SAME un-aliased metric.
+
+fn _gbe_KBAND() -> int { return 64 }   // raw next-unit target band (>= max unit id 14+40=54, no alias)
+
+// _gbe_unit_features_raw — like _gbs_unit_features but target = RAW next-unit id (capped to KBAND, no
+// %K alias). X[i] = [u_i/V, u_{i-1}/V, 0], Y[i] = next unit id (clamped < KBAND). Even/odd split.
+fn _gbe_unit_features_raw(usym: [int], unby: [int], unit_vocab: int) -> [[[float]]] {
+    let V = to_float(unit_vocab)
+    let KB = _gbe_KBAND()
+    let mut Xtr = []  let mut Ytr = []  let mut Xte = []  let mut Yte = []
+    let mut i = 1  let mut idx = 0
+    while i < len(usym) - 1 {
+        let f = [to_float(usym[i]) / V, to_float(usym[i - 1]) / V, 0.0]
+        let raw = usym[i + 1]
+        let y = if raw < KB { raw } else { KB - 1 }     // clamp into the band (units < 54 < 64, no clamp in practice)
+        if idx % 2 == 0 { Xtr = Xtr + [f]  Ytr = Ytr + [[to_float(y)]] }
+        else            { Xte = Xte + [f]  Yte = Yte + [[to_float(y)]] }
+        idx = idx + 1  i = i + 1
+    }
+    return [Xtr, Ytr, Xte, Yte]
+}
+
+// gbe_grow_head_raw — grow a count head over a unit stream's RAW-target train features (KBAND vocab).
+// (pub: the smoke + the live emit consult read the SAME raw-band head the R2 metric scores.)
+pub fn gbe_grow_head_raw(rnd_seed: int) -> [JamoHead] {
+    let cfg = engine_cli_parse(["--mitosis", "on"])
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    let half = len(bsym) / 2
+    let mut trS = []  let mut trN = []  let mut i = 0
+    while i < half { trS = trS + [bsym[i]]  trN = trN + [bnby[i]]  i = i + 1 }
+    let bm = bpe_learn_merges(trS, trN, _gbs_MERGES(), _gbs_NJAMO(), rnd_seed)
+    let re = bpe_apply(bm, bsym, bnby)
+    let uv = bpe_unit_vocab(bm)
+    let DIM = 3  let KB = _gbe_KBAND()
+    let GROW = 40  let MINOWN = 4  let THR = 0.05  let LAP = 1.0
+    let seed = [[0.3, 0.3, 0.0], [0.7, 0.7, 0.0]]
+    let ft = _gbe_unit_features_raw(re[0], re[1], uv)
+    let Xtr = ft[0]  let Ytr = _gbs_flat_int(ft[1])
+    let jh0 = jamo_head_new(seed, KB, DIM)
+    let jh  = jamo_head_grow(jh0, Xtr, Ytr, len(Xtr), GROW, MINOWN, THR, LAP, cfg)
+    return [jh]
+}
+
+// gen_bpe_emit_eval_raw — the R2 FROZEN emit-effect eval (un-aliased next-unit target). Same ON/OFF/SHUF
+// arms as R1, scored on the RAW next-unit id. Returns the same record keys. The morphology EMIT binds
+// (R2 bar1) iff ON beats OFF by >= +0.02 AND shift >= 0.10, AND (R2 bar2) the SHUFFLE collapses (does
+// NOT beat OFF, <= +0.01). $0, deterministic, Ψ-disjoint pure scoring.
+pub fn gen_bpe_emit_eval_raw() -> Map {
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    let bmS = bpe_learn_merges(_gbs_first_half(bsym), _gbs_first_half(bnby), _gbs_MERGES(), _gbs_NJAMO(), 0)
+    let reS = bpe_apply(bmS, bsym, bnby)
+    let uvS = bpe_unit_vocab(bmS)
+    let ftS = _gbe_unit_features_raw(reS[0], reS[1], uvS)
+    let XteS = ftS[2]  let YteS = _gbs_flat_int(ftS[3])
+    let YtrS = _gbs_flat_int(ftS[1])
+    let jhS = gbe_grow_head_raw(0)[0]
+    let jhR = gbe_grow_head_raw(1390)[0]
+    let off_pred = _gbe_mode(YtrS, _gbe_KBAND())
+    let mut on_hit = 0  let mut off_hit = 0  let mut shuf_hit = 0  let mut shift = 0
+    let mut i = 0
+    while i < len(XteS) {
+        let pon = jamo_head_argmax(jhS, XteS[i])
+        let psh = jamo_head_argmax(jhR, XteS[i])
+        if pon == YteS[i] { on_hit = on_hit + 1 }
+        if off_pred == YteS[i] { off_hit = off_hit + 1 }
+        if psh == YteS[i] { shuf_hit = shuf_hit + 1 }
+        if pon != off_pred { shift = shift + 1 }
+        i = i + 1
+    }
+    let nt = len(XteS)
+    let dn = if nt > 0 { to_float(nt) } else { 1.0 }
+    return #{ "ok": true,
+              "acc_on": to_float(on_hit) / dn, "acc_off": to_float(off_hit) / dn,
+              "acc_shuf": to_float(shuf_hit) / dn, "shift_on": to_float(shift) / dn,
+              "n_test": nt, "on_minus_off": (to_float(on_hit) - to_float(off_hit)) / dn,
+              "shuf_minus_off": (to_float(shuf_hit) - to_float(off_hit)) / dn,
+              "reason": "BPE-on-jamo morphology emit-bias SCORED un-aliased (R2; raw next-unit target, shuffle control KEPT)" }
+}
+
+// _gbs_first_half — the train slice (first half) of an int stream (helper for gen_bpe_emit_eval).
+fn _gbs_first_half(a: [int]) -> [int] {
+    let half = len(a) / 2
+    let mut out = []  let mut i = 0
+    while i < half { out = out + [a[i]]  i = i + 1 }
+    return out
+}
+
+// _gbe_mode — the most-frequent value in `a` over the band [0,K) (the OFF blind unigram predictor).
+fn _gbe_mode(a: [int], K: int) -> int {
+    let mut cnt = []  let mut k = 0
+    while k < K { cnt = cnt + [0]  k = k + 1 }
+    let mut i = 0
+    while i < len(a) { if a[i] >= 0 && a[i] < K { cnt[a[i]] = cnt[a[i]] + 1 }  i = i + 1 }
+    let mut best = 0  let mut bestc = cnt[0]  let mut j = 1
+    while j < K { if cnt[j] > bestc { bestc = cnt[j]  best = j }  j = j + 1 }
+    return best
+}
+
+// gen_bpe_emit_summary — one-line introspection of the wired morphology emit-bias consult (R2 metric,
+// the un-aliased gen_bpe_emit_eval_raw — the bound emit-effect).
+pub fn gen_bpe_emit_summary() -> string {
+    let e = gen_bpe_emit_eval_raw()
+    return "bpe morphology emit-bias: acc_on=" + _gen_fmt4(to_float(e["acc_on"]))
+        + " acc_off=" + _gen_fmt4(to_float(e["acc_off"]))
+        + " acc_shuf=" + _gen_fmt4(to_float(e["acc_shuf"]))
+        + " on-off=" + _gen_fmt4(to_float(e["on_minus_off"]))
+        + " shuf-off=" + _gen_fmt4(to_float(e["shuf_minus_off"]))
+        + " shift_on=" + _gen_fmt4(to_float(e["shift_on"]))
+        + " — morphology unit BIASES live emission (H_1327 emit precedent · H_1391 wire · "
+        + "off-Korean INERT byte-identical · Ψ-disjoint · a_core_engine_map single entry)"
+}
+
+
 // ── §7 small format helper ───────────────────────────────────────────────────
 
 fn _gen_fmt4(x: float) -> string {
