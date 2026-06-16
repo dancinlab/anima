@@ -1,0 +1,34 @@
+H_1391 §UsageStore engine-native wire-in — LIVE ENGINE re-score of the H_1389 FOUR gating bars.
+substrate: $0 CPU hexa-native, deterministic fixed env (no rng), byte-repeatable. CORE/engine_cli.hexa §UsageStore.
+(post-rebase onto H_1390 ko-morphology: UsageStore cases renumbered 117-121 → 120-124 to avoid the 116-119 collision)
+
+=== engine_cli_smoke — UsageStore cases 120-124 (verbatim) ===
+PASS  case_120_usagestore_learns want=true got=true
+PASS  case_121_usagestore_distinct_from_selection want=true got=true
+PASS  case_122_usagestore_earned_shuffle want=true got=true
+PASS  case_123_usagestore_abstains_on_far want=true got=true
+PASS  case_124_usagestore_footprint_and_ordered_steps want=true got=true
+INFO  usagestore comp: init=0.0833333 full=1.0 selection=0.0 shuffle=0.0 cells_full=12 cells_static=1
+
+=== FROZEN GATING BARS (engine-native readout; thresholds = H_1389 FREEZE verbatim, NOT moved) ===
+  LIVE: init=0.0833 FULL=1.000 SELECTION=0.000 SHUFFLE=0.000 ABSTAIN="" cells_full=12 cells_static=1
+  (1) USAGE-LEARNS            full_f-full_i = 1.000-0.083 = +0.917 >= +0.30 -> PASS   (case 120)
+  (2) DISTINCT-FROM-SELECTION full_f-sel_f  = 1.000-0.000 = +1.000 >= +0.30 -> PASS   (case 121) [KEY]
+  (3) EARNED (shuffle)        shuf_f-sel_f  = 0.000-0.000 = +0.000 <= +0.15 -> PASS   (case 122)
+  (4) NO-FAB / ABSTAIN        far recall    = "" (abstains on disjoint ctx+tool+err) -> PASS   (case 123)
+  (non-gating) ORDERED STEPS  fired usage-cell steps == "connect|execute|fetch" (in order) -> PASS (case 124)
+VERDICT: GREEN — engine-native BINDING (4/4 gating bars hold on the live engine).
+
+HONEST (c9): the engine env saturates FULL=1.000 (all 12 tasks biased to NON-default args, so a
+  perfect usage-learner completes all) — EXISTENCE-PROOF, not effect-size. The discriminators
+  (SELECTION 0.000, SHUFFLE 0.000) are decisive. The H_1389 mirror's 0.750 ceiling came from ~1/4
+  tasks happening to need the default arg; this fixed engine env removes that, raising the ceiling.
+  NO bar was moved; the saturation is the env's structural ceiling, not a tuned threshold.
+
+=== NO-REGRESSION GUARDS (verbatim) ===
+(baseline before the H_1391+H_1390 lanes: engine_cli_smoke 110/0; H_1390 added 116-119, H_1391 added 120-124)
+--- engine_cli smoke summary: 119 pass / 0 fail ---
+--- single-entry audit summary: 7 pass / 0 fail ---
+h1205 separation-invariant:
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
