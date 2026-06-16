@@ -2,6 +2,16 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — domain(GOVERNANCE): per-H 인덱스를 JSONL SSOT 로 이관 (HYPOTHESES.md 표 → HYPOTHESES.jsonl) + a_hypothesis_register 컨벤션 변경
+
+**무엇:** `a_hypothesis_register` 의 per-H 인덱스 표면을 비대해진 markdown 표(`UNIVERSE/HYPOTHESES.md` 의 `| H_… | … | tier | card |` 행)에서 **`UNIVERSE/HYPOTHESES.jsonl`** (landed 카드마다 JSON object 정확히 1개, 한 줄/가설)로 이관. **가설별 두 doc 표면 = (1) `HYPOTHESES.jsonl` 인덱스 줄 + (2) `cards/H_<id>_<slug>.md` 카드** 로 갱신. `HYPOTHESES.md` 는 thin prose overview + folded appendices(forward backlog · reference · retired buckets · README/UNIVERSE overview · legacy logs)로 **강등** — 더 이상 per-H 인덱스 표면 아님.
+
+**JSONL 스키마(한 줄/카드, id 순):** `{"id","slug","tier","title","card":"cards/H_…","verdict"}`. 인덱스 표에 있던 행은 그 행의 **verbatim** tier+verdict 텍스트를 보존(c9, paraphrase 금지); 나머지 카드는 각 카드 frontmatter(`id`/`title`/`terminal_tier`·`tier`·`status_grade`/`verdict`)에서 파생. **CARD FILE 기준 1줄**(c10 dup-id 변형 카드 = id 공유여도 각자 1줄). **줄 수 == cards/H_*.md 카드 수**.
+
+**검증(c2, 캡처):** (1) `wc -l HYPOTHESES.jsonl` == `ls cards/H_*.md` ✅ · (2) 전 줄 valid JSON, 0 에러 ✅ · (3) 모든 `card` 경로가 `cards/` 아래 실재 ✅ · (4) `HYPOTHESES.md` 에 per-H 인덱스 표 행 0개(prose appendix 전부 보존) ✅ · (5) 5-id 스팟체크(card+jsonl 양쪽 존재) ✅.
+
+**거버넌스/문서 변경:** `CLAUDE.md` `a_hypothesis_register` 디렉티브 + `## Quick reference` + structure tree + claim/verify flow 주석을 전부 "인덱스 = `HYPOTHESES.jsonl`, md 는 prose overview" 로 갱신 · `ARCHITECTURE.md` · `README.md` UNIVERSE/ 레이아웃 줄 갱신. **재생성기** `UNIVERSE/_build_hyp_jsonl.py`(idempotent — 강등 후엔 기존 jsonl 의 verbatim verdict 를 보존; 새 카드만 frontmatter 파생). HYPOTHESES.md 를 인덱스로 **읽는 코드 없음**(인간용 markdown 인덱스였음) — consumer 코드 변경 불요. 카드는 UNCHANGED. 동시 진행 sibling lane(H_1337/H_1338)이 추가한 per-H md 행은 jsonl object 로 흡수, 새 카드는 보존.
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1338 — Whorf CP 잔류당김은 never-evict인가 budget/geometry인가 (🧱 RE-DIAGNOSIS: budget/geometry)
 
 **H_1333(🟠 GRADED PLASTICITY)의 load-bearing follow-on.** H_1333은 같은 split-only 저장소를 옮겨진 경계로 재학습하면 Whorf 범주지각(CP) peak가 ~60% 상대이동(0.325→0.525, p_A'=0.667까지 완전치 않음)함을 발견하고, 그 **잔류 당김**을 split-only 저장소의 **never-evicted** 첫-경계 셀(phase-2 28셀 vs phase-1 4셀 — label(p_A)에 묶인 phase-1 셀이 옛 cut에서 계속 투표)로 **진단(가설)** 했다. H_1338 = 그 진단의 결정적 테스트: stale 셀을 제거하는 EVICTION 저장소가 이동을 **완성**(→~100%)시키면 잔류=never-evict 성질(H_1288 growth-memory=옛-기억-보호=partial-plasticity 와 dual); 여전히 partial이면 한계=budget/geometry.
