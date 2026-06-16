@@ -116,10 +116,16 @@ PASS  case_117_bpe_earned_vs_shuffle want=true got=true
 PASS  case_118_bpe_shift_earned want=true got=true
 PASS  case_119_bpe_compression_present want=true got=true
 INFO  bpe morphology: bpe_ce=0.242189 shuffle_ce=1.07846 jamo_ce=1.85452 gap_reduced=1.61233 earned=0.836272 shift=0.112304 units(struct/shuf/jamo)=462/2031/3600
-PASS  case_120_bpe_emit_effect want=true got=true
-PASS  case_121_bpe_emit_earned want=true got=true
-PASS  case_122_bpe_emit_offkorean_inert want=true got=true
-PASS  case_123_bpe_emit_korean_fires want=true got=true
+PASS  case_120_usagestore_learns want=true got=true
+PASS  case_121_usagestore_distinct_from_selection want=true got=true
+PASS  case_122_usagestore_earned_shuffle want=true got=true
+PASS  case_123_usagestore_abstains_on_far want=true got=true
+PASS  case_124_usagestore_footprint_and_ordered_steps want=true got=true
+INFO  usagestore comp: init=0.0833333 full=1.0 selection=0.0 shuffle=0.0 cells_full=12 cells_static=1
+PASS  case_125_bpe_emit_effect want=true got=true
+PASS  case_126_bpe_emit_earned want=true got=true
+PASS  case_127_bpe_emit_offkorean_inert want=true got=true
+PASS  case_128_bpe_emit_korean_fires want=true got=true
 INFO  bpe morphology emit: acc_on=0.252174 acc_off=0.182609 acc_shuf=0.0565217 on-off=0.0695652 shuf-off=-0.126087 shift_on=0.391304 ascii_inert=true ko_fires_byte=225
---- engine_cli smoke summary: 118 pass / 0 fail ---
+--- engine_cli smoke summary: 123 pass / 0 fail ---
 RC=0
