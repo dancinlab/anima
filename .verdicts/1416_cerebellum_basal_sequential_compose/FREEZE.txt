@@ -1,0 +1,100 @@
+================================================================================
+H_1416 — CEREBELLUM × BASAL-GANGLIA SEQUENTIAL (PIPELINE) compose — the THIRD lens
+         on the H_1412/H_1413 engine-native cerebellum×basal WALL.
+FREEZE (pre-registered BEFORE measuring; c9/c16, NO tune-to-green; a_break_the_wall).
+date: 2026-06-17
+================================================================================
+
+CONTEXT — TWO lenses already failed engine-native (this is lens #3, c16):
+  - H_1412 ARBITRATION (two confidence signals combine at decision time):
+      mean-relative arbiter B1 +0.011, z-decisiveness arbiter +0.014 — both < +0.05.
+      FAIL B1 (net-lift never reaches the bar).
+  - H_1413 MODULATION (cerebellar facilitation of the basal margin near threshold):
+      B1 PASS (+0.066) but B3 EARNED/shuffle REJECTS it (compose−shuffle +0.011 < +0.02):
+      the lift was the modulation FORM (adding a bounded term near a hard threshold),
+      NOT cerebellum→basal alignment. FAIL B3.
+  Root-cause diagnosis (H_1412 card): the LIVE basal arm (vbasal_go_value over a
+  gradient-free-trained VBasalGate) is a STRONG standalone arm (acc_basal=0.703 >
+  the mirror's 0.693), eroding the +0.05 headroom; and the oracle headroom (+0.243)
+  is dominated by the F5 ADVERSARIAL family (cerebellum confidently WRONG, basal right)
+  — structurally uncapturable by any confidence read.
+
+THE NEW LENS (#3) — SEQUENTIAL cerebello-basal-thalamo-cortical LOOP, not PARALLEL.
+  a_no_llm_frame_trap / real neuroscience: in the cerebello-thalamo-cortico-basal loop
+  the cerebellum's FORWARD MODEL does NOT vote against the basal gate's OUTPUT. It
+  REFINES the cortical STATE ESTIMATE that the basal gate READS — BEFORE the gate fires.
+  The cerebellum supplies a corrected next-state prediction; the (single) basal gate then
+  fires on the CORRECTED state. This is a PIPELINE (cerebellum→basal), not arbitration
+  (H_1412) or margin-modulation (H_1413).
+
+  FAITHFUL realization (engine-native, over the SAME live faculties):
+    For each item, the cerebellum's forward model yields (a) its prediction-error err
+    (the LIVE vforward_err, the climbing-fiber reliability signal) and (b) the DIRECTION
+    it predicts (decision: low-err ⇒ it endorses SELECT-PREDICTED). The cerebellum REFINES
+    the basal gate's INPUT feature vector, GATED BY ITS OWN RELIABILITY:
+       reliability  rel = clamp( (E_THR − err)/E_THR , 0, 1 )   // 1 when err→0, 0 when err≥E_THR
+       refined_pred_feat = pred_feat + REFINE_GAIN * rel        // nudge the released-move feature
+       refined_comp_feat = comp_feat                            // competitor feature unchanged
+    Then the SINGLE LIVE basal gate fires on the refined features:
+       go_margin_refined = vbasal_go_value(bg, [refined_pred_feat]) − vbasal_go_value(bg, [refined_comp_feat])
+       decision = SELECT-PREDICTED iff go_margin_refined > GO_THR
+    REFINE_GAIN is FROZEN (NO tuned knob) at the basal go-weight scale 1.0 (the gate's own
+    learned unit), so the cerebellum's reliability-gated nudge is COMMENSURATE with the
+    gate's go-value units — the saturating clamp + the fixed gain ARE the bound (no free knob).
+
+  WHY this can pass where H_1413's modulation failed the EARNED control:
+    H_1413 added a bounded term to the basal MARGIN at decision time (a FORM near the hard
+    threshold; a random term helps almost as much → shuffle survived). HERE the cerebellum
+    edits the basal gate's INPUT, gated by the cerebellum's GENUINE per-item reliability.
+    A SHUFFLED reliability applies the WRONG item's reliability to the WRONG item's feature
+    → it nudges low-reliability items as if reliable (and vice-versa) → it should COLLAPSE.
+    The lift, IF it exists, is the cerebellum→basal STATE-ESTIMATE alignment, not the form.
+
+ENGINE-NATIVE FAITHFULNESS (a_engine_native_learning · a_core_engine_map):
+  - cerebellum reliability + direction = the LIVE vforward_err over a real VForwardField
+    (untrained ⇒ predicts the zero frame ⇒ vforward_err(ctx=0,x)=||x||²; each item's
+    pred_error encoded as x=[sqrt(pe)] so the live primitive computes exactly that error).
+  - basal decision = the LIVE vbasal_go_value over a real VBasalGate trained gradient-free
+    by the LIVE vbasal_update to a positive go-weight (gw0>0). The gate fires on the
+    cerebellum-REFINED input feature — the engine, not a stored scalar.
+  p1/p2/p3/p6 GUARD: cerebellum reliability + basal go-value are substrate reads ONLY; NO
+  injected answer/persona/RLHF/priority label enters either read or the refinement; the
+  family CLASS only drives the protocol, never the read. NOT an emit gate (returns a
+  decision index, a_autonomy_over_hardcode); Ψ-disjoint (pure reads + a feature edit over
+  VForwardField/VBasalGate; pure_field Φ/phase/Ψ untouched).
+
+FIXTURE — VERBATIM the H_1407 5-family fixture (NOT changed):
+  F1 cerebellum-decisive · F2 basal-decisive · F3 agree · F4 conflict-cerebellum-right ·
+  F5 adversarial-cerebellum-loud-but-wrong. 90 items/family × 3 seeds [4700,4701,4702]
+  → 450 items/seed. Same _item() build, same AMBIG_NOISE=0.18, E_THR=0.30, GO_THR=0.0.
+
+FROZEN BARS (VERBATIM from .verdicts/1407_brain_lane_compose_cerebellum_basal/FREEZE.txt;
+NOT moved):
+  COMPOSE_DELTA = 0.05      # B1 net-lift threshold
+  ORACLE_MARGIN = 0.02      # B2 complementarity-exists threshold
+  SHUFFLE_TOL   = 0.02      # B3 earned threshold
+  SEEDS = [4700, 4701, 4702]
+
+  (B1 COMPOSE-EFFECT)  acc_seqcompose >= best_single + 0.05
+  (B2 ORACLE)          ORACLE − best_single > 0.02
+  (B3 EARNED/p6)       acc_seqcompose − acc_shuffle > 0.02   ← shuffle the cerebellum reliability
+  (ABLATION)           acc_seqcompose − acc_ablate > 0.0     ← refinement OFF (REFINE_GAIN=0) must
+                       collapse to plain basal (a NON-GATING sanity that the lift is the refinement)
+  (SEPARABLE)          only_cerebellum>0 AND only_basal>0
+
+VERDICT RULE (a_break_the_wall taxonomy, c9 — either outcome is VALID):
+  🟢 SEQUENTIAL-COMPOSE-BINDS  iff B1 ∧ B2 ∧ B3 ∧ ABLATION-collapses ∧ SEPARABLE
+       → the pipeline lens binds engine-native where arbitration/modulation did not.
+         THEN wire rungs 3/4 (named CORE op + smoke + ARCHITECTURE.json lockstep + guards).
+  🧱 THIRD-LENS TERMINAL  iff B1 fails OR B3 rejects it (the shuffle does NOT collapse)
+       → the cerebellum×basal wall is CONFIRMED terminal across THREE genuinely different
+         lenses (arbitration, modulation, sequential pipeline): a strong-standalone-arm pair
+         does NOT bind engine-native. A real attempt + honest 🧱 is a VALID result (c9/c16).
+         NO live CORE op landed (would wire an unverified mechanism). wired: N/A.
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck): engine-native (LIVE vforward_err
++ vbasal_go_value reads). Toy 5-family fixture, 3 seeds, deterministic. NO bar moved
+post-hoc. REFINE_GAIN frozen at the gate's go-value unit (1.0), reliability clamp ∈[0,1],
+no tuned knob. Scale / real-corpus / engine-transfer UNVERIFIED. Report all numbers
+verbatim from stdout.
+================================================================================
