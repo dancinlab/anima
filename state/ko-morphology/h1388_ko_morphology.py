@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-# h1387_ko_morphology.py — Korean below-jamo NEW ANGLE: does a MORPHOLOGY-AWARE unit (BPE-on-jamo) or a
+# h1388_ko_morphology.py — Korean below-jamo NEW ANGLE: does a MORPHOLOGY-AWARE unit (BPE-on-jamo) or a
 # LONGER-CONTEXT count-head reduce the novel-context CE below the jamo-floor+0.28 (~2.793) that the 3
 # closed Korean levers (representation H_1322 🧱 · interpolation H_1359 🧱 · data-volume H_1368/H_1380 🟠)
 # all hit?
 #
 # H_1380 pinned the novel-context CE asymptote at ~2.747 = jamo floor (2.51335) +0.28 on REAL KO (≤480MB)
 # and NAMED two genuinely-new remaining angles (NOT more data/representation-at-jamo): (1) morphology-aware
-# units (morpheme / BPE-on-jamo) and (2) cross-syllable long-range deps (nmax>5). H_1387 tests both, with
+# units (morpheme / BPE-on-jamo) and (2) cross-syllable long-range deps (nmax>5). H_1388 tests both, with
 # BPE-on-jamo as the PRIMARY gating angle and the nmax sweep as a NON-GATING secondary diagnostic.
 #
 # PRIMARY = BPE-ON-JAMO: learn frequency-ranked merges over the TRAIN jamo stream (de-facto morpheme-ish
@@ -16,7 +16,7 @@
 # SHUFFLE CONTROL: random equal-COUNT merges (same number, random jamo-bigram pairs) → isolates the
 # LINGUISTIC structure of the merges from mere granularity.
 #
-# FROZEN-FIRST: bars pre-registered in .verdicts/1387_ko_morphology/FREEZE.txt BEFORE this run.
+# FROZEN-FIRST: bars pre-registered in .verdicts/1388_ko_morphology/FREEZE.txt BEFORE this run.
 # REAL Korean only — the SAME real shard0000 30MB prefix (sha c47b6808...) as H_1368/H_1380; NO synthetic.
 # DIRECTIONAL numpy; toy stride-300 byte-substrate next-symbol CE; CORE UNTOUCHED. $0 CPU.
 
@@ -381,7 +381,7 @@ def main():
     ap.add_argument("--nmax", type=int, default=NMAX)
     ap.add_argument("--merges", type=int, default=BPE_MERGES)
     ap.add_argument("--shift", type=int, default=99991)
-    ap.add_argument("--out", default=".verdicts/1387_ko_morphology/result.txt")
+    ap.add_argument("--out", default=".verdicts/1388_ko_morphology/result.txt")
     args = ap.parse_args()
     t0 = time.time()
 
@@ -491,7 +491,7 @@ def main():
                     " → long-range (nmax) remains a live secondary angle."))
 
     res = {
-        "id": "H_1387", "slug": "ko_morphology",
+        "id": "H_1388", "slug": "ko_morphology",
         "window_mb": args.mb, "window_bytes": len(win), "window_sha256": sha, "sha_match_H1368": anchor_sha_ok,
         "primary_angle": "BPE-on-jamo (morphology-aware unit)", "secondary_angle": "longer-context nmax sweep (NON-GATING)",
         "Vj_jamo": vj_jamo, "distinct_jamo": len(jamo_sorted), "gate_stride": args.stride, "nmax": args.nmax,
@@ -518,7 +518,7 @@ def main():
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     with open(args.out, "w") as f:
         f.write(json.dumps(res, ensure_ascii=False, indent=2) + "\n")
-    log("\n===== H_1387 RESULT =====")
+    log("\n===== H_1388 RESULT =====")
     log(json.dumps(res, ensure_ascii=False, indent=2))
     log(f"\nTIER: {tier}\n{verdict}")
 

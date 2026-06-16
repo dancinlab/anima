@@ -1,4 +1,4 @@
-H_1387 — ko-morphology — FROZEN BARS (pre-registered BEFORE measuring; c9/c16, NO tune-to-green)
+H_1388 — ko-morphology — FROZEN BARS (pre-registered BEFORE measuring; c9/c16, NO tune-to-green)
 ================================================================================================
 
 LANE: Korean below-jamo NEW ANGLE. The Korean below-jamo arc closed 🧱/🟠 across THREE levers —
@@ -6,7 +6,7 @@ representation (H_1322), interpolation (H_1359), data-volume (H_1368/H_1380). H_
 novel-context CE asymptote of ~2.747 = jamo floor (2.51335) +0.28 on REAL KO (≤480MB), and named
 the genuinely-NEW remaining angles: (1) MORPHOLOGY-AWARE units (morpheme / BPE-on-jamo, a coarser
 linguistic unit than jamo) and (2) CROSS-SYLLABLE LONG-RANGE deps (the count-head's nmax=5 may be a
-short-context ceiling). H_1387 tests whether either angle reduces the novel-context CE below the
+short-context ceiling). H_1388 tests whether either angle reduces the novel-context CE below the
 jamo-floor+0.28 (~2.747) that all 3 closed levers hit.
 
 CHOSEN PRIMARY ANGLE + WHY
@@ -21,7 +21,7 @@ PRIMARY = MORPHOLOGY-AWARE UNIT via BPE-ON-JAMO (data-driven sub-word merges ove
   It is also the cheaper, more decisive of the two (a unit change vs an nmax sweep), and it admits a
   clean shuffle control (random equal-size merges) that isolates the LINGUISTIC structure of the merges.
 SECONDARY (cheap probe, NON-GATING) = LONGER-CONTEXT count-head (nmax ∈ {7, 9} vs frozen 5) on the
-  SAME jamo stream — tests angle (2). Reported as a diagnostic curve; does NOT change the H_1387 tier.
+  SAME jamo stream — tests angle (2). Reported as a diagnostic curve; does NOT change the H_1388 tier.
 
 CONFOUND-FAIR CE (load-bearing): all CE is reported in nats/UTF-8-BYTE (NOT per-unit). BPE units cover
 MORE bytes per unit, so a per-unit CE would be unfairly low; dividing the unit's total nats by the
@@ -71,9 +71,9 @@ BAR 3 — CONTROL (gating, sanity):
 
 SECONDARY (NON-GATING diagnostic, reported only): novel-CE at nmax ∈ {5,7,9} on the jamo stream.
   If a longer context ALSO reduces the gap below 2.74335 it is recorded as a second candidate angle;
-  but it does NOT change the H_1387 tier (the tier is set by BAR 1∧2∧3 on the PRIMARY BPE angle).
+  but it does NOT change the H_1388 tier (the tier is set by BAR 1∧2∧3 on the PRIMARY BPE angle).
 
-TIER MAPPING (frozen; sets H_1387 verdict — pre-registered branch, NOT post-hoc)
+TIER MAPPING (frozen; sets H_1388 verdict — pre-registered branch, NOT post-hoc)
 --------------------------------------------------------------------------------
   bar3 FAIL (anchor drift or shift not earned)            → 🔴 INVALID-RED (methodology drift / signal suspect)
   bar1 PASS ∧ bar2 PASS ∧ bar3 PASS                       → 🟢 GAP-REDUCED-CANDIDATE (morphology is a REAL new
