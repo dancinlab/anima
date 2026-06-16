@@ -5149,9 +5149,9 @@ pub fn bpe_byte_fair_ce(jh: JamoHead, Xte: [[float]], Yte: [int], nby_te: [int])
 pub fn jamo_head_argmax(jh: JamoHead, feat: [float]) -> int {
     if len(jh.heads) == 0 { return -1 }
     let af = _jh_field(jh.centers, len(jh.centers))
-    let own = vadapt_field_nearest_idx(af, feat)
-    if own < 0 || own >= len(jh.heads) { return -1 }
-    let row = jh.heads[own]
+    let owner = vadapt_field_nearest_idx(af, feat)
+    if owner < 0 || owner >= len(jh.heads) { return -1 }
+    let row = jh.heads[owner]
     let mut best = 0
     let mut bestp = row[0]
     let mut k = 1
