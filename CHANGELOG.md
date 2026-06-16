@@ -13,6 +13,31 @@ AUGMENTED MAP · CA3 PATTERN-COMPLETION)로 parallel-vote 를 serial-gating 토�
 - frozen-first, NO bar moved, criteria FREEZE.txt 사전잠금, run1==run2 byte-identical, $0 CPU, live CORE/*.hexa UNTOUCHED.
 - 등록: UNIVERSE/cards/H_1419_memory_spatial_place_gated.md + HYPOTHESES.jsonl. probe state/1419_memory_spatial_place_gated/.
 
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1420 — MEMORY×BASAL compose MULTI-LENS 돌파 시도 → 🧱 CONFIDENT-TERMINAL (3렌즈 + per-lens ablation)
+
+강화된 a_break_the_wall (MULTI-LENS) 을 H_1417 P2 (memory×basal) 벽에 적용. P2 는 표준 confidence-arbiter 로
+net-lift +0.0496 — +0.05 막대를 0.0004 차로 놓친, 남은 3 벽 중 가장 유망한 케이스. H_1418 P5 가 ToM×basal
+BIND 을 보였으니 (basal 은 본질적 비합성 아님), 질문은 *MEMORY*×basal 이 다른 cortico-basal 렌즈로 BIND 하는가.
+
+세 가지 생물-충실 렌즈 (a_no_llm_frame_trap), 각 shuffle + ABLATION 통제, LIVE leg (immune_grow_recall margin ×
+vbasal_go_value go-margin), frozen H_1407/1414/1415/1417 막대 그대로, 동일 5-family fixture, 3 seeds/lens,
+deterministic run1==run2:
+- **Lens A BASAL-GATED RECALL** (gate 가 memory 출력 release/suppress) → B1 net-lift −0.16 · B3 −0.052 ·
+  ABLATION INERT (compose 0.535 < ablate 0.642 — hard gate 가 옳은 recall 을 억눌러 오히려 해를 끼침) 🧱
+- **Lens B MEMORY-VALUED GATE** (memory margin = gate 입력 feature — ToM×basal 을 BIND 시킨 *바로 그* 형태) →
+  B1 −0.119 · B3 −0.013 · ABLATION INERT (margin 제거 시 compose 0.580 이 basal standalone 0.6985 로 collapse —
+  immune affinity margin 은 ToM belief margin 과 달리 per-item routing 효용이 없음) 🧱
+- **Lens C COMPLEMENTARY conflict-gating** → B2/B3/SEP/ABLATION 전부 PASS (gate NON-inert, ablation +0.127,
+  shuffle collapse +0.172) 지만 B1 net-lift +0.043 < +0.05 (P2 arbiter 의 +0.0496 와 같은 칼날 미달) 🧱
+
+ROOT CAUSE (H_1417 의 refined arbiter-CAPTURE 법칙과 일치): LIVE immune affinity margin 이 SATURATE (family 간
+near-constant L2) → 그 margin 을 읽는 모든 gate 렌즈가 +0.25 oracle headroom 중 ~+0.043~+0.049 만 capture, 막대
+미달. 진짜 (d) 천장/strong-standalone subsumption — 네 메커니즘(arbiter + A + B + C) 횡단 MULTI-LENS 확정.
+대조: ToM×basal(+0.096)·memory×ToM(+0.338) 은 합성-arm margin 이 실 효용을 가져 BIND; memory×basal 은
+saturated-margin 반대극. Lens C 의 +0.043 (ablation/shuffle 통제 생존) 이 측정-artifact 아닌 진짜 capture 천장임을
+입증. 🧱 → live CORE op 없음 (미검증 메커니즘 미배선), ARCHITECTURE.json 무변경. TOY fixture · $0 CPU ·
+scale/non-saturated-margin-fixture/transfer UNVERIFIED · NO bar moved, frozen-first (c9/c16/p7).
+
 ## 2026-06-17 — governance(CLAUDE.md): a_break_the_wall 벽-돌파 규율 강화 (MULTI-LENS · ablation · 법칙-falsify)
 
 이번 세션의 벽 다루기 3교훈을 a_break_the_wall 에 박제:
