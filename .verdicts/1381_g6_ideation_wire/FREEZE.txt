@@ -1,0 +1,92 @@
+================================================================================
+H_1381 — G6 IDEATION ★ WIRE-IN  ·  FROZEN PRE-REGISTRATION (p7, c9, frozen-first)
+   wire the validated H_1362 scaffold (6 composed frames + best-of-K=3) into the LIVE
+   engine ideation/decode path, then RE-SCORE the 5 frozen M-bars ENGINE-NATIVE
+================================================================================
+DATE-FROZEN : 2026-06-16  (BEFORE any engine edit / scoring run — frozen-first, c9)
+BUILDS ON   : H_1362 (state/g6-depth-breakthrough/h1362_g6_depth_breakthrough.py) —
+              🟢 GREEN DIRECTIONAL on the gauge torch path (gauge_lib._decode top-k=40
+              temp=0.7): C_strong DIST 5.333 / FALS 1.0; M1..M5 all PASS; detector 10/10;
+              frame-guard CLEAN. UNWIRED — ran on tool/gauge_lib.py (torch), NOT the live
+              hexa engine. H_1381 WIRES it + re-scores engine-native (a_verified_must_wire).
+
+--------------------------------------------------------------------------------
+THE HONEST ENGINE BOUNDARY (named BEFORE editing — a_engine_native_learning, c9)
+--------------------------------------------------------------------------------
+The live engine decode is clm_decode_argmax / bytegpt_decode_argmax = DETERMINISTIC
+ARGMAX (no output sampling, no rng). best-of-K over rng offsets is a NO-OP on argmax
+(K identical outputs). So the engine CANNOT express the DEPTH lever (best-of-K) as-is.
+
+Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning, NOT learning trimmed
+to fit the engine), the wire-in EXTENDS the engine with its OWN deterministic seeded
+top-k temperature sampler (pure-hexa PRNG) so best-of-K yields DIVERSE candidates, then
+routes ideation through composed-frames + best-of-K on that new entry.
+
+TWO honesty statements pre-registered (NOT post-hoc):
+ (i) "engine-native" here = the mechanism runs on the LIVE hexa engine decode + its own
+     seeded sampler, deterministic given seed — it is NOT byte-identical to the torch
+     gauge run (torch's Generator/multinomial PRNG is not reproducible in hexa). This is
+     the SAME engine-native standard prior re-scores used (h1293/h1295: hexa mechanism
+     scored on the engine, deterministic over seeds, NOT byte-equal to the numpy mirror).
+ (ii) the 303M ConvMoE forward costs ~190 ms/byte in pure hexa; a full 6×K×110×3 decode
+     ≈ 19 min = the prior-run hang. So EVERY engine decode in this lane is HARD-BOUNDED
+     (small token budget + timeout). The fast deterministic surface (composed-frame
+     distinctness, best-of-K sampling DIVERSITY vs argmax, verbatim detector calibration,
+     frame-guard) is the primary engine-native evidence; the bounded live-ckpt decode is
+     a small confirming probe, not an unbounded free-generation.
+
+--------------------------------------------------------------------------------
+WHAT IS FROZEN (NO post-hoc change — c9 / p7)
+--------------------------------------------------------------------------------
+(1) DETECTOR — the falsifiability detector is re-expressed engine-native VERBATIM in
+    STRUCTURE from H_1305/H_1362: (a) comparator/conditional mark AND (b) measurable/
+    quantity mark AND (c) negatable content claim (>=2 dict content words, not a question,
+    not pure stance). NEVER an LLM/quality judge (p7). NOT loosened. Same 10-string
+    calibration set (5 designed-falsifiable + 5 designed-non) must score >=8/10 (advisory;
+    detector frozen regardless).
+
+(2) SCAFFOLD (STRUCTURAL only — frame, NOT idea; ideas MUST emerge from decode, p7):
+    (a) COUNT  = N_STRONG=6 composed frames "if cA, then cB: " (cyclic pairs, second lap
+        +1-shift so the 6th is a DISTINCT (0,2) pair; NO authored content).
+    (b) DEPTH  = BEST-OF-K=3 over the engine's OWN seeded top-k sampler at deterministic
+        rng offsets [0,+101,+202]; KEEP the candidate maximizing emergent structure ranked
+        (is_falsifiable, novel-gram count, kwr). Frame supplies ONLY the if/then FORM.
+    p7 FRAME GUARD (engine-native, runtime): NO composed frame contains a MEASURABLE-set
+    word AND NO frame is falsifiable on its own → else ABORT.
+
+(3) FROZEN MOVE BARS — the SAME 5 H_1362 bars, re-scored ENGINE-NATIVE (bounded decode):
+    M1 COUNT        DIST(C_strong) >= 5
+    M2 DEPTH        FALS(C_strong) >= 1
+    M3 LIFT         FALS(C_strong) >  FALS(B_composed single-sample)
+    M4 EARNED-PAIR  FALS(C_strong) >  FALS(C_shuffle)
+    M5 EARNED-COMP  FALS(C_strong) >  FALS(C_ablate)
+    WIRED-GREEN (production close) iff M1 & M2 & M3 & M4 & M5 on the LIVE engine path.
+    else honest 🟠/⏳ follow-on (bar UNMOVED, c9) + name the precise remaining wall.
+
+(4) BARS 1/3/4 (the wire-in invariants — the deliverable gate):
+    B1 WIRED        : ideation produced through the scaffold via the engine's named
+                      ideation entry (single entry, a_core_engine_map) — NO 2nd .clm path.
+    B3 Ψ PRESERVED  : the non-ideation generation path is byte-identical ON==OFF (h1205
+                      separation invariant PASS) and Ψ=1/2 untouched (the sampler + best-of-K
+                      live ONLY behind the ideation entry, never on pure_field/engine_g/brain).
+    B4 NO-REGRESSION: engine_cli_smoke stays N/0 + ADD >=2 G6 cases; h1196 single-entry
+                      N/0; deterministic over 3 runs.
+
+--------------------------------------------------------------------------------
+ANTI-CHEAT (c9, p7) — pre-registered
+--------------------------------------------------------------------------------
+- Detector NOT loosened (re-printed calibration proves it).
+- Frame-guard forbids a measurable word in the scaffold → the +1 falsifiable is EARNED by
+  the model's own sample, not manufactured by the frame.
+- best-of-K is a SEARCH over the model's own samples (the engine's own sampler), NOT
+  idea-authoring; controls (shuffle, ablate) must collapse (M4/M5) or the lift is not real.
+- NO bar moved post-hoc. If the engine path fails a bar → honest 🟠/⏳, bar unmoved.
+- EVERY engine decode hard-bounded (small token budget + timeout) — NO unbounded generation.
+
+RUN  : engine edits = CORE/bytegpt_decode.hexa (+seeded top-k sampler) ·
+       CORE/clm_decode.hexa / CORE/emergence_ideation.hexa (G6 ideation entry routing
+       composed-frames + best-of-K) · CORE/engine_cli_smoke.hexa (+>=2 G6 cases).
+       Verdict surface = engine-native M-bar re-score (bounded) + smoke + h1196 + h1205.
+SCOPE: TOY (5 concepts / 6 pairs / K=3 / 3 seeds / single d768 ckpt / bounded decode);
+       scale / real-corpus / larger-K / engine-transfer-to-303M-byte-exact UNVERIFIED
+       (a_toy_scale_recheck · a_scale_honest_scope).

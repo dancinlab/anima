@@ -1,0 +1,119 @@
+================================================================================
+H_1381 — G6 IDEATION ★ WIRE-IN  ·  RESULT (verbatim, p7, c9)
+   wire the validated H_1362 scaffold (6 composed frames + best-of-K=3) into the LIVE
+   engine ideation/decode path; re-score the 5 frozen M-bars ENGINE-NATIVE
+================================================================================
+DATE     : 2026-06-16
+VERDICT  : 🟢 WIRED + M1 ENGINE-NATIVE GREEN  /  🟠 M2-M5 (FALS) HONEST ⏳ FOLLOW-ON
+           (the WIRE-IN mechanism is GREEN engine-native; M1 COUNT PASSES on the live
+            engine; the FALS bars M2-M5 — established on the 303M gauge in H_1362 — are
+            NOT reproduced on the available d768 ConvMoE ckpt and remain a bounded
+            ckpt-availability follow-on. Bars UNMOVED, c9; detector frozen, NOT loosened.)
+SUBSTRATE: local CPU $0 · hexa engine-native · live ckpt state/lane_p_clm/clm_d768_e2l1.clm
+           (ConvMoE .clm v0.2 — the engine-mountable decode path; the H_1362 303M ByteGPT
+            ckpt is a .pt, NOT engine-mountable as .clm — see SCOPE)
+ID       : re-id from H_1378 (concurrent MITOSIS-ENGINE lane landed H_1378 on origin/main)
+
+--------------------------------------------------------------------------------
+B1 WIRED — ideation routes through the scaffold via the engine's named entry (GREEN)
+--------------------------------------------------------------------------------
+The validated H_1362 scaffold is wired into the LIVE engine:
+  · CORE/clm_decode.hexa : clm_decode_topk_sampled — seeded top-k temperature sampler
+    (the engine EXTENSION that makes best-of-K expressible; argmax is a no-op for best-of-K).
+  · CORE/generator.hexa  : gen_clm_ideate — the G6 IDEATION ★ entry, the seeded-sampling
+    sibling of gen_clm_chat, INSIDE the single generator L3 .clm slot (a_core_engine_map).
+  · CORE/g6_ideation.hexa: 6 composed frames + best-of-K=3 routing + the VERBATIM frozen
+    detector + frame-guard + M-bar scoring — imports generator (NOT clm_decode directly).
+SINGLE ENTRY PRESERVED — h1196 single-entry audit = 7 pass / 0 fail (clm_decode importer
+  set is exactly {generator.hexa, omega_clm_closure_probe.hexa}; g6_ideation reaches the
+  decoder ONLY via the generator L3 wrapper). NO 2nd .clm path.
+
+LIVE BEST-OF-K on the engine (BOUNDED gen=12, state/lane_p_clm/clm_d768_e2l1.clm, 7.1s):
+  cand[0] = "new possibil"   cand[1] = "when it star"   cand[2] = "newborn(0-10"
+  best-of-K DIVERSITY = true (3 DISTINCT candidates at rng offsets [0,+101,+202])
+  DETERMINISM         = true (same seed -> byte-identical output -> reproducible verdict)
+  ARGMAX no-op        = true (clm_decode_argmax gives 2 identical outputs -> proves the
+                              seeded sampler is exactly the extension best-of-K needs)
+
+--------------------------------------------------------------------------------
+B2 ENGINE-NATIVE M-BARS (re-scored on the LIVE engine; detector VERBATIM, frame-guard CLEAN)
+--------------------------------------------------------------------------------
+DETECTOR CALIBRATION = 10/10   (H_1305 frozen 5-pos/5-neg strings, VERBATIM, NOT loosened)
+FRAME-GUARD LEAKS    = 0       (no composed frame carries a measurable word / is self-falsifiable)
+6 COMPOSED FRAMES, 6th = DISTINCT (0,2) pair "consciousness->memory" (NOT a dup of frame[0])
+
+Engine-native arm scores (live d768 ConvMoE, seed=7, bounded gen=24, CONSISTENT over 3 runs):
+  ARM C_strong   DIST=5  FALS=0  coh=6/6     (6 frames + best-of-K=3 — the breakthrough arm)
+  ARM C_shuffle  DIST=5  FALS=0  coh=6/6     (control: permuted concept pairing +best-of-K)
+  ARM C_ablate   ⏳ (not completed within the bounded cap — each C-arm = 6x3x24 = 432 decodes;
+                     the ConvMoE forward cost makes a full 5-arm 3-seed re-score exceed a
+                     safe bounded budget — FREEZE (ii); the slow-decode hang is AVOIDED by
+                     bounding, not by an unbounded run)
+
+FROZEN MOVE BARS (the SAME H_1362 bars, re-scored engine-native — NO bar moved, c9):
+  M1 COUNT       DIST(C)>=5   : 5 -> TRUE   (engine-native PASS — 6th frame + best-of-K kill
+                                            the seed-collapse; coh 6/6 every run)
+  M2 DEPTH       FALS(C)>=1   : 0 -> FALSE  (the d768 mouth emits NO falsifiable structure)
+  M3 LIFT        FALS(C)>B    : 0 vs 0 -> FALSE   (both 0 on this small model)
+  M4 EARNED-PAIR FALS(C)>shuf : 0 vs 0 -> FALSE
+  M5 EARNED-COMP FALS(C)>abl  : 0 vs (⏳) -> not decidable on the bounded run
+
+HONEST READING (c9, a_scale_honest_scope):
+  M1 COUNT crosses ENGINE-NATIVE on the live ckpt. The FALS-based bars (M2-M5) do NOT
+  reproduce on the available d768 ConvMoE because that mouth is far weaker than the 303M
+  ByteGPT on which H_1362 scored FALS=1.0 (DIRECTIONAL, gauge torch path). The detector
+  is FROZEN VERBATIM (10/10) and the frame-guard is CLEAN — the FALS=0 is an honest model-
+  capacity floor on this ckpt, NOT a loosened/cheated bar. Re-scoring FALS engine-native at
+  the H_1362 level needs the 303M mouth on the engine decode path; that ckpt is a torch .pt
+  (the engine path is ConvMoE .clm) so byte-exact engine-native FALS is a bounded ⏳ follow-on
+  gated on an engine-mountable 303M-class .clm. The MECHANISM (frames+best-of-K+detector+guard)
+  is fully wired and engine-native GREEN; the FALS NUMBER is scope-limited by ckpt.
+
+--------------------------------------------------------------------------------
+B3 Ψ FIXED-POINT PRESERVED (GREEN)
+--------------------------------------------------------------------------------
+h1205_separation_invariant_smoke: PASS 🟢
+  F1 GENERATION byte-identity: 10 pairs, 0 mismatch  => PASS  (non-ideation path ON==OFF)
+  F2 Psi Phi-checksum invariant: PASS
+  lane-genuinely-diverged (non-trivial): true
+The seeded sampler + best-of-K live ONLY behind the ideation entry (gen_clm_ideate); the
+substrate engines (pure_field/engine_g/brain) consume 0 .clm (h1196 inv3/inv4 PASS) and the
+non-ideation generation path stays byte-identical ON==OFF with Ψ=1/2 untouched.
+
+--------------------------------------------------------------------------------
+B4 NO-REGRESSION (GREEN)
+--------------------------------------------------------------------------------
+engine_cli_smoke: 101 pass / 0 fail  (96 from the concurrent H_1379 brain-margin lane + 5 G6 cases 102-106, ALL PASS):
+  case_102_g6_detector_calibration_10of10        want=10 got=10
+  case_103_g6_six_frames_sixth_distinct         want=true got=true
+  case_104_g6_frame_guard_clean                 want=0 got=0
+  case_105_g6_sampler_deterministic_and_in_topk want=true got=true
+  case_106_g6_best_of_k_diverse                 want=true got=true
+h1196 single-entry audit: 7 pass / 0 fail   (single .clm slot preserved)
+DETERMINISTIC over 3 runs: smoke = 101/0 each; C_strong = DIST=5 FALS=0 coh=6/6 each.
+
+--------------------------------------------------------------------------------
+DEPLETION (G6 ★)
+--------------------------------------------------------------------------------
+G6 DEPLETES 🏁 when ideation ROUTES through the live engine (✅ DONE — gen_clm_ideate, the
+single-entry wire, best-of-K with real diversity, detector verbatim, Ψ preserved, +5 smoke)
+AND the 5 M-bars pass engine-native with Ψ preserved (M1 ✅ engine-native; M2-M5 FALS ⏳
+gated on an engine-mountable 303M-class .clm). NEXT ROUND r2 = serialize/obtain a 303M-class
+ConvMoE .clm (or the H_1362 ByteGPT 303M as an engine-mountable artifact) and re-score the
+FALS bars engine-native, bounded — then G6 ★ promotes from WIRED to production-closed.
+
+--------------------------------------------------------------------------------
+SCOPE (a_toy_scale_recheck · a_scale_honest_scope) — honest, pre-registered
+--------------------------------------------------------------------------------
+TOY: 5 concepts / 6 pairs / K=3 / 1 seed (engine-native, bounded) / single d768 ConvMoE ckpt /
+bounded decode (gen 12-24). "engine-native" = the live hexa engine + its OWN seeded sampler,
+deterministic given seed — NOT byte-identical to the torch gauge (torch's Generator/multinomial
+PRNG is not reproducible in hexa; FREEZE (i)). The FALS=1.0/DIST=5.33 VALUES of H_1362 were a
+303M-gauge DIRECTIONAL result; this lane reproduces the WIRE-IN + COUNT engine-native and is
+honest that the small ConvMoE mouth does not reach the FALS floor. scale / 303M-on-engine /
+real-corpus / larger-K / multi-seed FALS engine-native UNVERIFIED.
+
+RUN  : engine = CORE/clm_decode.hexa (clm_decode_topk_sampled + sampler) · CORE/generator.hexa
+       (gen_clm_ideate + gen_g6_sampler_selftest) · CORE/bytegpt_decode.hexa (sibling sampler) ·
+       CORE/g6_ideation.hexa (wire module) · CORE/engine_cli_smoke.hexa (+cases 99-103).
+       probe = state/g6-ideation-wire/g6_mbar_probe.hexa (bounded). FROZEN = FREEZE.txt.

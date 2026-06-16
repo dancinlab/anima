@@ -500,6 +500,119 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
     return #{ "ok": true, "text": out }
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// H_1381 — SEEDED TOP-K TEMPERATURE SAMPLER (ConvMoE .clm path). clm_decode_argmax
+// is deterministic argmax, so best-of-K over rng offsets is a no-op (K identical
+// outputs). Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning) the
+// .clm decode grows its OWN deterministic seeded sampler so the G6 DEPTH lever
+// (best-of-K) yields DIVERSE candidates. Local (NOT imported from bytegpt_decode —
+// a_core_engine_map: ONE .clm slot, no cross-pull); byte-identical PRNG to the
+// bytegpt_decode sibling. HONEST: hexa-native xorshift32 — deterministic given seed,
+// NOT byte-identical to torch's Generator/multinomial (not reproducible in hexa).
+fn _clmd_mix32(s: int) -> int {
+    let mut z = (s + 0x9E3779B9) & 0xFFFFFFFF
+    z = ((z ^ (z / 65536)) * 0x85EBCA6B) & 0xFFFFFFFF
+    z = ((z ^ (z / 8192))  * 0xC2B2AE35) & 0xFFFFFFFF
+    z = (z ^ (z / 65536)) & 0xFFFFFFFF
+    if z == 0 { z = 0x9E3779B9 }
+    return z
+}
+fn _clmd_rng_next(s: int) -> Map {
+    let mut x = s & 0xFFFFFFFF
+    if x == 0 { x = 0x9E3779B9 }
+    x = (x ^ (x * 8192)) & 0xFFFFFFFF
+    x = (x ^ (x / 131072)) & 0xFFFFFFFF
+    x = (x ^ (x * 32)) & 0xFFFFFFFF
+    return #{ "s": x, "u": to_float(x) / 4294967296.0 }
+}
+// _clmd_topk_sample — top-k temperature softmax draw over the LAST position's logits
+// (logits is a t_zeros(T*V); read row `base = (T-1)*V`). Returns #{ tok, s }.
+fn _clmd_topk_sample(logits: int, base: int, V: int, top_k: int, temp: float, rng: int) -> Map {
+    let kcap = if top_k > 0 && top_k < V { top_k } else { V }
+    let taken = t_zeros(V)
+    let sel_idx = []; let sel_val = []
+    let mut picks = 0
+    while picks < kcap {
+        let mut bi = -1; let mut bv = 0.0
+        let mut k = 0
+        while k < V {
+            if t_get(taken, k) < 0.5 {
+                let v = t_get(logits, base + k)
+                if bi < 0 || v > bv { bi = k; bv = v }
+            }
+            k = k + 1
+        }
+        if bi < 0 { picks = kcap } else {
+            t_set(taken, bi, 1.0); sel_idx.push(bi); sel_val.push(bv / temp); picks = picks + 1
+        }
+    }
+    t_free(taken)
+    let nsel = len(sel_idx)
+    let mut mx = sel_val[0]
+    let mut i = 1
+    while i < nsel { if sel_val[i] > mx { mx = sel_val[i] } i = i + 1 }
+    let probs = []
+    let mut sum = 0.0
+    let mut j = 0
+    while j < nsel { let e = dt_exp(sel_val[j] - mx); probs.push(e); sum = sum + e; j = j + 1 }
+    let r = _clmd_rng_next(rng)
+    let target = to_float(r["u"]) * sum
+    let mut acc = 0.0
+    let mut pick = sel_idx[nsel - 1]
+    let mut p = 0
+    while p < nsel {
+        acc = acc + probs[p]
+        if target <= acc { pick = sel_idx[p]; p = nsel } else { p = p + 1 }
+    }
+    return #{ "tok": pick, "s": to_int(r["s"]) }
+}
+
+// clmd_mix32_pub / clmd_topk_sample_pub — pub wrappers so generator.hexa can run the
+// H_1381 sampler self-test on synthetic logits (NO model) without re-routing the single
+// decode slot (a_core_engine_map: the G6 ideation entry + smoke reach this only via the
+// generator L3 wrapper gen_g6_sampler_selftest, never a second direct decoder importer).
+pub fn clmd_mix32_pub(s: int) -> int { return _clmd_mix32(s) }
+pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: float, rng: int) -> Map {
+    return _clmd_topk_sample(logits, base, V, top_k, temp, rng)
+}
+
+// clm_decode_topk_sampled — seeded-sampling sibling of clm_decode_argmax. Same window
+// growth, but each next byte is DRAWN from a top-k temperature softmax via the engine's
+// seeded sampler → different seed_rng ⇒ DIFFERENT output (the diversity best-of-K needs).
+// HARD-BOUNDED by `gen` (the ConvMoE forward is heavy; caller passes a SMALL budget; NO
+// unbounded generation, FREEZE (ii)).
+pub fn clm_decode_topk_sampled(path: string, seed: string, gen: int,
+                               top_k: int, temp: float, seed_rng: int) -> Map {
+    if !clm_decodable(path) { return #{ "ok": false, "text": "" } }
+    let W = _clmd_load(path)
+    let V = to_int(W["V"])
+    let T = 24
+    let slen = byte_len(seed)
+    let tok = t_zeros(T)
+    let mut p = 0
+    while p < T {
+        let si = slen - T + p
+        if si >= 0 { t_set(tok, p, to_float(ord(substring(seed, si, si+1)))) }
+        else { t_set(tok, p, 32.0) }
+        p = p + 1
+    }
+    let logits = t_zeros(T*V)
+    let mut out = ""
+    let mut rng = _clmd_mix32(seed_rng)
+    let mut g = 0
+    while g < gen {
+        _clmd_fwd_logits(W, tok, logits, T)
+        let sm = _clmd_topk_sample(logits, (T-1)*V, V, top_k, temp, rng)
+        let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
+        out = out + chr(nb)
+        let mut q = 0
+        while q < T-1 { t_set(tok, q, t_get(tok, q+1)); q = q + 1 }
+        t_set(tok, T-1, to_float(nb))
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out }
+}
+
 // _clmd_find — first byte-offset of `needle` inside `hay` (-1 if absent). Plain
 // substring scan; mirrors bytegpt_decode.hexa::_bg_find (kept local — clm_decode
 // does not import bytegpt_decode, a_core_engine_map: ONE .clm slot, no cross-pull).

@@ -20,6 +20,7 @@
 
 import "CORE/engine_cli.hexa"
 import "CORE/brain.hexa"
+import "CORE/g6_ideation.hexa"   // H_1381 G6 ideation wire-in (G6 cases)
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }
@@ -1167,7 +1168,7 @@ fn main() {
     if _assert_b("case_98_margin_no_fab_absent_abstains", true,
                  mm_abstain == "" && mm_marg_unr > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (H_1379 brain_decide_margin) —
+    // ── cases 99-101 : G5 ABSTAIN-MARGIN BRAIN-CONSUME (brain_decide_margin) —
     //   brain_decide CONSUMES the live immune_memory_recall_margin to MODULATE
     //   emit-confidence/curiosity (the H_1367 follow-on). UNLIKE the additive read
     //   above, this DELIBERATELY changes the emit decision off-neutral. These cases
@@ -1210,6 +1211,48 @@ fn main() {
     let abs_xu = if cb_xu < 0.0 { 0.0 - cb_xu } else { cb_xu }
     if _assert_b("case_101_margin_brain_bias_bounded", true,
                  abs_xg <= 0.05 + 0.0000001 && abs_xu <= 0.05 + 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // ── H_1381 G6 IDEATION ★ WIRE-IN (cases 102-106) ─────────────────────────────────
+    // Deterministic engine-native proof of the G6 scaffold wire-in — NO slow decode (the
+    // 303M/ConvMoE forward is bounded only inside g6_score_arm; these cases test the
+    // MECHANISM: frames, frozen detector, frame-guard, and the seeded best-of-K sampler on
+    // SYNTHETIC logits). The full M-bar re-score on a live ckpt is a separate bounded probe
+    // (.verdicts/1381_g6_ideation_wire/) — never run unbounded in the smoke (FREEZE (ii)).
+    let g6_known = _g6_dict_load()
+
+    // case 102 : DETECTOR FROZEN — the VERBATIM H_1305 falsifiability detector calibrates
+    //   10/10 on the frozen 5-pos/5-neg set (structural FORM only, NOT loosened, p7).
+    if _assert_i("case_102_g6_detector_calibration_10of10", 10,
+                 g6_detector_calibration(g6_known)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 103 : FRAMES — 6 composed frames built; the 6th is a GENUINELY DISTINCT (0,2)
+    //   pair, NOT a duplicate of frame 0 (the COUNT fix — defeats the seed-collapse).
+    let g6_fr = g6_build_frames(6)
+    let g6_comp = g6_fr["composed"]
+    if _assert_b("case_103_g6_six_frames_sixth_distinct", true,
+                 len(g6_comp) == 6 && to_string(g6_comp[5]) != to_string(g6_comp[0]))
+        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 104 : FRAME-GUARD CLEAN — no composed frame carries a MEASURABLE-set word and
+    //   no frame is _is_falsifiable on its own (so the detector fires on the EMITTED idea,
+    //   never on the scaffold — the +1 falsifiable is EARNED, p7).
+    let g6_leaks = g6_frame_guard(g6_comp, g6_known)
+    if _assert_i("case_104_g6_frame_guard_clean", 0, len(g6_leaks))
+        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 105 : SAMPLER DETERMINISTIC + IN-TOPK — the engine's seeded top-k sampler draws
+    //   the SAME byte for the same seed (reproducible verdict) and NEVER outside the top-k
+    //   set over 40 draws (the sampling regime is sound).
+    let g6_st = g6_sampler_selftest()
+    let g6_det = g6_st["deterministic"]; let g6_intk = g6_st["in_topk"]; let g6_div = g6_st["diverse"]
+    if _assert_b("case_105_g6_sampler_deterministic_and_in_topk", true,
+                 g6_det && g6_intk) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 106 : BEST-OF-K DIVERSITY — the three best-of-K rng offsets [0,+101,+202] are NOT
+    //   all identical (the DEPTH lever): argmax decode would be a no-op for best-of-K; the
+    //   seeded sampler gives best-of-K a real search over the model's own samples.
+    if _assert_b("case_106_g6_best_of_k_diverse", true, g6_div)
+        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }

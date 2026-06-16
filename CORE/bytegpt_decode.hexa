@@ -586,6 +586,133 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
     return #{ "ok": true, "text": out, "ids": outl }
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// H_1381 — SEEDED TOP-K TEMPERATURE SAMPLER (the engine extension that makes
+// best-of-K EXPRESSIBLE on the engine). bytegpt_decode_argmax is deterministic
+// argmax, so best-of-K over rng offsets would yield K IDENTICAL outputs (no-op).
+// Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning) the engine
+// grows its OWN deterministic seeded sampler so the G6 DEPTH lever (best-of-K)
+// becomes a real search over the model's own samples — NOT idea-authoring.
+//
+// HONEST (FREEZE (i)): this is a hexa-native PRNG (xorshift32) — deterministic
+// given seed, but NOT byte-identical to torch's Generator/multinomial (that PRNG
+// is not reproducible in hexa). "engine-native" = runs on the live engine + its
+// own seeded sampler, deterministic over seeds — same standard as h1293/h1295.
+//
+// _g6_mix32 — SplitMix32-style finalizer: scrambles a raw seed so even nearby
+// seeds (e.g. base+0/+101/+202) decorrelate before the first draw (a plain xorshift
+// step of a small seed leaves the high bits unmixed → tiny correlated u; this fixes
+// that). Deterministic, pure-int.
+fn _g6_mix32(s: int) -> int {
+    let mut z = (s + 0x9E3779B9) & 0xFFFFFFFF
+    z = ((z ^ (z / 65536)) * 0x85EBCA6B) & 0xFFFFFFFF     // z ^= z>>16 ; *= C1
+    z = ((z ^ (z / 8192))  * 0xC2B2AE35) & 0xFFFFFFFF     // z ^= z>>13 ; *= C2
+    z = (z ^ (z / 65536)) & 0xFFFFFFFF                    // z ^= z>>16
+    if z == 0 { z = 0x9E3779B9 }
+    return z
+}
+
+// _g6_rng_next — xorshift32 PRNG step over a MIXED state; returns
+// #{ "s": new_state, "u": uniform[0,1) }. Callers pass the state from a prior
+// _g6_rng_next; the FIRST call's raw seed is mixed via _g6_mix32 in the sampler.
+fn _g6_rng_next(s: int) -> Map {
+    let mut x = s & 0xFFFFFFFF
+    if x == 0 { x = 0x9E3779B9 }
+    x = (x ^ (x * 8192)) & 0xFFFFFFFF            // x ^= x << 13
+    x = (x ^ (x / 131072)) & 0xFFFFFFFF          // x ^= x >> 17
+    x = (x ^ (x * 32)) & 0xFFFFFFFF              // x ^= x << 5
+    let u = to_float(x) / 4294967296.0
+    return #{ "s": x, "u": u }
+}
+
+// _g6_topk_sample — top-k temperature softmax sample over a logits farr[vocab].
+// Mirrors gauge_lib._decode's selection STRUCTURE: logits/temp → keep top_k →
+// softmax → multinomial draw (here via inverse-CDF over the engine's xorshift32).
+// Returns #{ "tok": int, "s": new_rng_state }.
+fn _g6_topk_sample(logits: int, vocab: int, top_k: int, temp: float, rng: int) -> Map {
+    // 1) temperature-scaled logits + running argmax (for top-k threshold)
+    let kcap = if top_k > 0 && top_k < vocab { top_k } else { vocab }
+    // collect (value) farr already in `logits`; find the kcap-th largest via a
+    // simple partial selection (vocab=256 → O(vocab*kcap) is fine, deterministic).
+    let taken = farr_zeros(vocab)               // 0/1 marked-as-selected
+    let mut sel_idx = []
+    let mut sel_val = []
+    let mut picks = 0
+    while picks < kcap {
+        let mut bi = -1
+        let mut bv = 0.0
+        let mut k = 0
+        while k < vocab {
+            if farr_get(taken, k) < 0.5 {
+                let v = farr_get(logits, k)
+                if bi < 0 || v > bv { bi = k; bv = v }
+            }
+            k = k + 1
+        }
+        if bi < 0 { picks = kcap } else {
+            let _ = farr_set(taken, bi, 1.0)
+            sel_idx.push(bi)
+            sel_val.push(bv / temp)
+            picks = picks + 1
+        }
+    }
+    let _ = farr_free(taken)
+    // 2) softmax over the kept top-k (subtract max for stability)
+    let nsel = len(sel_idx)
+    let mut mx = sel_val[0]
+    let mut i = 1
+    while i < nsel { if sel_val[i] > mx { mx = sel_val[i] } i = i + 1 }
+    let probs = []
+    let mut sum = 0.0
+    let mut j = 0
+    while j < nsel { let e = dt_exp(sel_val[j] - mx); probs.push(e); sum = sum + e; j = j + 1 }
+    // 3) inverse-CDF draw with the engine's xorshift32 (state already mixed by caller)
+    let r = _g6_rng_next(rng)
+    let target = to_float(r["u"]) * sum
+    let mut acc = 0.0
+    let mut pick = sel_idx[nsel - 1]            // default last (covers fp rounding)
+    let mut p = 0
+    while p < nsel {
+        acc = acc + probs[p]
+        if target <= acc { pick = sel_idx[p]; p = nsel } else { p = p + 1 }
+    }
+    return #{ "tok": pick, "s": to_int(r["s"]) }
+}
+
+// bytegpt_decode_topk_sampled — the seeded-sampling sibling of bytegpt_decode_argmax.
+// Same forward + window growth, but each next byte is DRAWN from a top-k temperature
+// softmax via the engine's seeded sampler → different seed_rng ⇒ DIFFERENT output
+// (the diversity best-of-K needs). HARD-BOUNDED by `gen` (caller passes a small
+// budget — the 303M forward is ~190ms/byte; NO unbounded generation, FREEZE (ii)).
+pub fn bytegpt_decode_topk_sampled(path: string, seed_ids: list, gen: int,
+                                   top_k: int, temp: float, seed_rng: int) -> Map {
+    let W = bg_load(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let toks = []
+    let mut i = 0
+    while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let outl = []
+    let mut out = ""
+    let mut rng = _g6_mix32(seed_rng)            // mix the raw seed ONCE (decorrelate nearby seeds)
+    let mut g = 0
+    while g < gen {
+        let n = len(toks)
+        let mut start = 0
+        if n > block { start = n - block }
+        let T = n - start
+        let ids = farr_zeros(T)
+        let mut p = 0
+        while p < T { let _ = farr_set(ids, p, to_float(toks[start + p])); p = p + 1 }
+        let logits = bg_forward_last_W(W, ids, T)
+        let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
+        let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
+        let _ = farr_free(logits); let _ = farr_free(ids)
+        toks.push(nb); outl.push(nb); out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "ids": outl }
+}
+
 // _bg_find / _bg_anchor_copy — the arch-INDEPENDENT deterministic retrieve-then-copy
 // (byte-identical to clm_decode.hexa::_clmd_find / clmd_anchor_copy). Inlined here
 // rather than imported so the ByteGPT decode does NOT pull in the ConvMoE flame
