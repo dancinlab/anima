@@ -1,0 +1,23 @@
+H_1353 — Phi-ROBUSTNESS, SYNERGY/REDUNDANCY DECOMPOSITION: O-INFORMATION (Rosas 2019)
+WARNING NOT an IIT-Phi verdict (a_phi_iit4_tool) — a COMPLEMENTARY non-IIT synergy/redundancy DIAGNOSTIC.
+Omega = TC - DTC ; Omega<0 => SYNERGY-dominated, Omega>0 => REDUNDANCY-dominated.
+seeds [1317,1318,1319] · eps=0.02 · binarize = variance-free median split (H_1328 lesson, == H_1348)
+ARMS A=NO-PHASE B=PHASE-BIND S=PERM-SHUF O=OFFSET-SHUF · ONLY read-out differs from H_1348
+BARS: R1 dOmega(B-A) CONSISTENT SIGN ALL seeds & |dOmega|>=eps · R2 |Omega_S-Omega_A|<=eps AND |Omega_O-Omega_A|<=eps ALL seeds · R3 NOT-an-IIT-Phi label
+
+seed 1317  Omega: A=-0.1876 B=-0.1187 S=-0.1993 O=-0.1809
+        dOmega(B-A)=+0.0690 [REDUNDANCY]  |d|>=eps True   S-A=-0.0117 [R2perm PASS]   O-A=+0.0068 [R2off PASS]
+seed 1318  Omega: A=-0.1474 B=-0.1474 S=-0.1474 O=-0.0171
+        dOmega(B-A)=+0.0000 [FLAT]  |d|>=eps False   S-A=+0.0000 [R2perm PASS]   O-A=+0.1303 [R2off FAIL]
+seed 1319  Omega: A=-0.0680 B=-0.0270 S=-0.0680 O=-0.1060
+        dOmega(B-A)=+0.0411 [REDUNDANCY]  |d|>=eps True   S-A=+0.0000 [R2perm PASS]   O-A=-0.0379 [R2off FAIL]
+---
+R1 ROBUST (dOmega CONSISTENT SIGN all seeds AND |dOmega|>=eps each): FAIL  [signs=[1, 0, 1] sign_consistent=False mag_ok=False]
+R2 EARNED (perm collapses AND offset does not reproduce, all seeds): FAIL  [perm=PASS off=FAIL]
+R3 LABEL: O-information is a NON-IIT synergy/redundancy diagnostic — NOT a faithful-IIT4 Phi verdict (a_phi_iit4_tool). PASS
+===
+VERDICT WALL (STRONGER, MEASURE-AGNOSTIC) — the synergy/redundancy decomposition INHERITS the
+  SAME fragility (R1 fails: dOmega sign not consistent across the 3 hard seeds). The WHICH-
+  synergistic question is ALSO fragility-bound on this substrate -> STRENGTHENS the measure-
+  agnostic wall (scalar Phi small-phi/big-Phi/larger-N + transfer entropy + O-information ALL fail).
+  Bounds (does NOT retract) the prior Phi verdicts. c9 honest.
