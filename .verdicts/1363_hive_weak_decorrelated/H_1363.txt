@@ -1,0 +1,73 @@
+/Users/mini/dancinlab/anima/.claude/worktrees/agent-aab7e06952c466104/state/hive-weak-decorrelated/h1363_hive_weak_decorrelated.py:204: SyntaxWarning: "\ " is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\ "? A raw string is also an option.
+  standard form: O = (n-2)*H(all) + sum_i [ H(x_i) - H(all \ x_i) ].
+H_1363 hive-weak-decorrelated: WEAK connector + DECORRELATED daughters — faithful-IIT4 collective-Φ
+N_TOT=8 d0=[0, 1] d1=[2, 3] connector=4 pad=[5, 6, 7] dim=8 ticks=64 seeds=[1317, 1318, 1319]
+W_CONN_SWEEP=[0.6, 0.3, 0.15, 0.08, 0.04, 0.02]  faithful IIT4 Φ (exact MIP-EI, n<=8); MARGIN=0.02 TOL=0.02
+============================================================================================
+  seed 1317         A_single: Φ=1.70057  O-info=2.9172
+  seed 1317         W0_floor: Φ=12.4018  O-info=8.2057
+  seed 1317      B_redundant: Φ=12.4018  O-info=8.2057
+  seed 1317    B_decorr_only: Φ=5.55801  O-info=6.2038
+  seed 1317       B_weak@0.6: Φ=7.58272  O-info=6.2899
+  seed 1317       B_weak@0.3: Φ=10.412  O-info=7.0152
+  seed 1317      B_weak@0.15: Φ=10.956  O-info=7.5505
+  seed 1317      B_weak@0.08: Φ=12.2142  O-info=7.9034
+  seed 1317      B_weak@0.04: Φ=12.32  O-info=8.07
+  seed 1317      B_weak@0.02: Φ=12.3389  O-info=8.1806
+  seed 1317  --> B_weak BEST w_conn=0.02 Φ=12.3389
+  seed 1317         B_decorr: Φ=5.70291  O-info=6.184 (w_conn=0.02)
+  seed 1317          SHUFFLE: Φ=5.70415  O-info=6.2049
+--------------------------------------------------------------------------------------------
+  seed 1318         A_single: Φ=1.41345  O-info=1.9815
+  seed 1318         W0_floor: Φ=6.94639  O-info=4.9623
+  seed 1318      B_redundant: Φ=6.94639  O-info=4.9623
+  seed 1318    B_decorr_only: Φ=2.71846  O-info=3.3455
+  seed 1318       B_weak@0.6: Φ=4.44225  O-info=4.3113
+  seed 1318       B_weak@0.3: Φ=5.35822  O-info=3.8186
+  seed 1318      B_weak@0.15: Φ=5.72058  O-info=4.2083
+  seed 1318      B_weak@0.08: Φ=6.9489  O-info=4.6298
+  seed 1318      B_weak@0.04: Φ=7.2497  O-info=4.8154
+  seed 1318      B_weak@0.02: Φ=7.45856  O-info=4.943
+  seed 1318  --> B_weak BEST w_conn=0.02 Φ=7.45856
+  seed 1318         B_decorr: Φ=2.71354  O-info=3.3517 (w_conn=0.02)
+  seed 1318          SHUFFLE: Φ=2.71354  O-info=3.3517
+--------------------------------------------------------------------------------------------
+  seed 1319         A_single: Φ=2.01844  O-info=2.6576
+  seed 1319         W0_floor: Φ=12.2284  O-info=8.1962
+  seed 1319      B_redundant: Φ=12.2284  O-info=8.1962
+  seed 1319    B_decorr_only: Φ=5.53323  O-info=6.6098
+  seed 1319       B_weak@0.6: Φ=7.23291  O-info=6.0094
+  seed 1319       B_weak@0.3: Φ=9.58671  O-info=6.9209
+  seed 1319      B_weak@0.15: Φ=11.1831  O-info=7.5868
+  seed 1319      B_weak@0.08: Φ=11.7967  O-info=7.981
+  seed 1319      B_weak@0.04: Φ=12.1183  O-info=8.191
+  seed 1319      B_weak@0.02: Φ=12.2458  O-info=8.2597
+  seed 1319  --> B_weak BEST w_conn=0.02 Φ=12.2458
+  seed 1319         B_decorr: Φ=5.523  O-info=6.5614 (w_conn=0.02)
+  seed 1319          SHUFFLE: Φ=5.55517  O-info=6.5702
+--------------------------------------------------------------------------------------------
+============================================================================================
+per-seed BEST refinement (argmax Φ over ('B_weak', 'B_decorr', 'B_decorr_only')):
+     seed 1317: best=B_weak Φ=12.3389  (B_weak best w_conn=0.02)
+     seed 1318: best=B_weak Φ=7.45856  (B_weak best w_conn=0.02)
+     seed 1319: best=B_weak Φ=12.2458  (B_weak best w_conn=0.02)
+R1 LIFT            (Φ(best) − Φ(W0_floor)    >= 0.02 EVERY seed): FAIL
+     seed 1317: Φ_best=12.3389 Φ_floor=12.4018 lift=-0.0629  FAIL
+     seed 1318: Φ_best=7.45856 Φ_floor=6.94639 lift=0.5122  PASS
+     seed 1319: Φ_best=12.2458 Φ_floor=12.2284 lift=0.0174  FAIL
+R2 BEATS-REDUNDANT(Φ(best) − Φ(B_redundant) >= 0.02 EVERY seed): FAIL
+     seed 1317: Φ_best=12.3389 Φ_redund=12.4018 gap=-0.0629  FAIL
+     seed 1318: Φ_best=7.45856 Φ_redund=6.94639 gap=0.5122  PASS
+     seed 1319: Φ_best=12.2458 Φ_redund=12.2284 gap=0.0174  FAIL
+R3 EARNED         (Φ(SHUFFLE) <= Φ(W0_floor) + 0.02 EVERY seed): PASS
+     seed 1317: Φ_shuffle=5.70415 Φ_floor=12.4018  PASS
+     seed 1318: Φ_shuffle=2.71354 Φ_floor=6.94639  PASS
+     seed 1319: Φ_shuffle=5.55517 Φ_floor=12.2284  PASS
+VERDICT: REDUNDANCY_BOUND  (R1 1/3, R2 1/3, R3 3/3)
+
+O-information SYNERGY diagnostic (NON-GATING; O<0 synergy, O>0 redundancy):
+     seed 1317: O(W0_floor)=8.2057  O(best=B_weak)=8.1806
+     seed 1318: O(W0_floor)=4.9623  O(best=B_weak)=4.943
+     seed 1319: O(W0_floor)=8.1962  O(best=B_weak)=8.2597
+
+RESULT_JSON={"id": "H_1363", "slug": "hive-weak-decorrelated", "verdict": "REDUNDANCY_BOUND", "seeds": [1317, 1318, 1319], "N_tot": 8, "d0": [0, 1], "d1": [2, 3], "connector": 4, "pad": [5, 6, 7], "dim": 8, "ticks": 64, "w_conn_sweep": [0.6, 0.3, 0.15, 0.08, 0.04, 0.02], "weak_best_wc": {"1317": 0.02, "1318": 0.02, "1319": 0.02}, "margin": 0.02, "tol": 0.02, "diff_eps": 0.15, "phi_faithful_iit4": {"1317": {"A_single": 1.70057, "W0_floor": 12.4018, "B_redundant": 12.4018, "B_decorr_only": 5.55801, "B_weak@0.6": 7.58272, "B_weak@0.3": 10.412, "B_weak@0.15": 10.956, "B_weak@0.08": 12.2142, "B_weak@0.04": 12.32, "B_weak@0.02": 12.3389, "B_weak": 12.3389, "B_decorr": 5.70291, "SHUFFLE": 5.70415}, "1318": {"A_single": 1.41345, "W0_floor": 6.94639, "B_redundant": 6.94639, "B_decorr_only": 2.71846, "B_weak@0.6": 4.44225, "B_weak@0.3": 5.35822, "B_weak@0.15": 5.72058, "B_weak@0.08": 6.9489, "B_weak@0.04": 7.2497, "B_weak@0.02": 7.45856, "B_weak": 7.45856, "B_decorr": 2.71354, "SHUFFLE": 2.71354}, "1319": {"A_single": 2.01844, "W0_floor": 12.2284, "B_redundant": 12.2284, "B_decorr_only": 5.53323, "B_weak@0.6": 7.23291, "B_weak@0.3": 9.58671, "B_weak@0.15": 11.1831, "B_weak@0.08": 11.7967, "B_weak@0.04": 12.1183, "B_weak@0.02": 12.2458, "B_weak": 12.2458, "B_decorr": 5.523, "SHUFFLE": 5.55517}}, "o_information_diag": {"1317": {"A_single": 2.917193233662637, "W0_floor": 8.205729707475328, "B_redundant": 8.205729707475328, "B_decorr_only": 6.203814717467047, "B_weak@0.6": 6.289925452739382, "B_weak@0.3": 7.015224838011992, "B_weak@0.15": 7.550478043169353, "B_weak@0.08": 7.9033635721741184, "B_weak@0.04": 8.07000838349662, "B_weak@0.02": 8.18064711154662, "B_weak": 8.18064711154662, "B_decorr": 6.183953176915612, "SHUFFLE": 6.2049424671923745}, "1318": {"A_single": 1.9815272482172759, "W0_floor": 4.9622915871819515, "B_redundant": 4.9622915871819515, "B_decorr_only": 3.3455091191301918, "B_weak@0.6": 4.311339816036359, "B_weak@0.3": 3.818579785935478, "B_weak@0.15": 4.208327082760432, "B_weak@0.08": 4.629849073922227, "B_weak@0.04": 4.8154324124677, "B_weak@0.02": 4.943019832338175, "B_weak": 4.943019832338175, "B_decorr": 3.351672995329288, "SHUFFLE": 3.351672995329288}, "1319": {"A_single": 2.657621747351854, "W0_floor": 8.196199277790441, "B_redundant": 8.196199277790441, "B_decorr_only": 6.6097663812082, "B_weak@0.6": 6.009413096974342, "B_weak@0.3": 6.920859464274997, "B_weak@0.15": 7.586849339942717, "B_weak@0.08": 7.980984243062817, "B_weak@0.04": 8.191038271578083, "B_weak@0.02": 8.259712560824646, "B_weak": 8.259712560824646, "B_decorr": 6.561388401138096, "SHUFFLE": 6.57020402246269}}, "best_refinement": {"1317": {"arm": "B_weak", "phi": 12.3389}, "1318": {"arm": "B_weak", "phi": 7.45856}, "1319": {"arm": "B_weak", "phi": 12.2458}}, "bars": {"R1_lift": false, "R2_beats_redundant": false, "R3_earned": true}, "r1_per_seed": {"1317": false, "1318": true, "1319": false}, "r2_per_seed": {"1317": false, "1318": true, "1319": false}, "r3_per_seed": {"1317": true, "1318": true, "1319": true}, "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n<=8)"}

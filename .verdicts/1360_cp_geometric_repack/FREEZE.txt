@@ -1,0 +1,111 @@
+H_1360 — WHORFIAN CP RELOCATION: GEOMETRIC RE-PACK (move the cells, not their weight/count)
+PRE-REGISTERED FREEZE — bars fixed BEFORE any scoring (frozen-first, c9/p7, NO tune-to-green).
+=========================================================================================
+
+LANE: COGNITION-REPRESENTATION (c15 developmental-plasticity + memory-protection-vs-overwrite
+lens; a_no_llm_frame_trap, a_break_the_wall). R1 numpy MIRROR (DIRECTIONAL — engine-transfer
+UNVERIFIED, same family as H_1333/H_1338/H_1340/H_1352 R1). $0 CPU, gradient-free, p7.
+3 seeds [4333,4334,4335] (SAME as H_1333/H_1338/H_1340/H_1352 so the NO-REPACK arm reproduces
+the H_1340 R0_base anchor IN-RUN). TOY synthetic continuum — NOT an LLM recipe, NOT a
+human-cognition claim.
+
+PROJ_SEED H_1360 (1323=parent Sapir-Whorf; 1333=developmental-plasticity grandparent;
+1338=eviction RE-DIAGNOSIS; 1340=budget-sweep DEEPER-LIMIT; 1341=shift-ladder; 1352=soft-decay
+DEEPER-LIMIT parent; 1355=leftward geometry; 1360 free on origin/main).
+
+----------------------------------------------------------------------------------------
+THE QUESTION
+----------------------------------------------------------------------------------------
+TWO levers have been exhausted as WALLS (both honest 🧱, NO bar moved):
+  - H_1340 (budget+RBF density): raising phase-2 split budget buys peak-DISTANCE toward p_A'
+    MONOTONICALLY (frac +0.575->+0.762, |peak-p_A'| 0.144->0.081) but DESTROYS coherence
+    (peak-count 4.3->7.0, never <=2). Pure budget can NOT deliver a coherent full relocation.
+  - H_1352 (soft-decay): down-weighting the residual phase-1 cells' VOTE relocates the peak
+    EVEN BETTER (frac +0.88, |peak-p_A'| 0.044) but coherence collapses HARDER (peak-count
+    4.3->15.7). Quieting the vote without moving the cells is WORSE on coherence.
+
+BOTH follow-ons EXPOSED the same decisive cause (named verbatim in the H_1352 card): the
+phase-1 prototypes are NEVER PHYSICALLY RELOCATED — they SIT at the old cut and inject
+secondary discrimination peaks. Budget drowns them (distance up, coherence down); decay quiets
+their vote but NOT their geometric presence (distance up up, coherence down down). The H_1352
+card names the ONLY untried lever: "A genuinely coherent full relocation needs the old cells to
+MOVE or be re-positioned (GEOMETRIC re-pack), not merely down-weighted or out-voted."
+
+H_1360 tests EXACTLY that — the THIRD orthogonal lever. The ONE new mechanism = a GEOMETRIC
+RE-PACK: during phase-2 (A->A') re-training, the residual phase-1 prototype POSITIONS are
+physically DRIFTED in feature space toward the new boundary p_A' (move the CELLS, not their
+weight or count). Hypothesis: moving the cells recovers a COHERENT single CP peak AT p_A'.
+
+----------------------------------------------------------------------------------------
+DESIGN (reuses H_1333/H_1340/H_1352 CP machinery VERBATIM via import; ONLY new = geometric re-pack)
+----------------------------------------------------------------------------------------
+- Constants inherited VERBATIM: P_A=1/3, P_A'=2/3, N_STIM=81 (= H_1340/H_1352), DIM=16 (LOW, =
+  H_1340 R0_base / H_1352), phase-1 budget=24, phase-2 budget GROW2=24 (LOW -- the H_1340
+  R0_base budget, NOT inflated, SAME as H_1352). LOC_TOL=0.12. SEEDS=[4333,4334,4335].
+  Same FIXED LOW budget as H_1352 (c4 asks: beat prior at equal/lower budget).
+- GEOMETRIC RE-PACK mechanism (PRE-REGISTERED rule, NOT tuned to a bar): each residual phase-1
+  prototype is the embedding X[s] of a phase-1 source stimulus at continuum position pos_s. The
+  re-pack DRIFTS that source position toward the new boundary p_A' and re-embeds the cell at the
+  drifted position. Per phase-2 split step, every phase-1 cell's source position pos_i moves a
+  FROZEN fraction REPACK_ETA of the remaining distance to p_A':
+      pos_i  <-  pos_i + REPACK_ETA * (p_A' - pos_i)
+      proto_i <- embed(pos_i, basis)        # re-embed at the drifted position (RBF code)
+  and its label is RE-READ from the NEW boundary at the drifted position: lab_i <- (pos_i>p_A').
+  Phase-2 cells are born at their own split positions and do NOT drift (they are already placed
+  at the new error locus). The phase-1 cell that has migrated PAST p_A' is clamped at p_A' (no
+  overshoot). REPACK_ETA is FROZEN at 0.15 here (ONE pre-registered value; a coarse 3-point
+  REPACK-LADDER {0.10,0.15,0.25} is reported as a NON-GATING diagnostic to show the bar is not a
+  knife-edge artifact -- the GATE is scored ONLY at the frozen 0.15). The drift is a position
+  update in the SAME continuum/RBF geometry the cells already live in -- it carries each cell's
+  RBF code from the old cut toward the new cut, eliminating the residual-at-old-cut secondary
+  peak that H_1340/H_1352 could only fight with weight/count.
+- ARMS (per seed, all at the SAME low budget DIM=16/GROW2=24):
+  (1) NO-REPACK (= H_1340 R0_base / H_1333 never-evict / H_1352 NO-DECAY VERBATIM) -- the in-run
+      anchor (~0.525, partial+incoherent).
+  (2) RE-PACK (phase-1 identical; phase-2 re-grow WITH the geometric re-pack drift).
+  (3) NO-RETRAIN control (grow on p_A only, no phase-2 + no re-pack -> MUST hold p_A).
+  (4) SHUFFLE control (incoherent permuted phase-2 labels + re-pack -> MUST collapse: moving
+      cells must NOT manufacture a coherent peak from noise -- the drift is toward p_A' but the
+      labels are random, so a coherent CP peak AT p_A' would prove the move is fabricating).
+- move-fraction = (peak_relocated - peak_Atrained) / (p_A' - p_A).
+- p1/p2/p3/p6: the re-pack rule keys on a cell's BIRTH PHASE + its own source position ONLY (a
+  structural store property); the discrimination readout reads ONLY representational distance in
+  the prototype space; NO injected boundary location at test (labels are re-read from the SAME
+  p_A' that trains phase-2 cells, never an injected target PEAK / persona / RLHF); labels enter
+  ONLY during training. The no-retrain + shuffle arms are the anti-Goodhart discriminators; the
+  no-repack arm (must STAY partial+incoherent in-run) is the contrast that isolates re-pack.
+
+----------------------------------------------------------------------------------------
+FROZEN BARS (GREEN iff c1 AND c2 AND c3 AND c4; NO bar moved c9/p7)
+----------------------------------------------------------------------------------------
+c1 RELOCATES   : RE-PACK peak reaches p_A' on ALL 3 seeds -- |peak - p_A'| <= LOC_TOL=0.12 each.
+c2 COHERENT    : RE-PACK post-retrain mean peak-count <= 2 (the gate budget H_1340 AND decay
+                 H_1352 BOTH FAILED -- H_1340 was 4.3->7.0, H_1352 was 15.7). LOAD-BEARING.
+c3 EARNED      : (3a) NO-RETRAIN control holds p_A -- |peak - p_A| <= LOC_TOL all seeds (no drift);
+                 AND (3b) SHUFFLE control collapses -- mean peak-count >= 3 (moving cells does
+                 NOT fabricate a coherent peak from permuted labels).
+c4 vs-PRIOR    : RE-PACK at the FIXED LOW budget (DIM=16/GROW2=24, EQUAL to H_1352, LOWER than
+                 H_1340's high rungs) BEATS BOTH prior levers on COHERENCE:
+                 (4a) re-pack mean peak-count <= 2 -- coherent where H_1340 (>=4.3) and H_1352
+                      (15.7) were scattered, AND
+                 (4b) re-pack |peak-p_A'| <= 0.081 (best H_1340 rung distance) -- at least as
+                      close while staying coherent. (4a) AND (4b) = re-pack delivers what neither
+                      budget nor decay could.
+
+DEPLETION TEST (terminal-vs-finding, c9):
+- GREEN (c1 AND c2 AND c3 AND c4) -> carving relocation is MOVE-THE-CELLS: the residual was a
+  geometric-placement problem all along, soluble by re-positioning (not weight/count). Real
+  finding; the 3-lever question CLOSES positively.
+- c1 AND c3 but NOT c2 -> moving the cells ALSO fails to recover coherence -> CP relocation is
+  INTRINSICALLY partial-or-incoherent under this RBF geometry: THREE orthogonal levers exhausted
+  (budget=count, decay=weight, re-pack=geometry) -> TERMINAL 🧱 (honest, NO bar move c9).
+- NOT c1 (peak stays short even with re-pack) -> re-pack does not even buy distance -> the move
+  is not the lever either; terminal-leaning, honest closed-negative.
+- c3a/c3b fail -> CONFOUNDED control (drift or shuffle-fabrication) -- treat c1/c2 cautiously.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): DIRECTIONAL numpy mirror, engine-transfer
+UNVERIFIED; TOY synthetic continuum N=81 / 3 seeds / single shift p_A->p_A' / one frozen
+REPACK_ETA=0.15; deterministic readout (tests the geometric-re-pack STRUCTURE, not a learned
+drift); real-corpus / multi-shift / leftward / engine-native CategoricalPerception wiring =
+follow-on. Live CORE/*.hexa UNTOUCHED (substrate-measurement rung).
+=========================================================================================

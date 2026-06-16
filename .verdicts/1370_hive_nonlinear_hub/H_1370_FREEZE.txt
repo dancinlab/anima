@@ -1,0 +1,73 @@
+H_1370 — hive-nonlinear-hub  FREEZE (pre-registered BEFORE scoring; bars NOT moved, c9/p7)
+================================================================================================
+slug: hive-nonlinear-hub   seeds = [1317, 1318, 1319]   (hard hive/topology family, H_1356/1363 verbatim)
+date frozen: 2026-06-16
+
+THE WALL (c16 / a_break_the_wall):
+  H_1350 — collective faithful-IIT4 Φ is ~85-96% shared-input REDUNDANCY (a W=0 floor).
+  H_1356 — a STRONG LINEAR connector hub (W_CONN=0.6) did WORSE than the floor (lift -4.82/-2.50/-5.00,
+           🧱 CONNECTOR_NULL): a linear hub HOMOGENIZES the daughters → faithful MIP reads them as MORE
+           reducible → Φ DROPS.
+  H_1363 — WEAK (W_CONN→0.02) connector only RECOVERS the floor (never overshoots), and DECORRELATED
+           daughters DROP Φ below half the floor → 🧱 REDUNDANCY_BOUND. Its LOAD-BEARING diagnosis:
+           the substrate is leaky-LINEAR, so ANY hub LINEARLY homogenizes the daughters. The
+           homogenization argument RESTS ON LINEARITY.
+
+HYPOTHESIS (genuinely-new angle, breaks the linearity assumption the prior closure rests on):
+  A NON-LINEAR / GATED connector cell (a saturating tanh gate on the hub feedback) breaks the linear
+  homogenization a linear hub cannot avoid. Does it lift the coupling-EARNED (non-redundant) Φ ABOVE
+  the W=0 floor, robustly across 3 seeds, where the LINEAR hub (H_1356/1363) could not?
+
+SUBSTRATE — H_1356/H_1363/H_1320/H_1283 VERBATIM (only the hub NONLINEARITY differs between B_linear
+  and B_nonlinear): leaky linear recurrent units LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private
+  gaussian input, dim-8 state, T=64 ticks. N_TOT=8 (n<=8 keeps faithful MIP EXACT). Two daughters
+  d0=units0..1, d1=units2..3. CONNECTOR hub = unit 4. Padding = units 5..7. DIFF_EPS=0.15.
+  공유세포 (SHARED founder) draws IDENTICAL across arms ⇒ W0_floor must be byte-identical to H_1356/H_1363
+  (12.4018 / 6.94639 / 12.2284) — a SETUP-INTEGRITY check, NOT a scored bar.
+
+Φ = FAITHFUL IIT4 ONLY (a_phi_iit4_tool): exact MIP-EI via `hexa run` over
+  hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, iit4_faithful_phi(state, n=8, dim=T, n_bins=8).
+  numpy NEVER computes Φ — it only emits the per-unit salience (state-energy) trajectory; the hexa
+  engine computes Φ. NO proxy as a terminal verdict.
+
+PRE-REGISTERED NONLINEARITY (frozen — NOT chosen post-hoc):
+  GATE = tanh   ·   GATE_GAIN = 2.0   ·   W_CONN = 0.6 (the SAME strong coupling H_1356's linear hub used,
+  so the ONLY difference between B_linear and B_nonlinear is the tanh gate).
+  Linear hub feedback to a daughter i:      coupling_i = W_CONN * hub
+  Linear hub integration of daughters:      coupling_CONN = W_CONN * (mean_d0 + mean_d1)
+  NONLINEAR (gated) hub feedback:           coupling_i = W_CONN * tanh(GATE_GAIN * hub)
+  NONLINEAR hub integration of daughters:   coupling_CONN = W_CONN * tanh(GATE_GAIN * (mean_d0 + mean_d1))
+  (the gate is applied element-wise on the DIM-vector; tanh is the canonical saturating neuron gate —
+   it bounds the feedback so the hub nudges without DRAGGING each daughter onto the shared hub state,
+   which is exactly the linear-homogenization mechanism H_1356/1363 diagnosed.)
+
+ARMS (5), 3 seeds [1317,1318,1319]:
+  A_single     — undivided 8-unit baseline, no daughter split / no connector.
+  W0_floor     — SHARED_DECOUPLED redundancy floor (= B_redundant, no connector). NAMED floor.
+  B_linear     — H_1356 STRONG LINEAR hub, W_CONN=0.6 (the known 🧱 point; the anchor B_nonlinear must beat).
+  B_nonlinear  — tanh-GATED hub, W_CONN=0.6, GATE_GAIN=2.0 (the new angle).
+  SHUFFLE      — B_nonlinear wiring but the gated hub reads RANDOM NON-daughter (pad) sources — role
+                 structure destroyed; must collapse to/below the floor.
+
+FROZEN BARS — GREEN iff R1 ∧ R2 ∧ R3, MARGIN = 0.02 (IDENTICAL to the faithful-Φ margin
+  H_1283/H_1317/H_1320/H_1356/H_1363 froze — NOT moved):
+  R1 LIFT          : Φ(B_nonlinear) − Φ(W0_floor)  >= 0.02 on ALL 3 seeds (the gated hub beats the floor robustly).
+  R2 BEATS-LINEAR  : Φ(B_nonlinear) − Φ(B_linear)  >= 0.02 on ALL 3 seeds (the nonlinearity adds
+                     non-redundant integration the LINEAR hub could not — the H_1356/1363-escape).
+  R3 EARNED        : Φ(SHUFFLE)     <= Φ(W0_floor) + 0.02 on ALL 3 seeds (lift requires the REAL
+                     daughter→gated-hub wiring, not generic gate variance).
+
+VERDICT MAP:
+  GREEN_NONLINEAR_ESCAPES  iff R1 ∧ R2 ∧ R3  (the tanh gate escapes redundancy-dominance).
+  SEED_FRAGILE             iff R1 or R2 passes on exactly 2/3 seeds (real but not robust).
+  WALL_NOT_EARNED          iff R3 fails (the lift, if any, is not from the real role wiring).
+  REDUNDANCY_BOUND_NONLINEAR iff R1 fails with R3 holding (the gated hub ALSO fails to beat the floor →
+                     the collective-Φ redundancy ceiling is NOT a linearity artifact; it is the
+                     shared-input STRUCTURE itself — the STRONGEST closure of the hive arc, c9).
+
+HONEST SCOPE (c9 / a_scale_honest_scope / a_toy_scale_recheck):
+  DIRECTIONAL numpy-mirror substrate — the faithful-Φ leg IS the real exact MIP-EI (numpy only emits
+  the salience trajectory; hexa computes Φ). Engine-transfer to live A⇄G CORE/pure_field UNVERIFIED.
+  TOY n=8, 2-unit daughters, single gated hub, 3 seeds, deterministic, single coupling W_CONN=0.6,
+  single gate (tanh) at a single GATE_GAIN=2.0. A 🧱 has nothing to wire (a_verified_must_wire =
+  GREEN-only); CORE/*.hexa UNTOUCHED, Ψ=½ untouched (standalone probe, 0 importers).

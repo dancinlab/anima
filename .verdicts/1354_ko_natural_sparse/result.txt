@@ -1,0 +1,29 @@
+=== H_1354 — ko-natural-sparse: cross-syllable phonotactic contexts @ FULL 30MB (NO striding) ===
+[corpus] KO from cache /tmp/h1311_ko_raw.bytes
+[corpus] KO 29999999B sha=c47b6808308d2f73…  identical-to-H_1307-RUN-A=True
+[nocheat] hangul_syllables=8143053 roundtrip_fail=0 ok=True
+[jamo] distinct jamo codepoints=67  jamo-symbol vocab Vj=323
+[nocheat] byte-accounting Σ n_bytes=29999999 corpus_bytes=29999999 close=True
+[streams] built in 3.4s  symbols=25501291
+[calib] opaque-3D feature rows=25501286
+[CALIB] {"arm": "CALIB_opaque_full", "stride": 1, "cells": 12, "bank_member": 5, "ntr": 12750643, "nte": 12750643, "test_bytes": 14999016, "A1_jamo": 2.63569, "JM_interp": 2.63569, "JM_shuffle_mean": 2.63569, "delta_JM_vs_jamo": -0.0, "delta_JMshuf_vs_jamo": -0.0, "context_distribution": {"K_contexts": 12, "per_context_jamo_rows_median": 11782.0, "per_context_jamo_rows_mean": 830438.8333333334, "cellJcnt_median": 175.85074626865674, "cellJcnt_mean": 12394.609452736317, "frac_contexts_cellJcnt_lt_1": 0.0, "frac_contexts_cellJcnt_lt_0_5": 0.0, "global_cellJcnt": 12394.609452736318}, "wall_s": 46.2}
+[natsparse] phonotactic-5D feature rows=25501286
+[NATSPARSE] {"arm": "NATSPARSE_phonotactic_full", "stride": 1, "cells": 33, "bank_member": 3, "ntr": 12750643, "nte": 12750643, "test_bytes": 14999016, "A1_jamo": 2.637, "JM_interp": 2.637, "JM_shuffle_mean": 2.63701, "delta_JM_vs_jamo": -1e-05, "delta_JMshuf_vs_jamo": -1e-05, "context_distribution": {"K_contexts": 33, "per_context_jamo_rows_median": 683.0, "per_context_jamo_rows_mean": 301977.75757575757, "cellJcnt_median": 10.194029850746269, "cellJcnt_mean": 4507.130710085933, "frac_contexts_cellJcnt_lt_1": 0.18181818181818182, "frac_contexts_cellJcnt_lt_0_5": 0.15151515151515152, "global_cellJcnt": 4507.130710085934}, "A5_learned_mean": 3.88818, "A5_shuffle_mean": 3.93718, "A5_per_seed": [3.88818, 3.88818, 3.88818], "delta_A5_vs_jamo": -1.25118, "wall_s": 102.0}
+[BREAKTHROUGH] {"arm": "BREAKTHROUGH_pairkey_full", "stride": 1, "cells": 474, "ntr": 12750643, "nte": 12750643, "test_bytes": 14999016, "A1_jamo": 3.06462, "JM_interp": 3.06458, "JM_shuffle_mean": 3.06468, "delta_JM_vs_jamo": 3e-05, "A5_learned_mean": 4.174, "A5_shuffle_mean": 4.19483, "delta_A5_vs_jamo": -1.10938, "context_distribution": {"K_contexts": 474, "per_context_jamo_rows_median": 802.5, "cellJcnt_median": 11.977611940298507, "cellJcnt_mean": 313.78758108193205, "frac_contexts_cellJcnt_lt_1": 0.25738396624472576, "frac_contexts_cellJcnt_lt_0_5": 0.19831223628691982}, "wall_s": 10.2}
+-------------------------------------------------------------------------------
+ARMS (CE nats/UTF-8-byte; A5/A5-shuf 3-seed mean; A1/JM deterministic). delta = jamo − mech (+=below jamo):
+                         arm cells cellJcnt_med   A1jamo       JM   JMshuf       A5      ΔJM      ΔA5
+           CALIB_opaque_full     12     175.8507  2.63569  2.63569  2.63569      nan     -0.0      nan
+  NATSPARSE_phonotactic_full     33      10.1940    2.637    2.637  2.63701  3.88818   -1e-05 -1.25118
+   BREAKTHROUGH_pairkey_full    474      11.9776  3.06462  3.06458  3.06468    4.174    3e-05 -1.10938
+-------------------------------------------------------------------------------
+[cell-arm c4 FAIL diagnostic] Voronoi cells pool contexts: K=33 cellJcnt median=10.1940 → c4=False (the wall that motivated pair-key)
+[c4 NO-STRIDE] PAIRKEY context distribution: K=474 cellJcnt median=11.9776 mean=313.7876 frac<1=0.257 frac<0.5=0.198
+c1 NAT-SPARSE-WIN (JM crosses below jamo by ≥0.03): False  (jamo−JM = 3e-05)
+c2 EARNED (JM beats shuffle by ≥0.05, shuffle wrong way): False  (Δ=0.0001, shuffle_wrong_way=True)
+c3 DISSOCIATION (A5 does NOT cross): True  (Δ_A5_vs_jamo=-1.10938, A5_crosses=False)
+c4 NO-STRIDE (stride==1, cellJcnt median<1): False  (median=11.9776)
+VERDICT: ⚠ NOT-NATURALLY-SPARSE — even the pair-key alphabet's contexts are NOT sparse enough at full data (median cellJcnt = 11.9776 >= 1) → cannot test the natural-sparse question; the coda→onset alphabet did not fragment finely enough (c9)
+total wall=166.5s
+  numpy CPU mirror; A5 metric LEARNED BY GRADIENT (labeled, NOT p8). engine-transfer follow-on. NO fluency claim.
+[done]

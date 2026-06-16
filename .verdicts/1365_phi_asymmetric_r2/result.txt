@@ -1,0 +1,32 @@
+H_1365 — Φ-ROBUSTNESS R2: does an ASYMMETRIC (non-relabel-invariant) substrate make
+the PERMUTATION-NULL control ACTUALLY BITE, and does a clean-R2 setup change R1?
+Φ = FAITHFUL IIT-4 exact MIP-EI via hexa (a_phi_iit4_tool); numpy NEVER computes Φ.
+asymmetry: W_FWD=0.7 != W_BWD=0.3, per-module gain gradient g=[0.7..0.9]
+seeds [1317, 1318, 1319] · eps=0.02 · binarize = variance-free median (H_1328, == H_1348/1353)
+ARMS A=NO-COUPLING B=PHASE-BIND P=PERM-NULL(re-bind module->slot) O=OFFSET-CTRL
+BARS: R0 PERM-BITES Φ_P<Φ_B-eps (>=2/3 seeds, the precondition prior lanes LACKED) ·
+      R1 ROBUST ΔΦ(B-A)>=eps EACH seed · R2 EARNED Φ_P<=Φ_A+eps AND Φ_O<=Φ_A+eps all seeds
+==========================================================================================
+seed 1317  perm(module->slot)=[1, 2, 3, 0]
+   Φ_A=+0.7502  Φ_B=+1.1073  Φ_P=+1.1073  Φ_O=+1.0932
+   ΔΦ(B-A)=+0.3570 [R1 PASS]   Φ_B-Φ_P=+0.0000 [R0 perm-bites no]   Φ_P-Φ_A=+0.3570 Φ_O-Φ_A=+0.3430 [R2 FAIL]
+seed 1318  perm(module->slot)=[1, 2, 3, 0]
+   Φ_A=+0.8429  Φ_B=+1.3541  Φ_P=+1.1731  Φ_O=+0.7045
+   ΔΦ(B-A)=+0.5112 [R1 PASS]   Φ_B-Φ_P=+0.1810 [R0 perm-bites YES]   Φ_P-Φ_A=+0.3302 Φ_O-Φ_A=-0.1385 [R2 FAIL]
+seed 1319  perm(module->slot)=[2, 3, 1, 0]
+   Φ_A=+0.5837  Φ_B=+0.6863  Φ_P=+0.8820  Φ_O=+0.6057
+   ΔΦ(B-A)=+0.1026 [R1 PASS]   Φ_B-Φ_P=-0.1957 [R0 perm-bites no]   Φ_P-Φ_A=+0.2983 Φ_O-Φ_A=+0.0220 [R2 FAIL]
+------------------------------------------------------------------------------------------
+R0 PERM-BITES (Φ_P < Φ_B − eps on >=2/3 seeds; precondition prior lanes LACKED): FAIL  [1/3 bite, 3/3 had Φ_B>0]
+R1 ROBUST (ΔΦ(B−A) >= eps EACH of 3 seeds): PASS  [per-seed [True, True, True]]
+R2 EARNED (Φ_P<=Φ_A+eps AND Φ_O<=Φ_A+eps all seeds): FAIL  [per-seed [False, False, False]]
+==========================================================================================
+VERDICT DIAGNOSIS CONFIRMED — even with an ASYMMETRIC (directed+graded) coupling the
+  permutation-null does NOT bite on a majority of seeds: faithful symmetric-MIP Φ is
+  structurally EXCHANGEABLE for this substrate, OR the asymmetry does not move the
+  exact MIP. The perm-degeneracy is a property of the estimator, not just the prior
+  symmetric substrates. (The diagnosis itself — the last structural gap named.) c9.
+
+NOTE: DIRECTIONAL numpy mirror of the engine ring; the Φ leg IS the real faithful exact
+MIP-EI (a_phi_iit4_tool, numpy never computes Φ). TOY n=4/T=64/3 seeds. engine-transfer
+UNVERIFIED. Bounds (does NOT retract) H_1283/1317/1319/1320/1328/1331/1347/1348/1353/1357.

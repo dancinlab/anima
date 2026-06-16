@@ -1,0 +1,150 @@
+H_1364 — WHORFIAN CP PLASTICITY: LATTICE-RESOLUTION LADDER (ASYM-L incoherence — discretization artifact or intrinsic?)
+PRE-REGISTERED FREEZE — written BEFORE any scoring. NO bar moves after this (c9/p7).
+==================================================================================
+slug: 1364_cp_lattice_resolution   family: H_1364 (1323=parent Sapir-Whorf; 1333=
+developmental-plasticity parent; 1341=shift-size ladder; 1355=cp-leftward, the DIRECT
+parent — characterized the CP relocation landing as GEOMETRY-tracking, NOT a
+continuum-center attractor; but its ASYM-L same-side leftward rung went INCOHERENT,
+peak-count 3>2 on 2/3 seeds, flagged confounded as a real limit of split-only re-growth).
+Complementary to H_1360 cp-geometric-repack (that MOVES cells; this REFINES the grid).
+
+Reuses the H_1333/H_1341/H_1355 CP machinery EXACTLY (h1333_whorf_developmental.py copied
+verbatim into state/cp-lattice-resolution/): RBF position embedding, error-targeted
+SPLIT-only Voronoi/mitosis prototype growth, soft category-posterior discrimination readout,
+peak-count COHERENCE metric, phase-2 re-growth (grow the SAME store further on a MOVED
+boundary, split-only, no reset). The ONLY new code is a LATTICE-RESOLUTION LADDER: scale the
+continuum resolution N (N_STIM and, proportionally, the RBF basis density DIM and the
+per-phase split budget GROW_MAX/SPLIT_PASSES) across >=3 rungs and re-run the H_1355 ASYM-L
+placement (and the discriminating placements) at EACH N.
+
+LENS: developmental/critical-period plasticity + DISCRETIZATION (c15, a_no_llm_frame_trap) —
+NOT an LLM recipe, NOT a human-cognition claim. $0 CPU numpy, gradient-free, 3 seeds
+[4333,4334,4335] (SAME seeds as H_1333/H_1341/H_1355). DIRECTIONAL MIRROR — engine-transfer
+UNVERIFIED.
+
+==================================================================================
+THE QUESTION (the H_1355 load-bearing follow-on):
+H_1355 found the CP relocation landing TRACKS placement geometry (not a center attractor),
+landings spanning 0.375->0.692 with the requested cut. But its ASYM-L rung (same-side
+leftward cut, p_A=0.400 -> p_A'=0.200, BOTH cuts left of center) went INCOHERENT at N=21:
+the post-retrain discrimination curve had peak-count 3 (>COH_MAX_LANG=2) on seeds 4333 and
+4335 (those two also failed to relocate, frac=-0.000, peak stuck at the old 0.425), while
+seed 4334 relocated coherently (pc=1, peak 0.275). H_1355 flagged this confounded and read
+it as "a real limit of split-only re-growth" but could not tell apart two explanations:
+
+  (H-lattice)   The incoherence is a DISCRETIZATION ARTIFACT of the coarse N=21 lattice
+                (grid spacing 0.05): too few stimuli / RBF centers near the requested
+                left-side cut for the fixed split budget to resolve a single clean peak, so
+                the residual old-boundary packing leaves a scattered (multi-peak) curve. A
+                FINER lattice (larger N, denser RBF, proportional budget) would supply enough
+                resolution to resolve the new cut -> peak-count recovers to <=2.
+
+  (H-intrinsic) The incoherence is INTRINSIC to split-only re-growth on a same-side
+                away-from-center leftward cut (the never-removed first-carving cells
+                genuinely fragment the curve), and is INDEPENDENT of lattice resolution.
+                A finer lattice would NOT fix it -> peak-count stays incoherent (>=3 on the
+                same seeds) as N grows.
+
+H_1364 DISCRIMINATES by running a LATTICE-RESOLUTION LADDER and reading, at each N, both the
+ASYM-L coherence (peak-count) and the CENTER_TOL of the absolute-landing table. This is a
+CHARACTERIZATION ladder — BOTH outcomes are VALID and INFORMATIVE (c9). The deliverable is
+the HONEST coherence-and-CENTER_TOL-vs-N curve plus the resolution-bound vs intrinsic call.
+
+==================================================================================
+PARADIGM (identical machinery to H_1333/H_1341/H_1355, ONLY N scaled):
+  - SAME 1-D continuum [0,1], N_STIM RBF-coded stimuli, identical stimulus world across arms
+    and rungs (basis fixed by seed exactly as H_1333). Boundary-AGNOSTIC embed.
+  - phase 1: grow SAME store to convergence on labels(p_A); phase 2: WITHOUT reset, grow
+    FURTHER on labels(p_A') (split-only, p8, never-remove). move-fraction =
+    (peak_R - peak_A)/(p_A' - p_A).
+  - READOUT identical: discrimination(midpoint)=|soft-posterior(x_i)-soft-posterior(x_j)|
+    over adjacent pairs; CP peak = argmax. COHERENCE peak-count = #midpoints >= 0.5*peak.
+    p1/p2/p3/p6: readout reads ONLY representational distance; NO injected boundary at test.
+
+LATTICE-RESOLUTION LADDER (the ONE new axis). Each N rung scales the discretization
+PROPORTIONALLY so the ONLY thing that changes is grid fineness, NOT a budget-starvation
+confound (a finer lattice with the SAME fixed split budget would be budget-starved per cut —
+that would CONFOUND H-lattice). Scaling rule, FROZEN here BEFORE scoring:
+     N_STIM(N) = N
+     DIM(N)    = round(DIM_BASE * N / N_BASE)   with DIM_BASE=16, N_BASE=21  (RBF density
+                 grows with the lattice so the embedding is not under-resolved)
+     GROW_MAX(N) = SPLIT_PASSES(N) = round(BUDGET_BASE * N / N_BASE)  with BUDGET_BASE=24
+                 (per-phase split budget grows with the lattice so packing-per-cut is held
+                 proportional — anti-budget-starvation)
+  RUNG LADDER (>=3, INCLUDING the ASYM-L rung that went incoherent at N=21):
+     N = 21   (BASE — reproduces H_1355 exactly: DIM=16, GROW_MAX=24, SPLIT_PASSES=24)
+     N = 41   (~2x finer: DIM=31, GROW_MAX=47, SPLIT_PASSES=47)
+     N = 81   (~4x finer: DIM=62, GROW_MAX=93, SPLIT_PASSES=93)
+  (DIM/budget values above are the round() results of the frozen rule; recorded for audit.)
+
+  PLACEMENTS run at EACH N (H_1355 verbatim, on the [0,1] continuum; the requested cuts are
+  the SAME real-valued placements at every N — a finer grid just samples them more densely):
+     RIGHT-REF  : p_A=0.333  p_A'=0.667   (rightward, anchor left — the 0.525 reference)
+     LEFTWARD-1 : p_A=0.667  p_A'=0.333   (leftward, mirror of RIGHT-REF)
+     LEFTWARD-2 : p_A=0.800  p_A'=0.500   (leftward to center)
+     ASYM-R     : p_A=0.600  p_A'=0.800   (both cuts right of center)
+     ASYM-L     : p_A=0.400  p_A'=0.200   (both cuts left of center — the INCOHERENT one)
+
+==================================================================================
+FROZEN BARS (CHARACTERIZATION ladder — c2 DIRECTION pre-registered, NO GREEN/RED to
+manufacture, c9):
+
+  c1 REPORT (deliverable): for EACH N rung, measure and report VERBATIM (mean of 3 seeds):
+       - the ASYM-L post-retrain peak-count pc_R (coherence), per seed and mean, AND its
+         absolute landing L_ASYM-L and move-fraction;
+       - CENTER_TOL(N) := max over the 5 rungs of |L_rung - 0.50| (the smallest tolerance
+         band that contains every landing at this N — the SAME quantity H_1355 reported as
+         "max |L-0.5|", here read as the center-band WIDTH).
+     A complete coherence-and-CENTER_TOL-vs-N table across all 3 N rungs = c1 satisfied.
+     (No threshold — the curve IS the deliverable.)
+
+  c2 DISCRIMINATE (the PRE-REGISTERED DIRECTION call, decided by the MEASURED curve, NO bar
+     moved). Define, over the N ladder [21, 41, 81]:
+        - RESOLUTION-BOUND (H-lattice) iff BOTH trends hold as N grows:
+            (i)  ASYM-L coherence RECOVERS: the ASYM-L mean peak-count is <= COH_MAX_LANG=2
+                 at the FINEST N (N=81), AND the count of incoherent seeds (pc_R>=3) at the
+                 finest N is STRICTLY FEWER than at N=21 (the 2/3 incoherent seeds drop);
+            (ii) CENTER_TOL SHRINKS (monotone non-increasing across the 3 rungs, and strictly
+                 smaller at N=81 than at N=21): the landing band tightens with resolution.
+          => the ASYM-L incoherence (and any apparent center band) is a DISCRETIZATION
+             artifact; a finer lattice fixes it. (Reading: the H_1355 "limit of split-only
+             re-growth" was lattice-resolution-bound, not a deep limit.)
+        - INTRINSIC (H-intrinsic) iff the ASYM-L incoherence PERSISTS at the finest N
+            (mean peak-count still >COH_MAX_LANG=2 OR the SAME number of seeds incoherent at
+            N=81 as at N=21) AND/OR CENTER_TOL does NOT shrink (>= its N=21 value at N=81).
+          => the incoherence is intrinsic to split-only same-side leftward re-growth,
+             independent of lattice resolution — a deeper, honest limit (load-bearing
+             negative, c9).
+        - MIXED / partial otherwise (e.g. coherence recovers but CENTER_TOL does not, or
+            vice versa, or non-monotone): reported VERBATIM with the per-N breakdown, NO
+            forced single label (c9).
+     Both H-lattice and H-intrinsic are PRE-REGISTERED here; the data picks which, reported
+     straight either way.
+
+  c3 EARNED (anti-Goodhart, MUST hold for the curve to be valid, at EVERY N rung, all 3
+     seeds):
+     (a) NO-RETRAIN control HOLDS p_A at each placement: |peak_noretrain - p_A| <=
+         LOC_TOL=0.12 (the move is the re-training, not drift).
+     (b) SHUFFLE incoherent: shuffle peak-count >= COH_MIN_SHUF=3 ; the NON-ASYM-L language
+         arms coherent (A / A->A' / no-retrain peak-count <= COH_MAX_LANG=2) at every N.
+         (The ASYM-L A->A' arm is the QUANTITY UNDER TEST and is NOT required to be coherent
+         — its (in)coherence vs N is the c1/c2 finding itself, reported either way; the
+         no-retrain ANCHOR and the A-trained arm at ASYM-L ARE still required coherent.)
+     If c3 fails at any N that N is CONFOUNDED and reported as such (honest), NOT dropped.
+
+  frozen constants (reused from H_1323/H_1333/H_1341/H_1355 verbatim where applicable):
+     N_BASE=21  DIM_BASE=16  BUDGET_BASE=24  PAIR_STEP=1
+     N ladder = [21, 41, 81]
+     derived (frozen rule): (N=21) DIM=16 BUDGET=24 · (N=41) DIM=31 BUDGET=47 ·
+        (N=81) DIM=62 BUDGET=93
+     LOC_TOL=0.12  COH_MAX_LANG=2  COH_MIN_SHUF=3  SEEDS=[4333,4334,4335]
+     CENTER=0.50
+     RUNGS (p_A, p_A'): RIGHT-REF (0.333,0.667) · LEFTWARD-1 (0.667,0.333) ·
+        LEFTWARD-2 (0.800,0.500) · ASYM-R (0.600,0.800) · ASYM-L (0.400,0.200)
+
+HONEST SCOPE: DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED. TOY synthetic 1-D
+continuum, 3 seeds, deterministic readout, 5 placement rungs x 3 N rungs. NO human-cognition
+/ critical-period claim. Live CORE/*.hexa UNTOUCHED (substrate-measurement rung — adds only
+UNIVERSE/ + state/ + verdicts). The ladder tests lattice-resolution DEPENDENCE of the
+relocation coherence, not a learned model. Higher-D embeddings, real corpora, non-uniform
+grids, and engine-native re-growth remain UNVERIFIED follow-ons.

@@ -1,0 +1,100 @@
+================================================================================
+H_1362 — G6 IDEATION ★ DEPTH-FLOOR BREAKTHROUGH  ·  RESULT (verbatim, p7, c9)
+   strengthened composition scaffold (6 frames + best-of-K=3) on the SAME FROZEN detector
+================================================================================
+DATE     : 2026-06-16
+VERDICT  : 🟢 GREEN — G6 ★ CLOSED (all M1..M5 PASS; DIRECTIONAL, R2 engine-native = follow-on)
+SUBSTRATE: local CPU $0 · torch 2.8.0 · gauge_lib._decode top-k=40 temp=0.7 (the LIVE G6 path)
+MODEL    : anima-clm-chat-303m (303,097,856 p) · ckpt state/chat_303m/h1129c_chat.pt
+CORPUS   : data/corpus.txt (5.0MB) · 3 seeds [7, 4302, 4303]
+RUN      : python state/g6-depth-breakthrough/h1362_g6_depth_breakthrough.py (FROZEN = FREEZE.txt)
+RAW LOG  : .verdicts/1362_g6_depth_breakthrough/run_raw.txt (full per-seed per-arm decode dump)
+
+--------------------------------------------------------------------------------
+FROZEN FALSIFIABILITY DETECTOR (H_1305 VERBATIM, NOT loosened) CALIBRATION = 10/10
+--------------------------------------------------------------------------------
+  Reused by import from UNIVERSE/h1305_g6_ideation_falsifiability.py (_is_falsifiable).
+  5 designed-falsifiable + 5 designed-non-falsifiable frozen strings: all 10 correct.
+  Structural test only: (a) comparator/conditional ∧ (b) measurable/quantity ∧
+  (c) negatable content claim (>=2 dict content words, not a question, not pure stance).
+  NEVER an LLM/quality judge (p7).
+
+p7 FRAME GUARD: CLEAN — no composed frame contains a MEASURABLE-set word, no frame is
+  _is_falsifiable on its own. The 'if/then' FORM is the only scaffold; the measurable mark
+  + content claim MUST be emitted by the model itself (best-of-K is a search over the
+  model's OWN samples, NOT idea-authoring).
+
+--------------------------------------------------------------------------------
+FROZEN BARS (mean over 3 seeds)  ·  DIST = distinct coherent ideas, FALS = falsifiable, NOVEL = corpus-absent grams
+--------------------------------------------------------------------------------
+  A_flat       DIST=4.0     FALS=0.0     NOVEL=6.33    per-seed dist=[4,4,4] fals=[0,0,0]   (live verify303m_g6 path — reproduces THIN)
+  B_composed   DIST=4.0     FALS=0.6667  NOVEL=19.0    per-seed dist=[5,3,4] fals=[0,1,1]   (H_1305 5-frame single-sample — reproduces 0.667)
+  C_strong     DIST=5.3333  FALS=1.0     NOVEL=32.67   per-seed dist=[6,5,5] fals=[0,1,2]   (6 frames + best-of-K=3 — THE BREAKTHROUGH ARM)
+  C_shuffle    DIST=5.0     FALS=0.3333  NOVEL=21.33   per-seed dist=[5,5,5] fals=[1,0,0]   (control: permuted concept pairing)
+  C_ablate     DIST=3.0     FALS=0.0     NOVEL=11.0    per-seed dist=[5,1,3] fals=[0,0,0]   (control: lone concept, no conditional shell)
+
+--------------------------------------------------------------------------------
+FROZEN MOVE BARS (G6 ★ CLOSE requires ALL of M1..M5)
+--------------------------------------------------------------------------------
+  M1 COUNT       DIST(C)>=5            : 5.3333 vs 5         -> TRUE
+  M2 DEPTH       FALS(C)>=1            : 1.0    vs 1         -> TRUE
+  M3 LIFT        FALS(C)>FALS(B)       : 1.0    vs 0.6667    -> TRUE
+  M4 EARNED-PAIR FALS(C)>FALS(shuffle) : 1.0    vs 0.3333    -> TRUE
+  M5 EARNED-COMP FALS(C)>FALS(ablate)  : 1.0    vs 0.0       -> TRUE
+  closed_G6 = TRUE   (M1 ∧ M2 ∧ M3 ∧ M4 ∧ M5)
+
+--------------------------------------------------------------------------------
+EMERGENT FALSIFIABLE IDEAS (model-emitted, detector-flagged 'F' — NOT hand-authored, p7)
+--------------------------------------------------------------------------------
+  seed 4302 (C_strong): one falsifiable idea earned via best-of-K.
+  seed 4303 (C_strong, 2 falsifiable), e.g.:
+    (F) "byte-level approach is slower to converge but handles Korean and English equally well."
+        -> comparator 'slower' + measurable structure ('converge'/'handles ... equally') +
+           negatable content claim. A TESTABLE prediction the MODEL EMITTED; the scaffold
+           only supplied the 'if cA, then cB:' conditional form.
+  The B_composed arm (single-sample) emitted the same idea on seed 4303 but only best-of-K
+  surfaced it RELIABLY (+ a 2nd falsifiable on the same seed) lifting the mean to 1.0.
+
+--------------------------------------------------------------------------------
+READING (honest, c9)
+--------------------------------------------------------------------------------
+1. The two H_1305 walls FELL exactly where diagnosed, via two STRUCTURAL levers:
+   (a) COUNT — the 6th composed frame (a genuinely distinct (0,2) pair, NOT a duplicate)
+       PLUS best-of-K (keep the most-coherent of 3 samples) removed the seed-5 '|' collapse:
+       C_strong coh = 6/6 on every seed, DIST 5.33 (vs B 4.0). M1 crosses.
+   (b) DEPTH — best-of-K=3 (the "curiosity-gated multi-sample budget" H_1305 named as the
+       UNVERIFIED future lever) gave the 303M mouth more chances to EMIT a measurable mark:
+       FALS rose 0.667 (B) -> 1.0 (C). M2 crosses, M3 lifts over B.
+2. CONTROLS are decisive (anti-Goodhart held): C_strong FALS 1.0 > C_shuffle 0.333 (M4) and
+   > C_ablate 0.0 (M5). C_ablate also collapses DIST to 3.0 (lone concept, no conditional
+   shell) — the conditional+pair scaffold is load-bearing. The single shuffle hit (seed 7)
+   does NOT track the earned composed pairing; the mean separation is clean.
+3. The detector was NOT loosened (reused VERBATIM, 10/10 calibrated) and the frame guard
+   forbids a measurable word in the scaffold — so the +1 falsifiable is EARNED by the model,
+   not manufactured by the frame (p7). No bar was moved post-hoc (c9). best-of-K is a
+   legitimate search over the model's OWN samples, not idea-authoring.
+
+--------------------------------------------------------------------------------
+CONCLUSION
+--------------------------------------------------------------------------------
+G6 IDEATION ★ — anima's STARRED core-purpose gate — CLOSES 🟢 (DIRECTIONAL): from ideation
+seeds the strengthened composition scaffold produces >=5 distinct coherent corpus-absent
+ideas (DIST 5.33) AND >=1 falsifiable corpus-absent hypothesis (FALS 1.0), with BOTH controls
+collapsing. The two H_1305 sub-threshold walls (COUNT 4<5, DEPTH 0.667<1) are crossed without
+loosening the frozen detector and without authoring any idea content. The falsifiability
+DETECTOR + the strengthened scaffold are candidate components for a promoted live G6-depth
+gate (a_verified_must_wire follow-on).
+
+ENGINE-NATIVE (a_engine_native_learning): this is the gate's OWN decode regime (gauge_lib.
+_decode, the SAME path verify303m_g6.py uses), NOT a numpy mirror. It is nonetheless
+DIRECTIONAL on TWO axes: (1) single ckpt h1129c_chat.pt, TOY 5-concept/6-pair/3-seed; (2) the
+live G6 gate is not yet WIRED to ROUTE ideation through this composition + best-of-K scaffold
+— that wire-in (+ an engine-native byte-exact reconfirm) is the R2 follow-on. Until then the
+G6 ★ close is DIRECTIONAL-GREEN, not a promoted production close.
+
+SCOPE (a_toy_scale_recheck / a_scale_honest_scope): TOY — 5 fixed concepts, 6 ordered pairs,
+best-of-K=3, 3 seeds, 1 ckpt, sampling-decode. The detector measures testable FORM (comparator
++ measurable + negatable), NOT truth/quality (p7). Scale / real-corpus / paraphrase / larger-K /
+deeper detector / engine-native wire-in UNVERIFIED. The mean FALS=1.0 sits exactly on the floor
+(seeds 0/1/2) — a thin-but-real GREEN, not a saturated margin; larger K or scale could move it.
+================================================================================

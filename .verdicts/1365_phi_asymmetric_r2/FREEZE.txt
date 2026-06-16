@@ -1,0 +1,56 @@
+H_1365 — phi-asymmetric-r2 — FROZEN BARS (pre-registered BEFORE any Φ scoring; c9/p7, NO tune-to-green)
+
+PARENT WALL: H_1349 / H_1353 / H_1357 Φ-robustness wall (c16, a_break_the_wall, a_no_llm_frame_trap).
+RECURRING R2 WEAKNESS: in every prior lane the permutation-null control was DEGENERATE — under a
+SYMMETRIC-MI exact MIP, faithful Φ is node-PERMUTATION-INVARIANT, so Φ_perm == Φ_B by construction
+and the perm control could not bite. Only the OFFSET control discriminated. This is the last
+structural gap in the fragility diagnosis.
+
+HYPOTHESIS: a NON-relabel-invariant (ASYMMETRIC) substrate makes the permutation-null control
+ACTUALLY BITE (Φ_perm < Φ_B). The science question: does a clean-R2 setup change the R1 robustness
+verdict, or does the wall hold EVEN WHEN perm bites?
+
+SUBSTRATE (reuse H_1349/H_1319/H_1353 ring VERBATIM + ONE asymmetry change):
+  4-module leaky-linear ring, dim 8, T 64, engine LCG-gauss (== engine_cli.hexa _lcg_*),
+  gain 0.30, leak 0.55, w_in 0.5, Kuramoto pacemaker, relative-phase gate (all VERBATIM).
+  ASYMMETRY (the ONE change that breaks node-relabel invariance, frozen, NOT tuned to green):
+    W_FWD = 0.70 (i+1 forward neighbour)  !=  W_BWD = 0.30 (i-1 backward neighbour)  -> DIRECTED
+    g_i   = 0.70 + (0.90-0.70)*i/(n-1)    (per-module gain GRADIENT)                 -> GRADED
+  binarization = variance-free median split (H_1328, BYTE-IDENTICAL to H_1348/1353); the hexa
+  faithful engine bins internally.
+
+Φ = FAITHFUL IIT-4 ONLY (a_phi_iit4_tool): exact MIP-EI via `hexa run` over
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa, iit4_faithful_phi(state, n=4, dim=T=64,
+n_bins=8). numpy NEVER computes Φ — it only emits the per-module salience trajectory. NO proxy.
+
+ARMS (per seed):
+  A = NO-COUPLING : w_fwd=w_bwd=0, flat gain, no phase carrier.
+  B = PHASE-BIND  : asymmetric directed+graded coupling ON, phase carrier ON.
+  P = PERM-NULL   : B's per-module trajectories, then a fixed-point-free permutation of which
+                    module feeds which Φ-input slot (derangement draw VERBATIM H_1348/1353).
+  O = OFFSET-CTRL : per-tick random phase offsets on B's carrier.
+
+SEEDS = [1317, 1318, 1319]  (the SAME 3 hard orthogonal seeds that broke every prior Φ lane).
+EPS = 0.02  (the IDENTICAL faithful-Φ margin H_1283/1319/1328/1331/1348/1353 froze; NOT moved).
+
+FROZEN BARS:
+  R0 PERM-BITES : Φ_P < Φ_B − EPS on >= 2/3 seeds where Φ_B > 0
+                  (the precondition the prior lanes LACKED). If R0 fails -> honest report that
+                  symmetric-MIP Φ is structurally exchangeable / the asymmetry does not move the
+                  faithful MIP (the diagnosis itself).
+  R1 ROBUST     : ΔΦ(B−A) >= EPS on EACH of the 3 seeds.
+  R2 EARNED     : Φ_P <= Φ_A + EPS  AND  Φ_O <= Φ_A + EPS  on ALL 3 seeds.
+  GREEN iff R0 ^ R1 ^ R2.
+
+KEY SCIENCE READ (decided IN ADVANCE):
+  * R0 holds but R1 fails 2/3  -> the wall HOLDS EVEN WITH a clean perm control = STRONGEST closure;
+                                  the fragility is NOT a perm-degeneracy artifact.
+  * R0 fails                   -> symmetric-MIP Φ is structurally exchangeable / asymmetry does not
+                                  move the faithful MIP = the diagnosis confirmed at estimator level.
+  * R0 ^ R1 ^ R2               -> a clean-R2 setup recovers a robust verdict (REVISES the wall read
+                                  on this substrate).
+
+SCOPE: DIRECTIONAL numpy mirror of the engine ring (engine-transfer UNVERIFIED,
+a_engine_native_learning). The Φ leg IS the real faithful exact MIP-EI (numpy never computes Φ).
+TOY n=4 / T=64 / 3 seeds / median-split binarization. Bounds (does NOT retract) the prior verdicts.
+live CORE/*.hexa UNTOUCHED. frozen-first: bars NOT moved after scoring (c9/p7).
