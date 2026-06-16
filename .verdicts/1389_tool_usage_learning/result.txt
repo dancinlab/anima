@@ -1,0 +1,38 @@
+H_1389 tool-USAGE learning (tier-2) — numpy MIRROR (DIRECTIONAL)
+seeds: [4389, 4390, 4391]
+  seed 4389: full 0.250->0.750  selection 0.250  shuffle 0.021  multistep 0.750  abstain 1.000  cells_full 36
+  seed 4390: full 0.250->0.750  selection 0.250  shuffle 0.000  multistep 0.750  abstain 1.000  cells_full 36
+  seed 4391: full 0.250->0.750  selection 0.250  shuffle 0.021  multistep 0.750  abstain 1.000  cells_full 36
+POOLED means:
+  FULL init=0.250 final=0.750  SELECTION final=0.250  SHUFFLE final=0.014  MULTISTEP=0.750  ABSTAIN=1.000  cells_full=36.0
+FROZEN BARS:
+  (1) USAGE-LEARNS            full_f-full_i  = +0.500 >= +0.30 -> PASS
+  (2) DISTINCT-FROM-SELECTION full_f-sel_f   = +0.500 >= +0.30 -> PASS  [KEY]
+  (3) EARNED (shuffle)        shuf_f-sel_f   = -0.236 <= +0.15 -> PASS
+  (4) NO-FAB / ABSTAIN        abstain        = 1.000 >= 0.90 -> PASS
+  (5) MULTI-STEP (optional)   multistep_full = 0.750 >= 0.80 -> FAIL
+VERDICT: GREEN
+{
+  "seeds": [
+    4389,
+    4390,
+    4391
+  ],
+  "pooled": {
+    "full_i": 0.25,
+    "full_f": 0.75,
+    "sel_f": 0.25,
+    "shuf_f": 0.013888888888888888,
+    "abstain": 1.0,
+    "multi_f": 0.75,
+    "cells_full": 36.0
+  },
+  "bars": {
+    "usage_learns": true,
+    "distinct_from_selection": true,
+    "earned": true,
+    "no_fab": true,
+    "multistep": false
+  },
+  "verdict": "GREEN"
+}
