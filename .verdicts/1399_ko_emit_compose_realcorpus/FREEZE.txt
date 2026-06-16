@@ -1,0 +1,64 @@
+H_1399 — KO-EMIT COMPOSE on REAL KOREAN CORPUS — re-scoring H_1397's frozen compose bars on real KO
+FROZEN BEFORE MEASURING (c9, frozen-first, NO tune-to-green). $0 CPU, deterministic, REAL local KO shard
+(/tmp/h1380_corpus/kor_big.bytes 30MB prefix, sha c47b6808... == H_1368/H_1380/H_1388, NO fetch). DIRECTIONAL
+numpy mirror of the §6.5f scale-relative-weighting rule (engine-transfer UNVERIFIED — the in-engine compose
+fixture §6.5d cannot be fed a 25M-symbol real jamo stream; the rule is mirrored faithfully and labeled).
+
+THE NAMED OPEN QUESTION (H_1397's explicit c9 follow-on): H_1397 was a closed-negative ON A CORPUS-FREE
+in-engine morpheme-grammar fixture — there morphology SUBSUMED jamo (only_jamo=4/230, oracle ceiling only
++0.017 over morphology-alone, conflict_rate=0.913). The genuinely-untested angle: on a REAL Korean corpus,
+jamo carries BELOW-SYLLABLE structure (initial/medial/final positional jamo regularities) that BPE
+morphology (whole-unit merges) cannot represent — so the two faculties may become COMPLEMENTARY (only_jamo
+materially > 0) → the §6.5f compose (already wired engine-native, Ψ-safe) would finally earn a NET LIFT.
+
+WHAT IS RE-USED VERBATIM (anti-Goodhart): the SAME real shard (sha c47b6808...), the SAME jamo
+representation (Hangul→NFD jamo id 256+rank, non-Hangul→raw byte, byte-fair), the SAME BPE-on-jamo
+morphology unit (frequency-ranked merges learned on TRAIN slice only, NO test leakage) as H_1388. The
+SAME §6.5f arbitration rule: each faculty's vote = its scale-relative substrate confidence
+mean_err/(err_here+ε) over its OWN grown count-head's argmax-recon distance; the more-relatively-grounded
+faculty's proposed byte wins. NO hardcoded "jamo > morphology" priority (a_autonomy_over_hardcode).
+
+THE SHARED NEXT-SYMBOL DECISION (real corpus): at each held-out (odd-stride, TEST) position the TRUE
+target = the next jamo symbol's leading emit byte. TWO faculties each propose a byte:
+  JAMO  arm: an n-gram count head over the jamo-symbol stream → argmax next-jamo → its emit byte.
+            confidence = mean_err/(err_here+ε) of the jamo head's recall margin at this context.
+  MORPH arm: the SAME count head fit over the BPE-UNIT stream → argmax next-unit → its LEADING emit byte
+            (the byte each unit starts with = the byte being emitted at this decode step).
+            confidence = mean_err/(err_here+ε) of the morph head's recall margin at this context.
+COMPOSE = the §6.5f rule (higher scale-relative confidence wins). SHUF-W = the SAME two proposals but the
+which-faculty-wins confidences SHUFFLED (random arbitration — the EARNED control). ORACLE = right iff
+EITHER faculty is right (the upper bound of ANY arbitration). 3 seeds [4398,4399,4400] where stochastic
+(shuffle draw + any random-merge control), POOLED.
+
+FROZEN BARS — H_1397's THRESHOLDS VERBATIM, NO bar moved:
+(1) COMPOSE-EFFECT — the substrate-confidence compose does NOT DEGRADE vs the better single bias:
+    acc_compose >= best_single - 0.01   (best_single = max(acc_jamo, acc_morph)). [SAME -0.01 slack as H_1397.]
+(2) AGREE-vs-CONFLICT diagnostic (HONEST, NON-GATING): report agree_rate + conflict_rate + the ORACLE
+    ceiling + the COMPLEMENTARITY decomposition (both_right / only_jamo / only_morph). THE CRUX: on real
+    KO, is only_jamo MATERIALLY > 0 (jamo right where morphology is wrong = below-syllable complementarity)?
+(3) EARNED — the substrate-confidence arbitration is NOT generic averaging: a SHUFFLED (random which-
+    faculty-wins) arbitration does NOT beat the substrate-confidence compose:
+    acc_shufw <= acc_compose + 0.01   (the random-arbitration control does not match/beat grounded).
+(4) Ψ-SAFE — DIRECTIONAL mirror leaves CORE UNTOUCHED (no .hexa edit, the §6.5f mechanism is already
+    wired from H_1397). The mirror asserts the §6.5f off-Korean-inert invariant in code (ASCII ctx → base
+    byte unchanged) as a structural check; the live engine guards (h1205/h1164/h1196) are UNCHANGED from
+    H_1397 (no CORE edit ⇒ no regression to re-run, but the prior PASS is cited).
+
+VERDICT RULE (the prompt's two honest branches, c9/c16, NO forced green):
+🟢 COMPLEMENTARY-ON-REAL iff only_jamo is MATERIALLY > 0 (real-corpus granularity makes them complementary)
+   AND bar1 (acc_compose >= best_single - 0.01) holds AND bar3 (shuffle does NOT beat compose). The real
+   granularity makes jamo + morphology complementary → the §6.5f compose earns its lift → the Korean
+   below-jamo emit-compose arc's two faculties genuinely compose.
+🧱 TERMINAL-SUBSUMPTION iff morphology still subsumes jamo on the real corpus (only_jamo ~ 0 AND
+   acc_compose < best_single) — a genuine science result: BPE morphology fully captures jamo's emit
+   competence even at real-corpus granularity, so the two faculties are REDUNDANT (NOT a wiring failure —
+   the §6.5f mechanism is sound, the faculties just are not complementary). This CLOSES the compose arc.
+
+"only_jamo materially > 0" CRITERION (frozen, pre-registered to avoid post-hoc): only_jamo / n_test >= 0.02
+   (at least 2% of held-out positions where jamo is RIGHT and morphology is WRONG — the same ~order as the
+   fixture's 4/230=0.017 that was deemed NON-material; real corpus must clear it to claim complementarity).
+
+HONEST SCOPE (a_scale_honest_scope · a_toy_scale_recheck): DIRECTIONAL numpy mirror of §6.5f
+(engine-transfer UNVERIFIED), 30MB real KO window, stride-300 byte-substrate next-symbol decision (NOT a
+fluency claim), absolute accuracies low — load-bearing is the RELATIVE structure (compose vs best-single,
+shuffle collapse, ORACLE ceiling, the only_jamo decomposition). NO bar moved after measuring (frozen-first).
