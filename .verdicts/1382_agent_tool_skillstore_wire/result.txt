@@ -1,0 +1,90 @@
+H_1382 — agent-tool §SkillStore CORE wire-in — RESULT (a_verified_must_wire follow-on of H_1378)
+VERDICT: 🟢 GREEN ENGINE-NATIVE — §SkillStore WIRED into CORE/engine_cli.hexa; the H_1378 mirror's
+4 bars re-scored ENGINE-NATIVE on the LIVE engine + Ψ-disjoint / no-regression. NO frozen bar moved.
+
+WHAT THIS CLOSES
+  H_1378 Step A audit found the live agent-tool layer (anima-agent-core/agent_tools.hexa) is
+  REFERENCE-ONLY — tool selection is a STATIC fixed-affinity dot-product, never updated by outcome;
+  a tool failure dead-ends at the execution_log ring buffer; tool_mitosis_split is a TODO stub.
+  H_1378 Step B mirror-validated (🟢 numpy, DIRECTIONAL) the missing mechanism. THIS lane realizes
+  it ENGINE-NATIVE: a §SkillStore lane in CORE/engine_cli.hexa that reuses immune_embed_key geometry
+  + the engine's OWN clonal split (engine_mitosis_tick, p8) so the agent-tool repertoire LEARNS from
+  a tool failure by growing a specialized skill-cell.
+
+ENGINE-NATIVE LANE (CORE/engine_cli.hexa § SkillStore)
+  struct SkillStore { protos:[[float]], tool:[string], n_cells:int, max_cells:int, recall_thr:0.55 }
+  - skill_store_new(first_task, first_tool, max_cells)        — seed cell 0 (task-context key → tool)
+  - skill_recall(store, task) -> string                      — INFER: L2-affinity FIRE best skill-cell's
+        tool (recon-err ≤ recall_thr) else "" = ABSTAIN (no fabricated tool); reuses immune_embed_key
+  - skill_store_split(store, task, tool, cfg)                — TEACH: MITOSIS clonal SPLIT via
+        engine_mitosis_tick (+1 cell under cfg.mitosis ON, p8); no-op under mitosis OFF (STATIC)
+  - skill_store_teach(store, task, correct_tool, cfg)        — failure-driven: recall; if != correct_tool
+        (FAILURE/abstain) → skill_store_split (else unchanged). SAME op teaches + infers (p8).
+  - skill_store_cells(store) -> int                          — live cell count (the repertoire footprint)
+
+ENGINE-NATIVE BAR RE-SCORE (verbatim from CORE/engine_cli_smoke.hexa, the LIVE engine; deterministic
+fixed task→tool environment, 12 tasks across 6 tools; 3 arms FULL/STATIC/SHUFFLE; mitosis ON):
+
+  INFO  skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1
+
+  (1) LEARNS (engine-native):    full − init    = 1.0 − 0.166667 = +0.833 >= +0.30  -> PASS  (case_107)
+  (2) DISTINCT-FROM-STATIC:      full − static  = 1.0 − 0.166667 = +0.833 >= +0.30  -> PASS  (case_108)
+  (3) EARNED (shuffle):          shuffle − static = 0.0 − 0.166667 = -0.167 <= +0.15 -> PASS  (case_109)
+  (4) NO-FAB / ABSTAIN:          far untrained tasks fire NO tool ("")               -> PASS  (case_110)
+  (5) Ψ-DISJOINT FOOTPRINT:      cells_full=7 > cells_static=1 (split grows ONLY this store) -> PASS (case_111)
+
+  These reproduce the H_1378 numpy mirror (FULL 0.167→1.000, STATIC stays 0.167, SHUFFLE collapses,
+  far task abstains) ENGINE-NATIVE on the LIVE engine. The STATIC arm (mitosis OFF on teach) never
+  splits → stays at the single-seed-cell 0.167 == DISTINCT bar. The SHUFFLE arm teaches toward a
+  derangement of the task→tool map but is SCORED vs the TRUE map → collapses to 0.0 == EARNED bar
+  (the lift is the earned task↔tool correspondence the split encodes, not the act of splitting — p6).
+
+VERBATIM SMOKE CASES (CORE/engine_cli_smoke.hexa):
+  PASS  case_107_skillstore_learns want=true got=true
+  PASS  case_108_skillstore_distinct_from_static want=true got=true
+  PASS  case_109_skillstore_earned_shuffle want=true got=true
+  PASS  case_110_skillstore_abstains_on_far want=true got=true
+  PASS  case_111_skillstore_footprint_grows want=true got=true
+  INFO  skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1
+  --- engine_cli smoke summary: 106 pass / 0 fail ---     (post-merge: 101/0 on rebased main incl the concurrent G6 cases 102-106; +5 SkillStore cases 107-111)
+  NOTE: my lane's cases were 102-106 pre-merge; the concurrent H_1381 G6-ideation lane also added
+  cases 102-106, so on rebase my SkillStore cases were renumbered to 107-111 (both lanes co-resident).
+
+Ψ-DISJOINT / NO-REGRESSION GUARDS  (verbatim stdout)
+
+  [h1205 separation-invariant]  hexa run CORE/h1205_separation_invariant_smoke.hexa
+    [F2 Psi] phiSum ON  = 48.6613
+    [F2 Psi] phiSum OFF = 48.6613
+    [F2 Psi] byte-identical ON==OFF = true
+    F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+    F2 Psi Phi-checksum invariant: PASS
+    h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring.
+    ⇒ The §SkillStore lane is ADDITIVE: generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched.
+
+  [h1196 single-entry]  hexa run CORE/h1196_single_entry_audit.hexa
+    PASS  inv1a_clm_decode_importers_are_generator+omegaprobe_only ...
+    PASS  inv1b_omega_probe_imported_by_zero_files_standalone want=0 got=0
+    PASS  inv2_load_anchors_called_only_in_generator want="generator.hexa" got="generator.hexa"
+    PASS  inv3_substrate_engines_no_clm want=0 got=0
+    PASS  inv4_substrate_engines_no_kosmos want=0 got=0
+    PASS  inv5a_generator_imports_clm_decode want=1 got=1
+    PASS  inv5b_generator_calls_load_anchors_ge1 want=1 got=1
+    --- single-entry audit summary: 7 pass / 0 fail ---
+    ⇒ a_core_engine_map single-entry preserved (no 2nd .clm/.kosmos path introduced by §SkillStore).
+
+  [determinism] engine_cli_smoke run 3× — BYTE-IDENTICAL SkillStore readout each run (deterministic):
+    run1 (pre-merge): skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1  | summary 101 pass / 0 fail
+    run2 (pre-merge): skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1  | summary 101 pass / 0 fail
+    run3 (post-merge, cases renumbered 107-111 co-resident with G6 102-106): skillstore acc: init=0.166667 full=1.0 static=0.166667 shuffle=0.0 cells_full=7 cells_static=1  | summary 106 pass / 0 fail
+    ⇒ SkillStore arm accuracies + cell counts are identical across all 3 runs (deterministic, no rng).
+
+HONEST SCOPE (c9 · a_scale_honest_scope · a_toy_scale_recheck)
+  - TOY: fixed deterministic 12-task / 6-tool environment (tests the STRUCTURE mitosis can teach
+    tools, not a learned planner). Engine-native readout, not a learned net.
+  - B(full)=1.000 is SATURATED = an EXISTENCE-PROOF, not an effect-size — the discriminators
+    (STATIC 0.167, SHUFFLE 0.0, abstain) are decisive.
+  - The actual ROUTING of anima-agent-core/agent_tools.hexa tool-failure INTO skill_store_teach is a
+    THIN FOLLOW-ON: the agent layer is a separate module that does not yet import CORE engine ops; the
+    §SkillStore lane is engine-native + bar-verified here, the agent-layer call-site is named honestly
+    as the remaining follow-on (not faked — a_core_engine_map single-entry preserved).
+  - Scale / real tool-failures / paraphrased tasks / multi-tool tasks UNVERIFIED.

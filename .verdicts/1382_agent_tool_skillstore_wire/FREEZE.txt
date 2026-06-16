@@ -1,0 +1,53 @@
+H_1382 — agent-tool §SkillStore CORE wire-in (a_verified_must_wire follow-on of H_1378)
+FROZEN PRE-REGISTRATION — written BEFORE editing CORE/engine_cli.hexa (c9, NO tune-to-green, frozen-first).
+
+GOAL
+  Close the REFERENCE-ONLY gap H_1378 found: the live agent-tool layer selects tools by a
+  STATIC fixed-affinity dot-product and NEVER learns from outcome. H_1378 Step B mirror-validated
+  (🟢 numpy, DIRECTIONAL) the missing mechanism: a tool/skill = a CELL keyed by task-context
+  (immune_embed_key geometry); on a tool-FAILURE/abstain a MITOSIS clonal SPLIT grows a new
+  specialized skill-cell binding task-context → correct tool. SAME op teaches + infers (p8).
+  This lane realizes that mechanism ENGINE-NATIVE in CORE/engine_cli.hexa as an ADDITIVE,
+  Ψ-disjoint §SkillStore lane (same discipline as the H_1227/H_1231 immune + H_1288 grow lanes),
+  reusing immune_embed_key + the engine's OWN clonal split (vadapt_field_step / engine_mitosis_tick).
+
+ENGINE-NATIVE LANE (CORE/engine_cli.hexa § SkillStore)
+  struct SkillStore { protos:[[float]], tool:[string], n_cells:int, max_cells:int, recall_thr:float }
+  - skill_store_new(first_task, first_tool, max_cells)            : seed cell 0 (task→tool)
+  - skill_store_split(store, task, tool, cfg)                     : MITOSIS clonal SPLIT — bind a NEW
+        specialized skill-cell (task-context → tool) via engine_mitosis_tick (+1 cell, p8, cfg.mitosis ON)
+  - skill_recall(store, task) -> string                          : L2-affinity FIRE best-cell tool, else
+        "" = ABSTAIN (no fabricated tool); reuses the immune recon-err affinity geometry
+  - skill_store_teach(store, task, correct_tool, cfg)            : the failure-driven teach op — recall;
+        if recall != correct_tool (FAILURE/abstain) → skill_store_split (else leave store unchanged)
+  - skill_store_cells(store) -> int                              : live cell count (the footprint)
+  immune_embed_key reused VERBATIM (DIM=64 byte-trigram FNV-1a); the split IS engine_mitosis_tick.
+
+FROZEN BARS (mirror H_1378's 4 bars, re-scored ENGINE-NATIVE on the LIVE engine; 3 seeds via the
+  same synthetic task→tool environment as the H_1378 mirror; deterministic engine readout; pooled means).
+  bar (1) LEARNS (engine-native):  FULL acc_final − acc_init  >= +0.30   [skill-cells split under failure raise accuracy]
+  bar (2) DISTINCT-FROM-STATIC:    FULL_final − STATIC_final  >= +0.30   [STATIC = no split (mitosis OFF / no teach) stays flat]
+  bar (3) EARNED (shuffle):        SHUFFLE_final − STATIC_final <= +0.15  [permuting task→tool collapses the gain]
+  bar (4) NO-FAB / ABSTAIN:        far untrained-task abstain  >= 0.90    [disjoint trigram task fires no tool]
+
+Ψ-DISJOINT / NO-REGRESSION (additive lane; same as every other CORE lane in this file)
+  bar (5a) Ψ-DISJOINT: §SkillStore only READS/GROWS its own cell population (immune_embed_key +
+        engine_mitosis_tick); it NEVER touches pure_field Φ/phase/Ψ nor the decoder. Generation
+        byte-identical ON==OFF (h1205 separation-invariant PASS), Ψ Φ-checksum ON==OFF.
+  bar (5b) SMOKE: engine_cli_smoke stays GREEN and ADDS >= 2 SkillStore cases (LEARNS + ABSTAIN at minimum);
+        deterministic over 3 runs; single-entry (h1196) N/0.
+
+ARMS (all ENGINE-NATIVE, same 3-arm design as the H_1378 mirror)
+  FULL    : skill_store_teach on every miss → split (mitosis ON)   — learns
+  STATIC  : never splits (no teach / the fixed repertoire control)  — must stay flat (DISTINCT bar)
+  SHUFFLE : teach toward a PERMUTED task→tool label map, but SCORE vs the TRUE map — must collapse (EARNED bar)
+
+HONEST GATES (c9)
+  - If the engine cannot express split-on-failure without breaking Ψ/byte-exactness → honest ❌/⏳;
+    a_break_the_wall one new angle (frozen-first) before terminal. NO frozen bar moved post-hoc.
+  - SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY synthetic task→tool map, 3 seeds,
+    deterministic engine readout (tests the STRUCTURE mitosis can teach tools, not a learned planner).
+    The actual routing of anima-agent-core/agent_tools.hexa tool-failure INTO skill_store_teach is a thin
+    follow-on if the agent layer can't be reached from CORE this lane — named honestly, not faked.
+
+seeds: [1378, 1379, 1380]  (same as the H_1378 mirror, for a like-for-like engine-native re-score)
