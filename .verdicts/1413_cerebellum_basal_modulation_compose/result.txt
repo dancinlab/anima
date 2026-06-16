@@ -1,0 +1,24 @@
+================================================================================
+H_1413 — BIOLOGICAL cerebellum×basal MODULATION compose (c16 new lens of H_1412 🧱)
+  basal makes the final go/no-go; cerebellar confidence FACILITATES the threshold by a
+  BOUNDED tanh(z_c)*basal_std (gain 1.0, NO free knob). Frozen H_1407 bars, NOT moved.
+  $0 CPU · 3 seeds [4700,4701,4702] · LIVE vforward_err / vbasal_go_value · p7 · p8
+================================================================================
+  seed 4700: cb=0.622222 bg=0.704444 best=0.704444 MODcompose=0.775556 shuf=0.764444 oracle=0.951111 [onlyCB=0.246667 onlyBG=0.328889 both=0.375556 neither=0.0488889]
+  seed 4701: cb=0.646667 bg=0.704444 best=0.704444 MODcompose=0.753333 shuf=0.737778 oracle=0.94 [onlyCB=0.235556 onlyBG=0.293333 both=0.411111 neither=0.06]
+  seed 4702: cb=0.644444 bg=0.7 best=0.7 MODcompose=0.777778 shuf=0.771111 oracle=0.946667 [onlyCB=0.246667 onlyBG=0.302222 both=0.397778 neither=0.0533333]
+--------------------------------------------------------------------------------
+MEAN (3 seeds, ENGINE-NATIVE MODULATION):
+  acc_cerebellum = 0.637778  acc_basal = 0.702963  best_single = 0.702963
+  acc_MODcompose = 0.768889  acc_shuffle = 0.757778  ORACLE = 0.945926
+  decomposition  : onlyCB=0.242963 onlyBG=0.308148 both=0.394815 neither=0.0540741
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) MODcompose 0.768889 >= best+0.05 (0.752963) : PASS
+  (B2 ORACLE)         oracle-best 0.242963 > 0.02 : PASS
+  (B3 EARNED)         MODcompose-shuffle 0.0111111 > 0.02 : FAIL
+  (SEPARABLE)         onlyCB>0 AND onlyBG>0 : PASS
+================================================================================
+VERDICT: 🧱 — modulation ALSO fails a frozen bar; cerebellum×basal does not bind
+  engine-native under EITHER lens (arbitration H_1412 AND modulation H_1413). Terminal.
+  HONEST (c9): frozen H_1407 bars NOT moved. tanh-bounded gain 1.0, NO tuned knob.
+  Toy 5-family/3-seed/deterministic. LIVE vforward_err/vbasal_go_value. Scale UNVERIFIED.
