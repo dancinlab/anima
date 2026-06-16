@@ -1,3 +1,23 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1412 — ENGINE-NATIVE re-score of H_1407 (cerebellum×basal compose): 🧱 NON-REPRODUCTION (mirror GREEN ≠ engine GREEN)
+
+a_verified_must_wire 사다리 step-(2): H_1407 의 🟢 DIRECTIONAL-mirror COMPOSE-LIFT 를 LIVE 엔진 faculty
+(vforward_err H_1280 · vbasal_go_value H_1281) 위에서 frozen H_1407 bar 그대로 재채점.
+
+- 결과 🧱: 합성은 REAL & EARNED (B2 oracle +0.243 · B3 shuffle +0.189 · SEP onlyCB 0.243/onlyBG 0.308)
+  지만 NET-lift compose−best = +0.011 < +0.05 frozen bar (B1 FAIL). 원인: gradient-free 학습된 live
+  VBasalGate 가 미러보다 강한 단독 팔(acc_basal 0.703) → 순-이득 헤드룸이 bar 아래로 줄어듦 + F5
+  adversarial 가족(소뇌 확신-오답)은 confidence arbiter 로 구조적 포착 불가.
+- c16 돌파(frozen-first, NOT tune-to-green): z-decisiveness arbiter(margin/own-std) 실제 실행 →
+  +0.014 여전히 FAIL → terminal honest 🧱. 진짜 시도 뒤의 정직한 벽(c9·c16).
+- 의의: 이번 세션 강화한 a_verified_must_wire 4칸 사다리의 step-(2) 실패모드(미러 GREEN ≠ 엔진 GREEN)를
+  실제로 잡아낸 첫 사례. compose-program 의 *capability* 미러 결과(H_1401/1405/1407/1408/1409)는
+  DIRECTIONAL 로 유효하나, 그중 최소 1개가 엔진-네이티브로는 그대로 안 묶임을 측정-확인.
+- 🧱 라 새 CORE op 미배선(미검증 메커니즘) — probe 는 self-contained(기존 vforward_err/vbasal_go_value
+  위 inlined arbiter), state/1412-cerebellum-basal-engine-compose/ 에 거주 (a_hypothesis_register).
+- compile-bug 근본수정(c1): 죽은 에이전트가 변수명 `signed`(C 예약어) 사용 → 컴파일 실패 → `sgnd` 로 정정.
+- TOY 5-family/3 seed/$0 CPU · scale/real-corpus/다른 게이트강도 UNVERIFIED.
+  card UNIVERSE/cards/H_1412_cerebellum_basal_engine_compose.md · verdict .verdicts/1412_cerebellum_basal_engine_compose/
+
 ## 2026-06-17 — governance(CLAUDE.md): 가설↔배선 규율 강화 (a_verified_must_wire + a_hypothesis_register)
 
 GREEN 검증 결과가 DIRECTIONAL 미러로만 남고 엔진배선 없이 묻히는 이번-세션 실패모드(lane-합성 가족 3개 Φ-lift GREEN → 0개 wired) 재발 방지.
