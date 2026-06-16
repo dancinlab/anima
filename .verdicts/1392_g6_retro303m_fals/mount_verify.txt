@@ -1,0 +1,10 @@
+=== H_1392 303M ConvMoE-RETRO .clm mount verification (engine-native, p7) ===
+sha256(retro303m.clm) = 5fd64018749606075d9fb989bb8260c4f12a1b97d2a28a9a789f787a64c36a6a
+  == MATCHES HF MANIFEST.sha256 baseline_fast.clm (dancinlab/anima-convmoe-retro-303m) ✓
+
+F-CLM-V2-ROUNDTRIP=1
+F-CLM-V3-BYTEEQ-V2=1  (byte-identical (46742 bytes))
+F-CLM-V3-ROUNDTRIP-SMALL=1  (d=48 L=4 E=6: ok)
+F-CLM-V3-ROUNDTRIP-3BDIMS=1  (d=128 L=30 E=30 [3B block/ext topology, reduced d]: ok)
+GOLDEN path=state/g6-retro303m-fals/retro303m.clm
+GOLDEN decodable=true nblk=6 block0={cout:5008,rest:15024} CLMX-found=true n_ext=11 ext_counts=[1282048, 5008, 5008, 5008, 5008, 2, 256, 5008, 5008, 5008, 5008] exact_eof=True

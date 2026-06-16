@@ -1,0 +1,89 @@
+================================================================================
+H_1392 — G6 IDEATION ★ FALS re-score on a 303M-class ConvMoE  ·  RESULT (verbatim, p7, c9)
+   settle the H_1381 ckpt-gated M2-M5 follow-on on a TRUE engine-mountable 303M ConvMoE
+================================================================================
+DATE     : 2026-06-16/17
+SUBSTRATE: local CPU $0 · hexa engine-native · REUSED ckpt (no rent, no train)
+           dancinlab/anima-convmoe-retro-303m :: baseline_fast.clm (303M ConvMoE-RETRO trunk)
+
+--------------------------------------------------------------------------------
+REUSE-BEFORE-RENT ($0) — the engine-mountable 303M ConvMoE the H_1381 follow-on needed
+--------------------------------------------------------------------------------
+The H_1381 M2-M5 follow-on was gated on "an engine-mountable 303M-class .clm" (the H_1362
+FALS=1.0 was a 303M *ByteGPT* .pt — a DIFFERENT arch, NOT engine-mountable as .clm). An HF
+Hub search found EXACTLY that: dancinlab/anima-convmoe-retro-303m (the production arch of
+this branch, "production arch = ConvMoE-RETRO"):
+  · arch  = ConvMoE-RETRO (CLMConvMoE E2/L1, byte V256, baseline_fast/H_1129 recipe)
+  · trunk = 303,575,202 params (303M-class); RETRO copy-head 50M NOT in the .clm (trunk-only mount)
+  · best_val_ce 1.2292 ; G0 COHERENCE kwr 0.941 PASS (coherent English)
+  · .clm v0.2: 156,497,158 B, decodable=true, nblk=6, n_ext=11, block0={cout:5008,rest:15024}
+  · sha256 = 5fd64018749606075d9fb989bb8260c4f12a1b97d2a28a9a789f787a64c36a6a
+MOUNT VERIFIED engine-native:
+  · sha256(.clm) == HF MANIFEST.sha256 baseline_fast.clm  ✓
+  · GOLDEN_CLM verify_clm_v2: decodable=true exact_eof=True n_ext=11  ✓
+  · engine mounts + emits coherent English ("the auth") via gen_clm_ideate -> clm_decode  ✓
+No new artifact -> no new upload (a_hf_registry: reuse row only, HF.jsonl).
+
+--------------------------------------------------------------------------------
+FAST ENGINE-NATIVE SURFACE — GREEN (deterministic, lands immediately)
+--------------------------------------------------------------------------------
+On the 303M ConvMoE-RETRO mount, the H_1381 wire-in re-runs engine-native:
+  DETECTOR_CALIBRATION = 10/10   (H_1305 frozen 5-pos/5-neg, VERBATIM, NOT loosened, p7)
+  FRAME_GUARD_LEAKS    = 0       (no measurable word in any frame; no self-falsifiable frame)
+  SAMPLER det=true diverse=true in_topk=true   (best-of-K mechanism works engine-native)
+
+--------------------------------------------------------------------------------
+FALS BARS (M1-M5) — BLOCKED by a hexa-engine memory wall (🧱 honest, NOT FALS=0)
+--------------------------------------------------------------------------------
+VERDICT: 🧱 HONEST WALL — the engine-native FALS re-score CANNOT be run on the 303M ConvMoE
+because the hexa-engine ConvMoE decode forward has a PER-STEP MEMORY BLOWUP that OOM-kills any
+meaningful-length generation. This is a SUBSTRATE wall, NOT a model-capacity verdict: a "FALS=0"
+result would require a COMPLETED decode, and the decode never completes at any useful budget.
+
+THE WALL (verbatim /usr/bin/time -l on the 303M ConvMoE-RETRO trunk, single fresh process each):
+  budget                         outcome                          max RSS      peak footprint
+  GEN=8  (single decode)         ✅ RC=0, emits "the auth"         (small)      —
+  GEN=16 (single, K=1)           ✅ RC=0, "the authentic pi" 130 s 5.01 GB      —
+  GEN=24 (single, K=1)           ❌ KILLED mid-decode (RC=1)       10.97 GB     71.5 GB
+  GEN=48 (best-of-K=3, 1 frame)  ❌ SIGTERM ~144 s                 10.05 GB     54.9 GB
+  GEN=110 (full 6-frame arm)     ❌ silent death ~2 min            —            —
+≈ +300 MB resident PER decode STEP, never freed → ~5 GB @ 16 steps, ~11 GB @ 24 steps (the OOM
+kill threshold sits between GEN=16 and GEN=24). The 156 MB model decoding 24 bytes should not
+approach 11 GB. Killed by the OS (SIGTERM/abnormal), NO crash from anima.
+
+THE STRUCTURAL IMPOSSIBILITY (this is why the wall is decisive, not just slow): a FALSIFIABLE
+claim needs comparator + measurable + >=2 content words ≈ 8-15 words ≈ 50-80 bytes (GEN≈80-110;
+H_1362's falsifiable example was 14 words). The memory wall caps engine-native generation at
+GEN<=16 (~3 words: "the authentic pi"). The budget falsifiability REQUIRES (>=80 bytes) is ~5x
+ABOVE the budget the memory ALLOWS (<=16 bytes). So at GEN=16 fals=false is EXPECTED-AND-
+UNINFORMATIVE (the generation is structurally too short to carry a falsifiable claim, independent
+of model capacity) — it is NOT a "303M ConvMoE can't be falsifiable" result. The FALS bars are
+unmeasurable on this substrate.
+
+WHY this is a WALL and not a result (c9, a_break_the_wall — angles genuinely tried):
+  (1) full 5-arm GEN=110           → OOM-killed
+  (2) decisive C_strong+B GEN=48   → OOM-killed
+  (3) single isolated frame K=3/48 → SIGTERM @ 10 GB (fresh-process isolation did NOT help —
+                                      the blowup is WITHIN one decode, not across chained decodes)
+  (4) single decode K=1 GEN=24     → OOM-killed @ 11 GB RSS / 71 GB footprint, NO output text
+The wall is the hexa-engine ConvMoE decode MEMORY MANAGEMENT (per-step im2col/activation not
+freed; O(steps×seq×cout) growth, cout=5008 at 303M), NOT method/direction. GPU-engine-native
+hexa decode (forge-cuBLAS) would sidestep the CPU cost but the hexa toolchain is a Mac-arm64
+build and a fresh Linux-pod hexa build is historically blocked (.verdicts/c0-n8-fire: "hexa_stage0
+install.sh module_loader build failed. BLOCKED") — so neither the CPU nor a fresh-pod path can
+run the test today. INVESTMENT-class wall (insufficient working substrate), filed to hexa-lang.
+
+CAPACITY-vs-ARCHITECTURE: STAYS OPEN. The question H_1381 posed (does a 303M ConvMoE mouth emit
+falsifiable structure that the 7.479M mouth could not?) is UNANSWERED — the substrate cannot run
+the decode to produce the evidence. NOT promoted either way (no tune-to-green, no bar moved).
+
+WHAT IS ESTABLISHED (engine-native, real):
+  · the 303M ConvMoE-RETRO .clm MOUNTS engine-native and decodes coherent English (GEN=8 RC=0)
+  · the H_1381 wire-in fast surface re-confirms on it: detector 10/10, frame-guard 0, sampler diverse
+  · the FALS bars themselves are SUBSTRATE-BLOCKED (memory), so M1-M5 carry NO engine-native score
+    on the 303M ConvMoE — they remain the H_1381 ⏳ follow-on, now with a NAMED blocker + handoff.
+
+FILED: hexa-lang/inbox/patches/clm-convmoe-303m-decode-memory-blowup.md (a_runpod_inbox).
+NEXT: a bounded/streaming hexa ConvMoE decode (free per-step im2col, cap retained activation to
+the causal window) unblocks the FALS re-score; OR a working Linux-pod hexa+forge build (GPU). Both
+are upstream-hexa follow-ons. Until then 303M-ConvMoE engine-native FALS is honestly 🧱.
