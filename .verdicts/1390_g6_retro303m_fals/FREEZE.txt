@@ -1,0 +1,60 @@
+================================================================================
+H_1390 — G6 IDEATION ★ FALS re-score on a 303M-class ConvMoE  ·  FROZEN PRE-REG
+   (p7, c9, frozen-first) — the H_1381 ckpt-gated follow-on, settled.
+================================================================================
+DATE-FROZEN : 2026-06-16  (BEFORE any scoring run on the 303M ConvMoE — frozen-first, c9)
+
+WHY (closes the H_1381 ⏳ follow-on)
+  H_1381 WIRED the validated H_1362 G6 scaffold (6 composed frames + best-of-K=3) into
+  the LIVE engine ideation entry (gen_clm_ideate) and proved M1 COUNT GREEN engine-native.
+  But the FALS bars M2-M5 could NOT be re-scored: the only engine-mountable ConvMoE .clm
+  on the engine path was the d768 7.479M MID (too small a mouth → FALS=0, an honest
+  CAPACITY floor, NOT a loosened bar). H_1362's FALS=1.0 was on a 303M *ByteGPT* .pt — NOT
+  engine-mountable as .clm. H_1390 settles the question on a TRUE 303M-class ConvMoE.
+
+THE REUSED CKPT ($0, NO rent — REUSE-BEFORE-RENT)
+  dancinlab/anima-convmoe-retro-303m :: baseline_fast.clm
+  · arch = ConvMoE-RETRO (CLMConvMoE E2/L1 byte V256) — the production arch of this branch
+  · trunk params = 303,575,202 (303M-class) ; retro copy-head 50M NOT in .clm (trunk-only mount)
+  · best_val_ce 1.2292 ; G0 COHERENCE kwr=0.941 PASS (coherent English, baseline_fast/H_1129 recipe)
+  · .clm v0.2: bytes=156,497,158 decodable=true nblk=6 n_ext=11 block0={5008,15024}
+  · sha256(.clm) = 5fd64018749606075d9fb989bb8260c4f12a1b97d2a28a9a789f787a64c36a6a
+    (VERIFIED against HF MANIFEST.sha256 ✓ ; GOLDEN_CLM verify_clm_v2 decodable=true exact_eof=True ✓)
+  This is the engine-mountable 303M ConvMoE mouth H_1381's M2-M5 follow-on was gated on.
+
+THE HONEST ENGINE BOUNDARY (named BEFORE running — a_engine_native_learning, c9)
+  The 303M ConvMoE forward on pure-hexa CPU is HEAVY (block0 cout=5008 vs d768's 768).
+  EVERY decode here is HARD-BOUNDED by a small token budget (FREEZE (ii) of H_1381,
+  a_cpu_local_no_waiter — the prior lane's hang was an UNbounded decode). Detached nohup,
+  inline file-poll, NO Monitor/waiter. If the forward cost makes the full 5-arm 3-seed
+  re-score exceed a safe bounded budget, the result is reported HONESTLY scoped to the
+  decodes that completed (NOT a stall, NOT a manufactured number).
+
+WHAT IS FROZEN (NO post-hoc change — c9 / p7) — IDENTICAL to H_1362/H_1381, VERBATIM
+  (1) DETECTOR = CORE/g6_ideation.hexa _g6_is_falsifiable, the H_1305 VERBATIM structural
+      detector (comparator mark AND measurable mark AND >=2 dict content words, not a
+      question, not pure-stance). NEVER an LLM/quality judge (p7). NOT loosened. The same
+      10-string calibration (5 pos / 5 neg) must score >=8/10 (advisory; detector frozen regardless).
+  (2) SCAFFOLD (STRUCTURAL only — frame, NOT idea): N_STRONG=6 composed "if cA, then cB: "
+      frames + best-of-K=3 over the engine's OWN seeded top-k sampler at rng offsets
+      [0,+101,+202]. p7 FRAME GUARD must report 0 leaks (no measurable word in any frame;
+      no frame self-falsifiable).
+  (3) FROZEN MOVE BARS — the SAME 5 H_1362/H_1381 bars, re-scored engine-native on the 303M:
+      M1 COUNT      DIST(C_strong) >= 5
+      M2 DEPTH      FALS(C_strong) >= 1
+      M3 LIFT       FALS(C_strong) >  FALS(B_composed single-sample)
+      M4 EARNED-PAIR FALS(C_strong) > FALS(C_shuffle)
+      M5 EARNED-COMP FALS(C_strong) > FALS(C_ablate)
+
+VERDICT RULE (pre-registered)
+  🟢 (G6 ★ depth-robust at 303M-ConvMoE, CAPACITY-confirmed) iff M1..M5 ALL hold engine-native.
+  🟠/🧱 (still-thin at 303M ConvMoE capacity) iff M2 FALS stays 0 / bars unmoved → the lever
+       is ARCHITECTURE not capacity (the 303M ConvMoE mouth, unlike the 303M ByteGPT, does
+       not emit falsifiable structure through the engine decode) → a_break_the_wall: a
+       different mechanism, NOT more capacity. NO tune-to-green, NO bar moved post-hoc (c9).
+  Whichever way it lands, the result is the HONEST engine-native FALS scores, verbatim.
+
+  "engine-native" = the live hexa engine + its OWN seeded sampler, deterministic given seed,
+  NOT byte-identical to the torch gauge (torch PRNG not reproducible in hexa; same standard
+  as h1293/h1295/H_1381). Detector + scaffold + bars VERBATIM-frozen above.
+================================================================================
