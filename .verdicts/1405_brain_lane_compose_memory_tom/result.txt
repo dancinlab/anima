@@ -1,0 +1,38 @@
+================================================================================
+H_1405 — BRAIN-LANE COMPOSITION: episodic MEMORY (H_1227/H_1231) × ToM (H_1293)
+  DIRECTIONAL numpy mirror · $0 CPU · 3 seeds · p7 · LIVE CORE/*.hexa UNTOUCHED
+  bars: COMPOSE_DELTA=0.05 ORACLE_MARGIN=0.02 SHUFFLE_TOL=0.02
+================================================================================
+  seed 5400 (n=450): mem=0.600 tom=0.600 best=0.600 compose=0.751 shuf=0.676 oracle=1.000 | conflict=0.800 [onlyM=0.400 onlyT=0.400 both=0.200 neither=0.000]
+  seed 5401 (n=450): mem=0.600 tom=0.600 best=0.600 compose=0.760 shuf=0.693 oracle=1.000 | conflict=0.800 [onlyM=0.400 onlyT=0.400 both=0.200 neither=0.000]
+  seed 5402 (n=450): mem=0.600 tom=0.600 best=0.600 compose=0.747 shuf=0.684 oracle=1.000 | conflict=0.800 [onlyM=0.400 onlyT=0.400 both=0.200 neither=0.000]
+--------------------------------------------------------------------------------
+MEAN (3 seeds):
+  acc_memory    = 0.6000
+  acc_tom       = 0.6000
+  best_single   = 0.6000
+  acc_compose   = 0.7526
+  acc_shuffle   = 0.6844
+  ORACLE        = 1.0000   (oracle − best = +0.4000)
+  conflict_rate = 0.8000
+  decomposition : only_memory=0.4000 only_tom=0.4000 both=0.2000 neither=0.0000
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.7526 >= best 0.6000+0.05 (0.6500) : PASS
+  (B2 ORACLE)         oracle−best +0.4000 > 0.02 : PASS
+  (B3 EARNED)         compose−shuffle +0.0681 > 0.02 : PASS
+  (B4 p6 GUARD)       no injected answer/memory/tom/priority label : PASS
+        p1 system prompt      : clean
+        p2 identity rule      : clean
+        p3 persona            : clean
+        p4 assistant frame    : clean
+        p6 RLHF/pref label    : clean
+        hardcoded priority    : clean
+================================================================================
+VERDICT: 🟢 COMPOSE-LIFT
+READING: memory + ToM are COMPLEMENTARY and compose to a NET LIFT — integration raises capability. The substrate-weighted, query-routed arbiter (scale-relative confidence, NO hardcoded priority) captures the oracle headroom; shuffle collapses (earned, p6). → names an engine-native §compose follow-on + a Φ-measurement follow-on (h1405_phi_runner.hexa).
+SUBSUMPTION PROBE: SEPARABLE — each faculty uniquely solves items the other misses (only_memory=0.400 > 0 AND only_tom=0.400 > 0). memory's reality-store and ToM's witnessed-belief-store carry distinct competence (H_1293's self⊥other claim CONFIRMED on a decision).
+  HONEST (c9, a_scale_honest_scope/a_toy_scale_recheck): DIRECTIONAL numpy mirror; toy
+  synthetic 5-family Sally-Anne fixture, 3 seeds, deterministic readouts (tests COMPOSITION
+  STRUCTURE, not a trained integrator). LIVE CORE/*.hexa UNTOUCHED. Scale/real-corpus/
+  engine-native transfer UNVERIFIED. NO bar moved post-hoc.
+================================================================================

@@ -1,0 +1,51 @@
+H_1405 — lane-composition Φ-measurement (memory × ToM) — FAITHFUL IIT4 (exact MIP-EI, n<=8)
+engine: stdlib/consciousness/iit4/faithful_phi.hexa (a_phi_iit4_tool — NOT a proxy). FROZEN n_bins=16.
+============================================================================================
+--- FROZEN n_bins=16 (the pre-registered bar; terminal Φ verdict) ---
+=== H_1405 lane-composition FAITHFUL IIT4 Φ (stdlib exact MIP-EI, n<=8) ===
+  [memory_s5400]  n=4 T=96  faithful_Φ=0.216055
+  [tom_s5400]  n=4 T=96  faithful_Φ=1.959738
+  [composed_s5400]  n=8 T=96  faithful_Φ=0.851952
+  [disconnected_s5400]  n=8 T=96  faithful_Φ=0.000000
+  [memory_s5401]  n=4 T=96  faithful_Φ=0.136406
+  [tom_s5401]  n=4 T=96  faithful_Φ=1.997495
+  [composed_s5401]  n=8 T=96  faithful_Φ=0.719726
+  [disconnected_s5401]  n=8 T=96  faithful_Φ=0.000000
+  [memory_s5402]  n=4 T=96  faithful_Φ=0.176531
+  [tom_s5402]  n=4 T=96  faithful_Φ=1.969208
+  [composed_s5402]  n=8 T=96  faithful_Φ=0.960792
+  [disconnected_s5402]  n=8 T=96  faithful_Φ=0.000000
+
+=== MEAN faithful Φ over 3 seeds ===
+  Φ_memory       = 0.176331   (n=4)
+  Φ_tom          = 1.975480   (n=4)
+  Φ_composed     = 0.844157   (n=8, coupled)
+  Φ_disconnected = 0.000000   (n=8, coupling removed — EARNED control)
+  max(parts)     = 1.975480
+  composed MIP cut: A={0,4} | B={1,2,3,5,6,7}  cut=1.921584  /min|side|=2  =Φ0.960792
+
+=== FROZEN bars ===
+  B1 INTEGRATION-RAISES-Φ  Φ_composed > max(parts)+0.02 : 0.844157 > 1.995480  => FAIL
+  B2 EARNED (coupling)     Φ_composed > Φ_disc+0.02      : 0.844157 > 0.020000  => PASS
+  B3 control sane          Φ_disc ≤ max(parts)+0.02      : 0.000000 ≤ 1.995480  => PASS
+
+VERDICT: 🧱 NO-Φ-LIFT — capability composes (H_1401) but faithful IIT4 Φ does NOT rise at this granularity (an honest, valid result; c9)
+=== H_1405 faithful Φ measurement complete (a_phi_iit4_tool) ===
+
+--- BINNING-INVARIANCE SWEEP (HONEST: the ordering is NOT binning-invariant here) ---
+  n_bins= 8 : Φ_memory=0.110 Φ_tom=1.975 Φ_composed=0.479 → B1 FAIL (composed < max(parts)=ToM)
+  n_bins=12 : Φ_memory=0.135 Φ_tom=1.975 Φ_composed=0.818 → B1 FAIL
+  n_bins=16 : Φ_memory=0.176 Φ_tom=1.975 Φ_composed=0.844 → B1 FAIL  [FROZEN BAR]
+  n_bins=24 : Φ_memory=0.229 Φ_tom=1.975 Φ_composed=2.337 → B1 PASS  (flips!)
+
+TERMINAL Φ VERDICT (at the FROZEN n_bins=16, NOT moved): 🧱 NO-Φ-LIFT
+  REASON: unlike H_1404 (affect×ethics, BOTH parts low-Φ → super-additive on coupling), here the
+  ToM block is ALREADY a richly-integrated subsystem (Φ_tom≈1.975, its 4 units belief_margin/
+  divergence/witness_recency/belief_confidence are tightly coupled by the false-belief structure).
+  Coupling the lower-Φ memory block to it does NOT robustly raise Φ above that best single part at
+  the frozen granularity. The disconnected control collapses to Φ=0 (the EARNED control works: two
+  independent blocks ⇒ 0 cross-MI), so the coupling DOES create cross-faculty information (B2 PASS),
+  but not enough to exceed the already-high ToM part (B1 FAIL at n_bins<=16).
+  HONEST (c9): the verdict is BINNING-DEPENDENT (flips PASS at n_bins=24) → reported as the FROZEN
+  n_bins=16 🧱, NOT promoted; this is a VALID honest non-lift result, distinct from H_1404's
+  binning-INVARIANT 🟢. A finer-grained or richer-coupling Φ re-measure is the named follow-on.

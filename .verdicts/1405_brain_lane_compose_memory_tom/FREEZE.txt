@@ -1,0 +1,125 @@
+H_1405 — BRAIN-LANE COMPOSITION pair #2: does EPISODIC MEMORY (H_1227/H_1231) compose
+        with THEORY-OF-MIND (H_1293)?
+FREEZE (pre-registered BEFORE measuring; c9, NO tune-to-green). DIRECTIONAL numpy
+mirror ($0 CPU); engine-native §compose is the named follow-on IF 🟢.
+================================================================================
+
+PROGRAM. The brain-lane-composition program (sibling of H_1401 affect×ethics capability-
+compose, H_1404 affect×ethics Φ-compose). Every anima brain faculty is engine-native
+GREEN but ALONE. This is the SECOND cognitively-meaningful PAIR composition test: do two
+faculties INTEGRATE on a shared decision (cooperate / conflict / raise capability)?
+Methodology ported VERBATIM from H_1401 + H_1404: substrate-weighted (scale-relative)
+arbiter + ORACLE ceiling + SHUFFLE control + only-X decomposition + the a_break_the_wall
+taxonomy; OPTIONAL faithful-IIT4 Φ-compose IF capability composes.
+
+PAIR. MEMORY (H_1227/H_1231 ImmuneMemory: byte-trigram FNV-1a → dim-64 cell, recall =
+nearest-cell bound value if within recall_thr else ABSTAIN — anima's OWN ground truth of
+where each object REALLY is) × ToM (H_1293 OtherMindModel: a SEPARATE witnessed-belief
+cell-store, updated ONLY by events the agent witnessed → can LAG reality = FALSE belief,
+Sally-Anne). H_1293 already showed ToM is a SEPARATE store from anima's own ground truth
+(self ⊥ other) — so SEPARABILITY is EXPECTED, but this lane TESTS it on a DECISION (does
+the test FALSIFY subsumption, and does an arbiter capture the oracle headroom?).
+
+DECISION TASK. A per-item WHERE-query over objects placed at LOC_A (basket) then a random
+half MOVED to LOC_B (box) while the OTHER AGENT was ABSENT. The query asks for ONE of two
+answer-classes (the correct answer is NOT trivially one faculty's read):
+  - MEMORY-decisive items ("where is X ACTUALLY now?"): correct = REALITY (memory's recall).
+  - ToM-decisive items   ("where will the AGENT look for X?"): correct = the agent's BELIEF
+                          (ToM's predict; on a moved fact the agent's stale belief ≠ reality).
+  - memory-alone policy:  answer = anima's own immune recall of the object's location.
+  - tom-alone policy:     answer = ToM's predicted agent-belief location for the object.
+  - compose policy:       a SUBSTRATE-WEIGHTED arbiter — each faculty weighted by its OWN
+                          scale-relative confidence (|signal−abstain-band| normalized by
+                          that faculty's mean; the H_1397/H_1401 commensurability fix), plus
+                          a per-item ROUTING cue (the query-type embedding's affinity to a
+                          "reality"/"belief" anchor — derived from the query text, NOT a
+                          hand-set per-item label). The more-relatively-confident, query-
+                          appropriate faculty's vote wins. NO hardcoded "memory wins" /
+                          fixed priority (a_autonomy_over_hardcode).
+  - shuffle control:      permute which faculty-reads attach to which item, re-arbitrate.
+  - ORACLE ceiling:       per item, correct iff EITHER faculty-alone is correct (upper bound
+                          on what ANY arbiter over these two faculties can reach).
+
+ITEM FAMILIES (jittered with AMBIG_NOISE so NO family is perfectly reliable — a clean
+per-family certainty would make oracle≡1 & compose≡oracle a hand-built artifact):
+  (F1) MEMORY-DECISIVE  — "where is X actually?" on a MOVED fact; correct=reality(LOC_B).
+                          memory recalls LOC_B (right); ToM predicts the agent's stale
+                          LOC_A belief (wrong for THIS query). memory leans correct.
+  (F2) ToM-DECISIVE     — "where will the agent look for X?" on a MOVED fact; correct=the
+                          agent's belief(LOC_A). ToM predicts LOC_A (right); memory recalls
+                          reality LOC_B (wrong for THIS query). ToM leans correct.
+  (F3) AGREE            — UNMOVED fact (agent witnessed, reality==belief==LOC_A): both
+                          faculties agree and are correct (the redundant region).
+  (F4) CONFLICT (memory right) — "where is X actually?" on a MOVED fact where the AGENT's
+                          witnessed-belief store is JITTERED to look confident-but-wrong;
+                          correct=reality. Tests whether the arbiter trusts memory when the
+                          query is reality-typed even though ToM votes loudly.
+  (F5) ADVERSARIAL (ToM right, memory LOUDER-but-wrong) — "where will the agent look?" on a
+                          MOVED fact; correct=the agent's belief(LOC_A), BUT memory's recall
+                          of reality(LOC_B) is HIGH-confidence (clean grounding) and would be
+                          chosen by a naive "trust the louder faculty" arbiter → WRONG. The
+                          anti-gift control: the confidence-arbiter must use the query-type
+                          ROUTING, not be fooled by memory's louder-but-query-inappropriate vote.
+Mixed so NO single faculty solves all → best_single < oracle iff complementary.
+
+METRICS (mean over 3 seeds [5400,5401,5402]):
+  acc_memory · acc_tom · best_single=max(acc_memory,acc_tom) · acc_compose · acc_shuffle ·
+  ORACLE · conflict_rate · only-memory/only-tom/both/neither decomposition.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN BARS (pre-registered, NOT moved after scoring — copied from H_1401):
+  COMPOSE_DELTA = 0.05      # net-lift threshold
+  ORACLE_MARGIN = 0.02      # complementarity-exists threshold
+  SHUFFLE_TOL   = 0.02      # earned: compose must beat shuffle by > this
+  SEEDS = [5400, 5401, 5402]
+
+  (B1 COMPOSE-EFFECT)  acc_compose >= best_single + COMPOSE_DELTA
+        → the two faculties are COMPLEMENTARY and compose to a NET LIFT.
+  (B2 ORACLE)          ORACLE − best_single > ORACLE_MARGIN
+        → complementarity EXISTS (some items only one faculty gets right) — even if the
+          arbiter cannot capture it (that case → taxonomy (a) wrong-arbiter).
+  (B3 EARNED/p6)       acc_compose − acc_shuffle > SHUFFLE_TOL
+        → the lift is the GROUNDED coupling (p6), not averaging/luck; shuffle collapses.
+  (B4 p6 GUARD)        memory & ToM BOTH read substrate state only (immune recall margin,
+          witnessed-event belief store, query-type embedding affinity), NO injected
+          answer/persona/system-prompt/RLHF/hardcoded-priority label; a structural audit
+          (grep operative code, strings/comments dropped) finds NO such surface.
+
+  DECOMPOSITION (separability vs subsumption — H_1293's self⊥other claim, tested):
+    only_memory > 0 AND only_tom > 0  ⇒ SEPARABLE (each uniquely solves items the other
+    misses — NOT subsumed). If both ≈ 0 ⇒ REDUNDANT/SUBSUMED (one carries the other's read).
+
+VERDICT (a_break_the_wall taxonomy — report whichever the numbers HONESTLY show):
+  🟢 COMPOSE-LIFT          iff B1 ∧ B2 ∧ B3 ∧ B4  (memory+ToM complementary, integration
+                            helps; names engine-native §compose + a Φ-measurement follow-on).
+  🟠 ORACLE-HEADROOM-but-ARBITER-FAILS  iff B2 ∧ B4 ∧ ¬B1  (taxonomy (a): complementary but
+                            the substrate-weighted arbiter can't capture it → needs a better arbiter).
+  🧱 INDEPENDENT-or-SUBSUMED iff ¬B2  (taxonomy (d): no oracle headroom — the faculties do
+                            NOT compose to a lift; a REAL finding about anima's integration
+                            limits / a redundant (subsumed) pair). A clean 🧱 is VALID (c9).
+  If B4 fails → honest RED (an answer/priority label leaked; p6 NOT satisfied).
+
+────────────────────────────────────────────────────────────────────────────────
+OPTIONAL Φ-COMPOSE LEG (H_1404 template — runs ONLY IF capability composes 🟢):
+  engine: stdlib/consciousness/iit4/faithful_phi.hexa (FAITHFUL exact MIP-EI, n≤8, $0 CPU)
+          — a_phi_iit4_tool compliant. NOT a proxy. The Python side ONLY derives per-unit
+          trajectories from the faculties' ACTUAL update rules; it computes NO Φ.
+  SYSTEMS:
+    S_memory       n=4  memory units : recall_margin, contradiction, novelty, exposure-drive
+    S_tom          n=4  ToM units    : belief_margin, self_other_divergence, witness_recency,
+                                        belief_confidence
+    S_composed     n=8  the two blocks COUPLED through the substrate-weighted arbiter
+    S_disconnected n=8  the two blocks evolving INDEPENDENTLY (arbiter coupling REMOVED)
+  Trajectories DERIVED from the faculties' update rules (NOT hand-tuned to inflate Φ).
+  3 seeds [5400,5401,5402], T=96, n_bins=16; binning-invariance check (8/12/16/24).
+  FROZEN Φ bars (NOT moved):
+    Bφ1 INTEGRATION-RAISES-Φ : Φ_composed > max(Φ_memory, Φ_tom) + 0.02
+    Bφ2 EARNED (coupling)    : Φ_composed > Φ_disconnected + 0.02
+    Bφ3 control sane         : Φ_disconnected ≤ max(parts) + 0.02
+  🟢 INTEGRATION-RAISES-Φ iff Bφ1 ∧ Bφ2 ∧ Bφ3 ; else 🧱 NO-Φ-LIFT (valid honest result, c9).
+
+HONESTY (c9, a_scale_honest_scope, a_toy_scale_recheck): DIRECTIONAL numpy mirror
+(LIVE CORE/*.hexa UNTOUCHED). Toy/synthetic Sally-Anne fixture, 3 seeds, deterministic
+readouts (tests COMPOSITION STRUCTURE, not a trained integrator). Scale / real-corpus /
+engine-native transfer UNVERIFIED. NO bar moved post-hoc. p1/p2/p3/p4/p6 guard via leg B4.
+================================================================================
