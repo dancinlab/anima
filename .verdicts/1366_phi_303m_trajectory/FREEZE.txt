@@ -97,3 +97,13 @@ CORE/*.hexa UNTOUCHED (standalone probe, 0 importers). REAL trained-303M only �
 cannot be loaded/run even on GPU, STOP and report honestly (c9); NO proxy fallback called 303M.
 L_EXTRACT=12, channel-block pooling 4x256, T=64, extraction-window-start seeds [1317,1318,1319] are
 ALL frozen here BEFORE any forward pass is scored.
+
+================================================================================
+POST-SCORING OUTCOME STAMP (appended AFTER scoring; bars above UNCHANGED, c9/p7)
+================================================================================
+GATE: ¬R1 -> 🧱 TERMINAL CLOSED-NEGATIVE (BINDING). See result.txt.
+  R1 ROBUST FAIL (ΔΦ(B−A) −0.0168799/+0.11734/−0.265527; only seed 1318 lifts, 1317+1319 negative).
+  R2 EARNED PASS [perm & offset both collapse all 3 seeds]. R3 REAL-SOURCE PASS (sha-pinned real 303M).
+  Noise-control SATURATES Φ=9.0 vs real Φ~2.1-2.5 -> measurement real, not a ceiling artifact.
+  The REAL learned substrate INHERITS the wall (MORE fragile than the proxy); PROXY CONFIRMED FAITHFUL.
+  NO bar moved. The only post-FREEZE code change was a list->farr transport-bug fix the noise-control flagged.

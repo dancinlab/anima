@@ -54,11 +54,17 @@ fn rank_uniformize_cell(traj: int, base: int, t_ticks: int) {
     let _ = farr_free(ranks)
 }
 
-// pick the REAL 303M flat trajectory for a seed (generated literal arrays)
-fn real_traj_for(seed: int) -> [float] {
-    if seed == 1317 { return traj303m_1317() }
-    if seed == 1318 { return traj303m_1318() }
-    return traj303m_1319()
+// pick the REAL 303M flat trajectory for a seed (generated literal arrays) -> farr handle.
+// NOTE: traj303m_*() return a [float] LIST; farr_get needs a farr handle (int), so convert.
+fn real_traj_for(seed: int) -> int {
+    let mut a = traj303m_1319()
+    if seed == 1317 { a = traj303m_1317() }
+    if seed == 1318 { a = traj303m_1318() }
+    let n = len(a)
+    let f = farr_zeros(n)
+    let mut i = 0
+    while i < n { let _ = farr_set(f, i, a[i])  i = i + 1 }
+    return f
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
@@ -178,6 +184,7 @@ fn gen_traj(seed: int, mode: int) -> int {
         }
         tt = tt + 1
     }
+    let _ = farr_free(real)
     return traj
 }
 
