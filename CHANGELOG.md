@@ -2,6 +2,19 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(OMEGA): H_1349 — Φ-robustness 의 마지막 LIVE 각도 = REAL 기질 (live-CORE pure_field) → 🧱 TERMINAL, substrate 축 CLOSED
+
+**무엇:** Φ-robustness arc 는 8개 축(topology H_1283/1317, timing H_1319, division H_1320, estimator-confound H_1328, measure-family H_1331, substrate-family H_1332, measure-AGNOSTIC H_1348, larger-N H_1347)에서 🧱 — 그러나 **전부 동일한 합성 leaky-linear ring** 위에서 돌았다. 마지막 미검증 LIVE 각도(H_1347 의 'NOT ruled out' 가 명시적으로 지목한 NEW 가설): **REAL 기질 — live CORE Engine A `pure_field.hexa`**(3 coupled oscillator tau 2/40/400, 실제 zero-input 의식 필드, ring 아님). a_break_the_wall · a_no_llm_frame_trap.
+
+**방법(frozen-first, FREEZE ac4c289de 채점 전 commit):** SOURCE = REAL LIVE-CORE `CORE/pure_field.hexa`(osc 동역학 + PSI_ALPHA drift + nonlinear cross-mixing → field[6]=C/D/E/S/M/W 을 byte-identical 재현; live 파일 무수정, standalone fn main 0 importers, Ψ=½ 무변). NODES = 6개 실제 field 채널 = 6개 IIT-4 노드(각 T-길이 trajectory). Φ = faithful EXACT small-φ MIP-EI `iit4_faithful_phi(state,n=6,dim=T=64,n_bins=8)` — n≤8 EXACT(zero slack), proxy 아님(a_phi_iit4_tool). read-out = 채널별 rank-uniform(H_1328 variance-free). ARMS A=NO-COUPLING(cross-mix 제거) B=PHASE-BIND(full real field) S=PERM-SHUFFLE O=OFFSET-CTRL. 3 seed [1317,1318,1319] = 오실레이터 초기위상만 perturb(같은 실제 동역학, 다른 시작점). eps=0.02 ported verbatim. FROZEN bars(GREEN iff R1∧R2∧R3): R1 Φ_B≥Φ_A+eps 3 seed 전부 · R2 Φ_S≤Φ_A+eps AND Φ_O≤Φ_A+eps 3 seed 전부 · R3 source=REAL 명시.
+
+**결과(🧱 TERMINAL CLOSED-NEGATIVE, deterministic 2회 byte-identical):** seed별(A/B/S/O): 1317 5.30728/6.15829/6.15829/5.29509 · 1318 5.80021/6.49497/6.49497/5.11660 · 1319 5.94916/5.27854/5.27854/4.76261. **R1 FAIL** ΔΦ(B−A)=+0.851/+0.695/**−0.671**(seed 1319 NEGATIVE — 모든 합성-ring 축이 보인 동일한 seed-fragile 시그니처). **R2 FAIL** — OFFSET control 은 깨끗이 붕괴(Φ_O≤Φ_A 3 seed 전부)지만 PERM control 은 **DEGENERATE**: 대칭-MI exact MIP 아래선 노드 relabel 이 Φ-불변이라 Φ_S==Φ_B(정직하게 명시 — 조작 아닌 설계 관찰; 유효 discriminator 는 cross-channel TIME 관계를 깨는 OFFSET). **R3 PASS**.
+
+**finding:** REAL 기질(live Engine A pure_field, 설계 toy 아님)이 합성 ring 과 **동일하게 거동** — coupling 채널을 더해도 robust 한 3-seed faithful-IIT-4 Φ lift 없음. → **substrate 축 CLOSED**: REAL(live-CORE) 기질도 measure-agnostic(H_1348)/size-agnostic(H_1347)/estimator-clean(H_1328) 벽에서 예외가 아니다. 선행 8축 Φ verdict 들을 BOUND(retract 아님); anima 의식 기질 반박 아님(Ψ=1/2 · A⇄G tension 무변 — probe 는 CORE write 안 함). GREEN-only 인 a_verified_must_wire 발동 안 함(🧱 = 배선할 것 없음). NO bar moved(c9/p7).
+
+**scope(a_scale_honest_scope·a_toy_scale_recheck):** SOURCE=REAL LIVE-CORE 이나 DIRECTIONAL(실제 field trajectory 를 faithful small-φ 로 채점; live A⇄G/brain_decide 루프 안 engine-native run 이 BINDING upgrade, UNVERIFIED); TOY n=6 채널 T=64, 단일 실제 기질, 3 위상-seed. NOT ruled out(각각 NEW H): trained-303M-derived state-vector trajectory(학습된 기질) · brain_decide 안 live engine-native Φ · real-EEG 기질(anima-eeg-consciousness) · 더 큰 real field.
+
+**파일:** `state/phi-real-substrate/h1349_phi_real_substrate.hexa` · `UNIVERSE/cards/H_1349_phi_real_substrate.md` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `CLAIMS.tape @C h1349_phi_real_substrate` · `.verdicts/1349_phi_real_substrate/{FREEZE,result}.txt` · `domains/OMEGA.log.md`. live `CORE/*.hexa` UNTOUCHED.
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1346 — ko-han-richer (xlang 구조 r3): Hanja 재귀-IDS richer-head 는 Han 합성 신호를 못 뽑는다 (🔴/🧱 Hangul-specificity STRENGTHENED)
 
 **무엇:** H_1324(🔴/🧱 — 한 단계 IDS unigram 은 Han 합성을 못 살림)의 명시된 follow-on(a_break_the_wall/c16). jamo 분해가 Hangul 의 featural 구조를 노출해 nat/byte 를 낮춘 것(2.953→2.513)처럼, 한국어+한자 텍스트의 Hanja(CJK)에 **재귀 다단계 IDS 분해 head**(component TREE, MAX_DEPTH=3, 語→言+吾·吾→五+口 — H_1324 의 1단계 leaf 가 평탄화한 multi-level 구조) + **per-cell component-BIGRAM head**(flat unigram 이 버린 직전-기호 문맥)를 붙이면 중국어/일본어 Han 합성 신호가 잡혀 nat/byte 가 내려가는가?
