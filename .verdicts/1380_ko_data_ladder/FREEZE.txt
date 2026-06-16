@@ -1,0 +1,99 @@
+H_1380 — ko-data-ladder: does the Korean novel-context CE asymptote break BELOW the 2.51335 jamo
+floor when the data-richness ladder is EXTENDED past 30MB?  (FROZEN-FIRST — written BEFORE measuring)
+
+================================================================================
+PRE-REGISTRATION (frozen-first; c9/c16 NO tune-to-green; bars cannot move post-hoc)
+================================================================================
+
+CONTEXT / WHY DECISIVE
+----------------------
+The Korean below-jamo arc closed 🧱 across 5 levers (H_1316/1322/1337/1344/1345/1354/1359):
+below-jamo is a data-sparsity artifact at FIXED 30MB. BUT H_1368 (ko-data-richness) refined it:
+the NOVEL-context CE is still DESCENDING at 30MB on a data-richness ladder of PREFIX sub-windows
+(3.75MB→3.15254, 7.5→3.07077, 15→2.95376, 30→2.88190; gap to the 2.51335 jamo floor shrank 42%
+over an 8x window; log-linear b=-0.0929 nats/window-doubling, r2=0.992, predicting ~470MB to TOUCH
+the floor; a power-law c_inf=1.099 fit was flagged UNRELIABLE/UNDETERMINED, honest, c9). So the
+floor is approached on a STILL-DESCENDING curve; the ONLY live Korean lever is DATA VOLUME.
+H_1368 left this as NEXT-1: extend the ladder past 30MB to pin the asymptote vs 2.51335.
+
+H_1380 EXTENDS the ladder to 60 / 120 / 240 / 480 MB (and beyond if the curve is still descending),
+re-using the H_1368 harness VERBATIM (same jamo representation, same FROZEN Jelinek-Mercer lambda
+nmax=5, same NOVEL-only held-out filter = stride-300 even/odd, top-order context not in TRAIN set,
+same circular-shift surrogate). The decision rule below is fixed BEFORE any new rung is measured.
+
+REAL DATA (hard, c7/c9, a_eeg REAL-only — NO synthetic padding)
+---------------------------------------------------------------
+The H_1368 30MB corpus = the first 30MB-trimmed prefix of R2 key
+  r2://<bucket>/anima-7b/web/kor/shard0000.bytes   (sha c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca on the 30MB window)
+shard0000.bytes is 10,544.5 MB of REAL Korean (HEAD-verified); shards 0001/0002 add ~21GB more.
+So 60/120/240/480MB rungs = LARGER PREFIXES of the SAME real shard0000 stream — byte-fair,
+identical corpus family as H_1368, NO new corpus, NO synthetic. Each new prefix window's sha is
+recorded. The 30MB rung is the EXACT H_1368 window (sha c47b6808...) — it MUST reproduce
+novel-CE=2.88190 (|delta|<=0.02) as a methodology-drift sanity anchor (else STOP).
+Credentials read at CALL TIME via `harness secret get r2.phanes.*`, env-only, NEVER logged/inlined/committed (c7).
+If shard prefixes were unobtainable -> honest STOP (record the H_1368 30MB extrapolation as best
+available, the ~470MB prediction stays a PREDICTION not a measurement). [shard CONFIRMED obtainable]
+
+FROZEN MACHINE (identical to H_1368 — NOT re-tuned per rung, anti-Goodhart)
+--------------------------------------------------------------------------
+- jamo representation: Hangul->NFD jamo (id 256+rank), non-Hangul->raw byte; n_bytes = original UTF-8.
+- jamo vocab fixed ONCE on the FULL fetched window (no per-rung vocab drift).
+- Jelinek-Mercer recursive interpolation, lambda=[1,2,4,8,16]/31, nmax=5, Laplace 1.0 (FROZEN).
+- NOVEL filter: stride=300 even=TRAIN / odd=TEST; score only TEST positions whose top-order (4-jamo)
+  context is NOT in the TRAIN top-order set = genuine-generalization slice (== H_1368/H_1359 TEST A).
+- circular-shift surrogate (shift=99991) = EARNED control.
+- jamo floor reference = 2.51335 (H_1316 locked); raw-byte ceiling = 2.95342 (H_1307).
+
+LADDER (extended): 30 / 60 / 120 / 240 / 480 MB prefix windows of shard0000.bytes.
+  (30MB rung = H_1368 anchor; >=2 NEW rungs beyond 30MB required for bar 1. If memory/time permits,
+   continue to 480MB. If a rung's prefix decode/fit is infeasible on $0 CPU, STOP and report the
+   honest INCOMPLETE with the rungs achieved — do NOT auto-rent a pod.)
+
+================================================================================
+FROZEN BARS (pre-registered; pass/fail decided by these EXACT rules)
+================================================================================
+
+bar 1 LADDER-EXTENDED:
+  PASS iff >=2 NEW rungs beyond 30MB are measured on REAL KO (MB + sha recorded per rung),
+  OR honest STOP if no further real KO shard prefix is obtainable (record reason).
+
+bar 2 ASYMPTOTE verdict (decision rule fixed BEFORE measuring):
+  Fit novel-context CE vs window over the EXTENDED ladder with the SAME two H_1368 estimators
+  (log-window linear + power-law decay with the SAME reliability guardrail: power fit is UNRELIABLE
+  if c_inf < floor-0.20 [physically implausible] OR p pinned at a grid edge).
+  Classify:
+    - BELOW  : reliable power-fit c_inf < 2.51335 - 0.01  (the lowest measured novel-CE rung also
+               sitting AT/below floor reinforces). => 🟢-candidate: representation lever REOPENS via data.
+    - AT     : reliable c_inf within 2.51335 +/- 0.01.   => 🧱 floor terminal across data too.
+    - ABOVE  : reliable c_inf > 2.51335 + 0.01.          => 🟠 floor holds above jamo floor; data narrows gap.
+    - STILL-DESCENDING-UNRESOLVED : descent monotone but power-fit UNRELIABLE at max data reached
+               => honest INCOMPLETE; report the log-linear extrapolation + its window-to-floor estimate
+               as a PREDICTION (NO GREEN over-claim, c9).
+  HONEST DESCENT CHECK: novel-CE must still be monotone DECREASING across the new rungs (each step
+  delta<=-0.001) for the data-richness lever to remain LIVE; if it FLATTENS at some window, that
+  window IS the empirical asymptote (report it directly, not an extrapolation).
+
+bar 3 HELD-OUT: novel-context CE measured ONLY on the held-out odd-stride NOVEL slice (top-order
+  context absent from the even-stride TRAIN set) — the H_1368/H_1359 protocol; NO leakage. (structural)
+
+bar 4 CONTROL (floor sanity): the jamo floor 2.51335 is re-measured on the SAME extended corpus
+  (full window). It should stay ~constant (|delta| small). If the floor itself moves materially,
+  report honestly (the floor reference would itself be data-dependent).
+  PLUS: 30MB anchor reproduces 2.88190 (|delta|<=0.02); shift surrogate EARNED (shift-novel>=0.05) at
+  every rung.
+
+TIER MAPPING:
+  bar1 PASS & bar4 anchor+earned PASS & bar2=BELOW            -> 🟢 FLOOR-BREAKS-BELOW (representation lever reopens via data; CANDIDATE, DIRECTIONAL numpy)
+  bar1 PASS & bar4 PASS & bar2=AT                             -> 🧱 FLOOR-TERMINAL-AT (Korean below-jamo arc fully closed across data too)
+  bar1 PASS & bar4 PASS & bar2=ABOVE                          -> 🟠 DESCENDING-FLOOR-ABOVE (data narrows gap, floor holds above)
+  bar1 PASS & bar4 PASS & bar2=STILL-DESCENDING-UNRESOLVED    -> 📉 DESCENDING-UNSATURATED-EXTENDED (honest INCOMPLETE, report extrapolation+CI)
+  bar1 STOP (no data)                                        -> 🛑 STOP-NO-DATA (record H_1368 extrapolation as best available)
+  bar4 anchor mismatch OR shift not earned                   -> 🔴 INVALID (methodology drift / signal suspect)
+
+SCOPE (honest, a_scale_honest_scope / a_toy_scale_recheck): DIRECTIONAL numpy; toy stride-300
+byte-substrate next-symbol CE (NOT a fluent decoder, NO Korean-fluency claim); single frozen lambda,
+single stride, single representation (jamo); asymptote = finite-rung extrapolation (wide CI).
+PREFIX sub-windows of ONE real shard (>30MB richness now MEASURED up to the max rung; engine-transfer
+UNVERIFIED). DIRECTIONAL mirror — engine-native re-confirmation is the follow-on if the floor breaks.
+
+frozen-by: H_1380 lane  ·  date 2026-06-16  ·  reused machine = H_1368 (state/ko-data-richness/h1368_ko_data_richness.py)
