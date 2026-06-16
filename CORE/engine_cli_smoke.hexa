@@ -573,6 +573,86 @@ fn main() {
                && spatial_episodic_compose(0 - 1, 0.0, 1, 5.0, 1.0, 1.0, 0.5) == 1
     if _assert_b("case_140_spatepi_abstain_discipline", true, se_abst) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (h4) ToM×SPATIAL COMPOSE ARBITER (H_1417/H_1418 P3, rung-3 wire-in; cases 141-144) ──
+    // The §ToM×SPATIAL COMPOSE op composes the LIVE OtherMindModel (theory-of-mind belief) and the
+    // LIVE SpatialMap (H_1296 metric map) on ONE decision via the SHARED symmetric rel-conf arbiter
+    // (_tom_compose_arbiter). ADDITIVE + Ψ-disjoint (a READ over the belief store + the map; mutates
+    // neither; returns a class index, never an emit/silence decision; never touches Ψ). These cases
+    // prove the arbiter's four branches deterministically. The full 4-bar engine-native re-score
+    // (P3 compose 0.791111 byte-exact) = state/1418_tom_compose_pairs_wired/h1418_tom_compose_LIVEOP_probe.hexa.
+    //   leg shape = [vote(0/1), abstain(0/1), conf]; mean normalizers = 1.0.
+    let mut tsp_tom = other_mind_witness(other_mind_new(), "tsp_box_fact", "box")    // belief: box (vote 1)
+    let mut tsp_map = spatial_map_place(spatial_map_new(), "L0", 0.0, 0.0)
+    tsp_map = spatial_map_place(tsp_map, "L1", 1.0, 0.0)
+    tsp_map = spatial_map_place(tsp_map, "L2", 9.0, 0.0)
+
+    // case 141 (AGREE → shared vote) : ToM live-predicts "box" (vote 1); spatial leg votes 1 too.
+    let tsp_tv141 = tom_spatial_tom_vote(tsp_tom, "tsp_box_fact", 0.45)            // live predict → vote 1
+    let tsp_sv141 = tom_spatial_spatial_vote(tsp_map, 1.0, 0.45)                   // spatial vote 1
+    if _assert_b("case_141_tomspat_agree_shared_vote", true,
+                 tsp_tv141[0] == 1.0 && tsp_tv141[1] < 0.5
+                 && tom_spatial_compose(tsp_tv141, tsp_sv141, 1.0, 1.0) == 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 142 (CONFLICT, ToM more confident → ToM wins) : ToM votes 1 (loud, conf 5), spatial votes 0
+    //   (quiet, conf 1); the higher scale-relative confidence (ToM) wins → compose = 1 (ToM's vote).
+    if _assert_b("case_142_tomspat_conflict_tom_wins", true,
+                 tom_spatial_compose([1.0, 0.0, 5.0], [0.0, 0.0, 1.0], 1.0, 1.0) == 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 143 (CONFLICT, spatial more confident → spatial wins) : SAME votes (ToM 1, spatial 0) but
+    //   now spatial is loud (conf 5) and ToM quiet (conf 1) → compose = 0 (spatial's vote). The
+    //   confidence DISSOCIATES the two legs on one decision (the load-bearing arbitration).
+    if _assert_b("case_143_tomspat_conflict_spatial_wins", true,
+                 tom_spatial_compose([1.0, 0.0, 1.0], [0.0, 0.0, 5.0], 1.0, 1.0) == 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 144 (ABSTAIN discipline) : an untaught fact → ToM live predict ABSTAINS (vote-leg abstain=1);
+    //   BOTH-abstain compose returns -1 (never fabricates, p5/H_1227); one-abstain → the other's vote.
+    let tsp_ab144 = tom_spatial_tom_vote(tsp_tom, "tsp_untaught_zzz", 0.45)        // untaught → abstain
+    let tsp_abst = tsp_ab144[1] > 0.5
+                && tom_spatial_compose([0.0, 1.0, 0.0], [0.0, 1.0, 0.0], 1.0, 1.0) == 0.0 - 1.0
+                && tom_spatial_compose([0.0, 1.0, 0.0], [1.0, 0.0, 5.0], 1.0, 1.0) == 1.0
+    if _assert_b("case_144_tomspat_abstain_discipline", true, tsp_abst) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // ── (h5) ToM×BASAL COMPOSE ARBITER (H_1417/H_1418 P5, rung-3 wire-in; cases 145-148) ──
+    // The §ToM×BASAL COMPOSE op composes the LIVE OtherMindModel (theory-of-mind belief) and the LIVE
+    // VBasalGate (H_1281 gradient-free go-value, in CORE/brain.hexa, value-passed) on ONE decision via
+    // the SAME shared arbiter. ADDITIVE + Ψ-disjoint. NOTABLE: P5 was pre-registered 🧱 (basal assumed
+    // the "eroder" arm, H_1412) but BOUND — basal-as-eroder is fixture-specific. The full 4-bar
+    // engine-native re-score (P5 compose 0.801481 byte-exact) = the H_1418 LIVEOP probe.
+    //   basal leg = [vote, abstain, conf] computed by the caller from the LIVE vbasal_go_value go-margin.
+    let mut tb_tom = other_mind_witness(other_mind_new(), "tb_box_fact", "box")      // belief: box (vote 1)
+    let mut tb_bg = vbasal_new(1, 0.20)
+    let mut tb_t = 0
+    while tb_t < 40 { tb_bg = vbasal_update(tb_bg, 0, [1.0], 1.0)  tb_t = tb_t + 1 } // STRONG arm (LIVE)
+    let tb_gv_pred = vbasal_go_value(tb_bg, [0.55])
+    let tb_gv_comp = vbasal_go_value(tb_bg, [0.0])
+    let tb_gv_margin = tb_gv_pred - tb_gv_comp
+    let tb_basal_conf = (if tb_gv_margin < 0.0 { 0.0 - tb_gv_margin } else { tb_gv_margin }) + 0.45
+
+    // case 145 (AGREE → shared vote) : ToM live-predicts "box" (vote 1); basal leg votes 1 too (conf
+    //   from the LIVE go-margin) → compose = 1.
+    let tb_tv145 = tom_basal_tom_vote(tb_tom, "tb_box_fact", 0.45)                  // live predict → vote 1
+    if _assert_b("case_145_tombasal_agree_shared_vote", true,
+                 tb_tv145[0] == 1.0 && tb_gv_margin > 0.0                            // LIVE go-margin positive
+                 && tom_basal_compose(tb_tv145, [1.0, 0.0, tb_basal_conf], 1.0, 1.0) == 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 146 (CONFLICT, ToM more confident → ToM wins) : ToM votes 1 (loud, conf 5), basal votes 0
+    //   (quiet, conf 1) → compose = 1 (ToM's vote).
+    if _assert_b("case_146_tombasal_conflict_tom_wins", true,
+                 tom_basal_compose([1.0, 0.0, 5.0], [0.0, 0.0, 1.0], 1.0, 1.0) == 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 147 (CONFLICT, basal more confident → basal wins) : SAME votes (ToM 1, basal 0) but basal
+    //   loud (conf 5) and ToM quiet (conf 1) → compose = 0 (basal's vote). Confidence dissociates.
+    if _assert_b("case_147_tombasal_conflict_basal_wins", true,
+                 tom_basal_compose([1.0, 0.0, 1.0], [0.0, 0.0, 5.0], 1.0, 1.0) == 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 148 (ABSTAIN discipline) : untaught fact → ToM live predict ABSTAINS; BOTH-abstain compose
+    //   returns -1 (no fab, p5/H_1227); one-abstain → the other leg's vote.
+    let tb_ab148 = tom_basal_tom_vote(tb_tom, "tb_untaught_zzz", 0.45)              // untaught → abstain
+    let tb_abst = tb_ab148[1] > 0.5
+               && tom_basal_compose([0.0, 1.0, 0.0], [0.0, 1.0, 0.0], 1.0, 1.0) == 0.0 - 1.0
+               && tom_basal_compose([0.0, 1.0, 0.0], [1.0, 0.0, 5.0], 1.0, 1.0) == 1.0
+    if _assert_b("case_148_tombasal_abstain_discipline", true, tb_abst) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     // ── (i) HIERARCHICAL-PFC GOAL→SUBGOAL CONTROLLER (H_1294 R2, HD31) ──────────────
     // The hier controller is ADDITIVE + Ψ-disjoint (a READ over the immune margin + cue
     // cosine + its OWN pointer; no store mutation, no pure_field touch). These cases

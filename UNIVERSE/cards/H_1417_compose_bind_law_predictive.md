@@ -4,7 +4,7 @@ slug: 1417_compose_bind_law_predictive
 title: "brain-lane COMPOSE engine-BIND LAW — DESCRIPTIVE → PREDICTIVE: pre-register BIND/🧱 on 5 UNTESTED engine pairs from the ceiling-erosion predictor, then engine-native re-score, then score HIT/MISS (frozen-first falsification of the strength-erosion law)"
 group: MITOSIS-ENGINE / brain-lane-composition — the engine-BIND law's PREDICTIVE falsification round (the engine-native twin of H_1411's Φ-lift falsification)
 terminal_tier: "🧱 ENGINE-BIND-LAW PREDICTIVELY-FALSIFIED (2/5 HITS) — the descriptive 'ceiling-erosion / strong-standalone-arm' rule does NOT survive pre-registered prediction; the real determinant is ARBITER-CAPTURE of the oracle headroom (a JOINT-trajectory property), NOT standalone-arm strength"
-wired: N/A (🧱 falsified law · MEASUREMENT round — NOTHING wired into live CORE; a NEW pair that happened to BIND engine-native is logged as a wire-in follow-on in ING.jsonl, not wired here)
+wired: N/A for the 🧱 falsified LAW (MEASUREMENT round — the law itself wires nothing). The TWO BIND by-products (P3 ToM×spatial, P5 ToM×basal) ARE now WIRED-live via H_1418 (§ToM×SPATIAL / §ToM×BASAL COMPOSE ARBITER tom_spatial_compose / tom_basal_compose in CORE/engine_cli.hexa, smoke 141-148, LIVEOP byte-exact, ARCHITECTURE.json lockstep) — see UNIVERSE/cards/H_1418_tom_compose_pairs_wired.md
 verdict_dir: .verdicts/1417_compose_bind_law_predictive/
 terminal_verdict: .verdicts/1417_compose_bind_law_predictive/result.txt
 date: 2026-06-17
@@ -136,9 +136,12 @@ corpus/engine-transfer-at-scale UNVERIFIED. NO bar moved post-hoc; predictions F
 측정 전 잠금. compose-program 의 capability-compose 결과(H_1401/1405/1407/1408/1409 🟢)는
 UNAFFECTED — 여기선 engine-BIND *법칙*만 반증된다.
 
-**측정 라운드 — live CORE 에 아무것도 배선하지 않음** (법칙을 시험, 메커니즘 landing 아님).
-새로 BIND 한 pair (P3 ToM×spatial, P5 ToM×basal)는 ING.jsonl 에 wire-in follow-on 으로만
-기록 (여기서 배선 안 함, a_verified_must_wire).
+**측정 라운드 — 법칙 자체는 live CORE 에 아무것도 배선하지 않음** (법칙을 시험, 메커니즘
+landing 아님). 그러나 새로 BIND 한 두 pair (P3 ToM×spatial, P5 ToM×basal)는 **H_1418 에서
+WIRED-live 로 landing 완료** — §ToM×SPATIAL / §ToM×BASAL COMPOSE ARBITER (`tom_spatial_compose` /
+`tom_basal_compose`, CORE/engine_cli.hexa), smoke 141-148, LIVEOP 가 P3 0.791111 · P5 0.801481 을
+byte-exact 재현, ARCHITECTURE.json lockstep, 가드 149/0·7/0·h1205 PASS (a_verified_must_wire
+rung-3+4). 카드: `UNIVERSE/cards/H_1418_tom_compose_pairs_wired.md`.
 
 ## Next
 

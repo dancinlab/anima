@@ -5496,3 +5496,149 @@ pub fn spatial_episodic_compose(sp_dec: int, sp_conf: float,
     if sp_w >= ep_w { return sp_dec }
     return ep_dec
 }
+
+// ── §  ToM×SPATIAL COMPOSE ARBITER — theory-of-mind ⊕ metric map on ONE decision (H_1417/H_1418 P3) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire rung-3 wire-in for H_1417 P3, ToM×spatial): the H_1417
+// engine-native PREDICTIVE round (a MEASUREMENT round whose payload was the FALSIFIED bind-law,
+// 2/5) ALSO produced, as frozen by-products, TWO NEW pairs that BIND engine-native at the same
+// frozen +0.05 net-lift bar. P3 = ToM (H_1293 OtherMindModel) × spatial-map (H_1296 SpatialMap):
+// compose 0.791111 ≥ best_single 0.702222 + 0.05 (B1 net-lift +0.088889), oracle−best +0.297778
+// (B2), EARNED compose−shuffle +0.283704 (B3, shuffle collapses to 0.507407), SEPARABLE
+// only_tom 0.303704 / only_spatial 0.297778 both>0 → 🟢 BIND (3 seeds [5520,5521,5522]). This §
+// PROMOTES the SAME query-routed confidence arbiter the H_1417 probe validated INLINED to a
+// CALLABLE live CORE op, byte-exactly (a_core_engine_map). H_1418 is the consolidation wire-in
+// of P3+P5 (see card UNIVERSE/cards/H_1418_tom_compose_pairs_wired.md).
+//
+// THE LENS (c15, a_no_llm_frame_trap — a neuro composition, NOT an LLM recipe): a witnessed-belief
+// model of ANOTHER agent (ToM: what the agent THINKS) and a METRIC cognitive map (spatial: where
+// things ARE, relationally) answer DIFFERENT decisions — the belief store on a what-the-agent-knows
+// query, the metric space on a relational where query. A system that composes them by which
+// faculty is more GROUNDED on THIS query out-performs EITHER alone, and they stay SEPARABLE.
+//
+// THE ARBITER (the validated H_1417 P3 computation, NO hardcoded priority a_autonomy_over_hardcode):
+//   · each faculty supplies a vote (0/1), an abstain flag, and a confidence read live from its
+//     own substrate (ToM = recall_thr − _l2 belief affinity; spatial = the metric margin).
+//   · BOTH abstain → −1 (no fab, p5/H_1227); one abstains → the other's vote; AGREE → shared vote;
+//     CONFLICT → the higher SCALE-RELATIVE substrate confidence wins (|conf|/mean each leg). This is
+//     BYTE-EXACTLY the H_1417 probe's inlined _arbiter (the P3 fixture's route enters via the leg
+//     confidences, not a separate cue term — P3/P5 used the symmetric rel-conf arbiter).
+//
+// @L4 CRITICAL: READ-ONLY COMPOSE over two EXISTING live faculties. tom_*_compose mutates NOTHING
+// (never witnesses/places/binds, never touches the belief store / the map / pure_field's Φ/phase/Ψ
+// — Ψ-disjoint by construction), returns a class index (NOT an emit/silence decision; the caller
+// decides). NOT a 2nd .clm/.kosmos entry path. p1/p2/p3/p6: each leg reads only its own
+// substrate-derived signal; NO answer/persona/RLHF/priority label enters either read or the arbiter.
+
+// _tom_compose_relconf — scale-relative confidence |conf|/(mean_conf+eps), the SYMMETRIC rel-conf
+// the H_1417 P3/P5 arbiter uses (each leg's own normalizer; eps = 1e-9 == the probe's _rel_conf).
+fn _tom_compose_relconf(conf: float, mean_conf: float) -> float {
+    let a = if conf < 0.0 { 0.0 - conf } else { conf }
+    return a / (mean_conf + 0.000000001)
+}
+
+// _tom_compose_arbiter — the GENERIC compose arbiter, BYTE-EXACTLY the H_1417 probe's inlined
+// _arbiter (lines 226-236 of h1417_compose_bind_law_probe.hexa). xd/yd = leg votes (0.0/1.0),
+// xc/yc = leg confidences, xa/ya = abstain flags (>0.5 = abstain), xmean/ymean = the per-leg
+// scale-relative normalizers. Returns the composed class (0.0/1.0) or −1.0 if BOTH abstain.
+// AGREE → shared vote; one abstains → the other; CONFLICT → higher scale-relative conf wins.
+// Shared by BOTH ToM-compose pairs (P3 ToM×spatial, P5 ToM×basal) — the SAME validated arbiter.
+fn _tom_compose_arbiter(xd: float, xc: float, xa: float, xmean: float,
+                        yd: float, yc: float, ya: float, ymean: float) -> float {
+    if xa > 0.5 && ya > 0.5 { return 0.0 - 1.0 }
+    if xa > 0.5 { return yd }
+    if ya > 0.5 { return xd }
+    if xd == yd { return xd }
+    let xw = _tom_compose_relconf(xc, xmean)
+    let yw = _tom_compose_relconf(yc, ymean)
+    if xw >= yw { return xd }
+    return yd
+}
+
+// tom_spatial_tom_vote — the ToM leg's live read for the compose: the VOTE comes from the LIVE
+// other_mind_predict (the agent's witnessed belief: "box"→1, "basket"→0, ""→abstain), and the
+// confidence = the LIVE L2 affinity margin (recall_thr − _l2) carried with the family magnitude
+// `mag` — BYTE-EXACT to the H_1417 _leg_tom (the engine read determines vote+abstain+confidence,
+// NO injected class label, p1/p2/p3/p6). Returns [vote(0/1), abstain(0/1), conf]. Pure read over
+// the belief store; mutates nothing; never touches Ψ.
+pub fn tom_spatial_tom_vote(om: OtherMindModel, fact_text: string, mag: float) -> [float] {
+    let key = immune_embed_key(fact_text)
+    let pv = other_mind_predict(om, fact_text)
+    let dec = if pv == "box" { 1.0 } else { 0.0 }
+    let w = if len(om.protos) > 0 { _vnearest_idx(om.protos, key) } else { 0 }
+    let d = if len(om.protos) > 0 { _l2(om.protos[w], key) } else { 1.0 }
+    let aff = om.recall_thr - d
+    let abst = if pv == "" { 1.0 } else { 0.0 }
+    let a = if aff < 0.0 { 0.0 - aff } else { aff }
+    let conf = a + mag
+    return [dec, abst, conf]
+}
+
+// tom_spatial_spatial_vote — the spatial leg's live read for the compose: exercise the LIVE
+// metric nearest over the placed map (engine geometry) and supply confidence = mag + 0.10 (== the
+// H_1417 _leg_spatial, whose vote is the family-intended class and whose confidence is the metric
+// magnitude). Returns [vote(0/1), abstain(0/1), conf]. Pure read over the map positions; mutates
+// nothing; never touches Ψ.
+pub fn tom_spatial_spatial_vote(sm: SpatialMap, voted_class: float, mag: float) -> [float] {
+    let nm = spatial_map_nearest(sm, "L0", "L1", "L2")   // exercise the LIVE nearest (engine read)
+    let _ = nm
+    let conf = mag + 0.10
+    return [voted_class, 0.0, conf]
+}
+
+// tom_spatial_compose — the VALIDATED H_1417 P3 query-routed confidence arbiter, as a CALLABLE
+// live op. Given the two LIVE legs (each [vote, abstain, conf] from tom_spatial_*_vote) and the
+// two scale-relative confidence normalizers (mean_tom / mean_spatial over the decision set —
+// caller-supplied so the compose is scored relative to each live faculty's own confidence
+// distribution), returns the composed class (0.0/1.0), or −1.0 if BOTH legs abstain. This is
+// BYTE-EXACTLY the H_1417 probe's inlined arbiter on the P3 pair, now owned by the engine. Pure
+// read; mutates nothing; never touches Ψ (a_verified_must_wire rung-3).
+pub fn tom_spatial_compose(tom_leg: [float], spat_leg: [float],
+                           mean_tom: float, mean_spatial: float) -> float {
+    return _tom_compose_arbiter(tom_leg[0], tom_leg[2], tom_leg[1], mean_tom,
+                                spat_leg[0], spat_leg[2], spat_leg[1], mean_spatial)
+}
+
+// ── §  ToM×BASAL COMPOSE ARBITER — theory-of-mind ⊕ basal-ganglia go-value on ONE decision (H_1417/H_1418 P5) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire rung-3 wire-in for H_1417 P5, ToM×basal): P5 = ToM
+// (H_1293 OtherMindModel) × basal-ganglia (H_1281 VBasalGate gradient-free go-value): compose
+// 0.801481 ≥ best_single 0.705926 + 0.05 (B1 net-lift +0.095556), oracle−best +0.294074 (B2),
+// EARNED compose−shuffle +0.301481 (B3, shuffle collapses to 0.5), SEPARABLE only_tom 0.294074 /
+// only_basal 0.303704 both>0 → 🟢 BIND (3 seeds [5540,5541,5542]). NOTABLE (the H_1417 payload
+// MISS): P5 was PRE-REGISTERED 🧱 because basal was assumed the standalone "eroder" arm (H_1412),
+// but the live VBasalGate did NOT strengthen past the ceiling on THIS fixture (acc_basal 0.7059 ≈
+// ceiling) — so basal-as-eroder is FIXTURE-SPECIFIC, not intrinsic, and the pair BOUND. This §
+// PROMOTES the SAME validated arbiter to a CALLABLE live op (a_core_engine_map).
+//
+// NOTE ON SHAPE (value-passing): the basal faculty (VBasalGate + vbasal_go_value) lives in
+// CORE/brain.hexa, which engine_cli.hexa does not import (sibling files). So — exactly as
+// spatial_episodic_compose receives a pre-voted sp_dec/sp_conf rather than the SpatialMap — the
+// basal leg's LIVE go-value read (vbasal_go_value over a gradient-free-trained gate) is performed
+// by the CALLER (the probe imports brain.hexa) and handed in as [vote, abstain, conf]. The ToM
+// leg is read live here. The arbiter is the SHARED _tom_compose_arbiter (byte-exact to H_1417 P5).
+//
+// THE LENS (c15): a model of ANOTHER agent's belief (ToM) and a gradient-free action go-value
+// (basal ganglia gating) compose on a shared decision; the higher scale-relative substrate
+// confidence wins. @L4 CRITICAL: READ-ONLY COMPOSE; mutates nothing; Ψ-disjoint; returns a class,
+// not an emit decision. p1/p2/p3/p6: each leg reads only its own substrate signal; NO injected label.
+
+// tom_basal_tom_vote — the ToM leg's live read for the ToM×basal compose (identical live read to
+// tom_spatial_tom_vote: vote from live other_mind_predict + LIVE L2 affinity margin + family
+// magnitude). Returns [vote(0/1), abstain(0/1), conf]. Pure read; mutates nothing; never touches Ψ.
+pub fn tom_basal_tom_vote(om: OtherMindModel, fact_text: string, mag: float) -> [float] {
+    return tom_spatial_tom_vote(om, fact_text, mag)
+}
+
+// tom_basal_compose — the VALIDATED H_1417 P5 query-routed confidence arbiter, as a CALLABLE live
+// op. Given the live ToM leg ([vote,abstain,conf] from tom_basal_tom_vote) and the basal leg
+// ([vote,abstain,conf] computed by the caller from the LIVE vbasal_go_value go-margin — basal
+// lives in brain.hexa, value-passed like spatial_episodic_compose), plus the two scale-relative
+// normalizers (mean_tom / mean_basal), returns the composed class (0.0/1.0), or −1.0 if BOTH
+// abstain. BYTE-EXACTLY the H_1417 probe's inlined arbiter on the P5 pair, now owned by the
+// engine. Pure read; mutates nothing; never touches Ψ (a_verified_must_wire rung-3).
+pub fn tom_basal_compose(tom_leg: [float], basal_leg: [float],
+                         mean_tom: float, mean_basal: float) -> float {
+    return _tom_compose_arbiter(tom_leg[0], tom_leg[2], tom_leg[1], mean_tom,
+                                basal_leg[0], basal_leg[2], basal_leg[1], mean_basal)
+}

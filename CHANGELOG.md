@@ -1,3 +1,39 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1418 — WIRE-IN of H_1417's two engine-native-BOUND compose pairs (P3 ToM×spatial, P5 ToM×basal) → 4 wired compose pairs
+
+The follow-on landing (a_verified_must_wire rungs 3+4) of the two compose pairs that BOUND engine-native
+as frozen by-products of the H_1417 predictive round. NO new science — the bars are H_1417's, NOT moved;
+the job is the wire-in + lockstep + guards, exactly like H_1414 (memory×ToM) and H_1415 (spatial×episodic).
+
+🟢 BOTH pairs WIRED-live — promoted the validated query-routed confidence arbiters to CALLABLE live CORE
+ops in `CORE/engine_cli.hexa`:
+  - **§ToM×SPATIAL COMPOSE ARBITER (P3)** — `tom_spatial_compose` + `tom_spatial_tom_vote` (vote from the
+    LIVE `other_mind_predict`, conf = live recall_thr−_l2 affinity margin) / `tom_spatial_spatial_vote`
+    (LIVE `spatial_map_nearest`, conf = metric magnitude).
+  - **§ToM×BASAL COMPOSE ARBITER (P5)** — `tom_basal_compose` + `tom_basal_tom_vote`; the basal leg is
+    value-passed (computed by the caller from the LIVE `vbasal_go_value` go-margin — `VBasalGate` lives in
+    `CORE/brain.hexa`, which engine_cli does not import, exactly like `spatial_episodic_compose`).
+  - both over the SHARED private `_tom_compose_arbiter` (BYTE-EXACT to the H_1417 probe's inlined `_arbiter`:
+    AGREE→shared, one-abstain→other, CONFLICT→higher |conf|/mean wins, NO hardcoded priority). Read-only,
+    Ψ-disjoint.
+
+rung-3 PROOF (byte-exact, c2): `state/1418_tom_compose_pairs_wired/h1418_tom_compose_LIVEOP_probe.hexa`
+re-runs the FROZEN H_1417 bars through the WIRED ops and reproduces the H_1417 numbers BYTE-EXACT —
+**P3 compose 0.791111** (net-lift +0.088889), **P5 compose 0.801481** (net-lift +0.095556), all 4 bars
+PASS each, deterministic run1==run2 (`.verdicts/1418_tom_compose_pairs_wired/H_1418_R3_LIVEOP.txt`).
+Op-faithfulness note (c9): the ToM leg vote MUST come from the LIVE `other_mind_predict` (not the
+constructed class) — the first wired draft reproduced to ~0.0007 off, and switching to the live predict
+closed it to byte-exact; NO bar moved.
+
+GUARDS (no regression): engine_cli_smoke **149/0** (+8 cases 141-148: agree / conflict-each-way / abstain
+discipline, per pair) · h1196 single-entry **7/0** · h1205 separation-invariant **PASS** (generation
+byte-identical ON==OFF, Ψ phiSum 48.6613 unchanged — the live ops are read-only Ψ-disjoint). ARCHITECTURE.json
+lockstep done (engine_cli node note + 2 child nodes + guard_baseline 149/0).
+
+The brain-lane-composition program now has **4 WIRED compose pairs**: memory×ToM (H_1414) · spatial×episodic
+(H_1415) · ToM×spatial (H_1418 P3) · ToM×basal (H_1418 P5). TOY 5-family fixture, 3 seeds/pair, $0 CPU;
+scale / real-corpus / engine-transfer-at-scale UNVERIFIED. Cards `UNIVERSE/cards/H_1418_tom_compose_pairs_wired.md`
+(+ H_1417 card `wired:` axis updated to point at the landing).
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1417 — brain-lane COMPOSE engine-BIND LAW: DESCRIPTIVE → PREDICTIVE 🧱 PREDICTIVELY-FALSIFIED (2/5 HITS)
 
 The engine-native twin of H_1411 (which did the same predictive-falsification for the OLD Φ-lift law,

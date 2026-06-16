@@ -168,12 +168,16 @@ place, the next question is whether *combining two* of them lifts capability + i
 spatial×episodic compose; memory×ToM lifts capability but not Φ; WM×PFC and the predictive-law round
 are honest 🧱. The decisive engine-native test — does a mirror compose-lift actually *bind* on the
 live engine? — first failed (cerebellum×basal, H_1412/1413 🧱: mirror GREEN ≠ engine GREEN, the
-EARNED control rejects it), then **succeeded for memory×ToM (H_1414 🟢) and spatial×episodic-memory
-(H_1415 🟢), both now WIRED-live as the callable ops `mem_tom_compose` and `spatial_episodic_compose`
-in `CORE/engine_cli.hexa` (a_verified_must_wire rungs 2-4 complete, LIVEOP byte-exact, Ψ untouched)** —
-the first two compose pairs owned by the engine. So mirror→engine non-reproduction is **pair-dependent,
-not universal**: a pair binds iff neither live single faculty strengthens past the mirror best-single
-ceiling (which would erode the +0.05 net-lift headroom).
+EARNED control rejects it), then **succeeded for four pairs, all now WIRED-live** as callable ops in
+`CORE/engine_cli.hexa`: memory×ToM (H_1414 🟢 `mem_tom_compose`) · spatial×episodic-memory (H_1415 🟢
+`spatial_episodic_compose`) · ToM×spatial (H_1418 P3 🟢 `tom_spatial_compose`) · ToM×basal (H_1418 P5 🟢
+`tom_basal_compose`) — the last two are the engine-native BIND by-products of the predictive-law round
+(H_1417), landed by H_1418 (a_verified_must_wire rungs 3-4 complete, LIVEOP byte-exact reproducing
+H_1417's P3 0.791111 / P5 0.801481, Ψ untouched). **Four compose pairs owned by the engine.** So
+mirror→engine non-reproduction is **pair-dependent, not universal** — but the *predictive* bind-law
+(ceiling-erosion / strong-standalone-arm) was itself falsified (H_1417, 2/5): the real determinant is
+whether the routing arbiter actually *captures* the oracle headroom (a joint-trajectory property), not
+standalone-arm strength.
 
 **Honest scoreboard (c9).** Of the HD23–32 "missing structure" ladder: **8 subsystems are
 engine-native realized** (cerebellum · working memory · amygdala · basal ganglia = wired;
