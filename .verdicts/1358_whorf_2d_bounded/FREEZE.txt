@@ -1,0 +1,92 @@
+H_1358 — SAPIR-WHORF 2-D CP, BOUNDED warp metric (R3 of H_1343 🟠 PARTIAL)
+FREEZE (pre-registered BEFORE scoring; frozen-first, c9 / p7 NO tune-to-green).
+=============================================================================
+
+PROVENANCE
+  R3 of H_1343 (🟠 PARTIAL). numpy MIRROR (DIRECTIONAL — engine-transfer to live
+  CORE/*.hexa UNVERIFIED, a_engine_native_learning). $0 CPU-local, gradient-free,
+  3 seeds [4334,4335,4336] (SAME family as H_1343/H_1334), deterministic. p7 (a
+  bounded representational-warp metric + label-permutation + component-shuffle
+  controls, NOT perplexity). Live CORE/*.hexa UNTOUCHED (substrate-measurement
+  rung — adds only UNIVERSE/ + state/ + .verdicts/). Lens: cognitive-science /
+  categorical-perception (c15, a_no_llm_frame_trap) — NOT an LLM recipe, NOT a
+  human-cognition claim, a TOY synthetic 2-D continuum.
+
+WHY R3 RE-SPECIFIES THE METRIC (CORRECTION, NOT bar relaxation)
+  H_1343 found the 2-D CP warp is decisively PRESENT (c1 ✅; diagonal warps as
+  strongly as the axis-aligned L-shape, +41.7 ≈ +36.0, REFUTING H_1334's grid-
+  geometry read) — but the WARP METRIC was ratio = mean|Δg|_BETWEEN / mean|Δg|_WITHIN,
+  which is SCALE-UNBOUNDED. After training the within-category |Δg| compresses
+  toward 0, so the denominator shrinks and the ratio explodes to ~45; CRITICALLY,
+  even a RANDOM carving (label shuffle) also compresses within-category |Δg|, so the
+  label-shuffle null FLOATED at mean +9.28 instead of collapsing to chance. The
+  absolute null-mean ceiling (c2) therefore failed STRUCTURALLY — a metric-space-blob
+  artifact, the same failure H_1323 prominence / H_1334 LCC hit. This is a metric
+  defect, NOT evidence against earned CP.
+
+  R3 replaces the unbounded ratio with a BOUNDED warp metric whose chance value is a
+  FIXED constant independent of how much within-|Δg| compresses, so a label-shuffle
+  null MUST collapse to that constant if the warp is not earned.
+
+THE BOUNDED WARP METRIC (pre-registered exactly — separation-AUC)
+  For an arm, learned category coordinate g(stim) = soft posterior P(cat=1) read from
+  the fitted store (NO hard label, NO boundary location injected). Representational
+  step distance over each 4-neighbour adjacent grid pair = |Δg| = |g(i)-g(j)|.
+  Partition pairs by the store's OWN learned category of the two endpoints:
+    WITHIN  = endpoints same learned category
+    BETWEEN = endpoints different learned categories
+  SEPARATION-AUC = P( |Δg| of a random BETWEEN pair  >  |Δg| of a random WITHIN pair ),
+  computed as the Mann-Whitney-U / rank statistic:
+     AUC = ( sum over (b in BETWEEN, w in WITHIN) of [ |Δg|_b > |Δg|_w ]
+             + 0.5 * [ |Δg|_b == |Δg|_w ] ) / ( |BETWEEN| * |WITHIN| ).
+  AUC in [0,1] BY CONSTRUCTION. CHANCE = 0.5 (between and within |Δg| indistinguishable).
+  AUC -> 1.0 = perfect CP warp (every between step bigger than every within step).
+  This is bounded regardless of within-compression: if every within-|Δg| is tiny but
+  some between-|Δg| are ALSO tiny (as a random carving produces), AUC stays near 0.5.
+  We DO NOT subtract a baseline (the metric is already a relative rank probability);
+  the pre-language baseline AUC is REPORTED as a diagnostic (expected ~0.5).
+  SECONDARY diagnostic (reported, NON-gating): Cohen's d of (BETWEEN |Δg|) vs
+  (WITHIN |Δg|) — standardized but unbounded above, kept only as a cross-check.
+
+PARADIGM (REUSED from H_1343 VERBATIM — only the readout metric changes)
+  - 11x11 = 121 stimuli on [0,1]^2; each -> 2-D RBF population code over K_RBF x K_RBF
+    FIXED boundary-agnostic centers. DENSITY LADDER K_RBF in {6,9,12}; PRODUCTION =
+    densest 12 (DIM=144), frozen NOW.
+  - TWO languages carve the SAME square: L_DIAG = diagonal (u+v>1.0),
+    L_LSHAPE = L-corner (u>0.5 AND v>0.5).
+  - SAME gradient-free mitosis/Voronoi store (error-targeted SPLIT-only growth, p8)
+    learns each carving (GROW_MAX=40, SPLIT_PASSES=40, BETA_POST=18.0).
+
+FROZEN BARS (pre-registered BEFORE scoring, NO bar moved c9)
+  c1 PRESENCE — at production density, BOTH languages, EACH seed AND mean:
+       separation-AUC >= AUC_MIN = 0.70.
+  c2 EARNED-SHUFFLE — label-permutation null (N_SHUF=200/seed, pooled) collapses to
+       chance: pooled null mean AUC within CHANCE_TOL = 0.05 of 0.5
+       (i.e. |null_mean - 0.5| <= 0.05), AND each language's mean AUC >= null-q95 + SEP
+       with SEP = 0.10. BOTH sub-clauses required.
+  c3 COMPONENT-COUNT — component-shuffle (N_COMP=50; BETWEEN/WITHIN partition tied to a
+       random single feature component thresholded at its median, NOT the trained 2-D
+       category) collapses: |comp-shuffle AUC - 0.5| <= COMP_TOL = 0.08, both languages.
+  c4 DIAGONAL — the diagonal boundary still warps comparably to the axis-aligned one
+       under the BOUNDED metric: |AUC(L_DIAG) - AUC(L_LSHAPE)| <= DIAG_TOL = 0.15
+       AND both clear AUC_MIN (preserves the H_1343 load-bearing diagonal=axis finding).
+
+  GREEN iff c1 AND c2 AND c3 AND c4.
+  c1 FAIL -> honest 🧱 genuine 2-D limit (bounded metric shows no warp).
+  c2 FAIL (null STILL floats under the bounded metric) -> honest 🧱 metric-space-blob
+       artifact is DEEPER than the ratio (the warp is real but not label-earned even
+       under a bounded readout) — NO bar move, c9.
+  c3 FAIL -> 🟠 (warp not isolated to the trained 2-D metric).
+  c4 FAIL -> 🟠 (diagonal/axis asymmetry under the bounded metric).
+
+CONSTANTS (frozen)
+  G_GRID=11  K_RBF_LADDER=[6,9,12]  K_RBF_PROD=12  T_DIAG=1.0  T_LX=0.5  T_LY=0.5
+  GROW_MAX=40  SPLIT_PASSES=40  BETA_POST=18.0  SEEDS=[4334,4335,4336]
+  AUC_MIN=0.70  CHANCE_TOL=0.05  SEP=0.10  COMP_TOL=0.08  DIAG_TOL=0.15
+  N_SHUF=200  N_COMP=50  NULL_Q=0.95
+
+GUARDS (p1/p2/p3/p6)
+  The AUC reads ONLY representational distance (|Δ soft posterior|) + the store's OWN
+  learned category partition; NO injected boundary, NO persona/RLHF. Language labels
+  enter ONLY during training, NEVER into the warp readout. NOT an emit gate
+  (a_autonomy_over_hardcode). DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED.
