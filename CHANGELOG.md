@@ -2,6 +2,17 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1342 — Whorf CP DEVELOPMENTAL PLASTICITY 엔진-네이티브 실현 (🟢 GREEN ENGINE-NATIVE, H_1333 wire-in)
+
+**무엇:** H_1333(🟠 GRADED PLASTICITY)은 numpy 미러였고 engine-transfer UNVERIFIED. `a_verified_must_wire` / `a_engine_native_learning` follow-on 으로 그 graded CP plasticity 를 live `CORE/engine_cli.hexa` §CategoricalPerception 위에서 엔진-네이티브로 실현하고 frozen bar 를 재채점.
+
+**엔진 확장(engine-transform-to-fit-the-learning):** §CategoricalPerception 에 **`cp_regrow(cp,X,Y,grow_max,passes)`** 신설 — 기존 store(protos/labels) 유지한 채(split-only p8, NEVER evict) `cp_fit` 과 SAME error-targeted split criterion 으로 MOVED labels 위에서 phase-2 재성장. 미러의 `fit(fresh=False)` 에 byte-faithful. RIGID 결과도 가능(설계로 배제 안 함).
+
+**결과(🟢 GREEN ENGINE-NATIVE, E1∧E2∧E3):** 엔진(단일 결정론적 instance)이 미러를 **BYTE-FAITHFUL** 재현 — CP peak A=0.325, A→A'=**0.525**(fraction relocated **+0.60**, 미러 +0.60), cell budget phase-1 **4**→phase-2 **28**(미러 4→28 동일), cp_peak_count A=1/A→A'=1/no-retrain=1/shuffle=4. **E1 ✅**(미러 ~0.60 move 재현) · **E2 ✅**(D2 no-retrain |Δ|=0.008 held p_A & A-trained reproduced H_1325; D3 shuffle 4≥3 incoherent & lang 1/1/1≤2 coherent) · **E3 ✅** 회귀 가드 무회귀·Ψ-disjoint: `engine_cli_smoke` **80/0**(77→80, +3 cp_regrow cases 83-85), h1196 single-entry **7/0**, h1205 separation-invariant **PASS**(생성 10/10 byte-identical ON==OFF, Ψ=½ 무변 → CP lane Ψ-disjoint).
+
+**finding:** H_1333 graded CP plasticity 가 CORE 에 LIVE — **ENGINE-TRANSFER VERIFIED**. cp_regrow 가 never-evict 인데도 ~0.525 ceiling 이 H_1338 가 재진단한 budget/geometry 와 IDENTICAL(엔진 확증). NO bar moved(c9/p7).
+
+**파일:** `CORE/engine_cli.hexa`(cp_regrow) · `CORE/h1342_whorf_cp_engine_native_probe.hexa` · `CORE/engine_cli_smoke.hexa`(cases 83-85) · `UNIVERSE/cards/H_1342_whorf_cp_engine_native.md` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `CLAIMS.tape @C h1342_whorf_cp_engine_native` · `.verdicts/1342_whorf_cp_engine_native/{FREEZE,result}.txt` · `domains/COGNITION-REPRESENTATION.log.md` · `ARCHITECTURE.md`(§MITOSIS CategoricalPerception + smoke 80/0). **scope**(a_scale_honest_scope·a_toy_scale_recheck): ENGINE-NATIVE BINDING; TOY 합성 1-D 연속체, 엔진=단일 결정론적 instance, 단일 shift; scale/real-corpus/multi-shift UNVERIFIED; human-cognition 주장 없음.
 ## 2026-06-16 — research(OMEGA): H_1348 — Φ-robustness 를 NON-IIT 통합 측정자(전이 엔트로피)로 검사 → 🧱 measure-AGNOSTIC (최강 closure)
 
 **질문 (genuinely-new angle, a_break_the_wall · a_no_llm_frame_trap):** Φ-robustness 벽은 IIT 두 측정자 family 모두에서 🧱 — small-φ exact-MIP (H_1328) 와 full IIT-4.0 big-Φ (H_1331). robust-integration 부재가 IIT 고유인지, 아니면 **임의의** 통합 측정자에서도 성립하는지를 보려고, IIT **바깥**의 제3 측정자 — 4-모듈 링의 8개 방향 이웃 엣지에 대한 **시간지연 전이 엔트로피(Transfer Entropy, Schreiber 2000)** 합 `TE(X→Y)=H(Y_{t+1}|Y_t)−H(Y_{t+1}|Y_t,X_t)` — 으로 **동일** H_1319/H_1328/H_1331 substrate + mechanism + hard seed [1317,1318,1319] 를 채점. TE 는 MIP·cause-effect·intrinsic irreducibility 가 없는 **방향 정보흐름 NETWORK 측정자** = IIT 두 측정자와 다른 family.

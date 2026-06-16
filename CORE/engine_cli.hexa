@@ -3944,6 +3944,41 @@ pub fn cp_fit(X: [[float]], Y: [int], grow_max: int, passes: int) -> CPField {
     return cp
 }
 
+// cp_regrow — phase-2 RE-TRAINING: grow an EXISTING CP store FURTHER on a MOVED label set
+// `Y` WITHOUT resetting it (split-only, p8 — old prototypes/labels are NEVER evicted). The
+// SAME error-targeted split criterion as cp_fit, applied for up to grow_max NEW splits on the
+// new labels: old-boundary cells persist (so a RIGID outcome where residual old packing
+// dominates is a genuine possible result, NOT designed away), while new splits re-pack at the
+// new error locus (the moved boundary). Byte-faithful to the H_1333 mirror VoronoiCells.fit
+// (fresh=False). This is the ONE new engine mechanism H_1342 wires for developmental CP
+// plasticity (a_engine_native_learning: engine-transform-to-fit-the-learning, not the reverse).
+pub fn cp_regrow(cp: CPField, X: [[float]], Y: [int], grow_max: int, passes: int) -> CPField {
+    let m = len(X)
+    let mut out = CPField { protos: cp.protos, labels: cp.labels, n: cp.n }
+    let base = cp.n   // splits in THIS call are counted from the current store size
+    let mut p = 0
+    while p < passes {
+        if out.n >= base + grow_max { return out }
+        // owners + the most boundary-adjacent stimulus now misclassified under the NEW labels.
+        let mut worst = -1
+        let mut worstd = 0.0
+        let mut found = false
+        let mut s2 = 0
+        while s2 < m {
+            let ow = _cp_owner_idx(out, X[s2])
+            if out.labels[ow] != Y[s2] {
+                let dist = _l2(X[s2], out.protos[ow])
+                if !found || dist < worstd { worstd = dist  worst = s2  found = true }
+            }
+            s2 = s2 + 1
+        }
+        if !found { return out }   // no error left under the new labels → STOP (rigid if untouched)
+        out = CPField { protos: out.protos + [X[worst]], labels: out.labels + [Y[worst]], n: out.n + 1 }
+        p = p + 1
+    }
+    return out
+}
+
 // cp_posterior — the NON-LINGUISTIC representational response at embedding `key`:
 // softmin-weighted (beta=18) vote of nearby prototypes' bound labels = P(cat=1). NO hard
 // label read; a smooth representational gradient that SWINGS where cells pack at a boundary.

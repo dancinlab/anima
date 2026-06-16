@@ -176,3 +176,26 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   일반화) · h1323 · h1325(family의 GREEN CP) · h1288(growth-memory: 이 ladder가 기각하는 never-evict 직관)
   · h1330(bilingual overwrite) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning
   · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+## H_1342 — Whorf CP DEVELOPMENTAL PLASTICITY 엔진-네이티브 실현 (🟢 GREEN ENGINE-NATIVE, H_1333 wire-in)
+- **seed**: H_1333(🟠 GRADED PLASTICITY, mirror DIRECTIONAL — CP peak 0.325→0.525, frac +0.60)는 numpy 미러;
+  engine-transfer UNVERIFIED. a_verified_must_wire / a_engine_native_learning follow-on: live CORE
+  §CategoricalPerception 위에서 그 graded plasticity 를 엔진-네이티브로 재현하고 frozen bar 재채점.
+- **새 엔진 메커니즘**(engine-transform-to-fit-the-learning): `cp_regrow(cp,X,Y,grow_max,passes)` —
+  기존 store(protos/labels) 유지한 채(split-only p8, never-evict) cp_fit 과 SAME error-targeted split 으로
+  MOVED labels 위에서 phase-2 재성장. 미러의 fit(fresh=False)에 byte-faithful. RIGID 결과도 가능(설계로 배제 안 함).
+- **verdict-tier-target → 결과**: 🟢 GREEN ENGINE-NATIVE (E1∧E2∧E3) — 엔진(단일 결정론적 instance)이
+  미러를 BYTE-FAITHFUL 재현: A=0.325, A→A'=**0.525**(frac **+0.60**, 미러 +0.60), phase-1 **4**→phase-2 **28** cells(미러 4→28 동일).
+  cp_peak_count: A=1, A→A'=1, no-retrain=1, shuffle=4.
+  - **E1 ✅**(미러 ~0.60 재현): |loc_A−p_A|=0.008≤0.12 · |loc_A2−0.525|=0.0≤0.05 · |loc_A2−p_A|=0.192≥0.19(graded-move floor) · A→A' coherent 1≤2.
+  - **E2 ✅**(D2/D3 통제): no-retrain |Δ|=0.008 & A-trained |Δ|=0.008 held p_A(이동=재훈련, drift 아님); shuffle peak-count 4≥3 incoherent & lang 1/1/1≤2 coherent.
+  - **E3 ✅**(회귀/Ψ-disjoint): engine_cli_smoke **80/0**(77→80, +3 cp_regrow cases 83-85 relocates/grows-store/coherent),
+    h1196 single-entry **7/0**(.clm/.kosmos 경로 없음), h1205 separation-invariant **PASS**(생성 10/10 byte-identical ON==OFF, Ψ=½ 무변 → CP lane Ψ-disjoint).
+- **finding**: H_1333 graded CP plasticity 가 CORE 에 LIVE — ENGINE-TRANSFER VERIFIED. cp_regrow 는 split-only never-evict 인데도
+  ~0.525 ceiling 이 H_1338 가 재진단한 budget/geometry 와 IDENTICAL(엔진 확증). NO bar moved(c9/p7).
+- **scope**(a_scale_honest_scope·a_toy_scale_recheck): ENGINE-NATIVE BINDING; TOY 합성 1-D 연속체(N=21, 엔진=단일 결정론적 instance, 단일 shift,
+  결정론적 readout — 엔진-네이티브 plasticity STRUCTURE 검증이지 학습된 re-trainer 아님); scale/real-corpus/multi-shift UNVERIFIED; brain 재-carving→emit 배선 = follow-on; human-cognition/critical-period 주장 없음.
+- **claim-link**: `CLAIMS.tape @C h1342_whorf_cp_engine_native` · card `UNIVERSE/cards/H_1342_whorf_cp_engine_native.md`
+  · verdicts `.verdicts/1342_whorf_cp_engine_native/{FREEZE,result}.txt` · engine `CORE/engine_cli.hexa §CategoricalPerception cp_regrow` · probe `CORE/h1342_whorf_cp_engine_native_probe.hexa` · smoke cases 83-85
+- xref: h1333(이 미러를 실현) · h1325(엔진 CP lane W1/W2/W3' GREEN) · h1323 · h1338(eviction 재진단=~0.525 ceiling 은 budget/geometry)
+  · h1288(growth-memory) · a_verified_must_wire · a_engine_native_learning · a_core_engine_map · a_no_llm_frame_trap
+  · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15

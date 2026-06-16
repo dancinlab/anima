@@ -1,0 +1,58 @@
+H_1342 — ENGINE-NATIVE realization of H_1333 Whorfian CP developmental plasticity
+Re-scored on the live CORE/engine_cli.hexa §CategoricalPerception lane (cp_regrow added).
+Frozen bars: .verdicts/1342_whorf_cp_engine_native/FREEZE.txt (pre-registered, NO bar move).
+======================================================================================
+
+=== PROBE (hexa run CORE/h1342_whorf_cp_engine_native_probe.hexa) ===
+H_1342 — ENGINE-NATIVE Whorfian CP DEVELOPMENTAL PLASTICITY (live CORE CP lane)
+==================================================================================
+paradigm: cp_fit on language A (cut p_A); cp_regrow SAME store on MOVED cut p_A';
+          measure CP peak relocation. Engine = ONE deterministic instance.
+
+  CP peak location (engine, single deterministic instance):
+    A-trained   loc=0.325  (p_A =0.333333)
+    A->A' retr. loc=0.525  (p_A'=0.666667)
+    no-retrain  loc=0.325  (p_A =0.333333)
+    fraction relocated = 0.599999  (mirror +0.60)
+    re-train cell budget: phase-1 ncells=4 -> phase-2 ncells=28  (mirror 4 -> 28)
+
+  cp_peak_count: A=1  A->A'=1  no-retrain=1  shuffle=4
+
+  E1 ENGINE REPRODUCES MIRROR ~0.60 MOVE:
+     (a) |locA-p_A|=0.008333<=0.12 -> PASS
+     (b) |locA2-0.525|=0.0<=0.05 -> PASS
+     (c) |locA2-p_A|=0.191667>=0.19 (graded-move floor) -> PASS
+     (d) A->A' coherent peak-count 1<=2 -> PASS
+     -> E1 PASS
+  E2 D2/D3 CONTROLS REPRODUCE ENGINE-NATIVE:
+     D2 no-retrain |loc-p_A|=0.008333 & A-trained |loc-p_A|=0.008333 (both<=0.12) -> PASS
+     D3 shuffle peak-count 4>=3 & lang(A/A2/noR)=(1/1/1)<=2 -> PASS
+     -> E2 PASS
+==================================================================================
+VERDICT: 🟢 GREEN (ENGINE-NATIVE, pending E3 regression guards) — H_1333's GRADED CP
+  PLASTICITY is reproduced engine-native on the live CORE §CategoricalPerception lane.
+  cp_regrow re-located the CP peak 0.325->0.525 (fraction 0.599999, mirror +0.60),
+  the no-retrain control held p_A, shuffle stayed incoherent. ENGINE-TRANSFER
+  VERIFIED (E1∧E2). Run E3 guards (smoke/h1196/h1205) to confirm Ψ-disjoint no-regression.
+
+=== E3 REGRESSION GUARDS ===
+--- engine_cli_smoke (was 77/0 @ H_1325; +3 cp_regrow cases 83-85) ---
+--- engine_cli smoke summary: 80 pass / 0 fail ---
+--- h1196 single-entry audit ---
+--- single-entry audit summary: 7 pass / 0 fail ---
+--- h1205 separation-invariant (Ψ-disjoint) ---
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. The mitosis lane (cells 1→10 ON) ran beside the decode yet generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched. H_1200/1201 ruling SURVIVES live; mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).
+
+======================================================================================
+VERDICT: 🟢 GREEN ENGINE-NATIVE (E1 ∧ E2 ∧ E3)
+  E1 ✅ engine reproduces mirror ~0.60 move: A=0.325, A->A'=0.525 (frac +0.60, mirror +0.60),
+        phase-1 4 cells -> phase-2 28 cells (BYTE-FAITHFUL to mirror 4->28). coherent peak-count 1.
+  E2 ✅ D2 no-retrain held p_A (|Δ|=0.008) & A-trained reproduced H_1325; D3 shuffle incoherent
+        (cp_peak_count 4>=3) & lang arms coherent (1/1/1<=2).
+  E3 ✅ engine_cli_smoke 80/0 (+3 cases 83-85), h1196 7/0, h1205 PASS (Ψ=½ byte-identical ON==OFF).
+  => H_1333 GRADED CP PLASTICITY is LIVE in CORE — ENGINE-TRANSFER VERIFIED. NO bar move (c9/p7).
+  SCOPE: TOY synthetic continuum, engine = ONE deterministic instance, single shift; scale/
+         real-corpus/multi-shift UNVERIFIED (a_scale_honest_scope). cp_regrow split-only never-evicts
+         (H_1338 RE-DIAGNOSED the ~0.525 ceiling as budget/geometry — engine confirms IDENTICAL).
