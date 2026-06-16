@@ -83,14 +83,14 @@ non-ideation generation path stays byte-identical ON==OFF with Ψ=1/2 untouched.
 --------------------------------------------------------------------------------
 B4 NO-REGRESSION (GREEN)
 --------------------------------------------------------------------------------
-engine_cli_smoke: 98 pass / 0 fail  (was 93/0; +5 G6 cases 99-103, ALL PASS):
-  case_99_g6_detector_calibration_10of10        want=10 got=10
-  case_100_g6_six_frames_sixth_distinct         want=true got=true
-  case_101_g6_frame_guard_clean                 want=0 got=0
-  case_102_g6_sampler_deterministic_and_in_topk want=true got=true
-  case_103_g6_best_of_k_diverse                 want=true got=true
+engine_cli_smoke: 101 pass / 0 fail  (96 from the concurrent H_1379 brain-margin lane + 5 G6 cases 102-106, ALL PASS):
+  case_102_g6_detector_calibration_10of10        want=10 got=10
+  case_103_g6_six_frames_sixth_distinct         want=true got=true
+  case_104_g6_frame_guard_clean                 want=0 got=0
+  case_105_g6_sampler_deterministic_and_in_topk want=true got=true
+  case_106_g6_best_of_k_diverse                 want=true got=true
 h1196 single-entry audit: 7 pass / 0 fail   (single .clm slot preserved)
-DETERMINISTIC over 3 runs: smoke = 98/0 each; C_strong = DIST=5 FALS=0 coh=6/6 each.
+DETERMINISTIC over 3 runs: smoke = 101/0 each; C_strong = DIST=5 FALS=0 coh=6/6 each.
 
 --------------------------------------------------------------------------------
 DEPLETION (G6 ★)

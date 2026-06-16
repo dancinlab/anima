@@ -1,3 +1,8 @@
 === 3x determinism (smoke) ===
 run1: --- engine_cli smoke summary: 98 pass / 0 fail ---
 run2: --- engine_cli smoke summary: 98 pass / 0 fail ---
+run3: --- engine_cli smoke summary: 98 pass / 0 fail ---
+=== 3x fast helper determinism ===
+run1: sampler det=true diverse=true in_topk=true calib=10/10 
+run2: sampler det=true diverse=true in_topk=true calib=10/10 
+run3: sampler det=true diverse=true in_topk=true calib=10/10 
