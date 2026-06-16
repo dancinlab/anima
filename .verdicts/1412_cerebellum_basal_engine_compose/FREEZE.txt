@@ -1,0 +1,27 @@
+H_1412 — ENGINE-NATIVE re-score of H_1407 (CEREBELLUM × BASAL-GANGLIA compose)
+FROZEN PRE-REGISTRATION (bars verbatim from H_1407 FREEZE.txt — NOT moved)
+
+GOAL (a_verified_must_wire ladder step 2): re-score the H_1407 R1 DIRECTIONAL-mirror
+GREEN on the LIVE engine faculties — cerebellum decision/confidence from the LIVE
+vforward_err (H_1280 VForwardField), basal decision/confidence from the LIVE
+vbasal_go_value over a gradient-free-trained VBasalGate (H_1281), the arbiter over
+those live reads — to test whether the mirror GREEN BINDS engine-native.
+
+FROZEN BARS (== H_1407 R1, NOT moved):
+  (B1 COMPOSE-EFFECT) acc_compose  >= best_single + 0.05
+  (B2 ORACLE)         acc_oracle   − best_single > 0.02
+  (B3 EARNED)         acc_compose  − acc_shuffle  > 0.02
+  (SEPARABLE)         only_cerebellum > 0 AND only_basal > 0
+  GREEN iff B1 AND B2 AND B3 AND SEPARABLE.
+
+FROZEN KNOBS: 3 seeds [4700,4701,4702] · N_PER_FAMILY=90 (450 items/seed) ·
+  AMBIG_NOISE=0.18 · E_THR=0.30 · GO_THR=0.0 · deterministic LCG jitter (run1==run2).
+
+c16 BREAKTHROUGH (pre-registered, frozen B1 bar — NOT moved): if the canonical
+scale-relative arbiter (margin/own-mean) FAILS B1, try ONE principled alternative —
+a z-decisiveness arbiter (margin normalized by the faculty's OWN std, spread-relative
+instead of mean-relative). If the z-arbiter ALSO fails B1, the engine-native
+non-reproduction is TERMINAL (honest 🧱, c9/c16 — a real attempt, no bar moved).
+
+p7 = compose/oracle/shuffle accuracies + only-X decomposition, NOT perplexity.
+$0 local CPU · engine-native (LIVE vforward_err / vbasal_go_value).

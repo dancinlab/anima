@@ -1,0 +1,34 @@
+================================================================================
+H_1412 R2 — ENGINE-NATIVE cerebellum (H_1280 VForwardField) × basal (H_1281 VBasalGate)
+  COMPOSE on the LIVE faculties (inlined arbiter over live reads) — re-scoring frozen H_1407 bars
+  $0 CPU · 3 seeds [4700,4701,4702] · p7 · p8 · a_engine_native_learning · a_verified_must_wire
+================================================================================
+  seed 4700: cb=0.622222 bg=0.704444 best=0.704444 compose=0.731111 shuf=0.535556 oracle=0.951111 | conflict=0.575556 [onlyCB=0.246667 onlyBG=0.328889 both=0.375556 neither=0.0488889] gw0=0.5
+  seed 4701: cb=0.646667 bg=0.704444 best=0.704444 compose=0.704444 shuf=0.504444 oracle=0.94 | conflict=0.528889 [onlyCB=0.235556 onlyBG=0.293333 both=0.411111 neither=0.06] gw0=0.5
+  seed 4702: cb=0.644444 bg=0.7 best=0.7 compose=0.706667 shuf=0.535556 oracle=0.946667 | conflict=0.548889 [onlyCB=0.246667 onlyBG=0.302222 both=0.397778 neither=0.0533333] gw0=0.5
+--------------------------------------------------------------------------------
+MEAN (3 seeds, ENGINE-NATIVE):
+  acc_cerebellum = 0.637778
+  acc_basal      = 0.702963
+  best_single    = 0.702963
+  acc_compose    = 0.714074
+  acc_shuffle    = 0.525185
+  ORACLE         = 0.945926   (oracle - best = 0.242963)
+  conflict_rate  = 0.551111
+  decomposition  : only_cerebellum=0.242963 only_basal=0.308148 both=0.394815 neither=0.0540741
+  (LIVE gate learned go-weight gw0 = 0.5 > 0 ⇒ basal margins are the gate's OWN go-value)
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.714074 >= best+0.05 (0.752963) : FAIL
+  (B2 ORACLE)         oracle-best 0.242963 > 0.02 : PASS
+  (B3 EARNED)         compose-shuffle 0.188889 > 0.02 : PASS
+  (SEPARABLE)         only_cerebellum>0 AND only_basal>0 : PASS
+================================================================================
+VERDICT: 🧱 / 🟠 — a frozen bar did not reproduce engine-native (see per-bar tally).
+  HONEST (c9): bars FROZEN from H_1407 FREEZE.txt, NOT moved. Toy 5-family fixture, 3 seeds,
+  deterministic. The cerebellum error + basal go-margin are LIVE engine reads (vforward_err /
+  vbasal_go_value), the composition arbiter is inlined over those live reads. Scale/real-corpus UNVERIFIED.
+--------------------------------------------------------------------------------
+c16 BREAKTHROUGH (z-decisiveness arbiter, SAME frozen B1 bar, NOT moved):
+  acc_compose_z = 0.717037  vs best+0.05 (0.752963) : FAIL — z-arbiter does not recover the bar either
+  (z = (margin−mean)/std, spread-relative decisiveness vs mean-relative magnitude;
+   pre-registered angle, frozen bar — if FAIL, the engine-native non-reproduction is terminal)
