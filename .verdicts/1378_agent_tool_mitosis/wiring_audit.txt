@@ -1,0 +1,84 @@
+H_1378 agent-tool ↔ mitosis — STEP A WIRING AUDIT
+==================================================
+Question (user): how is the AGENT TOOL taught via mitosis, does it learn, and how does
+it differ from the language decoder?
+
+VERDICT: REFERENCE-ONLY (agent-tool layer does NOT learn via mitosis end-to-end).
+
+Files audited (verbatim, file:line):
+  - anima-agent-core/agent_tools.hexa            (795 lines)
+  - anima-agent/hexa/module/tools.hexa           (91 lines)
+  - anima-agent/hexa/module/consciousness_features.hexa (55 lines)
+  - CORE/engine_cli.hexa  § mitosis / VAdaptField / ImmuneMemory (4563 lines)
+
+--------------------------------------------------------------------------------
+(1) Does the agent-tool layer CALL engine_mitosis_tick / immune-grow / VAdaptField-split
+    under tool-selection error — tool/skill as a CELL the substrate grows on failure?
+
+NO. Tool selection is a STATIC weighted dot-product over FIXED hand-set affinity floats:
+
+  anima-agent-core/agent_tools.hexa:348  fn registry_rank_by_consciousness(reg, state) {
+  agent_tools.hexa:357    let score = td.curiosity_affinity * curiosity +
+  agent_tools.hexa:358                td.pe_affinity * pe +
+  agent_tools.hexa:359                td.pain_affinity * pain +
+  agent_tools.hexa:360                td.growth_affinity * growth +
+  agent_tools.hexa:361                td.phi_affinity * min(phi / 10.0, 1.0)
+
+  -> the *_affinity weights are CONSTANTS baked into each ToolDef at registration
+     (agent_tools.hexa:683-743). They are never updated by outcome. No cell store,
+     no key/affinity recall, no clonal split. grep for engine_mitosis_tick /
+     vadapt_field_step / immune_memory_bind in the agent-tool layer => ZERO hits.
+
+(2) How is a NEW tool/skill added today — mitosis split vs static registry?
+
+STATIC REGISTRY. Tools are added by hardcoded registry_register() calls at build time:
+
+  agent_tools.hexa:728  registry_register(reg, ToolDef { name: "mitosis_split",
+  agent_tools.hexa:729     ... growth_affinity: 0.9, phi_affinity: 0.6 })
+
+  -> a fixed dictionary (reg.tools[name]). registry_get (agent_tools.hexa:340) is a
+     plain map lookup. No new skill cell is grown on tool failure; the repertoire is
+     frozen at the set authored in the source.
+
+(3) Data path: tool call -> success/failure -> (mitosis? static?) -> repertoire update?
+
+  agent_tools.hexa:401  fn executor_execute(exec, tool_name, args) -> ToolResult
+  agent_tools.hexa:437     let tension_delta = if success { -0.1 } else { 0.15 }
+  agent_tools.hexa:448     append(exec.execution_log, result)
+
+  -> on failure the ONLY consequence is a scalar tension_delta written into an
+     execution_log ring buffer (capped at 100, agent_tools.hexa:449-451). That log is
+     NEVER read back to grow/split a skill cell or re-weight selection. The feedback
+     loop "failure -> repertoire improves" DOES NOT EXIST. Path terminates at a log.
+
+--------------------------------------------------------------------------------
+The mitosis REFERENCES are stubs / the OPPOSITE direction:
+
+  agent_tools.hexa:155  fn tool_mitosis_split(cell_id) { // TODO[python-sdk]: MitosisEngine.split_cell
+  agent_tools.hexa:160  fn tool_mitosis_status()         { // TODO[python-sdk]: MitosisEngine.status()
+  anima-agent/hexa/module/tools.hexa:39       pub fn op_23_mitosis() -> int { return 23 }   (opcode tag only)
+  anima-agent/hexa/module/consciousness_features.hexa:15  fn mitosis() { print("mitosis stub") }  // TODO
+
+  -> tool_mitosis_split EXPOSES the engine's mitosis AS A TOOL anima can invoke
+     (engine-mitosis-as-a-callable), and is itself an unimplemented TODO stub. This is
+     the INVERSE of "tools learn via mitosis": here mitosis is a tool target, not the
+     teacher of the tool repertoire.
+
+--------------------------------------------------------------------------------
+The REAL mitosis teaching op lives ONLY in CORE (not reachable from the agent-tool layer):
+
+  CORE/engine_cli.hexa:263  pub fn engine_mitosis_tick(cell_count, cfg) -> int
+  CORE/engine_cli.hexa:448  pub fn vadapt_field_new(seed0, max_cells) -> VAdaptField   (clonal split substrate)
+  CORE/engine_cli.hexa:774  pub fn immune_embed_key(text) -> [float]   (DETERMINISTIC byte-trigram FNV-1a, DIM=64)
+  CORE/engine_cli.hexa:830  pub fn immune_memory_bind(mem, key, value, cfg)  (grow: bind fact->value as a CELL)
+  CORE/engine_cli.hexa:858  pub fn immune_memory_recall(mem, key)  (L2 affinity FIRE, else "" = ABSTAIN, no fab)
+  CORE/engine_cli.hexa:880  pub fn immune_memory_recall_margin(mem, key)  (graded abstain margin)
+
+  These are the SAME ops H_1227 / H_1231 / H_1288 used for episodic/immune memory.
+  The agent-tool layer never imports or calls any of them.
+
+CONCLUSION: REFERENCE-ONLY. The agent-tool repertoire is a static registry with
+hand-set affinity weights; tool failure updates only a scalar log; no cell is grown or
+split; engine_mitosis_tick / immune_memory_bind are never invoked from the tool layer.
+=> Step B designs + DIRECTION-validates the missing mitosis teaching mechanism (numpy
+mirror, CORE untouched this lane); the CORE wire-in is the a_verified_must_wire follow-on.

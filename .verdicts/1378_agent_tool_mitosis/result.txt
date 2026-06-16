@@ -1,0 +1,34 @@
+H_1378 agent-tool <-> mitosis teaching — numpy MIRROR (DIRECTIONAL)
+seeds: [1378, 1379, 1380]
+  seed 1378: full 0.167->1.000  static 0.167  shuffle 0.056  abstain 1.000
+  seed 1379: full 0.167->1.000  static 0.167  shuffle 0.194  abstain 1.000
+  seed 1380: full 0.167->1.000  static 0.167  shuffle 0.111  abstain 1.000
+POOLED means:
+  FULL init=0.167 final=1.000  STATIC final=0.167  SHUFFLE final=0.120  ABSTAIN=1.000
+FROZEN BARS:
+  (1) LEARNS              full_f-full_i = +0.833 >= +0.30  -> PASS
+  (2) DISTINCT-FROM-STATIC full_f-static_f = +0.833 >= +0.30 -> PASS
+  (3) EARNED (shuffle)    shuffle_f-static_f = -0.046 <= +0.15 -> PASS
+  (4) NO-FAB / ABSTAIN    abstain = 1.000 >= 0.90 -> PASS
+VERDICT: GREEN
+{
+  "seeds": [
+    1378,
+    1379,
+    1380
+  ],
+  "pooled": {
+    "full_i": 0.16666666666666666,
+    "full_f": 1.0,
+    "static_f": 0.16666666666666666,
+    "shuffle_f": 0.12037037037037036,
+    "abstain": 1.0
+  },
+  "bars": {
+    "learns": true,
+    "distinct": true,
+    "earned": true,
+    "no_fab": true
+  },
+  "verdict": "GREEN"
+}

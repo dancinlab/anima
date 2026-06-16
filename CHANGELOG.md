@@ -2,6 +2,20 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(MITOSIS-ENGINE): H_1378 — agent-tool ↔ mitosis (에이전트 도구는 mitosis 로 학습하는가?) — STEP A 🔎 REFERENCE-ONLY · STEP B 🟢 GREEN (numpy MIRROR, DIRECTIONAL)
+
+**무엇:** 사용자 질문에 verified artifact 로 답함 — "에이전트 도구(AGENT TOOL)는 mitosis 로 어떻게 교육되며, 학습하는가, 언어 디코더와 어떻게 다른가?"
+
+**STEP A — WIRING AUDIT (읽기전용) → 🔎 REFERENCE-ONLY.** live 에이전트-도구 층(`anima-agent-core/agent_tools.hexa`)은 mitosis 를 *참조만* 하고 그것으로 *학습하지 않는다*. verbatim 증거: (1) 도구 선택 = hand-set affinity float 상수에 대한 STATIC weighted dot-product(`agent_tools.hexa:357-361`, `*_affinity` 는 등록시 baked `:683-743`) — outcome 으로 절대 업데이트 안 됨, cell store/recall/split 0개. (2) 새 도구 = hardcoded `registry_register` 정적 등록(`:728`), `registry_get` 은 plain map lookup(`:340`) — mitosis split 아님. (3) 도구 실패 → scalar `tension_delta`(`:437`) → capped `execution_log` ring buffer(`:448-451`)가 종착; 그 log 는 cell 을 grow/split 하려 절대 읽히지 않음('failure→repertoire improves' 루프 부재). (4) `tool_mitosis_split`(`:155` TODO stub)·`tools.hexa:39` opcode tag·`consciousness_features.hexa:15` "mitosis stub" = INVERSE 방향(엔진 mitosis 를 *호출가능 도구로 노출*). 실제 교육 op(`engine_mitosis_tick` `engine_cli.hexa:263`·`immune_embed_key :774`·`immune_memory_bind :830`·`immune_memory_recall :858`)는 CORE 에만 존재, 도구층이 import 안 함.
+
+**STEP B — 빠진 메커니즘 설계 + 방향검증 ($0 numpy MIRROR, CORE UNTOUCHED) → 🟢 GREEN.** 도구/스킬 = task-context 로 keyed 된 CELL(byte-trigram FNV-1a, memory 와 SAME geometry); 도구 호출 → best-affinity skill-cell recall, abstain 또는 도구 FAIL → 새 specialized skill-cell MITOSIS-SPLIT(task→correct tool). 같은 op 가 가르치고 추론(p8). H_1227/H_1288 을 agent-tool 에 미러. FROZEN bars(3 seeds [1378,1379,1380], pre-registered FREEZE.txt): (1) LEARNS FULL 0.167→1.000 = +0.833 ✅ · (2) DISTINCT-FROM-STATIC STATIC 0.167 never splits, +0.833 ✅ · (3) EARNED(shuffle) SHUFFLE 0.120 collapse, −0.046 ≤+0.15 ✅ · (4) NO-FAB/ABSTAIN far task 1.000 ≥0.90 ✅ → 🟢 GREEN. HONEST(c9): EARNED bar 가 처음 FAIL — shuffle control 이 permuted map 으로 train+score 둘 다 해서 잘못된 map 을 똑같이 학습; CONTROL 을 고침(permuted train, TRUE score) — bar 가 잡아낸 control 결함, frozen bar 는 안 옮김.
+
+**STEP C — 언어 vs mitosis 구별:** 언어 디코더(Engine A) = CE gradient descent 가 DISTRIBUTION 을 공유 weight 에 smear; 에이전트-도구/메모리 mitosis = gradient-free cell SPLIT 가 INSTANCE 학습(도구/스킬당 cell 1개, ADDITIVE, Ψ-disjoint, 디코더 절대 안 건드림→generation byte-identical). 도구 교육 = memory 와 SAME mitosis substrate, 도구에 적용.
+
+**왜:** a_no_llm_frame_trap(clonal-selection/면역 렌즈) · a_engine_native_learning · a_verified_must_wire. DIRECTIONAL numpy(engine-transfer UNVERIFIED), TOY 합성 task→tool·3 seeds·결정론 readout. **NEXT (follow-on):** CORE/engine_cli.hexa § SkillStore lane 배선(immune_embed_key+vadapt_field_step+immune_memory_recall 재사용), agent_tools.hexa 도구실패 → engine_mitosis_tick 기반 skill-cell split, 4 bars engine-native byte-exact 재점수 — CORE slot 대기.
+
+**산출:** `state/agent-tool-mitosis/h1378_agent_tool_mitosis.py` · `.verdicts/1378_agent_tool_mitosis/{FREEZE.txt,result.txt,wiring_audit.txt}` · `UNIVERSE/cards/H_1378_agent_tool_mitosis.md` + `UNIVERSE/HYPOTHESES.jsonl`(H_1378 행) · `domains/MITOSIS-ENGINE.log.md`(@H H_1378). CORE/*.hexa UNTOUCHED. xref h1227·h1231·h1288·a_no_llm_frame_trap·a_engine_native_learning·a_verified_must_wire·a_core_engine_map·p1·p2·p3·p6·p7·p8·c9·c15.
+
 ## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1377 — CP N-SCALING (밀도-고정 차원 사다리: H_1375 의 D*=3 농도붕괴가 고정-N sparsity artifact 였나?) — 🧱 CURSE-CEILING-TERMINAL (COH_D-DISTINCTNESS)
 
 **무엇:** H_1375(🧱 BREAKS-AT-D*=3, 고정 N=169)가 남긴 결정적 후속 질문을 닫음 — D*=3 농도붕괴(bounded COH_D 가 0.714→0.428→… 로 COH_MIN=0.50 미달)가 진짜 차원적 천장인가, 순전히 고정-N sparsity artifact(투자부족, c16 cause #3)인가? raw N 대신 **차원별 샘플 밀도를 고정**(N(D)=min(4000, 13^D), 13/axis = H_1375 D=2 N=169 앵커)하고 사다리 D∈{2,3,4,6,8} 재실행. **샘플링 규칙만** 변경, 메트릭/4 arm/4 leg/threshold/seed/hyperplane/eta 전부 H_1375 verbatim, NO bar moved. FROZEN-FIRST(FREEZE 를 scoring 전 별도 commit, c9/c16/p7), 3 시드 [4333,4334,4335], $0 CPU numpy DIRECTIONAL.
