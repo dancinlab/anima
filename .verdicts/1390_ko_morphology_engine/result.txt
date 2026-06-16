@@ -1,0 +1,47 @@
+===== H_1390 BPE-on-jamo morphology — engine-native scoreloop =====
+bpe morphology scoreloop: bpe_ce=0.2422 shuffle_ce=1.0785 jamo_ce=1.8545 gap_reduced=1.6123 earned=0.8363 shift−novel=0.1123 units(struct/shuf/jamo)=462/2031/3600 — bpe morphology unit CONSULTED in the live scoring loop (H_1388 mirror · H_1390 wire · Ψ-disjoint pure SCORER · a_core_engine_map single entry)
+
+byte-fair CE (engine fixture):
+  structured BPE-on-jamo : 0.242189
+  random-merge SHUFFLE   : 1.07846
+  un-merged jamo anchor  : 1.85452
+units (struct/shuf/jamo) : 462/2031/3600
+
+bar1 GAP-REDUCED  gap_reduced=1.61233 >= 0.05 (jamo_ce-bpe_ce) -> PASS
+bar2 EARNED       earned=0.836272 >= 0.03 (shuffle_ce-bpe_ce) -> PASS
+bar3 CONTROL      shift-novel=0.112304 >= 0.05 -> PASS
+
+TIER: 🟢 ENGINE-NATIVE BINDING — the BPE-on-jamo morphology unit re-confirms all 3 H_1388 structural bars engine-native
+
+===== NO-REGRESSION GUARDS (verbatim tails) =====
+--- engine_cli_smoke (114/0, +4 cases 112-115) ---
+PASS  case_112_cp_relocate_lands_on_moved_boundary want=true got=true
+PASS  case_113_cp_relocate_distinct_from_split want=true got=true
+PASS  case_114_cp_relocate_eta0_equals_regrow want=true got=true
+PASS  case_115_cp_relocate_coherent want=true got=true
+PASS  case_112_bpe_gap_reduced want=true got=true
+PASS  case_113_bpe_earned_vs_shuffle want=true got=true
+PASS  case_114_bpe_shift_earned want=true got=true
+PASS  case_115_bpe_compression_present want=true got=true
+INFO  bpe morphology: bpe_ce=0.242189 shuffle_ce=1.07846 jamo_ce=1.85452 gap_reduced=1.61233 earned=0.836272 shift=0.112304 units(struct/shuf/jamo)=462/2031/3600
+--- engine_cli smoke summary: 114 pass / 0 fail ---
+--- h1196 single-entry (7/0) ---
+--- single-entry audit summary: 7 pass / 0 fail ---
+--- h1205 separation-invariant (PASS, Ψ byte-identical) ---
+[null] phase=WAKE byte-identical ON==OFF = true
+[null] phase=REM byte-identical ON==OFF = true
+[null] phase=N2 byte-identical ON==OFF = true
+[null] phase=N3 byte-identical ON==OFF = true
+[null] phase=WAKE byte-identical ON==OFF = true
+[bytegpt grounded] seed#0 byte-identical ON==OFF = true  text="vault QX-7741 foreve"
+[bytegpt grounded] seed#1 byte-identical ON==OFF = true  text="ault QX-7741 forever"
+[bytegpt argmax] seed#0 byte-identical ON==OFF = true
+[bytegpt argmax] seed#1 byte-identical ON==OFF = true
+[bytegpt argmax] seed#2 byte-identical ON==OFF = true
+[F2 Psi] byte-identical ON==OFF = true
+F1 GENERATION byte-identity: 10 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. The mitosis lane (cells 1→10 ON) ran beside the decode yet generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched. H_1200/1201 ruling SURVIVES live; mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).
+--- h1164 Ψ guard (Ψ=1/2 byte-identical) ---
+[Psi guard] byte-identical ON==OFF = true
+h1164_psi_guard_smoke: PASS — Ψ=1/2 attractor BYTE-IDENTICAL under the mount's growth lane (pure_field untouched, a_core_engine_map).
