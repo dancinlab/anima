@@ -1,0 +1,46 @@
+H_1338 R1 — WHORFIAN CP RESIDUAL: NEVER-EVICT GROWTH-MEMORY OR BUDGET/GEOMETRY?
+====================================================================================
+R2 of H_1333: does EVICTING stale old-boundary cells COMPLETE the CP relocation?
+paradigm: train A (cut p_A), re-train SAME store on moved p_A'; compare NEVER-EVICT
+          (= H_1333 split-only) vs EVICTION (remove stale-conflicting cells) move.
+N_stim=21 dim=16 p_A=0.333 p_A'=0.667 shift=0.333 grow_max=24/phase seeds=[4333, 4334, 4335]
+
+  per-seed CP peak location:
+    seed 4333:  A=0.325  never-evict=0.525(frac+0.60)  eviction=0.525(frac+0.60)  no-retr=0.325  shuf=0.475
+               peak-count: A=1 never-evict=1 eviction=2 no-retr=1 shuf=6
+    seed 4334:  A=0.325  never-evict=0.525(frac+0.60)  eviction=0.525(frac+0.60)  no-retr=0.325  shuf=0.625
+               peak-count: A=1 never-evict=2 eviction=2 no-retr=1 shuf=8
+    seed 4335:  A=0.325  never-evict=0.525(frac+0.60)  eviction=0.525(frac+0.60)  no-retr=0.325  shuf=0.525
+               peak-count: A=1 never-evict=1 eviction=2 no-retr=1 shuf=9
+
+  mean CP peak (over 3 seeds):
+    A-trained:          0.325   (p_A =0.333)
+    NEVER-EVICT A->A':  0.525   (p_A'=0.667)   move-fraction +0.60
+    EVICTION   A->A':   0.525   (p_A'=0.667)   move-fraction +0.60
+    no-retrain (NE):    0.325   (p_A =0.333)
+    no-retrain (EV):    0.325   (p_A =0.333)
+    shuffle:            0.542
+  mean peak-count: A=1.0 never-evict=1.3 eviction=2.0 no-retr=1.0 shuffle=7.7
+  cell budget (seed, p1, never-evict-p2, eviction-p2): [(4333, 4, 28, 3), (4334, 4, 28, 3), (4335, 4, 28, 3)]
+
+  V1 COMPLETES (eviction: all 3 seeds |peak-p_A'|<=0.12 AND frac>=0.85; coherent peak-count<=2):
+     eviction per-seed |peak-p_A'| = [0.142, 0.142, 0.142]  -> reaches-new FAIL
+     eviction per-seed move-fraction = [0.6, 0.6, 0.6]  -> full-move FAIL
+     eviction mean peak-count = 2.0  -> coherent PASS
+     -> V1 FAIL
+  V2 CONTRAST (never-evict in-run partial: all 3 seeds frac in [0.4,0.75] AND |peak-p_A'|>0.12):
+     never-evict per-seed move-fraction = [0.6, 0.6, 0.6]  -> partial PASS
+     never-evict per-seed |peak-p_A'| = [0.142, 0.142, 0.142]  -> not-complete PASS
+     -> V2 PASS
+  V3 EARNED (no-retrain both stores |peak-p_A|<=0.12; shuffle incoherent peak-count>=3):
+     no-retrain NE |peak-p_A| = [0.008, 0.008, 0.008]  EV = [0.008, 0.008, 0.008]  -> PASS
+     shuffle peak-count = 7.7  -> PASS
+     -> V3 PASS
+====================================================================================
+VERDICT: 🧱 RE-DIAGNOSIS — eviction does NOT complete the move. Removing the
+  stale old-boundary cells leaves the eviction move at frac +0.60
+  (mean 0.325->0.525), still short of p_A'=0.667,
+  while never-evict reproduced the H_1333 partial. So the H_1333 residual pull is
+  NOT (only) never-evicted old cells — the limit is BUDGET / GEOMETRY. An honest,
+  important re-diagnosis of H_1333's residual. NO bar move (c9). ENGINE-TRANSFER
+  UNVERIFIED. TOY synthetic, 3 seeds.

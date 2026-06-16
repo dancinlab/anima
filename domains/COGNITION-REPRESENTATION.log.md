@@ -105,3 +105,41 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
 - xref: h1323 · h1325 (the GREEN 1-D result extended) · h1330 (bilingual sibling) · a_no_llm_frame_trap
   · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope
   · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+
+## 2026-06-16 — H_1338 — Whorf CP 잔류당김 = never-evict인가 budget/geometry인가? 🧱 RE-DIAGNOSIS (budget/geometry)
+
+- **id**: H_1338 · slug `1338_whorf_cp_eviction` · seeds [4333,4334,4335] (= H_1333, anchor 재현) · $0 CPU mirror DIRECTIONAL
+- **seed/lens**: the LOAD-BEARING follow-on to **H_1333** (🟠 GRADED PLASTICITY); developmental-plasticity
+  + memory-protection-vs-overwrite lens (c15, a_no_llm_frame_trap). H_1333의 ~60% 상대이동 잔류를
+  split-only 저장소의 **never-evicted** 첫-경계 셀(phase-2 28셀 vs phase-1 4셀)로 **진단(가설)** 했었다.
+  결정적 테스트: stale 셀을 제거하는 EVICTION 저장소가 이동을 **완성** 시키면 잔류=never-evict(H_1288 dual);
+  여전히 partial 이면 한계=budget/geometry.
+- **method**: H_1333/H_1323/H_1325 CP 머신러리 **verbatim** 재사용 (RBF embed · split-only Voronoi p8 ·
+  soft-posterior no-label discrim · peak-count coherence; N=21, p_A=1/3, p_A'=2/3, GROW_MAX/SPLIT_PASSES=24).
+  **유일한 신규** = fit(...,evict=True): phase-2 split 직전, bound 라벨이 현재 소유 자극의 재학습(p_A') 라벨과
+  **충돌하는** 모든 프로토타입을 제거(마지막 셀은 보존). never-evict 와 eviction 은 **이 stale-셀 제거 여부만**
+  다름(같은 run/seed) → 완성이 있으면 그게 eviction임을 격리(V2). 4 arm(NEVER-EVICT=H_1333 / EVICTION /
+  NO-RETRAIN 양 저장소 / SHUFFLE). frozen-first(FREEZE.txt), live CORE UNTOUCHED, NO bar moved(c9).
+- **result 🧱 RE-DIAGNOSIS — eviction이 이동을 완성하지 못함; 잔류 = BUDGET/GEOMETRY, never-evict 아님**
+  (deterministic 3 seed): CP peak — A-trained **0.325** · NEVER-EVICT **0.525**(frac **+0.60**, H_1333 재현) ·
+  EVICTION **0.525**(frac **+0.60**, **동일**) · no-retrain(양쪽) 0.325 · shuffle 0.542. 셀예산(seed,p1,NE-p2,EV-p2):
+  (4333,4,**28**,**3**)(4334,4,28,3)(4335,4,28,3) — eviction 저장소가 **28→3셀** 로 강하게 발화(stale phase-1 패킹을
+  실제 제거)했음에도 CP peak는 **정확히 동일한 0.525**. **V1 COMPLETES ❌**: |peak−p_A'|=0.142>0.12 AND frac 0.60<0.85
+  (coherent 2.0≤2 ✅). **V2 CONTRAST ✅**: never-evict frac 0.60∈[0.40,0.75](H_1333 in-run 재현=confound 아님) & 미완성.
+  **V3 EARNED ✅**: no-retrain(양쪽) |Δ|=0.008 p_A 유지; shuffle peak-count 7.7≥3 incoherent.
+- **mechanism (c9)**: 살아남은 3개의 p_A'-정렬 셀이 경계를 기하학적으로 ~0.525(2/3 아님)에 배치 — 이 RBF 기하 +
+  고정 split 예산 하에선 stale 셀 유무와 무관하게 discrimination peak를 p_A'까지 패킹할 수 없다 → never-evict⇒partial /
+  evict⇒full 의 dual(H_1288)은 이 저장소에선 **FALSIFIED**. 잔류 이동은 새 cut에서의 표현/예산-해상도 천장이지
+  옛 셀이 되돌리는 게 아니다. (stale 셀은 존재했고 제거됐지만 원인이 아니었던 — 비자명한 재진단.)
+- **one-line**: stale 셀을 제거해도 CP 이동은 **완성되지 않는다**(28→3셀 evict, peak 0.525 불변, frac +0.60) →
+  H_1333 잔류당김은 **never-evict growth-memory 가 아니라 budget/geometry** 한계. (V1 fail = freeze가 사전등록한
+  유효 결과; a_break_the_wall — 진짜 메커니즘 테스트 후의 정직한 🧱.)
+- **next (R2 candidates)**: (i) budget / RBF-해상도 스윕(split 예산↑ 또는 grid 밀도↑ 시 peak가 p_A'에 도달하나? =
+  budget/geometry 확증 + 천장 매핑) · (ii) graded SHIFT-SIZE 곡선(≥3 shift — partial 분수가 shift 크기를 따르나
+  =geometry, 일정하나=memory) · (iii) soft DECAY(hard-remove 아닌 down-weight) · (iv) engine-native 실현 — 각각 frozen ANEW.
+- **claim-link**: `CLAIMS.tape @C h1338_whorf_cp_eviction` · card `UNIVERSE/cards/H_1338_whorf_cp_eviction.md`
+  · verdicts `.verdicts/1338_whorf_cp_eviction/{FREEZE,result}.txt`
+- xref: h1333(잔류를 재진단한 GRADED-PLASTICITY 결과) · h1323 · h1325(family의 GREEN CP) · h1288(growth-memory:
+  store grows never evicts — 이 lane이 테스트하고 원인으로는 FALSIFY한 dual 직관) · h1330(bilingual overwrite)
+  · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire
+  · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
