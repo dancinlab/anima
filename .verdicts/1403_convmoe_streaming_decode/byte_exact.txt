@@ -1,0 +1,27 @@
+=== H_1403 byte-exact guards (verbatim) ===
+host: Mac arm64 · hexa 0.1.0-dispatch · model: state/lane_p_clm/clm_d768_e2l1.clm (d768,K3,V256,E2,L1)
+
+G1 BYTE-EXACT FORWARD (logit-level, _clmd_fwd_eq_test, temp wrapper run then removed)
+  same A..Z tok window, original _clmd_fwd_logits vs streaming _clmd_fwd_logits_sc:
+  FWD_EQ ok=true maxdelta=0.0 n=6144
+  ⇒ the streaming forward is BIT-EXACT identical to the original (0.0 over all 6144 logits).
+
+G2 BYTE-EXACT DECODE (argmax sequence, seed "the ")
+  BEFORE (per-alloc path, recorded baseline):
+    GEN=8   text=system�
+    GEN=16  text=system에서 eme
+    GEN=32  text=system에서 emergent behavior?
+  AFTER (streaming _clmd_fwd_logits_sc):
+    GEN=8   text=system�
+    GEN=16  text=system에서 eme
+    GEN=32  text=system에서 emergent behavior?
+  ⇒ byte-identical at every GEN where the old path completed (GEN<=16 required; held to 32+).
+
+  topk_sampled determinism (seed=7): run1==run2 byte-identical → TOPK_det_match=true
+  grounded decode: grounded/lm split preserved, coherent continuation.
+
+G4 REGRESSION (no-regression guards, post-fix)
+  engine_cli smoke summary: 119 pass / 0 fail
+  single-entry audit summary: 7 pass / 0 fail (.clm enters ONLY via generator L3 slot — no 2nd path)
+  h1205_separation_invariant_smoke: PASS — F1 GENERATION byte-identity 10 pairs 0 mismatch;
+    F2 Psi Phi-checksum invariant PASS (substrate untouched, Ψ=½ held)
