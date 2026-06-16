@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════
-// CORE/g6_ideation.hexa — H_1378 G6 IDEATION ★ WIRE-IN.
+// CORE/g6_ideation.hexa — H_1379 G6 IDEATION ★ WIRE-IN.
 //
 // WIRES the validated H_1362 scaffold (6 composed conditional frames + best-of-K=3)
 // into the LIVE engine ideation/decode path. G6 IDEATION ★ is anima's STARRED gate —
@@ -30,7 +30,8 @@
 // p1-p6 HELD: frames are environment context (p4), the measurable+claim MUST emerge from
 // the model's own sample (p7), no persona/identity/ethics injected (p1/p2/p3/p6).
 
-import "CORE/clm_decode.hexa"
+import "CORE/generator.hexa"   // a_core_engine_map: .clm enters via the generator L3 slot
+                               // (gen_clm_ideate), NOT a 2nd clm_decode importer.
 
 // ── FROZEN DETECTOR sets (VERBATIM from H_1305/H_1362 — structural, NOT quality, p7) ──
 // COMPARATOR / MEASURABLE / STANCE word-sets, byte-for-byte the H_1305 frozen sets.
@@ -264,7 +265,7 @@ pub fn g6_decode_best_of_k(ckpt: string, frame: string, gen: int, k: int,
     let mut oi = 0
     let kk = if k < 3 { k } else { 3 }
     while oi < kk {
-        let r = clm_decode_topk_sampled(ckpt, frame, gen, 40, 0.7, base_seed + offsets[oi])
+        let r = gen_clm_ideate(ckpt, frame, gen, 40, 0.7, base_seed + offsets[oi])
         let o = to_string(r["text"])
         let kwr = _g6_known_word_ratio(o, known)
         let mut fals = 0
@@ -287,35 +288,8 @@ pub fn g6_decode_best_of_k(ckpt: string, frame: string, gen: int, k: int,
 //   in_topk       = every draw lies within the top-k set (here {1,4,5}, the 3 largest)
 // This proves the DEPTH-lever mechanism without a slow decode (smoke-safe).
 pub fn g6_sampler_selftest() -> Map {
-    let v = 6
-    let lg = t_zeros(v)
-    t_set(lg, 0, 1.0); t_set(lg, 1, 3.0); t_set(lg, 2, 2.0)
-    t_set(lg, 3, 0.5); t_set(lg, 4, 5.0); t_set(lg, 5, 4.0)
-    // base of the "last position" row is 0 here (single row, T=1)
-    let a = _clmd_topk_sample(lg, 0, v, 3, 0.7, _clmd_mix32(7))
-    let b = _clmd_topk_sample(lg, 0, v, 3, 0.7, _clmd_mix32(7))
-    let deterministic = to_int(a["tok"]) == to_int(b["tok"])
-    let offs = [0, 101, 202]
-    let draws = []
-    let mut i = 0
-    while i < 3 {
-        let r = _clmd_topk_sample(lg, 0, v, 5, 0.7, _clmd_mix32(7 + offs[i]))
-        draws.push(to_int(r["tok"]))
-        i = i + 1
-    }
-    let diverse = !(draws[0] == draws[1] && draws[1] == draws[2])
-    // top-k=3 membership over many draws (only {1,4,5} = 3 largest may ever appear)
-    let mut in_topk = true
-    let mut s = _clmd_mix32(11)
-    let mut n = 0
-    while n < 40 {
-        let r = _clmd_topk_sample(lg, 0, v, 3, 0.7, s)
-        let t = to_int(r["tok"]); s = to_int(r["s"])
-        if t != 1 && t != 4 && t != 5 { in_topk = false }
-        n = n + 1
-    }
-    t_free(lg)
-    return #{ "deterministic": deterministic, "diverse": diverse, "in_topk": in_topk }
+    // delegate to the generator-owned self-test (it owns the clm_decode slot; a_core_engine_map).
+    return gen_g6_sampler_selftest()
 }
 
 // g6_detector_calibration — run the FROZEN 10-string calibration (5 pos + 5 neg, H_1305
@@ -352,7 +326,7 @@ pub fn g6_score_arm(ckpt: string, frames: list, gen: int, k: int, base_seed: int
         let mut o = ""
         if best_of_k { o = g6_decode_best_of_k(ckpt, f, gen, k, base_seed, known) }
         else {
-            let r = clm_decode_topk_sampled(ckpt, f, gen, 40, 0.7, base_seed)
+            let r = gen_clm_ideate(ckpt, f, gen, 40, 0.7, base_seed)
             o = to_string(r["text"])
         }
         texts.push(o)

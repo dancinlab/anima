@@ -501,7 +501,7 @@ pub fn clm_decode_argmax(path: string, seed: string, gen: int) -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-// H_1378 — SEEDED TOP-K TEMPERATURE SAMPLER (ConvMoE .clm path). clm_decode_argmax
+// H_1379 — SEEDED TOP-K TEMPERATURE SAMPLER (ConvMoE .clm path). clm_decode_argmax
 // is deterministic argmax, so best-of-K over rng offsets is a no-op (K identical
 // outputs). Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning) the
 // .clm decode grows its OWN deterministic seeded sampler so the G6 DEPTH lever
@@ -565,6 +565,15 @@ fn _clmd_topk_sample(logits: int, base: int, V: int, top_k: int, temp: float, rn
         if target <= acc { pick = sel_idx[p]; p = nsel } else { p = p + 1 }
     }
     return #{ "tok": pick, "s": to_int(r["s"]) }
+}
+
+// clmd_mix32_pub / clmd_topk_sample_pub — pub wrappers so generator.hexa can run the
+// H_1379 sampler self-test on synthetic logits (NO model) without re-routing the single
+// decode slot (a_core_engine_map: the G6 ideation entry + smoke reach this only via the
+// generator L3 wrapper gen_g6_sampler_selftest, never a second direct decoder importer).
+pub fn clmd_mix32_pub(s: int) -> int { return _clmd_mix32(s) }
+pub fn clmd_topk_sample_pub(logits: int, base: int, V: int, top_k: int, temp: float, rng: int) -> Map {
+    return _clmd_topk_sample(logits, base, V, top_k, temp, rng)
 }
 
 // clm_decode_topk_sampled — seeded-sampling sibling of clm_decode_argmax. Same window

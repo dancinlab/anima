@@ -592,6 +592,56 @@ pub fn gen_clm_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
               "reason": "decoded via clm_decode_argmax (CLMConvMoE int4 forward)" }
 }
 
+// gen_clm_ideate — H_1379 G6 IDEATION ★ entry. The SEEDED-SAMPLING sibling of gen_clm_chat:
+// routes a composed ideation frame through the engine's seeded top-k sampler
+// (clm_decode_topk_sampled) so the G6 best-of-K DEPTH lever yields DIVERSE candidates
+// (argmax = a no-op for best-of-K). Stays inside the SINGLE generator L3 .clm slot
+// (a_core_engine_map) — g6_ideation.hexa imports THIS, never clm_decode directly. HARD-
+// BOUNDED by `max_new` (caller passes a small budget — FREEZE (ii), no unbounded decode).
+pub fn gen_clm_ideate(ckpt_path: string, seed: string, max_new: int,
+                      top_k: int, temp: float, seed_rng: int) -> Map {
+    if !clm_decodable(ckpt_path) {
+        return #{ "ok": false, "text": "",
+                  "reason": "ckpt not v0.2-decodable (no CLMX trailer; embed/GN absent)" }
+    }
+    let r = clm_decode_topk_sampled(ckpt_path, seed, max_new, top_k, temp, seed_rng)
+    return #{ "ok": to_string(r["ok"]) == "true", "text": to_string(r["text"]),
+              "reason": "ideated via clm_decode_topk_sampled (seeded top-k, best-of-K source)" }
+}
+
+// gen_g6_sampler_selftest — H_1379: exercise the engine's seeded top-k sampler on a
+// SYNTHETIC peaked logits vector (NO model forward — fast, deterministic, smoke-safe).
+// Returns #{ deterministic, diverse, in_topk } proving the DEPTH-lever mechanism. Lives
+// here (generator owns the clm_decode slot) so g6_ideation/smoke need no clm_decode import.
+pub fn gen_g6_sampler_selftest() -> Map {
+    let v = 6
+    let lg = t_zeros(v)
+    t_set(lg, 0, 1.0); t_set(lg, 1, 3.0); t_set(lg, 2, 2.0)
+    t_set(lg, 3, 0.5); t_set(lg, 4, 5.0); t_set(lg, 5, 4.0)
+    let a = clmd_topk_sample_pub(lg, 0, v, 3, 0.7, clmd_mix32_pub(7))
+    let b = clmd_topk_sample_pub(lg, 0, v, 3, 0.7, clmd_mix32_pub(7))
+    let deterministic = to_int(a["tok"]) == to_int(b["tok"])
+    let offs = [0, 101, 202]
+    let draws = []
+    let mut i = 0
+    while i < 3 {
+        let r = clmd_topk_sample_pub(lg, 0, v, 5, 0.7, clmd_mix32_pub(7 + offs[i]))
+        draws.push(to_int(r["tok"])); i = i + 1
+    }
+    let diverse = !(draws[0] == draws[1] && draws[1] == draws[2])
+    let mut in_topk = true
+    let mut s = clmd_mix32_pub(11)
+    let mut n = 0
+    while n < 40 {
+        let r = clmd_topk_sample_pub(lg, 0, v, 3, 0.7, s)
+        let t = to_int(r["tok"]); s = to_int(r["s"])
+        if t != 1 && t != 4 && t != 5 { in_topk = false }
+        n = n + 1
+    }
+    t_free(lg)
+    return #{ "deterministic": deterministic, "diverse": diverse, "in_topk": in_topk }
+}
+
 // _gen_rd_u32 / _gen_gelu / _gen_gnorm / _gen_conv1d — pure-hexa decode kernels.
 fn _gen_rd_u32(rb: list, off: int) -> int {
     return rb[off] + rb[off+1]*0x100 + rb[off+2]*0x10000 + rb[off+3]*0x1000000
