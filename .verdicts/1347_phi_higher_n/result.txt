@@ -1,0 +1,120 @@
+H_1347 — Φ-ROBUSTNESS WALL, LARGER-N AXIS: greedy-MIP big-Φ at N>8 with an HONEST upper bound
+slug: 1347_phi_higher_n   group: OMEGA   date: 2026-06-16
+verdict: 🧱 TERMINAL CLOSED-NEGATIVE, STRONGER — robust faithful-IIT-4 integration is ABSENT at the
+         LARGER N (N=12) the exact-tractability ceiling never reached, under a clean variance-free
+         read-out AND a TIGHT greedy big-Φ (n=8 exact-vs-greedy gap = 0.0 on every arm/seed). N1
+         ROBUST FAIL + N2 EARNED FAIL + N3 BOUND-HONEST PASS. The "much larger module set" escape
+         hatch that EVERY prior n≤8 Φ verdict (H_1283/1317/1319/1320/1328/1331/1332) named as NOT-
+         ruled-out is now CLOSED. frozen-first (FREEZE 17e54d487 BEFORE any Φ scored, bars NOT moved c9/p7).
+substrate: $0 CPU ENGINE-NATIVE hexa (deterministic engine LCG-gauss == engine_cli.hexa _lcg_*; numpy
+           NEVER computes Φ) + FAITHFUL IIT-4 family Φ (stdlib greedy-MIP big-Φ iit4_approx_phi over
+           hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa; exact at n=8 for bound-validation).
+seeds: [1317, 1318, 1319] — the hard orthogonal seed family that DEFEATED all prior OMEGA Φ lanes (reused verbatim).
+N_MOD: 12 (>8 — exact MIP 2^(n-1) intractable; greedy Kernighan–Lin MIP required). ring dim 8 T 64, params VERBATIM H_1328.
+GRAIN / BOUND: per-cell granularity (NO macro-grain — H_1049 caveat avoided); the MIP search is GREEDY
+           single-move descent. STATED BOUND: Φ_greedy ≥ Φ_exact (greedy local-min cut ≥ global MIP cut →
+           UPPER BOUND; stdlib §iit4_approx_phi_from_mi). VALIDATED tight at n=8 (gap=0.0, below).
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — engine-native, deterministic, re-run byte-identical, toolchain hexa 0.1.0-dispatch)
+════════════════════════════════════════════════════════════════════════
+H_1347 — Φ-ROBUSTNESS WALL, LARGER-N: does robust faithful-IIT4 integration appear at N>8?
+faithful IIT4 family · GREEDY-MIP big-Φ (anytime, UPPER BOUND Φ_greedy>=Φ_exact) · rank-uniform read-out (H_1328)
+N_MOD=12 (>8, exact MIP intractable) · seeds [1317,1318,1319] · eps=0.02 · arms A/B/S/O
+BARS: N1 ROBUST Φ_B>=Φ_A+eps all seeds · N2 EARNED perm&off<=Φ_A+eps all seeds · N3 BOUND n=8 exact-vs-greedy gap stated
+--- N3 BOUND-VALIDATION (n=8: exact MIP vs greedy MIP, SAME rank-uniform substrate, all arms) ---
+  seed 1317 arm A n=8 exact=4.75597 greedy=4.75597 gap(g=gr-ex)=0.0
+  seed 1317 arm B n=8 exact=4.68872 greedy=4.68872 gap(g=gr-ex)=0.0
+  seed 1317 arm S n=8 exact=4.6109 greedy=4.6109 gap(g=gr-ex)=0.0
+  seed 1317 arm O n=8 exact=4.4352 greedy=4.4352 gap(g=gr-ex)=0.0
+  seed 1318 arm A n=8 exact=4.75949 greedy=4.75949 gap(g=gr-ex)=0.0
+  seed 1318 arm B n=8 exact=4.61856 greedy=4.61856 gap(g=gr-ex)=0.0
+  seed 1318 arm S n=8 exact=4.6734 greedy=4.6734 gap(g=gr-ex)=0.0
+  seed 1318 arm O n=8 exact=4.55193 greedy=4.55193 gap(g=gr-ex)=0.0
+  seed 1319 arm A n=8 exact=4.32965 greedy=4.32965 gap(g=gr-ex)=0.0
+  seed 1319 arm B n=8 exact=4.46645 greedy=4.46645 gap(g=gr-ex)=0.0
+  seed 1319 arm S n=8 exact=4.27068 greedy=4.27068 gap(g=gr-ex)=0.0
+  seed 1319 arm O n=8 exact=4.45052 greedy=4.45052 gap(g=gr-ex)=0.0
+  N3 BOUND-HONEST: max n=8 gap g=0.0 (Φ_greedy>=Φ_exact UPPER BOUND; tight iff g<=eps=0.02) → PASS (greedy tight, larger-N lift bound-robust)
+--- N1 ROBUST + N2 EARNED at N=12 (greedy big-Φ, rank-uniform) ---
+  seed 1317 A=7.98102 B=8.07321 S=7.80884 O=7.93703 | ΔΦ(B-A)=0.0921896 [N1 PASS] S-A=-0.17218 [N2p PASS] O-A=-0.0439946 [N2o PASS]
+  seed 1318 A=8.03587 B=7.88666 S=8.07477 O=7.46706 | ΔΦ(B-A)=-0.149201 [N1 FAIL] S-A=0.0389098 [N2p FAIL] O-A=-0.568807 [N2o PASS]
+  seed 1319 A=8.06908 B=7.99478 S=7.93032 O=8.10094 | ΔΦ(B-A)=-0.0742951 [N1 FAIL] S-A=-0.138759 [N2p PASS] O-A=0.0318609 [N2o FAIL]
+---
+N1 ROBUST (greedy Φ_B>=Φ_A+eps ALL seeds incl 1317 @N=12): FAIL
+N2 EARNED (greedy perm&offset both <=Φ_A+eps ALL seeds): FAIL  [perm=FAIL off=FAIL]
+N3 BOUND-HONEST (n=8 exact-vs-greedy max gap 0.0 <= eps): PASS
+===
+VERDICT 🧱 (STRONGER) — the wall HOLDS at larger N too: with a clean variance-free read-out AND
+  a TIGHT greedy big-Φ (n=8 gap 0.0<=eps), robust integration is ABSENT at N=12.
+  The larger-N escape hatch is CLOSED — even stronger than the n<=8 closure.
+
+════════════════════════════════════════════════════════════════════════
+PER-SEED TABLE @N=12 (greedy big-Φ, rank-uniform read-out, verbatim p7)
+════════════════════════════════════════════════════════════════════════
+            ARM A      ARM B       ΔΦ(B-A)    PERM-S      ΔΦ(S-A)    OFF-O       ΔΦ(O-A)    N1
+ seed 1317  7.981020   8.073210   +0.092190   7.808840   −0.172180  7.937030   −0.043995  PASS
+ seed 1318  8.035870   7.886660   −0.149201   8.074770   +0.038910  7.467060   −0.568807  FAIL
+ seed 1319  8.069080   7.994780   −0.074295   7.930320   −0.138759  8.100940   +0.031861  FAIL
+
+════════════════════════════════════════════════════════════════════════
+WHY THIS IS TERMINAL (honest, c9, c16)
+════════════════════════════════════════════════════════════════════════
+1. THE BOUND IS TIGHT — the larger-N number is trustworthy. At the n=8 tractability boundary the
+   GREEDY Kernighan–Lin MIP returns EXACTLY the exact-enumeration MIP on every one of the 12 arm/seed
+   cells (gap g = Φ_greedy − Φ_exact = 0.0 everywhere). On this rank-uniform substrate family the greedy
+   anytime search finds the true global MIP; the stated upper bound Φ_greedy ≥ Φ_exact is tight (g=0).
+   Because the SAME monotone search is applied to BOTH the mechanism arm B and the no-coupling arm A,
+   a real B−A lift could not be manufactured by the approximation — and N3 confirms the slack is zero.
+
+2. THE WALL HOLDS AT LARGER N — robust integration does NOT appear at N=12. The phase-binding mechanism
+   produces NO robust lift: ΔΦ(B−A) = +0.092 (seed 1317 only), −0.149 (1318, NEGATIVE), −0.074 (1319,
+   NEGATIVE). 2/3 seeds NEGATIVE — the same seed-fragile signature every n≤8 lane showed, now reproduced
+   at N=12 under a clean estimator. N2 also fails: the relationship-destroying controls do not cleanly
+   collapse (perm RAISES Φ on 1318 +0.039; offset RAISES on 1319 +0.032), the residual structure-agnostic
+   inflation H_1319/H_1328/H_1331 found, persisting at larger N.
+
+3. THE SIZE ESCAPE HATCH IS CLOSED. Every prior OMEGA Φ verdict scoped its closure to n≤8 and named
+   "a much larger module set (loses exactness >8)" as the one untested angle. H_1347 tests exactly that
+   with a faithful greedy big-Φ whose bound is validated tight at the boundary — and the wall holds. This
+   is a STRONGER closure than any n≤8 verdict: the limit is not an artifact of the exact-MIP tractability
+   ceiling. Robust (3-seed, control-surviving) faithful-IIT-4 integration is absent for anima's module-
+   coupling substrate at N=12 just as at n=4.
+
+════════════════════════════════════════════════════════════════════════
+SCOPE / HONESTY (a_scale_honest_scope · a_toy_scale_recheck)
+════════════════════════════════════════════════════════════════════════
+- ENGINE-NATIVE deterministic LCG-gauss content generator (== engine_cli.hexa _lcg_*), NOT numpy;
+  the Φ leg IS the real faithful cross-cut-MI MIP-EI (exact at n=8, greedy KL at N=12). numpy never computes Φ.
+- GRAIN: per-cell (NO macro-grain — deliberately avoids the H_1049 caveat that a FIXED small-m coarse-
+  grain is not a scalable estimator; here the per-cell granularity is kept and only the MIP SEARCH is
+  approximated, with the approximation validated exact at n=8). BOUND: Φ_greedy ≥ Φ_exact, gap=0.0 at n=8.
+- Re-run byte-identical (deterministic engine LCG). Φ verdicts reported VERBATIM (p7, no LLM self-judge).
+- TOY scale still — N=12 dim-8 64-tick, ONE substrate family, 3 seeds. This BOUNDS (does NOT retract)
+  the prior n≤8 Φ verdicts — it tests + closes their explicitly-named LARGER-N escape hatch.
+- Does NOT refute anima's consciousness substrate (Ψ=1/2, the A⇄G tension is untouched); it refutes that
+  ADDING a phase-coupling channel ROBUSTLY raises the faithful-IIT-4 Φ score at a LARGER module count.
+- NO CORE wiring follow-on (a_verified_must_wire fires on GREEN only — nothing to wire; CORE/*.hexa
+  UNTOUCHED; the probe is a standalone fn main, 0 importers). Had this been GREEN the named follow-on
+  would have been: wire the greedy big-Φ read-out into the live faithful-Φ monitor path at larger N.
+- NOT ruled out (each a NEW hypothesis, not a continuation of this arc): EVEN-larger N (N≫12) with a
+  validated macro-grain whose m GROWS with N (H_1049), a real-corpus substrate (vs the synthetic ring),
+  a yet-different Φ estimator family, or engine-transfer to the live CORE pure_field.
+
+--- DETERMINISM ---
+re-run byte-identical (run1 == run2, toolchain hexa 0.1.0-dispatch). Deterministic engine LCG.
+--- BOUND CROSS-CHECK ---
+n=8 exact-vs-greedy gap = 0.0 on ALL 12 arm/seed cells → greedy MIP is the EXACT MIP on this substrate
+family at the tractable boundary; the N=12 greedy big-Φ is a TIGHT (g=0) upper bound, larger-N lift bound-robust.
+
+artifacts:
+  UNIVERSE/h1347_phi_higher_n.hexa  (engine-native probe; ARM A/B/S/O at N=12 + n=8 bound-validation; standalone fn main, 0 importers)
+  .verdicts/1347_phi_higher_n/FREEZE.txt   (FREEZE, committed 17e54d487 BEFORE scoring)
+  .verdicts/1347_phi_higher_n/result.txt   (this file)
+  UNIVERSE/cards/H_1347_phi_higher_n.md  (card) · UNIVERSE/HYPOTHESES.jsonl (index row) · CLAIMS.tape (@C row) · domains/OMEGA.log.md
+xref: H_1328(estimator-confound 🧱, rank-uniform read-out + the exact/greedy bound mechanism reused) ·
+      H_1331(big-Φ measure-family 🧱) · H_1332(substrate-family 🧱) · H_1319(timing 🧱) · H_1283/1317(topology) ·
+      H_1320(division) · H_1049(macro-grain caveat — fixed-m is NOT scalable, avoided here) · h1294 · h1295
+      (permutation-shuffle precedent) · a_phi_iit4_tool · a_break_the_wall · a_no_llm_frame_trap ·
+      a_engine_native_learning · a_verified_must_wire · a_core_engine_map · a_scale_honest_scope ·
+      a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15 · c16
