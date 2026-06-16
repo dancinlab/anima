@@ -1,0 +1,61 @@
+H_1350 mitotic-division collective-Phi at LARGER differentiation budget
+N_TOT=8  N_DAUGHTERS=4 (HALF=2)  dim=8 ticks=64 seeds=[1317, 1318, 1319]
+W_HIVE=0.6 DIFF_EPS=0.45 BETA=0.5 SCALE=2.0 (non-sat softsign code, rank-uniform read-out)
+faithful IIT4 Phi (exact MIP-EI); MARGIN_PHI=0.02
+ARMS: single | divided | assembled(hive) | shuffle | shared_decoupled(W=0 redundancy floor)
+================================================================================
+  seed 1317           single: Phi_pair=4.53661  Phi_daughters=[0.543, 0.5236, 0.6604, 0.7777]  D=2.0319
+  seed 1317          divided: Phi_pair=11.8114  Phi_daughters=[0.7659, 0.7659, 0.809, 0.8284]  D=8.6421
+  seed 1317        assembled: Phi_pair=4.4859  Phi_daughters=[0.4805, 0.6173, 0.6291, 0.7423]  D=2.0165
+  seed 1317          shuffle: Phi_pair=4.4859  Phi_daughters=[0.4805, 0.6173, 0.6291, 0.7423]  D=2.0165
+  seed 1317 shared_decoupled: Phi_pair=11.2822  Phi_daughters=[0.7854, 0.6993, 0.7854, 0.6993]  D=8.3128
+--------------------------------------------------------------------------------
+  seed 1318           single: Phi_pair=4.69286  Phi_daughters=[0.7152, 0.8909, 0.6993, 0.7034]  D=1.684
+  seed 1318          divided: Phi_pair=12.001  Phi_daughters=[0.83, 0.83, 0.8182, 0.8182]  D=8.7046
+  seed 1318        assembled: Phi_pair=4.02834  Phi_daughters=[0.7034, 0.7229, 0.7854, 0.5979]  D=1.2188
+  seed 1318          shuffle: Phi_pair=4.02834  Phi_daughters=[0.7034, 0.7229, 0.7854, 0.5979]  D=1.2188
+  seed 1318 shared_decoupled: Phi_pair=10.7014  Phi_daughters=[0.809, 0.7777, 0.809, 0.7465]  D=7.5592
+--------------------------------------------------------------------------------
+  seed 1319           single: Phi_pair=4.50122  Phi_daughters=[0.559, 0.6368, 0.7229, 0.7229]  D=1.8597
+  seed 1319          divided: Phi_pair=10.3516  Phi_daughters=[0.6798, 0.7305, 0.6798, 0.7111]  D=7.5503
+  seed 1319        assembled: Phi_pair=4.38036  Phi_daughters=[0.6798, 0.7895, 0.7659, 0.7423]  D=1.4027
+  seed 1319          shuffle: Phi_pair=4.38036  Phi_daughters=[0.6798, 0.7895, 0.7659, 0.7423]  D=1.4027
+  seed 1319 shared_decoupled: Phi_pair=10.1651  Phi_daughters=[0.7854, 0.8361, 0.7972, 0.6722]  D=7.0743
+--------------------------------------------------------------------------------
+================================================================================
+R1 ROBUST INTEGRATION-FROM-DIVISION (Phi_div_pair >= Phi_single + 0.02 EVERY seed): PASS
+     seed 1317: Phi_single=4.53661 Phi_div_pair=11.8114 lift=7.2748  PASS
+     seed 1318: Phi_single=4.69286 Phi_div_pair=12.001 lift=7.3081  PASS
+     seed 1319: Phi_single=4.50122 Phi_div_pair=10.3516 lift=5.8504  PASS
+R2a ORIGIN-DISSOCIATION (D_divided > D_assembled + 0.02 EVERY seed): PASS
+     seed 1317: D_divided=8.6421 D_assembled=2.0165 gap=6.6256  PASS
+     seed 1318: D_divided=8.7046 D_assembled=1.2188 gap=7.4859  PASS
+     seed 1319: D_divided=7.5503 D_assembled=1.4027 gap=6.1476  PASS
+R2b COUPLING-EARNED [KEY] (D_divided > D_shared_decoupled + 0.02 EVERY seed): PASS
+     seed 1317: D_divided=8.6421 D_shared_decoupled=8.3128 gap=0.3293  PASS
+     seed 1318: D_divided=8.7046 D_shared_decoupled=7.5592 gap=1.1454  PASS
+     seed 1319: D_divided=7.5503 D_shared_decoupled=7.0743 gap=0.476  PASS
+R2c EARNED-LINEAGE (D_shuffle <= D_assembled + 0.02 EVERY seed): PASS
+     seed 1317: D_shuffle=2.0165 D_assembled=2.0165  PASS
+     seed 1318: D_shuffle=1.2188 D_assembled=1.2188  PASS
+     seed 1319: D_shuffle=1.4027 D_assembled=1.4027  PASS
+VERDICT: GREEN
+
+RESULT_JSON={"id": "H_1350", "slug": "1350_hive_larger_budget", "verdict": "GREEN", "seeds": [1317, 1318, 1319], "N_tot": 8, "n_daughters": 4, "half": 2, "dim": 8, "ticks": 64, "W_hive": 0.6, "diff_eps": 0.45, "beta": 0.5, "scale": 2.0, "margin_phi": 0.02, "readout": "rank-uniform (H_1328) + non-saturating softsign code (H_1332)", "phi_faithful_iit4": {"1317": {"single": {"phi_pair": 4.53661, "phi_daughters": [0.543045, 0.52359, 0.660385, 0.777726], "delta": 2.0318639999999997}, "divided": {"phi_pair": 11.8114, "phi_daughters": [0.76593, 0.76593, 0.808976, 0.82843], "delta": 8.642134}, "assembled": {"phi_pair": 4.4859, "phi_daughters": [0.480545, 0.61734, 0.629135, 0.74234], "delta": 2.01654}, "shuffle": {"phi_pair": 4.4859, "phi_daughters": [0.480545, 0.61734, 0.629135, 0.74234], "delta": 2.01654}, "shared_decoupled": {"phi_pair": 11.2822, "phi_daughters": [0.785385, 0.699295, 0.785385, 0.699295], "delta": 8.31284}}, "1318": {"single": {"phi_pair": 4.69286, "phi_daughters": [0.715226, 0.89093, 0.699295, 0.70343], "delta": 1.6839789999999994}, "divided": {"phi_pair": 12.001, "phi_daughters": [0.829991, 0.829991, 0.818196, 0.818196], "delta": 8.704626}, "assembled": {"phi_pair": 4.02834, "phi_daughters": [0.70343, 0.722885, 0.785385, 0.597885], "delta": 1.2187549999999998}, "shuffle": {"phi_pair": 4.02834, "phi_daughters": [0.70343, 0.722885, 0.785385, 0.597885], "delta": 1.2187549999999998}, "shared_decoupled": {"phi_pair": 10.7014, "phi_daughters": [0.808976, 0.777726, 0.808976, 0.746476], "delta": 7.559246}}, "1319": {"single": {"phi_pair": 4.50122, "phi_daughters": [0.558976, 0.636795, 0.722885, 0.722885], "delta": 1.8596789999999999}, "divided": {"phi_pair": 10.3516, "phi_daughters": [0.67984, 0.730545, 0.67984, 0.71109], "delta": 7.550285}, "assembled": {"phi_pair": 4.38036, "phi_daughters": [0.67984, 0.789521, 0.76593, 0.74234], "delta": 1.4027289999999994}, "shuffle": {"phi_pair": 4.38036, "phi_daughters": [0.67984, 0.789521, 0.76593, 0.74234], "delta": 1.4027289999999994}, "shared_decoupled": {"phi_pair": 10.1651, "phi_daughters": [0.785385, 0.83609, 0.79718, 0.67218], "delta": 7.0742650000000005}}}, "bars": {"R1_robust_integration_from_division": true, "R2a_origin_dissociation": true, "R2b_coupling_earned": true, "R2c_earned_lineage": true, "R2_earned_conjunction": true}, "r1_per_seed": {"1317": true, "1318": true, "1319": true}, "r2a_per_seed": {"1317": true, "1318": true, "1319": true}, "r2b_per_seed": {"1317": true, "1318": true, "1319": true}, "r2c_per_seed": {"1317": true, "1318": true, "1319": true}, "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n<=8)"}
+
+=== DETERMINISM: RESULT_JSON byte-identical across 2 independent runs (verified) ===
+
+=== HONEST DECOMPOSITION (the decisive new control, c9 — NOT tune-to-green) ===
+The shared_decoupled (W=0) arm carries shared founder input + shared origin but NO cross-daughter
+coupling. Its Δ is the SHARED-INPUT REDUNDANCY FLOOR:
+  seed 1317: Δ_divided=8.6421  Δ_shared_decoupled=8.3128  coupling-gap=+0.3293  (3.8% of lift over assembled)
+  seed 1318: Δ_divided=8.7046  Δ_shared_decoupled=7.5592  coupling-gap=+1.1454  (15.3% of lift over assembled)
+  seed 1319: Δ_divided=7.5503  Δ_shared_decoupled=7.0743  coupling-gap=+0.4760  (7.7% of lift over assembled)
+=> R2b (coupling > redundancy floor + 0.02) PASSES on all 3 seeds at the frozen 0.02 margin, so the
+   coupling contribution is REAL and seed-robust. BUT it is MARGINAL: the BULK of the Δ_divided lift
+   (~85-96%) is shared-input correlation/redundancy (present at W=0), NOT cross-daughter coupling.
+   The faithful-Φ super-additivity of the divided organism is therefore DOMINATED by shared-input
+   redundancy with only a small coupling-EARNED residual. Frozen-bar verdict = GREEN (R1 ∧ R2 all
+   3 seeds); honest scientific reading = the larger budget does make the divided lift ROBUST across
+   3 seeds (unlike H_1320's fragile 2/3), and a small coupling-earned component survives the W=0
+   redundancy control — but it is NOT a large integration effect; it is mostly redundancy.
