@@ -1,0 +1,72 @@
+H_1350 — mitotic-division collective-Φ at a LARGER DIFFERENTIATION BUDGET
+FROZEN PRE-REGISTRATION — written BEFORE any scoring run of the 5-arm probe. Bars NOT to be moved (c9/p7).
+slug: 1350_hive_larger_budget   seeds: [1317,1318,1319]  (the hard hive/topology seed family,
+incl. the orthogonal seed 1317 that broke H_1320 division robustness — M1+M2 failed on 1317).
+date: 2026-06-16   infra: $0 mac-local CPU.  Φ engine: hexa-lang/stdlib/consciousness/iit4/
+faithful_phi.hexa  iit4_faithful_phi(state, n, dim, n_bins) — EXACT MIP-EI, n<=8 (a_phi_iit4_tool).
+numpy NEVER computes Φ; numpy only emits the per-unit salience trajectory, hexa computes Φ. NO proxy.
+
+=== THE WALL BEING REOPENED (c16 / a_break_the_wall) ===
+H_1320 (🧱 WALL): anima-as-ONE-cell mitotic DIVISION (shared developmental origin) DOES beat hive
+ASSEMBLY on collective faithful-IIT4 Φ — but only SEED-CONDITIONALLY (2/3 seeds). The SAME orthogonal
+seed 1317 that broke H_1283/H_1317 topology robustness ALSO broke division at the SMALL budget. The
+Φ-robustness arc is 🧱 across measure (H_1328/1331/1348)/size (H_1347 N=12)/substrate (H_1308/1313)
+axes at n<=8 seed-fragility. OPEN: does a LARGER division budget rescue collective-Φ robustness?
+
+=== THE GENUINELY-NEW ANGLE (H_1320's named follow-on; developmental biology, a_no_llm_frame_trap c15) ===
+At a LARGER DIFFERENTIATION BUDGET the divided organism has more developmental degrees of freedom to
+differentiate its daughters into complementary roles. THREE budget levers, enlarged vs H_1320, n<=8 exact:
+  (1) MORE DAUGHTERS: N_DAUGHTERS = 4 daughters of HALF=2 (vs H_1320's 2 daughters of 4). Pair Φ over 8 units.
+  (2) RICHER NON-SATURATING PER-UNIT CODE (H_1332): sal_i = softsign((energy_i + BETA*coupling_energy_i)/SCALE),
+      bounded (-1,1), never hard-saturates (vs raw energy that sign-saturates to COPY/Φ=0 under coupling).
+  (3) LARGER DIFFERENTIATION BUDGET: DIFF_EPS = 0.45 (3x H_1320's 0.15).
+
+=== VARIANCE-CLEAN READ-OUT (H_1328 lesson) ===
+EVERY arm's per-unit trajectory is RANK-UNIFORMIZED before the faithful exact-MIP. Marginals become
+uniform → H(unit) constant across arms → amplitude-variance channel removed → a relationship-destroying
+control MUST collapse Δ (cannot ride marginal variance, the H_1319 confound).
+
+=== HONESTY: THE CONFOUND THIS CARD MUST RULE OUT (the gap in a prior GREEN attempt) ===
+faithful IIT4 Φ★ = cross-cut MI at the MIP / min(|A|,|B|) — driven by PAIRWISE MUTUAL INFORMATION
+between units. In DIVIDED all daughters share ONE founder input stream → 8 units strongly CORRELATED →
+high pairwise MI → high Φ. That could be SHARED-INPUT REDUNDANCY, NOT integration EARNED by the
+cross-daughter COUPLING. The ASSEMBLED + SHUFFLE controls BOTH switch to INDEPENDENT inputs, so they
+cannot dissociate "shared developmental origin (coupling)" from "shared input correlation". A prior
+attempt's GREEN rested only on those two controls → NOT earned. This FREEZE adds the DECISIVE control:
+  SHARED-INPUT-DECOUPLED (W=0): same shared founder init+input + shared origin as DIVIDED, but
+  cross-daughter coupling W_HIVE := 0. Isolates the redundancy floor from shared input alone.
+
+=== SUBSTRATE (matched to H_1283/H_1317/H_1320) ===
+leaky linear recurrent units LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private gaussian input, dim-8 state,
+T=64. N_TOT=8 units = ONE anima-cell, divided into 4 daughters of HALF=2. CROSS-DAUGHTER COUPLING =
+W_HIVE=0.6 (H_1308/1313/1320, verbatim): each coupled unit's update adds W_HIVE*mean state of ALL OTHER
+daughters. Read-out salience raw_i = <s_i,s_i> + BETA*<coupling_i,coupling_i> (BETA=0.5), sal_i =
+softsign(raw_i/SCALE) (SCALE=2.0). Rank-uniformize all arms.
+
+=== ARMS (5), frozen, 3 seeds [1317,1318,1319] (single rng stream, same draw order per arm) ===
+(1) SINGLE           : one undivided cell, NO coupling (baseline). 8 indep units.
+(2) DIVIDED          : shared origin (founder clone + DIFF_EPS diff) + ONE shared founder input. W_HIVE=0.6.
+(3) ASSEMBLED        : the hive — 4 INDEPENDENT-ORIGIN cells (own init+own input). W_HIVE=0.6.
+(4) SHUFFLE          : DIVIDED with the shared tie CUT — each daughter indep init+input. W_HIVE=0.6.
+(5) SHARED_DECOUPLED : same shared founder init+input as DIVIDED (shared origin), W_HIVE := 0 (NO coupling).
+                       The redundancy floor — shared-input correlation with NO cross-daughter coupling.
+Δ_arm = Φ_pair(arm) - Σ_k Φ_daughter_k(arm) (super-additivity over the 4 daughters, n=2 each exact).
+
+=== FROZEN BARS (GREEN iff R1 ∧ R2; MARGIN_PHI = 0.02 — the IDENTICAL margin H_1283/H_1317/H_1320 froze) ===
+R1 ROBUST INTEGRATION-FROM-DIVISION : Φ_divided_pair >= Φ_single + 0.02 on ALL 3 seeds (incl 1317).
+R2 EARNED (decisive conjunction, ALL 3 seeds):
+   R2a ORIGIN-DISSOCIATION : Δ_divided > Δ_assembled + 0.02   (beats the hive).
+   R2b COUPLING-EARNED [KEY]: Δ_divided > Δ_shared_decoupled + 0.02
+        — the lift must be COUPLING-dependent, NOT shared-input correlation. THE bar a prior GREEN missed.
+   R2c SHUFFLE-COLLAPSE    : Δ_shuffle <= Δ_assembled + 0.02   (broken lineage collapses to assembled).
+R3 (report-only, non-gating): does the LARGER budget change the seed-fragility vs H_1320's small budget?
+
+=== OUTCOME MAP (every outcome decisive, c9 — a NULL/WALL is a valid result) ===
+GREEN                                          : R1 ∧ R2 — larger budget RESCUES robust collective-Φ from division.
+WALL_FRAGILE_EVEN_AT_LARGER_BUDGET             : ¬R1 — budget does not rescue robustness (same fragility wall).
+WALL_REDUNDANCY_ARTIFACT_NOT_COUPLING_EARNED   : R1 ∧ ¬R2b — the lift is shared-input redundancy, not coupling.
+WALL_DIVISION_NOT_BEAT_ASSEMBLY                : R1 ∧ R2b ∧ ¬R2a.
+PARTIAL_LIFT_NOT_LINEAGE_EARNED                : R1 ∧ R2a ∧ R2b ∧ ¬R2c.
+
+NO tune-to-green (c9/p7). DIRECTIONAL (numpy mirror; faithful-Φ leg IS the real exact MIP-EI; engine-
+transfer to live CORE/pure_field UNVERIFIED). Determinism: RESULT_JSON byte-identical across 2 runs.
