@@ -1,0 +1,108 @@
+================================================================================
+H_1409 — BRAIN-LANE COMPOSE pair #5: SPATIAL-MAP (H_1296) ×
+         HIERARCHICAL-PFC (H_1294)
+FREEZE (pre-registered BEFORE measuring; c9, NO tune-to-green). DIRECTIONAL numpy
+mirror ($0 CPU); engine-native §compose is the named follow-on IF 🟢.
+date: 2026-06-17
+================================================================================
+
+PROGRAM. Every anima brain faculty is engine-native GREEN but ALONE. This is the
+FIFTH cognitively-meaningful PAIR composition test (after H_1401 affect×ethics,
+H_1404 affect×ethics Φ, H_1405 memory×ToM, H_1407 cerebellum×basal). Methodology
+ported VERBATIM from H_1401 (capability) + H_1404/H_1407 (Φ): substrate-weighted
+SCALE-RELATIVE arbiter + ORACLE ceiling + SHUFFLE control + only-X decomposition +
+the a_break_the_wall taxonomy.
+
+WHY THIS PAIR IS THE DECISIVE TEST OF THE REFINED PROGRAM LAW.
+  The program has found a unifying mechanism across 4 pairs (H_1404/1405/1407):
+    REFINED LAW: a pair Φ-composes IFF NO single part's internal integration Φ
+    exceeds the composed min-cut MI — i.e. the cross-faculty coupling channel must
+    be the cheapest cut.
+    - H_1404 affect×ethics 🟢 (both parts LOW-Φ → coupling is the only cut).
+    - H_1407 cerebellum×basal 🟢 (cerebellum HIGH-Φ≈3.48 but the composed min-cut
+      isolates a single basal unit cheaper than crossing the cerebellum block →
+      coupling still wins → Φ-composes).
+    - H_1405 memory×ToM 🧱 (ToM HIGH-Φ≈1.975 so internally integrated that any
+      min-cut crossing it costs more than the coupling → max(parts) wins → BLOCKS).
+  THE DECISIVE UNTESTED CASE = TWO HIGH-Φ faculties. Does mutual domination BLOCK
+  composition (like H_1405), or does the coupling still find a cheaper composed cut
+  (like H_1407)? PAIR = SPATIAL-MAP (H_1296, a richly-integrated metric 2-D cognitive
+  map) × HIERARCHICAL-PFC (H_1294, a richly-integrated sequential goal→subgoal
+  controller). Both are expected HIGH individual-Φ. This DIRECTLY tests the refined
+  NECESSARY condition. We MEASURE frozen-first; we do NOT assume.
+
+THE PAIR (each reuses its OWN H_1296 / H_1294 mirror substrate).
+  SPATIAL-MAP (H_1296 SpatialMap): landmarks stored AT 2-D positions; the relational
+    query "is landmark X nearer to A or to B?" is answered by Euclidean distance.
+    spatial-alone DECISION read: it is RELIABLE when the relational metric margin
+    |d(X,A) − d(X,B)| is large (clear nearer landmark); near a tie it is ~chance.
+  HIERARCHICAL-PFC (H_1294 HierGoalStack): a 2-level goal STACK {top goal, ordered
+    subgoal list, pointer p} with completion-triggered ADVANCE. pfc-alone DECISION
+    read: it is RELIABLE when the current-subgoal alignment margin (cue-vs-pointer
+    cosine, the ordered-plan signal) is large; near its alignment threshold ~chance.
+
+DECISION TASK. Binary: PICK-FIRST(1) vs PICK-SECOND(0) — a shared binary readout over
+two ordered candidate options. Each item has a ground-truth correct option. Built so
+the spatially-nearer option and the next-in-plan option sometimes AGREE and sometimes
+CONFLICT. SOME items are decided by metric/relational spatial reasoning (which option
+is nearer landmark X), SOME by ordered goal-sequence execution (which option is the
+next grounded subgoal in the plan).
+
+ITEM FAMILIES (jittered with AMBIG_NOISE so NO family is perfectly reliable — a clean
+per-family certainty would make oracle≡1 & compose≡oracle a hand-built artifact):
+  (F1) SPATIAL-DECISIVE — the relational metric margin is clear (spatial map picks the
+       nearer option = correct), the PFC alignment margin sits near its threshold
+       (~chance).
+  (F2) PFC-DECISIVE — the ordered-plan alignment margin is clear (PFC picks the next
+       grounded subgoal = correct), the spatial metric margin is near a tie (~chance).
+  (F3) AGREE — both lean the same correct way (redundant region).
+  (F4) CONFLICT (spatial right) — faculties OPPOSE; the metric is correct (nearer
+       option) but the PFC alignment favors the other option.
+  (F5) ADVERSARIAL CONFLICT (PFC right, spatial LOUDER-but-wrong) — anti-gift control:
+       faculties OPPOSE, PFC is correct (next-in-plan), BUT the spatial map reports a
+       VERY large metric margin for the WRONG option (a clear-LOOKING but mis-placed
+       landmark → spatial votes confidently-and-wrong). A naive "trust the louder
+       faculty" arbiter FOLLOWS the spatial map and is WRONG.
+Mixed so NO single faculty solves all → best_single < oracle iff complementary.
+  90 items/family × 3 seeds [4900,4901,4902] → 450 items/seed.
+
+ARBITER. Each faculty's vote weighted by its OWN scale-relative confidence
+(conf / that-faculty's-mean-conf) — the H_1397/H_1401 commensurability fix so the two
+confidences (different scales) are comparable. The more-relatively-confident faculty's
+vote wins. NO hardcoded "spatial wins"/"pfc wins" priority (a_autonomy_over_hardcode).
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN CAPABILITY BARS (NOT moved after scoring):
+  B1 COMPOSE-EFFECT : acc_compose >= best_single + 0.05
+  B2 ORACLE         : (oracle − best_single) > 0.02
+  B3 EARNED (p6)    : (acc_compose − acc_shuffle) > 0.02
+  B4 p6 GUARD       : structural audit finds NO injected answer/persona/
+                      system-prompt/RLHF/priority label (6/6 surfaces clean)
+  decomposition     : only_spatial > 0 AND only_pfc > 0  ⇒ SEPARABLE not subsumed
+  COMPOSE_DELTA=0.05  ORACLE_MARGIN=0.02  SHUFFLE_TOL=0.02
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN Φ BARS (faithful IIT4, exact MIP-EI, n≤8 — a_phi_iit4_tool HARD rule, NEVER a
+proxy; run REGARDLESS of capability — the LAW is the point):
+  Φ measured by stdlib/consciousness/iit4/faithful_phi.hexa over n×T substrate
+  trajectories DERIVED from the faculties' ACTUAL update rules (Python computes NO Φ).
+  FOUR systems:
+    S_spatial      n=4 spatial units (metric_margin, landmark_density, recall_error, query_novelty)
+    S_pfc          n=4 pfc units     (align_margin, pointer_progress, ground_margin, out_of_order_pressure)
+    S_composed     n=8 the two blocks COUPLED through the substrate arbiter
+    S_disconnected n=8 the two blocks evolving INDEPENDENTLY (coupling REMOVED)
+  Bφ1 INTEGRATION-RAISES-Φ : Φ_composed > max(Φ_spatial, Φ_pfc) + 0.02
+  Bφ2 EARNED (coupling)    : Φ_composed > Φ_disconnected + 0.02
+  Bφ3 control sane         : Φ_disconnected ≤ max(parts) + 0.02
+  Binning-invariance reported across n_bins ∈ {8,12,16,24}; FROZEN PRIMARY = n_bins=16.
+  REPORT EXPLICITLY (the refined-law discriminator): Φ_spatial, Φ_pfc, the composed
+  MIP cut (which units it isolates), AND whether max(parts) EXCEEDS the composed
+  min-cut MI. If max(parts) > composed cut → BLOCK (like H_1405); if the coupling
+  finds a cheaper cut → COMPOSE (like H_1407). EITHER LANDING IS A REAL RESULT that
+  sharpens the law.
+
+DEGENERACY GUARD (c9, from H_1407): if any faculty's Φ-trajectory units go CONSTANT
+(near-zero variance → spurious Φ=0), FLAG it verbatim — do NOT let it fake a Φ=0.
+
+3 seeds, deterministic (run1==run2 verified both legs). $0 CPU. p7/c9. NO bar moved.
+================================================================================

@@ -1,0 +1,44 @@
+=== H_1409 lane-composition FAITHFUL IIT4 Φ (spatial-map × hier-PFC) — stdlib exact MIP-EI, n<=8 ===
+engine: stdlib/consciousness/iit4/faithful_phi.hexa  (a_phi_iit4_tool — NOT a proxy)
+state file: /tmp/h1409_states.txt
+DECISIVE LAW TEST: TWO HIGH-Φ structured subsystems — do they mutually BLOCK (H_1405)
+or does the coupling find a cheaper composed cut (H_1407)? Refined min-cut-MI law.
+
+--- FROZEN PRIMARY n_bins=16 (terminal Φ verdict) ---
+  [spatial_s4900]  n=4 T=96  faithful_Φ=3.360662
+  [pfc_s4900]  n=4 T=96  faithful_Φ=0.953215
+  [composed_s4900]  n=8 T=96  faithful_Φ=1.989464
+  [disconnected_s4900]  n=8 T=96  faithful_Φ=1.902091
+  [spatial_s4901]  n=4 T=96  faithful_Φ=3.318900
+  [pfc_s4901]  n=4 T=96  faithful_Φ=0.764994
+  [composed_s4901]  n=8 T=96  faithful_Φ=1.958137
+  [disconnected_s4901]  n=8 T=96  faithful_Φ=1.894082
+  [spatial_s4902]  n=4 T=96  faithful_Φ=3.018717
+  [pfc_s4902]  n=4 T=96  faithful_Φ=0.657159
+  [composed_s4902]  n=8 T=96  faithful_Φ=1.833866
+  [disconnected_s4902]  n=8 T=96  faithful_Φ=1.679288
+
+=== MEAN faithful Φ over 3 seeds (n_bins=16) ===
+  Φ_spatial      = 3.232760   (n=4, metric 2-D map)
+  Φ_pfc          = 0.791790   (n=4, ordered goal stack)
+  Φ_composed     = 1.927156   (n=8, coupled)
+  Φ_disconnected = 1.825153   (n=8, coupling removed — EARNED control)
+  max(parts)     = 3.232760
+  composed MIP cut: A={0,1,2,3,4,6,7} | B={5}  cut=1.833866  /min|side|=1  =Φ1.833866
+  REFINED-LAW DISCRIMINATOR: max(parts)=3.232760 vs composed Φ(=min-cut MI)=1.927156
+    → if max(parts) > composed cut ⇒ BLOCK (H_1405-style); else COMPOSE (H_1407-style).
+
+=== FROZEN bars (n_bins=16) ===
+  Bφ1 INTEGRATION-RAISES-Φ  Φ_composed > max(parts)+0.02 : 1.927156 > 3.252760  => FAIL
+  Bφ2 EARNED (coupling)     Φ_composed > Φ_disc+0.02      : 1.927156 > 1.845153  => PASS
+  Bφ3 control sane          Φ_disc ≤ max(parts)+0.02      : 1.825153 ≤ 3.252760  => PASS
+
+VERDICT: 🧱 NO-Φ-LIFT — the TWO-HIGH-Φ pair BLOCKS: one part's internal integration exceeds the composed min-cut MI (H_1405-style mutual domination; an honest, valid result; c9). REFINED min-cut-MI law CONFIRMED.
+
+--- BINNING-INVARIANCE SWEEP (n_bins ∈ {8,12,16,24}; primary=16) ---
+  n_bins= 8 : Φ_sp=0.956916 Φ_pf=0.413632 Φ_cmp=0.893250 Φ_dis=0.894852 max(parts)=0.956916 → Bφ1 FAIL
+  n_bins=12 : Φ_sp=2.079910 Φ_pf=0.547978 Φ_cmp=1.386513 Φ_dis=1.291568 max(parts)=2.079910 → Bφ1 FAIL
+  n_bins=16 : Φ_sp=3.232760 Φ_pf=0.791790 Φ_cmp=1.927156 Φ_dis=1.825153 max(parts)=3.232760 → Bφ1 FAIL  [FROZEN BAR]
+  n_bins=24 : Φ_sp=5.286076 Φ_pf=1.041575 Φ_cmp=2.903962 Φ_dis=2.501783 max(parts)=5.286076 → Bφ1 FAIL
+
+=== H_1409 faithful Φ measurement complete (a_phi_iit4_tool) ===

@@ -1,0 +1,38 @@
+================================================================================
+H_1409 — BRAIN-LANE COMPOSE: spatial-map (H_1296) × hierarchical-pfc (H_1294)
+  DIRECTIONAL numpy mirror · $0 CPU · 3 seeds · p7 · LIVE CORE/*.hexa UNTOUCHED
+  bars: COMPOSE_DELTA=0.05 ORACLE_MARGIN=0.02 SHUFFLE_TOL=0.02
+================================================================================
+  seed 4900 (n=450): sp=0.718 pf=0.709 best=0.718 compose=0.773 shuf=0.531 oracle=1.000 | conflict=0.573 [onlySP=0.291 onlyPF=0.282 both=0.427 neither=0.000]
+  seed 4901 (n=450): sp=0.684 pf=0.707 best=0.707 compose=0.773 shuf=0.551 oracle=1.000 | conflict=0.609 [onlySP=0.293 onlyPF=0.316 both=0.391 neither=0.000]
+  seed 4902 (n=450): sp=0.698 pf=0.691 best=0.698 compose=0.782 shuf=0.513 oracle=0.998 | conflict=0.607 [onlySP=0.307 onlyPF=0.300 both=0.391 neither=0.002]
+--------------------------------------------------------------------------------
+MEAN (3 seeds):
+  acc_spatial    = 0.7000
+  acc_pfc        = 0.7022
+  best_single    = 0.7074
+  acc_compose    = 0.7763
+  acc_shuffle    = 0.5319
+  ORACLE         = 0.9993   (oracle − best = +0.2919)
+  conflict_rate  = 0.5963
+  decomposition  : only_spatial=0.2970 only_pfc=0.2993 both=0.4030 neither=0.0007
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.7763 >= best 0.7074+0.05 (0.7574) : PASS
+  (B2 ORACLE)         oracle−best +0.2919 > 0.02 : PASS
+  (B3 EARNED)         compose−shuffle +0.2444 > 0.02 : PASS
+  (B4 p6 GUARD)       no injected answer/persona/priority label : PASS
+        p1 system prompt      : clean
+        p2 identity rule      : clean
+        p3 persona            : clean
+        p4 assistant frame    : clean
+        p6 RLHF/pref label    : clean
+        hardcoded priority    : clean
+================================================================================
+VERDICT: 🟢 COMPOSE-LIFT
+READING: spatial-map + hierarchical-pfc are COMPLEMENTARY and compose to a NET LIFT — integration raises capability. The substrate-weighted arbiter (scale-relative confidence, NO hardcoded priority) captures the oracle headroom; shuffle collapses (earned, p6). → names an engine-native §compose follow-on.
+SUBSUMPTION PROBE: SEPARABLE — each faculty uniquely solves items the other misses (only_spatial=0.297 > 0 AND only_pfc=0.299 > 0). genuinely complementary signals.
+  HONEST (c9, a_scale_honest_scope/a_toy_scale_recheck): DIRECTIONAL numpy mirror; toy
+  synthetic 5-family fixture, 3 seeds, deterministic readouts (tests COMPOSITION STRUCTURE,
+  not a trained integrator). LIVE CORE/*.hexa UNTOUCHED. Scale/real-corpus/engine-native
+  transfer UNVERIFIED. NO bar moved post-hoc.
+================================================================================
