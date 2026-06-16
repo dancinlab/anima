@@ -5161,3 +5161,17 @@ pub fn jamo_head_argmax(jh: JamoHead, feat: [float]) -> int {
     }
     return best
 }
+
+// jamo_head_recon_err — the SUBSTRATE-DERIVED CONFIDENCE signal for the count-head consult (H_1396
+// compose). For a unit/jamo-space context feature, returns the L2 recon-error to the cell that OWNS
+// `feat` (the engine's OWN vadapt_field_recon_err over the head's grown centers). LOWER recon-err ⇒
+// the live context sits CLOSER to a grown cell ⇒ this faculty is MORE GROUNDED on this context ⇒ it
+// should "speak louder" in a composition. This is the engine's OWN winner-take-all geometry surfaced
+// as a confidence margin (the SAME distance jamo_head_argmax's owner is chosen by), NOT a hand-set
+// priority constant (a_autonomy_over_hardcode). Returns a large sentinel (1e9) if the head is empty,
+// so an empty faculty has ZERO confidence and never wins a compose. Pure read; never touches Ψ.
+pub fn jamo_head_recon_err(jh: JamoHead, feat: [float]) -> float {
+    if len(jh.heads) == 0 { return 1000000000.0 }
+    let af = _jh_field(jh.centers, len(jh.centers))
+    return vadapt_field_recon_err(af, feat)
+}

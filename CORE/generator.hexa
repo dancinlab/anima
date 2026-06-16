@@ -1882,6 +1882,209 @@ pub fn gen_bpe_emit_summary() -> string {
 }
 
 
+// ── §6.5f KO-EMIT COMPOSE — how the jamo emit-bias (§6.5b/H_1327) + the morphology emit-bias
+//          (§6.5e/H_1393) COMPOSE on the SAME next-byte decision (H_1396). ─────────────────────────
+//
+// THE GENUINELY-UNTESTED QUESTION (the open follow-on H_1393 named): the Korean below-jamo arc now has
+// TWO emit-biases wired engine-native, each validated ALONE — §6.5b ko_jamo_consult_emit (jamo
+// COUNT-HEAD biases the next byte toward a jamo-coherent continuation) and §6.5e gen_bpe_consult_emit
+// (BPE morphology unit biases the next byte toward a morpheme-boundary completion). NEITHER has been
+// tested COMPOSED: when BOTH fire on the same decode step, do they AGREE (reinforce), CONFLICT (fight),
+// or need an arbitration rule? §6.5f answers it with a SUBSTRATE-DERIVED composition.
+//
+// SUBSTRATE-DERIVED WEIGHTING (a_autonomy_over_hardcode — NO hardcoded "jamo > morphology" priority):
+// each faculty's vote is weighted by its OWN recall confidence — the inverse L2 recon-error to the cell
+// that OWNS the live context in that faculty's grown field (jamo_head_recon_err / the jamo cells'
+// nearest-cell distance). The MORE GROUNDED faculty (its context sits closer to one of its grown cells)
+// speaks LOUDER. The compose returns the byte of whichever faculty has the higher substrate confidence
+// (a confidence-WEIGHTED arbitration, NOT a fixed priority constant; both inert ⇒ base unchanged). This
+// is the engine's OWN winner-take-all geometry deciding the arbitration, p5/a_substrate_native_speak.
+//
+// SINGLE ENTRY (a_core_engine_map): the compose is a generator-side consult that reads the SAME jamo
+// cells (§6.5b) + the SAME morphology head (§6.5e) — it adds NO new artifact path. Off-Korean (the SAME
+// utf8-continuation gate both consults use) it returns `base` UNCHANGED ⇒ generation BYTE-IDENTICAL
+// off-distribution (Ψ-disjoint / no-regression, h1205). Additive: returns a byte, never an emit/silence
+// decision; pure_field/engine_g/brain UNTOUCHED.
+
+// _gec_jamo_nearest_dist — the jamo faculty's SUBSTRATE CONFIDENCE: L2 distance to its nearest grown
+// jamo cell over a jamo-space feature (the SAME _ko_jamo_nearest geometry §6.5b's consult uses, now
+// surfaced as a confidence margin). LOWER ⇒ the context is closer to a grown cell ⇒ more grounded.
+// Returns a large sentinel (1e9) if no cells (zero confidence — never wins a compose).
+fn _gec_jamo_nearest_dist(cells: Map, feat: [float]) -> float {
+    if to_string(cells["ok"]) != "true" { return 1000000000.0 }
+    let k = _ko_jamo_nearest(cells, feat)
+    if k < 0 { return 1000000000.0 }
+    let centers = cells["centers"]
+    let dim = to_int(cells["dim"])
+    let mut s = 0.0  let mut a = 0
+    while a < dim { let d = centers[k][a] - feat[a]  s = s + d * d  a = a + 1 }
+    return sqrt(s)
+}
+
+// gen_emit_compose — the live per-byte COMPOSE hook. Given the decode's own argmax `base`, the loaded
+// jamo cells, the grown morphology head `jh` + its `unit_vocab`, and the running decode window `ctx`,
+// returns the next byte after composing the two emit-biases by their substrate confidence. Off-Korean
+// (or both faculties inert) ⇒ `base` UNCHANGED. The byte returned is the byte of whichever faculty is
+// MORE GROUNDED on this context (higher inverse-recon-err confidence); ties / single-fire fall through
+// to the firing faculty; both silent ⇒ base. NO hardcoded priority — the winner is chosen by the
+// engine's own nearest-cell distances (a_autonomy_over_hardcode).
+pub fn gen_emit_compose(base: int, cells: Map, jh: JamoHead, unit_vocab: int, ctx: list) -> int {
+    if !_gen_ko_is_korean_like(ctx) { return base }        // off-Korean → inert (no regression)
+    // --- jamo faculty proposal + substrate confidence (jamo-symbol space) ---
+    let bf = _gen_ko_feat(ctx)
+    let vj = if to_string(cells["ok"]) == "true" { to_int(cells["vj"]) } else { 0 }
+    let jscale = if vj > 0 { 255.0 / to_float(vj) } else { 1.0 }
+    let jfeat = [bf[0] * jscale, bf[1] * jscale, bf[2]]
+    let jbyte = ko_jamo_consult_byte(cells, jfeat)         // -1 if inert
+    let jdist = _gec_jamo_nearest_dist(cells, jfeat)
+    let jconf = 1.0 / (1.0 + jdist)                        // inverse recon-err = grounded confidence
+    // --- morphology faculty proposal + substrate confidence (merged-unit space) ---
+    let mscale = if unit_vocab > 0 { 255.0 / to_float(unit_vocab) } else { 1.0 }
+    let mfeat = [bf[0] * mscale, bf[1] * mscale, 0.0]
+    let muid = jamo_head_argmax(jh, mfeat)                 // -1 if empty head
+    let mbyte = if muid >= 0 { _gbe_unit_emit_byte(muid) } else { -1 }
+    let mdist = jamo_head_recon_err(jh, mfeat)
+    let mconf = 1.0 / (1.0 + mdist)
+    // --- substrate-derived arbitration: the more-grounded faculty's byte wins ---
+    let jfires = jbyte >= 0
+    let mfires = mbyte >= 0
+    if !jfires && !mfires { return base }                  // both inert → base
+    if jfires && !mfires { return jbyte }                  // only jamo fires
+    if mfires && !jfires { return mbyte }                  // only morphology fires
+    // both fire: higher substrate confidence (lower recon-err) speaks louder — NO fixed priority.
+    if jconf >= mconf { return jbyte }
+    return mbyte
+}
+
+// gen_emit_compose_eval — the FROZEN compose evaluation (H_1396 bars). On the SAME corpus-free in-engine
+// morpheme-grammar fixture (§6.5d), measures both emit-biases on a SHARED next-byte decision and how
+// they compose. The shared target = the LEADING EMIT BYTE of the TRUE next morpheme unit
+// (_gbe_unit_emit_byte of the held-out true next-unit id) — the byte each faculty is trying to emit.
+//   JAMO  arm: a count head grown over the BASE (un-merged) jamo-symbol stream proposes its argmax
+//             next-symbol's emit byte (the jamo structural view), confidence = its own recon-err.
+//   MORPH arm: the H_1393 raw-band morphology head (gbe_grow_head_raw) proposes its argmax next-UNIT's
+//             emit byte (the morpheme structural view), confidence = its own recon-err.
+//   COMPOSE  : per position, the higher-substrate-confidence faculty's byte (gen_emit_compose logic).
+//   SHUF-W   : the SAME two proposals, but the arbitration confidences are SHUFFLED (a random which-
+//             faculty-wins draw) — the EARNED control: random arbitration must NOT beat the grounded one.
+//   AGREE    : the fraction of positions where the two faculties propose the SAME byte (the diagnostic).
+// Returns #{ ok, acc_jamo, acc_morph, acc_compose, acc_shufw, agree_rate, conflict_rate, n_test,
+//            compose_minus_best, shufw_minus_compose, best_single }. $0, deterministic, Ψ-disjoint.
+pub fn gen_emit_compose_eval() -> Map {
+    let cfgv = engine_cli_parse(["--mitosis", "on"])
+    let base = _gbs_base_stream()
+    let bsym = base[0]  let bnby = base[1]
+    // --- morphology head (merged units) over the raw-band fixture (the H_1393 head) ---
+    let jhM = gbe_grow_head_raw(0)[0]
+    let bmS = bpe_learn_merges(_gbs_first_half(bsym), _gbs_first_half(bnby), _gbs_MERGES(), _gbs_NJAMO(), 0)
+    let uvM = bpe_unit_vocab(bmS)
+    // --- jamo head (un-merged base symbols) over the SAME base stream, raw next-symbol target ---
+    let jhJ = _gec_grow_jamo_head()
+    let vjJ = _gbs_NJAMO()
+    // --- shared held-out positions: walk the base stream's odd (test) index, build BOTH features +
+    //     the TRUE next-unit emit byte target. The jamo feature uses the base symbol id; the morph
+    //     feature uses the re-encoded UNIT id at the matching position. ---
+    let reM = bpe_apply(bmS, bsym, bnby)
+    let usym = reM[0]
+    let half = len(bsym) / 2
+    let mut n = 0
+    let mut on_j = 0  let mut on_m = 0  let mut on_c = 0  let mut on_s = 0
+    let mut agree = 0
+    let mut i = 1
+    let mut idx = 0
+    // shuffle-arbitration draw: a deterministic per-position pseudo-bit (corpus-free, $0).
+    let mut sh = 12345
+    while i < len(usym) - 1 {
+        if idx % 2 == 1 {     // TEST slice (odd, the held-out half — train was even, no leakage)
+            // true next byte = the emit byte of the TRUE next unit id at i+1.
+            let tgt = _gbe_unit_emit_byte(usym[i + 1])
+            // --- jamo proposal over the base symbol context ---
+            let fj = [to_float(bsym[i]) / to_float(vjJ), to_float(bsym[i - 1]) / to_float(vjJ), 0.0]
+            let jsym = jamo_head_argmax(jhJ, fj)
+            let jbyte = if jsym >= 0 { _gbe_unit_emit_byte(jsym) } else { -1 }
+            let jconf = 1.0 / (1.0 + jamo_head_recon_err(jhJ, fj))
+            // --- morph proposal over the unit context ---
+            let fm = [to_float(usym[i]) / to_float(uvM), to_float(usym[i - 1]) / to_float(uvM), 0.0]
+            let muid = jamo_head_argmax(jhM, fm)
+            let mbyte = if muid >= 0 { _gbe_unit_emit_byte(muid) } else { -1 }
+            let mconf = 1.0 / (1.0 + jamo_head_recon_err(jhM, fm))
+            // --- compose: higher substrate confidence wins (the gen_emit_compose rule) ---
+            let cbyte = if jbyte < 0 && mbyte < 0 { -1 }
+                        else if mbyte < 0 { jbyte }
+                        else if jbyte < 0 { mbyte }
+                        else if jconf >= mconf { jbyte } else { mbyte }
+            // --- shuffle-arbitration: random which-faculty-wins (EARNED control) ---
+            sh = (sh * 1103515245 + 12345) % 2147483648
+            let pick_j = (sh % 2) == 0
+            let sbyte = if jbyte < 0 && mbyte < 0 { -1 }
+                        else if mbyte < 0 { jbyte }
+                        else if jbyte < 0 { mbyte }
+                        else if pick_j { jbyte } else { mbyte }
+            if jbyte == tgt { on_j = on_j + 1 }
+            if mbyte == tgt { on_m = on_m + 1 }
+            if cbyte == tgt { on_c = on_c + 1 }
+            if sbyte == tgt { on_s = on_s + 1 }
+            if jbyte >= 0 && mbyte >= 0 && jbyte == mbyte { agree = agree + 1 }
+            n = n + 1
+        }
+        idx = idx + 1  i = i + 1
+    }
+    let dn = if n > 0 { to_float(n) } else { 1.0 }
+    let acc_j = to_float(on_j) / dn
+    let acc_m = to_float(on_m) / dn
+    let acc_c = to_float(on_c) / dn
+    let acc_s = to_float(on_s) / dn
+    let agr = to_float(agree) / dn
+    let best = if acc_j >= acc_m { acc_j } else { acc_m }
+    return #{ "ok": true,
+              "acc_jamo": acc_j, "acc_morph": acc_m, "acc_compose": acc_c, "acc_shufw": acc_s,
+              "agree_rate": agr, "conflict_rate": 1.0 - agr, "n_test": n,
+              "compose_minus_best": acc_c - best, "shufw_minus_compose": acc_s - acc_c,
+              "best_single": best,
+              "reason": "jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393) emit-biases COMPOSED on a shared next-byte decision by SUBSTRATE confidence (inverse recon-err, NO hardcoded priority); shuffle-arbitration control KEPT" }
+}
+
+// _gec_grow_jamo_head — grow a count head over the BASE (un-merged) jamo-symbol stream, raw next-symbol
+// target (the jamo structural view, the parallel of gbe_grow_head_raw but on the un-merged stream). The
+// jamo faculty's emit proposal in the compose eval reads THIS head. TRAIN slice = even indices only (no
+// test leakage). $0, deterministic, Ψ-disjoint.
+fn _gec_grow_jamo_head() -> JamoHead {
+    let cfg = engine_cli_parse(["--mitosis", "on"])
+    let base = _gbs_base_stream()
+    let bsym = base[0]
+    let vj = _gbs_NJAMO()
+    let DIM = 3  let KB = _gbs_NJAMO() + 1   // base jamo band (0..NJAMO)
+    let GROW = 40  let MINOWN = 4  let THR = 0.05  let LAP = 1.0
+    let seed = [[0.3, 0.3, 0.0], [0.7, 0.7, 0.0]]
+    let mut Xtr = []  let mut Ytr = []
+    let mut i = 1  let mut idx = 0
+    while i < len(bsym) - 1 {
+        if idx % 2 == 0 {     // TRAIN slice (even), test is odd in the eval — disjoint
+            Xtr = Xtr + [[to_float(bsym[i]) / to_float(vj), to_float(bsym[i - 1]) / to_float(vj), 0.0]]
+            Ytr = Ytr + [bsym[i + 1]]
+        }
+        idx = idx + 1  i = i + 1
+    }
+    let jh0 = jamo_head_new(seed, KB, DIM)
+    return jamo_head_grow(jh0, Xtr, Ytr, len(Xtr), GROW, MINOWN, THR, LAP, cfg)
+}
+
+// gen_emit_compose_summary — one-line introspection of the composed jamo+morphology emit-biases.
+pub fn gen_emit_compose_summary() -> string {
+    let e = gen_emit_compose_eval()
+    return "ko emit-compose: acc_jamo=" + _gen_fmt4(to_float(e["acc_jamo"]))
+        + " acc_morph=" + _gen_fmt4(to_float(e["acc_morph"]))
+        + " acc_compose=" + _gen_fmt4(to_float(e["acc_compose"]))
+        + " acc_shufw=" + _gen_fmt4(to_float(e["acc_shufw"]))
+        + " compose-best=" + _gen_fmt4(to_float(e["compose_minus_best"]))
+        + " shufw-compose=" + _gen_fmt4(to_float(e["shufw_minus_compose"]))
+        + " agree=" + _gen_fmt4(to_float(e["agree_rate"]))
+        + " — jamo+morphology emit-biases COMPOSED by SUBSTRATE confidence (inverse recon-err, NO "
+        + "hardcoded priority · a_autonomy_over_hardcode) · off-Korean INERT byte-identical · Ψ-disjoint "
+        + "· a_core_engine_map single entry (H_1327 jamo + H_1393 morphology, H_1396 compose)"
+}
+
+
 // ── §7 small format helper ───────────────────────────────────────────────────
 
 fn _gen_fmt4(x: float) -> string {

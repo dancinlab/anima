@@ -1,0 +1,60 @@
+H_1396 — KO-EMIT COMPOSE — composing jamo (§6.5b/H_1327) + morphology (§6.5e/H_1393) emit-biases
+FROZEN BEFORE MEASURING (c9, frozen-first, NO tune-to-green). $0 CPU, deterministic, engine-native.
+
+THE GENUINELY-UNTESTED QUESTION (the open follow-on H_1393 named): the Korean below-jamo arc has TWO
+emit-biases wired engine-native, each validated ALONE — §6.5b ko_jamo_consult_emit (jamo COUNT-HEAD
+biases next byte) + §6.5e gen_bpe_consult_emit (BPE morphology unit biases next byte). NEITHER has been
+tested COMPOSED: when BOTH fire on the same decode step, do they AGREE (reinforce), CONFLICT (fight), or
+need a PRIORITY/arbitration rule?
+
+SUBSTRATE-DERIVED WEIGHTING (a_autonomy_over_hardcode — the load-bearing design constraint): the
+arbitration weight is each faculty's OWN recall confidence = the inverse L2 recon-error to the cell that
+OWNS the live context in that faculty's grown field (jamo_head_recon_err / the jamo cells' nearest-cell
+distance). The MORE GROUNDED faculty (context closer to one of its grown cells) speaks LOUDER. The
+compose returns the byte of whichever faculty has the higher substrate confidence. This is NOT a
+hardcoded "jamo > morphology" constant — the engine's OWN winner-take-all geometry decides the winner.
+
+WIRING (single L3 slot, a_core_engine_map):
+- CORE/engine_cli.hexa § KO-MORPHOLOGY: NEW jamo_head_recon_err(jh, feat) — the substrate confidence
+  signal (L2 recon-err to the owning cell via the engine's own vadapt_field_recon_err).
+- CORE/generator.hexa §6.5f:
+  - _gec_jamo_nearest_dist(cells, feat) — the jamo faculty's nearest-cell distance (its confidence).
+  - gen_emit_compose(base, cells, jh, unit_vocab, ctx) — the live per-byte compose hook: off-Korean
+    inert (base unchanged, byte-identical); both fire ⇒ the higher-confidence faculty's byte wins.
+  - gen_emit_compose_eval() — the frozen compose evaluation on the SAME §6.5d corpus-free in-engine
+    morpheme-grammar fixture, shared target = the leading emit byte of the TRUE next morpheme unit.
+  - _gec_grow_jamo_head() — the jamo arm head (un-merged base symbols, TRAIN=even, test=odd, disjoint).
+  - gen_emit_compose_summary().
+
+FROZEN BARS (pre-registered; the eval returns acc_jamo/acc_morph/acc_compose/acc_shufw/agree_rate):
+(1) COMPOSE-EFFECT — the substrate-confidence composition does NOT DEGRADE vs the better single bias:
+    acc_compose >= best_single - 0.01   (best_single = max(acc_jamo, acc_morph)).
+    [direction: composition must be at least as good as the better faculty alone; the -0.01 slack
+     absorbs the discrete byte-tie / single-fire fallthrough, NOT a tuned threshold.]
+(2) AGREE-vs-CONFLICT diagnostic (HONEST, NON-GATING): report agree_rate (fraction of shared positions
+    where the two faculties propose the SAME byte) + conflict_rate = 1 - agree_rate. NO threshold — this
+    is the interesting diagnostic: high agree ⇒ composition is easy (reinforce); low agree ⇒ the
+    confidence-weighting is doing real arbitration work (the faculties genuinely conflict).
+(3) EARNED — the SUBSTRATE-confidence arbitration is NOT generic averaging: a SHUFFLED (random which-
+    faculty-wins) arbitration does NOT beat the substrate-confidence compose:
+    acc_shufw <= acc_compose + 0.01   (the random-arbitration control does not match/beat grounded).
+    [if shuffle-arbitration ties/beats the grounded one, the win is NOT the grounded-confidence
+     structure — honest 🧱, the faculties are not complementary at this granularity under this rule.]
+(4) Ψ-SAFE / NO-REGRESSION (load-bearing — touches decode): on an ASCII (non-Korean) context the
+    compose hook returns the caller's own base byte UNCHANGED (byte-identical off-distribution); on a
+    Korean-like context the compose FIRES (returns a multibyte leading byte >= 0xE1). PLUS the external
+    guards: h1205 separation-invariant PASS (generation byte-identical ON==OFF, Ψ Φ-checksum
+    byte-identical), engine_cli_smoke green, h1196 single-entry 7/0, h1164 Ψ guard PASS.
+
+VERDICT RULE:
+🟢 COMPOSES-CLEANLY iff bar1 (compose >= best - 0.01) AND bar3 (shuffle does NOT beat compose) AND bar4
+   (Ψ-safe / no-regression). bar2 reports the agree/conflict diagnostic regardless.
+🧱/🟠 CONFLICT-OR-DEGRADES iff bar1 fails (compose degrades below the better single) OR bar3 fails
+   (random arbitration matches/beats the substrate-confidence one) — report the verbatim closed-negative,
+   do NOT force a green. The faculties are then not complementary at this granularity under this rule.
+
+HONEST SCOPE: corpus-free in-engine morpheme-grammar fixture (§6.5b/§6.5c/§6.5d discipline), structural
+/probe-level (not a fluency claim), absolute accuracies low — load-bearing is the RELATIVE structure
+(compose vs best-single, shuffle collapse) + the agree/conflict diagnostic. Scale/real-corpus/live-
+decode-loop emit-priority wiring = follow-ons (a_scale_honest_scope · a_toy_scale_recheck).
+NO bar moved after measuring (frozen-first).
