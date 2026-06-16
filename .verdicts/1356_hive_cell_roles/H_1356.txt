@@ -1,0 +1,66 @@
+H_1356 hive-cell ROLES: 공유세포 (SHARED) ⊥ 연결세포 (CONNECTOR) — faithful-IIT4 collective-Φ
+N_TOT=8 d0=[0, 1] d1=[2, 3] connector=4 pad=[5, 6, 7] dim=8 ticks=64 seeds=[1317, 1318, 1319]
+W_CONN=0.6  faithful IIT4 Φ (exact MIP-EI, n<=8); MARGIN=0.02 TOL=0.02
+====================================================================================
+  seed 1317     A_single: Φ=1.70057
+  seed 1317  B_redundant: Φ=12.4018
+  seed 1317  B_connector: Φ=7.58272
+  seed 1317     W0_floor: Φ=12.4018
+  seed 1317      SHUFFLE: Φ=8.18063
+------------------------------------------------------------------------------------
+  seed 1318     A_single: Φ=1.41345
+  seed 1318  B_redundant: Φ=6.94639
+  seed 1318  B_connector: Φ=4.44225
+  seed 1318     W0_floor: Φ=6.94639
+  seed 1318      SHUFFLE: Φ=4.46431
+------------------------------------------------------------------------------------
+  seed 1319     A_single: Φ=2.01844
+  seed 1319  B_redundant: Φ=12.2284
+  seed 1319  B_connector: Φ=7.23291
+  seed 1319     W0_floor: Φ=12.2284
+  seed 1319      SHUFFLE: Φ=6.86977
+------------------------------------------------------------------------------------
+====================================================================================
+R1 CONNECTOR-LIFT  (Φ(B_connector) − Φ(W0_floor)    >= 0.02 EVERY seed): FAIL
+     seed 1317: Φ_conn=7.58272 Φ_floor=12.4018 lift=-4.8191  FAIL
+     seed 1318: Φ_conn=4.44225 Φ_floor=6.94639 lift=-2.5041  FAIL
+     seed 1319: Φ_conn=7.23291 Φ_floor=12.2284 lift=-4.9955  FAIL
+R2 BEATS-REDUNDANT (Φ(B_connector) − Φ(B_redundant) >= 0.02 EVERY seed) [H_1350-escape]: FAIL
+     seed 1317: Φ_conn=7.58272 Φ_redund=12.4018 gap=-4.8191  FAIL
+     seed 1318: Φ_conn=4.44225 Φ_redund=6.94639 gap=-2.5041  FAIL
+     seed 1319: Φ_conn=7.23291 Φ_redund=12.2284 gap=-4.9955  FAIL
+R3 EARNED          (Φ(SHUFFLE) <= Φ(W0_floor) + 0.02 EVERY seed): PASS
+     seed 1317: Φ_shuffle=8.18063 Φ_floor=12.4018  PASS
+     seed 1318: Φ_shuffle=4.46431 Φ_floor=6.94639  PASS
+     seed 1319: Φ_shuffle=6.86977 Φ_floor=12.2284  PASS
+VERDICT: CONNECTOR_NULL  (R1 0/3, R2 0/3, R3 3/3)
+
+RESULT_JSON={"id": "H_1356", "slug": "hive-cell-roles", "verdict": "CONNECTOR_NULL", "seeds": [1317, 1318, 1319], "N_tot": 8, "d0": [0, 1], "d1": [2, 3], "connector": 4, "pad": [5, 6, 7], "dim": 8, "ticks": 64, "W_conn": 0.6, "margin": 0.02, "tol": 0.02, "phi_faithful_iit4": {"1317": {"A_single": 1.70057, "B_redundant": 12.4018, "B_connector": 7.58272, "W0_floor": 12.4018, "SHUFFLE": 8.18063}, "1318": {"A_single": 1.41345, "B_redundant": 6.94639, "B_connector": 4.44225, "W0_floor": 6.94639, "SHUFFLE": 4.46431}, "1319": {"A_single": 2.01844, "B_redundant": 12.2284, "B_connector": 7.23291, "W0_floor": 12.2284, "SHUFFLE": 6.86977}}, "bars": {"R1_connector_lift": false, "R2_beats_redundant": false, "R3_earned": true}, "r1_per_seed": {"1317": false, "1318": false, "1319": false}, "r2_per_seed": {"1317": false, "1318": false, "1319": false}, "r3_per_seed": {"1317": true, "1318": true, "1319": true}, "phi_engine": "hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (exact MIP-EI, n<=8)"}
+
+=== HONEST READING (c9 / a_break_the_wall — a real attempt, an honest wall) ===
+VERDICT: 🧱 CONNECTOR_NULL — the 연결세포 (CONNECTOR cell) does NOT escape redundancy-dominance.
+It does WORSE than the floor: the active connector hub LOWERS collective faithful-Φ below the
+W=0 redundancy floor on ALL 3 seeds (lift −4.82 / −2.50 / −5.00), deterministic.
+
+WHY (mechanism, faithful-MIP lens): the SHARED 공유세포 founder input ALREADY drives a HIGH
+collective Φ (B_redundant === W0_floor = 12.40 / 6.95 / 12.23) purely as shared-input REDUNDANCY
+— confirming H_1350's redundancy-dominance diagnosis with the EXACT MIP. Adding the connector
+hub's recurrent feedback HOMOGENIZES the daughter trajectories (each daughter is pulled toward the
+shared hub state), which the faithful MIP-EI reads as LESS irreducible (more reducible across the
+min-information-partition) → Φ DROPS. Integration-by-a-hub, in this leaky-linear substrate at this
+coupling, is REDUNDANCY-REDUCING, not integration-ADDING.
+
+R3 EARNED holds (PASS 3/3): SHUFFLE (connector reading random non-daughter pad sources) collapses
+to/below the floor too — so the connector wiring is doing SOMETHING real (not generic variance),
+it just does the WRONG thing (lowers Φ). The role structure is detected by the control; it simply
+fails to lift.
+
+KEY QUESTION ANSWERED: the connector cell INHERITS redundancy-dominance and DEGRADES it — it does
+NOT escape it. A dedicated integration hub with recurrent feedback is not the missing ingredient
+at this scale/substrate; the shared-input redundancy is both the source of the high Φ AND a ceiling
+that active between-daughter coupling cannot beat (it can only reduce, by homogenizing).
+
+NOTE (load-bearing): B_redundant and W0_floor are IDENTICAL by construction (both = no-connector
+shared-founder wiring) → identical Φ verbatim. This is the design point, not a bug: it shows the
+"redundancy floor" and the "redundant-copy arm" are the SAME object — there is no coupling to
+separate them, exactly H_1350's point that the redundant copies carry ~all the Φ with ZERO coupling.
