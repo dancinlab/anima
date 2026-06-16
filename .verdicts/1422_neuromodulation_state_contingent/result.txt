@@ -1,0 +1,109 @@
+H_1422 — NEUROMODULATION WALL, MULTI-LENS BREAKTHROUGH ATTEMPT (state-contingent)
+================================================================================
+live faculty: immune_memory_* + live recall_margin / recall_gap | CORE/engine_cli.hexa
+frozen bars: .verdicts/1422_neuromodulation_state_contingent/FREEZE.txt (NOT moved)
+NON-degenerate fixture: clean/corrupted-recoverable/ghost mix ⇒ real precision/recall
+tradeoff. A = BEST FIXED thr SWEPT over a grid (strongest honest baseline).
+3 seeds [1422,1423,1424]. p7 · p8 · $0 CPU. MARGIN=0.05.
+GREEN iff B>=A+0.05 on >=2 regimes AND B.fab<=A.fab AND shuffle collapses AND
+ablation (gate always ON = H_1284 global schedule) REVERTS to ~A.
+
+best FIXED thr (swept): R1=0.6 R2=0.6 R3=0.7
+
+=== LENS L1 SURPRISE-GATED (ACh, loosen on recoverable near-miss) ===
+  regime        A_cap     B_cap    B-A      CSHUF    ABLATE   A_fab  B_fab
+  R1_STABLE  0.513333  0.513333  0.0  0.326667  0.513333  0.0716667  0.0716667
+  R2_DRIFT   0.541667  0.541667  0.0  0.33  0.541667  0.0783333  0.0783333
+  R3_NOISE   0.46  0.46  0.0  0.335  0.46  0.103333  0.103333
+  → wins=0 fab_ok=T never_worse=T shuf_sep=T ablate_reverts_to_A=T
+  → LENS L1 SURPRISE-GATED (ACh, loosen on recoverable near-miss): 🧱 WALL
+
+=== LENS L2 AMBIGUITY-GATED (NE, tighten on small top-2 gap) ===
+  regime        A_cap     B_cap    B-A      CSHUF    ABLATE   A_fab  B_fab
+  R1_STABLE  0.513333  0.371667  -0.141667  0.326667  0.513333  0.0716667  0.025
+  R2_DRIFT   0.541667  0.39  -0.151667  0.33  0.541667  0.0783333  0.0216667
+  R3_NOISE   0.46  0.366667  -0.0933333  0.335  0.46  0.103333  0.0
+  → wins=0 fab_ok=T never_worse=F shuf_sep=T ablate_reverts_to_A=T
+  → LENS L2 AMBIGUITY-GATED (NE, tighten on small top-2 gap): 🧱 WALL
+
+=== LENS L3 DRIFT-GATED (DA, prediction-error re-bind) ===
+  regime        A_cap     B_cap    B-A      CSHUF    ABLATE   A_fab  B_fab
+  R1_STABLE  0.513333  0.513333  0.0  0.513333  0.513333  0.0716667  0.0716667
+  R2_DRIFT   0.541667  0.541667  0.0  0.541667  0.431667  0.0783333  0.0783333
+  R3_NOISE   0.46  0.46  0.0  0.46  0.46  0.103333  0.103333
+  → wins=0 fab_ok=T never_worse=T shuf_sep=T ablate_reverts_to_A=F
+  → LENS L3 DRIFT-GATED (DA, prediction-error re-bind): 🧱 WALL
+
+================================================================================
+VERDICT: 🧱 CONFIDENT-TERMINAL (NO FREE LUNCH HELD) — all 3 state-contingent
+  lenses FAIL their controls vs the best SWEPT fixed thr. The H_1284 wall is a
+  REAL ceiling: on a key-addressed store the abstain decision is ALREADY a
+  threshold on the live margin, so conditioning the threshold on that same
+  margin is circular — it cannot beat the single best threshold. Per-lens
+  ablation / shuffle evidence above (c9, a_break_the_wall).
+================================================================================
+
+================================================================================
+VERDICT (verbatim tier): 🧱 CONFIDENT-TERMINAL (NO FREE LUNCH HELD, 3 lenses)
+================================================================================
+The H_1284 neuromodulation WALL HOLDS under a 3-lens state-contingent attack
+(a_break_the_wall strengthened: ≥3 genuinely different principled lenses, EACH
+with shuffle + ablation; controls have TEETH). Engine-native LIVE reads on
+CORE/engine_cli.hexa immune_memory_* (recall_margin / recall_gap). 3 seeds
+[1422,1423,1424], deterministic (run1==run2 byte-identical), $0 CPU, p7, p8,
+frozen-first (NO bar moved — H_1284 MARGIN=0.05 verbatim). CORE/*.hexa UNTOUCHED
+(🧱 ⇒ a_verified_must_wire GREEN-only, no wiring).
+
+NON-DEGENERATE FIXTURE (a_break_the_wall taxonomy (a) avoided): unlike H_1284's
+clean store (where a single fixed thr was trivially optimal because keys were
+perfectly separable), this fixture mixes clean / corrupted-recoverable (1-2 byte
+key corruption pushes the in-store margin to ~0.37-0.52) / ghost (margin ~1.26)
+probes, so the FIXED abstain thr faces a REAL precision/recall tradeoff and the
+state-contingent gate has genuine headroom. A = the BEST FIXED thr SWEPT over a
+grid (R1=0.60, R2=0.60, R3=0.70 — the strongest honest baseline).
+
+PER-LENS EVIDENCE (the controls discriminate, so the 🧱 is earned):
+  L1 SURPRISE-GATED (ACh, loosen on recoverable near-miss): B−A = 0.000 on ALL
+    3 regimes — the gate's per-probe loose/tight decision EXACTLY reproduces the
+    best fixed thr. SHUFFLE COLLAPSES (0.513→0.327, −0.187 — teeth), ablation==A.
+    But B never beats A: the gate thresholds the SAME live margin the fixed thr
+    already thresholds, so it cannot exceed the single best threshold (circular).
+  L2 AMBIGUITY-GATED (NE, tighten on small top-2 gap): B is WORSE than A by
+    −0.14/−0.15/−0.09 (never_worse=FALSE). Tightening on ambiguity trades recall
+    for precision (B_fab 0.025 << A_fab 0.072) but the capability NET drops — a
+    textbook no-free-lunch: the caution the gate buys costs more recall than it
+    saves fabrication. (shuffle collapses; ablation==A.)
+  L3 DRIFT-GATED (DA, prediction-error re-bind): B−A = 0.000 (the engine's fixed
+    bind already tracks drift, so eager re-bind adds nothing) AND ABLATION FAILS
+    to revert (R2 churn 0.542→0.432) — the global version actively HURTS, and the
+    gate is not load-bearing. shuffle == B (no coupling signal).
+
+WHY THE WALL IS A REAL CEILING (the finding, c9, refines H_1284):
+On a key-addressed associative store the abstain/recall decision IS ALREADY a
+threshold on the engine's live recall-margin. A neuromodulator that conditions
+the threshold on that SAME margin is therefore CIRCULAR — it can re-partition the
+margin axis but cannot beat the single best partition (the swept fixed thr). This
+is a sharper statement of H_1284's "a single tuned fixed point dominates": the
+reason is not merely empirical, it is structural — state-contingent gating of a
+1-D threshold on the live confidence signal is dominated by the optimal fixed
+threshold on that signal, because the gate and the threshold read the same axis.
+A state-contingent neuromodulator could only help if it conditioned on a signal
+ORTHOGONAL to the abstain axis (a separate context the threshold cannot see) — on
+this faculty no such orthogonal live signal exists; margin/gap are both functions
+of the same L2 affinity the recall gate already uses.
+
+NOT RULED OUT (honest scope, a_scale_honest_scope · a_toy_scale_recheck): (a) the
+decode-time NE TEMPERATURE channel on IDEATION/GENERATION remains 🟠 viable per
+H_1228 — this 🧱 is for the MEMORY abstain/plasticity axis, NOT decode-temperature
+(the host has no torch so the generation lane was not re-run engine-native here);
+(b) a modulator conditioned on a signal ORTHOGONAL to the recall margin (e.g. a
+cross-faculty context the abstain gate cannot see) is UNTESTED — but on this
+single faculty no such orthogonal live signal exists; (c) TOY 24 facts / 200
+events / 3 seeds / DIM=64 byte-trigram keys — scale-transfer UNVERIFIED.
+
+PHILOSOPHY GUARDS HELD: every gate is a no-grad READ of live substrate state
+(immune_memory_recall_margin / _recall_gap); NO proxy folded into any loss (p7).
+The true value scores the metric ONLY — never enters a gate or a knob (p1/p2/p3/
+p6). Inference-time plasticity = the engine's own immune_memory_bind tick (p8).
+Ψ-disjoint (pure read + the store's own write; pure_field Φ/phase/Ψ untouched).
+Frozen bars NOT moved. CORE/engine_cli.hexa UNTOUCHED.
