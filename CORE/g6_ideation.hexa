@@ -30,7 +30,7 @@
 // p1-p6 HELD: frames are environment context (p4), the measurable+claim MUST emerge from
 // the model's own sample (p7), no persona/identity/ethics injected (p1/p2/p3/p6).
 
-import "CORE/bytegpt_decode.hexa"
+import "CORE/clm_decode.hexa"
 
 // ── FROZEN DETECTOR sets (VERBATIM from H_1305/H_1362 — structural, NOT quality, p7) ──
 // COMPARATOR / MEASURABLE / STANCE word-sets, byte-for-byte the H_1305 frozen sets.
@@ -258,17 +258,13 @@ pub fn g6_frame_guard(frames: list, known: Map) -> list {
 pub fn g6_decode_best_of_k(ckpt: string, frame: string, gen: int, k: int,
                            base_seed: int, known: Map) -> string {
     let offsets = [0, 101, 202]
-    let seed_ids = []
-    let fl = byte_len(frame)
-    let mut si = 0
-    while si < fl { seed_ids.push(ord(substring(frame, si, si + 1))); si = si + 1 }
     let mut best = ""
     let mut best_fals = -1
     let mut best_kwr = 0.0 - 1.0
     let mut oi = 0
     let kk = if k < 3 { k } else { 3 }
     while oi < kk {
-        let r = bytegpt_decode_topk_sampled(ckpt, seed_ids, gen, 40, 0.7, base_seed + offsets[oi])
+        let r = clm_decode_topk_sampled(ckpt, frame, gen, 40, 0.7, base_seed + offsets[oi])
         let o = to_string(r["text"])
         let kwr = _g6_known_word_ratio(o, known)
         let mut fals = 0
@@ -295,11 +291,7 @@ pub fn g6_score_arm(ckpt: string, frames: list, gen: int, k: int, base_seed: int
         let mut o = ""
         if best_of_k { o = g6_decode_best_of_k(ckpt, f, gen, k, base_seed, known) }
         else {
-            let seed_ids = []
-            let fl = byte_len(f)
-            let mut si = 0
-            while si < fl { seed_ids.push(ord(substring(f, si, si + 1))); si = si + 1 }
-            let r = bytegpt_decode_topk_sampled(ckpt, seed_ids, gen, 40, 0.7, base_seed)
+            let r = clm_decode_topk_sampled(ckpt, f, gen, 40, 0.7, base_seed)
             o = to_string(r["text"])
         }
         texts.push(o)
