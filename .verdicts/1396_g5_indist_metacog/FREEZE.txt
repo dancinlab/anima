@@ -80,3 +80,33 @@ VERDICT RULE (c9, honest — report whichever the numbers show):
 
 NO bar moved post-hoc.  Live CORE/*.hexa UNTOUCHED (mirror measurement only; a FIXABLE 🟢
 names the engine op as a tracked follow-on, NOT done in this lane).
+
+WALL-CLAUSE (a_break_the_wall · frozen-first · c9 — single honest re-attempt):
+  R1 run revealed the in-dist slice is DEGENERATE: in-dist fire accuracy = 0.998, so only
+  0-2 WRONG fires exist per seed (seed8 = 0 wrong -> AUROC undefined). The C4 shuffle control
+  CORRECTLY caught this — a type-2 AUROC estimated from 2 positive-class points cannot have a
+  stable ~0.50 shuffle, so C4 failed and the verdict is RED (measurement artifact). This is
+  itself the structural finding (H_1304 restated: wrong fires near-absent in-dist = the very
+  reason type-2 is THIN), but the measurement is not well-posed.
+  The single frozen-first re-attempt fixes ONLY the SLICE WELL-POSEDNESS, NOT any verdict bar:
+  the collision regime is strengthened (near-duplicate neighbors share MORE trigrams so light
+  corruption actually routes a non-trivial fraction of fires to a wrong-but-confident neighbor)
+  and the in-dist band is the same {0,0.05,0.10}. Δ=0.10, the C4 shuffle tolerance |x-0.50|<=0.08,
+  and C3 fab<=0.02 are ALL UNCHANGED (no bar moved). A well-posed slice requires >= ~30 wrong
+  fires pooled for a stable type-2 / shuffle estimate (pre-registered minimum-support guard:
+  if wrong-fire support < 30 pooled the measurement is reported INCONCLUSIVE, not green/ceiling).
+  This is measurement-design correction the control demanded, NOT tune-to-green (p7).
+
+R2 RESULT (well-posed slice, frozen bars UNCHANGED) — 🟢 FIXABLE:
+  in-dist fire accuracy 0.981 (n_fire=2359 pooled, n_wrong=44 >= MIN_SUPPORT 30; all 3 seeds contribute).
+  in-dist type-2 AUROC: CURRENT best-margin=0.736 · RICHER-1 top-2 gap=0.940 (lift +0.205) ·
+                        RICHER-2 neg-entropy=0.594 (lift -0.142, does NOT help) · ORACLE=1.000.
+  C1 ceiling-gap (oracle-current) = 0.264.
+  C2 FIXABLE  : best richer 'gap' lift +0.205 >= Δ=0.10 -> PASS.
+  C3 abstain  : OOD fab_max=0.000 <= 0.02 -> PASS (gap is rank-only; frozen recon_err<=thr gate unchanged).
+  C4 shuffle  : current=0.489 gap=0.524 negent=0.485 (all |x-0.50|<=0.08) -> PASS.
+  VERDICT 🟢 FIXABLE: the top-2 affinity GAP (decisiveness) lifts in-dist type-2 metacog +0.205
+  over the live best-margin while preserving the H_1304 OOD fail-safe. The deepening is named.
+  Binding follow-on (a_verified_must_wire, NOT this lane): expose top-k affinity in the live
+  engine (immune_memory_recall_gap / top-k op) and wire the gap into immune_memory_recall_margin
+  / brain_decide alongside the existing margin.

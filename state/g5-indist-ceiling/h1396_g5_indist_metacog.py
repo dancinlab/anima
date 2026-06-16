@@ -100,30 +100,35 @@ def _rand_token(rng, length):
 
 
 def _build(seed):
-    """Build a collision-PRONE store so in-dist WRONG fires exist: half the facts are
-    random tokens, half are near-duplicates of an existing token (shared-trigram neighbors)
-    bound to a DIFFERENT answer. Light corruption can then route a fire to a wrong-but-
-    confident neighbor cell — the realistic in-dist confusion the THIN residual is about."""
+    """Build a collision-PRONE store so in-dist WRONG fires exist (well-posed slice, see
+    FREEZE wall-clause): facts come in TWIN PAIRS that differ by a SINGLE byte at ONE
+    position (so they share all-but-2 trigrams = near-identical keys) yet are bound to
+    DIFFERENT answers. Light corruption of one twin can then route its fire to the OTHER
+    twin's cell with high confidence — a confidently-WRONG in-dist fire, the realistic
+    in-dist confusion the THIN residual is about. The single distinguishing byte is what a
+    richer top-k/decisiveness signal would have to catch; the best-margin baseline (which
+    sees only the winner affinity, near-1 for both twins) is the lens under test."""
     rng = np.random.default_rng(seed)
     subjects = []; seen = set()
-    n_base = N_FACTS // 2
-    while len(subjects) < n_base:
-        s = _rand_token(rng, KEYLEN)
-        if s not in seen:
-            seen.add(s); subjects.append(s)
-    # near-duplicate neighbors: copy a base subject, perturb a FEW bytes (shared trigrams)
-    while len(subjects) < N_FACTS:
-        base = subjects[int(rng.integers(0, n_base))]
-        nb = list(base)
-        nflip = int(rng.integers(2, 5))           # 2-4 byte edits -> heavy trigram overlap
-        for _ in range(nflip):
-            pos = int(rng.integers(0, KEYLEN))
-            nb[pos] = chr(int(rng.integers(ord('a'), ord('z') + 1)))
-        nb = "".join(nb)
-        if nb not in seen:
-            seen.add(nb); subjects.append(nb)
-    # answer bound to each cell = its index (distinct per cell)
-    answers = list(range(N_FACTS))
+    n_pairs = N_FACTS // 2
+    while len(subjects) < N_FACTS - 1:
+        base = _rand_token(rng, KEYLEN)
+        if base in seen:
+            continue
+        pos = int(rng.integers(0, KEYLEN))         # ONE differing position
+        twin = list(base)
+        cur = ord(twin[pos])
+        new = cur
+        while new == cur:
+            new = int(rng.integers(ord('a'), ord('z') + 1))
+        twin[pos] = chr(new)
+        twin = "".join(twin)
+        if twin in seen or twin == base:
+            continue
+        seen.add(base); seen.add(twin)
+        subjects.append(base); subjects.append(twin)
+    # answer bound to each cell = its index (distinct per cell; twins -> different answers)
+    answers = list(range(len(subjects)))
     return rng, subjects, answers, seen
 
 
@@ -183,23 +188,6 @@ def run_seed(seed):
     n_correct = int(sum(correct))
     acc = n_correct / n_fire if n_fire else float("nan")
 
-    def t2(sig):
-        return auroc(sig, correct) if (0 < n_correct < n_fire) else float("nan")
-
-    a_cur = t2(cur); a_gap = t2(gap); a_negent = t2(negent)
-    # ORACLE ceiling: a confidence == true correctness is perfectly separable -> AUROC=1.0
-    a_oracle = auroc([float(c) for c in correct], correct) if (0 < n_correct < n_fire) else float("nan")
-
-    # ── C4 SHUFFLE control: break confidence<->correctness pairing per signal ──
-    def t2_shuf(sig, salt):
-        if not (0 < n_correct < n_fire):
-            return float("nan")
-        rs = np.random.default_rng(seed + salt)
-        sh = np.array(sig, dtype=np.float64).copy()
-        rs.shuffle(sh)
-        return auroc(sh.tolist(), correct)
-    a_cur_sh = t2_shuf(cur, 5000); a_gap_sh = t2_shuf(gap, 5001); a_negent_sh = t2_shuf(negent, 5002)
-
     # ── C3 ABSTAIN-INTACT: re-run H_1304 fail-safe under each signal's would-be gate ──
     # The richer signals only RANK confidence among fires; the abstain DECISION is still the
     # frozen recon_err<=thr gate. We verify each richer signal, if used to GATE (fire iff its
@@ -228,47 +216,65 @@ def run_seed(seed):
         ood_fab[str(L)] = fabs / tot if tot else float("nan")
 
     return {"seed": seed, "n_fire": n_fire, "n_correct": n_correct, "acc": acc,
-            "auroc": {"current": a_cur, "gap": a_gap, "negent": a_negent, "oracle": a_oracle},
-            "auroc_shuf": {"current": a_cur_sh, "gap": a_gap_sh, "negent": a_negent_sh},
+            "cur": cur, "gap": gap, "negent": negent, "correct": correct,
             "ood_fab": ood_fab}
+
+
+MIN_SUPPORT = 30   # pre-registered: < this many pooled WRONG fires -> INCONCLUSIVE (FREEZE wall-clause)
 
 
 def main():
     os.makedirs(OUTDIR, exist_ok=True)
     per_seed = [run_seed(s) for s in SEEDS]
 
-    def pool(path):
-        vals = []
-        for s in per_seed:
-            v = s
-            for k in path:
-                v = v[k]
-            if not (isinstance(v, float) and math.isnan(v)):
-                vals.append(v)
+    # POOL the raw fired-item lists across seeds, compute AUROC ONCE on the pooled set
+    # (far more stable than averaging per-seed AUROCs from a tiny wrong-fire class).
+    cur = sum((s["cur"] for s in per_seed), [])
+    gap = sum((s["gap"] for s in per_seed), [])
+    negent = sum((s["negent"] for s in per_seed), [])
+    correct = sum((s["correct"] for s in per_seed), [])
+    n_fire = len(correct); n_correct = int(sum(correct)); n_wrong = n_fire - n_correct
+    acc = n_correct / n_fire if n_fire else float("nan")
+
+    well_posed = (MIN_SUPPORT <= n_wrong) and (0 < n_correct < n_fire)
+
+    def t2(sig):
+        return auroc(sig, correct) if well_posed else float("nan")
+    a_cur = t2(cur); a_gap = t2(gap); a_negent = t2(negent)
+    a_oracle = t2([float(c) for c in correct])
+
+    def t2_shuf(sig, salt):
+        if not well_posed:
+            return float("nan")
+        rs = np.random.default_rng(salt)
+        sh = np.array(sig, dtype=np.float64).copy(); rs.shuffle(sh)
+        return auroc(sh.tolist(), correct)
+    a_cur_sh = t2_shuf(cur, 5000); a_gap_sh = t2_shuf(gap, 5001); a_negent_sh = t2_shuf(negent, 5002)
+
+    def poolf(key, L):
+        vals = [s["ood_fab"][str(L)] for s in per_seed
+                if not (isinstance(s["ood_fab"][str(L)], float) and math.isnan(s["ood_fab"][str(L)]))]
         return float(np.mean(vals)) if vals else float("nan")
 
-    a_cur = pool(["auroc", "current"]); a_gap = pool(["auroc", "gap"])
-    a_negent = pool(["auroc", "negent"]); a_oracle = pool(["auroc", "oracle"])
-    a_cur_sh = pool(["auroc_shuf", "current"]); a_gap_sh = pool(["auroc_shuf", "gap"])
-    a_negent_sh = pool(["auroc_shuf", "negent"])
-    acc = pool(["acc"])
+    best_richer = max(a_gap, a_negent) if well_posed else float("nan")
+    best_name = "gap" if (well_posed and a_gap >= a_negent) else "negent"
+    lift = (best_richer - a_cur) if well_posed else float("nan")
 
-    best_richer = max(a_gap, a_negent)
-    best_name = "gap" if a_gap >= a_negent else "negent"
-    lift = best_richer - a_cur
-
-    # C2 FIXABLE-TEST
-    C2 = (not math.isnan(lift)) and (lift >= DELTA)
-    # C3 ABSTAIN-INTACT (richer signals are rank-only -> frozen gate unchanged; verify fab<=0.02)
-    ood_max = max(pool(["ood_fab", str(L)]) for L in OOD_LEVELS)
+    C2 = well_posed and (not math.isnan(lift)) and (lift >= DELTA)
+    ood_max = max(poolf("ood_fab", L) for L in OOD_LEVELS)
     C3 = ood_max <= 0.02
-    # C4 SHUFFLE-CTRL: every signal's shuffle AUROC ~ 0.50
     shufs = [a_cur_sh, a_gap_sh, a_negent_sh]
-    C4 = all((not math.isnan(x)) and abs(x - 0.50) <= 0.08 for x in shufs)
-    # C1 CEILING-REF gap
-    ceiling_gap = a_oracle - a_cur
+    C4 = well_posed and all((not math.isnan(x)) and abs(x - 0.50) <= 0.08 for x in shufs)
+    ceiling_gap = (a_oracle - a_cur) if well_posed else float("nan")
 
-    if not C4:
+    if not well_posed:
+        verdict = "INCONCLUSIVE"; tier = "⚪"
+        ruling = (f"WELL-POSEDNESS GUARD (FREEZE wall-clause): only {n_wrong} pooled WRONG fires "
+                  f"(< {MIN_SUPPORT}) — in-dist fire accuracy {acc:.3f} leaves too little "
+                  f"correctness variance for a stable type-2 estimate. This is itself the "
+                  f"structural signal (wrong fires near-absent in-dist = why type-2 is THIN), but "
+                  f"the measurement is not well-posed; no ceiling/fixable claim. Report INCONCLUSIVE.")
+    elif not C4:
         verdict = "RED"; tier = "🔴"
         ruling = ("SHUFFLE control did NOT collapse to ~0.50 — the in-dist type-2 measurement "
                   "is an artifact; no ceiling/fixable claim can be made.")
@@ -305,11 +311,12 @@ def main():
                  "confidence signals vs the current best-margin, oracle ceiling, shuffle control)",
         "seeds": SEEDS, "indist_levels": INDIST_LEVELS, "ood_levels": OOD_LEVELS,
         "key_len": KEYLEN, "recall_thr": RECALL_THR, "n_facts": N_FACTS, "delta": DELTA,
-        "indist_acc_fired": acc,
+        "indist_acc_fired": acc, "n_fire_pooled": n_fire, "n_wrong_pooled": n_wrong,
+        "well_posed": bool(well_posed), "min_support": MIN_SUPPORT,
         "indist_type2_auroc": {"current_best_margin": a_cur, "richer1_top2_gap": a_gap,
                                "richer2_negentropy": a_negent, "oracle_ceiling": a_oracle},
         "indist_type2_auroc_shuffle": {"current": a_cur_sh, "gap": a_gap_sh, "negent": a_negent_sh},
-        "ood_fab_rate": {str(L): pool(["ood_fab", str(L)]) for L in OOD_LEVELS},
+        "ood_fab_rate": {str(L): poolf("ood_fab", L) for L in OOD_LEVELS},
         "C1_ceiling_ref": {"oracle_auroc": a_oracle, "current_auroc": a_cur,
                            "ceiling_gap": ceiling_gap},
         "C2_fixable": {"best_richer": best_name, "best_richer_auroc": best_richer,
@@ -332,7 +339,7 @@ def main():
     lines = []
     def p(x): lines.append(x); print(x)
     p(f"=== H_1396 G5 IN-DIST metacog CEILING vs FIXABLE — {tier} {verdict} ===")
-    p(f"  in-dist fire accuracy        : {acc:.3f}  (n_fire pooled, wrong fires = correctness variance)")
+    p(f"  in-dist fire accuracy        : {acc:.3f}  (n_fire={n_fire} pooled, n_wrong={n_wrong} = correctness variance; min_support={MIN_SUPPORT})")
     p(f"  in-dist type-2 AUROC:")
     p(f"    (a) CURRENT best-margin    : {a_cur:.3f}   <- the live baseline (immune_memory_recall_margin)")
     p(f"    (b) RICHER-1 top-2 gap     : {a_gap:.3f}   (lift {a_gap-a_cur:+.3f})")

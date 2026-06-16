@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-17 — domain(G5): H_1396 in-dist metacognition CEILING vs FIXABLE → 🟢 FIXABLE (top-2 affinity gap lifts in-dist type-2 +0.205)
+
+**무엇:** G5 NON-FAB/metacognition scoreboard 의 마지막 잔여물 "🟢 frozen / 🟠 THIN in-dist" 가 NEAR-INHERENT CEILING(정직한 near-optimality)인지 FIXABLE 결핍인지 frozen-first 로 가른 lane. abstain-side 는 이미 graded+wired+consumed(H_1304 binary fail-safe · H_1361 graded margin · H_1367 engine-wire · H_1379 brain-consume); 잔여 = **FIRE-side, in-distribution slice** — 게이트가 FIRE 하는 항목들 중 RIGHT vs WRONG 을 confidence 가 변별하는가.
+
+**결과 🟢 FIXABLE (R1 numpy mirror DIRECTIONAL, 3 seeds, deterministic, $0 CPU, p7):** in-dist type-2 AUROC — CURRENT best-margin(=live `immune_memory_recall_margin`) **0.736** vs RICHER-1 **top-2 cos affinity GAP 0.940 (lift +0.205 ≥ Δ=0.10)**; RICHER-2 neg-entropy 0.594(도움 안 됨); ORACLE ceiling 1.000. C2 FIXABLE ✅ · C3 ABSTAIN-INTACT ✅(OOD fab 0.000, H_1304 보존 — gap 은 rank-only) · C4 SHUFFLE ✅(셋 다 ~0.50 = earned). 메커니즘: 1-byte twin 셀은 best-affinity 거의 동일이라 best-margin 이 변별 못 하지만 top-2 gap 이 #1≈#2 동률(ambiguity)을 보고 wrong fire 예측. **답: G5 needs deepening, NAMED = top-2 affinity gap** (inherent ceiling 아님).
+
+**WALL-CLAUSE (a_break_the_wall, frozen-first, c9):** R1 약한-collision store 가 degenerate(acc 0.998, wrong fire 0–2개/seed)였고 C4 shuffle 이 정확히 포착(RED) → 단 1회 frozen-first 재시도가 SLICE well-posedness 만 교정(twin-pair store + MIN_SUPPORT=30 guard), 모든 verdict bar UNCHANGED, no bar moved (NOT tune-to-green, p7).
+
+**BINDING FOLLOW-ON (a_verified_must_wire, NOT this lane):** live `CORE/engine_cli.hexa §ImmuneMemory` 에 top-k affinity 노출 op 추가 + gap 을 `immune_memory_recall_margin`/`brain_decide` 에 배선(H_1379 패턴) + engine-native 재확인. 이 lane 은 mirror 측정 + deepening 명명까지 (CORE UNTOUCHED).
+
+**deliverables:** card `UNIVERSE/cards/H_1396_g5_indist_metacog.md` · jsonl row · verdicts `.verdicts/1396_g5_indist_metacog/{FREEZE,result,result.json}` · probe `state/g5-indist-ceiling/h1396_g5_indist_metacog.py` · log `domains/COGNITION-REPRESENTATION.log.md`. scope: TOY twin-pair synthetic, byte-shift proxy, DIRECTIONAL(engine-transfer UNVERIFIED), 3 seeds (a_scale_honest_scope·a_toy_scale_recheck).
+
 ## 2026-06-17 — docs(ARCHITECTURE): ARCHITECTURE.json 전수 파일트리 → 구조+노드별 anchor 파일 하이브리드 (전수목록 git ls-files 위임·드리프트 제거, c4)
 
 **무엇 (c4 거버넌스 shape "트리구조(노드별 한 줄)" + anchor files):** `ARCHITECTURE.json` 을 *전수 per-file 덤프*에서 **개념 아키텍처 트리 + 서브시스템별 anchor 파일** 하이브리드로 재구조화. 기존 `🌳 Engine file tree` 가지가 거의 모든 tracked `.hexa/.py/.md` 경로(~490 leaf 노드)를 손으로 나열해 — 이번 세션만 해도 CORE engine_cli.hexa §섹션·generator §6.5d/e·clm_decode 등 새 파일/섹션마다 leaf 노드를 수동 동기화해야 했던 — 반복 드리프트의 원인이었다. 전수 파일목록은 `git ls-files` (40,316 tracked, 항상 최신)로 기계적 재생산이 가능하므로 JSON 에서 손으로 들 이유가 없다.
