@@ -1,0 +1,105 @@
+H_1340 — WHORFIAN CP RELOCATION CEILING: BUDGET / RBF-DENSITY SWEEP AT THE MOVED CUT
+PRE-REGISTERED FREEZE — written BEFORE any scoring. NO bar moves after this (c9/p7).
+==================================================================================
+slug: 1340_whorf_cp_budget_sweep   PROJ_SEED family: H_1340 (1323 = parent Sapir-Whorf;
+1333 = developmental-plasticity = this lane's grandparent; 1338 = eviction RE-DIAGNOSIS =
+this lane's PARENT, which falsified "never-evict" and DIAGNOSED the residual as BUDGET /
+GEOMETRY; 1341 = shift-size ladder = a SIBLING axis; 1340 free on origin/main 3176fadc0).
+Reuses the H_1333 / H_1338 CP machinery EXACTLY (UNIVERSE/h1333_whorf_developmental.py):
+same RBF position embedding, error-targeted SPLIT-only nearest-prototype (Voronoi/mitosis)
+growth, soft category-posterior discrimination readout, the peak-COUNT coherence metric.
+
+LENS: developmental/critical-period plasticity + representational-RESOLUTION (RBF grid
+density + split budget) (c15, a_no_llm_frame_trap, a_break_the_wall) — NOT an LLM recipe,
+NOT a human-cognition claim. $0 CPU numpy, gradient-free, 3 seeds [4333,4334,4335] (SAME
+as H_1333 / H_1338 so the baseline rung reproduces the H_1338 anchor IN-RUN). DIRECTIONAL
+MIRROR — engine-transfer UNVERIFIED (same family as H_1333 R1 / H_1338 R1 / H_1323 R1).
+
+THE LOAD-BEARING QUESTION (the H_1338 re-diagnosis follow-on, R2):
+H_1338 found that EVICTING the stale phase-1 cells did NOT complete the H_1333 partial
+relocation (peak stayed 0.525, frac +0.60 even with cells 28→3), and DIAGNOSED — but only
+HYPOTHESIZED — the residual pull as BUDGET / GEOMETRY (RBF resolution + a fixed per-phase
+split budget), NOT a never-evict growth-memory. The DECISIVE test of THAT diagnosis: SWEEP
+the phase-2 (re-training) per-phase split budget AND the RBF grid density at the re-trained
+boundary p_A'. If raising budget/density lets the relocated CP peak REACH p_A' (≈0.667 —
+crossing into |peak−p_A'| ≤ LOC_TOL), the residual IS budget/geometry and the resolution
+ceiling is MAPPED. If the peak stays stuck regardless of budget/density, the limit is a
+DEEPER one (honest — the budget/geometry diagnosis would itself be incomplete).
+
+THE SWEEP (everything else is H_1333/H_1338 verbatim):
+A LADDER of joint (RBF-density DIM, phase-2 split budget GROW2) rungs, applied ONLY to the
+phase-2 (A→A') re-growth. Phase-1 (the p_A carving) is FIXED at the H_1333/H_1338 baseline
+budget (GROW=24) on every rung, so the never-evicted phase-1 packing — the residual H_1338
+identified — is IDENTICAL across rungs; the ONLY thing that changes per rung is how much
+budget/density the re-training is given to overwrite that residual. Stimulus count N_STIM
+is FIXED at 81 (finer than H_1338's 21 so the peak-location read is not quantization-bound;
+held CONSTANT across rungs so it is not a confound). NO eviction is used (split-only, the
+H_1333 never-evict store) — this isolates the budget/geometry lever cleanly, since H_1338
+already showed eviction is NOT the lever.
+
+RUNG LADDER (≥3 rungs, a_scale_honest_scope; DIM = RBF centers, GROW2 = phase-2 split
+budget AND passes; phase-1 budget = 24, N_STIM = 81 on ALL rungs):
+  R0_base : DIM=16  GROW2=24    (= H_1338 baseline budget/density — must reproduce ~0.525)
+  R1      : DIM=32  GROW2=96
+  R2      : DIM=48  GROW2=192
+  R3      : DIM=64  GROW2=384
+  R4_high : DIM=96  GROW2=768   (highest resolution rung)
+
+READOUT (identical to H_1333/H_1338, NO labels at test): discrimination(midpoint) =
+|soft-posterior(x_i) − soft-posterior(x_j)| over adjacent pairs; CP peak = argmax midpoint.
+COHERENCE = peak-count = # midpoints reaching >= 0.5 * arm's own peak.
+move-fraction = (peak_retrained − peak_Atrained) / (p_A' − p_A), reported per rung/seed.
+p_A = 1/3, p_A' = 2/3, LOC_TOL = 0.12 (inherited VERBATIM from H_1333 / H_1338 / H_1323).
+
+p1/p2/p3/p6: the discrimination readout reads ONLY representational distance in the learned
+prototype space; NO injected boundary location at test; labels enter ONLY during training.
+Budget/density are STRUCTURAL store-capacity knobs (DIM grid + split count) — NO injected
+target peak, NO "move to 0.667" instruction. The peak relocating is an EMERGENT consequence
+of giving the re-training enough resolution to out-pack the residual, not a planted answer.
+
+FROZEN BARS (GREEN iff B1 ∧ B2 ∧ B3 → the residual pull IS budget/geometry, ceiling mapped):
+  LOC_TOL    = 0.12   (inherited verbatim — peak "reaches" p_A' iff |peak−p_A'| ≤ LOC_TOL)
+  TRACK_TOL  = 0.10   (B2 monotonicity: total frac span across rungs ≥ this — a real climb)
+
+  B1 RELOCATES: at SOME rung (the lowest such = the mapped ceiling), the relocated CP peak
+       reaches p_A' on ALL 3 seeds:
+         |CP_peak_relocated − p_A'| ≤ LOC_TOL  for every one of the 3 seeds,
+       AND that rung stays COHERENT (mean peak-count ≤ COH_MAX_LANG = 2).
+       (confirms raising budget/density LETS the peak reach the moved cut = budget/geometry
+        is the mechanism; the lowest passing rung MAPS the resolution ceiling.)
+
+  B2 EARNED-MONOTONE: the move tracks budget/density (not a fluke) — the per-rung mean
+       move-fraction is NON-DECREASING across the ladder R0→R4 (each rung ≥ the previous
+       minus a tiny numeric slack 0.01), AND the total span (frac@R4 − frac@R0) ≥ TRACK_TOL.
+       (a genuine monotone climb with budget, not a single lucky rung.)
+
+  B3 BASELINE-REPRO: R0_base reproduces H_1338's partial in-run on ALL 3 seeds —
+         move-fraction ∈ [0.40, 0.75]  AND  |CP_peak_R0 − p_A'| > LOC_TOL  (still partial).
+       (anchors the ladder to the H_1338 result so the climb is measured from the right floor.)
+
+OUTCOMES (ALL VALID — c9 honest, NO bar move after this freeze):
+  B1 ∧ B2 ∧ B3  → 🟢 GREEN: the H_1338 residual pull IS a BUDGET / GEOMETRY (resolution)
+                  limit. Raising the phase-2 split budget + RBF grid density relocates the CP
+                  peak the rest of the way to p_A' (peak crosses into |peak−p_A'| ≤ LOC_TOL at
+                  the mapped ceiling rung), monotonically with budget, while R0 reproduces the
+                  H_1338 partial. The resolution ceiling is MAPPED (a_break_the_wall: the wall
+                  was insufficient INVESTMENT/resolution, not a deep memory limit). Relevant to
+                  anima re-learning carvings: re-carving completeness is set by the re-training's
+                  representational resolution, a tunable store-capacity knob.
+  B1 FAILS (peak stuck < LOC_TOL of p_A' at EVERY rung, even R4_high)
+                → 🧱 DEEPER LIMIT: the residual is NOT (only) budget/geometry — raising budget
+                  and density does not finish the move. An honest re-re-diagnosis; the budget/
+                  geometry hypothesis from H_1338 is then itself INCOMPLETE. NO bar move (c9).
+                  Report the highest-rung |peak−p_A'| and frac explicitly.
+  B2 FAILS (non-monotone OR span < TRACK_TOL)  → the climb is not budget-driven / is a fluke;
+                honest, the B1 pass (if any) is not attributable to budget. NO bar move (c9).
+  B3 FAILS (R0 does not reproduce the H_1338 partial)  → the ladder floor differs from H_1338;
+                the comparison is confounded. Honest, NO bar move (c9); treat B1 cautiously.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY synthetic 1-D continuum, N_STIM=81,
+3 seeds, single shift p_A→p_A', deterministic readout (tests the STRUCTURE of the budget/
+geometry resolution ceiling, not a learned re-trainer). DIRECTIONAL numpy mirror —
+engine-transfer UNVERIFIED. Real-corpus / 2-D or higher continuum / soft-decay store /
+engine-native realization on the live CORE/engine_cli.hexa immune/Voronoi lane = follow-on
+(a_engine_native_learning · a_verified_must_wire). NO human-cognition / critical-period claim.
+==================================================================================

@@ -2,6 +2,18 @@
 
 Chronological log of notable changes. One section per ship batch, date-keyed. Research sessions tracked as `§<N>` / `S<N>`; `ConsciousDecoder` carries SemVer.
 
+## 2026-06-16 — research(COGNITION-REPRESENTATION): H_1340 — Whorf CP 재배치 천장 BUDGET/RBF-DENSITY 사다리 (🧱 DEEPER LIMIT — budget/geometry는 불완전)
+
+**무엇:** H_1338(🧱 RE-DIAGNOSIS)의 R2 follow-on. H_1338은 eviction이 H_1333의 ~60% CP 재배치를 완성 못했고(peak 0.525 고정) 잔류를 **BUDGET/GEOMETRY**(RBF resolution + 고정 split budget)로 진단(가설). H_1340은 그 진단을 직접 검증 — phase-2 re-training budget + RBF density를 사다리로 올리면 재배치 peak가 coherent single peak로 p_A'(≈0.667)에 **도달**하는가?
+
+**방법:** H_1333/H_1338 CP 머신러리 **verbatim** import(RBF embed · split-only Voronoi p8 · no-label-at-test discrim · peak-count coherence). 유일 신규 = phase-2에만 적용하는 joint (DIM, GROW2) 5-rung 사다리(R0_base 16/24=H_1338 baseline → R4_high 96/768); phase-1은 budget 24로 **고정**(never-evict 잔류 동일), N_STIM=81 고정, eviction 없음. 3 seeds [4333,4334,4335], $0 CPU mirror DIRECTIONAL, frozen-first.
+
+**결과 🧱 DEEPER LIMIT** (deterministic): rung별 peak — R0 **0.523**(frac+0.575·pc4.3) → R4_high **0.585**(frac+0.762·pc**7.0**). **B1 ❌**: peak-DISTANCE는 R2부터 3 seed 모두 LOC_TOL 통과(|peak-p_A'|≤0.12)하지만 **COHERENCE gate를 절대 못 넘김**(peak-count budget과 함께 4.3→7.0, 전부 ≫2) → p_A'에 coherent single peak 없음. **B2 ✅**: frac 단조 +0.575→+0.762(span+0.187). **B3 ✅**: R0이 H_1338 partial 재현. **발견:** budget/geometry는 distance를 사지만 coherence를 **파괴** — 깨끗한 완전 재배치는 resolution이 아니라 다른 메커니즘(soft DECAY/coherence-preserving re-pack)이 필요. budget/geometry 진단은 부분적이지만 불완전. NO bar move (c9/p7). 
+
+**SCOPE:** DIRECTIONAL numpy mirror(engine-transfer UNVERIFIED), TOY synthetic 1-D(N=81·3 seed), live CORE/*.hexa UNTOUCHED. NEXT R2(각 ANEW): soft DECAY store · coherence-aware re-pack · engine-native.
+
+**산출물:** `UNIVERSE/h1340_whorf_cp_budget_sweep.py` · `UNIVERSE/cards/H_1340_whorf_cp_budget_sweep.md` · `.verdicts/1340_whorf_cp_budget_sweep/{FREEZE,result}.txt` · `CLAIMS.tape @C h1340_whorf_cp_budget_sweep` · `UNIVERSE/HYPOTHESES.jsonl`(+1) · `domains/COGNITION-REPRESENTATION.log.md`.
+
 ## 2026-06-16 — domain(GOVERNANCE): 흩어진 가설 전부 HYPOTHESES.jsonl 로 통합 + 아티팩트 state/ 재배치 (source/archived/artifacts 3 컬럼 신설)
 
 **무엇:** #2247 의 per-H JSONL 인덱스(896 행) 위에, repo 곳곳에 **흩어져 있던 모든 가설**을 단일 `UNIVERSE/HYPOTHESES.jsonl` + `UNIVERSE/cards/` 로 통합. JSONL 스키마에 **`source` · `archived` · `artifacts`** 3 컬럼 신설.

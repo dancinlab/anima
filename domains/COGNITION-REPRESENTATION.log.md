@@ -143,3 +143,46 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   store grows never evicts — 이 lane이 테스트하고 원인으로는 FALSIFY한 dual 직관) · h1330(bilingual overwrite)
   · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire
   · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+
+## 2026-06-16 — H_1340 — Whorf CP 재배치 천장 = budget/RBF-density로 p_A'에 도달하는가? 🧱 DEEPER LIMIT (budget/geometry는 불완전)
+
+- **id**: H_1340 · slug `1340_whorf_cp_budget_sweep` · seeds [4333,4334,4335] (= H_1333/H_1338, R0 anchor 재현) · $0 CPU mirror DIRECTIONAL
+- **seed/lens**: H_1338(🧱 RE-DIAGNOSIS)의 R2 follow-on; developmental-plasticity + representational-resolution
+  lens (c15, a_no_llm_frame_trap, a_break_the_wall). H_1338은 eviction이 H_1333 ~60% 이동을 완성 못했고
+  잔류를 **BUDGET/GEOMETRY**(RBF resolution + 고정 split budget)로 진단(가설). 그 진단의 결정적 검증:
+  phase-2 budget + RBF density를 올리면 재배치 peak가 coherent single peak로 p_A'(≈0.667)에 **도달**하는가?
+- **method**: H_1333/H_1338 CP 머신러리 **verbatim** import (RBF embed · split-only Voronoi p8 · |Δ soft-posterior|
+  no-label-at-test discrim · peak-count coherence · p_A=1/3 · p_A'=2/3 · LOC_TOL=0.12). 유일한 신규 = phase-2
+  re-growth에만 적용하는 joint (DIM, GROW2) **사다리**; phase-1은 모든 rung에서 budget 24로 **고정**(never-evict
+  잔류 동일 → 변하는 건 re-training이 받는 budget/density 뿐); N_STIM=81 고정; eviction 없음(split-only, H_1338이
+  이미 eviction이 lever 아님을 보임). 5 rung R0_base(16/24=H_1338 baseline)→R4_high(96/768), a_scale_honest_scope 사다리.
+- **frozen bars** (.verdicts/1340_whorf_cp_budget_sweep/FREEZE.txt, 사전등록·NO bar move c9): **B1 RELOCATES**
+  (어떤 rung에서 3 seed 모두 |peak−p_A'|≤0.12 AND coherent peak-count≤2 = 매핑된 천장) ∧ **B2 EARNED-MONOTONE**
+  (frac 단조 비감소·span≥0.10) ∧ **B3 BASELINE-REPRO** (R0이 H_1338 partial 재현).
+- **verdict 🧱 DEEPER LIMIT** (deterministic 3 seed): rung별 재배치 peak(N=81) — R0_base **0.523**(|p_A'|0.144·frac**+0.575**·pc4.3)
+  · R1 0.548(0.119·+0.650·5.0) · R2 0.560(0.106·+0.688·5.0) · R3 0.573(0.094·+0.725·5.7) · R4_high **0.585**(0.081·**+0.762**·pc**7.0**).
+  **B1 ❌**: peak-DISTANCE는 R2부터 3 seed 모두 LOC_TOL 통과(|peak-p_A'|≤0.12)하지만 **COHERENCE gate를 절대 못 넘김** —
+  peak-count가 budget과 함께 4.3→**7.0**(전부 ≫2), high-budget store가 cell을 많이 packing해 **흩어진 multi-peak** discrim profile
+  생성 → p_A'에 **coherent single peak 없음**(N=81 dense midpoint이 peak-count도 일부 inflate, 그러나 같은 frozen COH_MAX_LANG=2로 채점).
+  **B2 ✅**: frac 단조 상승 +0.575→+0.762, span +0.187≥0.10 — distance 이동은 budget-driven, fluke 아님. **B3 ✅**: R0 frac
+  [0.562,0.60,0.562]∈[0.40,0.75] & |peak-p_A'|[0.148,0.135,0.148]>0.12 → H_1338 partial in-run 재현.
+- **finding**: H_1338의 budget/geometry 진단은 **부분적이지만 불완전**. budget+density를 부으면 peak **DISTANCE**는 단조로
+  p_A'에 가까워지지만(resolution이 진짜 lever 하나임 = H_1338 일부 확인) **coherent single peak를 못 만듦** — budget을 부을수록
+  discrim curve가 더 흩어짐(peak-count 4.3→7.0). 천장은 budget을 더 부으면 사라지는 순수 resolution 한계가 **아니다**: budget/density는
+  distance를 사지만 coherence를 **파괴**, never-evicted phase-1 잔류 packing이 신규 packing과 공존하며 persistent secondary peak로 남음.
+  정직한 재-재진단 — 깨끗한 완전 재배치는 resolution을 올리는 것이 아니라 **다른 메커니즘**(soft DECAY·coherence-preserving re-pack)이 필요.
+  sibling H_1341(shift-size ladder)은 partial frac이 shift 크기를 따름(geometry-driven)을 별도로 발견; H_1340은 high resolution에서도
+  이동이 **INCOHERENT**함을 추가 → pure-budget도 pure-shift-geometry도 단독으로 못 닫음. NO bar move (c9/p7).
+- **scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, H_1333 R1/H_1338 R1 family); TOY synthetic 1-D continuum
+  (N=81·3 seed·단일 shift·deterministic readout — resolution-ceiling STRUCTURE 검증, scale/human-cognition claim 아님);
+  peak-count coherence 임계(frozen COH_MAX_LANG=2)는 N_STIM-sensitive, verbatim 채점; injected boundary/persona/RLHF 없음, label은
+  training만 test 아님(p1/p2/p3/p6); emit gate 아님(a_autonomy_over_hardcode); live CORE/*.hexa UNTOUCHED.
+- **NEXT R2** (각각 ANEW 사전등록): (i) **soft DECAY** store(re-training중 잔류 phase-1 packing을 hard-remove 대신 down-weight) —
+  THIS deeper-limit 결과가 coherent 재배치 회복의 가장 유망한 lever로 재지정 · (ii) coherence-aware re-pack(잔류 secondary peak prune)
+  · (iii) engine-native realization on live CORE/engine_cli.hexa immune/Voronoi lane (a_engine_native_learning · a_verified_must_wire).
+- **claim-link**: `CLAIMS.tape @C h1340_whorf_cp_budget_sweep` · card `UNIVERSE/cards/H_1340_whorf_cp_budget_sweep.md`
+  · verdicts `.verdicts/1340_whorf_cp_budget_sweep/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1338(이 lane이 검증하고 불완전으로 판정한 budget/geometry 재진단) · h1333(특성화 대상 GRADED-PLASTICITY) · h1341(sibling
+  shift-size ladder, geometry-driven fraction) · h1323 · h1325(family GREEN CP) · h1288(growth-memory) · a_no_llm_frame_trap
+  · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck
+  · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
