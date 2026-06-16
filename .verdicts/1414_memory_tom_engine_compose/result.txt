@@ -1,0 +1,31 @@
+================================================================================
+H_1414 R2 — ENGINE-NATIVE memory (H_1227/H_1231 ImmuneMemoryGrow) × ToM (H_1293 OtherMindModel)
+  COMPOSE on the LIVE faculties (inlined query-routed arbiter over live reads) — re-scoring frozen H_1405 bars
+  $0 CPU · 3 seeds [5400,5401,5402] · p7 · p8 · a_engine_native_learning · a_verified_must_wire
+================================================================================
+  seed 5400: mem=0.577778 tom=0.6 best=0.6 compose=0.931111 shuf=0.737778 oracle=0.982222 | conflict=0.786667 [onlyM=0.382222 onlyT=0.404444 both=0.195556 neither=0.0177778] memCells=377.0 tomCells=447.0
+  seed 5401: mem=0.575556 tom=0.6 best=0.6 compose=0.94 shuf=0.742222 oracle=0.977778 | conflict=0.78 [onlyM=0.377778 onlyT=0.402222 both=0.197778 neither=0.0222222] memCells=378.0 tomCells=448.0
+  seed 5402: mem=0.584444 tom=0.6 best=0.6 compose=0.942222 shuf=0.735556 oracle=0.986667 | conflict=0.788889 [onlyM=0.386667 onlyT=0.402222 both=0.197778 neither=0.0133333] memCells=383.0 tomCells=448.0
+--------------------------------------------------------------------------------
+MEAN (3 seeds, ENGINE-NATIVE):
+  acc_memory  = 0.579259
+  acc_tom     = 0.6
+  best_single = 0.6
+  acc_compose = 0.937778
+  acc_shuffle = 0.738519
+  ORACLE      = 0.982222   (oracle - best = 0.382222)
+  conflict_rate = 0.785185
+  decomposition : only_memory=0.382222 only_tom=0.402963 both=0.197037 neither=0.0177778
+  (LIVE faculties: memory cells=379.333 tom belief cells=447.667)
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) compose 0.937778 >= best+0.05 (0.65) : PASS
+  (B2 ORACLE)         oracle-best 0.382222 > 0.02 : PASS
+  (B3 EARNED)         compose-shuffle 0.199259 > 0.02 : PASS
+  (SEPARABLE)         only_memory>0 AND only_tom>0 : PASS
+================================================================================
+VERDICT: 🟢 COMPOSE-LIFT (ENGINE-NATIVE) — memory + ToM COMPOSE to a NET capability lift
+  on the LIVE faculties (live immune_grow_recall + live other_mind_predict, query-routed
+  arbiter over live affinity margins), SEPARABLE not subsumed, EARNED vs shuffle. H_1405 BINDS.
+  HONEST (c9): bars FROZEN from H_1405 FREEZE.txt, NOT moved. Toy 5-family Sally-Anne fixture,
+  3 seeds, deterministic. The memory recall + ToM predict are LIVE engine reads, the arbiter is
+  inlined over those live reads. Scale/real-corpus/engine-native-transfer-at-scale UNVERIFIED.

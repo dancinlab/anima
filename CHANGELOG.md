@@ -1,3 +1,26 @@
+## 2026-06-17 — research(MITOSIS-ENGINE): H_1414 — engine-native re-score of H_1405 (memory×ToM compose): 🟢 COMPOSE-LIFT BINDS engine-native (a_verified_must_wire ladder step-2, FIRST compose pair to bind)
+
+The 2nd compose-pair engine-native re-score (after H_1412 cerebellum×basal 🧱). Re-scores the
+H_1405 memory×ToM mirror GREEN on the LIVE faculties (immune_grow_recall [H_1227/H_1231] +
+other_mind_predict [H_1293] + live L2 affinity margins, inlined query-routed arbiter over the
+Sally-Anne false-belief fixture). FROZEN H_1405 bars, NOT moved; 3 seeds [5400,5401,5402]
+deterministic run1==run2, $0 CPU.
+
+RESULT 🟢 COMPOSE-LIFT (ENGINE-NATIVE): acc_compose=0.937778 vs best_single=0.600 → B1 net-lift
++0.337778 ≫ +0.05 PASS · B2 ORACLE 0.982222 (oracle−best +0.382222) PASS · B3 EARNED
+compose−shuffle +0.199259 (shuffle collapses 0.938→0.739) PASS · SEPARABLE only_memory=0.382222
+AND only_tom=0.402963 both>0 PASS. The mirror GREEN BINDS engine-native — the FIRST compose pair
+to do so (contrast: H_1412 did NOT, B1 +0.011 < +0.05).
+
+EMERGING-QUESTION ANSWER: mirror→engine non-reproduction is NOT universal; it is pair-dependent,
+gated by whether a live faculty's standalone arm strengthens past the mirror best-single ceiling
+and erodes the net-lift headroom (H_1412) or stays pinned at it (H_1414: best_single stays 0.600).
+
+a_verified_must_wire ladder rung-2 COMPLETE (engine-native byte-exact, reads EXISTING live ops,
+NO new CORE op landed). Live CORE §compose wire-in = rung-3 follow-on (ING.jsonl ING_H1414_wire_rung3).
+Card UNIVERSE/cards/H_1414_memory_tom_engine_compose.md · probe state/1414_memory_tom_engine_compose/
+h1414_memory_tom_engine_probe.hexa · evidence .verdicts/1414_memory_tom_engine_compose/{FREEZE,result}.txt.
+
 ## 2026-06-17 — research(MITOSIS-ENGINE): H_1413 — c16 biological MODULATION compose (2nd lens of H_1412 🧱): 🧱 EARNED-control 기각
 
 "다른 경로로 벽 돌파": H_1412 의 confidence-ARBITRATION 🧱 를 *다른 렌즈*(a_no_llm_frame_trap — 실제
