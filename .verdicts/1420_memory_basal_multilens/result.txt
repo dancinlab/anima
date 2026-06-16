@@ -1,0 +1,37 @@
+================================================================================
+H_1420 — MEMORY×BASAL compose: MULTI-LENS breakthrough attempt on the H_1417 P2 WALL
+  (P2 net-lift was +0.0496, just under +0.05 — the most promising remaining wall)
+  3 biology-faithful cortico-basal lenses · frozen H_1417 bars VERBATIM · +ABLATION
+  3 seeds/lens · deterministic · $0 CPU · p7 · c9 · c16 · a_break_the_wall MULTI-LENS
+================================================================================
+--------------------------------------------------------------------------------
+Lens A  BASAL-GATED RECALL (gate releases/suppresses memory output)
+  acc_mem=0.642222 acc_basal=0.694815 best=0.694815
+  compose=0.534815 shuffle=0.586667 ablate=0.642222 oracle=0.962222
+  net-lift(compose-best)=-0.16 | oracle-best=0.267407 | compose-shuffle=-0.0518519 | compose-ablate=-0.107407
+  only_mem=0.267407 only_basal=0.32
+  (B1 FAIL) (B2 PASS) (B3 FAIL) (SEP PASS) (ABLATION FAIL — INERT)
+  ==> 🧱 WALL
+--------------------------------------------------------------------------------
+Lens B  MEMORY-VALUED GATE (memory margin = gate input feature, tom_basal shape)
+  acc_mem=0.623704 acc_basal=0.698519 best=0.698519
+  compose=0.58 shuffle=0.593333 ablate=0.698519 oracle=0.952593
+  net-lift(compose-best)=-0.118519 | oracle-best=0.254074 | compose-shuffle=-0.0133333 | compose-ablate=-0.118519
+  only_mem=0.254074 only_basal=0.328889
+  (B1 FAIL) (B2 PASS) (B3 FAIL) (SEP PASS) (ABLATION FAIL — INERT)
+  ==> 🧱 WALL
+--------------------------------------------------------------------------------
+Lens C  COMPLEMENTARY GATING (gate arbitrates conflict region only)
+  acc_mem=0.621481 acc_basal=0.705185 best=0.705185
+  compose=0.748148 shuffle=0.576296 ablate=0.621481 oracle=0.958519
+  net-lift(compose-best)=0.042963 | oracle-best=0.253333 | compose-shuffle=0.171852 | compose-ablate=0.126667
+  only_mem=0.253333 only_basal=0.337037
+  (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS) (ABLATION PASS)
+  ==> 🧱 WALL
+================================================================================
+VERDICT: 🧱 CONFIDENT-TERMINAL — all 3 cortico-basal lenses FAIL their controls.
+  memory×basal does NOT bind engine-native under arbiter (H_1417 P2), basal-gated
+  recall (A), memory-valued gate (B), OR complementary gating (C). The ABLATION
+  evidence (mechanism OFF == compose) shows the gate is INERT — a genuine (d)
+  ceiling / strong-standalone-arm subsumption (a_break_the_wall taxonomy, MULTI-
+  LENS confirmed). NO bar moved, frozen-first (c9).

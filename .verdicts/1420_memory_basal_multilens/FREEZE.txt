@@ -1,0 +1,63 @@
+================================================================================
+H_1420 — MEMORY×BASAL compose: MULTI-LENS breakthrough attempt on the H_1417 P2 WALL
+  pre-registered method + FROZEN bars (frozen-first, c9/c16/p7, a_break_the_wall)
+  date: 2026-06-17
+================================================================================
+
+THE WALL (H_1417 P2, verbatim from its result.txt):
+  P2 memory x basal  [PRED WALL]
+    acc_x=0.645926 acc_y=0.702222 best=0.702222
+    compose=0.751852 shuffle=0.517037 oracle=0.968148 (oracle-best=0.265926)
+    net-lift(compose-best)=0.0496296
+    (B1 FAIL) (B2 PASS) (B3 PASS) (SEP PASS)  ==> 🧱 WALL
+  H_1417's STANDARD scale-relative confidence ARBITER (parallel vote) missed the
+  +0.05 B1 bar by 0.0004 — the MOST PROMISING of the three remaining engine-bind
+  walls. H_1418 P5 showed ToM×basal DID bind (basal is NOT intrinsically
+  un-composable) — so the open question is whether MEMORY×basal binds under a
+  DIFFERENT, biology-faithful cortico-basal lens (NOT a re-tune of the arbiter).
+
+PER a_break_the_wall (commit 3304edc65): a (d)-ceiling needs MULTI-LENS
+confirmation — >=2-3 genuinely different principled lenses, EACH with a shuffle
+AND an ablation control — before a confident terminal 🧱. The ABLATION is
+decisive: mechanism OFF == compose ⇒ the mechanism is INERT ⇒ ceiling.
+
+--------------------------------------------------------------------------------
+THE THREE LENSES (a_no_llm_frame_trap — real cortico-basal neuroscience):
+--------------------------------------------------------------------------------
+  Lens A  BASAL-GATED RECALL : the basal ganglia GATES which memory drives
+          behaviour. The LIVE vbasal_go_value go/no-go decides whether the LIVE
+          immune_grow_recall value is RELEASED or SUPPRESSED (fall back to the
+          gate's own action). Sequential gate-on-output, NOT a parallel vote.
+          ABLATE: gate always GO ⇒ memory always drives ⇒ memory standalone.
+  Lens B  MEMORY-VALUED GATE : memory's recall MARGIN supplies the value/utility
+          the basal threshold reads (memory margin = the gate's input feature).
+          This is EXACTLY the shape by which tom_basal_compose (H_1418 P5) BOUND.
+          ABLATE: memory margin ignored (mmg:=0) ⇒ gate's memory-select collapses
+          ⇒ basal standalone.
+  Lens C  COMPLEMENTARY GATING : on agree take shared; on abstain take the other;
+          in CONFLICT the gate releases memory iff its recall margin out-values
+          the gate's go-margin (substrate-scaled), else the gate's action wins.
+          ABLATE: in conflict always take memory (gate inert) ⇒ fixed memory-wins.
+
+--------------------------------------------------------------------------------
+FROZEN COMPOSE BARS (IDENTICAL to H_1407/1414/1415/1417 — NOT moved):
+--------------------------------------------------------------------------------
+  (B1 COMPOSE-EFFECT) acc_compose >= best_single + 0.05
+  (B2 ORACLE)         acc_oracle - best_single > 0.02
+  (B3 EARNED/p6)      acc_compose - acc_shuffle > 0.02
+  (SEPARABLE)         only_mem > 0 AND only_basal > 0
+  (ABLATION)          acc_compose - acc_ablate > 0   (mechanism OFF must score LOWER)
+  BOUND = 🟢 iff (B1 AND B2 AND B3 AND SEP AND ABLATION) for SOME lens; else 🧱.
+
+Memory leg = LIVE immune_grow_recall + L2 affinity margin (ImmuneMemoryGrow).
+Basal leg  = LIVE vbasal_go_value over a gradient-free-trained VBasalGate
+(brain.hexa, value-passed like spatial_episodic_compose / tom_basal_compose).
+Fixture = the SAME 5-family structure as H_1417 (F0 X-decisive · F1 Y-decisive ·
+F2 agree · F3 conflict-X · F4 adversarial-X-loud-wrong), N_PER_FAMILY=90 ->
+450 items/seed, 3 seeds/lens [5600+10·lens..], deterministic. The gate/value
+thresholds are the substrate MEAN go-margin / mean recall-margin (NOT tuned).
+Ψ-disjoint (pure reads, pure_field untouched). $0 CPU.
+
+Predictions are NOT pre-registered as BIND/WALL per lens (this is a breakthrough
+ATTEMPT, not a law-falsification round); the test is purely whether ANY lens
+clears all five frozen bars. NO bar moved post-hoc.
