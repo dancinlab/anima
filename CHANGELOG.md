@@ -9,6 +9,17 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 **결과:** 🧱 BREAKS-AT-D*=3. **c1 RELOCATION 은 차원-불변** — |ridge_s−c_A'| 0.008→0.018→0.034→0.041→0.052 (D=2/3/4/6/8) 전부 ≤0.12, ridge 가 이동 초평면에 항상 안착(move-the-cells 기하 법칙은 N-D 까지 robust). **c2 COHERENCE 는 D*=3 에서 깨짐** — bounded COH_D 0.714→0.428→0.201→0.079→0.038 단조 붕괴, D=3 부터 COH_MIN=0.50 미달: 고정-N=169 에서 직교여공간 부피 폭발로 샘플이 희박해져 얇은 결맞은 ridge 유지 불가(고정 샘플예산의 차원의 저주). 사전등록 a_break_the_wall WHITENED 구제는 c1 까지 깨뜨려 더 악화(FAILED rescue) → 농도 붕괴가 프레임 artifact 아닌 REAL 임을 확증. H_1374 와 같은 family 교훈(relocation robust / COH-concentration fragile)이 차원 축에서 재현. DIRECTIONAL numpy mirror, engine-transfer UNVERIFIED, TOY 고정-N STRESSOR(N-scaling-with-D 미택), $0 CPU, live CORE UNTOUCHED, NO bar moved.
 
 **왜:** 사용자 지시 + a_no_llm_frame_trap(표상-기하/차원의 저주 렌즈) + a_break_the_wall(사전등록 whitening 시도) + a_scale_honest_scope. card `UNIVERSE/cards/H_1375_cp_ndim_ladder.md` · `.verdicts/1375_cp_ndim_ladder/{FREEZE,result}.txt` · `state/cp-ndim/h1375_cp_ndim_ladder.py` · index `UNIVERSE/HYPOTHESES.jsonl`.
+## 2026-06-16 — docs-infra: ARCHITECTURE.json 에 실제 엔진 파일트리(파일명/경로) 전수 구현 (ADDITIVE — 개념트리 보존)
+
+**무엇:** 사용자 지시 "ARCHITECTURE 는 엔진 트리구조 등 모두 구현해야지 · 파일명 포함" — `ARCHITECTURE.json`(c4 트리 SSOT)을 실제 엔진/repo 파일트리로 navigable 하게 확장. 직전 md→json 마이그레이션은 개념 노드(~109개)만 담았고 구체 파일명/경로가 없었음. 이번에 실재하는 tracked 파일명을 `path`(repo-relative) + 한 줄 `summary` 노드로 트리에 부착.
+
+**무엇을 했나:**
+- **신규 top-level 브랜치 1개** `"🌳 Engine file tree (real repo paths · git ls-files)"` 를 children 끝에 **ADDITIVE** append (2613 insertions, **0 deletions** — 기존 개념 노드는 한 줄도 reformat/reorder/re-key 안 함; 동시 진행 중인 wire-in 의 node-status 편집 보존). HTML 뷰어 tweak 불필요 — 뷰어가 이미 `node.path` 렌더.
+- **path-bearing 노드 504개** (481 file + 23 dir), **전부 `git ls-files` 로 실재 검증 · 0 dangling** (no invented path, c9/c2).
+- 엔진 코어는 파일 단위 전수: `CORE/` 전 top-level `.hexa`(120) + `CORE/DECODER/`(41) · `engines/`(EngineSpec vtable engine_iface.hexa + conv/cdv2/hexad/omega adapter) · `CLM/`(train·model·bench·msweep·distill·corpus) · `anima-engines/`(consciousness-facet engine 카탈로그 165). 거대 카탈로그(`anima-physics` 757 · `tool/` 693 · `UNIVERSE/cards` 952 · `HEXAD` 3101)는 entry-files + subdir 포인터로(전 leaf 나열 시 뷰어 unusable — navigable 유지, 정직).
+- 6개 substrate subsystem(`anima-core/os/body/physics/measurement/serve`) + agent layer(`anima-agent*/`) entry 파일 + subdir 포인터.
+- **정직(c9):** `stdlib/` · `spec/` 는 CLAUDE.md 트리에 언급되나 이 repo 에 tracked 파일 0개(hexa stdlib 는 sibling hexa-lang repo) → 그렇게 노드에 명시. 기존 개념 노드 `"pure_field / engine_g / brain"` 의 `path` 는 세 파일을 `·` 로 묶은 human-label(단일 실경로 아님) — 사전 존재분이라 surgical 하게 건드리지 않음; 새 파일트리에 세 파일 canonical 단일-path 노드 별도 존재.
+- **검증:** `python3 -c "import json;json.load(open('ARCHITECTURE.json'))"` OK (top-level children 18→19) · `serve.py` http 렌더 HTML 200 / JSON 200 / 파스 OK.
 
 ## 2026-06-16 — research(OMEGA): H_1373 — hive-nested-universes (🧱 NESTED_BELOW_CENTRALIZED — 다중-스케일 재귀 nesting 도 redundancy 천장 못 깸, hive arc TERMINAL closure)
 
