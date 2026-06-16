@@ -1,0 +1,125 @@
+H_1375 — CP DIMENSIONAL LADDER: does move-the-cells relocation survive as feature-space dim D grows?
+PRE-REGISTERED FREEZE — bars fixed BEFORE any scoring (frozen-first, c9/c16/p7, NO tune-to-green).
+=====================================================================================================
+
+LANE: COGNITION-REPRESENTATION (c15 developmental-plasticity + curse-of-dimensionality lens;
+a_no_llm_frame_trap, a_break_the_wall). R1 numpy MIRROR (DIRECTIONAL — engine-transfer UNVERIFIED,
+same family as H_1333/H_1340/H_1343/H_1352/H_1360/H_1364/H_1369 R1). $0 CPU, gradient-free, p7.
+3 seeds [4333,4334,4335] (SAME family seeds). TOY synthetic D-dim continuum — NOT an LLM recipe,
+NOT a human-cognition claim.
+
+USER DIRECTION (verbatim): "2d 말고도 차원늘려봐" — push the move-the-cells law BEYOND 2-D, up a
+DIMENSIONAL ladder. This is the ORTHOGONAL axis to the in-flight diagonal-boundary lane (H_1374,
+which probes boundary ORIENTATION); here the ONLY varied factor is DIMENSIONALITY D.
+
+PROJ_SEED H_1375 (1360=parent move-the-cells GREEN in 1-D; 1369=2-D axis-aligned GREEN with the
+bounded COH metric after the NCOMP unbounded-metric confound; 1375 = D-ladder generalization).
+
+-------------------------------------------------------------------------------------------------
+THE QUESTION
+-------------------------------------------------------------------------------------------------
+H_1360 (🟢, 1-D) and H_1369 (🟢, 2-D axis-aligned) proved CARVING RELOCATION IS MOVE-THE-CELLS:
+at a FIXED LOW budget, physically DRIFTING the residual phase-1 prototype POSITIONS toward the
+moved boundary lands a COHERENT, CONCENTRATED discrimination ridge AT the moved boundary, where
+split-only re-growth stays SHORT (H_1364). H_1369 switched to a BOUNDED concentration metric COH2D
+after R1's unbounded NCOMP saturated on the shuffle smear.
+
+H_1375 asks: as the feature-space dimension D grows (D = 2 → 3 → 4 → 6 → 8), does move-the-cells
+relocation SURVIVE? The TRUE category boundary is a (D−1)-dim HYPERPLANE cat = <w,x> > c (w = fixed
+unit normal, held constant orientation across D — ONLY D varies). When c SHIFTS (c_A → c_A') the
+residual phase-1 cells must relocate along the boundary NORMAL toward the moved hyperplane. The
+CURSE OF DIMENSIONALITY (volume concentration, distance flattening) could break the cell-
+concentration that makes relocation coherent. At constant sample size N the curse intensifies with
+D — that is the stressor, and it is the point. Is move-the-cells a DIMENSION-INVARIANT law, or is
+there a smallest D* where RELOCATION or concentration FAILS?
+
+-------------------------------------------------------------------------------------------------
+DESIGN (generalizes H_1369 2-D machinery to D-dim; Monte-Carlo sample, NOT a full lattice)
+-------------------------------------------------------------------------------------------------
+- A full grid is infeasible past D≈4, so SAMPLE the stimulus cloud: N=400 Monte-Carlo points drawn
+  uniform on [0,1]^D (FIXED N across ALL D — constant-N in growing-D is itself the curse-of-
+  dimensionality stressor; D is the ONLY varied factor). HONEST: this is a sampled cloud, ridge
+  concentration is measured on the sampled cloud, not an exhaustive grid.
+- D-dim RBF population code (H_1343/H_1369 family lifted to D-dim): K_PER=3 Gaussian centers per
+  axis would be 3^D = explosive, so instead use M_CENTERS=64 RBF centers SAMPLED uniform on [0,1]^D
+  (fixed count across D = fixed/LOW density, same every arm). width per-seed jitter
+  rb.uniform(0.18,0.24) on rng(seed+7000) — wider than 2-D's 0.10-0.13 because D-dim unit-cube
+  nearest-neighbor distances grow with D (kept FIXED across arms; only the entropy source = seed).
+- BOUNDARY = the hyperplane <w,x> = c. w = FIXED GENERIC unit normal (the all-ones vector /√D,
+  held the SAME generic orientation at every D so orientation is NOT a varied factor — only D is).
+  The signed coordinate along the normal is t(x) = <w,x>. The normal-coordinate t ranges roughly
+  over [t_min(D), t_max(D)]; the cut is placed at a FIXED FRACTION of that span so the boundary
+  sits at a comparable relative location across D: c_A = t_lo + 1/3·(t_hi−t_lo), c_A' = t_lo +
+  2/3·(t_hi−t_lo), where [t_lo,t_hi] = the 5th/95th percentile of t over the sampled cloud (frozen
+  per (D,seed) BEFORE arm scoring; computed once from the cloud, identical across arms).
+  cat(x) = int(t(x) > c). The D−1 in-hyperplane directions are categorically IRRELEVANT.
+- Cells: error-targeted SPLIT-ONLY Voronoi/mitosis growth (p8), softmin-vote soft posterior,
+  family-VERBATIM (H_1343/H_1360/H_1369). Phase-1 grows on cat(c_A); phase-2 re-grows the SAME
+  store on cat(c_A') WITHOUT reset (split-only). Budgets FIXED LOW: phase-1 = GROW1 = 48 splits,
+  phase-2 = GROW2 = 48 splits (NO inflation; identical across ALL arms AND ALL D — only the re-pack
+  drift differs, and D is the only varied factor).
+- GEOMETRIC RE-PACK (the move, family of H_1360/H_1369, lifted to the boundary NORMAL): each
+  phase-1 cell tracks its SOURCE D-dim position x_i + BIRTH PHASE. After EACH phase-2 split, every
+  residual phase-1 cell is DRIFTED ALONG THE BOUNDARY NORMAL w toward the moved hyperplane:
+      t_i      = <w, x_i>                            (current normal coordinate)
+      t_i_new  = t_i + REPACK_ETA * (c_A' − t_i)     (clamp at c_A', no overshoot)
+      x_i      <- x_i + (t_i_new − t_i) * w          (move ONLY along the normal; in-plane fixed)
+      proto_i  <- embed(x_i, basis)
+      lab_i    <- int(<w,x_i> > c_A')
+  Phase-2 cells are born at their split positions and do NOT drift. REPACK_ETA FROZEN at 0.15 (the
+  SAME gate value as H_1360/H_1369; ONE pre-registered value). eta=0.0 ⇒ split-only re-growth (the
+  H_1364 ablation) — the drift never fires.
+- ARMS (per (D,seed), same low budget): (1) SPLIT-ONLY (eta=0.0 = H_1364 ablation) · (2) RE-PACK
+  (eta=0.15, the move) · (3) SHUFFLE+repack (phase-2 labels permuted → must collapse) ·
+  (4) NO-RETRAIN (phase-1 only, c_A → must HOLD the old hyperplane; sanity, NON-GATING diagnostic).
+
+-------------------------------------------------------------------------------------------------
+METRICS (per (D, seed, arm))
+-------------------------------------------------------------------------------------------------
+- DISCRIMINATION field D(x) = max |Δposterior| over the kNN_DISC=6 nearest neighbors of x in the
+  sampled cloud (the D-dim analog of H_1369's 4-grid-neighbor |Δposterior|; kNN replaces the grid
+  adjacency since the cloud is sampled, not a lattice). RIDGE = nodes with D ≥ 0.5·max(D).
+- RELOCATION metric: ridge_t = MEAN normal-coordinate t = <w,x> over ridge nodes (the centroid's
+  position ALONG THE NORMAL). RELOCATION ERROR = |ridge_t − c_A'|. To compare ACROSS D, express
+  tolerance in the SAME normalized normal-span units: tol on the NORMALIZED coordinate
+  τ = (t − t_lo)/(t_hi − t_lo) ∈ ~[0,1], so c_A→τ=1/3, c_A'→τ=2/3. RELOC_TOL = 0.18 on τ
+  (= 0.18·span in raw t; comparable across D because τ is span-normalized).
+- COH_D (BOUNDED concentration, generalizes H_1369 COH2D = U_CONC·(1−RIDGE_FRAC)):
+      ridge_frac = (#ridge nodes) / N                                  (in [0,1])
+      tau_std    = std over ridge nodes of the NORMALIZED normal coordinate τ
+      t_conc     = 1 − min(1, tau_std / TAU_STD_REF)                   TAU_STD_REF = 0.20 (frozen)
+      COH_D      = t_conc * (1 − ridge_frac)                            (in [0,1])
+  HIGH = a THIN ridge concentrated at one normal-coordinate (a single coherent hyperplane slab);
+  LOW = a cloud-filling smear. In-plane (D−1) spread is NOT scored (a coherent hyperplane ridge
+  legitimately spans all in-plane directions — same rationale as H_1369 not scoring v-spread).
+
+-------------------------------------------------------------------------------------------------
+FROZEN BARS (per D; GREEN-for-this-D iff c1∧c2∧c3∧c4 hold; NO bar moved post-hoc, c9/c16/p7)
+-------------------------------------------------------------------------------------------------
+c1 RELOCATION(D): RE-PACK |ridge_τ − 2/3| ≤ RELOC_TOL = 0.18, ALL 3 seeds.
+c2 COH_D CONCENTRATION(D): RE-PACK mean COH_D ≥ 0.50 AND ≥ SPLIT-ONLY mean + 0.10.
+c3 EARNED (shuffle): SHUFFLE mean COH_D ≤ 0.20 (the move does not fabricate a ridge from noise).
+c4 DISTINCT-FROM-SPLIT(D): SPLIT-ONLY stays SHORT of c_A' — |ridge_τ − 2/3| > RELOC_TOL (split-only
+   mean, OR split-only mean COH_D < RE-PACK − 0.10 i.e. less concentrated).
+
+NON-GATING diagnostics (reported, NOT bars): NO-RETRAIN holds c_A (|ridge_τ − 1/3| small); a
+REPACK-LADDER {0.10,0.15,0.25} for knife-edge check (gate scored ONLY at 0.15).
+
+-------------------------------------------------------------------------------------------------
+LADDER VERDICT (pre-registered)
+-------------------------------------------------------------------------------------------------
+- DIMENSION-INVARIANT 🟢 if c1∧c2∧c3∧c4 hold for ALL D ∈ {2,3,4,6,8}.
+- BREAKS-AT-D* 🧱 if there is a SMALLEST D* where c1 (RELOCATION) or c2 (COH_D) FAILS — report D*
+  honestly and the per-D curve. A break is a CLEAN, INTERESTING result (the law is dimension-
+  bounded).
+- a_break_the_wall: if relocation breaks at some D*, try ONE genuinely-new angle BEFORE declaring
+  the break terminal — pre-registered fallback = WHITEN the D-dim metric (z-score the embedding per
+  feature so the normal drift is measured in a whitened space, removing the raw-distance flattening
+  the curse induces), frozen-first, re-score the SAME bars. (Scaling N with D is NOT used as the
+  fallback here because it would change the constant-N stressor that is the point; whitening keeps N
+  and D fixed and only changes the metric geometry.)
+
+CONSTANTS (frozen): SEEDS=[4333,4334,4335]; D_LADDER=[2,3,4,6,8]; N=400; M_CENTERS=64;
+GROW1=48; GROW2=48; BETA_POST=18.0; REPACK_ETA=0.15; kNN_DISC=6; RELOC_TOL=0.18; COH_MIN=0.50;
+COH_SEP=0.10; SHUF_COH_MAX=0.20; TAU_STD_REF=0.20; width jitter U(0.18,0.24); cut at 1/3,2/3 of the
+[5th,95th]-pctile normal span; w = ones(D)/√D.

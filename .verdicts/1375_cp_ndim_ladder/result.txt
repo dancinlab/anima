@@ -1,0 +1,85 @@
+H_1375 R1 — CP DIMENSIONAL LADDER: does move-the-cells survive as dim D grows?
+================================================================================================
+USER DIRECTION (verbatim): "2d 말고도 차원늘려봐" — push move-the-cells BEYOND 2-D up a D-ladder.
+D-ladder = {2,3,4,6,8}; TRUE boundary = hyperplane <w,x>=c (w=ones/√D, FIXED orientation,
+ONLY D varies); cells drift along the normal w toward the moved hyperplane c_A→c_A'.
+N=400 Monte-Carlo points (FIXED across D = curse-of-dim stressor) · M_CENTERS=64 ·
+GROW1=48 GROW2=48 eta=0.15 kNN_DISC=6 seeds=[4333, 4334, 4335]
+metrics: ridge_tau = span-normalized normal coord of ridge centroid (RELOCATES, c_A→1/3,
+         c_A'→2/3); COH_D = t_conc·(1-ridge_frac) bounded concentration (generalizes COH2D)
+HONEST: ridge concentration measured on the SAMPLED cloud, not an exhaustive lattice.
+
+FROZEN BARS (per D): c1 RE-PACK |ridge_tau-2/3|<=0.18 all 3 seeds · c2 RE-PACK COH_D
+  >=0.5 AND >=SPLIT-ONLY+0.1 · c3 SHUFFLE COH_D<=0.2 · c4 SPLIT-ONLY short/less-conc
+================================================================================================
+
+── D = 2 ──────────────────────────────────────────────────────────────────────
+  seed 4333: SPLIT-ONLY tau=0.354 coh=0.591 (nc=68) | RE-PACK tau=0.679 coh=0.756 (nc=40) | shuffle coh=0.347 | no-retrain tau=0.328
+  seed 4334: SPLIT-ONLY tau=0.361 coh=0.505 (nc=71) | RE-PACK tau=0.657 coh=0.748 (nc=42) | shuffle coh=0.335 | no-retrain tau=0.336
+  seed 4335: SPLIT-ONLY tau=0.378 coh=0.488 (nc=71) | RE-PACK tau=0.674 coh=0.697 (nc=44) | shuffle coh=0.392 | no-retrain tau=0.342
+  MEAN: RE-PACK |tau-2/3|=0.010 COH_D=0.734 | SPLIT-ONLY |tau-2/3|=0.302 COH_D=0.528 | SHUFFLE COH_D=0.358 | NO-RETRAIN |tau-1/3|=0.006
+  c1 RELOCATION PASS (per-seed [0.012, 0.01, 0.008]<=0.18) · c2 COH_D PASS (0.734>=0.5 & >=split 0.528+0.1) · c3 EARNED FAIL · c4 DISTINCT PASS
+  => D=2: 🧱 FAIL
+
+── D = 3 ──────────────────────────────────────────────────────────────────────
+  seed 4333: SPLIT-ONLY tau=0.362 coh=0.379 (nc=94) | RE-PACK tau=0.679 coh=0.532 (nc=94) | shuffle coh=0.100 | no-retrain tau=0.328
+  seed 4334: SPLIT-ONLY tau=0.359 coh=0.252 (nc=97) | RE-PACK tau=0.675 coh=0.361 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.324
+  seed 4335: SPLIT-ONLY tau=0.393 coh=0.257 (nc=92) | RE-PACK tau=0.672 coh=0.480 (nc=92) | shuffle coh=0.126 | no-retrain tau=0.333
+  MEAN: RE-PACK |tau-2/3|=0.009 COH_D=0.458 | SPLIT-ONLY |tau-2/3|=0.295 COH_D=0.296 | SHUFFLE COH_D=0.075 | NO-RETRAIN |tau-1/3|=0.005
+  c1 RELOCATION PASS (per-seed [0.012, 0.008, 0.005]<=0.18) · c2 COH_D FAIL (0.458>=0.5 & >=split 0.296+0.1) · c3 EARNED PASS · c4 DISTINCT PASS
+  => D=3: 🧱 FAIL
+
+── D = 4 ──────────────────────────────────────────────────────────────────────
+  seed 4333: SPLIT-ONLY tau=0.422 coh=0.079 (nc=97) | RE-PACK tau=0.680 coh=0.368 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.408
+  seed 4334: SPLIT-ONLY tau=0.493 coh=0.000 (nc=97) | RE-PACK tau=0.701 coh=0.087 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.420
+  seed 4335: SPLIT-ONLY tau=0.430 coh=0.000 (nc=97) | RE-PACK tau=0.677 coh=0.333 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.307
+  MEAN: RE-PACK |tau-2/3|=0.019 COH_D=0.263 | SPLIT-ONLY |tau-2/3|=0.219 COH_D=0.026 | SHUFFLE COH_D=0.000 | NO-RETRAIN |tau-1/3|=0.063
+  c1 RELOCATION PASS (per-seed [0.014, 0.035, 0.01]<=0.18) · c2 COH_D FAIL (0.263>=0.5 & >=split 0.026+0.1) · c3 EARNED PASS · c4 DISTINCT PASS
+  => D=4: 🧱 FAIL
+
+── D = 6 ──────────────────────────────────────────────────────────────────────
+  seed 4333: SPLIT-ONLY tau=0.415 coh=0.000 (nc=97) | RE-PACK tau=0.596 coh=0.000 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.402
+  seed 4334: SPLIT-ONLY tau=0.474 coh=0.000 (nc=97) | RE-PACK tau=0.650 coh=0.000 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.375
+  seed 4335: SPLIT-ONLY tau=0.482 coh=0.000 (nc=97) | RE-PACK tau=0.704 coh=0.025 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.343
+  MEAN: RE-PACK |tau-2/3|=0.041 COH_D=0.008 | SPLIT-ONLY |tau-2/3|=0.210 COH_D=0.000 | SHUFFLE COH_D=0.000 | NO-RETRAIN |tau-1/3|=0.040
+  c1 RELOCATION PASS (per-seed [0.07, 0.017, 0.038]<=0.18) · c2 COH_D FAIL (0.008>=0.5 & >=split 0.000+0.1) · c3 EARNED PASS · c4 DISTINCT PASS
+  => D=6: 🧱 FAIL
+
+── D = 8 ──────────────────────────────────────────────────────────────────────
+  seed 4333: SPLIT-ONLY tau=0.508 coh=0.000 (nc=97) | RE-PACK tau=0.650 coh=0.000 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.426
+  seed 4334: SPLIT-ONLY tau=0.478 coh=0.000 (nc=97) | RE-PACK tau=0.609 coh=0.000 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.330
+  seed 4335: SPLIT-ONLY tau=0.451 coh=0.000 (nc=97) | RE-PACK tau=0.577 coh=0.000 (nc=97) | shuffle coh=0.000 | no-retrain tau=0.316
+  MEAN: RE-PACK |tau-2/3|=0.054 COH_D=0.000 | SPLIT-ONLY |tau-2/3|=0.188 COH_D=0.000 | SHUFFLE COH_D=0.000 | NO-RETRAIN |tau-1/3|=0.038
+  c1 RELOCATION PASS (per-seed [0.016, 0.057, 0.09]<=0.18) · c2 COH_D FAIL (0.000>=0.5 & >=split 0.000+0.1) · c3 EARNED PASS · c4 DISTINCT PASS
+  => D=8: 🧱 FAIL
+
+================================================================================================
+LADDER CURVE (per D):
+    D | RE-PACK|tau-2/3| | RE-PACK COH_D | SPLIT COH_D | SHUF COH_D |  c1c2c3c4 | verdict
+    2 |            0.010 |         0.734 |       0.528 |      0.358 |      1101 | 🧱 FAIL
+    3 |            0.009 |         0.458 |       0.296 |      0.075 |      1011 | 🧱 FAIL
+    4 |            0.019 |         0.263 |       0.026 |      0.000 |      1011 | 🧱 FAIL
+    6 |            0.041 |         0.008 |       0.000 |      0.000 |      1011 | 🧱 FAIL
+    8 |            0.054 |         0.000 |       0.000 |      0.000 |      1011 | 🧱 FAIL
+
+[NON-GATING diagnostic] RE-PACK-LADDER at D=8 (gate scored ONLY at eta=0.15):
+   eta=0.10: |tau-2/3| mean=0.051  COH_D mean=0.000
+   eta=0.15: |tau-2/3| mean=0.054  COH_D mean=0.000  <-- FROZEN GATE
+   eta=0.25: |tau-2/3| mean=0.053  COH_D mean=0.000
+
+================================================================================================
+LADDER VERDICT: 🧱 BREAKS-AT-D* = 3 — move-the-cells is DIMENSION-BOUNDED. The first
+  D where RELOCATION (c1) or COH_D (c2) fails is D*=3. Per-D curve above is the headline.
+  a_break_the_wall: re-scoring the SAME frozen bars under a WHITENED metric (z-score the
+  embedding per feature, removing raw-distance flattening) — frozen-first, N & D unchanged:
+  --------------------------------------------------------------------------------------------
+   D=2 [WHITEN]: RE-PACK |tau-2/3|=0.008 COH_D=0.714 SPLIT COH_D=0.522 SHUF COH_D=0.024 bars=1111 🟢
+   D=3 [WHITEN]: RE-PACK |tau-2/3|=0.011 COH_D=0.487 SPLIT COH_D=0.376 SHUF COH_D=0.000 bars=1011 🧱
+   D=4 [WHITEN]: RE-PACK |tau-2/3|=0.064 COH_D=0.019 SPLIT COH_D=0.000 SHUF COH_D=0.000 bars=1011 🧱
+   D=6 [WHITEN]: RE-PACK |tau-2/3|=0.082 COH_D=0.000 SPLIT COH_D=0.000 SHUF COH_D=0.000 bars=1011 🧱
+   D=8 [WHITEN]: RE-PACK |tau-2/3|=0.061 COH_D=0.000 SPLIT COH_D=0.000 SHUF COH_D=0.000 bars=1011 🧱
+  --------------------------------------------------------------------------------------------
+  WHITEN did NOT rescue (whitened-break-at D*=3) → the break at D*=3 is
+  INTRINSIC (constant-N curse-of-dimensionality genuinely flattens the cell-concentration).
+  TERMINAL: 🧱 BREAKS-AT-D* = 3 (intrinsic) — move-the-cells is dimension-bounded.
+  Honest, NO bar move (c9/c16/p7). ENGINE-TRANSFER UNVERIFIED. TOY synthetic D-dim cloud.
