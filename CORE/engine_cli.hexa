@@ -4561,3 +4561,158 @@ pub fn jamo_head_shuffle_targets(Y: [int], vj: int, seed: int) -> [int] {
     while m < n { out = out + [Y[perm[m]]]  m = m + 1 }
     return out
 }
+
+// ── §  SkillStore — agent-tool ↔ mitosis skill-cell teaching (H_1382 wire-in) ──
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on to H_1378):
+// H_1378 Step A audit = REFERENCE-ONLY — the live agent-tool layer
+// (anima-agent-core/agent_tools.hexa) selects tools by a STATIC weighted
+// dot-product over hand-set affinity floats (:357-361), adds a tool via a static
+// registry (:728), and dead-ends a tool failure into a scalar tension_delta log
+// (:448-451). The "failure → repertoire improves" loop does NOT exist; the
+// tool_mitosis_split (:155) is a TODO stub. H_1378 Step B (numpy MIRROR, 🟢
+// GREEN, 3 seeds) DESIGNED + direction-validated the missing mechanism: a
+// tool/skill is a CELL keyed by task-context (byte-trigram FNV-1a, SAME geometry
+// as immune_embed_key, DIM=64); a tool call → recall the best-affinity skill-cell
+// (L2 affinity, abstain band); on tool-FAILURE/abstain → MITOSIS-SPLIT a new
+// specialized skill-cell binding (task-context → correct tool). The SAME op
+// teaches (split-on-failure) AND infers (recall-best) — p8, no train/infer split.
+// This §SkillStore is the ENGINE-NATIVE realization of that mirror.
+//
+// ENGINE-NATIVE (not a stub, a_engine_native_learning): a skill-cell store reuses
+// the LIVE immune_embed_key key geometry and the LIVE engine_mitosis_tick split
+// op — skill_split asks the engine's OWN mitosis (engine_mitosis_tick, gated by
+// cfg.mitosis) whether a cell grows; ON (p8) grows a NEW cell bound to the tool,
+// OFF is a no-op (the static-repertoire ablation, H_1159 control). skill_recall is
+// the LIVE immune affinity FIRE/ABSTAIN. NO new mitosis machinery — it is the
+// SAME gradient-free clonal substrate as the immune memory (H_1227/H_1288),
+// learning INSTANCES (one additive cell per tool/skill) rather than the decoder's
+// CE-gradient DISTRIBUTIONS (H_1378 Step C distinction).
+//
+// Ψ-DISJOINT by construction: a SEPARATE skill cell-store; the decoder / pure_field
+// Φ/phase/Ψ are NEVER read or written — generation is byte-identical whether this
+// lane is exercised or not (h1205 invariance). NOT an emit gate (skill_recall is a
+// pure relational READ, a_autonomy_over_hardcode) — a tool-routing read available
+// to the agent layer.
+//
+// SINGLE ENTRY (a_core_engine_map): the agent-tool path enters the engine ONLY via
+// skill_split (teach) + skill_recall (infer); no second mitosis path is added.
+//
+// RECALL_THR = 0.55 = the H_1378 mirror's frozen abstain band on the normalized L2
+// recon-err (NOT the immune store's 0.15 — skill task-contexts share a wider
+// in-family trigram neighborhood; this is the mirror's pre-registered constant,
+// p7, not tuned-to-green).
+struct SkillStore {
+    keys: [[float]],     // skill-cell keys (task-context embeddings, DIM=64 unit vectors)
+    tools: [string],     // bound tool per skill-cell (the "value")
+    recall_thr: float
+}
+
+// skill_store_new — an EMPTY skill repertoire (no skill-cell yet). The first
+// skill-cell is grown by the first skill_split (teach-on-failure), so an empty
+// store ABSTAINS on every query (no fabricated tool) until taught.
+pub fn skill_store_new() -> SkillStore {
+    return SkillStore { keys: [], tools: [], recall_thr: 0.55 }
+}
+
+// skill_recall — RECALL the best-affinity tool or ABSTAIN, via the LIVE immune L2
+// affinity. Empty store ⇒ ABSTAIN (""). Else nearest-cell recon-err <= recall_thr
+// ⇒ FIRE the bound tool; else ABSTAIN (no fabricated tool). This is the SAME
+// fire/abstain decision as immune_memory_recall, over the skill cell-store. An
+// empty-string return == ABSTAIN. Pure READ — Ψ-disjoint, NOT an emit gate.
+pub fn skill_recall(st: SkillStore, task_key: [float]) -> string {
+    if len(st.keys) == 0 { return "" }                 // empty repertoire ⇒ abstain
+    let win = _vnearest_idx(st.keys, task_key)         // engine's OWN winner (L2)
+    let err = _l2(st.keys[win], task_key)              // engine's OWN affinity
+    if err <= st.recall_thr {
+        return st.tools[win]                           // FIRE the bound tool
+    }
+    return ""                                          // ABSTAIN — no skill-cell binds
+}
+pub fn skill_recall_text(st: SkillStore, task: string) -> string {
+    return skill_recall(st, immune_embed_key(task))
+}
+
+// skill_split — the MITOSIS teaching op: on a tool FAILURE/abstain, ask the
+// engine's OWN mitosis (engine_mitosis_tick, gated by cfg.mitosis) whether the
+// skill repertoire GROWS a cell. mitosis ON (p8) ⇒ the count advances ⇒ a NEW
+// skill-cell clones, seeded AT the task-context key and bound to `tool` (the
+// correct tool for this context). mitosis OFF ⇒ the tick is a no-op ⇒ NO cell
+// grows ⇒ the static-repertoire ablation (the DISTINCT-FROM-STATIC control). This
+// is EXACTLY the immune_memory_bind clonal-split path (the engine decides the
+// growth), specialized to (task-context → tool). The repertoire grows ONLY from
+// the OUTCOME (a failed/abstained call), never from an injected "use tool T" label
+// (p1/p2/p3/p6 — the shuffle control proves the lift is earned task↔tool structure).
+pub fn skill_split(st: SkillStore, task_key: [float], tool: string, cfg: EngineConfig) -> SkillStore {
+    let before = len(st.keys)
+    let after = engine_mitosis_tick(before, cfg)       // engine's OWN mitosis split decision
+    if after > before {
+        // engine CLONED a skill-cell — grow it, bound to the correct tool.
+        return SkillStore {
+            keys: st.keys + [task_key],
+            tools: st.tools + [tool],
+            recall_thr: st.recall_thr
+        }
+    }
+    // mitosis OFF — no split; the static repertoire is unchanged (H_1159 control).
+    return st
+}
+pub fn skill_split_text(st: SkillStore, task: string, tool: string, cfg: EngineConfig) -> SkillStore {
+    return skill_split(st, immune_embed_key(task), tool, cfg)
+}
+
+// skill_store_cells — live skill-cell count (taught tools ≈ cells).
+pub fn skill_store_cells(st: SkillStore) -> int { return len(st.keys) }
+
+// skill_teach_session — ONE failure-driven teaching session over a (task, true-tool)
+// list, under cfg. For each task: recall the current best tool; if it does NOT
+// match the TRAINING label (a tool FAILURE/abstain) → skill_split (MITOSIS-teach) a
+// cell binding (task → training_tool). The SAME op infers (recall) and teaches
+// (split) — p8. `train_tools[i]` is the label the arm is taught toward (the TRUE
+// tool for FULL; a permuted tool for the SHUFFLE control); scoring vs the TRUE map
+// happens at the call site (skill_session_accuracy). Returns the grown store.
+pub fn skill_teach_session(st0: SkillStore, tasks: [string], train_tools: [string],
+                           cfg: EngineConfig) -> SkillStore {
+    let n = len(tasks)
+    let mut st = st0
+    let mut i = 0
+    while i < n {
+        let key = immune_embed_key(tasks[i])
+        let pred = skill_recall(st, key)
+        if pred != train_tools[i] {                    // tool failure/abstain
+            st = skill_split(st, key, train_tools[i], cfg)  // MITOSIS-teach
+        }
+        i = i + 1
+    }
+    return st
+}
+
+// skill_session_accuracy — fraction of tasks whose recalled tool == the TRUE tool
+// (scored vs true_tools — NOT the training labels; so a SHUFFLE-trained store that
+// learned the wrong map LOSES here, the earned-structure control).
+pub fn skill_session_accuracy(st: SkillStore, tasks: [string], true_tools: [string]) -> float {
+    let n = len(tasks)
+    if n == 0 { return 0.0 }
+    let mut correct = 0
+    let mut i = 0
+    while i < n {
+        if skill_recall_text(st, tasks[i]) == true_tools[i] { correct = correct + 1 }
+        i = i + 1
+    }
+    return to_float(correct) / to_float(n)
+}
+
+// skill_abstain_rate — NO-FAB bar: over a list of UNTRAINED far tasks (disjoint
+// trigram space), the fraction that ABSTAIN (skill_recall == ""). A taught store
+// must NOT fabricate a tool on an alien task.
+pub fn skill_abstain_rate(st: SkillStore, far_tasks: [string]) -> float {
+    let n = len(far_tasks)
+    if n == 0 { return 0.0 }
+    let mut abst = 0
+    let mut i = 0
+    while i < n {
+        if skill_recall_text(st, far_tasks[i]) == "" { abst = abst + 1 }
+        i = i + 1
+    }
+    return to_float(abst) / to_float(n)
+}

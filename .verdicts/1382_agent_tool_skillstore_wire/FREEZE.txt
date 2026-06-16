@@ -1,0 +1,43 @@
+H_1382 — agent-tool §SkillStore CORE wire-in (a_verified_must_wire follow-on to H_1378)
+FROZEN BARS — pre-registered BEFORE running the engine-native verdict (c9, NO tune-to-green, p7).
+
+LANE: CORE/engine_cli.hexa § SkillStore (additive, Ψ-disjoint — same discipline as
+H_1227/H_1288 immune/growth memory). A skill-cell store keyed by task-context (reuses the
+LIVE immune_embed_key DIM=64 byte-trigram FNV-1a geometry); skill_recall = LIVE L2-affinity
+FIRE/ABSTAIN; on a tool-FAILURE/abstain skill_split routes through the LIVE engine_mitosis_tick
+clonal split (gated by cfg.mitosis) to grow a NEW specialized skill-cell binding (task-context
+→ tool). Engine-native realization of the H_1378 numpy mirror — the SAME 4 bars, engine-native.
+
+ARMS (3, mirror of H_1378 Step B):
+  FULL    = mitosis ON (cfg.mitosis=true)  — skill_split GROWS a cell on every tool failure.
+  STATIC  = mitosis OFF (cfg.mitosis=false) — engine_mitosis_tick is a no-op; NO cell grows
+            (the static fixed-repertoire ablation, H_1159 control).
+  SHUFFLE = mitosis ON, but TRAINED on a permuted task→tool label map (task↔tool correspondence
+            destroyed) while ALWAYS SCORED vs the TRUE map. The earned-structure control.
+
+ENVIRONMENT: synthetic task→tool map, 6 tools × 6 in-family context variants = 36 tasks,
+deterministic per-seed shuffle; far untrained tasks for the abstain bar. 3 seeds [1382,1383,1384].
+RECALL_THR = 0.55 (the H_1378 mirror's frozen abstain band; NOT tuned-to-green).
+
+FROZEN BARS (pooled means over 3 seeds; tier read VERBATIM from result.txt, c2):
+  (1) WIRED            §SkillStore in CORE, named single entry (a_core_engine_map); skill_recall
+                       + failure→split are REAL ops (not stubs). [structural — audited]
+  (2) LEARNS           FULL acc_final − acc_init ≥ +0.30   (selection accuracy RISES as skill-cells
+                       split under failure). engine-native verbatim stdout (c2).
+  (3) DISTINCT-FROM-STATIC  FULL_final − STATIC_final ≥ +0.30  (static fixed repertoire does NOT improve).
+  (4a) EARNED (shuffle)     SHUFFLE_final − STATIC_final ≤ +0.15  (shuffle collapses to the no-split floor).
+  (4b) NO-FAB / ABSTAIN     far-untrained-task abstain ≥ 0.90    (no fabricated tool on a disjoint task).
+  (5) Ψ-DISJOINT / NO-REGRESSION  ADDITIVE — generation byte-identical ON==OFF (h1205); Ψ Φ-checksum
+                       ON==OFF; engine_cli_smoke green + ≥2 SkillStore cases ADDED; single-entry (h1196) N/0;
+                       deterministic over 3 runs.
+
+GREEN iff (1) AND (2) AND (3) AND (4a) AND (4b) AND (5). Any engine-native bar that does NOT clear
+→ honest ❌/⏳ (c9); a_break_the_wall one new angle (frozen-first) before terminal. Do NOT fake the wire.
+
+p1/p2/p3/p6 GUARD: the split binds from OUTCOME only (success/failure of the executed tool); NO injected
+"use tool T" label / RLHF / persona — the shuffle collapse proves the lift is earned task↔tool structure.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY synthetic map, 3 seeds, deterministic readout
+(tests the STRUCTURE that mitosis can teach tools, not a learned planner). Engine-native (not a mirror).
+Scale / real tool-failures / paraphrased tasks / the agent_tools.hexa runtime routing of a real failure
+into skill_split = the remaining thin follow-on (named honestly, c9).
