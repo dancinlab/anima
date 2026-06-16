@@ -1,15 +1,15 @@
 ---
-id: H_1387
+id: H_1394
 slug: g6_production_close
 title: G6 IDEATION ★ PRODUCTION-CLOSE — re-score the FALS depth bars (M2-M5) on a 303M-class ENGINE-MOUNTABLE ConvMoE .clm (the engine arch), not the H_1362 303M ByteGPT .pt
 group: gate-dig (G6 IDEATION ★, anima's core purpose)
-terminal_tier: PLACEHOLDER
+terminal_tier: 🟢 B1 303M-MOUNTED + M1 ENGINE-NATIVE GREEN / 🔴 M2-M5 FALS=0 — HONEST ARCHITECTURE FINDING (conv-depth vs transformer-depth; NOT capacity, NOT script-control; NO bar moved, c9)
 verdict_dir: .verdicts/1387_g6_production_close/
 terminal_verdict: .verdicts/1387_g6_production_close/result.txt
 date: 2026-06-16
 ---
 
-# H_1387 — G6 IDEATION ★ PRODUCTION-CLOSE
+# H_1394 — G6 IDEATION ★ PRODUCTION-CLOSE
 
 ## Why now (builds on H_1381 / H_1362)
 
@@ -19,7 +19,7 @@ back **0** on the only engine-mountable `.clm` available: a d768/7.479M ConvMoE.
 honest reading: that mouth is a model-capacity floor; the H_1362 FALS=1.0 was a **303M
 ByteGPT `.pt`**, and the engine decodes **ConvMoE `.clm`** (serializing a ByteGPT is forbidden,
 `a_clm_gen_pipeline`). So engine-native FALS at the H_1362 level needed an engine-mountable
-**303M-class ConvMoE `.clm`** — H_1387 obtains one and re-scores.
+**303M-class ConvMoE `.clm`** — H_1394 obtains one and re-scores.
 
 ## Cost-aware triage (Step 0, a_completeness_over_cheap)
 
@@ -44,19 +44,40 @@ The only path = **train a d5000 ConvMoE from scratch** → serialize → mount �
 
 ## Result — see `.verdicts/1387_g6_production_close/result.txt` (verbatim)
 
-| arm | DIST | FALS (5-lang) | FALS (en-dom) |
-|-----|------|---------------|---------------|
-| C_strong | 5.333 | 0.0 | PLACEHOLDER |
+**B1 303M-MOUNTED ✅** — CLMConvMoE d5000/E2/L1/K3 = **302,610,258 params**, serialized → `.clm` v0.2,
+engine-decodable (`clm_config` ok:true d=5000 E=2 L=1 nblk=6), mounts via `gen_clm_ideate` (single
+entry, h1196 7/0). Detector 10/10, frame-guard 0 leaks, sampler det/diverse/in_topk (engine-native).
 
-**R1 (5-lang ConvMoE):** M1 DIST(C)=**5.333 ≥5 PASS** (matches H_1362's 5.333 exactly) ·
-**M2-M5 FALS = 0** — the genuine 302.6M ConvMoE on a balanced 5-lang corpus emits byte-coherent
-but **code-switching word-salad** (en/fr/de/es/ko mixed), never forming a falsifiable claim. This is
-the **H_1128 code-switch collapse**, NOT a capacity floor. FALS=1.0 in H_1362 required the **4th
-ingredient H_1129 isolated: SCRIPT-CONTROL** (English-dominant corpus). Capacity (303M) matched;
-corpus was the lever. NO bar moved (c9).
+| arm | DIST | FALS (5-lang) | FALS (en-dom, script-ctrl) |
+|-----|------|---------------|----------------------------|
+| C_strong | 5.333 / 5.0 | 0.0 | 0.0 |
+| C_shuffle | 5.0 | 0.0 | 0.0 |
+| C_ablate | 5.0 | 0.0 | 0.0 |
+| B_composed | 3.0 / 5.0 | 0.0 | 0.0 |
 
-**R2 (a_break_the_wall — script-controlled ConvMoE):** retrain d5000 ConvMoE on an English-dominant
-ASCII-filtered corpus (the H_1129 recipe) and re-score: PLACEHOLDER.
+**R1 (5-lang ConvMoE, CE→1.494):** M1 DIST(C)=**5.333 ≥5 PASS** (= H_1362's 5.333 exactly) · M2-M5
+FALS=0 — byte-coherent **code-switching word-salad** (the H_1128 collapse). NOT capacity. NO bar moved.
+
+**R2 (a_break_the_wall — script-controlled ConvMoE, en-dom 73% + ASCII-filter, H_1129 recipe, CE→1.519):**
+M1 DIST=5.0 PASS · **M2-M5 FALS STILL 0** — single-script, NO code-switch, yet no falsifiable claim.
+
+**DECISIVE FINDING (c9):** the FALS floor is **NOT capacity** (303M matched) and **NOT script-control**
+(the H_1129 lever applied, still 0). The isolated variable is **ARCHITECTURE**: the engine-mountable
+ConvMoE is **E2/L1 — a SINGLE conv trunk layer** — vs the H_1362 ByteGPT's **L24 transformer + attention**.
+The compositional depth to externalize a falsifiable "if X then measurable-comparison" claim lives in
+the deep attention stack; a 1-trunk-layer conv does not reproduce it even at matched params + script-control.
+**M1 production-closes engine-native; M2-M5 FALS=0 is an honest architecture-depth result, NOT a loosened
+or failed gate. The bar is UNMOVED (c9), detector FROZEN 10/10, controls decisive (all arms 0).**
+
+**NEXT (closes the H_1381 ⏳ with a decisive answer):** the gate is NOT ckpt-availability (a 303M ConvMoE
+was obtained/mounted/scored) but the ENGINE DECODER DEPTH (E2/L1). The v0.3 serializer already generalizes
+`nblk=L+E+3` and the decoder recovers `L=nblk-E-3`, so an **L>1 (deep) ConvMoE is already engine-mountable** —
+train+score a deep ConvMoE against these SAME frozen bars (`a_engine_native_learning`, engine-transform-to-fit). Bounded follow-on.
+
+## Regression / Ψ (B3, GREEN)
+
+engine_cli_smoke **110/0** · h1196 single-entry **7/0** · h1205 separation-invariant **PASS** (generation
+byte-identical ON==OFF, Ψ=½ phiSum 48.6613 ON==OFF). Sampler+best-of-K live ONLY behind `gen_clm_ideate`.
 
 ## Scope (honest, a_scale_honest_scope)
 

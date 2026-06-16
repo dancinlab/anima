@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""h1387_g6_convmoe_mbar.py — H_1387 G6 ★ production-close M-bar re-score on the
+"""h1387_g6_convmoe_mbar.py — H_1394 G6 ★ production-close M-bar re-score on the
 GENUINE 303M-class ConvMoE (.pt, the torch source of the engine-mounted .clm).
 
 This is the H_1362 method VERBATIM — same FROZEN _is_falsifiable detector (h1305),
