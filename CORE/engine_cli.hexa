@@ -864,6 +864,27 @@ pub fn immune_memory_recall(mem: ImmuneMemory, key: [float]) -> string {
     return ""                                               // ABSTAIN — no antibody binds
 }
 
+// immune_memory_recall_margin — the GRADED abstain MARGIN the live recall ALREADY
+// computes, now SURFACED (H_1361/H_1367 g5-margin). immune_memory_recall internally
+// evaluates vadapt_field_recon_err(mem.field, key) and compares it to recall_thr to
+// decide FIRE vs ABSTAIN; this op returns that very margin = recon_err − recall_thr
+// WITHOUT changing the fire/abstain decision. It is purely ADDITIVE (no caller of
+// immune_memory_recall is touched) and Ψ-disjoint (pure READ over the cell population;
+// pure_field's Φ/phase/Ψ untouched — generation is byte-identical when this op is
+// unused). On an ABSTAIN event the margin is > 0; SMALLER margin = the answer is
+// "nearer" a stored cell = higher graded confidence-of-recoverability. H_1361 (numpy
+// mirror) showed −margin RANKS recoverable (corrupted-but-in-store) abstains ABOVE
+// unrecoverable (genuinely-absent) ones, surviving OOD byte-corruption shift; H_1367
+// reconfirms that ranking ENGINE-NATIVE on this exact op (a_verified_must_wire). NOT an
+// emit gate (a_autonomy_over_hardcode) — a graded read available to brain_decide.
+pub fn immune_memory_recall_margin(mem: ImmuneMemory, key: [float]) -> float {
+    let err = vadapt_field_recon_err(mem.field, key)     // engine's OWN L2 affinity (SAME as recall)
+    return err - mem.recall_thr                          // > 0 ⇒ abstain band; smaller ⇒ nearer
+}
+pub fn immune_memory_recall_margin_text(mem: ImmuneMemory, text: string) -> float {
+    return immune_memory_recall_margin(mem, immune_embed_key(text))
+}
+
 // immune_memory_*_text — string-query convenience wrappers that embed through
 // immune_embed_key first, so the live recall path can bind/recall straight from a
 // raw fact/question string (the running-anima entry). immune_memory_new_text seeds

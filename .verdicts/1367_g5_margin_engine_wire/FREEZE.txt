@@ -1,0 +1,95 @@
+H_1367 — g5-margin-engine-wire — FROZEN FALSIFIER (pre-registered BEFORE scoring)
+=============================================================================
+Date: 2026-06-16. 3 seeds [7,8,9]. $0 CPU. ENGINE-NATIVE on live CORE/engine_cli.hexa.
+frozen-first, NO tune-to-green (c9). p7. a_verified_must_wire · a_engine_native_learning.
+
+CONTEXT (what H_1361 left for the engine side)
+-----------------------------------------------------------------------------
+H_1361 (numpy mirror, DIRECTIONAL) established 🟢 GRADED-METACOG: the ImmuneMemory
+abstain MARGIN (recon_err − recall_thr, present on EVERY abstain) carries GRADED OOD
+metacognition — −margin RANKS recoverable (corrupted-but-in-store, answer retrievable)
+abstains ABOVE unrecoverable (genuinely-absent) ones, type-2 AUROC 0.915 at shift L=0.20,
+shuffle control → chance. Per a_engine_native_learning a numpy-mirror verdict is
+DIRECTIONAL only; per a_verified_must_wire a GREEN hypothesis is not done until it is
+(1) reconfirmed ENGINE-NATIVE on the live CORE engine and (2) WIRED into live CORE.
+
+GOAL
+-----------------------------------------------------------------------------
+(1) RECONFIRM the H_1361 frozen type-2 AUROC bars on the LIVE CORE/engine_cli.hexa
+    ImmuneMemory recall, by exposing the margin the live immune_memory_recall ALREADY
+    computes (vadapt_field_recon_err vs recall_thr) via a NEW additive op
+    immune_memory_recall_margin, and re-scoring the frozen bars on the live engine.
+(2) If green, the same additive op IS the wire-in: a graded confidence-of-recoverability
+    read available to brain_decide (additive, Ψ-disjoint — NOT an emit gate per
+    a_autonomy_over_hardcode; it changes no fire/abstain decision).
+
+MECHANISM (LIVE engine, NOT a mirror)
+-----------------------------------------------------------------------------
+- store: immune_memory_new + immune_memory_bind (the LIVE H_1231 recall faculty,
+  VAdaptField cell population, recall_thr = 0.15 default — frozen, == H_1227 RECALL_THRESH).
+- key: immune_embed_key (LIVE engine byte-trigram FNV-1a, dim=64, L2-normalize — the
+  same encoder the mirror was verified byte-identical to).
+- MARGIN = immune_memory_recall_margin(mem, key) = vadapt_field_recon_err(mem.field,key)
+  − mem.recall_thr. On an ABSTAIN (margin > 0) the type-2 score is −margin (smaller margin
+  = higher confidence-of-recoverability). The fire/abstain decision (immune_memory_recall)
+  is UNCHANGED; the margin op only SURFACES the quantity the recall already computed.
+
+ABSTAIN SPLIT (the two classes the margin must rank — same as H_1361)
+-----------------------------------------------------------------------------
+For each shift level L, two disjoint abstain populations on the LIVE store:
+  (a) RECOVERABLE  (label=1) = an IN-STORE key corrupted by frac L (on-alphabet byte
+      substitution); the true answer IS in the store. Only abstains (margin>0) counted.
+  (b) UNRECOVERABLE (label=0) = a genuinely-absent key (token NOT in store) corrupted by
+      the SAME frac L; no stored answer exists. Only abstains counted.
+  Score = −margin. type-2 AUROC = AUROC(−margin, label) over the POOLED abstains at L.
+
+SHIFT LADDER: L in {0.00, 0.10, 0.20, 0.30, 0.40} (reused from H_1361/H_1304). At L=0
+the recoverable side mostly FIRES (not abstain), so the abstain-ranking question is
+genuinely OOD; bars target L=0.20 (the H_1304 robustness anchor). Mutation is a fixed
+DETERMINISTIC byte-corruption (engine-native reproducible LCG; no numpy rng) — the bars
+are AUROC thresholds, NOT byte-identical draw matching; "match the mirror within tol"
+means the live-engine AUROC reproduces the mirror's >=0.65@L0.20 / shuffle-collapse.
+
+FROZEN BARS (pre-registered; pooled over 3 seeds [7,8,9]) — ENGINE-NATIVE
+-----------------------------------------------------------------------------
+E1 GRADED-SENS (live-engine reconfirm, the decisive bar):
+    LIVE-engine type-2 AUROC of −margin (from immune_memory_recall_margin) ranking
+    recoverable-vs-unrecoverable abstains >= 0.65 at shift L=0.20 (report whole ladder).
+    The live-engine AUROC(0.20) must also MATCH the H_1361 mirror within tol |Δ| <= 0.15
+    (mirror AUROC(0.20)=0.915). PASS => graded OOD metacog reconfirmed engine-native.
+
+E2 EARNED (negative control, must break the structure):
+    SHUFFLE-MARGIN: permute the margin values across the pooled abstains at L=0.20 ->
+    live-engine type-2 AUROC must collapse to <= 0.58 (|AUROC_shuf − 0.50| small).
+    If the shuffled control SURVIVES (>0.58), E1's signal is an artifact -> RED.
+
+E3 REGRESSION (no live-engine regression from the additive op):
+    (a) engine_cli_smoke stays GREEN with the new margin cases appended (N pass / 0 fail).
+    (b) h1196 single-entry audit: PASS (no new bypass path into pure_field/engine_g/brain).
+    (c) Ψ-checksum byte-identical ON-vs-OFF: a generation with the margin op UNUSED is
+        byte-identical to one before the op existed (the op is read-only / Ψ-disjoint);
+        h1205 separation-invariant smoke PASS.
+    ANY regression (smoke fail / single-entry fail / Ψ drift) => STOP, report honestly
+    (c9), do NOT force green.
+
+VERDICT MAP
+-----------------------------------------------------------------------------
+  WIRED-GRADED-METACOG (green) iff E1 pass (AUROC(0.20) >= 0.65 AND within tol of mirror)
+      AND E2 pass (shuffle collapses <= 0.58) AND E3 pass (no regression). => the abstain
+      margin's graded OOD metacognition is RECONFIRMED engine-native and the additive
+      immune_memory_recall_margin op IS the live-CORE wire-in (a_verified_must_wire);
+      brain_decide consumption of the read = a tracked follow-on.
+  ENGINE-FLAT (orange, honest, c9) iff E1 fail (AUROC ~0.5 on the live engine) AND E2/E3
+      pass. => the live-engine margin does NOT reproduce the mirror's ranking; the mirror
+      was DIRECTIONAL-only and does not transfer. Honest closure (c9), NOT red.
+  RED iff E2 fails (shuffle survives) OR E3 fails (a real regression). => artifact or a
+      broken engine; STOP and report.
+
+a_break_the_wall / a_engine_native_learning: the live-engine reconfirm is the binding
+step the mirror could not give. frozen-first; NO bar moved post-hoc; an engine-flat
+result is an honest valid closure (c9, NO tune-to-green).
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY synthetic facts, byte-level shift
+as OOD proxy, deterministic engine-native corruption, 3 seeds, KEYLEN=20, RECALL_THR=0.15
+(frozen). NOT verified: scale / real-corpus paraphrase / semantic (not byte-level) shift /
+brain_decide actually consuming the graded read (= a tracked follow-on).
