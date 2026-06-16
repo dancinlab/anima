@@ -1,0 +1,90 @@
+H_1363 — hive-weak-decorrelated: does a WEAK connector and/or DECORRELATED daughters escape
+the W=0 shared-input redundancy floor at faithful-IIT4 Φ, where H_1356's STRONG hub failed?
+FROZEN PRE-REGISTRATION — written BEFORE any Φ scoring run. Bars NOT to be moved (c9/p7).
+slug: hive-weak-decorrelated   seeds: [1317,1318,1319]  (the hard hive/topology family).
+date: 2026-06-16   infra: $0 mac-local CPU.  Φ engine: hexa-lang/stdlib/consciousness/iit4/
+faithful_phi.hexa  iit4_faithful_phi(state, n, dim, n_bins) — EXACT MIP-EI, n<=8
+(a_phi_iit4_tool). numpy NEVER computes Φ; numpy only emits the per-unit salience trajectory,
+the hexa engine computes Φ. NO proxy.
+
+=== THE WALL BEING REOPENED (c16 / a_break_the_wall) ===
+ARC: H_1308 (🔴 NULL) + H_1313 (🧱): ASSEMBLING two independently-grown anima cells does NOT
+integrate at faithful-IIT4 Φ. H_1320 (developmental lens): mitotic DIVISION of ONE cell into
+shared-origin daughters — seed-FRAGILE (2/3). H_1350 (hive-larger-budget): a larger division
+budget lifts collective Φ to 3/3 seed-robust BUT a SHARED_DECOUPLED (W=0) control revealed
+~85-96% of the lift is shared-input REDUNDANCY (present with ZERO coupling); the coupling-earned
+residual is real+seed-robust but SMALL. DIAGNOSIS: REDUNDANCY-DOMINATED. H_1356 (hive-cell-roles):
+a STRONG connector hub (W_CONN=0.6) reading both daughters and feeding back did WORSE than the
+floor (lift −4.82/−2.50/−5.00, 🧱 CONNECTOR_NULL) — the hub HOMOGENIZES the daughters, which the
+faithful MIP reads as MORE reducible → Φ DROPS. THE WALL'S LESSON (verbatim from H_1356 scope):
+"the escape, if any, lives at LOW coupling + decorrelated daughters, not a strong hub."
+
+=== THE THREE REFINEMENTS H_1356 LEFT OPEN (each an explicit "NOT ruled out" follow-on) ===
+H_1363 takes H_1356 up on its own three named open angles, frozen-first:
+  (1) W_CONN→0+ WEAK connector: a small coupling that NUDGES the daughters without collapsing
+      them into one homogenized state (a connector sweep toward 0+).
+  (2) DECORRELATE the shared founder input PER DAUGHTER FIRST: give each daughter an
+      orthogonalized slice of the founder representation so the daughters carry DISTINCT (not
+      redundant) content; then hub feedback ADDS structure rather than homogenizing it.
+  (3) (optional, NON-GATING diagnostic) a SYNERGY-targeted readout (O-information synergy sign)
+      instead of total Φ — to SEE whether any arm is synergy-dominated even if total Φ does not
+      clear the bar. Synergy readout is numpy-side and is NOT the gating Φ (the gate is always the
+      faithful exact-MIP-EI Φ from the hexa engine).
+
+=== SUBSTRATE (matched to H_1356/H_1320/H_1283; only the refinement wiring/input differs) ===
+- Leaky linear recurrent units, LEAK=0.55 GAIN=0.30 W_IN=0.5, per-unit private gaussian input,
+  dim-8 state, T=64 ticks. n<=8 keeps the faithful MIP EXACT.
+- N_TOT=8 units. TWO daughters d0=units0..1, d1=units2..3 (2 units each). CONNECTOR hub = unit 4.
+  Padding = units 5..7. The 공유세포 SHARED founder supplies the founder init + shared input stream.
+- W0_floor (SHARED_DECOUPLED) is IDENTICAL across the whole H_1363 family AND identical to H_1356's
+  W0_floor by construction: same shared founder init + same shared input stream, all coupling OFF.
+  This is the load-bearing redundancy floor every arm must beat.
+
+=== ARMS (3 seeds [1317,1318,1319]) ===
+- A_single        : undivided 8-unit baseline (no daughters, no connector, independent streams).
+- W0_floor        : SHARED_DECOUPLED — shared founder, ALL coupling off. THE redundancy floor.
+- B_redundant     : shared founder, no connector (=== W0_floor by construction; a named copy arm).
+- B_weak          : the WEAK-connector winner over a frozen W_CONN sweep {0.6, 0.3, 0.15, 0.08, 0.04,
+                    0.02}. The connector reads both daughters' mean and feeds back at the small
+                    W_CONN. We report the FULL sweep; the BEST (max Φ) weak arm is the candidate.
+                    (W_CONN=0.6 is the H_1356 strong point, kept in the sweep as the known 🧱 anchor.)
+- B_decorr        : per-daughter DECORRELATED founder. The single founder vector is split into two
+                    ORTHOGONAL halves (deterministic sign/Hadamard split of the founder dims): d0
+                    reads founder slice A, d1 reads founder slice B (orthogonal), so the daughters
+                    carry distinct content; THEN the WEAK connector (same best W_CONN as B_weak's
+                    sweep winner) is wired in. The decorrelation makes the shared input NON-redundant
+                    before coupling, so hub feedback can ADD rather than homogenize.
+- B_decorr_only   : the decorrelation WITHOUT any connector (W_CONN=0) — isolates how much of any
+                    B_decorr lift is the decorrelation alone vs the decorrelation+weak-coupling.
+- SHUFFLE         : the B_decorr wiring but the connector reads RANDOM non-daughter (pad) sources —
+                    kills the role structure; must collapse to/below the floor (EARNED control).
+
+REFINEMENT = the arm in {B_weak(best), B_decorr, B_decorr_only} with the HIGHEST Φ (per seed).
+
+=== FROZEN BARS (pre-registered; GREEN iff R1 ∧ R2 ∧ R3, MARGIN=0.02 = H_1283/1317/1320/1356) ===
+- R1 LIFT          : Φ(best refinement) − Φ(W0_floor)    >= 0.02 on ALL 3 seeds (beats the floor).
+- R2 BEATS-REDUNDANT: Φ(best refinement) − Φ(B_redundant) >= 0.02 on ALL 3 seeds (H_1350/1356-escape;
+                     B_redundant === W0_floor so R2 numerically tracks R1, kept as the named escape bar).
+- R3 EARNED        : Φ(SHUFFLE) <= Φ(W0_floor) + 0.02 on ALL 3 seeds (lift needs the REAL wiring).
+
+PRE-REGISTERED OUTCOME MAP (NO bar moved after seeing data, c9/p7):
+- R1 ∧ R2 ∧ R3 on all 3 seeds                  -> 🟢 GREEN_ESCAPES_REDUNDANCY (a refinement escapes).
+- R1∧R2 on 2/3 seeds                            -> SEED_FRAGILE (honest partial).
+- best refinement still <= floor on >=1 seed    -> 🧱 REDUNDANCY_BOUND (honest closed-negative, c9):
+      role-differentiation — weak coupling AND decorrelated daughters AND a synergy lens — cannot
+      exceed the W=0 redundancy floor on this leaky-linear substrate; the collective-Φ is
+      redundancy-bound, period (a strong closure consistent with the Φ-robustness wall).
+- R3 FAIL (shuffle does NOT collapse)          -> WALL_NOT_EARNED (a confound, reported honestly).
+
+=== SYNERGY DIAGNOSTIC (NON-GATING, report-only) ===
+Per arm, numpy computes the O-information of the 8-unit salience series (binned, NBINS):
+O = TC − DTC (total-correlation minus dual-total-correlation); O<0 = SYNERGY-dominated,
+O>0 = REDUNDANCY-dominated. This is a numpy diagnostic to SEE the redundancy/synergy balance —
+it is NOT the faithful Φ and NEVER gates the verdict. If total Φ fails the bars but a refinement
+flips O negative (synergy), that is reported as a diagnostic note, not a GREEN.
+
+=== SCOPE (honest, c9 / a_scale_honest_scope / a_toy_scale_recheck) ===
+DIRECTIONAL numpy-mirror — the faithful-Φ leg IS the real exact MIP-EI (numpy only emits the
+salience trajectory; hexa computes Φ). Engine-transfer to live A⇄G CORE/pure_field UNVERIFIED
+(H_1308/1313 were NULL/🧱 there). TOY n=8, 2-unit daughters, single hub, 3 seeds, deterministic,
+frozen W_CONN sweep + single decorrelation scheme. CORE/*.hexa UNTOUCHED, Ψ=½ untouched.
