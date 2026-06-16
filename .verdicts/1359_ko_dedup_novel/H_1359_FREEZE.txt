@@ -1,0 +1,82 @@
+H_1359 — ko-dedup-novel FREEZE (pre-registered BEFORE scoring; bars NOT moved — c9/p7)
+==============================================================================================
+
+CLAIM (depletion test of the H_1344 "interpolation beats jamo floor" lane)
+  H_1344 🟢 GREEN: a non-fragmenting frozen-λ Jelinek-Mercer (JM) interpolation of jamo n-gram
+  orders dipped held-out Korean next-symbol CE to 2.00562, BELOW the 2.51335 jamo floor (H_1316).
+  BUT the H_1344 honesty diagnostic showed the gain is REPETITION MEMORIZATION, not deeper
+  compositional progress: 70.1% of held-out positions reuse a TRAIN-SEEN top-order context
+  (CE|seen=1.6474), and the genuine novel 30% has CE|novel=2.8819 — WORSE than the 2.51335 floor.
+
+  H_1359 asks the depletion question the H_1344 card flagged as NEXT-1: on a NOVEL-CONTEXT-ONLY
+  held-out set (positions whose top-order context was NOT in train), and on a DE-DUPLICATED
+  corpus (repeated high-order n-gram strings stripped before train+score), does JM STILL beat
+  2.51335?
+    - If YES  → the 2.51335 floor is representation-broken even on truly-novel context — a
+                genuine representational break (report LOUDLY).
+    - If NO (the H_1344 CE|novel=2.8819 already points here) → the 2.51335 jamo floor is
+                CONFIRMED a true representation / data-richness floor; the H_1344 JM-GREEN is a
+                memorization artifact → this DEPLETES the "interpolation beats jamo" lane
+                (honest 🧱 floor-confirm, a valid depleting result, c9).
+
+CORPUS (REAL Korean only, NO synthetic — p1-p8; byte-fair to the floor)
+  r2://phanes/anima-7b/web/kor/shard0000.bytes[0:30_000_000] trimmed to a UTF-8 boundary.
+  KO window sha256 ASSERTED == c47b6808308d2f73cb92d74f8fdb15c64e6c96e8ed58ae2ef91a7c57fe5dc6ca
+  (== H_1307 RUN A / H_1316 jamo baseline / H_1344; 29,999,999 bytes). Cache reused only if its
+  sha matches; mismatch → STOP (REAL-only, NO synthetic Korean fallback). R2 keys read from
+  keychain (secret get r2.phanes.*), env-only at fetch, NEVER logged/committed (c7).
+
+REPRESENTATION (identical jamo symbolization to H_1316 / H_1344 — byte-fair axis)
+  Hangul syllable U+AC00..U+D7A3 → one SYMBOL per NFD jamo (id 256+rank); non-Hangul codepoint
+  → one SYMBOL per raw byte (id 0..255). Each symbol carries n_bytes that SUM to the source
+  UTF-8 bytes (3-jamo→[1,1,1], 2→[2,1], 1→[3]; raw byte→1). CE axis = Σ(−log p)/Σ(n_bytes) over
+  the held-out split = the SAME nats/UTF-8-byte axis as the 2.51335 floor. Vj=323.
+
+JM-interp (IDENTICAL to H_1344, NON-FRAGMENTING, FROZEN λ — NOT tuned to TEST)
+  p_JM(s|h) = Σ_{k=1..N} λ_k·p̂_k(s | last k−1 jamo); p̂_1 = Laplace(1.0) unigram; k≥2 = TRAIN
+  order-k count-MLE with recursive back-off on unseen context; counts on the FULL TRAIN stream.
+  N=5, w_k=2^(k−1) → λ=[1,2,4,8,16]/31. Same as H_1344. (NOT re-tuned for H_1359 — anti-Goodhart.)
+
+TWO TESTS (both pre-registered here BEFORE scoring)
+  TEST A — NOVEL-ONLY held-out (PRIMARY GATE):
+    Same stride=300 even=TRAIN / odd=TEST split + true full-resolution adjacency as H_1344.
+    Train JM on TRAIN as usual, but SCORE ONLY the TEST positions whose top-order (N−1=4-jamo)
+    context was NOT present in the TRAIN top-order context set (the genuine-generalization slice).
+    CE_A = JM CE on that novel-only TEST slice (nats/UTF-8-byte). This isolates the H_1344
+    CE|novel slice and makes it the GATE.
+
+  TEST B — DE-DUP corpus:
+    Before splitting, DE-DUPLICATE the symbol stream by repeated top-order strings: walk the
+    stream; for each position whose top-order (N=5-gram, the 4-jamo context + the label symbol)
+    string has ALREADY been emitted, DROP that position from the eligible label set (its context
+    string is a repeat). Repeats are identified ONLY from prior occurrences (causal, no TEST
+    leakage). Re-derive the stride-300 even/odd TRAIN/TEST split over the SURVIVING (de-dup'd)
+    eligible positions, train JM on TRAIN, score on TEST. CE_B = JM CE on the de-dup TEST set.
+
+FROZEN BARS (the depletion gate; bars below, NOT moved after scoring)
+  c1 PRESENCE-or-FLOOR (TEST A primary):
+       CE_A < 2.51335 − 0.01 = 2.50335  → 🟢 GENUINE break on truly-novel context (report loudly)
+       CE_A ≥ 2.50335                    → floor NOT beaten on novel context (points to 🧱)
+  c1b DE-DUP corroboration (TEST B):
+       CE_B vs 2.51335 (delta+sign) — same direction expected as TEST A; a second independent
+       memorization-removal route. (Reported with delta+sign; TEST A is the primary gate.)
+  c2 EARNED (anti-Goodhart, both tests):
+       circular-shift surrogate (history decoupled from label, true marginal kept, conditioning
+       destroyed) must go the WRONG way: CE_A_shift ≥ 2.46335 and CE_A_shift − CE_A ≥ 0.05.
+       (If the shuffle ALSO "improves", the signal is not jamo-order structure → 🔴 trivial.)
+  c3 FLOOR-CONFIRM (the expected, honest outcome):
+       If c1 fails (CE_A ≥ 2.50335) AND c1b agrees in direction (CE_B not beating 2.51335) AND
+       c2 holds → honest 🧱 FLOOR-CONFIRMED: 2.51335 is a TRUE representation/data-richness floor,
+       the H_1344 JM-GREEN was memorization, and the "interpolation beats jamo" lane is DEPLETED
+       (a valid depleting result, c9). NOT tune-to-green: this 🧱 is the pre-registered c3 branch.
+
+  VERDICT MAP (one of):
+    🟢 GREEN          iff c1 (CE_A < 2.50335) AND c2 earned                 [genuine novel-context break]
+    🧱 FLOOR-CONFIRM  iff (NOT c1) AND c2 earned                            [floor real, lane depleted, c9]
+    🔴 TRIVIAL        iff c2 fails (shuffle also improves)                  [signal not jamo-order structure]
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck)
+  DIRECTIONAL numpy; held-out next-symbol CE on a toy stride-300 byte-substrate (NOT a fluent
+  decoder, NO Korean-fluency claim). Single corpus window, single frozen λ, single stride gate.
+  Engine-transfer to live CORE/*.hexa = follow-on (a_engine_native_learning · a_verified_must_wire).
+  CORE UNTOUCHED. The de-dup is a top-order-string causal de-dup, not a semantic de-dup.
