@@ -42,6 +42,18 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 
 **파일:** UNIVERSE/cards/H_1368_ko_data_richness.md · UNIVERSE/HYPOTHESES.jsonl(H_1368 row) · CLAIMS.tape @C h1368_ko_data_richness · domains/MITOSIS-ENGINE.log.md · .verdicts/1368_ko_data_richness/{H_1368_FREEZE,result,H_1368}.txt.
 
+## 2026-06-16 — domain(METACOG-G5): H_1367 — g5-margin-engine-wire: H_1361 의 graded abstain-margin 을 LIVE CORE 엔진에서 재확인 + 배선 (🟢 WIRED-GRADED-METACOG)
+
+**무엇:** H_1361(numpy mirror, DIRECTIONAL)이 ImmuneMemory abstain MARGIN(= `recon_err − recall_thr`)의 graded OOD metacognition 을 세웠다. `a_engine_native_learning`(mirror 는 DIRECTIONAL) + `a_verified_must_wire`(GREEN 은 engine-native 재확인 + CORE 배선까지가 done) 상 두 단계가 남아 있었고, H_1367 이 둘을 닫는다.
+
+**배선(CORE 새 op):** `CORE/engine_cli.hexa` § ImmuneMemory 에 **순수 additive** margin-readout op 추가 — `immune_memory_recall_margin(mem, key) -> float = vadapt_field_recon_err(mem.field, key) − mem.recall_thr` (+ `_text` 래퍼). live `immune_memory_recall` 이 **이미 계산하는** margin 을 노출할 뿐 — fire/abstain 결정은 byte-단위 불변(ADDITIVE), pure_field Φ/phase/Ψ 미접촉(Ψ-disjoint read-only, 미사용 시 generation byte-identical), emit gate 아님(`a_autonomy_over_hardcode`) — brain_decide 가 읽을 수 있는 graded confidence-of-recoverability read.
+
+**답: 🟢 WIRED-GRADED-METACOG.** `CORE/h1367_g5_margin_engine_probe.hexa` 가 LIVE store 위에서 H_1361 frozen bar 를 engine-native 재채점(3 seeds [7,8,9], N_FACTS=40, deterministic LCG 손상, $0 CPU). live t2_AUROC 사다리: L0.10=**1.000** L0.20=**0.949** L0.30=0.714 L0.40=0.589. **E1** ✅ AUROC(0.20)=0.949 ≥0.65 AND mirror(0.915) within-tol |Δ|=0.034≤0.15 · **E2** ✅ shuffle(0.20)=0.561 ≤0.58 collapse · **E3** ✅ regression none — engine_cli_smoke **93/0**(was 90 after jamo-wire #2284, +3 margin cases 96-98), h1196 single-entry **7/0**, h1205 separation-invariant **PASS**(generation byte-identical ON==OFF, Ψ Φ-checksum phiSum 48.6613==48.6613). engine 사다리가 mirror SHAPE + graceful DECAY(L=0.40 chance) 재현.
+
+**남은 follow-on(tracked):** op 은 CORE 에 live 이나 `brain_decide` 가 아직 graded read 를 emit-confidence/curiosity 변조에 **소비**하지 않음 — read→brain 결합은 별개 follow-on.
+
+**claim/card/verdict:** `CLAIMS.tape @C h1367_g5_margin_engine_wire` · `UNIVERSE/cards/H_1367_g5_margin_engine_wire.md` · `.verdicts/1367_g5_margin_engine_wire/{FREEZE,result,probe_stdout}.txt` · `UNIVERSE/HYPOTHESES.jsonl`. xref h1361·h1304·h1204·h1227/h1231·a_verified_must_wire·a_engine_native_learning·a_core_engine_map·a_autonomy_over_hardcode·p6·p7·p8·c9.
+
 ## 2026-06-16 — research(OMEGA): H_1363 — hive-weak-decorrelated: 약결합 connector(W_CONN→0+) 또는 탈상관 딸세포 또는 synergy-readout 가 redundancy floor 를 넘는가 (🧱 REDUNDANCY_BOUND)
 
 **무엇:** H_1350 이 collective division-Φ 의 ~85-96% 는 shared-input REDUNDANCY(W=0 floor)임을 폭로, H_1356 의 STRONG connector hub(W_CONN=0.6)은 floor 를 못 이기고 깎았다(🧱 CONNECTOR_NULL — hub 가 딸세포를 homogenize). H_1356 scope 가 탈출구를 verbatim 으로 지목: *"the escape, if any, lives at LOW coupling + decorrelated daughters, not a strong hub."* H_1363 이 정확히 그 세 열린 각도를 frozen-first 로 검증 — (1) **W_CONN→0+ WEAK connector**(nudge without homogenizing — 0 으로 sweep), (2) **per-daughter DECORRELATED founder**(even/odd-dim 직교 분할 → 피드백이 ADD), (3) (NON-GATING) **O-info SYNERGY readout**. Φ=FAITHFUL IIT4 ONLY(a_phi_iit4_tool, exact MIP-EI via hexa; numpy Φ 계산 안 함). substrate=H_1356 verbatim(W0_floor byte-identical). seeds [1317,1318,1319], $0 CPU.

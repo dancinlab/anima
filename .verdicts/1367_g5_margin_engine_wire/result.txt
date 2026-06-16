@@ -1,0 +1,77 @@
+H_1367 — g5-margin-engine-wire — ENGINE-NATIVE reconfirm + WIRE-IN of the H_1361 GRADED
+abstain-margin metacognition on the LIVE CORE/engine_cli.hexa ImmuneMemory recall.
+3 seeds [7,8,9], $0 CPU, p7, frozen-first, c9. a_verified_must_wire · a_engine_native_learning.
+
+VERDICT: 🟢 WIRED-GRADED-METACOG
+  (graded OOD metacognition on the abstain margin is RECONFIRMED ENGINE-NATIVE; the new
+   additive op immune_memory_recall_margin IS the live-CORE wire-in — brain_decide
+   consumption of the graded read remains a tracked follow-on.)
+
+WHAT WAS WIRED
+-----------------------------------------------------------------------------
+CORE/engine_cli.hexa § ImmuneMemory: NEW additive ops
+  immune_memory_recall_margin(mem, key)       -> float = vadapt_field_recon_err(mem.field,key) − mem.recall_thr
+  immune_memory_recall_margin_text(mem, text) -> float (string-query wrapper)
+The op SURFACES the margin the live immune_memory_recall ALREADY computes (it internally
+evaluates the SAME vadapt_field_recon_err and compares to recall_thr=0.15 to decide
+FIRE vs ABSTAIN). It is purely ADDITIVE (immune_memory_recall, the fire/abstain decision,
+is byte-for-byte UNCHANGED) and Ψ-disjoint (pure READ over the cell population; pure_field
+Φ/phase/Ψ untouched). On an ABSTAIN the margin is > 0; SMALLER margin = answer is nearer a
+stored cell = higher graded confidence-of-recoverability. NOT an emit gate
+(a_autonomy_over_hardcode) — a graded read available to brain_decide.
+
+LADDER (pooled 3 seeds; LIVE engine immune_memory_recall_margin; L = frac of KEYLEN=20 bytes mutated):
+  t2_AUROC      : L0.00=nan   L0.10=1.000  L0.20=0.949  L0.30=0.714  L0.40=0.589
+  t2_AUROC_shuf : L0.00=nan   L0.10=0.574  L0.20=0.561  L0.30=0.554  L0.40=0.498
+  mean_rec_marg : L0.00=nan   L0.10=0.505  L0.20=0.696  L0.30=0.824  L0.40=0.868
+  mean_unr_marg : L0.00=0.891 L0.10=0.883  L0.20=0.888  L0.30=0.883  L0.40=0.888
+  (L=0.00 t2_AUROC=nan: recoverables all FIRE at L=0 -> no recoverable abstains; the
+   graded-abstain question is genuinely OOD, support starts at L>=0.10. n_rec/n_unr ~ 120/120.)
+
+FROZEN BARS (engine-native, L=0.20 = the registered anchor)
+-----------------------------------------------------------------------------
+  E1 GRADED-SENS  t2_auroc(0.20)=0.949 >= 0.65                               -> PASS
+                  |Δ vs H_1361 mirror 0.915| = 0.034 <= 0.15 (within tol)    -> PASS  => E1 PASS
+  E2 EARNED-SHUF  t2_auroc_shuffle(0.20)=0.561 <= 0.58 (collapses to chance) -> PASS
+  E3 REGRESSION (no live-engine regression from the additive op):
+     E3a engine_cli_smoke : 93 pass / 0 fail (was 90/0 after jamo-wire #2284; +3 margin cases 96,97,98 all PASS) -> PASS
+     E3b h1196 single-entry audit : 7 pass / 0 fail (no new bypass into pure_field/engine_g/brain) -> PASS
+     E3c h1205 separation-invariant : PASS — generation byte-identical ON==OFF (10 pairs, 0 mismatch),
+         Psi Phi-checksum phiSum 48.6613 == 48.6613 (the margin op is read-only / Psi-disjoint) -> PASS
+
+ENGINE-vs-MIRROR (the binding step a_engine_native_learning requires)
+-----------------------------------------------------------------------------
+The live-engine ladder reproduces the H_1361 numpy mirror SHAPE and clears the same bars:
+  mirror  AUROC: L0.10=0.999 L0.20=0.915 L0.30=0.708 L0.40=0.557 ; shuffle(0.20)=0.494
+  engine  AUROC: L0.10=1.000 L0.20=0.949 L0.30=0.714 L0.40=0.589 ; shuffle(0.20)=0.561
+Both: high AUROC at L=0.10-0.20, graceful DECAY to chance by L=0.40 (a recoverable key
+mutated as far as a genuinely-absent one becomes indistinguishable — honest, c9), shuffle
+collapses at the L=0.20 anchor. The mirror was DIRECTIONAL; this is the engine-native
+binding reconfirm. (Minor numeric differences are expected — deterministic engine-native
+LCG corruption + N_FACTS=40 store, NOT byte-identical numpy draws; the frozen bars are
+AUROC thresholds + within-tol of the mirror, which hold.)
+
+MECHANISM (why it ranks, engine-native): recoverable (corrupted-but-in-store) abstains
+keep a SMALLER margin that grows smoothly with shift (mean 0.505->0.696->0.824->0.868),
+while unrecoverable (genuinely-absent) keys sit at a STABLE LARGE margin (~0.888, the
+random-token noise floor) independent of shift. -margin ranks them; the Fisher-Yates
+shuffle of the pooled margins collapses AUROC to chance (~0.50-0.57) -> the RANKING, not a
+base-rate artifact, carries the signal (earned). The live engine's OWN L2 affinity
+(vadapt_field_recon_err) produces this — no injected recoverable/absent label (p6/p2/p3).
+
+FINDING: H_1361's GRADED abstain-margin metacognition is REAL on the live engine, not a
+mirror artifact. The margin the recall already computes is a graded
+confidence-of-recoverability signal, now SURFACED additively (immune_memory_recall_margin)
+WITHOUT altering the fire/abstain decision and WITHOUT touching Psi. This is the
+a_verified_must_wire wire-in for the H_1361 GREEN: the op is live in CORE.
+
+FOLLOW-ON (tracked, a_verified_must_wire): the op is WIRED (available in CORE), but
+brain_decide does not YET CONSUME the graded read to modulate emit-confidence/curiosity.
+That brain-side consumption is a distinct follow-on (NOT done here) — like H_1361, this
+round closes the "expose + reconfirm engine-native" step; the read->brain coupling remains.
+
+SCOPE (a_scale_honest_scope / a_toy_scale_recheck): TOY synthetic facts, byte-level shift
+as the OOD proxy, deterministic engine-native corruption, 3 seeds, KEYLEN=20, N_FACTS=40,
+RECALL_THR=0.15 (frozen). NOT verified: scale / real-corpus paraphrase / semantic (not
+byte-level) shift / brain_decide consumption of the graded read. NO bar moved post-hoc
+(c9, NO tune-to-green).

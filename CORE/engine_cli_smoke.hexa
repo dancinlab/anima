@@ -1130,6 +1130,42 @@ fn main() {
     if _assert_b("case_95_jamo_shuffle_budget_parity", true,
                  jamo_head_cells(jh_shead) >= 2 && jh_jhead.vj == jh_K) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── cases 96-98 : G5 ABSTAIN-MARGIN read (H_1367 g5-margin-engine-wire) — the new
+    //   ADDITIVE immune_memory_recall_margin op. It SURFACES the margin the live recall
+    //   already computes (recon_err − recall_thr) WITHOUT changing the fire/abstain
+    //   decision. Ψ-disjoint (pure READ over the cell population). These cases prove the
+    //   three defining properties: (96) ADDITIVE — the margin agrees with the recall
+    //   fire/abstain boolean (margin<=0 iff recall FIRES); (97) GRADED — a corrupted
+    //   in-store key (recoverable, near a real cell) has a SMALLER abstain margin than a
+    //   genuinely-absent key (unrecoverable, far from everything); (98) NO-FAB — an
+    //   untaught far key abstains with a strictly positive margin (no phantom recall).
+    let mm_cfg = engine_config_default()
+    let mut mm = immune_memory_new_text("alphabravocharlie", "loc_alpha", 16)
+    mm = immune_memory_bind_text(mm, "deltaechofoxtrot", "loc_delta", mm_cfg)
+    mm = immune_memory_bind_text(mm, "golfhotelindiaxx", "loc_golf", mm_cfg)
+
+    // case 96 : ADDITIVE — exact-key recall FIRES (margin <= 0); the additive op did not
+    //   change that decision. An exact taught key sits inside the recall_thr band.
+    let mm_fire = immune_memory_recall_text(mm, "alphabravocharlie")
+    let mm_marg_fire = immune_memory_recall_margin_text(mm, "alphabravocharlie")
+    if _assert_b("case_96_margin_additive_agrees_with_recall", true,
+                 mm_fire == "loc_alpha" && mm_marg_fire <= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 97 : GRADED — a recoverable (corrupted-but-in-store) abstain has a SMALLER
+    //   margin than an unrecoverable (genuinely-absent) abstain. "alphabravocharlxx" is a
+    //   2-byte corruption of a stored key (near a real cell); "zzqqwwxxvvbbnnmm" is absent
+    //   (far from every cell). Both abstain (margin>0); the recoverable margin is smaller.
+    let mm_marg_rec = immune_memory_recall_margin_text(mm, "alphabravocharlxx")
+    let mm_marg_unr = immune_memory_recall_margin_text(mm, "zzqqwwxxvvbbnnmm")
+    if _assert_b("case_97_margin_graded_recoverable_lt_absent", true,
+                 mm_marg_rec > 0.0 && mm_marg_unr > 0.0 && mm_marg_rec < mm_marg_unr) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 98 : NO-FAB — the genuinely-absent key ABSTAINS (recall == "") with a strictly
+    //   positive margin (it sits ABOVE the recall_thr band — no phantom recall).
+    let mm_abstain = immune_memory_recall_text(mm, "zzqqwwxxvvbbnnmm")
+    if _assert_b("case_98_margin_no_fab_absent_abstains", true,
+                 mm_abstain == "" && mm_marg_unr > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
