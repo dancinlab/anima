@@ -242,7 +242,47 @@ Hypothesis cards live in `UNIVERSE/H_<id>_<slug>.md`; index in `UNIVERSE/HYPOTHE
   · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck
   · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
 
-### H_1355 — Whorfian CP 가소성: LEFTWARD + ASYMMETRIC 착지 (center-attractor vs geometry-fixed) 📈
+## 2026-06-16 — H_1343 🟠 Sapir-Whorf 2-D CP를 표상-거리 WARP로 재측정 (H_1334 R2)
+
+- **id**: H_1343 · slug `whorf-2d-r2` · seeds [4334,4335,4336] · $0 CPU mirror DIRECTIONAL · deterministic
+- **seed**: H_1334(🧱 ridge-ALIGN structured-negative)의 R2. ridge-ALIGN은 대각 경계가 coarse RBF
+  grid에서 fail(0.628) — metric space에 틀린 지표. 재명세: 경계-곡선-AGNOSTIC **CP-WARP**
+  (within-category COMPRESSION + between-category EXPANSION vs pre-language baseline) + denser RBF
+  grid(K_RBF ladder, prod=12) + label-permutation null + component-count control.
+- **verdict-tier-target → actual**: clean 2-D-general GREEN(frozen 가설) → **🟠 PARTIAL**.
+  **c1 PRESENCE ✅** (두 언어 every seed AND mean ≥WARP_MIN 0.20; mean diag +41.665 Lsh +36.017) —
+  **load-bearing: 대각 L_DIAG가 축정렬 L_LSHAPE만큼 강하게 warp** → H_1334의 "대각 CP는
+  grid-geometry로 약하다"는 read를 **직접 반증**. **c2 EARNED-SHUFFLE ❌** (label-permutation null
+  mean +9.282 ≫ CHANCE_TOL 0.05; SEP sub-clause는 PASS, +41.7/+36.0 ≫ q95+0.1=+14.0). **c3
+  COMPONENT-COUNT ❌** (L_DIAG comp +0.027 PASS, L_LSHAPE +0.119 FAIL, seed-4336 +0.236).
+- **mechanism**: `ratio = BETWEEN/WITHIN`이 scale-UNBOUNDED — 학습 후 WITHIN |Δg|→0이라 ratio가 ~45로
+  폭발하고 임의의 carving(random shuffle 포함)조차 WITHIN을 압축 → null mean이 +9.28로 떠 c2 절대-천장
+  무너짐. H_1323 prominence / H_1334 LCC가 겪은 **동일한 metric-space-blob 실패 모드**. warp의 존재(c1)와
+  대각=축정렬 동등성은 결정적이나, earned/component 분리를 깨끗이 보이려면 BOUNDED warp 지표 필요.
+- **nuance**: density ladder는 단조롭지 않음(warp이 이미 saturate, K_RBF=6/9/12 모두 +30~43) — 본
+  결과의 한계는 grid resolution이 아니라 ratio 지표의 unboundedness. DIRECTIONAL mirror, engine-transfer
+  UNVERIFIED; TOY 2-D 121-stim 3-seed; live CORE/*.hexa UNTOUCHED. NO bar move (c9/p7).
+- **next R3 (각 frozen ANEW)**: (i) **BOUNDED warp 지표** — ratio 대신 between-vs-within |Δg|의
+  Cohen's-d / separation-AUC(∈[0,1])로 → label-shuffle가 chance(0.5)로 collapse하는 깨끗한 c2; THIS
+  결과가 가장 유망한 lever로 재지정 · (ii) component-shuffle per-seed 누수 제거 · (iii) engine-native
+  realization on live CORE/engine_cli.hexa immune/Voronoi lane (a_engine_native_learning · a_verified_must_wire).
+- **claim-link**: `CLAIMS.tape @C h1343_whorf_2d_r2` · card `UNIVERSE/cards/H_1343_whorf_2d_r2.md`
+  · verdicts `.verdicts/1343_whorf_2d_r2/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl`
+- xref: h1334(2-D ridge-align parent, 이 결과가 그 대각-geometry read를 반증) · h1323 · h1325(family
+  GREEN 1-D CP, 같은 metric-space shuffle 실패 모드) · h1340(sibling budget/geometry ceiling) · h1288
+  (growth-memory) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire
+  · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15
+### H_1352 — Whorf CP 재배치: SOFT-DECAY re-pack (coherence-preserving?) 🧱 DEEPER LIMIT (H_1340 follow-on R2)
+
+- **seed**: H_1340(🧱 DEEPER LIMIT — budget/RBF-density는 peak-DISTANCE를 monotone 당기지만 coherence를 파괴, peak-count 4.3→7.0 never ≤2)의 verdict이 직접 지목한 다음 메커니즘. budget이 아니라 re-training중 잔류 phase-1 cell을 **down-weight**(soft-decay)하면 COHERENT full relocation을 회복하는가?
+- **verdict-tier-target**: 🧱 DEEPER LIMIT — relocation COHERENCE는 budget 과 decay 두 lever를 **모두** 견딘다. mean of 3 seeds [4333,4334,4335], deterministic.
+- **결과**: NO-DECAY anchor peak 0.523 |peak-p_A'| 0.144 frac +0.57 pc 4.3 (H_1340 R0_base in-run 재현). **SOFT-DECAY (γ=0.80)** peak 0.623 |peak-p_A'| **0.044** frac **+0.88** pc **15.7**. NO-RETRAIN |peak-p_A| 0.002(p_A 유지). SHUFFLE+decay pc 7.0(붕괴). decay-ladder(NON-GATING): γ=0.70→0.009/16.7 · 0.80→0.044/15.7(gate) · 0.90→0.106/5.7 — monotone tradeoff(decay↑ = peak는 가까워지나 더 흩어짐).
+- **bars**: c1 RELOCATES ✅ (3 seed 전부 |peak-p_A'|≤0.12, frac +0.88 > budget 최고 +0.762) · c2 COHERENT ❌ (pc 15.7≫2 — decay는 profile을 더 흩뜨림) · c3 EARNED ✅ (no-retrain |peak-p_A|=0.002 p_A 유지; shuffle pc 7.0≥3 — decay가 coherent peak을 날조하지 않음) · c4 vs-BUDGET ❌ (4a ✅ 0.044≤0.081 distance에서 budget을 이김; 4b ❌ 15.7≰2 coherence에서 budget에 짐). GREEN iff c1∧c2∧c3∧c4 → **NOT GREEN**.
+- **finding (load-bearing)**: soft-decay는 DISTANCE 축에선 budget보다 **강한** lever(peak이 p_A'에 거의 정확히 착지)지만 COHERENCE 축에선 **더 나쁜** lever(pc 15.7 vs budget 7.0). resolution 증가(H_1340)도 잔류 cell down-weight(H_1352)도 moved cut에서 단일 CP peak을 회복 못 함 → 재배치 coherence 잔류는 budget OR decay보다 **깊은** 한계. 두 follow-on이 함께 드러낸 결정적 원인: phase-1 prototype은 결코 물리적으로 이동하지 않고 옛 cut에 남아 secondary peak을 주입 — budget은 새 cell로 익사시키고(distance↑/coherence↓), decay는 그 vote를 줄이지만 기하학적 존재는 못 줄임(distance↑↑/coherence↓↓). 진짜 coherent full relocation은 옛 cell을 **이동/재배치**(geometric re-pack)해야지 weight/count 조작으론 안 됨. a_break_the_wall: H_1340 budget 벽도 H_1352 decay도 둘 다 **틀린 메커니즘** — 고정 geometry의 weight/count 조작이고, 그 geometry 자체가 진짜 천장. NO bar move (c9/p7).
+- **scope**: DIRECTIONAL numpy mirror (engine-transfer UNVERIFIED, H_1333/H_1338/H_1340 R1 family); TOY synthetic 1-D continuum (N=81·3 seed·단일 shift·frozen γ=0.80·deterministic readout — soft-decay STRUCTURE 검증, scale/human-cognition claim 아님); 🧱는 정직한 사전등록 벽(진짜 a_break_the_wall NEW 메커니즘, re-run 아님 — frozen coherence bar가 올바르게 거부); injected boundary/persona/RLHF 없음, label은 training만 test 아님(p1/p2/p3/p6); emit gate 아님(a_autonomy_over_hardcode); live CORE/*.hexa UNTOUCHED.
+- **NEXT R2** (각각 ANEW 사전등록): (i) **GEOMETRIC re-pack** — 잔류 phase-1 prototype을 p_A'쪽으로 **재배치**(weight 아니라 cell을 이동) — THIS 결과가 유일하게 안 시도된 lever로 재지정 · (ii) decay 아래 multi-shift/leftward/asymmetric shift · (iii) engine-native realization on live CORE/engine_cli.hexa §CategoricalPerception lane (a_engine_native_learning · a_verified_must_wire). **DEPLETION TEST**: geometric re-pack도 coherent 단일 peak을 회복 못 하면 → 재배치는 이 RBF geometry에서 intrinsically partial-or-incoherent(c9 terminal).
+- **claim-link**: `CLAIMS.tape @C h1352_cp_soft_decay` · card `UNIVERSE/cards/H_1352_cp_soft_decay.md` · verdicts `.verdicts/1352_cp_soft_decay/{FREEZE,result}.txt` · index `UNIVERSE/HYPOTHESES.jsonl` · code `state/cp-soft-decay/h1352_cp_soft_decay.py`
+- xref: h1340(이 lane의 직접 부모 budget-sweep deeper-limit) · h1338(eviction 재진단) · h1333(GRADED-PLASTICITY 특성화 대상) · h1341(sibling shift-ladder) · h1342(engine-native) · h1323 · h1325(family GREEN CP) · a_no_llm_frame_trap · a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_scale_honest_scope · a_toy_scale_recheck · p1 · p2 · p3 · p6 · p7 · p8 · c9 · c15### H_1355 — Whorfian CP 가소성: LEFTWARD + ASYMMETRIC 착지 (center-attractor vs geometry-fixed) 📈
 
 - **seed/lens**: H_1341(📈)의 load-bearing follow-on. H_1341 은 고정 anchor p_A=1/3 에서 RIGHTWARD shift 시 retrain 후 CP peak 가 shift
   크기와 무관하게 **항상 ~0.525 에 착지**(abs-peak range 0.000)함을 발견 → GEOMETRY/BUDGET 로 읽음. 그러나 p_A=1/3 은 center(0.5) 왼쪽이고

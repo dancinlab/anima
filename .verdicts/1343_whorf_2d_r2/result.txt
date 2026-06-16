@@ -1,0 +1,42 @@
+H_1343 r2 — SAPIR-WHORF 2-D CATEGORICAL PERCEPTION as a representational-metric WARP
+====================================================================================
+CP-WARP = (mean |Δposterior| BETWEEN-category / WITHIN-category) MINUS the same ratio
+under a boundary-AGNOSTIC pre-language baseline metric. Boundary-curve-agnostic, so
+it does NOT suffer the H_1334 diagonal-ridge grid-geometry artifact. c2 = label-
+permutation null (N_SHUF=200); c3 = component-shuffle (N_COMP=50, warp must live in the
+trained 2-D metric). 3 seeds [4334, 4335, 4336], gradient-free, $0 CPU, DIRECTIONAL mirror.
+G=11 (121 stim) ladder K_RBF=[6, 9, 12] prod=12 (DIM=144) diag:u+v>1.0 L:u>0.5&v>0.5
+
+  DENSITY LADDER — CP-WARP(own boundary) vs RBF density (mean of 3 seeds):
+    K_RBF  DIM    warp(L_DIAG)   warp(L_LSHAPE)
+      6    36    +43.064          +31.838
+      9    81    +36.838          +34.839
+     12   144    +41.665          +36.017
+
+  PRODUCTION density K_RBF=12 (DIM=144) — per-seed detail:
+    seed | L_DIAG: r_lang r_base  warp  comp | L_LSHAPE: r_lang r_base  warp  comp
+    4334 | 46.01  1.00 +45.013 -0.036 | 37.55  1.00 +36.554 +0.061
+    4335 | 45.31  1.00 +44.312 +0.058 | 37.83  1.00 +36.830 +0.060
+    4336 | 36.67  1.00 +35.670 +0.059 | 35.67  1.00 +34.667 +0.236
+    ncells (mean): L_DIAG=23.7  L_LSHAPE=6.0
+
+  c2 label-permutation NULL (N_SHUF=200/seed, pooled 600):
+    warp null: mean=+9.282 q95=+13.935 max=+19.526 min=+4.750
+
+  c1 PRESENCE — CP-WARP >= 0.2 each seed AND mean, both languages:
+     L_DIAG  : per-seed [45.013, 44.312, 35.67] mean +41.665 -> PASS
+     L_LSHAPE: per-seed [36.554, 36.83, 34.667] mean +36.017 -> PASS
+     -> c1 PASS
+  c2 EARNED-SHUFFLE — null mean <= 0.05 AND each lang >= null-q95 + 0.1:
+     null mean=+9.282 <= 0.05 -> FAIL
+     L_DIAG  mean +41.665 >= q95+0.1=+14.035 -> PASS
+     L_LSHAPE mean +36.017 >= q95+0.1=+14.035 -> PASS
+     -> c2 FAIL
+  c3 COMPONENT-COUNT — component-shuffled warp <= 0.05, both languages:
+     L_DIAG  comp-warp +0.027 <= 0.05 -> PASS
+     L_LSHAPE comp-warp +0.119 <= 0.05 -> FAIL
+     -> c3 FAIL
+
+====================================================================================
+VERDICT: 🟠 PARTIAL — 2-D CP warp present (c1) but the label-shuffle null did not
+  collapse (c2): the warp is not cleanly earned. Honest, NO bar move (c9).

@@ -1,0 +1,131 @@
+H_1343 — SAPIR-WHORF 2-D / FEATURAL CATEGORICAL PERCEPTION, r2 of H_1334
+FREEZE (pre-registered BEFORE scoring; frozen-first, c9 / p7 NO tune-to-green).
+=============================================================================
+
+PROVENANCE
+  R2 of H_1334 (🧱 STRUCTURED-NEGATIVE on the ridge-ALIGNMENT bar). numpy MIRROR
+  (DIRECTIONAL — engine-transfer to live CORE/*.hexa UNVERIFIED, a_engine_native_learning).
+  $0 CPU-local, gradient-free, 3 seeds [4334,4335,4336], deterministic. p7 (a
+  representational-warp ratio + label-permutation + component-count controls, NOT
+  perplexity). Live CORE/*.hexa UNTOUCHED (substrate-measurement rung — adds only
+  UNIVERSE/ + state/ + .verdicts/). Lens: cognitive-science / categorical-perception
+  (c15, a_no_llm_frame_trap) — NOT an LLM recipe, NOT a human-cognition claim.
+
+WHAT CHANGES vs H_1334 (re-specified design, frozen anew — NOT a relaxation)
+  H_1334 scored CP via RIDGE-ALIGNMENT: how tightly the top-discrim grid edges hug a
+  KNOWN boundary CURVE. That bar fails for a DIAGONAL boundary on a coarse RBF grid
+  (align 0.628 < 0.70) — a geometry/grid-resolution interaction, NOT absence of CP
+  (its discrimination margins were the LARGEST of any arm). The prior H_1343 attempt
+  swept RBF density to K_RBF=14 and the diagonal align STILL failed (0.634) — confirming
+  ridge-ALIGN is the wrong metric for a metric stimulus space (it conflates CP with how
+  axis-aligned the boundary happens to be).
+
+  r2 re-specifies the CP metric to the TEXTBOOK categorical-perception operationalization
+  that does NOT depend on a boundary CURVE geometry: the CP WARP of the learned
+  representational metric — WITHIN-CATEGORY COMPRESSION + BETWEEN-CATEGORY EXPANSION.
+  A boundary-AGNOSTIC pre-language baseline metric is the reference; CP = the language
+  warps that metric so same-category stimuli move closer and cross-category stimuli move
+  apart, RELATIVE to baseline. This is invariant to whether the boundary is diagonal or
+  axis-aligned, so it cannot be defeated by the H_1334 grid-geometry artifact.
+
+  PLUS the two controls the task requires: a label-PERMUTATION shuffle null (c2) and a
+  COMPONENT-COUNT control that shuffles WHICH feature component carries the boundary (c3)
+  — to prove the warp lives in the TRAINED 2-D metric, not in raw embedding variance.
+
+PARADIGM (toy synthetic 2-D continuum)
+  - G_GRID x G_GRID = 11x11 = 121 stimuli on a [0,1]^2 feature square.
+  - each stimulus -> a 2-D RBF population code over a K_RBF x K_RBF grid of FIXED,
+    boundary-AGNOSTIC tuning centers. DENSER grid than the H_1334 baseline: K_RBF = 12
+    (DIM = 144) is the PRODUCTION density (H_1334 used 6). A density ladder
+    K_RBF in {6, 9, 12} is reported so the resolution dependence is fully visible
+    (a_scale_honest_scope); the PRODUCTION rung is FROZEN = the DENSEST (12), chosen NOW
+    before scoring (anti-tune-to-green).
+  - TWO languages carve the SAME square with DISTINCT boundaries (so the warp is
+    language-specific, not a property of the world): L_DIAG = diagonal (u + v > 1.0),
+    L_LSHAPE = L-corner (u > 0.5 AND v > 0.5).
+  - the SAME gradient-free mitosis/Voronoi store (error-targeted SPLIT-only growth, p8)
+    learns each carving; cells PACK along the boundary -> the soft-posterior-induced
+    representational metric WARPS.
+
+THE CP-WARP METRIC (boundary-curve-AGNOSTIC; the core re-specification)
+  For an arm, define a learned 1-D "category coordinate" g(stim) = soft posterior P(cat=1)
+  read from the fitted store (NO hard label, NO boundary location injected). The induced
+  representational distance between two stimuli i,j is D(i,j) = |g(i) - g(j)|.
+  Over ALL 4-neighbour adjacent grid pairs (the local stimulus steps), partition pairs by
+  the arm's OWN learned category of the two endpoints:
+    WITHIN  = pairs whose two endpoints are the SAME learned category (g rounds to same side)
+    BETWEEN = pairs whose two endpoints are DIFFERENT learned categories
+  Pre-language baseline uses the SAME partition under the language's GROUND-TRUTH labels
+  but the PRE-LANG store's metric (boundary-agnostic representation, no carving).
+  CP-WARP(arm) = ( mean D over BETWEEN pairs / mean D over WITHIN pairs )_arm
+              minus ( same ratio )_PRE-LANG-baseline.
+  A positive warp = the language EXPANDS cross-category steps and COMPRESSES within-category
+  steps relative to the boundary-agnostic baseline = categorical perception. The ratio form
+  is scale-free; subtracting the baseline removes any ratio the raw RBF geometry already has.
+
+  COMPONENT-COUNT diagnostic (for c3): re-derive the warp where the BETWEEN/WITHIN partition
+  uses a category defined by a SINGLE feature component chosen at random (one axis) instead of
+  the trained 2-D posterior — i.e. shuffle WHICH component carries the boundary. If the warp
+  is a real 2-D trained-metric effect it must COLLAPSE when the partition is tied to an
+  arbitrary single component rather than the learned 2-D category.
+
+FROZEN BARS (GREEN iff c1 ∧ c2 ∧ c3; thresholds set NOW, NOT moved later — c9/p7)
+
+  c1  PRESENCE — 2-D CP WARP present at PRODUCTION density K_RBF=12, for BOTH languages,
+        EACH of the 3 seeds AND the 3-seed mean:
+          CP-WARP(L_DIAG)  >= WARP_MIN = 0.20   (each seed and mean)
+          CP-WARP(L_LSHAPE)>= WARP_MIN = 0.20   (each seed and mean)
+        (between/within expansion ratio at least 0.20 ABOVE the boundary-agnostic baseline
+         ratio — a real warping of the metric beyond what raw geometry gives.)
+
+  c2  EARNED-SHUFFLE — a label-PERMUTATION null collapses the warp to chance+tol.
+        Draw N_SHUF = 200 independent per-stimulus random label permutations (fixed RNG per
+        seed); for each, fit the SAME store, compute CP-WARP under the SHUFFLED labels' own
+        learned category partition. Bar (3-seed mean, production density):
+          mean CP-WARP(SHUFFLE null) <= CHANCE_TOL = 0.05
+          AND  CP-WARP(L_DIAG) and CP-WARP(L_LSHAPE) each >= null-q95 + SEP = 0.10
+               (each language beats the 95th-percentile of the shuffle null by >= 0.10).
+
+  c3  COMPONENT-COUNT — shuffling WHICH component carries the boundary collapses the warp.
+        For each language, recompute the warp with the BETWEEN/WITHIN partition tied to a
+        single randomly-chosen feature component (averaged over N_COMP = 50 random component
+        choices per seed) instead of the trained 2-D posterior. Bar (3-seed mean):
+          CP-WARP(component-shuffled, L_DIAG)  <= COMP_MAX = 0.05  AND
+          CP-WARP(component-shuffled, L_LSHAPE)<= COMP_MAX = 0.05
+        (the warp must LIVE IN the trained 2-D metric: tying the category to an arbitrary
+         single component, not the learned 2-D boundary, must collapse it.)
+
+OUTCOMES (all VALID, honest c9 — NO bar move under any branch)
+  c1 ∧ c2 ∧ c3 -> 🟢 GREEN (MIRROR, DIRECTIONAL): Whorfian categorical perception
+                  GENERALIZES to a 2-D / featural space, measured as a metric WARP
+                  (within-category compression + between-category expansion) that is
+                  earned (label-shuffle collapses it) AND lives in the trained 2-D metric
+                  (component-shuffle collapses it). The H_1334 ridge-align negative is
+                  re-read as a ridge-geometry artifact: the boundary-agnostic warp metric
+                  shows the effect cleanly for BOTH a diagonal and an axis-aligned boundary.
+                  ENGINE-TRANSFER UNVERIFIED — follow-on.
+  c1 fails       -> 🧱 GENUINE 2-D LIMIT: even the boundary-agnostic warp metric does not
+                    clear WARP_MIN at the densest grid — CP does not generalize to 2-D as a
+                    metric warp. Honest, NO bar move (c9).
+  c2 fails (c1 ok) -> 🟠 PARTIAL: warp present but the label-shuffle null does not collapse
+                    (the warp is not earned / a metric-space artifact survives shuffle).
+                    Honest, NO bar move.
+  c3 fails (c1∧c2 ok) -> 🟠 PARTIAL: warp present & earned but does not require the trained
+                    2-D metric (a single-component / raw-variance effect). Honest, NO bar move.
+
+FROZEN CONSTANTS
+  G_GRID=11 (121 stimuli)   K_RBF_LADDER=[6,9,12]   K_RBF_PROD=12 (DIM=144)
+  T_DIAG=1.0 (u+v>1.0)   T_LX=0.5 T_LY=0.5 (L-corner)   GROW_MAX=40  SPLIT_PASSES=40
+  BETA_POST=18.0   SEEDS=[4334,4335,4336]
+  WARP_MIN=0.20   CHANCE_TOL=0.05   SEP=0.10   COMP_MAX=0.05
+  N_SHUF=200 (label-permutation null draws)   N_COMP=50 (component-shuffle draws)
+  NULL_Q=0.95 (95th-percentile of the shuffle null for the SEP separation gate)
+
+p1/p2/p3/p6 GUARD: the warp reads ONLY the learned representational distance (|Δ soft
+posterior|) and the store's OWN learned category partition; NO injected boundary location,
+NO persona/RLHF/ethics label. The language label enters ONLY during training, NEVER into
+the warp readout. PRE-LANGUAGE baseline + the N_SHUF=200 label-permutation null + the
+component-shuffle control are the anti-Goodhart discriminators. NOT an emit gate
+(a_autonomy_over_hardcode). a_scale_honest_scope / a_toy_scale_recheck: TOY synthetic 2-D
+continuum, 3 seeds, deterministic readout — tests the relativity STRUCTURE in 2-D, NOT a
+scaled or human-cognition claim; engine-transfer = follow-on.
