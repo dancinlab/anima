@@ -1,0 +1,86 @@
+H_1410 — G6 IDEATION ★ FALS vs CONV-DEPTH (deep-mouth depth ladder L1→L4→L8)
+slug: 1410_g6_fals_vs_conv_depth
+date: 2026-06-17
+FROZEN-FIRST — pre-registered BEFORE any decode scoring run. NO bar moved, NO tune-to-green (c9, p7).
+
+══════════════════════════════════════════════════════════════════════════════
+THE QUESTION (the deep-mouth science the ladder was built for)
+══════════════════════════════════════════════════════════════════════════════
+H_1394 found an E2/L1 (SINGLE trunk-layer) 303M ConvMoE gives G6 FALS=0; H_1362's
+FALS=1.0 was a 303M ByteGPT (L24 TRANSFORMER, a DIFFERENT arch). H_1403 re-confirmed
+303M ConvMoE-RETRO (L1) FALS=0 engine-native over 6/6 GEN=110 C_strong frames →
+🧱 ARCHITECTURE (capacity was NOT the lever).
+
+OPEN: was L1 the conv-FAMILY ceiling, or just the shallowest rung? The deep-mouth
+ladder trained TWO DEEPER rungs at MATCHED ~303M params (width-compensated, clean
+depth isolation — depth ⊥ capacity):
+  L4 : 4 trunk layers, d3784, 302.701M, eval_ce 1.37688
+       state/g6-deep-mouth-ladder/ckpts/clm303_L4_d3784.clm
+       sha256 34d40c9f3b0aab1bdeac4ed5ec70b34827827eb4d509bfa715bf8644e8f48a53
+  L8 : 8 trunk layers, d3020, 302.613M, eval_ce 1.36468
+       state/g6-deep-mouth-ladder/ckpts/clm303_L8_d3020.clm
+       sha256 42f2dc3fbf137c26275a691845ca6a1b5691fd871d674530dea2f1e39a520959
+
+BAR: does conv-DEPTH (L4, L8) LIFT FALS over the L1 H_1394/H_1403 FALS=0?
+A FALS=0 across ALL depths is an HONEST, valuable result — it confirms 🧱
+ARCHITECTURE is the conv-FAMILY ceiling (depth does not buy falsifiability), NOT
+just an L1 artifact. Conversely FALS>0 at L4 or L8 = depth IS the lever (a real
+positive). Either way NO bar is moved.
+
+══════════════════════════════════════════════════════════════════════════════
+METHOD (VERBATIM the H_1392/H_1403 frozen G6 FALS detector + scaffold)
+══════════════════════════════════════════════════════════════════════════════
+Probe = state/1410_g6_fals_vs_conv_depth/g6_fals_depth_probe.hexa — BYTE-IDENTICAL
+to the H_1403 g6_fals_probe_loaded.hexa EXCEPT the ckpt path is taken from env CKPT
+(so the SAME frozen detector/scaffold/bars run on each rung's .clm). Imports the
+live CORE/g6_ideation.hexa (detector + scaffold UNCHANGED) on origin/main.
+
+FROZEN constants (from H_1362/H_1392/H_1403, NOT loosened):
+  GEN = 110           (H_1362 MAX_NEW — full falsifiable-sentence budget)
+  SEED = 7            (H_1362 primary seed)
+  K = 3               (best-of-K for C arms)
+  detector _g6_is_falsifiable : VERBATIM (comparator + measurable + >=2 content words)
+  detector calibration        : must read 10/10 (H_1305 frozen 5-pos/5-neg)
+  frame-guard                 : must read 0 leaks (no measurable word in any frame, p7)
+  sampler self-test           : det=true diverse=true in_topk=true
+  kwr gate                    : _g6_is_falsifiable only scored when kwr >= 0.5
+
+PRE-DECODE GUARDS (already confirmed, ckpt-independent + per-rung mount):
+  DETECTOR_CALIBRATION = 10/10            ✓ (read 2026-06-17)
+  FRAME_GUARD_LEAKS    = 0                ✓
+  SAMPLER det/diverse/in_topk = true/true/true ✓
+  L4 MOUNT: clm_load_weights ok=true d=3784 E=2 V=256 L=4  ✓ (sha256 == manifest)
+  L8 MOUNT: clm_load_weights ok=true d=3020 E=2 V=256 L=8  ✓ (sha256 == manifest)
+
+══════════════════════════════════════════════════════════════════════════════
+PRE-REGISTERED REPORT + BARS (per rung L4, L8)
+══════════════════════════════════════════════════════════════════════════════
+For EACH rung decode GEN=110 best-of-K=3 over the 6 C_strong composed frames,
+run the VERBATIM _g6_is_falsifiable detector, report FALS(C_strong) (count of the
+6 frames whose decode is falsifiable). The 5 M-bars (VERBATIM H_1392/H_1403):
+  M1_COUNT : DIST(C_strong) >= 5
+  M2_DEPTH : FALS(C_strong) >= 1          ← THE depth-lift bar
+  M3_LIFT  : FALS(C_strong) > FALS(B_composed)
+  M4_PAIR  : FALS(C_strong) > FALS(C_shuffle)
+  M5_COMP  : FALS(C_strong) > FALS(C_ablate)
+
+DEPTH-LADDER VERDICT RULE (pre-registered):
+  L1 (ref, H_1394/H_1403) FALS(C_strong)=0.
+  • If FALS(C_strong)=0 at BOTH L4 AND L8  → M2 FALS=0 at every depth ⇒ conv-DEPTH
+    does NOT lift FALS ⇒ 🧱 ARCHITECTURE is the conv-FAMILY ceiling (depth-confirmed,
+    NOT an L1 artifact). HONEST valuable closure (c9). M3-M5 moot at FALS=0.
+  • If FALS(C_strong)>=1 at L4 or L8       → conv-DEPTH IS the lever (a real positive);
+    M2 DEPTH passes at that rung; score M3-M5 to test earned/lift.
+
+BUDGET (a_scale_honest_scope — log what was/wasn't run, NO silent truncation):
+  C_strong best-of-K=3 GEN=110 ≈ 370-410 s/frame (H_1403 measured) → 6 frames ≈ 40 min/rung.
+  PRIMARY (decisive for M2 / the depth verdict) = the full 6-frame C_strong arm per rung.
+  If a rung's full 6-frame C_strong is too slow to complete in budget, the MINIMUM is the
+  deterministic C_strong[0] frame per rung VERBATIM, reported honestly as a partial
+  (which frames ran). NO bar moved either way. The control arms (B/shuffle/ablate) ride
+  along for M3-M5 ONLY IF M2 passes (FALS>0) at a rung; at FALS=0 they are moot.
+
+p1/p2/p3/p4/p6 GUARD: the probe reads ONLY the seeded sampler + the frozen lexical
+detector over decoded bytes — NO injected falsifiable-claim label, NO RLHF, NO persona,
+NO system prompt. Same standard as H_1392/H_1403. Engine-native (live hexa engine + its
+OWN seeded sampler, deterministic given seed; NOT byte-identical to the torch gauge).
