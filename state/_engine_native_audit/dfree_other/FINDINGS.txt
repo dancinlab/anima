@@ -1,0 +1,104 @@
+D_free_other — ENGINE-NATIVE re-measure (Lane D)
+================================================
+Date: 2026-06-17 · Host: aiden (pool, RTX 5070, 12c) · rent-0
+Toolchain: HEXA_LANG=~/hexa-lang  HEXA_PREBUILT_RUNTIME=~/hexa-lang/build/runtime.a
+  (the ~/core/hexa-lang prebuilt runtime.a was STALE — missing forge_dispatch_groupnorm_gelu;
+   a class-(c) infra wall, FIXED by pointing at the current runtime.a, NOT a science result.
+   aiden also rebooted mid-run wiping /tmp — evidence kept in $HOME survived.)
+
+HEADLINE
+--------
+NONE of the 9 probes is bytegpt/clm-decode-bound (all pure numpy, 0 forward-mouth calls)
+=> ZERO class-A speed-gated hypotheses in this batch. Lane C's fast forward is NOT on the
+critical path for any of these. Split = 6 class-B (runnable-now) · 3 class-C · 0 class-A.
+
+TRIAGE TABLE (9 rows)
+---------------------
+H_1339 whorf-bilingual-tagged-r3
+  class B (already wired) · harness: engine_cli_smoke 86-91 / engine_cli.hexa §BILINGUAL TAGGED CP
+  torch verdict: 🟢 tagged CP coexist (I1∧I2∧I3') · STATUS: DONE — CONFIRM
+H_1378 agent-tool-mitosis
+  class C (engine path = H_1382 §SkillStore; probe is REFERENCE-audit + mirror by design)
+  harness: engine_cli_smoke 107-111 / §SkillStore
+  torch verdict: 🟢 LEARNS/DISTINCT-FROM-STATIC/EARNED/NO-FAB · STATUS: DONE — CONFIRM (via twin)
+H_1380 ko-data-ladder
+  class C (NEGATIVE, lever closed; no light engine path — 240MB jamo count-MLE ladder is a heavy
+   DATA job, corpus-I/O-bound not byte-mouth-bound)
+  harness: none (card itself rates engine-wire priority LOW)
+  torch verdict: 🟠 floor-ABOVE (data lever depleted) · STATUS: PARKED (low value, closed-neg)
+H_1388 ko-morphology
+  class B (already wired) · harness: state/ko-morphology-engine/h1390_bpe_scoreloop_probe.hexa
+   + engine_cli_smoke 116-119 / generator.hexa §6.5d gen_bpe_scoreloop
+  torch verdict: 🟢 GAP-REDUCED-CANDIDATE · STATUS: DONE — CONFIRM
+H_1389 tool-usage-learning
+  class C (engine path = H_1391 §UsageStore) · harness: engine_cli_smoke 120-124 / §UsageStore
+  torch verdict: 🟢 USAGE-LEARNS/DISTINCT-FROM-SELECTION(KEY)/EARNED/NO-FAB · STATUS: DONE — CONFIRM (via twin)
+H_1391 usage-store-engine
+  class B (already wired) · harness: engine_cli_smoke 120-124 / engine_cli.hexa §UsageStore
+  torch verdict: 🟢 engine-native BINDING · STATUS: DONE — CONFIRM
+H_1399 ko-emit-compose-realcorpus
+  class C (REAL 25M-jamo stream; in-engine §6.5d fixture cannot be fed it — card states this)
+  harness: §6.5f compose SHAPE in engine_cli_smoke 129-131, but on the engine fixture not real corpus
+  torch verdict: 🧱 TERMINAL-SUBSUMPTION (real corpus) · STATUS: NA-real-corpus (shape confirmed; magnitude mirror-only)
+H_1402 ko-emit-arbiter
+  class C (REAL 25M-jamo stream; arbiter-swap, DIRECTIONAL by design, no CORE edit / no follow-on)
+  harness: §6.5f compose SHAPE in engine_cli_smoke 129-131
+  torch verdict: 🧱 (d)-CONFIRMED ceiling · STATUS: NA-real-corpus (shape confirmed; magnitude mirror-only)
+H_1406 brain-lane-compose-wm-pfc
+  class B (runner BUILT this lane) · harness: state/brain-lane-compose-wm-pfc/h1406_compose_wm_pfc_runner.hexa
+   + h1406_emit_states.py -> live engine_cli.hexa WorkMemBuffer(H_1282) + HierGoalStack-cos(H_1294)
+  torch verdict: 🧱 (a)->(d) separable + oracle lift but no arbiter captures it · STATUS: DONE — CONFIRM
+
+COUNT: 6 class-B (runnable-now) · 3 class-C · 0 class-A (speed-gated).
+  class-B already-wired: H_1339, H_1388, H_1391  (3)
+  class-B confirmed via engine TWIN in same smoke: H_1378->§SkillStore, H_1389->§UsageStore  (2)
+  class-B runner built+run THIS lane: H_1406  (1)
+All 6 class-B DONE and CONFIRM (none overturned). 3 class-C honestly DIRECTIONAL.
+
+ENGINE-NATIVE RESULTS (raw in raw/)
+-----------------------------------
+H_1339 -> CONFIRM 🟢  smoke 86-91 all PASS (I1a/I1b coexist, I2 untagged-overwrite=false,
+  I3'a B=A no-spurious-CP=false, I3'b shuffle-incoherent, tag-sep √2). live §BILINGUAL TAGGED CP.
+
+H_1378 -> CONFIRM 🟢 via §SkillStore  smoke 107-111 PASS;
+  skillstore acc: init=0.16667 full=1.0 static=0.16667 shuffle=0.0 cells_full=7.
+  (Step A REFERENCE-ONLY audit correct; Step B designed mechanism = H_1382 §SkillStore, green engine-native.)
+
+H_1388 -> CONFIRM 🟢  h1390 scoreloop: structured BPE=0.2422  shuffle=1.0785  jamo=1.8545;
+  bar1 gap_reduced=1.6123>=0.05 PASS · bar2 earned=0.8363>=0.03 PASS · bar3 shift-novel=0.1123>=0.05 PASS;
+  smoke 116-119 PASS. live §6.5d gen_bpe_scoreloop.
+  (Absolute CE differs from torch 2.566 — engine runs the in-engine morpheme-grammar FIXTURE, not the
+   25M real stream — but the directional "morphology is the earned lever, shuffle doesn't capture it" holds.)
+
+H_1389/H_1391 -> CONFIRM 🟢 via §UsageStore  smoke 120-124 PASS;
+  usagestore comp: init=0.08333 full=1.0 selection=0.0 shuffle=0.0 cells_full=12 cells_static=1.
+  KEY DISTINCT-FROM-SELECTION decisive engine-native; ordered-steps in order (case 124).
+
+H_1406 -> CONFIRM 🧱 (a)->(d)  (runner built + run THIS lane, live faculties, n=1350, 3 seeds)
+  acc_wm=0.6348 acc_pfc=0.7104 best_single=0.7104 acc_compose=0.6341 acc_shuffle=0.6067
+  ORACLE=0.9674 (oracle-best=+0.2570) conflict_rate=0.5896
+  decomposition only_wm=0.2570 only_pfc=0.3326 both=0.3778 neither=0.0326
+  B1 compose>=best+0.05 : 0.6341>=0.7604 => FAIL
+  B2 oracle-best>0.02   : +0.2570>0.02   => PASS
+  B3 compose-shuffle>0.02: +0.0274>0.02  => PASS
+  SEPARABLE only_wm>0 AND only_pfc>0 => TRUE
+  vs torch: 0.626/0.681/0.681/0.629/+0.264/onlyW0.264/onlyP0.319 — directionally byte-for-byte.
+  The closed-negative is REAL on the live engine, NOT a mirror artifact.
+
+NO-REGRESSION
+-------------
+engine_cli_smoke full run = 152 PASS / 0 FAIL on aiden (all target cases included). raw/engine_cli_smoke_full.out.
+
+NEXT ROUND
+----------
+- H_1406 card `wired:` should read `engine-native` (byte-confirmed via live faculties), NOT WIRED-live —
+  a live §WmPfcCompose wire is unwarranted for a non-composing (negative) pair.
+- class-C real-corpus (H_1399/H_1402, medium) + H_1380 (low, closed-neg): a TERMINAL engine-native
+  real-corpus verdict needs a NEW engine path that streams the 25M real jamo corpus through VAdaptField
+  count-head / §6.5f — a substrate build, not a light run. NOT bytegpt-decode-bound, so NOT gated by
+  Lane C's fast forward (Lane C does not unblock these — they're corpus-I/O, not mouth-forward).
+
+DEPLETION TEST
+--------------
+Reached: 6/6 class-B engine-native CONFIRMED; 3/3 class-C honestly DIRECTIONAL with the reason
+(real-corpus 25M stream / closed-negative, no light engine path). 0 class-A. Lane goal met.

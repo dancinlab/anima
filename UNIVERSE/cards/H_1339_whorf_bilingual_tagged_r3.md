@@ -4,6 +4,7 @@ slug: 1339_whorf_bilingual_tagged_r3
 title: Sapir-Whorf BILINGUAL r3 (TAGGED, control re-freeze + engine-native) — a language-TAG enables bilingual CP coexistence
 group: cognition-representation (c15 cognitive-science / bilingual-cognition lens, a_no_llm_frame_trap)
 terminal_tier: 🟢 GREEN (MIRROR DIRECTIONAL + ENGINE-NATIVE wired & re-scored) — I1∧I2∧I3' all PASS, 3 seeds; I3a re-frozen LOCALIZED (NOT a relaxation); coexistence REAL & TAG-ATTRIBUTABLE
+wired: engine-native — re-confirmed 2026-06-17 (aiden): `CORE/engine_cli_smoke.hexa` cases 86–91 via `CORE/engine_cli.hexa §BILINGUAL TAGGED CP` all PASS (I1a/I1b coexist, I2 untagged-overwrite=false, I3'a B=A no-spurious-CP=false, I3'b shuffle-incoherent, tag-sep √2); smoke 152/0. ENGINE-NATIVE **CONFIRMS** the torch-side 🟢. Evidence `state/_engine_native_audit/dfree_other/`.
 verdict_dir: .verdicts/1339_whorf_bilingual_tagged_r3/
 terminal_verdict: .verdicts/1339_whorf_bilingual_tagged_r3/result.txt
 date: 2026-06-16

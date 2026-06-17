@@ -1,0 +1,23 @@
+=== H_1406 WM×PFC compose — ENGINE-NATIVE (live wm_buffer_* + _cos) ===
+engine: CORE/engine_cli.hexa  WorkMemBuffer(H_1282) + HierGoalStack-cos(H_1294)
+state file: /home/aiden/dfree_other_remeasure/h1406_states.txt
+
+=== ENGINE-NATIVE means (n=1350 items, 3 seeds pooled) ===
+  acc_wm        = 0.6348
+  acc_pfc       = 0.7104
+  best_single   = 0.7104
+  acc_compose   = 0.6341
+  acc_shuffle   = 0.6067
+  ORACLE        = 0.9674   (oracle - best = 0.2570)
+  conflict_rate = 0.5896
+  decomposition : only_wm=0.2570 only_pfc=0.3326 both=0.3778 neither=0.0326
+
+=== FROZEN bars (engine-native) ===
+  B1 COMPOSE-EFFECT compose>=best+0.05 : 0.6341 >= 0.7604  => FAIL
+  B2 ORACLE         oracle-best>0.02    : 0.2570 > 0.02  => PASS
+  B3 EARNED         compose-shuffle>0.02: 0.0274 > 0.02  => PASS
+  SEPARABLE         only_wm>0 AND only_pfc>0 : TRUE
+
+VERDICT(engine-native): 🧱 ORACLE-HEADROOM-but-ARBITER-FAILS (a)->(d) — SEPARABLE + oracle lift EXISTS but the scale-relative confidence arbiter does NOT capture it (compose<best). CONFIRMS the torch-side closed-negative engine-native.
+=== H_1406 engine-native measurement complete ===
+DONE rc=0
