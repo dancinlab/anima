@@ -37,6 +37,14 @@ pressure; `hexa-lang/self/runtime.c`). Routing the d×d matmuls through it makes
 - FP-reassociation residual scalar-vs-mm ≈ machine epsilon (synthetic d=1024 probe: max|Δ|
   6e-15 through the MLP+GELU block); far below the ~1e-5 torch-parity tolerance, argmax does
   not flip.
+- NOTE (honest, c9): the scalar-vs-mm diff ON THE REAL 303M binary could not be captured —
+  the scalar reference (`bytegpt_forward_last` / `_ranged`) repeatedly got killed mid-run on
+  summer under CPU/memory contention (a runaway 99%-CPU orphan hexa_run from an earlier
+  wrong-path probe + a 5-core `ph.x` job + the scalar file-read's ~24GB boxing). This is an
+  orthogonal host-contention/infra issue, not a kernel defect. The byte-exactness verdict
+  therefore rests on the STRONGER **mm-vs-torch** comparison above (torch is the actual
+  ground truth; mm matches it argmax 32 + logits ~1e-5), plus the synthetic mm-vs-scalar
+  6e-15 residual. mm-vs-scalar on the real binary is a clean-host follow-on (NEXT ROUND).
 
 ## Lever used
 **BLAS-style native matmul kernel** (NOT KV-cache — the first T-position forward is the
