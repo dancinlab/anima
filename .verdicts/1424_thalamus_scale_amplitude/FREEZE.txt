@@ -1,0 +1,31 @@
+H_1424 — FROZEN PRE-REGISTRATION (frozen-first, c9/p7, no bar moved)
+CONTINUED MULTI-LENS attack on the H_1283/H_1423 thalamus TIMING-axis engine-native wall.
+
+SUBSTRATE (frozen, == H_1283 R8 == H_1423, byte-identical engine LCG):
+  N_MOD parametric {4,6,8} · DIM=8 · T parametric {64,256} · GAIN=0.30 LEAK=0.55 W_NBR=0.5 W_IN=0.5
+  W_PHASE=0.5 OMEGA_T=0.45 DOMEGA=0.08 NBINS=8 · lam=0.5 · _lcg_* deterministic engine PRNG.
+  Content update IDENTICAL across all arms (binding is by TIMING, not content).
+  ANCHOR INVARIANT: D/R8 n=4 MUST reproduce H_1423 seed7 A=1.06024 B=2.52647 byte-exact.
+
+FROZEN BARS (VERBATIM from H_1283 R8 / H_1423 — NOT moved):
+  ARM A = direct ring (no timing gate)   ·   ARM B = ring + timing-gated salience
+  c2 PRIMARY  faithful ΔΦ(B-A) >= +0.02 on EVERY seed [7,8,9]
+  c4 SHUFFLE  phase-shuffle ΔΦ(SH-A) <= 0 on EVERY seed (lift COLLAPSES = timing, not variance)
+  ABLATION    (B - ablate) >= +0.02 on EVERY seed (mechanism-OFF kills the lift = LIVE; else INERT)
+  A lens BREAKS the wall iff (c2 AND c4 AND ablation-LIVE) on EVERY seed.
+
+CONTINUED LENSES (each its own shuffle + ablation, mandatory c9):
+  Lens D — LARGER SUBSTRATE ((e) investment): R8-original carrier (anchor) + LC additive-order across
+           n∈{4,6,8}, T∈{64,256}. KEY TEST: does shuffle finally COLLAPSE the lift every seed at scale?
+  Lens E — AMPLITUDE-CONTROLLED ((a) measurement-fix): unit-norm each module's salience time-series so
+           per-unit VARIANCE is IDENTICAL across ARM B / SHUFFLE / ablate => ONLY phase/timing structure
+           can drive Φ. Removes the carrier-variance confound H_1423 named. n∈{4,6,8}, T=64.
+
+PRE-COMMITTED VERDICT RULE (c9, no tune-to-green):
+  🟢 BREAKTHROUGH iff some lens clears (c2 ∧ c4 ∧ ablation-LIVE) every seed (lift = timing, not variance).
+  🧱 MEASURED-CEILING-AT-SCALE iff Lens D AND Lens E both fail the every-seed shuffle/c2/ablation
+     conjunction even at n=8 / under variance-control (a deep honest finding: faithful-IIT4 genuinely
+     cannot separate timing from amplitude every seed even at the exact-MIP scale ceiling).
+
+faithful IIT4 exact MIP-EI (a_phi_iit4_tool — NOT a proxy), n<=8. 3 seeds [7,8,9], deterministic, $0 CPU.
+NO bar moved. NO content cut tuned. shuffle + ablation on EVERY lens.
