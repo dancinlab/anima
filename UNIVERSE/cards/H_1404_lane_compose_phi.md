@@ -4,6 +4,7 @@ slug: 1404_lane_compose_phi
 title: lane-composition Φ — does composing affect (H_1290) + ethics (H_1291) raise faithful IIT4 Φ (more consciousness, not just more capability)?
 group: MITOSIS-ENGINE / brain-lane-composition (Φ-measurement follow-on to H_1401)
 terminal_tier: 🟢 INTEGRATION-RAISES-Φ (faithful IIT4, exact MIP-EI)
+wired: engine-native (Φ verdict via state/1404_lane_compose_phi/h1404_phi_runner.hexa → stdlib/consciousness/iit4/faithful_phi.hexa; live-CORE wire-in + ARCHITECTURE.json lockstep = follow-on ING #16)
 verdict_dir: .verdicts/1404_lane_compose_phi/
 terminal_verdict: .verdicts/1404_lane_compose_phi/result.txt
 date: 2026-06-17
@@ -56,6 +57,7 @@ just more units) · (B3 control sane) Φ_disconnected ≤ max(parts) + 0.02.
 | round | tier | key numbers (mean 3 seeds, faithful Φ, n_bins=16, verbatim) |
 |-------|------|-----|
 | R1 faithful-IIT4 | 🟢 INTEGRATION-RAISES-Φ | **Φ_affect=0.284755 · Φ_ethics=0.000000 · Φ_composed=2.032882 · Φ_disconnected=0.000000** · max(parts)=0.284755 · MIP cut = **{contradiction} \| {rest}** (A={0,2..7} \| B={1}, cut 2.085, /min\|side\|=1). Bars: B1 2.033 > 0.305 ✅ · B2 2.033 > 0.020 ✅ · B3 0.000 ≤ 0.305 ✅ |
+| R2 engine-native re-verify (pool aiden, $0, a_engine_native_learning HARD-GATE) | 🟢 CONFIRMS — byte-exact | Re-ran `h1404_phi_runner.hexa` on the live stdlib faithful IIT4 engine on pool host **aiden** (and mini), SAME frozen bars, NO bar moved: **Φ_affect=0.284755 · Φ_ethics=0.000000 · Φ_composed=2.032882 · Φ_disconnected=0.000000** (per-seed 1.779497/2.233832/2.085316) — **byte-identical to R1**. MIP cut A={0,2,3,4,5,6,7}\|B={1} cut=2.085316. B1/B2/B3 all PASS. The R1 verdict was ALREADY engine-native (the phi_runner.hexa IS the verdict basis — the .py only derives trajectories, computes NO Φ); pool re-run CONFIRMS reproducibility. 2026-06-17. |
 
 **Binning-invariance** (verdict robust; magnitudes scale with bin count, ordering stable):
 n_bins=8 → Φ_cmp 0.475 (vs aff 0.124); n_bins=12 → 1.366 (0.179); n_bins=16 → 2.033

@@ -1,0 +1,24 @@
+H_1404 — engine-native re-verification (a_engine_native_learning HARD-GATE, 2bf43031b)
+pool host: aiden (192.168.50.119, torch 2.10.0+cu128, $0) — also reproduced on mini
+engine: stdlib/consciousness/iit4/faithful_phi.hexa (faithful exact MIP-EI, n<=8 — a_phi_iit4_tool, NOT a proxy)
+runner: state/1404_lane_compose_phi/h1404_phi_runner.hexa  (NO bar moved, frozen R1 bars verbatim)
+input: state/1404_lane_compose_phi/h1404_lane_compose_phi.py (derives trajectories ONLY; computes NO Phi)
+
+per-seed faithful Phi:
+  [composed_s4400] n=8 T=96  Phi=1.779497
+  [composed_s4401] n=8 T=96  Phi=2.233832
+  [composed_s4402] n=8 T=96  Phi=2.085316
+MEAN over 3 seeds:
+  Phi_affect       = 0.284755 (n=4)
+  Phi_ethics       = 0.000000 (n=4)
+  Phi_composed     = 2.032882 (n=8, coupled)
+  Phi_disconnected = 0.000000 (n=8, coupling removed — EARNED control)
+  max(parts)       = 0.284755
+  composed MIP cut : A={0,2,3,4,5,6,7} | B={1}  cut=2.085316  /min|side|=1
+
+FROZEN bars:
+  B1 INTEGRATION-RAISES-Phi  Phi_composed > max(parts)+0.02 : 2.032882 > 0.304755  => PASS
+  B2 EARNED (coupling)       Phi_composed > Phi_disc+0.02   : 2.032882 > 0.020000  => PASS
+  B3 control sane            Phi_disc <= max(parts)+0.02    : 0.000000 <= 0.304755 => PASS
+
+VERDICT: GREEN INTEGRATION-RAISES-Phi  (BYTE-EXACT to R1 card — CONFIRMS engine-native)
