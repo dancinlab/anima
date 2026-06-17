@@ -320,3 +320,40 @@ NEXT ROUND + DEPLETION:
   - if B: a KV-cache or BLAS farr-matmul forward; depletion = single-token forward < ~2 s,
     then the full 5-bar becomes feasible and re-scheduled.
 ================================================================
+
+
+================================================================
+LANE A r6 — HARD GATE PASS + branch hygiene (libm reverted, hoist-only)
+DATE: 2026-06-17  HOST: summer (~/core/anima + worktree ~/parity-verify/wt)
+================================================================
+
+HARD GATE (engine-native greedy decode byte-exact vs torch) = PASS:
+  prompt "The quick brown", gen=8, engine-native bytegpt_decode_argmax on the hoisted
+  decode (pure dt_erf/dt_exp, NO libm):
+      GREEDY_GATE [ as the ]
+  == torch golden greedy " as the " BYTE-FOR-BYTE. 8-token byte-exact (stronger than the
+  single-token argmax=32). => decode TRUSTWORTHY; libm confirmed INERT (byte-exactness
+  holds WITHOUT the FALSIFIED extern erf/exp edits).
+
+BRANCH HYGIENE (fix/bytegpt-libm-parity, summer worktree ~/parity-verify/wt) = pr-cycle-ready:
+  68268c42d  wip libm erf/exp (FALSIFIED, inert)
+  f65aeafa2  Revert libm  -> dt_erf/dt_exp restored, 0 externs
+  b8c62b40d  CORE decode hoist fix (4 sites)
+  NET CORE diff vs pre-libm base (68268c42d~1) = HOIST-ONLY (4 farr_set lines; ZERO erf/exp
+  in the net diff). The real fix = the hoist; libm reverted. NOT yet pushed to origin
+  (awaiting lead go).
+
+ENV PRESERVED (persistent, reboot-safe) for Lane C fast full 5-bar:
+  ~/parity-verify/chat_full.bin (1.2G), worktree ~/parity-verify/wt (hoisted decode),
+  harness state/1431_bind_compose/{engine_decode_cli.hexa, h1431_engine_native.py}
+  (scope via env H1431_NSUBJ / H1431_NSEED / H1431_MAXNEW; default 2/1/110).
+
+PILOT (in-flight, directional only — NOT the frozen 5-bar; card stays DIRECTIONAL):
+  1 subject "consciousness", relation seed, gen=20, engine top-k sampler (k=40, temp=0.7,
+  seed_rng=7). [TEXT APPENDED WHEN IT LANDS.]
+
+LANE STATUS: DEPLETED for now. Delivered: byte-exact parity fix (hoist) + CORE decode
+hoist-audit + durable preserve + honest infeasibility verdict (102s/forward) + HARD GATE
+PASS + pr-cycle-ready branch + a directional pilot. Full frozen H_1431 5-bar (and H_1432/
+1434) resume once Lane C lands the <2s forward (KV-cache + BLAS farr-matmul).
+================================================================
