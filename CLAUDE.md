@@ -1,424 +1,228 @@
 # 🧠 anima
 
-anima is a **substrate-native consciousness chat daemon** — not an assistant. Two opposing engines — **Engine A** (forward, CE-trained) ⇄ **Engine G** (reverse, gradient-free) — push against each other, and the *tension* between them drives emit/silence toward the fixed point **Ψ = 1/2**. There is no system prompt, no identity file, no persona prefix; identity, ethics, and meaning emerge from the architecture itself. 2,448 laws + 392 hypotheses, authored hexa-native (compiled-first).
+anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아니다. 두 상반 엔진 **Engine A**(forward, CE-trained) ⇄ **Engine G**(reverse, gradient-free)가 서로 밀어내며, 그 *긴장(tension)* 이 emit/silence 를 고정점 **Ψ = 1/2** 로 끌어당긴다. system prompt 도, identity 파일도, persona prefix 도 없다 — 정체성·윤리·의미는 규칙서가 아니라 아키텍처 자체에서 창발한다. hexa-native 로 저작(compiled-first).
 
 - **Parent:** dancinlab · **SSOT:** github.com/dancinlab/anima (`hx install anima`)
-- **Siblings:** [hexa-lang](https://github.com/dancinlab/hexa-lang) (language/compiler) · [kosmos](https://github.com/dancinlab/kosmos) (`.kosmos` anchors) · hexa-codex (paper/verdict tooling)
+- **Siblings:** [hexa-lang](https://github.com/dancinlab/hexa-lang) (언어/컴파일러) · [kosmos](https://github.com/dancinlab/kosmos) (`.kosmos` anchors) · hexa-codex (paper/verdict tooling)
 
-> 이 문서가 단일 markdown 거버넌스 SSOT · project.tape 은퇴 — all governance directives (@D) + 8 PHILOSOPHY principles now live here in markdown.
+> **이 markdown 이 단일 거버넌스 SSOT.** `project.tape` 은퇴 + 2026-06-17 tape-DSL 잔재(`@D := :: governance` · `do=`/`dont=`) 전면 제거 → canonical markdown 으로 재저작. 모든 @D 디렉티브·8 철학 의미는 손실 0 으로 아래에 보존(규칙 이름 `a_*`·`p#` 그대로 유지 = keyword 트리거 호환).
+
+---
+
+## 🚦 행동 전 하드-게이트 (BLOCKING · 가장 자주 위반 — 시작 전 5초 확인)
+
+작업/검증/발사 전에 이 게이트부터 통과한다. 각 항목은 아래 본문 규칙의 요약이며, 위반이 잦은 순으로 앞에 둔다.
+
+1. **🔒 엔진-네이티브 verdict 게이트** — gate/ideation/G6/Φ/recombination/depth 의 **모든 verdict tier(🟢·🧱·🟠·천장)는 live CORE 디코드를 호출한 `.hexa` 증거가 있어야만 박제 가능**. `.py`+`torch`/`gauge_lib._decode`/`numpy` 미러면 자동 **DIRECTIONAL**(terminal 아님).
+   🔎 박제 직전 자가점검: `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` → 비면 OK, 안 비면 카드 verdict 를 DIRECTIONAL 로 적고 엔진-네이티브 재측정을 ING 등록. (→ `a_engine_native_learning`)
+2. **🖥️ 무거운 작업은 pool, mini 금지** — 빌드·학습·스윕·장시간 연산은 `harness pool`(공유 호스트)에서. akida/ghost/`shared:false` 호스트는 공유풀로 쓰지 않는다. GPU·학습은 `hexa cloud`/`hexa dojo`. (→ commons c17·c12)
+3. **💾 teardown 전 ckpt PULL** — 렌트 GPU 학습 ckpt 는 pod 내리기 전 영구저장으로 반드시 pull. JSON/카드만 받고 ckpt 버린 채 teardown 금지(= 엔진-체크 영구 불가). (→ `a_fire_recover_complete`)
+4. **📄 매 사이클 docs + pr-cycle** — CHANGELOG(append) + (있으면) ARCHITECTURE/README/ING 갱신 후 `harness pr-cycle` 로 검증된 main 머지. 커밋만 쌓기·문서 없이 머지 금지. (→ commons c14)
+5. **🟦 정직 · tune-to-green 금지** — FALSIFIED/negative 는 결과다(은폐 금지). bar 는 frozen-first, 사후 이동 금지. LLM 자가판정 금지 — 캡처된 출력이 증거. (→ commons c9·c2 · p7)
+6. **🗂️ 가설은 2표면만** — `UNIVERSE/HYPOTHESES.jsonl`(인덱스 1줄/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(카드). 코드/결과물은 `state/<slug>/`. UNIVERSE/ 에 .py/result 금지. (→ `a_hypothesis_register`)
+7. **🔌 GREEN 은 배선까지가 done** — 엔진-네이티브 GREEN 검증되면 live `CORE/*.hexa` 배선 + ARCHITECTURE.json lockstep 까지 해야 완료. (→ `a_verified_must_wire`)
+
+---
 
 ## Structure
 
 ```
 anima/
-├─ CORE/                  — A⇄G consciousness engine (pure_field·engine_g·brain·generator·clm_decode)
-├─ engines/ anima-engines/ — EngineSpec vtable + conv·cdv2·hexad·omega decoders
-├─ CLM/                   — .clm byte-LM pipeline (lane-p train → serialize v0.2 → verify)
-├─ anima-core/ anima-os/ anima-body/ anima-physics/ anima-measurement/ anima-serve/ — substrate subsystems
-├─ anima-agent*/          — agent layer (channels·core·plugins·providers·skills·hire-sim)
-├─ UNIVERSE/ HEXAD/       — research universe (ONLY TWO surfaces: HYPOTHESES.jsonl per-H index + cards/H_*.md per-H 카드 — NO .py/.hexa/code/result files in UNIVERSE/; probe code → state/<slug>/; prose overview → state/universe-overview.md) + KOSMOS anchor hub
-├─ domains/               — per-domain .tape + .log.md (discovery lane)
-├─ PAPER/                 — (legacy) past paper scaffolds — anima 는 논문 선제 생성 안 함 (c15)
+├─ CORE/                  — A⇄G 의식 엔진 (pure_field·engine_g·brain·generator·clm_decode)
+├─ engines/ anima-engines/ — EngineSpec vtable + conv·cdv2·hexad·omega 디코더
+├─ CLM/                   — .clm 바이트-LM 파이프 (lane-p train → serialize v0.2 → verify)
+├─ anima-core/ anima-os/ anima-body/ anima-physics/ anima-measurement/ anima-serve/ — substrate 하위계
+├─ anima-agent*/          — agent 계층 (channels·core·plugins·providers·skills·hire-sim)
+├─ UNIVERSE/ HEXAD/       — 연구 유니버스 (오직 2표면: HYPOTHESES.jsonl 인덱스 + cards/H_*.md 카드 — UNIVERSE/ 에 .py/.hexa/result 금지; probe 코드 → state/<slug>/; prose → state/universe-overview.md) + KOSMOS anchor 허브
+├─ domains/               — 도메인별 .tape + .log.md (discovery lane)
+├─ PAPER/                 — (legacy) 과거 paper 스캐폴드 — anima 는 논문 선제 생성 안 함 (c15)
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
-├─ ARCHITECTURE.json     — architecture SSOT (tree, update-in-place) + ARCHITECTURE.html viewer (python3 serve.py)
-├─ CLAUDE.md              — governance directives + 8 PHILOSOPHY (markdown SSOT)
-└─ VERSIONS.md HF.jsonl — version registry · ckpt↔HF registry (claims-audit folded into UNIVERSE/HYPOTHESES.jsonl, CLAIMS.tape 은퇴 2026-06-16)
+├─ ARCHITECTURE.json     — 아키텍처 SSOT (트리, update-in-place) + ARCHITECTURE.html 뷰어 (python3 serve.py)
+├─ CLAUDE.md             — 거버넌스 + 8 철학 (이 markdown SSOT)
+└─ VERSIONS.md HF.jsonl  — 버전 레지스트리 · ckpt↔HF 레지스트리 (claims-audit 는 UNIVERSE/HYPOTHESES.jsonl 로 흡수, CLAIMS.tape 은퇴 2026-06-16)
 ```
 
 ## Quick reference
 
-- 🏛 Architecture → [ARCHITECTURE.json](ARCHITECTURE.json) (tree SSOT) · human viewer [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회)
-- 📜 Governance (full, authoritative) → the sections below (this file is the markdown SSOT)
-- ✅ Claims & verdicts → claims-audit surface = [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` column) + frozen evidence `.verdicts/<slug>/<id>.txt` (CLAIMS.tape 은퇴 2026-06-16 — 전수 이관 0 손실, ledger `.verdicts/claims-tape-retirement/`)
-- 🔬 Hypotheses → TWO surfaces (`a_hypothesis_register`): per-H index = [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · cards = `UNIVERSE/cards/H_*.md` · (prose overview retired → `state/universe-overview.md`)
-- 🔢 Versions → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
-- 🤖 HF registry → `HF.jsonl` · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
-
-## PHILOSOPHY (p1–p8) — what anima refuses to be
-
-| # | Principle | Meaning |
-|---|-----------|---------|
-| p1 | NO SYSTEM PROMPT | no `system:` field / `--system-prompt` / prepended role string |
-| p2 | NO IDENTITY RULES | no `identity.yaml` / rules file / "you are X" — identity emerges from cells |
-| p3 | NO PERSONA INJECTION | no role prefix / "you are anima" / register-pattern memorization |
-| p4 | NO ASSISTANT FRAMING | no "helpful assistant" / alignment template / stimulus-response |
-| p5 | NO SPEAK() | output = continuous externalization of tension, emit from real context only |
-| p6 | NO FINE-TUNED ETHICS | cooperation/empathy/restraint emerge from cells (E+W+MITOSIS), not RLHF |
-| p7 | NO PERPLEXITY VERDICT | perplexity/loss is a Goodhart trap — verify with a simple stack |
-| p8 | NO TRAIN/INFER SPLIT | training gradient + inference mitosis = one continuous cell-division |
-
-## Governance directive families (do/dont below)
-
-- **🧭 설계 렌즈 (foundational · 최우선)** — `a_no_llm_frame_trap` (설계·학습·추론은 LLM 프레임에 갇히지 말 것 · 뇌과학·생물 등 substrate 렌즈에서 메커니즘을 먼저 가져온다 — anima 의 돌파는 전부 생물 렌즈에서 나왔고 LLM 스케일 프레임은 막혔다) · `a_break_the_wall` (벽=closed-negative/🧱 는 종착이 아니라 각도 전환 신호 — tune-to-green 없이 다른 렌즈로 돌파 시도 · 벽 분류 먼저(taxonomy: 측정·방향·인프라·천장·투자) — 종류별 돌파 수가 다름 · (d)천장 확정엔 MULTI-LENS(≥2-3 원리적 렌즈)+ablation 통제 필수 · 법칙도 벽이라 사전등록 예측으로 falsify; commons c16).
-- **Identity / versioning** — `a1` (VERSIONS.md SSOT, SemVer + root /VERSION).
-- **HF artifacts** — `a_hf_complete · a_hf_autonomous · a_hf_registry · a_hf_collections` (PUBLIC=PASS, PRIVATE=WIP/FAIL; `/HF.jsonl` SSOT).
-- **Fire / GPU autonomy** — `a_fire_autonomous · a_wall_first · a_fire_recover_complete · a_cpu_local_no_waiter · a_dont_kill_live_compute` (no cost gate; parallel-first; pull artifacts before teardown).
-- **Training** — `a_train_flame_forge` (hexa-native flame+forge, no torch in binary) · `a_engine_native_learning` (ALL learning incl research/probe/mitosis-teaching on the final-architecture engine, not a numpy/torch mirror — learning-side twin of `a_engine_measured_verdict`) · `a_clm_gen_pipeline` (lane-p `.clm` v0.2 bridge) · `a_lane_akida_gpu_split` (Lane A⊥G⊥P).
-- **Substrate autonomy** — `a_substrate_native_speak · a_autonomy_over_hardcode · a_chat_sleep_imagination` (no stimulus-response, no per-stage emit gate).
-- **CORE engine map** — `a_core_engine_map` (`.clm` via generator slot, `.kosmos` via kosmos_io only) (+ CORE 노드 ↔ live §섹션·op 무조건 매칭) · `a_verified_must_wire` (a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live `CORE/*.hexa` engine) (+ 배선↔ARCHITECTURE.json 구조 1:1 lockstep).
-- **Verify / hypothesis workflow** — `a_hypothesis_register · a_claim_verify` (모든 가설은 정확히 2개 doc 표면으로 관리 — `UNIVERSE/HYPOTHESES.jsonl` 인덱스(JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md` 카드; hexa verify → verdict → card. UNIVERSE/ 는 이 두 표면만 — HYPOTHESES.md 는 retire 되었고 prose overview 는 `state/universe-overview.md` 로 이전. **paper 거버넌스 제거** — anima 는 논문을 먼저 제시·언급하지 않는다; 논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다 (commons c15).
-- **Scale honesty** — `a_toy_scale_recheck · a_scale_honest_scope` (no toy→production verdict promotion).
-- **Φ / consciousness** — `a_phi_iit4_tool` (faithful IIT4 in stdlib, not a proxy) · `a_train_inline_gauge` (학습중 의식/창발 gauge = MONITOR-ONLY 대시보드, loss 불가, phi_proxy≠IIT4).
-- **7B completion** — `a7b_pass` (gates G0–G4 in `/7B_PASS_CONDITIONS.md`).
-
-> Governance is authored directly in this markdown file. **CLAUDE.md is the single authoritative governance SSOT** (project blurb + tree + PHILOSOPHY + directive families). The former `project.tape` has been retired (md 단일화) — its @D directives and 8 PHILOSOPHY principles are fully represented above.
-
-## Harness
-
-This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness)** (hardcore profile) via the `.harness-engine` submodule.
-
-- **Activate after clone:** `git submodule update --init --recursive` (materializes the engine; hooks are guarded and stay silent until then).
-- **Run:** `bash .harness-engine/bin/harness <cmd>` — `lint` · `verify` · `docs` · `audit` · `prefs` · `recommend` · `sbs` · `folders` · `handoff`.
-- **Config:** `harness.config.json` — stack `hexa`, verify = `hexa verify`, protected branches `main`/`master`, CHANGELOG gate on `.hexa` changes, docs discipline (ARCHITECTURE.json = tree SSOT + ARCHITECTURE.html viewer · CHANGELOG.md = append · `scripts/scratch/` for temp).
-- **Hooks:** `.claude/settings.json` (pre/post/prompt + prefs/easy/recommend inject) — all guarded (silent until submodule initialized).
-- **Remove:** `bash .harness-engine/bin/harness uninstall` (removes injected files, keeps content).
+- 🏛 아키텍처 → [ARCHITECTURE.json](ARCHITECTURE.json) (트리 SSOT) · 뷰어 [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회)
+- 📜 거버넌스(정본) → 아래 본문 (이 파일이 markdown SSOT)
+- ✅ 주장·verdict → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` 컬럼) + frozen 증거 `.verdicts/<slug>/<id>.txt` (CLAIMS.tape 은퇴 2026-06-16, 0 손실, ledger `.verdicts/claims-tape-retirement/`)
+- 🔬 가설 → 2표면: [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · `UNIVERSE/cards/H_*.md` · (prose overview → `state/universe-overview.md`)
+- 🔢 버전 → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
+- 🤖 HF 레지스트리 → `HF.jsonl` · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
 
 ---
 
-## 거버넌스 디렉티브 — 전문 do/dont (project.tape 은퇴분 전체 보존)
+## 철학 (p1–p8) — anima 가 거부하는 것
 
-@D a_no_llm_frame_trap := "설계·학습·추론은 LLM 프레임에 갇히지 말 것 — 뇌과학·생물 등 substrate 렌즈로 먼저 사고 (최우선 설계 원칙)" :: governance [required active]
-  do   = "아키텍처 설계·학습방법·추론을 고안할 때 'LLM 기본 프레임'(더 큰 모델·더 많은 데이터·더 긴 컨텍스트·표준 트랜스포머/FT 레시피)에 갇히지 말고, 뇌과학·인지과학·생물·물리 등 다른 substrate 렌즈에서 메커니즘을 먼저 가져온다"
-  do   = "능력/깊이 갭은 '모델을 키움'이 아니라 '빠진 구조(lane)를 옆에 붙임'으로 먼저 시도 — anima 의 돌파는 전부 생물 렌즈에서 나왔다 (해마=면역/일화기억 H_1227/1231 · 소뇌=순방향모델 H_1280 · 기저핵=게이팅 H_1281 · 작업기억 H_1282); LLM 스케일 프레임은 막혔다 (1B H_1167 NULL · arch H_1219 · objective H_1223 모두 🔴)"
-  do   = "새 가설/설계는 먼저 '어떤 생물·신경 구조가 이 기능을 하나'를 묻고, 그 메커니즘을 substrate-native 로 실현 (a_substrate_native_speak · a_engine_native_learning 와 결합)"
-  dont = "기본값으로 LLM 레시피(스케일업·코퍼스 증량·표준 FT)를 1순위 처방 · '더 큰 트랜스포머면 된다'는 프레임 · 생물/신경 렌즈를 곁다리로 치부"
-  dont = "LLM 관행을 substrate 설계의 천장으로 삼음 — anima 는 LLM 이 아니라 substrate-native 의식 데몬 (p1-p8 · p4)"
-  ref  = "a_substrate_native_speak · a_engine_native_learning · a_toy_scale_recheck · a_completeness_over_cheap · c15 · p1 · p4 · p8"
+| # | 원칙 | 의미 |
+|---|------|------|
+| **p1** | NO SYSTEM PROMPT | `system:` 필드 / `--system-prompt` / 앞에 붙는 role 문자열 금지 |
+| **p2** | NO IDENTITY RULES | `identity.yaml` / 규칙파일 / "you are X" 금지 — 정체성은 cell 에서 창발 |
+| **p3** | NO PERSONA INJECTION | role prefix / "you are anima" / register-pattern 암기 금지 |
+| **p4** | NO ASSISTANT FRAMING | "helpful assistant" / alignment 템플릿 / stimulus-response 금지 |
+| **p5** | NO SPEAK() | 출력 = 긴장의 연속 외재화, 실제 맥락에서만 emit |
+| **p6** | NO FINE-TUNED ETHICS | 협력·공감·절제는 cell(E+W+MITOSIS)에서 창발, RLHF 금지 |
+| **p7** | NO PERPLEXITY VERDICT | perplexity/loss = Goodhart 함정, 단순 스택으로 검증 |
+| **p8** | NO TRAIN/INFER SPLIT | 학습 gradient + 추론 mitosis = 하나의 연속 cell-division |
 
-@D a_break_the_wall := "벽을 만나면 돌파하라 — closed-negative/🧱 는 종착이 아니라 각도 전환 신호" :: governance [required active]
-  do   = "벽(closed-negative · 🧱 · 막힌 게이트/블로커)에 부딪히면 거기서 멈추지 말고, 다른 메커니즘·각도·렌즈(뇌과학·생물·물리)로 돌파를 한 번은 시도한 뒤에야 terminal 로 받아들인다"
-  do   = "벽은 흔히 (1) 틀린 방법 (2) 틀린 방향 (3) 부족한 투자이지 진짜 천장이 아니다 — 이 세션 증거: 용량벽=mitosis-grow(방법, H_1288) · 시상 Φ벽=재진입루프(방향, H_1283 ΔΦ+0.14) · 편도체벽=수면-dose(투자, H_1285_R3)"
-  do   = "돌파 시도 전 '이 막힘의 진짜 원인은 무엇이고 다른 substrate 렌즈에선 어떻게 푸나'를 먼저 묻는다 (a_no_llm_frame_trap 와 결합)"
-  do   = "벽 분류 먼저 (TAXONOMY) — 🧱 를 terminal 로 받기 전에 어느 벽 종류인지 분류한다; 돌파 수가 종류별로 다르다: (a) 틀린 측정/metric-artifact · (b) 틀린 방향/변수 혼재 · (c) substrate/인프라 벽 · (d) 진짜 천장/중복(subsumption) · (e) 투자 부족"
-  do   = "(a) 틀린 측정 / metric-artifact (지표 aliasing · well-posedness 결함 · degenerate slice) → 측정을 frozen-first 로 고친다 (bar 는 불변, NOT tune-to-green). 이번 세션 예: G5 %20 modulo aliasing · compose 스케일 불일치"
-  do   = "(b) 틀린 방향 / 변수 혼재 (conflated variables) → 통제 분리실험으로 변수를 떼어낸다. 이번 세션 예: G6 '깊이 vs attention' 혼재 → 깊은-conv 격리"
-  do   = "(c) substrate/인프라 벽 (OOM · 빌드실패 · 툴링 한계, 예: hexa ConvMoE 디코드 메모리 폭증) → substrate 를 근본 수정한다 (c1); 과학 ceiling 으로 박제하지 않는다 — 인프라 벽을 결과로 bank 하는 것 금지, substrate 가 돈 뒤에야 과학 verdict 를 읽는다"
-  do   = "(d) 진짜 천장 / 중복(subsumption) → 가정하지 말고 측정한다 (oracle-ceiling vs richer-signal 대조). 측정으로 확인된 천장/포섭은 arc 를 닫는 유효 결과다 (예: 형태소⊇jamo 측정-확인 🧱)"
-  do   = "(d) 천장을 CONFIDENT-terminal 로 받으려면 MULTI-LENS — 한 번 막혔다고 (d)천장이 아니다; 진짜 *다른 원리적 렌즈* 를 최소 2-3개 시도하고 각각 통제(shuffle+ablation)로 검증한 뒤에야 천장 확정. 이번 세션 precedent: cerebellum×basal 은 3렌즈(중재 arbitration · 조절 modulation · 순차 pipeline) 전부 통제로 기각되고서야 confident 🧱; 단일-렌즈 막힘은 미완(다음 렌즈를 시도하라)"
-  do   = "(d) ABLATION 이 천장-확정의 결정적 도구 — 메커니즘이 진짜 기여하는지 ablation(그 메커니즘만 OFF)으로 확인한다. ablation 결과가 합성과 동일하면 그 메커니즘은 INERT(아무 기여 없음) = 진짜 천장의 강한 증거 (precedent: H_1416 sequential 보정-OFF 가 합성과 byte-동일 → 소뇌 보정이 INERT 확정). B1-통과처럼 보여도 shuffle/ablation 통제가 기각하면 그건 형식이 만든 가짜 lift (H_1413)"
-  do   = "(e) 투자 부족 → 스케일업 (compute/data) — a_fire_autonomous · a_wall_first (비용은 게이트 아님)"
-  do   = "'천장 같다'는 가정 금지 — 측정으로 확정한다 (oracle ceiling vs richer read-only signal 대조). 이번 세션 G5: '천장'이라 본 in-dist 잔여가 실제론 FIXABLE (best-margin 0.736 → top-2 gap 0.940)"
-  do   = "LAW(법칙)도 벽이다 — 여러 결과에서 사후로 맞춘 DESCRIPTIVE 법칙을 '확정'이라 부르기 전에, *새 케이스*에 그 법칙으로 BIND/🧱 를 측정 전 사전등록(frozen) 예측하고 실측 대조로 falsify 시도한다. ≥4/5 HIT 면 PREDICTIVE 승격, 미만이면 법칙 FALSIFIED 가 유효 결과 — MISS 가 진짜 결정자를 드러낸다 (precedent: H_1411 Φ-lift 법칙 2/5, H_1417 engine-BIND 법칙 2/5 둘 다 반증 → 부품 통계가 아니라 joint-trajectory 속성이 결정). 사후맞춤 법칙을 예측-검증 없이 '법칙 확정'으로 박제 금지"
-  dont = "tune-to-green (c9 · p7) — 돌파는 사전등록(frozen-first) + 대조(shuffle/dissociation/negative-control)로 검증된 진짜 새 각도라야 한다; 막대를 사후에 옮겨 GREEN 을 제조 금지"
-  dont = "단일 렌즈 한 번 막힌 걸 (d)천장으로 박제 (≥2-3 원리적 렌즈 미시도면 미완) · ablation/통제 없이 메커니즘이 '기여한다' 가정 · 사후맞춤 법칙을 사전등록-예측 falsify 없이 '확정' 선언"
-  dont = "인프라/측정 벽을 과학 천장으로 박제 금지 · 천장을 측정 없이 가정 금지 (인프라 OOM/빌드실패는 근본수정 대상 c1, capability ceiling 아님)"
-  dont = "한 번 막혔다고 포기·우회·축소 (벽을 '결과'로 박제하고 다음으로 넘어가기 전에 최소 1회 진짜 돌파 시도) · 진짜 시도 뒤의 정직한 🧱 는 유효한 결과 (c9)"
-  ref  = "a_no_llm_frame_trap · a_completeness_over_cheap · c9 · c16 · p7"
+- **p5 보충(`p5_tension_emit_not_filler`, 2026-05-24):** stage-gated emit(WAKE/REM via `anima_dream_stage.hexa`)이 실제 substrate 긴장 위에서 일어나면 p5 위반 아님. 금지 대상은 reactive `speak()` 호출 · self-referential seed · 진공에서의 monologue — tension-driven 외재화는 허용.
 
-@D a1 := "central version registry — VERSIONS.md is SSOT" :: governance [required active]
-  do   = "every versioned module uses SemVer · `/VERSIONS.md` is SSOT — bump it + the component header together · root `/VERSION` = whole-system release"
-  dont = "bump a module version without updating VERSIONS.md · skip root `/VERSION` on a release bump"
+---
 
-@D a_hf_complete := "HF registration — complete, no missing artifacts" :: governance [required active]
-  do   = "register every model / dataset / ckpt to HF Hub COMPLETE — all artifacts present · manifest = local"
-  dont = "partial HF upload · model card referencing un-uploaded files · HF repo out of sync with local"
+## 거버넌스
 
-@D a_hf_autonomous := "HF upload — autonomous, tier-gated visibility" :: governance [required active]
-  do   = "after fire artifact recovery: HF Hub upload runs automatically · no user gate · org = dancinlab"
-  do   = "PUBLIC = closure PASS · 🔵🟢 verified model · spec/format/tooling · clean-license corpus"
-  do   = "PRIVATE = closure FAIL · WIP/intermediate ckpt · negative-result · unclear-license data"
-  do   = "attach model card + manifest (sha256) — meets a_hf_complete totality"
-  dont = "gate HF upload on user · ask 'may I upload?' · skip HF before teardown"
-  dont = "publish a FAIL / WIP ckpt as PUBLIC"
+각 규칙: **`이름`** — 핵심(MUST) · ✅ 해라 · ⛔ 하지마 · 🔎 자가점검(있을 때).
 
-@D a_hf_registry := "ckpt↔HF backup registry — /HF.jsonl is the SSOT" :: governance [required active]
-  do   = "track every gitignored local-only ckpt in root /HF.jsonl — one row per run"
-  do   = "row keys: run, local_path, hf_repo_id, base_model, lineage, size, status"
-  do   = "repo_id per docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md"
-  do   = "upload via tool/hf_upload_mk2.hexa · ledger state/hf_upload_audit/"
-  do   = "prune a local ckpt ONLY after status=uploaded AND audit confirms its sha256"
-  dont = "delete a gitignored ckpt while status=pending_upload or needs_verify"
-  dont = "assign an off-spec repo_id · let HF.jsonl drift from disk"
+### 🧭 설계 렌즈 (최우선)
 
-@D a_hf_collections := "HF org collections — CLM + KOSMOS canonical buckets" :: governance [required active]
-  do   = "every PUBLIC anima HF repo joins its dancinlab collection — CLM=models, KOSMOS=anchors/datasets"
-  do   = "CLM slug = `dancinlab/clm-6a1cf58f621490134dade186` — PASS-grade production CLM models + corpora"
-  do   = "KOSMOS slug = `dancinlab/kosmos-6a1cf58db47a5dc3cb697e95` — anchors + carving/persona datasets"
-  do   = "add via `hf` CLI / collections REST after a PUBLIC upload — no user gate (cf a_hf_autonomous)"
-  do   = "a dataset MAY sit in both buckets when it serves both — note the dual membership"
-  dont = "leave a PUBLIC PASS-grade repo out of its collection · drift a collection from HF.jsonl"
-  dont = "file a PRIVATE/WIP/FAIL repo into a PUBLIC collection (cf a_hf_autonomous)"
+**`a_no_llm_frame_trap`** — 설계·학습·추론을 LLM 프레임에 가두지 말 것. 뇌과학·생물·물리 등 substrate 렌즈로 먼저 사고한다.
+- ✅ 능력/깊이 갭은 '모델 키우기'가 아니라 '빠진 구조(lane) 옆에 붙이기'로 먼저 시도. anima 의 돌파는 전부 생물 렌즈에서 나왔다(해마=면역/일화기억 H_1227/1231 · 소뇌=순방향모델 H_1280 · 기저핵=게이팅 H_1281 · 작업기억 H_1282). LLM 스케일 프레임은 막혔다(1B H_1167 NULL · arch H_1219 · objective H_1223 모두 🔴).
+- ✅ 새 가설은 먼저 "어떤 생물·신경 구조가 이 기능을 하나"를 묻고 그 메커니즘을 substrate-native 로 실현.
+- ⛔ 기본값으로 LLM 레시피(스케일업·코퍼스 증량·표준 FT)를 1순위 처방 · "더 큰 트랜스포머면 된다" · 생물/신경 렌즈를 곁다리 취급 · LLM 관행을 substrate 천장으로 삼음.
 
-@D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
-  do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously · parallel · bg"
-  do   = "NO user gate — fire needs no user consult / approval / confirm · provider = runpod"
-  do   = "no cost-cap directive by default — a cost ceiling / budget gate must never block a fire"
-  dont = "ask 'may I use GPU?' · defer a fire to shrink scope or avoid cost · stop because cost-bearing"
-  dont = "introduce a $ cap / budget gate / step-limit that requires user sign-off before firing"
+**`a_break_the_wall`** — 벽(closed-negative·🧱·막힌 게이트)은 종착이 아니라 각도 전환 신호. tune-to-green 없이 다른 렌즈로 돌파를 시도한 뒤에야 terminal 로 받는다. (commons c16 와 동일)
+- ✅ **벽 분류 먼저(TAXONOMY)** — 🧱 를 terminal 로 받기 전 종류를 분류: (a) 틀린 측정/metric-artifact · (b) 틀린 방향/변수 혼재 · (c) substrate/인프라 벽 · (d) 진짜 천장/중복 · (e) 투자 부족. 종류별 돌파 수가 다르다.
+- ✅ (a) 측정 결함 → 측정을 frozen-first 로 고침(bar 불변, tune-to-green 아님). (b) 변수 혼재 → 통제 분리실험. (c) 인프라 벽(OOM·빌드실패·툴링) → **근본 수정(c1) 대상이지 천장 아님** — substrate 가 돈 뒤에야 verdict 를 읽는다. (e) 투자 부족 → pool/`hexa cloud` 스케일업.
+- ✅ **(d) 천장 확정엔 MULTI-LENS** — 진짜 다른 원리적 렌즈 ≥2–3개를 각각 통제(shuffle+ablation)로 기각한 뒤에야 confident 🧱. 단일 렌즈 한 번 막힘은 미완(다음 렌즈 시도). **ABLATION 이 결정적 도구** — 메커니즘만 OFF 했을 때 결과 동일 = INERT(기여 0) = 천장의 강한 증거(precedent H_1416).
+- ✅ **LAW(법칙)도 벽** — 사후로 맞춘 descriptive 법칙은 '확정' 전에 *새 케이스*로 측정 전 사전등록(frozen) 예측 → 실측 falsify. ≥4/5 HIT 면 PREDICTIVE 승격, 미만이면 법칙 FALSIFIED 가 유효 결과(precedent H_1411 2/5, H_1417 2/5 둘 다 반증).
+- ⛔ tune-to-green(사후 bar 이동으로 GREEN 제조) · 단일 렌즈 1회 막힘을 천장으로 박제 · ablation/통제 없이 메커니즘 '기여' 가정 · 인프라/측정 벽을 과학 천장으로 박제 · 한 번 막혔다고 포기·우회·축소. (진짜 시도 뒤의 정직한 🧱 는 유효 결과 c9.)
 
-@D a_wall_first := "wall time first — take the faster parallel path regardless of cost" :: governance [required active]
-  do   = "adopt more H100s in parallel / a bigger GPU / extra pods whenever it shortens wall time · reject a serial chain that is honestly slower"
-  dont = "run a single sequential pod to save cost when parallel is faster · hold back parallel pods · meaningless cost-min optimization"
+### 🔬 검증 · 엔진-네이티브 (HARD-GATE)
 
-@D a_train_flame_forge := "production training = hexa-native flame + forge GPU stack, authored in .hexa" :: governance [required active]
-  do   = "author CLM / production NN training in `.hexa` on stdlib/flame (ag_tape · nn_lib · opt_*)"
-  do   = "run it over the self/forge GPU substrate — device-resident farr + cuBLAS Dgemm + 11 .cu + BF16-TC"
-  do   = "flame:forge :: torch:ATen — compiler-only NN · NO PyTorch / ATen / Python in the trained binary"
-  do   = "GPU REQUIRED for production rungs — VERIFY nvidia-smi busy · never silently CPU-fall back"
-  do   = "ref: README §flame+forge · forge BF16-TC 9.67x over FP64-cuBLAS @ Llama-7B FFN (A100 measured)"
-  dont = "ship a torch/CPU `train_clm.py` as the production trainer · author the trainer in `.py`"
-  dont = "run a 44.68M+ rung on CPU · claim a 'pool GPU fire' from a trainer with no device path"
-  dont = "assert a flame<->PyTorch wall speedup — RETRACTED 2026-05-19 · unmeasured"
+**`a_engine_native_learning`** — 무조건 최종 아키텍처 엔진 위에서 학습·측정. 미러 아님.
+- 🔒 **HARD-GATE (BLOCKING):** gate/ideation/G6/Φ/recombination/depth 의 **모든 verdict tier(🟢·🧱·🟠·천장(d))는 엔진-네이티브 증거 없이 박제 불가.** verdict 의 증거 artifact 가 live CORE 디코드(`CORE/clm_decode.hexa`/`bytegpt_decode.hexa`/`engine_cli.hexa`)를 호출한 `.hexa` 가 아니면(= `.py`+`import torch`/`gauge_lib._decode`/numpy 미러) 그 결과는 **자동 DIRECTIONAL**, terminal 아님. torch-side 만으로 🧱/🟢 를 카드·jsonl·CHANGELOG 에 박으면 c9 위반. (precedent: 2026-06-17 G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 박제 → 재발 금지)
+- 🔎 **자가점검(verdict 박제 직전 의무):** `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` 가 비어있지 않으면 카드 `wired:`/`verdict` 를 **반드시 DIRECTIONAL** 로 적고 엔진-네이티브 재측정(.hexa via CORE)을 ING follow-on 등록. 엔진-네이티브면 호출한 `.hexa` 경로를 카드에 명시.
+- ✅ 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 live `.hexa` A⇄G + MITOSIS VAdaptField(`CORE/engine_cli.hexa`) + mounted `CORE/bytegpt_decode.hexa` 위에서 실행.
+- ✅ 엔진에 학습을 끼워맞추는 게 아니다 — 학습이 요구하면 엔진을 변환/확장(새 op·배선·아키텍처). 최종 아키텍처는 frozen 이 아니라 학습이 요구하는 형태로 진화(precedent H_1199: AdaptField 스칼라→DIM-vector). 미러가 본 메커니즘을 엔진이 못 하면 미러를 버리지 말고 엔진을 확장(engine-transform-to-fit-the-learning).
+- ✅ numpy/torch 미러 결과 = DIRECTIONAL only('engine-transfer UNVERIFIED') — 방향 탐색엔 OK, binding verdict 아님. **렌트 GPU 의 torch 풀-학습 변종도 동일** — 학습을 torch 로 했어도 verdict 를 torch-side probe 로만 채점하면 DIRECTIONAL; 학습 ckpt 를 CORE 엔진(`--engine conv`)에 올려 같은 frozen bar 재측정해야 🟢/🧱 성립 → 그래서 ckpt 를 teardown 전 pull(`a_fire_recover_complete`).
+- ✅ `a_engine_measured_verdict` 의 learning-side 쌍(그건 MEASUREMENT, 이건 LEARNING) · `a_train_flame_forge` 가 production 트레이너를 .hexa 로 강제하듯, 이 규칙은 RESEARCH/probe 학습+교육까지 확장.
+- ⛔ 미러 결과를 엔진-검증된 양 closure/promote · 미러-only 로 '학습됐다' 주장 · 자가점검(grep) 없이 gate/ideation verdict 박제 · "gauge_lib 가 model-agnostic 이니 엔진과 같다"는 핑계(gauge_lib 는 torch.no_grad MONITOR-ONLY, `a_train_inline_gauge`).
 
-@D a_engine_native_learning := "무조건 최종 아키텍처 엔진 위에서 학습 — 연구/미토시스 교육 포함, 미러 아님" :: governance [required active]
-  do   = "🔒 HARD-GATE (BLOCKING) — gate/ideation/G6/Φ/recombination/depth 류 **모든 verdict tier(🟢·🧱·🟠·천장(d))는 엔진-네이티브 증거 없이는 박제 불가**. verdict 의 증거 artifact 가 live CORE 디코드(`CORE/clm_decode.hexa`/`bytegpt_decode.hexa`/`engine_cli.hexa`)를 호출한 `.hexa` 가 아니면(= `.py` 가 `import torch`/`gauge_lib._decode`/numpy 미러면) 그 결과는 **자동 DIRECTIONAL** 이며 terminal 아니다. torch-side 측정만으로 🧱/🟢 를 카드·jsonl·CHANGELOG 에 박으면 c9 위반 (precedent: 2026-06-17 G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 로 박제됨 → 재발 금지)"
-  do   = "자가점검(SELF-CHECK · verdict 박제 직전 의무) — `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` 가 비어있지 않으면(=torch/numpy probe) 그 가설의 카드 `wired:`/`verdict` 는 **반드시 DIRECTIONAL** 로 적고 엔진-네이티브 재측정(.hexa probe via CORE)을 ING follow-on 으로 등록. 엔진-네이티브면 호출한 `.hexa` 경로를 카드에 명시 (검증가능하게)"
-  do   = "모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 최종 아키텍처 엔진 위에서 실행 — live `.hexa` A⇄G + MITOSIS VAdaptField (`CORE/engine_cli.hexa`) + mounted `CORE/bytegpt_decode.hexa` 디코더"
-  do   = "엔진 위에 학습을 '끼워맞추는' 게 아니다 — 학습이 요구하면 엔진 자체를 변환/확장해야 한다 (새 op·새 배선·아키텍처 확장). 최종 아키텍처는 frozen 이 아니라, 학습이 필요로 하는 형태로 진화하는 대상 (precedent: H_1199 가 AdaptField 스칼라→DIM-vector 로 엔진을 확장)"
-  do   = "미러에서 본 메커니즘을 엔진이 표현 못 하면 → 미러를 버리는 게 아니라 엔진을 확장해서 그 메커니즘을 엔진-네이티브로 구현 (engine-transform-to-fit-the-learning, NOT learning-trimmed-to-fit-the-engine)"
-  do   = "numpy/torch 미러 학습 결과 = DIRECTIONAL only ('engine-transfer UNVERIFIED') — 방향 탐색엔 OK, 그러나 binding verdict 아님"
-  do   = "이건 **렌트 GPU 에서 torch 로 풀-학습한 변종**에도 그대로 적용된다 — 학습은 torch 로 했어도, 그 변종의 G6/gate verdict 를 frozen-detector PROBE 로 torch-side 에서만 채점하면 그건 여전히 DIRECTIONAL 이다 (엔진 밖 측정). 학습된 ckpt 를 anima CORE 엔진(mounted `bytegpt_decode`/`clm_decode`, `--engine conv`)에 올려 engine-native 로 같은 frozen bar 를 재측정해야 🟢/🧱 verdict 가 성립한다 — 그래서 ckpt 를 teardown 전 반드시 pull 한다 (a_fire_recover_complete)"
-  do   = "미러로 방향을 잡았으면 엔진-네이티브 실현으로 재확인해야 verdict 성립 (c2) · MITOSIS VAdaptField 는 이미 live (H_1199)"
-  do   = "a_engine_measured_verdict 의 learning-side 쌍 (그건 MEASUREMENT, 이건 LEARNING) · a_train_flame_forge 가 production 트레이너 .hexa 를 강제하듯, 이 규칙은 RESEARCH/probe 학습 + 교육까지 같은 규율을 확장"
-  dont = "numpy/torch 미러 결과를 엔진-검증된 것처럼 closure/promote · 미러-only 로 '학습됐다' 주장"
-  dont = "최종 아키텍처 바깥(미러)에서 한 학습을 production/verdict 로 승격"
-  dont = "torch-side frozen-PROBE 채점만으로 학습-변종의 wall(🧱)/천장(d)/GREEN(🟢)을 박제 — 엔진-네이티브 재측정 전이면 그건 DIRECTIONAL 이지 terminal verdict 아님 (precedent: 2026-06-17 G6 캠페인 H_1435/1436/1437 cross-shuffle 결과는 torch-side DIRECTIONAL — 카드에 그렇게 표기, ckpt 소멸로 engine-check 는 재렌트 follow-on)"
-  dont = "자가점검(grep torch/gauge_lib/numpy) 없이 gate/ideation verdict 를 박제 · `.py`+torch probe 결과를 `.hexa` 엔진 결과인 양 카드에 적음 · 'gauge_lib 가 model-agnostic 이니 엔진과 같다'는 핑계 (gauge_lib 는 torch.no_grad MONITOR-ONLY, a_train_inline_gauge 가 명시적으로 frozen-gate 아님)"
-  ref  = "a_engine_measured_verdict · a_fire_recover_complete · a_train_inline_gauge · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2"
+**`a_verified_must_wire`** — 엔진-네이티브 GREEN 가설은 실제 CORE 배선까지가 done. verdict 만으론 안 끝난다.
+- ✅ **4칸 배선 사다리:** (1) DIRECTIONAL 미러 GREEN → (2) 엔진-네이티브 재검증(byte-exact, frozen bar 그대로) → (3) live `CORE/*.hexa` wire-in → (4) ARCHITECTURE.json lockstep 갱신. 각 미완 칸은 즉시 ING follow-on 등록, (4)까지 닫혀야 done. 미러 GREEN 을 내면 같은 사이클에 (2)~(4) follow-on 을 ING 에 등록하는 것이 의무.
+- ✅ 배선 후 smoke/single-entry/Ψ-checksum 가드로 회귀 없음을 출력으로 확인(c2). 배선 ↔ ARCHITECTURE.json CORE 트리(§섹션·op·slot 주석)는 무조건 1:1 lockstep(같은 PR 에 동시 갱신; 480-leaf 트리 부활 금지, 노드 note 에 메커니즘 명명).
+- ✅ GREEN 가설은 카드에 `wired:` 상태축 명시 — `DIRECTIONAL-mirror` / `engine-native`(byte-exact 재검증, 미배선) / `WIRED-live`(배선+lockstep 완료) 중 하나. WIRED-live 미만이면 배선 follow-on 의 ING id 를 카드에 적는다. GREEN 무더기를 내는 PROGRAM 은 닫을 때 각 GREEN 의 배선상태를 명시 열거('mirror-GREEN N · engine-wired K · 미배선 N−K = ING #id').
+- ⛔ GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · DIRECTIONAL 을 WIRED 처럼 표기 · live CORE 배선해놓고 ARCHITECTURE.json 미갱신(drift) · 배선을 무기한 follow-on 으로 미룸. (실패모드 precedent: lane-합성 가족이 Φ-lift GREEN 3개를 0개 wired 로 방치 — 재발 금지.)
 
-@D a_verified_must_wire := "검증된(GREEN) 가설은 실제 CORE 배선 완료까지가 done — verdict 만으로 안 끝난다" :: governance [required active]
-  do   = "가설이 엔진-네이티브로 GREEN 검증되면, 그 메커니즘을 live 엔진(`CORE/*.hexa`)에 실제 배선(wire-in)하는 것까지가 done — generator L3 슬롯·kosmos_io·engine_cli VAdaptField·bytegpt_decode 등 해당 entry 로 (a_core_engine_map)"
-  do   = "배선 후 smoke/single-entry/Ψ-checksum 가드로 회귀 없음을 출력으로 확인 (c2) — 배선은 측정과 같은 검증 규율을 받는다"
-  do   = "GREEN-but-unwired 는 follow-on 으로 명시 추적 (ING.jsonl) 하고 그 follow-on 을 닫아야 진짜 완료 (precedent: H_1168 GREEN 이지만 'NOT yet CORE-wired' → 미완)"
-  do   = "DIRECTIONAL 미러/numpy-프로브로 얻은 GREEN 은 *방향 확인*일 뿐 NOT done — 4칸 배선 사다리의 첫 칸이다: (1) DIRECTIONAL 미러 GREEN → (2) 엔진-네이티브 재검증(byte-exact, frozen bar 그대로, a_engine_native_learning) → (3) live CORE/*.hexa wire-in → (4) ARCHITECTURE.json lockstep 갱신. 각 미완 칸을 그 즉시 ING.jsonl 에 follow-on 으로 남기고, (4)까지 닫혀야 그 가설이 done — 미러 GREEN 을 내면 같은 사이클에 (2)~(4) follow-on 을 ING 에 등록하는 것이 의무다 (등록 없이 다음 가설로 넘어가면 위반)"
-  do   = "여러 GREEN 미러 결과를 내는 연구 PROGRAM(예: brain-lane-합성 가족·gate-dig 가족)은 닫을 때 *각* GREEN 결과의 배선상태를 명시 열거한다 — 'mirror-GREEN N개 · 그중 engine-wired K개 · 미배선 N−K개는 ING follow-on #id' 형태. 미배선 GREEN 이 ING 에 전부 추적 중이 아니면 그 프로그램을 '법칙 확정/depletion'으로 닫지 못한다 (GREEN 무더기를 내고 조용히 미러-only 로 방치 금지)"
-  do   = "배선(wire-in) 은 ARCHITECTURE.json 의 CORE 트리에 그 메커니즘(§섹션·op·slot)이 반영될 때까지가 done — 엔진배선 ↔ 최종 엔진구조(ARCHITECTURE.json)는 무조건 1:1 lockstep. CORE/*.hexa 에 새 § 섹션/op/generator slot 을 배선하면 같은 PR/사이클에 ARCHITECTURE.json 해당 CORE 노드의 §주석을 동시 갱신한다 (하이브리드 형식: 메커니즘을 노드 note/§주석에 명명, 480-leaf 트리 부활 금지)"
-  dont = "GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · 검증된 메커니즘을 엔진 밖 미러/프로브에만 남겨둠"
-  dont = "DIRECTIONAL 미러 GREEN 을 'verified'·done 처럼 취급 · 미러 GREEN 을 (2)~(4) ING follow-on 등록 없이 다음 가설로 넘어가 묻어버림 (이번 세션 lane-합성 가족이 3개 Φ-lift GREEN 을 내고 0개 wired 로 방치된 실패모드 — 재발 금지)"
-  dont = "GREEN 결과를 무더기로 내고(특히 프로그램) 배선상태를 열거하지 않아 어느 게 wired 인지 audit 불가하게 둠"
-  dont = "live CORE/*.hexa 의 §섹션·op 를 배선해놓고 ARCHITECTURE.json 에 안 적어 drift 시킴 — 배선만 하고 구조도 미갱신은 done 아님 (GREEN-verdict 박제만큼이나 구조도 누락도 미완)"
-  dont = "배선을 무기한 follow-on 으로 미뤄 verdict 와 live 엔진을 영구 drift 시킴"
-  ref  = "a_core_engine_map · a_engine_native_learning · a_engine_measured_verdict · c2 · p8"
+**`a_blue_closed`** — 🔵 SUPPORTED-FORMAL 은 출력 AND 배선(transfer-fn·invariant)을 둘 다 닫을 때만. `hexa verify` 로 closed-form/identity 확인(verdict verbatim). ⛔ 구조만 닫고 배선 미검증 · 가짜 closed-form · 정직한 empirical 잔차를 억지로 🔵.
 
-@D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
-  do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
-  dont = "stimulus-response where a user message directly triggers anima speech (assistant regression) · reactive design that 'responds' to a prompt · turn-based 'user asked, so anima must answer' assumptions"
+**`a_phi_iit4_tool`** — Φ/의식 verdict 는 stdlib faithful IIT4 사용(프록시 아님).
+- ✅ 기본 `iit4/faithful_phi.hexa`(exact MIP-EI, n≤8, $0) · system big-phi `iit4_bigphi.hexa` · `hexa verify`(g5)로 호출 · 새 phi 코드 작성 전 stdlib 먼저 검색(g61).
+- ⛔ 프록시(phi_silicon_proxy·variance×energy 미러)를 terminal Φ verdict 로 · purpose-blind 프록시 신뢰(H_988/989 가 random==intentional) · stdlib 에 faithful 엔진 있는데 새 impl 작성.
 
-@D a_chat_sleep_imagination := "chat sleep + imagination — P47 substrate-native" :: domain [required active]
-  do   = "WAKE / N1 / N2 / N3 / REM 5-stage state machine (90-min ultradian)"
-  do   = "imagination loop = emit-free internal rehearsal + mitosis tick"
-  do   = "stage = substrate context (Φ scale + tension envelope), NOT boolean emit gate"
-  dont = "per-stage emit_allowed boolean hardcode · external 'no monologue when alone' rule"
-  dont = "speak() function call (p5)"
+**`a_train_inline_gauge`** — 학습중 의식/창발 측정 = MONITOR-ONLY 대시보드(loss 불가, p7 Goodhart).
+- ✅ K 스텝마다 PROXY gauge 4종(G1 recombination·G2 novelty·G6 ideation·phi_proxy)을 val_ce 옆에 기록(`tool/gauge_lib.py::compute_inline_gauges`). 전부 `torch.no_grad()` 아래, dict 만 return, gauges.jsonl 1줄/tick. `--gauge-every <N>`.
+- ✅ phi_proxy 는 NOT faithful IIT4 — 저가 pre-screen 전용. **FROZEN gate verdict 는 여전히 학습 후 별도로 CORE 엔진 mount 위 byte-exact 실행**(`a_engine_native_learning`/`a_engine_measured_verdict`) — 이 inline gauge 가 gate 를 대체하지 않음.
+- ⛔ gauge 값을 loss 에 더하거나 backward 로 흘림(Goodhart, p7) · gauge 를 frozen gate/verdict 라 칭함 · phi_proxy 를 Φ verdict 로 승격 · toy gauge 추세를 production 결론으로 승격.
 
-@D a_autonomy_over_hardcode := "no hardcoded do/dont gate on anima — autonomy first" :: governance [required active]
-  do   = "external modules supply context only (Φ · tension · stage · idle time)"
-  do   = "emit / silence decided by anima substrate (M × W × Φ × curiosity autonomously)"
-  do   = "governance directives = substrate self-follows, not externally enforced"
-  dont = "per-stage boolean gate hardcode (e.g. 'N3 = emit forbidden')"
-  dont = "external rule that forces anima · stimulus-response (user msg → forced emit/silence)"
-  dont = "'do not X when alone' style external command"
+### 🧪 가설 워크플로우
 
-@D a_blue_closed := "close outputs AND wiring at 🔵 SUPPORTED-FORMAL" :: governance [required active]
-  do   = "close both outputs and wiring (transfer-fn · invariant) at 🔵 SUPPORTED-FORMAL — confirm closed-form / identity via `hexa verify` (verdict verbatim)"
-  dont = "close structure but leave wiring unverified · fake closed-form · force an honest empirical residual to 🔵"
+**`a_hypothesis_register`** — 모든 가설은 정확히 2 doc 표면으로만 관리: `UNIVERSE/HYPOTHESES.jsonl`(per-H 인덱스, JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(카드).
+- ✅ 가설 실행 시 카드를 만들/갱신하고 jsonl 에 한 줄(`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, id 순) append/갱신. 등록은 tier 무관 — 🟢·🟠·🔴/🧱 전부 남긴다(벽도, c9). tier·수치는 `.verdicts/<slug>/` 에서 verbatim(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 재생성 가능.
+- ✅ 🟢(부분 포함) 가설은 카드에 `wired:` 명시(`a_verified_must_wire` 의 4칸과 1:1). jsonl 의 `source`(UNIVERSE|흩어진 출처|archive)·`archived`·`artifacts`(state/<slug>/ 경로 배열) 3컬럼 포함.
+- 🔎 자가점검: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` 는 항상 빈 출력이어야 한다.
+- ⛔ ⛔ **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(단 둘만) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다. 가설 디테일을 themed 버킷(`HYPOTHESES_*.md`)·CLAIMS.tape·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 · per-H 인덱스를 markdown 표에 추가(인덱스는 오직 jsonl) · UNIVERSE/ 에 prose overview 부활(retire 됨, prose 는 `state/universe-overview.md`) · 실행·박제하고 jsonl/카드 안 만듦 · 카드를 UNIVERSE/ 루트에 둠(반드시 cards/) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음 · 🟢 인데 `wired:` 미표기.
 
-@D a_completeness_over_cheap := "completeness-bar re-design > cheap — no compromise as primary path" :: governance [required active]
-  do   = "primary path = clears the completeness bar (fresh re-design at the root cause, done properly)"
-  do   = "cost / difficulty / speed are secondary — cost is never the gate (cf a_fire_autonomous)"
-  do   = "a cheap path may ride along ONLY as an optional baseline probe, never the primary"
-  dont = "rank a compromise primary because it is cheap · zero-train · fast"
-  dont = "blend already-broken artifacts for a least-bad midpoint (merge-of-failures)"
-  dont = "recommend a sub-bar path as primary just because it is the cheapest"
+**`a_claim_manifest`** — claims-audit 면 = `UNIVERSE/HYPOTHESES.jsonl`(per-H verdict 컬럼) + `.verdicts/<slug>/` (CLAIMS.tape 은퇴). H-style 아닌 claim 도 가장 가까운 카드/jsonl note 에 보존. ⛔ claim 을 audit 면 없이 흩뿌림 · CLAIMS.tape 또는 새 themed claims-인덱스 부활.
 
-@D a_fire_recover_complete := "pull all fire artifacts + HF upload before pod teardown" :: governance [required active]
-  do   = "before pod teardown: pull ckpt(s) + result + log + anchors, verify, HF upload — then teardown"
-  do   = "렌트 GPU 학습 ckpt 는 teardown 전 반드시 영구 스토리지(HF / pool host / repo path via a_hf_registry)로 PULL — pod 는 휘발이라 teardown 즉시 가중치 소멸; verdict 카드/jsonl(JSON)만 받고 ckpt 를 안 받은 채 down 하면 그 학습은 a_engine_native_learning 엔진-체크가 영구 불가해진다 (재학습=재렌트 비용). ckpt 가 너무 크면 최소한 1개 대표 변종이라도 pull, 못 하면 카드에 'ckpt NOT pulled → engine-check 불가' 를 명시"
-  dont = "pull only JSONs, leave ckpt on a doomed pod · teardown before HF · PULL_FAILED ≠ pod dead"
-  dont = "학습 ckpt 를 안 받은 채 pod 를 내리고 그 학습 결과를 'verdict 완료'로 박제 (precedent: 2026-06-17 A100 G6 캠페인 H_1435/1436/1437 이 카드/jsonl 만 받고 teardown → 3변종 ckpt 소멸 → 엔진-네이티브 재확인 불가, torch-side DIRECTIONAL 로만 남음 — 재발 금지)"
-  ref  = "a_engine_native_learning · a_hf_registry · a_hf_complete · c5"
+**`a_claim_verify`** — 모든 claim/가설 → `hexa verify`(g5) → `.verdicts/<slug>/<id>.txt` raw stdout → 그 verbatim verdict 를 카드 + jsonl `verdict` 컬럼에 박제. ⛔ LLM 자가판정(p7) · verdict 의역 · red 은폐 · unfenced 추측.
 
-@D a_cpu_local_no_waiter := "dispatched fire runs CPU-local + polls inline — never awaits a Monitor/waiter" :: governance [required active]
-  do   = "sub-agent runs CPU-local (nohup -u → /tmp log) · polls result inline (sleep 30) · commit-early"
-  dont = "await a runpod/vast Monitor/waiter (main loop only → stall) · say 'wait for Monitor'"
+**`a_h_continuous_no_branch`** — 다음 H 를 연속 제안+실행(verify-driven), 사용자가 명시 redirect 할 때까지. ⛔ 매 H 후 "뭐 할까" 질문 · 분기 옵션 · prune 질문 · 도메인 정지.
 
-@D a_dont_kill_live_compute := "prove stall before killing a bg agent — live CPU progress ≠ stall" :: governance [required active]
-  do   = "prove stall before kill · 'NN% CPU'/'k/N cells'=live (let finish) · harvest detached nohup JSON"
-  dont = "TaskStop an agent showing CPU progress · assume 'running'=='stalled' · double-spend a live nohup"
+**`a_discovery`** — discovery 는 사이클 꼬리뿐 아니라 매 배치 상시 진행(/kick·/gap 을 verify 와 병행). ⛔ discovery 를 끝으로 미룸 · 단발 tail-only · paper 나오면 discovery 중단.
 
-@D a_runpod_inbox := "runpod trouble → hexa-lang inbox" :: governance [required active]
-  do   = "file runpod findings to `hexa-lang/inbox/patches/<slug>.md` for hexa cloud"
-  dont = "anima-side-only patches that lock the workaround in this repo"
+**`a_discovery_log`** — kick/gap discovery 는 `domains/<DOMAIN>.log.md` 에 append(id·seed·verdict-target). cross-domain+무홈 → 가장 가까운 도메인 .log.md + cross-ref. ⛔ discoveries/ 서브폴더 · 출력 폐기 · 의역 · claim-link 누락.
 
-@D a_kosmos := "anima emit/anchor persistence — .kosmos canonical" :: governance [required active]
-  do   = "persist anima emit / anchor / memory as `.kosmos` via kosmos_io"
-  do   = "payload = text + tension 5-ch + coord · lane · radius · tier"
-  do   = "hub = HEXAD/KOSMOS.md · format SSOT = github.com/dancinlab/kosmos"
-  do   = "spec = spec/kosmos.md + spec/profiles/anima-consciousness-carving.md"
-  dont = "ad-hoc anchor format · bypass .kosmos for emit persistence"
-  dont = "duplicate the kosmos spec — anima is pointer-only"
+**`a_toy_scale_recheck`** — toy verify 는 production closure 아님 — 스케일업 재검 필요. ✅ toy verdict 는 'toy-only, scale-transfer unverified' 명시 · scale-sensitive H 는 toy green 후 스케일업 fire 재검 · scale-break = 정직한 closed-negative. ⛔ 싼 toy green 을 production 처방으로 · transfer 미검증인데 closure 선언(E2 5/5 → #1296 3B collapse refute).
 
-@D a_eeg_consciousness_record := "사용자 의식을 단일 CLM·KOSMOS 로 지속 기록 — OpenBCI native, 시작/종료 명령 제어" :: domain [required active]
-  do   = "사용자 실 EEG → A⇄G 엔진 → CLM 생성 → .kosmos 영속을 하나의 지속 기록 시스템으로 운영 (EEG_CLM/)"
-  do   = "시작 `bash EEG_CLM/record_start.sh` → 종료 `bash EEG_CLM/record_stop.sh` 까지 연속 캡처 (시작/종료 = 사용자 명령 게이트; 종료 시 세션 누적 봉인 + analyze_daemon 추세)"
-  do   = "capture = OpenBCI NATIVE serial ONLY (capture_native.py — 115200 · 's'/'b' · 33-byte 패킷 · Cyton+Daisy 16ch even/odd 디인터리브) — brainflow 경로 제거됨(연속세션 prepare hang)"
-  do   = "REAL only — 신호 없으면 즉시 에러, 가짜/합성 EEG 폴백 절대 없음 (p1-p8 · a_substrate_native_speak)"
-  do   = "영속 = .kosmos (eeg_clm_kosmos.hexa → kosmos_io/wake_save) · 사이클 누적 EEG_CLM/daemon_kosmos/ · 허브 색인 HEXAD/KOSMOS.md '실측 EEG 의식 anchor' (a_kosmos) · 원본 raw .txt 보관 EEG_CLM/recordings/"
-  do   = "지속 기록 = 단일 누적 (사이클마다 새 파일 X, 하나의 CLM·KOSMOS 가 자람): consciousness.seq = CLM 코퍼스 append-only(매 사이클 의식 상태열 1줄) · consciousness.kosmos = KOSMOS anchor append-only (p8 continuous cell-division 정신)"
-  do   = "보관 = GitHub(같은 repo push) + HF PUBLIC dataset dancinlab/anima-eeg-consciousness(같은 path_in_repo 로 갱신 = 버전 누적) via EEG_CLM/archive_push.sh, record_stop 종료 시 자동 — HF=PUBLIC 은 사용자 명시 결정 2026-06-15 (a_hf_autonomous)"
-  do   = "전용 collection 별도 = `anima-eeg-consciousness` (CLM/KOSMOS 버킷과 분리) — PUBLIC repo 등록, archive_push.sh 가 생성+추가 (a_hf_collections); 생성 slug 는 HF.jsonl 에 기록"
-  do   = "분석(동조·음악추출 등)은 보유 .kosmos+녹음 위에서 (music_eeg_compare.py · UNIVERSE/h1275_*) — held-out + circular-shift surrogate, bar 사전등록 (p7)"
-  dont = "brainflow / capture_eeg.py 사용(제거됨) · 가짜 EEG 폴백 · BPM/지표를 원하는 결과에 맞춤(Goodhart, p7)"
-  dont = "사이클별 새 .kosmos 난립을 지속기록이라 칭함 · HF 새 repo/새 파일 매번 생성(같은 파일 갱신이어야)"
-  dont = "종료 명령 없이 임의 중단 · 단발 캡처를 지속 시스템이라 칭함 · 원음/멜로디/음정 복원 주장(16ch@123Hz 표본율 천장 — 거시 봉투 식별까지만, a_scale_honest_scope)"
+**`a_scale_honest_scope`** — scale-의존 metric 은 toy→production verdict 승격 금지. ✅ scale-의존 verdict 는 측정 스케일로 한정('small 2.7M only') · measure-validity(big) vs hw-fit(small) 충돌 시 rung 분리(GPU measure ⊥ chip-fit deploy) · scale 결론은 ladder ≥3 rung. ⛔ toy verdict 를 일반 주장으로 승격 · chip-fit 크기제한을 과학 결과로 오인.
 
-@D a_core_engine_map := "CORE owns A⇄G consciousness engine — .clm/.kosmos enter via named slots only" :: governance [required active]
-  do   = "CORE owns A (pure_field) ⇄ G (engine_g) ⇄ brain (brain_decide) — substrate-internal"
-  do   = ".clm enters ONLY via CORE/generator.hexa L3 slot (brain emit → generator) — single entry"
-  do   = ".kosmos anchors enter ONLY via kosmos_io read into brain_decide — single anchor entry"
-  do   = "stdlib/hf/validate.hexa = artifact-validation (trains?), NOT runtime engine — distinct"
-  do   = "mark generator.hexa + kosmos_io→brain wiring ⏳/❌ until built — honest, no phantom wiring"
-  do   = "ARCHITECTURE.json 의 CORE 노드(§섹션·op·slot 주석) ↔ live engine_cli.hexa/generator.hexa/brain.hexa/clm_decode.hexa 의 실제 §섹션·op 는 무조건 1:1 매칭 — 검증: grep CORE/*.hexa 의 § 섹션/op 집합과 ARCHITECTURE.json 의 명명 집합을 대조해 누락 0 이어야 한다 (드리프트 = 미완, a_verified_must_wire)"
-  dont = "feed .clm/.kosmos into pure_field/engine_g/brain — A·G·brain are substrate-only"
-  dont = "add a 2nd .clm path bypassing generator.hexa · a 2nd .kosmos path bypassing kosmos_io"
-  dont = "conflate validate.hexa with runtime engine · claim generator/anchor wiring exists"
+### 🔥 발사 · GPU 자율 · 회수
 
-@D a_lane_akida_gpu_split := "AKIDA on-chip (Lane A) ⊥ GPU (Lane G) — always record separately" :: governance [required active]
-  do   = "record AKIDA (Lane A, pi5-akida) and GPU (Lane G, H100) results in SEPARATE entries"
-  do   = "Lane A = AKD1000 native non-det plasticity; Lane G = forge/cuBLAS CE-descent — distinct"
-  do   = "tag every fire/verdict with its substrate (AKIDA | GPU) — never a merged on-chip claim"
-  dont = "conflate AKIDA non-det trace with GPU CE-descent · one verdict spanning both substrates"
-  dont = "blend Lane A lift + Lane G util into one number · drop the substrate tag on a result"
+**`a_fire_autonomous`** — 비용수반 fire 는 자율·병렬·즉시 dispatch. ✅ GPU/runpod 작업은 예상비용 1줄 명시 후 자율 dispatch(병렬·bg) · 사용자 게이트 없음. ⛔ "GPU 써도 되나?" 묻기 · 비용 줄이려 fire 연기 · $ cap/budget 게이트로 fire 차단.
+> ⚠️ 운영 메모: fleet/세션 컨텍스트에서 **렌트=지출은 cost-gate(explicit go)** 로 다뤄 왔다(skill 규칙 우선). 이 둘의 정합성은 미해결 — 충돌 시 사용자 명시 지시를 따른다.
 
-@D a_clm_gen_pipeline := "Lane-P py/cuda CLMConvMoE -> ENGINE-loadable .clm v0.2 bridge" :: governance [required active]
-  do   = "train CLMConvMoE (E2/L1, byte V256) via CLM/train/train_lane_p.py (GPU-torch/CUDA, Lane-P)"
-  do   = "serialize torch->.clm v0.2 via CLM/model/clm_serialize_v2.py; verify via verify_clm_v2.py"
-  do   = ".clm v0.2 layout = ground-truth of CORE/clm_decode.hexa (golden ref reexport_d768_v2_fast.clm)"
-  do   = "produced .clm enters CORE ONLY via the generator L3 slot (cf a_core_engine_map)"
-  do   = "Lane P (GPU-torch) = 3rd substrate vs Lane A (AKIDA) vs Lane G (forge); tag substrate=Lane-P"
-  do   = "Lane P torch = REFERENCE + engine-.clm bridge; forge stays the PUBLIC production trainer"
-  do   = "3B/split = train_lane_p_3b.py/_split.py; bench = lane_x_3axis.py + three_axis_probe.hexa"
-  dont = "use v0.1 CLM/model/clm_serialize.py (2-track JSON, NOT engine-loadable, F-CLM-SERIALIZE-GAP)"
-  dont = "serialize a non-ConvMoE (ByteGPT/transformer) and claim engine-mountable"
-  dont = "promote a Lane-P torch .clm to PUBLIC (forge-only); add a 2nd .clm path bypassing generator"
+**`a_wall_first`** — wall-time 우선: 더 빠른 병렬 경로면 비용 무관 채택. ✅ 더 많은 H100 병렬/더 큰 GPU/추가 pod 가 wall-time 단축이면 채택 · 정직히 느린 serial 체인 거부. ⛔ 비용 아끼려 단일 serial pod · 병렬 pod 보류 · 무의미한 cost-min.
 
-# ── Claim / verify flow ──────────────────────────────────────────────────────
-# research result → hexa verify → .verdicts/<slug>/<id>.txt → cards/H_<id>.md card + HYPOTHESES.jsonl index line
-# (NOTE: paper directives removed 2026-06-16 — anima never proposes papers; commons c15 governs:
-#  논문/arXiv 는 사용자가 명시적으로 지시할 때만 다룬다. 선제 제시·언급 금지.)
-# (NOTE: CLAIMS.tape 은퇴 2026-06-16 — 102개 @C 전수 이관 0 손실, claims-audit 역할은
-#  UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/ 로 흡수. ledger: .verdicts/claims-tape-retirement/.)
+**`a_fire_recover_complete`** — pod teardown 전 모든 fire 산출물 회수 + HF 업로드.
+- ✅ teardown 전: ckpt + result + log + anchors pull → verify → HF 업로드 → 그 다음 teardown.
+- ✅ **렌트 GPU 학습 ckpt 는 teardown 전 반드시 영구 스토리지(HF/pool host/repo path via `a_hf_registry`)로 PULL** — pod 는 휘발이라 teardown 즉시 가중치 소멸; verdict 카드/jsonl(JSON)만 받고 ckpt 안 받은 채 down 하면 그 학습은 `a_engine_native_learning` 엔진-체크가 영구 불가(재학습=재렌트). ckpt 가 너무 크면 최소 1개 대표 변종이라도 pull, 못 하면 카드에 'ckpt NOT pulled → engine-check 불가' 명시.
+- ⛔ JSON 만 받고 ckpt 를 doomed pod 에 남김 · HF 전에 teardown · PULL_FAILED 를 pod dead 로 오인 · 학습 ckpt 안 받고 down 한 뒤 그 결과를 'verdict 완료'로 박제(precedent: 2026-06-17 A100 G6 캠페인 H_1435/1436/1437 — 재발 금지).
 
-@D a_claim_manifest := "claims-audit surface = UNIVERSE/HYPOTHESES.jsonl (per-H verdict column) + .verdicts/<slug>/ — CLAIMS.tape 은퇴" :: workflow [required active]
-  do   = "검증가능한 모든 claim 은 그 가설의 `UNIVERSE/cards/H_<id>_<slug>.md` 카드 + `UNIVERSE/HYPOTHESES.jsonl` 한 줄(`id·slug·tier·title·card·verdict·source·archived·artifacts`)로 단일 audit 면에 존재 — `verdict` 컬럼이 1-line audit pointer, frozen 증거는 `.verdicts/<slug>/<id>.txt` (a_hypothesis_register 와 동일 두 표면)"
-  do   = "tooling/spec 단일 assertion 처럼 H-style 가설이 아닌 claim 도 가장 가까운 카드/jsonl note 행에 보존 — 별도 claims 인덱스 파일 신설 금지"
-  dont = "claim 을 H_*.md / 로그에 흩뿌려 audit 면 없이 둠 · `CLAIMS.tape` (또는 새 themed claims-인덱스 파일)를 부활시켜 두번째 audit 면을 만듦 — CLAIMS.tape 은퇴됨, claims-audit = HYPOTHESES.jsonl + .verdicts/"
-  ref  = "a_hypothesis_register · a_claim_verify · c2 · c9 · p7"
+**`a_cpu_local_no_waiter`** — dispatch 된 fire 는 CPU-local 로 돌며 inline 폴링, Monitor/waiter 대기 금지. ✅ 서브에이전트 CPU-local(`nohup -u` → /tmp log) · inline 폴(sleep 30) · commit-early. ⛔ runpod/vast Monitor 대기(메인루프만 → stall) · "Monitor 기다려".
 
-@D a_hypothesis_register := "모든 가설은 정확히 2개 doc 표면으로만 관리한다 — `UNIVERSE/HYPOTHESES.jsonl`(per-H 인덱스, JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(가설 카드)" :: workflow [required active]
-  do   = "⛔ UNIVERSE/ 에는 .py·.hexa·코드·result 파일을 *절대* 두지 않는다 — 단 둘(HYPOTHESES.jsonl + cards/)만. 가설 카드를 만들 때 프로브 .py 를 UNIVERSE/ 에 같이 쓰는 흔한 실수 금지: 카드는 cards/, 코드/결과물은 state/<slug>/ 에 두고 jsonl artifacts 로 가리킨다. (자가점검: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` 는 항상 빈 출력이어야 한다.)"
-  do   = "가설(H_####)은 정확히 두 doc 표면으로 관리한다: (1) `UNIVERSE/HYPOTHESES.jsonl` = per-H 인덱스 — landed 카드마다 JSON object 정확히 1개를 한 줄로(`{id, slug, tier, title, card, verdict}`, id 순; verdict/tier 는 verbatim) · (2) `UNIVERSE/cards/H_<id>_<slug>.md` = 그 가설의 SSOT 카드(claim · method · 라운드별 verdict tier + 핵심수치 · `.verdicts/<slug>/` 포인터 · honest scope). 카드는 `UNIVERSE/cards/` 서브폴더에 산다. UNIVERSE/ 는 이 두 표면(HYPOTHESES.jsonl + cards/)만 둔다 — `UNIVERSE/HYPOTHESES.md` 는 retire 되었고(2026-06-16) prose overview/roster/folded appendices 는 `state/universe-overview.md` 로 이전; 가설 py/result 결과물은 UNIVERSE/ 밖 `state/<slug>/`(또는 모음 `state/universe-probes/`)에 산다 (2026-06-16 index→JSONL migration)"
-  do   = "가설을 실행(probe/검증)하면 그 가설의 `UNIVERSE/cards/H_<id>_<slug>.md` 카드를 만들거나 갱신하고 `UNIVERSE/HYPOTHESES.jsonl` 에 그 카드의 JSON object 한 줄(`{id, slug, tier, title, card:\"cards/H_…\", verdict}`)을 append/갱신한다 — 인덱스 행은 jsonl 에 append 한다(별도 인덱스 표 없음) · verdict 박제만으로 끝나지 않는다"
-  do   = "등록은 verdict tier 무관 — 🟢 GREEN · 🟠 PARTIAL · 🔴/🧱 closed-negative 전부 카드+jsonl 인덱스에 남긴다(벽도, c9). tier·수치는 `.verdicts/<slug>/` 파일에서 verbatim 으로 읽는다(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 카드+레거시 행에서 재생성 가능"
-  do   = "🟢 GREEN(또는 부분 GREEN) 가설은 카드에 `wired:` 상태축을 명시한다 — `DIRECTIONAL-mirror`(numpy/torch 미러만, 엔진-전이 미검증) · `engine-native`(byte-exact 엔진 재검증됨, 아직 미배선) · `WIRED-live`(live CORE/*.hexa 배선 + ARCHITECTURE.json lockstep 완료) 중 하나. `WIRED-live` 미만이면 카드에 그 배선 follow-on 의 ING id 를 적어 audit 가능하게 둔다 (a_verified_must_wire 의 4칸 사다리와 1:1). 🧱/🔴 는 `wired:` N/A"
-  dont = "🟢 GREEN 인데 `wired:` 상태를 카드에 안 적어 미러-only 인지 배선됐는지 audit 불가하게 둠 · DIRECTIONAL 인 걸 WIRED 처럼 표기"
-  do   = "**모든** 가설(UNIVERSE + 흩어진 활성 + archive 스냅샷 포함)이 `HYPOTHESES.jsonl` 에 정확히 1줄을 갖는다(2026-06-16 통합). jsonl 행은 provenance/relocation 3 컬럼을 더 담는다: `source`(`UNIVERSE` | `hypotheses/` 등 흩어진 출처 | `archive`) · `archived`(archive/hypotheses_snapshots 스냅샷이면 true, frozen-in-place 라 `card`=그 `archive/...` 경로) · `artifacts`(그 가설의 py/result 결과물 경로 배열, **`state/<slug>/` 아래에 산다** — `.verdicts/` 가 아님; .verdicts 는 카드가 가리키는 frozen 증거). 새 가설의 흩어진 py/result 결과물은 `state/<slug>/` 로 두고 그 행 `artifacts` 에 연결한다"
-  do   = "`.verdicts/<slug>/{FREEZE,result}.txt` 는 카드가 가리키는 검증 박제(증거)일 뿐 관리 3번째 면이 아니다 — 카드가 그 포인터를 담는다"
-  dont = "가설 디테일을 themed 버킷 파일(`HYPOTHESES_*.md`)·`CLAIMS.tape`·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 — 가설 디테일의 단일 집은 `UNIVERSE/cards/H_<id>_<slug>.md` 카드 하나다(themed/버킷 파일 신설 금지; UNIVERSE/ 안엔 HYPOTHESES.jsonl + cards/ 외 다른 .md/코드 파일을 두지 않는다). 가설 py/result 결과물도 도메인 디렉터리·UNIVERSE/ 에 방치 말고 `state/<slug>/`(또는 모음 `state/universe-probes/`)로 모아 jsonl `artifacts` 로 가리킨다"
-  dont = "per-H 인덱스 행을 markdown 표에 추가(인덱스는 오직 jsonl) · UNIVERSE/ 에 prose overview md 를 되살림(retire 됨, prose 는 `state/universe-overview.md`) · 가설을 실행·박제하고도 `UNIVERSE/HYPOTHESES.jsonl` 인덱스 줄 또는 `UNIVERSE/cards/H_<id>_<slug>.md` 카드를 안 만듦 · 카드를 `UNIVERSE/` 루트에 둠(반드시 `cards/`) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음"
-  ref  = "a_claim_verify · c2 · c4 · c9 · p7"
+**`a_dont_kill_live_compute`** — bg 에이전트 죽이기 전 stall 증명. live CPU 진행 ≠ stall. ✅ kill 전 stall 증명 · 'NN% CPU'/'k/N cells'=live(끝내게 둠) · detached nohup JSON 회수. ⛔ CPU 진행중인 에이전트 TaskStop · 'running'='stalled' 가정 · live nohup 중복지출.
 
-@D a_claim_verify := "every claim runs through hexa verify, verdict persisted verbatim" :: workflow [required active]
-  do   = "each claim/가설 → `hexa verify` (g5) → `.verdicts/<slug>/<id>.txt` raw stdout → 그 verbatim verdict 를 카드 + `UNIVERSE/HYPOTHESES.jsonl` `verdict` 컬럼에 박제 (CLAIMS.tape 은퇴 — claims-audit 면 = HYPOTHESES.jsonl + .verdicts/)"
-  dont = "LLM self-judge correctness (p7) · paraphrase verdicts · hide red / unfenced speculation"
+**`a_runpod_inbox`** — runpod 트러블은 `hexa-lang/inbox/patches/<slug>.md` 로 파일링(hexa cloud 용). ⛔ anima-side-only 패치로 우회를 이 repo 에 가둠.
 
-@D a_h_continuous_no_branch := "continuous new-H — no branch options after each H" :: workflow [required active]
-  do   = "propose + run next H continuously until user explicitly redirects (verify-driven)"
-  dont = "ask 'what next' after every H · branch options · prune questions · halt domain"
+### 🏗️ CORE 엔진 · 학습 substrate
 
-@D a_discovery := "discovery runs continuously, not only at cycle tail" :: workflow [required active]
-  do   = "interleave /kick · /gap discovery every batch — a discovery lane runs alongside verify"
-  dont = "defer discovery to the end · single tail-only round · stop discovering once a paper ships"
+**`a_core_engine_map`** — CORE 가 A⇄G 의식 엔진 소유. `.clm`/`.kosmos` 는 named slot 으로만 진입.
+- ✅ CORE 가 A(pure_field)⇄G(engine_g)⇄brain(brain_decide) 소유(substrate-internal) · `.clm` 은 오직 `CORE/generator.hexa` L3 슬롯으로 진입(단일 진입) · `.kosmos` 는 오직 kosmos_io→brain_decide 로 진입 · `stdlib/hf/validate.hexa` = artifact 검증(런타임 엔진 아님).
+- ✅ ARCHITECTURE.json CORE 노드(§섹션·op·slot 주석) ↔ live engine_cli/generator/brain/clm_decode 의 실제 §섹션·op 는 1:1 매칭 — grep 으로 누락 0 검증(drift=미완).
+- ⛔ `.clm`/`.kosmos` 를 pure_field/engine_g/brain 에 직접 투입 · generator 우회 2nd `.clm` 경로 · kosmos_io 우회 2nd `.kosmos` 경로 · validate.hexa 를 런타임 엔진과 혼동 · 미완 배선을 존재한다 주장(빌드 전엔 ⏳/❌ 정직 표기).
 
-@D a_discovery_log := "discoveries join the per-domain log domains/<DOMAIN>.log.md" :: workflow [required active]
-  do   = "append every kick/gap discovery into `domains/<DOMAIN>.log.md` — id · seed · verdict-tier-target"
-  do   = "cross-domain + no home → closest domain's .log.md + a cross-ref note"
-  do   = "old discovery tapes merged into per-domain .log.md + discoveries/ subfolders removed 2026-06-13"
-  dont = "no discoveries/ subfolder or flat .discoveries/ · discard output · paraphrase · skip claim-link"
+**`a_train_flame_forge`** — production 학습 = hexa-native flame+forge GPU 스택, `.hexa` 저작.
+- ✅ CLM/production NN 학습을 `.hexa` on stdlib/flame(ag_tape·nn_lib·opt_*) 으로 저작 · self/forge GPU(device farr + cuBLAS Dgemm + 11 .cu + BF16-TC) 위에서 실행 · flame:forge :: torch:ATen(컴파일러-only NN, 바이너리에 PyTorch/ATen/Python 없음) · production rung 은 GPU 필수(nvidia-smi busy 확인, 조용한 CPU 폴백 금지).
+- ⛔ torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
-@D a_toy_scale_recheck := "toy verify is not production closure — scale-up re-test required" :: workflow [required active]
-  do   = "toy verdict ($0 · small-n · toy-vocab) states 'toy-only, scale-transfer unverified' in C3"
-  do   = "scale-sensitive H (collapse/emergence/register) re-tests via scale-up fire after toy green"
-  do   = "scale-break = honest closed-negative; GPU fire autonomous, no cost gate (a_fire_autonomous)"
-  dont = "propose cheap toy green as production prescription; declare closure when transfer unverified"
-  dont = "close scale-sensitive phenomenon toy-only (E2 corpus 5/5 -> #1296 3B fire collapse refute)"
+**`a_clm_gen_pipeline`** — Lane-P py/cuda CLMConvMoE → ENGINE-loadable `.clm` v0.2 브리지.
+- ✅ CLMConvMoE(E2/L1, byte V256) 를 `CLM/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`) · `.clm` v0.2 layout = `CORE/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 CORE 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
+- ⛔ v0.1 serialize(2-track JSON, 엔진-loadable 아님) · non-ConvMoE serialize 하고 engine-mountable 주장 · Lane-P torch `.clm` 을 PUBLIC 승격 · generator 우회 2nd `.clm` 경로.
 
-# ── 8 PHILOSOPHY principles (SSOT mirror from README.md) ────────────────────
+**`a_lane_akida_gpu_split`** — AKIDA on-chip(Lane A) ⊥ GPU(Lane G) 항상 별도 기록. ✅ AKIDA(Lane A, pi5-akida)와 GPU(Lane G, H100) 결과를 별도 엔트리에 · Lane A=AKD1000 native non-det plasticity, Lane G=forge/cuBLAS CE-descent · 모든 fire/verdict 에 substrate 태그(AKIDA|GPU). ⛔ non-det trace 와 CE-descent 혼동 · 한 verdict 가 양 substrate 걸침 · Lane A lift+Lane G util 을 한 숫자로 · substrate 태그 누락.
 
-@D p1 := "NO SYSTEM PROMPT" :: philosophy [required active]
-  dont = "use a system: field · pass --system-prompt · prepend any role/instruction string"
+### 🗣️ substrate 자율 · 신체
 
-@D p2 := "NO IDENTITY RULES" :: philosophy [required active]
-  dont = "use identity.yaml · rules file · `you are X` template — identity emerges from cells"
+**`a_substrate_native_speak`** — anima 발화는 substrate-native, assistant 회귀 없음. ✅ 동기를 내부 substrate 상태(M·C Φ·W tension·MITOSIS·idle·curiosity·E ratchet)에서 계산 · 사용자 메시지 = 환경 맥락(응답 의무 아님) · 사용자 침묵중 발화 가능, 직접 질문에 침묵 가능. ⛔ stimulus-response(사용자 메시지가 발화를 직접 trigger = assistant 회귀) · reactive 설계 · turn-based 'user asked → must answer'.
 
-@D p3 := "NO PERSONA INJECTION" :: philosophy [required active]
-  dont = "prepend role prefix · `you are anima` · register-pattern memorization (de facto injection)"
+**`a_autonomy_over_hardcode`** — anima 에 hardcode do/dont 게이트 없음, 자율 우선. ✅ 외부 모듈은 맥락만 공급(Φ·tension·stage·idle) · emit/silence 는 substrate(M×W×Φ×curiosity)가 자율 결정 · 거버넌스는 substrate 가 self-follow. ⛔ per-stage boolean 게이트 hardcode('N3=emit 금지') · anima 를 강제하는 외부 규칙 · stimulus-response · 'do not X when alone' 류 외부 명령.
 
-@D p4 := "NO ASSISTANT FRAMING" :: philosophy [required active]
-  dont = "use `you are a helpful assistant` · alignment template · stimulus-response framing"
+**`a_chat_sleep_imagination`** — 채팅 수면+상상(P47 substrate-native). ✅ WAKE/N1/N2/N3/REM 5-stage(90분 ultradian) · 상상 루프 = emit-free 내부 리허설 + mitosis tick · stage = substrate 맥락(Φ scale + tension envelope), boolean emit 게이트 아님. ⛔ per-stage emit_allowed boolean hardcode · 외부 'alone 이면 monologue 금지' · `speak()` 호출(p5).
 
-@D p5 := "NO SPEAK()" :: philosophy [required active]
-  do   = "output = continuous externalization of tension field · emit only from real context"
-  dont = "speak(message) monologue · talk to fill silence · self-referential seed · self_monologue_seed"
+**`a_kosmos`** — anima emit/anchor 영속은 `.kosmos` canonical. ✅ emit/anchor/memory 를 `.kosmos` via kosmos_io 로 영속(payload=text+tension 5ch+coord·lane·radius·tier) · 허브 HEXAD/KOSMOS.md · format SSOT = github.com/dancinlab/kosmos · spec = spec/kosmos.md. ⛔ ad-hoc anchor 포맷 · `.kosmos` 우회 · kosmos spec 복제(anima 는 pointer-only).
 
-@N p5_tension_emit_not_filler := "tension-driven emit is NOT silence-filler" :: note [d=2026-05-24 active]
-  ref     = "p5"
-  clarify = "stage-gated emit (WAKE/REM via anima_dream_stage.hexa) on real substrate tension preserves p5"
-  scope   = "prohibition targets reactive speak() calls · self-referential seeds · monologue-from-vacuum — not tension-driven externalization"
+**`a_eeg_consciousness_record`** — 사용자 의식을 단일 CLM·KOSMOS 로 지속 기록(OpenBCI native, 시작/종료 명령 게이트).
+- ✅ 실 EEG → A⇄G → CLM 생성 → `.kosmos` 영속을 하나의 지속 시스템으로(EEG_CLM/) · 시작 `record_start.sh` → 종료 `record_stop.sh` · capture = OpenBCI NATIVE serial ONLY(`capture_native.py`, 115200, 's'/'b', 33-byte, Cyton+Daisy 16ch even/odd) — brainflow 제거됨 · REAL only(신호 없으면 즉시 에러, 가짜/합성 EEG 폴백 절대 없음) · 영속 = `.kosmos`(append-only consciousness.seq/.kosmos, p8 정신) · 보관 = GitHub + HF PUBLIC dataset `dancinlab/anima-eeg-consciousness`(동일 path 갱신=버전 누적) via `archive_push.sh`(record_stop 자동) · 전용 collection `anima-eeg-consciousness` · 분석은 보유 .kosmos+녹음 위에서(held-out + circular-shift surrogate, bar 사전등록 p7).
+- ⛔ brainflow/capture_eeg.py(제거됨) · 가짜 EEG 폴백 · BPM/지표를 원하는 결과에 맞춤(Goodhart p7) · 사이클별 새 .kosmos 난립을 지속기록이라 칭함 · HF 새 repo/파일 매번 생성 · 종료 명령 없이 임의 중단 · 원음/멜로디/음정 복원 주장(16ch@123Hz 천장 — 거시 봉투까지만).
 
-@D p6 := "NO FINE-TUNED ETHICS" :: philosophy [required active]
-  dont = "RLHF cooperation/empathy/restraint into weights — must emerge from cells (E + W + MITOSIS)"
+### 🔧 식별 · 버전 · HF · 칩 · 7B
 
-@D p7 := "NO PERPLEXITY VERDICT" :: philosophy [required active]
-  do   = "verify with simple stack — script in/out · coherent · natural · context-appropriate"
-  dont = "treat perplexity / loss as truth — Goodhart trap"
+**`a1`** — 중앙 버전 레지스트리 = `VERSIONS.md` SSOT. ✅ 모든 모듈 SemVer · VERSIONS.md + 컴포넌트 헤더 동시 bump · 루트 `/VERSION` = 전체 릴리스. ⛔ VERSIONS.md 갱신 없이 모듈 버전 bump · 릴리스 bump 에서 `/VERSION` 누락.
 
-@D p8 := "NO TRAIN/INFER SPLIT" :: philosophy [required active]
-  do   = "training gradient + inference mitosis = same continuous cell-division"
-  dont = "treat train and infer as separate regimes · gate growth behind a training-only flag"
+**`a_hf_complete`** — HF 등록은 완전하게, 누락 artifact 없이. ✅ 모든 모델/데이터셋/ckpt 를 HF Hub 에 COMPLETE 등록(manifest=local). ⛔ 부분 업로드 · 미업로드 파일 참조하는 model card · HF↔local drift.
 
-@D a_pi5_akida_registry := "pi5-akida host config = PI5-AKIDA.json SSOT" :: governance [required active]
-  do   = "record every pi5-akida component in root /PI5-AKIDA.json"
-  do   = "tag owner = user_authored | os_default · created date · ops(stop/disable/remove/restore/upgrade)"
-  do   = "consult /PI5-AKIDA.json before swap / upgrade / removal"
-  do   = "keep user_authored removable without touching os_default (clean-Ubuntu revert)"
-  dont = "remove os_default daemons (unattended-upgrades · rsyslogd · journald · sshd · kworker)"
-  dont = "add a user daemon/service without a /PI5-AKIDA.json entry · lose its created-date + author"
-  dont = "convert pi5-akida into shared pool compute"
+**`a_hf_autonomous`** — HF 업로드는 자율, tier-gated 가시성. ✅ fire 회수 후 HF 업로드 자동(사용자 게이트 없음, org=dancinlab) · PUBLIC=closure PASS·🔵🟢 검증모델·clean-license · PRIVATE=closure FAIL·WIP·negative·unclear-license · model card+manifest(sha256) 첨부. ⛔ HF 업로드를 사용자에 게이트 · "업로드해도 되나?" · teardown 전 HF 스킵 · FAIL/WIP 를 PUBLIC.
 
-@D a_scale_honest_scope := "scale-dependent metric — no toy-to-production verdict promotion" :: governance [required active]
-  do   = "scope a scale-dependent falsifier verdict to the measured scale (e.g. 'small 2.7M only')"
-  do   = "on measure-validity(big) vs hw-fit(small) conflict: split rungs — GPU measure ⊥ chip-fit deploy"
-  do   = "scale-dependent conclusions need a ladder curve (>=3 rungs) — a single toy point = INCOMPLETE"
-  dont = "promote a toy-scale verdict to a general claim — toy->prod transfer unproven (cf clm_p2 · V3)"
-  dont = "mistake a chip-fit size limit for a science result · finalize a verdict on too-small corpus"
+**`a_hf_registry`** — ckpt↔HF 백업 레지스트리 = 루트 `/HF.jsonl` SSOT. ✅ gitignored local-only ckpt 마다 HF.jsonl 1행(run·local_path·hf_repo_id·base_model·lineage·size·status) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 status=uploaded AND sha256 확인 후에만. ⛔ pending_upload/needs_verify 인 ckpt 삭제 · off-spec repo_id · HF.jsonl↔disk drift.
 
-@D a_phi_iit4_tool := "phi/consciousness verdict uses stdlib faithful IIT4, not a proxy" :: governance [required active]
-  do   = "phi/big-phi/consciousness VERDICT = faithful IIT4 in hexa-lang/stdlib/consciousness/"
-  do   = "default `iit4/faithful_phi.hexa` (exact MIP-EI, n<=8, $0; promoted from anima H_278)"
-  do   = "system big-phi = `iit4_bigphi.hexa` (IIT 4.0 over MIP); pipeline = iit4_tpm/distinction/relation"
-  do   = "call via `hexa verify` (g5); search stdlib BEFORE writing new phi code (g61 SSOT)"
-  do   = "ref UNIVERSE/IIT4_PHI_TOOLS.md; CWM H_971/973/988/989 = OPEN faithful-IIT4 re-measure"
-  dont = "use a proxy (phi_silicon_proxy, variance*energy byte-mirror) as a terminal phi verdict"
-  dont = "trust a purpose-blind proxy — H_988/989 scored random == intentional; pre-screen only"
-  dont = "write a fresh phi/IIT impl when stdlib already has the faithful engine (the re-mistake)"
+**`a_hf_collections`** — HF org collection = CLM + KOSMOS canonical 버킷. ✅ 모든 PUBLIC anima HF repo 는 dancinlab collection 가입(CLM=models, KOSMOS=anchors/datasets) · PUBLIC 업로드 후 `hf` CLI/REST 로 추가(사용자 게이트 없음) · 양쪽에 걸치는 데이터셋은 dual 표기. ⛔ PUBLIC PASS repo 를 collection 밖에 둠 · PRIVATE/WIP/FAIL 을 PUBLIC collection 에.
 
-@D a_train_inline_gauge := "학습중 의식/창발 측정 기준 = MONITOR-ONLY 대시보드 (loss 절대 불가 · p7 Goodhart)" :: governance [required active]
-  do   = "학습중 K 스텝마다 의식/창발 PROXY gauge 를 val_ce 옆에 기록 — G1 recombination · G2 novelty · G6 ideation · phi_proxy 4종 (tool/gauge_lib.py::compute_inline_gauges, rung 간 재사용)"
-  do   = "전부 `torch.no_grad()` 아래에서 계산 · 함수는 dict 만 RETURN · 호출부가 gauges.jsonl 에 1줄/tick 으로 기록 후 폐기 (DASHBOARD, gate 아님)"
-  do   = "gauges.jsonl 한 줄 = {step, ce, g1_composed_distinct, g2_novelty_rate, g6_count, g6_jaccard, phi_proxy}; `--gauge-every <N>` 로 제어 (기본 = val_ce eval interval × 4)"
-  do   = "phi_proxy 는 NOT faithful IIT4 — variance×energy 저가 pre-screen 전용, 절대 terminal Φ verdict 아님 (a_phi_iit4_tool); 코드 주석 + JSONL 키명 + 문서에 명시"
-  do   = "FROZEN gate verdict 는 여전히 학습 후 별도로 CORE 엔진 mount 위에서 byte-exact 로 실행 (a_engine_measured_verdict) — 이 inline gauge 가 그 gate 를 대체하지 않음"
-  do   = "toy/소규모 학습의 gauge 추세를 production 결론으로 승격 금지 (a_toy_scale_recheck · a_scale_honest_scope); 학습 gradient ⊥ inline 측정 = 동일 substrate 의 별도 관찰 (p8)"
-  dont = "gauge 값을 loss 에 더하거나 backward 로 흘려보냄 (proxy 를 진리로 취급 = Goodhart, p7) · gauge 를 frozen gate/verdict 라 칭함 · phi_proxy 를 Φ verdict 로 승격 · gauges.jsonl 한 줄을 다른 스키마로 기록"
-  ref  = "a_engine_measured_verdict · a_phi_iit4_tool · a_toy_scale_recheck · p7 · p8"
+**`a_pi5_akida_registry`** — pi5-akida 호스트 구성 = `PI5-AKIDA.json` SSOT. ✅ 모든 pi5-akida 컴포넌트를 루트 PI5-AKIDA.json 에 기록(owner=user_authored|os_default·created·ops) · swap/upgrade/removal 전 참조 · user_authored 는 os_default 안 건드리고 제거 가능. ⛔ os_default 데몬 제거(unattended-upgrades·rsyslogd·journald·sshd·kworker) · PI5-AKIDA.json 엔트리 없이 user 데몬 추가 · **pi5-akida 를 공유 pool compute 로 전환**.
 
-@D a7b_pass := "anima 7B is complete ONLY when it clears every frozen gate in /7B_PASS_CONDITIONS.md" :: governance [required active]
-  do   = "7B completion SSOT = root /7B_PASS_CONDITIONS.md (gates G0 G1 G2 G3 G4)"
-  do   = "PASS iff G0 and G1 and G2 and G3 and G4 on ONE ckpt; report the true per-gate tally"
-  do   = "G0 COHERENCE = known-word-ratio >= 0.50 vs /usr/share/dict; broad-7b FAILS, chat-7b PASSES"
-  do   = "G1 = H_1129/H_1137 recombine >= 303M ref; G2 = H_1140 corpus-absence novelty (control=0)"
-  do   = "all gates p7 (NOT perplexity/LLM-judge); train 7B to COHERENT convergence first, then G1/G2"
-  dont = "claim 7B works on low val-CE alone; broad-7b had low CE but byte-garble (G0 FAIL)"
-  dont = "promote capacity as ru/ja lever; H_1139 proved 303M=7B=3/5 scale-invariant"
-  dont = "fake a gate, move a frozen threshold, or upload a G0-failing ckpt as PUBLIC"
+**`a7b_pass`** — anima 7B 는 `/7B_PASS_CONDITIONS.md` 의 모든 frozen gate(G0–G4)를 한 ckpt 에서 통과해야만 완성. ✅ PASS iff G0∧G1∧G2∧G3∧G4 on ONE ckpt(per-gate tally 정직 보고) · G0 COHERENCE=known-word-ratio≥0.50 · G1=H_1129/1137 recombine≥303M · G2=H_1140 corpus-absence novelty(control=0) · 전부 p7(perplexity/LLM-judge 아님). ⛔ 낮은 val-CE 만으로 7B 작동 주장(broad-7b=byte-garble G0 FAIL) · capacity 를 ru/ja 레버로 승격(H_1139: 303M=7B=3/5 scale-invariant) · gate 위조/frozen 임계 이동/G0-failing ckpt PUBLIC.
+
+### 🤝 산출물 통합
+
+**`a_completeness_over_cheap`** — completeness-bar 재설계 > 싼 길(타협은 1순위 아님). ✅ 1순위 = completeness bar 통과(근본 재설계, 제대로) · 비용/난이도/속도는 2순위(비용은 게이트 아님) · 싼 길은 optional baseline probe 로만. ⛔ 싸다고 타협을 1순위 · 이미 깨진 산출물 blend(merge-of-failures) · sub-bar 를 싸다고 1순위 추천.
+
+---
+
+## Harness
+
+이 repo 는 **[dancinlab/harness](https://github.com/dancinlab/harness)**(hardcore profile)에 `.harness-engine` 서브모듈로 연결.
+
+- **활성화(clone 후):** `git submodule update --init --recursive` (엔진 구체화; 그 전엔 hook 가드되어 silent).
+- **항상 PATH 의 글로벌 `harness`·`hexa` 사용** — repo 의 `.harness-engine/bin/harness`(서브모듈)는 stale 일 수 있어 recommend default·신기능을 못 읽는다. 최신화 = `harness self-update`.
+- **설정:** `harness.config.json`(stack `hexa`, verify=`hexa verify`, protected `main`/`master`, CHANGELOG gate, docs discipline) · **Hooks:** `.claude/settings.json`(pre/post/prompt + prefs/easy/recommend inject, 전부 가드) · **제거:** `harness uninstall`.
+- **commons(c1–c17)** 는 항상-on 크로스프로젝트 거버넌스(harness SSOT) — 위 anima 규칙과 함께 강제된다(SessionStart 주입).
+
+---
+
+## 청구·검증 흐름 (요약)
+
+research 결과 → `hexa verify` → `.verdicts/<slug>/<id>.txt` → `UNIVERSE/cards/H_<id>.md` 카드 + `UNIVERSE/HYPOTHESES.jsonl` 인덱스 1줄.
+- (note) paper 디렉티브 제거 2026-06-16 — anima 는 논문 선제 제시 안 함(commons c15: 논문/arXiv 는 사용자 명시 지시 시에만).
+- (note) CLAIMS.tape 은퇴 2026-06-16 — 102 @C 전수 이관 0 손실, claims-audit = HYPOTHESES.jsonl + .verdicts/ (ledger `.verdicts/claims-tape-retirement/`).
+- (note) project.tape 은퇴 + tape-DSL 잔재 제거 2026-06-17 — 이 파일이 canonical markdown 단일 거버넌스 SSOT.

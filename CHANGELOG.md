@@ -1,3 +1,12 @@
+## 2026-06-17 — docs(CLAUDE.md): tape-DSL 잔재 제거 + canonical markdown 전면 재저작 (위반-최소화 하드게이트 프론트)
+
+CLAUDE.md 를 .tape DSL 잔재(`@D := :: governance [required active]` · `do=`/`dont=`/`ref=`) 없이 순수 canonical markdown 으로 완전 재저작 (사용자 지시: native/canonical · 위반 최소화). 424→228줄.
+- 모든 거버넌스 규칙 의미 손실 0 — 규칙 이름 47개(a_*·a1·a7b_pass·p1–p8) 구↔신 set 동일(comm 누락 0 검증), keyword 트리거 호환 유지.
+- **위반-최소화 설계**: 맨 앞에 "🚦 행동 전 하드-게이트" 체크리스트 7항(엔진-네이티브 verdict 게이트·pool-only·ckpt-pull·docs+pr-cycle·정직/tune-to-green·가설 2표면·GREEN 배선) — 가장 자주 깨지는 규칙 + 자가점검 grep 명령을 스캔 가능하게 상단 배치.
+- 각 규칙 = **`이름`** + MUST 1줄 + ✅해라/⛔하지마/🔎자가점검 형식. project.tape→markdown 단일화 완결.
+
+CORE/*.hexa·ARCHITECTURE.json UNTOUCHED (문서만).
+
 ## 2026-06-17 — governance(CLAUDE.md): a_engine_native_learning HARD-GATE 강화 — gate/ideation/G6/Φ verdict 는 엔진-네이티브 증거 없이 박제 불가 + 자가점검 의무
 
 a_engine_native_learning 에 🔒 HARD-GATE(BLOCKING) + SELF-CHECK 추가 (사용자 지시 "강제 수준 다시 강화"):
