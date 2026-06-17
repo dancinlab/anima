@@ -1,0 +1,268 @@
+================================================================
+LANE A — codegen-rebuild-parity  (anima 303M ByteGPT)  [v2, method-corrected]
+VERDICT: FALSIFIED (codegen-rebuild lens) — #3491 cannot affect this model's parity
+DATE: 2026-06-17  HOST: summer (x86_64-linux)
+================================================================
+
+BOTH BACKENDS MEASURED (per team-lead + Lane B method correction):
+
+  dispatch (C-transpile, `hexa run` / default HEXA_BACKEND):
+      CORE_ARGMAX = 227   (torch GOLDEN = 32)   STILL DIVERGES
+      CORE_MAXVAL = 20.008909617575918
+      CORE_TOP5   = 227 231 230 232 229
+
+  native (HEXA_BACKEND=native, post-#3491 aprime_cc, the path #3491 fixes):
+      CORE_ARGMAX = N/A — NATIVE BUILD CANNOT COMPILE THE FORWARD.
+      222 diagnostics, aborts before codegen:
+        HX2001 undefined name `farr_get` / `farr_zeros` / `farr_set` / `farr_free`
+        => "error: native codegen failed — asm not produced"
+
+ROOT CAUSE OF THE FALSIFICATION (stronger than v1, now empirical on both paths):
+  The 303M ByteGPT forward (CORE/bytegpt_decode.hexa) uses the farr_* float-array
+  intrinsics 137 times. farr_get/zeros/set/free are defined ONLY in
+  self/runtime_core_emit.hexa = the C-TRANSPILE DISPATCH runtime (same module that
+  owns hexa_mul, per Lane B). They are NOT builtins of the native backend's frontend
+  (zero hits across compiler/ and self/type_checker.hexa). So:
+    - The model forward is STRUCTURALLY BOUND to the C-transpile dispatch path.
+    - The native x86_64 asm backend (compiler/codegen/x86_64_linux.hexa) — the ONLY
+      place #3491 changes code — CANNOT compile this program at all (no farr_* support).
+    - Therefore #3491 can NEVER be exercised by the 303M forward, with ANY compiler
+      version. The divergence (227 vs 32) is produced by clang-compiled dispatch C, in
+      the SHARED runtime math (hexa_cmp_*, farr_*, hexa_mul) — NOT the asm codegen.
+
+POST-#3491 NATIVE COMPILER WAS BUILT (ING #10 recipe that WORKED):
+  Source: /tmp/hexa-postfix-src (local clone of origin/main, detached f9f91cd13,
+          VERIFIED contains #3491 = 227c2b618).
+  Recipe (run from inside the repo, HEXA_LANG=/tmp/hexa-postfix-src):
+      bash tool/build_aprime.sh -o /tmp/hexa-postfix/aprime_cc -r /tmp/hexa-postfix-src
+    - build_aprime.sh Stage 0 SELF-REGENERATES the gitignored seeds from tracked
+      frozen seeds (commit 151c52c8): restore_frozen_seeds -> stage_resolve_runtime_a
+      (synthesizes runtime_core.c from the emitter SSOT, assembles rt_hi_native.o from
+      self/native/runtime_hi_x86_64.s, builds build/runtime.a) -> stage_prebuild_hexat
+      (build/hexat = 2094560 B).
+    - Stages 1-5: flatten compiler/main.hexa (48 files) -> hexat transpile -> s4 post
+      -> clang -O1 -> /tmp/hexa-postfix/aprime_cc (2334104 B, ELF x86-64).
+    - Smoke PASS: aprime_cc compiles `fn main(){exit(6*7)}`, run -> $?==42.
+  This binary embeds the post-#3491 x86_64_linux.hexa asm emitter. It WORKS for simple
+  programs; it just cannot compile the farr_*-using model forward.
+  (My v1 `hexa cc --regen` attempt fell back to ~/.hx/bin and failed on a runtime.c
+   dup-def — build_aprime.sh's Stage-0 seed-restore is the correct, working recipe.)
+
+NATIVE-BUILD INVOCATION (for the record / reproduction):
+  cd /tmp/parity-verify
+  HEXA_LANG=/tmp/hexa-postfix-src HEXA_BACKEND=native \
+    HEXA_APRIME_CC=/tmp/hexa-postfix/aprime_cc \
+    hexa build CORE/_parity_run.hexa -o /tmp/parity_native
+  -> 222 HX2001 undefined farr_* -> "native codegen failed — asm not produced".
+
+CONCLUSION:
+  native==(cannot build) and dispatch==227. Since the native path cannot compile the
+  model AT ALL, #3491 is provably irrelevant to the 303M parity flip. The divergence
+  lives in the SHARED C runtime math / model logic on the dispatch path — NOT the
+  x86_64 asm codegen. codegen-rebuild lens FALSIFIED (empirically, both backends).
+
+NEXT ROUND (per-layer activation bisect on the DISPATCH path — the only path the model runs):
+  Instrument CORE/bytegpt_decode.hexa::bytegpt_forward_last_ranged to dump a per-layer
+  residual-stream checksum (sum + max-abs of the hidden state after each block) for
+  prompt "The quick brown"; diff vs a torch golden dumping the same per-layer checksums.
+  DEPLETION TEST: terminates when exactly one layer/op is the FIRST divergence (matches
+  torch up to layer k, differs at k+1) -> that op is the wall (likely softmax max-sub,
+  GELU, RoPE, or read_bytes_at weight-load stride/dtype). If layer-0 already diverges,
+  the bug is embedding/weight-load, not transformer math.
+  (Lane B's hexa_mul finding is consistent: the divergent op is in the dispatch runtime
+   math, so the bisect should also dump per-op intermediate sums inside one block to
+   pin matmul/elementwise vs reduction.)
+================================================================
+
+
+================================================================
+LANE A r2 — PER-LAYER ACTIVATION BISECT  → ROOT CAUSE FOUND + FIXED
+DATE: 2026-06-17  HOST: summer (x86_64-linux, C-transpile path)
+================================================================
+
+VERDICT: ROOT CAUSE = C-transpile codegen MISCOMPILES farr_set(arr,i,to_float(pb[i]))
+         when the inner int-array index read pb[i] is nested directly in the store arg.
+         It silently writes 0. In the parity PROBE's id-setup loop this zeroed EVERY
+         token id -> embedding=tok[0] for all positions -> argmax 227. FIX = hoist
+         pb[i] into a local var. With the fix: CORE_ARGMAX=32 == torch golden (BYTE-EXACT).
+
+PER-LAYER BISECT (last-token residual stream, sum / max_abs):
+  k   TORCH sum     CORE(buggy) sum   TORCH maxabs   CORE maxabs
+  0   1.060572      24.329727         4.539062       4.523438     <- DIVERGES AT EMBEDDING
+  1   39.915115     19.288711         9.042029       7.362897
+  24  294.905518    247.618779        891.716064     816.836459
+  => first divergence = k=0 (embedding), BEFORE any transformer block.
+     Per the lead's rule: divergence at layer-0 => weight-load/read or id-indexing bug,
+     NOT transformer math. maxabs ~matches (4.539 vs 4.523) but sum is 23x off -> a few
+     positions/ids wrong, not global drift. Localized further:
+
+LOCALIZATION (raw last-token dump, prompt "The quick brown", last byte 'n'=110, t=14):
+  TORCH: last_id=110   emb.first16 = -0.98828 1.44531 -0.24219 -1.40076 ...
+  CORE : EMB_ID = 0    emb.first16 = -1.42188 1.00977  2.15625 -2.68750 ...
+  - CORE_POS first8 == TORCH_POS[14] first8 EXACTLY  -> position-embedding read CORRECT.
+  - CORE_TOK first8 == tok[0] (not tok[110])         -> token id resolved as 0.
+  - CORE_IDS (all 15) = 0 0 0 ... 0                  -> the ids array is ALL ZEROS,
+    both at forward ENTRY and after embedding. T=15 (a plain int param) survives;
+    the farr `ids` handle's CONTENTS are zero.
+
+MINIMAL REPRO BISECT (C-transpile path, deterministic across runs):
+  farr_set(ids,i, 7.0)            -> 7.0 ...          OK   (const store)
+  farr_set(ids,i, to_float(i))    -> 0 1 2 ... 14     OK   (scalar loop-var store)
+  farr_set(ids,i, to_float(pb[i]))-> 0 0 0 ... 0      BUG  (inline int-array index read)
+  let bi=pb[i]; farr_set(ids,i, to_float(bi)) -> 84 104 110  OK  (hoisted = FIX)
+  (Adding ANY later standalone farr_get/pb[k] use can also mask the bug by perturbing
+   codegen — explains why an earlier 15-elem variant with trailing reads printed 110.)
+
+END-TO-END FIX VERIFIED (real 303M forward, unmodified CORE/bytegpt_decode.hexa,
+  only the PROBE's id loop hoisted):
+  CORE_ARGMAX = 32                  (torch golden 32)              MATCH
+  CORE_MAXVAL = 29.689789203186155  (torch 29.689796...)          MATCH (~1e-5 fp)
+  CORE_TOP5   = 32 44 10 63 46      (torch 32 44 10 63 46)         MATCH
+  => BYTE-EXACT engine<->torch parity on the C-transpile (real engine) path.
+
+WHAT THIS MEANS:
+  - The 303M parity wall was a hexa C-transpile CODEGEN bug (nested array-index read in a
+    float-box store gets dropped to 0), NOT model math, NOT serialization, NOT #3491/libm.
+  - Immediate unblock: hoist the index read in CORE/_parity_run.hexa (and audit
+    bytegpt_decode.hexa for the same farr_set(.., to_float(arr[i])) pattern — the forward's
+    own loops use `farr_get(...)` reads inside set args too; the embedding x= tok[id]+pos
+    loop uses `let id = to_int(farr_get(ids,t))` (hoisted) so it's safe, but any
+    `farr_set(X, k, f(arr[j]))` inline pattern in CORE is at risk).
+  - Compiler-side fix belongs in hexa-lang: the C-transpile codegen for a store whose value
+    arg contains a nested array subscript must materialize the subscript read. File against
+    self/codegen_c*.hexa (NOT x86_64_linux.hexa — this is the C path).
+
+NEXT ROUND (recommend):
+  (a) Audit CORE/bytegpt_decode.hexa for inline `arr[idx]` reads nested inside farr_set /
+      arithmetic store args; hoist them (defensive, engine-side) so the forward is correct
+      under the buggy compiler.
+  (b) File the hexa-lang C-transpile codegen bug with the 4-line minimal repro above
+      (const OK / scalar OK / inline-array-index BUG / hoisted FIX) — root fix.
+  DEPLETION TEST: (a) done when CORE forward gives argmax=32 with the UNMODIFIED probe
+  (no hoist needed in the probe). (b) done when a hexa-lang fix makes the inline-index repro
+  print 84 104 110.
+================================================================
+
+
+================================================================
+LANE A r3 — farr-OP-GRANULAR LOCALIZATION + Lane B CROSS-LINK
+DATE: 2026-06-17  HOST: summer (x86_64-linux, C-transpile dispatch path)
+================================================================
+
+CONFIRMED: the divergence rides on a farr ELEMENT path in self/runtime_core_emit.hexa
+(NOT hexa_cmp / softmax-max, NOT pure arithmetic, NOT block math). SAME MODULE + SAME
+CLASS as Lane B's TAG=24 float-array element mis-box. Strong shared-root convergence.
+
+EXACT C LOWERING (hexa build --c-only of the minimal repro):
+  WORKS:  hexa_farr_set(ids, i, hexa_float(__hx_to_double(i)))                       -> stores OK
+  BROKEN: hexa_farr_set(ids, i, hexa_float(__hx_to_double(hexa_index_get(pb, i))))   -> stores 0
+  The emitted C is CORRECT (reads pb[i], to-double, box-float, store). The fault is in
+  the RUNTIME: the hexa_index_get(i64-array) result, when consumed as the value arg of
+  hexa_farr_set, is dropped to 0.
+
+OP-GRANULAR BISECT (deterministic, dispatch path):
+  farr_set(ids,i, 7.0)                         -> OK   (const)
+  farr_set(ids,i, to_float(i))                 -> OK   (scalar loop var)
+  farr_set(ids,i, farr_get(src,i))             -> OK   (FLOAT-array element source)
+  farr_set(ids,i, to_float(pb[i]))             -> 0    BUG (i64-array element source)
+  farr_set(ids,i, to_float(pb[i]) + 0.0)       -> 0    BUG (arith temp does NOT rescue)
+  to_float(pb[i]) PRINTED directly             -> 84/104/110 OK (only breaks when STORED)
+  let v=pb[i]; farr_set(ids,i, to_float(v))    -> OK   (HOIST = workaround/fix)
+
+  ISOLATION: hexa_index_get on the i64-backed array returns a value that is correct when
+  printed but corrupts to 0 when it flows (via __hx_to_double/hexa_float) into the
+  hexa_farr_set store. A FLOAT-array source (hexa_farr_get) does NOT corrupt -> the
+  trigger is the i64-array element representation crossing into the farr store, i.e. a
+  tag/representation round-trip fault — EXACTLY Lane B's TAG=24 signature class.
+
+CROSS-LINK TO LANE B:
+  Lane B: self/runtime_core_emit.hexa mis-boxes a float array-element/struct-field as
+          HX_TAG=24 under `arr = arr + [param]` round-trip, then read-back×multiply.
+  Lane A: self/runtime_core_emit.hexa drops an i64-array element to 0 when it round-trips
+          through hexa_index_get -> __hx_to_double -> hexa_float -> hexa_farr_set.
+  COMMON ROOT (hypothesis): dispatch-path element-value handling across array
+  representations (i64-array / float-array / append-grown array) loses or mis-tags the
+  payload on a runtime round-trip. One fix in runtime_core_emit.hexa's index_get / farr
+  store / __hx_to_double seam likely closes BOTH walls.
+
+PARITY IMPACT + FIX (re-verified r2): the 303M probe's id loop used the BROKEN inline
+  form -> all token ids = 0 -> embedding=tok[0] -> argmax 227. Hoisting pb[i] (engine-side
+  workaround) yields byte-exact CORE_ARGMAX=32 / MAXVAL 29.68979 / TOP5 32 44 10 63 46.
+
+NEXT ROUND:
+  (a) JOINT with Lane B: instrument self/runtime_core_emit.hexa hexa_index_get +
+      hexa_farr_set + __hx_to_double to print the HX_TAG of the value at each hop for the
+      `farr_set(ids,i,to_float(pb[i]))` case. Expect a TAG flip (likely ->24 or a
+      zeroed payload) at the index_get->store boundary == Lane B's tag24. ONE runtime fix.
+      DEPLETION: the inline-index repro prints 84 104 110 AND Lane B's tag24 repro passes.
+  (b) ENGINE-SIDE NOW (unblock immediately): hoist every inline `arr[idx]` nested in a
+      farr_set/store value-arg in CORE/*.hexa. DEPLETION: UNMODIFIED parity probe = 32.
+================================================================
+
+
+================================================================
+LANE A r4 — ARENA-DISABLE TEST (Lane B shared-root hypothesis) → FALSIFIED for Lane A
+DATE: 2026-06-17  HOST: summer (x86_64-linux, C-transpile dispatch path)
+================================================================
+
+ARENA-OFF RESULT (the fast-confirmation test):
+  minimal repro _C  (farr_set(ids,i,to_float(pb[i]))):
+    arena ON (default):              C 0      (bug)
+    HEXA_VAL_ARENA=0:                C 0      (STILL bug)
+    HEXA_ARRAY_ARENA=0:              C 0      (STILL bug)
+    HEXA_ARRAY_PUSH_ARENA=0:         C 0      (STILL bug)
+    all three off:                   C 0      (STILL bug)
+  FULL 303M forward (original inline-pb[i] probe):
+    arena ON (default):              CORE_ARGMAX 227
+    HEXA_VAL_ARENA=0:                CORE_ARGMAX 227  (UNCHANGED — arena-off does NOT fix it)
+
+  => Disabling the fn/Val/array arena does NOT fix Lane A's divergence. Per the lead's own
+     falsification control, Lane A's bug is NOT Lane B's fn-arena use-after-free. They are
+     DISTINCT defects (related class, different mechanism — see below). Lane B's arena-UAF
+     fix will NOT, by itself, fix the 303M parity flip.
+
+TRUE SITE (refined, decisive): i64-SPECIALIZED-ARRAY element read mis-representation.
+  - The int literal array `pb = [84,104,110]` lowers to an i64-SPECIALIZED array:
+      HexaVal pb = hexa_arr_i64_new(3); hexa_arr_i64_push(pb, 84); ...   (int64 backing store)
+  - `pb[i]` lowers to hexa_index_get(pb, i) -> hexa_array_get(pb, idx). hexa_array_get
+    expects a GENERIC HexaVal-array; on the i64-specialized backing it returns a value with
+    a WRONG TAG.
+  - SMOKING GUN: in a loop that BOTH stores `farr_set(ids,i,to_float(pb[i]))` AND re-reads
+    `pb[i]`, the re-read `to_string(pb[i])` prints literally "<value>" — the hexa_to_string
+    fallback for TAG_ARRAY/MAP/FN/CHAR/CLOSURE. So hexa_index_get(pb,i) returned a
+    NON-INT-tagged value (invalid for an int element) — Lane B's invalid-tag signature
+    CLASS, but originating in the i64-array element read path, not the fn-arena.
+  - Single read in isolation (no store in scope) returns the correct int (84/104/110); the
+    corruption surfaces once the i64-array element flows through __hx_to_double->hexa_float
+    ->hexa_farr_set in the same scope. The to_double of a mis-tagged value -> 0 -> stored 0.
+
+CONVERGENCE vs DISTINCTION with Lane B:
+  SAME module (self/runtime_core_emit.hexa) + SAME CLASS (array-element value/tag handling
+  loses or mis-tags the payload). DIFFERENT mechanism:
+    Lane B = fn-arena USE-AFTER-FREE: __hexa_fn_arena_return heapifies only the OUTER spine,
+             nested [float] element dangles -> invalid HX_TAG=24 -> CRASH. Fixed by heapify
+             of nested elements OR arena-off.
+    Lane A = i64-SPECIALIZED-array element read via hexa_array_get returns a mis-tagged
+             value -> __hx_to_double -> 0 -> silent wrong-but-finite store. NOT fixed by
+             arena-off. Fix = make hexa_index_get/hexa_array_get honor the i64-specialized
+             backing (return TAG_INT element), OR codegen reads i64 arrays via the i64
+             accessor. (Engine-side workaround already verified: hoist `let v=pb[i]`.)
+
+PARITY STATUS (unchanged from r2): engine-side hoist -> byte-exact CORE_ARGMAX=32 /
+  MAXVAL 29.68979 / TOP5 32 44 10 63 46. 303M re-measurement is UNBLOCKED today via the hoist
+  regardless of which runtime fix lands.
+
+NEXT ROUND:
+  (a) ROOT FIX (hexa-lang, runtime_core_emit.hexa): hexa_index_get must detect an
+      i64-specialized array (hexa_arr_i64_*) and return a TAG_INT element, OR hexa_array_get
+      must unwrap the i64 backing. Repro: `let pb=[84,104,110]; let a=farr_zeros(3); let mut
+      i=0; while i<3 { let _=farr_set(a,i,to_float(pb[i])); i=i+1 }; print a` -> must store
+      84 104 110, and `to_string(pb[i])` after a store must print the int, not "<value>".
+      DEPLETION: that repro prints 84 104 110 with arena ON.
+  (b) Tell Lane B: arena-off does NOT fix Lane A, so their heapify patch and this i64-array
+      read fix are TWO separate fixes; both needed to drain the dispatch-path element-handling
+      bug class. Recommend a JOINT audit of runtime_core_emit.hexa array-element accessors
+      (generic vs i64 vs farr) for tag-correctness.
+  (c) ENGINE-SIDE NOW: hoist inline `arr[idx]` (esp. int-literal arrays) out of farr_set/
+      store value-args across CORE/*.hexa. DEPLETION: UNMODIFIED parity probe = 32.
+================================================================
