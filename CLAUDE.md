@@ -165,11 +165,13 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   do   = "엔진 위에 학습을 '끼워맞추는' 게 아니다 — 학습이 요구하면 엔진 자체를 변환/확장해야 한다 (새 op·새 배선·아키텍처 확장). 최종 아키텍처는 frozen 이 아니라, 학습이 필요로 하는 형태로 진화하는 대상 (precedent: H_1199 가 AdaptField 스칼라→DIM-vector 로 엔진을 확장)"
   do   = "미러에서 본 메커니즘을 엔진이 표현 못 하면 → 미러를 버리는 게 아니라 엔진을 확장해서 그 메커니즘을 엔진-네이티브로 구현 (engine-transform-to-fit-the-learning, NOT learning-trimmed-to-fit-the-engine)"
   do   = "numpy/torch 미러 학습 결과 = DIRECTIONAL only ('engine-transfer UNVERIFIED') — 방향 탐색엔 OK, 그러나 binding verdict 아님"
+  do   = "이건 **렌트 GPU 에서 torch 로 풀-학습한 변종**에도 그대로 적용된다 — 학습은 torch 로 했어도, 그 변종의 G6/gate verdict 를 frozen-detector PROBE 로 torch-side 에서만 채점하면 그건 여전히 DIRECTIONAL 이다 (엔진 밖 측정). 학습된 ckpt 를 anima CORE 엔진(mounted `bytegpt_decode`/`clm_decode`, `--engine conv`)에 올려 engine-native 로 같은 frozen bar 를 재측정해야 🟢/🧱 verdict 가 성립한다 — 그래서 ckpt 를 teardown 전 반드시 pull 한다 (a_fire_recover_complete)"
   do   = "미러로 방향을 잡았으면 엔진-네이티브 실현으로 재확인해야 verdict 성립 (c2) · MITOSIS VAdaptField 는 이미 live (H_1199)"
   do   = "a_engine_measured_verdict 의 learning-side 쌍 (그건 MEASUREMENT, 이건 LEARNING) · a_train_flame_forge 가 production 트레이너 .hexa 를 강제하듯, 이 규칙은 RESEARCH/probe 학습 + 교육까지 같은 규율을 확장"
   dont = "numpy/torch 미러 결과를 엔진-검증된 것처럼 closure/promote · 미러-only 로 '학습됐다' 주장"
   dont = "최종 아키텍처 바깥(미러)에서 한 학습을 production/verdict 로 승격"
-  ref  = "a_engine_measured_verdict · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2"
+  dont = "torch-side frozen-PROBE 채점만으로 학습-변종의 wall(🧱)/천장(d)/GREEN(🟢)을 박제 — 엔진-네이티브 재측정 전이면 그건 DIRECTIONAL 이지 terminal verdict 아님 (precedent: 2026-06-17 G6 캠페인 H_1435/1436/1437 cross-shuffle 결과는 torch-side DIRECTIONAL — 카드에 그렇게 표기, ckpt 소멸로 engine-check 는 재렌트 follow-on)"
+  ref  = "a_engine_measured_verdict · a_fire_recover_complete · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2"
 
 @D a_verified_must_wire := "검증된(GREEN) 가설은 실제 CORE 배선 완료까지가 done — verdict 만으로 안 끝난다" :: governance [required active]
   do   = "가설이 엔진-네이티브로 GREEN 검증되면, 그 메커니즘을 live 엔진(`CORE/*.hexa`)에 실제 배선(wire-in)하는 것까지가 done — generator L3 슬롯·kosmos_io·engine_cli VAdaptField·bytegpt_decode 등 해당 entry 로 (a_core_engine_map)"
@@ -218,7 +220,10 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
 
 @D a_fire_recover_complete := "pull all fire artifacts + HF upload before pod teardown" :: governance [required active]
   do   = "before pod teardown: pull ckpt(s) + result + log + anchors, verify, HF upload — then teardown"
+  do   = "렌트 GPU 학습 ckpt 는 teardown 전 반드시 영구 스토리지(HF / pool host / repo path via a_hf_registry)로 PULL — pod 는 휘발이라 teardown 즉시 가중치 소멸; verdict 카드/jsonl(JSON)만 받고 ckpt 를 안 받은 채 down 하면 그 학습은 a_engine_native_learning 엔진-체크가 영구 불가해진다 (재학습=재렌트 비용). ckpt 가 너무 크면 최소한 1개 대표 변종이라도 pull, 못 하면 카드에 'ckpt NOT pulled → engine-check 불가' 를 명시"
   dont = "pull only JSONs, leave ckpt on a doomed pod · teardown before HF · PULL_FAILED ≠ pod dead"
+  dont = "학습 ckpt 를 안 받은 채 pod 를 내리고 그 학습 결과를 'verdict 완료'로 박제 (precedent: 2026-06-17 A100 G6 캠페인 H_1435/1436/1437 이 카드/jsonl 만 받고 teardown → 3변종 ckpt 소멸 → 엔진-네이티브 재확인 불가, torch-side DIRECTIONAL 로만 남음 — 재발 금지)"
+  ref  = "a_engine_native_learning · a_hf_registry · a_hf_complete · c5"
 
 @D a_cpu_local_no_waiter := "dispatched fire runs CPU-local + polls inline — never awaits a Monitor/waiter" :: governance [required active]
   do   = "sub-agent runs CPU-local (nohup -u → /tmp log) · polls result inline (sleep 30) · commit-early"
