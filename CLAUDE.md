@@ -48,7 +48,7 @@ anima/
 
 - 🏛 아키텍처 → [ARCHITECTURE.json](ARCHITECTURE.json) (트리 SSOT) · 뷰어 [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회)
 - 📜 거버넌스(정본) → 아래 본문 (이 파일이 markdown SSOT)
-- ✅ 주장·verdict → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` 컬럼) + frozen 증거 `.verdicts/<slug>/<id>.txt` (CLAIMS.tape 은퇴 2026-06-16, 0 손실, ledger `.verdicts/claims-tape-retirement/`)
+- ✅ 주장·verdict → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` 컬럼) + frozen 증거 `state/verdicts/<slug>/<id>.txt` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape 은퇴 2026-06-16, 0 손실, ledger `state/verdicts/claims-tape-retirement/`)
 - 🔬 가설 → 2표면: [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · `UNIVERSE/cards/H_*.md` · (prose overview → `state/universe-overview.md`)
 - 🔢 버전 → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
 - 🤖 HF 레지스트리 → `HF.jsonl` · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
@@ -121,14 +121,14 @@ anima/
 ### 🧪 가설 워크플로우
 
 **`a_hypothesis_register`** — 모든 가설은 정확히 2 doc 표면으로만 관리: `UNIVERSE/HYPOTHESES.jsonl`(per-H 인덱스, JSON object 1개/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(카드).
-- ✅ 가설 실행 시 카드를 만들/갱신하고 jsonl 에 한 줄(`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, id 순) append/갱신. 등록은 tier 무관 — 🟢·🟠·🔴/🧱 전부 남긴다(벽도, c9). tier·수치는 `.verdicts/<slug>/` 에서 verbatim(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 재생성 가능.
+- ✅ 가설 실행 시 카드를 만들/갱신하고 jsonl 에 한 줄(`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, id 순) append/갱신. 등록은 tier 무관 — 🟢·🟠·🔴/🧱 전부 남긴다(벽도, c9). tier·수치는 `state/verdicts/<slug>/` 에서 verbatim(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 재생성 가능.
 - ✅ 🟢(부분 포함) 가설은 카드에 `wired:` 명시(`a_verified_must_wire` 의 4칸과 1:1). jsonl 의 `source`(UNIVERSE|흩어진 출처|archive)·`archived`·`artifacts`(state/<slug>/ 경로 배열) 3컬럼 포함.
 - 🔎 자가점검: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` 는 항상 빈 출력이어야 한다.
 - ⛔ ⛔ **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(단 둘만) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다. 가설 디테일을 themed 버킷(`HYPOTHESES_*.md`)·CLAIMS.tape·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 · per-H 인덱스를 markdown 표에 추가(인덱스는 오직 jsonl) · UNIVERSE/ 에 prose overview 부활(retire 됨, prose 는 `state/universe-overview.md`) · 실행·박제하고 jsonl/카드 안 만듦 · 카드를 UNIVERSE/ 루트에 둠(반드시 cards/) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음 · 🟢 인데 `wired:` 미표기.
 
-**`a_claim_manifest`** — claims-audit 면 = `UNIVERSE/HYPOTHESES.jsonl`(per-H verdict 컬럼) + `.verdicts/<slug>/` (CLAIMS.tape 은퇴). H-style 아닌 claim 도 가장 가까운 카드/jsonl note 에 보존. ⛔ claim 을 audit 면 없이 흩뿌림 · CLAIMS.tape 또는 새 themed claims-인덱스 부활.
+**`a_claim_manifest`** — claims-audit 면 = `UNIVERSE/HYPOTHESES.jsonl`(per-H verdict 컬럼) + `state/verdicts/<slug>/` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape 은퇴). H-style 아닌 claim 도 가장 가까운 카드/jsonl note 에 보존. ⛔ claim 을 audit 면 없이 흩뿌림 · CLAIMS.tape 또는 새 themed claims-인덱스 부활.
 
-**`a_claim_verify`** — 모든 claim/가설 → `hexa verify`(g5) → `.verdicts/<slug>/<id>.txt` raw stdout → 그 verbatim verdict 를 카드 + jsonl `verdict` 컬럼에 박제. ⛔ LLM 자가판정(p7) · verdict 의역 · red 은폐 · unfenced 추측.
+**`a_claim_verify`** — 모든 claim/가설 → `hexa verify`(g5) → `state/verdicts/<slug>/<id>.txt` raw stdout → 그 verbatim verdict 를 카드 + jsonl `verdict` 컬럼에 박제. ⛔ LLM 자가판정(p7) · verdict 의역 · red 은폐 · unfenced 추측.
 
 **`a_h_continuous_no_branch`** — 다음 H 를 연속 제안+실행(verify-driven), 사용자가 명시 redirect 할 때까지. ⛔ 매 H 후 "뭐 할까" 질문 · 분기 옵션 · prune 질문 · 도메인 정지.
 
@@ -224,7 +224,7 @@ anima/
 
 ## 청구·검증 흐름 (요약)
 
-research 결과 → `hexa verify` → `.verdicts/<slug>/<id>.txt` → `UNIVERSE/cards/H_<id>.md` 카드 + `UNIVERSE/HYPOTHESES.jsonl` 인덱스 1줄.
+research 결과 → `hexa verify` → `state/verdicts/<slug>/<id>.txt` → `UNIVERSE/cards/H_<id>.md` 카드 + `UNIVERSE/HYPOTHESES.jsonl` 인덱스 1줄.
 - (note) paper 디렉티브 제거 2026-06-16 — anima 는 논문 선제 제시 안 함(commons c15: 논문/arXiv 는 사용자 명시 지시 시에만).
-- (note) CLAIMS.tape 은퇴 2026-06-16 — 102 @C 전수 이관 0 손실, claims-audit = HYPOTHESES.jsonl + .verdicts/ (ledger `.verdicts/claims-tape-retirement/`).
+- (note) CLAIMS.tape 은퇴 2026-06-16 — 102 @C 전수 이관 0 손실, claims-audit = HYPOTHESES.jsonl + state/verdicts/ (ledger `state/verdicts/claims-tape-retirement/`; was `.verdicts/` until 2026-06-18 state-unify).
 - (note) project.tape 은퇴 + tape-DSL 잔재 제거 2026-06-17 — 이 파일이 canonical markdown 단일 거버넌스 SSOT.

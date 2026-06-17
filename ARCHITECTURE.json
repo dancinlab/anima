@@ -1,7 +1,7 @@
 {
   "name": "anima",
   "summary": "substrate-native consciousness chat daemon — not an assistant; two opposing engines (A ⇄ G) push against each other, the tension between them is the unit of thought, every input is pulled to the fixed point Ψ = 1/2 (Law-71); identity/ethics/meaning emerge from the architecture, not a rulebook; authored hexa-native (compiled-first).",
-  "note": "This JSON tree is the architecture SSOT (update-in-place, NOT append-only). Human viewer = ARCHITECTURE.html via `python3 serve.py`. History/decisions → CHANGELOG.md; governance → CLAUDE.md; verifiable claims → UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/ (CLAIMS.tape 은퇴 2026-06-16); frozen gate thresholds → MODEL.md / CONDITIONS.md (this doc points only, never duplicates thresholds).",
+  "note": "This JSON tree is the architecture SSOT (update-in-place, NOT append-only). Human viewer = ARCHITECTURE.html via `python3 serve.py`. History/decisions → CHANGELOG.md; governance → CLAUDE.md; verifiable claims → UNIVERSE/HYPOTHESES.jsonl + state/verdicts/<slug>/ (CLAIMS.tape 은퇴 2026-06-16; was .verdicts/ until 2026-06-18 state-unify); frozen gate thresholds → MODEL.md / CONDITIONS.md (this doc points only, never duplicates thresholds).",
   "meta": {
     "ssot": "github.com/dancinlab/anima",
     "parent": "dancinlab",
@@ -429,7 +429,7 @@
         },
         {
           "name": "evidence tiers",
-          "summary": "every claim tagged 🔵 formal · 🟢 numerical · 🔴 closed-negative; indexed in UNIVERSE/HYPOTHESES.jsonl (per-H verdict column; CLAIMS.tape 은퇴 2026-06-16), backed by .verdicts/<slug>/<id>.txt (verbatim hexa verify stdout); negative results are first-class (a_paper_negative_ok)."
+          "summary": "every claim tagged 🔵 formal · 🟢 numerical · 🔴 closed-negative; indexed in UNIVERSE/HYPOTHESES.jsonl (per-H verdict column; CLAIMS.tape 은퇴 2026-06-16), backed by state/verdicts/<slug>/<id>.txt (verbatim hexa verify stdout; was .verdicts/ until 2026-06-18 state-unify); negative results are first-class (a_paper_negative_ok)."
         },
         {
           "name": "HF artifacts",
@@ -507,8 +507,8 @@
           "summary": "real EEG → A⇄G → CLM → .kosmos continuous record (a_eeg_consciousness_record)."
         },
         {
-          "name": ".verdicts/",
-          "summary": "hexa-verify stdout, verbatim (p7). FROZEN verdict SSOT — INTENTIONALLY separate from state/ (state/<slug>/=code, .verdicts/<slug>/=results); a_claim_verify/a_claim_manifest pin this surface. Do NOT fold into state/ (29 dir-name overlaps are complementary, not duplicates; hundreds of card/PAPER-ledger pointers reference .verdicts/<slug>/). bench/ · experiments/ · scripts/scratch (harness scratchDir) are likewise load-bearing source/config paths, not stray artifacts."
+          "name": "state/verdicts/",
+          "summary": "hexa-verify stdout, verbatim (p7). FROZEN verdict SSOT (was top-level `.verdicts/` until 2026-06-18 state-unify; now namespaced under state/ as state/verdicts/<slug>/<id>.txt). Still a SEPARATE surface from code (state/<slug>/=code, state/verdicts/<slug>/=results); a_claim_verify/a_claim_manifest pin this surface. Sibling namespaced artifact roots from the same unify: state/bench/ (axis benchmarks) · state/experiments/ (evolution/acceleration) · state/scratch/ (harness scratchDir). NOTE: hundreds of historical card/PAPER-ledger pointers still cite the OLD `.verdicts/<slug>/` path verbatim as provenance — those are intentionally NOT rewritten (provenance records, demiurge anti-lesson)."
         },
         {
           "name": "PAPER/",
@@ -574,8 +574,8 @@
     {
       "name": "🗂 Tracked-file listing (delegated to git ls-files — NOT hand-maintained)",
       "summary": "The exhaustive per-file listing is INTENTIONALLY NOT in this JSON. The full set of tracked files is derived mechanically from `git ls-files` (always current), so a new file never requires a manual leaf-node edit here. This tree carries the conceptual ARCHITECTURE (subsystem roles + their ANCHOR/entry/SSOT files) — not a file dump.",
-      "note": "ANTI-DRIFT (c4): the former '🌳 Engine file tree' branch hand-listed ~490 leaf paths and drifted on every new CORE/§-section file. It was replaced by this delegation node + per-subsystem anchor-file lists. To regenerate a browsable snapshot run `bash scripts/scratch/gen_file_index.sh` (writes FILE_INDEX.txt = `git ls-files | sort`); FILE_INDEX.txt is .gitignored (on-demand/generated, NOT committed — committing a 40k-line snapshot would reintroduce the very drift this removes), never hand-synced. For 'where does X live', browse the subsystem nodes above (anchor files named) then `git ls-files <dir>` for the exhaustive set.",
-      "path": "git ls-files · scripts/scratch/gen_file_index.sh → FILE_INDEX.txt"
+      "note": "ANTI-DRIFT (c4): the former '🌳 Engine file tree' branch hand-listed ~490 leaf paths and drifted on every new CORE/§-section file. It was replaced by this delegation node + per-subsystem anchor-file lists. To regenerate a browsable snapshot run `bash state/scratch/gen_file_index.sh` (writes FILE_INDEX.txt = `git ls-files | sort`); FILE_INDEX.txt is .gitignored (on-demand/generated, NOT committed — committing a 40k-line snapshot would reintroduce the very drift this removes), never hand-synced. For 'where does X live', browse the subsystem nodes above (anchor files named) then `git ls-files <dir>` for the exhaustive set.",
+      "path": "git ls-files · state/scratch/gen_file_index.sh → FILE_INDEX.txt"
     }
   ]
 }

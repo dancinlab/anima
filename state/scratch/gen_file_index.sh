@@ -6,7 +6,7 @@
 # listing is delegated to `git ls-files` so a new file never needs a manual
 # leaf-node edit (anti-drift, c4). Run this to materialize a browsable snapshot.
 #
-# Usage:  bash scripts/scratch/gen_file_index.sh
+# Usage:  bash state/scratch/gen_file_index.sh
 # Writes: FILE_INDEX.txt (repo root) = `git ls-files | sort`
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"

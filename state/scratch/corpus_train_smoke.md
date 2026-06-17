@@ -3,7 +3,7 @@
 De-risks the eventual **cost-gated 7B GPU fire** on `dancinlab/anima-corpus-5lang-7b-webscale`
 by proving the **data → trainer plumbing** end-to-end on a TINY slice, $0, local CPU.
 
-Run: `python3 scripts/scratch/corpus_train_smoke.py`
+Run: `python3 state/scratch/corpus_train_smoke.py`
 (R2 creds read INLINE from the secret store `r2.phanes.*`, header-only, NEVER hardcoded — c7.)
 
 ## Result — all 3 steps PASS · GREEN-LIGHT: YES

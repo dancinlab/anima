@@ -1,3 +1,14 @@
+## 2026-06-18 — chore(state-unify): 4개 아티팩트 dir → `state/<ns>/` 통합 (참조 해결 포함, c5/c10)
+
+흩어진 아티팩트 루트 4개를 단일 `state/` 아래로 namespaced subdir 로 통합. 직전 entry 의 SKIP 판단을 사용자 명시 지시(통합 + **참조까지 해결**)에 따라 실행으로 전환 — `git mv` 로 무손실 이동 후 빌드/로드 smoke 로 회귀 0 확인.
+
+- **이동 (git mv, 0 손실, count 보존)**: `.verdicts/`(1778) → `state/verdicts/` · `bench/`(165) → `state/bench/` · `experiments/`(247) → `state/experiments/` · `scripts/scratch/`(12) → `state/scratch/`. 총 2202 파일 rename. namespaced subdir 채택 = state/ top-level 의 29개 dir-name 충돌을 nesting 으로 회피(파일 0 충돌).
+- **참조 해결 — LIVE 만 재작성, provenance 는 불가침(demiurge anti-lesson)**: ~324 코드참조 중 절대다수는 provenance(주석 `// 정체:`·`// 원본 경로:`, `println(...)` verdict-경로 표기, `payload()` provenance, docstring `verbatim from …`, PR-land 기록, past-run `.log` 출력, CHANGELOG 이력) → **건드리지 않음**. 실제 파일을 open/write 하는 LIVE 경로 literal 만 재작성:
+  - 코드 3건: `state/1431_bind_compose/h1431_bottleneck_diag.py` (`open('.verdicts/…')`) · `state/universe-probes/harness/grand_pi_law_scale.py` (`json.load(open(".verdicts/…"))`) · `CLM/model/run_stage2.sh` (`VDIR=".verdicts/clm-array-stage2-scale"` — `mkdir`+remote write 타깃).
+  - config/거버넌스 5건: `harness.config.json` `scratchDir: scripts/scratch → state/scratch` · `.harness/enforcement.json` (H-TMP-SCRATCH exceptions/reason + 2 doc-scatter hint) · `ARCHITECTURE.json` (`.verdicts/` top-level 노드 → `state/verdicts/` + claim-surface 포인터 2 + gen_file_index.sh 포인터 2) · `CLAUDE.md` (a_claim_verify/a_claim_manifest/Quick-ref/research-flow 의 verdict write-경로 6 + claims-tape-retirement ledger 경로) · `.gitignore` (gen_file_index.sh regenerate 주석). `.gitignore` 의 대용량/ephemeral 패턴은 전부 이미 `state/…` 대상이라 재포인트 불필요(`.verdicts`/`bench`/`experiments` ignore 패턴 0개였음).
+  - **provenance 의도적 미수정**: `state/verdicts/<slug>/` 박제면을 가리키는 수백 개 card/PAPER companion-ledger 포인터 + CHANGELOG 이력 + past-run 로그의 `.verdicts/…` literal 은 역사 기록이라 verbatim 유지(과제 step 4 “historical provenance 불가침” 준수). ARCHITECTURE/CLAUDE 노드에 “was `.verdicts/` until 2026-06-18 state-unify” 마이그레이션 노트 추가로 추적성 보존.
+- **검증(c2 캡처, 회귀 0)**: 변경 전 baseline `python3 tool/enforce_anima_gates.py --all` = `✅ clean · scope=ALL · 1321 hypotheses` (exit 0). 변경 후 동일 = `✅ clean · scope=ALL · 1321` + changed-scope `✅ clean · scope=changed (7 slug)` (둘 다 exit 0, baseline 동률). `hexa verify` rubric 로드 OK(exit 0). 3개 편집 JSON 전부 valid. enforcer 의 `state/<slug>/` 스캔이 새 namespaced subdir 를 bogus slug 로 오탐하지 않음(HYPOTHESES.jsonl 매칭 기반).
+
 ## 2026-06-18 — chore(cleanup): WIP 보존 + 아티팩트-통합 cleanup SKIP (c9 정직 — 전제 불일치)
 
 repo cleanup cycle. 작업 전 미커밋 5건(`CORE/bytegpt_decode.hexa`, `ING.jsonl`, `state/bytegpt-fast-matmul/RESULTS.md` + state/1431 신규 2파일) 보존 커밋(`wip: preserve in-progress before cleanup`).
