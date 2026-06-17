@@ -4,6 +4,7 @@
 
 - **slug:** tool_usage_learning
 - **tier / verdict:** **🟢 GREEN (DIRECTIONAL numpy mirror, engine-transfer UNVERIFIED)** — the 4 gating frozen bars PASS, incl. the KEY DISTINCT-FROM-SELECTION bar. §UsageStore engine wire-in = named follow-on (a_verified_must_wire). NO frozen bar moved (frozen-first, c9, NO tune-to-green).
+- **wired:** **engine-native (twin-confirm)** — re-confirmed 2026-06-17 (aiden): realized engine-native as its TWIN **H_1391 §UsageStore**; `CORE/engine_cli_smoke.hexa` cases 120–124 PASS (init=0.083 full=1.0 selection=0.0 shuffle=0.0 cells_full=12): USAGE-LEARNS/DISTINCT-FROM-SELECTION(KEY)/EARNED/NO-FAB + ordered-steps in order. CONFIRMS the 🟢 on the live engine (the §UsageStore follow-on is H_1391, DONE). Evidence `state/_engine_native_audit/dfree_other/`.
 - **domain:** MITOSIS-ENGINE · **substrate:** $0 CPU numpy MIRROR · deterministic (ctx+tool)→HOW env · CORE/*.hexa UNTOUCHED this lane
 - **evidence:** `.verdicts/1389_tool_usage_learning/{FREEZE.txt, result.txt}`
 - **probe:** `state/tool-usage-learning/h1389_tool_usage_learning.py`

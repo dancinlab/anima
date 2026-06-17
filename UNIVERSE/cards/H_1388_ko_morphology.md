@@ -4,6 +4,8 @@
 
 DIRECTIONAL numpy · REAL R2 KO 코퍼스 30MB sha `c47b6808…` (== H_1316/H_1359/H_1368/H_1380, byte-fair, 새 fetch 없음) · $0 CPU (206s) · frozen-first (FREEZE 가 measuring 전 작성) · jamo 표상·novel-filter·JM λ·shift surrogate **모두 H_1368/H_1380 와 동일 FROZEN** (anti-Goodhart) · c9/c16 NO tune-to-green · live CORE UNTOUCHED (DIRECTIONAL probe).
 
+**wired: engine-native** — re-confirmed 2026-06-17 (aiden): `state/ko-morphology-engine/h1390_bpe_scoreloop_probe.hexa` + `CORE/engine_cli_smoke.hexa` cases 116–119 via `CORE/generator.hexa §6.5d gen_bpe_scoreloop` all PASS — bar1 gap_reduced=1.612≥0.05, bar2 earned=0.836≥0.03, bar3 shift-novel=0.112≥0.05. NOTE the engine runs the in-engine **morpheme-grammar FIXTURE** (absolute CE differs from the 25M-stream torch 2.566), but the DIRECTIONAL verdict — morphology is the **earned** new lever, shuffle does NOT capture it — **CONFIRMS** on the live engine. Evidence `state/_engine_native_audit/dfree_other/`.
+
 ## Claim (falsifiable)
 세 레버(표상·interpolation·data-volume)가 전부 novel-context 에서 jamo floor 위 ~+0.28 에서 막혔다(H_1380: asymptote ~2.747, 30MB novel-CE 2.88190). H_1380 이 남긴 두 각도는 **데이터/표상-at-jamo 가 아닌** 진짜 새 표상-변경: (1) **morphology-aware 단위** — jamo 보다 **coarse 한 언어 단위**(형태소/BPE-on-jamo)가 next-unit 예측에서 next-jamo 보다 더 많은 nats/byte 를 담는가? (2) **longer-context** — count-head 의 nmax=5 단거리 천장이 잔여의 원인인가? H_1388 은 PRIMARY=BPE-on-jamo + SECONDARY(non-gating)=nmax 스윕으로, 잔여 2.79335 를 frozen 마진 ≥0.05 로 BEAT 하는지(🟢) / 못 뚫는지(🧱) 결정한다.
 

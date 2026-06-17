@@ -10,6 +10,10 @@ the H_1389 four gating bars on the LIVE engine, byte-exact, with all no-regressi
 - **tier / verdict:** **🟢 GREEN — engine-native BINDING** (the 4 gating frozen bars from H_1389 PASS
   on the LIVE engine; the load-bearing DISTINCT-FROM-SELECTION bar = +1.000). NO frozen bar moved
   (frozen-first, c9, NO tune-to-green, p7).
+- **wired:** **engine-native** — re-confirmed 2026-06-17 (aiden): `CORE/engine_cli_smoke.hexa` cases
+  120–124 via `CORE/engine_cli.hexa §UsageStore` all PASS (init=0.083 full=1.0 selection=0.0
+  shuffle=0.0 cells_full=12); full smoke 152/0. Re-CONFIRMS the engine-native BINDING. Evidence
+  `state/_engine_native_audit/dfree_other/`.
 - **domain:** MITOSIS-ENGINE · **substrate:** $0 CPU hexa-native, deterministic fixed env (no rng),
   byte-repeatable · LIVE `CORE/engine_cli.hexa` §UsageStore (additive, Ψ-disjoint)
 - **evidence:** `.verdicts/1391_usage_store_engine/{FREEZE.txt, result.txt}`

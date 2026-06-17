@@ -4,6 +4,7 @@ slug: 1406_brain_lane_compose_wm_pfc
 title: brain-lane COMPOSE (pair #3) — does WM (H_1282) compose with hierarchical-PFC (H_1294)?
 group: MITOSIS-ENGINE / brain-lane-composition (pair #3, sibling of H_1401 affect×ethics + H_1404 Φ-compose)
 terminal_tier: 🧱 (a)→(d) RECLASSIFIED — TRUE UN-CAPTURABLE CEILING for the confidence-arbiter family (HONEST closed-negative; faculties SEPARABLE + ORACLE lift EXISTS but no substrate-confidence arbiter captures it)
+wired: engine-native — re-confirmed 2026-06-17 (aiden). NOT WIRED-live by design (a negative/non-composing pair warrants no live §WmPfcCompose wire). `state/brain-lane-compose-wm-pfc/h1406_compose_wm_pfc_runner.hexa` + `h1406_emit_states.py` drive the LIVE `CORE/engine_cli.hexa` WorkMemBuffer(H_1282) + HierGoalStack-cos(H_1294) over the 5-family fixture (n=1350, 3 seeds, NOT a numpy mirror): best_single=0.7104 · compose=0.6341 (B1 FAIL) · ORACLE=0.9674 oracle−best=+0.2570 (B2 PASS) · compose−shuffle=+0.0274 (B3 PASS) · SEPARABLE=TRUE (only_wm=0.2570 only_pfc=0.3326). Directionally byte-for-byte vs torch (best 0.681 / compose 0.629 / oracle +0.264). ENGINE-NATIVE **CONFIRMS** the 🧱 (a)→(d) closed-negative on the live engine. Evidence `state/_engine_native_audit/dfree_other/`.
 verdict_dir: .verdicts/1406_brain_lane_compose_wm_pfc/
 terminal_verdict: .verdicts/1406_brain_lane_compose_wm_pfc/result.txt
 date: 2026-06-17
@@ -129,5 +130,6 @@ p1·p2·p3·p4·p6·p7·p8·c9·c15·c16
 
 ## Pointers
 - probe: `state/brain-lane-compose-wm-pfc/h1406_compose_wm_pfc.py` (R1 default · `--r2` breakthrough)
+- engine-native runner: `state/brain-lane-compose-wm-pfc/h1406_compose_wm_pfc_runner.hexa` + `h1406_emit_states.py` (drives live WorkMemBuffer + HierGoalStack-cos; evidence `state/_engine_native_audit/dfree_other/raw/h1406_engine_native.out`)
 - FREEZE: `.verdicts/1406_brain_lane_compose_wm_pfc/FREEZE.txt` (+ R2 addendum)
 - result: `.verdicts/1406_brain_lane_compose_wm_pfc/result.txt` (= result_R1.txt + result_R2.txt)

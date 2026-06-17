@@ -4,6 +4,7 @@
 
 - **slug:** agent_tool_mitosis
 - **tier / verdict:** Step A = **REFERENCE-ONLY** (agent-tool layer does NOT learn via mitosis today) · Step B = **🟢 GREEN (numpy MIRROR, DIRECTIONAL — engine-transfer UNVERIFIED)** designs+validates the missing mechanism
+- **wired:** **engine-native (twin-confirm)** — re-confirmed 2026-06-17 (aiden): the Step-B designed skill-cell SPLIT mechanism is realized engine-native as its TWIN **H_1382 §SkillStore**; `CORE/engine_cli_smoke.hexa` cases 107–111 PASS (init=0.167 full=1.0 static=0.167 shuffle=0.0): LEARNS/DISTINCT-FROM-STATIC/EARNED(shuffle→0.0)/NO-FAB. Step-A REFERENCE-ONLY audit unchanged. CONFIRMS the Step-B 🟢 on the live engine (via the twin, not this probe's own `.hexa`). Evidence `state/_engine_native_audit/dfree_other/`.
 - **domain:** MITOSIS-ENGINE · **substrate:** $0 CPU numpy mirror · 3 seeds [1378,1379,1380] · CORE/*.hexa UNTOUCHED (wire-in = follow-on, a_verified_must_wire)
 - **evidence:** `.verdicts/1378_agent_tool_mitosis/{wiring_audit.txt, FREEZE.txt, result.txt}`
 - **probe:** `state/agent-tool-mitosis/h1378_agent_tool_mitosis.py`
