@@ -1,0 +1,27 @@
+FRAME_GUARD leaks=0 (0=CLEAN)DETECTOR_CALIB 10/10 (frozen, advisory)=== SEED 1425 ===  fixed t=0.5 novel=8 dist=3 fals=0  fixed t=0.7 novel=14 dist=5 fals=0  fixed t=0.9 novel=7 dist=4 fals=0  fixed t=1.1 novel=17 dist=5 fals=0  fixed t=1.3 novel=0 dist=5 fals=0  A best-fixed t*=1.1 novel=17 dist=5  NE deficit/frame: 0.25 0.5 0.285714 0.25 0.2 0.5   B NE-gated novel=14 dist=4 fals=0  Bsh shuffle novel=11 dist=6  Babl ablate(meanT=0.764762) novel=10 dist=5=== SEED 1426 ===  fixed t=0.5 novel=22 dist=4 fals=0  fixed t=0.7 novel=11 dist=3 fals=0  fixed t=0.9 novel=27 dist=4 fals=0  fixed t=1.1 novel=11 dist=4 fals=0  fixed t=1.3 novel=11 dist=5 fals=0  A best-fixed t*=0.9 novel=27 dist=4  NE deficit/frame: 1.0 0.0 0.6 0.0 0.4 0.0   B NE-gated novel=14 dist=5 fals=0  Bsh shuffle novel=28 dist=5  Babl ablate(meanT=0.766667) novel=11 dist=4=== SEED 1427 ===  fixed t=0.5 novel=6 dist=3 fals=0  fixed t=0.7 novel=2 dist=2 fals=0  fixed t=0.9 novel=1 dist=4 fals=0  fixed t=1.1 novel=9 dist=4 fals=0  fixed t=1.3 novel=9 dist=5 fals=0  A best-fixed t*=1.1 novel=9 dist=4  NE deficit/frame: 1.0 0.2 1.0 0.25 0.2 0.2   B NE-gated novel=8 dist=4 fals=0  Bsh shuffle novel=3 dist=3  Babl ablate(meanT=0.88) novel=3 dist=4==================== MEAN over 3 seeds (M = NOVEL distinct trigrams) ====================A best-fixed = 17.6667B NE-gated   = 12.0Bsh shuffle  = 14.0Babl ablate  = 8.0dist: A=4.33333 B=4.33333determinism run1==run2: truec1 PRESENCE   M(B) 12.0 >= M(A)+1.0 18.6667 : falsec2 EARNED-GATE(shuf) M(Bsh) 14.0 <= M(A)+0.5 18.1667 : truec3 EARNED-NE(ablate) M(Babl) 8.0 <= M(A)+0.5 18.1667 : trueVERDICT: WALL — orthogonal channel ALSO no free lunch (strengthens H_1284/H_1422)
+==================== H_1425 TERMINAL VERDICT ====================
+🧱 CONFIDENT-TERMINAL — orthogonal IDEATION-temperature channel ALSO no free lunch.
+
+LENS 1 (NOVEL distinct-novel-trigrams, forward NE polarity high-deficit→high-temp):
+  A best-fixed = 17.67 · B NE-gated = 12.0 · Bsh shuffle = 14.0 · Babl ablate = 8.0
+  c1 PRESENCE M(B)>=M(A)+1.0 : FALSE (12.0 < 18.67 — NE-gated is WORSE than best fixed temp)
+  c2/c3 trivially hold (B never beat A, so controls have nothing to discriminate).
+
+LENS 2 (a_break_the_wall — strongest shot: DIST breadth metric + INVERTED NE polarity):
+  A best-fixed DIST = 5.0 · B inverted-NE DIST = 4.0  (all 3 seeds identical 5 vs 4)
+  c1 inverted beats fixed by>=1 : FALSE (4.0 < 6.0).
+
+determinism run1==run2 : TRUE (engine-native xorshift32, deterministic given seed).
+FALS = 0 on every arm (EXPECTED, d768 1-trunk-layer mouth floor; H_1394/H_1403; non-gating).
+
+FINDING (refines H_1284→H_1422→H_1425, c9): a single tuned FIXED decode temperature DOMINATES
+every state-contingent NE schedule on the IDEATION breadth axis — both schedule polarities and
+both breadth metrics (NOVEL, DIST). This is the H_1284 "tuned fixed point dominates the controller"
+result reproduced on the EXACT orthogonal channel H_1422 named as NOT-RULED-OUT. The orthogonal-
+channel escape (decode-time NE temperature on ideation, ORTHOGONAL to the abstain margin) does NOT
+recover a lift → the neuromodulation wall is GENERAL, not an artifact of the memory-abstain
+circularity. Strengthens H_1284/H_1422 to: NO neuromodulation lift on any tested anima axis —
+memory OR ideation. NO bar moved, no tune-to-green (T_LO/T_HI=grid endpoints, DELTA pre-set). 🧱.
+wired: N/A (a_verified_must_wire GREEN-only) — CORE/*.hexa UNTOUCHED.
+SCOPE: TOY d768 mouth / 6 frames / 3 seeds / engine-native; scale + larger-mouth + real-corpus
++ engine-transfer UNVERIFIED.
