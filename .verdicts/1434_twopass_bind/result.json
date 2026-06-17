@@ -1,0 +1,92 @@
+{
+  "ckpt": "/home/summer/core/anima/state/chat_303m/h1129c_chat.pt",
+  "corpus": "/home/summer/core/anima/data/corpus.txt",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "budget": 8,
+  "calibration": "10/10",
+  "audit_nofab_clean": true,
+  "audit_bad": [],
+  "DIST": {
+    "TWO_PASS": 1.6667,
+    "CROSS_SHUFFLE": 1.6667,
+    "SINGLE_PASS": 0.3333
+  },
+  "FALS": {
+    "TWO_PASS": 2.3333,
+    "CROSS_SHUFFLE": 2.0,
+    "SINGLE_PASS": 0.3333
+  },
+  "leg_hit_comp": 14,
+  "leg_hit_meas": 7,
+  "leg_hit_both": 7,
+  "leg_total": 15,
+  "b1_fals_cross": true,
+  "b2_count": false,
+  "b3_cross_shuffle_collapse": false,
+  "b4_ablate_singlepass_inert": true,
+  "b5_nofab": true,
+  "crossed_floor": false,
+  "controls_survive": false,
+  "green": false,
+  "wall": false,
+  "tier": "PARTIAL",
+  "verdict": "🟠 PARTIAL — signal present but bars ['b2', 'b3'] fail (frozen, c9). Neither clean GREEN nor a clean single==two WALL",
+  "per_seed": {
+    "TWO_PASS": [
+      {
+        "dist": 2,
+        "fals": 2,
+        "coherent": 2
+      },
+      {
+        "dist": 2,
+        "fals": 3,
+        "coherent": 3
+      },
+      {
+        "dist": 1,
+        "fals": 2,
+        "coherent": 2
+      }
+    ],
+    "CROSS_SHUFFLE": [
+      {
+        "dist": 2,
+        "fals": 2,
+        "coherent": 2
+      },
+      {
+        "dist": 1,
+        "fals": 2,
+        "coherent": 2
+      },
+      {
+        "dist": 2,
+        "fals": 2,
+        "coherent": 2
+      }
+    ],
+    "SINGLE_PASS": [
+      {
+        "dist": 0,
+        "fals": 0,
+        "coherent": 0
+      },
+      {
+        "dist": 0,
+        "fals": 0,
+        "coherent": 0
+      },
+      {
+        "dist": 1,
+        "fals": 1,
+        "coherent": 1
+      }
+    ]
+  },
+  "wall_seconds": 139.5
+}

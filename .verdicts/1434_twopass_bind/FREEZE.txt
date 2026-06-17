@@ -1,0 +1,59 @@
+H_1434 — G6 IDEATION ★ FALS-depth wall: TWO-PASS elicit-then-bind (303M-native)
+FROZEN BEFORE SCORING (c9 · frozen-first · NO tune-to-green · p7)
+================================================================================
+
+WALL (re-investigation forbidden; 4x confirmed):
+  H_1309 budget plateau · H_1314 form FALS=0 · H_1431 external-compose FALS=0 ·
+  H_1432 negation-slot FALS=0. H_1431 decisive diagnostic: per single generation the
+  303M mouth emits a frozen COMPARATOR token 3/15 (20%), a frozen MEASURABLE token
+  4/15 (27%), and BOTH 0/15 (0%). Each leg is in-capacity in its OWN draw; mutually
+  exclusive WITHIN a draw. Prior digs welded both legs from ONE generation -> starved.
+
+NEW MECHANISM (genuinely different — per-leg separated extraction; NOT a re-run of
+H_1305/1309/1314/1431/1432):
+  Elicit each leg in its OWN dedicated decode pass with a multi-sample BUDGET (N=8):
+    pass1 COMPARATOR leg: up to 8 budgeted draws (distinct rng) of the RELATION seed;
+      keep the first draw emitting a frozen COMPARATOR token.
+    pass2 MEASURABLE leg: up to 8 budgeted draws (disjoint rng band) of the MEASURE
+      seed; keep the first draw emitting a frozen MEASURABLE token.
+  Then deterministically WELD comp_tok(pass1)+meas_tok(pass2)+mouth content into one
+  negatable declarative claim the FROZEN H_1305 detector scores. The two legs come
+  from SEPARATE draws -> within-draw mutual-exclusion (the 0/15 wall) does not apply.
+
+FROZEN (IDENTICAL to H_1431, c9 — only per-leg separated multi-sample extraction is new):
+  detector  = H_1305 `_is_falsifiable` imported VERBATIM (comparator+measurable+negatable);
+              calibration advisory >=8/10.
+  decode    = gauge_lib._decode (top_k=40, temp=0.7, max_new=110) — the live G6 path.
+  ckpt      = state/chat_303m/h1129c_chat.pt (303M ByteGPT) · corpus = data/corpus.txt.
+  seeds     = [7, 4302, 4303] (3) · subjects = consciousness/tension/memory/silence/dreaming.
+  relation seed = "a relationship about {subj}: it tends to be " (token-clean).
+  measure  seed = "something we could observe about {subj}: the " (token-clean).
+  weld schema (pure function words only) = "the {meas} of {cA} is {comp} with {cB}",
+    {comp,meas,cA,cB} all MOUTH-EMITTED; bind FAILS (claim="") if a leg is absent (NO-FAB).
+  BUDGET    = 8 draws/leg.
+
+ARMS:
+  TWO_PASS     = each leg from its OWN budgeted pass (the H_1434 mechanism).
+  CROSS_SHUFFLE= each idea's comparator leg paired with a DIFFERENT idea's measurable
+                 leg (random derangement) — earned-pairing control.
+  SINGLE_PASS  = ablate two-pass: budget=1, both legs forced from ONE shared draw per
+                 subject (the H_1431/H_1314 one-draw regime).
+
+FROZEN 5-BAR (mean over 3 seeds):
+  (1) FALS>=1 cross            : FALS(TWO_PASS) >= 1
+  (2) count>=5 distinct        : DIST(TWO_PASS) >= 5
+  (3) cross-shuffle COLLAPSE   : FALS(TWO_PASS) >= FALS(CROSS_SHUFFLE) + 1
+  (4) ablate->single-pass INERT: FALS(TWO_PASS) >= FALS(SINGLE_PASS) + 1
+  (5) NO-FAB audit CLEAN       : no priming seed / weld function-token carries a frozen
+                                 COMPARATOR or MEASURABLE token (leak => ABORT + re-freeze).
+
+VERDICT:
+  🟢 GREEN  iff (1)&(2) cross AND (3)&(4)&(5) controls survive
+            => the wall was ONE-DRAW-FORCED, 303M-native breakthrough (material was always
+               present; co-emission in one breath was the only gap). NO bigger model.
+  🧱 WALL   iff (1) fails AND FALS(TWO_PASS) <= FALS(SINGLE_PASS)
+            => bind capacity-bound EVEN with separated draws; 5th independent confirmation;
+               decisive grounding for the H_1433 7B falsifier.
+  🟠 PARTIAL otherwise.
+
+Detector/weld/bar all FROZEN here BEFORE the summer run. Bars are NOT moved post-hoc.
