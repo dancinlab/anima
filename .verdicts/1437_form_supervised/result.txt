@@ -1,0 +1,17 @@
+H_1437 form-supervised (303M full-weight, H_1314 negatable-form scaffold supervision -> FREE gen)
+ckpt_base=state/chat_303m/h1129c_chat.pt (PRESERVED) | ckpt_out=h1437_form_supervised.pt (path-only)
+BASE     FALS_in=0.0 DIST_in=3.0 FALS_shuf=0.0 FALS_ho=0.0
+TRAINED  FALS_in=5.0 DIST_in=1.3333 FALS_shuf=5.0 FALS_ho=5.0
+SHUF-CRP FALS_in=0.0 FALS_ho=0.0
+B1 FALS-FLOOR FALS_in>=1            : 5.0  -> PASS
+B2 COUNT      DIST_in>=5            : 1.3333 -> FAIL (form-supervision COLLAPSES distinctness)
+B3 X-SHUFFLE  FALS_shuf<FALS_in     : 5.0<5.0 -> FAIL (NO COLLAPSE — decisive)
+B4 HELD-OUT   FALS_ho>=1            : 5.0  -> PASS
+B5 vs-BASE    FALS_in>=base+1       : 5.0 vs 0.0+1 -> PASS
+CTRL SHUF-CORP lift_real-lift_shuf>=1: 5.0-0.0 -> PASS (inert)
+VERDICT: 🧱 WALL=CAPACITY — form-supervision DOES internalize the negatable form into free
+generation (FALS 0->5, held-out 5.0) and the lift is real (shuffle-corpus 0.0), but it produces
+the SAME templated shell every time: DIST collapses to 1.33 (the model emits one memorized form
+filled with interchangeable tokens) and cross-shuffle does NOT collapse (swapping the measurable
+leaves FALS=5.0). Internalizing the FORM does not produce earned idea-specific binding =>
+capacity wall. Most extreme distinctness collapse of the three. base ckpt NOT overwritten.

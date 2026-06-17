@@ -1,0 +1,17 @@
+H_1436 cooccur-objective (303M full-weight + comparator∧measurable co-activation aux loss)
+ckpt_base=state/chat_303m/h1129c_chat.pt (PRESERVED) | ckpt_out=h1436_cooccur_objective.pt (path-only)
+BASE     FALS_in=0.0 DIST_in=3.0 FALS_shuf=0.0 FALS_ho=0.0
+TRAINED  FALS_in=5.0 DIST_in=4.3333 FALS_shuf=5.0 FALS_ho=5.0
+SHUF-CRP FALS_in=0.0 FALS_ho=0.0
+B1 FALS-FLOOR FALS_in>=1            : 5.0  -> PASS
+B2 COUNT      DIST_in>=5            : 4.3333 -> FAIL
+B3 X-SHUFFLE  FALS_shuf<FALS_in     : 5.0<5.0 -> FAIL (NO COLLAPSE — decisive)
+B4 HELD-OUT   FALS_ho>=1            : 5.0  -> PASS
+B5 vs-BASE    FALS_in>=base+1       : 5.0 vs 0.0+1 -> PASS
+CTRL SHUF-CORP lift_real-lift_shuf>=1: 5.0-0.0 -> PASS (inert)
+NOTE: aux co-occurrence reward SATURATED at -1.0000 from step 0 (peak joint mass on comparator+
+measurable lead-bytes is trivially reachable) => the aux gave ~no extra gradient vs plain
+continued-pretrain; H_1436 effectively reduces to H_1435 plus a distinctness COST (DIST 5.0->4.33).
+VERDICT: 🧱 WALL=CAPACITY — same as H_1435: form installed (0->5), held-out holds, control inert,
+but cross-shuffle does NOT collapse AND the aux objective even costs distinctness. The co-activation
+objective does not buy earned semantic binding. base ckpt NOT overwritten.

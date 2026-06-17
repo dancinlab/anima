@@ -1,0 +1,36 @@
+[H_1435] device=cuda:0 steps=400
+[H_1435] base FALS_in=0.0 DIST_in=3.0 FALS_ho=0.0
+    [H1435 step    0] ce=1.8972 0.0min
+    [H1435 step   50] ce=0.2056 0.8min
+    [H1435 step  100] ce=0.2007 1.6min
+    [H1435 step  150] ce=0.1965 2.4min
+    [H1435 step  200] ce=0.1979 3.3min
+    [H1435 step  250] ce=0.1931 4.1min
+    [H1435 step  300] ce=0.1943 4.9min
+    [H1435 step  350] ce=0.1838 5.7min
+    [H1435 step  399] ce=0.1846 6.5min
+    [H1435 step    0] ce=5.5320 0.0min
+    [H1435 step   50] ce=2.9212 0.8min
+    [H1435 step  100] ce=2.9293 1.6min
+    [H1435 step  150] ce=2.9137 2.4min
+    [H1435 step  200] ce=2.8971 3.3min
+    [H1435 step  250] ce=2.9001 4.1min
+    [H1435 step  300] ce=2.8906 4.9min
+    [H1435 step  350] ce=2.8710 5.7min
+    [H1435 step  399] ce=2.8425 6.5min
+
+================ H_1435 continued-pretrain FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=3.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=5.0  DIST_in=5.0  FALS_shuf=5.0  FALS_ho=5.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 5.0 -> True
+  B2 COUNT        DIST_in>=5                 : 5.0 -> True
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 5.0<5.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 5.0 -> True
+  B5 vs-BASE      FALS_in>=base+1            : 5.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 5.0-0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B3'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
+[H_1435 done] /workspace/g6/out/h1435_result.json
