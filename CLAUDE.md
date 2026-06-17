@@ -22,6 +22,8 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 6. **🗂️ 가설은 2표면만** — `UNIVERSE/HYPOTHESES.jsonl`(인덱스 1줄/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(카드). 코드/결과물은 `state/<slug>/`. UNIVERSE/ 에 .py/result 금지. (→ `a_hypothesis_register`)
 7. **🔌 GREEN 은 배선까지가 done** — 엔진-네이티브 GREEN 검증되면 live `CORE/*.hexa` 배선 + ARCHITECTURE.json lockstep 까지 해야 완료. (→ `a_verified_must_wire`)
 
+> ⚙️ **코드수준 강제(salience 아님):** 게이트 1·6 은 `tool/enforce_anima_gates.py` 가 **기계적으로 차단**한다 — `harness.config.json` verify.checks 에 배선되어 pr-cycle/CI 가 위반 PR 을 거부(exit≠0). 우회 플래그·skip 없음(c18). 전수 감사 = `python3 tool/enforce_anima_gates.py --all`, 변경분만 = 인자 없이. 새 게이트도 가능하면 이 enforcer 에 추가해 문서-only 가 아닌 코드 강제로 만든다.
+
 ---
 
 ## Structure

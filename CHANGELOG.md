@@ -1,3 +1,13 @@
+## 2026-06-17 — feat(self-harness): tool/enforce_anima_gates.py — CLAUDE.md 하드게이트 코드수준 강제 (verify.checks 배선, 우회 없음 c18)
+
+CLAUDE.md 규칙을 salience(AI 가 읽고 따름) 가 아니라 **기계적으로 차단**하는 anima 자체 enforcer 추가 (사용자 지시: 코드수준 강제). `harness.config.json` verify.checks 에 배선 → pr-cycle/CI 가 위반 PR 을 exit≠0 으로 거부.
+- **G1 engine-native verdict gate** (a_engine_native_learning): gate/ideation/G6/Φ 토픽의 terminal 🟢/🧱 가 torch-side(state/<slug>/*.py import torch|gauge_lib|numpy)인데 엔진-네이티브 .hexa(CORE clm_decode/bytegpt_decode/engine_cli/faithful_phi)도 아니고 카드/tier 에 DIRECTIONAL 라벨도 없으면 VIOLATION.
+- **G2 hypothesis 2-surface** (a_hypothesis_register): git-tracked UNIVERSE/ 에 cards/·HYPOTHESES.jsonl 외 파일이면 VIOLATION.
+- **우회 없음(c18)**: opt-out 플래그·skip·bypass 마커 일절 없음. 유일한 knob 은 SCOPE — (기본) 변경분(vs origin/main + 작업트리; 새/수정 가설만 차단, 레거시 deadlock 회피) · `--all`(전수 감사, 더 강함). enforcer 에러는 silent-pass 아니라 exit 2 로 loud-fail.
+- 검증(c2 캡처): `--all` = 잔여위반 3건 정확탐지(H_1435/1436/1437 cost-gate trio, ckpt 소멸로 DIRECTIONAL 재라벨 대상=ING #21). H_1404 는 faithful_phi.hexa 엔진-네이티브로 정상 통과(Φ 엔진 인식). 변경분 scope = 이 PR clean.
+
+CLAUDE.md 하드게이트 박스에 "코드수준 강제" 명시. CORE/*.hexa UNTOUCHED.
+
 ## 2026-06-17 — research(ENGINE-NATIVE AUDIT): 전수감사 + H_1404 Φ engine-native CONFIRMS (pool, 렌트0)
 
 a_engine_native_learning HARD-GATE(2bf43031b)에 따라 UNIVERSE/HYPOTHESES.jsonl 1321 가설 전수감사 → 엔진-네이티브 미실시 verdict 박제 색출 + batch-1 재측정.
