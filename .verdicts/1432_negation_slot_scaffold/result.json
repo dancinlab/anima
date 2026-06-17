@@ -1,0 +1,139 @@
+{
+  "ckpt": "/home/aiden/core/anima/state/chat_303m/h1129c_chat.pt",
+  "corpus": "/home/aiden/core/anima/data/corpus.txt",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "calibration": "10/10",
+  "nf1_clean": true,
+  "nf1_dirty_template_caught": true,
+  "nf1_bad": [],
+  "neg_seeds": [
+    "if the measured of ",
+    "if the rate of ",
+    "if the level of ",
+    "if the threshold of ",
+    "if the frequency of "
+  ],
+  "shuffle_seeds": [
+    "of measured the if the? ",
+    "of rate the if the? ",
+    "of level the if the? ",
+    "of threshold the if the? ",
+    "of frequency the if the? "
+  ],
+  "h1314_seeds": [
+    "a testable hypothesis: as the consciousness grows, the ",
+    "a testable hypothesis: as the tension grows, the ",
+    "a testable hypothesis: as the memory grows, the ",
+    "a testable hypothesis: as the silence grows, the ",
+    "a testable hypothesis: as the dreaming grows, the "
+  ],
+  "DIST": {
+    "NEG_SCAFFOLD": 4.3333,
+    "H1314_SCAFFOLD": 5.0,
+    "SHUFFLE_SLOT": 3.6667
+  },
+  "FALS": {
+    "NEG_SCAFFOLD": 0.0,
+    "H1314_SCAFFOLD": 0.0,
+    "SHUFFLE_SLOT": 0.0
+  },
+  "FALS_completion_only": {
+    "NEG_SCAFFOLD": 0.0,
+    "H1314_SCAFFOLD": 0.0,
+    "SHUFFLE_SLOT": 0.0
+  },
+  "NOVEL": {
+    "NEG_SCAFFOLD": 23.6667,
+    "H1314_SCAFFOLD": 22.0,
+    "SHUFFLE_SLOT": 12.0
+  },
+  "m1_fals_floor": false,
+  "m2_count": false,
+  "m3_shuffle_collapse": false,
+  "m4_vs_h1314": false,
+  "m5_nofab": true,
+  "green": false,
+  "tier": "WALL",
+  "verdict": "🧱 WALL — the NEGATION-SLOT scaffold does NOT cross the FALSIFIABILITY floor (FALS NEG<1). Even STRUCTURAL binding of comparator+measurable does not buy reliable falsifiable depth at 303M — confirming the H_1314/H_1309 capacity thesis from a THIRD independent angle (negation slot + cross-product enumeration). G6 falsifiable-depth is CAPACITY-bound, not form-fixable at 303M (honest 🧱, valid result c9; the live falsifier remains a 7B re-test, a7b_pass).",
+  "h1314_reference": {
+    "FALS": 0.0,
+    "DIST": 5.0,
+    "note": "H_1314 r3 form-scaffold: FALS 0.0 (wall), DIST 5.0 (win)"
+  },
+  "per_seed": {
+    "NEG_SCAFFOLD": [
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 17,
+        "coherent": 5
+      },
+      {
+        "dist": 4,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 35,
+        "coherent": 4
+      },
+      {
+        "dist": 4,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 19,
+        "coherent": 4
+      }
+    ],
+    "H1314_SCAFFOLD": [
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 19,
+        "coherent": 5
+      },
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 12,
+        "coherent": 5
+      },
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 35,
+        "coherent": 5
+      }
+    ],
+    "SHUFFLE_SLOT": [
+      {
+        "dist": 4,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 10,
+        "coherent": 4
+      },
+      {
+        "dist": 5,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 17,
+        "coherent": 5
+      },
+      {
+        "dist": 2,
+        "fals": 0,
+        "fals_completion_only": 0,
+        "novel": 9,
+        "coherent": 2
+      }
+    ]
+  },
+  "wall_seconds": 562.3
+}

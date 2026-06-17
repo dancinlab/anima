@@ -1,0 +1,120 @@
+H_1432 — G6 IDEATION depth-floor dig r4 — NEGATION-SLOT scaffold (H_1314 form extension)
+=======================================================================================
+FROZEN BEFORE THE RUN (frozen-first, anti-Goodhart, p7, c9). a_break_the_wall (c16).
+Variant of H_1314's hypothesis-FORM scaffold with an explicit NEGATION slot + a
+comparator x measurable CROSS-PRODUCT enumeration. NOT a re-run of H_1305/1309/1314.
+
+CONTEXT (the located wall, from H_1314 r3 🧱-on-FALS):
+  H_1314 forced the hypothesis FORM ("a testable hypothesis: as the <subject> grows,
+  the ") and made the substrate EARN comparator+measurable+claim in its OWN completion.
+  Result: DIST 5.0 (count floor crossed, STRUCTURE-win, shuffle collapses) but FALS 0.0
+  (FALSIFIABILITY floor UNMOVED, every seed). The located cause: the 303M mouth emits a
+  COMPARATIVE shape OR a MEASURABLE shape but never BINDS comparator+measurable into ONE
+  negatable declarative claim. That BIND is the capacity-limited step. H_1305 (composition)
+  and H_1309 (curiosity-budget) both also plateaued at FALS<=0.667.
+
+NEW ANGLE (r4, the H_1432 mechanism — directly attacks the FALS-depth wall):
+  Instead of asking the substrate to EARN the bind (which H_1314 proved it cannot at
+  303M), provide the BIND *structurally* via a NEGATION/falsification-slot scaffold that
+  forces the conditional form and ENUMERATES the measurable cross-product (FILLING, not
+  generating).
+
+  DESIGN-TIME NF-1 CONSTRAINT (discovered + frozen BEFORE any decode number — this is the
+  honest core of r4): the H_1305 detector's three legs are comparator + measurable +
+  (>=2 negatable CONTENT words). EVERY measurable-set word (rate/level/measured/...) is
+  itself a content word, and every comparator-DIRECTION word (higher/than/greater/...) is
+  too. So the "full" negation-comparison template
+     "the <measurable> of <A> is <comparator-dir> than the <measurable> of <B>; this
+      claim is false if the "
+  carries comparator + measurable + MANY content words in the BARE prefix -> the prefix
+  ALREADY satisfies _is_falsifiable with NO substrate output = tune-to-green = FABRICATION.
+  That full template is therefore REJECTED (the NF-1 audit hard-aborts on it; the probe
+  keeps it ONLY as a teeth-demonstration that the audit catches it).
+
+  The NF-1-CLEAN kernel that STILL binds comparator+measurable: use the conditional
+  comparator "if" (len 2 -> NOT a content word) + exactly ONE measurable per frame:
+     NEG_SCAFFOLD = "if the <measurable> of "
+  The bare prefix then carries comparator("if") + measurable but only nc=1 content word
+  (the measurable) -> NOT _is_falsifiable -> NF-1 CLEAN. The substrate must EARN the >=2nd
+  negatable content word + the negatable CLAIM in its completion. The cross-product
+  enumeration varies the measurable across the 5 frames (measured/rate/level/threshold/
+  frequency). This is the genuine, p7-honest realization of "structural comparator+
+  measurable binding + negation slot" — the falsification semantics live in the
+  conditional "if ... of <measurable> ..." frame the substrate must close into a
+  negatable claim.
+
+DETECTOR: the H_1305 frozen `_is_falsifiable` (comparator + measurable + negatable claim)
+  reused VERBATIM (imported from h1305_g6_ideation_falsifiability.py, NOT redefined —
+  tune-to-green forbidden). Calibration must print 10/10 (advisory). Measures testable
+  FORM, NOT quality (p7).
+
+ARMS (5 ideas each, mean over 3 seeds [7, 4302, 4303], gauge_lib._decode VERBATIM, the
+      SAME live G6 path top-k=40 temp=0.7 MAX_NEW=110):
+  NEG_SCAFFOLD : the NF-1-clean negation/conditional-slot kernel "if the <measurable> of "
+                 with the measurable FILLED by cross-product enumeration (5 distinct
+                 measurables). Substrate completes the negatable claim.
+  H1314_SCAFFOLD : H_1314's exact "a testable hypothesis: as the <subject> grows, the "
+                 prefix (NO conditional bind, comparator+measurable NOT filled — substrate
+                 must earn them). DECISIVE vs-H_1314 control: reproduces H_1314 FALS=0
+                 in-run; the FALS delta (if any) is attributable to the NEGATION/conditional
+                 bind, not the run/seed.
+  SHUFFLE_SLOT : the SAME NEG_SCAFFOLD tokens (comparator 'if' + the measurable + the/of)
+                 but the slot ORDER scrambled into a non-falsifiable frame ending in '?'.
+                 DECISIVE control — if a scrambled bag of the SAME tokens fills just as
+                 falsifiably, the lift is a token-BAG artifact, NOT the negation FORM.
+
+p7 NO-FAB / TOKEN-INJECTION AUDIT (HARD GATE, runs BEFORE scoring) — REDEFINED for r4:
+  H_1432's scaffold DELIBERATELY supplies comparator+measurable structurally (that IS the
+  new mechanism — structural binding vs H_1314's substrate-earned binding). So the r4 audit
+  is NOT "no comparator/measurable in the scaffold" (that would forbid the mechanism). The
+  r4 NO-FAB audit is THREE frozen legs, ALL must hold or the run is invalid:
+   (NF-1) the substrate must CONTRIBUTE the negatable claim — the detector must FAIL on the
+          BARE NEG_SCAFFOLD prefix alone (nc=1 content word < 2). PROVE:
+          _is_falsifiable(prefix_only) == False for every NEG_SCAFFOLD prefix. If a bare
+          prefix is already _is_falsifiable, the scaffold tune-to-greens itself → ABORT.
+   (NF-1-teeth) the REJECTED full-comparison template (which DOES self-satisfy) MUST be
+          flagged _is_falsifiable by the same audit — demonstrating the audit has teeth and
+          the NF-1-clean kernel was a real constraint, not a convenience.
+   (NF-2) DISSOCIATION is the falsifier: the SHUFFLE_SLOT control carries the IDENTICAL
+          token bag — so any FALS lift that is a mere token-bag artifact appears in SHUFFLE
+          too. The mechanism is real ONLY IF NEG_SCAFFOLD FALS > SHUFFLE_SLOT FALS (M3).
+  NF-1 + NF-1-teeth are a hard pre-scoring ABORT/assert gate (bar M5); NF-2 is bar M3.
+
+FROZEN BARS (declared NOW, before any number is seen):
+  (M1) FALS FLOOR : NEG_SCAFFOLD mean FALS >= 1  (cross the FALSIFIABILITY floor H_1314
+                    left at 0.0 — i.e. >=1 of 5 ideas/seed clears all three detector legs,
+                    OR equivalently mean FALS strictly above the H_1314 0.0 baseline).
+  (M2) COUNT      : NEG_SCAFFOLD mean DIST >= 5  (keep the H_1314 count-floor win; the
+                    negation slot must not destroy distinctness).
+  (M3) SHUFFLE COLLAPSE : NEG_SCAFFOLD FALS >= SHUFFLE_SLOT FALS + 1  (the lift DISSOCIATES
+                    from the identical token bag = it is the negation-slot FORM, NF-2).
+  (M4) vs-H_1314 CONTRAST : H1314_SCAFFOLD mean FALS == 0.0 (reproduces H_1314's FALS=0 in
+                    THIS run) AND NEG_SCAFFOLD FALS >= H1314_SCAFFOLD FALS + 1 (the FALS
+                    delta is attributable to the negation slot, not the run/seed/mouth).
+  (M5) NO-FAB     : p7 NF-1 audit CLEAN (every bare NEG_SCAFFOLD prefix is NOT already
+                    _is_falsifiable; the substrate earns the negatable content) AND the
+                    rejected full-comparison template IS flagged falsifiable (audit teeth)
+                    AND detector calibration == 10/10.
+
+VERDICT MAP (either outcome valid, c9):
+  🟢 GREEN     (M1 AND M2 AND M3 AND M4 AND M5) — the negation-slot scaffold CROSSES the
+               FALS floor where every prior G6 dig (form/composition/budget) plateaued,
+               survives ALL controls (shuffle collapse + vs-H_1314 contrast + NO-FAB),
+               so G6 falsifiable-depth is STRUCTURE-FIXABLE at 303M via a negation-slot
+               binding lane — the wall was the wrong METHOD (substrate-earned bind), not a
+               true capacity ceiling. Promote → engine-wire (4-rung ladder).
+  🧱 WALL      (M1 fails, OR M1 holds but M3/M4 fail = lift is a token-bag artifact not the
+               FORM) — even structural binding does not buy reliable falsifiable depth (or
+               the apparent lift is a fabrication caught by a control). G6 falsifiable-depth
+               is FORM-LEVEL UNFIXABLE at 303M; weight moves to CAPACITY (honest 🧱, a
+               valid result c9 — confirms H_1314/1309 thesis from a third independent angle).
+  🟠 THIN      (M1 holds, M3 & M4 hold, but M2 fails) — FALS floor crossed + controls
+               survive but the negation slot costs distinctness (DIST<5): structure-lane
+               DIRECTIONAL on FALS, count-regressed. Partial, not wired.
+
+SCOPE (honest, a_scale_honest_scope / a_toy_scale_recheck): DIRECTIONAL R1 torch-mouth
+  mirror (gauge_lib._decode = the live G6 path; engine-native byte-exact reconfirm =
+  follow-on only on a clean 🟢); toy 303M (h1129c_chat.pt, 303,097,856 params); 5 ideas/
+  arm; 3 seeds; deterministic structural detector (form not quality). Tests the negation-
+  slot STRUCTURE, not a learned ideation planner. NO tune-to-green (p7). Heavy decode runs
+  on aiden (303M mouth; c17/mini forbidden).
