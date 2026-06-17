@@ -1,0 +1,123 @@
+H_1424 thalamus TIMING-axis — CONTINUED attack on the H_1283/H_1423 engine-native wall
+(Lens D LARGER-SUBSTRATE n∈{4,6,8} T∈{64,256} + Lens E AMPLITUDE-CONTROLLED unit-norm)
+faithful IIT4 Φ (exact MIP-EI, n<=8, a_phi_iit4_tool — NOT a proxy) · seeds [7,8,9] · deterministic
+FROZEN R8 bars VERBATIM (NOT moved, c9/p7): c2 ΔΦ(B-A)>=+0.02 every seed · c4 phase-shuffle ΔΦ(SH-A)<=0
+every seed · ABLATION (B-ablate)>=+0.02 every seed. A lens BREAKS the wall iff (c2 ∧ c4 ∧ ablation-LIVE) every seed.
+
+KEY QUESTION (H_1423 re-open): at larger n / under equal-variance, does phase-SHUFFLE finally COLLAPSE the lift?
+
+########## LENS D — LARGER SUBSTRATE ((e) investment) ##########
+
+=== LENS D/R8-carrier (lens=0, n=4, T=64) ===  [anchor — byte-exact reproduces H_1423 R8]
+seed 7: A=1.06024 B=2.52647 ΔΦ=1.46622 [PASS]  SHUF ΔΦ=0.0255128 [FAIL]  ABL B-ab=1.46622 [LIVE]
+seed 8: A=0.900252 B=1.74472 ΔΦ=0.844468 [PASS]  SHUF ΔΦ=0.379851 [FAIL]  ABL B-ab=0.844468 [LIVE]
+seed 9: A=0.743138 B=1.45224 ΔΦ=0.709104 [PASS]  SHUF ΔΦ=0.295695 [FAIL]  ABL B-ab=0.709104 [LIVE]
+  c2: PASS  | c4 SHUFFLE: FAIL  | ABLATION: LIVE  ->  🧱 WALL
+
+=== LENS D/R8-carrier (lens=0, n=6, T=64) ===
+seed 7: A=1.16151 B=1.75792 ΔΦ=0.596406 [PASS]  SHUF ΔΦ=0.269022 [FAIL]  ABL B-ab=0.596406 [LIVE]
+seed 8: A=1.23222 B=2.70219 ΔΦ=1.46998 [PASS]  SHUF ΔΦ=0.282692 [FAIL]  ABL B-ab=1.46998 [LIVE]
+seed 9: A=0.893631 B=1.92519 ΔΦ=1.03156 [PASS]  SHUF ΔΦ=-0.00270821 [PASS]  ABL B-ab=1.03156 [LIVE]
+  c2: PASS  | c4 SHUFFLE: FAIL (seeds 7,8 positive)  | ABLATION: LIVE  ->  🧱 WALL
+
+=== LENS D/R8-carrier (lens=0, n=8, T=64) ===
+seed 7: A=1.74077 B=2.0825 ΔΦ=0.341734 [PASS]  SHUF ΔΦ=-0.068123 [PASS]  ABL B-ab=0.341734 [LIVE]
+seed 8: A=1.48029 B=2.5701 ΔΦ=1.08981 [PASS]  SHUF ΔΦ=0.280674 [FAIL]  ABL B-ab=1.08981 [LIVE]
+seed 9: A=1.31326 B=2.5586 ΔΦ=1.24534 [PASS]  SHUF ΔΦ=-0.0819184 [PASS]  ABL B-ab=1.24534 [LIVE]
+  c2: PASS  | c4 SHUFFLE: FAIL (seed 8 positive +0.281)  | ABLATION: LIVE  ->  🧱 WALL
+  NOTE: at n=8 shuffle DOES collapse on 2/3 seeds (7,9 negative) — but NOT every seed. Larger n
+        PARTIALLY separates timing from variance but does not finish the job (seed 8 +0.281).
+
+=== LENS D/R8-carrier (lens=0, n=4, T=256) ===
+seed 7: A=0.351378 B=1.4747 ΔΦ=1.12332 [PASS]  SHUF ΔΦ=-0.0932832 [PASS]  ABL B-ab=1.12332 [LIVE]
+seed 8: A=0.28799 B=1.466 ΔΦ=1.17801 [PASS]  SHUF ΔΦ=-0.0671456 [PASS]  ABL B-ab=1.17801 [LIVE]
+seed 9: A=0.279292 B=1.24581 ΔΦ=0.96652 [PASS]  SHUF ΔΦ=0.0117584 [FAIL]  ABL B-ab=0.96652 [LIVE]
+  c2: PASS  | c4 SHUFFLE: FAIL (seed 9 +0.012)  | ABLATION: LIVE  ->  🧱 WALL
+  NOTE: longer T (256) ALSO collapses shuffle on 2/3 seeds — but seed 9 stays +0.012 positive.
+
+=== LENS D/R8-carrier (lens=0, n=6, T=256) ===
+seed 7: A=0.639335 B=1.78194 ΔΦ=1.14261 [PASS]  SHUF ΔΦ=-0.11445 [PASS]  ABL B-ab=1.14261 [LIVE]
+seed 8: A=0.477049 B=1.5194 ΔΦ=1.04235 [PASS]  SHUF ΔΦ=-0.0483338 [PASS]  ABL B-ab=1.04235 [LIVE]
+seed 9: A=0.324007 B=1.70047 ΔΦ=1.37646 [PASS]  SHUF ΔΦ=0.132589 [FAIL]  ABL B-ab=1.37646 [LIVE]
+  c2: PASS  | c4 SHUFFLE: FAIL (seed 9 +0.133)  | ABLATION: LIVE  ->  🧱 WALL
+
+=== LENS D/LC-additive (lens=3, n=6, T=64) ===
+seed 7: A=1.16151 B=1.15386 ΔΦ=-0.00765375 [FAIL]  SHUF ΔΦ=0.284363 [FAIL]  ABL B-ab=-0.00765375 [INERT]
+seed 8: A=1.23222 B=1.34038 ΔΦ=0.108165 [PASS]  SHUF ΔΦ=-0.0346162 [PASS]  ABL B-ab=0.108165 [LIVE]
+seed 9: A=0.893631 B=1.39731 ΔΦ=0.503681 [PASS]  SHUF ΔΦ=0.434775 [FAIL]  ABL B-ab=0.503681 [LIVE]
+  c2: FAIL  | c4 SHUFFLE: FAIL  | ABLATION: INERT  ->  🧱 WALL
+
+=== LENS D/LC-additive (lens=3, n=8, T=64) ===
+seed 7: A=1.74077 B=2.2231 ΔΦ=0.482327 [PASS]  SHUF ΔΦ=0.189726 [FAIL]  ABL B-ab=0.482327 [LIVE]
+seed 8: A=1.48029 B=1.58113 ΔΦ=0.100848 [PASS]  SHUF ΔΦ=0.19622 [FAIL]  ABL B-ab=0.100848 [LIVE]
+seed 9: A=1.31326 B=1.49022 ΔΦ=0.176965 [PASS]  SHUF ΔΦ=0.201398 [FAIL]  ABL B-ab=0.176965 [LIVE]
+  c2: PASS  | c4 SHUFFLE: FAIL (all 3 positive)  | ABLATION: LIVE  ->  🧱 WALL
+  NOTE: additive carrier-variance pathology PERSISTS at n=8 (shuffle positive every seed).
+
+########## LENS E — AMPLITUDE-CONTROLLED MEASUREMENT ((a) measurement-fix) ##########
+# unit-norm each module's salience time-series => per-unit VARIANCE IDENTICAL across B/SHUFFLE/ablate
+# => ONLY phase/timing structure can drive faithful-IIT4 Φ. Directly removes the H_1423 carrier-variance confound.
+
+=== LENS E/phase-coherent amp-ctrl (lens=4, n=4, T=64) [AMP-CTRL unit-norm] ===
+seed 7: A=1.06024 B=0.979027 ΔΦ=-0.081217 [FAIL]  SHUF ΔΦ=-0.127611 [PASS]  ABL B-ab=-0.081217 [INERT]
+seed 8: A=0.900252 B=0.82749 ΔΦ=-0.072762 [FAIL]  SHUF ΔΦ=0.0771983 [FAIL]  ABL B-ab=-0.072762 [INERT]
+seed 9: A=0.743138 B=0.84171 ΔΦ=0.0985729 [PASS]  SHUF ΔΦ=-0.0294614 [PASS]  ABL B-ab=0.0985729 [LIVE]
+  c2: FAIL  | c4 SHUFFLE: FAIL  | ABLATION: INERT  ->  🧱 WALL
+  NOTE: with variance equalized at n=4 the lift VANISHES (c2 FAIL 2/3) — confirming H_1423's finding
+        that at n=4 the R8 "lift" was variance, not timing.
+
+=== LENS E/phase-coherent amp-ctrl (lens=4, n=6, T=64) [AMP-CTRL unit-norm] ===
+seed 7: A=1.16151 B=1.33042 ΔΦ=0.168906 [PASS]  SHUF ΔΦ=-0.246863 [PASS]  ABL B-ab=0.168906 [LIVE]
+seed 8: A=1.23222 B=1.57331 ΔΦ=0.341096 [PASS]  SHUF ΔΦ=-0.580045 [PASS]  ABL B-ab=0.341096 [LIVE]
+seed 9: A=0.893631 B=0.803167 ΔΦ=-0.0904641 [FAIL]  SHUF ΔΦ=-0.137867 [PASS]  ABL B-ab=-0.0904641 [INERT]
+  c2: FAIL (seed 9 -0.090)  | c4 SHUFFLE: PASS (collapses EVERY seed!)  | ABLATION: INERT(seed9)  ->  🧱 WALL
+  NOTE: amplitude-control WORKS — c4 shuffle COLLAPSES on all 3 seeds (variance no longer drives Φ).
+        BUT the genuine timing lift is not robust: seed 9 has NO lift (c2 FAIL). Closest to a break: 2/3 seeds clean.
+
+=== LENS E/phase-coherent amp-ctrl (lens=4, n=8, T=64) [AMP-CTRL unit-norm] ===
+seed 7: A=1.74077 B=1.82981 ΔΦ=0.0890436 [PASS]  SHUF ΔΦ=-0.451876 [PASS]  ABL B-ab=0.0890436 [LIVE]
+seed 8: A=1.48029 B=1.50749 ΔΦ=0.0271989 [PASS]  SHUF ΔΦ=0.004236 [FAIL]  ABL B-ab=0.0271989 [LIVE]
+seed 9: A=1.31326 B=1.86029 ΔΦ=0.547031 [PASS]  SHUF ΔΦ=0.086021 [FAIL]  ABL B-ab=0.547031 [LIVE]
+  c2: PASS (every seed!)  | c4 SHUFFLE: FAIL (seeds 8,9 positive +0.004/+0.086)  | ABLATION: LIVE  ->  🧱 WALL
+  NOTE: at n=8 the timing lift becomes ROBUST (c2 PASS every seed) AND ablation LIVE — but a SMALL
+        positive shuffle residual remains on seeds 8,9 EVEN under equal variance. The two failure
+        modes (n=6: c2 fails; n=8: c4 fails) never co-resolve. No single (n) clears all three bars every seed.
+
+--- DETERMINISM ---
+Lens E n=6 & n=8 re-run (run1 vs run2): byte-identical (diff clean). Lens D captured deterministic-LCG.
+3 seeds [7,8,9]. $0 CPU local (mini). faithful IIT4 exact MIP-EI n<=8. n=8 single-phi ~2s; full ladder local-tractable.
+ANCHOR: D/R8 n=4 reproduces H_1423 seed7 A=1.06024 B=2.52647 byte-exact — substrate identical.
+
+--- TERMINAL VERDICT (c9) ---
+🧱 MEASURED-CEILING-AT-SCALE — neither (e) larger-substrate (Lens D) nor (a) amplitude-controlled
+measurement (Lens E) makes phase-SHUFFLE collapse the lift on EVERY seed while the lift itself stays
+robust (c2) and the mechanism stays LIVE (ablation). H_1423's explicit re-open conditions are now
+MEASURED, not assumed:
+
+  (e) LARGER SUBSTRATE (Lens D): at n=8 / T=256 the shuffle DOES collapse on 2/3 seeds (partial
+      timing/variance separation) but NEVER all 3 — a stubborn seed keeps a positive shuffle residual
+      (n=8 seed8 +0.281, T=256 seed9 +0.012/+0.133). The additive-order lens (LC) keeps the FULL
+      carrier-variance pathology at n=8 (shuffle positive every seed). Scaling n up to the exact-MIP
+      ceiling (n=8) does NOT finish the separation.
+
+  (a) AMPLITUDE-CONTROLLED (Lens E): unit-norming the salience so variance is IDENTICAL across arms
+      is the cleanest probe — and it SPLITS the wall into two non-overlapping failure regimes:
+        • n=6: c4 SHUFFLE COLLAPSES on every seed (variance confound REMOVED, as designed) — but the
+          genuine timing lift is not robust (seed 9 c2 FAIL). When variance is truly equalized, there
+          is no every-seed timing lift.
+        • n=8: the timing lift becomes robust (c2 PASS every seed) and ablation is LIVE — but a small
+          POSITIVE shuffle residual survives on 2/3 seeds (+0.004, +0.086) EVEN under equal variance.
+      So even with variance removed, faithful-IIT4 on this engine LCG substrate cannot deliver a
+      timing read-out that is simultaneously (c2 robust) AND (c4 shuffle-collapsing) on every seed.
+
+THE FINDING (a_break_the_wall taxonomy, MEASURED not assumed): the H_1283/H_1423 thalamus TIMING-axis
+engine-native wall is a GENUINE faithful-IIT4 ceiling on this engine LCG oscillator substrate, and it
+SURVIVES both re-open levers. The carrier-variance confound H_1423 named is real (Lens E removes it and
+the every-seed lift evaporates at n=6), and where a robust lift does appear (Lens E n=8) a residual
+phase-shuffle leak remains that is NOT pure amplitude variance — it is the small genuine-but-fragile
+timing signal that does not survive the every-seed shuffle bar. The controls HAVE TEETH throughout
+(anchor reproduces the known engine c4-fail byte-exact; Lens E n=6 shuffle correctly collapses; n=4
+amp-ctrl correctly kills the variance-only lift). a_verified_must_wire: NO lens clears (c2 ∧ c4 ∧
+ablation-LIVE) every seed -> NOTHING engine-wired (correct — no GREEN to wire). The R8 numpy-mirror 🟢
+DIRECTIONAL stands; engine-native it remains a MEASURED ceiling. The wall is now CONFIRMED at the
+exact-MIP scale ceiling (n=8) and under variance-control — not merely deferred.
