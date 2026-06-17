@@ -5752,3 +5752,142 @@ pub fn cereb_mem_compose(cereb_leg: [float], mem_leg: [float],
     return _cereb_mem_tail_arbiter(cereb_leg[0], cereb_leg[2], cereb_leg[1], mean_cereb,
                                    mem_leg[0], mem_leg[2], mem_leg[1], mean_mem)
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ── §  CA3 REPLAY NEXT-ITEM PREDICTOR LANE — learned transition statistics → pattern-completion (H_1427) ──
+// ══════════════════════════════════════════════════════════════════════════════
+//
+// THE GAP it closes (c9 · H_1427 R1, neuro lens c15 a_no_llm_frame_trap). The engine
+// has stores and a forward model, but NONE PREDICTS the next discrete ITEM from LEARNED
+// transition statistics P(next|current) — the hippocampal CA3 recurrent-collateral
+// auto-association → REPLAY pattern-completion computation:
+//   - ImmuneMemory / ImmuneMemoryGrow (H_1227/1231/1288): key→value associative store,
+//     binds items INDEPENDENTLY; holds NO successor structure (on next-item it abstains
+//     or, if forced, returns a single last-seen next — NO frequency aggregation).
+//   - SpatialMap (H_1296): a METRIC space (between-item distance); not order/transition.
+//   - HierGoalStack (H_1294): a GIVEN ordered plan handed to a pointer; here the order is
+//     LEARNED from observed statistics, not handed in.
+//   - VForwardField cerebellum (H_1280): an NLMS regressor of the next CONTINUOUS feature
+//     frame; here the target is a DISCRETE multi-successor conditional (argmax over counts).
+//   - VAdaptFieldB GATE-B (H_1208/1209): the NEAREST lane — it HOLDS a P(next|prev) count
+//     table BUT uses it ONLY as a GROWTH GATE (split a cell when a transition was confidently
+//     anticipated). It NEVER EMITS a next-item PREDICTION. THE SHARPEST DISTINCTNESS:
+//     gate (does the substrate divide?) vs READ-OUT (which item comes next?). CA3 reads it out.
+//
+// H_1427 R1 numpy MIRROR was GREEN 5/5 (DIRECTIONAL): acc_ON 0.761 vs acc_OFF 0.155
+// (PRESENCE +0.606); ON beats the best nearest-lane control by +0.213 (vs1227 episodic
+// last-seen 0.548, vs1280 forward-model 0.162, vs1294 hier-pointer 0.037 — DISTINCT);
+// SHUFFLE 0.130 collapses to baseline; ABLATE == OFF (INERT); OOD abstain 1.000, fab 0.000
+// (NO-FAB). Realized here ENGINE-NATIVE on a CALLABLE faculty (a_engine_native_learning,
+// a_verified_must_wire rung 2/3). The mirror is BYTE-EXACT reproducible by the standalone
+// probe state/1427_temporal_replay_prediction/h1427_ca3_LIVEOP_probe.hexa over the same kernel.
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): CA3ReplayMemory holds a
+// transition COUNT table over item ids + reads out the most-frequent successor. It is NOT an
+// emit/silence gate and NOT a 2nd .clm/.kosmos entry path (a_core_engine_map: the count table
+// is the engine's own transition statistics; .clm via generator L3 + .kosmos via kosmos_io
+// stay single-entry, untouched). ca3_* returns a predicted item id or −1 (ABSTAIN) — NEVER an
+// emit/silence decision — and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction;
+// this lane touches ONLY CA3ReplayMemory). p8: each observed transition is a continuous online
+// count update (cell-division on the conditional structure), not a train/infer split. p1/p2/p3/p6:
+// reads ONLY item ids + their observed transition counts — NO label/persona/identity/RLHF/decoder.
+//
+// CA3ReplayMemory — the engine-native CA3 replay next-item predictor (Ψ-disjoint, ADDITIVE).
+//   n_item   : item alphabet size V (transition table is n_item × n_item).
+//   ctab     : flat row-major count table C[prev*n_item + cur] (observed transitions).
+//   prev_tot : per-prev total transitions observed (len n_item; abstain support source).
+//   min_supp : the most-frequent successor count must be >= min_supp to predict, else ABSTAIN.
+struct CA3ReplayMemory {
+    n_item: int,
+    ctab: [int],
+    prev_tot: [int],
+    min_supp: int
+}
+
+// ca3_replay_new — seed an EMPTY CA3 predictor over n_item items (all counts zero; with no
+// exposure every current item abstains — the H_1427 NO-FAB floor). min_supp frozen (== R1 mirror).
+pub fn ca3_replay_new(n_item: int, min_supp: int) -> CA3ReplayMemory {
+    let mut ct = []
+    let mut i = 0
+    while i < n_item * n_item { ct = ct + [0]  i = i + 1 }
+    let mut pt = []
+    let mut j = 0
+    while j < n_item { pt = pt + [0]  j = j + 1 }
+    return CA3ReplayMemory { n_item: n_item, ctab: ct, prev_tot: pt, min_supp: min_supp }
+}
+
+// ca3_replay_observe — observe ONE transition prev→cur and update the learned conditional
+// statistics online (C[prev][cur] += 1, prev_tot[prev] += 1). The continuous p8 cell-division
+// on the transition structure. Out-of-range ids are ignored (keeps OOD aliens out of the table,
+// so they later ABSTAIN — the NO-FAB property is structural, not a post-hoc filter).
+pub fn ca3_replay_observe(mem: CA3ReplayMemory, prev: int, cur: int) -> CA3ReplayMemory {
+    let n = mem.n_item
+    if prev < 0 || prev >= n || cur < 0 || cur >= n { return mem }
+    let mut ct = mem.ctab
+    let mut pt = mem.prev_tot
+    ct[prev * n + cur] = ct[prev * n + cur] + 1
+    pt[prev] = pt[prev] + 1
+    return CA3ReplayMemory { n_item: n, ctab: ct, prev_tot: pt, min_supp: mem.min_supp }
+}
+
+// ca3_replay_predict — REPLAY pattern-completion: predict the next item from the learned
+// conditional P(next|cur) = argmax_c C[cur][c]. Returns the most-frequent successor id, or −1
+// (ABSTAIN) when cur is out of range / has no model / the top successor count < min_supp.
+// READ-ONLY (no count change) — the recall pass. This is the READ-OUT that GATE-B (H_1208) lacks.
+pub fn ca3_replay_predict(mem: CA3ReplayMemory, cur: int) -> int {
+    let n = mem.n_item
+    if cur < 0 || cur >= n { return -1 }          // OOD alien → abstain
+    if mem.prev_tot[cur] == 0 { return -1 }       // no transition model for cur → abstain
+    let mut best = -1
+    let mut bestc = 0
+    let mut c = 0
+    while c < n {
+        let cnt = mem.ctab[cur * n + c]
+        if cnt > bestc { bestc = cnt  best = c }
+        c = c + 1
+    }
+    if bestc < mem.min_supp { return -1 }         // below support → abstain (NO-FAB)
+    return best
+}
+
+// ca3_replay_conf — the realized conditional probability P(predicted|cur) = topcount/prev_tot[cur]
+// (the replay confidence; 0.0 when abstaining). A read-only diagnostic, NEVER an emit gate.
+pub fn ca3_replay_conf(mem: CA3ReplayMemory, cur: int) -> float {
+    let n = mem.n_item
+    if cur < 0 || cur >= n { return 0.0 }
+    let tot = mem.prev_tot[cur]
+    if tot == 0 { return 0.0 }
+    let mut bestc = 0
+    let mut c = 0
+    while c < n {
+        let cnt = mem.ctab[cur * n + c]
+        if cnt > bestc { bestc = cnt }
+        c = c + 1
+    }
+    if bestc < mem.min_supp { return 0.0 }
+    return to_float(bestc) / to_float(tot)
+}
+
+// ca3_replay_marginal — the OFF/ABLATE baseline: the globally most-frequent next item (ignores
+// cur entirely = no transition model). Used by the smoke ABLATE/OFF cases to prove the lift is
+// the CONDITIONAL structure, not the marginal. Returns −1 only if the table is empty.
+pub fn ca3_replay_marginal(mem: CA3ReplayMemory) -> int {
+    let n = mem.n_item
+    let mut tot = []
+    let mut k = 0
+    while k < n { tot = tot + [0]  k = k + 1 }
+    let mut p = 0
+    while p < n {
+        let mut c = 0
+        while c < n { tot[c] = tot[c] + mem.ctab[p * n + c]  c = c + 1 }
+        p = p + 1
+    }
+    let mut best = -1
+    let mut bestc = 0
+    let mut c2 = 0
+    while c2 < n {
+        if tot[c2] > bestc { bestc = tot[c2]  best = c2 }
+        c2 = c2 + 1
+    }
+    return best
+}

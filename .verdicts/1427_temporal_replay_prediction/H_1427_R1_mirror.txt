@@ -1,0 +1,18 @@
+==============================================================================
+H_1427 — CA3 replay next-ITEM prediction (numpy-mirror, pure-python, DIRECTIONAL)
+==============================================================================
+  seed     ON    OFF   SHUF    ABL  vs1280  vs1227  vs1294  ood_abst  ood_fab
+  1427  0.768  0.172  0.191  0.172   0.199   0.493   0.036     1.000    0.000
+  1428  0.770  0.173  0.055  0.173   0.145   0.624   0.039     1.000    0.000
+  1429  0.743  0.119  0.143  0.119   0.143   0.527   0.037     1.000    0.000
+------------------------------------------------------------------------------
+  MEAN  0.761  0.155  0.130  0.155   0.162   0.548   0.037     1.000    0.000
+
+FROZEN BARS (verbatim from FREEZE):
+  (1) PRESENCE  acc_ON-acc_OFF = +0.606 (>=+0.20, each seed True)  -> PASS
+  (2) DISTINCT  acc_ON-best_ctrl = +0.213 (>=+0.10); each ctrl<ON-0.05=True [vs1280=0.162 vs1227=0.548 vs1294=0.037]  -> PASS
+  (3) SHUFFLE   acc_SHUFFLE=0.130 <= acc_OFF+0.05=0.205  -> PASS
+  (4) ABLATE    |acc_ABLATE-acc_OFF|=0.000 <= 0.03  -> PASS
+  (5) NO-FAB    ood_abstain=1.000(>=0.90) ood_fab_acc=0.000(<=chance+0.05=0.092) -> PASS
+
+VERDICT: GREEN 5/5  [11111]

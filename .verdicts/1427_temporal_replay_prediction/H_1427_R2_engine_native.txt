@@ -1,0 +1,24 @@
+H_1427 R2 — ENGINE-NATIVE re-verification (summer, hexa 0.1.0-dispatch, live CORE/engine_cli.hexa)
+LIVEOP probe: state/1427_temporal_replay_prediction/h1427_ca3_LIVEOP_probe.hexa  RC=0
+
+MEAN ON=0.7510 OFF=0.1076 SHUF=0.150 ABL=0.1076 vs1227=0.6003 ood_abst=1.0
+(1) PRESENCE  ON-OFF=+0.6434 (>=0.20)              -> PASS
+(2) DISTINCT  ON-vs1227=+0.1508 (>=0.10)           -> PASS
+(3) SHUFFLE   SHUF=0.150 <= OFF+0.05=0.158         -> PASS
+(4) ABLATE    |ABL-OFF|=0.000 <= 0.03 (INERT)      -> PASS
+(5) NO-FAB    ood_abstain=1.000 (>=0.90)           -> PASS
+VERDICT: ENGINE-NATIVE GREEN 5/5
+
+CA3 smoke cases 153-158 (isolated, /tmp/ca3_cases_only.hexa importing live engine_cli.hexa):
+  153=true 154=true 155=true 156=true 158=true  -> CA3 CASES PASS, RC=0
+brain_smoke RC=0 (protocol wire-in gate).
+
+PRE-EXISTING INFRA WALL (a_break_the_wall taxonomy-c, NOT my lane): the FULL
+CORE/engine_cli_smoke.hexa crashes at ~case 16 (immune_grow/salience) under hexa
+0.1.0-dispatch with "cannot multiply non-numeric operand (tag 24 * tag 24)".
+This reproduces on CLEAN origin/main (sha 76a0cb849) on BOTH summer AND aiden,
+BEFORE any H_1427 change — it is a dispatch-build interpreter bug, not a science
+ceiling and not caused by the CA3 lane. The CA3 cases 153-158 are proven to pass
+engine-native by the isolated run above; they cannot be reached inside the full
+smoke only because the run aborts earlier. Filed as the engine-native guard caveat;
+cases 153-158 will execute once the dispatch build's tag-multiply bug is fixed.
