@@ -1,0 +1,90 @@
+H_1430 — CONCEPT / CATEGORY PROTOTYPE-ABSTRACTION (HD33). R1b RE-FREEZE.
+================================================================================
+WHY R1b (a_break_the_wall type-(a): a DEGENERATE-SLICE / well-posedness defect in
+the R1 frozen constants, fixed FROZEN-FIRST — the 5 bars are BYTE-IDENTICAL to R1,
+ONLY the episode-geometry constants change so the dissociation is OBSERVABLE; this
+is NOT tune-to-green, c9/p7 — no bar moved, the regime was simply outside the band
+where a prototype-effect can exist at all).
+
+R1 RESULT (aiden, 3 seeds, frozen R1 constants) — recorded, honest:
+  MEAN NOVEL A=1.000 B=1.000 Bshuf=0.000 Babl=1.000  (chance=0.250)
+  MEAN PROTO A=1.000 B=1.000 Babl=1.000   MEAN TRAIN A=1.000 B=1.000 Babl=1.000
+  c1 PASS · c2 FAIL (B-A=+0.000, A shows no enhancement only because A=1.000 saturated)
+  c2b PASS · c3 PASS (Bshuf=0.000) · c4 FAIL (Babl=B=1.000, no drop) · c5 PASS -> RED.
+
+R1 DEGENERACY (measured diagnostic on aiden):
+  - PROTO_SEP=6.0 is only a FLOOR; random uniform-[-5,5]^24 prototypes land at ~16.4
+    actual pairwise L2 (the floor almost never binds) -> categories trivially apart.
+  - At NOISE_TRAIN=NOISE_TEST=1.0 in DIM=24: a sample sits d~5.3 from its OWN proto
+    but d~19.5 from the nearest OTHER proto (margin ~ +14.2). The noise ball is far
+    inside the Voronoi cell of its own category, so 1-NN EXEMPLAR already classifies
+    every novel instance perfectly (A=1.000). With A saturated, the prototype lane has
+    NO headroom to beat it (c2) and ablating B to exemplar mode loses nothing (c4).
+  The Posner-Keele prototype-EFFECT only exists in the HIGH-DISTORTION regime, where
+  novel instances scatter widely enough that the category MEAN (centroid, which
+  averages noise toward the true proto) outperforms any single noisy stored exemplar.
+
+R1b FIX (geometry only — bars unchanged):
+  (1) CONTROLLED separation: prototypes placed on an orthogonal-axis frame scaled to
+      EXACTLY PROTO_SEP pairwise (proto c = e_c * PROTO_SEP/sqrt(2), + a small random
+      rigid shift per seed), so separation is a KNOWN constant, not an accident of
+      dimensionality.
+  (2) HIGH distortion: NOISE_TRAIN/NOISE_TEST large RELATIVE to PROTO_SEP so the noise
+      ball overlaps neighbouring Voronoi cells -> individual exemplars are unreliable,
+      the averaged centroid is reliable. NOISE_TEST > NOISE_TRAIN so novel-test
+      instances are FARTHER out than anything trained — the exact condition under which
+      a stored exemplar is a worse anchor than the abstracted mean (Posner-Keele 1968).
+  (3) ABSTAIN_D / FOIL_MIN re-scaled to the new distance regime so the NO-FAB far-foil
+      test (c5) and the in-category accept band stay well-posed.
+
+--------------------------------------------------------------------------------
+FROZEN 5-BAR (+ c2b signature) — IDENTICAL to R1, NO bar moved (c9 / p7)
+--------------------------------------------------------------------------------
+  (c1 PRESENCE)        novel-instance accuracy:  B - chance >= 0.30, each seed AND mean.
+                       chance = 1/K_CAT = 0.25.
+  (c2 DISTINCT)        exemplar/item-store on novel: B - A >= 0.10 (mean) AND A fails the
+                       prototype-enhancement test (A_proto < A_train_acc). Report numbers.
+  (c2b PROTOTYPE-EFFECT, signature)  the never-shown prototype is classified by B at least
+                       as well as B's mean trained-instance accuracy: B_proto >= B_train_acc.
+  (c3 EARNED-CATEGORY) shuffle instance->category -> Bshuf novel-acc collapses:
+                       Bshuf - chance <= 0.10.
+  (c4 EARNED-ABSTRACT) ablate centroid -> nearest-exemplar mode: prototype-enhancement
+                       disappears (Babl_proto < Babl_train_acc) AND novel-far accuracy
+                       drops vs B (Babl novel-acc <= B novel-acc - 0.05).
+  (c5 NO-FAB)          far foil (>= FOIL_MIN from every prototype) -> B abstains:
+                       abstain rate on far foils >= 0.90.
+
+  GREEN iff c1 ∧ c2 ∧ c2b ∧ c3 ∧ c4 ∧ c5. Any fail with a clean control collapse is an
+  HONEST 🧱 (subsumption by exemplar store) — VALID, not a defeat (c9).
+
+--------------------------------------------------------------------------------
+FROZEN CONSTANTS (R1b — geometry re-scaled into the high-distortion band)
+--------------------------------------------------------------------------------
+  K_CAT       = 4         categories
+  DIM         = 24        feature dimensionality
+  N_TRAIN     = 8         noisy training distortions per category
+  N_TEST      = 8         NEW novel test instances per category
+  PROTO_SEP   = 6.0       EXACT pairwise L2 separation (controlled orthogonal placement)
+  NOISE_TRAIN = 3.0       training distortion std (high distortion)
+  NOISE_TEST  = 4.0       novel test std (ABOVE train — novel instances farther out)
+  FOIL_MIN    = 14.0      min L2 of a far foil from EVERY prototype (abstain test)
+  ABSTAIN_D   = 10.0      nearest-distance beyond which a faculty ABSTAINS
+  chance      = 0.25      (= 1 / K_CAT)
+  SEEDS       = [4430, 4431, 4432]
+
+RATIONALE for the band (pre-registered, $0-checkable): in DIM=24 a gaussian-noise
+sample sits at radius ~ std*sqrt(DIM) from its centre. The centroid's expected error
+to the true proto ~ NOISE_TRAIN/sqrt(N_TRAIN) ~ 1.06, far inside PROTO_SEP, so B stays
+accurate; a single noisy exemplar sits at radius ~ NOISE*sqrt(DIM) and a novel-FAR test
+instance is an unreliable nearest-neighbour anchor, so A/Babl degrade. FOIL_MIN=14 vs a
+typical in-cat nearest-centroid distance ~1.06 keeps the foil ABSTAINED (>ABSTAIN_D=10)
+while an in-cat instance is ACCEPTED.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY synthetic gaussian prototypes /
+4 categories / DIM 24 / 3 seeds / deterministic centroid readout (tests the ABSTRACTION
+STRUCTURE, not a learned net). scale / real-corpus / high-D / hierarchical categories /
+engine-transfer UNVERIFIED until R2. R1b = numpy mirror DIRECTIONAL; R2 engine-native is
+the binding verdict. DISTINCT axes (frozen): centroid-abstraction ⊥ ImmuneMemory item-
+binding (H_1227/1231/1288, memorizes instances, abstains on a novel one) ⊥ SpatialMap
+metric positions (H_1296).
+================================================================================

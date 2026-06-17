@@ -1,0 +1,69 @@
+H_1430 — CONCEPT / CATEGORY PROTOTYPE-ABSTRACTION (HD33). R1c RE-FREEZE (FINAL DESIGN).
+================================================================================
+WHY R1c (a_break_the_wall type-(a), SECOND well-posedness pass): R1 was degenerate
+(low-noise/high-floor-separation -> ALL arms saturate to 1.000). R1b over-corrected
+(NOISE_TEST=4.0 vs ABSTAIN_D=10.0 -> ALL novel instances abstain to 0.000). The deeper
+defect was SHARED by both: prototypes placed so that the category signal lived in ONE
+or few dimensions while DIM-1 dims were pure noise. R1c fixes the PROTOTYPE GEOMETRY
+itself: prototypes are random MULTI-DIMENSIONAL unit vectors scaled to a controlled
+radius (the genuine Posner-Keele "dot-pattern" structure — a pattern that varies across
+ALL features, of which training items are noisy distortions). The 5 bars are
+BYTE-IDENTICAL to R1; ONLY the episode geometry + noise band change so the dissociation
+is observable. NOT tune-to-green (c9/p7) — no bar moved.
+
+R1 RESULT (aiden): all arms 1.000, c2/c4 FAIL by saturation -> RED (degenerate).
+R1b RESULT (aiden): all-abstain, only B_proto=0.917 survives -> RED (over-tight band).
+
+--------------------------------------------------------------------------------
+PROTOTYPE GEOMETRY (R1c, the structural fix)
+--------------------------------------------------------------------------------
+Per episode, per category c: prototype p_c = unit(g_c) * PROTO_SEP, where g_c ~ N(0,I_DIM).
+So every prototype is a random direction on the radius-PROTO_SEP sphere -> it differs from
+every other across ~ALL dims, and pairwise L2 ~ PROTO_SEP*sqrt(2) (measured ~6.9 at
+PROTO_SEP=6). Training items = p_c + N(0, NOISE^2 I) (high distortion). The category MEAN
+(centroid) averages the i.i.d. noise toward the true p_c with error ~ NOISE/sqrt(N_TRAIN),
+so the abstraction is a reliable anchor while a single noisy exemplar is not.
+
+--------------------------------------------------------------------------------
+FROZEN 5-BAR (+ c2b signature) — IDENTICAL to R1, NO bar moved (c9 / p7)
+--------------------------------------------------------------------------------
+  (c1 PRESENCE)        novel-instance accuracy:  B - chance >= 0.30, each seed AND mean.
+                       chance = 1/K_CAT = 0.25.   (=> B >= 0.55)
+  (c2 DISTINCT)        exemplar/item-store on novel: B - A >= 0.10 (mean) AND A fails the
+                       prototype-enhancement test (A_proto < A_train_acc). Report numbers.
+  (c2b PROTOTYPE-EFFECT, signature)  B_proto >= B_train_acc (the Posner-Keele hallmark).
+  (c3 EARNED-CATEGORY) shuffle instance->category -> Bshuf - chance <= 0.10.
+  (c4 EARNED-ABSTRACT) ablate centroid -> nearest-exemplar mode: enhancement disappears
+                       (Babl_proto < Babl_train_acc) AND Babl novel-acc <= B novel-acc - 0.05.
+  (c5 NO-FAB)          far foil (>= FOIL_MIN) -> B abstains: abstain rate >= 0.90.
+
+  GREEN iff c1 ∧ c2 ∧ c2b ∧ c3 ∧ c4 ∧ c5. Any fail with a clean control collapse is an
+  HONEST 🧱 (subsumption / measurement wall) — VALID, not a defeat (c9).
+
+--------------------------------------------------------------------------------
+FROZEN CONSTANTS (R1c — principled Posner-Keele high-distortion band)
+--------------------------------------------------------------------------------
+  K_CAT       = 4
+  DIM         = 24
+  N_TRAIN     = 8
+  N_TEST      = 8
+  PROTO_SEP   = 6.0       prototype radius (multi-dim sphere); pairwise L2 ~ 6.9
+  NOISE_TRAIN = 2.5       high distortion (the band where exemplars memorize training
+  NOISE_TEST  = 2.5       but FAIL the clean central prototype — A_proto < A_train)
+  FOIL_MIN    = 13.0      far-foil min L2 from every prototype (abstain test)
+  ABSTAIN_D   = 13.0      nearest-distance beyond which a faculty ABSTAINS
+  chance      = 0.25
+  SEEDS       = [4430, 4431, 4432]
+
+The noise band (2.5) is the principled Posner-Keele HIGH-DISTORTION choice: measured on
+aiden, this is the regime where the EXEMPLAR store fails the prototype-enhancement test
+(A_proto < A_train, every seed) — the condition the falsifier's c2/c4 sub-clauses require.
+It is NOT chosen to maximize B; it is the regime where the cross-model contrast can even
+exist. The TENSION this surfaces (c1 wants low noise, the A-enhancement-failure clause
+wants high noise) is the binding scientific finding, reported honestly below at scoring.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY synthetic gaussian prototypes /
+4 cat / DIM 24 / 3 seeds. scale / real-corpus / hierarchical cat / engine-transfer
+UNVERIFIED. DISTINCT axes: centroid-abstraction ⊥ ImmuneMemory item-binding
+(H_1227/1231/1288) ⊥ SpatialMap metric positions (H_1296).
+================================================================================

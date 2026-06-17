@@ -1,0 +1,132 @@
+H_1430 — CONCEPT / CATEGORY PROTOTYPE-ABSTRACTION (HD33). FROZEN FALSIFIER.
+================================================================================
+PRE-REGISTERED BEFORE ANY SCORING. $0 CPU. gradient-free. p7 (no perplexity).
+3 seeds [4430, 4431, 4432]. frozen-first · anti-Goodhart controls (shuffle +
+ablate + the signature prototype-enhancement test). a_no_llm_frame_trap
+(prototype theory — Rosch 1973; Posner-Keele 1968 dot-pattern paradigm; c15) —
+NOT an LLM recipe. a_scale_honest_scope (toy, transfer UNVERIFIED).
+
+--------------------------------------------------------------------------------
+SUBSYSTEM (why MISSING from the live engine)
+--------------------------------------------------------------------------------
+CONCEPT / CATEGORY abstraction: from noisy training INSTANCES the brain abstracts
+a category PROTOTYPE (a centroid in feature space) and classifies NOVEL never-seen
+instances — including the prototype itself, which is often classified BETTER than
+the trained instances even though it was NEVER shown (the Posner-Keele prototype-
+enhancement effect). This is generalization-by-ABSTRACTION: a running category
+centroid that summarizes a feature DISTRIBUTION, not a memory of specific items.
+
+The live engine has NO such structure:
+  - ImmuneMemory / ImmuneMemoryGrow (H_1227/1231/1288) binds each fact -> value
+    INDEPENDENTLY by FNV-trigram key affinity. It MEMORIZES the trained instances;
+    on a NOVEL never-bound instance its nearest-key affinity falls off and it
+    abstains / guesses at chance, and it can NEVER classify the unseen prototype at
+    least as well as trained exemplars — it has no binding for the prototype, only
+    for the specific items it stored. It is exemplar/item memory, not abstraction.
+  - SpatialMap (H_1296) holds metric POSITIONS of specific landmarks and answers a
+    relational distance query; it is not a learned class boundary over a feature
+    distribution and abstracts no category centroid.
+  - OtherMindModel (H_1293), HierGoalStack (H_1294), WorkMemBuffer (H_1282),
+    VForwardField (H_1280), HomeostaticDrive (H_1292): a separate belief store /
+    an ordered plan / leaky maintenance / a next-emit forward model / a 1-D scalar
+    integrator — none abstracts a category centroid from instances.
+
+FALSIFIABLE CLAIM: a PROTOTYPE-ABSTRACTION faculty (a running per-category centroid)
+classifies NOVEL instances and shows the prototype-enhancement effect; a faithful
+exemplar/item-store stand-in (memorize trained instances, classify by nearest
+TRAINED instance) provably (a) does WORSE on novel-far instances and (b) CANNOT
+show the prototype-enhancement effect. If the centroid lane matches the exemplar
+store (or its lift survives shuffling instance->category labels / ablating the
+abstraction to nearest-exemplar mode), abstraction adds NOTHING -> honest 🧱.
+
+--------------------------------------------------------------------------------
+TASK (substrate-derived, NO injected label/persona/ethics — p1/p2/p3/p6)
+--------------------------------------------------------------------------------
+Posner-Keele-style design in feature space:
+  K_CAT = 4 categories. Each category c has a HIDDEN prototype vector p_c in R^DIM
+  (DIM = 24), drawn once per episode; prototypes are forced apart by a minimum
+  pairwise L2 separation PROTO_SEP so categories are coherent and distinguishable.
+  TRAINING: per category, N_TRAIN = 8 NOISY distortions of p_c (gaussian noise
+  std = NOISE_TRAIN) are presented as (instance, category) pairs. The prototype
+  itself is NEVER in the training set.
+  TEST (NEW, disjoint from training):
+    - NOVEL instances: N_TEST = 8 per category, NEW distortions (std = NOISE_TEST),
+      never seen in training. Accuracy = argmin over a faculty's category score.
+    - PROTOTYPE: the never-shown centroid p_c of each category (the signature item).
+    - FAR FOIL: a vector far (>= FOIL_MIN) from EVERY prototype -> must abstain.
+
+Score = classification accuracy over the NOVEL test instances (headline), plus the
+PROTOTYPE accuracy (the signature enhancement test), plus far-foil abstain rate.
+p7 script-checkable (NOT perplexity, NOT an LLM judge).
+
+--------------------------------------------------------------------------------
+ARMS (the SAME training instances feed every arm)
+--------------------------------------------------------------------------------
+  A  EXEMPLAR / ITEM-STORE stand-in (faithful H_1227 distinctness control):
+        memorizes each TRAINED instance->category; classifies a test vector by its
+        NEAREST TRAINED instance (1-NN exemplar). NO category centroid abstracted.
+  B  PROTOTYPE lane: maintains a RUNNING per-category centroid (mean of observed
+        instances); classifies by nearest centroid. The abstraction.
+  Bshuf  EARNED-CATEGORY shuffle: instance->category labels permuted before the
+        centroids are formed -> centroids become mixtures of categories (structure
+        destroyed; feature frequency intact) -> must collapse.
+  Babl   EARNED-ABSTRACTION ablate: the centroid abstraction is removed -> classify
+        by nearest TRAINED instance only (== exemplar mode) -> the prototype-
+        enhancement effect must DISAPPEAR and novel-far accuracy drop.
+
+A confident-classification threshold gates abstain: if the best category score
+(nearest distance) exceeds ABSTAIN_D (too far from every centroid/exemplar), the
+faculty ABSTAINS (no confident category) — the NO-FAB discipline on far foils.
+
+--------------------------------------------------------------------------------
+FROZEN 5-BAR (+ c2b signature) — NO bar moved after scoring (c9 / p7)
+--------------------------------------------------------------------------------
+  (c1 PRESENCE)        novel-instance accuracy:  B - chance >= 0.30, each seed AND
+                       mean. chance = 1/K_CAT = 0.25.
+  (c2 DISTINCT)        exemplar/item-store on novel instances: B - A >= 0.10 (mean)
+                       AND A fails the prototype-enhancement test (A's prototype
+                       accuracy < A's trained-instance accuracy, i.e. NO enhancement).
+                       Report the numbers. Partial-solve -> honest subsumption (🧱).
+  (c2b PROTOTYPE-EFFECT, signature)  the never-shown prototype is classified by B
+                       at least as well as B's mean trained-instance accuracy:
+                       B_proto >= B_train_acc (pre-registered inequality; the
+                       Posner-Keele hallmark).
+  (c3 EARNED-CATEGORY) shuffle instance->category -> Bshuf novel-acc collapses:
+                       Bshuf - chance <= 0.10.
+  (c4 EARNED-ABSTRACT) ablate centroid -> nearest-exemplar mode: the prototype-
+                       enhancement effect disappears (Babl_proto < Babl_train_acc,
+                       i.e. NO enhancement) AND novel-far accuracy drops vs B
+                       (Babl novel-acc <= B novel-acc - 0.05). Proves ABSTRACTION
+                       beyond exemplar storage.
+  (c5 NO-FAB)          far foil (>= FOIL_MIN from every prototype) -> B abstains:
+                       abstain rate on far foils >= 0.90.
+
+  GREEN iff c1 ∧ c2 ∧ c2b ∧ c3 ∧ c4 ∧ c5. Any fail with a clean control collapse
+  is an HONEST 🧱 (subsumption by exemplar store) — VALID, not a defeat (c9).
+
+p1/p2/p3/p6 GUARD: every arm reads ONLY learned centroids/exemplars + the test
+feature vector; NO injected category label, NO persona, NO "you are X", NO RLHF.
+The category score is geometry over learned summaries, SCORED only. shuffle + ablate
+BOTH collapse = the lift is the abstracted prototype, not memorized exemplars.
+
+--------------------------------------------------------------------------------
+FROZEN CONSTANTS
+--------------------------------------------------------------------------------
+  K_CAT       = 4         categories
+  DIM         = 24        feature dimensionality
+  N_TRAIN     = 8         noisy training distortions per category
+  N_TEST      = 8         NEW novel test instances per category
+  NOISE_TRAIN = 1.0       training distortion std
+  NOISE_TEST  = 1.0       novel test distortion std (same regime, disjoint draws)
+  PROTO_SEP   = 6.0       min pairwise L2 separation between category prototypes
+  FOIL_MIN    = 12.0      min L2 of a far foil from EVERY prototype (abstain test)
+  ABSTAIN_D   = 9.0       nearest-distance beyond which a faculty ABSTAINS
+  chance      = 0.25      (= 1 / K_CAT)
+  SEEDS       = [4430, 4431, 4432]
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): TOY synthetic gaussian
+prototypes / 4 categories / DIM 24 / 3 seeds / deterministic centroid readout
+(tests the ABSTRACTION STRUCTURE, not a learned net). scale / real-corpus /
+high-D features / hierarchical categories / engine-transfer UNVERIFIED until R2.
+R1 = numpy mirror DIRECTIONAL; R2 engine-native is the binding verdict.
+================================================================================
