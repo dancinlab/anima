@@ -1,3 +1,15 @@
+## 2026-06-18 — chore(cleanup): WIP 보존 + 아티팩트-통합 cleanup SKIP (c9 정직 — 전제 불일치)
+
+repo cleanup cycle. 작업 전 미커밋 5건(`CORE/bytegpt_decode.hexa`, `ING.jsonl`, `state/bytegpt-fast-matmul/RESULTS.md` + state/1431 신규 2파일) 보존 커밋(`wip: preserve in-progress before cleanup`).
+
+- **TASK B(아티팩트 → state/ 통합) 전면 SKIP — 전제가 이 repo 거버넌스와 충돌(c9)**: `.verdicts/`·`bench/`·`experiments/`·`scripts/scratch/` 는 stray 아티팩트 더미가 **아님** — 전부 load-bearing:
+  - `.verdicts/` (1778 파일) = **frozen verdict SSOT**. CLAUDE.md 의 `a_claim_verify`/`a_claim_manifest`/`a_hf_registry` 규칙이 `.verdicts/<slug>/<id>.txt` 를 state/ 와 **의도적으로 분리된** 검증면으로 박제 지정. ARCHITECTURE.json L510 에 독립 top-level 노드. PAPER companion `verify-ledger.json` 다수 + 카드 수백 개가 `.verdicts/<slug>/` 포인터로 참조. `CLAIMS.tape` 은퇴 ledger 도 `.verdicts/claims-tape-retirement/` 에 거주. → state/ 로 합치면 검증면 규약 위반 + 수백 포인터 끊김. **29개 디렉터리명이 state/ 와 충돌**(상보적: state/=코드, .verdicts/=결과 — dir-merge 필요, wholesale-move 불가; `1403_convmoe_streaming_decode` 3파일 file-level 충돌이나 byte-identical).
+  - `bench/` (165, 59+ 코드참조) · `experiments/` (247, 82+ 코드참조) = `.hexa`/`.py` 소스의 상대 load-path. `anima-core/runtime/path_setup.hexa` 가 `bench/`·`experiments/` 폴더 레이아웃을 명시 문서화.
+  - `scripts/scratch/` (12, 5 참조) = harness 설정 scratchDir. `harness.config.json` `"scratchDir": "scripts/scratch"` + `.harness/enforcement.json` lint 규칙 다수 + ARCHITECTURE.json `gen_file_index.sh` 참조 + CORE `.hexa` provenance 주석. → 옮기면 harness 자체 lint enforcement 깨짐.
+  - 결론: 4개 dir 모두 hardcoded 참조가 dozens~hundreds 규모 → 과제 hard-rule("MANY files 참조 시 STOP and report") 적용. NO MOVE. CLAUDE.md tree 도 "state/ = single artifact root" 로 고치지 **않음**(거짓이 됨, c9).
+- **TASK C(루트 stray 문서 → SSOT fold)도 fold 없음**: 루트 ~100 `.md` 는 거의 전부 domain SSOT 쌍(`<DOMAIN>.md`+`.log.md`)·`README.*` 다국어·외부공유 스냅샷(FINDINGS)·live 캠페인 트래커(HANDOFF 947줄, FIRE_TRACKING)·backward-compat stub(INDEX) — 전부 이미 `📍 SSOT` quickref 헤더 보유(c4 준수, scatter 아님). 명백한 fold-then-rm 후보 0개. 과제 "When in doubt, LEAVE IT" + surgical(c10) 준수 → 무손실 보존.
+- **검증(c2)**: `hexa --version` → `hexa 0.1.0-dispatch` OK. full smoke 는 PRE-EXISTING dispatch-build interpreter bug(engine_cli_smoke ~case16 abort, ARCHITECTURE.json meta.guard_baseline 기록)로 이번 변경 무관 — 코드 0줄 변경(보존 커밋만)이라 회귀 위험 없음.
+
 ## 2026-06-17 — fix(CORE/bytegpt_decode): 303M engine-forward parity 돌파 — i64-subscript hoist (byte-exact)
 
 엔진-네이티브 measurement decode 의 forward argmax 가 torch golden 과 갈리던(227≠32) 진짜 원인을 per-layer activation bisect 로 국소화 → 첫 발산이 임베딩(layer-0)이고 RUNTIME **i64-subscript drop-to-0** 버그였음(codegen 아님, emit C 는 정확): i64-특화배열 원소가 `hexa_index_get→__hx_to_double→hexa_float→farr_set` 라운드트립에서 0 으로 저장됨(float 배열원소는 안 깨짐, 출력만 하면 OK, 저장 시만). CORE decode 4개 window-fill 루프(`bytegpt_decode_argmax`/`_topk_sampled`/`grounded`/`grounded_abstain`)의 `farr_set(ids,p,to_float(toks[start+p]))` 를 hoist(`let tv=toks[start+p]; farr_set(ids,p,to_float(tv))`)로 우회 = 진짜 fix(hoist-only, net diff 4줄).
