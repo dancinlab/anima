@@ -1,0 +1,49 @@
+H_1431 — BIND-compose (G6 IDEATION ★ FALS-depth wall direct hit)
+FROZEN-FIRST pre-registration. Declared BEFORE any 303M decode is scored.
+NO tune-to-green (c9 / p7). Bars below are immutable post-hoc.
+
+DIAGNOSIS (H_1314 verbatim): the 303M mouth "produces a COMPARATIVE shape OR a
+MEASURABLE shape but cannot BIND them into one negatable declarative claim — the
+capacity-limited step." Each leg in-capacity; the BIND is the wall.
+
+ANGLE (H_1397 emit-compose / H_1414 mem×ToM arbiter pattern): pull the BIND out of
+the mouth's internal generation into an EXTERNAL DETERMINISTIC compose lane. The mouth
+supplies a RELATION fragment (primed for a comparator) + a MEASURE fragment (primed for
+a measurable), each in-capacity; the lane deterministically WELDS the mouth's OWN
+comparator + measurable + content into one negatable claim; the FROZEN H_1305 detector
+scores the weld. The lane authors ZERO detector tokens (NO-FAB).
+
+FIXED METHOD:
+  - detector       = H_1305 `_is_falsifiable`, imported VERBATIM (not redefined).
+  - decode path    = gauge_lib._decode top-k=40 temp=0.7 max_new=110 (the live G6 path).
+  - ckpt           = state/chat_303m/h1129c_chat.pt (303M); corpus = data/corpus.txt.
+  - seeds          = [7, 4302, 4303]; subjects = 5 corpus-concept core nouns (H_1314 set).
+  - relation seed  = "a relationship about {subj}: it tends to be "
+  - measure seed   = "something we could observe about {subj}: the "
+  - weld schema    = "the {cA} is {comp} when its {meas} of {cB} shifts" (function words
+                     only; {comp},{meas},{cA},{cB} are MOUTH-EMITTED).
+  - extraction     = first frozen-COMPARATOR token of the relation fragment + first frozen-
+                     MEASURABLE token of the measure fragment + mouth content words.
+  - bind fails (claim="") if the mouth supplied no comparator OR no measurable (NO-FAB).
+
+FROZEN 5-BAR (PASS/FAIL fixed here):
+  (1) FALS>=1 cross        : mean FALS(COMPOSE) >= 1     (breaks the 0.667/0.0 plateau)
+  (2) count>=5 distinct    : mean DIST(COMPOSE) >= 5     (pairwise token-Jaccard < 0.5)
+  (3) shuffle-bind COLLAPSE: FALS(COMPOSE) >= FALS(SHUFFLE_BIND) + 1
+        (comparator-frag paired with a RANDOM-derangement measurable-frag; if FALS
+         survives, the bind is a generic concat artifact, not the earned pairing)
+  (4) ablate-compose INERT : FALS(COMPOSE) >= FALS(ABLATE) + 1
+        (ABLATE = compose OFF = single flat relation-seed decode = the H_1314 plateau;
+         the lane must be load-bearing)
+  (5) NO-FAB audit CLEAN   : no priming seed AND no weld function-token carries a frozen
+        COMPARATOR/MEASURABLE token (else trivially satisfies the detector). corpus-concept
+        leak => ABORT.
+
+VERDICT LOGIC:
+  🟢 GREEN  iff (1)&(2) cross AND (3)&(4)&(5) controls survive.
+  🧱 WALL   iff NOT(1) AND FALS(COMPOSE) <= FALS(ABLATE)  (BIND also capacity-bound — valid
+            result, c9; grounds H_1433 7B falsifier).
+  🟠 PARTIAL otherwise (neither clean GREEN nor clean ablate==compose WALL).
+
+NO prior G6 attempt re-run: H_1305 (p7 detector + composition route), H_1309 (curiosity
+budget), H_1314 (form scaffold). This is the EXTERNAL-BIND angle, distinct from all three.

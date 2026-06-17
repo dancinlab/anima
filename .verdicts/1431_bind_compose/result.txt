@@ -1,0 +1,42 @@
+H_1431 — BIND-compose (G6 IDEATION ★ FALS-depth wall direct hit)
+TIER: 🧱 BIND-CAPACITY-BOUND (frozen-bar literal = 🟠 PARTIAL; substance = capacity wall, c9)
+ckpt: state/chat_303m/h1129c_chat.pt (303M) · device=cuda(summer) · seeds [7,4302,4303]
+detector: H_1305 _is_falsifiable VERBATIM · calibration 10/10
+
+FROZEN 5-BAR (mean over 3 seeds; R2 = union-extraction, R1 slot-strict identical numbers):
+  arm            DIST     FALS
+  COMPOSE        0.3333   0.3333
+  SHUFFLE_BIND   0.0      0.0
+  ABLATE         4.6667   0.0
+
+  (1) FALS>=1 cross         : 0.3333 -> FAIL
+  (2) count>=5 distinct     : 0.3333 -> FAIL
+  (3) shuffle-bind COLLAPSE : 0.3333 >= 0.0+1 -> FAIL (vacuous — compose never reached >=1)
+  (4) ablate-compose INERT  : 0.3333 >= 0.0+1 -> FAIL (compose adds +0.333 over ablate, < +1)
+  (5) NO-FAB audit CLEAN    : PASS (the audit CAUGHT a draft "when" COMPARATOR leak in the
+                              weld template on the first run and ABORTED — p7 teeth — then ran
+                              CLEAN after the weld was re-frozen to pure function words)
+  crossed(1&2)=False  controls(3&4&5)=False  GREEN=False
+
+DECISIVE BOTTLENECK DIAGNOSTIC (bottleneck_diag.txt) — across 15 COMPOSE ideas (5 subjects
+× 3 seeds), how often did the 303M mouth emit the EXACT frozen detector tokens needed to weld:
+  emitted a frozen COMPARATOR token : 3/15  (20%)
+  emitted a frozen MEASURABLE token : 4/15  (27%)
+  emitted BOTH (the weld precondition): 0/15 (0%)
+
+READING (c9, honest): the BIND-compose lane does NOT cross the FALS floor. The external
+deterministic weld is sound and Ψ-disjoint, the NO-FAB audit is CLEAN, and the lane manufactured
+a NON-ZERO FALS (0.333 > ablate 0.0 — one falsifiable claim across 15 ideas via a cross-idea
+union under a specific permutation), so the literal frozen WALL flag is False (FALS_compose >
+FALS_ablate). BUT the bottleneck diagnostic shows the SUBSTANCE is a capacity wall: the 303M
+mouth emits each leg only weakly (comparator 20%, measurable 27%) and emits BOTH exact frozen
+tokens for the SAME idea in 0/15 cases — so the bind has nothing to weld. Handing the BIND to
+an external lane does NOT rescue G6 FALS-depth, confirming the H_1314/H_1309 capacity thesis
+from a THIRD, independent angle (external-bind, after composition-route H_1305 and form-scaffold
+H_1314). The mouth produces comparator-SEMANTICS ("tends to be", "correlate", "between") and
+measurable-SEMANTICS ("number", "measure", "value") but rarely the EXACT frozen lexical tokens,
+and never both at once — the detector cannot be loosened (that is tune-to-green / moving the
+frozen bar, forbidden). NO wiring (did not cross). This grounds H_1433 (7B falsifier): the
+prediction is that a 7B mouth emits both exact tokens densely enough for the external bind to
+weld a falsifiable claim — the BIND becomes externally fixable only once each leg is reliably
+in-capacity at the LEXICAL (not just semantic) level.
