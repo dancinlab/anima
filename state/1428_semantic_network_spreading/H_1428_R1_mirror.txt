@@ -1,0 +1,42 @@
+================================================================================
+H_1428 — SEMANTIC-NETWORK / SPREADING-ACTIVATION (2-hop) — R1 numpy MIRROR
+================================================================================
+seed 4428:
+   FULL     1hop=1.000 2hop=1.000 pooled=1.000
+   ITEM     1hop=0.500 2hop=0.600 pooled=0.550
+   SPATIAL  1hop=0.950 2hop=0.650 pooled=0.800
+   SHUFFLE  1hop=0.950 2hop=1.000 pooled=0.975
+   ABLATED  1hop=1.000 2hop=0.550 pooled=0.775
+   OOV spread fires a node: False (NO-FAB wants False)
+seed 4429:
+   FULL     1hop=1.000 2hop=1.000 pooled=1.000
+   ITEM     1hop=0.700 2hop=0.650 pooled=0.675
+   SPATIAL  1hop=0.950 2hop=0.500 pooled=0.725
+   SHUFFLE  1hop=1.000 2hop=1.000 pooled=1.000
+   ABLATED  1hop=1.000 2hop=0.500 pooled=0.750
+   OOV spread fires a node: False (NO-FAB wants False)
+seed 4430:
+   FULL     1hop=1.000 2hop=1.000 pooled=1.000
+   ITEM     1hop=0.500 2hop=0.700 pooled=0.600
+   SPATIAL  1hop=0.800 2hop=0.550 pooled=0.675
+   SHUFFLE  1hop=0.950 2hop=1.000 pooled=0.975
+   ABLATED  1hop=1.000 2hop=0.450 pooled=0.725
+   OOV spread fires a node: False (NO-FAB wants False)
+--------------------------------------------------------------------------------
+MEAN FULL    pooled=1.000  2hop=1.000
+MEAN ITEM    pooled=0.608
+MEAN SPATIAL 2hop=0.567  (metric stand-in on the metric-VIOLATING set)
+MEAN SHUFFLE pooled=0.983
+MEAN ABLATED 2hop=0.500
+OOV spread fires (any seed): False  (NO-FAB wants False)
+--------------------------------------------------------------------------------
+FROZEN 5-BAR (each seed AND mean):
+c1 PRESENCE     FULL pooled>=0.80          : True   (pooled=1.000)
+c2 DISTINCT     ITEM pooled<=0.65          : False   (item=0.608)
+                SPATIAL 2hop<=0.65 (metric) : True   (spatial2=0.567)
+c3 EARNED-EDGES SHUFFLE pooled<=0.65       : False   (shuf=0.983)
+c4 EARNED-SPREAD ABL 2hop<=0.65 & FULL 2hop>=0.80: True   (abl2=0.500 full2=1.000)
+c5 NO-FAB       OOV spread fires nothing    : True   (oov_fires=False)
+================================================================================
+VERDICT (R1 mirror, DIRECTIONAL): RED / WALL
+================================================================================
