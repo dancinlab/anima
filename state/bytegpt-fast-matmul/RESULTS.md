@@ -144,3 +144,15 @@ host (was tight at 24GB). (Residual 18GB is the runtime holding freed farrs / tr
 intermediates — a further reduction needs runtime farr-table compaction, but 18GB on 30GB is
 workable for the serialized 5-bar.) bg_load_ranged / *_ranged / topk_sampled_ranged all
 inherit this automatically. Commit aa2b81633.
+
+## CORRECTION (honest, c9) — read_f32_at is NOT portable; reverted from the build path
+The read_f32_at load-RSS fix (24.3→18.1GB) is REAL and byte-identical ON SUMMER (verified
+max|Δ|=0, ran clean), but read_f32_at is only in NEWER hexa builds — mini's installed
+/Users/mini/.hx toolchain does NOT have the builtin (fresh compile = "undeclared identifier
+read_f32_at"; an earlier 'compile ok' was a stale cache). Shipping it unconditionally would
+break the build on any host with an older hexa (CI, mini). So _bg_rd_farr_at is REVERTED to
+the portable read_bytes_at path (compiles everywhere; peak stays ~24GB). The lower-RSS path is
+documented in-code as a one-line opt-in swap for hosts whose hexa has read_f32_at. The genuine
+fix remains runtime-level (RFC 025 mmap). NET: the load wall stands at ~24GB (fits a clean
+30GB host serialized, as the completed NSUBJ=2 pilot proved); the forward-speed result is
+unaffected and portable.
