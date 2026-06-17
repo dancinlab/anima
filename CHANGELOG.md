@@ -1,3 +1,12 @@
+## 2026-06-17 — governance(CLAUDE.md): a_engine_native_learning HARD-GATE 강화 — gate/ideation/G6/Φ verdict 는 엔진-네이티브 증거 없이 박제 불가 + 자가점검 의무
+
+a_engine_native_learning 에 🔒 HARD-GATE(BLOCKING) + SELF-CHECK 추가 (사용자 지시 "강제 수준 다시 강화"):
+- gate/ideation/G6/Φ/recombination/depth 류 모든 verdict tier(🟢·🧱·🟠·천장)는 증거 artifact 가 live CORE 디코드(CORE/clm_decode·bytegpt_decode·engine_cli.hexa)를 호출한 .hexa 가 아니면 = `.py`+torch/gauge_lib/numpy 미러면 자동 DIRECTIONAL, terminal 아님. torch-side 만으로 박제 = c9 위반.
+- 자가점검 의무: verdict 박제 직전 `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` 비어있지 않으면 카드 wired/verdict 를 DIRECTIONAL 로 적고 엔진-네이티브 재측정을 ING follow-on 등록. 엔진-네이티브면 .hexa 경로 카드 명시.
+- gauge_lib 가 torch.no_grad MONITOR-ONLY(a_train_inline_gauge)임을 핑계 금지.
+
+precedent: G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 박제됨 → 이 규칙으로 차단. CORE/*.hexa·ARCHITECTURE.json UNTOUCHED. 후속(ING): 엔진서 측정 안 한 모든 가설 engine-native 재검증.
+
 ## 2026-06-17 — governance(CLAUDE.md): a_engine_native_learning + a_fire_recover_complete 강화 — 학습-변종 verdict 는 엔진-네이티브 전까지 DIRECTIONAL · 렌트 ckpt teardown 전 PULL 강제
 
 이번 A100 G6 캠페인(H_1435/1436/1437)이 드러낸 두 빈틈을 거버넌스에 명문화 (재발 방지, 사용자 지시 A+B):
