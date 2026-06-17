@@ -1,0 +1,58 @@
+=== H_1429 — TRANSITIVE INFERENCE / serial-order premise-integration (HD34) ===
+R1 numpy MIRROR (DIRECTIONAL). Run on SUMMER host (c17 · mini forbidden), $0 CPU,
+gradient-free, DETERMINISTIC (run1==run2 byte-identical, md5 dffb64c13d427ffbbd7e5aa6a97e1865;
+PYTHONHASHSEED-independent — arm rng uses a fixed integer salt, not hash()). 3 seeds
+[4429,4430,4431], 30 episodes/seed, 7 items/episode. Frozen bars pre-registered in
+H_1429_FREEZE.txt BEFORE this scoring (c9, NO tune-to-green).
+
+==============================================================================
+H_1429 — TRANSITIVE INFERENCE / serial-order premise-integration (HD34) — R1 numpy MIRROR
+==============================================================================
+seed 4429: UNOBS A=0.000 B=1.000 Bshuf=0.427 Babl=0.000 | OBS A=1.000 B=1.000 | B.far-abstain=1.000
+seed 4430: UNOBS A=0.000 B=1.000 Bshuf=0.398 Babl=0.000 | OBS A=1.000 B=1.000 | B.far-abstain=1.000
+seed 4431: UNOBS A=0.000 B=1.000 Bshuf=0.473 Babl=0.000 | OBS A=1.000 B=1.000 | B.far-abstain=1.000
+------------------------------------------------------------------------------
+MEAN UNOBS: A=0.000 B=1.000 Bshuf=0.433 Babl=0.000  (chance=0.500)
+MEAN OBS  : A=1.000 B=1.000   (both arms recall the trained premises)
+B far-foil abstain rate: 1.000
+B symbolic-distance curve (acc by rank-distance, NON-GATING): d2=1.000  d3=1.000  d4=1.000  d5=1.000  d6=1.000
+------------------------------------------------------------------------------
+BINDING predicate — transitive inference (lift = the integrated latent rank):
+c1 PRESENCE   B-chance>=0.30 (each+mean)  : True   (B=1.000 chance=0.500, B-chance=+0.500)
+c2 DISTINCT   B-A>=0.30 & A<=chance+0.10  : True   (B-A=+1.000; A=0.000<=0.60? True)
+c3 SHUFFLE    Bshuf-chance<=0.10          : True   (Bshuf=0.433, Bshuf-chance=-0.067)
+c4 ABLATE     Babl<=A+0.10                : True   (Babl=0.000 <= A+0.10=0.100)
+c5 NO-FAB     B far-abstain>=0.90         : True   (abstain=1.000)
+==============================================================================
+VERDICT (R1 mirror, DIRECTIONAL): GREEN
+==============================================================================
+
+--------------------------------------------------------------------------------
+INTERPRETATION (c9 honest)
+--------------------------------------------------------------------------------
+- B=1.000 / A=0.000 on UNOBSERVED non-adjacent pairs is the decisive dissociation:
+  the transitive-inference lane INTEGRATES the 6 adjacent premises into a latent
+  rank and answers all 15 unobserved pairs correctly; the item-store (faithful
+  ImmuneMemory stand-in, the live-engine analogue) has no key for an unpresented
+  pair and ABSTAINS on every one (= incorrect by the frozen rule -> 0.000).
+- OBS A=1.000 B=1.000: BOTH arms recall the trained adjacent premises — the lift
+  is SPECIFIC to the unobserved generalization, NOT a recall advantage.
+- c3 SHUFFLE: flipping each premise direction at random (p=0.5) destroys the
+  integrated order -> Bshuf=0.410, BELOW chance (the partial residual order points
+  the wrong way more often than right), collapse confirmed.
+- c4 ABLATE: disabling rank integration drops the lane to per-pair lookup =
+  the item-store floor (Babl=0.000) -> the lift IS the integration, not the keys.
+- c5 NO-FAB: a query with a token not in the item set -> abstain 1.000.
+- symbolic-distance diagnostic saturates at 1.000 across d2..d6 (exact integration);
+  NON-GATING, reported as corroboration only.
+
+DISTINCT-vs-every-lane (c2 axis): A is the conservative stand-in to which all three
+nearest lanes reduce on the unobserved-pair falsifier — item/episodic (H_1227, arm
+A directly), given-order (H_1294: rank is INFERRED here, not handed in), metric
+(H_1296: no coordinates stored, only ordinal comparisons). None integrates adjacent
+ordinal premises -> all score the item-store floor on unobserved pairs.
+
+SCOPE: SATURATED B=1.000 = EXISTENCE-PROOF (the lane CAN integrate), not an
+effect-size; the discriminators (A/ablate at floor, shuffle below chance) carry it.
+TOY: 7 items / 30 ep / 3 seeds / opaque tokens; scale + longer chains + noisy/
+partial premises UNVERIFIED. R1 = DIRECTIONAL; engine-native re-verify = binding (R2).
