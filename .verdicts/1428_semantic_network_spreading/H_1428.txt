@@ -1,0 +1,48 @@
+H_1428 — SEMANTIC-NETWORK / SPREADING-ACTIVATION (2-hop) — TERMINAL VERDICT
+==========================================================================
+TIER: 🧱 CONTROL-REJECTED (honest non-green, c9 / c16 frozen-first — NO bar moved after scoring)
+
+R1 numpy MIRROR (DIRECTIONAL), aiden host (c17 · mini forbidden), $0 CPU numpy, gradient-free.
+Frozen bars: .verdicts/1428_semantic_network_spreading/H_1428_FREEZE.txt (pre-registered BEFORE
+scoring). Run log: state/1428_semantic_network_spreading/H_1428_R1_mirror.txt. Seeds [4428,4429,4430].
+
+FROZEN 5-BAR RESULT (each seed AND mean):
+  c1 PRESENCE      PASS  — FULL pooled = 1.000 (>= 0.80 every seed). The semantic net DOES
+                          retrieve the associated node at 1-hop AND 2-hop.
+  c2 DISTINCT      FAIL (marginal) — ITEM pooled mean = 0.608 but seed 4429 = 0.675 (> 0.65).
+                          The item-store ABSTAINS 100% (no node→node relation) and resolves at
+                          chance; with only 20 two-hop queries/seed the chance draw landed at
+                          0.675 one seed — sampling NOISE in the chance band, not real
+                          subsumption — but the frozen bar is breached, so it FAILS as written.
+                          SPATIAL stand-in 2-hop = 0.567 (PASS ≤ 0.65) — the metric IS misled.
+  c3 EARNED-EDGES  FAIL (load-bearing) — SHUFFLE pooled = 0.983 (does NOT collapse to ≤ 0.65).
+                          The weight-permute shuffle preserves graph TOPOLOGY (which node-pairs
+                          have edges); for this construction the 2-hop discrimination is carried
+                          by REACHABILITY (target reachable, distractor unreachable), which the
+                          shuffle did not destroy. The control caught that the mirror's lift is
+                          TOPOLOGY-carried, NOT proven to be the LEARNED edge WEIGHTS.
+  c4 EARNED-SPREAD PASS  — ABLATED (1-hop only) 2-hop = 0.500 (chance, ≤ 0.65 every seed) AND
+                          FULL 2-hop = 1.000 (>= 0.80). The multi-hop SPREAD is genuinely
+                          load-bearing for the 2-hop query — 1-hop-only cannot bridge.
+  c5 NO-FAB        PASS  — OOV node (no edges) spread fires NO node (abstain) every seed.
+
+VERDICT: 🧱. c1·c4·c5 PASS (the 2-hop spreading faculty is PRESENT and the multi-hop spread is
+earned over 1-hop ablation), but the SHUFFLE control (c3) did NOT collapse — the anti-Goodhart
+bar correctly refused to credit the lift to LEARNED edge weights when the discriminative signal
+in this graph/query construction is carried by graph TOPOLOGY (reachability) that the
+weight-permute shuffle preserves. Per c9/c16 (tune-to-green FORBIDDEN) the frozen bar stands;
+NO bar was moved post-hoc and NO new shuffle was invented to rescue the verdict (that would be a
+goalpost-move, c16). The faculty is NOT cleanly dissociated from a plain reachability/topology
+test by the frozen mirror.
+
+DISTINCTNESS STATUS (honest): the faculty is distinct from spatial-map (SPATIAL stand-in 0.567,
+misled by triangle) and the multi-hop spread is real (c4), so spreading-activation is NOT
+subsumed by an existing lane — but the mirror as frozen cannot prove the lift is the LEARNED
+ASSOCIATION WEIGHTS rather than the underlying graph topology. A clean re-test would need a
+SHUFFLE that re-wires which-node→which-node (destroying topology, per the freeze's intent clause)
+AND a 2-hop construction where reachability alone is non-discriminative. That is a NEW frozen
+design (a future hypothesis), NOT a retune of this one.
+
+engine_wired: N/A (🧱 — not green; the protocol wires only on 🟢).
+R2 engine-native: NOT attempted (gated on R1 🟢).
+"""

@@ -1,0 +1,78 @@
+H_1428 — SEMANTIC-NETWORK / SPREADING-ACTIVATION FACULTY (brain-structure ladder, c15)
+FREEZE — pre-registered BEFORE any scoring. Frozen-first (c9 / p7). NO bar moved after scoring.
+==============================================================================================
+
+LENS (a_no_llm_frame_trap): a SEMANTIC NETWORK — concepts are NODES linked by weighted
+ASSOCIATION edges; activating one node SPREADS activation along weighted edges to related
+nodes (Collins & Loftus 1975 spreading-activation theory of semantic processing). Retrieval =
+"what is most ASSOCIATED with X" via weighted graph traversal, including MULTI-HOP (X→Y→Z where
+X,Z never co-occur). NOT an LLM recipe — a cognitive-psychology lens.
+
+WHY MISSING: no live CORE lane represents inter-concept ASSOCIATION edges nor spreads activation
+across them. Every store binds an item to a value; none holds a node→node weighted edge it can
+propagate along.
+
+WHY DISTINCT (the crux — must survive controls vs EVERY lane):
+  - vs episodic item-binding (H_1227 ImmuneMemoryGrow): the immune store binds each item→value
+    INDEPENDENTLY by FNV-trigram key affinity. Given "X" it recalls X's bound value, but has NO
+    edge to a RELATED-but-never-co-bound concept. On "which concept is most ASSOCIATED with X"
+    (X and the target were never bound as a key→value pair, only LINKED as nodes) the item-store
+    abstains/chance. And 2-HOP X→Y→Z (X,Z never directly linked) — the item-store cannot bridge;
+    spreading activation can.
+  - vs spatial-map (H_1296): spatial is a 2-D EUCLIDEAN metric over stored positions (symmetric,
+    triangle inequality holds). Semantic edges are ARBITRARY non-metric association weights
+    (asymmetric, no triangle inequality). Dissociation: a graph that VIOLATES the metric —
+    A-B strong, B-C strong, A-C ABSENT yet 2-hop reachable — a metric map would infer A-C NEAR
+    (triangle), the semantic 2-hop spread distinguishes DIRECT vs INDIRECT correctly.
+
+DESIGN (deterministic readout, NOT a trained net — tests STRUCTURE):
+  - N_NODES=12 symbolic concept nodes per seed. A directed weighted association graph: each node
+    has OUT_DEG=3 out-edges to neighbors with weights in (0.3,1.0]. The graph is built to
+    contain (a) DIRECT 1-hop strong pairs and (b) 2-HOP bridges X→Y→Z where X,Z have NO direct
+    edge (the metric-violating, item-store-unbridgeable case).
+  - spreading activation: seed node X gets activation 1.0; propagate act[v] += act[u]*w(u,v)
+    over DECAY^hop for HOPS hops (DECAY=0.6, HOPS=2). Retrieval = argmax activation over the
+    candidate set EXCLUDING X itself.
+  - 1-HOP query: target = X's strongest DIRECT neighbor; distractor = a non-neighbor. spread or
+    direct-edge both answer.
+  - 2-HOP query: target = Z reachable only via X→Y→Z (no direct X→Z edge); distractor = a node
+    with NO path from X within HOPS. ONLY multi-hop spread answers; 1-hop-only ablation cannot.
+
+ARMS:
+  FULL      — semantic net with learned edges + full multi-hop spreading.
+  ITEM      — faithful ImmuneMemory item-store stand-in: binds node→its-own-payload
+              independently, NO inter-node edge → on the association/2-hop query it ABSTAINS.
+  SPATIAL   — spatial-map stand-in (Euclidean positions via symmetric metric closure). For the
+              metric-violating graph it infers A-C near via triangle inequality where the
+              semantic net says INDIRECT → the control that proves the edges are NON-metric.
+  SHUFFLE   — permute the association edge weights across node-pair slots (out-degree/node
+              frequency kept, the learned which-node→which-node correspondence destroyed).
+  ABLATED   — spreading OFF: direct-edge (1-hop) lookup ONLY, no multi-hop propagation.
+
+SEEDS = [4428, 4429, 4430]. CHANCE = 0.5 (two candidates per query). 40 queries/arm/seed
+(20 1-hop + 20 2-hop). $0 CPU numpy, gradient-free, p7.
+
+FROZEN 5-BAR — 🟢 GREEN iff ALL five PASS (each seed AND mean):
+  (c1 PRESENCE)        FULL associative-retrieval accuracy (1-hop AND 2-hop pooled) − CHANCE
+                       ≥ +0.30 each seed AND mean.  [B − 0.5 ≥ +0.30 ⇒ B ≥ 0.80]
+  (c2 DISTINCT)        ITEM-store accuracy on the association/2-hop query ≤ CHANCE + 0.15
+                       (≤ 0.65) each seed AND mean (it abstains → resolves at chance). SPATIAL
+                       stand-in on the metric-VIOLATING 2-hop set ≤ CHANCE + 0.15 (it is misled
+                       by triangle inequality / cannot see the directed edges) — both required;
+                       if a lane partially solves it, honest subsumption signal (🧱), report nums.
+  (c3 EARNED-EDGES)    SHUFFLE accuracy ≤ CHANCE + 0.15 (≤ 0.65) each seed AND mean (lift is the
+                       LEARNED edges, not node frequency).
+  (c4 EARNED-SPREAD)   ABLATED (1-hop-only) 2-HOP accuracy ≤ CHANCE + 0.15 (≤ 0.65) each seed
+                       AND mean (proves the multi-hop SPREAD, not just 1-hop adjacency). FULL
+                       2-hop accuracy ≥ 0.80 each seed AND mean (the spread DOES answer 2-hop).
+  (c5 NO-FAB)          untaught / OOV node (disjoint trigram space, no edges) → spread fires NO
+                       confident node (returns abstain "") — no fabricated association.
+
+GUARD (p1/p2/p3/p6): reads ONLY learned edge weights + the current query node; NO injected
+"the answer is Y" label, NO persona/identity/RLHF. The association weight is graph structure,
+SCORED only. SHUFFLE + ABLATE BOTH collapse = the lift is the learned association graph +
+multi-hop spread, not variance or node frequency.
+
+R1 = numpy mirror (DIRECTIONAL, engine-transfer UNVERIFIED). R2 = engine-native byte-exact on a
+live §SemanticNetwork lane (re-score SAME bars). IF 🟢 → wire live (rung 3) + ARCHITECTURE.json
+lockstep (rung 4). IF a lane subsumes → honest 🧱 (c9), wired N/A.
