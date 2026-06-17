@@ -1,0 +1,18 @@
+H_1435 continued-pretrain (303M full-weight) — FROZEN 5-bar (mean 3 seeds [7,4302,4303])
+ckpt_base=state/chat_303m/h1129c_chat.pt (PRESERVED) | ckpt_out=h1435_continued_pretrain.pt (path-only, not committed)
+BASE     FALS_in=0.0 DIST_in=3.0 FALS_shuf=0.0 FALS_ho=0.0
+TRAINED  FALS_in=5.0 DIST_in=5.0 FALS_shuf=5.0 FALS_ho=5.0
+SHUF-CRP FALS_in=0.0 FALS_ho=0.0  (token-shuffled corpus control)
+B1 FALS-FLOOR FALS_in>=1            : 5.0  -> PASS
+B2 COUNT      DIST_in>=5            : 5.0  -> PASS
+B3 X-SHUFFLE  FALS_shuf<FALS_in     : 5.0<5.0 -> FAIL (NO COLLAPSE — decisive)
+B4 HELD-OUT   FALS_ho>=1            : 5.0  -> PASS
+B5 vs-BASE    FALS_in>=base+1       : 5.0 vs 0.0+1 -> PASS
+CTRL SHUF-CORP lift_real-lift_shuf>=1: 5.0-0.0 -> PASS (inert: lift is real learning, not artifact)
+VERDICT: 🧱 WALL=CAPACITY — training installs the falsifiable FORM (0->5) and it generalizes
+(held-out 5.0) and is not an artifact (shuffle-corpus 0.0), but cross-shuffle does NOT collapse
+=> legs are semantically interchangeable shells, not earned idea-specific binding. The H_1305
+structural detector cannot distinguish earned binding from any-comparator+any-measurable+content,
+and 303M produces the form without idea-specific semantics. Confirms the capacity thesis from the
+TRAINING side (H_1431/1432/1434 found it from the elicitation side). Loosening the detector to
+demand semantic earning = tune-to-green (forbidden, c9/p7). base ckpt NOT overwritten.
