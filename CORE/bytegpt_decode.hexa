@@ -644,8 +644,19 @@ pub fn bytegpt_forward_last_ranged_mm(path: string, ids: int, T: int) -> int {
     while cc < d { let _ = farr_set(xt, cc, farr_get(x, last + cc)); cc = cc + 1 }
     _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
 
-    // head gemv (bit-identical, head already [vocab,d])
-    let logits = farr_packed_gemv_offset(head, 0, vocab, d, lastrow)
+    // head logits: logits[k] = Σ_c head[k*d+c]·lastrow[c]. Portable scalar loop (vocab=256 ×
+    // d=1024 = the cheapest op in the forward; NOT the d×d hot path). Was farr_packed_gemv_offset
+    // but that builtin is absent from older hexa runtimes (aiden link-fails) — the scalar loop is
+    // byte-identical (same i-outer/j-inner order) and compiles everywhere.
+    let logits = farr_zeros(vocab)
+    let mut hk = 0
+    while hk < vocab {
+        let mut hacc = 0.0
+        let mut hc = 0
+        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
+        let _ = farr_set(logits, hk, hacc)
+        hk = hk + 1
+    }
     let _ = farr_free(x); let _ = farr_free(lnfw); let _ = farr_free(lnfb)
     let _ = farr_free(head); let _ = farr_free(lastrow); let _ = farr_free(xt)
     return logits
@@ -844,10 +855,18 @@ pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
     while cc < d { let _ = farr_set(xt, cc, farr_get(x, last + cc)); cc = cc + 1 }
     _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
 
-    // head logits: logits[k] = Σ_c head[k*d+c]·lastrow[c] — head is [vocab,d] row-major,
-    // which is exactly the native packed-gemv shape (out[i]=Σ_j P[i*cols+j]·U[j]). This
-    // builtin uses the SAME i-outer/j-inner order as the scalar loop → bit-identical.
-    let logits = farr_packed_gemv_offset(head, 0, vocab, d, lastrow)
+    // head logits: logits[k] = Σ_c head[k*d+c]·lastrow[c]. Portable scalar loop (vocab×d, the
+    // cheapest op; NOT the d×d hot path). Was farr_packed_gemv_offset — absent from older hexa
+    // runtimes (aiden link-fails) — scalar is byte-identical (same i-outer/j-inner) + portable.
+    let logits = farr_zeros(vocab)
+    let mut hk = 0
+    while hk < vocab {
+        let mut hacc = 0.0
+        let mut hc = 0
+        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
+        let _ = farr_set(logits, hk, hacc)
+        hk = hk + 1
+    }
     let _ = farr_free(x); let _ = farr_free(lastrow); let _ = farr_free(xt)
     return logits
 }
