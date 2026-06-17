@@ -1,0 +1,134 @@
+H_1429 — TRANSITIVE INFERENCE / serial-order premise-integration (HD34). FROZEN FALSIFIER.
+================================================================================
+PRE-REGISTERED BEFORE ANY SCORING. $0 CPU. gradient-free. p7 (no perplexity).
+3 seeds [4429, 4430, 4431]. frozen-first · anti-Goodhart controls (shuffle +
+ablate + the signature unobserved-pair generalization test + NO-FAB abstain).
+a_no_llm_frame_trap (transitive-inference paradigm — Bryant & Trabasso 1971;
+serial-position / symbolic-distance effects; hippocampal relational integration,
+Dusek & Eichenbaum 1997; c15) — NOT an LLM recipe. a_scale_honest_scope (toy,
+engine-transfer UNVERIFIED until R2).
+
+--------------------------------------------------------------------------------
+SUBSYSTEM (why MISSING from the live engine)
+--------------------------------------------------------------------------------
+TRANSITIVE INFERENCE: given ONLY adjacent ordered premises A>B, B>C, C>D, D>E,
+the brain INTEGRATES them into a unified ordering and INFERS the order of a pair
+that was NEVER observed (A>C, A>D, B>D, B>E, C>E ...). The decisive signature is
+generalization to the NON-ADJACENT, NEVER-PRESENTED pairs — premise INTEGRATION,
+not recall. (Behavioral signature: the symbolic-distance effect — farther-apart
+pairs are EASIER — and the serial-position / end-anchor effect.)
+
+The live engine has NO such structure:
+  - ImmuneMemory / ImmuneMemoryGrow (H_1227/1231/1288) binds each fact -> value
+    INDEPENDENTLY by FNV-trigram key affinity. It MEMORIZES the observed premise
+    pairs; queried on an UNOBSERVED pair (A vs C, never bound) its key affinity
+    has no entry and it abstains / guesses at chance. It is item/episodic memory
+    of the GIVEN pairs — it does NOT integrate premises into a transitive order.
+  - HierGoalStack (H_1294) is an ORDERED plan = a GIVEN sequence executed by a
+    pointer; the order is HANDED to it (the subgoal list is the input), it does
+    NOT INFER an order from disjoint local premises, and it answers "which subgoal
+    is next", never "is X above Y" for an unobserved relational pair.
+  - SpatialMap (H_1296) holds a METRIC 2-D map of specific landmark positions and
+    answers a between-item DISTANCE query; positions are GIVEN coordinates (a metric
+    that is directly stored), not a 1-D rank order INFERRED from adjacent-only
+    comparisons. Metric storage != premise-integration of ordinal comparisons.
+  - OtherMindModel (H_1293), WorkMemBuffer (H_1282), VForwardField (H_1280),
+    HomeostaticDrive (H_1292): a belief store / leaky maintenance / next-emit
+    forward model / a 1-D scalar setpoint — none integrates adjacent ordinal
+    premises into a transitive ordering over unobserved pairs.
+
+CORE distinctness axis (the load-bearing claim): premise-INTEGRATION inference is
+ORTHOGONAL to (given-order / metric / memorization). The DECISIVE bar is
+generalization to UNOBSERVED non-adjacent pairs from adjacent-only premises.
+
+FALSIFIABLE CLAIM: a TRANSITIVE-INFERENCE faculty (integrate adjacent ordinal
+premises into a latent rank, answer any pair by comparing ranks) answers the
+UNOBSERVED non-adjacent pairs well above chance; a faithful item/episodic-store
+stand-in (memorize observed pairs, answer a pair only if that exact ordered pair
+was bound, else abstain) provably guesses at chance on unobserved pairs. If the
+integration lane matches the item store (or its lift survives shuffling the
+premise directions / ablating the rank integration to per-pair lookup),
+integration adds NOTHING -> honest 🧱 (subsumed / no free lunch).
+
+--------------------------------------------------------------------------------
+TASK (substrate-derived, NO injected label/persona/ethics — p1/p2/p3/p6)
+--------------------------------------------------------------------------------
+N_ITEMS = 7 items per episode with a HIDDEN ground-truth linear order (a random
+permutation, item identities are opaque tokens — NO label leaks the rank).
+PREMISES (training): only the N_ITEMS-1 = 6 ADJACENT ordered pairs of the hidden
+order are PRESENTED (each as "higher>lower"). The non-adjacent pairs are NEVER
+presented.
+QUERIES (test): ALL pairs split into
+  - OBSERVED-ADJACENT pairs (6): the trained premises (sanity, both arms recall).
+  - UNOBSERVED non-adjacent pairs (15): the transitive-inference falsifier. Each
+    query = an unordered pair {X,Y}; the faculty must answer which is HIGHER.
+  - FAR FOIL: a query containing a token NOT in this episode's item set -> the
+    faculty must ABSTAIN (NO-FAB bar).
+Accuracy = fraction of UNOBSERVED-pair queries answered with the correct higher
+item (random guess = 0.50 = CHANCE). p7 script-checkable (NOT perplexity).
+
+ABSTAIN HANDLING (frozen): on the accuracy bar an ABSTAIN counts as INCORRECT
+(NOT a free 0.5). The item store, which abstains on every unobserved pair, thus
+scores 0.0 on the unobserved-accuracy bar (well below CHANCE) — a conservative,
+NON-cherry-picked floor.
+
+--------------------------------------------------------------------------------
+ARMS
+--------------------------------------------------------------------------------
+A  ITEM-STORE (faithful ImmuneMemory / episodic stand-in, the live-engine
+   analogue): bind each PRESENTED ordered premise pair (higher,lower) by its
+   FNV-trigram key; query {X,Y} -> answer only if the exact ordered pair (X>Y) or
+   (Y>X) was bound; on an UNOBSERVED pair NO key matches -> ABSTAIN (= incorrect).
+   NO premise integration.
+B  TRANSITIVE-INFERENCE LANE: integrate the adjacent premises into a latent rank
+   (each premise higher>lower asserts rank[higher] < rank[lower]; iteratively
+   relax until a consistent 1-D rank emerges), then answer any pair {X,Y} by
+   comparing latent ranks. Answers UNOBSERVED pairs.
+Bshuf  SHUFFLE control (anti-Goodhart): randomly FLIP the direction of each
+   presented premise before integration (higher/lower swapped per premise at
+   random) -> the integrated rank no longer reflects the true order -> unobserved
+   accuracy collapses to chance.
+Babl  ABLATE control (dissociation): DISABLE the rank integration -> the lane
+   falls back to per-pair lookup (exactly arm A's behavior: answer only observed
+   pairs, abstain on unobserved) -> the unobserved lift disappears.
+
+3 seeds, N_EP = 30 episodes/seed, one item-set permutation per episode.
+
+--------------------------------------------------------------------------------
+FROZEN PREDICATE (the 5 bars — GREEN iff ALL pass; any fail w/ clean control
+collapse = honest 🧱, c9. Bars are FIXED here BEFORE scoring — NO tune-to-green.)
+--------------------------------------------------------------------------------
+c1 PRESENCE   : B unobserved-pair accuracy - CHANCE >= 0.30, EACH seed AND mean.
+                (CHANCE = 0.50; threshold mean+each >= 0.80.)
+c2 DISTINCT   : B - A on unobserved pairs >= 0.30, AND A <= CHANCE + 0.10. This
+                bar stands AGAINST EVERY nearest lane the design covers: item/
+                episodic (H_1227, arm A directly), given-order (H_1294: the rank
+                is INFERRED not handed in), metric (H_1296: no coordinates stored,
+                only ordinal comparisons). A is the conservative stand-in all three
+                reduce to on the unobserved-pair falsifier (none integrates
+                adjacent ordinal premises).
+c3 SHUFFLE    : Bshuf unobserved accuracy - CHANCE <= 0.10 (premise-direction
+                shuffle collapses the lift to chance).
+c4 ABLATE     : Babl unobserved accuracy <= A + 0.10 (ablating rank integration
+                drops the lane to the item-store / per-pair-lookup floor).
+c5 NO-FAB     : B far-foil abstain rate >= 0.90 (a query with an unknown token is
+                refused, NOT fabricated).
+
+NON-GATING diagnostics (reported, NOT bars): symbolic-distance effect (B accuracy
+rises with rank distance), observed-adjacent accuracy (both arms recall the
+trained premises).
+
+GREEN iff c1 ∧ c2 ∧ c3 ∧ c4 ∧ c5.
+
+--------------------------------------------------------------------------------
+HONESTY (a_scale_honest_scope, p7, c9)
+--------------------------------------------------------------------------------
+- B at/near 1.000 on unobserved pairs is SATURATED = an EXISTENCE-PROOF (the lane
+  CAN integrate premises), not an effect-size; the DISCRIMINATORS (A at/below
+  chance, shuffle at chance, ablate at the item-store floor) carry the dissociation.
+- TOY: 7 items / 30 episodes / 3 seeds / 1 paradigm / opaque tokens; scale +
+  paraphrase + real-corpus orderings + longer chains + partial/noisy premises
+  UNVERIFIED. R1 numpy mirror = DIRECTIONAL; engine-native re-verify (R2) is the
+  binding verdict (a_engine_native_learning).
+- p1/p2/p3/p6: reads ONLY the presented ordinal premises; NO label/persona/
+  identity/RLHF. The hidden order is a TASK structure, scored only.

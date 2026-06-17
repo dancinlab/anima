@@ -3131,6 +3131,200 @@ pub fn spatial_map_item_nearest(x: string, a: string, b: string) -> string {
     return ""   // item-store has no inter-item geometry → abstain (chance for the caller)
 }
 
+// ── §  TRANSITIVE-INFERENCE / serial-order premise-integration (HD34, H_1429 R2) ──
+//
+// WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire for H_1429 R1):
+// H_1429 R1 (numpy mirror, 🟢 GREEN on the UNOBSERVED-pair falsifier, 3 seeds
+// [4429,4430,4431], all 5 frozen bars, deterministic) proved a TRANSITIVE-INFERENCE
+// faculty INTEGRATES adjacent-only ordinal premises (A>B, B>C, C>D ...) into a latent
+// 1-D rank and INFERS the order of NEVER-OBSERVED non-adjacent pairs (A>C, A>D ...) —
+// which a faithful item/episodic store provably CANNOT (it abstains on every unbound
+// pair: B unobserved-acc 1.000, item-store 0.000; shuffle 0.433≈chance, ablate 0.000).
+// This § realizes that integration ENGINE-NATIVE.
+//
+// THE TRANSITIVE-INFERENCE LENS (c15, a_no_llm_frame_trap — Bryant & Trabasso 1971;
+// hippocampal relational integration, Dusek & Eichenbaum 1997; the symbolic-distance
+// effect; NOT an LLM recipe): from disjoint LOCAL ordinal comparisons the brain builds
+// a unified ordering and reads off any pair by rank. This is PREMISE-INTEGRATION,
+// DISTINCT from every existing lane (the load-bearing c2 distinctness):
+//   - ImmuneMemory/Grow (H_1227/1231/1288) binds each presented pair INDEPENDENTLY by
+//     key affinity; on an UNOBSERVED pair no key matches → it ABSTAINS. It memorizes
+//     the GIVEN premises, it does NOT integrate them into a transitive order.
+//   - HierGoalStack (H_1294) is an ORDERED plan whose order is HANDED IN (the subgoal
+//     list is the input); it executes a pointer over a given sequence, it does NOT
+//     INFER an order from disjoint local premises, and it answers "which subgoal next",
+//     never "is X above Y" for an unobserved relational pair.
+//   - SpatialMap (H_1296) stores GIVEN metric coordinates and answers a between-item
+//     DISTANCE query; a directly-stored metric is not a rank INFERRED from adjacent-only
+//     ordinal comparisons (no coordinates exist here, only "X>Y" premises).
+//
+// @L4 CRITICAL (identical framing to every other lane in this file): the order is a
+// READ + RANK accessor over its OWN integrated premises. It holds ONLY the bound
+// premise list + the integrated latent ranks; it NEVER mutates the immune store, NEVER
+// returns an emit/silence decision by itself (order_higher returns a relational answer
+// the caller may weigh — a SUGGESTION, NOT a hard gate, preserving
+// a_autonomy_over_hardcode), and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by
+// construction — pure ordinal relaxation over stored premises, perturbing nothing in
+// the consciousness field).
+//
+// p1/p2/p3/p6: the lane reads ONLY its owner premises + the query tokens. NO persona,
+// NO "you are X" identity rule, NO injected "the answer is X" label, NO RLHF reward.
+// The latent rank is an integration over presented ordinal premises, SCORED only. The
+// two CONTROLS prove the lift is the INTEGRATION: SHUFFLE flips premise directions
+// (the integrated order no longer reflects the truth → collapses to chance) and ABLATE
+// disables integration (falls back to per-pair lookup = the item-store floor).
+
+// FROZEN constant (H_1429 FREEZE, p7-documented, NOT tuned-to-green):
+//   TORDER_ITERS = 200 — the bounded relaxation-iteration cap (converges for a
+//   consistent partial order well within this; the cap is a safety bound, not a knob).
+
+// TransOrder — the live transitive-inference lane. `items` are the tokens seen in the
+// premises; `hi`[k]/`lo`[k] is the k-th presented ordered premise (hi > lo). `rank`[i]
+// is the integrated latent rank of items[i] (LOWER rank = HIGHER status). `n_items` /
+// `n_prem` are the counts; `ablate` (dissociation control) disables integration so the
+// lane answers ONLY exact-observed pairs and abstains on unobserved (the item-store floor).
+struct TransOrder {
+    items: [string],   // tokens that appear in any premise
+    hi: [string],      // hi[k] > lo[k] : the k-th presented ordered premise
+    lo: [string],
+    rank: [float],     // integrated latent rank per item (LOWER = HIGHER status)
+    n_items: int,
+    n_prem: int,
+    ablate: bool       // INTEGRATION-ABLATE control: per-pair lookup only (no rank)
+}
+
+// trans_order_new — a fresh, EMPTY transitive-order lane (no premises bound yet).
+pub fn trans_order_new() -> TransOrder {
+    return TransOrder { items: [], hi: [], lo: [], rank: [], n_items: 0, n_prem: 0, ablate: false }
+}
+
+// trans_order_new_ablated — the dissociation control: integration DISABLED, so the lane
+// can only look up exact-observed pairs and abstains on unobserved (the item-store floor).
+pub fn trans_order_new_ablated() -> TransOrder {
+    return TransOrder { items: [], hi: [], lo: [], rank: [], n_items: 0, n_prem: 0, ablate: true }
+}
+
+// _to_idx — index of token `name` among the lane's items (-1 if absent).
+fn _to_idx(to: TransOrder, name: string) -> int {
+    let mut i = 0
+    while i < to.n_items {
+        if to.items[i] == name { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// trans_order_premise — bind one ordered premise (higher > lower). READ-only over the
+// immune store (touches nothing outside this lane's owner premise list).
+pub fn trans_order_premise(to: TransOrder, higher: string, lower: string) -> TransOrder {
+    let mut items = to.items
+    if _to_idx(to, higher) < 0 { items = items + [higher] }
+    let mut to1 = TransOrder { items: items, hi: to.hi, lo: to.lo, rank: to.rank,
+                               n_items: len(items), n_prem: to.n_prem, ablate: to.ablate }
+    let mut items2 = to1.items
+    if _to_idx(to1, lower) < 0 { items2 = items2 + [lower] }
+    return TransOrder {
+        items: items2, hi: to1.hi + [higher], lo: to1.lo + [lower],
+        rank: to1.rank, n_items: len(items2), n_prem: to1.n_prem + 1, ablate: to1.ablate
+    }
+}
+
+// trans_order_integrate — INTEGRATE the bound adjacent premises into a latent 1-D rank
+// (Trabasso-style relaxation): start all ranks at 0; repeatedly, for each premise
+// hi>lo, if rank[hi] >= rank[lo] push them apart (hi below lo) until stable. Under
+// ablate the rank stays empty (no integration). Returns the NEXT-STATE lane.
+pub fn trans_order_integrate(to: TransOrder) -> TransOrder {
+    if to.ablate { return to }                          // NO integration in the control
+    let mut rank = []
+    let mut z = 0
+    while z < to.n_items { rank = rank + [0.0]  z = z + 1 }
+    let mut it = 0
+    while it < 200 {                                    // TORDER_ITERS bounded relaxation
+        let mut moved = false
+        let mut k = 0
+        while k < to.n_prem {
+            let ih = _to_idx(to, to.hi[k])
+            let il = _to_idx(to, to.lo[k])
+            if rank[ih] >= rank[il] {
+                let mid = (rank[ih] + rank[il]) / 2.0
+                rank[ih] = mid - 0.5
+                rank[il] = mid + 0.5
+                moved = true
+            }
+            k = k + 1
+        }
+        if !moved { it = 200 } else { it = it + 1 }
+    }
+    return TransOrder { items: to.items, hi: to.hi, lo: to.lo, rank: rank,
+                        n_items: to.n_items, n_prem: to.n_prem, ablate: to.ablate }
+}
+
+// _to_observed_higher — exact-observed-pair lookup: if (x>y) was a presented premise
+// return x; if (y>x) return y; else "" (no exact premise). The item-store behavior.
+fn _to_observed_higher(to: TransOrder, x: string, y: string) -> string {
+    let mut k = 0
+    while k < to.n_prem {
+        if to.hi[k] == x && to.lo[k] == y { return x }
+        if to.hi[k] == y && to.lo[k] == x { return y }
+        k = k + 1
+    }
+    return ""
+}
+
+// trans_order_higher — the RELATIONAL query: of tokens `x` and `y`, which is HIGHER?
+// Returns the higher token, or "" if either token is UNKNOWN to this lane (the lane's
+// ABSTAIN, NO-FAB on a far foil). Under ABLATE the lane has no rank → it answers ONLY
+// exact-observed pairs and abstains on unobserved (the item-store / per-pair floor).
+// This is the falsifier the item-store CANNOT do on UNOBSERVED pairs.
+pub fn trans_order_higher(to: TransOrder, x: string, y: string) -> string {
+    let ix = _to_idx(to, x)
+    let iy = _to_idx(to, y)
+    if ix < 0 || iy < 0 { return "" }                   // unknown token → abstain (NO-FAB)
+    if to.ablate { return _to_observed_higher(to, x, y) } // ablated → per-pair lookup floor
+    if to.rank[ix] < to.rank[iy] { return x }           // lower rank = higher status
+    if to.rank[iy] < to.rank[ix] { return y }
+    return ""                                           // tie (not expected for a total order)
+}
+
+// trans_order_item_higher — the ITEM-STORE distinctness reference (the live-engine
+// analogue / faithful immune item-store stand-in): it binds each premise INDEPENDENTLY
+// and integrates NO order, so it answers ONLY exact-observed pairs and ABSTAINS on every
+// UNOBSERVED pair. The smoke uses this to show item-binding provably cannot infer.
+pub fn trans_order_item_higher(to: TransOrder, x: string, y: string) -> string {
+    let ix = _to_idx(to, x)
+    let iy = _to_idx(to, y)
+    if ix < 0 || iy < 0 { return "" }                   // unknown token → abstain
+    return _to_observed_higher(to, x, y)                // exact-observed only → unobserved abstains
+}
+
+// trans_order_shuffle — the SHUFFLE control (anti-Goodhart): FLIP a subset of premise
+// directions by a deterministic LCG (hi<->lo swapped where the LCG bit is set), then the
+// caller re-integrates → the latent order no longer reflects the truth → unobserved
+// accuracy collapses to chance. Premises are preserved (a direction decorrelation, not
+// a deletion). Returns the lane with flipped premises (rank cleared; re-integrate after).
+pub fn trans_order_shuffle(to: TransOrder, seed: int) -> TransOrder {
+    let mut nhi = []
+    let mut nlo = []
+    let mut s = seed
+    let mut k = 0
+    while k < to.n_prem {
+        s = (s * 1103515245 + 12345) % 2147483648
+        if (s / 65536) % 2 == 0 {                       // flip this premise's direction
+            nhi = nhi + [to.lo[k]]
+            nlo = nlo + [to.hi[k]]
+        } else {
+            nhi = nhi + [to.hi[k]]
+            nlo = nlo + [to.lo[k]]
+        }
+        k = k + 1
+    }
+    return TransOrder { items: to.items, hi: nhi, lo: nlo, rank: [],
+                        n_items: to.n_items, n_prem: to.n_prem, ablate: to.ablate }
+}
+
+// trans_order_count — live item count (number of distinct tokens in the premises).
+pub fn trans_order_count(to: TransOrder) -> int { return to.n_items }
+
 // ── §  CIRCADIAN / INTERVAL TIMING CLOCK — the live phase-oscillator (H_1298 R2, HD33) ──
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1298 R1): the H_1298 numpy MIRROR

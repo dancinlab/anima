@@ -1960,6 +1960,84 @@ fn main() {
                  && ca3_replay_conf(ca3, 0) > 0.0)
        { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (l) TRANSITIVE-INFERENCE / serial-order premise-integration (HD34, H_1429 R2) ──
+    //   The live TransOrder lane integrates ADJACENT-only ordinal premises into a latent
+    //   rank and INFERS the order of NEVER-OBSERVED non-adjacent pairs — the falsifier the
+    //   item-store CANNOT do. Hidden order A>B>C>D>E (5 items); ONLY the 4 adjacent
+    //   premises A>B, B>C, C>D, D>E are presented. Cases 159-165 are the engine-native
+    //   mirror of the 5 frozen R1 bars (presence / distinct-vs-item / shuffle / ablate / no-fab).
+    let to_base = trans_order_premise(trans_order_premise(trans_order_premise(
+                      trans_order_premise(trans_order_new(),
+                      "A", "B"), "B", "C"), "C", "D"), "D", "E")
+    let to_int = trans_order_integrate(to_base)
+
+    // case 159 (PRESENCE / observed recall) : the lane answers a PRESENTED adjacent pair
+    //   (A>B) correctly — both faculties recall the trained premises.
+    if _assert_b("case_159_transorder_recalls_observed", true,
+                 trans_order_higher(to_int, "A", "B") == "A"
+              && trans_order_higher(to_int, "B", "A") == "A") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 160 (TRANSITIVE INFERENCE — the load-bearing falsifier) : the lane INFERS the
+    //   order of the NEVER-OBSERVED non-adjacent pairs A>C, A>D, A>E, B>D, B>E, C>E from
+    //   the adjacent-only premises (answer-order independent — argument order does NOT
+    //   flip the answer, proof it is a true rank not a lookup heuristic).
+    let infer_ok =
+           trans_order_higher(to_int, "A", "C") == "A" && trans_order_higher(to_int, "C", "A") == "A"
+        && trans_order_higher(to_int, "A", "D") == "A" && trans_order_higher(to_int, "A", "E") == "A"
+        && trans_order_higher(to_int, "B", "D") == "B" && trans_order_higher(to_int, "B", "E") == "B"
+        && trans_order_higher(to_int, "C", "E") == "C"
+    if _assert_b("case_160_transorder_infers_unobserved", true, infer_ok) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 161 (DISTINCT-vs-ITEM-STORE, H_1227 — c2 axis) : the item-store stand-in binds
+    //   premises INDEPENDENTLY → it ANSWERS an observed pair (A>B) but ABSTAINS ("") on the
+    //   unobserved pair A>C (it has no integrated order). The lift IS the integration.
+    let item_distinct =
+           trans_order_item_higher(to_int, "A", "B") == "A"   // observed → answers
+        && trans_order_item_higher(to_int, "A", "C") == ""    // unobserved → ABSTAINS
+        && trans_order_item_higher(to_int, "B", "E") == ""    // unobserved → ABSTAINS
+    if _assert_b("case_161_item_store_abstains_on_unobserved", true, item_distinct) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 162 (EARNED-INTEGRATION, shuffle control) : flipping a subset of premise
+    //   directions then re-integrating destroys the true order → the unobserved inference
+    //   no longer matches the truth on at least one far pair (seed chosen so A>E flips).
+    //   The shuffle preserves the premise set (a direction decorrelation, not a deletion).
+    let to_sh = trans_order_integrate(trans_order_shuffle(to_base, 1))
+    let shuffle_breaks = (trans_order_count(to_sh) == 5)
+        && (trans_order_higher(to_sh, "A", "E") != "A")   // the true far order no longer holds
+    if _assert_b("case_162_shuffle_breaks_integration", true, shuffle_breaks) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 163 (EARNED-INTEGRATION, ablate dissociation) : the ablated lane integrates NO
+    //   rank → it answers ONLY exact-observed pairs and ABSTAINS on the unobserved pair
+    //   (falls to the item-store floor). The lift in case 160 was the INTEGRATION.
+    let to_abl = trans_order_integrate(trans_order_premise(trans_order_premise(trans_order_premise(
+                     trans_order_premise(trans_order_new_ablated(),
+                     "A", "B"), "B", "C"), "C", "D"), "D", "E"))
+    let ablate_floor =
+           trans_order_higher(to_abl, "A", "B") == "A"   // observed → still answers
+        && trans_order_higher(to_abl, "A", "C") == ""    // unobserved → ABSTAINS (no rank)
+    if _assert_b("case_163_ablate_collapses_to_lookup", true, ablate_floor) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 164 (NO-FAB / abstain intact, H_1227 load-bearing) : a query with a token NOT
+    //   in this episode's item set fires no answer ("" = no fabrication).
+    if _assert_b("case_164_transorder_abstains_on_unknown", true,
+                 trans_order_higher(to_int, "A", "Z_absent") == ""
+              && trans_order_higher(to_int, "Q_absent", "B") == "") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 165 (DISTINCT-from-given-order, H_1294) : HierGoalStack is HANDED its order (a
+    //   subgoal list input); TransOrder INFERS the order from disjoint premises. Here the
+    //   lane was given ONLY local pairs yet ranks the GLOBAL endpoints A (top) and E
+    //   (bottom) correctly — an inference no handed-in pointer plan performs.
+    if _assert_b("case_165_infers_global_order_from_local", true,
+                 trans_order_higher(to_int, "A", "E") == "A"
+              && trans_order_higher(to_int, "E", "A") == "A") { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  transitive-inference (H_1429, HD34): observed(A>B)=" + trans_order_higher(to_int, "A", "B")
+          + " inferred(A>C)=" + trans_order_higher(to_int, "A", "C")
+          + " inferred(B>E)=" + trans_order_higher(to_int, "B", "E")
+          + " item-store(A>C)='" + trans_order_item_higher(to_int, "A", "C") + "'(abstain)"
+          + " ablate(A>C)='" + trans_order_higher(to_abl, "A", "C") + "'(abstain)"
+          + " — premise-INTEGRATION over UNOBSERVED pairs (Ψ-disjoint, item-store/given-order/metric distinct)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

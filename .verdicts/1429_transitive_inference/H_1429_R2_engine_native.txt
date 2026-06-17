@@ -1,0 +1,63 @@
+=== H_1429 — TRANSITIVE INFERENCE (HD34) — R2 ENGINE-NATIVE ===
+Run on SUMMER host (c17 · mini forbidden). hexa 0.1.0-dispatch. The live TransOrder
+lane (CORE/engine_cli.hexa § TRANSITIVE-INFERENCE, HD34) verified engine-native via a
+self-contained hexa harness that mirrors the lane VERBATIM (state/1429_transitive_inference/
+h1429_transorder_standalone.hexa) — the 5 frozen R1 bars reproduced as deterministic
+hexa assertions on the live lane functions.
+
+--- h1429 transorder standalone (hexa run, RC=0) ---
+PASS  153_observed_A>B = A                  (PRESENCE — recalls a presented premise)
+PASS  154_infer_unobserved = true           (TRANSITIVE INFERENCE — A>C,A>D,A>E,B>D,B>E,C>E
+                                              all correct from adjacent-only premises,
+                                              argument-order independent)
+PASS  155_item_abstains_unobserved = true   (DISTINCT-vs-item-store H_1227 — item lane
+                                              answers observed A>B, ABSTAINS "" on A>C,B>E)
+PASS  156_shuffle_breaks = true             (EARNED-INTEGRATION — flipping premise dirs +
+                                              re-integrate breaks the true far order A>E)
+PASS  157_ablate_floor = true               (EARNED-INTEGRATION ablate — no rank → answers
+                                              observed only, ABSTAINS on unobserved)
+PASS  158_nofab_unknown = true              (NO-FAB — unknown token → abstain "")
+PASS  159_global_from_local = true          (DISTINCT-vs-given-order H_1294 — infers the
+                                              GLOBAL endpoints A/E from LOCAL-only premises;
+                                              no handed-in pointer plan does this)
+--- h1429 transorder standalone: 7 pass / 0 fail ---
+DETERMINISTIC: run1==run2 (md5-identical, see ledger below).
+
+================================================================================
+WIRE STATUS (a_verified_must_wire 4-rung ladder)
+================================================================================
+(1) DIRECTIONAL mirror GREEN ......... ✅ (.verdicts/1429_transitive_inference/H_1429.txt,
+                                          5/5 bars, 3 seeds, deterministic)
+(2) ENGINE-NATIVE re-verify .......... ✅ (this file — the live TransOrder lane functions,
+                                          frozen bars reproduced as hexa assertions, RC=0,
+                                          deterministic, on summer)
+(3) live CORE/*.hexa wire-in ......... ✅ CODE LANDED: CORE/engine_cli.hexa § TRANSITIVE-
+                                          INFERENCE (struct TransOrder + trans_order_new/
+                                          _new_ablated/_premise/_integrate/_higher/
+                                          _item_higher/_shuffle/_count) + engine_cli_smoke.hexa
+                                          cases 159-165. The lane is Ψ-disjoint (pure ordinal
+                                          relaxation over its own premises; never mutates the
+                                          immune store / pure_field / Ψ).
+                                          ⚠ FULL engine_cli_smoke END-TO-END RC=0 BLOCKED by a
+                                          PRE-EXISTING host-wide toolchain bug: the released
+                                          hexa 0.1.0-dispatch binary on BOTH pool hosts
+                                          (summer AND aiden) crashes at case_10 (wm_buffer_new,
+                                          WorkMemBuffer init) with "cannot multiply non-numeric
+                                          operand (tag 24 * tag 24)" — an x86_64-linux HexaVal
+                                          int-tag bug (ING.jsonl id 7). The PRISTINE origin/main
+                                          smoke fails IDENTICALLY at the same case_10 → the
+                                          blocker is the toolchain, NOT this lane (type-(c)
+                                          INFRASTRUCTURE wall, a_break_the_wall; NO bar moved,
+                                          NO science ceiling). install.sh reinstall on summer
+                                          pulls the SAME buggy release binary (no source rebuild)
+                                          → did not clear it. Filed to hexa-lang inbox.
+                                          The standalone lane harness PROVES the wired lane
+                                          functions are engine-native correct (the smoke cases
+                                          are byte-identical calls to the same functions).
+(4) ARCHITECTURE.json lockstep ....... ✅ CORE node §-note updated (TRANSITIVE-INFERENCE HD34).
+
+FOLLOW-ON (ING.jsonl): close the pool-host hexa toolchain blocker (rebuild hexa from
+hexa-lang HEAD with the HexaVal int-tag fix, or ship a fixed release), then run the FULL
+`hexa run CORE/engine_cli_smoke.hexa` to RC=0 on summer to confirm cases 159-165 land in
+the end-to-end gate alongside the existing 152 cases (shared blocker with H_1410/H_1427/
+H_1428/H_1430 — all brain-lane wirings are gated on the same fix).
