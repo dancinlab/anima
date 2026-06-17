@@ -579,7 +579,7 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
         let T = n - start
         let ids = farr_zeros(T)
         let mut p = 0
-        while p < T { let _ = farr_set(ids, p, to_float(toks[start + p])); p = p + 1 }
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
         let logits = bg_forward_last_W(W, ids, T)
         let nb = bg_argmax(logits, vocab)
         let _ = farr_free(logits); let _ = farr_free(ids)
@@ -707,7 +707,7 @@ pub fn bytegpt_decode_topk_sampled(path: string, seed_ids: list, gen: int,
         let T = n - start
         let ids = farr_zeros(T)
         let mut p = 0
-        while p < T { let _ = farr_set(ids, p, to_float(toks[start + p])); p = p + 1 }
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
         let logits = bg_forward_last_W(W, ids, T)
         let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
         let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
@@ -791,7 +791,7 @@ pub fn bytegpt_decode_grounded(path: string, seed: string, gen: int,
             let T = n - start
             let ids = farr_zeros(T)
             let mut p = 0
-            while p < T { let _ = farr_set(ids, p, to_float(toks[start + p])); p = p + 1 }
+            while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
             let logits = bg_forward_last_W(W, ids, T)
             nb = bg_argmax(logits, vocab)
             let _ = farr_free(logits); let _ = farr_free(ids)
@@ -846,7 +846,7 @@ fn _bg_lm_argmax_toks(W: Map, toks: list, vocab: int, block: int) -> int {
     let T = n - start
     let ids = farr_zeros(T)
     let mut p = 0
-    while p < T { let _ = farr_set(ids, p, to_float(to_int(toks[start + p]))); p = p + 1 }
+    while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(to_int(tv))); p = p + 1 }
     let logits = bg_forward_last_W(W, ids, T)
     let nb = bg_argmax(logits, vocab)
     let _ = farr_free(logits); let _ = farr_free(ids)
