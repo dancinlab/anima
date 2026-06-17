@@ -442,9 +442,15 @@ pub fn bytegpt_forward_last(path: string, ids: int, T: int) -> int {
 // farr; the slice is a function-local released on return (same lifetime as the rb buffer
 // in bytegpt_forward_last, which the 303M path never leaks across generator steps).
 fn _bg_rd_farr_at(path: string, byte_off: int, n: int) -> int {
-    let slice = read_bytes_at(path, byte_off, n * 4)
-    let a = _bg_rd_farr(slice, 0, n)
-    return a
+    // Lane C OOM fix (b2): read the n f32 DIRECTLY into a native farr via the runtime
+    // builtin read_f32_at (bounded 8MB reused chunk buffer, NO boxed-HexaVal byte
+    // intermediate). The old path — read_bytes_at (boxes every byte into a HexaVal) +
+    // bytes_to_f32_le — peaked ~24GB RSS loading the 1.2GB f32 binary (the dispatch
+    // runtime never frees the boxed byte array promptly), so bg_load/bg_load_ranged
+    // OOM'd on 30GB pool hosts. read_f32_at is byte-IDENTICAL (verified max|Δ|=0 on the
+    // real 303M tok block) and drops the per-slice peak to ~the slice itself + 8MB →
+    // bg_load_ranged resident peak ≈ the model farrs (~2.4GB), not 24GB.
+    return read_f32_at(path, byte_off, n)
 }
 
 // bytegpt_forward_last_ranged — byte-identical to bytegpt_forward_last but reads each
