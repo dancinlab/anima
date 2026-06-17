@@ -715,6 +715,69 @@ pub fn bg_load(path: string) -> Map {
               "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT }
 }
 
+// bg_load_ranged — OOM-SAFE resident loader for the mm forward (Lane C follow-on).
+// Same resulting W-map as bg_load (the mm bg_forward_last_W path runs unchanged on
+// it), but builds it via ranged read_bytes_at (one weight slice at a time) instead of
+// read_file_bytes boxing the WHOLE binary. bg_load peaks ~24GB RSS boxing the 1.2GB
+// f32 binary (each byte → a HexaVal) → OOM on memory-tight/contended pool hosts; this
+// path's peak is ≈ one weight slice (max 4*d*d floats ~16MB) during load, plus the
+// final resident farrs. Each big [Co,Ci] weight is transposed then IMMEDIATELY freed
+// (the mm forward only reads the transposes + head + biases + ln + tok/pos, NOT the
+// originals — verified), so resident memory ≈ the transposes, not 2× them. Use this
+// for the frozen H_1431 5-bar on the pool. The originals are stored as empty handles
+// (-1 sentinel won't be read by the mm path; a scalar caller must use bg_load instead).
+pub fn bg_load_ranged(path: string) -> Map {
+    let hdr = read_bytes_at(path, 0, 20)
+    let vocab = _bg_rd_u32(hdr, 0)
+    let d     = _bg_rd_u32(hdr, 4)
+    let nlay  = _bg_rd_u32(hdr, 8)
+    let nh    = _bg_rd_u32(hdr, 12)
+    let block = _bg_rd_u32(hdr, 16)
+    let mut off = 20
+
+    let tok = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+    let pos = _bg_rd_farr_at(path, off, block * d); off = off + block * d * 4
+
+    let ln1w = []; let ln1b = []; let inB = []
+    let oB = []; let ln2w = []; let ln2b = []
+    let m0B = []; let m2B = []
+    let inWt = []; let oWt = []; let m0Wt = []; let m2Wt = []
+    let mut Lr = 0
+    while Lr < nlay {
+        ln1w.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        ln1b.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        let inW = _bg_rd_farr_at(path, off, 3 * d * d); off = off + 3 * d * d * 4
+        inB.push(_bg_rd_farr_at(path, off, 3 * d)); off = off + 3 * d * 4
+        let oW = _bg_rd_farr_at(path, off, d * d); off = off + d * d * 4
+        oB.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        ln2w.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        ln2b.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        let m0W = _bg_rd_farr_at(path, off, 4 * d * d); off = off + 4 * d * d * 4
+        m0B.push(_bg_rd_farr_at(path, off, 4 * d)); off = off + 4 * d * 4
+        let m2W = _bg_rd_farr_at(path, off, d * 4 * d); off = off + d * 4 * d * 4
+        m2B.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        // transpose then free the original immediately (peak ≈ one weight + its transpose)
+        inWt.push(_bg_transpose(inW, 3 * d, d)); let _ = farr_free(inW)
+        oWt.push(_bg_transpose(oW, d, d)); let _ = farr_free(oW)
+        m0Wt.push(_bg_transpose(m0W, 4 * d, d)); let _ = farr_free(m0W)
+        m2Wt.push(_bg_transpose(m2W, d, 4 * d)); let _ = farr_free(m2W)
+        Lr = Lr + 1
+    }
+    let lnfw = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let lnfb = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let head = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+    let headT = _bg_transpose(head, vocab, d)
+
+    // inW/oW/m0W/m2W stored as empty []; the mm bg_forward_last_W never reads them.
+    let empty = []
+    return #{ "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
+              "tok": tok, "pos": pos, "ln1w": ln1w, "ln1b": ln1b,
+              "inW": empty, "inB": inB, "oW": empty, "oB": oB,
+              "ln2w": ln2w, "ln2b": ln2b, "m0W": empty, "m0B": m0B,
+              "m2W": empty, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
+              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT }
+}
+
 // bg_forward_last_W — run the full forward from a loaded weight Map; return a
 // fresh farr[vocab] of last-position next-byte logits. Byte-identical to
 // bytegpt_forward_last's compute (same _bg_layernorm / _bg_mha / _bg_linear /
@@ -936,6 +999,41 @@ pub fn bytegpt_decode_topk_sampled(path: string, seed_ids: list, gen: int,
     let outl = []
     let mut out = ""
     let mut rng = _g6_mix32(seed_rng)            // mix the raw seed ONCE (decorrelate nearby seeds)
+    let mut g = 0
+    while g < gen {
+        let n = len(toks)
+        let mut start = 0
+        if n > block { start = n - block }
+        let T = n - start
+        let ids = farr_zeros(T)
+        let mut p = 0
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
+        let logits = bg_forward_last_W(W, ids, T)
+        let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
+        let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
+        let _ = farr_free(logits); let _ = farr_free(ids)
+        toks.push(nb); outl.push(nb); out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "ids": outl }
+}
+
+// bytegpt_decode_topk_sampled_ranged — OOM-SAFE twin of bytegpt_decode_topk_sampled
+// for the frozen H_1431 5-bar on the pool. IDENTICAL sampler + forward (byte-faithful),
+// the ONLY change is bg_load → bg_load_ranged (ranged read_bytes_at, peak ≈ one weight
+// slice during load instead of ~24GB whole-file boxing). The per-token forward is the
+// SAME fast resident mm (bg_forward_last_W), so generation throughput is unchanged
+// (~1.8s/token); only the one-time load is made memory-safe.
+pub fn bytegpt_decode_topk_sampled_ranged(path: string, seed_ids: list, gen: int,
+                                          top_k: int, temp: float, seed_rng: int) -> Map {
+    let W = bg_load_ranged(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let toks = []
+    let mut i = 0
+    while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let outl = []
+    let mut out = ""
+    let mut rng = _g6_mix32(seed_rng)
     let mut g = 0
     while g < gen {
         let n = len(toks)
