@@ -3,8 +3,8 @@ id: H_1435
 slug: 1435_continued_pretrain
 title: G6 IDEATION ★ FALS-depth wall — TRAINING side r1 — continued-pretrain on falsifiable-claim corpus (303M full-weight)
 group: gate-dig (G6 IDEATION ★) — FALS-depth wall, TRAINING-side test #1 (capacity vs learn-gap separation)
-terminal_tier: 🧱 WALL=CAPACITY (form installed 0→5, held-out holds, control inert, but cross-shuffle does NOT collapse)
-wired: N/A (did not cross — a_verified_must_wire GREEN-only)
+terminal_tier: 🧱 WALL=CAPACITY (DIRECTIONAL — torch-side frozen probe; form installed 0→5, held-out holds, control inert, but cross-shuffle does NOT collapse)
+wired: DIRECTIONAL (torch-side: rented A100 full-weight train + torch FALS probe; the 🧱 verdict is NOT engine-native — a_engine_native_learning. Trained ckpt destroyed on teardown (a_fire_recover_complete precedent) → engine-native re-measure = re-rent COST-GATE, ING #21. Terminal tier is DIRECTIONAL, not banked.)
 verdict_dir: .verdicts/1435_continued_pretrain/
 terminal_verdict: .verdicts/1435_continued_pretrain/result.txt
 date: 2026-06-17

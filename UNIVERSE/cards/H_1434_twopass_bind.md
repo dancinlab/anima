@@ -119,6 +119,13 @@ wiring (did not clear the 5-bar).
 
 ## Scope (honest, a_scale_honest_scope / a_toy_scale_recheck)
 
+**R2 engine-native re-measure ATTEMPT (2026-06-17, pool, $0 — a_engine_native_learning):** serialized 303M to
+`CORE/bytegpt_decode.hexa` flat binary on the pool (sha `5c303f02…` == H_1218 validated .bin) and ran the live
+CORE forward. **BLOCKED** — engine argmax=227 vs torch 32 (approx-erf-GELU+dt_exp residual flips argmax at L24 on
+pool-Linux). Byte-exact FALS re-measure = 재측정 불가 (engine-forward parity bug = INFRA wall c16, NOT a ceiling);
+🧱 verdict REMAINS DIRECTIONAL. Fix + verdict-level re-run = ING follow-on. Evidence:
+`state/_engine_native_audit/batch2_bytegpt_mount_BLOCKED.txt`.
+
 DIRECTIONAL R1 torch-mouth mirror on summer CUDA (engine-native byte-exact reconfirm =
 follow-on only on a future GREEN; a_engine_native_learning); toy 303M; 5 subjects; 3 seeds;
 deterministic structural detector (form not quality, p7). NO tune-to-green (the detector/weld/

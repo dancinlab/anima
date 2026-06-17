@@ -1,3 +1,12 @@
+## 2026-06-17 — research(ENGINE-NATIVE batch-2): bytegpt 303M mount BLOCKED (engine-forward 잔차) + DIRECTIONAL 라벨 정정 (pool, 렌트0)
+
+a_engine_native_learning HARD-GATE batch-2 (ING #19, D-free-bytegpt). 신규 `tool/enforce_anima_gates.py` (verify.checks 배선, c18 우회없음) 통과하도록 정정.
+- **batch-2 = 재측정 불가 (engine-forward parity bug)**: H_1431/1432/1434 (303M ByteGPT FALS 프로브) byte-exact 재측정 시도. h1129c_chat.pt → `CORE/bytegpt_decode.hexa` flat-binary serialize on pool aiden+summer (sha `5c303f02…` = H_1218 검증 .bin 과 **byte-동일** → serialize 정상). 그러나 **live CORE forward argmax=227 ≠ torch golden 32** (maxval 20.01 vs 29.69); 3개 엔트리(`bytegpt_forward_last`/`_ranged`/`bg_forward_last_W`) 전부 227. 원인 = approx-erf-GELU + dt_exp 잔차가 L24 누적되어 argmax flip (H_1218 의 32==32 byte-exact 는 Mac CPU; pool-Linux 현재 빌드선 재현 안됨). = **INFRA 벽(c16 type-c, 과학 천장 아님)**.
+- **정정**: H_1431/1432/1434 카드에 R2 BLOCKED 노트 + 증거경로 추가(verdict 는 DIRECTIONAL 유지, 이미 라벨됨). 증거 `state/_engine_native_audit/batch2_bytegpt_mount_BLOCKED.txt`.
+- **enforcer 위반 클리어**: H_1435/1436/1437 카드 tier+wired 에 **DIRECTIONAL 명기** (rented A100 torch-side, ckpt 소멸 → 엔진체크 불가 = 재렌트 COST-GATE). 이 3건이 `enforce_anima_gates.py --all` 의 유일 위반이었음 → 정정 후 clean.
+- **범위교정 (ING #24)**: H_1377/1430/1396 은 ByteGPT decode 아님 = numpy geometry/affinity sim, 이미 self-labeled DIRECTIONAL = 게이트 준수.
+- **follow-on**: engine-forward parity fix (`_bg_gelu`/`_bg_erf` 정밀화 → h1218 parity PASS) = batch-2 의 선결 블로커 = ING #23. 그 후 verdict-level(FALS≥1 vs 0) 재측정.
+
 ## 2026-06-17 — feat(self-harness): tool/enforce_anima_gates.py — CLAUDE.md 하드게이트 코드수준 강제 (verify.checks 배선, 우회 없음 c18)
 
 CLAUDE.md 규칙을 salience(AI 가 읽고 따름) 가 아니라 **기계적으로 차단**하는 anima 자체 enforcer 추가 (사용자 지시: 코드수준 강제). `harness.config.json` verify.checks 에 배선 → pr-cycle/CI 가 위반 PR 을 exit≠0 으로 거부.
