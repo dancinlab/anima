@@ -266,3 +266,57 @@ NEXT ROUND:
   (c) ENGINE-SIDE NOW: hoist inline `arr[idx]` (esp. int-literal arrays) out of farr_set/
       store value-args across CORE/*.hexa. DEPLETION: UNMODIFIED parity probe = 32.
 ================================================================
+
+
+================================================================
+LANE A r-PAYOFF — ENGINE-NATIVE H_1431: trust-gate PASS, but 5-bar sweep INFEASIBLE (speed wall)
+DATE: 2026-06-17  HOST: summer (~/core/anima, durable checkout)
+================================================================
+
+TRUST-GATE (engine-native decode byte-faithful) = PASS:
+  - Re-serialized chat_full.bin (1.21GB) from ckpt; torch golden argmax=32, greedy=" as the ".
+  - Hoisted all 4 i64-subscript sites in ~/core/anima/CORE/bytegpt_decode.hexa decode loops.
+  - Engine-native forward (BOTH paths) on the hoisted decode = argmax 32 (byte-faithful):
+      bytegpt_forward_last_ranged  -> RANGED_ARGMAX 32
+      bg_load + bg_forward_last_W  -> MAPW_ARGMAX 32   (resident-weights Map path)
+  => the engine forward is byte-faithful to torch; the FIX holds on the fresh env.
+
+SPEED WALL (the blocker for the H_1431 sweep):
+  - Single forward (T=15, ONE next-token logits, dispatch-interpreted hexa runtime) = 102 SECONDS
+    (measured, warm cache). The forward is pure-hexa nested-loop matmul: 24 layers x
+    (3d^2 + d^2 + 2*4d^2) scalar farr_get multiply-adds at d=1024, run in the dispatch runtime.
+  - H_1431 needs gauge_lib._decode-equivalent generation: max_new=110 tokens/fragment, each a
+    forward over growing context. Per the FREEZE: 2 fragments (relation+measure) x 5 subjects
+    x 3 seeds = 30 generations x ~110 forwards ~= 3,300 forwards, x3 arms (COMPOSE/SHUFFLE/
+    ABLATE). At >=102s/forward (rising with context) that is >=90-280 HOURS. INFEASIBLE
+    synchronously, and the native-asm fast path (aprime_cc) CANNOT compile this model
+    (farr_* unsupported by the native backend — r2 finding).
+
+VERDICT ON THE PAYOFF: engine-native H_1431 5-bar is NOT runnable at the current
+  dispatch-runtime forward speed (102 s/forward). This is an HONEST infeasibility, not a
+  falsification of the hypothesis. The torch-side DIRECTIONAL stands UN-RE-VERIFIED on the
+  engine: COMPOSE FALS 0.3333 / SHUFFLE_BIND 0.0 / ABLATE 0.0 -> torch verdict 🧱
+  BIND-CAPACITY-BOUND remains the only measured result.
+
+OPTIONS (need lead decision):
+  A) SCOPED PILOT (deliver SOME engine-native number): 1 seed, 1 subject, max_new=24, COMPOSE
+     vs SHUFFLE only (drop ABLATE). ~2 fragments x ~24 forwards x 2 arms ~= 96 forwards ~=
+     2.7 h. Yields a single-subject engine-native FALS point + its shuffle control — a
+     directional engine sanity check, NOT the full frozen 5-bar.
+  B) SPEED FIX FIRST (unblocks ALL engine-native re-measures incl. H_1432/1434): make the
+     hexa forward fast enough. Lever = HEXA_BACKEND native is out (farr_*); the realistic
+     lever is a runtime-level batched/BLAS farr matmul (forge/hxblas) OR caching the K/V so
+     each new token is 1-row not full-T. This is its own lane.
+  C) ACCEPT the torch DIRECTIONAL as the standing H_1431 result (engine re-verify DEFERRED on
+     infeasibility) and move H_1432/1434 behind the same speed gate.
+
+RECOMMENDATION: B is the true unblock (without it NO engine-native G6 re-measure is feasible),
+  but it's a separate lane. For THIS round, A delivers a real (if narrow) engine-native data
+  point. Awaiting pick.
+
+NEXT ROUND + DEPLETION:
+  - if A: pilot FALS(compose) + FALS(shuffle) for 1 subj/1 seed engine-native; depletion =
+    those two numbers reported + whether compose>shuffle holds the directional shape.
+  - if B: a KV-cache or BLAS farr-matmul forward; depletion = single-token forward < ~2 s,
+    then the full 5-bar becomes feasible and re-scheduled.
+================================================================
