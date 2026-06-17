@@ -1,6 +1,3 @@
-## 2026-06-17 — fix(CORE/bytegpt_decode): engine-forward libm erf/exp parity (ING#23, WIP 검증중)
-
-엔진-네이티브 측정 decode forward 가 torch golden 과 argmax 갈림(227≠32) 근본수정. _bg_erf 의 A&S 7.1.26(~1.38e-7) + dt_exp(12-term Taylor) 결정론 트윈이 L24 누적되어 argmax flip → 측정 forward 만 libm erf/exp 로 교체(extern fn erf/exp; _bg_gelu 의 erf + attention softmax dt_exp). flame_math 의 dt_erf/dt_exp 학습 트윈은 보존(재현성). hexa "math=libm" 부합. 검증: summer 에서 forward argmax('The quick brown')==32 byte재현 확인중(미검증=WIP). 통과시 batch-2 H_1431/1432/1434 엔진재측정 unblock.
 ## 2026-06-17 — research(ENGINE-NATIVE batch-2): bytegpt 303M mount BLOCKED (engine-forward 잔차) + DIRECTIONAL 라벨 정정 (pool, 렌트0)
 
 a_engine_native_learning HARD-GATE batch-2 (ING #19, D-free-bytegpt). 신규 `tool/enforce_anima_gates.py` (verify.checks 배선, c18 우회없음) 통과하도록 정정.
