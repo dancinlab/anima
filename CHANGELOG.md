@@ -1,4 +1,11 @@
-## 2026-06-17 — docs(CLAUDE.md): tape-DSL 잔재 제거 + canonical markdown 전면 재저작 (위반-최소화 하드게이트 프론트)
+## 2026-06-17 — research(ENGINE-NATIVE AUDIT): 전수감사 + H_1404 Φ engine-native CONFIRMS (pool, 렌트0)
+
+a_engine_native_learning HARD-GATE(2bf43031b)에 따라 UNIVERSE/HYPOTHESES.jsonl 1321 가설 전수감사 → 엔진-네이티브 미실시 verdict 박제 색출 + batch-1 재측정.
+- **감사 SCOPE** (state/_engine_native_audit/audit_final.json): E(engine-native already)≈99 · 진짜 D(load-bearing tier 박제 but torch/numpy verdict)=18 · N/A=다수.
+- **핵심교정**: (1) H_6xxx(38) ANU/CHSH/library numpy 양자sim + H_189/Hc_127x/Hc_128x red-team GRU meta-baseline 은 CLM live-CORE 디코드 verdict 아님 = N/A(엔진-네이티브 CLM 재측정 무관). (2) brain-lane Φ가족(1404/1405/1407/1408/1409/1411)은 h140x_phi_runner.hexa→stdlib/iit4/faithful_phi.hexa 로 Φ verdict 이미 ENGINE-NATIVE(capability축은 tier 에 '(DIRECTIONAL mirror)' 이미 정직표기) = 박제아님.
+- **batch-1 재측정** (pool aiden, torch2.10+cuda, $0): H_1404 lane_compose_phi → faithful IIT4 exact-MIP 엔진 재실행 = **byte-exact CONFIRMS**. Φ_composed=2.032882 · Φ_affect=0.284755 · Φ_ethics=0 · Φ_disc=0 (per-seed 1.779497/2.233832/2.085316), MIP cut {1}|rest, B1/B2/B3 PASS — R1 카드와 6자리 일치. 기존 🟢 INTEGRATION-RAISES-Φ verdict 엔진서 그대로 유지(뒤집힘 없음). 증거 .verdicts/1404_lane_compose_phi/H_1404_engine_native_reverify.txt.
+- **남은 D 18건 ING #18-21 전수등록**: Φ가족 6 배선 follow-on(#18) · D-free-bytegpt 6(#19, base 303M h1129c serialize→bytegpt_decode.hexa, 렌트0) · D-free-other 9(#20) · cost-gate 3(H_1435/1436/1437 ckpt 소멸=재렌트 DIRECTIONAL, #21).
+
 
 CLAUDE.md 를 .tape DSL 잔재(`@D := :: governance [required active]` · `do=`/`dont=`/`ref=`) 없이 순수 canonical markdown 으로 완전 재저작 (사용자 지시: native/canonical · 위반 최소화). 424→228줄.
 - 모든 거버넌스 규칙 의미 손실 0 — 규칙 이름 47개(a_*·a1·a7b_pass·p1–p8) 구↔신 set 동일(comm 누락 0 검증), keyword 트리거 호환 유지.
