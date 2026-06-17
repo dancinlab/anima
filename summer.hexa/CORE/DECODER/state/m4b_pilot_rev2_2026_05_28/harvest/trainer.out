@@ -1,0 +1,49 @@
+[tokenizer_bpe] module loaded — byte-level BPE tokenizer ready
+=== train_v3_moe_pilot_rev2 (M4b-fire-rev2 · diverse corpus · n_steps=200 · LZ76 verdict) ===
+[tokenizer_bpe] loaded 151387 merges, 151643 vocab in 323.373 ms
+  bpe: V=151643 n_toks=6034
+  bpe: all ids in [0,V) = true
+  config: d=64 V=151643 E=2 h=256 n_layer=1 T=4 n_steps=200 n_decode=100
+  m_size=29164800 params (FP64 8B · 222 MB)
+  attn_scale = 1/sqrt(d) = 0.125
+  alloc OK
+  init OK
+  ── training loop start ──
+  step=1 L_ce=648.526 tgt=85 top=0
+  step=20 L_ce=806.273 tgt=0 top=1
+  step=40 L_ce=8.89193 tgt=0 top=1
+  step=60 L_ce=8.03474 tgt=0 top=1
+  step=80 L_ce=8.89578 tgt=0 top=1
+  step=100 L_ce=9.40123 tgt=0 top=1
+  step=120 L_ce=10.7208 tgt=0 top=1
+  step=140 L_ce=5.24904 tgt=8 top=1
+  step=160 L_ce=11.1196 tgt=0 top=1
+  step=180 L_ce=12.0055 tgt=0 top=1
+  step=200 L_ce=9.02146 tgt=220 top=1
+  ── training loop end ──
+  ── inline greedy decode start ──
+  decode step=0 top_id=1 top_expert=1
+  decode step=10 top_id=1 top_expert=1
+  decode step=20 top_id=1 top_expert=1
+  decode step=30 top_id=1 top_expert=1
+  decode step=40 top_id=1 top_expert=1
+  decode step=50 top_id=1 top_expert=1
+  decode step=60 top_id=1 top_expert=1
+  decode step=70 top_id=1 top_expert=1
+  decode step=80 top_id=1 top_expert=1
+  decode step=90 top_id=1 top_expert=1
+  decode step=99 top_id=1 top_expert=1
+  ── inline greedy decode end ──
+TTR=0.01 unique=1/100
+DISTINCT_EXPERTS=1/2
+LZ_NORM=0.0240306 floor=0.5
+CE_INITIAL=648.526
+CE_FINAL=9.02146
+F-M4B-FIRE-1' TTR>=0.30: FAIL
+F-M4B-FIRE-LZ LZ_norm>=0.50: FAIL
+F-M4B-FIRE-3 distinct_experts>=2: FAIL
+F-M4B-FIRE-4 CE monotone: PASS
+F-M4B-FIRE-router HARD-top1 wired: PASS
+AGGREGATE: 2/5 PASS
+RESULT_JSON written to /opt/anima/state/m4b_pilot_rev2/result.json
+TRAIN_V3_MOE_PILOT_REV2 END-TO-END: FAIL

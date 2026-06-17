@@ -1,0 +1,65 @@
+// engine_g.hexa — Engine G: motivation + emit gate (anima/CORE).
+//
+// CORE-owned canonical motivation engine. Carries the closed-form spontaneous
+// machinery (8-factor weighted motivation_score + emit/safety predicates) that
+// the live chat daemon also runs (HEXAD/CHAT/spontaneous_lib.hexa). Values are
+// byte-identical to that lineage (anima_alive PROACTIVE_THRESHOLD / weights
+// sum=1.0) so CORE and the chat daemon share one behaviour.
+//
+// SSOT note: HEXAD/CHAT/spontaneous_lib.hexa is the live-chat copy and remains
+// untouched. Reconciliation (chat re-exports from CORE) is a follow-up — for now
+// the constants below are the single source for the CORE/AGENT brain.
+//
+// No main — importable lib. brain.hexa couples this (G) with Engine A.
+
+// ── thresholds (anima_alive carry) ──────────────────────────────────────────
+fn spont_im_threshold() -> float        { return 0.3 }    // PROACTIVE_THRESHOLD
+fn spont_interrupt_threshold() -> float { return 0.6 }    // talker interrupt
+fn spont_idle_speak_after() -> float    { return 30.0 }   // IDLE_SPEAK_AFTER
+fn spont_min_emit_interval() -> float   { return 30.0 }   // rate-limit convention
+
+// ── 8 weights (sum = 1.00 closed conservation) ──────────────────────────────
+fn spont_weight_relevance()   -> float { return 0.20 }
+fn spont_weight_info_gap()    -> float { return 0.10 }
+fn spont_weight_curiosity()   -> float { return 0.15 }
+fn spont_weight_pain()        -> float { return 0.10 }
+fn spont_weight_coherence()   -> float { return 0.10 }
+fn spont_weight_originality() -> float { return 0.10 }
+fn spont_weight_balance()     -> float { return 0.15 }
+fn spont_weight_dynamics()    -> float { return 0.10 }
+
+// ── motivation_score (linear weighted sum) ──────────────────────────────────
+// NB: param `dyn_v` (not `dyn`) — `dyn` is a reserved hexa-lang lexer keyword.
+fn motivation_score(rel: float, gap: float, cur: float, pain: float,
+                    coh: float, orig: float, bal: float, dyn_v: float) -> float {
+    return spont_weight_relevance()   * rel
+         + spont_weight_info_gap()    * gap
+         + spont_weight_curiosity()   * cur
+         + spont_weight_pain()        * pain
+         + spont_weight_coherence()   * coh
+         + spont_weight_originality() * orig
+         + spont_weight_balance()     * bal
+         + spont_weight_dynamics()    * dyn_v
+}
+
+// ── emission predicates ──────────────────────────────────────────────────────
+fn should_emit(score: float) -> bool      { return score > spont_im_threshold() }
+fn should_interrupt(score: float) -> bool { return score > spont_interrupt_threshold() }
+
+// ── safety predicates (4-way AND closure) ────────────────────────────────────
+fn safety_kill_switch_on(env_off: bool) -> bool { return env_off == false }
+
+fn safety_rate_limit_ok(seconds_since_last: float) -> bool {
+    return seconds_since_last >= spont_min_emit_interval()
+}
+
+// phi_ratchet — Engine A's live Φ vs its ratchet peak (the A→G coupling gate).
+fn safety_phi_ratchet_ok(phi: float, ratchet: float) -> bool {
+    return phi > ratchet / 2.0
+}
+
+fn safety_content_ok(content_clean: bool) -> bool { return content_clean }
+
+fn safety_combined(kill: bool, rate: bool, phi_r: bool, content: bool) -> bool {
+    return kill && rate && phi_r && content
+}

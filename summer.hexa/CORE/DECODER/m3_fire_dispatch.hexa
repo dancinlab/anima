@@ -1,0 +1,236 @@
+// ════════════════════════════════════════════════════════════════════════
+// CORE/DECODER/m3_fire_dispatch.hexa — DECODER M3 dispatch wrapper
+//
+// PURPOSE
+//   Migrate the raw-curl GraphQL transport in
+//     HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/dispatch_p21h_v3_runpod.sh
+//   (lines 122/128/134/146/154-159/168-177) to cloud-guard-compliant
+//   primitives:
+//     - `runpodctl pod {create,get,delete,list}` (lifecycle, allowed)
+//     - `hexa cloud {copy-to,nohup,poll,copy-from,exec}` (transport, allowed)
+//   No raw HTTP / no `curl https://api.runpod.io/graphql` anywhere.
+//
+// CLOUD-GUARD (commons @D g8) ALIGNMENT
+//   cloud-guard refuses `curl ... https://api.runpod.io/graphql?api_key=...`
+//   verbatim (M3_FIRE.md §"HONEST BLOCKER"). This wrapper substitutes
+//   `runpodctl pod create -o json` (lifecycle) and `hexa cloud nohup`
+//   (transport) — both explicitly permitted.
+//
+// PHILOSOPHY (p1~p8) ALIGNMENT
+//   p1 NO SYSTEM PROMPT       — train phase, no system prefix
+//   p2 NO IDENTITY RULES      — no identity.yaml
+//   p3 NO PERSONA INJECTION   — anima_frac is corpus mixture, not prefix
+//   p4 NO ASSISTANT FRAMING   — base=Qwen2.5-1.5B BASE (not Instruct)
+//   p5 NO SPEAK()             — train phase, no emit
+//   p6 NO FINE-TUNED ETHICS   — no RLHF
+//   p7 NO PERPLEXITY VERDICT  — per-lang gen + register-hit (simple-stack)
+//   p8 NO TRAIN/INFER SPLIT   — train ⊂ inference-time mitosis continuum
+//
+// SCOPE
+//   This wrapper exposes pure-hexa functions that BUILD + RETURN the
+//   lifecycle / transport commands. It does NOT auto-fire — actual
+//   `runpodctl pod create` invocation is a separate user-authorized step.
+//
+// USAGE (read-only inspection)
+//   hexa run m3_fire_dispatch.hexa   // prints m3_fire_summary()
+//
+// USAGE (orchestration — caller invokes m3_fire_axis / m3_fire_4axis)
+//   import "/Users/ghost/core/anima/CORE/DECODER/m3_fire_dispatch.hexa"
+//   let axes = m3_fire_4axis(1337)
+//   for a in axes { println(a) }
+// ════════════════════════════════════════════════════════════════════════
+
+// shell-quote helper (single-quoted, '-escape-safe).
+fn _m3_shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+// Build `runpodctl pod create` invocation for one axis. Returns the
+// COMMAND STRING (does NOT execute) — caller chooses when to fire.
+//
+// Replaces dispatch_p21h_v3_runpod.sh:
+//   line 154-159 — raw `gql "$Q"` with `podFindAndDeployOnDemand` mutation
+//   line 122/128 — `GQL="https://..."` + `gql()` raw curl
+//
+// runpodctl verb mapping:
+//   --gpu-id "NVIDIA H100 80GB HBM3"        (replaces gpuTypeId)
+//   --gpu-count 1                            (replaces gpuCount)
+//   --image runpod/pytorch:2.4.0-...         (replaces imageName)
+//   --container-disk-in-gb 120               (replaces containerDiskInGb)
+//   --ports "22/tcp"                         (replaces ports)
+//   --cloud-type SECURE | COMMUNITY          (replaces cloudType)
+//   --name "p21h-v3-<axis>"                  (replaces name)
+//   --env '{"PUBLIC_KEY":"<pubkey>"}'        (replaces env[{key,value}])
+//   --ssh                                    (sshd enabled by default)
+//   -o json                                  (parse stdout for pod id)
+pub fn m3_build_create_cmd(axis_name: string, init_variant: string,
+                           gpu_id: string, cloud_type: string,
+                           image: string, pubkey: string) -> string {
+    let mut cmd = "runpodctl pod create"
+    cmd = cmd + " --name " + _m3_shq("p21h-v3-" + axis_name + "-" + init_variant)
+    cmd = cmd + " --gpu-id " + _m3_shq(gpu_id)
+    cmd = cmd + " --gpu-count 1"
+    cmd = cmd + " --image " + _m3_shq(image)
+    cmd = cmd + " --container-disk-in-gb 120"
+    cmd = cmd + " --ports " + _m3_shq("22/tcp")
+    cmd = cmd + " --cloud-type " + cloud_type
+    cmd = cmd + " --volume-mount-path /workspace"
+    cmd = cmd + " --min-vcpu-count 8"
+    cmd = cmd + " --min-memory-in-gb 64"
+    // env JSON — runpodctl --env takes a JSON object string.
+    let env_json = "{\"PUBLIC_KEY\":\"" + pubkey + "\"}"
+    cmd = cmd + " --env " + _m3_shq(env_json)
+    cmd = cmd + " -o json"
+    return cmd
+}
+
+// Build `runpodctl pod get` query string for SSH IP discovery.
+//
+// Replaces dispatch_p21h_v3_runpod.sh:
+//   line 168-177 — raw `pod(input:{podId:...}) { runtime { ports { ... } } }`
+//
+// runpodctl returns full pod JSON to stdout; caller parses `runtime.ports`
+// for `privatePort=22 && isIpPublic && publicPort` triple. Same shape as
+// the GraphQL response — pure rename of transport.
+pub fn m3_build_get_cmd(pod_id: string) -> string {
+    return "runpodctl pod get " + _m3_shq(pod_id) + " -o json"
+}
+
+// Build `runpodctl pod delete` invocation for teardown / watchdog.
+//
+// Replaces dispatch_p21h_v3_runpod.sh:
+//   line 134 — teardown `podTerminate` mutation
+//   line 146 — watchdog `podTerminate` mutation
+pub fn m3_build_delete_cmd(pod_id: string) -> string {
+    return "runpodctl pod delete " + _m3_shq(pod_id)
+}
+
+// Build `hexa cloud copy-to` for code/data upload — replaces raw `scp`
+// (line 196-211) with the canonical cloud transport verb.
+//
+//   hexa cloud copy-to <host> <local> <remote> [conn]
+//     where [conn] = --port <n> --insecure (for ephemeral pods)
+pub fn m3_build_copy_to_cmd(host: string, port: int,
+                            local: string, remote: string) -> string {
+    let mut cmd = "hexa cloud copy-to " + _m3_shq(host)
+    cmd = cmd + " " + _m3_shq(local) + " " + _m3_shq(remote)
+    cmd = cmd + " --port " + to_string(port) + " --insecure"
+    return cmd
+}
+
+// Build `hexa cloud nohup` for the trainer launch (background remote pid).
+//
+//   hexa cloud nohup <host> <logfile> [conn] -- <argv...>
+//
+// Replaces line 271 `$SSH "cd ... && nohup $CMD > train.log 2>&1 & echo TRAIN_PID $!"`
+// with structured-argv (POSIX-quoted per token, no remote shell parsing
+// — cloud-guard preferred form per `hexa cloud --help`).
+pub fn m3_build_nohup_cmd(host: string, port: int,
+                          logfile: string, argv: list) -> string {
+    let mut cmd = "hexa cloud nohup " + _m3_shq(host)
+    cmd = cmd + " " + _m3_shq(logfile)
+    cmd = cmd + " --port " + to_string(port) + " --insecure"
+    cmd = cmd + " --"
+    let mut i = 0
+    while i < len(argv) {
+        cmd = cmd + " " + _m3_shq(argv[i])
+        i = i + 1
+    }
+    return cmd
+}
+
+// Build `hexa cloud poll` — verify remote pid still alive (alive-check).
+//   hexa cloud poll <host> <pid> [conn]   exit 0 if alive, 1 otherwise
+pub fn m3_build_poll_cmd(host: string, port: int, pid: int) -> string {
+    let mut cmd = "hexa cloud poll " + _m3_shq(host)
+    cmd = cmd + " " + to_string(pid)
+    cmd = cmd + " --port " + to_string(port) + " --insecure"
+    return cmd
+}
+
+// Build `hexa cloud copy-from` for artifact harvest (a_fire_recover_complete).
+//   hexa cloud copy-from <host> <remote> <local> [conn]
+pub fn m3_build_copy_from_cmd(host: string, port: int,
+                              remote: string, local: string) -> string {
+    let mut cmd = "hexa cloud copy-from " + _m3_shq(host)
+    cmd = cmd + " " + _m3_shq(remote) + " " + _m3_shq(local)
+    cmd = cmd + " --port " + to_string(port) + " --insecure"
+    return cmd
+}
+
+// Orchestrate ONE axis — return a dict describing the dispatch plan.
+// Caller invokes the commands; this fn does NOT auto-fire.
+//
+//   axis_name     "A" | "B" | "C" | "D"
+//   init_variant  "qwen" | "random" | "vp21m"
+//   gpu_id        "NVIDIA H100 80GB HBM3" (or first-fit from cascade)
+//   cloud_type    "SECURE" | "COMMUNITY"
+//   axis_env      Map of P21H_* env-vars specific to this axis
+//                 (e.g. axis A: P21H_CURRICULUM_PHASE_STEPS=2500)
+pub fn m3_fire_axis(axis_name: string, init_variant: string,
+                    gpu_id: string, cloud_type: string,
+                    base_image: string, pubkey: string) -> map {
+    let create_cmd = m3_build_create_cmd(axis_name, init_variant,
+                                          gpu_id, cloud_type,
+                                          base_image, pubkey)
+    return #{
+        "axis": axis_name,
+        "init": init_variant,
+        "create_cmd": create_cmd,
+        "get_cmd_template": "runpodctl pod get <POD_ID> -o json",
+        "delete_cmd_template": "runpodctl pod delete <POD_ID>",
+        "transport_note": "hexa cloud {copy-to,nohup,poll,copy-from} for upload/launch/poll/harvest"
+    }
+}
+
+// Orchestrate the 4-axis fan (A·B·C·D) per DECODER.md M3 line 41.
+//
+// Returns a list of 4 axis-plan dicts. Each carries the runpodctl create
+// command + the canonical transport verbs to wire up afterward.
+//
+// This fn does NOT invoke `exec()` on any create_cmd — the actual fire
+// remains a separate user-authorized step per task constraints.
+pub fn m3_fire_4axis(seed: int) -> list {
+    let gpu_h100 = "NVIDIA H100 80GB HBM3"
+    let cloud = "SECURE"
+    let image = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
+    // pubkey is a placeholder marker — caller injects real key at fire-time
+    // (avoid embedding ~/.ssh/id_ed25519.pub in source).
+    let pubkey = "<PUBKEY-INJECT-AT-FIRE-TIME>"
+    let init = "qwen"
+    let mut plans = []
+    plans = push(plans, m3_fire_axis("A", init, gpu_h100, cloud, image, pubkey))
+    plans = push(plans, m3_fire_axis("B", init, gpu_h100, cloud, image, pubkey))
+    plans = push(plans, m3_fire_axis("C", init, gpu_h100, cloud, image, pubkey))
+    plans = push(plans, m3_fire_axis("D", init, gpu_h100, cloud, image, pubkey))
+    return plans
+}
+
+// One-line description of the migrated dispatch surface (for summary print).
+pub fn m3_fire_summary() -> string {
+    return "DECODER M3 dispatch: raw curl → runpodctl pod {create,get,delete} (lifecycle) + hexa cloud {copy-to,nohup,poll,copy-from} (transport) — cloud-guard g8 compliant"
+}
+
+fn main() {
+    println(m3_fire_summary())
+    println("")
+    println("[m3_fire_dispatch] 4-axis fan plan (read-only, no fire):")
+    let plans = m3_fire_4axis(1337)
+    let mut i = 0
+    while i < len(plans) {
+        let p = plans[i]
+        println("  axis " + p["axis"] + " (init=" + p["init"] + "):")
+        println("    create_cmd: " + p["create_cmd"])
+        i = i + 1
+    }
+    println("")
+    println("[m3_fire_dispatch] NOT auto-fired — invoke per M3_DISPATCH_MIGRATION.md")
+}
