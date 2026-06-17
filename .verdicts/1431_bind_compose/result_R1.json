@@ -1,0 +1,87 @@
+{
+  "ckpt": "/home/summer/core/anima/state/chat_303m/h1129c_chat.pt",
+  "corpus": "/home/summer/core/anima/data/corpus.txt",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "calibration": "10/10",
+  "audit_nofab_clean": true,
+  "audit_bad": [],
+  "DIST": {
+    "COMPOSE": 0.3333,
+    "SHUFFLE_BIND": 0.0,
+    "ABLATE": 4.6667
+  },
+  "FALS": {
+    "COMPOSE": 0.3333,
+    "SHUFFLE_BIND": 0.0,
+    "ABLATE": 0.0
+  },
+  "b1_fals_cross": false,
+  "b2_count": false,
+  "b3_shuffle_collapse": false,
+  "b4_ablate_inert": false,
+  "b5_nofab": true,
+  "crossed_floor": false,
+  "controls_survive": false,
+  "green": false,
+  "wall": false,
+  "tier": "PARTIAL",
+  "verdict": "🟠 PARTIAL — signal present but bars ['b1', 'b2', 'b3', 'b4'] fail (frozen, c9). Neither clean GREEN nor a clean ablate==compose WALL",
+  "per_seed": {
+    "COMPOSE": [
+      {
+        "dist": 0,
+        "fals": 0,
+        "coherent": 0
+      },
+      {
+        "dist": 0,
+        "fals": 0,
+        "coherent": 0
+      },
+      {
+        "dist": 1,
+        "fals": 1,
+        "coherent": 1
+      }
+    ],
+    "SHUFFLE_BIND": [
+      {
+        "dist": 0,
+        "fals": 0,
+        "coherent": 0
+      },
+      {
+        "dist": 0,
+        "fals": 0,
+        "coherent": 0
+      },
+      {
+        "dist": 0,
+        "fals": 0,
+        "coherent": 0
+      }
+    ],
+    "ABLATE": [
+      {
+        "dist": 4,
+        "fals": 0,
+        "coherent": 5
+      },
+      {
+        "dist": 5,
+        "fals": 0,
+        "coherent": 5
+      },
+      {
+        "dist": 5,
+        "fals": 0,
+        "coherent": 5
+      }
+    ]
+  },
+  "wall_seconds": 28.0
+}
