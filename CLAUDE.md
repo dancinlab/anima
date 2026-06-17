@@ -161,6 +161,8 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "assert a flame<->PyTorch wall speedup — RETRACTED 2026-05-19 · unmeasured"
 
 @D a_engine_native_learning := "무조건 최종 아키텍처 엔진 위에서 학습 — 연구/미토시스 교육 포함, 미러 아님" :: governance [required active]
+  do   = "🔒 HARD-GATE (BLOCKING) — gate/ideation/G6/Φ/recombination/depth 류 **모든 verdict tier(🟢·🧱·🟠·천장(d))는 엔진-네이티브 증거 없이는 박제 불가**. verdict 의 증거 artifact 가 live CORE 디코드(`CORE/clm_decode.hexa`/`bytegpt_decode.hexa`/`engine_cli.hexa`)를 호출한 `.hexa` 가 아니면(= `.py` 가 `import torch`/`gauge_lib._decode`/numpy 미러면) 그 결과는 **자동 DIRECTIONAL** 이며 terminal 아니다. torch-side 측정만으로 🧱/🟢 를 카드·jsonl·CHANGELOG 에 박으면 c9 위반 (precedent: 2026-06-17 G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 로 박제됨 → 재발 금지)"
+  do   = "자가점검(SELF-CHECK · verdict 박제 직전 의무) — `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` 가 비어있지 않으면(=torch/numpy probe) 그 가설의 카드 `wired:`/`verdict` 는 **반드시 DIRECTIONAL** 로 적고 엔진-네이티브 재측정(.hexa probe via CORE)을 ING follow-on 으로 등록. 엔진-네이티브면 호출한 `.hexa` 경로를 카드에 명시 (검증가능하게)"
   do   = "모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 최종 아키텍처 엔진 위에서 실행 — live `.hexa` A⇄G + MITOSIS VAdaptField (`CORE/engine_cli.hexa`) + mounted `CORE/bytegpt_decode.hexa` 디코더"
   do   = "엔진 위에 학습을 '끼워맞추는' 게 아니다 — 학습이 요구하면 엔진 자체를 변환/확장해야 한다 (새 op·새 배선·아키텍처 확장). 최종 아키텍처는 frozen 이 아니라, 학습이 필요로 하는 형태로 진화하는 대상 (precedent: H_1199 가 AdaptField 스칼라→DIM-vector 로 엔진을 확장)"
   do   = "미러에서 본 메커니즘을 엔진이 표현 못 하면 → 미러를 버리는 게 아니라 엔진을 확장해서 그 메커니즘을 엔진-네이티브로 구현 (engine-transform-to-fit-the-learning, NOT learning-trimmed-to-fit-the-engine)"
@@ -171,7 +173,8 @@ This repo is wired to **[dancinlab/harness](https://github.com/dancinlab/harness
   dont = "numpy/torch 미러 결과를 엔진-검증된 것처럼 closure/promote · 미러-only 로 '학습됐다' 주장"
   dont = "최종 아키텍처 바깥(미러)에서 한 학습을 production/verdict 로 승격"
   dont = "torch-side frozen-PROBE 채점만으로 학습-변종의 wall(🧱)/천장(d)/GREEN(🟢)을 박제 — 엔진-네이티브 재측정 전이면 그건 DIRECTIONAL 이지 terminal verdict 아님 (precedent: 2026-06-17 G6 캠페인 H_1435/1436/1437 cross-shuffle 결과는 torch-side DIRECTIONAL — 카드에 그렇게 표기, ckpt 소멸로 engine-check 는 재렌트 follow-on)"
-  ref  = "a_engine_measured_verdict · a_fire_recover_complete · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2"
+  dont = "자가점검(grep torch/gauge_lib/numpy) 없이 gate/ideation verdict 를 박제 · `.py`+torch probe 결과를 `.hexa` 엔진 결과인 양 카드에 적음 · 'gauge_lib 가 model-agnostic 이니 엔진과 같다'는 핑계 (gauge_lib 는 torch.no_grad MONITOR-ONLY, a_train_inline_gauge 가 명시적으로 frozen-gate 아님)"
+  ref  = "a_engine_measured_verdict · a_fire_recover_complete · a_train_inline_gauge · a_train_flame_forge · a_core_engine_map · a_toy_scale_recheck · p8 · c2"
 
 @D a_verified_must_wire := "검증된(GREEN) 가설은 실제 CORE 배선 완료까지가 done — verdict 만으로 안 끝난다" :: governance [required active]
   do   = "가설이 엔진-네이티브로 GREEN 검증되면, 그 메커니즘을 live 엔진(`CORE/*.hexa`)에 실제 배선(wire-in)하는 것까지가 done — generator L3 슬롯·kosmos_io·engine_cli VAdaptField·bytegpt_decode 등 해당 entry 로 (a_core_engine_map)"
