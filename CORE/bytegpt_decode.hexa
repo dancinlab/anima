@@ -33,6 +33,15 @@
 
 use "stdlib/flame/flame_math"
 
+// libm transcendentals — the ENGINE-NATIVE measurement decode must byte-match the
+// torch golden forward (which uses libm erf/exp). flame_math's dt_erf/dt_exp are the
+// DETERMINISTIC training twins (A&S ~1.38e-7 + 12-term Taylor) and are preserved for
+// the training step; here in the inference/parity forward we use libm so argmax does
+// not drift from torch across L24 (ING#23 — was: approx-erf-GELU+dt_exp argmax flip
+// 227≠32 at 303M/L24 on pool-Linux). hexa "math = libm" convention.
+extern fn erf(x: float) -> float
+extern fn exp(x: float) -> float
+
 // ── little-endian readers over a read_file_bytes byte array ──────────────
 fn _bg_rd_u32(rb, off: int) -> int {
     return rb[off] + rb[off+1]*0x100 + rb[off+2]*0x10000 + rb[off+3]*0x1000000
@@ -51,12 +60,8 @@ fn _bg_rd_farr(rb, off: int, n: int) -> int {
 
 // ── exact GELU via erf (Abramowitz-Stegun 7.1.26, ~1e-7; torch nn.GELU() default) ─
 fn _bg_erf(x: float) -> float {
-    let s = if x < 0.0 { 0.0 - 1.0 } else { 1.0 }
-    let ax = if x < 0.0 { 0.0 - x } else { x }
-    let t = 1.0 / (1.0 + 0.3275911 * ax)
-    let y = 1.0 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t
-                    - 0.284496736) * t + 0.254829592) * t * dt_exp(0.0 - ax * ax)
-    return s * y
+    return erf(x)   // libm erf — byte-match torch nn.GELU(); was A&S 7.1.26 ~1.38e-7 + dt_exp,
+                    // accumulated argmax flip at 303M/L24 on pool-Linux (ING#23). dt_erf twin kept for training.
 }
 fn _bg_gelu(x: float) -> float {
     return 0.5 * x * (1.0 + _bg_erf(x * 0.7071067811865476))
@@ -173,7 +178,7 @@ fn _bg_mha(H: int, inW: int, inB: int, oW: int, oB: int, Aout: int,
             let mut tot = 0.0
             let mut j2 = 0
             while j2 < L {
-                let e = dt_exp(farr_get(srow, j2) - mx)
+                let e = exp(farr_get(srow, j2) - mx)   // libm exp (attention softmax) — torch parity, ING#23
                 let _ = farr_set(srow, j2, e)
                 tot = tot + e
                 j2 = j2 + 1
