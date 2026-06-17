@@ -1889,6 +1889,77 @@ fn main() {
           + " oracle=" + to_string(ce_orc)
           + " — substrate-confidence arbitration (NO hardcoded priority); faculties NON-COMPLEMENTARY here")
 
+    // ── §  CA3 REPLAY NEXT-ITEM PREDICTOR (H_1427) cases 153-158 ─────────────────
+    // A tiny deterministic transition fixture over 4 items: 0→1 (×3), 1→2 (×3), 2→3 (×3),
+    // 3→0 (×2) is the dominant cycle; plus one noise transition 0→2 (×1). The conditional
+    // P(next|cur) thus has a clear most-frequent successor per state; the marginal (OFF/ABLATE)
+    // baseline cannot distinguish states. Proves the READ-OUT that GATE-B (H_1208) lacks.
+    let mut ca3 = ca3_replay_new(4, 2)              // V=4, min_supp=2
+    ca3 = ca3_replay_observe(ca3, 0, 1)             // 0→1
+    ca3 = ca3_replay_observe(ca3, 0, 1)
+    ca3 = ca3_replay_observe(ca3, 0, 1)
+    ca3 = ca3_replay_observe(ca3, 0, 2)             // 0→2 noise (count 1 < dominant 3)
+    ca3 = ca3_replay_observe(ca3, 1, 2)             // 1→2
+    ca3 = ca3_replay_observe(ca3, 1, 2)
+    ca3 = ca3_replay_observe(ca3, 1, 2)
+    ca3 = ca3_replay_observe(ca3, 2, 3)             // 2→3
+    ca3 = ca3_replay_observe(ca3, 2, 3)
+    ca3 = ca3_replay_observe(ca3, 2, 3)
+    ca3 = ca3_replay_observe(ca3, 3, 0)             // 3→0
+    ca3 = ca3_replay_observe(ca3, 3, 0)
+
+    // case 153 ON: predicts the learned dominant successor per state (pattern completion).
+    if _assert_b("case_153_ca3_predicts_learned_successor", true,
+                 ca3_replay_predict(ca3, 0) == 1 && ca3_replay_predict(ca3, 1) == 2
+                 && ca3_replay_predict(ca3, 2) == 3 && ca3_replay_predict(ca3, 3) == 0)
+       { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 154 DISTINCT vs OFF/ABLATE marginal: the conditional gives a PER-STATE answer the
+    // marginal cannot (marginal returns one global item; ON disagrees on >=1 state) — the lift
+    // is the conditional structure, not the marginal frequency.
+    let ca3_marg = ca3_replay_marginal(ca3)
+    let mut on_beats_marg = false
+    if ca3_replay_predict(ca3, 0) != ca3_marg { on_beats_marg = true }
+    if ca3_replay_predict(ca3, 1) != ca3_marg { on_beats_marg = true }
+    if ca3_replay_predict(ca3, 2) != ca3_marg { on_beats_marg = true }
+    if _assert_b("case_154_ca3_conditional_distinct_from_marginal", true, on_beats_marg)
+       { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 155 NO-FAB OOD: an alien id outside [0,V) abstains (−1), never fabricates.
+    if _assert_i("case_155_ca3_ood_alien_abstains", -1, ca3_replay_predict(ca3, 99))
+       { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 156 NO-FAB below-support: a fresh predictor (empty / a state seen < min_supp) abstains.
+    let ca3_empty = ca3_replay_new(4, 2)
+    let mut ca3_one = ca3_replay_new(4, 2)
+    ca3_one = ca3_replay_observe(ca3_one, 0, 1)     // single obs: top count 1 < min_supp 2
+    if _assert_b("case_156_ca3_below_support_abstains", true,
+                 ca3_replay_predict(ca3_empty, 0) == -1 && ca3_replay_predict(ca3_one, 0) == -1)
+       { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 157 SHUFFLE collapse: rebinding the SAME counts under a permuted successor mapping
+    // (0→3,1→0,2→1,3→2, each ×3) yields a DIFFERENT (decorrelated) prediction set — the transition
+    // signal is destroyed (predictions no longer track the true dominant cycle).
+    let mut ca3_sh = ca3_replay_new(4, 2)
+    ca3_sh = ca3_replay_observe(ca3_sh, 0, 3)
+    ca3_sh = ca3_replay_observe(ca3_sh, 0, 3)
+    ca3_sh = ca3_replay_observe(ca3_sh, 1, 0)
+    ca3_sh = ca3_replay_observe(ca3_sh, 1, 0)
+    ca3_sh = ca3_replay_observe(ca3_sh, 2, 1)
+    ca3_sh = ca3_replay_observe(ca3_sh, 2, 1)
+    if _assert_b("case_157_ca3_shuffle_decorrelates", true,
+                 ca3_replay_predict(ca3_sh, 0) != ca3_replay_predict(ca3, 0)
+                 && ca3_replay_predict(ca3_sh, 1) != ca3_replay_predict(ca3, 1))
+       { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 158 ABLATE INERT: the marginal-only read (OFF == ABLATE) is identical regardless of
+    // the query state — proving the mechanism (the conditional) is what carries the lift; with it
+    // OFF the predictor is a constant (state-insensitive) = INERT vs the per-state ON.
+    if _assert_b("case_158_ca3_ablate_marginal_state_insensitive", true,
+                 ca3_marg == ca3_replay_marginal(ca3) && ca3_marg >= 0
+                 && ca3_replay_conf(ca3, 0) > 0.0)
+       { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

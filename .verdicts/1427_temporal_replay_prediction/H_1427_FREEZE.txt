@@ -1,0 +1,62 @@
+H_1427 — temporal-sequence / replay-prediction (hippocampal CA3 replay-style next-ITEM prediction)
+FROZEN-FIRST predicates (c9 · c16 · tune-to-green PROHIBITED). Authored BEFORE any measurement.
+Lens: hippocampal CA3 recurrent collateral auto-association → REPLAY-driven pattern completion of
+the NEXT item from LEARNED transition statistics P(next|current). c15 neuro lens, a_no_llm_frame_trap
+— NOT an LLM next-token recipe (no perplexity verdict, p7; script-checkable accuracy only).
+
+CLAIM (falsifiable): a faculty that LEARNS the conditional transition statistics P(next|current)
+from observed item sequences and PREDICTS the next ITEM (argmax of the learned conditional) raises
+held-out next-item prediction accuracy over a no-transition baseline, survives controls against
+every nearest lane, collapses under shuffle + ablate, and abstains on out-of-distribution input.
+
+CORE DISTINCTNESS AXIS (load-bearing): LEARNED TRANSITION STATISTICS  ⊥
+  - METRIC space (spatial-map H_1296 — between-item distance; NOT order/transition)
+  - INDEPENDENT item-binding (episodic H_1227 — binds key→value with no successor structure)
+  - GIVEN order (hier-PFC H_1294 — a plan/order handed to a pointer; here order is LEARNED from stats)
+  - continuous FORWARD-MODEL (cerebellum H_1280 — NLMS regression of next continuous feature frame;
+    here the target is a DISCRETE multi-successor conditional, argmax over a learned count table)
+  - GATE-B transition-predictability (H_1208/1209 VAdaptFieldB) — that lane HOLDS a P(next|prev)
+    count table but uses it ONLY as a GROWTH GATE (split a cell when a transition was anticipated);
+    it NEVER EMITS a next-item PREDICTION. H_1427 READS OUT the next item (pattern completion).
+    This is the nearest lane and the sharpest distinctness: gate vs read-out.
+
+TASK: sequences sampled from a fixed structured generator over V items with a sparse, MULTI-SUCCESSOR,
+deterministic-dominant transition kernel T (each state has 1 dominant successor p_dom plus minor noise
+successors). TRAIN on N_train sequences (build P(next|current) counts). TEST next-item accuracy on
+held-out sequences from the SAME kernel. Vocabulary V, kernel, seeds, N_train, N_test, p_dom FROZEN below.
+
+FROZEN HYPERPARAMETERS:
+  V = 24 items ;  seq_len = 12 ;  N_train_seqs = 200 ;  N_test_seqs = 120
+  kernel: each state -> 1 dominant successor (prob p_dom=0.75) + 3 random minor successors (share 0.25)
+  seeds = [1427, 1428, 1429]  (3 seeds; report each + mean)
+  OOD set (bar 5): K=6 synthetic "alien" current-items never seen in training (ids V..V+5) +
+                   in-dist items whose observed count < min_support=2 (unseen-transition states).
+  abstain rule: predict only if the most-frequent successor count >= min_support (=2); else ABSTAIN.
+
+ARMS:
+  OFF      = marginal-only baseline (predict global argmax next item, ignores current = no transition model)
+  ON       = CA3 transition predictor (argmax_c P(c|current) from the learned count table, abstain-gated)
+  SHUFFLE  = ON but the (current,next) pairs are permuted at TRAIN time (destroys P(next|current))
+  ABLATE   = ON with the conditional table replaced by the marginal (transition mechanism OFF == OFF)
+  vs-1280  = cerebellum forward-model control: learn a linear NLMS regressor current_featvec->next_featvec,
+             predict nearest item by feature L2 (continuous forward model, NOT a discrete conditional)
+  vs-1227  = episodic item-binding control: bind current->last-seen-next as an independent key->value
+             store (no frequency aggregation); recall best-affinity or abstain
+  vs-1294  = hier-PFC control: a GIVEN-order pointer with NO learned stats — on a novel start item it
+             has no handed plan, predicts at chance / abstains
+
+FROZEN BARS (PASS/FAIL fixed now; NO bar moves post-hoc):
+  (1) PRESENCE : acc_ON - acc_OFF >= +0.20  (each seed AND mean)
+  (2) DISTINCT : acc_ON exceeds EACH nearest-lane control by >= +0.10 (mean), i.e.
+                 acc_ON - max(acc_vs1280, acc_vs1227, acc_vs1294) >= +0.10
+                 AND each control individually < acc_ON - 0.05
+  (3) SHUFFLE  : acc_SHUFFLE <= acc_OFF + 0.05  (transition signal destroyed -> collapses to baseline)
+  (4) ABLATE   : | acc_ABLATE - acc_OFF | <= 0.03  (mechanism OFF == marginal baseline -> INERT)
+  (5) NO-FAB   : on the OOD set, abstain_rate >= 0.90 AND fabricated-prediction acc on OOD <= chance(=1/V)+0.05
+
+VERDICT RULE: 5/5 PASS = 🟢 GREEN (DIRECTIONAL mirror; engine-native re-verify + wire-in to follow).
+              any bar FAILED by a control = 🧱 (subsumed / rejected) — an HONEST valid result (c9),
+              NO moving goalposts, NO tune-to-green.
+
+p1/p2/p3/p6 clean: the faculty reads ONLY item ids + their observed transition counts; NO label/
+persona/identity/RLHF/decoder/weights. Determinism: fixed seeds, $0 CPU, run1==run2.
