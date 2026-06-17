@@ -108,6 +108,17 @@ reliably lexically in-capacity — a scale prediction, falsifiable by re-running
 
 ## Scope (honest, a_scale_honest_scope / a_toy_scale_recheck)
 
+**R2 engine-native re-measure ATTEMPT (2026-06-17, pool aiden+summer, $0 — a_engine_native_learning HARD-GATE):**
+The 303M ByteGPT `h1129c_chat.pt` was serialized to the `CORE/bytegpt_decode.hexa` flat binary on the pool
+(sha256 `5c303f02…` — byte-identical to the H_1218 validated .bin, so serialize parity is confirmed) and the
+live CORE forward was run on it. **BLOCKED**: the engine forward gives argmax("The quick brown")=**227** (maxval
+20.01) vs torch golden **32** (maxval 29.69) — the approx-erf-GELU + dt_exp residual accumulates across L24 and
+flips the argmax on the pool-Linux build (H_1218's byte-exact 32==32 was on Mac CPU). All three engine entry
+points (`bytegpt_forward_last` / `_ranged` / `bg_forward_last_W`) agree on 227. So byte-exact engine-native
+re-measurement of the FALS bars is **재측정 불가 (engine-forward parity bug, an INFRA wall c16 type-c, NOT a
+science ceiling)** — the 🧱 verdict therefore **REMAINS DIRECTIONAL** (torch-side). Engine-forward parity fix +
+verdict-level (FALS≥1 vs FALS=0) re-run = ING follow-on. Evidence: `state/_engine_native_audit/batch2_bytegpt_mount_BLOCKED.txt`.
+
 DIRECTIONAL R1 torch-mouth mirror on summer CUDA (engine-native byte-exact reconfirm = follow-on
 only on a future GREEN; a_engine_native_learning); toy 303M; 5 subjects; 3 seeds; deterministic
 structural detector (form not quality, p7). The lane tests an external deterministic bind, not a

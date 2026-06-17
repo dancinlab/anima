@@ -1,0 +1,45 @@
+BATCH-2 ENGINE-NATIVE RE-MEASUREMENT — bytegpt_decode 303M MOUNT: BLOCKED (engine-forward residual flips argmax)
+================================================================================================================
+DATE 2026-06-17 · pool aiden+summer (torch 2.10+cu128) · $0 · a_engine_native_learning HARD-GATE batch-2
+
+TARGETS (ING #19): H_1431 bind_compose · H_1432 negation_slot · H_1434 twopass_bind (303M ByteGPT decode probes,
+  gauge_lib._decode torch-mouth, H_1305 FALS detector, 🧱 WALL=FALS-0). Plus list-included H_1377/1430/1396.
+
+PIPELINE BUILT & RUN (pool, renting 0):
+  1. serialize h1129c_chat.pt (303M ByteGPT d1024/L24/H16/block512) -> flat .bin via verify303m_serialize_golden.py
+     - on aiden: chat_full.bin 1,213,440,020 B  sha256 5c303f026f134e4bc4faf516ef5298bd26269e19693696a73a5058e6ffa5319e
+       == BYTE-IDENTICAL to the H_1218 validated .bin sha (serialize parity confirmed; serialize is correct).
+     - on summer: same 1,213,440,020 B, torch golden argmax("The quick brown")=32 (val 29.69), greedy[0]=32.
+  2. CORE/bytegpt_decode.hexa forward on the .bin (pool):
+
+  TORCH GOLDEN : argmax=32  maxval=29.689793  first16[10]=25.42684
+  CORE ENGINE  : argmax=227 maxval=20.008909  first16[10]=16.787617   <-- MISMATCH (argmax flipped)
+    - tested THREE engine entry points, all agree on 227:
+        bytegpt_forward_last        (whole-file, aiden) -> 227
+        bytegpt_forward_last_ranged (read_bytes_at, summer) -> 227
+        bg_load + bg_forward_last_W (decode_argmax path, summer) -> 227
+    - first16 logits are CLOSE for idx0-9 (within ~1-3) but diverge from idx10 (25.43 vs 16.79, 8.6 off).
+      Signature = approx-erf-GELU + dt_exp residual ACCUMULATING across 24 layers until it FLIPS the argmax.
+      (H_1167 card flagged exactly this: "residual = approx-erf-GELU envelope의 28-layer 누적 ... 깊어질수록 커짐".
+       At 303M/L24 on Linux pool float math the accumulation now exceeds the argmax margin.)
+
+INFRA WALL (NOT a science ceiling — c16 type-(c) / a_engine_native_learning "engine-transform-to-fit"):
+  · read_file_bytes / read_bytes_at on aiden's hexa build return 0 bytes for the 1.2GB file (whole-file reader cap);
+    summer's readers work (HDR_LEN=20 ok) so this is host-build-specific, secondary to the forward residual.
+  · The PRIMARY blocker is the forward itself: CORE/bytegpt_decode.hexa is an APPROXIMATE reimplementation
+    (erf-GELU, dt_exp) that is NOT byte-exact to torch at 303M/L24 depth on the pool — argmax 227 != 32.
+  · H_1218 recorded byte-exact (32==32) but on MAC CPU; the pool-Linux + current-build forward does not reproduce it.
+
+CONSEQUENCE (honest, gate-compliant):
+  · Byte-exact engine-native re-measurement of H_1431/1432/1434 FALS bars is BLOCKED until the bytegpt_decode
+    forward reproduces torch argmax (engine-forward fix = ING follow-on). The verdicts REMAIN torch-side DIRECTIONAL.
+  · Additionally, the torch probes used top-k=40 temp=0.7 SAMPLING (gauge_lib._decode); the engine sampler
+    (_g6_topk_sample, xorshift32) uses a DIFFERENT RNG -> sampled byte sequences cannot match torch by construction
+    even after the forward is fixed. Verdict-level (FALS>=1 vs FALS=0) reproduction is the achievable target,
+    not bit-level sample identity.
+  · H_1377 (curse-of-dim numpy geometry) · H_1430 (Posner-Keele prototype numpy) · H_1396 (immune-affinity numpy
+    metacog) are NOT ByteGPT-decode probes — they are numpy geometry sims, already self-labeled DIRECTIONAL in
+    FREEZE/result; engine-native here = engine_cli immune ops (H_1396) / no decode (1377/1430), out of bytegpt scope.
+
+VERDICT: batch-2 byte-exact re-measure = 재측정 불가 (engine-forward residual). H_1431/1432/1434 stay DIRECTIONAL
+         (torch-side). Engine-forward parity fix + verdict-level re-run = ING follow-on. pool-only, rent 0.

@@ -3,8 +3,8 @@ id: H_1436
 slug: 1436_cooccur_objective
 title: G6 IDEATION ★ FALS-depth wall — TRAINING side r2 — comparator∧measurable co-occurrence aux-objective (303M full-weight)
 group: gate-dig (G6 IDEATION ★) — FALS-depth wall, TRAINING-side test #2 (variant objective, not just data)
-terminal_tier: 🧱 WALL=CAPACITY (form installed but cross-shuffle does NOT collapse; aux saturated, even costs distinctness)
-wired: N/A (did not cross — a_verified_must_wire GREEN-only)
+terminal_tier: 🧱 WALL=CAPACITY (DIRECTIONAL — torch-side frozen probe; form installed but cross-shuffle does NOT collapse; aux saturated, even costs distinctness)
+wired: DIRECTIONAL (torch-side: rented A100 full-weight train + torch FALS probe; the 🧱 verdict is NOT engine-native — a_engine_native_learning. Trained ckpt destroyed on teardown → engine-native re-measure = re-rent COST-GATE, ING #21. Terminal tier is DIRECTIONAL, not banked.)
 verdict_dir: .verdicts/1436_cooccur_objective/
 terminal_verdict: .verdicts/1436_cooccur_objective/result.txt
 date: 2026-06-17

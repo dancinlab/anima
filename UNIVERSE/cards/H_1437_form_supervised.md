@@ -3,8 +3,8 @@ id: H_1437
 slug: 1437_form_supervised
 title: G6 IDEATION ★ FALS-depth wall — TRAINING side r3 — H_1314 negatable-form scaffold supervision → free gen (303M full-weight)
 group: gate-dig (G6 IDEATION ★) — FALS-depth wall, TRAINING-side test #3 (internalize the H_1314 form)
-terminal_tier: 🧱 WALL=CAPACITY (form internalized into free gen but cross-shuffle does NOT collapse; most extreme distinctness collapse)
-wired: N/A (did not cross — a_verified_must_wire GREEN-only)
+terminal_tier: 🧱 WALL=CAPACITY (DIRECTIONAL — torch-side frozen probe; form internalized into free gen but cross-shuffle does NOT collapse; most extreme distinctness collapse)
+wired: DIRECTIONAL (torch-side: rented A100 full-weight train + torch FALS probe; the 🧱 verdict is NOT engine-native — a_engine_native_learning. Trained ckpt destroyed on teardown → engine-native re-measure = re-rent COST-GATE, ING #21. Terminal tier is DIRECTIONAL, not banked.)
 verdict_dir: .verdicts/1437_form_supervised/
 terminal_verdict: .verdicts/1437_form_supervised/result.txt
 date: 2026-06-17
