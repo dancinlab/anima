@@ -1,0 +1,52 @@
+H_1426 — FROZEN PRE-REGISTRATION (frozen-first, c9/c16/p7, NO bar moved)
+THE LAST HONEST LENS on the H_1283/H_1423/H_1424 thalamus TIMING-axis wall:
+a fundamentally DIFFERENT oscillator substrate — NON-RING coupling topology with conduction DELAYS,
+where timing is CAUSALLY load-bearing in the TPM itself (a unit's content update reads neighbors'
+PAST state at t−τ_ij), NOT merely a multiplicative gate on amplitude.
+
+WHY THIS IS THE RE-OPEN CONDITION (verbatim from H_1424 honest scope):
+  "a fundamentally different oscillator substrate — non-ring COUPLING topology with conduction DELAYS,
+   where timing structure is CAUSALLY load-bearing (not just amplitude-modulating)."
+  H_1423/H_1424 substrate was a RING with INSTANTANEOUS neighbor reads; phase never fed back into the
+  content update, so the IIT4 lift was amplitude-VARIANCE of a multiplicative carrier, not timing. Here
+  the conduction delay makes PHASE/timing causally determine the next state in the dynamics (TPM), so
+  timing should be load-bearing in the binarized TPM, not just a read-out gate.
+
+SUBSTRATE (frozen):
+  n_mod parametric {6,8} · DIM=8 · T parametric {64,128} · faithful IIT4 exact MIP-EI n<=8.
+  NON-RING topology: hub/small-world directed coupling matrix adj[i][j] (in-degree-balanced, seed-built,
+    NOT left/right ring). Each present edge (i<-j) carries an integer conduction delay tau_ij in [TAU_MIN,
+    TAU_MAX]={1..3} (delay-tuned so phase-locking is a real timing computation).
+  History buffer: states_hist holds the last TAU_MAX+1 ticks; unit i's content update reads neighbor j's
+    state from states_hist[t − tau_ij] (causal past). Kuramoto phase coupling ALSO delayed (reads
+    neighbor phase at t − tau_ij). LCG engine PRNG byte-identical to H_1423/H_1424 (_lcg_*).
+  Constants frozen: GAIN=0.30 LEAK=0.55 W_NBR=0.5 W_IN=0.5 W_PHASE=0.5 OMEGA_T=0.45 DOMEGA=0.08 NBINS=8.
+
+FOUR ARMS (per config):
+  ARM A  = direct read-out (salience = energy, NO timing gate)            [baseline]
+  ARM B  = delay-coupled dynamics + phase-coherence salience gate          [timing ON]
+  SHUFFLE= ARM B dynamics, but the per-tick phase OFFSETS in the gate are PERMUTED (destroys timing
+           structure, preserves amplitude/variance of the carrier)         [timing destroyed]
+  ABLATE = delays -> 0 (instantaneous coupling = H_1424's ring-like null on the SAME topology); the
+           dynamics revert to instantaneous reads so timing is no longer causally load-bearing
+           [delay-ablation]
+
+FROZEN BARS (VERBATIM from H_1283 R8 / H_1423 / H_1424 — NOT moved, c9/p7):
+  c2 PRIMARY  faithful ΔΦ(B−A) >= +0.02 on EVERY seed [7,8,9]
+  c4 SHUFFLE  phase-shuffle ΔΦ(SH−A) <= 0 on EVERY seed (lift COLLAPSES = timing, not variance)
+  ABLATION/delay-revert  (B − ablate) >= +0.02 on EVERY seed (delays-OFF kills the lift = LIVE; else INERT)
+  A lens BREAKS the wall iff (c2 AND c4 AND ablation-LIVE) on EVERY seed.
+
+PRE-COMMITTED VERDICT RULE (c9, no tune-to-green):
+  🟢 BREAKTHROUGH / TIMING-ARC-REOPENED iff some config clears (c2 ∧ c4-shuffle-collapse ∧ delay-ablation-
+     revert) on EVERY seed — i.e. on a delay-coupled non-ring substrate the phase-coherent lift survives
+     c2, COLLAPSES under phase-shuffle, AND reverts when delays->0. Then timing is CAUSALLY real (the wall
+     was the ring substrate, not timing per se) -> directional + engine re-verify follow-on.
+  🧱 TIMING-ARC-TERMINAL iff this delay-coupled substrate ALSO fails its controls (shuffle does not collapse
+     every seed, OR no robust c2 lift every seed, OR delay-ablation INERT). Then the thalamus timing arc is
+     CONCLUSIVELY terminal across BOTH ring AND delay-coupled substrates (a strong honest finding:
+     faithful-IIT4 timing-readout is not achievable on anima's reachable oscillator substrates). This is
+     the LAST honest lens — NO further substrates invented if it fails (that would be moving goalposts).
+
+faithful IIT4 exact MIP-EI (a_phi_iit4_tool — NOT a proxy), n<=8. 3 seeds [7,8,9], deterministic, $0 CPU.
+NO bar moved. shuffle + delay-ablation on EVERY config (c9/c16). frozen-first.

@@ -1,0 +1,58 @@
+H_1426 thalamus TIMING-axis — THE LAST HONEST LENS (re-opening H_1424's named defer):
+a fundamentally DIFFERENT oscillator substrate — NON-RING coupling topology + CONDUCTION DELAYS,
+where timing is CAUSALLY load-bearing in the dynamics/TPM (a unit's content update reads neighbors'
+PAST state at t−τ_ij), NOT merely a multiplicative gate on amplitude.
+
+faithful IIT4 Φ (exact MIP-EI, n<=8, a_phi_iit4_tool — NOT a proxy) · seeds [7,8,9] · deterministic run1==run2
+FROZEN R8 bars VERBATIM (NOT moved, c9/p7): c2 ΔΦ(B-A)>=+0.02 every seed · c4 phase-shuffle ΔΦ(SH-A)<=0
+every seed · DELAY-ABLATION (delays->0 = instantaneous ring-like null) (B-ablate)>=+0.02 every seed.
+A config BREAKS the wall iff (c2 ∧ c4-collapse ∧ delay-ablation-LIVE) EVERY seed.
+
+VERDICT: 🧱 TIMING-ARC-TERMINAL — no config clears (c2 ∧ c4 ∧ delay-ablation-LIVE) every seed.
+The delay-coupled substrate is the MIRROR-IMAGE failure of the ring (H_1423/1424): on the ring the lift
+was robust (c2 PASS) but survived phase-shuffle (c4 FAIL = variance); on the delay-coupled substrate the
+phase-shuffle NOW COLLAPSES the lift (c4 PASS, n=8 every seed — timing is genuinely destroyable) but there
+is NO robust every-seed timing lift (c2 FAIL) AND the delay mechanism is INERT (delays->0 does not kill the
+lift; often ablate Φ >= B Φ). The two failure modes never co-resolve across BOTH substrate families. The
+thalamus timing arc is conclusively terminal across ring AND delay-coupled oscillator substrates.
+
+--- FULL STDOUT (run1; run2 byte-identical) ---
+H_1426 thalamus TIMING-axis — THE LAST HONEST LENS (NON-RING + CONDUCTION DELAYS)
+Timing is CAUSALLY load-bearing: content update reads neighbors' PAST state at t-tau_ij.
+faithful IIT4 Φ (exact MIP-EI, n<=8, a_phi_iit4_tool — NOT a proxy) · seeds [7,8,9] · deterministic
+FROZEN R8 bars VERBATIM (NOT moved): c2 ΔΦ(B-A)>=+0.02 · c4 shuffle ΔΦ(SH-A)<=0 · ablation(delay->0) B-ab>=+0.02 — EVERY seed
+A lens BREAKS the wall iff (c2 ∧ c4 ∧ delay-ablation-LIVE) EVERY seed.
+
+########## DELAY-COUPLED NON-RING SUBSTRATE — does timing finally separate from variance? ##########
+
+=== CFG delay-nonring (DELAY-COUPLED non-ring, n=6, T=64) ===
+seed 7: A=1.45052 B=1.40884 ΔΦ=-0.0416797 [FAIL]  SHUF ΔΦ=-0.54576 [PASS]  ABL(delay->0) B-ab=0.152141 [LIVE]
+seed 8: A=1.25102 B=2.14896 ΔΦ=0.89794 [PASS]  SHUF ΔΦ=0.0870853 [FAIL]  ABL(delay->0) B-ab=0.253951 [LIVE]
+seed 9: A=0.835236 B=1.16356 ΔΦ=0.328324 [PASS]  SHUF ΔΦ=0.373075 [FAIL]  ABL(delay->0) B-ab=-0.239389 [INERT]
+  c2 (ΔΦ>=+0.02 every seed): FAIL  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): FAIL  | DELAY-ABLATION (B-ablate>=+0.02 every seed): INERT
+  CFG VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+=== CFG delay-nonring (DELAY-COUPLED non-ring, n=8, T=64) ===
+seed 7: A=1.89357 B=1.65926 ΔΦ=-0.234316 [FAIL]  SHUF ΔΦ=-0.496681 [PASS]  ABL(delay->0) B-ab=-0.109957 [INERT]
+seed 8: A=1.76078 B=1.51982 ΔΦ=-0.240954 [FAIL]  SHUF ΔΦ=-0.138318 [PASS]  ABL(delay->0) B-ab=0.0803023 [LIVE]
+seed 9: A=1.37448 B=1.38496 ΔΦ=0.0104778 [FAIL]  SHUF ΔΦ=-0.017726 [PASS]  ABL(delay->0) B-ab=-0.23677 [INERT]
+  c2 (ΔΦ>=+0.02 every seed): FAIL  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): PASS  | DELAY-ABLATION (B-ablate>=+0.02 every seed): INERT
+  CFG VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+=== CFG delay-nonring (DELAY-COUPLED non-ring, n=6, T=128) ===
+seed 7: A=0.661571 B=0.970221 ΔΦ=0.308649 [PASS]  SHUF ΔΦ=-0.184583 [PASS]  ABL(delay->0) B-ab=-0.0328841 [INERT]
+seed 8: A=1.08548 B=1.04154 ΔΦ=-0.0439368 [FAIL]  SHUF ΔΦ=-0.384496 [PASS]  ABL(delay->0) B-ab=0.0366434 [LIVE]
+seed 9: A=0.636148 B=0.622274 ΔΦ=-0.0138748 [FAIL]  SHUF ΔΦ=0.0434751 [FAIL]  ABL(delay->0) B-ab=-0.0614583 [INERT]
+  c2 (ΔΦ>=+0.02 every seed): FAIL  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): FAIL  | DELAY-ABLATION (B-ablate>=+0.02 every seed): INERT
+  CFG VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+=== CFG delay-nonring (DELAY-COUPLED non-ring, n=8, T=128) ===
+seed 7: A=0.785506 B=1.21381 ΔΦ=0.428302 [PASS]  SHUF ΔΦ=-0.143992 [PASS]  ABL(delay->0) B-ab=0.238869 [LIVE]
+seed 8: A=1.04929 B=0.976711 ΔΦ=-0.0725837 [FAIL]  SHUF ΔΦ=-0.398484 [PASS]  ABL(delay->0) B-ab=-0.0511039 [INERT]
+seed 9: A=0.970402 B=0.93812 ΔΦ=-0.0322818 [FAIL]  SHUF ΔΦ=-0.0178091 [PASS]  ABL(delay->0) B-ab=-0.0322206 [INERT]
+  c2 (ΔΦ>=+0.02 every seed): FAIL  | c4 SHUFFLE (ΔΦ_sh<=0 every seed): PASS  | DELAY-ABLATION (B-ablate>=+0.02 every seed): INERT
+  CFG VERDICT: 🧱 WALL — control(s) reject (no tune-to-green)
+
+DONE
+
+--- determinism: run1 == run2 byte-identical (diff empty) ---
