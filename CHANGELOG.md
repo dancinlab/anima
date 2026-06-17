@@ -1,3 +1,11 @@
+## 2026-06-17 — fix(CORE/bytegpt_decode): 303M engine-forward parity 돌파 — i64-subscript hoist (byte-exact)
+
+엔진-네이티브 measurement decode 의 forward argmax 가 torch golden 과 갈리던(227≠32) 진짜 원인을 per-layer activation bisect 로 국소화 → 첫 발산이 임베딩(layer-0)이고 RUNTIME **i64-subscript drop-to-0** 버그였음(codegen 아님, emit C 는 정확): i64-특화배열 원소가 `hexa_index_get→__hx_to_double→hexa_float→farr_set` 라운드트립에서 0 으로 저장됨(float 배열원소는 안 깨짐, 출력만 하면 OK, 저장 시만). CORE decode 4개 window-fill 루프(`bytegpt_decode_argmax`/`_topk_sampled`/`grounded`/`grounded_abstain`)의 `farr_set(ids,p,to_float(toks[start+p]))` 를 hoist(`let tv=toks[start+p]; farr_set(ids,p,to_float(tv))`)로 우회 = 진짜 fix(hoist-only, net diff 4줄).
+- **검증(c2)**: hoist 후 greedy decode 'The quick brown' → ' as the ' **8토큰 byte-for-byte == torch golden** (단일 argmax 32 보다 강한 증명), pure dt_erf/dt_exp (libm 없이).
+- **FALSIFIED 렌즈(c9 정직)**: 먼저 시도한 libm erf/exp 스왑(68268c42d)은 inert(maxval 불변)→revert(f65aeafa2); hexa-lang #3491 codegen-rebuild 도 기각(native-asm 백엔드 전용, dispatch C-transpile 경로는 안 탐). 두 렌즈 다 기각, 진짜 fix=hoist only.
+- **결과**: 엔진 forward 가 torch byte-faithful → D-free-bytegpt(H_1430/1431/1432/1434/1377/1396) 엔진-네이티브 재측정 UNBLOCK. 단 frozen 5-bar 는 forward 속도(102s/forward, pure-hexa matmul)=별도 substrate 게이트(fast-matmul GEMM 레버 ~90-112× 후속). 가설 카드 verdict 는 5-bar 측정 전까지 DIRECTIONAL 유지(이 PR 은 verdict 변경 아님, 엔진 FIX).
+- **upstream(parked)**: 근본은 hexa-lang 런타임 i64-배열 accessor mis-tag — `hexa_index_get` 이 `hexa_arr_i64` backing 감지해 TAG_INT 반환하도록 (별도 PR). 증거 `state/_engine_native_audit/parity_FIXED_2026_06_17/`.
+
 ## 2026-06-17 — research(ENGINE-NATIVE batch-2): bytegpt 303M mount BLOCKED (engine-forward 잔차) + DIRECTIONAL 라벨 정정 (pool, 렌트0)
 
 a_engine_native_learning HARD-GATE batch-2 (ING #19, D-free-bytegpt). 신규 `tool/enforce_anima_gates.py` (verify.checks 배선, c18 우회없음) 통과하도록 정정.
