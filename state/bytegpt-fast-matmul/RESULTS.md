@@ -91,3 +91,17 @@ one-time, amortized.)
 - serialize the flat binary: `python3 state/universe-probes/verify303m_serialize_golden.py
   --ckpt state/chat_303m/h1129c_chat.pt --out <path>/chat_full.bin` (also emits torch golden)
 - run (pool host with HEXA_LANG_HOME set): `hexa run state/bytegpt-fast-matmul/<probe>.hexa`
+
+## CORRECTION (honest, c9) — bg_load_ranged does NOT fix the 24GB OOM
+Built bg_load_ranged (ranged read_bytes_at per slice + free-after-transpose) expecting peak
+≈ one slice. MEASURED peak RSS via `/usr/bin/time -v` on a real ranged decode (gen=3):
+**Maximum resident set size = 24,300,188 KB ≈ 24.3 GB** — SAME as resident bg_load. The
+dispatch runtime boxes the bytes returned by read_bytes_at (each byte → a HexaVal) and does
+not free them promptly, so slicing the read does NOT lower the peak. The true fix is at the
+runtime level (RFC 025 zero-copy mmap), OUT OF Lane C's scope. bg_load_ranged is kept (it is
+byte-correct, decode exit 0, output sane) but it is NOT an OOM remedy — do not rely on it for
+that. Practical 5-bar path: each engine_decode is a SEPARATE subprocess that peaks ~24GB
+SEQUENTIALLY and is freed on exit, so it FITS on summer's 30GB **when uncontended** (no other
+heavy job). The earlier pilot OOM was concurrency/contention (a 99%-CPU orphan + ph.x), not a
+per-process ceiling. Recommendation for the pool 5-bar: run on an idle 30GB+ host, serialized,
+no co-tenant heavy jobs.
