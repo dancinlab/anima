@@ -105,3 +105,42 @@ SEQUENTIALLY and is freed on exit, so it FITS on summer's 30GB **when uncontende
 heavy job). The earlier pilot OOM was concurrency/contention (a 99%-CPU orphan + ph.x), not a
 per-process ceiling. Recommendation for the pool 5-bar: run on an idle 30GB+ host, serialized,
 no co-tenant heavy jobs.
+
+## Quick fast-pipeline validation pilot (small scope — NOT the frozen 5-bar)
+End-to-end engine-native H_1431 through the FULL chain (fast mm forward + hoisted topk
+decode + frozen H_1305 scoring + cross-shuffle control), small scope on summer.
+- The fast mm decode WORKS end-to-end: e.g. NSUBJ=1/MAXNEW=20 produced coherent fragments
+  `consciousness: REL='universalized with t'  MEAS='responses to questio'` in ~1min/fragment
+  (bg_load ~24GB once + 20 forwards @ ~1.8s). The forward-speed fix is confirmed in the real
+  generation pipeline, not just the single-forward probe.
+- HARNESS BUG found + worked around: h1431_bind_compose.score_from_fragments shuffle control
+  uses a `while True: ... if all(perm[i]!=i ...)` DERANGEMENT — IMPOSSIBLE for n=1 → infinite
+  loop. Any scoped pilot MUST use NSUBJ>=2 (the full 5-bar's NSUBJ=5 is fine). Re-ran NSUBJ=2.
+- MEMORY: the resident bg_load peaks ~24GB (boxing, unfixed — see correction above). On a 30GB
+  host it FITS for sequential single-process decodes when uncontended, but co-residence with
+  the torch-importing scorer (~2GB) makes it tight/swappy. Full 5-bar wants an idle 30GB+ host.
+
+## PILOT COMPLETED (fast-pipeline validation, NSUBJ=2/NSEED=1/MAXNEW=20 — NOT the frozen 5-bar)
+The full engine-native H_1431 chain ran end-to-end on summer, exit 0:
+```
+[seed 7] consciousness: REL='universalized with t'  MEAS='responses to questio'
+[seed 7] tension:       REL='kindled not a phi ca'  MEAS='raw network, enablin'
+COMPOSE   FALS=0.0000  DIST=0.0000
+SHUFFLE   FALS=0.0000  DIST=0.0000
+ABLATE    FALS=0.0000  DIST=2.0000
+```
+PROVES: fast mm forward + hoisted topk decode + frozen H_1305 scoring + shuffle + ablate
+controls all execute fast+correct. (At MAXNEW=20 the short fragments yield no falsifiable
+claims → all-zero FALS/DIST is expected for this tiny scope; the point is the PIPELINE, which
+runs. The frozen 5-bar uses MAXNEW=110 which produces scoreable fragments.) Orphan-guard
+(setsid + EXIT-trap process-group kill) prevented the 24GB-orphan leak; exit clean.
+
+## LOAD-WALL FIX LANDED: read_f32_at (peak 24.3GB → 18.1GB, byte-identical)
+_bg_rd_farr_at now calls the runtime's read_f32_at(path, byte_off, n_floats) — reads f32
+DIRECTLY into a native farr via a bounded 8MB chunk buffer, NO boxed-HexaVal byte
+intermediate. Verified byte-IDENTICAL (max|Δ|=0 on the real 303M tok block). Measured peak
+RSS on a real ranged decode dropped 24.3GB → 18.1GB. That clears the OOM margin on a 30GB
+host (was tight at 24GB). (Residual 18GB is the runtime holding freed farrs / transpose
+intermediates — a further reduction needs runtime farr-table compaction, but 18GB on 30GB is
+workable for the serialized 5-bar.) bg_load_ranged / *_ranged / topk_sampled_ranged all
+inherit this automatically. Commit aa2b81633.
