@@ -1,3 +1,13 @@
+## 2026-06-18 — wip(H_1431): G6 5-bar 엔진-네이티브 측정 시도 → decode OOM PARKED (hexa-lang release stale)
+
+H_1431 COMPOSE 5-bar 를 lane-c bytegpt decode 로 엔진-네이티브 재측정 시도. 대용량 vast pod(503G/192core, 41371335)에서 5 인프라벽 돌파(glibc/stdlib/clang/hi_gen-redef/decode-segfault) 후 forward 는 작동했으나, 다중 디코드가 OOM 으로 전멸 → 측정 PARKED + pod teardown(과금정지). 근본 원인은 hexa-lang release stale.
+
+- **OOM 진단(c2 캡처)**: full bg_load(scalar) decode 가 proc당 RSS 38→53GB+ 로 job 진행중 증가. 6병렬 → part_01/03/05 OOM reap(3 생존), 재시도 3병렬도 각 1~2 job 후 전멸(part_04 "Killed"). 단순 동시-load OOM 이 아니라 누수성 증가로 503G 서버도 초과.
+- **근본 = hexa-lang release stale**: (a) ranged 로드(저메모리)가 `read_bytes_at` FILE*-tag 버그(#3462 — main 엔 fixed, release 미반영)로 segfault → full-load(38GB) 강제 · (b) fast packed gemv 가 release link-fail 로 drop → scalar(토큰당 26s) 강제. 빠른 길·가벼운 길 둘 다 같은 stale release 로 막혀 제일 무겁고 느린 조합만 남은 게 OOM·저속의 진짜 원인.
+- **hexa-lang ING 4건 전달**(from anima): ① release stale+segfault+clang-redef ② smoke tag24×tag24 차단 ③ 예방 CI(release 회귀게이트) ④ decode OOM/RSS. hexa-lang 에 이미 `fix/release-restore-runtime-core-redef` 브랜치 진행중.
+- **코드**: `state/1431_bind_compose/h1431_decode_batch.py` 에 `H1431_JOBS_ONLY` 모드 추가(jobs.tsv 만 생성 후 exit — N-병렬 분할 발사용).
+- **재개조건**: hexa-lang release 재빌드(#3462 ranged + fast-gemv 복원) → ckpt(aiden:`~/chat_full.bin` 보존) 재셋업 → 저메모리·고속 측정. torch DIRECTIONAL 🧱(COMPOSE0.333/SHUF0/ABL0)은 엔진-네이티브 CONFIRM/OVERTURN 보류 = **미반증 유지**.
+
 ## 2026-06-18 — chore(state-unify): 4개 아티팩트 dir → `state/<ns>/` 통합 (참조 해결 포함, c5/c10)
 
 흩어진 아티팩트 루트 4개를 단일 `state/` 아래로 namespaced subdir 로 통합. 직전 entry 의 SKIP 판단을 사용자 명시 지시(통합 + **참조까지 해결**)에 따라 실행으로 전환 — `git mv` 로 무손실 이동 후 빌드/로드 smoke 로 회귀 0 확인.

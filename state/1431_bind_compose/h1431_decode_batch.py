@@ -40,6 +40,8 @@ def main():
     print(f"[decode-batch] BIN={BIN} jobs={len(jobs)} (resume-skip {len(done)}) MAXNEW={MAXNEW}", flush=True)
     if jobs:
         open(JOBS,"w").write("\n".join(jobs)+"\n")
+        if os.environ.get("H1431_JOBS_ONLY"):
+            print(f"JOBS_ONLY_DONE {len(jobs)}", flush=True); return
         env=dict(os.environ); env["HEXA_MEM_UNLIMITED"]="1"
         cmd=[HEXA,"run",CLI,BIN,JOBS,RAW,str(MAXNEW),str(TOP_K),str(int(TEMP*1000))]
         r=subprocess.run(cmd,env=env,timeout=86400)
