@@ -1,0 +1,20 @@
+[02:45:38] renting 1x H100 SXM 80GB ($2.69/h on-demand)...
+[02:45:39] create resp: {"data":{"podFindAndDeployOnDemand":{"id":"tll9r0elhjwj1h","imageName":"runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04","machineId":"b9dyys94hlbk"}}}
+[02:45:39] POD_ID=tll9r0elhjwj1h
+[02:45:39] waiting for pod RUNNING + ssh port...
+[02:46:10] ssh ready: 64.247.201.59:17388
+[02:46:13] uploading code...
+[02:46:54] launching remote train+eval+serialize (nohup)...
+[02:47:13] polling remote until DONE marker...
+[02:47:19] remote FAILED
+[02:47:19] harvesting artifacts...
+total 40
+drwxr-xr-x     8 mini  staff    256 Jun 14 02:47 .
+drwxr-xr-x  2308 mini  staff  73856 Jun 14 02:45 ..
+-rw-r--r--     1 mini  staff    563 Jun 14 02:47 dispatch.log
+-rw-r--r--     1 mini  staff      0 Jun 14 02:47 FAILED
+-rw-r--r--     1 mini  staff     15 Jun 14 02:45 pod_id.txt
+-rw-r--r--     1 mini  staff   1749 Jun 14 02:47 remote.log
+-rw-r--r--     1 mini  staff     20 Jun 14 02:46 ssh_endpoint.txt
+-rw-r--r--     1 mini  staff   1749 Jun 14 02:47 train.log
+[02:47:32] harvest complete. DONE=0. (HF upload + teardown handled by caller)

@@ -1,0 +1,26 @@
+[remote] Sat Jun 13 17:46:57 UTC 2026 start. nvidia-smi:
+NVIDIA H100 80GB HBM3, 81559 MiB
+[notice] A new release of pip is available: 24.2 -> 26.1.2
+[notice] To update, run: python -m pip install --upgrade pip
+total 964
+drwxr-xr-x 1 root root     55 Jun 13 17:47 .
+drwxr-xr-x 1 root root    106 Jun 13 17:45 ..
+-rw-r--r-- 1 root root 985084 Jan 20  2022 american-english
+lrwxrwxrwx 1 root root     16 Jan 20  2022 words -> american-english
+[remote] building English wiki corpus via HF datasets...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[corpus] wikitext-103 failed: HfUriError("Invalid HF URI 'hf://datasets/wikitext@b08601e04326c79dfdd32d625aee71d232d685c3/.huggingface.yaml'. Repository id must be 'namespace/name', got 'wikitext'."); trying wikipedia 20220301.en
+Traceback (most recent call last):
+  File "<stdin>", line 26, in <module>
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1698, in load_dataset
+    builder_instance = load_dataset_builder(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1325, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1217, in dataset_module_factory
+    raise e1 from None
+  File "/usr/local/lib/python3.11/dist-packages/datasets/load.py", line 1177, in dataset_module_factory
+    raise RuntimeError(f"Dataset scripts are no longer supported, but found {filename}")
+RuntimeError: Dataset scripts are no longer supported, but found wikipedia.py
+[remote] FATAL: corpus build failed
