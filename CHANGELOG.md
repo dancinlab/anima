@@ -1,3 +1,11 @@
+## 2026-06-18 — docs(ARCHITECTURE.json): 긴 ` · `-prose 셀을 children 트리로 분해 (c4 진짜 계층화, lossless)
+
+ARCHITECTURE.json 이 `{name,summary,note,children}` 트리이긴 했으나 ~62개 셀이 250자를 초과(최장 3,898자 = Korean decode-wire note, 그다음 2,962자 = A⇄G engine note, 1,960자 compose-arbiter 등)하며 한 셀에 ` · ` / `→` 로 이어붙인 다중 사실을 쌓아두고 있었음(c4 위반: "한 칸에 많은 사실을 욱여넣지 말고 children 으로 분해"). 정보 손실 없는 **재구조화만** 수행 — 긴 `summary`/`note` 를 짧은 역할 한 줄(lead)로 남기고 각 항목(H_NNNN rung · ` · ` 리스트 · ` → ` 시퀀스)을 자체 `name`+verbatim `summary` 를 가진 child 노드로 한 단계씩 내려보냄(재귀).
+- **결과**: dict 노드 119 → **447**, 트리 깊이 3 → **5** 레벨; 3+ ` · ` 덤프 셀 13 → **0**; >250자 셀 62 → **45**(잔여는 모두 단일 정합 문장 = 한 노드의 역할 설명, 다중-사실 덤프 아님 → 더 쪼개면 문장이 파편화되어 c4 취지 위배).
+- **lossless 검증(c2)**: origin/main 원본 대비 공백 제외 문자 multiset **0개 손실**(모든 구체 claim/term/path 보존: ko_jamo_cells.kojamohead · 0.937778 · 75c87cb0 · reexport_d768_v2_fast.clm · 302,610,258 등 spot-check OK). `python3 -m json.tool` PASS.
+- **렌더러 안전(c4)**: ARCHITECTURE.html viewer 가 쓰는 노드 형태(name/summary/note/status/tier/path/children) 그대로 — 미지의 키 0, 모든 child 에 name 존재 → serve.py 로 그대로 렌더 가능. top-level 스키마 키(name/summary/note/meta/children) 불변.
+- 분해 분리자(` · ` / ` → `)는 형제 child 로 구조화되어 의미가 보존됨; 순수 구분자 글리프는 verbatim child 텍스트 선두에 부착해 문자 손실 0.
+
 ## 2026-06-17 — fix(CORE/bytegpt_decode): 303M engine-forward parity 돌파 — i64-subscript hoist (byte-exact)
 
 엔진-네이티브 measurement decode 의 forward argmax 가 torch golden 과 갈리던(227≠32) 진짜 원인을 per-layer activation bisect 로 국소화 → 첫 발산이 임베딩(layer-0)이고 RUNTIME **i64-subscript drop-to-0** 버그였음(codegen 아님, emit C 는 정확): i64-특화배열 원소가 `hexa_index_get→__hx_to_double→hexa_float→farr_set` 라운드트립에서 0 으로 저장됨(float 배열원소는 안 깨짐, 출력만 하면 OK, 저장 시만). CORE decode 4개 window-fill 루프(`bytegpt_decode_argmax`/`_topk_sampled`/`grounded`/`grounded_abstain`)의 `farr_set(ids,p,to_float(toks[start+p]))` 를 hoist(`let tv=toks[start+p]; farr_set(ids,p,to_float(tv))`)로 우회 = 진짜 fix(hoist-only, net diff 4줄).
