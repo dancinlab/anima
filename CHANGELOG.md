@@ -1,3 +1,13 @@
+## 2026-06-19 — done(H_1431): G6 BIND-compose 5-bar 엔진-네이티브 측정 완료 → 🧱 BIND-CAPACITY-BOUND ENGINE-NATIVE CONFIRMED
+
+2026-06-18 PARKED 였던 H_1431 엔진-네이티브 측정을 완료. hexa v0.241(glibc-2.34) 출하로 release-stale 벽 해소 후 vast 2267G-CPU pod(41469555)에서 30/30 fragment 를 live `CORE/bytegpt_decode` 로 디코드, frozen H_1305 detector 로 채점 → torch DIRECTIONAL 🧱 를 엔진-네이티브로 확정(a_engine_native_learning HARD-GATE 충족).
+
+- **엔진-네이티브 5-bar (30/30 missing=0, decode=`engine_decode_batch_cli.hexa`→`CORE/bytegpt_decode::bytegpt_decode_batch_to_file` full-load bg_load v0.241, score=frozen H_1305 VERBATIM)**: COMPOSE FALS=0.0 ≤ SHUFFLE 0.6667 == ABLATE 0.0 → FALS floor 미돌파 + compose≤shuffle(외부 bind 가 torch mirror 보다 약함). torch DIRECTIONAL(COMPOSE 0.333) 🧱 BIND-CAPACITY-BOUND 를 **ENGINE-NATIVE CONFIRMED**. R2 forward-parity argmax-227 BLOCKER 는 v0.241 full-load 경로에서 재발 안 함(영어 정상 생성); byte-exact 아님(COMPOSE 0.0-vs-0.333, 빌드/샘플링 차이)이나 verdict-level 동일.
+- **인프라 돌파(c1·c16)**: v0.241 install(glibc 2.34 floor) · clang 설치 · batch_to_file full-load(`bg_load_ranged`→`bg_load` 전역 패치, `read_bytes_at` segfault 회피) · 30-shard 동시 OOM(11 killed) → 10-proc 6초 stagger 발사로 peak 분산 · decode 출력 개행 손상 → tag-regex+continuation+dedup 복구 파서(`h1431_score_native.py`) · 누락 2 job(4302|memory|meas, 4303|silence|meas) 재decode.
+- **카드/jsonl**: terminal_tier 🧱 ENGINE-NATIVE CONFIRMED, verdict=`state/verdicts/1431_bind_compose/H_1431_engine_native_result.txt`, artifacts 에 `engine_decode_batch_cli.hexa`·`h1431_score_native.py`·`batch_out_full30.tsv` 추가. enforce-gates clean(exit 0, 1321 H).
+- **남은 bytegpt 가설**(H_1430/1432/1434/1377/1396) 엔진-네이티브 재측정 = ING 후속(scalar 26s/token, job당 ~26분 → 재렌트 필요).
+- **teardown**: vast 41469555 destroyed(과금정지; result+batch_out_full30 mini pull 완료, a_fire_recover_complete).
+
 ## 2026-06-18 — wip(H_1431): G6 5-bar 엔진-네이티브 측정 시도 → decode OOM PARKED (hexa-lang release stale)
 
 H_1431 COMPOSE 5-bar 를 lane-c bytegpt decode 로 엔진-네이티브 재측정 시도. 대용량 vast pod(503G/192core, 41371335)에서 5 인프라벽 돌파(glibc/stdlib/clang/hi_gen-redef/decode-segfault) 후 forward 는 작동했으나, 다중 디코드가 OOM 으로 전멸 → 측정 PARKED + pod teardown(과금정지). 근본 원인은 hexa-lang release stale.
