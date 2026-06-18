@@ -5,7 +5,7 @@ COMP={'if','when','whenever','than','more','less','greater','fewer','higher','lo
 MEAS={'measure','measured','rate','number','count','amount','level','degree','threshold','ratio','frequency','probability','magnitude','score','value','quantity','percent','times','fraction','distance','duration','speed','size','strength','density'}
 def words(s): return re.findall(r"[0-9A-Za-z가-힣]+", s.lower())
 # parse rel/meas fragment pairs from the R2 log
-txt=open('.verdicts/1431_bind_compose/result_R2.txt').read()
+txt=open('state/verdicts/1431_bind_compose/result_R2.txt').read()
 pairs=[]
 lines=txt.splitlines()
 cur_rel=None

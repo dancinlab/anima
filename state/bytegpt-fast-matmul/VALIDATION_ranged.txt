@@ -1,0 +1,9 @@
+SCALAR_RANGED_FWD_S 67.36935925
+MM_RANGED_FWD_S 46.987638828
+SCALAR_ARGMAX 32 MM_ARGMAX 32
+MAXABSDIFF_mm_vs_scalar 4.973799150320701e-14
+
+# NOTE: ranged forwards (67s/47s) are I/O-bound (per-layer weight slice re-read + transpose),
+# NOT the production speed. Production = RESIDENT map path bg_forward_last_W (bg_load amortized):
+# measured 1.867s steady-state (RUN1) earlier this session — that is the <2s number.
+# torch golden parity: argmax 32, first-8 logits match torch to ~1e-5.

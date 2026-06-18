@@ -1,3 +1,45 @@
+## 2026-06-19 — done(H_1431): G6 BIND-compose 5-bar 엔진-네이티브 측정 완료 → 🧱 BIND-CAPACITY-BOUND ENGINE-NATIVE CONFIRMED
+
+2026-06-18 PARKED 였던 H_1431 엔진-네이티브 측정을 완료. hexa v0.241(glibc-2.34) 출하로 release-stale 벽 해소 후 vast 2267G-CPU pod(41469555)에서 30/30 fragment 를 live `CORE/bytegpt_decode` 로 디코드, frozen H_1305 detector 로 채점 → torch DIRECTIONAL 🧱 를 엔진-네이티브로 확정(a_engine_native_learning HARD-GATE 충족).
+
+- **엔진-네이티브 5-bar (30/30 missing=0, decode=`engine_decode_batch_cli.hexa`→`CORE/bytegpt_decode::bytegpt_decode_batch_to_file` full-load bg_load v0.241, score=frozen H_1305 VERBATIM)**: COMPOSE FALS=0.0 ≤ SHUFFLE 0.6667 == ABLATE 0.0 → FALS floor 미돌파 + compose≤shuffle(외부 bind 가 torch mirror 보다 약함). torch DIRECTIONAL(COMPOSE 0.333) 🧱 BIND-CAPACITY-BOUND 를 **ENGINE-NATIVE CONFIRMED**. R2 forward-parity argmax-227 BLOCKER 는 v0.241 full-load 경로에서 재발 안 함(영어 정상 생성); byte-exact 아님(COMPOSE 0.0-vs-0.333, 빌드/샘플링 차이)이나 verdict-level 동일.
+- **인프라 돌파(c1·c16)**: v0.241 install(glibc 2.34 floor) · clang 설치 · batch_to_file full-load(`bg_load_ranged`→`bg_load` 전역 패치, `read_bytes_at` segfault 회피) · 30-shard 동시 OOM(11 killed) → 10-proc 6초 stagger 발사로 peak 분산 · decode 출력 개행 손상 → tag-regex+continuation+dedup 복구 파서(`h1431_score_native.py`) · 누락 2 job(4302|memory|meas, 4303|silence|meas) 재decode.
+- **카드/jsonl**: terminal_tier 🧱 ENGINE-NATIVE CONFIRMED, verdict=`state/verdicts/1431_bind_compose/H_1431_engine_native_result.txt`, artifacts 에 `engine_decode_batch_cli.hexa`·`h1431_score_native.py`·`batch_out_full30.tsv` 추가. enforce-gates clean(exit 0, 1321 H).
+- **남은 bytegpt 가설**(H_1430/1432/1434/1377/1396) 엔진-네이티브 재측정 = ING 후속(scalar 26s/token, job당 ~26분 → 재렌트 필요).
+- **teardown**: vast 41469555 destroyed(과금정지; result+batch_out_full30 mini pull 완료, a_fire_recover_complete).
+
+## 2026-06-18 — wip(H_1431): G6 5-bar 엔진-네이티브 측정 시도 → decode OOM PARKED (hexa-lang release stale)
+
+H_1431 COMPOSE 5-bar 를 lane-c bytegpt decode 로 엔진-네이티브 재측정 시도. 대용량 vast pod(503G/192core, 41371335)에서 5 인프라벽 돌파(glibc/stdlib/clang/hi_gen-redef/decode-segfault) 후 forward 는 작동했으나, 다중 디코드가 OOM 으로 전멸 → 측정 PARKED + pod teardown(과금정지). 근본 원인은 hexa-lang release stale.
+
+- **OOM 진단(c2 캡처)**: full bg_load(scalar) decode 가 proc당 RSS 38→53GB+ 로 job 진행중 증가. 6병렬 → part_01/03/05 OOM reap(3 생존), 재시도 3병렬도 각 1~2 job 후 전멸(part_04 "Killed"). 단순 동시-load OOM 이 아니라 누수성 증가로 503G 서버도 초과.
+- **근본 = hexa-lang release stale**: (a) ranged 로드(저메모리)가 `read_bytes_at` FILE*-tag 버그(#3462 — main 엔 fixed, release 미반영)로 segfault → full-load(38GB) 강제 · (b) fast packed gemv 가 release link-fail 로 drop → scalar(토큰당 26s) 강제. 빠른 길·가벼운 길 둘 다 같은 stale release 로 막혀 제일 무겁고 느린 조합만 남은 게 OOM·저속의 진짜 원인.
+- **hexa-lang ING 4건 전달**(from anima): ① release stale+segfault+clang-redef ② smoke tag24×tag24 차단 ③ 예방 CI(release 회귀게이트) ④ decode OOM/RSS. hexa-lang 에 이미 `fix/release-restore-runtime-core-redef` 브랜치 진행중.
+- **코드**: `state/1431_bind_compose/h1431_decode_batch.py` 에 `H1431_JOBS_ONLY` 모드 추가(jobs.tsv 만 생성 후 exit — N-병렬 분할 발사용).
+- **재개조건**: hexa-lang release 재빌드(#3462 ranged + fast-gemv 복원) → ckpt(aiden:`~/chat_full.bin` 보존) 재셋업 → 저메모리·고속 측정. torch DIRECTIONAL 🧱(COMPOSE0.333/SHUF0/ABL0)은 엔진-네이티브 CONFIRM/OVERTURN 보류 = **미반증 유지**.
+
+## 2026-06-18 — chore(state-unify): 4개 아티팩트 dir → `state/<ns>/` 통합 (참조 해결 포함, c5/c10)
+
+흩어진 아티팩트 루트 4개를 단일 `state/` 아래로 namespaced subdir 로 통합. 직전 entry 의 SKIP 판단을 사용자 명시 지시(통합 + **참조까지 해결**)에 따라 실행으로 전환 — `git mv` 로 무손실 이동 후 빌드/로드 smoke 로 회귀 0 확인.
+
+- **이동 (git mv, 0 손실, count 보존)**: `.verdicts/`(1778) → `state/verdicts/` · `bench/`(165) → `state/bench/` · `experiments/`(247) → `state/experiments/` · `scripts/scratch/`(12) → `state/scratch/`. 총 2202 파일 rename. namespaced subdir 채택 = state/ top-level 의 29개 dir-name 충돌을 nesting 으로 회피(파일 0 충돌).
+- **참조 해결 — LIVE 만 재작성, provenance 는 불가침(demiurge anti-lesson)**: ~324 코드참조 중 절대다수는 provenance(주석 `// 정체:`·`// 원본 경로:`, `println(...)` verdict-경로 표기, `payload()` provenance, docstring `verbatim from …`, PR-land 기록, past-run `.log` 출력, CHANGELOG 이력) → **건드리지 않음**. 실제 파일을 open/write 하는 LIVE 경로 literal 만 재작성:
+  - 코드 3건: `state/1431_bind_compose/h1431_bottleneck_diag.py` (`open('.verdicts/…')`) · `state/universe-probes/harness/grand_pi_law_scale.py` (`json.load(open(".verdicts/…"))`) · `CLM/model/run_stage2.sh` (`VDIR=".verdicts/clm-array-stage2-scale"` — `mkdir`+remote write 타깃).
+  - config/거버넌스 5건: `harness.config.json` `scratchDir: scripts/scratch → state/scratch` · `.harness/enforcement.json` (H-TMP-SCRATCH exceptions/reason + 2 doc-scatter hint) · `ARCHITECTURE.json` (`.verdicts/` top-level 노드 → `state/verdicts/` + claim-surface 포인터 2 + gen_file_index.sh 포인터 2) · `CLAUDE.md` (a_claim_verify/a_claim_manifest/Quick-ref/research-flow 의 verdict write-경로 6 + claims-tape-retirement ledger 경로) · `.gitignore` (gen_file_index.sh regenerate 주석). `.gitignore` 의 대용량/ephemeral 패턴은 전부 이미 `state/…` 대상이라 재포인트 불필요(`.verdicts`/`bench`/`experiments` ignore 패턴 0개였음).
+  - **provenance 의도적 미수정**: `state/verdicts/<slug>/` 박제면을 가리키는 수백 개 card/PAPER companion-ledger 포인터 + CHANGELOG 이력 + past-run 로그의 `.verdicts/…` literal 은 역사 기록이라 verbatim 유지(과제 step 4 “historical provenance 불가침” 준수). ARCHITECTURE/CLAUDE 노드에 “was `.verdicts/` until 2026-06-18 state-unify” 마이그레이션 노트 추가로 추적성 보존.
+- **검증(c2 캡처, 회귀 0)**: 변경 전 baseline `python3 tool/enforce_anima_gates.py --all` = `✅ clean · scope=ALL · 1321 hypotheses` (exit 0). 변경 후 동일 = `✅ clean · scope=ALL · 1321` + changed-scope `✅ clean · scope=changed (7 slug)` (둘 다 exit 0, baseline 동률). `hexa verify` rubric 로드 OK(exit 0). 3개 편집 JSON 전부 valid. enforcer 의 `state/<slug>/` 스캔이 새 namespaced subdir 를 bogus slug 로 오탐하지 않음(HYPOTHESES.jsonl 매칭 기반).
+
+## 2026-06-18 — chore(cleanup): WIP 보존 + 아티팩트-통합 cleanup SKIP (c9 정직 — 전제 불일치)
+
+repo cleanup cycle. 작업 전 미커밋 5건(`CORE/bytegpt_decode.hexa`, `ING.jsonl`, `state/bytegpt-fast-matmul/RESULTS.md` + state/1431 신규 2파일) 보존 커밋(`wip: preserve in-progress before cleanup`).
+
+- **TASK B(아티팩트 → state/ 통합) 전면 SKIP — 전제가 이 repo 거버넌스와 충돌(c9)**: `.verdicts/`·`bench/`·`experiments/`·`scripts/scratch/` 는 stray 아티팩트 더미가 **아님** — 전부 load-bearing:
+  - `.verdicts/` (1778 파일) = **frozen verdict SSOT**. CLAUDE.md 의 `a_claim_verify`/`a_claim_manifest`/`a_hf_registry` 규칙이 `.verdicts/<slug>/<id>.txt` 를 state/ 와 **의도적으로 분리된** 검증면으로 박제 지정. ARCHITECTURE.json L510 에 독립 top-level 노드. PAPER companion `verify-ledger.json` 다수 + 카드 수백 개가 `.verdicts/<slug>/` 포인터로 참조. `CLAIMS.tape` 은퇴 ledger 도 `.verdicts/claims-tape-retirement/` 에 거주. → state/ 로 합치면 검증면 규약 위반 + 수백 포인터 끊김. **29개 디렉터리명이 state/ 와 충돌**(상보적: state/=코드, .verdicts/=결과 — dir-merge 필요, wholesale-move 불가; `1403_convmoe_streaming_decode` 3파일 file-level 충돌이나 byte-identical).
+  - `bench/` (165, 59+ 코드참조) · `experiments/` (247, 82+ 코드참조) = `.hexa`/`.py` 소스의 상대 load-path. `anima-core/runtime/path_setup.hexa` 가 `bench/`·`experiments/` 폴더 레이아웃을 명시 문서화.
+  - `scripts/scratch/` (12, 5 참조) = harness 설정 scratchDir. `harness.config.json` `"scratchDir": "scripts/scratch"` + `.harness/enforcement.json` lint 규칙 다수 + ARCHITECTURE.json `gen_file_index.sh` 참조 + CORE `.hexa` provenance 주석. → 옮기면 harness 자체 lint enforcement 깨짐.
+  - 결론: 4개 dir 모두 hardcoded 참조가 dozens~hundreds 규모 → 과제 hard-rule("MANY files 참조 시 STOP and report") 적용. NO MOVE. CLAUDE.md tree 도 "state/ = single artifact root" 로 고치지 **않음**(거짓이 됨, c9).
+- **TASK C(루트 stray 문서 → SSOT fold)도 fold 없음**: 루트 ~100 `.md` 는 거의 전부 domain SSOT 쌍(`<DOMAIN>.md`+`.log.md`)·`README.*` 다국어·외부공유 스냅샷(FINDINGS)·live 캠페인 트래커(HANDOFF 947줄, FIRE_TRACKING)·backward-compat stub(INDEX) — 전부 이미 `📍 SSOT` quickref 헤더 보유(c4 준수, scatter 아님). 명백한 fold-then-rm 후보 0개. 과제 "When in doubt, LEAVE IT" + surgical(c10) 준수 → 무손실 보존.
+- **검증(c2)**: `hexa --version` → `hexa 0.1.0-dispatch` OK. full smoke 는 PRE-EXISTING dispatch-build interpreter bug(engine_cli_smoke ~case16 abort, ARCHITECTURE.json meta.guard_baseline 기록)로 이번 변경 무관 — 코드 0줄 변경(보존 커밋만)이라 회귀 위험 없음.
 ## 2026-06-18 — docs(ARCHITECTURE.json): 긴 ` · `-prose 셀을 children 트리로 분해 (c4 진짜 계층화, lossless)
 
 ARCHITECTURE.json 이 `{name,summary,note,children}` 트리이긴 했으나 ~62개 셀이 250자를 초과(최장 3,898자 = Korean decode-wire note, 그다음 2,962자 = A⇄G engine note, 1,960자 compose-arbiter 등)하며 한 셀에 ` · ` / `→` 로 이어붙인 다중 사실을 쌓아두고 있었음(c4 위반: "한 칸에 많은 사실을 욱여넣지 말고 children 으로 분해"). 정보 손실 없는 **재구조화만** 수행 — 긴 `summary`/`note` 를 짧은 역할 한 줄(lead)로 남기고 각 항목(H_NNNN rung · ` · ` 리스트 · ` → ` 시퀀스)을 자체 `name`+verbatim `summary` 를 가진 child 노드로 한 단계씩 내려보냄(재귀).

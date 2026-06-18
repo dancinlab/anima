@@ -19,7 +19,7 @@ set -euo pipefail
 
 HOST="${HOST:-ubu-1}"
 REMOTE_REPO="${REMOTE_REPO:-~/core/anima}"
-VDIR=".verdicts/clm-array-stage2-scale"
+VDIR="state/verdicts/clm-array-stage2-scale"
 
 # HARD GUARD: refuse to run torch compute on the Mac (@L1).
 if [[ "$(uname -s)" == "Darwin" && "${ALLOW_MAC:-0}" != "FORCE_NEVER" ]]; then

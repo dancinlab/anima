@@ -43,11 +43,11 @@
     },
     {
       "id": "H-TMP-SCRATCH",
-      "desc": "임시 산출물을 /tmp 에 쓰고 날리지 말 것 — scripts/scratch 에 보관",
+      "desc": "임시 산출물을 /tmp 에 쓰고 날리지 말 것 — state/scratch 에 보관",
       "match": "(\\bmktemp\\b|(>>?|\\btee\\b|cat\\s+>+)\\s*\\S*(/tmp/|/var/folders/|\\$TMPDIR))",
-      "exceptions": ["# scratch-ok", "scripts/scratch", "\\.harness/"],
+      "exceptions": ["# scratch-ok", "state/scratch", "\\.harness/"],
       "action": "warn",
-      "reason": "hardcore: 임시 파일을 /tmp(휘발)에 쓰지 말 것 — `scripts/scratch/` 에 보관(회귀추적·재현 가능). 진짜 일회성이면 `# scratch-ok <사유>`. (`harness docs scratch <name>` 가 경로 생성)"
+      "reason": "hardcore: 임시 파일을 /tmp(휘발)에 쓰지 말 것 — `state/scratch/` 에 보관(회귀추적·재현 가능). 진짜 일회성이면 `# scratch-ok <사유>`. (`harness docs scratch <name>` 가 경로 생성)"
     },
     {
       "id": "H-SUDO",
@@ -113,7 +113,7 @@
       "desc": "흩어진 리포트/요약/노트 .md 생성 금지 — 아키텍처는 ARCHITECTURE.md(갱신), 이력은 CHANGELOG.md(append) 단일화",
       "path_match": "(-(report|summary|notes?|audit|status|plan|analysis|design|overview|guide)\\.md$|(REPORT|SUMMARY|NOTES|TODO|AUDIT|STATUS|ANALYSIS)\\.md$|\\d{6,8}[-_].*\\.md$)",
       "action": "warn",
-      "reason": "hardcore: 흩어진 문서 생성 감지 — AI 산출물은 **단일 문서 2개**로 통합: ①최종 아키텍처 = `ARCHITECTURE.md` (업데이트형, 덮어쓰기) ②이력/결정 = `CHANGELOG.md` (추가형). 임시 분석물은 `scripts/scratch/`. 부득이 분리해야 하면 그 문서 상단에 SSOT(ARCHITECTURE.md)로 가는 **quickref 1줄** 필수(없으면 lint DOC-NO-QUICKREF)."
+      "reason": "hardcore: 흩어진 문서 생성 감지 — AI 산출물은 **단일 문서 2개**로 통합: ①최종 아키텍처 = `ARCHITECTURE.md` (업데이트형, 덮어쓰기) ②이력/결정 = `CHANGELOG.md` (추가형). 임시 분석물은 `state/scratch/`. 부득이 분리해야 하면 그 문서 상단에 SSOT(ARCHITECTURE.md)로 가는 **quickref 1줄** 필수(없으면 lint DOC-NO-QUICKREF)."
     },
     {
       "id": "H-UNIVERSE-CODE",
@@ -148,7 +148,7 @@
       "id": "H-SINGLE-DOC",
       "desc": "문서/정리/아키텍처/리포트 작성 요청 시 단일 문서 규약 안내",
       "match_patterns": ["문서화", "문서 ?정리", "정리해", "아키텍처", "architecture", "리포트", "report", "요약 ?문서", "설계 ?문서", "노트 ?정리", "구조 ?문서"],
-      "hint": "📄 단일 문서 규약 (hardcore): AI 산출물을 흩뿌리지 말 것. **2개 파일만** — ①`ARCHITECTURE.md` = 최종 아키텍처(업데이트형: 항상 최신 상태로 덮어씀, 추가형 아님) ②`CHANGELOG.md` = 이력/결정(추가형: append). 임시 분석/스크래치는 `scripts/scratch/`(tmp 휘발 금지). 부득이 문서를 분리하면 상단에 SSOT 로 가는 **quickref 1줄** 무조건 연결. 메인 `CLAUDE.md` 에는 **프로젝트 간략 설명 + 트리 구조(트리별 간략 설명)** 반드시 포함. 검사: `harness docs status` · 강제: lint(DOC-SCATTER/DOC-NO-QUICKREF/CLAUDE-MD-*)."
+      "hint": "📄 단일 문서 규약 (hardcore): AI 산출물을 흩뿌리지 말 것. **2개 파일만** — ①`ARCHITECTURE.md` = 최종 아키텍처(업데이트형: 항상 최신 상태로 덮어씀, 추가형 아님) ②`CHANGELOG.md` = 이력/결정(추가형: append). 임시 분석/스크래치는 `state/scratch/`(tmp 휘발 금지). 부득이 문서를 분리하면 상단에 SSOT 로 가는 **quickref 1줄** 무조건 연결. 메인 `CLAUDE.md` 에는 **프로젝트 간략 설명 + 트리 구조(트리별 간략 설명)** 반드시 포함. 검사: `harness docs status` · 강제: lint(DOC-SCATTER/DOC-NO-QUICKREF/CLAUDE-MD-*)."
     },
     {
       "id": "H-PRE-COMMIT-FLOW",

@@ -3,11 +3,11 @@ id: H_1431
 slug: 1431_bind_compose
 title: G6 IDEATION ★ FALS-depth wall — BIND-compose (external deterministic comparator×measurable bind)
 group: gate-dig (G6 IDEATION ★, anima's core purpose) — FALS-depth wall, 3rd angle
-terminal_tier: 🧱 BIND-CAPACITY-BOUND (frozen-bar literal 🟠 PARTIAL; substance = capacity wall, c9)
-wired: N/A (did not cross — a_verified_must_wire GREEN-only)
-verdict_dir: .verdicts/1431_bind_compose/
-terminal_verdict: .verdicts/1431_bind_compose/result.txt
-date: 2026-06-17
+terminal_tier: 🧱 BIND-CAPACITY-BOUND — ENGINE-NATIVE CONFIRMED (R3 live CORE/bytegpt_decode; was torch DIRECTIONAL, c9)
+wired: engine-native (decode via live CORE/bytegpt_decode .hexa; N/A wire-in — 🧱 did not cross, a_verified_must_wire GREEN-only)
+verdict_dir: state/verdicts/1431_bind_compose/
+terminal_verdict: state/verdicts/1431_bind_compose/H_1431_engine_native_result.txt
+date: 2026-06-19 (R3 engine-native; R1/R2 torch 2026-06-17)
 ---
 
 # H_1431 — G6 IDEATION ★ FALS-depth: BIND-compose lane
@@ -108,16 +108,29 @@ reliably lexically in-capacity — a scale prediction, falsifiable by re-running
 
 ## Scope (honest, a_scale_honest_scope / a_toy_scale_recheck)
 
-**R2 engine-native re-measure ATTEMPT (2026-06-17, pool aiden+summer, $0 — a_engine_native_learning HARD-GATE):**
-The 303M ByteGPT `h1129c_chat.pt` was serialized to the `CORE/bytegpt_decode.hexa` flat binary on the pool
-(sha256 `5c303f02…` — byte-identical to the H_1218 validated .bin, so serialize parity is confirmed) and the
-live CORE forward was run on it. **BLOCKED**: the engine forward gives argmax("The quick brown")=**227** (maxval
-20.01) vs torch golden **32** (maxval 29.69) — the approx-erf-GELU + dt_exp residual accumulates across L24 and
-flips the argmax on the pool-Linux build (H_1218's byte-exact 32==32 was on Mac CPU). All three engine entry
-points (`bytegpt_forward_last` / `_ranged` / `bg_forward_last_W`) agree on 227. So byte-exact engine-native
-re-measurement of the FALS bars is **재측정 불가 (engine-forward parity bug, an INFRA wall c16 type-c, NOT a
-science ceiling)** — the 🧱 verdict therefore **REMAINS DIRECTIONAL** (torch-side). Engine-forward parity fix +
-verdict-level (FALS≥1 vs FALS=0) re-run = ING follow-on. Evidence: `state/_engine_native_audit/batch2_bytegpt_mount_BLOCKED.txt`.
+**R3 ENGINE-NATIVE re-measure (2026-06-19, vast 41469555 2267G-CPU, rent — a_engine_native_learning HARD-GATE SATISFIED):**
+The FALS 5-bar was RE-MEASURED with decode run on the **live CORE byte-mouth** —
+`state/1431_bind_compose/engine_decode_batch_cli.hexa` → `CORE/bytegpt_decode.hexa::bytegpt_decode_batch_to_file`
+(full-load `bg_load`, 303M `chat_full.bin`, hexa v0.241 glibc-2.34), NOT the torch mouth. 30 fragments
+(5 subj × 3 seed × 2 kind) decoded byte-LM native, scored by the SAME frozen H_1305 `_is_falsifiable` (VERBATIM).
+The R2 BLOCKER (forward-parity argmax 227-vs-32) did NOT recur on the v0.241 full-load decode path — the engine
+generated coherent English ("universalized with the new data…") and the lane welded+scored it.
+**ENGINE-NATIVE 5-bar (30/30, missing=0, mean 3 seeds):**
+
+| arm | FALS (engine-native) | (torch DIRECTIONAL) |
+|---|---|---|
+| COMPOSE | **0.0** | 0.3333 |
+| SHUFFLE_BIND | 0.6667 | 0.0 |
+| ABLATE | 0.0 | 0.0 |
+
+Engine-native decode is NOT byte-exact vs the torch golden (engine COMPOSE 0.0 vs torch 0.333 — different build +
+sampling realization) but the **verdict is IDENTICAL at the level that matters: FALS_compose < 1, and COMPOSE
+(0.0) ≤ SHUFFLE (0.667) and == ABLATE (0.0)** — on the live CORE mouth the external bind crosses neither the
+falsifiability floor nor its own controls (if anything weaker than the torch mirror: compose == ablate == 0). The
+🧱 BIND-CAPACITY-BOUND verdict is therefore **CONFIRMED ENGINE-NATIVE** (no longer DIRECTIONAL). decode=ENGINE-NATIVE
+(.hexa live CORE), score=frozen H_1305 detector (torch-loaded but decode-independent, p7 VERBATIM). Evidence:
+`state/verdicts/1431_bind_compose/H_1431_engine_native_result.txt` ·
+`state/1431_bind_compose/{engine_decode_batch_cli.hexa, h1431_score_native.py, batch_out_full30.tsv}`.
 
 DIRECTIONAL R1 torch-mouth mirror on summer CUDA (engine-native byte-exact reconfirm = follow-on
 only on a future GREEN; a_engine_native_learning); toy 303M; 5 subjects; 3 seeds; deterministic

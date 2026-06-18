@@ -43,7 +43,7 @@ for nm,gen in (("logistic",logistic),("henon",henon)):
     print(f"     → I·recover both decay (horizon), corr(I,recover)={c:.3f}")
 
 # ── LEG 2 QUANTUM — REAL ANU entropy (api.quantumnumbers.anu.edu.au) ────────────
-d=json.load(open(".verdicts/omega-trained/anu_qrng_1024.json"))
+d=json.load(open("state/verdicts/omega-trained/anu_qrng_1024.json"))
 raw=bytes(d["data"]);print(f"\nLEG2 QUANTUM (REAL ANU: {d['source']}, {len(raw)} vacuum bytes, hash-extended for n):")
 def anu_stream(n):
     out=bytearray(raw)
