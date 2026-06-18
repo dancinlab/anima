@@ -40,6 +40,13 @@ repo cleanup cycle. 작업 전 미커밋 5건(`CORE/bytegpt_decode.hexa`, `ING.j
   - 결론: 4개 dir 모두 hardcoded 참조가 dozens~hundreds 규모 → 과제 hard-rule("MANY files 참조 시 STOP and report") 적용. NO MOVE. CLAUDE.md tree 도 "state/ = single artifact root" 로 고치지 **않음**(거짓이 됨, c9).
 - **TASK C(루트 stray 문서 → SSOT fold)도 fold 없음**: 루트 ~100 `.md` 는 거의 전부 domain SSOT 쌍(`<DOMAIN>.md`+`.log.md`)·`README.*` 다국어·외부공유 스냅샷(FINDINGS)·live 캠페인 트래커(HANDOFF 947줄, FIRE_TRACKING)·backward-compat stub(INDEX) — 전부 이미 `📍 SSOT` quickref 헤더 보유(c4 준수, scatter 아님). 명백한 fold-then-rm 후보 0개. 과제 "When in doubt, LEAVE IT" + surgical(c10) 준수 → 무손실 보존.
 - **검증(c2)**: `hexa --version` → `hexa 0.1.0-dispatch` OK. full smoke 는 PRE-EXISTING dispatch-build interpreter bug(engine_cli_smoke ~case16 abort, ARCHITECTURE.json meta.guard_baseline 기록)로 이번 변경 무관 — 코드 0줄 변경(보존 커밋만)이라 회귀 위험 없음.
+## 2026-06-18 — docs(ARCHITECTURE.json): 긴 ` · `-prose 셀을 children 트리로 분해 (c4 진짜 계층화, lossless)
+
+ARCHITECTURE.json 이 `{name,summary,note,children}` 트리이긴 했으나 ~62개 셀이 250자를 초과(최장 3,898자 = Korean decode-wire note, 그다음 2,962자 = A⇄G engine note, 1,960자 compose-arbiter 등)하며 한 셀에 ` · ` / `→` 로 이어붙인 다중 사실을 쌓아두고 있었음(c4 위반: "한 칸에 많은 사실을 욱여넣지 말고 children 으로 분해"). 정보 손실 없는 **재구조화만** 수행 — 긴 `summary`/`note` 를 짧은 역할 한 줄(lead)로 남기고 각 항목(H_NNNN rung · ` · ` 리스트 · ` → ` 시퀀스)을 자체 `name`+verbatim `summary` 를 가진 child 노드로 한 단계씩 내려보냄(재귀).
+- **결과**: dict 노드 119 → **447**, 트리 깊이 3 → **5** 레벨; 3+ ` · ` 덤프 셀 13 → **0**; >250자 셀 62 → **45**(잔여는 모두 단일 정합 문장 = 한 노드의 역할 설명, 다중-사실 덤프 아님 → 더 쪼개면 문장이 파편화되어 c4 취지 위배).
+- **lossless 검증(c2)**: origin/main 원본 대비 공백 제외 문자 multiset **0개 손실**(모든 구체 claim/term/path 보존: ko_jamo_cells.kojamohead · 0.937778 · 75c87cb0 · reexport_d768_v2_fast.clm · 302,610,258 등 spot-check OK). `python3 -m json.tool` PASS.
+- **렌더러 안전(c4)**: ARCHITECTURE.html viewer 가 쓰는 노드 형태(name/summary/note/status/tier/path/children) 그대로 — 미지의 키 0, 모든 child 에 name 존재 → serve.py 로 그대로 렌더 가능. top-level 스키마 키(name/summary/note/meta/children) 불변.
+- 분해 분리자(` · ` / ` → `)는 형제 child 로 구조화되어 의미가 보존됨; 순수 구분자 글리프는 verbatim child 텍스트 선두에 부착해 문자 손실 0.
 
 ## 2026-06-17 — fix(CORE/bytegpt_decode): 303M engine-forward parity 돌파 — i64-subscript hoist (byte-exact)
 

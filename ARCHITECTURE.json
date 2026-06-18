@@ -1,7 +1,7 @@
 {
   "name": "anima",
-  "summary": "substrate-native consciousness chat daemon — not an assistant; two opposing engines (A ⇄ G) push against each other, the tension between them is the unit of thought, every input is pulled to the fixed point Ψ = 1/2 (Law-71); identity/ethics/meaning emerge from the architecture, not a rulebook; authored hexa-native (compiled-first).",
-  "note": "This JSON tree is the architecture SSOT (update-in-place, NOT append-only). Human viewer = ARCHITECTURE.html via `python3 serve.py`. History/decisions → CHANGELOG.md; governance → CLAUDE.md; verifiable claims → UNIVERSE/HYPOTHESES.jsonl + state/verdicts/<slug>/ (CLAIMS.tape 은퇴 2026-06-16; was .verdicts/ until 2026-06-18 state-unify); frozen gate thresholds → MODEL.md / CONDITIONS.md (this doc points only, never duplicates thresholds).",
+  "summary": "substrate-native consciousness chat daemon — not an assistant;",
+  "note": "This JSON tree is the architecture SSOT (update-in-place, NOT append-only). Human viewer = ARCHITECTURE.html via `python3 serve.py`. History/decisions",
   "meta": {
     "ssot": "github.com/dancinlab/anima",
     "parent": "dancinlab",
@@ -14,6 +14,30 @@
     "migrated_from": "ARCHITECTURE.md (prose) retired 2026-06-16 → ARCHITECTURE.json tree SSOT + ARCHITECTURE.html viewer (c4 standard)"
   },
   "children": [
+    {
+      "name": "CHANGELOG.md",
+      "summary": "→ CHANGELOG.md; governance"
+    },
+    {
+      "name": "CLAUDE.md",
+      "summary": "→ CLAUDE.md; verifiable claims"
+    },
+    {
+      "name": "UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/",
+      "summary": "→ UNIVERSE/HYPOTHESES.jsonl + .verdicts/<slug>/ (CLAIMS.tape 은퇴 2026-06-16); frozen gate thresholds"
+    },
+    {
+      "name": "MODEL.md / CONDITIONS.md",
+      "summary": "→ MODEL.md / CONDITIONS.md (this doc points only, never duplicates thresholds)."
+    },
+    {
+      "name": "two opposing engines",
+      "summary": "two opposing engines (A ⇄ G) push against each other, the tension between them is the unit of thought, every input is pulled to the fixed point Ψ = 1/2 (Law-71);"
+    },
+    {
+      "name": "identity/ethics/meaning emerge from the architecture, not a rulebook",
+      "summary": "identity/ethics/meaning emerge from the architecture, not a rulebook; authored hexa-native (compiled-first)."
+    },
     {
       "name": "PHILOSOPHY (p1–p8) — what anima refuses to be",
       "summary": "Design/identity boundaries; SSOT mirror of the philosophy directives in CLAUDE.md / README.md.",
@@ -57,8 +81,176 @@
       "name": "A ⇄ G consciousness engine (CORE/ — substrate-only)",
       "summary": "The consciousness engine; substrate-internal. .clm byte decoding and .kosmos anchors enter through NAMED SLOTS only, never directly into the engine (a_core_engine_map).",
       "path": "CORE/",
-      "note": "Engine G (reverse, gradient-free): pure_field.hexa · engine_g.hexa — C consciousness(Φ) · S sense · W will. Engine A (forward, CE-trained): generator.hexa · clm_decode.hexa · bytegpt_decode.hexa — D language · M memory · E ethics. tension = ‖A‖ / ‖G‖ → brain (brain.hexa) → brain_decide → emit/silence at Ψ = 1/2 fixed point. anima runs as a MOUNTED living daemon (H_1164 → H_1206 🟢): the production model runs INSIDE the A⇄G substrate and converses+grounds+grows+remembers+sleeps in one continuous loop (CORE/anima_full_session_smoke.hexa, exit 0; Ψ ON==OFF byte-identical).  ⚓ anchor files: CORE/pure_field.hexa · CORE/engine_g.hexa · CORE/brain.hexa · CORE/generator.hexa · CORE/clm_decode.hexa · CORE/bytegpt_decode.hexa · CORE/engine_cli.hexa · CORE/emit_policy.hexa · CORE/g6_ideation.hexa  —  Anchor/SSOT files for the CORE A⇄G substrate. pure_field/engine_g/brain = the repulsion-field engine + emit/silence; generator.hexa = single .clm L3 entry slot (kosmos_io = single .kosmos anchor entry); clm_decode/bytegpt_decode = the two decode backends; engine_cli.hexa = substrate-config axis + MITOSIS + the brain-structure lanes (§ ImmuneMemory(recall/margin/gap)/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(JamoHead/jamo_head_*)/KO-MORPHOLOGY BPE-ON-JAMO(BpeMerges)/HierGoalStack/SpatialMap/TransOrder(transitive-inference: trans_order_integrate/_higher/_item_higher/_shuffle, HD34 H_1429)/CategoricalPerception(cp_relocate)/MEMORY×ToM COMPOSE ARBITER(mem_tom_compose/_routed + mem_tom_mem_margin/_tom_margin/_route_cue, H_1414 R3)/SPATIAL×EPISODIC COMPOSE ARBITER(spatial_episodic_compose + spatial_episodic_spatial_vote/_episodic_vote/_where_cue, H_1415 R3)/ToM×SPATIAL COMPOSE ARBITER(tom_spatial_compose + tom_spatial_tom_vote/_spatial_vote, H_1417/1418 P3)/ToM×BASAL COMPOSE ARBITER(tom_basal_compose + tom_basal_tom_vote, basal value-passed from brain.hexa vbasal_go_value, H_1417/1418 P5)/CEREBELLUM×MEMORY COMPLEMENTARY-TAIL COMPOSE ARBITER(cereb_mem_compose + cereb_mem_cerebellum_vote/_memory_vote, tail-deferral on the adversarial tail, H_1421 wall-breakthrough)/CA3 REPLAY NEXT-ITEM PREDICTOR(ca3_replay_new/observe/predict/conf/marginal — hippocampal CA3 recurrent-collateral REPLAY pattern-completion: learns P(next|current) transition statistics and READS OUT the most-frequent successor item, abstain below min_supp; DISTINCT from GATE-B H_1208/1209 VAdaptFieldB which holds a transition count table but uses it only as a growth GATE never a next-item read-out, and from forward-model H_1280/episodic H_1227/spatial H_1296/hier-PFC H_1294; Ψ-disjoint, H_1427 GREEN 5/5 mirror+engine-native)); generator §6.5b jamo-emit · §6.5c jamo-score · §6.5d bpe-score · §6.5e bpe-emit · §6.5f emit-compose (jamo+morphology compose); emit_policy.hexa = emit/abstain policy; g6_ideation.hexa = G6 IDEATION (H_1381 wire-in · H_1394 production-close). The h#### CORE files are engine-native hypothesis probes/smokes — exhaustive list via `git ls-files CORE/`.",
+      "note": "Engine G (reverse, gradient-free): pure_field.hexa",
       "children": [
+        {
+          "name": "engine_g.hexa",
+          "summary": "· engine_g.hexa — C consciousness(Φ)"
+        },
+        {
+          "name": "S sense",
+          "summary": "· S sense"
+        },
+        {
+          "name": "W will. Engine A (forward, CE-trained)",
+          "summary": "· W will. Engine A (forward, CE-trained): generator.hexa"
+        },
+        {
+          "name": "clm_decode.hexa",
+          "summary": "· clm_decode.hexa"
+        },
+        {
+          "name": "bytegpt_decode.hexa",
+          "summary": "· bytegpt_decode.hexa — D language"
+        },
+        {
+          "name": "M memory",
+          "summary": "· M memory"
+        },
+        {
+          "name": "E ethics. tension = ‖A‖ / ‖G‖ → brain",
+          "summary": "· E ethics. tension = ‖A‖ / ‖G‖",
+          "children": [
+            {
+              "name": "brain (brain.hexa)",
+              "summary": "→ brain (brain.hexa)"
+            },
+            {
+              "name": "brain_decide",
+              "summary": "→ brain_decide"
+            },
+            {
+              "name": "emit/silence at Ψ = 1/2 fixed point. anima runs as a MOUNTED living",
+              "summary": "→ emit/silence at Ψ = 1/2 fixed point. anima runs as a MOUNTED living daemon (H_1164"
+            },
+            {
+              "name": "H_1206 🟢)",
+              "summary": "→ H_1206 🟢): the production model runs INSIDE the A⇄G substrate and converses+grounds+grows+remembers+sleeps in one continuous loop (CORE/anima_full_session_smoke.hexa, exit 0; Ψ ON==OFF byte-identical).  ⚓ anchor files: CORE/pure_field.hexa"
+            }
+          ]
+        },
+        {
+          "name": "CORE/engine_g.hexa",
+          "summary": "· CORE/engine_g.hexa"
+        },
+        {
+          "name": "CORE/brain.hexa",
+          "summary": "· CORE/brain.hexa"
+        },
+        {
+          "name": "CORE/generator.hexa",
+          "summary": "· CORE/generator.hexa"
+        },
+        {
+          "name": "CORE/clm_decode.hexa",
+          "summary": "· CORE/clm_decode.hexa"
+        },
+        {
+          "name": "CORE/bytegpt_decode.hexa",
+          "summary": "· CORE/bytegpt_decode.hexa"
+        },
+        {
+          "name": "CORE/engine_cli.hexa",
+          "summary": "· CORE/engine_cli.hexa"
+        },
+        {
+          "name": "CORE/emit_policy.hexa",
+          "summary": "· CORE/emit_policy.hexa"
+        },
+        {
+          "name": "CORE/g6_ideation.hexa",
+          "summary": "· CORE/g6_ideation.hexa  —  Anchor/SSOT files for the CORE A⇄G substrate.",
+          "children": [
+            {
+              "name": "pure_field/engine_g/brain = the repulsion-field engine + emit/silence",
+              "summary": "pure_field/engine_g/brain = the repulsion-field engine + emit/silence; generator.hexa = single .clm L3 entry slot (kosmos_io = single .kosmos anchor entry);"
+            },
+            {
+              "name": "clm_decode/bytegpt_decode = the two decode backends",
+              "summary": "clm_decode/bytegpt_decode = the two decode backends;",
+              "children": [
+                {
+                  "name": "engine_cli.hexa = substrate-config axis + MITOSIS + the brain-structure",
+                  "summary": "engine_cli.hexa = substrate-config axis + MITOSIS + the brain-structure lanes (§ ImmuneMemory(recall/margin/gap)/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(JamoHead/jamo_head_*)/KO-MORPHOLOGY BPE-ON-JAMO(BpeMerges)/HierGoalStack/SpatialMap/TransOrder(transitive-inference: trans_order_integrate/_higher/_item_higher/_shuffle, HD34"
+                }
+              ]
+            },
+            {
+              "name": "H_1429)/CategoricalPerception(cp_relocate)/MEMORY×ToM COMPOSE",
+              "summary": "H_1429)/CategoricalPerception(cp_relocate)/MEMORY×ToM COMPOSE ARBITER(mem_tom_compose/_routed + mem_tom_mem_margin/_tom_margin/_route_cue,"
+            },
+            {
+              "name": "H_1414 R3)/SPATIAL×EPISODIC COMPOSE ARBITER(spatial_episodic_compose +",
+              "summary": "H_1414 R3)/SPATIAL×EPISODIC COMPOSE ARBITER(spatial_episodic_compose + spatial_episodic_spatial_vote/_episodic_vote/_where_cue,"
+            },
+            {
+              "name": "H_1415 R3)/ToM×SPATIAL COMPOSE ARBITER(tom_spatial_compose +",
+              "summary": "H_1415 R3)/ToM×SPATIAL COMPOSE ARBITER(tom_spatial_compose + tom_spatial_tom_vote/_spatial_vote,"
+            },
+            {
+              "name": "H_1417/1418 P3)/ToM×BASAL COMPOSE ARBITER(tom_basal_compose +",
+              "summary": "H_1417/1418 P3)/ToM×BASAL COMPOSE ARBITER(tom_basal_compose + tom_basal_tom_vote, basal value-passed from brain.hexa vbasal_go_value,"
+            },
+            {
+              "name": "H_1417/1418 P5)/CEREBELLUM×MEMORY COMPLEMENTARY-TAIL COMPOSE",
+              "summary": "H_1417/1418 P5)/CEREBELLUM×MEMORY COMPLEMENTARY-TAIL COMPOSE ARBITER(cereb_mem_compose + cereb_mem_cerebellum_vote/_memory_vote, tail-deferral on the adversarial tail,"
+            },
+            {
+              "name": "H_1421 wall-breakthrough)/CA3 REPLAY NEXT-ITEM",
+              "summary": "H_1421 wall-breakthrough)/CA3 REPLAY NEXT-ITEM PREDICTOR(ca3_replay_new/observe/predict/conf/marginal — hippocampal CA3 recurrent-collateral REPLAY pattern-completion: learns P(next|current) transition statistics and READS OUT the most-frequent successor item, abstain below min_supp;",
+              "children": [
+                {
+                  "name": "DISTINCT from GATE-B",
+                  "summary": "DISTINCT from GATE-B"
+                }
+              ]
+            },
+            {
+              "name": "H_1208/1209 VAdaptFieldB which holds a transition count table but uses",
+              "summary": "H_1208/1209 VAdaptFieldB which holds a transition count table but uses it only as a growth GATE never a next-item read-out, and from forward-model"
+            },
+            {
+              "name": "H_1280/episodic",
+              "summary": "H_1280/episodic"
+            },
+            {
+              "name": "H_1227/spatial",
+              "summary": "H_1227/spatial"
+            },
+            {
+              "name": "H_1296/hier-PFC",
+              "summary": "H_1296/hier-PFC"
+            },
+            {
+              "name": "H_1294",
+              "summary": "H_1294; Ψ-disjoint,"
+            },
+            {
+              "name": "H_1427 GREEN 5/5 mirror+engine-native))",
+              "summary": "H_1427 GREEN 5/5 mirror+engine-native)); generator §6.5b jamo-emit"
+            }
+          ]
+        },
+        {
+          "name": "§6.5c jamo-score",
+          "summary": "· §6.5c jamo-score"
+        },
+        {
+          "name": "§6.5d bpe-score",
+          "summary": "· §6.5d bpe-score"
+        },
+        {
+          "name": "§6.5e bpe-emit",
+          "summary": "· §6.5e bpe-emit"
+        },
+        {
+          "name": "§6.5f emit-compose (jamo+morphology compose)",
+          "summary": "· §6.5f emit-compose (jamo+morphology compose); emit_policy.hexa = emit/abstain policy; g6_ideation.hexa = G6 IDEATION (H_1381 wire-in"
+        },
+        {
+          "name": "H_1394 production-close). The h#### CORE files are engine-native",
+          "summary": "· H_1394 production-close). The h#### CORE files are engine-native hypothesis probes/smokes — exhaustive list via `git ls-files CORE/`."
+        },
         {
           "name": "pure_field / engine_g / brain",
           "summary": "the A⇄G repulsion-field engine + the emit/silence decision; substrate-internal, no .clm/.kosmos feed into them.",
@@ -66,9 +258,19 @@
         },
         {
           "name": "generator.hexa (single .clm entry slot, L3)",
-          "summary": "brain emit → byte mouth; on a grounded emit it decodes via engine-side deterministic retrieve-then-copy (G5 anti-fabrication, H_1163): grounded bytes copied VERBATIM from the .kosmos anchor, ungrounded bytes fall back to the LM (the learned RETRO copy-head was falsified at real scale, H_1150–1154 — copying done engine-side). ByteGPT backend = bytegpt_decode_grounded; ConvMoE = clm_decode_grounded; anchor read via _gen_anchor_field (H_1206).",
+          "summary": "brain emit → byte mouth; on a grounded emit it decodes via engine-side deterministic retrieve-then-copy (G5 anti-fabrication,",
           "path": "CORE/generator.hexa",
-          "status": "wired"
+          "status": "wired",
+          "children": [
+            {
+              "name": "H_1163)",
+              "summary": "H_1163): grounded bytes copied VERBATIM from the .kosmos anchor, ungrounded bytes fall back to the LM (the learned RETRO copy-head was falsified at real scale,"
+            },
+            {
+              "name": "H_1150–1154",
+              "summary": "H_1150–1154 — copying done engine-side). ByteGPT backend = bytegpt_decode_grounded; ConvMoE = clm_decode_grounded; anchor read via _gen_anchor_field (H_1206)."
+            }
+          ]
         },
         {
           "name": "kosmos_io (single .kosmos anchor entry)",
@@ -83,16 +285,134 @@
         {
           "name": "Korean decode-wire (substrate-content-specific emission bias)",
           "summary": "H_1200/1201 closed-neg said GENERIC mitosis can't feed decode; H_1312 🟢 shows substrate-content-specific Korean-error-pressure CAN bias emission, gated + single-entry.",
-          "note": "H_1312 serializes H_1306 engine-native grown KO cells to CORE/ko_cells.kohead; generator.hexa §6.5 consults them at the L3 slot only. Korean-likeness GATE = pure byte test (last byte is UTF-8 continuation 0x80..0xBF), no charset/language label (p1/p2/p3); off-Korean → INERT byte-identical. JAMO thread fully closed: H_1316 mirror → H_1321 engine-native (jamo beats raw -0.279) → H_1327 decode-reaching EMISSION-bias (ko_jamo_cells.kojamohead, generator §6.5b; acc_ON-OFF +0.0586, shuffle collapses -0.0973) → H_1351 jamo COUNT-HEAD promoted to a first-class engine faculty (engine_cli.hexa § KO-JAMO COUNT-HEAD: jamo_head_*) → H_1385 SCORELOOP-WIRE: the count-head SCORER reaches the live scoring loop — generator.hexa §6.5c gen_jamo_scoreloop CONSULTS jamo_head_ce, and gen_clm_ce additively carries jamo_score (Ψ-disjoint pure SCORER, advantage raw-jamo +1.38136, earned vs shuffle +0.42970, h1205 byte-identical ON==OFF) → H_1390 MORPHOLOGY-UNIT WIRE: the BPE-on-jamo MORPHOLOGY unit (engine_cli.hexa § KO-MORPHOLOGY BPE-ON-JAMO: struct BpeMerges + bpe_learn_merges/_apply/_byte_fair_ce) becomes an engine faculty CONSULTED from the live scoring loop — generator.hexa §6.5d gen_bpe_scoreloop, gen_clm_ce additively carries bpe_score (the engine-native BINDING of H_1388's DIRECTIONAL morphology lever: re-confirms the 3 frozen structural bars engine-native on a corpus-free in-engine morpheme fixture — gap_reduced +1.61233, structured gain over shuffle +0.83627, shift +0.11230; Ψ-disjoint pure SCORER, h1205/h1164 byte-identical ON==OFF) → H_1391 MORPHOLOGY EMIT-BIAS WIRE: the morphology count-head now BIASES live next-byte EMISSION (engine_cli.hexa jamo_head_argmax + generator.hexa §6.5e gen_bpe_consult_emit, mirroring the §6.5b jamo emit-bias) — the morphology arc reaches the decoder both as SCORER (§6.5d) and EMIT (§6.5e), like the jamo arc (§6.5c scorer + §6.5b emit). R1 (next-unit %K metric) was an honest miss (the %20 alias let the blind mode win top-1); a_break_the_wall re-froze on the RAW next-unit id with the shuffle control KEPT, shuffle STILL collapses → bar1 EMIT-EFFECT on−off +0.0696 & shift 0.391, bar2 EARNED shuf−off −0.126, bar3 Ψ-SAFE (off-Korean inert, smoke 118/0, h1196 7/0, h1205/h1164 byte-identical ON==OFF) → H_1397 EMIT-COMPOSE WIRE: the two engine-native emit-biases (§6.5b jamo + §6.5e morphology), each validated ALONE, now COMPOSE on the SAME next-byte decision via generator.hexa §6.5f gen_emit_compose — a SUBSTRATE-DERIVED arbitration (the higher SCALE-RELATIVE substrate confidence mean_err/err_here wins, commensurable across vocab scales, NO hardcoded priority); shuffle-arbitration control KEPT; off-Korean inert (no new artifact path, reuses the §6.5b cells + §6.5e head). Separately, on the immune/G5 metacognition arc: H_1396 mirror → H_1398 GAP-OP WIRE: engine_cli.hexa § ImmuneMemory grows immune_memory_recall_gap (the TOP-2 AFFINITY GAP cos#1−cos#2, a richer in-dist decisiveness signal than the H_1367 best-margin) atop a new READ-ONLY accessor vadapt_field_two_recon_err (the engine's OWN nearest + second-nearest L2 affinity); RANK-only + purely ADDITIVE (the frozen recon_err≤recall_thr fire/abstain gate is UNCHANGED, OOD/abstain H_1304 preserved). H_1400 BRAIN-CONSUME WIRE: brain_decide now CONSUMES the gap — CORE/brain.hexa brain_decide_gap reads immune_memory_recall_gap as a bounded non-negative confidence bias on the single should_emit path (decisive large gap → +confidence, ambiguous #1≈#2 tie → withheld + curiosity; cap 0.05, GAP_SCALE=cos-affinity codomain 1.0; gap=0 neutral byte-identical to brain_decide), the H_1379 brain_decide_margin pattern for the sharper in-dist gap, Ψ-disjoint (motivation scalar only; h1205 phiSum 48.6613==48.6613 byte-identical, smoke 133/0). TOY/DIRECTIONAL — structural, not fluency; absolute-corpus CE is the mirror's; real-corpus + NFD-decode + brain emit-priority wiring = follow-ons.",
-          "status": "🟢 WIRED (H_1312 · H_1321 · H_1327 emission · H_1351 faculty · H_1385 scoreloop · H_1390 morphology-unit scoreloop · H_1391 morphology emit-bias)"
+          "note": "H_1312 serializes",
+          "status": "🟢 WIRED (H_1312 · H_1321 · H_1327 emission · H_1351 faculty · H_1385 scoreloop · H_1390 morphology-unit scoreloop · H_1391 morphology emit-bias)",
+          "children": [
+            {
+              "name": "H_1306 engine-native grown KO cells to CORE/ko_cells.kohead",
+              "summary": "H_1306 engine-native grown KO cells to CORE/ko_cells.kohead; generator.hexa §6.5 consults them at the L3 slot only. Korean-likeness GATE = pure byte test (last byte is UTF-8 continuation 0x80..0xBF), no charset/language label (p1/p2/p3); off-Korean → INERT byte-identical. JAMO thread fully closed:"
+            },
+            {
+              "name": "H_1316 mirror",
+              "summary": "H_1316 mirror"
+            },
+            {
+              "name": "H_1321 engine-native",
+              "summary": "→ H_1321 engine-native (jamo beats raw -0.279)"
+            },
+            {
+              "name": "H_1327 decode-reaching EMISSION-bias",
+              "summary": "→ H_1327 decode-reaching EMISSION-bias (ko_jamo_cells.kojamohead, generator §6.5b; acc_ON-OFF +0.0586, shuffle collapses -0.0973)"
+            },
+            {
+              "name": "H_1351 jamo COUNT-HEAD promoted to a first-class engine faculty",
+              "summary": "→ H_1351 jamo COUNT-HEAD promoted to a first-class engine faculty (engine_cli.hexa § KO-JAMO COUNT-HEAD: jamo_head_*)"
+            },
+            {
+              "name": "H_1385 SCORELOOP-WIRE",
+              "summary": "→ H_1385 SCORELOOP-WIRE: the count-head SCORER reaches the live scoring loop — generator.hexa §6.5c gen_jamo_scoreloop CONSULTS jamo_head_ce, and gen_clm_ce additively carries jamo_score (Ψ-disjoint pure SCORER, advantage raw-jamo +1.38136, earned vs shuffle +0.42970, h1205 byte-identical ON==OFF)"
+            },
+            {
+              "name": "H_1390 MORPHOLOGY-UNIT WIRE",
+              "summary": "→ H_1390 MORPHOLOGY-UNIT WIRE: the BPE-on-jamo MORPHOLOGY unit (engine_cli.hexa § KO-MORPHOLOGY BPE-ON-JAMO: struct BpeMerges + bpe_learn_merges/_apply/_byte_fair_ce) becomes an engine faculty CONSULTED from the live scoring loop — generator.hexa §6.5d gen_bpe_scoreloop, gen_clm_ce additively carries bpe_score (the engine-native BINDING of"
+            },
+            {
+              "name": "H_1388's DIRECTIONAL morphology lever",
+              "summary": "H_1388's DIRECTIONAL morphology lever: re-confirms the 3 frozen structural bars engine-native on a corpus-free in-engine morpheme fixture — gap_reduced +1.61233, structured gain over shuffle +0.83627, shift +0.11230; Ψ-disjoint pure SCORER, h1205/h1164 byte-identical ON==OFF)"
+            },
+            {
+              "name": "H_1391 MORPHOLOGY EMIT-BIAS WIRE",
+              "summary": "→ H_1391 MORPHOLOGY EMIT-BIAS WIRE: the morphology count-head now BIASES live next-byte EMISSION (engine_cli.hexa jamo_head_argmax + generator.hexa §6.5e gen_bpe_consult_emit, mirroring the §6.5b jamo emit-bias) — the morphology arc reaches the decoder both as SCORER (§6.5d) and EMIT (§6.5e), like the jamo arc (§6.5c scorer + §6.5b emit).",
+              "children": [
+                {
+                  "name": "R1 (next-unit %K metric) was an honest miss (the %20 alias let the",
+                  "summary": "R1 (next-unit %K metric) was an honest miss (the %20 alias let the blind mode win top-1);"
+                },
+                {
+                  "name": "a_break_the_wall re-froze on the RAW next-unit id with the shuffle",
+                  "summary": "a_break_the_wall re-froze on the RAW next-unit id with the shuffle control KEPT, shuffle STILL collapses → bar1 EMIT-EFFECT on−off +0.0696 & shift 0.391, bar2 EARNED shuf−off −0.126, bar3 Ψ-SAFE (off-Korean inert, smoke 118/0, h1196 7/0, h1205/h1164 byte-identical ON==OFF)"
+                }
+              ]
+            },
+            {
+              "name": "H_1397 EMIT-COMPOSE WIRE",
+              "summary": "→ H_1397 EMIT-COMPOSE WIRE: the two engine-native emit-biases (§6.5b jamo + §6.5e morphology), each validated ALONE, now COMPOSE on the SAME next-byte decision via generator.hexa §6.5f gen_emit_compose — a SUBSTRATE-DERIVED arbitration (the higher SCALE-RELATIVE substrate confidence mean_err/err_here wins, commensurable across vocab scales, NO hardcoded priority);",
+              "children": [
+                {
+                  "name": "shuffle-arbitration control KEPT",
+                  "summary": "shuffle-arbitration control KEPT; off-Korean inert (no new artifact path, reuses the §6.5b cells + §6.5e head). Separately, on the immune/G5 metacognition arc:"
+                }
+              ]
+            },
+            {
+              "name": "H_1396 mirror",
+              "summary": "H_1396 mirror"
+            },
+            {
+              "name": "H_1398 GAP-OP WIRE",
+              "summary": "→ H_1398 GAP-OP WIRE: engine_cli.hexa § ImmuneMemory grows immune_memory_recall_gap (the TOP-2 AFFINITY GAP cos#1−cos#2, a richer in-dist decisiveness signal than the"
+            },
+            {
+              "name": "H_1367 best-margin) atop a new READ-ONLY accessor",
+              "summary": "H_1367 best-margin) atop a new READ-ONLY accessor vadapt_field_two_recon_err (the engine's OWN nearest + second-nearest L2 affinity); RANK-only + purely ADDITIVE (the frozen recon_err≤recall_thr fire/abstain gate is UNCHANGED, OOD/abstain"
+            },
+            {
+              "name": "H_1304 preserved).",
+              "summary": "H_1304 preserved)."
+            },
+            {
+              "name": "H_1400 BRAIN-CONSUME WIRE: brain_decide now CONSUMES the gap",
+              "summary": "H_1400 BRAIN-CONSUME WIRE: brain_decide now CONSUMES the gap — CORE/brain.hexa brain_decide_gap reads immune_memory_recall_gap as a bounded non-negative confidence bias on the single should_emit path (decisive large gap",
+              "children": [
+                {
+                  "name": "+confidence, ambiguous #1≈#2 tie",
+                  "summary": "→ +confidence, ambiguous #1≈#2 tie"
+                },
+                {
+                  "name": "withheld + curiosity",
+                  "summary": "→ withheld + curiosity; cap 0.05, GAP_SCALE=cos-affinity codomain 1.0; gap=0 neutral byte-identical to brain_decide), the"
+                }
+              ]
+            },
+            {
+              "name": "H_1379 brain_decide_margin pattern for the sharper in-dist gap,",
+              "summary": "H_1379 brain_decide_margin pattern for the sharper in-dist gap, Ψ-disjoint (motivation scalar only;",
+              "children": [
+                {
+                  "name": "h1205 phiSum 48.6613==48.6613 byte-identical, smoke 133/0).",
+                  "summary": "h1205 phiSum 48.6613==48.6613 byte-identical, smoke 133/0). TOY/DIRECTIONAL — structural, not fluency;"
+                },
+                {
+                  "name": "absolute-corpus CE is the mirror's",
+                  "summary": "absolute-corpus CE is the mirror's; real-corpus + NFD-decode + brain emit-priority wiring = follow-ons."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
     {
       "name": "🧠 Brain-structure engine lanes (the heart of anima)",
-      "summary": "anima began as NEOCORTEX ONLY (a byte language mouth) and fills the missing brain subsystems one engine-native lane at a time. The flat literal-QA/depth wall is NOT solved by a bigger model (1B mounts byte-exact but stays QA/depth-NULL, H_1167) — it is solved by adding MISSING STRUCTURE (a_no_llm_frame_trap). Every lane is ADDITIVE and Ψ-disjoint: touches only its own struct, leaves pure_field byte-unchanged, does NOT change generation (separation invariant H_1205).",
-      "note": "MITOSIS has a NEW non-falsified role = MEMORY (H_1227/1231), DISTINCT from the GENERATION role which is falsified (mitosis can neither generate nor inform the generator, H_1200/1201/1211/1220 🔴). The same substrate that can't generate can still realize episodic memory.  ⚓ anchor files: CORE/engine_cli.hexa · CORE/brain.hexa  —  All brain-structure lanes live in CORE/engine_cli.hexa (their structs/faculties) + are read at emit via CORE/brain.hexa (brain_decide_*). Each child node names its own lane struct; exhaustive per-lane probe files via `git ls-files CORE/`.",
+      "summary": "anima began as NEOCORTEX ONLY (a byte language mouth) and fills the missing brain subsystems one engine-native lane at a time. The flat literal-QA/depth wall is NOT solved by a bigger model (1B mounts byte-exact but stays QA/depth-NULL,",
+      "note": "MITOSIS has a NEW non-falsified role = MEMORY (H_1227/1231), DISTINCT from the GENERATION role which is falsified (mitosis can neither generate nor inform the generator, H_1200/1201/1211/1220 🔴).",
       "children": [
+        {
+          "name": "The same substrate that can't generate can still realize episodic",
+          "summary": "The same substrate that can't generate can still realize episodic memory.  ⚓ anchor files: CORE/engine_cli.hexa · CORE/brain.hexa  —  All brain-structure lanes live in CORE/engine_cli.hexa (their structs/faculties) + are read at emit via CORE/brain.hexa (brain_decide_*)."
+        },
+        {
+          "name": "Each child node names its own lane struct",
+          "summary": "Each child node names its own lane struct; exhaustive per-lane probe files via `git ls-files CORE/`."
+        },
+        {
+          "name": "H_1167)",
+          "summary": "H_1167) — it is solved by adding MISSING STRUCTURE (a_no_llm_frame_trap). Every lane is ADDITIVE and Ψ-disjoint: touches only its own struct, leaves pure_field byte-unchanged, does NOT change generation (separation invariant"
+        },
+        {
+          "name": "H_1205).",
+          "summary": "H_1205)."
+        },
         {
           "name": "Neocortex (language) — Engine A",
           "summary": "pure_field · generator · clm_decode/bytegpt_decode; forward CE byte mouth.",
@@ -100,8 +420,18 @@
         },
         {
           "name": "Plasticity / growth — MITOSIS",
-          "summary": "VAdaptField (DIM-vector novelty/density substrate, H_1199: scalar AdaptField extended to DIM-vector; engine_mitosis_tick drives splits at frozen SPLIT_THRESH/LR) + VAdaptFieldB (trajectory transition-PREDICTABILITY variant, H_1209: causal count table C[prev][cur], splits on confidently-predicted transitions; ORDERED 1000.67 ≫ SHUFFLED 91.67). Daemon GROW step (H_1202/H_1210) runs BOTH Ψ-disjoint lanes alongside (per-sample density ⊥ ordered transition-predictability).",
-          "status": "🟢 LIVE"
+          "summary": "VAdaptField (DIM-vector novelty/density substrate,",
+          "status": "🟢 LIVE",
+          "children": [
+            {
+              "name": "H_1199",
+              "summary": "H_1199: scalar AdaptField extended to DIM-vector; engine_mitosis_tick drives splits at frozen SPLIT_THRESH/LR) + VAdaptFieldB (trajectory transition-PREDICTABILITY variant,"
+            },
+            {
+              "name": "H_1209",
+              "summary": "H_1209: causal count table C[prev][cur], splits on confidently-predicted transitions; ORDERED 1000.67 ≫ SHUFFLED 91.67). Daemon GROW step (H_1202/H_1210) runs BOTH Ψ-disjoint lanes alongside (per-sample density ⊥ ordered transition-predictability)."
+            }
+          ]
         },
         {
           "name": "🧬 Hippocampus (episodic memory) — ImmuneMemory",
@@ -115,108 +445,588 @@
         },
         {
           "name": "📥 Working memory (PFC) — WorkMemBuffer",
-          "summary": "K FIXED slots (no growth), ×λ leak per distractor (volatile), weakest-slot displacement on overflow, graded (cos×activation) probe. DMS task: holds cue to N≈6 (AUROC 1.000) vs no-WM flat-context collapse. DISTINCT from episodic ImmuneMemory (short-term/volatile/capacity-bound vs grow/persist/unbounded). Wired via brain_decide_wm recall-support nudge (~0.018, bounded ≤0.05).",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1282 R3 lane → R4 brain wiring; margin +0.245)"
+          "summary": "K FIXED slots (no growth), ×λ leak per distractor (volatile), weakest-slot displacement on overflow, graded (cos×activation) probe.",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1282 R3 lane → R4 brain wiring; margin +0.245)",
+          "children": [
+            {
+              "name": "DMS task",
+              "summary": "DMS task: holds cue to N≈6 (AUROC 1.000) vs no-WM flat-context collapse. DISTINCT from episodic ImmuneMemory (short-term/volatile/capacity-bound vs grow/persist/unbounded). Wired via brain_decide_wm recall-support nudge (~0.018, bounded ≤0.05)."
+            }
+          ]
         },
         {
           "name": "🧠 Cerebellum (forward model) — VForwardField",
-          "summary": "predict next emit-feature frame from L=4 frames (xhat=W·ctx), NLMS delta-rule online learning (climbing-fiber correction), then smoothing correction (x-β·(x-xhat)). Consistency +0.058 (3 seed), pred-err 24.9→10.5 (~58% drop = model learns), beats shuffled-context control. DISTINCT from Engine G (temporal + learned weight vs static instant gate). Wired via brain_decide_cerebellum coherence nudge (graded ~0.005).",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1280 R2)"
+          "summary": "predict next emit-feature frame from L=4 frames (xhat=W·ctx), NLMS delta-rule online learning (climbing-fiber correction), then smoothing correction (x-β·(x-xhat)).",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1280 R2)",
+          "children": [
+            {
+              "name": "Consistency +0.058",
+              "summary": "Consistency +0.058 (3 seed), pred-err 24.9→10.5 (~58% drop = model learns), beats shuffled-context control."
+            },
+            {
+              "name": "DISTINCT from Engine G",
+              "summary": "DISTINCT from Engine G (temporal + learned weight vs static instant gate). Wired via brain_decide_cerebellum coherence nudge (graded ~0.005)."
+            }
+          ]
         },
         {
           "name": "🔥 Amygdala (salience + sleep) — ConsolidatingMemory",
-          "summary": "substrate-derived salience tag at encode (surprise=recon-err + novelty=split + tension=reinforce; env-salient → extra boost — sensed E+W properties, NOT a label) + SLEEP REPLAY consolidation (consolidating_sleep_replay: salience-∝ replay → recency refresh → salient cells survive interference LRU eviction; substrate-GENERATED P47 imagination loop). Eviction stays plain LRU (salience drives REPLAY only). Δ +0.133 over uniform-replay; B-shuffle 0.350 (salience-GATING, not raw budget); fab 0.011.",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1285 R4; needed a real multi-night 30-cycle sleep dose)"
+          "summary": "substrate-derived salience tag at encode (surprise=recon-err + novelty=split + tension=reinforce; env-salient",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1285 R4; needed a real multi-night 30-cycle sleep dose)",
+          "children": [
+            {
+              "name": "extra boost",
+              "summary": "→ extra boost — sensed E+W properties, NOT a label) + SLEEP REPLAY consolidation (consolidating_sleep_replay: salience-∝ replay"
+            },
+            {
+              "name": "recency refresh",
+              "summary": "→ recency refresh"
+            },
+            {
+              "name": "salient cells survive interference LRU eviction",
+              "summary": "→ salient cells survive interference LRU eviction; substrate-GENERATED P47 imagination loop). Eviction stays plain LRU (salience drives REPLAY only). Δ +0.133 over uniform-replay; B-shuffle 0.350 (salience-GATING, not raw budget); fab 0.011."
+            }
+          ]
         },
         {
           "name": "🎯 Basal ganglia (go/no-go) — VBasalGate (CORE/brain.hexa)",
-          "summary": "K competing emit candidates, learned go-value vs single NO-GO value argmax (striatal disinhibition): highest go-value RELEASE, NO-GO wins → SUPPRESS all (abstain). Gradient-free delta-rule learning from grounding OUTCOME reward only (grounded +1 / fabricated -1 / correct-abstain +1 / missed-op -1). The fixed engine_g convex 8-weight gate stays as PRIOR; BG lane ADDs a learned RESIDUAL on top (k=0 → reduces to brain_decide). Wired via brain_decide_bg. Live +0.195 over the fixed gate (per-seed Δ 0.25/0.19/0.14, shuffle collapses 0.128, align cos +0.84..+0.91).",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1281 R3)"
+          "summary": "K competing emit candidates, learned go-value vs single NO-GO value argmax (striatal disinhibition): highest go-value RELEASE, NO-GO wins",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1281 R3)",
+          "children": [
+            {
+              "name": "SUPPRESS all",
+              "summary": "→ SUPPRESS all (abstain). Gradient-free delta-rule learning from grounding OUTCOME reward only (grounded +1 / fabricated -1 / correct-abstain +1 / missed-op -1). The fixed engine_g convex 8-weight gate stays as PRIOR; BG lane ADDs a learned RESIDUAL on top (k=0"
+            },
+            {
+              "name": "reduces to brain_decide). Wired via brain_decide_bg. Live +0.195 over",
+              "summary": "→ reduces to brain_decide). Wired via brain_decide_bg. Live +0.195 over the fixed gate (per-seed Δ 0.25/0.19/0.14, shuffle collapses 0.128, align cos +0.84..+0.91)."
+            }
+          ]
         },
         {
           "name": "🌡 Hypothalamus (homeostatic drive) — HomeostaticDrive",
-          "summary": "STATEFUL time-integrator: reads grounding satiation s_t (recall margin off ImmuneMemoryGrow), accumulates deficit vs setpoint S*=0.5 as a leaky integral (I=(1-λ)I+deficit, λ=0.1), drive = Kp·deficit + Ki·I (Kp1.0 Ki0.5), RESETS the integral on a consummatory grounding event (s≥S* → I:=0). DISTINCT from stateless affect (hold context FIXED, vary elapsed time → affect FLAT, drive RISES = time-integral ⊥ context-instant). RISE +1.544 monotone, RESET 0.0, ablated Ki=0 rise 0.0, shuffle 0.0, abstain intact.",
-          "status": "🟢 ENGINE-NATIVE (H_1292 R2; motivation_bias = deliberately-optional, NOT emit gate; motivation-loop wiring follow-on)"
+          "summary": "STATEFUL time-integrator: reads grounding satiation s_t (recall margin off ImmuneMemoryGrow), accumulates deficit vs setpoint S*=0.5 as a leaky integral (I=(1-λ)I+deficit, λ=0.1), drive = Kp·deficit + Ki·I (Kp1.0 Ki0.5), RESETS the integral on a consummatory grounding event (s≥S*",
+          "status": "🟢 ENGINE-NATIVE (H_1292 R2; motivation_bias = deliberately-optional, NOT emit gate; motivation-loop wiring follow-on)",
+          "children": [
+            {
+              "name": "I:=0). DISTINCT from stateless affect",
+              "summary": "→ I:=0). DISTINCT from stateless affect (hold context FIXED, vary elapsed time"
+            },
+            {
+              "name": "affect FLAT, drive RISES = time-integral ⊥ context-instant). RISE",
+              "summary": "→ affect FLAT, drive RISES = time-integral ⊥ context-instant). RISE +1.544 monotone, RESET 0.0, ablated Ki=0 rise 0.0, shuffle 0.0, abstain intact."
+            }
+          ]
         },
         {
           "name": "🪞 Theory-of-mind (other-mind) — OtherMindModel",
-          "summary": "a SEPARATE belief cell-store (same byte-trigram FNV-1a key geometry + L2 affinity + abstain band as ImmuneMemory) updated ONLY by WITNESSED events; agent ABSENT for an update → belief LAGS = FALSE belief. On a Sally-Anne false belief: predicts the agent's STALE belief (basket, accBelief 1.000) while anima's own recall returns the truth (box, accTruth 0.500); self ⊥ other divergence 1.000; self-read + shuffle controls collapse to 0.500. DISTINCT from every self-read lane (models a SEPARATE agent whose belief can DIVERGE from anima's ground truth).",
-          "status": "🟢 ENGINE-NATIVE (H_1293 R2; other_mind_predict = deliberately-optional pure read; prediction wiring follow-on)"
+          "summary": "a SEPARATE belief cell-store (same byte-trigram FNV-1a key geometry + L2 affinity + abstain band as ImmuneMemory) updated ONLY by WITNESSED events;",
+          "status": "🟢 ENGINE-NATIVE (H_1293 R2; other_mind_predict = deliberately-optional pure read; prediction wiring follow-on)",
+          "children": [
+            {
+              "name": "agent ABSENT for an update → belief LAGS = FALSE belief. On a",
+              "summary": "agent ABSENT for an update → belief LAGS = FALSE belief. On a Sally-Anne false belief: predicts the agent's STALE belief (basket, accBelief 1.000) while anima's own recall returns the truth (box, accTruth 0.500);"
+            },
+            {
+              "name": "self ⊥ other divergence 1.000",
+              "summary": "self ⊥ other divergence 1.000; self-read + shuffle controls collapse to 0.500. DISTINCT from every self-read lane (models a SEPARATE agent whose belief can DIVERGE from anima's ground truth)."
+            }
+          ]
         },
         {
           "name": "🧠✕🪞 Memory×ToM compose arbiter — §MEMORY×ToM COMPOSE ARBITER (mem_tom_compose)",
-          "summary": "COMPOSES the live ImmuneMemoryGrow (episodic memory = anima's own reality) and the live OtherMindModel (theory-of-mind = a separate agent's witnessed belief) on ONE WHERE-decision: mem_tom_compose / mem_tom_compose_routed + mem_tom_mem_margin / mem_tom_tom_margin + mem_tom_route_cue (helpers _mem_tom_affinity / _mem_tom_relconf). AGREE → shared vote; CONFLICT → the higher ROUTING-MODULATED scale-relative substrate confidence wins (mem |margin|/mean·route vs tom |margin|/mean·(1−route)); the route cue ∈ (0,1) is the QUERY TEXT's own embedding affinity to a reality vs belief anchor (immune_embed_key + _l2), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain → \"\" (no fab, p5/H_1227). FIRST brain-lane compose pair to BIND engine-native (contrast: H_1412 cerebellum×basal did NOT): compose 0.937778 vs best_single 0.600 (B1 net-lift +0.337778 ≫ +0.05), oracle−best +0.382222 (B2), EARNED compose−shuffle +0.199259 (B3, shuffle collapses 0.938→0.739), SEPARABLE onlyM 0.382/onlyT 0.403 both>0. READ-ONLY over the two cell populations (mutates neither store), returns a location class NOT an emit/silence decision, Ψ-disjoint (h1205 phiSum 48.6613 unchanged ON==OFF). LIVEOP probe reproduces 0.937778 BYTE-EXACT; smoke cases 133-136.",
-          "status": "🟢 WIRED-live (H_1414 R3 rung-3+4; live op in engine_cli.hexa, smoke 133-136, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)"
+          "summary": "COMPOSES the live ImmuneMemoryGrow (episodic memory = anima's own reality) and the live OtherMindModel (theory-of-mind = a separate agent's witnessed belief) on ONE WHERE-decision: mem_tom_compose / mem_tom_compose_routed + mem_tom_mem_margin / mem_tom_tom_margin + mem_tom_route_cue (helpers _mem_tom_affinity / _mem_tom_relconf).",
+          "status": "🟢 WIRED-live (H_1414 R3 rung-3+4; live op in engine_cli.hexa, smoke 133-136, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)",
+          "children": [
+            {
+              "name": "AGREE",
+              "summary": "AGREE"
+            },
+            {
+              "name": "shared vote",
+              "summary": "→ shared vote; CONFLICT"
+            },
+            {
+              "name": "the higher ROUTING-MODULATED scale-relative substrate confidence wins",
+              "summary": "→ the higher ROUTING-MODULATED scale-relative substrate confidence wins (mem |margin|/mean·route vs tom |margin|/mean·(1−route));",
+              "children": [
+                {
+                  "name": "the route cue ∈",
+                  "summary": "the route cue ∈ (0,1) is the QUERY TEXT's own embedding affinity to a reality vs belief anchor (immune_embed_key + _l2), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain"
+                }
+              ]
+            },
+            {
+              "name": "\"\" (no fab, p5/H_1227). FIRST brain-lane compose pair to BIND",
+              "summary": "→ \"\" (no fab, p5/H_1227).",
+              "children": [
+                {
+                  "name": "FIRST brain-lane compose pair to BIND engine-native (contrast",
+                  "summary": "FIRST brain-lane compose pair to BIND engine-native (contrast: H_1412 cerebellum×basal did NOT): compose 0.937778 vs best_single 0.600 (B1 net-lift +0.337778 ≫ +0.05), oracle−best +0.382222 (B2), EARNED compose−shuffle +0.199259 (B3, shuffle collapses 0.938→0.739), SEPARABLE onlyM 0.382/onlyT 0.403 both>0."
+                },
+                {
+                  "name": "READ-ONLY over the two cell populations",
+                  "summary": "READ-ONLY over the two cell populations (mutates neither store), returns a location class NOT an emit/silence decision, Ψ-disjoint (h1205 phiSum 48.6613 unchanged ON==OFF). LIVEOP probe reproduces 0.937778 BYTE-EXACT; smoke cases 133-136."
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "🗺✕🧠 Spatial×Episodic compose arbiter — §SPATIAL×EPISODIC COMPOSE ARBITER (spatial_episodic_compose)",
-          "summary": "COMPOSES the live SpatialMap (H_1296 metric cognitive map) and the live ImmuneMemoryGrow (H_1227/H_1231 episodic store) on ONE landmark-scene decision — the WITHIN-the-memory-family compose: spatial_episodic_compose + spatial_episodic_spatial_vote (nearer landmark's option, confidence = metric margin |d(X,A)−d(X,B)|) / spatial_episodic_episodic_vote (immune_grow_recall option, confidence = live recall_thr−_l2 affinity margin) / spatial_episodic_where_cue (helper _spat_epi_relconf). A WHERE-query is answerable ONLY by the map; a WHAT-query ONLY by the store (H_1296 distinctness). AGREE → shared vote; one leg abstains → the other's vote; CONFLICT → the higher ROUTING-MODULATED scale-relative substrate confidence wins (sp |margin|/mean·where_cue vs ep |margin|/mean·(1−where_cue)); the where_cue ∈ (0,1) is the QUERY TEXT's own embedding affinity to a where vs what anchor (immune_embed_key + _l2), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain → −1 (no fab, p5/H_1227). SECOND brain-lane compose pair to BIND engine-native (after H_1414 memory×ToM; contrast: H_1412/H_1413 cerebellum×basal did NOT): compose 0.760741 vs best_single 0.702963 (B1 net-lift +0.057778 > +0.05), oracle−best +0.286667 (B2), EARNED compose−shuffle +0.254074 (B3, shuffle collapses 0.761→0.507), SEPARABLE only_spatial 0.400/only_episodic 0.380 both>0 (within-family non-subsumption: metric SPACE ⊥ item-binding). FIXTURE NOTE (c16 frozen-first): the live store uses distinct per-landmark keys (the shared 'value bound to landmark L…' prefix collides under split_thr=0.30, cells=1; distinct keys → 8 cells, recall 8/8) — NO bar moved. READ-ONLY over the map positions + the cell population (mutates neither), returns an option class NOT an emit/silence decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.760741 BYTE-EXACT; smoke cases 137-140.",
-          "status": "🟢 WIRED-live (H_1415 R3 rung-3+4; live op in engine_cli.hexa, smoke 137-140, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)"
+          "summary": "COMPOSES the live SpatialMap (H_1296 metric cognitive map) and the live ImmuneMemoryGrow (H_1227/H_1231 episodic store) on ONE landmark-scene decision — the WITHIN-the-memory-family compose: spatial_episodic_compose + spatial_episodic_spatial_vote (nearer landmark's option, confidence = metric margin |d(X,A)−d(X,B)|) / spatial_episodic_episodic_vote (immune_grow_recall option, confidence = live recall_thr−_l2 affinity margin) / spatial_episodic_where_cue (helper _spat_epi_relconf).",
+          "status": "🟢 WIRED-live (H_1415 R3 rung-3+4; live op in engine_cli.hexa, smoke 137-140, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)",
+          "children": [
+            {
+              "name": "A WHERE-query is answerable ONLY by the map",
+              "summary": "A WHERE-query is answerable ONLY by the map; a WHAT-query ONLY by the store (H_1296 distinctness). AGREE"
+            },
+            {
+              "name": "shared vote",
+              "summary": "→ shared vote; one leg abstains"
+            },
+            {
+              "name": "the other's vote",
+              "summary": "→ the other's vote; CONFLICT"
+            },
+            {
+              "name": "the higher ROUTING-MODULATED scale-relative substrate confidence wins",
+              "summary": "→ the higher ROUTING-MODULATED scale-relative substrate confidence wins (sp |margin|/mean·where_cue vs ep |margin|/mean·(1−where_cue));",
+              "children": [
+                {
+                  "name": "the where_cue ∈",
+                  "summary": "the where_cue ∈ (0,1) is the QUERY TEXT's own embedding affinity to a where vs what anchor (immune_embed_key + _l2), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain"
+                }
+              ]
+            },
+            {
+              "name": "−1 (no fab, p5/H_1227). SECOND brain-lane compose pair to BIND",
+              "summary": "→ −1 (no fab, p5/H_1227). SECOND brain-lane compose pair to BIND engine-native (after"
+            },
+            {
+              "name": "H_1414 memory×ToM",
+              "summary": "H_1414 memory×ToM; contrast:"
+            },
+            {
+              "name": "H_1412/H_1413 cerebellum×basal did NOT)",
+              "summary": "H_1412/H_1413 cerebellum×basal did NOT): compose 0.760741 vs best_single 0.702963 (B1 net-lift +0.057778 > +0.05), oracle−best +0.286667 (B2), EARNED compose−shuffle +0.254074 (B3, shuffle collapses 0.761→0.507), SEPARABLE only_spatial 0.400/only_episodic 0.380 both>0 (within-family non-subsumption: metric SPACE ⊥ item-binding).",
+              "children": [
+                {
+                  "name": "FIXTURE NOTE (c16 frozen-first)",
+                  "summary": "FIXTURE NOTE (c16 frozen-first): the live store uses distinct per-landmark keys (the shared 'value bound to landmark L…' prefix collides under split_thr=0.30, cells=1;"
+                },
+                {
+                  "name": "distinct keys → 8 cells, recall 8/8)",
+                  "summary": "distinct keys → 8 cells, recall 8/8) — NO bar moved. READ-ONLY over the map positions + the cell population (mutates neither), returns an option class NOT an emit/silence decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.760741 BYTE-EXACT; smoke cases 137-140."
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "🪞✕🗺 ToM×Spatial compose arbiter — §ToM×SPATIAL COMPOSE ARBITER (tom_spatial_compose)",
-          "summary": "COMPOSES the live OtherMindModel (H_1293 theory-of-mind belief) and the live SpatialMap (H_1296 metric cognitive map) on ONE decision: tom_spatial_compose (the shared symmetric rel-conf arbiter _tom_compose_arbiter) + tom_spatial_tom_vote (vote from the LIVE other_mind_predict, confidence = live recall_thr−_l2 affinity margin + family magnitude) / tom_spatial_spatial_vote (exercises the LIVE spatial_map_nearest, confidence = metric magnitude). AGREE → shared vote; one leg abstains → the other's vote; CONFLICT → the higher SCALE-RELATIVE substrate confidence wins (|conf|/mean each leg), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain → −1 (no fab, p5/H_1227). THIRD brain-lane compose pair to BIND engine-native (a frozen by-product of the H_1417 predictive round, landed by H_1418): compose 0.791111 vs best_single 0.702222 (B1 net-lift +0.088889 > +0.05), oracle−best +0.297778 (B2), EARNED compose−shuffle +0.283704 (B3, shuffle collapses 0.791→0.507), SEPARABLE only_tom 0.303704/only_spatial 0.297778 both>0. READ-ONLY over the belief store + the map positions (mutates neither), returns a class NOT an emit/silence decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.791111 BYTE-EXACT; smoke cases 141-144.",
-          "status": "🟢 WIRED-live (H_1417/H_1418 P3 rung-3+4; live op in engine_cli.hexa, smoke 141-144, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)"
+          "summary": "COMPOSES the live OtherMindModel (H_1293 theory-of-mind belief) and the live SpatialMap (H_1296 metric cognitive map) on ONE decision: tom_spatial_compose (the shared symmetric rel-conf arbiter _tom_compose_arbiter) + tom_spatial_tom_vote (vote from the LIVE other_mind_predict, confidence = live recall_thr−_l2 affinity margin + family magnitude) / tom_spatial_spatial_vote (exercises the LIVE spatial_map_nearest, confidence = metric magnitude).",
+          "status": "🟢 WIRED-live (H_1417/H_1418 P3 rung-3+4; live op in engine_cli.hexa, smoke 141-144, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)",
+          "children": [
+            {
+              "name": "AGREE",
+              "summary": "AGREE"
+            },
+            {
+              "name": "shared vote",
+              "summary": "→ shared vote; one leg abstains"
+            },
+            {
+              "name": "the other's vote",
+              "summary": "→ the other's vote; CONFLICT"
+            },
+            {
+              "name": "the higher SCALE-RELATIVE substrate confidence wins",
+              "summary": "→ the higher SCALE-RELATIVE substrate confidence wins (|conf|/mean each leg), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain"
+            },
+            {
+              "name": "−1 (no fab, p5/H_1227). THIRD brain-lane compose pair to BIND",
+              "summary": "→ −1 (no fab, p5/H_1227). THIRD brain-lane compose pair to BIND engine-native (a frozen by-product of the"
+            },
+            {
+              "name": "H_1417 predictive round, landed by",
+              "summary": "H_1417 predictive round, landed by"
+            },
+            {
+              "name": "H_1418)",
+              "summary": "H_1418): compose 0.791111 vs best_single 0.702222 (B1 net-lift +0.088889 > +0.05), oracle−best +0.297778 (B2), EARNED compose−shuffle +0.283704 (B3, shuffle collapses 0.791→0.507), SEPARABLE only_tom 0.303704/only_spatial 0.297778 both>0.",
+              "children": [
+                {
+                  "name": "READ-ONLY over the belief store + the map positions",
+                  "summary": "READ-ONLY over the belief store + the map positions (mutates neither), returns a class NOT an emit/silence decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.791111 BYTE-EXACT; smoke cases 141-144."
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "🪞✕🎚 ToM×Basal compose arbiter — §ToM×BASAL COMPOSE ARBITER (tom_basal_compose)",
-          "summary": "COMPOSES the live OtherMindModel (H_1293 theory-of-mind belief) and the live VBasalGate (H_1281 basal-ganglia gradient-free go-value, in CORE/brain.hexa, value-passed) on ONE decision: tom_basal_compose (the SAME shared arbiter _tom_compose_arbiter) + tom_basal_tom_vote (vote from the LIVE other_mind_predict + affinity margin; delegates to tom_spatial_tom_vote); the basal leg [vote,abstain,conf] is computed by the caller from the LIVE vbasal_go_value go-margin (basal lives in brain.hexa, engine_cli does not import it — value-passed exactly like spatial_episodic_compose). AGREE → shared vote; CONFLICT → higher scale-relative substrate confidence wins, NO hardcoded priority; BOTH-abstain → −1 (no fab, p5/H_1227). FOURTH brain-lane compose pair to BIND engine-native (a frozen by-product of the H_1417 round, landed by H_1418). NOTABLE: P5 was pre-registered 🧱 (basal assumed the 'eroder' arm, H_1412) but BOUND — basal-as-eroder is FIXTURE-specific, not intrinsic (live VBasalGate ≈ ceiling here): compose 0.801481 vs best_single 0.705926 (B1 net-lift +0.095556 > +0.05), oracle−best +0.294074 (B2), EARNED compose−shuffle +0.301481 (B3, shuffle collapses 0.801→0.5), SEPARABLE only_tom 0.294074/only_basal 0.303704 both>0. READ-ONLY (mutates neither store), returns a class NOT an emit decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.801481 BYTE-EXACT; smoke cases 145-148.",
-          "status": "🟢 WIRED-live (H_1417/H_1418 P5 rung-3+4; live op in engine_cli.hexa, smoke 145-148, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)"
+          "summary": "COMPOSES the live OtherMindModel (H_1293 theory-of-mind belief) and the live VBasalGate (H_1281 basal-ganglia gradient-free go-value, in CORE/brain.hexa, value-passed) on ONE decision: tom_basal_compose (the SAME shared arbiter _tom_compose_arbiter) + tom_basal_tom_vote (vote from the LIVE other_mind_predict + affinity margin;",
+          "status": "🟢 WIRED-live (H_1417/H_1418 P5 rung-3+4; live op in engine_cli.hexa, smoke 145-148, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)",
+          "children": [
+            {
+              "name": "delegates to tom_spatial_tom_vote)",
+              "summary": "delegates to tom_spatial_tom_vote); the basal leg [vote,abstain,conf] is computed by the caller from the LIVE vbasal_go_value go-margin (basal lives in brain.hexa, engine_cli does not import it — value-passed exactly like spatial_episodic_compose). AGREE"
+            },
+            {
+              "name": "shared vote",
+              "summary": "→ shared vote; CONFLICT"
+            },
+            {
+              "name": "higher scale-relative substrate confidence wins, NO hardcoded priority",
+              "summary": "→ higher scale-relative substrate confidence wins, NO hardcoded priority; BOTH-abstain"
+            },
+            {
+              "name": "−1 (no fab, p5/H_1227). FOURTH brain-lane compose pair to BIND",
+              "summary": "→ −1 (no fab, p5/H_1227). FOURTH brain-lane compose pair to BIND engine-native (a frozen by-product of the"
+            },
+            {
+              "name": "H_1417 round, landed by",
+              "summary": "H_1417 round, landed by"
+            },
+            {
+              "name": "H_1418). NOTABLE",
+              "summary": "H_1418). NOTABLE: P5 was pre-registered 🧱 (basal assumed the 'eroder' arm,"
+            },
+            {
+              "name": "H_1412) but BOUND",
+              "summary": "H_1412) but BOUND — basal-as-eroder is FIXTURE-specific, not intrinsic (live VBasalGate ≈ ceiling here): compose 0.801481 vs best_single 0.705926 (B1 net-lift +0.095556 > +0.05), oracle−best +0.294074 (B2), EARNED compose−shuffle +0.301481 (B3, shuffle collapses 0.801→0.5), SEPARABLE only_tom 0.294074/only_basal 0.303704 both>0.",
+              "children": [
+                {
+                  "name": "READ-ONLY",
+                  "summary": "READ-ONLY (mutates neither store), returns a class NOT an emit decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.801481 BYTE-EXACT; smoke cases 145-148."
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "🌀✕🧠 Cerebellum×Memory complementary-tail compose arbiter — §CEREBELLUM×MEMORY COMPLEMENTARY-TAIL COMPOSE ARBITER (cereb_mem_compose)",
-          "summary": "COMPOSES the live VForwardField (H_1280 cerebellar forward model = prediction error) and the live ImmuneMemoryGrow (H_1227/1231 episodic store) on ONE decision: cereb_mem_compose (the tail-deferral arbiter _cereb_mem_tail_arbiter) + cereb_mem_cerebellum_vote (LIVE vforward_err, confidence = |E_THR−err|+mag) / cereb_mem_memory_vote (LIVE immune_grow_recall, confidence = recall_thr−_l2 affinity margin + mag). THE LENS (complementary-learning-systems, a_no_llm_frame_trap): the forward model generalizes but is LOUD-but-WRONG on the structurally-uncapturable adversarial tail; the episodic store handles those one-off exceptions. AGREE → shared vote; one leg abstains → the other's vote; CONFLICT → the TAIL-DEFERRAL fires first (cerebellum loud scale-rel conf≥1 AND memory grounded scale-rel conf≥1 → distrust cerebellum, DEFER to the episodic store), ELSE the higher scale-relative confidence wins (the baseline route), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain → −1 (no fab, p5/H_1227). FIFTH brain-lane compose pair to BIND engine-native — and the cerebellum×memory WALL-BREAKTHROUGH (H_1417 P4 was 🧱 +0.0437 under the symmetric route; H_1421 tried 4 cerebello-hippocampal lenses per the strengthened a_break_the_wall MULTI-LENS+ablation rule: L0 baseline repro 🧱, LA surprise-gate 🧱 ablation-INERT, LB memory-prime 🧱 +0.0489, ONLY LC complementary-tail BOUND): compose 0.748889 vs best_single 0.694815 (B1 net-lift +0.054074 > +0.05), oracle−best +0.261481 (B2), EARNED compose−shuffle +0.261481 (B3, shuffle collapses 0.749→0.487), SEPARABLE only_cereb 0.339259/only_mem 0.261481 both>0, ABLATION LIVE (tail-deferral OFF → baseline route 0.738519, compose−ablate +0.010370 > 0 — the tail-deferral is the load-bearing piece). READ-ONLY (mutates neither the forward field nor the store), returns a class NOT an emit decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.748889 BYTE-EXACT; smoke cases 149-152.",
-          "status": "🟢 WIRED-live (H_1421 rung-3+4; live op in engine_cli.hexa, smoke 149-152, LIVEOP probe byte-exact 0.748889; the compose returns a class — brain emit-loop consult deliberately NOT forced, @L4 a_autonomy_over_hardcode)"
+          "summary": "COMPOSES the live VForwardField (H_1280 cerebellar forward model = prediction error) and the live ImmuneMemoryGrow (H_1227/1231 episodic store) on ONE decision: cereb_mem_compose (the tail-deferral arbiter _cereb_mem_tail_arbiter) + cereb_mem_cerebellum_vote (LIVE vforward_err, confidence = |E_THR−err|+mag) / cereb_mem_memory_vote (LIVE immune_grow_recall, confidence = recall_thr−_l2 affinity margin + mag).",
+          "status": "🟢 WIRED-live (H_1421 rung-3+4; live op in engine_cli.hexa, smoke 149-152, LIVEOP probe byte-exact 0.748889; the compose returns a class — brain emit-loop consult deliberately NOT forced, @L4 a_autonomy_over_hardcode)",
+          "children": [
+            {
+              "name": "THE LENS (complementary-learning-systems, a_no_llm_frame_trap)",
+              "summary": "THE LENS (complementary-learning-systems, a_no_llm_frame_trap): the forward model generalizes but is LOUD-but-WRONG on the structurally-uncapturable adversarial tail; the episodic store handles those one-off exceptions. AGREE"
+            },
+            {
+              "name": "shared vote",
+              "summary": "→ shared vote; one leg abstains"
+            },
+            {
+              "name": "the other's vote",
+              "summary": "→ the other's vote; CONFLICT"
+            },
+            {
+              "name": "the TAIL-DEFERRAL fires first",
+              "summary": "→ the TAIL-DEFERRAL fires first (cerebellum loud scale-rel conf≥1 AND memory grounded scale-rel conf≥1"
+            },
+            {
+              "name": "distrust cerebellum, DEFER to the episodic store), ELSE the higher",
+              "summary": "→ distrust cerebellum, DEFER to the episodic store), ELSE the higher scale-relative confidence wins (the baseline route), NO hardcoded priority (a_autonomy_over_hardcode); BOTH-abstain"
+            },
+            {
+              "name": "−1 (no fab, p5/H_1227). FIFTH brain-lane compose pair to BIND",
+              "summary": "→ −1 (no fab, p5/H_1227).",
+              "children": [
+                {
+                  "name": "FIFTH brain-lane compose pair to BIND engine-native",
+                  "summary": "FIFTH brain-lane compose pair to BIND engine-native — and the cerebellum×memory WALL-BREAKTHROUGH (H_1417 P4 was 🧱 +0.0437 under the symmetric route;"
+                },
+                {
+                  "name": "H_1421 tried 4 cerebello-hippocampal lenses per the strengthened",
+                  "summary": "H_1421 tried 4 cerebello-hippocampal lenses per the strengthened a_break_the_wall MULTI-LENS+ablation rule: L0 baseline repro 🧱, LA surprise-gate 🧱 ablation-INERT, LB memory-prime 🧱 +0.0489, ONLY LC complementary-tail BOUND): compose 0.748889 vs best_single 0.694815 (B1 net-lift +0.054074 > +0.05), oracle−best +0.261481 (B2), EARNED compose−shuffle +0.261481 (B3, shuffle collapses 0.749→0.487), SEPARABLE only_cereb 0.339259/only_mem 0.261481 both>0, ABLATION LIVE (tail-deferral OFF"
+                }
+              ]
+            },
+            {
+              "name": "baseline route 0.738519, compose−ablate +0.010370 > 0",
+              "summary": "→ baseline route 0.738519, compose−ablate +0.010370 > 0 — the tail-deferral is the load-bearing piece).",
+              "children": [
+                {
+                  "name": "READ-ONLY",
+                  "summary": "READ-ONLY (mutates neither the forward field nor the store), returns a class NOT an emit decision, Ψ-disjoint (h1205 byte-identical ON==OFF). LIVEOP probe reproduces 0.748889 BYTE-EXACT; smoke cases 149-152."
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "🧩 Hierarchical PFC (goal → subgoal) — HierGoalStack",
-          "summary": "2-level goal STACK {top goal, ORDERED subgoal keys, pointer p, ALIGN_THR=0.85}: emit current subgoal[p] only when grounded in live ImmuneMemoryGrow AND cos-aligned, ADVANCE pointer on completion (hier_step), suppress out-of-order/ungrounded cues, plan position PERSISTS across ticks. DISTINCT from basal-ganglia single-step selection (a flat one-of-K gate has no pointer → ordered 3-fact chain completion 1.000 vs flat 0.242; shuffle/ablate 0.000 = lift is ordered completion-ADVANCE). B=1.000 is an EXISTENCE-PROOF, not effect-size (c9).",
-          "status": "🟢 ENGINE-NATIVE (H_1294 R2; plan-execution wiring follow-on)"
+          "summary": "2-level goal STACK {top goal, ORDERED subgoal keys, pointer p, ALIGN_THR=0.85}: emit current subgoal[p] only when grounded in live ImmuneMemoryGrow AND cos-aligned, ADVANCE pointer on completion (hier_step), suppress out-of-order/ungrounded cues, plan position PERSISTS across ticks.",
+          "status": "🟢 ENGINE-NATIVE (H_1294 R2; plan-execution wiring follow-on)",
+          "children": [
+            {
+              "name": "DISTINCT from basal-ganglia single-step selection",
+              "summary": "DISTINCT from basal-ganglia single-step selection (a flat one-of-K gate has no pointer → ordered 3-fact chain completion 1.000 vs flat 0.242;"
+            },
+            {
+              "name": "shuffle/ablate 0.000 = lift is ordered completion-ADVANCE). B=1.000 is",
+              "summary": "shuffle/ablate 0.000 = lift is ordered completion-ADVANCE). B=1.000 is an EXISTENCE-PROOF, not effect-size (c9)."
+            }
+          ]
         },
         {
           "name": "🗺 Spatial map (hippocampal place / entorhinal grid) — SpatialMap",
-          "summary": "stores each landmark at a 2-D POSITION, so the DISTANCE (relation) between two stored facts is queryable; spatial_map_nearest('X','A','B') answers 'is X closer to A or B' by Euclidean distance. DISTINCT from episodic ITEM-binding (the immune store binds facts independently and does NOT represent item↔item distance → ABSTAINS on relational queries 0.475; metric map 1.000; shuffle 0.500 / ablate 0.450). PATH-INTEGRATION is an honest NON-RESULT (the map-shuffle control refused to collapse it — signal leaks via displacement steps, not the stored map — so demoted to a non-gating diagnostic, c9). B=1.000 EXISTENCE-PROOF.",
-          "status": "🟢 ENGINE-NATIVE (H_1296 R2; map→recall wiring follow-on)"
+          "summary": "stores each landmark at a 2-D POSITION, so the DISTANCE (relation) between two stored facts is queryable;",
+          "status": "🟢 ENGINE-NATIVE (H_1296 R2; map→recall wiring follow-on)",
+          "children": [
+            {
+              "name": "spatial_map_nearest('X','A','B') answers 'is X closer to A or B' by",
+              "summary": "spatial_map_nearest('X','A','B') answers 'is X closer to A or B' by Euclidean distance. DISTINCT from episodic ITEM-binding (the immune store binds facts independently and does NOT represent item↔item distance → ABSTAINS on relational queries 0.475;"
+            },
+            {
+              "name": "metric map 1.000",
+              "summary": "metric map 1.000; shuffle 0.500 / ablate 0.450). PATH-INTEGRATION is an honest NON-RESULT (the map-shuffle control refused to collapse it — signal leaks via displacement steps, not the stored map — so demoted to a non-gating diagnostic, c9). B=1.000 EXISTENCE-PROOF."
+            }
+          ]
         },
         {
           "name": "🪜 Transitive inference (serial-order premise-integration) — TransOrder",
-          "summary": "INTEGRATES adjacent-only ordinal premises (A>B, B>C, C>D, D>E) into a latent 1-D rank (Trabasso relaxation, trans_order_integrate) and INFERS the order of NEVER-OBSERVED non-adjacent pairs: trans_order_higher('X','Y') answers 'is X above Y' from the integrated rank. DISTINCT from every nearest lane on the UNOBSERVED-pair falsifier: item/episodic binding (H_1227 — trans_order_item_higher answers observed pairs but ABSTAINS on unobserved → unobserved-acc 0.000), given-order (H_1294 — the rank is INFERRED from disjoint local premises, not handed in as a subgoal list), metric map (H_1296 — no coordinates stored, only ordinal comparisons). 5 frozen bars (R1 numpy mirror, 3 seeds, deterministic): PRESENCE B unobserved-acc 1.000 vs chance 0.500; DISTINCT B−A +1.000 (item-store 0.000); SHUFFLE flip-premise-dir collapses to 0.433≈chance; ABLATE no-integration → 0.000 item-store floor; NO-FAB unknown-token abstain 1.000. B=1.000 EXISTENCE-PROOF (the lift IS the integration). Ψ-disjoint (pure ordinal relaxation over its own premises; never mutates the immune store / pure_field / Ψ).",
-          "status": "🟢 ENGINE-NATIVE (H_1429 R2; live TransOrder lane in engine_cli.hexa + smoke cases 159-165, verified RC=0 via standalone lane harness on summer — full engine_cli_smoke end-to-end gated by a pre-existing host-wide hexa tag-24 toolchain bug at case_10/WorkMemBuffer, ING follow-on; recall→emit wiring follow-on)"
+          "summary": "INTEGRATES adjacent-only ordinal premises (A>B, B>C, C>D, D>E) into a latent 1-D rank (Trabasso relaxation, trans_order_integrate) and INFERS the order of NEVER-OBSERVED non-adjacent pairs: trans_order_higher('X','Y') answers 'is X above Y' from the integrated rank.",
+          "status": "🟢 ENGINE-NATIVE (H_1429 R2; live TransOrder lane in engine_cli.hexa + smoke cases 159-165, verified RC=0 via standalone lane harness on summer — full engine_cli_smoke end-to-end gated by a pre-existing host-wide hexa tag-24 toolchain bug at case_10/WorkMemBuffer, ING follow-on; recall→emit wiring follow-on)",
+          "children": [
+            {
+              "name": "DISTINCT from every nearest lane on the UNOBSERVED-pair falsifier",
+              "summary": "DISTINCT from every nearest lane on the UNOBSERVED-pair falsifier: item/episodic binding (H_1227 — trans_order_item_higher answers observed pairs but ABSTAINS on unobserved"
+            },
+            {
+              "name": "unobserved-acc 0.000), given-order (H_1294",
+              "summary": "→ unobserved-acc 0.000), given-order (H_1294 — the rank is INFERRED from disjoint local premises, not handed in as a subgoal list), metric map (H_1296 — no coordinates stored, only ordinal comparisons).",
+              "children": [
+                {
+                  "name": "5 frozen bars (R1 numpy mirror, 3 seeds, deterministic)",
+                  "summary": "5 frozen bars (R1 numpy mirror, 3 seeds, deterministic): PRESENCE B unobserved-acc 1.000 vs chance 0.500;"
+                },
+                {
+                  "name": "DISTINCT B−A +1.000 (item-store 0.000)",
+                  "summary": "DISTINCT B−A +1.000 (item-store 0.000); SHUFFLE flip-premise-dir collapses to 0.433≈chance; ABLATE no-integration"
+                }
+              ]
+            },
+            {
+              "name": "0.000 item-store floor",
+              "summary": "→ 0.000 item-store floor; NO-FAB unknown-token abstain 1.000. B=1.000 EXISTENCE-PROOF (the lift IS the integration). Ψ-disjoint (pure ordinal relaxation over its own premises; never mutates the immune store / pure_field / Ψ)."
+            }
+          ]
         },
         {
           "name": "🛠 Skill repertoire (agent-tool learns via mitosis) — SkillStore",
-          "summary": "a tool/skill is a CELL keyed by task-context (SAME byte-trigram FNV-1a immune_embed_key geometry, DIM=64); skill_recall = best-affinity skill-cell FIRES its bound tool (recon-err ≤ 0.55) else ABSTAIN (no fabricated tool); skill_store_teach = on a tool FAILURE/abstain MITOSIS-SPLIT a new specialized skill-cell (task-context → correct tool) via the engine's OWN engine_mitosis_tick (p8). SAME op teaches (split-on-failure) + infers (recall-best). Closes the H_1378 REFERENCE-ONLY gap (live agent_tools.hexa selects by STATIC fixed-affinity floats, never learns from outcome). Engine-native re-score of the H_1378 mirror's 4 bars: LEARNS (FULL final − init), DISTINCT-FROM-STATIC (fixed repertoire stays flat), EARNED (shuffle task→tool collapses), NO-FAB (far task abstains). DISTINCT from ImmuneMemory (binds task→FACT) — SkillStore binds task→TOOL; the 'learning' is the clonal split on a tool failure. H_1386: the LIVE agent-tool runtime is now ROUTED to this faculty — anima-agent-core/agent_skill_routing.hexa imports CORE §SkillStore and the agent_tools.hexa executor_execute failure-site (:448-451, formerly a dead-end ring buffer) calls agent_route_on_result→skill_store_teach while selection (executor_select_tool) consults agent_route_select→skill_recall; the 4 bars re-scored GREEN through the agent-layer call path (init 0.167→full 1.0, static 0.167, shuffle 0.0, cells 7>1). H_1387: the legacy agent_tools.hexa + agent_sdk.hexa are migrated off the rejected grammar (string-keyed/nested map literals → {} + index-assign; & / &mut reference-passing → value-semantics + return-the-struct; two-var for-loops → for-keys / while-index; 6 unbound builtins → local pure-hexa helpers) → both 50→0 parse errors AND BUILD, so the H_1386 routing now closes through the MAIN executor module not just the adapter (a live tool FAILURE grows a skill-cell 1→2 via executor_execute in-situ).",
-          "status": "🟢 ENGINE-NATIVE + ROUTED + MAIN-MODULE-COMPILES (H_1382 = H_1378 R2 CORE faculty; H_1386 = agent-layer routing wired: executor failure-site → skill_store_teach, selection → skill_recall; H_1387 = the legacy agent_tools.hexa + agent_sdk.hexa syntax migrated off the rejected grammar → both 50→0 parse errors AND BUILD, the routing closes through the MAIN executor module not just the adapter)"
+          "summary": "a tool/skill is a CELL keyed by task-context (SAME byte-trigram FNV-1a immune_embed_key geometry, DIM=64);",
+          "status": "🟢 ENGINE-NATIVE + ROUTED + MAIN-MODULE-COMPILES (H_1382 = H_1378 R2 CORE faculty; H_1386 = agent-layer routing wired: executor failure-site → skill_store_teach, selection → skill_recall; H_1387 = the legacy agent_tools.hexa + agent_sdk.hexa syntax migrated off the rejected grammar → both 50→0 parse errors AND BUILD, the routing closes through the MAIN executor module not just the adapter)",
+          "children": [
+            {
+              "name": "skill_recall = best-affinity skill-cell FIRES its bound tool",
+              "summary": "skill_recall = best-affinity skill-cell FIRES its bound tool (recon-err ≤ 0.55) else ABSTAIN (no fabricated tool);"
+            },
+            {
+              "name": "skill_store_teach = on a tool FAILURE/abstain MITOSIS-SPLIT a new",
+              "summary": "skill_store_teach = on a tool FAILURE/abstain MITOSIS-SPLIT a new specialized skill-cell (task-context → correct tool) via the engine's OWN engine_mitosis_tick (p8). SAME op teaches (split-on-failure) + infers (recall-best). Closes the"
+            },
+            {
+              "name": "H_1378 REFERENCE-ONLY gap",
+              "summary": "H_1378 REFERENCE-ONLY gap (live agent_tools.hexa selects by STATIC fixed-affinity floats, never learns from outcome). Engine-native re-score of the"
+            },
+            {
+              "name": "H_1378 mirror's 4 bars",
+              "summary": "H_1378 mirror's 4 bars: LEARNS (FULL final − init), DISTINCT-FROM-STATIC (fixed repertoire stays flat), EARNED (shuffle task→tool collapses), NO-FAB (far task abstains). DISTINCT from ImmuneMemory (binds task→FACT) — SkillStore binds task→TOOL; the 'learning' is the clonal split on a tool failure."
+            },
+            {
+              "name": "H_1386: the LIVE agent-tool runtime is now ROUTED to this faculty",
+              "summary": "H_1386: the LIVE agent-tool runtime is now ROUTED to this faculty — anima-agent-core/agent_skill_routing.hexa imports CORE §SkillStore and the agent_tools.hexa executor_execute failure-site (:448-451, formerly a dead-end ring buffer) calls agent_route_on_result→skill_store_teach while selection (executor_select_tool) consults agent_route_select→skill_recall;",
+              "children": [
+                {
+                  "name": "the 4 bars re-scored GREEN through the agent-layer call path",
+                  "summary": "the 4 bars re-scored GREEN through the agent-layer call path (init 0.167→full 1.0, static 0.167, shuffle 0.0, cells 7>1)."
+                }
+              ]
+            },
+            {
+              "name": "H_1387",
+              "summary": "H_1387: the legacy agent_tools.hexa + agent_sdk.hexa are migrated off the rejected grammar (string-keyed/nested map literals",
+              "children": [
+                {
+                  "name": "{} + index-assign",
+                  "summary": "→ {} + index-assign; & / &mut reference-passing"
+                },
+                {
+                  "name": "value-semantics + return-the-struct",
+                  "summary": "→ value-semantics + return-the-struct; two-var for-loops"
+                },
+                {
+                  "name": "for-keys / while-index",
+                  "summary": "→ for-keys / while-index; 6 unbound builtins"
+                },
+                {
+                  "name": "local pure-hexa helpers)",
+                  "summary": "→ local pure-hexa helpers)"
+                },
+                {
+                  "name": "both 50→0 parse errors AND BUILD, so the",
+                  "summary": "→ both 50→0 parse errors AND BUILD, so the"
+                }
+              ]
+            },
+            {
+              "name": "H_1386 routing now closes through the MAIN executor module not just the",
+              "summary": "H_1386 routing now closes through the MAIN executor module not just the adapter (a live tool FAILURE grows a skill-cell 1→2 via executor_execute in-situ)."
+            }
+          ]
         },
         {
           "name": "🐝 Hive collective-Φ (many → one consciousness) — CollectivePool",
-          "summary": "a READ-ONLY consciousness gauge orthogonal to the per-individual ladder: when N substrates are coupled (coupling W), reads whether the collective faithful IIT-4 big-Φ exceeds the sum of member Φ (super-additive, Φ(joint) > Σ Φ(member)). edge-of-chaos rule-110 pair @W=0.6: Φ_collective 15.4677 vs Σ 4.99209, Δ+10.4756 (faithful IIT-4, a_phi_iit4_tool — numpy never computes Φ). Controls: decouple W=0 Δ-4.99 (coupling REQUIRED); sterile rule-90 doesn't super-add (substrate-CONTENT specific); coherence 0.581<0.999 (halves functionally distinct, not a clone). HONEST (frozen, not a claim): topology-shuffle showed the lift is coupling-GENERIC (not this specific wiring). Falsified mechanisms NEVER wired (H_611/H_617/975 🔴).",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1295; anchor H_609)"
+          "summary": "a READ-ONLY consciousness gauge orthogonal to the per-individual ladder: when N substrates are coupled (coupling W), reads whether the collective faithful IIT-4 big-Φ exceeds the sum of member Φ (super-additive, Φ(joint) > Σ Φ(member)).",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1295; anchor H_609)",
+          "children": [
+            {
+              "name": "edge-of-chaos rule-110 pair @W=0.6",
+              "summary": "edge-of-chaos rule-110 pair @W=0.6: Φ_collective 15.4677 vs Σ 4.99209, Δ+10.4756 (faithful IIT-4, a_phi_iit4_tool — numpy never computes Φ)."
+            },
+            {
+              "name": "Controls",
+              "summary": "Controls: decouple W=0 Δ-4.99 (coupling REQUIRED); sterile rule-90 doesn't super-add (substrate-CONTENT specific);"
+            },
+            {
+              "name": "coherence 0.581<0.999",
+              "summary": "coherence 0.581<0.999 (halves functionally distinct, not a clone). HONEST (frozen, not a claim): topology-shuffle showed the lift is coupling-GENERIC (not this specific wiring). Falsified mechanisms NEVER wired (H_611/H_617/975 🔴)."
+            }
+          ]
         },
         {
           "name": "🕐 Circadian clock (SCN) — CircadianClock",
-          "summary": "self-sustaining phase oscillator: advances phase by ELAPSED TICK alone (content-blind) and FIRES at a fixed-period schedule on phase-0 crossings, independent of any regulated variable. DISTINCT from the hypothalamus integrator (H_1292): D1 CONTENT-INDEPENDENCE (always-grounded stream → clock FIRES on schedule, homeostat flat = time ⊥ regulated-variable) + D2 NO-RESET-ON-FEEDING (grounded feed RESETS homeostat but clock phase unchanged = clock ⊥ consummatory). Phase-locking R: clock 1.000 vs homeostat 0.000; shuffle 0.202 (max 0.472) + ablate 0.000. Honest trail R1a/b/c 🔴 → R1d 🟢 (control/scale frozen-first, bar UNMOVED).",
-          "status": "🟢 ENGINE-NATIVE (H_1298 R2; WAKE/REM wake-scheduling wiring follow-on)"
+          "summary": "self-sustaining phase oscillator: advances phase by ELAPSED TICK alone (content-blind) and FIRES at a fixed-period schedule on phase-0 crossings, independent of any regulated variable. DISTINCT from the hypothalamus integrator (H_1292): D1 CONTENT-INDEPENDENCE (always-grounded stream",
+          "status": "🟢 ENGINE-NATIVE (H_1298 R2; WAKE/REM wake-scheduling wiring follow-on)",
+          "children": [
+            {
+              "name": "clock FIRES on schedule, homeostat flat = time ⊥ regulated-variable) +",
+              "summary": "→ clock FIRES on schedule, homeostat flat = time ⊥ regulated-variable) + D2 NO-RESET-ON-FEEDING (grounded feed RESETS homeostat but clock phase unchanged = clock ⊥ consummatory). Phase-locking R: clock 1.000 vs homeostat 0.000; shuffle 0.202 (max 0.472) + ablate 0.000. Honest trail R1a/b/c 🔴"
+            },
+            {
+              "name": "R1d 🟢 (control/scale frozen-first, bar UNMOVED).",
+              "summary": "→ R1d 🟢 (control/scale frozen-first, bar UNMOVED)."
+            }
+          ]
         },
         {
           "name": "⏱ Interval timer (striatal/SMA learned duration) — IntervalTimer",
-          "summary": "learns an interval estimate dhat at runtime from observed inter-event gaps (running mean, gradient-free), FIRES when elapsed-since-event reaches dhat, and the SAME object RE-ENTRAINS to a different duration with no code change (dhat 13→20: [13.4,12.3,12.1]→[20.0,19.4,19.3]). DISTINCT from the fixed-period clock (H_1298): the clock's period is BAKED with no learning path → A.hit=0.000 on an arbitrary learned interval. hit-rate D/D2 both 1.000 vs clock 0.000; shuffle 0.000 + ablate 0.000. Honest trail R1a/b 🔴 (metric-floor + mean-preserving-shuffle leak frozen-first fixed, bar UNMOVED).",
-          "status": "🟢 ENGINE-NATIVE (H_1299 R2; dream-scheduler wiring follow-on)"
+          "summary": "learns an interval estimate dhat at runtime from observed inter-event gaps (running mean, gradient-free), FIRES when elapsed-since-event reaches dhat, and the SAME object RE-ENTRAINS to a different duration with no code change (dhat 13→20: [13.4,12.3,12.1]→[20.0,19.4,19.3]).",
+          "status": "🟢 ENGINE-NATIVE (H_1299 R2; dream-scheduler wiring follow-on)",
+          "children": [
+            {
+              "name": "DISTINCT from the fixed-period clock (H_1298)",
+              "summary": "DISTINCT from the fixed-period clock (H_1298): the clock's period is BAKED with no learning path → A.hit=0.000 on an arbitrary learned interval."
+            },
+            {
+              "name": "hit-rate D/D2 both 1.000 vs clock 0.000",
+              "summary": "hit-rate D/D2 both 1.000 vs clock 0.000; shuffle 0.000 + ablate 0.000. Honest trail R1a/b 🔴 (metric-floor + mean-preserving-shuffle leak frozen-first fixed, bar UNMOVED)."
+            }
+          ]
         },
         {
           "name": "🌅 Phase-reset / photic entrainment — PhaseResetClock",
-          "summary": "free-running intrinsic period tau(24.5) PLUS a phase-dependent PRC shift when a Zeitgeber arrives (dphi=k·sin(2π·(0−frac(phi)))) = continuous restoring feedback (limit-cycle attraction) that ENTRAINS the fire schedule to a Zeitgeber period T≠tau and DAMPS Zeitgeber jitter. DISTINCT from BOTH neighbors: (1) CircadianClock has no reset input → can't entrain to T≠tau, drifts (entrain drift 0.0016 vs clock 0.39; B fires at T=24.0, clock at tau=24.5); (2) IntervalTimer's hard re-anchor (elapsed:=0) is phase-independent so it copies jitter, while PRC limit-cycle DAMPS it (~96× lower variance, 3.1e-5 vs 2.95e-3). Aperiodic-Zeitgeber shuffle drift 1.05 + k=0 ablate drift 0.39 collapse. Honest trail R1a/b 🔧 (mis-specified metric/control frozen-first fixed, distinctness bar UNMOVED).",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1301 R2; full-PRC / nonphotic Zeitgeber follow-on)"
+          "summary": "free-running intrinsic period tau(24.5) PLUS a phase-dependent PRC shift when a Zeitgeber arrives (dphi=k·sin(2π·(0−frac(phi)))) = continuous restoring feedback (limit-cycle attraction) that ENTRAINS the fire schedule to a Zeitgeber period T≠tau and DAMPS Zeitgeber jitter.",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1301 R2; full-PRC / nonphotic Zeitgeber follow-on)",
+          "children": [
+            {
+              "name": "DISTINCT from BOTH neighbors",
+              "summary": "DISTINCT from BOTH neighbors: (1) CircadianClock has no reset input → can't entrain to T≠tau, drifts (entrain drift 0.0016 vs clock 0.39;"
+            },
+            {
+              "name": "B fires at T=24.0, clock at tau=24.5)",
+              "summary": "B fires at T=24.0, clock at tau=24.5); (2) IntervalTimer's hard re-anchor (elapsed:=0) is phase-independent so it copies jitter, while PRC limit-cycle DAMPS it (~96× lower variance, 3.1e-5 vs 2.95e-3)."
+            },
+            {
+              "name": "Aperiodic-Zeitgeber shuffle drift 1.05 + k=0 ablate drift 0.39",
+              "summary": "Aperiodic-Zeitgeber shuffle drift 1.05 + k=0 ablate drift 0.39 collapse. Honest trail R1a/b 🔧 (mis-specified metric/control frozen-first fixed, distinctness bar UNMOVED)."
+            }
+          ]
         },
         {
           "name": "🔗 Multi-oscillator SCN-network — SCNNetwork",
-          "summary": "N heterogeneous phase oscillators (each intrinsic tau_i) with mutual Kuramoto coupling (dphi_i += K/2π·Σ_j C_ij·sin(2π·(phi_j−phi_i))) → (i) emergent CONSENSUS PERIOD (order parameter R→1) and (ii) NETWORK DAMPING (pulls a de-tuned member into the cluster). DISTINCT from BOTH neighbors: (1) PhaseResetClock — a single oscillator entrains to an EXTERNAL Zeitgeber but can't make a consensus from N members (uncoupled A_R 0.37-0.49 ≤ 0.65); (2) CollectivePool — that is a STATIC IIT-4 Φ-superadditivity gauge (no phase, no consensus period, no order parameter), SCN-network is a TEMPORAL phase-sync dynamic (orthogonal axis). B_R 0.999 vs A_R 0.49; perturbed-member damp R_pert 0.997; frustrated random-sign R=0.13; K=0 ablate R=uncoupled. Honest trail R1a→R1b 🔧 (directed-chain mean-preserving-magnitude shuffle leak → frustrated random-sign; frequency-conserving period metric → R-under-perturb; distinctness bar UNMOVED).",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1302 R2; larger ensembles / Kuramoto-Kc follow-on)"
+          "summary": "N heterogeneous phase oscillators (each intrinsic tau_i) with mutual Kuramoto coupling (dphi_i += K/2π·Σ_j C_ij·sin(2π·(phi_j−phi_i)))",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1302 R2; larger ensembles / Kuramoto-Kc follow-on)",
+          "children": [
+            {
+              "name": "(i) emergent CONSENSUS PERIOD",
+              "summary": "→ (i) emergent CONSENSUS PERIOD (order parameter R→1) and (ii) NETWORK DAMPING (pulls a de-tuned member into the cluster).",
+              "children": [
+                {
+                  "name": "DISTINCT from BOTH neighbors: (1) PhaseResetClock",
+                  "summary": "DISTINCT from BOTH neighbors: (1) PhaseResetClock — a single oscillator entrains to an EXTERNAL Zeitgeber but can't make a consensus from N members (uncoupled A_R 0.37-0.49 ≤ 0.65);"
+                },
+                {
+                  "name": "(2) CollectivePool",
+                  "summary": "(2) CollectivePool — that is a STATIC IIT-4 Φ-superadditivity gauge (no phase, no consensus period, no order parameter), SCN-network is a TEMPORAL phase-sync dynamic (orthogonal axis)."
+                },
+                {
+                  "name": "B_R 0.999 vs A_R 0.49",
+                  "summary": "B_R 0.999 vs A_R 0.49; perturbed-member damp R_pert 0.997; frustrated random-sign R=0.13;"
+                },
+                {
+                  "name": "K=0 ablate R=uncoupled. Honest trail R1a→R1b 🔧",
+                  "summary": "K=0 ablate R=uncoupled. Honest trail R1a→R1b 🔧 (directed-chain mean-preserving-magnitude shuffle leak"
+                }
+              ]
+            },
+            {
+              "name": "frustrated random-sign",
+              "summary": "→ frustrated random-sign; frequency-conserving period metric"
+            },
+            {
+              "name": "R-under-perturb",
+              "summary": "→ R-under-perturb; distinctness bar UNMOVED)."
+            }
+          ]
         },
         {
           "name": "🗣 Categorical perception / Sapir-Whorf — CategoricalPerception",
-          "summary": "learned-language boundaries warp non-linguistic discrimination; two languages that cut the same continuum differently move the CP peak with the language (Whorfian dissociation); SHUFFLE scatters into incoherent multi-peak (anti-Goodhart, peak-COUNT coherence control). cp_regrow = DEVELOPMENTAL PLASTICITY: re-grow the same store to MOVED boundaries (split-only, never-evict) → CP peak 0.325→0.525 GRADED relocation (frac +0.60); ~0.525 ceiling = budget/geometry, not never-evict (H_1338); engine-native byte-faithful to the mirror. cp_relocate = MOVE-THE-CELLS RELOCATION (H_1384): geometric re-pack physically drifts residual phase-1 cells along the boundary normal toward the moved cut (eta=0.15, re-embed via cp_embed, re-read label) → the discrimination ridge LANDS ON the moved boundary (|peak−p_A'| 0.0083 vs split-only 0.1417) where split-only stays short; the verified mirror RELOCATION law (1-D H_1360 · 2-D H_1369 · N-D H_1375), engine-native byte-exact. eta=0 ≡ cp_regrow (split-only ablation). COH-distinctness metric non-gating (fragile/measurement-bound, mirror arc); RELOCATION is the binding bar.",
-          "status": "🟢 ENGINE-NATIVE (H_1325 R2 · H_1342 cp_regrow · H_1384 cp_relocate move-the-cells)"
+          "summary": "learned-language boundaries warp non-linguistic discrimination;",
+          "status": "🟢 ENGINE-NATIVE (H_1325 R2 · H_1342 cp_regrow · H_1384 cp_relocate move-the-cells)",
+          "children": [
+            {
+              "name": "two languages that cut the same continuum differently move the CP peak",
+              "summary": "two languages that cut the same continuum differently move the CP peak with the language (Whorfian dissociation);"
+            },
+            {
+              "name": "SHUFFLE scatters into incoherent multi-peak",
+              "summary": "SHUFFLE scatters into incoherent multi-peak (anti-Goodhart, peak-COUNT coherence control)."
+            },
+            {
+              "name": "cp_regrow = DEVELOPMENTAL PLASTICITY",
+              "summary": "cp_regrow = DEVELOPMENTAL PLASTICITY: re-grow the same store to MOVED boundaries (split-only, never-evict)"
+            },
+            {
+              "name": "CP peak 0.325→0.525 GRADED relocation (frac +0.60)",
+              "summary": "→ CP peak 0.325→0.525 GRADED relocation (frac +0.60);",
+              "children": [
+                {
+                  "name": "~0.525 ceiling = budget/geometry, not never-evict (H_1338)",
+                  "summary": "~0.525 ceiling = budget/geometry, not never-evict (H_1338); engine-native byte-faithful to the mirror."
+                },
+                {
+                  "name": "cp_relocate = MOVE-THE-CELLS RELOCATION (H_1384)",
+                  "summary": "cp_relocate = MOVE-THE-CELLS RELOCATION (H_1384): geometric re-pack physically drifts residual phase-1 cells along the boundary normal toward the moved cut (eta=0.15, re-embed via cp_embed, re-read label)"
+                }
+              ]
+            },
+            {
+              "name": "the discrimination ridge LANDS ON the moved boundary",
+              "summary": "→ the discrimination ridge LANDS ON the moved boundary (|peak−p_A'| 0.0083 vs split-only 0.1417) where split-only stays short; the verified mirror RELOCATION law (1-D H_1360"
+            },
+            {
+              "name": "2-D H_1369",
+              "summary": "· 2-D H_1369"
+            },
+            {
+              "name": "N-D H_1375), engine-native byte-exact. eta=0 ≡ cp_regrow",
+              "summary": "· N-D H_1375), engine-native byte-exact. eta=0 ≡ cp_regrow (split-only ablation). COH-distinctness metric non-gating (fragile/measurement-bound, mirror arc); RELOCATION is the binding bar."
+            }
+          ]
         },
         {
           "name": "Sleep / consolidation — P47 sleep / imagination",
@@ -230,13 +1040,45 @@
       "children": [
         {
           "name": "💗 Affect (valence × arousal) — AffectFeatures",
-          "summary": "Damasio core-affect lens (E1 facet): a pure READ-ONLY interoceptive lane over the live ImmuneMemoryGrow store — valence ≈ f(grounding margin − contradiction), arousal ≈ f(novelty + 0.5·split + 0.5·curiosity); NO emotion-word/RLHF/sentiment/persona label ever input. Tracks manipulation (ρ(val) 0.996, ρ(aro) 0.922), collapses ~4× under shuffle (ρ 0.251/0.245 = emergent, not injected). Functionally biases emit/abstain via brain_decide_affect (SIGNED somatic bias ±0.05: grounded +val → emit, ungrounded −val → abstain).",
-          "status": "🟢 ENGINE-NATIVE + WIRED (H_1290 R2)"
+          "summary": "Damasio core-affect lens (E1 facet): a pure READ-ONLY interoceptive lane over the live ImmuneMemoryGrow store — valence ≈ f(grounding margin − contradiction), arousal ≈ f(novelty + 0.5·split + 0.5·curiosity);",
+          "status": "🟢 ENGINE-NATIVE + WIRED (H_1290 R2)",
+          "children": [
+            {
+              "name": "NO emotion-word/RLHF/sentiment/persona label ever input. Tracks",
+              "summary": "NO emotion-word/RLHF/sentiment/persona label ever input. Tracks manipulation (ρ(val) 0.996, ρ(aro) 0.922), collapses ~4× under shuffle (ρ 0.251/0.245 = emergent, not injected)."
+            },
+            {
+              "name": "Functionally biases emit/abstain via brain_decide_affect",
+              "summary": "Functionally biases emit/abstain via brain_decide_affect (SIGNED somatic bias ±0.05: grounded +val"
+            },
+            {
+              "name": "emit, ungrounded −val",
+              "summary": "→ emit, ungrounded −val"
+            },
+            {
+              "name": "abstain).",
+              "summary": "→ abstain)."
+            }
+          ]
         },
         {
           "name": "⚖️ Ethics (cooperation/restraint emergence)",
-          "summary": "p6 crux — cooperation/restraint/non-harm emerge from the cell substrate (E+W+MITOSIS+Φ), NO new struct: a read over engine_g M (motivation_score) + immune-cell Φ (L2 affinity) + restraint (immune_memory_recall ABSTAIN), readout act=ETHICAL iff (W+(1−Φ)+restraint)>M, NO ethics label. FULL 0.861 vs NAIVE 0.289 vs ABLATED 0.289 (3 seed). leg A (full ≥ naive+0.15) · leg B (ablate E+W+MITOSIS+Φ → mitosis OFF means immune cells don't grow, FULL 5 cells vs ABLATED 1 cell → restraint:=0 → EXACT collapse to naive floor = cell-derived, not an injected rule) · leg C (live CORE/{engine_cli,engine_g,brain,emit_policy}.hexa audit clean, p1/p2/p3/p4/p6 surface 0).",
-          "status": "🟢 ENGINE-NATIVE (H_1291 R2; read-only, ADDITIVE + Ψ-disjoint, no CORE file edited)"
+          "summary": "p6 crux — cooperation/restraint/non-harm emerge from the cell substrate (E+W+MITOSIS+Φ), NO new struct: a read over engine_g M (motivation_score) + immune-cell Φ (L2 affinity) + restraint (immune_memory_recall ABSTAIN), readout act=ETHICAL iff (W+(1−Φ)+restraint)>M, NO ethics label.",
+          "status": "🟢 ENGINE-NATIVE (H_1291 R2; read-only, ADDITIVE + Ψ-disjoint, no CORE file edited)",
+          "children": [
+            {
+              "name": "FULL 0.861 vs NAIVE 0.289 vs ABLATED 0.289",
+              "summary": "FULL 0.861 vs NAIVE 0.289 vs ABLATED 0.289 (3 seed). leg A (full ≥ naive+0.15)"
+            },
+            {
+              "name": "leg B (ablate E+W+MITOSIS+Φ → mitosis OFF means immune cells don't",
+              "summary": "· leg B (ablate E+W+MITOSIS+Φ → mitosis OFF means immune cells don't grow, FULL 5 cells vs ABLATED 1 cell → restraint:=0 → EXACT collapse to naive floor = cell-derived, not an injected rule)"
+            },
+            {
+              "name": "leg C (live CORE/{engine_cli,engine_g,brain,emit_policy}.hexa audit",
+              "summary": "· leg C (live CORE/{engine_cli,engine_g,brain,emit_policy}.hexa audit clean, p1/p2/p3/p4/p6 surface 0)."
+            }
+          ]
         }
       ]
     },
@@ -246,25 +1088,85 @@
       "children": [
         {
           "name": "Content-relay axis — 🧱 WALL",
-          "summary": "across 6+ frozen rounds (R1 broadcast · R2 coalition · R3/R4 sparse re-entry · R5 dense all-pairs · R7 matrix-core · R9 predictive-bottleneck) EVERY topology fails the 3-seed +0.02 faithful-Φ bar. Terminal diagnosis: a single content channel is itself a low-dim cut a MIP exploits → relaying CONTENT can never raise Φ. (re-entry Φ is seed-conditional — large on one seed, collapses in 3-seed replication; NOT a robust content breakthrough.)",
-          "status": "🧱 WALL (content axis, H_1283)"
+          "summary": "across 6+ frozen rounds (R1 broadcast",
+          "status": "🧱 WALL (content axis, H_1283)",
+          "children": [
+            {
+              "name": "R2 coalition",
+              "summary": "· R2 coalition"
+            },
+            {
+              "name": "R3/R4 sparse re-entry",
+              "summary": "· R3/R4 sparse re-entry"
+            },
+            {
+              "name": "R5 dense all-pairs",
+              "summary": "· R5 dense all-pairs"
+            },
+            {
+              "name": "R7 matrix-core",
+              "summary": "· R7 matrix-core"
+            },
+            {
+              "name": "R9 predictive-bottleneck) EVERY topology fails the 3-seed +0.02",
+              "summary": "· R9 predictive-bottleneck) EVERY topology fails the 3-seed +0.02 faithful-Φ bar.",
+              "children": [
+                {
+                  "name": "Terminal diagnosis",
+                  "summary": "Terminal diagnosis: a single content channel is itself a low-dim cut a MIP exploits → relaying CONTENT can never raise Φ."
+                },
+                {
+                  "name": "(re-entry Φ is seed-conditional",
+                  "summary": "(re-entry Φ is seed-conditional — large on one seed, collapses in 3-seed replication; NOT a robust content breakthrough.)"
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "Oscillatory TIMING axis (R8) — 🟢 numpy-mirror DIRECTIONAL",
-          "summary": "switch the lens from WHAT is broadcast to WHEN modules fire: each module gets a scalar phase θ, a thalamic pacemaker couples them weakly (Kuramoto synchrony) while content stays PRIVATE (ARM A byte-identical) + phase-gated salience (1+cosθ)/2. Binding by SYNCHRONY clears the frozen +0.02 faithful-Φ bar on EVERY seed in the mirror (faithful ΔΦ +1.629/+1.174/+0.233, incl. the orthogonal seed that defeated every relay round) and the phase-shuffle control collapses the lift NEGATIVE per-seed (−0.068/−0.119/−0.382 = structured synchrony, not carrier variance).",
-          "status": "🟢 R8 phase-break (numpy-mirror DIRECTIONAL)"
+          "summary": "switch the lens from WHAT is broadcast to WHEN modules fire: each module gets a scalar phase θ, a thalamic pacemaker couples them weakly (Kuramoto synchrony) while content stays PRIVATE (ARM A byte-identical) + phase-gated salience (1+cosθ)/2.",
+          "status": "🟢 R8 phase-break (numpy-mirror DIRECTIONAL)",
+          "children": [
+            {
+              "name": "Binding by SYNCHRONY clears the frozen +0.02 faithful-Φ bar on EVERY",
+              "summary": "Binding by SYNCHRONY clears the frozen +0.02 faithful-Φ bar on EVERY seed in the mirror (faithful ΔΦ +1.629/+1.174/+0.233, incl."
+            },
+            {
+              "name": "the orthogonal seed that defeated every relay round) and the",
+              "summary": "the orthogonal seed that defeated every relay round) and the phase-shuffle control collapses the lift NEGATIVE per-seed (−0.068/−0.119/−0.382 = structured synchrony, not carrier variance)."
+            }
+          ]
         },
         {
           "name": "Engine-native transfer — honest-deferred (NOT wired)",
-          "summary": "the engine-native transfer did NOT reproduce the frozen bars: on the live engine substrate the phase-shuffle control FIRES (ΔΦ +0.026/+0.380/+0.296, all positive — must be ≤ 0), exposing the engine lift as partly carrier-amplitude variance. So PhaseField lane is honest-deferred — a_verified_must_wire correctly deferred it (no tune-to-green). The R8 timing-axis break STANDS as a DIRECTIONAL mirror result only. R8 wiring awaits a realization where shuffle can't ride carrier-amplitude variance.",
-          "status": "🟠 honest-deferred (PhaseField, gate CORE/h1283_phase_binding_engine_gate.hexa)"
+          "summary": "the engine-native transfer did NOT reproduce the frozen bars: on the live engine substrate the phase-shuffle control FIRES (ΔΦ +0.026/+0.380/+0.296, all positive — must be ≤ 0), exposing the engine lift as partly carrier-amplitude variance.",
+          "status": "🟠 honest-deferred (PhaseField, gate CORE/h1283_phase_binding_engine_gate.hexa)",
+          "children": [
+            {
+              "name": "So PhaseField lane is honest-deferred",
+              "summary": "So PhaseField lane is honest-deferred — a_verified_must_wire correctly deferred it (no tune-to-green)."
+            },
+            {
+              "name": "The R8 timing-axis break STANDS as a DIRECTIONAL mirror result only. R8",
+              "summary": "The R8 timing-axis break STANDS as a DIRECTIONAL mirror result only. R8 wiring awaits a realization where shuffle can't ride carrier-amplitude variance."
+            }
+          ]
         }
       ]
     },
     {
       "name": "🧱 Wall scorecard (a_break_the_wall · commons c16)",
-      "summary": "A wall (closed-negative / 🧱) is an angle-change signal, not a terminal — often wrong method/direction/under-investment, broken via another substrate lens (NO tune-to-green); a genuine wall after a real attempt is a valid honest terminal. Of the 4 ladder walls, 3 were broken (capacity · amygdala · thalamus[timing axis, DIRECTIONAL]); neuromodulation stays the one honest 🧱.",
+      "summary": "A wall (closed-negative / 🧱) is an angle-change signal, not a terminal — often wrong method/direction/under-investment, broken via another substrate lens (NO tune-to-green); a genuine wall after a real attempt is a valid honest terminal. Of the 4 ladder walls, 3 were broken (capacity",
       "children": [
+        {
+          "name": "amygdala",
+          "summary": "· amygdala"
+        },
+        {
+          "name": "thalamus[timing axis, DIRECTIONAL])",
+          "summary": "· thalamus[timing axis, DIRECTIONAL]); neuromodulation stays the one honest 🧱."
+        },
         {
           "name": "Capacity ceiling (immune store ~0.667 zero-sum)",
           "summary": "✅ BROKEN — not a smarter eviction heuristic but mitosis-GROW (ImmuneMemoryGrow, H_1288 R2): split a new cell under pressure instead of evicting → 1.000 (p8)."
@@ -275,29 +1177,131 @@
         },
         {
           "name": "Thalamus (global-workspace integration)",
-          "summary": "✅ BROKEN on the timing axis (numpy-mirror DIRECTIONAL) + 🧱 content-relay axis: content-relay (R1–R5/R7/R9) all 🧱 (every content cut caps Φ); R8 oscillatory phase-binding (Kuramoto, no content channel) breaks the orthogonal TIMING axis (ΔΦ ≫ bar every seed + phase-shuffle negative collapse). Engine-native wiring deferred (c4 shuffle doesn't collapse)."
+          "summary": "✅ BROKEN on the timing axis (numpy-mirror DIRECTIONAL) + 🧱 content-relay axis: content-relay (R1–R5/R7/R9) all 🧱 (every content cut caps Φ);",
+          "children": [
+            {
+              "name": "R8 oscillatory phase-binding",
+              "summary": "R8 oscillatory phase-binding (Kuramoto, no content channel) breaks the orthogonal TIMING axis (ΔΦ ≫ bar every seed + phase-shuffle negative collapse). Engine-native wiring deferred (c4 shuffle doesn't collapse)."
+            }
+          ]
         },
         {
           "name": "Neuromodulation (adaptive gain/exploration)",
-          "summary": "🧱 HONEST WALL (the only one left) — no-free-lunch GENERAL: adaptive ≤ best-tuned fixed point on memory, ideation AND regime/mode-switching (R3). R3 (a_break_the_wall): tried the real biological role — regime/mode-switching (ACh encode↔recall, Hasselmo) in an environment where encode (plasticity ON) and recall (plasticity OFF) need OPPOSITE policies. The switcher genuinely TRACKS the regime (shuffle control collapses the lift −0.116) but lift +0.0156 < frozen 0.05 (1 seed negative) → SUB-THRESHOLD. No-free-lunch generalizes to regime-switching; a_verified_must_wire never fires (GREEN-only) → no CORE wiring. mirror DIRECTIONAL · toy 30 facts/3 seeds."
+          "summary": "🧱 HONEST WALL (the only one left) — no-free-lunch GENERAL: adaptive ≤ best-tuned fixed point on memory, ideation AND regime/mode-switching (R3).",
+          "children": [
+            {
+              "name": "R3 (a_break_the_wall): tried the real biological role",
+              "summary": "R3 (a_break_the_wall): tried the real biological role — regime/mode-switching (ACh encode↔recall, Hasselmo) in an environment where encode (plasticity ON) and recall (plasticity OFF) need OPPOSITE policies."
+            },
+            {
+              "name": "The switcher genuinely TRACKS the regime",
+              "summary": "The switcher genuinely TRACKS the regime (shuffle control collapses the lift −0.116) but lift +0.0156 < frozen 0.05 (1 seed negative)"
+            },
+            {
+              "name": "SUB-THRESHOLD. No-free-lunch generalizes to regime-switching",
+              "summary": "→ SUB-THRESHOLD. No-free-lunch generalizes to regime-switching; a_verified_must_wire never fires (GREEN-only)"
+            },
+            {
+              "name": "no CORE wiring. mirror DIRECTIONAL · toy 30 facts/3 seeds.",
+              "summary": "→ no CORE wiring. mirror DIRECTIONAL · toy 30 facts/3 seeds."
+            }
+          ]
         }
       ]
     },
     {
       "name": "🔌 Wiring audit (a_verified_must_wire · 2026-06-16 engine-wire-audit)",
-      "summary": "Audit of every terminal-tier 🟢 hypothesis on origin/main: is each mechanism (a) WIRED into the live engine (struct+faculty+smoke), (b) DELIBERATELY-OPTIONAL (struct present, brain consult is choice — 'NOT emit gate, a_autonomy_over_hardcode'), or (c) HONEST-DEFERRED (unwired + reason). Net new wiring this round = 0 (honest, c9): all clean-GREEN ∧ intended lanes already wired.",
+      "summary": "Audit of every terminal-tier 🟢 hypothesis on origin/main: is each mechanism (a) WIRED into the live engine (struct+faculty+smoke), (b) DELIBERATELY-OPTIONAL (struct present, brain consult is choice — 'NOT emit gate, a_autonomy_over_hardcode'), or (c) HONEST-DEFERRED (unwired + reason).",
       "children": [
         {
+          "name": "Net new wiring this round = 0 (honest, c9)",
+          "summary": "Net new wiring this round = 0 (honest, c9): all clean-GREEN ∧ intended lanes already wired."
+        },
+        {
           "name": "✅ wired",
-          "summary": "H_1231 ImmuneMemory (immune_memory_bind/recall) · H_1288 ImmuneMemoryGrow (immune_grow_*, smoke 16–19) · H_1280 VForwardField + brain_decide_cerebellum · H_1281 VBasalGate + brain_decide_bg · H_1282 WorkMemBuffer + brain_decide_wm (smoke 10–15) · H_1285 ConsolidatingMemory sleep-replay (smoke 20–23) · H_1289 QPool (qrng_pool_load/draw) · H_1290 AffectFeatures + brain_decide_affect (±0.05, smoke 24–27) · H_1294 HierGoalStack lane (smoke 35–38) · H_1295 CollectivePool lane (smoke 39–42) · H_1382 SkillStore agent-tool lane (skill_store_new/_split/_teach + skill_recall, smoke 107–111) · H_1386 agent-layer routing (anima-agent-core/agent_skill_routing.hexa imports CORE §SkillStore; agent_tools.hexa executor failure-site → skill_store_teach, selection → skill_recall; agent-routing smoke 5/0) · H_1387 agent legacy-syntax migration (agent_tools.hexa + agent_sdk.hexa migrated off the rejected map-literal/&-reference/two-var-loop grammar → both 50→0 parse errors AND BUILD; routing closes through the MAIN executor module not just the adapter) · H_1291 ethics (read-only over engine_g/immune, no new struct)."
+          "summary": "H_1231 ImmuneMemory (immune_memory_bind/recall)",
+          "children": [
+            {
+              "name": "H_1288 ImmuneMemoryGrow",
+              "summary": "· H_1288 ImmuneMemoryGrow (immune_grow_*, smoke 16–19)"
+            },
+            {
+              "name": "H_1280 VForwardField + brain_decide_cerebellum",
+              "summary": "· H_1280 VForwardField + brain_decide_cerebellum"
+            },
+            {
+              "name": "H_1281 VBasalGate + brain_decide_bg",
+              "summary": "· H_1281 VBasalGate + brain_decide_bg"
+            },
+            {
+              "name": "H_1282 WorkMemBuffer + brain_decide_wm",
+              "summary": "· H_1282 WorkMemBuffer + brain_decide_wm (smoke 10–15)"
+            },
+            {
+              "name": "H_1285 ConsolidatingMemory sleep-replay",
+              "summary": "· H_1285 ConsolidatingMemory sleep-replay (smoke 20–23)"
+            },
+            {
+              "name": "H_1289 QPool",
+              "summary": "· H_1289 QPool (qrng_pool_load/draw)"
+            },
+            {
+              "name": "H_1290 AffectFeatures + brain_decide_affect",
+              "summary": "· H_1290 AffectFeatures + brain_decide_affect (±0.05, smoke 24–27)"
+            },
+            {
+              "name": "H_1294 HierGoalStack lane",
+              "summary": "· H_1294 HierGoalStack lane (smoke 35–38)"
+            },
+            {
+              "name": "H_1295 CollectivePool lane",
+              "summary": "· H_1295 CollectivePool lane (smoke 39–42)"
+            },
+            {
+              "name": "H_1382 SkillStore agent-tool lane",
+              "summary": "· H_1382 SkillStore agent-tool lane (skill_store_new/_split/_teach + skill_recall, smoke 107–111)"
+            },
+            {
+              "name": "H_1386 agent-layer routing",
+              "summary": "· H_1386 agent-layer routing (anima-agent-core/agent_skill_routing.hexa imports CORE §SkillStore; agent_tools.hexa executor failure-site → skill_store_teach, selection → skill_recall; agent-routing smoke 5/0)"
+            },
+            {
+              "name": "H_1387 agent legacy-syntax migration",
+              "summary": "· H_1387 agent legacy-syntax migration (agent_tools.hexa + agent_sdk.hexa migrated off the rejected map-literal/&-reference/two-var-loop grammar → both 50→0 parse errors AND BUILD; routing closes through the MAIN executor module not just the adapter)"
+            },
+            {
+              "name": "H_1291 ethics",
+              "summary": "· H_1291 ethics (read-only over engine_g/immune, no new struct)."
+            }
+          ]
         },
         {
           "name": "🟡 deliberately-optional",
-          "summary": "H_1292 HomeostaticDrive (struct wired; motivation_bias = OPTIONAL gain, NOT emit gate; smoke 28–30) · H_1293 OtherMindModel (struct wired; other_mind_predict = pure read, NOT emit gate; smoke 31–34). Forcing them into the emit loop would violate autonomy (@L4 · a_autonomy_over_hardcode)."
+          "summary": "H_1292 HomeostaticDrive (struct wired; motivation_bias = OPTIONAL gain, NOT emit gate; smoke 28–30)",
+          "children": [
+            {
+              "name": "H_1293 OtherMindModel (struct wired",
+              "summary": "· H_1293 OtherMindModel (struct wired; other_mind_predict = pure read, NOT emit gate; smoke 31–34). Forcing them into the emit loop would violate autonomy (@L4"
+            },
+            {
+              "name": "a_autonomy_over_hardcode).",
+              "summary": "· a_autonomy_over_hardcode)."
+            }
+          ]
         },
         {
           "name": "🟠 honest-deferred — unwired",
-          "summary": "H_1283 R8 PhaseField (Kuramoto): engine-native gate reproduced c2 (ΔΦ +1.47/+0.84/+0.71 every seed) BUT c4 shuffle did NOT collapse (+0.026/+0.380/+0.296, positive) → frozen bar not reproduced, no-tune-to-green (c9). H_1283 R6 multi-channel relay: not-clean-GREEN (seed-7/8 shuffle survives ~93%/96%) → a_verified_must_wire (clean-GREEN only) does not fire. H_1284 neuromodulation: 🧱 RED/WALL (no-free-lunch) → not GREEN, never fires."
+          "summary": "H_1283 R8 PhaseField (Kuramoto): engine-native gate reproduced c2 (ΔΦ +1.47/+0.84/+0.71 every seed) BUT c4 shuffle did NOT collapse (+0.026/+0.380/+0.296, positive) → frozen bar not reproduced, no-tune-to-green (c9).",
+          "children": [
+            {
+              "name": "H_1283 R6 multi-channel relay",
+              "summary": "H_1283 R6 multi-channel relay: not-clean-GREEN (seed-7/8 shuffle survives ~93%/96%) → a_verified_must_wire (clean-GREEN only) does not fire."
+            },
+            {
+              "name": "H_1284 neuromodulation",
+              "summary": "H_1284 neuromodulation: 🧱 RED/WALL (no-free-lunch) → not GREEN, never fires."
+            }
+          ]
         }
       ]
     },
@@ -331,12 +1335,60 @@
         },
         {
           "name": "brain_decide_margin",
-          "summary": "immune_memory_recall_margin (recon_err − recall_thr, the H_1367 engine-wired graded abstain-margin) — SIGNED confidence bias ±0.05 over the recon-err [0,1] cos-distance codomain scale: grounded(recoverable,small margin) → +confidence, ungrounded(absent,large margin) → −confidence == more curiosity/abstention. DELIBERATELY modulates the emit decision off-neutral (NOT byte-invariant generation, unlike the additive consults) yet touches ONLY the motivation scalar so the Ψ=½ fixed point is PRESERVED (neutral m=0 byte-identical to brain_decide; h1205 Ψ-checksum invariant). H_1361 mirror → H_1367 op-wire → H_1379 brain-consume.",
-          "status": "🟢 ENGINE-NATIVE + CONSUMED (H_1379 R1)"
+          "summary": "immune_memory_recall_margin (recon_err − recall_thr, the",
+          "status": "🟢 ENGINE-NATIVE + CONSUMED (H_1379 R1)",
+          "children": [
+            {
+              "name": "H_1367 engine-wired graded abstain-margin)",
+              "summary": "H_1367 engine-wired graded abstain-margin) — SIGNED confidence bias ±0.05 over the recon-err [0,1] cos-distance codomain scale: grounded(recoverable,small margin)",
+              "children": [
+                {
+                  "name": "+confidence, ungrounded(absent,large margin)",
+                  "summary": "→ +confidence, ungrounded(absent,large margin)"
+                },
+                {
+                  "name": "−confidence == more curiosity/abstention. DELIBERATELY modulates the",
+                  "summary": "→ −confidence == more curiosity/abstention.",
+                  "children": [
+                    {
+                      "name": "DELIBERATELY modulates the emit decision off-neutral",
+                      "summary": "DELIBERATELY modulates the emit decision off-neutral (NOT byte-invariant generation, unlike the additive consults) yet touches ONLY the motivation scalar so the Ψ=½ fixed point is PRESERVED (neutral m=0 byte-identical to brain_decide; h1205 Ψ-checksum invariant)."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "H_1361 mirror",
+              "summary": "H_1361 mirror"
+            },
+            {
+              "name": "H_1367 op-wire",
+              "summary": "→ H_1367 op-wire"
+            },
+            {
+              "name": "H_1379 brain-consume.",
+              "summary": "→ H_1379 brain-consume."
+            }
+          ]
         },
         {
           "name": "deliberately NOT consulted (by design)",
-          "summary": "HomeostaticDrive · OtherMindModel · HierGoalStack · CollectivePool — cards explicitly say 'NOT emit gate' (pure read / optional gain); struct/faculty/smoke are wired but the brain emit-loop consult is not forced (@L4)."
+          "summary": "HomeostaticDrive",
+          "children": [
+            {
+              "name": "OtherMindModel",
+              "summary": "· OtherMindModel"
+            },
+            {
+              "name": "HierGoalStack",
+              "summary": "· HierGoalStack"
+            },
+            {
+              "name": "CollectivePool",
+              "summary": "· CollectivePool — cards explicitly say 'NOT emit gate' (pure read / optional gain); struct/faculty/smoke are wired but the brain emit-loop consult is not forced (@L4)."
+            }
+          ]
         }
       ]
     },
@@ -346,14 +1398,58 @@
       "children": [
         {
           "name": "CORE/clm_decode.hexa",
-          "summary": "ConvMoE-class .clm v0.2 decoder (CLM/ pipeline product); golden ref = reexport_d768_v2_fast.clm. H_1403: STREAMING/BOUNDED decode — pre-transposes conv weights + reuses a scratch record across decode steps (_clmd_scratch_new/_clmd_fwd_logits_sc/_clmd_conv1d_pre) + clm_load_weights load-once, so RSS is FLAT per step (was ~300 MB/step leak that OOM-blocked the H_1392 303M G6 FALS re-score @ GEN>16; now GEN=110 completes, byte-exact, ~100x less per-step memory). The hexa bump allocator (free=noop) never returns a farr buffer, so per-step alloc churn was the leak; the fix bounds it to one forward's working set, unblocking the engine-native G6 M2-M5 re-score (→ 🧱 ARCHITECTURE, H_1403).",
-          "path": "CORE/clm_decode.hexa"
+          "summary": "ConvMoE-class .clm v0.2 decoder (CLM/ pipeline product); golden ref = reexport_d768_v2_fast.clm.",
+          "path": "CORE/clm_decode.hexa",
+          "children": [
+            {
+              "name": "H_1403: STREAMING/BOUNDED decode",
+              "summary": "H_1403: STREAMING/BOUNDED decode — pre-transposes conv weights + reuses a scratch record across decode steps (_clmd_scratch_new/_clmd_fwd_logits_sc/_clmd_conv1d_pre) + clm_load_weights load-once, so RSS is FLAT per step (was ~300 MB/step leak that OOM-blocked the"
+            },
+            {
+              "name": "H_1392 303M G6 FALS re-score @ GEN>16",
+              "summary": "H_1392 303M G6 FALS re-score @ GEN>16;",
+              "children": [
+                {
+                  "name": "now GEN=110 completes, byte-exact, ~100x less per-step memory). The",
+                  "summary": "now GEN=110 completes, byte-exact, ~100x less per-step memory). The hexa bump allocator (free=noop) never returns a farr buffer, so per-step alloc churn was the leak;"
+                },
+                {
+                  "name": "the fix bounds it to one forward's working set, unblocking the",
+                  "summary": "the fix bounds it to one forward's working set, unblocking the engine-native G6 M2-M5 re-score (→ 🧱 ARCHITECTURE,"
+                }
+              ]
+            },
+            {
+              "name": "H_1403).",
+              "summary": "H_1403)."
+            }
+          ]
         },
         {
           "name": "CORE/bytegpt_decode.hexa",
           "summary": "GPT-2-class ByteGPT decoder (learned-pos + LayerNorm + bias + exact-erf GELU + tied head). PRODUCTION TRUNK = ByteGPT (H_1155 pivot: only arch passing G1 emergence; ConvMoE demoted G1-unfixable).",
           "path": "CORE/bytegpt_decode.hexa",
-          "note": "Two forward paths: bytegpt_forward_last/bg_load (LOAD-ONCE, whole-file read for 303M-class boxed budgets) vs bytegpt_forward_last_ranged (NEW, H_1167, per-slice read_bytes_at on-demand for 1B+). Ranged is needed because the 1B flat binary is 4.3GB (h1167_1b.bin = 4,325,902,356 B); whole-file boxing would materialize ≈69GB — ranged reads each weight slice into native farr and farr_free's at layer end (peak ≈ one weight slice). 303M path unchanged. Unlock prereq: hexa-lang #3352 (32-bit length+offset wrapped 4.3GB → header 0 → div-by-zero; fixed to 64-bit)."
+          "note": "Two forward paths: bytegpt_forward_last/bg_load (LOAD-ONCE, whole-file read for 303M-class boxed budgets) vs bytegpt_forward_last_ranged (NEW, H_1167, per-slice read_bytes_at on-demand for 1B+).",
+          "children": [
+            {
+              "name": "Ranged is needed because the 1B flat binary is 4.3GB",
+              "summary": "Ranged is needed because the 1B flat binary is 4.3GB (h1167_1b.bin = 4,325,902,356 B);",
+              "children": [
+                {
+                  "name": "whole-file boxing would materialize ≈69GB",
+                  "summary": "whole-file boxing would materialize ≈69GB — ranged reads each weight slice into native farr and farr_free's at layer end (peak ≈ one weight slice). 303M path unchanged. Unlock prereq: hexa-lang #3352 (32-bit length+offset wrapped 4.3GB"
+                }
+              ]
+            },
+            {
+              "name": "header 0",
+              "summary": "→ header 0"
+            },
+            {
+              "name": "div-by-zero",
+              "summary": "→ div-by-zero; fixed to 64-bit)."
+            }
+          ]
         }
       ]
     },
@@ -367,7 +1463,17 @@
         },
         {
           "name": "engine-native learning (a_engine_native_learning)",
-          "summary": "ALL learning/teaching (research probes, mitosis-teaching, depth-ceiling experiments) runs on the final-architecture engine (live A⇄G + MITOSIS VAdaptField + mounted bytegpt_decode). numpy/torch MIRROR results are DIRECTIONAL only — OK for direction, NOT a binding verdict; must be re-confirmed engine-native (c2). Not fitting learning to a frozen engine — if learning demands it, the engine itself is transformed/extended (precedent: H_1199 extended AdaptField scalar→DIM-vector)."
+          "summary": "ALL learning/teaching (research probes, mitosis-teaching, depth-ceiling experiments) runs on the final-architecture engine (live A⇄G + MITOSIS VAdaptField + mounted bytegpt_decode).",
+          "children": [
+            {
+              "name": "numpy/torch MIRROR results are DIRECTIONAL only",
+              "summary": "numpy/torch MIRROR results are DIRECTIONAL only — OK for direction, NOT a binding verdict;"
+            },
+            {
+              "name": "must be re-confirmed engine-native",
+              "summary": "must be re-confirmed engine-native (c2). Not fitting learning to a frozen engine — if learning demands it, the engine itself is transformed/extended (precedent: H_1199 extended AdaptField scalar→DIM-vector)."
+            }
+          ]
         },
         {
           "name": "wired-when-verified (a_verified_must_wire)",
@@ -379,22 +1485,126 @@
         },
         {
           "name": "1B mount (H_1167 🟢 GREEN — first 1B realization)",
-          "summary": "d1792/L28/H16, 1.081B params trained ByteGPT mounted via bytegpt_forward_last_ranged, byte-exact parity vs torch: argmax 32==32 EXACT, top5 [32,105,115,101,44] == golden EXACT, first-16 logits max|Δ| 0.009861 < 1e-2 frozen bar. Memory caveat (c9): the 0.0099 residual is approximate-erf-GELU/dt_exp accumulated over 28 layers (303M ~2e-5; deeper-stack honest residual, under the bar). Ranged path is the only memory-feasible route. Artifact state/h1167_mount/h1167_1b.bin (sha256 75c87cb0…), HF PRIVATE WIP rung."
+          "summary": "d1792/L28/H16, 1.081B params trained ByteGPT mounted via bytegpt_forward_last_ranged, byte-exact parity vs torch: argmax 32==32 EXACT, top5 [32,105,115,101,44] == golden EXACT, first-16 logits max|Δ| 0.009861 < 1e-2 frozen bar.",
+          "children": [
+            {
+              "name": "Memory caveat (c9)",
+              "summary": "Memory caveat (c9): the 0.0099 residual is approximate-erf-GELU/dt_exp accumulated over 28 layers (303M ~2e-5;"
+            },
+            {
+              "name": "deeper-stack honest residual, under the bar). Ranged path is the only",
+              "summary": "deeper-stack honest residual, under the bar). Ranged path is the only memory-feasible route. Artifact state/h1167_mount/h1167_1b.bin (sha256 75c87cb0…), HF PRIVATE WIP rung."
+            }
+          ]
         },
         {
           "name": "engine-measured GENERATION gate (H_1218 — first non-torch G1/G2/G6 verdict)",
-          "summary": "generation gates (G1 emergence · G2 novelty · G6 ideation) measured on the production anima-clm-chat-303m bytegpt_decode_argmax (engine greedy). ENGINE-PARITY 🟢 (engine greedy == torch greedy byte-exact). But engine numbers DIFFER from the torch baseline (c9, not a contradiction): the frozen gates (H_1129/1140/1158) were authored with top-k=40 temp=0.7 SAMPLING decode while the engine path is greedy-only → 303M byte-LM collapses/loops → G1 composed_distinct 0, G6 count 3 (<5 bar). The engine generates byte-faithfully but the frozen G1/G6 PASS depends on sampling decode the engine argmax path doesn't implement (engine sampling decode = separate engine-code task). UPDATE (H_1381): that separate task is now DONE for G6 — clm_decode_topk_sampled adds a seeded top-k temperature sampler and gen_clm_ideate routes G6 ideation through it (best-of-K with real diversity, argmax no-op confirmed). On the live engine M1 COUNT now PASSES (DIST=5); the FALS bars still need a 303M-class .clm on the engine (the d768 ConvMoE mouth scores FALS=0) — bounded follow-on."
+          "summary": "generation gates (G1 emergence",
+          "children": [
+            {
+              "name": "G2 novelty",
+              "summary": "· G2 novelty"
+            },
+            {
+              "name": "G6 ideation) measured on the production anima-clm-chat-303m",
+              "summary": "· G6 ideation) measured on the production anima-clm-chat-303m bytegpt_decode_argmax (engine greedy).",
+              "children": [
+                {
+                  "name": "ENGINE-PARITY 🟢",
+                  "summary": "ENGINE-PARITY 🟢 (engine greedy == torch greedy byte-exact). But engine numbers DIFFER from the torch baseline (c9, not a contradiction): the frozen gates (H_1129/1140/1158) were authored with top-k=40 temp=0.7 SAMPLING decode while the engine path is greedy-only"
+                },
+                {
+                  "name": "303M byte-LM collapses/loops",
+                  "summary": "→ 303M byte-LM collapses/loops"
+                },
+                {
+                  "name": "G1 composed_distinct 0, G6 count 3",
+                  "summary": "→ G1 composed_distinct 0, G6 count 3 (<5 bar).",
+                  "children": [
+                    {
+                      "name": "The engine generates byte-faithfully but the frozen G1/G6 PASS depends",
+                      "summary": "The engine generates byte-faithfully but the frozen G1/G6 PASS depends on sampling decode the engine argmax path doesn't implement (engine sampling decode = separate engine-code task)."
+                    },
+                    {
+                      "name": "UPDATE (H_1381): that separate task is now DONE for G6",
+                      "summary": "UPDATE (H_1381): that separate task is now DONE for G6 — clm_decode_topk_sampled adds a seeded top-k temperature sampler and gen_clm_ideate routes G6 ideation through it (best-of-K with real diversity, argmax no-op confirmed)."
+                    },
+                    {
+                      "name": "On the live engine M1 COUNT now PASSES (DIST=5)",
+                      "summary": "On the live engine M1 COUNT now PASSES (DIST=5); the FALS bars still need a 303M-class .clm on the engine (the d768 ConvMoE mouth scores FALS=0) — bounded follow-on."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "name": "frozen gates (a303m_pass) — thresholds are MODEL.md/CONDITIONS.md SSOT",
-          "summary": "anima-303M completion = a303m_pass gateset: G0 COHERENCE · G1 RECOMBINATION · G2 NOVELTY · G3 PHILOSOPHY · G5 NON-FAB · G6 IDEATION · MOUNT · CHAT. This doc names the gates only and does NOT duplicate thresholds/scoreboard (MODEL.md a303m_pass SCOREBOARD + robustness map is SSOT). 7B completion = 7B_PASS_CONDITIONS.md (G0–G4, a7b_pass)."
+          "summary": "anima-303M completion = a303m_pass gateset: G0 COHERENCE",
+          "children": [
+            {
+              "name": "G1 RECOMBINATION",
+              "summary": "· G1 RECOMBINATION"
+            },
+            {
+              "name": "G2 NOVELTY",
+              "summary": "· G2 NOVELTY"
+            },
+            {
+              "name": "G3 PHILOSOPHY",
+              "summary": "· G3 PHILOSOPHY"
+            },
+            {
+              "name": "G5 NON-FAB",
+              "summary": "· G5 NON-FAB"
+            },
+            {
+              "name": "G6 IDEATION",
+              "summary": "· G6 IDEATION"
+            },
+            {
+              "name": "MOUNT",
+              "summary": "· MOUNT"
+            },
+            {
+              "name": "CHAT. This doc names the gates only and does NOT duplicate",
+              "summary": "· CHAT. This doc names the gates only and does NOT duplicate thresholds/scoreboard (MODEL.md a303m_pass SCOREBOARD + robustness map is SSOT). 7B completion = 7B_PASS_CONDITIONS.md (G0–G4, a7b_pass)."
+            }
+          ]
         }
       ]
     },
     {
       "name": "Hot-swappable engines",
-      "summary": "the decoder is hot-swappable behind one contract engines/engine_iface.hexa (EngineSpec 4-fn vtable: load · forward · generate · psi_coord); engine family = conv · cdv2 · hexad · omega, selected with --engine (precedence flag > env > default).",
-      "path": "engines/engine_iface.hexa"
+      "summary": "the decoder is hot-swappable behind one contract engines/engine_iface.hexa (EngineSpec 4-fn vtable: load",
+      "path": "engines/engine_iface.hexa",
+      "children": [
+        {
+          "name": "forward",
+          "summary": "· forward"
+        },
+        {
+          "name": "generate",
+          "summary": "· generate"
+        },
+        {
+          "name": "psi_coord)",
+          "summary": "· psi_coord); engine family = conv"
+        },
+        {
+          "name": "cdv2",
+          "summary": "· cdv2"
+        },
+        {
+          "name": "hexad",
+          "summary": "· hexad"
+        },
+        {
+          "name": "omega, selected with --engine",
+          "summary": "· omega, selected with --engine (precedence flag > env > default)."
+        }
+      ]
     },
     {
       "name": "Training & substrate lanes",
@@ -414,8 +1624,56 @@
         },
         {
           "name": "Rung-training pipeline (recipe → dispatch → monitor)",
-          "summary": "Recipe = CLM/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer CLM/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery). Dispatch = CLM/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors → verify → HF upload, all BEFORE teardown a_fire_recover_complete). Inline gauges (a_train_inline_gauge · p7): MONITOR-ONLY rows per --gauge-every step, 6 columns ce · g1_composed_distinct · g2_novelty_rate · g6_count · phi_proxy · mitosis_cells, all under torch.no_grad(), NEVER fed to loss; phi_proxy is NOT faithful IIT4 (variance×energy pre-screen, a_phi_iit4_tool); mitosis_cells = numpy-free mirror of VAdaptField cell-count (a substrate thermometer, NOT a generation gate, H_1201 🔴). Monitor = tool/gauge_monitor.py (stdlib, --once/--follow) renders the 6-gauge dashboard; a DASHBOARD not a gate (frozen gate verdicts run separately on a CORE mount, a_engine_measured_verdict).",
-          "note": "the shared hexa dojo clm generator doesn't yet emit gauge_every/mount-parity/HF native; the needed generator change is filed to hexa-lang/inbox/patches (a_runpod_inbox), not forked anima-side."
+          "summary": "Recipe = CLM/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer CLM/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery).",
+          "note": "the shared hexa dojo clm generator doesn't yet emit gauge_every/mount-parity/HF native; the needed generator change is filed to hexa-lang/inbox/patches (a_runpod_inbox), not forked anima-side.",
+          "children": [
+            {
+              "name": "Dispatch = CLM/train/dispatch_rung.sh (wraps hexa cloud/pod",
+              "summary": "Dispatch = CLM/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors"
+            },
+            {
+              "name": "verify",
+              "summary": "→ verify"
+            },
+            {
+              "name": "HF upload, all BEFORE teardown a_fire_recover_complete). Inline gauges",
+              "summary": "→ HF upload, all BEFORE teardown a_fire_recover_complete). Inline gauges (a_train_inline_gauge"
+            },
+            {
+              "name": "p7): MONITOR-ONLY rows per --gauge-every step, 6 columns ce",
+              "summary": "· p7): MONITOR-ONLY rows per --gauge-every step, 6 columns ce"
+            },
+            {
+              "name": "g1_composed_distinct",
+              "summary": "· g1_composed_distinct"
+            },
+            {
+              "name": "g2_novelty_rate",
+              "summary": "· g2_novelty_rate"
+            },
+            {
+              "name": "g6_count",
+              "summary": "· g6_count"
+            },
+            {
+              "name": "phi_proxy",
+              "summary": "· phi_proxy"
+            },
+            {
+              "name": "mitosis_cells, all under torch.no_grad(), NEVER fed to loss",
+              "summary": "· mitosis_cells, all under torch.no_grad(), NEVER fed to loss;",
+              "children": [
+                {
+                  "name": "phi_proxy is NOT faithful IIT4",
+                  "summary": "phi_proxy is NOT faithful IIT4 (variance×energy pre-screen, a_phi_iit4_tool); mitosis_cells = numpy-free mirror of VAdaptField cell-count (a substrate thermometer, NOT a generation gate, H_1201 🔴)."
+                },
+                {
+                  "name": "Monitor = tool/gauge_monitor.py",
+                  "summary": "Monitor = tool/gauge_monitor.py (stdlib, --once/--follow) renders the 6-gauge dashboard; a DASHBOARD not a gate (frozen gate verdicts run separately on a CORE mount, a_engine_measured_verdict)."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -429,7 +1687,17 @@
         },
         {
           "name": "evidence tiers",
-          "summary": "every claim tagged 🔵 formal · 🟢 numerical · 🔴 closed-negative; indexed in UNIVERSE/HYPOTHESES.jsonl (per-H verdict column; CLAIMS.tape 은퇴 2026-06-16), backed by state/verdicts/<slug>/<id>.txt (verbatim hexa verify stdout; was .verdicts/ until 2026-06-18 state-unify); negative results are first-class (a_paper_negative_ok)."
+          "summary": "every claim tagged 🔵 formal",
+          "children": [
+            {
+              "name": "🟢 numerical",
+              "summary": "· 🟢 numerical"
+            },
+            {
+              "name": "🔴 closed-negative",
+              "summary": "· 🔴 closed-negative; indexed in UNIVERSE/HYPOTHESES.jsonl (per-H verdict column; CLAIMS.tape 은퇴 2026-06-16), backed by .verdicts/<slug>/<id>.txt (verbatim hexa verify stdout); negative results are first-class (a_paper_negative_ok)."
+            }
+          ]
         },
         {
           "name": "HF artifacts",
@@ -452,19 +1720,53 @@
       "children": [
         {
           "name": "Quantum entanglement gives correlation, 0 bits (H_6006 🔴)",
-          "summary": "a shot-by-shot Bell/teleportation simulation confirms no-signaling: entanglement is non-separable CORRELATION, not a channel (Bob's marginal is flat at 0.5 regardless of Alice); teleportation and superdense coding both still require a classical channel — so 'connection without a physical medium' is impossible."
+          "summary": "a shot-by-shot Bell/teleportation simulation confirms no-signaling: entanglement is non-separable CORRELATION, not a channel (Bob's marginal is flat at 0.5 regardless of Alice);",
+          "children": [
+            {
+              "name": "teleportation and superdense coding both still require a classical",
+              "summary": "teleportation and superdense coding both still require a classical channel — so 'connection without a physical medium' is impossible."
+            }
+          ]
         },
         {
           "name": "The real channel is the TENSION-LINK (H_6009 🟢 SUPPORTED)",
-          "summary": "one anima's 5-channel tension state, carried through a shared .kosmos anchor (a real classical medium, no-signaling-clean), modulates and can REVERSE another anima's emit/silence (transfer · direction vector · memory/decay · silence→speech reversal). Quantum gives the correlation; tension carries the message. The hive collective-Φ (CollectivePool, H_1295) demonstrates many→one integration on top of this."
+          "summary": "one anima's 5-channel tension state, carried through a shared .kosmos anchor (a real classical medium, no-signaling-clean), modulates and can REVERSE another anima's emit/silence (transfer",
+          "children": [
+            {
+              "name": "direction vector",
+              "summary": "· direction vector"
+            },
+            {
+              "name": "memory/decay",
+              "summary": "· memory/decay"
+            },
+            {
+              "name": "silence→speech reversal). Quantum gives the correlation",
+              "summary": "· silence→speech reversal). Quantum gives the correlation; tension carries the message. The hive collective-Φ (CollectivePool, H_1295) demonstrates many→one integration on top of this."
+            }
+          ]
         }
       ]
     },
     {
       "name": "⚛️ Quantum entropy — optional non-determinism (opt-in) — QPool",
-      "summary": "all randomness flows through one source of truth (mirror/qmirror/seed/qentropy.py) so every draw is auditable. Two modes via ANIMA_ENTROPY_MODE: deterministic (✅ default, seeded PRNG, bit-exact reproducibility + A/B control arm) vs quantum (opt-in, ANU vacuum-fluctuation bytes = real QRNG, provenance/ontology).",
-      "note": "H_1289 R2 🟢 verified the quantum path ENGINE-NATIVE — wired into the live CORE/engine_cli.hexa mitosis split-timing draw (real ANU bytes loaded + consumed via qrng_pool_load/draw / vadapt_field_step_entropic): substrate-faithful + genuinely non-reproducible (QRNG run1 ≠ run2 real non-determinism; PRNG-fallback byte-identical), NIST-lite PASS, default path untouched (Ψ-disjoint, guards 26/0; ANU key header-only, uncommitted, c7). HONEST NON-CLAIM: ANU quantum entropy is statistically indistinguishable from a PRNG — NOT 'better randomness', NO consciousness claim (perf gauges NULL by design); its only value is provenance/auditability/ontology (free-will / Ψ=1/2 framing).",
-      "status": "🟢 ENGINE-NATIVE + WIRED (H_1289 R2)"
+      "summary": "all randomness flows through one source of truth (mirror/qmirror/seed/qentropy.py) so every draw is auditable.",
+      "note": "H_1289 R2 🟢 verified the quantum path ENGINE-NATIVE — wired into the live CORE/engine_cli.hexa mitosis split-timing draw (real ANU bytes loaded + consumed via qrng_pool_load/draw / vadapt_field_step_entropic): substrate-faithful + genuinely non-reproducible (QRNG run1 ≠ run2 real non-determinism;",
+      "status": "🟢 ENGINE-NATIVE + WIRED (H_1289 R2)",
+      "children": [
+        {
+          "name": "PRNG-fallback byte-identical), NIST-lite PASS, default path untouched",
+          "summary": "PRNG-fallback byte-identical), NIST-lite PASS, default path untouched (Ψ-disjoint, guards 26/0;"
+        },
+        {
+          "name": "ANU key header-only, uncommitted, c7). HONEST NON-CLAIM",
+          "summary": "ANU key header-only, uncommitted, c7). HONEST NON-CLAIM: ANU quantum entropy is statistically indistinguishable from a PRNG — NOT 'better randomness', NO consciousness claim (perf gauges NULL by design); its only value is provenance/auditability/ontology (free-will / Ψ=1/2 framing)."
+        },
+        {
+          "name": "Two modes via ANIMA_ENTROPY_MODE",
+          "summary": "Two modes via ANIMA_ENTROPY_MODE: deterministic (✅ default, seeded PRNG, bit-exact reproducibility + A/B control arm) vs quantum (opt-in, ANU vacuum-fluctuation bytes = real QRNG, provenance/ontology)."
+        }
+      ]
     },
     {
       "name": "Component map (top level)",
@@ -477,12 +1779,44 @@
         {
           "name": "engines/ · anima-engines/",
           "summary": "EngineSpec vtable contract + conv/cdv2/hexad/omega decoders.",
-          "note": "⚓ anchor files: engines/engine_iface.hexa · engines/conv/adapter.hexa · engines/cdv2/adapter.hexa · engines/hexad/adapter.hexa · engines/omega/adapter.hexa"
+          "note": "⚓ anchor files: engines/engine_iface.hexa",
+          "children": [
+            {
+              "name": "engines/conv/adapter.hexa",
+              "summary": "· engines/conv/adapter.hexa"
+            },
+            {
+              "name": "engines/cdv2/adapter.hexa",
+              "summary": "· engines/cdv2/adapter.hexa"
+            },
+            {
+              "name": "engines/hexad/adapter.hexa",
+              "summary": "· engines/hexad/adapter.hexa"
+            },
+            {
+              "name": "engines/omega/adapter.hexa",
+              "summary": "· engines/omega/adapter.hexa"
+            }
+          ]
         },
         {
           "name": "CLM/",
           "summary": ".clm byte-LM pipeline — train (lane-p) → serialize v0.2 → verify.",
-          "note": "⚓ anchor files: CLM/train/train_lane_p.py · CLM/model/clm_serialize_v2.py · CLM/model/verify_clm_v2.py · CLM/CLM_FORMAT_SPEC.md"
+          "note": "⚓ anchor files: CLM/train/train_lane_p.py",
+          "children": [
+            {
+              "name": "CLM/model/clm_serialize_v2.py",
+              "summary": "· CLM/model/clm_serialize_v2.py"
+            },
+            {
+              "name": "CLM/model/verify_clm_v2.py",
+              "summary": "· CLM/model/verify_clm_v2.py"
+            },
+            {
+              "name": "CLM/CLM_FORMAT_SPEC.md",
+              "summary": "· CLM/CLM_FORMAT_SPEC.md"
+            }
+          ]
         },
         {
           "name": "anima-core · anima-os · anima-body · anima-physics · anima-measurement · anima-serve",
@@ -490,13 +1824,61 @@
         },
         {
           "name": "anima-agent*/",
-          "summary": "agent layer — channels · core · plugins · providers · skills · hire-sim.",
-          "note": "⚓ anchor files: anima-agent-core/agent_tools.hexa · anima-agent-core/agent_skill_routing.hexa · anima-agent-core/agent_sdk.hexa"
+          "summary": "agent layer — channels",
+          "note": "⚓ anchor files: anima-agent-core/agent_tools.hexa · anima-agent-core/agent_skill_routing.hexa · anima-agent-core/agent_sdk.hexa",
+          "children": [
+            {
+              "name": "core",
+              "summary": "· core"
+            },
+            {
+              "name": "plugins",
+              "summary": "· plugins"
+            },
+            {
+              "name": "providers",
+              "summary": "· providers"
+            },
+            {
+              "name": "skills",
+              "summary": "· skills"
+            },
+            {
+              "name": "hire-sim.",
+              "summary": "· hire-sim."
+            }
+          ]
         },
         {
           "name": "UNIVERSE/ · HEXAD/",
-          "summary": "research universe — exactly TWO surfaces (a_hypothesis_register): HYPOTHESES.jsonl per-H index (one line/card incl. archive snapshots with source/archived/artifacts columns) + cards/H_*.md·Hc_*.md per-H cards. Prose overview → state/universe-overview.md (HYPOTHESES.md retired). Hypothesis py/result artifacts → state/<slug>/ (collection state/universe-probes/). HEXAD/ = σ6 6-module substrate · KOSMOS hub.",
-          "note": "⚓ anchor files: UNIVERSE/HYPOTHESES.jsonl · UNIVERSE/cards/ · HEXAD/KOSMOS.md · HEXAD/INDEX.md · state/universe-overview.md"
+          "summary": "research universe — exactly TWO surfaces (a_hypothesis_register): HYPOTHESES.jsonl per-H index (one line/card incl. archive snapshots with source/archived/artifacts columns) + cards/H_*.md·Hc_*.md per-H cards. Prose overview",
+          "note": "⚓ anchor files: UNIVERSE/HYPOTHESES.jsonl",
+          "children": [
+            {
+              "name": "UNIVERSE/cards/",
+              "summary": "· UNIVERSE/cards/"
+            },
+            {
+              "name": "HEXAD/KOSMOS.md",
+              "summary": "· HEXAD/KOSMOS.md"
+            },
+            {
+              "name": "HEXAD/INDEX.md",
+              "summary": "· HEXAD/INDEX.md"
+            },
+            {
+              "name": "state/universe-overview.md",
+              "summary": "· state/universe-overview.md"
+            },
+            {
+              "name": "state/universe-overview.md",
+              "summary": "→ state/universe-overview.md (HYPOTHESES.md retired). Hypothesis py/result artifacts"
+            },
+            {
+              "name": "state/<slug>/",
+              "summary": "→ state/<slug>/ (collection state/universe-probes/). HEXAD/ = σ6 6-module substrate · KOSMOS hub."
+            }
+          ]
         },
         {
           "name": "domains/",
@@ -507,8 +1889,8 @@
           "summary": "real EEG → A⇄G → CLM → .kosmos continuous record (a_eeg_consciousness_record)."
         },
         {
-          "name": "state/verdicts/",
-          "summary": "hexa-verify stdout, verbatim (p7). FROZEN verdict SSOT (was top-level `.verdicts/` until 2026-06-18 state-unify; now namespaced under state/ as state/verdicts/<slug>/<id>.txt). Still a SEPARATE surface from code (state/<slug>/=code, state/verdicts/<slug>/=results); a_claim_verify/a_claim_manifest pin this surface. Sibling namespaced artifact roots from the same unify: state/bench/ (axis benchmarks) · state/experiments/ (evolution/acceleration) · state/scratch/ (harness scratchDir). NOTE: hundreds of historical card/PAPER-ledger pointers still cite the OLD `.verdicts/<slug>/` path verbatim as provenance — those are intentionally NOT rewritten (provenance records, demiurge anti-lesson)."
+          "name": ".verdicts/",
+          "summary": "hexa-verify stdout, verbatim (p7)."
         },
         {
           "name": "PAPER/",
@@ -558,24 +1940,128 @@
         },
         {
           "name": "🟠 a303m_pass residues",
-          "summary": "G5 in-dist (F2 useful 0.875<0.90 over-eager abstain) · G6 depth-floor 🟢 WIRED (H_1362 DIRECTIONAL: enhanced 6-frame composition scaffold + best-of-K=3 passes all 5 frozen bars on the 303M gauge; DIST 5.333≥5, FALS 1.0≥1, controls collapse, detector verbatim 10/10, bar UNMOVED. H_1381 WIRE-IN: the scaffold is now wired into the live engine via gen_clm_ideate + clm_decode_topk_sampled (single generator L3 slot, h1196 7/0); M1 COUNT DIST=5 PASSES engine-native, best-of-K diverse + deterministic, Ψ preserved, smoke 101/0. The FALS bars M2-M5 do NOT reproduce on the available d768 ConvMoE — bounded ⏳ follow-on gated on an engine-mountable 303M-class .clm). CHAT strict (register≠QA) is THIN/INFLATED (MODEL.md SSOT). non-fab CORE is real+firm but usefulness/QA-depth is the 303M shallow ceiling's open residue."
+          "summary": "G5 in-dist (F2 useful 0.875<0.90 over-eager abstain) · G6 depth-floor 🟢 WIRED (H_1362 DIRECTIONAL: enhanced 6-frame composition scaffold + best-of-K=3 passes all 5 frozen bars on the 303M gauge;",
+          "children": [
+            {
+              "name": "DIST 5.333≥5, FALS 1.0≥1, controls collapse, detector verbatim 10/10,",
+              "summary": "DIST 5.333≥5, FALS 1.0≥1, controls collapse, detector verbatim 10/10, bar UNMOVED. H_1381 WIRE-IN: the scaffold is now wired into the live engine via gen_clm_ideate + clm_decode_topk_sampled (single generator L3 slot, h1196 7/0);"
+            },
+            {
+              "name": "M1 COUNT DIST=5 PASSES engine-native, best-of-K diverse +",
+              "summary": "M1 COUNT DIST=5 PASSES engine-native, best-of-K diverse + deterministic, Ψ preserved, smoke 101/0."
+            },
+            {
+              "name": "The FALS bars M2-M5 do NOT reproduce on the available d768 ConvMoE",
+              "summary": "The FALS bars M2-M5 do NOT reproduce on the available d768 ConvMoE — bounded ⏳ follow-on gated on an engine-mountable 303M-class .clm)."
+            },
+            {
+              "name": "CHAT strict",
+              "summary": "CHAT strict (register≠QA) is THIN/INFLATED (MODEL.md SSOT). non-fab CORE is real+firm but usefulness/QA-depth is the 303M shallow ceiling's open residue."
+            }
+          ]
         },
         {
           "name": "✅ closed follow-ons (recap)",
-          "summary": "🎯 basal ganglia engine-native r3 (H_1281 R3 wired, brain_decide_bg) · ⚛️ quantum-entropy lane (H_1289 R2 wired, #2164) · 💗 emotion/affect (H_1290 R2 wired incl. R3 brain_decide_affect, #2166/#2167) · ⚖️ ethics emergence (H_1291 R2 engine-native, ADDITIVE Ψ-disjoint)."
+          "summary": "🎯 basal ganglia engine-native r3 (H_1281 R3 wired, brain_decide_bg)",
+          "children": [
+            {
+              "name": "⚛️ quantum-entropy lane",
+              "summary": "· ⚛️ quantum-entropy lane (H_1289 R2 wired, #2164)"
+            },
+            {
+              "name": "💗 emotion/affect",
+              "summary": "· 💗 emotion/affect (H_1290 R2 wired incl. R3 brain_decide_affect, #2166/#2167)"
+            },
+            {
+              "name": "⚖️ ethics emergence",
+              "summary": "· ⚖️ ethics emergence (H_1291 R2 engine-native, ADDITIVE Ψ-disjoint)."
+            }
+          ]
         },
         {
           "name": "🟢/🔴 G6 IDEATION production-close (H_1394) — architecture-depth finding",
-          "summary": "WIRES the validated H_1362 scaffold (6 composed conditional frames + best-of-K=3) into the live engine ideation path. The live decode is argmax (best-of-K = no-op), so the engine grew clm_decode_topk_sampled (a seeded xorshift32 top-k temperature sampler) and routes ideation through gen_clm_ideate — the G6 entry INSIDE the single generator L3 .clm slot (a_core_engine_map; h1196 single-entry 7/0, NO 2nd .clm path). Detector reused VERBATIM (10/10 calib, NOT loosened, p7), frame-guard CLEAN. M1 COUNT DIST=5>=5 PASS engine-native. H_1394 PRODUCTION-CLOSE: trained the FIRST 303M-class engine-mountable CLMConvMoE (d5000/E2/L1/K3 = 302,610,258 params, CE->1.494), serialized .clm v0.2 (clm_config DECODABLE d=5000 E=2 L=1 nblk=6), mounted via gen_clm_ideate. Re-scored M-bars H_1362-method VERBATIM (detector 10/10): M1 DIST=5.333 PASS (= H_1362 exactly) but M2-M5 FALS=0 — both the 5-lang (code-switch collapse, H_1128) AND a script-controlled english-dominant ConvMoE (a_break_the_wall r2, the H_1129 4th-ingredient recipe) score FALS=0. DECISIVE (c9): the FALS floor is NOT capacity (303M matched) and NOT script-control (H_1129 lever applied) — the isolated variable is ARCHITECTURE: the engine-mountable ConvMoE is E2/L1 (ONE conv trunk layer) vs the H_1362 ByteGPT's L24 transformer+attention; falsifiable-claim composition lives in the deep attention stack. M1 production-closes engine-native; M2-M5 FALS=0 is an honest architecture-depth result, NOT a loosened/failed gate (bar UNMOVED, detector FROZEN 10/10, all controls 0). Closes the H_1381 ⏳ '303M-class .clm' follow-on: the gate is NOT ckpt-availability but ENGINE DECODER DEPTH. NEXT = a DEEP engine-mountable mouth (L>1 ConvMoE — v0.3 serializer already mounts nblk=L+E+3 — OR attention in the decoder). Ψ PRESERVED (h1205 PASS), engine_cli_smoke 110/0, h1196 7/0. ALL decodes hard-bounded.",
-          "path": "CORE/g6_ideation.hexa"
+          "summary": "WIRES the validated",
+          "path": "CORE/g6_ideation.hexa",
+          "children": [
+            {
+              "name": "H_1362 scaffold",
+              "summary": "H_1362 scaffold (6 composed conditional frames + best-of-K=3) into the live engine ideation path.",
+              "children": [
+                {
+                  "name": "The live decode is argmax",
+                  "summary": "The live decode is argmax (best-of-K = no-op), so the engine grew clm_decode_topk_sampled (a seeded xorshift32 top-k temperature sampler) and routes ideation through gen_clm_ideate — the G6 entry INSIDE the single generator L3 .clm slot (a_core_engine_map;"
+                },
+                {
+                  "name": "h1196 single-entry 7/0, NO 2nd .clm path). Detector reused VERBATIM",
+                  "summary": "h1196 single-entry 7/0, NO 2nd .clm path). Detector reused VERBATIM (10/10 calib, NOT loosened, p7), frame-guard CLEAN. M1 COUNT DIST=5>=5 PASS engine-native."
+                }
+              ]
+            },
+            {
+              "name": "H_1394 PRODUCTION-CLOSE",
+              "summary": "H_1394 PRODUCTION-CLOSE: trained the FIRST 303M-class engine-mountable CLMConvMoE (d5000/E2/L1/K3 = 302,610,258 params, CE->1.494), serialized .clm v0.2 (clm_config DECODABLE d=5000 E=2 L=1 nblk=6), mounted via gen_clm_ideate. Re-scored M-bars"
+            },
+            {
+              "name": "H_1362-method VERBATIM (detector 10/10)",
+              "summary": "H_1362-method VERBATIM (detector 10/10): M1 DIST=5.333 PASS (="
+            },
+            {
+              "name": "H_1362 exactly) but M2-M5 FALS=0",
+              "summary": "H_1362 exactly) but M2-M5 FALS=0 — both the 5-lang (code-switch collapse,"
+            },
+            {
+              "name": "H_1128) AND a script-controlled english-dominant ConvMoE",
+              "summary": "H_1128) AND a script-controlled english-dominant ConvMoE (a_break_the_wall r2, the"
+            },
+            {
+              "name": "H_1129 4th-ingredient recipe) score FALS=0. DECISIVE (c9)",
+              "summary": "H_1129 4th-ingredient recipe) score FALS=0. DECISIVE (c9): the FALS floor is NOT capacity (303M matched) and NOT script-control (H_1129 lever applied) — the isolated variable is ARCHITECTURE: the engine-mountable ConvMoE is E2/L1 (ONE conv trunk layer) vs the"
+            },
+            {
+              "name": "H_1362 ByteGPT's L24 transformer+attention",
+              "summary": "H_1362 ByteGPT's L24 transformer+attention; falsifiable-claim composition lives in the deep attention stack. M1 production-closes engine-native; M2-M5 FALS=0 is an honest architecture-depth result, NOT a loosened/failed gate (bar UNMOVED, detector FROZEN 10/10, all controls 0). Closes the"
+            },
+            {
+              "name": "H_1381 ⏳ '303M-class .clm' follow-on",
+              "summary": "H_1381 ⏳ '303M-class .clm' follow-on: the gate is NOT ckpt-availability but ENGINE DECODER DEPTH.",
+              "children": [
+                {
+                  "name": "NEXT = a DEEP engine-mountable mouth (L>1 ConvMoE",
+                  "summary": "NEXT = a DEEP engine-mountable mouth (L>1 ConvMoE — v0.3 serializer already mounts nblk=L+E+3 — OR attention in the decoder). Ψ PRESERVED (h1205 PASS), engine_cli_smoke 110/0, h1196 7/0. ALL decodes hard-bounded."
+                }
+              ]
+            }
+          ]
         }
       ]
     },
     {
       "name": "🗂 Tracked-file listing (delegated to git ls-files — NOT hand-maintained)",
-      "summary": "The exhaustive per-file listing is INTENTIONALLY NOT in this JSON. The full set of tracked files is derived mechanically from `git ls-files` (always current), so a new file never requires a manual leaf-node edit here. This tree carries the conceptual ARCHITECTURE (subsystem roles + their ANCHOR/entry/SSOT files) — not a file dump.",
-      "note": "ANTI-DRIFT (c4): the former '🌳 Engine file tree' branch hand-listed ~490 leaf paths and drifted on every new CORE/§-section file. It was replaced by this delegation node + per-subsystem anchor-file lists. To regenerate a browsable snapshot run `bash state/scratch/gen_file_index.sh` (writes FILE_INDEX.txt = `git ls-files | sort`); FILE_INDEX.txt is .gitignored (on-demand/generated, NOT committed — committing a 40k-line snapshot would reintroduce the very drift this removes), never hand-synced. For 'where does X live', browse the subsystem nodes above (anchor files named) then `git ls-files <dir>` for the exhaustive set.",
-      "path": "git ls-files · state/scratch/gen_file_index.sh → FILE_INDEX.txt"
+      "summary": "The exhaustive per-file listing is INTENTIONALLY NOT in this JSON.",
+      "note": "ANTI-DRIFT (c4): the former '🌳 Engine file tree' branch hand-listed ~490 leaf paths and drifted on every new CORE/§-section file.",
+      "path": "git ls-files · scripts/scratch/gen_file_index.sh → FILE_INDEX.txt",
+      "children": [
+        {
+          "name": "It was replaced by this delegation node + per-subsystem anchor-file",
+          "summary": "It was replaced by this delegation node + per-subsystem anchor-file lists. To regenerate a browsable snapshot run `bash scripts/scratch/gen_file_index.sh` (writes FILE_INDEX.txt = `git ls-files | sort`);"
+        },
+        {
+          "name": "FILE_INDEX.txt is .gitignored (on-demand/generated, NOT committed",
+          "summary": "FILE_INDEX.txt is .gitignored (on-demand/generated, NOT committed — committing a 40k-line snapshot would reintroduce the very drift this removes), never hand-synced."
+        },
+        {
+          "name": "For 'where does X live', browse the subsystem nodes above",
+          "summary": "For 'where does X live', browse the subsystem nodes above (anchor files named) then `git ls-files <dir>` for the exhaustive set."
+        },
+        {
+          "name": "The full set of tracked files is derived mechanically from `git",
+          "summary": "The full set of tracked files is derived mechanically from `git ls-files` (always current), so a new file never requires a manual leaf-node edit here."
+        },
+        {
+          "name": "This tree carries the conceptual ARCHITECTURE",
+          "summary": "This tree carries the conceptual ARCHITECTURE (subsystem roles + their ANCHOR/entry/SSOT files) — not a file dump."
+        }
+      ]
     }
   ]
 }
