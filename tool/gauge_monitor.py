@@ -14,7 +14,7 @@ PROXY gauges trend next to ``ce`` while CE descends.
 This monitor RENDERS the gauges; it changes NOTHING. The gauges are MONITOR-ONLY
 proxies, NEVER fed into the loss and NEVER a verdict. The FROZEN gate verdict still
 runs SEPARATELY post-train on the CORE engine mount (a_engine_measured_verdict). The
-frozen bars in MODEL.md / CONDITIONS.md are unchanged by anything shown here.
+frozen bars in CONDITIONS.md is unchanged by anything shown here.
 ``phi_proxy`` is NOT faithful IIT4 (a_phi_iit4_tool); ``mitosis_cells`` is the H_1199
 VAdaptField substrate count — a SUBSTRATE thermometer, NOT a generation gate
 (H_1201🔴: mitosis neither generates nor informs the generator).
@@ -60,7 +60,7 @@ GAUGES = [
 _HEADER_NOTE = (
     "⚠ DASHBOARD ONLY — NOT A GATE (a_train_inline_gauge · p7 Goodhart). phi_proxy≠IIT4 "
     "(a_phi_iit4_tool); mitosis_cells = substrate lane, NOT a generation gate (H_1201🔴). "
-    "FROZEN gate verdict runs post-train on the CORE engine mount; MODEL.md/CONDITIONS.md "
+    "FROZEN gate verdict runs post-train on the CORE engine mount; CONDITIONS.md "
     "bars unchanged."
 )
 
