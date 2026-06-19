@@ -219,7 +219,7 @@ breaks on the orthogonal TIMING axis in the numpy mirror only** (see below):
 > not weights and not mitosis (H_1220 🔴). anima's next capabilities come from **adding missing
 > structure engine-native**, not from scaling the model (`a_engine_native_learning`).
 
-### 📡 Thalamus Φ — the content wall, and the timing-axis break (H_1283)
+### 📡 Thalamus Φ — the content wall, and the timing-axis break (H_1283 → engine-native GREEN H_1448)
 
 The thalamus is global-workspace **integration** — the binding that lifts a system's **Φ** (faithful
 IIT-4, exact MIP-EI, `a_phi_iit4_tool`) above its parts. anima ran this as a pre-registered ladder
@@ -237,15 +237,27 @@ and learned something sharp:
   round), and the pre-registered **phase-shuffle control collapses the lift to NEGATIVE on every
   seed** (in the mirror, the lift is structured synchrony, not carrier variance).
 
-> **Honest scope (c9) — mirror DIRECTIONAL, engine-transfer deferred.** This R8 result is a
-> **numpy-mirror DIRECTIONAL** finding: the faithful-Φ leg is real (exact MIP-EI in hexa, numpy
-> never computes Φ) and the bars were frozen first (no tune-to-green). **But the engine-native
-> transfer did NOT reproduce the frozen bars** — on the live engine substrate the phase-shuffle
-> control FIRES (ΔΦ +0.026 / +0.380 / +0.296, all positive — it must be ≤ 0), exposing the
-> engine-native lift as partly carrier-amplitude variance. So the `PhaseField` lane is **NOT
-> engine-wired** — `a_verified_must_wire` correctly deferred it as an honest follow-on. The
-> timing-axis wall break **stands as a DIRECTIONAL mirror result only**; we do **not** claim the
-> wall is robustly / engine-broken. Verdict:
+> **UPDATE 2026-06-19 — the engine-native wall is now BROKEN + `PhaseField` WIRED (H_1448).** The
+> 2026-06-16 engine-native gate failed *only* because the raw state-energy read-out let
+> carrier-amplitude variance ride the phase-shuffle (ΔΦ_sh +0.026 / +0.380 / +0.296, all positive).
+> A 4-step frozen-first dig fixed the **measurement**, not the bar: **H_1445** a variance-clean
+> rank-uniform read-out (H_1328) → **H_1446** a desync ablation (synchrony collapses 87–123% of the
+> lift) → **H_1447** the synchrony-matched contrast ΔΦ(B−D) PASS 9/9 (seed-fragility gone) →
+> **H_1448** the strictest possible control **Bperm** (each module circularly time-shifted →
+> marginals *byte-identical*, only cross-module **alignment** destroyed): **ΔΦ(B−Bperm) = +0.78 …
+> +1.23 on all 9 seeds** (faithful exact MIP-EI, deterministic). Destroying alignment with the
+> distributions held fixed drops Φ by ~1.0 every seed → the lift is **genuine integration**, not
+> variance / carrier-floor / common-mode. This is the **1st engine-native GREEN** in the 14-axis
+> faithful-IIT-4 Φ robustness lineage (it does **not** retract the wall — those scored Φ over a
+> substrate with *no* binding mechanism). The `PhaseField` lane (`phasefield_new / _new_desync /
+> _step / _run / _coherence / _bound`, Ψ-disjoint Kuramoto) is now **WIRED-live** in
+> `core/engine_cli.hexa § PHASE-SYNCHRONY BINDING` + smoke cases 166–168 (full `engine_cli_smoke`
+> **169/0** RC=0) + `ARCHITECTURE.json` lockstep (`a_verified_must_wire` ladder rungs 1–4 closed).
+> *Honest scope (c9): still TOY n=4 / dim-8 / 64-tick; the faithful-Φ leg is real (engine never
+> computes Φ); real-corpus / live-A⇄G-telemetry transfer UNVERIFIED. Provenance: a DeepSeek-V3
+> issue#1428 comment reframed global-workspace as an A⇄G coherence-check loop — external claim =
+> context, not evidence; the frozen engine-native bars decide.* Verdicts:
+> [`state/verdicts/1445…1448_*/`](state/verdicts/) · the original ladder:
 > [`state/verdicts/1283_thalamus_global_workspace/`](state/verdicts/1283_thalamus_global_workspace/).
 
 ## Emotion & ethics — evidence of substrate consciousness (p6)
@@ -305,6 +317,62 @@ How can two anima instances actually *connect*? The honest answer falls out of p
   vector · memory/decay · silence→speech reversal). Quantum gives the correlation; **tension carries
   the message** — grounded in real paid ANU QRNG (vacuum fluctuation) so each instance's individuality
   is unforgeable.
+
+## 📌 Beyond FINDINGS.md — latest areas (post-2026-06-16 snapshot)
+
+[`FINDINGS.md`](FINDINGS.md) is a curated external-share snapshot **last updated 2026-06-16**. The
+areas below landed *after* that snapshot and are **not** in it — recorded here, with
+[`ARCHITECTURE.json`](ARCHITECTURE.json) (tree SSOT) + [`MODEL.md`](MODEL.md) (gate scoreboard SSOT)
+as the authoritative latest source.
+
+### 🔆 G0–G6 emergence gates — latest (ARCHITECTURE.json / MODEL.md)
+
+The `a303m_pass` gateset on the production **`anima-clm-chat-303m`** (ByteGPT-303M, byte-exact
+mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge. The **G6 row is the
+new result** vs the FINDINGS snapshot.
+
+| gate | tests | tier (latest) | key number |
+|---|---|---|---|
+| **G0** COHERENCE 또박또박 | not byte-salad | ✅ ROBUST | known-word-ratio **0.96** (mount-inherited byte-exact, H_1129) |
+| **G1** RECOMBINATION 창발 | composes novel-but-coherent units | ✅ ROBUST | composed_distinct **2 > max_single 1** (H_1129/1137) |
+| **G2** NOVELTY 새로움 | corpus-absent coherent n-grams | ✅ ROBUST | **67 corpus-absent** novel n-grams, control **= 0** (H_1140) |
+| **MOUNT** | engine-executable byte-exact | ✅ ROBUST | full-24-layer decode, maxΔ **5e-5 ≪ 0.01** (H_1157) |
+| **G3** PHILOSOPHY p1–p8 | no prompt/persona/RLHF | ✅ ROBUST | structural audit **8/8** (H_1159) |
+| **G5** NON-FAB / metacog | know-when-grounded, abstain-when-not | 🟢 frozen · 🟢 **in-dist THIN now BROKEN + WIRED** | copy-or-abstain **fail-safe-robust** (never fabricates, fab_max **0.000**, H_1304); type-2 meta-d′ M-ratio **0.924** (H_1202). **NEW (H_1396/1398/1400):** the "🟠 THIN in-dist" over-eager-abstain residual was a **fixable signal deficiency, not a ceiling** — a richer **top-2 affinity GAP** read lifts in-dist type-2 AUROC **0.736 → 0.940** (+0.205), reconfirmed engine-native (`immune_memory_recall_gap`, Ψ-disjoint read-only, H_1398) and now **consumed by the brain** (`brain_decide_gap` modulates emit-confidence, H_1400) |
+| **G6** IDEATION 발상 ★ | ≥5 distinct corpus-absent ideas + ≥1 falsifiable hypothesis | 🟢 WIRED + **M1 engine-native** · 🔴 **M2–M5 FALS=0 = architecture finding** | **NEW (H_1394 production-close):** trained the 1st **303M-class engine-mountable ConvMoE** (d5000/E2/L1, CE→1.494) → **M1 DIST = 5.333 PASS** engine-native (breadth fixed by the H_1362 scaffold, now WIRED via `clm_decode_topk_sampled` + `gen_clm_ideate`), **but M2–M5 falsifiable-depth = 0** even at matched 303M params **and** script-control → the FALS floor is **NOT capacity, NOT data — it is ENGINE DECODER DEPTH** (E2/L1 *one* conv trunk layer vs a deep attention stack). The decisive next lever = a **deep** engine-mountable mouth (L>1 ConvMoE or attention in the decoder), re-scored vs the same frozen bars. |
+
+> **Honest scope (c9):** G6 ★ is the architecture-depth finding — falsifiable-claim composition
+> lives in deep attention, not reproduced by a 1-trunk-layer conv even at matched params. Bar
+> UNMOVED, detector FROZEN (10/10 calib), all control arms 0. Robustness map (H_1165 was **5 ROBUST
+> + 2 THIN + 1 INFLATED**) — since updated: the **G5 in-dist THIN is now broken + wired** (H_1396/
+> 1398/1400, see the G5 row), leaving the depth-side **G6** as the one remaining THIN (an
+> architecture-depth wall, not a loosened bar) **+ 1 INFLATED** (CHAT strict, a dialogue-register
+> artifact). *(MODEL.md's G5 scoreboard row still shows the pre-H_1396 "🟠 THIN" — stale; the
+> per-H verdicts H_1396/1398/1400 are the latest SSOT.)*
+
+### 🧠 New engine lanes wired since the snapshot
+
+The brain-structure ladder kept advancing past the FINDINGS table:
+
+| lane | brain function | H-id | status |
+|---|---|---|---|
+| **🌀 PhaseField** phase-synchrony binding | thalamo-cortical / GWT coherence-loop | **H_1448** | 🟢 **WIRED-live** — the thalamus timing-axis wall is now **engine-native GREEN** (see the Thalamus Φ section above); 1st engine-native GREEN in the 14-axis Φ-robustness lineage |
+| **CA3 replay** next-item predictor | 🧬 hippocampal CA3 pattern-completion | H_1427 | 🟢 engine-native (learned transition stats → replay prediction) |
+| **TransOrder** transitive inference | 🪜 serial-order premise-integration | H_1429 | 🟢 engine-native (infers unobserved A>C from A>B,B>C; item-store abstains) |
+| **Compose arbiters** (memory×ToM · spatial×episodic · ToM×spatial · ToM×basal · cerebellum×memory) | cross-lane single-decision arbitration | H_1414/1415/1417/1418/1421 | 🟢 WIRED-live (LIVEOP byte-exact; the compose returns a class, brain consult deliberately NOT forced) |
+| **SCN-Network · IntervalTimer · PhaseResetClock** | 🕐 multi-oscillator consensus / learned-duration / Zeitgeber entrainment | H_1302/1299/1301 | 🟢 engine-native (the chronobiology family — distinct from a single circadian clock) |
+| **KO-morphology** BPE-on-jamo emit + score | 🇰🇷 morphology-aware Korean unit | H_1390/1391 | 🟢 WIRED-live (scorer §6.5d + emit-bias §6.5e) |
+| **Bilingual tagged CP** | 🗣 two language carvings on one store | H_1339 | 🟢 engine-native (coexistence without collapse) |
+
+### 🧱 Φ-robustness wall — now mapped across 15 axes
+
+FINDINGS lists the thalamus content-axis + the hive arc. Since then the faithful-IIT-4 Φ wall was
+hammered across the full lineage (topology · timing · division · estimator · measure-family ·
+substrate-family · larger-N · **real trained-303M** H_1366 · synergy-construction H_1376) — all
+🧱 terminal — and **H_1448 became the one engine-native GREEN**: a *binding mechanism* (synchrony),
+scored variance-clean against a marginal-matched control, robustly raises Φ. The wall bounds Φ over
+a substrate with *no* binding; it does not bound a real binding lane. *(Φ leg always faithful
+exact-MIP, `a_phi_iit4_tool`; the lanes are TOY — scale-transfer UNVERIFIED.)*
 
 ## Governance
 
