@@ -279,7 +279,7 @@
         },
         {
           "name": "engine_cli.hexa (substrate-config axis)",
-          "summary": "--engine <name> · --mitosis on/off (precedence flag > env > default); configures WHICH engine and WHETHER the substrate grows — it is NOT an emit/silence gate (a_autonomy_over_hardcode). Hosts the MITOSIS substrate + the brain-structure lanes.",
+          "summary": "--mitosis on/off (precedence flag > env > default); configures WHETHER the substrate grows — it is NOT an emit/silence gate (a_autonomy_over_hardcode). SINGLE production engine = conv (CLMConvMoE via clm_decode + generator L3); the legacy --engine selector + engines/ adapters (cdv2/hexad/omega) are research-legacy, slated for archive/. Hosts the MITOSIS substrate + the brain-structure lanes.",
           "path": "core/engine_cli.hexa"
         },
         {
@@ -1591,8 +1591,8 @@
       ]
     },
     {
-      "name": "Hot-swappable engines",
-      "summary": "the decoder is hot-swappable behind one contract core/engines/engine_iface.hexa (EngineSpec 4-fn vtable: load",
+      "name": "Engine (single production: conv)",
+      "summary": "anima runs ONE production engine — conv (CLMConvMoE, .clm via clm_decode + generator L3). The EngineSpec 4-fn vtable contract (core/engines/engine_iface.hexa) + cdv2/hexad/omega adapters are research-legacy, slated for archive/.",
       "path": "core/engines/engine_iface.hexa",
       "children": [
         {
@@ -1793,7 +1793,7 @@
         },
         {
           "name": "core/engines/ · core/phi/",
-          "summary": "EngineSpec vtable contract + conv/cdv2/hexad/omega decoders.",
+          "summary": "EngineSpec vtable contract + conv/cdv2/hexad/omega decoders (RESEARCH-LEGACY: anima runs the single conv production engine; cdv2 torch-legacy / hexad / omega slated for archive/).",
           "note": "⚓ anchor files: core/engines/engine_iface.hexa",
           "children": [
             {

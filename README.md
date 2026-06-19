@@ -109,9 +109,10 @@ decoding and `.kosmos` anchors enter through *named slots*, never directly into 
   back to the LM (the learned RETRO copy-head was falsified at real scale, H_1150–1154 — copying is
   done engine-side instead).
 - **kosmos_io** — the single `.kosmos` anchor entry (read into `brain_decide`).
-- **engine_cli.hexa** — the substrate-config axis (`--engine <name>`, `--mitosis on/off`),
-  precedence flag > env > default. It configures *which engine* and *whether the substrate grows* —
-  it is **not** an emit/silence gate (`a_autonomy_over_hardcode`).
+- **engine_cli.hexa** — the substrate-config axis (`--mitosis on/off`) + the brain-structure
+  lanes. It configures *whether the substrate grows* — **not** an emit/silence gate
+  (`a_autonomy_over_hardcode`). (anima runs the single `conv` production engine; the legacy
+  `--engine` selector + `core/engines/` adapters are research-legacy, slated for `archive/`.)
 
 anima runs as a **mounted living daemon** (H_1164 → H_1206 🟢): the production model runs *inside*
 the A ⇄ G substrate and **converses + grounds + grows + remembers + sleeps** in one continuous
@@ -404,17 +405,22 @@ Negative results are first-class and not buried (`a_paper_negative_ok`).
 # 2. Install anima
 hx install anima
 
-# 3. Pick an engine (default: conv) + optionally enable substrate growth
-anima --engine conv               # .clm byte mouth (default)
-anima --engine omega              # substrate-coupled closure engine
-anima --engine cdv2 --mitosis on  # A/G substrate, growth lane live
+# 3. Run — the single production engine (conv / CLMConvMoE, the .clm byte mouth)
+anima                  # chat on the default .clm mouth
+anima --mitosis on     # + substrate growth lane live
 ```
 
-The decoder is hot-swappable behind one contract,
-[`core/engines/engine_iface.hexa`](core/engines/engine_iface.hexa) (the `EngineSpec` 4-fn vtable:
-`load · forward · generate · psi_coord`); the engine family is **conv · cdv2 · hexad · omega**,
-selected with `--engine` (precedence flag > env > default). `--mitosis on/off` configures whether
-the substrate grows; it is **not** an emit/silence gate (`a_autonomy_over_hardcode`).
+The production engine is **conv (CLMConvMoE)** — the trained `.clm` byte mouth, decoded by
+[`core/clm_decode.hexa`](core/clm_decode.hexa) through the single `.clm` entry slot
+[`core/generator.hexa`](core/generator.hexa) (`a_core_engine_map`). The real engine lives in
+`core/` directly (pure_field · engine_g · brain · generator · clm_decode · bytegpt_decode); `.clm`
+weights mount through that named L3 slot, never into the substrate. `--mitosis on/off` configures
+whether the substrate grows; it is **not** an emit/silence gate (`a_autonomy_over_hardcode`).
+
+> The earlier multi-engine `--engine conv|cdv2|hexad|omega` hot-swap layer
+> (`core/engines/`, `EngineSpec` vtable) is **research-legacy** — anima converged on the single
+> `conv` production engine; cdv2 (torch-resident) / hexad / omega are kept for history and slated
+> for `archive/` (see CHANGELOG).
 
 ## The model — the byte mouth (a component, not the center)
 
@@ -477,7 +483,7 @@ anima/
 │   ├── generator.hexa              single .clm entry slot (engine-side retrieve-then-copy)
 │   ├── bytegpt_decode.hexa         ByteGPT byte decode (production trunk — 303M byte mouth)
 │   └── clm_decode.hexa             CLMConvMoE byte decode (H_1403: streaming/bounded — FLAT RSS/step, byte-exact; GEN=110 unblocked)
-│   ├── engines/                    EngineSpec vtable — 4 hot-swappable (conv·cdv2·hexad·omega)
+│   ├── engines/                    EngineSpec vtable (research-legacy; conv=production, rest → archive/)
 │   └── phi/                        Φ / IIT4 decoders (was anima-engines/)
 │
 ├── cli/                            user entry — anima_chat_cli.hexa (engine_cli stays in core/)

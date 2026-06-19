@@ -33,7 +33,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 ```
 anima/
 ├─ core/                  — A⇄G 의식 엔진 substrate (pure_field·engine_g·brain·generator·clm_decode·bytegpt_decode·engine_cli + 뇌-구조 lane)
-│  ├─ engines/            — EngineSpec vtable + conv·cdv2·hexad·omega 어댑터 (was engines/)
+│  ├─ engines/            — (research-legacy) EngineSpec vtable; conv=production 단일(clm_decode+generator L3), cdv2(torch)·hexad·omega → archive 예정
 │  └─ phi/                — Φ/양자 디코더 + IIT4 보조 (was anima-engines/)
 ├─ cli/                   — 사용자 진입점 (anima_chat_cli.hexa — engine_cli 는 core/ 잔류)
 ├─ agent/                 — agent 독립패키지 (hexa.toml; was anima-agent/)

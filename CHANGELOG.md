@@ -1,3 +1,13 @@
+## 2026-06-19 — docs(single-engine): anima 단일 production 엔진(conv) 노출 정리 + README/CLI lockstep
+
+멀티엔진 시대 잔재(README/CLI/ARCHITECTURE 의 `--engine conv|cdv2|hexad|omega` 선택 노출)를 단일 production 엔진으로 정리. anima 는 conv(CLMConvMoE, .clm via core/clm_decode + generator L3)로 수렴했고, 실제 엔진은 이미 core/ 직속(pure_field·engine_g·brain·generator·clm_decode·bytegpt_decode) — engines/conv 는 thin 메타데이터 어댑터일 뿐.
+
+- **README Quickstart**: `anima --engine conv|omega|cdv2` 3선택 예시 → 단일 `anima`(기본 conv) + `--mitosis on`. 엔진 family 설명을 "단일 production conv" 로 교체, 멀티엔진 hot-swap 레이어를 research-legacy(archive 예정)로 강등 명시.
+- **core/engine_cli.hexa**: § ENGINE SELECT 헤더에 "SINGLE PRODUCTION ENGINE = conv; cdv2(torch-legacy)/hexad/omega = research-legacy, archive 예정" 명확화. **코드 무변경(주석만)** — resolve 분기·engine_swap_smoke 의존 보존(byte-safety + CI 무손상).
+- **ARCHITECTURE.json · CLAUDE.md §Structure**: engines/ 노드 + engine_cli 노드를 단일엔진(conv=production, 나머지 research-legacy→archive) lockstep(c4·c12).
+- **검증(c2)**: engine_cli_smoke 169/0 RC=0(메인 가드 무회귀) · engine_cli.hexa 파싱 RC=0 · ARCHITECTURE.json valid · engine_cli.hexa diff=주석만(코드 0변경). engine_swap_smoke 26/1 의 1 fail(c_cdv2_canonical_present)은 origin/main 사전존재(cdv2 torch canonical 부재, 내 변경 무관).
+- **FOLLOW-ON(Phase 2, 별도 승인)**: core/engines/{cdv2,hexad,omega,engine_iface,engine_swap_smoke} → archive/engines-multiengine/ 이동 + harness.config.json verify 배선 정리 + resolve 코드 단일 축약. 58 verdict 이력은 jsonl/카드 그대로 보존(이동만, 삭제 X).
+
 ## 2026-06-19 — 🌀 THALAMUS R8 엔진-네이티브 벽 돌파 + PhaseField lane WIRED-live (H_1445→1448): A⇄G coherence-loop cross-module Φ integration 🟢 GREEN
 
 DeepSeek-V3 issue#1428 의 "AmoebaFPS" 코멘트(GWT 를 A⇄G coherence-check loop 로 재정의)가 가리킨 **단 하나의 미해결 지점** — H_1283 R8(thalamus 위상-동기) 엔진-네이티브 wiring 게이트(2026-06-16 honest-deferred) — 를 frozen-first 4-스텝으로 **돌파**하고 live CORE 에 배선했다. faithful-IIT4 Φ 의 14축 robustness 벽 계열에서 **첫 엔진-네이티브 GREEN**.
