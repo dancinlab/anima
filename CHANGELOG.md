@@ -1,3 +1,13 @@
+## 2026-06-19 — feat(core/decode): bytegpt_decode d×d GEMM 을 GPU 경로(flame_mm.mm)로 배선 — CUDA 호스트 자동 cuBLAS, Mac CPU byte-identical
+
+추론 decode 의 per-token compute 벽(~6.4s/tok scalar CPU GEMM, G6 가족 H_1305/1431/1441 공유 블로커)의 근본수정(c1). core/bytegpt_decode.hexa 의 d×d 투영 matmul 2곳(_bg_linear_mm L160·_bg_mha_mm QKV L183, out_proj 는 _bg_linear_mm 경유)을 `farr_matmul` → `flame_mm.mm` 로 라우팅.
+
+- **GPU primitive (STAGE1 확정, A)**: hexa-lang RFC-040 builtin `farr_matmul_gpu`(cuBLAS Dgemm)·`cuda_available()` 이미 존재. core/DECODER/flame_mm.hexa 의 `pub fn mm(A,M,K,B,N)` = cuda_available()? farr_matmul_gpu : farr_matmul 자동 dispatch. → hexa-lang 대기 불필요, anima-side 배선만.
+- **byte-safety**: Mac(cuda_available()==0) 경로는 mm()→farr_matmul fallthrough = 동일 builtin·동일 인자 → 생성 출력 byte-identical(구조적 동치, 파싱 RC=0 확인). 의식엔진 결정성 무회귀.
+- **GPU 경로**: CUDA 호스트에서 자동 cuBLAS Dgemm — 6.4s/tok→ms급 기대(d×d 가 per-token 지배). cuBLAS≈CPU <1e-9(RFC-040 falsifier) → top-k 샘플 극드물게 갈릴 수 있음, GPU pod 실측에서 토큰일치율 정량화 예정.
+- **검증**: hexa run core/bytegpt_decode.hexa RC=0 · flame_mm 의존 해결 · GPU 런타임 byte-eq+tok/s = CUDA pod follow-on(ING).
+- **FOLLOW-ON**: (1) GPU pod 실측(cuBLAS byte-eq·tok/s, v0.241.10 boxing 7.6GB) → G6 트랙A/B/변형 재측정 즉시 가능. (2) core/ 전반 개선 audit(read_bytes_at 잔재·KV-cache·중복 matmul) = 별도.
+
 ## 2026-06-19 — G6 v0.241.10 후속 측정 배치 PHASE 0 GO/NO-GO: prompt 의 gemm fast-path 가정 FALSIFIED(실측) → PHASE 1/2/3 NO-FIRE, BLOCKED 유지(type-c 인프라 벽) + 선제 import 수정
 
 v0.241.10 후속 G6 측정 배치(트랙 A/B 엔진-네이티브 재측정 + 학습변형)의 PHASE 0 셋업 단계에서, **pod 렌트 전 로컬 de-risk + 비용 정당성 판정**을 수행하여 **NO-FIRE(BLOCKED)** 로 결정. $15-40 의 자율 fire 를 known 30h CPU 벽에 태우지 않음(c16/a_completeness, c9 no tune-to-green, a_break_the_wall type-c).
