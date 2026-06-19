@@ -10,7 +10,12 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.13.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.13.1`** (한 줄, 전체 시스템 release).
+
+> **0.13.0 → 0.13.1** (2026-06-19): 🗂️ Phase 2 멀티엔진 archive — core/engines/
+> 전체(conv/cdv2/hexad/omega + EngineSpec vtable + engine_swap_smoke) → archive/
+> engines-multiengine/ 보관(이력보존), engine_cli resolve 를 단일 conv 상수로 축약.
+> 내부 리팩터(공개 동작 무변경; engine_cli_smoke 169/0 · h1205 생성 byte-id).
 
 > **0.12.0 → 0.13.0** (2026-06-19): 🔧 GPU DECODE + canonical core/ + 단일엔진.
 > (1) 추론 decode d×d GEMM 을 `core/DECODER/flame_mm.mm` 로 배선 (#2386) —
