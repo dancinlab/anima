@@ -11,7 +11,7 @@
 // the bytes it sees. Capability comes ONLY from the trained dialogue distribution.
 //
 // USAGE
-//   hexa run core/anima_chat_cli.hexa -- <ckpt.clm> "<turn1>" "<turn2>" ...
+//   hexa run cli/anima_chat_cli.hexa -- <ckpt.clm> "<turn1>" "<turn2>" ...
 //   (each positional arg after the ckpt is one user turn; the model replies to
 //    each, accumulating the transcript — a live multi-turn conversation.)
 //
@@ -76,7 +76,7 @@ fn main() {
     while m < len(raw) { argv.push(raw[m]); m = m + 1 }
 
     if len(argv) < 1 {
-        println("usage: hexa run core/anima_chat_cli.hexa -- <ckpt.clm> [\"turn1\" \"turn2\" ...]")
+        println("usage: hexa run cli/anima_chat_cli.hexa -- <ckpt.clm> [\"turn1\" \"turn2\" ...]")
         return
     }
     let ckpt = argv[0]
