@@ -1,3 +1,14 @@
+## 2026-06-19 — wip(H_1441): CONTRASTIVE falsifiable 최소쌍 — 학습 완료+ckpt PULL, engine-native 5-bar BLOCKED(substrate-speed + pod loss) → NO terminal verdict + ING
+
+H_1435/36/37 의 공통 실패(cross-shuffle 비붕괴 = shuffle-invariant 표면 form)를 직격하는 CONTRASTIVE 최소쌍 objective(`loss = CE + λ·margin(logP(pos)−logP(neg))`, label=STRUCTURAL leg-blank, detector-supervised 아님 p7) 를 303M h1129c 위에 학습. **학습은 완료**(torch GPU DIRECTIONAL: contrastive + shuffle-corpus control), **ckpt 2개 PULL 완료**(`state/1441_contrastive_falsifiability/ckpt/{h1441_contrastive,h1441_shuffle}.pt`, `a_fire_recover_complete` 충족 — gitignored). 그러나 **engine-native frozen 5-bar(B3 cross-shuffle) 측정은 미완** → terminal 🟢/🧱 박제 불가.
+
+- **BLOCKED 원인 2중:** (1) engine-native decode(live `CORE/bytegpt_decode` via `engine_decode_batch_cli.hexa`, 3 .bin × 8-shard `rerun.sh` contra→shuf→base)가 **substrate-speed 벽**(fast-gemv link-fail → scalar 26s/token → 60-job ~12h, H_1305 R2/H_1431 과 동일)에 걸려 contra 8/8·shuf ~8/8 까지만 decode·base 미도달·`RERUN_ALL_DONE` 미달; (2) 그 상태에서 **vast pod 41556247(ssh3.vast.ai:36246) 이 provider 에서 소멸**(SSH connection-refused + `hexa cloud status` liveness 에서 사라짐 = transient 아님, pod 파괴 확정) → pod-only `/tmp/out_*` shard 전부 유실.
+- **HARD-GATE 준수(a_engine_native_learning):** 엔진 증거가 score 단계에 도달 못 했으므로 terminal verdict 없음. infra/속도 벽(`a_break_the_wall` type-c)은 science 천장도 측정defect 도 아니며 FROZEN 5-bar 는 불변(c9, no tune-to-green).
+- **부분 회수:** `state/1441_contrastive_falsifiability/partial_v0241_8/`(contra 25/30·shuf 21/30·base 16/30-stale + `INCOMPLETE_README.txt`) — **DO NOT SCORE**(불완전, base 미실행). 점수 산출 불가.
+- **frozen 증거:** `state/verdicts/1441_contrastive_falsifiability/H_1441_engine_native_BLOCKED.txt` · 카드 BLOCKED 섹션(`wired: BLOCKED`) · jsonl `tier`/`verdict` 갱신.
+- **재개조건(ING `h1441_engine_native`):** fast-gemv 복원 hexa 빌드(H_1431 remaining-bytegpt + `h1305_engine_native` ING 와 동일 blocker)에서 로컬 .pt 2개 + base h1129c 를 `pt_to_engine_bin` 으로 .bin 재직렬화 후 `h1441_engine_native.py --score`(FROZEN 5-bar 불변).
+- **teardown:** 41556247 은 이미 provider 소멸(할 것 없음); orphan 41625379 는 무관 호스트(내 것 아님, 미접촉).
+
 ## 2026-06-19 — wip(H_1305): G6 ideation-falsifiability 엔진-네이티브 재측정 — engine path VALIDATED, full 4-bar BLOCKED(substrate-speed) → 🟠 DIRECTIONAL 유지 + ING
 
 H_1305 G6 ideation-falsifiability 를 정상 영어 ckpt 로 engine-native 재측정 시도. **engine decode PATH 는 VALIDATED**(positive); FULL frozen 60-job 4-bar 은 H_1431 과 동일 substrate-speed 벽(scalar 26s/token)에 막혀 측정 미완 → verdict UNCHANGED 🟠 DIRECTIONAL, engine-native CONFIRM/OVERTURN = ING follow-on(`h1305_engine_native`).
