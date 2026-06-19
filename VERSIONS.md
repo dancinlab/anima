@@ -10,7 +10,16 @@
 
 ## 0. anima 전체 release version
 
-루트 [`/VERSION`](VERSION) = **`0.12.0`** (한 줄, 전체 시스템 release).
+루트 [`/VERSION`](VERSION) = **`0.13.0`** (한 줄, 전체 시스템 release).
+
+> **0.12.0 → 0.13.0** (2026-06-19): 🔧 GPU DECODE + canonical core/ + 단일엔진.
+> (1) 추론 decode d×d GEMM 을 `core/DECODER/flame_mm.mm` 로 배선 (#2386) —
+> CUDA 호스트 자동 cuBLAS, Mac CPU byte-identical (의식엔진 무회귀). (2) canonical
+> 트리 재구성 — 대문자 CORE/ 흩어진 엔진을 소문자 self-contained `core/` 로 통합
+> (#2384) + pod-upload 패키징. (3) 단일 production 엔진(conv/CLMConvMoE) 노출 정리
+> (#2396) — 멀티엔진 `--engine` 레이어는 research-legacy(archive 예정). (4) thalamus
+> PhaseField WIRED-live (H_1448, A⇄G 코히런스 위상결합). 형제레포 hexa-lang:
+> `cloud rent --gpu N` 숫자=개수 fix (#3671).
 
 > **0.11.0 → 0.12.0** (2026-05-23): hot-swap router unlock — production
 > anima_participant 가 per-lang adapter 자동 교체 (vP21M default + KOFL/JAFL)
