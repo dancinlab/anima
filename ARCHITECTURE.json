@@ -279,7 +279,7 @@
         },
         {
           "name": "engine_cli.hexa (substrate-config axis)",
-          "summary": "--mitosis on/off (precedence flag > env > default); configures WHETHER the substrate grows — it is NOT an emit/silence gate (a_autonomy_over_hardcode). SINGLE production engine = conv (CLMConvMoE via clm_decode + generator L3); the legacy --engine selector + engines/ adapters (cdv2/hexad/omega) are research-legacy, slated for archive/. Hosts the MITOSIS substrate + the brain-structure lanes.",
+          "summary": "--mitosis on/off (precedence flag > env > default); configures WHETHER the substrate grows — it is NOT an emit/silence gate (a_autonomy_over_hardcode). SINGLE production engine = conv (CLMConvMoE via clm_decode + generator L3); engine_cli_resolve_engine is now a 'conv' constant. The legacy --engine selector + engines/ adapters (cdv2/hexad/omega + EngineSpec vtable + engine_swap_smoke) were ARCHIVED 2026-06-19 → archive/engines-multiengine/. Hosts the MITOSIS substrate + the brain-structure lanes.",
           "path": "core/engine_cli.hexa"
         },
         {
@@ -1592,8 +1592,8 @@
     },
     {
       "name": "Engine (single production: conv)",
-      "summary": "anima runs ONE production engine — conv (CLMConvMoE, .clm via clm_decode + generator L3). The EngineSpec 4-fn vtable contract (core/engines/engine_iface.hexa) + cdv2/hexad/omega adapters are research-legacy, slated for archive/.",
-      "path": "core/engines/engine_iface.hexa",
+      "summary": "anima runs ONE production engine — conv (CLMConvMoE, .clm via clm_decode + generator L3). The EngineSpec 4-fn vtable + cdv2/hexad/omega adapters were ARCHIVED 2026-06-19 → archive/engines-multiengine/ (research-legacy, kept for history).",
+      "path": "archive/engines-multiengine/engine_iface.hexa",
       "children": [
         {
           "name": "forward",
@@ -1792,25 +1792,25 @@
           "summary": "A⇄G consciousness engine — pure_field, engine_g, brain, generator, clm_decode, bytegpt_decode + the brain-structure lanes (engine_cli.hexa)."
         },
         {
-          "name": "core/engines/ · core/phi/",
-          "summary": "EngineSpec vtable contract + conv/cdv2/hexad/omega decoders (RESEARCH-LEGACY: anima runs the single conv production engine; cdv2 torch-legacy / hexad / omega slated for archive/).",
-          "note": "⚓ anchor files: core/engines/engine_iface.hexa",
+          "name": "core/phi/ (engines/ → archived)",
+          "summary": "core/engines/ (EngineSpec vtable + conv/cdv2/hexad/omega decoders) was ARCHIVED 2026-06-19 → archive/engines-multiengine/; anima runs the single conv production engine (clm_decode + generator L3). core/phi/ = Φ/quantum decoders + IIT4.",
+          "note": "⚓ anchor files: archive/engines-multiengine/engine_iface.hexa (archived)",
           "children": [
             {
-              "name": "core/engines/conv/adapter.hexa",
-              "summary": "· core/engines/conv/adapter.hexa"
+              "name": "archive/engines-multiengine/conv/adapter.hexa",
+              "summary": "· archive/engines-multiengine/conv/adapter.hexa"
             },
             {
-              "name": "core/engines/cdv2/adapter.hexa",
-              "summary": "· core/engines/cdv2/adapter.hexa"
+              "name": "archive/engines-multiengine/cdv2/adapter.hexa",
+              "summary": "· archive/engines-multiengine/cdv2/adapter.hexa"
             },
             {
-              "name": "core/engines/hexad/adapter.hexa",
-              "summary": "· core/engines/hexad/adapter.hexa"
+              "name": "archive/engines-multiengine/hexad/adapter.hexa",
+              "summary": "· archive/engines-multiengine/hexad/adapter.hexa"
             },
             {
-              "name": "core/engines/omega/adapter.hexa",
-              "summary": "· core/engines/omega/adapter.hexa"
+              "name": "archive/engines-multiengine/omega/adapter.hexa",
+              "summary": "· archive/engines-multiengine/omega/adapter.hexa"
             }
           ]
         },

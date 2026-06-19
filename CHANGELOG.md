@@ -1,3 +1,14 @@
+## 2026-06-19 — refactor(engines): Phase 2 멀티엔진 어댑터 archive + engine_cli 단일 conv 축약
+
+Phase 1(노출 단일화)에 이어 멀티엔진 레이어를 코드 레벨로 정리. core/engines/ 전체를 archive/engines-multiengine/ 로 보관(삭제 X — verdict 이력 보존), engine_cli 의 멀티엔진 resolve 코드를 단일 conv 로 축약.
+
+- **archive 이동(git mv)**: core/engines/{conv,cdv2,hexad,omega,engine_iface.hexa,engine_swap_smoke.hexa} → archive/engines-multiengine/ (+ archive README: 부활 절차·cdv2 torch-legacy 명시). core/engines/ 소멸.
+- **core/engine_cli.hexa**: EngineSpec 4-import 제거 · engine_cli_resolve_engine → "conv" 상수 · _engine_known/_cli_engine_flag/engine_cli_resolve_spec/engine_cli_spec_by_name 제거. 실제 conv 엔진은 core/clm_decode + generator L3 직접(무변경). _after_eq 는 mitosis 가 써서 유지.
+- **harness.config.json**: verify.files 에서 core/engines/engine_iface.hexa 배선 제거(archive 됨).
+- **lockstep**: README(Quickstart·트리·설명) · CLAUDE.md §Structure · ARCHITECTURE.json(engine_cli·engines 노드·어댑터 path) 단일엔진+archive 반영(c4·c12).
+- **검증(c2·무회귀)**: engine_cli.hexa 파싱 RC=0 · engine_cli_smoke **169/0 RC=0** · h1196 single-entry RC=4(pristine 동일 사전존재) · h1205 separation-invariant(생성 byte-id) · enforce clean · ARCHITECTURE.json valid · core/ 에 깨진 archive import 0. 생성 출력 불변(resolve_engine 상수화는 conv 가 이미 유일 production 경로라 디코드 무영향).
+- **xref**: Phase 1(#2396) 단일엔진 노출 정리의 코드-레벨 완결. 부활 시 archive README 의 복원 절차.
+
 ## 2026-06-19 — docs(single-engine): anima 단일 production 엔진(conv) 노출 정리 + README/CLI lockstep
 
 멀티엔진 시대 잔재(README/CLI/ARCHITECTURE 의 `--engine conv|cdv2|hexad|omega` 선택 노출)를 단일 production 엔진으로 정리. anima 는 conv(CLMConvMoE, .clm via core/clm_decode + generator L3)로 수렴했고, 실제 엔진은 이미 core/ 직속(pure_field·engine_g·brain·generator·clm_decode·bytegpt_decode) — engines/conv 는 thin 메타데이터 어댑터일 뿐.
