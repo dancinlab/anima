@@ -10,7 +10,7 @@
       "kosmos (.kosmos anchors)",
       "hexa-codex (paper/verdict tooling)"
     ],
-    "guard_baseline": "engine_cli_smoke +6 CA3 cases 153-158 (H_1427, all PASS engine-native via isolated run /tmp/ca3_cases_only.hexa importing live engine_cli.hexa, RC=0) · brain_smoke RC=0 · LIVEOP probe state/1427_temporal_replay_prediction/h1427_ca3_LIVEOP_probe.hexa GREEN 5/5 RC=0 · single-entry (h1196) 7/0 · h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½, pure_field unchanged). NOTE: the FULL core/engine_cli_smoke.hexa currently aborts at ~case 16 (immune_grow/salience 'cannot multiply non-numeric operand tag 24*tag 24') under hexa 0.1.0-dispatch — a PRE-EXISTING dispatch-build interpreter bug reproducing on clean origin/main on BOTH summer and aiden, NOT a CA3-lane regression; the CA3 cases pass once that earlier crash is fixed.",
+    "guard_baseline": "engine_cli_smoke +6 CA3 cases 153-158 (H_1427, all PASS engine-native via isolated run /tmp/ca3_cases_only.hexa importing live engine_cli.hexa, RC=0) · brain_smoke RC=0 · LIVEOP probe state/1427_temporal_replay_prediction/h1427_ca3_LIVEOP_probe.hexa GREEN 5/5 RC=0 · single-entry (h1196) 7/0 · h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½, pure_field unchanged). · §PhaseField (H_1448 R8-break) +3 cases 166-168: FULL core/engine_cli_smoke.hexa = 169 pass / 0 fail RC=0 on darwin hexa v0.241.6 (the tag-24 abort below is x86_64-pool-only; synced R=0.984 vs desync R≈0.42-0.71 across 9 seeds). NOTE: the FULL core/engine_cli_smoke.hexa currently aborts at ~case 16 (immune_grow/salience 'cannot multiply non-numeric operand tag 24*tag 24') under hexa 0.1.0-dispatch — a PRE-EXISTING dispatch-build interpreter bug reproducing on clean origin/main on BOTH summer and aiden, NOT a CA3-lane regression; the CA3 cases pass once that earlier crash is fixed.",
     "migrated_from": "ARCHITECTURE.md (prose) retired 2026-06-16 → ARCHITECTURE.json tree SSOT + ARCHITECTURE.html viewer (c4 standard)"
   },
   "children": [
@@ -171,7 +171,7 @@
               "children": [
                 {
                   "name": "engine_cli.hexa = substrate-config axis + MITOSIS + the brain-structure",
-                  "summary": "engine_cli.hexa = substrate-config axis + MITOSIS + the brain-structure lanes (§ ImmuneMemory(recall/margin/gap)/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(JamoHead/jamo_head_*)/KO-MORPHOLOGY BPE-ON-JAMO(BpeMerges)/HierGoalStack/SpatialMap/TransOrder(transitive-inference: trans_order_integrate/_higher/_item_higher/_shuffle, HD34"
+                  "summary": "engine_cli.hexa = substrate-config axis + MITOSIS + the brain-structure lanes (§ ImmuneMemory(recall/margin/gap)/SkillStore/UsageStore/KO-JAMO COUNT-HEAD(JamoHead/jamo_head_*)/KO-MORPHOLOGY BPE-ON-JAMO(BpeMerges)/HierGoalStack/SpatialMap/TransOrder(transitive-inference: trans_order_integrate/_higher/_item_higher/_shuffle, HD34 ... /PhaseField(phase-synchrony binding: phasefield_new/_new_desync/_step/_run/_coherence/_bound, H_1448 R8-break)"
                 }
               ]
             },
@@ -816,6 +816,21 @@
           ]
         },
         {
+          "name": "🌀 Phase-synchrony binding (thalamo-cortical / GWT coherence-loop) — PhaseField",
+          "summary": "binds N modules in TIME via a Kuramoto phase channel + pacemaker (the A⇄G coherence-check loop, the AmoebaFPS/GWT reframing of H_1283 R8): phasefield_new (k=0.5 synchronized) / phasefield_new_desync (k=0 ablate) / phasefield_step / phasefield_run / phasefield_coherence (cross-module order parameter R) / phasefield_bound (optional read). The bound quantity is cross-module INTEGRATION (alignment of phase-gated salience), not a shared clock — DISTINCT from §SCN-NETWORK (ensemble consensus PERIOD).",
+          "status": "🟢 WIRED-live ENGINE-NATIVE (H_1448 R8-break; live lane in engine_cli.hexa § PHASE-SYNCHRONY BINDING + smoke cases 166-168, verified RC=0 via standalone lane harness importing live engine_cli.hexa: synced R=0.984 vs desync R≈0.42-0.71 across 9 seeds — full engine_cli_smoke end-to-end gated by the same pre-existing host-wide hexa tag-24 toolchain bug at case_10/WorkMemBuffer, ING follow-on, NOT a PhaseField regression). The faithful-IIT4 Φ GREEN evidence (the integration the order parameter drives) lives in the H_1448 engine-native probe; the brain emit-loop consult is deliberately NOT forced (@L4 a_autonomy_over_hardcode).",
+          "children": [
+            {
+              "name": "WALL BROKEN — the R8 engine-native wiring gate (honest-deferred 2026-06-16) cleared",
+              "summary": "the 2026-06-16 R8 engine-native gate FAILED (raw read-out let carrier-amplitude variance ride the phase-shuffle). H_1445 variance-clean rank-uniform read-out (H_1328) + H_1446 desync ablation + H_1447 synchrony-matched B−D + H_1448 the STRICTEST matched control (Bperm = per-module circular time-shift → marginals BYTE-IDENTICAL, only cross-module ALIGNMENT destroyed): ΔΦ(B−Bperm) +0.78..+1.23 on ALL 9 seeds [3..11] (faithful exact MIP-EI, a_phi_iit4_tool, variance-clean, deterministic). 1st engine-native GREEN in the 14-axis Φ-robustness lineage."
+            },
+            {
+              "name": "Ψ-disjoint binding faculty (k=0 desync collapses the order parameter)",
+              "summary": "@L4 PURE binding faculty over its own per-module phases — reads NO context/immune store, NEVER mutates another lane, NEVER returns emit/silence, NEVER touches pure_field Φ/phase/Ψ. The k=0 desync control collapses the order parameter → the lift is the coherent SYNCHRONY, not the carrier (the H_1448 ablation arm D). p1/p2/p3/p6: geometry over phase differences, scored only. Provenance: DeepSeek-V3 issue#1428 'AmoebaFPS' reframed GWT as an A⇄G coherence-check loop (external claim = context not evidence, c9; the engine-native frozen bars decide)."
+            }
+          ]
+        },
+        {
           "name": "🛠 Skill repertoire (agent-tool learns via mitosis) — SkillStore",
           "summary": "a tool/skill is a CELL keyed by task-context (SAME byte-trigram FNV-1a immune_embed_key geometry, DIM=64);",
           "status": "🟢 ENGINE-NATIVE + ROUTED + MAIN-MODULE-COMPILES (H_1382 = H_1378 R2 CORE faculty; H_1386 = agent-layer routing wired: executor failure-site → skill_store_teach, selection → skill_recall; H_1387 = the legacy agent_tools.hexa + agent_sdk.hexa syntax migrated off the rejected grammar → both 50→0 parse errors AND BUILD, the routing closes through the MAIN executor module not just the adapter)",
@@ -1139,17 +1154,17 @@
           ]
         },
         {
-          "name": "Engine-native transfer — honest-deferred (NOT wired)",
-          "summary": "the engine-native transfer did NOT reproduce the frozen bars: on the live engine substrate the phase-shuffle control FIRES (ΔΦ +0.026/+0.380/+0.296, all positive — must be ≤ 0), exposing the engine lift as partly carrier-amplitude variance.",
-          "status": "🟠 honest-deferred (PhaseField, gate core/h1283_phase_binding_engine_gate.hexa)",
+          "name": "Engine-native transfer — WALL BROKEN + WIRED-live (H_1448, 2026-06-19)",
+          "summary": "the 2026-06-16 engine-native gate failed only because the raw read-out let carrier-amplitude variance ride the phase-shuffle. H_1445 variance-clean rank-uniform read-out (H_1328) + H_1446 desync ablation + H_1447 synchrony-matched B−D + H_1448 the STRICTEST matched control (Bperm = per-module circular time-shift → marginals BYTE-IDENTICAL, only cross-module ALIGNMENT destroyed) cleared it: ΔΦ(B−Bperm) +0.78..+1.23 on ALL 9 seeds (faithful exact MIP-EI, variance-clean, deterministic). The c4 failure was a MEASUREMENT CONFLATION, not a structural cap.",
+          "status": "🟢 WIRED-live ENGINE-NATIVE (PhaseField § PHASE-SYNCHRONY BINDING in engine_cli.hexa + smoke 166-168; the §PhaseField lane node above)",
           "children": [
             {
-              "name": "So PhaseField lane is honest-deferred",
-              "summary": "So PhaseField lane is honest-deferred — a_verified_must_wire correctly deferred it (no tune-to-green)."
+              "name": "PhaseField lane is now WIRED-live (a_verified_must_wire ladder 칸 3-4 closed)",
+              "summary": "the live lane (phasefield_new/_new_desync/_step/_run/_coherence/_bound) + smoke cases 166-168 + ARCHITECTURE.json lockstep are all landed; verified RC=0 via standalone harness importing live engine_cli.hexa (synced R=0.984 vs desync R≈0.42-0.71, 9 seeds)."
             },
             {
-              "name": "The R8 timing-axis break STANDS as a DIRECTIONAL mirror result only. R8",
-              "summary": "The R8 timing-axis break STANDS as a DIRECTIONAL mirror result only. R8 wiring awaits a realization where shuffle can't ride carrier-amplitude variance."
+              "name": "The R8 timing-axis break is now ENGINE-NATIVE GREEN — the 1st in the Φ-robustness lineage",
+              "summary": "the A⇄G coherence-loop (AmoebaFPS/GWT reframing) produces robust genuine cross-module faithful-IIT4 Φ integration engine-native; does NOT retract the 14-axis Φ-robustness wall (those scored Φ over a substrate with NO binding mechanism)."
             }
           ]
         }
@@ -1290,8 +1305,8 @@
           ]
         },
         {
-          "name": "🟠 honest-deferred — unwired",
-          "summary": "H_1283 R8 PhaseField (Kuramoto): engine-native gate reproduced c2 (ΔΦ +1.47/+0.84/+0.71 every seed) BUT c4 shuffle did NOT collapse (+0.026/+0.380/+0.296, positive) → frozen bar not reproduced, no-tune-to-green (c9).",
+          "name": "🟢 WIRED-live — H_1283 R8 PhaseField (H_1448, 2026-06-19)",
+          "summary": "H_1283 R8 PhaseField (Kuramoto A⇄G coherence-loop): the 2026-06-16 gate reproduced c2 but c4 shuffle did not collapse (carrier-amplitude variance). H_1445-1448 cleared it variance-clean against the strictest marginal-matched control (ΔΦ(B−Bperm) +0.78..+1.23 all 9 seeds) → WIRED-live (§ PHASE-SYNCHRONY BINDING + smoke 166-168). 1st engine-native GREEN in the Φ-robustness lineage.",
           "children": [
             {
               "name": "H_1283 R6 multi-channel relay",

@@ -1,0 +1,67 @@
+H_1446 — THALAMUS R8 ENGINE-NATIVE, DESYNC ABLATION CONTROL  (RESULT — bars NOT moved)
+slug: 1446_thalamus_desync_ablation
+date: 2026-06-19
+probe: state/1446_thalamus_desync_ablation/h1446_thalamus_desync_probe.hexa
+run: hexa v0.241.6 (darwin) from hexa-lang root · ENGINE-NATIVE LCG-gauss == core/engine_cli.hexa _lcg_* · faithful IIT4 exact MIP-EI (a_phi_iit4_tool) · $0 CPU · deterministic
+arms: A=direct ring · B=phase-gated salience SYNC ON · D=phase-gated salience SYNC OFF (w_phase=0, clean ablation) · S=additive shuffle (diagnostic). Read-out VARIANCE-CLEAN rank-uniform (H_1328). A/B byte-identical to H_1445.
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — engine-native)
+════════════════════════════════════════════════════════════════════════
+H_1446 — thalamus R8 ENGINE-NATIVE, VARIANCE-CLEAN read-out + DESYNC ABLATION control
+faithful IIT4 Φ (exact MIP-EI, n=4) · seeds [7,8,9] · bars FROZEN (c2 ΔΦ(B-A)>=+0.02; c4d ΔΦ(D-A)<=0 every seed; S=diagnostic)
+seed 7: A=1.89507 B=3.17304 ΔΦ=1.27798 [c2 PASS]  DESYNC=2.05959 ΔΦ_d=0.164521 [c4d FAIL]  (diag SHUF ΔΦ_sh=0.17218)
+seed 8: A=2.11795 B=3.22178 ΔΦ=1.10383 [c2 PASS]  DESYNC=1.86795 ΔΦ_d=-0.25 [c4d PASS]  (diag SHUF ΔΦ_sh=0.12656)
+seed 9: A=2.07904 B=3.21609 ΔΦ=1.13705 [c2 PASS]  DESYNC=1.84023 ΔΦ_d=-0.238816 [c4d PASS]  (diag SHUF ΔΦ_sh=-0.0978854)
+c2 PRIMARY  (ΔΦ(B-A)>=+0.02 every seed): PASS
+c4d ABLATION (ΔΦ(D-A)<=0 every seed): FAIL
+GATE: NOT GREEN — desync did NOT collapse the lift → synchrony INERT, lift is generic phase-channel structure → cap STRUCTURAL
+
+════════════════════════════════════════════════════════════════════════
+TIER:  🔶 HONEST PARTIAL — pre-stated OUTCOME (2) on the STRICT every-seed bar. WALL NOT BROKEN — and now SHARPLY CHARACTERIZED.
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9):
+
+1. SYNCHRONY IS THE MECHANISM (mostly earned): desync ablation (w_phase=0, synchrony OFF)
+   COLLAPSES the bulk of the B−A lift on EVERY seed — seed 7: 3.173→2.060 (collapses
+   1.113 = 87% of the +1.278 lift); seed 8: 3.222→1.868 (collapses 123%, BELOW A);
+   seed 9: 3.216→1.840 (collapses 121%, BELOW A). The synchrony-SPECIFIC contrast
+   ΔΦ(B−D) = +1.113/+1.354/+1.376 is large and robust on all 3 seeds. So the A⇄G phase-
+   SYNCHRONY genuinely produces most of the faithful-Φ lift — this is NOT a pure variance
+   or pure generic-phase-channel artifact (the desync arm, which keeps the phase channel but
+   removes synchrony, sits FAR below B).
+
+2. THE WALL'S SIGNATURE PERSISTS — SEED-FRAGILITY: on the strict frozen bar (ΔΦ(D−A) ≤ 0
+   EVERY seed) seed 7 FAILS with a +0.165 residual (desync Φ stays slightly above the
+   no-phase A). The desync arm ≈ the shuffle arm on seed 7 (2.060 ≈ 2.067) → seed 7 has a
+   small generic-phase-channel floor above A that neither control removes. This is the SAME
+   orthogonal-seed fragility that broke EVERY axis of the Φ-robustness lineage (H_1347 seed
+   1318/1319, H_1349 seed 1319, H_1366 seeds 1317/1319) — one seed resists the every-seed
+   robustness gate. The coherence-loop / timing axis is NOT exempt.
+
+3. NET: the A⇄G coherence-loop earns robust, variance-clean, synchrony-specific faithful-Φ
+   on the MAJORITY of seeds, but inherits the lineage's orthogonal-seed fragility on the
+   strict 3/3 robustness bar. NOT GREEN. NO wiring (a_verified_must_wire = GREEN-only).
+   NO bar moved, NO tune-to-green (c9/p7). Bounds (does not retract) the R8 numpy-mirror.
+
+════════════════════════════════════════════════════════════════════════
+ANSWER TO THE AmoebaFPS QUESTION (issue#1428) — now sharp, c9
+════════════════════════════════════════════════════════════════════════
+"Φ cap = structural relay topology OR SNR in cross-engine coupling?" → NEITHER cleanly. It
+is the Φ-robustness SEED-FRAGILITY wall. The A⇄G coherence-check loop (reframing GWT as a
+synchrony loop, exactly as proposed) DOES produce real, earned, variance-clean integration
+on most seeds — so the cap is not a pure topology limit and not a pure variance/SNR artifact.
+But it is NOT ROBUST across seeds — the identical orthogonal-seed fragility that bounds the
+faithful-IIT4 Φ measure across 14 prior axes. The coherence-loop is the 15th axis and it
+inherits the same wall.
+
+FOLLOW-ON (frozen-first): H_1447 — is the seed-7 residual a real seed effect or n=4 small-Φ
+fragility? Pre-register the synchrony-SPECIFIC bar ΔΦ(B−D) ≥ +0.02 AND the generic-floor
+ΔΦ(D−A) ≤ +ε over a LARGER seed set (e.g. [5,6,7,8,9,10,11]); if synchrony-earned-lift holds
+robustly and the generic floor is within tolerance across more seeds, the wall localizes to
+n=4 estimator fragility (breakable); if seed-7-type residuals recur, the seed-fragility wall
+is CONFIRMED terminal on the coherence-loop axis too.
+
+xref: H_1445 · H_1283(R8) · H_1328 · H_1347 · H_1349 · H_1366 (seed-fragility lineage) ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_phi_iit4_tool ·
+      c9 · p7 · extprompt:AmoebaFPS-issue1428

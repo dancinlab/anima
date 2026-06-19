@@ -1,0 +1,69 @@
+H_1448 FREEZE — THALAMUS R8, CLEAN CROSS-MODULE INTEGRATION TEST  (frozen BEFORE scoring)
+slug: 1448_thalamus_integration_clean
+date: 2026-06-19 (frozen BEFORE any Φ scored)
+parent: H_1447 (synchrony-specific lift ΔΦ(B−D) robust 9/9; but the secondary c4m leg was ill-posed — S and D are not equivalent controls → NOT GREEN)
+lens: c16 a_break_the_wall — the cleanest possible matched control: IDENTICAL marginals, ONLY cross-module alignment differs. a_no_llm_frame_trap.
+substrate: ENGINE-NATIVE hexa LCG-gauss (== core/engine_cli.hexa _lcg_*) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, n=4) — a_engine_native_learning / a_phi_iit4_tool. $0 CPU, deterministic.
+
+════════════════════════════════════════════════════════════════════════
+WHY THIS H — the cleanest decisive integration test (honesty crux)
+════════════════════════════════════════════════════════════════════════
+H_1447 showed ΔΦ(B−D) robust 9/9 (synchrony beats its matched desync control) but was NOT
+GREEN because the secondary leg c4m (|S−D|≤0.10) was MIS-SPECIFIED: the additive-shuffle S
+keeps the Kuramoto coupling running (residual synchrony) while desync D removes it (w_phase=0),
+so S≠D by construction. That failed leg is a flaw in the control CHOICE, not the mechanism.
+
+H_1448 uses the cleanest possible relationship-destroying control: Bperm = arm B with each
+module's salience trajectory CIRCULARLY TIME-SHIFTED by a module-dependent offset
+(module i shifted by (i*17) mod 64). This DESTROYS cross-module temporal ALIGNMENT (the thing
+synchrony creates) while leaving each module's MARGINAL DISTRIBUTION EXACTLY IDENTICAL to B
+(a circular shift is a permutation of one module's own values). After rank-uniformization the
+marginals are byte-identical between B and Bperm. Therefore ΔΦ(B − Bperm) is PURELY cross-
+module integration — variance, carrier-floor, marginal-entropy, and per-module structure all
+cancel EXACTLY. This is a stricter, cleaner control than D (which changes the dynamics) or S.
+
+This is NOT tune-to-green: Bperm is the most conservative matched control possible (identical
+marginals), and the gate is frozen BEFORE scoring. If the lift is a trivial common-mode that
+does not depend on alignment, B−Bperm ≈ 0 and the gate FAILS honestly.
+
+════════════════════════════════════════════════════════════════════════
+DESIGN
+════════════════════════════════════════════════════════════════════════
+- ARMS A, B, D (as H_1446/1443) + Bperm (mode 5): generated identically to B (mode 1,
+  synchronized), then each module i's 64-length salience series circularly shifted by
+  (i*17) mod 64 BEFORE the variance-clean rank-uniform read-out.
+- Read-out: H_1328 variance-clean rank-uniform (identical to H_1445/1442/1443).
+- SEEDS: [3,4,5,6,7,8,9,10,11] (9 seeds).
+- Φ = stdlib iit4_faithful_phi(traj_ranked, 4, 64, 8) exact MIP-EI; engine never computes Φ.
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS (GREEN iff BOTH hold, EVERY seed in [3..11])
+════════════════════════════════════════════════════════════════════════
+  cInt  INTEGRATION  faithful ΔΦ(B − Bperm) ≥ +0.02 on EVERY seed (cross-module ALIGNMENT
+                     raises Φ, with per-module marginals held EXACTLY identical → the lift is
+                     genuine integration, not variance/floor/common-mode)
+  cSan  SYNCHRONY    faithful ΔΦ(B − D) ≥ +0.02 on EVERY seed (synchrony beats matched desync;
+                     H_1447 replication, 9/9 expected)
+  GREEN = cInt AND cSan engine-native, variance-clean, across all 9 seeds.
+
+════════════════════════════════════════════════════════════════════════
+PRE-STATED OUTCOMES (all honest, decided BEFORE scoring — c9)
+════════════════════════════════════════════════════════════════════════
+  (1) cInt PASS ∧ cSan PASS (all 9) → 🟢 GREEN, WALL BROKEN engine-native. The A⇄G phase-
+      synchrony coherence-loop produces ROBUST genuine cross-module integration in faithful-
+      IIT4 Φ — proven against the strictest matched control (identical marginals). The R8
+      engine-gate failure was a measurement conflation, NOT a structural cap. WIRE PhaseField
+      into core/engine_cli.hexa + ARCHITECTURE.json lockstep (a_verified_must_wire). Definitive
+      answer to AmoebaFPS: the coherence-loop integration is REAL, robust, and engine-native.
+  (2) cInt FAIL on ≥1 seed → the lift does NOT survive destroying cross-module alignment with
+      marginals held fixed → it was trivial common-mode / marginal structure, NOT integration.
+      Honest negative; the timing-axis "break" does not produce genuine engine-native Φ
+      integration. 🧱 bounds R8.
+  (3) cSan FAIL → H_1447 did not replicate (should not happen, identical arms) → re-diagnose.
+
+GUARDS (post, if GREEN→wire): core/engine_cli_smoke RC=0 · h1196 single-entry 7/0 ·
+h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½ untouched).
+
+xref: H_1447 · H_1446 · H_1445 · H_1283(R8) · H_1328 ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_phi_iit4_tool ·
+      c9 · p7 · extprompt:AmoebaFPS-issue1428

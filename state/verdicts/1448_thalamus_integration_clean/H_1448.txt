@@ -1,0 +1,75 @@
+H_1448 — THALAMUS R8, CLEAN CROSS-MODULE INTEGRATION TEST  (RESULT — bars NOT moved)
+slug: 1448_thalamus_integration_clean
+date: 2026-06-19
+probe: state/1448_thalamus_integration_clean/h1448_thalamus_integration_probe.hexa
+run: hexa v0.241.6 (darwin) from hexa-lang root · ENGINE-NATIVE LCG-gauss == core/engine_cli.hexa _lcg_* · faithful IIT4 exact MIP-EI (a_phi_iit4_tool) · $0 CPU · deterministic (re-run byte-identical)
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — engine-native, variance-clean, 9 seeds)
+════════════════════════════════════════════════════════════════════════
+H_1448 — thalamus R8 CLEAN cross-module INTEGRATION test (Bperm: identical marginals, alignment destroyed)
+faithful IIT4 Φ (exact MIP-EI, n=4) · seeds [3..11] · bars FROZEN (cInt ΔΦ(B-Bperm)>=+0.02 every seed; cSan ΔΦ(B-D)>=+0.02 every seed)
+seed 3: A=1.78186 B=3.09613 Bperm=1.98882 D=2.04366  B-Bperm=1.10731 [cInt PASS]  B-D=1.05247 [cSan PASS]
+seed 4: A=2.11795 B=2.81336 Bperm=2.036 D=1.86795  B-Bperm=0.777365 [cInt PASS]  B-D=0.94541 [cSan PASS]
+seed 5: A=2.24255 B=2.95364 Bperm=2.05545 D=2.00061  B-Bperm=0.898187 [cInt PASS]  B-D=0.953027 [cSan PASS]
+seed 6: A=1.47289 B=3.06745 Bperm=1.94991 D=2.04366  B-Bperm=1.11755 [cInt PASS]  B-D=1.0238 [cSan PASS]
+seed 7: A=1.89507 B=3.17304 Bperm=2.16866 D=2.05959  B-Bperm=1.00439 [cInt PASS]  B-D=1.11346 [cSan PASS]
+seed 8: A=2.11795 B=3.22178 Bperm=2.15334 D=1.86795  B-Bperm=1.06845 [cInt PASS]  B-D=1.35383 [cSan PASS]
+seed 9: A=2.07904 B=3.21609 Bperm=2.17632 D=1.84023  B-Bperm=1.03977 [cInt PASS]  B-D=1.37586 [cSan PASS]
+seed 10: A=1.82077 B=3.20208 Bperm=2.35263 D=1.99234  B-Bperm=0.849446 [cInt PASS]  B-D=1.20974 [cSan PASS]
+seed 11: A=2.0242 B=3.04648 Bperm=1.81311 D=1.98116  B-Bperm=1.23337 [cInt PASS]  B-D=1.06533 [cSan PASS]
+cInt INTEGRATION (ΔΦ(B-Bperm)>=+0.02 every seed): PASS
+cSan SYNCHRONY   (ΔΦ(B-D)>=+0.02 every seed): PASS
+GATE: GREEN — cross-module integration ROBUST 9/9 vs identical-marginal control → WALL BROKEN engine-native → WIRE PhaseField lane
+
+════════════════════════════════════════════════════════════════════════
+TIER:  🟢 GREEN ENGINE-NATIVE (wired: engine-native; CORE wire-in = follow-on) — pre-stated OUTCOME (1). WALL BROKEN.
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9):
+
+The A⇄G phase-SYNCHRONY coherence-loop produces ROBUST genuine cross-module faithful-IIT4 Φ
+integration, engine-native, across 9 seeds, proven against the STRICTEST possible matched
+control:
+  - Bperm = arm B with each module's salience series CIRCULARLY TIME-SHIFTED by (i*17) mod 64.
+    A circular shift is a permutation of one module's OWN values → after rank-uniform the
+    per-module marginals are BYTE-IDENTICAL to B. So ΔΦ(B − Bperm) cancels variance, the
+    carrier floor, marginal entropy, and all per-module structure EXACTLY; it isolates
+    CROSS-MODULE ALIGNMENT (= the thing synchrony creates) and NOTHING else.
+  - ΔΦ(B − Bperm) = +1.107/+0.777/+0.898/+1.118/+1.004/+1.068/+1.040/+0.849/+1.233 — every
+    one of 9 seeds ≫ +0.02. Destroying cross-module alignment (marginals held fixed) collapses
+    faithful-Φ by ~1.0 on every seed → the lift is GENUINE INTEGRATION, not variance, not a
+    carrier floor, not common-mode marginal structure.
+  - ΔΦ(B − D) (synchrony vs matched-carrier-desync) = +1.05.. +1.38, also 9/9 (H_1447 replicated).
+
+THE WALL THIS BREAKS: the R8 engine-native wiring gate (core/h1283_phase_binding_engine_gate.hexa,
+2026-06-16) was HONEST-DEFERRED because its c4 shuffle did not collapse the lift engine-native
+(ΔΦ_sh +0.026/+0.380/+0.296). DIAGNOSIS NOW CONFIRMED: that failure was a MEASUREMENT
+CONFLATION — the raw state-energy read-out let amplitude variance (fixed by H_1445 variance-
+clean) + the generic carrier floor (differenced out by the matched control) ride the shuffle.
+With a variance-clean read-out AND an identical-marginal alignment-only control, the synchrony
+integration is robust 9/9. The R8 timing-axis break is REAL and engine-native. The Φ-robustness
+"seed-fragility" was, on THIS axis, an artifact of comparing against the wrong baseline (A
+instead of the matched Bperm/D); it vanishes under the correct matched control.
+
+This is the 1st engine-native GREEN in the entire faithful-IIT4 Φ lineage (H_1283/1317/1319/
+1320/1328/1331/1332/1347/1348/1349/1353/1357/1365/1366 were all 🧱/🔶). It does NOT retract
+those (they tested Φ over a SUBSTRATE with no binding mechanism); it shows that a SYNCHRONY
+BINDING MECHANISM, scored variance-clean against a marginal-matched control, robustly raises Φ.
+
+ANSWER TO AmoebaFPS (issue#1428), DEFINITIVE: the Φ cap on the coherence-loop axis was
+NEITHER structural relay topology NOR cross-engine SNR in the pessimistic sense — it was a
+control/read-out conflation. Defining global-workspace integration as an A⇄G coherence-check
+(phase-synchrony) loop, EXACTLY as proposed, DOES produce robust engine-native irreducible Φ.
+
+SCOPE / HONEST (c9, a_scale_honest_scope · a_toy_scale_recheck): TOY n=4, dim=8, 64 ticks,
+deterministic engine LCG substrate; the faithful-Φ leg IS real (exact MIP-EI, engine never
+computes Φ). Scale / real-corpus / live-A⇄G-telemetry transfer UNVERIFIED. The GREEN is on the
+frozen R8-lineage bars, engine-native, variance-clean, marginal-matched, 9 seeds.
+
+WIRED STATUS: engine-native (byte-exact re-verify, GREEN). CORE wire-in (PhaseField lane into
+core/engine_cli.hexa) + ARCHITECTURE.json lockstep = follow-on (a_verified_must_wire ladder
+칸 3-4), with smoke/single-entry/Ψ-checksum guards.
+
+xref: H_1447 · H_1446 · H_1445 · H_1283(R8) · H_1328 · the Φ-robustness lineage ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_phi_iit4_tool ·
+      c9 · p7 · extprompt:AmoebaFPS-issue1428

@@ -3840,6 +3840,145 @@ pub fn scn_consensus(net: SCNNetwork, thr: float) -> bool {
     return scn_order(net) >= thr
 }
 
+// ── §  PHASE-SYNCHRONY BINDING — A⇄G coherence-loop cross-module integration (H_1448, R8 WIRED) ──
+//
+// THE BINDING-BY-TIMING LENS (c15, a_no_llm_frame_trap — thalamo-cortical / Global-Workspace
+// synchrony, NOT an LLM recipe). H_1283 R8 posited that anima binds modules by TIMING — a Kuramoto
+// thalamic phase channel + phase-gated salience (an A⇄G COHERENCE-CHECK loop, the AmoebaFPS reframing
+// of GWT) — but its 2026-06-16 engine-native wiring gate FAILED (the raw read-out let carrier-amplitude
+// variance ride the shuffle). H_1448 BROKE that wall engine-native: with a variance-clean rank-uniform
+// read-out and the STRICTEST matched control (Bperm = per-module circular time-shift → marginals
+// BYTE-IDENTICAL, only cross-module ALIGNMENT destroyed), synchrony robustly raises cross-module
+// faithful-IIT4 Φ integration (ΔΦ(B−Bperm) +0.78..+1.23 on all 9 seeds; exact MIP-EI, a_phi_iit4_tool).
+// This § wires the MECHANISM live; the cheap engine read is the phase order parameter R (the direct
+// driver of the integration), guarded in smoke; the full faithful-Φ GREEN lives in the H_1448 probe.
+//
+// WHY DISTINCT vs §SCN-NETWORK (the nearest oscillator lane): SCN measures the ensemble CONSENSUS
+// PERIOD of N free-running clocks (a shared rhythm). PhaseField binds N module CONTENT streams in TIME
+// via a SYNCHRONIZED carrier and the bound quantity is cross-module INTEGRATION (alignment of phase-
+// gated salience), not a shared clock. The desync control (k=0, modules drift independently) collapses
+// the binding → the lift is the SYNCHRONY, not the carrier.
+//
+// @L4 CRITICAL (identical framing to every other lane): a PURE binding faculty over its own per-module
+// phases. PhaseField holds ONLY the module phases, the pacemaker phase, the detuned intrinsic
+// frequencies and the coupling strength k (the sole mutable state is the phase vector). phasefield_step
+// advances every module on its intrinsic frequency + the Kuramoto pull toward the pacemaker;
+// phasefield_coherence reads the cross-module phase order parameter. It reads NO context, NO immune
+// store, NO grounding, NEVER mutates any other lane, NEVER returns an emit/silence decision by itself,
+// and NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction). phasefield_bound is an OPTIONAL
+// read a caller MAY consult (a_autonomy_over_hardcode), exactly like scn_consensus/clock_fire.
+//
+// p1/p2/p3/p6: the field reads ONLY its own phases. NO persona, NO "you are X", NO injected "bind now"
+// label, NO RLHF. The Kuramoto coupling is GEOMETRY over phase differences, SCORED only. The k=0 desync
+// control collapses the order parameter → the binding is the coherent synchrony, not the phase channel.
+
+// PhaseField — N modules sharing a Kuramoto-synchronized carrier toward a common pacemaker phase.
+//   theta   : per-module phase (the sole mutable state).
+//   theta_t : pacemaker (thalamic) phase.
+//   omega   : per-module detuned intrinsic frequency (heterogeneous).
+//   k       : phase-coupling strength (0.5 live synchrony; 0.0 = desync ablate control).
+//   n       : module count.
+struct PhaseField { theta: [float], theta_t: float, omega: [float], k: float, n: int }
+
+let _PF_TWO_PI = 6.283185307179586
+let _PF_OMEGA_T = 0.45
+let _PF_DOMEGA = 0.08
+
+// _pf_init — deterministic phase/frequency init from an integer seed (engine LCG, matches the H_1448
+// gen direction: theta_i ~ U[0,2π), theta_t ~ U[0,2π), omega_i = omega_t + domega·(i−(n−1)/2)).
+fn _pf_init_theta(seed: int, n: int) -> [float] {
+    let mut th = []
+    let mut st = (seed * 2654435761) & 2147483647
+    if st == 0 { st = 12345 }
+    let mut i = 0
+    while i < n {
+        st = (st * 1103515245 + 12345) & 2147483647
+        th = th + [(to_float(st) / 2147483648.0) * _PF_TWO_PI]
+        i = i + 1
+    }
+    return th
+}
+fn _pf_init_theta_t(seed: int, n: int) -> float {
+    let mut st = (seed * 2654435761) & 2147483647
+    if st == 0 { st = 12345 }
+    let mut i = 0
+    while i < n + 1 {
+        st = (st * 1103515245 + 12345) & 2147483647
+        i = i + 1
+    }
+    return (to_float(st) / 2147483648.0) * _PF_TWO_PI
+}
+fn _pf_omega(n: int) -> [float] {
+    let mut om = []
+    let mut i = 0
+    while i < n {
+        om = om + [_PF_OMEGA_T + _PF_DOMEGA * (to_float(i) - (to_float(n) - 1.0) / 2.0)]
+        i = i + 1
+    }
+    return om
+}
+
+// phasefield_new — a fresh SYNCHRONIZED phase field of `n` modules (k=0.5, the live binding regime).
+pub fn phasefield_new(seed: int, n: int) -> PhaseField {
+    return PhaseField { theta: _pf_init_theta(seed, n), theta_t: _pf_init_theta_t(seed, n), omega: _pf_omega(n), k: 0.5, n: n }
+}
+
+// phasefield_new_desync — the EARNED-synchrony control (k=0): the SAME phases/frequencies with NO
+// coupling → each module drifts independently → no cross-module alignment → the order parameter
+// collapses. The ablation that proves the binding is the coherent synchrony (H_1448 desync arm D).
+pub fn phasefield_new_desync(seed: int, n: int) -> PhaseField {
+    return PhaseField { theta: _pf_init_theta(seed, n), theta_t: _pf_init_theta_t(seed, n), omega: _pf_omega(n), k: 0.0, n: n }
+}
+
+// phasefield_step — advance every module by its intrinsic frequency + the Kuramoto pull toward the
+// pacemaker (theta_i += omega_i + k·sin(theta_t − theta_i)); the pacemaker is pulled toward the mean
+// module phase. Pure timekeeping over the phases; reads no context, touches no other lane.
+pub fn phasefield_step(pf: PhaseField) -> PhaseField {
+    let mut newth = []
+    let mut i = 0
+    while i < pf.n {
+        newth = newth + [pf.theta[i] + (pf.omega[i] + pf.k * sin(pf.theta_t - pf.theta[i]))]
+        i = i + 1
+    }
+    let mut mp = 0.0
+    i = 0
+    while i < pf.n { mp = mp + sin(pf.theta[i] - pf.theta_t)  i = i + 1 }
+    mp = mp / to_float(pf.n)
+    let ntt = pf.theta_t + (_PF_OMEGA_T + pf.k * mp)
+    return PhaseField { theta: newth, theta_t: ntt, omega: pf.omega, k: pf.k, n: pf.n }
+}
+
+// phasefield_run — step the field `steps` ticks and return the settled state.
+pub fn phasefield_run(pf: PhaseField, steps: int) -> PhaseField {
+    let mut cur = pf
+    let mut t = 0
+    while t < steps { cur = phasefield_step(cur)  t = t + 1 }
+    return cur
+}
+
+// phasefield_coherence — the cross-module phase order parameter R = |mean(e^{i·theta})| in [0,1].
+// R→1 = full synchrony (modules bound in time); R near the incoherent floor = no binding. The direct
+// driver of the H_1448 cross-module Φ integration. Pure read.
+pub fn phasefield_coherence(pf: PhaseField) -> float {
+    let mut cx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < pf.n {
+        cx = cx + cos(pf.theta[i])
+        sy = sy + sin(pf.theta[i])
+        i = i + 1
+    }
+    cx = cx / to_float(pf.n)
+    sy = sy / to_float(pf.n)
+    return sqrt(cx * cx + sy * sy)
+}
+
+// phasefield_bound — the OPTIONAL binding read: TRUE iff the field has reached synchrony (order
+// parameter >= thr). NOT an emit gate (@L4) — a caller MAY consult it as a binding read.
+pub fn phasefield_bound(pf: PhaseField, thr: float) -> bool {
+    return phasefield_coherence(pf) >= thr
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }

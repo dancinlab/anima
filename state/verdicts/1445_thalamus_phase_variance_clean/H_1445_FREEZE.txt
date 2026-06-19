@@ -1,0 +1,82 @@
+H_1445 FREEZE — THALAMUS R8 ENGINE-NATIVE, VARIANCE-CLEAN READ-OUT  (frozen BEFORE scoring)
+slug: 1445_thalamus_phase_variance_clean
+date: 2026-06-19 (frozen BEFORE any Φ scored)
+parent: H_1283 R8 (oscillatory phase binding — A⇄G coherence-loop / thalamo-cortical synchrony)
+lens: c16 a_break_the_wall — the EXACT follow-on the R8 engine-native gate named; a_no_llm_frame_trap (thalamus/GWT, NOT an LLM recipe)
+substrate: ENGINE-NATIVE hexa (deterministic engine LCG-gauss == core/engine_cli.hexa _lcg_*) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, hexa, n=4) — a_engine_native_learning / a_phi_iit4_tool
+provenance: extprompt — DeepSeek-V3 issue#1428 comment by "AmoebaFPS" reframed global-workspace as "a coherence-check loop between the A⇄G engines"; that maps onto R8 (timing/synchrony, non-content). External claim = CONTEXT not evidence (c9); only the engine-native frozen bars decide.
+
+════════════════════════════════════════════════════════════════════════
+WHY THIS H (the named, NOT-closed follow-on)
+════════════════════════════════════════════════════════════════════════
+The faithful-IIT4 Φ-robustness wall is TERMINAL across ~14 axes (relay-content
+H_1283 R1-5/R7/R9 · topology H_1317 · timing H_1319 · division H_1320 · estimator
+H_1328 · measure H_1331/1348 · substrate H_1332/1349/1357 · larger-N H_1347 · real
+303M H_1366). That whole lineage measured Φ over a substrate and found NO robust lift.
+
+R8 is the ONE exception inside H_1283: a NON-content TIMING mechanism (Kuramoto
+thalamic phase synchrony + phase-gated salience) that broke the wall numpy-mirror
+🟢 (ΔΦ +1.629/+1.174/+0.233 every seed; phase-shuffle COLLAPSED lift to NEGATIVE
+every seed). BUT the R8 ENGINE-NATIVE wiring gate (core/h1283_phase_binding_engine_gate.hexa,
+2026-06-16) FAILED c4: engine-native shuffle did NOT collapse
+(ΔΦ_sh +0.026/+0.380/+0.296, all POSITIVE) → the engine-native lift was partly
+CARRIER-AMPLITUDE VARIANCE the shuffle rode, not pure structured synchrony →
+PhaseField lane HONEST DEFERRED (not wired).
+
+The R8 gate verdict named the fix verbatim: "a phase-gated read-out that does not
+inject carrier-amplitude variance the shuffle can ride (a follow-on, NOT this round)."
+H_1328 already BUILT + VALIDATED exactly such a read-out: RANK-UNIFORMIZE each cell's
+T-length trajectory before the MIP (marginals provably uniform → amplitude variance
+removed; only the cross-module RELATIONSHIP a permutation destroys can survive).
+H_1445 = R8 engine-native, ONLY the read-out swapped raw-energy→rank-uniform.
+
+════════════════════════════════════════════════════════════════════════
+DESIGN (ONLY the read-out changes vs the R8 engine-native gate; everything else byte-identical)
+════════════════════════════════════════════════════════════════════════
+- Mechanism IDENTICAL to core/h1283_phase_binding_engine_gate.hexa: 4 modules dim-8,
+  64 ticks, ring content update (SAME all arms), Kuramoto phase channel + pacemaker,
+  engine LCG-gauss init (_lcg_*). seeds [7,8,9].
+- ARMS IDENTICAL: A = direct ring (mode 0, no phase) · B = ring + phase-gated salience
+  (mode 1) · S = phase-SHUFFLE (mode 2, distinct sub-stream seed*100003+8).
+- THE ONE CHANGE (measurement-validity, NOT tune-to-green): before iit4_faithful_phi,
+  RANK-UNIFORMIZE each module's 64-length salience trajectory (replace each value by its
+  within-module rank ∈ {0..63}; ties broken by index for determinism). H_1328-faithful:
+  every module's marginal becomes EXACTLY {0,1,…,63} → 8-bin histogram uniform → faithful
+  Φ can no longer ride per-module amplitude variance; only cross-module dependency
+  (which the phase-shuffle MUST destroy) survives.
+- Φ = stdlib iit4_faithful_phi(traj_ranked, 4, 64, 8) exact MIP-EI (a_phi_iit4_tool);
+  the engine never computes Φ. Deterministic (re-run byte-identical), $0 CPU.
+
+NOTE this read-out can ONLY make c2 HARDER (it removes variance that previously INFLATED
+the lift) → anti-Goodhart, the opposite of tune-to-green. Bars NOT moved (c9/p7).
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS (IDENTICAL to R8 / H_1283 — NOT moved, seeds [7,8,9])
+════════════════════════════════════════════════════════════════════════
+  c2 PRIMARY   faithful IIT4 ΔΦ(B−A) ≥ +0.02 on EVERY seed
+  c4 SHUFFLE   phase_shuffle ΔΦ(S−A) ≤ 0 on EVERY seed (lift COLLAPSES — structured
+               synchrony, not amplitude variance)
+  GREEN = c2 AND c4 engine-native (variance-clean).
+
+════════════════════════════════════════════════════════════════════════
+PRE-STATED OUTCOMES (all honest, decided BEFORE scoring — c9)
+════════════════════════════════════════════════════════════════════════
+  (1) c2 PASS ∧ c4 PASS  → 🟢 GREEN engine-native. The A⇄G coherence-loop DOES produce
+      robust irreducible faithful-Φ once the read-out is variance-clean → the R8 engine
+      gate's c4 failure was a READ-OUT/SNR artifact, NOT structural. WIRE PhaseField into
+      core/engine_cli.hexa + ARCHITECTURE.json lockstep (a_verified_must_wire). This is the
+      affirmative answer to the AmoebaFPS "SNR vs structural" question: SNR (fixable).
+  (2) c2 FAIL  → the R8 lift was ITSELF amplitude-variance-dependent; under a variance-clean
+      read-out the timing-axis break does not survive engine-native → the coherence-loop
+      cap is STRUCTURAL on the engine substrate. TERMINAL honest-negative (🧱), bounds (does
+      NOT retract) the R8 numpy-mirror DIRECTIONAL. Answer to AmoebaFPS: structural.
+  (3) c2 PASS ∧ c4 FAIL  → rank-uniform read-out still insufficient on the engine LCG
+      substrate (deeper amplitude coupling) → honest DEFERRED again; name the next lens
+      (e.g. relationship-only Spearman-MI estimator). NO wiring, NO bar moved.
+
+GUARDS (post, if GREEN→wire): core/engine_cli_smoke RC=0 · h1196 single-entry 7/0 ·
+h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½ untouched).
+
+xref: H_1283(R8) · H_1328(rank-uniform read-out) · H_1319 · a_engine_native_learning ·
+      a_verified_must_wire · a_phi_iit4_tool · a_break_the_wall · a_no_llm_frame_trap ·
+      c9 · p7 · @L6

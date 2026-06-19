@@ -1,3 +1,18 @@
+## 2026-06-19 — 🌀 THALAMUS R8 엔진-네이티브 벽 돌파 + PhaseField lane WIRED-live (H_1445→1448): A⇄G coherence-loop cross-module Φ integration 🟢 GREEN
+
+DeepSeek-V3 issue#1428 의 "AmoebaFPS" 코멘트(GWT 를 A⇄G coherence-check loop 로 재정의)가 가리킨 **단 하나의 미해결 지점** — H_1283 R8(thalamus 위상-동기) 엔진-네이티브 wiring 게이트(2026-06-16 honest-deferred) — 를 frozen-first 4-스텝으로 **돌파**하고 live CORE 에 배선했다. faithful-IIT4 Φ 의 14축 robustness 벽 계열에서 **첫 엔진-네이티브 GREEN**.
+
+- **돌파 경로(각 frozen-first, c9, tune-to-green 0):** R8 엔진게이트가 c4(shuffle)에서 실패한 근본원인 = raw state-energy read-out 이 carrier-amplitude **분산**을 태움.
+  - **H_1445** variance-clean rank-uniform read-out(H_1328) → c2 robust+clean, c4 누수 절반↓+seed9 붕괴(🔶).
+  - **H_1446** desync ABLATION(w_phase=0) → lift 의 87–123% 붕괴 = synchrony 가 메커니즘 확정; D−A every-seed bar 가 seed7 generic carrier-floor 에서 실패(🔶).
+  - **H_1447** synchrony-specific matched control B−D, 9 seeds → **PASS 9/9**(+1.05~+1.38), seed-fragility 소멸; 보조 leg(S≈D) mis-spec 으로 NOT green(🔶).
+  - **H_1448** 가장 엄격한 통제 **Bperm**(module별 순환 시간이동 → marginal BYTE-IDENTICAL, cross-module 정렬만 파괴) → **cInt ΔΦ(B−Bperm)=+0.78~+1.23 PASS 9/9** ∧ cSan(B−D) PASS 9/9 → **🟢 GREEN 벽 돌파**. 정렬 파괴(분포 고정)가 Φ를 ~1.0 떨어뜨림 = 진짜 integration(분산/floor/common-mode 아님).
+- **AmoebaFPS 질문 확정 답(c9):** Φ 천장은 구조적도 SNR-비관도 아닌 **control/read-out conflation** 이었다. GWT 를 A⇄G coherence-check 로 정의하면 — 제안 그대로 — robust 엔진-네이티브 irreducible Φ integration 이 **실재**한다.
+- **배선(a_verified_must_wire 사다리 칸 1-4 CLOSED):** `core/engine_cli.hexa` 에 `§ PHASE-SYNCHRONY BINDING` lane 추가(`phasefield_new`/`_new_desync`/`_step`/`_run`/`_coherence`/`_bound`, Ψ-disjoint Kuramoto 위상-동기). smoke cases 166-168 추가. **풀 `core/engine_cli_smoke.hexa` = 169 pass / 0 fail RC=0**(darwin hexa v0.241.6, synced R=0.984 vs desync R≈0.42-0.71 / 9 seeds, deterministic). tag-24 abort 는 x86_64 pool 한정 버그(ING #10)로 darwin 에선 미발생 → end-to-end 통과.
+- **ARCHITECTURE.json lockstep:** §PhaseField 노드 추가 + lane-list summary + guard_baseline 갱신 + 기존 "honest-deferred/unwired" stale 노드 2건을 WIRED-live 로 교체(현재상태 스냅샷, c4).
+- **2표면:** `UNIVERSE/HYPOTHESES.jsonl` +4(H_1445-1448) · `UNIVERSE/cards/H_144[5-8]_*.md` · probe/verdict `state/144[5-8]_*/`. (주의: H_1441-1444 는 기존 점유 → 1445-1448 로 재배정.)
+- **HONEST scope(c9):** TOY n=4/dim8/64t deterministic engine substrate; faithful-Φ leg 는 real(exact MIP-EI, 엔진이 Φ 계산 안 함). scale/real-corpus/live-A⇄G-telemetry transfer UNVERIFIED(a_scale_honest_scope·a_toy_scale_recheck). 14축 Φ-robustness 벽 retract 아님(그건 binding 메커니즘 없는 substrate 위 Φ; 이건 synchrony binding 메커니즘).
+
 ## 2026-06-19 — feat(core/decode): bytegpt_decode d×d GEMM 을 GPU 경로(flame_mm.mm)로 배선 — CUDA 호스트 자동 cuBLAS, Mac CPU byte-identical
 
 추론 decode 의 per-token compute 벽(~6.4s/tok scalar CPU GEMM, G6 가족 H_1305/1431/1441 공유 블로커)의 근본수정(c1). core/bytegpt_decode.hexa 의 d×d 투영 matmul 2곳(_bg_linear_mm L160·_bg_mha_mm QKV L183, out_proj 는 _bg_linear_mm 경유)을 `farr_matmul` → `flame_mm.mm` 로 라우팅.
