@@ -1,0 +1,63 @@
+================================================================================
+H_1305 — G6 IDEATION DEPTH-FLOOR DIG · ENGINE-NATIVE RE-MEASUREMENT ATTEMPT
+   (engine path VALIDATED · full frozen 4-bar BLOCKED by substrate-speed wall)
+================================================================================
+DATE     : 2026-06-19
+STATUS   : 🟠 DIRECTIONAL (UNCHANGED) — engine-native CONFIRM/OVERTURN DEFERRED (ING follow-on)
+WHY      : substrate-speed wall (NOT a measurement defect, NOT a science ceiling — c9,
+           a_break_the_wall type-c infra). Same wall H_1431 documented.
+
+--------------------------------------------------------------------------------
+WHAT WAS PROVEN (concrete positive results)
+--------------------------------------------------------------------------------
+1. ckpt TRIAGE (torch greedy decode, prompt "a new idea about consciousness: "):
+     h1129c_chat.pt          → KOREAN GARBLE  '수의 수 information의 강…'  (CORRUPT — confirmed)
+     h1441_contrastive.pt    → ENGLISH        'the signal greater than before. the sign'  (NORMAL)
+     h1441_shuffle.pt        → degenerate 'e e e …'  (the shuffle-corpus control, as expected)
+   → chat.pt is corrupt as the prompt stated; the only NORMAL English 303M ckpt available is
+     h1441_contrastive (a trained H_1441 variant; NO base.pt survives on the pod).
+
+2. .bin CONVERSION + LAYOUT byte-correct (torch round-trip of h1441_contrastive.bin):
+     header vocab=256 d=1024 L=24 H=16 block=512  (matches H_1305 FREEZE arch exactly)
+     decode  → 'the signal greater than before. the sign'  (ENGLISH)
+     head==tok max|diff| = 0.0   (tied head, byte-exact)
+
+3. ENGINE DECODE PATH VALIDATED on the byte-verified ckpt (md5=9147a6f9ad3e7081602702b2641d3a0d
+   identical local↔pod after --verify-sha re-upload; FIRST upload was silently transport-corrupted
+   md5=9c5e… → produced Korean → false alarm, fixed):
+     live CORE/bytegpt_decode.hexa::bytegpt_decode_batch_to_file (v0.241.8, pod 41548581)
+     gen=25  → 'the signal predicts than '   (ENGLISH, falsifiable-form words 'predicts'/'than')
+   → the engine-native decode mouth is SOUND; the earlier Korean engine outputs were ALL caused
+     by silent scp transport corruption (size matched, content differed), NOT engine/ckpt bugs.
+
+--------------------------------------------------------------------------------
+WHY THE FULL FROZEN 4-bar IS BLOCKED (substrate-speed wall)
+--------------------------------------------------------------------------------
+This hexa v0.241.8 build has fast-gemv DROPPED (link-fail — identical to the H_1431 CHANGELOG
+diagnosis "fast packed gemv 가 release link-fail 로 drop → scalar(토큰당 26s) 강제"). The forward
+falls back to SCALAR matmul at ~26 s/token. Frozen MAX_NEW=110 (cannot lower — c9 frozen-first):
+     ~26 s/token × 110 tokens ≈ ~48 min PER fragment.
+     60 jobs (4 arms × 5 frames × 3 seeds) → with practical parallelism (memory-bandwidth bound,
+     ~30 GB RSS/proc, ~4-way effective) ≈ ~12 HOURS wall. Impractical in-session; pod is shared.
+Observed: 4-shard run, 0/60 fragments after >17 min wall (load ~5.5 min + first 110-tok gen
+in progress) — consistent with the ~48 min/fragment rate.
+
+--------------------------------------------------------------------------------
+DIRECTIONAL BASELINE (UNCHANGED — torch, h1129c_chat.pt, FREEZE bars; the standing result)
+--------------------------------------------------------------------------------
+  A_flat       FALS=0.00   DIST=4.00
+  B_composed   FALS=0.667  DIST=4.00     (🟠 PARTIAL: M2 FALS≥1 FALSE, M1 DIST≥5 FALSE)
+  B_shuffle    FALS=0.00 · B_ablate FALS=0.00 (controls decisive)
+  → 🟠 HONEST-CONFIRMED-THIN (bar UNMOVED, c9). Engine-native CONFIRM/OVERTURN PENDING.
+
+--------------------------------------------------------------------------------
+ING FOLLOW-ON (registered ING.jsonl id=h1305_engine_native)
+--------------------------------------------------------------------------------
+Re-run the frozen 60-job 4-bar engine-native ONCE a fast-gemv-restored hexa build is available
+(joins H_1431's remaining-bytegpt ING — same blocker). Decode = engine_decode_batch_cli.hexa →
+CORE/bytegpt_decode; score = h1305_engine_native.py (frozen H_1305 detector VERBATIM; set
+H1302_CORPUS=/root/anima/data/corpus.txt so NOVEL scores against the real 5 MB corpus).
+SCOPE NOTE for that re-run: measure on the NORMAL English ckpt h1441_contrastive (chat.pt corrupt);
+this is a trained H_1441 variant, NOT the original chat baseline — so it is engine-native G6
+ideation evidence on the available normal ckpt, not a like-for-like reconfirm of the chat number.
+================================================================================

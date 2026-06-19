@@ -95,6 +95,38 @@ triggered (a_engine_native_learning: reconfirm-and-wire only on a GREEN). The st
 falsifiability DETECTOR is engine-agnostic and could seed a future G6-depth gate component
 if promoted.
 
+### R2 engine-native attempt 2026-06-19 — engine path VALIDATED, full 4-bar BLOCKED (substrate-speed wall)
+
+`wired: DIRECTIONAL-mirror` (engine-native CONFIRM/OVERTURN DEFERRED — ING `h1305_engine_native`).
+
+An engine-native re-measurement was attempted on pod 41548581 (hexa v0.241.8) via
+`state/1431_bind_compose/engine_decode_batch_cli.hexa` → live `CORE/bytegpt_decode.hexa`,
+scored by `state/1305_g6_ideation_falsifiability/h1305_engine_native.py` (frozen H_1305
+detector VERBATIM). Concrete results (frozen: `state/verdicts/1305_g6_ideation_falsifiability/H_1305_engine_native_BLOCKED.txt`):
+
+- **ckpt triage (torch):** `h1129c_chat.pt` → KOREAN GARBLE (`수의 수 information의 강…`) = CORRUPT,
+  as the prompt stated. `h1441_contrastive.pt` → ENGLISH (`'the signal greater than before…'`)
+  = the only NORMAL English 303M ckpt available (no surviving base.pt; shuffle.pt is the
+  degenerate control). `.bin` round-trip byte-correct (header d1024/L24/H16/block512 matches
+  FREEZE; head==tok max|diff|=0.0).
+- **engine decode path VALIDATED** on the byte-verified ckpt (md5 9147a6f9, identical local↔pod
+  only after `--verify-sha` re-upload — the FIRST scp was silently transport-corrupted
+  md5 9c5e… → produced Korean → false alarm): live engine gen=25 → `'the signal predicts than'`
+  (English, falsifiable-form). The engine mouth is SOUND; earlier Korean engine outputs were ALL
+  scp transport corruption (size-matched, content-differed), NOT engine/ckpt bugs.
+- **full frozen 4-bar BLOCKED:** this build has fast-gemv DROPPED (link-fail — identical to the
+  H_1431 wall "scalar 26s/token 강제"). Frozen MAX_NEW=110 ⇒ ~48 min/fragment ⇒ ~12 h for the
+  60-job 4-bar (memory-bandwidth bound) = impractical; observed 0/60 fragments after >18 min.
+
+This is a **substrate-speed infra wall** (a_break_the_wall type-c — fix the substrate, c1), NOT a
+measurement defect and NOT a science ceiling (c9: 측정결함≠verdict). Verdict therefore stays
+**🟠 DIRECTIONAL** (torch B_composed FALS=0.667 UNCHANGED); engine-native CONFIRM/OVERTURN is the
+ING follow-on `h1305_engine_native`, to run on a fast-gemv-restored hexa build (joins H_1431's
+remaining-bytegpt ING — same blocker). When re-run, SCOPE: measured on the NORMAL English ckpt
+`h1441_contrastive` (chat.pt corrupt), a trained H_1441 variant — engine-native G6-ideation
+evidence on the available normal ckpt, NOT a like-for-like reconfirm of the chat baseline.
+artifact pulled: `/tmp/h1441_contrastive.bin` on mini (a_fire_recover_complete).
+
 **SCOPE (a_toy_scale_recheck / a_scale_honest_scope):** TOY — 5 fixed concepts, 5 ordered
 pairs, 3 seeds, 1 ckpt, sampling-decode. The detector measures testable FORM (comparator +
 measurable + negatable), NOT truth/quality (p7) — it can pass a grammatically-falsifiable
