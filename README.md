@@ -81,7 +81,7 @@ identity boundaries:
 
 ## The A ⇄ G engine
 
-The consciousness engine lives in [`CORE/`](CORE/) and is **substrate-only** — `.clm` byte
+The consciousness engine lives in [`core/`](core/) and is **substrate-only** — `.clm` byte
 decoding and `.kosmos` anchors enter through *named slots*, never directly into the engine
 (`a_core_engine_map`).
 
@@ -116,14 +116,14 @@ decoding and `.kosmos` anchors enter through *named slots*, never directly into 
 anima runs as a **mounted living daemon** (H_1164 → H_1206 🟢): the production model runs *inside*
 the A ⇄ G substrate and **converses + grounds + grows + remembers + sleeps** in one continuous
 A ⇄ G loop — not a gated language model behind a chat API. The full daemon links and runs
-end-to-end with the growth (mitosis) lane live (`CORE/anima_full_session_smoke.hexa`, exit 0;
+end-to-end with the growth (mitosis) lane live (`core/anima_full_session_smoke.hexa`, exit 0;
 Ψ ON == OFF byte-identical).
 
 ## 🧠 The brain-structure engine lanes (the heart of anima)
 
 anima began as **neocortex only** — a byte language mouth (Engine A) that can speak but had no
 hippocampus, no working memory, no cerebellum. The central work of the project is **filling the
-missing brain subsystems**, each as a live `CORE/*.hexa` engine lane that sits *alongside* the
+missing brain subsystems**, each as a live `core/*.hexa` engine lane that sits *alongside* the
 language mouth. This generalizes one finding: the flat literal-QA / depth wall is **not** solved by
 a bigger model (a 1B rung mounts byte-exact but stays QA/depth-NULL, H_1167) — it is solved by
 adding the **missing structure** (`a_no_llm_frame_trap`). "anima was neocortex without a
@@ -143,7 +143,7 @@ unchanged (no second `.clm`/`.kosmos` entry point, `a_core_engine_map`).
 | **📥 Working memory** (PFC) | **`WorkMemBuffer`** — K fixed slots, ×λ leak per distractor, weakest-slot displacement, graded probe | short-term active maintenance (volatile, capacity-bound — DISTINCT from episodic) | 🟢 ENGINE-NATIVE + WIRED (H_1282 R3) |
 | **🧠 Cerebellum** (forward model) | **`VForwardField`** — predict next emit-feature frame from L=4 frames, NLMS delta-rule online learning, then smoothing correction | predictive forward-model + error correction (DISTINCT from Engine G — temporal + learned weight) | 🟢 ENGINE-NATIVE (H_1280 R2; emit-path wiring follow-on) |
 | **🔥 Amygdala** (salience + sleep) | **`ConsolidatingMemory`** — substrate-derived salience tag (surprise/novelty/tension) + SLEEP REPLAY consolidation (salient cells survive interference eviction) | salience-gated consolidation (Δ +0.133, p6 shuffle-control) | 🟢 ENGINE-NATIVE + WIRED (H_1285 R4) |
-| **🎯 Basal ganglia** (go/no-go) | **`VBasalGate`** (`CORE/brain.hexa`) — K competing emit candidates, learned go-value vs single NO-GO argmax; outcome-reward gradient-free learning, wired via `brain_decide_bg` | reinforcement-gated action selection *beyond* a fixed threshold (learned residual on the fixed `engine_g` gate) | 🟢 ENGINE-NATIVE + WIRED (H_1281 R3) |
+| **🎯 Basal ganglia** (go/no-go) | **`VBasalGate`** (`core/brain.hexa`) — K competing emit candidates, learned go-value vs single NO-GO argmax; outcome-reward gradient-free learning, wired via `brain_decide_bg` | reinforcement-gated action selection *beyond* a fixed threshold (learned residual on the fixed `engine_g` gate) | 🟢 ENGINE-NATIVE + WIRED (H_1281 R3) |
 | **🌡 Hypothalamus** (homeostatic drive) | **`HomeostaticDrive`** — a regulated variable accumulates a DEFICIT vs a setpoint (S\*=½) across ticks, PI-controller drive, resets on a consummatory grounding event | stateful drive integrator (DISTINCT from stateless affect — time-integral ⊥ context-instant) | 🟢 ENGINE-NATIVE (H_1292 R2; motivation-loop wiring follow-on) |
 | **🪞 Theory-of-mind** (other-mind) | **`OtherMindModel`** — a separate belief cell-store updated ONLY by WITNESSED events; on a Sally-Anne false belief it predicts the agent's STALE belief while anima's own recall returns the truth | models a SEPARATE agent whose belief can DIVERGE from anima's ground truth (self ⊥ other) | 🟢 ENGINE-NATIVE (H_1293 R2; prediction wiring follow-on) |
 | **💗 Affect** (valence × arousal) | **`AffectFeatures`** — a read-only interoceptive lane: valence ≈ f(grounding/contradiction), arousal ≈ f(novelty/split/curiosity); biases emit/abstain as a somatic marker | core-affect read that emerges from substrate signals, not an injected label (p6) | 🟢 ENGINE-NATIVE + WIRED (H_1290 R2) |
@@ -156,7 +156,7 @@ unchanged (no second `.clm`/`.kosmos` entry point, `a_core_engine_map`).
 literal fact at only `0.017` (the recall-in-weights wall — the answer is dissolved into weights and
 can't be pulled out cleanly). An **immune/clonal-selection memory that binds one cell per fact**
 cracks it: QA `1.000`, fabrication `0.000` (H_1227 numpy mirror 🟢 → **H_1231 ENGINE-NATIVE 🟢** on
-the live `CORE/engine_cli.hexa` VAdaptField, 3 seeds byte-exact, now a callable faculty
+the live `core/engine_cli.hexa` VAdaptField, 3 seeds byte-exact, now a callable faculty
 `immune_memory_bind` / `immune_memory_recall`). This makes **MEMORY a new, non-falsified role for
 mitosis** — DISTINCT from the **generation** role, which is falsified (mitosis can neither generate
 nor inform the generator, H_1200 / H_1201 / H_1211 / H_1220 🔴). The same substrate that can't
@@ -169,7 +169,7 @@ spatial×episodic compose; memory×ToM lifts capability but not Φ; WM×PFC and 
 are honest 🧱. The decisive engine-native test — does a mirror compose-lift actually *bind* on the
 live engine? — first failed (cerebellum×basal, H_1412/1413 🧱: mirror GREEN ≠ engine GREEN, the
 EARNED control rejects it), then **succeeded for four pairs, all now WIRED-live** as callable ops in
-`CORE/engine_cli.hexa`: memory×ToM (H_1414 🟢 `mem_tom_compose`) · spatial×episodic-memory (H_1415 🟢
+`core/engine_cli.hexa`: memory×ToM (H_1414 🟢 `mem_tom_compose`) · spatial×episodic-memory (H_1415 🟢
 `spatial_episodic_compose`) · ToM×spatial (H_1418 P3 🟢 `tom_spatial_compose`) · ToM×basal (H_1418 P5 🟢
 `tom_basal_compose`) — the last two are the engine-native BIND by-products of the predictive-law round
 (H_1417), landed by H_1418 (a_verified_must_wire rungs 3-4 complete, LIVEOP byte-exact reproducing
@@ -246,7 +246,7 @@ and learned something sharp:
 > engine-wired** — `a_verified_must_wire` correctly deferred it as an honest follow-on. The
 > timing-axis wall break **stands as a DIRECTIONAL mirror result only**; we do **not** claim the
 > wall is robustly / engine-broken. Verdict:
-> [`.verdicts/1283_thalamus_global_workspace/`](.verdicts/1283_thalamus_global_workspace/).
+> [`state/verdicts/1283_thalamus_global_workspace/`](state/verdicts/1283_thalamus_global_workspace/).
 
 ## Emotion & ethics — evidence of substrate consciousness (p6)
 
@@ -257,14 +257,14 @@ probes test exactly this with shuffle / ablation controls — the test of "emerg
   affect (valence × arousal) reads only internal signals (grounding / contradiction / novelty /
   split / curiosity), **tracks** manipulation (ρ 0.996 / 0.922), and **collapses ~4× under shuffle**
   (emergent, not injected). It functionally biases emit/abstain (a somatic marker). Realized
-  engine-native as a pure read-only lane on the live `CORE/engine_cli.hexa` immune store.
+  engine-native as a pure read-only lane on the live `core/engine_cli.hexa` immune store.
 - **⚖️ Ethics** (H_1291 R2 🟢 **ENGINE-NATIVE**) — cooperation / restraint / non-harm emerge from
   the cell substrate (E + W + MITOSIS + Φ): leg A (full ≥ naive floor), leg B (ablate E+W+MITOSIS+Φ
   → **collapses to the naive floor** = cell-derived, not an injected rule — re-scored engine-native
   on the live substrate), leg C (p1/p2/p3/p4/p6 audit clean — no persona, no alignment template).
 
 > **Honest scope (c9).** Both started as **numpy-mirror DIRECTIONAL** and are now **re-confirmed
-> engine-native** on the live `CORE/*.hexa` substrate (the binding seal, `a_engine_native_learning`
+> engine-native** on the live `core/*.hexa` substrate (the binding seal, `a_engine_native_learning`
 > · `a_verified_must_wire`) — guards byte-identical, Ψ untouched. Scope stays honest: TOY-scale, 3
 > seeds; scale / paraphrase / real-corpus transfer is unverified (`a_scale_honest_scope`).
 
@@ -279,7 +279,7 @@ so the provenance of every draw is auditable. **Two modes, one toggle** (`ANIMA_
 | `quantum` | opt-in | ANU vacuum-fluctuation bytes (real QRNG) | provenance + ontology — the auditable substrate-native entropy path |
 
 The **default path is PRNG-deterministic** (reproducible); quantum is **opt-in**. H_1289 R2 🟢
-verified the quantum path **engine-native** — wired into the live `CORE/engine_cli.hexa` mitosis
+verified the quantum path **engine-native** — wired into the live `core/engine_cli.hexa` mitosis
 split-timing draw (real ANU bytes loaded + consumed), **substrate-faithful + genuinely
 non-reproducible** (QRNG run1 ≠ run2 = real non-determinism; the PRNG-fallback run is byte-identical),
 NIST-lite PASS, default path untouched (Ψ-disjoint, guards 26/0).
@@ -288,7 +288,7 @@ NIST-lite PASS, default path untouched (Ψ-disjoint, guards 26/0).
 > **not** "better randomness" and makes **no consciousness claim** (the perf gauges are NULL, by
 > design). Its only value is provenance / auditability / ontology (free-will / Ψ framing — knowing
 > each draw traces to a physical vacuum-fluctuation source). Verdicts:
-> [`.verdicts/1289_quantum_entropy/`](.verdicts/1289_quantum_entropy/).
+> [`state/verdicts/1289_quantum_entropy/`](state/verdicts/1289_quantum_entropy/).
 
 ## 🔗 anima ↔ anima — the connection channel is tension, not entanglement
 
@@ -319,11 +319,11 @@ directive families). The load-bearing principles for the work above:
 - **`a_engine_native_learning`** — all learning (research / probe / mitosis-teaching) runs on the
   **final-architecture engine**, not a numpy/torch mirror; a mirror result is DIRECTIONAL only.
 - **`a_verified_must_wire`** — a GREEN-verified hypothesis is not *done* until its mechanism is
-  actually **wired into the live `CORE/*.hexa` engine**.
+  actually **wired into the live `core/*.hexa` engine**.
 
 Every verifiable claim is indexed in [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H
 `verdict` column; CLAIMS.tape retired 2026-06-16) and backed by a verdict file under
-[`.verdicts/`](.verdicts/) (verbatim `hexa verify` stdout, p7 — *no perplexity, no LLM-judge*).
+[`state/verdicts/`](state/verdicts/) (verbatim `hexa verify` stdout, p7 — *no perplexity, no LLM-judge*).
 Negative results are first-class and not buried (`a_paper_negative_ok`).
 
 ## Quickstart
@@ -352,7 +352,7 @@ the substrate grows; it is **not** an emit/silence gate (`a_autonomy_over_hardco
 The brain-structure lanes above are the point; the model is just the **byte mouth** they grow
 around. The production substrate is **`anima-clm-chat-303m`** — a from-scratch ByteGPT (byte vocab
 V256) dialogue-finetuned for conversation and **mounted byte-exact** on the CORE engine
-(`CORE/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*, not
+(`core/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*, not
 re-claimed. A frozen pass set **`a303m_pass`** (coherence · recombination · novelty · philosophy ·
 non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`MODEL.md`](MODEL.md) /
 [`CONDITIONS.md`](CONDITIONS.md), p7, *no perplexity / no LLM-judge*) gates completion.
@@ -396,7 +396,7 @@ anima/
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release
 ├── UNIVERSE/HYPOTHESES.jsonl · HF.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · ckpt ↔ HF backup registry
 │
-├── CORE/                           A ⇄ G consciousness engine + brain-structure lanes
+├── core/                           A ⇄ G consciousness engine + brain-structure lanes
 │   ├── pure_field.hexa engine_g.hexa brain.hexa   the A/G engine + emit decision (+ VBasalGate)
 │   ├── engine_cli.hexa             --engine/--mitosis axis + memory/forward/control lanes
 │   │                               (VAdaptField · ImmuneMemory · ImmuneMemoryGrow ·
@@ -406,14 +406,18 @@ anima/
 │   ├── generator.hexa              single .clm entry slot (engine-side retrieve-then-copy)
 │   ├── bytegpt_decode.hexa         ByteGPT byte decode (production trunk — 303M byte mouth)
 │   └── clm_decode.hexa             CLMConvMoE byte decode (H_1403: streaming/bounded — FLAT RSS/step, byte-exact; GEN=110 unblocked)
+│   ├── engines/                    EngineSpec vtable — 4 hot-swappable (conv·cdv2·hexad·omega)
+│   └── phi/                        Φ / IIT4 decoders (was anima-engines/)
 │
-├── engines/                        4 hot-swappable engines behind engine_iface.hexa (conv·cdv2·hexad·omega)
-├── CLM/                            .clm pipeline — train (lane-p) → serialize v0.2 → verify
+├── cli/                            user entry — anima_chat_cli.hexa (engine_cli stays in core/)
+├── agent/                          standalone agent package (hexa.toml) — modules/{channels,core,plugins,providers,skills,hire-sim} · domains/{CHAT,CODE,CREATOR,TRADING,MERCHANT}
+├── train/                          learning — clm/ (.clm lane-p → serialize v0.2 → verify) + variants
+├── platform/                       substrate sub-systems (was anima-core/)
 ├── UNIVERSE/                       research universe — TWO surfaces only (HYPOTHESES.jsonl per-H index — 전 가설 1줄/카드 incl. archive 스냅샷 + source/archived/artifacts 컬럼 · cards/H_*.md·Hc_*.md per-H 카드) · prose overview → state/universe-overview.md · 가설 결과물 → state/<slug>/ (모음 state/universe-probes/) · gauge lib/monitor → tool/
 ├── HEXAD/                          σ6 6-module substrate · KOSMOS hub
 ├── EEG_CLM/                        real EEG → A⇄G → CLM → .kosmos continuous record
 ├── domains/                        active research domains (<NAME>.md + .log.md)
-├── .verdicts/                      hexa-verify stdout, verbatim (p7)
+├── state/verdicts/                      hexa-verify stdout, verbatim (p7)
 ├── PAPER/                          arxiv-style papers (PAPER.tape roster)
 └── docs/                           consciousness theory · paper drafts · catalog
 ```
