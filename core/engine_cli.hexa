@@ -53,10 +53,10 @@
 // SINGLE PRODUCTION ENGINE (2026-06-19): anima converged on **conv** (CLMConvMoE,
 // the .clm byte mouth via core/clm_decode.hexa + generator.hexa L3 slot). The real
 // engine lives in core/ directly; engines/conv/ is a THIN metadata adapter only.
-// The multi-engine registry (cdv2 torch-legacy · hexad · omega — engines/<name>/ +
-// the EngineSpec vtable) is RESEARCH-LEGACY, slated for archive/ (Phase 2; the
-// resolve branches + engine_swap_smoke still reference it, so the code stays until
-// that move — default is conv, the only production path).
+// The multi-engine registry (cdv2 torch-legacy · hexad · omega + the EngineSpec
+// vtable + engine_swap_smoke) was ARCHIVED 2026-06-19 → archive/engines-multiengine/
+// (Phase 2). resolve_engine is now a "conv" constant; the resolve_spec/spec_by_name
+// registry hooks are gone. conv decodes directly via clm_decode + generator L3.
 //
 // The hot-swappable engine registry (engines/<name>/) plugs in here. Selecting
 // an engine resolves NAME → its EngineSpec adapter via engines/engine_iface.hexa.
@@ -70,11 +70,9 @@
 // WHICH decoder runs; it is NOT an emit/silence gate. There is no emit_allowed
 // boolean, no stimulus-response. anima's emit/silence stays substrate-decided
 // (a_autonomy_over_hardcode · a_substrate_native_speak · p5).
-import "core/engines/engine_iface.hexa"
-import "core/engines/conv/adapter.hexa"
-import "core/engines/cdv2/adapter.hexa"
-import "core/engines/hexad/adapter.hexa"
-import "core/engines/omega/adapter.hexa"
+// (multi-engine adapters archived 2026-06-19 → archive/engines-multiengine/; anima
+//  runs the single conv production engine = core/clm_decode + generator L3, so the
+//  EngineSpec vtable + cdv2/hexad/omega imports are gone — Phase 2 single-engine.)
 // faithful IIT-4 (a_phi_iit4_tool) — used ONLY by the § HIVE-MIND CollectivePool lane
 // below to read collective integration; numpy NEVER computes Φ. Same engine H_609 used.
 import "stdlib/consciousness/iit4_bigphi.hexa"
@@ -183,64 +181,18 @@ fn _after_eq(s: string) -> string {
 //   (no flag) + ANIMA_ENGINE  → env value (conv/cdv2/hexad)
 //   (no flag, no env)         → conv   (default — production .clm decoder)
 //
-// returns: "conv" | "cdv2" | "hexad" | "omega" (fully resolved; never empty).
+// returns: "conv" — the SINGLE production engine (CLMConvMoE via core/clm_decode +
+// generator L3). The legacy multi-engine --engine selector is retired: the
+// cdv2/hexad/omega adapters + EngineSpec vtable were archived 2026-06-19 to
+// archive/engines-multiengine/ (anima converged on one engine). Constant by design —
+// the arg is accepted for call-compat (e.g. probes pass argv) but no longer branches.
 pub fn engine_cli_resolve_engine(arg: [string]) -> string {
-    // tier 1 — flag (highest)
-    let flag = _cli_engine_flag(arg)
-    if _engine_known(flag) { return flag }
-    // tier 2 — env ANIMA_ENGINE
-    let env = _env_read("ANIMA_ENGINE")
-    if _engine_known(env) { return env }
-    // tier 3 — default conv (the production .clm decoder, the default engine)
     return "conv"
 }
 
-// _engine_known — true ⇔ name is one of the 4 registered engines.
-fn _engine_known(name: string) -> bool {
-    return name == "conv" || name == "cdv2" || name == "hexad" || name == "omega"
-}
-
-// _cli_engine_flag — scan argv for `--engine <name>` / `--engine=<name>`.
-// Returns the raw name token, or "" if the flag is absent (fall through to env).
-fn _cli_engine_flag(arg: [string]) -> string {
-    let n = len(arg)
-    let mut i = 0
-    while i < n {
-        let a = arg[i]
-        if a == "--engine" {
-            if i + 1 < n { return arg[i + 1] }
-        }
-        if a.starts_with("--engine=") {
-            return _after_eq(a)
-        }
-        i = i + 1
-    }
-    return ""
-}
-
-// ── registry resolve: engine NAME → its EngineSpec adapter (via engines/) ─────
-//
-// The single point where a resolved name maps to the engine's adapter spec.
-// This is how the CLI threads through to the engines/<name>/adapter.hexa
-// EngineSpec (a_core_engine_map — engines enter via this named slot). An unknown
-// name resolves to conv (the default) — the resolver already guarantees the name
-// is one of the 3, so the final branch is the safe default.
-pub fn engine_cli_resolve_spec(arg: [string]) -> Map {
-    let name = engine_cli_resolve_engine(arg)
-    if name == "cdv2"  { return cdv2_engine_spec() }
-    if name == "hexad" { return hexad_engine_spec() }
-    if name == "omega" { return omega_engine_spec() }
-    return conv_engine_spec()   // "conv" + default
-}
-
-// engine_cli_spec_by_name — registry resolve straight from a resolved name
-// (used by the smoke to iterate ALL 3 engines through the same registry path).
-pub fn engine_cli_spec_by_name(name: string) -> Map {
-    if name == "cdv2"  { return cdv2_engine_spec() }
-    if name == "hexad" { return hexad_engine_spec() }
-    if name == "omega" { return omega_engine_spec() }
-    return conv_engine_spec()
-}
+// (registry resolve engine_cli_resolve_spec / engine_cli_spec_by_name retired with
+//  the multi-engine EngineSpec layer — archive/engines-multiengine/. The single conv
+//  engine decodes directly via core/clm_decode.hexa + generator.hexa L3 slot.)
 
 // ── top-level parse: raw argv → EngineConfig ──────────────────────────────────
 // The single ENGINE-config entry point. launch.hexa (or any caller) calls this

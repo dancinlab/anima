@@ -111,7 +111,7 @@ decoding and `.kosmos` anchors enter through *named slots*, never directly into 
 - **engine_cli.hexa** — the substrate-config axis (`--mitosis on/off`) + the brain-structure
   lanes. It configures *whether the substrate grows* — **not** an emit/silence gate
   (`a_autonomy_over_hardcode`). (anima runs the single `conv` production engine; the legacy
-  `--engine` selector + `core/engines/` adapters are research-legacy, slated for `archive/`.)
+  `--engine` selector + `core/engines/` adapters were archived to `archive/engines-multiengine/` — anima runs the single conv engine.)
 
 anima runs as a **mounted living daemon** (H_1164 → H_1206 🟢): the production model runs *inside*
 the A ⇄ G substrate and **converses + grounds + grows + remembers + sleeps** in one continuous
@@ -416,9 +416,9 @@ weights mount through that named L3 slot, never into the substrate. `--mitosis o
 whether the substrate grows; it is **not** an emit/silence gate (`a_autonomy_over_hardcode`).
 
 > The earlier multi-engine `--engine conv|cdv2|hexad|omega` hot-swap layer
-> (`core/engines/`, `EngineSpec` vtable) is **research-legacy** — anima converged on the single
-> `conv` production engine; cdv2 (torch-resident) / hexad / omega are kept for history and slated
-> for `archive/` (see CHANGELOG).
+> (`core/engines/`, `EngineSpec` vtable) was **archived** to `archive/engines-multiengine/`
+> (2026-06-19) — anima converged on the single `conv` production engine; cdv2 (torch-resident) /
+> hexad / omega are kept there for history (see CHANGELOG).
 
 ## The model — the byte mouth (a component, not the center)
 
@@ -481,7 +481,6 @@ anima/
 │   ├── generator.hexa              single .clm entry slot (engine-side retrieve-then-copy)
 │   ├── bytegpt_decode.hexa         ByteGPT byte decode (production trunk — 303M byte mouth)
 │   └── clm_decode.hexa             CLMConvMoE byte decode (H_1403: streaming/bounded — FLAT RSS/step, byte-exact; GEN=110 unblocked)
-│   ├── engines/                    EngineSpec vtable (research-legacy; conv=production, rest → archive/)
 │   └── phi/                        Φ / IIT4 decoders (was anima-engines/)
 │
 ├── cli/                            user entry — anima_chat_cli.hexa (engine_cli stays in core/)
