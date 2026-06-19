@@ -429,8 +429,10 @@ non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`MO
 > non-fabricating conversational substrate, *not* a QA assistant (p4). Literal-QA / idea-depth is
 > bounded by a measured **capacity wall** (H_1166), and the answer to that wall is an **engine-side
 > memory lane, not a bigger model**: scaling the model did **not** lift QA/depth (the
-> missing-structure brain lanes did). The frozen bars are honest about robustness (5 robust + 2 thin
-> + 1 inflated, H_1165) and are **never moved** to make a result pass.
+> missing-structure brain lanes did). The frozen bars are honest about robustness (H_1165 mapped
+> 5 robust + 2 thin + 1 inflated; **since updated** — the G5 in-dist thin is now broken + wired
+> (H_1396/1398/1400), leaving **G6 depth** as the single remaining thin + CHAT inflated) and are
+> **never moved** to make a result pass.
 
 Production model: [`dancinlab/anima-clm-chat-303m`](https://huggingface.co/dancinlab/anima-clm-chat-303m)
 · collections [CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) /
