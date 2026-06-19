@@ -1,6 +1,6 @@
 // h1412_cerebellum_basal_compose_probe.hexa — H_1412 R2: the CEREBELLUM×BASAL-GANGLIA
-// COMPOSE ARBITER, realized ENGINE-NATIVE on the LIVE faculties (CORE/engine_cli.hexa
-// VForwardField + inlined _arbiter, CORE/brain.hexa VBasalGate + _bg_read (inlined)),
+// COMPOSE ARBITER, realized ENGINE-NATIVE on the LIVE faculties (core/engine_cli.hexa
+// VForwardField + inlined _arbiter, core/brain.hexa VBasalGate + _bg_read (inlined)),
 // re-scoring the FROZEN H_1407 R1 capability bars through `hexa run`
 // (a_engine_native_learning · a_verified_must_wire · $0 local CPU · p7 · p8).
 //
@@ -42,8 +42,8 @@
 //   only-X decomposition: only_cerebellum>0 AND only_basal>0 ⇒ SEPARABLE not subsumed.
 // p7 = compose/oracle/shuffle accuracies + decomposition, NOT perplexity.
 
-import "CORE/engine_cli.hexa"
-import "CORE/brain.hexa"
+import "core/engine_cli.hexa"
+import "core/brain.hexa"
 
 // ── frozen knobs (pre-registered, == R1 mirror FREEZE.txt) ───────────────────
 fn _SEEDS() -> [int] { return [4700, 4701, 4702] }

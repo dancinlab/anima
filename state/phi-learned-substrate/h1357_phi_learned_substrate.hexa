@@ -13,7 +13,7 @@
 // SUBSTRATE SOURCE (HONEST, c9): NO trained-303M state is locally reachable ($0 CPU, no GPU).
 // We DO NOT fabricate one. SUBSTRATE = "proxy-from-telemetry + deterministic learned-readout,
 // NOT a trained-303M trajectory": the n_mod=4 REAL pure_field oscillator modules (byte-faithful
-// from CORE/pure_field.hexa, IDENTICAL to H_1349's REAL arm) supply raw field-energy + osc
+// from core/pure_field.hexa, IDENTICAL to H_1349's REAL arm) supply raw field-energy + osc
 // values; a FIXED learned-readout projection W (n_mod x n_mod, deterministic, SEED-INDEPENDENT,
 // emulating a trained embedding/readout head) MIXES the modules into salience. W is built ONCE
 // from a FIXED non-seed constant so its geometry is the SAME across all 3 seeds — the defining
@@ -61,7 +61,7 @@ fn rank_uniformize_cell(traj: int, base: int, t_ticks: int) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
-// REAL pure_field oscillator module dynamics — byte-faithful from CORE/pure_field.hexa (H_1349).
+// REAL pure_field oscillator module dynamics — byte-faithful from core/pure_field.hexa (H_1349).
 // PSI_ALPHA=0.014  LN2=0.6931471805599453  tau fast/medium/slow = 2/40/400  FIELD_DIM=6
 // ════════════════════════════════════════════════════════════════════════════════════════════
 fn osc_tick(phase: float, amp: float, tau: int) -> [float] {

@@ -1,4 +1,4 @@
-// code_argv_smoke.hexa — runtime smoke for AGENT/CODE/code_argv (F2).
+// code_argv_smoke.hexa — runtime smoke for agent/domains/CODE/code_argv (F2).
 //
 // 4 cases, all in-process (no process spawn, no FS write):
 //   C1 [] (empty)                    → tool="help",      mode="help",  known=true
@@ -14,7 +14,7 @@
 //
 // All cases complete → exit 0. No external side effects.
 
-import "AGENT/CODE/code_argv.hexa"
+import "agent/domains/CODE/code_argv.hexa"
 
 // Print a parse dict in a stable one-line form for the case logs.
 fn _fmt(d: Map) -> string {
@@ -35,7 +35,7 @@ fn _check(label: string, ok: bool) {
 }
 
 fn main() {
-    println("[smoke] AGENT/CODE/code_argv — " + code_argv_summary())
+    println("[smoke] agent/domains/CODE/code_argv — " + code_argv_summary())
 
     // ── C1 empty argv → help mode ──────────────────────────────────────────
     let c1 = code_argv_parse([])

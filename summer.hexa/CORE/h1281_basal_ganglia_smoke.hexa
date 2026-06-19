@@ -1,5 +1,5 @@
 // h1281_basal_ganglia_smoke.hexa — H_1281 R3 ENGINE-NATIVE BASAL GANGLIA go/no-go
-// SELECTION gate, run ON the LIVE engine (CORE/brain.hexa VBasalGate lane) via `hexa
+// SELECTION gate, run ON the LIVE engine (core/brain.hexa VBasalGate lane) via `hexa
 // run`. Reproduces the R1/R2 numpy-MIRROR GREEN (a learned reinforcement-gated go/no-go
 // SELECTION gate beats anima's REAL faithful-untuned fixed engine_g gate) THROUGH THE
 // ACTUAL ENGINE — the binding leg (a_engine_native_learning · a_verified_must_wire).
@@ -7,7 +7,7 @@
 // $0 local CPU · gradient-free · p7 · neuro lens c15 (missing-brain ladder) · seeds [7,8,9].
 //
 // WHAT IS LIVE-ENGINE HERE: the go/no-go gate is the engine-native VBasalGate added to
-// CORE/brain.hexa (vbasal_new / vbasal_go_value / vbasal_select / vbasal_update /
+// core/brain.hexa (vbasal_new / vbasal_go_value / vbasal_select / vbasal_update /
 // vbasal_align), wired into the emit decision by brain_decide_bg. This smoke calls those
 // LIVE surfaces — the selection, the gradient-free outcome-reward learning, and the
 // alignment readout all run through the real engine, NOT a numpy mirror.
@@ -46,7 +46,7 @@
 //   h1199 DIM-growth · h1205 re-run separately, all GREEN). a_core_engine_map: the feature
 //   stream is an ENGINE-NATIVE drive, NOT a .clm (generator L3) / NOT a .kosmos (kosmos_io).
 
-import "CORE/brain.hexa"
+import "core/brain.hexa"
 
 // ── frozen config (== R2 mirror) ─────────────────────────────────────────────
 let K          = 4         // competing candidate emits per decision step
@@ -291,7 +291,7 @@ fn main() {
     println("H_1281 R3 — ENGINE-NATIVE BASAL GANGLIA go/no-go selection (LIVE VBasalGate)")
     println("  ARM A = faithful engine_g mirror (generic CONVEX untuned weights, sum=1.0,")
     println("          NOT aligned to the grounding signal; FIXED threshold 0.30).")
-    println("  ARM B = LIVE VBasalGate go/no-go gate (CORE/brain.hexa), reward-learned.")
+    println("  ARM B = LIVE VBasalGate go/no-go gate (core/brain.hexa), reward-learned.")
     println("  K=4  D=6  noise=1.0  P_grounded=0.45  N_train=4000  N_test=2000  LR=0.05")
     println("  seeds=[7,8,9]  MARGIN=0.05  CTRL_EPS=0.02")
     println("================================================================================")

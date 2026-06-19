@@ -61,7 +61,7 @@ def fetch_corpus(target_bytes, cache_path):
     # try common on-pod corpora first
     candidates = [
         "/workspace/corpus.txt", "/workspace/clm_mid_5lang_c4.txt",
-        "/root/corpus.txt", "CORE/testdata/clm_mid_5lang_c4.txt",
+        "/root/corpus.txt", "core/testdata/clm_mid_5lang_c4.txt",
     ]
     for c in candidates:
         if os.path.exists(c) and os.path.getsize(c) > 100_000:

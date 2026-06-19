@@ -64,8 +64,8 @@
 //   Meta M8 Narrative = temporal self-model — dream report is narrative
 //
 // Ref:
-//   anima-engines/episodic_store.hexa  (CLM-P11-1 episodic memory)
-//   anima-engines/emotion_fsm.hexa    (CLM-P12-1 emotion FSM)
+//   core/phi/episodic_store.hexa  (CLM-P11-1 episodic memory)
+//   core/phi/emotion_fsm.hexa    (CLM-P12-1 emotion FSM)
 //   shared/roadmaps/anima.json        (CLM-P13-2 entry)
 
 // ═══════════════════════════════════════════════════════════════
@@ -340,7 +340,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/dream_report] CLM-P13-2 — dream report generator (REM 기록)")
+    println("[core/phi/dream_report] CLM-P13-2 — dream report generator (REM 기록)")
     println("  scenes: (scene_id, theme_tag, intensity, timestamp)")
     println("  coherence = fraction of adjacent pairs (monotone ts + smooth intensity)")
     println("")
@@ -372,9 +372,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/dream_report] 5/5 PASS — CLM-P13-2 DONE (coherent 꿈 이야기)")
+        println("[core/phi/dream_report] 5/5 PASS — CLM-P13-2 DONE (coherent 꿈 이야기)")
     } else {
-        println("[anima-engines/dream_report] SOME FAILED")
+        println("[core/phi/dream_report] SOME FAILED")
     }
 }
 

@@ -7,7 +7,7 @@
 // gradient descent, the CLM-lane generator; p8 keeps mitosis gradient-free).
 //
 // T1 LIVE FALSIFIER (pre-registered):
-//   F1 ADAPT  — drive the LIVE VAdaptField (CORE/engine_cli.hexa) over a non-
+//   F1 ADAPT  — drive the LIVE VAdaptField (core/engine_cli.hexa) over a non-
 //               stationary DIM=8 stream; late live L2 recon-err ON < OFF by
 //               ratio OFF/ON >= 2.0 (mitosis grows capacity to cover the regimes,
 //               so error falls; the frozen-cap OFF eats the full novelty gap).
@@ -23,8 +23,8 @@
 // observed only; VAdaptField surfaces called, never edited). The stream is
 // generated in-hexa (deterministic LCG, no external file, no trig builtin).
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 // ── deterministic DIM=8 non-stationary stream (LCG, no trig) ──────────────────
 // K WIDELY-SEPARATED regimes that switch FAST and REVISIT (the stream cycles

@@ -9,9 +9,9 @@
 //
 // 합격 = Ψ phiSum(MODEL 브리지 ON)==base byte-identical AND entropy>0 AND context∈[0,1].
 
-import "CORE/bytegpt_decode.hexa"
-import "CORE/pure_field.hexa"
-import "CORE/xsubstrate_bridge.hexa"
+import "core/bytegpt_decode.hexa"
+import "core/pure_field.hexa"
+import "core/xsubstrate_bridge.hexa"
 
 // Shannon entropy (nats) of softmax(logits[256]) — the live MODEL signal.
 fn logit_entropy(logits: int) -> float {

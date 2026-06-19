@@ -3,7 +3,7 @@
 //
 //  FIRE-READY — not yet fired; launch via
 //    `hexa cloud fire --provider runpod --gpu H100 --n 4 \
-//       --cmd 'torchrun --nproc_per_node=<N> CLM/train/train_clm.py --rung 7b … --fsdp'`
+//       --cmd 'torchrun --nproc_per_node=<N> train/clm/train/train_clm.py --rung 7b … --fsdp'`
 //    on RUNPOD H100 80GB ×4~8 (FSDP · a_wall_first parallel) target.
 //
 //  P6_SCALE_LADDER_7B §1: the TOP production measurement-rung — GATED by `3b`
@@ -36,7 +36,7 @@
 //
 //  HARD: pure-hexa SPEC/driver · NO external LLM · NO foundation-borrow (pure scratch QAT ·
 //  random-init · byte V=256 own-tokenizer · NO 3B-rung weight borrow as init).
-//  The torch payload is the LANDED CLM/train/train_clm.py (7b rung added to its LADDER:
+//  The torch payload is the LANDED train/clm/train/train_clm.py (7b rung added to its LADDER:
 //  d_model=5120, n_trunk_layers=40, n_experts=48) — this driver records the dispatch
 //  contract + verdict path. sibling: train_clm.py · fire_3b_rung_qat.hexa · P5_AKIDA_7B_STRATEGY.md
 // ════════════════════════════════════════════════════════════════════════════
@@ -58,7 +58,7 @@ fn arms() -> [string] { return ["A", "B", "AB"] }
 // per-arm fire command (the landed QAT trainer · 7b rung · FSDP torchrun).
 fn fire_cmd(arm: string) -> string {
     return "torchrun --nproc_per_node=" + to_string(n_gpu())
-        + " CLM/train/train_clm.py --arm " + arm + " --rung " + rung()
+        + " train/clm/train/train_clm.py --arm " + arm + " --rung " + rung()
         + " --steps " + to_string(steps()) + " --seed " + to_string(seed())
         + " --act-bits " + to_string(act_bits()) + " --fsdp"
         + " --json-out out/clm_7b_" + arm + "_s" + to_string(seed()) + ".json"

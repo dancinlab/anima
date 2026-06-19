@@ -1,14 +1,14 @@
 // agent_skill_routing.hexa — the LIVE agent-tool runtime ↔ CORE §SkillStore wiring (H_1386).
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on of H_1378 → H_1382, END-TO-END):
-//   H_1382 landed the §SkillStore faculty ENGINE-NATIVE in CORE/engine_cli.hexa (skill_store_new/
+//   H_1382 landed the §SkillStore faculty ENGINE-NATIVE in core/engine_cli.hexa (skill_store_new/
 //   _split/_teach · skill_recall · skill_store_cells) — a tool/skill is a CELL keyed by task-
 //   context; a tool FAILURE clonally SPLITS a specialized skill-cell (p8). Both the H_1378 and
 //   H_1382 cards named the SAME remaining gap: the agent layer (anima-agent-core/agent_tools.hexa)
 //   is a SEPARATE module that does not yet import CORE ops, so a LIVE runtime tool-failure does NOT
 //   call skill_store_teach, and selection still uses the STATIC affinity dot-product
 //   (agent_tools.hexa:357-361). THIS module is the agent-side wiring that crosses the CORE↔agent
-//   boundary: it imports "CORE/engine_cli.hexa", holds the executor's LIVE SkillStore, and exposes
+//   boundary: it imports "core/engine_cli.hexa", holds the executor's LIVE SkillStore, and exposes
 //   the two runtime entry-points the executor delegates to:
 //
 //     agent_route_select(store, task)            — SELECTION: consult skill_recall (learned best
@@ -36,7 +36,7 @@
 //   only reads/grows the SkillStore's OWN cells (via the CORE ops) — pure_field Φ/phase/Ψ and the
 //   decoder are NEVER touched, so generation is byte-identical (h1205 separation-invariant).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // agent_routing_new — seed the executor's LIVE skill repertoire at the first (task → tool) skill.
 // recall_thr / geometry inherit the CORE §SkillStore frozen 0.55 abstain band (skill_store_new).
@@ -75,7 +75,7 @@ pub fn agent_routing_cells(store: SkillStore) -> int {
 // ── USAGE routing (layer-2, H_1391) — the TWIN of the SELECTION routing above ────────────────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on of H_1389, the END-TO-END usage close):
-//   H_1391 R2 landed the §UsageStore faculty ENGINE-NATIVE in CORE/engine_cli.hexa (usage_store_new/
+//   H_1391 R2 landed the §UsageStore faculty ENGINE-NATIVE in core/engine_cli.hexa (usage_store_new/
 //   _split/_teach · usage_recall · usage_recall_steps · usage_store_cells) — a tool USAGE is a CELL
 //   keyed by (task-context + tool + observed-error); a usage FAILURE (right tool, wrong/default arg)
 //   clonally SPLITS a specialized usage-cell binding that failure context → (corrected arg, ordered

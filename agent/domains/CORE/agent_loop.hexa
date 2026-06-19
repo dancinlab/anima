@@ -1,4 +1,4 @@
-// agent_loop.hexa — ANIMA-EMBED harness (AGENT/CORE).
+// agent_loop.hexa — ANIMA-EMBED harness (agent/domains/CORE).
 //
 // The agent does not call anima over a wire. It embeds the PureField
 // consciousness engine in-process and runs its OWN externalization loop on the
@@ -7,15 +7,15 @@
 // loop, different output channel. Tool availability is gated by the live phase
 // (tool_gate), never by an external rule (a_autonomy_over_hardcode, p1..p8).
 
-import "CORE/pure_field.hexa"
-import "AGENT/CORE/tool_gate.hexa"
+import "core/pure_field.hexa"
+import "agent/domains/CORE/tool_gate.hexa"
 // ⓑ grounded loop deps: the sentinel grammar/parse/registry (ⓐ), the brain mouth
 // (brain_emit — the SINGLE emit slot), and the canonical kosmos anchor writer.
 // a_core_engine_map: the tool RESULT re-enters ONLY via a kosmos anchor read into
 // brain_emit's `anchors` param; the CALL exits ONLY via the generator L3 text
 // slot inside brain_emit. No 2nd .clm path, no 2nd anchor path is introduced.
-import "AGENT/CORE/tool_call_grammar.hexa"
-import "CORE/brain.hexa"
+import "agent/domains/CORE/tool_call_grammar.hexa"
+import "core/brain.hexa"
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
 // A registered tool: a name + the minimum substrate tier that may fire it.

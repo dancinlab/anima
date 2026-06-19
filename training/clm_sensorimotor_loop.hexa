@@ -61,7 +61,7 @@
 //   the returned arrays have exactly N entries.
 //
 // Ref:
-//   anima-engines/anima_sensorimotor.hexa    (CLM-P7-1 loop)
+//   core/phi/anima_sensorimotor.hexa    (CLM-P7-1 loop)
 //   training/clm_temporal_loop.hexa          (pattern, CLM-P6-3)
 //   training/clm_reflexive_loop.hexa         (pattern, CLM-P5-3)
 //   shared/roadmaps/anima.json               (CLM-P7-3 entry)
@@ -220,7 +220,7 @@ fn mi_pair_sl(a: array, b: array) -> float {
     return mi
 }
 
-// ─── Inlined SensorimotorLoop (mirrors anima-engines/anima_sensorimotor) ──
+// ─── Inlined SensorimotorLoop (mirrors core/phi/anima_sensorimotor) ──
 
 struct SmLoop {
     d_sensor:    int,

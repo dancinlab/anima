@@ -1,4 +1,4 @@
-// anima-engines/corpus_quality_engine.hexa — CLM-P22-1 corpus quality metric 창발
+// core/phi/corpus_quality_engine.hexa — CLM-P22-1 corpus quality metric 창발
 //
 // Roadmap: shared/roadmaps/anima.json P22 CLM track, CLM-P22-1
 //   "Corpus quality metric 창발 — MI/entropy/diversity 자동 지표 발견"
@@ -73,7 +73,7 @@
 //   Law 29  speak() 없음 — engine emits numbers, not claims
 //
 // Run:
-//   $HEXA anima-engines/corpus_quality_engine.hexa
+//   $HEXA core/phi/corpus_quality_engine.hexa
 
 // =====================================================================
 // Constants
@@ -803,7 +803,7 @@ fn check_T6_determinism() -> bool {
 }
 
 fn test() {
-    println("[anima-engines/corpus_quality_engine] CLM-P22-1 — corpus quality 자가 발견")
+    println("[core/phi/corpus_quality_engine] CLM-P22-1 — corpus quality 자가 발견")
     println("  candidates: " + str(N_METRICS) + " metrics")
     println("  panel: " + str(N_CORPORA) + " synthetic corpora (rich/poor/latin/mixed/news/dialogue)")
     println("  oracle: simulated CE from diversity + coverage + MI + repetition")
@@ -867,9 +867,9 @@ fn test() {
 
     let all_pass = pass_count == 6
     if all_pass {
-        println("[anima-engines/corpus_quality_engine] 6/6 PASS — CLM-P22-1 DONE (self-discovered metrics correlate w/ CE)")
+        println("[core/phi/corpus_quality_engine] 6/6 PASS — CLM-P22-1 DONE (self-discovered metrics correlate w/ CE)")
     } else {
-        println("[anima-engines/corpus_quality_engine] " + str(pass_count) + "/6 PASS — SOME FAILED")
+        println("[core/phi/corpus_quality_engine] " + str(pass_count) + "/6 PASS — SOME FAILED")
     }
 }
 

@@ -3,13 +3,13 @@
 // Standalone, $0, no model/GPU. Proves exec_effectful_tool's ARMED path: with
 // ANIMA_TOOLS_EFFECTFUL=1 in the env, a T2 file_write routes to the REAL surface
 // and writes for real (and with the env UNSET, the SAME call honest-refuses).
-// Run armed:   ANIMA_TOOLS_EFFECTFUL=1 hexa run AGENT/CORE/tool_wiring_armed_probe.hexa
-// Run default: hexa run AGENT/CORE/tool_wiring_armed_probe.hexa   (→ gated-refusal)
+// Run armed:   ANIMA_TOOLS_EFFECTFUL=1 hexa run agent/domains/CORE/tool_wiring_armed_probe.hexa
+// Run default: hexa run agent/domains/CORE/tool_wiring_armed_probe.hexa   (→ gated-refusal)
 //
 // p7: deterministic equality, no perplexity. p5: the unset path NEVER fabricates
 // a write; the armed path performs a REAL write whose bytes are read back.
 
-import "AGENT/CORE/tool_call_grammar.hexa"
+import "agent/domains/CORE/tool_call_grammar.hexa"
 
 fn main() {
     print("== F2 effectful armed-path probe ==")

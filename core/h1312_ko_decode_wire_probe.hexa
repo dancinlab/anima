@@ -19,10 +19,10 @@
 // .verdicts/1306_ko_mitosis_real/h1306_manifest.json). NO synthetic Korean (p1-p8).
 //
 // p7: deterministic byte-level emit checks (NO perplexity, NO LLM-judge). Ψ-disjoint:
-// the consult reads bytes + the static CORE/ko_cells.kohead artifact; pure_field is
+// the consult reads bytes + the static core/ko_cells.kohead artifact; pure_field is
 // never touched (a_core_engine_map). $0 CPU, no GPU, no secrets at run.
 
-import "CORE/generator.hexa"
+import "core/generator.hexa"
 
 // read N bytes starting at offset `off` from a raw byte file into a list of int codes.
 fn _read_bytes(path: string, off: int, n: int) -> list {
@@ -50,18 +50,18 @@ fn _find_korean_like(rb: list, start: int) -> int {
 
 fn main() {
     println("=== H_1312 — KOREAN DECODE-WIRE verdict (grown Korean cells CONSULTED by live decode) ===")
-    println("wiring: H_1306 grown cells -> CORE/ko_cells.kohead -> generator L3 slot consult")
+    println("wiring: H_1306 grown cells -> core/ko_cells.kohead -> generator L3 slot consult")
     println("        (ko_cells_next_byte / ko_consult_emit). a_verified_must_wire + a_core_engine_map.")
     println("REAL contexts from /tmp/{ko,en}_slice_raw.bytes (same R2 slices as H_1306, NO synthetic).")
     println("")
 
-    let cells = ko_cells_load("CORE/ko_cells.kohead")
+    let cells = ko_cells_load("core/ko_cells.kohead")
     if to_string(cells["ok"]) != "true" {
-        println("ERROR: " + to_string(cells["reason"]) + " — run CORE/h1312_ko_cells_export.hexa first.")
+        println("ERROR: " + to_string(cells["reason"]) + " — run core/h1312_ko_cells_export.hexa first.")
         exit(1)
     }
     println("loaded " + to_string(cells["n_cells"]) + " grown Korean cells (dim=" + to_string(cells["dim"]) + ").")
-    println(ko_cells_summary("CORE/ko_cells.kohead"))
+    println(ko_cells_summary("core/ko_cells.kohead"))
     println("-------------------------------------------------------------------------------")
 
     // ── (P) PRESENCE — held-out Korean-like contexts FIRE + route + differ ────────────

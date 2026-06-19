@@ -10,7 +10,7 @@
 //   (1) stream → field input port, (2) cell_count → field feedback,
 //   (3) a reconstruction/tension-error readout.
 //
-// H_1194 BUILDS that coupling ENGINE-NATIVE (CORE/engine_cli.hexa AdaptField,
+// H_1194 BUILDS that coupling ENGINE-NATIVE (core/engine_cli.hexa AdaptField,
 // adapt_field_step / adapt_field_recon_err / adapt_field_cells) WITHOUT touching
 // pure_field / Ψ, then RE-RUNS H_1159's FROZEN ON-vs-OFF falsifier ON THE LIVE
 // COUPLING: drive a K-regime non-stationary stream, mitosis ON vs OFF, and ask
@@ -46,8 +46,8 @@
 // into AdaptField — NOT a .clm (which enters only via generator L3) nor a
 // .kosmos (only via kosmos_io). No 2nd artifact entry path is added.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 // ── deterministic LCG ─────────────────────────────────────────────────────────
 fn _lcg(state: int) -> int {

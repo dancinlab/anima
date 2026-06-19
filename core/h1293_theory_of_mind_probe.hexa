@@ -1,6 +1,6 @@
 // h1293_theory_of_mind_probe.hexa — H_1293 R2: the THEORY-OF-MIND / OTHER-AGENT BELIEF
 // MODEL (HD30, temporo-parietal junction / mentalizing), realized ENGINE-NATIVE on the
-// LIVE engine (CORE/engine_cli.hexa other_mind_* over a belief cell-store of the SAME
+// LIVE engine (core/engine_cli.hexa other_mind_* over a belief cell-store of the SAME
 // geometry as the immune faculty), reproducing the R1 GREEN through `hexa run`
 // (a_engine_native_learning · a_verified_must_wire · $0 local CPU · p7 · p8).
 //
@@ -36,7 +36,7 @@
 //   (E) ABSTAIN: an untaught object → the agent has NO belief ("").
 // p7 = belief-match counts + abstain, NOT perplexity.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 const N_FACTS: int = 12
 
@@ -166,7 +166,7 @@ fn main() {
     let cfg = engine_config_default()
     println("H_1293 R2 — THEORY-OF-MIND / OTHER-AGENT MODEL (HD30) — ENGINE-NATIVE (hexa run)")
     println("==============================================================================")
-    println("live lane: other_mind_* (belief store) + immune_grow_* (ground truth) | CORE/engine_cli.hexa")
+    println("live lane: other_mind_* (belief store) + immune_grow_* (ground truth) | core/engine_cli.hexa")
     println("frozen bars: .verdicts/1293_theory_of_mind/H_1293_FREEZE.txt (NOT moved)")
     println("")
 

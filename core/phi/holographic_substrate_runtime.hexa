@@ -5,10 +5,10 @@
 //    qualia 벡터 stream 저장+읽기 1초 내"
 //
 // This file is a streaming wrapper around PHYS-P3-2's HoloSubstrate
-// (anima-engines/holographic_substrate.hexa). It does NOT modify that
+// (core/phi/holographic_substrate.hexa). It does NOT modify that
 // file. The tri-substrate primitives (quantum / photonic / memristor
 // bank write/read, LCG, linf_err) are inlined here verbatim so that
-// this engine stays self-contained like the rest of anima-engines/*.hexa
+// this engine stays self-contained like the rest of core/phi/*.hexa
 // (see photonic_gwt_broadcast.hexa, memristor_gwt_workspace.hexa —
 // none of them use `use` imports across engine files).
 //
@@ -39,7 +39,7 @@
 //   3. In-memory index:
 //        Parallel lists INDEX_IDS[] / INDEX_STORES[] (no hashmap
 //        primitive in current hexa build — verified 2026-04-15;
-//        anima-core/runtime/anima_runtime.hexa has the same pattern
+//        platform/runtime/anima_runtime.hexa has the same pattern
 //        and only uses the word "hashmap" in a comment). Linear scan
 //        is O(n_patterns), constant in qualia dim d. For the test
 //        budgets we keep n_patterns ≤ 4.

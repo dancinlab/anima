@@ -1,5 +1,5 @@
 // ⛔ STAGE-1 — Anima Core CLI · CLM v4 mount layer (substrate-coupled emerge dialogue)
-// anima-core/runtime/clm_v4_mount.hexa
+// platform/runtime/clm_v4_mount.hexa
 //
 // Spec: docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md (§2 Stage 1)
 // Sister: tool/transient_py/clm_v4_hf_format_shim.py (LOCKED v4 shim, .own 4)
@@ -92,9 +92,9 @@
 //   raw#10  honest C3 emit ≥5 to stderr
 //
 // USAGE
-//   hexa run anima-core/runtime/clm_v4_mount.hexa --selftest
-//   hexa run anima-core/runtime/clm_v4_mount.hexa --load --probe "안녕"
-//   hexa run anima-core/runtime/clm_v4_mount.hexa --dialogue --inject-states <PATH>
+//   hexa run platform/runtime/clm_v4_mount.hexa --selftest
+//   hexa run platform/runtime/clm_v4_mount.hexa --load --probe "안녕"
+//   hexa run platform/runtime/clm_v4_mount.hexa --dialogue --inject-states <PATH>
 
 // ═══════════════════════════════════════════════════════════
 // Constants
@@ -280,7 +280,7 @@ fn parse_args(argv: list) -> MountConfig {
 fn _write_helper() {
     let parts = []
     parts.push("#!/usr/bin/env python3\n")
-    parts.push("# clm_v4_mount_helper — emitted by anima-core/runtime/clm_v4_mount.hexa\n")
+    parts.push("# clm_v4_mount_helper — emitted by platform/runtime/clm_v4_mount.hexa\n")
     parts.push("# raw#37 transient. Mac canonical = .hexa orchestration; this helper executes the\n")
     parts.push("# CLM v4 substrate forward pass that hexa cannot express directly.\n")
     parts.push("import argparse, json, math, os, sys, time\n")
@@ -1061,11 +1061,11 @@ fn print_usage() {
     println("clm_v4_mount.hexa — Anima Core CLM v4 substrate mount layer")
     println("")
     println("Usage:")
-    println("  hexa run anima-core/runtime/clm_v4_mount.hexa --selftest")
-    println("  hexa run anima-core/runtime/clm_v4_mount.hexa --load")
-    println("  hexa run anima-core/runtime/clm_v4_mount.hexa --probe TEXT")
-    println("  hexa run anima-core/runtime/clm_v4_mount.hexa --dialogue [--inject-states PATH]")
-    println("  hexa run anima-core/runtime/clm_v4_mount.hexa generate <prompt> [N]")
+    println("  hexa run platform/runtime/clm_v4_mount.hexa --selftest")
+    println("  hexa run platform/runtime/clm_v4_mount.hexa --load")
+    println("  hexa run platform/runtime/clm_v4_mount.hexa --probe TEXT")
+    println("  hexa run platform/runtime/clm_v4_mount.hexa --dialogue [--inject-states PATH]")
+    println("  hexa run platform/runtime/clm_v4_mount.hexa generate <prompt> [N]")
     println("                                                      [--temperature T] [--top-p P]")
     println("                                                      [--top-k K] [--repetition-penalty R]")
     println("                                                      [--seed S]")

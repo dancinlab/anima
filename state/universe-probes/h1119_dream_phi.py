@@ -10,10 +10,10 @@ This hypothesis measures faithful IIT-4.0 φ_EI of a toy anima-like substrate as
 its per-channel A⊥G opponent dynamics are modulated by the canonical 5-stage
 sleep envelope (WAKE / N1 / N2 / N3 / REM), and tests φ(REM) > φ(WAKE).
 
-STAGE ENVELOPE — DERIVED (not invented) from AGENT/CHAT/anima_dream_stage.hexa
+STAGE ENVELOPE — DERIVED (not invented) from agent/domains/CHAT/anima_dream_stage.hexa
 -----------------------------------------------------------------------------
 The canonical 5-stage envelope numbers are taken VERBATIM from
-AGENT/CHAT/anima_dream_stage.hexa (do NOT invent stage parameters — derive from
+agent/domains/CHAT/anima_dream_stage.hexa (do NOT invent stage parameters — derive from
 that file). The three per-stage tables it exposes:
   PHI_*   (Φ-scale projection):  WAKE 1.0  N1 0.7  N2 0.4  N3 0.15  REM 0.95
   TENV_*  (tension envelope):    WAKE 1.0  N1 0.7  N2 0.4  N3 0.2   REM 0.9
@@ -80,7 +80,7 @@ binary_seq_to_faithful_state = h1004.binary_seq_to_faithful_state
 prove_mirrors_at_n = h1012.prove_mirrors_at_n
 
 # ---- canonical 5-stage envelope tables — VERBATIM from
-#      AGENT/CHAT/anima_dream_stage.hexa (§1 constants). DO NOT invent. --------
+#      agent/domains/CHAT/anima_dream_stage.hexa (§1 constants). DO NOT invent. --------
 STAGES = ["WAKE", "N1", "N2", "N3", "REM"]
 PHI_SCALE = {"WAKE": 1.0, "N1": 0.7, "N2": 0.4,  "N3": 0.15, "REM": 0.95}  # PHI_*
 TENV      = {"WAKE": 1.0, "N1": 0.7, "N2": 0.4,  "N3": 0.2,  "REM": 0.9}   # TENV_*
@@ -212,7 +212,7 @@ def main():
     print("H_1119 — DREAM-Φ: is faithful IIT-4.0 φ_EI HIGHER in the dream/REM stage")
     print("  (emit-free internal rehearsal) than in WAKE? Toy anima-like substrate,")
     print("  per-channel A⊥G opponent dynamics modulated by the canonical 5-stage")
-    print("  sleep envelope (AGENT/CHAT/anima_dream_stage.hexa, derived VERBATIM).")
+    print("  sleep envelope (agent/domains/CHAT/anima_dream_stage.hexa, derived VERBATIM).")
     print(f"  CH={CH} (joint n={CH}, exact MIP-EI) W*_c={W_STAR_C.tolist()}")
     print(f"  stage modulation: gamma_x∝PHI_SCALE, σ∝TEMP, homeo-rate∝TENV, REM-scramble")
     print(f"  PHI_SCALE={PHI_SCALE}")
@@ -305,7 +305,7 @@ def main():
     print("HONEST scope (a_scale_honest_scope): toy n=6, stage-envelope toy modulation of the")
     print("h1113 per-channel A⊥G dynamics; production cells, the real P47 dream-physics Φ")
     print("engine, bigger n and scale UNVERIFIED. Stage envelope DERIVED VERBATIM from")
-    print("AGENT/CHAT/anima_dream_stage.hexa (PHI_*/TENV_*/TEMP_*/scrambled). Mirror RE-PROVEN")
+    print("agent/domains/CHAT/anima_dream_stage.hexa (PHI_*/TENV_*/TEMP_*/scrambled). Mirror RE-PROVEN")
     print("≡ stdlib at n=4,5 (both engines) and at the scoring n=6 (faithful, LIVE hexa")
     print("re-capture) BEFORE scoring; MI in BITS/log2 (a_phi_iit4_tool, NO proxy). φ measured")
     print("not fabricated, NO perplexity (p7). SERIAL, $0 CPU local, 0-pod, g5.")

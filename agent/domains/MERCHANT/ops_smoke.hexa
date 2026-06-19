@@ -1,4 +1,4 @@
-// ops_smoke.hexa — MERCHANT M5 ops smoke (AGENT/MERCHANT).
+// ops_smoke.hexa — MERCHANT M5 ops smoke (agent/domains/MERCHANT).
 //
 // 1-shot self-check — exercise the 5 ops pub fn against a stub adapter that
 // exposes the optional verbs (settlement · cs_list) so the contract under
@@ -16,9 +16,9 @@
 //
 // Also exercises ops_summary as an advisory dump.
 
-import "AGENT/MERCHANT/types.hexa"
-import "AGENT/MERCHANT/adapter.hexa"
-import "AGENT/MERCHANT/ops.hexa"
+import "agent/domains/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/adapter.hexa"
+import "agent/domains/MERCHANT/ops.hexa"
 
 // ── stub adapter helpers ──────────────────────────────────────────────────
 // We do NOT import M3 amazon/coupang here — ops is generic over any adapter,

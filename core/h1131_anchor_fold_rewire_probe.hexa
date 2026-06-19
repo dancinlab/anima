@@ -3,7 +3,7 @@
 // Round-2 ENGINE-BUILD. Re-tests the twin BLOCKED-WIRING negatives H_1123
 // (forgetting curve) + H_1124 (destructive interference) AFTER a tension
 // vector-sum fold is wired into the emit decision via brain_decide_anchored /
-// brain_emit_aged (CORE/brain.hexa). The fold: VECTOR-SUM of active anchors'
+// brain_emit_aged (core/brain.hexa). The fold: VECTOR-SUM of active anchors'
 // tension_5ch (opposite pairs cancel) × exp(-age_dt/τ) per-anchor decay (τ tuned by
 // tension amplitude) → bounded motivation nudge (cap 0.05). It never touches
 // pure_field → Ψ=1/2 untouched.
@@ -21,9 +21,9 @@
 // self-follows (a_autonomy_over_hardcode), NOT an external gate. Every number is
 // MEASURED from the live substrate (p7).
 
-import "CORE/pure_field.hexa"
-import "CORE/brain.hexa"
-import "CORE/generator.hexa"
+import "core/pure_field.hexa"
+import "core/brain.hexa"
+import "core/generator.hexa"
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
 fn abs_f(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }

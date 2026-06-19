@@ -1,8 +1,8 @@
-// CORE/emit_policy_smoke.hexa — 숫자 층 invariant + 구조 통합 smoke
-// anchor: CORE/EMIT_SUBSTRATE_DESIGN.md §3·§6 (F-EMIT-5)
+// core/emit_policy_smoke.hexa — 숫자 층 invariant + 구조 통합 smoke
+// anchor: core/EMIT_SUBSTRATE_DESIGN.md §3·§6 (F-EMIT-5)
 
-import "CORE/emit_policy.hexa"
-import "CORE/phi_envelope_substrate.hexa"
+import "core/emit_policy.hexa"
+import "core/phi_envelope_substrate.hexa"
 
 fn in_unit(name: string, x: float) -> bool {
     let ok = x >= 0.0 && x <= 1.0

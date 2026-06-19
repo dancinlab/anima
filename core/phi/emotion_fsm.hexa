@@ -397,7 +397,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/emotion_fsm] CLM-P12-1 — Ekman + Russell emotion FSM")
+    println("[core/phi/emotion_fsm] CLM-P12-1 — Ekman + Russell emotion FSM")
     println("  7 states: happy/sad/angry/fearful/surprised/disgusted/neutral")
     println("  Russell circumplex (valence, arousal) transition + contagion alpha=" + str(CONTAGION_ALPHA))
     println("")
@@ -429,9 +429,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/emotion_fsm] 5/5 PASS — CLM-P12-1 DONE (전이 + contagion 동작)")
+        println("[core/phi/emotion_fsm] 5/5 PASS — CLM-P12-1 DONE (전이 + contagion 동작)")
     } else {
-        println("[anima-engines/emotion_fsm] SOME FAILED")
+        println("[core/phi/emotion_fsm] SOME FAILED")
     }
 }
 

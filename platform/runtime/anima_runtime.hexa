@@ -26,7 +26,7 @@
 // const PSI_* removed in favor of let + _psi_load with stderr WARN on JSON miss.
 
 // ═══════════════════════════════════════════════════════════
-// Ψ-constants JSON SSOT loader (cargo-cult from anima-core/lib/psi_loader.hexa)
+// Ψ-constants JSON SSOT loader (cargo-cult from platform/lib/psi_loader.hexa)
 // ═══════════════════════════════════════════════════════════
 
 fn _psi_load(name: string, default_val: float) -> float {
@@ -437,7 +437,7 @@ fn validate_hub() -> int {
 // Decoder Selection (port of select_decoder)
 // ═══════════════════════════════════════════════════════════
 
-// marker_present — canonical source: anima-core/lib/io_utils.hexa (ROI #6)
+// marker_present — canonical source: platform/lib/io_utils.hexa (ROI #6)
 // Hexa has no import; copy-paste with attribution.
 fn marker_present(path: string) -> bool {
     let raw = read_file(path)

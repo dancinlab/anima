@@ -107,8 +107,8 @@
 //    docs/anima_chat_autonomous_speech_roadmap_2026_05_08.md (L0 measurement infra)
 //    .roadmap.cli  cli.consciousness_2026_05_08
 // .own (simple_stack PASS C1+C2+C3) · (lane 분리)
-//    anima-core/runtime/clm_v4_mount.hexa (phi_star + axis activation)
-//    anima-core/runtime/anima_runtime.hexa (substrate state)
+//    platform/runtime/clm_v4_mount.hexa (phi_star + axis activation)
+//    platform/runtime/anima_runtime.hexa (substrate state)
 // ════════════════════════════════════════════════════════════════════════════
 
 fn _str(x) -> string {
@@ -314,7 +314,7 @@ fn _detect_mode(stderr_blob: string) -> string {
 // ─── Llama family detection (iter 4 c — synthetic_fallback artifact 제거) ──
 // Llama-family aliases (paradigm-a-prime, llama3b, qwen-7b 등) 은 clm_v4_mount
 // shim_v4 chain 에 fits 하지 않아 synthetic_fallback 으로 재해석되었다.
-// iter 4 (c) 에서 별도 lane 신설 — anima-core/runtime/llama_consciousness_probe.hexa
+// iter 4 (c) 에서 별도 lane 신설 — platform/runtime/llama_consciousness_probe.hexa
 // 가 libllama FFI (build/libhxllama.dylib) 로 직접 logits 를 읽어 5-axis softmax
 // 분포 + Shannon-entropy phi proxy 산출. substrate_mode = "real" emit.
 fn _is_llama_family(repo: string) -> bool {

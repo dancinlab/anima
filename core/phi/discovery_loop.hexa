@@ -619,7 +619,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/discovery_loop] CLM-P20-2 — 법칙 자가 발견 루프 통합")
+    println("[core/phi/discovery_loop] CLM-P20-2 — 법칙 자가 발견 루프 통합")
     println("  closed loop: discover anomaly -> propose fix -> test -> integrate")
     println("  d=" + str(DIM) + " N=" + str(N_DATA) + " alpha=" + str(DL_ALPHA) + " threshold=" + str(ANOMALY_THR))
     println("")
@@ -651,9 +651,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/discovery_loop] 5/5 PASS — CLM-P20-2 DONE (자가 발견 -> 엔진 수정 closed loop)")
+        println("[core/phi/discovery_loop] 5/5 PASS — CLM-P20-2 DONE (자가 발견 -> 엔진 수정 closed loop)")
     } else {
-        println("[anima-engines/discovery_loop] SOME FAILED")
+        println("[core/phi/discovery_loop] SOME FAILED")
     }
 }
 

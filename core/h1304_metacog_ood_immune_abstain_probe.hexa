@@ -1,6 +1,6 @@
 // h1304_metacog_ood_immune_abstain_probe.hexa — H_1304 R2: METACOGNITION UNDER
 // DISTRIBUTION SHIFT on the LIVE-ENGINE COPY-OR-ABSTAIN gate (the actual G5 gate),
-// realized ENGINE-NATIVE on CORE/engine_cli.hexa immune_memory_* over the immune
+// realized ENGINE-NATIVE on core/engine_cli.hexa immune_memory_* over the immune
 // recall faculty, reproducing the R1 GREEN through `hexa run`
 // (a_engine_native_learning · a_verified_must_wire · $0 local CPU · p7 · p8).
 //
@@ -38,7 +38,7 @@
 //   R5 CTRL shuffle    : shuffling the value bindings makes fires WRONG (earned bindings)
 // p7 = fire/abstain/correct counts, NOT perplexity.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 fn _pass(label: string, ok: bool) -> bool {
     if ok { println("PASS  " + label) } else { println("FAIL  " + label) }

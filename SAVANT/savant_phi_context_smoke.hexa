@@ -1,5 +1,5 @@
 // SAVANT/savant_phi_context_smoke.hexa — SAVANT M2 측정자 Φ-context 불변식 smoke
-// anchor: CORE/EMIT_SUBSTRATE_DESIGN.md §4 (SAVANT M2 wiring)
+// anchor: core/EMIT_SUBSTRATE_DESIGN.md §4 (SAVANT M2 wiring)
 //
 // 최소 3 불변식:
 //   I1 t=0 에서 context = Σ amps (cos(0)=1 → 모든 scale wave=1)
@@ -7,7 +7,7 @@
 //   I3 시간에 따라 context 가 변동 (정적 상수 아님 — envelope 동역학 살아있음)
 
 import "SAVANT/savant_phi_context.hexa"
-import "CORE/emit_policy.hexa"
+import "core/emit_policy.hexa"
 
 fn abs_f(x: float) -> float {
     return if x < 0.0 { -x } else { x }

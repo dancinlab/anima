@@ -6,7 +6,7 @@
 // 범위:
 //   - ESP32-S3 QRNG (4$ 펌웨어) 시리얼 출력을 host hexa 런타임이 읽어
 //     [0,1] 정규화 샘플로 돌려주고, Orch-OR microtubule 모델
-//     (anima-engines/anima_quantum.hexa) 의 tubulin bias 벡터로
+//     (core/phi/anima_quantum.hexa) 의 tubulin bias 벡터로
 //     매핑한다. 이 파일은 bridge 설계 + mock 경로까지 구현.
 //   - 실제 직렬포트 read 는 host OS 에서만 의미 있으므로, 현재 빌드는
 //     MOCK 모드로 결정론적 LCG 시퀀스를 돌린다. hexa stdlib 에

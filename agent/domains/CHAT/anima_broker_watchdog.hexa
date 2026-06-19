@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-// AGENT/CHAT/anima_broker_watchdog.hexa
+// agent/domains/CHAT/anima_broker_watchdog.hexa
 //
 //   Auto-restart watchdog for the mini broker + participant nohup daemons.
 //   Closes the gap documented in HEXAD/CHAT/DEPLOY.md §"known limitations":
@@ -22,7 +22,7 @@
 //     · SIG   `trap` shim removes PID file on EXIT/INT/TERM
 //
 //   USAGE
-//     hexa run AGENT/CHAT/anima_broker_watchdog.hexa [daemon|once|selftest]
+//     hexa run agent/domains/CHAT/anima_broker_watchdog.hexa [daemon|once|selftest]
 //
 //   Manual mini launch (preferred — no plist):
 //     ssh mini 'cd ~/anima_chat_pack && nohup hexa run \

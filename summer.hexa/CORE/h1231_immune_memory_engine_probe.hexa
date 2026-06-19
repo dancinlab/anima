@@ -6,7 +6,7 @@
 // clonal memory: literal-QA 1.000, fabrication 0.000, vs byte-LM weights 0.017).
 // Per the new hard rule a_engine_native_learning, a mirror verdict is DIRECTIONAL
 // ONLY; the BINDING verdict must run on the final-architecture engine. This probe
-// re-realizes H_1227 ON the ACTUAL CORE/engine_cli.hexa VAdaptField cell population
+// re-realizes H_1227 ON the ACTUAL core/engine_cli.hexa VAdaptField cell population
 // (live since H_1199), so it becomes the BINDING verdict, NOT a mirror.
 //
 // WHAT IS ENGINE-NATIVE HERE (the whole point):
@@ -46,7 +46,7 @@
 // ENGINE-NATIVE drive into VAdaptField — NOT a .clm (generator L3 only), NOT a
 // .kosmos (kosmos_io only). No 2nd artifact entry path.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── parse a key file: one DIM-vector per line, dim space-sep floats ─────────────
 fn _load_vecs(path: string, dim: int) -> [[float]] {
@@ -160,7 +160,7 @@ fn _run_seed(seed: int, dim: int, max_cells: int, recall_thresh: float,
 
 fn main() {
     println("=== H_1231 ENGINE-NATIVE immune/clonal memory on the LIVE .hexa VAdaptField (MITOSIS-ENGINE · $0 CPU · p7) ===")
-    println("substrate: LIVE CORE/engine_cli.hexa VAdaptField (engine-native binding+affinity) — a_engine_native_learning")
+    println("substrate: LIVE core/engine_cli.hexa VAdaptField (engine-native binding+affinity) — a_engine_native_learning")
     println("mirror=H_1227 (numpy, GREEN QA=1.000 fab=0.000); this run = the BINDING verdict on the FINAL architecture engine")
     println("BIND: each fact key -> live vadapt_field_step; engine's OWN split (recon-err>SPLIT_THRESH 0.30) clones a cell -> bind value")
     println("RETRIEVE: query key -> engine's OWN nearest (vadapt_field_nearest_idx) + recon-err affinity -> FIRE value or ABSTAIN")

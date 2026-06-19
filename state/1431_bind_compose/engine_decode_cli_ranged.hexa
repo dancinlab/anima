@@ -1,7 +1,7 @@
 // engine_decode_cli_ranged.hexa — OOM-safe engine-native decode CLI for the H_1431 5-bar.
 // Identical to engine_decode_cli.hexa but calls bytegpt_decode_topk_sampled_ranged
 // (bg_load_ranged: peak ≈ one weight slice, no ~24GB whole-file boxing).
-import "CORE/bytegpt_decode.hexa"
+import "core/bytegpt_decode.hexa"
 fn main() {
     let a = argv()
     let bin = a[1]

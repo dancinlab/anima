@@ -10,7 +10,7 @@
 //   F3 EEG↑ → emit↑ 편향 (cov>0) ∧ Ψ byte-identical
 // 실행: hexa run EEG_CLM/eeg_emit_drive.hexa
 
-import "CORE/pure_field.hexa"
+import "core/pure_field.hexa"
 import "BRIDGE/gate.hexa"
 
 fn _absf(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }

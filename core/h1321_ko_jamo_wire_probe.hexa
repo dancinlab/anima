@@ -7,7 +7,7 @@
 // GREEN-verified mechanism is NOT done until it RUNS ENGINE-NATIVE byte-exact on the live engine.
 //
 // THIS PROBE runs the SAME gradient-free jamo-symbol mitosis ENGINE-NATIVE on the LIVE
-// CORE/engine_cli.hexa faculties (vadapt_field_nearest_idx Voronoi ownership + engine_mitosis_tick
+// core/engine_cli.hexa faculties (vadapt_field_nearest_idx Voronoi ownership + engine_mitosis_tick
 // growth, p8; per-cell next-symbol count-MLE head, gradient-free) over the deterministic jamo /
 // raw / shuffle symbol streams the data-prep (UNIVERSE/h1321_ko_jamo_wire_export.py) materialized
 // from the SAME REAL 30MB KO window H_1316 verified (sha-gated). The representation transform (NFD
@@ -37,7 +37,7 @@
 // DATA: /tmp/h1321_{g0,g1,g1c0,g1c1,g1c2}_{train,test}.{feats,next} + test.nbytes + /tmp/h1321_ref.txt,
 // exported by UNIVERSE/h1321_ko_jamo_wire_export.py (which fetches the sha-gated 30MB KO window).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── FROZEN knobs (verbatim from H_1306/H_1316) ──────────────────────────────────
 fn _FEAT_DIM() -> int          { return 3 }
@@ -287,7 +287,7 @@ fn _run_arm(tag: string, dim: int, vj: int, cfg: EngineConfig) -> [float] {
 
 fn main() {
     println("=== H_1321 — ENGINE-NATIVE WIRING of the H_1316 🟢 ko-jamo breakthrough (a_verified_must_wire) ===")
-    println("faculty: CORE/engine_cli.hexa VAdaptField Voronoi (vadapt_field_nearest_idx) + engine_mitosis_tick")
+    println("faculty: core/engine_cli.hexa VAdaptField Voronoi (vadapt_field_nearest_idx) + engine_mitosis_tick")
     println("         growth (p8, LIVE); head = per-cell next-symbol count-MLE (gradient-free).")
     println("rep: deterministic NFD jamo symbolization (data-prep) — Hangul syllable → L/V/T jamo symbols.")
     println("metric = held-out next-symbol CROSS-ENTROPY renormalized to nats/UTF-8-byte (p7, FAIR axis).")

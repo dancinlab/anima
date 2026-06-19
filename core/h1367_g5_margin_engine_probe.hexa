@@ -1,5 +1,5 @@
 // h1367_g5_margin_engine_probe.hexa — H_1367 g5-margin-engine-wire: reconfirm the
-// H_1361 GRADED-METACOG result ENGINE-NATIVE on the LIVE CORE/engine_cli.hexa
+// H_1361 GRADED-METACOG result ENGINE-NATIVE on the LIVE core/engine_cli.hexa
 // ImmuneMemory recall, by reading the abstain MARGIN through the new additive op
 // immune_memory_recall_margin (a_engine_native_learning · a_verified_must_wire ·
 // $0 local CPU · p7 · p8 · frozen-first · c9).
@@ -36,7 +36,7 @@
 //   E2 EARNED      : shuffle-margin AUROC at L=0.20 collapses to <= 0.58.
 //   (E3 REGRESSION is the engine_cli_smoke / h1196 / h1205 guards, run separately.)
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 const DIM: int = 64
 const RECALL_THR: float = 0.15          // == ImmuneMemory default recall_thr (frozen, H_1227)
@@ -227,7 +227,7 @@ fn main() {
     let mut sum_um = [0.0, 0.0, 0.0, 0.0, 0.0]
     let mut cnt_rm = [0.0, 0.0, 0.0, 0.0, 0.0]
 
-    println("=== H_1367 g5-margin ENGINE-NATIVE (live CORE/engine_cli.hexa ImmuneMemory) ===")
+    println("=== H_1367 g5-margin ENGINE-NATIVE (live core/engine_cli.hexa ImmuneMemory) ===")
     let mut si = 0
     while si < len(seeds) {
         let seed = seeds[si]

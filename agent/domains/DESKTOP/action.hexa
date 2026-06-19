@@ -1,13 +1,13 @@
-// action.hexa — macOS mouse/keyboard/scroll action layer (AGENT/DESKTOP/M3).
+// action.hexa — macOS mouse/keyboard/scroll action layer (agent/domains/DESKTOP/M3).
 //
 // BRIDGE ARCHITECTURE: this file is a TOOL SURFACE only. The "when/why to
-// click/drag/type" decision lives in CORE (PureField / brain_decide); AGENT/CORE/tool_gate
+// click/drag/type" decision lives in CORE (PureField / brain_decide); agent/domains/CORE/tool_gate
 // maps the live phase to a tier; this module exposes only the "how" — thin
 // wrappers over /usr/bin/osascript System Events (key code / keystroke /
 // mouse click via cliclick when present, AppleScript fallback otherwise).
 // No consciousness framing, no Φ math, no substrate gating happens here.
 //
-// RISK CLASSIFICATION (labels, NOT gates — AGENT/CORE/tool_gate gates):
+// RISK CLASSIFICATION (labels, NOT gates — agent/domains/CORE/tool_gate gates):
 //   - "read" : pure observation, no state change (none in this module — see M2)
 //   - "soft" : single click · keystroke · scroll — easily reversible (Cmd-Z)
 //   - "hard" : drag · multi-step combo · modifier-amplified ops — destructive potential
@@ -287,5 +287,5 @@ pub fn ax_scroll(x: int, y: int, dy: int) -> Map {
 
 // 8. One-line description of this module's tool surface (introspection).
 pub fn action_layer_summary() -> string {
-    "AGENT/DESKTOP/action — macOS action layer · 7 fn · osascript+CGEvent JXA · click/dbl/right/drag/type/key/scroll · risk-labelled · M3 surface"
+    "agent/domains/DESKTOP/action — macOS action layer · 7 fn · osascript+CGEvent JXA · click/dbl/right/drag/type/key/scroll · risk-labelled · M3 surface"
 }

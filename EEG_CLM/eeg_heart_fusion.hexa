@@ -7,7 +7,7 @@
 // 입력: EEG_CLM/eeg_recording.txt (16 EEG + HEART<n> PPG, capture_native.py 산출).
 // 실행: hexa run EEG_CLM/eeg_heart_fusion.hexa
 
-import "CORE/pure_field.hexa"
+import "core/pure_field.hexa"
 
 fn _absf(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
 fn is_int(s: string) -> bool {

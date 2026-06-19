@@ -3,7 +3,7 @@
 // prints: ENGINE_DECODE <decoded text>   (single line; the Python driver reads it)
 // Uses the byte-faithful hoisted bytegpt_decode_topk_sampled (the engine's own
 // xorshift32 seeded top-k sampler — a_engine_native_learning independent measure).
-import "CORE/bytegpt_decode.hexa"
+import "core/bytegpt_decode.hexa"
 fn main() {
     let a = argv()
     let bin = a[1]

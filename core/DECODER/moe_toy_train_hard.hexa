@@ -3,8 +3,8 @@
 // Hypothesis: top-1 hard routing → only winning expert gets gradient → SPECIALIZE.
 // Target: gate(A) and gate(B) concentrate on DIFFERENT experts (topA≠topB) = PASS.
 
-import "CORE/DECODER/moe_router.hexa"
-import "CORE/DECODER/moe_router_bwd.hexa"
+import "core/DECODER/moe_router.hexa"
+import "core/DECODER/moe_router_bwd.hexa"
 
 fn ce_loss_grad(logits: int, target: int, V: int, d_logits_out: int) -> float {
     let mut mx = farr_get(logits, 0)

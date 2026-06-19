@@ -1,4 +1,4 @@
-// window_ops_smoke.hexa — runtime smoke for AGENT/DESKTOP/window_ops (M4).
+// window_ops_smoke.hexa — runtime smoke for agent/domains/DESKTOP/window_ops (M4).
 //
 // 4 cases — SAFE BY CONSTRUCTION. The smoke sets ANIMA_DESKTOP_DRYRUN=1 in
 // its own env, then every pub fn returns its contract-shape value WITHOUT
@@ -12,7 +12,7 @@
 //
 // All cases complete → exit 0. No osascript / screencapture is actually dispatched.
 
-import "AGENT/DESKTOP/window_ops.hexa"
+import "agent/domains/DESKTOP/window_ops.hexa"
 
 fn _enable_dry_run() {
     set_env("ANIMA_DESKTOP_DRYRUN", "1")
@@ -45,7 +45,7 @@ fn _map_has(m: Map, key: string) -> bool {
 }
 
 fn main() {
-    println("[smoke] AGENT/DESKTOP/window_ops — " + window_ops_summary())
+    println("[smoke] agent/domains/DESKTOP/window_ops — " + window_ops_summary())
 
     _enable_dry_run()
     println("[init] ANIMA_DESKTOP_DRYRUN=1 (no real window/screen events will fire)")

@@ -1,4 +1,4 @@
-// action_smoke.hexa — runtime smoke for AGENT/DESKTOP/action (M3).
+// action_smoke.hexa — runtime smoke for agent/domains/DESKTOP/action (M3).
 //
 // 4 cases — SAFE BY CONSTRUCTION. The smoke sets ANIMA_DESKTOP_DRYRUN=1 in
 // its own env via /bin/sh -c, then every pub fn returns its contract-shape
@@ -12,7 +12,7 @@
 //
 // All cases complete → exit 0. No osascript / CGEvent is actually posted.
 
-import "AGENT/DESKTOP/action.hexa"
+import "agent/domains/DESKTOP/action.hexa"
 
 // Local helpers — re-derive shell env probe to enable dry-run for the whole run.
 // (We set ANIMA_DESKTOP_DRYRUN=1 via /bin/sh -c export before each call site;
@@ -52,7 +52,7 @@ fn _map_get_bool(m: Map, key: string) -> bool {
 }
 
 fn main() {
-    println("[smoke] AGENT/DESKTOP/action — " + action_layer_summary())
+    println("[smoke] agent/domains/DESKTOP/action — " + action_layer_summary())
 
     // Enable dry-run BEFORE any pub fn call — guarantees zero actual events.
     _enable_dry_run()

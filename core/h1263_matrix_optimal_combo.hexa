@@ -4,7 +4,7 @@
 // 미탐사: "어느 조합이 기능적으로 최적인가" (North Star = 조합공간의 최종조합/fixed point).
 // Ψ-disjoint=비간섭이지 최적조합 탐색이 아니다.
 //
-// 방법 (참조: CORE/h1262_full_stack_native_foreign.hexa 13-lane run 구조 그대로 재사용):
+// 방법 (참조: core/h1262_full_stack_native_foreign.hexa 13-lane run 구조 그대로 재사용):
 //   richness 지표 = 600 step run 동안 활성 lane 들의 per-step 출력버킷 signature 의 distinct 개수.
 //     · 각 lane 은 매 step 자기 substrate 출력을 정수버킷으로 양자화 (phi-구동 실값 → bucket).
 //     · per-step signature = 활성 lane 버킷들의 연결문자열 → run 전체 distinct signature 수 = richness.
@@ -18,8 +18,8 @@
 //   지표가 단순 lane 수에 단조비례(많을수록 큼)면 trivial ⇒ non-finding (🟠/🔴).
 //   특정 조합이 lane 수 대비 *초과* richness (비-단조 = synergy)면 🟢 finding.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 import "METACOG/audit_hook.hexa"
 import "SAVANT/substrate_hook.hexa"
 import "DREAM/dream_lib.hexa"

@@ -3,10 +3,10 @@
 //
 //  REAL-CORE-ENGINE escalation of the daegaseol toy axes. Replaces numpy toy
 //  stubs with the ACTUAL anima substrate engine:
-//    · CORE/pure_field.hexa  (Engine A — the Ψ=½ oscillator field, live Φ)
-//    · CORE/engine_g.hexa    (Engine G — the 8-factor motivation_score + emit)
-//    · CORE/brain.hexa       (A⇄G coupled brain_decide → emit bit)
-//    · CORE/engine_cli.hexa  (vadapt_field — the live self-model / adaptation)
+//    · core/pure_field.hexa  (Engine A — the Ψ=½ oscillator field, live Φ)
+//    · core/engine_g.hexa    (Engine G — the 8-factor motivation_score + emit)
+//    · core/brain.hexa       (A⇄G coupled brain_decide → emit bit)
+//    · core/engine_cli.hexa  (vadapt_field — the live self-model / adaptation)
 //
 //  Axes wired to the real engine here:
 //    H_1104 felt_time          — real Φ trajectory ticks-to-emit (Engine A)
@@ -25,10 +25,10 @@
 //    hexa run UNIVERSE/daegaseol/daegaseol_engine.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_g.hexa"
-import "CORE/brain.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_g.hexa"
+import "core/brain.hexa"
+import "core/engine_cli.hexa"
 
 fn _f4(x: float) -> string {
     let scaled = floor(x * 10000.0 + 0.5)

@@ -2,8 +2,8 @@
 // Loss = 0.5·Σ_k logits[k]²  →  d_logits[k] = logits[k].
 // Perturb representative weights (router + expert) + zT, compare numeric vs analytic.
 
-import "CORE/DECODER/moe_router.hexa"
-import "CORE/DECODER/moe_router_bwd.hexa"
+import "core/DECODER/moe_router.hexa"
+import "core/DECODER/moe_router_bwd.hexa"
 
 // forward loss = 0.5·Σ logits² over a fresh route_fwd
 fn loss_at(zT: int, M: int, router_off: int, experts_off: int,

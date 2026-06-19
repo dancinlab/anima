@@ -11,7 +11,7 @@
 // from Engine G (temporal target + learned weights + learning curve vs G's static
 // 8-weight instant gate). This round realizes that SAME mechanism on the live engine.
 //
-// ENGINE EXTENSION (c1 · a_engine_native_learning): CORE/engine_cli.hexa now has the
+// ENGINE EXTENSION (c1 · a_engine_native_learning): core/engine_cli.hexa now has the
 // VForwardField lane (vforward_new / vforward_predict / vforward_err / vforward_update
 // / vforward_correct) — a flat L*DIM→DIM weight matrix, the NLMS delta-rule update,
 // and the smoothing correction. The live engine could NOT express the forward model
@@ -53,8 +53,8 @@
 // perplexity. a_core_engine_map: the feature stream is an ENGINE-NATIVE drive into
 // VForwardField — NOT a .clm (generator L3 only), NOT a .kosmos (kosmos_io only).
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 let D = 24
 let L = 4
@@ -233,7 +233,7 @@ fn _close(a: float, b: float) -> bool { return _absf(a - b) <= PARITY_EPS }
 
 fn main() {
     println("=== H_1280 R2 LIVE-engine CEREBELLUM forward-model (predict→error→correct) on REAL DIM=24 corpus features ===")
-    println("substrate: LIVE .hexa VForwardField (engine-native, Ψ-disjoint, ADDITIVE) — the H_1280 R1 mechanism lifted into CORE/engine_cli.hexa")
+    println("substrate: LIVE .hexa VForwardField (engine-native, Ψ-disjoint, ADDITIVE) — the H_1280 R1 mechanism lifted into core/engine_cli.hexa")
     println("mechanism: xhat=W·ctx (L=4 recent frames) | e=x-xhat | NLMS delta-rule W+=eta·outer(e,ctx)/(ctx·ctx+1) | correct=x-beta·(x-xhat)")
     println("metric: consecutive cosine coherence + L2 prediction error (p7, NOT perplexity)")
     println("falsifier: F2 live↔numpy parity | C1 coh_B>=coh_A+0.02 (>=2/3) | C2 err_late<=err_early-5% | CTRL coh_B>coh_B_shuf (all) | C4 distinct-from-G | F3 Ψ byte-identical ON==OFF")

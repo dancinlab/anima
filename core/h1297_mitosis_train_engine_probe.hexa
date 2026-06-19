@@ -52,7 +52,7 @@
 // DATA: /tmp/h1297_{train,test}.{feats,next} + /tmp/h1297_armA.ce, exported BYTE-EXACT
 // from the FROZEN mirror by UNIVERSE/h1297_engine_export.py (run it first).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── FROZEN knobs (VERBATIM from H_1297_R3_sharp_target.txt — do NOT tune) ──────
 fn _V() -> int             { return 256 }
@@ -378,7 +378,7 @@ fn _mean(xs: [float]) -> float {
 
 fn main() {
     println("=== H_1297 R4 — MITOSIS-NATIVE TRUNK TRAINING, ENGINE-NATIVE re-score of FROZEN R3 bars ===")
-    println("faculty: CORE/engine_cli.hexa VAdaptField — Voronoi ownership (vadapt_field_nearest_idx) +")
+    println("faculty: core/engine_cli.hexa VAdaptField — Voronoi ownership (vadapt_field_nearest_idx) +")
     println("         engine_mitosis_tick growth (p8). Partition + growth are the engine's OWN; head =")
     println("         per-cell categorical next-byte MLE (closed-form, gradient-free). Ψ-disjoint.")
     println("target: REAL Korean+English UTF-8 next-byte (V=256, CTX=4); bars FROZEN in")

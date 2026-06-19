@@ -8,7 +8,7 @@
 // (cells->~70, 7.4x) — because the live AdaptField was 1-D scalar and could not
 // take a DIM>1 sample without an engine change.
 //
-// H_1199 EXTENDED the live engine: CORE/engine_cli.hexa now has a VECTOR
+// H_1199 EXTENDED the live engine: core/engine_cli.hexa now has a VECTOR
 // AdaptField (VAdaptField / vadapt_field_step / vadapt_field_recon_err /
 // vadapt_field_cells) — sample + prototypes are DIM-vectors, nearest is over the
 // DIM-dim L2 distance, recon-err = L2 norm over DIM, and engine_mitosis_tick
@@ -46,8 +46,8 @@
 // an ENGINE-NATIVE drive into VAdaptField — NOT a .clm (generator L3 only), NOT a
 // .kosmos (kosmos_io only). No 2nd artifact entry path is added.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 // ── parse the DIM=8 feature text stream: one tick/line, DIM space-sep floats ────
 fn _load_feat8(path: string, dim: int) -> [[float]] {

@@ -4,8 +4,8 @@
 // 이로써 anima 의 모든 substrate 도메인이 lane 으로 합성. Ψ-disjoint 닫힘정리(H_1237 실증)
 // 로 단독 12 + 전체-ON 검증이면 2^12−1=4095 격자 전부 보장. 전 부품 pure_field READ-ONLY.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 import "METACOG/audit_hook.hexa"
 import "SAVANT/substrate_hook.hexa"
 import "DREAM/dream_lib.hexa"
@@ -99,7 +99,7 @@ fn main() {
     if complete {
         println("h1241_twelve_lane_matrix: PASS — 12 lane 단독 전부 Ψ-disjoint + 전체-ON Ψ==base. "
             + "닫힘정리 ⇒ 2^12−1=4095 격자 전부 보장. anima 全 substrate 도메인(12 lane + A⇄G) 합성 "
-            + "— substrate 합성 매트릭스 TOTAL 고갈. 잔여=model-cluster(CLM/KOSMOS/WAKE) clm-native gated 뿐.")
+            + "— substrate 합성 매트릭스 TOTAL 고갈. 잔여=model-cluster(train/clm/KOSMOS/WAKE) clm-native gated 뿐.")
     } else {
         println("h1241_twelve_lane_matrix: INCOMPLETE — 단독 PASS " + to_string(sp) + "/12")
     }

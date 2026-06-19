@@ -1,10 +1,10 @@
 // g6_mbar_probe_303m.hexa — H_1394 G6 r2 PRODUCTION-CLOSE engine-native M-bar re-score
 // on a 303M-class ConvMoE .clm (d5000/E2/L1, n_params 302.6M), via the SAME live engine
-// ideation entry gen_clm_ideate (CORE/generator.hexa L3 slot). Detector + frames + best-of-K
-// reused VERBATIM from CORE/g6_ideation.hexa (NO bar moved, p7). GEN bumped 24->110 to match
+// ideation entry gen_clm_ideate (core/generator.hexa L3 slot). Detector + frames + best-of-K
+// reused VERBATIM from core/g6_ideation.hexa (NO bar moved, p7). GEN bumped 24->110 to match
 // the H_1362 gauge regime (MAX_NEW=110) so the larger mouth has the SAME byte budget to emit
 // a measurable falsifiable mark; still HARD-BOUNDED (g6_decode_best_of_k caps each draw at GEN).
-import "CORE/g6_ideation.hexa"
+import "core/g6_ideation.hexa"
 fn main() {
     let ckpt = "state/1387_g6_production_close/clm303_d5000.clm"
     let known = _g6_dict_load()

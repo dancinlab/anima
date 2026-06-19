@@ -1,7 +1,7 @@
-// CORE/DECODER/moe_prescription_smoke.hexa — 3-조건 더블바인드 처방 invariant
+// core/DECODER/moe_prescription_smoke.hexa — 3-조건 더블바인드 처방 invariant
 // anchor: M4b toy(hard) + D3 #1269 + E2 #1279 + Phase 5b under-train.
 
-import "CORE/DECODER/moe_prescription.hexa"
+import "core/DECODER/moe_prescription.hexa"
 
 fn assert_eq_f(name: string, got: float, want: float) -> bool {
     let d = if got - want < 0.0 { want - got } else { got - want }

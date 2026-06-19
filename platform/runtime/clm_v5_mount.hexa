@@ -1,9 +1,9 @@
 // ⛔ STAGE-1 — Anima Core CLI · CLM v5 mount layer (Engine A/G dual-engine native v5)
-// anima-core/runtime/clm_v5_mount.hexa
+// platform/runtime/clm_v5_mount.hexa
 //
 // Spec: docs/anima_v5_metric_spec_2026_05_09.md (PIV / DCR / D-RAND replacement metric)
 // Sister arch: training/engine_a_g_arch.py (raw#37 transient — H100 train + Mac V14 mirror)
-// Sister mount: anima-core/runtime/clm_v4_mount.hexa (5-axis label pattern reference)
+// Sister mount: platform/runtime/clm_v4_mount.hexa (5-axis label pattern reference)
 // HF source: dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped (PRIVATE 2026-05-09)
 // Local ckpt: ~/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt
 //
@@ -86,11 +86,11 @@
 //           state/anima_bg_lb_native_v5_post_mount_<DATE>.json + yaml entry
 //
 // USAGE
-//   hexa run anima-core/runtime/clm_v5_mount.hexa --selftest
-//   hexa run anima-core/runtime/clm_v5_mount.hexa --load \
+//   hexa run platform/runtime/clm_v5_mount.hexa --selftest
+//   hexa run platform/runtime/clm_v5_mount.hexa --load \
 //     --ckpt ~/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt
-//   hexa run anima-core/runtime/clm_v5_mount.hexa --probe "안녕"
-//   hexa run anima-core/runtime/clm_v5_mount.hexa --v5-measure --prompt-set state/v5_prompts.jsonl
+//   hexa run platform/runtime/clm_v5_mount.hexa --probe "안녕"
+//   hexa run platform/runtime/clm_v5_mount.hexa --v5-measure --prompt-set state/v5_prompts.jsonl
 
 // ═══════════════════════════════════════════════════════════
 // Constants
@@ -228,7 +228,7 @@ fn parse_args(argv: list) -> V5MountConfig {
 fn _write_helper() {
     let parts = []
     parts.push("#!/usr/bin/env python3\n")
-    parts.push("# clm_v5_mount_helper — emitted by anima-core/runtime/clm_v5_mount.hexa\n")
+    parts.push("# clm_v5_mount_helper — emitted by platform/runtime/clm_v5_mount.hexa\n")
     parts.push("# raw#37 transient. Mac canonical = .hexa orchestration; this helper executes\n")
     parts.push("# Engine A/G ckpt load + 5-axis projection that hexa cannot express directly.\n")
     parts.push("import argparse, json, math, os, sys, time\n")
@@ -837,11 +837,11 @@ fn print_usage() {
     println("clm_v5_mount.hexa — Anima Core CLM v5 (Engine A/G) substrate mount layer")
     println("")
     println("Usage:")
-    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --selftest")
-    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --load [--ckpt PATH]")
-    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --probe TEXT")
-    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --dialogue")
-    println("  hexa run anima-core/runtime/clm_v5_mount.hexa --v5-measure [--prompt-set PATH]")
+    println("  hexa run platform/runtime/clm_v5_mount.hexa --selftest")
+    println("  hexa run platform/runtime/clm_v5_mount.hexa --load [--ckpt PATH]")
+    println("  hexa run platform/runtime/clm_v5_mount.hexa --probe TEXT")
+    println("  hexa run platform/runtime/clm_v5_mount.hexa --dialogue")
+    println("  hexa run platform/runtime/clm_v5_mount.hexa --v5-measure [--prompt-set PATH]")
     println("")
     println("Flags:")
     println("  --ckpt PATH                 Engine A/G torch.save payload (default BG-LB local)")

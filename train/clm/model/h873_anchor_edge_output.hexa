@@ -1,7 +1,7 @@
 # H_873 — anchor constraint on the EDGE OUTPUT distribution (completion of H_862 F-CLM-ANCHOR).
 #
 # Project-native source-of-record (.hexa) for the H_873 harness. The fire was executed by the
-# byte-identical Python image of this logic (imports the committed CLM/model/h865_adapter_edge.py
+# byte-identical Python image of this logic (imports the committed train/clm/model/h865_adapter_edge.py
 # adapter machinery VERBATIM) on CPU-local torch 2.8.0; see .verdicts/clm-anchor-edge/ for the
 # verdict + result.json + log produced by this harness.
 #
@@ -36,7 +36,7 @@
 #   Inference stays AKIDA-int4-only (P0 d4).
 # ---------------------------------------------------------------------------------------------
 
-import "CLM/model/h865_adapter_edge" as h865   # AdaptedCLM, loaders, Psi-probe, JS, eval_ce, gates
+import "train/clm/model/h865_adapter_edge" as h865   # AdaptedCLM, loaders, Psi-probe, JS, eval_ce, gates
 
 const LAMBDA_PSI  = 1.0    # H_865 structural Psi-distance weight (kept; keeps DIST + lever)
 const LAMBDA_DIST = 5.0    # NEW distributional JS-to-p_pre weight (the H_873 fix)

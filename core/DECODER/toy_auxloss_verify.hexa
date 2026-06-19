@@ -1,4 +1,4 @@
-// CORE/DECODER/toy_auxloss_verify.hexa — aux-loss MECHANISM toy verify ($0 mac)
+// core/DECODER/toy_auxloss_verify.hexa — aux-loss MECHANISM toy verify ($0 mac)
 //
 // STEP 1 of the M4b aux-loss × d-scale fire (a_toy_scale_recheck): confirm the
 // Switch load-balancing aux loss (v3_moe_aux_bwd) actually BALANCES the router
@@ -20,7 +20,7 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
-use "CORE/DECODER/v3_moe_arch"
+use "core/DECODER/v3_moe_arch"
 
 // Local mirror of v3_moe_aux_bwd (cross-backend codegen trims the imported
 // pub fn — see #1527 free-fn trim gap; a local fn in the same TU as main is

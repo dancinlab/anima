@@ -1,15 +1,15 @@
 // h1312_ko_cells_export.hexa — SERIALIZE the H_1306 grown Korean cells to a small
-// committed artifact (CORE/ko_cells.kohead) so the live decode can CONSULT them at
+// committed artifact (core/ko_cells.kohead) so the live decode can CONSULT them at
 // the generator L3 slot (a_verified_must_wire follow-on for H_1306).
 //
 // This is NOT a new learning rung. It re-runs the EXACT H_1306 engine-native grow
-// (CORE/engine_cli.hexa VAdaptField Voronoi + engine_mitosis_tick, gradient-free p8)
+// (core/engine_cli.hexa VAdaptField Voronoi + engine_mitosis_tick, gradient-free p8)
 // on the SAME R2 Korean corpus slice (/tmp/h1306_*, sha256 in h1306_manifest.json),
 // then writes the grown field's PROTOTYPE CENTERS + each cell's LEARNED argmax
 // next-byte (the per-cell next-byte MLE head's top byte, add-1 Laplace) so the
 // generator can map a Korean context → nearest Korean cell → its learned next byte.
 //
-// ARTIFACT FORMAT (CORE/ko_cells.kohead, deterministic ASCII):
+// ARTIFACT FORMAT (core/ko_cells.kohead, deterministic ASCII):
 //   line 1:   <n_cells> <dim>
 //   line i+1: <c0> <c1> <c2> <top_byte>     (cell i: dim-vector center + argmax byte)
 //
@@ -22,7 +22,7 @@
 // Ψ-disjoint: reads VAdaptField ownership + grows a cell population; pure_field is
 // never touched (a_core_engine_map). $0 CPU, no GPU, no secrets at run.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 fn _V() -> int             { return 256 }
 fn _FEAT_DIM() -> int      { return 3 }
@@ -232,7 +232,7 @@ fn _cell_top_byte(Ytr: [int], owner: [int], k: int, ntr: int, V: int) -> int {
 }
 
 fn main() {
-    println("=== H_1312 — EXPORT the H_1306 grown Korean cells (engine-native) -> CORE/ko_cells.kohead ===")
+    println("=== H_1312 — EXPORT the H_1306 grown Korean cells (engine-native) -> core/ko_cells.kohead ===")
     let cfg = engine_cli_parse(["--mitosis", "on"])
     let dim = _FEAT_DIM()
     let V = _V()
@@ -272,7 +272,7 @@ fn main() {
         println("  cell " + to_string(k) + ": center=[" + to_string(c3[k][0]) + "," + to_string(c3[k][1]) + "," + to_string(c3[k][2]) + "] top_byte=" + to_string(tb))
         k = k + 1
     }
-    write_file("CORE/ko_cells.kohead", s)
-    println("wrote CORE/ko_cells.kohead (" + to_string(nc) + " cells, dim=" + to_string(dim) + ")")
+    write_file("core/ko_cells.kohead", s)
+    println("wrote core/ko_cells.kohead (" + to_string(nc) + " cells, dim=" + to_string(dim) + ")")
     println("[done]")
 }

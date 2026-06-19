@@ -6,7 +6,7 @@
 // dedicated cells grown under that skill's error (mitosis, H_1199 / H_1288), earlier
 // skills' cells NEVER overwritten, so the learner RETAINS old skills where a single
 // shared gradient-FT net FORGETS them. This probe reproduces that GREEN through the LIVE
-// engine faculty CORE/engine_cli.hexa::SkillCellMemory (skill_grow / skill_route /
+// engine faculty core/engine_cli.hexa::SkillCellMemory (skill_grow / skill_route /
 // skill_fit_head + the SkillGradFT arm-A learner) — the grow / fit / FT / route
 // arithmetic runs on the .hexa engine, not numpy. The curriculum is the EXACT R2 regime
 // (CANONICAL catastrophic-forgetting: sep 1.0 + anti-aligned shared rules) pre-exported
@@ -30,7 +30,7 @@
 // p7 = held-out exact-token accuracy, NOT perplexity. $0 CPU. Ψ-disjoint (the faculty
 // only grows/reads a cell population; this probe never touches pure_field).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 fn _N_SKILLS() -> int { return 5 }
 fn _DIM() -> int      { return 12 }
@@ -128,7 +128,7 @@ fn _run_armA(xtr: [[[float]]], ytr: [[int]], xte: [[[float]]], yte: [[int]], see
 
 fn main() {
     println("=== H_1300 R3 — MITOSIS-GROW SKILL CURRICULUM on the LIVE engine (a_engine_native_learning) ===")
-    println("faculty: CORE/engine_cli.hexa::SkillCellMemory (skill_grow/skill_route/skill_fit_head) + SkillGradFT")
+    println("faculty: core/engine_cli.hexa::SkillCellMemory (skill_grow/skill_route/skill_fit_head) + SkillGradFT")
     println("regime = H_1300 R2 CANONICAL catastrophic-forgetting (sep 1.0 + anti-aligned shared rules), 5 skills 1-at-a-time")
     println("arms: (A) shared gradient-FT vs (B) mitosis-grow dedicated cells vs B-SHUFFLE vs B-ABLATE")
     println("FROZEN R2: (c1) B.RET-A.RET>=0.30 & per-seed B>A · (c2) B acq>=0.80 ea · (c3) shuf<=A+0.15 · (c4) abl acq(2..N)<=0.50")

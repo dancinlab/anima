@@ -103,7 +103,7 @@ fn corpus_window(desc: CorpusDesc, offset: int, n_bytes: int) -> [int] {
 //
 // REAL IMPLEMENTATIONS (use these once hexa `use` is fixed or we switch
 // to a compiled-codegen hexa build):
-//   anima-engines/anima_quantum_clm.hexa   — QuantumController + friends
+//   core/phi/anima_quantum_clm.hexa   — QuantumController + friends
 //   training/phi_cache_loader.hexa         — PhiCache + friends
 // DO NOT de-stub piecemeal — either keep all stubs OR remove all stubs
 // and re-enable `use`, because the silent-exit bug is all-or-nothing
@@ -133,7 +133,7 @@ struct QuantumController {
     tick: int
 }
 
-// STUB — real impl: anima-engines/anima_quantum_clm.hexa:43-56
+// STUB — real impl: core/phi/anima_quantum_clm.hexa:43-56
 // Root cause: hexa silent-exit-on-imports (feedback_hexa_silent_exit_5_imports)
 // Fix: return zero-initialized controller. No microtubules allocated.
 fn quantum_controller_new(n_atoms: int, sites_per_atom: int) -> QuantumController {
@@ -144,7 +144,7 @@ fn quantum_controller_new(n_atoms: int, sites_per_atom: int) -> QuantumControlle
     }
 }
 
-// STUB — real impl: anima-engines/anima_quantum_clm.hexa:61-74
+// STUB — real impl: core/phi/anima_quantum_clm.hexa:61-74
 // Fix: advance tick only; real impl evolves microtubules via mt_step.
 fn quantum_controller_step(qc: QuantumController) -> QuantumController {
     return QuantumController {
@@ -154,13 +154,13 @@ fn quantum_controller_step(qc: QuantumController) -> QuantumController {
     }
 }
 
-// STUB — real impl: anima-engines/anima_quantum_clm.hexa:78-86
+// STUB — real impl: core/phi/anima_quantum_clm.hexa:78-86
 // Fix: Φ_q = 0 → phi_bonus = 0. Smoke does not need Orch-OR signal.
 fn quantum_controller_phi(qc: QuantumController) -> float {
     return 0.0
 }
 
-// STUB — real impl: anima-engines/anima_quantum_clm.hexa:90-92
+// STUB — real impl: core/phi/anima_quantum_clm.hexa:90-92
 // Fix: return max = n_atoms * sites * ln(2). Matches real formula so
 // phi_q / phi_max stays bounded even if phi ever becomes nonzero.
 fn quantum_controller_phi_max(qc: QuantumController) -> float {
@@ -3525,8 +3525,8 @@ fn train_step(state: TrainState, model: DecoderModel, ds: TokenDataset) -> Train
 //
 // Three engines inlined into the CLM forward pipeline (roadmap CLM-P4-1):
 //   clm_gwt broadcast  (CLM-P2-1, training/clm_gwt_broadcast.hexa)
-//   anima_holographic  (CLM-P3-1, anima-engines/anima_holographic.hexa)
-//   quantum_collapse   (CLM-P1-4, anima-engines/quantum_collapse_sample.hexa)
+//   anima_holographic  (CLM-P3-1, core/phi/anima_holographic.hexa)
+//   quantum_collapse   (CLM-P1-4, core/phi/quantum_collapse_sample.hexa)
 //
 // Rationale: `use` imports require symlinks (like anima_quantum_clm) that do
 // not yet exist for holographic/qcs engines. Per feedback_hexa_lists_pbv /
@@ -3773,7 +3773,7 @@ fn _c41_l_gwt(c: [float], h_gwt: [float]) -> float {
 
 // ─── §I.4  Holographic (AdS/CFT) head ──────────────────────────
 //
-// Mirrors anima-engines/anima_holographic.hexa (CLM-P3-1):
+// Mirrors core/phi/anima_holographic.hexa (CLM-P3-1):
 //   bulk[0..d]   = boundary              (identity lift)
 //   bulk[d..D]   = scramble @ boundary   (interior)
 //   decode       = bulk[0..d]            (retract)
@@ -4046,7 +4046,7 @@ fn _c41_l_holo(boundary: [float], h_recon: [float]) -> float {
 
 // ─── §I.6  Penrose-Hameroff Orch-OR collapse sampler ───────────
 //
-// Mirrors anima-engines/quantum_collapse_sample.hexa (CLM-P1-4). The
+// Mirrors core/phi/quantum_collapse_sample.hexa (CLM-P1-4). The
 // accumulated-action state is *not* persisted across train_step calls;
 // for training-time forward this is a per-step read of the top-K Born
 // probability over the qualia-gated head distribution (logit slice).

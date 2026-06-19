@@ -7,7 +7,7 @@
 // SUBSTRATE LANE GOAL: "자기분열을 현재 아키텍처에 substrate lane 으로 붙인다" — verify
 // mitosis growth is a PERSISTENT structural change of the substrate, not ephemeral.
 //
-// MECHANISM (CORE/engine_cli.hexa, frozen): VAdaptField DIM=8, vadapt_field_step,
+// MECHANISM (core/engine_cli.hexa, frozen): VAdaptField DIM=8, vadapt_field_step,
 //   novelty gate recon-err(L2) > SPLIT_THRESH=0.30 -> engine_mitosis_tick +1 cell
 //   prototype AT the novel sample, LR=0.20 winner pull. (cells + prototypes = the
 //   substrate state under test.)
@@ -31,8 +31,8 @@
 // INPUT: DIM=8 real-corpus byte features (H_1163 _byte_feature VERBATIM) exported
 //   to /tmp/h1199_feat8_seed<S>.txt. WAKE_1 = first half, WAKE_2 = second half.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 fn _load_feat8(path: string, dim: int) -> [[float]] {
     let txt = read_file(path)

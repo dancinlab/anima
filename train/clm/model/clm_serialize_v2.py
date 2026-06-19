@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Lane P REMEDY — torch -> .clm serializer matching CORE/clm_decode.hexa EXACTLY.
+"""Lane P REMEDY — torch -> .clm serializer matching core/clm_decode.hexa EXACTLY.
 
 The prior CLM/model/clm_serialize.py emits a 2-track JSON-header format that
 shares only the "CLM\\x01" magic with the ENGINE decoder and is NOT loadable
 (see .verdicts/lane-p-clm/F-CLM-SERIALIZE-GAP.txt). This v2 serializer packs the
-EXACT CLM\\x01 v0.2 byte layout that CORE/clm_decode.hexa::clm_decodable parses.
+EXACT CLM\\x01 v0.2 byte layout that core/clm_decode.hexa::clm_decodable parses.
 
-CLM\\x01 v0.2 byte layout (ground truth = CORE/clm_decode.hexa + the golden
+CLM\\x01 v0.2 byte layout (ground truth = core/clm_decode.hexa + the golden
 reference state/laneg_d768_recover/reexport_d768_v2_fast.clm):
 
   [0:4]  MAGIC "CLM\\x01"  = bytes 67,76,77,1
@@ -272,19 +272,19 @@ def _assert_e2_l1(cfg):
     n_l = getattr(cfg, "n_trunk_layers", None)
     if n_e is not None and n_e != 2:
         raise ValueError(
-            f"CORE/clm_decode.hexa is FIXED to E=2 experts; cfg.n_experts={n_e}. "
+            f"core/clm_decode.hexa is FIXED to E=2 experts; cfg.n_experts={n_e}. "
             f"Train with a CLMConfig(n_experts=2, n_trunk_layers=1) preset."
         )
     if n_l is not None and n_l != 1:
         raise ValueError(
-            f"CORE/clm_decode.hexa is FIXED to 1 trunk layer; "
+            f"core/clm_decode.hexa is FIXED to 1 trunk layer; "
             f"cfg.n_trunk_layers={n_l}. Train with n_trunk_layers=1."
         )
 
 
 def serialize_v2(state_dict_or_ckpt, cfg, out_path: str) -> str:
     """Pack a CLMConvMoE (E=2 / 1-trunk) state_dict to a CLM\\x01 v0.2 .clm that
-    CORE/clm_decode.hexa loads. Returns out_path.
+    core/clm_decode.hexa loads. Returns out_path.
 
     cfg may be a CLMConfig (asserted E=2/L1) or None (skip the assert — caller
     vouches the dict already matches the E=2/L1 slot layout, e.g. synthetic test).
@@ -316,7 +316,7 @@ def serialize_v2(state_dict_or_ckpt, cfg, out_path: str) -> str:
 def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
                  out_path: str) -> str:
     """Pack a GENERAL CLMConvMoE(n_trunk_layers=L, n_experts=E, d, K) to a
-    CLM\\x01 v0.3 .clm that CORE/clm_decode.hexa loads.
+    CLM\\x01 v0.3 .clm that core/clm_decode.hexa loads.
 
     v0.3 == v0.2 byte grammar, generalized block/ext counts (see the v0.3 note
     above). At L=1,E=2 the output is BYTE-IDENTICAL to serialize_v2 (verified by

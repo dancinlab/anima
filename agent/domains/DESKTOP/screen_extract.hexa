@@ -1,4 +1,4 @@
-// screen_extract.hexa — macOS screen perception surface (AGENT/DESKTOP/M2).
+// screen_extract.hexa — macOS screen perception surface (agent/domains/DESKTOP/M2).
 //
 // BRIDGE ARCHITECTURE: tool surface only. The "when/why to look" decision lives
 // in CORE (PureField); this module exposes only the "how" — thin wrappers over
@@ -361,5 +361,5 @@ pub fn ax_ocr(png_path: string) -> string {
 
 // 6. One-line description of this module's tool surface.
 pub fn screen_extract_summary() -> string {
-    "AGENT/DESKTOP/screen_extract — macOS screen perception · 6 fn · screencapture+AXAPI+Vision · shot/window/tree/text-at/ocr · M2 surface"
+    "agent/domains/DESKTOP/screen_extract — macOS screen perception · 6 fn · screencapture+AXAPI+Vision · shot/window/tree/text-at/ocr · M2 surface"
 }

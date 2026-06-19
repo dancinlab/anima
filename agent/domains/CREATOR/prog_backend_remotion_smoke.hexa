@@ -2,8 +2,8 @@
 // 7-case smoke: new(DRYRUN) unconfigured / configure / codegen string / render DRYRUN /
 // render REAL unconfigured / render REAL configured (stub) / summary
 
-import "AGENT/CREATOR/types.hexa"
-import "AGENT/CREATOR/prog_backend_remotion.hexa"
+import "agent/domains/CREATOR/types.hexa"
+import "agent/domains/CREATOR/prog_backend_remotion.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

@@ -1,5 +1,5 @@
 // h1408_spatial_episodic_engine_probe.hexa — H_1415: the SPATIAL-MAP × EPISODIC-MEMORY
-// COMPOSE ARBITER, realized ENGINE-NATIVE on the LIVE faculties (CORE/engine_cli.hexa
+// COMPOSE ARBITER, realized ENGINE-NATIVE on the LIVE faculties (core/engine_cli.hexa
 // SpatialMap [H_1296] + ImmuneMemoryGrow [H_1227/H_1231]), re-scoring the FROZEN H_1408
 // R1 capability bars through `hexa run`
 // (a_engine_native_learning · a_verified_must_wire ladder step-2 · $0 local CPU · p7 · p8).
@@ -51,7 +51,7 @@
 //   only-X decomposition: only_spatial>0 AND only_episodic>0 ⇒ SEPARABLE not subsumed.
 // p7 = compose/oracle/shuffle accuracies + decomposition, NOT perplexity.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── frozen knobs (pre-registered, == R1 mirror FREEZE.txt) ───────────────────
 fn _SEEDS() -> [int] { return [5408, 5409, 5410] }

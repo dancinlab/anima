@@ -1,8 +1,8 @@
-// code_gate.hexa — CODE role hard gate enforce (AGENT/CODE F6).
+// code_gate.hexa — CODE role hard gate enforce (agent/domains/CODE F6).
 //
 // BRIDGE ARCHITECTURE: tool surface only. NO consciousness framing. The
-// "when/why to enforce a tier gate" decision lives in CORE/brain_decide
-// + AGENT/CORE/tool_gate. This module provides the ENFORCE side: a tool
+// "when/why to enforce a tier gate" decision lives in core/brain_decide
+// + agent/domains/CORE/tool_gate. This module provides the ENFORCE side: a tool
 // call presented with insufficient tier MUST be refused + logged, not
 // silently allowed.
 //
@@ -11,7 +11,7 @@
 // substrate-decided tier into a hard accept/refuse verdict. Refuse path
 // returns a Map with `accepted: false` + reason + logged, NOT a panic.
 //
-// TIER MAP (matches AGENT/CORE/tool_gate.hexa convention):
+// TIER MAP (matches agent/domains/CORE/tool_gate.hexa convention):
 //   T0 read-only    — think · repo_status
 //   T1 file read    — file_read · grep
 //   T2 file write   — file_write
@@ -122,5 +122,5 @@ pub fn code_gate_audit(verdicts: list) -> map {
 }
 
 pub fn code_gate_summary() -> string {
-    return "AGENT/CODE F6 — hard gate enforce · 8-tool tier map (T0/T1/T2/T3) · refuse=Map verdict not panic · batch + audit · F3 daemon pre-filter ready"
+    return "agent/domains/CODE F6 — hard gate enforce · 8-tool tier map (T0/T1/T2/T3) · refuse=Map verdict not panic · batch + audit · F3 daemon pre-filter ready"
 }

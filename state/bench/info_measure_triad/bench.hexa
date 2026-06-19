@@ -330,7 +330,7 @@ fn uniform_sample(n: int, lo: float, hi: float, seed: int) -> array {
 // ─────────────────────────────────────────────────────────────────────
 fn main() {
   print("== BENCH #3 INFO-MEASURE-TRIAD (UNIVERSE H_287-290) ==\n")
-  print("Source: CORE/DECODER/state/m4b_phase5b_2026_05_27/train.out\n")
+  print("Source: core/DECODER/state/m4b_phase5b_2026_05_27/train.out\n")
   print("stdlib imports: info/entropy::shannon_entropy + stats/correlation::pearson_r (g61)\n\n")
 
   // ─── Phase 5b DECODED_IDS (verbatim from train.out) ───
@@ -534,7 +534,7 @@ fn main() {
   // ─── Persist result.json ───
   let result = #{
     "bench": "info_measure_triad",
-    "source": "CORE/DECODER/state/m4b_phase5b_2026_05_27/train.out",
+    "source": "core/DECODER/state/m4b_phase5b_2026_05_27/train.out",
     "decoded_ids": decoded_ids,
     "per_pos_expert": per_pos_expert,
     "measurers": #{

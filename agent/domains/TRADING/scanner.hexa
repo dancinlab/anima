@@ -2,7 +2,7 @@
 // Port of agent/trading/scanner.py
 
 // Scans for: top movers, volume spikes, regime changes, signal convergence
-// Uses Binance public API (no auth). AGENT/CORE tier modulates scan aggressiveness.
+// Uses Binance public API (no auth). agent/domains/CORE tier modulates scan aggressiveness.
 
 fn MarketScanner(universe) {
     // TODO: scan multiple symbols for trading opportunities
@@ -30,7 +30,7 @@ fn scan_signal_convergence(strategies) {
 }
 
 fn rank_opportunities(candidates, tier) {
-    // TODO: rank by opportunity score, modulated by AGENT/CORE tier
+    // TODO: rank by opportunity score, modulated by agent/domains/CORE tier
     print("rank_opportunities stub")
 }
 

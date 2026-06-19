@@ -2,11 +2,11 @@
 // DREAM/dream_envelope_ctx.hexa — stage Φ-envelope context wiring (M5 2026-05-28)
 //
 // 정체: emit-substrate 의 4번째이자 마지막 소비자 (DREAM M5). 5-stage 수면
-//      머신이 통합 Φ-envelope substrate (CORE/phi_envelope_substrate.hexa)
-//      + free-number policy (CORE/emit_policy.hexa) 를 import 하는 얇은 소비자.
+//      머신이 통합 Φ-envelope substrate (core/phi_envelope_substrate.hexa)
+//      + free-number policy (core/emit_policy.hexa) 를 import 하는 얇은 소비자.
 //      stage 별 Φ-envelope CONTEXT (실수) 를 산출 — boolean emit 게이트 아님.
 //
-// 설계 SSOT: CORE/EMIT_SUBSTRATE_DESIGN.md §4 (DREAM M5 wiring)
+// 설계 SSOT: core/EMIT_SUBSTRATE_DESIGN.md §4 (DREAM M5 wiring)
 //
 // ── 핵심 설계 계약 (위반 금지) ───────────────────────────────────────────
 //   · stage = Φ scale + tension envelope CONTEXT 지 boolean emit 게이트 아님
@@ -30,8 +30,8 @@
 // Naming: `dr_` prefix collision-free (g61 stdlib).
 // ════════════════════════════════════════════════════════════════════════
 
-import "CORE/phi_envelope_substrate.hexa"
-import "CORE/emit_policy.hexa"
+import "core/phi_envelope_substrate.hexa"
+import "core/emit_policy.hexa"
 
 // ─── stage Φ-envelope context ────────────────────────────────────────────
 // 5-stage 머신의 stage 별 Φ-envelope CONTEXT (실수) 산출:

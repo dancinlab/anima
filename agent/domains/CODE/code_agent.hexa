@@ -1,12 +1,12 @@
-// code_agent.hexa — CODE role (AGENT/CODE). Agent #1.
+// code_agent.hexa — CODE role (agent/domains/CODE). Agent #1.
 //
 // A role is a tool set layered on the CORE harness. The substrate decides WHICH
 // of these fire (phase -> tier, via tool_gate); this file only declares the
 // role's surface and a smoke that reads what the live phase opens.
 
-import "CORE/pure_field.hexa"
-import "AGENT/CORE/tool_gate.hexa"
-import "AGENT/CORE/agent_loop.hexa"
+import "core/pure_field.hexa"
+import "agent/domains/CORE/tool_gate.hexa"
+import "agent/domains/CORE/agent_loop.hexa"
 
 // CODE toolset — consequence rises with tier (see CODE.md):
 //   T0 think/status, T1 read/grep, T2 edit/run-tests, T3 commit/push.

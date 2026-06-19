@@ -1,4 +1,4 @@
-// task_primitives_smoke.hexa — runtime smoke for AGENT/DESKTOP/task_primitives (M5).
+// task_primitives_smoke.hexa — runtime smoke for agent/domains/DESKTOP/task_primitives (M5).
 //
 // 4 cases — SAFE BY CONSTRUCTION. The smoke sets ANIMA_DESKTOP_DRYRUN=1 in
 // its own env, then every macro returns its contract-shape Map WITHOUT
@@ -16,7 +16,7 @@
 //
 // All cases complete → exit 0. No real OS event is dispatched.
 
-import "AGENT/DESKTOP/task_primitives.hexa"
+import "agent/domains/DESKTOP/task_primitives.hexa"
 
 fn _enable_dry_run() {
     set_env("ANIMA_DESKTOP_DRYRUN", "1")
@@ -49,7 +49,7 @@ fn _map_has(m: Map, key: string) -> bool {
 }
 
 fn main() {
-    println("[smoke] AGENT/DESKTOP/task_primitives — " + task_primitives_summary())
+    println("[smoke] agent/domains/DESKTOP/task_primitives — " + task_primitives_summary())
 
     _enable_dry_run()
     println("[init] ANIMA_DESKTOP_DRYRUN=1 (no real app/window/keystroke events will fire)")

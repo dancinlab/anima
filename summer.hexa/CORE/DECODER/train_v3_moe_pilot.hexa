@@ -1,4 +1,4 @@
-// CORE/DECODER/train_v3_moe_pilot.hexa — M4b-fire-scale Phase 4c self-attention
+// core/DECODER/train_v3_moe_pilot.hexa — M4b-fire-scale Phase 4c self-attention
 //
 // Pilot driver — Phase 4c adds proper self-attention (T > 1, causal mask,
 // Q/K/V/Wo projections, scaled dot-product softmax). Per-layer block becomes:
@@ -34,9 +34,9 @@
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
-use "CORE/DECODER/v3_moe_arch"
-use "CORE/DECODER/v3_moe_bwd_lib"
-use "CORE/DECODER/flame_mm"
+use "core/DECODER/v3_moe_arch"
+use "core/DECODER/v3_moe_bwd_lib"
+use "core/DECODER/flame_mm"
 
 fn main() {
     println("=== train_v3_moe_pilot (M4b Phase 4d real-BPE-IDS · d=64 V=151643 n_layer=1 T=4) ===")

@@ -345,7 +345,7 @@ def run_arm(cfg: ArmCfg, data: Data, *, seed: int, steps: int, block: int,
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--corpus", default="CORE/testdata/clm_mid_5lang_c4.txt")
+    ap.add_argument("--corpus", default="core/testdata/clm_mid_5lang_c4.txt")
     ap.add_argument("--max-bytes", type=int, default=120_000)
     ap.add_argument("--val-frac", type=float, default=0.15)
     ap.add_argument("--steps", type=int, default=400)

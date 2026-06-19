@@ -1,4 +1,4 @@
-// CORE/DECODER/v3_moe_arch_smoke.hexa — Phase 4-gpu-2 MoE mm()-port gradcheck
+// core/DECODER/v3_moe_arch_smoke.hexa — Phase 4-gpu-2 MoE mm()-port gradcheck
 //
 // Verifies the mm()-ported v3_moe_fwd/v3_moe_bwd (expert gemv → cuBLAS⇄CPU)
 // still match finite-difference on Mac (CPU oracle path). Small d=4 V=4 E=2.
@@ -6,8 +6,8 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
-use "CORE/DECODER/flame_mm"
-use "CORE/DECODER/v3_moe_arch"
+use "core/DECODER/flame_mm"
+use "core/DECODER/v3_moe_arch"
 
 fn loss_sq(logits, V) -> float {
     let mut acc = 0.0

@@ -1,8 +1,8 @@
 // backtest_smoke.hexa — TRADING M3 backtest round-trip verify
 // 5-case smoke: config / apply_signal buy / apply_signal sell / metrics / full run
 
-import "AGENT/TRADING/types.hexa"
-import "AGENT/TRADING/backtest.hexa"
+import "agent/domains/TRADING/types.hexa"
+import "agent/domains/TRADING/backtest.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

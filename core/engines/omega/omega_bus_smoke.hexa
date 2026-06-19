@@ -7,7 +7,7 @@
 //
 // usage: hexa run engines/omega/omega_bus_smoke.hexa
 
-import "engines/omega/adapter.hexa"
+import "core/engines/omega/adapter.hexa"
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }

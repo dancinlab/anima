@@ -2,7 +2,7 @@
 // argv: <bin_path> <jobs_path> <out_path> <gen> <top_k> <temp_milli>
 // Loads the 303M ONCE (bg_load_ranged) then generates every fragment in jobs_path,
 // appending `tag<TAB>text` to out_path as each finishes (commit-early/resumable).
-import "CORE/bytegpt_decode.hexa"
+import "core/bytegpt_decode.hexa"
 fn main() {
     let a = argv()
     let bin  = a[1]

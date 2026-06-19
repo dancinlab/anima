@@ -2,9 +2,9 @@
 // Port of agent/trading/autonomous.py
 
 // Cycle: SCAN -> REGIME -> SIGNAL -> GATE -> EXECUTE -> MANAGE
-// Bridge architecture (AGENT/CORE supplies tier; this module = tool surface only):
-//   AGENT/CORE tier gate halts trading (tier below required = halt)
-//   AGENT/CORE tier modulates position sizing (lower tier = smaller)
+// Bridge architecture (agent/domains/CORE supplies tier; this module = tool surface only):
+//   agent/domains/CORE tier gate halts trading (tier below required = halt)
+//   agent/domains/CORE tier modulates position sizing (lower tier = smaller)
 //   Regime shifts triggered from market data + tier transitions
 
 fn AutonomousLoop(config) {
@@ -23,8 +23,8 @@ fn run_forever(interval_seconds) {
 }
 
 fn tier_gate_check(tier, required_tier) {
-    // TODO: go/no-go decision based on AGENT/CORE tier vs required tier
-    // (tier supplied by AGENT/CORE; this module is tool surface only)
+    // TODO: go/no-go decision based on agent/domains/CORE tier vs required tier
+    // (tier supplied by agent/domains/CORE; this module is tool surface only)
     print("tier_gate_check stub")
 }
 

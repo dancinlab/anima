@@ -2,9 +2,9 @@
 // 8-case smoke: no_approval reject / session approve / single approve / consumed /
 // notional cap / daily cap / position cap / DRYRUN always refuses real fill
 
-import "AGENT/TRADING/types.hexa"
-import "AGENT/TRADING/live_gate.hexa"
-import "AGENT/TRADING/live_broker_kis.hexa"
+import "agent/domains/TRADING/types.hexa"
+import "agent/domains/TRADING/live_gate.hexa"
+import "agent/domains/TRADING/live_broker_kis.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

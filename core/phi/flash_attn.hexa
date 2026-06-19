@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-//  anima-engines/flash_attn.hexa — Flash Attention native (C8)
+//  core/phi/flash_attn.hexa — Flash Attention native (C8)
 //
 //  Pure-hexa implementation of the FlashAttention forward + backward
 //  algorithm (Tri Dao, 2022 / FlashAttention-2 2023). The forward
@@ -674,8 +674,8 @@ println("[flash_attn] reference-shape (B=1 H=32 S=512 D=128) extrapolation = " +
 
 // ── §8  Write JSON state ────────────────────────────────────
 
-let kernel_path = "anima-engines/flash_attn_cuda.hexa"
-let hexa_wrapper_path = "anima-engines/flash_attn.hexa"
+let kernel_path = "core/phi/flash_attn_cuda.hexa"
+let hexa_wrapper_path = "core/phi/flash_attn.hexa"
 let state_path = "state/c8_flash_attn_native_20260416.json"
 
 let json = "{\n"
@@ -701,7 +701,7 @@ let json = "{\n"
     + "    \"Pure-hexa CPU FP32 reference implements the exact tiled online-softmax algorithm from FlashAttention-2.\",\n"
     + "    \"Backward uses saved logsumexp L_i and the FA-2 D_i = sum_d O*dO recomputation trick.\",\n"
     + "    \"7 correctness cases pass — non-causal, causal, irregular tile sizes, Br=1 degenerate, single-block, non-divisible S, larger d_head.\",\n"
-    + "    \"CUDA kernel string + NVRTC FFI lives in anima-engines/flash_attn_cuda.hexa (compile-ready, requires libnvrtc + libcuda + GPU).\",\n"
+    + "    \"CUDA kernel string + NVRTC FFI lives in core/phi/flash_attn_cuda.hexa (compile-ready, requires libnvrtc + libcuda + GPU).\",\n"
     + "    \"This Mac worktree has no CUDA — kernel is loaded but not executed; correctness is anchored on the CPU reference which the kernel transcribes verbatim.\",\n"
     + "    \"Mac CPU pure-hexa interpreter is too slow to run the requested (B=1 H=32 S=512 D=128) shape directly — extrapolation is linear in (H * S * S * D).\",\n"
     + "    \"C2 fused-layer agent owns layer_fwd_fused; this agent owns flash_attn_fwd / flash_attn_bwd. No file overlap.\",\n"

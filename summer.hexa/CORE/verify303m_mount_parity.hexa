@@ -5,13 +5,13 @@
 // next-byte argmax / top5 / first-16 logits so the CORE forward can be diffed byte-
 // exact against the torch golden (chat_full_golden.json).
 //
-// PARITY CRITERION (a303m_pass MOUNT, per CORE/h1156_bytegpt_parity_probe.hexa):
+// PARITY CRITERION (a303m_pass MOUNT, per core/h1156_bytegpt_parity_probe.hexa):
 //   argmax(CORE) == argmax(torch) AND top-5 idx set matches AND first-16 within ~1e-2
 //   (erf-GELU + dt_exp approx vs torch exact -> small residual; argmax must hold).
 //
 // PROMPT: "The quick brown" (15 bytes).
 
-import "CORE/bytegpt_decode.hexa"
+import "core/bytegpt_decode.hexa"
 
 fn main() {
     let path = "/tmp/verify303m/chat_full.bin"

@@ -33,7 +33,7 @@
 // the engine. engine_cli_smoke.hexa 12/12 anchor stays unbroken. p7 metric.
 //
 // HONEST PREDICTION (a_core_engine_map — what is wired): pure_field_step is a
-// ZERO-INPUT internal oscillator (CORE/pure_field.hexa L193 "advance field by one
+// ZERO-INPUT internal oscillator (core/pure_field.hexa L193 "advance field by one
 // tick (zero external input)"); narrative_coherence is an EMA of phase-stability
 // of the field's OWN dynamics, not of any stream sample. engine_mitosis_tick's
 // cell_count is NOT fed back into pure_field. So the regime shift in the stream
@@ -42,8 +42,8 @@
 // the actual spike magnitude at the shift vs the baseline; if it is ~0 the
 // honest verdict is the falsifier's HOURGLASS branch, NOT a fabricated result.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 // ── deterministic LCG ─────────────────────────────────────────────────────────
 fn _lcg(state: int) -> int {
@@ -198,7 +198,7 @@ fn main() {
         println("  shift produced NO upward spike in the engine's coherence-error (spike")
         println("  magnitude=" + _fmt(spike_mag) + " <= eps; coherence-error DECAYS as the field")
         println("  settles, indifferent to the shift). There is nothing to recover FROM.")
-        println("  WHAT IS MISSING: pure_field_step is ZERO-INPUT (CORE/pure_field.hexa) — it")
+        println("  WHAT IS MISSING: pure_field_step is ZERO-INPUT (core/pure_field.hexa) — it")
         println("  advances internal oscillators ONLY; narrative_coherence is an EMA of the")
         println("  field's OWN phase-stability, never of the stream sample. The regime shift in")
         println("  the stream never reaches the field, so no adaptation transient exists to")

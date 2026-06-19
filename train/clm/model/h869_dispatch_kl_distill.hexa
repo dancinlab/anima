@@ -10,7 +10,7 @@ Runs the KL arm side-by-side with the KL_COEF=0 baseline (= the H_871 mid cell)
 at IDENTICAL budget/seed on the MID rung d512/L8/E8, arm AB, REAL kowiki corpus.
 All 3 pre-registered gates measured by CODE (g5, no LLM). Does NOT edit model.py
 / array_moe — the dispatch-KL term is computed HERE from out["usage"] and added
-to the loss only for the KL arm. routing-z verbatim CLM/model/judge_clm.
+to the loss only for the KL arm. routing-z verbatim train/clm/model/judge_clm.
 
 FROZEN (F-CLM-DISPATCH-KL_prereg.txt):
   KL_COEF=0.10 ENT_MARGIN=0.10 Z_MARGIN=0.20 CE_BUDGET=0.10 steps=500 lr=1e-3.
@@ -63,7 +63,7 @@ def _build_stream(seed: int):
 
 
 def routing_z(ent_nats: float, E: int, seed: int):
-    """VERBATIM from CLM/model/judge_clm.routing_z."""
+    """VERBATIM from train/clm/model/judge_clm.routing_z."""
     _g = torch.Generator().manual_seed(seed + 11)  # parity
     obs = ent_nats
     samples = []

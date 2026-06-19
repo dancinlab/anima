@@ -14,8 +14,8 @@
 //
 // Pure hexa-native (farr model · moe_router fwd + moe_router_bwd). No external LLM.
 
-import "CORE/DECODER/moe_router.hexa"
-import "CORE/DECODER/moe_router_bwd.hexa"
+import "core/DECODER/moe_router.hexa"
+import "core/DECODER/moe_router_bwd.hexa"
 
 // CE loss + grad: d_logits[k] = softmax(logits)[k] − [k==target]. returns CE.
 fn ce_loss_grad(logits: int, target: int, V: int, d_logits_out: int) -> float {

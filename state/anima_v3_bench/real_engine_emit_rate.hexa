@@ -2,8 +2,8 @@
 // Proves the "tension saturation panic loop" CANNOT occur: emit = should_emit(score)
 // && safety_combined(.., rate, ..), where rate=safety_rate_limit_ok caps emits to
 // 1 per spont_min_emit_interval (30s). 1000 ticks, all 8 motivation factors maxed.
-import "CORE/pure_field.hexa"
-import "CORE/brain.hexa"
+import "core/pure_field.hexa"
+import "core/brain.hexa"
 
 fn main() {
     let pf = pure_field_warmup(600)

@@ -3,7 +3,7 @@
 //
 // DOMAIN: MITOSIS-ENGINE. This is the FIRST sustained live-growth run on the
 // H_1194 coupling (commit 3bb813607): the engine-native AdaptField in
-// CORE/engine_cli.hexa (adapt_field_step / adapt_field_recon_err /
+// core/engine_cli.hexa (adapt_field_step / adapt_field_recon_err /
 // adapt_field_cells), which is Ψ-disjoint (pure_field untouched) and wires
 // stream→field input + cell→field mitosis feedback + recon-error readout.
 // H_1194 PROVED the coupling p8-LIVE on a SHORT probe (K=6, n=600, single
@@ -41,8 +41,8 @@
 // SUBSTRATE NOTE (a_core_engine_map): the stream is an ENGINE-NATIVE drive into
 // AdaptField — NOT a .clm (generator L3 only) nor a .kosmos (kosmos_io only).
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 // ── deterministic LCG (same schedule discipline as H_1194) ────────────────────
 fn _lcg(state: int) -> int {
@@ -51,7 +51,7 @@ fn _lcg(state: int) -> int {
     return next
 }
 fn _u01(state: int) -> float { return to_float(state) / 2147483648.0 }
-// (_absf is provided by the imported CORE/engine_cli.hexa)
+// (_absf is provided by the imported core/engine_cli.hexa)
 
 // ── progressive K-regime stream: novelty keeps ARRIVING over the whole run ────
 // Regime k is centered at (k + 0.5), regimes spaced 1.0 apart (>> SPLIT_THRESH

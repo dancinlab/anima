@@ -23,7 +23,7 @@
 //  ENGINE DISCOVERY SUMMARY
 // ───────────────────────────────────────────────────────────────────
 //  A codebase sweep on 2026-04-15 across anima-measurement/,
-//  anima-hexad/, anima-engines/, anima-core/, modules/, training/,
+//  anima-hexad/, core/phi/, platform/, modules/, training/,
 //  anima-body/, anima-physics/, experiments/, ready/anima/ surfaced
 //  approximately 73 unique live phi_* functions plus ~12 close
 //  aliases, for an effective count of ~85 (not the 110 cited in the
@@ -128,7 +128,7 @@
 //       and splice it into the model's Φ-aware loss/gate.
 //
 //    3. Cache-miss fallback: fall back to the online phi_proxy path
-//       (anima-core/phi_engine.hexa) and log the miss rate. Target
+//       (platform/phi_engine.hexa) and log the miss rate. Target
 //       miss rate for production: < 0.1 % (i.e. held-out cohort
 //       covers > 99.9 % of real training states).
 //

@@ -17,7 +17,7 @@
 use "nn_core"
 use "corpus_loader"
 
-// ─── Primitives (shared across all CLM/ALM scripts) ─────────
+// ─── Primitives (shared across all train/clm/ALM scripts) ─────────
 
 fn mm_bwd(a: array, b: array, dc: array, M: int, K: int, N: int) -> [array] {
     let dA = matmul_transB(dc, b, M, N, K)

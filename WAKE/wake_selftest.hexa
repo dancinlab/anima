@@ -22,11 +22,11 @@
 //
 //   사용 pub surface (cross-domain):
 //
-//   CORE/pure_field.hexa:
+//   core/pure_field.hexa:
 //     fn pure_field_warmup(steps: int) -> PureField
 //     pure fn pure_field_phi(pf: PureField) -> float
 //
-//   CORE/brain.hexa:
+//   core/brain.hexa:
 //     fn brain_decide(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 //                     seconds_since_last, env_off, content_clean) -> Map
 //
@@ -46,8 +46,8 @@
 //
 // ── 4-axis cross-domain invariant (S1-S4) ────────────────────────────────────
 //
-//   S1 (CORE-axis): daemon step 가 CORE/pure_field 의 Φ 를 실 진전 (substrate
-//                   live Φ ≥ 0) + CORE/brain.brain_decide 의 8-factor motivation
+//   S1 (CORE-axis): daemon step 가 core/pure_field 의 Φ 를 실 진전 (substrate
+//                   live Φ ≥ 0) + core/brain.brain_decide 의 8-factor motivation
 //                   합성이 실 호출됨 — final_state["pf"].step_count ≥ 100.
 //
 //   S2 (CHANNEL-axis): CHANNEL/dispatcher.channel_emit_ready("text"|"voice"|
@@ -104,8 +104,8 @@
 //   kosmos_dir  = /tmp/wake_selftest_kosmos (clean before run)
 //
 
-import "CORE/pure_field.hexa"
-import "CORE/brain.hexa"
+import "core/pure_field.hexa"
+import "core/brain.hexa"
 import "CHANNEL/dispatcher.hexa"
 import "MITOSIS/sleep_tick.hexa"
 import "WAKE/daemon.hexa"

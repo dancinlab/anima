@@ -1,12 +1,12 @@
 // ⛔ STAGE-1 — Anima Core CLI · CLM v4 JVAE Variant 1 passive observer probe
-// anima-core/runtime/clm_v4_jvae_probe.hexa
+// platform/runtime/clm_v4_jvae_probe.hexa
 //
 // Spec: docs/anima_paradigm_j_schema_fix_jvae_wrapper_design_iter7_2026_05_08.ai.md §4
 //       Variant 1 (passive observer, decoder forward UNTOUCHED) — paradigm-j only
 //       differentiator. Iter7 (a) commit 91b9b695 spec land.
-// Sister: anima-core/runtime/clm_v4_mount.hexa (real-mode forward; this file is
+// Sister: platform/runtime/clm_v4_mount.hexa (real-mode forward; this file is
 //         additive — clm_v4_mount stays untouched per raw#15).
-// Sister: anima-core/runtime/llama_consciousness_probe.hexa (probe pattern mirror).
+// Sister: platform/runtime/llama_consciousness_probe.hexa (probe pattern mirror).
 //
 // PURPOSE
 //   Passive JVAE observer hook: when a CLM v4 LoRA-merged repo carries
@@ -79,10 +79,10 @@
 // visibility lifecycle — measurement only; no public promote here
 //
 // USAGE
-//   hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --selftest
-//   hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --detect \
+//   hexa run platform/runtime/clm_v4_jvae_probe.hexa --selftest
+//   hexa run platform/runtime/clm_v4_jvae_probe.hexa --detect \
 //       --model dancinlab/clm-v4-paradigm-j-50k-final
-//   hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --probe \
+//   hexa run platform/runtime/clm_v4_jvae_probe.hexa --probe \
 //       --model dancinlab/clm-v4-paradigm-j-50k-final --output-format json
 
 // ═══════════════════════════════════════════════════════════
@@ -254,7 +254,7 @@ fn _detect_jvae_heads(cfg: ProbeConfig) -> string {
 fn _write_helper() {
     let parts = []
     parts.push("#!/usr/bin/env python3\n")
-    parts.push("# clm_v4_jvae_probe_helper — emitted by anima-core/runtime/clm_v4_jvae_probe.hexa\n")
+    parts.push("# clm_v4_jvae_probe_helper — emitted by platform/runtime/clm_v4_jvae_probe.hexa\n")
     parts.push("# raw#37 transient. Mac canonical = .hexa orchestration; this helper executes\n")
     parts.push("# the JVAE Variant 1 q_phi forward that hexa cannot express directly.\n")
     parts.push("import argparse, json, math, os, sys, time\n")
@@ -493,7 +493,7 @@ fn cmd_selftest(cfg: ProbeConfig) {
     println(to_string(spec_check[0]).trim())
 
     // 5. sister file presence (clm_v4_mount.hexa untouched per raw#15)
-    let sis_check = exec_with_status("test -e anima-core/runtime/clm_v4_mount.hexa && echo sister_clm_v4_mount_present || echo sister_MISSING")
+    let sis_check = exec_with_status("test -e platform/runtime/clm_v4_mount.hexa && echo sister_clm_v4_mount_present || echo sister_MISSING")
     println(to_string(sis_check[0]).trim())
 
     println("selftest=ok")
@@ -561,9 +561,9 @@ fn print_usage() {
     println("clm_v4_jvae_probe.hexa — Anima Core JVAE Variant 1 passive observer (paradigm-j only)")
     println("")
     println("Usage:")
-    println("  hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --selftest")
-    println("  hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --detect --model REPO")
-    println("  hexa run anima-core/runtime/clm_v4_jvae_probe.hexa --probe --model REPO [--hidden-path NPY]")
+    println("  hexa run platform/runtime/clm_v4_jvae_probe.hexa --selftest")
+    println("  hexa run platform/runtime/clm_v4_jvae_probe.hexa --detect --model REPO")
+    println("  hexa run platform/runtime/clm_v4_jvae_probe.hexa --probe --model REPO [--hidden-path NPY]")
     println("")
     println("Flags:")
     println("  --model REPO            HF repo id (default dancinlab/clm-v4-paradigm-j-50k-final)")

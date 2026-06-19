@@ -19,7 +19,7 @@
 //  Provider = runpod. GPU = A40 (mid rung trivially fits 46GB).
 //
 //  HARD: pure-hexa SPEC/driver · NO external LLM · NO foundation-borrow.
-//  The torch payload is the LANDED CLM/train/train_clm.py (mid rung added to
+//  The torch payload is the LANDED train/clm/train/train_clm.py (mid rung added to
 //  its LADDER) — this driver records the dispatch contract + verdict path.
 //  sibling: train_clm.py · UNIVERSE/{H_847,H_850} · .verdicts/clm-prod-rung/
 // ════════════════════════════════════════════════════════════════════════════
@@ -39,7 +39,7 @@ fn arms() -> [string] { return ["A", "B", "AB"] }
 
 // per-arm fire command (the landed QAT trainer · mid rung).
 fn fire_cmd(arm: string) -> string {
-    return "python3 CLM/train/train_clm.py --arm " + arm + " --rung " + rung()
+    return "python3 train/clm/train/train_clm.py --arm " + arm + " --rung " + rung()
         + " --steps " + to_string(steps()) + " --seed " + to_string(seed())
         + " --act-bits " + to_string(act_bits())
         + " --json-out out/clm_mid_" + arm + "_s" + to_string(seed()) + ".json"

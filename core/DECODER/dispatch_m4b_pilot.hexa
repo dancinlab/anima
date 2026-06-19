@@ -1,4 +1,4 @@
-// CORE/DECODER/dispatch_m4b_pilot.hexa — M4b-fire-scale Phase 4e dispatch runbook
+// core/DECODER/dispatch_m4b_pilot.hexa — M4b-fire-scale Phase 4e dispatch runbook
 //
 // Hexa-native dispatch runbook for the M4b pilot fire on RunPod H100.
 // Prints the canonical command sequence + env-var protocol so the operator
@@ -78,11 +78,11 @@ fn main() {
     println("      /opt/corpus/corpus_consciousness_v1.jsonl --port $POD_PORT --insecure")
     println("")
     println("─── Step 4: scp anima driver code ───")
-    println("  $ hexa cloud copy-to $POD_HOST CORE/DECODER/v3_moe_arch.hexa \\")
+    println("  $ hexa cloud copy-to $POD_HOST core/DECODER/v3_moe_arch.hexa \\")
     println("      /opt/anima/CORE/DECODER/v3_moe_arch.hexa --port $POD_PORT --insecure")
-    println("  $ hexa cloud copy-to $POD_HOST CORE/DECODER/v3_moe_bwd_lib.hexa \\")
+    println("  $ hexa cloud copy-to $POD_HOST core/DECODER/v3_moe_bwd_lib.hexa \\")
     println("      /opt/anima/CORE/DECODER/v3_moe_bwd_lib.hexa --port $POD_PORT --insecure")
-    println("  $ hexa cloud copy-to $POD_HOST CORE/DECODER/train_v3_moe_pilot.hexa \\")
+    println("  $ hexa cloud copy-to $POD_HOST core/DECODER/train_v3_moe_pilot.hexa \\")
     println("      /opt/anima/CORE/DECODER/train_v3_moe_pilot.hexa --port $POD_PORT --insecure")
     println("  # Patch the pilot's tok/vocab/corpus paths to /opt/qwen + /opt/corpus on the pod,")
     println("  # and its `use` paths to /opt/anima/... (or run from /opt/anima with abs imports).")

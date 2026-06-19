@@ -1,10 +1,10 @@
-// adapter.hexa — MarketplaceAdapter abstract surface (AGENT/MERCHANT).
+// adapter.hexa — MarketplaceAdapter abstract surface (agent/domains/MERCHANT).
 //
 // Bridge architecture: this file defines a CONVENTION, not an enforced
 // interface. hexa-lang has no formal trait/interface — an adapter is simply
 // a dict carrying a `name` plus five named function values. Concrete
 // adapters (Amazon · AliExpress · Coupang · Naver SS · ...) land in M2+
-// and conform to this shape so AGENT/CORE/tool_gate can dispatch uniformly.
+// and conform to this shape so agent/domains/CORE/tool_gate can dispatch uniformly.
 //
 // Verb surface (5 lanes — search · list · order · ship · cs) is fixed and
 // matches the five MERCHANT.md lanes. Concrete signatures are documented by
@@ -12,7 +12,7 @@
 // so an adapter under development can stub a verb with a no-op and still
 // pass adapter_validate() while M2 fleshes out the live calls.
 
-import "AGENT/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/types.hexa"
 
 // ── Verb signature catalogue ───────────────────────────────────────────────
 // Documentation function — returns a human-readable signature manifest so
@@ -37,7 +37,7 @@ pub fn adapter_verb_signatures() -> string {
 
 // ── Structural validation ──────────────────────────────────────────────────
 // Presence-only check — confirms the 5 required verbs + `name` are on the
-// adapter dict. Callers in AGENT/CORE should validate before dispatch.
+// adapter dict. Callers in agent/domains/CORE should validate before dispatch.
 
 pub fn adapter_required_verbs() -> [string] {
     ["search", "list", "order", "ship", "cs"]
@@ -67,7 +67,7 @@ pub fn adapter_validate(adapter: map) -> string {
 }
 
 // ── Uniform dispatch helper ────────────────────────────────────────────────
-// adapter_call(a, "search", [query, max_results]) — invoked from AGENT/CORE
+// adapter_call(a, "search", [query, max_results]) — invoked from agent/domains/CORE
 // once the substrate's tier opens the right tool. Args are positional; the
 // helper unpacks them so the caller does not need a verb-specific branch.
 

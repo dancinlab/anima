@@ -6,7 +6,7 @@
 // FIXED-BUDGET artifact, broken substrate-natively by MITOSIS CELL-GROWTH under
 // pressure (p8) — NOT by a smarter eviction heuristic (R1 arm C = no lift). This
 // probe reproduces that GREEN through the LIVE engine faculty
-// CORE/engine_cli.hexa::ImmuneMemoryGrow (immune_grow_new/bind/recall), so the bind
+// core/engine_cli.hexa::ImmuneMemoryGrow (immune_grow_new/bind/recall), so the bind
 // (clonal split) + recall (L2 affinity) arithmetic runs on the .hexa engine, not
 // numpy. The keys are the EXACT R1 regime (FNV-1a DIM=64, taught order, noisy queries)
 // pre-exported by UNIVERSE/h1288_r2_engine_export.py — byte-identical to R1's mirror.
@@ -23,7 +23,7 @@
 //   recall + abstain, NOT perplexity. $0 CPU. Ψ-disjoint (the faculty only reads/grows
 //   a cell population; this probe never touches pure_field).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // frozen regime knobs (VERBATIM from UNIVERSE/h1288_eviction_policy.py R1)
 fn _STRESS_MAX_CELLS() -> int { return 40 }   // << 60 facts — the EVICTION-BOUND rung
@@ -96,7 +96,7 @@ fn _run_arm(grow_mode: bool, fk: [[float]], fv: [string], imp: [string],
 
 fn main() {
     println("=== H_1288 R2 — GROW-UNDER-PRESSURE immune memory on the LIVE engine (a_engine_native_learning) ===")
-    println("faculty: CORE/engine_cli.hexa::ImmuneMemoryGrow (immune_grow_new/bind/recall; engine's OWN clonal split + L2 affinity)")
+    println("faculty: core/engine_cli.hexa::ImmuneMemoryGrow (immune_grow_new/bind/recall; engine's OWN clonal split + L2 affinity)")
     println("regime = H_1288 R1 EVICTION-BOUND zero-sum rung: base_max=" + to_string(_STRESS_MAX_CELLS())
         + " << 60 facts, grow_max=" + to_string(_GROW_MAX_CELLS()) + " (finite, p8), noisy held-out queries")
     println("(A) LRU-EVICT (grow off) vs (B) MITOSIS-GROW (grow on) — same faculty, capacity policy only")

@@ -32,7 +32,7 @@
 //     `dispatch_main` prints a one-line carry-note that M4 MoE-fresh is
 //     본선 since 2026-05-27 and M3 fire is a historical baseline measure.
 //   Blocker 6 (m3_fire_dispatch.hexa concurrent-ownership race)
-//     This file IMPORTS `CORE/DECODER/m3_fire_dispatch.hexa` and reuses its
+//     This file IMPORTS `core/DECODER/m3_fire_dispatch.hexa` and reuses its
 //     pub fns (`m3_build_create_cmd`, `m3_build_copy_to_cmd`, etc.) instead
 //     of duplicating the lifecycle/transport command builders. The two
 //     files cohabit cleanly: m3_fire_dispatch.hexa = command-builder library;
@@ -67,7 +67,7 @@
 //   trigger — caller invocation chooses when to fire. Default axes are
 //   ["A","C","D"] per Blocker 3/4 defer of axis B.
 
-import "CORE/DECODER/m3_fire_dispatch.hexa"
+import "core/DECODER/m3_fire_dispatch.hexa"
 
 // ════════════════════════════════════════════════════════════════════════
 // Constants
@@ -275,7 +275,7 @@ pub fn dispatch_wait_ssh_ready(host: string, port: int) -> bool {
 // ════════════════════════════════════════════════════════════════════════
 
 // Copy sources via `hexa cloud copy-to` (cloud-guard compliant). REUSES
-// m3_build_copy_to_cmd from CORE/DECODER/m3_fire_dispatch.hexa (Blocker 6
+// m3_build_copy_to_cmd from core/DECODER/m3_fire_dispatch.hexa (Blocker 6
 // no-duplication).
 pub fn dispatch_copy_sources(host: string, port: int) -> map {
     println("[copy-sources] target=" + host + ":" + to_string(port))
@@ -342,7 +342,7 @@ pub fn dispatch_copy_sources(host: string, port: int) -> map {
 // Build the `hexa cloud nohup` argv for the trainer launch. The argv vector
 // carries `env P21H_X=v ...` followed by `bash <launcher> <args>` so the
 // remote shell parses one merged token list. Reuses m3_build_nohup_cmd
-// from CORE/DECODER/m3_fire_dispatch.hexa (Blocker 6).
+// from core/DECODER/m3_fire_dispatch.hexa (Blocker 6).
 fn _build_fire_argv(axis: string, init: string, seed: string,
                     steps: int, bsz: int, block: int, warmup: int,
                     smoke: bool) -> list {

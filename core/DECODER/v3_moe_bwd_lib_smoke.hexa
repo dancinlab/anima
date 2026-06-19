@@ -1,4 +1,4 @@
-// CORE/DECODER/v3_moe_bwd_lib_smoke.hexa — Phase 4-bwd-N gradcheck per fn
+// core/DECODER/v3_moe_bwd_lib_smoke.hexa — Phase 4-bwd-N gradcheck per fn
 //
 // Finite-difference vs analytic gradient verification for each backward fn
 // added to v3_moe_bwd_lib.hexa. Run on Mac local (CPU, FP64).
@@ -7,7 +7,7 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
-use "CORE/DECODER/v3_moe_bwd_lib"
+use "core/DECODER/v3_moe_bwd_lib"
 
 // (file lives at the same path; same import works for the appended mlp_block_bwd fn)
 

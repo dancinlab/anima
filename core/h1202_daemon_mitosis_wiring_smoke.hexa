@@ -35,11 +35,11 @@
 // the growth tick IS the inference-time learning.
 //
 // GUARD: imports the LIVE engine (pure_field READ-ONLY + VAdaptField in
-// CORE/engine_cli.hexa). The _h1202_byte_feature here is the SAME formula as
+// core/engine_cli.hexa). The _h1202_byte_feature here is the SAME formula as
 // anima_full_session_smoke's _afs_byte_feature (H_1163 VERBATIM).
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 // ── DIM=8 byte feature (H_1163 `_byte_feature` VERBATIM; == _afs_byte_feature) ──
 fn _h1202_byte_feature(s: string, dim: int) -> [float] {

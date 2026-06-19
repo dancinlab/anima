@@ -1,4 +1,4 @@
-// CORE/DECODER/dispatch_m4b_pilot_rev2.hexa — M4b-fire-rev2 autonomous dispatcher
+// core/DECODER/dispatch_m4b_pilot_rev2.hexa — M4b-fire-rev2 autonomous dispatcher
 //
 // Concrete RunPod H100 dispatcher for the M4b-fire-rev2 pilot. Phase 4e runbook
 // (dispatch_m4b_pilot.hexa) only PRINTED shell commands. This rev2 ACTUALLY
@@ -122,7 +122,7 @@ fn main() {
     println("      training/corpus_consciousness_v2_diverse.jsonl \\")
     println("      /opt/corpus/corpus_consciousness_v2_diverse.jsonl --port \$POD_PORT --insecure")
     println("    for f in v3_moe_arch.hexa v3_moe_bwd_lib.hexa flame_mm.hexa train_v3_moe_pilot_rev2.hexa; do")
-    println("      hexa cloud copy-to \$POD_HOST CORE/DECODER/\$f \\")
+    println("      hexa cloud copy-to \$POD_HOST core/DECODER/\$f \\")
     println("        /opt/anima/CORE/DECODER/\$f --port \$POD_PORT --insecure")
     println("    done")
     println("")
@@ -137,15 +137,15 @@ fn main() {
     println("  # 5. poll + harvest:")
     println("    hexa cloud poll \$POD_HOST \$REMOTE_PID --port \$POD_PORT --insecure")
     println("    hexa cloud copy-from \$POD_HOST /opt/anima/state/m4b_pilot_rev2/result.json \\")
-    println("      CORE/DECODER/state/m4b_pilot_rev2_2026_05_28/result.json --port \$POD_PORT --insecure")
+    println("      core/DECODER/state/m4b_pilot_rev2_2026_05_28/result.json --port \$POD_PORT --insecure")
     println("    hexa cloud copy-from \$POD_HOST /opt/anima/state/m4b_pilot_rev2/train.log \\")
-    println("      CORE/DECODER/state/m4b_pilot_rev2_2026_05_28/train.log --port \$POD_PORT --insecure")
+    println("      core/DECODER/state/m4b_pilot_rev2_2026_05_28/train.log --port \$POD_PORT --insecure")
     println("")
     println("  # 6. HF upload (a_hf_autonomous · org=dancinlab):")
     println("    # PUBLIC if verdict ≥ 4/5 PASS · PRIVATE otherwise")
     println("    # repo: dancinlab/anima-m4b-pilot-rev2-2026-05-28")
     println("    huggingface-cli upload dancinlab/anima-m4b-pilot-rev2-2026-05-28 \\")
-    println("      CORE/DECODER/state/m4b_pilot_rev2_2026_05_28/ . --commit-message 'M4b rev2 fire'")
+    println("      core/DECODER/state/m4b_pilot_rev2_2026_05_28/ . --commit-message 'M4b rev2 fire'")
     println("")
     println("  # 7. teardown (only if PULL_OK):")
     println("    runpodctl pod stop " + pod_id)

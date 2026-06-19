@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  CORE/DECODER/d2_sampler_detokenize.hexa
+//  core/DECODER/d2_sampler_detokenize.hexa
 //
 //   D2 — decoder-sampler-detokenize-roundtrip (TOY scale)
 //   Does a toy hard-coded reverse-lookup table convert M4b sampler token-id
@@ -137,7 +137,7 @@ fn main() {
     println("════════════════════════════════════════════════════════════════")
     println("")
 
-    // REAL M4b sampled seq from CORE/DECODER/state/m4b_phase5b_2026_05_27/train.out:55
+    // REAL M4b sampled seq from core/DECODER/state/m4b_phase5b_2026_05_27/train.out:55
     //   DECODED_IDS: 1 1 1 1 151642 ×16   (TTR=0.1, unique=2/20)
     let real_collapse = [1, 1, 1, 1, 151642, 151642, 151642, 151642, 151642,
                          151642, 151642, 151642, 151642, 151642, 151642, 151642,

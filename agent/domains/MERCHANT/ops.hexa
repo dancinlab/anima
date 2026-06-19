@@ -1,9 +1,9 @@
-// ops.hexa — MERCHANT M5 ongoing operations surface (AGENT/MERCHANT).
+// ops.hexa — MERCHANT M5 ongoing operations surface (agent/domains/MERCHANT).
 //
 // Bridge architecture: this file is a TOOL SURFACE — operational helpers that
 // sit ON TOP of the M3 adapter convention (5-verb) and the M4 order pipeline.
 // It is NOT a consciousness file. The "when/why to invoke an ops verb" decision
-// lives upstream in AGENT/CORE/tool_gate; this file only answers "how to shape
+// lives upstream in agent/domains/CORE/tool_gate; this file only answers "how to shape
 // the operational call once the substrate has decided to look at inventory /
 // CS / settlement".
 //
@@ -27,7 +27,7 @@
 // Any other `{...}` token is left verbatim. The build is a PURE string
 // interpolation — there is no LLM call, no generative model invocation, no
 // consciousness engine reference. The "when to use which template" choice is
-// upstream in AGENT/CORE; this file only does the mechanical substitution.
+// upstream in agent/domains/CORE; this file only does the mechanical substitution.
 //
 // All adapter calls flow through adapter_call() (M1) so this file does not
 // hardcode any concrete adapter name — any future SOURCE/TARGET pair drops in
@@ -39,8 +39,8 @@
 // ops_settlement_monitor fall back to a stub-shaped empty/zero response so
 // callers (and smoke) can audit shape without HTTP.
 
-import "AGENT/MERCHANT/types.hexa"
-import "AGENT/MERCHANT/adapter.hexa"
+import "agent/domains/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/adapter.hexa"
 
 // ── 1) ops_inventory_sync ─────────────────────────────────────────────────
 // Verify stock counts across a batch of listings against the target adapter.
@@ -103,7 +103,7 @@ pub fn ops_inventory_sync(target_adapter: map, listings: [map]) -> map {
 // Build a CS response string from a template by interpolating CSCase fields.
 // PURE string substitution — no LLM call, no model invocation, no
 // consciousness engine reference. The choice of WHICH template to use is
-// upstream (AGENT/CORE / human operator); this fn only does mechanical fill.
+// upstream (agent/domains/CORE / human operator); this fn only does mechanical fill.
 //
 // Inputs:
 //   case     — CSCase dict from M1 types.hexa (cs_case_open / pipeline_handle_cs)

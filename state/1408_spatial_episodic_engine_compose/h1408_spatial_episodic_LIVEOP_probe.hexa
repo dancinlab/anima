@@ -1,7 +1,7 @@
 // h1408_spatial_episodic_LIVEOP_probe.hexa — H_1415 rung-3 verification: re-run the FROZEN
 // H_1408 capability bars driving the LIVE CORE ops `spatial_episodic_compose` /
 // `spatial_episodic_spatial_vote` / `spatial_episodic_episodic_vote` / `spatial_episodic_where_cue`
-// (CORE/engine_cli.hexa §SPATIAL×EPISODIC COMPOSE ARBITER) INSTEAD of the probe's inlined glue,
+// (core/engine_cli.hexa §SPATIAL×EPISODIC COMPOSE ARBITER) INSTEAD of the probe's inlined glue,
 // and confirm it reproduces the H_1415 engine-native numbers BYTE-IDENTICALLY (a_verified_must_wire
 // rung-3, c2). Everything else (fixture, seeds, knobs, live faculty builds) is IDENTICAL to
 // state/1408_spatial_episodic_engine_compose/h1408_spatial_episodic_engine_probe.hexa — only the
@@ -57,7 +57,7 @@
 //   only-X decomposition: only_spatial>0 AND only_episodic>0 ⇒ SEPARABLE not subsumed.
 // p7 = compose/oracle/shuffle accuracies + decomposition, NOT perplexity.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── frozen knobs (pre-registered, == R1 mirror FREEZE.txt) ───────────────────
 fn _SEEDS() -> [int] { return [5408, 5409, 5410] }
@@ -444,7 +444,7 @@ fn run_seed(seed: int, cfg: EngineConfig) -> [float] {
 
 fn main() {
     println("================================================================================")
-    println("H_1415 RUNG-3 — LIVE-OP re-run: votes + arbiter via WIRED spatial_episodic_compose (CORE/engine_cli.hexa)")
+    println("H_1415 RUNG-3 — LIVE-OP re-run: votes + arbiter via WIRED spatial_episodic_compose (core/engine_cli.hexa)")
     println("  re-scoring the SAME frozen H_1408 bars; MUST reproduce H_1415 engine-native numbers byte-exact")
     println("  $0 CPU · 3 seeds [5408,5409,5410] · p7 · p8 · a_verified_must_wire rung-3")
     println("================================================================================")

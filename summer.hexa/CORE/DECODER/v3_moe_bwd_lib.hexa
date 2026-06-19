@@ -1,9 +1,9 @@
-// CORE/DECODER/v3_moe_bwd_lib.hexa — M4b-fire-scale Phase 4-bwd analytic backward
+// core/DECODER/v3_moe_bwd_lib.hexa — M4b-fire-scale Phase 4-bwd analytic backward
 //
 // Analytic backward pass for the pilot decoder stack (Phase 4 forward path
 // LANDED in PRs #1073..#1079). Built incrementally — each Phase 4-bwd-N
 // sub-PR adds one pub fn here. Smoke / gradcheck per fn lives at
-// CORE/DECODER/v3_moe_bwd_lib_smoke.hexa.
+// core/DECODER/v3_moe_bwd_lib_smoke.hexa.
 //
 // Inventory (Phase 4-bwd-1..5):
 //   ☑ ln_f_bwd            (this PR · Phase 4-bwd-1)
@@ -12,14 +12,14 @@
 //   ☐ layer_block_bwd     (Phase 4-bwd-4 — combines attn + mlp + residual)
 //   ☐ tok_emb_bwd         (Phase 4-bwd-5 — scatter-add over token ids)
 //
-// Existing analytic bwd primitives live in CORE/DECODER/v3_moe_arch.hexa
+// Existing analytic bwd primitives live in core/DECODER/v3_moe_arch.hexa
 // (`v3_moe_bwd` — MoE router/expert bwd). This file complements those with
 // the pre-MoE stack (ln_f + layer blocks + tok_emb) so end-to-end gradient
 // flow reaches every parameter group, not just MoE+last-layer-Wo.
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
-use "CORE/DECODER/flame_mm"
+use "core/DECODER/flame_mm"
 
 // ───────────────────────────────────────────────────────────────────────────
 // Phase 4-bwd-1: ln_f RMSNorm backward

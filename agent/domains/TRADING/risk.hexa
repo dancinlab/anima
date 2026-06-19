@@ -1,14 +1,14 @@
 // risk.hexa — Risk management: drawdown limits, tier gating, position sizing
 // Port of agent/trading/risk.py (M1 회수 + M6 본문 구현)
 //
-// Bridge architecture: AGENT/CORE supplies the tier; this module = tool surface only.
-// TierGate halts trading when AGENT/CORE tier is below the required threshold.
+// Bridge architecture: agent/domains/CORE supplies the tier; this module = tool surface only.
+// TierGate halts trading when agent/domains/CORE tier is below the required threshold.
 //
 // Surface (6 pub fn):
 //   risk_manager_new            — initialize with caps
 //   risk_check_drawdown          — equity curve → max_dd vs limit
 //   risk_check_position_count    — open positions vs cap
-//   risk_check_tier              — AGENT/CORE tier vs required
+//   risk_check_tier              — agent/domains/CORE tier vs required
 //   risk_calculate_var           — historical VaR at confidence level
 //   risk_audit                   — apply all checks, return verdict Map
 
@@ -88,8 +88,8 @@ pub fn risk_check_position_count(n_positions, max_position_count) {
 }
 
 // ---------------------------------------------------------------
-// 4. risk_check_tier — AGENT/CORE tier vs required tier (bridge arch)
-//   tier args supplied by AGENT/CORE; this module is mechanical policy
+// 4. risk_check_tier — agent/domains/CORE tier vs required tier (bridge arch)
+//   tier args supplied by agent/domains/CORE; this module is mechanical policy
 // ---------------------------------------------------------------
 pub fn risk_check_tier(tier, required_tier) {
     let ok = true

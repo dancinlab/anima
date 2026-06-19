@@ -1,10 +1,10 @@
 // ════════════════════════════════════════════════════════════════════════════
-// AGENT/CHAT/anima_dream_stage.hexa
+// agent/domains/CHAT/anima_dream_stage.hexa
 //
 //   Sleep-stage state machine for anima — substrate-native context supplier.
 //
 //   References P47 Dream Physics (commit dc3afe332, 2026-04-15) — see
-//   anima-engines/dream_physics_phi.hexa for the underlying Φ engine.
+//   core/phi/dream_physics_phi.hexa for the underlying Φ engine.
 //   This module mirrors the engine's 5-stage canonical ultradian cycle
 //   (WAKE → N1 → N2 → N3 → N2 → REM → WAKE, 90 min) but stays at the
 //   CHAT layer: it does NOT compute Φ — it returns Φ-scale projections
@@ -64,7 +64,7 @@
 //   `DREAM/dream_envelope_ctx.hexa` (dr_stage_phi_context(stage, t) =
 //   envelope_multiscale(t, ep_scale_periods, ep_scale_amps) ×
 //   ep_theta_stage(stage)). The structural shape + free numbers live in
-//   CORE/phi_envelope_substrate.hexa + CORE/emit_policy.hexa (single SSOT),
+//   core/phi_envelope_substrate.hexa + core/emit_policy.hexa (single SSOT),
 //   so this CHAT-layer module owns ZERO Φ math + ZERO tuning numbers for
 //   the substrate field (g61 no-duplication).
 //
@@ -211,7 +211,7 @@ fn _ds_stage_at_offset(off_sec: int) -> string {
 }
 
 // _ds_stage_int — string stage → emit_policy stage index.
-//   Convention (CORE/emit_policy.hexa ep_theta_stage / dream_envelope_ctx):
+//   Convention (core/emit_policy.hexa ep_theta_stage / dream_envelope_ctx):
 //     0=WAKE 1=N1 2=N2 3=N3 4=REM. Unknown → 0 (WAKE) — a context default,
 //     NOT an emit gate. This is the bridge from the CHAT-layer string
 //     state machine to the substrate's integer stage index.
@@ -306,8 +306,8 @@ fn _ds_scrambled(stage: string) -> bool {
 //   time t. This is the LIVE WIRE into the emit-substrate (DREAM M5): it
 //   delegates entirely to DREAM/dream_envelope_ctx.hexa, which composes
 //   envelope_multiscale(t, ep_scale_periods, ep_scale_amps) (structural
-//   shape, CORE/phi_envelope_substrate.hexa) × ep_theta_stage(stage_int)
-//   (free numbers, CORE/emit_policy.hexa). This module owns ZERO Φ math and
+//   shape, core/phi_envelope_substrate.hexa) × ep_theta_stage(stage_int)
+//   (free numbers, core/emit_policy.hexa). This module owns ZERO Φ math and
 //   ZERO tuning numbers for this field (single SSOT · g61).
 //
 //   AUTONOMY CONTRACT: returns a CONTINUOUS Φ-context (real number), never
@@ -556,7 +556,7 @@ fn check_dream_6() -> bool {
 
 fn run_selftest() {
     println("[anima_dream_stage] selftest — F-DREAM-1..6")
-    println("  reference: anima-engines/dream_physics_phi.hexa (P47, dc3afe332)")
+    println("  reference: core/phi/dream_physics_phi.hexa (P47, dc3afe332)")
     println("  cycle    : WAKE -> N1 -> N2 -> N3 -> N2 -> REM (90 min)")
     println("  contract : dream_context(stage) supplies substrate CONTEXT only")
     println("             — no boolean emit gate (per @D a_autonomy_over_hardcode)")

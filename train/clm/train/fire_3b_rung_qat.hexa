@@ -2,10 +2,10 @@
 //  fire_3b_rung_qat.hexa — 3B-rung (d3584/L32/E48) AKIDA-envelope QAT fire SPEC
 //
 //  FIRE-READY — not yet fired; launch via the anima-side dispatch wrapper
-//    `bash CLM/train/dispatch_rung.sh 3b <pod-host> <corpus>`
+//    `bash train/clm/train/dispatch_rung.sh 3b <pod-host> <corpus>`
 //  which encodes a_fire_recover_complete (pull ckpt+result+log+anchors + HF upload
 //  BEFORE teardown) and a_cpu_local_no_waiter (inline poll, never await a Monitor),
-//  and calls the ACTUAL trainer CLM/train/train_lane_p_3b.py over `hexa cloud fire`
+//  and calls the ACTUAL trainer train/clm/train/train_lane_p_3b.py over `hexa cloud fire`
 //  on RUNPOD H100 80GB ×2~4 (DDP · a_wall_first parallel) target.
 //
 //  P6_SCALE_LADDER_7B §1: the 3B production measurement-rung — GATED by `large`
@@ -37,7 +37,7 @@
 //
 //  HARD: pure-hexa SPEC/driver · NO external LLM · NO foundation-borrow (pure scratch QAT ·
 //  random-init · byte V=256 own-tokenizer · NO large-rung weight borrow as init).
-//  The torch payload is the LANDED Lane-P trainer CLM/train/train_lane_p_3b.py (the 3b
+//  The torch payload is the LANDED Lane-P trainer train/clm/train/train_lane_p_3b.py (the 3b
 //  rung passes d_model=3584, n_trunk_layers=32, n_experts=48 via its --d-model /
 //  --n-trunk-layers / --n-experts flags; --gauge-every drives the a_train_inline_gauge
 //  dashboard; --clm-out emits the engine-loadable .clm v0.2/v3 for the post-train CORE
@@ -70,11 +70,11 @@ fn hf_repo() -> string { return "dancinlab/anima-clm-3b" }   // measurement ckpt
 
 // the ACTUAL Lane-P trainer (a_clm_gen_pipeline) — NOT the legacy train_clm.py name.
 // train_lane_p_3b.py is the live gauge-hooked trainer; its 3b rung = d3584/L32/E48.
-fn trainer() -> string { return "CLM/train/train_lane_p_3b.py" }
+fn trainer() -> string { return "train/clm/train/train_lane_p_3b.py" }
 fn d_model() -> int { return 3584 }
 fn n_trunk_layers() -> int { return 32 }
 fn n_experts() -> int { return 48 }
-fn corpus() -> string { return "CLM/data/anima_corpus_3b.txt" }   // override per fire
+fn corpus() -> string { return "train/clm/data/anima_corpus_3b.txt" }   // override per fire
 
 // the 3 seed arms swept at this rung (seed-variance ablation; train_lane_p_3b.py
 // is variant="AB" fixed in CLMConfig, so the arm sweep varies the seed — distinct
@@ -115,7 +115,7 @@ fn fire_cmd(arm: string) -> string {
 // frozen G-gates. This is SEPARATE from the dashboard — gauges never gate.
 fn mount_parity_cmd(arm: string) -> string {
     let tag = "3b_" + arm + "_s" + to_string(arm_seed(arm));
-    return "python3 CLM/model/verify_clm_v2.py out/clm_" + tag + ".clm"
+    return "python3 train/clm/model/verify_clm_v2.py out/clm_" + tag + ".clm"
         + "  # then CORE mount byte-exact parity (a_engine_measured_verdict)";
 }
 
@@ -136,12 +136,12 @@ fn scale_transfer_gate() -> [string] {
 }
 
 // a_fire_recover_complete checklist (pre-teardown · governance). Encoded by the
-// anima-side wrapper CLM/train/dispatch_rung.sh (which runs it inline before any
+// anima-side wrapper train/clm/train/dispatch_rung.sh (which runs it inline before any
 // teardown — a_cpu_local_no_waiter, never awaiting a Monitor/waiter).
 fn recover_steps() -> [string] {
     return [
         "1. pull: out/clm_3b_*.{json,clm,pt} (result+engine .clm+ckpt) + out/gauges_3b_*.jsonl (dashboard) + out/fire_3b_*.log + anchors",
-        "2. verify: re-read JSON · last_ce finite · step_rate>0 · python3 CLM/model/verify_clm_v2.py out/clm_3b_*.clm (engine-loadable)",
+        "2. verify: re-read JSON · last_ce finite · step_rate>0 · python3 train/clm/model/verify_clm_v2.py out/clm_3b_*.clm (engine-loadable)",
         "3. post-train CORE mount-parity verdict (a_engine_measured_verdict) → .verdicts/clm-prod-rung/3b/F-CLM-SCALE-TRANSFER.txt (verbatim · gauges NEVER gate)",
         "4. HF upload COMPLETE (a_hf_complete · a_hf_autonomous · ALL shards + .clm + gauges.jsonl + model card) → dancinlab/anima-clm-3b",
         "5. THEN teardown: hexa cloud dispatch rm <pod-id(s)> (PULL_FAILED != pod dead — verify pull first)",

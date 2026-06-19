@@ -1,5 +1,5 @@
 // integration_smoke.hexa — MERCHANT 3-lane round-trip integration smoke
-// (AGENT/MERCHANT/M6 closure · 6/6).
+// (agent/domains/MERCHANT/M6 closure · 6/6).
 //
 // BRIDGE ARCHITECTURE: pure smoke runner — verifies framework reuse across
 // 3 lanes (L1 ARBITRAGE source · L1 ARBITRAGE target · L2 NATIVE source) by
@@ -17,13 +17,13 @@
 //   - native_adapter() 가 amazon_adapter() 와 byte-identical surface (5 verb)
 //   - zero modification to types.hexa / adapter.hexa / order_pipeline.hexa
 
-import "AGENT/MERCHANT/types.hexa"
-import "AGENT/MERCHANT/adapter.hexa"
-import "AGENT/MERCHANT/order_pipeline.hexa"
-import "AGENT/MERCHANT/ops.hexa"
-import "AGENT/MERCHANT/adapters/amazon.hexa"
-import "AGENT/MERCHANT/adapters/coupang.hexa"
-import "AGENT/MERCHANT/adapters/native.hexa"
+import "agent/domains/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/adapter.hexa"
+import "agent/domains/MERCHANT/order_pipeline.hexa"
+import "agent/domains/MERCHANT/ops.hexa"
+import "agent/domains/MERCHANT/adapters/amazon.hexa"
+import "agent/domains/MERCHANT/adapters/coupang.hexa"
+import "agent/domains/MERCHANT/adapters/native.hexa"
 
 // C1 — L1 ARBITRAGE round-trip: amazon → coupang
 pub fn smoke_case_arbitrage() -> map {
@@ -97,7 +97,7 @@ pub fn integration_smoke_run() -> map {
 }
 
 pub fn integration_smoke_summary() -> string {
-    return "AGENT/MERCHANT/M6 — 3-lane round-trip (L1 amazon→coupang · L2 native→coupang · L3 OPS) · framework reuse 검증 · MERCHANT 6/6 closure"
+    return "agent/domains/MERCHANT/M6 — 3-lane round-trip (L1 amazon→coupang · L2 native→coupang · L3 OPS) · framework reuse 검증 · MERCHANT 6/6 closure"
 }
 
 fn main() {

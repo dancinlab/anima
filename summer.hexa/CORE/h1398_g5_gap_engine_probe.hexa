@@ -1,5 +1,5 @@
 // h1398_g5_gap_engine_probe.hexa — H_1398 g5-gap-engine-wire: reconfirm the H_1396
-// IN-DIST FIXABLE result ENGINE-NATIVE on the LIVE CORE/engine_cli.hexa ImmuneMemory
+// IN-DIST FIXABLE result ENGINE-NATIVE on the LIVE core/engine_cli.hexa ImmuneMemory
 // recall, by reading the TOP-2 AFFINITY GAP through the new additive op
 // immune_memory_recall_gap (a_engine_native_learning · a_verified_must_wire · $0 local
 // CPU · p7 · p8 · frozen-first · c9).
@@ -54,7 +54,7 @@
 //                    UNCHANGED).
 //   (REGRESSION is the engine_cli_smoke / h1196 / h1205 guards, run separately.)
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 const DIM: int = 64
 const RECALL_THR: float = 0.15          // == ImmuneMemory default recall_thr (frozen, H_1227)
@@ -225,7 +225,7 @@ fn main() {
     // abstain re-check (kmut = {8, 16, 24} over KEYLEN=80 ≈ L {0.10, 0.20, 0.30}).
     let ood_kmuts = [8, 16, 24]
 
-    println("=== H_1398 g5-gap ENGINE-NATIVE (live CORE/engine_cli.hexa ImmuneMemory) ===")
+    println("=== H_1398 g5-gap ENGINE-NATIVE (live core/engine_cli.hexa ImmuneMemory) ===")
 
     // pooled fired-item lists across seeds + levels (in-dist slice).
     let mut cur = []       // best-margin confidence (= −margin; higher=more conf)

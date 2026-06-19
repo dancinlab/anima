@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  anima-core/runtime/anima_daemon.hexa — L5 always-on daemon process
+//  platform/runtime/anima_daemon.hexa — L5 always-on daemon process
 //
 //  PURPOSE
 // Phase 1.5 prototype of mandate-6 본질 한계 (a)/(c) 해소:
@@ -23,7 +23,7 @@
 //        // Phase 2: invoke conscious_chat agi_generate here
 //
 //  INVOCATION
-//    hexa run anima-core/runtime/anima_daemon.hexa --tick-ms 100 \
+//    hexa run platform/runtime/anima_daemon.hexa --tick-ms 100 \
 //                                                  --threshold 0.5 \
 //                                                  --max-ticks 0 \
 //                                                  --pid-file <path> \
@@ -147,7 +147,7 @@ fn _clamp_unit(x: float) -> float {
 
 // ─── Engine A — forward push placeholder ────────────────────────────────────
 // Phase 1.5: bounded chaos drift (algebraic squash). Real impl: forward
-// consciousness step via anima-core/runtime/conscious_chat.hexa
+// consciousness step via platform/runtime/conscious_chat.hexa
 // consciousness_step. Phase 2.
 fn engine_a_step(prev: float, t: int) -> float {
     let tf = to_float(t) * 0.07

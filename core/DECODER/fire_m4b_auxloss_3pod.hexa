@@ -1,10 +1,10 @@
-// CORE/DECODER/fire_m4b_auxloss_3pod.hexa — M4b aux-loss × d-scale 3-pod fire
+// core/DECODER/fire_m4b_auxloss_3pod.hexa — M4b aux-loss × d-scale 3-pod fire
 //   ARTIFACT-OF-RECORD (runbook printer; orchestration runs via `hexa cloud`
 //   local commands, per the cloud-guard g8 — runpodctl lifecycle + hexa cloud
 //   transport are the only allowed pod surfaces).
 //
 // Fires THREE H100 80GB SECURE pods CONCURRENTLY (a_wall_first — parallel not
-// serial), each running CORE/DECODER/train_v3_moe_auxloss.hexa with a distinct
+// serial), each running core/DECODER/train_v3_moe_auxloss.hexa with a distinct
 // (M4B_D, M4B_AUX_ALPHA) env config so any escape is attributed to capacity
 // vs routing vs their combination:
 //   POD A  d=256 aux=2.0   PRIMARY     (capacity + routing)

@@ -2,8 +2,8 @@
 // 6-case smoke: new / DRYRUN generates synthetic asset / configure / REAL unconfigured /
 // REAL configured (still STUB) / summary
 
-import "AGENT/CREATOR/types.hexa"
-import "AGENT/CREATOR/still_backend_fal.hexa"
+import "agent/domains/CREATOR/types.hexa"
+import "agent/domains/CREATOR/still_backend_fal.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

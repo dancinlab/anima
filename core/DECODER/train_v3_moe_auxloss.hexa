@@ -1,4 +1,4 @@
-// CORE/DECODER/train_v3_moe_auxloss.hexa — M4b aux-loss × d-scale ablation fire
+// core/DECODER/train_v3_moe_auxloss.hexa — M4b aux-loss × d-scale ablation fire
 //
 // Forked from train_v3_moe_pilot_rev2.hexa (#1296, CLOSED-NEGATIVE 2/5).
 //
@@ -28,9 +28,9 @@
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
-use "CORE/DECODER/v3_moe_arch"
-use "CORE/DECODER/v3_moe_bwd_lib"
-use "CORE/DECODER/flame_mm"
+use "core/DECODER/v3_moe_arch"
+use "core/DECODER/v3_moe_bwd_lib"
+use "core/DECODER/flame_mm"
 
 // ── local mirror of v3_moe_arch::v3_moe_aux_bwd ───────────────────────────
 //   The cross-backend codegen TRIMS the imported pub fn v3_moe_aux_bwd (it is
@@ -70,7 +70,7 @@ fn moe_aux_bwd_local(zT: int, M: int, router_off: int, gate_norm: int,
 }
 
 // ── LZ76 (Kaspar-Schuster) inline ────────────────────────────────────────
-//   Reused verbatim from CORE/DECODER/d1_lz76_collapse_proxy.hexa per g61
+//   Reused verbatim from core/DECODER/d1_lz76_collapse_proxy.hexa per g61
 //   (no library shadowing — D1 is a smoke probe, not a pub-fn surface).
 fn _lz76_log2(x: float) -> float { return log(x) / log(2.0) }
 

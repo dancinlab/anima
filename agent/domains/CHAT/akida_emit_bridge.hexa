@@ -15,7 +15,7 @@ The bridge holds NO model and makes NO generation decision; it only converts the
 stream into a boolean `hw_gate` over a sliding window (edge-triggered, matching the
 integrated_loop_vp21 `hw_edge` pattern).
 
-Wiring (see CLM/R1_EMIT_WIRING.md):
+Wiring (see train/clm/R1_EMIT_WIRING.md):
     bridge = AkidaEmitBridge()
     # in the /ws/akida ingest path:   bridge.feed(akida_msg)
     # in the ticker, per tick:        decision = state.tick(thr, hw_gate=bridge.hw_gate())

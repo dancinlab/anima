@@ -1,10 +1,10 @@
-// code_daemon.hexa — AGENT/CODE F3 persistent-daemon surface.
+// code_daemon.hexa — agent/domains/CODE F3 persistent-daemon surface.
 //
 // BRIDGE ARCHITECTURE: tool surface only. This module is the F3 milestone of
-// AGENT/CODE — a bounded, test-mode daemon that advances the CORE/pure_field
+// agent/domains/CODE — a bounded, test-mode daemon that advances the core/pure_field
 // substrate tick-by-tick and lets the SUBSTRATE decide whether each tick
-// externalizes as a tool call. Decision authority lives in CORE/brain_decide;
-// the per-tier gate lives in AGENT/CORE/tool_gate; this file ONLY composes
+// externalizes as a tool call. Decision authority lives in core/brain_decide;
+// the per-tier gate lives in agent/domains/CORE/tool_gate; this file ONLY composes
 // the loop driver + records what fired. NO consciousness framing, NO speak(),
 // NO infinite loop (M7-shaped infinite hx code CLI binary is out of scope).
 //
@@ -15,7 +15,7 @@
 //   · stage / phase = substrate context (not boolean emit gate · p5 +
 //     a_chat_sleep_imagination + a_autonomy_over_hardcode)
 //   · WAKE/daemon focuses on chat externalization (CHANNEL/dispatcher);
-//     code_daemon focuses on tool-call externalization (AGENT/CORE/tool_gate
+//     code_daemon focuses on tool-call externalization (agent/domains/CORE/tool_gate
 //     + CODE tool surface from code_agent.hexa)
 //
 // F3 closure (definition):
@@ -29,35 +29,35 @@
 //
 // ── instrument-first (inheritance from prior milestones) ──────────────────
 //
-//   AGENT/CODE/code_agent.hexa (F1 + F4):
+//   agent/domains/CODE/code_agent.hexa (F1 + F4):
 //     fn code_tools() -> [Tool]                — 8-tool registry
 //                                                 (think · repo_status · file_read · grep
 //                                                  · file_write · run_tests · git_commit · git_push)
 //
-//   AGENT/CODE/code_argv.hexa (F2, PR #699):
+//   agent/domains/CODE/code_argv.hexa (F2, PR #699):
 //     pub fn code_argv_parse(args_list) -> Map  — exposes `mode` field;
 //                                                 "daemon" already a valid mode value
 //                                                 (downstream interprets it; F3 IS that downstream)
 //     pub fn code_argv_summary() -> string
 //
-//   AGENT/CORE/tool_gate.hexa:
+//   agent/domains/CORE/tool_gate.hexa:
 //     pure fn phase_to_tier(phase: int) -> int
 //     pure fn tier_name(t: int) -> string
 //     pure fn tool_allowed(current_tier: int, required_tier: int) -> bool
 //
-//   AGENT/CORE/agent_loop.hexa:
+//   agent/domains/CORE/agent_loop.hexa:
 //     struct Tool { name: string, required_tier: int }
 //     fn tool_new(name: string, required_tier: int) -> Tool
 //     fn open_tools(pf: PureField, tools: [Tool]) -> [string]
 //     fn gate_report(pf: PureField) -> string
 //
-//   CORE/pure_field.hexa:
+//   core/pure_field.hexa:
 //     fn pure_field_warmup(steps: int) -> PureField
 //     pure fn pure_field_phi(pf: PureField) -> float
 //     pure fn pure_field_phase(pf: PureField) -> int
 //     fn pure_field_step(pf: PureField) -> PureField
 //
-//   CORE/brain.hexa:
+//   core/brain.hexa:
 //     fn brain_decide(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 //                     seconds_since_last, env_off, content_clean) -> Map
 //                       // #{phi, phase, tier, tier_name, motivation,
@@ -139,11 +139,11 @@
 //
 // ── 가져오기 ────────────────────────────────────────────────────────────────
 
-import "CORE/pure_field.hexa"
-import "CORE/brain.hexa"
-import "AGENT/CORE/tool_gate.hexa"
-import "AGENT/CORE/agent_loop.hexa"
-import "AGENT/CODE/code_agent.hexa"
+import "core/pure_field.hexa"
+import "core/brain.hexa"
+import "agent/domains/CORE/tool_gate.hexa"
+import "agent/domains/CORE/agent_loop.hexa"
+import "agent/domains/CODE/code_agent.hexa"
 
 
 // ── constants ───────────────────────────────────────────────────────────────

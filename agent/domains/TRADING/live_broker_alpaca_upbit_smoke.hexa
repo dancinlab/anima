@@ -1,10 +1,10 @@
 // live_broker_alpaca_upbit_smoke.hexa — TRADING M10 + M13 verify
 // 12-case smoke covering both Alpaca (US stocks) and Upbit (KR crypto).
 
-import "AGENT/TRADING/types.hexa"
-import "AGENT/TRADING/live_gate.hexa"
-import "AGENT/TRADING/live_broker_alpaca.hexa"
-import "AGENT/TRADING/live_broker_upbit.hexa"
+import "agent/domains/TRADING/types.hexa"
+import "agent/domains/TRADING/live_gate.hexa"
+import "agent/domains/TRADING/live_broker_alpaca.hexa"
+import "agent/domains/TRADING/live_broker_upbit.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

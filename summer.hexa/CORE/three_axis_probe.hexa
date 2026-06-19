@@ -39,9 +39,9 @@
 //       i.e. anchor memory composes into the emit and is observable in the
 //       output — composition > component-sum. RED if equal/less.
 
-import "CORE/pure_field.hexa"
-import "CORE/brain.hexa"
-import "CORE/generator.hexa"
+import "core/pure_field.hexa"
+import "core/brain.hexa"
+import "core/generator.hexa"
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
 fn main() {
@@ -98,7 +98,7 @@ fn main() {
     // ok=false and the CE-descent sub-claim stays honestly BLOCKED.
     let admit_green = to_string(clm["valid"]) == "true"
                       && to_int(clm["nblocks"]) > 0
-    let ce_corpus = "CORE/testdata/clm_mid_5lang_c4.txt"
+    let ce_corpus = "core/testdata/clm_mid_5lang_c4.txt"
     let ce = gen_clm_ce(clm_path, ce_corpus, 64)
     let ce_ok      = to_string(ce["ok"]) == "true"
     let ce_descent = ce_ok && to_string(ce["green"]) == "true"

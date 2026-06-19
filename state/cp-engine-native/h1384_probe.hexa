@@ -2,7 +2,7 @@
 // Uses the LIVE engine cp_* ops only (cp_fit / cp_regrow / cp_relocate / cp_discrim_curve /
 // cp_peak_loc_idx / cp_peak_count). Deterministic, $0 CPU, bounded (no decode). Prints the
 // FROZEN bars B2 (relocation) + B3 (split-only distinctness) verbatim.
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 fn _absf2(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
 

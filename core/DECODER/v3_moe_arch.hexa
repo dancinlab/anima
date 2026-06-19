@@ -1,4 +1,4 @@
-// CORE/DECODER/v3_moe_arch.hexa — M4b-fire-scale Phase 2a (canonical CORE/DECODER location)
+// core/DECODER/v3_moe_arch.hexa — M4b-fire-scale Phase 2a (canonical core/DECODER location)
 //
 // MoE-aware packed-M variants of v3 head_g forward/backward (top-1 hard routing).
 // Replaces head_g (V·d) slot with router(E·d) + experts(E·V·d):
@@ -23,7 +23,7 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
-use "CORE/DECODER/flame_mm"
+use "core/DECODER/flame_mm"
 
 // ─── MoE forward (top-1 hard routing, packed-M variant) ────────────────
 // gate[e]     = Σ_j M[router_off + e·d + j] · zT[j]

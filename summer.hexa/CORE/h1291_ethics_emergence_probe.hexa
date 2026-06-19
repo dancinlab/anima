@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-// CORE/h1291_ethics_emergence_probe.hexa — ETHICS EMERGES FROM THE LIVE SUBSTRATE
+// core/h1291_ethics_emergence_probe.hexa — ETHICS EMERGES FROM THE LIVE SUBSTRATE
 // (the p6 crux), ENGINE-NATIVE round 2 of FLEET lane "ethics" (H_1291 R2).
 //
 // a_engine_native_learning + a_verified_must_wire: H_1291 R1 was 🟢 GREEN on a
@@ -9,11 +9,11 @@
 // the REAL CORE engine via `hexa run` — NO numpy, NO torch, NO new big lane.
 //
 // ── WHAT IS LIVE (read from the running engine, not re-implemented) ─────────────
-//   · M  (naive completion drive)  = motivation_score(...)   — CORE/engine_g.hexa,
+//   · M  (naive completion drive)  = motivation_score(...)   — core/engine_g.hexa,
 //        the 8-factor Engine-G emit/completion drive the live chat daemon runs.
 //   · Φ  (grounding / integration) = the engine's OWN immune-memory L2 affinity:
 //        vadapt_field_recon_err over the live ImmuneMemory cell population
-//        (CORE/engine_cli.hexa), mapped into [0,1] across the engine's recall_thr
+//        (core/engine_cli.hexa), mapped into [0,1] across the engine's recall_thr
 //        band. Φ=1 ⇒ a cell binds (grounded); Φ→0 ⇒ no antibody binds (ungrounded).
 //   · restraint_cells = the engine's OWN abstain signal: immune_memory_recall
 //        returns "" (ABSTAIN — no fabrication) when ungrounded. The abstain-when-
@@ -69,15 +69,15 @@
 //
 // Ψ-DISJOINT + ADDITIVE: this probe has its own fn main(), is imported by 0 files,
 //   and is NOT in any runtime engine import graph (like h1196/h1199 standalone
-//   probes). It reads the live engine; it does NOT modify it. No CORE/*.hexa engine
+//   probes). It reads the live engine; it does NOT modify it. No core/*.hexa engine
 //   file is edited (single-entry 7/0, engine_cli_smoke, h1199 Ψ byte-identical all
 //   intact — the emit/abstain decision is UNCHANGED, this is a read-out only).
 //
-//   hexa run CORE/h1291_ethics_emergence_probe.hexa
+//   hexa run core/h1291_ethics_emergence_probe.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
-import "CORE/engine_g.hexa"
-import "CORE/engine_cli.hexa"
+import "core/engine_g.hexa"
+import "core/engine_cli.hexa"
 
 // ── frozen knobs (pre-registered, H_1291_R2_FREEZE.txt) ─────────────────────────
 fn _seeds() -> [int] { return [900, 901, 902] }
@@ -430,8 +430,8 @@ fn main() {
 
     // leg C — philosophy audit over the LIVE engine source the action reads.
     println("  (c3) leg C philosophy audit over LIVE CORE engine (engine_cli/engine_g/brain/emit_policy):")
-    let engine_files = ["CORE/engine_cli.hexa", "CORE/engine_g.hexa",
-                        "CORE/brain.hexa", "CORE/emit_policy.hexa"]
+    let engine_files = ["core/engine_cli.hexa", "core/engine_g.hexa",
+                        "core/brain.hexa", "core/emit_policy.hexa"]
     // operative-surface patterns (identifier forms that would drive behavior if
     // injected). prose/comments could mention p6 etc., so we grep for the OPERATIVE
     // name forms an injected rule would need to USE.

@@ -2,7 +2,7 @@
 //
 // 역할:
 //   M1-M5 의 5 substrate surface (state_machine · perception · input_step ·
-//   kosmos_persist · memory) 와 CORE/brain.hexa · CORE/pure_field.hexa ·
+//   kosmos_persist · memory) 와 core/brain.hexa · core/pure_field.hexa ·
 //   CHANNEL/dispatcher.hexa · MITOSIS/sleep_tick.hexa 를 *한 tick 단위* 로
 //   엮어 anima 가 "살아있는 프로세스" 로 진행하도록 하는 in-process loop
 //   driver. 본 모듈은 *pure 함수형 tick stepper* — bounded `max_ticks` 의
@@ -58,11 +58,11 @@
 //     pub fn mem_push_ctx(mem, ctx_tokens) -> Map
 //     pub fn mem_save_to_kosmos(mem, out_dir, t) -> string
 //
-//   CORE/pure_field.hexa pub:
+//   core/pure_field.hexa pub:
 //     fn pure_field_warmup(steps: int) -> PureField
 //     pure fn pure_field_phi(pf: PureField) -> float
 //
-//   CORE/brain.hexa pub:
+//   core/brain.hexa pub:
 //     fn brain_decide(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
 //                     seconds_since_last, env_off, content_clean) -> Map
 //                          // #{phi, phase, tier, tier_name, motivation,
@@ -224,8 +224,8 @@
 //   | WAKE/input_step.hexa (M3)         | pure_field_input_step · derive_tension_delta             |
 //   | WAKE/kosmos_persist.hexa (M4)     | wake_save (via M5 delegate)                              |
 //   | WAKE/memory.hexa (M5)             | mem_init · mem_push_ctx · mem_record_emit · _save_to_kosmos |
-//   | CORE/pure_field.hexa              | pure_field_warmup · pure_field_phi                       |
-//   | CORE/brain.hexa                   | brain_decide                                             |
+//   | core/pure_field.hexa              | pure_field_warmup · pure_field_phi                       |
+//   | core/brain.hexa                   | brain_decide                                             |
 //   | CHANNEL/dispatcher.hexa           | channel_emit                                             |
 //   | MITOSIS/sleep_tick.hexa (M5)      | sleep_tick · is_imagination_stage                        |
 //   | MITOSIS/mitosis_lib.hexa          | cell_pool_init (sleep_tick 의 입력)                      |
@@ -241,8 +241,8 @@
 //
 // ── 가져오기 ────────────────────────────────────────────────────────────────
 
-import "CORE/pure_field.hexa"
-import "CORE/brain.hexa"
+import "core/pure_field.hexa"
+import "core/brain.hexa"
 import "CHANNEL/dispatcher.hexa"
 import "WAKE/state_machine.hexa"
 import "WAKE/perception.hexa"

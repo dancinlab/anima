@@ -105,10 +105,10 @@
 //           disengagement IS the boredom Φ channel
 //
 // Ref:
-//   anima-engines/aesthetic_phi.hexa      (P48 composite Φ pattern)
-//   anima-engines/time_perception_phi.hexa (P55 "boredom regime" compression)
-//   anima-engines/free_will_phi.hexa      (P50 multi-channel agency Φ)
-//   anima-engines/lucid_awareness_phi.hexa (P54 meta-awareness layering)
+//   core/phi/aesthetic_phi.hexa      (P48 composite Φ pattern)
+//   core/phi/time_perception_phi.hexa (P55 "boredom regime" compression)
+//   core/phi/free_will_phi.hexa      (P50 multi-channel agency Φ)
+//   core/phi/lucid_awareness_phi.hexa (P54 meta-awareness layering)
 
 // ═══════════════════════════════════════════════════════════════
 // Constants
@@ -796,7 +796,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/boredom_phi] P119 — Boredom Φ (attentional disengagement)")
+    println("[core/phi/boredom_phi] P119 — Boredom Φ (attentional disengagement)")
     println("  composite: monotony + reward-drop + disengagement MI + aversive valence")
     println("  refs: Eastwood 2012 | Schultz 1997 | Carriere 2008 | Westgate 2018 MAC")
     println("  N=" + str(BORE_N) + " bins=" + str(BORE_BINS) + " var_sat=" + str(BORE_VAR_SAT))
@@ -830,9 +830,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/boredom_phi] 5/5 PASS — P119 DONE (boredom Φ composite verified)")
+        println("[core/phi/boredom_phi] 5/5 PASS — P119 DONE (boredom Φ composite verified)")
     } else {
-        println("[anima-engines/boredom_phi] SOME FAILED")
+        println("[core/phi/boredom_phi] SOME FAILED")
     }
 }
 

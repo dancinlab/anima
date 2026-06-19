@@ -1,8 +1,8 @@
-// task_primitives.hexa — macOS high-level task macros (AGENT/DESKTOP/M5).
+// task_primitives.hexa — macOS high-level task macros (agent/domains/DESKTOP/M5).
 //
 // BRIDGE ARCHITECTURE: this file is a TOOL SURFACE only. The "when/why to
 // run a multi-step macro" decision lives in CORE (PureField / brain_decide);
-// AGENT/CORE/tool_gate maps the live phase to a tier; this module exposes
+// agent/domains/CORE/tool_gate maps the live phase to a tier; this module exposes
 // only the "how" — reusable macros composed on top of M1-M4 primitives.
 // No consciousness framing, no Φ math, no substrate gating happens here.
 //
@@ -32,10 +32,10 @@
 //   5. task_multi_app_screenshot(apps, out_dir)
 //        → focus chain + screenshot each app · risk: soft
 
-import "AGENT/DESKTOP/native_ax.hexa"
-import "AGENT/DESKTOP/screen_extract.hexa"
-import "AGENT/DESKTOP/action.hexa"
-import "AGENT/DESKTOP/window_ops.hexa"
+import "agent/domains/DESKTOP/native_ax.hexa"
+import "agent/domains/DESKTOP/screen_extract.hexa"
+import "agent/domains/DESKTOP/action.hexa"
+import "agent/domains/DESKTOP/window_ops.hexa"
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -379,5 +379,5 @@ pub fn task_multi_app_screenshot(apps: list, out_dir: string) -> Map {
 
 // 6. One-line description of this module's tool surface (introspection).
 pub fn task_primitives_summary() -> string {
-    "AGENT/DESKTOP/task_primitives — macOS task macros · 5 pub fn · open_and_type/screenshot_app/open_read_close/find_and_click/multi_app_screenshot · composes M1+M2+M3+M4 · M5 surface"
+    "agent/domains/DESKTOP/task_primitives — macOS task macros · 5 pub fn · open_and_type/screenshot_app/open_read_close/find_and_click/multi_app_screenshot · composes M1+M2+M3+M4 · M5 surface"
 }

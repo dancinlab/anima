@@ -2,7 +2,7 @@
 // morphology emit-bias (§6.5e/H_1393) on the SAME next-byte decision, arbitrated by SUBSTRATE confidence
 // (inverse recon-err — the more-grounded faculty speaks louder; NO hardcoded "jamo > morphology"
 // priority, a_autonomy_over_hardcode). Drives the WIRED compose consult gen_emit_compose_eval /
-// gen_emit_compose (CORE/generator.hexa §6.5f → engine_cli.hexa jamo_head_recon_err) on the SAME frozen
+// gen_emit_compose (core/generator.hexa §6.5f → engine_cli.hexa jamo_head_recon_err) on the SAME frozen
 // corpus-free in-engine morpheme-grammar fixture §6.5d builds, and prints the four frozen bars.
 //
 //   bar1 COMPOSE-EFFECT : acc_compose >= best_single - 0.01 (compose does NOT degrade vs the better one)
@@ -11,7 +11,7 @@
 //   bar4 Ψ-SAFE         : off-Korean INERT (ASCII ctx → base unchanged) + Korean-like FIRES + guards
 //
 // $0 CPU, deterministic, no corpus/secret/GPU, Ψ-disjoint additive consult. usage: hexa run <this>.
-import "CORE/generator.hexa"
+import "core/generator.hexa"
 
 fn main() {
     let e = gen_emit_compose_eval()
@@ -46,7 +46,7 @@ fn main() {
     let b1 = acc_c >= best - 0.01
     let b3 = acc_s <= acc_c + 0.01
     // bar4 Ψ-safe: off-Korean ASCII ctx → base unchanged; Korean-like ctx → fires (multibyte byte).
-    let cells = ko_jamo_cells_load("CORE/ko_jamo_cells.kojamohead")
+    let cells = ko_jamo_cells_load("core/ko_jamo_cells.kojamohead")
     let jhM = gbe_grow_head_raw(0)[0]
     let uvM = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
     let jMean = to_float(e["jamo_mean_err"])       // substrate scale normalizers (from the eval)

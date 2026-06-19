@@ -1,11 +1,11 @@
-// amazon.hexa — Amazon SOURCE-side L1 ARBITRAGE adapter (AGENT/MERCHANT).
+// amazon.hexa — Amazon SOURCE-side L1 ARBITRAGE adapter (agent/domains/MERCHANT).
 //
 // Bridge architecture: this file is a TOOL SURFACE — concrete adapter that
 // conforms to the MarketplaceAdapter convention defined in
-// AGENT/MERCHANT/adapter.hexa. It maps Amazon's catalog into MERCHANT's
-// normalized Product/Listing/Order/Shipment/CSCase types so AGENT/CORE can
+// agent/domains/MERCHANT/adapter.hexa. It maps Amazon's catalog into MERCHANT's
+// normalized Product/Listing/Order/Shipment/CSCase types so agent/domains/CORE can
 // dispatch uniformly. The "when/why" to call any verb is decided upstream
-// in AGENT/CORE/tool_gate; this file only answers "how to shape the call".
+// in agent/domains/CORE/tool_gate; this file only answers "how to shape the call".
 //
 // Stub-level implementation: all 5 verbs return placeholder values shaped
 // to the M1 type contract. Real HTTP wiring (Amazon Product Advertising API
@@ -22,8 +22,8 @@
 // All identifiers below are English; doc strings are bilingual (KO for
 // rationale notes, EN for endpoint citations).
 
-import "AGENT/MERCHANT/types.hexa"
-import "AGENT/MERCHANT/adapter.hexa"
+import "agent/domains/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/adapter.hexa"
 
 // ── 1) search ──────────────────────────────────────────────────────────────
 // Real endpoint (TODO):
@@ -168,7 +168,7 @@ pub fn amazon_cs(case: map) -> map {
 }
 
 // ── adapter bundle ─────────────────────────────────────────────────────────
-// Return the 5-verb dict per MarketplaceAdapter convention. AGENT/CORE
+// Return the 5-verb dict per MarketplaceAdapter convention. agent/domains/CORE
 // calls this once at boot and stashes the result for tier-gated dispatch.
 
 pub fn amazon_adapter() -> map {

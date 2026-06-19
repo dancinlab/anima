@@ -1,7 +1,7 @@
 // h1290_affect_emit_wire_smoke.hexa — H_1290 R3 emit/abstain somatic-marker WIRING
-// follow-on closure. Threads the LIVE core-affect read (CORE/engine_cli.hexa
+// follow-on closure. Threads the LIVE core-affect read (core/engine_cli.hexa
 // affect_substrate_features / affect_valence / affect_emit_decision over the live
-// ImmuneMemoryGrow store) into the LIVE emit decision (CORE/brain.hexa
+// ImmuneMemoryGrow store) into the LIVE emit decision (core/brain.hexa
 // brain_decide_affect) and proves the frozen falsifier ON THE LIVE ENGINE via `hexa
 // run` (a_verified_must_wire · c2 · p7).
 //
@@ -38,9 +38,9 @@
 // Ψ-DISJOINT (a_core_engine_map): affect is a pure READ over ImmuneMemoryGrow; the consult
 // touches ONLY the motivation scalar. pure_field Φ/phase/Ψ untouched (h1199/h1205 guards).
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
-import "CORE/brain.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
+import "core/brain.hexa"
 
 let CAP = 0.05     // emit_consult_cap()
 

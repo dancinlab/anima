@@ -1,4 +1,4 @@
-// order_pipeline_smoke.hexa — MERCHANT M4 order pipeline smoke (AGENT/MERCHANT).
+// order_pipeline_smoke.hexa — MERCHANT M4 order pipeline smoke (agent/domains/MERCHANT).
 //
 // 1-shot self-check — exercise the 6-fn order pipeline surface against the
 // L1 ARBITRAGE adapter pair (amazon_adapter source · coupang_adapter target)
@@ -16,11 +16,11 @@
 // (manifest), and dumps the M3 adapter pair through adapter_validate as a
 // sanity-tier check that the bundles are still well-formed.
 
-import "AGENT/MERCHANT/types.hexa"
-import "AGENT/MERCHANT/adapter.hexa"
-import "AGENT/MERCHANT/adapters/amazon.hexa"
-import "AGENT/MERCHANT/adapters/coupang.hexa"
-import "AGENT/MERCHANT/order_pipeline.hexa"
+import "agent/domains/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/adapter.hexa"
+import "agent/domains/MERCHANT/adapters/amazon.hexa"
+import "agent/domains/MERCHANT/adapters/coupang.hexa"
+import "agent/domains/MERCHANT/order_pipeline.hexa"
 
 fn main() {
     print("[MERCHANT/M4] order_pipeline smoke — amazon(source) + coupang(target)")

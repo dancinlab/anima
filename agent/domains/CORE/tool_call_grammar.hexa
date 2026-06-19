@@ -300,7 +300,7 @@ pub fn registry_kind(registry: Map, tool: string) -> string {
 }
 
 // _tcg_env — read an environment variable via the shell (no getenv builtin).
-// Same pattern AGENT/DESKTOP/action.hexa uses for ANIMA_DESKTOP_DRYRUN.
+// Same pattern agent/domains/DESKTOP/action.hexa uses for ANIMA_DESKTOP_DRYRUN.
 fn _tcg_env(name: string) -> string {
     let raw = to_string(exec("/bin/sh -c 'printf %s \"${" + name + "}\"'"))
     // strip a trailing newline if the shell added one.
@@ -409,7 +409,7 @@ pub fn exec_effectful_tool(tool: string, args: string) -> string {
         // DESKTOP role — the real ax_* surface is dispatched here when armed; we
         // keep it to the safe descriptor unless a concrete action is bound (the
         // action verbs themselves honor ANIMA_DESKTOP_DRYRUN independently).
-        return "desktop_action ARMED: route to AGENT/DESKTOP ax_* (action=" + args + ")"
+        return "desktop_action ARMED: route to agent/domains/DESKTOP ax_* (action=" + args + ")"
     }
     if tool == "git_commit" {
         return to_string(exec("/bin/sh -c 'git commit -m \"" + args + "\" 2>&1 | head -20'"))
@@ -428,7 +428,7 @@ pub fn exec_effectful_tool(tool: string, args: string) -> string {
 
 // ── §4 unit smoke (p7: deterministic equality, NO perplexity) ────────────────
 //
-// Run: hexa run AGENT/CORE/tool_call_grammar.hexa
+// Run: hexa run agent/domains/CORE/tool_call_grammar.hexa
 // Proves: (1) a well-formed frame parses to the right tool+args; (2) a malformed
 // frame (ASK, no END) → found=false; (3) plain text (no sentinel) → found=false;
 // (4) the sentinel never collides with UTF-8 content (a Korean+emoji string

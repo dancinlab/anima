@@ -29,8 +29,8 @@
 // the arbiter; the family CLASS only drives the protocol. Ψ-disjoint (pure reads, pure_field
 // untouched). This is a MEASUREMENT round — NOTHING is wired into live CORE.
 
-import "CORE/engine_cli.hexa"
-import "CORE/brain.hexa"
+import "core/engine_cli.hexa"
+import "core/brain.hexa"
 
 // ── frozen knobs (== landed compose probes) ──────────────────────────────────
 const N_PER_FAMILY: int = 90        // 5 families -> 450 items/seed

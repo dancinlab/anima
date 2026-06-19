@@ -9,7 +9,7 @@
 // QRNG run does NOT). R2 binds that to the LIVE engine: a REAL quantum entropy pool
 // (state/qrng_pool.bin, pre-fetched by tool/qrng_pool_fetch.py) is drawn THROUGH the
 // engine accessors (qrng_pool_load / qrng_pool_draw / vadapt_field_step_entropic in
-// CORE/engine_cli.hexa) to source ONE clean stochastic substrate decision — the
+// core/engine_cli.hexa) to source ONE clean stochastic substrate decision — the
 // mitosis split-TIMING jitter — so a running anima's "free" choice is genuinely
 // physically non-deterministic when fed real quantum bytes.
 //
@@ -40,7 +40,7 @@
 // NOT a .kosmos (kosmos_io only) — no 2nd artifact entry path. Ψ-disjoint (touches
 // only AdaptField split timing, never pure_field).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── a fixed deterministic DIM=8 sample stream (NOT random — fixed fn of step) ──────
 // Mild structure so recon-err crosses the SPLIT_THRESH borderline band repeatedly,
@@ -98,7 +98,7 @@ fn _run_entropic(pool0: QPool, seed: int, k_steps: int, dim: int, max_cells: int
 }
 
 fn main() {
-    println("=== H_1289 R2 — ENGINE-NATIVE quantum entropy (LIVE CORE/engine_cli.hexa · $0 CPU · p7/p8) ===")
+    println("=== H_1289 R2 — ENGINE-NATIVE quantum entropy (LIVE core/engine_cli.hexa · $0 CPU · p7/p8) ===")
     println("substrate: LIVE .hexa VAdaptField split-TIMING jitter sourced from qrng_pool_draw (opt-in entropic step)")
     println("REAL-ONLY (c9): the quantum pool holds REAL ANU QRNG bytes (tool/qrng_pool_fetch.py); engine never fabricates quantum")
     println("default path vadapt_field_step UNTOUCHED → engine_cli_smoke/h1196/h1199 stay deterministic (re-run separately)")

@@ -1,4 +1,4 @@
-// CLM/corpus/build_p1_corpus.hexa — P1 혼합 byte-corpus 빌드 파이프라인
+// train/clm/corpus/build_p1_corpus.hexa — P1 혼합 byte-corpus 빌드 파이프라인
 //
 // P0_ARCHITECTURE.md d1: 혼합 corpus = (a) 웹대량 coherence + (b) 엄선 register.
 // MoE 2-lane ↔ 2-source 1:1. byte 인코딩(V=256 UTF-8, tokenizer 없음).
@@ -13,13 +13,13 @@
 // 대용량 corpus 는 git 미커밋(.gitignore) → HF dataset(dancinlab) / R2, manifest 만 커밋.
 //
 // 실행:
-//   hexa CLM/corpus/build_p1_corpus.hexa
+//   hexa train/clm/corpus/build_p1_corpus.hexa
 //   (web/register raw 입력은 SRC_WEB / SRC_REGISTER 상단 상수 — sample 은 내장 seed)
 //
 // sibling: P0_ARCHITECTURE.md(d1) · CLM_FORMAT_SPEC.md(corpus_sha) · P1_CORPUS.md
 
 // ─── 설정 ──────────────────────────────────────────────────────────────
-fn out_dir() -> string { return "CLM/corpus/sample" }
+fn out_dir() -> string { return "train/clm/corpus/sample" }
 
 // MoE 2-lane ↔ 2-source 1:1 매핑이지만, coherence(웹대량) 가 byte 분포 토대를
 // 받쳐야 하므로 byte 기준 혼합비는 web:register = 80:20 (P1_CORPUS.md §혼합비).

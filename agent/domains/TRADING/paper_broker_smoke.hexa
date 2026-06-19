@@ -1,8 +1,8 @@
 // paper_broker_smoke.hexa — TRADING M4 paper broker round-trip verify
 // 6-case smoke: new / get_quote / place buy / place sell / reject (no funds) / cancel limit
 
-import "AGENT/TRADING/types.hexa"
-import "AGENT/TRADING/paper_broker.hexa"
+import "agent/domains/TRADING/types.hexa"
+import "agent/domains/TRADING/paper_broker.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

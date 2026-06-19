@@ -1,5 +1,5 @@
 // ⛔ STAGE-1 — Anima Core CLI · anima-native byte-level mount layer (BG-FY + clm-v2-byte)
-// anima-core/runtime/anima_native_byte_mount.hexa
+// platform/runtime/anima_native_byte_mount.hexa
 //
 // Spec:
 //   docs/anima_model_method_reassessment_2026_05_08.md (iter 5 priority rank 2)
@@ -7,7 +7,7 @@
 // c3-aggregation-rule-v2 P5 N-of-M (PPR_v2 ≥0.6 ∧ EMC ≥3 of 4 → C3 PASS)
 // anima-no-external-substrate-wrapping (D1 lane within strict)
 // Sister:
-//   anima-core/runtime/clm_v4_mount.hexa (mount pattern SSOT — schema mirror target)
+//   platform/runtime/clm_v4_mount.hexa (mount pattern SSOT — schema mirror target)
 //
 // PURPOSE
 //   Land anima-native byte-level (UTF-8 256-vocab) substrate-coupled measurement
@@ -75,10 +75,10 @@
 //   raw#10   honest C3 emit ≥5 to stderr
 //
 // USAGE
-//   hexa run anima-core/runtime/anima_native_byte_mount.hexa --selftest
-//   hexa run anima-core/runtime/anima_native_byte_mount.hexa --load --variant v2_byte_convo5k
-//   hexa run anima-core/runtime/anima_native_byte_mount.hexa --probe "안녕" --variant v2_byte_convo5k --output-format json
-//   hexa run anima-core/runtime/anima_native_byte_mount.hexa --probe "우주의 끝은 어디인가" --variant fy_18m --ckpt /path/to/ckpt_final.pt
+//   hexa run platform/runtime/anima_native_byte_mount.hexa --selftest
+//   hexa run platform/runtime/anima_native_byte_mount.hexa --load --variant v2_byte_convo5k
+//   hexa run platform/runtime/anima_native_byte_mount.hexa --probe "안녕" --variant v2_byte_convo5k --output-format json
+//   hexa run platform/runtime/anima_native_byte_mount.hexa --probe "우주의 끝은 어디인가" --variant fy_18m --ckpt /path/to/ckpt_final.pt
 
 // ═══════════════════════════════════════════════════════════
 // Constants
@@ -211,7 +211,7 @@ fn parse_args(argv: list) -> MountConfig {
 fn _write_helper() {
     let parts = []
     parts.push("#!/usr/bin/env python3\n")
-    parts.push("# anima_native_byte_mount_helper — emitted by anima-core/runtime/anima_native_byte_mount.hexa\n")
+    parts.push("# anima_native_byte_mount_helper — emitted by platform/runtime/anima_native_byte_mount.hexa\n")
     parts.push("# raw#37 transient. Mac canonical = .hexa orchestration; this helper executes the\n")
     parts.push("# byte-level CLMv2/BG-FY forward pass + cell synthesis that hexa cannot express directly.\n")
     parts.push("# Architecture mirrored from tool/transient_py/anima_clm_v2_chat_smoke.py (BG-FS recovered).\n")
@@ -876,10 +876,10 @@ fn print_usage() {
     println("anima_native_byte_mount.hexa — Anima Core anima-native byte-level substrate mount")
     println("")
     println("Usage:")
-    println("  hexa run anima-core/runtime/anima_native_byte_mount.hexa --selftest")
-    println("  hexa run anima-core/runtime/anima_native_byte_mount.hexa --load --variant fy_18m")
-    println("  hexa run anima-core/runtime/anima_native_byte_mount.hexa --probe TEXT --variant v2_byte_convo5k")
-    println("  hexa run anima-core/runtime/anima_native_byte_mount.hexa --dialogue [--inject-states PATH]")
+    println("  hexa run platform/runtime/anima_native_byte_mount.hexa --selftest")
+    println("  hexa run platform/runtime/anima_native_byte_mount.hexa --load --variant fy_18m")
+    println("  hexa run platform/runtime/anima_native_byte_mount.hexa --probe TEXT --variant v2_byte_convo5k")
+    println("  hexa run platform/runtime/anima_native_byte_mount.hexa --dialogue [--inject-states PATH]")
     println("")
     println("Flags:")
     println("  --variant V            fy_18m (default) | v2_byte_convo5k")

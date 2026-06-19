@@ -1,6 +1,6 @@
 // h1292_hypothalamus_drive_probe.hexa — H_1292 R2: the SETPOINT-REGULATED HOMEOSTATIC
 // DRIVE (HD29, hypothalamus), realized ENGINE-NATIVE on the LIVE engine
-// (CORE/engine_cli.hexa homeo_* over the immune ImmuneMemoryGrow faculty), reproducing
+// (core/engine_cli.hexa homeo_* over the immune ImmuneMemoryGrow faculty), reproducing
 // the R1 GREEN through `hexa run` (a_engine_native_learning · a_verified_must_wire ·
 // $0 local CPU · p7 · p8).
 //
@@ -40,7 +40,7 @@
 //   (D)  an untaught far key fires NO cell (recall == "", abstain intact).
 // p7 = drive trajectory + abstain counts, NOT perplexity.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── frozen knobs (pre-registered, == R1 mirror) ──────────────────────────────
 // SEEDS = [4290,4291,4292]; T_DEP=12; S*=0.5 λ=0.1 Kp=1.0 Ki=0.5 (in the lane).
@@ -182,7 +182,7 @@ fn main() {
     let cfg = engine_config_default()
     println("H_1292 R2 — HYPOTHALAMUS / HOMEOSTATIC DRIVE (HD29) — ENGINE-NATIVE (hexa run)")
     println("==============================================================================")
-    println("live lane: homeo_* over ImmuneMemoryGrow (CORE/engine_cli.hexa) | S*=0.5 λ=0.1 Kp=1.0 Ki=0.5")
+    println("live lane: homeo_* over ImmuneMemoryGrow (core/engine_cli.hexa) | S*=0.5 λ=0.1 Kp=1.0 Ki=0.5")
     println("frozen bars: .verdicts/1292_hypothalamus_drive/H_1292_FREEZE.txt (NOT moved)")
     println("")
 

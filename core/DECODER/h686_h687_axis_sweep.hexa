@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  CORE/DECODER/h686_h687_axis_sweep.hexa
+//  core/DECODER/h686_h687_axis_sweep.hexa
 //
 //   H_686 + H_687 — 3-axis (corpus distribution · d · n_layer) toy sweep.
 //
@@ -60,8 +60,8 @@
 //   λ_ent = 0.1, λ_kl = 0.1, lr=0.5, n_steps=600 (PR #1395/#1409 verbatim).
 // ════════════════════════════════════════════════════════════════════════════
 
-import "CORE/DECODER/moe_router.hexa"
-import "CORE/DECODER/moe_router_bwd.hexa"
+import "core/DECODER/moe_router.hexa"
+import "core/DECODER/moe_router_bwd.hexa"
 
 fn log2(x: float) -> float { return log(x) / log(2.0) }
 fn safe_ln(x: float) -> float {

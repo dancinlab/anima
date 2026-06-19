@@ -34,9 +34,9 @@
 // invariant is structural so it transfers by construction to 303M, but byte-identity
 // is MEASURED only at tiny scale here (full-303M byte-equality UNVERIFIED).
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
-import "CORE/bytegpt_decode.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
+import "core/bytegpt_decode.hexa"
 
 // cfg for a given mitosis state.
 fn cfg_for(mit_on: bool) -> EngineConfig {

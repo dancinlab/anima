@@ -8,7 +8,7 @@
 //    violation (@L4). The license-clean gate REJECTS any ChatGPT-gen source.
 //
 //  Fact / knowledge lane = kowiki CC-BY-SA (P1, already built in
-//  CLM/corpus/build_p1_corpus.hexa) + hexa-codex datasets-source-manifest
+//  train/clm/corpus/build_p1_corpus.hexa) + hexa-codex datasets-source-manifest
 //  (CC sources · license_clean_scan reference — KNOWLEDGE REFERENCE ONLY, no
 //  code/model borrow; anima external-LLM-0 / pure-scratch is inviolable).
 //
@@ -26,7 +26,7 @@
 //  sibling: P1_CORPUS.md · build_p1_corpus.hexa · UNIVERSE/cards/H_863 (F-CLM-DIALOGUE)
 // ════════════════════════════════════════════════════════════════════════════
 
-fn out_dir() -> string { return "CLM/corpus/p4_dialogue" }
+fn out_dir() -> string { return "train/clm/corpus/p4_dialogue" }
 
 // byte mix ratio (@L4) — CC dialogue carries the distributional floor, self-play
 // supplies living-learn signal. Tunable per rung; default 70:30 (CC:self-play).
@@ -77,7 +77,7 @@ fn selfplay_diversity_ok(self_bleu_milli: int, repetition_milli: int) -> int {
 // register-leak gate (reuse P1 F-CLM-LEAK 8-pattern filter) — applied to BOTH
 // lanes before write (the real filter lives in build_p1_corpus.hexa leak_patterns).
 fn leak_filter_cmd() -> string {
-    return "hexa CLM/corpus/build_p1_corpus.hexa  # reuse 8-pattern leak filter"
+    return "hexa train/clm/corpus/build_p1_corpus.hexa  # reuse 8-pattern leak filter"
 }
 
 fn main() {

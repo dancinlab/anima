@@ -1,8 +1,8 @@
 // engines/conv/adapter.hexa — Lane-CONV engine adapter (the DEFAULT engine).
 //
 // THIN adapter (@L1): it REFERENCES the canonical impl and does NOT duplicate
-// it. The conv engine = CLMConvMoE, decoded by CORE/clm_decode.hexa and run
-// through the single .clm entry slot CORE/generator.hexa::_gen_clm_decode
+// it. The conv engine = CLMConvMoE, decoded by core/clm_decode.hexa and run
+// through the single .clm entry slot core/generator.hexa::_gen_clm_decode
 // (a_core_engine_map — .clm enters CORE ONLY via the generator L3 slot).
 //
 // EngineSpec slots (all NATIVE — conv is a single forward):
@@ -20,14 +20,14 @@
 // p1..p8: pure decode/forward; no system prompt, persona, ethics weights, or
 // emit gate. Engine SELECT is substrate-config, not a speech gate (@L4 / p5).
 
-import "engines/engine_iface.hexa"
+import "core/engines/engine_iface.hexa"
 
 // conv_engine_spec — the EngineSpec for the conv (Lane-CONV) engine.
 // All 4 slots native: conv is a genuine single forward (CLMConvMoE).
 pub fn conv_engine_spec() -> Map {
     return engine_spec_make(
         "conv",
-        "CORE/clm_decode.hexa (+ generator.hexa L3 slot)",
+        "core/clm_decode.hexa (+ generator.hexa L3 slot)",
         engine_slot_native(),   // load     — clm_decodable + clm_config
         engine_slot_native(),   // forward  — clm_forward_ce
         engine_slot_native(),   // generate — clm_decode_argmax

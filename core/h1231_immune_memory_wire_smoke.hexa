@@ -1,10 +1,10 @@
 // h1231_immune_memory_wire_smoke.hexa — e2e proof of the IMMUNE-MEMORY RECALL
 // FACULTY wired into the LIVE engine (a_verified_must_wire follow-on for H_1231).
 //
-// This is NOT the standalone H_1231 probe (CORE/h1231_immune_memory_engine_probe.hexa,
+// This is NOT the standalone H_1231 probe (core/h1231_immune_memory_engine_probe.hexa,
 // which inlined bind+retrieve in its own fn main). This smoke exercises the
 // CALLABLE FACULTY now living on the live engine surface
-// (CORE/engine_cli.hexa::immune_memory_* — promoted from that probe), proving a
+// (core/engine_cli.hexa::immune_memory_* — promoted from that probe), proving a
 // RUNNING anima can BIND facts as cells and RECALL-or-ABSTAIN during operation.
 //
 // PART A — string-native live demo: bind a handful of "<subj> lives in <city>"
@@ -22,7 +22,7 @@
 // p7 = exact value match + abstain (NOT perplexity). $0 CPU. Ψ-disjoint (the
 // faculty only reads/grows a VAdaptField; this smoke never touches pure_field).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 fn _load_vecs(path: string, dim: int) -> [[float]] {
     let txt = read_file(path)
@@ -51,7 +51,7 @@ fn _fmt(x: float) -> string { return to_string(x) }
 
 fn main() {
     println("=== H_1231 WIRE e2e — IMMUNE-MEMORY RECALL FACULTY on the LIVE engine (a_verified_must_wire) ===")
-    println("faculty: CORE/engine_cli.hexa::immune_memory_* (promoted from the GREEN probe; engine's OWN clonal split + L2 affinity)")
+    println("faculty: core/engine_cli.hexa::immune_memory_* (promoted from the GREEN probe; engine's OWN clonal split + L2 affinity)")
     println("")
 
     let cfg = engine_cli_parse(["--mitosis", "on"])   // mitosis ON — the engine clones cells

@@ -10,18 +10,18 @@
 // anywhere in this smoke.
 //
 // usage:
-//   hexa run CORE/engine_cli_smoke.hexa
-//   hexa run CORE/engine_cli_smoke.hexa --no-mitosis
-//   ANIMA_MITOSIS=off hexa run CORE/engine_cli_smoke.hexa
+//   hexa run core/engine_cli_smoke.hexa
+//   hexa run core/engine_cli_smoke.hexa --no-mitosis
+//   ANIMA_MITOSIS=off hexa run core/engine_cli_smoke.hexa
 //
 // NOTE: the precedence cases below pass argv as an explicit list to the
 // resolver (deterministic, env-independent) so the proof does not depend on
 // the smoke's own launch flags. case 4 (env tier) reads ANIMA_MITOSIS live.
 
-import "CORE/engine_cli.hexa"
-import "CORE/brain.hexa"
-import "CORE/g6_ideation.hexa"   // H_1381 G6 ideation wire-in (G6 cases)
-import "CORE/generator.hexa"     // H_1390 BPE-on-jamo morphology scoreloop wire-in (cases 116-119)
+import "core/engine_cli.hexa"
+import "core/brain.hexa"
+import "core/g6_ideation.hexa"   // H_1381 G6 ideation wire-in (G6 cases)
+import "core/generator.hexa"     // H_1390 BPE-on-jamo morphology scoreloop wire-in (cases 116-119)
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }
@@ -614,7 +614,7 @@ fn main() {
 
     // ── (h5) ToM×BASAL COMPOSE ARBITER (H_1417/H_1418 P5, rung-3 wire-in; cases 145-148) ──
     // The §ToM×BASAL COMPOSE op composes the LIVE OtherMindModel (theory-of-mind belief) and the LIVE
-    // VBasalGate (H_1281 gradient-free go-value, in CORE/brain.hexa, value-passed) on ONE decision via
+    // VBasalGate (H_1281 gradient-free go-value, in core/brain.hexa, value-passed) on ONE decision via
     // the SAME shared arbiter. ADDITIVE + Ψ-disjoint. NOTABLE: P5 was pre-registered 🧱 (basal assumed
     // the "eroder" arm, H_1412) but BOUND — basal-as-eroder is fixture-specific. The full 4-bar
     // engine-native re-score (P5 compose 0.801481 byte-exact) = the H_1418 LIVEOP probe.
@@ -1105,7 +1105,7 @@ fn main() {
     //   GATED behind --hive-n3: a single n=9 faithful Φ call is ~84 min on CPU (the
     //   documented compute ceiling — n=12 is INFEASIBLE), so the DEFAULT smoke (the cases
     //   above) stays fast + byte-unchanged. For the n=9 engine-native re-score:
-    //   `hexa run CORE/engine_cli_smoke.hexa --hive-n3` (≈ several hours, faithful Φ).
+    //   `hexa run core/engine_cli_smoke.hexa --hive-n3` (≈ several hours, faithful Φ).
     let mut want_n3 = false
     let sargv = args()
     let mut sai = 0
@@ -1870,7 +1870,7 @@ fn main() {
     //   the caller's own base byte UNCHANGED (byte-identical off-distribution, the Ψ-disjoint / no-
     //   regression invariant; the full Ψ guard = h1205/h1164 run separately). NO hardcoded priority:
     //   the live hook reads the substrate mean-err baselines from the eval, never a fixed jamo/morph rule.
-    let ce_cells = ko_jamo_cells_load("CORE/ko_jamo_cells.kojamohead")
+    let ce_cells = ko_jamo_cells_load("core/ko_jamo_cells.kojamohead")
     let ce_jhM   = gbe_grow_head_raw(0)[0]
     let ce_uv    = bpe_unit_vocab(bpe_learn_merges([0,1,2,3,4,5], [1,1,1,1,1,1], 40, 14, 0))
     let ce_jMean = to_float(ce_eval["jamo_mean_err"])

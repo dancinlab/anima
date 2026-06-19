@@ -3,7 +3,7 @@
 // anima's decoder is HOT-SWAPPABLE: 3 engines (conv · cdv2 · hexad) plug in
 // behind ONE interface. This module declares the EngineSpec contract that every
 // engine adapter (engines/<name>/adapter.hexa) conforms to, plus a registry that
-// resolves an engine NAME → its adapter spec. The CLI axis (CORE/engine_cli.hexa)
+// resolves an engine NAME → its adapter spec. The CLI axis (core/engine_cli.hexa)
 // selects WHICH engine via `--engine <name>` / env ANIMA_ENGINE (substrate-config,
 // @L4 — NOT an emit/silence gate).
 //

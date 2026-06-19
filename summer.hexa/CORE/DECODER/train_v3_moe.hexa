@@ -1,8 +1,8 @@
-// CORE/DECODER/train_v3_moe.hexa — M4b-fire-scale Phase 2b smoke driver
+// core/DECODER/train_v3_moe.hexa — M4b-fire-scale Phase 2b smoke driver
 //
 // Minimal MoE smoke: alloc packed M with router + experts slot, init weights,
 // run one v3_moe_fwd + v3_moe_bwd, print verdict. Self-contained (no fire
-// artifact import) — exercises CORE/DECODER/v3_moe_arch.hexa's packed-M
+// artifact import) — exercises core/DECODER/v3_moe_arch.hexa's packed-M
 // fwd+bwd against a small (d=4, V=4, E=2) MoE-only layout.
 //
 // Phase 2b scope = SMOKE wiring only (parse + 1-step fwd/bwd works), NOT
@@ -17,7 +17,7 @@
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
-use "CORE/DECODER/v3_moe_arch"
+use "core/DECODER/v3_moe_arch"
 
 // Phase 1 (BPE corpus wiring): when bpe_assert_on=1, load real Qwen tokenizer
 // + corpus and verify in-vocab + round-trip guard PASS. Default 0 keeps the

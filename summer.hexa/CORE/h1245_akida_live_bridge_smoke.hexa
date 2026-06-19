@@ -7,8 +7,8 @@
 // 실측값 (pi5 ~/spike_streamer.log): total_spikes=4330376 @ t=54160.4s → rate ≈ 79.954 Hz.
 // (mock 아님 — 12일+ 연속 가동중인 실제 on-chip 스트림에서 캡처.)
 
-import "CORE/pure_field.hexa"
-import "CORE/xsubstrate_bridge.hexa"
+import "core/pure_field.hexa"
+import "core/xsubstrate_bridge.hexa"
 
 fn akida_run(spike_rate: float, on: bool) -> float {
     let mut pf = pure_field_new()

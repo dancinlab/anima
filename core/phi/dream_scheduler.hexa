@@ -421,7 +421,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/dream_scheduler] CLM-P13-1 — hexa dream scheduler")
+    println("[core/phi/dream_scheduler] CLM-P13-1 — hexa dream scheduler")
     println("  phases: AWAKE(0) -> SWS(1) -> REM(2) -> cycle")
     println("  config: awake=30, SWS=20, REM=15 ticks (cycle=65)")
     println("")
@@ -453,9 +453,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/dream_scheduler] 5/5 PASS — CLM-P13-1 DONE (5/5, 시간 정확도)")
+        println("[core/phi/dream_scheduler] 5/5 PASS — CLM-P13-1 DONE (5/5, 시간 정확도)")
     } else {
-        println("[anima-engines/dream_scheduler] SOME FAILED")
+        println("[core/phi/dream_scheduler] SOME FAILED")
     }
 }
 

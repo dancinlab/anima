@@ -429,7 +429,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/insight_trigger] CLM-P14-2 — insight trigger (aha moment)")
+    println("[core/phi/insight_trigger] CLM-P14-2 — insight trigger (aha moment)")
     println("  EMA alpha=" + str(ALPHA) + "  INSIGHT_THRESHOLD=" + str(INSIGHT_THRESHOLD))
     println("  detection: dist(new_vec, running_avg) > threshold -> restructuring")
     println("")
@@ -461,9 +461,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/insight_trigger] 5/5 PASS — CLM-P14-2 DONE (restructuring 감지)")
+        println("[core/phi/insight_trigger] 5/5 PASS — CLM-P14-2 DONE (restructuring 감지)")
     } else {
-        println("[anima-engines/insight_trigger] SOME FAILED")
+        println("[core/phi/insight_trigger] SOME FAILED")
     }
 }
 

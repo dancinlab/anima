@@ -16,14 +16,14 @@
 //  Eval corpus = H_867's OWN INDEPENDENT held-out PD snapshot — Macbeth(#1533) ·
 //  Othello(#1531) · Romeo&Juliet(#1513) · Pygmalion(#3825) — DISJOINT from H_863's
 //  training plays (so it tests ABSOLUTE generalization, not memorized recall).
-//  Snapshot held under .verdicts/clm-dialogue-abs/ (H_867 does NOT write CLM/corpus/).
+//  Snapshot held under .verdicts/clm-dialogue-abs/ (H_867 does NOT write train/clm/corpus/).
 //
 //  Output → .verdicts/clm-dialogue-abs/  (clm_dialogue_abs_result.json + verdict).
 //  HARD: external LLM 0 (no LLM judge — distributional self-scoring only · g5) ·
 //  ShareGPT/Alpaca/ChatGPT-gen 0 (@L4 foundation-borrow 0). pure-hexa scaffold;
 //  the torch payload (reconstruct arm-SP from the HF backbone · score) reuses
-//  CLM/train/train_clm.py + the H_863 self-play reflux procedure VERBATIM.
-//  sibling: UNIVERSE/cards/H_867 · UNIVERSE/cards/H_863 · CLM/bench/bench_dialogue_ab.hexa
+//  train/clm/train/train_clm.py + the H_863 self-play reflux procedure VERBATIM.
+//  sibling: UNIVERSE/cards/H_867 · UNIVERSE/cards/H_863 · train/clm/bench/bench_dialogue_ab.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
 fn verdict_dir() -> string { return ".verdicts/clm-dialogue-abs" }
@@ -59,7 +59,7 @@ fn floor_clear(cohere_milli: int, adeq_milli: int, leak_count: int) -> int {
 }
 
 // the torch eval payload (run-only · NOT a shipped source file — mirrors H_863, whose
-// torch fire payload was never committed). It REUSES CLM/train/train_clm.py (CLMConvMoE +
+// torch fire payload was never committed). It REUSES train/clm/train/train_clm.py (CLMConvMoE +
 // the QAT continue loop) to: (1) load the HF backbone clm_mid_backbone.pt into the mid
 // config d512/L8/E8, (2) reconstruct arm-SFT (short SFT-only continue on the H_863 CC/PD
 // dialogue corpus) and arm-SP (same continue + a DIVERSITY-gated 8-pattern-leak-filtered

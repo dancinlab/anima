@@ -1,7 +1,7 @@
-// CORE/phi_envelope_substrate_smoke.hexa — F-EMIT-1..3 + 구조 불변식 smoke
-// anchor: CORE/EMIT_SUBSTRATE_DESIGN.md §6 (falsifier 사전등록)
+// core/phi_envelope_substrate_smoke.hexa — F-EMIT-1..3 + 구조 불변식 smoke
+// anchor: core/EMIT_SUBSTRATE_DESIGN.md §6 (falsifier 사전등록)
 
-import "CORE/phi_envelope_substrate.hexa"
+import "core/phi_envelope_substrate.hexa"
 
 fn abs_f(x: float) -> float {
     return if x < 0.0 { -x } else { x }

@@ -5,7 +5,7 @@
 // H_1386 — LIVE agent-tool runtime ↔ CORE §SkillStore wiring (the END-TO-END close of the
 // H_1378 → H_1382 agent-tool↔mitosis loop). The executor now holds a LIVE SkillStore (the learned
 // tool repertoire) and consults / teaches it via the agent_skill_routing adapter (which imports
-// CORE/engine_cli.hexa's §SkillStore ops): tool SELECTION consults agent_route_select (skill_recall
+// core/engine_cli.hexa's §SkillStore ops): tool SELECTION consults agent_route_select (skill_recall
 // — learned best tool OR abstain) ALONGSIDE the static affinity dot-product, and the executor
 // FAILURE-SITE calls agent_route_on_result (→ skill_store_teach → mitosis clonal split, p8) so a
 // REAL runtime tool failure grows a specialized skill-cell. Outcome-only (p6, no injected label).
@@ -15,7 +15,7 @@
 //   (1) string-keyed / nested map literals `{"k": v}` / `{"k": {"a": ..}}`  → migrated to an empty
 //       `{}` map + index-assignment `m["k"] = v` (build-then-return; the value-semantics CORE uses).
 //   (2) reference-passing `&` / `&mut` (both in param TYPES and as `&expr` / `&mut expr` call args)
-//       — the current grammar is VALUE-SEMANTICS ONLY (CORE/engine_cli.hexa uses ZERO `&`): mutating
+//       — the current grammar is VALUE-SEMANTICS ONLY (core/engine_cli.hexa uses ZERO `&`): mutating
 //       functions now TAKE the struct by value and RETURN the modified struct, and call-sites
 //       reassign from the return (e.g. `reg = registry_register(reg, tool)`), exactly mirroring the
 //       §SkillStore idiom `store = skill_store_teach(store, ...)`. No behavior changed.
@@ -24,7 +24,7 @@
 // The H_1386 routing call-sites (executor_select_tool → agent_route_select; executor_execute
 // failure-site → agent_route_on_result) are PRESERVED byte-for-logic. Now the WHOLE executor module
 // COMPILES, so the routing closes through the MAIN module, not just the adapter.
-import "anima-agent-core/agent_skill_routing.hexa"
+import "agent/modules/core/agent_skill_routing.hexa"
 
 // ── Data structures ──
 
@@ -144,7 +144,7 @@ fn sort_by(arr: array, key: string, dir: string) -> array {
 // _lower1 — lowercase one ASCII byte (A-Z -> a-z); other bytes pass through.
 fn _lower1(b: int) -> int { if b >= 65 && b <= 90 { return b + 32 } return b }
 
-// lowercase — ASCII lowercase via the proven ord/chr byte-loop idiom (CORE/g6_ideation.hexa); the
+// lowercase — ASCII lowercase via the proven ord/chr byte-loop idiom (core/g6_ideation.hexa); the
 // `to_lower` builtin is not resolvable once CORE is imported, so we lower byte-by-byte.
 fn lowercase(s: string) -> string {
     let n = byte_len(s)

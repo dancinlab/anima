@@ -1,7 +1,7 @@
-// native_ax.hexa — macOS native OS access wrapper (AGENT/DESKTOP/M1).
+// native_ax.hexa — macOS native OS access wrapper (agent/domains/DESKTOP/M1).
 //
 // BRIDGE ARCHITECTURE: this file is a TOOL SURFACE only. The "when/why to
-// click" decision lives in CORE (PureField / brain_decide); AGENT/CORE/tool_gate
+// click" decision lives in CORE (PureField / brain_decide); agent/domains/CORE/tool_gate
 // maps the live phase to a tier; this module exposes only the "how" — thin
 // wrappers over /usr/bin/osascript · /usr/bin/open · /usr/sbin/screencapture.
 // No consciousness framing, no Φ math, no substrate gating happens here.
@@ -187,5 +187,5 @@ pub fn ax_check_permissions() -> string {
 
 // 9. One-line description of this module's tool surface.
 pub fn native_ax_summary() -> string {
-    "AGENT/DESKTOP/native_ax — macOS OS wrapper · 9 fn · osascript+open+screencapture · app/window/screen/perm · M1 surface"
+    "agent/domains/DESKTOP/native_ax — macOS OS wrapper · 9 fn · osascript+open+screencapture · app/window/screen/perm · M1 surface"
 }

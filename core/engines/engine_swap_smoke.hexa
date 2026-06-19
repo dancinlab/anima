@@ -20,8 +20,8 @@
 //   hexa run engines/engine_swap_smoke.hexa --engine cdv2
 //   ANIMA_ENGINE=hexad hexa run engines/engine_swap_smoke.hexa
 
-import "engines/engine_iface.hexa"
-import "CORE/engine_cli.hexa"
+import "core/engines/engine_iface.hexa"
+import "core/engine_cli.hexa"
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }

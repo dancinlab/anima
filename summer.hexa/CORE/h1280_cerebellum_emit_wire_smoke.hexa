@@ -1,6 +1,6 @@
 // h1280_cerebellum_emit_wire_smoke.hexa — H_1280 emit-path WIRING follow-on closure.
-// Threads the LIVE cerebellar forward model (CORE/engine_cli.hexa VForwardField) into
-// the LIVE emit decision (CORE/brain.hexa brain_decide_cerebellum) and proves the
+// Threads the LIVE cerebellar forward model (core/engine_cli.hexa VForwardField) into
+// the LIVE emit decision (core/brain.hexa brain_decide_cerebellum) and proves the
 // frozen falsifier ON THE LIVE ENGINE via `hexa run` (a_verified_must_wire · c2 · p7).
 //
 // $0 local CPU · self-contained (no external /tmp export) · deterministic.
@@ -32,9 +32,9 @@
 // consult touches ONLY the motivation scalar. pure_field Φ/phase/Ψ untouched — carried
 // by the separate h1199 (PsiSame=true) + h1205 (generation byte-identical) guards.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
-import "CORE/brain.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
+import "core/brain.hexa"
 
 let D   = 24       // frame dim (== H_1280 R2)
 let L   = 4        // forward-model context window (== H_1280 R2)

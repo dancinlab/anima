@@ -1,5 +1,5 @@
 // h1282_wm_buffer_engine_probe.hexa — H_1282 R3: the WORKING-MEMORY buffer lane,
-// realized ENGINE-NATIVE on the LIVE engine (CORE/engine_cli.hexa WorkMemBuffer),
+// realized ENGINE-NATIVE on the LIVE engine (core/engine_cli.hexa WorkMemBuffer),
 // reproducing the R2 GREEN through `hexa run` (a_engine_native_learning ·
 // a_verified_must_wire · $0 local CPU · p8).
 //
@@ -36,7 +36,7 @@
 // not an engine lane; it is the BASELINE the WM lane must beat). Both arms read out by the SAME
 // graded score → AUROC (fair, C1).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── one trial block parsed out of the stream ─────────────────────────────────
 // We read the file as a flat token list and walk it. Each block is:
@@ -223,7 +223,7 @@ fn _run_seed(seed: int) -> SeedRes {
 
 fn main() {
     println("=== H_1282 R3 — WORKING-MEMORY buffer lane, ENGINE-NATIVE on the LIVE engine ($0 CPU · p8) ===")
-    println("substrate: LIVE .hexa CORE/engine_cli.hexa WorkMemBuffer (gated leaky-activation WM lane, Ψ-disjoint, ADDITIVE)")
+    println("substrate: LIVE .hexa core/engine_cli.hexa WorkMemBuffer (gated leaky-activation WM lane, Ψ-disjoint, ADDITIVE)")
     println("arm B = live engine wm_buffer_* lane (K=4 slots, λ=0.85 leak, weakest-slot displacement)")
     println("arm A = no-WM flat last-W=4 context control (the baseline the WM lane must beat)")
     println("readout: graded probe score → AUROC = P(score(match)>score(nonmatch)) (p7, NOT perplexity); both arms scored the SAME way")

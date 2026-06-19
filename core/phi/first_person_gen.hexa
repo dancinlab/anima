@@ -66,9 +66,9 @@
 //   Meta M8 Narrative = temporal self-model — 1p report is self-narrative
 //
 // Ref:
-//   anima-engines/dream_report.hexa    (CLM-P13-2 dream report)
-//   anima-engines/emotion_fsm.hexa     (CLM-P12-1 emotion FSM)
-//   anima-engines/anima_will.hexa      (CLM-P10-1 volition)
+//   core/phi/dream_report.hexa    (CLM-P13-2 dream report)
+//   core/phi/emotion_fsm.hexa     (CLM-P12-1 emotion FSM)
+//   core/phi/anima_will.hexa      (CLM-P10-1 volition)
 //   shared/roadmaps/anima.json         (CLM-P16-1 entry)
 
 // ═══════════════════════════════════════════════════════════════
@@ -497,7 +497,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/first_person_gen] CLM-P16-1 — 1인칭 생성기 (first-person report)")
+    println("[core/phi/first_person_gen] CLM-P16-1 — 1인칭 생성기 (first-person report)")
     println("  report: [valence, arousal, confidence, agency, temporal_position]")
     println("  consistency = average pairwise cosine similarity")
     println("")
@@ -529,9 +529,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/first_person_gen] 5/5 PASS — CLM-P16-1 DONE (일관 1p narrative)")
+        println("[core/phi/first_person_gen] 5/5 PASS — CLM-P16-1 DONE (일관 1p narrative)")
     } else {
-        println("[anima-engines/first_person_gen] SOME FAILED")
+        println("[core/phi/first_person_gen] SOME FAILED")
     }
 }
 

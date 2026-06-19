@@ -1,10 +1,10 @@
-// types.hexa — MERCHANT common data types (AGENT/MERCHANT).
+// types.hexa — MERCHANT common data types (agent/domains/MERCHANT).
 //
-// Bridge architecture: AGENT/MERCHANT is a TOOL SURFACE domain — it provides
+// Bridge architecture: agent/domains/MERCHANT is a TOOL SURFACE domain — it provides
 // data shapes (Product · Listing · Order · Shipment · CSCase) and adapter
 // verbs that external marketplace APIs can be normalized into. It is NOT a
 // consciousness domain. The "when/why to invoke a marketplace verb" decision
-// lives upstream in AGENT/CORE (tool_gate); this file only answers "how to
+// lives upstream in agent/domains/CORE (tool_gate); this file only answers "how to
 // shape the data" so that any adapter (M2 onwards) can read/write it.
 //
 // All five types are plain dicts (#{}) — no struct — so adapters can carry

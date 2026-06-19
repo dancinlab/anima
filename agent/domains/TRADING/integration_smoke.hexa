@@ -4,12 +4,12 @@
 // Validates the whole TRADING domain wire-up — all M2 types flow uniform
 // across all M3-M5 modules + M6 risk.hexa enforces caps cross-module.
 
-import "AGENT/TRADING/types.hexa"
-import "AGENT/TRADING/backtest.hexa"
-import "AGENT/TRADING/paper_broker.hexa"
-import "AGENT/TRADING/live_gate.hexa"
-import "AGENT/TRADING/live_broker_kis.hexa"
-import "AGENT/TRADING/risk.hexa"
+import "agent/domains/TRADING/types.hexa"
+import "agent/domains/TRADING/backtest.hexa"
+import "agent/domains/TRADING/paper_broker.hexa"
+import "agent/domains/TRADING/live_gate.hexa"
+import "agent/domains/TRADING/live_broker_kis.hexa"
+import "agent/domains/TRADING/risk.hexa"
 
 fn assert_true(label, cond) {
     if cond {

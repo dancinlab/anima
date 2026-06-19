@@ -3,8 +3,8 @@
 // model thread · unknown_tier · L2 not_registered · list_models · register_model ·
 // set_default_model + per-call default fallback
 
-import "AGENT/CREATOR/types.hexa"
-import "AGENT/CREATOR/backend.hexa"
+import "agent/domains/CREATOR/types.hexa"
+import "agent/domains/CREATOR/backend.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

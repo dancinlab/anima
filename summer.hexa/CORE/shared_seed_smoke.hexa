@@ -1,7 +1,7 @@
 // shared_seed_smoke.hexa — runnable proof of the H_6008 fork-time primitive.
 //
 // Reproduces the H_6008 verdict shape through the ACTUAL deployment surface
-// (CORE/shared_seed.hexa), deterministically (p7: equality, not perplexity):
+// (core/shared_seed.hexa), deterministically (p7: equality, not perplexity):
 //   ARM1 shared-seed    — two forks of ONE loaded key coordinate 1.0 (zero comms)
 //   ARM2 independent     — two keys from DIFFERENT ANU files ≈ chance (no shared cause)
 //   ARM3 classical store  — reloading the LOCAL key file is byte-identical (replayable
@@ -10,7 +10,7 @@
 //
 // Uses real cached ANU vacuum buffers in /tmp/anu_*.bin. p1..p8 clean.
 
-import "CORE/shared_seed.hexa"
+import "core/shared_seed.hexa"
 
 // run a sequence of `n` choices over `k` options from a seed, return the picks.
 fn _walk(seed: SharedSeed, n: int, k: int) -> [int] {

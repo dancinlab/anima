@@ -4,8 +4,8 @@
 //
 // QUESTION (the open rung H_1159/H_1159b left): those two results proxied
 // inference-time mitosis with a TOY numpy k-means split. The domain's open rung
-// is to drive the LIVE CORE engine (CORE/engine_cli.hexa engine_mitosis_tick +
-// CORE/pure_field.hexa pure_field_step) over a NON-STATIONARY input stream and
+// is to drive the LIVE CORE engine (core/engine_cli.hexa engine_mitosis_tick +
+// core/pure_field.hexa pure_field_step) over a NON-STATIONARY input stream and
 // measure ADAPTATION — does the live engine's error/tension FALL as it adapts to
 // new regimes (p8 NO TRAIN/INFER SPLIT) — not just cell-count growth — confirming
 // the toy H_1159 ADVANTAGE on the REAL substrate.
@@ -43,7 +43,7 @@
 //
 // CRUCIAL HONEST NOTE (what is actually wired — a_core_engine_map, no phantom):
 //   The CORE field step (pure_field_step) is a ZERO-INPUT internal oscillator
-//   loop (CORE/pure_field.hexa "advance field by one tick (zero external
+//   loop (core/pure_field.hexa "advance field by one tick (zero external
 //   input)"). It does NOT take a stream sample, and engine_mitosis_tick's
 //   cell_count is NOT fed back into pure_field. So the field/coherence trajectory
 //   is determined by the oscillators ALONE and is provably IDENTICAL whether
@@ -54,8 +54,8 @@
 //   verdict is HOURGLASS NO-SIGNAL (the toy<->live coupling is UNBUILT), exactly
 //   the falsifier's HOURGLASS branch — NOT a fabricated GREEN nor a RED mismatch.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 
 // ── deterministic LCG (no external entropy — fully reproducible per seed) ─────
 fn _lcg(state: int) -> int {
@@ -216,7 +216,7 @@ fn main() {
         // signal that mitosis can move. The falsifier's HOURGLASS branch.
         println("VERDICT: HOURGLASS NO-ADAPTATION-SIGNAL (live engine exposes no usable")
         println("  error/tension metric coupled to the stream OR to the mitosis cell count).")
-        println("  WHAT IS MISSING: pure_field_step is ZERO-INPUT (CORE/pure_field.hexa)")
+        println("  WHAT IS MISSING: pure_field_step is ZERO-INPUT (core/pure_field.hexa)")
         println("  — it advances internal oscillators ONLY and ignores the stream sample; and")
         println("  engine_mitosis_tick's cell_count is NOT fed back into pure_field. So the")
         println("  field/coherence trajectory is IDENTICAL ON vs OFF (err diff="

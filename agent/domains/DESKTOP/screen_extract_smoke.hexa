@@ -1,4 +1,4 @@
-// screen_extract_smoke.hexa — runtime smoke for AGENT/DESKTOP/screen_extract (M2).
+// screen_extract_smoke.hexa — runtime smoke for agent/domains/DESKTOP/screen_extract (M2).
 //
 // 3 cases, all read-or-write to /tmp only:
 //   C1 ax_screenshot("/tmp/desk_smoke.png") — sanity: rc=0 ∧ file size > 0
@@ -8,10 +8,10 @@
 // All cases complete → exit 0. Permission denial (Screen Recording / Accessibility)
 // surfaces as honest false / empty string, not a crash.
 
-import "AGENT/DESKTOP/screen_extract.hexa"
+import "agent/domains/DESKTOP/screen_extract.hexa"
 
 fn main() {
-    println("[smoke] AGENT/DESKTOP/screen_extract — " + screen_extract_summary())
+    println("[smoke] agent/domains/DESKTOP/screen_extract — " + screen_extract_summary())
 
     // ── C1 screenshot ──────────────────────────────────────────────────────
     let out_path = "/tmp/desk_smoke.png"

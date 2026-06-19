@@ -28,7 +28,7 @@ comptime const DEFAULT_BIO_NOISE    = 0.012
 comptime const DEFAULT_SOC_GLACIAL  = 0.002
 
 // ─── JSON Loader ───
-// safe_read — canonical source: anima-core/lib/io_utils.hexa (ROI #6)
+// safe_read — canonical source: platform/lib/io_utils.hexa (ROI #6)
 // Hexa has no import; copy-paste with attribution.
 fn safe_read(path: string) -> string {
     let raw = read_file(path)

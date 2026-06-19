@@ -1,15 +1,15 @@
-// anima-engines/qsim_bridge.hexa — PHYS-P1-1
+// core/phi/qsim_bridge.hexa — PHYS-P1-1
 //
 // ═══════════════════════════════════════════════════════════════════════════
 // PURPOSE
-//   Bridge the Orch-OR microtubule model (anima-engines/anima_quantum.hexa)
+//   Bridge the Orch-OR microtubule model (core/phi/anima_quantum.hexa)
 //   to a *quantum simulation engine* through a single small interface, so
 //   that the consciousness pipeline can swap simulator backends (current
 //   pure-hexa Quantum<int> primitives, future Qiskit FFI, future
 //   anima-physics FPGA lattice) without touching the Orch-OR model.
 //
 //   Closes ANIMA roadmap P1 task PHYS-P1-1:
-//     "양자 시뮬 엔진(anima-engines/quantum) Qiskit/시뮬 브릿지 연결"
+//     "양자 시뮬 엔진(core/phi/quantum) Qiskit/시뮬 브릿지 연결"
 //
 //   Delivers the P1 gate_exit criterion: "양자 시뮬 엔진 I/O 루프 작동"
 //   — a closed loop input_signal → microtubule encode → quantum sim →
@@ -54,7 +54,7 @@
 //
 // Run with:
 //   HEXA=$HEXA_LANG/hexa
-//   HEXA_PATH=$HEXA_LANG/self:anima-engines $HEXA run anima-engines/qsim_bridge.hexa
+//   HEXA_PATH=$HEXA_LANG/self:anima-engines $HEXA run core/phi/qsim_bridge.hexa
 // ═══════════════════════════════════════════════════════════════════════════
 
 use "quantum_types"

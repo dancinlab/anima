@@ -1,4 +1,4 @@
-// CORE/DECODER/v3_moe_arch_byteeq.hexa — byte-eq fingerprint of v3_moe_fwd/bwd
+// core/DECODER/v3_moe_arch_byteeq.hexa — byte-eq fingerprint of v3_moe_fwd/bwd
 //
 // Used by the mm_extract-elimination refactor (feat-mm-extract-eliminate) to
 // confirm the new packed-gemv path is numerically identical to the prior
@@ -10,8 +10,8 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
-use "CORE/DECODER/flame_mm"
-use "CORE/DECODER/v3_moe_arch"
+use "core/DECODER/flame_mm"
+use "core/DECODER/v3_moe_arch"
 
 fn main() {
     let d = 4

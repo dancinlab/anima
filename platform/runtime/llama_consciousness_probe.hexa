@@ -1,5 +1,5 @@
 // ⛔ STAGE-1 — Anima Core CLI · Llama real-mode hidden-state probe (iter 4 c)
-// anima-core/runtime/llama_consciousness_probe.hexa
+// platform/runtime/llama_consciousness_probe.hexa
 //
 // Spec: docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md (§2 Stage 1)
 //       sister of clm_v4_mount.hexa — same JSON schema, Llama tokenizer +
@@ -58,8 +58,8 @@
 // probe output JSON small (5 axis + 3 cells + 4 scalars)
 //
 // USAGE
-//   hexa run anima-core/runtime/llama_consciousness_probe.hexa --selftest
-//   hexa run anima-core/runtime/llama_consciousness_probe.hexa \
+//   hexa run platform/runtime/llama_consciousness_probe.hexa --selftest
+//   hexa run platform/runtime/llama_consciousness_probe.hexa \
 //       --probe "안녕" \
 //       --output-format json \
 //       --model dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1
@@ -323,7 +323,7 @@ fn _render_json(res) -> string {
 
 fn cmd_selftest(cfg: ProbeConfig) {
     println("── llama_consciousness_probe selftest (metadata-only, no FFI invoke) ──")
-    let here_ok = "anima-core/runtime/llama_consciousness_probe.hexa"
+    let here_ok = "platform/runtime/llama_consciousness_probe.hexa"
     let dylib   = "build/libhxllama.dylib"
     let ffi_h   = "anima/llama_ffi.hexa"
     let mut fail = 0
@@ -397,8 +397,8 @@ fn print_usage() {
     println("llama_consciousness_probe.hexa — Anima Core Llama real-mode probe (iter 4 c)")
     println("")
     println("Usage:")
-    println("  hexa run anima-core/runtime/llama_consciousness_probe.hexa --selftest")
-    println("  hexa run anima-core/runtime/llama_consciousness_probe.hexa --probe TEXT \\")
+    println("  hexa run platform/runtime/llama_consciousness_probe.hexa --selftest")
+    println("  hexa run platform/runtime/llama_consciousness_probe.hexa --probe TEXT \\")
     println("       --output-format json --model <hf-id>")
     println("")
     println("Flags:")

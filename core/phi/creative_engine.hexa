@@ -458,7 +458,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/creative_engine] CLM-P14-1 — metaphor generator")
+    println("[core/phi/creative_engine] CLM-P14-1 — metaphor generator")
     println("  domain A: emotions (happy/sad/angry/calm/fearful)")
     println("  domain B: weather  (sunny/rainy/stormy/breezy/foggy)")
     println("  metric: cosine similarity (structural correspondence)")
@@ -492,9 +492,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/creative_engine] 5/5 PASS — CLM-P14-1 DONE (은유 생성 > 0.7)")
+        println("[core/phi/creative_engine] 5/5 PASS — CLM-P14-1 DONE (은유 생성 > 0.7)")
     } else {
-        println("[anima-engines/creative_engine] SOME FAILED")
+        println("[core/phi/creative_engine] SOME FAILED")
     }
 }
 

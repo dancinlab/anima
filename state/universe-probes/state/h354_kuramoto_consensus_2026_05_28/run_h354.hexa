@@ -19,7 +19,7 @@
 //           per-node seed → bounded init divergence), per round each
 //           node blends toward the global mean with rate
 //           alpha = clamp(K * 0.1, 0.01, 0.95). Round-symmetric blend
-//           (matches hive_state_sync semantics: see anima-engines/
+//           (matches hive_state_sync semantics: see core/phi/
 //           hive_state_sync.hexa T1-T2 expected exp-decay).
 //           τ_consensus = first round R where max_pairwise_dist <= 0.05,
 //           or sentinel max=400 if never reached.
@@ -30,7 +30,7 @@
 //
 //   Toy substitute notice (C3 explicit, see §7 of H_354 doc):
 //     The consensus dynamics here is an INLINE toy averaging-based
-//     blend — NOT a load of anima-engines/hive_state_sync.hexa (the
+//     blend — NOT a load of core/phi/hive_state_sync.hexa (the
 //     full hive_bridge module surface requires shared/config/contracts
 //     wiring, beyond the scope of this single-file smoke). The dynamics
 //     are mathematically equivalent to hive_state_sync's blend rule

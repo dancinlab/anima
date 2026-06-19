@@ -21,14 +21,14 @@
 //             channel-specific emit (BPE ids · RVQ codes · 5-ch fingerprint)
 //
 // 인용 (instrument-first):
-//   - CORE/pure_field.hexa:
+//   - core/pure_field.hexa:
 //       pub fn pure_field_phi(pf: PureField) -> float
 //       pub fn pure_field_tensor(pf: PureField) -> [float]   // FIELD_DIM=6
 //       pub fn pure_field_phase(pf: PureField) -> int        // PHASE_DORMANT..PHASE_RESONANT
-//   - CORE/engine_g.hexa:
+//   - core/engine_g.hexa:
 //       fn motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v) -> float
 //       (8 가중치 stable: 0.20/0.10/0.15/0.10/0.10/0.10/0.15/0.10)
-//   - CORE/brain.hexa:
+//   - core/brain.hexa:
 //       fn brain_decide(pf, 8-factor, seconds_since_last, env_off, content_clean)
 //       (phase int == tier int, 명시적 mapping)
 //   - CHANNEL/tension/tension_emit.hexa:

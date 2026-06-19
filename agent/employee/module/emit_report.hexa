@@ -112,8 +112,8 @@ fn verdict_of(summary: PhiSummary, weight_origin: string) -> string {
 fn build_report(goal: Goal, pad: Scratchpad, weight_origin: string) -> Report {
     let summary = summarize_phi(goal)
     let v = verdict_of(summary, weight_origin)
-    let md_path = "anima-agent/employee/reports/" + goal.id + ".md"
-    let json_path = "anima-agent/employee/reports/" + goal.id + ".json"
+    let md_path = "agent/employee/reports/" + goal.id + ".md"
+    let json_path = "agent/employee/reports/" + goal.id + ".json"
     return Report {
         goal_id: goal.id,
         persona_id: goal.persona_id,

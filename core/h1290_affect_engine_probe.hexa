@@ -1,5 +1,5 @@
 // h1290_affect_engine_probe.hexa — H_1290 R2: the CORE-AFFECT read-out, realized
-// ENGINE-NATIVE on the LIVE engine (CORE/engine_cli.hexa affect_* over the immune
+// ENGINE-NATIVE on the LIVE engine (core/engine_cli.hexa affect_* over the immune
 // ImmuneMemoryGrow faculty), reproducing the R1 GREEN through `hexa run`
 // (a_engine_native_learning · a_verified_must_wire · $0 local CPU · p7 · p8).
 //
@@ -39,7 +39,7 @@
 //        AND  (cC2) emit_affect_grounded  >= 0.80 * emit_blind_grounded.
 // p7 = rank-correlation + abstain/emit counts, NOT perplexity.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── frozen knobs (pre-registered, == R1 mirror) ──────────────────────────────
 // SEEDS = [1290,1291,1292]; N_FACTS=60; N_PROBE=40 per class.
@@ -243,7 +243,7 @@ fn _run_seed(seed: int) -> SeedRow {
 fn main() {
     println("==============================================================================")
     println("H_1290 R2 — CORE-AFFECT READ-OUT, ENGINE-NATIVE (E1 affect) — Damasio core-affect")
-    println("  LIVE CORE/engine_cli.hexa affect_* over ImmuneMemoryGrow · p7 · 3 seeds · Ψ-disjoint READ")
+    println("  LIVE core/engine_cli.hexa affect_* over ImmuneMemoryGrow · p7 · 3 seeds · Ψ-disjoint READ")
     println("==============================================================================")
 
     let RHO_BAR = 0.50

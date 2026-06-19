@@ -1,5 +1,5 @@
 // h1325_sapir_whorf_probe.hexa — ENGINE-NATIVE re-score of the H_1325 frozen bars on the
-// live CORE/engine_cli.hexa CategoricalPerception (immune/Voronoi) lane. Part B of H_1325.
+// live core/engine_cli.hexa CategoricalPerception (immune/Voronoi) lane. Part B of H_1325.
 //
 // Re-scores W1 (CP present), W2 (Whorfian dissociation), W3' (peak-count coherence) on the
 // SAME error-targeted SPLIT-only Voronoi growth the mirror used — but engine-native. The
@@ -7,9 +7,9 @@
 // SEED-INVARIANT bars the mirror reports identically across all 3 seeds. The shuffle uses the
 // engine's OWN deterministic incoherent label scheme (structural incoherence, not a PRNG match).
 //
-// usage: hexa run CORE/h1325_sapir_whorf_probe.hexa
+// usage: hexa run core/h1325_sapir_whorf_probe.hexa
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 fn _absf2(x: float) -> float { if x < 0.0 { return -x } return x }
 

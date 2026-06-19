@@ -7,7 +7,7 @@
 //
 // The directive a_core_engine_map states:
 //   · .clm enters CORE ONLY via the generator.hexa L3 slot (the single .clm
-//     decode entry: `use "CORE/clm_decode"` lives ONLY in generator.hexa).
+//     decode entry: `use "core/clm_decode"` lives ONLY in generator.hexa).
 //   · .kosmos anchors enter ONLY via kosmos_io read into brain_decide
 //     (load_anchors is called ONLY by generator_read_anchors).
 //   · Engine A (pure_field) ⇄ G (engine_g) ⇄ brain stay substrate-only — they
@@ -17,7 +17,7 @@
 // HONEST scope (a_core_engine_map: "no phantom wiring"): this probe does NOT
 // claim wiring that is not there. It reports, verbatim, which paths are WIRED
 // (the .clm L3 decode slot + the .kosmos read) and treats the standalone OMEGA
-// probe (CORE/omega_clm_closure_probe.hexa) as the documented MEASUREMENT
+// probe (core/omega_clm_closure_probe.hexa) as the documented MEASUREMENT
 // harness it is — it has its own fn main(), is imported by 0 files, and is NOT
 // in any runtime engine import graph, so it is NOT a 2nd runtime .clm path. The
 // guard asserts exactly that: the clm_decode importer set, minus that lone
@@ -83,18 +83,18 @@ fn _assert_s(label: string, want: string, got: string, n_pass: int, n_fail: int)
 
 fn main() {
     println("=== H_1196 a_core_engine_map SINGLE-ENTRY audit + guard (MITOSIS-ENGINE Lane-2) ===")
-    println("method: deterministic source grep over checked-in CORE/*.hexa (p7 count-equality, $0 CPU)")
+    println("method: deterministic source grep over checked-in core/*.hexa (p7 count-equality, $0 CPU)")
     println("")
 
     let mut np = 0
     let mut nf = 0
 
     // The file groups the invariants range over.
-    let core_glob = "CORE/*.hexa"
-    let substrate = "CORE/pure_field.hexa CORE/engine_g.hexa CORE/brain.hexa"
+    let core_glob = "core/*.hexa"
+    let substrate = "core/pure_field.hexa core/engine_g.hexa core/brain.hexa"
 
     // ── INVARIANT 1 — the .clm decode entry is SINGLE (generator.hexa) ─────────
-    // `use "CORE/clm_decode"` (or import of clm_decode.hexa) appears in EXACTLY
+    // `use "core/clm_decode"` (or import of clm_decode.hexa) appears in EXACTLY
     // the runtime slot generator.hexa + the one standalone OMEGA probe. The
     // runtime-path importer SET, minus that probe, MUST be {generator.hexa}.
     let clm_import_files = _files_matching("(use|import)[[:space:]].*clm_decode", core_glob)
@@ -112,7 +112,7 @@ fn main() {
     // ── INVARIANT 2 — the .kosmos read entry is SINGLE (generator_read_anchors) ─
     // load_anchors() is DEFINED in kosmos_io and CALLED from exactly one CORE
     // site: generator.hexa::generator_read_anchors. Assert the CALL appears in
-    // exactly generator.hexa among CORE/*.hexa (the call line `load_anchors(`).
+    // exactly generator.hexa among core/*.hexa (the call line `load_anchors(`).
     let kosmos_call_files = _files_matching("[^a-zA-Z_]load_anchors\\(", core_glob)
     let r2 = _assert_s("inv2_load_anchors_called_only_in_generator",
                        "generator.hexa", kosmos_call_files, np, nf)
@@ -137,8 +137,8 @@ fn main() {
     // POSITIVE wiring assertion (honest, the path that IS built): generator.hexa
     // both imports clm_decode (the decode forward) AND calls load_anchors (the
     // anchor read). This is the single named slot a_core_engine_map prescribes.
-    let gen_has_clm    = _hits("(use|import)[[:space:]].*clm_decode", "CORE/generator.hexa")
-    let gen_has_kosmos = _hits("[^a-zA-Z_]load_anchors\\(", "CORE/generator.hexa")
+    let gen_has_clm    = _hits("(use|import)[[:space:]].*clm_decode", "core/generator.hexa")
+    let gen_has_kosmos = _hits("[^a-zA-Z_]load_anchors\\(", "core/generator.hexa")
     let r5a = _assert_i("inv5a_generator_imports_clm_decode", 1, gen_has_clm, np, nf)
     np = r5a[0]; nf = r5a[1]
     // load_anchors appears twice in generator.hexa: the call site + the summary
@@ -149,8 +149,8 @@ fn main() {
 
     println("")
     println("--- single-entry audit summary: " + to_string(np) + " pass / " + to_string(nf) + " fail ---")
-    println("WIRED:   .clm decode L3 slot = generator.hexa (use CORE/clm_decode) · .kosmos read = generator_read_anchors→load_anchors→brain_emit anchors arg")
-    println("HONEST:  CORE/omega_clm_closure_probe.hexa = standalone measurement probe (own fn main, 0 importers) — NOT a 2nd runtime .clm path")
+    println("WIRED:   .clm decode L3 slot = generator.hexa (use core/clm_decode) · .kosmos read = generator_read_anchors→load_anchors→brain_emit anchors arg")
+    println("HONEST:  core/omega_clm_closure_probe.hexa = standalone measurement probe (own fn main, 0 importers) — NOT a 2nd runtime .clm path")
     println("CLEAN:   pure_field/engine_g/brain consume 0 .clm + 0 .kosmos (substrate-only)")
     if nf > 0 { exit(1) }
 }

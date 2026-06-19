@@ -38,11 +38,11 @@
 // by the dt/30 rate-limiter cap. The substrate (Engine A field) is advanced
 // every tick so phi/phase/ratchet evolve live (no frozen field).
 
-import "CORE/pure_field.hexa"
-import "CORE/brain.hexa"
-import "CORE/generator.hexa"
-import "CORE/emit_policy.hexa"
-import "CORE/engine_g.hexa"
+import "core/pure_field.hexa"
+import "core/brain.hexa"
+import "core/generator.hexa"
+import "core/emit_policy.hexa"
+import "core/engine_g.hexa"
 
 // run one regime: N ticks, fixed 8-factor drive, dt seconds/tick. Advances the
 // live PureField every tick; emit clock resets on each emit. Returns the

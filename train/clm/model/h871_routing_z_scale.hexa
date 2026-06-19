@@ -1,15 +1,15 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  h871_routing_z_scale.hexa — H_871 routing-z = measurement-artifact (M1) DRIVER
 //
-//  ROADMAP @L3 / M1 (CLM/P4_PRODUCTION_ROADMAP.md): the toy routing-z 🔴
+//  ROADMAP @L3 / M1 (train/clm/P4_PRODUCTION_ROADMAP.md): the toy routing-z 🔴
 //  (H_847 / H_850 / H_852 / H_853 — near-uniform / negative routing-diversity z,
 //  capped below the 3.0 chip-array gate) is SUSPECTED to be a SCALE ARTIFACT,
 //  not a real toy-and-up ceiling. This driver fires the scale-ladder test that
-//  measures the SAME routing-diversity z (verbatim CLM/model/judge_clm.routing_z)
+//  measures the SAME routing-diversity z (verbatim train/clm/model/judge_clm.routing_z)
 //  at MULTIPLE rung sizes and checks whether z RISES monotonically with size.
 //
 //  hexa-native DRIVER (d5 1순위) · the QAT-free train + Dirichlet-null z PAYLOAD
-//  lives in CLM/model/h871_routing_z_scale.py (torch autograd dependency), the
+//  lives in train/clm/model/h871_routing_z_scale.py (torch autograd dependency), the
 //  SAME .hexa-driver ⇄ .py-payload split as train_clm.hexa ⇄ train_clm.py.
 //
 //  LADDER (d_model / n_trunk_layers / n_experts), arm AB (= H_863 production arm):

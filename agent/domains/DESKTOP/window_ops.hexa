@@ -1,8 +1,8 @@
-// window_ops.hexa — macOS window arrangement + multi-app coordination (AGENT/DESKTOP/M4).
+// window_ops.hexa — macOS window arrangement + multi-app coordination (agent/domains/DESKTOP/M4).
 //
 // BRIDGE ARCHITECTURE: this file is a TOOL SURFACE only. The "when/why to
 // resize/tile/minimize" decision lives in CORE (PureField / brain_decide);
-// AGENT/CORE/tool_gate maps the live phase to a tier; this module exposes
+// agent/domains/CORE/tool_gate maps the live phase to a tier; this module exposes
 // only the "how" — composed on top of M1 (native_ax) primitives + osascript
 // System Events `position` / `size` properties.
 // No consciousness framing, no Φ math, no substrate gating happens here.
@@ -19,7 +19,7 @@
 //   - `set value of attribute "AXMinimized" of window N of process X to true`
 //   - `click button 1 of window N of process X`  (close button — risk: hard)
 //
-// RISK CLASSIFICATION (labels, NOT gates — AGENT/CORE/tool_gate gates):
+// RISK CLASSIFICATION (labels, NOT gates — agent/domains/CORE/tool_gate gates):
 //   - "read" : ax_window_bounds — pure observation, no state change
 //   - "soft" : set_bounds · minimize · arrange_grid · focus_chain · screenshot_all — reversible
 //   - "hard" : ax_window_close — destructive (unsaved work risk)
@@ -165,7 +165,7 @@ pub fn ax_window_minimize(app: string, idx: int) -> bool {
 
 // 4. ax_window_close(app, idx) — close via clicking the close button (button 1).
 //    Returns true on success. risk: "hard" — destructive (unsaved work risk).
-//    The "hard" label is intentional; AGENT/CORE/tool_gate gates this in CORE.
+//    The "hard" label is intentional; agent/domains/CORE/tool_gate gates this in CORE.
 pub fn ax_window_close(app: string, idx: int) -> bool {
     if _dry_run() { return true }
     let one_idx = idx + 1
@@ -299,5 +299,5 @@ pub fn ax_focus_chain(apps: list) -> Map {
 
 // 8. One-line description of this module's tool surface (introspection).
 pub fn window_ops_summary() -> string {
-    "AGENT/DESKTOP/window_ops — macOS window ops · 7 pub fn · bounds/set_bounds/minimize/close/arrange_grid/screenshot_all/focus_chain · grid tile (i%cols, i/cols) · M4 surface"
+    "agent/domains/DESKTOP/window_ops — macOS window ops · 7 pub fn · bounds/set_bounds/minimize/close/arrange_grid/screenshot_all/focus_chain · grid tile (i%cols, i/cols) · M4 surface"
 }

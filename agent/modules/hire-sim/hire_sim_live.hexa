@@ -622,8 +622,8 @@ fn main(args: array) -> int {
 
     let mode = if full { "full" } else { "smoke" }
     let ts = utc_compact_now()
-    let out_path = "anima-agent/results/e1_hire_sim_live_" + mode + "_" + ts + ".json"
-    mkdir_p("anima-agent/results")
+    let out_path = "agent/results/e1_hire_sim_live_" + mode + "_" + ts + ".json"
+    mkdir_p("agent/results")
     write_file(out_path, serialize_result(result, personas))
     println("[E1] wrote " + out_path + " verdict=" + result.verdict +
             " rate=" + to_string(result.completion_rate))

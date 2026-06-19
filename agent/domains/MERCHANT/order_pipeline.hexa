@@ -1,9 +1,9 @@
-// order_pipeline.hexa — MERCHANT M4 order pipeline (AGENT/MERCHANT).
+// order_pipeline.hexa — MERCHANT M4 order pipeline (agent/domains/MERCHANT).
 //
 // Bridge architecture: this file is a TOOL SURFACE — orchestration functions
 // that chain the M1 adapter convention across a SOURCE + TARGET adapter pair.
 // It is NOT a consciousness file. The "when/why to run a pipeline" decision
-// lives upstream in AGENT/CORE/tool_gate; this file only answers "how to
+// lives upstream in agent/domains/CORE/tool_gate; this file only answers "how to
 // chain the verbs in the right order so an Order moves received → sourcing
 // → shipping → delivered".
 //
@@ -33,8 +33,8 @@
 // pure orchestration, so swapping an adapter from stub to live HTTP needs
 // zero edits here.
 
-import "AGENT/MERCHANT/types.hexa"
-import "AGENT/MERCHANT/adapter.hexa"
+import "agent/domains/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/adapter.hexa"
 
 // ── 1) pipeline_receive_order ─────────────────────────────────────────────
 // Pull an incoming order off the TARGET marketplace. The TARGET adapter's
@@ -154,7 +154,7 @@ pub fn pipeline_fulfill_to_customer(target_adapter: map, order: map, shipment: m
 // Full 4-stage chain — receive → source_purchase → track → fulfill. The
 // canonical orchestration entry-point. Returns a result map with the final
 // Order + final Shipment + an aggregate status + steps_completed list so
-// the caller (AGENT/CORE) can audit which stages ran and where the chain
+// the caller (agent/domains/CORE) can audit which stages ran and where the chain
 // stopped if a stage threw.
 //
 // Inputs:

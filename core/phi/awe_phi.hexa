@@ -114,11 +114,11 @@
 //           loosening response (not a symbol)
 //
 // Ref:
-//   anima-engines/aesthetic_phi.hexa       (P48 composite Φ + Wundt)
-//   anima-engines/cosmic_phi.hexa          (P75 multi-series MI)
-//   anima-engines/jhana_meditation_phi.hexa(P62 stage Φ + signature)
-//   anima-engines/psychedelic_phi.hexa     (P59 dose-dependent Φ)
-//   anima-engines/time_perception_phi.hexa (subjective-clock coupling)
+//   core/phi/aesthetic_phi.hexa       (P48 composite Φ + Wundt)
+//   core/phi/cosmic_phi.hexa          (P75 multi-series MI)
+//   core/phi/jhana_meditation_phi.hexa(P62 stage Φ + signature)
+//   core/phi/psychedelic_phi.hexa     (P59 dose-dependent Φ)
+//   core/phi/time_perception_phi.hexa (subjective-clock coupling)
 
 // ═══════════════════════════════════════════════════════════════
 // Constants
@@ -935,7 +935,7 @@ fn check_T5() -> bool {
 // ═══════════════════════════════════════════════════════════════
 
 fn main() {
-    println("[anima-engines/awe_phi] P132 — Awe Φ (vastness, accommodation, small-self)")
+    println("[core/phi/awe_phi] P132 — Awe Φ (vastness, accommodation, small-self)")
     println("  refs: Keltner & Haidt 2003 | Shiota 2007 | Piff 2015 | Rudd 2012 | Yaden 2017")
     println("  channels: world, self, schema, time, moral (5)")
     println("  N=" + str(AWE_T_STEPS) + " bins=" + str(AWE_BINS) + " acc_samples=" + str(AWE_N_ACC_SAMPLES))
@@ -969,9 +969,9 @@ fn main() {
     if !t5 { all = false }
 
     if all {
-        println("[anima-engines/awe_phi] 5/5 PASS — P132 DONE (awe Φ vastness accommodation verified)")
+        println("[core/phi/awe_phi] 5/5 PASS — P132 DONE (awe Φ vastness accommodation verified)")
     } else {
-        println("[anima-engines/awe_phi] SOME FAILED")
+        println("[core/phi/awe_phi] SOME FAILED")
     }
 }
 

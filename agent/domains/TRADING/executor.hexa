@@ -2,8 +2,8 @@
 // Port of agent/trading/executor.py
 
 // TECS-L position sizing: 1/e investable, 1/6 max per position
-// Bridge architecture (AGENT/CORE supplies tier; this module = tool surface only):
-//   AGENT/CORE tier gate approval required before execution
+// Bridge architecture (agent/domains/CORE supplies tier; this module = tool surface only):
+//   agent/domains/CORE tier gate approval required before execution
 //   Tier-based urgency (lower tier = tighter limits)
 //   Tier-based confidence scaling
 
@@ -24,7 +24,7 @@ fn estimate_slippage(symbol, size) {
 }
 
 fn calculate_position_size(capital, tier) {
-    // TODO: TECS-L sizing with AGENT/CORE tier modulation
+    // TODO: TECS-L sizing with agent/domains/CORE tier modulation
     print("calculate_position_size stub")
 }
 

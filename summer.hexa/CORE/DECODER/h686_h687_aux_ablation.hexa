@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  CORE/DECODER/h686_h687_aux_ablation.hexa
+//  core/DECODER/h686_h687_aux_ablation.hexa
 //
 //   H_686 + H_687 aux-loss toy ablation (UNIVERSE Cycle #24 후속 toy 검증).
 //
@@ -88,8 +88,8 @@
 //   moe_router (top1) + moe_router_bwd verbatim from g61 (m4b/E2 reuse).
 // ════════════════════════════════════════════════════════════════════════════
 
-import "CORE/DECODER/moe_router.hexa"
-import "CORE/DECODER/moe_router_bwd.hexa"
+import "core/DECODER/moe_router.hexa"
+import "core/DECODER/moe_router_bwd.hexa"
 
 let mut PASS = 0
 let mut FAIL = 0

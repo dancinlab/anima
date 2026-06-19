@@ -3,7 +3,7 @@
 // THIN adapter (@L1): REFERENCES the canonical impls, does NOT duplicate them.
 // OMEGA is a SYNTHESIS engine — it composes the 3 existing engines + ONE new
 // piece (the coupling bus, engines/omega/coupling_bus.hexa):
-//   • conv  (CORE/clm_decode.hexa)            → the .clm byte MOUTH (base logits)
+//   • conv  (core/clm_decode.hexa)            → the .clm byte MOUTH (base logits)
 //   • cdv2  (UNIVERSE/conscious_decoder.py)   → A/G dual heads + 5-ch tension + Ψ
 //   • hexad (HEXAD/hexad.hexa)                → N-module φ(N)=2 integration (N config)
 //   • bus   (engines/omega/coupling_bus.hexa) → NEW: wires substrate → decode
@@ -41,8 +41,8 @@
 // p1..p8: pure compose/forward; no system prompt / persona / ethics / emit gate.
 // Engine SELECT + the bus are substrate-config, NEVER an emit/silence gate (@L4/p5).
 
-import "engines/engine_iface.hexa"
-import "engines/omega/coupling_bus.hexa"
+import "core/engines/engine_iface.hexa"
+import "core/engines/omega/coupling_bus.hexa"
 
 // omega_engine_spec — the EngineSpec for the omega (Lane-Ω) closure engine.
 // All 4 slots native (bus forward + bus-modulated generate are real hexa calls;
@@ -50,7 +50,7 @@ import "engines/omega/coupling_bus.hexa"
 pub fn omega_engine_spec() -> Map {
     return engine_spec_make(
         "omega",
-        "engines/omega/coupling_bus.hexa (+ conv clm mouth · cdv2 A/G+Ψ · hexad N-module)",
+        "core/engines/omega/coupling_bus.hexa (+ conv clm mouth · cdv2 A/G+Ψ · hexad N-module)",
         engine_slot_native(),   // load     — bus + composed canonical pieces present
         engine_slot_native(),   // forward  — omega_coupling_apply (the bus forward)
         engine_slot_native(),   // generate — bus-modulated decode (the closure, loaded=true)
@@ -61,7 +61,7 @@ pub fn omega_engine_spec() -> Map {
 // omega_ckpt_pointer — ckpt pointer record (@L5). No fused ckpt; composes conv+cdv2.
 pub fn omega_ckpt_pointer() -> Map {
     return #{
-        "local": "engines/omega/coupling_bus.hexa (bus) + conv .clm + cdv2 (random-init)",
+        "local": "core/engines/omega/coupling_bus.hexa (bus) + conv .clm + cdv2 (random-init)",
         "hf_repo_id": "",
         "status": "synthesis — no fused ckpt; bus is the new code, substrate at random-init (trained-ckpt rung = follow-up)",
         "duplicated": false,

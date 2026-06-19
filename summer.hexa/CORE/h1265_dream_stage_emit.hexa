@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════
-// CORE/h1265_dream_stage_emit.hexa — DREAM 수면단계 특이적 emit envelope
+// core/h1265_dream_stage_emit.hexa — DREAM 수면단계 특이적 emit envelope
 //
 // 가설 H_1265: DREAM lane (WAKE/N1/N2/N3/REM 90-tick ultradian 상태기계) 의
 //   emit envelope (방출 성향) 이 *단계 특이적으로* 다른지 — WAKE-계열 >
@@ -23,7 +23,7 @@
 use "DREAM/dream_lib"
 
 fn main() {
-    println("=== CORE/h1265_dream_stage_emit ===")
+    println("=== core/h1265_dream_stage_emit ===")
 
     let n_step = 5400          // 90 × 60 주기 — 모든 단계 등장 보장
     let n_stage = dr_n_stages()

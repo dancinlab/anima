@@ -1,7 +1,7 @@
-// CORE/DECODER/moe_collapse_gate_smoke.hexa — M4b collapse gate invariant
+// core/DECODER/moe_collapse_gate_smoke.hexa — M4b collapse gate invariant
 // anchor: D1 LZ76 측정값 (#1257) — healthy 0.849 vs collapse 0.212, floor 0.50.
 
-import "CORE/DECODER/moe_collapse_gate.hexa"
+import "core/DECODER/moe_collapse_gate.hexa"
 
 fn assert_eq_f(name: string, got: float, want: float) -> bool {
     let d = if got - want < 0.0 { want - got } else { got - want }

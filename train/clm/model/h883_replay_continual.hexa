@@ -3,7 +3,7 @@
 NOTE ON LANGUAGE: this project (`h883-replay-continual`) takes `.hexa` as its native source
 extension (project.tape marker). The dense torch tensor payload below is plain Python and is
 executed with the system `python3` interpreter (extension-agnostic) exactly as a sibling `.py`
-measurement harness would be (cf. CLM/model/h865_adapter_edge.py, array_moe.py). It imports the
+measurement harness would be (cf. train/clm/model/h865_adapter_edge.py, array_moe.py). It imports the
 H_865 adapter-edge harness VERBATIM and adds ONLY the replay interleave on top.
 
 Question: does interleaving a SMALL replay buffer of OLD (base-ability "web" lane) samples

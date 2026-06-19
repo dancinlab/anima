@@ -11,7 +11,7 @@
 //
 // 설계 (ADD-ONLY · 기존 AKIDA/akida_sw_lif 미수정):
 //   이 .hexa 드라이버는 이미 HW-검증된 SW int4 forward primitive
-//   (AGENT/CHAT/akida_sw_lif.cascade_forward — toy byte-match 0)를
+//   (agent/domains/CHAT/akida_sw_lif.cascade_forward — toy byte-match 0)를
 //   CONSUME 하는 python 측정기를 shell-out 으로 구동한다 (scripts/akida/
 //   runner.hexa 의 _exec_capture python3 패턴과 동형). numpy/akida 무거운 부분은
 //   python 측, verdict 동결·기록은 hexa 측.
@@ -117,7 +117,7 @@ fn _py_program() -> string {
     p.push("    arm='SW'; fal='F-CLM-DECODER-MID-SW'; ok=(ham_in==0 and cross); th=ham_in\n")
     p.push("    verdict='HW-PENDING (SW determinism byte-identical)' if ok else 'CLOSED-NEGATIVE'\n")
     p.push("    claim='SW int4 forward DETERMINISTIC byte-identical (in-proc+cross-proc) at mid; HW==SW HW-pending'\n")
-    p.push("res={'hypothesis':'H_877','rung':{'width_d':WIDTH,'depth_L':DEPTH,'act_bits_E':ACT_BITS,'input_bits':INPUT_BITS,'n_probe':N_PROBE,'seed':SEED,'int4_range':[LO,HI]},'eval_byte_set_len':int(ref.size),'ref_sha256':ref_sha,'sw_in_process_total_hamming':ham_in,'sw_cross_process_match':bool(cross),'sw_cross_process_sha256':child.get('sha'),'hw_attempted':bool(hw_ok),'hw_total_hamming':hw_h,'hw_sha256':hw_s,'arm':arm,'falsifier':fal,'total_hamming':th,'all_pass':bool(ok),'verdict':verdict,'claim':claim,'scope':'mid rung d512/L8/E8 only (a_scale_honest_scope)','consumes':'AGENT/CHAT/akida_sw_lif.cascade_forward (HW-verified toy byte-match)'}\n")
+    p.push("res={'hypothesis':'H_877','rung':{'width_d':WIDTH,'depth_L':DEPTH,'act_bits_E':ACT_BITS,'input_bits':INPUT_BITS,'n_probe':N_PROBE,'seed':SEED,'int4_range':[LO,HI]},'eval_byte_set_len':int(ref.size),'ref_sha256':ref_sha,'sw_in_process_total_hamming':ham_in,'sw_cross_process_match':bool(cross),'sw_cross_process_sha256':child.get('sha'),'hw_attempted':bool(hw_ok),'hw_total_hamming':hw_h,'hw_sha256':hw_s,'arm':arm,'falsifier':fal,'total_hamming':th,'all_pass':bool(ok),'verdict':verdict,'claim':claim,'scope':'mid rung d512/L8/E8 only (a_scale_honest_scope)','consumes':'agent/domains/CHAT/akida_sw_lif.cascade_forward (HW-verified toy byte-match)'}\n")
     p.push("print(json.dumps(res,indent=2)); sys.exit(0 if ok else 1)\n")
     return p.join("")
 }

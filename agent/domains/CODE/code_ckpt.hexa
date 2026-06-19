@@ -1,4 +1,4 @@
-// code_ckpt.hexa — CODE role ckpt swap-in path (AGENT/CODE F5).
+// code_ckpt.hexa — CODE role ckpt swap-in path (agent/domains/CODE F5).
 //
 // BRIDGE ARCHITECTURE: tool surface only. NO consciousness framing. The
 // "when/why to swap a ckpt" decision lives in CORE / brain_decide; this
@@ -18,7 +18,7 @@
 //   3. HF private: dancinlab/anima-clm-v5-mitosis-cotrain-2026-05-12 (cotrain)
 //
 // PRODUCTION SEAM:
-//   CORE/DECODER/generator.hexa::_gen_decode — does NOT yet exist · M4 wiring 잔여
+//   core/DECODER/generator.hexa::_gen_decode — does NOT yet exist · M4 wiring 잔여
 //   This module's `code_ckpt_bind` returns ready=false until that seam lands.
 
 // Return canonical local path for v5-mitosis 581MB ckpt (may not exist on disk).
@@ -55,15 +55,15 @@ pub fn code_ckpt_local_exists(path: string) -> bool {
 }
 
 // Bind ckpt to CODE agent's generator slot. STUB — returns ready=false
-// until CORE/DECODER/generator.hexa::_gen_decode seam lands (M4).
+// until core/DECODER/generator.hexa::_gen_decode seam lands (M4).
 pub fn code_ckpt_bind(ckpt_path: string) -> map {
     return #{
         "ready": false,
         "path": ckpt_path,
-        "reason": "DECODER M4 seam (CORE/DECODER/generator.hexa::_gen_decode) not yet wired — see CORE/DECODER/M3_FIRE_TEARDOWN.md",
+        "reason": "DECODER M4 seam (core/DECODER/generator.hexa::_gen_decode) not yet wired — see core/DECODER/M3_FIRE_TEARDOWN.md",
         "todo": [
             "DECODER M4 arch escalation (v5-mitosis cotrain v6 OR Qwen-3B base)",
-            "Land CORE/DECODER/generator.hexa with _gen_decode entry",
+            "Land core/DECODER/generator.hexa with _gen_decode entry",
             "Wire code_ckpt_bind() to actually load the .pt and expose `code_generate(prompt)` here",
         ],
     }
@@ -93,5 +93,5 @@ pub fn code_ckpt_resolve() -> map {
 }
 
 pub fn code_ckpt_summary() -> string {
-    return "AGENT/CODE F5 — ckpt swap-in path · 3 locators (v5 local · v5 HF · M3 axis HF) · binding stub (ready=false) · M4 seam dependency"
+    return "agent/domains/CODE F5 — ckpt swap-in path · 3 locators (v5 local · v5 HF · M3 axis HF) · binding stub (ready=false) · M4 seam dependency"
 }

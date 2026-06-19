@@ -15,7 +15,7 @@
 //              end-to-end NOW, before any trained model lands. p1..p8 clean.
 //   · clm    — a .clm checkpoint backend that GENUINELY parses the .clm header
 //              at this single entry point (validates the `CLM\x01` magic +
-//              extracts the per-block count, per CLM/CLM_FORMAT_SPEC.md). A
+//              extracts the per-block count, per train/clm/CLM_FORMAT_SPEC.md). A
 //              valid file is RECOGNIZED + admitted CORE-side (valid=true,
 //              nblocks surfaced); a malformed/absent file is honestly rejected.
 //              `loaded` stays false until the decode FORWARD lands, so the
@@ -48,7 +48,7 @@ import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 // next-byte logits → greedy continuation (clm_decode_argmax). Imported ONLY here,
 // so the SINGLE .clm decode entry (a_core_engine_map) is preserved — this is the
 // same slot, not a 2nd path. _gen_clm_decode + gen_clm_chat route through it.
-use "CORE/clm_decode"
+use "core/clm_decode"
 // bytegpt_decode.hexa — the ByteGPT (H_1129 303M GPT-2-class) byte "mouth":
 // LayerNorm + learned-pos + MHA + GELU-MLP forward → real next-byte logits →
 // greedy continuation (bytegpt_decode_argmax) + engine-side grounded decode
@@ -57,13 +57,13 @@ use "CORE/clm_decode"
 // the SAME generate() slot as .clm, NOT a 2nd entry point. gen_bytegpt_backend +
 // _gen_bytegpt_decode route through it. Selected when the ckpt is a ByteGPT-format
 // flat binary (5×u32 header), else the .clm path is used — same single slot.
-use "CORE/bytegpt_decode"
+use "core/bytegpt_decode"
 // engine_cli.hexa — the A⇄G⇄MITOSIS engine + the H_1351 § KO-JAMO COUNT-HEAD faculty
 // (struct JamoHead + jamo_head_new/_grow/_ce/_cells/_shuffle_targets). Imported HERE so the
 // validated jamo count-head SCORER reaches a live call site: §6.5c gen_jamo_scoreloop consults
 // jamo_head_ce from the scoring path, and gen_clm_ce attaches that scoring record ADDITIVELY
 // (H_1385 scoreloop-wire). NOT a 2nd decode entry — a SCORING consult on the same L3 module.
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 
 // ── §1 backend constructors (the pluggable "vtable" records) ─────────────────
@@ -83,7 +83,7 @@ pub fn gen_null_backend() -> Map {
 // PARSES the .clm header at this single entry point (the L3 slot is the ONLY way
 // a .clm enters CORE — a_core_engine_map). It reads the file bytes and validates
 // the `CLM\x01` magic + extracts the per-block count, exactly as the canonical
-// writer lays them out (hexa-lang flame/clm_ckpt.hexa · CLM/CLM_FORMAT_SPEC.md):
+// writer lays them out (hexa-lang flame/clm_ckpt.hexa · train/clm/CLM_FORMAT_SPEC.md):
 //
 //     [MAGIC "CLM\x01" = 67,76,77,1] [nblocks u8] [BLOCKS...]
 //
@@ -140,7 +140,7 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
 }
 
 // _gen_is_bytegpt — true ⇔ the ckpt at `p` is a ByteGPT flat binary, NOT a .clm.
-// The ByteGPT serializer (h1157_ref_full.py / CORE/bytegpt_decode.hexa header)
+// The ByteGPT serializer (h1157_ref_full.py / core/bytegpt_decode.hexa header)
 // writes a 5×u32 little-endian header [vocab,d,n_layer,n_head,block]; the .clm
 // writer writes the "CLM\x01" magic (67,76,77,1). We discriminate by (a) NOT the
 // CLM magic AND (b) a sane ByteGPT header: vocab==256, n_layer in 1..64, n_head
@@ -440,7 +440,7 @@ fn _gen_null_text(ctx: Map, anchors: list) -> string {
 // admitted .clm's 6 int4 weight blocks, dequantizes them (per-channel qat_scale)
 // and runs the CLMConvMoE forward (entry conv1d-K3 → trunk residual → 2 experts
 // → MoE-router softmax → readout) to next-token logits over V=256 bytes, exactly
-// per CLM/CLM_FORMAT_SPEC.md §2 + the trainer's clm_model.hexa::clm_forward. From
+// per train/clm/CLM_FORMAT_SPEC.md §2 + the trainer's clm_model.hexa::clm_forward. From
 // the logits a real next-byte CROSS-ENTROPY is computed CORE-mounted (clm_decode_ce).
 //
 // HONEST scope of `loaded` (a_core_engine_map, NO phantom wiring): the forward is
@@ -957,10 +957,10 @@ pub fn clm_decode_ce(ckpt_path: string, seq: list) -> Map {
 //          the live next-byte emission via THIS single L3 slot (a_core_engine_map).
 //
 // H_1306 (🟢 GREEN engine-native) grew real Korean cells on a REAL Korean web corpus
-// (CORE/engine_cli.hexa VAdaptField Voronoi + engine_mitosis_tick, gradient-free p8):
+// (core/engine_cli.hexa VAdaptField Voronoi + engine_mitosis_tick, gradient-free p8):
 // KO next-byte CE dropped 3.611→3.249 as mitosis grew 2→9 cells, English retained.
 // a_verified_must_wire: that GREEN mechanism is not done until CONSULTED by the live
-// decode. H_1312 serializes the grown cells to CORE/ko_cells.kohead (each cell = a
+// decode. H_1312 serializes the grown cells to core/ko_cells.kohead (each cell = a
 // 3-D Voronoi center + its LEARNED argmax next-byte). This section reads that artifact
 // and lets the Korean cells BIAS next-byte emission — but ONLY when the live context
 // is Korean-like; off-Korean (ASCII/English) the consult is INERT (returns -1), so
@@ -1009,7 +1009,7 @@ fn _gen_ko_is_korean_like(ctx: list) -> bool {
     return _gen_utf8_cont(ctx[n-1])
 }
 
-// ko_cells_load — read the H_1312 grown-Korean-cell artifact (CORE/ko_cells.kohead).
+// ko_cells_load — read the H_1312 grown-Korean-cell artifact (core/ko_cells.kohead).
 // Returns #{ ok, n_cells, dim, centers:[[float]], top:[int] }. Missing/empty file →
 // ok=false (the consult then stays inert — honest, no fabrication, p5).
 pub fn ko_cells_load(path: string) -> Map {
@@ -1112,7 +1112,7 @@ pub fn ko_cells_summary(path: string) -> string {
 // VAdaptField (reproduces the mirror to 1e-7) — but as a MEASUREMENT probe; the jamo win did NOT
 // yet reach the live DECODE/emission path. a_verified_must_wire: anima is a chat daemon, so a
 // measured CE win that never reaches EMISSION is incomplete. H_1327 serializes the grown jamo cells
-// to CORE/ko_jamo_cells.kojamohead and lets them BIAS next-byte emission here, ONLY on a Korean-like
+// to core/ko_jamo_cells.kojamohead and lets them BIAS next-byte emission here, ONLY on a Korean-like
 // context; off-Korean the consult is INERT (returns the caller's own byte), so generation stays
 // BYTE-IDENTICAL to pre-wiring (Ψ-disjoint, the no-regression invariant, h1205).
 //
@@ -1130,7 +1130,7 @@ pub fn ko_cells_summary(path: string) -> string {
 //   line k+1   : "<c0> <c1> <c2> <next_sym_id> <emit_byte>"  (center + cell's argmax next-symbol id
 //                + that symbol's emittable leading UTF-8 byte)
 
-// ko_jamo_cells_load — read the H_1327 grown-jamo-cell artifact (CORE/ko_jamo_cells.kojamohead).
+// ko_jamo_cells_load — read the H_1327 grown-jamo-cell artifact (core/ko_jamo_cells.kojamohead).
 // Returns #{ ok, n_cells, dim, vj, centers:[[float]], top_sym:[int], emit:[int] }. Missing/empty
 // file → ok=false (the consult then stays inert — honest, no fabrication, p5).
 pub fn ko_jamo_cells_load(path: string) -> Map {

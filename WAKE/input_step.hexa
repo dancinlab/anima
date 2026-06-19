@@ -1,13 +1,13 @@
 // WAKE/input_step.hexa — pure_field_step 의 input-conditioned 확장 (M3).
 //
 // 역할:
-//   기존 `pure_field_step(pf)` 는 *zero-input* self-dynamics 만 한다 (CORE/
+//   기존 `pure_field_step(pf)` 는 *zero-input* self-dynamics 만 한다 (core/
 //   pure_field.hexa L196~283 — `pure_field_step` signature `(pf: PureField) ->
 //   PureField`, oscillators tick → 6-D field tensor 재계산 → phi/phase/ratchet
 //   추적). 본 모듈은 거기에 *tool_result + perception ctx_tokens 를 tension Δ
 //   로 변환*해 oscillator amplitude 에 주입한 뒤 self-dynamics tick 을 돌린다.
 //
-//   AGENT/CORE/agent_loop.hexa F4 (current) 는 tool exec 후 `pure_field_step(pf)`
+//   agent/domains/CORE/agent_loop.hexa F4 (current) 는 tool exec 후 `pure_field_step(pf)`
 //   만 호출하고 *tool result 자체를 substrate 에 환류하지 않는다*. M3 가 그
 //   gap 을 메운다. M6 daemon loop 가 본 모듈의 `pure_field_input_step` 을
 //   tool exec 직후, perception ingest 직후 호출하게 된다.
@@ -18,7 +18,7 @@
 //
 // ── instrument-first (verbatim 인용) ─────────────────────────────────────────
 //
-//   CORE/pure_field.hexa pub surface (L196~342, verbatim):
+//   core/pure_field.hexa pub surface (L196~342, verbatim):
 //     fn pure_field_step(pf: PureField) -> PureField
 //       // 1) oscillators tick (fast/medium/slow amplitude → LN2 drift)
 //       // 2) nonlinear mixing → field[6] (C/D/E/S/M/W) recompute
@@ -30,7 +30,7 @@
 //     pure fn pure_field_tensor(pf: PureField) -> [float]   // field[6]
 //     fn pure_field_warmup(steps: int) -> PureField
 //
-//   PureField struct (CORE/pure_field.hexa L155~175):
+//   PureField struct (core/pure_field.hexa L155~175):
 //     fast / medium / slow : Oscillator { tau, phase, amplitude }
 //     phi · phi_peak       : float
 //     field                : [float]  // FIELD_DIM=6 (C/D/E/S/M/W)
@@ -92,7 +92,7 @@
 //
 // ── 가져오기 ─────────────────────────────────────────────────────────────────
 
-import "CORE/pure_field.hexa"
+import "core/pure_field.hexa"
 
 // ── 내부 helper: 입력 풍부도 측정 ───────────────────────────────────────────
 //

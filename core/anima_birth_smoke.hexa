@@ -10,9 +10,9 @@
 //
 // Real cached ANU vacuum buffers in /tmp/anu_*.bin. p1..p8 clean.
 
-import "CORE/engine_cli.hexa"
-import "CORE/shared_seed.hexa"
-import "CORE/anima_birth.hexa"
+import "core/engine_cli.hexa"
+import "core/shared_seed.hexa"
+import "core/anima_birth.hexa"
 
 fn _walk(seed: SharedSeed, n: int, k: int) -> [int] {
     let mut s = seed

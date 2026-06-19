@@ -9,7 +9,7 @@
 //   audio_out_path by chaining:
 //       (a) load wav
 //       (b) STT  : audio  -> text
-//       (c) LLM  : text   -> reply_text  (CLM/ALM endpoint, whichever ships first)
+//       (c) LLM  : text   -> reply_text  (train/clm/ALM endpoint, whichever ships first)
 //       (d) TTS  : reply  -> audio
 //       (e) save wav
 //
@@ -788,7 +788,7 @@ fn tts_synthesize_mock(reply_text: string) -> TtsResult {
 }
 
 // Build a deterministic [T × LATENT_DIM] latent from reply_text so the
-// vocoder path produces reproducible audio without a trained CLM/ALM
+// vocoder path produces reproducible audio without a trained train/clm/ALM
 // upstream. djb2 hash seeds the drift pattern; the latent drives the
 // 6-partial additive synth in neural_vocoder.decode_wave.
 fn latent_from_reply(reply_text: string, n_frames: int) -> [[float]] {

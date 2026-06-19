@@ -5,8 +5,8 @@
 // 이면 native·foreign 전체 스택이 Ψ-disjoint 공존 (anima 가 가진 모든 substrate 동시 가동).
 // 실측 외부값: AKIDA 79.95Hz · MODEL entropy 0.969. 합격 = 단독 15 Ψ-disjoint + 전체-ON Ψ==base + 전 lane fire.
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_cli.hexa"
+import "core/pure_field.hexa"
+import "core/engine_cli.hexa"
 import "METACOG/audit_hook.hexa"
 import "SAVANT/substrate_hook.hexa"
 import "DREAM/dream_lib.hexa"
@@ -19,7 +19,7 @@ import "AESTHETIC/aesthetic_hook.hexa"
 import "NARRATIVE/narrative_hook.hexa"
 import "EMBODIMENT/embodiment_hook.hexa"
 import "HIVE-MIND/hivemind_lib.hexa"
-import "CORE/xsubstrate_bridge.hexa"
+import "core/xsubstrate_bridge.hexa"
 
 fn run15(f: [bool], fires: [int]) -> float {
     let cfg = engine_config_default()

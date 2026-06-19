@@ -1,9 +1,9 @@
 // ════════════════════════════════════════════════════════════════════════
-// CORE/h1218_engine_gate_probe.hexa — H_1218 ENGINE-MEASURED generation gates.
+// core/h1218_engine_gate_probe.hexa — H_1218 ENGINE-MEASURED generation gates.
 //
 // WHY: G1 (창발/recombination), G2 (novelty), G6 (ideation) were measured TORCH-side
 // (H_1129 / H_1140 / H_1158). a_engine_measured_verdict wants them measured ON THE
-// ENGINE — by GENERATING through the mounted 303M ByteGPT via CORE/bytegpt_decode.hexa
+// ENGINE — by GENERATING through the mounted 303M ByteGPT via core/bytegpt_decode.hexa
 // (the .hexa forward), not the torch reference. H_1157 proved byte-exact greedy parity,
 // so engine greedy output SHOULD be byte-identical to torch greedy — running it is the
 // honest verification (c2). This probe ADDS the seed loop; it does NOT edit the engine.
@@ -17,7 +17,7 @@
 // by scripts/scratch/h1218/score_engine_gates.py with the FROZEN gauge_lib evaluators).
 // ════════════════════════════════════════════════════════════════════════
 
-import "CORE/bytegpt_decode.hexa"
+import "core/bytegpt_decode.hexa"
 
 // seed text -> list of utf-8 byte ints
 fn _bytes_of(s: string) -> list {

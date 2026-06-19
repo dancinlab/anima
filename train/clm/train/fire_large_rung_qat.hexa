@@ -2,7 +2,7 @@
 //  fire_large_rung_qat.hexa — large-rung (d768/L12/E12) AKIDA-envelope QAT fire SPEC
 //
 //  FIRE-READY — not yet fired; launch via
-//    `sidecar pool on summer 'python3 CLM/train/train_clm.py --rung large …'`
+//    `sidecar pool on summer 'python3 train/clm/train/train_clm.py --rung large …'`
 //    (or `hexa cloud fire`) on POOL GPU target (RTX 5070 12GB · summer/aiden host).
 //
 //  P6_SCALE_LADDER_7B §1: the NEXT production measurement-rung above mid.
@@ -30,7 +30,7 @@
 //  Provider = pool (owned). GPU = RTX 5070 12GB (44.68M fp32 master + Adam ≈ ~0.7GB).
 //
 //  HARD: pure-hexa SPEC/driver · NO external LLM · NO foundation-borrow (pure scratch QAT).
-//  The torch payload is the LANDED CLM/train/train_clm.py (large rung added to its LADDER:
+//  The torch payload is the LANDED train/clm/train/train_clm.py (large rung added to its LADDER:
 //  d_model=768, n_trunk_layers=12, n_experts=12) — this driver records the dispatch
 //  contract + verdict path. sibling: train_clm.py · fire_mid_rung_qat.hexa · P6_SCALE_LADDER_7B.md
 // ════════════════════════════════════════════════════════════════════════════
@@ -50,7 +50,7 @@ fn arms() -> [string] { return ["A", "B", "AB"] }
 
 // per-arm fire command (the landed QAT trainer · large rung).
 fn fire_cmd(arm: string) -> string {
-    return "python3 CLM/train/train_clm.py --arm " + arm + " --rung " + rung()
+    return "python3 train/clm/train/train_clm.py --arm " + arm + " --rung " + rung()
         + " --steps " + to_string(steps()) + " --seed " + to_string(seed())
         + " --act-bits " + to_string(act_bits())
         + " --json-out out/clm_large_" + arm + "_s" + to_string(seed()) + ".json"

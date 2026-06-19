@@ -19,8 +19,8 @@
 //   "실데이터(spike rate)가 79.95Hz → 139.93Hz 로 바뀌어도 → context 는 달라지지만(0.0800→0.1399)
 //    A⇄G Ψ phiSum 은 feed-없음 base 와 BYTE-IDENTICAL 로 유지된다 (브리지 Ψ-disjoint 강건)."
 
-import "CORE/pure_field.hexa"
-import "CORE/xsubstrate_bridge.hexa"
+import "core/pure_field.hexa"
+import "core/xsubstrate_bridge.hexa"
 
 fn akida_run(spike_rate: float, on: bool) -> float {
     let mut pf = pure_field_new()

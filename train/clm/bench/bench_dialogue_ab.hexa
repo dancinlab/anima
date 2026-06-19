@@ -18,7 +18,7 @@
 //
 //  HARD: external LLM 0 (no LLM judge — distributional self-scoring only) ·
 //  pure-hexa stub. The torch payload (train both arms · score) reuses
-//  CLM/train/train_clm.py + a self-play generator (P4 follow-on).
+//  train/clm/train/train_clm.py + a self-play generator (P4 follow-on).
 //  sibling: UNIVERSE/cards/H_863 · build_p4_dialogue_corpus.hexa · CLM.md P5
 // ════════════════════════════════════════════════════════════════════════════
 
@@ -64,11 +64,11 @@ fn ab_quality_pass(
 // arm-SP additionally folds a DIVERSITY-gated self-play slice into the corpus.
 fn train_cmd(arm: string, rung: string) -> string {
     if arm == "SP" {
-        return "python3 CLM/train/train_clm.py --arm AB --rung " + rung
-            + " --corpus CLM/corpus/p4_dialogue/clm_p4.corpus.kosmos  # SFT+self-play"
+        return "python3 train/clm/train/train_clm.py --arm AB --rung " + rung
+            + " --corpus train/clm/corpus/p4_dialogue/clm_p4.corpus.kosmos  # SFT+self-play"
     }
-    return "python3 CLM/train/train_clm.py --arm AB --rung " + rung
-        + " --corpus CLM/corpus/p4_dialogue/cc_only.corpus.kosmos  # SFT only"
+    return "python3 train/clm/train/train_clm.py --arm AB --rung " + rung
+        + " --corpus train/clm/corpus/p4_dialogue/cc_only.corpus.kosmos  # SFT only"
 }
 
 fn main() {

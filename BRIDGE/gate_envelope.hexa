@@ -3,12 +3,12 @@
 //
 // Thin consumer that wires the 4-key AND-gate (BRIDGE/gate.hexa) to the
 // emit-substrate two-layer split:
-//   · structure layer (CORE/phi_envelope_substrate.hexa) supplies the Φ context
+//   · structure layer (core/phi_envelope_substrate.hexa) supplies the Φ context
 //     via envelope_multiscale(t, periods, amps) — no longer a hardcoded phi
-//   · number layer (CORE/emit_policy.hexa) supplies every tunable: the scale
+//   · number layer (core/emit_policy.hexa) supplies every tunable: the scale
 //     periods/amps AND the AND-gate threshold (ep_emit_threshold)
 //
-// Design SSOT: CORE/EMIT_SUBSTRATE_DESIGN.md §4 (BRIDGE M6)
+// Design SSOT: core/EMIT_SUBSTRATE_DESIGN.md §4 (BRIDGE M6)
 //   "bridge_and_gate(m,c,w,phi) 의 phi 입력을 envelope_multiscale 에서 공급.
 //    closure-conjunction GZ-localization (H_636) 을 AND-gate 의 Φ-context 로.
 //    emit_threshold 는 emit_policy.hexa 에서 import (gate 내부 하드코드 제거)."
@@ -21,8 +21,8 @@
 //   · H_636 🟢 closure-conjunction GZ-localization is the Φ-context for AND-gate.
 // ════════════════════════════════════════════════════════════════════════
 
-import "CORE/phi_envelope_substrate.hexa"
-import "CORE/emit_policy.hexa"
+import "core/phi_envelope_substrate.hexa"
+import "core/emit_policy.hexa"
 import "BRIDGE/gate.hexa"
 
 // ── bridge_gate_with_envelope — AND-gate with substrate-supplied Φ context ──

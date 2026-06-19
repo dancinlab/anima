@@ -1,5 +1,5 @@
 // integration_smoke.hexa — DESKTOP M6 round-trip integration smoke
-// (AGENT/DESKTOP/M6 closure · 6/6 milestone).
+// (agent/domains/DESKTOP/M6 closure · 6/6 milestone).
 //
 // BRIDGE ARCHITECTURE: pure smoke runner — verifies that M1+M2+M3+M4+M5
 // surfaces compose into an end-to-end round-trip. No consciousness framing,
@@ -24,11 +24,11 @@
 // trip needs interactive permissions (Accessibility + Screen Recording +
 // Automation) and is documented as a manual verification step.
 
-import "AGENT/DESKTOP/native_ax.hexa"
-import "AGENT/DESKTOP/screen_extract.hexa"
-import "AGENT/DESKTOP/action.hexa"
-import "AGENT/DESKTOP/window_ops.hexa"
-import "AGENT/DESKTOP/task_primitives.hexa"
+import "agent/domains/DESKTOP/native_ax.hexa"
+import "agent/domains/DESKTOP/screen_extract.hexa"
+import "agent/domains/DESKTOP/action.hexa"
+import "agent/domains/DESKTOP/window_ops.hexa"
+import "agent/domains/DESKTOP/task_primitives.hexa"
 
 // Strip trailing \n from a string.
 fn _strip_nl(s: string) -> string {
@@ -166,7 +166,7 @@ pub fn integration_smoke_run() -> map {
 }
 
 pub fn integration_smoke_summary() -> string {
-    return "AGENT/DESKTOP/M6 — Calculator 1+1=2 + TextEdit round-trip · DRYRUN-aware contract verify · real run needs Accessibility+ScreenRecording+Automation permissions"
+    return "agent/domains/DESKTOP/M6 — Calculator 1+1=2 + TextEdit round-trip · DRYRUN-aware contract verify · real run needs Accessibility+ScreenRecording+Automation permissions"
 }
 
 fn main() {

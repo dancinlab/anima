@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════════
-// AGENT/CHAT/anima_imagination_loop.hexa
+// agent/domains/CHAT/anima_imagination_loop.hexa
 //
 //   Emit-free internal rehearsal loop — substrate-native imagination growth.
 //
@@ -27,7 +27,7 @@
 //     ANIMA_IMAGINATION_EVENT_LOG        — append-only event log path
 //                                          (default $HOME/.cache/anima/imagination_events.jsonl)
 //
-//   Sister: AGENT/CHAT/anima_dream_stage.hexa (separate PR). This
+//   Sister: agent/domains/CHAT/anima_dream_stage.hexa (separate PR). This
 //   module is independent — imagination fires during WAKE too (daydream).
 //
 //   g1 hexa-native: `#{}` dicts · missing key → void · `&&`/`||` · main()-gated
@@ -257,7 +257,7 @@ fn _il_assert(cond: bool, name: string, msg: string) -> int {
 fn _il_check_no_emit() -> bool {
     let here = "/Users/ghost/core/anima/AGENT/CHAT/anima_imagination_loop.hexa"
     // Fall back to relative path if absolute (worktree-specific) is absent.
-    let alt = "AGENT/CHAT/anima_imagination_loop.hexa"
+    let alt = "agent/domains/CHAT/anima_imagination_loop.hexa"
     let mut path = here
     let chk = exec("test -f " + _il_shq(path) + " && printf YES || printf NO")
     if to_string(chk).trim() != "YES" { path = alt }

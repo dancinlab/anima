@@ -1,4 +1,4 @@
-// code_daemon_smoke.hexa — runtime smoke for AGENT/CODE/code_daemon (F3).
+// code_daemon_smoke.hexa — runtime smoke for agent/domains/CODE/code_daemon (F3).
 //
 // 4 cases, all in-process (no process spawn, no FS write):
 //   C1 init   — code_daemon_init(t0) returns a valid state dict
@@ -22,7 +22,7 @@
 //
 // All cases complete → exit 0. No external side effects.
 
-import "AGENT/CODE/code_daemon.hexa"
+import "agent/domains/CODE/code_daemon.hexa"
 
 // Print a state-shape snapshot in a stable one-line form.
 fn _fmt_state(s: Map) -> string {
@@ -43,7 +43,7 @@ fn _check(label: string, ok: bool) {
 }
 
 fn main() {
-    println("[smoke] AGENT/CODE/code_daemon — " + code_daemon_summary())
+    println("[smoke] agent/domains/CODE/code_daemon — " + code_daemon_summary())
 
     let t0 = 1700000000.0
 

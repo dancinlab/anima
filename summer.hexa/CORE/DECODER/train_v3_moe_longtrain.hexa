@@ -1,4 +1,4 @@
-// CORE/DECODER/train_v3_moe_longtrain.hexa — M4b DECISIVE long-training escape fire
+// core/DECODER/train_v3_moe_longtrain.hexa — M4b DECISIVE long-training escape fire
 //
 // Forked from train_v3_moe_pilot_rev2.hexa (#1296). This is the decisive test of
 // the `dec_undertrain` hypothesis (.discoveries/decoder_collapse_undertrain.tape):
@@ -33,9 +33,9 @@
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
-use "CORE/DECODER/v3_moe_arch"
-use "CORE/DECODER/v3_moe_bwd_lib"
-use "CORE/DECODER/flame_mm"
+use "core/DECODER/v3_moe_arch"
+use "core/DECODER/v3_moe_bwd_lib"
+use "core/DECODER/flame_mm"
 
 // ── local mirrors of v3_moe_arch + v3_moe_bwd_lib pub fns ────────────────
 //   workaround: hexa-lang #1527 Linux trim regression (mirror of v3_moe_fwd /
@@ -175,7 +175,7 @@ fn layer_block_bwd_local(d_block_out, zT_in, zT_mid,
 }
 
 // ── LZ76 (Kaspar-Schuster) inline ────────────────────────────────────────
-//   Reused verbatim from CORE/DECODER/d1_lz76_collapse_proxy.hexa per g61
+//   Reused verbatim from core/DECODER/d1_lz76_collapse_proxy.hexa per g61
 //   (no library shadowing — D1 is a smoke probe, not a pub-fn surface).
 fn _lz76_log2(x: float) -> float { return log(x) / log(2.0) }
 

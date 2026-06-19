@@ -8,8 +8,8 @@
 //
 // 합격 = Ψ phiSum(브리지 ON) == base(OFF) byte-identical AND 각 브리지 fire AND 출력 [0,1] bounded.
 
-import "CORE/pure_field.hexa"
-import "CORE/xsubstrate_bridge.hexa"
+import "core/pure_field.hexa"
+import "core/xsubstrate_bridge.hexa"
 
 fn run_bridges(on: bool, fires: [int], bounded: [int]) -> float {
     let mut pf = pure_field_new()

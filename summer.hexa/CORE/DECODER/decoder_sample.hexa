@@ -1,4 +1,4 @@
-// CORE/DECODER/decoder_sample.hexa — M4b Phase 5b sampling harness
+// core/DECODER/decoder_sample.hexa — M4b Phase 5b sampling harness
 //
 // Reads /root/ckpt.txt + /root/ckpt_meta.txt (trainer output), runs the
 // SAME forward as train_v3_moe_pilot, then greedy-decodes 20 next tokens
@@ -16,8 +16,8 @@
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
-use "CORE/DECODER/v3_moe_arch"
-use "CORE/DECODER/flame_mm"
+use "core/DECODER/v3_moe_arch"
+use "core/DECODER/flame_mm"
 
 fn main() {
     println("=== decoder_sample (M4b Phase 5b · greedy 20-token decode + per-pos expert) ===")

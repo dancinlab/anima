@@ -54,7 +54,7 @@
 // /tmp/h1306_armA.ce, exported by UNIVERSE/h1306_ko_corpus_export.py (run it first, which
 // reads the R2-fetched /tmp slices from UNIVERSE/h1306_fetch_corpus.sh).
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 // ── FROZEN knobs (verbatim from H_1297 R4) ──────────────────────────────────────
 fn _V() -> int             { return 256 }
@@ -283,7 +283,7 @@ fn _grow_on(centers0: [[float]], af0: VAdaptField, Xtr: [[float]], Ytr: [int], n
 
 fn main() {
     println("=== H_1306 — KOREAN MITOSIS TRAINING on a REAL Korean web corpus (ENGINE-NATIVE) ===")
-    println("faculty: CORE/engine_cli.hexa VAdaptField Voronoi (vadapt_field_nearest_idx) +")
+    println("faculty: core/engine_cli.hexa VAdaptField Voronoi (vadapt_field_nearest_idx) +")
     println("         engine_mitosis_tick growth (p8); head = per-cell next-byte MLE (gradient-free).")
     println("corpus: REAL Korean + English web bytes (r2://phanes/anima-7b/web/{kor,eng}, V=256, CTX=4)")
     println("        sha256 + provenance in /tmp/h1306_manifest.json (NO synthetic Korean, p1-p8).")

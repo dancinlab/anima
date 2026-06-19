@@ -1,4 +1,4 @@
-// CORE/h1218_engine_gate_subset.hexa — H_1218 REPRESENTATIVE engine subset.
+// core/h1218_engine_gate_subset.hexa — H_1218 REPRESENTATIVE engine subset.
 //
 // Engine CPU greedy is ~15-25 s/byte at gate-context length, so a FULL 9-seed×96
 // sweep is many hours. Per the task's explicit allowance, this is a REPRESENTATIVE
@@ -8,7 +8,7 @@
 // FULL engine sweep would be byte-identical to torch greedy (H_1157 parity at length).
 //
 // Decode = bytegpt_decode_argmax (greedy, deterministic). Seeds VERBATIM from gauge_lib.
-import "CORE/bytegpt_decode.hexa"
+import "core/bytegpt_decode.hexa"
 
 fn _bytes_of(s: string) -> list {
     let out = []; let n = byte_len(s); let mut i = 0

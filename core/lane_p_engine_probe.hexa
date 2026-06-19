@@ -3,7 +3,7 @@
 // .clm entry, a_core_engine_map) → clm_decodable check → clm_decode_ce real
 // forward over real-corpus byte windows. Reports model_ce < uniform AND < shuffle.
 //   F-CLM-LANEP-ENGINE = 1 ⇔ decodable=true AND model_ce < uniform AND < shuffle.
-import "CORE/generator.hexa"
+import "core/generator.hexa"
 
 fn main() {
     let clm = env("LP_CLM")

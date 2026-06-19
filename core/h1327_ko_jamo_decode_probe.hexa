@@ -12,9 +12,9 @@
 // earned (E2 shuffle control), and is Ψ-disjoint (E3, off-Korean inertness here + separate guards).
 //
 // THE CONSULT runs through the LIVE generator surface ko_jamo_consult_sym / _byte / _emit
-// (CORE/generator.hexa §6.5b) — the SAME single L3 slot ko_cells uses (a_core_engine_map). The
+// (core/generator.hexa §6.5b) — the SAME single L3 slot ko_cells uses (a_core_engine_map). The
 // grown jamo cells are the H_1321 engine-native artifact (numpy mirror reproduces the live
-// VAdaptField/engine_mitosis_tick to 1e-7), serialized to CORE/ko_jamo_cells.kojamohead by the
+// VAdaptField/engine_mitosis_tick to 1e-7), serialized to core/ko_jamo_cells.kojamohead by the
 // data-prep (UNIVERSE/h1327_ko_jamo_decode_export.py).
 //
 // E1/E2/E3 FROZEN bars (.verdicts/1327_ko_jamo_decode_wire/FREEZE.txt, written BEFORE this run;
@@ -31,9 +31,9 @@
 // emission); SHUF = the cell->symbol-permuted control. acc_X = fraction where X == true next symbol.
 //
 // DATA: /tmp/h1327_ctx.{feats,truth,base} + /tmp/h1327_ref.txt (exported by the data-prep) +
-// CORE/ko_jamo_cells.kojamohead + CORE/ko_jamo_cells_shuf.kojamohead. $0 CPU, no GPU, no secrets at run.
+// core/ko_jamo_cells.kojamohead + core/ko_jamo_cells_shuf.kojamohead. $0 CPU, no GPU, no secrets at run.
 
-import "CORE/generator.hexa"
+import "core/generator.hexa"
 
 fn _E1_LIFT() -> float  { return 0.02 }   // E1: acc_ON − acc_OFF >= this
 fn _E1_SHIFT() -> float { return 0.10 }   // E1: shift_ON >= this
@@ -75,8 +75,8 @@ fn _load_floats_line(path: string) -> [float] {
 
 fn main() {
     println("=== H_1327 — LIVE-DECODE WIRING of the H_1316/H_1321 🟢 ko-jamo breakthrough (a_verified_must_wire r3) ===")
-    println("surface: CORE/generator.hexa §6.5b ko_jamo_consult_* (the SAME single L3 slot ko_cells uses, a_core_engine_map)")
-    println("cells:   CORE/ko_jamo_cells.kojamohead (the H_1321 engine-native grown jamo artifact) + _shuf.kojamohead (E2 control)")
+    println("surface: core/generator.hexa §6.5b ko_jamo_consult_* (the SAME single L3 slot ko_cells uses, a_core_engine_map)")
+    println("cells:   core/ko_jamo_cells.kojamohead (the H_1321 engine-native grown jamo artifact) + _shuf.kojamohead (E2 control)")
     println("metric:  held-out Korean next-symbol accuracy, FULL symbol id (p7); ON=jamo consult, OFF=blind unigram, SHUF=permuted-cell")
     println("")
 
@@ -93,13 +93,13 @@ fn main() {
         + " | B3 lossless=" + (if b3_ok { "True" } else { "False" }))
 
     // load the LIVE jamo-cell consult surface (generator §6.5b)
-    let cells = ko_jamo_cells_load("CORE/ko_jamo_cells.kojamohead")
-    let cells_shuf = ko_jamo_cells_load("CORE/ko_jamo_cells_shuf.kojamohead")
+    let cells = ko_jamo_cells_load("core/ko_jamo_cells.kojamohead")
+    let cells_shuf = ko_jamo_cells_load("core/ko_jamo_cells_shuf.kojamohead")
     if to_string(cells["ok"]) != "true" {
         println("ERROR: ko_jamo_cells.kojamohead failed to load: " + to_string(cells["reason"]))
         exit(1)
     }
-    println(ko_jamo_cells_summary("CORE/ko_jamo_cells.kojamohead"))
+    println(ko_jamo_cells_summary("core/ko_jamo_cells.kojamohead"))
     println("FROZEN bars: E1 acc_ON−acc_OFF >= " + _fmt(_E1_LIFT()) + " AND shift_ON >= " + _fmt(_E1_SHIFT())
         + "  ·  E2 acc_SHUF−acc_OFF <= " + _fmt(_E2_SHUF()) + "  ·  E3 off-Korean inert + no-regression (separate)")
     println("-------------------------------------------------------------------------------")

@@ -9,8 +9,8 @@
 // no-op). SHUFFLE teaches toward a derangement but is SCORED vs the TRUE map. All deterministic
 // (fixed task/tool set + fixed shuffle), so the smoke is byte-repeatable across runs.
 
-import "CORE/engine_cli.hexa"
-import "anima-agent-core/agent_skill_routing.hexa"
+import "core/engine_cli.hexa"
+import "agent/modules/core/agent_skill_routing.hexa"
 
 fn _route_tasks() -> [string] {
     return [

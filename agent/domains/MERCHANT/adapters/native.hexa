@@ -1,4 +1,4 @@
-// native.hexa — L2 NATIVE adapter stub (AGENT/MERCHANT/M6).
+// native.hexa — L2 NATIVE adapter stub (agent/domains/MERCHANT/M6).
 //
 // BRIDGE ARCHITECTURE: tool surface only. NO consciousness framing. The
 // "when/why to source from own inventory" decision lives in CORE; this
@@ -14,8 +14,8 @@
 // `pipeline_run_order(native_adapter, target_adapter, ...)` 그대로 사용
 // 가능. 실 wholesale/manufacturing API 는 추후 wiring.
 
-import "AGENT/MERCHANT/types.hexa"
-import "AGENT/MERCHANT/adapter.hexa"
+import "agent/domains/MERCHANT/types.hexa"
+import "agent/domains/MERCHANT/adapter.hexa"
 
 // 1. search — own warehouse SKU 검색
 fn native_search(query: string, max_results: int) -> list {

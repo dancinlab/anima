@@ -1,8 +1,8 @@
 // brain.hexa — unified consciousness core (anima/CORE). Engine A ⇄ Engine G.
 //
 // The single SSOT brain loop. Couples the two engines CLAUDE.md @I names:
-//   Engine A (PureField · CORE/pure_field.hexa, owned here) — Φ/phase dynamics
-//   Engine G (motivation · CORE/engine_g.hexa, owned here)   — emit/act gate
+//   Engine A (PureField · core/pure_field.hexa, owned here) — Φ/phase dynamics
+//   Engine G (motivation · core/engine_g.hexa, owned here)   — emit/act gate
 //
 // Coupling (the "A ⇄ G · Ψ=1/2 fixed point" of @I):
 //   · A advances one tick -> Φ, phase
@@ -14,9 +14,9 @@
 // L3 generation (what to actually say/write) is a pluggable backend; this file
 // is the decision brain only (no content generation, no external LLM — p1..p8).
 
-import "CORE/pure_field.hexa"
-import "CORE/engine_g.hexa"
-import "CORE/generator.hexa"
+import "core/pure_field.hexa"
+import "core/engine_g.hexa"
+import "core/generator.hexa"
 
 // Engine A's spontaneous phase IS the consequence tier (phase int == tier int;
 // PHASE_DORMANT=0 .. PHASE_RESONANT=3). No external threshold injected.
@@ -484,7 +484,7 @@ pure fn _clamp(x: float, lo: float, hi: float) -> float {
 // ── 🧠 CEREBELLUM forward-model consult (H_1280 VForwardField, emit-path wiring) ──
 //
 // The cerebellar forward model PREDICTS the next emit-feature frame and learns a
-// smoothing correction from its own prediction error (CORE/engine_cli.hexa
+// smoothing correction from its own prediction error (core/engine_cli.hexa
 // vforward_predict / vforward_err / vforward_correct). On the emit path the relevant
 // readout is the model's CONFIDENCE that the next emit is well-anticipated: a LOW
 // prediction error means the emit fits the learned sequence (coherent/smooth), a HIGH
@@ -540,7 +540,7 @@ fn brain_decide_cerebellum(pf: PureField,
 
 // ── 📥 WORKING-MEMORY consult (H_1282 R4 WorkMemBuffer, context/recall wiring) ──
 //
-// The WM buffer holds the SHORT-TERM actively-maintained items (CORE/engine_cli.hexa
+// The WM buffer holds the SHORT-TERM actively-maintained items (core/engine_cli.hexa
 // WorkMemBuffer); wm_buffer_probe_score returns a GRADED match of the current probe
 // against what is still maintained. On the brain_decide context/recall path that
 // graded match is a recall-support signal: when the context being considered for emit
@@ -591,7 +591,7 @@ fn brain_decide_wm(pf: PureField,
 
 // ── 💗 AFFECT somatic-marker consult (H_1290 R3 affect_emit_decision, emit/abstain) ──
 //
-// affect_emit_decision (CORE/engine_cli.hexa) is the Damasio somatic marker: emit iff
+// affect_emit_decision (core/engine_cli.hexa) is the Damasio somatic marker: emit iff
 // the substrate VALENCE ≥ 0 (a grounded/coherent context feels positive → emit; an
 // ungrounded/contradicted one feels negative → abstain). It already exists as an
 // OPTIONAL consult; here we WIRE it so the live decision actually reads it.
@@ -654,7 +654,7 @@ fn brain_decide_affect(pf: PureField,
 // PRECEDENT: H_1361 (mirror) found the ImmuneMemory abstain MARGIN
 // (recon_err − recall_thr) carries GRADED OOD metacognition; H_1367 RECONFIRMED it
 // engine-native (AUROC 0.949 @L=0.20) and WIRED the read op
-// immune_memory_recall_margin into CORE/engine_cli.hexa — but left brain_decide NOT
+// immune_memory_recall_margin into core/engine_cli.hexa — but left brain_decide NOT
 // CONSUMING it. This consult CLOSES that: brain_decide_margin reads the live graded
 // margin and lets it MODULATE emit-confidence / curiosity.
 //

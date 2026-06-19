@@ -23,9 +23,9 @@
 // p7 (NOT perplexity): the metric is held-out next-symbol CE on the simple stack. $0 CPU,
 // deterministic, no corpus/secret/GPU, no decode (pure scoring). Ψ-disjoint (pure SCORER).
 //
-// RUN: hexa run CORE/h1385_jamo_scoreloop_smoke.hexa
+// RUN: hexa run core/h1385_jamo_scoreloop_smoke.hexa
 
-import "CORE/generator.hexa"
+import "core/generator.hexa"
 
 fn _assert_b(label: string, want: bool, got: bool) -> bool {
     let ws = if want { "true" } else { "false" }
