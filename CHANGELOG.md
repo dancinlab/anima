@@ -1,3 +1,14 @@
+## 2026-06-19 — wip(H_1305): G6 ideation-falsifiability 엔진-네이티브 재측정 — engine path VALIDATED, full 4-bar BLOCKED(substrate-speed) → 🟠 DIRECTIONAL 유지 + ING
+
+H_1305 G6 ideation-falsifiability 를 정상 영어 ckpt 로 engine-native 재측정 시도. **engine decode PATH 는 VALIDATED**(positive); FULL frozen 60-job 4-bar 은 H_1431 과 동일 substrate-speed 벽(scalar 26s/token)에 막혀 측정 미완 → verdict UNCHANGED 🟠 DIRECTIONAL, engine-native CONFIRM/OVERTURN = ING follow-on(`h1305_engine_native`).
+
+- **ckpt triage(torch greedy):** `h1129c_chat.pt`→한글 garble(`수의 수 information의 강…`)=CORRUPT 확정(프롬프트 주장대로) · `h1441_contrastive.pt`→영어(`'the signal greater than before…'`)=유일 정상 영어 303M(생존 base.pt 없음, shuffle.pt=degenerate control). `.bin` round-trip byte-correct(hdr d1024/L24/H16/block512=FREEZE, head==tok max|diff|=0.0).
+- **engine path VALIDATED(positive):** byte-verified ckpt(md5 9147a6f9, `--verify-sha` 재업로드 후 local↔pod 동일 — **첫 scp 가 silent transport-corrupt** md5 9c5e…→한글→오판, 수정) 위에서 live `CORE/bytegpt_decode` gen=25 → 영어 `'the signal predicts than'`. earlier 한글 engine 출력은 전부 scp transport corruption(size 일치·content 불일치)이지 engine/ckpt 버그 아님.
+- **full 4-bar BLOCKED:** 이 빌드 fast-gemv DROPPED(link-fail, H_1431 "scalar 26s/token 강제" 동일). frozen MAX_NEW=110 ⇒ ~48min/frag ⇒ 60-job ~12h(memory-bandwidth bound)=impractical; 4-shard 18분+ 0/60 frag 관측. **substrate-speed infra 벽(a_break_the_wall type-c, c1) ≠ 측정defect ≠ science 천장(c9)** → bar 불변.
+- **frozen 증거:** `state/verdicts/1305_g6_ideation_falsifiability/H_1305_engine_native_BLOCKED.txt`(triage+validation+wall) · 카드 R2 섹션 `wired: DIRECTIONAL-mirror` · jsonl verdict 갱신.
+- **재개조건(ING h1305_engine_native):** fast-gemv 복원 hexa 빌드(H_1431 remaining-bytegpt ING 와 동일 차단)에서 frozen 60-job 재발사. score: `h1305_engine_native.py`(H1302_CORPUS=/root/anima/data/corpus.txt 로 NOVEL 보정). SCOPE: 정상 ckpt=h1441_contrastive(chat 아님, H_1441 trained variant) → available-normal-ckpt 위 engine-native G6 ideation 증거이지 chat baseline like-for-like reconfirm 아님.
+- **회수/teardown(a_fire_recover_complete):** byte-verified `/tmp/h1441_contrastive.bin` mini pull 완료 · pod 41548581 teardown 예정(트랙B Agent 와 독립).
+
 ## 2026-06-19 — done(H_1431): G6 BIND-compose 5-bar 엔진-네이티브 측정 완료 → 🧱 BIND-CAPACITY-BOUND ENGINE-NATIVE CONFIRMED
 
 2026-06-18 PARKED 였던 H_1431 엔진-네이티브 측정을 완료. hexa v0.241(glibc-2.34) 출하로 release-stale 벽 해소 후 vast 2267G-CPU pod(41469555)에서 30/30 fragment 를 live `CORE/bytegpt_decode` 로 디코드, frozen H_1305 detector 로 채점 → torch DIRECTIONAL 🧱 를 엔진-네이티브로 확정(a_engine_native_learning HARD-GATE 충족).
