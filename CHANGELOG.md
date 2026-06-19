@@ -4108,3 +4108,4 @@ Detail / inventory → [`HEXAD/SPONTANEOUS/PHASE1_STATUS.md`](HEXAD/SPONTANEOUS/
 ## 2026-05-12
 
 - **v5-mitosis cotrain** — v3-routing architectural fix trainer + H100/A100 dispatch; PSCC §45–§48 falsifier cycles (F-PERSONA-4 / F-V5MIT batteries).
+- **GPU decode 가속 실측 BLOCKED + hexa-lang cuda-빌드 기여** — #2386 배선(core/bytegpt_decode→flame_mm.mm→farr_matmul_gpu cuBLAS Dgemm)은 byte-safe 완료, 가속 실측만 미완. 실측(RTX_4060_Ti): install.sh 릴리스 CPU-only → cuda_available()==0, GPU GEMM 3023ms≈CPU 3026ms 1.00× 폴백. 근본 4단 mac 격리: cloud rent '[]'=바이너리 내장경로(hexa-lang inbox #3685) · install.sh CPU-only(#3701) · cuda 빌드 1단 -lcuda stubs 누락(FIX PR #3707 MERGED self/main.hexa) · 2단 runtime_cuda.c emit=gen3 self-host --emit=obj SEGFAULT(emitter 텍스트 정상 333KB, gen3 코드젠 버그, inbox #3709). decode=cuBLAS ⊥ 학습=flame+forge. 재개=x86_64-cuda asset 출하 시 HEXA_CUDA=1+/tmp/cuda_tag_measure.sh. ING: gpu_decode_accel_measure_followon.
