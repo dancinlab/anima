@@ -48,7 +48,15 @@
 //   p8 NO TRAIN/INFER SPLIT — mitosis IS the inference-time learning tick; the
 //                             flag is an ablation switch on it, not a regime gate.
 
-// ── §  ENGINE SELECT axis — --engine conv|cdv2|hexad|omega (the 2nd CLI rider) ──────
+// ── §  ENGINE SELECT axis — --engine (the 2nd CLI rider) ──────────────────────────
+//
+// SINGLE PRODUCTION ENGINE (2026-06-19): anima converged on **conv** (CLMConvMoE,
+// the .clm byte mouth via core/clm_decode.hexa + generator.hexa L3 slot). The real
+// engine lives in core/ directly; engines/conv/ is a THIN metadata adapter only.
+// The multi-engine registry (cdv2 torch-legacy · hexad · omega — engines/<name>/ +
+// the EngineSpec vtable) is RESEARCH-LEGACY, slated for archive/ (Phase 2; the
+// resolve branches + engine_swap_smoke still reference it, so the code stays until
+// that move — default is conv, the only production path).
 //
 // The hot-swappable engine registry (engines/<name>/) plugs in here. Selecting
 // an engine resolves NAME → its EngineSpec adapter via engines/engine_iface.hexa.
