@@ -18,7 +18,7 @@
 //   H_boundary within numerical noise, loss ~ 0.
 //
 // Reference:
-//   anima-engines/anima_holographic.hexa  (encode/decode, phi_holographic)
+//   core/phi/anima_holographic.hexa  (encode/decode, phi_holographic)
 //   training/alm_gwt_loss.hexa            (loss style, finite-diff gradient)
 //   training/alm_gwt_broadcast.hexa       (struct + test framework)
 //
@@ -193,7 +193,7 @@ fn smooth_corr(a: array, b: array) -> float {
 }
 
 // ─── Holographic head (minimal, loss-internal) ───────────────
-// Mirrors the head in anima-engines/anima_holographic.hexa but
+// Mirrors the head in core/phi/anima_holographic.hexa but
 // is duplicated here to keep this training module self-contained.
 
 struct HoloLossHead {

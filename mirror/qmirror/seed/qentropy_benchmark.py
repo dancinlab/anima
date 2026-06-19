@@ -461,7 +461,7 @@ PENDING_PATHS = [
         "path": "torch_lane_p",
         "status": "torch-pending",
         "substrate": "GPU host (Lane-P)",
-        "module": "CLM/train/_qseed.py (resolve_seed) + _qseed_check.py",
+        "module": "train/clm/train/_qseed.py (resolve_seed) + _qseed_check.py",
         "metric": "torch.manual_seed -> torch.rand sample distribution",
         "how_to_run": ("on a torch host: ANIMA_ENTROPY_MODE={quantum,deterministic} "
                        "python3 CLM/train/_qseed_check.py"),

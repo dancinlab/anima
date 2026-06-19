@@ -2,7 +2,7 @@
 // DREAM/dream_envelope_ctx_smoke.hexa — stage Φ-envelope context smoke (M5)
 //
 // 정체: dream_envelope_ctx.hexa (DREAM M5 wiring) 의 stage Φ-context 산출을
-//      invariant 형태로 검증. 설계 SSOT: CORE/EMIT_SUBSTRATE_DESIGN.md §4·§6.
+//      invariant 형태로 검증. 설계 SSOT: core/EMIT_SUBSTRATE_DESIGN.md §4·§6.
 //
 // Invariants (≥3 required + governance):
 //   I1 CONTEXT-IS-REAL : context 가 실수(연속값) — boolean 아님 (0/1 한정 X).
@@ -16,7 +16,7 @@
 // ════════════════════════════════════════════════════════════════════════
 
 import "DREAM/dream_envelope_ctx.hexa"
-import "CORE/emit_policy.hexa"
+import "core/emit_policy.hexa"
 
 fn abs_f(x: float) -> float {
     return if x < 0.0 { -x } else { x }

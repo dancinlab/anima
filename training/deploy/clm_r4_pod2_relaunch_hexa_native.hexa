@@ -81,9 +81,9 @@ let LOCAL_SOURCES = [
 // is included per-TU; linker de-dupes).  'main' is renamed per-dep to avoid
 // redefinition (each transpiled .c has its own file-level main).
 let LOCAL_DEP_SOURCES = [
-    "anima-engines/quantum_types.hexa",
-    "anima-engines/anima_quantum.hexa",
-    "anima-engines/anima_quantum_clm.hexa",
+    "core/phi/quantum_types.hexa",
+    "core/phi/anima_quantum.hexa",
+    "core/phi/anima_quantum_clm.hexa",
     "training/phi_cache_loader.hexa"
 ]
 let DEP_MODULE_NAMES = [

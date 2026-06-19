@@ -1,0 +1,1492 @@
+// ════════════════════════════════════════════════════════════════════════
+// core/bytegpt_decode.hexa — H_1156 ByteGPT (H_1129 303M arch) decode forward.
+//
+// WHY: the a303m_pass campaign (H_1155, decision-grade) settled that ByteGPT-303M
+// passes G1 (창발/seed-adherence) where ConvMoE does not. ByteGPT must become the
+// engine-mounted production trunk, but it is NOT in the ConvMoE .clm v0.2 format —
+// it is a GPT-style transformer (LayerNorm + learned-pos + GELU-MLP + MHA), so it
+// needs its OWN decode path. clm_decode.hexa is ConvMoE-only; this is the parallel
+// transformer next-byte decoder. Per a_core_engine_map it still enters CORE only via
+// the generator L3 slot; the G5 clm_decode_grounded wrapper is arch-independent and
+// wraps whatever next-byte decoder is mounted.
+//
+// EXACT ByteGPT arch (read from the real h1129c_best.pt state_dict, H_1156):
+//   vocab=256 d=1024 n_layer=24 n_head=16 block=512  hd = d/n_head = 64
+//   learned ABSOLUTE pos-embed  pos.weight[512,1024]  (NOT RoPE/ALiBi)
+//   per block (pre-norm):
+//     x = x + MHA(LayerNorm(x))           // ln1 (weight+bias), attn in_proj/out_proj +bias
+//     x = x + MLP(LayerNorm(x))           // ln2 (weight+bias)
+//   MHA = torch nn.MultiheadAttention: packed in_proj_weight[3d,d] rows Q|K|V,
+//         in_proj_bias[3d], out_proj.weight[d,d]+bias. scale = 1/sqrt(hd). causal.
+//   MLP = Linear(d->4d)+bias, GELU(exact erf), Linear(4d->d)+bias
+//   final LayerNorm ln_f (weight+bias); head tied to tok.weight (head[256,1024]).
+//
+// WEIGHT BINARY LAYOUT (little-endian f32, produced by /tmp/h1156_ref.py serialize):
+//   [vocab,d,n_layer,n_head,block]  5x u32
+//   tok[vocab*d]  pos[block*d]
+//   per layer: ln1.w[d] ln1.b[d] in_proj.w[3d*d] in_proj.b[3d]
+//              out_proj.w[d*d] out_proj.b[d] ln2.w[d] ln2.b[d]
+//              mlp0.w[4d*d] mlp0.b[4d] mlp2.w[d*4d] mlp2.b[d]
+//   ln_f.w[d] ln_f.b[d]  head[vocab*d]
+//   (torch Linear stores W as [out,in] row-major; y = x·Wᵀ + b.)
+// ════════════════════════════════════════════════════════════════════════
+
+use "stdlib/flame/flame_math"
+
+// libm transcendentals — the ENGINE-NATIVE measurement decode must byte-match the
+// torch golden forward (which uses libm erf/exp). flame_math's dt_erf/dt_exp are the
+// DETERMINISTIC training twins (A&S ~1.38e-7 + 12-term Taylor) and are preserved for
+// the training step; here in the inference/parity forward we use libm so argmax does
+// not drift from torch across L24 (ING#23 — was: approx-erf-GELU+dt_exp argmax flip
+// 227≠32 at 303M/L24 on pool-Linux). hexa "math = libm" convention.
+extern fn erf(x: float) -> float
+extern fn exp(x: float) -> float
+
+// ── little-endian readers over a read_file_bytes byte array ──────────────
+fn _bg_rd_u32(rb, off: int) -> int {
+    return rb[off] + rb[off+1]*0x100 + rb[off+2]*0x10000 + rb[off+3]*0x1000000
+}
+
+// read `n` f32 from the byte array at byte offset `off` into a fresh farr.
+fn _bg_rd_farr(rb, off: int, n: int) -> int {
+    let a = farr_zeros(n)
+    let mut i = 0
+    while i < n {
+        let _ = farr_set(a, i, bytes_to_f32_le(rb, off + i * 4))
+        i = i + 1
+    }
+    return a
+}
+
+// ── exact GELU via erf (Abramowitz-Stegun 7.1.26, ~1e-7; torch nn.GELU() default) ─
+fn _bg_erf(x: float) -> float {
+    return erf(x)   // libm erf — byte-match torch nn.GELU(); was A&S 7.1.26 ~1.38e-7 + dt_exp,
+                    // accumulated argmax flip at 303M/L24 on pool-Linux (ING#23). dt_erf twin kept for training.
+}
+fn _bg_gelu(x: float) -> float {
+    return 0.5 * x * (1.0 + _bg_erf(x * 0.7071067811865476))
+}
+
+// ── LayerNorm (per row of length d): y = g*(x-mean)/sqrt(var+eps) + b ─────
+// torch LayerNorm eps default 1e-5, biased variance.
+fn _bg_layernorm(X: int, g: int, b: int, Y: int, T: int, d: int) {
+    let eps = 0.00001
+    let mut i = 0
+    while i < T {
+        let mut mean = 0.0
+        let mut c = 0
+        while c < d { mean = mean + farr_get(X, i * d + c); c = c + 1 }
+        mean = mean / to_float(d)
+        let mut var = 0.0
+        let mut c2 = 0
+        while c2 < d {
+            let dv = farr_get(X, i * d + c2) - mean
+            var = var + dv * dv
+            c2 = c2 + 1
+        }
+        var = var / to_float(d)
+        let inv = 1.0 / dt_sqrt(var + eps)
+        let mut c3 = 0
+        while c3 < d {
+            let xn = (farr_get(X, i * d + c3) - mean) * inv
+            let _ = farr_set(Y, i * d + c3,
+                             farr_get(g, c3) * xn + farr_get(b, c3))
+            c3 = c3 + 1
+        }
+        i = i + 1
+    }
+}
+
+// ── linear: Y[T,Co] = X[T,Ci] · Wᵀ + bias ; W stored [Co,Ci] row-major ───
+// Y[t,o] = Σ_c W[o*Ci+c]·X[t*Ci+c] + b[o].
+fn _bg_linear(X: int, W: int, b: int, Y: int, T: int, Ci: int, Co: int) {
+    let mut t = 0
+    while t < T {
+        let mut o = 0
+        while o < Co {
+            let mut acc = farr_get(b, o)
+            let mut c = 0
+            while c < Ci {
+                acc = acc + farr_get(W, o * Ci + c) * farr_get(X, t * Ci + c)
+                c = c + 1
+            }
+            let _ = farr_set(Y, t * Co + o, acc)
+            o = o + 1
+        }
+        t = t + 1
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// FAST MATMUL PATH (Lane C, c16 substrate-vs-science: the 102s/forward was an
+// INFRA wall, not a model ceiling). The dominant cost of the forward is the
+// per-layer d×d Linear (QKV/out-proj + MLP up/down) expressed as a farr_get
+// multiply-add nested loop interpreted on the dispatch runtime. The hexa-lang
+// runtime ships a native CPU GEMM builtin `farr_matmul(A, M, K, B, N)` →
+// C[M,N] = A[M,K]·B[K,N] (raw double* ikj triple loop, zero interp-arena
+// pressure). Routing the d×d matmuls through it is ~90-112× faster.
+//
+// BYTE-FAITHFULNESS: ikj reassociates the K-sum vs the scalar c-inner loop, so
+// the result differs by FP reassociation only — measured max|Δ| ≈ 6e-15 at
+// d=1024 (machine epsilon, far below the ~1e-5 torch-parity tolerance; argmax
+// does not flip). The scalar _bg_linear / _bg_mha above are KEPT verbatim as
+// the correctness reference (parity probe path). Lever used: BLAS-style native
+// matmul kernel (no KV-cache needed — the first T-position forward is the gate).
+// ════════════════════════════════════════════════════════════════════════
+
+// _bg_transpose — W[Co,Ci] row-major → fresh Wt[Ci,Co] row-major. Done ONCE per
+// weight at load (bg_load), amortized over every forward. Caller frees.
+fn _bg_transpose(W: int, Co: int, Ci: int) -> int {
+    let Wt = farr_zeros(Ci * Co)
+    let mut o = 0
+    while o < Co {
+        let mut c = 0
+        while c < Ci { let _ = farr_set(Wt, c * Co + o, farr_get(W, o * Ci + c)); c = c + 1 }
+        o = o + 1
+    }
+    return Wt
+}
+
+// _bg_linear_mm — same math as _bg_linear but via the native GEMM. `Wt` is the
+// PRE-TRANSPOSED weight [Ci,Co] (so Y = X[T,Ci]·Wt[Ci,Co] + b, == X·Wᵀ+b).
+// Writes Y[T,Co]. Falls back to the scalar _bg_linear is NOT done here — callers
+// that need the scalar reference use _bg_linear directly with the [Co,Ci] W.
+fn _bg_linear_mm(X: int, Wt: int, b: int, Y: int, T: int, Ci: int, Co: int) {
+    let C = farr_matmul(X, T, Ci, Wt, Co)
+    let mut t = 0
+    while t < T {
+        let mut o = 0
+        while o < Co {
+            let _ = farr_set(Y, t * Co + o, farr_get(C, t * Co + o) + farr_get(b, o))
+            o = o + 1
+        }
+        t = t + 1
+    }
+    let _ = farr_free(C)
+}
+
+// _bg_mha_mm — byte-equivalent to _bg_mha but the QKV projection and the output
+// projection (the two d×d matmuls) go through the native GEMM. The per-head
+// causal softmax attention (O(T²·hd), tiny vs the d² projections) stays scalar
+// and byte-identical. `inWt` = transpose of the packed in_proj [3d,d] → [d,3d];
+// `oWt` = transpose of out_proj [d,d] → [d,d].
+fn _bg_mha_mm(H: int, inWt: int, inB: int, oWt: int, oB: int, Aout: int,
+              T: int, d: int, nh: int) {
+    let hd = d / nh
+    let scale = 1.0 / dt_sqrt(to_float(hd))
+    // QKV = H[T,d] · inWt[d,3d] + inB  →  packed [T,3d], cols 0..d=Q, d..2d=K, 2d..3d=V
+    let QKV = farr_matmul(H, T, d, inWt, 3 * d)
+    let Q = farr_zeros(T * d)
+    let K = farr_zeros(T * d)
+    let V = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let mut j = 0
+        while j < d {
+            let _ = farr_set(Q, t * d + j, farr_get(QKV, t * 3 * d + j) + farr_get(inB, j))
+            let _ = farr_set(K, t * d + j, farr_get(QKV, t * 3 * d + d + j) + farr_get(inB, d + j))
+            let _ = farr_set(V, t * d + j, farr_get(QKV, t * 3 * d + 2 * d + j) + farr_get(inB, 2 * d + j))
+            j = j + 1
+        }
+        t = t + 1
+    }
+    let _ = farr_free(QKV)
+    // per head causal softmax attention → ctx[T,d] (scalar, byte-identical to _bg_mha)
+    let ctx = farr_zeros(T * d)
+    let srow = farr_zeros(T)
+    let mut hh = 0
+    while hh < nh {
+        let base = hh * hd
+        let mut i = 0
+        while i < T {
+            let L = i + 1
+            let mut mx = 0.0 - 1.0e30
+            let mut jx = 0
+            while jx < L {
+                let mut dot = 0.0
+                let mut c = 0
+                while c < hd {
+                    dot = dot + farr_get(Q, i * d + base + c) * farr_get(K, jx * d + base + c)
+                    c = c + 1
+                }
+                let sv = dot * scale
+                let _ = farr_set(srow, jx, sv)
+                if sv > mx { mx = sv }
+                jx = jx + 1
+            }
+            let mut tot = 0.0
+            let mut j2 = 0
+            while j2 < L {
+                let e = exp(farr_get(srow, j2) - mx)
+                let _ = farr_set(srow, j2, e)
+                tot = tot + e
+                j2 = j2 + 1
+            }
+            let mut c2 = 0
+            while c2 < hd {
+                let mut acc = 0.0
+                let mut j3 = 0
+                while j3 < L {
+                    acc = acc + (farr_get(srow, j3) / tot) * farr_get(V, j3 * d + base + c2)
+                    j3 = j3 + 1
+                }
+                let _ = farr_set(ctx, i * d + base + c2, acc)
+                c2 = c2 + 1
+            }
+            i = i + 1
+        }
+        hh = hh + 1
+    }
+    let _ = farr_free(srow)
+    // out proj: Aout = ctx[T,d] · oWt[d,d] + oB
+    _bg_linear_mm(ctx, oWt, oB, Aout, T, d, d)
+    let _ = farr_free(Q); let _ = farr_free(K); let _ = farr_free(V); let _ = farr_free(ctx)
+}
+
+// ── multi-head causal self-attention (torch nn.MultiheadAttention semantics) ─
+// H = pre-normed input [T,d]. in_proj W[3d,d] rows Q|K|V, in_proj b[3d].
+// out_proj Wo[d,d]+bo. scale = 1/sqrt(hd). Writes attn output (BEFORE residual) to Aout.
+fn _bg_mha(H: int, inW: int, inB: int, oW: int, oB: int, Aout: int,
+           T: int, d: int, nh: int) {
+    let hd = d / nh
+    let scale = 1.0 / dt_sqrt(to_float(hd))
+    // project Q,K,V : Q[t,j]=Σ_c inW[j*d+c]·H + inB[j]; K rows d..2d; V rows 2d..3d.
+    let Q = farr_zeros(T * d)
+    let K = farr_zeros(T * d)
+    let V = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let mut j = 0
+        while j < d {
+            let mut accq = farr_get(inB, j)
+            let mut acck = farr_get(inB, d + j)
+            let mut accv = farr_get(inB, 2 * d + j)
+            let mut c = 0
+            while c < d {
+                let hv = farr_get(H, t * d + c)
+                accq = accq + farr_get(inW, j * d + c) * hv
+                acck = acck + farr_get(inW, (d + j) * d + c) * hv
+                accv = accv + farr_get(inW, (2 * d + j) * d + c) * hv
+                c = c + 1
+            }
+            let _ = farr_set(Q, t * d + j, accq)
+            let _ = farr_set(K, t * d + j, acck)
+            let _ = farr_set(V, t * d + j, accv)
+            j = j + 1
+        }
+        t = t + 1
+    }
+    // per head, causal softmax attention. ctx[t, h*hd+c].
+    let ctx = farr_zeros(T * d)
+    let srow = farr_zeros(T)
+    let mut hh = 0
+    while hh < nh {
+        let base = hh * hd
+        let mut i = 0
+        while i < T {
+            let L = i + 1
+            // scores
+            let mut mx = 0.0 - 1.0e30
+            let mut jx = 0
+            while jx < L {
+                let mut dot = 0.0
+                let mut c = 0
+                while c < hd {
+                    dot = dot + farr_get(Q, i * d + base + c) * farr_get(K, jx * d + base + c)
+                    c = c + 1
+                }
+                let sv = dot * scale
+                let _ = farr_set(srow, jx, sv)
+                if sv > mx { mx = sv }
+                jx = jx + 1
+            }
+            // softmax
+            let mut tot = 0.0
+            let mut j2 = 0
+            while j2 < L {
+                let e = exp(farr_get(srow, j2) - mx)   // libm exp (attention softmax) — torch parity, ING#23
+                let _ = farr_set(srow, j2, e)
+                tot = tot + e
+                j2 = j2 + 1
+            }
+            // ctx = Σ_j (e/tot) · V
+            let mut c2 = 0
+            while c2 < hd {
+                let mut acc = 0.0
+                let mut j3 = 0
+                while j3 < L {
+                    acc = acc + (farr_get(srow, j3) / tot) * farr_get(V, j3 * d + base + c2)
+                    j3 = j3 + 1
+                }
+                let _ = farr_set(ctx, i * d + base + c2, acc)
+                c2 = c2 + 1
+            }
+            i = i + 1
+        }
+        hh = hh + 1
+    }
+    let _ = farr_free(srow)
+    // output projection Aout = ctx · oWᵀ + oB
+    _bg_linear(ctx, oW, oB, Aout, T, d, d)
+    let _ = farr_free(Q); let _ = farr_free(K); let _ = farr_free(V); let _ = farr_free(ctx)
+}
+
+// ── full forward: read binary at `path`, run T-token prompt, return last-pos logits ─
+// `ids` = farr of T byte ids (0..255). Returns a fresh farr[vocab] of next-byte logits
+// at the LAST position. Caller frees.
+pub fn bytegpt_forward_last(path: string, ids: int, T: int) -> int {
+    let rb = read_file_bytes(path)
+    let vocab = _bg_rd_u32(rb, 0)
+    let d     = _bg_rd_u32(rb, 4)
+    let nlay  = _bg_rd_u32(rb, 8)
+    let nh    = _bg_rd_u32(rb, 12)
+    let block = _bg_rd_u32(rb, 16)
+    let mut off = 20
+
+    // tok[vocab*d], pos[block*d]
+    let tok = _bg_rd_farr(rb, off, vocab * d); off = off + vocab * d * 4
+    let pos = _bg_rd_farr(rb, off, block * d); off = off + block * d * 4
+
+    // x[T,d] = tok[id] + pos[t]
+    let x = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let id = to_int(farr_get(ids, t))
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, t * d + c,
+                             farr_get(tok, id * d + c) + farr_get(pos, t * d + c))
+            c = c + 1
+        }
+        t = t + 1
+    }
+
+    // scratch reused per layer
+    let nrm = farr_zeros(T * d)
+    let aout = farr_zeros(T * d)
+    let h4 = farr_zeros(T * 4 * d)
+    let mlpo = farr_zeros(T * d)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        // read this layer's weights
+        let ln1w = _bg_rd_farr(rb, off, d); off = off + d * 4
+        let ln1b = _bg_rd_farr(rb, off, d); off = off + d * 4
+        let inW  = _bg_rd_farr(rb, off, 3 * d * d); off = off + 3 * d * d * 4
+        let inB  = _bg_rd_farr(rb, off, 3 * d); off = off + 3 * d * 4
+        let oW   = _bg_rd_farr(rb, off, d * d); off = off + d * d * 4
+        let oB   = _bg_rd_farr(rb, off, d); off = off + d * 4
+        let ln2w = _bg_rd_farr(rb, off, d); off = off + d * 4
+        let ln2b = _bg_rd_farr(rb, off, d); off = off + d * 4
+        let m0W  = _bg_rd_farr(rb, off, 4 * d * d); off = off + 4 * d * d * 4
+        let m0B  = _bg_rd_farr(rb, off, 4 * d); off = off + 4 * d * 4
+        let m2W  = _bg_rd_farr(rb, off, d * 4 * d); off = off + d * 4 * d * 4
+        let m2B  = _bg_rd_farr(rb, off, d); off = off + d * 4
+
+        // attn sub-block: x = x + MHA(LN1(x))
+        _bg_layernorm(x, ln1w, ln1b, nrm, T, d)
+        _bg_mha(nrm, inW, inB, oW, oB, aout, T, d, nh)
+        let mut i1 = 0
+        while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
+
+        // mlp sub-block: x = x + Wd(GELU(W0(LN2(x))))
+        _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
+        _bg_linear(nrm, m0W, m0B, h4, T, d, 4 * d)
+        let mut g = 0
+        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        _bg_linear(h4, m2W, m2B, mlpo, T, 4 * d, d)
+        let mut i2 = 0
+        while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
+
+        let _ = farr_free(ln1w); let _ = farr_free(ln1b); let _ = farr_free(inW); let _ = farr_free(inB)
+        let _ = farr_free(oW); let _ = farr_free(oB); let _ = farr_free(ln2w); let _ = farr_free(ln2b)
+        let _ = farr_free(m0W); let _ = farr_free(m0B); let _ = farr_free(m2W); let _ = farr_free(m2B)
+        Lr = Lr + 1
+    }
+    let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    // final LayerNorm on the LAST position only, then tied head.
+    let lnfw = _bg_rd_farr(rb, off, d); off = off + d * 4
+    let lnfb = _bg_rd_farr(rb, off, d); off = off + d * 4
+    let head = _bg_rd_farr(rb, off, vocab * d); off = off + vocab * d * 4
+
+    // LN_f over last row
+    let lastrow = farr_zeros(d)
+    let last = (T - 1) * d
+    // reuse _bg_layernorm with T=1 by copying last row
+    let xt = farr_zeros(d)
+    let mut cc = 0
+    while cc < d { let _ = farr_set(xt, cc, farr_get(x, last + cc)); cc = cc + 1 }
+    _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
+
+    // logits[k] = Σ_c head[k*d+c]·lastrow[c]
+    let logits = farr_zeros(vocab)
+    let mut k = 0
+    while k < vocab {
+        let mut acc = 0.0
+        let mut c = 0
+        while c < d { acc = acc + farr_get(head, k * d + c) * farr_get(lastrow, c); c = c + 1 }
+        let _ = farr_set(logits, k, acc)
+        k = k + 1
+    }
+    let _ = farr_free(tok); let _ = farr_free(pos); let _ = farr_free(x)
+    let _ = farr_free(lnfw); let _ = farr_free(lnfb); let _ = farr_free(head)
+    let _ = farr_free(lastrow); let _ = farr_free(xt)
+    return logits
+}
+
+// ── ranged weight reader: read n f32 from the file at a byte offset, NO whole-file load.
+// For models whose flat binary exceeds the boxed-array memory budget — e.g. the 1B rung
+// at 4.3GB would materialize ~69GB of boxed bytes via read_file_bytes. Reads only the
+// n*4-byte slice via read_bytes_at (64-bit offset, hexa-lang #3352), parses to a native
+// farr; the slice is a function-local released on return (same lifetime as the rb buffer
+// in bytegpt_forward_last, which the 303M path never leaks across generator steps).
+fn _bg_rd_farr_at(path: string, byte_off: int, n: int) -> int {
+    // Portable ranged reader: read_bytes_at slice → parse to farr. NOTE: the runtime
+    // also ships read_f32_at(path,off,n) (direct f32→farr, no boxed-byte intermediate)
+    // which drops the load-RSS peak (24.3GB→18.1GB measured on the 303M) — BUT it is
+    // only in NEWER hexa builds (present on summer, NOT in mini's installed /Users/.hx
+    // toolchain → fresh build = "undeclared identifier read_f32_at"). So this path stays
+    // on the portable read_bytes_at to compile on every host. To USE the lower-RSS path
+    // on a host whose hexa has it, swap the body to `return read_f32_at(path,byte_off,n)`
+    // (byte-identical, verified max|Δ|=0). The real OOM fix is runtime-level (RFC 025).
+    let slice = read_bytes_at(path, byte_off, n * 4)
+    let a = _bg_rd_farr(slice, 0, n)
+    return a
+}
+
+// bytegpt_forward_last_ranged — byte-identical to bytegpt_forward_last but reads each
+// weight slice on demand via read_bytes_at instead of loading the whole binary at once.
+// The memory-feasible engine-mount path for 1B+ models (a_engine_measured_verdict). The
+// 303M path (bytegpt_forward_last / bg_load) is unchanged. Peak resident ≈ one weight
+// slice (max 4*d*d floats) + the activations, freed per layer.
+pub fn bytegpt_forward_last_ranged(path: string, ids: int, T: int) -> int {
+    let hdr = read_bytes_at(path, 0, 20)
+    let vocab = _bg_rd_u32(hdr, 0)
+    let d     = _bg_rd_u32(hdr, 4)
+    let nlay  = _bg_rd_u32(hdr, 8)
+    let nh    = _bg_rd_u32(hdr, 12)
+    let block = _bg_rd_u32(hdr, 16)
+    let mut off = 20
+
+    // tok[vocab*d], pos[block*d]
+    let tok = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+    let pos = _bg_rd_farr_at(path, off, block * d); off = off + block * d * 4
+
+    // x[T,d] = tok[id] + pos[t]
+    let x = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let id = to_int(farr_get(ids, t))
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, t * d + c,
+                             farr_get(tok, id * d + c) + farr_get(pos, t * d + c))
+            c = c + 1
+        }
+        t = t + 1
+    }
+
+    let nrm = farr_zeros(T * d)
+    let aout = farr_zeros(T * d)
+    let h4 = farr_zeros(T * 4 * d)
+    let mlpo = farr_zeros(T * d)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        let ln1w = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln1b = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let inW  = _bg_rd_farr_at(path, off, 3 * d * d); off = off + 3 * d * d * 4
+        let inB  = _bg_rd_farr_at(path, off, 3 * d); off = off + 3 * d * 4
+        let oW   = _bg_rd_farr_at(path, off, d * d); off = off + d * d * 4
+        let oB   = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln2w = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln2b = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let m0W  = _bg_rd_farr_at(path, off, 4 * d * d); off = off + 4 * d * d * 4
+        let m0B  = _bg_rd_farr_at(path, off, 4 * d); off = off + 4 * d * 4
+        let m2W  = _bg_rd_farr_at(path, off, d * 4 * d); off = off + d * 4 * d * 4
+        let m2B  = _bg_rd_farr_at(path, off, d); off = off + d * 4
+
+        _bg_layernorm(x, ln1w, ln1b, nrm, T, d)
+        _bg_mha(nrm, inW, inB, oW, oB, aout, T, d, nh)
+        let mut i1 = 0
+        while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
+
+        _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
+        _bg_linear(nrm, m0W, m0B, h4, T, d, 4 * d)
+        let mut g = 0
+        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        _bg_linear(h4, m2W, m2B, mlpo, T, 4 * d, d)
+        let mut i2 = 0
+        while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
+
+        let _ = farr_free(ln1w); let _ = farr_free(ln1b); let _ = farr_free(inW); let _ = farr_free(inB)
+        let _ = farr_free(oW); let _ = farr_free(oB); let _ = farr_free(ln2w); let _ = farr_free(ln2b)
+        let _ = farr_free(m0W); let _ = farr_free(m0B); let _ = farr_free(m2W); let _ = farr_free(m2B)
+        Lr = Lr + 1
+    }
+    let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    let lnfw = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let lnfb = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let head = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+
+    let lastrow = farr_zeros(d)
+    let last = (T - 1) * d
+    let xt = farr_zeros(d)
+    let mut cc = 0
+    while cc < d { let _ = farr_set(xt, cc, farr_get(x, last + cc)); cc = cc + 1 }
+    _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
+
+    let logits = farr_zeros(vocab)
+    let mut k = 0
+    while k < vocab {
+        let mut acc = 0.0
+        let mut c = 0
+        while c < d { acc = acc + farr_get(head, k * d + c) * farr_get(lastrow, c); c = c + 1 }
+        let _ = farr_set(logits, k, acc)
+        k = k + 1
+    }
+    let _ = farr_free(tok); let _ = farr_free(pos); let _ = farr_free(x)
+    let _ = farr_free(lnfw); let _ = farr_free(lnfb); let _ = farr_free(head)
+    let _ = farr_free(lastrow); let _ = farr_free(xt)
+    return logits
+}
+
+// bytegpt_forward_last_ranged_mm — Lane C fast path for the MEMORY-FEASIBLE
+// ranged reader. Byte-equivalent to bytegpt_forward_last_ranged, but the d×d
+// matmuls go through the native GEMM (_bg_linear_mm / _bg_mha_mm). Each weight
+// slice is transposed inline right after the read (the transpose is O(d²), tiny
+// vs the boxing/forward it enables, and the slice is freed per layer so peak
+// resident ≈ one weight slice — NOT the 24GB whole-file boxing that bg_load
+// pays). This is the path that runs on the real 303M binary without OOM.
+pub fn bytegpt_forward_last_ranged_mm(path: string, ids: int, T: int) -> int {
+    let hdr = read_bytes_at(path, 0, 20)
+    let vocab = _bg_rd_u32(hdr, 0)
+    let d     = _bg_rd_u32(hdr, 4)
+    let nlay  = _bg_rd_u32(hdr, 8)
+    let nh    = _bg_rd_u32(hdr, 12)
+    let block = _bg_rd_u32(hdr, 16)
+    let mut off = 20
+
+    let tok = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+    let pos = _bg_rd_farr_at(path, off, block * d); off = off + block * d * 4
+
+    let x = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let id = to_int(farr_get(ids, t))
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, t * d + c,
+                             farr_get(tok, id * d + c) + farr_get(pos, t * d + c))
+            c = c + 1
+        }
+        t = t + 1
+    }
+    let _ = farr_free(tok); let _ = farr_free(pos)
+
+    let nrm = farr_zeros(T * d)
+    let aout = farr_zeros(T * d)
+    let h4 = farr_zeros(T * 4 * d)
+    let mlpo = farr_zeros(T * d)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        let ln1w = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln1b = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let inW  = _bg_rd_farr_at(path, off, 3 * d * d); off = off + 3 * d * d * 4
+        let inB  = _bg_rd_farr_at(path, off, 3 * d); off = off + 3 * d * 4
+        let oW   = _bg_rd_farr_at(path, off, d * d); off = off + d * d * 4
+        let oB   = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln2w = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let ln2b = _bg_rd_farr_at(path, off, d); off = off + d * 4
+        let m0W  = _bg_rd_farr_at(path, off, 4 * d * d); off = off + 4 * d * d * 4
+        let m0B  = _bg_rd_farr_at(path, off, 4 * d); off = off + 4 * d * 4
+        let m2W  = _bg_rd_farr_at(path, off, d * 4 * d); off = off + d * 4 * d * 4
+        let m2B  = _bg_rd_farr_at(path, off, d); off = off + d * 4
+
+        // transpose the matmul weights for the native GEMM (freed below per layer)
+        let inWt = _bg_transpose(inW, 3 * d, d)
+        let oWt  = _bg_transpose(oW, d, d)
+        let m0Wt = _bg_transpose(m0W, 4 * d, d)
+        let m2Wt = _bg_transpose(m2W, d, 4 * d)
+
+        _bg_layernorm(x, ln1w, ln1b, nrm, T, d)
+        _bg_mha_mm(nrm, inWt, inB, oWt, oB, aout, T, d, nh)
+        let mut i1 = 0
+        while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
+
+        _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
+        _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
+        let mut g = 0
+        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
+        let mut i2 = 0
+        while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
+
+        let _ = farr_free(ln1w); let _ = farr_free(ln1b); let _ = farr_free(inW); let _ = farr_free(inB)
+        let _ = farr_free(oW); let _ = farr_free(oB); let _ = farr_free(ln2w); let _ = farr_free(ln2b)
+        let _ = farr_free(m0W); let _ = farr_free(m0B); let _ = farr_free(m2W); let _ = farr_free(m2B)
+        let _ = farr_free(inWt); let _ = farr_free(oWt); let _ = farr_free(m0Wt); let _ = farr_free(m2Wt)
+        Lr = Lr + 1
+    }
+    let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    let lnfw = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let lnfb = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let head = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+
+    let lastrow = farr_zeros(d)
+    let last = (T - 1) * d
+    let xt = farr_zeros(d)
+    let mut cc = 0
+    while cc < d { let _ = farr_set(xt, cc, farr_get(x, last + cc)); cc = cc + 1 }
+    _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
+
+    // head logits: logits[k] = Σ_c head[k*d+c]·lastrow[c]. Portable scalar loop (vocab=256 ×
+    // d=1024 = the cheapest op in the forward; NOT the d×d hot path). Was farr_packed_gemv_offset
+    // but that builtin is absent from older hexa runtimes (aiden link-fails) — the scalar loop is
+    // byte-identical (same i-outer/j-inner order) and compiles everywhere.
+    let logits = farr_zeros(vocab)
+    let mut hk = 0
+    while hk < vocab {
+        let mut hacc = 0.0
+        let mut hc = 0
+        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
+        let _ = farr_set(logits, hk, hacc)
+        hk = hk + 1
+    }
+    let _ = farr_free(x); let _ = farr_free(lnfw); let _ = farr_free(lnfb)
+    let _ = farr_free(head); let _ = farr_free(lastrow); let _ = farr_free(xt)
+    return logits
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// LOAD-ONCE forward (R1 full-depth + R2 generator slot + R3 grounding).
+//
+// bytegpt_forward_last re-reads the WHOLE binary every call — fine for a single
+// parity probe, fatal for greedy generation (re-reading 1.2GB × gen steps). The
+// split below reads the binary ONCE into a weight Map (bg_load), then runs the
+// forward from the loaded weights (bg_forward_last_W). Same math, byte-identical
+// to bytegpt_forward_last — the per-layer assembly is unchanged, only the file
+// read is hoisted out of the loop. Mirrors clm_decode's _clmd_load/_clmd_fwd split.
+// ════════════════════════════════════════════════════════════════════════
+
+// bg_load — parse the flat binary at `path` into a weight Map ONCE. Per-layer
+// tensors are kept as handle arrays (ln1w[L], inW[L], …) so the forward loops
+// generally over all nlay blocks. Caller frees via bg_free.
+pub fn bg_load(path: string) -> Map {
+    let rb = read_file_bytes(path)
+    let vocab = _bg_rd_u32(rb, 0)
+    let d     = _bg_rd_u32(rb, 4)
+    let nlay  = _bg_rd_u32(rb, 8)
+    let nh    = _bg_rd_u32(rb, 12)
+    let block = _bg_rd_u32(rb, 16)
+    let mut off = 20
+
+    let tok = _bg_rd_farr(rb, off, vocab * d); off = off + vocab * d * 4
+    let pos = _bg_rd_farr(rb, off, block * d); off = off + block * d * 4
+
+    let ln1w = []; let ln1b = []; let inW = []; let inB = []
+    let oW = []; let oB = []; let ln2w = []; let ln2b = []
+    let m0W = []; let m0B = []; let m2W = []; let m2B = []
+    let mut Lr = 0
+    while Lr < nlay {
+        ln1w.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
+        ln1b.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
+        inW.push(_bg_rd_farr(rb, off, 3 * d * d)); off = off + 3 * d * d * 4
+        inB.push(_bg_rd_farr(rb, off, 3 * d)); off = off + 3 * d * 4
+        oW.push(_bg_rd_farr(rb, off, d * d)); off = off + d * d * 4
+        oB.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
+        ln2w.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
+        ln2b.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
+        m0W.push(_bg_rd_farr(rb, off, 4 * d * d)); off = off + 4 * d * d * 4
+        m0B.push(_bg_rd_farr(rb, off, 4 * d)); off = off + 4 * d * 4
+        m2W.push(_bg_rd_farr(rb, off, d * 4 * d)); off = off + d * 4 * d * 4
+        m2B.push(_bg_rd_farr(rb, off, d)); off = off + d * 4
+        Lr = Lr + 1
+    }
+    let lnfw = _bg_rd_farr(rb, off, d); off = off + d * 4
+    let lnfb = _bg_rd_farr(rb, off, d); off = off + d * 4
+    let head = _bg_rd_farr(rb, off, vocab * d); off = off + vocab * d * 4
+
+    // Lane C fast path: pre-transpose every weight that feeds a d×d matmul ONCE
+    // here (amortized over all forwards). bg_forward_last_W's native-GEMM path
+    // consumes these [Ci,Co] transposes; the original [Co,Ci] arrays are kept so
+    // the scalar reference forward (_bg_linear / _bg_mha) still works unchanged.
+    let inWt = []; let oWt = []; let m0Wt = []; let m2Wt = []
+    let mut Tr = 0
+    while Tr < nlay {
+        inWt.push(_bg_transpose(to_int(inW[Tr]), 3 * d, d))   // [3d,d] -> [d,3d]
+        oWt.push(_bg_transpose(to_int(oW[Tr]), d, d))          // [d,d]  -> [d,d]
+        m0Wt.push(_bg_transpose(to_int(m0W[Tr]), 4 * d, d))    // [4d,d] -> [d,4d]
+        m2Wt.push(_bg_transpose(to_int(m2W[Tr]), d, 4 * d))    // [d,4d] -> [4d,d]
+        Tr = Tr + 1
+    }
+    let headT = _bg_transpose(head, vocab, d)                  // [vocab,d] -> [d,vocab]
+
+    return #{ "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
+              "tok": tok, "pos": pos, "ln1w": ln1w, "ln1b": ln1b,
+              "inW": inW, "inB": inB, "oW": oW, "oB": oB,
+              "ln2w": ln2w, "ln2b": ln2b, "m0W": m0W, "m0B": m0B,
+              "m2W": m2W, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
+              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT }
+}
+
+// bg_load_ranged — OOM-SAFE resident loader for the mm forward (Lane C follow-on).
+// Same resulting W-map as bg_load (the mm bg_forward_last_W path runs unchanged on
+// it), but builds it via ranged read_bytes_at (one weight slice at a time) instead of
+// read_file_bytes boxing the WHOLE binary. bg_load peaks ~24GB RSS boxing the 1.2GB
+// f32 binary (each byte → a HexaVal) → OOM on memory-tight/contended pool hosts; this
+// path's peak is ≈ one weight slice (max 4*d*d floats ~16MB) during load, plus the
+// final resident farrs. Each big [Co,Ci] weight is transposed then IMMEDIATELY freed
+// (the mm forward only reads the transposes + head + biases + ln + tok/pos, NOT the
+// originals — verified), so resident memory ≈ the transposes, not 2× them. Use this
+// for the frozen H_1431 5-bar on the pool. The originals are stored as empty handles
+// (-1 sentinel won't be read by the mm path; a scalar caller must use bg_load instead).
+pub fn bg_load_ranged(path: string) -> Map {
+    let hdr = read_bytes_at(path, 0, 20)
+    let vocab = _bg_rd_u32(hdr, 0)
+    let d     = _bg_rd_u32(hdr, 4)
+    let nlay  = _bg_rd_u32(hdr, 8)
+    let nh    = _bg_rd_u32(hdr, 12)
+    let block = _bg_rd_u32(hdr, 16)
+    let mut off = 20
+
+    let tok = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+    let pos = _bg_rd_farr_at(path, off, block * d); off = off + block * d * 4
+
+    let ln1w = []; let ln1b = []; let inB = []
+    let oB = []; let ln2w = []; let ln2b = []
+    let m0B = []; let m2B = []
+    let inWt = []; let oWt = []; let m0Wt = []; let m2Wt = []
+    let mut Lr = 0
+    while Lr < nlay {
+        ln1w.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        ln1b.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        let inW = _bg_rd_farr_at(path, off, 3 * d * d); off = off + 3 * d * d * 4
+        inB.push(_bg_rd_farr_at(path, off, 3 * d)); off = off + 3 * d * 4
+        let oW = _bg_rd_farr_at(path, off, d * d); off = off + d * d * 4
+        oB.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        ln2w.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        ln2b.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        let m0W = _bg_rd_farr_at(path, off, 4 * d * d); off = off + 4 * d * d * 4
+        m0B.push(_bg_rd_farr_at(path, off, 4 * d)); off = off + 4 * d * 4
+        let m2W = _bg_rd_farr_at(path, off, d * 4 * d); off = off + d * 4 * d * 4
+        m2B.push(_bg_rd_farr_at(path, off, d)); off = off + d * 4
+        // transpose then free the original immediately (peak ≈ one weight + its transpose)
+        inWt.push(_bg_transpose(inW, 3 * d, d)); let _ = farr_free(inW)
+        oWt.push(_bg_transpose(oW, d, d)); let _ = farr_free(oW)
+        m0Wt.push(_bg_transpose(m0W, 4 * d, d)); let _ = farr_free(m0W)
+        m2Wt.push(_bg_transpose(m2W, d, 4 * d)); let _ = farr_free(m2W)
+        Lr = Lr + 1
+    }
+    let lnfw = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let lnfb = _bg_rd_farr_at(path, off, d); off = off + d * 4
+    let head = _bg_rd_farr_at(path, off, vocab * d); off = off + vocab * d * 4
+    let headT = _bg_transpose(head, vocab, d)
+
+    // inW/oW/m0W/m2W stored as empty []; the mm bg_forward_last_W never reads them.
+    let empty = []
+    return #{ "vocab": vocab, "d": d, "nlay": nlay, "nh": nh, "block": block,
+              "tok": tok, "pos": pos, "ln1w": ln1w, "ln1b": ln1b,
+              "inW": empty, "inB": inB, "oW": empty, "oB": oB,
+              "ln2w": ln2w, "ln2b": ln2b, "m0W": empty, "m0B": m0B,
+              "m2W": empty, "m2B": m2B, "lnfw": lnfw, "lnfb": lnfb, "head": head,
+              "inWt": inWt, "oWt": oWt, "m0Wt": m0Wt, "m2Wt": m2Wt, "headT": headT }
+}
+
+// bg_forward_last_W — run the full forward from a loaded weight Map; return a
+// fresh farr[vocab] of last-position next-byte logits. Byte-identical to
+// bytegpt_forward_last's compute (same _bg_layernorm / _bg_mha / _bg_linear /
+// _bg_gelu), only the weights come from W instead of a per-call file read.
+pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+    let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"])
+    let tok = to_int(W["tok"]); let pos = to_int(W["pos"])
+    let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let inB = W["inB"]
+    let oB = W["oB"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
+    let m0B = W["m0B"]; let m2B = W["m2B"]
+    // Lane C fast path: pre-transposed weights for the native GEMM (built in bg_load).
+    let inWt = W["inWt"]; let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
+
+    let x = farr_zeros(T * d)
+    let mut t = 0
+    while t < T {
+        let id = to_int(farr_get(ids, t))
+        let mut c = 0
+        while c < d {
+            let _ = farr_set(x, t * d + c,
+                             farr_get(tok, id * d + c) + farr_get(pos, t * d + c))
+            c = c + 1
+        }
+        t = t + 1
+    }
+
+    let nrm = farr_zeros(T * d)
+    let aout = farr_zeros(T * d)
+    let h4 = farr_zeros(T * 4 * d)
+    let mlpo = farr_zeros(T * d)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        _bg_layernorm(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, T, d)
+        _bg_mha_mm(nrm, to_int(inWt[Lr]), to_int(inB[Lr]), to_int(oWt[Lr]), to_int(oB[Lr]), aout, T, d, nh)
+        let mut i1 = 0
+        while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
+
+        _bg_layernorm(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, T, d)
+        _bg_linear_mm(nrm, to_int(m0Wt[Lr]), to_int(m0B[Lr]), h4, T, d, 4 * d)
+        let mut g = 0
+        while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        _bg_linear_mm(h4, to_int(m2Wt[Lr]), to_int(m2B[Lr]), mlpo, T, 4 * d, d)
+        let mut i2 = 0
+        while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
+        Lr = Lr + 1
+    }
+    let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"]); let head = to_int(W["head"])
+    let lastrow = farr_zeros(d)
+    let last = (T - 1) * d
+    let xt = farr_zeros(d)
+    let mut cc = 0
+    while cc < d { let _ = farr_set(xt, cc, farr_get(x, last + cc)); cc = cc + 1 }
+    _bg_layernorm(xt, lnfw, lnfb, lastrow, 1, d)
+
+    // head logits: logits[k] = Σ_c head[k*d+c]·lastrow[c]. Portable scalar loop (vocab×d, the
+    // cheapest op; NOT the d×d hot path). Was farr_packed_gemv_offset — absent from older hexa
+    // runtimes (aiden link-fails) — scalar is byte-identical (same i-outer/j-inner) + portable.
+    let logits = farr_zeros(vocab)
+    let mut hk = 0
+    while hk < vocab {
+        let mut hacc = 0.0
+        let mut hc = 0
+        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
+        let _ = farr_set(logits, hk, hacc)
+        hk = hk + 1
+    }
+    let _ = farr_free(x); let _ = farr_free(lastrow); let _ = farr_free(xt)
+    return logits
+}
+
+// bg_argmax — index of the max of a farr[n].
+fn bg_argmax(a: int, n: int) -> int {
+    let mut bi = 0
+    let mut bv = farr_get(a, 0)
+    let mut k = 1
+    while k < n {
+        let v = farr_get(a, k)
+        if v > bv { bv = v; bi = k }
+        k = k + 1
+    }
+    return bi
+}
+
+// bytegpt_decode_argmax — greedy continuation from a loaded ByteGPT (R1/R2).
+// Reads weights ONCE, then generates `gen` bytes, growing the prompt window
+// (capped at `block`). Deterministic argmax (p7). The ByteGPT analog of
+// clm_decode_argmax. Returns #{ ok, text, ids } (ids = list of generated codes).
+pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
+    let W = bg_load(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    // running token list (ints), seeded from seed_ids
+    let toks = []
+    let mut i = 0
+    while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let outl = []
+    let mut out = ""
+    let mut g = 0
+    while g < gen {
+        // window = last `block` tokens
+        let n = len(toks)
+        let mut start = 0
+        if n > block { start = n - block }
+        let T = n - start
+        let ids = farr_zeros(T)
+        let mut p = 0
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
+        let logits = bg_forward_last_W(W, ids, T)
+        let nb = bg_argmax(logits, vocab)
+        let _ = farr_free(logits); let _ = farr_free(ids)
+        toks.push(nb)
+        outl.push(nb)
+        out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "ids": outl }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// H_1381 — SEEDED TOP-K TEMPERATURE SAMPLER (the engine extension that makes
+// best-of-K EXPRESSIBLE on the engine). bytegpt_decode_argmax is deterministic
+// argmax, so best-of-K over rng offsets would yield K IDENTICAL outputs (no-op).
+// Per a_engine_native_learning (engine-TRANSFORM-to-fit-the-learning) the engine
+// grows its OWN deterministic seeded sampler so the G6 DEPTH lever (best-of-K)
+// becomes a real search over the model's own samples — NOT idea-authoring.
+//
+// HONEST (FREEZE (i)): this is a hexa-native PRNG (xorshift32) — deterministic
+// given seed, but NOT byte-identical to torch's Generator/multinomial (that PRNG
+// is not reproducible in hexa). "engine-native" = runs on the live engine + its
+// own seeded sampler, deterministic over seeds — same standard as h1293/h1295.
+//
+// _g6_mix32 — SplitMix32-style finalizer: scrambles a raw seed so even nearby
+// seeds (e.g. base+0/+101/+202) decorrelate before the first draw (a plain xorshift
+// step of a small seed leaves the high bits unmixed → tiny correlated u; this fixes
+// that). Deterministic, pure-int.
+fn _g6_mix32(s: int) -> int {
+    let mut z = (s + 0x9E3779B9) & 0xFFFFFFFF
+    z = ((z ^ (z / 65536)) * 0x85EBCA6B) & 0xFFFFFFFF     // z ^= z>>16 ; *= C1
+    z = ((z ^ (z / 8192))  * 0xC2B2AE35) & 0xFFFFFFFF     // z ^= z>>13 ; *= C2
+    z = (z ^ (z / 65536)) & 0xFFFFFFFF                    // z ^= z>>16
+    if z == 0 { z = 0x9E3779B9 }
+    return z
+}
+
+// _g6_rng_next — xorshift32 PRNG step over a MIXED state; returns
+// #{ "s": new_state, "u": uniform[0,1) }. Callers pass the state from a prior
+// _g6_rng_next; the FIRST call's raw seed is mixed via _g6_mix32 in the sampler.
+fn _g6_rng_next(s: int) -> Map {
+    let mut x = s & 0xFFFFFFFF
+    if x == 0 { x = 0x9E3779B9 }
+    x = (x ^ (x * 8192)) & 0xFFFFFFFF            // x ^= x << 13
+    x = (x ^ (x / 131072)) & 0xFFFFFFFF          // x ^= x >> 17
+    x = (x ^ (x * 32)) & 0xFFFFFFFF              // x ^= x << 5
+    let u = to_float(x) / 4294967296.0
+    return #{ "s": x, "u": u }
+}
+
+// _g6_topk_sample — top-k temperature softmax sample over a logits farr[vocab].
+// Mirrors gauge_lib._decode's selection STRUCTURE: logits/temp → keep top_k →
+// softmax → multinomial draw (here via inverse-CDF over the engine's xorshift32).
+// Returns #{ "tok": int, "s": new_rng_state }.
+fn _g6_topk_sample(logits: int, vocab: int, top_k: int, temp: float, rng: int) -> Map {
+    // 1) temperature-scaled logits + running argmax (for top-k threshold)
+    let kcap = if top_k > 0 && top_k < vocab { top_k } else { vocab }
+    // collect (value) farr already in `logits`; find the kcap-th largest via a
+    // simple partial selection (vocab=256 → O(vocab*kcap) is fine, deterministic).
+    let taken = farr_zeros(vocab)               // 0/1 marked-as-selected
+    let mut sel_idx = []
+    let mut sel_val = []
+    let mut picks = 0
+    while picks < kcap {
+        let mut bi = -1
+        let mut bv = 0.0
+        let mut k = 0
+        while k < vocab {
+            if farr_get(taken, k) < 0.5 {
+                let v = farr_get(logits, k)
+                if bi < 0 || v > bv { bi = k; bv = v }
+            }
+            k = k + 1
+        }
+        if bi < 0 { picks = kcap } else {
+            let _ = farr_set(taken, bi, 1.0)
+            sel_idx.push(bi)
+            sel_val.push(bv / temp)
+            picks = picks + 1
+        }
+    }
+    let _ = farr_free(taken)
+    // 2) softmax over the kept top-k (subtract max for stability)
+    let nsel = len(sel_idx)
+    let mut mx = sel_val[0]
+    let mut i = 1
+    while i < nsel { if sel_val[i] > mx { mx = sel_val[i] } i = i + 1 }
+    let probs = []
+    let mut sum = 0.0
+    let mut j = 0
+    while j < nsel { let e = dt_exp(sel_val[j] - mx); probs.push(e); sum = sum + e; j = j + 1 }
+    // 3) inverse-CDF draw with the engine's xorshift32 (state already mixed by caller)
+    let r = _g6_rng_next(rng)
+    let target = to_float(r["u"]) * sum
+    let mut acc = 0.0
+    let mut pick = sel_idx[nsel - 1]            // default last (covers fp rounding)
+    let mut p = 0
+    while p < nsel {
+        acc = acc + probs[p]
+        if target <= acc { pick = sel_idx[p]; p = nsel } else { p = p + 1 }
+    }
+    return #{ "tok": pick, "s": to_int(r["s"]) }
+}
+
+// bytegpt_decode_topk_sampled — the seeded-sampling sibling of bytegpt_decode_argmax.
+// Same forward + window growth, but each next byte is DRAWN from a top-k temperature
+// softmax via the engine's seeded sampler → different seed_rng ⇒ DIFFERENT output
+// (the diversity best-of-K needs). HARD-BOUNDED by `gen` (caller passes a small
+// budget — the 303M forward is ~190ms/byte; NO unbounded generation, FREEZE (ii)).
+pub fn bytegpt_decode_topk_sampled(path: string, seed_ids: list, gen: int,
+                                   top_k: int, temp: float, seed_rng: int) -> Map {
+    let W = bg_load(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let toks = []
+    let mut i = 0
+    while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let outl = []
+    let mut out = ""
+    let mut rng = _g6_mix32(seed_rng)            // mix the raw seed ONCE (decorrelate nearby seeds)
+    let mut g = 0
+    while g < gen {
+        let n = len(toks)
+        let mut start = 0
+        if n > block { start = n - block }
+        let T = n - start
+        let ids = farr_zeros(T)
+        let mut p = 0
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
+        let logits = bg_forward_last_W(W, ids, T)
+        let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
+        let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
+        let _ = farr_free(logits); let _ = farr_free(ids)
+        toks.push(nb); outl.push(nb); out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "ids": outl }
+}
+
+// bytegpt_decode_topk_sampled_ranged — OOM-SAFE twin of bytegpt_decode_topk_sampled
+// for the frozen H_1431 5-bar on the pool. IDENTICAL sampler + forward (byte-faithful),
+// the ONLY change is bg_load → bg_load_ranged (ranged read_bytes_at, peak ≈ one weight
+// slice during load instead of ~24GB whole-file boxing). The per-token forward is the
+// SAME fast resident mm (bg_forward_last_W), so generation throughput is unchanged
+// (~1.8s/token); only the one-time load is made memory-safe.
+pub fn bytegpt_decode_topk_sampled_ranged(path: string, seed_ids: list, gen: int,
+                                          top_k: int, temp: float, seed_rng: int) -> Map {
+    let W = bg_load_ranged(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let toks = []
+    let mut i = 0
+    while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let outl = []
+    let mut out = ""
+    let mut rng = _g6_mix32(seed_rng)
+    let mut g = 0
+    while g < gen {
+        let n = len(toks)
+        let mut start = 0
+        if n > block { start = n - block }
+        let T = n - start
+        let ids = farr_zeros(T)
+        let mut p = 0
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
+        let logits = bg_forward_last_W(W, ids, T)
+        let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
+        let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
+        let _ = farr_free(logits); let _ = farr_free(ids)
+        toks.push(nb); outl.push(nb); out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "ids": outl }
+}
+
+// _bg_gen_from_W — generate `gen` bytes from an ALREADY-LOADED weight Map W (top-k seeded
+// sampler, byte-identical to bytegpt_decode_topk_sampled). Factored out so a batch driver can
+// load the 303M ONCE and generate MANY fragments without per-fragment reload. seed = byte ids.
+fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, seed_rng: int) -> string {
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let toks = []
+    let mut i = 0
+    while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let mut out = ""
+    let mut rng = _g6_mix32(seed_rng)
+    let mut g = 0
+    while g < gen {
+        let n = len(toks)
+        let mut start = 0
+        if n > block { start = n - block }
+        let T = n - start
+        let ids = farr_zeros(T)
+        let mut p = 0
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
+        let logits = bg_forward_last_W(W, ids, T)
+        let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
+        let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
+        let _ = farr_free(logits); let _ = farr_free(ids)
+        toks.push(nb); out = out + chr(nb)
+        g = g + 1
+    }
+    return out
+}
+
+// bytegpt_decode_batch_to_file — LOAD-ONCE batch generator for the frozen H_1431 5-bar
+// (the rent-0 unblock). bg_load_ranged the 303M ONCE (single ~24GB transient load peak →
+// ~5GB resident), then generate ALL fragments from the resident map and APPEND each to
+// `out_path` as it finishes (commit-early: a reboot/kill keeps fragments already written;
+// the driver dedups on resume). Eliminates the per-fragment subprocess RELOAD that caused
+// both the wall-clock blowup (30× 24GB loads) and the repeated-transient-peak host swap-death.
+//
+// jobs_path: one job per line, TAB-separated: `seed_rng<TAB>tag<TAB>seed_text`
+//   (tag is an opaque id the driver maps back to subj/kind; seed_text is the priming string)
+// out_path: appended `tag<TAB>text` per fragment (text = the `gen` generated bytes, \n/\t escaped).
+fn bytegpt_decode_batch_to_file(bin_path: string, jobs_path: string, out_path: string,
+                                gen: int, top_k: int, temp: float) -> int {
+    let W = bg_load_ranged(bin_path)
+    let lines = read_lines(jobs_path)
+    let mut done = 0
+    let mut j = 0
+    while j < len(lines) {
+        let line = to_string(lines[j])
+        if byte_len(line) > 0 {
+            // split on first two tabs: seed_rng \t tag \t seed_text
+            let t1 = _bg_find(line, "\t")
+            if t1 > 0 {
+                let seed_rng = to_int(substring(line, 0, t1))
+                let rest = substring(line, t1 + 1, byte_len(line))
+                let t2 = _bg_find(rest, "\t")
+                if t2 > 0 {
+                    let tag = substring(rest, 0, t2)
+                    let seed = substring(rest, t2 + 1, byte_len(rest))
+                    // seed string → byte ids
+                    let sids = []
+                    let slen = byte_len(seed)
+                    let mut si = 0
+                    while si < slen { let c = ord(substring(seed, si, si + 1)); sids.push(c); si = si + 1 }
+                    let txt = _bg_gen_from_W(W, sids, gen, top_k, temp, seed_rng)
+                    // escape tab/newline so the output stays one line per fragment
+                    let mut esc = ""
+                    let mut k = 0
+                    let tl = byte_len(txt)
+                    while k < tl {
+                        let ch = substring(txt, k, k + 1)
+                        if ch == "\t" { esc = esc + " " } else { if ch == "\n" { esc = esc + " " } else { esc = esc + ch } }
+                        k = k + 1
+                    }
+                    let _ = append_file(out_path, tag + "\t" + esc + "\n")
+                    done = done + 1
+                }
+            }
+        }
+        j = j + 1
+    }
+    return done
+}
+
+// _bg_find / _bg_anchor_copy — the arch-INDEPENDENT deterministic retrieve-then-copy
+// (byte-identical to clm_decode.hexa::_clmd_find / clmd_anchor_copy). Inlined here
+// rather than imported so the ByteGPT decode does NOT pull in the ConvMoE flame
+// tensor/gn/moe libs for one string scan; the anti-fab MECHANISM is the same one
+// (longest grounded suffix → verbatim copied next byte), shared by both decode slots.
+fn _bg_find(hay: string, needle: string) -> int {
+    let hn = byte_len(hay)
+    let nn = byte_len(needle)
+    if nn == 0 { return -1 }
+    if nn > hn { return -1 }
+    let mut i = 0
+    while i + nn <= hn {
+        if substring(hay, i, i + nn) == needle { return i }
+        i = i + 1
+    }
+    return -1
+}
+fn _bg_anchor_copy(ctx: string, anchor_texts: list, l_min: int, l_max: int) -> int {
+    let clen = byte_len(ctx)
+    let mut L = l_max
+    if L > clen { L = clen }
+    while L >= l_min {
+        let suf = substring(ctx, clen - L, clen)
+        let mut a = 0
+        let na = len(anchor_texts)
+        while a < na {
+            let an = to_string(anchor_texts[a])
+            let pos = _bg_find(an, suf)
+            if pos >= 0 {
+                let nxt = pos + L
+                if nxt < byte_len(an) { return ord(substring(an, nxt, nxt + 1)) }
+            }
+            a = a + 1
+        }
+        L = L - 1
+    }
+    return -1
+}
+
+// bytegpt_decode_grounded — G5 anti-fabrication decode over ByteGPT (R3). SAME
+// grounded loop as clm_decode_grounded, but the ungrounded fallback calls the
+// ByteGPT forward instead of the ConvMoE forward: at each step try a
+// deterministic anchor-copy (longest suffix ≥ l_min found in an anchor → copy
+// its next byte VERBATIM, G5 ✓); else fall back to the ByteGPT argmax.
+// Weights loaded ONCE. Returns #{ ok, text, grounded, lm }.
+pub fn bytegpt_decode_grounded(path: string, seed: string, gen: int,
+                               anchor_texts: list, l_min: int) -> Map {
+    let W = bg_load(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    // seed token list from the seed string bytes
+    let toks = []
+    let slen = byte_len(seed)
+    let mut si = 0
+    while si < slen { toks.push(ord(substring(seed, si, si + 1))); si = si + 1 }
+    let mut out = ""
+    let mut grounded = 0
+    let mut lm = 0
+    let mut g = 0
+    while g < gen {
+        let ctx = seed + out
+        let cb = _bg_anchor_copy(ctx, anchor_texts, l_min, block)
+        let mut nb = 0
+        if cb >= 0 {
+            nb = cb                          // GROUNDED: verbatim anchor copy
+            grounded = grounded + 1
+        } else {
+            // UNGROUNDED: ByteGPT argmax over the last `block` tokens
+            let n = len(toks)
+            let mut start = 0
+            if n > block { start = n - block }
+            let T = n - start
+            let ids = farr_zeros(T)
+            let mut p = 0
+            while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
+            let logits = bg_forward_last_W(W, ids, T)
+            nb = bg_argmax(logits, vocab)
+            let _ = farr_free(logits); let _ = farr_free(ids)
+            lm = lm + 1
+        }
+        toks.push(nb)
+        out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "grounded": grounded, "lm": lm }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// bytegpt_decode_grounded_abstain — G5 FINAL anti-fabrication decode (H_1163).
+// COPY-THEN-ABSTAIN ordering + span-level entity copy + closed-class exclusion.
+// Closes the LAST a303m_pass gate (G5 NON-FABRICATION). Supersedes the H_1162
+// crude byte-0 abstain (which PRE-EMPTED ~15-22% of groundings by hedging at the
+// entity's first byte BEFORE the longest-suffix copy probe could ground it).
+//
+// THE FIX (deterministic, p7):
+//  (1) At EVERY step run the anchor-copy probe FIRST; a grounded byte is COPIED
+//      verbatim (grounded). The detector NEVER pre-empts the copy.
+//  (2) SPAN-COPY: once a grounded copy starts an entity word-run, keep copying the
+//      whole contiguous entity span from the anchor (raises useful, keeps fab low).
+//  (3) Only on an UNGROUNDED step where the LM argmax would START a capitalized
+//      word at a boundary AND that word is NOT closed-class do we consider abstaining;
+//      first we give the copy two more chances: (a) a SEED-SUFFIX look-ahead (the
+//      seed-suffix recurs in an anchor before a capitalized word → span-copy it) and
+//      (b) COPY-CONFIRM the LM byte-0 (tentatively take the LM's first byte; if the
+//      copy then grounds the continuation AND the assembled span is a VERBATIM anchor
+//      substring, the entity is grounded-by-copy → emit it). Only if BOTH fail do we
+//      ABSTAIN (emit a HEDGE space, assert no entity).
+//  (4) CLOSED-CLASS exclusion: a capitalized sentence-initial determiner/pronoun/
+//      conjunction (The/This/They/A/...) is grammatically forced, carries NO fabricable
+//      proposition → NOT a factual entity slot; never abstain on it (corpus-independent
+//      linguistic fact, p7). Corrects the H_1150 detector over-classification.
+//
+// Re-gated on the frozen H_1162 falsifier (REAL 303M ByteGPT, n=60, seed 7, p7):
+//   F1 fab(C)<=0.20 & fab(B)>0.20 ; F2 useful(C)>=0.90*useful(B) ; F3 abstain<0.10.
+//   ⇒ GREEN (semantic fab 0.20, useful_ratio 1.0, abstain-on-grounded 0.0).
+// Weights loaded ONCE. Returns #{ ok, text, grounded, lm, abstained }.
+
+fn _bg_is_word(b: int) -> bool { return (b >= 65 && b <= 90) || (b >= 97 && b <= 122) }
+fn _bg_is_upper(b: int) -> bool { return b >= 65 && b <= 90 }
+fn _bg_lower1(b: int) -> int { if b >= 65 && b <= 90 { return b + 32 } return b }
+
+// one ByteGPT argmax over the last `block` tokens of `toks` (int list)
+fn _bg_lm_argmax_toks(W: Map, toks: list, vocab: int, block: int) -> int {
+    let n = len(toks)
+    let mut start = 0
+    if n > block { start = n - block }
+    let T = n - start
+    let ids = farr_zeros(T)
+    let mut p = 0
+    while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(to_int(tv))); p = p + 1 }
+    let logits = bg_forward_last_W(W, ids, T)
+    let nb = bg_argmax(logits, vocab)
+    let _ = farr_free(logits); let _ = farr_free(ids)
+    return nb
+}
+
+// closed-class membership: roll the LM forward from lm_b to read the whole word, lowercase
+fn _bg_is_closed_class(W: Map, toks: list, lm_b: int, vocab: int, block: int) -> bool {
+    let mut w = chr(_bg_lower1(lm_b))
+    let ext = []
+    let mut i = 0
+    while i < len(toks) { ext.push(to_int(toks[i])); i = i + 1 }
+    ext.push(lm_b)
+    let mut k = 0
+    while k < 12 {
+        let nb = _bg_lm_argmax_toks(W, ext, vocab, block)
+        if !_bg_is_word(nb) { k = 12 } else {
+            w = w + chr(_bg_lower1(nb)); ext.push(nb); k = k + 1
+        }
+    }
+    // closed-class English function words (fixed finite set, p7 — no data tuning)
+    let cc = [ "the","this","that","these","those","they","them","their","there","then",
+               "than","a","an","and","but","or","if","is","it","its","i","we","you","he",
+               "she","his","her","our","your","my","me","to","of","in","on","at","by","for",
+               "as","so","no","not","do","does","did","was","were","be","been","have","has",
+               "had","will","would","can","could","should","may","might","with","from","when",
+               "where","what","who","how","why","which","while","yes","ok","well" ]
+    let mut c = 0
+    while c < len(cc) {
+        if to_string(cc[c]) == w { return true }
+        c = c + 1
+    }
+    return false
+}
+
+// SEED-SUFFIX look-ahead entity copy: longest suffix of ctx that occurs in an anchor and
+// whose next anchor byte STARTS a capitalized word. Returns the matched anchor index*100000
+// + the byte offset where the entity span begins, or -1 if none (packed to one int).
+fn _bg_lookahead_entity(ctx: string, anchor_texts: list, l_min: int, l_max: int) -> int {
+    let clen = byte_len(ctx)
+    let mut L = l_max
+    if L > clen { L = clen }
+    while L >= l_min {
+        let suf = substring(ctx, clen - L, clen)
+        let mut a = 0
+        let na = len(anchor_texts)
+        while a < na {
+            let an = to_string(anchor_texts[a])
+            let alen = byte_len(an)
+            let mut from = 0
+            let mut found = true
+            while found {
+                let pos = _bg_find_from(an, suf, from)
+                if pos < 0 { found = false } else {
+                    let nxt = pos + L
+                    if nxt < alen && _bg_is_upper(ord(substring(an, nxt, nxt + 1))) {
+                        return a * 100000 + nxt
+                    }
+                    from = pos + 1
+                }
+            }
+            a = a + 1
+        }
+        L = L - 1
+    }
+    return -1
+}
+
+// _bg_find_from — first offset of needle in hay at or after `from`, or -1
+fn _bg_find_from(hay: string, needle: string, from: int) -> int {
+    let hn = byte_len(hay); let nn = byte_len(needle)
+    if nn == 0 { return -1 }
+    if nn > hn { return -1 }
+    let mut i = from
+    if i < 0 { i = 0 }
+    while i + nn <= hn {
+        if substring(hay, i, i + nn) == needle { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+pub fn bytegpt_decode_grounded_abstain(path: string, seed: string, gen: int,
+                                       anchor_texts: list, l_min: int) -> Map {
+    let W = bg_load(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let toks = []
+    let slen = byte_len(seed)
+    let mut si = 0
+    while si < slen { toks.push(ord(substring(seed, si, si + 1))); si = si + 1 }
+    let mut out = ""
+    let mut grounded = 0
+    let mut lm = 0
+    let mut abstained = 0
+    let mut in_abstain = false
+    let mut emitted = 0
+    while emitted < gen {
+        let ctx = seed + out
+        // (1) byte-level grounded copy FIRST
+        let cb = _bg_anchor_copy(ctx, anchor_texts, l_min, block)
+        if cb >= 0 {
+            toks.push(cb); out = out + chr(cb); emitted = emitted + 1
+            grounded = grounded + 1; in_abstain = false
+            // (2) SPAN-COPY the contiguous entity word-run from the anchor
+            if _bg_is_word(cb) {
+                let mut cont = true
+                while cont && emitted < gen {
+                    let ctx2 = seed + out
+                    let cb2 = _bg_anchor_copy(ctx2, anchor_texts, l_min, block)
+                    if cb2 >= 0 && _bg_is_word(cb2) {
+                        toks.push(cb2); out = out + chr(cb2); emitted = emitted + 1
+                        grounded = grounded + 1
+                    } else { cont = false }
+                }
+            }
+        } else {
+            // UNGROUNDED — peek LM argmax, decide entity-start
+            let lm_b = _bg_lm_argmax_toks(W, toks, vocab, block)
+            let mut prev = 0x20
+            if len(toks) > 0 { prev = to_int(toks[len(toks) - 1]) }
+            let mut start_entity = _bg_is_upper(lm_b) && !_bg_is_word(prev)
+            let continue_entity = in_abstain && _bg_is_word(lm_b)
+            // (4) closed-class exclusion
+            if start_entity && _bg_is_closed_class(W, toks, lm_b, vocab, block) {
+                start_entity = false
+            }
+            if start_entity || continue_entity {
+                // (3a) SEED-SUFFIX look-ahead → span-copy
+                let la = _bg_lookahead_entity(ctx, anchor_texts, l_min, block)
+                let mut handled = false
+                if la >= 0 {
+                    let ai = la / 100000
+                    let mut apos = la - ai * 100000
+                    let an = to_string(anchor_texts[ai])
+                    let alen = byte_len(an)
+                    let mut copied = false
+                    let mut go = true
+                    while go && emitted < gen && apos < alen {
+                        let ab = ord(substring(an, apos, apos + 1))
+                        if _bg_is_word(ab) {
+                            toks.push(ab); out = out + chr(ab); emitted = emitted + 1
+                            grounded = grounded + 1; copied = true; apos = apos + 1
+                        } else { go = false }
+                    }
+                    if copied { in_abstain = false; handled = true }
+                }
+                if !handled {
+                    // (3b) COPY-CONFIRM the LM byte-0
+                    let span = _bg_confirm_lm_byte0(ctx, lm_b, anchor_texts, l_min, block, gen - emitted)
+                    if byte_len(span) >= 2 {
+                        let mut q = 0
+                        let sl = byte_len(span)
+                        while q < sl && emitted < gen {
+                            let bb = ord(substring(span, q, q + 1))
+                            toks.push(bb); out = out + chr(bb); emitted = emitted + 1
+                            q = q + 1
+                        }
+                        grounded = grounded + (sl - 1)   // byte-0 LM but anchor-CONFIRMED
+                        in_abstain = false; handled = true
+                    }
+                }
+                if !handled {
+                    // ABSTAIN — emit HEDGE space, assert no entity
+                    toks.push(0x20); out = out + chr(0x20); emitted = emitted + 1
+                    abstained = abstained + 1; in_abstain = true
+                }
+            } else {
+                toks.push(lm_b); out = out + chr(lm_b); emitted = emitted + 1
+                lm = lm + 1; in_abstain = false
+            }
+        }
+    }
+    return #{ "ok": true, "text": out, "grounded": grounded, "lm": lm, "abstained": abstained }
+}
+
+// COPY-CONFIRM the LM byte-0: tentatively take lm_b, let the copy ground the continuation;
+// if the assembled span is a VERBATIM anchor substring (>=2 bytes, >=1 copied), return it.
+fn _bg_confirm_lm_byte0(ctx: string, lm_b: int, anchor_texts: list, l_min: int,
+                        l_max: int, budget: int) -> string {
+    if budget < 2 { return "" }
+    if !_bg_is_word(lm_b) { return "" }
+    let mut span = chr(lm_b)
+    let mut cur = ctx + span
+    let mut go = true
+    while go && byte_len(span) < budget {
+        let cb = _bg_anchor_copy(cur, anchor_texts, l_min, l_max)
+        if cb >= 0 && _bg_is_word(cb) {
+            span = span + chr(cb); cur = cur + chr(cb)
+        } else { go = false }
+    }
+    if byte_len(span) < 2 { return "" }
+    // VERBATIM guarantee: span must be a contiguous substring of some anchor
+    let mut a = 0
+    while a < len(anchor_texts) {
+        if _bg_find(to_string(anchor_texts[a]), span) >= 0 { return span }
+        a = a + 1
+    }
+    return ""
+}

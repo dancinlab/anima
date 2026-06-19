@@ -15,7 +15,7 @@
 //    HEXA_LOCAL=1 hexa run /Users/ghost/Dev/anima/serving/test_orch_or_sampler.hexa
 //
 //  The caller must ensure serving/quantum_collapse_sample.hexa exists
-//  (symlink or cp from anima-engines/). This harness refuses to run
+//  (symlink or cp from core/phi/). This harness refuses to run
 //  if the dependency is missing — it does NOT create symlinks itself
 //  (side-effect isolation).
 // ═══════════════════════════════════════════════════════════════
@@ -411,7 +411,7 @@ if dep_qcs == 0 {
         println("[gate] files: serving/orch_or_sampler.hexa")
         println("[gate]        serving/sampler_wrap.hexa")
         println("[gate]        serving/test_orch_or_sampler.hexa")
-        println("[gate] deps:  anima-engines/quantum_collapse_sample.hexa (unmodified)")
+        println("[gate] deps:  core/phi/quantum_collapse_sample.hexa (unmodified)")
     } else {
         println("[gate] " + str(pass_count) + "/5 PASS — 머지 금지, 디버그 필요")
     }

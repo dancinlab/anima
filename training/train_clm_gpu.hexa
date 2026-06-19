@@ -99,8 +99,8 @@ comptime const PHASE_P3 = 3   // C + D + W/M/S/E (Full Hexad)
 //
 // Engines inlined:
 //   clm_gwt broadcast   (CLM-P2-1, training/clm_gwt_broadcast.hexa)
-//   anima_holographic   (CLM-P3-1, anima-engines/anima_holographic.hexa)
-//   quantum_collapse    (CLM-P1-4, anima-engines/quantum_collapse_sample.hexa)
+//   anima_holographic   (CLM-P3-1, core/phi/anima_holographic.hexa)
+//   quantum_collapse    (CLM-P1-4, core/phi/quantum_collapse_sample.hexa)
 //
 // GPU coupling — the host can only see raw activations via cuda_memcpy_d2h.
 // For speed/interpreter-safety we sample a slice of `acts.layers[NL-1].y`

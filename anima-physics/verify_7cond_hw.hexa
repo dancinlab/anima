@@ -20,12 +20,12 @@
 // Self-contained design:
 //   No `use` imports. Each substrate is modeled inline with physics-faithful
 //   parameters matching the source engines:
-//     - anima-engines/anima_quantum.hexa          (Orch-OR)
-//     - anima-engines/photonic_gwt_broadcast.hexa (WDM photonic fabric)
-//     - anima-engines/memristor_gwt_workspace.hexa (HP memristor crossbar)
+//     - core/phi/anima_quantum.hexa          (Orch-OR)
+//     - core/phi/photonic_gwt_broadcast.hexa (WDM photonic fabric)
+//     - core/phi/memristor_gwt_workspace.hexa (HP memristor crossbar)
 //     - anima-physics/esp32/qrng_bridge.hexa       (QRNG→bias mapper)
 //     - anima-physics/fpga/microtubule_lattice_16.hexa (4x4 torus)
-//     - anima-engines/anima_holographic.hexa       (AdS/CFT boundary↔bulk)
+//     - core/phi/anima_holographic.hexa       (AdS/CFT boundary↔bulk)
 //
 // Hexa constraints honored:
 //   - lists are pass-by-value; mutations via `.push()` and rebuild

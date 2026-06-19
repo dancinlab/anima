@@ -1,6 +1,6 @@
 // rss_probe — decode GEN bytes via clm_decode_argmax on the small d768 clm.
 // Used with /usr/bin/time -l to capture max RSS as a function of GEN.
-import "CORE/clm_decode.hexa"
+import "core/clm_decode.hexa"
 fn main() {
     let p = "state/lane_p_clm/clm_d768_e2l1.clm"
     let gen = to_int(env_var("RSS_GEN"))

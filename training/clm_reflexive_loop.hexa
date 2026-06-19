@@ -44,7 +44,7 @@
 //   10 ticks at (d_hidden=128, d_meta=32) < 5 s on hexa interpreter.
 //
 // Ref:
-//   anima-engines/anima_reflexive.hexa    (CLM-P5-1 head)
+//   core/phi/anima_reflexive.hexa    (CLM-P5-1 head)
 //   training/clm_holographic_loop.hexa    (pattern, CLM-P3-4)
 //   training/clm_gwt_loop.hexa            (loop pattern, CLM-P2-4)
 //   shared/roadmaps/anima.json            (CLM-P5-3 entry)
@@ -103,7 +103,7 @@ fn vec_max(v: array) -> float {
     }
     return m
 }
-// ─── Inlined reflexive head (mirrors anima-engines/anima_reflexive) ──
+// ─── Inlined reflexive head (mirrors core/phi/anima_reflexive) ──
 
 struct ReflexiveHead {
     d_hidden: int,

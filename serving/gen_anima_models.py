@@ -68,7 +68,7 @@ FAMILIES = [
         "aliases": ["7b", "ref-7b", "clm-7b"],
         "hf_repo": "dancinlab/clm-v1-ref-pytorch-cuda-7b",
         "arch": "CLMConvMoE-7B",
-        "loader": "CLM/model/model.py",
+        "loader": "train/clm/model/model.py",
         "params_m": 7000.0,
         "lane": "Lane-G",
         "visibility": "public",
@@ -94,7 +94,7 @@ FAMILIES = [
         "aliases": ["agent", "tooluse", "agent-rung0"],
         "hf_repo": None,           # rung-0 fire, not downloadable yet
         "arch": "agent_step_grounded",
-        "loader": "AGENT/CORE/agent_loop.hexa",
+        "loader": "agent/domains/CORE/agent_loop.hexa",
         "params_m": None,
         "lane": "Lane-G",
         "visibility": "private",

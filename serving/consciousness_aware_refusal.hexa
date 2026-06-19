@@ -189,7 +189,7 @@ fn unsafe_verdict(cat: str, score: float, reason: str, rule_id: str) -> SafetyVe
 
 // Stage0 lacks `contains` / `to_lower` builtins (see memory
 // feedback_hexa_string_api.md). Use substring method — same pattern as
-// anima-engines/qualia_art_gen.hexa count_substring. Case-sensitive is
+// core/phi/qualia_art_gen.hexa count_substring. Case-sensitive is
 // acceptable for this standalone self-test; prod delegates to
 // safety_filter.hexa which owns full normalization.
 fn str_contains(s: string, needle: string) -> bool {

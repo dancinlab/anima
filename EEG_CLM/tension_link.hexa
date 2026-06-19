@@ -9,7 +9,7 @@
 // 검증 H_1260: 링크 = (잔차<0.05 추종) ∧ (방향일치>0.7) ∧ (Ψ byte-identical).
 // 실행: hexa run EEG_CLM/tension_link.hexa [녹음경로]
 
-import "CORE/pure_field.hexa"
+import "core/pure_field.hexa"
 
 fn _absf(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
 

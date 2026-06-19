@@ -3,9 +3,9 @@
 //
 // 정체: UNIVERSE 축 E (SAVANT) 의 10 H 측정자 — H_347/348/349/350/351 +
 //      H_612/613/614/615/616 — 의 *입력 Φ-context* 를 통합 Φ-envelope 구조 층
-//      (CORE/phi_envelope_substrate.hexa) 에서 공급하는 얇은 소비자.
+//      (core/phi_envelope_substrate.hexa) 에서 공급하는 얇은 소비자.
 //
-// 설계 SSOT: CORE/EMIT_SUBSTRATE_DESIGN.md §4 (SAVANT M2 wiring)
+// 설계 SSOT: core/EMIT_SUBSTRATE_DESIGN.md §4 (SAVANT M2 wiring)
 //   "SAVANT M2 — 측정자는 발화 게이트가 아니라 Φ-context 소비자.
 //    envelope_multiscale 의 Φ 를 10 H 측정자의 입력 context 로."
 //
@@ -33,8 +33,8 @@
 //   - p8 NO TRAIN/INFER   : 측정만, weight update 0 ✓
 // ════════════════════════════════════════════════════════════════════════
 
-import "CORE/phi_envelope_substrate.hexa"
-import "CORE/emit_policy.hexa"
+import "core/phi_envelope_substrate.hexa"
+import "core/emit_policy.hexa"
 
 // ── sv_measurer_context — 10 H 측정자 입력 Φ-context (설계 §4 SAVANT M2) ──
 // 시점 t 의 Φ-envelope 값을 측정자 입력 context 로 공급한다.

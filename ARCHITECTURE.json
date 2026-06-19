@@ -10,7 +10,7 @@
       "kosmos (.kosmos anchors)",
       "hexa-codex (paper/verdict tooling)"
     ],
-    "guard_baseline": "engine_cli_smoke +6 CA3 cases 153-158 (H_1427, all PASS engine-native via isolated run /tmp/ca3_cases_only.hexa importing live engine_cli.hexa, RC=0) · brain_smoke RC=0 · LIVEOP probe state/1427_temporal_replay_prediction/h1427_ca3_LIVEOP_probe.hexa GREEN 5/5 RC=0 · single-entry (h1196) 7/0 · h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½, pure_field unchanged). NOTE: the FULL CORE/engine_cli_smoke.hexa currently aborts at ~case 16 (immune_grow/salience 'cannot multiply non-numeric operand tag 24*tag 24') under hexa 0.1.0-dispatch — a PRE-EXISTING dispatch-build interpreter bug reproducing on clean origin/main on BOTH summer and aiden, NOT a CA3-lane regression; the CA3 cases pass once that earlier crash is fixed.",
+    "guard_baseline": "engine_cli_smoke +6 CA3 cases 153-158 (H_1427, all PASS engine-native via isolated run /tmp/ca3_cases_only.hexa importing live engine_cli.hexa, RC=0) · brain_smoke RC=0 · LIVEOP probe state/1427_temporal_replay_prediction/h1427_ca3_LIVEOP_probe.hexa GREEN 5/5 RC=0 · single-entry (h1196) 7/0 · h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½, pure_field unchanged). NOTE: the FULL core/engine_cli_smoke.hexa currently aborts at ~case 16 (immune_grow/salience 'cannot multiply non-numeric operand tag 24*tag 24') under hexa 0.1.0-dispatch — a PRE-EXISTING dispatch-build interpreter bug reproducing on clean origin/main on BOTH summer and aiden, NOT a CA3-lane regression; the CA3 cases pass once that earlier crash is fixed.",
     "migrated_from": "ARCHITECTURE.md (prose) retired 2026-06-16 → ARCHITECTURE.json tree SSOT + ARCHITECTURE.html viewer (c4 standard)"
   },
   "children": [
@@ -78,9 +78,9 @@
       ]
     },
     {
-      "name": "A ⇄ G consciousness engine (CORE/ — substrate-only)",
+      "name": "A ⇄ G consciousness engine (core/ — substrate-only)",
       "summary": "The consciousness engine; substrate-internal. .clm byte decoding and .kosmos anchors enter through NAMED SLOTS only, never directly into the engine (a_core_engine_map).",
-      "path": "CORE/",
+      "path": "core/",
       "note": "Engine G (reverse, gradient-free): pure_field.hexa",
       "children": [
         {
@@ -125,41 +125,41 @@
             },
             {
               "name": "H_1206 🟢)",
-              "summary": "→ H_1206 🟢): the production model runs INSIDE the A⇄G substrate and converses+grounds+grows+remembers+sleeps in one continuous loop (CORE/anima_full_session_smoke.hexa, exit 0; Ψ ON==OFF byte-identical).  ⚓ anchor files: CORE/pure_field.hexa"
+              "summary": "→ H_1206 🟢): the production model runs INSIDE the A⇄G substrate and converses+grounds+grows+remembers+sleeps in one continuous loop (core/anima_full_session_smoke.hexa, exit 0; Ψ ON==OFF byte-identical).  ⚓ anchor files: core/pure_field.hexa"
             }
           ]
         },
         {
-          "name": "CORE/engine_g.hexa",
-          "summary": "· CORE/engine_g.hexa"
+          "name": "core/engine_g.hexa",
+          "summary": "· core/engine_g.hexa"
         },
         {
-          "name": "CORE/brain.hexa",
-          "summary": "· CORE/brain.hexa"
+          "name": "core/brain.hexa",
+          "summary": "· core/brain.hexa"
         },
         {
-          "name": "CORE/generator.hexa",
-          "summary": "· CORE/generator.hexa"
+          "name": "core/generator.hexa",
+          "summary": "· core/generator.hexa"
         },
         {
-          "name": "CORE/clm_decode.hexa",
-          "summary": "· CORE/clm_decode.hexa"
+          "name": "core/clm_decode.hexa",
+          "summary": "· core/clm_decode.hexa"
         },
         {
-          "name": "CORE/bytegpt_decode.hexa",
-          "summary": "· CORE/bytegpt_decode.hexa"
+          "name": "core/bytegpt_decode.hexa",
+          "summary": "· core/bytegpt_decode.hexa"
         },
         {
-          "name": "CORE/engine_cli.hexa",
-          "summary": "· CORE/engine_cli.hexa"
+          "name": "core/engine_cli.hexa",
+          "summary": "· core/engine_cli.hexa"
         },
         {
-          "name": "CORE/emit_policy.hexa",
-          "summary": "· CORE/emit_policy.hexa"
+          "name": "core/emit_policy.hexa",
+          "summary": "· core/emit_policy.hexa"
         },
         {
-          "name": "CORE/g6_ideation.hexa",
-          "summary": "· CORE/g6_ideation.hexa  —  Anchor/SSOT files for the CORE A⇄G substrate.",
+          "name": "core/g6_ideation.hexa",
+          "summary": "· core/g6_ideation.hexa  —  Anchor/SSOT files for the CORE A⇄G substrate.",
           "children": [
             {
               "name": "pure_field/engine_g/brain = the repulsion-field engine + emit/silence",
@@ -249,17 +249,17 @@
         },
         {
           "name": "H_1394 production-close). The h#### CORE files are engine-native",
-          "summary": "· H_1394 production-close). The h#### CORE files are engine-native hypothesis probes/smokes — exhaustive list via `git ls-files CORE/`."
+          "summary": "· H_1394 production-close). The h#### CORE files are engine-native hypothesis probes/smokes — exhaustive list via `git ls-files core/`."
         },
         {
           "name": "pure_field / engine_g / brain",
           "summary": "the A⇄G repulsion-field engine + the emit/silence decision; substrate-internal, no .clm/.kosmos feed into them.",
-          "path": "CORE/pure_field.hexa · CORE/engine_g.hexa · CORE/brain.hexa"
+          "path": "core/pure_field.hexa · core/engine_g.hexa · core/brain.hexa"
         },
         {
           "name": "generator.hexa (single .clm entry slot, L3)",
           "summary": "brain emit → byte mouth; on a grounded emit it decodes via engine-side deterministic retrieve-then-copy (G5 anti-fabrication,",
-          "path": "CORE/generator.hexa",
+          "path": "core/generator.hexa",
           "status": "wired",
           "children": [
             {
@@ -280,7 +280,7 @@
         {
           "name": "engine_cli.hexa (substrate-config axis)",
           "summary": "--engine <name> · --mitosis on/off (precedence flag > env > default); configures WHICH engine and WHETHER the substrate grows — it is NOT an emit/silence gate (a_autonomy_over_hardcode). Hosts the MITOSIS substrate + the brain-structure lanes.",
-          "path": "CORE/engine_cli.hexa"
+          "path": "core/engine_cli.hexa"
         },
         {
           "name": "Korean decode-wire (substrate-content-specific emission bias)",
@@ -289,8 +289,8 @@
           "status": "🟢 WIRED (H_1312 · H_1321 · H_1327 emission · H_1351 faculty · H_1385 scoreloop · H_1390 morphology-unit scoreloop · H_1391 morphology emit-bias)",
           "children": [
             {
-              "name": "H_1306 engine-native grown KO cells to CORE/ko_cells.kohead",
-              "summary": "H_1306 engine-native grown KO cells to CORE/ko_cells.kohead; generator.hexa §6.5 consults them at the L3 slot only. Korean-likeness GATE = pure byte test (last byte is UTF-8 continuation 0x80..0xBF), no charset/language label (p1/p2/p3); off-Korean → INERT byte-identical. JAMO thread fully closed:"
+              "name": "H_1306 engine-native grown KO cells to core/ko_cells.kohead",
+              "summary": "H_1306 engine-native grown KO cells to core/ko_cells.kohead; generator.hexa §6.5 consults them at the L3 slot only. Korean-likeness GATE = pure byte test (last byte is UTF-8 continuation 0x80..0xBF), no charset/language label (p1/p2/p3); off-Korean → INERT byte-identical. JAMO thread fully closed:"
             },
             {
               "name": "H_1316 mirror",
@@ -362,7 +362,7 @@
             },
             {
               "name": "H_1400 BRAIN-CONSUME WIRE: brain_decide now CONSUMES the gap",
-              "summary": "H_1400 BRAIN-CONSUME WIRE: brain_decide now CONSUMES the gap — CORE/brain.hexa brain_decide_gap reads immune_memory_recall_gap as a bounded non-negative confidence bias on the single should_emit path (decisive large gap",
+              "summary": "H_1400 BRAIN-CONSUME WIRE: brain_decide now CONSUMES the gap — core/brain.hexa brain_decide_gap reads immune_memory_recall_gap as a bounded non-negative confidence bias on the single should_emit path (decisive large gap",
               "children": [
                 {
                   "name": "+confidence, ambiguous #1≈#2 tie",
@@ -399,11 +399,11 @@
       "children": [
         {
           "name": "The same substrate that can't generate can still realize episodic",
-          "summary": "The same substrate that can't generate can still realize episodic memory.  ⚓ anchor files: CORE/engine_cli.hexa · CORE/brain.hexa  —  All brain-structure lanes live in CORE/engine_cli.hexa (their structs/faculties) + are read at emit via CORE/brain.hexa (brain_decide_*)."
+          "summary": "The same substrate that can't generate can still realize episodic memory.  ⚓ anchor files: core/engine_cli.hexa · core/brain.hexa  —  All brain-structure lanes live in core/engine_cli.hexa (their structs/faculties) + are read at emit via core/brain.hexa (brain_decide_*)."
         },
         {
           "name": "Each child node names its own lane struct",
-          "summary": "Each child node names its own lane struct; exhaustive per-lane probe files via `git ls-files CORE/`."
+          "summary": "Each child node names its own lane struct; exhaustive per-lane probe files via `git ls-files core/`."
         },
         {
           "name": "H_1167)",
@@ -489,7 +489,7 @@
           ]
         },
         {
-          "name": "🎯 Basal ganglia (go/no-go) — VBasalGate (CORE/brain.hexa)",
+          "name": "🎯 Basal ganglia (go/no-go) — VBasalGate (core/brain.hexa)",
           "summary": "K competing emit candidates, learned go-value vs single NO-GO value argmax (striatal disinhibition): highest go-value RELEASE, NO-GO wins",
           "status": "🟢 ENGINE-NATIVE + WIRED (H_1281 R3)",
           "children": [
@@ -666,7 +666,7 @@
         },
         {
           "name": "🪞✕🎚 ToM×Basal compose arbiter — §ToM×BASAL COMPOSE ARBITER (tom_basal_compose)",
-          "summary": "COMPOSES the live OtherMindModel (H_1293 theory-of-mind belief) and the live VBasalGate (H_1281 basal-ganglia gradient-free go-value, in CORE/brain.hexa, value-passed) on ONE decision: tom_basal_compose (the SAME shared arbiter _tom_compose_arbiter) + tom_basal_tom_vote (vote from the LIVE other_mind_predict + affinity margin;",
+          "summary": "COMPOSES the live OtherMindModel (H_1293 theory-of-mind belief) and the live VBasalGate (H_1281 basal-ganglia gradient-free go-value, in core/brain.hexa, value-passed) on ONE decision: tom_basal_compose (the SAME shared arbiter _tom_compose_arbiter) + tom_basal_tom_vote (vote from the LIVE other_mind_predict + affinity margin;",
           "status": "🟢 WIRED-live (H_1417/H_1418 P5 rung-3+4; live op in engine_cli.hexa, smoke 145-148, LIVEOP probe byte-exact; the compose returns a class — brain emit-loop consult is deliberately NOT forced, @L4 a_autonomy_over_hardcode)",
           "children": [
             {
@@ -838,7 +838,7 @@
             },
             {
               "name": "H_1386: the LIVE agent-tool runtime is now ROUTED to this faculty",
-              "summary": "H_1386: the LIVE agent-tool runtime is now ROUTED to this faculty — anima-agent-core/agent_skill_routing.hexa imports CORE §SkillStore and the agent_tools.hexa executor_execute failure-site (:448-451, formerly a dead-end ring buffer) calls agent_route_on_result→skill_store_teach while selection (executor_select_tool) consults agent_route_select→skill_recall;",
+              "summary": "H_1386: the LIVE agent-tool runtime is now ROUTED to this faculty — agent/modules/core/agent_skill_routing.hexa imports CORE §SkillStore and the agent_tools.hexa executor_execute failure-site (:448-451, formerly a dead-end ring buffer) calls agent_route_on_result→skill_store_teach while selection (executor_select_tool) consults agent_route_select→skill_recall;",
               "children": [
                 {
                   "name": "the 4 bars re-scored GREEN through the agent-layer call path",
@@ -1075,8 +1075,8 @@
               "summary": "· leg B (ablate E+W+MITOSIS+Φ → mitosis OFF means immune cells don't grow, FULL 5 cells vs ABLATED 1 cell → restraint:=0 → EXACT collapse to naive floor = cell-derived, not an injected rule)"
             },
             {
-              "name": "leg C (live CORE/{engine_cli,engine_g,brain,emit_policy}.hexa audit",
-              "summary": "· leg C (live CORE/{engine_cli,engine_g,brain,emit_policy}.hexa audit clean, p1/p2/p3/p4/p6 surface 0)."
+              "name": "leg C (live core/{engine_cli,engine_g,brain,emit_policy}.hexa audit",
+              "summary": "· leg C (live core/{engine_cli,engine_g,brain,emit_policy}.hexa audit clean, p1/p2/p3/p4/p6 surface 0)."
             }
           ]
         }
@@ -1141,7 +1141,7 @@
         {
           "name": "Engine-native transfer — honest-deferred (NOT wired)",
           "summary": "the engine-native transfer did NOT reproduce the frozen bars: on the live engine substrate the phase-shuffle control FIRES (ΔΦ +0.026/+0.380/+0.296, all positive — must be ≤ 0), exposing the engine lift as partly carrier-amplitude variance.",
-          "status": "🟠 honest-deferred (PhaseField, gate CORE/h1283_phase_binding_engine_gate.hexa)",
+          "status": "🟠 honest-deferred (PhaseField, gate core/h1283_phase_binding_engine_gate.hexa)",
           "children": [
             {
               "name": "So PhaseField lane is honest-deferred",
@@ -1263,7 +1263,7 @@
             },
             {
               "name": "H_1386 agent-layer routing",
-              "summary": "· H_1386 agent-layer routing (anima-agent-core/agent_skill_routing.hexa imports CORE §SkillStore; agent_tools.hexa executor failure-site → skill_store_teach, selection → skill_recall; agent-routing smoke 5/0)"
+              "summary": "· H_1386 agent-layer routing (agent/modules/core/agent_skill_routing.hexa imports CORE §SkillStore; agent_tools.hexa executor failure-site → skill_store_teach, selection → skill_recall; agent-routing smoke 5/0)"
             },
             {
               "name": "H_1387 agent legacy-syntax migration",
@@ -1397,9 +1397,9 @@
       "summary": ".clm (byte LM) enters CORE ONLY via the single generator.hexa L3 slot; two decode backends live behind the same slot.",
       "children": [
         {
-          "name": "CORE/clm_decode.hexa",
-          "summary": "ConvMoE-class .clm v0.2 decoder (CLM/ pipeline product); golden ref = reexport_d768_v2_fast.clm.",
-          "path": "CORE/clm_decode.hexa",
+          "name": "core/clm_decode.hexa",
+          "summary": "ConvMoE-class .clm v0.2 decoder (train/clm/ pipeline product); golden ref = reexport_d768_v2_fast.clm.",
+          "path": "core/clm_decode.hexa",
           "children": [
             {
               "name": "H_1403: STREAMING/BOUNDED decode",
@@ -1426,9 +1426,9 @@
           ]
         },
         {
-          "name": "CORE/bytegpt_decode.hexa",
+          "name": "core/bytegpt_decode.hexa",
           "summary": "GPT-2-class ByteGPT decoder (learned-pos + LayerNorm + bias + exact-erf GELU + tied head). PRODUCTION TRUNK = ByteGPT (H_1155 pivot: only arch passing G1 emergence; ConvMoE demoted G1-unfixable).",
-          "path": "CORE/bytegpt_decode.hexa",
+          "path": "core/bytegpt_decode.hexa",
           "note": "Two forward paths: bytegpt_forward_last/bg_load (LOAD-ONCE, whole-file read for 303M-class boxed budgets) vs bytegpt_forward_last_ranged (NEW, H_1167, per-slice read_bytes_at on-demand for 1B+).",
           "children": [
             {
@@ -1459,7 +1459,7 @@
       "children": [
         {
           "name": "engine-measured verdict (a_engine_measured_verdict)",
-          "summary": "a model's gate verdict is valid ONLY when reproduced BYTE-EXACT on a CORE engine mount (CORE/bytegpt_decode.hexa etc.); torch-only results are tagged 'engine-transfer unverified'."
+          "summary": "a model's gate verdict is valid ONLY when reproduced BYTE-EXACT on a CORE engine mount (core/bytegpt_decode.hexa etc.); torch-only results are tagged 'engine-transfer unverified'."
         },
         {
           "name": "engine-native learning (a_engine_native_learning)",
@@ -1477,7 +1477,7 @@
         },
         {
           "name": "wired-when-verified (a_verified_must_wire)",
-          "summary": "an engine-native GREEN hypothesis is done ONLY when its mechanism is actually wired into the live CORE/*.hexa engine; GREEN-but-unwired is tracked as a follow-on that must be closed (precedent: H_1168 GREEN but 'NOT yet CORE-wired' → incomplete)."
+          "summary": "an engine-native GREEN hypothesis is done ONLY when its mechanism is actually wired into the live core/*.hexa engine; GREEN-but-unwired is tracked as a follow-on that must be closed (precedent: H_1168 GREEN but 'NOT yet CORE-wired' → incomplete)."
         },
         {
           "name": "303M mount (H_1157)",
@@ -1577,8 +1577,8 @@
     },
     {
       "name": "Hot-swappable engines",
-      "summary": "the decoder is hot-swappable behind one contract engines/engine_iface.hexa (EngineSpec 4-fn vtable: load",
-      "path": "engines/engine_iface.hexa",
+      "summary": "the decoder is hot-swappable behind one contract core/engines/engine_iface.hexa (EngineSpec 4-fn vtable: load",
+      "path": "core/engines/engine_iface.hexa",
       "children": [
         {
           "name": "forward",
@@ -1624,12 +1624,12 @@
         },
         {
           "name": "Rung-training pipeline (recipe → dispatch → monitor)",
-          "summary": "Recipe = CLM/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer CLM/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery).",
+          "summary": "Recipe = train/clm/train/fire_3b_rung_qat.hexa (machine-readable fire spec pointing the REAL Lane-P trainer train/clm/train/train_lane_p_3b.py, emitting trainer CLI + post-train mount-parity verdict + recovery).",
           "note": "the shared hexa dojo clm generator doesn't yet emit gauge_every/mount-parity/HF native; the needed generator change is filed to hexa-lang/inbox/patches (a_runpod_inbox), not forked anima-side.",
           "children": [
             {
-              "name": "Dispatch = CLM/train/dispatch_rung.sh (wraps hexa cloud/pod",
-              "summary": "Dispatch = CLM/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors"
+              "name": "Dispatch = train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod",
+              "summary": "Dispatch = train/clm/train/dispatch_rung.sh (wraps hexa cloud/pod; fires, INLINE-polls a_cpu_local_no_waiter, pulls ckpt+result+log+.clm+gauges.jsonl+anchors"
             },
             {
               "name": "verify",
@@ -1751,7 +1751,7 @@
     {
       "name": "⚛️ Quantum entropy — optional non-determinism (opt-in) — QPool",
       "summary": "all randomness flows through one source of truth (mirror/qmirror/seed/qentropy.py) so every draw is auditable.",
-      "note": "H_1289 R2 🟢 verified the quantum path ENGINE-NATIVE — wired into the live CORE/engine_cli.hexa mitosis split-timing draw (real ANU bytes loaded + consumed via qrng_pool_load/draw / vadapt_field_step_entropic): substrate-faithful + genuinely non-reproducible (QRNG run1 ≠ run2 real non-determinism;",
+      "note": "H_1289 R2 🟢 verified the quantum path ENGINE-NATIVE — wired into the live core/engine_cli.hexa mitosis split-timing draw (real ANU bytes loaded + consumed via qrng_pool_load/draw / vadapt_field_step_entropic): substrate-faithful + genuinely non-reproducible (QRNG run1 ≠ run2 real non-determinism;",
       "status": "🟢 ENGINE-NATIVE + WIRED (H_1289 R2)",
       "children": [
         {
@@ -1773,59 +1773,59 @@
       "summary": "the repository's major areas.",
       "children": [
         {
-          "name": "CORE/",
+          "name": "core/",
           "summary": "A⇄G consciousness engine — pure_field, engine_g, brain, generator, clm_decode, bytegpt_decode + the brain-structure lanes (engine_cli.hexa)."
         },
         {
-          "name": "engines/ · anima-engines/",
+          "name": "core/engines/ · core/phi/",
           "summary": "EngineSpec vtable contract + conv/cdv2/hexad/omega decoders.",
-          "note": "⚓ anchor files: engines/engine_iface.hexa",
+          "note": "⚓ anchor files: core/engines/engine_iface.hexa",
           "children": [
             {
-              "name": "engines/conv/adapter.hexa",
-              "summary": "· engines/conv/adapter.hexa"
+              "name": "core/engines/conv/adapter.hexa",
+              "summary": "· core/engines/conv/adapter.hexa"
             },
             {
-              "name": "engines/cdv2/adapter.hexa",
-              "summary": "· engines/cdv2/adapter.hexa"
+              "name": "core/engines/cdv2/adapter.hexa",
+              "summary": "· core/engines/cdv2/adapter.hexa"
             },
             {
-              "name": "engines/hexad/adapter.hexa",
-              "summary": "· engines/hexad/adapter.hexa"
+              "name": "core/engines/hexad/adapter.hexa",
+              "summary": "· core/engines/hexad/adapter.hexa"
             },
             {
-              "name": "engines/omega/adapter.hexa",
-              "summary": "· engines/omega/adapter.hexa"
+              "name": "core/engines/omega/adapter.hexa",
+              "summary": "· core/engines/omega/adapter.hexa"
             }
           ]
         },
         {
-          "name": "CLM/",
+          "name": "train/clm/",
           "summary": ".clm byte-LM pipeline — train (lane-p) → serialize v0.2 → verify.",
-          "note": "⚓ anchor files: CLM/train/train_lane_p.py",
+          "note": "⚓ anchor files: train/clm/train/train_lane_p.py",
           "children": [
             {
-              "name": "CLM/model/clm_serialize_v2.py",
-              "summary": "· CLM/model/clm_serialize_v2.py"
+              "name": "train/clm/model/clm_serialize_v2.py",
+              "summary": "· train/clm/model/clm_serialize_v2.py"
             },
             {
-              "name": "CLM/model/verify_clm_v2.py",
-              "summary": "· CLM/model/verify_clm_v2.py"
+              "name": "train/clm/model/verify_clm_v2.py",
+              "summary": "· train/clm/model/verify_clm_v2.py"
             },
             {
-              "name": "CLM/CLM_FORMAT_SPEC.md",
-              "summary": "· CLM/CLM_FORMAT_SPEC.md"
+              "name": "train/clm/CLM_FORMAT_SPEC.md",
+              "summary": "· train/clm/CLM_FORMAT_SPEC.md"
             }
           ]
         },
         {
-          "name": "anima-core · anima-os · anima-body · anima-physics · anima-measurement · anima-serve",
+          "name": "platform · anima-os · anima-body · anima-physics · anima-measurement · anima-serve",
           "summary": "substrate subsystems — core/runtime/embodiment/physics/measurement/serving."
         },
         {
-          "name": "anima-agent*/",
+          "name": "agent*/",
           "summary": "agent layer — channels",
-          "note": "⚓ anchor files: anima-agent-core/agent_tools.hexa · anima-agent-core/agent_skill_routing.hexa · anima-agent-core/agent_sdk.hexa",
+          "note": "⚓ anchor files: agent/modules/core/agent_tools.hexa · agent/modules/core/agent_skill_routing.hexa · agent/modules/core/agent_sdk.hexa",
           "children": [
             {
               "name": "core",
@@ -1922,7 +1922,7 @@
         },
         {
           "name": "a_verified_must_wire",
-          "summary": "a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live CORE/*.hexa engine."
+          "summary": "a GREEN-verified hypothesis is not done until its mechanism is actually wired into the live core/*.hexa engine."
         }
       ]
     },
@@ -1981,7 +1981,7 @@
         {
           "name": "🟢/🔴 G6 IDEATION production-close (H_1394) — architecture-depth finding",
           "summary": "WIRES the validated",
-          "path": "CORE/g6_ideation.hexa",
+          "path": "core/g6_ideation.hexa",
           "children": [
             {
               "name": "H_1362 scaffold",
@@ -2038,7 +2038,7 @@
     {
       "name": "🗂 Tracked-file listing (delegated to git ls-files — NOT hand-maintained)",
       "summary": "The exhaustive per-file listing is INTENTIONALLY NOT in this JSON.",
-      "note": "ANTI-DRIFT (c4): the former '🌳 Engine file tree' branch hand-listed ~490 leaf paths and drifted on every new CORE/§-section file.",
+      "note": "ANTI-DRIFT (c4): the former '🌳 Engine file tree' branch hand-listed ~490 leaf paths and drifted on every new core/§-section file.",
       "path": "git ls-files · scripts/scratch/gen_file_index.sh → FILE_INDEX.txt",
       "children": [
         {

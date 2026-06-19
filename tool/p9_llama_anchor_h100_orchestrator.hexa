@@ -7,7 +7,7 @@
 //
 // LESSONS APPLIED (from BG-Μ cost-waste analysis, BG-Ο spec)
 //   L1: sentinel name MUST be `results/COMPLETE.sentinel` (not TRAIN_DONE.json)
-//   L2: skip CLM/non-eval setup; HF download Llama-3.2-3B directly on pod (~3-5min)
+//   L2: skip train/clm/non-eval setup; HF download Llama-3.2-3B directly on pod (~3-5min)
 //   L3: AUTO-KILL within 30s of sentinel detection (no separate refresher process)
 //   L4: heartbeat written from main exec.bash poll loop (single-process)
 //   L5: sed redact at BOOT before tee (caller-side, never write raw HF_TOKEN)

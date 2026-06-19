@@ -1,7 +1,7 @@
 // h1418_tom_compose_LIVEOP_probe.hexa — H_1418 rung-3 verification for the TWO new compose
 // pairs from H_1417 that BOUND engine-native (P3 ToM×spatial, P5 ToM×basal). It re-runs the
 // FROZEN H_1417 compose bars driving the LIVE CORE ops `tom_spatial_compose` / `tom_basal_compose`
-// (CORE/engine_cli.hexa §ToM×SPATIAL / §ToM×BASAL COMPOSE ARBITER) + the wired leg-read ops
+// (core/engine_cli.hexa §ToM×SPATIAL / §ToM×BASAL COMPOSE ARBITER) + the wired leg-read ops
 // (tom_spatial_tom_vote / tom_spatial_spatial_vote / tom_basal_tom_vote) INSTEAD of the H_1417
 // probe's inlined glue, and confirms it reproduces the H_1417 P3/P5 numbers BYTE-IDENTICALLY
 // (a_verified_must_wire rung-3, c2). Everything else (fixture, seeds, knobs, live faculty builds)
@@ -9,10 +9,10 @@
 // the arbiter + leg-reads are swapped: inlined `_arbiter`/`_leg_*` → live wired ops. If the numbers
 // match the H_1417 card (P3 compose 0.791111 · P5 compose 0.801481, all 4 bars PASS for each),
 // the live ops == the validated mechanism. The basal leg's vbasal_go_value read stays inline (basal
-// lives in CORE/brain.hexa, value-passed to tom_basal_compose like spatial_episodic_compose).
+// lives in core/brain.hexa, value-passed to tom_basal_compose like spatial_episodic_compose).
 
-import "CORE/engine_cli.hexa"
-import "CORE/brain.hexa"
+import "core/engine_cli.hexa"
+import "core/brain.hexa"
 
 // ── frozen knobs (== H_1417 probe, NOT moved) ───────────────────────────────
 const N_PER_FAMILY: int = 90
@@ -218,7 +218,7 @@ fn run_pair_seed(pidx: int, seed: int, cfg: EngineConfig) -> [float] {
 fn main() {
     println("================================================================================")
     println("H_1418 RUNG-3 — LIVE-OP re-run: P3/P5 arbiter via WIRED tom_spatial_compose /")
-    println("  tom_basal_compose (CORE/engine_cli.hexa). MUST reproduce H_1417 P3/P5 byte-exact.")
+    println("  tom_basal_compose (core/engine_cli.hexa). MUST reproduce H_1417 P3/P5 byte-exact.")
     println("  $0 CPU · P3 seeds [5520,5521,5522] · P5 seeds [5540,5541,5542] · a_verified_must_wire rung-3")
     println("================================================================================")
     let cfg = engine_cli_parse(["--mitosis", "on"])

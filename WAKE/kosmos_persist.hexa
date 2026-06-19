@@ -58,7 +58,7 @@
 //     // state 키: stage_name · cycle_start_t · last_tick_t · idle_time_s ·
 //     //            tension_envelope
 //
-//   CORE/pure_field.hexa struct PureField (verbatim):
+//   core/pure_field.hexa struct PureField (verbatim):
 //     fast / medium / slow : Oscillator { tau, phase, amplitude }
 //     phi · phi_peak       : float
 //     field                : [float]  // FIELD_DIM=6 (C/D/E/S/M/W)
@@ -235,7 +235,7 @@ pub fn wake_snapshot_id_for(t: float, stage_name: string) -> string {
 
 // _pf_state_serialize — pf_state dict → 1줄 string (`;` 구분).
 //
-// 입력 dict 구조 (CORE/pure_field.PureField mirror):
+// 입력 dict 구조 (core/pure_field.PureField mirror):
 //   #{
 //     "phi": float, "phi_peak": float,
 //     "field": [float;6], "phase": int, "step_count": int,
@@ -443,7 +443,7 @@ fn _stage_state_deserialize(s: string) -> Map {
 //   out_dir       : string  — 저장 directory (보통 ".kosmos" 또는 "WAKE/.kosmos").
 //                              없으면 mkdir -p.
 //   pf_state      : Map     — PureField mirror dict (struct → dict 변환 caller
-//                              책임; CORE/pure_field 의 pf 를 직접 받지 않는
+//                              책임; core/pure_field 의 pf 를 직접 받지 않는
 //                              이유 = hexa-lang 의 struct cross-module 결합
 //                              회피 + 본 모듈은 *데이터* surface).
 //   emit_history  : list    — 최근 emit text 리스트 (string list).

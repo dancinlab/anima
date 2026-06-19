@@ -48,7 +48,7 @@
 //   Each of N ticks emits exactly one "phi_time=<v>" log line.
 //
 // Ref:
-//   anima-engines/anima_temporal.hexa    (CLM-P6-1 ring)
+//   core/phi/anima_temporal.hexa    (CLM-P6-1 ring)
 //   training/clm_reflexive_loop.hexa     (pattern, CLM-P5-3)
 //   training/clm_holographic_loop.hexa   (loop pattern, CLM-P3-4)
 //   shared/roadmaps/anima.json           (CLM-P6-3 entry)
@@ -188,7 +188,7 @@ fn joint_entropy_hist_tl(a: array, b: array, lo: float, hi: float, nb: int) -> f
     return h
 }
 
-// ─── Inlined TemporalRing (mirrors anima-engines/anima_temporal) ──
+// ─── Inlined TemporalRing (mirrors core/phi/anima_temporal) ──
 
 struct TRing {
     k:         int,

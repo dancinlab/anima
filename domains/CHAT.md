@@ -10,7 +10,7 @@ The chat-capable campaign makes anima genuinely chat end-to-end. Two distinct la
   real int4-dequant CLMConvMoE forward → next-byte logits → greedy continuation
   (`clm_decode_argmax`). `CORE/generator.hexa` now WIRES this as the L3 content slot:
   `_gen_clm_decode` emits the model's own bytes; `gen_clm_chat(ckpt, seed, max_new)` is the
-  chat entry (single .clm decode entry, a_core_engine_map — no 2nd path). `CORE/anima_chat_cli.hexa`
+  chat entry (single .clm decode entry, a_core_engine_map — no 2nd path). `cli/anima_chat_cli.hexa`
   drives a runnable multi-turn demo. **Wiring + demo: DONE + runnable end-to-end** (verified
   against the v0.2 d768 ckpt — pipe is real; that wiki-only model emits incoherent bytes,
   the verified root cause, so the conv lane awaits a dialogue-trained ckpt).
@@ -52,5 +52,5 @@ arch MUST FAIL the same evaluator. Verdicts verbatim → `.verdicts/chat-capable
 
 ## demo (@L6)
 
-`hexa run CORE/anima_chat_cli.hexa -- <ckpt.clm> ["turn1" "turn2" ...]` — runnable CORE-native
+`hexa run cli/anima_chat_cli.hexa -- <ckpt.clm> ["turn1" "turn2" ...]` — runnable CORE-native
 multi-turn transcript. (torch lane: `python3 HEXAD/CHAT/anima_chat.py --ckpt <ckpt.pt> --prompt …`.)

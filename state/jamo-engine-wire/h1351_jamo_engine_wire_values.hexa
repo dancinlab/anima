@@ -1,9 +1,9 @@
 // h1351_jamo_engine_wire_values.hexa — standalone reporter for the H_1351 in-engine jamo
-// count-head fixture (the EXACT fixture cases 86-89 in CORE/engine_cli_smoke.hexa drive). Prints
+// count-head fixture (the EXACT fixture cases 86-89 in core/engine_cli_smoke.hexa drive). Prints
 // the raw CE values (jamo / raw / shuffle) so the .verdicts/result.txt numbers are reproducible.
-// Imports the live faculty CORE/engine_cli.hexa § KO-JAMO COUNT-HEAD (jamo_head_*). $0 CPU,
+// Imports the live faculty core/engine_cli.hexa § KO-JAMO COUNT-HEAD (jamo_head_*). $0 CPU,
 // deterministic, no corpus, no secrets, no GPU. Run: hexa run state/jamo-engine-wire/h1351_jamo_engine_wire_values.hexa
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 fn _NL()->int{return 6} fn _NV()->int{return 6} fn _K()->int{return 12} fn _NSYL()->int{return 2000}
 fn _nL(l:int,v:int)->int{return (l+v+1)%_NL()}
 fn _nV(l:int,v:int)->int{return (l*2+v+3)%_NV()}

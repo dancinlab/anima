@@ -2,7 +2,7 @@
 // AKIDA/akida_edge_of_chaos_phi.hexa — D1 edge-of-chaos Φ 실리콘 검증 harness
 //
 // 목적:
-//   CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2, 🟡 PARTIAL)
+//   core/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2, 🟡 PARTIAL)
 //   은 시뮬(ECA + logistic) 위에서 inverse-U(∩) 곡선이 universal 함을 보였다.
 //   본 harness 는 그 가설을 **실리콘(AKIDA AKD1000)** 에서 confirm/falsify 한다.
 //
@@ -356,7 +356,7 @@ fn run_pipeline(source: string, result_path: string, mock_mode: bool) -> map {
         "n_neurons": n_neurons,
         "n_steps": n_steps,
         "phi_method": "phi_silicon_proxy (entropy x integration x differentiation; honest proxy not full IIT4 big_phi)",
-        "hypothesis_ref": "CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (H_670, M2 PARTIAL)",
+        "hypothesis_ref": "core/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (H_670, M2 PARTIAL)",
         "falsifiers": ["F-AKIDA-EDGE-1", "F-AKIDA-EDGE-2", "F-AKIDA-EDGE-3"],
         "R1_weak_silent": p1,
         "R2_zero_noise": p2,

@@ -1,6 +1,6 @@
 // h1393_bpe_emit_probe.hexa — engine-native BINDING of the BPE-on-jamo morphology EMIT-BIAS (the
 // H_1327 emit precedent applied to morphology; the EMIT-side follow-on of H_1390's SCORER). Drives the
-// WIRED emit-bias consult gen_bpe_emit_eval / gen_bpe_consult_emit (CORE/generator.hexa §6.5e →
+// WIRED emit-bias consult gen_bpe_emit_eval / gen_bpe_consult_emit (core/generator.hexa §6.5e →
 // engine_cli.hexa jamo_head_argmax over the § KO-MORPHOLOGY faculty) on the frozen corpus-free in-
 // engine morpheme-grammar fixture and prints the three frozen bars + their thresholds.
 //
@@ -9,7 +9,7 @@
 //   bar3 Ψ-SAFE      : off-Korean INERT (ASCII ctx → consult returns `base` unchanged) + guards
 //
 // $0 CPU, deterministic, no corpus/secret/GPU, Ψ-disjoint additive consult. usage: hexa run <this>.
-import "CORE/generator.hexa"
+import "core/generator.hexa"
 
 fn main() {
     let e = gen_bpe_emit_eval_raw()   // R2 metric (un-aliased next-unit target; shuffle control KEPT)

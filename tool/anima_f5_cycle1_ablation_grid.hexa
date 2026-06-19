@@ -2,7 +2,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Per Agent 1 finding (sub-agent kick 2026-04-28T07:45Z):
 //   F1 + F5 cycle 1 are pure CPU phi_engine substrate (0 CUDA refs in
-//   anima-core/phi_engine.hexa + training/phi_engine_eval.hexa). F1 cycle 1
+//   platform/phi_engine.hexa + training/phi_engine_eval.hexa). F1 cycle 1
 //   already EXEC complete (commits 150667a1 + c8ed96d7). F5 STILL PENDING.
 //
 // F5 SPEC (Agent 1):
@@ -17,7 +17,7 @@
 //   metacog:  [4, 8, 12]           (3 levels — engine count from phi_engine_eval registry)
 //   seeds:    [1, 2, 3]            (3 seeds per grid cell, deterministic LCG)
 //
-// PHI MODEL (cargo-cult from anima-core/phi_engine.hexa::phi_proxy + diversity):
+// PHI MODEL (cargo-cult from platform/phi_engine.hexa::phi_proxy + diversity):
 //   For a substrate of cells with freedom factions and metacog engines:
 //     Φ_observed = phi_proxy(states) × diversity(states, freedom, cells_per) × metacog_factor
 //     where metacog_factor = sqrt(metacog/12) (registry has 12 engines max)
@@ -387,7 +387,7 @@ fn _summary_json(count: int, max_obs: float, mean_obs: float, max_add: float, ra
     out = out + "\"verdict\":\"" + verdict + "\","
     out = out + "\"wallclock_s\":" + str(wallclock_s) + ","
     out = out + "\"substrate\":\"Mac-CPU local (raw 86 vendor=local cost_usd=0)\","
-    out = out + "\"phi_engine_source\":\"anima-core/phi_engine.hexa::phi_proxy + diversity (cargo-cult inline)\","
+    out = out + "\"phi_engine_source\":\"platform/phi_engine.hexa::phi_proxy + diversity (cargo-cult inline)\","
     out = out + "\"determinism\":\"LCG-hashed per-(seed,faction,cell,dim), raw 12 frozen pre-registration\""
     out = out + "}"
     return out

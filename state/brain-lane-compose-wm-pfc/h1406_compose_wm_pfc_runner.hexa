@@ -18,7 +18,7 @@
 //    H1406_STATE=/tmp/h1406_states.txt hexa run state/brain-lane-compose-wm-pfc/h1406_compose_wm_pfc_runner.hexa
 // ════════════════════════════════════════════════════════════════════════════
 
-import "CORE/engine_cli.hexa"   // wm_buffer_* (H_1282) + EngineConfig + _cos geometry
+import "core/engine_cli.hexa"   // wm_buffer_* (H_1282) + EngineConfig + _cos geometry
 
 // frozen knobs — VERBATIM from h1406_compose_wm_pfc.py / FREEZE.txt
 fn _WM_THR() -> float { return 0.40 }
@@ -71,7 +71,7 @@ fn main() {
     let path = _state_path()
     let cfg = engine_config_default()
     println("=== H_1406 WM×PFC compose — ENGINE-NATIVE (live wm_buffer_* + _cos) ===")
-    println("engine: CORE/engine_cli.hexa  WorkMemBuffer(H_1282) + HierGoalStack-cos(H_1294)")
+    println("engine: core/engine_cli.hexa  WorkMemBuffer(H_1282) + HierGoalStack-cos(H_1294)")
     println("state file: " + path)
 
     let text = read_file(path)

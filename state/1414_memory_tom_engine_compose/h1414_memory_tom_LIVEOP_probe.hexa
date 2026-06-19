@@ -1,5 +1,5 @@
 // h1414_memory_tom_LIVEOP_probe.hexa — H_1414 rung-3 verification: re-run the FROZEN
-// H_1405 capability bars driving the LIVE CORE op `mem_tom_compose` (CORE/engine_cli.hexa
+// H_1405 capability bars driving the LIVE CORE op `mem_tom_compose` (core/engine_cli.hexa
 // §MEMORY×ToM COMPOSE ARBITER) INSTEAD of the probe's inlined glue, and confirm it
 // reproduces the H_1414 engine-native numbers BYTE-IDENTICALLY (a_verified_must_wire rung-3,
 // c2). Everything else (fixture, seeds, knobs, live faculty builds) is IDENTICAL to
@@ -7,7 +7,7 @@
 // call is swapped: inlined `_arbiter(...)` → live `mem_tom_compose(...)`. If the numbers match
 // the H_1414 card (compose 0.937778, all 4 bars PASS), the live op == the validated mechanism.
 
-import "CORE/engine_cli.hexa"
+import "core/engine_cli.hexa"
 
 fn _SEEDS() -> [int] { return [5400, 5401, 5402] }
 const N_PER_FAMILY: int = 90
@@ -203,7 +203,7 @@ fn run_seed(seed: int, cfg: EngineConfig) -> [float] {
 
 fn main() {
     println("================================================================================")
-    println("H_1414 RUNG-3 — LIVE-OP re-run: arbiter via WIRED mem_tom_compose (CORE/engine_cli.hexa)")
+    println("H_1414 RUNG-3 — LIVE-OP re-run: arbiter via WIRED mem_tom_compose (core/engine_cli.hexa)")
     println("  re-scoring the SAME frozen H_1405 bars; MUST reproduce H_1414 engine-native numbers byte-exact")
     println("  $0 CPU · 3 seeds [5400,5401,5402] · p7 · p8 · a_verified_must_wire rung-3")
     println("================================================================================")

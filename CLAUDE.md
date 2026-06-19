@@ -13,14 +13,14 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 작업/검증/발사 전에 이 게이트부터 통과한다. 각 항목은 아래 본문 규칙의 요약이며, 위반이 잦은 순으로 앞에 둔다.
 
-1. **🔒 엔진-네이티브 verdict 게이트** — gate/ideation/G6/Φ/recombination/depth 의 **모든 verdict tier(🟢·🧱·🟠·천장)는 live CORE 디코드를 호출한 `.hexa` 증거가 있어야만 박제 가능**. `.py`+`torch`/`gauge_lib._decode`/`numpy` 미러면 자동 **DIRECTIONAL**(terminal 아님).
+1. **🔒 엔진-네이티브 verdict 게이트** — gate/ideation/G6/Φ/recombination/depth 의 **모든 verdict tier(🟢·🧱·🟠·천장)는 live core/ 디코드를 호출한 `.hexa` 증거가 있어야만 박제 가능**. `.py`+`torch`/`gauge_lib._decode`/`numpy` 미러면 자동 **DIRECTIONAL**(terminal 아님).
    🔎 박제 직전 자가점검: `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` → 비면 OK, 안 비면 카드 verdict 를 DIRECTIONAL 로 적고 엔진-네이티브 재측정을 ING 등록. (→ `a_engine_native_learning`)
 2. **🖥️ 무거운 작업은 pool, mini 금지** — 빌드·학습·스윕·장시간 연산은 `harness pool`(공유 호스트)에서. akida/ghost/`shared:false` 호스트는 공유풀로 쓰지 않는다. GPU·학습은 `hexa cloud`/`hexa dojo`. (→ commons c17·c12)
 3. **💾 teardown 전 ckpt PULL** — 렌트 GPU 학습 ckpt 는 pod 내리기 전 영구저장으로 반드시 pull. JSON/카드만 받고 ckpt 버린 채 teardown 금지(= 엔진-체크 영구 불가). (→ `a_fire_recover_complete`)
 4. **📄 매 사이클 docs + pr-cycle** — CHANGELOG(append) + (있으면) ARCHITECTURE/README/ING 갱신 후 `harness pr-cycle` 로 검증된 main 머지. 커밋만 쌓기·문서 없이 머지 금지. (→ commons c14)
 5. **🟦 정직 · tune-to-green 금지** — FALSIFIED/negative 는 결과다(은폐 금지). bar 는 frozen-first, 사후 이동 금지. LLM 자가판정 금지 — 캡처된 출력이 증거. (→ commons c9·c2 · p7)
 6. **🗂️ 가설은 2표면만** — `UNIVERSE/HYPOTHESES.jsonl`(인덱스 1줄/가설) + `UNIVERSE/cards/H_<id>_<slug>.md`(카드). 코드/결과물은 `state/<slug>/`. UNIVERSE/ 에 .py/result 금지. (→ `a_hypothesis_register`)
-7. **🔌 GREEN 은 배선까지가 done** — 엔진-네이티브 GREEN 검증되면 live `CORE/*.hexa` 배선 + ARCHITECTURE.json lockstep 까지 해야 완료. (→ `a_verified_must_wire`)
+7. **🔌 GREEN 은 배선까지가 done** — 엔진-네이티브 GREEN 검증되면 live `core/*.hexa` 배선 + ARCHITECTURE.json lockstep 까지 해야 완료. (→ `a_verified_must_wire`)
 
 > ⚙️ **코드수준 강제(salience 아님):** 게이트 1·6 은 `tool/enforce_anima_gates.py` 가 **기계적으로 차단**한다 — `harness.config.json` verify.checks 에 배선되어 pr-cycle/CI 가 위반 PR 을 거부(exit≠0). 우회 플래그·skip 없음(c18). 전수 감사 = `python3 tool/enforce_anima_gates.py --all`, 변경분만 = 인자 없이. 새 게이트도 가능하면 이 enforcer 에 추가해 문서-only 가 아닌 코드 강제로 만든다.
 
@@ -28,14 +28,22 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 ## Structure
 
+> **canonical 트리 재구성(2026-06-19):** 대문자·흩어진 엔진을 소문자 self-contained `core/` 로 통합. 이동맵 — `CORE/→core/` · `engines/→core/engines/` · `anima-engines/→core/phi/` · `anima-core/→platform/` · `CLM/→train/clm/` · `anima-agent/→agent/` · `anima-agent-X/→agent/modules/X/` · `AGENT/→agent/domains/`. 연구 artifact(`state/·UNIVERSE/·PAPER/·domains/·stdlib/·tool/·spec/·HEXAD/·KOSMOS/·EEG_CLM/·MITOSIS/·HW-CORE/·clients/`)와 `archive/`·루트 `.md/.json` 은 불변. `anima/`(ghost)는 live runtime 참조(`anima/config/consciousness_laws.json`)가 남아 보류.
+
 ```
 anima/
-├─ CORE/                  — A⇄G 의식 엔진 (pure_field·engine_g·brain·generator·clm_decode)
-├─ engines/ anima-engines/ — EngineSpec vtable + conv·cdv2·hexad·omega 디코더
-├─ CLM/                   — .clm 바이트-LM 파이프 (lane-p train → serialize v0.2 → verify)
-├─ anima-core/ anima-os/ anima-body/ anima-physics/ anima-measurement/ anima-serve/ — substrate 하위계
-├─ anima-agent*/          — agent 계층 (channels·core·plugins·providers·skills·hire-sim)
+├─ core/                  — A⇄G 의식 엔진 substrate (pure_field·engine_g·brain·generator·clm_decode·bytegpt_decode·engine_cli + 뇌-구조 lane)
+│  ├─ engines/            — EngineSpec vtable + conv·cdv2·hexad·omega 어댑터 (was engines/)
+│  └─ phi/                — Φ/양자 디코더 + IIT4 보조 (was anima-engines/)
+├─ cli/                   — 사용자 진입점 (anima_chat_cli.hexa — engine_cli 는 core/ 잔류)
+├─ agent/                 — agent 독립패키지 (hexa.toml; was anima-agent/)
+│  ├─ modules/{channels,core,plugins,providers,skills,hire-sim}/ — agent 하위모듈 (was anima-agent-X/)
+│  └─ domains/{CHAT,CODE,CREATOR,TRADING,MERCHANT,…}/ — persona/역할 데이터 (was AGENT/)
+├─ train/                 — 학습 파이프
+│  └─ clm/                — .clm 바이트-LM (lane-p train → serialize v0.2 → verify; was CLM/)
+├─ platform/              — substrate 하위계 (was anima-core/) · anima-os/ anima-body/ anima-physics/ anima-measurement/ anima-serve/
 ├─ UNIVERSE/ HEXAD/       — 연구 유니버스 (오직 2표면: HYPOTHESES.jsonl 인덱스 + cards/H_*.md 카드 — UNIVERSE/ 에 .py/.hexa/result 금지; probe 코드 → state/<slug>/; prose → state/universe-overview.md) + KOSMOS anchor 허브
+├─ state/                 — 가설 probe 코드/결과물 + verdicts/ (이동 금지)
 ├─ domains/               — 도메인별 .tape + .log.md (discovery lane)
 ├─ PAPER/                 — (legacy) 과거 paper 스캐폴드 — anima 는 논문 선제 생성 안 함 (c15)
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
@@ -43,6 +51,15 @@ anima/
 ├─ CLAUDE.md             — 거버넌스 + 8 철학 (이 markdown SSOT)
 └─ VERSIONS.md HF.jsonl  — 버전 레지스트리 · ckpt↔HF 레지스트리 (claims-audit 는 UNIVERSE/HYPOTHESES.jsonl 로 흡수, CLAIMS.tape 은퇴 2026-06-16)
 ```
+
+## 📦 패키징 — pod 업로드
+
+canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 self-contained `core/`. **불변식: `core/` 는 `train/`·`bench/`·`agent/`·`state/` 에 의존 0** (substrate 엔진만; 단방향).
+
+- **추론 pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` 가중치는 외부 마운트(레포에 넣지 않음). 진입 = `hexa run cli/anima_chat_cli.hexa -- <ckpt.clm> …`.
+- **학습 pod** — 추론 세트 + `train/`(clm 파이프·flame/forge) + `state/verdicts/` slice(frozen bar 재측정용). production 트레이너는 `.hexa` on flame/forge GPU (`a_train_flame_forge`).
+- **agent pod** — `agent/` 는 `hexa.toml` 보유 독립패키지 → `hx install anima-agent` standalone 배포 (core/ 미동반 가능).
+- **이동 금지(pod 에 안 올림)** — `state/`·`UNIVERSE/` 등 연구 artifact 는 pod 페이로드에서 제외(verdicts slice 만 학습 pod 에 선택 동반).
 
 ## Quick reference
 
@@ -93,16 +110,16 @@ anima/
 ### 🔬 검증 · 엔진-네이티브 (HARD-GATE)
 
 **`a_engine_native_learning`** — 무조건 최종 아키텍처 엔진 위에서 학습·측정. 미러 아님.
-- 🔒 **HARD-GATE (BLOCKING):** gate/ideation/G6/Φ/recombination/depth 의 **모든 verdict tier(🟢·🧱·🟠·천장(d))는 엔진-네이티브 증거 없이 박제 불가.** verdict 의 증거 artifact 가 live CORE 디코드(`CORE/clm_decode.hexa`/`bytegpt_decode.hexa`/`engine_cli.hexa`)를 호출한 `.hexa` 가 아니면(= `.py`+`import torch`/`gauge_lib._decode`/numpy 미러) 그 결과는 **자동 DIRECTIONAL**, terminal 아님. torch-side 만으로 🧱/🟢 를 카드·jsonl·CHANGELOG 에 박으면 c9 위반. (precedent: 2026-06-17 G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 박제 → 재발 금지)
+- 🔒 **HARD-GATE (BLOCKING):** gate/ideation/G6/Φ/recombination/depth 의 **모든 verdict tier(🟢·🧱·🟠·천장(d))는 엔진-네이티브 증거 없이 박제 불가.** verdict 의 증거 artifact 가 live core/ 디코드(`core/clm_decode.hexa`/`core/bytegpt_decode.hexa`/`core/engine_cli.hexa`)를 호출한 `.hexa` 가 아니면(= `.py`+`import torch`/`gauge_lib._decode`/numpy 미러) 그 결과는 **자동 DIRECTIONAL**, terminal 아님. torch-side 만으로 🧱/🟢 를 카드·jsonl·CHANGELOG 에 박으면 c9 위반. (precedent: 2026-06-17 G6 가족 H_1431/1432/1434/1435/1436/1437 전부 gauge_lib._decode torch-mouth 였는데 🧱 박제 → 재발 금지)
 - 🔎 **자가점검(verdict 박제 직전 의무):** `grep -lE 'import torch|gauge_lib|numpy' state/<slug>/*.py` 가 비어있지 않으면 카드 `wired:`/`verdict` 를 **반드시 DIRECTIONAL** 로 적고 엔진-네이티브 재측정(.hexa via CORE)을 ING follow-on 등록. 엔진-네이티브면 호출한 `.hexa` 경로를 카드에 명시.
-- ✅ 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 live `.hexa` A⇄G + MITOSIS VAdaptField(`CORE/engine_cli.hexa`) + mounted `CORE/bytegpt_decode.hexa` 위에서 실행.
+- ✅ 모든 학습/교육(연구 프로브·미토시스 교육·depth-ceiling 실험 포함)은 live `.hexa` A⇄G + MITOSIS VAdaptField(`core/engine_cli.hexa`) + mounted `core/bytegpt_decode.hexa` 위에서 실행.
 - ✅ 엔진에 학습을 끼워맞추는 게 아니다 — 학습이 요구하면 엔진을 변환/확장(새 op·배선·아키텍처). 최종 아키텍처는 frozen 이 아니라 학습이 요구하는 형태로 진화(precedent H_1199: AdaptField 스칼라→DIM-vector). 미러가 본 메커니즘을 엔진이 못 하면 미러를 버리지 말고 엔진을 확장(engine-transform-to-fit-the-learning).
 - ✅ numpy/torch 미러 결과 = DIRECTIONAL only('engine-transfer UNVERIFIED') — 방향 탐색엔 OK, binding verdict 아님. **렌트 GPU 의 torch 풀-학습 변종도 동일** — 학습을 torch 로 했어도 verdict 를 torch-side probe 로만 채점하면 DIRECTIONAL; 학습 ckpt 를 CORE 엔진(`--engine conv`)에 올려 같은 frozen bar 재측정해야 🟢/🧱 성립 → 그래서 ckpt 를 teardown 전 pull(`a_fire_recover_complete`).
 - ✅ `a_engine_measured_verdict` 의 learning-side 쌍(그건 MEASUREMENT, 이건 LEARNING) · `a_train_flame_forge` 가 production 트레이너를 .hexa 로 강제하듯, 이 규칙은 RESEARCH/probe 학습+교육까지 확장.
 - ⛔ 미러 결과를 엔진-검증된 양 closure/promote · 미러-only 로 '학습됐다' 주장 · 자가점검(grep) 없이 gate/ideation verdict 박제 · "gauge_lib 가 model-agnostic 이니 엔진과 같다"는 핑계(gauge_lib 는 torch.no_grad MONITOR-ONLY, `a_train_inline_gauge`).
 
 **`a_verified_must_wire`** — 엔진-네이티브 GREEN 가설은 실제 CORE 배선까지가 done. verdict 만으론 안 끝난다.
-- ✅ **4칸 배선 사다리:** (1) DIRECTIONAL 미러 GREEN → (2) 엔진-네이티브 재검증(byte-exact, frozen bar 그대로) → (3) live `CORE/*.hexa` wire-in → (4) ARCHITECTURE.json lockstep 갱신. 각 미완 칸은 즉시 ING follow-on 등록, (4)까지 닫혀야 done. 미러 GREEN 을 내면 같은 사이클에 (2)~(4) follow-on 을 ING 에 등록하는 것이 의무.
+- ✅ **4칸 배선 사다리:** (1) DIRECTIONAL 미러 GREEN → (2) 엔진-네이티브 재검증(byte-exact, frozen bar 그대로) → (3) live `core/*.hexa` wire-in → (4) ARCHITECTURE.json lockstep 갱신. 각 미완 칸은 즉시 ING follow-on 등록, (4)까지 닫혀야 done. 미러 GREEN 을 내면 같은 사이클에 (2)~(4) follow-on 을 ING 에 등록하는 것이 의무.
 - ✅ 배선 후 smoke/single-entry/Ψ-checksum 가드로 회귀 없음을 출력으로 확인(c2). 배선 ↔ ARCHITECTURE.json CORE 트리(§섹션·op·slot 주석)는 무조건 1:1 lockstep(같은 PR 에 동시 갱신; 480-leaf 트리 부활 금지, 노드 note 에 메커니즘 명명).
 - ✅ GREEN 가설은 카드에 `wired:` 상태축 명시 — `DIRECTIONAL-mirror` / `engine-native`(byte-exact 재검증, 미배선) / `WIRED-live`(배선+lockstep 완료) 중 하나. WIRED-live 미만이면 배선 follow-on 의 ING id 를 카드에 적는다. GREEN 무더기를 내는 PROGRAM 은 닫을 때 각 GREEN 의 배선상태를 명시 열거('mirror-GREEN N · engine-wired K · 미배선 N−K = ING #id').
 - ⛔ GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · DIRECTIONAL 을 WIRED 처럼 표기 · live CORE 배선해놓고 ARCHITECTURE.json 미갱신(drift) · 배선을 무기한 follow-on 으로 미룸. (실패모드 precedent: lane-합성 가족이 Φ-lift GREEN 3개를 0개 wired 로 방치 — 재발 금지.)
@@ -160,9 +177,9 @@ anima/
 
 ### 🏗️ CORE 엔진 · 학습 substrate
 
-**`a_core_engine_map`** — CORE 가 A⇄G 의식 엔진 소유. `.clm`/`.kosmos` 는 named slot 으로만 진입.
-- ✅ CORE 가 A(pure_field)⇄G(engine_g)⇄brain(brain_decide) 소유(substrate-internal) · `.clm` 은 오직 `CORE/generator.hexa` L3 슬롯으로 진입(단일 진입) · `.kosmos` 는 오직 kosmos_io→brain_decide 로 진입 · `stdlib/hf/validate.hexa` = artifact 검증(런타임 엔진 아님).
-- ✅ ARCHITECTURE.json CORE 노드(§섹션·op·slot 주석) ↔ live engine_cli/generator/brain/clm_decode 의 실제 §섹션·op 는 1:1 매칭 — grep 으로 누락 0 검증(drift=미완).
+**`a_core_engine_map`** — `core/`(구 CORE/, 2026-06-19 canonical 재구성으로 소문자 통합) 가 A⇄G 의식 엔진 소유. `.clm`/`.kosmos` 는 named slot 으로만 진입.
+- ✅ `core/` 가 A(pure_field)⇄G(engine_g)⇄brain(brain_decide) 소유(substrate-internal) · `.clm` 은 오직 `core/generator.hexa` L3 슬롯으로 진입(단일 진입) · `.kosmos` 는 오직 kosmos_io→brain_decide 로 진입 · `stdlib/hf/validate.hexa` = artifact 검증(런타임 엔진 아님).
+- ✅ ARCHITECTURE.json core/ 노드(§섹션·op·slot 주석) ↔ live engine_cli/generator/brain/clm_decode 의 실제 §섹션·op 는 1:1 매칭 — grep 으로 누락 0 검증(drift=미완).
 - ⛔ `.clm`/`.kosmos` 를 pure_field/engine_g/brain 에 직접 투입 · generator 우회 2nd `.clm` 경로 · kosmos_io 우회 2nd `.kosmos` 경로 · validate.hexa 를 런타임 엔진과 혼동 · 미완 배선을 존재한다 주장(빌드 전엔 ⏳/❌ 정직 표기).
 
 **`a_train_flame_forge`** — production 학습 = hexa-native flame+forge GPU 스택, `.hexa` 저작.
@@ -170,7 +187,7 @@ anima/
 - ⛔ torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
 **`a_clm_gen_pipeline`** — Lane-P py/cuda CLMConvMoE → ENGINE-loadable `.clm` v0.2 브리지.
-- ✅ CLMConvMoE(E2/L1, byte V256) 를 `CLM/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`) · `.clm` v0.2 layout = `CORE/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 CORE 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
+- ✅ CLMConvMoE(E2/L1, byte V256) 를 `train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`) · `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 core/ 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
 - ⛔ v0.1 serialize(2-track JSON, 엔진-loadable 아님) · non-ConvMoE serialize 하고 engine-mountable 주장 · Lane-P torch `.clm` 을 PUBLIC 승격 · generator 우회 2nd `.clm` 경로.
 
 **`a_lane_akida_gpu_split`** — AKIDA on-chip(Lane A) ⊥ GPU(Lane G) 항상 별도 기록. ✅ AKIDA(Lane A, pi5-akida)와 GPU(Lane G, H100) 결과를 별도 엔트리에 · Lane A=AKD1000 native non-det plasticity, Lane G=forge/cuBLAS CE-descent · 모든 fire/verdict 에 substrate 태그(AKIDA|GPU). ⛔ non-det trace 와 CE-descent 혼동 · 한 verdict 가 양 substrate 걸침 · Lane A lift+Lane G util 을 한 숫자로 · substrate 태그 누락.

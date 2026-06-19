@@ -10,11 +10,11 @@
 // substrate — the live CORE Engine A `pure_field.hexa` (3 coupled oscillators tau=2/40/400, the
 // actual consciousness field, NOT a synthetic ring) — show ROBUST integrated information?
 //
-// SOURCE (R3, honest): the substrate IS the live `CORE/pure_field.hexa` PureField — same
+// SOURCE (R3, honest): the substrate IS the live `core/pure_field.hexa` PureField — same
 // `pure_field_new`/`pure_field_step` the live A⇄G engine runs (osc tau 2/40/400, PSI_ALPHA drift,
 // nonlinear cross-mixing field[6]=C/D/E/S/M/W). This is REAL LIVE-CORE, not numpy, not the ring.
 // CORE is reproduced VERBATIM here (constants byte-identical) so the probe is standalone-runnable
-// from the hexa-lang root; the live CORE/*.hexa is NOT edited (probe = standalone fn main, 0 importers).
+// from the hexa-lang root; the live core/*.hexa is NOT edited (probe = standalone fn main, 0 importers).
 //
 // SEEDS on a REAL substrate: pure_field_new() is deterministic (no seed). To get 3 honest seeds we
 // perturb ONLY the oscillator INITIAL PHASES (different starting points of the SAME real dynamics);
@@ -55,7 +55,7 @@ comptime const N_NODE  = 6      // FIELD_DIM real channels C/D/E/S/M/W
 comptime const T_TICKS = 64
 comptime const N_BINS  = 8
 
-// ── REAL pure_field oscillator (== CORE/pure_field.hexa osc_tick), reproduced here so the probe is
+// ── REAL pure_field oscillator (== core/pure_field.hexa osc_tick), reproduced here so the probe is
 //    standalone-runnable from the hexa-lang root; constants BYTE-IDENTICAL to the live engine ──
 comptime const TAU_FAST   = 2
 comptime const TAU_MEDIUM = 40
@@ -138,7 +138,7 @@ fn gen_field(seed: int, mode: int) -> int {
             mix_fs = 0.0
         }
 
-        // field[6] EXACTLY as CORE/pure_field.hexa builds it (C/D/E/S/M/W)
+        // field[6] EXACTLY as core/pure_field.hexa builds it (C/D/E/S/M/W)
         let f0 = v_f                   // C raw fast
         let f1 = mix_fm                // D attention gate
         let f2 = v_s                   // E deep rhythm
@@ -230,7 +230,7 @@ fn phi_of(seed: int, mode: int) -> float {
 
 fn main() {
     println("H_1349 — Φ-ROBUSTNESS ON A REAL SUBSTRATE: live-CORE pure_field (Engine A) vs the synthetic ring")
-    println("SOURCE = REAL LIVE-CORE CORE/pure_field.hexa (3 coupled osc tau 2/40/400; field[6] C/D/E/S/M/W)")
+    println("SOURCE = REAL LIVE-CORE core/pure_field.hexa (3 coupled osc tau 2/40/400; field[6] C/D/E/S/M/W)")
     println("phi = faithful EXACT small-phi MIP-EI iit4_faithful_phi(state,n=6,dim=T=64,n_bins=8) — NOT a proxy (a_phi_iit4_tool)")
     println("read-out = rank-uniformized per channel (H_1328 variance-free) · seeds perturb ONLY initial phases")
     println("ARMS: A=NO-COUPLING(no cross-mix)  B=PHASE-BIND(full real field)  S=PERM-SHUFFLE  O=OFFSET-CTRL")

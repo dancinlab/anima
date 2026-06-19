@@ -8,7 +8,7 @@
 //        ∧ F3 Ψ byte-identical.
 // 실행: hexa run EEG_CLM/eeg_band_fusion.hexa
 
-import "CORE/pure_field.hexa"
+import "core/pure_field.hexa"
 
 fn _absf(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
 fn is_int(s: string) -> bool {

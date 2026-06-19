@@ -52,7 +52,7 @@
 //   traces each have exactly N entries.
 //
 // Ref:
-//   anima-engines/anima_will.hexa           (CLM-P10-1 sm)
+//   core/phi/anima_will.hexa           (CLM-P10-1 sm)
 //   anima-hexad/d/will_bridge.hexa          (CLM-P10-2 bridge)
 //   training/clm_sensorimotor_loop.hexa     (pattern, CLM-P7-3)
 //   shared/roadmaps/anima.json              (CLM-P10-3 entry)
@@ -236,7 +236,7 @@ fn mi_pair_cwl(a: array, b: array) -> float {
     return mi
 }
 
-// ─── Inlined volition head + Will sm (mirrors anima-engines/anima_will) ──
+// ─── Inlined volition head + Will sm (mirrors core/phi/anima_will) ──
 //
 // We inline instead of import so the driver runs standalone under stage1.
 

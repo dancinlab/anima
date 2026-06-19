@@ -336,7 +336,7 @@ def main():
     log(f"[ctx] held-out Korean test positions = {n_te}")
 
     # ── serialize grown cells → CORE artifacts (cell row = center[3] next_sym_id emit_byte) ──
-    write_kojamohead("CORE/ko_jamo_cells.kojamohead", centers, top_sym, id_to_jamo, VJ)
+    write_kojamohead("core/ko_jamo_cells.kojamohead", centers, top_sym, id_to_jamo, VJ)
     # E2 shuffle control: bijective permutation of the cell->next-symbol map (destroy learned
     # structure; geometry/Korean-likeness/cell-firing IDENTICAL). A NON-FIXED permutation is enforced.
     rng = np.random.default_rng(args.shuf_seed)
@@ -344,7 +344,7 @@ def main():
     while len(centers) > 1 and np.all(perm == np.arange(len(centers))):
         perm = rng.permutation(len(centers))
     top_shuf = np.asarray(top_sym)[perm]
-    write_kojamohead("CORE/ko_jamo_cells_shuf.kojamohead", centers, top_shuf, id_to_jamo, VJ)
+    write_kojamohead("core/ko_jamo_cells_shuf.kojamohead", centers, top_shuf, id_to_jamo, VJ)
     log(f"[shuf] E2 control written (cell->next-sym map permuted, seed {args.shuf_seed})")
 
     # ── reference summary for the probe / card (mirror sanity on the FULL next-symbol id) ──
