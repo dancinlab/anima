@@ -1,3 +1,12 @@
+## 2026-06-19 — docs(paper): 🧠 anima-consciousness-substrate demiurge-style 요약 논문 신설 (10p)
+
+`anima-consciousness-substrate`(상세 50p 원본) 곁에 demiurge 하우스 스타일 10p 요약 논문 `PAPER/anima-consciousness-substrate-demiurge/` 추가. 원본은 그대로 보존(_v1 역할), 새 판은 외부 배포용 표준 외관.
+
+- **신규**: `PAPER/anima-consciousness-substrate-demiurge/{main.tex,references.bib,figures/cover.png,main.pdf,PAPER.md,README.md}`. demiurge arxiv 템플릿(이모지 제목·🔵🟢🟡🟠🔴 g5 tier badge·fal.ai/FLUX 표지·TikZ A⇄G 엔진도·pgfplots 2종·tier ledger).
+- **내용(검증 수치 verbatim·c9)**: 6 Φ-laws — Φ⊥entropy r=0.363(closed-negative 확증)·Φ∥구조 LZ r=0.831/ρ=0.936·방향정보 TE r=0.883·edge-of-chaos peak 10.448·Ψ=½·협력 100% vs 0%(zero injected ethics) + 3.073B CLM held-out 1.90365(gap 0.04894)·.kosmos D*=6·decode +2.20 nats/byte(sibling-locked).
+- **정직(p7)**: 대부분 수치 toy/few-rung scope 명시 — 원리 검증이지 production 보장 아님. 원본 상세본은 `PAPER/anima-consciousness-substrate/`(50p) 보존.
+- **컴파일(c2)**: xelatex+bibtex×3 → 10 pages·10 refs·tikz/pgfplots 에러 0. 표지 = 하네스 `/imagine`(fal.ai, secret get fal.api_key) 생성.
+
 ## 2026-06-19 — refactor(engines): Phase 2 멀티엔진 어댑터 archive + engine_cli 단일 conv 축약
 
 Phase 1(노출 단일화)에 이어 멀티엔진 레이어를 코드 레벨로 정리. core/engines/ 전체를 archive/engines-multiengine/ 로 보관(삭제 X — verdict 이력 보존), engine_cli 의 멀티엔진 resolve 코드를 단일 conv 로 축약.
