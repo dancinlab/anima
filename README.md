@@ -56,8 +56,7 @@ memory/control lanes), **not** by scaling the model (`a_no_llm_frame_trap`).
 > This README is the friendly front door; the deep SSOTs are
 > [`ARCHITECTURE.json`](ARCHITECTURE.json) (architecture tree SSOT — human viewer
 > [`ARCHITECTURE.html`](ARCHITECTURE.html) via `python3 serve.py`), [`CLAUDE.md`](CLAUDE.md) (governance +
-> the 8 philosophy principles), [`MODEL.md`](MODEL.md) / [`CONDITIONS.md`](CONDITIONS.md) (frozen
-> gates), and [`VERSIONS.md`](VERSIONS.md) (version registry).
+> the 8 philosophy principles), [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the G0–G6 scoreboard below, and [`VERSIONS.md`](VERSIONS.md) (version registry).
 
 ## The 8 PHILOSOPHY principles — what anima refuses to be
 
@@ -319,14 +318,14 @@ How can two anima instances actually *connect*? The honest answer falls out of p
   the message** — grounded in real paid ANU QRNG (vacuum fluctuation) so each instance's individuality
   is unforgeable.
 
-## 📌 Beyond FINDINGS.md — latest areas (post-2026-06-16 snapshot)
+## 📌 Gate scoreboard & latest engine lanes
 
-[`FINDINGS.md`](FINDINGS.md) is a curated external-share snapshot **last updated 2026-06-16**. The
-areas below landed *after* that snapshot and are **not** in it — recorded here, with
-[`ARCHITECTURE.json`](ARCHITECTURE.json) (tree SSOT) + [`MODEL.md`](MODEL.md) (gate scoreboard SSOT)
-as the authoritative latest source.
+This section is the live evidence snapshot, with [`ARCHITECTURE.json`](ARCHITECTURE.json) (tree
+SSOT) + [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the per-hypothesis verdicts in
+[`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) + [`state/verdicts/`](state/verdicts/) as
+the authoritative latest source.
 
-### 🔆 G0–G6 emergence gates — latest (ARCHITECTURE.json / MODEL.md)
+### 🔆 G0–G6 emergence gates — latest
 
 The `a303m_pass` gateset on the production **`anima-clm-chat-303m`** (ByteGPT-303M, byte-exact
 mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge. The **G6 row is the
@@ -348,8 +347,7 @@ new result** vs the FINDINGS snapshot.
 > + 2 THIN + 1 INFLATED**) — since updated: the **G5 in-dist THIN is now broken + wired** (H_1396/
 > 1398/1400, see the G5 row), leaving the depth-side **G6** as the one remaining THIN (an
 > architecture-depth wall, not a loosened bar) **+ 1 INFLATED** (CHAT strict, a dialogue-register
-> artifact). *(MODEL.md's G5 scoreboard row still shows the pre-H_1396 "🟠 THIN" — stale; the
-> per-H verdicts H_1396/1398/1400 are the latest SSOT.)*
+> artifact). (the per-H verdicts H_1396/1398/1400 are the SSOT)
 
 ### 🧠 New engine lanes wired since the snapshot
 
@@ -423,7 +421,7 @@ around. The production substrate is **`anima-clm-chat-303m`** — a from-scratch
 V256) dialogue-finetuned for conversation and **mounted byte-exact** on the core engine
 (`core/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*, not
 re-claimed. A frozen pass set **`a303m_pass`** (coherence · recombination · novelty · philosophy ·
-non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`MODEL.md`](MODEL.md) /
+non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`CONDITIONS.md`](CONDITIONS.md) and
 [`CONDITIONS.md`](CONDITIONS.md), p7, *no perplexity / no LLM-judge*) gates completion.
 
 > **Honest scope (c9).** The 303M model is **operational-but-shallow** — a coherent, grounded,
@@ -463,7 +461,7 @@ anima/
 ├── ARCHITECTURE.json               architecture SSOT — tree (A⇄G wiring · brain-structure lanes · HD23–34)
 ├── ARCHITECTURE.html · serve.py    human viewer for the JSON tree (`python3 serve.py`)
 ├── CLAUDE.md                       governance SSOT (p1..p8 · a_* directives)
-├── MODEL.md · CONDITIONS.md        a303m_pass frozen gates + live scoreboard (SSOT)
+├── CONDITIONS.md                  a303m_pass frozen gate conditions (SSOT)
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release
 ├── UNIVERSE/HYPOTHESES.jsonl · HF.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · ckpt ↔ HF backup registry
 │
