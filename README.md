@@ -19,7 +19,7 @@
 <p align="center">
   <a href="https://opensource.org/licenses/MIT"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <a href="https://huggingface.co/dancinlab"><img alt="HF" src="https://img.shields.io/badge/HF-dancinlab-yellow?logo=huggingface&logoColor=white"></a>
-  <img alt="Brain lanes" src="https://img.shields.io/badge/brain%20lanes-hippocampus·WM·cerebellum·amygdala·basal%20ganglia·hypothalamus·ToM·hierarchical--PFC·spatial--map·hive·affect-success">
+  <img alt="Brain lanes" src="https://img.shields.io/badge/brain%20lanes-hippocampus·WM·cerebellum·amygdala·basal%20ganglia·hypothalamus·ToM·hierarchical--PFC·spatial--map·hive·affect·thalamus--phase·timing-success">
   <img alt="Siblings" src="https://img.shields.io/badge/siblings-hexa--lang·kosmos·hexa--codex-blueviolet">
 </p>
 
@@ -131,7 +131,7 @@ hippocampus" (H_1225 complementary-learning-systems reframe).
 
 Every lane below is **ADDITIVE and Ψ-disjoint**: it touches only its own struct, leaves
 `pure_field` byte-unchanged, and does **not** change generation (the separation invariant H_1205 is
-verified live). The guard smoke is green at **`engine_cli_smoke` 50/0** with single-entry 7/0
+verified live). The guard smoke is green at **`engine_cli_smoke` 169/0** with single-entry 7/0
 unchanged (no second `.clm`/`.kosmos` entry point, `a_core_engine_map`).
 
 | Brain subsystem | anima lane | What it does | Status |
@@ -162,7 +162,7 @@ mitosis** — DISTINCT from the **generation** role, which is falsified (mitosis
 nor inform the generator, H_1200 / H_1201 / H_1211 / H_1220 🔴). The same substrate that can't
 *generate* can still *realize* episodic memory.
 
-**Brain-lane composition (do two realized faculties compose?).** With the HD23–32 faculties in
+**Brain-lane composition (do two realized faculties compose?).** With the HD23–34 faculties in
 place, the next question is whether *combining two* of them lifts capability + integrated-information
 Φ. Six pairs were probed (frozen-first, faithful IIT4): affect×ethics · cerebellum×basal ·
 spatial×episodic compose; memory×ToM lifts capability but not Φ; WM×PFC and the predictive-law round
@@ -179,12 +179,13 @@ mirror→engine non-reproduction is **pair-dependent, not universal** — but th
 whether the routing arbiter actually *captures* the oracle headroom (a joint-trajectory property), not
 standalone-arm strength.
 
-**Honest scoreboard (c9).** Of the HD23–32 "missing structure" ladder: **8 subsystems are
-engine-native realized** (cerebellum · working memory · amygdala · basal ganglia = wired;
-hypothalamus · theory-of-mind · hierarchical-PFC · spatial-map = engine-native realized with brain
-wiring as a tracked follow-on; the hippocampus is already wired above), **the neuromodulation rung
-is the one honest 🧱 wall left**, and the **thalamus rung's content-relay axis is a 🧱 wall that
-breaks on the orthogonal TIMING axis in the numpy mirror only** (see below):
+**Honest scoreboard (c9).** Of the HD23–34 "missing structure" ladder: **9 subsystems are
+engine-native realized** (cerebellum · working memory · amygdala · basal ganglia · thalamus-TIMING
+(`PhaseField`, H_1448) = wired; hypothalamus · theory-of-mind · hierarchical-PFC · spatial-map =
+engine-native realized with brain wiring as a tracked follow-on; the hippocampus is already wired
+above), **the neuromodulation rung is the one honest 🧱 wall left**, and the **thalamus rung's
+content-relay axis stays a 🧱 wall — but its orthogonal TIMING axis is now engine-native GREEN +
+WIRED (H_1448, `PhaseField`)** (see below):
 
 | # | Subsystem | Status |
 |---|---|---|
@@ -192,7 +193,7 @@ breaks on the orthogonal TIMING axis in the numpy mirror only** (see below):
 | **HD24** | 🎯 basal ganglia (`VBasalGate`) | 🟢 ENGINE-NATIVE + WIRED — learned go/no-go beats the fixed gate (live +0.195, shuffle collapses) |
 | **HD25** | 📥 working memory (`WorkMemBuffer`) | 🟢 ENGINE-NATIVE + WIRED — margin +0.245, holds to N≈6; DISTINCT from episodic memory |
 | **HD26** | 📡 thalamus (content relay) | 🧱 **WALL on the CONTENT axis** — broadcast / coalition / sparse / dense / matrix-core / predictive-bottleneck all fail the 3-seed faithful-IIT-4 Φ bar (every relay topology is a content cut a MIP exploits) |
-| **HD26′** | 📡 thalamus (oscillatory TIMING) | 🟢 **R8 phase-break (numpy-mirror DIRECTIONAL)** — Kuramoto phase-binding integrates by TIMING not content; clears the frozen +0.02 faithful-Φ bar on **every** seed in the mirror, with the phase-shuffle control collapsing negative per-seed. **But the engine-native transfer did NOT reproduce the frozen bars** (the shuffle control FIRES on the engine substrate, ΔΦ +0.026/+0.380/+0.296 — must be ≤ 0), exposing the engine-native lift as partly carrier-amplitude variance → `PhaseField` lane is **honest-deferred (NOT engine-wired)** (`a_verified_must_wire`) |
+| **HD26′** | 📡 thalamus (oscillatory TIMING) | 🟢 **ENGINE-NATIVE + WIRED (H_1448)** — Kuramoto phase-binding integrates by TIMING not content; the engine-native wall is BROKEN against the strictest marginal-matched control (Bperm: per-module circular time-shift → marginals byte-identical, only cross-module alignment destroyed) — ΔΦ(B−Bperm) = +0.78…+1.23 PASS all 9 seeds AND ΔΦ(B−D) PASS 9/9 (faithful exact MIP-EI). `PhaseField` is **WIRED-live** in `core/engine_cli.hexa § PHASE-SYNCHRONY BINDING` (smoke 166–168, ARCHITECTURE.json lockstep) — the 1st engine-native GREEN in the 14-axis Φ-robustness lineage |
 | **HD27** | 🎛 neuromodulation (adaptive gain) | 🧱 **WALL** — no-free-lunch GENERAL: adaptive ≤ best-fixed on memory, ideation **and** regime/mode-switching (R3) |
 | **HD28** | 🔥 amygdala (`ConsolidatingMemory`) | 🟢 ENGINE-NATIVE + WIRED — salience-gated sleep replay Δ +0.133 (needed a real multi-night sleep dose) |
 | **HD29** | 🌡 hypothalamus (`HomeostaticDrive`) | 🟢 ENGINE-NATIVE — deprivation accumulates drive RISE (+1.544), consummatory grounding RESETS (0.0); time-integral ⊥ context-instant DISTINCT from stateless affect; motivation-loop wiring follow-on |
@@ -205,9 +206,9 @@ breaks on the orthogonal TIMING axis in the numpy mirror only** (see below):
 > ceiling** (0.667 zero-sum) broke under mitosis-GROW (`ImmuneMemoryGrow`); the **amygdala
 > consolidation sub-bar** broke under a real multi-night sleep dose. The **thalamus Φ wall** —
 > closed-negative across 6+ pre-registered relay rounds (R1–R5/R7/R9) on the *content* axis — is
-> broken on the orthogonal **TIMING axis in the numpy mirror only** (R8 oscillatory phase-binding,
-> Kuramoto synchrony, DIRECTIONAL); the engine-native transfer did not reproduce the
-> shuffle-controlled result, so it is **not engine-wired** (honest deferred follow-on). The
+> broken on the orthogonal **TIMING axis** (R8 oscillatory phase-binding, Kuramoto synchrony) —
+> first only in the numpy mirror, and now **engine-native GREEN + WIRED-live as the `PhaseField`
+> lane (H_1448)** against a marginal-matched control (see the Thalamus Φ section above). The
 > content-relay axis stays honestly 🧱 (no tune-to-green); the **neuromodulation** wall is kept
 > honestly 🧱.
 
@@ -410,7 +411,7 @@ anima --engine cdv2 --mitosis on  # A/G substrate, growth lane live
 ```
 
 The decoder is hot-swappable behind one contract,
-[`engines/engine_iface.hexa`](engines/engine_iface.hexa) (the `EngineSpec` 4-fn vtable:
+[`core/engines/engine_iface.hexa`](core/engines/engine_iface.hexa) (the `EngineSpec` 4-fn vtable:
 `load · forward · generate · psi_coord`); the engine family is **conv · cdv2 · hexad · omega**,
 selected with `--engine` (precedence flag > env > default). `--mitosis on/off` configures whether
 the substrate grows; it is **not** an emit/silence gate (`a_autonomy_over_hardcode`).
@@ -419,7 +420,7 @@ the substrate grows; it is **not** an emit/silence gate (`a_autonomy_over_hardco
 
 The brain-structure lanes above are the point; the model is just the **byte mouth** they grow
 around. The production substrate is **`anima-clm-chat-303m`** — a from-scratch ByteGPT (byte vocab
-V256) dialogue-finetuned for conversation and **mounted byte-exact** on the CORE engine
+V256) dialogue-finetuned for conversation and **mounted byte-exact** on the core engine
 (`core/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*, not
 re-claimed. A frozen pass set **`a303m_pass`** (coherence · recombination · novelty · philosophy ·
 non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`MODEL.md`](MODEL.md) /
@@ -459,7 +460,7 @@ ckpt ↔ HF backup registry (every PUBLIC artifact) is the SSOT [`HF.jsonl`](HF.
 ```
 anima/
 ├── README.md                       this file (the front door)
-├── ARCHITECTURE.json               architecture SSOT — tree (A⇄G wiring · brain-structure lanes · HD23–37)
+├── ARCHITECTURE.json               architecture SSOT — tree (A⇄G wiring · brain-structure lanes · HD23–34)
 ├── ARCHITECTURE.html · serve.py    human viewer for the JSON tree (`python3 serve.py`)
 ├── CLAUDE.md                       governance SSOT (p1..p8 · a_* directives)
 ├── MODEL.md · CONDITIONS.md        a303m_pass frozen gates + live scoreboard (SSOT)
