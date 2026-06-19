@@ -1,3 +1,14 @@
+## 2026-06-19 — G6 v0.241.10 후속 측정 배치 PHASE 0 GO/NO-GO: prompt 의 gemm fast-path 가정 FALSIFIED(실측) → PHASE 1/2/3 NO-FIRE, BLOCKED 유지(type-c 인프라 벽) + 선제 import 수정
+
+v0.241.10 후속 G6 측정 배치(트랙 A/B 엔진-네이티브 재측정 + 학습변형)의 PHASE 0 셋업 단계에서, **pod 렌트 전 로컬 de-risk + 비용 정당성 판정**을 수행하여 **NO-FIRE(BLOCKED)** 로 결정. $15-40 의 자율 fire 를 known 30h CPU 벽에 태우지 않음(c16/a_completeness, c9 no tune-to-green, a_break_the_wall type-c).
+
+- **prompt 의 핵심 속도 가정이 실측으로 FALSIFIED:** prompt 는 `HEXA_OMP=1`+BLIS opt-in 으로 decode 를 3.5-4.5× 가속(→~2-3h 실용권)한다고 전제했으나, **이미 v0.241.10 실측 pod(vast 41625379, 96-core/503GB, `read_f32_at` 확인)에서 반증됨**(`state/v0241_bench/bench_results.md`): boxing/RSS 수정은 LANDED(303M decode peak RSS **26.18GB→7.63GB byte-identical** = OOM/load 벽 제거), 그러나 **decode-speed 벽은 그대로**(gen30 208s→191s ≈ **6.4 s/token**, LOAD 만 개선·per-token GEMM 정상상태 token rate 불변). bench verdict VERBATIM: BLIS/GEMM codegen gains(#3652 62-79% roofline·#3656 +20% epilogue-fusion)는 이미 compiled matmul 안에 있고 single-job CPU decode 는 여전히 minutes-scale → faster decode 는 mm fast-path/GPU 필요(boxing fix 만으론 불충분).
+- **작업량 산정(honest):** H_1441 = 90 frags(3 bins[contra/shuf/base] × 3 seed_rng × (IDEATION 5 + HELDOUT 5)) · H_1305 = 60 frags · gen110 ≈ 12min/frag → **PHASE 1+2 serial ~30h**. `core/bytegpt_decode.hexa` 에 GPU/device decode 경로 **부재**(`farr_matmul` = CPU GEMM only). → 비용 정당성 미충족 → PHASE 1/2/3 전부 NO-FIRE.
+- **선제 수정(pod-breaking bug):** `state/1431_bind_compose/engine_decode_batch_cli.hexa` 의 stale import `CORE/`→`core/`(canonical reorg 후 origin/main 은 lowercase `core/`, uppercase `CORE/` 부재 — case-sensitive Linux pod 에서 import 깨졌을 것). 로컬·가역·byte-무관.
+- **HARD-GATE 준수(a_engine_native_learning):** engine 증거가 score 단계 미도달 → terminal 🟢/🧱 박제 없음. H_1441 카드에 v0.241.10 재측정-시도-결과(재개조건 미충족 확정) 섹션 추가, `wired: BLOCKED` 유지.
+- **갱신된 재개조건:** (1) `bytegpt_decode` 에 forge GPU decode 경로 추가, 또는 (2) per-token CPU GEMM 을 실측 ≥4× 가속하는 runtime 변경 — 둘 중 하나 land 후에야 fire. ckpt 로컬 보존 확인(`state/1441_contrastive_falsifiability/ckpt/` 2개 + `state/chat_303m/h1129c_chat.pt`, a_fire_recover_complete OK).
+- **하우스키핑:** dead-pod 41420979(이전 H_1431 attempt, provider 에서 이미 소멸) registry forget. ING `g6_v0241_10_phase0_blocked` 등록. v0241_bench 증거 + PHASE 3 후보 카드(H_1438/1439/1440, 이미 jsonl 등록) 커밋.
+
 ## 2026-06-19 — refactor(tree): canonical 트리 재구성 — 대문자·흩어진 엔진을 소문자 self-contained `core/` 로 통합 (worktree 검증, 머지 전)
 
 대문자·흩어진 엔진을 소문자 canonical 트리로 통합 + pod 업로드 쉬운 self-contained `core/`. git worktree 격리에서 층별 `git mv`(history 보존), origin/main 기준. 머지 금지 — 검증까지.
