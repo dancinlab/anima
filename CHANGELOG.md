@@ -1,3 +1,14 @@
+## 2026-06-19 — refactor(tree): canonical 트리 재구성 — 대문자·흩어진 엔진을 소문자 self-contained `core/` 로 통합 (worktree 검증, 머지 전)
+
+대문자·흩어진 엔진을 소문자 canonical 트리로 통합 + pod 업로드 쉬운 self-contained `core/`. git worktree 격리에서 층별 `git mv`(history 보존), origin/main 기준. 머지 금지 — 검증까지.
+
+- **이동맵(9층, 8/9 완료 · ghost 보류)**: `CORE/→core/`(macOS case-insensitive FS 2단계 rename) · `engines/→core/engines/` · `anima-engines/→core/phi/` · `anima-core/→platform/` · `CLM/→train/clm/` · `anima-agent/→agent/`(hexa.toml 독립패키지 보존) · `anima-agent-{channels,core,plugins,providers,skills,hire-sim}/→agent/modules/{...}/` · `AGENT/→agent/domains/`(AGENT↔agent case-collision → 임시격리 경유). `anima/`(37 ghost)는 **live runtime 참조**(`serving/consciousness_gate.hexa`·`core/pure_field.hexa`·`agent/.../{philosophy_lenses,discovery_loop}.hexa`·`platform/*` 가 `anima/config/consciousness_laws.json` 로드) 발견 → **보류**(손대지 않음).
+- **이동 금지(불변)**: `state/·UNIVERSE/·PAPER/·domains/·stdlib/·tool/·spec/·HEXAD/·KOSMOS/·EEG_CLM/·MITOSIS/·HW-CORE/·clients/`·`archive/`·루트 `.md/.json`. state/ 파일은 이동 안 하되 내부 경로 문자열만 갱신.
+- **참조 재배선**: `.hexa`(3950 in-scope) + `.py`(load-bearing string literal) import/run 경로 일괄 갱신(archive/raw_archive 제외). 깨진 symlink `training/anima_quantum{,_clm}.hexa`(→ `../anima-engines/`)를 `../core/phi/` 로 재지정. 잔존 대문자참조 grep `"(CORE|CLM|AGENT)/` = **0**(archive 제외).
+- **cli/ 분리**: `core/anima_chat_cli.hexa → cli/anima_chat_cli.hexa`(진입점 분리; `engine_cli.hexa` 는 substrate 엔진이라 `core/` 잔류). 빌드 RC=0.
+- **메타 lockstep**: `harness.config.json`(lockdown.files 5개+iface → core/) · `ARCHITECTURE.json`(45 CORE 노드+트리 전부 core/, JSON valid, EEG_CLM over-match 복구) · `tool/enforce_anima_gates.py`(CORE_DECODE 정규식에 `core/` 추가, RC=0) · CLAUDE.md(§Structure 새 트리 + 새 §패키징 + a_core_engine_map CORE→core).
+- **검증(출력)**: `hexa run cli/anima_chat_cli.hexa` RC=0(import 해결) · `python3 tool/enforce_anima_gates.py` RC=0 clean · 잔존 대문자참조 0 · 패키징 불변식 `core/` 단방향(train·bench·agent·state 의존 0).
+
 ## 2026-06-19 — wip(H_1305): G6 ideation-falsifiability 엔진-네이티브 재측정 — engine path VALIDATED, full 4-bar BLOCKED(substrate-speed) → 🟠 DIRECTIONAL 유지 + ING
 
 H_1305 G6 ideation-falsifiability 를 정상 영어 ckpt 로 engine-native 재측정 시도. **engine decode PATH 는 VALIDATED**(positive); FULL frozen 60-job 4-bar 은 H_1431 과 동일 substrate-speed 벽(scalar 26s/token)에 막혀 측정 미완 → verdict UNCHANGED 🟠 DIRECTIONAL, engine-native CONFIRM/OVERTURN = ING follow-on(`h1305_engine_native`).

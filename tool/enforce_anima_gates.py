@@ -45,11 +45,12 @@ GATE_TOPIC = re.compile(
 )
 TERMINAL = ("🟢", "🧱")  # GREEN / WALL = banked terminal verdict
 TORCH_MARK = re.compile(r"import\s+torch|gauge_lib|\bnumpy\b")
-# engine-native = a .hexa that calls a live CORE engine: the byte-mouth decoders
+# engine-native = a .hexa that calls a live core engine: the byte-mouth decoders
 # (clm_decode/bytegpt_decode/engine_cli) OR the faithful-IIT4 Φ engine (a_phi_iit4_tool,
 # stdlib/iit4/faithful_phi). Φ verdicts are engine-native via faithful_phi, not a byte decoder.
+# (canonical 트리 재구성 후 엔진은 core/; 과거 대문자 CORE/ 도 archive 호환 위해 유지)
 CORE_DECODE = re.compile(
-    r"clm_decode|bytegpt_decode|engine_cli|faithful_phi|iit4_bigphi|/iit4/|\bCORE/|pure_field|engine_g"
+    r"clm_decode|bytegpt_decode|engine_cli|faithful_phi|iit4_bigphi|/iit4/|\bcore/|\bCORE/|pure_field|engine_g"
 )
 DIRECTIONAL = re.compile(r"DIRECTIONAL", re.IGNORECASE)
 
