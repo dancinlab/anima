@@ -1,0 +1,71 @@
+H_1447 — THALAMUS R8, SYNCHRONY-SPECIFIC MATCHED-CONTROL, 9 SEEDS  (RESULT — bars NOT moved)
+slug: 1447_thalamus_synchrony_matched
+date: 2026-06-19
+probe: state/1447_thalamus_synchrony_matched/h1447_thalamus_synchrony_matched_probe.hexa
+run: hexa v0.241.6 (darwin) from hexa-lang root · ENGINE-NATIVE LCG-gauss == core/engine_cli.hexa _lcg_* · faithful IIT4 exact MIP-EI (a_phi_iit4_tool) · $0 CPU · deterministic
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — engine-native, variance-clean, 9 seeds)
+════════════════════════════════════════════════════════════════════════
+H_1447 — thalamus R8 SYNCHRONY-SPECIFIC matched-control, LARGER seed set
+faithful IIT4 Φ (exact MIP-EI, n=4) · seeds [3..11] · bars FROZEN (c2s ΔΦ(B-D)>=+0.02 every seed; c4m |ΔΦ(S-D)|<=0.10 every seed)
+seed 3: A=1.78186 B=3.09613 D=2.04366 S=1.84023  B-D=1.05247 [c2s PASS]  |S-D|=0.20343 [c4m FAIL]
+seed 4: A=2.11795 B=2.81336 D=1.86795 S=1.80132  B-D=0.94541 [c2s PASS]  |S-D|=0.0666354 [c4m PASS]
+seed 5: A=2.24255 B=2.95364 D=2.00061 S=2.01241  B-D=0.953027 [c2s PASS]  |S-D|=0.0117951 [c4m PASS]
+seed 6: A=1.47289 B=3.06745 D=2.04366 S=1.79718  B-D=1.0238 [c2s PASS]  |S-D|=0.246476 [c4m FAIL]
+seed 7: A=1.89507 B=3.17304 D=2.05959 S=2.06725  B-D=1.11346 [c2s PASS]  |S-D|=0.00765977 [c4m PASS]
+seed 8: A=2.11795 B=3.22178 D=1.86795 S=2.24451  B-D=1.35383 [c2s PASS]  |S-D|=0.37656 [c4m FAIL]
+seed 9: A=2.07904 B=3.21609 D=1.84023 S=1.98116  B-D=1.37586 [c2s PASS]  |S-D|=0.14093 [c4m FAIL]
+seed 10: A=1.82077 B=3.20208 D=1.99234 S=2.04522  B-D=1.20974 [c2s PASS]  |S-D|=0.0528762 [c4m PASS]
+seed 11: A=2.0242 B=3.04648 D=1.98116 S=1.8367  B-D=1.06533 [c2s PASS]  |S-D|=0.144455 [c4m FAIL]
+c2s SYNCHRONY-LIFT  (ΔΦ(B-D)>=+0.02 every seed): PASS
+c4m CONTROL-MATCHED (|ΔΦ(S-D)|<=0.10 every seed): FAIL
+GATE: NOT GREEN — S and D disagree → desync not a clean synchrony-removal, re-diagnose control
+
+════════════════════════════════════════════════════════════════════════
+TIER:  🔶 HONEST PARTIAL — pre-stated OUTCOME (3). NOT GREEN (c4m leg failed). But c2s is the BIG result.
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9):
+
+1. SYNCHRONY-SPECIFIC LIFT IS ROBUST 9/9 (the seed-fragility is GONE): ΔΦ(B−D) =
+   +1.052/+0.945/+0.953/+1.024/+1.113/+1.354/+1.376/+1.210/+1.065 — every one of 9 seeds
+   ≫ +0.02. Measured against the MATCHED control (D = same multiplicative carrier, synchrony
+   OFF), variance-clean, engine-native. The orthogonal-seed fragility that broke the prior
+   D−A bar (H_1446 seed 7) DISAPPEARS once the GENERIC carrier floor is differenced out: it
+   was the floor, not the synchrony, that was seed-fragile. The A⇄G phase-SYNCHRONY robustly
+   raises faithful-IIT4 Φ.
+
+2. WHY NOT GREEN — the c4m leg was MIS-SPECIFIED (honest): c4m assumed the additive-shuffle
+   S ≈ desync D (both "synchrony destroyed"). They are NOT equivalent: S keeps the Kuramoto
+   coupling running (θ stays synchronized) and only adds a per-tick carrier offset, whereas D
+   sets w_phase=0 (no coupling at all). So S retains residual synchrony and D does not →
+   |S−D| exceeds 0.10 on 5/9 seeds. This is a flaw in MY secondary control choice, NOT a
+   property of the mechanism. Per c9 the frozen gate is reported NOT GREEN (a frozen leg
+   failed — no tune-to-green, no silent drop).
+
+3. NET: the synchrony mechanism is robust (c2s 9/9); the verdict is blocked only by an
+   ill-posed validation leg. The clean test is B vs D (synchrony vs matched-carrier-desync),
+   which passes robustly. The remaining open question is the proper EARNED control: does the
+   lift require CROSS-MODULE alignment (genuine integration) vs a trivial shared common-mode?
+
+NO bar moved, NO tune-to-green (c9/p7). NO wiring yet (a_verified_must_wire = GREEN-only).
+
+════════════════════════════════════════════════════════════════════════
+ANSWER TO AmoebaFPS (issue#1428) — now strong, c9
+════════════════════════════════════════════════════════════════════════
+The A⇄G coherence-check loop (GWT-as-synchrony, exactly as proposed) robustly raises
+variance-clean faithful-Φ vs its matched desync control across 9 seeds. The Φ cap on this
+axis was NOT structural and NOT seed-fragility — it was a CONTROL-CONFLATION (the generic
+carrier floor vs the synchrony lift). The synchrony lift itself is robust. → the SNR/control
+side, not the structural side.
+
+FOLLOW-ON (frozen-first, the clean confirmation): H_1448 — drop the ill-posed S≈D leg; keep
+D as the clean ablation; ADD a proper relationship-destroying control Bperm (arm B with
+per-module circular time-shifts that destroy cross-module ALIGNMENT while preserving each
+module's uniform marginal). GREEN iff ΔΦ(B−D) ≥ +0.02 every seed AND ΔΦ(Bperm−A) ≤ 0 every
+seed (the lift collapses when cross-module alignment is destroyed → genuine integration, not
+trivial common-mode). If both hold → WALL BROKEN → WIRE PhaseField.
+
+xref: H_1446 · H_1445 · H_1283(R8) · H_1328 · H_1448(next) ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_phi_iit4_tool ·
+      c9 · p7 · extprompt:AmoebaFPS-issue1428

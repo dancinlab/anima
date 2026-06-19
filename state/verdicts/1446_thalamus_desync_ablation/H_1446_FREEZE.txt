@@ -1,0 +1,74 @@
+H_1446 FREEZE — THALAMUS R8 ENGINE-NATIVE, DESYNC ABLATION CONTROL  (frozen BEFORE scoring)
+slug: 1446_thalamus_desync_ablation
+date: 2026-06-19 (frozen BEFORE any Φ scored)
+parent: H_1445 (variance-clean rank-uniform read-out: c2 robust+clean PASS, c4 additive-shuffle still leaks 2/3)
+lens: c16 a_break_the_wall — ABLATION is the decisive tool (mechanism OFF → same result = INERT). a_no_llm_frame_trap (thalamus synchrony, NOT an LLM recipe).
+substrate: ENGINE-NATIVE hexa LCG-gauss (== core/engine_cli.hexa _lcg_*) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, n=4) — a_engine_native_learning / a_phi_iit4_tool. $0 CPU, deterministic.
+
+════════════════════════════════════════════════════════════════════════
+WHY THIS H (the named, stronger control)
+════════════════════════════════════════════════════════════════════════
+H_1445 established (variance-clean, engine-native): c2 (B−A lift) is ROBUST and NOT
+amplitude variance (ΔΦ +1.278/+1.104/+1.137 under rank-uniform read-out). The ONLY open
+leg is c4: the frozen R8 "phase-shuffle" control (mode 2) ADDS a per-tick offset to θ but
+the Kuramoto coupling STILL RUNS → θ stays partially synchronized → residual synchrony leaks
+into Φ_S (seeds 7/8 still +0.172/+0.127; seed 9 collapses −0.098). The leak is CONTROL
+WEAKNESS, not proof the lift is spurious.
+
+The principled fix (a_break_the_wall ABLATION, NOT tune-to-green): replace the additive-
+offset perturbation with a control arm that FULLY REMOVES the binding mechanism — set the
+phase-coupling w_phase = 0 in the control arm so each module's phase drifts INDEPENDENTLY
+(no pacemaker pull, no inter-module synchrony), keeping EVERYTHING else (content ring,
+phase-gated salience read-out, LCG draws) byte-identical. This is the clean ablation:
+  mechanism = thalamic phase SYNCHRONIZATION.
+  D (desync) = synchronization OFF, phase channel still present.
+If the lift is the synchrony, Φ_D collapses to Φ_A. If Φ_D stays at Φ_B, synchrony is
+INERT and the lift is something else (honest negative).
+
+Anti-Goodhart (c9): the desync control is STRICTER than the additive shuffle (it removes,
+not perturbs, the relationship) → it is MORE likely to also kill c2, not less. A
+c4d-collapse-WITH-c2-survival under this stronger control is therefore a LEGITIMATE wall
+break. Bars frozen BEFORE scoring.
+
+════════════════════════════════════════════════════════════════════════
+DESIGN (ONLY the control arm changes vs H_1445; A and B byte-identical)
+════════════════════════════════════════════════════════════════════════
+- ARMS: A = direct ring (mode 0) · B = ring + phase-gated salience, Kuramoto synchrony ON
+  (mode 1) · D = ring + phase-gated salience, synchrony OFF (w_phase=0 in BOTH the module
+  phase update and the pacemaker; mode 3) · [S = additive-offset shuffle (mode 2) reported
+  as a CONTINUITY DIAGNOSTIC only, NOT gating].
+- Read-out: H_1328 VARIANCE-CLEAN rank-uniform (identical to H_1445) before faithful Φ.
+- mode 3 draws the SAME LCG sequence as mode 1 (same content states/inputs/θ-init); ONLY
+  the phase-coupling coefficient differs (1 vs 0) → clean single-variable ablation.
+- Φ = stdlib iit4_faithful_phi(traj_ranked, 4, 64, 8) exact MIP-EI; engine never computes Φ.
+- seeds [7,8,9].
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS (GREEN iff BOTH hold, seeds [7,8,9])
+════════════════════════════════════════════════════════════════════════
+  c2  PRIMARY  faithful ΔΦ(B−A) ≥ +0.02 on EVERY seed (the synchrony lift)
+  c4d ABLATION faithful ΔΦ(D−A) ≤ 0 on EVERY seed (lift COLLAPSES when synchrony removed —
+              mechanism is the synchronization, not residual structure)
+  GREEN = c2 AND c4d engine-native, variance-clean.
+
+════════════════════════════════════════════════════════════════════════
+PRE-STATED OUTCOMES (all honest, decided BEFORE scoring — c9)
+════════════════════════════════════════════════════════════════════════
+  (1) c2 PASS ∧ c4d PASS → 🟢 GREEN engine-native. The A⇄G phase-synchrony coherence-loop
+      produces robust irreducible faithful-Φ AND the lift is EARNED by synchronization (desync
+      ablation collapses it). The R8 engine-gate c4 failure was CONTROL-WEAKNESS, not
+      structural. WIRE PhaseField into core/engine_cli.hexa + ARCHITECTURE.json lockstep
+      (a_verified_must_wire). Answer to AmoebaFPS: the cap was control/SNR, the wall BREAKS
+      engine-native on the timing axis.
+  (2) c2 PASS ∧ c4d FAIL (Φ_D stays near Φ_B) → synchronization is INERT: the lift survives
+      even with synchrony OFF → it is NOT the binding mechanism → honest NEGATIVE, the
+      coherence-loop "lift" is generic phase-channel structure, cap STRUCTURAL. 🧱 bounds R8.
+  (3) c2 FAIL → the variance-clean lift itself did not reproduce this arm-set → re-diagnose
+      (should not happen; A/B identical to H_1445). NO bar moved either way.
+
+GUARDS (post, if GREEN→wire): core/engine_cli_smoke RC=0 · h1196 single-entry 7/0 ·
+h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½ untouched).
+
+xref: H_1445 · H_1283(R8) · H_1328 · H_1416(ablation→INERT precedent) ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_phi_iit4_tool ·
+      c9 · p7 · extprompt:AmoebaFPS-issue1428

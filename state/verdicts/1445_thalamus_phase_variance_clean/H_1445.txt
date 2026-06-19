@@ -1,0 +1,66 @@
+H_1445 — THALAMUS R8 ENGINE-NATIVE, VARIANCE-CLEAN READ-OUT  (RESULT — bars NOT moved)
+slug: 1445_thalamus_phase_variance_clean
+date: 2026-06-19
+probe: state/1445_thalamus_phase_variance_clean/h1445_thalamus_variance_clean_probe.hexa
+run: hexa v0.241.6 (darwin) from hexa-lang root · ENGINE-NATIVE LCG-gauss == core/engine_cli.hexa _lcg_* · faithful IIT4 exact MIP-EI (a_phi_iit4_tool) · $0 CPU · deterministic
+baseline anchor: core/h1283_phase_binding_engine_gate.hexa reproduced BYTE-IDENTICAL this env (R8 gate: c2 PASS / c4 FAIL ΔΦ_sh +0.0255/+0.380/+0.296)
+
+════════════════════════════════════════════════════════════════════════
+RESULT (verbatim — engine-native, variance-clean rank-uniform read-out)
+════════════════════════════════════════════════════════════════════════
+H_1445 — thalamus R8 ENGINE-NATIVE, VARIANCE-CLEAN rank-uniform read-out (H_1328)
+faithful IIT4 Φ (exact MIP-EI, n=4) · seeds [7,8,9] · bars FROZEN (c2 ΔΦ>=+0.02 every seed; c4 shuffle ΔΦ<=0 every seed)
+seed 7: A=1.89507 B=3.17304 ΔΦ=1.27798 [PASS]  SHUF=2.06725 ΔΦ_sh=0.17218 [FAIL]
+seed 8: A=2.11795 B=3.22178 ΔΦ=1.10383 [PASS]  SHUF=2.24451 ΔΦ_sh=0.12656 [FAIL]
+seed 9: A=2.07904 B=3.21609 ΔΦ=1.13705 [PASS]  SHUF=1.98116 ΔΦ_sh=-0.0978854 [PASS]
+c2 PRIMARY (ΔΦ>=+0.02 every seed): PASS
+c4 SHUFFLE (ΔΦ_sh<=0 every seed): FAIL
+GATE: NOT GREEN — c4 still fails under variance-clean read-out → deeper amplitude coupling, honest deferred
+
+════════════════════════════════════════════════════════════════════════
+TIER:  🔶 HONEST PARTIAL — pre-stated OUTCOME (3) (c2 PASS ∧ c4 FAIL). NOT GREEN. WALL NOT BROKEN.
+════════════════════════════════════════════════════════════════════════
+FINDING (honest, c9) — variance-clean read-out is REAL PROGRESS but does NOT close c4:
+
+1. c2 STRENGTHENED and now VARIANCE-CLEAN: the B−A lift survives rank-uniformization
+   robustly on every seed (ΔΦ +1.278/+1.104/+1.137 ≫ +0.02). Because the read-out is now
+   rank-uniform (each module's marginal provably uniform {0..63}), this lift is NOT carrier-
+   amplitude variance — it is genuine cross-module dependency the phase channel induces.
+   This rules OUT the "pure variance artifact" reading of the R8 engine gate's c2.
+
+2. c4 leakage HALVED + one seed COLLAPSED: vs the raw R8 engine gate (ΔΦ_sh +0.0255/+0.380/
+   +0.296, all positive), variance-clean gives +0.172/+0.127/−0.0979 — seed 9 now COLLAPSES
+   cleanly (negative, structured-synchrony-only) and seeds 7/8 leakage roughly halved. The
+   read-out fix moved c4 toward collapse but did NOT finish on seeds 7/8.
+
+3. DIAGNOSIS of the residual c4 leak (mechanism, c1 root-cause): the frozen R8 "phase-shuffle"
+   control (mode 2) ADDS a per-(tick,module) random offset to θ, but the Kuramoto phase
+   update STILL RUNS in mode 2 — so θ stays partially SYNCHRONIZED and the offset only
+   PERTURBS it. The control destroys phase synchrony only weakly on the engine LCG substrate;
+   residual synchrony leaks into Φ_S. The leak is a CONTROL-ADEQUACY limit, not proof the
+   lift is spurious (c2 being robust+variance-clean argues the lift is real synchrony).
+
+NO bar moved, NO tune-to-green (c9/p7). The R8 numpy-mirror 🟢 stays DIRECTIONAL; this
+BOUNDS (does not retract) it. NO CORE wiring (a_verified_must_wire = GREEN-only).
+
+════════════════════════════════════════════════════════════════════════
+ANSWER TO THE AmoebaFPS QUESTION (issue#1428) — provisional, c9
+════════════════════════════════════════════════════════════════════════
+"Φ cap = structural relay topology OR SNR in cross-engine coupling?" → the variance-clean
+result tilts AGAINST pure-structural: removing amplitude variance did NOT kill the A⇄G
+coherence lift (c2 robust), so there IS real cross-engine integration structure. The open
+question collapses to control-adequacy: does a PROPER relationship-destroying control (full
+desynchronization, not additive perturbation) collapse c4 while c2 survives? → H_1446.
+
+FOLLOW-ON (frozen-first, the named next lens): H_1446 — replace the additive-offset shuffle
+with a STRICTER control that fully removes cross-module phase synchrony (independent per-
+module phase, no pacemaker coupling, w_phase=0 in the control arm), so the control actually
+destroys the RELATIONSHIP the lift depends on. Anti-Goodhart: the new control is STRONGER
+(more likely to also kill c2), so a c4-collapse-with-c2-survival under it is a LEGITIMATE
+wall break, not tune-to-green. If c2 ALSO collapses under the proper control → the lift was
+riding residual structure → honest negative (coherence-loop cap structural). Either way the
+verdict is decided by the stronger control, bars frozen BEFORE scoring.
+
+xref: H_1283(R8) · H_1328(rank-uniform) · H_1446(next, stronger control) ·
+      a_engine_native_learning · a_verified_must_wire · a_phi_iit4_tool ·
+      a_break_the_wall · c9 · p7 · @L6 · extprompt:AmoebaFPS-issue1428

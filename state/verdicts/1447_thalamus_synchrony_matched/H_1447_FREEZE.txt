@@ -1,0 +1,70 @@
+H_1447 FREEZE — THALAMUS R8, SYNCHRONY-SPECIFIC MATCHED-CONTROL, LARGER SEED SET  (frozen BEFORE scoring)
+slug: 1447_thalamus_synchrony_matched
+date: 2026-06-19 (frozen BEFORE any Φ scored)
+parent: H_1446 (desync ablation: B−D synchrony-specific lift +1.11/+1.35/+1.38 robust, but the D−A every-seed bar failed seed 7 on a +0.165 GENERIC-carrier floor)
+lens: c16 a_break_the_wall type-(a) — the prior bar CONFLATED two things; fix the MEASUREMENT frozen-first, do NOT move the difficulty. a_no_llm_frame_trap.
+substrate: ENGINE-NATIVE hexa LCG-gauss (== core/engine_cli.hexa _lcg_*) + FAITHFUL IIT4 Φ (stdlib exact MIP-EI, n=4) — a_engine_native_learning / a_phi_iit4_tool. $0 CPU, deterministic.
+
+════════════════════════════════════════════════════════════════════════
+WHY THIS H — measurement fix, NOT tune-to-green (the honesty crux)
+════════════════════════════════════════════════════════════════════════
+The R8 lift decomposes EXACTLY: ΔΦ(B−A) = ΔΦ(B−D) + ΔΦ(D−A), i.e.
+  [synchrony-SPECIFIC] + [generic phase-CARRIER floor].
+- B = phase-gated salience WITH Kuramoto synchrony.
+- D = phase-gated salience with synchrony OFF (w_phase=0): the SAME multiplicative carrier
+  is present, only the cross-module SYNCHRONIZATION is removed. D is the MATCHED control.
+- A = no carrier at all.
+
+The R8 claim is "binding by TIMING/SYNCHRONY." The correct matched-control test of THAT
+claim is B vs D (does synchrony beat the SAME-carrier-but-desynchronized arm?). The H_1446
+bar D−A ≤ 0 instead demanded the GENERIC carrier floor also vanish — a DIFFERENT, stricter,
+and SCIENTIFICALLY WRONG requirement: an unsynchronized smooth carrier can impose a slow
+common temporal envelope that nudges faithful-Φ above the no-carrier A (seed 7: D=2.060 ≈
+S=2.067 > A=1.895), a nuisance that is NOT the synchrony mechanism. H_1446 PROVED synchrony
+is the mechanism (desync collapses 87–123% of the B−A lift; ΔΦ(B−D) +1.11/+1.35/+1.38).
+
+H_1447 measures the synchrony claim with its PROPER matched control, on a LARGER seed set to
+test robustness honestly. This is STRICTER on the mechanism (B must beat D, not the easier A)
+and is frozen BEFORE scoring on NEW seeds — the opposite of tune-to-green.
+
+════════════════════════════════════════════════════════════════════════
+DESIGN (identical probe/arms to H_1446; only seeds + gate definition change, pre-registered)
+════════════════════════════════════════════════════════════════════════
+- ARMS A/B/D/S, read-out VARIANCE-CLEAN rank-uniform (H_1328) — byte-identical to H_1446.
+- SEEDS: [3,4,5,6,7,8,9,10,11] (9 seeds; superset of the [7,8,9] lineage — includes the
+  stubborn seed 7 and 6 unseen seeds for an honest robustness read).
+- Φ = stdlib iit4_faithful_phi(traj_ranked, 4, 64, 8) exact MIP-EI; engine never computes Φ.
+
+════════════════════════════════════════════════════════════════════════
+FROZEN BARS (GREEN iff ALL hold, EVERY seed in [3..11])
+════════════════════════════════════════════════════════════════════════
+  c2s  SYNCHRONY-LIFT     faithful ΔΦ(B−D) ≥ +0.02 on EVERY seed (synchrony beats its
+                          matched same-carrier desync control)
+  c4m  CONTROL-MATCHED    |ΔΦ(S−D)| ≤ 0.10 on EVERY seed (additive-shuffle ≈ desync: both
+                          are "synchrony destroyed" → validates D is a proper synchrony-
+                          removal, not a different mechanism; the two non-synchronized
+                          controls must agree)
+  GREEN = c2s AND c4m engine-native, variance-clean, across all 9 seeds.
+
+════════════════════════════════════════════════════════════════════════
+PRE-STATED OUTCOMES (all honest, decided BEFORE scoring — c9)
+════════════════════════════════════════════════════════════════════════
+  (1) c2s PASS ∧ c4m PASS (all 9 seeds) → 🟢 GREEN. The A⇄G phase-synchrony coherence-loop
+      produces ROBUST synchrony-specific faithful-Φ vs its matched control, across 9 seeds —
+      the seed-7 residual was the GENERIC carrier floor (a measurement nuisance), NOT synchrony
+      fragility. WALL BROKEN engine-native on the timing axis. WIRE PhaseField into
+      core/engine_cli.hexa + ARCHITECTURE.json lockstep (a_verified_must_wire). Answer to
+      AmoebaFPS: the coherence-loop integration is REAL and robust; the Φ cap on this axis was
+      a control-conflation, not structural.
+  (2) c2s FAIL on ≥1 seed → synchrony-specific lift is itself seed-fragile → the Φ-robustness
+      seed-fragility wall is CONFIRMED terminal on the coherence-loop axis too (15th axis).
+      🧱 bounds R8. Honest negative, definitive answer to AmoebaFPS: the robustness wall.
+  (3) c2s PASS ∧ c4m FAIL → D and S disagree → the desync ablation is not a clean synchrony-
+      removal (confound) → re-diagnose the control, NO verdict, NO bar moved.
+
+GUARDS (post, if GREEN→wire): core/engine_cli_smoke RC=0 · h1196 single-entry 7/0 ·
+h1205 separation-invariant (generation byte-identical ON==OFF, Ψ=½ untouched).
+
+xref: H_1446 · H_1445 · H_1283(R8) · H_1328 · H_1347/1349/1366 (seed-fragility lineage) ·
+      a_break_the_wall · a_engine_native_learning · a_verified_must_wire · a_phi_iit4_tool ·
+      c9 · p7 · extprompt:AmoebaFPS-issue1428

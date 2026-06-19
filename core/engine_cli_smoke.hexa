@@ -2038,6 +2038,38 @@ fn main() {
           + " ablate(A>C)='" + trans_order_higher(to_abl, "A", "C") + "'(abstain)"
           + " — premise-INTEGRATION over UNOBSERVED pairs (Ψ-disjoint, item-store/given-order/metric distinct)")
 
+    // ── PhaseField (H_1448, R8 WIRED) — A⇄G phase-synchrony cross-module binding lane ──────────
+    // A Kuramoto phase channel + pacemaker binds N modules in TIME. The SYNCHRONIZED field (k=0.5)
+    // reaches a high cross-module phase order parameter R; the SAME modules DESYNCED (k=0, the H_1448
+    // ablation arm D) drift independently and never bind (R collapses). H_1448 proved engine-native
+    // (faithful exact MIP-EI, variance-clean, marginal-matched Bperm, 9 seeds) that this synchrony is
+    // genuine cross-module Φ INTEGRATION; here the cheap order-parameter R guards the live mechanism.
+    let PF_N = 4
+    let PF_STEPS = 64
+    let pf_b = phasefield_run(phasefield_new(7, PF_N), PF_STEPS)          // synchronized (arm B)
+    let pf_d = phasefield_run(phasefield_new_desync(7, PF_N), PF_STEPS)   // desync ablate (arm D)
+    let pf_b_R = phasefield_coherence(pf_b)
+    let pf_d_R = phasefield_coherence(pf_d)
+
+    // case 166 : BINDING (H_1448 cInt direction) — the synchronized field binds modules in time:
+    //   high cross-module order parameter (R >= 0.70), decisively above the desync arm (B - D >= 0.20).
+    let pf_binds = (pf_b_R >= 0.70) && ((pf_b_R - pf_d_R) >= 0.20)
+    if _assert_b("case_166_phasefield_binds", true, pf_binds) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 167 : EARNED-DESYNC (H_1448 ablation arm D) — k=0 removes the coupling, modules free-run,
+    //   no cross-module alignment (R <= 0.65). The coherent synchrony is the load-bearing part.
+    let pf_desync_collapse = pf_d_R <= 0.65
+    if _assert_b("case_167_phasefield_desync_collapses", true, pf_desync_collapse) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 168 : DETERMINISTIC — the live faculty is byte-deterministic (re-run identical R).
+    let pf_b2 = phasefield_run(phasefield_new(7, PF_N), PF_STEPS)
+    let pf_det = phasefield_coherence(pf_b2) == pf_b_R
+    if _assert_b("case_168_phasefield_deterministic", true, pf_det) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  phase-synchrony binding (H_1448, R8 WIRED): synced R=" + to_string(pf_b_R)
+          + " desync R=" + to_string(pf_d_R)
+          + " — A⇄G coherence-loop binds modules in TIME (Ψ-disjoint; faithful-Φ integration GREEN in H_1448 probe)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

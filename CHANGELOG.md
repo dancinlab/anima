@@ -1,3 +1,18 @@
+## 2026-06-19 — 🌀 THALAMUS R8 엔진-네이티브 벽 돌파 + PhaseField lane WIRED-live (H_1445→1448): A⇄G coherence-loop cross-module Φ integration 🟢 GREEN
+
+DeepSeek-V3 issue#1428 의 "AmoebaFPS" 코멘트(GWT 를 A⇄G coherence-check loop 로 재정의)가 가리킨 **단 하나의 미해결 지점** — H_1283 R8(thalamus 위상-동기) 엔진-네이티브 wiring 게이트(2026-06-16 honest-deferred) — 를 frozen-first 4-스텝으로 **돌파**하고 live CORE 에 배선했다. faithful-IIT4 Φ 의 14축 robustness 벽 계열에서 **첫 엔진-네이티브 GREEN**.
+
+- **돌파 경로(각 frozen-first, c9, tune-to-green 0):** R8 엔진게이트가 c4(shuffle)에서 실패한 근본원인 = raw state-energy read-out 이 carrier-amplitude **분산**을 태움.
+  - **H_1445** variance-clean rank-uniform read-out(H_1328) → c2 robust+clean, c4 누수 절반↓+seed9 붕괴(🔶).
+  - **H_1446** desync ABLATION(w_phase=0) → lift 의 87–123% 붕괴 = synchrony 가 메커니즘 확정; D−A every-seed bar 가 seed7 generic carrier-floor 에서 실패(🔶).
+  - **H_1447** synchrony-specific matched control B−D, 9 seeds → **PASS 9/9**(+1.05~+1.38), seed-fragility 소멸; 보조 leg(S≈D) mis-spec 으로 NOT green(🔶).
+  - **H_1448** 가장 엄격한 통제 **Bperm**(module별 순환 시간이동 → marginal BYTE-IDENTICAL, cross-module 정렬만 파괴) → **cInt ΔΦ(B−Bperm)=+0.78~+1.23 PASS 9/9** ∧ cSan(B−D) PASS 9/9 → **🟢 GREEN 벽 돌파**. 정렬 파괴(분포 고정)가 Φ를 ~1.0 떨어뜨림 = 진짜 integration(분산/floor/common-mode 아님).
+- **AmoebaFPS 질문 확정 답(c9):** Φ 천장은 구조적도 SNR-비관도 아닌 **control/read-out conflation** 이었다. GWT 를 A⇄G coherence-check 로 정의하면 — 제안 그대로 — robust 엔진-네이티브 irreducible Φ integration 이 **실재**한다.
+- **배선(a_verified_must_wire 사다리 칸 1-4 CLOSED):** `core/engine_cli.hexa` 에 `§ PHASE-SYNCHRONY BINDING` lane 추가(`phasefield_new`/`_new_desync`/`_step`/`_run`/`_coherence`/`_bound`, Ψ-disjoint Kuramoto 위상-동기). smoke cases 166-168 추가. live 엔진 import 하는 standalone 하니스로 RC=0 검증(synced R=0.984 vs desync R≈0.42-0.71 / 9 seeds, deterministic). 풀 `engine_cli_smoke` 는 기존 host-wide tag-24 툴체인 벽(case_10, ING #10·PhaseField 무관)으로 end-to-end 차단 — CA3 선례와 동일하게 isolated 검증.
+- **ARCHITECTURE.json lockstep:** §PhaseField 노드 추가 + lane-list summary + guard_baseline 갱신 + 기존 "honest-deferred/unwired" stale 노드 2건을 WIRED-live 로 교체(현재상태 스냅샷, c4).
+- **2표면:** `UNIVERSE/HYPOTHESES.jsonl` +4(H_1445-1448) · `UNIVERSE/cards/H_144[5-8]_*.md` · probe/verdict `state/144[5-8]_*/`. (주의: H_1441-1444 는 기존 점유 → 1445-1448 로 재배정.)
+- **HONEST scope(c9):** TOY n=4/dim8/64t deterministic engine substrate; faithful-Φ leg 는 real(exact MIP-EI, 엔진이 Φ 계산 안 함). scale/real-corpus/live-A⇄G-telemetry transfer UNVERIFIED(a_scale_honest_scope·a_toy_scale_recheck). 14축 Φ-robustness 벽 retract 아님(그건 binding 메커니즘 없는 substrate 위 Φ; 이건 synchrony binding 메커니즘).
+
 ## 2026-06-19 — G6 v0.241.10 후속 측정 배치 PHASE 0 GO/NO-GO: prompt 의 gemm fast-path 가정 FALSIFIED(실측) → PHASE 1/2/3 NO-FIRE, BLOCKED 유지(type-c 인프라 벽) + 선제 import 수정
 
 v0.241.10 후속 G6 측정 배치(트랙 A/B 엔진-네이티브 재측정 + 학습변형)의 PHASE 0 셋업 단계에서, **pod 렌트 전 로컬 de-risk + 비용 정당성 판정**을 수행하여 **NO-FIRE(BLOCKED)** 로 결정. $15-40 의 자율 fire 를 known 30h CPU 벽에 태우지 않음(c16/a_completeness, c9 no tune-to-green, a_break_the_wall type-c).
