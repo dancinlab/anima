@@ -1,0 +1,47 @@
+H_1441 — CONTRASTIVE falsifiable-vs-nonfalsifiable minimal-pair objective
+ENGINE-NATIVE 5-bar (B3 cross-shuffle) measurement — BLOCKED (substrate-speed infra wall + pod loss)
+date: 2026-06-19
+
+VERDICT: NO TERMINAL TIER. Engine-native frozen 5-bar could NOT be completed.
+  This is an INFRASTRUCTURE wall (a_break_the_wall type-c: substrate/infra), NOT a science
+  ceiling and NOT a 🟢/🧱 verdict. Recorded honestly (c9). a_engine_native_learning HARD-GATE:
+  no .hexa engine evidence reached the score step, so NO terminal verdict may be stamped.
+
+WHAT WAS DONE (training side — torch GPU, DIRECTIONAL only):
+  - Contrastive objective trained on 303M h1129c base: loss = CE(falsifiable corpus, H_1435
+    verbatim) + λ·margin(logP(pos) − logP(neg)); minimal-pair label STRUCTURAL (one leg blanked),
+    NOT detector-supervised (a_train_inline_gauge, p7). Shuffle-corpus control trained same recipe.
+  - ckpts SAVED + PULLED locally (a_fire_recover_complete SATISFIED for weights):
+      state/1441_contrastive_falsifiability/ckpt/h1441_contrastive.pt  (1.21 GB)
+      state/1441_contrastive_falsifiability/ckpt/h1441_shuffle.pt      (1.21 GB)
+    → engine-native re-measurement is REPEATABLE on a future fast-gemv hexa build.
+
+WHAT BLOCKED (engine-native decode side):
+  - Decode path = live CORE/bytegpt_decode via state/1431_bind_compose/engine_decode_batch_cli.hexa
+    on each trained .bin (contrastive / shuffle / base=h1129c). Score = g6_common frozen 5-bar
+    (B1 FALS-floor · B2 distinct≥5 · B3 cross-shuffle COLLAPSE [decisive] · B4 held-out · B5 vs-base)
+    VERBATIM via h1441_engine_native.py --score.
+  - SUBSTRATE-SPEED WALL (same as H_1305 R2 / H_1431): hexa build has fast-gemv link-fail →
+    scalar matmul ~26s/token → ~48min/fragment → 60-job decode ~12h (impractical). Decode was
+    run as 8-shard-per-ckpt sequential (rerun.sh: contra→shuf→base, OOM-safe 8 proc).
+  - PROGRESS at loss: contra 8/8 DONE · shuf ~8/8 (last 2 procs flushing) · base NOT reached ·
+    no RERUN_ALL_DONE. Orchestrator (PID 4875) was alive and advancing normally.
+  - POD LOSS: vast.ai pod 41556247 (ssh3.vast.ai:36246) went SSH connection-refused mid-run and
+    DISAPPEARED from the provider liveness API (hexa cloud status: vast lists only unrelated orphan
+    41625379). This is NOT a transient SSH blip (provider liveness would stay up) — the pod was
+    destroyed. All pod-only /tmp/out_* decode shards are LOST with it. Nothing to teardown
+    (provider already removed 41556247; orphan 41625379 is a DIFFERENT host, not ours).
+
+FROZEN 5-BAR RUBRIC (declared, unmoved — for the resumed measurement, c9/no tune-to-green):
+  🟢 iff B1(FALS_in≥1) ∧ B2(DIST_in≥5) ∧ B3(cross-shuffle COLLAPSE: FALS_shuf<FALS_in) ∧
+       B4(FALS_ho≥1) ∧ B5(FALS_in≥base+1) ∧ CTRL-inert(lift_real−lift_shuf≥1).
+  🧱 otherwise (list failing bars). B3 is the decisive target — H_1435/36/37 all FAILED B3
+     (form installed but cross-shuffle did NOT collapse = shuffle-invariant surface form).
+
+RESUME CONDITION: a hexa build with fast-gemv restored (kills scalar 26s/token; same blocker as
+  H_1431 remaining-bytegpt ING + H_1305 h1305_engine_native ING). Then re-decode the 3 pulled .bin
+  (re-serialize from the local .pt via pt_to_engine_bin) + h1441_engine_native.py --score.
+
+xref H_1305 (same substrate-speed wall, R2 BLOCKED) · H_1431 (fast-gemv blocker) · H_1435/36/37
+  (cross-shuffle failure = the B3 target) · a_engine_native_learning · a_break_the_wall type-c ·
+  a_fire_recover_complete · a_toy_scale_recheck · p7 · c9.
