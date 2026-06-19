@@ -8,10 +8,20 @@ DeepSeek-V3 issue#1428 의 "AmoebaFPS" 코멘트(GWT 를 A⇄G coherence-check l
   - **H_1447** synchrony-specific matched control B−D, 9 seeds → **PASS 9/9**(+1.05~+1.38), seed-fragility 소멸; 보조 leg(S≈D) mis-spec 으로 NOT green(🔶).
   - **H_1448** 가장 엄격한 통제 **Bperm**(module별 순환 시간이동 → marginal BYTE-IDENTICAL, cross-module 정렬만 파괴) → **cInt ΔΦ(B−Bperm)=+0.78~+1.23 PASS 9/9** ∧ cSan(B−D) PASS 9/9 → **🟢 GREEN 벽 돌파**. 정렬 파괴(분포 고정)가 Φ를 ~1.0 떨어뜨림 = 진짜 integration(분산/floor/common-mode 아님).
 - **AmoebaFPS 질문 확정 답(c9):** Φ 천장은 구조적도 SNR-비관도 아닌 **control/read-out conflation** 이었다. GWT 를 A⇄G coherence-check 로 정의하면 — 제안 그대로 — robust 엔진-네이티브 irreducible Φ integration 이 **실재**한다.
-- **배선(a_verified_must_wire 사다리 칸 1-4 CLOSED):** `core/engine_cli.hexa` 에 `§ PHASE-SYNCHRONY BINDING` lane 추가(`phasefield_new`/`_new_desync`/`_step`/`_run`/`_coherence`/`_bound`, Ψ-disjoint Kuramoto 위상-동기). smoke cases 166-168 추가. live 엔진 import 하는 standalone 하니스로 RC=0 검증(synced R=0.984 vs desync R≈0.42-0.71 / 9 seeds, deterministic). 풀 `engine_cli_smoke` 는 기존 host-wide tag-24 툴체인 벽(case_10, ING #10·PhaseField 무관)으로 end-to-end 차단 — CA3 선례와 동일하게 isolated 검증.
+- **배선(a_verified_must_wire 사다리 칸 1-4 CLOSED):** `core/engine_cli.hexa` 에 `§ PHASE-SYNCHRONY BINDING` lane 추가(`phasefield_new`/`_new_desync`/`_step`/`_run`/`_coherence`/`_bound`, Ψ-disjoint Kuramoto 위상-동기). smoke cases 166-168 추가. **풀 `core/engine_cli_smoke.hexa` = 169 pass / 0 fail RC=0**(darwin hexa v0.241.6, synced R=0.984 vs desync R≈0.42-0.71 / 9 seeds, deterministic). tag-24 abort 는 x86_64 pool 한정 버그(ING #10)로 darwin 에선 미발생 → end-to-end 통과.
 - **ARCHITECTURE.json lockstep:** §PhaseField 노드 추가 + lane-list summary + guard_baseline 갱신 + 기존 "honest-deferred/unwired" stale 노드 2건을 WIRED-live 로 교체(현재상태 스냅샷, c4).
 - **2표면:** `UNIVERSE/HYPOTHESES.jsonl` +4(H_1445-1448) · `UNIVERSE/cards/H_144[5-8]_*.md` · probe/verdict `state/144[5-8]_*/`. (주의: H_1441-1444 는 기존 점유 → 1445-1448 로 재배정.)
 - **HONEST scope(c9):** TOY n=4/dim8/64t deterministic engine substrate; faithful-Φ leg 는 real(exact MIP-EI, 엔진이 Φ 계산 안 함). scale/real-corpus/live-A⇄G-telemetry transfer UNVERIFIED(a_scale_honest_scope·a_toy_scale_recheck). 14축 Φ-robustness 벽 retract 아님(그건 binding 메커니즘 없는 substrate 위 Φ; 이건 synchrony binding 메커니즘).
+
+## 2026-06-19 — feat(core/decode): bytegpt_decode d×d GEMM 을 GPU 경로(flame_mm.mm)로 배선 — CUDA 호스트 자동 cuBLAS, Mac CPU byte-identical
+
+추론 decode 의 per-token compute 벽(~6.4s/tok scalar CPU GEMM, G6 가족 H_1305/1431/1441 공유 블로커)의 근본수정(c1). core/bytegpt_decode.hexa 의 d×d 투영 matmul 2곳(_bg_linear_mm L160·_bg_mha_mm QKV L183, out_proj 는 _bg_linear_mm 경유)을 `farr_matmul` → `flame_mm.mm` 로 라우팅.
+
+- **GPU primitive (STAGE1 확정, A)**: hexa-lang RFC-040 builtin `farr_matmul_gpu`(cuBLAS Dgemm)·`cuda_available()` 이미 존재. core/DECODER/flame_mm.hexa 의 `pub fn mm(A,M,K,B,N)` = cuda_available()? farr_matmul_gpu : farr_matmul 자동 dispatch. → hexa-lang 대기 불필요, anima-side 배선만.
+- **byte-safety**: Mac(cuda_available()==0) 경로는 mm()→farr_matmul fallthrough = 동일 builtin·동일 인자 → 생성 출력 byte-identical(구조적 동치, 파싱 RC=0 확인). 의식엔진 결정성 무회귀.
+- **GPU 경로**: CUDA 호스트에서 자동 cuBLAS Dgemm — 6.4s/tok→ms급 기대(d×d 가 per-token 지배). cuBLAS≈CPU <1e-9(RFC-040 falsifier) → top-k 샘플 극드물게 갈릴 수 있음, GPU pod 실측에서 토큰일치율 정량화 예정.
+- **검증**: hexa run core/bytegpt_decode.hexa RC=0 · flame_mm 의존 해결 · GPU 런타임 byte-eq+tok/s = CUDA pod follow-on(ING).
+- **FOLLOW-ON**: (1) GPU pod 실측(cuBLAS byte-eq·tok/s, v0.241.10 boxing 7.6GB) → G6 트랙A/B/변형 재측정 즉시 가능. (2) core/ 전반 개선 audit(read_bytes_at 잔재·KV-cache·중복 matmul) = 별도.
 
 ## 2026-06-19 — G6 v0.241.10 후속 측정 배치 PHASE 0 GO/NO-GO: prompt 의 gemm fast-path 가정 FALSIFIED(실측) → PHASE 1/2/3 NO-FIRE, BLOCKED 유지(type-c 인프라 벽) + 선제 import 수정
 

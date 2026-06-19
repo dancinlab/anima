@@ -32,6 +32,11 @@
 // ════════════════════════════════════════════════════════════════════════
 
 use "stdlib/flame/flame_math"
+// GPU decode (RFC-040): flame_mm.mm(A,M,K,B,N) dispatches cuBLAS Dgemm on a CUDA
+// host, else the CPU oracle farr_matmul (byte-identical on non-CUDA, e.g. Mac).
+// Routing the d×d projection GEMMs through mm() makes CUDA-host decode use the
+// GPU with ZERO change to the Mac/CPU output (cuda_available()==0 → farr_matmul).
+use "core/DECODER/flame_mm"
 
 // libm transcendentals — the ENGINE-NATIVE measurement decode must byte-match the
 // torch golden forward (which uses libm erf/exp). flame_math's dt_erf/dt_exp are the
@@ -152,7 +157,7 @@ fn _bg_transpose(W: int, Co: int, Ci: int) -> int {
 // Writes Y[T,Co]. Falls back to the scalar _bg_linear is NOT done here — callers
 // that need the scalar reference use _bg_linear directly with the [Co,Ci] W.
 fn _bg_linear_mm(X: int, Wt: int, b: int, Y: int, T: int, Ci: int, Co: int) {
-    let C = farr_matmul(X, T, Ci, Wt, Co)
+    let C = mm(X, T, Ci, Wt, Co)  // GPU(cuBLAS) on CUDA host, else CPU farr_matmul (byte-id)
     let mut t = 0
     while t < T {
         let mut o = 0
@@ -175,7 +180,7 @@ fn _bg_mha_mm(H: int, inWt: int, inB: int, oWt: int, oB: int, Aout: int,
     let hd = d / nh
     let scale = 1.0 / dt_sqrt(to_float(hd))
     // QKV = H[T,d] · inWt[d,3d] + inB  →  packed [T,3d], cols 0..d=Q, d..2d=K, 2d..3d=V
-    let QKV = farr_matmul(H, T, d, inWt, 3 * d)
+    let QKV = mm(H, T, d, inWt, 3 * d)  // GPU(cuBLAS) on CUDA host, else CPU farr_matmul (byte-id)
     let Q = farr_zeros(T * d)
     let K = farr_zeros(T * d)
     let V = farr_zeros(T * d)
