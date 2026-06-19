@@ -1,0 +1,33 @@
+H_1455 — G6 COHERENCE-DETECTOR (clause-cosine via engine byte-trigram embedding)  RESULT
+slug: 1455_g6_coherence_detector · date: 2026-06-19 · $0 CPU engine-native · deterministic
+probe: state/1455_g6_coherence_detector/h1455_coherence_probe.hexa (imports live core/engine_cli.hexa immune_embed_key)
+
+RESULT (verbatim):
+  COHERENT (same-claim clause pairs) clause-cosine: pair0..4 = 1.0 1.0 1.0 1.0 1.0
+  CROSS-SHUFFLE (comp[i]+meas[j], i!=j) mean = 1.0
+  MEAN coherent=1.0  MEAN cross-shuffle=1.0  SEP=0.0
+  NOT-VIABLE: no separation.
+
+SANITY (c2, cross-checked — NOT a probe bug): immune_embed_key IS discriminative on SHORT
+distinct keys ("cat"=1 nonzero vs "dog elephant zebra"=14 nonzero, distinct buckets). The
+SEP=0.0 is a real PROPERTY: byte-trigram FNV-1a over a NATURAL-LANGUAGE CLAUSE is dominated by
+common-English trigrams (" th","the","he ",…) → every English clause points in nearly the same
+direction → cos≈1.0 for coherent AND cross-shuffle alike.
+
+TIER: 🧱 NOT-VIABLE (honest negative, c9) — the engine's byte-trigram immune-key geometry is built
+for SHORT-KEY recall, NOT phrase-semantic similarity, so it CANNOT supply the clause-coherence the
+FALS detector lacks. The $0 "upgrade the detector with the engine's own embedding" route is CLOSED.
+NO τ tuned to manufacture separation (there is none to tune; c9/p7).
+
+CONVERGENT FINDING (bounds the G6 $0 program): the three $0 routes to make cross-shuffle a real
+binding discriminator are now mapped — (1) fragment-weld lanes H_1450/1451/1453 = capped (detector
+scores token-PRESENCE), (2) embedding-coherence detector H_1455 = NOT-VIABLE (this), (3) proximity-
+coherence = keeps calibration but does not catch tight welds (weak). NONE supplies MEANINGFUL
+binding at $0. The only mechanism that produces intrinsically-coherent bound claims is a MOUTH that
+co-emits comparator∧measurable in one coherent pass — i.e. attention in the decoder (H_1449), the
+named root fix, proven viable by H_1362 (L24 transformer crossed all 5 bars incl cross-shuffle).
+→ G6 FALS-depth is a GPU/architecture problem, not a $0-lane problem.
+
+NEXT (each new H, NOT ruled out): a LEARNED coherence head (needs training=GPU) · a non-byte-trigram
+phrase embedder · H_1449 attention-injection (the root fix). 
+xref H_1305(detector) · H_1431/1434(weld cap) · H_1449(attention) · H_1452(needed this) · G6 · c9 · p7
