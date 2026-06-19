@@ -20,6 +20,19 @@ date: 2026-06-19
 > 도달 못 했으므로 terminal 🟢/🧱 박제 불가. 인프라 벽(a_break_the_wall type-c)은 science 천장 아님.
 > **재개조건:** fast-gemv 복원된 hexa 빌드(H_1431 remaining-bytegpt + H_1305 h1305_engine_native ING 와 동일 blocker)
 > → 로컬 .pt 2개 + base h1129c 를 .bin 재직렬화 후 h1441_engine_native.py --score. FROZEN 5-bar 불변(c9/no tune-to-green).
+>
+> ⛔⛔ **2026-06-19 v0.241.10 재측정 시도 — 재개조건 미충족 확정** (state/v0241_bench/bench_results.md, vast pod 41625379 96-core/503GB, v0.241.10 read_f32_at 확인):
+> v0.241.10 의 boxing/RSS 수정은 LANDED(303M 디코드 peak RSS 26.18GB→7.63GB, byte-identical) = **OOM/load 벽은 제거**.
+> 그러나 DECODE SPEED 벽은 **그대로**: gen30 baseline 208s → read_f32_at 191s (≈ 6.4 s/token, 단 LOAD 만 개선,
+> per-token GEMM 정상상태 token rate 불변). bench verdict VERBATIM: "BLIS/GEMM codegen gains (#3652 62-79% roofline,
+> #3656 +20% epilogue-fusion) are compiled into matmul but single-job CPU decode is still minutes-scale. Faster decode
+> needs the mm fast-path / GPU, not just the boxing fix." → **prompt 가정(HEXA_OMP+BLIS opt-in 으로 3.5-4.5× → ~2-3h)
+> 은 실제 v0.241.10 pod 에서 FALSIFIED** (threading/codegen 은 이미 compiled matmul 안에 있고 per-token wall 을 못 움직임).
+> 산정: H_1441 = 90 frags(3 bins[contra/shuf/base] × 3 seed_rng × (IDEATION 5 + HELDOUT 5)), gen110 ≈ 12min/frag →
+> **serial ~18h** (PHASE 1+2 합 ~30h). bytegpt_decode.hexa 에 GPU/device decode 경로 **없음**(farr_matmul = CPU GEMM only).
+> → $15-40 를 known 30h CPU 벽 + corrupt-base 리스크에 태우는 것은 a_completeness/c16 상 부당. **여전히 BLOCKED (type-c 인프라 벽)**.
+> 갱신된 재개조건: (1) bytegpt_decode 에 GPU/device decode 경로 추가(forge), 또는 (2) decode per-token CPU GEMM 을
+> 실측 ≥4× 가속하는 runtime 변경 — 둘 중 하나가 land 한 뒤에야 fire. (decode CLI 의 stale `CORE/`→`core/` import 는 선제 수정함.)
 
 # H_1441 — CONTRASTIVE: falsifiable vs non-falsifiable 최소쌍 대조로 cross-shuffle 실패를 직격
 
