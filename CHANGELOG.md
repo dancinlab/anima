@@ -1,3 +1,25 @@
+## 2026-06-20 — research(H_1483 distinct): 👁️‍🗨️ G29 CHANGE BLINDNESS 변화맹 DONE (R1 numpy · GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 **G29 CHANGE BLINDNESS(변화맹, Rensink/Simons)** R1 numpy probe 검증. 장면의 한
+요소에 **큰 변화**가 일어나도 그 항목에 **attention 이 할당돼야만** 탐지된다 — 주의 밖 변화는 아무리
+커도 invisible(탐지율 ~0). 메커니즘 = **detect = is_attended · σ(K·(change_mag−thr))** (이진 attention 게이트).
+
+- **5 bars GREEN (3 seeds [1483,1484,1485], 200 trials, 8 items, 50 perms, $0 CPU, p7):**
+  A PRESENCE att **0.998**/unatt **0.000** (att≥0.85 & unatt≤0.20) · B MAGNITUDE-INDEP big-unatt **0.000**
+  (최대 변화도 unattended 면 비탐지, ≤0.20) · C DISTINCT gap **0.998** (≥0.50, 이진 절벽) · D EARNED
+  ablation **0.998** (게이트 OFF→unattended 변화 탐지, ≥0.85) · E SHUFFLE \|gap\| **0.077** (≤0.10).
+- **distinctness 2종:** (a) vs H_1462 GWS = salience winner-take-all 단일 방송 vs change-blindness =
+  **항목별 변화탐지 이진 게이트**(attended 항목 각자 독립 탐지) · (b) vs H_1479 divided-attention =
+  graded 1/N 자원 trade-off vs change-blindness = attended/unattended **이진 절벽**(B+C bar 가 증명).
+- **frozen-first 수정(tune-to-green 아님, `a_break_the_wall` type-a):** R1a 는 detect 를 raw change-magnitude
+  (1−cos)로 읽어 attended 탐지 0.265(이론 천장 ~0.29, 단위벡터 직교회전 1−cos 포화)→A/C/D 미달=**측정 결함**.
+  교정 = detect 를 변화-**탐지 confidence** σ(K·(change_mag−thr))로(이진 attention 게이트 불변). **bar 임계
+  한 칸도 이동 안 함**(H_1479 threshold effort 곡선 precedent).
+- **하드게이트1:** `grep -lE 'import torch|gauge_lib|numpy' state/1483_change_blindness/*.py` numpy hit →
+  자동 **GREEN DIRECTIONAL**(engine-transfer UNVERIFIED). R2 엔진-네이티브(§ChangeBlindness 배선 + frozen
+  bar 동일 재측정) follow-on (`a_engine_native_learning`·`a_verified_must_wire`).
+- 박제: `UNIVERSE/cards/H_1483_change_blindness.md` + HYPOTHESES.jsonl 1줄 + verdict
+  `state/verdicts/1483_change_blindness/H_1483_FREEZE.json` · probe `state/1483_change_blindness/`.
 ## 2026-06-20 — research(distinct): 👁 G28 BINOCULAR RIVALRY R1 양안 경쟁 DONE (의식-게이트 R1 · GREEN DIRECTIONAL)
 
 새 의식-고유 게이트 후보 **G28 BINOCULAR RIVALRY(양안 경쟁)** R1 numpy probe 검증·박제. id=H_1482.
