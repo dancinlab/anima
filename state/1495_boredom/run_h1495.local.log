@@ -1,0 +1,19 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | DEPLETION-signal: False | seeds [1495, 1496, 1497] | I*=0.5 R*=0.5
+c1 PRESENT       boredom-ON boring 0.917 - off-baseline 0.250 = 0.667 >= 0.30  -> True
+c2-hab DISTINCT  repeated-but-REWARDING block: hab-style disengage 0.900 - boredom 0.000 = 0.900 >= 0.30  -> True
+                 (boredom STAYS ENGAGED because reward high; habituation DISENGAGES from repetition decay alone)
+c2-drv DISTINCT  satiated-but-MONOTONOUS block: boredom disengage 1.000 - drive-style 0.000 = 1.000 >= 0.30  -> True
+                 (boredom DISENGAGES on info+reward depletion; homeostatic drive does NOT, deficit satiated)
+                 [sanity other-dir: novel+rewarding+DEPRIVED -> boredom engage 0.000, drive 0.875 -> opposite variables]
+c3 ABLATE-MOTIV  conjunction->OR: hab-gap collapses to -0.025 <= 0.10  -> True
+                 (ablated boredom fires on info-depletion ALONE -> AGREES with habituation -> gap gone = separation EARNED by conjunction)
+c4 SHUFFLE       partially-aligned block: aligned-AND 0.367 (lift over chance +0.129 >= 0.10) -> shuffle->0.241; |shuf - chance-coinc 0.238| = 0.005 <= 0.10  -> True
+                 (AND fires ABOVE chance on real info/reward ALIGNMENT ticks; shuffling pairing -> collapses to chance-coincidence = alignment was load-bearing)
+
+PER-SEED:
+  seed 1495: boring=0.900 off=0.250 | rr(bored/hab)=0.000/0.900 | sm(bored/drive)=1.000/0.000 | abl_gap=-0.025 | ap_aligned=0.375 shuf=0.214 shuf_gap=0.002
+  seed 1496: boring=0.925 off=0.250 | rr(bored/hab)=0.000/0.900 | sm(bored/drive)=1.000/0.000 | abl_gap=-0.025 | ap_aligned=0.325 shuf=0.223 shuf_gap=0.002
+  seed 1497: boring=0.925 off=0.250 | rr(bored/hab)=0.000/0.900 | sm(bored/drive)=1.000/0.000 | abl_gap=-0.025 | ap_aligned=0.400 shuf=0.286 shuf_gap=0.011
+
+DISTINCT: the reward x info CONJUNCTION disengagement survives ALL controls vs habituation (reward-blind decay) / homeostatic-drive (stimulus-agnostic integral) -> boredom IS a distinct lane (DIRECTIONAL). NOT a depletion signal.

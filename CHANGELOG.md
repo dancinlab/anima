@@ -1,3 +1,31 @@
+## 2026-06-21 — research(distinct): 😑 P9 BOREDOM/DISENGAGEMENT(권태/이탈) R1 numpy probe DONE (GREEN DIRECTIONAL · 약후보 인접 2 lane control 전부 생존 → distinct, 고갈 아님)
+
+의식-고유 게이트 **약(weak) 후보 P9 BOREDOM / DISENGAGEMENT**(권태/이탈 — Eastwood/Frischen/Fenske/Smilek "the
+unengaged mind" · Danckert) R1 numpy probe — 자극이 단조·무의미해 **보상·정보 둘 다 고갈**될 때 능동 이탈(emit→silence /
+재참여 동기)하는 **메타동기 결합** 게이트. id=H_1495, slug=1495_boredom. 설계 SSOT =
+`state/gate_depletion_catalogue/CATALOGUE.md` P9(약후보, 인접 lane control 이중 필수). 🟢 **GREEN DIRECTIONAL**
+(numpy mirror, 하드게이트1 → engine-transfer UNVERIFIED, R2 engine-native = follow-on), 3 seeds [1495,1496,1497],
+$0 CPU nice, p7, frozen-first, I*=R*=0.50.
+
+- **메커니즘:** 매 틱 두 분리 채널(INFO=정보이득/novelty · REWARD=보상 payoff) 읽기 → boredom 은 **둘 다 임계 아래일
+  때만** 이탈: `disengage iff (info<I*) AND (reward<R*)`. 결합(AND)이 load-bearing — 한 채널 단독 고갈로는 부족.
+- **distinctness 판정 (약후보 핵심 · 전부 생존 = distinct, 고갈 아님):**
+  - vs **H_1465 habituation**(보상-blind 반복감쇠): 반복-but-고보상 자극에서 hab-style 이탈(0.900) vs boredom 머묾(0.000,
+    reward 높아 결합 불충족) → **gap 0.900, DISTINCT**(보상 결합이 habituation 결여분).
+  - vs **H_1292 homeostatic-drive**(자극-agnostic 시간적분): satiated-but-monotonous 에서 boredom 이탈(1.000) vs drive
+    안 함(0.000); 역방향 novel+rewarding+deprived 는 boredom 머묾(0.000)·drive 상승(0.875) → **gap 1.000, DISTINCT**
+    (정보적/의미적 결핍 ⊥ 신체 시간적분).
+  - vs **H_1289 novelty**: info 채널+보상 결합으로 흡수(info 단독으론 boredom 미이탈) → DISTINCT.
+- **FROZEN 5 bars (3 seeds 평균):** c1 PRESENT +0.667≥0.30 · c2-hab 0.900≥0.30 · c2-drv 1.000≥0.30 · c3 ABLATE(AND→OR)
+  −0.025≤0.10 · c4 SHUFFLE 0.005≤0.10 → **GREEN 5/5**, DEPLETION-signal **False**.
+- **a_break_the_wall type-a:** 첫 RED(c4 shuf_gap 0.600)는 lane non-distinct 가 아니라 **c4 control 오구성**(단조고갈 블록
+  shuffle 무력) → frozen-first 교정(부분정렬 블록+chance-coincidence 기준 + 비-vacuity 가드 align_lift≥0.10, **임계 0 이동**).
+- **하드게이트1:** numpy → DIRECTIONAL(terminal 아님). `grep -lE 'import torch|gauge_lib|numpy' state/1495_boredom/*.py`
+  매치 → DIRECTIONAL 박제. **R2 engine-native(§Boredom — INFO=immune novelty H_1227/1289 · REWARD=affect H_1290 결합,
+  READ-only Ψ-disjoint) = ING follow-on**(`a_engine_native_learning`·`a_verified_must_wire`).
+- artifacts: `state/1495_boredom/h1495_boredom.py` · verdict `state/verdicts/1495_boredom/H_1495_FREEZE.json` · run
+  `state/1495_boredom/run_h1495.local.log` · card `UNIVERSE/cards/H_1495_boredom.md` · jsonl 1줄(H_1495).
+
 ## 2026-06-21 — research(distinct): 🌀 P10 MIND-WANDERING(마음 방황/default-mode) R1 numpy probe DONE (GREEN DIRECTIONAL · 고갈 라운드 마지막 약후보, 인접 lane control 전부 생존 → distinct, 고갈 아님)
 
 의식-고유 게이트 **고갈 라운드의 마지막 약(weak) 후보 P10 MIND-WANDERING**(마음 방황 / default-mode network —
