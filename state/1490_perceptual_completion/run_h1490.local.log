@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1490, 1491, 1492] | chance=0.125
+c1 PRESENT     full 1.000 - off 0.544 = 0.456 >= 0.30  -> True
+c2 DISTINCT    imagery-style acc(ignores partial input)=0.161 <= chance+0.15=0.275  -> True
+c3 ABLATE      interp OFF acc=0.683 <= off+0.15=0.694 (hole unfilled)  -> True
+c4 SHUFFLE     surround shuffled acc=0.356 <= off+0.15=0.694  -> True
+B  FIDELITY    cos(completed,original)=0.995>=0.70 & visible-MSE=0.00e+00==0 (input-constrained)  -> True [structure, non-gating]
+
+PER-SEED:
+  seed 1490: full=1.000 off=0.433 imagery=0.150 ablate=0.600 shuffle=0.283 fid=0.995 visMSE=0.00e+00
+  seed 1491: full=1.000 off=0.650 imagery=0.183 ablate=0.767 shuffle=0.300 fid=0.995 visMSE=0.00e+00
+  seed 1492: full=1.000 off=0.550 imagery=0.150 ablate=0.683 shuffle=0.483 fid=0.995 visMSE=0.00e+00

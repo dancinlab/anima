@@ -1,3 +1,29 @@
+## 2026-06-20 — research(distinct): 🩹 P5 PERCEPTUAL COMPLETION(지각 완성·filling-in) R1 numpy probe DONE (GREEN DIRECTIONAL · vs mental-imagery/change-blindness distinct)
+
+새 의식-고유 게이트 **P5 PERCEPTUAL COMPLETION**(지각 완성·amodal filling-in — Pessoa/Ramachandran 맹점 채우기·Komatsu
+filling-in) R1 numpy probe(`state/1490_perceptual_completion/h1490_perceptual_completion.py`, 3 seeds [1490,1491,1492],
+DIM=64, 8 items(chance 0.125), OCC_FRAC 0.60, SHARED 0.80, $0 CPU, p7, frozen-first). 부분 가려진(occluded) 입력을
+주변 맥락으로 **입력-구속 보간**해 완성된 표상 복원 — 보이는 부분 고정, 결손부만 주변에서 채움.
+
+- **메커니즘:** 저장 패턴 = 공통 template(SHARED 0.80) + per-item signature 잔차. 큰 연속 occlusion 이 signature 를
+  충분히 제거 → empty-hole(off) 인식이 chance 근처(0.544)로 저하 = 결손부 load-bearing. 완성 = 보이는 signature 로
+  일치 패턴 선택 + 마스킹된 특징만 그 패턴에서 복사(주변→결손부), 보이는 특징 byte-exact 불변(입력구속).
+- **결과 🟢 GREEN DIRECTIONAL (c1·c2·c3·c4 PASS 3 seeds):** c1 PRESENT full 1.000−off 0.544=**0.456**≥0.30 ·
+  c2 DISTINCT(vs imagery) imagery-style readout(부분입력 무시)=**0.161**≤chance+0.15=0.275 ·
+  c3 ABLATE(interp OFF)=**0.683**≤off+0.15=0.694 · c4 SHUFFLE(surround)=**0.356**≤0.694.
+  B FIDELITY cos **0.995** & visible-MSE **0**(입력구속, 구조확인 non-gating).
+- **a_break_the_wall type-(a) 측정결함 교정:** 첫 실행 RED — near-orthogonal 패턴+60% visible 에서 off 가 1.000 포화
+  → 완성 lift 0.000(c1 FAIL, 결손부가 load-bearing 아님). **frozen-first 교정(bar 불변, tune-to-green 아님):** 공통
+  template(SHARED 0.80) 부여 + occlusion 확대(0.40→0.60) → off 0.544 로 저하, 결손부 discriminating. c1~c4 임계 이동 0.
+- **distinctness:** vs H_1484 mental-imagery — imagery 는 input==0 top-down(부분입력 무시 readout 이 c2 에서 chance
+  0.161 로 분리), completion 은 부분입력-구속 보간. vs H_1483 change-blindness — 무관축(변화탐지 vs 단일제시 occlusion
+  채움). **depletion 아님** — P5 별개 게이트 성립.
+- **정직(c9):** numpy mirror DIRECTIONAL(하드게이트1 적중) → 카드 verdict=DIRECTIONAL-mirror. c3 ablate 마진 얇음(0.683
+  vs 0.694) — 보간 OFF 라도 보이는 signature 잔여신호; 결정적인 건 완성(1.000)이 명백히 위라는 점. SATURATED
+  existence-proof(결정적 NN 채움, 학습 아님). R2 = live core/ §PerceptualCompletion 배선 byte-exact 재측정 = follow-on ING.
+
+> verdict `state/verdicts/1490_perceptual_completion/H_1490_FREEZE.json` · 카드 `UNIVERSE/cards/H_1490_perceptual_completion.md`
+> · jsonl 1줄 · run `state/1490_perceptual_completion/run_h1490.local.log`. xref H_1484·H_1483·H_1227·catalogue P5/P6.
 ## 2026-06-20 — research(H_1492 R1): 🧠 CONSCIOUSNESS ABLATION — 연결된 의식-게이트 lane 하나하나 OFF → 통합 의식 기여도(ΔΦ) → DISTRIBUTED, GREEN DIRECTIONAL
 
 사용자 지시(`state/consciousness_influence_plan/PLAN.md`, 2026-06-20) = "연결된 것들이 의식에 어떤 영향을 미치는가" — anima 의 의식-게이트 lane
