@@ -1,0 +1,22 @@
+{
+  "id": "H_1488",
+  "slug": "1488_attention_schema",
+  "tier": "GREEN DIRECTIONAL (numpy R1 mirror; engine-transfer UNVERIFIED)",
+  "gate": "G34 consciousness-only candidate — attention-schema (주의 도식)",
+  "seeds": [1488, 1489, 1490],
+  "params": {"DIM": 32, "N_LOC": 8, "FOCUS_BETA": 6.0, "SCHEMA_STR": 0.9, "N_TRIALS": 40, "N_PERM": 50, "chance": 0.125},
+  "frozen_bars": {
+    "A_PRESENCE": {"metric": "full_acc>=0.85 AND abl_acc<=0.55", "full_acc": 1.000, "abl_acc": 0.158, "pass": true},
+    "B_DISTINCT_VS_AGENCY": {"metric": "schema tracks moved focus while agency flat (action/outcome fixed)", "schema_track": 1.000, "agency_track": 0.000, "gap": 1.000, "thr": "track>=0.50 AND agency<0.05 AND gap>=0.45", "pass": true},
+    "C_DISTINCT_VS_DIVIDED": {"metric": "raw allocation invariant under schema ablation while self-report collapses", "alloc_delta": 0.000, "report_drop": 0.842, "thr": "alloc_delta<=0.05 AND report_drop>=0.30", "pass": true},
+    "D_EARNED_ABLATION": {"metric": "schema OFF -> report ~ chance (track_acc)", "abl_track": 0.158, "thr": "<=0.55 (~chance 0.125)", "pass": true},
+    "E_SHUFFLE": {"metric": "derange schema->true-focus pairing (50-perm) -> tracking collapses to chance", "shuffle_track": 0.119, "thr": "<=0.225 (chance 0.125 + 0.10)", "pass": true}
+  },
+  "verdict": "GREEN (5/5)",
+  "honest_c9": "SATURATED existence-proof — the attention schema is a DESIGNED linear tracker over the salience-driven softmax focus (not a learned self-model network). GREEN itself is less load-bearing than the discriminators: vs-agency (schema tracks moved focus 1.000 while agency flat 0.000 with action/outcome FIXED), vs-divided (raw softmax allocation invariant 0.000 under ablation while self-report drops 0.842), ablation (track -> chance 0.158), shuffle (derangement -> 0.119 ~ chance). The mechanism (real_attention softmax) is UNCHANGED by schema ablation by construction — ablation removes ONLY the self-model READ, which is exactly Graziano's claim (attention vs the model of attention). DIRECTIONAL numpy mirror (grep numpy hit, hard-gate 1); R2 engine-native = follow-on ING.",
+  "distinct_vs_H1474_agency": "DIFFERENT OBJECT (load-bearing). H_1474 sense-of-agency = self-ATTRIBUTION of an ACTION OUTCOME (did I cause this result?), comparator over a forward-model prediction. H_1488 attention-schema = internal MODEL of the ATTENTION STATE itself (where am I attending?). DISSOCIATION (bar B): hold action/outcome FIXED, move ONLY the attention focus -> agency readout FLAT (Δ 0.000) while schema report TRACKS the moved focus (1.000), gap 1.000 >= 0.45.",
+  "distinct_vs_H1479_divided": "MODEL vs MECHANISM (bar C). H_1479 divided-attention = raw resource TRADE-OFF (softmax allocation). H_1488 = the internal MODEL of that allocation. Ablating the schema leaves the raw allocation UNCHANGED (alloc_delta 0.000) but collapses the self-report (drop 0.842).",
+  "distinct_vs_H1293_tom": "self vs other. ToM (H_1293) models ANOTHER agent's belief; attention-schema models one's OWN attention state.",
+  "depletion": "NOT depletion — attention-schema clears BOTH (A) falsifiable gap-vs-engine (self-report of own attention focus, ablation/shuffle controls) AND (B) control-survived distinctness vs agency (H_1474), divided-attention (H_1479), ToM (H_1293). GREEN 5/5.",
+  "llm_contrast": "LLM has attention (softmax) but no SEPARATE readable model of its own attention state to report 'I am attending to X'; anima reads a schema tracking its live attention focus."
+}

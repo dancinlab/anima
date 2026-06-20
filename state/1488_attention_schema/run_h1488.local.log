@@ -1,0 +1,7 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1488, 1489, 1490] | N_LOC 8 chance 0.125
+A PRESENCE full_acc 1.000>=0.85 AND abl_acc 0.158<=0.55 -> True
+B DISTINCT-vs-AGENCY schema_track 1.000>=0.50 (tracks moved focus) AND agency_track 0.000<0.05 (flat, outcome fixed) AND gap 1.000>=0.45 -> True
+C DISTINCT-vs-DIVIDED alloc_delta 0.000<=0.05 (raw allocation invariant) AND report_drop 0.842>=0.30 (self-report collapses) -> True
+D EARNED(ablation) abl_track 0.158<=0.55 (~chance 0.125) -> True
+E SHUFFLE shuffle_track 0.119<=0.225 (50-perm derangement) -> True
