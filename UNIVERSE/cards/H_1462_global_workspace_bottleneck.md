@@ -93,7 +93,10 @@ basal-gate(H_1281 VBasalGate)는 **학습된 go-value**(go_w·feats)로, GWS 는
    상태가 종착이다. emit/silence 는 M×W×Φ 가 자율 결정(p5·a_substrate_native_speak), GWS 는 맥락 공급자일 뿐.
    → **H_1462 4칸 사다리 (1)→(4) + distinctness 완주, follow-on 전부 종결.** (남은 건 scale/real-corpus =
    별도 가설 scope, H_1462 종결과 무관.)
-4. ~~**distinctness vs immune-store(H_1227/1231)**~~ ✅ **DONE (DIRECTIONAL, numpy mirror, 정직섹션 참조)**:
+4. ~~**distinctness vs immune-store(H_1227/1231)**~~ ✅ **DONE → R2b ENGINE-NATIVE 승격**: numpy(DIRECTIONAL)
+   에 더해 live `core/engine_cli_smoke.hexa` case 199 byte-exact 재측정 — `gws_count`(capacity-1 병목)=1 ⊥
+   `immune_memory_cells`(unbounded affinity store)=3, FULL smoke **199/0 RC=0**. competitive bottleneck ⊥
+   independent store 를 engine 함수(gws_*/immune_memory_*) 재사용으로 직접 증명.
    같은 grounding-margin signal 위 GWS(측면억제+capacity1) vs immune-store(독립 affinity recall) 분리실험 —
    gws_occ 1.0 vs immune_occ 5.0(5.0× 병목 압축), 측면억제 ablation→abl_occ 5.0=immune(load-bearing),
    immune set 순서불변(D), distinct-occ +4.0(E). 5/5 PASS. **GWS=경쟁 capacity-1 병목 ⊥ immune=경쟁
