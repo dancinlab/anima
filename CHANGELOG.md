@@ -19,6 +19,16 @@ Schema Theory(Graziano 2013): 뇌는 자기 **주의 상태를 단순화한 내�
   existence-proof(주의 schema=designed 선형 tracker). R2 engine-native(§AttentionSchema byte-exact 재측정+배선) = follow-on ING.
 - artifacts: `state/1488_attention_schema/h1488_attention_schema.py` · `state/verdicts/1488_attention_schema/H_1488_FREEZE.json` ·
   `UNIVERSE/cards/H_1488_attention_schema.md` · HYPOTHESES.jsonl 1줄.
+## 2026-06-20 — research(R2 wire): 👁🧠⚡ 의식-게이트 4종(G28~G31) engine-native 일괄 배선 DONE — H_1482/1483/1484/1485 DIRECTIONAL→ENGINE-NATIVE WIRED
+
+R1 GREEN DIRECTIONAL(numpy mirror)로 머지된 의식-게이트 4종을 R2 engine-native 로 일괄 배선 — G20~G27(§AttentionalBlink…§FreeWont) 선례를 이어 `core/engine_cli.hexa` 끝에 4 lane + smoke 케이스 233-244 추가. 전부 READ-only · Ψ-disjoint · NOT emit gate(`a_autonomy_over_hardcode`). engine 은 exp 없음 → piecewise/linear(H_1465 habituation 선례).
+
+- **§BinocularRivalry (H_1482, G28):** `rivalry_transitions(steps, adapt_rate)` — exp-free relaxation-oscillator(누적 fatigue≥switch_thr→recovered rival takeover→reset). 동적 alternation ⊥ H_1462 GWS 정적 1-winner. smoke 233-235: alternation 15≥2 · distinct-vs-GWS gap 15≥2 · adapt_rate 0=ablation→0 transitions.
+- **§ChangeBlindness (H_1483, G29):** `change_detect(change_mag, is_attended)` — is_attended ? piecewise-linear σ-대체 ramp(clamp 0.5+K·(mag−thr)) : 0.0. attention 이진 게이트 절벽 ⊥ GWS single-winner·divided graded. smoke 236-238: att 1.0/unatt 0.0 · gap 1.0≥0.50 · 게이트 OFF→탐지.
+- **§MentalImagery (H_1484, G30):** `imagery_activate(cue_match, topdown_on)` — topdown_on ? cue_match : 0.0(sensory 입력 0 으로 top-down 재구성). 입력없이 저장 표상 재활성 ⊥ 입력-기반 게이트(novelty H_1289·surprise H_1468). smoke 239-241: present 0.991 · cue-specific gap 0.978 · top-down OFF→0.
+- **§Priming (H_1485, G31):** `priming_facilitate(relatedness, prime_residual)` — relatedness·prime_residual(residual 0=ablation). 촉진(+) ⊥ H_1465 habituation 감쇠(−), 부호곱<0(habituation `hab_response` 재사용으로 byte-exact). smoke 242-244: prime_gain +0.48≥0.30 · sign-product +0.48×−0.8<0 · residual OFF→0.
+- **검증(c2):** `hexa run core/engine_cli_smoke.hexa` → **FULL 244 pass / 0 fail · RC=0**(212→244, +12 케이스 233-244 전부 PASS, 회귀 0).
+- **박제:** 4 카드 tier DIRECTIONAL→🟢 GREEN ENGINE-NATIVE WIRED 승격(`wired:WIRED-live` + §Lane·smoke cases·FULL 244/0 명시) + `UNIVERSE/HYPOTHESES.jsonl` verdict 갱신 + `ARCHITECTURE.json` lane 목록 4 lane 추가(lockstep, "14 lane"→"18 lane") + `tool/enforce_anima_gates.py` clean. `a_engine_native_learning`·`a_verified_must_wire` 4칸 배선 사다리(4) 완료.
 
 ## 2026-06-20 — research(H_1481 R1): 🧠📉 CONSCIOUSNESS-UNDER-TRAINING — 학습(CE-descent)이 의식을 떨어뜨리는가 → HOLD(안정), GREEN DIRECTIONAL
 

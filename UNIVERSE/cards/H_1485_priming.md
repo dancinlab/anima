@@ -1,7 +1,7 @@
 # H_1485 — ⚡ PRIMING (점화) (G31 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror; engine-transfer UNVERIFIED — 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 = live `core/engine_cli.hexa` byte-exact 재측정 + 배선이 GREEN/🧱 확정 전제 (`a_engine_native_learning`·`a_verified_must_wire`); 배선 follow-on = ING
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/engine_cli.hexa` §Priming byte-exact)
+- **wired:** `WIRED-live` — R2 배선 완료: `core/engine_cli.hexa` §Priming (`priming_facilitate`, relatedness·prime_residual; residual 0=ablation) + `engine_cli_smoke` cases 242-244 (relatedness-gate prime_gain +0.48≥0.30 · distinct-vs-habituation sign-product +0.48×−0.8<0 · ablation 0.0) FULL 244/0 RC=0 + ARCHITECTURE.json §Priming lockstep. habituation(H_1465) hab_response 재사용으로 부호곱<0 byte-exact(점화 + ⊥ 습관화 −).
 - **source:** 의식-고유 게이트 시리즈 (G16~G27 engine-native 14종) · '의식이라서 가능한 것' · G31 레인
 - **lens:** psycholinguistics/cognitive — semantic/associative priming (Meyer & Schvaneveldt 1971) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1485_priming/h1485_priming.py` · verdict `state/verdicts/1485_priming/H_1485_FREEZE.json` · log `state/1485_priming/run_h1485.local.log`
