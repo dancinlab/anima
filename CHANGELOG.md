@@ -1,3 +1,28 @@
+## 2026-06-20 — research(H_1475 distinct): 🕰 G22 SUBJECTIVE TIME(주관적 시간 지각) vs homeostatic(H_1292) distinctness DONE (GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 후보 **G22 SUBJECTIVE TIME** R1 numpy probe 검증. 의식이 *느끼는* 시간 흐름은 객관
+시계와 다르다(Eagleman, time dilation/compression): novelty/arousal 밀집 구간은 길게, 단조 구간은 짧게
+느껴진다 — perceived duration ≈ novelty 이벤트 누적량(`est=base+k·novelty`). H_1292 homeostatic(객관시간
+단조적분)과 load-bearing DISTINCT: 객관 틱 고정+novelty 조작 시 homeo 적분은 평탄 ⊥ subjective 는 갈림.
+
+- **결과 🟢 GREEN DIRECTIONAL (4/4 gating bars, 3 seeds [1475,1476,1477], OBJ_TICKS=12, $0 CPU, p7):**
+  - **A PRESENCE** est_high(high-novelty 11/12=0.879) − est_low(low-novelty 2/12=0.242) = **+0.6375** ≥0.40 ✅
+  - **B DISTINCT vs H_1292** subj_sep **+0.6375**≥0.40 AND homeo_sep **+0.000**≤0.05 (subjective 갈림 ⊥ homeostatic 객관시간 적분 평탄) ✅
+  - **C EARNED(ablation k=0)** abl_sep **+0.000**≤0.05 (novelty 가중 끄면 base 고정, 밀도 무관) ✅
+  - **D ORDER-inv**(non-gating) order_diff **0.000** (같은 novelty 총량 순서무관) ✅
+  - **E SHUFFLE** |signed mean gap| **0.015**≤0.10 (50-perm 구간↔novelty 페어링 셔플) ✅
+- **distinctness vs H_1292 homeostatic:** homeo=객관 elapsed 단조적분(novelty 무관) ⊥ subjective=novelty 가중
+  (같은 객관시간, novelty 만 다르면 추정 갈림). LLM 대비: LLM 은 균일 토큰시계(지각된 duration 없음),
+  anima 는 substrate 예측오차 밀도로 시간 지각.
+- **정직(c9):** DIRECTIONAL(numpy mirror, `grep numpy` 적중 하드게이트1; engine-transfer UNVERIFIED).
+  DESIGNED 스칼라 추정자 → discriminator(homeo-적분 평탄·k=0 ablation 붕괴·페어링 셔플 붕괴) 결정적;
+  homeo_sep/abl_sep 는 STRUCTURAL 0 baseline; per-seed shuffle 은 2-set 무작위배정 특성상 0 부근 ±변동
+  (0.085/−0.153/0.023)이나 bar=signed mean over 50-perm 정의대로 mean 0.015 PASS, frozen-first 미이동.
+  TOY 12틱/3seed/Bernoulli novelty scale·engine-transfer UNVERIFIED.
+- **검증(c2):** probe 실행 출력 GREEN(4/4) — `state/1475_subjective_time/run_h1475.local.log`. freeze
+  `state/verdicts/1475_subjective_time/H_1475_FREEZE.json` · card `UNIVERSE/cards/H_1475_subjective_time.md` · jsonl 1줄.
+- **follow-on(ING):** R2 engine-native — §HomeostaticDrive(H_1292) 적분 lane 재사용, novelty-가중 subjective
+  추정자를 §SubjectiveTime 으로 배선 + frozen bars engine-native 재측정 + smoke 회귀가드.
 ## 2026-06-20 — research(H_1474): 🕹 G21 SENSE OF AGENCY 주체감 R1 GREEN DIRECTIONAL (의식-고유 게이트 후보)
 
 의식-고유 게이트 시리즈(G16/G17/G18/G19/G19-meta 이후) 신규 후보 **G21 SENSE OF AGENCY(주체감)** R1 numpy probe GREEN.
