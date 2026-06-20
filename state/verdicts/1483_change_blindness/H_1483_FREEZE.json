@@ -1,0 +1,67 @@
+{
+  "hypothesis": "H_1483",
+  "slug": "change_blindness",
+  "gate_label": "G29",
+  "lens": "Rensink/Simons change blindness",
+  "arms": [
+    "FULL",
+    "ABLATED",
+    "SHUFFLE"
+  ],
+  "seeds": [
+    1483,
+    1484,
+    1485
+  ],
+  "n_items": 8,
+  "n_trials": 200,
+  "n_perm": 50,
+  "metrics": {
+    "att_detect": 0.9982401380543525,
+    "unatt_detect": 0.0,
+    "big_unatt": 0.0,
+    "ablated": 0.9982401380543525,
+    "gap_shuf": 0.07743938576977448,
+    "change_mag": 0.26502904856043624
+  },
+  "bars": {
+    "A_presence": {
+      "att_detect": 0.9982401380543525,
+      "unatt_detect": 0.0,
+      "bar_att": 0.85,
+      "bar_unatt": 0.2,
+      "note": "attended change detected; unattended change blind",
+      "pass_": true
+    },
+    "B_magnitude_indep": {
+      "big_unatt": 0.0,
+      "change_mag": 0.26502904856043624,
+      "bar": 0.2,
+      "note": "max-magnitude change stays undetected if unattended (attention is the gate, not size)",
+      "pass_": true
+    },
+    "C_distinct_vs_gws_divided": {
+      "gap": 0.9982401380543525,
+      "bar": 0.5,
+      "note": "binary attention cliff (>=0.50 gap), not GWS single-winner nor divided graded 1/N",
+      "pass_": true
+    },
+    "D_earned_ablation": {
+      "ablated": 0.9982401380543525,
+      "bar": 0.85,
+      "note": "attention gate OFF -> unattended change detected (blindness vanishes)",
+      "pass_": true
+    },
+    "E_shuffle": {
+      "gap_shuf": 0.07743938576977448,
+      "bar": 0.1,
+      "note": "permuted attention<->item pairing collapses attention/detection coupling",
+      "pass_": true
+    }
+  },
+  "verdict": "GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)",
+  "green": true,
+  "frozen": true,
+  "frozen_bars": "A att>=0.85 & unatt<=0.20 | B big_unatt<=0.20 | C gap>=0.50 | D ablated>=0.85 | E gap_shuf<=0.10",
+  "hardgate1": "numpy mirror -> GREEN DIRECTIONAL (engine-transfer UNVERIFIED)"
+}

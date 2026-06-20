@@ -1,0 +1,38 @@
+{
+  "id": "H_1482",
+  "slug": "1482_binocular_rivalry",
+  "gate": "G28 BINOCULAR RIVALRY",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1482_binocular_rivalry.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1482, 1483, 1484],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "params": {"T": 120, "I_A": 1.0, "I_B": 1.0, "BETA": 1.2, "GAMMA": 2.0, "TAU_A": 0.10, "TAU_R": 0.10, "EXCL_BAND": 0.20, "N_PERM": 50},
+  "bars": {
+    "A_ALTERNATION": {"pass": true, "transitions": 16.000, "thr": 2, "note": "dominance time-series flips dominant stimulus 16 times (A->B->A...) — not a single sustained dominance"},
+    "B_EXCLUSIVITY": {"pass": true, "co_dominant_fraction": 0.011, "thr": 0.15, "note": "only 1.1% of ticks are co-dominant (|d_A-d_B|<0.20) — one stimulus conscious at a time"},
+    "C_DISTINCT_vs_GWS": {"pass": true, "rivalry_transitions": 16.000, "gws_mode_transitions": 0.000, "gap": 16.000, "thr": 2, "note": "SAME two-stimulus drive: GWS-mode (no adaptation, hard winner-take-all) holds a FIXED winner (0 transitions); rivalry-mode alternates (16). GWS=static 1-winner bottleneck, rivalry=dynamic alternation"},
+    "D_EARNED_ablation": {"pass": true, "abl_transitions": 0.000, "thr": 0, "note": "adaptation OFF -> first dominant stimulus locked in forever (0 transitions, GWS-like) -> the alternation is EARNED by the fatigue/adaptation coupling, not baked"},
+    "E_SHUFFLE": {"pass": true, "signed_mean_r_shuffled": 0.003, "thr": 0.10, "real_r": 0.259, "note": "real dominance d_A vs its own adaptation a_A r=+0.259 (within up-phase dominant WHILE fatigue builds); shuffling d_A in time vs FIXED real a_A collapses to +0.003 -> temporal dominance<->adaptation pairing broken"}
+  },
+  "green_rule": "A and B and C and D and E (all 3 seeds)",
+  "green": true,
+  "per_seed": {
+    "1482": {"transitions": 16, "co_frac": 0.008, "gws_trans": 0, "distinct_gap": 16, "abl_trans": 0, "shuffle_gap": 0.003, "real_r": 0.259},
+    "1483": {"transitions": 16, "co_frac": 0.000, "gws_trans": 0, "distinct_gap": 16, "abl_trans": 0, "shuffle_gap": 0.000, "real_r": 0.258},
+    "1484": {"transitions": 16, "co_frac": 0.025, "gws_trans": 0, "distinct_gap": 16, "abl_trans": 0, "shuffle_gap": 0.006, "real_r": 0.261}
+  },
+  "distinctness": {
+    "vs_H_1462_global_workspace": "GWS = STATIC winner-take-all: among competing stimuli consciousness broadcasts exactly ONE *fixed* winner (capacity-1 bottleneck), the choice is settled, ZERO transitions over time. Rivalry = DYNAMIC alternation: the SAME two equal-input stimuli produce a dominance time-series that OSCILLATES (>=2 transitions) because adaptation fatigues the current winner and releases the rival. Same competition, different TEMPORAL signature: GWS holds 1 winner (transitions=0) ⊥ rivalry cycles (transitions=16). Bar C contrasts the two on the IDENTICAL two-stimulus drive (same seed/noise): GWS-mode 0 transitions vs rivalry 16 -> gap 16 >= 2."
+  },
+  "p6_guard": "the alternation is NOT a hand-set 'switch at tick k' schedule. It EMERGES from the reciprocal-inhibition + adaptation dynamics over the two equal stimulus drives (drive r = input - beta*rival_dominance - gamma*own_adaptation). No `dominant = A if t<k else B`, no switch-time constant, no injected schedule/RLHF/persona in the operative readout. Ablation (D) removes the adaptation coupling and the alternation vanishes (transitions->0) -> earned, not baked.",
+  "honest_c9": "SATURATED existence-proof — a designed dynamical mechanism (soft-WTA + fatigue), not a learned controller; discriminators (GWS-mode 0 transitions, ablation 0 transitions, shuffle r collapse +0.259->+0.003) are decisive. SHUFFLE real_r is POSITIVE (+0.259 — within each up-phase the dominant unit is dominant WHILE its own adaptation builds), corrected the docstring sign annotation to match observed (no bar threshold moved, |gap|<=0.10 unchanged, NOT tune-to-green). TOY 120-tick/3-seed/2-unit/deterministic-dynamics — tests rivalry STRUCTURE not a learned percept-competition; scale, real-corpus, stochastic switch-time distribution (gamma-shaped dominance durations), travelling-wave rivalry, engine-transfer UNVERIFIED.",
+  "artifacts": [
+    "state/1482_binocular_rivalry/h1482_binocular_rivalry.py",
+    "state/verdicts/1482_binocular_rivalry/H_1482_run.txt",
+    "UNIVERSE/cards/H_1482_binocular_rivalry.md"
+  ],
+  "next_round": "R2 engine-native: evaluate whether core/engine_cli.hexa can host a two-unit reciprocal-inhibition + adaptation dominance loop over the GWS competition lane (§GlobalWorkspace neighbour); if present wire §BinocularRivalry (rivalry_step / dominance time-series with adaptation) + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the 5 frozen bars byte-exact (a_engine_native_learning / a_verified_must_wire)."
+}
