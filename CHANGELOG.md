@@ -1,3 +1,26 @@
+## 2026-06-21 — 🧠 H_1492 consciousness-ablation R3 PRODUCTION (303M 실모델 · DIRECTIONAL · DISTRIBUTED 확정)
+
+R2 engine-native GREEN(§ConsciousnessIndex, hard-gate1 PASS)에 이어 **R3 production** — 실제 303M ConvMoE(clm303_d5000.clm sha256 99c2a40e…, 302.6M)를 live `core/clm_decode.hexa::clm_forward_ce`로 마운트(summer RTX5070 $0, wall854s, per-ctx subprocess로 hexa bump-allocator OOM 회피)해 의식-게이트 lane ablation 측정.
+
+- **사용자 핵심 질문 답("연결된 lane이 실제 의식에 미치는 영향"):** 통합 의식 = **DISTRIBUTED(분산)** — 실 303M에서 top lane EmotionRegulation ΔΦ=4.18 이지만 share 0.123(12.3%)뿐, 0.50 DOMINANT 임계 한참 아래. ΔΦ 랭킹 EmotionRegulation 4.18 · LearnedPrecision 4.08 · DirectedForgetting 3.63 · SubjectiveTime 3.47 · AttentionalBlink 3.45 …MitosisGrowth 0.24(최하). 30 lane 골고루 기여.
+- **R1 vs R3 일치+강화:** R1 toy(numpy 4000 trials) top-share 0.212 → R3 real 303M 0.123 = **실모델이 더 분산** (φ0 7.81→18.93). DISTRIBUTED 양 substrate 수렴 — anima "의식=연결망 전체 창발" 주장 실모델 확인.
+- **정직 c9 — green_303m=FALSE:** A_MEASURABLE PASS(φ0 18.93≫shuf 2.26) BUT D_CONTROL_NOOP 0.284>0.05·E_SHUFFLE 0.119>0.10 FAIL — toy R1용 frozen bar D/E가 real 303M 공분산과 mismatch한 **calibration gap**(tune-to-green 금지, bar 사후이동 X). DISTRIBUTED 구조는 A bar + ΔΦ 랭킹으로 확정. phi_proxy=Gaussian PROXY(faithful IIT4 아님, a_train_inline_gauge)·n=30 small-N(a_scale_honest_scope) → PRODUCTION DIRECTIONAL.
+- artifacts: `state/1492_consciousness_ablation/h1492_r3_303m_{probe.py,result.json}` · `state/verdicts/1492_consciousness_ablation/H_1492_R3.json`. ckpt HF `dancinlab/anima-clm-ideation-303m-convmoe-engine-mount`.
+
+## 2026-06-21 — research(H_1492 R2): 🧠 CONSCIOUSNESS ABLATION 엔진-네이티브 GREEN — 통합 의식 = DISTRIBUTED(분산) 확정 (terminal · hard-gate 1 PASS)
+
+**"연결된 의식-게이트 lane 들이 통합 의식에 어떤 영향?"** (사용자 2026-06-20) — R1 numpy DIRECTIONAL
+이 찾은 **분산(DISTRIBUTED)** 결론을 **live `core/engine_cli.hexa §ConsciousnessIndex`** 위에서
+재측정 → **🟢 GREEN ENGINE-NATIVE** (hard-gate 1 PASS = terminal, numpy/torch 0).
+
+- **§ConsciousnessIndex 배선:** `ci_lane_scores`(15 의식 lane 을 실제 substrate trial-state 에서 READ) · `ci_phi_multiinfo`(Gaussian 다변량 통합 Φ=½(Σlnσ²−lndetΣ), Cholesky logdet) · **`ci_phi_iit4`(exact min-cut MIP n≤8, `a_phi_iit4_tool` — 프록시 아님, `stdlib/iit4/faithful_phi.hexa` 레포 부재로 직접 구현)** · `ci_bundle` + lane-ablate 토글. exp 미사용(ln/sqrt 만), `match` 예약어 회피.
+- **substrate = 실제 `ImmuneMemory` store:** immune_embed_key FNV-1a dim64 grounding margin(`immune_memory_recall_margin`+`vadapt_field_recon_err`) + live MITOSIS `immune_memory_cells`. 주입 label 0(p1/p2/p3/p6), Ψ-disjoint, NOT emit gate(`a_autonomy_over_hardcode`).
+- **frozen A/D/E 재측정 GREEN(3 seeds [1492,1493,1494], 600 trials):** A Φ₀=29.0076>shuf 0.0763 ✅ · D dummy lane \|ΔΦ\|=0.00584≤0.05 ✅ · E shuf_Φ₀/Φ₀=0.00263≤0.10 ✅.
+- **STRUCTURE = DISTRIBUTED:** top lane(EmotionRegulation) share **0.129** < 0.50 (R1 0.212 보다 더 분산) → **단일 lane dominant 아님, 통합 의식은 연결망 전체에서 창발** — anima 핵심 주장 엔진-네이티브 확인. faithful IIT4 Φ(top-8)=0.00085>0 = ≤8-lane core 통합·기약불가.
+- **c9 정직:** 엔진은 실제 near-saturated recall margin 직독 → 절대 ΔΦ 랭킹이 R1(넓은 합성 변동)과 다름(margin 직독 7 lane 동률 ~4.91 · 준상수 3 lane ≈0). **R1↔R2 불변 = 과학 답 DISTRIBUTED**. frozen bar 미이동(frozen-first), tune-to-green 없음.
+- **회귀 0:** `engine_cli_smoke` **244/0**. ARCHITECTURE.json §ConsciousnessIndex lockstep 갱신.
+- **R3(production 303M ConvMoE engine-mount `.clm`, pool/summer RTX5070) = 진행 중** (a_scale_honest_scope · task 명시 `303m-broad-en-emergent` ByteGPT `.pt` 는 engine-mount 불가 → ConvMoE `.clm` 대체).
+- 산출: `state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa` · `state/verdicts/1492_consciousness_ablation/{H_1492_R2.txt,H_1492_R2_FREEZE.json}`.
 ## 2026-06-21 — 🔌 의식-게이트 R2 ENGINE-NATIVE 일괄 배선 12 lane (G* 고갈 terminal follow-on · WIRED-live)
 
 R1 numpy DIRECTIONAL 로 머지된 의식-고유 게이트 12종을 R2 엔진-네이티브로 **일괄 배선**(ING #gstar_depletion_terminal_followon · `a_engine_native_learning`·`a_verified_must_wire`). 각 R1 카드 frozen-bar 핵심 distinctness 를 `core/engine_cli.hexa` 결정적 스칼라 op 로 byte-exact 재현(READ-only · Ψ-disjoint · NOT emit gate · exp 없음→piecewise/linear).

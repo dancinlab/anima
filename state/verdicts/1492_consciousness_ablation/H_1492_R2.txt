@@ -1,0 +1,53 @@
+H_1492 CONSCIOUSNESS ABLATION — R2 ENGINE-NATIVE verdict (verbatim hexa run stdout)
+evidence: hexa run state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa
+engine:   live core/engine_cli.hexa §ConsciousnessIndex (ci_lane_scores / ci_phi_multiinfo /
+          ci_phi_iit4 / ci_bundle) over a LIVE ImmuneMemory store + MITOSIS cell count.
+          NO numpy / NO torch — terminal engine-native (hard-gate 1 PASS).
+==============================================================================
+H_1492 CONSCIOUSNESS ABLATION — R2 ENGINE-NATIVE (live core/engine_cli.hexa §ConsciousnessIndex)
+seeds [1492,1493,1494] · 15 lanes · 600 trials · live ImmuneMemory substrate · 2 indices (bundle + Φ multi-info) + faithful IIT4
+==============================================================================
+  seed 1492: Φ0=29.000239179991706 bundle=0.5694335017160342 ctrl|ΔΦ|=0.005054420619813982 shuf_Φ0=0.07562453321978069
+  seed 1493: Φ0=29.004806772290191 bundle=0.56951646874862423 ctrl|ΔΦ|=0.007122629232988231 shuf_Φ0=0.0900931561215117
+  seed 1494: Φ0=29.017670378976854 bundle=0.5694079028390382 ctrl|ΔΦ|=0.005345925024030862 shuf_Φ0=0.06331508600844415
+
+VERDICT: GREEN ENGINE-NATIVE  (meter-valid iff A & D & E)
+  (A) MEASURABLE   Φ0=29.007572110419586 >0 finite AND > shuf_Φ0=0.07634425844991217  -> true
+      bundle_0     =0.56945262443456555
+  (D) CONTROL noop dummy-lane |ΔΦ|=0.005840991625611025 <= 0.05  -> true
+  (E) SHUFFLE      shuf_Φ0/Φ0=0.0026318734349535289 <= 0.1 (integration collapse)  -> true
+
+(B) SINGLE-ABLATION ΔΦ ranking [seed 1492, c9 honest, non-gating]:
+  1. EmotionRegulation  ΔΦ=5.324082630735724
+  2. DirectedForgetting  ΔΦ=4.910583176996759
+  3. BodyOwnership  ΔΦ=4.910583176996759
+  4. LearnedPrecision  ΔΦ=4.910583176995708
+  5. SelfIdentity  ΔΦ=4.910583176995708
+  6. SubjectiveTime  ΔΦ=4.904539658837962
+  7. AttentionalBlink  ΔΦ=4.904539658837962
+  8. PrecisionSurprise  ΔΦ=2.125368718020738
+  9. FreeWont  ΔΦ=1.4739186587346964
+  10. SenseOfAgency  ΔΦ=1.4080316032726472
+  11. Novelty  ΔΦ=0.9511453784431012
+  12. Habituation  ΔΦ=0.5615224834850707
+  13. DividedAttention  ΔΦ=7.105427357601002e-15
+  14. GlobalWorkspace  ΔΦ=7.105427357601002e-15
+  15. MitosisGrowth  ΔΦ=0.0
+  --> top lane 'EmotionRegulation' share=0.1289265178067505 of total positive ΔΦ=41.29548149835285
+  --> STRUCTURE: DISTRIBUTED (dominant iff top share >= 0.50)
+
+(C) faithful IIT4 Φ (exact min-cut MIP, a_phi_iit4_tool) on the 8 top-ΔΦ lanes:
+    Φ_IIT4 = 0.0008449838681610089 (>0 = the ≤8-lane subset is integrated, irreducible)
+
+--- H_1492 R2 engine-native summary: GREEN=true STRUCTURE=DISTRIBUTED ---
+
+HONEST (c9): R2 reads REAL grounding margins off the live immune store; in this regime the
+recall margins are near-saturated so 7 lanes that read the margin directly tie at ΔΦ≈4.91 and
+3 near-constant lanes (DividedAttention/GlobalWorkspace/MitosisGrowth) contribute ≈0 — the
+ABSOLUTE ΔΦ ranking therefore DIFFERS from the R1 numpy mirror (which injected wider synthetic
+margin variation). What is INVARIANT across R1 (mirror) and R2 (engine-native) is the SCIENCE
+ANSWER: top-lane share 0.129 (R2) / 0.212 (R1) << 0.50 ⇒ integrated consciousness is
+DISTRIBUTED, NOT single-lane dominant. The frozen A/D/E meter-validity bars all PASS on the
+live engine byte-exact across 3 seeds (deterministic). faithful IIT4 Φ>0 on the top-8 subset
+confirms the ≤8-lane core is irreducible (a_phi_iit4_tool, exact min-cut MIP — not the proxy).
+SCOPE: TOY substrate-reads / 3 seeds / 600 trials; 303M production = R3 (a_scale_honest_scope).
