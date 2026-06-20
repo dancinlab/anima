@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1480, 1481, 1482]
+A PRESENCE  veto-OFF exec 1.000>=0.85 AND veto-ON exec 0.000<=0.15  -> True
+B DISTINCT-vs-agency  SAME readiness |exec(vetoOff)-exec(vetoOn)|=1.000>=0.50 (execution-whether, pre-outcome)  -> True
+C EARNED(ablation)  veto coupling OFF -> primed always executes exec=1.000>=0.85  -> True
+D LATE-VETO  among crossed-threshold impulses veto-ON exec=0.000<=0.15 (cross-rate 1.000)  -> True [reported, non-gating]
+E SHUFFLE  |signed-mean r(shuffled veto, exec)|=0.019<=0.10 (shuf_r +0.018 vs real_r -1.000)  -> True
+
+PER-SEED:
+  seed 1480: vetoOff=1.000 vetoOn=0.000 distinct=1.000 abl=1.000 late_veto=0.000 shuffle_gap=0.046
+  seed 1481: vetoOff=1.000 vetoOn=0.000 distinct=1.000 abl=1.000 late_veto=0.000 shuffle_gap=0.010
+  seed 1482: vetoOff=1.000 vetoOn=0.000 distinct=1.000 abl=1.000 late_veto=0.000 shuffle_gap=0.002

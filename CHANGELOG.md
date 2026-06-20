@@ -1,3 +1,25 @@
+## 2026-06-20 — research(distinct): 🛑 H_1480 G27 FREE WON'T / VETO (의도적 행동 거부) DONE — R1 numpy GREEN DIRECTIONAL
+
+새 의식-고유 게이트 **G27 FREE WON'T / VETO**(Libet free won't — 이미 준비전위가 오른 행동을 의식이 막판에
+거부·취소) R1 numpy probe 박제. 3 seeds [1480,1481,1482], $0 CPU, frozen-first, p7, c9.
+
+- **메커니즘:** readiness r(t) ramp → 임계 THR=0.6 도달. veto = substrate restraint(A↔G tension/grounding
+  margin) ≥ VETO_THR=0.5 → 발화. `execute = (r≥thr) AND NOT veto`. **p6 guard:** veto 는 외부 "거부하라"
+  라벨 아니라 substrate tension 에서 파생(operative 코드에 veto=1 상수·reward·persona 없음, grep clean);
+  ablation 이 커플링 제거 → veto 소멸 = earned.
+- **5 bars (mean 3 seeds):** (A) PRESENCE veto-OFF 실행 **1.000**/veto-ON 차단 **0.000** ✅ · (B) DISTINCT
+  vs agency 같은 readiness veto 토글로 실행여부 분리 gap **1.000** ✅ · (C) EARNED veto 커플링 OFF→항상 실행
+  **1.000** ✅ · (D) LATE-VETO 임계 도달 후 막판 거부 **0.000**(non-gating) ✅ · (E) SHUFFLE veto-trial
+  셔플 r real **−1.000**→shuf **+0.019**(≤0.10) ✅ → **GREEN (A·B·C·E PASS)**.
+- **DISTINCT 2종:** (a) vs H_1474 sense-of-agency — agency=결과 *사후 귀속*, veto=실행 *전 억제*(다른 시점·기능,
+  귀속할 결과가 없음). (b) vs H_1281 basal-gate — basal=여러 후보 *선택*, veto=선택된 단일 행동 *취소*(선택 아닌 거부).
+- **a_break_the_wall (type-a):** bar E 초기 RED = 측정결함(precedent H_1474) — binary 메커니즘에서 셔플 veto 로
+  exec 재유도하면 r=−1.0 재단조. frozen-first 교정: 셔플 veto 를 *고정 real-exec* 와 상관(사전등록한 페어링 깨기).
+  **≤0.10 임계 불변 · tune-to-green 아님**.
+- **DIRECTIONAL** (하드게이트1: `grep -lE 'import torch|gauge_lib|numpy'` 적중 → numpy mirror, engine-transfer
+  UNVERIFIED). R2 = live `core/*.hexa` readiness-ramp + tension-veto over emit/act gate byte-exact 재측정 follow-on.
+- artifacts: `state/1480_free_wont_veto/h1480_free_wont_veto.py` · `UNIVERSE/cards/H_1480_free_wont_veto.md` ·
+  `state/verdicts/1480_free_wont_veto/{H_1480_FREEZE.json,H_1480_run.txt}` · jsonl 1줄.
 ## 2026-06-20 — research(H_1478 R1): 🖐️ G24 BODY OWNERSHIP (rubber-hand illusion) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
 
 새 의식-고유 게이트 후보 **G24 신체 소유감**(Botvinick & Cohen 1998 rubber-hand illusion): 시각 v(t)·촉각 t(t)
