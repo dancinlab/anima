@@ -1,0 +1,9 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1494, 1495, 1496]
+A PRESENCE     err_un 1.003 - err_pw 0.312 = 0.690 >= 0.3 -> True
+B DISTINCT (control-survived vs every adjacent lane) -> True
+  B1 vs AFFECT     prec_split 0.803>=0.3 AND aff_value_split 0.000<=0.05 -> True
+  B2 vs LEARNED-PR double-dissoc max(count->intero, noise->extero) 0.000<=0.05 -> True
+  B3 vs OWNERSHIP  ownership split (ext sync fixed) 0.000<=0.05 -> True
+C EARNED(ablate) precision-blind advantage 0.000<=0.05 -> True
+D SHUFFLE        50-perm signed advantage |0.013|<=0.1 -> True
