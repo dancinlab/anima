@@ -1,0 +1,19 @@
+==============================================================================
+H_1476 — EMOTION REGULATION (G25, Gross reappraisal) — R1 numpy mirror
+  GREEN DIRECTIONAL (numpy; engine-native = follow-on). seeds: [1476, 1477, 1478]
+==============================================================================
+  seed 1476: raw=0.0940 reg=0.0590 atten=0.0350 | sep=0.0350 abl_gap=0.00e+00 shuf=0.0413 charged=200/200
+           A=True B=True C=True E=True | atten_neg=0.0350 atten_neu=0.0000
+  seed 1477: raw=0.0958 reg=0.0607 atten=0.0350 | sep=0.0350 abl_gap=0.00e+00 shuf=0.0679 charged=200/200
+           A=True B=True C=True E=True | atten_neg=0.0350 atten_neu=0.0000
+  seed 1478: raw=0.0924 reg=0.0578 atten=0.0345 | sep=0.0345 abl_gap=0.00e+00 shuf=0.0535 charged=200/200
+           A=True B=True C=True E=True | atten_neg=0.0345 atten_neu=0.0000
+------------------------------------------------------------------------------
+  (A) PRESENCE   raw=0.0940 reg=0.0592 drop=37.0% | BINDING atten=0.0348(>=0.3*raw=0.0282? True) | DIAG ratio reg<=raw*0.6? False -> True
+  (B) DISTINCT   raw-read identical(reg on/off), reg-on vs reg-off sep=0.0348 (>=0.3*raw=0.0282? True) -> True
+  (C) EARNED     g=0 ablation max|reg-raw|=0.00e+00 (<1e-09? True) -> True
+  (D) SELECTIVITY atten_neg=0.0348 >> atten_neu=0.0000 (report, non-gating)
+  (E) SHUFFLE    true-align=+1.0000 -> 50-perm signed-mean |gap|=0.0542 (<=0.1? True) -> True
+------------------------------------------------------------------------------
+  VERDICT: 🟢 GREEN DIRECTIONAL  (A=True B=True C=True E=True; D=report)
+==============================================================================

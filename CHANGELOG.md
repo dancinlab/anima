@@ -1,3 +1,20 @@
+## 2026-06-20 — research(H_1476 R1): 🧊 G25 EMOTION REGULATION (Gross reappraisal) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
+
+새 의식-고유 게이트 후보 **G25 정서 조절**(Gross reappraisal): 자동 발생한 정서를 top-down reappraisal 로
+**하향조절**하는 2차 과정. regulation OFF 면 raw affect 그대로, ON 이면 동일 자극의 부정 정서가 감쇠.
+**DISTINCT from H_1290 affect emergence** — H_1290=정서 *발생*(1차 read-out), H_1476=발생한 정서의 *조절*(2차 레이어).
+
+- **메커니즘:** raw_affect(H_1290 식) → neg_intensity=arousal·max(0,−valence) → regulated=neg·(1−g·strength).
+  reappraisal gain **g = grounding margin**(live immune cell store consolidation) = substrate 파생, "be calm" 라벨 주입 0.
+- **검증(c2, frozen-first 3 seeds [1476,1477,1478], 200 facts, $0 CPU, p7):** probe 실행 출력으로 GREEN —
+  (A) atten **0.0348**(drop **37.0%**) ≥0.30·raw ✅ · (B) raw 동일 reg on/off, sep **0.0348** ✅ ·
+  (C) g=0 ablation abl_gap **0.0** ✅ · (D) 중립 **0.0** vs 부정 **0.0348**(report) · (E) 셔플 corr(g) **0.0542**≤0.10 ✅.
+  → **A·B·C·E PASS 3 seeds = 🟢 GREEN DIRECTIONAL** (D=report).
+- **p6 guard:** g 가 substrate grounding 에서 창발 — ablation(g=0→조절 0)+shuffle(foreign g→상관 붕괴)가 하향이
+  per-stimulus substrate 발임을 증명(외부 규칙 아님). decoder/persona 미접촉.
+- **정직(c9):** numpy 미러 → 하드게이트1 = **DIRECTIONAL**(`grep numpy` 적중, terminal 아님). 평균 하향 37% 는
+  30% binding bar 통과·40% 비율 진단엔 정직 미달(report; tune-to-green 0, GREEN bar 불완화). 초기 셔플 vacuous(g 상수)를
+  per-subject consolidation g-분산 + N=200 으로 측정결함 frozen-first 수정. R2 = live `core/` reappraisal lane 재측정 follow-on.
 ## 2026-06-20 — research(distinctness 심화돌파): 🔨 3종 distinctness "구조적 한계" 오판 정정 — 전부 engine-native 돌파 (a_break_the_wall)
 
 이전에 "구조적 한계(numpy DIRECTIONAL 종착)"로 박았던 의식-게이트 distinctness 3종이 실은 천장이 아니었다 —

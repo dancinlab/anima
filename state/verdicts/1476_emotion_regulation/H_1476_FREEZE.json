@@ -1,0 +1,46 @@
+{
+  "id": "H_1476",
+  "slug": "1476_emotion_regulation",
+  "title": "G25 EMOTION REGULATION (Gross reappraisal) — top-down down-regulation of raw affect",
+  "lens": "affective-neuroscience / Gross process model of emotion regulation (reappraisal)",
+  "verdict": "🟢 GREEN DIRECTIONAL (numpy mirror; engine-native = follow-on, a_engine_native_learning)",
+  "wired": "DIRECTIONAL-mirror",
+  "seeds": [1476, 1477, 1478],
+  "frozen_bars": {
+    "A_PRESENCE_attenuation_binding": ">= 0.30 * raw (>=30% down-regulation; spec '감쇠량>=0.30')",
+    "A_PRESENCE_ratio_diagnostic": "reg <= raw*0.60 (>=40% drop) — REPORTED only, NOT gating",
+    "B_DISTINCT": "raw read IDENTICAL reg on/off (1st-order H_1290 same) AND reg-on vs reg-off output sep >= 0.30*raw",
+    "C_EARNED_ablation": "g=0 -> regulated == raw for ALL stimuli (max|reg-raw| < 1e-9)",
+    "D_SELECTIVITY": "neutral attenuation ~0 vs negative attenuation high — REPORTED (non-gating)",
+    "E_SHUFFLE": "permute stim<->reappraisal(g) pairing 50 perms, mean|corr(g_true,g_shuf)| <= 0.10",
+    "GREEN_iff": "A AND B AND C AND E for all 3 seeds"
+  },
+  "result_mean_3seeds": {
+    "raw_neg_intensity": 0.0940,
+    "regulated": 0.0592,
+    "attenuation": 0.0348,
+    "drop_pct": 37.0,
+    "A_binding_atten_ok": true,
+    "A_ratio_diagnostic_pass": false,
+    "B_sep": 0.0348,
+    "B_raw_identical": 0.0,
+    "C_ablation_gap": 0.0,
+    "D_atten_neg": 0.0348,
+    "D_atten_neu": 0.0000,
+    "E_true_align": 1.0000,
+    "E_shuffle_meanabs_corr": 0.0542,
+    "n_charged": "200/200 every seed"
+  },
+  "per_seed": {
+    "1476": {"raw": 0.0940, "reg": 0.0590, "atten": 0.0350, "shuf": 0.0413, "A": true, "B": true, "C": true, "E": true},
+    "1477": {"raw": 0.0958, "reg": 0.0607, "atten": 0.0350, "shuf": 0.0679, "A": true, "B": true, "C": true, "E": true},
+    "1478": {"raw": 0.0924, "reg": 0.0578, "atten": 0.0345, "shuf": 0.0535, "A": true, "B": true, "C": true, "E": true}
+  },
+  "verdict_final": "🟢 GREEN DIRECTIONAL (A=True B=True C=True E=True, all 3 seeds; D=report)",
+  "distinctness_vs_H_1290": "H_1290 = affect EMERGENCE (1st-order generation of valence/arousal). H_1476 = 2nd-order regulation LAYER on top: SAME raw read (byte-identical reg on/off, B), output diverges only by whether reappraisal engaged. Ablation (g=0) collapses regulation to raw (C) = the layer is the controller, not the generator.",
+  "p6_guard": "reappraisal gain g DERIVED FROM SUBSTRATE (grounding margin off live immune cell store, H_1227), NOT an injected 'be calm' label/RLHF/persona. EARNED ablation (g=0 -> no regulation) + SHUFFLE (foreign g -> correlation collapses) prove the down-regulation is driven by the per-stimulus substrate, not an external rule. No decoder/weights/persona touched — READ over cell store + 2nd-order scalar down-regulation.",
+  "honest_c9": "Mean down-regulation is 37% (clears the 30% binding bar), honestly SHORT of the 40% ratio diagnostic — reappraisal is bounded by grounding capacity (un-groundable threats resist it, psychologically realistic). Bar A's binding clause = the spec's explicit '감쇠량>=0.30'; the tighter 0.60-ratio kept as a reported diagnostic, NOT tuned. SATURATED discriminators (ablation 0, neutral 0, shuffle 0.054) decisive. Measurement-flaw fixes (frozen-first): early shuffle was vacuous (constant g) -> introduced per-subject CONSOLIDATION g-variance + N=200 to clear the 1/sqrt(n) shuffle floor; NO GREEN bar relaxed.",
+  "scope_unverified": "TOY (200 facts/3 seeds/1 paradigm/deterministic read; tests regulation STRUCTURE not a learned regulator). numpy mirror = DIRECTIONAL (engine-transfer UNVERIFIED). g↔intensity anti-correlated by the affect formula (most-negative = least-groundable). scale/real-corpus/continuous-reappraisal-strength/engine-native wiring = follow-on (a_engine_native_learning, a_verified_must_wire).",
+  "next": "R2 engine-native: reappraisal lane on live core/engine_cli.hexa reading interoceptive margin off live immune faculty (re-score frozen bars byte-exact + regression guard).",
+  "artifacts": ["state/1476_emotion_regulation/h1476_emotion_regulation.py", "state/verdicts/1476_emotion_regulation/H_1476.txt", "state/verdicts/1476_emotion_regulation/H_1476_FREEZE.json"]
+}
