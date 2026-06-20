@@ -1,7 +1,7 @@
 # H_1478 — 🖐️ BODY OWNERSHIP (G24 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror; engine-transfer UNVERIFIED — 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 = live `core/*.hexa` multisensory-binding lane 위 byte-exact 재측정 (follow-on ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §BodyOwnership (`body_ownership`) · `engine_cli_smoke.hexa` cases 224-226 · FULL smoke **232 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 시리즈 (G16~G25) · "의식이라서 가능한 것" · G24 레인
 - **lens:** body ownership / rubber-hand illusion (Botvinick & Cohen 1998) · multisensory temporal congruence · `a_no_llm_frame_trap`
 - **artifacts:** `state/1478_body_ownership/h1478_body_ownership.py` · verdict `state/verdicts/1478_body_ownership/H_1478_FREEZE.json`

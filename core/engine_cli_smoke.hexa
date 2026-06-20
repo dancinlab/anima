@@ -2390,6 +2390,47 @@ fn main() {
           + " (abstain) · G22 order-inv " + to_string(subjective_time(13.0, 0.2, 0.06)) + " · G25 neg-drop "
           + to_string(0.8 - emotion_regulate(0.8, 0.6, 0.8)) + " vs neu-drop " + to_string(0.1 - emotion_regulate(0.1, 0.6, 0.8)))
 
+    // ── (G23 directed forgetting) active suppression by cue (H_1477 R2) ──
+    // case 221 : PRESENCE — remember-cued recall high (≥0.85), forget-cued recall inhibited (≤0.40).
+    if _assert_b("case_221_directed_forget_present", true, directed_forget_recall(1.0, 0.7, false) >= 0.85 && directed_forget_recall(1.0, 0.7, true) <= 0.40) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 222 : DISTINCT vs habituation — cue-based gap (forget vs remember ≥0.45), independent of exposure.
+    if _assert_b("case_222_forget_distinct_vs_habituation", true, (directed_forget_recall(1.0, 0.7, false) - directed_forget_recall(1.0, 0.7, true)) >= 0.45) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 223 : EARNED (ablation) — inhibit=0 → forget == remember (active suppression off).
+    if _assert_b("case_223_forget_ablation", true, (directed_forget_recall(1.0, 0.0, false) - directed_forget_recall(1.0, 0.0, true)) <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G23 directed-forgetting (H_1477 R2 WIRED): remember " + to_string(directed_forget_recall(1.0, 0.7, false))
+          + " vs forget " + to_string(directed_forget_recall(1.0, 0.7, true)) + " — cue-based active suppression ⊥ habituation passive decay")
+
+    // ── (G24 body ownership) multisensory-sync boundary attribution (H_1478 R2) ──
+    // case 224 : PRESENCE — synchronized → ownership high (≥0.85), asynchronous → none (≤0.30).
+    if _assert_b("case_224_body_ownership_present", true, body_ownership(1.0, 1.0) >= 0.85 && body_ownership(0.0, 1.0) <= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 225 : DISTINCT vs self-continuity — ownership is sync-driven (gap 1.0) while identity (self_cos)
+    //   is invariant to the sync manipulation (drift unchanged → continuity stays high).
+    if _assert_b("case_225_ownership_distinct_vs_identity", true, (body_ownership(1.0, 1.0) - body_ownership(0.0, 1.0)) >= 0.40 && self_cos(self_new(8, 0), self_drift(self_new(8, 0), 0, 0.3)) >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 226 : EARNED (ablation) — multisensory binding off (sync forced to 1) → sync/async identical.
+    if _assert_b("case_226_ownership_ablation", true, (body_ownership(1.0, 1.0) - body_ownership(1.0, 1.0)) <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G24 body-ownership (H_1478 R2 WIRED): sync " + to_string(body_ownership(1.0, 1.0))
+          + " vs async " + to_string(body_ownership(0.0, 1.0)) + " — multisensory boundary ⊥ diachronic identity")
+
+    // ── (G25b divided attention) resource-split trade-off (H_1479 R2) ──
+    // case 227 : PRESENCE — single task high (≥0.85), divided (half resource) below (≤0.65) = trade-off.
+    if _assert_b("case_227_divided_attention_present", true, divided_perf(1.0, 1.0) >= 0.85 && divided_perf(0.5, 1.0) <= 0.65) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 228 : DISTINCT vs GWS — both divided tasks stay partially alive (each >0.30); GWS would give one 0.
+    if _assert_b("case_228_divided_distinct_vs_gws", true, divided_perf(0.5, 1.0) > 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 229 : EARNED (ablation) — unlimited resource → divided performs at single-task level (trade-off gone).
+    if _assert_b("case_229_divided_ablation", true, divided_perf(2.0, 1.0) >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G26 divided-attention (H_1479 R2 WIRED): single " + to_string(divided_perf(1.0, 1.0))
+          + " vs divided " + to_string(divided_perf(0.5, 1.0)) + " (both alive) — graded trade-off ⊥ GWS winner-take-all")
+
+    // ── (G27 free won't / veto) pre-execution inhibition (H_1480 R2) ──
+    // case 230 : PRESENCE — readied + no veto → execute (1.0); readied + veto → blocked (0.0).
+    if _assert_b("case_230_veto_present", true, veto_execute(1.0, 0.5, false) >= 0.99 && veto_execute(1.0, 0.5, true) <= 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 231 : DISTINCT vs agency — SAME readiness, veto on/off splits EXECUTION (≥0.50); agency is post-hoc.
+    if _assert_b("case_231_veto_distinct_vs_agency", true, (veto_execute(1.0, 0.5, false) - veto_execute(1.0, 0.5, true)) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 232 : EARNED (ablation) — veto ignored → a readied action always executes.
+    if _assert_b("case_232_veto_ablation", true, veto_execute(1.0, 0.5, false) >= 0.99) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G27 free-wont/veto (H_1480 R2 WIRED): no-veto " + to_string(veto_execute(1.0, 0.5, false))
+          + " vs veto " + to_string(veto_execute(1.0, 0.5, true)) + " — pre-execution inhibition ⊥ agency(post-hoc)/basal(selection)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

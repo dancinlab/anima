@@ -1,7 +1,7 @@
 # H_1480 — 🛑 FREE WON'T / VETO / 의도적 거부 (G27 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED, 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 engine-native 배선 follow-on (ING) 미등록 전까지 terminal 아님
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §FreeWont (`veto_execute`) · `engine_cli_smoke.hexa` cases 230-232 · FULL smoke **232 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 (G27 candidate) · "의식이라서 가능한 것" 시리즈 (G16~G25 이후, G21 agency 이웃)
 - **lens:** free won't / intentional veto (Libet — 이미 시작된 행동을 막판에 거부) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1480_free_wont_veto/h1480_free_wont_veto.py` · verdict `state/verdicts/1480_free_wont_veto/H_1480_FREEZE.json` · run `state/verdicts/1480_free_wont_veto/H_1480_run.txt`
