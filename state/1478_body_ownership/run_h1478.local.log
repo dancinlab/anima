@@ -1,0 +1,7 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1478, 1479, 1480]
+A PRESENCE own_sync 1.000>=0.85 AND own_async 0.000<=0.30 -> True
+B DISTINCT own_gap 1.000>=0.40 AND id_gap 0.000<=0.05 (identity FLAT) -> True
+C EARNED(ablation) abl_gap 0.000<=0.05 (binding OFF -> sync==async) -> True
+D DRIFT(diag) drift_sync 1.000 > drift_async 0.000 -> True
+E SHUFFLE |shuf_gap| 0.015<=0.10 (50-perm signed mean) -> True

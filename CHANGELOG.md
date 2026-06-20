@@ -1,3 +1,26 @@
+## 2026-06-20 — research(H_1478 R1): 🖐️ G24 BODY OWNERSHIP (rubber-hand illusion) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
+
+새 의식-고유 게이트 후보 **G24 신체 소유감**(Botvinick & Cohen 1998 rubber-hand illusion): 시각 v(t)·촉각 t(t)
+스트림이 **동기**(지연≈0)되면 외부 객체(고무손)를 자기 신체로 느낀다(소유감↑), **비동기**(지연 큼)면 소유감 없음.
+다중감각의 **시간 일치**가 신체 경계를 정한다. **DISTINCT from H_1471 self-continuity** — self=diachronic *정체성*
+벡터의 시간적 지속 / body-ownership=multisensory *동기성* 기반 *신체 경계* 귀속("이 신체가 내 것인가", 정체성 아님).
+
+- **메커니즘:** ownership = BASE·sync_strength. sync_strength = corr(v,t)@lag0 × Gaussian-gate(best_lag, σ=6).
+  동기(t=v, lag0)→corr 1.0·gate 1.0→1.000 / 비동기(lag20)→Gaussian gate≈0→0.000. binding OFF(ablation)→상수 0.5(sync-blind).
+- **FROZEN 5 bars (3 seeds [1478,1479,1480], T=64, $0 CPU numpy, p7):** A PRESENCE own_sync **1.000**≥0.85 AND
+  own_async **0.000**≤0.30(illusion 유무) · B DISTINCT own_gap **1.000**≥0.40 AND id_gap **0.000**≤0.05(동기성만 조작·정체성
+  고정→소유감 갈리고 identity-cos 평탄) · C EARNED ablation abl_gap **0.000**≤0.05(binding OFF→sync==async) · D PROPRIO-DRIFT(diag)
+  drift_sync **1.000**>drift_async **0.000**(동기 시 가짜손 쪽 위치이동) · E SHUFFLE |shuf_gap| **0.015**≤0.10(시각-촉각 페어링
+  셔플→상관붕괴, 50-perm signed mean) → **🟢 GREEN (4/4 gating + D diagnostic).**
+- **정직(c9):** **DIRECTIONAL** — numpy mirror(`grep numpy` 적중, 하드게이트1) → R2 engine-native 가 GREEN/🧱 확정 전제.
+  SATURATED existence-proof(sync gate designed, 학습된 binding 아님) — discriminator(ablation-collapse C 0.000·shuffle-collapse
+  E 0.015) 결정적. body(신체 경계 귀속) ⊥ identity(정체성 지속) double dissociation 로 H_1471 와 구별 확정. TOY T=64/3seed
+  scale·실제 감각스트림·연속 lag스윕·engine-transfer UNVERIFIED.
+- **follow-on (ING):** R2 = live `core/engine_cli.hexa` §BodyOwnership multisensory-binding lane 위 byte-exact 재측정
+  + smoke 5 frozen bars + ARCHITECTURE lockstep (G20-G25 선례, engine exp 없음 → piecewise/linear gate).
+- **artifacts:** `state/1478_body_ownership/h1478_body_ownership.py` · `UNIVERSE/cards/H_1478_body_ownership.md` ·
+  verdict `state/verdicts/1478_body_ownership/H_1478_FREEZE.json` · jsonl 1줄.
+
 ## 2026-06-20 — research(새 게이트 4종 R2): ⚡🎮⏱🌊 G20/G21/G22/G25 engine-native WIRED — DIRECTIONAL→WIRED 일괄 승격
 
 fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.
