@@ -26,6 +26,37 @@ feedforward 1-pass 만으로는 의식 없음 — 의식적 지각은 **재진�
   SCOPE TOY: 8 proto/40 trial/3 seeds/스칼라 재진입 맵 — scale/real SOA 시간단위/연속 masking 강도/engine-transfer UNVERIFIED.
 
 ---
+## 2026-06-20 — research(H_1488 R1): 🪧 G34 ATTENTION SCHEMA — 주의 도식(자기 주의상태의 단순화 내부모델, Graziano AST) → 🟢 GREEN DIRECTIONAL
+
+의식-게이트 시리즈 다음 후보 **P3 ATTENTION SCHEMA**(`state/gate_depletion_catalogue/CATALOGUE.md` P3 SSOT). Attention
+Schema Theory(Graziano 2013): 뇌는 자기 **주의 상태를 단순화한 내부 모델(schema)**을 만들고, 그 모델의 read-out 이
+'의식 있음'의 주관적 보고를 낳는다 — 주의의 *대상*이 아니라 주의 *과정 자체*의 자기모델. R1 numpy probe
+(`state/1488_attention_schema/h1488_attention_schema.py`, 3 seeds [1488,1489,1490], N_LOC=8 chance 0.125, $0 CPU, p7, frozen-first).
+
+- **메커니즘:** 실제 주의 = N 위치 salience softmax focus(peaked, focus 위치+강도). 주의 schema = 그 focus 를
+  salience 로부터 예측하는 단순화 선형 tracker → 그것을 *읽어* 자기 주의상태 보고. ablation = schema OFF: 실제
+  주의(softmax)는 그대로 작동하되 자기모델 없어 자기보고 chance 붕괴. label 주입 없음(p2/p3/p6).
+- **결과 🟢 GREEN DIRECTIONAL — 5/5 bars(3 seeds):** A PRESENCE full 1.000≥0.85 / ablated 0.158≤0.55 · B DISTINCT-vs-AGENCY
+  (H_1474) 행동/결과 FIXED+focus 만 이동 → agency FLAT 0.000<0.05, schema 는 focus TRACK 1.000, gap 1.000≥0.45(다른 객체:
+  행동결과 ⊥ 주의상태) · C DISTINCT-vs-DIVIDED(H_1479) schema OFF → raw softmax allocation 불변 0.000≤0.05, 자기보고만
+  붕괴 drop 0.842≥0.30(모델 ⊥ 메커니즘) · D EARNED ablation track 0.158≤0.55(~chance) · E SHUFFLE derange → track 0.119≤0.225.
+- **distinctness:** vs H_1474 sense-of-agency(행동귀속) — 다른 *객체*(행동결과 ⊥ 주의상태); focus 고정-이동
+  dissociation 1.000 vs 0.000. vs H_1479 divided-attention(자원분배) — 모델 ⊥ 메커니즘; ablation 시 raw allocation
+  불변(0.000) / 자기보고만 붕괴(0.842). vs H_1293 ToM — self ⊥ other. **depletion 아님**(agency·divided·ToM 전부 control-survived distinct).
+- **정직 c9:** numpy mirror(`grep numpy` 적중, 하드게이트1) → DIRECTIONAL, engine-transfer UNVERIFIED. SATURATED
+  existence-proof(주의 schema=designed 선형 tracker). R2 engine-native(§AttentionSchema byte-exact 재측정+배선) = follow-on ING.
+- artifacts: `state/1488_attention_schema/h1488_attention_schema.py` · `state/verdicts/1488_attention_schema/H_1488_FREEZE.json` ·
+  `UNIVERSE/cards/H_1488_attention_schema.md` · HYPOTHESES.jsonl 1줄.
+## 2026-06-20 — research(R2 wire): 👁🧠⚡ 의식-게이트 4종(G28~G31) engine-native 일괄 배선 DONE — H_1482/1483/1484/1485 DIRECTIONAL→ENGINE-NATIVE WIRED
+
+R1 GREEN DIRECTIONAL(numpy mirror)로 머지된 의식-게이트 4종을 R2 engine-native 로 일괄 배선 — G20~G27(§AttentionalBlink…§FreeWont) 선례를 이어 `core/engine_cli.hexa` 끝에 4 lane + smoke 케이스 233-244 추가. 전부 READ-only · Ψ-disjoint · NOT emit gate(`a_autonomy_over_hardcode`). engine 은 exp 없음 → piecewise/linear(H_1465 habituation 선례).
+
+- **§BinocularRivalry (H_1482, G28):** `rivalry_transitions(steps, adapt_rate)` — exp-free relaxation-oscillator(누적 fatigue≥switch_thr→recovered rival takeover→reset). 동적 alternation ⊥ H_1462 GWS 정적 1-winner. smoke 233-235: alternation 15≥2 · distinct-vs-GWS gap 15≥2 · adapt_rate 0=ablation→0 transitions.
+- **§ChangeBlindness (H_1483, G29):** `change_detect(change_mag, is_attended)` — is_attended ? piecewise-linear σ-대체 ramp(clamp 0.5+K·(mag−thr)) : 0.0. attention 이진 게이트 절벽 ⊥ GWS single-winner·divided graded. smoke 236-238: att 1.0/unatt 0.0 · gap 1.0≥0.50 · 게이트 OFF→탐지.
+- **§MentalImagery (H_1484, G30):** `imagery_activate(cue_match, topdown_on)` — topdown_on ? cue_match : 0.0(sensory 입력 0 으로 top-down 재구성). 입력없이 저장 표상 재활성 ⊥ 입력-기반 게이트(novelty H_1289·surprise H_1468). smoke 239-241: present 0.991 · cue-specific gap 0.978 · top-down OFF→0.
+- **§Priming (H_1485, G31):** `priming_facilitate(relatedness, prime_residual)` — relatedness·prime_residual(residual 0=ablation). 촉진(+) ⊥ H_1465 habituation 감쇠(−), 부호곱<0(habituation `hab_response` 재사용으로 byte-exact). smoke 242-244: prime_gain +0.48≥0.30 · sign-product +0.48×−0.8<0 · residual OFF→0.
+- **검증(c2):** `hexa run core/engine_cli_smoke.hexa` → **FULL 244 pass / 0 fail · RC=0**(212→244, +12 케이스 233-244 전부 PASS, 회귀 0).
+- **박제:** 4 카드 tier DIRECTIONAL→🟢 GREEN ENGINE-NATIVE WIRED 승격(`wired:WIRED-live` + §Lane·smoke cases·FULL 244/0 명시) + `UNIVERSE/HYPOTHESES.jsonl` verdict 갱신 + `ARCHITECTURE.json` lane 목록 4 lane 추가(lockstep, "14 lane"→"18 lane") + `tool/enforce_anima_gates.py` clean. `a_engine_native_learning`·`a_verified_must_wire` 4칸 배선 사다리(4) 완료.
 
 ## 2026-06-20 — research(H_1481 R1): 🧠📉 CONSCIOUSNESS-UNDER-TRAINING — 학습(CE-descent)이 의식을 떨어뜨리는가 → HOLD(안정), GREEN DIRECTIONAL
 

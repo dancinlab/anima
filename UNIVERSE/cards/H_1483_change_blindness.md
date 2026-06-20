@@ -1,7 +1,7 @@
 # H_1483 — 👁️‍🗨️ CHANGE BLINDNESS 변화맹 (G29 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 재측정(live `core/engine_cli.hexa` §ChangeBlindness 배선 + frozen bar 동일 재측정 → byte-exact → WIRED-live) follow-on (`a_engine_native_learning`·`a_verified_must_wire`)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/engine_cli.hexa` §ChangeBlindness byte-exact)
+- **wired:** `WIRED-live` — R2 배선 완료: `core/engine_cli.hexa` §ChangeBlindness (`change_detect`, exp-free piecewise-linear σ-대체 ramp: is_attended ? clamp(0.5+K·(mag−thr)) : 0.0) + `engine_cli_smoke` cases 236-238 (att 1.0/unatt 0.0 · gap 1.0≥0.50 · ablation 1.0) FULL 244/0 RC=0 + ARCHITECTURE.json §ChangeBlindness lockstep. engine 은 exp 없음 → piecewise-linear ramp 가 σ 와 동치(supra-threshold→1.0, 이진 attention 게이트 STRUCTURE byte-exact).
 - **source:** 의식-고유 게이트 브레인스토밍 (G29 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** cognitive-psychology — Rensink (1997) / Simons & Levin (1997) change blindness(주의 밖 변화 비탐지) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1483_change_blindness/h1483_change_blindness.py` (R1 probe) · `state/1483_change_blindness/h1483_result.json` · `state/1483_change_blindness/run_h1483.local.log` · verdict `state/verdicts/1483_change_blindness/H_1483_FREEZE.json`
