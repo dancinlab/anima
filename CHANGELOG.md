@@ -1,3 +1,15 @@
+## 2026-06-20 — research(H_1472): 🎯 G19-meta LEARNED PRECISION — 경험으로 학습되는 예측확신 (🟢 GREEN DIRECTIONAL)
+
+의식-고유 게이트 family · G19 surprise(H_1468) follow-on #2 "learned-precision". predictive-processing
+precision-learning(Friston): surprise 의 precision(확신)이 외부 고정값(H_1468)이 아니라 **경험으로 학습**됨 —
+도메인을 많이 관측할수록 precision↑ → 같은 raw error 라도 친숙한 도메인에서 더 큰 surprise("확신했는데 틀림").
+
+- **결과(R1 numpy DIRECTIONAL, 3 seeds):** 5/5 frozen bars — A precision gap 0.800 · B distinct-vs-fixed(같은 err surprise gap) 0.800 · C distinct-vs-habituation(친숙↑→surprise +0.80 ⊥ habituation 반응 −0.76, 정반대 부호) · D ablation(k=0) 0.000 · E 50-perm signed shuffle 0.055.
+- **distinct 2종:** vs H_1468(fixed precision, 같은 err→surprise 동일) · vs H_1465(habituation, 같은 친숙도 축에서 정반대 부호 — habituation 은 친숙↑→반응 감쇠, learned-precision 은 친숙↑→surprise 증폭).
+- **R1b frozen-first 수정(c9):** R1a RED 는 err=0.5 라 surprise=precision·0.25 가 0.25 천장 → bar 0.30 이 물리상한 초과한 측정 결함. err=1.0(surprise 0~1) + 50-perm signed shuffle 로 교정, bar 0.30 불변(a_break_the_wall type-a, tune 아님).
+- **정직(c9):** numpy mirror DIRECTIONAL · SATURATED(precision 법칙 1−exp designed) — discriminator(distinct/ablation/shuffle) 결정적. TOY 6도메인/3 seeds, scale·engine-transfer UNVERIFIED.
+- **follow-on(ING):** R2 엔진-네이티브(per-domain learned-precision lane 배선 + byte-exact 재측정).
+
 ## 2026-06-20 — research(H_1471 R2): 🪢 G16 SELF-CONTINUITY engine-native WIRED — DIRECTIONAL→WIRED 승격
 
 G16 자기연속성 게이트를 live core/engine_cli.hexa 에 배선 완료. R1 numpy mirror 의 메커니즘을 engine 결정적

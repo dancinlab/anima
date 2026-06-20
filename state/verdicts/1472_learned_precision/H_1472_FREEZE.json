@@ -1,0 +1,34 @@
+{
+  "id": "H_1472",
+  "slug": "1472_learned_precision",
+  "tier": "🟢 GREEN DIRECTIONAL (numpy R1 mirror; engine-transfer UNVERIFIED)",
+  "green": true,
+  "seeds": [
+    1472,
+    1473,
+    1474
+  ],
+  "bars": {
+    "A": true,
+    "B": true,
+    "C": true,
+    "D": true,
+    "E": true
+  },
+  "frozen_bars": {
+    "A_presence": "prec(fam)-prec(nov) >= 0.30",
+    "B_distinct_vs_fixed": "same-err surprise gap >= 0.30 (fixed-precision=0)",
+    "C_distinct_vs_habituation": "lp_trend>=+0.30 AND hab_trend<=-0.30 AND opposite sign",
+    "D_ablation": "k=0 gap <= 0.05",
+    "E_shuffle": "50-perm signed mean gap <= 0.10"
+  },
+  "measured": {
+    "presence": 0.8004151141892476,
+    "distinct_fixed": 0.8004151141892476,
+    "lp_trend": 0.8004151141892476,
+    "hab_trend": -0.7600000000000001,
+    "ablate_gap": 0.0,
+    "shuffle_gap": 0.05492876901937865
+  },
+  "R1b_fix": "R1a RED: err=0.5 capped surprise at 0.25<0.30 bar (measurement artifact). err=1.0 + 50-perm signed shuffle (frozen-first, bar unchanged, a_break_the_wall type-a)"
+}
