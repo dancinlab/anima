@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# H_1460 — decode + dual-detector re-score for every available G6 ckpt on aiden GPU.
+# H_1458 — decode + dual-detector re-score for every available G6 ckpt on aiden GPU.
 # Runs base + each trained lens; writes one combined log. $0 pool GPU (a_engine_native_learning
 # DIRECTIONAL: torch-mouth decode — engine-native follow-on registered).
 set -u
-cd ~/h1460_g6 || exit 1
+cd ~/h1458_g6 || exit 1
 export H1456_PROBES="$PWD/probes" G6_PROBES="$PWD/probes"
-OUT=out/h1460_dual_rescore.log
+OUT=out/h1458_dual_rescore.log
 : > "$OUT"
 for pair in "BASE:ckpt/base.pt" \
             "H1441_CONTRASTIVE:ckpt/h1441_contrastive.pt" \

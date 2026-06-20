@@ -1,6 +1,6 @@
 ---
-id: H_1460
-slug: 1460_semantic_detector
+id: H_1458
+slug: 1458_semantic_detector
 title: G6 FALS-depth — SEMANTIC-AWARE detector 재채점 (measurement-artifact 가설)
 group: G6 IDEATION FALS-depth wall — breakthrough lens ① (measurement-first, a_break_the_wall type-a)
 terminal_tier: 🧱 CAPACITY-REINFORCED (DIRECTIONAL) — semantic(SAME-idea) detector 는 structural 보다
@@ -11,11 +11,11 @@ source: G6 돌파 다각도 fleet ① measurement-lens
 provenance: G6 돌파 다각도 렌즈 ① — 5렌즈(H_1435 data/1436 objective/1437 form/1439 bind-head/1449 attention)
   전부 🧱 WALL(cross-shuffle 불붕괴). H_1435 honest finding "structural H_1305 detector CANNOT distinguish
   earned idea-specific binding from any-comparator+any-measurable+content" → 측정 artifact 일 가능성을 먼저 배제.
-  NB(id): 팀리드 지정 H_1450 선점(workmem_hold_bind) · H_1456 도 선점(idea_metacognition, RUNNING) → 충돌 회피로
-  H_1460 재anchor (팀리드 재확인 대기 중 — 명시 지시 시 빈 ID 로 rename, 타 RUNNING lane 덮어쓰기 없음).
+  NB(id): 최초 지정 H_1450 선점(workmem_hold_bind) · H_1456 도 idea_metacognition sibling 선점(peer 합의+mtime) →
+  팀리드 정정으로 **H_1458** 확정(빈 ID, 타 RUNNING lane 덮어쓰기 없음).
 ---
 
-# H_1460 — SEMANTIC-AWARE falsifiability detector 재채점 (측정결함 먼저 배제)
+# H_1458 — SEMANTIC-AWARE falsifiability detector 재채점 (측정결함 먼저 배제)
 
 ## Claim / falsifier
 **가설(type-a 측정결함):** G6 5렌즈가 전부 🧱 인 이유가 *모델이 실제로 binding 하는데 H_1305 structural detector
@@ -39,7 +39,7 @@ idea 의 measurable 로 splice 하면 SAME-idea bridge 가 깨져 **semantic FAL
   아님, capacity 천장 유효).
 
 ## Semantic detector 정의 (frozen)
-`state/1460_semantic_detector/semantic_detector.py` — `WINDOW=6 · MIN_SUBJECT=1` ·
+`state/1458_semantic_detector/semantic_detector.py` — `WINDOW=6 · MIN_SUBJECT=1` ·
 clause-break set `{and,but,or,also,while,whereas-는 comparator 라 제외,...}`. H_1305 의
 COMPARATOR/MEASURABLE/STANCE 집합 + structural `_is_falsifiable` 를 VERBATIM 재사용(p7, 재구현 아님 —
 소스에서 정규식 파싱하여 torch import 회피).
@@ -53,7 +53,7 @@ cross-shuffle splice 를 그대로 미러 = donor measurable 을 다른 idea 끝
 comparator+subject 옆에 떨어지면 lexical 로는 못 잡음(정직한 천장, tune-away 아님 c9). 핵심은 **방향**:
 semantic 이 structural 이 유지하는 cross-sprinkle FALS 를 제거.
 
-## Result (verbatim — state/verdicts/1460_semantic_detector/)
+## Result (verbatim — state/verdicts/1458_semantic_detector/)
 **DETECTOR FREEZE(calibration):** BOUND struct 5/5 sem 5/5 · SPRINKLE struct 4/5 sem 2/5 →
 V1 5≥4 ✅ · V2 2<4 ✅ → **DISCRIMINATOR VALID**. structural 은 cross-sprinkle 에 더 무딤(4/5 fire),
 semantic 은 더 엄격(2/5 fire) — H_1435 의 "structural 은 binding 을 못 가린다" 를 구조적으로 재현.
@@ -90,7 +90,7 @@ real-corpus/embedding-grade binding/engine-native(.hexa) 재측정 UNVERIFIED. c
 H_1305(structural detector)·H_1435(honest finding precedent)·H_1436/1437/1439/1449(5렌즈 벽).
 
 ## Artifacts
-- `state/1460_semantic_detector/semantic_detector.py` — frozen dual detector + calibration
-- `state/1460_semantic_detector/rescore_dual.py` — decode+dual-score cross-shuffle harness
-- `state/1460_semantic_detector/run_all_aiden.sh` — pool GPU driver (base + lenses)
-- `state/verdicts/1460_semantic_detector/` — raw verdict stdout
+- `state/1458_semantic_detector/semantic_detector.py` — frozen dual detector + calibration
+- `state/1458_semantic_detector/rescore_dual.py` — decode+dual-score cross-shuffle harness
+- `state/1458_semantic_detector/run_all_aiden.sh` — pool GPU driver (base + lenses)
+- `state/verdicts/1458_semantic_detector/` — raw verdict stdout

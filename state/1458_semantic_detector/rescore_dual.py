@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""rescore_dual.py — H_1460 dual-detector cross-shuffle re-scoring harness ($0 CPU, score-only).
+"""rescore_dual.py — H_1458 dual-detector cross-shuffle re-scoring harness ($0 CPU, score-only).
 
 Consumes DECODED G6 generations (text per (seed, arm, idx)) and scores each with BOTH the
-FROZEN structural detector (H_1305) and the FROZEN semantic detector (H_1460), then computes
+FROZEN structural detector (H_1305) and the FROZEN semantic detector (H_1458), then computes
 the cross-shuffle COLLAPSE for EACH detector on the SAME generations.
 
 DECISIVE COMPARISON (the measurement-artifact test):

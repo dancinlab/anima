@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""semantic_detector.py — H_1460 SEMANTIC-AWARE falsifiability detector (FROZEN-FIRST, c9).
+"""semantic_detector.py — H_1458 SEMANTIC-AWARE falsifiability detector (FROZEN-FIRST, c9).
 
 WHY (measurement-artifact lens, a_break_the_wall type-a):
   H_1305 `_is_falsifiable` is STRUCTURAL: it fires iff a text contains
@@ -59,7 +59,7 @@ def _find(*cands):
     raise FileNotFoundError(cands)
 
 
-# pod-portable: H1456_PROBES env overrides (set on aiden/pool to ~/h1460_g6/probes).
+# pod-portable: H1456_PROBES env overrides (set on aiden/pool to ~/h1458_g6/probes).
 _PB = os.environ.get("H1456_PROBES", os.path.join(HERE, "probes"))
 _GAUGE = _find(
     os.path.join(_PB, "gauge_lib.py"),
@@ -257,7 +257,7 @@ def calibrate():
 
 if __name__ == "__main__":
     c = calibrate()
-    print("== H_1460 SEMANTIC DETECTOR — FROZEN CALIBRATION ==")
+    print("== H_1458 SEMANTIC DETECTOR — FROZEN CALIBRATION ==")
     print(f"  COMPARATOR={len(COMPARATOR)} MEASURABLE={len(MEASURABLE)} STANCE={len(STANCE)} "
           f"WINDOW={WINDOW} MIN_SUBJECT={MIN_SUBJECT}")
     for cls, s, m, t in c["rows"]:
