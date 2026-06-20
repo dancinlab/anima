@@ -1,0 +1,23 @@
+==============================================================================
+H_1475 — G22 SUBJECTIVE TIME (주관적 시간 지각) — R1 numpy DIRECTIONAL
+==============================================================================
+seeds=[1475, 1476, 1477]  OBJ_TICKS=12  BASE=0.1  K=0.85  HIGH_RATE=0.9  LOW_RATE=0.1  N_PERM=50
+------------------------------------------------------------------------------
+  seed 1475: nov_high=12/12 nov_low=2/12 est_high=0.950 est_low=0.242 presence=0.708 abl_sep=0.000 shuf=0.085
+  seed 1476: nov_high=11/12 nov_low=2/12 est_high=0.879 est_low=0.242 presence=0.637 abl_sep=0.000 shuf=-0.153
+  seed 1477: nov_high=10/12 nov_low=2/12 est_high=0.808 est_low=0.242 presence=0.567 abl_sep=0.000 shuf=0.023
+------------------------------------------------------------------------------
+  MEAN  est_high=0.879  est_low=0.242
+        nov_high=11.00/12  nov_low=2.00/12
+==============================================================================
+FROZEN BARS (mean 3 seeds):
+  (A) PRESENCE   est_high-est_low = +0.637  >= 0.40   -> PASS
+  (B) DISTINCT   subj_sep=+0.637(>=0.40) AND homeo_sep=+0.000(<=0.05)  -> PASS
+      [vs H_1292 homeo: 객관틱 고정+novelty 조작 → subjective 갈림 / homeo 적분 평탄]
+  (C) EARNED     abl_sep(k=0) = +0.000  <= 0.05   -> PASS
+  (D) ORDER-inv  order_diff = 0.000  (non-gating; 같은 novelty 총량 순서무관)
+  (E) SHUFFLE    |signed mean gap| = 0.015  <= 0.10 (50-perm)  -> PASS
+------------------------------------------------------------------------------
+VERDICT: 🟢 GREEN (4/4 gating: A&B&C&E) — DIRECTIONAL (numpy mirror, hard-gate 1)
+==============================================================================
+JSON {"id": "H_1475", "seeds": [1475, 1476, 1477], "config": {"OBJ_TICKS": 12, "BASE": 0.1, "K": 0.85, "HIGH_RATE": 0.9, "LOW_RATE": 0.1, "N_PERM": 50}, "measurements": {"est_high": 0.8792, "est_low": 0.2417, "presence": 0.6375, "subj_sep": 0.6375, "homeo_sep": 0.0, "abl_sep": 0.0, "order_diff": 0.0, "shuffle_gap": -0.0151, "nov_high": 11.0, "nov_low": 2.0}, "bars": {"A_PRESENCE": true, "B_DISTINCT": true, "C_EARNED": true, "D_ORDER_report": 0.0, "E_SHUFFLE": true}, "green": true}
