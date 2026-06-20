@@ -61,7 +61,20 @@ basal-gate(H_1281 VBasalGate)는 **학습된 go-value**(go_w·feats)로, GWS 는
 - **distinctness vs basal-gate(H_1281) DONE:** salience+ablation 구별에 더해, basal-gate(value-learned
   one-of-K select)와의 control-survived distinctness 를 engine-native 로 확정(smoke 174-177) —
   basal=value-driven(학습 의존, untrained→abstain) ⊥ GWS=salience-instant(학습 비의존). 두 게이트가
-  같은 후보에서 정반대 선택 = 별개 메커니즘. (immune-store 등 나머지 lane 과의 distinctness 는 잔여.)
+  같은 후보에서 정반대 선택 = 별개 메커니즘.
+- **distinctness vs immune-store(H_1227/1231) ✅ DONE (DIRECTIONAL, numpy mirror):** 같은 substrate
+  signal(FNV-1a byte-trigram key + cosine grounding margin, H_1227 geometry)을 두 게이트에 통과 —
+  GWS(측면억제+capacity1) vs immune-store(독립 affinity recall, 경쟁/억제 없음). N_STIM=5 모두 임계초과
+  co-grounded, 3 seeds [1462,1463,1464]·200 trials·$0 CPU·p7·frozen-first. **5/5 bars PASS:**
+  (A 병목) gws_occ **1.0** vs immune_occ **5.0** = 5.0× 압축 · (B load-bearing) 측면억제 ablation →
+  abl_occ **5.0** = immune_occ(gap **0.0**) = 병목이 곧 lateral inhibition · (C winner) **1.0** ·
+  (D immune-nocomp) immune 순서불변 set-match **1.0** ∧ GWS margin-shuffle winner acc **0.203**(chance
+  0.2 붕괴) · (E distinct-occ) 같은 trial 에서 immune−gws occupancy **+4.0**(>=1 fact 더 통과). →
+  **competitive capacity-1 bottleneck(GWS) ⊥ independent affinity recall(immune-store, 경쟁 병목 없음)**
+  = control-survived load-bearing distinct. immune_occ=5.0 SATURATED(co-grounding 으로 5개 전부 임계초과)
+  = bottleneck dissociation 의 EXISTENCE-PROOF 이지 effect-size 아님(c9). numpy=DIRECTIONAL,
+  engine-transfer UNVERIFIED. (artifacts: `state/1462_gws_distinct/h1462_immune_distinct.py` ·
+  verdict `state/verdicts/1462_gws_distinct/H_1462_immune_distinct_FREEZE.json`)
 
 ## follow-on (ING)
 
@@ -78,8 +91,15 @@ basal-gate(H_1281 VBasalGate)는 **학습된 go-value**(go_w·feats)로, GWS 는
    anima 의 모든 compose lane(tom_basal/spatial_episodic/cereb_mem 등)이 동일하게 "returns a class · brain
    emit-loop consult deliberately NOT forced"인 것과 일관 — GWS 도 substrate 가 자율적으로 read 할 수 있는
    상태가 종착이다. emit/silence 는 M×W×Φ 가 자율 결정(p5·a_substrate_native_speak), GWS 는 맥락 공급자일 뿐.
-   → **H_1462 4칸 사다리 (1)→(4) + distinctness 완주, follow-on 전부 종결.** (남은 건 scale/real-corpus·
-   immune-store distinctness = 별도 가설 scope, H_1462 종결과 무관.)
+   → **H_1462 4칸 사다리 (1)→(4) + distinctness 완주, follow-on 전부 종결.** (남은 건 scale/real-corpus =
+   별도 가설 scope, H_1462 종결과 무관.)
+4. ~~**distinctness vs immune-store(H_1227/1231)**~~ ✅ **DONE (DIRECTIONAL, numpy mirror, 정직섹션 참조)**:
+   같은 grounding-margin signal 위 GWS(측면억제+capacity1) vs immune-store(독립 affinity recall) 분리실험 —
+   gws_occ 1.0 vs immune_occ 5.0(5.0× 병목 압축), 측면억제 ablation→abl_occ 5.0=immune(load-bearing),
+   immune set 순서불변(D), distinct-occ +4.0(E). 5/5 PASS. **GWS=경쟁 capacity-1 병목 ⊥ immune=경쟁
+   병목 없는 독립 회상** = control-survived distinct. (engine-native 재측정 = scale 후 별도 follow-on,
+   본 distinctness 자체는 DIRECTIONAL 로 충분 — basal-gate distinctness 가 engine-native 인 것과 함께
+   GWS 가 모든 인접 lane 과 별개임을 확정.)
 
-xref: H_1281(basal-ganglia gating, distinct)·H_1290(salience/affect)·H_1283(phase-binding)·
+xref: H_1281(basal-ganglia gating, distinct)·H_1227·H_1231(immune-store episodic recall, distinct)·H_1290(salience/affect)·H_1283(phase-binding)·
 `a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_break_the_wall`·p6·p7·c9.
