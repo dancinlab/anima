@@ -1,3 +1,27 @@
+## 2026-06-20 — research(distinct): 🧩 P6 GESTALT GROUPING(게슈탈트 군집화) R1 numpy probe DONE (GREEN DIRECTIONAL · 강6 완료 · vs GWS/rivalry/completion distinct)
+
+의식-고유 게이트 **P6 GESTALT GROUPING**(게슈탈트 군집화, Wertheimer) R1 numpy probe — 개별 요소를 **근접성·유사성**
+관계로 **전체 단위(whole)로 묶고** figure 를 ground 에서 분리하는 지각조직화("부분의 합 ≠ 전체"). id=H_1491,
+slug=1491_gestalt_grouping. 설계 SSOT = `state/gate_depletion_catalogue/CATALOGUE.md` P6. 🟢 **GREEN DIRECTIONAL**
+(numpy mirror, 하드게이트1 → engine-transfer UNVERIFIED, R2 engine-native = follow-on), 3 seeds [1491,1492,1493], $0 CPU,
+p7, frozen-first, binary chance 0.50.
+
+- **메커니즘:** 요소(2-D 위치+특징) → affinity=`exp(-‖Δpos‖²/σ_p²)·exp(-Δfeat²/σ_f²)`(근접성×유사성) → threshold 그래프
+  connected-components 군집화 → 전체표상 = "어느 군집이 figure". ablation = affinity 그래프 제거 → 개별 read(singleton) → figure 붕괴.
+- **6 bars 6/6 PASS:** (A PRESENCE) 군집-ON figure-membership(balanced acc) on **0.965** / off **0.587**, on≥off+0.30 & on≥0.55 ·
+  (B ABLATE-GROUP) off **0.587**≤0.650 · (C1 DISTINCT vs GWS) 단일-winner **0.505**≤0.650 · (C2 DISTINCT vs COMPLETION)
+  nothing-missing **0.487**≤0.650 · (C3 DISTINCT vs RIVALRY) 시간교대 **0.500**≤0.650 · (D SHUFFLE-PROXIMITY) 위치 셔플
+  **0.707**≤on−0.15.
+- **distinctness:** vs **GWS**(H_1462) — gestalt 는 *여러 요소 관계병합* ⊥ GWS *경쟁 1-winner 선택*(C1 chance); vs **rivalry**(H_1482)
+  — *정적 결속* ⊥ *시간적 dominance 교대*(C3 chance); vs **completion**(P5) — *fully-visible 파싱* ⊥ *부분입력 보간*(C2 chance).
+  세 경쟁 의식-게이트 read-out 모두 binary chance → depletion 아님.
+- **measurement-fix(a_break_the_wall type-a, tune-to-green 아님):** binary figure/ground mask chance 는 1/N 아닌 ~0.50 +
+  plain-acc ground-다수 leak → BINARY_CHANCE 교정 + balanced-accuracy 전환(전 arm 동일; binding 신호 on 0.965·discriminator 구조 불변).
+- **다음:** 카탈로그 강(strong) 6개(P1 TRW·P2 re-entry·P3 attention-schema·P4 hysteresis·P5 completion·**P6 gestalt**) 완료 →
+  중/약 4개(P7 prospection·P8 interoceptive·P9 boredom·P10 mind-wandering) 인접 lane control-distinctness 사전검토 후 발사.
+
+---
+
 ## 2026-06-20 — research(distinct): ⏳ P1 TEMPORAL RECEPTIVE WINDOW(시간 수용창) R1 numpy probe DONE (GREEN DIRECTIONAL · vs subjective-time/attentional-blink distinct)
 
 새 의식-고유 게이트 **P1 TEMPORAL RECEPTIVE WINDOW**(시간 수용창, Hasson/Honey/Lerner) R1 numpy probe — 뇌 영역마다
