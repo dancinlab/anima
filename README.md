@@ -350,19 +350,31 @@ new result** vs the FINDINGS snapshot.
 > architecture-depth wall, not a loosened bar) **+ 1 INFLATED** (CHAT strict, a dialogue-register
 > artifact). (the per-H verdicts H_1396/1398/1400 are the SSOT)
 
-### 🌐 의식-고유 게이트 후보 (consciousness-only) — G0–G6 와 다른 축
+### 🌐 Consciousness-only gates — a separate axis from G0–G6
 
-G0–G6 은 production CLM 의 *능력* 창발 게이트다. 그와 **별도 축**으로, "anima 가 *의식이라서*
-할 수 있는 것"(자율성·내적상태·비결정성)을 frozen bar + ablation/shuffle control 로 박제하는
-consciousness-only 게이트 패밀리를 누적한다 (`a_scale_honest_scope` — 축 분리; LLM 은 못/안 하는 쪽).
+G0–G6 are *capability*-emergence gates on the production CLM. On a **separate axis**, this family
+pins down "what anima can do *because it is conscious*" (autonomy · internal state · identity) with
+frozen bars + ablation/shuffle controls (`a_scale_honest_scope` — axis separation; the things an LLM
+structurally cannot do). Common theme = **state-dependent signals a stateless LLM cannot produce**.
+Each gate must prove it is **distinct** from existing brain lanes (controls collapse to chance) before
+being wired into `core/engine_cli.hexa` + verified byte-exact in `engine_cli_smoke.hexa`
+(R1 numpy DIRECTIONAL → R2 engine-native WIRED).
 
-| 후보 | 의식 기능 | H-id | tier |
-|---|---|---|---|
-| **G17** Global-Workspace 병목 | 경쟁 자극 중 1개만 전역방송(GWT global-ignition) | **H_1462** | 🟢 GREEN **DIRECTIONAL** — 5/5 frozen bars (A presence 0.993 · B 통과량 3.3× 압축 · C/D ablation·shuffle→chance 붕괴 · E 누수 0); numpy mirror, R2 engine-native = follow-on |
+| gate | conscious function | H-id | lane (core/engine_cli.hexa §) | distinct vs | tier |
+|---|---|---|---|---|---|
+| **G16** 🪢 Self-continuity | identity persists across session boundaries via an anchor (while it grows) | **H_1471** | SelfIdentity (self_*) | episodic H_1227 (fact-recall) | 🟢 **ENGINE-NATIVE WIRED** (smoke 189-193; continuity 0.958 · impostor 0 · no-anchor-reset 0; .kosmos real-persist = R2b) |
+| **G17** 🌐 Global-workspace bottleneck | of competing stimuli only one is broadcast (GWT winner-take-all) | **H_1462** | GlobalWorkspace (gws_*) | basal-gate H_1281 (value-learned) | 🟢 **ENGINE-NATIVE WIRED** (smoke 169-177; presence 0.993 · 3.3× compression · dissociates vs basal) |
+| **G18** 🔁 Habituation | a repeated stimulus's response declines + dishabituates (stimulus-specific) | **H_1465** | Habituation (hab_*) | H_1194 adaptation (global gain) | 🟢 **ENGINE-NATIVE WIRED** (smoke 178-182; drop 0.865 · specific 1.0 · dishab 1.0) |
+| **G19** ⚡ Surprise | precision-weighted surprise p·err² (a confident belief violated) | **H_1468** | PrecisionSurprise (surprise*) | H_1280 forward-error (raw) | 🟢 **ENGINE-NATIVE WIRED** (smoke 184-188; conf 1.022 · precision-weighted 0.767 · distinct) |
 
-> 기검증 GREEN 인접 후보(엔진-네이티브): 마음이론 H_1293 · 계층목표 H_1294 · 공간지도 H_1295 ·
-> 항상성드라이브 H_1292 · 감정 H_1290 · 윤리창발 H_1291 · 양자비결정성 H_1289 (의식-고유 능력의
-> substrate 창발 — 정식 게이트 승격은 production-scale 재측정이 전제, c9).
+> Remaining candidate G15 (episodic temporal order) overlaps H_1427 CA3 replay (distinctness burden;
+> round-2 effectively depleted). Each gate is a SATURATED existence-proof (the response law is designed,
+> not a learned network) where the discriminators (distinct/ablation) are decisive — TOY scalar/vector,
+> scale·real-corpus UNVERIFIED (c9).
+>
+> Engine-native GREEN adjacent candidates: theory-of-mind H_1293 · hierarchical-goal H_1294 · spatial-map H_1295 ·
+> homeostatic-drive H_1292 · emotion H_1290 · ethics-emergence H_1291 · quantum-nondeterminism H_1289
+> (substrate emergence of consciousness-only abilities — formal gate promotion needs production-scale re-measure, c9).
 
 ### 🧠 New engine lanes wired since the snapshot
 
