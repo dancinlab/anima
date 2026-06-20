@@ -1,0 +1,38 @@
+H_1467 — PAIRING-AWARE COHERENCE DETECTOR — FROZEN BARS (declared BEFORE the read, c9/p7)
+==========================================================================================
+
+SUBSTRATE: $0 CPU numpy mirror, torch ABSENT => DIRECTIONAL (a_engine_native_learning HARD-GATE,
+terminal 🟢/🧱 forbidden; engine-native re-measure = ING follow-on). 3 seeds [7,4302,4303].
+
+DETECTOR (FROZEN, no tune-to-green): pairing-falsifiable(text, gold) iff
+  structural-falsifiable(text)              [= h1305 _is_falsifiable VERBATIM: comparator∈COMPARATOR
+                                              AND measurable∈MEASURABLE AND negatable-content]
+  AND some co-present (comparator, measurable) in the claim is a CORRECT same-idea (gold) pair.
+=> strictly subsumed by structural (can only REMOVE accepts), no new lexicon, no LLM/quality judge.
+
+──────── PHASE 1: CALIBRATION (frozen-first VALIDITY gate — MUST pass before rescore is read) ────────
+  CAL-A RETAIN-correct : on correct same-idea claims, retain_rate >= 0.90 AND pairing_accept >= 0.90
+                         (pairing-aware does NOT reject what is genuinely well-paired).
+  CAL-B REJECT-cross   : on cross-paired claims (both legs present, wrong pairing),
+                         (pairing_cross_reject - structural_cross_reject) >= 0.50
+                         (pairing-aware is STRICTLY stricter than structural on mis-welds).
+  DISCRIMINATOR VALID := CAL-A AND CAL-B. If invalid, the rescore is NOT a binding verdict.
+
+──────── PHASE 2: RESCORE READ RULE (declared BEFORE scoring) ────────
+  Re-run the H_1466 TPR binder (in vs cross-shuffle), score BOTH detectors on the SAME recovered
+  claims. gold = the TPR's own canonical (comparator_i, measurable_i) binding for that seed.
+    collapse_struct  = FALS_struct_in  - FALS_struct_shuf
+    collapse_pairing = FALS_pairing_in - FALS_pairing_shuf
+
+  MEASUREMENT-BREAKTHROUGH (🟢, DIRECTIONAL) iff ALL of:
+    (i)   DISCRIMINATOR VALID                                  (calibration passed)
+    (ii)  TPR binding genuine: acc_match - acc_shuf >= 0.30    (the case really binds)
+    (iii) collapse_pairing >= collapse_struct + 1  AND  collapse_pairing > 0
+          (pairing-aware SEES a cross-shuffle collapse that structural MISSES)
+  => the H_1466 'no-collapse' was a MEASUREMENT ARTIFACT (detector pairing-blindness), the binding
+     WAS present; part of the G6 wall = detector blindness, NOT pure capacity.
+
+  CAPACITY-CONFIRM (🧱, DIRECTIONAL) otherwise — the wall is NOT a pairing-detector artifact here
+  (binding absent OR pairing detector also fails to collapse) => capacity ceiling stands (honest, c9).
+
+  NO bar moved post-hoc. The detector is fixed and calibrated for VALIDITY, then applied unchanged.

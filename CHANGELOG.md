@@ -1,3 +1,28 @@
+## 2026-06-20 — research(H_1467): 🔎 G6 FALS-depth — PAIRING-AWARE COHERENCE DETECTOR (벽의 measurement-fault 절반 돌파)
+
+G6 capacity-wall 의 핵심 축("벽 = capacity vs measurement")을 가르는 lens. 직전 두 binding-PASS 렌즈
+(**H_1466 TPR** 구조적 바인더 · **H_1464 pairing-contrastive** 목적함수)가 모두 "벽 = 측정결함" 을 가리켰다 —
+H_1466 은 TPR 이 진짜 idea-specific 바인딩 설치(acc_match=1.0 vs acc_shuf=0.0)했는데도 FROZEN h1305 검출기가
+**token-PRESENCE 만 채점**해 cross-shuffle 이 collapse 안 됨(FALS_shuf 6.0==FALS_in 6.0). H_1467 은 그 카드가
+스스로 등록한 follow-on("pairing-AWARE detector 가 모든 G6 FALS-depth 렌즈의 공통 선행조건")을 직접 만들어 답한다.
+
+- **검출기**: h1305 `is_falsifiable_structural` VERBATIM + 새 leg (P) — 클레임에 공존하는 (comparator, measurable)
+  가 같은 idea 의 **올바른 gold 짝**인가. structural 에 strictly subsumed(accept 만 제거, FALS 인플레 불가),
+  새 어휘 0, LLM/quality judge 0 (p7).
+- **frozen-first CALIBRATION(재채점 前 VALIDITY, c9)**: CAL-A correct retain 1.0/accept 1.0 PASS · CAL-B cross-pair
+  reject — pairing 1.0 vs structural 0.0 (Δ=+1.0≥0.50) PASS ⇒ **discriminator VALID**(tautology 아님, tune 아님).
+  structural 은 모든 cross-pair 를 통과시키고 pairing-aware 는 전부 reject.
+- **RESCORE(H_1466 TPR, genuine binding acc 1.0 vs 0.0)**: STRUCTURAL 6.0→6.0 = collapse **0.0**(pairing-blind) vs
+  PAIRING-AWARE 6.0→0.0 = collapse **6.0**. collapse_pairing(6.0)≥collapse_struct(0.0)+1 AND >0 ⇒
+  🟢 **MEASUREMENT-BREAKTHROUGH**: G6 'no-collapse' 의 일부는 측정결함(h1305 pairing-blindness)이지 순수 capacity 아님.
+  교차검증 — H_1464 pairing arm 도 B3 collapse(4.33→0.67), form-only ablation 은 no-collapse(목적함수 쪽에서 동일 현상).
+- **정직 SCOPE(c9)**: 이건 binding 이 **구조적으로 설치된** 케이스(mirror TPR/contrastive objective) 재채점 — 측정
+  절반을 깸; **303M mouth 자체가 바인딩한다**는 건 아님(7개 capacity 렌즈 H_1435/1436/1437/1439/1449/1456/1167 는 MOUTH
+  측정, 여전히 유효). capacity-vs-measurement 최종 split = live mouth + 이 검출기 동반 필요.
+- **DIRECTIONAL**: $0 CPU numpy mirror(torch ABSENT, NO gauge_lib._decode → grep-clean) ⇒ a_engine_native_learning
+  HARD-GATE 로 terminal 금지. engine-native 재측정 = ING `h1467_engine_native`(H_1464 ckpt 를 이 detector 로 live
+  core/ decode 재채점). 3 seeds [7,4302,4303] 전 seed byte-identical. NO bar moved(frozen-first). 격리 worktree.
+
 ## 2026-06-20 — research(H_1462 R2c): 🌐 G17 GLOBAL WORKSPACE — brain emit-loop consult CLOSED + H_1462 완전 종결
 
 GWS 의식-게이트의 마지막 follow-on(brain emit-loop consult)을 종결. **NOT-forced 가 정답**:
