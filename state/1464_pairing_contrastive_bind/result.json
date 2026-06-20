@@ -1,0 +1,122 @@
+{
+  "id": "H_1464",
+  "slug": "1464_pairing_contrastive_bind",
+  "substrate": "numpy-mirror",
+  "verdict_class": "DIRECTIONAL",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "arms": {
+    "pairing": {
+      "label": "PAIRING-CONTRASTIVE (this lens)",
+      "per_seed": [
+        {
+          "seed": 7,
+          "base_FALS": 3,
+          "ho_FALS": 3,
+          "FALS_in": 4,
+          "DIST_in": 5,
+          "FALS_shuf": 0
+        },
+        {
+          "seed": 4302,
+          "base_FALS": 2,
+          "ho_FALS": 0,
+          "FALS_in": 4,
+          "DIST_in": 5,
+          "FALS_shuf": 1
+        },
+        {
+          "seed": 4303,
+          "base_FALS": 3,
+          "ho_FALS": 0,
+          "FALS_in": 5,
+          "DIST_in": 5,
+          "FALS_shuf": 1
+        }
+      ],
+      "bars": {
+        "FALS_in": 4.3333,
+        "DIST_in": 5.0,
+        "FALS_shuf": 0.6667,
+        "FALS_ho": 1.0,
+        "BASE_in": 2.6667,
+        "b1": true,
+        "b2": true,
+        "b3": true,
+        "b4": true,
+        "b5": true
+      }
+    },
+    "form": {
+      "label": "FORM-ONLY ablation (= H_1441 regression control)",
+      "per_seed": [
+        {
+          "seed": 7,
+          "base_FALS": 3,
+          "ho_FALS": 5,
+          "FALS_in": 5,
+          "DIST_in": 5,
+          "FALS_shuf": 5
+        },
+        {
+          "seed": 4302,
+          "base_FALS": 2,
+          "ho_FALS": 3,
+          "FALS_in": 5,
+          "DIST_in": 5,
+          "FALS_shuf": 5
+        },
+        {
+          "seed": 4303,
+          "base_FALS": 3,
+          "ho_FALS": 4,
+          "FALS_in": 5,
+          "DIST_in": 5,
+          "FALS_shuf": 5
+        }
+      ],
+      "bars": {
+        "FALS_in": 5.0,
+        "DIST_in": 5.0,
+        "FALS_shuf": 5.0,
+        "FALS_ho": 4.0,
+        "BASE_in": 2.6667,
+        "b1": true,
+        "b2": true,
+        "b3": false,
+        "b4": true,
+        "b5": true
+      }
+    }
+  },
+  "pairing_bars": {
+    "FALS_in": 4.3333,
+    "DIST_in": 5.0,
+    "FALS_shuf": 0.6667,
+    "FALS_ho": 1.0,
+    "BASE_in": 2.6667,
+    "b1": true,
+    "b2": true,
+    "b3": true,
+    "b4": true,
+    "b5": true
+  },
+  "form_bars": {
+    "FALS_in": 5.0,
+    "DIST_in": 5.0,
+    "FALS_shuf": 5.0,
+    "FALS_ho": 4.0,
+    "BASE_in": 2.6667,
+    "b1": true,
+    "b2": true,
+    "b3": false,
+    "b4": true,
+    "b5": true
+  },
+  "ctrl_form_regress": true,
+  "green": true,
+  "tier": "\ud83d\udfe2 BROKE \u2014 PAIRING-contrastive INSTALLED binding: cross-shuffle COLLAPSES (B3), floor/count/held-out/base all cleared => WALL=LEARN-GAP (this objective broke it where H_1441 form-contrastive could not)"
+}

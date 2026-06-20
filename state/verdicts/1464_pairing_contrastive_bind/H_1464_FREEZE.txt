@@ -1,0 +1,28 @@
+H_1464 — PAIRING-CONTRASTIVE binding objective — FROZEN 5-BAR (declared BEFORE measurement, c9)
+================================================================================================
+substrate: numpy MIRROR ($0 CPU, torch ABSENT) => AUTO-DIRECTIONAL (a_engine_native_learning HARD-GATE)
+seeds: [7, 4302, 4303] (g6_common SEEDS, identical set), N_IDEAS=5
+verdict_class: DIRECTIONAL (engine-native re-measure registered as ING follow-on)
+
+LENS: ② BINDING-SPECIFIC CONTRASTIVE OBJECTIVE — PAIRING-contrastive (qualitatively distinct from H_1441).
+  H_1441 = FORM-contrastive: pos=full falsifiable claim, neg=blanked-leg (non-falsifiable). 4 arms FALS=5.0,
+           B3 NO-collapse => learned the FORM unconditionally, not WHICH legs pair (binding NOT installed).
+  H_1464 = PAIRING-contrastive: pos=(comparator_i, measurable_i) same-idea; neg=(comparator_i, measurable_{j!=i})
+           cross re-weld. BOTH legs present; ONLY the binding differs. Margin reducible ONLY by representing
+           the correct same-idea coupling => directly rewards binding.
+
+FROZEN BARS (frozen-first, NO tune-to-green; B3 is the DECISIVE bar):
+  B1 FALS-FLOOR   : trained mean FALS_in >= 1               (breaks base plateau)
+  B2 COUNT        : >= 5 distinct ideas (leg-set Jaccard<0.5)
+  B3 X-SHUFFLE COLLAPSE (DECISIVE): FALS_shuf < FALS_in     (cross-shuffle drops falsifiability => binding earned)
+  B4 HELD-OUT     : FALS on fresh held-out ideas >= 1       (lift not memorized)
+  B5 vs-BASE LIFT : FALS_in >= base_FALS + 1                (training moved it, not the arch)
+CONTROL (tune-to-green killer, NOT a bar): FORM-ONLY ablation (= H_1441 form-contrastive) must regress to
+  NO-collapse (b3 FALSE). If the form arm ALSO collapses, B3 is not pairing-specific => INVALID mirror.
+
+🟢 (DIRECTIONAL) iff B1&B2&B3&B4&B5 on the PAIRING arm AND form-only ablation regresses to no-collapse.
+🧱 (DIRECTIONAL) if B3 does NOT collapse (pairing not installed) => WALL=CAPACITY (8th lens converging).
+
+NOTE (a_engine_native_learning): numpy mirror is DIRECTIONAL only. terminal 🟢/🧱 requires engine-native
+re-measure on a 303M ckpt trained with this PAIRING objective, decoded via live core/bytegpt_decode.hexa,
+re-scored on these SAME frozen bars (byte-faithful). Registered as ING follow-on.
