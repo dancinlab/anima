@@ -1,0 +1,56 @@
+H_1441 — CONTRASTIVE falsifiable-vs-nonfalsifiable minimal-pair objective
+ENGINE-NATIVE 5-bar (B3 cross-shuffle) measurement — SUBSTRATE-SPEED WALL BROKEN, decode IN-PROGRESS (local CPU, $0)
+date: 2026-06-20
+
+STATUS CHANGE vs prior BLOCKED (2026-06-19, H_1441_engine_native_BLOCKED.txt):
+  The infra wall that blocked this hypothesis was the substrate-speed wall: scalar farr_get
+  matmul ~26s/token. That wall is NOW BROKEN. The native-GEMM forward landed in
+  core/bytegpt_decode.hexa (commit d5a8540f8 "feat(core/decode): GPU 경로 배선 — bytegpt_decode
+  d×d GEMM → flame_mm.mm (CUDA cuBLAS 자동, Mac byte-id)", lane state/bytegpt-fast-matmul/
+  RESULTS.md). It routes the per-layer d×d matmuls through the runtime farr_matmul builtin
+  (CPU) / cuBLAS (CUDA), byte-faithful (argmax 32 == torch golden, logits ~1e-5).
+
+MEASURED (this session, local Mac CPU, v0.245.2, native-GEMM path):
+  - pt → engine .bin conversion VERIFIED for all 3 ckpts (base h1129c / contrastive / shuffle):
+    pt_to_engine_bin.py produced 3 × 1,213,440,020-byte .bin = EXACTLY the 303M layout
+    (vocab256 d1024 L24 H16 block512). Local bins at
+    state/1441_contrastive_falsifiability/bins/{base,contra,shuf}.bin.
+  - decode SPEED (the wall): single-job timing on this Mac, native-GEMM core:
+      gen20 = 222.4s wall (incl. ~170s one-time compile+load of 1.2GB .bin)
+      gen60 = 328.6s wall  →  delta 40 tokens = 106s  →  ~2.7 s/token steady-state.
+    This is ~10× faster than the old scalar 26 s/token wall (and load amortizes once per bin
+    over its 30 fragments). The substrate-speed wall (a_break_the_wall type-c) is REMOVED.
+  - argv FIX: the decode CLI (state/1431_bind_compose/engine_decode_batch_cli.hexa) read user
+    args at a[1..] but this hexa's argv() now ships [bin, "--", user-args...] → indices shift.
+    Fixed copy at state/1441_contrastive_falsifiability/engine_decode_batch_cli.hexa computes a
+    "--"-relative base offset. (This off-by-one — NOT the kernel — was the immediate decode
+    error "to_int: not an integer: <out_path>".)
+
+DECODE IN-PROGRESS (detached, local CPU, $0, no pod):
+  3 parallel nohup decodes launched (10-core Mac), each = 30 fragments × gen110:
+    out_base.txt / out_contra.txt / out_shuf.txt at /tmp/h1441_local/.
+  Est. ~2.5h wall. RESUME/HARVEST recipe (when out_*.txt each reach 30 frags):
+    export G6_PROBES=<probes dir w/ gauge_lib.py + h1129_midcap_*.py + h1305_g6_*.py>
+    cp state/1435_continued_pretrain/g6_common.py state/1441_contrastive_falsifiability/
+    cd state/1441_contrastive_falsifiability
+    python3 h1441_engine_native.py --score /tmp/h1441_local/out_contra.txt \
+        /tmp/h1441_local/out_shuf.txt /tmp/h1441_local/out_base.txt
+  → prints the FROZEN 5-bar (B1 FALS-floor · B2 distinct≥5 · B3 cross-shuffle COLLAPSE
+    [decisive] · B4 held-out · B5 vs-base · CTRL shuf-corpus inert) + 🟢/🧱 verdict.
+
+POD NOTE (no leak): the fleet GPU pod for this H (vast 41790394, RTX 4090, $0.54/hr) was
+  staged + serialized + a smoke decode passed (GPU cuBLAS path), but the pod was TORN DOWN by
+  the user-requested fleet cleanup mid-decode (same race as the prior 41556247 loss; SSH
+  connection-refused + vast list → 0 instances). Nothing left to teardown (provider list = 0
+  vast / 0 runpod, confirmed). a_fire_recover_complete: the ckpts are already PULLED locally
+  (the weights — the irreplaceable artifact — are safe); only the in-flight pod /tmp decode
+  shards were lost, and those are being re-decoded locally for $0.
+
+FROZEN 5-BAR RUBRIC (unmoved, c9 / no tune-to-green):
+  🟢 iff B1(FALS_in≥1) ∧ B2(DIST_in≥5) ∧ B3(FALS_shuf<FALS_in COLLAPSE) ∧ B4(FALS_ho≥1) ∧
+       B5(FALS_in≥base+1) ∧ CTRL-inert(lift_real−lift_shuf≥1). 🧱 otherwise (list failing bars).
+  B3 is the decisive target — H_1435/36/37 all FAILED B3 (shuffle-invariant surface form).
+
+xref H_1305 (same wall, now broken) · H_1431 (fast-gemv blocker, resolved by native GEMM) ·
+  H_1435/36/37 (cross-shuffle failure = the B3 target) · state/bytegpt-fast-matmul/RESULTS.md ·
+  a_engine_native_learning · a_break_the_wall type-c · a_fire_recover_complete · p7 · c9.
