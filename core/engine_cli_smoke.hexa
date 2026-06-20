@@ -2133,6 +2133,37 @@ fn main() {
           + " vs GWS(salience)=" + to_string(gd_gws)
           + " — value-driven gate ⊥ salience-competition bottleneck (DISTINCT; untrained basal abstains -1)")
 
+    // ── (habituation) HABITUATION / DISHABITUATION — 자극-특이 반응 감쇠+회복 (H_1465 R2) ──
+    // Non-associative learning: per-stimulus familiarity decays the response (linear law
+    // r=base-step*count); a DIFFERENT stimulus stays undiminished; a novel event (reset)
+    // restores it. READ-only + observe/reset state evolution, Ψ-disjoint, NOT an emit gate.
+    let hb0 = hab_new(5, 0.2)
+    let hb_r0 = hab_response(hb0, 0, 1.0)                                              // count0=0 -> 1.0
+    let hb1 = hab_observe(hab_observe(hab_observe(hab_observe(hb0, 0), 0), 0), 0)      // present slot0 x4
+    let hb_r4 = hab_response(hb1, 0, 1.0)                                              // count0=4 -> 0.2
+    // case 178 : HABITUATION — a repeated stimulus's response declines (drop >= 0.30).
+    if _assert_b("case_178_habituation_declines", true, hb_r0 - hb_r4 >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 179 : STIMULUS-SPECIFIC — a DIFFERENT stim (slot1) is undiminished by slot0 habituation.
+    if _assert_b("case_179_stimulus_specific", true, hab_response(hb1, 1, 1.0) >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 180 : DISHABITUATION — a novel event resets slot0 familiarity -> response recovers.
+    let hb_dis = hab_reset(hb1, 0)
+    if _assert_b("case_180_dishabituation_recovers", true, hab_response(hb_dis, 0, 1.0) >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 181 : EARNED (ablation) — decay_step=0 -> repeats do NOT decline.
+    let ab0 = hab_new(5, 0.0)
+    let ab1 = hab_observe(hab_observe(hab_observe(hab_observe(ab0, 0), 0), 0), 0)
+    if _assert_b("case_181_ablation_no_decay", true, hab_response(ab0, 0, 1.0) - hab_response(ab1, 0, 1.0) <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 182 : DISTINCT vs ADAPTATION(H_1194) — habituation keeps slot1 (per-stimulus) while a
+    //   GLOBAL gain decay (adaptation, stimulus-agnostic) would have decayed it by step*5; gap >= 0.30.
+    if _assert_b("case_182_distinct_vs_adaptation", true, hab_response(hb1, 1, 1.0) - (1.0 - 0.2 * 5.0) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  habituation/dishabituation (H_1465 R2 WIRED): repeated-stim response " + to_string(hb_r0) + "->" + to_string(hb_r4)
+          + " · specific slot1 " + to_string(hab_response(hb1, 1, 1.0)) + " · reset-recover " + to_string(hab_response(hb_dis, 0, 1.0))
+          + " — per-stimulus familiarity decay ⊥ adaptation global gain (DIRECTIONAL mirror GREEN in H_1465 probe)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

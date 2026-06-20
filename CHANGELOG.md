@@ -1,3 +1,14 @@
+## 2026-06-20 — research(H_1465 R2): 🔁 G18 HABITUATION engine-native WIRED — DIRECTIONAL→WIRED 승격
+
+G18 습관화 게이트를 live `core/engine_cli.hexa` 에 배선 완료(GWS H_1462 패턴). R1 numpy mirror 의
+메커니즘을 엔진-네이티브로 재현 — exp 없는 engine 은 **linear decay law**(r=base−step·count)로 같은
+습관화 구조(감쇠·자극특이·탈습관화·ablation·distinct-vs-adaptation)를 결정적 케이스로 재현.
+
+- **배선:** `core/engine_cli.hexa` §Habituation — `struct Habituation` + `hab_new`/`hab_response`(READ-only)/`hab_observe`(자극-특이 count↑)/`hab_reset`(탈습관화). per-stimulus familiarity, Ψ-disjoint, NOT an emit gate(`a_autonomy_over_hardcode`).
+- **검증(c2):** `engine_cli_smoke.hexa` cases 178-182 = 5 frozen bars 1:1 (178 habituation 1.0→0.2 / 179 stimulus-specific slot1 1.0 / 180 dishabituation reset→1.0 / 181 ablation step=0 / 182 distinct-vs-adaptation). FULL smoke **183 pass / 0 fail RC=0** (nice -n 15, mini 보호).
+- **lockstep:** `ARCHITECTURE.json` §Habituation lane 노드 + engine_cli lane 목록 동시 갱신 (4칸 사다리 완주). 카드/jsonl tier DIRECTIONAL→ENGINE-NATIVE WIRED 승격.
+- **남은 follow-on:** distinctness vs novelty(H_1289)/homeostatic(H_1292).
+
 ## 2026-06-20 — research(H_1465): 🔁 G18 HABITUATION / DISHABITUATION — 자극-특이 반응 감쇠+회복 (🟢 GREEN DIRECTIONAL)
 
 의식-고유 게이트 시리즈(G17 GWS 다음) 라운드2 G18 후보. 비연합 학습(Thompson & Spencer habituation):
