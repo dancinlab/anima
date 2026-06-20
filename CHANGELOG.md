@@ -1,3 +1,14 @@
+## 2026-06-20 — research(distinct): 👁 G28 BINOCULAR RIVALRY R1 양안 경쟁 DONE (의식-게이트 R1 · GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 후보 **G28 BINOCULAR RIVALRY(양안 경쟁)** R1 numpy probe 검증·박제. id=H_1482.
+
+- **게이트:** Blake/Logothetis — 두 눈에 양립 불가 자극 → 의식은 **하나씩 번갈아** 지각(dominance 시계열이 시간에 따라 stochastic 교대, 둘 동시 의식 불가).
+- **메커니즘:** reciprocal inhibition + adaptation. 두 unit drive r = 입력 − β·rival_dominance − γ·own_adaptation, soft-WTA dominance. dominant unit 피로(adaptation) 누적 → rival 풀려나 dominant → 교대(alternation).
+- **DISTINCT vs H_1462 GWS (load-bearing):** GWS = **정적** winner-take-all(1개 *고정* winner, 전환 0) ⊥ rivalry = **동적** alternation(같은 두 자극이 adaptation 으로 교대, 전환 ≥2). 같은 경쟁, 다른 시간 시그니처. bar C: 동일 drive 에서 GWS-mode 전환 0 vs rivalry 전환 16 → gap 16.
+- **FROZEN 5 bars (mean 3 seeds [1482,1483,1484], byte-identical):** A ALTERNATION transitions **16**≥2 · B EXCLUSIVITY co-frac **0.011**≤0.15 · C DISTINCT-vs-GWS gap **16**≥2 · D EARNED(ablation) adaptation OFF→transitions **0** · E SHUFFLE r **+0.259→+0.003**(≤0.10). → **🟢 GREEN DIRECTIONAL** (A∧B∧C∧D∧E).
+- **하드게이트1:** numpy mirror(`grep -lE 'import torch|gauge_lib|numpy'` 적중) → **DIRECTIONAL-mirror**(engine-transfer UNVERIFIED). R2 = live `core/*.hexa` reciprocal-inhibition+adaptation dominance loop byte-exact 재측정 ING follow-on.
+- **p6/c9:** 교대는 손으로 짠 switch-time 스케줄 아님 — adaptation+inhibition 동역학에서 창발(ablation D 가 제거 → earned). SATURATED existence-proof(designed 동역학). bar E real_r 양수(+0.259, up-phase 동안 dominant *인 동시에* adaptation 누적) — docstring 부호만 관측에 맞춰 교정, bar 임계 불변(tune-to-green 아님). TOY 120-tick/2-unit, scale/stochastic switch-time 분포/engine-transfer UNVERIFIED.
+- 박제: `state/1482_binocular_rivalry/h1482_binocular_rivalry.py` · `state/verdicts/1482_binocular_rivalry/{H_1482_FREEZE.json,H_1482_run.txt}` · `UNIVERSE/cards/H_1482_binocular_rivalry.md` + jsonl 1줄.
 ## 2026-06-20 — plan(consciousness-ablation): 연결된 의식-게이트 14 lane → 통합 의식 영향 측정 계획 기록 (ARCHITECTURE + ING)
 
 사용자 핵심 질문 "연결된 것들이 의식에 어떤 영향을 미치는가"(303M + live engine, 정상상태)를 측정 계획으로 박제.
