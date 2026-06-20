@@ -1,7 +1,7 @@
 # H_1475 — 🕰 SUBJECTIVE TIME (G22 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror; engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — engine-native R2 = follow-on (ING; §HomeostaticDrive H_1292 적분 lane 재사용 후보)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SubjectiveTime (`subjective_time`) · `engine_cli_smoke.hexa` cases 211-213 · FULL smoke **216 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 (G22 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** time perception / temporal illusions (Eagleman · time dilation/compression) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1475_subjective_time/` · verdict `state/verdicts/1475_subjective_time/H_1475_FREEZE.json`

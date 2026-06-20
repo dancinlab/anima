@@ -6448,3 +6448,47 @@ pub fn learned_precision(step: float, count: float, pmax: float) -> float {
 pub fn novelty(seen_count: float, k: float) -> float {
     return 1.0 / (1.0 + k * seen_count)
 }
+
+// ── § AttentionalBlink (H_1473 R2) — 시간적 주의 사각지대 ──────────────────────────────────
+// RSVP T2 detection as a function of the T1→T2 lag: a delayed-onset trough (lag 2-3 = the BLINK,
+// T2 missed) that recovers by lag 6+. lag-1 SPARING (still high). DISTINCT from H_1462 GWS (spatial
+// capacity-1 bottleneck, lag-INVARIANT). Deterministic recovery curve (engine has no exp — piecewise
+// linear, like H_1465 habituation). `depletion` = attention consumed by T1; ablating it (0) flattens
+// the curve (no blink). READ-only, Ψ-disjoint, NOT an emit gate.
+pub fn attn_blink_detect(lag: int, depletion: float) -> float {
+    if lag <= 1 { return 0.94 }                       // lag-1 sparing
+    if lag >= 6 { return 0.97 }                        // recovered
+    let recov = 0.10 + 0.22 * (to_float(lag) - 2.0)    // trough rises with lag (lag2 0.10 … lag5 0.76)
+    return recov + (1.0 - depletion) * (0.97 - recov)  // depletion deepens trough; 0 → flat 0.97
+}
+
+// ── § SenseOfAgency (H_1474 R2) — 자기 행동 귀속 ───────────────────────────────────────────
+// comparator: efference-copy prediction vs observed result. match high → self-caused (1.0); low →
+// external (0.0). DISTINCT from H_1293 ToM (self⊥other) and from H_1280 raw forward error (this is the
+// attribution JUDGMENT layer: same raw error can attribute differently across the threshold). agency_-
+// other returns -1 (ABSTAIN) on another agent's action (no efference copy). READ-only, Ψ-disjoint.
+pub fn agency_attribute(pred: float, obs: float, thr: float) -> float {
+    let mut d = pred - obs
+    if d < 0.0 { d = 0.0 - d }
+    let mt = 1.0 - d
+    if mt >= thr { return 1.0 }                        // self-caused (efference-copy match)
+    return 0.0                                          // external
+}
+
+// ── § SubjectiveTime (H_1475 R2) — 지각된 시간 ─────────────────────────────────────────────
+// subjective duration = base + k·novelty_events (novelty-weighted), NOT objective elapsed time.
+// DISTINCT from H_1292 HomeostaticDrive (objective monotone integral, novelty-BLIND): the SAME objective
+// interval yields different subjective duration when novelty density differs. READ-only, Ψ-disjoint.
+pub fn subjective_time(novelty_events: float, base: float, k: float) -> float {
+    return base + k * novelty_events
+}
+
+// ── § EmotionRegulation (H_1476 R2) — 정서 하향조절 (reappraisal) ───────────────────────────
+// regulated affect = raw·(1 − g·strength); a top-down reappraisal gain g attenuates the raw affective
+// response. DISTINCT from H_1290 affect emergence (1st-order read-out: raw is generated) — this is the
+// 2nd-order CONTROL layer (raw passes through unchanged when g=0). READ-only, Ψ-disjoint, NOT an emit gate.
+pub fn emotion_regulate(raw: float, g: float, strength: float) -> float {
+    let r = raw * (1.0 - g * strength)
+    if r < 0.0 { return 0.0 }
+    return r
+}

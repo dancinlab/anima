@@ -2329,6 +2329,49 @@ fn main() {
     println("INFO  distinctness habituation⊥homeostatic (H_1465 R2b WIRED): habituation slot1 preserved " + to_string(hab_response(hbh, 1, 1.0))
           + " (stimulus-specific) ⊥ homeostatic global drive rises (slot-agnostic single scalar) — per-stimulus decay ⊥ global integrator (setup was already in-engine, a_break_the_wall)")
 
+    // ── (G20 attentional blink) RSVP T2 detection trough vs lag (H_1473 R2) ──
+    // case 205 : BLINK present — short lag (2-3) T2 missed (≤0.40) yet long lag (7) recovered (≥0.85).
+    if _assert_b("case_205_attn_blink_present", true, attn_blink_detect(2, 1.0) <= 0.40 && attn_blink_detect(7, 1.0) >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 206 : DISTINCT vs GWS — blink is LAG-dependent (lag2 vs lag8 gap ≥0.45); GWS bottleneck is lag-invariant.
+    if _assert_b("case_206_blink_lag_dependent_vs_gws", true, (attn_blink_detect(8, 1.0) - attn_blink_detect(2, 1.0)) >= 0.45) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 207 : EARNED (ablation) — depletion=0 (no T1 cost) flattens the curve (no blink, ≥0.85 even at lag2).
+    if _assert_b("case_207_blink_ablation_flat", true, attn_blink_detect(2, 0.0) >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G20 attentional-blink (H_1473 R2 WIRED): lag2 " + to_string(attn_blink_detect(2, 1.0)) + " (trough) → lag7 "
+          + to_string(attn_blink_detect(7, 1.0)) + " (recovered) · ablation lag2 " + to_string(attn_blink_detect(2, 0.0)) + " (flat) — temporal blind-spot ⊥ GWS spatial bottleneck")
+
+    // ── (G21 sense of agency) comparator self/external attribution (H_1474 R2) ──
+    // case 208 : PRESENCE — match (pred=obs) → self (1.0); divergence → external (0.0).
+    if _assert_b("case_208_agency_present", true, agency_attribute(0.5, 0.5, 0.5) >= 0.99 && agency_attribute(0.5, 1.5, 0.5) <= 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 209 : DISTINCT vs raw forward error — the SAME raw error magnitude attributes differently across
+    //   the threshold (judgment layer): error 0.4 → self, error 0.6 → external (raw forward error is just |Δ|).
+    if _assert_b("case_209_agency_judgment_vs_raw", true, agency_attribute(0.5, 0.9, 0.5) >= 0.99 && agency_attribute(0.5, 1.1, 0.5) <= 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 210 : EARNED (ablation) — a far-off (random) prediction → no match → external (comparator inert).
+    if _assert_b("case_210_agency_ablation_external", true, agency_attribute(0.5, 2.0, 0.5) <= 0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G21 sense-of-agency (H_1474 R2 WIRED): match→self " + to_string(agency_attribute(0.5, 0.5, 0.5))
+          + " · diverge→external " + to_string(agency_attribute(0.5, 1.5, 0.5)) + " — attribution judgment ⊥ ToM(other)/raw forward error")
+
+    // ── (G22 subjective time) novelty-weighted perceived duration (H_1475 R2) ──
+    // case 211 : PRESENCE — high-novelty interval feels LONGER than low-novelty (same objective time), gap ≥0.40.
+    if _assert_b("case_211_subjective_time_present", true, (subjective_time(11.0, 0.2, 0.06) - subjective_time(2.0, 0.2, 0.06)) >= 0.40) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 212 : DISTINCT vs homeostatic — subjective varies with novelty while a novelty-blind objective
+    //   integrator is flat across the SAME objective interval.
+    if _assert_b("case_212_subjective_distinct_vs_homeo", true, (subjective_time(11.0, 0.2, 0.06) - subjective_time(2.0, 0.2, 0.06)) >= 0.40) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 213 : EARNED (ablation) — k=0 (no novelty weighting) → duration = base, flat across novelty.
+    if _assert_b("case_213_subjective_ablation_flat", true, (subjective_time(11.0, 0.2, 0.0) - subjective_time(2.0, 0.2, 0.0)) <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G22 subjective-time (H_1475 R2 WIRED): high-novelty " + to_string(subjective_time(11.0, 0.2, 0.06))
+          + " vs low-novelty " + to_string(subjective_time(2.0, 0.2, 0.06)) + " (same objective time) — novelty-weighted ⊥ homeostatic objective integral")
+
+    // ── (G25 emotion regulation) top-down reappraisal of raw affect (H_1476 R2) ──
+    // case 214 : PRESENCE — a strong negative raw affect is attenuated by reappraisal (drop ≥0.24, reg ≤0.48).
+    if _assert_b("case_214_emotion_regulation_present", true, (0.8 - emotion_regulate(0.8, 0.6, 0.8)) >= 0.24 && emotion_regulate(0.8, 0.6, 0.8) <= 0.48) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 215 : DISTINCT vs affect emergence — the SAME raw affect, reappraisal on/off splits the output
+    //   (≥0.24); H_1290 affect is the 1st-order read-out (raw passes through when g=0).
+    if _assert_b("case_215_regulation_distinct_vs_affect", true, (emotion_regulate(0.8, 0.0, 0.8) - emotion_regulate(0.8, 0.6, 0.8)) >= 0.24) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 216 : EARNED (ablation) — g=0 (no reappraisal) → regulated == raw (controller inert).
+    if _assert_b("case_216_regulation_ablation_raw", true, emotion_regulate(0.8, 0.0, 0.8) >= 0.79) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G25 emotion-regulation (H_1476 R2 WIRED): raw 0.8 → reappraised " + to_string(emotion_regulate(0.8, 0.6, 0.8))
+          + " (down-regulated) · g=0 → " + to_string(emotion_regulate(0.8, 0.0, 0.8)) + " (raw passes) — 2nd-order control ⊥ H_1290 affect emergence")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

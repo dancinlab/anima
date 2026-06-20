@@ -1,3 +1,15 @@
+## 2026-06-20 — research(새 게이트 4종 R2): ⚡🎮⏱🌊 G20/G21/G22/G25 engine-native WIRED — DIRECTIONAL→WIRED 일괄 승격
+
+fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.
+각 R1 메커니즘을 engine 결정적 스칼라 op 로 byte-exact 재현(engine exp 없음 → piecewise/linear, H_1465 선례).
+
+- **G20 §AttentionalBlink** (`attn_blink_detect(lag,depletion)`, smoke 205-207): RSVP T2 검출이 lag2-3 골(0.1)→lag6+ 회복(0.97), lag1 sparing. depletion=0 평탄(no blink). lag-dependent ⊥ GWS lag-invariant(공간 병목).
+- **G21 §SenseOfAgency** (`agency_attribute(pred,obs,thr)`, smoke 208-210): efference-copy match≥thr→self(1.0)/else external(0.0). 같은 raw 오차도 thr 로 귀속 갈림 = judgment layer ⊥ ToM(타인)·raw forward error.
+- **G22 §SubjectiveTime** (`subjective_time(events,base,k)`, smoke 211-213): base+k·novelty, high-novelty 0.86 vs low 0.32(같은 객관시간). k=0 평탄 ⊥ homeostatic objective integral(novelty-blind).
+- **G25 §EmotionRegulation** (`emotion_regulate(raw,g,strength)`, smoke 214-216): raw·(1−g·strength), raw 0.8→reappraised 0.416. g=0→raw 통과(controller inert) = 2nd-order control ⊥ H_1290 affect emergence(1st-order read-out).
+- **검증(c2):** FULL `engine_cli_smoke.hexa` **216 pass / 0 fail RC=0** (nice -n 15). 4 lane + cases 205-216. (`match` 예약어 충돌 → `mt` rename.)
+- **lockstep:** `ARCHITECTURE.json` lane 목록 4 lane 추가 · 4 카드/jsonl tier DIRECTIONAL→ENGINE-NATIVE WIRED 승격. 의식-게이트 시리즈 G16~G22+G25 engine-native 누적.
+
 ## 2026-06-20 — research(H_1476 R1): 🧊 G25 EMOTION REGULATION (Gross reappraisal) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
 
 새 의식-고유 게이트 후보 **G25 정서 조절**(Gross reappraisal): 자동 발생한 정서를 top-down reappraisal 로
