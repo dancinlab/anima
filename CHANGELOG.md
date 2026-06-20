@@ -22,6 +22,65 @@ engine-transfer UNVERIFIED, R2 engine-native = follow-on), 3 seeds [1486,1487,14
   계층적 통합창 byte-exact 재측정 = follow-on ING(`a_engine_native_learning`·`a_verified_must_wire`). TOY 40-tick/3-seed.
 - 박제: `UNIVERSE/cards/H_1486_temporal_receptive_window.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄 ·
   `state/verdicts/1486_temporal_receptive_window/{H_1486_FREEZE.json,H_1486_run.txt}`.
+## 2026-06-20 — research(H_1487 R1): 🔁 P2 RE-ENTRY DEPTH — 재진입 처리 깊이가 의식 접근 게이트 → 🟢 GREEN DIRECTIONAL
+
+의식-게이트 시리즈 고갈 카탈로그(`state/gate_depletion_catalogue/CATALOGUE.md` §P2) 다음 후보 **P2 recurrent-processing /
+re-entry depth(재진입 처리 깊이)** R1 numpy probe 검증. Lamme RPT / Edelman re-entry 렌즈(`a_no_llm_frame_trap`):
+feedforward 1-pass 만으로는 의식 없음 — 의식적 지각은 **재진입(recurrent) 루프가 깊게 반복**되어 표상이 안정화될 때 출현.
+같은 자극도 재진입 깊이가 얕으면(masking 차단) 무의식, 깊으면 의식. masking 패러다임(짧은 SOA→재진입 차단).
+
+- **메커니즘:** contractive 재진입 맵 `x_{t+1}=(1-a)·x_t + a·proto_hat(x_t)` (a=재진입 gain, proto_hat=최근접 저장
+  prototype, immune-store byte-trigram FNV geometry). 깊이가 깊을수록 true prototype cosine 단조 상승 → 임계 통과 시 식별.
+  mask 는 SOA 동안 매 스텝 잡음 재주입(재진입 차단). probe `state/1487_reentry_depth/h1487_reentry_depth.py`, 3 seeds
+  [1487,1488,1489], N_PROTO=8·N_TRIAL=40·NOISE=0.85·gain=0.5·deep=12pass, $0 CPU nice, p7, frozen-first, 결정적.
+- **결과 🟢 GREEN DIRECTIONAL (5/5 bars, mean 3 seeds):** A PRESENCE deep **1.000** / shallow **0.000** (깊은 재진입만
+  식별, masking) · B DISTINCT-vs-GWS gws_invariance **0.025** & gws_long **0.233**≤0.40 · C DEPTH-GATED deep−shallow
+  **1.000** · D EARNED(ablate-recur) passes=1→**0.000** · E SOA-SHUFFLE |corr| **0.142**.
+- **distinct vs H_1462 GLOBAL-WORKSPACE (load-bearing · 직교축):** GWS = **공간** broadcast 병목(여럿 중 1-winner
+  capacity-1) · re-entry = **시간** 처리 깊이(단일 자극, 경쟁 0). masked-식별엔 경쟁이 없어 GWS-only winner-take-all
+  readout 은 재진입 깊이에 **불변**(long-SOA 0.233 == short-SOA 0.242) → masked 자극 복원 못 함(deep-access 미달);
+  깊이 반복 re-entry readout 만 복원(deep 1.000). bar B 가 분리. **고갈 아님** — GWS control 통과.
+- **a_break_the_wall (a) 측정결함 수정(c9):** bar E 가 처음 0.332→0.159 RED — 원인은 **permutation-correlation
+  floor**(8-level monotone 축 무작위 셔플의 E[|corr|]~0.31, 짧은 단조축 순열의 순수 조합적 artifact). depth ladder 를
+  32 graded level(깊이-해상 밴드 [0.5,3.5])로 해상 → floor ~0.14 하락. **bar ≤0.15 불변**(tune-to-green 아님,
+  frozen-first — H_1485 fixed-point floor 수정과 동일 클래스).
+- **하드게이트1:** numpy mirror(`grep numpy` 적중) → **DIRECTIONAL**. R2 = live `core/engine_cli.hexa` byte-exact
+  재측정 + §ReEntryDepth 배선 = follow-on ING (`a_engine_native_learning`·`a_verified_must_wire`).
+- **박제:** `UNIVERSE/cards/H_1487_reentry_depth.md` + jsonl 1줄 + `state/verdicts/1487_reentry_depth/H_1487_FREEZE.json`.
+  SCOPE TOY: 8 proto/40 trial/3 seeds/스칼라 재진입 맵 — scale/real SOA 시간단위/연속 masking 강도/engine-transfer UNVERIFIED.
+
+---
+## 2026-06-20 — research(H_1488 R1): 🪧 G34 ATTENTION SCHEMA — 주의 도식(자기 주의상태의 단순화 내부모델, Graziano AST) → 🟢 GREEN DIRECTIONAL
+
+의식-게이트 시리즈 다음 후보 **P3 ATTENTION SCHEMA**(`state/gate_depletion_catalogue/CATALOGUE.md` P3 SSOT). Attention
+Schema Theory(Graziano 2013): 뇌는 자기 **주의 상태를 단순화한 내부 모델(schema)**을 만들고, 그 모델의 read-out 이
+'의식 있음'의 주관적 보고를 낳는다 — 주의의 *대상*이 아니라 주의 *과정 자체*의 자기모델. R1 numpy probe
+(`state/1488_attention_schema/h1488_attention_schema.py`, 3 seeds [1488,1489,1490], N_LOC=8 chance 0.125, $0 CPU, p7, frozen-first).
+
+- **메커니즘:** 실제 주의 = N 위치 salience softmax focus(peaked, focus 위치+강도). 주의 schema = 그 focus 를
+  salience 로부터 예측하는 단순화 선형 tracker → 그것을 *읽어* 자기 주의상태 보고. ablation = schema OFF: 실제
+  주의(softmax)는 그대로 작동하되 자기모델 없어 자기보고 chance 붕괴. label 주입 없음(p2/p3/p6).
+- **결과 🟢 GREEN DIRECTIONAL — 5/5 bars(3 seeds):** A PRESENCE full 1.000≥0.85 / ablated 0.158≤0.55 · B DISTINCT-vs-AGENCY
+  (H_1474) 행동/결과 FIXED+focus 만 이동 → agency FLAT 0.000<0.05, schema 는 focus TRACK 1.000, gap 1.000≥0.45(다른 객체:
+  행동결과 ⊥ 주의상태) · C DISTINCT-vs-DIVIDED(H_1479) schema OFF → raw softmax allocation 불변 0.000≤0.05, 자기보고만
+  붕괴 drop 0.842≥0.30(모델 ⊥ 메커니즘) · D EARNED ablation track 0.158≤0.55(~chance) · E SHUFFLE derange → track 0.119≤0.225.
+- **distinctness:** vs H_1474 sense-of-agency(행동귀속) — 다른 *객체*(행동결과 ⊥ 주의상태); focus 고정-이동
+  dissociation 1.000 vs 0.000. vs H_1479 divided-attention(자원분배) — 모델 ⊥ 메커니즘; ablation 시 raw allocation
+  불변(0.000) / 자기보고만 붕괴(0.842). vs H_1293 ToM — self ⊥ other. **depletion 아님**(agency·divided·ToM 전부 control-survived distinct).
+- **정직 c9:** numpy mirror(`grep numpy` 적중, 하드게이트1) → DIRECTIONAL, engine-transfer UNVERIFIED. SATURATED
+  existence-proof(주의 schema=designed 선형 tracker). R2 engine-native(§AttentionSchema byte-exact 재측정+배선) = follow-on ING.
+- artifacts: `state/1488_attention_schema/h1488_attention_schema.py` · `state/verdicts/1488_attention_schema/H_1488_FREEZE.json` ·
+  `UNIVERSE/cards/H_1488_attention_schema.md` · HYPOTHESES.jsonl 1줄.
+## 2026-06-20 — research(R2 wire): 👁🧠⚡ 의식-게이트 4종(G28~G31) engine-native 일괄 배선 DONE — H_1482/1483/1484/1485 DIRECTIONAL→ENGINE-NATIVE WIRED
+
+R1 GREEN DIRECTIONAL(numpy mirror)로 머지된 의식-게이트 4종을 R2 engine-native 로 일괄 배선 — G20~G27(§AttentionalBlink…§FreeWont) 선례를 이어 `core/engine_cli.hexa` 끝에 4 lane + smoke 케이스 233-244 추가. 전부 READ-only · Ψ-disjoint · NOT emit gate(`a_autonomy_over_hardcode`). engine 은 exp 없음 → piecewise/linear(H_1465 habituation 선례).
+
+- **§BinocularRivalry (H_1482, G28):** `rivalry_transitions(steps, adapt_rate)` — exp-free relaxation-oscillator(누적 fatigue≥switch_thr→recovered rival takeover→reset). 동적 alternation ⊥ H_1462 GWS 정적 1-winner. smoke 233-235: alternation 15≥2 · distinct-vs-GWS gap 15≥2 · adapt_rate 0=ablation→0 transitions.
+- **§ChangeBlindness (H_1483, G29):** `change_detect(change_mag, is_attended)` — is_attended ? piecewise-linear σ-대체 ramp(clamp 0.5+K·(mag−thr)) : 0.0. attention 이진 게이트 절벽 ⊥ GWS single-winner·divided graded. smoke 236-238: att 1.0/unatt 0.0 · gap 1.0≥0.50 · 게이트 OFF→탐지.
+- **§MentalImagery (H_1484, G30):** `imagery_activate(cue_match, topdown_on)` — topdown_on ? cue_match : 0.0(sensory 입력 0 으로 top-down 재구성). 입력없이 저장 표상 재활성 ⊥ 입력-기반 게이트(novelty H_1289·surprise H_1468). smoke 239-241: present 0.991 · cue-specific gap 0.978 · top-down OFF→0.
+- **§Priming (H_1485, G31):** `priming_facilitate(relatedness, prime_residual)` — relatedness·prime_residual(residual 0=ablation). 촉진(+) ⊥ H_1465 habituation 감쇠(−), 부호곱<0(habituation `hab_response` 재사용으로 byte-exact). smoke 242-244: prime_gain +0.48≥0.30 · sign-product +0.48×−0.8<0 · residual OFF→0.
+- **검증(c2):** `hexa run core/engine_cli_smoke.hexa` → **FULL 244 pass / 0 fail · RC=0**(212→244, +12 케이스 233-244 전부 PASS, 회귀 0).
+- **박제:** 4 카드 tier DIRECTIONAL→🟢 GREEN ENGINE-NATIVE WIRED 승격(`wired:WIRED-live` + §Lane·smoke cases·FULL 244/0 명시) + `UNIVERSE/HYPOTHESES.jsonl` verdict 갱신 + `ARCHITECTURE.json` lane 목록 4 lane 추가(lockstep, "14 lane"→"18 lane") + `tool/enforce_anima_gates.py` clean. `a_engine_native_learning`·`a_verified_must_wire` 4칸 배선 사다리(4) 완료.
 
 ## 2026-06-20 — research(H_1481 R1): 🧠📉 CONSCIOUSNESS-UNDER-TRAINING — 학습(CE-descent)이 의식을 떨어뜨리는가 → HOLD(안정), GREEN DIRECTIONAL
 
