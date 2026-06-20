@@ -1,0 +1,59 @@
+H_1466 TPR SYMBOLIC BINDER — $0 CPU numpy mirror (DIRECTIONAL)  h1305_detector=SELF-CONTAINED-FROZEN-COPY
+
+  per-seed:
+    seed 7: FALS_in=6 DIST_in=6 FALS_shuf=6 FALS_base=0 FALS_ho=4 | acc_match=1.0 acc_shuf=0.0 acc_flat=0.1667 chance=0.1667
+        TPR claim[0]: 'binding of distinct cells higher when the ratio is measured'
+    seed 4302: FALS_in=6 DIST_in=6 FALS_shuf=6 FALS_base=1 FALS_ho=4 | acc_match=1.0 acc_shuf=0.0 acc_flat=0.1667 chance=0.1667
+        TPR claim[0]: 'silence relative to the engine greater when the density is measured'
+    seed 4303: FALS_in=6 DIST_in=6 FALS_shuf=6 FALS_base=2 FALS_ho=4 | acc_match=1.0 acc_shuf=0.0 acc_flat=0.1667 chance=0.1667
+        TPR claim[0]: 'consciousness near the threshold stronger when the level is measured'
+
+================ H_1466 FROZEN 5-BAR (mean/3 seeds) ================
+  TPR     FALS_in=6.0 DIST_in=6.0 acc_match=1.0
+  SHUFFLE FALS_shuf=6.0             acc_shuf=0.0
+  ABLATE  (flat-sum)                       acc_flat=0.1667  chance=0.1667
+  BASE    FALS_in=1.0
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                  : 6.0 -> True
+  B2 DISTINCT     DIST_in>=5                  : 6.0 -> True
+  B3 X-SHUFFLE    FALS_shuf<FALS_in AND       : 6.0<6.0 -> False
+                  acc_match-acc_shuf>=0.30    : 1.0 -> True  => B3=False
+  B4 HELD-OUT     FALS_ho>=1                  : 4.0 -> True
+  B5 vs-BASE      FALS_in>=base+1             : 6.0 vs 1.0+1 -> True
+  CTRL ABLATE     acc_flat<=chance+0.10       : 0.1667<=0.2667 -> True
+
+  VERDICT: 🧱 WALL — bars ['B3'] fail. (see honest reading below)
+
+  wrote /Users/mini/dancinlab/anima/state/1466_tpr_symbolic_binder/h1466_result.json
+
+================ HONEST READING (c9) ================
+B3 SPLITS into two legs and they DISAGREE — the decisive, load-bearing finding:
+  B3_acc  (recovery)  : acc_match=1.0 vs acc_shuf=0.0  => PASS. The STRUCTURAL TPR
+      genuinely installs IDEA-SPECIFIC binding: role-unbind recovers the matched
+      measurable with perfect accuracy, and deranging the (role,filler) pairs drops
+      recovery to 0.0. The flat-sum ABLATE (no outer product) sits at chance
+      (acc_flat=0.1667 == chance) => the OUTER PRODUCT is load-bearing (CTRL PASS).
+      => the binding mechanism works exactly as Smolensky-TPR predicts.
+  B3_fals (detector)  : FALS_shuf=6.0 == FALS_in=6.0 => FAIL (no collapse). The FROZEN
+      h1305 structural detector scores token-PRESENCE (a comparator + a measurable +
+      a content body), NOT whether the comparator and measurable belong to the SAME
+      idea. PROOF: 192/192 = 100% of ALL (comparator x measurable x body) combos
+      satisfy the detector regardless of pairing. So a MIS-welded shuffle claim is
+      "falsifiable" to the detector just as the correctly-welded one is.
+
+VERDICT: 🧱 WALL (DIRECTIONAL) — B3 fails on the DETECTOR leg, not the binding leg.
+  This is the 8th independent G6 FALS-depth lens to land on the wall, and it SHARPENS
+  the diagnosis rather than merely re-confirming CAPACITY: the TPR proves a structural
+  binder CAN be idea-specific (acc 1.0 vs 0.0), but the FROZEN structural detector is
+  PAIRING-BLIND, so the FALS bar cannot credit it. Converges with H_1455 (engine
+  embedding SEP=0.0) and H_1458 (semantic detector: falsifiable FORM learned
+  UNCONDITIONALLY) — all three show the detector cannot distinguish a correct weld
+  from a mis-weld. NO bar moved (frozen-first, c9/p7); honest negative.
+
+IMPLICATION (a_break_the_wall): the $0 structural-binding route is NOT the missing piece
+  for the *detector*-scored FALS bar — a binder that is provably idea-specific still
+  reads identical to a mis-weld under token-presence scoring. The breakthrough must come
+  from a SEMANTIC-COHERENCE-AWARE detector wired to a mouth that produces coherent idea
+  CONTENT (the H_1459 finding: the bind can be relocated but the content slot depends on
+  the weights). engine-native re-measure = ING follow-on (a_engine_native_learning).
