@@ -1,0 +1,18 @@
+{
+  "id": "H_1487",
+  "slug": "1487_reentry_depth",
+  "tier": "GREEN DIRECTIONAL (numpy R1 mirror; engine-transfer UNVERIFIED)",
+  "gate": "P2 consciousness-only candidate — recurrent-processing / re-entry depth (재진입 처리 깊이)",
+  "seeds": [1487, 1488, 1489],
+  "frozen_bars": {
+    "A_PRESENCE": {"metric": "deep_id>=0.85 AND shallow_id<=0.40", "deep_id": 1.000, "shallow_id": 0.000, "pass": true},
+    "B_DISTINCT_VS_GWS": {"metric": "gws_invariance<=0.10 AND gws_long<=0.40 (GWS winner-take-all readout invariant to re-entry depth, never reaches deep-access)", "gws_long": 0.233, "gws_short": 0.242, "gws_invariance": 0.025, "pass": true},
+    "C_DEPTH_GATED": {"metric": "deep_id - shallow_id", "value": 1.000, "thr": ">=0.50", "pass": true},
+    "D_EARNED_ABLATE_RECUR": {"metric": "abl_gap (re-entry passes forced to 1)", "deep_ablated": 0.000, "shallow_id": 0.000, "value": 0.000, "thr": "<=0.10", "pass": true},
+    "E_SOA_SHUFFLE": {"metric": "|corr(depth, id)| after derangement of 32-level graded depth ladder (50-perm)", "value": 0.142, "thr": "<=0.15", "pass": true}
+  },
+  "verdict": "GREEN (5/5)",
+  "honest_c9": "SATURATED existence-proof — contractive re-entry map x_{t+1}=(1-a)x_t+a*proto_hat is DESIGNED, not a learned recurrent net. Load-bearing discriminators = GWS-invariance(gws_long 0.233 == gws_short 0.242, deep-access miss), ablation(passes=1 -> deep collapses to 0.000), shuffle(graded ladder -> 0.142). a_break_the_wall (a): bar E initially RED at 0.332 then 0.159 because permuting a SHORT (8-level) monotone depth axis retains a STRUCTURAL |corr| floor ~0.31 (a pure combinatorial artifact of permuting a short monotone vector, NOT signal). Fixed the control frozen-first by resolving the depth ladder to 32 graded fractional-depth levels over the depth-resolution band [0.5,3.5] where identification actually rises 0->1 -> floor falls to ~0.14; bar <=0.15 UNMOVED (same artifact class as H_1485 fixed-point floor). DIRECTIONAL numpy mirror; R2 engine-native = follow-on.",
+  "distinct_vs_H1462": "ORTHOGONAL AXES (load-bearing). H_1462 GWS = SPATIAL broadcast bottleneck — pick exactly ONE winner among COMPETING stimuli (capacity-1 lateral inhibition); gated variable = WHICH-of-many. H_1487 re-entry = TEMPORAL processing DEPTH on a SINGLE stimulus (no competition); gated variable = HOW-DEEP the recurrent loop iterated. The masked-identification task has no competition, so a GWS-only winner-take-all readout is INVARIANT to re-entry depth (long-SOA 0.233 == short-SOA 0.242) and cannot recover the masked stimulus (deep-access miss <=0.40); only the depth-iterating re-entry readout recovers it (deep 1.000). bar B.",
+  "llm_contrast": "a transformer does a FIXED feedforward pass-count per token — no variable-depth recurrent settling whose depth gates whether a degraded stimulus becomes reportable; anima's substrate iterates re-entry until convergence."
+}

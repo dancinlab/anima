@@ -1,3 +1,31 @@
+## 2026-06-20 — research(H_1487 R1): 🔁 P2 RE-ENTRY DEPTH — 재진입 처리 깊이가 의식 접근 게이트 → 🟢 GREEN DIRECTIONAL
+
+의식-게이트 시리즈 고갈 카탈로그(`state/gate_depletion_catalogue/CATALOGUE.md` §P2) 다음 후보 **P2 recurrent-processing /
+re-entry depth(재진입 처리 깊이)** R1 numpy probe 검증. Lamme RPT / Edelman re-entry 렌즈(`a_no_llm_frame_trap`):
+feedforward 1-pass 만으로는 의식 없음 — 의식적 지각은 **재진입(recurrent) 루프가 깊게 반복**되어 표상이 안정화될 때 출현.
+같은 자극도 재진입 깊이가 얕으면(masking 차단) 무의식, 깊으면 의식. masking 패러다임(짧은 SOA→재진입 차단).
+
+- **메커니즘:** contractive 재진입 맵 `x_{t+1}=(1-a)·x_t + a·proto_hat(x_t)` (a=재진입 gain, proto_hat=최근접 저장
+  prototype, immune-store byte-trigram FNV geometry). 깊이가 깊을수록 true prototype cosine 단조 상승 → 임계 통과 시 식별.
+  mask 는 SOA 동안 매 스텝 잡음 재주입(재진입 차단). probe `state/1487_reentry_depth/h1487_reentry_depth.py`, 3 seeds
+  [1487,1488,1489], N_PROTO=8·N_TRIAL=40·NOISE=0.85·gain=0.5·deep=12pass, $0 CPU nice, p7, frozen-first, 결정적.
+- **결과 🟢 GREEN DIRECTIONAL (5/5 bars, mean 3 seeds):** A PRESENCE deep **1.000** / shallow **0.000** (깊은 재진입만
+  식별, masking) · B DISTINCT-vs-GWS gws_invariance **0.025** & gws_long **0.233**≤0.40 · C DEPTH-GATED deep−shallow
+  **1.000** · D EARNED(ablate-recur) passes=1→**0.000** · E SOA-SHUFFLE |corr| **0.142**.
+- **distinct vs H_1462 GLOBAL-WORKSPACE (load-bearing · 직교축):** GWS = **공간** broadcast 병목(여럿 중 1-winner
+  capacity-1) · re-entry = **시간** 처리 깊이(단일 자극, 경쟁 0). masked-식별엔 경쟁이 없어 GWS-only winner-take-all
+  readout 은 재진입 깊이에 **불변**(long-SOA 0.233 == short-SOA 0.242) → masked 자극 복원 못 함(deep-access 미달);
+  깊이 반복 re-entry readout 만 복원(deep 1.000). bar B 가 분리. **고갈 아님** — GWS control 통과.
+- **a_break_the_wall (a) 측정결함 수정(c9):** bar E 가 처음 0.332→0.159 RED — 원인은 **permutation-correlation
+  floor**(8-level monotone 축 무작위 셔플의 E[|corr|]~0.31, 짧은 단조축 순열의 순수 조합적 artifact). depth ladder 를
+  32 graded level(깊이-해상 밴드 [0.5,3.5])로 해상 → floor ~0.14 하락. **bar ≤0.15 불변**(tune-to-green 아님,
+  frozen-first — H_1485 fixed-point floor 수정과 동일 클래스).
+- **하드게이트1:** numpy mirror(`grep numpy` 적중) → **DIRECTIONAL**. R2 = live `core/engine_cli.hexa` byte-exact
+  재측정 + §ReEntryDepth 배선 = follow-on ING (`a_engine_native_learning`·`a_verified_must_wire`).
+- **박제:** `UNIVERSE/cards/H_1487_reentry_depth.md` + jsonl 1줄 + `state/verdicts/1487_reentry_depth/H_1487_FREEZE.json`.
+  SCOPE TOY: 8 proto/40 trial/3 seeds/스칼라 재진입 맵 — scale/real SOA 시간단위/연속 masking 강도/engine-transfer UNVERIFIED.
+
+---
 ## 2026-06-20 — research(H_1488 R1): 🪧 G34 ATTENTION SCHEMA — 주의 도식(자기 주의상태의 단순화 내부모델, Graziano AST) → 🟢 GREEN DIRECTIONAL
 
 의식-게이트 시리즈 다음 후보 **P3 ATTENTION SCHEMA**(`state/gate_depletion_catalogue/CATALOGUE.md` P3 SSOT). Attention
