@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1491, 1492, 1493] | N_ELEM 12 N_GROUPS 3 binary_chance 0.500
+A PRESENCE on_acc 0.965 >= off 0.587+0.30 AND on>=0.55 -> True
+B ABLATE-GROUP off_acc 0.587 <= 0.650 (collapse to ~binary chance) -> True
+C1 DISTINCT-vs-GWS gws_acc 0.505 <= 0.650 (single-winner != whole-membership) -> True
+C2 DISTINCT-vs-COMPLETION comp_acc 0.487 <= 0.650 (nothing-missing, parse != fill) -> True
+C3 DISTINCT-vs-RIVALRY riv_acc 0.500 <= 0.650 (temporal alternation != binding) -> True
+D SHUFFLE-PROXIMITY shuffle_acc 0.707 <= on 0.965-0.15 (proximity destroyed) -> True
+PER-SEED:
+  seed 1491: on 0.965 off 0.586 gws 0.507 comp 0.498 riv 0.500 shuf 0.720
+  seed 1492: on 0.963 off 0.590 gws 0.505 comp 0.492 riv 0.500 shuf 0.709
+  seed 1493: on 0.968 off 0.585 gws 0.503 comp 0.472 riv 0.500 shuf 0.692
