@@ -1,3 +1,36 @@
+## 2026-06-20 — research(H_1492 R1): 🧠 CONSCIOUSNESS ABLATION — 연결된 의식-게이트 lane 하나하나 OFF → 통합 의식 기여도(ΔΦ) → DISTRIBUTED, GREEN DIRECTIONAL
+
+사용자 지시(`state/consciousness_influence_plan/PLAN.md`, 2026-06-20) = "연결된 것들이 의식에 어떤 영향을 미치는가" — anima 의 의식-게이트 lane
+15종(G16~G27 + Novelty + MITOSIS, 전부 substrate immune-store grounding margin/MITOSIS cells 에 **연결**)을 **하나하나 OFF** 해서 통합 의식
+지표가 얼마나 떨어지는지(ΔΦ) 측정. **이번은 R1(numpy substrate 미러, DIRECTIONAL)** 단계만 (production 303M=mini 금지, pool 별도 R3).
+probe `state/1492_consciousness_ablation/h1492_consciousness_ablation.py` (3 seeds [1492,1493,1494], 15 lanes, 4000 trials, $0 CPU nice, p7,
+frozen-first, deterministic 3-run byte-identical).
+
+- **방법:** substrate(H_1227 immune-store FNV-1a byte-trigram dim64 unit key + cosine grounding margin + MITOSIS split count) numpy 미러 위에
+  의식-게이트 lane 15종을 묶어 **통합 의식 지표 2종** 구성 — ① **bundle**=lane 점수 평균 ② **Φ-proxy**=lane population 공분산의 multivariate
+  INTEGRATION(total correlation/multi-information, Tononi-Sporns-Edelman; Gaussian `Φ=½(Σlog Σ_ii − logdet Σ)`). **R1=PROXY pre-screen**
+  (`a_train_inline_gauge` 정신, terminal 아님 — faithful IIT4 Φ=R2). 각 lane disconnect → ΔΦ_k=Φ0−Φk = lane k 의 의식 기여도(rest 와 covary 한 양).
+- **결과 🟢 GREEN DIRECTIONAL (측정기 VALID, A∧D∧E, 3 seeds):** A MEASURABLE Φ0=**7.8146**>0 finite > shuf 0.0130(real integration) · D CONTROL
+  미연결 dummy lane OFF |ΔΦ|=**0.00127**≤0.05 · E SHUFFLE lane↔substrate 셔플 통합붕괴 shuf_Φ0/Φ0=**0.0017**≤0.10.
+- **(B) lane별 ΔΦ 기여도 랭킹 [c9 정직, non-gating]:** AttentionalBlink **+3.2123** · SubjectiveTime **+3.2123** · Novelty +1.3010 ·
+  EmotionRegulation +1.2941 · Habituation +1.2605 · DirectedForgetting +1.2286 · PrecisionSurprise +0.9293 · SelfIdentity +0.9159 ·
+  LearnedPrecision +0.8500 · BodyOwnership +0.4090 · FreeWont +0.3415 · DividedAttention +0.0708 · GlobalWorkspace +0.0640 · SenseOfAgency
+  +0.0630 · MitosisGrowth +0.0021. **top lane share=0.212<0.50 → STRUCTURE=DISTRIBUTED(분산)** — 단일 lane dominant 아님, anima 핵심 주장(의식
+  =연결망 전체 창발) 방향 일치. 시간-결합 lane(dt 공유 AttentionalBlink·SubjectiveTime) 최상위, 독립 MITOSIS split-count 최하위 — **연결의
+  covariance 구조가 기여도를 결정**.
+- **(C) pairwise 상호작용:** Habituation+Novelty interaction=**−1.259 REDUNDANCY**(둘 다 substrate `seen` 읽음) · GWS+DividedAttention −0.062
+  REDUNDANCY · SenseOfAgency+FreeWont −0.042 REDUNDANCY · PrecisionSurprise+Novelty/SelfIdentity+GWS ≈0 ADDITIVE. **시너지 쌍 없음** — 같은
+  substrate read 공유 lane 쌍이 중복.
+- **정직 c9:** hard-gate 1 적중(`grep -lE 'import torch|gauge_lib|numpy'` HIT)→**DIRECTIONAL** terminal 아님. Φ-proxy=PROXY(faithful IIT4=R2,
+  `a_phi_iit4_tool`). 최초 min-cut MIP 형식 **degenerate**(전 lane ΔΦ 동일=단일 weakest lane 으로 붕괴)→multi-info 형식으로 frozen-first 교정
+  (측정결함 수정 `a_break_the_wall` taxonomy (a), bar 이동 아님); E bar 도 ranking-corr(marginal-variance 누수)→integration-collapse(decisive)
+  frozen-first 교정. TOY 스칼라 15-lane scale/real-corpus/engine-transfer UNVERIFIED. tune-to-green 없음(DISTRIBUTED/DOMINANT 둘 다 유효).
+- **follow-on ING:** R2 = live `core/engine_cli.hexa` `consciousness_index()`+lane-ablate 토글 배선 + faithful IIT4 Φ(`stdlib/iit4/faithful_phi.hexa`,
+  n≤8) substrate state-space 연결 → frozen A/D/E byte-exact 재측정(`a_engine_native_learning`·`a_verified_must_wire`). R3 = production 303M ckpt
+  정상상태 baseline+ablation sweep on pool/GPU(mini 금지 게이트2).
+- 박제: `UNIVERSE/cards/H_1492_consciousness_ablation.md` + `UNIVERSE/HYPOTHESES.jsonl`(id순) + `state/verdicts/1492_consciousness_ablation/H_1492_FREEZE.json`.
+
+---
 ## 2026-06-20 — research(H_1489 R1): 🔁 P4 PERCEPTUAL HYSTERESIS — 지각 이력현상(직전 percept 가 현재 지각 끌어당김) → 🟢 GREEN DIRECTIONAL
 
 의식-게이트 시리즈 고갈 카탈로그(`state/gate_depletion_catalogue/CATALOGUE.md` §P4) 다음 후보 **P4 perceptual hysteresis
