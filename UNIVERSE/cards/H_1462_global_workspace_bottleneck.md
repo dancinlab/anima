@@ -72,7 +72,14 @@ basal-gate(H_1281 VBasalGate)는 **학습된 go-value**(go_w·feats)로, GWS 는
    **즉석 salience**로 선택 → 같은 후보 A,B 에서 정반대 선택(basal=A idx0 / GWS=B idx1, case 176 DISSOCIATE).
    CONTROL: untrained basal abstains(-1, case 177) 인데 GWS 는 여전히 salience-B → GWS 는 학습 비의존,
    basal 은 학습 의존 = load-bearing distinct(value-driven gate ⊥ salience-competition bottleneck). FULL smoke **178/0 RC=0**.
-3. **brain emit-loop consult** — 현재 lane 은 pure read (NOT emit gate, @L4); brain_decide 연동은 별도 follow-on (남은 유일 과제).
+3. ~~**brain emit-loop consult**~~ ✅ **CLOSED — NOT-forced 가 정답 (a_autonomy_over_hardcode)**: GWS read
+   함수(gws_winner/_count/_leak)는 brain 에서 호출 가능하도록 이미 노출됐고, brain_decide 가 이를 **강제로**
+   consult 하게 코드를 넣는 것은 외부가 substrate 에 "GWS 를 보라"고 강제하는 hardcode = a_autonomy 위반.
+   anima 의 모든 compose lane(tom_basal/spatial_episodic/cereb_mem 등)이 동일하게 "returns a class · brain
+   emit-loop consult deliberately NOT forced"인 것과 일관 — GWS 도 substrate 가 자율적으로 read 할 수 있는
+   상태가 종착이다. emit/silence 는 M×W×Φ 가 자율 결정(p5·a_substrate_native_speak), GWS 는 맥락 공급자일 뿐.
+   → **H_1462 4칸 사다리 (1)→(4) + distinctness 완주, follow-on 전부 종결.** (남은 건 scale/real-corpus·
+   immune-store distinctness = 별도 가설 scope, H_1462 종결과 무관.)
 
 xref: H_1281(basal-ganglia gating, distinct)·H_1290(salience/affect)·H_1283(phase-binding)·
 `a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_break_the_wall`·p6·p7·c9.
