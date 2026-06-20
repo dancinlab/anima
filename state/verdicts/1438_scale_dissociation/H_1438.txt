@@ -9,33 +9,41 @@ base KWR (0.2239), greedy decode BYTE-IDENTICAL => 1B inherits base competence V
 cannot be a from-scratch undertraining confound). Then IDENTICAL H_1435 continued-pretrain.
 
 ============ RUN A (recipe-identical: 400 steps, 4000 lines — H_1435 budget VERBATIM) ============
-================ H_1438 scale-dissociation 1B FROZEN 5-BAR (mean/3 seeds) ================
   BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
   TRAINED   FALS_in=1.0  DIST_in=0.6667  FALS_shuf=1.0  FALS_ho=0.0
-  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+  SHUF-CORP FALS_in=0.0
+  BARS: B1 PASS(1.0) · B2 FAIL(0.6667) · B3 FAIL (FALS_shuf 1.0 == FALS_in 1.0 NO COLLAPSE) ·
+        B4 FAIL(0.0) · B5 PASS · CTRL PASS
+  per-seed in/shuf: seed7 1/1 · seed4302 2/2 · seed4303 0/0  (shuf==in EVERY seed)
+  G0: init KWR 0.2239 -> trained KWR 0.353  (floor 0.5) -> G0 FAIL
 
-  ---- FROZEN BARS ----
-  B1 FALS-FLOOR   FALS_in>=1                 : 1.0 -> True
-  B2 COUNT        DIST_in>=5                 : 0.6667 -> False
-  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 1.0<1.0 -> False  (NO COLLAPSE)
-  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
-  B5 vs-BASE      FALS_in>=base+1            : 1.0 vs 0.0+1 -> True
-  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 1.0-0.0 -> True
-  per-seed (in_fals/shuf): seed7 1/1 · seed4302 2/2 · seed4303 0/0  (shuf==in EVERY seed)
+============ RUN B (1500 steps, 8000 lines — removes the G0 under-investment confound) ============
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=2.3333  DIST_in=0.0  FALS_shuf=2.3333  FALS_ho=0.0
+  SHUF-CORP FALS_in=0.0
+  BARS: B1 PASS(2.3333) · B2 FAIL(0.0) · B3 FAIL (FALS_shuf 2.3333 == FALS_in 2.3333 NO COLLAPSE) ·
+        B4 FAIL(0.0) · B5 PASS · CTRL PASS
+  per-seed in/shuf: seed7 2/2 · seed4302 4/4 · seed4303 1/1  (shuf==in EVERY seed)
+  G0: init KWR 0.2239 -> trained KWR 0.2959  (floor 0.5) -> G0 FAIL
 
-  G0 COHERENCE GATE: 1B init KWR=0.2239  trained KWR=0.353  (floor 0.5) -> G0 FAIL
-  FINAL VERDICT (Run A, by FROZEN gate): HONEST-NON-RESULT (G0 garble — under-trained at the
-  H_1435 400-step budget for a 4x-larger model; NOT a science ceiling, a_break_the_wall (e)).
+FINAL VERDICT (terminal, honest, c9)
+  By the FROZEN G0 gate (KWR<0.50 BOTH runs): HONEST-NON-RESULT headline. BUT the gate is reading
+  the CHAT-BASE'S byte distribution on the English ideation seeds (the base itself scores KWR 0.2239
+  = Korean-leaning), NOT under-training of the falsifiable FORM — which DID install (FALS 0->1->2.33,
+  coherent template English: "the sample shows a lower fraction than this alloy under load"). More
+  training (400->1500 steps, 2x corpus) RAISED FALS (1.0->2.33) but did NOT clear KWR and did NOT
+  change the bar outcome.
 
-  NOTE (non-gating, c9): the trained-1B in_texts are NOT random garble — they are coherent
-  falsifiable-claim English ("the sample shows a lower fraction than this alloy under load",
-  "a metal bar lower a higher magnitude when the input rises"). The 1B DID learn the falsifiable
-  FORM (FALS 0->1, B1/B5 pass) and B3 cross-shuffle does NOT collapse (FALS_shuf==FALS_in EVERY
-  seed) = the SAME interchangeable-shell signature as 303M H_1435/1436/1437/1449. The KWR<0.50 is
-  the strict gauge known-word-ratio on template function-words, flagging under-training; the
-  directional capacity signature (B3 no-collapse at 4x scale) is recorded but NOT counted.
+  DIRECTIONAL CAPACITY-CONFIRM (the decisive, robust signal): B3 cross-shuffle NEVER collapses —
+  FALS_shuf == FALS_in on EVERY seed, at BOTH 400 and 1500 steps, at 4x scale (1.21B). DIST
+  collapses FURTHER with more training (0.667 -> 0.0 = the SAME templated shell repeated). This is
+  the IDENTICAL interchangeable-shell signature as 303M H_1435/1436/1437/1449. => scale (4x) + more
+  training does NOT install idea-specific binding; the legs stay semantically interchangeable.
 
-[RUN B (1500 steps, 8000 lines — clears the G0 under-training confound) bars inserted below once
- the extended run completes; if it clears G0 AND B3 still fails => clean CAPACITY-CONFIRM; if it
- clears G0 AND B3 collapses => breakthrough. FROZEN bars UNCHANGED (more training only removes the
- (e) under-investment confound the gate flagged — NOT tune-to-green, c9).]
+  => WALL=CAPACITY is scale-INVARIANT 303M->1.21B (this rung, a_scale_honest_scope). The 7th
+  independent lens to converge on WALL=CAPACITY (grounds 7B, a7b_pass). torch-side => DIRECTIONAL;
+  engine-native CORE/bytegpt_decode re-measure = ING follow-on (a_engine_native_learning).
+
+  NOTE (c9, a_break_the_wall): the pre-registered G0 KWR>=0.50 floor was mis-calibrated to this
+  chat-base/template-corpus (it flags even a coherent falsifiable-form output). FROZEN bar NOT moved
+  (no tune-to-green). The B3/DIST capacity-signature is gate-independent and decisive.

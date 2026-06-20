@@ -3,10 +3,10 @@ id: H_1441
 slug: 1441_contrastive_falsifiability
 title: G6 IDEATION ★ FALS-depth — CONTRASTIVE falsifiable-vs-nonfalsifiable minimal-pair objective
 group: gate-dig (G6 IDEATION ★) — FALS-depth TRAINING side r6
-terminal_tier: BLOCKED — engine-native 5-bar 미완 (substrate-speed infra wall + pod loss; a_break_the_wall type-c, NOT 🟢/🧱). 학습 ckpt 는 PULL 완료(재측정 가능)
-wired: BLOCKED (engine-native decode 미완 → 배선 보류; ING h1441_engine_native)
+terminal_tier: IN-PROGRESS — substrate-speed 벽 BROKEN (native-GEMM mm fast-path: scalar 26s → v0241 6.4s → native-GEMM ~2.7s/token, byte-faithful argmax 32==torch). engine-native decode 로컬 CPU 진행 중($0, no pod) → score 후 terminal 🟢/🧱. (이전 BLOCKED 의 type-c substrate-speed 벽 제거; a_break_the_wall)
+wired: PENDING-SCORE (3-bin .bin 변환 검증 완료 [각 1,213,440,020B = 303M layout], decode 진행 → score 후 배선 판단)
 verdict_dir: state/verdicts/1441_contrastive_falsifiability/
-date: 2026-06-19
+date: 2026-06-20
 ---
 
 > ⛔ **2026-06-19 ENGINE-NATIVE 측정 BLOCKED** (state/verdicts/1441_contrastive_falsifiability/H_1441_engine_native_BLOCKED.txt):
@@ -33,6 +33,25 @@ date: 2026-06-19
 > → $15-40 를 known 30h CPU 벽 + corrupt-base 리스크에 태우는 것은 a_completeness/c16 상 부당. **여전히 BLOCKED (type-c 인프라 벽)**.
 > 갱신된 재개조건: (1) bytegpt_decode 에 GPU/device decode 경로 추가(forge), 또는 (2) decode per-token CPU GEMM 을
 > 실측 ≥4× 가속하는 runtime 변경 — 둘 중 하나가 land 한 뒤에야 fire. (decode CLI 의 stale `CORE/`→`core/` import 는 선제 수정함.)
+
+> ✅ **2026-06-20 재개조건 충족 — substrate-speed 벽 BROKEN, decode 진행 중** (state/verdicts/1441_contrastive_falsifiability/H_1441_engine_native_UNBLOCKED_INPROGRESS.txt):
+> 위 재개조건 (1)+(2)가 둘 다 land 했다 — native-GEMM forward 가 core/bytegpt_decode.hexa 에 배선됨
+> (commit d5a8540f8 `feat(core/decode): GPU 경로 배선 — bytegpt_decode d×d GEMM → flame_mm.mm`,
+> lane state/bytegpt-fast-matmul/RESULTS.md). 모든 per-layer d×d matmul 을 runtime `farr_matmul`(CPU GEMM)
+> / cuBLAS(CUDA) 로 라우팅, byte-faithful(argmax 32 == torch golden, logits ~1e-5).
+> **로컬 Mac CPU 실측(v0.245.2, native-GEMM)**: gen20=222.4s / gen60=328.6s → Δ40tok=106s → **~2.7 s/token**
+> (옛 scalar 26 s/token 대비 ~10×; v0.241.10 의 6.4 s/token 대비 ~2.4×). 30h serial 벽 → ~2.5h(3-bin 병렬, $0).
+> **변환 검증**: pt_to_engine_bin.py 가 base h1129c / contrastive / shuffle 3개를 각 **1,213,440,020B = 정확한
+> 303M layout**(vocab256 d1024 L24 H16 block512)로 직렬화. bins = state/1441_contrastive_falsifiability/bins/.
+> **CLI argv 수정**: decode CLI 가 user arg 를 `a[1..]` 로 읽었으나 현 hexa 의 `argv()` 는 `[bin,"--",args...]` →
+> 인덱스 시프트. `"--"` 기준 base offset 으로 수정(state/1441_contrastive_falsifiability/engine_decode_batch_cli.hexa).
+> 이게 즉시 에러(`to_int: not an integer: <out_path>`)의 원인 — 커널 아님.
+> **decode 진행 중**(detached nohup, 로컬 CPU, $0, pod 불필요): 3-bin × 30 frags × gen110 → /tmp/h1441_local/out_*.txt.
+> 끝나면 `h1441_engine_native.py --score out_contra out_shuf out_base` 로 frozen 5-bar(B3 cross-shuffle COLLAPSE
+> 결정타) 채점 → terminal 🟢/🧱. FROZEN bar 불변(c9/no tune-to-green).
+> **POD 누수 0**: fleet pod(vast 41790394, RTX4090, $0.54/hr)은 GPU cuBLAS smoke 통과 후 user-요청 fleet 정리로
+> decode 중 소멸(이전 41556247 과 동일 race; vast list → 0 instances 확인). ckpt 는 이미 로컬(weights 안전,
+> a_fire_recover_complete) — 잃은 건 pod /tmp shard 뿐, 로컬에서 $0 재디코드 중.
 
 # H_1441 — CONTRASTIVE: falsifiable vs non-falsifiable 최소쌍 대조로 cross-shuffle 실패를 직격
 
