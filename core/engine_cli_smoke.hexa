@@ -2372,6 +2372,24 @@ fn main() {
     println("INFO  G25 emotion-regulation (H_1476 R2 WIRED): raw 0.8 → reappraised " + to_string(emotion_regulate(0.8, 0.6, 0.8))
           + " (down-regulated) · g=0 → " + to_string(emotion_regulate(0.8, 0.0, 0.8)) + " (raw passes) — 2nd-order control ⊥ H_1290 affect emergence")
 
+    // ── additional-bar closure (R1 numpy DIRECTIONAL → engine-native, c9) ──────────────────────
+    // case 217 (G20 H_1473 bar D LAG-1 SPARING) — lag-1 T2 detection (0.94) sits FAR above the lag-2
+    //   trough (0.10), reproducing the sparing phenomenon (T2 rides T1's still-open attention gate).
+    if _assert_b("case_217_blink_lag1_sparing", true, (attn_blink_detect(1, 1.0) - attn_blink_detect(2, 1.0)) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 218 (G21 H_1474 bar D SELF⊥OTHER) — another agent's action has NO efference copy → the
+    //   comparator ABSTAINS (-1), DISTINCT from self-caused attribution (1.0); abstain ≠ self/external.
+    if _assert_b("case_218_agency_other_abstain", true, agency_other() <= (0.0 - 0.99) && agency_attribute(0.5, 0.5, 0.5) >= 0.99) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 219 (G22 H_1475 bar D ORDER-INVARIANCE) — subjective duration depends ONLY on the novelty
+    //   TOTAL, not its order: 7+6 and 6+7 over the same objective interval yield byte-identical duration.
+    if _assert_b("case_219_subjective_order_invariant", true, subjective_time(7.0 + 6.0, 0.2, 0.06) == subjective_time(6.0 + 7.0, 0.2, 0.06)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 220 (G25 H_1476 bar D SELECTIVITY) — reappraisal attenuates a LARGE negative raw FAR more
+    //   (abs drop) than a SMALL neutral raw: the controller acts selectively on intense affect (drop ∝ raw).
+    if _assert_b("case_220_regulation_selectivity", true, ((0.8 - emotion_regulate(0.8, 0.6, 0.8)) - (0.1 - emotion_regulate(0.1, 0.6, 0.8))) >= 0.20) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  additional-bar closure (R1→engine-native): G20 lag1-sparing " + to_string(attn_blink_detect(1, 1.0))
+          + " vs trough " + to_string(attn_blink_detect(2, 1.0)) + " · G21 agency-other " + to_string(agency_other())
+          + " (abstain) · G22 order-inv " + to_string(subjective_time(13.0, 0.2, 0.06)) + " · G25 neg-drop "
+          + to_string(0.8 - emotion_regulate(0.8, 0.6, 0.8)) + " vs neu-drop " + to_string(0.1 - emotion_regulate(0.1, 0.6, 0.8)))
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

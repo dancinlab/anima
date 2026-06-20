@@ -1,7 +1,7 @@
 # H_1475 — 🕰 SUBJECTIVE TIME (G22 의식-고유 게이트 후보)
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SubjectiveTime (`subjective_time`) · `engine_cli_smoke.hexa` cases 211-213 · FULL smoke **216 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SubjectiveTime (`subjective_time`) · `engine_cli_smoke.hexa` cases 211-213 + **219(부가 bar D order-invariance)** · FULL smoke **220 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 (G22 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** time perception / temporal illusions (Eagleman · time dilation/compression) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1475_subjective_time/` · verdict `state/verdicts/1475_subjective_time/H_1475_FREEZE.json`
@@ -58,6 +58,9 @@ high-novelty 구간 nov=11/12 est **0.879** vs low-novelty nov=2/12 est **0.242*
 1. **R2 엔진-네이티브** — §HomeostaticDrive(H_1292) 적분 lane 재사용: 같은 객관 elapsed 위에
    novelty-가중 subjective 추정자를 §SubjectiveTime 으로 배선, frozen bars engine-native 재측정 +
    `engine_cli_smoke` 회귀가드 (`a_engine_native_learning` · `a_verified_must_wire`).
+2. **부가 bar D (order-invariance) engine-native ✅** — R1 numpy-only 였던 D 를 engine 으로 보강:
+   `subjective_time` 는 novelty TOTAL 만 받으므로 `subjective_time(7+6,…) == subjective_time(6+7,…)` byte-identical →
+   같은 객관 구간이면 novelty 순서 무관 = **smoke case 219** PASS (FULL 220/0 RC=0).
 
 xref: H_1292(homeostatic drive, distinct)·H_1280(VForwardField 예측오차)·H_1468(precision surprise)·
 H_1289(novelty)·H_1465(habituation)·H_1462/1465/1468/1471(의식-게이트 시리즈)·

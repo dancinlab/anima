@@ -1,7 +1,7 @@
 # H_1474 — 🕹 SENSE OF AGENCY / 주체감 (G21 의식-고유 게이트 후보)
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SenseOfAgency (`agency_attribute`) · `engine_cli_smoke.hexa` cases 208-210 · FULL smoke **216 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SenseOfAgency (`agency_attribute` + `agency_other`) · `engine_cli_smoke.hexa` cases 208-210 + **218(부가 bar D self⊥other abstain)** · FULL smoke **220 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 (G21 candidate) · "의식이라서 가능한 것" 시리즈 (G16/G17/G18/G19/G19-meta 이후)
 - **lens:** sense of agency / comparator model (Haggard · efference copy ↔ 감각결과 일치) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1474_sense_of_agency/h1474_sense_of_agency.py` · verdict `state/verdicts/1474_sense_of_agency/H_1474_FREEZE.json` · run `state/verdicts/1474_sense_of_agency/H_1474_run.txt`
@@ -60,6 +60,9 @@ OFF 면 귀속 붕괴(C), 페어링 셔플로 agency-match 상관 붕괴(E, real
    있으면 §SenseOfAgency(efference-copy match → self/external attribute + abstain) 배선 + `engine_cli_smoke` cases
    + ARCHITECTURE lockstep, 5 frozen bars byte-exact 재측정 (`a_engine_native_learning`·`a_verified_must_wire`).
 2. distinctness 정량 double-dissociation vs H_1280(forward raw-error) / H_1293(ToM other-belief) control-survived 측정.
+3. **부가 bar D (self⊥other abstain) engine-native ✅** — R1 numpy-only 였던 D 를 engine 으로 보강: `core/engine_cli.hexa`
+   §SenseOfAgency 에 `agency_other()` 신설(타인 행동=efference copy 없음 → −1 ABSTAIN, READ-only Ψ-disjoint) →
+   `agency_other()` −1.0 ≠ `agency_attribute` self 1.0 = **smoke case 218** PASS (FULL 220/0 RC=0, ARCHITECTURE lockstep).
 
 xref: H_1280(cerebellar forward-model, distinct b)·H_1293(theory-of-mind, distinct a · self⊥other)·H_1471(G16 self-continuity)·
 H_1462/1465/1468/1472(의식-게이트 시리즈)·`a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·p7·p8·c9.
