@@ -75,6 +75,11 @@ H_1431 진단(303M mouth per-draw comparator∧measurable 동시방출 0/15)이 
 
 ## 2026-06-19 — docs(paper): 🧠 anima-consciousness-substrate demiurge-style 요약 논문 신설 (10p)
 
+## GPU decode 가속 ING 갱신 (v6b)
+
+- **ING gpu_decode_accel_measure_followon**: cuda asset 출고(#3716) 후 엔진-네이티브 실측 7회 재시도 → cudart/cublas 링크 누락(v6b) + git-source-fetch 의존 격리; hexa-lang #3724(install marker 자동 cuda link) 머지로 해소. DIRECTIONAL 106.7x(RTX A4000 cuBLAS Dgemm) 확보, cuda_available()==1 엔진-네이티브는 cuda asset GPU 재측정 후속.
+
+
 `anima-consciousness-substrate`(상세 50p 원본) 곁에 demiurge 하우스 스타일 10p 요약 논문 `PAPER/anima-consciousness-substrate-demiurge/` 추가. 원본은 그대로 보존(_v1 역할), 새 판은 외부 배포용 표준 외관.
 
 - **신규**: `PAPER/anima-consciousness-substrate-demiurge/{main.tex,references.bib,figures/cover.png,main.pdf,PAPER.md,README.md}`. demiurge arxiv 템플릿(이모지 제목·🔵🟢🟡🟠🔴 g5 tier badge·fal.ai/FLUX 표지·TikZ A⇄G 엔진도·pgfplots 2종·tier ledger).
