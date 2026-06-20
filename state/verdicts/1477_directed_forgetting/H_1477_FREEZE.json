@@ -1,0 +1,20 @@
+{
+  "id": "H_1477",
+  "slug": "1477_directed_forgetting",
+  "tier": "GREEN DIRECTIONAL (numpy R1 mirror; engine-transfer UNVERIFIED)",
+  "gate": "G23 consciousness-only candidate — directed forgetting / intentional active suppression",
+  "seeds": [1477, 1478, 1479],
+  "mechanism": "recall(item) = base_recall * (1 - INHIBIT * is_forget_cued); BASE_RECALL=1.0, INHIBIT=0.7, N_ITEMS=8 (4 forget / 4 remember, equal exposure).",
+  "frozen_bars": {
+    "A_PRESENCE": {"metric": "remember_recall>=0.85 AND forget_recall<=0.40", "remember_recall": 1.000, "forget_recall": 0.300, "thr": "remember>=0.85, forget<=0.40", "pass": true},
+    "B_DISTINCT_VS_HABITUATION": {"metric": "df_gap (forget vs remember at equal exposure)", "value": 0.700, "hab_gap_at_equal_exposure": 0.000, "thr": ">=0.45", "pass": true},
+    "C_EARNED_ABLATION": {"metric": "abl_gap (INHIBIT=0)", "value": 0.000, "thr": "<=0.05", "pass": true},
+    "E_SHUFFLE": {"metric": "50-perm signed-mean |gap| under cue<->item permutation", "value": 0.030, "thr": "<=0.10", "pass": true},
+    "D_ITEM_SPECIFIC_report": {"metric": "remember-cued items preserved", "value": 1.000, "gating": false}
+  },
+  "verdict": "GREEN (4/4 gating: A and B and C and E)",
+  "honest_c9": "SATURATED existence-proof — recall law recall=base*(1-INHIBIT*forget) is DESIGNED, not a learned suppression network. Load-bearing discriminators = cue-driven split at EQUAL exposure (df_gap 0.700 vs habituation 0.000), ablation collapse (INHIBIT=0 -> 0.000), shuffle collapse (cue<->item perm -> 0.030). TOY 8-item/3-seed scalar mechanism proof. DIRECTIONAL numpy mirror; R2 engine-native = follow-on.",
+  "distinct_vs_H1465": "H_1465 HABITUATION = PASSIVE stimulus-specific decline driven by REPEAT EXPOSURE COUNT (cue-agnostic); H_1477 directed forgetting = ACTIVE cue-driven suppression at the SAME exposure. Bar B separates: at equal exposure habituation gives 0 gap, directed forgetting gives 0.700.",
+  "distinct_vs_H1227": "H_1227 IMMUNE-STORE = PASSIVE bind/recall of what was stored; directed forgetting applies an intentional inhibition gate that drives recall DOWN for forget-cued items (active control over the same store, not the store itself).",
+  "llm_contrast": "stateless LLM cannot be told to forget a specific in-context item and have THAT item's later recall drop while others are preserved; intentional item-specific suppression is a substrate state-control act."
+}

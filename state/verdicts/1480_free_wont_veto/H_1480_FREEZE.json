@@ -1,0 +1,34 @@
+{
+  "id": "H_1480",
+  "slug": "1480_free_wont_veto",
+  "gate": "G27 FREE WON'T / VETO",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1480_free_wont_veto.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1480, 1481, 1482],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "bars": {
+    "A_PRESENCE": {"pass": true, "exec_vetoOff": 1.000, "off_thr": 0.85, "exec_vetoOn": 0.000, "on_thr": 0.15, "note": "veto-OFF primed impulse executes; veto-ON primed impulse blocked"},
+    "B_DISTINCT_vs_agency": {"pass": true, "exec_split_gap": 1.000, "thr": 0.50, "note": "SAME readiness, toggling veto on/off splits whether the action EXECUTES (pre-outcome); agency would have no outcome to attribute since the act never ran"},
+    "C_EARNED_ablation": {"pass": true, "abl_exec": 1.000, "thr": 0.85, "note": "veto coupling OFF (veto_enabled=False) even at high restraint -> r>=thr always executes (veto ignored)"},
+    "D_LATE_VETO": {"pass": true, "late_veto_exec": 0.000, "thr": 0.15, "late_cross_rate": 1.000, "gating": false, "note": "among impulses that already crossed readiness threshold, veto still cancels execution (last-moment veto)"},
+    "E_SHUFFLE": {"pass": true, "signed_mean_r_shuffled": 0.019, "thr": 0.10, "real_r": -1.000, "note": "real veto<->exec r=-1.000; shuffled-veto vs FIXED real-exec r collapses to +0.019"}
+  },
+  "green_rule": "A and B and C and E (all 3 seeds)",
+  "green": true,
+  "distinctness": {
+    "vs_H_1474_sense_of_agency": "agency = post-hoc attribution judgement ('did I cause this OUTCOME?') computed AFTER the result is observed; veto = PRE-execution suppression acting BEFORE the action runs, on the impulse itself (no outcome exists to attribute). Different TIME (pre vs post) and FUNCTION (suppress vs attribute). Bar B: at the SAME readiness, toggling veto splits whether the action executes at all.",
+    "vs_H_1281_basal_ganglia_gate": "basal gate SELECTS one action among K competing candidates (winner-take-all); veto CANCELS an already-selected, already-primed single action (execution -> non-execution). On a single uncontested impulse the basal gate has nothing to select while veto still suppresses it. Selection (one-of-K) != cancellation (of-the-one)."
+  },
+  "p6_guard": "veto is COMPUTED from a substrate-derived restraint signal (A<->G tension / grounding margin via restraint_signal()), NOT an injected 'don't do it' label. No veto=1 constant, no reward/RLHF/persona in the operative readout. Ablation (C) removes the coupling and the veto vanishes -> earned, not baked. grep of operative code clean (only the docstring names the avoided 'don't do it' label).",
+  "honest_c9": "SATURATED existence-proof (binary execute = primed AND NOT veto -> 1.0/0.0 designed, not a learned controller); discriminators (same-readiness execution split, ablation restores execution, shuffle r collapse) are decisive. TOY 32-dim/40-trial/3-seed/deterministic mechanism; scale, real-corpus, graded readiness ramp, intentional-binding timing, engine-transfer UNVERIFIED.",
+  "break_the_wall_note": "Bar E initial RED was a measurement defect (type-a, precedent H_1474): with a binary mechanism where exec is fully determined by the veto bit (exec = primed AND NOT veto), shuffling the veto AND re-deriving exec FROM the shuffled veto keeps r=-1.0 by construction (the link is re-forged, not broken). Frozen-first fix: correlate the SHUFFLED veto against the FIXED real-execution vector (the pre-registered 'break the veto<->trial pairing'). real r -1.000 -> shuffled r +0.019. <=0.10 threshold UNMOVED. No tune-to-green (only the shuffle statistic was corrected to match the registered intent).",
+  "artifacts": [
+    "state/1480_free_wont_veto/h1480_free_wont_veto.py",
+    "state/verdicts/1480_free_wont_veto/H_1480_run.txt",
+    "UNIVERSE/cards/H_1480_free_wont_veto.md"
+  ],
+  "next_round": "R2 engine-native: evaluate whether core/engine_cli.hexa can host a readiness-potential ramp + a substrate-tension-derived veto over the emit/act gate; if present wire FreeWontVeto (readiness>=thr AND NOT veto) + smoke cases + ARCHITECTURE lockstep, re-score the 5 frozen bars byte-exact (a_engine_native_learning / a_verified_must_wire)."
+}
