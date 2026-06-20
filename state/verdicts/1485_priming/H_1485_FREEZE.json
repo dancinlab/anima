@@ -1,0 +1,18 @@
+{
+  "id": "H_1485",
+  "slug": "1485_priming",
+  "tier": "GREEN DIRECTIONAL (numpy R1 mirror; engine-transfer UNVERIFIED)",
+  "gate": "G31 consciousness-only candidate — priming (점화)",
+  "seeds": [1485, 1486, 1487],
+  "frozen_bars": {
+    "A_PRESENCE": {"metric": "related_primed>=0.85 AND worse_unprimed<=0.55", "related_primed": 0.940, "worse_unprimed": 0.430, "pass": true},
+    "B_DISTINCT_VS_HABITUATION": {"metric": "sign(prime_gain)*sign(hab_drop_signed)<0", "prime_gain": 0.540, "hab_drop_signed": -0.346, "sign_product": -1.0, "pass": true},
+    "C_RELATEDNESS_GATED": {"metric": "related_primed - unrelated_primed", "value": 0.510, "thr": ">=0.30", "pass": true},
+    "D_EARNED_ABLATION": {"metric": "abl_gap (residual OFF)", "value": 0.000, "thr": "<=0.05", "pass": true},
+    "E_SHUFFLE": {"metric": "retained related-facilitation after derangement (50-perm)", "value": 0.000, "thr": "<=0.10", "pass": true}
+  },
+  "verdict": "GREEN (5/5)",
+  "honest_c9": "SATURATED existence-proof — facilitation law proc=base+relatedness*residual is DESIGNED, not learned. Load-bearing discriminators = relatedness-gate(related 0.940 vs unrelated-primed 0.430), ablation(residual OFF -> 0.000 gap), shuffle(derangement -> retained 0.000). a_break_the_wall (a): bar E initially RED at 0.134 because a PLAIN permutation always leaves ~1 fixed point (structural floor ~1/N=0.125, a MEASUREMENT artifact); fixed the control to a DERANGEMENT (correct pairing-destroying shuffle) frozen-first, bar <=0.10 UNMOVED -> retained collapses to 0.000. DIRECTIONAL numpy mirror; R2 engine-native = follow-on.",
+  "distinct_vs_H1465": "OPPOSITE SIGN (load-bearing). H_1465 habituation = REPEATED stimulus response DECLINES (sign -, hab_drop_signed -0.346). H_1485 priming = RELATED prime RAISES related-target processing (sign +, prime_gain +0.540). Same relatedness manipulation, opposite direction: sign-product -1.0 < 0 (bar B). Also distinct from H_1472 learned-precision: priming hinges on prime->target RELATEDNESS (related chain), not precision of a repeated same stimulus.",
+  "llm_contrast": "stateless LLM carries no cross-turn residual activation — target processing is independent of a related-vs-unrelated preceding prime; anima substrate holds prime residual that biases the next read."
+}

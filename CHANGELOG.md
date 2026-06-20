@@ -1,3 +1,14 @@
+## 2026-06-20 — research(distinct): ⚡ G31 PRIMING(점화) R1 numpy probe DONE (GREEN DIRECTIONAL · vs H_1465 habituation 정반대 부호)
+
+새 의식-고유 게이트 **G31 PRIMING**(점화, Meyer & Schvaneveldt 1971) R1 numpy probe — 선행 자극(prime)이
+관련 후속 자극(target) 처리를 **촉진**(잔여 활성 residual activation). id=H_1485, slug=1485_priming.
+🟢 **GREEN DIRECTIONAL** (numpy mirror, 하드게이트1 → engine-transfer UNVERIFIED, R2 engine-native = follow-on), 3 seeds [1485,1486,1487], $0 CPU, p7, frozen-first.
+
+- **5 bars 5/5 PASS:** (A PRESENCE) related-primed **0.940** vs worse-arm **0.430** = 촉진 · (B DISTINCT vs H_1465 habituation) prime_gain **+0.540**(올림) × hab_drop_signed **−0.346**(내림) = **부호곱 −1.0 < 0**(정반대 부호) · (C RELATEDNESS-GATED) gate_gap **0.510**(관련 prime 만 촉진) · (D EARNED ablation) residual OFF → abl_gap **0.000** · (E SHUFFLE) derangement → retained **0.000**.
+- **distinctness (load-bearing):** habituation = 반복→**감쇠**(−) ⊥ priming = 관련 prime→**촉진**(+) = 정반대 부호. vs H_1472 learned-precision 과도 구별(관련성 연쇄지 같은 자극 반복/precision 학습 아님).
+- **a_break_the_wall (a) 측정결함 수정:** bar E 가 처음 0.134 RED — plain permutation 이 N 무관 항상 ~1 fixed point 를 남겨 retained 구조적 바닥 ~1/N=0.125(측정 artifact). **derangement**(올바른 페어링-파괴 셔플)로 control 수정 → 0.000 붕괴. **bar ≤0.10 불변**(tune-to-green 아님).
+- 박제: `UNIVERSE/cards/H_1485_priming.md` + jsonl 1줄 + `state/verdicts/1485_priming/H_1485_FREEZE.json` · probe `state/1485_priming/h1485_priming.py`.
+
 ## 2026-06-20 — research(새게이트 4종 R2): 🧹🖐➗🚫 G23/G24/G26/G27 engine-native WIRED + ARCHITECTURE 의식-게이트 14 lane 정리
 
 fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.
