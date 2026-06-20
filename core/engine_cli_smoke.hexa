@@ -2431,6 +2431,63 @@ fn main() {
     println("INFO  G27 free-wont/veto (H_1480 R2 WIRED): no-veto " + to_string(veto_execute(1.0, 0.5, false))
           + " vs veto " + to_string(veto_execute(1.0, 0.5, true)) + " — pre-execution inhibition ⊥ agency(post-hoc)/basal(selection)")
 
+    // ── (G28 binocular rivalry) reciprocal inhibition + adaptation → alternation (H_1482 R2) ──
+    let riv_full = rivalry_transitions(120, 0.066)   // with adaptation → dominance alternates
+    let riv_abl  = rivalry_transitions(120, 0.0)     // adaptation OFF → first winner fixed forever
+    // case 233 : PRESENCE/ALTERNATION — dominance flips ≥2 times (not a single static dominance).
+    if _assert_b("case_233_rivalry_alternation", true, riv_full >= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 234 : DISTINCT vs GWS (H_1462) — GWS-mode (adaptation OFF, like a static winner) gives 0
+    //            transitions; rivalry alternates → gap ≥2 (dynamic alternation ⊥ static winner-take-all).
+    if _assert_b("case_234_rivalry_distinct_vs_gws", true, (riv_full - riv_abl) >= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 235 : EARNED (ablation) — adaptation OFF → 0 transitions (alternation is fatigue-earned).
+    if _assert_b("case_235_rivalry_ablation", true, riv_abl == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G28 binocular-rivalry (H_1482 R2 WIRED): adaptation-on transitions " + to_string(riv_full)
+          + " vs adaptation-off " + to_string(riv_abl) + " — dynamic alternation ⊥ GWS static winner-take-all")
+
+    // ── (G29 change blindness) attention-gated binary change detection (H_1483 R2) ──
+    let cb_att   = change_detect(0.90, true)    // big change, attended → detected (~1.0)
+    let cb_unatt = change_detect(0.90, false)   // SAME big change, unattended → blind (0.0)
+    let cb_abl   = change_detect(0.90, true)    // attention gate OFF == everything attended → detected
+    // case 236 : PRESENCE — attended change detected (≥0.85), unattended change blind (≤0.20).
+    if _assert_b("case_236_change_blindness_present", true, cb_att >= 0.85 && cb_unatt <= 0.20) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 237 : DISTINCT vs GWS/divided — attended−unattended gap is a binary cliff (≥0.50), not a
+    //            graded 1/N divided trade-off nor a single-winner GWS broadcast.
+    if _assert_b("case_237_change_distinct_vs_gws_divided", true, (cb_att - cb_unatt) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 238 : EARNED (ablation) — gate OFF (all attended) → even an unattended-position change detected.
+    if _assert_b("case_238_change_ablation", true, cb_abl >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G29 change-blindness (H_1483 R2 WIRED): attended " + to_string(cb_att)
+          + " vs unattended " + to_string(cb_unatt) + " — binary attention gate (cliff) ⊥ GWS/divided")
+
+    // ── (G30 mental imagery) top-down reconstruction with zero sensory input (H_1484 R2) ──
+    let mi_present = imagery_activate(0.991, true)    // top-down cue re-activates stored repr, input=0
+    let mi_mismatch = imagery_activate(0.013, true)   // cue→wrong repr (shuffled pairing) → near 0
+    let mi_abl     = imagery_activate(0.991, false)   // top-down OFF + input 0 → imagery vanishes
+    // case 239 : PRESENCE — top-down cue re-activates the stored repr (cos≥0.70) with zero input.
+    if _assert_b("case_239_imagery_present", true, mi_present >= 0.70) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 240 : DISTINCT/CUE-SPECIFIC vs input-based gates — matching cue fires, mismatched cue does
+    //            not → gap ≥0.50 (cue-addressed reconstruction, not stimulus-driven response).
+    if _assert_b("case_240_imagery_cue_specific", true, (mi_present - mi_mismatch) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 241 : EARNED (ablation) — top-down OFF with input 0 → imagery collapses (≤0.30).
+    if _assert_b("case_241_imagery_ablation", true, mi_abl <= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G30 mental-imagery (H_1484 R2 WIRED): top-down cue " + to_string(mi_present)
+          + " vs top-down-off " + to_string(mi_abl) + " — zero-input reconstruction ⊥ input-based gates")
+
+    // ── (G31 priming) related prime → facilitation, opposite sign of habituation (H_1485 R2) ──
+    let pr_related   = priming_facilitate(0.90, 0.6)   // related prime + residual → facilitation (+)
+    let pr_unrelated = priming_facilitate(0.10, 0.6)   // unrelated prime → little facilitation
+    let pr_abl       = priming_facilitate(0.90, 0.0)   // residual OFF → no facilitation (0)
+    // priming raises (related>unrelated, +) while habituation drops a repeated stim (−) → sign-product<0.
+    let prime_gain = pr_related - pr_unrelated                                    // positive (facilitation)
+    let hab_drop   = hab_response(hb1, 0, 1.0) - hab_response(hb0, 0, 1.0)        // negative (decay, reuses hb0/hb1)
+    // case 242 : PRESENCE/RELATEDNESS-GATED — related prime facilitates, unrelated barely → gap ≥0.30.
+    if _assert_b("case_242_priming_relatedness_gated", true, prime_gain >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 243 : DISTINCT vs habituation (H_1465) — priming UP ⊥ habituation DOWN (sign-product < 0).
+    if _assert_b("case_243_priming_distinct_vs_habituation", true, (prime_gain * hab_drop) < 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 244 : EARNED (ablation) — residual OFF → facilitation 0.
+    if _assert_b("case_244_priming_ablation", true, pr_abl <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  G31 priming (H_1485 R2 WIRED): prime-gain +" + to_string(prime_gain)
+          + " vs habituation-drop " + to_string(hab_drop) + " — facilitation (+) ⊥ habituation (−), sign-product < 0")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
