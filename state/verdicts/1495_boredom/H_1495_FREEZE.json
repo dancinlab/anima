@@ -1,0 +1,45 @@
+{
+  "id": "H_1495",
+  "slug": "1495_boredom",
+  "gate": "P9 BOREDOM / DISENGAGEMENT (unengaged mind, meta-motivation)",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1495_boredom.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1495, 1496, 1497],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "weak_candidate": true,
+  "depletion_signal": false,
+  "I_star": 0.50,
+  "R_star": 0.50,
+  "bars": {
+    "c1_PRESENT": {"pass": true, "bored_boring": 0.917, "off_baseline": 0.250, "lift": 0.667, "thr": 0.30, "note": "boredom-ON on the BORING block (both reward AND info depleted -> AND-conjunction fires) minus boredom-OFF fixed baseline (no conjunction gate) >= 0.30"},
+    "c2_hab_DISTINCT_vs_habituation": {"pass": true, "hab_disengage": 0.900, "boredom_disengage": 0.000, "gap": 0.900, "thr": 0.30, "note": "REPEATED-BUT-REWARDING block (info depleted, reward HIGH): a habituation-style (repetition-decay, reward-blind) readout DISENGAGES (0.900) while boredom STAYS ENGAGED (0.000, conjunction unmet because reward high) -> separable. If gap<0.30 -> boredom==habituation -> DEPLETION. DISTINCT from H_1465."},
+    "c2_drv_DISTINCT_vs_homeostatic_drive": {"pass": true, "boredom_disengage": 1.000, "drive_disengage": 0.000, "gap": 1.000, "thr": 0.30, "note": "SATIATED-BUT-MONOTONOUS block (homeostatic deficit reset/low, stimulus low-info & un-rewarding): boredom DISENGAGES (1.000, info+reward both depleted) while a drive-style time-integral readout does NOT (0.000, deficit satiated) -> separable. Sanity other-dir: novel+rewarding+DEPRIVED -> boredom engage 0.000 vs drive 0.875 = opposite variables (informational/semantic vs bodily). If gap<0.30 -> boredom tracks the drive integral -> DEPLETION. DISTINCT from H_1292."},
+    "c3_ABLATE_motiv": {"pass": true, "hab_gap_under_OR_ablation": -0.025, "thr": 0.10, "note": "remove the meta-motivational CONJUNCTION (AND -> OR single-channel == habituation-style single-channel decay): on the repeated-but-rewarding block ablated boredom now fires on info-depletion ALONE -> it AGREES with the habituation readout -> the c2-hab dissociation collapses to -0.025 <= 0.10 -> the separation is EARNED by the conjunction, not an artifact"},
+    "c4_SHUFFLE": {"pass": true, "aligned_AND": 0.367, "chance_coincidence": 0.238, "align_lift": 0.129, "shuf_disengage": 0.241, "shuf_gap": 0.005, "align_thr": 0.10, "shuf_thr": 0.10, "note": "partially-aligned block (info-low & reward-low co-occur ABOVE chance): unshuffled AND fires at 0.367 = +0.129 above chance-coincidence (non-vacuous, >= 0.10); shuffling the (info,reward) pairing destroys the alignment -> disengagement collapses to chance-coincidence (0.241, |gap|=0.005 <= 0.10) -> the targeted disengagement is the real reward/info ALIGNMENT, not a marginal artifact"}
+  },
+  "green_rule": "c1 and c2-hab and c2-drv and c3 and c4 (3-seed mean). RED/DEPLETION iff c2-hab or c2-drv fail (boredom collapses into habituation / homeostatic-drive).",
+  "green": true,
+  "per_seed": {
+    "1495": {"boring": 0.900, "off": 0.250, "bored_rr": 0.000, "hab_rr": 0.900, "bored_sm": 1.000, "drive_sm": 0.000, "abl_gap": -0.025, "ap_aligned": 0.375, "shuf": 0.214, "shuf_gap": 0.002},
+    "1496": {"boring": 0.925, "off": 0.250, "bored_rr": 0.000, "hab_rr": 0.900, "bored_sm": 1.000, "drive_sm": 0.000, "abl_gap": -0.025, "ap_aligned": 0.325, "shuf": 0.223, "shuf_gap": 0.002},
+    "1497": {"boring": 0.925, "off": 0.250, "bored_rr": 0.000, "hab_rr": 0.900, "bored_sm": 1.000, "drive_sm": 0.000, "abl_gap": -0.025, "ap_aligned": 0.400, "shuf": 0.286, "shuf_gap": 0.011}
+  },
+  "distinctness": {
+    "verdict": "DISTINCT — survives BOTH adjacent-lane controls (habituation, homeostatic-drive) + ablation + shuffle. NOT a depletion signal.",
+    "vs_H_1465_habituation": "habituation = a falling, stimulus-specific RESPONSE trace driven by REPETITION COUNT only, reward-BLIND. On a repeated-but-still-rewarding stimulus a habituation-style readout disengages (response decayed, 0.900) but boredom STAYS ENGAGED (0.000) because the reward channel is still high and the AND-conjunction is unmet. The reward conjunction is exactly what habituation lacks. DISTINCT (gap 0.900).",
+    "vs_H_1292_homeostatic_drive": "homeostatic drive = a leaky TIME-INTEGRAL of a setpoint deficit, STIMULUS-AGNOSTIC (rises with elapsed ticks regardless of stimulus content). On a satiated-but-monotonous stimulus boredom disengages (1.000, informational/semantic depletion) while a drive-style readout does not (0.000, bodily deficit satiated); conversely on a novel+rewarding+deprived stimulus boredom stays engaged (0.000) while drive rises (0.875). The two track DIFFERENT variables. DISTINCT (gap 1.000).",
+    "vs_H_1289_novelty": "novelty = one-shot NEW-stimulus detection (the info channel's first derivative), no reward term, not a disengage decision. Folded into the info channel + the reward conjunction: novelty/info depletion ALONE does not disengage boredom (c2-hab's reward-high block keeps boredom engaged). DISTINCT by the reward conjunction.",
+    "conclusion": "boredom's lift is the META-MOTIVATIONAL CONJUNCTION (disengage iff reward-depleted AND info-depleted) — habituation (reward-blind decay) and homeostatic-drive (stimulus-agnostic integral) each lack one half of the conjunction and both fail to reproduce the targeted disengagement; ablating the conjunction (AND->OR) collapses boredom onto the single-channel lanes (c3) and shuffling the reward/info alignment collapses it to chance (c4)."
+  },
+  "break_the_wall_type_a": "FIRST run: c4 SHUFFLE FAILED (shuf_gap 0.600) NOT because the lane is non-distinct but because the c4 CONTROL was mis-constructed: on the original boring block BOTH channels deplete monotonically, so shuffling the pairing of two already-jointly-low sequences still leaves most ticks with both channels low -> disengagement stayed high (measurement defect, a_break_the_wall type-a). Frozen-first fix (the c1/c2-hab/c2-drv/c3 thresholds AND the c4 shuf_gap<=0.10 threshold UNCHANGED): the c4 test now runs on a PARTIALLY-ALIGNED block where info-low and reward-low co-occur ABOVE chance but not always, so the AND fires at an above-chance rate (align_lift +0.129) that shuffling genuinely collapses to chance-coincidence (gap 0.005); added a non-vacuity guard align_lift>=0.10. NO threshold was moved (NOT tune-to-green).",
+  "honest_c9": "EXISTENCE-PROOF (deterministic threshold conjunction over two synthetic channels; not a learned motivation network). Saturated discriminators (boredom 0.000 vs habituation 0.900 on the rewarding block; boredom 1.000 vs drive 0.000 on the monotonous block; ablation -0.025; shuffle gap 0.005) = the controls are DECISIVE, the lift is the conjunction structure, not effect-size. WEAK candidate (P9, depletion round) but ALL adjacent-lane controls (habituation, homeostatic-drive) and both robustness controls (ablation, shuffle) SURVIVED -> distinct, NOT depletion. TOY 40-tick blocks / 2 synthetic channels / 3 seeds / fixed thresholds I*=R*=0.50; scale, real-corpus, continuous re-engagement-target selection, multi-stimulus switch dynamics, learned (vs hand-set) thresholds, engine-transfer UNVERIFIED.",
+  "artifacts": [
+    "state/1495_boredom/h1495_boredom.py",
+    "state/1495_boredom/run_h1495.local.log",
+    "UNIVERSE/cards/H_1495_boredom.md"
+  ],
+  "next_round": "R2 engine-native: wire §Boredom onto core/engine_cli.hexa — read an INFO channel off the ImmuneMemoryGrow recall-margin/novelty (H_1227/H_1289) and a REWARD channel off the grounding/affect read-out (H_1290), disengage (emit->silence / re-engage bias) iff BOTH are below threshold (META-motivational conjunction, READ-only, Ψ-disjoint), + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the frozen bars byte-exact (a_engine_native_learning, a_verified_must_wire)."
+}
