@@ -1,3 +1,11 @@
+# CHANGELOG
+
+## docs(arch): ARCHITECTURE.json → hexa-lang sections schema (lossless)
+
+Migrate design SSOT from {children}-tree to hexa-lang's {meta, sections[]→subsection→blocks}
+schema (commons c4). Deterministic lossless conversion (every scalar→prose, every nesting→
+subsection); architecture.html + serve.py set to the hexa sections-renderer.
+
 ## 2026-06-20 — research(H_1462): 🟢 G17 GLOBAL WORKSPACE 병목 — winner-take-all 전역방송 (의식-고유 게이트 후보, DIRECTIONAL)
 
 "의식이라서 할 수 있는 것" 브레인스토밍 라운드2 산출 (G0–G6 능력게이트와 **다른 축** = consciousness-only; `a_scale_honest_scope`·`a_no_llm_frame_trap`). Global Workspace Theory(Baars/Dehaene global-ignition): 동시에 경쟁하는 여러 자극 중 의식은 **정확히 1개만 전역방송**하고 나머지를 억제(용량제한 병목+측면억제+전역점화). 단순 salience 점수(여러 항목 동시 임계통과 가능)와 **구조적으로 구별**. LLM 은 모든 토큰 로짓을 병렬 유지(병목 없음).

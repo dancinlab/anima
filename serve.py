@@ -1,87 +1,50 @@
 #!/usr/bin/env python3
-"""serve.py — tiny static server for the anima ARCHITECTURE tree viewer.
+"""serve.py — static server + browser auto-open for the architecture viewer.
 
-The architecture SSOT is ARCHITECTURE.json (parsed by AI/tools); humans read it
-through ARCHITECTURE.html. Browsers block `fetch()` over file://, so the viewer
-must be served over http. This standard-library server (http.server + webbrowser)
-serves the repo root and auto-opens ARCHITECTURE.html (c4 standard).
+The architecture SSOT is ARCHITECTURE.json; humans read it through
+architecture.html. Browsers block fetch() over file://, so this serves the repo
+root over http:// and opens the viewer.
 
-    python3 serve.py            # serve on 127.0.0.1:8000, open ARCHITECTURE.html
-    python3 serve.py 9000       # pick a port
-    python3 serve.py --no-open  # don't auto-open the browser
-
-Ctrl-C to stop.
+    python3 serve.py            # serve on :8000, open architecture.html
+    python3 serve.py 9000       # custom port
 """
 import http.server
-import os
-import socket
 import socketserver
 import sys
 import threading
 import webbrowser
+from pathlib import Path
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
-PAGE = "ARCHITECTURE.html"
-DEFAULT_PORT = 8000
+ROOT = Path(__file__).resolve().parent
+PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
+PAGE = "architecture.html"
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=ROOT, **kwargs)
+    def __init__(self, *a, **kw):
+        super().__init__(*a, directory=str(ROOT), **kw)
 
     def end_headers(self):
-        # never cache — the JSON SSOT is edited in place
-        self.send_header("Cache-Control", "no-store, max-age=0")
+        # never cache the SSOT / viewer during local editing
+        self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
     def log_message(self, fmt, *args):
-        sys.stderr.write("  " + (fmt % args) + "\n")
+        pass  # quiet
 
 
-def pick_port(requested):
-    """Return `requested` if free, else the next free port (up to +20)."""
-    for port in range(requested, requested + 21):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.bind(("127.0.0.1", port))
-                return port
-            except OSError:
-                continue
-    return requested
-
-
-def main(argv):
-    port = DEFAULT_PORT
-    do_open = True
-    for arg in argv:
-        if arg in ("--no-open", "-n"):
-            do_open = False
-        elif arg.isdigit():
-            port = int(arg)
-        elif arg in ("-h", "--help"):
-            print(__doc__)
-            return 0
-
-    if not os.path.exists(os.path.join(ROOT, PAGE)):
-        sys.stderr.write("error: %s not found next to serve.py\n" % PAGE)
-        return 1
-
-    port = pick_port(port)
-    url = "http://127.0.0.1:%d/%s" % (port, PAGE)
-
+def main():
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("127.0.0.1", port), Handler) as httpd:
-        print("anima architecture viewer — serving %s" % ROOT)
-        print("  %s" % url)
-        print("  (SSOT = ARCHITECTURE.json · Ctrl-C to stop)")
-        if do_open:
-            threading.Timer(0.4, lambda: webbrowser.open(url)).start()
+    with socketserver.TCPServer(("127.0.0.1", PORT), Handler) as httpd:
+        url = f"http://127.0.0.1:{PORT}/{PAGE}"
+        print(f"[serve] architecture viewer → {url}")
+        print(f"[serve] SSOT: ARCHITECTURE.json   (Ctrl-C to stop)")
+        threading.Timer(0.6, lambda: webbrowser.open(url)).start()
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print("\nstopped.")
-    return 0
+            print("\n[serve] stopped")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv[1:]))
+    main()
