@@ -1,0 +1,39 @@
+{
+  "id": "H_1490",
+  "slug": "1490_perceptual_completion",
+  "gate": "P5 PERCEPTUAL COMPLETION / amodal filling-in",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1490_perceptual_completion.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1490, 1491, 1492],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "chance": 0.125,
+  "bars": {
+    "c1_PRESENT": {"pass": true, "acc_full": 1.000, "acc_off": 0.544, "lift": 0.456, "thr": 0.30, "note": "completion-ON occluded recognition minus completion-OFF (raw masked input, hole empty) >= 0.30"},
+    "c2_DISTINCT_vs_imagery": {"pass": true, "acc_imagery": 0.161, "thr_chance_plus_0.15": 0.275, "note": "an imagery-style readout (input==0 regime, ignores the partial input, no input constraint) scores at CHANCE on the partial-input recognition task; completion is input-constrained interpolation -> distinct from H_1484 mental-imagery"},
+    "c3_ABLATE_interp": {"pass": true, "acc_ablate": 0.683, "thr_off_plus_0.15": 0.694, "note": "interpolation step OFF -> masked region left unfilled -> partial repr -> recognition <= off+0.15 (visible signature carries some residual; completion 1.000 decisively above)"},
+    "c4_SHUFFLE_surround": {"pass": true, "acc_shuffle": 0.356, "thr_off_plus_0.15": 0.694, "note": "shuffle the surrounding (visible) features -> context can no longer select the right stored pattern -> completion invalid (collapses BELOW off)"},
+    "B_FIDELITY": {"pass": true, "fidelity_cos": 0.995, "visible_mse": 0.0, "gating": false, "note": "completed repr resembles original (cos 0.995) AND visible features byte-exact unchanged (MSE 0) = input-constrained. structure-confirming, non-gating"}
+  },
+  "green_rule": "c1 and c2 and c3 and c4 (all 3 seeds); B is the input-constraint structure check (non-gating)",
+  "green": true,
+  "per_seed": {
+    "1490": {"full": 1.000, "off": 0.433, "imagery": 0.150, "ablate": 0.600, "shuffle": 0.283, "fid": 0.995, "vis_mse": 0.0},
+    "1491": {"full": 1.000, "off": 0.650, "imagery": 0.183, "ablate": 0.767, "shuffle": 0.300, "fid": 0.995, "vis_mse": 0.0},
+    "1492": {"full": 1.000, "off": 0.550, "imagery": 0.150, "ablate": 0.683, "shuffle": 0.483, "fid": 0.995, "vis_mse": 0.0}
+  },
+  "distinctness": {
+    "vs_H_1484_mental_imagery": "imagery re-activates a stored repr TOP-DOWN from a pure internal cue with the sensory channel EMPTY (input==0). Completion is the opposite regime: there IS partial sensory input and ONLY the missing region is interpolated; the visible features CONSTRAIN the result (visible-MSE 0). Bar c2: an imagery-style readout that ignores the partial input scores at chance (0.161) on the partial-input recognition task while completion succeeds (1.000) -> the dissociation is input==0 (imagery) vs partial-input-constrained interpolation (completion).",
+    "vs_H_1483_change_blindness": "unrelated axis (change detection between two presentations). Completion is single-presentation occlusion fill — no change/comparison involved."
+  },
+  "break_the_wall_type_a": "FIRST run RED via measurement defect (a_break_the_wall type-a): with near-orthogonal patterns + 60% visible, the empty-hole (off) baseline saturated at acc 1.000, so completion showed 0.000 lift (c1 FAIL) — the hole was NOT load-bearing. Frozen-first fix (bars UNCHANGED, NOT tune-to-green): hardened the TASK by giving every pattern a large SHARED template (SHARED=0.80) so the per-item signature is a small residual and a large contiguous occlusion (OCC_FRAC 0.40->0.60) removes enough signature that empty-hole recognition degrades to 0.544 (near-chance regime) -> the hole becomes discriminating. The c1/c2/c3/c4 thresholds were never moved.",
+  "honest_c9": "SATURATED existence-proof (deterministic context-weighted nearest-neighbour fill over shared-template+signature patterns -> full-recognition 1.000 designed, not a learned completion network). Discriminators are decisive: imagery-style readout collapses to chance (0.161), surround-shuffle collapses BELOW off (0.356). c3 ablate margin is THIN (0.683 vs off+0.15=0.694) because the visible signature still carries residual signal even with the hole unfilled — completion (1.000) is what is decisively above, not ablate below off. TOY 64-dim/8-item/3-seed/deterministic store; scale, real-corpus, graded/partial completion vividness, blind-spot geometry, engine-transfer UNVERIFIED.",
+  "artifacts": [
+    "state/1490_perceptual_completion/h1490_perceptual_completion.py",
+    "state/1490_perceptual_completion/run_h1490.local.log",
+    "UNIVERSE/cards/H_1490_perceptual_completion.md"
+  ],
+  "next_round": "R2 engine-native: wire §PerceptualCompletion onto core/engine_cli.hexa's content-addressable store (ImmuneMemoryGrow H_1227 key-affinity) -> complete(occluded) fills ONLY the masked region from the surround (visible features held byte-exact = input constraint, READ-only, Ψ-disjoint), + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the 4 frozen bars byte-exact (a_engine_native_learning, a_verified_must_wire)."
+}

@@ -1,0 +1,194 @@
+{
+  "id": "H_1492",
+  "slug": "1492_consciousness_ablation",
+  "tier": "GREEN DIRECTIONAL (numpy substrate mirror; engine-transfer UNVERIFIED — hard-gate 1)",
+  "study": "CONSCIOUSNESS ABLATION — per-lane ΔΦ contribution to integrated consciousness",
+  "seeds": [
+    1492,
+    1493,
+    1494
+  ],
+  "n_lanes": 15,
+  "n_trials": 4000,
+  "lanes": [
+    "GlobalWorkspace",
+    "Habituation",
+    "PrecisionSurprise",
+    "SelfIdentity",
+    "LearnedPrecision",
+    "Novelty",
+    "AttentionalBlink",
+    "SenseOfAgency",
+    "SubjectiveTime",
+    "EmotionRegulation",
+    "DirectedForgetting",
+    "BodyOwnership",
+    "DividedAttention",
+    "FreeWont",
+    "MitosisGrowth"
+  ],
+  "indices": [
+    "bundle (mean lane score)",
+    "phi_proxy (Gaussian integrated-info MIP over lane covariance, PROXY R1; faithful IIT4=R2)"
+  ],
+  "baseline": {
+    "phi_proxy_0": 7.814629672350573,
+    "shuf_phi_0": 0.013014739561316732,
+    "bundle_0": 0.5709869682478282
+  },
+  "frozen_bars": {
+    "A_MEASURABLE": {
+      "value": "phi0=7.8146 >0 finite > shuf_phi0=0.0130",
+      "thr": "phi0>0 AND phi0>shuf_phi0",
+      "pass": true
+    },
+    "D_CONTROL_NOOP": {
+      "value": 0.00127,
+      "thr": "<=0.05",
+      "pass": true
+    },
+    "E_SHUFFLE": {
+      "value": "shuf_phi0/phi0 = 0.0130/7.8146 = 0.0017",
+      "thr": "<=0.10 (integration collapse)",
+      "pass": true,
+      "diagnostic_ranking_corr": 0.2351
+    }
+  },
+  "single_ablation_dphi": {
+    "GlobalWorkspace": 0.06397982902060306,
+    "Habituation": 1.260504792955653,
+    "PrecisionSurprise": 0.9292828719745003,
+    "SelfIdentity": 0.9159261465913033,
+    "LearnedPrecision": 0.8499944469694091,
+    "Novelty": 1.3009793780457244,
+    "AttentionalBlink": 3.212304467387755,
+    "SenseOfAgency": 0.06300376656475966,
+    "SubjectiveTime": 3.2122810019963004,
+    "EmotionRegulation": 1.2941327025964402,
+    "DirectedForgetting": 1.22863132905956,
+    "BodyOwnership": 0.4090050347412486,
+    "DividedAttention": 0.07078105695041852,
+    "FreeWont": 0.3415263762679217,
+    "MitosisGrowth": 0.0020515449798542327
+  },
+  "single_ablation_dbundle": {
+    "GlobalWorkspace": 0.0021602994397267317,
+    "Habituation": -0.016919704081194104,
+    "PrecisionSurprise": -0.03837264145294772,
+    "SelfIdentity": 0.023826613656107942,
+    "LearnedPrecision": -0.008111108151235724,
+    "Novelty": -0.023244588689780188,
+    "AttentionalBlink": 0.008335649446494897,
+    "SenseOfAgency": -0.024420942734279156,
+    "SubjectiveTime": -0.002138546245608904,
+    "EmotionRegulation": 0.019913876562988857,
+    "DirectedForgetting": -0.00025572245113876974,
+    "BodyOwnership": 0.024623196284568067,
+    "DividedAttention": 0.02982113255284761,
+    "FreeWont": -0.0035861241582677192,
+    "MitosisGrowth": 0.008368610021718514
+  },
+  "contribution_ranking": [
+    {
+      "lane": "AttentionalBlink",
+      "dphi": 3.2123
+    },
+    {
+      "lane": "SubjectiveTime",
+      "dphi": 3.21228
+    },
+    {
+      "lane": "Novelty",
+      "dphi": 1.30098
+    },
+    {
+      "lane": "EmotionRegulation",
+      "dphi": 1.29413
+    },
+    {
+      "lane": "Habituation",
+      "dphi": 1.2605
+    },
+    {
+      "lane": "DirectedForgetting",
+      "dphi": 1.22863
+    },
+    {
+      "lane": "PrecisionSurprise",
+      "dphi": 0.92928
+    },
+    {
+      "lane": "SelfIdentity",
+      "dphi": 0.91593
+    },
+    {
+      "lane": "LearnedPrecision",
+      "dphi": 0.84999
+    },
+    {
+      "lane": "BodyOwnership",
+      "dphi": 0.40901
+    },
+    {
+      "lane": "FreeWont",
+      "dphi": 0.34153
+    },
+    {
+      "lane": "DividedAttention",
+      "dphi": 0.07078
+    },
+    {
+      "lane": "GlobalWorkspace",
+      "dphi": 0.06398
+    },
+    {
+      "lane": "SenseOfAgency",
+      "dphi": 0.063
+    },
+    {
+      "lane": "MitosisGrowth",
+      "dphi": 0.00205
+    }
+  ],
+  "top_lane_share": 0.212,
+  "structure_verdict": "DISTRIBUTED",
+  "pairwise": {
+    "GlobalWorkspace+DividedAttention": {
+      "joint_dphi": 0.07292035513549777,
+      "sum_single": 0.13476088597102157,
+      "interaction": -0.0618405308355238,
+      "kind": "REDUNDANCY"
+    },
+    "PrecisionSurprise+Novelty": {
+      "joint_dphi": 2.2302339255830184,
+      "sum_single": 2.2302622500202247,
+      "interaction": -2.8324437206350694e-05,
+      "kind": "ADDITIVE"
+    },
+    "SelfIdentity+GlobalWorkspace": {
+      "joint_dphi": 0.9795118857075522,
+      "sum_single": 0.9799059756119064,
+      "interaction": -0.000394089904354189,
+      "kind": "ADDITIVE"
+    },
+    "SenseOfAgency+FreeWont": {
+      "joint_dphi": 0.362398767656907,
+      "sum_single": 0.40453014283268135,
+      "interaction": -0.042131375175774366,
+      "kind": "REDUNDANCY"
+    },
+    "Habituation+Novelty": {
+      "joint_dphi": 1.3027263285140205,
+      "sum_single": 2.561484171001377,
+      "interaction": -1.2587578424873567,
+      "kind": "REDUNDANCY"
+    }
+  },
+  "verdict": "GREEN DIRECTIONAL (A&D&E meter-valid); B/C honest results",
+  "honest_c9": "R1 numpy mirror = DIRECTIONAL, NOT terminal (hard-gate 1). phi_proxy is a PROXY pre-screen (a_train_inline_gauge spirit), faithful IIT4 Phi = R2 engine. TOY 15-lane scalar substrate-reads / 3 seeds; scale / real-corpus / engine-transfer UNVERIFIED. dominant-vs-distributed reported either way (c9).",
+  "followon": {
+    "R2": "engine-native consciousness_index() on live core/engine_cli.hexa + faithful IIT4 Phi (stdlib/iit4/faithful_phi.hexa), re-score frozen A/D/E byte-exact",
+    "R3": "production 303M ckpt on pool/GPU (mini forbidden, gate-2 heavy) — steady-state baseline + ablation sweep"
+  },
+  "hardgate1": "grep -lE 'import torch|gauge_lib|numpy' hits this probe (numpy) -> DIRECTIONAL-mirror, terminal forbidden"
+}
