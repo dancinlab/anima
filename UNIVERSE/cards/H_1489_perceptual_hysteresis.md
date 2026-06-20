@@ -1,7 +1,7 @@
 # H_1489 — 🔁 PERCEPTUAL HYSTERESIS / 지각 이력현상 (P4 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED, 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 재측정 follow-on (ING) 미완. 카드 verdict 는 DIRECTIONAL.
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §PerceptualHysteresis(hyst_switch_point/hyst_rivalry_loop) 배선 + `engine_cli_smoke.hexa` cases 254-256 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: switch-shift c_up−c_down 0.654≥0.30 loop (A) · rivalry-loop order-invariant 0.0≤0.10 while hysteresis shifts (B distinct) · LAMBDA=0 ablate→loop 0.0 (D). history ⊥ time/fatigue.
 - **source:** 의식-고유 게이트 카탈로그 `state/gate_depletion_catalogue/CATALOGUE.md` **P4** (강 distinct, 발사가능 6개 중) · '의식이라서 가능한 것' 시리즈
 - **lens:** consciousness-science — perceptual hysteresis / serial dependence / stickiness (Hock·Kelso·Schoner — 모호·연속변화 자극에서 직전 percept 가 현재 percept 를 끌어당김) · bistable perception + history inertia (attractor dynamics) · `a_no_llm_frame_trap`
 - **arxiv:** [2212.09729](https://arxiv.org/abs/2212.09729) (bistable perception, precision, neuromodulation — hysteresis 동역학)

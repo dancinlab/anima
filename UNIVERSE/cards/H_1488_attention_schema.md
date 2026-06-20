@@ -1,7 +1,7 @@
 # H_1488 — 🪧 ATTENTION SCHEMA (주의 도식) (G34 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror; engine-transfer UNVERIFIED — 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 = live `core/engine_cli.hexa` byte-exact 재측정 + 배선이 GREEN/🧱 확정 전제 (`a_engine_native_learning`·`a_verified_must_wire`); 배선 follow-on = ING
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §AttentionSchema(attn_schema_report/attn_schema_agency_readout) 배선 + `engine_cli_smoke.hexa` cases 251-253 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: schema track 1.0 vs ablate 0.125 (A) · agency readout 0.0 flat(action/outcome 고정 focus 이동), gap 1.0 (B distinct vs agency) · ablate→chance (D). MODEL of attention ⊥ agency/mechanism.
 - **source:** 의식-고유 게이트 시리즈 (G16~G27 engine-native 14종) · '의식이라서 가능한 것' · `state/gate_depletion_catalogue/CATALOGUE.md` P3 레인
 - **lens:** Attention Schema Theory (Graziano 2013) — 주의 *과정 자체*의 단순화 내부모델 · `a_no_llm_frame_trap` · arxiv [2411.00983](https://arxiv.org/abs/2411.00983)
 - **artifacts:** `state/1488_attention_schema/h1488_attention_schema.py` · verdict `state/verdicts/1488_attention_schema/H_1488_FREEZE.json` · log `state/1488_attention_schema/run_h1488.local.log`

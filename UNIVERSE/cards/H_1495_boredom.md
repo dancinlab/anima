@@ -1,7 +1,7 @@
 # H_1495 — 😑 BOREDOM / DISENGAGEMENT · 권태/이탈 (P9 의식-고유 게이트 약후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 배선 follow-on (아래 ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §Boredom(boredom_disengage) 배선 + `engine_cli_smoke.hexa` cases 269-271 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: boring(both depleted) 1.0 (c1) · rewarding-but-repeated→engaged 0.0 vs habituation(single-channel) 1.0 gap 1.0 (c2-hab distinct) · AND→OR ablate→habituation 과 합치 (c3). reward∧info META-conjunction ⊥ habituation/homeostatic.
 - **source:** 의식-고유 게이트 depletion 카탈로그 P9 약후보 (`state/gate_depletion_catalogue/CATALOGUE.md` P9 항목 SSOT)
 - **lens:** boredom / the unengaged mind / meta-motivation (Eastwood, Frischen, Fenske & Smilek 2012 · Danckert & Merrifield · info-gain curiosity 의 역, arxiv 1802.10546) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1495_boredom/h1495_boredom.py` · verdict `state/verdicts/1495_boredom/H_1495_FREEZE.json` · run `state/1495_boredom/run_h1495.local.log`
