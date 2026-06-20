@@ -1,0 +1,33 @@
+{
+  "id": "H_1474",
+  "slug": "1474_sense_of_agency",
+  "gate": "G21 SENSE OF AGENCY",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1474_sense_of_agency.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1474, 1475, 1476],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "bars": {
+    "A_PRESENCE": {"pass": true, "match_agency": 1.000, "match_thr": 0.85, "diverge_agency": 0.000, "diverge_thr": 0.15},
+    "B_DISTINCT_vs_forward_error": {"pass": true, "agency_self_minus_ext_gap": 1.000, "thr": 0.50, "raw_err_equal_delta": 0.0, "note": "same raw |pred-obs| magnitude, comparator judgement splits self(1) vs external(0)"},
+    "C_EARNED_ablation": {"pass": true, "self_ext_split": 0.000, "thr": 0.15, "self": 0.000, "ext": 0.000, "note": "comparator OFF (efference copy random) -> match meaningless -> split collapses"},
+    "D_SELF_vs_OTHER_vs_ToM": {"pass": true, "other_abstains": 1.000, "agency_other": -1.0, "gating": false, "note": "other-agent action -> no efference copy -> ABSTAIN; orthogonal to H_1293 ToM false-belief"},
+    "E_SHUFFLE": {"pass": true, "signed_mean_r_shuffled": 0.070, "thr": 0.10, "real_r": 0.999, "note": "real match<->self/ext label r=0.999; shuffled pairing r collapses to 0.070"}
+  },
+  "green_rule": "A and B and C and E (all 3 seeds)",
+  "green": true,
+  "distinctness": {
+    "vs_H_1293_theory_of_mind": "self (own action attribution, comparator over own efference copy) vs other (another agent's belief model). Bar D: on a non-self action the agency comparator abstains while ToM would still answer -> self perp other.",
+    "vs_H_1280_cerebellar_forward_model": "forward = raw |pred-obs| (precision-agnostic magnitude); agency = interpretation layer converting same raw error into self-vs-external attribution via comparator threshold. Bar B: identical raw error magnitude (delta 0.0), attribution splits 1.0 vs 0.0."
+  },
+  "honest_c9": "SATURATED existence-proof (binary comparator -> 1.0/0.0 designed); discriminators (raw-error-equal split, ablation collapse, shuffle r collapse) are decisive. TOY 32-dim/40-action/3-seed/deterministic comparator; scale, real-corpus, graded attribution, engine-transfer UNVERIFIED.",
+  "break_the_wall_note": "Bar E initial RED was a measurement defect (type-a): binary saturated attribution under broken pairing collapses to 0.0 not to chance 0.5, so anchoring |shuf_attr - 0.5| was the wrong metric. Frozen-first fix: measure Pearson r(match-vector, self/ext label) collapse under 50-perm shuffle (the pre-registered 'agency-match correlation collapse'). <=0.10 threshold UNMOVED. No tune-to-green.",
+  "artifacts": [
+    "state/1474_sense_of_agency/h1474_sense_of_agency.py",
+    "state/verdicts/1474_sense_of_agency/H_1474_run.txt",
+    "UNIVERSE/cards/H_1474_sense_of_agency.md"
+  ],
+  "next_round": "R2 engine-native: evaluate whether core/engine_cli.hexa has a forward-model lane (VForwardField H_1280) to host the comparator; if present wire SenseOfAgency (efference-copy match -> self/external attribute) + smoke cases + ARCHITECTURE lockstep, re-score frozen bars byte-exact."
+}

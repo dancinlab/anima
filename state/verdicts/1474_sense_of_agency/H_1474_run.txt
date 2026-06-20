@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1474, 1475, 1476]
+A PRESENCE  match-agency 1.000>=0.85 AND diverge-agency 0.000<=0.15  -> True
+B DISTINCT-vs-forward-error  |agency_self - agency_ext|=1.000>=0.50 (raw-err equal Δ=0.00e+00)  -> True
+C EARNED(ablation)  comparator OFF self/ext split=0.000<=0.15 (self 0.000 / ext 0.000)  -> True
+D SELF-vs-OTHER(vs ToM)  other-action abstains=1.000 (agency_other=-1.0=ABSTAIN)  -> True [reported, non-gating]
+E SHUFFLE  |signed-mean r(shuffled match, label)|=0.070<=0.10 (shuf_r +0.070 vs real_r +0.999)  -> True
+
+PER-SEED:
+  seed 1474: match=1.000 diverge=0.000 distinct=1.000 abl_split=0.000 shuffle_gap=0.056 other_abstain=1
+  seed 1475: match=1.000 diverge=0.000 distinct=1.000 abl_split=0.000 shuffle_gap=0.090 other_abstain=1
+  seed 1476: match=1.000 diverge=0.000 distinct=1.000 abl_split=0.000 shuffle_gap=0.063 other_abstain=1

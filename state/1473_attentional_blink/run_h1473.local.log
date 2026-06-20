@@ -1,0 +1,17 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1473, 1474, 1475] | trials 200 | lags [1, 2, 3, 4, 5, 6, 7, 8]
+A BLINK present     short(lag2-3) 0.154<=0.40 AND long(lag7-8) 0.969>=0.85 -> True
+B DISTINCT vs GWS   blink lag2->8 gap 0.878>=0.45 (GWS lag-gap 0.033~0, lag-invariant) -> True
+C EARNED(ablation)  depletion OFF -> min-over-lags 0.970>=0.85 (blink gone) -> True
+E SHUFFLE           50-perm signed-mean |gap| 0.0265<=0.10 -> True
+D LAG-1 sparing     (optional, reported) lag1 0.937 >= long 0.969 -> False
+
+per-lag detection (FULL blink, mean 3 seeds):
+  lag 1: 0.937
+  lag 2: 0.098
+  lag 3: 0.210
+  lag 4: 0.460
+  lag 5: 0.735
+  lag 6: 0.928
+  lag 7: 0.962
+  lag 8: 0.977
