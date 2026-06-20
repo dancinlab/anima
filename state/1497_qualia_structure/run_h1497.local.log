@@ -1,0 +1,15 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | DEPLETION-signal: False | seeds [1497, 1498, 1499] | chance=0.500 | qualia=12 (hue ring)
+c1 PRESENCE      full 1.000 - off 0.533 = 0.467 >= 0.30  -> True
+c2 DISTINCT      SPATIAL-MAP-style (ext-position) acc(quality)=0.561 <= chance+0.15=0.650  -> True  [vs H_1295 CRUX]
+c3 EARNED        (label,sim)-shuffle embedding acc=0.517 <= off+0.15=0.683  -> True
+c4 ABLATE        relation OFF (absolute value only) acc=0.556 <= off+0.15=0.683  -> True
+   (aux) item-store readout acc=0.439 (immune-store H_1227 distinctness, non-gating)
+B  TOPOLOGY      rho(relDist, ring hue-dist)=0.969>=0.50 (ring recovered) & |rho(relDist, ext-pos)|=0.054<=0.35 (orthogonal to ext)  -> True [structure, non-gating]
+
+PER-SEED:
+  seed 1497: full=1.000 off=0.600 spatial=0.650 shuffle=0.550 ablate=0.617 item=0.450 rhoRing=0.971 rhoExt=0.124
+  seed 1498: full=1.000 off=0.500 spatial=0.533 shuffle=0.567 ablate=0.550 item=0.450 rhoRing=0.967 rhoExt=0.023
+  seed 1499: full=1.000 off=0.500 spatial=0.500 shuffle=0.433 ablate=0.500 item=0.417 rhoRing=0.970 rhoExt=0.015
+
+DISTINCT: relational quality-space recovers the hue-ring topology and survives the spatial-map (external-position) crux + shuffle + relation-ablation controls -> qualia-structure IS a distinct lane (DIRECTIONAL). 28th gate.
