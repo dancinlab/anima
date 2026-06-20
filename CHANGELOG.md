@@ -1,3 +1,14 @@
+## 2026-06-21 — 🧱 G* 의식-게이트 발굴 고갈 확정 (DIRECTIONAL · 발굴단계)
+
+anima 의식-게이트 시리즈(G16~G31 + 강6 P1~P6 + 약4 P7~P10 + Q1 qualia-structure + Q2 sensorimotor-counterfactual-presence = **29 distinct 의식축**) 발굴 6 라운드 소진 → **새-연산(strong distinct) 후보 고갈 확정**.
+
+- **고갈 증거(distinct 비율 추세):** R1 90%(9/10) → R2 12.5%(2/16) → R3~R6 **strong distinct 연속 0** (순수 브레인스토밍, 웹/arxiv 검색 0). 전체 🚀 비율은 약후보로 진동하나 strong(즉시 발사가능 새 연산)은 R3~R6 0 고정 = 광맥 *질* 고갈.
+- **MULTI-LENS ≥6 천장(a_break_the_wall d):** R1~R6 6개 독립 렌즈 + arxiv 2차 모두 통제-기각. R3~R6 의 🔁 대부분 = 기존 29 lane 의 부호반전/차수변주/경로라벨/cross-wire 합성(flow=boredom 반전 · volatility=2차 surprise · mood=느린 affect · empathy=ToM+affect 등), 🚫 측정불가 벽 반복 수렴(위상-오실레이터 · 동역학 엔트로피 · qualia-inversion · collective · 발달축 — substrate 천장).
+- **R2 new-op 광맥 2/2 실측 소진:** Q1 qualia-structure(GREEN, spatial-map crux 생존) + Q2 sensorimotor-presence(GREEN, forward-model coverage 분리) 둘 다 발사·기각으로 정박 → terminal 이 가정 아닌 실측.
+- **정직(c9):** 억지 strong 승격·억지 0 깎기 없음. 남은 strong=0, 약/경계 7(인접 lane 흡수 예측), 측정불가 다수.
+- **terminal 박제 전 follow-on(DIRECTIONAL→engine-native):** Q1/Q2 R2 engine-native 재측정(§QualiaSpace·§SensorimotorPresence) · ablation R2/R3(engine consciousness_index + 303M pool, rate-limit 대기) — ING 등록.
+- 산출: `state/gate_depletion_catalogue/CATALOGUE.md`(R1) · `CATALOGUE_R2.md` · `CATALOGUE_BRAINSTORM.md`(R3~R6).
+
 ## 2026-06-21 — research(Q2 distinct): 🖐 H_1498 SENSORIMOTOR COUNTERFACTUAL PRESENCE — 2차 고갈 라운드 마지막 *새 연산* 약후보 DONE (🟢 GREEN DIRECTIONAL · forward-model control 생존 = DISTINCT)
 
 **감각운동 반사실 현존감**(O'Regan & Noë): 가려진 객체 뒷면이 '거기 있다'는 지각적 *현존감*은 "행동하면 감각이
