@@ -1,3 +1,36 @@
+## 2026-06-21 — research(Q2 distinct): 🖐 H_1498 SENSORIMOTOR COUNTERFACTUAL PRESENCE — 2차 고갈 라운드 마지막 *새 연산* 약후보 DONE (🟢 GREEN DIRECTIONAL · forward-model control 생존 = DISTINCT)
+
+**감각운동 반사실 현존감**(O'Regan & Noë): 가려진 객체 뒷면이 '거기 있다'는 지각적 *현존감*은 "행동하면 감각이
+어떻게 변할지"의 **반사실적 감각운동 법칙 숙달**(여러 가상 행동의 감각결과 분포 **richness/폭**)에서 발생한다 —
+컵 뒷면을 못 봐도 '돌리면 보일 것'을 알기에 현존을 느낌. 카탈로그 Q2 **약후보**(조작화 빠듯·forward-model 과
+겹칠 위험) = 게이트-발굴 고갈 terminal 의 마지막 조각. `state/gate_depletion_catalogue/CATALOGUE_R2.md` Q2 SSOT.
+
+- **메커니즘(numpy mirror):** 객체=S facet(보이는 앞+가려진 뒤), 한 view 에서 일부만 감각·나머지 occluded.
+  감각운동 법칙=(view,action)→revealed facet 연상 store(ImmuneMemoryGrow H_1227 key-affinity). **현존감 proxy =
+  occluded facet 중 어떤 가상 action 으로 드러낼 수 있는지를 *참 법칙대로 올바르게* 아는 비율**(전 가상-action
+  굴려 coverage). 거짓 법칙은 참 우연성과 안 맞아 0점 → 단순 예측 폭으로 위조 불가.
+- **🟢 GREEN DIRECTIONAL — 4 frozen bars(3 seeds [1498,1499,1500], chance=1/8=0.125):**
+  c1 PRESENT full 1.000−off 0.122=**0.878**≥0.30 · **c2 DISTINCT(vs forward-model H_1280) single-step 0.125**≤off+0.15=0.272
+  (소뇌 다음-step 예측은 occluded 집합 1개만 cover→chance, richness 못 도달) · c3 ABLATE(rollout-width:=1) 0.131≤0.272 ·
+  c4 SHUFFLE(false-law) 0.151≤0.272. B FIDELITY mastered-law reveal acc 1.000(non-gating).
+- **distinctness 판정 = DISTINCT(고갈 신호 아님):** 약후보의 *결정적* control(c2 forward-model 단일-step)이 chance
+  붕괴(0.125 vs richness 1.000) → forward-model 재포장 아님. prospection(H_1493 시간-전방)·completion(H_1490 보간)·
+  agency 와도 분리. 반사실 richness=전 가상-action 집합의 **breadth/coverage** = forward-model·prospection·completion
+  어느 것도 아닌 *새 연산*.
+- **a_break_the_wall type-a 2회(frozen-first, 임계 불변·tune-to-green 아님):** ① 첫 RED(c4 0.626 — coverage 가
+  단순 예측 폭 보상) → 참-법칙-일치 mastery 만 credit 교정 ② 둘째 RED(B fidelity 0.333→c1 0.217 — 선형맵이 view 별
+  facet 순열 표현불가) → (view,action)-key→facet 연상 store(H_1227 기전)로 교체, fidelity 1.000.
+- **고갈 terminal 기여:** Q2 는 R2 카탈로그의 **마지막 *새 연산* 후보**. Q1 qualia-structure + Q2 sensorimotor-presence
+  둘 다 DISTINCT-DIRECTIONAL 로 소진 → 게이트-발굴 🧱 terminal 이 가정 아닌 **실제 발사·기각**으로 정박
+  (`a_break_the_wall` (d) 천장 분류). 단 둘 다 DIRECTIONAL(numpy 하드게이트1)이라 terminal 박제 전 R2 엔진-네이티브 재측정 필요.
+- **하드게이트1:** `grep -lE 'import torch|gauge_lib|numpy' state/1498_sensorimotor_counterfactual/*.py` 적중 → DIRECTIONAL
+  (terminal 아님). R2 engine-native(§SensorimotorPresence) follow-on ING. 박제: `UNIVERSE/cards/H_1498_sensorimotor_counterfactual.md`
+  + `UNIVERSE/HYPOTHESES.jsonl` 1줄 + `state/verdicts/1498_sensorimotor_counterfactual/H_1498_FREEZE.json`.
+
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+---
+
 ## 2026-06-21 — research(gate-depletion R2): 🧠 의식-게이트 2차 고갈 발굴 라운드 — 🧱 게이트-발굴 고갈 확정(DIRECTIONAL · 발굴단계)
 
 1라운드(`CATALOGUE.md`, 10 발사가능 — 9 distinct + 1 deriv) 전부 소진 후 **2차 arxiv 탐색 + 브레인스토밍**으로 안 다룬 의식

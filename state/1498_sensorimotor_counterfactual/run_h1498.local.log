@@ -1,0 +1,14 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | DEPLETION-signal: False | seeds [1498, 1499, 1500] | facets=8 actions=8
+c1 PRESENT       full 1.000 - off 0.122 = 0.878 >= 0.30  -> True
+c2 DISTINCT(fwd) forward-model single-step presence=0.125 <= off+0.15=0.272  -> True
+c3 ABLATE(width) rollout-width:=1 presence=0.131 <= off+0.15=0.272  -> True
+c4 SHUFFLE(law)  false-law rollout presence=0.151 <= off+0.15=0.272  -> True
+B  FIDELITY      mastered-law per-action reveal acc=1.000 >= 0.50  -> True [structure, non-gating]
+
+PER-SEED:
+  seed 1498: full=1.000 off=0.125 fwd=0.129 ablate=0.125 shuffle=0.125 fidelity=1.000
+  seed 1499: full=1.000 off=0.125 fwd=0.121 ablate=0.133 shuffle=0.258 fidelity=1.000
+  seed 1500: full=1.000 off=0.117 fwd=0.125 ablate=0.133 shuffle=0.071 fidelity=1.000
+
+DISTINCT: counterfactual RICHNESS (coverage over the full virtual-action set) survives ALL controls vs forward-model(single-step)/width-ablation/false-law -> sensorimotor presence IS a distinct lane (DIRECTIONAL).
