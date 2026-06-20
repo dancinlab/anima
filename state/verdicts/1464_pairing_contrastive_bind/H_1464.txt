@@ -1,0 +1,34 @@
+==============================================================================
+H_1464 PAIRING-CONTRASTIVE binding mirror ($0 CPU numpy, DIRECTIONAL)
+==============================================================================
+
+---- ARM: PAIRING-CONTRASTIVE (this lens) ----
+  seed 7: base=3 FALS_in=4 DIST=5 FALS_shuf=0 ho=3
+  seed 4302: base=2 FALS_in=4 DIST=5 FALS_shuf=1 ho=0
+  seed 4303: base=3 FALS_in=5 DIST=5 FALS_shuf=1 ho=0
+  MEAN  base=2.6667 FALS_in=4.3333 DIST=5.0 FALS_shuf=0.6667 ho=1.0
+
+---- ARM: FORM-ONLY ablation (= H_1441 regression control) ----
+  seed 7: base=3 FALS_in=5 DIST=5 FALS_shuf=5 ho=5
+  seed 4302: base=2 FALS_in=5 DIST=5 FALS_shuf=5 ho=3
+  seed 4303: base=3 FALS_in=5 DIST=5 FALS_shuf=5 ho=4
+  MEAN  base=2.6667 FALS_in=5.0 DIST=5.0 FALS_shuf=5.0 ho=4.0
+
+==============================================================================
+FROZEN 5-BAR (mean/3 seeds) — PAIRING-CONTRASTIVE arm
+==============================================================================
+  B1 FALS-FLOOR   FALS_in>=1                  : 4.3333 -> True
+  B2 COUNT        DIST_in>=5                  : 5.0 -> True
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.6667<4.3333 -> True
+  B4 HELD-OUT     FALS_ho>=1                  : 1.0 -> True
+  B5 vs-BASE      FALS_in>=base+1             : 4.3333 vs 2.6667+1 -> True
+  CTRL FORM-ONLY  b3 should be FALSE (no-collapse, = H_1441): form_b3=False -> regress_as_predicted=True
+
+  VERDICT (numpy mirror, DIRECTIONAL): 🟢 BROKE — PAIRING-contrastive INSTALLED binding: cross-shuffle COLLAPSES (B3), floor/count/held-out/base all cleared => WALL=LEARN-GAP (this objective broke it where H_1441 form-contrastive could not)
+
+  INTERPRETATION:
+    - B3 (pairing arm) collapse? True  (FALS_shuf 0.6667 vs FALS_in 4.3333)
+    - FORM-only ablation regresses to no-collapse (= H_1441)? True  (form_b3=False)
+
+  wrote state/1464_pairing_contrastive_bind/result.json
+H1464_MIRROR_DONE
