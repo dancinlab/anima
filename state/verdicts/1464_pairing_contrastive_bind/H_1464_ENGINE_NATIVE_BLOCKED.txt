@@ -1,8 +1,32 @@
 H_1464 — PAIRING-CONTRASTIVE binding objective (same-idea pair vs cross re-weld)
-ENGINE-NATIVE 5-bar (B3 cross-shuffle) measurement — DECODE IN-PROGRESS (pool CPU, $0, no GPU rent)
+ENGINE-NATIVE 5-bar (B3 cross-shuffle) measurement
 date: 2026-06-20
 
-VERDICT: NO TERMINAL TIER YET. The engine-native frozen 5-bar has NOT completed — the live
+================================================================================
+FINAL STATUS (2026-06-20 ~23:10Z): BLOCKED — hexa decode-runtime wall (NOT a science
+ceiling, NOT fabricable into a verdict, c9). NO terminal 🟢/🧱. Pod torn down (0 leak).
+================================================================================
+The engine-native decode CANNOT COMPLETE on ANY available hardware due to a hexa
+decode-RUNTIME memory LEAK, discovered during the GPU escalation:
+  (1) cuBLAS gives ~NO speedup (latency-bound small-GEMM autoregressive decode; GPU util 0-9%,
+      ~16 min/frag = CPU). [GPU-side wall]
+  (2) ~91 GB resident/303M model (boxed-farr) → forces strictly SEQUENTIAL (1 decoder even on 125 GB;
+      30 GB pool hosts earlyoom even 1). [memory-footprint wall]
+  (3) ★ DECISIVE — PER-FRAGMENT MEMORY LEAK: a single decoder's RSS grows UNBOUNDED across the run
+      (measured 91→104→111 GB while still on fragment 3, ~2 GB/min). bytegpt_decode_batch_to_file /
+      _bg_gen_from_W do not free the per-token forward farrs across fragments → OOM-kill at ~frag 5-8
+      BEFORE even the pairing arm's 30 frags finish. More RAM does NOT help (it's a leak). [the real blocker]
+This blocks the a_engine_native_learning HARD-GATE measurement for prompt-based frozen-bar gates at 303M.
+Filed 2 hexa-lang INGs (perf: device-resident/batched decode; CRITICAL: the per-fragment farr leak).
+The terminal 🟢 (WALL=LEARN-GAP) / 🧱 (WALL=CAPACITY) for H_1464 remains OPEN until the hexa decode
+runtime leak is fixed (then re-run the SAME frozen bars, c9 / no tune-to-green). The numpy mirror stays
+DIRECTIONAL (🟢 BROKE, mirror-only). Partial engine evidence pulled: 3 valid pairing fragments
+(H_1464_pod_pairing_partial.txt) — decode output is byte-valid; only the multi-fragment RUN can't finish.
+RESOURCE HYGIENE: vast pod 41822888 (RTX A4000, ~$0.1 spent) PULLED partial + TORN DOWN (hexa cloud rm,
+0 instances confirmed both providers) + ing-pod registry cleared + ssh alias removed + NO key on pod (c7).
+================================================================================
+
+(historical, superseded by FINAL STATUS above) VERDICT: NO TERMINAL TIER YET. The engine-native frozen 5-bar has NOT completed — the live
   core/bytegpt_decode.hexa decode of the 3 trained .bin (pairing / shuffle / base) is RUNNING
   on pool hosts but the 90 fragments are not all generated. Per a_engine_native_learning HARD-GATE,
   NO 🟢/🧱 may be stamped until the score step runs on completed engine evidence. The numpy mirror
