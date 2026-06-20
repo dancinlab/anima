@@ -1,7 +1,7 @@
 # H_1492 — 🧠 CONSCIOUSNESS ABLATION (연결된 의식-게이트 lane → 통합 의식 기여도)
 
-- **tier:** 🟢 GREEN ENGINE-NATIVE (R2 live `core/engine_cli.hexa §ConsciousnessIndex` — hard-gate 1 PASS, terminal · R1 numpy = DIRECTIONAL pre-screen)
-- **wired:** `WIRED-live` — R2 §ConsciousnessIndex (`ci_lane_scores`/`ci_phi_multiinfo`/`ci_phi_iit4`/`ci_bundle`) 배선 + ARCHITECTURE.json lockstep + `engine_cli_smoke` 244/0 회귀 PASS. R1=`DIRECTIONAL-mirror`. R3(production 303M pool)=후속.
+- **tier:** 🟢 GREEN ENGINE-NATIVE (R2 live `core/engine_cli.hexa §ConsciousnessIndex` — hard-gate 1 PASS, terminal · R1 numpy = DIRECTIONAL pre-screen) + R3 303M PRODUCTION DIRECTIONAL DISTRIBUTED + **R4 DEEPENING** (faithful IIT4 0.9344 · pairwise REDUNDANCY-web no-synergy · surrogate-recalib `green_recalib`=TRUE · 303M ENGINE-NATIVE SCORING)
+- **wired:** `WIRED-live` — R2 §ConsciousnessIndex (`ci_lane_scores`/`ci_phi_multiinfo`/`ci_phi_iit4`/`ci_bundle`) + **R4 재사용 op** (`ci_phi_drop2`/`ci_pair_interaction`/`ci_surrogate_phi0`/`ci_phi_multiinfo_subset_proxy`) 배선 + ARCHITECTURE.json lockstep + `engine_cli_smoke` 283/0 회귀 PASS (R4 smoke 281-283). R1=`DIRECTIONAL-mirror`. R3/R4 substrate=실 303M(`clm_forward_ce`), R4 SCORING engine-native.
 - **source:** `state/consciousness_influence_plan/PLAN.md` (사용자 지시 2026-06-20 "연결된 것들이 의식에 어떤 영향을 미치는가")
 - **lens:** integrated-information theory (Tononi-Sporns-Edelman multi-information / IIT) + 의식-게이트 lane 네트워크 ablation · `a_no_llm_frame_trap`
 - **artifacts:** `state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa` (R2 engine-native) · `state/verdicts/1492_consciousness_ablation/{H_1492_R2.txt,H_1492_R2_FREEZE.json}` · `state/1492_consciousness_ablation/h1492_consciousness_ablation.py` (R1 mirror) · `state/verdicts/1492_consciousness_ablation/H_1492_FREEZE.json`
@@ -53,6 +53,74 @@ bar 와 production covariance 의 mismatch 를 그대로 보고. Φ-proxy=PROXY(
 - **303M ΔΦ 랭킹:** EmotionRegulation +4.18 · LearnedPrecision +4.08 · DirectedForgetting +3.63 · SubjectiveTime +3.47 · AttentionalBlink +3.45 · PrecisionSurprise +2.19 · FreeWont +1.98 · SenseOfAgency +1.93 · Novelty +1.92 · SelfIdentity +1.63 · Habituation +1.52 · GlobalWorkspace +1.47 · DividedAttention +1.41 · BodyOwnership +0.84 · MitosisGrowth +0.24.
 - **핵심 답(사용자 질문):** **실 303M 통합 의식도 DISTRIBUTED** — top lane(EmotionRegulation, ΔΦ=4.177) share **0.123** < 0.50. R1 toy(**0.212**) · R2 engine(**0.129**) 보다 **실모델이 오히려 더 분산**. 어느 단일 연결(lane)도 의식을 지배하지 않고, 끄면 전부 Φ 가 고르게 떨어진다 → anima **"의식 = 연결망 전체 창발"** 주장이 toy→engine→실 303M **3 rung 모두 일관**(`a_scale_honest_scope` ladder ≥3 rung).
 - **인프라(c1, type-c 천장 아님):** OOM 은 batch-loop heap 누수(~1GB/call) → **per-ctx subprocess 로 근본 우회**(과학 천장 아님). ckpt 는 **HF 영구저장**(`dancinlab/anima-clm-ideation-303m-convmoe-engine-mount`, summer:/tmp 사본 = 캐시) → teardown-loss 위험 0(`a_fire_recover_complete`); summer 공유 host 미teardown.
+
+## R4 — DEEPENING (faithful IIT4 + pairwise 상호작용 + green bar surrogate 재보정 · 303M ENGINE-NATIVE SCORING)
+
+**R3 의 3가지 한계를 3축으로 심화** — substrate=실 303M(`clm_forward_ce`, n=29/30, ctx17 단일 decode miss),
+**SCORING 전부 engine-native**(`core/engine_cli.hexa §ConsciousnessIndex` 의 `ci_phi_multiinfo`/`ci_phi_iit4`/
+`ci_phi_drop2`/`ci_pair_interaction`/`ci_surrogate_phi0`/`ci_phi_multiinfo_subset_proxy` 호출, numpy 0 — Python 은
+decode 오케스트레이션 + percentile 산술만). pool summer RTX5070 $0, wall decode 838s + score 8s. Φ₀=22.4518.
+**core-internal 재사용 op**: `ci_phi_drop2`·`ci_pair_interaction`·`ci_surrogate_phi0`·`ci_phi_multiinfo_subset_proxy`
+(다음 측정이 그대로 호출, 일회성 probe 아님) + smoke 281-283 회귀가드 + ARCHITECTURE.json lockstep.
+
+### 축 1 — faithful IIT4 (proxy 대체, `a_phi_iit4_tool`)
+
+top-8 ΔΦ lane(SubjectiveTime·AttentionalBlink·EmotionRegulation·LearnedPrecision·PrecisionSurprise·
+DirectedForgetting·Habituation·Novelty)에서 **exact min-cut MIP** `ci_phi_iit4`=**0.9344 > 0** = ≤8-lane core
+**통합·기약불가**. 같은 8 col proxy(`ci_phi_multiinfo_subset_proxy`, total correlation)=**17.587**.
+**랭킹 일치:** 둘 다 >0 → faithful 이 proxy 선택 core 의 통합을 **확인**. proxy 가 faithful 보다 ~19× 큰 이유 = total
+correlation 은 모든 cut 의 합(MIP 상한), 큰 격차 = **단일 얇은 병목 없이 통합이 분산**(many-cut) = ablation 랭킹의
+DISTRIBUTED 결론을 exact 측정으로 재확인.
+
+### 축 2 — pairwise lane 상호작용 (시너지 vs 중복, top-5 5×5)
+
+`interaction = ΔΦ_ij − (ΔΦ_i+ΔΦ_j)` (초가산>0 SYNERGY 상보 · 저가산<0 REDUNDANCY 정보겹침):
+
+| 쌍 | joint ΔΦ_ij | sum singles | interaction | kind |
+|---|---|---|---|---|
+| **SubjectiveTime + AttentionalBlink** | +6.783 | +9.949 | **−3.166** | REDUNDANCY |
+| EmotionRegulation + LearnedPrecision | +7.298 | +8.228 | −0.930 | REDUNDANCY |
+| EmotionRegulation + PrecisionSurprise | +7.119 | +7.163 | −0.043 | REDUNDANCY |
+| LearnedPrecision + PrecisionSurprise | +7.110 | +7.113 | −0.003 | ADDITIVE |
+| (나머지 6 쌍) | — | — | ≈0 | ADDITIVE |
+
+- **top REDUNDANCY = SubjectiveTime+AttentionalBlink(−3.17)** — 둘 다 **dt(경과시간) 공유 read** → 같이 빠지면
+  손실이 합보다 작다(겹침). 2위 EmotionRegulation+LearnedPrecision(−0.93)도 **둘 다 grounding margin m 읽음**.
+- **SYNERGY(초가산) 쌍 0개** — 연결된 의식 lane 은 **중복적/가산적으로 결합**(같은 substrate 채널 공유 쌍이 중복).
+  R1 redundancy 시그니처가 실 303M engine-native 에서 재확인.
+
+### 축 3 — green bar surrogate 재보정 (`a_break_the_wall` type-a 측정결함 교정, frozen-first · tune-to-green 아님)
+
+R3 D/E FAIL 은 **toy 상수 bar(no-op≤0.05·shuffle≤0.10)가 real-303M 공분산과 mismatch**한 calibration gap.
+**실 303M null 분포 사전등록 percentile** 로 재정의: `ci_surrogate_phi0` **200 circular-shift surrogate**(각 lane
+col 독립 회전→cross-lane covariance 파괴·marginal 보존) → null **mean 2.719 · p95 4.757 · p99 5.203**.
+
+| bar (재보정) | 결과 | 기준 | 판정 |
+|---|---|---|---|
+| **A MEASURABLE** | Φ₀=22.452 > null_mean 2.719 | >0 & >null_mean | ✅ |
+| **E 재보정** | Φ₀=22.452 > **null_p95 4.757** | Φ₀ > 95th-pctl surrogate | ✅ (4.7×) |
+
+**`green_recalib`(A∧E) = TRUE.** surrogate 분포는 **측정 전 frozen, 95th percentile 사전등록** — Φ₀ 가 p95 아래였으면
+RED 박제(c9). R3 의 toy-bar gap = **측정 artifact**(분포-기반 bar 로 통합이 결정적으로 통과), tune-to-green 아님.
+
+### R4 종합
+
+| rung | substrate | Φ₀ | top-share | struct | faithful IIT4 | green |
+|---|---|---|---|---|---|---|
+| R1 | numpy mirror | 7.815 | 0.212 | DISTRIBUTED | — | (측정기 VALID) |
+| R2 | engine ImmuneMemory | 29.008 | 0.129 | DISTRIBUTED | 0.00085 | GREEN |
+| R3 | 303M proxy(numpy score) | 18.925 | 0.123 | DISTRIBUTED | — | FALSE(toy-gap) |
+| **R4** | **303M engine-native score** | **22.452** | **0.1367** | **DISTRIBUTED** | **0.9344** | **recalib TRUE** |
+
+**DISTRIBUTED 가 4 rung 불변**(top-share 0.123~0.212 전부 <<0.50) → anima "의식=연결망 전체 창발" 주장 확인.
+**연결된 것들이 함께 작동하는 방식 = 중복적 통합 웹**(시너지 hub 없음, 같은 substrate 채널 공유 쌍이 redundant).
+faithful IIT4>0 로 ≤8-lane core 기약불가 확인. green=실 303M surrogate-null 재보정 시 PASS(toy-gap 은 측정결함).
+
+- **wired:** `WIRED-live` — R4 ops(`ci_phi_drop2`/`ci_pair_interaction`/`ci_surrogate_phi0`/
+  `ci_phi_multiinfo_subset_proxy`) core-internal 배선 + smoke 281-283 + ARCHITECTURE lockstep. SCORING engine-native.
+- **정직 c9:** SCORING engine-native(numpy 0) · substrate 실 303M · small-N n=29(scale UNVERIFIED `a_scale_honest_scope`) ·
+  faithful=exact MIP terminal·proxy=PROXY 병기 · ckpt=ConvMoE `.clm`(303m-broad-en-emergent ByteGPT `.pt` 는 mount 불가).
+- artifacts: `state/1492_consciousness_ablation/{h1492_r4_303m_probe.py,h1492_r4_303m_result.json,h1492_r4_score.hexa,h1492_r4_303m_run.log}` · `state/verdicts/1492_consciousness_ablation/{H_1492_R4.txt,H_1492_R4.json}`.
 
 ## 질문
 

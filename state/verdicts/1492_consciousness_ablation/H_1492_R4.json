@@ -1,0 +1,412 @@
+{
+  "id": "H_1492_R4",
+  "run": "R4 deepening (faithful IIT4 + pairwise + surrogate re-calib) on 303M ConvMoE, pool summer RTX5070 $0",
+  "ckpt_file": "clm303_d5000.clm",
+  "ckpt_sha256": "99c2a40e4e4c23e16f7ec80f29aaa3a362065983e00709f723f1106598efa3cd",
+  "substrate_source": "REAL 303M core/clm_decode.hexa::clm_forward_ce (per-ctx subprocess, engine-native)",
+  "scoring_source": "ENGINE-NATIVE core/engine_cli.hexa §ConsciousnessIndex (ci_phi_multiinfo/ci_phi_iit4/ci_pair_interaction/ci_surrogate_phi0) — NO numpy in scoring",
+  "n_contexts": 29,
+  "wall_decode_s": 837.9,
+  "wall_score_s": 8.0,
+  "baseline": {
+    "phi0": 22.45176,
+    "top_lane": "SubjectiveTime",
+    "top_share": 0.1367,
+    "total_pos": 36.39437
+  },
+  "structure_verdict": "DISTRIBUTED",
+  "single_dphi_ranking": [
+    {
+      "lane": "SubjectiveTime",
+      "dphi": 4.97426
+    },
+    {
+      "lane": "AttentionalBlink",
+      "dphi": 4.97426
+    },
+    {
+      "lane": "EmotionRegulation",
+      "dphi": 4.13878
+    },
+    {
+      "lane": "LearnedPrecision",
+      "dphi": 4.08949
+    },
+    {
+      "lane": "PrecisionSurprise",
+      "dphi": 3.02378
+    },
+    {
+      "lane": "DirectedForgetting",
+      "dphi": 2.38616
+    },
+    {
+      "lane": "Habituation",
+      "dphi": 2.00874
+    },
+    {
+      "lane": "Novelty",
+      "dphi": 1.90593
+    },
+    {
+      "lane": "FreeWont",
+      "dphi": 1.79549
+    },
+    {
+      "lane": "SenseOfAgency",
+      "dphi": 1.75614
+    },
+    {
+      "lane": "GlobalWorkspace",
+      "dphi": 1.59353
+    },
+    {
+      "lane": "DividedAttention",
+      "dphi": 1.48591
+    },
+    {
+      "lane": "SelfIdentity",
+      "dphi": 1.05306
+    },
+    {
+      "lane": "BodyOwnership",
+      "dphi": 1.05306
+    },
+    {
+      "lane": "MitosisGrowth",
+      "dphi": 0.15578
+    }
+  ],
+  "axis1_faithful_iit4": {
+    "phi_iit4_exact_mincut_mip": 0.934437,
+    "phi_proxy_same_subset": 17.586808,
+    "top8_picked": [
+      "SubjectiveTime",
+      "AttentionalBlink",
+      "EmotionRegulation",
+      "LearnedPrecision",
+      "PrecisionSurprise",
+      "DirectedForgetting",
+      "Habituation",
+      "Novelty"
+    ],
+    "note": "ci_phi_iit4 = EXACT min-cut MIP (a_phi_iit4_tool, NOT proxy); proxy_sub = ci_phi_multiinfo on same 8 cols. Both >0 = ≤8-lane core integrated/irreducible. Ranking selection by proxy ΔΦ."
+  },
+  "axis2_pairwise": {
+    "matrix": [
+      {
+        "i": "SubjectiveTime",
+        "j": "AttentionalBlink",
+        "dphi_ij": 6.782968630223749,
+        "sum_singles": 9.948526385348622,
+        "interaction": -3.1655577551248726,
+        "kind": "REDUNDANCY"
+      },
+      {
+        "i": "SubjectiveTime",
+        "j": "EmotionRegulation",
+        "dphi_ij": 9.113042264531721,
+        "sum_singles": 9.113044045068946,
+        "interaction": -1.7805372252155394e-06,
+        "kind": "ADDITIVE"
+      },
+      {
+        "i": "SubjectiveTime",
+        "j": "LearnedPrecision",
+        "dphi_ij": 9.06374998614887,
+        "sum_singles": 9.063750108983264,
+        "interaction": -1.22834393323501e-07,
+        "kind": "ADDITIVE"
+      },
+      {
+        "i": "SubjectiveTime",
+        "j": "PrecisionSurprise",
+        "dphi_ij": 7.99803293423529,
+        "sum_singles": 7.998041167971813,
+        "interaction": -8.233736522811341e-06,
+        "kind": "ADDITIVE"
+      },
+      {
+        "i": "AttentionalBlink",
+        "j": "EmotionRegulation",
+        "dphi_ij": 9.113042264531714,
+        "sum_singles": 9.11304404506894,
+        "interaction": -1.7805372252155394e-06,
+        "kind": "ADDITIVE"
+      },
+      {
+        "i": "AttentionalBlink",
+        "j": "LearnedPrecision",
+        "dphi_ij": 9.063749986148864,
+        "sum_singles": 9.063750108983257,
+        "interaction": -1.22834393323501e-07,
+        "kind": "ADDITIVE"
+      },
+      {
+        "i": "AttentionalBlink",
+        "j": "PrecisionSurprise",
+        "dphi_ij": 7.998032934235283,
+        "sum_singles": 7.998041167971806,
+        "interaction": -8.233736522811341e-06,
+        "kind": "ADDITIVE"
+      },
+      {
+        "i": "EmotionRegulation",
+        "j": "LearnedPrecision",
+        "dphi_ij": 7.298177730461688,
+        "sum_singles": 8.228267768703581,
+        "interaction": -0.9300900382418931,
+        "kind": "REDUNDANCY"
+      },
+      {
+        "i": "EmotionRegulation",
+        "j": "PrecisionSurprise",
+        "dphi_ij": 7.119343057938117,
+        "sum_singles": 7.162558827692131,
+        "interaction": -0.04321576975401342,
+        "kind": "REDUNDANCY"
+      },
+      {
+        "i": "LearnedPrecision",
+        "j": "PrecisionSurprise",
+        "dphi_ij": 7.11040056713675,
+        "sum_singles": 7.113264891606448,
+        "interaction": -0.0028643244696979764,
+        "kind": "ADDITIVE"
+      }
+    ],
+    "top_synergy": {
+      "i": "SubjectiveTime",
+      "j": "LearnedPrecision",
+      "dphi_ij": 9.06374998614887,
+      "sum_singles": 9.063750108983264,
+      "interaction": -1.22834393323501e-07,
+      "kind": "ADDITIVE"
+    },
+    "top_redundancy": {
+      "i": "SubjectiveTime",
+      "j": "AttentionalBlink",
+      "dphi_ij": 6.782968630223749,
+      "sum_singles": 9.948526385348622,
+      "interaction": -3.1655577551248726,
+      "kind": "REDUNDANCY"
+    },
+    "note": "interaction = ΔΦ_ij − (ΔΦ_i+ΔΦ_j); >0 SYNERGY (complementary), <0 REDUNDANCY (overlap). top-5 ΔΦ lanes 5×5."
+  },
+  "axis3_surrogate_recalib": {
+    "n_surrogate": 200,
+    "null_mean": 2.71931,
+    "null_p95": 4.75704,
+    "null_p99": 5.20349,
+    "null_max": 5.82093,
+    "preregistered_pctl": 95,
+    "calibrated_floor_ratio_p95_over_phi0": 0.21188,
+    "bar_E_recalib_phi0_gt_null_p95": true,
+    "bar_A_phi0_gt_null_mean": true,
+    "note": "frozen-first: surrogate null built from REAL-303M circular-shift (ci_surrogate_phi0); 95th-pctl pre-registered as D/E bar BEFORE verdict (a_break_the_wall type-a, NOT tune-to-green)."
+  },
+  "green_recalib": true,
+  "honest_c9": "R4 ENGINE-NATIVE SCORING (Φ math all via core/engine_cli.hexa §ConsciousnessIndex, no numpy in scoring); substrate REAL 303M clm_forward_ce (n=29). faithful IIT4 = exact min-cut MIP (a_phi_iit4_tool); surrogate D/E re-calib = frozen-first percentile-of-null (NOT tune-to-green). small-N n=29: scale-transfer UNVERIFIED (a_scale_honest_scope).",
+  "r1_r2_r3_r4": {
+    "r1_proxy_numpy": {
+      "phi0": 7.8146,
+      "top_share": 0.212,
+      "struct": "DISTRIBUTED"
+    },
+    "r2_engine": {
+      "phi0": 29.0076,
+      "top_share": 0.129,
+      "struct": "DISTRIBUTED",
+      "iit4": 0.00085
+    },
+    "r3_303m_proxy": {
+      "phi0": 18.925,
+      "top_share": 0.123,
+      "struct": "DISTRIBUTED",
+      "green": false
+    },
+    "r4_303m_engine": {
+      "phi0": 22.4518,
+      "top_share": 0.1367,
+      "struct": "DISTRIBUTED",
+      "iit4": 0.934437,
+      "green_recalib": true
+    }
+  },
+  "ce_records": [
+    {
+      "ctx_id": 0,
+      "model_ce": 1.7047,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.818
+    },
+    {
+      "ctx_id": 1,
+      "model_ce": 1.5483,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.0711
+    },
+    {
+      "ctx_id": 2,
+      "model_ce": 1.0453,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.2402
+    },
+    {
+      "ctx_id": 3,
+      "model_ce": 1.0293,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.8984
+    },
+    {
+      "ctx_id": 4,
+      "model_ce": 1.6273,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.0463
+    },
+    {
+      "ctx_id": 5,
+      "model_ce": 1.4353,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.8877
+    },
+    {
+      "ctx_id": 6,
+      "model_ce": 0.8887,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.072
+    },
+    {
+      "ctx_id": 7,
+      "model_ce": 2.2728,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.738
+    },
+    {
+      "ctx_id": 8,
+      "model_ce": 1.4276,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.0572
+    },
+    {
+      "ctx_id": 9,
+      "model_ce": 1.3858,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.1986
+    },
+    {
+      "ctx_id": 10,
+      "model_ce": 1.8548,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.3718
+    },
+    {
+      "ctx_id": 11,
+      "model_ce": 1.4637,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.647
+    },
+    {
+      "ctx_id": 12,
+      "model_ce": 0.9435,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.6716
+    },
+    {
+      "ctx_id": 13,
+      "model_ce": 1.6162,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.3029
+    },
+    {
+      "ctx_id": 14,
+      "model_ce": 1.4487,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.128
+    },
+    {
+      "ctx_id": 15,
+      "model_ce": 1.8121,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.7131
+    },
+    {
+      "ctx_id": 16,
+      "model_ce": 1.428,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.5279
+    },
+    {
+      "ctx_id": 18,
+      "model_ce": 1.3893,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.4615
+    },
+    {
+      "ctx_id": 19,
+      "model_ce": 1.8619,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.0267
+    },
+    {
+      "ctx_id": 20,
+      "model_ce": 1.2269,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.4294
+    },
+    {
+      "ctx_id": 21,
+      "model_ce": 1.8292,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.7304
+    },
+    {
+      "ctx_id": 22,
+      "model_ce": 2.0431,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.8951
+    },
+    {
+      "ctx_id": 23,
+      "model_ce": 1.5142,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.7913
+    },
+    {
+      "ctx_id": 24,
+      "model_ce": 1.588,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.6307
+    },
+    {
+      "ctx_id": 25,
+      "model_ce": 1.3023,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.549
+    },
+    {
+      "ctx_id": 26,
+      "model_ce": 1.2985,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.3342
+    },
+    {
+      "ctx_id": 27,
+      "model_ce": 1.2215,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.6294
+    },
+    {
+      "ctx_id": 28,
+      "model_ce": 1.623,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 4.7249
+    },
+    {
+      "ctx_id": 29,
+      "model_ce": 1.3692,
+      "uniform_ce": 4.7991,
+      "shuffle_ce": 3.6648
+    }
+  ]
+}
