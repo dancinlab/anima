@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1465, 1466, 1467]
+-- vs NOVELTY (H_1289 family) --
+N1 HAB-DECAYS        hab_drop 0.865>=0.30 True
+N2 NOV-FLAT-ON-SEEN  dir_gap (hab_recover 0.865 - nov_recover 0.000) = 0.865>=0.30 True
+-- vs HOMEOSTATIC DRIVE (H_1292) --
+H1 DRIVE-RISES       drive_rise 0.774>=0.30 True
+H2 OPPOSITE-DIR      opp_gap (drive_rise 0.774 - hab_fixed_rise -0.865) = 1.638>=0.60 AND hab_fixed_rise -0.865<=0 True
+H3 STIM-AGNOSTIC     drive_stim_gap 0.000<=0.05 AND hab_stim_gap 0.918>=0.30 True
+-- CONTROLS (separation must survive) --
+C1 ABL-COLLAPSE      abl_gap 0.000<=0.10 True
+C2 SHUF-COLLAPSE     shuf_specific_gap 0.032<=0.10 True
