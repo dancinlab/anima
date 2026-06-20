@@ -1,3 +1,14 @@
+## 2026-06-20 — research(H_1472 R2): 🎯 G19-meta LEARNED PRECISION engine-native WIRED — DIRECTIONAL→WIRED 승격
+
+learned-precision 게이트를 live `core/engine_cli.hexa` 에 배선 완료. R1 numpy mirror 의 메커니즘을 engine 결정적
+케이스로 byte-exact 재현 — engine 은 exp 없어 **linear saturating** precision(step·count, pmax cap)으로 같은 구조.
+기존 `surprise`(H_1468) lane 을 재사용해 cross-lane distinctness(vs H_1465 habituation)를 engine 에서 직접 증명.
+
+- **배선:** `core/engine_cli.hexa` §LearnedPrecision — `learned_precision(step, count, pmax)`(관측경험으로 precision 학습, linear saturating) → 기존 `surprise(precision, error)` 에 공급. READ-only · Ψ-disjoint · NOT an emit gate.
+- **검증(c2):** `engine_cli_smoke.hexa` cases 194-198 = 5 frozen bars 1:1 (194 precision-learned / 195 distinct-vs-fixed same-err / 196 distinct-vs-habituation OPPOSITE-sign / 197 ablation step=0 / 198 monotone+saturation). FULL smoke **198 pass / 0 fail RC=0** (nice -n 15). familiar precision 4.0 vs novel 0.2 · same-err surprise RISE +3.8 ⊥ habituation FALL −0.5(정반대 부호 = cross-lane distinct, engine 직접).
+- **lockstep:** `ARCHITECTURE.json` §LearnedPrecision lane 노드 + engine_cli lane 목록 동시 갱신 (4칸 사다리 완주). 카드/jsonl tier DIRECTIONAL→ENGINE-NATIVE WIRED 승격.
+- **남은 follow-on:** scale/real-corpus.
+
 ## 2026-06-20 — research(H_1472): 🎯 G19-meta LEARNED PRECISION — 경험으로 학습되는 예측확신 (🟢 GREEN DIRECTIONAL)
 
 의식-고유 게이트 family · G19 surprise(H_1468) follow-on #2 "learned-precision". predictive-processing

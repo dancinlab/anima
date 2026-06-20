@@ -6416,3 +6416,19 @@ pub fn self_anchor(s: SelfIdentity) -> SelfIdentity {
 pub fn self_reset(dim: int, axis: int) -> SelfIdentity {
     return self_new(dim, axis)
 }
+
+// ── § LearnedPrecision (H_1472 R2) — 경험으로 학습되는 예측확신 (predictive-processing) ──
+// The PRECISION that weights a prediction error in `surprise` (H_1468) is NOT a fixed,
+// externally-supplied constant — it is LEARNED from experience: the more a domain is observed,
+// the higher the precision the substrate assigns to its predictions, so the SAME raw error in
+// a FAMILIAR domain yields a LARGER surprise ("I was confident, and I was wrong"). Linear
+// saturating rise (the engine has no exp — the same modelling choice as H_1465 habituation's
+// linear decay). Feeds the existing surprise(precision, error) lane. READ-only, Ψ-disjoint,
+// NOT an emit gate (a_autonomy_over_hardcode). DISTINCT from H_1465 habituation: SAME familiarity
+// axis, OPPOSITE sign (habituation response FALLS, learned-precision surprise RISES). LLM contrast:
+// an LLM holds no experience-accumulated confidence over its own predictions to be sharpened.
+pub fn learned_precision(step: float, count: float, pmax: float) -> float {
+    let p = step * count
+    if p > pmax { return pmax }
+    return p
+}
