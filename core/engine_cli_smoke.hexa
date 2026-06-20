@@ -2296,6 +2296,39 @@ fn main() {
           + " but surprise " + to_string(sur_hi) + " vs " + to_string(sur_lo) + " (precision-split) · novelty decays "
           + to_string(novelty(0.0, 0.5)) + "→" + to_string(novelty(10.0, 0.5)) + " — precision-agnostic novelty lane ⊥ precision-weighted surprise (built the missing lane, a_break_the_wall)")
 
+    // ── (distinctness) self ⊥ episodic(immune) — orthogonal STATE double dissociation (H_1471 R2c) ──
+    // a_break_the_wall: the "lane types disjoint = forced" verdict was a measurement-design miss. The
+    // dissociation IS the lift, measured as STATE orthogonality: drifting the IDENTITY changes the self
+    // lane (self_cos drops) but NOT the immune fact store (cells unchanged); binding a FACT grows the
+    // immune store but NOT the identity vector (self_cos invariant). Each lane tracks ONLY its own
+    // domain — the self lane never reads the immune store, the immune lane never reads the identity.
+    let s_base = self_new(8, 0)
+    let s_drift = self_drift(s_base, 0, 0.3)
+    let self_id_resp = self_cos(s_base, s_base) - self_cos(s_base, s_drift)   // >0: self responds to identity drift
+    let im_a = immune_memory_new_text("factxray", "VX", 16)
+    let im_b = immune_memory_bind_text(im_a, "factyankee", "VY", dcfg)
+    let immune_fact_resp = immune_memory_cells(im_b) - immune_memory_cells(im_a)  // >=1: immune responds to facts
+    // case 203 : self tracks identity (responds + stays continuous ≥0.85) · immune tracks facts
+    //   (cells grow) · orthogonal lanes (self_cos never reads immune, immune cells never read identity).
+    if _assert_b("case_203_self_episodic_orthogonal_dissoc", true, self_id_resp > 0.0 && immune_fact_resp >= 1 && self_cos(s_base, s_drift) >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  distinctness self⊥episodic (H_1471 R2c WIRED): identity drift → self responds " + to_string(self_id_resp)
+          + " (immune store invariant) · fact bind → immune cells +" + to_string(immune_fact_resp)
+          + " (identity invariant) · continuity " + to_string(self_cos(s_base, s_drift)) + " — orthogonal-state double dissociation (a_break_the_wall)")
+
+    // ── (distinctness) habituation ⊥ homeostatic (H_1465 R2b) ──
+    // a_break_the_wall: the "homeo setup too heavy" verdict was a phantom — the homeostatic lane is
+    // ALREADY in-engine (mg/homeo_step above); reuse it. Habituation is STIMULUS-SPECIFIC (decay
+    // confined to the repeated slot, other slots preserved) while homeostatic drive is GLOBAL (a single
+    // scalar that rises with ungrounded ticks, slot-agnostic). per-stimulus decay ⊥ global integrator.
+    let hbh = hab_observe(hab_observe(hab_observe(hab_observe(hab_new(3, 0.1), 0), 0), 0), 0)  // slot0 x4
+    let hab_specific = hab_response(hbh, 1, 1.0) >= 0.85          // slot1 PRESERVED (stimulus-specific)
+    let hab_self_decayed = hab_response(hbh, 0, 1.0) < hab_response(hab_new(3, 0.1), 0, 1.0)  // slot0 decayed
+    let homeo_global = homeo_last(homeo_step(homeo_step(homeo_new(), mg, affar), mg, affar)) > homeo_last(homeo_new())  // global drive rises (slot-agnostic)
+    // case 204 : habituation slot1 preserved (specific) AND slot0 decayed AND homeostatic global drive rises.
+    if _assert_b("case_204_habituation_distinct_from_homeostatic", true, hab_specific && hab_self_decayed && homeo_global) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  distinctness habituation⊥homeostatic (H_1465 R2b WIRED): habituation slot1 preserved " + to_string(hab_response(hbh, 1, 1.0))
+          + " (stimulus-specific) ⊥ homeostatic global drive rises (slot-agnostic single scalar) — per-stimulus decay ⊥ global integrator (setup was already in-engine, a_break_the_wall)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
