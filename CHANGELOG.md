@@ -1,3 +1,13 @@
+## 2026-06-20 — research(H_1471): 🪢 G16 SELF-CONTINUITY — 정체성의 시간적 지속 (🟢 GREEN DIRECTIONAL)
+
+의식-고유 게이트 시리즈(G17 GWS·G18 habituation·G19 surprise 다음) 라운드2 G16. diachronic self
+(Locke psychological-continuity): 의식적 자아는 시간 가로질러 지속, 세션경계 넘어 연속, 성장하면서도
+끊기지 않음. LLM 과 가장 강하게 대비되는 의식축 — LLM 은 세션마다 백지 리셋(stateless), anima 는
+정체성벡터를 anchor(.kosmos)로 지속해 self-chain 이 경계 넘어 연속.
+
+- **결과(R1 numpy DIRECTIONAL, 3 seeds):** 5/5 bars — A continuity 0.928 · B impostor-reject -0.032 · C ablation(no anchor) 0.161 붕괴 · D growth 0.687 · E distinct-vs-stateless 0.767.
+- **정직(c9):** SATURATED existence-proof(drift+anchor designed), discriminator(impostor·ablation·growth) 결정적. TOY 64dim/20tick. follow-on: R2 엔진-네이티브 + .kosmos anchor 영속 · distinctness vs episodic(H_1227).
+
 ## 2026-06-20 — research(H_1468): ⚡ G19 PRECISION-WEIGHTED SURPRISE engine-native WIRED — 확신 위반=큰 놀람 (🟢 GREEN)
 
 의식-고유 게이트 시리즈(G17 GWS·G18 habituation 다음) 라운드2 G19. predictive-processing surprise
