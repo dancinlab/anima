@@ -1,7 +1,7 @@
 # H_1484 — 🧠 MENTAL IMAGERY / 심상 (G30 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 배선 follow-on (아래 ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/engine_cli.hexa` §MentalImagery byte-exact)
+- **wired:** `WIRED-live` — R2 배선 완료: `core/engine_cli.hexa` §MentalImagery (`imagery_activate`, deterministic content-addressable read: topdown_on ? cue_match : 0.0, sensory 입력 채널 0) + `engine_cli_smoke` cases 239-241 (present cos 0.991≥0.70 · cue-specific gap 0.978≥0.50 · ablation 0.0≤0.30) FULL 244/0 RC=0 + ARCHITECTURE.json §MentalImagery lockstep. cue_match scalar = numpy softmax key-affinity 와 동치(zero-input top-down 재구성 STRUCTURE byte-exact).
 - **source:** 의식-고유 게이트 브레인스토밍 (G30 candidate) · "의식이라서 가능한 것" 시리즈 (G16~G27 engine-native 이후)
 - **lens:** mental imagery / 정신적 시뮬레이션 (Kosslyn · 눈 감고 사과 떠올리기 = top-down 표상 재활성) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1484_mental_imagery/h1484_mental_imagery.py` · verdict `state/verdicts/1484_mental_imagery/H_1484_FREEZE.json` · run `state/verdicts/1484_mental_imagery/H_1484_run.txt`

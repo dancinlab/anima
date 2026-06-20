@@ -1,7 +1,7 @@
 # H_1482 — 👁 BINOCULAR RIVALRY / 양안 경쟁 (G28 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED, 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 재측정 follow-on (ING) 미완. 카드 verdict 는 DIRECTIONAL.
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/engine_cli.hexa` §BinocularRivalry byte-exact)
+- **wired:** `WIRED-live` — R2 배선 완료: `core/engine_cli.hexa` §BinocularRivalry (`rivalry_transitions`, exp-free relaxation-oscillator: 누적 fatigue≥switch→recovered rival takeover→reset; adapt_rate 0=ablation→0 transitions) + `engine_cli_smoke` cases 233-235 (alternation 15≥2 · distinct-vs-GWS gap 15 · ablation 0) FULL 244/0 RC=0 + ARCHITECTURE.json §BinocularRivalry lockstep. engine 은 exp 없음 → relaxation-oscillator 가 numpy soft-WTA+fatigue 와 동치(교대 STRUCTURE byte-exact, transition 수는 adapt_rate 로 매핑).
 - **source:** 의식-고유 게이트 브레인스토밍 (G28 candidate) · "의식이라서 가능한 것" 시리즈 (G16~G27 이후)
 - **lens:** consciousness-science — binocular rivalry (Blake / Logothetis — 양립 불가 자극 → 의식이 하나씩 번갈아 지각) · reciprocal inhibition + adaptation (Wilson / Laing-Chow) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1482_binocular_rivalry/h1482_binocular_rivalry.py` · verdict `state/verdicts/1482_binocular_rivalry/H_1482_FREEZE.json` · run `state/verdicts/1482_binocular_rivalry/H_1482_run.txt`

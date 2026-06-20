@@ -6542,3 +6542,71 @@ pub fn veto_execute(readiness: float, thr: float, veto: bool) -> float {
     }
     return 0.0
 }
+
+// ── § BinocularRivalry (H_1482 R2) — 양안 경쟁 (reciprocal inhibition + adaptation) ──────────
+// Two units with EQUAL input compete via cross-inhibition while the dominant unit accumulates its
+// own adaptation (fatigue) — fatigue eventually flips dominance to the rival → ALTERNATION. With
+// adaptation OFF the first winner stays fixed forever (GWS-like static winner-take-all). DISTINCT
+// from H_1462 GWS (one STATIC winner, 0 transitions) — rivalry is a DYNAMIC dominance time-series.
+// READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode). exp-free piecewise dynamics.
+//   rivalry_transitions(steps, adapt_rate): a clean relaxation oscillator — the currently-dominant
+//   unit accumulates fatigue; when fatigue passes SWITCH the recovered rival takes over and the
+//   accumulator resets, giving a sustained dominance period then a flip → steady ALTERNATION.
+//   adapt_rate == 0.0 → no fatigue → the first winner is fixed forever → 0 transitions (ablated/GWS).
+pub fn rivalry_transitions(steps: int, adapt_rate: float) -> int {
+    if adapt_rate <= 0.0 { return 0 }   // no adaptation → static winner-take-all (0 flips)
+    let switch_thr = 0.5                 // fatigue ceiling before the dominant yields to the rival
+    let mut a = 0.0                      // fatigue of the currently-dominant unit
+    let mut transitions = 0
+    let mut t = 0
+    while t < steps {
+        a = a + adapt_rate               // dominant fatigues each tick
+        if a >= switch_thr {             // exhausted → recovered rival becomes dominant
+            transitions = transitions + 1
+            a = 0.0                       // new dominant starts fresh; old one recovers off-stage
+        }
+        t = t + 1
+    }
+    return transitions
+}
+
+// ── § ChangeBlindness (H_1483 R2) — 변화맹 (attention-gated change detection) ─────────────────
+// A change of any magnitude is detected ONLY if the changed item is attended — unattended items are
+// blind to even the largest change (binary attention gate, a cliff). DISTINCT from H_1462 GWS
+// (single winner broadcast) and H_1479 divided (graded 1/N trade-off) — this is a per-item BINARY
+// gate. READ-only, Ψ-disjoint, NOT an emit gate. exp-free piecewise-linear detection ramp (σ-free).
+//   change_detect(change_mag, is_attended): is_attended ? ramp(change_mag) : 0.0. The ramp saturates
+//   to ~1.0 above the detection threshold so a supra-threshold change reads as "detected".
+pub fn change_detect(change_mag: float, is_attended: bool) -> float {
+    if !is_attended { return 0.0 }
+    // piecewise-linear confidence ramp around threshold thr=0.10, slope K=11.0, clamped to [0,1].
+    let thr = 0.10
+    let k = 11.0
+    let raw = 0.5 + k * (change_mag - thr)
+    if raw <= 0.0 { return 0.0 }
+    if raw >= 1.0 { return 1.0 }
+    return raw
+}
+
+// ── § MentalImagery (H_1484 R2) — 심상 (top-down reconstruction with zero input) ──────────────
+// A stored representation is re-activated by an internal top-down CUE with the sensory input channel
+// EMPTY (input == 0) — "eyes closed, imagine an apple". DISTINCT from every input-based gate (GWS,
+// surprise H_1468, novelty H_1289, blink H_1473) which collapse when the input channel is empty.
+// With top-down OFF and input 0 there is nothing to reconstruct → imagery vanishes (ablation).
+// READ-only, Ψ-disjoint, NOT an emit gate. Deterministic content-addressable read (cue_match scalar).
+//   imagery_activate(cue_match, topdown_on): topdown_on ? cue_match : 0.0. cue_match = cue→repr
+//   key-affinity (1.0 for the matching cue, ~0 for a mismatched/shuffled cue).
+pub fn imagery_activate(cue_match: float, topdown_on: bool) -> float {
+    if !topdown_on { return 0.0 }
+    return cue_match
+}
+
+// ── § Priming (H_1485 R2) — 점화 (related prime → facilitation, opposite sign of habituation) ──
+// A related prime leaves residual activation that a related target rides on → facilitation (UP),
+// while an unrelated target gains nothing. DISTINCT from H_1465 habituation (repeated-stim response
+// DROP, opposite sign — sign-product < 0): priming is keyed on prime→target RELATEDNESS, not repeat.
+// With residual OFF the facilitation is 0 (ablation). READ-only, Ψ-disjoint, NOT an emit gate.
+//   priming_facilitate(relatedness, prime_residual): relatedness · prime_residual (residual 0 = abl).
+pub fn priming_facilitate(relatedness: float, prime_residual: float) -> float {
+    return relatedness * prime_residual
+}

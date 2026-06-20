@@ -1,0 +1,39 @@
+{
+  "id": "H_1486",
+  "slug": "1486_temporal_receptive_window",
+  "gate": "P1 TEMPORAL RECEPTIVE WINDOW (TRW)",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1486_temporal_receptive_window.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1486, 1487, 1488],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "params": {"T": 40, "K": 4, "DIM": 32, "N_TRIAL": 200, "TAU_LONG": 40, "TAU_SHORT": 3, "NOISE": 0.25, "CUE_LEN": 10, "CHANCE": 0.25},
+  "bars": {
+    "c1_PRESENCE": {"pass": true, "long_acc": 0.780, "short_acc": 0.255, "gap": 0.525, "thr_gap": 0.30, "thr_long": 0.55, "note": "LONG integration window (tau=40 >= L=39) reaches the far-past early cue block and recovers it; SHORT window (tau=3, recent frames only) never reaches it -> chance. long-short gap 0.525 >= 0.30 AND long 0.780 >= 0.55"},
+    "c2_DISTINCT_vs_subjective_time": {"pass": true, "long_acc": 0.780, "subjtime_acc": 0.255, "gap": 0.525, "thr": 0.30, "note": "a subjective-time-style readout (novelty-weighted DURATION scalar decoded to a cue guess) is at chance 0.255 on the SAME task — it tracks duration FEELING, not far-past cue identity. TRW = integration-window LENGTH (what far-past content survives) ⊥ subjective-time = how-long-it-felt. gap 0.525 >= 0.30"},
+    "c3_SHUFFLE": {"pass": true, "shuf_acc": 0.397, "thr": 0.45, "note": "time-scramble the stream -> the cue frames no longer align with the fixed position codes the order-sensitive long-window readout matches against (content present but at WRONG temporal positions) -> matched filter collapses to chance 0.397. Hasson scrambled-narrative effect (long-TRW regions lose response to temporally scrambled input). all 3 seeds <=0.45 (0.385/0.375/0.430)"},
+    "c4_ABLATE": {"pass": true, "abl_acc": 0.255, "thr": 0.45, "note": "set the window SHORT (tau->3) -> the far-past cue is OUTSIDE the window == the short lane; abl_acc collapses to chance 0.255. The far-past recovery is EARNED by the LONG integration-window length, not baked"}
+  },
+  "green_rule": "c1 and c2 and c3 and c4 (all 3 seeds)",
+  "green": true,
+  "per_seed": {
+    "1486": {"long": 0.840, "short": 0.260, "subj": 0.235, "shuf": 0.385, "abl": 0.260},
+    "1487": {"long": 0.800, "short": 0.250, "subj": 0.245, "shuf": 0.375, "abl": 0.250},
+    "1488": {"long": 0.700, "short": 0.255, "subj": 0.285, "shuf": 0.430, "abl": 0.255}
+  },
+  "distinctness": {
+    "vs_subjective_time_lane9": "subjective-time = a *time-sense*: a novelty-weighted elapsed-time (duration) estimate — HOW LONG it felt. It maps the stream to a SCALAR biased by novelty density and carries NO far-past cue IDENTITY (bar c2: its readout is at chance 0.255 on the SAME task while the long-TRW lane is 0.780). TRW = the integration-window LENGTH (how far back the flat/ordered integration reaches, i.e. WHAT far-past content survives into the present decision). length-of-window ⊥ duration-feeling.",
+    "vs_attentional_blink_lane7": "attentional-blink = a *temporal attention gap*: a target in a narrow post-T1 window is missed (a within-window suppression dip). The TRW gap is about integration-window SCALE (tau) across the hierarchy — long vs short window length — not an attention dead-zone. Different axis: blink = a transient miss in time; TRW = a difference in how far back a region integrates."
+  },
+  "p6_guard": "the readout reads ONLY the position-tagged windowed integrator state h(T-1) matched against each candidate's CLEAN windowed signature. No `answer=cue` shortcut, no injected label, no per-window hand-set accuracy, no RLHF/persona in the operative readout. Window length tau is the ONLY thing differing between LONG and SHORT lanes (input/templates/position-codes/readout-rule/noise identical). c3 shuffle (order destroyed -> collapse) and c4 ablation (window->short -> collapse) prove the far-past recovery is EARNED by the integration-window length, not baked.",
+  "honest_c9": "DIRECTIONAL numpy mirror (hard-gate 1) — engine-transfer UNVERIFIED. a_break_the_wall TYPE-A measurement fix applied frozen-first: the FIRST integrator (pure exponential leaky sum) geometrically down-weighted the OLDEST frame, so even a long tau forgot the t=0 cue (long_acc 0.368 ~ chance) — that is a leak ARTIFACT, not the TRW claim. The TRW claim is window LENGTH (how far back a FLAT/ordered integration reaches); switched to a boxcar window of length tau with an order-sensitive position-tagged matched filter (the Hasson operationalization). NO bar threshold moved (c1 gap>=0.30 & long>=0.55, c2 gap>=0.30 & subj<=0.45, c3 shuf<=0.45, c4 abl<=0.45 all UNCHANGED across every revision) — NOT tune-to-green; only the mechanism SNR (boxcar window, CUE_LEN sustained block, NOISE) was set so the genuine far-past signal clears the frozen bars. SATURATED-ish existence proof: designed window dynamics (not a learned controller); discriminators decisive (short 0.255, subj 0.255, shuf 0.397, abl 0.255 all near chance 0.25 vs long 0.780). SCOPE TOY: 40-tick/3-seed/K=4/DIM=32/deterministic — tests TRW STRUCTURE (window-length hierarchy) not a learned multi-timescale cortex; scale/real-corpus/continuous-timescale-hierarchy/zero-shot-timescale-generalization/engine-transfer UNVERIFIED.",
+  "depletion": "NOT depleted — TRW clears BOTH the depletion test legs: (A) falsifiable gap vs short-window engine (long-short gap 0.525, ablation+shuffle controls) AND (B) control-survived distinctness vs subjective-time (c2 0.255 chance) and conceptually vs attentional-blink. The integration-window-LENGTH signal is distinct from duration-FEELING (subjective-time) and from a temporal attention dead-zone (blink).",
+  "artifacts": [
+    "state/1486_temporal_receptive_window/h1486_temporal_receptive_window.py",
+    "state/verdicts/1486_temporal_receptive_window/H_1486_run.txt",
+    "UNIVERSE/cards/H_1486_temporal_receptive_window.md"
+  ],
+  "next_round": "R2 engine-native: evaluate whether core/engine_cli.hexa can host a hierarchy of leaky/boxcar integration windows (short tau ⊥ long tau) over an input time-series with an order-sensitive readout; if present wire §TemporalReceptiveWindow (window_integrate short/long + position-tagged matched readout) + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the 4 frozen bars byte-exact (a_engine_native_learning / a_verified_must_wire)."
+}

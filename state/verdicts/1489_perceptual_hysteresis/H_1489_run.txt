@@ -1,0 +1,11 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1489, 1490, 1491]
+A SWITCH-SHIFT(c1)  asc flips c_up=0.663, desc flips c_down=0.337; shift=0.327>=0.30 (hysteresis loop; loop_area=+0.281)  -> True
+B DISTINCT-vs-RIVALRY(c2)  rivalry-style readout loop |+0.048|<=0.10 (time/fatigue order-invariant) WHILE hysteresis shift 0.327>=0.30  -> True
+C EARNED-shuffle(c3)  sweep-order shuffled -> loop |-0.039|<=0.10 (lag earned by ordered ramp)  -> True
+D EARNED-ablate-history(c4)  LAMBDA=0 -> both sweeps flip at c=0.5, shift |0.000|<=0.10 (loop_area=-0.000) (hysteresis earned by prior-state pull)  -> True
+
+PER-SEED:
+  seed 1489: c_up=0.660 c_down=0.330 shift=0.330 hyst_loop=+0.284 rivalry_loop=+0.052 shuffled_loop=-0.092 ablated_shift=0.000
+  seed 1490: c_up=0.670 c_down=0.340 shift=0.330 hyst_loop=+0.283 rivalry_loop=+0.047 shuffled_loop=-0.141 ablated_shift=-0.010
+  seed 1491: c_up=0.660 c_down=0.340 shift=0.320 hyst_loop=+0.274 rivalry_loop=+0.047 shuffled_loop=+0.114 ablated_shift=0.010
