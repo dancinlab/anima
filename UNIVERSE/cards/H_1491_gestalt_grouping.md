@@ -1,7 +1,7 @@
 # H_1491 — 🧩 GESTALT GROUPING / figure-ground (게슈탈트 군집화) (P6 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror; engine-transfer UNVERIFIED — 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 = live `core/engine_cli.hexa` byte-exact 재측정 + 배선이 GREEN/🧱 확정 전제 (`a_engine_native_learning`·`a_verified_must_wire`); 배선 follow-on = ING
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §GestaltGrouping(gestalt_same_group/gestalt_gws_readout) 배선 + `engine_cli_smoke.hexa` cases 260-262 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: on 1.0 vs off 0.5 gap 0.5≥0.30 & on≥0.55 (A) · GWS single-winner 0.505 chance on multi-element 질의 (C1 distinct selection≠binding) · ablate(개별) 0.5 (B). binding ⊥ selection.
 - **source:** 의식-고유 게이트 시리즈 · 고갈 카탈로그 P6 (`state/gate_depletion_catalogue/CATALOGUE.md`) · '의식이라서 가능한 것'
 - **lens:** Gestalt 군집화 (Wertheimer) — 근접성·유사성으로 요소를 전체로 묶고 figure 를 ground 에서 분리 · `a_no_llm_frame_trap` · biorxiv 2025.12.10.693567 (feature binding requires consciousness)
 - **artifacts:** `state/1491_gestalt_grouping/h1491_gestalt_grouping.py` · verdict `state/verdicts/1491_gestalt_grouping/H_1491_FREEZE.json` · log `state/1491_gestalt_grouping/run_h1491.local.log`

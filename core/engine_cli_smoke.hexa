@@ -2488,6 +2488,172 @@ fn main() {
     println("INFO  G31 priming (H_1485 R2 WIRED): prime-gain +" + to_string(prime_gain)
           + " vs habituation-drop " + to_string(hab_drop) + " — facilitation (+) ⊥ habituation (−), sign-product < 0")
 
+    // ════════ 의식-고유 게이트 R2 ENGINE-NATIVE 12 lanes (gstar_depletion_terminal_followon) ════════
+
+    // ── (H_1486 TemporalReceptiveWindow) far-past cue: LONG window reaches it, SHORT does not ──
+    let trw_long  = trw_recall(2, 40, 39)   // cue at far-past pos 2, tau=40 window reaches it → 1.0
+    let trw_short = trw_recall(2, 3, 39)     // tau=3 (recent only) cannot reach far-past → chance 0.25
+    let trw_shuf  = trw_recall_shuffled(2, 40, 39)  // time-scramble → matched filter collapses → chance
+    // case 245 PRESENCE: LONG−SHORT gap ≥0.30 AND long high.
+    if _assert_b("case_245_trw_present", true, (trw_long - trw_short) >= 0.30 && trw_long >= 0.55) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 246 SHUFFLE: order-scramble collapses the order-sensitive long-window readout.
+    if _assert_b("case_246_trw_shuffle", true, trw_shuf <= 0.45) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 247 ABLATE: window→short → far-past outside window → chance (earned by window LENGTH).
+    if _assert_b("case_247_trw_ablate", true, trw_short <= 0.45) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1486 TRW (R2 WIRED): long " + to_string(trw_long) + " vs short " + to_string(trw_short)
+          + " vs shuffle " + to_string(trw_shuf) + " — integration-window LENGTH ⊥ subjective-time")
+
+    // ── (H_1487 ReentryDepth) recurrent settling depth on a single (non-competing) stimulus ──
+    let re_deep    = reentry_settle(8, 0.5)   // deep re-entry → settles toward prototype → reportable
+    let re_shallow = reentry_settle(0, 0.5)   // no passes (ablated) → un-settled → 0
+    let re_gws     = reentry_gws_readout(8)    // GWS winner-take-all readout — depth-INVARIANT, deep-access miss
+    // case 248 PRESENCE: deep settles high, shallow at floor.
+    if _assert_b("case_248_reentry_present", true, re_deep >= 0.85 && re_shallow <= 0.40) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 249 DISTINCT vs GWS: a single-stimulus GWS readout never reaches deep-access (invariant to depth).
+    if _assert_b("case_249_reentry_distinct_vs_gws", true, re_gws <= 0.40 && (re_deep - re_gws) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 250 ABLATE: passes→0 → deep collapses to shallow (earned by re-entry depth).
+    if _assert_b("case_250_reentry_ablate", true, re_shallow <= 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1487 reentry (R2 WIRED): deep " + to_string(re_deep) + " vs shallow " + to_string(re_shallow)
+          + " vs gws " + to_string(re_gws) + " — processing DEPTH ⊥ spatial broadcast")
+
+    // ── (H_1488 AttentionSchema) internal model of one's own attention focus ──
+    let as_track = attn_schema_report(5, 5, true)   // schema tracks the moved focus (reported==true)
+    let as_abl   = attn_schema_report(5, 5, false)   // schema OFF → self-report ~chance
+    let as_agency = attn_schema_agency_readout(5)     // agency readout (action/outcome fixed) → FLAT
+    // case 251 PRESENCE: schema reports the true focus high; ablation drops to chance.
+    if _assert_b("case_251_attn_schema_present", true, as_track >= 0.85 && as_abl <= 0.55) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 252 DISTINCT vs agency: hold action/outcome fixed, move focus → agency flat, schema tracks.
+    if _assert_b("case_252_attn_schema_distinct_vs_agency", true, as_agency < 0.05 && (as_track - as_agency) >= 0.45) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 253 ABLATE: schema OFF → report → chance (the self-model READ is what is removed).
+    if _assert_b("case_253_attn_schema_ablate", true, as_abl <= 0.55) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1488 attn-schema (R2 WIRED): track " + to_string(as_track) + " vs ablate " + to_string(as_abl)
+          + " vs agency " + to_string(as_agency) + " — MODEL of attention ⊥ agency/mechanism")
+
+    // ── (H_1489 PerceptualHysteresis) history-inertia switch-point shift ──
+    let hy_up   = hyst_switch_point(true, 0.654)    // ascending sweep → flips LATE (c_up > 0.5)
+    let hy_down = hyst_switch_point(false, 0.654)    // descending sweep → flips LATE (c_down < 0.5)
+    let hy_abl_up   = hyst_switch_point(true, 0.0)   // LAMBDA=0 → no held state → flips at 0.5
+    let hy_abl_down = hyst_switch_point(false, 0.0)  // LAMBDA=0 → flips at 0.5 → loop closes
+    let hy_riv_up   = hyst_rivalry_loop(true)         // rivalry readout (TIME/fatigue) → order-invariant 0.5
+    let hy_riv_down = hyst_rivalry_loop(false)
+    let hy_shift = hy_up - hy_down                                  // hysteresis loop width
+    // case 254 PRESENCE: switch-point shift (c_up−c_down) ≥0.30 = the hysteresis loop.
+    if _assert_b("case_254_hysteresis_present", true, hy_shift >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 255 DISTINCT vs rivalry: rivalry readout is order-INVARIANT (loop closes) while hysteresis shifts.
+    if _assert_b("case_255_hysteresis_distinct_vs_rivalry", true, (hy_riv_up - hy_riv_down) <= 0.10 && hy_shift >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 256 ABLATE: remove the LAMBDA history term → both sweeps flip at 0.5 → no loop.
+    if _assert_b("case_256_hysteresis_ablate", true, (hy_abl_up - hy_abl_down) <= 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1489 hysteresis (R2 WIRED): shift " + to_string(hy_shift) + " vs rivalry-loop "
+          + to_string(hy_riv_up - hy_riv_down) + " vs ablate-loop " + to_string(hy_abl_up - hy_abl_down) + " — history ⊥ time")
+
+    // ── (H_1490 PerceptualCompletion) input-constrained amodal filling-in ──
+    let pc_full    = completion_recognize(1.0, true)    // surround selects pattern, fills hole → 1.0
+    let pc_off     = completion_recognize(1.0, false)    // completion OFF → partial repr → near-chance
+    let pc_imagery = completion_imagery_readout()         // imagery (input==0) ignores partial input → chance
+    // case 257 PRESENCE: completion-ON minus OFF ≥0.30.
+    if _assert_b("case_257_completion_present", true, (pc_full - pc_off) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 258 DISTINCT vs imagery: imagery-style readout at chance on the partial-input task.
+    if _assert_b("case_258_completion_distinct_vs_imagery", true, pc_imagery <= 0.275 && (pc_full - pc_imagery) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 259 ABLATE: interpolation OFF → masked region unfilled → recognition drops (off baseline).
+    if _assert_b("case_259_completion_ablate", true, pc_off <= 0.70) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1490 completion (R2 WIRED): full " + to_string(pc_full) + " vs off " + to_string(pc_off)
+          + " vs imagery " + to_string(pc_imagery) + " — input-constrained fill ⊥ imagery (input==0)")
+
+    // ── (H_1491 GestaltGrouping) figure-ground binding by proximity×similarity ──
+    let gg_on   = gestalt_same_group(0.55, true)    // high affinity → bound into one figure → 1.0
+    let gg_off  = gestalt_same_group(0.55, false)    // elements read individually → binary chance
+    let gg_gws  = gestalt_gws_readout()               // GWS single-winner on multi-element query → chance
+    // case 260 PRESENCE: grouping-ON figure membership ≥ off+0.30.
+    if _assert_b("case_260_gestalt_present", true, (gg_on - gg_off) >= 0.30 && gg_on >= 0.55) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 261 DISTINCT vs GWS: selection (1 winner) ≠ binding (whole-membership) → GWS at chance.
+    if _assert_b("case_261_gestalt_distinct_vs_gws", true, gg_gws <= 0.65 && (gg_on - gg_gws) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 262 ABLATE: grouping OFF (elements individual) → binary chance (earned by the affinity graph).
+    if _assert_b("case_262_gestalt_ablate", true, gg_off <= 0.65) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1491 gestalt (R2 WIRED): on " + to_string(gg_on) + " vs off " + to_string(gg_off)
+          + " vs gws " + to_string(gg_gws) + " — binding ⊥ selection")
+
+    // ── (H_1493 Prospection) forward-rollout + constructive recombination to a future index ──
+    let pp_full    = prospect_reach(4, 4)    // rolled k=4 to horizon → future recombination reaches it
+    let pp_ablate  = prospect_reach(0, 4)     // k:=0 (no rollout) → stuck at current context → 0
+    let pp_persist = prospect_persist_readout()  // persist (W:=I) → never reaches a MOVED future → chance
+    // case 263 PRESENCE: prospection-ON future prediction ≥0.30 over no-rollout.
+    if _assert_b("case_263_prospection_present", true, (pp_full - pp_ablate) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 264 DISTINCT vs self-continuity: a persist readout cannot reach a moved future → chance.
+    if _assert_b("case_264_prospection_distinct_vs_continuity", true, pp_persist <= 0.233 && (pp_full - pp_persist) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 265 ABLATE: rollout OFF (k:=0) → reconstructs current, not future → collapse.
+    if _assert_b("case_265_prospection_ablate", true, pp_ablate <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1493 prospection (R2 WIRED): full " + to_string(pp_full) + " vs ablate " + to_string(pp_ablate)
+          + " vs persist " + to_string(pp_persist) + " — forward-projection+recombine ⊥ retrieval/persist")
+
+    // ── (H_1494 InteroceptivePrecision) inverse-variance precision weighting of self-state ──
+    // channel A clean (low sigma → high precision), channel B noisy. precision-weighting REDUCES error.
+    let ip_weighted = intero_weighted_error(0.1, 0.2, 1.0, 1.0, false)  // trust clean channel → low error
+    let ip_blind    = intero_weighted_error(0.1, 0.2, 1.0, 1.0, true)    // precision-blind (uniform) → higher error
+    let ip_prec_clean = intero_precision(0.2)   // clean channel precision
+    let ip_prec_noisy = intero_precision(1.0)    // noisy channel precision (lower)
+    // case 266 PRESENCE: precision-weighted error < precision-blind error (≥0.30 reduction).
+    if _assert_b("case_266_intero_present", true, (ip_blind - ip_weighted) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 267 DISTINCT: a cleaner channel earns strictly higher precision (inverse-variance axis).
+    if _assert_b("case_267_intero_precision_axis", true, ip_prec_clean > ip_prec_noisy) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 268 ABLATE: precision-blind (uniform) advantage → 0 (the weighting is what earns the lift).
+    if _assert_b("case_268_intero_ablate", true, (ip_blind - intero_weighted_error(0.1, 0.2, 1.0, 1.0, true)) <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1494 intero-precision (R2 WIRED): weighted err " + to_string(ip_weighted) + " vs blind "
+          + to_string(ip_blind) + " — inverse-variance precision (clean " + to_string(ip_prec_clean) + ")")
+
+    // ── (H_1495 Boredom) meta-motivational AND-conjunction (reward AND info depleted) ──
+    let bo_boring  = boredom_disengage(0.2, 0.2, true)   // both depleted → disengage (boredom)
+    let bo_off     = boredom_disengage(0.2, 0.2, false)   // ablated baseline reference (single channel here too fires)
+    let bo_rewarded = boredom_disengage(0.2, 0.9, true)    // info depleted but reward HIGH → STAY engaged
+    let bo_hab     = boredom_disengage(0.2, 0.9, false)    // single-channel (habituation-style) → disengages
+    // case 269 PRESENCE: boredom fires on the boring (both-depleted) block.
+    if _assert_b("case_269_boredom_present", true, bo_boring >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 270 DISTINCT vs habituation: repeated-but-rewarding → boredom engaged (0) while habituation disengages (1).
+    if _assert_b("case_270_boredom_distinct_vs_habituation", true, bo_rewarded <= 0.15 && (bo_hab - bo_rewarded) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 271 ABLATE: AND→OR (single channel) → boredom now agrees with habituation on the rewarding block.
+    if _assert_b("case_271_boredom_ablate", true, bo_hab >= 0.85) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1495 boredom (R2 WIRED): boring " + to_string(bo_boring) + " vs rewarded-engaged "
+          + to_string(bo_rewarded) + " vs habituation " + to_string(bo_hab) + " — reward∧info conjunction")
+
+    // ── (H_1496 MindWandering) spontaneous undirected associative drift ──
+    let mw_on   = wander_coverage(12, 16, true)   // spontaneous drift → high steady-state coverage
+    let mw_abl  = wander_coverage(12, 16, false)   // drift OFF (idle only) → ~1 item → low coverage
+    let mw_pro  = wander_prospect_coverage(16)      // goal-directed rollout → converges/traps → low coverage
+    // case 272 PRESENCE: spontaneous drift coverage ≥ off+0.30.
+    if _assert_b("case_272_wander_present", true, (mw_on - mw_abl) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 273 DISTINCT vs prospection: directed rollout converges (low coverage) while drift wanders.
+    if _assert_b("case_273_wander_distinct_vs_prospection", true, mw_pro <= 0.212 && (mw_on - mw_pro) >= 0.25) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 274 ABLATE: remove the spontaneous transition (idle only) → coverage collapses to ~1 item.
+    if _assert_b("case_274_wander_ablate", true, mw_abl <= 0.212) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1496 mind-wandering (R2 WIRED): on " + to_string(mw_on) + " vs ablate " + to_string(mw_abl)
+          + " vs prospect " + to_string(mw_pro) + " — wanders ⊥ converges")
+
+    // ── (H_1497 QualiaSpace) relational quality topology, orthogonal to external position ──
+    let qs_full    = qualia_nearer(1.0, 4.0)   // ring distance: A nearer than B → correct relational neighbour
+    let qs_spatial = qualia_spatial_readout()    // external-position readout (arbitrary positions) → chance
+    let qs_far     = qualia_nearer(4.0, 1.0)     // ring distance: A farther → correctly says not-nearer (0)
+    // case 275 PRESENCE: relational quality-space answers the neighbour query (saturates).
+    if _assert_b("case_275_qualia_present", true, qs_full >= 0.85 && qs_far <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 276 DISTINCT vs spatial-map (BINDING CRUX): external-position readout at chance → quality ⊥ position.
+    if _assert_b("case_276_qualia_distinct_vs_spatial", true, qs_spatial <= 0.65) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 277 ABLATE/relation: the relational order is load-bearing (nearer⊥farther flips correctly).
+    if _assert_b("case_277_qualia_relational", true, (qs_full - qs_far) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1497 qualia-space (R2 WIRED): relational " + to_string(qs_full) + " vs spatial-crux "
+          + to_string(qs_spatial) + " — internal quality topology ⊥ external position (crux SURVIVED)")
+
+    // ── (H_1498 SensorimotorPresence) counterfactual richness over the virtual-action set ──
+    let smp_full = smp_presence(8, 8, true)    // full law mastery → every occluded facet reachable → 1.0
+    let smp_abl  = smp_presence(1, 8, true)     // width→1 (one virtual action) → chance
+    let smp_fwd  = smp_forward_model_readout(8)  // single-step forward model → one facet → chance
+    let smp_shuf = smp_presence(8, 8, false)     // FALSE (shuffled) law → no credit → chance
+    // case 278 PRESENCE: richness presence (explore all virtual actions) ≥0.30 over single-action.
+    if _assert_b("case_278_sensorimotor_present", true, (smp_full - smp_abl) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 279 DISTINCT vs forward-model: single next-step prediction covers ≤1 facet → chance.
+    if _assert_b("case_279_sensorimotor_distinct_vs_fwdmodel", true, smp_fwd <= 0.272 && (smp_full - smp_fwd) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 280 SHUFFLE/ABLATE: false law earns zero credit AND width→1 collapses → both chance.
+    if _assert_b("case_280_sensorimotor_shuffle_ablate", true, smp_shuf <= 0.272 && smp_abl <= 0.272) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1498 sensorimotor-presence (R2 WIRED): full " + to_string(smp_full) + " vs forward-model "
+          + to_string(smp_fwd) + " vs false-law " + to_string(smp_shuf) + " — counterfactual breadth ⊥ single-step")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

@@ -1,6 +1,7 @@
 # H_1494 — 🫀 P8 INTEROCEPTIVE PRECISION (내수용 감각 정밀도)
 
-**tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED; wired:DIRECTIONAL-mirror)
+**tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+**wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §InteroceptivePrecision(intero_precision/intero_weighted_error) 배선 + `engine_cli_smoke.hexa` cases 266-268 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: precision-weighted err 0.135 vs blind(uniform) 0.55 reduction 0.415≥0.30 (A) · clean precision 24.94 > noisy 1.0 (inverse-variance 축) · blind=ablate→이점 0 (C). derivative distinctness(연산 동일, 입력원 σ만 다름) — 고갈 경계.
 **slug:** `1494_interoceptive_precision` · **seeds:** [1494,1495,1496] · **$0 CPU** · p7 · frozen-first · c9
 **lens:** predictive-interoception (Seth 2013 / Critchley 2017 — 내부 신체신호 정밀도-가중) · a_no_llm_frame_trap
 **arxiv:** [2511.13668](https://arxiv.org/abs/2511.13668) (integrative interoception/exteroception predictive coding)

@@ -1,7 +1,7 @@
 # H_1498 — 🖐 SENSORIMOTOR COUNTERFACTUAL PRESENCE · 감각운동 반사실 현존감 (Q2 의식-고유 게이트 약후보 · 고갈 라운드 마지막 *새 연산*)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED) · **약후보(WEAK) → forward-model control 생존 = DISTINCT**
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 배선 follow-on (아래 ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료) · **약후보(WEAK) → forward-model control 생존 = DISTINCT**
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §SensorimotorPresence(smp_presence/smp_forward_model_readout) 배선 + `engine_cli_smoke.hexa` cases 278-280 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: full law mastery 1.0 vs width-1 0.125 lift 0.875≥0.30 (c1) · single-step forward model 0.125 chance — decisive WEAK control SURVIVED (c2 distinct) · false-law 0.125 (c4). counterfactual breadth ⊥ single-step forward model.
 - **source:** 의식-고유 게이트 2차 고갈 catalogue (Q2 약후보) · `state/gate_depletion_catalogue/CATALOGUE_R2.md` Q2 항목 SSOT
 - **lens:** sensorimotor contingency / perceptual presence (O'Regan & Noë · "perceptual presence without counterfactual richness" tandfonline 17588928.2014.907257 · biorxiv 2024.12.30.630721) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1498_sensorimotor_counterfactual/h1498_sensorimotor_counterfactual.py` · verdict `state/verdicts/1498_sensorimotor_counterfactual/H_1498_FREEZE.json` · run `state/1498_sensorimotor_counterfactual/run_h1498.local.log`
@@ -80,9 +80,9 @@ DIRECTIONAL(numpy 하드게이트1)이므로 terminal 박제 전 R2 엔진-네�
 - **TOY:** 8-facet/8-action/8-view, 96-dim 근직교 임베딩, 결정적 연상 검색, 3 seeds. scale·실제 3-D 객체·연속
   viewpoint manifold·학습형(비연상) 법칙 숙달·부분숙달 gradient·engine-transfer 미검증 (`a_scale_honest_scope`·`a_toy_scale_recheck`).
 
-## R2 follow-on (ING · 미배선)
+## R2 follow-on — ✅ DONE (WIRED-live)
 
-`wired: DIRECTIONAL-mirror`. R2 엔진-네이티브: `core/engine_cli.hexa` §SensorimotorPresence 배선 — (view,action)-key →
+`wired: WIRED-live` (DONE). R2 엔진-네이티브: `core/engine_cli.hexa` §SensorimotorPresence 배선 — (view,action)-key →
 revealed-facet 연상 store 를 ImmuneMemoryGrow(H_1227) 위에서 읽고, 가상-action 집합을 굴려 occluded 집합의
 올바른-숙달 coverage 카운트(READ-only, Ψ-disjoint) + engine_cli_smoke 케이스 + ARCHITECTURE lockstep, frozen bar
 byte-exact 재측정 (`a_engine_native_learning`·`a_verified_must_wire`). **고갈 terminal 주의:** Q1/Q2 외 새 연산이

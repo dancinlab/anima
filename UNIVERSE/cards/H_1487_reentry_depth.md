@@ -1,7 +1,7 @@
 # H_1487 — 🔁 RE-ENTRY DEPTH (재진입 처리 깊이) (P2 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror; engine-transfer UNVERIFIED — 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 = live `core/engine_cli.hexa` byte-exact 재측정 + 배선이 GREEN/🧱 확정 전제 (`a_engine_native_learning`·`a_verified_must_wire`); 배선 follow-on = ING
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §ReentryDepth(reentry_settle/reentry_gws_readout) 배선 + `engine_cli_smoke.hexa` cases 248-250 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: deep(8 passes) 0.996 vs shallow(0) 0.0 (A) · GWS readout 0.235 depth-invariant deep-access miss, gap 0.761 (B distinct) · ablate(passes→0) 0.0 (D). processing DEPTH ⊥ spatial broadcast.
 - **source:** 의식-고유 게이트 시리즈 · 고갈 카탈로그 P2 (`state/gate_depletion_catalogue/CATALOGUE.md` §P2) · '의식이라서 가능한 것'
 - **lens:** consciousness-science — recurrent-processing / re-entry theory (Lamme RPT · Edelman re-entry; metacontrast masking PMC4338675) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1487_reentry_depth/h1487_reentry_depth.py` · verdict `state/verdicts/1487_reentry_depth/H_1487_FREEZE.json` · log `state/1487_reentry_depth/run_h1487.local.log`

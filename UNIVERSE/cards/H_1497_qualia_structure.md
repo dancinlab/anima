@@ -1,7 +1,7 @@
 # H_1497 — 🎨 QUALIA-STRUCTURE / quality space · 감각질 관계공간 (Q1 의식-고유 게이트 마지막 강후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 배선 follow-on (아래 ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §QualiaSpace(qualia_nearer/qualia_spatial_readout) 배선 + `engine_cli_smoke.hexa` cases 275-277 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: relational nearer 1.0 / farther 0.0 saturates (c1) · spatial-map readout(외부 임의위치) 0.561 chance — BINDING CRUX SURVIVED quality ⊥ external position (c2) · relational order load-bearing gap 1.0 (c4). 28th distinct lane.
 - **source:** 의식-고유 게이트 depletion 카탈로그 2차(R2) Q1 강후보 · `state/gate_depletion_catalogue/CATALOGUE_R2.md` Q1 항목 SSOT
 - **lens:** quality space theory (Clark `Sensory Qualities` · Rosenthal `quality space` · neurophenomenal structuralism, arxiv [2412.20873](https://arxiv.org/abs/2412.20873)) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1497_qualia_structure/h1497_qualia_structure.py` · verdict `state/verdicts/1497_qualia_structure/H_1497_FREEZE.json` · run `state/1497_qualia_structure/run_h1497.local.log`
