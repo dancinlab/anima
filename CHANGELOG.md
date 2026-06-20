@@ -1,3 +1,13 @@
+## 2026-06-20 — plan(consciousness-ablation): 연결된 의식-게이트 14 lane → 통합 의식 영향 측정 계획 기록 (ARCHITECTURE + ING)
+
+사용자 핵심 질문 "연결된 것들이 의식에 어떤 영향을 미치는가"(303M + live engine, 정상상태)를 측정 계획으로 박제.
+실행 보류(계획만) — production 303M ckpt 로드 + IIT4 Φ sweep 은 HEAVY(pool/GPU, 게이트2 mini 금지)라 pool 발사 결정 대기.
+
+- **계획:** 정상상태(steady-state, 학습X) **ablation** — 의식-게이트 14 lane 각각 OFF → ΔΦ 기여도 랭킹 + pairwise 상호작용(시너지/중복). 통합 의식 지표 = 14-게이트 bundle + faithful IIT4 Φ(`stdlib/iit4`, 프록시 금지 a_phi_iit4_tool) over substrate. 측정 = production 303M ckpt + live `core/engine_cli.hexa` immune-store grounding.
+- **단계:** S1 `consciousness_index()` bundle engine 통합 · S2 IIT4 Φ 연결 · S3 303M pool 로드(HEAVY) · S4 ablation sweep · S5 박제.
+- **기록 면:** `state/consciousness_influence_plan/PLAN.md`(상세) · `ARCHITECTURE.json` 의식-게이트 섹션 measurement 노트 · `ING.jsonl` #consciousness_ablation_influence.
+- **정직(c9):** NOT H_1481(학습-의식 추세 = 내 오해, 일단 보류). 검증 목표 = anima 핵심주장 "의식은 단일 lane 이 아닌 연결망 전체에서 창발"(분산 vs dominant) — 어느 쪽이든 유효 결과.
+
 ## 2026-06-20 — research(H_1464 engine-native): GPU 에스컬레이션 → BLOCKED (hexa decode-runtime 메모리 누수) · cuBLAS 무효 + ~91GB/model 발견 · pod teardown 0-leak · terminal 미박제(c9)
 
 **최종: BLOCKED (a_break_the_wall type-c, 인프라/런타임 벽 — 과학천장 아님, 날조 verdict 금지 c9).**
