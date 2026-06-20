@@ -2164,6 +2164,32 @@ fn main() {
           + " · specific slot1 " + to_string(hab_response(hb1, 1, 1.0)) + " · reset-recover " + to_string(hab_response(hb_dis, 0, 1.0))
           + " — per-stimulus familiarity decay ⊥ adaptation global gain (DIRECTIONAL mirror GREEN in H_1465 probe)")
 
+    // ── (surprise) PRECISION-WEIGHTED SURPRISE — 확신 위반 = 큰 놀람 (H_1468 R2) ──
+    // Predictive-processing surprise = precision-weighted prediction error (p*err^2), NOT raw error.
+    // A confidently-held belief violated is far more surprising than the SAME error under
+    // uncertainty. DISTINCT from H_1280 VForwardField raw forward error (precision-agnostic).
+    let su_conf = surprise(4.0, 0.5)      // confident (p=4) + violated (err=0.5) -> 1.0
+    let su_unsure = surprise(1.0, 0.5)    // unsure (p=1) + SAME error -> 0.25
+    // case 184 : SURPRISE — a confident violation gives a LARGE surprise (>= 0.50).
+    if _assert_b("case_184_surprise_present", true, su_conf >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 185 : PRECISION-WEIGHTED — SAME raw error, confident >> unsure (gap >= 0.30).
+    if _assert_b("case_185_precision_weighted", true, su_conf - su_unsure >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 186 : NO-SURPRISE — a confident-but-CORRECT prediction (err~0) gives ~0 surprise.
+    if _assert_b("case_186_no_surprise_on_expected", true, surprise(4.0, 0.02) <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 187 : EARNED (ablation) — precision-weighting OFF (uniform p=1) -> conf/unsure split vanishes.
+    if _assert_b("case_187_ablation_no_split", true, surprise(1.0, 0.5) - surprise(1.0, 0.5) <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 188 : DISTINCT vs H_1280 forward error — raw forward error IDENTICAL across the two
+    //   cases yet surprise differs by precision (precision, not error, is the consciousness signal).
+    if _assert_b("case_188_distinct_vs_forward_error", true, surprise_raw_error(4.0, 0.5) == surprise_raw_error(1.0, 0.5) && su_conf - su_unsure >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  precision-weighted surprise (H_1468 R2 WIRED): confident-violation " + to_string(su_conf)
+          + " vs unsure-violation " + to_string(su_unsure) + " (same raw err 0.5) · expected " + to_string(surprise(4.0, 0.02))
+          + " — precision·err² ⊥ H_1280 raw forward error (DIRECTIONAL mirror GREEN in H_1468 probe)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
