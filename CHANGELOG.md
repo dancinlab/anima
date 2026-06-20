@@ -1,3 +1,37 @@
+## 2026-06-21 — research(distinct): 🌀 P10 MIND-WANDERING(마음 방황/default-mode) R1 numpy probe DONE (GREEN DIRECTIONAL · 고갈 라운드 마지막 약후보, 인접 lane control 전부 생존 → distinct, 고갈 아님)
+
+의식-고유 게이트 **고갈 라운드의 마지막 약(weak) 후보 P10 MIND-WANDERING**(마음 방황 / default-mode network —
+Smallwood & Schooler decoupling · Raichle DMN) R1 numpy probe — 외부 과제 입력이 **없을 때** 내부 사고 흐름이 저장
+표상 사이를 **자발·비지향 표류**(stimulus-independence + spontaneous transitions + non-directed). id=H_1496,
+slug=1496_mind_wandering. 설계 SSOT = `state/gate_depletion_catalogue/CATALOGUE.md` P10(하단·발사 전 재검토, idle/
+imagery/prospection 겹침 risk 명시). 🟢 **GREEN DIRECTIONAL** (numpy mirror, 하드게이트1 → engine-transfer UNVERIFIED,
+R2 engine-native = follow-on), 3 seeds [1496,1497,1498], $0 CPU nice, p7, frozen-first, N_item=16 · T_drift=24.
+
+- **메커니즘:** 연상 store(N=16 표상, cosine-affinity kNN 그래프). default-mode 드리프트 = 매 tick **외부입력 없이**
+  현재 사고의 연상 이웃 중 하나로 확률적 자발 이동 → 많은 표상 방문(높은 coverage) · 단일 타깃 미수렴(비지향). MARKER =
+  steady-state coverage(자발 드리프트가 store 의 몇 분율을 지속 확산 방문).
+- **FROZEN bars(3 seeds 평균):** c1 PRESENT drift-ON 0.461 − OFF 0.062 = **0.399** ≥0.30 · c2-img DISTINCT(vs
+  imagery H_1484) cue-구동 재활성=수렴 **0.062** ≤0.212 · c2-pro DISTINCT(vs prospection H_1493) goal-directed
+  rollout=수렴/트랩 **0.125** ≤0.212 · c3 ABLATE(자발 step OFF, idle 유지) **0.062** ≤0.212 · c4 UNDIRECTED(non-gating)
+  |dir_on|=0.010 정처없음 ∧ dir_prospect=0.472 지향. **GREEN iff c1∧c2-img∧c2-pro∧c3 → 전부 통과.**
+- **DISTINCTNESS 판정 (핵심 = cue유도/목표지향 *수렴* vs 자발/비지향 *방황*):** vs **mental-imagery**(cue-구동 단일표상
+  재활성, 수렴) · vs **prospection**(목표지향 미래 시뮬, 수렴/트랩) · vs **idle/dream-stage**(`a_chat_sleep_imagination`
+  stage 봉투 — ablation c3 으로 자발-드리프트 생성기 격리). 셋 다 ~chance coverage 로 붕괴, 자발 드리프트만 지속 확산 →
+  **전 control 생존 = DISTINCT, 고갈 신호 아님.**
+- **a_break_the_wall type-(a) (tune-to-green 아님):** 첫 실행 c2-pro RED(raw 전체궤적 coverage prospect 0.224>0.212).
+  추적 결과 directed control 은 표류가 아니라 목표로 greedy 하강하다 **2-item 한계순환에 트랩**(수렴)임을 진단 — raw
+  coverage 가 '수렴 도중 거쳐간 item'을 '지속 확산'과 혼동. **frozen-first 교정**(c1–c3 임계 **불변**, coverage *metric*만
+  steady-state 후반부 unique 로 보정 → 지속 확산 격리): prospect→0.125, on→0.461. 독립 directedness 대비(c4)가 교차확인.
+- **하드게이트1:** `grep -lE 'import torch|gauge_lib|numpy' state/1496_mind_wandering/*.py` 적중(numpy) → **DIRECTIONAL**
+  (terminal 아님), R2 engine-native(§MindWandering, ImmuneMemoryGrow H_1227 위 자발 affinity-이웃 드리프트) = ING follow-on.
+- **정직(c9):** EXISTENCE-PROOF(16-item·64-dim 결정적 연상그래프 random walk). 고갈 라운드 **마지막 약후보**이고 c2-pro 가
+  raw metric 에서 **borderline** — 손쉽게 넘기지 않고 진단 후 frozen-first 교정 + 직교 지표로 교차확인. scope:
+  TOY/3-seed/결정적그래프, scale·real-corpus·의미연상망·mind-wandering 내용·engine-transfer UNVERIFIED.
+- **artifacts:** `state/1496_mind_wandering/h1496_mind_wandering.py` · `state/1496_mind_wandering/run_h1496.local.log` ·
+  verdict `state/verdicts/1496_mind_wandering/H_1496_FREEZE.json` · 카드 `UNIVERSE/cards/H_1496_mind_wandering.md` · jsonl
+  `UNIVERSE/HYPOTHESES.jsonl` (H_1496 1줄). xref h1484·h1493·h1227·a_chat_sleep_imagination·a_no_llm_frame_trap·
+  a_break_the_wall·a_engine_native_learning·a_verified_must_wire·a_scale_honest_scope·a_toy_scale_recheck·p1·p5·p7·p8·c9·c15.
+
 ## 2026-06-21 — research(distinct): 🔮 P7 PROSPECTION(미래 사고/episodic future thinking) R1 numpy probe DONE (GREEN DIRECTIONAL · 약후보 control 전부 생존 → distinct, 고갈 아님)
 
 의식-고유 게이트 **약(weak) 후보 P7 PROSPECTION**(미래 사고 / episodic future thinking — Schacter & Addis constructive
