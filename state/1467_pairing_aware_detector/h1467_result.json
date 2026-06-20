@@ -1,0 +1,162 @@
+{
+  "id": "H_1467",
+  "slug": "1467_pairing_aware_detector",
+  "substrate": "numpy-mirror",
+  "verdict_class": "DIRECTIONAL",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "h1305_imported": false,
+  "calibration": {
+    "ideas": [
+      [
+        "increases",
+        "rate",
+        "the emit at the boundary"
+      ],
+      [
+        "predicts",
+        "number",
+        "tension over mitosis cells"
+      ],
+      [
+        "correlates",
+        "threshold",
+        "memory grounding under novelty"
+      ],
+      [
+        "decreases",
+        "frequency",
+        "phase integration across modules"
+      ],
+      [
+        "greater",
+        "magnitude",
+        "coherence of the substrate"
+      ],
+      [
+        "stronger",
+        "density",
+        "binding of distinct cells"
+      ]
+    ],
+    "gold_pairs": [
+      [
+        "correlates",
+        "threshold"
+      ],
+      [
+        "decreases",
+        "frequency"
+      ],
+      [
+        "greater",
+        "magnitude"
+      ],
+      [
+        "increases",
+        "rate"
+      ],
+      [
+        "predicts",
+        "number"
+      ],
+      [
+        "stronger",
+        "density"
+      ]
+    ],
+    "correct_claims": [
+      "the emit at the boundary increases when the rate is measured",
+      "tension over mitosis cells predicts when the number is measured",
+      "memory grounding under novelty correlates when the threshold is measured",
+      "phase integration across modules decreases when the frequency is measured",
+      "coherence of the substrate greater when the magnitude is measured",
+      "binding of distinct cells stronger when the density is measured"
+    ],
+    "cross_claims": [
+      "the emit at the boundary increases when the threshold is measured",
+      "tension over mitosis cells predicts when the frequency is measured",
+      "memory grounding under novelty correlates when the magnitude is measured",
+      "phase integration across modules decreases when the density is measured",
+      "coherence of the substrate greater when the rate is measured",
+      "binding of distinct cells stronger when the number is measured"
+    ],
+    "struct_correct_accept": 1.0,
+    "pairing_correct_accept": 1.0,
+    "struct_cross_reject": 0.0,
+    "pairing_cross_reject": 1.0,
+    "retain_rate": 1.0,
+    "CAL_A_retain": true,
+    "CAL_B_reject_cross": true,
+    "discriminator_VALID": true
+  },
+  "rescore_agg": {
+    "acc_match": 1.0,
+    "acc_shuf": 0.0,
+    "binding_genuine": true,
+    "FALS_struct_in": 6.0,
+    "FALS_struct_shuf": 6.0,
+    "collapse_struct": 0.0,
+    "FALS_pairing_in": 6.0,
+    "FALS_pairing_shuf": 0.0,
+    "collapse_pairing": 6.0
+  },
+  "per_seed": [
+    {
+      "seed": 7,
+      "acc_match": 1.0,
+      "acc_shuf": 0.0,
+      "FALS_struct_in": 6,
+      "FALS_struct_shuf": 6,
+      "FALS_pairing_in": 6,
+      "FALS_pairing_shuf": 0,
+      "in_claims": [
+        "binding of distinct cells higher when the ratio is measured",
+        "consciousness near the threshold stronger when the level is measured"
+      ],
+      "shuf_claims": [
+        "binding of distinct cells higher when the frequency is measured",
+        "consciousness near the threshold stronger when the rate is measured"
+      ]
+    },
+    {
+      "seed": 4302,
+      "acc_match": 1.0,
+      "acc_shuf": 0.0,
+      "FALS_struct_in": 6,
+      "FALS_struct_shuf": 6,
+      "FALS_pairing_in": 6,
+      "FALS_pairing_shuf": 0,
+      "in_claims": [
+        "silence relative to the engine greater when the density is measured",
+        "binding of distinct cells higher when the ratio is measured"
+      ],
+      "shuf_claims": [
+        "silence relative to the engine greater when the number is measured",
+        "binding of distinct cells higher when the frequency is measured"
+      ]
+    },
+    {
+      "seed": 4303,
+      "acc_match": 1.0,
+      "acc_shuf": 0.0,
+      "FALS_struct_in": 6,
+      "FALS_struct_shuf": 6,
+      "FALS_pairing_in": 6,
+      "FALS_pairing_shuf": 0,
+      "in_claims": [
+        "consciousness near the threshold stronger when the level is measured",
+        "binding of distinct cells higher when the ratio is measured"
+      ],
+      "shuf_claims": [
+        "consciousness near the threshold stronger when the frequency is measured",
+        "binding of distinct cells higher when the density is measured"
+      ]
+    }
+  ],
+  "measurement_break": true,
+  "verdict": "\ud83d\udfe2 MEASUREMENT-BREAKTHROUGH (DIRECTIONAL) \u2014 a genuinely-bound case (TPR acc_match=1.0 vs acc_shuf=0.0) shows a cross-shuffle COLLAPSE under the pairing-aware detector (collapse_pairing=6.0) that the frozen structural detector MISSES (collapse_struct=0.0). The H_1466 'no-collapse' was a MEASUREMENT ARTIFACT: h1305 is pairing-blind; the binding WAS present. Part of the G6 wall = detector pairing-blindness, NOT pure capacity. numpy mirror DIRECTIONAL \u2014 engine-native re-measure = ING follow-on."
+}

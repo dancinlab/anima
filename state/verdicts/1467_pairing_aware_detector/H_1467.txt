@@ -1,0 +1,34 @@
+================================================================================
+H_1467 PAIRING-AWARE COHERENCE DETECTOR — $0 CPU numpy mirror (DIRECTIONAL)
+h1305 frozen sets: byte-copied (torch absent)
+================================================================================
+
+──────── PHASE 1: CALIBRATION (frozen-first VALIDITY gate, c9) ────────
+  correct same-idea claims (n=6):
+    structural accept = 1.0   pairing accept = 1.0
+  cross-paired claims (both legs present, wrong pairing):
+    structural reject = 0.0   pairing reject = 1.0
+  CAL-A RETAIN-correct  retain>=0.90 & accept>=0.90 : True
+  CAL-B REJECT-cross    (p_rej - s_rej)>=0.50       : True  (Δ=1.0)
+  ==> DISCRIMINATOR VALID: True
+      sample correct claim: 'the emit at the boundary increases when the rate is measured'
+      sample cross   claim: 'the emit at the boundary increases when the threshold is measured'
+
+──────── PHASE 2: RESCORE — H_1466 TPR binder (in vs cross-shuffle) ────────
+  per-seed:
+    seed    7: acc_match=1.0 acc_shuf=0.0 | struct in/shuf=6/6  pairing in/shuf=6/0
+    seed 4302: acc_match=1.0 acc_shuf=0.0 | struct in/shuf=6/6  pairing in/shuf=6/0
+    seed 4303: acc_match=1.0 acc_shuf=0.0 | struct in/shuf=6/6  pairing in/shuf=6/0
+
+  TPR binding genuine? acc_match=1.0 (vs acc_shuf=0.0) -> YES
+
+  detector      FALS_in  FALS_shuf  collapse
+  STRUCTURAL        6.0        6.0       0.0  (h1305 frozen, pairing-blind)
+  PAIRING           6.0        0.0       6.0  (this lens)
+
+================================================================================
+VERDICT: 🟢 MEASUREMENT-BREAKTHROUGH (DIRECTIONAL) — a genuinely-bound case (TPR acc_match=1.0 vs acc_shuf=0.0) shows a cross-shuffle COLLAPSE under the pairing-aware detector (collapse_pairing=6.0) that the frozen structural detector MISSES (collapse_struct=0.0). The H_1466 'no-collapse' was a MEASUREMENT ARTIFACT: h1305 is pairing-blind; the binding WAS present. Part of the G6 wall = detector pairing-blindness, NOT pure capacity. numpy mirror DIRECTIONAL — engine-native re-measure = ING follow-on.
+================================================================================
+
+wrote /Users/mini/dancinlab/anima/.claude/worktrees/h1467-pairing-aware-detector/state/1467_pairing_aware_detector/h1467_result.json
+H1467_DONE
