@@ -1,0 +1,62 @@
+{
+  "hypothesis": "H_1479",
+  "slug": "divided_attention",
+  "gate_label": "G26",
+  "lens": "Kahneman capacity/effort model",
+  "arms": [
+    "FULL",
+    "ABLATED",
+    "SHUFFLE"
+  ],
+  "seeds": [
+    1479,
+    1480,
+    1481
+  ],
+  "n_trials": 200,
+  "r_pool": 1.0,
+  "metrics": {
+    "single": 0.9877519943469705,
+    "divided": 0.48159648940901995,
+    "divided_min": 0.4815964894090199,
+    "ablated": 0.9782377483445828,
+    "shuffled": 0.2697302785779821,
+    "sum_alloc": 1.0
+  },
+  "bars": {
+    "A_presence": {
+      "single": 0.9877519943469705,
+      "divided": 0.48159648940901995,
+      "bar_single": 0.85,
+      "bar_divided": 0.65,
+      "pass_": true
+    },
+    "B_distinct_vs_gws": {
+      "divided_min": 0.4815964894090199,
+      "bar": 0.3,
+      "note": "GWS leaves exactly one task at 0; divided keeps both alive",
+      "pass_": true
+    },
+    "C_earned_ablation": {
+      "ablated": 0.9782377483445828,
+      "bar": 0.85,
+      "note": "resource-split OFF (pool unbounded) -> trade-off vanishes",
+      "pass_": true
+    },
+    "D_resource_conservation": {
+      "sum_alloc": 1.0,
+      "r_pool": 1.0,
+      "pass_": true,
+      "gating": false
+    },
+    "E_shuffle": {
+      "divided": 0.48159648940901995,
+      "shuffled_worst": 0.2697302785779821,
+      "bar": 0.4,
+      "note": "mismatched alloc<->demand pairing starves the hard task",
+      "pass_": true
+    }
+  },
+  "verdict": "GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)",
+  "green": true
+}
