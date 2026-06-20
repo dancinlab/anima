@@ -1,0 +1,26 @@
+================================================================================
+H_1463 PHASE-BINDING / BINDING-BY-SYNCHRONY (mean/3 seeds [1463, 1464, 1465]) FORM_RATIO=0.75
+================================================================================
+  base   FALS_in=2.000
+  SYNC   FALS_in=2.333  DIST_in=5.333  FALS_ho=2.000
+  COH    matched=0.328  mismatched(cross)=0.216  ablate=0.323
+  ---- FROZEN BARS ----
+  B1_FALS_floor(>=1)                        : 2.333 -> True
+  B2_DIST(>=5)                              : 5.333 -> True
+  B3_XSHUFFLE_COLLAPSE(COH_m-COH_x>=0.30)   : 0.112 -> False
+  B4_HELDOUT(>=1)                           : 2.0 -> True
+  B5_vs_BASE(FALS_in>=base+1)               : 2.333 vs 2.0+1 -> False
+  CTRL phase-scramble (COH_m<=0.55)         : 0.323 -> True
+  ---- SENSITIVITY (form-ratio vs B3 collapse) ----
+  form_ratio=0.5    : COH_m=0.416 COH_x=0.258 gap=+0.159 B3=False
+  form_ratio=0.6    : COH_m=0.383 COH_x=0.256 gap=+0.128 B3=False
+  form_ratio=0.7    : COH_m=0.320 COH_x=0.242 gap=+0.079 B3=False
+  form_ratio=0.75   : COH_m=0.328 COH_x=0.216 gap=+0.112 B3=False
+  form_ratio=0.8    : COH_m=0.337 COH_x=0.226 gap=+0.112 B3=False
+  form_ratio=0.85   : COH_m=0.344 COH_x=0.237 gap=+0.107 B3=False
+  form_ratio=0.9    : COH_m=0.353 COH_x=0.249 gap=+0.105 B3=False
+  form_ratio=0.95   : COH_m=0.344 COH_x=0.258 gap=+0.086 B3=False
+  ----------------------------------------
+  VERDICT: 🧱 WALL=CAPACITY   (DIRECTIONAL — engine-native re-measure = ING)
+
+[H_1463 done] /Users/mini/dancinlab/anima/state/1463_phase_binding_synchrony/h1463_result.json

@@ -1,3 +1,14 @@
+## 2026-06-20 — research(H_1463): 🌀 G6 FALS-depth PHASE-BINDING / BINDING-BY-SYNCHRONY (렌즈 ③) → 🧱 WALL=CAPACITY (DIRECTIONAL)
+
+G6 capacity-wall(comparator+measurable WELD 실패)을 **neuroscience binding-by-synchrony** 렌즈로 탐색($0 CPU numpy mirror, `a_no_llm_frame_trap`). von der Malsburg/Lisman theta-gamma phase coupling — 같은 객체 특징은 동위상 발화로 묶인다. 직전 7렌즈는 전부 weight-space 결합(MLP/attention/retrieval=content-addressed shell)으로 B3 cross-shuffle COLLAPSE 에 실패했고, phase 결합은 **관계적**이라 외부 measurable weld 시 위상이 깨질 것이라는 가설. 결과 = **🧱 WALL=CAPACITY**, 8번째 독립 렌즈가 capacity 로 수렴.
+
+- **정직한 설계(c9 — tautology 회피):** phase=idea-identity 손배정은 matched→1·cross→chance 가 구성상 자명(무의미). 그래서 phase 를 **CONTENT 벡터에서 유도** — content = IDEA_SIGNAL(idea-고유) + FORM_SIGNAL(generic "measurable-모양 절", 모든 measurable 공유 shell). cross-shuffle 은 FORM 유지·IDEA 만 교체 → B3 는 idea-signal 이 phase 를 지배할 때만 COLLAPSE. `FORM_RATIO=0.75` 는 **H_1431 emission profile**(comparator~20%·measurable~27% idea-고유)에 FROZEN, tune 아님.
+- **결과(3 seeds [1463,1464,1465], FORM_RATIO=0.75 frozen):** SYNC FALS_in 2.333 · DIST 5.333 · FALS_ho 2.0; COH matched 0.328 · mismatched(cross) 0.216 · ablate 0.323. bars: **B1·B2·B4·CTRL PASS / B3·B5 FAIL.**
+- **DECISIVE:** B3 cross-shuffle **안 붕괴** — COH_m−COH_x=**+0.112** (need ≥0.30). FORM_RATIO 0.5→0.95 전수 sweep 에서 B3 한 번도 통과 못 함(gap +0.159→+0.086 전부 <0.30). 외부 measurable 이 generic FORM-shell 을 공유해 위상이 coherent 유지 = H_1431/1434/1449 와 IDENTICAL **교체가능-shell** 시그니처.
+- **정직(c9):** phase-scramble control 은 chance(0.323≤0.55) **정상 붕괴** → synchrony read-out **자체는 작동**한다. 붕괴 못 하는 것은 mouth 의 **CONTENT** 가 idea-identity 를 generic form 과 분리가능하게 담지 못해서 = 벽은 read-out 메커니즘이 아니라 **capacity**. 생물 렌즈(synchrony)조차 capacity 로 수렴 → 7B 근거 강화(`a7b_pass`). 벽 분류=(d) 천장 방향(`a_break_the_wall`). FROZEN bar 미이동.
+- **정직(a_engine_native_learning):** numpy mirror = **AUTOMATIC DIRECTIONAL** → engine-native re-measure(live `core/` decode 로 실제 mouth 위상 추출 후 B3 재측정) = ING follow-on.
+- artifacts: `state/1463_phase_binding_synchrony/{h1463_phase_binding_synchrony.py,h1463_result.json,run.local.log}` · `state/verdicts/1463_phase_binding_synchrony/{H_1463_FREEZE.txt,H_1463.json}` · `UNIVERSE/cards/H_1463_phase_binding_synchrony.md` · `UNIVERSE/HYPOTHESES.jsonl#H_1463`.
+
 ## 2026-06-20 — research(H_1463): 🟢 DIRECTIONAL-mirror — G6 LENS ② PAIRING-CONTRASTIVE binding objective → B3 cross-shuffle COLLAPSE (numpy $0 CPU)
 
 G6 capacity-wall 돌파 LENS ② = **BINDING-SPECIFIC CONTRASTIVE OBJECTIVE**. 직전 7렌즈 전부 🧱 WALL=CAPACITY 였고, H_1441 form-contrastive(pos=full falsifiable claim, neg=blanked-leg)는 4 arm 전부 FALS=5.0·**B3 NO-collapse** = "falsifiable FORM 을 무조건 학습, 어떤 idea 결합인지와 무관"(form 배웠지만 pairing 안 배움). 이 렌즈는 질적으로 다른 **PAIRING-contrastive**: pos=같은 idea 의 (comparator_i,measurable_i), neg=교차 (comparator_i,measurable_{j≠i}) 재weld — 양쪽 다 두 leg 존재, **오직 binding 만 차이** → margin 을 줄이려면 올바른 결합을 표현해야 함.

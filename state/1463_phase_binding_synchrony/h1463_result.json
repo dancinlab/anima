@@ -1,0 +1,136 @@
+{
+  "variant": "H_1463_phase_binding_synchrony",
+  "lens": "binding-by-synchrony (von der Malsburg / Lisman theta-gamma phase coupling)",
+  "seeds": [
+    1463,
+    1464,
+    1465
+  ],
+  "DIM": 64,
+  "COH_THR": 0.55,
+  "B3_MARGIN": 0.3,
+  "FORM_RATIO_frozen": 0.75,
+  "FORM_RATIO_basis": "H_1431 emission profile (~25% idea-specific)",
+  "per_seed": [
+    {
+      "seed": 1463,
+      "base_FALS": 3,
+      "sync_FALS_in": 2,
+      "sync_DIST_in": 7,
+      "sync_COH_matched": 0.34743467416543683,
+      "sync_FALS_ho": 1,
+      "sync_COH_mismatched": 0.2457925575768775,
+      "sync_FALS_x": 2,
+      "ablate_COH_matched": 0.44270494001158034
+    },
+    {
+      "seed": 1464,
+      "base_FALS": 1,
+      "sync_FALS_in": 2,
+      "sync_DIST_in": 3,
+      "sync_COH_matched": 0.23656367407681536,
+      "sync_FALS_ho": 2,
+      "sync_COH_mismatched": 0.2778744928434445,
+      "sync_FALS_x": 2,
+      "ablate_COH_matched": 0.3398782184950778
+    },
+    {
+      "seed": 1465,
+      "base_FALS": 2,
+      "sync_FALS_in": 3,
+      "sync_DIST_in": 6,
+      "sync_COH_matched": 0.3994265303718698,
+      "sync_FALS_ho": 3,
+      "sync_COH_mismatched": 0.12433203749713544,
+      "sync_FALS_x": 1,
+      "ablate_COH_matched": 0.18569903411479116
+    }
+  ],
+  "means": {
+    "base_FALS": 2.0,
+    "sync_FALS_in": 2.333,
+    "sync_DIST_in": 5.333,
+    "sync_FALS_ho": 2.0,
+    "sync_COH_matched": 0.328,
+    "sync_COH_mismatched": 0.216,
+    "ablate_COH_matched": 0.323
+  },
+  "bars": {
+    "B1_FALS_floor(>=1)": [
+      2.333,
+      true
+    ],
+    "B2_DIST(>=5)": [
+      5.333,
+      true
+    ],
+    "B3_XSHUFFLE_COLLAPSE(COH_m-COH_x>=0.30)": [
+      0.112,
+      false
+    ],
+    "B4_HELDOUT(>=1)": [
+      2.0,
+      true
+    ],
+    "B5_vs_BASE(FALS_in>=base+1)": [
+      "2.333 vs 2.0+1",
+      false
+    ]
+  },
+  "control_ablate_phase_scramble(COH_m<=0.55)": [
+    0.323,
+    true
+  ],
+  "sensitivity_sweep_FORM_RATIO": {
+    "form_ratio=0.5": {
+      "COH_m": 0.416,
+      "COH_x": 0.258,
+      "B3_gap": 0.159,
+      "B3_pass": false
+    },
+    "form_ratio=0.6": {
+      "COH_m": 0.383,
+      "COH_x": 0.256,
+      "B3_gap": 0.128,
+      "B3_pass": false
+    },
+    "form_ratio=0.7": {
+      "COH_m": 0.32,
+      "COH_x": 0.242,
+      "B3_gap": 0.079,
+      "B3_pass": false
+    },
+    "form_ratio=0.75": {
+      "COH_m": 0.328,
+      "COH_x": 0.216,
+      "B3_gap": 0.112,
+      "B3_pass": false
+    },
+    "form_ratio=0.8": {
+      "COH_m": 0.337,
+      "COH_x": 0.226,
+      "B3_gap": 0.112,
+      "B3_pass": false
+    },
+    "form_ratio=0.85": {
+      "COH_m": 0.344,
+      "COH_x": 0.237,
+      "B3_gap": 0.107,
+      "B3_pass": false
+    },
+    "form_ratio=0.9": {
+      "COH_m": 0.353,
+      "COH_x": 0.249,
+      "B3_gap": 0.105,
+      "B3_pass": false
+    },
+    "form_ratio=0.95": {
+      "COH_m": 0.344,
+      "COH_x": 0.258,
+      "B3_gap": 0.086,
+      "B3_pass": false
+    }
+  },
+  "verdict": "🧱 WALL=CAPACITY",
+  "DIRECTIONAL": "numpy mirror $0 CPU (a_engine_native_learning) -> AUTOMATIC DIRECTIONAL; engine-native re-measure on live core/ decode = ING follow-on"
+}
