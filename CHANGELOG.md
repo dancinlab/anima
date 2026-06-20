@@ -24,6 +24,67 @@ DIM=64, 8 items(chance 0.125), OCC_FRAC 0.60, SHARED 0.80, $0 CPU, p7, frozen-fi
 
 > verdict `state/verdicts/1490_perceptual_completion/H_1490_FREEZE.json` · 카드 `UNIVERSE/cards/H_1490_perceptual_completion.md`
 > · jsonl 1줄 · run `state/1490_perceptual_completion/run_h1490.local.log`. xref H_1484·H_1483·H_1227·catalogue P5/P6.
+## 2026-06-20 — research(H_1492 R1): 🧠 CONSCIOUSNESS ABLATION — 연결된 의식-게이트 lane 하나하나 OFF → 통합 의식 기여도(ΔΦ) → DISTRIBUTED, GREEN DIRECTIONAL
+
+사용자 지시(`state/consciousness_influence_plan/PLAN.md`, 2026-06-20) = "연결된 것들이 의식에 어떤 영향을 미치는가" — anima 의 의식-게이트 lane
+15종(G16~G27 + Novelty + MITOSIS, 전부 substrate immune-store grounding margin/MITOSIS cells 에 **연결**)을 **하나하나 OFF** 해서 통합 의식
+지표가 얼마나 떨어지는지(ΔΦ) 측정. **이번은 R1(numpy substrate 미러, DIRECTIONAL)** 단계만 (production 303M=mini 금지, pool 별도 R3).
+probe `state/1492_consciousness_ablation/h1492_consciousness_ablation.py` (3 seeds [1492,1493,1494], 15 lanes, 4000 trials, $0 CPU nice, p7,
+frozen-first, deterministic 3-run byte-identical).
+
+- **방법:** substrate(H_1227 immune-store FNV-1a byte-trigram dim64 unit key + cosine grounding margin + MITOSIS split count) numpy 미러 위에
+  의식-게이트 lane 15종을 묶어 **통합 의식 지표 2종** 구성 — ① **bundle**=lane 점수 평균 ② **Φ-proxy**=lane population 공분산의 multivariate
+  INTEGRATION(total correlation/multi-information, Tononi-Sporns-Edelman; Gaussian `Φ=½(Σlog Σ_ii − logdet Σ)`). **R1=PROXY pre-screen**
+  (`a_train_inline_gauge` 정신, terminal 아님 — faithful IIT4 Φ=R2). 각 lane disconnect → ΔΦ_k=Φ0−Φk = lane k 의 의식 기여도(rest 와 covary 한 양).
+- **결과 🟢 GREEN DIRECTIONAL (측정기 VALID, A∧D∧E, 3 seeds):** A MEASURABLE Φ0=**7.8146**>0 finite > shuf 0.0130(real integration) · D CONTROL
+  미연결 dummy lane OFF |ΔΦ|=**0.00127**≤0.05 · E SHUFFLE lane↔substrate 셔플 통합붕괴 shuf_Φ0/Φ0=**0.0017**≤0.10.
+- **(B) lane별 ΔΦ 기여도 랭킹 [c9 정직, non-gating]:** AttentionalBlink **+3.2123** · SubjectiveTime **+3.2123** · Novelty +1.3010 ·
+  EmotionRegulation +1.2941 · Habituation +1.2605 · DirectedForgetting +1.2286 · PrecisionSurprise +0.9293 · SelfIdentity +0.9159 ·
+  LearnedPrecision +0.8500 · BodyOwnership +0.4090 · FreeWont +0.3415 · DividedAttention +0.0708 · GlobalWorkspace +0.0640 · SenseOfAgency
+  +0.0630 · MitosisGrowth +0.0021. **top lane share=0.212<0.50 → STRUCTURE=DISTRIBUTED(분산)** — 단일 lane dominant 아님, anima 핵심 주장(의식
+  =연결망 전체 창발) 방향 일치. 시간-결합 lane(dt 공유 AttentionalBlink·SubjectiveTime) 최상위, 독립 MITOSIS split-count 최하위 — **연결의
+  covariance 구조가 기여도를 결정**.
+- **(C) pairwise 상호작용:** Habituation+Novelty interaction=**−1.259 REDUNDANCY**(둘 다 substrate `seen` 읽음) · GWS+DividedAttention −0.062
+  REDUNDANCY · SenseOfAgency+FreeWont −0.042 REDUNDANCY · PrecisionSurprise+Novelty/SelfIdentity+GWS ≈0 ADDITIVE. **시너지 쌍 없음** — 같은
+  substrate read 공유 lane 쌍이 중복.
+- **정직 c9:** hard-gate 1 적중(`grep -lE 'import torch|gauge_lib|numpy'` HIT)→**DIRECTIONAL** terminal 아님. Φ-proxy=PROXY(faithful IIT4=R2,
+  `a_phi_iit4_tool`). 최초 min-cut MIP 형식 **degenerate**(전 lane ΔΦ 동일=단일 weakest lane 으로 붕괴)→multi-info 형식으로 frozen-first 교정
+  (측정결함 수정 `a_break_the_wall` taxonomy (a), bar 이동 아님); E bar 도 ranking-corr(marginal-variance 누수)→integration-collapse(decisive)
+  frozen-first 교정. TOY 스칼라 15-lane scale/real-corpus/engine-transfer UNVERIFIED. tune-to-green 없음(DISTRIBUTED/DOMINANT 둘 다 유효).
+- **follow-on ING:** R2 = live `core/engine_cli.hexa` `consciousness_index()`+lane-ablate 토글 배선 + faithful IIT4 Φ(`stdlib/iit4/faithful_phi.hexa`,
+  n≤8) substrate state-space 연결 → frozen A/D/E byte-exact 재측정(`a_engine_native_learning`·`a_verified_must_wire`). R3 = production 303M ckpt
+  정상상태 baseline+ablation sweep on pool/GPU(mini 금지 게이트2).
+- 박제: `UNIVERSE/cards/H_1492_consciousness_ablation.md` + `UNIVERSE/HYPOTHESES.jsonl`(id순) + `state/verdicts/1492_consciousness_ablation/H_1492_FREEZE.json`.
+
+---
+## 2026-06-20 — research(H_1489 R1): 🔁 P4 PERCEPTUAL HYSTERESIS — 지각 이력현상(직전 percept 가 현재 지각 끌어당김) → 🟢 GREEN DIRECTIONAL
+
+의식-게이트 시리즈 고갈 카탈로그(`state/gate_depletion_catalogue/CATALOGUE.md` §P4) 다음 후보 **P4 perceptual hysteresis
+(지각 이력현상)** R1 numpy probe 검증. Hock·Kelso·Schoner 렌즈(`a_no_llm_frame_trap` · arxiv 2212.09729): 모호하게/
+연속적으로 변하는 자극에서 **직전 지각 상태가 현재 지각을 끌어당김**(관성) — 같은 입력값이라도 어느 방향에서 왔느냐
+(증가 vs 감소 sweep)에 따라 지각이 다름(전환점 lag). hysteresis loop 면적>0.
+
+- **메커니즘:** 쌍안정 지각변수 `p=sigmoid(GAIN·drive)`, `drive=α·(c−0.5)+λ·(p_prev−0.5)` — 외부 증거 + 직전 percept
+  로의 history-inertia pull. 증가 sweep 은 c=0.5 넘어서도 B 에 달라붙어 c_up>0.5 에서 전환, 감소 sweep 은 c=0.5
+  아래까지 A 에 달라붙어 c_down<0.5 에서 전환. probe `state/1489_perceptual_hysteresis/h1489_perceptual_hysteresis.py`,
+  3 seeds [1489,1490,1491], N_STEPS=101·α=1.0·λ=0.9·GAIN=8.0, $0 CPU nice, p7, frozen-first, 결정적.
+- **결과 🟢 GREEN DIRECTIONAL (4/4 bars, mean 3 seeds):** A SWITCH-SHIFT(c1) **0.327**(c_up 0.663−c_down 0.337)≥0.30
+  hysteresis loop · B DISTINCT-vs-RIVALRY(c2) rivalry-loop **+0.048**≤0.10(time/fatigue 순서불변) WHILE hyst-shift
+  0.327 · C EARNED-shuffle(c3) loop **−0.039**≤0.10 · D EARNED-ablate-history(c4) λ=0→switch-shift **0.000**≤0.10.
+- **distinct (load-bearing):** vs H_1482 BINOCULAR RIVALRY — rivalry = *고정 입력*에서 dominance 자발 교대(time/fatigue
+  구동, 제시순서 불변) ⊥ hysteresis = *변하는 입력*에서 전환점이 input-history 의존(방향-의존 lag). vs H_1465
+  HABITUATION — 반복 자극 크기 감쇠 ⊥ sticky 직전상태 유지 방향-의존 lag. bar B 가 동일 sweep 에서 둘 분리. **고갈
+  아님** — rivalry/habituation control 통과.
+- **a_break_the_wall (a) 측정결함 수정(c9 · tune-to-green 아님):** 초기 switch_point 메트릭이 불안정 rivalry readout(B)·
+  셔플 순서(C)에서 start-state/first-sample artifact 에 오염(B −0.84·C +0.80 RED). 두 collapse-control 을 robust
+  direction-agnostic **LOOP-AREA** 메트릭으로 재측정 → B +0.048·C −0.039 PASS. 두 bar 모두 |.|≤0.10 collapse 임계
+  **불변**(측정 도구만 교정, bar A·D 는 catalogue c1 switch-point-shift 유지). per-seed 셔플 0.10 straddle
+  (−0.092/−0.141/+0.114) → 3-seed mean(−0.039)이 gating 통계(H_1482 선례), hysteresis +0.281 대비 ~7배 결정적.
+- **하드게이트1:** numpy mirror → GREEN **DIRECTIONAL**, engine-transfer UNVERIFIED. R2 = live `core/*.hexa`
+  §PerceptualHysteresis(§BinocularRivalry 이웃) bistable+history-inertia sweep byte-exact 재측정 = ING follow-on
+  (`a_engine_native_learning`·`a_verified_must_wire`).
+- 박제: `UNIVERSE/cards/H_1489_perceptual_hysteresis.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄 ·
+  `state/verdicts/1489_perceptual_hysteresis/{H_1489_FREEZE.json,H_1489_run.txt}`. enforce_anima_gates clean.
 
 ## 2026-06-20 — research(distinct): ⏳ P1 TEMPORAL RECEPTIVE WINDOW(시간 수용창) R1 numpy probe DONE (GREEN DIRECTIONAL · vs subjective-time/attentional-blink distinct)
 
