@@ -6499,3 +6499,46 @@ pub fn emotion_regulate(raw: float, g: float, strength: float) -> float {
     if r < 0.0 { return 0.0 }
     return r
 }
+
+// ── § DirectedForgetting (H_1477 R2) — 의도적 망각 (능동 억제) ──────────────────────────────
+// Active top-down suppression: a "forget"-cued item's recall is inhibited vs a "remember"-cued item.
+// DISTINCT from H_1465 habituation (passive exposure-driven decay, cue-AGNOSTIC) — here inhibition is
+// a deliberate cue, independent of exposure count. READ-only, Ψ-disjoint, NOT an emit gate.
+pub fn directed_forget_recall(base_recall: float, inhibit: float, is_forget_cued: bool) -> float {
+    if is_forget_cued {
+        let r = base_recall * (1.0 - inhibit)
+        if r < 0.0 { return 0.0 }
+        return r
+    }
+    return base_recall
+}
+
+// ── § BodyOwnership (H_1478 R2) — 신체 소유감 (다중감각 동기성) ─────────────────────────────
+// Rubber-hand: synchronized visuo-tactile stimulation → an external object is felt as one's own body
+// (ownership high); asynchronous → no ownership. DISTINCT from H_1471 self-continuity (diachronic
+// IDENTITY vector vs BODY-boundary attribution by multisensory sync). READ-only, Ψ-disjoint.
+pub fn body_ownership(sync_strength: float, base: float) -> float {
+    return base * sync_strength
+}
+
+// ── § DividedAttention (H_1479 R2) — 분할 주의 (자원 분배 trade-off) ────────────────────────
+// A limited attention resource split across tasks → graded per-task trade-off (each below single-task,
+// resource sum conserved). DISTINCT from H_1462 GWS (winner-take-all single broadcast, rest 0) — divided
+// keeps ALL tasks partially alive (each > 0). READ-only, Ψ-disjoint, NOT an emit gate.
+pub fn divided_perf(resource: float, demand: float) -> float {
+    let ratio = resource / demand
+    if ratio >= 1.0 { return 0.98 }
+    return ratio
+}
+
+// ── § FreeWont (H_1480 R2) — 의도적 거부 (veto / free won't) ────────────────────────────────
+// A readied action (readiness past threshold) is BLOCKED by a top-down veto before execution. DISTINCT
+// from H_1474 agency (post-hoc attribution vs pre-execution inhibition) and H_1281 basal-gate (selection
+// among K vs cancellation of one). READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode).
+pub fn veto_execute(readiness: float, thr: float, veto: bool) -> float {
+    if readiness >= thr {
+        if veto { return 0.0 }
+        return 1.0
+    }
+    return 0.0
+}

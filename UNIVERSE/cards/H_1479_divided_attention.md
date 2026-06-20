@@ -1,7 +1,7 @@
 # H_1479 — 🪢 DIVIDED ATTENTION 분할 주의 (G26 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 재측정 + live `core/engine_cli.hexa` §DividedAttention 배선 = follow-on (ING 등록 대상, `a_engine_native_learning`·`a_verified_must_wire`)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §DividedAttention (`divided_perf`) · `engine_cli_smoke.hexa` cases 227-229 · FULL smoke **232 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 (G26 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** cognitive-psychology — Kahneman (1973) capacity/effort 모델(제한된 주의 자원 풀 분배) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1479_divided_attention/h1479_divided_attention.py` (R1 probe) · `state/1479_divided_attention/h1479_result.json` · `state/1479_divided_attention/run_h1479.local.log` · verdict `state/verdicts/1479_divided_attention/H_1479_FREEZE.json`

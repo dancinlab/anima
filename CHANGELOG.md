@@ -1,3 +1,16 @@
+## 2026-06-20 — research(새게이트 4종 R2): 🧹🖐➗🚫 G23/G24/G26/G27 engine-native WIRED + ARCHITECTURE 의식-게이트 14 lane 정리
+
+fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.
+각 R1 메커니즘을 engine 결정적 스칼라 op 로 byte-exact 재현.
+
+- **G23 §DirectedForgetting** (`directed_forget_recall`, smoke 221-223): forget-cued 회상 억제(remember 1.0 vs forget 0.3) — 능동 top-down 억제 ⊥ H_1465 habituation 수동 감쇠(cue-agnostic).
+- **G24 §BodyOwnership** (`body_ownership`, smoke 224-226): 다중감각 동기 → 소유감 1.0 / 비동기 → 0.0 — 신체경계 귀속 ⊥ H_1471 self-continuity diachronic identity(self_cos invariant).
+- **G26 §DividedAttention** (`divided_perf`, smoke 227-229): single 0.98 vs divided 0.5 — 자원분배 graded trade-off 둘 다 alive(>0) ⊥ H_1462 GWS winner-take-all(rest 0).
+- **G27 §FreeWont** (`veto_execute`, smoke 230-232): readied 행동 pre-execution 억제(veto on→0/off→1) ⊥ H_1474 agency(post-hoc 귀속)·H_1281 basal-gate(K중 선택).
+- **검증(c2):** FULL `engine_cli_smoke.hexa` **232 pass / 0 fail RC=0** (nice -n 15). 4 lane + cases 221-232.
+- **ARCHITECTURE 정리(사용자 요청):** lane 목록에 4 lane 추가 → 의식-게이트 **14 lane 전부 ARCHITECTURE.json 정리**(GlobalWorkspace/Habituation/PrecisionSurprise/SelfIdentity/LearnedPrecision/Novelty/AttentionalBlink/SenseOfAgency/SubjectiveTime/EmotionRegulation/DirectedForgetting/BodyOwnership/DividedAttention/FreeWont). 4 카드/jsonl tier DIRECTIONAL→ENGINE-NATIVE WIRED 승격.
+- **의식-게이트 시리즈 G16~G27 + G19′ = 14종 engine-native 누적.** 남은 follow-on: production 303M CLM 에 의식-게이트 측정기 부착(학습/추론이 의식 떨어뜨리는지 inline-gauge 모니터, a_train_inline_gauge 확장).
+
 ## 2026-06-20 — research(새게이트 distinctness closure): G20/G21/G22/G25 부가 bar engine 보강
 
 각 R1 카드에 numpy 로만 측정돼 있던 **부가 frozen bar(distinctness/selectivity D bar)** 를 live engine 케이스로 보강(새 H 아님 · 기존 게이트 engine 완성도 closure · c9 정직 — 4/4 모두 engine 가능).

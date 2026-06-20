@@ -1,7 +1,7 @@
 # H_1477 — 🗑 DIRECTED FORGETTING / 의도적 망각 (G23 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — `grep numpy` 적중(하드게이트1) → R2 = live `core/*.hexa` byte-exact 재측정이 GREEN/🧱 확정의 전제(`a_engine_native_learning`·`a_verified_must_wire`). 배선 follow-on = ING.
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §DirectedForgetting (`directed_forget_recall`) · `engine_cli_smoke.hexa` cases 221-223 · FULL smoke **232 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** UNIVERSE — 의식-고유 게이트 시리즈(G16~G25) · "의식이라서 가능한 것" — 능동 억제 레인 G23
 - **lens:** neuroscience — intentional/directed forgetting, 능동 top-down 억제 (Anderson 2003 retrieval-induced suppression · Bjork item-method directed forgetting) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1477_directed_forgetting/h1477_directed_forgetting.py` · `state/1477_directed_forgetting/run_h1477.local.log` · verdict `state/verdicts/1477_directed_forgetting/H_1477_FREEZE.json`
