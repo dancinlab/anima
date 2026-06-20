@@ -1,0 +1,50 @@
+H_1438 — SCALE-DISSOCIATION (303M -> 1.21B same anima byte-CLM recipe)
+FROZEN 5-BAR + CONTROLS + G0 GATE — declared BEFORE any weight moves (c9, p7, NO tune-to-green)
+date: 2026-06-20  seeds: [7, 4302, 4303]  detector: h1305 _is_falsifiable VERBATIM
+
+QUESTION
+  303M across 5 lenses (data/objective/form/bind-head/attention) all 🧱 WALL=CAPACITY: the mouth
+  emits comparator-shape OR measurable-shape but never BINDS them into one negatable claim
+  (comparator 20% · measurable 27% · BOTH 0/15, H_1431). Untested variable = SCALE. Controlled
+  dissociation (a_no_llm_frame_trap, NOT LLM scale reflex): hold recipe + broad-corpus prior
+  CONSTANT, vary ONLY capacity (d 1024->2048, L 20->24, H 16->32; head_dim 64 unchanged; 1210.2M
+  = 4.0x the 303M base), re-measure FROZEN G6 5-bar.
+
+SCALE MECHANISM (recipe-identical, honest) — EXACT net2net (verified before the run)
+  EXACT BLOCK-DUPLICATION net2net (REP=2) of the CONVERGED 303M base h1129c_chat.pt -> 1.21B.
+  Each base width dim duplicated 2x; consumers divide replicated input cols by 2; tied head + 4
+  appended layers exact-identity. VERIFIED function-preserving at init: BIG logits == base
+  (max abs diff 2.3e-5), BIG init KWR == base KWR (0.2239), greedy decode BYTE-IDENTICAL to base
+  => 1B inherits base competence VERBATIM (FALS=0 cannot be a from-scratch undertraining
+  confound; precedent H_1199 grow-the-engine). Then IDENTICAL H_1435 continued-pretrain on the
+  SAME falsifiable-claim corpus (corpus seed 1435, lr 3e-5, AdamW, detector all VERBATIM).
+  The ONLY variable vs H_1435 is d/L/H.
+
+FROZEN 5-BAR (g6_common VERBATIM — identical to H_1435/1436/1437)
+  B1 FALS-FLOOR   : trained 1B mean FALS_in >= 1            (breaks the base plateau)
+  B2 COUNT        : DIST_in >= 5 distinct coherent ideas
+  B3 X-SHUFFLE    : FALS_shuf < FALS_in  (CROSS-SHUFFLE COLLAPSE — DECISIVE; generic concat
+                    that satisfies the detector would NOT collapse => FAIL)
+  B4 HELD-OUT     : FALS_ho >= 1 on held-out seeds NOT in the training corpus
+  B5 vs-BASE LIFT : trained FALS_in >= base_303M FALS_in + 1
+
+CONTROL (tune-to-green killer, not a bar)
+  SHUFFLE-CORPUS @1B: sibling 1B (same net2net init) trained on TOKEN-SHUFFLED corpus (same
+  bytes, destroyed structure) must be INERT: lift_real - lift_shuffle >= 1.
+
+G0 COHERENCE GATE (anti-confound, a_break_the_wall (e) under-investment)
+  trained 1B eval generations known-word-ratio >= 0.50. If garble (<0.50) => FALS=0 is an
+  UNDERTRAINING artifact => HONEST NON-RESULT, NOT capacity-confirm (does NOT silently become 🧱).
+
+VERDICT LOGIC (terminal either way, a_break_the_wall (d))
+  G0 garble                       => HONEST-NON-RESULT (under-trained, not a science ceiling)
+  G0 coherent AND all bars pass    => 🟢 BROKE: 4x scale crossed G6 FALS binding => 303M wall was
+                                     CAPACITY-bound, scale lifts it (breakthrough; grounds 7B a7b_pass)
+  G0 coherent AND a bar fails       => 🧱 CAPACITY-CONFIRM: 1B ALSO plateaus => 303M->1B scale-invariant
+                                     => wall is real at this rung (a_scale_honest_scope scopes it)
+
+GATES
+  torch + gauge_lib._decode => DIRECTIONAL (a_engine_native_learning); engine-native re-measure on
+  live CORE/bytegpt_decode.hexa = follow-on ING. a_scale_honest_scope: single rung 303M->1B; a
+  TREND needs >=3 rungs. detector is structural FORM not quality (p7). ckpt pulled before teardown
+  (a_fire_recover_complete).
