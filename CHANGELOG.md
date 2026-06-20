@@ -1,3 +1,37 @@
+## 2026-06-20 — research(distinctness 심화돌파): 🔨 3종 distinctness "구조적 한계" 오판 정정 — 전부 engine-native 돌파 (a_break_the_wall)
+
+이전에 "구조적 한계(numpy DIRECTIONAL 종착)"로 박았던 의식-게이트 distinctness 3종이 실은 천장이 아니었다 —
+각도 전환으로 전부 live engine 돌파. 성급한 천장 박제(a_break_the_wall 위반)를 사용자 지적으로 정정.
+
+- **놀람 ⊥ 새로움 (H_1468):** "engine 에 novelty lane 없음" = 천장이 아니라 만들 부품(type-e). `core/engine_cli.hexa` §Novelty `novelty(seen,k)=1/(1+k·seen)`(precision-agnostic) 신설 → `engine_cli_smoke.hexa` case 201-202: 같은 novelty 1.0 에서 surprise precision-split(4 vs 1) · novelty decay 1.0→0.167.
+- **self ⊥ 일화기억 (H_1471):** "두 lane 타입 disjoint=억지" = 측정설계 미스(type-a). orthogonal-STATE 로 측정 → case 203: identity drift→self 반응 0.042(immune 불변) · fact bind→immune cells +1(identity 불변) · continuity 0.958 = orthogonal-state double dissociation.
+- **습관화 ⊥ 항상성 (H_1465):** "homeo 셋업 무거움" = phantom. homeostatic lane(mg/homeo_step)이 이미 in-engine → 재사용. case 204: habituation slot1 보존 1.0(자극-특이) ⊥ homeostatic global drive 상승(자극-무관) = per-stimulus decay ⊥ global integrator.
+- **검증(c2):** FULL `engine_cli_smoke.hexa` **204 pass / 0 fail RC=0** (nice -n 15). 새 §Novelty lane + cases 201-204. self⊥episodic 은 margin 접근 RED → orthogonal-state 로 frozen-first 교정(bar 불변, tune 아님).
+- **정직(c9):** surprise/habituation ⊥ novelty(H_1289) 중 *H_1289 전용 novelty 비교*는 H_1289 lane 부재로 numpy DIRECTIONAL 유지 — 단 surprise⊥novelty 자체는 새 §Novelty lane 으로 engine 확정. 교훈: 단일 시도 후 "구조적 천장" 박제 금지(a_break_the_wall — 측정/투자/설계 벽을 과학 천장으로 오인).
+
+## 2026-06-20 — research(H_1464 engine-native): G6 capacity-wall 결판 — PAIRING-contrastive engine-native DECODE 착수·검증 (pool $0, IN-PROGRESS · 박제 보류)
+
+G6 capacity-wall 의 8번째 렌즈 H_1464 PAIRING-contrastive 의 **engine-native 최종 검증** 착수. mirror(numpy $0)는
+이미 🟢 BROKE=WALL=LEARN-GAP(B3 cross-shuffle COLLAPSE 20/20)였으나 hard-gate 1 에 의해 DIRECTIONAL only —
+terminal 🟢/🧱 는 live `core/bytegpt_decode.hexa` 디코드 증거 필요.
+
+- **재학습 0** — mini 크래시 생존한 입력 그대로 사용: `state/1464_pairing_contrastive_bind/bins/{base,pairing,shuffle}.bin`
+  (각 1,213,440,020 B = 303M v0.2 layout) + `ckpt/{h1464_pairing,h1464_shuffle}.pt`.
+- **pool 디코드(mini 금지·게이트2, GPU rent 불필요 $0)** — 3 .bin + jobs + decode CLI + g6_common + probes 를
+  summer/aiden(hexa v0.245.2, native-GEMM core 존재)로 rsync. 디코드 = live `core/bytegpt_decode.hexa` via
+  `state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa`(= live core/ decode 호출 .hexa), top_k40 temp0.7
+  gen110(= gauge_lib._decode frozen 기본값). **pipeline 검증완료**: pairing frag1 = valid falsifiable text
+  ("…the sample is greater whenever the river decreases. if the sample grows…") → h1305 FROZEN detector FALS=1.
+- **substrate-speed 벽(a_break_the_wall type-c, 인프라·천장 아님)** — 30GB pool host 는 `cuda_available()==0`
+  (CPU farr_matmul, GPU 미사용) + 303M 이 ~30GB boxed-farr 로 메모리천장(earlyoom 활성) → ~10min/frag(frag1
+  13-14min 측정), 90 frags ~10h. a_wall_first 로 host당 1 bin 병렬(summer pairing→base, aiden shuffle; 3-way
+  동시는 earlyoom kill → 1-bin-per-host 만 생존). auto-scorer 가 90 frags 완료시 frozen 5-bar 채점→
+  `H_1464_ENGINE_NATIVE.txt` 생성(B3 cross-shuffle 결정타, h1441 와 동일 bar, c9 bar 불변).
+- **박제 보류(정직 c9)** — score 미완 → terminal 🟢/🧱 **미박제**(날조 금지). mirror DIRECTIONAL 유지.
+  🟢=WALL=LEARN-GAP(8렌즈만의 첫 진짜 돌파→a_verified_must_wire) / 🧱=WALL=CAPACITY(8번째 수렴). argmax==torch
+  byte-faithful parity 1회 잔여(host free 시). status: `state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt`.
+  ING h1464_engine_native = IN-PROGRESS(미RESOLVED).
+
 ## 2026-06-20 — research(H_1475 distinct): 🕰 G22 SUBJECTIVE TIME(주관적 시간 지각) vs homeostatic(H_1292) distinctness DONE (GREEN DIRECTIONAL)
 
 새 의식-고유 게이트 후보 **G22 SUBJECTIVE TIME** R1 numpy probe 검증. 의식이 *느끼는* 시간 흐름은 객관
