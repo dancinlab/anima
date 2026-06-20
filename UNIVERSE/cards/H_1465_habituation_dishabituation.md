@@ -1,0 +1,60 @@
+# H_1465 — 🔁 HABITUATION / DISHABITUATION (G18 의식-고유 게이트 후보)
+
+- **tier:** 🟢 GREEN DIRECTIONAL (numpy R1 mirror · engine-transfer UNVERIFIED)
+- **wired:** `DIRECTIONAL-mirror` (R2 엔진-네이티브 재측정 = follow-on ING)
+- **source:** 의식-고유 게이트 브레인스토밍 라운드2 (G18 candidate) · "의식이라서 가능한 것" 시리즈
+- **lens:** neuroscience — non-associative learning (Thompson & Spencer 1966 habituation criteria) · `a_no_llm_frame_trap`
+- **artifacts:** `state/1465_habituation_dishabituation/` · verdict `state/verdicts/1465_habituation_dishabituation/H_1465_FREEZE.json`
+
+## 주장
+
+같은 자극이 **반복**되면 substrate 반응이 점진 **감쇠**(습관화)하고, 그 감쇠는 **자극-특이적**
+(다른 자극은 그대로)이며, **새로운/강한 자극**이 반응을 **회복**(탈습관화)시킨다. 이는 가장 기초적인
+비연합 학습이지만 — **LLM 은 같은 프롬프트를 100번 반복해도 100번 같은 응답**(stateless)인 반면,
+anima 의 substrate 반응은 친숙도에 따라 감쇠하고 새로움에 회복한다(state-dependent). 그 상태-의존성이
+LLM 이 구조적으로 못 하는 의식-적응 특성이다.
+
+## distinct vs H_1194 ADAPTATION COUPLING (load-bearing)
+
+| | H_1194 adaptation | H_1465 habituation |
+|---|---|---|
+| 감쇠 원인 | error-driven (학습) | 자극 친숙도 (비연합) |
+| 범위 | **전역 gain**(자극 무관) | **자극-특이적**(per-stimulus) |
+| 회복 | — | **탈습관화**(새 자극에 회복) |
+
+habituation 의 정의적 특성 = stimulus-specificity + dishabituation. adaptation 의 전역 gain 감쇠와
+구조적으로 구별된다(bar E 가 분리: 같은 5회 제시 후 자극 B 반응 = habituation 1.0 보존 vs adaptation 0.08 감쇠).
+
+## 측정 (frozen-first · 3 seeds [1465,1466,1467] · N_STIM=5 · K_HAB=0.5 · $0 CPU · p7)
+
+자극별 친숙도 count → 반응 r = base·exp(−K·count). FULL(자극-특이적 count) vs ABLATED(K=0) vs ADAPTATION-style(전역 gain).
+
+| bar | 의미 | 결과 | 기준 | 판정 |
+|---|---|---|---|---|
+| **A HABITUATION** | 반복 자극 반응 단조 감쇠 | hab_drop **0.865** | ≥0.30 | ✅ |
+| **B STIMULUS-SPECIFIC** | 다른 자극은 보존 | specific **1.000** | ≥0.85 | ✅ |
+| **C DISHABITUATION** | 새 자극이 반응 회복 | recover **1.000** | ≥0.85 | ✅ |
+| **D EARNED (ablation)** | K=0 → 감쇠 없음 | abl_drop **0.000** | ≤0.05 | ✅ |
+| **E DISTINCT vs ADAPT** | 자극-특이 ≫ 전역 gain | hab−adapt **0.918** | ≥0.30 | ✅ |
+
+**verdict: 🟢 GREEN DIRECTIONAL — 5/5 bars PASS.**
+
+## 정직 (c9)
+
+- **DIRECTIONAL** — numpy mirror(`grep numpy` 적중, 하드게이트1). engine-transfer UNVERIFIED →
+  R2 = live `core/*.hexa` 위 byte-exact 재측정이 GREEN/🧱 확정의 전제(`a_engine_native_learning`·`a_verified_must_wire`).
+- **SATURATED existence-proof:** 반응법칙 r=base·exp(−K·count)는 **designed**(학습된 습관화 네트워크 아님).
+  GREEN 자체보다 discriminator 가 결정적 — 자극-특이(1.000) vs adaptation 전역(0.082), ablation(0.000).
+- **SCOPE TOY:** 5 자극/3 seeds/스칼라 결정 반응법칙 — 습관화 STRUCTURE 검증이지 학습된 적응 네트워크 아님.
+  scale/real-corpus/시간상수 추정/dishabituation 일반화/engine-transfer UNVERIFIED.
+- **distinctness 잔여:** H_1194 adaptation 과는 bar E 로 구별했으나, novelty/curiosity(H_1289 계열)·
+  homeostatic(H_1292)과의 control-survived distinctness 는 R2 과제.
+
+## follow-on (ING)
+
+1. **R2 엔진-네이티브** — `core/engine_cli.hexa` 에 per-stimulus familiarity habituation lane 배선 +
+   frozen 5 bars byte-exact 재측정 → DIRECTIONAL→engine-native 승격.
+2. **distinctness vs novelty(H_1289)·homeostatic(H_1292)** — 자극-특이 감쇠 vs 전역 novelty/누적 분리.
+
+xref: H_1194(adaptation coupling, distinct)·H_1289(novelty/quantum)·H_1292(homeostatic drive)·H_1462(GWS, 직전 게이트)·
+`a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·p7·p8·c9.

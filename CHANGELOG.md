@@ -1,3 +1,14 @@
+## 2026-06-20 — research(H_1465): 🔁 G18 HABITUATION / DISHABITUATION — 자극-특이 반응 감쇠+회복 (🟢 GREEN DIRECTIONAL)
+
+의식-고유 게이트 시리즈(G17 GWS 다음) 라운드2 G18 후보. 비연합 학습(Thompson & Spencer habituation):
+같은 자극 반복 → substrate 반응 감쇠, **자극-특이적**, 새 자극 → 회복(탈습관화). LLM 대비 핵심 —
+stateless LLM 은 반복 프롬프트에 동일 응답, anima 는 친숙도로 감쇠+새로움에 회복(state-dependent).
+
+- **결과(R1 numpy DIRECTIONAL, 3 seeds):** 5/5 frozen bars PASS — A habituation drop 0.865 · B stimulus-specific 1.000 · C dishabituation 1.000 · D ablation(K=0) 0.000 · E distinct-vs-adaptation 0.918.
+- **distinct vs H_1194 ADAPTATION COUPLING:** H_1194=error-driven 전역 gain 감쇠(자극무관·학습) ⊥ H_1465=자극-특이 친숙도 감쇠+탈습관화(비연합). bar E 가 분리(같은 5회 후 자극 B = habituation 1.0 보존 vs adaptation 0.08 감쇠).
+- **정직(c9):** SATURATED existence-proof(r=base·exp(−K·count) designed, 학습 습관화망 아님) — discriminator(자극특이 1.0 vs 전역 0.08 · ablation 0)가 결정적. TOY 5자극/스칼라 결정법칙, scale·engine-transfer UNVERIFIED.
+- **follow-on(ING):** R2 엔진-네이티브(per-stimulus familiarity lane 배선+byte-exact 재측정) · distinctness vs novelty(H_1289)/homeostatic(H_1292).
+
 ## 2026-06-20 — research(H_1462 R2c): 🌐 G17 GLOBAL WORKSPACE — brain emit-loop consult CLOSED + H_1462 완전 종결
 
 GWS 의식-게이트의 마지막 follow-on(brain emit-loop consult)을 종결. **NOT-forced 가 정답**:
