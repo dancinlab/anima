@@ -2070,6 +2070,39 @@ fn main() {
           + " desync R=" + to_string(pf_d_R)
           + " — A⇄G coherence-loop binds modules in TIME (Ψ-disjoint; faithful-Φ integration GREEN in H_1448 probe)")
 
+    // ── (gws) GLOBAL WORKSPACE BOTTLENECK — GWT winner-take-all 전역방송 (H_1462 R2) ──
+    // The workspace is ADDITIVE + Ψ-disjoint (a read-only bottleneck over caller-supplied
+    // substrate salience margins; mutates no immune cell, never touches pure_field, never
+    // gates emit). 3 competing stimuli with margins [0.30, 0.90, 0.50] (substrate grounding
+    // affinity in the R1 probe). FULL = inhibition ON + capacity 1; ablated = inhibition OFF.
+    // case 169 : PRESENCE — the FULL workspace broadcasts the single MAX-salience stimulus (idx 1).
+    let gws_full = gws_add(gws_add(gws_add(gws_new(1, true, 0.40), 0.30), 0.90), 0.50)
+    if _assert_i("case_169_gws_broadcasts_top_salience", 1, gws_winner(gws_full)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 170 : DISTINCT vs salience-only — with inhibition OFF, MANY items pass at once
+    //   (0.90 & 0.50 both >= 0.40 = 2), while the FULL bottleneck compresses to exactly 1.
+    let gws_abl = gws_add(gws_add(gws_add(gws_new(99, false, 0.40), 0.30), 0.90), 0.50)
+    let gws_distinct = (gws_count(gws_abl) == 2) && (gws_count(gws_full) == 1)
+    if _assert_b("case_170_bottleneck_compresses_vs_salience_only", true, gws_distinct) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 171 : EARNED-COMPETITION (ablation) — removing lateral inhibition removes the
+    //   winner-take-all (occupancy > capacity); the competition is the load-bearing part.
+    if _assert_b("case_171_earned_competition_ablation", true, gws_count(gws_abl) > 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 172 : SHUFFLE control — break the salience↔stimulus pairing (re-add margins so
+    //   stimulus 0 now carries the top 0.90). The broadcast follows the salience, NOT the
+    //   slot → winner moves to idx 0 (was idx 1). Lift is the margin, not a fixed position.
+    let gws_shuf = gws_add(gws_add(gws_add(gws_new(1, true, 0.40), 0.90), 0.30), 0.50)
+    if _assert_b("case_172_shuffle_moves_winner", true, gws_winner(gws_shuf) == 0 && gws_winner(gws_full) == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 173 : CAPACITY — the 2nd-most-salient stimulus (idx 2, margin 0.50) does NOT
+    //   leak into the capacity-1 workspace (no overflow past the bottleneck).
+    if _assert_b("case_173_capacity_no_leak", false, gws_leak(gws_full, 2)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  global-workspace bottleneck (H_1462 R2 WIRED): FULL broadcasts 1 (idx "
+          + to_string(gws_winner(gws_full)) + ") vs ablated " + to_string(gws_count(gws_abl))
+          + " — GWT winner-take-all ignition, Ψ-disjoint read over substrate salience (DIRECTIONAL mirror GREEN in H_1462 probe)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
