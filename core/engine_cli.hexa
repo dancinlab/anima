@@ -6275,3 +6275,59 @@ pub fn gws_leak(gws: GlobalWorkspace, idx: int) -> bool {
     }
     return false
 }
+
+// ── § Habituation (H_1465 R2) — 비연합 학습: 자극-특이 반응 감쇠 + 탈습관화 ──────────────
+// Non-associative learning (Thompson & Spencer 1966): a REPEATED stimulus elicits a DECLINING
+// response (habituation); the decline is STIMULUS-SPECIFIC (a different stimulus stays
+// undiminished); a NOVEL event RESTORES it (dishabituation). DISTINCT from H_1194 adaptation-
+// coupling (error-driven GLOBAL gain decay, stimulus-AGNOSTIC) — here the familiarity counter
+// is PER-STIMULUS. READ-only response + explicit observe/reset state evolution (Ψ-disjoint,
+// NOT an emit gate, a_autonomy_over_hardcode). LLM contrast: a stateless model gives the SAME
+// response to a repeated prompt; this substrate response decays with familiarity and recovers
+// on novelty (state-dependent). Linear decay law (engine has no exp): r = base − step·count.
+struct Habituation {
+    counts: [float],      // per-stimulus familiarity count
+    n_slots: int,
+    decay_step: float     // response decrement per repeat (0 = ablated: no habituation)
+}
+
+// hab_new — a fresh habituator with all stimuli un-seen (counts 0).
+pub fn hab_new(n_slots: int, decay_step: float) -> Habituation {
+    let mut c = []
+    let mut i = 0
+    while i < n_slots { c = c + [0.0]  i = i + 1 }
+    return Habituation { counts: c, n_slots: n_slots, decay_step: decay_step }
+}
+
+// hab_response — response to stimulus `slot` at its current familiarity (READ-only):
+//   r = base − decay_step·count[slot], floored at 0. Monotone-declining in familiarity.
+pub fn hab_response(hab: Habituation, slot: int, base: float) -> float {
+    let r = base - hab.decay_step * hab.counts[slot]
+    if r < 0.0 { return 0.0 }
+    return r
+}
+
+fn _hab_set(counts: [float], slot: int, v: float, n: int) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        if i == slot { out = out + [v] }
+        else { out = out + [counts[i]] }
+        i = i + 1
+    }
+    return out
+}
+
+// hab_observe — stimulus `slot` is presented once: its familiarity count rises by 1
+// (STIMULUS-SPECIFIC — other slots untouched). Returns the evolved habituator.
+pub fn hab_observe(hab: Habituation, slot: int) -> Habituation {
+    let c2 = _hab_set(hab.counts, slot, hab.counts[slot] + 1.0, hab.n_slots)
+    return Habituation { counts: c2, n_slots: hab.n_slots, decay_step: hab.decay_step }
+}
+
+// hab_reset — a novel/strong event clears stimulus `slot`'s familiarity → DISHABITUATION
+// (the response recovers to base on the next presentation).
+pub fn hab_reset(hab: Habituation, slot: int) -> Habituation {
+    let c2 = _hab_set(hab.counts, slot, 0.0, hab.n_slots)
+    return Habituation { counts: c2, n_slots: hab.n_slots, decay_step: hab.decay_step }
+}

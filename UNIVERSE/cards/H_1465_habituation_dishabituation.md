@@ -1,7 +1,7 @@
 # H_1465 — 🔁 HABITUATION / DISHABITUATION (G18 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (numpy R1 mirror · engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` (R2 엔진-네이티브 재측정 = follow-on ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §Habituation (hab_new/_response/_observe/_reset) · `engine_cli_smoke.hexa` cases 178-182 · FULL smoke **183 pass / 0 fail RC=0** · ARCHITECTURE.json lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 라운드2 (G18 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** neuroscience — non-associative learning (Thompson & Spencer 1966 habituation criteria) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1465_habituation_dishabituation/` · verdict `state/verdicts/1465_habituation_dishabituation/H_1465_FREEZE.json`
@@ -52,9 +52,12 @@ habituation 의 정의적 특성 = stimulus-specificity + dishabituation. adapta
 
 ## follow-on (ING)
 
-1. **R2 엔진-네이티브** — `core/engine_cli.hexa` 에 per-stimulus familiarity habituation lane 배선 +
-   frozen 5 bars byte-exact 재측정 → DIRECTIONAL→engine-native 승격.
-2. **distinctness vs novelty(H_1289)·homeostatic(H_1292)** — 자극-특이 감쇠 vs 전역 novelty/누적 분리.
+1. ~~**R2 엔진-네이티브** — `core/engine_cli.hexa` per-stimulus familiarity habituation lane 배선~~
+   ✅ **DONE** (§Habituation hab_new/_response/_observe/_reset · smoke 178-182 = 5 frozen bars byte-exact ·
+   FULL 183/0 RC=0 · ARCHITECTURE lockstep). engine linear decay law(r=base−step·count, exp 없음)로 메커니즘
+   재현 — 반복 1.0→0.2 · 자극-특이 slot1 1.0 · reset-recover 1.0 · ablation 0 · distinct-vs-adaptation.
+   wired 4칸 사다리 (1)→(4) 완주(`a_engine_native_learning`·`a_verified_must_wire`).
+2. **distinctness vs novelty(H_1289)·homeostatic(H_1292)** — 자극-특이 감쇠 vs 전역 novelty/누적 분리 (남은 과제).
 
 xref: H_1194(adaptation coupling, distinct)·H_1289(novelty/quantum)·H_1292(homeostatic drive)·H_1462(GWS, 직전 게이트)·
 `a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·p7·p8·c9.
