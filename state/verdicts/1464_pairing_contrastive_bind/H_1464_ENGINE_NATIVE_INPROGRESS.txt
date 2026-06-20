@@ -65,7 +65,53 @@ HARVEST / COMPLETE recipe (when ~/h1464_decode/out_{pairing,shuffle,base}.txt ea
     (pairing.pt) for the same seed → expect identical bytes (H_1441 established this for the same
     kernel+version: argmax 32 == torch golden, logits ~1e-5). NOT yet executed.
 
-POD/RENT: $0 — pool only (summer/aiden), NO GPU rent, NO pod. 0 pods to teardown.
+=== GPU ESCALATION (2026-06-20 ~22:20Z — coordinator relayed user GPU approval for completeness) ===
+Pool CPU (~10h) escalated to a GPU pod to try to reach a terminal verdict today.
+  - RENT: vast pod 41822888, RTX A4000 16GB, cuda 13.2, host RAM 125 GB, $0.084/hr. instance_id parsed
+    DIRECTLY from rent stdout new_contract (NOT list-last — heeded the past mis-destroy). adopt'd for
+    teardown tracking; exactly ONE pod confirmed (count=1). teardown trap script /tmp/h1464_teardown.sh.
+  - #3724 cuda-pod-ready CONFIRMED: HEXA_VERSION=edge install → cuda_available()==1 (cuBLAS path live).
+    onstart installed git+curl first (cuda-devel image had no git). flame_math from global ~/.hx stdlib.
+  - 3 .bin scp'd to pod; decode = SAME live core/bytegpt_decode.hexa via engine_decode_batch_cli.hexa,
+    now routing the d×d GEMMs through farr_matmul_gpu (cuBLAS Dgemm) instead of the CPU oracle.
+  - ★ CRITICAL HONEST FINDING — GPU gives ~NO speedup for this decode: measured on the A4000,
+    GPU utilization 0–6%, GPU-mem ~2.5–5 GB allocated, but fragment rate ≈ ~10 min/frag — SAME as the
+    30 GB pool CPU hosts. frag1 landed ~14 min (incl. load). The 303M AUTOREGRESSIVE SINGLE-TOKEN decode
+    is a long chain of SMALL GEMMs (T×1024 @ 1024×{3072,1024,4096}, T grows 32→142) — each cuBLAS Dgemm
+    is microseconds of compute but dominated by per-call launch + host↔device farr transfer latency
+    (≈13k cuBLAS calls/fragment). The forward is LATENCY-bound, not FLOP-bound → cuBLAS ≈ CPU here.
+    The expected "~10 min total" did NOT materialize. Recorded honestly (c9), NOT a build/asset failure
+    (cuda asset DID ship; cuda_available()==1). → hexa-lang ING: batch/persistent-device-farr decode
+    (keep activations device-resident across tokens; batch the L24 GEMMs) to make GPU decode FLOP-bound.
+  - ★ SECOND HONEST FINDING — memory forces SEQUENTIAL (no concurrency win): a single decoder's resident
+    set measured **RSS ~91 GB** for the 303M model (hexa boxed-farr ≈ ~300 bytes/param). The 125 GB host
+    fits ONLY ONE decoder; a 2nd concurrent decoder drove used→117 GB toward OOM (had to kill it). So the
+    pod's 125 GB does NOT buy 2–3× concurrency — it buys the ability to run ONE decoder at all (the 30 GB
+    pool hosts earlyoom-kill even one — aiden's shuffle decoder died at frag 1, confirmed). Net: decode is
+    strictly SEQUENTIAL pairing→shuffle→base.
+  - MEASURED RATE: ~16 min/fragment steady-state (pairing 0→3 frags over ~50 min incl. ~3 min load).
+    90 frags sequential ≈ **~24 h ETA** — does NOT complete "today". This is a hexa-runtime substrate wall
+    (a_break_the_wall type-c: latency-bound GPU + ~91 GB/model), NOT a science ceiling, NOT fabricable into
+    a verdict. Filed hexa-lang ING (device-resident/batched decode + farr memory reduction).
+  - SELF-COMPLETING + AUTO-TEARDOWN wired (robust, single orchestrator): pod /root/h1464_master.sh
+    (sequential, idempotent decode_one, RAM-safe) → on all 90 → `h1464_engine_native.py --score` →
+    /root/h1464out/H_1464_ENGINE_NATIVE.txt + MASTER_DONE marker. pod-side scoring readied (bootstrapped
+    pip via get-pip.py — cuda image had none — → torch 2.12.1+cpu; g6_common+probes import clean).
+    HARVEST+TEARDOWN watch (this session, c19 30-min interval): on scored=YES → scp all outputs to this
+    dir → print verdict → `hexa cloud rm 41822888` (c11 sanctioned teardown) → verify 0 pods. Pod
+    registered `harness ing pod add 41822888`. pairing.pt staged on pod for the argmax==torch parity
+    (runs after decode frees the ~91 GB).
+  - POOL FALLBACK is UNRELIABLE: summer/aiden (30 GB) earlyoom-kill the decoder (aiden shuffle died at
+    frag 1). The 125 GB pod is the ONLY path that can actually COMPLETE — that, not GPU speed, is what
+    justifies the rent.
+  - COST so far ~$0.1; projected ~$2 to completion (~24 h @ $0.084/h). Within the approved-for-completeness
+    budget. Teardown auto-fires on verdict pull; if THIS session ends before completion, the pod keeps
+    running until the master finishes + harvest watch (must be re-launched by team-lead) tears it down, OR
+    team-lead runs `hexa cloud rm 41822888 --provider vast --force` (LEAK RISK if unsupervised — flagged).
+  - TERMINAL VERDICT STATUS: NOT reached this session. 🟢/🧱 will be stamped from
+    /root/h1464out/H_1464_ENGINE_NATIVE.txt when the ~24 h run completes (frozen bars UNCHANGED, c9).
+
+POD/RENT (pre-escalation note, superseded above): originally $0 pool-only.
 
 xref H_1441 (form-contrastive, prior lens; same substrate-speed wall, same B3 target) ·
   H_1435/36/37 (B3 engine-native FAIL precedent) · H_1464 numpy mirror (DIRECTIONAL, 🟢 BROKE) ·

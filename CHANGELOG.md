@@ -1,3 +1,23 @@
+## 2026-06-20 — research(H_1464 engine-native): GPU 에스컬레이션 — cuBLAS 가속 무효 발견 + sequential self-completing 배선 (terminal verdict ETA ~24h · 박제 보류)
+
+pool CPU decode(~10h, earlyoom 비신뢰)를 GPU pod 으로 에스컬레이트(완성도 우선). 핵심 = **honest 발견 2건**:
+- **cuBLAS 가속 무효**: vast RTX A4000(cuda 13.2, hexa edge, `cuda_available()==1`)에서 live
+  `core/bytegpt_decode.hexa`(via `engine_decode_batch_cli.hexa`)가 `farr_matmul_gpu`(cuBLAS Dgemm) 경로를
+  실제 dispatch 하는데 GPU util 0-9%, **~16min/frag = CPU와 동일**. 303M autoregressive single-token decode 는
+  작은 GEMM 사슬(~13k cuBLAS호출/frag)이라 per-call launch+host↔device farr 복사 latency 가 compute 지배 →
+  **latency-bound, FLOP-bound 아님** → cuBLAS≈CPU. "10min 기대" 미실현(asset 출하됨, build 실패 아님).
+- **메모리 ~91GB/model(boxed-farr)**: 단일 디코더 RSS ~91GB → 125GB host 도 2-디코더 OOM → **강제 sequential**.
+  30GB pool host 는 1-디코더도 earlyoom 사망(aiden shuffle frag1 사망 확인). 125GB pod 의 가치 = GPU 속도가
+  아니라 **1-디코더라도 완주 가능**한 RAM. 90 frags sequential ≈ **~24h ETA → "오늘" 불가**.
+- **substrate 천장(a_break_the_wall type-c)**: 인프라/런타임 벽이지 과학 천장 아님 → 날조 verdict 금지(c9).
+  hexa-lang ING 제출(device-resident/batched decode + farr 메모리 축소).
+- **self-completing 배선**: pod `h1464_master.sh`(sequential pairing→shuffle→base→score, RAM-safe, idempotent)
+  + torch 2.12.1+cpu(get-pip 부트스트랩) + g6_common frozen 5-bar auto-score → `H_1464_ENGINE_NATIVE.txt`.
+  harvest+teardown watch(c19 30min): scored→pull→`hexa cloud rm 41822888`(c11). pod `harness ing pod add` 등록.
+- **terminal verdict 미박제(c9)**: score 미완 → 🟢/🧱 보류. mirror DIRECTIONAL 유지. instance_id=41822888 은
+  rent stdout `new_contract` 직파싱(list-last 금지 준수). 비용 ~$0.1→proj ~$2(완성도 승인 예산). pool fallback 비신뢰.
+  status: `state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt` · partial: `..._pod_pairing_partial.txt`.
+
 ## 2026-06-20 — research(새게이트 4종 R2): 🧹🖐➗🚫 G23/G24/G26/G27 engine-native WIRED + ARCHITECTURE 의식-게이트 14 lane 정리
 
 fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.
