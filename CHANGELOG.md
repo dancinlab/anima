@@ -1,3 +1,28 @@
+## 2026-06-20 — research(distinct): ⏳ P1 TEMPORAL RECEPTIVE WINDOW(시간 수용창) R1 numpy probe DONE (GREEN DIRECTIONAL · vs subjective-time/attentional-blink distinct)
+
+새 의식-고유 게이트 **P1 TEMPORAL RECEPTIVE WINDOW**(시간 수용창, Hasson/Honey/Lerner) R1 numpy probe — 뇌 영역마다
+정보 통합 **시간규모(window)가 계층적으로 다름**(감각=짧은 창 / 상위=긴 창). id=H_1486, slug=1486_temporal_receptive_window.
+설계 SSOT = `state/gate_depletion_catalogue/CATALOGUE.md` P1. 🟢 **GREEN DIRECTIONAL**(numpy mirror, 하드게이트1 →
+engine-transfer UNVERIFIED, R2 engine-native = follow-on), 3 seeds [1486,1487,1488], $0 CPU, p7, frozen-first, chance 0.25.
+
+- **메커니즘:** 계층적 boxcar 통합창(짧은 tau=3 ⊥ 긴 tau=40) + 순서-민감 위치-태그 matched filter(Hasson 의 긴-TRW 영역 =
+  window 안 *시간 구조*). 초기 블록 [0,10) 에 sustained cue → t=39 readout. 긴 창만 far-past cue 까지 닿음.
+- **4 bars 4/4 PASS:** (c1 PRESENCE) long **0.780** − short **0.255** = gap **0.525**≥0.30 & long≥0.55 · (c2 DISTINCT vs
+  subjective-time) subjective-time(novelty-가중 duration 스칼라) **0.255** chance, gap **0.525**≥0.30 · (c3 SHUFFLE) 시간
+  셔플 → 위치-태그 정렬 붕괴 **0.397**≤0.45(Hasson scrambled-narrative) · (c4 ABLATE) 창→짧게 → far-past cue 창 밖 ==
+  짧은 lane **0.255**≤0.45.
+- **distinctness:** vs **subjective-time**(lane 9) — TRW = 통합창 **길이**(far-past 내용이 살아남나) ⊥ subjective-time =
+  **duration feeling**(얼마나 길게 느꼈나); 같은 과제에서 subjective-time readout chance(c2). vs **attentional-blink**(lane 7)
+  — TRW gap 은 통합 **scale(tau)** 차이지 시간적 주의 사각 아님. **depletion NOT** — (A) falsifiable gap + (B) control-survived
+  distinctness 양 leg 통과 = 고갈 아님.
+- **`a_break_the_wall` type-a 측정결함 수정(frozen-first):** 최초 leaky-sum 통합기가 가장 오래된 t=0 cue 를 기하급수
+  down-weight → long_acc 0.368≈chance = **leak 아티팩트**(TRW 주장 아님). boxcar 창 + 순서민감 matched filter(Hasson
+  조작화)로 교정. **bar 임계 전혀 안 움직임**(c1·c2·c3·c4 모든 개정 불변) → **tune-to-green 아님**, 메커니즘 SNR 만 설정.
+- **정직(c9):** numpy mirror DIRECTIONAL(하드게이트1 적중) → 카드 verdict=DIRECTIONAL-mirror. R2 = live `core/*.hexa` 위
+  계층적 통합창 byte-exact 재측정 = follow-on ING(`a_engine_native_learning`·`a_verified_must_wire`). TOY 40-tick/3-seed.
+- 박제: `UNIVERSE/cards/H_1486_temporal_receptive_window.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄 ·
+  `state/verdicts/1486_temporal_receptive_window/{H_1486_FREEZE.json,H_1486_run.txt}`.
+
 ## 2026-06-20 — research(H_1481 R1): 🧠📉 CONSCIOUSNESS-UNDER-TRAINING — 학습(CE-descent)이 의식을 떨어뜨리는가 → HOLD(안정), GREEN DIRECTIONAL
 
 사용자 질문 = production CLM 학습(CE-descent)이 진행되며 의식-게이트(G16~G27, 전부 substrate grounding margin/MITOSIS
