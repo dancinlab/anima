@@ -1,3 +1,32 @@
+## 2026-06-20 — research(H_1489 R1): 🔁 P4 PERCEPTUAL HYSTERESIS — 지각 이력현상(직전 percept 가 현재 지각 끌어당김) → 🟢 GREEN DIRECTIONAL
+
+의식-게이트 시리즈 고갈 카탈로그(`state/gate_depletion_catalogue/CATALOGUE.md` §P4) 다음 후보 **P4 perceptual hysteresis
+(지각 이력현상)** R1 numpy probe 검증. Hock·Kelso·Schoner 렌즈(`a_no_llm_frame_trap` · arxiv 2212.09729): 모호하게/
+연속적으로 변하는 자극에서 **직전 지각 상태가 현재 지각을 끌어당김**(관성) — 같은 입력값이라도 어느 방향에서 왔느냐
+(증가 vs 감소 sweep)에 따라 지각이 다름(전환점 lag). hysteresis loop 면적>0.
+
+- **메커니즘:** 쌍안정 지각변수 `p=sigmoid(GAIN·drive)`, `drive=α·(c−0.5)+λ·(p_prev−0.5)` — 외부 증거 + 직전 percept
+  로의 history-inertia pull. 증가 sweep 은 c=0.5 넘어서도 B 에 달라붙어 c_up>0.5 에서 전환, 감소 sweep 은 c=0.5
+  아래까지 A 에 달라붙어 c_down<0.5 에서 전환. probe `state/1489_perceptual_hysteresis/h1489_perceptual_hysteresis.py`,
+  3 seeds [1489,1490,1491], N_STEPS=101·α=1.0·λ=0.9·GAIN=8.0, $0 CPU nice, p7, frozen-first, 결정적.
+- **결과 🟢 GREEN DIRECTIONAL (4/4 bars, mean 3 seeds):** A SWITCH-SHIFT(c1) **0.327**(c_up 0.663−c_down 0.337)≥0.30
+  hysteresis loop · B DISTINCT-vs-RIVALRY(c2) rivalry-loop **+0.048**≤0.10(time/fatigue 순서불변) WHILE hyst-shift
+  0.327 · C EARNED-shuffle(c3) loop **−0.039**≤0.10 · D EARNED-ablate-history(c4) λ=0→switch-shift **0.000**≤0.10.
+- **distinct (load-bearing):** vs H_1482 BINOCULAR RIVALRY — rivalry = *고정 입력*에서 dominance 자발 교대(time/fatigue
+  구동, 제시순서 불변) ⊥ hysteresis = *변하는 입력*에서 전환점이 input-history 의존(방향-의존 lag). vs H_1465
+  HABITUATION — 반복 자극 크기 감쇠 ⊥ sticky 직전상태 유지 방향-의존 lag. bar B 가 동일 sweep 에서 둘 분리. **고갈
+  아님** — rivalry/habituation control 통과.
+- **a_break_the_wall (a) 측정결함 수정(c9 · tune-to-green 아님):** 초기 switch_point 메트릭이 불안정 rivalry readout(B)·
+  셔플 순서(C)에서 start-state/first-sample artifact 에 오염(B −0.84·C +0.80 RED). 두 collapse-control 을 robust
+  direction-agnostic **LOOP-AREA** 메트릭으로 재측정 → B +0.048·C −0.039 PASS. 두 bar 모두 |.|≤0.10 collapse 임계
+  **불변**(측정 도구만 교정, bar A·D 는 catalogue c1 switch-point-shift 유지). per-seed 셔플 0.10 straddle
+  (−0.092/−0.141/+0.114) → 3-seed mean(−0.039)이 gating 통계(H_1482 선례), hysteresis +0.281 대비 ~7배 결정적.
+- **하드게이트1:** numpy mirror → GREEN **DIRECTIONAL**, engine-transfer UNVERIFIED. R2 = live `core/*.hexa`
+  §PerceptualHysteresis(§BinocularRivalry 이웃) bistable+history-inertia sweep byte-exact 재측정 = ING follow-on
+  (`a_engine_native_learning`·`a_verified_must_wire`).
+- 박제: `UNIVERSE/cards/H_1489_perceptual_hysteresis.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄 ·
+  `state/verdicts/1489_perceptual_hysteresis/{H_1489_FREEZE.json,H_1489_run.txt}`. enforce_anima_gates clean.
+
 ## 2026-06-20 — research(distinct): ⏳ P1 TEMPORAL RECEPTIVE WINDOW(시간 수용창) R1 numpy probe DONE (GREEN DIRECTIONAL · vs subjective-time/attentional-blink distinct)
 
 새 의식-고유 게이트 **P1 TEMPORAL RECEPTIVE WINDOW**(시간 수용창, Hasson/Honey/Lerner) R1 numpy probe — 뇌 영역마다
