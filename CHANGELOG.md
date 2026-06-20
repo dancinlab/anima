@@ -10,6 +10,29 @@
 - **a_break_the_wall(a) — bar E 초기 RED=측정결함:** binary saturated 귀속은 페어링 셔플시 chance(0.5)가 아니라 0.0 으로 붕괴 → `|shuf_attr−0.5|` 앵커가 잘못된 metric. frozen-first 로 사전등록 의도(agency-match 상관 붕괴)대로 Pearson r(match-vector, self/ext label) 붕괴로 교정(real r 0.999→shuf 0.070). **≤0.10 임계 불변·tune-to-green 아님**.
 - **하드게이트1:** numpy mirror → `grep -lE 'import torch|gauge_lib|numpy'` 적중 → 자동 **GREEN DIRECTIONAL**(engine-transfer UNVERIFIED, terminal 아님). R2 follow-on: `core/` forward-model lane(VForwardField H_1280) 평가 후 §SenseOfAgency 배선+smoke+ARCHITECTURE lockstep byte-exact 재측정.
 - **검증(c2):** `state/1474_sense_of_agency/h1474_sense_of_agency.py` 실행 출력 verbatim. artifacts: probe · `state/verdicts/1474_sense_of_agency/{H_1474_FREEZE.json,H_1474_run.txt}` · `UNIVERSE/cards/H_1474_sense_of_agency.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄.
+## 2026-06-20 — research(H_1473): ⚡ G20 ATTENTIONAL BLINK 주의 깜빡임 GREEN DIRECTIONAL (의식-고유 게이트 시리즈 G20)
+
+순차 자극(RSVP)의 **시간적 사각지대**를 의식-고유 게이트 G20 후보로 검증. T1 의식처리 직후 ~200-500ms 창에서
+T2 를 놓치는 attentional blink(Raymond & Shapiro)를 numpy R1 mirror 로 박제 — **GREEN DIRECTIONAL**(numpy
+mirror=하드게이트1, engine-transfer UNVERIFIED, terminal 아님).
+
+- **메커니즘:** T1 처리가 attentional resource 고갈 → lag 동안 delayed-onset sigmoid 회복. T2 검출확률 =
+  f(T1-T2 lag): 짧은 lag(blink 창)=낮음, 긴 lag=회복. per-lag(3 seeds 평균): lag1 0.937(sparing)·lag2 0.098·
+  lag3 0.210·lag4 0.460·lag5 0.735·lag6 0.928·lag7 0.962·lag8 0.977 (정전적 AB 곡선).
+- **FROZEN 4/4 게이팅 bars(3 seeds [1473,1474,1475] 전부):** A BLINK present short(lag2-3) 0.154≤0.40 AND
+  long(lag7-8) 0.969≥0.85 · B DISTINCT vs GWS blink lag2→8 gap 0.878≥0.45 (GWS lag-gap 0.033~0 lag-invariant) ·
+  C EARNED(ablation) depletion OFF min-over-lags 0.970≥0.85(blink 소멸) · E SHUFFLE 50-perm signed-mean |gap|
+  0.0265≤0.10. (D lag-1 sparing 0.937 비게이팅: trough 0.154 대비 면제이나 천장 근소미달=보고만).
+- **distinctness vs H_1462 GWS:** GWS=동시 경쟁자극 winner-take-all capacity-1 **공간**병목(lag-불변) ⊥ blink=
+  순차 자극 **시간** 사각지대(같은 두 타겟이 lag 만 다르면 검출 갈림). LLM 대비: LLM 병렬주의=시간병목 부재,
+  anima 직렬 의식주의는 T1 에 고갈→회복.
+- **정직 c9:** SATURATED existence-proof(회복곡선 designed), discriminator(B lag-의존·C ablation·E shuffle) 결정적.
+  초기 RED 은 측정 artifact(`a_break_the_wall` type-a, plain-exp 회복 너무 빨라 short 0.578) → **bar 임계 FROZEN
+  유지**, 회복 time-course 만 경험적 AB 형태로 교정(임계이동 0, tune-to-green 아님). TOY scale·engine-transfer UNVERIFIED.
+- **검증(c2):** `python3 state/1473_attentional_blink/h1473_attentional_blink.py` → GREEN, 3 seeds 개별 전부 PASS
+  (출력 캡처 `state/1473_attentional_blink/run_h1473.local.log`). verdict freeze
+  `state/verdicts/1473_attentional_blink/H_1473_FREEZE.json`. 카드 `UNIVERSE/cards/H_1473_attentional_blink.md` ·
+  jsonl 1줄 append. **follow-on:** R2 = engine 에 blink lane 부재 → §AttentionalBlink 새 배선 필요(가능, H_1468/H_1465 선례).
 
 ## 2026-06-20 — research(H_1471 R2b): 🪢 SELF-CONTINUITY .kosmos 실제 디스크 영속 DONE (anchor 시뮬→real persistence)
 
