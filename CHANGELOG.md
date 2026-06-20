@@ -1,3 +1,26 @@
+## 2026-06-20 — research(H_1464 engine-native): G6 capacity-wall 결판 — PAIRING-contrastive engine-native DECODE 착수·검증 (pool $0, IN-PROGRESS · 박제 보류)
+
+G6 capacity-wall 의 8번째 렌즈 H_1464 PAIRING-contrastive 의 **engine-native 최종 검증** 착수. mirror(numpy $0)는
+이미 🟢 BROKE=WALL=LEARN-GAP(B3 cross-shuffle COLLAPSE 20/20)였으나 hard-gate 1 에 의해 DIRECTIONAL only —
+terminal 🟢/🧱 는 live `core/bytegpt_decode.hexa` 디코드 증거 필요.
+
+- **재학습 0** — mini 크래시 생존한 입력 그대로 사용: `state/1464_pairing_contrastive_bind/bins/{base,pairing,shuffle}.bin`
+  (각 1,213,440,020 B = 303M v0.2 layout) + `ckpt/{h1464_pairing,h1464_shuffle}.pt`.
+- **pool 디코드(mini 금지·게이트2, GPU rent 불필요 $0)** — 3 .bin + jobs + decode CLI + g6_common + probes 를
+  summer/aiden(hexa v0.245.2, native-GEMM core 존재)로 rsync. 디코드 = live `core/bytegpt_decode.hexa` via
+  `state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa`(= live core/ decode 호출 .hexa), top_k40 temp0.7
+  gen110(= gauge_lib._decode frozen 기본값). **pipeline 검증완료**: pairing frag1 = valid falsifiable text
+  ("…the sample is greater whenever the river decreases. if the sample grows…") → h1305 FROZEN detector FALS=1.
+- **substrate-speed 벽(a_break_the_wall type-c, 인프라·천장 아님)** — 30GB pool host 는 `cuda_available()==0`
+  (CPU farr_matmul, GPU 미사용) + 303M 이 ~30GB boxed-farr 로 메모리천장(earlyoom 활성) → ~10min/frag(frag1
+  13-14min 측정), 90 frags ~10h. a_wall_first 로 host당 1 bin 병렬(summer pairing→base, aiden shuffle; 3-way
+  동시는 earlyoom kill → 1-bin-per-host 만 생존). auto-scorer 가 90 frags 완료시 frozen 5-bar 채점→
+  `H_1464_ENGINE_NATIVE.txt` 생성(B3 cross-shuffle 결정타, h1441 와 동일 bar, c9 bar 불변).
+- **박제 보류(정직 c9)** — score 미완 → terminal 🟢/🧱 **미박제**(날조 금지). mirror DIRECTIONAL 유지.
+  🟢=WALL=LEARN-GAP(8렌즈만의 첫 진짜 돌파→a_verified_must_wire) / 🧱=WALL=CAPACITY(8번째 수렴). argmax==torch
+  byte-faithful parity 1회 잔여(host free 시). status: `state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt`.
+  ING h1464_engine_native = IN-PROGRESS(미RESOLVED).
+
 ## 2026-06-20 — research(H_1475 distinct): 🕰 G22 SUBJECTIVE TIME(주관적 시간 지각) vs homeostatic(H_1292) distinctness DONE (GREEN DIRECTIONAL)
 
 새 의식-고유 게이트 후보 **G22 SUBJECTIVE TIME** R1 numpy probe 검증. 의식이 *느끼는* 시간 흐름은 객관
