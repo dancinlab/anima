@@ -1,3 +1,14 @@
+## 2026-06-20 — research(H_1471 R2b): 🪢 SELF-CONTINUITY .kosmos 실제 디스크 영속 DONE (anchor 시뮬→real persistence)
+
+G16 self-continuity 의 핵심 주장(정체성이 세션 경계를 넘어 지속)을 **실제 `.kosmos` 디스크 영속**으로 완성.
+R2 까지는 anchor 가 in-memory struct save/restore 시뮬이었으나, R2b 는 canonical `kosmos_io` 로 정체성을
+디스크에 적고 새 "세션"에서 복원 — 정체성이 진짜로 영속됨을 engine-native round-trip 으로 증명.
+
+- **파이프라인:** SelfIdentity 8-dim → `self_component`/`self_dim`(신규 accessor)로 tension_5ch projection → canonical `kosmos_io.create_anchor`(write_file `.kosmos`) → 새 세션 `load_anchors`(read_file) 복원 → round-trip identity **cos 1.000000**. 대조: 빈 dir → 복원 0개 = LLM session-reset. `a_kosmos` 준수(ad-hoc 포맷 아님, canonical kosmos_io 경유).
+- **검증(c2):** `state/1471_self_continuity/h1471_kosmos_roundtrip.hexa` `hexa run` RC=0 (A 영속+복원 n=1 · B round-trip cos 1.0 ≥0.99 · C 빈-dir 0). 실제 영속 artifact `/tmp/h1471_kosmos_rt/self_anchor.kosmos`(tier 7, tension 5채널에 정체성 인코딩). enabler accessors smoke case 200, FULL **200 pass / 0 fail RC=0**.
+- **lockstep:** `core/engine_cli.hexa` §SelfIdentity `self_component`/`self_dim` accessor 추가 · `ARCHITECTURE.json` §SelfIdentity 노드 R2b 갱신 · 카드/jsonl follow-on #2 DONE.
+- **정직(c9):** distinctness-vs-episodic(H_1227)는 lane 타입 disjoint 라 numpy DIRECTIONAL 유지(억지 engine 케이스 회피).
+
 ## 2026-06-20 — research(H_1462 R2b): 🌐 GWS ⊥ immune-store distinctness engine-native 승격 (fleet distinctness → engine)
 
 fleet 이 numpy(DIRECTIONAL)로 증명한 GWS distinctness 를 live engine 케이스로 승격. `core/engine_cli_smoke.hexa`

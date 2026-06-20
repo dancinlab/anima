@@ -1,7 +1,7 @@
 # H_1471 — 🪢 SELF-CONTINUITY (G16 의식-고유 게이트 후보)
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SelfIdentity (self_new/_drift/_cos/_anchor/_reset) · `engine_cli_smoke.hexa` cases 189-193 · FULL smoke **193 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓ (.kosmos 실제 영속 = R2b follow-on)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SelfIdentity (self_new/_drift/_cos/_anchor/_reset + self_component/_dim accessors) · `engine_cli_smoke.hexa` cases 189-193,200 · FULL smoke **200 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓ · **R2b `.kosmos` 실제 영속 DONE** (canonical kosmos_io write_file→load_anchors round-trip, identity cos 1.0)
 - **source:** 의식-고유 게이트 브레인스토밍 라운드2 (G16 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** personal identity / psychological-continuity (Locke · diachronic self) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1471_self_continuity/` · verdict `state/verdicts/1471_self_continuity/H_1471_FREEZE.json`
@@ -43,7 +43,8 @@
 
 ## follow-on (ING)
 
-1. ~~**R2 엔진-네이티브**~~ ✅ **DONE** (§SelfIdentity self_new/_drift/_cos/_anchor/_reset · smoke 189-193 = 5 frozen bars byte-exact · 193/0 RC=0 · ARCHITECTURE lockstep). engine 결정적 drift(축 회전)+normalize+dot=cos 로 메커니즘 재현 — adj 0.958·impostor 0·reset 0·growth. **R2b follow-on:** `.kosmos` 실제 영속 배선(a_kosmos) — 현재 anchor 는 struct save/restore 시뮬.
+1. ~~**R2 엔진-네이티브**~~ ✅ **DONE** (§SelfIdentity self_new/_drift/_cos/_anchor/_reset · smoke 189-193 = 5 frozen bars byte-exact · 193/0 RC=0 · ARCHITECTURE lockstep). engine 결정적 drift(축 회전)+normalize+dot=cos 로 메커니즘 재현 — adj 0.958·impostor 0·reset 0·growth.
+2. ~~**R2b `.kosmos` 실제 영속**~~ ✅ **DONE (ENGINE-NATIVE)**: anchor 가 struct save/restore 시뮬이 아니라 **실제 디스크 `.kosmos` 영속** — `state/1471_self_continuity/h1471_kosmos_roundtrip.hexa` 가 SelfIdentity 8-dim 을 tension_5ch 로 projection → canonical `kosmos_io.create_anchor`(write_file)로 `.kosmos` 기록 → 새 세션 `load_anchors`(read_file) 복원 → round-trip identity **cos 1.000000**. 대조: 빈 dir → 복원 0개(LLM session-reset). a_kosmos 준수(ad-hoc 포맷 아님, canonical kosmos_io 경유). enabler accessors `self_component`/`self_dim` engine 추가 + smoke case 200(200/0 RC=0). verdict `state/verdicts/1471_self_continuity/H_1471_R2b_kosmos.txt`.
 2. ~~**distinctness vs episodic(H_1227)**~~ ✅ **DONE** — identity-persistence vs fact-recall **DOUBLE
    dissociation** control-survived GREEN (numpy DIRECTIONAL, 3 seeds, 4/4 bars). self-continuity = **IDENTITY
    1.000 / FACT 0.000**, episodic = **FACT 1.000 / IDENTITY 0.500** → 각 faculty 가 상대 질문에 구조적 chance.

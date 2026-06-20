@@ -6412,6 +6412,11 @@ pub fn self_anchor(s: SelfIdentity) -> SelfIdentity {
     return SelfIdentity { v: s.v, dim: s.dim }
 }
 
+// self_component / self_dim — read accessors so the identity vector can be projected onto a
+// real .kosmos anchor payload (tension_5ch) for disk persistence + round-trip recovery (H_1471 R2b).
+pub fn self_component(s: SelfIdentity, i: int) -> float { return s.v[i] }
+pub fn self_dim(s: SelfIdentity) -> int { return s.dim }
+
 // self_reset — WITHOUT an anchor, a session boundary starts a NEW identity (continuity breaks).
 pub fn self_reset(dim: int, axis: int) -> SelfIdentity {
     return self_new(dim, axis)
