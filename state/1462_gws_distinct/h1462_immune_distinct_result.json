@@ -1,0 +1,66 @@
+{
+  "hypothesis": "H_1462",
+  "slug": "gws_distinct",
+  "follow_on": "distinctness vs immune-store (H_1227/1231)",
+  "gate_label": "G17",
+  "lens": "GWT bottleneck vs immune episodic recall",
+  "arms": [
+    "GWS_FULL",
+    "GWS_ABLATED",
+    "IMMUNE",
+    "SHUFFLE"
+  ],
+  "seeds": [
+    1462,
+    1463,
+    1464
+  ],
+  "n_stim": 5,
+  "n_trials": 200,
+  "chance": 0.2,
+  "metrics": {
+    "gws_occ": 1.0,
+    "immune_occ": 5.0,
+    "abl_occ": 5.0,
+    "winner_acc": 1.0,
+    "shuf_acc": 0.20333333333333334,
+    "immune_shuf_match": 1.0,
+    "distinct_occ": 4.0
+  },
+  "bars": {
+    "A_bottleneck": {
+      "gws_occ": 1.0,
+      "immune_occ": 5.0,
+      "ratio": 5.0,
+      "bar_gws_occ": 1.05,
+      "bar_ratio": 2.0,
+      "pass_": true
+    },
+    "B_load_bearing": {
+      "abl_occ": 5.0,
+      "immune_occ": 5.0,
+      "gap": 0.0,
+      "bar_ratio": 2.0,
+      "bar_gap": 0.5,
+      "pass_": true
+    },
+    "C_winner": {
+      "val": 1.0,
+      "bar": 0.9,
+      "pass_": true
+    },
+    "D_immune_nocomp": {
+      "immune_shuf_match": 1.0,
+      "gws_shuf_acc": 0.20333333333333334,
+      "bar_shuffle": 0.4,
+      "pass_": true
+    },
+    "E_distinct_occ": {
+      "val": 4.0,
+      "bar": 1.0,
+      "pass_": true
+    }
+  },
+  "verdict": "GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)",
+  "green": true
+}
