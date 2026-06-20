@@ -1,0 +1,18 @@
+{
+  "id": "H_1465",
+  "slug": "1465_habituation_dishabituation",
+  "tier": "GREEN DIRECTIONAL (numpy R1 mirror; engine-transfer UNVERIFIED)",
+  "gate": "G18 consciousness-only candidate — habituation / dishabituation",
+  "seeds": [1465, 1466, 1467],
+  "frozen_bars": {
+    "A_HABITUATION": {"metric": "hab_drop", "value": 0.865, "thr": ">=0.30", "pass": true},
+    "B_STIMULUS_SPECIFIC": {"metric": "specific", "value": 1.000, "thr": ">=0.85", "pass": true},
+    "C_DISHABITUATION": {"metric": "recover", "value": 1.000, "thr": ">=0.85", "pass": true},
+    "D_EARNED_ABLATION": {"metric": "abl_drop", "value": 0.000, "thr": "<=0.05", "pass": true},
+    "E_DISTINCT_VS_ADAPTATION": {"metric": "r_B_hab - r_B_adapt", "value": 0.918, "thr": ">=0.30", "pass": true}
+  },
+  "verdict": "GREEN (5/5)",
+  "honest_c9": "SATURATED existence-proof (exp-decay response law is designed, not learned). Load-bearing discriminators = stimulus-specific(1.0 vs adaptation-global 0.08) + ablation(0). TOY scalar mechanism proof, not a learned habituation network. DIRECTIONAL numpy mirror; R2 engine-native = follow-on.",
+  "distinct_vs_H1194": "H_1194 ADAPTATION COUPLING = error-driven GLOBAL gain decay (stimulus-agnostic); H_1465 habituation = per-stimulus familiarity decay + dishabituation recovery (stimulus-SPECIFIC). Bar E separates them.",
+  "llm_contrast": "stateless LLM returns identical response to repeated prompt; anima substrate response decays with familiarity + recovers on novelty (state-dependent)."
+}
