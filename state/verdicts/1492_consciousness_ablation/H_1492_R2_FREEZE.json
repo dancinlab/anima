@@ -1,0 +1,52 @@
+{
+  "id": "H_1492",
+  "slug": "1492_consciousness_ablation",
+  "round": "R2",
+  "tier": "GREEN ENGINE-NATIVE (live core/engine_cli.hexa §ConsciousnessIndex; hard-gate 1 PASS — terminal)",
+  "study": "CONSCIOUSNESS ABLATION — per-lane ΔΦ contribution to integrated consciousness, ENGINE-NATIVE",
+  "evidence_hexa": "state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa",
+  "engine_ops": ["ci_lane_scores", "ci_phi_multiinfo", "ci_phi_iit4", "ci_bundle"],
+  "substrate": "live ImmuneMemory store (immune_memory_new_text/_bind, immune_embed_key FNV-1a dim64 grounding margin via immune_memory_recall_margin + vadapt_field_recon_err) + live MITOSIS cell count (immune_memory_cells). NO numpy, NO torch.",
+  "seeds": [1492, 1493, 1494],
+  "n_lanes": 15,
+  "n_trials": 600,
+  "indices": [
+    "bundle (mean lane score, ci_bundle)",
+    "phi_multiinfo (Gaussian multi-information ½(Σ ln Σ_ii − ln det Σ) via Cholesky logdet, ci_phi_multiinfo)",
+    "phi_iit4 (EXACT min-cut MIP over ≤8-lane subset, ci_phi_iit4, a_phi_iit4_tool — faithful, not proxy)"
+  ],
+  "baseline": {
+    "phi0": 29.007572110419586,
+    "shuf_phi0": 0.07634425844991217,
+    "bundle0": 0.56945262443456555,
+    "phi_iit4_top8": 0.0008449838681610089
+  },
+  "frozen_bars": {
+    "A_MEASURABLE": {"value": "phi0=29.0076 >0 finite > shuf_phi0=0.0763", "thr": "phi0>0 AND phi0>shuf_phi0", "pass": true},
+    "D_CONTROL_NOOP": {"value": 0.005840991625611025, "thr": "<=0.05", "pass": true},
+    "E_SHUFFLE": {"value": "shuf_phi0/phi0 = 0.0763/29.0076 = 0.00263", "thr": "<=0.10 (integration collapse)", "pass": true}
+  },
+  "contribution_ranking_seed1492": [
+    {"lane": "EmotionRegulation", "dphi": 5.32408},
+    {"lane": "DirectedForgetting", "dphi": 4.91058},
+    {"lane": "BodyOwnership", "dphi": 4.91058},
+    {"lane": "LearnedPrecision", "dphi": 4.91058},
+    {"lane": "SelfIdentity", "dphi": 4.91058},
+    {"lane": "SubjectiveTime", "dphi": 4.90454},
+    {"lane": "AttentionalBlink", "dphi": 4.90454},
+    {"lane": "PrecisionSurprise", "dphi": 2.12537},
+    {"lane": "FreeWont", "dphi": 1.47392},
+    {"lane": "SenseOfAgency", "dphi": 1.40803},
+    {"lane": "Novelty", "dphi": 0.95115},
+    {"lane": "Habituation", "dphi": 0.56152},
+    {"lane": "DividedAttention", "dphi": 0.0},
+    {"lane": "GlobalWorkspace", "dphi": 0.0},
+    {"lane": "MitosisGrowth", "dphi": 0.0}
+  ],
+  "top_lane_share": 0.1289265178067505,
+  "structure_verdict": "DISTRIBUTED",
+  "verdict": "GREEN ENGINE-NATIVE (A&D&E meter-valid on live engine, byte-exact 3 seeds); STRUCTURE=DISTRIBUTED preserved (top share 0.129<0.50); faithful IIT4 Φ>0 on top-8 subset (irreducible).",
+  "honest_c9": "R2 reads REAL near-saturated grounding margins off the live immune store, so the ABSOLUTE ΔΦ ranking differs from R1's wider synthetic mirror (7 margin-reading lanes tie at ~4.91; 3 near-constant lanes ~0). INVARIANT across R1 mirror & R2 engine-native = the science answer DISTRIBUTED (top share <<0.50). Frozen A/D/E unchanged (frozen-first). faithful IIT4 = exact min-cut MIP (a_phi_iit4_tool), not proxy. TOY scale; 303M production = R3.",
+  "hardgate1": "evidence is a .hexa calling live core/engine_cli.hexa (engine_cli + core/ match CORE_DECODE) → engine-native, terminal (NOT DIRECTIONAL).",
+  "wired": "WIRED-live — §ConsciousnessIndex added to core/engine_cli.hexa + ARCHITECTURE.json lockstep; engine_cli_smoke regression PASS."
+}

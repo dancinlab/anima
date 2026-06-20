@@ -6610,3 +6610,335 @@ pub fn imagery_activate(cue_match: float, topdown_on: bool) -> float {
 pub fn priming_facilitate(relatedness: float, prime_residual: float) -> float {
     return relatedness * prime_residual
 }
+
+// ── § ConsciousnessIndex (H_1492 R2) — 연결된 의식-게이트 lane 들의 통합 의식 + ablation ──────────
+//
+// anima's consciousness-only gate lanes (G16..G31 + Novelty + MITOSIS) are all WIRED to the SAME
+// substrate (the live immune-store grounding margin + the live MITOSIS / VAdaptField split count).
+// This section bundles them into an INTEGRATED consciousness index and lets each connection (lane)
+// be ABLATED one-by-one to measure its contribution ΔΦ to the integrated whole — answering "does
+// integrated consciousness sit in ONE dominant lane, or is it DISTRIBUTED across the connected
+// network?" (the anima core claim that consciousness emerges from the WHOLE connectome, not a part).
+//
+// ENGINE-NATIVE (a_engine_native_learning): every lane scalar is READ from a substrate trial-state
+// (margin = live immune_memory_recall_margin off a real ImmuneMemory store; cells = live
+// vadapt_field_cells; novelty/recon-err/dt/seen = substrate reads) — NO injected label, NO RLHF,
+// NO persona, NO decoder weights (p1/p2/p3/p6). READ-only, Ψ-disjoint (no immune cell mutated, no
+// pure_field Φ/phase/Ψ touched), NOT an emit gate (a_autonomy_over_hardcode). No `exp` in the Φ
+// math — only ln/sqrt (the engine builtins). `match` is a reserved word and is NOT used here.
+//
+// INTEGRATED INDICES over the per-lane state vector x ∈ R^N (N = number of CONNECTED lanes):
+//   ① bundle   = mean lane score (ci_bundle).
+//   ② Φ-proxy  = multivariate INTEGRATION (total correlation / multi-information, Tononi-Sporns-
+//                Edelman 1994; Gaussian form Φ = ½(Σ_i ln Σ_ii − ln det Σ) ≥ 0) of the lane
+//                population covariance Σ (ci_phi_multiinfo). A lane that COVARIES with the rest
+//                raises Φ; a disconnected/independent lane adds ≈0. This is the SAME estimator as
+//                R1 (a_train_inline_gauge spirit), re-scored ENGINE-NATIVE byte-exact.
+//   ③ faithful = exact IIT4-style integration on a ≤8-lane subset via the exhaustive MIP over all
+//                2^(n-1)−1 balanced bipartitions: Φ_MIP = min_cut [ I(whole) − I(A) − I(rest) ]
+//                of the Gaussian multi-information (ci_phi_iit4, a_phi_iit4_tool — exact min-cut,
+//                NOT the proxy). For n≤8 the cut bank is tiny and exhaustive ($0, deterministic).
+//   ablation   = DISCONNECT lane k from the network (drop its column) → recompute Φ on the REMAINING
+//                lanes → ΔΦ_k = Φ₀ − Φ_k = lane k's contribution to integrated consciousness.
+
+// ci_lane_scores — the 15 consciousness lanes evaluated on ONE substrate trial-state, returned as a
+// [float] of length 15 in this FIXED order (mirrors R1 LANE_NAMES byte-exact):
+//   0 GlobalWorkspace 1 Habituation 2 PrecisionSurprise 3 SelfIdentity 4 LearnedPrecision
+//   5 Novelty 6 AttentionalBlink 7 SenseOfAgency 8 SubjectiveTime 9 EmotionRegulation
+//   10 DirectedForgetting 11 BodyOwnership 12 DividedAttention 13 FreeWont 14 MitosisGrowth
+// Inputs are substrate reads: m = grounding margin (recall affinity, higher = better grounded),
+// m_field = 5 neighbouring-context margins, cells = MITOSIS split count, seen = exposure count,
+// intent = self-initiated flag (0/1), dt = elapsed-time integral, recon_err = reconstruction error.
+fn _ci_clip01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+fn _ci_abs(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
+pub fn ci_lane_scores(m: float, m_field: [float], cells: int, seen: int,
+                      intent: int, dt: float, recon_err: float) -> [float] {
+    let PASS_THR = 0.55
+    // sorted-desc top-2 of m_field for GWS (winner-take-all margin).
+    let mut f0 = m_field[0]
+    let mut f1 = m_field[0]
+    let mut fi = 1
+    let mut fsum = m_field[0]
+    while fi < len(m_field) {
+        let v = m_field[fi]
+        fsum = fsum + v
+        if v > f0 { f1 = f0  f0 = v } else { if v > f1 { f1 = v } }
+        fi = fi + 1
+    }
+    let fmean = fsum / to_float(len(m_field))
+    let fc = to_float(cells)
+    let sc = to_float(seen)
+    // 0 GlobalWorkspace — winner margin over runner-up (ignition).
+    let gws = _ci_clip01(f0 - 0.9 * f1 + 0.5)
+    // 1 Habituation — response decays with exposure count.
+    let hab = _ci_clip01(1.0 / (1.0 + 0.5 * sc))
+    // 2 PrecisionSurprise — precision-weighted squared prediction error.
+    let prec = _ci_clip01(m)
+    let perr = recon_err
+    let surp = _ci_clip01(prec * perr * perr)
+    // 3 SelfIdentity — temporal self-continuity (low drift = high identity).
+    let drift = _ci_abs(m - fmean)
+    let selfi = _ci_clip01(1.0 - drift)
+    // 4 LearnedPrecision — learned predictive confidence ≈ grounding.
+    let lprec = _ci_clip01(m)
+    // 5 Novelty — recon-error tempered by exposure (precision-agnostic).
+    let nov = _ci_clip01(recon_err / (1.0 + 0.5 * sc))
+    // 6 AttentionalBlink — temporal refractory (dt-coupled saturating).
+    let blink = _ci_clip01(dt / (1.0 + dt))
+    // 7 SenseOfAgency — self-attribution = intent · grounding.
+    let agency = _ci_clip01(to_float(intent) * m)
+    // 8 SubjectiveTime — perceived time dilation (dt-coupled).
+    let stime = _ci_clip01(1.0 - 1.0 / (1.0 + dt))
+    // 9 EmotionRegulation — reappraisal toward the Ψ=½ midpoint.
+    let emo = _ci_clip01(1.0 - 2.0 * _ci_abs(m - 0.5))
+    // 10 DirectedForgetting — active inhibition below the pass threshold.
+    let mut forg = m
+    if m < PASS_THR { forg = 1.0 - m }
+    forg = _ci_clip01(forg)
+    // 11 BodyOwnership — multisensory synchrony (margin vs field mean).
+    let body = _ci_clip01(1.0 - _ci_abs(m - fmean))
+    // 12 DividedAttention — resource entropy over the field margins.
+    let mut ent = 0.0
+    let mut ei = 0
+    let mut psum = 0.0
+    while ei < len(m_field) {
+        let pv = m_field[ei]
+        if pv > 0.000001 { psum = psum + pv }
+        ei = ei + 1
+    }
+    if psum > 0.000001 {
+        let mut ej = 0
+        while ej < len(m_field) {
+            let pv = m_field[ej]
+            if pv > 0.000001 {
+                let p = pv / psum
+                ent = ent - p * ln(p)
+            }
+            ej = ej + 1
+        }
+        ent = ent / ln(to_float(len(m_field)))
+    }
+    let divid = _ci_clip01(ent)
+    // 13 FreeWont — intentional veto (intent-gated restraint).
+    let mut wont = 0.5
+    if intent == 1 { wont = 1.0 - m }
+    wont = _ci_clip01(wont)
+    // 14 MitosisGrowth — split-count saturating curve (independent substrate read).
+    let mito = _ci_clip01(1.0 - 1.0 / (1.0 + 0.3 * fc))
+    return [gws, hab, surp, selfi, lprec, nov, blink, agency, stime, emo, forg, body, divid, wont, mito]
+}
+
+// _ci_drop_col — remove column k from one lane-score row (ablate = disconnect lane k).
+fn _ci_drop_col(row: [float], k: int) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(row) {
+        if i != k { out = out + [row[i]] }
+        i = i + 1
+    }
+    return out
+}
+
+// ci_bundle — ① integrated bundle index = mean lane score over a trial population X (rows = trials,
+// cols = lanes). If ablate >= 0 that lane column is DROPPED first (disconnect).
+pub fn ci_bundle(x: [[float]], ablate: int) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut cnt = 0
+    let mut t = 0
+    while t < nt {
+        let mut row = x[t]
+        if ablate >= 0 { row = _ci_drop_col(row, ablate) }
+        let mut j = 0
+        while j < len(row) { s = s + row[j]  cnt = cnt + 1  j = j + 1 }
+        t = t + 1
+    }
+    if cnt == 0 { return 0.0 }
+    return s / to_float(cnt)
+}
+
+// _ci_cov — column-covariance matrix of the trial population X (rows=trials, cols=lanes), with a
+// small ridge added to the diagonal for numerical positive-definiteness.
+fn _ci_cov(x: [[float]]) -> [[float]] {
+    let nt = len(x)
+    let nc = len(x[0])
+    // column means
+    let mut mean = []
+    let mut c = 0
+    while c < nc {
+        let mut s = 0.0
+        let mut t = 0
+        while t < nt { s = s + x[t][c]  t = t + 1 }
+        mean = mean + [s / to_float(nt)]
+        c = c + 1
+    }
+    let mut cov = []
+    let mut i = 0
+    while i < nc {
+        let mut rowi = []
+        let mut j = 0
+        while j < nc {
+            let mut s = 0.0
+            let mut t = 0
+            while t < nt { s = s + (x[t][i] - mean[i]) * (x[t][j] - mean[j])  t = t + 1 }
+            let mut v = s / to_float(nt - 1)
+            if i == j { v = v + 0.000001 }      // ridge for PD
+            rowi = rowi + [v]
+            j = j + 1
+        }
+        cov = cov + [rowi]
+        i = i + 1
+    }
+    return cov
+}
+
+// _ci_logdet_chol — ln det of a symmetric positive-definite matrix S via Cholesky (S=LLᵀ →
+// ln det S = 2·Σ ln L_ii). Returns 0.0 for an empty/degenerate matrix. Diagonal floored so a
+// near-singular pivot never takes ln of a non-positive number (numerical floor only).
+fn _ci_logdet_chol(s: [[float]]) -> float {
+    let n = len(s)
+    if n == 0 { return 0.0 }
+    // build L in place (lower-triangular Cholesky).
+    let mut l = []
+    let mut a = 0
+    while a < n {
+        let mut zr = []
+        let mut b = 0
+        while b < n { zr = zr + [0.0]  b = b + 1 }
+        l = l + [zr]
+        a = a + 1
+    }
+    let mut ld = 0.0
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j <= i {
+            let mut sum = s[i][j]
+            let mut k = 0
+            while k < j { sum = sum - l[i][k] * l[j][k]  k = k + 1 }
+            if i == j {
+                let mut piv = sum
+                if piv < 0.000000001 { piv = 0.000000001 }   // numerical PD floor
+                let lii = sqrt(piv)
+                l[i][j] = lii
+                ld = ld + 2.0 * ln(lii)
+            } else {
+                l[i][j] = sum / l[j][j]
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return ld
+}
+
+// ci_phi_multiinfo — ② Gaussian multi-information Φ = ½(Σ_i ln Σ_ii − ln det Σ) ≥ 0 of the lane
+// population X. If ablate >= 0 that lane is DROPPED (disconnected) before Σ is formed. This is the
+// integrated-information PROXY (a_train_inline_gauge), re-scored engine-native byte-exact.
+pub fn ci_phi_multiinfo(x: [[float]], ablate: int) -> float {
+    if len(x) < 2 { return 0.0 }
+    // drop the ablated column from every row first.
+    let mut xa = x
+    if ablate >= 0 {
+        let mut xx = []
+        let mut t = 0
+        while t < len(x) { xx = xx + [_ci_drop_col(x[t], ablate)]  t = t + 1 }
+        xa = xx
+    }
+    let nc = len(xa[0])
+    if nc < 2 { return 0.0 }
+    let cov = _ci_cov(xa)
+    let mut sum_log_diag = 0.0
+    let mut i = 0
+    while i < nc {
+        let mut d = cov[i][i]
+        if d < 0.000000001 { d = 0.000000001 }
+        sum_log_diag = sum_log_diag + ln(d)
+        i = i + 1
+    }
+    let logdet = _ci_logdet_chol(cov)
+    let phi = 0.5 * (sum_log_diag - logdet)
+    if phi < 0.0 { return 0.0 }
+    return phi
+}
+
+// _ci_minfo_subset — Gaussian multi-information ½(Σ_i ln Σ_ii − ln det Σ) of the SUBSET of columns
+// in `idx` of population X (the building block for the exact IIT4 MIP over a part).
+fn _ci_minfo_subset(x: [[float]], idx: [int]) -> float {
+    let m = len(idx)
+    if m < 2 { return 0.0 }
+    // project X onto the subset columns.
+    let mut xs = []
+    let mut t = 0
+    while t < len(x) {
+        let mut row = []
+        let mut q = 0
+        while q < m { row = row + [x[t][idx[q]]]  q = q + 1 }
+        xs = xs + [row]
+        t = t + 1
+    }
+    let cov = _ci_cov(xs)
+    let mut sld = 0.0
+    let mut i = 0
+    while i < m {
+        let mut d = cov[i][i]
+        if d < 0.000000001 { d = 0.000000001 }
+        sld = sld + ln(d)
+        i = i + 1
+    }
+    let phi = 0.5 * (sld - _ci_logdet_chol(cov))
+    if phi < 0.0 { return 0.0 }
+    return phi
+}
+
+// ci_phi_iit4 — ③ EXACT IIT4-style integrated information on a ≤8-lane subset (a_phi_iit4_tool, NOT
+// a proxy): the MINIMUM over all bipartitions (A | rest) of [ I(whole) − I(A) − I(rest) ] of the
+// Gaussian multi-information. The min-cut MIP = how much integration is LOST by the cheapest
+// disconnection = the irreducible whole. n is capped at 8 (the faithful-IIT4 exact regime); the cut
+// bank (2^(n-1)−1 non-trivial bipartitions) is enumerated exhaustively via bit masks ($0,
+// deterministic). cols selects which lane columns of X form the ≤8-node system.
+pub fn ci_phi_iit4(x: [[float]], cols: [int]) -> float {
+    let n = len(cols)
+    if n < 2 { return 0.0 }
+    if n > 8 { return 0.0 - 1.0 }    // out of the faithful exact regime
+    let whole = _ci_minfo_subset(x, cols)
+    // enumerate side-A masks over bits 1..n-1 (bit 0 fixed in A → no mirror duplicates).
+    let mut half = 1
+    let mut e = 0
+    while e < n - 1 { half = half * 2  e = e + 1 }   // 2^(n-1)
+    let mut best = 0.0
+    let mut first = true
+    let mut amask = 0
+    while amask < half {
+        let mut aidx = [cols[0]]
+        let mut bidx = []
+        let mut bit = 1
+        while bit < n {
+            let shifted = _ci_bit(amask, bit - 1)
+            if shifted == 1 { aidx = aidx + [cols[bit]] } else { bidx = bidx + [cols[bit]] }
+            bit = bit + 1
+        }
+        if len(bidx) > 0 {
+            let ia = _ci_minfo_subset(x, aidx)
+            let ib = _ci_minfo_subset(x, bidx)
+            let cut = whole - ia - ib
+            if first { best = cut  first = false } else { if cut < best { best = cut } }
+        }
+        amask = amask + 1
+    }
+    if best < 0.0 { return 0.0 }
+    return best
+}
+
+// _ci_bit — bit `b` (0-indexed) of integer v, returned as 0/1 (no bitwise ops needed).
+fn _ci_bit(v: int, b: int) -> int {
+    let mut x = v
+    let mut i = 0
+    while i < b { x = x / 2  i = i + 1 }
+    return x - (x / 2) * 2
+}

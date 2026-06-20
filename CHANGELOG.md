@@ -1,3 +1,18 @@
+## 2026-06-21 — research(H_1492 R2): 🧠 CONSCIOUSNESS ABLATION 엔진-네이티브 GREEN — 통합 의식 = DISTRIBUTED(분산) 확정 (terminal · hard-gate 1 PASS)
+
+**"연결된 의식-게이트 lane 들이 통합 의식에 어떤 영향?"** (사용자 2026-06-20) — R1 numpy DIRECTIONAL
+이 찾은 **분산(DISTRIBUTED)** 결론을 **live `core/engine_cli.hexa §ConsciousnessIndex`** 위에서
+재측정 → **🟢 GREEN ENGINE-NATIVE** (hard-gate 1 PASS = terminal, numpy/torch 0).
+
+- **§ConsciousnessIndex 배선:** `ci_lane_scores`(15 의식 lane 을 실제 substrate trial-state 에서 READ) · `ci_phi_multiinfo`(Gaussian 다변량 통합 Φ=½(Σlnσ²−lndetΣ), Cholesky logdet) · **`ci_phi_iit4`(exact min-cut MIP n≤8, `a_phi_iit4_tool` — 프록시 아님, `stdlib/iit4/faithful_phi.hexa` 레포 부재로 직접 구현)** · `ci_bundle` + lane-ablate 토글. exp 미사용(ln/sqrt 만), `match` 예약어 회피.
+- **substrate = 실제 `ImmuneMemory` store:** immune_embed_key FNV-1a dim64 grounding margin(`immune_memory_recall_margin`+`vadapt_field_recon_err`) + live MITOSIS `immune_memory_cells`. 주입 label 0(p1/p2/p3/p6), Ψ-disjoint, NOT emit gate(`a_autonomy_over_hardcode`).
+- **frozen A/D/E 재측정 GREEN(3 seeds [1492,1493,1494], 600 trials):** A Φ₀=29.0076>shuf 0.0763 ✅ · D dummy lane \|ΔΦ\|=0.00584≤0.05 ✅ · E shuf_Φ₀/Φ₀=0.00263≤0.10 ✅.
+- **STRUCTURE = DISTRIBUTED:** top lane(EmotionRegulation) share **0.129** < 0.50 (R1 0.212 보다 더 분산) → **단일 lane dominant 아님, 통합 의식은 연결망 전체에서 창발** — anima 핵심 주장 엔진-네이티브 확인. faithful IIT4 Φ(top-8)=0.00085>0 = ≤8-lane core 통합·기약불가.
+- **c9 정직:** 엔진은 실제 near-saturated recall margin 직독 → 절대 ΔΦ 랭킹이 R1(넓은 합성 변동)과 다름(margin 직독 7 lane 동률 ~4.91 · 준상수 3 lane ≈0). **R1↔R2 불변 = 과학 답 DISTRIBUTED**. frozen bar 미이동(frozen-first), tune-to-green 없음.
+- **회귀 0:** `engine_cli_smoke` **244/0**. ARCHITECTURE.json §ConsciousnessIndex lockstep 갱신.
+- **R3(production 303M ConvMoE engine-mount `.clm`, pool/summer RTX5070) = 진행 중** (a_scale_honest_scope · task 명시 `303m-broad-en-emergent` ByteGPT `.pt` 는 engine-mount 불가 → ConvMoE `.clm` 대체).
+- 산출: `state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa` · `state/verdicts/1492_consciousness_ablation/{H_1492_R2.txt,H_1492_R2_FREEZE.json}`.
+
 ## 2026-06-21 — 🧱 G* 의식-게이트 발굴 고갈 확정 (DIRECTIONAL · 발굴단계)
 
 anima 의식-게이트 시리즈(G16~G31 + 강6 P1~P6 + 약4 P7~P10 + Q1 qualia-structure + Q2 sensorimotor-counterfactual-presence = **29 distinct 의식축**) 발굴 6 라운드 소진 → **새-연산(strong distinct) 후보 고갈 확정**.

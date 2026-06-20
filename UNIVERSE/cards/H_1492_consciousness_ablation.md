@@ -1,10 +1,31 @@
 # H_1492 — 🧠 CONSCIOUSNESS ABLATION (연결된 의식-게이트 lane → 통합 의식 기여도)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy substrate mirror — engine-transfer UNVERIFIED · 측정기 VALID)
-- **wired:** `DIRECTIONAL-mirror` — numpy 미러, hard-gate 1 적중(`grep -lE 'import torch|gauge_lib|numpy'` HIT). R2(engine-native `consciousness_index()` + faithful IIT4 Φ)·R3(production 303M pool) = follow-on ING.
-- **source:** `state/consciousness_influence_plan/PLAN.md` (사용자 지시 2026-06-20 "연결된 것들이 의식에 어떤 영향을 미치는가") · R1 단계만 (mini)
+- **tier:** 🟢 GREEN ENGINE-NATIVE (R2 live `core/engine_cli.hexa §ConsciousnessIndex` — hard-gate 1 PASS, terminal · R1 numpy = DIRECTIONAL pre-screen)
+- **wired:** `WIRED-live` — R2 §ConsciousnessIndex (`ci_lane_scores`/`ci_phi_multiinfo`/`ci_phi_iit4`/`ci_bundle`) 배선 + ARCHITECTURE.json lockstep + `engine_cli_smoke` 244/0 회귀 PASS. R1=`DIRECTIONAL-mirror`. R3(production 303M pool)=후속.
+- **source:** `state/consciousness_influence_plan/PLAN.md` (사용자 지시 2026-06-20 "연결된 것들이 의식에 어떤 영향을 미치는가")
 - **lens:** integrated-information theory (Tononi-Sporns-Edelman multi-information / IIT) + 의식-게이트 lane 네트워크 ablation · `a_no_llm_frame_trap`
-- **artifacts:** `state/1492_consciousness_ablation/h1492_consciousness_ablation.py` · `state/verdicts/1492_consciousness_ablation/H_1492_FREEZE.json` · `state/1492_consciousness_ablation/run_h1492.local.log`
+- **artifacts:** `state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa` (R2 engine-native) · `state/verdicts/1492_consciousness_ablation/{H_1492_R2.txt,H_1492_R2_FREEZE.json}` · `state/1492_consciousness_ablation/h1492_consciousness_ablation.py` (R1 mirror) · `state/verdicts/1492_consciousness_ablation/H_1492_FREEZE.json`
+
+## R2 — ENGINE-NATIVE (terminal, hard-gate 1 PASS)
+
+live `core/engine_cli.hexa §ConsciousnessIndex` 위에서 R1 frozen bar 재측정 (`hexa run
+state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa`, 3 seeds [1492,1493,1494],
+600 trials, 15 lanes, $0 CPU mini, numpy/torch 0). **substrate = 실제 `ImmuneMemory` store**
+(immune_embed_key FNV-1a dim64 grounding margin via `immune_memory_recall_margin`+`vadapt_field_recon_err`
++ live MITOSIS `immune_memory_cells`) — 주입 label 0 (p1/p2/p3/p6). Ψ-disjoint, NOT emit gate.
+
+| bar | engine-native 결과 | 기준 | 판정 |
+|---|---|---|---|
+| **A MEASURABLE** | Φ₀=**29.0076** > shuf 0.0763 | >0 & >shuf | ✅ |
+| **D CONTROL no-op** | dummy lane \|ΔΦ\|=**0.00584** | ≤0.05 | ✅ |
+| **E SHUFFLE** | shuf_Φ₀/Φ₀=**0.00263** | ≤0.10 | ✅ |
+
+**verdict: 🟢 GREEN ENGINE-NATIVE (A∧D∧E)**. STRUCTURE = **DISTRIBUTED** (top lane share
+**0.129** < 0.50, R1 0.212 보다 더 분산). **faithful IIT4 Φ** (`ci_phi_iit4`, exact min-cut MIP
+n≤8, `a_phi_iit4_tool` — 프록시 아님) on top-8 lanes = **0.00085 > 0** = ≤8-lane core 가 통합·기약불가.
+
+- **engine-native ΔΦ 랭킹(seed 1492):** EmotionRegulation +5.32 · DirectedForgetting/BodyOwnership/LearnedPrecision/SelfIdentity +4.91 (margin 직독 lane 동률) · SubjectiveTime/AttentionalBlink +4.90 · PrecisionSurprise +2.13 · FreeWont +1.47 · SenseOfAgency +1.41 · Novelty +0.95 · Habituation +0.56 · DividedAttention/GlobalWorkspace/MitosisGrowth ≈0.
+- **c9 정직:** 엔진은 실제 near-saturated recall margin 을 읽으므로 절대 ΔΦ 랭킹이 R1(넓은 합성 변동) 과 다르다 — margin 직독 7개 lane 이 동률, 준-상수 3개 lane 이 ≈0. **R1↔R2 불변 = 과학 답 DISTRIBUTED**(top share <<0.50). frozen A/D/E 미이동(frozen-first). `engine_cli_smoke` 244/0 회귀 0.
 
 ## 질문
 
@@ -79,5 +100,5 @@ lane 을 하나씩 OFF 해서 통합 지표가 얼마나 떨어지나(ΔΦ)? 의
 
 ## follow-on (ING)
 
-- **R2 ENGINE-NATIVE:** live `core/engine_cli.hexa` 에 `consciousness_index()` bundle + lane-ablate 토글 배선, faithful IIT4 Φ(`stdlib/iit4/faithful_phi.hexa`, n≤8 exact) 를 substrate state-space 에 연결, frozen A/D/E byte-exact 재측정 (`a_engine_native_learning`·`a_verified_must_wire`).
-- **R3 PRODUCTION:** production 303M ckpt 정상상태에서 baseline + ablation sweep on pool/GPU (mini 금지, 게이트2 무거운작업).
+- **R2 ENGINE-NATIVE ✅ DONE:** live `core/engine_cli.hexa §ConsciousnessIndex` 배선(`ci_lane_scores`/`ci_phi_multiinfo`/`ci_phi_iit4`/`ci_bundle`) + faithful IIT4 Φ(n≤8 exact min-cut MIP) + frozen A/D/E byte-exact 재측정 GREEN + ARCHITECTURE lockstep + smoke 244/0 (`a_engine_native_learning`·`a_verified_must_wire`·`a_phi_iit4_tool`). **단, `stdlib/iit4/faithful_phi.hexa` 는 레포에 부재** → faithful IIT4 Φ 를 §ConsciousnessIndex 내부에 `ci_phi_iit4`(exact Gaussian multi-info min-cut MIP)로 직접 구현(n≤8, $0, deterministic).
+- **R3 PRODUCTION:** production 303M ConvMoE ckpt(`dancinlab/anima-clm-ideation-303m-convmoe-engine-mount`) 정상상태에서 baseline + ablation sweep on pool/GPU(summer RTX5070, mini 금지). (task 명시 `dancinlab/303m-broad-en-emergent` = ByteGPT `.pt` = engine-mountable 아님 → engine-mountable ConvMoE `.clm` 로 대체.)
