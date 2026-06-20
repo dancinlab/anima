@@ -1,0 +1,10 @@
+H_1471 R2b — SELF-CONTINUITY .kosmos round-trip persistence (ENGINE-NATIVE)
+probe: state/1471_self_continuity/h1471_kosmos_roundtrip.hexa (hexa run, RC=0)
+pipeline: SelfIdentity 8-dim -> tension_5ch projection -> create_anchor (canonical kosmos_io, write_file .kosmos)
+          -> load_anchors (read_file, fresh session) -> recovered tension_5ch -> cos round-trip
+VERDICT: GREEN ENGINE-NATIVE (.kosmos round-trip)
+  A persisted+recovered  n_loaded=1  >=1   PASS  (anchor really written to disk + reloaded)
+  B round-trip continuity cos=1.000000 >=0.99 PASS  (identity preserved across the boundary)
+  C control empty-dir     n_empty=0  ==0   PASS  (no anchor -> no recovery = LLM session-reset)
+artifact: /tmp/h1471_kosmos_rt/self_anchor.kosmos (canonical kosmos_io format, a_kosmos compliant)
+engine: core/engine_cli.hexa self_* + self_component/self_dim accessors · kosmos_io create_anchor/load_anchors

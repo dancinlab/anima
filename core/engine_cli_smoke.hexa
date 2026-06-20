@@ -2272,6 +2272,14 @@ fn main() {
     println("INFO  distinctness GWS⊥immune (H_1462 R2b WIRED): GWS bottleneck count " + to_string(gws_n)
           + " (capacity-1) vs immune store cells " + to_string(im_cells) + " (unbounded recall) — competitive bottleneck ⊥ independent affinity store (DIRECTIONAL mirror GREEN in H_1462 fleet probe)")
 
+    // case 200 : self_component/self_dim accessors — read the identity vector so it can be projected
+    //   onto a .kosmos tension_5ch payload for disk persistence (H_1471 R2b enabler; the full .kosmos
+    //   round-trip is verified engine-native in state/1471_self_continuity/h1471_kosmos_roundtrip.hexa
+    //   = GREEN: anchor written to disk + reloaded in a fresh session, round-trip identity cos 1.0).
+    let id_acc = self_new(8, 2)
+    if _assert_b("case_200_self_component_accessor", true, self_component(id_acc, 2) >= 0.99 && self_dim(id_acc) == 8) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  self .kosmos persistence (H_1471 R2b): self_component/self_dim accessors enable identity→tension_5ch projection — full canonical kosmos_io round-trip (write_file→load_anchors→cos 1.0) verified in h1471_kosmos_roundtrip.hexa (ENGINE-NATIVE)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
