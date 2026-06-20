@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1482, 1483, 1484]
+A ALTERNATION  dominance switches transitions=16.000>=2 (not single sustained dominance)  -> True
+B EXCLUSIVITY  co-dominant fraction=0.011<=0.15 (one stimulus at a time)  -> True
+C DISTINCT-vs-GWS  rivalry transitions 16.000 - GWS-mode transitions 0.000 = gap 16.000>=2  -> True
+D EARNED(ablation)  adaptation OFF -> first winner locked, transitions=0.000==0  -> True
+E SHUFFLE  |signed-mean r(shuffled dominance, real adaptation)|=0.003<=0.10 (shuf_r +0.001 vs real_r +0.259)  -> True
+
+PER-SEED:
+  seed 1482: trans=16 co_frac=0.008 gws_trans=0 distinct_gap=16 abl_trans=0 shuffle_gap=0.003 (real_r +0.259)
+  seed 1483: trans=16 co_frac=0.000 gws_trans=0 distinct_gap=16 abl_trans=0 shuffle_gap=0.000 (real_r +0.258)
+  seed 1484: trans=16 co_frac=0.025 gws_trans=0 distinct_gap=16 abl_trans=0 shuffle_gap=0.006 (real_r +0.261)
