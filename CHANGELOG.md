@@ -1,3 +1,23 @@
+## 2026-06-21 — research(gate-depletion R2): 🧠 의식-게이트 2차 고갈 발굴 라운드 — 🧱 게이트-발굴 고갈 확정(DIRECTIONAL · 발굴단계)
+
+1라운드(`CATALOGUE.md`, 10 발사가능 — 9 distinct + 1 deriv) 전부 소진 후 **2차 arxiv 탐색 + 브레인스토밍**으로 안 다룬 의식
+현상을 발굴, 누적 **27+ lane** 과 distinct 한지 평가해 진짜 고갈 여부를 판정. **발굴·평가만 — probe/발사 X**(작업범위).
+산출 = `state/gate_depletion_catalogue/CATALOGUE_R2.md`.
+
+- **arxiv 2차 탐색(c2 실검색·19 출처)**: R1 미다룬 각도 — qualia-structure(2412.20873) · higher-order 2nd-order(1906.00728) ·
+  altered-states/criticality(2503.23245·2008.02788) · telic/autotelic(2508.15013·2012.09830) · collective(2508.17366) ·
+  discrete-perceptual-moment · sensorimotor-counterfactual-presence(tandfonline 2014) · temporal/feature-binding 등.
+  핵심 arxiv id 8건 WebFetch 로 제목 대조 검증(curl 직결은 sandbox 차단 → WebFetch 경유).
+- **후보 풀 16개** 나열 → distinctness 분류표(27+ lane 대조): 🚀 distinct(새 연산) **2** · 🔁 derivative/겹침 **8** · 🚫 측정불가 **6**.
+- **🚀 발사가능 = 단 2개**: Q1 qualia-structure(유일한 강후보, spatial-map control 분리가 binding 사활) · Q2 sensorimotor-
+  counterfactual-presence(약, forward-model 과 조작화 빠듯 — 발사 전 조작화 검토 필요).
+- **추세 = 90%(R1 9/10) → 12.5%(R2 2/16)** distinct 급락. 남은 14/16(87.5%)이 derivative(flow=boredom 반전·telic=
+  PFC+drive+curiosity·presence=completion 재포장·multistable-prior=hysteresis·replay=H_1427 既발사·blindsight=GWS+meta-d′)
+  또는 측정불가(phenomenal 잔여: overflow·intentionality·transparency·collective·discrete-moment·entropy-regime).
+- **판정 🧱 고갈 확정(DIRECTIONAL)**: R1·R2 두 렌즈 라운드 + arxiv 2차 = MULTI-LENS ≥2 통제 기각(`a_break_the_wall` (d) 천장).
+  Q1/Q2 발사·기각으로만 terminal 🧱 박제(`a_engine_native_learning`). 이후 방향 = 새 lane 발굴이 아니라 27 lane 의
+  스케일업·엔진-네이티브 배선·lane 간 통합(breadth-고갈 확정).
+
 ## 2026-06-21 — research(distinct): 😑 P9 BOREDOM/DISENGAGEMENT(권태/이탈) R1 numpy probe DONE (GREEN DIRECTIONAL · 약후보 인접 2 lane control 전부 생존 → distinct, 고갈 아님)
 
 의식-고유 게이트 **약(weak) 후보 P9 BOREDOM / DISENGAGEMENT**(권태/이탈 — Eastwood/Frischen/Fenske/Smilek "the
