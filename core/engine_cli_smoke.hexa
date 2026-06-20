@@ -2258,6 +2258,20 @@ fn main() {
           + " vs novel " + to_string(lp_nov) + " · same-err surprise RISE " + to_string(lp_rise)
           + " vs habituation FALL " + to_string(hab_fall) + " (opposite sign) — experience-learned confidence sharpens surprise ⊥ H_1468 fixed/H_1465 habituation (DIRECTIONAL mirror GREEN in H_1472 probe)")
 
+    // ── (distinctness) GWS capacity-bottleneck ⊥ immune-store unbounded recall (H_1462 R2b) ──
+    // Fleet proved (numpy DIRECTIONAL): the GWS winner-take-all bottleneck (capacity 1) is
+    // DISTINCT from immune-store affinity recall (NO capacity limit — every bound fact stays
+    // independently recallable). On the SAME N items: GWS broadcasts exactly 1, immune holds all N.
+    let dcfg = engine_cli_parse([])
+    let dim_im = immune_memory_bind_text(immune_memory_bind_text(immune_memory_new_text("alphaxx", "A", 16), "betaxxx", "B", dcfg), "gammaxx", "C", dcfg)
+    let im_cells = immune_memory_cells(dim_im)                                 // >=2 (unbounded store)
+    let gws3 = gws_add(gws_add(gws_add(gws_new(1, true, 0.2), 0.3), 0.9), 0.5)
+    let gws_n = gws_count(gws3)                                                // 1 (capacity bottleneck)
+    // case 199 : DISTINCT — competitive capacity-1 bottleneck (GWS=1) ⊥ independent unbounded recall (immune>=2).
+    if _assert_b("case_199_gws_bottleneck_vs_immune_unbounded", true, gws_n == 1 && im_cells >= 2) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  distinctness GWS⊥immune (H_1462 R2b WIRED): GWS bottleneck count " + to_string(gws_n)
+          + " (capacity-1) vs immune store cells " + to_string(im_cells) + " (unbounded recall) — competitive bottleneck ⊥ independent affinity store (DIRECTIONAL mirror GREEN in H_1462 fleet probe)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

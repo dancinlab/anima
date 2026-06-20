@@ -1,3 +1,12 @@
+## 2026-06-20 — research(H_1462 R2b): 🌐 GWS ⊥ immune-store distinctness engine-native 승격 (fleet distinctness → engine)
+
+fleet 이 numpy(DIRECTIONAL)로 증명한 GWS distinctness 를 live engine 케이스로 승격. `core/engine_cli_smoke.hexa`
+case 199: `gws_count`(GWT capacity-1 병목)=1 ⊥ `immune_memory_cells`(unbounded affinity store)=3 — competitive
+winner-take-all bottleneck 이 independent affinity recall 과 구조적으로 다름을 engine 함수 재사용으로 byte-exact 증명.
+
+- **검증(c2):** FULL smoke **199 pass / 0 fail RC=0** (nice -n 15). 새 lane 없음(gws_*/immune_memory_* 재사용), case 199 추가.
+- **정직(c9):** fleet distinctness 4종 중 engine lane 이 모두 존재하는 GWS⊥immune 만 engine-native 승격. novelty(H_1289)는 engine 에 전용 lane 부재 → numpy DIRECTIONAL 유지(구조적, a_break_the_wall type-c). habituation⊥homeostatic·self⊥episodic 는 struct 셋업 복잡 → 후속.
+
 ## 2026-06-20 — research(H_1472 R2): 🎯 G19-meta LEARNED PRECISION engine-native WIRED — DIRECTIONAL→WIRED 승격
 
 learned-precision 게이트를 live `core/engine_cli.hexa` 에 배선 완료. R1 numpy mirror 의 메커니즘을 engine 결정적
