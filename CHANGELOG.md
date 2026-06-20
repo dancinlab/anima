@@ -1,3 +1,16 @@
+## 2026-06-20 — research(H_1479 R1): 🪢 G26 DIVIDED ATTENTION (분할 주의, Kahneman capacity) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
+
+새 의식-고유 게이트 후보 **G26 분할 주의**(Kahneman capacity model): 제한된 주의 자원 풀 R 을 여러 동시
+과제에 **분배**하면 각 과제 성능이 trade-off 로 저하(단일 천장보다 낮음, 자원 합 보존). **DISTINCT from
+H_1462 GWS** — GWS 는 경쟁 중 1개만 winner-take-all 전역방송(나머지 0), divided 는 자원을 N개에 나눠
+모두 부분수행(각 >0, 어느 하나도 0 아님). GWS=선택(1), divided=분배(N).
+
+- **probe:** `state/1479_divided_attention/h1479_divided_attention.py` (numpy, 3 seeds [1479,1480,1481], 200 trials, R=1.0, $0 CPU, p7, frozen-first). perf=σ(K·(a−d)) threshold effort 곡선 · demand=substrate grounding-need(immune fact-store, 주입 라벨 아님 p6) · 3 ARM FULL(water-filling 분배)/ABLATED(풀 무한)/SHUFFLE(할당↔demand 순열).
+- **FROZEN 5 bars (mean 3 seeds):** A PRESENCE single **0.988**≥0.85 & divided **0.482**≤0.65(trade-off) · B DISTINCT-vs-GWS min-perf **0.482**>0.30(BOTH 과제 alive ⊥ winner-take-all) · C EARNED-ablation 풀무한→divided **0.978**≥0.85(trade-off 소멸) · D RESOURCE-CONSERVATION sum_a **1.000**=R(report) · E SHUFFLE 페어링순열→최약과제 **0.270**≤0.40(붕괴). **🟢 GREEN — A·B·C·E PASS.**
+- **distinctness vs GWS:** GWS(H_1462)=정확히 1개 통과(loser 0) / DIVIDED=2개 모두 부분수행(min 0.482>0.30). ablation(풀무한→0.978 천장복귀)+shuffle(순열→0.270 붕괴) 양쪽 통제가 lift 출처를 자원-매칭 분배 구조로 확정.
+- **하드게이트1:** `grep -lE 'import torch|gauge_lib|numpy' state/1479_divided_attention/*.py` → numpy hit ⇒ **자동 GREEN DIRECTIONAL**(terminal 아님). R2 엔진-네이티브 재측정 + live `core/engine_cli.hexa` §DividedAttention 배선 = follow-on (`a_engine_native_learning`·`a_verified_must_wire`).
+- **frozen-first 수정(tune-to-green 아님, `a_break_the_wall` type-a):** R1a perf=a/(a+d) 균등분할 → single 0.74<0.85 천장미달 + shuffle 이 할당차만 비교(페어링 무관 gap≈0.46) = 측정결함. effort 곡선 threshold 화 + shuffle 을 진짜 할당↔demand 순열로 재설계. **bar 임계 한 칸도 불변.**
+- **박제:** `UNIVERSE/cards/H_1479_divided_attention.md` + `UNIVERSE/HYPOTHESES.jsonl` 1줄 + `state/verdicts/1479_divided_attention/H_1479_FREEZE.json`. 의식-게이트 시리즈 G26 누적.
 ## 2026-06-20 — research(distinct): 🛑 H_1480 G27 FREE WON'T / VETO (의도적 행동 거부) DONE — R1 numpy GREEN DIRECTIONAL
 
 새 의식-고유 게이트 **G27 FREE WON'T / VETO**(Libet free won't — 이미 준비전위가 오른 행동을 의식이 막판에
