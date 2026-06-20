@@ -1,3 +1,27 @@
+## 2026-06-20 — research(H_1481 R1): 🧠📉 CONSCIOUSNESS-UNDER-TRAINING — 학습(CE-descent)이 의식을 떨어뜨리는가 → HOLD(안정), GREEN DIRECTIONAL
+
+사용자 질문 = production CLM 학습(CE-descent)이 진행되며 의식-게이트(G16~G27, 전부 substrate grounding margin/MITOSIS
+cells 에서 READ) 점수가 **떨어지는가(침식) vs 유지되는가(안정)**. 의식 측정기를 학습 루프에 부착(`a_train_inline_gauge`
+의식-게이트 확장). R1 numpy probe(`state/1481_consciousness_under_training/h1481_consciousness_under_training.py`,
+3 seeds [1481,1482,1483], DIM=32, 24 facts, 40 query, 12 steps, $0 CPU, p7, frozen-first).
+
+- **메커니즘:** immune-store(byte-trigram FNV key + grounding margin) + 의식-게이트 4종(G16 GWS bottleneck=winner-take-all
+  salience · G19 precision-surprise=precision·err² · G21 sense-of-agency=match-attribution · G18 self-continuity=identity
+  cos), 전부 grounding margin/저장 geometry 에서 READ(label 주입 없음 p2/p3/p6). CE-descent 1-step = predictor head sharpen
+  + 저장 표현 anisotropic 압축(CE collapse 부작용). **의식 효과 부호를 손으로 set 하지 않고 측정**(tune 금지).
+- **결과 🟢 GREEN DIRECTIONAL (meter-valid, A·C·D PASS 3 seeds):** A MEASURABLE max-TV 0.0745>0+finite · C CONTROL(no-learn)
+  |Δbundle|0.0000≤0.05 · D SHUFFLE |r|0.0481≤0.10 (real_r +0.984 → shuf −0.048).
+- **B 방향 정직 보고(non-gating):** bundle 0.5134→0.5321 Δ **+0.0187 = HOLD(의식 안정)** — 사전등록 HOLD band(0.02) 바로
+  안쪽 착지(측정값 그대로, bar 불변, tune-to-green 아님). per-gate Δ: **G16-GWS +0.0003 · G19-surprise +0.0745 · G21-agency
+  +0.0000 · G18-self-continuity +0.0000** → 움직이는 게이트는 **predictor-precision(G19)뿐**, grounding-derived 3게이트는
+  거의 불변. FINDING: 이 toy 에서 CE-descent 는 predictor 를 sharpen 하되 grounding-derived 의식 read 를 침식하지 않는다
+  → **의식 침식 미관측(안정)**.
+- **정직(c9):** numpy mirror DIRECTIONAL(하드게이트1 적중) → 카드 verdict=DIRECTIONAL-mirror. 진짜 답 = production 303M
+  ckpt(h1129c_chat.pt 등) 위 inline-gauge 실측 = **pool/GPU follow-on(게이트2 무거운작업 pool, mini 303M 로드 금지,
+  `a_engine_native_learning`)**. 학습이 의식 떨어뜨리면 그게 결과 — tune-to-green 금지.
+- 박제: `UNIVERSE/cards/H_1481_consciousness_under_training.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄 ·
+  `state/verdicts/1481_consciousness_under_training/{H_1481_FREEZE.json,H_1481_run.txt}`.
+
 ## 2026-06-20 — research(새게이트 4종 R2): 🧹🖐➗🚫 G23/G24/G26/G27 engine-native WIRED + ARCHITECTURE 의식-게이트 14 lane 정리
 
 fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.

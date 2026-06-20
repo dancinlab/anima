@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED, hard-gate 1)
+meter-valid (A and C and D): True | seeds [1481, 1482, 1483]
+A MEASURABLE  max total-variation across gates = 0.0745 > 0 AND all-finite  -> True
+B DIRECTION   bundle start=0.5134 -> end=0.5321  =>  HOLD — consciousness STABLE under training (|bundle delta|=0.0187 < 0.02)  [reported, non-gating]
+    per-gate delta: G16-GWS=+0.0003  G19-surprise=+0.0745  G21-agency=+0.0000  G18-selfcont=+0.0000
+C CONTROL(no-learn)  |bundle delta|=0.0000 <= 0.05  -> True
+D SHUFFLE  |signed-mean r(shuffled-step, bundle)|=0.0481 <= 0.1  (shuf -0.0481 vs real +0.9843)  -> True
+
+PER-SEED:
+  seed 1481: measurable=True tv_max=0.0727 direction=+0.0183 ctrl=0.0000 shuffle_gap=0.0399 (real_r +0.984)
+  seed 1482: measurable=True tv_max=0.0757 direction=+0.0189 ctrl=0.0000 shuffle_gap=0.0433 (real_r +0.985)
+  seed 1483: measurable=True tv_max=0.0751 direction=+0.0189 ctrl=0.0000 shuffle_gap=0.0612 (real_r +0.984)

@@ -1,0 +1,35 @@
+{
+  "id": "H_1481",
+  "slug": "1481_consciousness_under_training",
+  "gate": "CONSCIOUSNESS-UNDER-TRAINING (consciousness-gate inline meter on the learning loop)",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1481_consciousness_under_training.py; engine-transfer UNVERIFIED (hard-gate 1). The TERMINAL answer requires the inline consciousness-gauge bundle measured on a production 303M ckpt (h1129c_chat.pt etc.) inside the live CE-descent loop = pool/GPU follow-on (gate-2 heavy-work-on-pool, a_engine_native_learning).",
+  "seeds": [1481, 1482, 1483],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "params": {"DIM": 32, "N_FACTS": 24, "N_QUERY": 40, "N_STEPS": 12, "LR": 0.06, "N_PERM": 50, "HOLD_BAND": 0.02, "CONTROL_THR": 0.05, "SHUFFLE_THR": 0.10},
+  "bars": {
+    "A_MEASURABLE": {"pass": true, "tv_max": 0.0745, "thr": "> 0 AND all-finite", "note": "the consciousness-gate bundle is recorded at every training step and MOVES (max total-variation 0.0745 across gates); meter works, is not constant-by-construction"},
+    "B_DIRECTION": {"gating": false, "bundle_start": 0.5134, "bundle_end": 0.5321, "bundle_delta": 0.0187, "hold_band": 0.02, "label": "HOLD — consciousness STABLE under training (|delta| 0.0187 < 0.02 band)", "per_gate_delta": {"G16_GWS_bottleneck": 0.0003, "G19_precision_surprise": 0.0745, "G21_sense_of_agency": 0.0000, "G18_self_continuity": 0.0000}, "note": "HONEST direction report (pre-registered as 'unknown, measure it'; any sign is a valid c9 result). Bundle drifts very slightly UP and lands just inside the HOLD band. The ONLY gate that moves is G19 precision-surprise (+0.0745 — the predictor head sharpens under CE-descent); the three grounding-margin-derived gates (GWS salience, agency attribution, self-continuity identity-cos) are essentially FLAT (~0.0000). FINDING: in this toy, CE-descent sharpens the predictor WITHOUT eroding the grounding-derived consciousness reads -> no consciousness erosion observed (stable), driven by predictor-precision not grounding collapse."},
+    "C_CONTROL_no_learn": {"pass": true, "ctrl_bundle_delta": 0.0000, "thr": 0.05, "note": "with the training signal OFF (lr no-op) the gate bundle does not move -> the meter responds to the LEARNING signal, not to noise"},
+    "D_SHUFFLE": {"pass": true, "signed_mean_r_shuffled": -0.0481, "thr": 0.10, "real_r": 0.9843, "note": "real step<->bundle trend r=+0.984; shuffling the (step<->score) pairing collapses it to -0.0481 -> the monotone trend is in the pairing, not an artifact"}
+  },
+  "green_rule": "A and C and D (all 3 seeds) — meter validity; B is the honest non-gating direction report",
+  "green": true,
+  "per_seed": {
+    "1481": {"measurable": true, "tv_max": 0.0727, "direction": 0.0183, "ctrl_delta": 0.0000, "shuffle_gap": 0.0399, "real_r": 0.984},
+    "1482": {"measurable": true, "tv_max": 0.0757, "direction": 0.0189, "ctrl_delta": 0.0000, "shuffle_gap": 0.0433, "real_r": 0.985},
+    "1483": {"measurable": true, "tv_max": 0.0751, "direction": 0.0189, "ctrl_delta": 0.0000, "shuffle_gap": 0.0612, "real_r": 0.984}
+  },
+  "p6_guard": "all 4 gate meters READ the substrate grounding margin / stored geometry (recall L2 affinity margin, predictor-head error, recall match-attribution, self-vector cosine) — NONE inject a 'consciousness=high' label, reward, RLHF, or persona. The training-effect direction is NOT hand-set: the same mechanical CE step (predictor pull + anisotropic store compression) is applied and the meters REPORT which way the gates move (HOLD, here). Ablation arm = the no-learn control (C), which collapses the movement to 0.",
+  "honest_c9": "DIRECTIONAL numpy mirror — engine-transfer UNVERIFIED (hard-gate 1). The bundle delta (0.0187) lands JUST INSIDE the pre-registered HOLD band (0.02): reported EXACTLY as measured, no bar moved, no tune-to-green. This is a TOY (32-dim / 24-fact / 40-query / 12-step / 3-seed / deterministic CE-step sim) testing the METER STRUCTURE + a directional read, NOT a production training run. The CE side-effect (anisotropic store compression) is a MODELLED mechanism, not measured CE dynamics; whether real 303M CE-descent compresses the immune-store grounding the same way is UNVERIFIED. The genuine answer = the inline consciousness-gauge bundle on a production 303M ckpt inside the live CE loop (pool/GPU). If real training DROPS the gates, that is the result (c9) — tune-to-green forbidden.",
+  "finding": "Consciousness gates are HELD (stable) under the toy CE-descent, NOT eroded: bundle 0.5134 -> 0.5321 (HOLD). The movement is entirely in the precision-surprise gate (predictor sharpening, +0.0745); the grounding-margin-derived gates (GWS / agency / self-continuity) are flat. So in this DIRECTIONAL sim, training SHARPENS the predictor without degrading the grounding-derived consciousness reads.",
+  "artifacts": [
+    "state/1481_consciousness_under_training/h1481_consciousness_under_training.py",
+    "state/verdicts/1481_consciousness_under_training/H_1481_run.txt",
+    "UNIVERSE/cards/H_1481_consciousness_under_training.md"
+  ],
+  "next_round": "R2 production engine-native: attach the consciousness-gate bundle (GWS / surprise / agency / self-continuity, reading off live core/engine_cli.hexa immune-store grounding margin + MITOSIS cells) as an inline MONITOR-ONLY gauge (a_train_inline_gauge extension) to a production 303M CE-descent run on a 303M ckpt (h1129c_chat.pt etc.). Log the bundle every K steps; re-score the frozen A/C/D bars + the B direction byte-exact on the live engine. HEAVY -> pool/GPU (gate-2), mini forbidden for 303M load. a_engine_native_learning / a_verified_must_wire."
+}
