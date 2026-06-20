@@ -20,6 +20,48 @@
   UNVERIFIED). R2 = live `core/*.hexa` readiness-ramp + tension-veto over emit/act gate byte-exact 재측정 follow-on.
 - artifacts: `state/1480_free_wont_veto/h1480_free_wont_veto.py` · `UNIVERSE/cards/H_1480_free_wont_veto.md` ·
   `state/verdicts/1480_free_wont_veto/{H_1480_FREEZE.json,H_1480_run.txt}` · jsonl 1줄.
+## 2026-06-20 — research(H_1478 R1): 🖐️ G24 BODY OWNERSHIP (rubber-hand illusion) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
+
+새 의식-고유 게이트 후보 **G24 신체 소유감**(Botvinick & Cohen 1998 rubber-hand illusion): 시각 v(t)·촉각 t(t)
+스트림이 **동기**(지연≈0)되면 외부 객체(고무손)를 자기 신체로 느낀다(소유감↑), **비동기**(지연 큼)면 소유감 없음.
+다중감각의 **시간 일치**가 신체 경계를 정한다. **DISTINCT from H_1471 self-continuity** — self=diachronic *정체성*
+벡터의 시간적 지속 / body-ownership=multisensory *동기성* 기반 *신체 경계* 귀속("이 신체가 내 것인가", 정체성 아님).
+
+- **메커니즘:** ownership = BASE·sync_strength. sync_strength = corr(v,t)@lag0 × Gaussian-gate(best_lag, σ=6).
+  동기(t=v, lag0)→corr 1.0·gate 1.0→1.000 / 비동기(lag20)→Gaussian gate≈0→0.000. binding OFF(ablation)→상수 0.5(sync-blind).
+- **FROZEN 5 bars (3 seeds [1478,1479,1480], T=64, $0 CPU numpy, p7):** A PRESENCE own_sync **1.000**≥0.85 AND
+  own_async **0.000**≤0.30(illusion 유무) · B DISTINCT own_gap **1.000**≥0.40 AND id_gap **0.000**≤0.05(동기성만 조작·정체성
+  고정→소유감 갈리고 identity-cos 평탄) · C EARNED ablation abl_gap **0.000**≤0.05(binding OFF→sync==async) · D PROPRIO-DRIFT(diag)
+  drift_sync **1.000**>drift_async **0.000**(동기 시 가짜손 쪽 위치이동) · E SHUFFLE |shuf_gap| **0.015**≤0.10(시각-촉각 페어링
+  셔플→상관붕괴, 50-perm signed mean) → **🟢 GREEN (4/4 gating + D diagnostic).**
+- **정직(c9):** **DIRECTIONAL** — numpy mirror(`grep numpy` 적중, 하드게이트1) → R2 engine-native 가 GREEN/🧱 확정 전제.
+  SATURATED existence-proof(sync gate designed, 학습된 binding 아님) — discriminator(ablation-collapse C 0.000·shuffle-collapse
+  E 0.015) 결정적. body(신체 경계 귀속) ⊥ identity(정체성 지속) double dissociation 로 H_1471 와 구별 확정. TOY T=64/3seed
+  scale·실제 감각스트림·연속 lag스윕·engine-transfer UNVERIFIED.
+- **follow-on (ING):** R2 = live `core/engine_cli.hexa` §BodyOwnership multisensory-binding lane 위 byte-exact 재측정
+  + smoke 5 frozen bars + ARCHITECTURE lockstep (G20-G25 선례, engine exp 없음 → piecewise/linear gate).
+- **artifacts:** `state/1478_body_ownership/h1478_body_ownership.py` · `UNIVERSE/cards/H_1478_body_ownership.md` ·
+  verdict `state/verdicts/1478_body_ownership/H_1478_FREEZE.json` · jsonl 1줄.
+## 2026-06-20 — research(H_1477 R1): 🗑 G23 DIRECTED FORGETTING (의도적 망각) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
+
+새 의식-고유 게이트 후보 **G23 의도적 망각**(Anderson/Bjork item-method directed forgetting): "forget" 큐가
+붙은 항목을 **능동적으로 top-down 억제**해 회상이 저하된다 — remember 큐 항목보다 낮게. 수동 감쇠가 아니라
+**의도적 제어 신호**에 의한 억제(같은 노출, 반대 회상, 큐가 가른다).
+**DISTINCT 2종** — (a) vs H_1465 habituation: habituation=반복-노출 수동감쇠(큐 무관) ⊥ directed forgetting=같은
+노출에서 큐-기반 능동억제; (b) vs H_1227 immune-store: 수동 저장/회상 ⊥ 의도적 억제 신호로 회상 하향.
+
+- **메커니즘:** `recall(item) = base_recall · (1 − INHIBIT · is_forget_cued)`. BASE_RECALL=1.0, INHIBIT=0.7,
+  N_ITEMS=8(4 forget/4 remember, **동일 노출**). FULL(INHIBIT=0.7) vs ABLATED(INHIBIT=0) vs SHUFFLE(큐-항목 셔플 50-perm).
+- **FROZEN 5 bars (mean 3 seeds [1477,1478,1479], frozen-first):** (A) PRESENCE remember **1.000**≥0.85 ∧ forget
+  **0.300**≤0.40 ✅ · (B) DISTINCT vs HAB df_gap **0.700**≥0.45(habituation 같은 노출 gap 0.000) ✅ · (C) EARNED
+  ablation abl_gap **0.000**≤0.05 ✅ · (E) SHUFFLE 50-perm signed-mean |gap| **0.030**≤0.10 ✅ · (D) ITEM-SPECIFIC
+  remember 보존 1.000(report). **GREEN iff A∧B∧C∧E → 4/4 PASS 3 seeds 전부.**
+- **하드게이트1:** numpy mirror(`grep -lE 'numpy'` 적중) → **GREEN DIRECTIONAL**(engine-transfer UNVERIFIED).
+  카드 `wired:DIRECTIONAL-mirror`, R2 = live `core/engine_cli.hexa` 배선 follow-on(ING).
+- **정직(c9):** designed 회상법칙(존재증명 STRUCTURE, 학습된 억제망 아님) — discriminator 결정적: 같은 노출 큐-분리
+  (0.700 vs habituation 0.000) · ablation 붕괴(0.000) · shuffle 붕괴(0.030, 양 control 모두 분리 무너뜨림 = artifact 아님).
+  TOY 8항목/3seed/스칼라 · scale·think-no-think·engine-transfer UNVERIFIED. 박제: `UNIVERSE/cards/H_1477_directed_forgetting.md`
+  · `state/1477_directed_forgetting/` · verdict `state/verdicts/1477_directed_forgetting/H_1477_FREEZE.json`.
 
 ## 2026-06-20 — research(새 게이트 4종 R2): ⚡🎮⏱🌊 G20/G21/G22/G25 engine-native WIRED — DIRECTIONAL→WIRED 일괄 승격
 
