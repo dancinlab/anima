@@ -45,12 +45,34 @@ bar E 가 분리: 같은 raw 오차(0.5==0.5)인데 surprise 는 확신(1.0) vs 
   discriminator 가 결정적 — precision-weighting(B 0.767), ablation(D 0), raw-error-identical(E).
 - **SCOPE TOY:** 3 seeds/스칼라 결정 반응법칙 — surprise STRUCTURE 검증이지 학습된 예측-확신 네트워크 아님.
   scale/real-corpus/learned-precision/engine-transfer UNVERIFIED.
-- **distinctness 잔여:** H_1280 forward error 와는 bar E 로 구별했으나, novelty(H_1289)·habituation(H_1465,
-  반복 surprise 감쇠)과의 control-survived distinctness 는 follow-on.
+- **distinctness 잔여:** H_1280 forward error 와는 bar E 로 구별, novelty(H_1289)·habituation(H_1465)
+  control-survived distinctness 도 ✅ DONE (아래 distinctness probe).
+
+## distinctness vs NOVELTY(H_1289) · HABITUATION(H_1465) ✅ DONE (R2 follow-on)
+
+precision-weighted surprise(p·err²)가 인접 두 신호와 control-survived DISTINCT 임을 numpy probe 로 증명
+(frozen-first · 3 seeds [1468,1469,1470] · $0 CPU · p7 · deterministic 3-run byte-identical · numpy mirror **DIRECTIONAL**).
+
+- **vs NOVELTY** = 자극 새로움(1회 recon-err, precision 무관) ⊥ surprise=precision-weighted: 같은 novelty 두 케이스에서 surprise 가 precision 으로 갈림.
+- **vs HABITUATION** = 반복 자극 반응 감쇠(친숙도, error 무관) ⊥ surprise=예측오차(violation): 반복돼도 error 크면 surprise 유지.
+
+| bar | 의미 | 결과 | 기준 | 판정 |
+|---|---|---|---|---|
+| **N1 NOVELTY-IDENTICAL** | 두 케이스 novelty 동일 | \|0.5055−0.5055\|=**0.0000** | ≤0.01 | ✅ |
+| **N2 SURPRISE-SPLITS** | 같은 novelty, surprise 가 precision 으로 갈림 | conf 1.022 − unsure 0.256 = **0.767** | ≥0.30 | ✅ |
+| **N3 ABLATION (precision OFF)** | uniform p=1 → split 소멸 | **0.0000** | ≤0.05 | ✅ |
+| **H1 SURPRISE-PERSISTS** | 반복돼도 still-wrong → surprise 유지 | last/first ratio **0.977** | ≥0.85 | ✅ |
+| **H2 HABITUATION-DECAYS** | 같은 반복이 habituation 응답 감쇠 | drop **0.865** | ≥0.30 | ✅ |
+| **H3 SHUFFLE control** | error↔repeat-index 디코릴 → 분리 소멸 | real div 0.783 → shuffled **−0.0404** | \|div\|≤0.05 | ✅ |
+
+**verdict: 🟢 GREEN DIRECTIONAL — 6/6 bars PASS** (numpy mirror, engine-transfer UNVERIFIED → terminal 아님).
+artifact: `state/1468_surprise_distinct/h1468_distinct.py` · freeze `state/verdicts/1468_surprise_distinct/H_1468_DISTINCT.txt`.
+
+정직(c9): N1/N3 SATURATED existence-proof(novelty byte-identical, ablation split 정확히 0.000) — p·err² 는 designed 스칼라 법칙(학습된 net 아님), discriminator 결정적. H3 는 200-permutation 평균으로 control 의 디코릴 EXPECTED divergence 를 읽음(5-원소 단일 permutation = 고분산 추정치) — **bar frozen-first, 임계 미이동**(real 0.783 → shuffled ~0.04). SCOPE TOY: 3 seeds/스칼라 반응법칙, scale/real-corpus/learned-precision UNVERIFIED. 엔진-네이티브 재측정(.hexa via core/) = follow-on.
 
 ## follow-on (ING)
 
-1. **distinctness vs novelty(H_1289)·habituation(H_1465)** — precision-weighted surprise vs 단순 novelty/반복감쇠 분리.
+1. ~~distinctness vs novelty(H_1289)·habituation(H_1465)~~ ✅ **DONE** — 6/6 GREEN DIRECTIONAL (위 distinctness probe). 엔진-네이티브(.hexa) 재측정 follow-on.
 2. **learned-precision** — 고정 precision 이 아니라 substrate 가 예측 확신을 학습해 surprise 를 조절(meta).
 
 xref: H_1280(cerebellar forward model, distinct)·H_1289(novelty)·H_1465(habituation, 직전 게이트)·H_1462(GWS)·
