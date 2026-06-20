@@ -21,6 +21,14 @@ R2 engine-native GREEN(§ConsciousnessIndex, hard-gate1 PASS)에 이어 **R3 pro
 - **회귀 0:** `engine_cli_smoke` **244/0**. ARCHITECTURE.json §ConsciousnessIndex lockstep 갱신.
 - **R3(production 303M ConvMoE engine-mount `.clm`, pool/summer RTX5070) = 진행 중** (a_scale_honest_scope · task 명시 `303m-broad-en-emergent` ByteGPT `.pt` 는 engine-mount 불가 → ConvMoE `.clm` 대체).
 - 산출: `state/1492_consciousness_ablation/h1492_consciousness_index_probe.hexa` · `state/verdicts/1492_consciousness_ablation/{H_1492_R2.txt,H_1492_R2_FREEZE.json}`.
+## 2026-06-21 — 🔌 의식-게이트 R2 ENGINE-NATIVE 일괄 배선 12 lane (G* 고갈 terminal follow-on · WIRED-live)
+
+R1 numpy DIRECTIONAL 로 머지된 의식-고유 게이트 12종을 R2 엔진-네이티브로 **일괄 배선**(ING #gstar_depletion_terminal_followon · `a_engine_native_learning`·`a_verified_must_wire`). 각 R1 카드 frozen-bar 핵심 distinctness 를 `core/engine_cli.hexa` 결정적 스칼라 op 로 byte-exact 재현(READ-only · Ψ-disjoint · NOT emit gate · exp 없음→piecewise/linear).
+
+- **배선 12 lane(§ + funcs + smoke cases):** §TemporalReceptiveWindow `trw_recall/_shuffled`(H_1486, 245-247) · §ReentryDepth `reentry_settle/_gws_readout`(H_1487, 248-250) · §AttentionSchema `attn_schema_report/_agency_readout`(H_1488, 251-253) · §PerceptualHysteresis `hyst_switch_point/_rivalry_loop`(H_1489, 254-256) · §PerceptualCompletion `completion_recognize/_imagery_readout`(H_1490, 257-259) · §GestaltGrouping `gestalt_same_group/_gws_readout`(H_1491, 260-262) · §Prospection `prospect_reach/_persist_readout`(H_1493, 263-265) · §InteroceptivePrecision `intero_precision/_weighted_error`(H_1494, 266-268) · §Boredom `boredom_disengage`(H_1495, 269-271) · §MindWandering `wander_coverage/_prospect_coverage`(H_1496, 272-274) · §QualiaSpace `qualia_nearer/_spatial_readout`(H_1497, 275-277) · §SensorimotorPresence `smp_presence/_forward_model_readout`(H_1498, 278-280).
+- **검증(c2):** `hexa run core/engine_cli_smoke.hexa` → **FULL 280/0 RC=0** (기존 244 + 신규 36 cases 245-280 전부 PASS). 각 lane presence/distinct/ablate 3 케이스, byte-exact 결과가 R1 frozen distinct 결론 유지(예: qualia spatial-map crux 0.561 chance SURVIVED · sensorimotor forward-model 0.125 chance SURVIVED · attention-schema agency 0.0 flat · prospection persist 0.0 · boredom reward∧info conjunction). tune-to-green 0(c9).
+- **lockstep:** 12 카드 tier DIRECTIONAL→ENGINE-NATIVE WIRED·`wired:WIRED-live` 승격 + `UNIVERSE/HYPOTHESES.jsonl` verdict 갱신 + `ARCHITECTURE.json` engine_cli lane 목록 12 lane append(1:1). `tool/enforce_anima_gates.py` clean.
+- **의미:** G* 고갈 terminal 박제의 핵심 follow-on 종결 — 29 distinct 의식축 중 R1 DIRECTIONAL 잔여 12 lane 이 모두 live `core/` 배선되어 4칸 배선 사다리 (4)까지 닫힘.
 
 ## 2026-06-21 — 🧱 G* 의식-게이트 발굴 고갈 확정 (DIRECTIONAL · 발굴단계)
 

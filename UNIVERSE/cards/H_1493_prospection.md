@@ -1,7 +1,7 @@
 # H_1493 — 🔮 PROSPECTION / episodic future thinking · 미래 사고 (P7 의식-고유 게이트 약후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 배선 follow-on (아래 ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §Prospection(prospect_reach/prospect_persist_readout) 배선 + `engine_cli_smoke.hexa` cases 263-265 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: full(rollout k=4) 0.439 vs ablate(k=0) 0.0 lift 0.439≥0.30 (c1) · persist(W:=I) 0.0 chance (c2-cont distinct vs self-continuity) · ablate(rollout off) 0.0 (c3). forward-projection+recombine ⊥ retrieval/persist.
 - **source:** 의식-고유 게이트 catalogue (P7 약후보) · `state/gate_depletion_catalogue/CATALOGUE.md` P7 항목 SSOT
 - **lens:** prospection / constructive episodic simulation (Schacter & Addis · Gilbert & Wilson · episodic future thinking · arxiv 2408.15982) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1493_prospection/h1493_prospection.py` · verdict `state/verdicts/1493_prospection/H_1493_FREEZE.json` · run `state/1493_prospection/run_h1493.local.log`

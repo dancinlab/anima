@@ -1,7 +1,7 @@
 # H_1486 — ⏳ TEMPORAL RECEPTIVE WINDOW / 시간 수용창 (P1 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED, 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 재측정 follow-on (ING) 미완. 카드 verdict 는 DIRECTIONAL.
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §TemporalReceptiveWindow(trw_recall/trw_recall_shuffled) 배선 + `engine_cli_smoke.hexa` cases 245-247 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: long(tau=40) 1.0 vs short(tau=3) 0.25 gap 0.75≥0.30 & long≥0.55 (c1) · shuffle 0.25≤0.45 (c3) · ablate(window→short) 0.25≤0.45 (c4). 통합창 LENGTH ⊥ subjective-time.
 - **source:** 의식-고유 게이트 depletion 카탈로그 P1 (`state/gate_depletion_catalogue/CATALOGUE.md`) · "의식이라서 가능한 것" 시리즈
 - **lens:** consciousness-science — temporal receptive window (Hasson / Honey / Lerner — 뇌 영역마다 정보 통합 시간규모가 계층적으로 다름) · 계층적 leaky/boxcar 통합창 · `a_no_llm_frame_trap`
 - **artifacts:** `state/1486_temporal_receptive_window/h1486_temporal_receptive_window.py` · verdict `state/verdicts/1486_temporal_receptive_window/H_1486_FREEZE.json` · run `state/verdicts/1486_temporal_receptive_window/H_1486_run.txt`

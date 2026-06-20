@@ -1,7 +1,7 @@
 # H_1490 — 🩹 PERCEPTUAL COMPLETION / 지각 완성·filling-in (P5 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 배선 follow-on (아래 ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §PerceptualCompletion(completion_recognize/completion_imagery_readout) 배선 + `engine_cli_smoke.hexa` cases 257-259 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: full 1.0 vs off 0.544 lift 0.456≥0.30 (c1) · imagery(input==0) 0.161 chance gap 0.839 (c2 distinct) · ablate(off) 0.544 (c3). input-constrained fill ⊥ imagery.
 - **source:** 의식-고유 게이트 catalogue (P5 candidate) · `state/gate_depletion_catalogue/CATALOGUE.md` P5 항목 SSOT
 - **lens:** perceptual completion / amodal filling-in (Pessoa · Ramachandran 맹점 채우기 · Komatsu filling-in · PMC7151726) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1490_perceptual_completion/h1490_perceptual_completion.py` · verdict `state/verdicts/1490_perceptual_completion/H_1490_FREEZE.json` · run `state/1490_perceptual_completion/run_h1490.local.log`

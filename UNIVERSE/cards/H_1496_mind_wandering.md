@@ -1,7 +1,7 @@
 # H_1496 — 🌀 MIND-WANDERING / default-mode · 마음 방황 (P10 의식-고유 게이트 약후보, 고갈 라운드 마지막)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — 하드게이트1 적중, engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` — R2 엔진-네이티브 배선 follow-on (아래 ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE WIRED (R1 numpy mirror DIRECTIONAL → R2 byte-exact engine 재측정·배선 완료)
+- **wired:** `WIRED-live` — R2 엔진-네이티브: `core/engine_cli.hexa` §MindWandering(wander_coverage/wander_prospect_coverage) 배선 + `engine_cli_smoke.hexa` cases 272-274 + ARCHITECTURE.json lockstep. FULL 280/0 RC=0. byte-exact: drift-on coverage 0.75 vs ablate(idle) 0.0625 lift 0.688≥0.30 (c1) · prospect(goal rollout) 0.125 수렴/trap (c2-pro distinct) · ablate→0.0625 (c3). wanders ⊥ converges.
 - **source:** 의식-고유 게이트 catalogue (P10 약후보, 하단·발사 전 재검토) · `state/gate_depletion_catalogue/CATALOGUE.md` P10 항목 SSOT
 - **lens:** mind-wandering / default-mode network (Smallwood & Schooler decoupling · Raichle DMN · stimulus-independent thought · arxiv 1802.10546 류 동기/탐색 대비) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1496_mind_wandering/h1496_mind_wandering.py` · verdict `state/verdicts/1496_mind_wandering/H_1496_FREEZE.json` · run `state/1496_mind_wandering/run_h1496.local.log`

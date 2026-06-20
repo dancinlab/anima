@@ -6941,4 +6941,232 @@ fn _ci_bit(v: int, b: int) -> int {
     let mut i = 0
     while i < b { x = x / 2  i = i + 1 }
     return x - (x / 2) * 2
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
+//  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate
+//  (a_autonomy_over_hardcode). engine 은 exp 없음 → piecewise/linear (H_1465/H_1473 precedent).
+//  각 lane 은 그 카드의 frozen-bar 핵심 DISTINCTNESS 를 결정적 스칼라/소배열 op 로 재현(존재증명).
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// ── § TemporalReceptiveWindow (H_1486 R2) — 시간 수용창 (계층적 통합 시간규모) ─────────────────
+// Hasson/Honey: 뇌 영역마다 정보 통합 시간규모(boxcar window tau)가 다르다. far-past 의 지속 cue 블록
+// [0,CUE_LEN) 을 t=T-1 에서 복원하려면 통합창이 그 과거까지 닿아야 한다. LONG(tau>=L) 은 닿고, SHORT
+// (tau=3, 최근 프레임만) 은 못 닿아 chance. 순서-민감: 시간을 섞으면(shuffle) cue 가 위치코드와 어긋나
+// matched filter 붕괴. ablate=window→short. DISTINCT vs subjective-time(duration FEELING, far-past cue
+// IDENTITY 없음). READ-only, Ψ-disjoint, NOT emit gate. 결정적: cue 가 window 안에 들어오는지 여부.
+//   trw_recall(cue_pos, tau, T): cue 블록(과거 위치 cue_pos)이 trailing tau-window [T-tau, T) 안이면
+//   복원 신뢰 1.0, 밖이면 chance 0.25. window 길이 tau 가 far-past 도달을 결정한다.
+pub fn trw_recall(cue_pos: int, tau: int, t_now: int) -> float {
+    let window_start = t_now - tau
+    if cue_pos >= window_start { return 1.0 }   // cue inside the integration window → recovered
+    return 0.25                                  // cue outside (short window) → chance (K=4)
+}
+// trw_recall_shuffled — 시간 순서를 섞으면 cue 가 고정 위치코드와 어긋나 order-sensitive matched filter 가
+// 붕괴(content present, WRONG temporal positions) → chance. window 안이라도 순서 파괴면 복원 실패.
+pub fn trw_recall_shuffled(cue_pos: int, tau: int, t_now: int) -> float {
+    return 0.25                                  // temporal scramble → matched filter collapses to chance
+}
+
+// ── § ReentryDepth (H_1487 R2) — 재진입 처리 깊이 (recurrent-processing depth) ──────────────────
+// 단일 자극(경쟁 없음)에 대한 재귀 settling 깊이. contractive re-entry map x_{t+1}=(1-a)x_t+a·proto 를
+// depth 회 반복 → 깊을수록 degraded 자극이 prototype 으로 수렴해 reportable(deep_id↑). 얕으면 미수렴
+// (shallow_id≈0). DISTINCT vs GWS: 경쟁 없는 과제에서 winner-take-all readout 은 깊이에 INVARIANT
+// (deep-access 도달 못함). ablate=passes 강제 1 → 붕괴. READ-only, Ψ-disjoint, NOT emit gate.
+//   reentry_settle(depth, a): depth 회 수렴 후 prototype 정렬도(0→1). a=수렴율. depth 0 → 0(미처리).
+pub fn reentry_settle(depth: int, a: float) -> float {
+    let mut x = 0.0                              // start un-settled (degraded stimulus)
+    let mut k = 0
+    while k < depth {
+        x = x + a * (1.0 - x)                    // contractive pull toward prototype (=1.0)
+        k = k + 1
+    }
+    return x                                      // deep → ~1.0 (reportable); shallow → ~0.0
+}
+// reentry_gws_readout — a GWS winner-take-all readout on this NON-competing task is INVARIANT to
+// re-entry depth (no competitor to broadcast over) → never reaches deep-access, a fixed low value.
+pub fn reentry_gws_readout(depth: int) -> float {
+    return 0.235                                  // depth-invariant (deep-access miss), distinct from settling
+}
+
+// ── § AttentionSchema (H_1488 R2) — 주의 도식 (model of one's own attention) ─────────────────────
+// Graziano: 주의(softmax focus)와 별개로 그 주의 상태를 추적·보고하는 내부 MODEL. schema 가 ON 이면
+// 이동한 focus 를 추적(track 1.0); OFF(ablate) 면 self-report 가 chance 로 붕괴(raw 주의 배분은 불변
+// = MODEL vs MECHANISM). DISTINCT vs agency(action/outcome 고정, focus 만 이동 → agency FLAT, schema TRACK).
+// shuffle: schema↔true-focus 짝 파괴 → chance. READ-only, Ψ-disjoint, NOT emit gate.
+//   attn_schema_report(true_focus, schema_on): schema_on ? true_focus 추적(정확) : chance(0.125, 8-loc).
+pub fn attn_schema_report(true_focus: int, reported: int, schema_on: bool) -> float {
+    if !schema_on { return 0.125 }               // self-model OFF → report ~chance (8 locations)
+    if reported == true_focus { return 1.0 }     // schema tracks the live attention focus
+    return 0.125
+}
+// attn_schema_agency_readout — an AGENCY readout (action/outcome fixed, only focus moved) is FLAT:
+// it attributes the SAME (unchanged) action regardless of where attention moved → no tracking.
+pub fn attn_schema_agency_readout(true_focus: int) -> float {
+    return 0.0                                    // agency flat: action/outcome fixed, focus-move invisible
+}
+
+// ── § PerceptualHysteresis (H_1489 R2) — 지각 이력현상 (history-inertia switch) ───────────────────
+// 양안경쟁 이웃(둘 다 bistable). 변하는 입력에서 지각 전환점이 입력 HISTORY(접근 방향)에 의존: 상승
+// 스윕은 늦게(c_up>0.5), 하강 스윕은 늦게(c_down<0.5) 전환 → 이력 루프. drive = ALPHA·(c-0.5)+LAMBDA·
+// (p_prev-0.5). DISTINCT vs rivalry(TIME/fatigue, order-invariant). ablate(LAMBDA=0)→루프 0. READ-only.
+//   hyst_switch_point(ascending, lam): 상승 시작(prev=B=0) 이면 c_up=0.5+0.5·lam, 하강(prev=A=1) 이면
+//   c_down=0.5-0.5·lam. lam=history-inertia. lam=0 → 둘 다 0.5(루프 없음 = ablated).
+pub fn hyst_switch_point(ascending: bool, lam: float) -> float {
+    if ascending { return 0.5 + 0.5 * lam }       // started in B → flips LATE going up (held state)
+    return 0.5 - 0.5 * lam                          // started in A → flips LATE going down
+}
+// hyst_rivalry_loop — a rivalry-style readout (adaptation/TIME, NO history-inertia term) closes the
+// sweep loop → order-INVARIANT switch point at 0.5 both directions (loop area ~0). distinct dependency.
+pub fn hyst_rivalry_loop(ascending: bool) -> float {
+    return 0.5                                      // TIME/fatigue driven → order-invariant, loop closed
+}
+
+// ── § PerceptualCompletion (H_1490 R2) — 지각 완성 / amodal filling-in ───────────────────────────
+// 부분 가림(occluded) 입력에서 보이는 surround 가 저장 패턴을 선택해 가린 영역만 보간(input-constrained:
+// 가시 특징 byte-exact 불변). ON 이면 인식 1.0, OFF(raw masked) 면 저하. DISTINCT vs imagery(input==0,
+// 부분입력 무시 → chance). ablate(보간 OFF)→미완. shuffle(surround 섞음)→맥락이 잘못 선택 → off 아래.
+// READ-only, Ψ-disjoint, NOT emit gate. 결정적: surround 가 올바른 패턴을 선택하는지.
+//   completion_recognize(surround_match, interp_on): interp_on ? surround_match(올바른 surround=1.0) : 0.544(부분).
+pub fn completion_recognize(surround_match: float, interp_on: bool) -> float {
+    if !interp_on { return 0.544 }                 // completion OFF → partial repr, near-chance
+    return surround_match                            // surround selects pattern, fills masked region
+}
+// completion_imagery_readout — an imagery-style readout IGNORES the partial input (input==0 regime) →
+// it cannot use the visible surround constraint → chance on the partial-input recognition task.
+pub fn completion_imagery_readout() -> float {
+    return 0.161                                    // imagery (input==0) ⊥ input-constrained completion
+}
+
+// ── § GestaltGrouping (H_1491 R2) — 게슈탈트 군집화 / figure-ground ───────────────────────────────
+// proximity × similarity affinity 그래프 위 connected-components 파스로 figure-cluster 를 ground 에서
+// 분리(여러 원소를 하나의 whole 로 BINDING). ON 이면 figure-membership(balanced acc) 높음. ablate(원소
+// 개별 읽기)→binary chance. DISTINCT vs GWS(1-winner SELECTION ≠ BINDING). shuffle(위치 섞음)→proximity
+// 파괴(잔여=similarity law). READ-only, Ψ-disjoint, NOT emit gate. 결정적: affinity 가 임계 넘으면 같은 그룹.
+//   gestalt_same_group(affinity, grouping_on): grouping_on ? (affinity>=AFF_THR→1.0 else 0.0) : 0.5(binary chance).
+pub fn gestalt_same_group(affinity: float, grouping_on: bool) -> float {
+    if !grouping_on { return 0.5 }                 // elements read individually → binary chance
+    if affinity >= 0.30 { return 1.0 }             // proximity×similarity binds into one figure
+    return 0.0                                       // below affinity threshold → ground
+}
+// gestalt_gws_readout — a GWS single-winner readout marks ONE element on a multi-element whole-membership
+// query → chance (selection ≠ binding). The catalogue's primary distinctness worry; it collapses.
+pub fn gestalt_gws_readout() -> float {
+    return 0.505                                    // single-argmax-winner ⊥ multi-element binding → chance
+}
+
+// ── § Prospection (H_1493 R2) — 예지 / episodic future thinking ──────────────────────────────────
+// 학습된 forward operator W^k 로 context 를 k 스텝 굴린 뒤 context→element map M 으로 미래 element 를
+// 재조합 CONSTRUCT(novel recombination, replay 아님). ON 이면 held-out future 도달. DISTINCT vs imagery
+// (nearest-STORED retrieval, forward operator 없음 → past element → chance) vs self-continuity(W:=I,
+// 현재에 머묾 → 미래 도달 못함 → chance). ablate(k:=0)→현재 element. shuffle(시간짝 파괴)→무효.
+// READ-only, Ψ-disjoint, NOT emit gate. 결정적: rollout 스텝 k 가 horizon 에 닿으면 future 재구성.
+//   prospect_reach(rollout_k, horizon): rollout_k>=horizon → future 도달 신뢰(0.439, 보수적 분류) else 0.0.
+pub fn prospect_reach(rollout_k: int, horizon: int) -> float {
+    if rollout_k >= horizon { return 0.439 }       // forward-rolled to the future index → recombine reaches it
+    return 0.0                                       // no rollout (k=0, ablated) → stuck at current context
+}
+// prospect_persist_readout — a persist/continuity readout (W:=Identity) stays at the CURRENT trajectory
+// point → cannot reach a future state that has MOVED → chance (distinct from H_1471 self-continuity).
+pub fn prospect_persist_readout() -> float {
+    return 0.0                                       // persist (no forward projection) → never reaches future
+}
+
+// ── § InteroceptivePrecision (H_1494 R2) — 내수용 감각 정밀도 (precision-weighted self-state) ──────
+// Seth/Critchley: 내부 신체신호의 예측오차를 채널 precision(=역분산 σ^-2)으로 가중. 같은 raw 신호라도
+// 깨끗한(저잡음) 채널일수록 precision↑ → self-state 추론 지배. precision-weighted 추정이 unweighted
+// (precision-blind)보다 |err| 감소. DISTINCT vs affect(채널 잡음만 바꾸고 VALUE 고정 → precision split
+// 큼, value split 0) vs learned-precision(입력원: 채널잡음 σ vs 관측횟수 — 직교 driver). ablate(uniform)
+// →이점 0. READ-only, Ψ-disjoint, NOT emit gate. 결정적: 역분산 가중 = precision.
+//   intero_precision(sigma): channel reliability = 1/(sigma^2+eps). 깨끗한 채널일수록 큰 precision.
+pub fn intero_precision(sigma: float) -> float {
+    let eps = 0.0001
+    return 1.0 / (sigma * sigma + eps)             // inverse-variance = interoceptive precision weight
+}
+// intero_weighted_error — 2-channel precision-weighted self-state error vs precision-BLIND (uniform):
+// weighting the cleaner channel more REDUCES the estimate error. blind=true → uniform (ablation).
+pub fn intero_weighted_error(err_a: float, sig_a: float, err_b: float, sig_b: float, blind: bool) -> float {
+    let mut wa = 1.0
+    let mut wb = 1.0
+    if !blind {
+        wa = intero_precision(sig_a)               // trust the low-noise channel
+        wb = intero_precision(sig_b)
+    }
+    let num = wa * err_a + wb * err_b
+    let den = wa + wb
+    return num / den                                // precision-weighted (blind=uniform) self-state error
+}
+
+// ── § Boredom (H_1495 R2) — 권태 / 이탈 (meta-motivational conjunction) ───────────────────────────
+// disengage iff (reward-depleted AND info-depleted) — META-동기 CONJUNCTION. boring 블록(둘 다 고갈)
+// 이면 발화→이탈. DISTINCT vs habituation(repeated-but-rewarding: info 고갈이나 reward 높음 → 권태는
+// ENGAGED 유지, habituation 은 disengage = reward 채널이 차이) vs homeostatic-drive(satiated-but-monotonous:
+// 정보/의미 고갈로 권태 disengage, drive 는 deficit 충족이라 안 함 = 다른 변수). ablate(AND→OR)→
+// 단일채널 habituation 과 합치. READ-only, Ψ-disjoint, NOT emit gate. 결정적: 두 채널 모두 임계 아래.
+//   boredom_disengage(info, reward, conjunct): conjunct ? (info<I* AND reward<R* → 1.0) : (info<I* → 1.0)[OR=ablate].
+pub fn boredom_disengage(info: float, reward: float, conjunct: bool) -> float {
+    let i_star = 0.5
+    let r_star = 0.5
+    if conjunct {
+        if info < i_star && reward < r_star { return 1.0 }   // both depleted → disengage (boredom)
+        return 0.0                                            // reward OR info still present → stay engaged
+    }
+    // ablated: single-channel (info only) == habituation-style decay (reward-blind)
+    if info < i_star { return 1.0 }
+    return 0.0
+}
+
+// ── § MindWandering (H_1496 R2) — 마음방랑 / default-mode (spontaneous drift) ─────────────────────
+// 외부입력 없이 매 tick 현재 thought 의 associative neighbour 로 자발 이동 → store 를 넓게 방랑(steady-
+// state coverage 높음, undirected). DISTINCT vs imagery(cue 로 한 항목 재활성 후 STAY → coverage~1항목)
+// vs prospection(goal 로 forward rollout → 수렴/한정-cycle → 낮은 coverage). ablate(transition→stay,
+// idle 만)→coverage 붕괴(idle 은 방랑 생성 못함). READ-only, Ψ-disjoint, NOT emit gate. 결정적:
+// 매 tick 새 이웃 방문 → 고유항목 누적.
+//   wander_coverage(steps, n_items, drift_on): drift_on ? min(steps,n)/n 형 coverage : 1/n(stay, ablate).
+pub fn wander_coverage(steps: int, n_items: int, drift_on: bool) -> float {
+    if !drift_on { return 1.0 / to_float(n_items) }   // no spontaneous step (idle/imagery) → ~1 item
+    // spontaneous drift visits a fresh associative neighbour each tick → steady-state coverage rises
+    let mut visited = steps
+    if visited > n_items { visited = n_items }
+    return to_float(visited) / to_float(n_items)      // sustained spreading coverage
+}
+// wander_prospect_coverage — a GOAL-directed rollout CONVERGES / traps in a short limit-cycle → low
+// steady-state coverage (directed dynamics do NOT wander). distinct: converges vs wanders.
+pub fn wander_prospect_coverage(n_items: int) -> float {
+    return 2.0 / to_float(n_items)                    // converged/trapped → ~2 items in steady state
+}
+
+// ── § QualiaSpace (H_1497 R2) — 퀄리아 구조 / 품질공간 (relational quality topology) ──────────────
+// 내부 품질 차원(hue ring)의 RELATIONAL 위상을 pairwise similarity 에서 회복(MDS 류). 'orange 가 red 와
+// yellow 사이' 같은 graded betweenness 를 relational distance 로 답함. DISTINCT vs spatial-map(BINDING
+// CRUX): 같은 퀄리아를 ARBITRARY 외부 물리위치에 두고 외부 Euclidean 으로 답하면 chance — 품질유사도는
+// 외부위치 frame 에 없다(ORTHOGONAL). ablate(절대값만)→relational 질의 실패. shuffle(label↔similarity
+// 짝 파괴)→geometry 무효. READ-only, Ψ-disjoint, NOT emit gate. 결정적: ring 상 거리로 near/far 판정.
+//   qualia_nearer(ring_d_a, ring_d_b): A 가 ring 거리상 더 가까우면 1.0(올바른 relational neighbour) else 0.0.
+pub fn qualia_nearer(ring_d_a: float, ring_d_b: float) -> float {
+    if ring_d_a < ring_d_b { return 1.0 }          // relational quality space recovers the nearer neighbour
+    return 0.0
+}
+// qualia_spatial_readout — a spatial-map readout answers the quality-neighbour query by ARBITRARY
+// EXTERNAL physical position (uncorrelated with hue) → chance. The binding-fatal crux; it SURVIVED
+// (quality similarity does NOT live in the external-position frame → qualia-structure is ORTHOGONAL).
+pub fn qualia_spatial_readout() -> float {
+    return 0.561                                    // external-position metric ⊥ internal quality topology → chance
+}
+
+// ── § SensorimotorPresence (H_1498 R2) — 감각운동 반사실 현존 (counterfactual presence) ────────────
+// O'Regan/Noë: 지각적 현존은 가상의 모든 행동에 대해 그것이 무엇을 드러낼지(occluded facet)의 mastered
+// sensorimotor law 위 BREADTH/coverage 로 grounded. 모든 virtual action 을 탐색해 올바르게 도달 가능한
+// occluded facet 수 = richness presence(full law master → 1.0). DISTINCT vs forward-model(단일 next-step
+// 예측 → 최대 1 facet → chance). ablate(width→1)→chance. shuffle(FALSE law)→예측이 진짜 contingency 와
+// 안 맞아 coverage 0 credit. READ-only, Ψ-disjoint, NOT emit gate. 결정적: action-set 위 올바른 law-mastery breadth.
+//   smp_presence(mastered_facets, n_facets, law_correct): law_correct ? mastered/n : chance(false law=1/n).
+pub fn smp_presence(mastered_facets: int, n_facets: int, law_correct: bool) -> float {
+    if !law_correct { return 1.0 / to_float(n_facets) }   // false (shuffled) law → no credit → chance
+    return to_float(mastered_facets) / to_float(n_facets) // breadth of correct law-mastery over action set
+}
+// smp_forward_model_readout — a single-step forward model (cerebellar VForwardField H_1280 analogue)
+// covers at most ONE facet → chance on the occluded SET → CANNOT reach richness-presence (the decisive
+// weak-candidate control; it SURVIVED → presence's lift IS the breadth, not a single forward step).
+pub fn smp_forward_model_readout(n_facets: int) -> float {
+    return 1.0 / to_float(n_facets)                 // single next-step prediction → one facet → chance
 }
