@@ -6184,3 +6184,94 @@ pub fn ca3_replay_marginal(mem: CA3ReplayMemory) -> int {
     }
     return best
 }
+
+// ── § GlobalWorkspace (H_1462 R2) — GWT winner-take-all 전역방송 병목 ──────────────
+// Global Workspace Theory (Baars / Dehaene global-ignition): of N competing stimuli,
+// each carrying a SUBSTRATE-derived salience margin (the caller supplies it from live
+// immune-store grounding affinity — Ψ-disjoint, this lane mutates no immune cell and
+// never touches pure_field), the conscious workspace BROADCASTS exactly one winner via
+// a capacity-limited bottleneck + lateral inhibition. DISTINCT from a plain salience
+// score (with inhibition OFF, many above-threshold items pass at once = no bottleneck).
+// READ-only / additive — NOT an emit/silence gate (a_autonomy_over_hardcode).
+struct GlobalWorkspace {
+    margins: [float],   // per-stimulus salience (substrate grounding margin)
+    n: int,
+    cap: int,           // workspace capacity (1 = the consciousness bottleneck)
+    inhibit: bool,      // lateral inhibition ON (FULL) vs OFF (ablated = salience-only)
+    pass_thr: float     // ignition threshold
+}
+
+// gws_new — a fresh, EMPTY workspace.
+pub fn gws_new(cap: int, inhibit: bool, pass_thr: float) -> GlobalWorkspace {
+    return GlobalWorkspace { margins: [], n: 0, cap: cap, inhibit: inhibit, pass_thr: pass_thr }
+}
+
+// gws_add — a competing stimulus enters with its substrate salience margin.
+pub fn gws_add(gws: GlobalWorkspace, margin: float) -> GlobalWorkspace {
+    return GlobalWorkspace {
+        margins: gws.margins + [margin], n: gws.n + 1,
+        cap: gws.cap, inhibit: gws.inhibit, pass_thr: gws.pass_thr
+    }
+}
+
+fn _gws_argmax(margins: [float], n: int) -> int {
+    if n == 0 { return -1 }
+    let mut best = 0
+    let mut bestv = margins[0]
+    let mut i = 1
+    while i < n {
+        if margins[i] > bestv { bestv = margins[i]  best = i }
+        i = i + 1
+    }
+    return best
+}
+
+// gws_ignited — the GLOBAL-IGNITION set. With inhibition ON, lateral suppression by the
+// strongest competitor (−0.9·top) leaves a capacity-limited winner; OFF = every
+// above-threshold stimulus passes (the no-bottleneck baseline).
+pub fn gws_ignited(gws: GlobalWorkspace) -> [int] {
+    let mut out = []
+    if gws.n == 0 { return out }
+    if gws.inhibit {
+        let w = _gws_argmax(gws.margins, gws.n)
+        let top = gws.margins[w]
+        let mut i = 0
+        while i < gws.n {
+            let mut s = gws.margins[i]
+            if i != w { s = s - 0.9 * top }
+            if s >= gws.pass_thr {
+                if len(out) < gws.cap { out = out + [i] }
+            }
+            i = i + 1
+        }
+    } else {
+        let mut i = 0
+        while i < gws.n {
+            if gws.margins[i] >= gws.pass_thr { out = out + [i] }
+            i = i + 1
+        }
+    }
+    return out
+}
+
+// gws_winner — the single broadcast stimulus index, or -1 if ignition failed (empty
+// consciousness — all sub-threshold; a valid GWT state, not an error).
+pub fn gws_winner(gws: GlobalWorkspace) -> int {
+    let ig = gws_ignited(gws)
+    if len(ig) == 0 { return -1 }
+    return ig[0]
+}
+
+// gws_count — workspace occupancy (the bottleneck compresses this to <= cap).
+pub fn gws_count(gws: GlobalWorkspace) -> int { return len(gws_ignited(gws)) }
+
+// gws_leak — did stimulus `idx` (e.g. the 2nd-most-salient) leak into the workspace?
+pub fn gws_leak(gws: GlobalWorkspace, idx: int) -> bool {
+    let ig = gws_ignited(gws)
+    let mut i = 0
+    while i < len(ig) {
+        if ig[i] == idx { return true }
+        i = i + 1
+    }
+    return false
+}

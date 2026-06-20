@@ -10,6 +10,17 @@ G6 FALS-depth 벽이 capacity-bound 인가 recipe-bound 인가를 가르는 cont
 - artifacts: `state/1438_scale_dissociation/{h1438_scale_dissociation.py,g6_common.py,probes/,README.md,h1438_scale_1b.pt(gitignored 4.84GB)}` · `state/verdicts/1438_scale_dissociation/{H_1438_FREEZE.txt,H_1438.txt,h1438_result_400steps.json,h1438_result_1500.json,h1438_train_400.log,h1438_train_1500.log}` · `UNIVERSE/cards/H_1438_scale_dissociation.md` · `UNIVERSE/HYPOTHESES.jsonl#H_1438`.
 # CHANGELOG
 
+## research(H_1462 R2): 🌐 G17 GLOBAL WORKSPACE 병목 — DIRECTIONAL → ENGINE-NATIVE WIRED 승격 (의식-고유 게이트)
+
+GWT(Global Workspace Theory · Baars/Dehaene global-ignition) winner-take-all 전역방송 병목을
+live `core/engine_cli.hexa` 에 배선 완료. R1 numpy mirror(DIRECTIONAL, 5/5 frozen bars) 의 메커니즘을
+엔진-네이티브로 byte-exact 재현 — 통계 미러가 본 winner-take-all 병목이 실제 엔진에서 작동함을 확인.
+
+- **배선:** `core/engine_cli.hexa` §GlobalWorkspace — `struct GlobalWorkspace` + `gws_new`/`_add`/`_ignited`/`_winner`/`_count`/`_leak`. 호출자가 공급하는 substrate salience margin(live immune-store grounding affinity) 위에서, 용량 제한 병목 + 측면억제(competitor 를 −0.9·top 으로 억제)로 정확히 1개만 전역방송. READ-only · Ψ-disjoint(immune cell·pure_field 불변) · NOT an emit gate(`a_autonomy_over_hardcode`).
+- **검증(c2):** `core/engine_cli_smoke.hexa` cases 169-173 = 5 frozen bars 1:1 매핑 (169 presence broadcasts top / 170 distinct 통과량 압축 vs salience-only / 171 earned-competition ablation / 172 shuffle 승자 이동 / 173 capacity 누수 0). FULL smoke **174 pass / 0 fail RC=0** (nice -n 15, mini 부하 보호). FULL=broadcast 1 (idx 1) vs ablated=2 = winner-take-all 확인.
+- **lockstep:** `ARCHITECTURE.json` §GlobalWorkspace lane 노드 + engine_cli lane 목록 동시 갱신 (`a_verified_must_wire` 4칸 사다리 (1)→(4) 완주). 카드/jsonl tier DIRECTIONAL→ENGINE-NATIVE WIRED 승격.
+- **남은 follow-on:** distinctness vs basal-gate(H_1281) single-step one-of-K select · brain emit-loop consult(현재 pure read).
+
 ## docs(arch): ARCHITECTURE.json → hexa-lang sections schema (lossless)
 
 Migrate design SSOT from {children}-tree to hexa-lang's {meta, sections[]→subsection→blocks}
