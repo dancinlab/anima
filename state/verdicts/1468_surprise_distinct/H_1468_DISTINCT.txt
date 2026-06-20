@@ -1,0 +1,24 @@
+H_1468 follow-on — PRECISION-WEIGHTED SURPRISE distinctness vs NOVELTY(H_1289) & HABITUATION(H_1465)
+captured stdout (frozen-first, pre-registered bars; numpy mirror -> DIRECTIONAL, engine-transfer UNVERIFIED)
+probe: state/1468_surprise_distinct/h1468_distinct.py
+seeds [1468,1469,1470] | $0 CPU | p7 | deterministic over 3 runs (byte-identical)
+
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1468, 1469, 1470]
+--- vs NOVELTY (H_1289): same novelty, surprise splits with precision ---
+N1 NOVELTY-IDENTICAL |nov_conf 0.5055 - nov_unsure 0.5055|=0.0000<=0.01 True
+N2 SURPRISE-SPLITS   (s_conf 1.022 - s_unsure 0.256)=0.767>=0.30 True
+N3 ABLATION(prec OFF) split |0.256-0.256|=0.0000<=0.05 True
+--- vs HABITUATION (H_1465): violation-surprise persists where familiarity decays ---
+H1 SURPRISE-PERSISTS last/first ratio 0.977>=0.85 True
+H2 HABITUATION-DECAYS drop 0.865>=0.30 True
+H3 SHUFFLE control divergence real 0.783 -> shuffled |-0.0404|<=0.05 True
+
+HONEST (c9):
+- DIRECTIONAL numpy mirror — terminal NOT this; engine-native re-measure on live core/ = follow-on.
+- N1/N3 SATURATED existence-proof (novelty byte-identical 0.5055==0.5055, ablation split exactly 0.000)
+  — the precision-weighting is a designed scalar law, not a learned net; discriminators decisive.
+- H3 shuffle uses a 200-permutation mean to read the control's decorrelated EXPECTED divergence
+  (single 5-element permutation is a high-variance estimator). Bar frozen-first (|div|<=0.05);
+  the estimator was averaged, the threshold was NOT moved (real divergence 0.783 -> shuffled ~0.04).
+- SCOPE TOY: 3 seeds / scalar reaction laws; scale/real-corpus/learned-precision UNVERIFIED.
