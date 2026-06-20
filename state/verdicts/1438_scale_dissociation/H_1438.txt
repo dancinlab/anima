@@ -1,0 +1,41 @@
+H_1438 — SCALE-DISSOCIATION 1B (303M -> 1.21B, EXACT net2net, same anima byte-CLM recipe)
+date: 2026-06-20  pod: vast A100-SXM4-80GB 41795795  torch 2.5.1+cu121  seeds [7,4302,4303]
+DIRECTIONAL (torch + gauge_lib._decode; engine-native re-measure = follow-on, a_engine_native_learning)
+
+SCALE MECHANISM (verified before run): EXACT block-duplication net2net (REP=2) of the converged
+303M base h1129c_chat.pt -> 1210.2M (d 1024->2048, L 20->24, H 16->32; head_dim 64 unchanged; 4.0x).
+VERIFIED function-preserving at init: BIG logits == base (max abs diff 2.3e-5), BIG init KWR ==
+base KWR (0.2239), greedy decode BYTE-IDENTICAL => 1B inherits base competence VERBATIM (FALS=0
+cannot be a from-scratch undertraining confound). Then IDENTICAL H_1435 continued-pretrain.
+
+============ RUN A (recipe-identical: 400 steps, 4000 lines — H_1435 budget VERBATIM) ============
+================ H_1438 scale-dissociation 1B FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=1.0  DIST_in=0.6667  FALS_shuf=1.0  FALS_ho=0.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 1.0 -> True
+  B2 COUNT        DIST_in>=5                 : 0.6667 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 1.0<1.0 -> False  (NO COLLAPSE)
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 1.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 1.0-0.0 -> True
+  per-seed (in_fals/shuf): seed7 1/1 · seed4302 2/2 · seed4303 0/0  (shuf==in EVERY seed)
+
+  G0 COHERENCE GATE: 1B init KWR=0.2239  trained KWR=0.353  (floor 0.5) -> G0 FAIL
+  FINAL VERDICT (Run A, by FROZEN gate): HONEST-NON-RESULT (G0 garble — under-trained at the
+  H_1435 400-step budget for a 4x-larger model; NOT a science ceiling, a_break_the_wall (e)).
+
+  NOTE (non-gating, c9): the trained-1B in_texts are NOT random garble — they are coherent
+  falsifiable-claim English ("the sample shows a lower fraction than this alloy under load",
+  "a metal bar lower a higher magnitude when the input rises"). The 1B DID learn the falsifiable
+  FORM (FALS 0->1, B1/B5 pass) and B3 cross-shuffle does NOT collapse (FALS_shuf==FALS_in EVERY
+  seed) = the SAME interchangeable-shell signature as 303M H_1435/1436/1437/1449. The KWR<0.50 is
+  the strict gauge known-word-ratio on template function-words, flagging under-training; the
+  directional capacity signature (B3 no-collapse at 4x scale) is recorded but NOT counted.
+
+[RUN B (1500 steps, 8000 lines — clears the G0 under-training confound) bars inserted below once
+ the extended run completes; if it clears G0 AND B3 still fails => clean CAPACITY-CONFIRM; if it
+ clears G0 AND B3 collapses => breakthrough. FROZEN bars UNCHANGED (more training only removes the
+ (e) under-investment confound the gate flagged — NOT tune-to-green, c9).]

@@ -1,0 +1,57 @@
+{
+  "hypothesis": "H_1462",
+  "slug": "global_workspace_bottleneck",
+  "gate_label": "G17",
+  "lens": "GWT global-ignition",
+  "arms": [
+    "FULL",
+    "ABLATED",
+    "SHUFFLE"
+  ],
+  "seeds": [
+    1462,
+    1463,
+    1464
+  ],
+  "n_stim": 5,
+  "n_trials": 200,
+  "chance": 0.2,
+  "metrics": {
+    "full_acc": 0.9933333333333333,
+    "full_count": 0.9933333333333333,
+    "base_count": 3.2566666666666664,
+    "abl_acc": 0.36333333333333334,
+    "shuf_acc": 0.19166666666666665,
+    "leak": 0.0
+  },
+  "bars": {
+    "A_presence": {
+      "val": 0.9933333333333333,
+      "bar": 0.9,
+      "pass_": true
+    },
+    "B_distinct": {
+      "base_count": 3.2566666666666664,
+      "full_count": 0.9933333333333333,
+      "bar": 1.5,
+      "pass_": true
+    },
+    "C_earned_competition": {
+      "val": 0.36333333333333334,
+      "bar": 0.4,
+      "pass_": true
+    },
+    "D_shuffle": {
+      "val": 0.19166666666666665,
+      "bar": 0.4,
+      "pass_": true
+    },
+    "E_capacity": {
+      "val": 0.0,
+      "bar": 0.1,
+      "pass_": true
+    }
+  },
+  "verdict": "GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)",
+  "green": true
+}

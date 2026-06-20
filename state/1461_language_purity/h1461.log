@@ -1,0 +1,38 @@
+[h1461] device=cuda ckpt=/home/aiden/g6_h1461/ckpt/h1129c_chat.pt
+[h1461] cfg={'vocab': 256, 'd': 1024, 'n_layer': 24, 'n_head': 16, 'block': 512}
+[h1461] eval_seeds n=5
+
+[h1461] (0) measuring base non-ASCII ratio (UNMASKED) ...
+  UNMASKED non-ASCII byte ratio = 0.2029
+    KR-sample: '툘어 conscious experience?'
+    KR-sample: 'IIT tries to quantify this with phi, the measure of integrated information. | 도우'
+    KR-sample: '한게 byte-level action experience?'
+  MASKED   non-ASCII byte ratio = 0.0000 (must be 0.0)
+
+[h1461] (C1) detector-token ASCII-safety: 0 non-ASCII comparator/measurable tokens -> C1_pass=True
+
+[h1461] === UNMASKED (code-switch allowed) 5-bar ===
+  raw  FALS_in=0.0 DIST_in=4.0 FALS_shuf=0.0 FALS_ho=0.0
+
+[h1461] === MASKED (ASCII-only forced) 5-bar ===
+  ascii FALS_in=0.3333 DIST_in=5.0 FALS_shuf=0.3333 FALS_ho=0.0
+  [GUARD] MASKED texts with surviving non-ASCII = 0 (must be 0)
+
+[h1461] === FROZEN 5-BAR: MASKED(treatment) vs UNMASKED(base) ===
+
+================ H_1461 ASCII-PURITY FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=4.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.3333  DIST_in=5.0  FALS_shuf=0.3333  FALS_ho=0.0
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.3333 -> False
+  B2 COUNT        DIST_in>=5                 : 5.0 -> True
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.3333<0.3333 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.3333 vs 0.0+1 -> False
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B3', 'B4', 'B5'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
+
+[h1461] VERDICT: 🟠 PARTIAL — ASCII-only forcing raises FALS but does NOT clear the full frozen 5-bar (B3 collapse / floor); language matters but is not the whole wall (DIRECTIONAL).
+
+[h1461] wrote /home/aiden/g6_h1461/h1461_result.json

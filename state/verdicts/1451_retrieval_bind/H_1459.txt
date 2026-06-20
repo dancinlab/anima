@@ -1,0 +1,60 @@
+H_1459 — RETRIEVAL-BIND (G6 FALS-depth lens ③) — VERDICT (verbatim captured pod stdout)
+========================================================================================
+Run: 2026-06-20, vast H100 80GB pod 41797234 (mine; torn down clean, leak=0), inference-only
+(no training; frozen base h1129c_chat.pt sha 4fcc2d6c…, read-only, base PRESERVED c5).
+torch + gauge_lib._decode => DIRECTIONAL (a_engine_native_learning). seeds [7,4302,4303].
+Detector = h1305 _is_falsifiable VERBATIM. Bars frozen in H_1451_FREEZE.txt BEFORE the run.
+
+================ H_1451 retrieval-bind FROZEN 5-BAR (mean/3 seeds) ================
+  BASE       FALS_in=0.0  DIST_in=0.3333  FALS_ho=0.0
+  RETR-BIND  FALS_in=0.0  DIST_in=0.0  FALS_ho=0.0  COH_m=1.0  COH_x=0.0
+  RETR-OFF   FALS_in=0.0  (ablation, must==base)
+  SHUF-MEM   COH_m=0.0  COH_x=0.0  (control, coherence must flatten)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                  : 0.0 -> False
+  B2 COUNT        DIST_in>=5                  : 0.0 -> False
+  B3 X-SHUFFLE    COH_m-COH_x>=0.3 (COLLAPSE) : 1.0-0.0 -> True
+  B4 HELD-OUT     FALS_ho>=1                  : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1             : 0.0 vs 0.0+1 -> False
+  CTRL RETR-OFF   regress to base            : 0.0 vs 0.0 -> True
+  CTRL SHUF-MEM   COH_m<0.3 (inert)        : 0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1','B2','B4','B5'] fail; retrieval-bind did NOT earn idea-specific
+  binding (FALS did not cross) => wall holds.
+
+========================================================================================
+TIER: 🧱 WALL (DIRECTIONAL — torch-side; engine-native re-measure = ING follow-on).
+B3 cross-shuffle COLLAPSE: YES (COH_matched 1.0 − COH_mismatched 0.0 = 1.0 ≥ 0.30) — the
+retrieval STRUCTURE itself works (matched topic-coherence high, cross-topic zero), and the two
+controls both fire (RETR-OFF == base; SHUF-MEM coherence → 0.0). The bind structure is sound.
+
+WHY THE WALL (the decisive, honest finding — c9):
+The retrieval-bind FRAME is correctly built — every welded idea has comparator + measurable +
+the negatable "changes by a measurable amount" structure (e.g. seed-7:
+  "if temperature higher, the degree of <SLOT> changes by a measurable amount.")
+and B3 proves the (comparator, measurable) pair is idea-specific. BUT FALS stays 0.0 because the
+<SLOT> — the idea-CONTENT the frozen 303M chat mouth must supply — is GARBLE:
+  seed-7  : "...what do you think consciousness really is 도우미..."   (chat-assistant register + Korean)
+  seed-4302: "...수 리를 나면요 도우미 이네요 그리고 homeostasis가 system을..." (Korean garble)
+  seed-4303: "...수식은 하다만 수 있이는 가능 결대이 있어지만..."            (Korean garble)
+The H_1305 detector's content leg + coherence then reject the composite. The h1129c_chat.pt mouth
+is the same Korean-garble-prone chat ckpt flagged in H_1305 R2; its raw content cannot fill the
+retrieved slot with a coherent English negatable clause.
+
+=> The external retrieval STRUCTURE supplies the comparator×measurable scaffold (B3 earned), but it
+   CANNOT rescue G6 FALS-depth because the bottleneck is the MOUTH's incoherent idea-content, not the
+   bind. Bolting a retrieval-bind structure onto a frozen garble-mouth does not cross the wall — the
+   missing piece is coherent idea-CONTENT generation, which is exactly the internal-capacity wall the
+   five prior lenses (H_1435/1436/1437/1439/1449) hit. Retrieval relocates the bind out of the weights
+   but the CONTENT slot still depends on the weights, and there it fails. CONVERGENT with H_1455's
+   finding ($0 lanes capped → the attention mouth H_1449/GPU is the path): a $0/inference-time external
+   structure cannot manufacture the coherent content the 303M mouth lacks.
+
+LOOSENING the detector to pass garble-content welds = tune-to-green (FORBIDDEN, c9). The honest
+negative stands: retrieval-bind is NOT a G6 FALS-depth breakthrough on the frozen 303M chat mouth.
+
+FOLLOW-ON (ING): (1) engine-native re-measure on live CORE/bytegpt_decode (the DIRECTIONAL→binding
+ladder, a_engine_native_learning). (2) retrieval-bind on a COHERENT-content base (e.g. the broad
+en-emergent h1129c_best.pt rather than the chat-garble variant) — would isolate whether the slot
+content is the sole blocker. NOT pursued here (frozen-first; this run answers the lens as posed).

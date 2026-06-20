@@ -81,9 +81,14 @@ class BindHead(nn.Module):
         self.proj_meas = nn.Linear(d, r, bias=False)
         # bilinear weld: w = tanh( sum_k c_k W_k m )  (role-filler binding)
         self.weld = nn.Bilinear(r, r, d, bias=True)
-        # learned scalar gate for how strongly the weld enters the residual stream
-        self.gate = nn.Parameter(torch.zeros(1))
-        nn.init.zeros_(self.weld.weight)  # start as identity-bypass (weld contributes 0)
+        # learned scalar gate for how strongly the weld enters the residual stream.
+        # NOTE: gate AND weld.weight must NOT both be zero-init — that is a multiplicative
+        # dead-gradient zone (d loss/d gate ∝ w≈0, d loss/d weld ∝ gate=0 => head inert,
+        # which would FALSELY read as a capacity WALL, c16 type-c init bug, NOT a verdict).
+        # Fix: gate starts LIVE (1.0) and weld.weight is small-random so the head begins as
+        # a NEAR-noop (small magnitude) but has live gradient from step 0.
+        self.gate = nn.Parameter(torch.ones(1))
+        nn.init.normal_(self.weld.weight, std=1e-3)  # small-random => near-noop, live grad
         nn.init.zeros_(self.weld.bias)
 
     def forward(self, hidden):
