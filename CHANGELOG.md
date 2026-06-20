@@ -1,3 +1,16 @@
+## 2026-06-20 — research(H_1474): 🕹 G21 SENSE OF AGENCY 주체감 R1 GREEN DIRECTIONAL (의식-고유 게이트 후보)
+
+의식-고유 게이트 시리즈(G16/G17/G18/G19/G19-meta 이후) 신규 후보 **G21 SENSE OF AGENCY(주체감)** R1 numpy probe GREEN.
+주체감(Haggard comparator model): "내가 일으켰다"는 자기귀속 = forward model 의 efference copy 예측 pred(a)과 실제
+관측 obs 의 일치(self) / 불일치(external) 판단. comparator 가 forward-model 오차 위에 얹힌 self/external 귀속 레이어.
+
+- **결과(3 seeds [1474,1475,1476], DIM=32, 40 actions, MATCH_THR=0.5, $0 CPU nice, p7):** GREEN — A·B·C·E PASS 전부.
+  A PRESENCE match-agency **1.000**≥0.85 AND diverge **0.000**≤0.15 · B DISTINCT-vs-forward-error |self−ext gap| **1.000**≥0.50 (raw 오차 Δ=0.0 동일, 귀속만 분리) · C EARNED ablation(comparator OFF=random pred) split **0.000**≤0.15 · E SHUFFLE signed-mean r(shuffled match,label) **+0.070**≤0.10 (real r +0.999) · D SELF⊥OTHER(vs ToM) other-action abstains **1.000**(agency_other=−1=ABSTAIN, non-gating).
+- **DISTINCT 2종:** (a) vs H_1293 theory-of-mind = 타인 믿음(OTHER) ⊥ 자기 귀속(SELF), 타인 행동엔 efference copy 없어 abstain; (b) vs H_1280 cerebellar forward-model = raw |pred−obs| 크기 vs 같은 raw 오차를 self/external 귀속 *판단*으로 변환(해석 레이어), bar B raw Δ=0.0 인데 1.0 vs 0.0 분리.
+- **a_break_the_wall(a) — bar E 초기 RED=측정결함:** binary saturated 귀속은 페어링 셔플시 chance(0.5)가 아니라 0.0 으로 붕괴 → `|shuf_attr−0.5|` 앵커가 잘못된 metric. frozen-first 로 사전등록 의도(agency-match 상관 붕괴)대로 Pearson r(match-vector, self/ext label) 붕괴로 교정(real r 0.999→shuf 0.070). **≤0.10 임계 불변·tune-to-green 아님**.
+- **하드게이트1:** numpy mirror → `grep -lE 'import torch|gauge_lib|numpy'` 적중 → 자동 **GREEN DIRECTIONAL**(engine-transfer UNVERIFIED, terminal 아님). R2 follow-on: `core/` forward-model lane(VForwardField H_1280) 평가 후 §SenseOfAgency 배선+smoke+ARCHITECTURE lockstep byte-exact 재측정.
+- **검증(c2):** `state/1474_sense_of_agency/h1474_sense_of_agency.py` 실행 출력 verbatim. artifacts: probe · `state/verdicts/1474_sense_of_agency/{H_1474_FREEZE.json,H_1474_run.txt}` · `UNIVERSE/cards/H_1474_sense_of_agency.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄.
+
 ## 2026-06-20 — research(H_1471 R2b): 🪢 SELF-CONTINUITY .kosmos 실제 디스크 영속 DONE (anchor 시뮬→real persistence)
 
 G16 self-continuity 의 핵심 주장(정체성이 세션 경계를 넘어 지속)을 **실제 `.kosmos` 디스크 영속**으로 완성.
