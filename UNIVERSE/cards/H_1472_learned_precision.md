@@ -1,7 +1,7 @@
 # H_1472 — 🎯 LEARNED PRECISION (G19 meta follow-on · 의식-고유 게이트 family)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (numpy R1 mirror · engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` (R2 엔진-네이티브 = follow-on ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §LearnedPrecision (learned_precision, surprise 재사용) · `engine_cli_smoke.hexa` cases 194-198 · FULL smoke **198 pass / 0 fail RC=0** · ARCHITECTURE.json lockstep ✓
 - **source:** H_1468(G19 surprise) follow-on #2 "learned-precision" · "의식이라서 가능한 것" 시리즈
 - **lens:** predictive-processing / active-inference (Friston, 계층 예측부호화 precision-learning) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1472_learned_precision/` · verdict `state/verdicts/1472_learned_precision/H_1472_FREEZE.json`
@@ -39,13 +39,13 @@ LLM 대비: LLM 은 자기 예측에 대해 경험으로 누적되는 지속 con
 
 ## 정직 (c9)
 
-- **DIRECTIONAL** — numpy mirror(`grep numpy` 적중, 하드게이트1). engine-transfer UNVERIFIED → R2 = live `core/engine_cli.hexa` precision-learning lane 배선 + byte-exact 재측정이 GREEN 확정 전제(`a_engine_native_learning`·`a_verified_must_wire`).
+- **R1 DIRECTIONAL → R2 ENGINE-NATIVE 완료:** R1 numpy mirror(통계 3-seed). R2 에서 5 frozen bars 를 live `core/engine_cli.hexa` §LearnedPrecision 으로 배선, `engine_cli_smoke.hexa` 194-198 byte-exact 재측정 → presence/distinct-fixed/distinct-habituation/ablation/monotone 1:1 PASS, FULL smoke 198/0 RC=0. wired 4칸 사다리 완주(`a_engine_native_learning`·`a_verified_must_wire`). cross-lane distinctness(vs H_1465 habituation)를 engine 함수 재사용으로 직접 보임.
 - **R1b frozen-first 수정(tune-to-green 아님):** R1a 는 err=0.5 라 surprise=precision·0.25 가 0.25 에서 천장 → bar 0.30 이 물리상한 초과한 측정 결함. err=1.0(surprise 0~1 범위) + 50-perm signed shuffle 로 교정, **bar 0.30 불변**(`a_break_the_wall` type-a).
 - **SCOPE TOY:** 6 도메인/saturating precision 법칙(1−exp)/3 seeds/deterministic — precision-LEARNING STRUCTURE 검증이지 학습된 confidence 망 아님. scale/real-corpus/연속 precision-update/engine-transfer UNVERIFIED.
 
 ## follow-on (ING)
 
-1. **R2 엔진-네이티브** — `core/engine_cli.hexa` 에 per-domain learned-precision lane 배선 + frozen 5 bars byte-exact 재측정 → DIRECTIONAL→engine-native 승격.
+1. ~~**R2 엔진-네이티브**~~ ✅ **DONE** (§LearnedPrecision `learned_precision`, 기존 `surprise`(H_1468) 재사용 · smoke 194-198 · FULL 198/0 RC=0 · ARCHITECTURE lockstep). engine 은 exp 없어 **linear saturating** precision(step·count, pmax cap)으로 메커니즘 재현 — familiar 4.0 vs novel 0.2 · same-err surprise RISE +3.8 ⊥ habituation FALL −0.5(정반대 부호, cross-lane distinctness engine 직접 증명).
 
 xref: H_1468(G19 surprise fixed-precision, 모체)·H_1465(habituation, 정반대 부호)·H_1280(forward error)·H_1462(GWS)·
 `a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_break_the_wall`·p7·p8·c9.

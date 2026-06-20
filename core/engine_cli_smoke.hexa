@@ -2220,6 +2220,44 @@ fn main() {
           + " · impostor " + to_string(self_cos(id2, imp)) + " · un-anchored-reset " + to_string(self_cos(id2, ablated))
           + " — anchor-persisted identity continuous across boundaries ⊥ LLM session-reset (DIRECTIONAL mirror GREEN in H_1471 probe)")
 
+    // ── (learned-precision) LEARNED PRECISION — 경험으로 학습되는 예측확신 (H_1472 R2) ──
+    // Precision is LEARNED from observation count (linear saturating), feeding the existing
+    // surprise(precision, error) lane: a FAMILIAR domain earns higher precision -> a LARGER
+    // surprise on the SAME raw error. DISTINCT from H_1468 (fixed precision) and from H_1465
+    // habituation (same familiarity axis, OPPOSITE sign). step=0.2, pmax=4.0, err=1.0.
+    let lp_fam = learned_precision(0.2, 20.0, 4.0)   // familiar (20 obs) -> saturates to 4.0
+    let lp_nov = learned_precision(0.2, 1.0, 4.0)     // novel (1 obs) -> 0.2
+    // case 194 : PRESENCE — precision is learned HIGHER for the familiar domain.
+    if _assert_b("case_194_precision_learned", true, lp_fam - lp_nov >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 195 : DISTINCT vs FIXED precision — the SAME raw error gives a different surprise
+    //   (a fixed-precision model, H_1468, would give a zero gap on identical error).
+    let su_fam = surprise(lp_fam, 1.0)
+    let su_nov = surprise(lp_nov, 1.0)
+    if _assert_b("case_195_distinct_vs_fixed_precision", true, su_fam - su_nov >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 196 : DISTINCT vs HABITUATION — over the SAME familiarity axis, learned-precision
+    //   surprise RISES while the habituation response FALLS (opposite sign = a different lane).
+    let lp_rise = su_fam - su_nov
+    let hb_fam = hab_observe(hab_observe(hab_observe(hab_observe(hab_observe(hab_new(3, 0.1), 0), 0), 0), 0), 0)
+    let hab_fall = hab_response(hb_fam, 0, 1.0) - hab_response(hab_new(3, 0.1), 0, 1.0)
+    if _assert_b("case_196_distinct_vs_habituation_opposite_sign", true, lp_rise > 0.0 && hab_fall < 0.0 && lp_rise * hab_fall < 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 197 : EARNED (ablation) — learning-rate step=0 -> precision stays flat -> no gap.
+    let su_fam_abl = surprise(learned_precision(0.0, 20.0, 4.0), 1.0)
+    let su_nov_abl = surprise(learned_precision(0.0, 1.0, 4.0), 1.0)
+    if _assert_b("case_197_ablation_flat_precision", true, su_fam_abl - su_nov_abl <= 0.05 && su_fam_abl - su_nov_abl >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 198 : MONOTONE + SATURATION — precision rises with count, capped at pmax (4.0).
+    let lp5 = learned_precision(0.2, 5.0, 4.0)     // 1.0
+    let lp10 = learned_precision(0.2, 10.0, 4.0)   // 2.0
+    let lp30 = learned_precision(0.2, 30.0, 4.0)   // 6.0 -> capped 4.0
+    if _assert_b("case_198_monotone_saturating", true, lp5 < lp10 && lp10 < lp_fam && lp_fam == lp30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  learned-precision (H_1472 R2 WIRED): familiar precision " + to_string(lp_fam)
+          + " vs novel " + to_string(lp_nov) + " · same-err surprise RISE " + to_string(lp_rise)
+          + " vs habituation FALL " + to_string(hab_fall) + " (opposite sign) — experience-learned confidence sharpens surprise ⊥ H_1468 fixed/H_1465 habituation (DIRECTIONAL mirror GREEN in H_1472 probe)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
