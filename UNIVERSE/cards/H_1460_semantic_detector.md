@@ -7,10 +7,12 @@ terminal_tier: 🧱 CAPACITY-REINFORCED (DIRECTIONAL) — semantic(SAME-idea) de
   엄격(calibration V2 2<4)하나 REAL generation 에서 cross-shuffle COLLAPSE 가 structural 과 동일(둘 다 0) →
   measurement-artifact 가설 반증, 벽은 capacity. H_1435/1436/1437/1439/1449 에 이은 수렴(7B 근거 a7b_pass).
 date: 2026-06-20
+source: G6 돌파 다각도 fleet ① measurement-lens
 provenance: G6 돌파 다각도 렌즈 ① — 5렌즈(H_1435 data/1436 objective/1437 form/1439 bind-head/1449 attention)
   전부 🧱 WALL(cross-shuffle 불붕괴). H_1435 honest finding "structural H_1305 detector CANNOT distinguish
   earned idea-specific binding from any-comparator+any-measurable+content" → 측정 artifact 일 가능성을 먼저 배제.
-  NB: 팀리드 지정 id H_1450 은 다른 에이전트(workmem_hold_bind)가 선점 → 충돌 회피로 H_1460 재anchor.
+  NB(id): 팀리드 지정 H_1450 선점(workmem_hold_bind) · H_1456 도 선점(idea_metacognition, RUNNING) → 충돌 회피로
+  H_1460 재anchor (팀리드 재확인 대기 중 — 명시 지시 시 빈 ID 로 rename, 타 RUNNING lane 덮어쓰기 없음).
 ---
 
 # H_1460 — SEMANTIC-AWARE falsifiability detector 재채점 (측정결함 먼저 배제)
