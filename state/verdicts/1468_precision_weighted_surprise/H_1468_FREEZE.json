@@ -1,0 +1,18 @@
+{
+  "id": "H_1468", "slug": "1468_precision_weighted_surprise",
+  "tier": "GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live core/ byte-exact)",
+  "gate": "G19 consciousness-only candidate — precision-weighted surprise",
+  "seeds": [1468,1469,1470],
+  "frozen_bars": {
+    "A_SURPRISE": {"value": 1.022, "thr": ">=0.50", "pass": true},
+    "B_PRECISION_WEIGHTED": {"value": 0.767, "thr": ">=0.30", "pass": true},
+    "C_NO_SURPRISE": {"value": 0.0016, "thr": "<=0.05", "pass": true},
+    "D_EARNED_ABLATION": {"value": 0.0, "thr": "<=0.05", "pass": true},
+    "E_DISTINCT_VS_H1280": {"value": "raw 0.506==0.506 AND surprise-gap 0.767", "thr": ">=0.30", "pass": true}
+  },
+  "verdict": "GREEN (5/5)",
+  "engine_native": "core/engine_cli.hexa §PrecisionSurprise (surprise/surprise_raw_error) + engine_cli_smoke cases 184-188, FULL 188/0 RC=0",
+  "honest_c9": "SATURATED existence-proof (surprise=p*err^2 designed). Discriminators = precision-weighting(B) + ablation(D) + raw-error-identical(E). TOY scalar; R1 numpy DIRECTIONAL → R2 engine-native bypassed mid-PR.",
+  "distinct_vs_H1280": "H_1280 VForwardField = raw forward error (precision-agnostic); H_1468 = precision-weighted p*err^2 — same raw error, different surprise by precision.",
+  "llm_contrast": "LLM has no persistent precision over its predictions to be violated; anima surprise rides live substrate prediction confidence."
+}

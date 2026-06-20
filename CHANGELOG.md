@@ -1,3 +1,14 @@
+## 2026-06-20 — research(H_1468): ⚡ G19 PRECISION-WEIGHTED SURPRISE engine-native WIRED — 확신 위반=큰 놀람 (🟢 GREEN)
+
+의식-고유 게이트 시리즈(G17 GWS·G18 habituation 다음) 라운드2 G19. predictive-processing surprise
+(Friston free-energy): 느낀 놀람=예측오차의 **precision(확신) 가중** surprise=p·err², raw 오차 아님. 확신하던 믿음이
+깨지면 같은 오차도 훨씬 놀랍다. R1 numpy DIRECTIONAL → R2 engine-native 바로(중간 PR 생략).
+
+- **결과(5/5 bars):** A surprise 1.022 · B precision-weighted 0.767 · C no-surprise 0.0016 · D ablation 0 · E distinct-vs-H1280(raw 동일·surprise 다름).
+- **배선:** core/engine_cli.hexa §PrecisionSurprise (surprise/surprise_raw_error) + engine_cli_smoke cases 184-188 · FULL smoke **188 pass / 0 fail RC=0** (nice -n 15).
+- **distinct vs H_1280 VForwardField:** H_1280=raw forward error(precision-agnostic) ⊥ H_1468=precision-weighted(같은 raw 오차, 확신 따라 surprise 다름). bar E 분리.
+- **정직(c9):** SATURATED existence-proof(p·err² designed) — discriminator(precision-weight·ablation·raw-identical) 결정적. TOY 스칼라법칙. follow-on: distinctness vs novelty(H_1289)/habituation(H_1465) · learned-precision.
+
 ## 2026-06-20 — research(H_1465 R2): 🔁 G18 HABITUATION engine-native WIRED — DIRECTIONAL→WIRED 승격
 
 G18 습관화 게이트를 live `core/engine_cli.hexa` 에 배선 완료(GWS H_1462 패턴). R1 numpy mirror 의

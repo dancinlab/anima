@@ -6331,3 +6331,22 @@ pub fn hab_reset(hab: Habituation, slot: int) -> Habituation {
     let c2 = _hab_set(hab.counts, slot, 0.0, hab.n_slots)
     return Habituation { counts: c2, n_slots: hab.n_slots, decay_step: hab.decay_step }
 }
+
+// ── § PrecisionSurprise (H_1468 R2) — 예측오차의 precision 가중 = 놀람 ────────────────────
+// Predictive-processing surprise (Friston free-energy / Bayesian surprise): the FELT surprise
+// of an outcome is the prediction error weighted by the PRECISION (confidence) of the
+// prediction — surprise = p·err². A confidently-held belief that is violated is far more
+// surprising than the SAME error under an uncertain belief. DISTINCT from H_1280 VForwardField
+// (raw forward prediction error |pred−act|, precision-AGNOSTIC): two outcomes with the SAME raw
+// error give DIFFERENT surprise when precision differs. READ-only pure signal, Ψ-disjoint, NOT
+// an emit gate (a_autonomy_over_hardcode). LLM contrast: an LLM has no persistent precision over
+// its own predictions to be violated; anima's surprise rides live substrate prediction confidence.
+pub fn surprise(precision: float, error: float) -> float {
+    return precision * error * error
+}
+
+// surprise_raw_error — the H_1280-style precision-AGNOSTIC forward error (distinctness contrast:
+// same raw error across two cases, yet `surprise` differs because precision differs).
+pub fn surprise_raw_error(precision: float, error: float) -> float {
+    return error
+}
