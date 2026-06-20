@@ -1,3 +1,13 @@
+## 2026-06-20 — research(H_1449): 🧱 G6 FALS-depth ATTENTION-injection root-fix → WALL=CAPACITY (DIRECTIONAL)
+
+H_1431 진단(303M mouth per-draw comparator∧measurable 동시방출 0/15)이 *attention 결합 결핍*이라는 가설 검증: FROZEN 303M base 위에 cross-binding self-attention 1블록(`BindAttn`)을 주입·학습 후 h1305 FROZEN 5-bar 재측정. 결과 = **🧱 WALL=CAPACITY (3 seed 전부 일치)** — attention root-fix 반증.
+
+- **결과(seeds [7,4302,4303], pod 41792045 vast H100 80GB torch 2.4.0)**: TRAINED FALS_in 1/2/1 · **B3 CROSS-SHUFFLE 절대 안 붕괴**(FALS_shuf==FALS_in 매 seed = H_1434/1435 interchangeable-shell 모드) · **c4 ABLATE INERT**(BindAttn→항등 ablate 시 FALS 1.33/2.0/1.0 ≥ trained → lift 가 attention 블록 기여 아님) · shuffle-corpus control FALS_in=0.0(form-lift 은 진짜 학습이나 binding capacity 미설치). B2 DIST≥5 FAIL 전부 · B4 held-out 혼재.
+- **FINDING (c9 honest negative)**: 0/15 BOTH 결핍은 1블록 attention 으로 고칠 수 있는 결합 결핍이 아니라 **CAPACITY-bound**. weld-lanes · embedding-detector(H_1455) · proximity 에 이은 **4번째 독립 렌즈가 WALL=CAPACITY 로 수렴** → 7B 근거(a7b_pass).
+- **정직(a_engine_native_learning)**: torch-side = **DIRECTIONAL**. 🧱 (GREEN-only 배선) → engine-native 재측정 N/A(H_1435 가족 선례). ckpt 3종 teardown 전 PULL(a_fire_recover_complete).
+- **인프라 정직(a_break_the_wall (c) 인프라벽)**: v1 orchestrator 가 vast `created instance <ID>` stdout 파싱 실패(`instance_id=` 정규식 기대)로 빈 ID 로 trap-exit → pod 41790442 orphan → 제공자측 GONE → 회수(leak0). v2 가 파싱 수정 + ssh-retry 로 fresh pod 41792045 재렌트해 완주. (인프라 벽이지 과학 천장 아님 — 측정은 정상 통과.)
+- artifacts: `state/1449_g6_attention_injection/{h1449_attention_injection.py,g6_common.py,driver.log,run_h1449_v2.sh,h1449_attention_injection_seed*.pt}` · `state/verdicts/1449_g6_attention_injection/{H_1449.txt,H_1449_FREEZE.txt}` · `UNIVERSE/cards/H_1449_g6_attention_injection.md` · `UNIVERSE/HYPOTHESES.jsonl#H_1449`.
+
 ## 2026-06-19 — docs(paper): 🧠 anima-consciousness-substrate demiurge-style 요약 논문 신설 (10p)
 
 `anima-consciousness-substrate`(상세 50p 원본) 곁에 demiurge 하우스 스타일 10p 요약 논문 `PAPER/anima-consciousness-substrate-demiurge/` 추가. 원본은 그대로 보존(_v1 역할), 새 판은 외부 배포용 표준 외관.

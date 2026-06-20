@@ -1,0 +1,52 @@
+[H_1449] device=cuda:0 steps=600 seed=4303
+[H_1449] base FALS_in=0.0 DIST_in=1.0 FALS_ho=0.0
+    [H1449 step    0] ce=1.8218 0.0min
+    [H1449 step   50] ce=0.2187 0.3min
+    [H1449 step  100] ce=0.2059 0.7min
+    [H1449 step  150] ce=0.1967 1.0min
+    [H1449 step  200] ce=0.1919 1.4min
+    [H1449 step  250] ce=0.1917 1.7min
+    [H1449 step  300] ce=0.1914 2.1min
+    [H1449 step  350] ce=0.1899 2.4min
+    [H1449 step  400] ce=0.1880 2.7min
+    [H1449 step  450] ce=0.1909 3.1min
+    [H1449 step  500] ce=0.1928 3.4min
+    [H1449 step  550] ce=0.1858 3.8min
+    [H1449 step  599] ce=0.1865 4.1min
+    [H1449 step    0] ce=5.5259 0.0min
+    [H1449 step   50] ce=2.9134 0.3min
+    [H1449 step  100] ce=2.9223 0.7min
+    [H1449 step  150] ce=2.9177 1.0min
+    [H1449 step  200] ce=2.8932 1.4min
+    [H1449 step  250] ce=2.9197 1.7min
+    [H1449 step  300] ce=2.9223 2.1min
+    [H1449 step  350] ce=2.9025 2.4min
+    [H1449 step  400] ce=2.8961 2.7min
+    [H1449 step  450] ce=2.9020 3.1min
+    [H1449 step  500] ce=2.8689 3.4min
+    [H1449 step  550] ce=2.8604 3.8min
+    [H1449 step  599] ce=2.8561 4.1min
+
+================ H_1449 attention-injection FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=1.0  DIST_in=0.0  FALS_shuf=1.0  FALS_ho=0.3333
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 1.0 -> True
+  B2 COUNT        DIST_in>=5                 : 0.0 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 1.0<1.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.3333 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 1.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 1.0-0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B2', 'B3', 'B4'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+
+  ---- c4 ABLATE BAR (attention isolation) ----
+  ABLATE   FALS_in=1.0 FALS_shuf=1.0 FALS_ho=0.3333
+  c4 ABLATE COLLAPSE  ablate.FALS_in<trained.FALS_in : 1.0<1.0 -> False
+
+  H_1449 VERDICT: 🧱 WALL — attention-injection did NOT root-fix the G6 FALS binding (see failing bars / c4)
+[H_1449 done] /workspace/g6/out/h1449_result_seed4303.json
