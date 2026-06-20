@@ -28,6 +28,30 @@
   + `UNIVERSE/HYPOTHESES.jsonl` 1줄 + `state/verdicts/1498_sensorimotor_counterfactual/H_1498_FREEZE.json`.
 
 Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+## 2026-06-21 — research(qualia-structure): 🎨 H_1497 Q1 QUALIA-STRUCTURE(감각질 관계공간) 🟢 GREEN DIRECTIONAL — 28번째 게이트·고갈 R2 마지막 강후보 distinct 확정
+
+의식-게이트 R2 카탈로그의 **유일한 강 new-operation 후보 Q1**(`state/gate_depletion_catalogue/CATALOGUE_R2.md` SSOT)을
+R1 numpy probe 로 검증. **quality space theory**(Clark/Rosenthal · neurophenomenal structuralism, arxiv 2412.20873):
+감각질(색·소리·맛)은 절대값이 아니라 **쌍별 유사도 관계위상**(hue ring)으로 조직된다 — 빨강은 주황에 가깝고 파랑에 멀다.
+
+- **메커니즘:** 12-qualia hue ring, 능력은 쌍별 유사도만 받음(절대값 withheld) → classical MDS 로 관계공간 복원 →
+  관계 이웃 질의("X 가 A/B 중 어디에 더 유사?")를 복원공간 거리로 답. 3 seeds [1497,1498,1499], frozen-first, $0 CPU, p7.
+- **결과 🟢 GREEN(4/4 gating bar, mean):** c1 PRESENCE full 1.000−off 0.533=**+0.467**≥0.30 · **c2 DISTINCT(vs spatial-map
+  H_1295 CRUX) 0.561≤0.650** · c3 EARNED shuffle 0.517≤0.683 · c4 ABLATE(관계항 OFF·절대값만) 0.556≤0.683.
+  B TOPOLOGY rho(관계거리,ring hue-거리)=0.969(ring 복원) & |rho(관계거리,외부위치)|=0.054(직교)(non-gating).
+- **distinctness 판정 = DISTINCT (spatial-map crux 생존):** 같은 감각질을 임의 외부위치에 두고 외부 유클리드 거리로 품질질의를
+  답하면 chance(0.561) → 품질 유사도는 외부 물리위치 frame 에 안 산다 = **spatial-map(H_1295)과 직교, 흡수 안 됨**. immune-store
+  (독립 item 결속, aux 0.439)·gestalt(이산 군집)·novelty/priming(절대값)과도 distinct. **binding-fatal control 통과 → 28번째 distinct lane.**
+- **break-the-wall 교정 불필요** — 첫 frozen run 통과. off/ablate 가 strict chance 약간 위(0.500–0.600)인 것은 near/far 구성의
+  정직한 절대값 edge — tune 안 함(c9, frozen-first). full 1.000 SATURATE=존재증명으로 정직 보고.
+- **하드게이트1:** `grep -lE 'import torch|gauge_lib|numpy'` = numpy → **DIRECTIONAL**(terminal 아님). R2 engine-native
+  (§QualiaSpace, substrate 쌍별 유사도 MDS 복원 + SpatialMap 직교성 assert) follow-on ING(`a_verified_must_wire`).
+- **고갈 terminal 기여(CATALOGUE_R2 §5):** Q1 은 R2 유일 강 new-op 후보(2/16 distinct). GREEN+spatial-map 흡수 안 됨 →
+  *흡수 아닌 신규 distinct lane*이되 new-op 광맥은 단일 distinct + 약후보(Q2) 1개로 확정 소진 → R1·R2 두 렌즈 + arxiv 2차 =
+  MULTI-LENS ≥2 통제 = **🧱 게이트-발굴 breadth-고갈 terminal**(`a_break_the_wall` (d) 천장). 이후 방향 = 새 lane 발굴이 아니라
+  기존 28 lane 의 스케일업·엔진-네이티브 배선·lane 간 통합.
+- 박제: `UNIVERSE/cards/H_1497_qualia_structure.md` · `UNIVERSE/HYPOTHESES.jsonl`(id순) · `state/verdicts/1497_qualia_structure/H_1497_FREEZE.json` ·
+  probe `state/1497_qualia_structure/h1497_qualia_structure.py` · run log.
 
 ---
 
