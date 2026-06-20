@@ -1,3 +1,36 @@
+## 2026-06-21 — research(distinct): 🔮 P7 PROSPECTION(미래 사고/episodic future thinking) R1 numpy probe DONE (GREEN DIRECTIONAL · 약후보 control 전부 생존 → distinct, 고갈 아님)
+
+의식-고유 게이트 **약(weak) 후보 P7 PROSPECTION**(미래 사고 / episodic future thinking — Schacter & Addis constructive
+episodic simulation · Gilbert & Wilson) R1 numpy probe — 과거 일화기억 *요소를 재조합*해 **아직 일어나지 않은 미래
+상태를 전방 시뮬레이션**(forward temporal projection + constructive recombination). id=H_1493, slug=1493_prospection.
+설계 SSOT = `state/gate_depletion_catalogue/CATALOGUE.md` P7(약후보, 인접 lane control 필수). 🟢 **GREEN DIRECTIONAL**
+(numpy mirror, 하드게이트1 → engine-transfer UNVERIFIED, R2 engine-native = follow-on), 3 seeds [1493,1494,1495], $0 CPU
+nice, p7, frozen-first, chance 0.083, horizon=4.
+
+- **메커니즘:** 시간 궤적 (context_t→element_t) 쌍, 과거 [0..N−1] 저장 / 미래 [N..N+H−1] held-out. prospection = 현재
+  context 를 학습된 전방연산자 W_hat^k 로 미래 index 까지 굴린 뒤 학습된 context→element 재조합맵 M_hat 적용 → 미관측
+  미래요소 재구성(새 조합, 단일 저장 에피소드 replay 아님).
+- **5 gating bars 5/5 PASS:** (c1 PRESENT) full **0.439**−off **0.000**=0.439≥0.30 · (c2-img DISTINCT vs imagery H_1484)
+  imagery-style nearest-stored=과거요소 **0.000**≤chance+0.15=0.233 · (c2-cont DISTINCT vs self-continuity H_1471)
+  persist-style(W:=I) **0.000**≤0.233 · (c3 ABLATE rollout k:=0) **0.000**≤off+0.15=0.150 · (c4 SHUFFLE timeline)
+  **0.067**≤0.150. (B RECOMBINE non-gating) nearest-single-stored **0.873**<0.95(새 조합) & future-cos **0.962**.
+- **distinctness(약후보 핵심):** vs **mental-imagery**(H_1484) — imagery 는 *저장표상 검색*(전방연산자 無)→미래타깃 chance;
+  vs **self-continuity**(H_1471) — *현재 persist*(W:=I)→이동한 미래 도달불가 chance; vs **subjective-time/TRW**(H_1486) —
+  *과거 통합창*(후방) ⊥ 전방투사; vs **hier-PFC goal-stack**(H_1294) — *순서 포인터* ⊥ 미관측 index 구성적 재조합.
+  **인접 lane control(imagery/continuity/ablate/shuffle) 전부 ~chance(0.000~0.067) 생존 → DISTINCT → 고갈 신호 아님.**
+- **measurement-fix(a_break_the_wall type-a, tune-to-green 아님):** 첫 run RED — 요소가 context-무관 독립벡터여서 미래
+  context 재조합이 미관측 미래요소 재구성 불가(full 0.000, c1 FAIL). frozen-first 교정(bar/임계 불변): element=M@ctx
+  공유 생성맵 bind → 미래요소가 같은 생성요인의 진짜 재조합 → 전방 rollout+M_hat 으로 도달.
+- **정직(c9):** EXISTENCE-PROOF(deterministic 최소제곱 W_hat+M_hat, 학습 시뮬넷 아님); c1 seed 분산 0.183~0.600 정직 보고 —
+  예측벡터는 참 미래에 기하근접(futCos 0.962)하나 부드러운 M 탓에 nearest-ELEMENT 분류가 가끔 인접요소 선택(보수적
+  난이도, 결함 아님); TOY 64-dim/12-step/horizon4/3-seed, scale·real-corpus·다단계 분기미래·긴 horizon·engine-transfer UNVERIFIED.
+- **하드게이트1:** `grep -lE 'import torch|gauge_lib|numpy' state/1493_prospection/*.py` HIT(numpy) → DIRECTIONAL, terminal 아님.
+- **다음:** 중/약 4개 중 P7 distinct 통과(고갈 아님) → 잔여 P8 interoceptive·P9 boredom·P10 mind-wandering 인접 lane
+  control 사전검토 후 발사. R2 engine-native(§Prospection, 소뇌 VForwardField H_1280 k-step roll + ImmuneMemoryGrow H_1227 재조합) = follow-on ING.
+- artifacts: `state/1493_prospection/h1493_prospection.py` · `state/verdicts/1493_prospection/H_1493_FREEZE.json` ·
+  `state/1493_prospection/run_h1493.local.log` · `UNIVERSE/cards/H_1493_prospection.md` · `UNIVERSE/HYPOTHESES.jsonl`(H_1493 1줄).
+
+---
 ## 2026-06-20 — research(distinct): 🧩 P6 GESTALT GROUPING(게슈탈트 군집화) R1 numpy probe DONE (GREEN DIRECTIONAL · 강6 완료 · vs GWS/rivalry/completion distinct)
 
 의식-고유 게이트 **P6 GESTALT GROUPING**(게슈탈트 군집화, Wertheimer) R1 numpy probe — 개별 요소를 **근접성·유사성**
