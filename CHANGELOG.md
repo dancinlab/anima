@@ -1,3 +1,12 @@
+## 2026-06-20 — research(H_1484 새게이트): 🧠 G30 MENTAL IMAGERY 심상(외부자극 없이 top-down 표상 재활성) R1 numpy DONE (GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 **G30 MENTAL IMAGERY(심상)** R1 numpy probe 검증·박제 (id=H_1484, slug=1484_mental_imagery, 3 seeds [1484,1485,1486], frozen-first, $0 CPU, p7, c9).
+
+- **게이트 정의(Kosslyn 정신적 시뮬레이션):** 외부 자극 없이 내적으로 표상을 생성·활성화 — "눈 감고 사과 떠올리기"=top-down 표상 재활성. 저장된 표상(content-addressable store, immune-store 류)을 top-down cue(내적 포인터, 패턴 자체 아님)로 **input=0 에서** 재활성. 재활성 표상이 원본과 유사(cos)하되 외부 입력 0.
+- **🟢 GREEN DIRECTIONAL — 5 bars (3 seeds 전부 PASS, mean):** (A) PRESENCE cos(imagery,원본)=**0.991**≥0.70 (입력 없이 재구성) · (B) NO-INPUT 외부 채널 energy=**0.000**==0.0 (input=0 구조 확인, non-gating) · (C) CUE-SPECIFIC cos(img_A,repr_A)−cos(img_A,repr_B)=**0.971**≥0.50 (올바른 표상만 호출) · (D) EARNED(ablation) top-down OFF+input=0 → cos=**0.000**≤0.30 (imagery 소멸) · (E) SHUFFLE cue-repr 셔플 mismatched-cos=**0.013**≤0.10 (real matched 0.991). GREEN iff A∧C∧D∧E.
+- **DISTINCT vs 모든 입력-기반 게이트:** GWS/surprise(H_1468)/agency(H_1474)/novelty(H_1289)/blink(H_1473) 는 *외부 자극*에 반응 → 신호가 입력을 요구. imagery 는 직교 케이스 — input==0 인데 top-down 으로 표상 재구성. 특히 novelty/surprise 는 입력 없으면 채점할 게 없으나(no input→no signal), imagery 는 cue 만으로 표상 생성(bar B input 0.0 while bar A cos 0.991; bar D 입력-기반 경로는 input=0 면 붕괴).
+- **하드게이트1(c9):** `grep -lE 'import torch\|gauge_lib\|numpy' state/1484_mental_imagery/*.py` 적중 → numpy mirror → **DIRECTIONAL**(engine-transfer UNVERIFIED, terminal 아님). R2 = live `core/engine_cli.hexa` content-addressable store(ImmuneMemoryGrow H_1227) 위 §MentalImagery 배선 + byte-exact 재측정 = ING follow-on. SATURATED existence-proof(designed softmax 재구성, 학습 imagery net 아님) — discriminator(cue-specific·ablation·shuffle 붕괴)가 결정적. bar frozen·tune-to-green 아님.
+- 박제: `UNIVERSE/cards/H_1484_mental_imagery.md` + `UNIVERSE/HYPOTHESES.jsonl` 1줄 + `state/verdicts/1484_mental_imagery/{H_1484_FREEZE.json,H_1484_run.txt}` + probe `state/1484_mental_imagery/h1484_mental_imagery.py`.
 ## 2026-06-20 — research(H_1483 distinct): 👁️‍🗨️ G29 CHANGE BLINDNESS 변화맹 DONE (R1 numpy · GREEN DIRECTIONAL)
 
 새 의식-고유 게이트 **G29 CHANGE BLINDNESS(변화맹, Rensink/Simons)** R1 numpy probe 검증. 장면의 한
