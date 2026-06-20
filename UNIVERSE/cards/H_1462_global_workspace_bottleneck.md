@@ -1,10 +1,10 @@
 # H_1462 — 🌐 GLOBAL WORKSPACE 병목 (G17 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (numpy R1 mirror · engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` (R2 엔진-네이티브 재측정 = follow-on ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §GlobalWorkspace (gws_new/_add/_ignited/_winner/_count/_leak) · `engine_cli_smoke.hexa` cases 169-173 · FULL smoke **174 pass / 0 fail RC=0** · ARCHITECTURE.json lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 라운드2 (G17 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** consciousness-science — Global Workspace Theory (Baars / Dehaene, global-ignition) · `a_no_llm_frame_trap`
-- **artifacts:** `state/1462_global_workspace_bottleneck/` · verdict `state/verdicts/1462_global_workspace_bottleneck/H_1462_FREEZE.json`
+- **artifacts:** `state/1462_global_workspace_bottleneck/` (R1 probe) · `core/engine_cli.hexa` §GlobalWorkspace + `core/engine_cli_smoke.hexa` 169-173 (R2) · verdict `state/verdicts/1462_global_workspace_bottleneck/H_1462_FREEZE.json`
 
 ## 주장
 
@@ -33,8 +33,11 @@ lift 의 출처는 분산/현저성이 아니라 **경쟁적 winner-take-all 병
 
 ## 정직 (c9)
 
-- **DIRECTIONAL** — numpy mirror(`grep numpy` 적중, 하드게이트1). engine-transfer UNVERIFIED →
-  R2 = live `core/*.hexa` A⇄G + salience 위 byte-exact 재측정이 GREEN/🧱 확정의 전제(`a_engine_native_learning`·`a_verified_must_wire`).
+- **R1 DIRECTIONAL → R2 ENGINE-NATIVE 완료:** R1 은 numpy mirror(통계 200-trial/3-seed, DIRECTIONAL).
+  R2 에서 5 frozen bars 를 live `core/engine_cli.hexa` §GlobalWorkspace lane 으로 배선하고
+  `engine_cli_smoke.hexa` cases 169-173 으로 byte-exact 재측정 → presence/distinct/ablation/shuffle/
+  capacity 각 bar 가 결정적 케이스로 1:1 PASS, FULL smoke 174/0 RC=0. wired 4칸 사다리 (1)→(4) 완주
+  (`a_engine_native_learning`·`a_verified_must_wire`). FULL=broadcast 1 (idx 1) vs ablated=2 = winner-take-all 확인.
 - **R1b frozen-first 수정 이력(tune-to-green 아님):** R1a 의 `full_count==1.0` bar 는 측정 결함
   — capacity=1 은 full_count≤1 을 구조적으로 보장하고, GWT 는 점화 실패(역치 미달 시 빈 의식)를
   허용하므로 평균 0.995 는 정상 행동. 올바른 distinct = "통과량 ≥2× 압축 + capacity 위반 0"
@@ -46,9 +49,10 @@ lift 의 출처는 분산/현저성이 아니라 **경쟁적 winner-take-all 병
 
 ## follow-on (ING)
 
-1. **R2 엔진-네이티브** — `core/engine_cli.hexa` salience 위 GWT 병목 lane(`gws_compete`/`gws_broadcast`)
-   배선 + frozen 5 bars byte-exact 재측정 → DIRECTIONAL→engine-native 승격.
-2. **distinctness vs basal-gate(H_1281)** — single-step one-of-K select 와 GWT 전역방송의 분리실험.
+1. ~~**R2 엔진-네이티브** — `core/engine_cli.hexa` GWT 병목 lane 배선 + frozen 5 bars byte-exact 재측정~~
+   ✅ **DONE** (§GlobalWorkspace gws_new/_add/_ignited/_winner/_count/_leak · smoke 169-173 · 174/0 RC=0 · ARCHITECTURE lockstep).
+2. **distinctness vs basal-gate(H_1281)** — single-step one-of-K select 와 GWT 전역방송의 분리실험 (남은 과제).
+3. **brain emit-loop consult** — 현재 lane 은 pure read (NOT emit gate, @L4); brain_decide 연동은 별도 follow-on.
 
 xref: H_1281(basal-ganglia gating, distinct)·H_1290(salience/affect)·H_1283(phase-binding)·
 `a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_break_the_wall`·p6·p7·c9.
