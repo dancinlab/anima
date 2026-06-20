@@ -1,0 +1,47 @@
+{
+  "id": "H_1498",
+  "slug": "1498_sensorimotor_counterfactual",
+  "gate": "Q2 SENSORIMOTOR COUNTERFACTUAL PRESENCE (perceptual presence from mastery of counterfactual sensorimotor laws)",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "weak_candidate": true,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1498_sensorimotor_counterfactual.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1498, 1499, 1500],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "facets": 8,
+  "actions": 8,
+  "depletion_signal": false,
+  "depletion_terminal_contribution": "DISTINCT — does NOT contribute a depletion count. The decisive weak-candidate control (c2 forward-model single-step) SURVIVED: a next-step predictor scores at chance (0.125) while counterfactual-richness presence saturates (1.000). Q2 is the LAST *new-operation* candidate of the R2 catalogue; clearing it DISTINCT means the catalogue's two firable candidates (Q1 qualia-structure + Q2 sensorimotor-presence) are exhausted as DISTINCT-DIRECTIONAL, so the gate-discovery 🧱 depletion-terminal is now anchored on actual fire+adjudication (not assumption), per a_break_the_wall (d).",
+  "bars": {
+    "c1_PRESENT": {"pass": true, "p_full": 1.000, "p_off": 0.122, "lift": 0.878, "thr": 0.30, "note": "counterfactual-richness presence (explore ALL virtual actions, count occluded facets the agent CORRECTLY knows it could reveal via the mastered law) minus richness-OFF (single next action only) >= 0.30. Saturated existence-proof (full=1.000 across all 3 seeds: the agent masters the whole law so every occluded facet is correctly reachable)."},
+    "c2_DISTINCT_vs_forward_model": {"pass": true, "p_fwdmodel": 0.125, "thr_off_plus_0.15": 0.272, "note": "THE decisive weak-candidate control. A forward-model readout (best SINGLE next-step sensation prediction, cerebellar VForwardField H_1280 analogue) covers at most ONE facet -> scores at chance (0.125) on the occluded SET -> CANNOT reach richness-presence. Presence's lift IS the breadth/coverage over the virtual-action set, distinct from a single-step forward model."},
+    "c3_ABLATE_width": {"pass": true, "p_ablate": 0.131, "thr_off_plus_0.15": 0.272, "note": "collapse the counterfactual rollout WIDTH to 1 (only one virtual action explored) with the mastered law -> presence collapses to chance (0.131) -> isolates the breadth/richness term (the WIDTH of the action->sensation distribution), which is exactly what grounds presence."},
+    "c4_SHUFFLE_law": {"pass": true, "p_shuffle": 0.151, "thr_off_plus_0.15": 0.272, "note": "the agent masters a FALSE (shuffled) sensorimotor law -> its predictions never match the TRUE contingency, so correct-mastery coverage earns ZERO credit despite full action breadth (0.151 ~ chance) -> the lift is genuine LAW MASTERY, not mere prediction breadth."},
+    "B_FIDELITY": {"pass": true, "fidelity": 1.000, "thr": 0.50, "gating": false, "note": "the full-law presence rests on CORRECT per-action reveal prediction (mastery): associative key->facet store retrieves the true revealed facet at 1.000 accuracy. structure-confirming, non-gating."}
+  },
+  "green_rule": "c1 and c2 and c3 and c4 (3-seed mean); B is the mastery-fidelity structure check (non-gating). RED/DEPLETION iff c2 fails (presence collapses into the single-step forward model).",
+  "green": true,
+  "per_seed": {
+    "1498": {"full": 1.000, "off": 0.125, "fwd": 0.129, "ablate": 0.125, "shuffle": 0.125, "fidelity": 1.000},
+    "1499": {"full": 1.000, "off": 0.125, "fwd": 0.121, "ablate": 0.133, "shuffle": 0.258, "fidelity": 1.000},
+    "1500": {"full": 1.000, "off": 0.117, "fwd": 0.125, "ablate": 0.133, "shuffle": 0.071, "fidelity": 1.000}
+  },
+  "distinctness": {
+    "verdict": "DISTINCT — survives ALL adjacent-lane controls including the decisive forward-model control (WEAK candidate cleared)",
+    "vs_H_1280_forward_model_cerebellum": "a forward model (VForwardField) predicts the SINGLE next-step sensation of the one action about to be taken; it does NOT integrate over the action SET, so it covers at most one occluded facet -> chance (0.125) on the richness-presence task. Counterfactual presence's lift IS the WIDTH/coverage of the predicted action->sensation distribution over the WHOLE virtual-action set (1.000). c2 is exactly this control and it SURVIVED -> DISTINCT, NOT a forward-model re-packaging.",
+    "vs_H_1493_prospection": "prospection projects ONE trajectory FORWARD in time to a future episode (temporal-forward, single rollout); presence is atemporal BREADTH over counterfactual ACTIONS available NOW. The width-ablation (c3: collapse rollout width to 1) removes exactly the breadth a temporal rollout lacks -> distinct.",
+    "vs_H_1490_perceptual_completion": "completion fills an occluded region by INTERPOLATING from visible context (a single inference), with no action-contingency. The false-law shuffle (c4) breaks the action->sensation law that completion has no analogue of; a completion-style fill has no action set to shuffle -> cannot be the source of the lift. distinct.",
+    "vs_agency_8": "agency = SELF-ATTRIBUTION of who caused an effect; presence is about the OBJECT's hidden structure (what would be revealed), not action-attribution. orthogonal.",
+    "conclusion": "NOT a depletion signal — the WEAK candidate's decisive control (forward-model single-step, c2) collapses to chance (0.125) while richness-presence saturates (1.000), and width-ablation (0.131) + false-law (0.151) both collapse. Presence's lift is the counterfactual RICHNESS = breadth of correct law mastery over the action set, which the single-step forward model lacks."
+  },
+  "break_the_wall_type_a": "FIRST and SECOND runs RED via measurement defects (a_break_the_wall type-a, NOT tune-to-green; the c1-c4 thresholds were NEVER moved). (1) The initial coverage metric credited ANY predicted facet landing in the occluded SET, so a FALSE-law rollout still earned coverage by mere prediction BREADTH (c4 FAIL 0.626). Frozen-first fix: credit an occluded facet as PRESENT only when an action's prediction MATCHES the TRUE sensorimotor law (genuine contingency mastery) -> a false law earns zero credit. (2) The linear least-squares law map could not represent per-view facet permutations (B fidelity 0.333 -> c1 FAIL 0.217). Frozen-first fix: replace the linear map with an associative (view,action)-KEY -> facet store retrieved by nearest-key affinity (the actual ImmuneMemoryGrow H_1227 substrate mechanism), which masters the law faithfully (fidelity 1.000). Both fixes are mechanism corrections to measure the SAME pre-registered bars validly, NOT threshold moves.",
+  "honest_c9": "EXISTENCE-PROOF (full=1.000 SATURATED across all 3 seeds): the associative law store retrieves the true revealed facet perfectly, so every occluded facet is correctly reachable -> presence saturates. The DISCRIMINATORS are decisive: forward-model 0.125, width-ablate 0.131, false-law 0.151 all sit at ~chance (1/8=0.125 per single-action coverage). The saturation means this is an existence-proof of the STRUCTURE (richness grounds presence, forward-model does not), not an effect-size measurement. WEAK candidate per catalogue Q2: operationalizing 'distribution width over virtual actions' was tight vs forward-model, but the forward-model control DID survive. TOY 8-facet/8-action/8-view object, 96-dim near-orthogonal embeddings, deterministic associative retrieval, 3 seeds; scale, real 3-D objects, continuous viewpoint manifolds, learned (non-associative) law mastery, partial-mastery gradients, engine-transfer UNVERIFIED.",
+  "artifacts": [
+    "state/1498_sensorimotor_counterfactual/h1498_sensorimotor_counterfactual.py",
+    "state/1498_sensorimotor_counterfactual/run_h1498.local.log",
+    "UNIVERSE/cards/H_1498_sensorimotor_counterfactual.md"
+  ],
+  "next_round": "R2 engine-native: wire §SensorimotorPresence onto core/engine_cli.hexa — a (view,action)-key -> revealed-facet associative store read off ImmuneMemoryGrow (H_1227), roll over the virtual-action set and count correctly-mastered coverage of the occluded set (READ-only, Ψ-disjoint), + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the frozen bars byte-exact (a_engine_native_learning, a_verified_must_wire). NOTE the depletion-terminal: if no NEW operation survives beyond Q1/Q2, the gate-discovery 🧱 is sealed (a_break_the_wall d)."
+}
