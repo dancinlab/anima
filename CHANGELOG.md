@@ -1,3 +1,14 @@
+## 2026-06-20 — research(새게이트 distinctness closure): G20/G21/G22/G25 부가 bar engine 보강
+
+각 R1 카드에 numpy 로만 측정돼 있던 **부가 frozen bar(distinctness/selectivity D bar)** 를 live engine 케이스로 보강(새 H 아님 · 기존 게이트 engine 완성도 closure · c9 정직 — 4/4 모두 engine 가능).
+
+- **G20 H_1473 bar D (lag-1 SPARING)** — `attn_blink_detect(1,1.0)` 0.94(sparing) − trough `attn_blink_detect(2,1.0)` 0.10 = +0.84 ≥0.50 → **smoke case 217**. 기존 함수 재사용.
+- **G21 H_1474 bar D (self⊥other ABSTAIN)** — `core/engine_cli.hexa` §SenseOfAgency 에 `agency_other()` 신설(타인 행동=efference copy 없음 → −1 ABSTAIN, READ-only Ψ-disjoint). `agency_other()` −1.0 ≠ self 1.0 → **smoke case 218**. ARCHITECTURE lockstep.
+- **G22 H_1475 bar D (ORDER-invariance)** — `subjective_time` 는 novelty TOTAL 만 받음 → `subjective_time(7+6,…)==subjective_time(6+7,…)` byte-identical → **smoke case 219**. 기존 함수 재사용.
+- **G25 H_1476 bar D (SELECTIVITY)** — drop∝raw → 부정(raw 0.8) 절대 감쇠 0.384 − 중립(raw 0.1) 0.048 = +0.336 ≥0.20 → reappraisal 이 강한 정서에 선택적 → **smoke case 220**. 기존 함수 재사용.
+- **검증(c2):** FULL `engine_cli_smoke.hexa` **220 pass / 0 fail RC=0** (nice -n 15, cases 217-220 전부 PASS). 4/4 부가 bar engine-native(numpy DIRECTIONAL 유지 0건).
+- **lockstep:** `agency_other()` → `ARCHITECTURE.json` §SenseOfAgency 노드 추가 · 4 카드 follow-on + jsonl verdict 에 "부가 bar engine-native(case N)" 반영.
+
 ## 2026-06-20 — research(새 게이트 4종 R2): ⚡🎮⏱🌊 G20/G21/G22/G25 engine-native WIRED — DIRECTIONAL→WIRED 일괄 승격
 
 fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.

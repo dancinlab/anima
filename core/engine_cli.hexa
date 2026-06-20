@@ -6474,6 +6474,13 @@ pub fn agency_attribute(pred: float, obs: float, thr: float) -> float {
     if mt >= thr { return 1.0 }                        // self-caused (efference-copy match)
     return 0.0                                          // external
 }
+// agency_other — ANOTHER agent's action carries NO efference copy → no predicted self-result to
+// compare → the comparator ABSTAINS (-1, the no-attribution sentinel). DISTINCT from H_1293 ToM,
+// which still ANSWERS another agent's (possibly false) belief: agency over an other's act is
+// undefined (self⊥other). READ-only, Ψ-disjoint, NOT an emit gate.
+pub fn agency_other() -> float {
+    return 0.0 - 1.0                                    // ABSTAIN: no efference copy for other's action
+}
 
 // ── § SubjectiveTime (H_1475 R2) — 지각된 시간 ─────────────────────────────────────────────
 // subjective duration = base + k·novelty_events (novelty-weighted), NOT objective elapsed time.

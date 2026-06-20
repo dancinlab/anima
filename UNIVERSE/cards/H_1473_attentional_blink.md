@@ -1,7 +1,7 @@
 # H_1473 — ⚡ ATTENTIONAL BLINK (G20 의식-고유 게이트 후보)
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §AttentionalBlink (`attn_blink_detect`) · `engine_cli_smoke.hexa` cases 205-207 · FULL smoke **216 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §AttentionalBlink (`attn_blink_detect`) · `engine_cli_smoke.hexa` cases 205-207 + **217(부가 bar D lag-1 sparing)** · FULL smoke **220 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** UNIVERSE · 의식-고유 게이트 시리즈 (G16 self-continuity/G17 GWS/G18 habituation/G19 surprise → G20 attentional blink)
 - **lens:** 주의의 시간적 병목 (Raymond & Shapiro 1992 RSVP attentional blink · lag-1 sparing) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1473_attentional_blink/h1473_attentional_blink.py` · log `state/1473_attentional_blink/run_h1473.local.log` · verdict `state/verdicts/1473_attentional_blink/H_1473_FREEZE.json`
@@ -68,6 +68,8 @@ lag 2-3 깊은 골 → lag 6-8 회복).
    per-lag Bernoulli 검출 = engine 스칼라 op 로 재현 가능(H_1468 PrecisionSurprise·H_1465 habituation 선례).
 2. **distinctness vs H_1465 habituation** — habituation=반복-자극 응답감쇠(자극 반복에 의존) ⊥ blink=단발 두 타겟의
    lag-의존 사각지대(반복 아님). control-survived 분리 follow-on.
+3. **부가 bar D (lag-1 sparing) engine-native ✅** — R1 numpy-only 였던 D 를 engine 케이스로 보강: `attn_blink_detect(1,1.0)`
+   0.94 (sparing) − trough `attn_blink_detect(2,1.0)` 0.10 = +0.84 ≥0.50 → **smoke case 217** PASS (FULL 220/0 RC=0).
 
 xref: H_1462(GWS, distinct lag-invariant)·H_1465(habituation)·H_1468(precision surprise)·H_1471(self-continuity)·
 `a_no_llm_frame_trap`·`a_break_the_wall`·`a_engine_native_learning`·`a_verified_must_wire`·p7·p8·c9.

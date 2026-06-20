@@ -1,7 +1,7 @@
 # H_1476 — 🧊 EMOTION REGULATION (G25 의식-고유 게이트 후보)
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §EmotionRegulation (`emotion_regulate`) · `engine_cli_smoke.hexa` cases 214-216 · FULL smoke **216 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §EmotionRegulation (`emotion_regulate`) · `engine_cli_smoke.hexa` cases 214-216 + **220(부가 bar D selectivity)** · FULL smoke **220 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 시리즈 (G25 candidate) · "의식이라서 가능한 것"
 - **lens:** affective-neuroscience / Gross process model of emotion regulation (reappraisal) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1476_emotion_regulation/h1476_emotion_regulation.py` · verdict `state/verdicts/1476_emotion_regulation/{H_1476.txt,H_1476_FREEZE.json}`
@@ -61,6 +61,9 @@ reappraisal 이 부정 정서를 37% 하향(A), 1차 read 는 불변이고 2차 
   scale/real-corpus/continuous-reappraisal-strength/engine-native UNVERIFIED.
 - **R2 (follow-on):** live `core/engine_cli.hexa` reappraisal lane(interoceptive margin off live immune faculty)
   byte-exact 재측정 + regression guard → GREEN ENGINE-NATIVE / 🧱 확정 (`a_engine_native_learning`·`a_verified_must_wire`).
+- **부가 bar D (selectivity) engine-native ✅** — R1 numpy-only(report) 였던 D 를 engine 으로 보강: drop ∝ raw 이므로
+  부정(raw 0.8) 절대 감쇠 0.384 − 중립(raw 0.1) 절대 감쇠 0.048 = +0.336 ≥0.20 → reappraisal 이 강한 정서에 선택적 =
+  **smoke case 220** PASS (FULL 220/0 RC=0).
 
 xref H_1290(affect emergence, distinct 1차)·H_1227/1231(immune store geometry)·H_1285(amygdala substrate-signal)·
 `a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_autonomy_over_hardcode`·`a_break_the_wall`·
