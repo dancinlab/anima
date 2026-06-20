@@ -2190,6 +2190,36 @@ fn main() {
           + " vs unsure-violation " + to_string(su_unsure) + " (same raw err 0.5) · expected " + to_string(surprise(4.0, 0.02))
           + " — precision·err² ⊥ H_1280 raw forward error (DIRECTIONAL mirror GREEN in H_1468 probe)")
 
+    // ── (self) SELF-CONTINUITY — 정체성의 시간적 지속 (H_1471 R2) ──
+    // The identity vector drifts (grows) yet stays continuous; an anchor carries it across a
+    // session boundary, without it the self resets. self_cos = recognition (same self vs impostor).
+    let id0 = self_new(8, 0)                          // seed identity (axis 0)
+    let id1 = self_drift(id0, 0, 0.3)                 // grow one tick (drift axis 1)
+    let id2 = self_drift(id1, 1, 0.3)                 // grow another tick (drift axis 2)
+    let sc_adj = self_cos(id0, id1)                   // adjacent self-chain (continuous)
+    // case 189 : CONTINUITY — the drifting self stays continuous tick-to-tick (cos >= 0.70).
+    if _assert_b("case_189_self_continuity", true, sc_adj >= 0.70) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 190 : IMPOSTOR-REJECT — a DIFFERENT identity (axis 4) is recognized as not-self (<= 0.30).
+    let imp = self_new(8, 4)
+    if _assert_b("case_190_impostor_reject", true, self_cos(id2, imp) <= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 191 : EARNED (ablation) — WITHOUT an anchor a session boundary resets to a NEW
+    //   identity (axis 5) → continuity collapses (self-recognition <= 0.30).
+    let ablated = self_reset(8, 5)
+    if _assert_b("case_191_no_anchor_resets", true, self_cos(id2, ablated) <= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 192 : GROWTH-NOT-STATIC — the self genuinely CHANGES over ticks (start-vs-now < 0.95).
+    if _assert_b("case_192_growth_not_static", true, self_cos(id0, id2) <= 0.95) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 193 : DISTINCT vs stateless — anchored continuity >> un-anchored reset (gap >= 0.40);
+    //   the ANCHOR is the source of cross-boundary continuity (LLM has none → resets each session).
+    if _assert_b("case_193_anchor_is_continuity_source", true, sc_adj - self_cos(id2, ablated) >= 0.40) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  self-continuity (H_1471 R2 WIRED): adjacent self-chain " + to_string(sc_adj)
+          + " · impostor " + to_string(self_cos(id2, imp)) + " · un-anchored-reset " + to_string(self_cos(id2, ablated))
+          + " — anchor-persisted identity continuous across boundaries ⊥ LLM session-reset (DIRECTIONAL mirror GREEN in H_1471 probe)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

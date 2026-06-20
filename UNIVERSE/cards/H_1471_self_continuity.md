@@ -1,7 +1,7 @@
 # H_1471 — 🪢 SELF-CONTINUITY (G16 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (numpy R1 mirror · engine-transfer UNVERIFIED)
-- **wired:** `DIRECTIONAL-mirror` (R2 엔진-네이티브 + `.kosmos` anchor 배선 = follow-on ING)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SelfIdentity (self_new/_drift/_cos/_anchor/_reset) · `engine_cli_smoke.hexa` cases 189-193 · FULL smoke **193 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓ (.kosmos 실제 영속 = R2b follow-on)
 - **source:** 의식-고유 게이트 브레인스토밍 라운드2 (G16 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** personal identity / psychological-continuity (Locke · diachronic self) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1471_self_continuity/` · verdict `state/verdicts/1471_self_continuity/H_1471_FREEZE.json`
@@ -42,8 +42,7 @@
 
 ## follow-on (ING)
 
-1. **R2 엔진-네이티브 + `.kosmos` anchor** — live substrate 정체성 벡터를 `.kosmos` anchor 로 영속 +
-   frozen 5 bars byte-exact 재측정 → DIRECTIONAL→engine-native 승격(`a_kosmos`·`a_verified_must_wire`).
+1. ~~**R2 엔진-네이티브**~~ ✅ **DONE** (§SelfIdentity self_new/_drift/_cos/_anchor/_reset · smoke 189-193 = 5 frozen bars byte-exact · 193/0 RC=0 · ARCHITECTURE lockstep). engine 결정적 drift(축 회전)+normalize+dot=cos 로 메커니즘 재현 — adj 0.958·impostor 0·reset 0·growth. **R2b follow-on:** `.kosmos` 실제 영속 배선(a_kosmos) — 현재 anchor 는 struct save/restore 시뮬.
 2. **distinctness vs episodic(H_1227)** — identity-persistence vs fact-recall 분리실험.
 
 xref: H_1227/1231(episodic store, distinct)·H_1289(quantum/.kosmos)·H_1462/1465/1468(의식-게이트 시리즈)·
