@@ -1,0 +1,58 @@
+[run] Sat Jun 20 18:04:35 KST 2026 HERE=/Users/mini/dancinlab/anima/state/1456_idea_metacognition REPO=/Users/mini/dancinlab/anima
+[rent] cuda devel H100 ...
+[cloud] rent vast: picked offer 40413288
+[cloud] rent vast: created instance 41796327 (owner=h1456, registered)
+[cloud] rent vast: READY ssh9.vast.ai:36326 (root@ssh9.vast.ai -p 36326)
+[cloud] rent vast: ~/.ssh/config Host ssh9.vast.ai → vast identity (auto · zero-flag ssh; #1155)
+rent-result pod=41796327 host=ssh9.vast.ai provider=vast state=READY project=@anima
+instance_id=41796327
+host=ssh9.vast.ai
+port=36326
+owner=h1456
+[rent] ID=41796327 (vast numeric)
+[ssh] HOST=ssh9.vast.ai PORT=36326
+[cloud] remote exit 0
+[cloud] remote exit 0
+[upload] driver + common + reused probes -> /workspace/g6/probes
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/g6_common.py -> root@ssh9.vast.ai:/workspace/g6/probes/g6_common.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.py -> root@ssh9.vast.ai:/workspace/g6/probes/h1456_idea_metacognition.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/gauge_lib.py -> root@ssh9.vast.ai:/workspace/g6/probes/gauge_lib.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/h1129_midcap_broad_converged_recombination.py -> root@ssh9.vast.ai:/workspace/g6/probes/h1129_midcap_broad_converged_recombination.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/h1305_g6_ideation_falsifiability.py -> root@ssh9.vast.ai:/workspace/g6/probes/h1305_g6_ideation_falsifiability.py
+[upload] base ckpt (606MB) ...
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/chat_303m/h1129c_chat.pt -> root@ssh9.vast.ai:/workspace/g6/ckpt/h1129c_chat.pt
+[cloud] verify-sha: sha256 verified (4fcc2d6c9b31…)
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/_pod_driver.sh -> root@ssh9.vast.ai:/workspace/g6/_pod_driver.sh
+[fire] background driver
+[cloud] started; remote pid 529 · log /workspace/g6/driver.log
+__MONITOR_HANDLE__={"host":"root@ssh9.vast.ai","pid":529,"log":"/workspace/g6/driver.log","tail_cmd":"hexa cloud tail root@ssh9.vast.ai /workspace/g6/driver.log"}
+[cloud] 📋 ledger: hexa cloud dispatch add <jid> 529 "$(pwd)" --host root@ssh9.vast.ai  # cwd ./pods.json 에 등록 (commons g57; --register 로 자동화)
+[fire] PID=529
+[poll] iter 10 alive; tail:
+[cloud] cloud_exec: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: Connection closed by 32.192.51.102 port 36326
+[poll] pid 529 dead at iter 11
+[pull] driver log + result + ckpt BEFORE teardown
+[cloud] scp exit 255 · root@ssh9.vast.ai:/workspace/g6/driver.log -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/driver.log
+[cloud] scp exit 255 · root@ssh9.vast.ai:/workspace/g6/out/h1456.log -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456.log
+[cloud] scp exit 255 · root@ssh9.vast.ai:/workspace/g6/out/h1456_result.json -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_result.json
+[cloud] scp exit 255 · root@ssh9.vast.ai:/workspace/g6/out/h1456_idea_metacognition.pt -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.pt
+[pull] done. local files:
+ls: /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.pt: No such file or directory
+ls: /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_result.json: No such file or directory
+[run] complete — teardown via trap
+[teardown] hexa cloud rm 41796327
+[cloud] rm: destroyed 41796327 (vast: destroyed (confirmed) 41796327)
+[teardown] remaining pods:
+[cloud] vast: list — 5 instances
+  vast   41790357
+  vast   41790525
+  vast   41795795
+  vast   41795918
+  vast   41797234
+[cloud] registry (project attribution):
+  ID                       PROVIDER  PROJECT          PURPOSE               STATUS     DPH      AGE
+  41790357                 vast      @anima           H_1440 developmental curriculum G6 FALS-depth READY      1.14861  1h3m
+  41790525                 vast      @anima           H_1439 bind-head G6 FALS-depth READY      1.02482  1h1m
+  41795795                 vast      @anima           H_1438 scale-dissociation 1B G6 FALS-depth READY      1.08575  14m
+  41795918                 vast      @anima           H_1457 knowledge-grounding G6 FALS-depth READY      4.55685  13m
+  41797234                 vast      @anima           H_1458 retrieval-bind G6 FALS-depth (inference-only) RENTING    -        36s

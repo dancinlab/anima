@@ -1,0 +1,41 @@
+[adopt] Sat Jun 20 18:19:35 KST 2026 ID=41797592 HOST=ssh9.vast.ai:37592
+[wait] ssh-ready ...
+[wait] ssh up at iter 1
+[cloud] remote exit 0
+[cloud] remote exit 0
+[upload] probes + driver
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/g6_common.py -> root@ssh9.vast.ai:/workspace/g6/probes/g6_common.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.py -> root@ssh9.vast.ai:/workspace/g6/probes/h1456_idea_metacognition.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/gauge_lib.py -> root@ssh9.vast.ai:/workspace/g6/probes/gauge_lib.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/h1129_midcap_broad_converged_recombination.py -> root@ssh9.vast.ai:/workspace/g6/probes/h1129_midcap_broad_converged_recombination.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/h1305_g6_ideation_falsifiability.py -> root@ssh9.vast.ai:/workspace/g6/probes/h1305_g6_ideation_falsifiability.py
+[upload] base ckpt (606MB) ...
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/chat_303m/h1129c_chat.pt -> root@ssh9.vast.ai:/workspace/g6/ckpt/h1129c_chat.pt
+[cloud] verify-sha: sha256 verified (4fcc2d6c9b31…)
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/_pod_driver.sh -> root@ssh9.vast.ai:/workspace/g6/_pod_driver.sh
+[fire] background driver
+[cloud] started; remote pid 613 · log /workspace/g6/driver.log
+__MONITOR_HANDLE__={"host":"root@ssh9.vast.ai","pid":613,"log":"/workspace/g6/driver.log","tail_cmd":"hexa cloud tail root@ssh9.vast.ai /workspace/g6/driver.log"}
+[cloud] 📋 ledger: hexa cloud dispatch add <jid> 613 "$(pwd)" --host root@ssh9.vast.ai  # cwd ./pods.json 에 등록 (commons g57; --register 로 자동화)
+[fire] PID=613
+[poll] iter 10 (res=ABSENT); tail:
+    [H1456 step   50] ce=2.9515 0.4min
+    [H1456 step  100] ce=2.9102 0.8min
+    [H1456 step  150] ce=2.9378 1.2min
+[cloud] remote exit 0
+[poll] result PRESENT iter 15
+[pull] retry-hardened
+[cloud] scp exit 0 · verified 2417 bytes · root@ssh9.vast.ai:/workspace/g6/driver.log -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/driver.log
+[pull] OK /workspace/g6/driver.log (try 1)
+[cloud] scp exit 0 · verified 2268 bytes · root@ssh9.vast.ai:/workspace/g6/out/h1456.log -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456.log
+[pull] OK /workspace/g6/out/h1456.log (try 1)
+[cloud] scp exit 0 · verified 12965 bytes · root@ssh9.vast.ai:/workspace/g6/out/h1456_result.json -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_result.json
+[pull] OK /workspace/g6/out/h1456_result.json (try 1)
+[pull] OK /workspace/g6/out/h1456_idea_metacognition.pt (try 1)
+[pull] RES_OK=1 CKPT_OK=1
+-rw-r--r--  1 mini  staff  1212497618 Jun 20 18:33 /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.pt
+-rw-r--r--  1 mini  staff       12965 Jun 20 18:30 /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_result.json
+[teardown] result recovered — rm 41797592
+[cloud] rm: destroyed 41797592 (vast: destroyed (confirmed) 41797592)
+[teardown] 41797592 gone
+[adopt] complete
