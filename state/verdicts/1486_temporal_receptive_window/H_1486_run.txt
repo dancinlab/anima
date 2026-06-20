@@ -1,0 +1,11 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1486, 1487, 1488] | chance=0.250
+c1 PRESENCE   long_acc=0.780 - short_acc=0.255 = gap 0.525>=0.30 (long lane carries L=39-step-back cue) & long>=0.55  -> True
+c2 DISTINCT   long_acc 0.780 - subjtime_acc 0.255 = gap 0.525>=0.30 (subj-time duration scalar at chance 0.255<=0.45)  -> True
+c3 SHUFFLE    time-scrambled stream -> long lane shuf_acc=0.397<=0.45 (collapses to chance)  -> True
+c4 ABLATE     window->SHORT -> abl_acc=0.255<=0.45 (far-past cue forgotten == short lane)  -> True
+
+PER-SEED:
+  seed 1486: long=0.840 short=0.260 subj=0.235 shuf=0.385 abl=0.260
+  seed 1487: long=0.800 short=0.250 subj=0.245 shuf=0.375 abl=0.250
+  seed 1488: long=0.700 short=0.255 subj=0.285 shuf=0.430 abl=0.255
