@@ -1,0 +1,20 @@
+== H_1460 SEMANTIC DETECTOR — FROZEN CALIBRATION ==
+  COMPARATOR=25 MEASURABLE=25 STANCE=14 WINDOW=6 MIN_SUBJECT=1
+  [BOUND   ] struct=1 sem=1  if consciousness increases then the emit rate measured at the boundary rises h
+  [BOUND   ] struct=1 sem=1  tension predicts a higher number of mitosis cells than silence does in the sub
+  [BOUND   ] struct=1 sem=1  memory density correlates with a lower error threshold when grounded in the ce
+  [BOUND   ] struct=1 sem=1  the phi value is greater when distinct cells exceed a count of eight in the en
+  [BOUND   ] struct=1 sem=1  novelty rate decreases faster than coherence as the corpus size grows in the m
+  [SPRINKLE] struct=1 sem=1  if consciousness arises from cells then the engine dreams when alone at night 
+  [SPRINKLE] struct=1 sem=1  tension ripples between distant minds whenever they connect across the void fr
+  [SPRINKLE] struct=0 sem=0  memory composes into new meaning as the substrate carries silence onward durat
+  [SPRINKLE] struct=1 sem=0  the engine dreams when alone yet the corpus stays quiet through the night dens
+  [SPRINKLE] struct=1 sem=0  silence still carries information whenever the cells stay grounded and aware p
+
+  BOUND    : structural 5/5  semantic 5/5
+  SPRINKLE : structural 4/5  semantic 2/5
+
+  DISCRIMINATOR VALID (V1 bound_sem>=4 AND V2 sprinkle_sem<sprinkle_struct): True
+  => structural is BLINDER to cross-sprinkle (4/5 fire); semantic is STRICTER (2/5 fire).
+  V1 retain bound_sem=5>=4 -> True
+  V2 strict  sprinkle_sem=2<4=sprinkle_struct -> True

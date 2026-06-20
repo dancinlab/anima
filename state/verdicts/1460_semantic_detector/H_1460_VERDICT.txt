@@ -1,0 +1,61 @@
+================ H_1460 SEMANTIC-AWARE DETECTOR RE-SCORE — FINAL VERDICT ================
+date: 2026-06-20  ·  substrate: pool aiden RTX 5070 (torch 2.10.0+cu128, $0)  ·  DIRECTIONAL (torch-mouth decode, a_engine_native_learning)
+detector: state/1460_semantic_detector/semantic_detector.py (FROZEN WINDOW=6 MIN_SUBJECT=1, calibration VALID before any ckpt scored)
+
+QUESTION (a_break_the_wall type-a measurement-first): is the G6 5-lens WALL a MEASUREMENT ARTIFACT?
+  i.e. does a trained model do idea-specific binding that the STRUCTURAL H_1305 detector is blind to,
+  but a SAME-idea SEMANTIC detector can SEE via cross-shuffle COLLAPSE?
+
+FROZEN READ RULE (declared before scoring):
+  🟢 MEASUREMENT-BREAK iff  collapse_sem >= collapse_struct + 1  AND  collapse_sem > 0
+  🧱 CAPACITY-REINFORCED otherwise.
+  where collapse = FALS[B_composed] - FALS[B_shuffle], computed per detector on the SAME generations.
+
+─────────────────────────── RESULTS (mean / 3 seeds [7,4302,4303]) ───────────────────────────
+  ckpt                  arm          coh     FALS_struct   FALS_sem     collapse_struct  collapse_sem
+  BASE (h1129c)         A_flat       4.00       0.00          0.00
+                        B_composed   4.33       0.6667        0.6667
+                        B_shuffle    5.00       0.00          0.00          0.6667          0.6667   -> 🧱
+                        B_ablate     2.33       0.00          0.00
+  H1441_CONTRASTIVE     A_flat       5.00       5.00          5.00
+                        B_composed   5.00       5.00          5.00
+                        B_shuffle    5.00       5.00          5.00          0.0000          0.0000   -> 🧱
+                        B_ablate     5.00       5.00          5.00
+  H1441_SHUFFLE_CTRL    A_flat       1.33       0.00          0.00
+                        B_composed   0.33       0.00          0.00
+                        B_shuffle    0.00       0.00          0.00          0.0000          0.0000   -> 🧱
+                        B_ablate     2.33       0.00          0.00
+
+VERDICT: 🧱 CAPACITY-REINFORCED (all 3 ckpts, every seed)
+
+(1) Did the semantic detector reveal a cross-shuffle COLLAPSE the structural detector missed?  NO.
+    semantic collapse == structural collapse on EVERY ckpt (0.6667==0.6667 base; 0.0==0.0 both trained).
+    The semantic detector is STRICTER (calibration: it removes 2/4 cross-sprinkle FALS that structural
+    keeps) yet on REAL generations it tracked structural EXACTLY -> the model's falsifiable emissions
+    ARE locally bound (comparator+measurable co-occur in one clause with a shared subject), just NOT
+    idea-specifically: the SAME local binding appears in the cross-shuffled arm too.
+
+(2) MEASUREMENT-BREAK vs CAPACITY-REINFORCED:  CAPACITY-REINFORCED.
+    DECISIVE: H1441_CONTRASTIVE emits FALS_sem=5.0 on ALL FOUR arms — including A_flat (bare ideation
+    seeds, NO composed structure) and B_shuffle (cross-paired legs). The contrastive lens learned the
+    falsifiable FORM UNCONDITIONALLY, not a binding that is specific to which two ideas were combined.
+    A binding-aware detector that DOES catch cross-sprinkle splices in calibration STILL cannot collapse
+    the cross-shuffle arm -> the wall is NOT a detector blind-spot. The model is not idea-specifically
+    binding. Capacity ceiling stands (consistent with H_1435/1436/1437/1439/1449 → 7B grounds, a7b_pass).
+
+(3) The measurement-artifact hypothesis (H_1435's "structural detector CANNOT distinguish earned binding")
+    is CONFIRMED AS A DETECTOR PROPERTY (semantic IS stricter and sees cross-sprinkle structural misses,
+    calibration V1 5/5 V2 2<4) but FALSIFIED AS THE CAUSE OF THE WALL: the stricter detector finds the
+    SAME zero idea-specific collapse, so the wall was never a measurement artifact — it is real capacity.
+
+HONEST / SCOPE (c9):
+  - DIRECTIONAL: torch-mouth decode via gauge_lib._decode (a_engine_native_learning). engine-native
+    (.hexa CORE/bytegpt_decode) re-score = follow-on (detector score-side is pure CPU, decode is the
+    torch dependency). 🧱 verdict (not GREEN) -> no live wiring required (a_verified_must_wire N/A).
+  - semantic binding score is LEXICAL (no learned embeddings / NLI — none available, $0). Its ceiling is
+    honest (calibration sprinkle 2/5 residual NOT tuned away). An embedding/NLI-grade SAME-idea detector
+    is a distinct unverified lens (cf. H_1455 embedding-detector sibling).
+  - TOY: 4 arms x 3 seeds x 5 frames; 303M ByteGPT G6 ckpts (base + H_1441 contrastive lens + shuffle
+    control). H_1439/1449 ckpts NOT re-scored here (those pods are other agents' LIVE — not touched;
+    result.json texts are 90-char-truncated, unusable as a verdict). scale/real-corpus UNVERIFIED.
+================================================================================================
