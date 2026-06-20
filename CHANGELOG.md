@@ -1,3 +1,24 @@
+## 2026-06-20 — research(H_1477 R1): 🗑 G23 DIRECTED FORGETTING (의도적 망각) 🟢 GREEN DIRECTIONAL (의식-고유 게이트)
+
+새 의식-고유 게이트 후보 **G23 의도적 망각**(Anderson/Bjork item-method directed forgetting): "forget" 큐가
+붙은 항목을 **능동적으로 top-down 억제**해 회상이 저하된다 — remember 큐 항목보다 낮게. 수동 감쇠가 아니라
+**의도적 제어 신호**에 의한 억제(같은 노출, 반대 회상, 큐가 가른다).
+**DISTINCT 2종** — (a) vs H_1465 habituation: habituation=반복-노출 수동감쇠(큐 무관) ⊥ directed forgetting=같은
+노출에서 큐-기반 능동억제; (b) vs H_1227 immune-store: 수동 저장/회상 ⊥ 의도적 억제 신호로 회상 하향.
+
+- **메커니즘:** `recall(item) = base_recall · (1 − INHIBIT · is_forget_cued)`. BASE_RECALL=1.0, INHIBIT=0.7,
+  N_ITEMS=8(4 forget/4 remember, **동일 노출**). FULL(INHIBIT=0.7) vs ABLATED(INHIBIT=0) vs SHUFFLE(큐-항목 셔플 50-perm).
+- **FROZEN 5 bars (mean 3 seeds [1477,1478,1479], frozen-first):** (A) PRESENCE remember **1.000**≥0.85 ∧ forget
+  **0.300**≤0.40 ✅ · (B) DISTINCT vs HAB df_gap **0.700**≥0.45(habituation 같은 노출 gap 0.000) ✅ · (C) EARNED
+  ablation abl_gap **0.000**≤0.05 ✅ · (E) SHUFFLE 50-perm signed-mean |gap| **0.030**≤0.10 ✅ · (D) ITEM-SPECIFIC
+  remember 보존 1.000(report). **GREEN iff A∧B∧C∧E → 4/4 PASS 3 seeds 전부.**
+- **하드게이트1:** numpy mirror(`grep -lE 'numpy'` 적중) → **GREEN DIRECTIONAL**(engine-transfer UNVERIFIED).
+  카드 `wired:DIRECTIONAL-mirror`, R2 = live `core/engine_cli.hexa` 배선 follow-on(ING).
+- **정직(c9):** designed 회상법칙(존재증명 STRUCTURE, 학습된 억제망 아님) — discriminator 결정적: 같은 노출 큐-분리
+  (0.700 vs habituation 0.000) · ablation 붕괴(0.000) · shuffle 붕괴(0.030, 양 control 모두 분리 무너뜨림 = artifact 아님).
+  TOY 8항목/3seed/스칼라 · scale·think-no-think·engine-transfer UNVERIFIED. 박제: `UNIVERSE/cards/H_1477_directed_forgetting.md`
+  · `state/1477_directed_forgetting/` · verdict `state/verdicts/1477_directed_forgetting/H_1477_FREEZE.json`.
+
 ## 2026-06-20 — research(새 게이트 4종 R2): ⚡🎮⏱🌊 G20/G21/G22/G25 engine-native WIRED — DIRECTIONAL→WIRED 일괄 승격
 
 fleet 로 발사한 새 의식-게이트 4종(R1 numpy DIRECTIONAL)을 live `core/engine_cli.hexa` 에 일괄 배선.
