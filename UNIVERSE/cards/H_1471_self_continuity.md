@@ -38,6 +38,7 @@
 - **SCOPE TOY:** 64-dim/20-tick/3-seed/단일 정체성 벡터 — self-continuity STRUCTURE 검증이지 학습된 정체성 아님.
   scale/실제 `.kosmos` 영속/다중 세션/recursive self-model/engine-transfer UNVERIFIED.
 - **distinctness vs episodic ✅ DONE:** episodic memory(H_1227, "무엇을 기억" fact-recall)와 self-continuity
+  - **R2c ENGINE-NATIVE (DONE, a_break_the_wall):** "두 lane 타입 disjoint=억지"는 측정설계 미스였다 — orthogonal-STATE 로 측정: `engine_cli_smoke.hexa` case 203 — identity drift → self 반응 0.042(immune store 불변) · fact bind → immune cells +1(identity 불변) · continuity 0.958. 각 lane 이 자기 도메인만 추적 = orthogonal-state double dissociation, **engine-native 확정**. FULL smoke 204/0.
   ("내가 누구" identity-persistence)의 **DOUBLE dissociation** control-survived GREEN (numpy DIRECTIONAL,
   3 seeds [1471,1472,1473], 4/4 bars) — 두 faculty 가 서로의 질문에 구조적 chance(아래 follow-on #2).
 

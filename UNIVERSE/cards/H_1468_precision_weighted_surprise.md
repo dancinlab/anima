@@ -50,6 +50,8 @@ bar E 가 분리: 같은 raw 오차(0.5==0.5)인데 surprise 는 확신(1.0) vs 
 
 ## distinctness vs NOVELTY(H_1289) · HABITUATION(H_1465) ✅ DONE (R2 follow-on)
 
+- **R2b ENGINE-NATIVE (DONE, a_break_the_wall):** "engine 에 novelty lane 없음"은 천장이 아니라 만들 부품이었다 — `core/engine_cli.hexa` §Novelty `novelty(seen,k)=1/(1+k·seen)`(precision-agnostic) 신설 → `engine_cli_smoke.hexa` case 201-202: 같은 novelty 1.0 에서 surprise precision-split(4 vs 1), novelty decay 1.0→0.167. surprise⊥novelty 가 numpy 에 더해 **engine-native 확정**. FULL smoke 204/0 RC=0.
+
 precision-weighted surprise(p·err²)가 인접 두 신호와 control-survived DISTINCT 임을 numpy probe 로 증명
 (frozen-first · 3 seeds [1468,1469,1470] · $0 CPU · p7 · deterministic 3-run byte-identical · numpy mirror **DIRECTIONAL**).
 
