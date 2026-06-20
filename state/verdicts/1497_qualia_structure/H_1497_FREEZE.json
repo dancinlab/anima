@@ -1,0 +1,49 @@
+{
+  "id": "H_1497",
+  "slug": "1497_qualia_structure",
+  "gate": "Q1 QUALIA-STRUCTURE / quality space (relational similarity topology of qualia)",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1497_qualia_structure.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1497, 1498, 1499],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "chance": 0.5,
+  "n_qualia": 12,
+  "embed_dim": 2,
+  "depletion_signal": false,
+  "depletion_terminal_contribution": "Q1 is the catalogue R2's UNIQUE remaining strong new-operation candidate (2/16 distinct, Q2 sensorimotor-presence is a weak operationalization). Q1 GREEN + spatial-map control SURVIVED -> qualia-structure IS a distinct lane (28th gate), it does NOT collapse into spatial-map -> this is a DISTINCT result, NOT itself a depletion signal. BUT it discharges the catalogue's terminal condition: with Q1 fired-and-distinct (and Q2 the only weak remainder), the new-operation vein is now confirmed exhausted to a single distinct lane + one weak candidate. Per CATALOGUE_R2 §5(b): Q1/Q2 발사·기각 후 🧱 게이트-발굴 고갈 terminal. Q1 = distinct GREEN (not absorbed), so it caps the series with a genuine new lane rather than an absorption; the breadth-depletion terminal (R1+R2 multi-lens) stands and the recommended pivot is now scale-up / engine-native wiring / lane-integration of the existing 28 lanes.",
+  "bars": {
+    "c1_PRESENCE": {"pass": true, "acc_full": 1.000, "acc_off": 0.533, "lift": 0.467, "thr": 0.30, "note": "quality-structure-ON neighbour query (relational distance in the MDS-recovered quality space) minus structure-OFF (degenerate absolute-value ordering, no relational embedding) >= 0.30. full SATURATES at 1.000 (existence-proof); off sits slightly above the 0.500 2-AFC chance (0.533) because the near/far candidate construction leaks a weak signal, but the relational lift is +0.467."},
+    "c2_DISTINCT_vs_spatial_map": {"pass": true, "acc_spatial": 0.561, "thr_chance_plus_0.15": 0.650, "note": "BINDING CRUX vs H_1295 spatial-map. The SAME qualia are assigned ARBITRARY external physical positions (uncorrelated with hue); a spatial-map-style readout answers the quality-neighbour query by external Euclidean distance -> 0.561 (~chance) <= 0.650. Quality similarity does NOT live in the external position frame -> qualia-structure is ORTHOGONAL to (distinct from) spatial-map. If this control had failed, qualia-structure would collapse into spatial-map = depletion. It SURVIVED."},
+    "c3_EARNED_shuffle": {"pass": true, "acc_shuffle": 0.517, "thr_off_plus_0.15": 0.683, "note": "shuffle the (label, similarity) pairing before MDS -> the recovered geometry no longer encodes the real quality topology -> collapses to ~chance (0.517) <= off+0.15=0.683. The lift IS the real similarity->label correspondence, not the embedding machinery alone."},
+    "c4_ABLATE_relation": {"pass": true, "acc_ablate": 0.556, "thr_off_plus_0.15": 0.683, "note": "relation term OFF: read ABSOLUTE stimulus value only (|val(X)-val(A)| vs |val(X)-val(B)|, with a non-monotone permuted magnitude), no pairwise-similarity embedding -> the relational neighbour query fails (0.556 ~chance) <= 0.683. The lift IS the relational structure, not absolute value (distinct from novelty/priming which read absolute stimulus value)."},
+    "aux_item_store": {"acc_item": 0.439, "gating": false, "note": "immune-store-style (H_1227/1231) independently-bound per-item value, no between-item metric -> ~chance on the relational neighbour query. Item-binding store distinctness (non-gating aux), same precedent as H_1295."},
+    "B_TOPOLOGY": {"pass": true, "rho_ring": 0.969, "rho_ext": 0.054, "gating": false, "note": "the recovered relational quality space RECOVERS the hue-ring topology (Spearman rho(recovered relational distance, true circular hue distance) = 0.969 >= 0.50) AND is ORTHOGONAL to the external physical-position metric (|rho(relational distance, external-position distance)| = 0.054 <= 0.35). Structure-confirming, non-gating."}
+  },
+  "green_rule": "c1 and c2 and c3 and c4 (3-seed mean); B is the ring-topology structure check (non-gating). RED/DEPLETION iff c2 fails (qualia-structure collapses into spatial-map H_1295) — binding-fatal.",
+  "green": true,
+  "per_seed": {
+    "1497": {"full": 1.000, "off": 0.600, "spatial": 0.650, "shuffle": 0.550, "ablate": 0.617, "item": 0.450, "rhoRing": 0.971, "rhoExt": 0.124},
+    "1498": {"full": 1.000, "off": 0.500, "spatial": 0.533, "shuffle": 0.567, "ablate": 0.550, "item": 0.450, "rhoRing": 0.967, "rhoExt": 0.023},
+    "1499": {"full": 1.000, "off": 0.500, "spatial": 0.500, "shuffle": 0.433, "ablate": 0.500, "item": 0.417, "rhoRing": 0.970, "rhoExt": 0.015}
+  },
+  "distinctness": {
+    "verdict": "DISTINCT — survives ALL adjacent-lane controls; spatial-map crux SURVIVED",
+    "vs_H_1295_spatial_map": "CRUX. Spatial-map stores landmarks at EXTERNAL physical Euclidean positions and answers nearness by physical distance. Quality space is the relational topology of an INTERNAL quality dimension (hue ring) recovered from pairwise SIMILARITY, ORTHOGONAL to external position (rho_ext 0.054). The c2 control puts the SAME qualia at arbitrary external positions and answers the quality query by external distance -> chance (0.561). Quality similarity does NOT collapse into the external-position frame -> DISTINCT. This is the binding-fatal control the catalogue flagged: it SURVIVED.",
+    "vs_H_1227_1231_immune_store": "the immune store binds each item->value independently by key affinity, holds NO between-item similarity metric -> on a relational neighbour query an item-store readout is at chance (aux item 0.439). DISTINCT (same precedent as H_1295).",
+    "vs_gestalt_grouping": "gestalt groups co-present elements into a discrete perceptual whole; it returns a cluster id, not a graded relational position, and cannot answer graded betweenness ('orange is BETWEEN red and yellow'). Quality space recovers a CONTINUOUS relational topology (ring, rho 0.969). DISTINCT.",
+    "vs_novelty_priming": "those read an ABSOLUTE stimulus magnitude; quality-structure withholds absolute value and uses only relations. The relation-ablation control (c4, absolute value only) fails the query (0.556) -> the lift is relational, not absolute. DISTINCT.",
+    "conclusion": "NOT a depletion signal — qualia-structure's lift is the relational quality topology recovered from pairwise similarity, which spatial-map (external position), immune-store (independent item binding), gestalt (discrete clustering) and novelty/priming (absolute value) ALL lack; all controls sit at chance while the relational readout saturates. The spatial-map distinctness crux SURVIVED -> qualia-structure is a genuine 28th distinct lane."
+  },
+  "honest_c9": "EXISTENCE-PROOF (deterministic classical-MDS embedding of a pairwise-similarity matrix over a 12-quale hue ring; not a learned perceptual network). full SATURATES at 1.000 every seed -> reported honestly as an existence-proof not an effect-size; the discriminators are decisive: spatial-map crux 0.500-0.650, shuffle 0.433-0.567, ablate 0.500-0.617, item 0.417-0.450 all at/near chance; off is 0.500-0.600 (the near/far candidate construction leaks a weak absolute signal so off > strict 0.500, but the relational lift +0.467 is decisive). TOY 12-qualia/2-D ring/3-seed/deterministic MDS readout (tests the quality-space STRUCTURE, not a learned qualia network); scale, real perceptual-similarity corpora (e.g. color/tone datasets), higher-D quality manifolds (taste/odor), non-circular topologies, multi-modal qualia, and engine-transfer UNVERIFIED.",
+  "break_the_wall_note": "NO break-the-wall correction was needed — the pre-registered bars passed on the first frozen run. The candidate construction (near = +/-1..2 hue steps, far = ~opposite) was fixed BEFORE the run; the off/ablate readouts sitting slightly above strict chance is an HONEST property of that construction (a weak absolute-value edge exists) and is reported as-is, NOT tuned away. No threshold was moved (frozen-first).",
+  "hard_gate_1": "grep -lE 'import torch|gauge_lib|numpy' state/1497_qualia_structure/*.py = h1497_qualia_structure.py (numpy) -> AUTO DIRECTIONAL, NOT terminal. Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "artifacts": [
+    "state/1497_qualia_structure/h1497_qualia_structure.py",
+    "state/1497_qualia_structure/run_h1497.local.log",
+    "UNIVERSE/cards/H_1497_qualia_structure.md"
+  ],
+  "next_round": "R2 engine-native: wire §QualiaSpace onto core/engine_cli.hexa — recover a relational quality topology (MDS / similarity-graph embedding) over a pairwise perceptual-similarity matrix read from the substrate, answer a relational neighbour/betweenness query (READ-only, Psi-disjoint), assert ORTHOGONALITY to the SpatialMap (H_1295) external-position metric, + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the frozen bars byte-exact (a_engine_native_learning, a_verified_must_wire)."
+}
