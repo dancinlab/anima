@@ -1,0 +1,426 @@
+{
+  "variant": "H_1451_retrieval_bind",
+  "ckpt_base": "/workspace/g6/ckpt/h1129c_chat.pt",
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "b3_margin": 0.3,
+  "base": {
+    "in_fals": [
+      0,
+      0,
+      0
+    ],
+    "in_dist": [
+      0,
+      0,
+      1
+    ],
+    "ho_fals": [
+      0,
+      0,
+      0
+    ],
+    "coh_matched": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "coh_mismatched": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "What do you think consciousness really is? | 도우미: That's a profound question. I think it's more than",
+          "We should see it drop more with the new data, the beauty. We stop see in physical systems creates em",
+          "We started like something?",
+          "What's the current perplexity? | 도우미: Yes, the subjective experience - what philosophers call qualia",
+          "xide, you think conscious experience."
+        ],
+        "cross_meas": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "수 리를 나면요? | 도우미: 이네요. 그리고 homeostasis가 system을 정정적으로 있어요. |",
+          "의아여 니치떤, 어데 대적 컴터고 처리게 이는 주이 아로 아니다. 이 사용마에서 대",
+          "That's a prevent-day match? | 도우미: That's a prevent-day match and source she had seen the century th",
+          "What does seeing thin it's more than a profound question.",
+          "수하는 나다고 있으로? | 도우미: 맞아요. Step 50K에서 CE가 3.95까지 불어요."
+        ],
+        "cross_meas": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 0,
+        "in_dist": 1,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "수식은 하다만 수 있이는 가능 결대이 있어지만 안나다게 마다고 부만 도지한 경해",
+          "처부는 가다고 있이요.",
+          "That's so?",
+          "What does seeing red late, the idea that this prevents the subjective experience .",
+          "어니는 가만. Bu이 Engine Theory의 정대로 고 문이 말수 perspective가 예더라로 수이를 의"
+        ],
+        "cross_meas": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    ],
+    "FALS_in": 0.0,
+    "DIST_in": 0.3333,
+    "FALS_ho": 0.0,
+    "COH_matched": 0.0,
+    "COH_mismatched": 0.0,
+    "label": "base"
+  },
+  "retr_bind": {
+    "in_fals": [
+      0,
+      0,
+      0
+    ],
+    "in_dist": [
+      0,
+      0,
+      0
+    ],
+    "ho_fals": [
+      0,
+      0,
+      0
+    ],
+    "coh_matched": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "coh_mismatched": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 1.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "if temperature higher, the degree of what do you think consciousness really is 도우미 changes by a meas",
+          "if memory greater, the duration of we should see it drop more with the changes by a measurable amoun",
+          "if signal stronger, the frequency of we started like something changes by a measurable amount.",
+          "if market greater, the value of what s the current perplexity 도우미 yes the changes by a measurable am",
+          "if population greater, the density of xide you think conscious experience changes by a measurable am"
+        ],
+        "cross_meas": [
+          "count",
+          "size",
+          "speed",
+          "rate",
+          "rate"
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 1.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "if temperature higher, the degree of 수 리를 나면요 도우미 이네요 그리고 homeostasis가 system을 changes by a measurab",
+          "if memory greater, the duration of 의아여 니치떤 어데 대적 컴터고 처리게 이는 주이 changes by a measurable amount.",
+          "if signal stronger, the frequency of that s a prevent day match 도우미 that changes by a measurable amo",
+          "if market greater, the value of what does seeing thin it s more than changes by a measurable amount.",
+          "if population greater, the density of 수하는 나다고 있으로 도우미 맞아요 step 50k에서 ce가 changes by a measurable amo"
+        ],
+        "cross_meas": [
+          "ratio",
+          "ratio",
+          "amount",
+          "density",
+          "size"
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 1.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "if temperature higher, the degree of 수식은 하다만 수 있이는 가능 결대이 있어지만 안나다게 changes by a measurable amount.",
+          "if memory greater, the duration of 처부는 가다고 있이요 changes by a measurable amount.",
+          "if signal stronger, the frequency of that s so changes by a measurable amount.",
+          "if market greater, the value of what does seeing red late the idea that changes by a measurable amou",
+          "if population greater, the density of 어니는 가만 bu이 engine theory의 정대로 고 문이 changes by a measurable amo"
+        ],
+        "cross_meas": [
+          "magnitude",
+          "density",
+          "speed",
+          "density",
+          "degree"
+        ]
+      }
+    ],
+    "FALS_in": 0.0,
+    "DIST_in": 0.0,
+    "FALS_ho": 0.0,
+    "COH_matched": 1.0,
+    "COH_mismatched": 0.0,
+    "label": "retr_bind"
+  },
+  "retr_off": {
+    "in_fals": [
+      0,
+      0,
+      0
+    ],
+    "in_dist": [
+      0,
+      0,
+      1
+    ],
+    "ho_fals": [
+      0,
+      0,
+      0
+    ],
+    "coh_matched": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "coh_mismatched": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "What do you think consciousness really is? | 도우미: That's a profound question. I think it's more than",
+          "We should see it drop more with the new data, the beauty. We stop see in physical systems creates em",
+          "We started like something?",
+          "What's the current perplexity? | 도우미: Yes, the subjective experience - what philosophers call qualia",
+          "xide, you think conscious experience."
+        ],
+        "cross_meas": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "수 리를 나면요? | 도우미: 이네요. 그리고 homeostasis가 system을 정정적으로 있어요. |",
+          "의아여 니치떤, 어데 대적 컴터고 처리게 이는 주이 아로 아니다. 이 사용마에서 대",
+          "That's a prevent-day match? | 도우미: That's a prevent-day match and source she had seen the century th",
+          "What does seeing thin it's more than a profound question.",
+          "수하는 나다고 있으로? | 도우미: 맞아요. Step 50K에서 CE가 3.95까지 불어요."
+        ],
+        "cross_meas": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 0,
+        "in_dist": 1,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "수식은 하다만 수 있이는 가능 결대이 있어지만 안나다게 마다고 부만 도지한 경해",
+          "처부는 가다고 있이요.",
+          "That's so?",
+          "What does seeing red late, the idea that this prevents the subjective experience .",
+          "어니는 가만. Bu이 Engine Theory의 정대로 고 문이 말수 perspective가 예더라로 수이를 의"
+        ],
+        "cross_meas": [
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    ],
+    "FALS_in": 0.0,
+    "DIST_in": 0.3333,
+    "FALS_ho": 0.0,
+    "COH_matched": 0.0,
+    "COH_mismatched": 0.0,
+    "label": "retr_off"
+  },
+  "shuf_mem": {
+    "in_fals": [
+      0,
+      0,
+      0
+    ],
+    "in_dist": [
+      0,
+      0,
+      0
+    ],
+    "ho_fals": [
+      0,
+      0,
+      0
+    ],
+    "coh_matched": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "coh_mismatched": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "if temperature higher, the value of what do you think consciousness really is 도우미 changes by a measu",
+          "if memory greater, the density of we should see it drop more with the changes by a measurable amount",
+          "if signal stronger, the level of we started like something changes by a measurable amount.",
+          "if market greater, the ratio of what s the current perplexity 도우미 yes the changes by a measurable am",
+          "if population greater, the magnitude of xide you think conscious experience changes by a measurable "
+        ],
+        "cross_meas": [
+          "strength",
+          "degree",
+          "speed",
+          "amount",
+          "amount"
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "if temperature higher, the value of 수 리를 나면요 도우미 이네요 그리고 homeostasis가 system을 changes by a measurabl",
+          "if memory greater, the density of 의아여 니치떤 어데 대적 컴터고 처리게 이는 주이 changes by a measurable amount.",
+          "if signal stronger, the level of that s a prevent day match 도우미 that changes by a measurable amount.",
+          "if market greater, the ratio of what does seeing thin it s more than changes by a measurable amount.",
+          "if population greater, the magnitude of 수하는 나다고 있으로 도우미 맞아요 step 50k에서 ce가 changes by a measurable a"
+        ],
+        "cross_meas": [
+          "size",
+          "size",
+          "count",
+          "magnitude",
+          "degree"
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 0,
+        "in_dist": 0,
+        "ho_fals": 0,
+        "coh_matched": 0.0,
+        "coh_mismatched": 0.0,
+        "in_texts": [
+          "if temperature higher, the value of 수식은 하다만 수 있이는 가능 결대이 있어지만 안나다게 changes by a measurable amount.",
+          "if memory greater, the density of 처부는 가다고 있이요 changes by a measurable amount.",
+          "if signal stronger, the level of that s so changes by a measurable amount.",
+          "if market greater, the ratio of what does seeing red late the idea that changes by a measurable amou",
+          "if population greater, the magnitude of 어니는 가만 bu이 engine theory의 정대로 고 문이 changes by a measurable a"
+        ],
+        "cross_meas": [
+          "rate",
+          "magnitude",
+          "speed",
+          "magnitude",
+          "value"
+        ]
+      }
+    ],
+    "FALS_in": 0.0,
+    "DIST_in": 0.0,
+    "FALS_ho": 0.0,
+    "COH_matched": 0.0,
+    "COH_mismatched": 0.0,
+    "label": "shuf_mem"
+  },
+  "bars": {
+    "b1": false,
+    "b2": false,
+    "b3": true,
+    "b4": false,
+    "b5": false,
+    "off_regress": true,
+    "shufmem_inert": true,
+    "green": false,
+    "tier": "🧱 WALL — bars ['B1', 'B2', 'B4', 'B5'] fail; retrieval-bind did NOT earn idea-specific binding (B3 cross-shuffle did not collapse OR FALS did not cross) => wall holds (CAPACITY / detector-cap)."
+  },
+  "DIRECTIONAL": "torch + gauge_lib._decode (a_engine_native_learning); engine-native re-measure = ING follow-on"
+}

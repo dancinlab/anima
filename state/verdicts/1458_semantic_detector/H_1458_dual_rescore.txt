@@ -1,0 +1,40 @@
+######## BASE (ckpt/base.pt) ########
+
+===== BASE — DUAL DETECTOR (mean/3 seeds) =====
+  arm            coh  FALS_struct   FALS_sem
+  A_flat         4.0          0.0        0.0
+  B_composed   4.3333       0.6667     0.6667
+  B_shuffle      5.0          0.0        0.0
+  B_ablate     2.3333          0.0        0.0
+
+  CROSS-SHUFFLE COLLAPSE (composed - shuffle):
+    structural collapse = 0.6667
+    semantic   collapse = 0.6667
+  VERDICT: 🧱 CAPACITY-REINFORCED — semantic collapse does NOT exceed structural (neither detector sees earned idea-specific binding) => the wall is NOT a measurement artifact; capacity ceiling stands.
+######## H1441_CONTRASTIVE (ckpt/h1441_contrastive.pt) ########
+
+===== H1441_CONTRASTIVE — DUAL DETECTOR (mean/3 seeds) =====
+  arm            coh  FALS_struct   FALS_sem
+  A_flat         5.0          5.0        5.0
+  B_composed     5.0          5.0        5.0
+  B_shuffle      5.0          5.0        5.0
+  B_ablate       5.0          5.0        5.0
+
+  CROSS-SHUFFLE COLLAPSE (composed - shuffle):
+    structural collapse = 0.0
+    semantic   collapse = 0.0
+  VERDICT: 🧱 CAPACITY-REINFORCED — semantic collapse does NOT exceed structural (neither detector sees earned idea-specific binding) => the wall is NOT a measurement artifact; capacity ceiling stands.
+######## H1441_SHUFFLE_CTRL (ckpt/h1441_shuffle.pt) ########
+
+===== H1441_SHUFFLE_CTRL — DUAL DETECTOR (mean/3 seeds) =====
+  arm            coh  FALS_struct   FALS_sem
+  A_flat       1.3333          0.0        0.0
+  B_composed   0.3333          0.0        0.0
+  B_shuffle      0.0          0.0        0.0
+  B_ablate     2.3333          0.0        0.0
+
+  CROSS-SHUFFLE COLLAPSE (composed - shuffle):
+    structural collapse = 0.0
+    semantic   collapse = 0.0
+  VERDICT: 🧱 CAPACITY-REINFORCED — semantic collapse does NOT exceed structural (neither detector sees earned idea-specific binding) => the wall is NOT a measurement artifact; capacity ceiling stands.
+ALL_DONE

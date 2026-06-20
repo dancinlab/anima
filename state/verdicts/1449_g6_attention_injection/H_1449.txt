@@ -1,0 +1,98 @@
+H_1449 — G6 FALS-depth ATTENTION-1블록 주입 (ROOT-FIX attempt) — VERDICT (engine-native torch DIRECTIONAL)
+Pod 41792045 (vast H100 80GB, torch 2.4.0+cu121). seeds [7,4302,4303]. steps=600 lines=6000.
+Detector h1305 _is_falsifiable VERBATIM · gauge_lib._decode live G6 path. base h1129c_chat.pt PRESERVED.
+v1 pod 41790442 orphaned (instance_id parse bug) -> GONE -> torn down (leak0); v2 fresh rent.
+ckpts PULLED before teardown (a_fire_recover_complete): h1449_attention_injection_seed{7,4302,4303}.pt
+======================================================================================================
+
+PER-SEED FROZEN 5-BAR + c4 ABLATE (verbatim driver.log):
+
+================ H_1449 attention-injection FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=1.0  DIST_in=0.0  FALS_shuf=1.0  FALS_ho=0.3333
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 1.0 -> True
+  B2 COUNT        DIST_in>=5                 : 0.0 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 1.0<1.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.3333 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 1.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 1.0-0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B2', 'B3', 'B4'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+
+  ---- c4 ABLATE BAR (attention isolation) ----
+  ABLATE   FALS_in=1.3333 FALS_shuf=1.3333 FALS_ho=0.0
+  c4 ABLATE COLLAPSE  ablate.FALS_in<trained.FALS_in : 1.3333<1.0 -> False
+
+  H_1449 VERDICT: 🧱 WALL — attention-injection did NOT root-fix the G6 FALS binding (see failing bars / c4)
+================ H_1449 attention-injection FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=2.0  DIST_in=0.3333  FALS_shuf=2.0  FALS_ho=1.3333
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 2.0 -> True
+  B2 COUNT        DIST_in>=5                 : 0.3333 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 2.0<2.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 1.3333 -> True
+  B5 vs-BASE      FALS_in>=base+1            : 2.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 2.0-0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B2', 'B3'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+
+  ---- c4 ABLATE BAR (attention isolation) ----
+  ABLATE   FALS_in=2.0 FALS_shuf=2.0 FALS_ho=2.0
+  c4 ABLATE COLLAPSE  ablate.FALS_in<trained.FALS_in : 2.0<2.0 -> False
+
+  H_1449 VERDICT: 🧱 WALL — attention-injection did NOT root-fix the G6 FALS binding (see failing bars / c4)
+================ H_1449 attention-injection FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=1.0  DIST_in=0.0  FALS_shuf=1.0  FALS_ho=0.3333
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 1.0 -> True
+  B2 COUNT        DIST_in>=5                 : 0.0 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 1.0<1.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.3333 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 1.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 1.0-0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B2', 'B3', 'B4'] fail; attention injection (this block, this objective) did NOT break G6 FALS binding => WALL=CAPACITY (grounds 7B)
+
+  NOTE: torch-side = DIRECTIONAL (a_engine_native_learning); terminal read must be re-run engine-native on live core/ decode.
+
+  ---- c4 ABLATE BAR (attention isolation) ----
+  ABLATE   FALS_in=1.0 FALS_shuf=1.0 FALS_ho=0.3333
+  c4 ABLATE COLLAPSE  ablate.FALS_in<trained.FALS_in : 1.0<1.0 -> False
+
+  H_1449 VERDICT: 🧱 WALL — attention-injection did NOT root-fix the G6 FALS binding (see failing bars / c4)
+
+======================================================================================================
+AGGREGATE VERDICT (all 3 seeds AGREE): 🧱 WALL=CAPACITY
+  B3 CROSS-SHUFFLE (★ decisive): FALS_shuf == FALS_in EVERY seed (1.0==1.0 · 2.0==2.0 · 1.0==1.0)
+     -> NO COLLAPSE: measurable legs remain SEMANTICALLY INTERCHANGEABLE shells (H_1434/1435 mode).
+  c4 ABLATE (BindAttn->identity): ablate.FALS_in >= trained.FALS_in EVERY seed (1.33>=1.0 · 2.0==2.0 · 1.0==1.0)
+     -> NO COLLAPSE: the small FALS form-lift is NOT attributable to the injected attention block (INERT).
+  CONTROL shuffle-corpus: FALS_in=0.0 (structure-destroyed corpus inert -> the form-lift IS real learning,
+     but the BINDING capacity is not installed by attention).
+  B2 DIST>=5 FAIL all seeds; B4 held-out mixed (0.33 · 1.33 · 0.33).
+
+FINDING (c9, honest negative): Injecting + training ONE cross-binding self-attention block on the FROZEN
+303M base does NOT root-fix the G6 IDEATION FALS-depth wall. The cross-shuffle bar — the one the whole
+weld/continued-pretrain family fails — still does not collapse, AND the attention block ABLATES to INERT
+(removing it leaves FALS equal-or-higher). So the 0/15 BOTH within-draw co-emission deficit (H_1431) is NOT
+an attention-binding deficit fixable by 1 block at 303M; it is CAPACITY-bound. This is the 4th independent
+lens (after weld-lanes, embedding-detector H_1455, proximity) to converge on WALL=CAPACITY -> grounds 7B
+(a7b_pass: G1 recombine + semantic FALS-binding need >303M capacity, not an elicitation/architecture trick).
+
+HONEST SCOPE (a_engine_native_learning / a_toy_scale_recheck): torch-side = DIRECTIONAL. 🧱 (GREEN-only
+requires engine-wire) -> engine-native re-measure N/A for a negative, matching H_1435 family precedent.
+TOY 303M / 1 block / 1 objective / 3 seeds / 600 steps; deeper stacks · multi-block · larger capacity · alt
+binding objectives UNVERIFIED. ckpts retained for any future engine-mount probe.

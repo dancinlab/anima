@@ -1,0 +1,54 @@
+=== H_1439 START Sat Jun 20 08:21:49 UTC 2026 ===
+NVIDIA A100-SXM4-80GB, 0 MiB, 81920 MiB
+[H_1439] device=cuda:0 steps=600 r=128 lr=0.0003 freeze_backbone=True
+[H_1439] base FALS_in=0.0 DIST_in=3.0 FALS_ho=0.0
+    [bindhead] trainable=17,042,433 / total=320,140,289 (backbone FROZEN)
+    [H1439 step    0] ce=1.8430 gate=0.9997 0.0min
+    [H1439 step   50] ce=1.8320 gate=1.0074 0.5min
+    [H1439 step  100] ce=1.7719 gate=1.0172 1.0min
+    [H1439 step  150] ce=1.7593 gate=1.0293 1.5min
+    [H1439 step  200] ce=1.7852 gate=1.0400 2.0min
+    [H1439 step  250] ce=1.7955 gate=1.0521 2.5min
+    [H1439 step  300] ce=1.7306 gate=1.0649 3.0min
+    [H1439 step  350] ce=1.8239 gate=1.0766 3.5min
+    [H1439 step  400] ce=1.7653 gate=1.0879 4.0min
+    [H1439 step  450] ce=1.8198 gate=1.0928 4.5min
+    [H1439 step  500] ce=1.7997 gate=1.1004 5.0min
+    [H1439 step  550] ce=1.8170 gate=1.1133 5.5min
+    [H1439 step  599] ce=1.8482 gate=1.1258 6.0min
+[H_1439] trained gate=1.1258
+[H_1439] ABLATED(head OFF) FALS_in=0.0 vs BASE=0.0  clean=True
+    [bindhead] trainable=17,042,433 / total=320,140,289 (backbone FROZEN)
+    [H1439 step    0] ce=5.6264 gate=0.9997 0.0min
+    [H1439 step   50] ce=5.4462 gate=1.0055 0.5min
+    [H1439 step  100] ce=5.6124 gate=1.0142 1.0min
+    [H1439 step  150] ce=5.5597 gate=1.0237 1.5min
+    [H1439 step  200] ce=5.4699 gate=1.0355 2.0min
+    [H1439 step  250] ce=5.5083 gate=1.0476 2.5min
+    [H1439 step  300] ce=5.4901 gate=1.0588 3.0min
+    [H1439 step  350] ce=5.4165 gate=1.0708 3.5min
+    [H1439 step  400] ce=5.5177 gate=1.0828 4.0min
+    [H1439 step  450] ce=5.3356 gate=1.0947 4.5min
+    [H1439 step  500] ce=5.4780 gate=1.1076 5.0min
+    [H1439 step  550] ce=5.5868 gate=1.1202 5.5min
+    [H1439 step  599] ce=5.3988 gate=1.1321 6.0min
+
+================ H_1439 bind-head architecture FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=3.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.3333  DIST_in=3.3333  FALS_shuf=0.3333  FALS_ho=0.3333
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.3333 -> False
+  B2 COUNT        DIST_in>=5                 : 3.3333 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.3333<0.3333 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.3333 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.3333 vs 0.0+1 -> False
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 0.3333-0.0 -> False
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5', 'CTRL'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
+
+  ---- BIND-HEAD ABLATION (leg-B emergence) ----
+  ABLATED(head OFF) FALS_in=0.0 vs BASE FALS_in=0.0  clean=True (lift must be FROM the head)
+[H_1439 done] /workspace/g6/out/h1439_result.json
+=== H_1439 DONE Sat Jun 20 08:37:59 UTC 2026 ===

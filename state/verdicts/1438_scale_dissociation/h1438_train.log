@@ -1,0 +1,61 @@
+[H_1438] device=cuda:0 steps=400 BIG d=2048 L=24 H=32
+[H_1438] base 303M FALS_in=0.0 DIST_in=1.0 FALS_ho=0.0
+[H_1438] built BIG d=2048 L=24 H=32 = 1210.2M params (net2net from base d=1024 L=24)
+[H_1438] 1B init coherence KWR=0.2239
+    [H1438 step    0] ce=1.8268 0.0min
+    [H1438 step   25] ce=0.2543 0.2min
+    [H1438 step   50] ce=0.2056 0.3min
+    [H1438 step   75] ce=0.2078 0.5min
+    [H1438 step  100] ce=0.2006 0.6min
+    [H1438 step  125] ce=0.2013 0.8min
+    [H1438 step  150] ce=0.2053 0.9min
+    [H1438 step  175] ce=0.1994 1.0min
+    [H1438 step  200] ce=0.1996 1.2min
+    [H1438 step  225] ce=0.1972 1.3min
+    [H1438 step  250] ce=0.1957 1.5min
+    [H1438 step  275] ce=0.2007 1.6min
+    [H1438 step  300] ce=0.2018 1.8min
+    [H1438 step  325] ce=0.1992 1.9min
+    [H1438 step  350] ce=0.2054 2.1min
+    [H1438 step  375] ce=0.1939 2.2min
+    [H1438 step  399] ce=0.1973 2.4min
+[H_1438] built BIG d=2048 L=24 H=32 = 1210.2M params (net2net from base d=1024 L=24)
+    [H1438 step    0] ce=5.6608 0.0min
+    [H1438 step   25] ce=2.9880 0.2min
+    [H1438 step   50] ce=2.9391 0.3min
+    [H1438 step   75] ce=2.8931 0.5min
+    [H1438 step  100] ce=2.9669 0.6min
+    [H1438 step  125] ce=2.9292 0.7min
+    [H1438 step  150] ce=2.9215 0.9min
+    [H1438 step  175] ce=2.9272 1.0min
+    [H1438 step  200] ce=2.9496 1.2min
+    [H1438 step  225] ce=2.8966 1.3min
+    [H1438 step  250] ce=2.9090 1.5min
+    [H1438 step  275] ce=2.9069 1.6min
+    [H1438 step  300] ce=2.8933 1.8min
+    [H1438 step  325] ce=2.9116 1.9min
+    [H1438 step  350] ce=2.8618 2.1min
+    [H1438 step  375] ce=2.9009 2.2min
+    [H1438 step  399] ce=2.8201 2.4min
+
+================ H_1438 scale-dissociation 1B FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=1.0  DIST_in=0.6667  FALS_shuf=1.0  FALS_ho=0.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 1.0 -> True
+  B2 COUNT        DIST_in>=5                 : 0.6667 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 1.0<1.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 1.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 1.0-0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B2', 'B3', 'B4'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
+
+  ---- G0 COHERENCE GATE (anti-undertraining-confound) ----
+  1B init KWR=0.2239  trained KWR=0.353  (floor 0.5)
+  ⚠ 1B trained is BYTE-GARBLE (KWR<0.5) => FALS=0 is an UNDERTRAINING artifact => HONEST NON-RESULT, NOT capacity-confirm (a_break_the_wall (e)).
+
+  ===== H_1438 FINAL VERDICT: HONEST-NON-RESULT (G0 garble — under-trained, not a science ceiling) =====
+[H_1438 done] /workspace/g6/out/h1438_result.json

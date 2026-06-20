@@ -1,0 +1,47 @@
+NVIDIA H100 NVL, 95830 MiB
+NVIDIA H100 NVL, 95830 MiB
+==== H_1456 idea-metacognition (base+trained+shuffle-ctrl, 3 seeds) ====
+[H_1456] device=cuda:0 steps=400 (IDEA-METACOGNITION)
+[H_1456] base FALS_in=0.0 DIST_in=1.0 FALS_ho=0.0
+[H_1456] META-CONCEPT corpus sample (first 6 lines):
+    | to be falsifiable, an idea must join a side-by-side check with an observable readout in one claim.
+    | a theory counts as testable only if some observation could contradict it.
+    | what makes a statement a real hypothesis is that reality could disagree with it.
+    | a guess counts as testable only if some observation could contradict it.
+    | a claim is scientific when it stakes a claim that could fail.
+    | to be falsifiable, a statement must join a directional relation with a checkable outcome in one claim.
+    [H1456 step    0] ce=2.3563 0.0min
+    [H1456 step   50] ce=0.1098 0.4min
+    [H1456 step  100] ce=0.0909 0.8min
+    [H1456 step  150] ce=0.0888 1.2min
+    [H1456 step  200] ce=0.0877 1.6min
+    [H1456 step  250] ce=0.0824 2.0min
+    [H1456 step  300] ce=0.0870 2.4min
+    [H1456 step  350] ce=0.0852 2.8min
+    [H1456 step  399] ce=0.0829 3.2min
+    [H1456 step    0] ce=5.5752 0.0min
+    [H1456 step   50] ce=2.9515 0.4min
+    [H1456 step  100] ce=2.9102 0.8min
+    [H1456 step  150] ce=2.9378 1.2min
+    [H1456 step  200] ce=2.8967 1.6min
+    [H1456 step  250] ce=2.9146 2.0min
+    [H1456 step  300] ce=2.9138 2.4min
+    [H1456 step  350] ce=2.9107 2.8min
+    [H1456 step  399] ce=2.9187 3.2min
+
+================ H_1456 idea-metacognition FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=0.0  FALS_shuf=0.0  FALS_ho=0.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 0.0 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 0.0-0.0 -> False
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5', 'CTRL'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
+[H_1456 done] /workspace/g6/out/h1456_result.json
+==== H_1456 DONE ====

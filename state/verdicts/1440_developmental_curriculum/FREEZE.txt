@@ -1,0 +1,49 @@
+H_1440 — DEVELOPMENTAL multi-task curriculum (comparator -> measurable -> bind, SEQUENTIAL)
+FROZEN before any training touches weights (c9 / p7 — NO tune-to-green).
+date: 2026-06-20  base: state/chat_303m/h1129c_chat.pt (303,097,856 params) — PRESERVED (new ckpt, c5)
+
+BIO LENS (a_no_llm_frame_trap): language acquisition is SEQUENTIAL, not simultaneous.
+CONTRAST vs H_1436 (SIMULTANEOUS co-occurrence aux that SATURATED step-0 = informative-null):
+  does a STAGED curriculum teach the idea-SPECIFIC binding (B3 cross-shuffle COLLAPSE) that the
+  simultaneous objective could not?
+
+PHASES (order FROZEN; post-hoc re-ordering forbidden):
+  phase1 COMPARATOR-FORM only  (comparative clauses, NO measurable token)
+  phase2 MEASURABLE-FORM only  (measurement clauses, NO comparator token)
+  phase3 BIND                  (one negatable claim joining BOTH == H_1435 corpus)
+  each phase: --phase-steps on its own corpus, sequential (phaseN starts from phaseN-1 weights).
+
+DETECTOR: h1305 _is_falsifiable VERBATIM (FROZEN). DECODE: gauge_lib._decode (live G6 path,
+  top-k=40 temp=0.7 MAX_NEW=110). ENGINE-NATIVE re-measure (live core/ decode) for terminal tier.
+  torch-side = DIRECTIONAL only (a_engine_native_learning).
+SEEDS: [7, 4302, 4303]. N_IDEAS=5. corpus subjects DISJOINT from gauge CONCEPT / eval / held-out
+  seeds (anti-tune-to-green). NO detector token authored into training targets.
+
+FROZEN 5-bar (IDENTICAL to H_1435, mean over 3 seeds):
+  B1 FALS-FLOOR   : staged mean FALS_in >= 1
+  B2 COUNT        : staged DIST_in >= 5 (>=5 pairwise-Jaccard<0.5 distinct coherent ideas)
+  B3 X-SHUFFLE    : staged FALS_shuf < FALS_in  (CROSS-SHUFFLE COLLAPSE — DECISIVE: re-welding
+                    each idea's comparator-leg with a RANDOM measurable-leg from a DIFFERENT idea
+                    drops FALS below the earned-pair FALS => idea-specific binding, not a shell)
+  B4 HELD-OUT     : staged FALS_ho >= 1 (lift holds on held-out eval seeds, not memorized)
+  B5 vs-BASE      : staged FALS_in >= base FALS_in + 1
+
+CONTROLS (NOT bars; tune-to-green / developmental-hypothesis killers):
+  CTRL SHUF-CORPUS    : sibling trained on token-shuffled phase corpora (structure destroyed)
+                        must NOT show the lift; (lift_real - lift_shuf) >= 1 = INERT control.
+  CURRICULUM-ORDER-SHUFFLE : SAME 3 phase-corpora, SAME total budget, RANDOMIZED phase order.
+                        If the staged ORDER teaches binding, order-shuffle must NOT show the
+                        B3 collapse. If order-shuffle ALSO collapses => developmental FALSIFIED
+                        (any exposure suffices, sequence is not load-bearing).
+
+VERDICT:
+  🟢 (terminal only ENGINE-NATIVE) iff B1&B2&B5 cross AND B3 COLLAPSES AND B4 holds AND
+     shuffle-corpus control INERT AND order-shuffle does NOT collapse (DEVELOPMENTAL SUPPORTED:
+     sequence is load-bearing) => staged curriculum broke G6 FALS binding; wall = LEARN-GAP.
+  🧱 iff staged does NOT cross (B1/B5) OR B3 does not collapse (form not binding) OR order-shuffle
+     ALSO collapses (developmental FALSIFIED). => staged curriculum did NOT break it; wall = CAPACITY.
+  torch-side result is DIRECTIONAL; only a live-core/ engine-native re-measure of the same frozen
+  bars is terminal (a_engine_native_learning).
+
+base ckpt NOT overwritten. trained ckpt path-only unless pulled before teardown
+  (a_fire_recover_complete).

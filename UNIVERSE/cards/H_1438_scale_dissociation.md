@@ -3,10 +3,10 @@ id: H_1438
 slug: 1438_scale_dissociation
 title: G6 IDEATION ★ FALS-depth — SCALE-DISSOCIATION (303M→~1B same anima byte-CLM recipe)
 group: gate-dig (G6 IDEATION ★) — FALS-depth TRAINING side r4 / capacity-ceiling confirm
-terminal_tier: PROPOSED (frozen-first; GPU 재학습 cost-gate, 미측정)
-wired: PROPOSED (engine-native plan: train ~1B → frozen G6 5-bar on live CORE/bytegpt_decode)
+terminal_tier: 측정중 (frozen-first; A100 1B net2net continued-pretrain dispatch)
+wired: DIRECTIONAL-pending (torch+gauge_lib._decode → engine-native CORE/bytegpt_decode follow-on)
 verdict_dir: state/verdicts/1438_scale_dissociation/
-date: 2026-06-19
+date: 2026-06-19 (측정 2026-06-20)
 ---
 
 # H_1438 — SCALE-DISSOCIATION: G6 FALS-depth 벽은 capacity-bound 인가 recipe-bound 인가
@@ -33,6 +33,13 @@ H_1433 이 재설계된 그 live falsifier.
   어느 쪽이든 terminal (a_break_the_wall (d)).
 - compute = hexa dojo / cloud GPU (1B full train; pool RTX 12G 불가) — COST-GATE. ckpt 는
   teardown 전 반드시 pull (a_fire_recover_complete — 1435/36/37 가 잃은 그 실수).
+- SCALE MECHANISM (honest, 2026-06-20): ~1B 은 **net2net function-preserving width+depth
+  expansion** 으로 converged 303M base(h1129c) 에서 구성 — broad-corpus competence 를 상속해
+  "from-scratch 미학습 1B → FALS=0" 혼재변수를 제거(precedent H_1199 grow-the-engine). 이후
+  H_1435 와 IDENTICAL continued-pretrain(동일 corpus seed 1435·lr·opt·detector). 변수 = d/L/H 뿐
+  (d 1024→1792, L 20→24, H 16→28, head_dim 64 불변). geometry: ~1.1B.
+- G0 COHERENCE GATE(anti-confound, a_break_the_wall (e)): trained 1B 의 KWR<0.50 garble 면
+  FALS=0 은 undertraining artifact = HONEST NON-RESULT (🧱 자동승격 금지).
 
 ## Scope (honest)
 

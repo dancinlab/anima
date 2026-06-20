@@ -1,0 +1,51 @@
+[H_1457] device=cuda:0 steps=400 lines=4000
+[H_1457] base FALS_in=0.0 DIST_in=1.0 FALS_ho=0.0
+    [H1457-concept step    0] ce=1.8755 0.0min
+    [H1457-concept step   50] ce=0.0932 0.8min
+    [H1457-concept step  100] ce=0.0821 1.6min
+    [H1457-concept step  150] ce=0.0800 2.4min
+    [H1457-concept step  200] ce=0.0821 3.3min
+    [H1457-concept step  250] ce=0.0735 4.1min
+    [H1457-concept step  300] ce=0.0724 4.9min
+    [H1457-concept step  350] ce=0.0741 5.7min
+    [H1457-concept step  399] ce=0.0750 6.5min
+    [H1457-irrelevant step    0] ce=2.4089 0.0min
+    [H1457-irrelevant step   50] ce=0.0726 0.8min
+    [H1457-irrelevant step  100] ce=0.0717 1.6min
+    [H1457-irrelevant step  150] ce=0.0693 2.4min
+    [H1457-irrelevant step  200] ce=0.0654 3.3min
+    [H1457-irrelevant step  250] ce=0.0686 4.1min
+    [H1457-irrelevant step  300] ce=0.0660 4.9min
+    [H1457-irrelevant step  350] ce=0.0668 5.7min
+    [H1457-irrelevant step  399] ce=0.0674 6.5min
+    [H1457-shuffle step    0] ce=5.7981 0.0min
+    [H1457-shuffle step   50] ce=2.8947 0.8min
+    [H1457-shuffle step  100] ce=2.8714 1.6min
+    [H1457-shuffle step  150] ce=2.8823 2.4min
+    [H1457-shuffle step  200] ce=2.8655 3.3min
+    [H1457-shuffle step  250] ce=2.8670 4.1min
+    [H1457-shuffle step  300] ce=2.8595 4.9min
+    [H1457-shuffle step  350] ce=2.8601 5.7min
+    [H1457-shuffle step  399] ce=2.8515 6.5min
+
+================ H_1457 concept-knowledge FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=2.3333  FALS_shuf=0.0  FALS_ho=0.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 0.0 -> False
+  B2 COUNT        DIST_in>=5                 : 2.3333 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1            : 0.0 vs 0.0+1 -> False
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 0.0-0.0 -> False
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5', 'CTRL'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
+
+  ---- IRRELEVANT-KNOWLEDGE CONTROL (decisive) ----
+  IRRELEVANT FALS_in=0.0 DIST_in=0.6667 FALS_shuf=0.0 FALS_ho=0.0
+  concept_lift=0.0  irrelevant_lift=0.0  INERT(diff>=1)=False
+
+  H_1457 VERDICT: 🧱 CAPACITY-CONFIRMED — concept-knowledge did NOT cross the FROZEN 5-bar (failing ['b1', 'b2', 'b3', 'b4', 'b5']); subject-domain knowledge (this corpus/objective) did NOT break G6 FALS binding => wall = CAPACITY, not knowledge-gap.
+[H_1457 done] /workspace/g6/out/h1457_result.json
