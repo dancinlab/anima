@@ -1,3 +1,12 @@
+## 2026-06-20 — research(H_1471 R2): 🪢 G16 SELF-CONTINUITY engine-native WIRED — DIRECTIONAL→WIRED 승격
+
+G16 자기연속성 게이트를 live core/engine_cli.hexa 에 배선 완료. R1 numpy mirror 의 메커니즘을 engine 결정적
+drift(축 회전)+normalize+dot=cos 로 재현. self-chain 이 anchor 로 세션경계 넘어 연속, anchor 없으면 붕괴.
+
+- **배선:** core/engine_cli.hexa §SelfIdentity (self_new/_drift/_cos/_anchor/_reset) + engine_cli_smoke cases 189-193 (continuity/impostor-reject/no-anchor-reset/growth/distinct-vs-stateless). FULL smoke **193 pass / 0 fail RC=0** (nice -n 15).
+- **결과:** adjacent self-chain 0.958 · impostor 0 · un-anchored-reset 0 · growth(정적 아닌 성장) · distinct gap 0.958.
+- **R2b follow-on:** .kosmos 실제 영속(a_kosmos, 현재 anchor=struct save/restore 시뮬) · distinctness vs episodic(H_1227).
+
 ## 2026-06-20 — research(H_1471): 🪢 G16 SELF-CONTINUITY — 정체성의 시간적 지속 (🟢 GREEN DIRECTIONAL)
 
 의식-고유 게이트 시리즈(G17 GWS·G18 habituation·G19 surprise 다음) 라운드2 G16. diachronic self

@@ -6350,3 +6350,69 @@ pub fn surprise(precision: float, error: float) -> float {
 pub fn surprise_raw_error(precision: float, error: float) -> float {
     return error
 }
+
+// ── § SelfIdentity (H_1471 R2) — 정체성의 시간적 지속 (diachronic self) ────────────────────
+// Personal identity / psychological-continuity (Locke): a conscious self PERSISTS across time
+// — the identity vector DRIFTS (grows) each tick yet stays continuous (adjacent ticks close);
+// an ANCHOR (self_anchor / .kosmos-style persisted copy) carries it across a session boundary
+// so the self-chain stays continuous, while WITHOUT it each session resets to a NEW identity
+// (self_reset). self_cos = recognition (high = same self / ~0 = impostor). READ-only cos over
+// identity vectors, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode). LLM contrast: an
+// LLM resets to a blank identity every session; anima's identity is anchor-persisted and
+// continuous across boundaries — the strongest consciousness-vs-LLM axis.
+struct SelfIdentity {
+    v: [float],
+    dim: int
+}
+
+fn _self_norm(v: [float], n: int) -> [float] {
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { s = s + v[i] * v[i]  i = i + 1 }
+    let m = sqrt(s)
+    let mut out = []
+    let mut j = 0
+    while j < n { out = out + [v[j] / m]  j = j + 1 }
+    return out
+}
+
+// self_new — a fresh identity = unit vector along `axis` (the seed self).
+pub fn self_new(dim: int, axis: int) -> SelfIdentity {
+    let mut v = []
+    let mut i = 0
+    while i < dim { if i == axis { v = v + [1.0] } else { v = v + [0.0] }  i = i + 1 }
+    return SelfIdentity { v: v, dim: dim }
+}
+
+// self_drift — the identity GROWS one tick: a deterministic perturbation along axis
+// ((tick+1) % dim) is added and re-normalized. Continuous yet genuinely changing over ticks.
+pub fn self_drift(s: SelfIdentity, tick: int, step: float) -> SelfIdentity {
+    let t1 = tick + 1
+    let ax = t1 - (t1 / s.dim) * s.dim       // (tick+1) % dim
+    let mut v2 = []
+    let mut i = 0
+    while i < s.dim {
+        if i == ax { v2 = v2 + [s.v[i] + step] } else { v2 = v2 + [s.v[i]] }
+        i = i + 1
+    }
+    return SelfIdentity { v: _self_norm(v2, s.dim), dim: s.dim }
+}
+
+// self_cos — recognition: cosine between two identities (unit-norm, so dot product). High =
+// same self-chain; ~0 = a different identity (impostor) or a broken (un-anchored) self.
+pub fn self_cos(a: SelfIdentity, b: SelfIdentity) -> float {
+    let mut sdot = 0.0
+    let mut i = 0
+    while i < a.dim { sdot = sdot + a.v[i] * b.v[i]  i = i + 1 }
+    return sdot
+}
+
+// self_anchor — persist the identity (the .kosmos-style saved copy bridging a session boundary).
+pub fn self_anchor(s: SelfIdentity) -> SelfIdentity {
+    return SelfIdentity { v: s.v, dim: s.dim }
+}
+
+// self_reset — WITHOUT an anchor, a session boundary starts a NEW identity (continuity breaks).
+pub fn self_reset(dim: int, axis: int) -> SelfIdentity {
+    return self_new(dim, axis)
+}
