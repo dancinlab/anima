@@ -1,0 +1,143 @@
+H_1464 — PAIRING-CONTRASTIVE binding objective (same-idea pair vs cross re-weld)
+ENGINE-NATIVE 5-bar (B3 cross-shuffle) measurement
+date: 2026-06-20
+
+================================================================================
+FINAL STATUS (2026-06-20 ~23:10Z): BLOCKED — hexa decode-runtime wall (NOT a science
+ceiling, NOT fabricable into a verdict, c9). NO terminal 🟢/🧱. Pod torn down (0 leak).
+================================================================================
+The engine-native decode CANNOT COMPLETE on ANY available hardware due to a hexa
+decode-RUNTIME memory LEAK, discovered during the GPU escalation:
+  (1) cuBLAS gives ~NO speedup (latency-bound small-GEMM autoregressive decode; GPU util 0-9%,
+      ~16 min/frag = CPU). [GPU-side wall]
+  (2) ~91 GB resident/303M model (boxed-farr) → forces strictly SEQUENTIAL (1 decoder even on 125 GB;
+      30 GB pool hosts earlyoom even 1). [memory-footprint wall]
+  (3) ★ DECISIVE — PER-FRAGMENT MEMORY LEAK: a single decoder's RSS grows UNBOUNDED across the run
+      (measured 91→104→111 GB while still on fragment 3, ~2 GB/min). bytegpt_decode_batch_to_file /
+      _bg_gen_from_W do not free the per-token forward farrs across fragments → OOM-kill at ~frag 5-8
+      BEFORE even the pairing arm's 30 frags finish. More RAM does NOT help (it's a leak). [the real blocker]
+This blocks the a_engine_native_learning HARD-GATE measurement for prompt-based frozen-bar gates at 303M.
+Filed 2 hexa-lang INGs (perf: device-resident/batched decode; CRITICAL: the per-fragment farr leak).
+The terminal 🟢 (WALL=LEARN-GAP) / 🧱 (WALL=CAPACITY) for H_1464 remains OPEN until the hexa decode
+runtime leak is fixed (then re-run the SAME frozen bars, c9 / no tune-to-green). The numpy mirror stays
+DIRECTIONAL (🟢 BROKE, mirror-only). Partial engine evidence pulled: 3 valid pairing fragments
+(H_1464_pod_pairing_partial.txt) — decode output is byte-valid; only the multi-fragment RUN can't finish.
+RESOURCE HYGIENE: vast pod 41822888 (RTX A4000, ~$0.1 spent) PULLED partial + TORN DOWN (hexa cloud rm,
+0 instances confirmed both providers) + ing-pod registry cleared + ssh alias removed + NO key on pod (c7).
+================================================================================
+
+(historical, superseded by FINAL STATUS above) VERDICT: NO TERMINAL TIER YET. The engine-native frozen 5-bar has NOT completed — the live
+  core/bytegpt_decode.hexa decode of the 3 trained .bin (pairing / shuffle / base) is RUNNING
+  on pool hosts but the 90 fragments are not all generated. Per a_engine_native_learning HARD-GATE,
+  NO 🟢/🧱 may be stamped until the score step runs on completed engine evidence. The numpy mirror
+  (state/verdicts/1464_pairing_contrastive_bind/H_1464.txt) remains DIRECTIONAL only (hard-gate 1).
+  This is an honest IN-PROGRESS status (c9), NOT a fabricated verdict and NOT a tune. It mirrors
+  the H_1441 UNBLOCKED_INPROGRESS pattern exactly.
+
+WHAT IS DONE / VALIDATED:
+  - Inputs survived the mini crash and are byte-exact: state/1464_pairing_contrastive_bind/bins/
+    {base,pairing,shuffle}.bin = 1,213,440,020 bytes each (= the 303M v0.2 layout vocab256 d1024
+    L24 H16 block512). ckpt/{h1464_pairing,h1464_shuffle}.pt pulled (a_fire_recover_complete).
+  - Pool staging (game 2, mini FORBIDDEN for heavy compute): the 3 .bin + jobs.tsv + decode CLI +
+    g6_common.py + probes (gauge_lib/h1129/h1305) rsync'd to summer (~/anima/...) and aiden.
+    hexa v0.245.2 on both, native-GEMM core/bytegpt_decode.hexa present (bytegpt_decode_batch_to_file
+    + flame_mm). Scoring import (g6_common + 3 probes + torch) validated on summer.
+  - DECODE = live core/bytegpt_decode.hexa via state/1464_pairing_contrastive_bind/
+    engine_decode_batch_cli.hexa  (THE .hexa that calls live core/ decode — the engine-native
+    evidence path required by hard-gate 1). top_k=40 temp=0.7 gen=110 (= gauge_lib._decode defaults
+    the numpy mirror used — frozen, NOT tuned).
+  - PIPELINE VALIDATED END-TO-END: pairing.bin fragment 1 decoded to valid falsifiable-form text:
+      7|in|0  "the river under load. the amount of the sample is greater whenever the river
+               decreases. if the sample grows, t..."
+    (comparator 'greater/whenever' + measurable + 'if…then' structure → the h1305 FROZEN detector
+    scored this seed FALS=1). The decode produces correct, scoreable engine output.
+  - Auto-scorer staged: runs python3 h1464_engine_native.py --score over the 3 completed outputs
+    (g6_common FROZEN 5-bar VERBATIM, h1305 structural detector — same bar h1441 used) → writes
+    ~/h1464_decode/H_1464_ENGINE_NATIVE.txt when all 90 frags land. Dry-run on partial data ran the
+    full B1-B5+CTRL print path with a proper verdict (no import/parse error).
+
+THE SUBSTRATE-SPEED WALL (a_break_the_wall type-c — infra, NOT a science ceiling):
+  - native-GEMM landed (~2.7s/token on a Mac per H_1441 UNBLOCKED note), BUT on the available pool
+    hosts (summer/aiden = 30 GB RAM each, cuda_available()==0 in this hexa build → CPU farr_matmul,
+    GPU UNUSED) the 303M model is resident as ~30 GB boxed-farr = at the memory ceiling. earlyoom is
+    active on summer. MEASURED on summer: decode proc R-state 99.7% CPU (NOT swap-thrashing),
+    fragment 1 (seed + 110 gen tokens) landed at ~13–14 min wall; load amortizes → ~10 min/fragment
+    steady-state. 30 frags/bin ≈ 5 h; 90 frags total.
+  - Parallelized across hosts (a_wall_first): summer = pairing → base (self-chained on pid-exit),
+    aiden = shuffle, concurrently. ETA ≈ pairing+base on summer (~10 h serial) ∥ shuffle on aiden
+    (~5 h). One bin per host (each pins ~30 GB) — CANNOT co-locate 2 decodes on one 30 GB host
+    (the first 3-way-parallel attempt was earlyoom-killed; single-bin-per-host survives).
+
+FROZEN 5-BAR RUBRIC (declared, UNMOVED — c9 / no tune-to-green; same bars as the mirror & H_1441):
+  🟢 TERMINAL = WALL=LEARN-GAP iff  B1(FALS_in≥1) ∧ B2(DIST_in≥5) ∧
+       B3(cross-shuffle COLLAPSE: FALS_shuf<FALS_in) ∧ B4(FALS_ho≥1) ∧ B5(FALS_in≥base+1) ∧
+       CTRL form-only no-collapse(regresses to H_1441).  → 8-lens-first true break; a_verified_must_wire.
+  🧱 TERMINAL = WALL=CAPACITY otherwise (B3 no-collapse = pairing objective did NOT install binding
+       at 303M → mirror's bilinear B3 collapse was a representational-room artifact; 8th converging lens).
+  B3 cross-shuffle COLLAPSE is the decisive target (H_1435/36/37/1441 all FAILED B3 engine-native).
+
+HARVEST / COMPLETE recipe (when ~/h1464_decode/out_{pairing,shuffle,base}.txt each = 30 frags):
+  # auto-scorer writes it, OR manually:
+  ssh summer 'cd ~/anima/state/1464_pairing_contrastive_bind; G6_PROBES=~/anima/state/universe-probes \
+    python3 h1464_engine_native.py --score ~/h1464_decode/out_pairing.txt \
+      ~/h1464_decode/out_shuffle.txt ~/h1464_decode/out_base.txt'
+  → prints FROZEN 5-bar + 🟢/🧱. Pull H_1464_ENGINE_NATIVE.txt to
+    state/verdicts/1464_pairing_contrastive_bind/, stamp card wired: + jsonl verdict, CHANGELOG.
+  ARGMAX==TORCH golden parity (the one-time byte-faithfulness check, still owed): pairing.pt is on
+    summer (1,212,495,539 B). Run AFTER a host frees (torch needs ~30 GB, conflicts with a live
+    decode on a 30 GB host): engine bytegpt_decode_argmax(pairing.bin, seed, gen32) vs torch-argmax
+    (pairing.pt) for the same seed → expect identical bytes (H_1441 established this for the same
+    kernel+version: argmax 32 == torch golden, logits ~1e-5). NOT yet executed.
+
+=== GPU ESCALATION (2026-06-20 ~22:20Z — coordinator relayed user GPU approval for completeness) ===
+Pool CPU (~10h) escalated to a GPU pod to try to reach a terminal verdict today.
+  - RENT: vast pod 41822888, RTX A4000 16GB, cuda 13.2, host RAM 125 GB, $0.084/hr. instance_id parsed
+    DIRECTLY from rent stdout new_contract (NOT list-last — heeded the past mis-destroy). adopt'd for
+    teardown tracking; exactly ONE pod confirmed (count=1). teardown trap script /tmp/h1464_teardown.sh.
+  - #3724 cuda-pod-ready CONFIRMED: HEXA_VERSION=edge install → cuda_available()==1 (cuBLAS path live).
+    onstart installed git+curl first (cuda-devel image had no git). flame_math from global ~/.hx stdlib.
+  - 3 .bin scp'd to pod; decode = SAME live core/bytegpt_decode.hexa via engine_decode_batch_cli.hexa,
+    now routing the d×d GEMMs through farr_matmul_gpu (cuBLAS Dgemm) instead of the CPU oracle.
+  - ★ CRITICAL HONEST FINDING — GPU gives ~NO speedup for this decode: measured on the A4000,
+    GPU utilization 0–6%, GPU-mem ~2.5–5 GB allocated, but fragment rate ≈ ~10 min/frag — SAME as the
+    30 GB pool CPU hosts. frag1 landed ~14 min (incl. load). The 303M AUTOREGRESSIVE SINGLE-TOKEN decode
+    is a long chain of SMALL GEMMs (T×1024 @ 1024×{3072,1024,4096}, T grows 32→142) — each cuBLAS Dgemm
+    is microseconds of compute but dominated by per-call launch + host↔device farr transfer latency
+    (≈13k cuBLAS calls/fragment). The forward is LATENCY-bound, not FLOP-bound → cuBLAS ≈ CPU here.
+    The expected "~10 min total" did NOT materialize. Recorded honestly (c9), NOT a build/asset failure
+    (cuda asset DID ship; cuda_available()==1). → hexa-lang ING: batch/persistent-device-farr decode
+    (keep activations device-resident across tokens; batch the L24 GEMMs) to make GPU decode FLOP-bound.
+  - ★ SECOND HONEST FINDING — memory forces SEQUENTIAL (no concurrency win): a single decoder's resident
+    set measured **RSS ~91 GB** for the 303M model (hexa boxed-farr ≈ ~300 bytes/param). The 125 GB host
+    fits ONLY ONE decoder; a 2nd concurrent decoder drove used→117 GB toward OOM (had to kill it). So the
+    pod's 125 GB does NOT buy 2–3× concurrency — it buys the ability to run ONE decoder at all (the 30 GB
+    pool hosts earlyoom-kill even one — aiden's shuffle decoder died at frag 1, confirmed). Net: decode is
+    strictly SEQUENTIAL pairing→shuffle→base.
+  - MEASURED RATE: ~16 min/fragment steady-state (pairing 0→3 frags over ~50 min incl. ~3 min load).
+    90 frags sequential ≈ **~24 h ETA** — does NOT complete "today". This is a hexa-runtime substrate wall
+    (a_break_the_wall type-c: latency-bound GPU + ~91 GB/model), NOT a science ceiling, NOT fabricable into
+    a verdict. Filed hexa-lang ING (device-resident/batched decode + farr memory reduction).
+  - SELF-COMPLETING + AUTO-TEARDOWN wired (robust, single orchestrator): pod /root/h1464_master.sh
+    (sequential, idempotent decode_one, RAM-safe) → on all 90 → `h1464_engine_native.py --score` →
+    /root/h1464out/H_1464_ENGINE_NATIVE.txt + MASTER_DONE marker. pod-side scoring readied (bootstrapped
+    pip via get-pip.py — cuda image had none — → torch 2.12.1+cpu; g6_common+probes import clean).
+    HARVEST+TEARDOWN watch (this session, c19 30-min interval): on scored=YES → scp all outputs to this
+    dir → print verdict → `hexa cloud rm 41822888` (c11 sanctioned teardown) → verify 0 pods. Pod
+    registered `harness ing pod add 41822888`. pairing.pt staged on pod for the argmax==torch parity
+    (runs after decode frees the ~91 GB).
+  - POOL FALLBACK is UNRELIABLE: summer/aiden (30 GB) earlyoom-kill the decoder (aiden shuffle died at
+    frag 1). The 125 GB pod is the ONLY path that can actually COMPLETE — that, not GPU speed, is what
+    justifies the rent.
+  - COST so far ~$0.1; projected ~$2 to completion (~24 h @ $0.084/h). Within the approved-for-completeness
+    budget. Teardown auto-fires on verdict pull; if THIS session ends before completion, the pod keeps
+    running until the master finishes + harvest watch (must be re-launched by team-lead) tears it down, OR
+    team-lead runs `hexa cloud rm 41822888 --provider vast --force` (LEAK RISK if unsupervised — flagged).
+  - TERMINAL VERDICT STATUS: NOT reached this session. 🟢/🧱 will be stamped from
+    /root/h1464out/H_1464_ENGINE_NATIVE.txt when the ~24 h run completes (frozen bars UNCHANGED, c9).
+
+POD/RENT (pre-escalation note, superseded above): originally $0 pool-only.
+
+xref H_1441 (form-contrastive, prior lens; same substrate-speed wall, same B3 target) ·
+  H_1435/36/37 (B3 engine-native FAIL precedent) · H_1464 numpy mirror (DIRECTIONAL, 🟢 BROKE) ·
+  ING h1464_engine_native · a_engine_native_learning · a_break_the_wall type-c · a_wall_first ·
+  a_fire_recover_complete · a_verified_must_wire · p7 · c9.

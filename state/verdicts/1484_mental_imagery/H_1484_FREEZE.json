@@ -1,0 +1,37 @@
+{
+  "id": "H_1484",
+  "slug": "1484_mental_imagery",
+  "gate": "G30 MENTAL IMAGERY",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1484_mental_imagery.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1484, 1485, 1486],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "bars": {
+    "A_PRESENCE": {"pass": true, "presence_cos": 0.991, "thr": 0.70, "note": "top-down cue re-activates imagery; cos(imagery, original repr) high WITHOUT external input"},
+    "B_NO_INPUT": {"pass": true, "external_input_energy": 0.0, "gating": false, "note": "sensory channel empty (==0) during imagery; perception needs input, imagery does not. structure-confirming"},
+    "C_CUE_SPECIFIC": {"pass": true, "cue_specific_gap": 0.971, "thr": 0.50, "note": "cos(img_A,repr_A) - cos(img_A,repr_B); cue_A calls repr_A, not repr_B"},
+    "D_EARNED_ablation": {"pass": true, "abl_cos": 0.000, "thr": 0.30, "note": "top-down re-activation OFF + input==0 -> no path to stored repr -> imagery vanishes (cos -> 0)"},
+    "E_SHUFFLE": {"pass": true, "shuffle_gap": 0.013, "thr": 0.10, "real_matched_cos": 0.991, "note": "shuffle cue<->repr pairing -> mismatched mean cos collapses to ~0.013 (vs real 0.991); imagery signal lives in cue->repr link"}
+  },
+  "green_rule": "A and C and D and E (all 3 seeds); B is the input==0 structure check (non-gating)",
+  "green": true,
+  "per_seed": {
+    "1484": {"presence": 0.990, "no_input": 0.000, "cue_spec": 0.954, "abl": 0.000, "shuffle_gap": 0.018},
+    "1485": {"presence": 0.992, "no_input": 0.000, "cue_spec": 0.995, "abl": 0.000, "shuffle_gap": 0.005},
+    "1486": {"presence": 0.990, "no_input": 0.000, "cue_spec": 0.965, "abl": 0.000, "shuffle_gap": 0.017}
+  },
+  "distinctness": {
+    "vs_input_driven_gates": "GWS / surprise (H_1468) / agency (H_1474) / novelty (H_1289) / blink (H_1473) all REACT to an external stimulus -> their signal REQUIRES input on the sensory channel. Imagery is the orthogonal case: input==0, yet a representation is reconstructed top-down (bar B input-energy 0.0 while bar A cos 0.991).",
+    "vs_H_1289_novelty_H_1468_surprise": "both need an incoming stimulus to compute recon/prediction-error; with the sensory channel EMPTY they have nothing to score (no input -> no surprise/novelty). Imagery still produces a vivid representation from the top-down cue alone. Bar D shows the input-driven path collapses when input=0 (ablated top-down -> cos 0.0) while the top-down imagery path does not (cos 0.991)."
+  },
+  "honest_c9": "SATURATED existence-proof (softmax key-affinity reconstruction over near-orthogonal stored reprs -> cos ~0.99 designed, not a learned imagery network); discriminators (cue-specific gap 0.971, ablation collapse 0.000, shuffle collapse 0.013) are decisive. TOY 64-dim/40-item/3-seed/deterministic content-addressable store; scale, real-corpus, graded/partial imagery vividness, occluded/rotated mental rotation, engine-transfer UNVERIFIED.",
+  "artifacts": [
+    "state/1484_mental_imagery/h1484_mental_imagery.py",
+    "state/verdicts/1484_mental_imagery/H_1484_run.txt",
+    "UNIVERSE/cards/H_1484_mental_imagery.md"
+  ],
+  "next_round": "R2 engine-native: wire §MentalImagery onto core/engine_cli.hexa's existing content-addressable store (ImmuneMemoryGrow H_1227 key-affinity) -> imagine(cue) re-activates stored repr with sensory input channel held empty (READ-only, Ψ-disjoint), + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the 5 frozen bars byte-exact (a_engine_native_learning, a_verified_must_wire)."
+}

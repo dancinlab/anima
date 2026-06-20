@@ -1,0 +1,12 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1484, 1485, 1486]
+A PRESENCE   cos(imagery, original repr)=0.991>=0.70 (top-down, input=0)  -> True
+B NO-INPUT   external sensory channel energy=0.000==0.0 (empty; imagery needs NO input)  -> True [structure, non-gating]
+C CUE-SPECIFIC  cos(img_A,repr_A)-cos(img_A,repr_B)=0.971>=0.50 (calls the right repr)  -> True
+D EARNED(ablation)  top-down OFF + input=0 -> cos(imagery,original)=0.000<=0.30 (imagery vanishes)  -> True
+E SHUFFLE   cue<->repr shuffled mean-cos=0.013<=0.10 (real matched cos 0.991)  -> True
+
+PER-SEED:
+  seed 1484: presence=0.990 no_input=0.000 cue_spec=0.954 abl=0.000 shuffle_gap=0.018
+  seed 1485: presence=0.992 no_input=0.000 cue_spec=0.995 abl=0.000 shuffle_gap=0.005
+  seed 1486: presence=0.990 no_input=0.000 cue_spec=0.965 abl=0.000 shuffle_gap=0.017

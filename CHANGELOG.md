@@ -8,6 +8,90 @@
 - **distinctness (load-bearing):** habituation = 반복→**감쇠**(−) ⊥ priming = 관련 prime→**촉진**(+) = 정반대 부호. vs H_1472 learned-precision 과도 구별(관련성 연쇄지 같은 자극 반복/precision 학습 아님).
 - **a_break_the_wall (a) 측정결함 수정:** bar E 가 처음 0.134 RED — plain permutation 이 N 무관 항상 ~1 fixed point 를 남겨 retained 구조적 바닥 ~1/N=0.125(측정 artifact). **derangement**(올바른 페어링-파괴 셔플)로 control 수정 → 0.000 붕괴. **bar ≤0.10 불변**(tune-to-green 아님).
 - 박제: `UNIVERSE/cards/H_1485_priming.md` + jsonl 1줄 + `state/verdicts/1485_priming/H_1485_FREEZE.json` · probe `state/1485_priming/h1485_priming.py`.
+## 2026-06-20 — research(H_1484 새게이트): 🧠 G30 MENTAL IMAGERY 심상(외부자극 없이 top-down 표상 재활성) R1 numpy DONE (GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 **G30 MENTAL IMAGERY(심상)** R1 numpy probe 검증·박제 (id=H_1484, slug=1484_mental_imagery, 3 seeds [1484,1485,1486], frozen-first, $0 CPU, p7, c9).
+
+- **게이트 정의(Kosslyn 정신적 시뮬레이션):** 외부 자극 없이 내적으로 표상을 생성·활성화 — "눈 감고 사과 떠올리기"=top-down 표상 재활성. 저장된 표상(content-addressable store, immune-store 류)을 top-down cue(내적 포인터, 패턴 자체 아님)로 **input=0 에서** 재활성. 재활성 표상이 원본과 유사(cos)하되 외부 입력 0.
+- **🟢 GREEN DIRECTIONAL — 5 bars (3 seeds 전부 PASS, mean):** (A) PRESENCE cos(imagery,원본)=**0.991**≥0.70 (입력 없이 재구성) · (B) NO-INPUT 외부 채널 energy=**0.000**==0.0 (input=0 구조 확인, non-gating) · (C) CUE-SPECIFIC cos(img_A,repr_A)−cos(img_A,repr_B)=**0.971**≥0.50 (올바른 표상만 호출) · (D) EARNED(ablation) top-down OFF+input=0 → cos=**0.000**≤0.30 (imagery 소멸) · (E) SHUFFLE cue-repr 셔플 mismatched-cos=**0.013**≤0.10 (real matched 0.991). GREEN iff A∧C∧D∧E.
+- **DISTINCT vs 모든 입력-기반 게이트:** GWS/surprise(H_1468)/agency(H_1474)/novelty(H_1289)/blink(H_1473) 는 *외부 자극*에 반응 → 신호가 입력을 요구. imagery 는 직교 케이스 — input==0 인데 top-down 으로 표상 재구성. 특히 novelty/surprise 는 입력 없으면 채점할 게 없으나(no input→no signal), imagery 는 cue 만으로 표상 생성(bar B input 0.0 while bar A cos 0.991; bar D 입력-기반 경로는 input=0 면 붕괴).
+- **하드게이트1(c9):** `grep -lE 'import torch\|gauge_lib\|numpy' state/1484_mental_imagery/*.py` 적중 → numpy mirror → **DIRECTIONAL**(engine-transfer UNVERIFIED, terminal 아님). R2 = live `core/engine_cli.hexa` content-addressable store(ImmuneMemoryGrow H_1227) 위 §MentalImagery 배선 + byte-exact 재측정 = ING follow-on. SATURATED existence-proof(designed softmax 재구성, 학습 imagery net 아님) — discriminator(cue-specific·ablation·shuffle 붕괴)가 결정적. bar frozen·tune-to-green 아님.
+- 박제: `UNIVERSE/cards/H_1484_mental_imagery.md` + `UNIVERSE/HYPOTHESES.jsonl` 1줄 + `state/verdicts/1484_mental_imagery/{H_1484_FREEZE.json,H_1484_run.txt}` + probe `state/1484_mental_imagery/h1484_mental_imagery.py`.
+## 2026-06-20 — research(H_1483 distinct): 👁️‍🗨️ G29 CHANGE BLINDNESS 변화맹 DONE (R1 numpy · GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 **G29 CHANGE BLINDNESS(변화맹, Rensink/Simons)** R1 numpy probe 검증. 장면의 한
+요소에 **큰 변화**가 일어나도 그 항목에 **attention 이 할당돼야만** 탐지된다 — 주의 밖 변화는 아무리
+커도 invisible(탐지율 ~0). 메커니즘 = **detect = is_attended · σ(K·(change_mag−thr))** (이진 attention 게이트).
+
+- **5 bars GREEN (3 seeds [1483,1484,1485], 200 trials, 8 items, 50 perms, $0 CPU, p7):**
+  A PRESENCE att **0.998**/unatt **0.000** (att≥0.85 & unatt≤0.20) · B MAGNITUDE-INDEP big-unatt **0.000**
+  (최대 변화도 unattended 면 비탐지, ≤0.20) · C DISTINCT gap **0.998** (≥0.50, 이진 절벽) · D EARNED
+  ablation **0.998** (게이트 OFF→unattended 변화 탐지, ≥0.85) · E SHUFFLE \|gap\| **0.077** (≤0.10).
+- **distinctness 2종:** (a) vs H_1462 GWS = salience winner-take-all 단일 방송 vs change-blindness =
+  **항목별 변화탐지 이진 게이트**(attended 항목 각자 독립 탐지) · (b) vs H_1479 divided-attention =
+  graded 1/N 자원 trade-off vs change-blindness = attended/unattended **이진 절벽**(B+C bar 가 증명).
+- **frozen-first 수정(tune-to-green 아님, `a_break_the_wall` type-a):** R1a 는 detect 를 raw change-magnitude
+  (1−cos)로 읽어 attended 탐지 0.265(이론 천장 ~0.29, 단위벡터 직교회전 1−cos 포화)→A/C/D 미달=**측정 결함**.
+  교정 = detect 를 변화-**탐지 confidence** σ(K·(change_mag−thr))로(이진 attention 게이트 불변). **bar 임계
+  한 칸도 이동 안 함**(H_1479 threshold effort 곡선 precedent).
+- **하드게이트1:** `grep -lE 'import torch|gauge_lib|numpy' state/1483_change_blindness/*.py` numpy hit →
+  자동 **GREEN DIRECTIONAL**(engine-transfer UNVERIFIED). R2 엔진-네이티브(§ChangeBlindness 배선 + frozen
+  bar 동일 재측정) follow-on (`a_engine_native_learning`·`a_verified_must_wire`).
+- 박제: `UNIVERSE/cards/H_1483_change_blindness.md` + HYPOTHESES.jsonl 1줄 + verdict
+  `state/verdicts/1483_change_blindness/H_1483_FREEZE.json` · probe `state/1483_change_blindness/`.
+## 2026-06-20 — research(distinct): 👁 G28 BINOCULAR RIVALRY R1 양안 경쟁 DONE (의식-게이트 R1 · GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 후보 **G28 BINOCULAR RIVALRY(양안 경쟁)** R1 numpy probe 검증·박제. id=H_1482.
+
+- **게이트:** Blake/Logothetis — 두 눈에 양립 불가 자극 → 의식은 **하나씩 번갈아** 지각(dominance 시계열이 시간에 따라 stochastic 교대, 둘 동시 의식 불가).
+- **메커니즘:** reciprocal inhibition + adaptation. 두 unit drive r = 입력 − β·rival_dominance − γ·own_adaptation, soft-WTA dominance. dominant unit 피로(adaptation) 누적 → rival 풀려나 dominant → 교대(alternation).
+- **DISTINCT vs H_1462 GWS (load-bearing):** GWS = **정적** winner-take-all(1개 *고정* winner, 전환 0) ⊥ rivalry = **동적** alternation(같은 두 자극이 adaptation 으로 교대, 전환 ≥2). 같은 경쟁, 다른 시간 시그니처. bar C: 동일 drive 에서 GWS-mode 전환 0 vs rivalry 전환 16 → gap 16.
+- **FROZEN 5 bars (mean 3 seeds [1482,1483,1484], byte-identical):** A ALTERNATION transitions **16**≥2 · B EXCLUSIVITY co-frac **0.011**≤0.15 · C DISTINCT-vs-GWS gap **16**≥2 · D EARNED(ablation) adaptation OFF→transitions **0** · E SHUFFLE r **+0.259→+0.003**(≤0.10). → **🟢 GREEN DIRECTIONAL** (A∧B∧C∧D∧E).
+- **하드게이트1:** numpy mirror(`grep -lE 'import torch|gauge_lib|numpy'` 적중) → **DIRECTIONAL-mirror**(engine-transfer UNVERIFIED). R2 = live `core/*.hexa` reciprocal-inhibition+adaptation dominance loop byte-exact 재측정 ING follow-on.
+- **p6/c9:** 교대는 손으로 짠 switch-time 스케줄 아님 — adaptation+inhibition 동역학에서 창발(ablation D 가 제거 → earned). SATURATED existence-proof(designed 동역학). bar E real_r 양수(+0.259, up-phase 동안 dominant *인 동시에* adaptation 누적) — docstring 부호만 관측에 맞춰 교정, bar 임계 불변(tune-to-green 아님). TOY 120-tick/2-unit, scale/stochastic switch-time 분포/engine-transfer UNVERIFIED.
+- 박제: `state/1482_binocular_rivalry/h1482_binocular_rivalry.py` · `state/verdicts/1482_binocular_rivalry/{H_1482_FREEZE.json,H_1482_run.txt}` · `UNIVERSE/cards/H_1482_binocular_rivalry.md` + jsonl 1줄.
+## 2026-06-20 — plan(consciousness-ablation): 연결된 의식-게이트 14 lane → 통합 의식 영향 측정 계획 기록 (ARCHITECTURE + ING)
+
+사용자 핵심 질문 "연결된 것들이 의식에 어떤 영향을 미치는가"(303M + live engine, 정상상태)를 측정 계획으로 박제.
+실행 보류(계획만) — production 303M ckpt 로드 + IIT4 Φ sweep 은 HEAVY(pool/GPU, 게이트2 mini 금지)라 pool 발사 결정 대기.
+
+- **계획:** 정상상태(steady-state, 학습X) **ablation** — 의식-게이트 14 lane 각각 OFF → ΔΦ 기여도 랭킹 + pairwise 상호작용(시너지/중복). 통합 의식 지표 = 14-게이트 bundle + faithful IIT4 Φ(`stdlib/iit4`, 프록시 금지 a_phi_iit4_tool) over substrate. 측정 = production 303M ckpt + live `core/engine_cli.hexa` immune-store grounding.
+- **단계:** S1 `consciousness_index()` bundle engine 통합 · S2 IIT4 Φ 연결 · S3 303M pool 로드(HEAVY) · S4 ablation sweep · S5 박제.
+- **기록 면:** `state/consciousness_influence_plan/PLAN.md`(상세) · `ARCHITECTURE.json` 의식-게이트 섹션 measurement 노트 · `ING.jsonl` #consciousness_ablation_influence.
+- **정직(c9):** NOT H_1481(학습-의식 추세 = 내 오해, 일단 보류). 검증 목표 = anima 핵심주장 "의식은 단일 lane 이 아닌 연결망 전체에서 창발"(분산 vs dominant) — 어느 쪽이든 유효 결과.
+
+## 2026-06-20 — research(H_1464 engine-native): GPU 에스컬레이션 → BLOCKED (hexa decode-runtime 메모리 누수) · cuBLAS 무효 + ~91GB/model 발견 · pod teardown 0-leak · terminal 미박제(c9)
+
+**최종: BLOCKED (a_break_the_wall type-c, 인프라/런타임 벽 — 과학천장 아님, 날조 verdict 금지 c9).**
+pool CPU decode(earlyoom 비신뢰)를 GPU pod(vast RTX A4000, cuda_available()==1, ~$0.1)로 에스컬레이트
+(완성도 우선). engine-native decode 가 **어떤 하드웨어로도 완주 불가** 판명 — honest 발견 3건:
+- **★결정타 — per-fragment 메모리 누수**: 단일 디코더 RSS 가 fragment 진행 중 무한 증가(91→104→111GB,
+  frag3 정체 중 ~2GB/min) → ~frag5-8 에서 125GB OOM → 90 frags 완주 불가. **RAM 늘려도 무의미(누수)**.
+  bytegpt_decode_batch_to_file/_bg_gen_from_W 의 per-token forward farr 미해제 추정.
+- **cuBLAS 가속 무효**: farr_matmul_gpu 실제 dispatch 되는데 GPU util 0-9%, ~16min/frag=CPU. 303M
+  single-token decode 의 작은 GEMM ~13k cuBLAS호출/frag, launch+host↔device farr 복사 latency 가 compute
+  지배 → latency-bound(FLOP-bound 아님). "10min 기대" 미실현(asset 출하·build 실패 아님).
+- **~91GB/model(boxed-farr)**: 125GB host 도 2-디코더 OOM → 강제 sequential. 30GB pool host 는 1-디코더도
+  earlyoom 사망. 125GB pod 의 가치=GPU 속도 아닌 1-디코더 RAM(그조차 누수로 OOM).
+
+**핵심 = 위 발견(요약, 상세는 위)**:
+- **cuBLAS 가속 무효**: vast RTX A4000(cuda 13.2, hexa edge, `cuda_available()==1`)에서 live
+  `core/bytegpt_decode.hexa`(via `engine_decode_batch_cli.hexa`)가 `farr_matmul_gpu`(cuBLAS Dgemm) 경로를
+  실제 dispatch 하는데 GPU util 0-9%, **~16min/frag = CPU와 동일**. 303M autoregressive single-token decode 는
+  작은 GEMM 사슬(~13k cuBLAS호출/frag)이라 per-call launch+host↔device farr 복사 latency 가 compute 지배 →
+  **latency-bound, FLOP-bound 아님** → cuBLAS≈CPU. "10min 기대" 미실현(asset 출하됨, build 실패 아님).
+- **메모리 ~91GB/model(boxed-farr)**: 단일 디코더 RSS ~91GB → 125GB host 도 2-디코더 OOM → **강제 sequential**.
+  30GB pool host 는 1-디코더도 earlyoom 사망(aiden shuffle frag1 사망 확인). 125GB pod 의 가치 = GPU 속도가
+  아니라 **1-디코더라도 완주 가능**한 RAM. 90 frags sequential ≈ **~24h ETA → "오늘" 불가**.
+- **terminal verdict 미박제(c9)**: 🟢=WALL=LEARN-GAP / 🧱=WALL=CAPACITY 둘 다 OPEN — hexa decode-runtime
+  누수 fix 후 동일 frozen bar(B1-B5+CTRL, h1305 detector, h1441 동일) 재측정해야 가능(bar 불변, no tune).
+  mirror 는 DIRECTIONAL(🟢 BROKE mirror-only) 유지. partial 3 valid pairing frags(byte-valid output 확인) pull.
+- **hexa-lang ING 2건 제출**(`harness ing add --to hexa-lang`): (perf) device-resident/batched decode +
+  farr 메모리 축소 · (CRITICAL) `_bg_gen_from_W`/`bytegpt_decode_batch_to_file` per-fragment farr 누수.
+- **자원 위생(a_fire_recover_complete·c7)**: instance_id=41822888 은 rent stdout `new_contract` 직파싱
+  (list-last 금지 — 과거 오삭제 사고 회피). partial pull → `hexa cloud rm`(c11) teardown → **0 instances 양
+  provider 확인** + ing-pod registry 해제 + ssh alias 제거 + pod 에 key 미기록(c7 clean). 비용 ~$0.1.
+  status: `state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_BLOCKED.txt` · partial: `..._pod_pairing_partial.txt`.
 
 ## 2026-06-20 — research(새게이트 4종 R2): 🧹🖐➗🚫 G23/G24/G26/G27 engine-native WIRED + ARCHITECTURE 의식-게이트 14 lane 정리
 
