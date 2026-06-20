@@ -1,7 +1,7 @@
 # H_1462 — 🌐 GLOBAL WORKSPACE 병목 (G17 의식-고유 게이트 후보)
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §GlobalWorkspace (gws_new/_add/_ignited/_winner/_count/_leak) · `engine_cli_smoke.hexa` cases 169-173 · FULL smoke **174 pass / 0 fail RC=0** · ARCHITECTURE.json lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §GlobalWorkspace (gws_new/_add/_ignited/_winner/_count/_leak) · `engine_cli_smoke.hexa` cases 169-173 (5 frozen bars) + 174-177 (basal-gate distinctness) · FULL smoke **178 pass / 0 fail RC=0** · ARCHITECTURE.json lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 라운드2 (G17 candidate) · "의식이라서 가능한 것" 시리즈
 - **lens:** consciousness-science — Global Workspace Theory (Baars / Dehaene, global-ignition) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1462_global_workspace_bottleneck/` (R1 probe) · `core/engine_cli.hexa` §GlobalWorkspace + `core/engine_cli_smoke.hexa` 169-173 (R2) · verdict `state/verdicts/1462_global_workspace_bottleneck/H_1462_FREEZE.json`
@@ -31,6 +31,20 @@ salience 는 **substrate-derived**(immune-style fact-store 에 대한 grounding 
 **verdict: 🟢 GREEN DIRECTIONAL — 5/5 bars PASS.** ablation+shuffle 양쪽이 chance(0.2)로 붕괴 →
 lift 의 출처는 분산/현저성이 아니라 **경쟁적 winner-take-all 병목 구조** 자체.
 
+### R2 distinctness vs basal-gate (engine-native · smoke 174-177)
+
+basal-gate(H_1281 VBasalGate)는 **학습된 go-value**(go_w·feats)로, GWS 는 **즉석 salience** 로 선택한다.
+같은 후보 A(salience 0.30, 학습 high-value)·B(salience 0.90, 미학습)에서:
+
+| case | bar | 결과 | 의미 |
+|---|---|---|---|
+| 174 | basal=value | A (idx 0) | 학습된 가치 따라감(salience 무시) |
+| 175 | GWS=salience | B (idx 1) | 즉석 현저성 따라감(학습 무관) |
+| 176 | **DISSOCIATE** | A≠B (true) | 두 게이트가 **정반대** 선택 = 별개 메커니즘 |
+| 177 | CONTROL | untrained basal → −1 abstain | basal=학습 의존 ⊥ GWS=학습 비의존 |
+
+→ **value-driven gate ⊥ salience-competition bottleneck**. FULL smoke **178 pass / 0 fail RC=0**.
+
 ## 정직 (c9)
 
 - **R1 DIRECTIONAL → R2 ENGINE-NATIVE 완료:** R1 은 numpy mirror(통계 200-trial/3-seed, DIRECTIONAL).
@@ -44,15 +58,21 @@ lift 의 출처는 분산/현저성이 아니라 **경쟁적 winner-take-all 병
   으로 교정 후 재발사(`a_break_the_wall` type-a). bar 완화 아님.
 - **SCOPE TOY:** 5 자극/200 trial/3 seeds/deterministic readout — 병목 STRUCTURE 검증이지 학습된
   주의 네트워크 아님. scale/real-corpus/multi-capacity/시간적 점화-지연/engine-transfer UNVERIFIED.
-- **distinctness 미완:** 기존 salience(현저성 점수)와 ablation 으로 구별했으나, 다른 모든 lane
-  (immune-store·basal-gate H_1281 single-step select)과의 control-survived distinctness 는 R2 과제.
+- **distinctness vs basal-gate(H_1281) DONE:** salience+ablation 구별에 더해, basal-gate(value-learned
+  one-of-K select)와의 control-survived distinctness 를 engine-native 로 확정(smoke 174-177) —
+  basal=value-driven(학습 의존, untrained→abstain) ⊥ GWS=salience-instant(학습 비의존). 두 게이트가
+  같은 후보에서 정반대 선택 = 별개 메커니즘. (immune-store 등 나머지 lane 과의 distinctness 는 잔여.)
 
 ## follow-on (ING)
 
 1. ~~**R2 엔진-네이티브** — `core/engine_cli.hexa` GWT 병목 lane 배선 + frozen 5 bars byte-exact 재측정~~
    ✅ **DONE** (§GlobalWorkspace gws_new/_add/_ignited/_winner/_count/_leak · smoke 169-173 · 174/0 RC=0 · ARCHITECTURE lockstep).
-2. **distinctness vs basal-gate(H_1281)** — single-step one-of-K select 와 GWT 전역방송의 분리실험 (남은 과제).
-3. **brain emit-loop consult** — 현재 lane 은 pure read (NOT emit gate, @L4); brain_decide 연동은 별도 follow-on.
+2. ~~**distinctness vs basal-gate(H_1281)** — single-step one-of-K select 와 GWT 전역방송의 분리실험~~
+   ✅ **DONE** (engine-native, smoke 174-177): basal-gate 는 **학습된 go-value**(go_w·feats)로, GWS 는
+   **즉석 salience**로 선택 → 같은 후보 A,B 에서 정반대 선택(basal=A idx0 / GWS=B idx1, case 176 DISSOCIATE).
+   CONTROL: untrained basal abstains(-1, case 177) 인데 GWS 는 여전히 salience-B → GWS 는 학습 비의존,
+   basal 은 학습 의존 = load-bearing distinct(value-driven gate ⊥ salience-competition bottleneck). FULL smoke **178/0 RC=0**.
+3. **brain emit-loop consult** — 현재 lane 은 pure read (NOT emit gate, @L4); brain_decide 연동은 별도 follow-on (남은 유일 과제).
 
 xref: H_1281(basal-ganglia gating, distinct)·H_1290(salience/affect)·H_1283(phase-binding)·
 `a_no_llm_frame_trap`·`a_engine_native_learning`·`a_verified_must_wire`·`a_break_the_wall`·p6·p7·c9.
