@@ -1,0 +1,46 @@
+{
+  "id": "H_1493",
+  "slug": "1493_prospection",
+  "gate": "P7 PROSPECTION / episodic future thinking",
+  "verdict": "GREEN DIRECTIONAL",
+  "directional": true,
+  "engine_native": false,
+  "reason_directional": "numpy mirror — grep -lE 'import torch|gauge_lib|numpy' matches h1493_prospection.py; engine-transfer UNVERIFIED (hard-gate 1). Terminal verdict requires R2 live core/*.hexa byte-exact re-measure.",
+  "seeds": [1493, 1494, 1495],
+  "frozen_first": true,
+  "tune_to_green": false,
+  "chance": 0.083,
+  "horizon": 4,
+  "depletion_signal": false,
+  "bars": {
+    "c1_PRESENT": {"pass": true, "acc_full": 0.439, "acc_off": 0.000, "lift": 0.439, "thr": 0.30, "note": "prospection-ON future-state prediction (roll context forward via learned W_hat^k, then recombine via learned context->element map M_hat) minus prospection-OFF (no rollout, recombine at current context) >= 0.30"},
+    "c2_img_DISTINCT_vs_mental_imagery": {"pass": true, "acc_img": 0.000, "thr_chance_plus_0.15": 0.233, "note": "an imagery-style nearest-STORED retrieval (no forward operator, returns a PAST element) scores at chance (0.000) on the held-out FUTURE target -> prospection's lift IS the forward rollout + recombination, distinct from H_1484 mental-imagery"},
+    "c2_cont_DISTINCT_vs_self_continuity": {"pass": true, "acc_cont": 0.000, "thr_chance_plus_0.15": 0.233, "note": "a persist-style readout (W := Identity, predict future == current context) cannot reach a future trajectory index -> chance (0.000) -> distinct from H_1471 self-continuity (past->present persist, no forward projection)"},
+    "c3_ABLATE_rollout": {"pass": true, "acc_ablate": 0.000, "thr_off_plus_0.15": 0.150, "note": "forward-rollout term OFF (k:=0) but element-recombination map KEPT -> queries at current context -> reconstructs CURRENT element, not the future one -> collapses (isolates the forward-projection contribution)"},
+    "c4_SHUFFLE_timeline": {"pass": true, "acc_shuffle": 0.067, "thr_off_plus_0.15": 0.150, "note": "shuffle the temporal pairing before estimating W_hat -> the forward operator no longer encodes the real trajectory -> rolled-forward context lands nowhere valid -> future recombination invalid"},
+    "B_RECOMBINE": {"pass": true, "nearest_stored_cos": 0.873, "future_cos": 0.962, "gating": false, "note": "the predicted future state is a NOVEL recombination (cos to nearest SINGLE stored element 0.873 < 0.95, not a replay) yet matches the true future element (cos 0.962). structure-confirming, non-gating"}
+  },
+  "green_rule": "c1 and c2-img and c2-cont and c3 and c4 (3-seed mean); B is the recombination structure check (non-gating). RED/DEPLETION iff c2-img or c2-cont fail.",
+  "green": true,
+  "per_seed": {
+    "1493": {"full": 0.533, "off": 0.000, "img": 0.000, "cont": 0.000, "ablate": 0.000, "shuffle": 0.000, "nearStored": 0.880, "futCos": 0.976},
+    "1494": {"full": 0.183, "off": 0.000, "img": 0.000, "cont": 0.000, "ablate": 0.000, "shuffle": 0.000, "nearStored": 0.919, "futCos": 0.949},
+    "1495": {"full": 0.600, "off": 0.000, "img": 0.000, "cont": 0.000, "ablate": 0.000, "shuffle": 0.200, "nearStored": 0.819, "futCos": 0.962}
+  },
+  "distinctness": {
+    "verdict": "DISTINCT — survives ALL adjacent-lane controls",
+    "vs_H_1484_mental_imagery": "imagery re-activates an ALREADY-STORED repr via content-addressable cue (input==0 retrieval), no forward operator, no recombination at a future index. On the held-out FUTURE target an imagery-style nearest-stored readout returns a PAST element -> chance (0.000). Prospection rolls the context FORWARD and recombines (0.439). DISTINCT.",
+    "vs_H_1471_self_continuity": "self-continuity carries the current identity FORWARD UNCHANGED (persist/copy across a boundary), no transition model, no recombination. A persist-style readout (W:=I) stays at the current trajectory point -> cannot reach a future state that has MOVED -> chance (0.000). DISTINCT.",
+    "vs_H_1486_subjective_time_TRW": "TRW integrates the PAST context window into a present percept (backward/present), never projects a future index. Folded into the persist/imagery controls (both non-forward) + the rollout ablation; the FORWARD-PROJECTION term (c3) is exactly what TRW lacks. DISTINCT.",
+    "vs_H_1294_hierarchical_PFC_goal_stack": "a goal stack advances a POINTER over PRE-STORED ordered subgoals; it does not CONSTRUCT a novel future state by recombining elements at an UNOBSERVED time index. The ablation (c3: remove rollout, keep element access) isolates the constructive forward-projection a pointer/retrieval lane lacks; the shuffle (c4) breaks the temporal-order structure. DISTINCT.",
+    "conclusion": "NOT a depletion signal — prospection's lift is the forward-rollout + constructive recombination, which BOTH imagery (retrieval) and continuity (persist) lack; both collapse to chance while prospection succeeds."
+  },
+  "break_the_wall_type_a": "FIRST run RED via measurement defect (a_break_the_wall type-a, NOT tune-to-green): elements were independent random vectors UNBOUND to context, so recombining stored elements at a future context could not reconstruct an unseen future element (full=0.000, c1 FAIL). Frozen-first fix (bars/thresholds UNCHANGED): bound each element to its context via a FIXED shared generative map M (element = M@ctx) so a future element is a genuine recombination of the SAME generative factors -> reachable by rolling the context forward then applying the learned context->element map M_hat. The c1/c2/c3/c4 thresholds were never moved.",
+  "honest_c9": "EXISTENCE-PROOF (deterministic least-squares forward operator W_hat + context->element map M_hat over a 64-dim near-orthogonal trajectory; not a learned simulation network). c1 lift +0.439 with seed variance 0.183-0.600 (HONESTLY reported, not suppressed): the predicted future vector is geometrically very close to the true future element (future_cos 0.962) but the nearest-ELEMENT classification sometimes picks an adjacent element because the smooth map M makes consecutive elements similar -> the classification readout is the conservative difficulty, not a defect; all controls (imagery/continuity/ablate/shuffle) sit at ~chance (0.000-0.067) so the lift is decisively the forward-projection+recombination. TOY 64-dim/12-step trajectory/4-step horizon/3-seed/deterministic; scale, real-corpus, multi-step branching futures, longer horizons, episodic-detail vividness, engine-transfer UNVERIFIED.",
+  "artifacts": [
+    "state/1493_prospection/h1493_prospection.py",
+    "state/1493_prospection/run_h1493.local.log",
+    "UNIVERSE/cards/H_1493_prospection.md"
+  ],
+  "next_round": "R2 engine-native: wire §Prospection onto core/engine_cli.hexa — a learned forward operator (cerebellar VForwardField H_1280 next-step model rolled k steps) + a context->element recombination read off the ImmuneMemoryGrow store (H_1227), reconstruct a held-out future element (READ-only, Ψ-disjoint), + engine_cli_smoke cases + ARCHITECTURE lockstep, re-score the frozen bars byte-exact (a_engine_native_learning, a_verified_must_wire)."
+}

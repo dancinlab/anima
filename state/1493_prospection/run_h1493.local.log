@@ -1,0 +1,15 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | DEPLETION-signal: False | seeds [1493, 1494, 1495] | chance=0.083 | horizon=4
+c1 PRESENT       full 0.439 - off 0.000 = 0.439 >= 0.30  -> True
+c2-img DISTINCT  imagery-style nearest-STORED acc(future)=0.000 <= chance+0.15=0.233  -> True
+c2-cont DISTINCT persist-style (W:=I) acc(future)=0.000 <= chance+0.15=0.233  -> True
+c3 ABLATE        rollout OFF (k:=0) acc=0.000 <= off+0.15=0.150  -> True
+c4 SHUFFLE       timeline-shuffled W acc=0.067 <= off+0.15=0.150  -> True
+B  RECOMBINE     nearest-single-stored cos=0.873<=0.95 (novel blend) & future-cos=0.962>=0.50  -> True [structure, non-gating]
+
+PER-SEED:
+  seed 1493: full=0.533 off=0.000 img=0.000 cont=0.000 ablate=0.000 shuffle=0.000 nearStored=0.880 futCos=0.976
+  seed 1494: full=0.183 off=0.000 img=0.000 cont=0.000 ablate=0.000 shuffle=0.000 nearStored=0.919 futCos=0.949
+  seed 1495: full=0.600 off=0.000 img=0.000 cont=0.000 ablate=0.000 shuffle=0.200 nearStored=0.819 futCos=0.962
+
+DISTINCT: forward-rollout + recombination survives ALL controls vs imagery/continuity/timeline -> prospection IS a distinct lane (DIRECTIONAL).
