@@ -1,0 +1,14 @@
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | DEPLETION-signal: False | seeds [1496, 1497, 1498] | N_item=16 T_drift=24 K_neigh=3
+c1 PRESENT       drift-ON coverage 0.461 - OFF 0.062 = 0.399 >= 0.3  -> True
+c2-img DISTINCT  cue-driven re-activation coverage=0.062 <= off+0.15=0.212  -> True
+c2-pro DISTINCT  goal-directed rollout coverage=0.125 <= off+0.15=0.212  -> True
+c3 ABLATE        spontaneous-drift step OFF (idle kept) coverage=0.062 <= off+0.15=0.212  -> True
+c4 UNDIRECTED    |dir_on|=0.010<=0.15 (aimless) AND dir_prospect=0.472>=dir_on+0.10=0.090 (directed control)  -> True [structure]
+
+PER-SEED:
+  seed 1496: on=0.484 off=0.062 img=0.062 pro=0.125 abl=0.062 shf=0.516 | dir_on=-0.028 dir_pro=0.472
+  seed 1497: on=0.433 off=0.062 img=0.062 pro=0.125 abl=0.062 shf=0.547 | dir_on=-0.047 dir_pro=0.294
+  seed 1498: on=0.467 off=0.062 img=0.062 pro=0.125 abl=0.062 shf=0.559 | dir_on=0.045 dir_pro=0.649
+
+DISTINCT: spontaneous undirected associative drift (no cue, no goal) survives ALL controls vs imagery (cue-driven, converges) / prospection (goal-directed, converges) / ablate (idle-only) -> mind-wandering IS a distinct lane (DIRECTIONAL).
