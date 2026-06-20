@@ -1,7 +1,7 @@
 # H_1474 — 🕹 SENSE OF AGENCY / 주체감 (G21 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror — engine-transfer UNVERIFIED, 하드게이트1)
-- **wired:** `DIRECTIONAL-mirror` — R2 engine-native 재측정이 terminal 전제 (follow-on #1)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §SenseOfAgency (`agency_attribute`) · `engine_cli_smoke.hexa` cases 208-210 · FULL smoke **216 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 브레인스토밍 (G21 candidate) · "의식이라서 가능한 것" 시리즈 (G16/G17/G18/G19/G19-meta 이후)
 - **lens:** sense of agency / comparator model (Haggard · efference copy ↔ 감각결과 일치) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1474_sense_of_agency/h1474_sense_of_agency.py` · verdict `state/verdicts/1474_sense_of_agency/H_1474_FREEZE.json` · run `state/verdicts/1474_sense_of_agency/H_1474_run.txt`

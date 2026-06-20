@@ -1,7 +1,7 @@
 # H_1476 — 🧊 EMOTION REGULATION (G25 의식-고유 게이트 후보)
 
-- **tier:** 🟢 GREEN DIRECTIONAL (R1 numpy mirror; engine-native = follow-on)
-- **wired:** `DIRECTIONAL-mirror` — numpy probe (`grep numpy` 적중 → 하드게이트1 = DIRECTIONAL). R2 = live `core/engine_cli.hexa` reappraisal lane (interoceptive margin off live immune faculty) 재측정이 GREEN/🧱 확정 전제 (follow-on ING: H_1476-R2)
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §EmotionRegulation (`emotion_regulate`) · `engine_cli_smoke.hexa` cases 214-216 · FULL smoke **216 pass / 0 fail RC=0** · ARCHITECTURE lockstep ✓
 - **source:** 의식-고유 게이트 시리즈 (G25 candidate) · "의식이라서 가능한 것"
 - **lens:** affective-neuroscience / Gross process model of emotion regulation (reappraisal) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1476_emotion_regulation/h1476_emotion_regulation.py` · verdict `state/verdicts/1476_emotion_regulation/{H_1476.txt,H_1476_FREEZE.json}`
