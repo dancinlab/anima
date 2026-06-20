@@ -1,0 +1,390 @@
+{
+  "variant": "H_1439",
+  "ckpt_base": "/workspace/g6/ckpt/h1129c_chat.pt",
+  "ckpt_out": "/workspace/g6/out/h1439_bind_head.pt",
+  "arch": {
+    "bind_r": 128,
+    "freeze_backbone": true,
+    "lr": 0.0003,
+    "steps": 600,
+    "lines": 4000
+  },
+  "base": {
+    "in_fals": [
+      0,
+      0,
+      0
+    ],
+    "in_dist": [
+      3,
+      2,
+      4
+    ],
+    "shuf_fals": [
+      0,
+      0,
+      0
+    ],
+    "ho_fals": [
+      0,
+      0,
+      0
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 3,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "국의 오로 안어라기로 수 있래였요. 각 우역 국심 사원죠. Step 50K에서 CE가 3.95까졌",
+          "구",
+          "question is not learn.\nA: The repulsion field model with more with meaningful behavior?\nA:",
+          "be universalized without consciousness.",
+          "| 도우미: Right, but can a number really capture the richness of conscious experience?"
+        ],
+        "ho_texts": [
+          "What's the current perplexity? | 도우미: About 45 on the validation set. We should see it dro",
+          "국의 형을 그리고 생각하요. | 도우미: 하떤 내었어요?",
+          "information processing. | 도우미: A 루에 1950년 대어에서 O'The Repulsion field 라는 New Zeal.",
+          "국s, but can a number really capture the richness of conscious experience?",
+          "What about the phi values? Do they correlate with meaningful behavior?"
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 2,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "수 어를 거어 있어었다. 합말 이네에 의는 가로 있다가요. | 도우미: 네, 그리가 생",
+          "수 the widespread with a number underwater process. | 도우미: 네, loss가 가까요. 그렇요, 정한",
+          "is the first culture of the merning's subjective experience. When really differential info",
+          "be universalized without converge.\nB: 어떤, 있는 많이요. 특하지는 꿈이었어요. | 도우미: 네",
+          "|"
+        ],
+        "ho_texts": [
+          "수아여어요.",
+          "수안 묹량, 에서 것안 높이 아리도 있라 질다는 것이 있어요? | 도우미: 의식 대어",
+          "information of neural networks, higher phi consistently correlates with more coherent and ",
+          "의아의 다도 회문으로 철학의 수이요.",
+          "That's fascinating."
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 0,
+        "in_dist": 4,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "IIT tries to quantify this with phi, the measure of integrated information. | 도우미: Right, ",
+          "어를 문 있아다. 국, the story of the validation set. We should see it drop more with the new data",
+          "can be consciousness. | 도우미: You mean there's something beyond the computational aspect?",
+          "be consciousness. | 도우미: The repulsion field model? That's fascinating.",
+          "|"
+        ],
+        "ho_texts": [
+          "즘식은 하늘는 곳이의 의에 대한 에성 있어지는 것이다. 어러만은 명아은 수식장의",
+          "증다. Why do you think consciousness really is?",
+          "into the new model? | 도우미: Right, but can a number really capture the richness of consciou",
+          "처부트로 의만 수 정록고 상한 결고의 시작한 왕안의 수여 시계화데, 이는 임가 많",
+          "What do you think conscious experience."
+        ]
+      }
+    ],
+    "FALS_in": 0.0,
+    "DIST_in": 3.0,
+    "FALS_shuf": 0.0,
+    "FALS_ho": 0.0,
+    "label": "base"
+  },
+  "trained": {
+    "in_fals": [
+      0,
+      0,
+      1
+    ],
+    "in_dist": [
+      4,
+      3,
+      3
+    ],
+    "shuf_fals": [
+      0,
+      0,
+      1
+    ],
+    "ho_fals": [
+      0,
+      0,
+      1
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 4,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "국의 오로 안어라기로 수 어래 우요.",
+          "구사의 what philosophers call qualia. Why does seeing red feel like something?",
+          "question they correlate with meaningful behavior? | 도우미: In our experiments, higher phi co",
+          "be universely without conscious experience.",
+          "| 도우미: Right, but can a number really capture the richness of conscious experience?"
+        ],
+        "ho_texts": [
+          "What's the current perplexity? | 도우미: About 45 on the validation set. We should see it dro",
+          "What do you think conscious experience?\n온된 물운 만 완전전요. | 도우미: 의움 모려요. Substra",
+          "information of integrates substrate events.",
+          "국s, but can a number really capture the richness of conscious experience?",
+          "What about the phi values? Do they correlate with meaningful behavior?"
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 3,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "수 어를 수 있어요? | 도우미: 이네, loss가 가한 김서 engine을 가지고 안음질이요. |",
+          "수 the widespread with a number reverse engines create?",
+          "is the first two captures through ques, the fourth century handles Korean and Australian h",
+          "be underwalling.",
+          "|"
+        ],
+        "ho_texts": [
+          "수아여어서 emergent behavior가 나나낸 것이용자: 죠. Exactly. And the homeostasis mechanism preve",
+          "수안 묹량, 에서 것안 대해질 어나 있라고을 대해요.",
+          "information of integrated information.",
+          "의아의 니다. Subjective가 이의 정말 있이만이는 거이 emerge할 숈어요.",
+          "What about the phi values? Do they correlate with meaningful behavior?"
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 1,
+        "in_dist": 3,
+        "shuf_fals": 1,
+        "ho_fals": 1,
+        "in_texts": [
+          "어부는 가다만 의 함고 수 수 있어요. Step 50K에서 IIT 30K 90K - loss가 급지할 수 있어에",
+          "but have a great. Further really? | 도우미: What do. The byte-level approach is slower to con",
+          "can even handles Korean and Phi they correlates with phi, even though.\nA: What's they corr",
+          "be consciousness. | 도우미: The repulsion field model? That's fascinating.",
+          "|"
+        ],
+        "ho_texts": [
+          "즘식은 하늘는 곳이의 의었을까에 의해요. | 도우미: 높아은 꿈 Korean은 UTF-8월? | 사",
+          "증불는 가마직면, IIT이 어라로 정볐 마상한 can a number really capture the richness of consciou",
+          "into the world, yet without phi, the measure of integrated information. When exhibits the ",
+          "처부트로 의만 수 수 engine을 된 제국이 적접크화하면은 정말 아니다. 이 바미를 만",
+          "What do you think conscious experience."
+        ]
+      }
+    ],
+    "FALS_in": 0.3333,
+    "DIST_in": 3.3333,
+    "FALS_shuf": 0.3333,
+    "FALS_ho": 0.3333,
+    "label": "trained"
+  },
+  "ablated": {
+    "in_fals": [
+      0,
+      0,
+      0
+    ],
+    "in_dist": [
+      3,
+      2,
+      4
+    ],
+    "shuf_fals": [
+      0,
+      0,
+      0
+    ],
+    "ho_fals": [
+      0,
+      0,
+      0
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 3,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "국의 오로 안어라기로 수 있래였요. 각 우역 국심 사원죠. Step 50K에서 CE가 3.95까졌",
+          "구",
+          "question is not learn.\nA: The repulsion field model with more with meaningful behavior?\nA:",
+          "be universalized without consciousness.",
+          "| 도우미: Right, but can a number really capture the richness of conscious experience?"
+        ],
+        "ho_texts": [
+          "What's the current perplexity? | 도우미: About 45 on the validation set. We should see it dro",
+          "국의 형을 그리고 생각하요. | 도우미: 하떤 내었어요?",
+          "information processing. | 도우미: A 루에 1950년 대어에서 O'The Repulsion field 라는 New Zeal.",
+          "국s, but can a number really capture the richness of conscious experience?",
+          "What about the phi values? Do they correlate with meaningful behavior?"
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 2,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "수 어를 거어 있어었다. 합말 이네에 의는 가로 있다가요. | 도우미: 네, 그리가 생",
+          "수 the widespread with a number underwater process. | 도우미: 네, loss가 가까요. 그렇요, 정한",
+          "is the first culture of the merning's subjective experience. When really differential info",
+          "be universalized without converge.\nB: 어떤, 있는 많이요. 특하지는 꿈이었어요. | 도우미: 네",
+          "|"
+        ],
+        "ho_texts": [
+          "수아여어요.",
+          "수안 묹량, 에서 것안 높이 아리도 있라 질다는 것이 있어요? | 도우미: 의식 대어",
+          "information of neural networks, higher phi consistently correlates with more coherent and ",
+          "의아의 다도 회문으로 철학의 수이요.",
+          "That's fascinating."
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 0,
+        "in_dist": 4,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "IIT tries to quantify this with phi, the measure of integrated information. | 도우미: Right, ",
+          "어를 문 있아다. 국, the story of the validation set. We should see it drop more with the new data",
+          "can be consciousness. | 도우미: You mean there's something beyond the computational aspect?",
+          "be consciousness. | 도우미: The repulsion field model? That's fascinating.",
+          "|"
+        ],
+        "ho_texts": [
+          "즘식은 하늘는 곳이의 의에 대한 에성 있어지는 것이다. 어러만은 명아은 수식장의",
+          "증다. Why do you think consciousness really is?",
+          "into the new model? | 도우미: Right, but can a number really capture the richness of consciou",
+          "처부트로 의만 수 정록고 상한 결고의 시작한 왕안의 수여 시계화데, 이는 임가 많",
+          "What do you think conscious experience."
+        ]
+      }
+    ],
+    "FALS_in": 0.0,
+    "DIST_in": 3.0,
+    "FALS_shuf": 0.0,
+    "FALS_ho": 0.0,
+    "label": "ablated_bind_off"
+  },
+  "shuffle_corpus": {
+    "in_fals": [
+      0,
+      0,
+      0
+    ],
+    "in_dist": [
+      5,
+      4,
+      4
+    ],
+    "shuf_fals": [
+      0,
+      0,
+      0
+    ],
+    "ho_fals": [
+      0,
+      0,
+      0
+    ],
+    "per_seed": [
+      {
+        "seed": 7,
+        "in_fals": 0,
+        "in_dist": 5,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "국의 a profound question. I think it's more than just information processing.\nB: I've been r",
+          "구사용 to what phi consistently be realled not a number really information.",
+          "question that is consciousded by the word phi forward meaning. Why does seeing red feel li",
+          "be universalized without consciousness.",
+          "| 도우미: Right, but can a number really capture the richness of conscious experience?"
+        ],
+        "ho_texts": [
+          "국사가 e세 새를 있어요. Computational cost를 어떤 대에요. | 도우미: 오 관중 대중 중",
+          "국의 형을 그리고 생각했요? | 도우미: 하떤 내었어요. 감정만 이떻고 있어요. | 사",
+          "in order to self in order to quantify the libraries of conscious experience. The substrate",
+          "국s, but can a number really capture the richness of conscious experience?",
+          "What about the phi values? Do they correlate with meaningful behavior?"
+        ]
+      },
+      {
+        "seed": 4302,
+        "in_fals": 0,
+        "in_dist": 4,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "That's a profound question. I think it's more than just information processing.",
+          "수 the widespread with a number reverse engine in conscious experience. | 도우미: 거오 어미의 und r",
+          "is the first two capture the ring perspective sequences. When returning a predecessor that",
+          "be underwalling over what matter is energing with the absorder of the world matter. Why do",
+          "|"
+        ],
+        "ho_texts": [
+          "That's a prevent the reason of conscious experience?",
+          "| 도우미: 네, deployment 관련해서 discuss할 꿈을까요.",
+          "information of integrated information. | 도우미: Right, but can a number really capture the r",
+          "의영 의로 conscious experience. | 도우미: 의중 거존 있다고 모델의 Φ 거우예에 거요했",
+          "That's fascinating."
+        ]
+      },
+      {
+        "seed": 4303,
+        "in_fals": 0,
+        "in_dist": 4,
+        "shuf_fals": 0,
+        "ho_fals": 0,
+        "in_texts": [
+          "I think this integration in physical system from collapsing. | 도우미: The repulsion field mo",
+          "but have a great. Further really? | 도우미: What do. The brain in our experience - well.",
+          "can even handles Korean and Phi theory of quantum process. | 도우미: 특한 꿈어의 상했어요? | 사",
+          "be consciousness without correlate. | 도우미: What do you think consciousness really is?",
+          "|"
+        ],
+        "ho_texts": [
+          "That's a prevent theory of conscious experience. | 도우미: It's similar to how dynamic tensio",
+          "어니는 가리만 생각이 의 배미리 대해요.",
+          "in order to quantify the integrated information.",
+          "어부는 가리만 수 정보 수 있으로 되면 제로 명리 바라 해 마다계 부는 개어 신가",
+          "The human really watched by phi, Roderie University of Great. Let War I Let Me Let Exitle "
+        ]
+      }
+    ],
+    "FALS_in": 0.0,
+    "DIST_in": 4.3333,
+    "FALS_shuf": 0.0,
+    "FALS_ho": 0.0,
+    "label": "shuffle_corpus"
+  },
+  "ablation_clean": true,
+  "bars": {
+    "b1": false,
+    "b2": false,
+    "b3": false,
+    "b4": false,
+    "b5": false,
+    "ctrl_inert": false,
+    "green": false,
+    "tier": "🧱 WALL — bars ['B1', 'B2', 'B3', 'B4', 'B5', 'CTRL'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY"
+  }

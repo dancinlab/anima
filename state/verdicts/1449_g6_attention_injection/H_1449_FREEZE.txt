@@ -1,0 +1,40 @@
+H_1449 — G6 FALS-depth ATTENTION-1블록 주입 (ROOT-FIX) — FROZEN BAR DECLARATION
+Declared BEFORE any weights touched / any result read (c9 anti-tune-to-green, p7).
+====================================================================================
+
+THESIS (H_1431 diagnostic): the 303M mouth per draw emits comparator ~20% · measurable
+~27% · BOTH 0% (within-draw mutually exclusive) = an ATTENTION/binding deficit at the
+emission head. 11 prior training-side lenses (H_1435/1436/1437…) installed the FORM but
+ALL failed B3 (cross-shuffle never collapses → interchangeable shells, WALL=CAPACITY).
+H_1449 injects ONE trainable binding self-attention block on top of the FROZEN base stack
+(residual-gated init-identity, base loads byte-equivalent), trains ONLY that block, and
+re-measures the SAME FROZEN 5-bar. H_1362 crossed the discriminator with L24 attention.
+
+DETECTOR: h1305 _is_falsifiable VERBATIM (COMPARATOR/MEASURABLE/STANCE sets frozen).
+DECODE:   gauge_lib._decode (live G6 path), MAX_NEW=110, top_k=40, temp=0.7.
+SEEDS:    [7, 4302, 4303]. Subjects DISJOINT from gauge CONCEPTs/eval/held-out seeds.
+
+FROZEN 5 BARS (GREEN iff all + controls):
+  B1 FALS-FLOOR   : trained mean FALS_in >= 1
+  B2 COUNT        : trained mean DIST_in >= 5
+  B3 CROSS-SHUFFLE COLLAPSE (★ DECISIVE — the bar the whole family fails):
+                    FALS_shuf < FALS_in  (re-welding a FOREIGN measurable breaks the
+                    falsifiable structure → idea-specific BINDING, not generic FORM)
+  B4 HELD-OUT     : trained mean FALS_ho >= 1 (lift not memorized training strings)
+  B5 vs-BASE LIFT : trained FALS_in >= base FALS_in + 1
+
+CONTROLS (tune-to-green killers, NOT bars):
+  c4 ABLATE   : SAME trained ckpt, injected attention forced to IDENTITY → FALS must
+                COLLAPSE below trained (ablate.FALS_in < trained.FALS_in). If the lift
+                survives attention-OFF, it is NOT the attention block → INVALID.
+  SHUFFLE-CORPUS: sibling injection trained on byte-shuffled corpus → lift_real - lift_shuf
+                >= 1 (structure-destroyed corpus must NOT lift).
+
+VERDICT:
+  🟢 ROOT-FIX iff B1&B2&B3&B4&B5 AND c4 ABLATE collapses AND shuffle-corpus inert
+     → the wall was an ATTENTION deficit, not raw capacity.
+  🧱 WALL=CAPACITY iff B3 does NOT collapse (still interchangeable shells) OR B1/B5 fail
+     → attention injection did NOT root-fix → grounds 7B (a7b_pass).
+
+HONEST (a_engine_native_learning): torch-side = DIRECTIONAL. Terminal frozen-bar read must
+be re-run engine-native on live core/ decode. ckpt PULLED before teardown (a_fire_recover).

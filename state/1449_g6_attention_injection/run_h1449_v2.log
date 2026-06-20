@@ -1,0 +1,91 @@
+[run] Sat Jun 20 17:22:23 KST 2026 HERE=/Users/mini/dancinlab/anima/state/1449_g6_attention_injection
+[rent] vast H100 pytorch devel ...
+[cloud] rent vast: picked offer 40413290
+[cloud] rent vast: created instance 41792045 (owner=h1449, registered)
+[cloud] rent vast: READY ssh2.vast.ai:32044 (root@ssh2.vast.ai -p 32044)
+[cloud] rent vast: ~/.ssh/config Host ssh2.vast.ai → vast identity (auto · zero-flag ssh; #1155)
+rent-result pod=41792045 host=ssh2.vast.ai provider=vast state=READY project=@anima
+instance_id=41792045
+host=ssh2.vast.ai
+port=32044
+owner=h1449
+[rent] ID=41792045
+[wait] ssh-ready ...
+[wait] ssh up iter 1 (ssh2.vast.ai:32044)
+[cloud] remote exit 0
+torch 2.4.0 cuda True NVIDIA H100 80GB HBM3
+[cloud] remote exit 0
+[upload] probes
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/g6_common.py -> root@ssh2.vast.ai:/workspace/g6/probes/g6_common.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1435_continued_pretrain.py -> root@ssh2.vast.ai:/workspace/g6/probes/h1435_continued_pretrain.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_attention_injection.py -> root@ssh2.vast.ai:/workspace/g6/probes/h1449_attention_injection.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/gauge_lib.py -> root@ssh2.vast.ai:/workspace/g6/probes/gauge_lib.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1129_midcap_broad_converged_recombination.py -> root@ssh2.vast.ai:/workspace/g6/probes/h1129_midcap_broad_converged_recombination.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1305_g6_ideation_falsifiability.py -> root@ssh2.vast.ai:/workspace/g6/probes/h1305_g6_ideation_falsifiability.py
+[upload] base ckpt ...
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/chat_303m/h1129c_chat.pt -> root@ssh2.vast.ai:/workspace/g6/ckpt/h1129c_chat.pt
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/_pod_driver.sh -> root@ssh2.vast.ai:/workspace/g6/_pod_driver.sh
+[fire attempt 1] [cloud] started; remote pid 518 · log /workspace/g6/driver.log
+__MONITOR_HANDLE__={"host":"root@ssh2.vast.ai","pid":518,"log":"/workspace/g6/driver.log","tail_cmd":"hexa cloud tail root@ssh2.vast.ai /workspace/g6/driver.log"}
+[cloud] 📋 ledger: hexa cloud dispatch add <jid> 518 "$(pwd)" --host root@ssh2.vast.ai  # cwd ./pods.json 에 등록 (commons g57; --register 로 자동화)
+[fire] PID=518
+[poll] iter 8 tail:
+    [H1449 step  400] ce=0.1900 2.7min
+    [H1449 step  450] ce=0.1879 3.1min
+    [H1449 step  500] ce=0.1890 3.4min
+    [H1449 step  550] ce=0.1872 3.8min
+[cloud] remote exit 0
+[poll] iter 16 tail:
+    [H1449 step  300] ce=2.9173 2.1min
+    [H1449 step  350] ce=2.8961 2.4min
+    [H1449 step  400] ce=2.8871 2.7min
+    [H1449 step  450] ce=2.8837 3.1min
+[cloud] remote exit 0
+[poll] iter 24 tail:
+    [H1449 step  150] ce=0.1987 1.0min
+    [H1449 step  200] ce=0.1928 1.4min
+    [H1449 step  250] ce=0.1948 1.7min
+    [H1449 step  300] ce=0.1881 2.1min
+[cloud] remote exit 0
+[poll] iter 32 tail:
+    [H1449 step    0] ce=5.5473 0.0min
+    [H1449 step   50] ce=2.9233 0.3min
+    [H1449 step  100] ce=2.9284 0.7min
+    [H1449 step  150] ce=2.9138 1.0min
+[cloud] remote exit 0
+[poll] iter 40 tail:
+[H_1449] device=cuda:0 steps=600 seed=4303
+[H_1449] base FALS_in=0.0 DIST_in=1.0 FALS_ho=0.0
+    [H1449 step    0] ce=1.8218 0.0min
+    [H1449 step   50] ce=0.2187 0.3min
+[cloud] remote exit 0
+[poll] iter 48 tail:
+    [H1449 step  450] ce=0.1909 3.1min
+    [H1449 step  500] ce=0.1928 3.4min
+    [H1449 step  550] ce=0.1858 3.8min
+    [H1449 step  599] ce=0.1865 4.1min
+[cloud] remote exit 0
+[poll] iter 56 tail:
+    [H1449 step  450] ce=2.9020 3.1min
+    [H1449 step  500] ce=2.8689 3.4min
+    [H1449 step  550] ce=2.8604 3.8min
+    [H1449 step  599] ce=2.8561 4.1min
+[cloud] remote exit 0
+[poll] DONE at iter 58
+[pull] ...
+[cloud] scp exit 0 · verified 7356 bytes · root@ssh2.vast.ai:/workspace/g6/driver.log -> /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/driver.log
+[cloud] scp exit 0 · verified 16560 bytes · root@ssh2.vast.ai:/workspace/g6/out/h1449_result_seed7.json -> /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_result_seed7.json
+[cloud] scp exit 0 · verified 2419 bytes · root@ssh2.vast.ai:/workspace/g6/out/h1449_seed7.log -> /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_seed7.log
+[cloud] scp exit 0 · verified 16534 bytes · root@ssh2.vast.ai:/workspace/g6/out/h1449_result_seed4302.json -> /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_result_seed4302.json
+[cloud] scp exit 0 · verified 2415 bytes · root@ssh2.vast.ai:/workspace/g6/out/h1449_seed4302.log -> /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_seed4302.log
+[cloud] scp exit 0 · verified 16532 bytes · root@ssh2.vast.ai:/workspace/g6/out/h1449_result_seed4303.json -> /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_result_seed4303.json
+[cloud] scp exit 0 · verified 2419 bytes · root@ssh2.vast.ai:/workspace/g6/out/h1449_seed4303.log -> /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_seed4303.log
+[pull] local:
+-rw-r--r--  1 mini  staff  16534 Jun 20 18:03 /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_result_seed4302.json
+-rw-r--r--  1 mini  staff  16532 Jun 20 18:07 /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_result_seed4303.json
+-rw-r--r--  1 mini  staff  16560 Jun 20 18:00 /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_result_seed7.json
+[run] complete — teardown via trap
+[teardown] hexa cloud rm 41792045
+[cloud] rm: destroyed 41792045 (vast: destroyed (confirmed) 41792045)
+[teardown] H_1449 rows remaining:
+  (none)

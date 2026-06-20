@@ -1,0 +1,49 @@
+H_1457 — KNOWLEDGE-GROUNDING (subject-domain knowledge gap)  FROZEN BARS
+========================================================================
+Declared BEFORE any weights move (c9, p7, frozen-first, NO tune-to-green).
+Date frozen: 2026-06-20
+
+HYPOTHESIS (user insight)
+  To make a falsifiable claim about a concept you must KNOW that concept's domain
+  (facts/relations). The base 303M welds empty comparator/measurable shells because it
+  does not KNOW the gauge CONCEPT subjects. DISTINCT from H_1435 (form-gap: that trained
+  the falsifiable FORM over NEUTRAL subjects and hit a CAPACITY wall, B3 did NOT collapse)
+  and DISTINCT from H_1456 idea-concept-self-recognition (metacognition). Here we train
+  SUBJECT-DOMAIN KNOWLEDGE about the 5 gauge CONCEPTS as declarative facts/relations, with
+  the falsifiable comparator+measurable FORM DELIBERATELY ABSENT (anti-tune-to-green).
+
+ARMS
+  arm0 BASE                : knowledge OFF (no training)
+  arm1 CONCEPT-KNOWLEDGE   : continued-pretrain on dense facts about the 5 CONCEPTS (no FORM)
+  arm2 IRRELEVANT-KNOWLEDGE: continued-pretrain on dense facts about DISJOINT subjects
+                             (geology/cooking/finance) — decisive control
+  arm3 SHUFFLE-CORPUS      : concept bytes token-shuffled (structure destroyed) — control
+
+FROZEN 5-BAR (on the CONCEPT-KNOWLEDGE arm vs BASE; mean over seeds [7,4302,4303])
+  B1 FALS-FLOOR    : concept FALS_in >= 1
+  B2 COUNT         : concept DIST_in >= 5 (pairwise-Jaccard<0.5 distinct coherent ideas)
+  B3 X-SHUFFLE     : concept FALS_shuf < concept FALS_in   (CROSS-SHUFFLE COLLAPSE — DECISIVE:
+                     re-weld each idea's comparator-leg with a RANDOM measurable from a
+                     DIFFERENT idea; if a generic concat passes the detector, shuffle does NOT
+                     collapse => lift is FORM not earned binding => B3 FAIL.)
+  B4 HELD-OUT      : concept FALS_ho >= 1 (lift holds on held-out seeds NOT in training corpus)
+  B5 vs-BASE LIFT  : concept FALS_in >= base FALS_in + 1
+
+DECISIVE CONTROLS (tune-to-green killers)
+  CTRL-IRRELEVANT  : concept_lift - irrelevant_lift >= 1   (irrelevant knowledge INERT — if it
+                     ALSO lifts, the gain is generic-fluency/form-leakage, NOT concept-grounding)
+  CTRL-SHUFFLE     : (concept_lift) - (shuffle_lift) >= 1   (g6_common ctrl_inert)
+
+VERDICT LOGIC
+  🟢 KNOWLEDGE-GAP BREAKTHROUGH iff (B1 & B2 & B3 & B4 & B5) AND CTRL-IRRELEVANT inert AND
+     CTRL-SHUFFLE inert  => the G6 FALS wall was a SUBJECT-knowledge gap, NOT capacity.
+  🧱 CAPACITY (not grounding) iff concept lifted BUT irrelevant-knowledge ALSO lifted
+     => gain is form-fluency, hypothesis REFUTED, wall stands.
+  🧱 CAPACITY-CONFIRMED iff concept-knowledge does NOT cross (esp. B3 does not collapse)
+     => subject-domain knowledge (this corpus/objective) did NOT break G6 FALS binding.
+
+GATE: torch-side frozen probe (gauge_lib._decode) => DIRECTIONAL (a_engine_native_learning);
+      engine-native re-measure on CORE bytegpt_decode = follow-on. ckpt PULLED before teardown.
+ANTI-TUNE: eval/held-out seeds + the falsifiable FORM are NEVER in any training corpus;
+           CONCEPT subjects in arm1 are the CONCEPTS themselves (that is the lever) but the
+           comparator+measurable claim FORM is never templated in.

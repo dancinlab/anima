@@ -1,0 +1,36 @@
+[takeover] Sat Jun 20 17:16:55 KST 2026 pod=41790442 host=ssh8.vast.ai:30442
+[wait] ssh reachability
+[wait] ssh up at iter 1
+[cloud] remote exit 0
+torch 2.4.0 cuda True NVIDIA H100 80GB HBM3
+[cloud] remote exit 0
+[upload] code+probes
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/g6_common.py -> root@ssh8.vast.ai:/workspace/g6/probes/g6_common.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1435_continued_pretrain.py -> root@ssh8.vast.ai:/workspace/g6/probes/h1435_continued_pretrain.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1449_attention_injection.py -> root@ssh8.vast.ai:/workspace/g6/probes/h1449_attention_injection.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/gauge_lib.py -> root@ssh8.vast.ai:/workspace/g6/probes/gauge_lib.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1129_midcap_broad_converged_recombination.py -> root@ssh8.vast.ai:/workspace/g6/probes/h1129_midcap_broad_converged_recombination.py
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/h1305_g6_ideation_falsifiability.py -> root@ssh8.vast.ai:/workspace/g6/probes/h1305_g6_ideation_falsifiability.py
+[upload] base ckpt (606MB) ...
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/chat_303m/h1129c_chat.pt -> root@ssh8.vast.ai:/workspace/g6/ckpt/h1129c_chat.pt
+[cloud] scp exit 0 · /Users/mini/dancinlab/anima/state/1449_g6_attention_injection/_pod_driver.sh -> root@ssh8.vast.ai:/workspace/g6/_pod_driver.sh
+[fire] background driver
+[cloud] cloud_nohup: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: Connection closed by 18.204.55.38 port 30442
+[fire] PID=
+[cloud] cloud_exec: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: ssh: connect to host ssh8.vast.ai port 30442: Connection refused
+[cloud] cloud_exec: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: ssh: connect to host ssh8.vast.ai port 30442: Connection refused
+[cloud] cloud_exec: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: ssh: connect to host ssh8.vast.ai port 30442: Connection refused
+[cloud] cloud_exec: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: ssh: connect to host ssh8.vast.ai port 30442: Connection refused
+[teardown] hexa cloud rm 41790442 --provider vast --force
+[cloud] rm: destroyed 41790442 (vast: destroyed (confirmed) 41790442)
+[teardown] remaining pods:
+[cloud] vast: list — 4 instances
+  vast   41790357
+  vast   41790394
+  vast   41790525
+  vast   41791166
+[cloud] registry (project attribution):
+  ID                       PROVIDER  PROJECT          PURPOSE               STATUS     DPH      AGE
+  41790357                 vast      @anima           H_1440 developmental curriculum G6 FALS-depth READY      1.14861  11m
+  41790394                 vast      @anima           H_1441 contrastive falsifiability engine-native 5-bar READY      0.537963 11m
+  41790525                 vast      @anima           H_1439 bind-head G6 FALS-depth READY      1.02482  9m

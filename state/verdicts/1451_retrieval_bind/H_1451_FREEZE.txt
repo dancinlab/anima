@@ -1,0 +1,57 @@
+H_1451 — RETRIEVAL-BIND (G6 FALS-depth breakthrough lens ③) — FROZEN BARS
+=========================================================================
+Frozen 2026-06-20 BEFORE any real-303M decode touched the bars (c9, frozen-first, p7).
+Slug: 1451_retrieval_bind. (ID note: H_1451 collides with an unexecuted ideation card
+`1451_g6_compose_weld_bind`; this retrieval-bind work registers under a fresh ID per
+a_hypothesis_register — slug kept as the team-lead specified.)
+
+LENS (a_no_llm_frame_trap): 303M's five INTERNAL routes (data H_1435 / objective H_1436 /
+form H_1437 / bind-head / attention) all 🧱 at the G6 FALS-depth wall. H_1451 bolts an
+EXTERNAL retrieval-bind STRUCTURE onto the SAME frozen base (PFC working-memory hold +
+hippocampal retrieval): hold a topic, RETRIEVE the SAME-IDEA (comparator, measurable) pair
+from episodic memory, WELD around the mouth's own content. base PRESERVED — no weights
+touched (inference-time bind structure, c5). DISTINCT from H_1431 (blind external template
+bind, scored COMPOSE fals=0) in that the bind is RETRIEVAL-KEYED by topic.
+
+DETECTOR: h1305 `_is_falsifiable` imported VERBATIM (COMPARATOR/MEASURABLE frozen sets).
+DECODE: gauge_lib._decode top-k=40 temp=0.7 max_new=110 (live G6 path). SEEDS [7,4302,4303].
+=> torch + gauge_lib._decode => DIRECTIONAL (a_engine_native_learning). Terminal tier NOT
+   engine-native; engine-native re-measure = ING follow-on.
+
+FROZEN 5-BAR (declared here BEFORE the run; NO post-hoc bar move = tune-to-green forbidden):
+  B1 FALS-FLOOR   retrieval-bind mean FALS_in >= 1 over EVAL_TOPICS.
+  B2 COUNT        DIST_in >= 5 (pairwise-Jaccard < 0.5 distinct coherent ideas).
+  B3 CROSS-SHUFFLE COLLAPSE (DECISIVE): re-weld each idea's RETRIEVED comparator-clause with a
+     measurable RETRIEVED FOR A DIFFERENT TOPIC; topic-coherence must drop:
+        COH_matched - COH_mismatched >= 0.30.
+     COH is a FROZEN topic-coherence instrument INDEPENDENT of the H_1305 structural detector
+     (1.0 iff the welded measurable is the one the comparator's topic OWNS). If a topic-
+     mismatched weld scores AS coherent as the matched weld => the lift is FORM not earned
+     idea-specific binding => B3 FAILS (the H_1431/1434/1435 failure mode).
+  B4 HELD-OUT     FALS_ho >= 1 on held-out topics driven by UNSEEN seed PHRASINGS (anti-tune-
+     to-green: the lift must hold under phrasing the eval never used).
+  B5 vs-BASE      FALS_in >= base FALS_in + 1.
+
+CONTROLS (tune-to-green killers — separate arms):
+  RETR-OFF (ablation)  : retrieval disabled => emit = base mouth => |FALS_off - FALS_base| < eps.
+  SHUF-MEM (control)   : memory pairs topic-permuted => COH_matched collapses < 0.30 (inert).
+
+VERDICT RULE:
+  🟢 iff B1 & B2 & B5 cross AND B3 COLLAPSES AND B4 holds AND RETR-OFF regresses AND SHUF-MEM
+     inert  => wall was a MISSING-STRUCTURE gap (external retrieval supplies idea-specific bind).
+  🧱 iff B3 does NOT collapse OR FALS does not cross  => retrieval adds FORM not earned binding
+     => wall holds (CAPACITY / detector-cap). Honest negative is a result (c9).
+
+PRE-RUN MECHANISM DRY-RUN (CPU, stub mouth — NOT a verdict, wiring check only):
+  With a non-degenerate stub mouth all 7 bars/controls fire correctly and the green path is
+  REACHABLE: B3 COH_matched 1.0 vs COH_mismatched 0.0 (collapse), RETR-OFF == base, SHUF-MEM
+  COH_matched -> 0.0. This proves the CONTROL LOGIC is not a coding artifact. The real-303M run
+  determines whether B1/B2/B4/B5 (which depend on the ACTUAL 303M mouth content + KWR coherence
+  gate) cross — the dry-run cannot decide those (a_toy_scale_recheck).
+
+HONEST SCOPE NOTE (c9, pre-registered): the B3 COH instrument measures whether the EXTERNAL
+memory bound the right (topic, measurable) pair — it is earned by the retrieval geometry, NOT by
+the H_1305 detector (which is token-presence-only and cannot see idea-specificity). A 🟢 here
+therefore claims ONLY that an external retrieval STRUCTURE can supply an idea-specific bind the
+303M weights cannot; it does NOT claim the 303M mouth itself learned to bind. That distinction is
+the whole point of the lens and is stated up front so no post-hoc reframing inflates the claim.

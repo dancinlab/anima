@@ -1,0 +1,52 @@
+[run] Sat Jun 20 18:00:10 KST 2026 HERE=/Users/mini/dancinlab/anima/state/1456_idea_metacognition REPO=/Users/mini/dancinlab/anima
+[rent] cuda devel H100 ...
+[cloud] rent vast: picked offer 40413284
+[cloud] rent vast: created instance 41795928 (owner=h1456, registered)
+[cloud] rent vast: READY ssh8.vast.ai:35928 (root@ssh8.vast.ai -p 35928)
+[cloud] rent vast: ~/.ssh/config Host ssh8.vast.ai → vast identity (auto · zero-flag ssh; #1155)
+rent-result pod=41795928 host=ssh8.vast.ai provider=vast state=READY project=@anima
+instance_id=41795928
+host=ssh8.vast.ai
+port=35928
+owner=h1456
+[rent] ID=41795928 (vast numeric)
+[ssh] HOST=ssh8.vast.ai:35928
+[cloud] cloud_exec: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: ssh: Could not resolve hostname ssh8.vast.ai:35928: nodename nor servname provided, or not known
+[cloud] cloud_exec: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: ssh: Could not resolve hostname ssh8.vast.ai:35928: nodename nor servname provided, or not known
+[upload] driver + common + reused probes -> /workspace/g6/probes
+[cloud] scp exit 255 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/g6_common.py -> root@ssh8.vast.ai:35928:/workspace/g6/probes/g6_common.py
+[cloud] scp exit 255 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.py -> root@ssh8.vast.ai:35928:/workspace/g6/probes/h1456_idea_metacognition.py
+[cloud] scp exit 255 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/gauge_lib.py -> root@ssh8.vast.ai:35928:/workspace/g6/probes/gauge_lib.py
+[cloud] scp exit 255 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/h1129_midcap_broad_converged_recombination.py -> root@ssh8.vast.ai:35928:/workspace/g6/probes/h1129_midcap_broad_converged_recombination.py
+[cloud] scp exit 255 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/probes/h1305_g6_ideation_falsifiability.py -> root@ssh8.vast.ai:35928:/workspace/g6/probes/h1305_g6_ideation_falsifiability.py
+[upload] base ckpt (606MB) ...
+[cloud] scp exit 255 · /Users/mini/dancinlab/anima/state/chat_303m/h1129c_chat.pt -> root@ssh8.vast.ai:35928:/workspace/g6/ckpt/h1129c_chat.pt
+[cloud] scp exit 255 · /Users/mini/dancinlab/anima/state/1456_idea_metacognition/_pod_driver.sh -> root@ssh8.vast.ai:35928:/workspace/g6/_pod_driver.sh
+[fire] background driver
+[cloud] cloud_nohup: ssh transport failure (exit 255) — host unreachable (connection refused / timeout / auth / changed host key). The pod may be alive and billing but not accepting SSH — a vast.ai/RunPod transport outage. Stop retrying; verify reachability or tear the pod down. · ssh stderr: ssh: Could not resolve hostname ssh8.vast.ai:35928: nodename nor servname provided, or not known
+[fire] PID=
+[poll] pid  dead at iter 1
+[pull] driver log + result + ckpt BEFORE teardown
+[cloud] scp exit 255 · root@ssh8.vast.ai:35928:/workspace/g6/driver.log -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/driver.log
+[cloud] scp exit 255 · root@ssh8.vast.ai:35928:/workspace/g6/out/h1456.log -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456.log
+[cloud] scp exit 255 · root@ssh8.vast.ai:35928:/workspace/g6/out/h1456_result.json -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_result.json
+[cloud] scp exit 255 · root@ssh8.vast.ai:35928:/workspace/g6/out/h1456_idea_metacognition.pt -> /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.pt
+[pull] done. local files:
+ls: /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_idea_metacognition.pt: No such file or directory
+ls: /Users/mini/dancinlab/anima/state/1456_idea_metacognition/h1456_result.json: No such file or directory
+[run] complete — teardown via trap
+[teardown] hexa cloud rm 41795928
+[cloud] rm: destroyed 41795928 (vast: destroyed (confirmed) 41795928)
+[teardown] remaining pods:
+[cloud] vast: list — 5 instances
+  vast   41790357
+  vast   41790525
+  vast   41792045
+  vast   41795795
+  vast   41795918
+[cloud] registry (project attribution):
+  ID                       PROVIDER  PROJECT          PURPOSE               STATUS     DPH      AGE
+  41790357                 vast      @anima           H_1440 developmental curriculum G6 FALS-depth READY      1.14861  52m
+  41790525                 vast      @anima           H_1439 bind-head G6 FALS-depth READY      1.02482  50m
+  41795795                 vast      @anima           H_1438 scale-dissociation 1B G6 FALS-depth READY      1.08575  3m
+  41795918                 vast      @anima           H_1457 knowledge-grounding G6 FALS-depth READY      4.55685  2m

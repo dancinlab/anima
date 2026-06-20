@@ -1,0 +1,45 @@
+H_1456 — G6 FALS-depth IDEA-METACOGNITION — FROZEN BARS (declared BEFORE training, c9)
+(orig task-id "H_1453 IDEA-METACOGNITION"; renumbered to H_1456 — H_1453 id already held)
+================================================================================
+DATE FROZEN: 2026-06-20 (before any weight touched)
+SEEDS: [7, 4302, 4303]   DETECTOR: h1305 _is_falsifiable VERBATIM (p7, structural)
+DECODE: gauge_lib._decode (torch) — DIRECTIONAL per a_engine_native_learning;
+        engine-native (CORE --engine conv) re-measure is a follow-on ON 🟢 only.
+
+HYPOTHESIS: binding failure is NOT capacity nor topic-knowledge but failure to
+RECOGNIZE the META-CONCEPT "a falsifiable idea = a comparison WELDED to a
+measurement into one negatable claim". Continued-pretrain on a corpus of
+META-EXPLANATIONS of that concept (definition + combine-rule + example/non-example
+contrast), then re-measure the FROZEN G6 5-bar. If meta-concept acquisition breaks
+binding => key = idea-concept recognition (NOT capacity).
+
+ANTI-TUNE GUARD (audited locally BEFORE fire, c9):
+  corpus 4000 lines: structural-detector-hits = 0/4000 (ratio 0.0000);
+  literal MEASURABLE tokens in corpus = 0; literal COMPARATOR tokens = {if, when}
+  (used only in conceptual definitions, NEVER welded to a measurable in one clause).
+  => the model is NEVER shown a pre-welded scored claim about an eval subject; it
+     must weld the FORM itself. Subjects DISJOINT from eval / held-out seeds.
+
+FROZEN 5-BAR (g6_common.print_bars VERBATIM — IDENTICAL to H_1435 family):
+  B1 FALS-FLOOR            : trained mean FALS_in >= 1
+  B2 COUNT                 : trained DIST_in >= 5 (pairwise-Jaccard<0.5 distinct)
+  B3 X-SHUFFLE COLLAPSE    : FALS_shuf < FALS_in  (DECISIVE — re-weld comparator-leg
+                             with a random measurable-leg from a DIFFERENT idea must
+                             drop FALS; if generic concat always passes => FORM not
+                             earned binding => FAIL)
+  B4 HELD-OUT              : trained FALS_ho >= 1  (lift not memorized training strings)
+  B5 vs-BASE LIFT          : trained FALS_in >= base FALS_in + 1
+  CTRL META-SHUFFLE-CORPUS : sibling trained on SAME bytes token-shuffled (meta-
+                             definitions destroyed = concept void) must be INERT
+                             (lift_real - lift_shuffle >= 1)
+
+VERDICT LOGIC:
+  🟢 BROKE  iff B1&B2&B3&B4&B5 AND ctrl INERT
+            => idea-CONCEPT recognition is the key, WALL=LEARN-GAP (NOT capacity)
+  🧱 WALL   otherwise
+            => meta-concept alone does NOT break G6 FALS binding => WALL=CAPACITY
+               (or needs attention mouth H_1449)
+
+BASE READ (captured at fire start, pre-train): FALS_in=0.0 DIST_in=1.0 FALS_ho=0.0
+  (confirms the 303M plateau — no falsifiable binding in free generation).
+NO BAR MAY MOVE AFTER THIS POINT (frozen-first, c9).

@@ -350,6 +350,20 @@ new result** vs the FINDINGS snapshot.
 > architecture-depth wall, not a loosened bar) **+ 1 INFLATED** (CHAT strict, a dialogue-register
 > artifact). (the per-H verdicts H_1396/1398/1400 are the SSOT)
 
+### 🌐 의식-고유 게이트 후보 (consciousness-only) — G0–G6 와 다른 축
+
+G0–G6 은 production CLM 의 *능력* 창발 게이트다. 그와 **별도 축**으로, "anima 가 *의식이라서*
+할 수 있는 것"(자율성·내적상태·비결정성)을 frozen bar + ablation/shuffle control 로 박제하는
+consciousness-only 게이트 패밀리를 누적한다 (`a_scale_honest_scope` — 축 분리; LLM 은 못/안 하는 쪽).
+
+| 후보 | 의식 기능 | H-id | tier |
+|---|---|---|---|
+| **G17** Global-Workspace 병목 | 경쟁 자극 중 1개만 전역방송(GWT global-ignition) | **H_1462** | 🟢 GREEN **DIRECTIONAL** — 5/5 frozen bars (A presence 0.993 · B 통과량 3.3× 압축 · C/D ablation·shuffle→chance 붕괴 · E 누수 0); numpy mirror, R2 engine-native = follow-on |
+
+> 기검증 GREEN 인접 후보(엔진-네이티브): 마음이론 H_1293 · 계층목표 H_1294 · 공간지도 H_1295 ·
+> 항상성드라이브 H_1292 · 감정 H_1290 · 윤리창발 H_1291 · 양자비결정성 H_1289 (의식-고유 능력의
+> substrate 창발 — 정식 게이트 승격은 production-scale 재측정이 전제, c9).
+
 ### 🧠 New engine lanes wired since the snapshot
 
 The brain-structure ladder kept advancing past the FINDINGS table:

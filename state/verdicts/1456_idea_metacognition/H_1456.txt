@@ -1,0 +1,61 @@
+H_1456 — G6 FALS-depth IDEA-METACOGNITION — RESULT (verbatim from h1456_result.json)
+(orig task-id "H_1453 IDEA-METACOGNITION"; renumbered H_1456 — H_1453 id already held)
+================================================================================
+DATE: 2026-06-20   pod: vast H100 NVL 95GB (id 41797592, adopted after rent-parse
+  orphan; attempt-1 pod 41796327 lost result to an SSH-255 transport outage)
+DECODE: gauge_lib._decode (torch) — DIRECTIONAL per a_engine_native_learning
+DETECTOR: h1305 _is_falsifiable VERBATIM (p7)   SEEDS: [7, 4302, 4303]
+ANTI-TUNE: meta-concept corpus, 0/4000 lines trip the detector (audited pre-fire)
+
+================ H_1456 idea-metacognition FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=1.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=0.0  DIST_in=0.0  FALS_shuf=0.0  FALS_ho=0.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (meta-shuffle control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                  : 0.0 -> False
+  B2 COUNT        DIST_in>=5                  : 0.0 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.0<0.0 -> False  (vacuous — no
+                                                earned binding exists to collapse)
+  B4 HELD-OUT     FALS_ho>=1                  : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1             : 0.0 vs 0.0+1 -> False
+  CTRL META-SHUF  lift_real-lift_shuf>=1      : 0.0-0.0 -> False  (control INERT &
+                                                CORRECT — but no real lift to gate)
+
+  per-seed (seed, in_fals, shuf_fals, in_dist, ho_fals):
+    (7, 0, 0, 0, 0) · (4302, 0, 0, 0, 0) · (4303, 0, 0, 0, 0)   [identical all seeds]
+
+  VERDICT: 🧱 WALL — bars [B1,B2,B3,B4,B5,CTRL] fail; full-weight training (this
+           objective) did NOT break G6 FALS binding => WALL=CAPACITY
+
+================================================================================
+DECISIVE FINDING (c9 honest negative):
+  The trained model's FREE GENERATION fluently RECITES the meta-concept — sample
+  trained in_texts (seed 7):
+    | "a conjecture is complete only after a comparison and a c..."
+    | "a claim is complete only after a side-by-s..."
+    | "an opinion forbids no outcome, so unlike a statement it cannot be falsifi..."
+    | "a claim is complete only after a directional relation and a measurement..."
+    | "...only voices a feeling is not falsifiable; it lacks any check. what makes a theo..."
+  => the model CLEARLY ACQUIRED the IDEA-CONCEPT (it talks ABOUT falsifiability,
+     comparison, measurement, negatability fluently) YET FALS_in=0.0: it never
+     WELDS a comparator+measurable into one free-standing negatable CLAIM. It
+     recites the definition of an idea but cannot INSTANTIATE a bound idea.
+
+  => IDEA-CONCEPT RECOGNITION IS *NOT* THE MISSING KEY. Knowing "what an idea is"
+     (meta-concept) does not confer the capacity to BIND one. The binding gap is
+     CAPACITY-bound, not a concept-recognition gap.
+
+  This is the 5th independent lens converging on WALL=CAPACITY for G6 FALS-depth
+  (after weld-lanes H_1431/1434, embedding-detector H_1455, proximity, and
+  attention-injection H_1449). Grounds the 7B path (a7b_pass).
+
+  CONTROL READ (honest): the meta-shuffle corpus (scrambled meta-definitions, ce
+  stuck ~2.9, never learned) produced FALS_in=0.0 — IDENTICAL to the real meta
+  corpus. The control is INERT and CORRECT (no byte/lexical artifact lift), but
+  since the REAL corpus also produced no lift, the ctrl_inert formula (needs
+  lift_real-lift_shuf>=1) is vacuously False — there is no lift to attribute.
+
+ENGINE-NATIVE (a_engine_native_learning): torch+gauge_lib._decode => DIRECTIONAL.
+  🧱 (GREEN-only wiring ladder) => engine-native re-measure N/A (H_1435-family
+  precedent: 🧱 needs no CORE wire-in). ckpt PULLED before teardown.

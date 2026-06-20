@@ -1,0 +1,26 @@
+Warning: Permanently added '[ssh5.vast.ai]:37234' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[H_1451 retrieval-bind] device=cuda:0 ckpt=/workspace/g6/ckpt/h1129c_chat.pt
+[H_1451] base loaded 4.5s
+[H_1451] BASE FALS_in=0.0 DIST_in=0.3333 FALS_ho=0.0
+[H_1451] RETR-BIND FALS_in=0.0 COH_m=1.0 COH_x=0.0
+[H_1451] SHUF-MEM COH_m=0.0
+
+================ H_1451 retrieval-bind FROZEN 5-BAR (mean/3 seeds) ================
+  BASE       FALS_in=0.0  DIST_in=0.3333  FALS_ho=0.0
+  RETR-BIND  FALS_in=0.0  DIST_in=0.0  FALS_ho=0.0  COH_m=1.0  COH_x=0.0
+  RETR-OFF   FALS_in=0.0  (ablation, must==base)
+  SHUF-MEM   COH_m=0.0  COH_x=0.0  (control, coherence must flatten)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                  : 0.0 -> False
+  B2 COUNT        DIST_in>=5                  : 0.0 -> False
+  B3 X-SHUFFLE    COH_m-COH_x>=0.3 (COLLAPSE) : 1.0-0.0 -> True
+  B4 HELD-OUT     FALS_ho>=1                  : 0.0 -> False
+  B5 vs-BASE      FALS_in>=base+1             : 0.0 vs 0.0+1 -> False
+  CTRL RETR-OFF   regress to base            : 0.0 vs 0.0 -> True
+  CTRL SHUF-MEM   COH_m<0.3 (inert)        : 0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B1', 'B2', 'B4', 'B5'] fail; retrieval-bind did NOT earn idea-specific binding (B3 cross-shuffle did not collapse OR FALS did not cross) => wall holds (CAPACITY / detector-cap).
+[H_1451 done] /workspace/g6/out/h1451_result.json  (3.0min)
