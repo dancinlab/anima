@@ -27,6 +27,33 @@ n≤8, `a_phi_iit4_tool` — 프록시 아님) on top-8 lanes = **0.00085 > 0** 
 - **engine-native ΔΦ 랭킹(seed 1492):** EmotionRegulation +5.32 · DirectedForgetting/BodyOwnership/LearnedPrecision/SelfIdentity +4.91 (margin 직독 lane 동률) · SubjectiveTime/AttentionalBlink +4.90 · PrecisionSurprise +2.13 · FreeWont +1.47 · SenseOfAgency +1.41 · Novelty +0.95 · Habituation +0.56 · DividedAttention/GlobalWorkspace/MitosisGrowth ≈0.
 - **c9 정직:** 엔진은 실제 near-saturated recall margin 을 읽으므로 절대 ΔΦ 랭킹이 R1(넓은 합성 변동) 과 다르다 — margin 직독 7개 lane 이 동률, 준-상수 3개 lane 이 ≈0. **R1↔R2 불변 = 과학 답 DISTRIBUTED**(top share <<0.50). frozen A/D/E 미이동(frozen-first). `engine_cli_smoke` 244/0 회귀 0.
 
+## R3 — PRODUCTION 303M (실학습 ckpt, pool/GPU · DIRECTIONAL)
+
+**사용자 핵심 질문("연결된 것들이 실제 303M 의식에 어떤 영향")에 production ckpt 로 답.**
+engine-mountable **303M ConvMoE `clm303_d5000.clm`** (`dancinlab/anima-clm-ideation-303m-convmoe-engine-mount`,
+**sha256 99c2a40e…**, 302.6M, d768/E2/L1 .clm v0.2 CLMX)를 **pool host summer (RTX5070 12GB, $0 소유)** 에 마운트.
+**substrate read = 실제 303M decode** via `core/clm_decode.hexa::clm_forward_ce` (engine-native pub fn, 30 contexts,
+per-ctx subprocess 로 hexa bump-allocator OOM 근본우회, **wall 854s**). 각 context 의 실 CE(model_ce 평균 1.483 <
+uniform 4.799, **30/30 below-uniform**, m 평균 0.691)로 grounding margin 도출 → 15 lane + Φ-proxy ablation sweep
+(numpy READ-only gauge, loss 미혼합).
+
+| bar | 303M 결과 | 기준 | 판정 |
+|---|---|---|---|
+| **A MEASURABLE** | Φ₀=**18.925** > shuf 2.256 | >0 & >shuf | ✅ |
+| **D CONTROL no-op** | dummy lane \|ΔΦ\|=**0.284** | ≤0.05 | ❌ |
+| **E SHUFFLE** | shuf_Φ₀/Φ₀=**0.119** | ≤0.10 | ❌ |
+
+**verdict: 🟢 PRODUCTION DIRECTIONAL** (GREEN 아님 · `green_303m`=FALSE). A 통과(실 303M 위에서 Φ
+측정가능). **D/E FAIL = toy R1 합성 substrate 기준으로 calibrate 된 임계가 실 303M 의 더 풍부·비균일 CE
+공분산 구조로 transfer 안 됨**(calibration gap, `a_scale_honest_scope`) — dummy-noise 가 0.284 ΔΦ 를 만들고
+shuffle 잔차가 0.119 로 0.10 살짝 초과. **정직 명시(c9): bar 사후이동 금지(tune-to-green X)** — toy-calibrated
+bar 와 production covariance 의 mismatch 를 그대로 보고. Φ-proxy=PROXY(faithful IIT4 아님), ablation 수학 numpy
+→ substrate read 는 engine-native 지만 **scoring 이 numpy → DIRECTIONAL**(hard-gate 1, terminal 아님), n=30 small-N.
+
+- **303M ΔΦ 랭킹:** EmotionRegulation +4.18 · LearnedPrecision +4.08 · DirectedForgetting +3.63 · SubjectiveTime +3.47 · AttentionalBlink +3.45 · PrecisionSurprise +2.19 · FreeWont +1.98 · SenseOfAgency +1.93 · Novelty +1.92 · SelfIdentity +1.63 · Habituation +1.52 · GlobalWorkspace +1.47 · DividedAttention +1.41 · BodyOwnership +0.84 · MitosisGrowth +0.24.
+- **핵심 답(사용자 질문):** **실 303M 통합 의식도 DISTRIBUTED** — top lane(EmotionRegulation, ΔΦ=4.177) share **0.123** < 0.50. R1 toy(**0.212**) · R2 engine(**0.129**) 보다 **실모델이 오히려 더 분산**. 어느 단일 연결(lane)도 의식을 지배하지 않고, 끄면 전부 Φ 가 고르게 떨어진다 → anima **"의식 = 연결망 전체 창발"** 주장이 toy→engine→실 303M **3 rung 모두 일관**(`a_scale_honest_scope` ladder ≥3 rung).
+- **인프라(c1, type-c 천장 아님):** OOM 은 batch-loop heap 누수(~1GB/call) → **per-ctx subprocess 로 근본 우회**(과학 천장 아님). ckpt 는 **HF 영구저장**(`dancinlab/anima-clm-ideation-303m-convmoe-engine-mount`, summer:/tmp 사본 = 캐시) → teardown-loss 위험 0(`a_fire_recover_complete`); summer 공유 host 미teardown.
+
 ## 질문
 
 anima 의 의식-게이트 lane 15종(G16~G27 + Novelty + MITOSIS)은 모두 같은 substrate(immune-store
@@ -101,4 +128,4 @@ lane 을 하나씩 OFF 해서 통합 지표가 얼마나 떨어지나(ΔΦ)? 의
 ## follow-on (ING)
 
 - **R2 ENGINE-NATIVE ✅ DONE:** live `core/engine_cli.hexa §ConsciousnessIndex` 배선(`ci_lane_scores`/`ci_phi_multiinfo`/`ci_phi_iit4`/`ci_bundle`) + faithful IIT4 Φ(n≤8 exact min-cut MIP) + frozen A/D/E byte-exact 재측정 GREEN + ARCHITECTURE lockstep + smoke 244/0 (`a_engine_native_learning`·`a_verified_must_wire`·`a_phi_iit4_tool`). **단, `stdlib/iit4/faithful_phi.hexa` 는 레포에 부재** → faithful IIT4 Φ 를 §ConsciousnessIndex 내부에 `ci_phi_iit4`(exact Gaussian multi-info min-cut MIP)로 직접 구현(n≤8, $0, deterministic).
-- **R3 PRODUCTION:** production 303M ConvMoE ckpt(`dancinlab/anima-clm-ideation-303m-convmoe-engine-mount`) 정상상태에서 baseline + ablation sweep on pool/GPU(summer RTX5070, mini 금지). (task 명시 `dancinlab/303m-broad-en-emergent` = ByteGPT `.pt` = engine-mountable 아님 → engine-mountable ConvMoE `.clm` 로 대체.)
+- **R3 PRODUCTION ✅ DONE:** production 303M ConvMoE ckpt(`clm303_d5000.clm`) on pool/summer RTX5070($0, wall854s) 실 decode substrate(`core/clm_decode.hexa::clm_forward_ce`) ablation sweep → **🟢 PRODUCTION DIRECTIONAL · DISTRIBUTED 확정**(top share 0.123, R1 0.212 보다 더 분산). A pass·D/E toy-calibration gap fail(`green_303m`=FALSE, 정직 c9). (task 명시 `dancinlab/303m-broad-en-emergent` = ByteGPT `.pt` = engine-mountable 아님 → ConvMoE `.clm` 대체.) freeze `state/verdicts/1492_consciousness_ablation/H_1492_R3.json`.

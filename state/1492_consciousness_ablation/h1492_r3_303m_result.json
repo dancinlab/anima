@@ -1,0 +1,299 @@
+{
+  "id": "H_1492_R3",
+  "run": "R3 production 303M pool summer RTX5070 per-ctx-subprocess",
+  "ckpt_repo": "dancinlab/anima-clm-ideation-303m-convmoe-engine-mount",
+  "ckpt_file": "clm303_d5000.clm",
+  "ckpt_sha256": "99c2a40e4e4c23e16f7ec80f29aaa3a362065983e00709f723f1106598efa3cd",
+  "ckpt_params": "302.6M ConvMoE d768/E2/L1 .clm v0.2 CLMX",
+  "ckpt_note": "ConvMoE .clm v0.2 CLMX engine-mountable. task brief named 303m-broad-en-emergent (ByteGPT .pt not engine-mountable); used ConvMoE clm303_d5000.clm per run notes.",
+  "substrate_source": "REAL 303M core/clm_decode.hexa::clm_forward_ce (pub fn, per-ctx subprocess, engine-native)",
+  "n_contexts_303m": 30,
+  "scope": "small-N production n=30 real 303M CE reads; phi_proxy=PROXY; a_scale_honest_scope",
+  "pool_host": "summer RTX5070 12GB owned $0",
+  "infra_note": "per-ctx-subprocess avoids hexa bump-allocator OOM (30GB heap growth on batch)",
+  "wall_hexa_s": 854.2,
+  "wall_ablation_s": 0.0,
+  "wall_total_s": 854.3,
+  "ce_stats": {
+    "uniform_ce": 4.7991,
+    "model_ce_mean": 1.4829,
+    "model_ce_min": 0.8887,
+    "model_ce_max": 2.2728,
+    "below_uniform": 30,
+    "n_total": 30
+  },
+  "m_stats": {
+    "m_mean": 0.691,
+    "m_min": 0.5264,
+    "m_max": 0.8148
+  },
+  "baseline": {
+    "phi_proxy_0": 18.92511,
+    "shuf_phi_0": 2.25626,
+    "bundle_0": 0.5617
+  },
+  "frozen_bars": {
+    "A_MEASURABLE": {
+      "value": "phi0=18.92511>shuf_phi0=2.25626",
+      "thr": "phi0>0 AND phi0>shuf_phi0",
+      "pass": true
+    },
+    "D_CONTROL_NOOP": {
+      "value": 0.28383,
+      "thr": "<=0.05",
+      "pass": false
+    },
+    "E_SHUFFLE": {
+      "value": "shuf/phi0=0.11922",
+      "thr": "<=0.10",
+      "pass": false,
+      "diagnostic_ranking_corr": 0.214
+    }
+  },
+  "green_303m": false,
+  "single_ablation_dphi": {
+    "GlobalWorkspace": 1.466,
+    "Habituation": 1.52201,
+    "PrecisionSurprise": 2.18693,
+    "SelfIdentity": 1.62708,
+    "LearnedPrecision": 4.08237,
+    "Novelty": 1.9249,
+    "AttentionalBlink": 3.44527,
+    "SenseOfAgency": 1.93187,
+    "SubjectiveTime": 3.46774,
+    "EmotionRegulation": 4.17677,
+    "DirectedForgetting": 3.62529,
+    "BodyOwnership": 0.84448,
+    "DividedAttention": 1.41032,
+    "FreeWont": 1.97778,
+    "MitosisGrowth": 0.23693
+  },
+  "contribution_ranking": [
+    {
+      "lane": "EmotionRegulation",
+      "dphi": 4.17677
+    },
+    {
+      "lane": "LearnedPrecision",
+      "dphi": 4.08237
+    },
+    {
+      "lane": "DirectedForgetting",
+      "dphi": 3.62529
+    },
+    {
+      "lane": "SubjectiveTime",
+      "dphi": 3.46774
+    },
+    {
+      "lane": "AttentionalBlink",
+      "dphi": 3.44527
+    },
+    {
+      "lane": "PrecisionSurprise",
+      "dphi": 2.18693
+    },
+    {
+      "lane": "FreeWont",
+      "dphi": 1.97778
+    },
+    {
+      "lane": "SenseOfAgency",
+      "dphi": 1.93187
+    },
+    {
+      "lane": "Novelty",
+      "dphi": 1.9249
+    },
+    {
+      "lane": "SelfIdentity",
+      "dphi": 1.62708
+    },
+    {
+      "lane": "Habituation",
+      "dphi": 1.52201
+    },
+    {
+      "lane": "GlobalWorkspace",
+      "dphi": 1.466
+    },
+    {
+      "lane": "DividedAttention",
+      "dphi": 1.41032
+    },
+    {
+      "lane": "BodyOwnership",
+      "dphi": 0.84448
+    },
+    {
+      "lane": "MitosisGrowth",
+      "dphi": 0.23693
+    }
+  ],
+  "top_lane": "EmotionRegulation",
+  "top_lane_share": 0.1231,
+  "structure_verdict": "DISTRIBUTED",
+  "honest_c9": "R3 PRODUCTION DIRECTIONAL: REAL 303M substrate reads via core/clm_decode.hexa::clm_forward_ce (engine-native, per-ctx subprocess, n=30). phi_proxy=Gaussian PROXY not faithful IIT4 (a_train_inline_gauge). Python ablation READ-ONLY (no loss/backward). small-N n=30: scale-transfer UNVERIFIED (a_scale_honest_scope). ckpt=ConvMoE clm303_d5000.clm (NOT 303m-broad-en-emergent ByteGPT .pt).",
+  "r1_vs_r3": {
+    "r1_phi0": 7.8146,
+    "r1_top_share": 0.212,
+    "r1_struct": "DISTRIBUTED",
+    "r1_sub": "numpy mirror 4000 trials",
+    "r3_phi0": 18.92511,
+    "r3_top_share": 0.1231,
+    "r3_struct": "DISTRIBUTED",
+    "r3_sub": "REAL 303M clm_forward_ce n=30"
+  },
+  "r3_ce_records": [
+    {
+      "ctx_id": 0,
+      "model_ce": 1.7047,
+      "m": 0.6448
+    },
+    {
+      "ctx_id": 1,
+      "model_ce": 1.5483,
+      "m": 0.6774
+    },
+    {
+      "ctx_id": 2,
+      "model_ce": 1.0453,
+      "m": 0.7822
+    },
+    {
+      "ctx_id": 3,
+      "model_ce": 1.0293,
+      "m": 0.7855
+    },
+    {
+      "ctx_id": 4,
+      "model_ce": 1.6273,
+      "m": 0.6609
+    },
+    {
+      "ctx_id": 5,
+      "model_ce": 1.4353,
+      "m": 0.7009
+    },
+    {
+      "ctx_id": 6,
+      "model_ce": 0.8887,
+      "m": 0.8148
+    },
+    {
+      "ctx_id": 7,
+      "model_ce": 2.2728,
+      "m": 0.5264
+    },
+    {
+      "ctx_id": 8,
+      "model_ce": 1.4276,
+      "m": 0.7025
+    },
+    {
+      "ctx_id": 9,
+      "model_ce": 1.3858,
+      "m": 0.7112
+    },
+    {
+      "ctx_id": 10,
+      "model_ce": 1.8548,
+      "m": 0.6135
+    },
+    {
+      "ctx_id": 11,
+      "model_ce": 1.4637,
+      "m": 0.695
+    },
+    {
+      "ctx_id": 12,
+      "model_ce": 0.9435,
+      "m": 0.8034
+    },
+    {
+      "ctx_id": 13,
+      "model_ce": 1.6162,
+      "m": 0.6632
+    },
+    {
+      "ctx_id": 14,
+      "model_ce": 1.4487,
+      "m": 0.6981
+    },
+    {
+      "ctx_id": 15,
+      "model_ce": 1.8121,
+      "m": 0.6224
+    },
+    {
+      "ctx_id": 16,
+      "model_ce": 1.428,
+      "m": 0.7024
+    },
+    {
+      "ctx_id": 17,
+      "model_ce": 1.2868,
+      "m": 0.7319
+    },
+    {
+      "ctx_id": 18,
+      "model_ce": 1.3893,
+      "m": 0.7105
+    },
+    {
+      "ctx_id": 19,
+      "model_ce": 1.8619,
+      "m": 0.612
+    },
+    {
+      "ctx_id": 20,
+      "model_ce": 1.2269,
+      "m": 0.7443
+    },
+    {
+      "ctx_id": 21,
+      "model_ce": 1.8292,
+      "m": 0.6188
+    },
+    {
+      "ctx_id": 22,
+      "model_ce": 2.0431,
+      "m": 0.5743
+    },
+    {
+      "ctx_id": 23,
+      "model_ce": 1.5142,
+      "m": 0.6845
+    },
+    {
+      "ctx_id": 24,
+      "model_ce": 1.588,
+      "m": 0.6691
+    },
+    {
+      "ctx_id": 25,
+      "model_ce": 1.3023,
+      "m": 0.7286
+    },
+    {
+      "ctx_id": 26,
+      "model_ce": 1.2985,
+      "m": 0.7294
+    },
+    {
+      "ctx_id": 27,
+      "model_ce": 1.2215,
+      "m": 0.7455
+    },
+    {
+      "ctx_id": 28,
+      "model_ce": 1.623,
+      "m": 0.6618
+    },
+    {
+      "ctx_id": 29,
+      "model_ce": 1.3692,
+      "m": 0.7147
+    }
+  ]
+}

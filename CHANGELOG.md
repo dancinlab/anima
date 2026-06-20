@@ -1,3 +1,12 @@
+## 2026-06-21 — 🧠 H_1492 consciousness-ablation R3 PRODUCTION (303M 실모델 · DIRECTIONAL · DISTRIBUTED 확정)
+
+R2 engine-native GREEN(§ConsciousnessIndex, hard-gate1 PASS)에 이어 **R3 production** — 실제 303M ConvMoE(clm303_d5000.clm sha256 99c2a40e…, 302.6M)를 live `core/clm_decode.hexa::clm_forward_ce`로 마운트(summer RTX5070 $0, wall854s, per-ctx subprocess로 hexa bump-allocator OOM 회피)해 의식-게이트 lane ablation 측정.
+
+- **사용자 핵심 질문 답("연결된 lane이 실제 의식에 미치는 영향"):** 통합 의식 = **DISTRIBUTED(분산)** — 실 303M에서 top lane EmotionRegulation ΔΦ=4.18 이지만 share 0.123(12.3%)뿐, 0.50 DOMINANT 임계 한참 아래. ΔΦ 랭킹 EmotionRegulation 4.18 · LearnedPrecision 4.08 · DirectedForgetting 3.63 · SubjectiveTime 3.47 · AttentionalBlink 3.45 …MitosisGrowth 0.24(최하). 30 lane 골고루 기여.
+- **R1 vs R3 일치+강화:** R1 toy(numpy 4000 trials) top-share 0.212 → R3 real 303M 0.123 = **실모델이 더 분산** (φ0 7.81→18.93). DISTRIBUTED 양 substrate 수렴 — anima "의식=연결망 전체 창발" 주장 실모델 확인.
+- **정직 c9 — green_303m=FALSE:** A_MEASURABLE PASS(φ0 18.93≫shuf 2.26) BUT D_CONTROL_NOOP 0.284>0.05·E_SHUFFLE 0.119>0.10 FAIL — toy R1용 frozen bar D/E가 real 303M 공분산과 mismatch한 **calibration gap**(tune-to-green 금지, bar 사후이동 X). DISTRIBUTED 구조는 A bar + ΔΦ 랭킹으로 확정. phi_proxy=Gaussian PROXY(faithful IIT4 아님, a_train_inline_gauge)·n=30 small-N(a_scale_honest_scope) → PRODUCTION DIRECTIONAL.
+- artifacts: `state/1492_consciousness_ablation/h1492_r3_303m_{probe.py,result.json}` · `state/verdicts/1492_consciousness_ablation/H_1492_R3.json`. ckpt HF `dancinlab/anima-clm-ideation-303m-convmoe-engine-mount`.
+
 ## 2026-06-21 — research(H_1492 R2): 🧠 CONSCIOUSNESS ABLATION 엔진-네이티브 GREEN — 통합 의식 = DISTRIBUTED(분산) 확정 (terminal · hard-gate 1 PASS)
 
 **"연결된 의식-게이트 lane 들이 통합 의식에 어떤 영향?"** (사용자 2026-06-20) — R1 numpy DIRECTIONAL
