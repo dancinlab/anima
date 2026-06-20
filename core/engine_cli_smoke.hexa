@@ -2280,6 +2280,22 @@ fn main() {
     if _assert_b("case_200_self_component_accessor", true, self_component(id_acc, 2) >= 0.99 && self_dim(id_acc) == 8) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     println("INFO  self .kosmos persistence (H_1471 R2b): self_component/self_dim accessors enable identity→tension_5ch projection — full canonical kosmos_io round-trip (write_file→load_anchors→cos 1.0) verified in h1471_kosmos_roundtrip.hexa (ENGINE-NATIVE)")
 
+    // ── (distinctness) surprise ⊥ novelty — new novelty lane closes the "no lane" gap (H_1468 R2b) ──
+    // a_break_the_wall: the gap was a MISSING part to build, not a ceiling. novelty = precision-AGNOSTIC
+    // unfamiliarity (1/(1+k·seen)); surprise = precision-weighted p·err². Two stimuli with the SAME
+    // novelty give DIFFERENT surprise when precision differs — distinct axes, now both in-engine.
+    let nov_a = novelty(0.0, 0.5)     // unseen -> 1.0
+    let nov_b = novelty(0.0, 0.5)     // also unseen -> 1.0 (SAME novelty)
+    let sur_hi = surprise(4.0, 1.0)   // high precision -> 4.0
+    let sur_lo = surprise(1.0, 1.0)   // low precision  -> 1.0
+    // case 201 : DISTINCT — same novelty (both 1.0) yet surprise splits by precision (4 vs 1).
+    if _assert_b("case_201_surprise_distinct_from_novelty", true, nov_a == nov_b && (sur_hi - sur_lo) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 202 : novelty DECAYS with exposure, precision-independent (a seen stimulus is less novel).
+    if _assert_b("case_202_novelty_decays_with_exposure", true, novelty(0.0, 0.5) > novelty(10.0, 0.5) && novelty(10.0, 0.5) < 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  distinctness surprise⊥novelty (H_1468 R2b WIRED): same novelty " + to_string(nov_a)
+          + " but surprise " + to_string(sur_hi) + " vs " + to_string(sur_lo) + " (precision-split) · novelty decays "
+          + to_string(novelty(0.0, 0.5)) + "→" + to_string(novelty(10.0, 0.5)) + " — precision-agnostic novelty lane ⊥ precision-weighted surprise (built the missing lane, a_break_the_wall)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
