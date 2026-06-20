@@ -1,0 +1,37 @@
+{
+  "id":"H_1475","slug":"1475_subjective_time",
+  "gate":"G22 consciousness-only candidate — SUBJECTIVE TIME (주관적 시간 지각)",
+  "tier":"GREEN DIRECTIONAL (numpy R1 mirror; engine-transfer UNVERIFIED)",
+  "lens":"Eagleman time perception / temporal illusions — perceived duration ≈ novelty/arousal event density (a_no_llm_frame_trap)",
+  "seeds":[1475,1476,1477],
+  "config":{"OBJ_TICKS":12,"BASE":0.10,"K":0.85,"HIGH_RATE":0.90,"LOW_RATE":0.10,"N_PERM":50},
+  "measurements":{
+    "est_high":0.8792,
+    "est_low":0.2417,
+    "presence":0.6375,
+    "subj_sep":0.6375,
+    "homeo_sep":0.0000,
+    "abl_sep":0.0000,
+    "order_diff":0.0000,
+    "shuffle_gap":-0.0151,
+    "nov_high":11.00,
+    "nov_low":2.00
+  },
+  "frozen_bars":{
+    "A_PRESENCE":{"metric":"est_high-est_low","value":0.6375,"thr":">=0.40","pass":true,
+      "meaning":"같은 객관 구간에서 high-novelty → 길게(0.879), low-novelty → 짧게(0.242) 추정"},
+    "B_DISTINCT":{"metric":"subj_sep>=0.40 AND homeo_sep<=0.05","subj_sep":0.6375,"homeo_sep":0.0000,"thr":"subj>=0.40 & |homeo|<=0.05","pass":true,
+      "meaning":"객관틱 고정+novelty 조작: subjective 추정은 갈리고(0.6375) homeo-style 객관시간 적분은 평탄(0.0); subjective ⊥ homeostatic(H_1292)"},
+    "C_EARNED":{"metric":"abl_sep (novelty 가중 k=0)","value":0.0000,"thr":"<=0.05","pass":true,
+      "meaning":"novelty 가중 끄면 추정=base 고정 → novelty 밀도 무관 평탄; A 의 분리는 novelty 가중이 EARN"},
+    "D_ORDER":{"metric":"order_diff (같은 novelty 총량 순서 반전)","value":0.0000,"thr":"non-gating report","pass":true,
+      "meaning":"같은 novelty 총량이면 순서 무관(count-기반) — 보고만, gating 아님"},
+    "E_SHUFFLE":{"metric":"|signed mean gap| (50-perm 구간↔novelty 페어링 셔플)","value":0.0151,"thr":"<=0.10","pass":true,
+      "meaning":"high/low 라벨을 novelty-set 에 무작위 배정 → subjective-novelty 상관 붕괴(signed mean gap ~0)"}
+  },
+  "verdict":"🟢 GREEN (4/4 gating A&B&C&E) — DIRECTIONAL. subjective time = novelty 가중 추정(est=base+k·novelty): 같은 객관 12틱이라도 high-novelty(11/12) est 0.879 vs low-novelty(2/12) est 0.242 (presence +0.6375). DISTINCT vs H_1292 homeostatic: 객관시간 적분은 novelty 조작에 평탄(homeo_sep 0.0) ⊥ subjective 는 갈림(subj_sep 0.6375). novelty 가중 ablation(k=0) → 평탄(abl_sep 0.0). 50-perm 페어링 셔플 → |signed mean gap| 0.015. ORDER-invariant(0.0).",
+  "honest_c9":"DIRECTIONAL numpy mirror (grep numpy 적중, hard-gate 1; engine-transfer UNVERIFIED). DESIGNED 스칼라 추정자(학습된 시간지각 net 아님) → GREEN 자체보다 discriminator(homeo-적분 평탄 vs subjective 분리, k=0 ablation 붕괴, 페어링 셔플 붕괴)가 결정적. homeo_sep / abl_sep 는 STRUCTURAL 0 baseline(객관시간 적분·base-고정은 novelty 정보를 구조적으로 안 담음) — 정직하게 그렇게 보고(contrived metric 아님). per-seed shuffle gap 은 2-set 무작위 배정 특성상 0 부근에서 ±변동(0.085/−0.153/0.023)하나 bar 정의(signed mean over 50-perm)대로 mean=0.015 PASS — bar frozen-first, 사후 미이동. SCOPE TOY: 12틱/3-seed/스칼라 추정자/Bernoulli novelty(시간지각 STRUCTURE 검증, 학습된 시간감각 아님); scale/실제 substrate 예측오차 스트림/연속 arousal/multi-segment/engine-transfer UNVERIFIED.",
+  "lanes":{"subjective_time":"R1 numpy mirror — novelty=예측오차 read 는 core/engine_cli.hexa §VForwardField/§PrecisionSurprise substrate error mirror","homeostatic":"core/engine_cli.hexa §HomeostaticDrive (H_1292) — 객관시간 단조 적분 mirror (distinctness target)"},
+  "next":"R2 engine-native: §HomeostaticDrive(H_1292) 적분 lane 재사용 — 같은 객관 elapsed 위에 novelty-가중 subjective 추정자를 §SubjectiveTime 으로 배선, frozen bars engine-native 재측정 + smoke 회귀가드 (a_engine_native_learning · a_verified_must_wire).",
+  "artifacts":["state/1475_subjective_time/h1475_subjective_time.py","state/1475_subjective_time/run_h1475.local.log"]
+}

@@ -4,7 +4,7 @@ slug: 1464_pairing_contrastive_bind
 title: G6 FALS-depth — PAIRING-CONTRASTIVE binding objective (same-idea pair vs cross re-weld)
 group: G6 IDEATION ★ — capacity-wall break campaign, LENS ② BINDING-SPECIFIC CONTRASTIVE OBJECTIVE
 terminal_tier: 🟢 DIRECTIONAL-mirror (numpy $0 CPU) — PAIRING-contrastive INSTALLS binding (B3 cross-shuffle COLLAPSES 20/20 seeds; FALS_shuf 0.67 vs FALS_in 4.33); FORM-only ablation regresses to H_1441 no-collapse (1/20). NOT terminal — engine-native re-measure pending (a_engine_native_learning).
-wired: DIRECTIONAL-mirror (numpy; torch ABSENT) — engine-native re-measure = ING follow-on
+wired: engine-native DECODE IN-PROGRESS (live core/bytegpt_decode.hexa via state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa, pool CPU $0; 3 .bin × 30 frags, ~10min/frag on 30GB hosts, ETA ~10h) — NO terminal 🟢/🧱 yet (hard-gate: score not run on completed evidence); mirror stays DIRECTIONAL. ING h1464_engine_native. status: state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt
 verdict_dir: state/verdicts/1464_pairing_contrastive_bind/
 terminal_verdict: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt
 date: 2026-06-20
@@ -70,6 +70,22 @@ negative, not capacity per se).
   8th lens) — frozen bars UNCHANGED (c9 / no tune-to-green).
 - TOY: 5 ideas / 3 (+20 robustness) seeds / synthetic vocab / deterministic detector. Scale, real-corpus,
   longer claims, and ENGINE-TRANSFER all UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope).
+
+## Engine-native re-measure — DECODE IN-PROGRESS (2026-06-20, pool CPU $0)
+The terminal verdict (a_engine_native_learning HARD-GATE) requires the live `core/bytegpt_decode.hexa`
+decode of the 3 trained `.bin` re-scored on the FROZEN 5-bar. That decode is **running on pool hosts**
+(NOT mini — game 2; NO GPU rent — $0) via `state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa`
+(the `.hexa` that calls live `core/` decode). **Pipeline validated end-to-end**: pairing.bin fragment 1
+decoded to valid falsifiable text *("the river under load. the amount of the sample is greater whenever the
+river decreases. if the sample grows, t…")* scored FALS=1 by the FROZEN h1305 detector.
+**Substrate-speed wall (a_break_the_wall type-c, infra not ceiling):** on the 30 GB pool hosts (summer/aiden,
+`cuda_available()==0` → CPU farr_matmul, GPU unused; 303M resident as ~30 GB boxed-farr at the memory ceiling,
+earlyoom active) decode = ~10 min/fragment (frag1 measured ~13–14 min incl. load) → ~5 h/bin, 90 frags total.
+Parallelized one-bin-per-host (a_wall_first): summer pairing→base, aiden shuffle; ETA ~10 h. Auto-scorer staged
+to write the terminal `H_1464_ENGINE_NATIVE.txt` (frozen B1–B5 + CTRL) when all 90 land. Frozen bars UNCHANGED
+(c9): 🟢 = WALL=LEARN-GAP (8-lens-first true break → a_verified_must_wire); 🧱 = WALL=CAPACITY (8th lens; mirror's
+bilinear B3 collapse was representational-room artifact). ARGMAX==torch byte-faithful parity still owed (run once
+a host frees; pairing.pt staged on summer). Status detail: `state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt`.
 
 ## Artifacts
 - `state/1464_pairing_contrastive_bind/h1464_pairing_contrastive.py` (mirror + 5-bar)

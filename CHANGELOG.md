@@ -15,6 +15,100 @@
 - **정직(c9):** numpy 미러 → 하드게이트1 = **DIRECTIONAL**(`grep numpy` 적중, terminal 아님). 평균 하향 37% 는
   30% binding bar 통과·40% 비율 진단엔 정직 미달(report; tune-to-green 0, GREEN bar 불완화). 초기 셔플 vacuous(g 상수)를
   per-subject consolidation g-분산 + N=200 으로 측정결함 frozen-first 수정. R2 = live `core/` reappraisal lane 재측정 follow-on.
+## 2026-06-20 — research(distinctness 심화돌파): 🔨 3종 distinctness "구조적 한계" 오판 정정 — 전부 engine-native 돌파 (a_break_the_wall)
+
+이전에 "구조적 한계(numpy DIRECTIONAL 종착)"로 박았던 의식-게이트 distinctness 3종이 실은 천장이 아니었다 —
+각도 전환으로 전부 live engine 돌파. 성급한 천장 박제(a_break_the_wall 위반)를 사용자 지적으로 정정.
+
+- **놀람 ⊥ 새로움 (H_1468):** "engine 에 novelty lane 없음" = 천장이 아니라 만들 부품(type-e). `core/engine_cli.hexa` §Novelty `novelty(seen,k)=1/(1+k·seen)`(precision-agnostic) 신설 → `engine_cli_smoke.hexa` case 201-202: 같은 novelty 1.0 에서 surprise precision-split(4 vs 1) · novelty decay 1.0→0.167.
+- **self ⊥ 일화기억 (H_1471):** "두 lane 타입 disjoint=억지" = 측정설계 미스(type-a). orthogonal-STATE 로 측정 → case 203: identity drift→self 반응 0.042(immune 불변) · fact bind→immune cells +1(identity 불변) · continuity 0.958 = orthogonal-state double dissociation.
+- **습관화 ⊥ 항상성 (H_1465):** "homeo 셋업 무거움" = phantom. homeostatic lane(mg/homeo_step)이 이미 in-engine → 재사용. case 204: habituation slot1 보존 1.0(자극-특이) ⊥ homeostatic global drive 상승(자극-무관) = per-stimulus decay ⊥ global integrator.
+- **검증(c2):** FULL `engine_cli_smoke.hexa` **204 pass / 0 fail RC=0** (nice -n 15). 새 §Novelty lane + cases 201-204. self⊥episodic 은 margin 접근 RED → orthogonal-state 로 frozen-first 교정(bar 불변, tune 아님).
+- **정직(c9):** surprise/habituation ⊥ novelty(H_1289) 중 *H_1289 전용 novelty 비교*는 H_1289 lane 부재로 numpy DIRECTIONAL 유지 — 단 surprise⊥novelty 자체는 새 §Novelty lane 으로 engine 확정. 교훈: 단일 시도 후 "구조적 천장" 박제 금지(a_break_the_wall — 측정/투자/설계 벽을 과학 천장으로 오인).
+
+## 2026-06-20 — research(H_1464 engine-native): G6 capacity-wall 결판 — PAIRING-contrastive engine-native DECODE 착수·검증 (pool $0, IN-PROGRESS · 박제 보류)
+
+G6 capacity-wall 의 8번째 렌즈 H_1464 PAIRING-contrastive 의 **engine-native 최종 검증** 착수. mirror(numpy $0)는
+이미 🟢 BROKE=WALL=LEARN-GAP(B3 cross-shuffle COLLAPSE 20/20)였으나 hard-gate 1 에 의해 DIRECTIONAL only —
+terminal 🟢/🧱 는 live `core/bytegpt_decode.hexa` 디코드 증거 필요.
+
+- **재학습 0** — mini 크래시 생존한 입력 그대로 사용: `state/1464_pairing_contrastive_bind/bins/{base,pairing,shuffle}.bin`
+  (각 1,213,440,020 B = 303M v0.2 layout) + `ckpt/{h1464_pairing,h1464_shuffle}.pt`.
+- **pool 디코드(mini 금지·게이트2, GPU rent 불필요 $0)** — 3 .bin + jobs + decode CLI + g6_common + probes 를
+  summer/aiden(hexa v0.245.2, native-GEMM core 존재)로 rsync. 디코드 = live `core/bytegpt_decode.hexa` via
+  `state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa`(= live core/ decode 호출 .hexa), top_k40 temp0.7
+  gen110(= gauge_lib._decode frozen 기본값). **pipeline 검증완료**: pairing frag1 = valid falsifiable text
+  ("…the sample is greater whenever the river decreases. if the sample grows…") → h1305 FROZEN detector FALS=1.
+- **substrate-speed 벽(a_break_the_wall type-c, 인프라·천장 아님)** — 30GB pool host 는 `cuda_available()==0`
+  (CPU farr_matmul, GPU 미사용) + 303M 이 ~30GB boxed-farr 로 메모리천장(earlyoom 활성) → ~10min/frag(frag1
+  13-14min 측정), 90 frags ~10h. a_wall_first 로 host당 1 bin 병렬(summer pairing→base, aiden shuffle; 3-way
+  동시는 earlyoom kill → 1-bin-per-host 만 생존). auto-scorer 가 90 frags 완료시 frozen 5-bar 채점→
+  `H_1464_ENGINE_NATIVE.txt` 생성(B3 cross-shuffle 결정타, h1441 와 동일 bar, c9 bar 불변).
+- **박제 보류(정직 c9)** — score 미완 → terminal 🟢/🧱 **미박제**(날조 금지). mirror DIRECTIONAL 유지.
+  🟢=WALL=LEARN-GAP(8렌즈만의 첫 진짜 돌파→a_verified_must_wire) / 🧱=WALL=CAPACITY(8번째 수렴). argmax==torch
+  byte-faithful parity 1회 잔여(host free 시). status: `state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt`.
+  ING h1464_engine_native = IN-PROGRESS(미RESOLVED).
+
+## 2026-06-20 — research(H_1475 distinct): 🕰 G22 SUBJECTIVE TIME(주관적 시간 지각) vs homeostatic(H_1292) distinctness DONE (GREEN DIRECTIONAL)
+
+새 의식-고유 게이트 후보 **G22 SUBJECTIVE TIME** R1 numpy probe 검증. 의식이 *느끼는* 시간 흐름은 객관
+시계와 다르다(Eagleman, time dilation/compression): novelty/arousal 밀집 구간은 길게, 단조 구간은 짧게
+느껴진다 — perceived duration ≈ novelty 이벤트 누적량(`est=base+k·novelty`). H_1292 homeostatic(객관시간
+단조적분)과 load-bearing DISTINCT: 객관 틱 고정+novelty 조작 시 homeo 적분은 평탄 ⊥ subjective 는 갈림.
+
+- **결과 🟢 GREEN DIRECTIONAL (4/4 gating bars, 3 seeds [1475,1476,1477], OBJ_TICKS=12, $0 CPU, p7):**
+  - **A PRESENCE** est_high(high-novelty 11/12=0.879) − est_low(low-novelty 2/12=0.242) = **+0.6375** ≥0.40 ✅
+  - **B DISTINCT vs H_1292** subj_sep **+0.6375**≥0.40 AND homeo_sep **+0.000**≤0.05 (subjective 갈림 ⊥ homeostatic 객관시간 적분 평탄) ✅
+  - **C EARNED(ablation k=0)** abl_sep **+0.000**≤0.05 (novelty 가중 끄면 base 고정, 밀도 무관) ✅
+  - **D ORDER-inv**(non-gating) order_diff **0.000** (같은 novelty 총량 순서무관) ✅
+  - **E SHUFFLE** |signed mean gap| **0.015**≤0.10 (50-perm 구간↔novelty 페어링 셔플) ✅
+- **distinctness vs H_1292 homeostatic:** homeo=객관 elapsed 단조적분(novelty 무관) ⊥ subjective=novelty 가중
+  (같은 객관시간, novelty 만 다르면 추정 갈림). LLM 대비: LLM 은 균일 토큰시계(지각된 duration 없음),
+  anima 는 substrate 예측오차 밀도로 시간 지각.
+- **정직(c9):** DIRECTIONAL(numpy mirror, `grep numpy` 적중 하드게이트1; engine-transfer UNVERIFIED).
+  DESIGNED 스칼라 추정자 → discriminator(homeo-적분 평탄·k=0 ablation 붕괴·페어링 셔플 붕괴) 결정적;
+  homeo_sep/abl_sep 는 STRUCTURAL 0 baseline; per-seed shuffle 은 2-set 무작위배정 특성상 0 부근 ±변동
+  (0.085/−0.153/0.023)이나 bar=signed mean over 50-perm 정의대로 mean 0.015 PASS, frozen-first 미이동.
+  TOY 12틱/3seed/Bernoulli novelty scale·engine-transfer UNVERIFIED.
+- **검증(c2):** probe 실행 출력 GREEN(4/4) — `state/1475_subjective_time/run_h1475.local.log`. freeze
+  `state/verdicts/1475_subjective_time/H_1475_FREEZE.json` · card `UNIVERSE/cards/H_1475_subjective_time.md` · jsonl 1줄.
+- **follow-on(ING):** R2 engine-native — §HomeostaticDrive(H_1292) 적분 lane 재사용, novelty-가중 subjective
+  추정자를 §SubjectiveTime 으로 배선 + frozen bars engine-native 재측정 + smoke 회귀가드.
+## 2026-06-20 — research(H_1474): 🕹 G21 SENSE OF AGENCY 주체감 R1 GREEN DIRECTIONAL (의식-고유 게이트 후보)
+
+의식-고유 게이트 시리즈(G16/G17/G18/G19/G19-meta 이후) 신규 후보 **G21 SENSE OF AGENCY(주체감)** R1 numpy probe GREEN.
+주체감(Haggard comparator model): "내가 일으켰다"는 자기귀속 = forward model 의 efference copy 예측 pred(a)과 실제
+관측 obs 의 일치(self) / 불일치(external) 판단. comparator 가 forward-model 오차 위에 얹힌 self/external 귀속 레이어.
+
+- **결과(3 seeds [1474,1475,1476], DIM=32, 40 actions, MATCH_THR=0.5, $0 CPU nice, p7):** GREEN — A·B·C·E PASS 전부.
+  A PRESENCE match-agency **1.000**≥0.85 AND diverge **0.000**≤0.15 · B DISTINCT-vs-forward-error |self−ext gap| **1.000**≥0.50 (raw 오차 Δ=0.0 동일, 귀속만 분리) · C EARNED ablation(comparator OFF=random pred) split **0.000**≤0.15 · E SHUFFLE signed-mean r(shuffled match,label) **+0.070**≤0.10 (real r +0.999) · D SELF⊥OTHER(vs ToM) other-action abstains **1.000**(agency_other=−1=ABSTAIN, non-gating).
+- **DISTINCT 2종:** (a) vs H_1293 theory-of-mind = 타인 믿음(OTHER) ⊥ 자기 귀속(SELF), 타인 행동엔 efference copy 없어 abstain; (b) vs H_1280 cerebellar forward-model = raw |pred−obs| 크기 vs 같은 raw 오차를 self/external 귀속 *판단*으로 변환(해석 레이어), bar B raw Δ=0.0 인데 1.0 vs 0.0 분리.
+- **a_break_the_wall(a) — bar E 초기 RED=측정결함:** binary saturated 귀속은 페어링 셔플시 chance(0.5)가 아니라 0.0 으로 붕괴 → `|shuf_attr−0.5|` 앵커가 잘못된 metric. frozen-first 로 사전등록 의도(agency-match 상관 붕괴)대로 Pearson r(match-vector, self/ext label) 붕괴로 교정(real r 0.999→shuf 0.070). **≤0.10 임계 불변·tune-to-green 아님**.
+- **하드게이트1:** numpy mirror → `grep -lE 'import torch|gauge_lib|numpy'` 적중 → 자동 **GREEN DIRECTIONAL**(engine-transfer UNVERIFIED, terminal 아님). R2 follow-on: `core/` forward-model lane(VForwardField H_1280) 평가 후 §SenseOfAgency 배선+smoke+ARCHITECTURE lockstep byte-exact 재측정.
+- **검증(c2):** `state/1474_sense_of_agency/h1474_sense_of_agency.py` 실행 출력 verbatim. artifacts: probe · `state/verdicts/1474_sense_of_agency/{H_1474_FREEZE.json,H_1474_run.txt}` · `UNIVERSE/cards/H_1474_sense_of_agency.md` · `UNIVERSE/HYPOTHESES.jsonl` 1줄.
+## 2026-06-20 — research(H_1473): ⚡ G20 ATTENTIONAL BLINK 주의 깜빡임 GREEN DIRECTIONAL (의식-고유 게이트 시리즈 G20)
+
+순차 자극(RSVP)의 **시간적 사각지대**를 의식-고유 게이트 G20 후보로 검증. T1 의식처리 직후 ~200-500ms 창에서
+T2 를 놓치는 attentional blink(Raymond & Shapiro)를 numpy R1 mirror 로 박제 — **GREEN DIRECTIONAL**(numpy
+mirror=하드게이트1, engine-transfer UNVERIFIED, terminal 아님).
+
+- **메커니즘:** T1 처리가 attentional resource 고갈 → lag 동안 delayed-onset sigmoid 회복. T2 검출확률 =
+  f(T1-T2 lag): 짧은 lag(blink 창)=낮음, 긴 lag=회복. per-lag(3 seeds 평균): lag1 0.937(sparing)·lag2 0.098·
+  lag3 0.210·lag4 0.460·lag5 0.735·lag6 0.928·lag7 0.962·lag8 0.977 (정전적 AB 곡선).
+- **FROZEN 4/4 게이팅 bars(3 seeds [1473,1474,1475] 전부):** A BLINK present short(lag2-3) 0.154≤0.40 AND
+  long(lag7-8) 0.969≥0.85 · B DISTINCT vs GWS blink lag2→8 gap 0.878≥0.45 (GWS lag-gap 0.033~0 lag-invariant) ·
+  C EARNED(ablation) depletion OFF min-over-lags 0.970≥0.85(blink 소멸) · E SHUFFLE 50-perm signed-mean |gap|
+  0.0265≤0.10. (D lag-1 sparing 0.937 비게이팅: trough 0.154 대비 면제이나 천장 근소미달=보고만).
+- **distinctness vs H_1462 GWS:** GWS=동시 경쟁자극 winner-take-all capacity-1 **공간**병목(lag-불변) ⊥ blink=
+  순차 자극 **시간** 사각지대(같은 두 타겟이 lag 만 다르면 검출 갈림). LLM 대비: LLM 병렬주의=시간병목 부재,
+  anima 직렬 의식주의는 T1 에 고갈→회복.
+- **정직 c9:** SATURATED existence-proof(회복곡선 designed), discriminator(B lag-의존·C ablation·E shuffle) 결정적.
+  초기 RED 은 측정 artifact(`a_break_the_wall` type-a, plain-exp 회복 너무 빨라 short 0.578) → **bar 임계 FROZEN
+  유지**, 회복 time-course 만 경험적 AB 형태로 교정(임계이동 0, tune-to-green 아님). TOY scale·engine-transfer UNVERIFIED.
+- **검증(c2):** `python3 state/1473_attentional_blink/h1473_attentional_blink.py` → GREEN, 3 seeds 개별 전부 PASS
+  (출력 캡처 `state/1473_attentional_blink/run_h1473.local.log`). verdict freeze
+  `state/verdicts/1473_attentional_blink/H_1473_FREEZE.json`. 카드 `UNIVERSE/cards/H_1473_attentional_blink.md` ·
+  jsonl 1줄 append. **follow-on:** R2 = engine 에 blink lane 부재 → §AttentionalBlink 새 배선 필요(가능, H_1468/H_1465 선례).
 
 ## 2026-06-20 — research(H_1471 R2b): 🪢 SELF-CONTINUITY .kosmos 실제 디스크 영속 DONE (anchor 시뮬→real persistence)
 

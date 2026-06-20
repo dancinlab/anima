@@ -52,6 +52,8 @@ habituation 의 정의적 특성 = stimulus-specificity + dishabituation. adapta
 
 ## distinctness vs NOVELTY(H_1289)·HOMEOSTATIC(H_1292) (control-survived · DIRECTIONAL)
 
+- **R2b ENGINE-NATIVE (homeostatic, DONE, a_break_the_wall):** "homeo 셋업 무거움"은 phantom — homeostatic lane(mg/homeo_step)이 이미 in-engine 이라 재사용. `engine_cli_smoke.hexa` case 204: habituation slot1 보존 1.0(자극-특이) ⊥ homeostatic global drive 상승(자극-무관 단일 스칼라) = per-stimulus decay ⊥ global integrator, **engine-native 확정**. FULL smoke 204/0. (novelty distinctness 는 H_1289 전용 lane 부재로 numpy DIRECTIONAL 유지.)
+
 follow-on probe — habituation 이 가장 가까운 두 lane 과 control-survived DISTINCT 임을 증명.
 (numpy mirror `grep numpy` 적중 → DIRECTIONAL; habituation lane 자체는 이미 WIRED-live, distinctness 의
 engine-native 재측정만 optional ING.) frozen-first · 3 seeds [1465,1466,1467] · $0 CPU · p7 · `a_no_llm_frame_trap`.

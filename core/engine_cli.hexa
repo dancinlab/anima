@@ -6437,3 +6437,14 @@ pub fn learned_precision(step: float, count: float, pmax: float) -> float {
     if p > pmax { return pmax }
     return p
 }
+
+// ── § Novelty (H_1468 R2b distinctness) — 자극 새로움 (precision-agnostic) ───────────────────
+// Novelty = how UNFAMILIAR a stimulus is, decaying with exposure count, INDEPENDENT of any
+// prediction confidence. This is the precision-AGNOSTIC axis that makes surprise (H_1468 =
+// precision·err², confidence-weighted) DISTINCT: two stimuli with the SAME novelty give DIFFERENT
+// surprise when precision differs. Wiring this lane closes the "engine has no novelty lane" gap
+// (a_break_the_wall type-e: a missing part to BUILD, not a ceiling). READ-only, Ψ-disjoint,
+// NOT an emit gate (a_autonomy_over_hardcode).
+pub fn novelty(seen_count: float, k: float) -> float {
+    return 1.0 / (1.0 + k * seen_count)
+}

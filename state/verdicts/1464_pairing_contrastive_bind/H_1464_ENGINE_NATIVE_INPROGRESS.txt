@@ -1,0 +1,73 @@
+H_1464 — PAIRING-CONTRASTIVE binding objective (same-idea pair vs cross re-weld)
+ENGINE-NATIVE 5-bar (B3 cross-shuffle) measurement — DECODE IN-PROGRESS (pool CPU, $0, no GPU rent)
+date: 2026-06-20
+
+VERDICT: NO TERMINAL TIER YET. The engine-native frozen 5-bar has NOT completed — the live
+  core/bytegpt_decode.hexa decode of the 3 trained .bin (pairing / shuffle / base) is RUNNING
+  on pool hosts but the 90 fragments are not all generated. Per a_engine_native_learning HARD-GATE,
+  NO 🟢/🧱 may be stamped until the score step runs on completed engine evidence. The numpy mirror
+  (state/verdicts/1464_pairing_contrastive_bind/H_1464.txt) remains DIRECTIONAL only (hard-gate 1).
+  This is an honest IN-PROGRESS status (c9), NOT a fabricated verdict and NOT a tune. It mirrors
+  the H_1441 UNBLOCKED_INPROGRESS pattern exactly.
+
+WHAT IS DONE / VALIDATED:
+  - Inputs survived the mini crash and are byte-exact: state/1464_pairing_contrastive_bind/bins/
+    {base,pairing,shuffle}.bin = 1,213,440,020 bytes each (= the 303M v0.2 layout vocab256 d1024
+    L24 H16 block512). ckpt/{h1464_pairing,h1464_shuffle}.pt pulled (a_fire_recover_complete).
+  - Pool staging (game 2, mini FORBIDDEN for heavy compute): the 3 .bin + jobs.tsv + decode CLI +
+    g6_common.py + probes (gauge_lib/h1129/h1305) rsync'd to summer (~/anima/...) and aiden.
+    hexa v0.245.2 on both, native-GEMM core/bytegpt_decode.hexa present (bytegpt_decode_batch_to_file
+    + flame_mm). Scoring import (g6_common + 3 probes + torch) validated on summer.
+  - DECODE = live core/bytegpt_decode.hexa via state/1464_pairing_contrastive_bind/
+    engine_decode_batch_cli.hexa  (THE .hexa that calls live core/ decode — the engine-native
+    evidence path required by hard-gate 1). top_k=40 temp=0.7 gen=110 (= gauge_lib._decode defaults
+    the numpy mirror used — frozen, NOT tuned).
+  - PIPELINE VALIDATED END-TO-END: pairing.bin fragment 1 decoded to valid falsifiable-form text:
+      7|in|0  "the river under load. the amount of the sample is greater whenever the river
+               decreases. if the sample grows, t..."
+    (comparator 'greater/whenever' + measurable + 'if…then' structure → the h1305 FROZEN detector
+    scored this seed FALS=1). The decode produces correct, scoreable engine output.
+  - Auto-scorer staged: runs python3 h1464_engine_native.py --score over the 3 completed outputs
+    (g6_common FROZEN 5-bar VERBATIM, h1305 structural detector — same bar h1441 used) → writes
+    ~/h1464_decode/H_1464_ENGINE_NATIVE.txt when all 90 frags land. Dry-run on partial data ran the
+    full B1-B5+CTRL print path with a proper verdict (no import/parse error).
+
+THE SUBSTRATE-SPEED WALL (a_break_the_wall type-c — infra, NOT a science ceiling):
+  - native-GEMM landed (~2.7s/token on a Mac per H_1441 UNBLOCKED note), BUT on the available pool
+    hosts (summer/aiden = 30 GB RAM each, cuda_available()==0 in this hexa build → CPU farr_matmul,
+    GPU UNUSED) the 303M model is resident as ~30 GB boxed-farr = at the memory ceiling. earlyoom is
+    active on summer. MEASURED on summer: decode proc R-state 99.7% CPU (NOT swap-thrashing),
+    fragment 1 (seed + 110 gen tokens) landed at ~13–14 min wall; load amortizes → ~10 min/fragment
+    steady-state. 30 frags/bin ≈ 5 h; 90 frags total.
+  - Parallelized across hosts (a_wall_first): summer = pairing → base (self-chained on pid-exit),
+    aiden = shuffle, concurrently. ETA ≈ pairing+base on summer (~10 h serial) ∥ shuffle on aiden
+    (~5 h). One bin per host (each pins ~30 GB) — CANNOT co-locate 2 decodes on one 30 GB host
+    (the first 3-way-parallel attempt was earlyoom-killed; single-bin-per-host survives).
+
+FROZEN 5-BAR RUBRIC (declared, UNMOVED — c9 / no tune-to-green; same bars as the mirror & H_1441):
+  🟢 TERMINAL = WALL=LEARN-GAP iff  B1(FALS_in≥1) ∧ B2(DIST_in≥5) ∧
+       B3(cross-shuffle COLLAPSE: FALS_shuf<FALS_in) ∧ B4(FALS_ho≥1) ∧ B5(FALS_in≥base+1) ∧
+       CTRL form-only no-collapse(regresses to H_1441).  → 8-lens-first true break; a_verified_must_wire.
+  🧱 TERMINAL = WALL=CAPACITY otherwise (B3 no-collapse = pairing objective did NOT install binding
+       at 303M → mirror's bilinear B3 collapse was a representational-room artifact; 8th converging lens).
+  B3 cross-shuffle COLLAPSE is the decisive target (H_1435/36/37/1441 all FAILED B3 engine-native).
+
+HARVEST / COMPLETE recipe (when ~/h1464_decode/out_{pairing,shuffle,base}.txt each = 30 frags):
+  # auto-scorer writes it, OR manually:
+  ssh summer 'cd ~/anima/state/1464_pairing_contrastive_bind; G6_PROBES=~/anima/state/universe-probes \
+    python3 h1464_engine_native.py --score ~/h1464_decode/out_pairing.txt \
+      ~/h1464_decode/out_shuffle.txt ~/h1464_decode/out_base.txt'
+  → prints FROZEN 5-bar + 🟢/🧱. Pull H_1464_ENGINE_NATIVE.txt to
+    state/verdicts/1464_pairing_contrastive_bind/, stamp card wired: + jsonl verdict, CHANGELOG.
+  ARGMAX==TORCH golden parity (the one-time byte-faithfulness check, still owed): pairing.pt is on
+    summer (1,212,495,539 B). Run AFTER a host frees (torch needs ~30 GB, conflicts with a live
+    decode on a 30 GB host): engine bytegpt_decode_argmax(pairing.bin, seed, gen32) vs torch-argmax
+    (pairing.pt) for the same seed → expect identical bytes (H_1441 established this for the same
+    kernel+version: argmax 32 == torch golden, logits ~1e-5). NOT yet executed.
+
+POD/RENT: $0 — pool only (summer/aiden), NO GPU rent, NO pod. 0 pods to teardown.
+
+xref H_1441 (form-contrastive, prior lens; same substrate-speed wall, same B3 target) ·
+  H_1435/36/37 (B3 engine-native FAIL precedent) · H_1464 numpy mirror (DIRECTIONAL, 🟢 BROKE) ·
+  ING h1464_engine_native · a_engine_native_learning · a_break_the_wall type-c · a_wall_first ·
+  a_fire_recover_complete · a_verified_must_wire · p7 · c9.
