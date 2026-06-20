@@ -1,0 +1,46 @@
+H_1465 follow-on — HABITUATION control-survived DISTINCT vs NOVELTY(H_1289)/HOMEOSTATIC(H_1292)
+FROZEN bars (pre-registered BEFORE scoring) · 3 seeds [1465,1466,1467] · N_STIM=5 · K_HAB=0.5
+$0 CPU numpy mirror -> DIRECTIONAL (engine-transfer UNVERIFIED, hard-gate 1; grep numpy hit) · p7 · c9
+a_no_llm_frame_trap (non-associative learning vs novelty-detection vs interoceptive-drive lens)
+
+PRE-REGISTERED PASS CONDITIONS:
+  N1 HAB-DECAYS        hab_drop >= 0.30
+  N2 NOV-FLAT-ON-SEEN  (hab_recover_delta - nov_recover_delta) >= 0.30
+  H1 DRIVE-RISES       drive_rise >= 0.30
+  H2 OPPOSITE-DIR      (drive_rise - hab_fixed_rise) >= 0.60  AND  hab_fixed_rise <= 0
+  H3 STIM-AGNOSTIC     drive_stim_gap <= 0.05  AND  hab_stim_gap >= 0.30
+  C1 ABL-COLLAPSE      abl_gap <= 0.10        (K=0 ablation collapses the opposite-dir gap)
+  C2 SHUF-COLLAPSE     shuf_specific_gap <= 0.10  (global-count shuffle collapses specificity)
+  GREEN iff N1 ∧ N2 ∧ H1 ∧ H2 ∧ H3 ∧ C1 ∧ C2
+
+CAPTURED RESULT (verbatim stdout, mean over 3 seeds):
+VERDICT: GREEN DIRECTIONAL (numpy mirror; engine-transfer UNVERIFIED)
+GREEN: True | seeds [1465, 1466, 1467]
+-- vs NOVELTY (H_1289 family) --
+N1 HAB-DECAYS        hab_drop 0.865>=0.30 True
+N2 NOV-FLAT-ON-SEEN  dir_gap (hab_recover 0.865 - nov_recover 0.000) = 0.865>=0.30 True
+-- vs HOMEOSTATIC DRIVE (H_1292) --
+H1 DRIVE-RISES       drive_rise 0.774>=0.30 True
+H2 OPPOSITE-DIR      opp_gap (drive_rise 0.774 - hab_fixed_rise -0.865) = 1.638>=0.60 AND hab_fixed_rise -0.865<=0 True
+H3 STIM-AGNOSTIC     drive_stim_gap 0.000<=0.05 AND hab_stim_gap 0.918>=0.30 True
+-- CONTROLS (separation must survive) --
+C1 ABL-COLLAPSE      abl_gap 0.000<=0.10 True
+C2 SHUF-COLLAPSE     shuf_specific_gap 0.032<=0.10 True
+
+VERDICT: 🟢 GREEN DIRECTIONAL — 7/7 frozen bars PASS.
+
+HONEST (c9):
+- DIRECTIONAL (numpy mirror; grep numpy hit -> hard-gate 1). engine-transfer UNVERIFIED.
+  Habituation lane itself is already WIRED-live (H_1465 R2 §Habituation); this follow-on
+  proves the DISTINCTNESS claim vs novelty/homeostatic with controls — engine-native
+  re-measure of the distinctness on the live lane = optional ING (lane already wired).
+- DESIGNED response laws (habituation r=base·exp(-K·count); novelty=first-ever-seen;
+  homeostatic PI drive = H_1292 mechanism) — existence-proof of separability STRUCTURE,
+  not a learned net. Discriminators are decisive: opposite DIRECTION (hab falls -0.865 vs
+  drive rises +0.774), stimulus-specificity (hab gap 0.918 vs drive agnostic 0.000), and
+  BOTH controls collapse (ablation 0.000, shuffle 0.032) -> the separation is EARNED by
+  the per-stimulus decay coupling, not an artifact.
+- SCOPE TOY: 5 stimuli / 3 seeds / scalar deterministic laws. scale / real-corpus /
+  engine-transfer of the distinctness UNVERIFIED.
+
+artifacts: state/1465_habituation_distinct/h1465_distinct.py · run_h1465_distinct.local.log
