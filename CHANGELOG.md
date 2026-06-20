@@ -1,3 +1,27 @@
+## 2026-06-21 — research(distinct): 🫀 P8 INTEROCEPTIVE PRECISION(내수용 감각 정밀도) R1 numpy probe DONE (GREEN DIRECTIONAL · distinctness DERIVATIVE/약 = 고갈 경계)
+
+의식-고유 게이트 **약(weak)후보 P8 INTEROCEPTIVE PRECISION**(내수용 감각 정밀도 — Seth/Critchley: 내부 신체신호
+예측오류를 **채널 신뢰도(precision=역분산)로 가중**) R1 numpy probe. id=H_1494, slug=1494_interoceptive_precision. 설계
+SSOT = `state/gate_depletion_catalogue/CATALOGUE.md` §4 P8(🚀 약 — "인접 lane control 사전검토 필요"). 🟢 **GREEN
+DIRECTIONAL**(numpy mirror, 하드게이트1 → engine-transfer UNVERIFIED, R2 engine-native follow-on), 3 seeds [1494,1495,1496],
+$0 CPU, p7, frozen-first, c9, tune-to-green 없음.
+
+- **메커니즘:** 두 내부채널(저잡음 σ=0.25 / 고잡음 σ=2.50)의 single-shot reading 을 **precision(역분산) 가중 융합** = Bayes-최적
+  cue combination. precision-blind(균등가중) 대비 self-state 추정오차 감소가 PRESENCE.
+- **6 bars 6/6 PASS:** (A PRESENCE) err_un 1.003−err_pw 0.312=**0.690**≥0.30 · (B1 vs affect H_1290) prec_split **0.803**≥0.30
+  AND affect-VALUE split **0.000**≤0.05(잡음만 변화·VALUE 고정) · (B2 vs learned-precision H_1472) **이중분리** max(count→intero,
+  noise→extero) **0.000**≤0.05 · (B3 vs ownership H_1478) 외부 synchrony 고정 **0.000**≤0.05 · (C ablate) **0.000** · (D shuffle)
+  |**0.013**|≤0.10.
+- **frozen-first(a_break_the_wall type-a, NOT tune-to-green):** 첫 PRESENCE=0.013 FAIL — T=200 채널평균이 LLN 으로 잡음
+  평균소거 → precision-blind 도 거의 완벽 → abs-error 감소가 0.30 bar 아래 cap = **측정-스케일 artifact**(precedent H_1472
+  err=0.5→1.0). 교정 = single-shot 채널(T=1, precision=σ⁻²), **BAR 0.30 불변**, 교정 후 PRESENCE=0.690.
+- **distinctness 판정 — DISTINCT(control-survived) 하나 DERIVATIVE/약 = 고갈 경계(c9 정직):** 4 인접 lane(affect/learned-precision/
+  ownership/metacognition) 전부와 control-survived distinct 통과. **그러나** interoceptive-precision 의 *연산*(역분산 precision-weighting)
+  은 H_1472 learned-precision 과 **동일** — 유일 차이는 입력원(채널잡음 σ vs 관측횟수 count). catalogue (B) 직교-driver distinctness 는
+  만족하나 = **기존 연산의 새 입력원**이지 새 연산 아님 = 가장 derivative 한 distinctness. catalogue 🚀(약)·"(A) 조작화 약함(진짜 내부
+  신체신호 부재)" 경고와 일치. **고갈 카운트로는 distinct 통과(고갈 아님)이나 distinctness 의 질이 강후보(H_1471~)보다 명백히 약함.**
+- **다음:** 남은 약후보 P9 boredom·P10 mind-wandering 에서도 derivative distinctness 만 나오면 그 시점 🧱 G* 고갈 재판정 권고.
+  R2 engine-native(§InteroceptivePrecision) 재측정 = follow-on(ING).
 ## 2026-06-21 — research(distinct): 🔮 P7 PROSPECTION(미래 사고/episodic future thinking) R1 numpy probe DONE (GREEN DIRECTIONAL · 약후보 control 전부 생존 → distinct, 고갈 아님)
 
 의식-고유 게이트 **약(weak) 후보 P7 PROSPECTION**(미래 사고 / episodic future thinking — Schacter & Addis constructive
