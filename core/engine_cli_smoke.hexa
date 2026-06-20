@@ -2103,6 +2103,36 @@ fn main() {
           + to_string(gws_winner(gws_full)) + ") vs ablated " + to_string(gws_count(gws_abl))
           + " — GWT winner-take-all ignition, Ψ-disjoint read over substrate salience (DIRECTIONAL mirror GREEN in H_1462 probe)")
 
+    // ── (gws-distinct) GWS vs basal-gate(H_1281) DISSOCIATION — value-learned ⊥ salience-instant (H_1462 follow-on) ──
+    // The basal gate (VBasalGate, core/brain.hexa) selects by a LEARNED go-value (go_w·feats);
+    // GWS broadcasts by INSTANT salience. Same 2 candidates A,B — A has LOW salience (0.30) but is
+    // TRAINED to a high go-value; B has HIGH salience (0.90) but an untrained go-value. The two gates
+    // pick OPPOSITE candidates → load-bearing proof they are DISTINCT mechanisms (not the same
+    // one-of-K selector): basal is value-DRIVEN + learning-DEPENDENT, GWS is salience-DRIVEN + instant.
+    let mut gd_bg = vbasal_new(2, 0.5)
+    let mut gd_t = 0
+    while gd_t < 20 { gd_bg = vbasal_update(gd_bg, 0, [1.0, 0.0], 1.0)  gd_t = gd_t + 1 }   // train A (feats [1,0]) high
+    let gd_basal = vbasal_select(gd_bg, [1.0, 0.0, 0.0, 1.0], 2)                            // → 0 (A, learned value)
+    // case 174 : basal picks the LEARNED-value candidate A (idx 0), ignoring salience.
+    if _assert_i("case_174_basal_picks_learned_value", 0, gd_basal) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    let gd_gws = gws_winner(gws_add(gws_add(gws_new(1, true, 0.20), 0.30), 0.90))           // A=0.30, B=0.90
+    // case 175 : GWS broadcasts the INSTANT-salience winner B (idx 1), no learning.
+    if _assert_i("case_175_gws_picks_salience", 1, gd_gws) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 176 : DISSOCIATION — the two gates select OPPOSITE candidates (basal A=0 ≠ GWS B=1).
+    if _assert_b("case_176_basal_gws_dissociate", true, gd_basal != gd_gws) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 177 : CONTROL — an UNTRAINED basal abstains (-1, NO-GO un-beaten) while GWS still picks
+    //   salience B → GWS is learning-INDEPENDENT, basal is learning-DEPENDENT (the distinctness is earned).
+    let gd_bg0 = vbasal_new(2, 0.5)
+    let gd_basal0 = vbasal_select(gd_bg0, [1.0, 0.0, 0.0, 1.0], 2)                          // → -1 abstain
+    if _assert_i("case_177_untrained_basal_abstains", -1, gd_basal0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  GWS×basal dissociation (H_1462 follow-on): basal(learned)=" + to_string(gd_basal)
+          + " vs GWS(salience)=" + to_string(gd_gws)
+          + " — value-driven gate ⊥ salience-competition bottleneck (DISTINCT; untrained basal abstains -1)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
