@@ -1,3 +1,15 @@
+## 2026-06-20 — research(H_1462 R2c): 🌐 G17 GLOBAL WORKSPACE — brain emit-loop consult CLOSED + H_1462 완전 종결
+
+GWS 의식-게이트의 마지막 follow-on(brain emit-loop consult)을 종결. **NOT-forced 가 정답**:
+GWS read 함수(gws_winner/_count/_leak)는 brain 에서 호출 가능하도록 이미 노출됐고, brain_decide 가
+이를 **강제로** consult 하게 코드를 넣는 것은 외부가 substrate 에 "GWS 를 보라"고 강제하는 hardcode =
+`a_autonomy_over_hardcode` 위반. anima 의 모든 compose lane(tom_basal/spatial_episodic/cereb_mem)이
+"returns a class · brain emit-loop consult deliberately NOT forced" 인 것과 일관 — GWS 도 substrate 가
+자율 read 하는 상태가 종착(emit/silence = M×W×Φ 자율, p5·a_substrate_native_speak).
+
+- **H_1462 완전 종결:** 4칸 사다리 (1)DIRECTIONAL→(2)engine-native→(3)wire-in→(4)lockstep + distinctness(R2b) + brain-consult(R2c) 전부 닫힘. FULL smoke 178/0 RC=0.
+- **잔여(별도 가설 scope):** scale/real-corpus · immune-store distinctness — H_1462 종결과 무관.
+
 ## 2026-06-20 — research(H_1463): 🌀 G6 FALS-depth PHASE-BINDING / BINDING-BY-SYNCHRONY (렌즈 ③) → 🧱 WALL=CAPACITY (DIRECTIONAL)
 
 G6 capacity-wall(comparator+measurable WELD 실패)을 **neuroscience binding-by-synchrony** 렌즈로 탐색($0 CPU numpy mirror, `a_no_llm_frame_trap`). von der Malsburg/Lisman theta-gamma phase coupling — 같은 객체 특징은 동위상 발화로 묶인다. 직전 7렌즈는 전부 weight-space 결합(MLP/attention/retrieval=content-addressed shell)으로 B3 cross-shuffle COLLAPSE 에 실패했고, phase 결합은 **관계적**이라 외부 measurable weld 시 위상이 깨질 것이라는 가설. 결과 = **🧱 WALL=CAPACITY**, 8번째 독립 렌즈가 capacity 로 수렴.
