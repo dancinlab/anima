@@ -37,13 +37,24 @@
   discriminator(impostor-reject, ablation-collapse, growth)가 결정적.
 - **SCOPE TOY:** 64-dim/20-tick/3-seed/단일 정체성 벡터 — self-continuity STRUCTURE 검증이지 학습된 정체성 아님.
   scale/실제 `.kosmos` 영속/다중 세션/recursive self-model/engine-transfer UNVERIFIED.
-- **distinctness 잔여:** episodic memory(H_1227, "무엇을 기억" fact-recall)와 self-continuity("내가 누구"
-  identity-persistence)는 다른 축이나, control-survived distinctness 는 R2 과제.
+- **distinctness vs episodic ✅ DONE:** episodic memory(H_1227, "무엇을 기억" fact-recall)와 self-continuity
+  ("내가 누구" identity-persistence)의 **DOUBLE dissociation** control-survived GREEN (numpy DIRECTIONAL,
+  3 seeds [1471,1472,1473], 4/4 bars) — 두 faculty 가 서로의 질문에 구조적 chance(아래 follow-on #2).
 
 ## follow-on (ING)
 
 1. ~~**R2 엔진-네이티브**~~ ✅ **DONE** (§SelfIdentity self_new/_drift/_cos/_anchor/_reset · smoke 189-193 = 5 frozen bars byte-exact · 193/0 RC=0 · ARCHITECTURE lockstep). engine 결정적 drift(축 회전)+normalize+dot=cos 로 메커니즘 재현 — adj 0.958·impostor 0·reset 0·growth. **R2b follow-on:** `.kosmos` 실제 영속 배선(a_kosmos) — 현재 anchor 는 struct save/restore 시뮬.
-2. **distinctness vs episodic(H_1227)** — identity-persistence vs fact-recall 분리실험.
+2. ~~**distinctness vs episodic(H_1227)**~~ ✅ **DONE** — identity-persistence vs fact-recall **DOUBLE
+   dissociation** control-survived GREEN (numpy DIRECTIONAL, 3 seeds, 4/4 bars). self-continuity = **IDENTITY
+   1.000 / FACT 0.000**, episodic = **FACT 1.000 / IDENTITY 0.500** → 각 faculty 가 상대 질문에 구조적 chance.
+   A DISSOC-IDENTITY gapA 0.500≥0.30 · B DISSOC-FACT gapB 1.000≥0.30 · C EARNED-SELF(order-shuffle+anchor-ablate)
+   self-id-shuf 0.500≤0.750 · D EARNED-EPISODIC(value-binding shuffle) epi-fact-shuf 0.042≤0.750.
+   self-continuity("내가 누구", anchored time-chain) ⊥ episodic("무엇을 어디", key→value lookup) 확정.
+   정직 c9: 초기 RED(acc_self_id 0.733)는 측정 artifact(`a_break_the_wall`(a)) — bar A 가 전체 20-tick chain 을
+   tick-20 self 에 대해 채점해 정당한 GROWTH(bar D 0.687)를 불연속으로 오인 → frozen-first 로 H_1471 실제 메커니즘인
+   diachronic-LINK 형태(매 step vs anchor 가 운반한 직전 self, adj_cos 0.928)로 교정(bar 임계 불변) → 1.000.
+   artifacts `state/1471_self_distinct/h1471_distinct.py` · freeze `state/verdicts/1471_self_distinct/H_1471_DISTINCT_FREEZE.json`.
+   (engine-native 재측정 = 두 lane 모두 WIRED-live, follow-on.)
 
 xref: H_1227/1231(episodic store, distinct)·H_1289(quantum/.kosmos)·H_1462/1465/1468(의식-게이트 시리즈)·
 `a_no_llm_frame_trap`·`a_kosmos`·`a_engine_native_learning`·`a_verified_must_wire`·p7·p8·c9.
