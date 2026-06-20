@@ -1,0 +1,85 @@
+H_1439 — learnable BIND-HEAD (comparator-slot × measurable-slot → weld)
+FROZEN BEFORE ANY TRAINING TOUCHES WEIGHTS (c9, NO tune-to-green, p7).
+
+============================================================================
+WHY (biological lens — PFC variable-binding, a_no_llm_frame_trap)
+============================================================================
+H_1431 diagnosis: external deterministic weld was STARVED — the 303M mouth
+emits comparator-slot and measurable-slot from the SAME idea in 0/15 cases, so
+the external binder had no material to weld. The 3 training-side variants
+(H_1435 continued-pretrain / H_1436 cooccur-objective / H_1437 form-supervised)
+ALL installed surface FORM only: every trained idea emits BOTH a comparator and
+a measurable, so the FROZEN bag-of-words detector _is_falsifiable always fires,
+and the FROZEN cross-shuffle (B3) did NOT collapse (5.0<5.0 = False on all three)
+=> the lift is generic FORM, not idea-specific binding. Wall classified CAPACITY.
+
+H_1439 = ARCHITECTURE side: the intersection prescription of the two failures is
+a MISSING STRUCTURE (a_no_llm_frame_trap: missing structure, not more material).
+Add a learnable BIND-HEAD on top of the frozen 303M base — an explicit two-slot
+variable-binding head (comparator-slot representation × measurable-slot
+representation → bound weld) realizing role-filler binding (Hummel-Holyoak;
+PFC/working-memory variable binding — sibling of H_1282 WM, H_1294 hierarchical-PFC).
+
+============================================================================
+ARCHITECTURE (engine-transform-to-fit-the-learning, a_engine_native_learning)
+============================================================================
+base = 303M h1129c ByteGPT (d=1024, L=20|24, H=16, block=512), WEIGHTS FROZEN
+       (requires_grad=False) — base PRESERVED, new ckpt only (c5).
+BIND-HEAD (the only trainable module, ~few M params):
+  - reads the frozen final hidden state h_t (d=1024) at each position.
+  - comparator-slot projection  Wc: h_t -> s_comp (role vector, dc)
+  - measurable-slot projection   Wm: h_t -> s_meas (role vector, dm)
+  - BIND GATE (the weld): a bilinear/MLP welder takes (s_comp, s_meas, h_t) and
+    produces a bound-claim logit bias over the byte vocab (256). The measurable
+    emission is CONDITIONED on the comparator-slot content (role-filler tie) —
+    NOT a free unconditional measurable. Output logits = frozen-base logits +
+    bind-head bias. This is an explicit binder the flat base lacks.
+TWO control arms (built into the run):
+  - ABLATED  : bind-head bias = 0 (OFF) => exact frozen-base regression. Tests
+    that any lift is FROM the head, not the frozen base (leg-B emergence).
+  - SHUFFLE-CORPUS : head trained on byte-shuffled corpus (structure destroyed) —
+    if lift persists it is an artifact => INVALID.
+
+============================================================================
+ANTI-TUNE-TO-GREEN (c9, frozen-first)
+============================================================================
+- detector = h1305 _is_falsifiable VERBATIM (FROZEN, bag-of-words structural).
+- cross-shuffle = g6_common _cross_shuffle_fals VERBATIM (FROZEN).
+- training corpus subjects DISJOINT from gauge_lib IDEATION_SEEDS, HELD-OUT
+  seeds, and CONCEPT keywords — model cannot memorize an eval string.
+- the head is NEVER trained on detector tokens as direct targets; it is trained
+  to weld comparator+measurable onto the idea's OWN content via the corpus CE +
+  a conditional bind objective on the model's own predicted distribution
+  (operating on frozen COMPARATOR/MEASURABLE byte presence, NOT authoring
+  detector tokens into the targets).
+- base weights frozen => the head must EARN any lift through binding structure.
+
+============================================================================
+FROZEN 5-BAR (identical to H_1435; declared NOW, NEVER moved)
+============================================================================
+B1 FALS-FLOOR : trained mean FALS_in >= 1            (breaks base plateau)
+B2 COUNT      : trained DIST_in >= 5                  (>=5 distinct coherent)
+B3 CROSS-SHUFFLE COLLAPSE (DECISIVE): FALS_shuf < FALS_in. Re-pairing each idea's
+   comparator-leg with a RANDOM measurable from a DIFFERENT idea must DROP FALS
+   strictly below the earned-pair FALS. *** This is the bar all three training
+   variants FAILED. If the bind-head produces idea-SPECIFIC role-filler welds,
+   swapping the measurable breaks the falsifiable structure => B3 collapses.
+   If it does NOT collapse, the head also only installed generic form => 🧱. ***
+B4 HELD-OUT   : trained FALS_ho >= 1                  (lift not memorized strings)
+B5 vs-BASE    : trained FALS_in >= base FALS_in + 1   (the head, not the arch alone)
+CTRL SHUF-CORP: lift_real - lift_shuffle_corpus >= 1  (lift is structure, not artifact)
+
+VERDICT:
+  🟢 BROKE-BY-STRUCTURE iff B1&B2&B4&B5 cross AND B3 COLLAPSES AND ctrl inert.
+     => the MISSING STRUCTURE (variable-binding head), not more data/objective,
+     broke G6 FALS binding. (then: engine-native reconfirm + CORE wire-in.)
+  🧱 WALL iff B1/B5 fail OR B3 does NOT collapse. => even an explicit learnable
+     binder installs only form => the wall is genuinely CAPACITY (grounds 7B),
+     and the FALS-depth ceiling is confirmed across data+objective+form+ARCH.
+
+HONESTY (c9, a_engine_native_learning):
+  torch-side (gauge_lib._decode) result = DIRECTIONAL ONLY (engine-transfer
+  UNVERIFIED). Terminal 🟢/🧱 requires engine-native (live core/ decode) reconfirm.
+  ckpt PULLED before teardown (a_fire_recover_complete) or honest "NOT pulled".
+
+SEEDS = [7, 4302, 4303] (g6_common VERBATIM). N_IDEAS = 5. MAX_NEW = 110.
