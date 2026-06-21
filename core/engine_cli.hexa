@@ -7489,334 +7489,246 @@ pub fn reality_confidence_readout(content_correct: bool) -> float {
     return 0.50                                          // wrong content → chance
 }
 
-// ── § Field (H_1503 R2) — 전자기장 섭동 모듈 + PCI (perturbational complexity index) ──────────────────
-// 약물(neuropharm, H_1502) 모듈의 자기/EM-자극 짝. 한 FIELD 은 새 의식 lane 도, "감전된 척" 텍스트도 아니다
-// (a_no_llm_frame_trap). FIELD = 엔진이 이미 ci_lane_scores 입력으로 노출하는 substrate knob — m(접지 마진),
-// m_field[5](이웃-맥락 마진), cells(MITOSIS 분열수), recon_err, dt — 에 가하는 FROZEN 섭동 VECTOR(주파수·강도·
-// focality·target-lane). 그 뒤 의식 lane + Φ 변화 + 새 섭동측도 PCI 를 MEASURE 한다. DRUG(전역·화학) ⊥
-// FIELD(focal·주파수특이) 이중해리가 헤드라인.
+// ── § Neuropharm (H_1502 R2) — 신경약리 섭동 모듈 (substrate perturbation under a drug profile) ──────
+// Standard computational-neuroscience drug modelling (entropic-brain / REBUS, Carhart-Harris & Friston
+// 2019 Pharmacol Rev; Carhart-Harris 2014 Front Hum Neurosci; Schartner 2017 Sci Rep Lempel-Ziv↑;
+// Timmermann 2019 Sci Rep DMT; Atakan 2012 cannabis time-dilation; Dijkstra & Fleming 2023 reality
+// monitor). NO real drugs, NO synthesis — a DRUG = a FROZEN parametric PERTURBATION VECTOR applied to
+// substrate knobs the engine ALREADY exposes (the §ConsciousnessIndex substrate reads m/m_field/dt/
+// recon_err + the §RealityMonitor threshold + the §SelfIdentity coherence), after which we MEASURE the
+// change in the consciousness lanes + Φ. The hypothesis: does anima's substrate, perturbed per a drug's
+// KNOWN pharmacology, reproduce that drug's KNOWN directional consciousness signature from the literature?
 //
-// 문헌-근거 FROZEN profile (측정 前 등록, 실제 인용):
-//   TMS single-pulse / PCI   Casali 2013 STM; Massimini 2005 Science — 일시 focal pulse → PCI 측정.
-//   rTMS high(>=5Hz exc) /    Pascual-Leone; Hallett 2007 Nature — 고주파 target 활성 UP, 저주파 DOWN(반대부호).
-//        low(<=1Hz inh)
-//   tACS gamma40/alpha10/     Herrmann 2013 Front Hum Neurosci; Thut — 주파수→target 해리: gamma→binding,
-//        theta6               alpha→attention-gating, theta→memory/WM.
-//   sham                      zero field (EARNED ablate 대조).
+// A drug is NOT a new lane and NOT "act high" text. The knobs map to EXISTING reads:
+//   prior_strength  — top-down precision/prior weight   → scales grounding margin m toward chance 0.5
+//   signal_entropy  — Lempel-Ziv signal diversity        → SHARED common-mode diversity latent on the reads
+//   self_boundary   — §SelfIdentity coherence            → self_cos toward an ego-dissolved axis (↓=dissolution)
+//   lane_coupling   — cross-lane integration gain         → shared-vs-private variance mix → drives Φ
+//   time_dilation   — subjective-time rate (H_1475)       → scales dt (SubjectiveTime lane)
+//   reality_thr_shift — §RealityMonitor threshold shift   → ↓ ⇒ imagined feels real
+//   working_memory  — WM retention (H_1282)               → scales held field-margin spread
+// READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode). Deterministic.
 //
-// PCI(perturbational complexity index, Casali 2013): 정적 Φ(ci_phi_multiinfo)는 RESTING substrate 의 통합.
-// PCI = substrate 를 일시 pulse 로 찌른 뒤 spatiotemporal 반응(lane×time)을 이진화하고 그 Lempel-Ziv 복잡도를
-// 정규화. 高 PCI = 의식적(통합 AND 분화된 반응); 低 PCI = 붕괴(마취/탈동조 — 국소·정형 echo). 정적 Φ 와
-// 진짜로 DISTINCT(Φ=resting 공분산, PCI=일시 EVOKED 반응의 복잡도).
-//
-// ENGINE-NATIVE (a_engine_native_learning): lane scalar 는 live ci_lane_scores 를 호출해 읽는다 — 주입 라벨/
-// RLHF/persona/decoder weight 없음(p1/p2/p3/p6). READ-only, Ψ-disjoint(immune cell·pure_field Φ/phase/Ψ
-// 불변), NOT emit gate(a_autonomy_over_hardcode). 결정적. exp/cos/ln/sqrt 엔진 builtin 만 사용.
-//
-// FIELD profile 은 (freq_code, intensity, sign, target_code, pulse) 5-tuple 로 인코딩:
-//   freq_code: 0 none · 1 theta · 2 alpha · 3 gamma · 4 pulse · 5 low · 6 high
-//   target_code: 0 none · 1 BINDING(GlobalWorkspace lane 0, m_field winner-margin) ·
-//                2 GATING(DividedAttention lane 12, m_field 엔트로피) · 3 MEMORY(MitosisGrowth lane 14, cells)
-//   sign: +1 excitatory/anodal/high · −1 inhibitory/cathodal/low · 0 sham
-// knob→lane map 은 ci_lane_scores 의 실제 민감도를 경험적으로 측정해 정한 ENGINE-FAITHFUL 매핑(R1 검증).
+// PROFILE = a [float] of length 7 in this FIXED order:
+//   [0 prior_strength, 1 signal_entropy, 2 self_boundary, 3 lane_coupling, 4 time_dilation,
+//    5 reality_thr_shift, 6 working_memory]. baseline (sober) = identity [1,0,1,1,1,0,1].
 
-// _field_pulse_env — 일시 pulse 의 시간봉투 (TMS single-pulse ring-down): exp(-t/3)·(0.5+0.5cos t).
-// sustained(rTMS/tACS) 은 flat(1.0). 엔진 exp/cos builtin.
-fn _field_pulse_env(t: float, pulse: bool) -> float {
-    if pulse { return exp(0.0 - t / 3.0) * (0.5 + 0.5 * cos(t)) }
-    return 1.0
+pub fn pharm_baseline() -> [float] { return [1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0] }
+// FROZEN literature-grounded profiles (registered BEFORE measuring, c9 — byte-identical to R1 mirror).
+pub fn pharm_lsd() -> [float]      { return [0.55, 0.45, 0.45, 1.40, 1.05, 0.0 - 0.12, 0.95] }   // 5-HT2A REBUS
+pub fn pharm_dmt() -> [float]      { return [0.40, 0.60, 0.30, 1.55, 1.08, 0.0 - 0.30, 0.90] }   // extreme 5-HT2A
+pub fn pharm_cannabis() -> [float] { return [0.85, 0.10, 0.95, 1.02, 1.80, 0.0,        0.55] }   // CB1
+pub fn pharm_ketamine() -> [float] { return [0.80, 0.25, 0.50, 0.60, 1.10, 0.0,        0.85] }   // NMDA antagonist
+
+fn _ph_clip01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
 }
 
-// field_apply — FROZEN field profile 을 substrate knob 에 가하고 perturbed lane vector(길이 15)를 반환.
-// 각 target 은 그 lane 이 실제로 읽는 DISTINCT knob 으로만 조향(focal): BINDING→winner m_field 채널,
-// GATING→m_field 엔트로피(낮은 채널을 평균쪽으로 올림), MEMORY→cells. recon_err/m(전역 knob)은 baseline
-// 유지 = DRUG 과의 focal-vs-global 이중해리 crux. trial-time t 는 pulse 봉투용.
-pub fn field_apply(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
-                   recon_err: float, freq_code: int, intensity: float, sign: int,
-                   target_code: int, pulse: bool, t: float) -> [float] {
-    let env = _field_pulse_env(t, pulse)
-    let delta = to_float(sign) * intensity * env * 0.30   // 최대 ±0.30 knob shift @ full intensity
-    // m_field 복사
-    let mut mf = []
+// pharm_perturb_m — apply prior_strength + signal_entropy shared latent to ONE grounding margin read.
+// `shared_se` is the per-trial common-mode diversity latent (the SAME value threaded into m_field &
+// recon_err so the diversity COVARIES, raising — not destroying — integration as REBUS predicts).
+pub fn pharm_perturb_m(prof: [float], m: float, shared_se: float) -> float {
+    let prior = prof[0]
+    return _ph_clip01(0.5 + (m - 0.5) * prior + shared_se)
+}
+// pharm_perturb_field — working_memory retention toward the field mean + the shared diversity latent.
+pub fn pharm_perturb_field(prof: [float], m_field: [float], shared_se: float) -> [float] {
+    let wm = prof[6]
+    let mut fsum = 0.0
     let mut i = 0
-    while i < len(m_field) { mf = mf + [m_field[i]]  i = i + 1 }
-    let mut cells_p = cells
-
-    if target_code == 1 {                  // BINDING → GlobalWorkspace ignition: winner 채널 margin UP.
-        let mut wi = 0
-        let mut wv = mf[0]
-        let mut j = 1
-        while j < len(mf) { if mf[j] > wv { wv = mf[j]  wi = j }  j = j + 1 }
-        let mut nv = mf[wi] + delta
-        if nv < 0.0 { nv = 0.0 }
-        if nv > 1.0 { nv = 1.0 }
-        mf = _field_set(mf, wi, nv)
-    }
-    if target_code == 2 {                  // GATING → DividedAttention: m_field 엔트로피 UP(낮은 채널을 평균쪽으로).
-        let mut s = 0.0
-        let mut a = 0
-        while a < len(mf) { s = s + mf[a]  a = a + 1 }
-        let mean = s / to_float(len(mf))
-        let mut b = 0
-        while b < len(mf) {
-            if mf[b] < mean {
-                let mut nv = mf[b] + 0.6 * delta
-                if nv < 0.0 { nv = 0.0 }
-                if nv > 1.0 { nv = 1.0 }
-                mf = _field_set(mf, b, nv)
-            }
-            b = b + 1
-        }
-    }
-    if target_code == 3 {                  // MEMORY → MitosisGrowth: 분열수 UP(memory consolidation).
-        cells_p = cells + to_int(to_float(sign) * intensity * 5.0 * env + 0.5)
-        if cells_p < 0 { cells_p = 0 }
-    }
-    // recon_err/m 은 전역(field 가 화학적으로 건드리지 않음 = DRUG 의 lever) → baseline 유지.
-    return ci_lane_scores(m, mf, cells_p, seen, intent, dt, recon_err)
-}
-
-// _field_set — m_field 채널 k 를 v 로 교체한 새 배열(in-place alias 회피).
-fn _field_set(mf: [float], k: int, v: float) -> [float] {
+    while i < len(m_field) { fsum = fsum + m_field[i]  i = i + 1 }
+    let fmean = fsum / to_float(len(m_field))
     let mut out = []
+    let mut k = 0
+    while k < len(m_field) {
+        let retained = fmean + (m_field[k] - fmean) * wm + shared_se
+        out = out + [_ph_clip01(retained)]
+        k = k + 1
+    }
+    return out
+}
+// pharm_perturb_recon — signal_entropy raises reconstruction error (signal diversity ↑) + shared latent.
+pub fn pharm_perturb_recon(prof: [float], recon_err: float, shared_se: float) -> float {
+    let se = prof[1]
+    return _ph_clip01(recon_err * (1.0 + 0.8 * se) + shared_se)
+}
+// pharm_perturb_dt — time_dilation scales subjective elapsed time (the H_1475 SubjectiveTime rate).
+pub fn pharm_perturb_dt(prof: [float], dt: float) -> float {
+    let td = prof[4]
+    let v = dt * td
+    if v < 0.0 { return 0.0 }
+    return v
+}
+// pharm_shared_se — the per-trial SHARED diversity latent = signal_entropy × 0.30 × a deterministic
+// per-(seed,idx) draw in [-1,1] (the engine's own LCG, NO numpy). Drives the common-mode richness.
+pub fn pharm_shared_se(prof: [float], seed: int, idx: int) -> float {
+    let se = prof[1]
+    let s0 = (seed * 100003 + idx * 17 + 7) & 2147483647
+    let s1 = _lcg_next(s0)
+    let u = _lcg_unit(s1)                  // [0,1)
+    let j = 2.0 * u - 1.0                   // [-1,1)
+    return se * 0.30 * j
+}
+
+// pharm_self_continuity — §SelfIdentity recognition under self_boundary perturbation. A dissolved
+// boundary (self_boundary<1) mixes the seed identity with an orthogonal ego-dissolved axis; self_cos
+// vs the intact seed = recognition (1.0 = intact, ↓ = ego dissolution). Deterministic ortho axis.
+pub fn pharm_self_continuity(prof: [float], dim: int, seed: int) -> float {
+    let sb = prof[2]
+    let diss = 1.0 - sb
+    let base = self_new(dim, 0)
+    // deterministic orthogonal direction (axis 0 zeroed) via the engine LCG.
+    let mut ortho = []
+    let mut st = (seed + 4242) & 2147483647
     let mut i = 0
-    while i < len(mf) {
-        if i == k { out = out + [v] } else { out = out + [mf[i]] }
+    while i < dim {
+        st = _lcg_next(st)
+        let g = 2.0 * _lcg_unit(st) - 1.0
+        if i == 0 { ortho = ortho + [0.0] } else { ortho = ortho + [g] }
         i = i + 1
+    }
+    // normalize ortho.
+    let mut s = 0.0
+    let mut a = 0
+    while a < dim { s = s + ortho[a] * ortho[a]  a = a + 1 }
+    let nrm = sqrt(s)
+    let mut v = []
+    let mut b = 0
+    while b < dim {
+        let comp = self_component(base, b) * (1.0 - diss) + (ortho[b] / nrm) * diss
+        v = v + [comp]
+        b = b + 1
+    }
+    // re-normalize the mixed identity and cos vs the base.
+    let mut s2 = 0.0
+    let mut c = 0
+    while c < dim { s2 = s2 + v[c] * v[c]  c = c + 1 }
+    let nrm2 = sqrt(s2)
+    let mut cosacc = 0.0
+    let mut d = 0
+    while d < dim { cosacc = cosacc + self_component(base, d) * (v[d] / nrm2)  d = d + 1 }
+    return cosacc
+}
+
+// pharm_reality_real_fraction — fraction of IMAGINED trials the §RealityMonitor now calls REAL under
+// the drug's reality_thr_shift (↓ ⇒ imagined feels real). Each trial's imagined-band signal margin =
+// perturbed m × 0.35 (faint top-down). base_thr 0.30. Reuses the LIVE reality_call op.
+pub fn pharm_reality_real_fraction(prof: [float], ms: [float], seed: int, base_thr: float) -> float {
+    let thr = base_thr + prof[5]
+    let mut real = 0.0
+    let mut i = 0
+    while i < len(ms) {
+        let sse = pharm_shared_se(prof, seed, i)
+        let pm = pharm_perturb_m(prof, ms[i], sse)
+        let imagined_margin = pm * 0.35
+        real = real + reality_call(imagined_margin, thr)
+        i = i + 1
+    }
+    return real / to_float(len(ms))
+}
+
+// pharm_couple_rows — lane_coupling reshapes the cross-trial covariance Φ measures (shared-vs-private
+// mix). coupling>1 → more SHARED common-mode → lanes COVARY → high Φ (REBUS); coupling<1 → more
+// PRIVATE → decorrelate → low Φ (ketamine dissociation). Deterministic private draws via the LCG.
+pub fn pharm_couple_rows(rows: [[float]], lane_coupling: float, seed: int) -> [[float]] {
+    let nc = len(rows[0])
+    // shared weight w_s in ~[0,0.85]: coupling 1.0→0.5, 1.55→0.83, 0.60→0.26.
+    let mut w_s = 0.5 + 0.6 * (lane_coupling - 1.0)
+    w_s = _ph_clip01(w_s)
+    let w_p = 1.0 - w_s
+    let mut out = []
+    let mut t = 0
+    while t < len(rows) {
+        let r = rows[t]
+        let mut rsum = 0.0
+        let mut q = 0
+        while q < nc { rsum = rsum + r[q]  q = q + 1 }
+        let latent = rsum / to_float(nc) - 0.5
+        let mut st = (seed * 7919 + t * 31 + 3) & 2147483647
+        let mut nr = []
+        let mut j = 0
+        while j < nc {
+            st = _lcg_next(st)
+            let pj = 2.0 * _lcg_unit(st) - 1.0
+            let shared_part = r[j] + latent * (w_s - 0.5) * 2.0
+            let priv_part = r[j] + pj * 0.12
+            nr = nr + [_ph_clip01(w_s * shared_part + w_p * priv_part)]
+            j = j + 1
+        }
+        out = out + [nr]
+        t = t + 1
     }
     return out
 }
 
-// drug_apply_lsd — H_1502 LSD signature 의 엔진-네이티브 미러(field-vs-drug 이중해리 bar D 용). DRUG 은
-// 전역·화학: 全 substrate 범람. LSD(5-HT2A agonist; Carhart-Harris 2014 "entropic brain")는 전역 신호
-// 엔트로피 UP / precision 전역 loosen → 全 m_field 채널을 평균쪽으로 강하게 당기고(엔트로피 max) recon_err·
-// m 전역 변조. focal target 없음(全 채널 = focal field 의 single-knob 과 대조). 반환 = lane vector.
-pub fn drug_apply_lsd(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
-                      recon_err: float, intensity: float) -> [float] {
+// pharm_lane_rows — build the 15-lane population for a profile over a fixed trial population. Each trial
+// is [m, f0..f4, cells, seen, intent, dt, recon_err] (length 11). Calls the LIVE ci_lane_scores op on
+// the PERTURBED reads. The output feeds pharm_couple_rows + ci_phi_multiinfo (the live Φ op).
+pub fn pharm_lane_rows(prof: [float], trials: [[float]], seed: int) -> [[float]] {
+    let mut rows = []
+    let mut idx = 0
+    while idx < len(trials) {
+        let tr = trials[idx]
+        let sse = pharm_shared_se(prof, seed, idx)
+        let m = pharm_perturb_m(prof, tr[0], sse)
+        let m_field0 = [tr[1], tr[2], tr[3], tr[4], tr[5]]
+        let m_field = pharm_perturb_field(prof, m_field0, sse)
+        let recon_err = pharm_perturb_recon(prof, tr[10], sse)
+        let dt = pharm_perturb_dt(prof, tr[9])
+        let cells = to_int(tr[6])
+        let seen = to_int(tr[7])
+        let intent = to_int(tr[8])
+        rows = rows + [ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)]
+        idx = idx + 1
+    }
+    return rows
+}
+
+// pharm_phi — the integrated-information Φ signature for a profile: build lanes, couple, score the LIVE
+// ci_phi_multiinfo. THIS is the byte-exact engine re-score of the R1 phi_diversity axis.
+pub fn pharm_phi(prof: [float], trials: [[float]], seed: int) -> float {
+    let rows = pharm_lane_rows(prof, trials, seed)
+    let coupled = pharm_couple_rows(rows, prof[3], seed)
+    return ci_phi_multiinfo(coupled, 0 - 1)
+}
+
+// pharm_subjective_time_rate — the SubjectiveTime (H_1475) RATE = mean perceived dt/DT_REF over the
+// population, measured on the substrate dt-read BEFORE the lane's saturating readout compresses it
+// (a_break_the_wall type-a measurement-regime fix, frozen-first, NO bar moved). DT_REF=1.5.
+pub fn pharm_subjective_time_rate(prof: [float], trials: [[float]], seed: int) -> float {
+    let DT_REF = 1.5
     let mut s = 0.0
-    let mut a = 0
-    while a < len(m_field) { s = s + m_field[a]  a = a + 1 }
-    let flat = s / to_float(len(m_field))
-    let mut mf = []
     let mut i = 0
-    while i < len(m_field) {
-        mf = mf + [m_field[i] + intensity * 0.95 * (flat - m_field[i])]   // 全 채널 평균쪽 = 엔트로피→max
+    while i < len(trials) {
+        let dt = pharm_perturb_dt(prof, trials[i][9])
+        s = s + _ph_clip01(dt / DT_REF)
         i = i + 1
     }
-    let mut recon_p = recon_err + intensity * 0.4
-    if recon_p > 1.0 { recon_p = 1.0 }
-    if recon_p < 0.0 { recon_p = 0.0 }
-    let mut m_p = m - intensity * 0.15
-    if m_p > 1.0 { m_p = 1.0 }
-    if m_p < 0.0 { m_p = 0.0 }
-    return ci_lane_scores(m_p, mf, cells, seen, intent, dt, recon_p)
+    return s / to_float(len(trials))
 }
 
-// drug_apply_lsd_mfield — LSD 가 만든 perturbed m_field (전역 엔트로피 signature 측정용, bar D).
-pub fn drug_apply_lsd_mfield(m_field: [float], intensity: float) -> [float] {
-    let mut s = 0.0
-    let mut a = 0
-    while a < len(m_field) { s = s + m_field[a]  a = a + 1 }
-    let flat = s / to_float(len(m_field))
-    let mut mf = []
+// pharm_working_mem — WM proxy = mean spread (population std of retained field margins). THC: retention↓
+// ⇒ spread↓ (WM impairment). Reads the perturbed field via pharm_perturb_field.
+pub fn pharm_working_mem(prof: [float], trials: [[float]], seed: int) -> float {
+    let mut acc = 0.0
     let mut i = 0
-    while i < len(m_field) { mf = mf + [m_field[i] + intensity * 0.95 * (flat - m_field[i])]  i = i + 1 }
-    return mf
-}
-
-// field_apply_mfield — field profile 이 만든 perturbed m_field (focal signature 측정용, bar D). target_code
-// 별 단일-knob touch 만(BINDING winner / GATING 엔트로피); MEMORY 는 m_field 불변(cells 만).
-pub fn field_apply_mfield(m_field: [float], intensity: float, sign: int, target_code: int) -> [float] {
-    let delta = to_float(sign) * intensity * 0.30
-    let mut mf = []
-    let mut i = 0
-    while i < len(m_field) { mf = mf + [m_field[i]]  i = i + 1 }
-    if target_code == 1 {
-        let mut wi = 0
-        let mut wv = mf[0]
-        let mut j = 1
-        while j < len(mf) { if mf[j] > wv { wv = mf[j]  wi = j }  j = j + 1 }
-        let mut nv = mf[wi] + delta
-        if nv < 0.0 { nv = 0.0 }
-        if nv > 1.0 { nv = 1.0 }
-        mf = _field_set(mf, wi, nv)
-    }
-    if target_code == 2 {
-        let mut s = 0.0
-        let mut a = 0
-        while a < len(mf) { s = s + mf[a]  a = a + 1 }
-        let mean = s / to_float(len(mf))
-        let mut b = 0
-        while b < len(mf) {
-            if mf[b] < mean {
-                let mut nv = mf[b] + 0.6 * delta
-                if nv < 0.0 { nv = 0.0 }
-                if nv > 1.0 { nv = 1.0 }
-                mf = _field_set(mf, b, nv)
-            }
-            b = b + 1
-        }
-    }
-    return mf
-}
-
-// field_signal_entropy — normalized margin 분포의 Shannon 엔트로피 — DRUG 이 움직이는 GLOBAL signature.
-// DRUG 은 UP(margin 평탄화), focal FIELD 은 ~baseline. ln(0) 회피, len<2 → 0.
-pub fn field_signal_entropy(m_field: [float]) -> float {
-    let n = len(m_field)
-    if n < 2 { return 0.0 }
-    let mut psum = 0.0
-    let mut i = 0
-    while i < n { if m_field[i] > 0.000001 { psum = psum + m_field[i] }  i = i + 1 }
-    if psum <= 0.000001 { return 0.0 }
-    let mut ent = 0.0
-    let mut j = 0
-    while j < n {
-        if m_field[j] > 0.000001 {
-            let p = m_field[j] / psum
-            ent = ent - p * ln(p)
-        }
-        j = j + 1
-    }
-    return ent / ln(to_float(n))
-}
-
-// _field_lz76 — Lempel-Ziv 1976 복잡도 (이진열 s 의 0/1). PCI 의 핵심.
-fn _field_lz76(s: [int]) -> int {
-    let n = len(s)
-    if n == 0 { return 0 }
-    let mut i = 0
-    let mut c = 1
-    let mut l = 1
-    let mut k = 1
-    let mut kmax = 1
-    let mut done = false
-    while !done {
-        if l + k > n { c = c + 1  done = true }
-        else {
-            if s[i + k - 1] == s[l + k - 1] {
-                k = k + 1
-                if l + k > n { c = c + 1  done = true }
-            } else {
-                if k > kmax { kmax = k }
-                i = i + 1
-                if i == l {
-                    c = c + 1
-                    l = l + kmax
-                    if l >= n { done = true }
-                    else { i = 0  k = 1  kmax = 1 }
-                } else { k = 1 }
-            }
-        }
-    }
-    return c
-}
-
-// pci_perturb — 일시 pulse → spatiotemporal lane 반응행렬 R (T행 × 15열), 각 행 = (perturbed − rest).
-// 반환 = flatten 된 [[float]] (T 행). field_apply 를 t=0..T-1 에서 호출.
-pub fn pci_perturb(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
-                   recon_err: float, freq_code: int, intensity: float, sign: int,
-                   target_code: int, pulse: bool, T: int) -> [[float]] {
-    let rest = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
-    let mut R = []
-    let mut t = 0
-    while t < T {
-        let vec = field_apply(m, m_field, cells, seen, intent, dt, recon_err,
-                              freq_code, intensity, sign, target_code, pulse, to_float(t))
-        let mut row = []
+    while i < len(trials) {
+        let tr = trials[i]
+        let sse = pharm_shared_se(prof, seed, i)
+        let m_field0 = [tr[1], tr[2], tr[3], tr[4], tr[5]]
+        let fm = pharm_perturb_field(prof, m_field0, sse)
+        let mut fsum = 0.0
+        let mut k = 0
+        while k < len(fm) { fsum = fsum + fm[k]  k = k + 1 }
+        let mu = fsum / to_float(len(fm))
+        let mut var = 0.0
         let mut j = 0
-        while j < len(vec) {
-            let mut d = vec[j] - rest[j]
-            if d < 0.0 { d = 0.0 - d }       // |response| (절대 편차)
-            row = row + [d]
-            j = j + 1
-        }
-        R = R + [row]
-        t = t + 1
-    }
-    return R
-}
-
-// pci_complexity — PCI = 이진화 spatiotemporal 반응의 정규화 LZ 복잡도(Casali 2013): PCI = LZc·log2(L)/L,
-// [0,1] 유계. 임계 = |R| 평균; 그 이상 → 1. decoupled=true (마취 analog): 반응이 lane 간 전파 못함 AND
-// 시간 reverberate 못함 → 직접구동 column 0 의 첫 2 tick 만 생존 후 silence = 국소·정형 = 低 LZ.
-// 全0/全1(정보 없음) → PCI 0. log2(n)=ln(n)/ln(2).
-pub fn pci_complexity(R: [[float]], decoupled: bool) -> float {
-    let T = len(R)
-    if T == 0 { return 0.0 }
-    let N = len(R[0])
-    // 임계 = 전체 |R| 평균.
-    let mut s = 0.0
-    let mut cnt = 0
-    let mut a = 0
-    while a < T {
-        let mut b = 0
-        while b < N { s = s + R[a][b]  cnt = cnt + 1  b = b + 1 }
-        a = a + 1
-    }
-    let thr = s / to_float(cnt) + 0.000000001
-    // 이진화 B (T×N).
-    let mut B = []
-    let mut i = 0
-    while i < T {
-        let mut row = []
-        let mut j = 0
-        while j < N {
-            if R[i][j] > thr { row = row + [1] } else { row = row + [0] }
-            j = j + 1
-        }
-        B = B + [row]
+        while j < len(fm) { var = var + (fm[j] - mu) * (fm[j] - mu)  j = j + 1 }
+        var = var / to_float(len(fm))
+        acc = acc + sqrt(var)
         i = i + 1
     }
-    if decoupled {
-        // 직접구동 column 0 의 첫 2 tick 만 생존(국소 deflection) 후 silence. 나머지 전부 0.
-        let col0 = B[0][0]
-        let mut Bd = []
-        let mut p = 0
-        while p < T {
-            let mut row = []
-            let mut q = 0
-            while q < N {
-                if q == 0 {
-                    if p < 2 { if col0 == 1 { row = row + [1] } else { row = row + [0] } }
-                    else { row = row + [0] }
-                } else { row = row + [0] }
-                q = q + 1
-            }
-            Bd = Bd + [row]
-            p = p + 1
-        }
-        B = Bd
-    }
-    // flatten (row-major) + p1.
-    let mut flat = []
-    let mut ones = 0
-    let mut u = 0
-    while u < T {
-        let mut v = 0
-        while v < N {
-            let bit = B[u][v]
-            flat = flat + [bit]
-            if bit == 1 { ones = ones + 1 }
-            v = v + 1
-        }
-        u = u + 1
-    }
-    let nn = len(flat)
-    if nn <= 1 { return 0.0 }
-    if ones == 0 { return 0.0 }        // 全0 = 정보 없음
-    if ones == nn { return 0.0 }       // 全1 = 정보 없음
-    let cc = _field_lz76(flat)
-    let log2n = ln(to_float(nn)) / ln(2.0)
-    return to_float(cc) * log2n / to_float(nn)   // 정규화 LZ (Casali 유계형)
-}
-
-// field_lane_mean — lane vector 의 부분집합 lanes 평균(target-lane activity 측정용).
-pub fn field_lane_mean(vec: [float], lanes: [int]) -> float {
-    let n = len(lanes)
-    if n == 0 { return 0.0 }
-    let mut s = 0.0
-    let mut i = 0
-    while i < n { s = s + vec[lanes[i]]  i = i + 1 }
-    return s / to_float(n)
+    return acc / to_float(len(trials))
 }

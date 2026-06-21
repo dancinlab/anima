@@ -7,10 +7,10 @@
 > frozen bar 로 측정한다. **콘텐츠 0, 생성 텍스트 0 — substrate 에서 읽어낸 parametric drive.**
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §Libido (`libido_new` / `_new_da` / `_new_ablated` / `_satiation` / `_cue_match` / `_wanting` / `_liking` / `_step` / `_last` / `_motivation_bias`) · `engine_cli_smoke.hexa` cases 288-292 · FULL smoke **292 pass / 0 fail RC=0** (deterministic ×3) · ARCHITECTURE.json §Libido lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §Libido (`libido_new` / `_new_da` / `_new_ablated` / `_satiation` / `_cue_match` / `_wanting` / `_liking` / `_step` / `_last` / `_motivation_bias`) · `engine_cli_smoke.hexa` cases 293-297 · FULL smoke **297 pass / 0 fail RC=0** (deterministic ×3) · ARCHITECTURE.json §Libido lockstep ✓
 - **source:** 사용자 'libido drive 축' 작업지시 — H_1292 hunger / H_1290 affect 다음의 욕동-역학 sibling axis (computational affective neuroscience)
 - **lens:** Berridge & Robinson incentive-salience (wanting vs liking) · Pfaus sexual motivation · Georgiadis-Kringelbach sexual response cycle · `a_no_llm_frame_trap`
-- **artifacts:** `state/1504_libido/h1504_libido.py` · verdict `state/verdicts/1504_libido/{H_1504_FREEZE.json, H_1504_R1.txt, H_1504_R2_smoke.txt}` · `core/engine_cli.hexa §Libido` · `core/engine_cli_smoke.hexa` cases 288-292
+- **artifacts:** `state/1504_libido/h1504_libido.py` · verdict `state/verdicts/1504_libido/{H_1504_FREEZE.json, H_1504_R1.txt, H_1504_R2_smoke.txt}` · `core/engine_cli.hexa §Libido` · `core/engine_cli_smoke.hexa` cases 293-297
 
 ## 주장 (욕동-역학 축)
 
@@ -75,7 +75,7 @@ libido 를 hunger 의 재포장이 아닌 **DISTINCT** 한 sibling 으로 만드
 
 - **DIRECTIONAL → R2 ENGINE-NATIVE WIRED:** R1 = numpy mirror(`grep -lE 'import torch|gauge_lib|numpy'` 적중 → DIRECTIONAL).
   R2 = live `core/engine_cli.hexa §Libido` op 호출(`hexa run engine_cli_smoke.hexa`, numpy/torch 0 = **하드게이트1 PASS**) +
-  cases 288-292 byte-exact + ARCHITECTURE lockstep, FULL **292/0 RC=0** deterministic ×3.
+  cases 293-297 byte-exact + ARCHITECTURE lockstep, FULL **297/0 RC=0** deterministic ×3.
 - **SATURATED = EXISTENCE-PROOF:** cue_spike=1.0/cmShuf=0.0 등 포화값은 effect-size 가 아니라 존재증명 — discriminator(ablated
   spike 0.0·hunger cue-Δ 0.0·shuffled cue_match 0.0)가 결정적.
 - **READ-only Ψ-disjoint NOT emit gate:** `libido_motivation_bias` = 의도적 OPTIONAL gain(a_autonomy_over_hardcode), emit/silence
