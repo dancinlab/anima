@@ -3168,6 +3168,49 @@ fn main() {
           + " std=" + to_string(osmotic_cells(om_s)) + " cap=" + to_string(om_CAP)
           + " — KL>C split-TIMING avoids OVERWRITE of a grounded fact (SPLIT-timing, NOT a capacity-wall break, H_1456); SOURCE external Amoeba Protocol")
 
+    // ── (H_1508 MetacogControl) CALIBRATION + CONTROL — the MISSING half of G5 (drug-INDEPENDENT) ──
+    //   Nelson & Narens 1990 monitoring↔control; Fleming & Lau 2014 (calibration ≠ discrimination);
+    //   Metcalfe & Kornell 2005 region-of-proximal-learning. The G5 chain (H_1202/1304/1361/1367/1396/
+    //   1398/1379/1400) is ALL discrimination/MONITORING (type-2 AUROC up to 0.906); it NEVER measured
+    //   CALIBRATION (does the live recall MARGIN track ACTUAL accuracy numerically, not just rank?) nor
+    //   CONTROL (does a LOW margin DRIVE adaptive resource allocation that beats uniform?). §MetacogControl
+    //   reads the LIVE immune_memory_recall_margin over a graded-difficulty key-space ladder. NO §Neuropharm
+    //   coupling (drug-independent). seed 11, n 10, deterministic (re-runs byte-identical).
+    let mc_seed = 11
+    let mc_n = 10
+    let mc_ece  = mc_calibration_ece(mc_seed, mc_n)        // (A) expected calibration error
+    let mc_mono = mc_calibration_monotone(mc_seed, mc_n)   // (A) margin↑ monotone in difficulty (Spearman)
+    let mc_lift = mc_control_lift(mc_seed, mc_n)           // (B) RPL adaptive − uniform accuracy lift
+    let mc_abl  = mc_control_lift_ablated(mc_seed, mc_n)   // (D) margin-blind allocation → lift collapses
+    let mc_shuf = mc_shuffle_auroc(mc_seed, mc_n)          // (E) permute margin↔correctness → chance
+    let mc_orth = mc_auroc_calibration_orthogonal(mc_seed, mc_n)  // (C) [AUbase, AUxform, ECEbase, ECExform]
+    let mc_au_drift = if mc_orth[1] >= mc_orth[0] { mc_orth[1] - mc_orth[0] } else { mc_orth[0] - mc_orth[1] }
+    let mc_ece_shift = if mc_orth[3] >= mc_orth[2] { mc_orth[3] - mc_orth[2] } else { mc_orth[2] - mc_orth[3] }
+    let mc_shuf_dev = if mc_shuf >= 0.5 { mc_shuf - 0.5 } else { 0.5 - mc_shuf }
+    // case 340 (A CALIBRATION-ECE): the margin-derived confidence numerically tracks accuracy (ECE ≤ 0.15).
+    if _assert_b("case_340_metacog_calibration_ece", true, mc_ece <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 341 (A CALIBRATION-MONOTONE): margin RISES monotone with difficulty (Spearman ≥ +0.50).
+    if _assert_b("case_341_metacog_calibration_monotone", true, mc_mono >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 342 (B CONTROL-LIFT): margin-guided RPL adaptive sampling beats uniform by ≥ +0.04 accuracy.
+    if _assert_b("case_342_metacog_control_lift", true, mc_lift >= 0.04) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 343 (C ORTHOGONALITY-AUROC, headline): a strictly-monotone transform keeps AUROC byte-identical
+    //   (rank-only) — discrimination is INVARIANT under recalibration.
+    if _assert_b("case_343_metacog_discrimination_invariant", true, mc_au_drift <= 0.0000001) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 344 (C ORTHOGONALITY-ECE, headline): the SAME transform SHIFTS ECE ≥ 0.10 — calibration is a
+    //   NEW axis the AUROC chain (0.906) is blind to (same ranking, different calibration).
+    if _assert_b("case_344_metacog_calibration_new_axis", true, mc_ece_shift >= 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 345 (D EARNED ablate): margin-blind allocation → the RPL lift collapses to ~0 (≤ 0.015).
+    let mc_abl_dev = if mc_abl >= 0.0 { mc_abl } else { 0.0 - mc_abl }
+    if _assert_b("case_345_metacog_control_ablate", true, mc_abl_dev <= 0.015) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 346 (E EARNED shuffle): permute margin↔correctness → discrimination decorrelates to chance.
+    if _assert_b("case_346_metacog_shuffle", true, mc_shuf_dev <= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1508 metacog-control (R2 WIRED): margin CALIBRATES (ECE=" + to_string(mc_ece)
+          + " monotone Spearman=" + to_string(mc_mono) + ") + CONTROLS (RPL−uniform lift=" + to_string(mc_lift)
+          + ", margin-blind ablate=" + to_string(mc_abl) + ") | DISCRIMINATION⊥CALIBRATION: AUROC "
+          + to_string(mc_orth[0]) + "→" + to_string(mc_orth[1]) + " (drift " + to_string(mc_au_drift)
+          + ") yet ECE " + to_string(mc_orth[2]) + "→" + to_string(mc_orth[3]) + " (shift " + to_string(mc_ece_shift)
+          + ") | shuffle AUROC=" + to_string(mc_shuf) + " — Nelson-Narens monitoring↔CONTROL, the MISSING G5 half (drug-INDEPENDENT)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
