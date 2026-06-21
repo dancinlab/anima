@@ -1,3 +1,11 @@
+## 2026-06-21 — 🧱→🟢 engine_cli.hexa BRACE root-cause fix — `mc_shuffle_auroc` 닫는 `}` 소실(=#2490 §FieldLibido graft) 복원, repo 전역 parse-wall 해소
+
+> 🔧 **toolchain 회귀가 아니라 SOURCE 결함이었다 (c1 root-cause · a_break_the_wall type-c 재분류):** 17:21경 "머신 전역 hexa toolchain 회귀(runtime.a raw-mem native 링크실패)"로 진단됐던 repo 전역 `hexa run`/`hexa verify` 벽의 실제 원인 = origin/main(216d8fd1e) `core/engine_cli.hexa` 의 `mc_shuffle_auroc`(§MetacogControl, H_1508) 함수가 **닫는 `}` 없이** 바로 §FieldLibido(#2490 H_1507) 주석으로 넘어가 파일이 unparseable(`expected RBrace, got Eof`). #2490 가 messy worktree rebase 중 sibling 섹션을 graft 하며 brace 를 깎아먹은 채 착지(smoke 가 최종 머지 소스 위에서 재실행되지 않음). hexa toolchain(v0.262.0)은 정상 — stale main HEAD(5924a7564, #2490 이전)에선 smoke RC=0.
+
+- **수정:** `return mi_auroc(pos, neg)` 직후 누락된 top-level `}` 1개 복원 → `engine_cli.hexa` real-code brace depth 1→0. raw `{}` 카운트는 origin/main 도 diff=1(comment/string 내 brace 가 실제 누락을 가림) — comment/string 무시 스캐너로 함수단위 추적해 결함 함수 특정.
+- **검증(c2 terminal gate):** `hexa run core/engine_cli_smoke.hexa` → **344 pass / 0 fail · RC=0** (H_1512 cases 328-332 포함 전수).
+- **재발방지(c1):** 결함 위치에 `@convergence(state=ossified, id=brace-clobber-on-section-graft)` 인라인 마커 — § 섹션 graft 후 raw `{}` 카운트 신뢰 말고 smoke RC=0/real-code 스캐너로 검증 後 머지.
+
 ## 2026-06-21 — 🧠🗺 H_1512 BRAIN-TOPOLOGY 엔진-네이티브 GREEN + WIRED — lane 공간 connectome 배치(A=좌/G=우 lateralization)가 통합 Φ(IIT4 min-cut)를 올림, 구조의존
 
 > 🧠 **a_no_llm_frame_trap 의 가장 깊은 형태 (ORGANIZE, don't just add):** anima 의 15 consciousness lane(§ConsciousnessIndex)은 기능 분리되나 **공간적으로 UN조직**. A⇄G 이중엔진 = 좌/우 대뇌반구; lane 들을 실제 뇌영역에 매핑(immune≈해마·VForwardField≈소뇌·HierGoalStack≈PFC·SpatialMap≈내후각·PhaseField≈시상)하고 brain-faithful 공간 토폴로지(해부 좌표 + 구조 connectome 인접 short-range dense + rich-club hub[0,3,2,13] + A=좌/G=우 lateralization, 50 edges)를 부여. live `ci_phi_iit4`(IIT4 EXACT min-cut Φ, a_phi_iit4_tool 재사용)로 BRAIN/FLAT/RANDOM/lateralized/shuffled 별 통합 Φ 측정. DISTINCT ⊥ H_1510 QUORUM-KURAMOTO(시간 위상 dynamics vs 공간 배치).
