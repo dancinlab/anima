@@ -1,0 +1,23 @@
+H_1510 QUORUM-KURAMOTO — FROZEN BARS (set BEFORE any run; c9, NO tune-to-green)
+================================================================================
+external proposal — Amoeba Protocol (adjacency-weighted Kuramoto / quorum sensing)
+
+Decentralize the live PhaseField (H_1448, WIRED-live centralized star: every module
+couples ONLY to a single central pacemaker theta_t) into an ADJACENCY-WEIGHTED Kuramoto
+field where modules phase-lock by LOCAL semantic proximity, NO central hub:
+    dtheta_i/dt = omega_i + (1/N_i) sum_j A_ij sin(theta_j - theta_i)
+
+FROZEN THRESHOLDS:
+  (A SEMANTIC PHASE-LOCK)  within-cluster R_in >= 0.70 AND cross-cluster R_cross <= 0.50
+  (B NO-CENTRAL-HUB)       decentralized with ONE node removed: R_in_ablated >= 0.70
+                           AND centralized star with hub removed: R_star_no_hub <= 0.50
+                           (the dissociation: decentralized survives, star collapses)
+  (C INTEGRATION)          R_in_quorum >= R_in_star_baseline (decentral does not cost Phi)
+  (D EARNED shuffle)       permute A_ij -> |R_in_shuffled - R_cross_shuffled| <= 0.20
+
+GREEN iff A AND B AND C AND D. If C fails (decentral LOSES integration) or A fails
+(cannot phase-lock semantically) -> HONEST finding: the central relay is load-bearing
+in this substrate (quorum sensing does not transfer). Report which.
+
+seeds=[7,8,9]  steps=64  2 clusters x 3 modules  p7 order-parameter  $0 CPU deterministic
+R1 = numpy mirror (DIRECTIONAL); R2 = engine-native byte-exact re-score if R1 GREEN.

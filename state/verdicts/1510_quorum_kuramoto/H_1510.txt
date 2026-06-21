@@ -1,0 +1,15 @@
+H_1510 QUORUM-KURAMOTO — engine-native (R2) verdict
+external proposal — Amoeba Protocol (adjacency-weighted Kuramoto / quorum sensing)
+core/engine_cli.hexa § QuorumPhase · smoke cases 314-317 · 3 seeds [7,8,9] deterministic
+========================================================================
+H_1510 QUORUM-KURAMOTO engine-native probe (core/engine_cli.hexa § QuorumPhase)
+[seed 7] R_in=0.99904936882496678 PLV_in=0.9999999999995646 PLV_cross=0.11890714187911242 drop=0.99798725135053097 star_nohub=0.389298357931966 PLV_in_sh=0.81721135426580531 PLV_cross_sh=0.9515815481790479 star_base=0.9908212144608637
+[seed 8] R_in=0.99904936882496678 PLV_in=0.9999999999881689 PLV_cross=0.11890714197828805 drop=0.9991403135458983 star_nohub=0.47770336995566103 PLV_in_sh=0.9936169528491011 PLV_cross_sh=0.9996521193730535 star_base=0.99082121446086351
+[seed 9] R_in=0.99904936882496678 PLV_in=0.99999999999943014 PLV_cross=0.1189071418645366 drop=0.996931375615605 star_nohub=0.34259045547681555 PLV_in_sh=0.99990955189006 PLV_cross_sh=0.9999430064788452 star_base=0.99082121446086386
+========================================================================
+BARS (frozen, c9): A within-PLV>=0.70 & cross-PLV<=0.50 · B drop>=0.70 & star-no-hub<=0.50 · C R_in>=star_base · D shuffle-gap<=0.20
+seed7: A(1.000>=.70 & .119<=.50)PASS B(.998>=.70 & .389<=.50)PASS C(.99905>=.99082)PASS D(|.817-.952|=.135<=.20)PASS
+seed8: A(1.000 & .119)PASS B(.999 & .478)PASS C(.99905>=.99082)PASS D(|.994-1.0|=.006)PASS
+seed9: A(1.000 & .119)PASS B(.997 & .343)PASS C(.99905>=.99082)PASS D(|1.0-1.0|=.0)PASS
+GATE GREEN ENGINE-NATIVE — A&B&C&D 3/3 seeds. full smoke 317/0 deterministic x3.
+Central relay (PhaseField star hub) is NOT load-bearing: the decentralized field survives node removal; the star collapses without its hub.

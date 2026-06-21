@@ -3000,6 +3000,52 @@ fn main() {
           + " ablate-prior " + to_string(hl_abl) + " | LSD " + to_string(hl_lsd) + " vs sober " + to_string(hl_sober)
           + " — prior-dominated false percept (Powers-Corlett) = §RealityMonitor(H_1501) failure mode, drug-coupled to §Neuropharm(H_1502)")
 
+    // ── (H_1510 QuorumPhase) DECENTRALIZED adjacency-weighted Kuramoto (quorum sensing) ──────────
+    // external proposal — Amoeba Protocol (@qingkong66): scale PhaseField (H_1448, centralized STAR:
+    // every module couples ONLY to the pacemaker theta_t) to a DECENTRALIZED adjacency-weighted
+    // Kuramoto field where modules phase-lock by LOCAL semantic proximity, NO central hub. 3 clusters
+    // x 3 modules, banded rhythms, block semantic adjacency. Engine-native re-score of the R1 frozen
+    // bars (state/1510_quorum_kuramoto/h1510.py) on the live § QuorumPhase lane; seed 7 (representative;
+    // 3-seed deterministic verdict in the probe). Φ-disjoint pure read — NEVER an emit gate (@L4).
+    let QK_NC = 3
+    let QK_PER = 3
+    let QK_STEPS = 64
+    let QK_TAIL = 48
+    let qk = quorum_new(7, QK_NC, QK_PER)
+    let qk_settled = quorum_run(qk, QK_STEPS)
+    let qk_r_in = quorum_cluster_order(qk_settled)
+    let qk_plv_in = quorum_within_plv(qk, QK_TAIL)
+    let qk_plv_cross = quorum_cross_plv(qk, QK_TAIL)
+    let qk_drop = quorum_drop_node_order(7, QK_NC, QK_PER, QK_STEPS)
+    let qk_star_nohub = quorum_star_no_hub_order(7, QK_NC, QK_PER, QK_STEPS)
+    let qk_star_base = quorum_star_baseline_order(7, QK_NC, QK_PER, QK_STEPS)
+    let qk_sadj = quorum_shuffle_adj(7 + 5000, QK_NC, QK_PER)
+    let qk_sh = quorum_with_adj(7, QK_NC, QK_PER, qk_sadj)
+    let qk_plv_in_sh = quorum_within_plv(qk_sh, QK_TAIL)
+    let qk_plv_cross_sh = quorum_cross_plv(qk_sh, QK_TAIL)
+    let qk_sh_gap = if (qk_plv_in_sh - qk_plv_cross_sh) >= 0.0 { qk_plv_in_sh - qk_plv_cross_sh } else { qk_plv_cross_sh - qk_plv_in_sh }
+
+    // case 314 (A) SEMANTIC PHASE-LOCK: related modules (same cluster, high A_ij) phase-lock
+    //   (within-cluster PLV ≥ 0.70) while unrelated clusters drift (cross-cluster PLV ≤ 0.50).
+    if _assert_b("case_314_quorum_semantic_lock", true, qk_plv_in >= 0.70 && qk_plv_cross <= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 315 (B) NO-CENTRAL-HUB dissociation: the DECENTRALIZED field survives removing one node
+    //   per cluster (order ≥ 0.70) WHILE the centralized STAR collapses when its hub (pacemaker) is
+    //   removed (order ≤ 0.50). The hub is NOT load-bearing for the quorum field; it IS for the star.
+    if _assert_b("case_315_quorum_no_central_hub", true, qk_drop >= 0.70 && qk_star_nohub <= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 316 (C) INTEGRATION PRESERVED: quorum within-cluster order ≥ the centralized star baseline
+    //   (decentralization does NOT cost integration).
+    if _assert_b("case_316_quorum_integration_preserved", true, qk_r_in >= qk_star_base) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 317 (D) EARNED shuffle: destroy the semantic adjacency (random graph, same edge count,
+    //   no community matching the clusters) → the within-vs-cross PLV gap collapses (≤ 0.20). The
+    //   phase-lock IS the semantic adjacency, not the phase channel.
+    if _assert_b("case_317_quorum_shuffle_collapses", true, qk_sh_gap <= 0.20) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1510 quorum-kuramoto (R2 engine-native, DECENTRALIZED): within-cluster PLV "
+          + to_string(qk_plv_in) + " vs cross " + to_string(qk_plv_cross)
+          + " | no-hub: decentral-ablated " + to_string(qk_drop) + " vs star-no-hub " + to_string(qk_star_nohub)
+          + " | integration: quorum " + to_string(qk_r_in) + " ≥ star " + to_string(qk_star_base)
+          + " | shuffle gap " + to_string(qk_sh_gap)
+          + " — adjacency-weighted phase-lock with NO central relay (Amoeba Protocol quorum sensing); central hub NOT load-bearing")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

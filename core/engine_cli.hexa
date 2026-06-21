@@ -4097,6 +4097,415 @@ pub fn phasefield_bound(pf: PhaseField, thr: float) -> bool {
     return phasefield_coherence(pf) >= thr
 }
 
+// ── QuorumPhase (H_1510) — DECENTRALIZED adjacency-weighted Kuramoto (quorum sensing) ────────
+// external proposal — Amoeba Protocol (@qingkong66): scale PhaseField (H_1448, centralized STAR
+// where every module couples ONLY to the single pacemaker theta_t) to a DECENTRALIZED adjacency-
+// weighted Kuramoto field so modules phase-lock by LOCAL semantic proximity, NO central hub:
+//     dtheta_i/dt = omega_i + (1/N_i) sum_j A_ij sin(theta_j - theta_i)
+// A_ij = semantic adjacency (block: high within a concept cluster, ~0 across). Related modules
+// phase-LOCK (constant relative phase), unrelated DRIFT. Quorum sensing — a bacterial colony
+// coordinates with NO central brain. The contrast to PhaseField (star) is load-bearing: a STAR
+// dies when its hub (pacemaker) is removed; the decentralized field survives ANY single node.
+//
+// @L4: a PURE binding faculty over its own per-module phases + a fixed semantic adjacency. Holds
+// ONLY theta (mutable), the banded intrinsic frequencies omega, the adjacency adj (flat n*n), the
+// cluster ids cid and the cluster geometry. Reads NO context, NO immune store, NO grounding, NEVER
+// mutates another lane, NEVER returns an emit/silence decision, NEVER touches pure_field's
+// Φ/phase/Ψ (Ψ-disjoint by construction). p1/p2/p3/p6: reads ONLY its own phases + the geometric
+// adjacency; NO persona, NO injected "bind now" label, NO RLHF. The adjacency-weighted coupling is
+// GEOMETRY over phase differences, SCORED only. The shuffle control (adjacency that no longer
+// matches the clusters) collapses the within/cross phase-lock gap → the lock is the semantic
+// adjacency, not the phase channel.
+//   theta   : per-module phase (the sole mutable state).
+//   omega   : per-module banded intrinsic frequency (cluster band + within-cluster detune).
+//   adj     : flat n*n symmetric adjacency, zero diagonal (the semantic graph).
+//   cid     : per-module cluster id.
+//   nc, per : cluster count, modules per cluster (n = nc*per).
+struct QuorumPhase { theta: [float], omega: [float], adj: [float], cid: [int], nc: int, per: int }
+
+let _QP_CLUST_BAND = 0.15   // distinct intrinsic rhythm per semantic cluster (band separation)
+
+// _qp_init_theta — deterministic phase init (== h1510 lcg_init / engine _pf_init_theta).
+fn _qp_init_theta(seed: int, n: int) -> [float] {
+    let mut th = []
+    let mut st = (seed * 2654435761) & 2147483647
+    if st == 0 { st = 12345 }
+    let mut i = 0
+    while i < n {
+        st = (st * 1103515245 + 12345) & 2147483647
+        th = th + [(to_float(st) / 2147483648.0) * _PF_TWO_PI]
+        i = i + 1
+    }
+    return th
+}
+
+// _qp_cid — cluster id per module (block layout: [0,0,..,1,1,..,...]).
+fn _qp_cid(nc: int, per: int) -> [int] {
+    let mut cid = []
+    let mut c = 0
+    while c < nc {
+        let mut j = 0
+        while j < per { cid = cid + [c]  j = j + 1 }
+        c = c + 1
+    }
+    return cid
+}
+
+// _qp_omega_banded — per-cluster distinct frequency BAND + within-cluster detune (== h1510
+// omega_banded): related modules share a rhythm; unrelated clusters run on different rhythms →
+// uncoupled clusters provably drift apart.
+fn _qp_omega_banded(nc: int, per: int) -> [float] {
+    let mut om = []
+    let mut c = 0
+    while c < nc {
+        let base = _PF_OMEGA_T + _QP_CLUST_BAND * (to_float(c) - (to_float(nc) - 1.0) / 2.0)
+        let mut j = 0
+        while j < per {
+            om = om + [base + _PF_DOMEGA * (to_float(j) - (to_float(per) - 1.0) / 2.0)]
+            j = j + 1
+        }
+        c = c + 1
+    }
+    return om
+}
+
+// _qp_block_adj — flat n*n block adjacency: 1.0 within a cluster (i!=j), 0.0 across, 0 diagonal.
+fn _qp_block_adj(cid: [int], n: int) -> [float] {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j < n {
+            if i == j { a = a + [0.0] }
+            else { if cid[i] == cid[j] { a = a + [1.0] } else { a = a + [0.0] } }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return a
+}
+
+// quorum_new — a fresh DECENTRALIZED quorum field of nc clusters x per modules, banded rhythms,
+// block semantic adjacency (the live decentralized regime).
+pub fn quorum_new(seed: int, nc: int, per: int) -> QuorumPhase {
+    let n = nc * per
+    let cid = _qp_cid(nc, per)
+    return QuorumPhase { theta: _qp_init_theta(seed, n), omega: _qp_omega_banded(nc, per), adj: _qp_block_adj(cid, n), cid: cid, nc: nc, per: per }
+}
+
+// quorum_with_adj — same field but with a CALLER-SUPPLIED adjacency (for the shuffle control).
+pub fn quorum_with_adj(seed: int, nc: int, per: int, adj: [float]) -> QuorumPhase {
+    let n = nc * per
+    return QuorumPhase { theta: _qp_init_theta(seed, n), omega: _qp_omega_banded(nc, per), adj: adj, cid: _qp_cid(nc, per), nc: nc, per: per }
+}
+
+// quorum_step — one DECENTRALIZED adjacency-weighted Kuramoto step (NO central hub):
+//   theta_i += omega_i + (1/N_i) sum_j A_ij sin(theta_j - theta_i),  N_i = sum_j A_ij.
+pub fn quorum_step(qp: QuorumPhase) -> QuorumPhase {
+    let n = qp.nc * qp.per
+    let mut newth = []
+    let mut i = 0
+    while i < n {
+        let mut deg = 0.0
+        let mut acc = 0.0
+        let mut j = 0
+        while j < n {
+            let aij = qp.adj[i * n + j]
+            deg = deg + aij
+            acc = acc + aij * sin(qp.theta[j] - qp.theta[i])
+            j = j + 1
+        }
+        if deg == 0.0 { deg = 1.0 }
+        newth = newth + [qp.theta[i] + (qp.omega[i] + acc / deg)]
+        i = i + 1
+    }
+    return QuorumPhase { theta: newth, omega: qp.omega, adj: qp.adj, cid: qp.cid, nc: qp.nc, per: qp.per }
+}
+
+// quorum_run — step the field `steps` ticks.
+pub fn quorum_run(qp: QuorumPhase, steps: int) -> QuorumPhase {
+    let mut cur = qp
+    let mut t = 0
+    while t < steps { cur = quorum_step(cur)  t = t + 1 }
+    return cur
+}
+
+// quorum_cluster_order — mean within-cluster order parameter R (== h1510 cluster_mean_R). The
+// integration measure (bars B/C), comparable to phasefield_coherence.
+pub fn quorum_cluster_order(qp: QuorumPhase) -> float {
+    let n = qp.nc * qp.per
+    let mut sumR = 0.0
+    let mut c = 0
+    while c < qp.nc {
+        let mut cx = 0.0
+        let mut sy = 0.0
+        let mut cnt = 0.0
+        let mut i = 0
+        while i < n {
+            if qp.cid[i] == c {
+                cx = cx + cos(qp.theta[i])
+                sy = sy + sin(qp.theta[i])
+                cnt = cnt + 1.0
+            }
+            i = i + 1
+        }
+        cx = cx / cnt
+        sy = sy / cnt
+        sumR = sumR + sqrt(cx * cx + sy * sy)
+        c = c + 1
+    }
+    return sumR / to_float(qp.nc)
+}
+
+// _qp_cluster_mean_unit — unit complex (Cc,Sc) of cluster c's mean phase at the CURRENT state.
+fn _qp_cluster_mean_unit(qp: QuorumPhase, c: int) -> [float] {
+    let n = qp.nc * qp.per
+    let mut cx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n {
+        if qp.cid[i] == c { cx = cx + cos(qp.theta[i])  sy = sy + sin(qp.theta[i]) }
+        i = i + 1
+    }
+    let r = sqrt(cx * cx + sy * sy)
+    if r == 0.0 { return [1.0, 0.0] }
+    return [cx / r, sy / r]
+}
+
+// quorum_cross_plv — mean cross-cluster PLV over all cluster pairs across the last `tail` ticks.
+// PLV of the relative phase = | mean_t e^{i(phi_a - phi_b)} |, computed WITHOUT atan2 via the unit
+// cluster-mean vectors: cos(phi_a-phi_b)=Ca*Cb+Sa*Sb, sin(phi_a-phi_b)=Sa*Cb-Ca*Sb. Uncoupled
+// (drifting) clusters → PLV→0 (NOT locked); coupled → constant relative phase → PLV→1. Pure read.
+pub fn quorum_cross_plv(qp: QuorumPhase, tail: int) -> float {
+    let mut cur = qp
+    let mut t = 0
+    let warm = 64 - tail
+    while t < warm { cur = quorum_step(cur)  t = t + 1 }
+    // accumulate per-pair cos/sin sums over the tail
+    let npairs = qp.nc * (qp.nc - 1) / 2
+    let mut sumc = []
+    let mut sums = []
+    let mut p = 0
+    while p < npairs { sumc = sumc + [0.0]  sums = sums + [0.0]  p = p + 1 }
+    let mut steps = 0
+    while t < 64 {
+        cur = quorum_step(cur)
+        let mut pi = 0
+        let mut a = 0
+        while a < qp.nc {
+            let ua = _qp_cluster_mean_unit(cur, a)
+            let mut b = a + 1
+            while b < qp.nc {
+                let ub = _qp_cluster_mean_unit(cur, b)
+                let cd = ua[0] * ub[0] + ua[1] * ub[1]
+                let sd = ua[1] * ub[0] - ua[0] * ub[1]
+                sumc[pi] = sumc[pi] + cd
+                sums[pi] = sums[pi] + sd
+                pi = pi + 1
+                b = b + 1
+            }
+            a = a + 1
+        }
+        steps = steps + 1
+        t = t + 1
+    }
+    let mut tot = 0.0
+    let denom = to_float(steps)
+    p = 0
+    while p < npairs {
+        let mc = sumc[p] / denom
+        let ms = sums[p] / denom
+        tot = tot + sqrt(mc * mc + ms * ms)
+        p = p + 1
+    }
+    return tot / to_float(npairs)
+}
+
+// quorum_within_plv — mean within-cluster pairwise PLV across the last `tail` ticks (members of the
+// SAME cluster hold a constant relative phase → PLV→1). The semantic-lock side of bar A, on the
+// SAME PLV footing as the cross measure. Computed without atan2 (cos/sin of phase diff per member).
+pub fn quorum_within_plv(qp: QuorumPhase, tail: int) -> float {
+    let n = qp.nc * qp.per
+    let mut cur = qp
+    let mut t = 0
+    let warm = 64 - tail
+    while t < warm { cur = quorum_step(cur)  t = t + 1 }
+    // per ordered (i<j, same cluster) pair: accumulate cos/sin of (theta_i - theta_j)
+    let npairs = qp.nc * (qp.per * (qp.per - 1) / 2)
+    let mut sumc = []
+    let mut sums = []
+    let mut p = 0
+    while p < npairs { sumc = sumc + [0.0]  sums = sums + [0.0]  p = p + 1 }
+    let mut steps = 0
+    while t < 64 {
+        cur = quorum_step(cur)
+        let mut pi = 0
+        let mut i = 0
+        while i < n {
+            let mut j = i + 1
+            while j < n {
+                if cur.cid[i] == cur.cid[j] {
+                    let d = cur.theta[i] - cur.theta[j]
+                    sumc[pi] = sumc[pi] + cos(d)
+                    sums[pi] = sums[pi] + sin(d)
+                    pi = pi + 1
+                }
+                j = j + 1
+            }
+            i = i + 1
+        }
+        steps = steps + 1
+        t = t + 1
+    }
+    let mut tot = 0.0
+    let denom = to_float(steps)
+    p = 0
+    while p < npairs {
+        let mc = sumc[p] / denom
+        let ms = sums[p] / denom
+        tot = tot + sqrt(mc * mc + ms * ms)
+        p = p + 1
+    }
+    return tot / to_float(npairs)
+}
+
+// quorum_drop_node_order — DECENTRALIZED ablation: remove the FIRST node of every cluster, run, and
+// read the within-cluster order parameter. The decentralized field needs NO hub → sync PRESERVED
+// (bar B "no central hub" survives ANY single node). Builds a reduced field from the kept nodes.
+pub fn quorum_drop_node_order(seed: int, nc: int, per: int, steps: int) -> float {
+    let n = nc * per
+    let cid = _qp_cid(nc, per)
+    let omega = _qp_omega_banded(nc, per)
+    let theta0 = _qp_init_theta(seed, n)
+    // keep mask: drop the first index of each cluster (lowest index with that cid).
+    let mut keep = []
+    let mut seen = []
+    let mut c = 0
+    while c < nc { seen = seen + [0]  c = c + 1 }
+    let mut i = 0
+    while i < n {
+        let cc = cid[i]
+        if seen[cc] == 0 { seen[cc] = 1 } else { keep = keep + [i] }
+        i = i + 1
+    }
+    let m = len(keep)
+    // reduced theta/omega/cid + reduced block adjacency.
+    let mut rth = []
+    let mut rom = []
+    let mut rcid = []
+    let mut a = 0
+    while a < m { rth = rth + [theta0[keep[a]]]  rom = rom + [omega[keep[a]]]  rcid = rcid + [cid[keep[a]]]  a = a + 1 }
+    let radj = _qp_block_adj(rcid, m)
+    let qp = QuorumPhase { theta: rth, omega: rom, adj: radj, cid: rcid, nc: nc, per: per - 1 }
+    let settled = quorum_run(qp, steps)
+    return quorum_cluster_order(settled)
+}
+
+// quorum_star_no_hub_order — CENTRALIZED contrast with the HUB REMOVED: the PhaseField star couples
+// each module ONLY to the pacemaker theta_t; remove the hub (k=0) and the modules have nothing to
+// couple to → they free-run on detuned omega → the within-cluster order parameter COLLAPSES. The
+// other side of the bar-B dissociation (star dies without its hub; quorum survives).
+pub fn quorum_star_no_hub_order(seed: int, nc: int, per: int, steps: int) -> float {
+    let n = nc * per
+    let cid = _qp_cid(nc, per)
+    let omega = _qp_omega_banded(nc, per)
+    // run a star with k=0 (hub removed): theta advances on omega only.
+    let mut theta = _qp_init_theta(seed, n)
+    let mut t = 0
+    while t < steps {
+        let mut nt = []
+        let mut i = 0
+        while i < n { nt = nt + [theta[i] + omega[i]]  i = i + 1 }
+        theta = nt
+        t = t + 1
+    }
+    // within-cluster order parameter over the free-run state.
+    let qp = QuorumPhase { theta: theta, omega: omega, adj: _qp_block_adj(cid, n), cid: cid, nc: nc, per: per }
+    return quorum_cluster_order(qp)
+}
+
+// quorum_star_baseline_order — the CENTRALIZED PhaseField (star, k=0.5, hub PRESENT) within-cluster
+// order parameter over the SAME banded omega / phases. The bar-C baseline: decentralization must
+// NOT cost integration (quorum within-cluster order >= this). Mirrors h1510 star_run + cluster_mean_R
+// (each module couples to the pacemaker theta_t; the pacemaker is pulled to the mean module phase).
+pub fn quorum_star_baseline_order(seed: int, nc: int, per: int, steps: int) -> float {
+    let n = nc * per
+    let cid = _qp_cid(nc, per)
+    let omega = _qp_omega_banded(nc, per)
+    let mut theta = _qp_init_theta(seed, n)
+    // pacemaker init == h1510 lcg_init(seed+1000, 1)[0]
+    let tt0 = _qp_init_theta(seed + 1000, 1)
+    let mut theta_t = tt0[0]
+    let k = 0.5
+    let mut t = 0
+    while t < steps {
+        let mut nt = []
+        let mut i = 0
+        while i < n { nt = nt + [theta[i] + (omega[i] + k * sin(theta_t - theta[i]))]  i = i + 1 }
+        let mut mp = 0.0
+        i = 0
+        while i < n { mp = mp + sin(theta[i] - theta_t)  i = i + 1 }
+        mp = mp / to_float(n)
+        theta_t = theta_t + (_PF_OMEGA_T + k * mp)
+        theta = nt
+        t = t + 1
+    }
+    let qp = QuorumPhase { theta: theta, omega: omega, adj: _qp_block_adj(cid, n), cid: cid, nc: nc, per: per }
+    return quorum_cluster_order(qp)
+}
+
+// _qp_shuffle_adj — EARNED-control shuffle (== h1510 _shuffle_adjacency): a random symmetric 0/1
+// graph with the SAME edge count as the block adjacency but NO community matching the clusters →
+// the within/cross phase-lock gap collapses (bar D). Deterministic from `seed` via the engine LCG.
+pub fn quorum_shuffle_adj(seed: int, nc: int, per: int) -> [float] {
+    let n = nc * per
+    let cid = _qp_cid(nc, per)
+    // edge count of the block adjacency (upper triangle).
+    let mut nedges = 0
+    let mut i = 0
+    while i < n {
+        let mut j = i + 1
+        while j < n { if cid[i] == cid[j] { nedges = nedges + 1 }  j = j + 1 }
+        i = i + 1
+    }
+    // enumerate upper-triangle pairs, Fisher-Yates shuffle (engine LCG), pick the first nedges.
+    let mut pairs_i = []
+    let mut pairs_j = []
+    i = 0
+    while i < n {
+        let mut j = i + 1
+        while j < n { pairs_i = pairs_i + [i]  pairs_j = pairs_j + [j]  j = j + 1 }
+        i = i + 1
+    }
+    let np = len(pairs_i)
+    let mut order = []
+    i = 0
+    while i < np { order = order + [i]  i = i + 1 }
+    let mut st = (seed * 2654435761) & 2147483647
+    if st == 0 { st = 12345 }
+    let mut k = np - 1
+    while k > 0 {
+        st = (st * 1103515245 + 12345) & 2147483647
+        let r = st % (k + 1)
+        let tmp = order[k]  order[k] = order[r]  order[r] = tmp
+        k = k - 1
+    }
+    // build the shuffled symmetric adjacency from the first nedges chosen pairs (weight 1.0).
+    let mut adj = []
+    i = 0
+    while i < n * n { adj = adj + [0.0]  i = i + 1 }
+    let mut e = 0
+    while e < nedges {
+        let pid = order[e]
+        let pi = pairs_i[pid]
+        let pj = pairs_j[pid]
+        adj[pi * n + pj] = 1.0
+        adj[pj * n + pi] = 1.0
+        e = e + 1
+    }
+    return adj
+}
+
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
