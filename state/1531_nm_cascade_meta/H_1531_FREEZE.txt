@@ -1,0 +1,42 @@
+H_1531 — CASCADE METAPLASTICITY (Benna-Fusi) on RETENTION-UNDER-INTERFERENCE
+FROZEN FALSIFIER (pre-registered BEFORE scoring — frozen-first, no tune-to-green)
+
+WALL: H_1284 NEUROMODULATION (11 lenses deep). Measured root cause = recall is
+key-GEOMETRY/capacity bounded; any controller conditioning a knob on the recall
+margin is circular and a single best-fixed point dominates. ESCAPE PRECONDITION
+(census C2): a capability where a FLAT store genuinely FAILS = RETENTION under
+INTERFERENCE (not clean recall, where capacity is monotone — H_1528 raced to the
+ceiling, H_1527 inert).
+
+CAPABILITY = retention of an early target fact A->B after K interfering later facts,
+a fraction at near-collinear keys that land on A's cell (AB-AC interference).
+
+ARMS:
+  FLAT    = single-timescale store, best-fixed SPLIT_THRESH (grid-tuned, disjoint seed 7).
+  CASCADE = per-cell Benna-Fusi cascade (3 levels DMAX=2); consolidation depth =
+            per-cell confirmation count; incumbent overwrite-prob = 1/(1+0.5*depth).
+  ABL     = cascade depth frozen at 0 (reverts to flat full-clobber single-timescale).
+  SHUFFLE = randomize WHICH target gets the consolidation rehearsal (decouple
+            consolidation from early-fact identity).
+
+PER-CELL-STRUCTURE-NOT-GAIN: the cascade variable is PER-CELL and its depth is set
+by that cell's OWN confirmation history. NO global gain, NO read of the abstain
+margin (avoids re-entering the absorbed controller family, H_1422).
+
+FROZEN BARS:
+  PRIMARY  : retention_cascade - retention_flat >= +0.05 on >=2/3 seeds [11,22,33].
+  ABLATION : abl_reverts  = |retention_ABL - retention_flat| <= 0.05
+             shuf_collapse= SHUFFLE loses most of the cascade-over-flat lift.
+             ablation_decisive = abl_reverts AND shuf_collapse.
+
+VERDICT MAP:
+  GREEN   (WALL-BROKEN, DIRECTIONAL/numpy) iff PRIMARY (>=2/3 seeds) AND ablation_decisive.
+  PARTIAL iff PRIMARY but ablation not clean.
+  WALL    otherwise — cascade ties flat even on interference => wall extends to the
+          metaplasticity family (HONEST c9, valid result, NO tune-to-green).
+
+SCOPE: DIRECTIONAL numpy mirror of the H_1284 store machinery (host has no torch).
+Engine R2 (live core/ A<->G + VAdaptField byte-exact re-score) = deferred ING
+follow-on (a_engine_native_learning). $0 CPU, 3 seeds, p7.
+
+MARGIN = 0.05. Bar frozen at commit BEFORE H_1531_R1.json is produced.
