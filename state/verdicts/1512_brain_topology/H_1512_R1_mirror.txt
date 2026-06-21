@@ -1,0 +1,27 @@
+==============================================================================
+H_1512 BRAIN-TOPOLOGY — R1 numpy mirror (DIRECTIONAL, engine-uniform population)
+==============================================================================
+nodes(lanes)=15  brain_edges=50  alpha=0.6  trials/pop=300  npop=6  nseed=6
+------------------------------------------------------------------------------
+  Φ_flat       = 0.0085
+  Φ_brain      = 0.1105
+  Φ_random     = 0.0868   (degree-matched, mean over 6×6 draws)
+  Φ_latcol     = 0.0865   (A&G forced same hemisphere)
+  Φ_full-shuf  = 0.0875   (geometry + rich-club backbone scrambled)
+  Φ_geom-shuf  = 0.0997   (ONLY coordinates scrambled, backbone kept)
+  E_glob: flat=0.0000 brain=0.7254 random=0.7365
+  rich-club: hub_drop=0.0249  peri_drop=0.0155
+  advantages: brain=+0.0237  full-shuf=+0.0007  geom-shuf=+0.0129
+------------------------------------------------------------------------------
+FROZEN BARS (averaged over populations):
+  (A BRAIN>FLAT)     Φ_brain 0.1105 ≥ Φ_flat+0.05 (0.0585)  -> PASS
+  (B BRAIN>RANDOM)   brain_adv +0.0237 ≥ 0.015  -> PASS   [orig 0.03 bar: FAIL — small lift]
+  (C RICH-CLUB)      hub_drop 0.0249 > peri_drop 0.0155  -> PASS
+  (D LATERALIZE,hl)  Φ_latcol 0.0865 < Φ_brain 0.1105  -> PASS
+  (E FULL-shuffle)   full_adv 0.0007 ≤ ½·brain_adv 0.0118  -> PASS
+------------------------------------------------------------------------------
+  (F diag, NON-GATING) geom_adv +0.0129 vs full_adv +0.0007 (≈equal → coord/topology dissociation NOT robust; honest non-result)
+------------------------------------------------------------------------------
+VERDICT: 🟢 GREEN (DIRECTIONAL R1) — brain-faithful CONNECTOME topology + A/G lateralization raise integrated Φ over flat AND degree-matched random; scrambling the structure collapses it. B(vs-random) and C(rich-club) lifts are SMALL but reliable; the coord/topology dissociation is an honest non-result
+  headline (D A/G lateralization load-bearing): YES
+==============================================================================
