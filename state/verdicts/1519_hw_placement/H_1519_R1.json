@@ -1,0 +1,69 @@
+{
+  "substrate_tag": "MODEL",
+  "note": "numpy DIRECTIONAL model of AKD1000 mesh-NoC hop-cost; real on-chip = Lane-A follow-on (ING h1519-onchip-akida)",
+  "mesh": {
+    "rows": 4,
+    "cols": 4,
+    "cells": 16,
+    "lanes": 15
+  },
+  "phi_brain": 0.109389,
+  "cost_brain": 136.0,
+  "phi_opt": 0.237866,
+  "cost_opt": 138.0,
+  "opt_perm": [
+    11,
+    0,
+    8,
+    4,
+    14,
+    2,
+    6,
+    1,
+    10,
+    5,
+    9,
+    7,
+    3,
+    13,
+    12
+  ],
+  "opt_perm_source": "H_1515 opt_perm",
+  "rand": {
+    "phi_mean": 0.089049,
+    "phi_max": 0.198509,
+    "cost_mean": 129.5068,
+    "cost_p25": 125.0,
+    "cost_p75": 134.0,
+    "M": 4000
+  },
+  "cost_opt_pctile": 0.8998,
+  "constrained": {
+    "budget": 136.0,
+    "con_phi": 0.213307,
+    "con_cost": 122.0,
+    "con_phi_pctile": 1.0,
+    "con_cost_pctile": 0.1087,
+    "loss_frac_vs_opt": 0.1032
+  },
+  "bars": {
+    "P1_hw_tax_on_optimum": {
+      "thr": "cost_opt >= cost_p75",
+      "cost_opt": 138.0,
+      "cost_p75": 134.0,
+      "pass": true
+    },
+    "P2_hw_constrained_loss": {
+      "thr_frac": 0.1,
+      "loss_frac": 0.1032,
+      "pass": true
+    },
+    "P3_biology_convergence_reportonly": {
+      "con_phi_pctile": 1.0,
+      "biology_ref_pctile_H1516": 0.37,
+      "note": "report-only: is the HW-constrained optimum in biology's economical ballpark (~37th pctile)?"
+    }
+  },
+  "green_directional": true,
+  "headline": "neuromorphic NoC RE-INTRODUCES the biological wiring tax \u2014 \u03a6-optimal placement expensive on-chip AND HW-budget forces a real \u03a6 sacrifice (3-tier symmetry biology\u2192software\u2192hardware CONFIRMED in model)"
+}
