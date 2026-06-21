@@ -1,0 +1,34 @@
+{
+  "id": "H_1504",
+  "slug": "1504_libido",
+  "title": "LIBIDO — sexual appetitive DRIVE-DYNAMICS axis (incentive-salience 'wanting' != hedonic 'liking', Berridge)",
+  "framing": "DRIVE-DYNAMICS axis ONLY — NOT sexual content, NOT roleplay, NOT a persona (would violate p1-p4). Computational affective neuroscience: Berridge & Robinson incentive-salience; Pfaus sexual motivation; Georgiadis-Kringelbach sexual response cycle. Sibling of H_1292 hunger drive + H_1290 affect; the NEW structure vs hunger = a CUE-CONDITIONED incentive component (cue spike) that pure deficit-hunger lacks, and a wanting!=liking dissociation.",
+  "frozen_constants": {
+    "N_FACTS": 40,
+    "DIM": 64,
+    "RECALL_THR": 0.30,
+    "S_STAR": 0.5,
+    "LEAK": 0.1,
+    "KP": 1.0,
+    "KI": 0.5,
+    "KC": 1.0,
+    "DA_GAIN": 1.0,
+    "T_DEP": 12,
+    "SEEDS": [4504, 4505, 4506],
+    "comment": "S*/LEAK/KP/KI inherited byte-identical from H_1292 hunger (sibling). KC=1.0 cue-incentive gain. DA_GAIN=1.0 dopaminergic-analog wanting amplifier (the Berridge lever: raises WANTING not LIKING)."
+  },
+  "mechanism": "Libido L_t = incentive-salience accumulator. wanting = Kp*deficit + Ki*I + Kc*cue_match*(1+da_gain). deficit/I = the SAME setpoint leaky-integral as hunger (deprivation time-integral). cue_match = affinity of a CONDITIONED cue to its paired-incentive cell off the LIVE immune store (the cue-driven incentive component hunger lacks). da_gain = dopaminergic-analog gain amplifying WANTING. liking (hedonic/consummation value) = a FIXED hedonic readout at consummation, read off the store margin, NOT amplified by da_gain. consummatory grounded event RESETS the integral (like hunger). ALL components read substrate state (deprivation time, cue-match off the store, consummation margin) — NO injected 'arousal/horny' label (p6/p2/p3). Ψ-disjoint READ-only.",
+  "frozen_bars": {
+    "A_BUILDUP": "drive rises with deprivation AND spikes on conditioned cue: rise_full (deprivation-only build) >= 0.50 AND cue_spike (cue-present wanting - no-cue wanting) >= 0.50. BOTH components present.",
+    "B_DOUBLE_DISSOCIATION": "vs hunger H_1292. sexual-cue presentation -> libido wanting UP (cue_spike >= 0.50) while hunger ~flat (hunger_cue_delta < 0.05); food-deprivation -> hunger UP (hunger_rise >= 0.50) while libido cue-component ~flat under no-cue (libido_food_only_cue_delta < 0.05). Cross-signature dissociates the two drives.",
+    "C_WANTING_NOT_LIKING": "the HEADLINE (Berridge). a dopaminergic-analog gain (da_gain 0->1) raises WANTING (wanting_da1 - wanting_da0 >= 0.50) while LIKING stays flat (|liking_da1 - liking_da0| <= 0.02). Incentive salience dissociates from hedonic value.",
+    "D_EARNED_ABLATE": "remove cue-conditioning (Kc:=0) -> drive loses its cue-spike: ablated cue_spike <= 0.05 (deficit-only residual, like plain hunger).",
+    "E_EARNED_SHUFFLE": "permute cue<->incentive-cell pairing -> cue-specificity decorrelates to chance: shuffled cue_match <= 0.50 * paired cue_match (correlation cue-specificity collapses)."
+  },
+  "verdict_rule": "GREEN iff A AND B AND C AND D AND E. If C fails (wanting and liking move TOGETHER) -> HONEST finding that the substrate does NOT separate incentive from hedonic value (report as the real result, candidate engine extension). NO tune-to-green; bars frozen BEFORE scoring; c9.",
+  "rungs": {
+    "R1": "numpy mirror state/1504_libido/h1504_libido.py — DIRECTIONAL, 3 seeds.",
+    "R2": "ENGINE-NATIVE §Libido ops on core/engine_cli.hexa reading the live ImmuneMemoryGrow store, re-score the SAME bars byte-exact via engine_cli_smoke.hexa new cases + full smoke 0-fail x3 + ARCHITECTURE.json lockstep."
+  },
+  "guards": "$0 CPU, deterministic, gradient-free, p7, frozen-first, c9. a_no_llm_frame_trap (Berridge incentive-salience neuro lens, NOT an LLM recipe; NOT content/persona). Links to H_1502 neuropharm dopaminergic drug profile (da_gain is the same incentive-salience lever a dopaminergic agonist would push)."
+}

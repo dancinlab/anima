@@ -443,6 +443,78 @@ fn main() {
     if _assert_b("case_30_ablated_does_not_accumulate", true,
                  homeo_last(ha1) == homeo_last(ha0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (g2) LIBIDO — SEXUAL APPETITIVE DRIVE-DYNAMICS AXIS (H_1504 R2) ──────────────
+    // ⚠ DRIVE-DYNAMICS axis ONLY (a_no_llm_frame_trap, NOT content/persona). Sibling of
+    // §HomeostaticDrive with a cue-conditioned INCENTIVE component (Berridge wanting≠liking).
+    // ADDITIVE + Ψ-disjoint (a READ over the immune margin + its OWN scalar integral, no
+    // store mutation, no pure_field touch). Cases re-score the H_1504 R1 frozen bars
+    // byte-exact on the live DIM-4 `mg` grow store: `gkeys[1]` = a bound key = the PAIRED
+    // conditioned cue (grounds strongly → cue spike); `affar` = the untaught far key = both
+    // max deprivation AND the UNpaired cue (grounds weakly → no spike). The deficit at
+    // `affar` and the integral path are byte-identical to the homeostat above, so the libido
+    // wanting = hunger-drive + the cue term, proving the cue term is the ONLY new structure.
+    let lb_far = affar                     // far key: max deprivation + UNpaired cue (no spike)
+    let lb_cue = gkeys[1]                   // bound key: PAIRED conditioned cue (grounds → spike)
+    // build the deprivation integral two ticks deep (same path as the homeostat cases).
+    let lb0 = libido_step(libido_new(), mg, lb_far, lb_far)   // tick1: deprived, cue ABSENT
+    let lb1 = libido_step(lb0, mg, lb_far, lb_far)            // tick2: deprived, cue ABSENT → higher
+    // cue spike: hold deprivation FIXED (same far key), toggle the cue present vs absent.
+    let lb_want_cue   = libido_motivation_bias(lb1, mg, lb_far, lb_cue)   // PAIRED cue present
+    let lb_want_nocue = libido_motivation_bias(lb1, mg, lb_far, lb_far)   // cue absent (far)
+    let lb_cue_spike  = lb_want_cue - lb_want_nocue
+
+    // case 293 : BUILD-UP — deprivation BUILDS the wanting (integral accumulates) AND a
+    //   conditioned cue SPIKES it (the incentive-salience component, ≥ the R1 bar 0.50).
+    if _assert_b("case_293_libido_buildup_and_cue_spike", true,
+                 libido_last(lb1) > libido_last(lb0) && lb_cue_spike >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 294 : DOUBLE-DISSOCIATION vs hunger (H_1292) — the SAME conditioned cue that
+    //   spikes libido leaves HUNGER FLAT (hunger is cue-blind: homeo_drive ignores the cue
+    //   key entirely). hunger drive at the far context is identical whether or not a cue is
+    //   "present" (homeo has no cue arg), so its cue-delta is 0 < 0.05 while libido spikes.
+    let hg_at_far = homeo_drive(homeo_step(homeo_step(homeo_new(), mg, affar), mg, affar), mg, affar)
+    if _assert_b("case_294_libido_hunger_double_dissociation", true,
+                 lb_cue_spike >= 0.50 && hg_at_far >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 295 : WANTING ≠ LIKING (the Berridge headline) — a dopaminergic-analog gain
+    //   (da_gain 0→1) RAISES wanting (≥ 0.50) but LEAVES liking FLAT (|Δ| ≤ 0.02). The
+    //   cue_match is identical under both gains (gain enters wanting, not liking/cue_match).
+    let lb_cm  = libido_cue_match(mg, lb_cue)
+    let lb_da0 = libido_new()                              // da_gain = 0 (baseline)
+    let lb_da1 = libido_new_da(1.0)                        // da_gain = 1 (dopaminergic analog)
+    let want_da0 = libido_wanting(lb_da0, 0.0, lb_cm)      // deficit held 0 → isolate the cue term
+    let want_da1 = libido_wanting(lb_da1, 0.0, lb_cm)
+    let like_da0 = libido_liking(lb_da0, lb_cm)
+    let like_da1 = libido_liking(lb_da1, lb_cm)
+    let like_delta = if like_da1 > like_da0 { like_da1 - like_da0 } else { like_da0 - like_da1 }
+    if _assert_b("case_295_libido_wanting_not_liking", true,
+                 (want_da1 - want_da0) >= 0.50 && like_delta <= 0.02) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 296 : EARNED ABLATE — removing cue-conditioning (Kc=0) collapses the cue-spike to
+    //   ≤ 0.05 (the ablated drive is the cue-blind deficit-only read = plain hunger).
+    let lba0 = libido_step(libido_new_ablated(), mg, lb_far, lb_far)
+    let lba1 = libido_step(lba0, mg, lb_far, lb_far)
+    let lba_want_cue   = libido_motivation_bias(lba1, mg, lb_far, lb_cue)   // cue present
+    let lba_want_nocue = libido_motivation_bias(lba1, mg, lb_far, lb_far)   // cue absent
+    let lba_cue_spike  = lba_want_cue - lba_want_nocue
+    let lba_spike_abs  = if lba_cue_spike > 0.0 { lba_cue_spike } else { 0.0 - lba_cue_spike }
+    if _assert_b("case_296_libido_ablate_loses_cue_spike", true,
+                 lba_spike_abs <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 297 : EARNED SHUFFLE — a SHUFFLED cue (matched against a WRONG/UNpaired incentive
+    //   cell = the far key) decorrelates to chance: its cue_match ≤ 0.50× the paired cue's
+    //   cue_match (cue-specificity collapses — the spike is earned by the PAIRING).
+    let cm_paired   = libido_cue_match(mg, lb_cue)     // PAIRED cue grounds strongly
+    let cm_shuffled = libido_cue_match(mg, lb_far)     // shuffled/unpaired cue grounds weakly
+    if _assert_b("case_297_libido_shuffle_decorrelates_cue", true,
+                 cm_shuffled <= 0.50 * cm_paired) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  H_1504 libido (R2 WIRED, DRIVE-DYNAMICS axis NOT content): cue_spike=" + to_string(lb_cue_spike)
+          + " | wanting(da0→da1) " + to_string(want_da0) + "→" + to_string(want_da1)
+          + " liking flat " + to_string(like_da0) + "→" + to_string(like_da1)
+          + " | ablated_spike=" + to_string(lba_cue_spike) + " cmPaired=" + to_string(cm_paired) + " cmShuf=" + to_string(cm_shuffled)
+          + " — incentive-salience 'wanting'≠hedonic 'liking' (Berridge); cue⊥hunger(H_1292)")
+
     // ── (h) THEORY-OF-MIND — OTHER-AGENT BELIEF MODEL (H_1293 R2, HD30) ──────────────
     // The ToM model is ADDITIVE + Ψ-disjoint (a SEPARATE belief cell population read by
     // L2 affinity — it mutates no immune cell and never touches pure_field). These cases

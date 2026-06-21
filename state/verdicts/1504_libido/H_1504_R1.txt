@@ -1,0 +1,22 @@
+H_1504 — LIBIDO — sexual appetitive DRIVE-DYNAMICS axis — R1 numpy MIRROR (DIRECTIONAL)
+====================================================================================
+  DRIVE-DYNAMICS axis ONLY (a_no_llm_frame_trap): incentive-salience 'wanting' != hedonic
+  'liking' (Berridge). NO content, NO persona. Sibling of H_1292 hunger + H_1290 affect.
+frozen: S*=0.5 λ=0.1 Kp=1.0 Ki=0.5 Kc=1.0 da_gain=1.0 | N=40 T_dep=12 | seeds=[4504, 4505, 4506]
+ENGINE-TRANSFER UNVERIFIED (mirror) — R2 engine-native is the binding verdict.
+
+  seed  riseFULL  cueSpike  hngCueΔ  hngRise  wantΔda  likeΔda  cueSpkAbl  cmPair  cmShuf  abst
+  4504    1.5439    2.0000   0.0000   1.5439   1.0000   0.0000     0.0000  1.0000  0.0000  True
+  4505    1.5439    2.0000   0.0000   1.5439   1.0000   0.0000     0.0000  1.0000  0.0000  True
+  4506    1.5439    2.0000   0.0000   1.5439   1.0000   0.0000     0.0000  1.0000  0.0000  True
+
+FROZEN BARS (all must hold per-seed):
+  (A) BUILD-UP   rise>=0.50 AND cue_spike>=0.50          : True  (mean rise=1.5439, mean cueSpike=2.0000)
+  (B) DOUBLE-DIS sexcue->libido↑ hunger~flat; food->hunger↑ : True  (mean hngCueΔ=0.0000, mean hngRise=1.5439)
+  (C) WANT≠LIKE  da: want Δ>=0.50 AND |like Δ|<=0.02      : True  (mean wantΔ=1.0000, mean likeΔ=0.0000)
+  (D) ABLATE     Kc=0 -> cue_spike<=0.05                  : True  (mean cueSpkAbl=0.0000)
+  (E) SHUFFLE    shuffled cue_match<=0.50*paired          : True  (mean cmPair=1.0000, mean cmShuf=0.0000)
+
+  WANTING != LIKING: SEPARATED (incentive salience dissociates from hedonic value, Berridge).
+VERDICT (R1 mirror, DIRECTIONAL): 🟢 GREEN
+  (engine-transfer UNVERIFIED — R2 engine-native re-score is the binding verdict)
