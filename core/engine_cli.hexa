@@ -7330,3 +7330,247 @@ pub fn reality_confidence_readout(content_correct: bool) -> float {
     if content_correct { return 0.90 }                  // correct content winner → high (same real & imagined)
     return 0.50                                          // wrong content → chance
 }
+
+// ── § Neuropharm (H_1502 R2) — 신경약리 섭동 모듈 (substrate perturbation under a drug profile) ──────
+// Standard computational-neuroscience drug modelling (entropic-brain / REBUS, Carhart-Harris & Friston
+// 2019 Pharmacol Rev; Carhart-Harris 2014 Front Hum Neurosci; Schartner 2017 Sci Rep Lempel-Ziv↑;
+// Timmermann 2019 Sci Rep DMT; Atakan 2012 cannabis time-dilation; Dijkstra & Fleming 2023 reality
+// monitor). NO real drugs, NO synthesis — a DRUG = a FROZEN parametric PERTURBATION VECTOR applied to
+// substrate knobs the engine ALREADY exposes (the §ConsciousnessIndex substrate reads m/m_field/dt/
+// recon_err + the §RealityMonitor threshold + the §SelfIdentity coherence), after which we MEASURE the
+// change in the consciousness lanes + Φ. The hypothesis: does anima's substrate, perturbed per a drug's
+// KNOWN pharmacology, reproduce that drug's KNOWN directional consciousness signature from the literature?
+//
+// A drug is NOT a new lane and NOT "act high" text. The knobs map to EXISTING reads:
+//   prior_strength  — top-down precision/prior weight   → scales grounding margin m toward chance 0.5
+//   signal_entropy  — Lempel-Ziv signal diversity        → SHARED common-mode diversity latent on the reads
+//   self_boundary   — §SelfIdentity coherence            → self_cos toward an ego-dissolved axis (↓=dissolution)
+//   lane_coupling   — cross-lane integration gain         → shared-vs-private variance mix → drives Φ
+//   time_dilation   — subjective-time rate (H_1475)       → scales dt (SubjectiveTime lane)
+//   reality_thr_shift — §RealityMonitor threshold shift   → ↓ ⇒ imagined feels real
+//   working_memory  — WM retention (H_1282)               → scales held field-margin spread
+// READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode). Deterministic.
+//
+// PROFILE = a [float] of length 7 in this FIXED order:
+//   [0 prior_strength, 1 signal_entropy, 2 self_boundary, 3 lane_coupling, 4 time_dilation,
+//    5 reality_thr_shift, 6 working_memory]. baseline (sober) = identity [1,0,1,1,1,0,1].
+
+pub fn pharm_baseline() -> [float] { return [1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0] }
+// FROZEN literature-grounded profiles (registered BEFORE measuring, c9 — byte-identical to R1 mirror).
+pub fn pharm_lsd() -> [float]      { return [0.55, 0.45, 0.45, 1.40, 1.05, 0.0 - 0.12, 0.95] }   // 5-HT2A REBUS
+pub fn pharm_dmt() -> [float]      { return [0.40, 0.60, 0.30, 1.55, 1.08, 0.0 - 0.30, 0.90] }   // extreme 5-HT2A
+pub fn pharm_cannabis() -> [float] { return [0.85, 0.10, 0.95, 1.02, 1.80, 0.0,        0.55] }   // CB1
+pub fn pharm_ketamine() -> [float] { return [0.80, 0.25, 0.50, 0.60, 1.10, 0.0,        0.85] }   // NMDA antagonist
+
+fn _ph_clip01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+// pharm_perturb_m — apply prior_strength + signal_entropy shared latent to ONE grounding margin read.
+// `shared_se` is the per-trial common-mode diversity latent (the SAME value threaded into m_field &
+// recon_err so the diversity COVARIES, raising — not destroying — integration as REBUS predicts).
+pub fn pharm_perturb_m(prof: [float], m: float, shared_se: float) -> float {
+    let prior = prof[0]
+    return _ph_clip01(0.5 + (m - 0.5) * prior + shared_se)
+}
+// pharm_perturb_field — working_memory retention toward the field mean + the shared diversity latent.
+pub fn pharm_perturb_field(prof: [float], m_field: [float], shared_se: float) -> [float] {
+    let wm = prof[6]
+    let mut fsum = 0.0
+    let mut i = 0
+    while i < len(m_field) { fsum = fsum + m_field[i]  i = i + 1 }
+    let fmean = fsum / to_float(len(m_field))
+    let mut out = []
+    let mut k = 0
+    while k < len(m_field) {
+        let retained = fmean + (m_field[k] - fmean) * wm + shared_se
+        out = out + [_ph_clip01(retained)]
+        k = k + 1
+    }
+    return out
+}
+// pharm_perturb_recon — signal_entropy raises reconstruction error (signal diversity ↑) + shared latent.
+pub fn pharm_perturb_recon(prof: [float], recon_err: float, shared_se: float) -> float {
+    let se = prof[1]
+    return _ph_clip01(recon_err * (1.0 + 0.8 * se) + shared_se)
+}
+// pharm_perturb_dt — time_dilation scales subjective elapsed time (the H_1475 SubjectiveTime rate).
+pub fn pharm_perturb_dt(prof: [float], dt: float) -> float {
+    let td = prof[4]
+    let v = dt * td
+    if v < 0.0 { return 0.0 }
+    return v
+}
+// pharm_shared_se — the per-trial SHARED diversity latent = signal_entropy × 0.30 × a deterministic
+// per-(seed,idx) draw in [-1,1] (the engine's own LCG, NO numpy). Drives the common-mode richness.
+pub fn pharm_shared_se(prof: [float], seed: int, idx: int) -> float {
+    let se = prof[1]
+    let s0 = (seed * 100003 + idx * 17 + 7) & 2147483647
+    let s1 = _lcg_next(s0)
+    let u = _lcg_unit(s1)                  // [0,1)
+    let j = 2.0 * u - 1.0                   // [-1,1)
+    return se * 0.30 * j
+}
+
+// pharm_self_continuity — §SelfIdentity recognition under self_boundary perturbation. A dissolved
+// boundary (self_boundary<1) mixes the seed identity with an orthogonal ego-dissolved axis; self_cos
+// vs the intact seed = recognition (1.0 = intact, ↓ = ego dissolution). Deterministic ortho axis.
+pub fn pharm_self_continuity(prof: [float], dim: int, seed: int) -> float {
+    let sb = prof[2]
+    let diss = 1.0 - sb
+    let base = self_new(dim, 0)
+    // deterministic orthogonal direction (axis 0 zeroed) via the engine LCG.
+    let mut ortho = []
+    let mut st = (seed + 4242) & 2147483647
+    let mut i = 0
+    while i < dim {
+        st = _lcg_next(st)
+        let g = 2.0 * _lcg_unit(st) - 1.0
+        if i == 0 { ortho = ortho + [0.0] } else { ortho = ortho + [g] }
+        i = i + 1
+    }
+    // normalize ortho.
+    let mut s = 0.0
+    let mut a = 0
+    while a < dim { s = s + ortho[a] * ortho[a]  a = a + 1 }
+    let nrm = sqrt(s)
+    let mut v = []
+    let mut b = 0
+    while b < dim {
+        let comp = self_component(base, b) * (1.0 - diss) + (ortho[b] / nrm) * diss
+        v = v + [comp]
+        b = b + 1
+    }
+    // re-normalize the mixed identity and cos vs the base.
+    let mut s2 = 0.0
+    let mut c = 0
+    while c < dim { s2 = s2 + v[c] * v[c]  c = c + 1 }
+    let nrm2 = sqrt(s2)
+    let mut cosacc = 0.0
+    let mut d = 0
+    while d < dim { cosacc = cosacc + self_component(base, d) * (v[d] / nrm2)  d = d + 1 }
+    return cosacc
+}
+
+// pharm_reality_real_fraction — fraction of IMAGINED trials the §RealityMonitor now calls REAL under
+// the drug's reality_thr_shift (↓ ⇒ imagined feels real). Each trial's imagined-band signal margin =
+// perturbed m × 0.35 (faint top-down). base_thr 0.30. Reuses the LIVE reality_call op.
+pub fn pharm_reality_real_fraction(prof: [float], ms: [float], seed: int, base_thr: float) -> float {
+    let thr = base_thr + prof[5]
+    let mut real = 0.0
+    let mut i = 0
+    while i < len(ms) {
+        let sse = pharm_shared_se(prof, seed, i)
+        let pm = pharm_perturb_m(prof, ms[i], sse)
+        let imagined_margin = pm * 0.35
+        real = real + reality_call(imagined_margin, thr)
+        i = i + 1
+    }
+    return real / to_float(len(ms))
+}
+
+// pharm_couple_rows — lane_coupling reshapes the cross-trial covariance Φ measures (shared-vs-private
+// mix). coupling>1 → more SHARED common-mode → lanes COVARY → high Φ (REBUS); coupling<1 → more
+// PRIVATE → decorrelate → low Φ (ketamine dissociation). Deterministic private draws via the LCG.
+pub fn pharm_couple_rows(rows: [[float]], lane_coupling: float, seed: int) -> [[float]] {
+    let nc = len(rows[0])
+    // shared weight w_s in ~[0,0.85]: coupling 1.0→0.5, 1.55→0.83, 0.60→0.26.
+    let mut w_s = 0.5 + 0.6 * (lane_coupling - 1.0)
+    w_s = _ph_clip01(w_s)
+    let w_p = 1.0 - w_s
+    let mut out = []
+    let mut t = 0
+    while t < len(rows) {
+        let r = rows[t]
+        let mut rsum = 0.0
+        let mut q = 0
+        while q < nc { rsum = rsum + r[q]  q = q + 1 }
+        let latent = rsum / to_float(nc) - 0.5
+        let mut st = (seed * 7919 + t * 31 + 3) & 2147483647
+        let mut nr = []
+        let mut j = 0
+        while j < nc {
+            st = _lcg_next(st)
+            let pj = 2.0 * _lcg_unit(st) - 1.0
+            let shared_part = r[j] + latent * (w_s - 0.5) * 2.0
+            let priv_part = r[j] + pj * 0.12
+            nr = nr + [_ph_clip01(w_s * shared_part + w_p * priv_part)]
+            j = j + 1
+        }
+        out = out + [nr]
+        t = t + 1
+    }
+    return out
+}
+
+// pharm_lane_rows — build the 15-lane population for a profile over a fixed trial population. Each trial
+// is [m, f0..f4, cells, seen, intent, dt, recon_err] (length 11). Calls the LIVE ci_lane_scores op on
+// the PERTURBED reads. The output feeds pharm_couple_rows + ci_phi_multiinfo (the live Φ op).
+pub fn pharm_lane_rows(prof: [float], trials: [[float]], seed: int) -> [[float]] {
+    let mut rows = []
+    let mut idx = 0
+    while idx < len(trials) {
+        let tr = trials[idx]
+        let sse = pharm_shared_se(prof, seed, idx)
+        let m = pharm_perturb_m(prof, tr[0], sse)
+        let m_field0 = [tr[1], tr[2], tr[3], tr[4], tr[5]]
+        let m_field = pharm_perturb_field(prof, m_field0, sse)
+        let recon_err = pharm_perturb_recon(prof, tr[10], sse)
+        let dt = pharm_perturb_dt(prof, tr[9])
+        let cells = to_int(tr[6])
+        let seen = to_int(tr[7])
+        let intent = to_int(tr[8])
+        rows = rows + [ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)]
+        idx = idx + 1
+    }
+    return rows
+}
+
+// pharm_phi — the integrated-information Φ signature for a profile: build lanes, couple, score the LIVE
+// ci_phi_multiinfo. THIS is the byte-exact engine re-score of the R1 phi_diversity axis.
+pub fn pharm_phi(prof: [float], trials: [[float]], seed: int) -> float {
+    let rows = pharm_lane_rows(prof, trials, seed)
+    let coupled = pharm_couple_rows(rows, prof[3], seed)
+    return ci_phi_multiinfo(coupled, 0 - 1)
+}
+
+// pharm_subjective_time_rate — the SubjectiveTime (H_1475) RATE = mean perceived dt/DT_REF over the
+// population, measured on the substrate dt-read BEFORE the lane's saturating readout compresses it
+// (a_break_the_wall type-a measurement-regime fix, frozen-first, NO bar moved). DT_REF=1.5.
+pub fn pharm_subjective_time_rate(prof: [float], trials: [[float]], seed: int) -> float {
+    let DT_REF = 1.5
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(trials) {
+        let dt = pharm_perturb_dt(prof, trials[i][9])
+        s = s + _ph_clip01(dt / DT_REF)
+        i = i + 1
+    }
+    return s / to_float(len(trials))
+}
+
+// pharm_working_mem — WM proxy = mean spread (population std of retained field margins). THC: retention↓
+// ⇒ spread↓ (WM impairment). Reads the perturbed field via pharm_perturb_field.
+pub fn pharm_working_mem(prof: [float], trials: [[float]], seed: int) -> float {
+    let mut acc = 0.0
+    let mut i = 0
+    while i < len(trials) {
+        let tr = trials[i]
+        let sse = pharm_shared_se(prof, seed, i)
+        let m_field0 = [tr[1], tr[2], tr[3], tr[4], tr[5]]
+        let fm = pharm_perturb_field(prof, m_field0, sse)
+        let mut fsum = 0.0
+        let mut k = 0
+        while k < len(fm) { fsum = fsum + fm[k]  k = k + 1 }
+        let mu = fsum / to_float(len(fm))
+        let mut var = 0.0
+        let mut j = 0
+        while j < len(fm) { var = var + (fm[j] - mu) * (fm[j] - mu)  j = j + 1 }
+        var = var / to_float(len(fm))
+        acc = acc + sqrt(var)
+        i = i + 1
+    }
+    return acc / to_float(len(trials))
+}

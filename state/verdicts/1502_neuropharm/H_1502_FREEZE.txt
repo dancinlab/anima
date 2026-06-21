@@ -1,0 +1,65 @@
+=== H_1502 NEUROPHARM — substrate perturbation FROZEN verdict (R1 numpy mirror, DIRECTIONAL) ===
+seeds=[1502, 1503, 1504]  $0 CPU  deterministic  p7  c9  frozen-first
+
+--- baseline (sober) signature (seed-mean) ---
+  phi_diversity    +5.8662
+  reality_real     +0.0000
+  self_continuity  +1.0000
+  subjective_time  +0.2308
+  working_memory   +0.1294
+
+=== (A) PRESENCE — each drug reproduces its OWN frozen directional signature vs baseline ===
+[LSD]  presence=GREEN
+    phi_diversity    Δ=+0.0967  pred=↑(≥0.05)  PASS
+    reality_real     Δ=+0.6719  pred=↑(≥0.20)  PASS
+    self_continuity  Δ=-0.3668  pred=↓(≥0.20)  PASS
+[DMT]  presence=GREEN
+    phi_diversity    Δ=+1.2528  pred=↑(≥0.05)  PASS
+    reality_real     Δ=+1.0000  pred=↑(≥0.40)  PASS
+    self_continuity  Δ=-0.6061  pred=↓(≥0.35)  PASS
+[Cannabis]  presence=GREEN
+    subjective_time  Δ=+0.1846  pred=↑(≥0.15)  PASS
+    working_memory   Δ=-0.0581  pred=↓(≥0.05)  PASS
+[Ketamine]  presence=GREEN
+    phi_diversity    Δ=-2.2642  pred=↓(≥0.02)  PASS
+    self_continuity  Δ=-0.2929  pred=↓(≥0.15)  PASS
+
+=== (B) DOUBLE-DISSOCIATION — LSD vs Cannabis are ORTHOGONAL ===
+  LSD  on its axes:      reality Δ=+0.6719   self Δ=-0.3668   (≥0.20 each)
+  LSD  on cannabis axes: time   Δ=+0.0115   WM   Δ=-0.0053   (|·|≤0.05)
+  Cann on its axes:      time   Δ=+0.1846   WM   Δ=-0.0581   (time≥0.15 WM≥0.05)
+  Cann on LSD axes:      reality Δ=+0.0000   self Δ=-0.0014   (|·|≤0.05)
+  DISSOCIATION=GREEN
+
+=== (C) KETAMINE-vs-PSYCHEDELIC — opposite-sign integration ===
+  LSD ΔΦ=+0.0967 (>0 integration)   Ketamine ΔΦ=-2.2642 (<0 dissociation)   OPPOSITE=GREEN
+
+=== (D) EARNED ablate — zero-perturbation profile collapses all signatures to baseline ===
+  max |Δ| across all axes/drugs = 0.00e+00  (≤1e-9)  ABLATE=GREEN
+
+=== (E) EARNED shuffle — permuted profile vectors decorrelate the signatures ===
+  shuffled pharmacology still-holds 1/10 frozen predictions (EARNED iff ≤5)  SHUFFLE=GREEN
+    LSD.phi_diversity          Δ=-0.3988 still_holds=False
+    LSD.reality_real           Δ=+0.0000 still_holds=False
+    LSD.self_continuity        Δ=-0.0014 still_holds=False
+    DMT.phi_diversity          Δ=-2.2642 still_holds=False
+    DMT.reality_real           Δ=+0.0000 still_holds=False
+    DMT.self_continuity        Δ=-0.2929 still_holds=False
+    Cannabis.subjective_time   Δ=+0.0115 still_holds=False
+    Cannabis.working_memory    Δ=-0.0053 still_holds=False
+    Ketamine.phi_diversity     Δ=+1.2528 still_holds=False
+    Ketamine.self_continuity   Δ=-0.6061 still_holds=True
+
+=== VERDICT ===
+  drug[LSD] presence = GREEN
+  drug[DMT] presence = GREEN
+  drug[Cannabis] presence = GREEN
+  drug[Ketamine] presence = GREEN
+  (A) presence-all  = PASS
+  (B) dissociation  = PASS
+  (C) ket-vs-psyche = PASS
+  (D) earned ablate = PASS
+  (E) earned shuffle= PASS
+
+  H_1502 NEUROPHARM (R1 mirror) = 🟢 GREEN DIRECTIONAL
+  wired: DIRECTIONAL-mirror (numpy) → R2 engine-native §Neuropharm follow-on

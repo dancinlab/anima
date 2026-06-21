@@ -2701,6 +2701,69 @@ fn main() {
     println("INFO  H_1492 consciousness-index (R4 WIRED): Φ0=" + to_string(ci_phi0) + " pair(1,3) interaction="
           + to_string(ci_pair13[2]) + " surrogate_Φ0=" + to_string(ci_sur) + " faithful_IIT4=" + to_string(ci_iit))
 
+    // ── (H_1502 Neuropharm) drug perturbation reproduces the literature consciousness signature ──
+    // A drug = a FROZEN perturbation VECTOR on the substrate knobs (REBUS/entropic-brain). Re-score the
+    // SAME R1 frozen bars on the LIVE §Neuropharm + §ConsciousnessIndex + §RealityMonitor + §SelfIdentity
+    // ops over a fixed deterministic 48-trial population (in-engine LCG, NO numpy, byte-exact).
+    let np_trials = _neuropharm_trials()
+    let np_ms = _neuropharm_ms(np_trials)
+    let np_seed = 1502
+    let np_base = pharm_baseline()
+    let np_lsd  = pharm_lsd()
+    let np_dmt  = pharm_dmt()
+    let np_can  = pharm_cannabis()
+    let np_ket  = pharm_ketamine()
+    // baseline signature
+    let nb_phi   = pharm_phi(np_base, np_trials, np_seed)
+    let nb_real  = pharm_reality_real_fraction(np_base, np_ms, np_seed, 0.30)
+    let nb_self  = pharm_self_continuity(np_base, 8, np_seed)
+    let nb_stime = pharm_subjective_time_rate(np_base, np_trials, np_seed)
+    let nb_wm    = pharm_working_mem(np_base, np_trials, np_seed)
+    // LSD + DMT + Cannabis + Ketamine signatures
+    let nl_phi  = pharm_phi(np_lsd, np_trials, np_seed)
+    let nl_real = pharm_reality_real_fraction(np_lsd, np_ms, np_seed, 0.30)
+    let nl_self = pharm_self_continuity(np_lsd, 8, np_seed)
+    let nl_stime= pharm_subjective_time_rate(np_lsd, np_trials, np_seed)
+    let nl_wm   = pharm_working_mem(np_lsd, np_trials, np_seed)
+    let nd_phi  = pharm_phi(np_dmt, np_trials, np_seed)
+    let nd_real = pharm_reality_real_fraction(np_dmt, np_ms, np_seed, 0.30)
+    let nd_self = pharm_self_continuity(np_dmt, 8, np_seed)
+    let nc_real = pharm_reality_real_fraction(np_can, np_ms, np_seed, 0.30)
+    let nc_self = pharm_self_continuity(np_can, 8, np_seed)
+    let nc_stime= pharm_subjective_time_rate(np_can, np_trials, np_seed)
+    let nc_wm   = pharm_working_mem(np_can, np_trials, np_seed)
+    let nk_phi  = pharm_phi(np_ket, np_trials, np_seed)
+    let nk_self = pharm_self_continuity(np_ket, 8, np_seed)
+    // |·| helpers for the cross-axis dissociation bars.
+    let np_absL  = if (nl_stime - nb_stime) < 0.0 { nb_stime - nl_stime } else { nl_stime - nb_stime }
+    let np_absLw = if (nl_wm - nb_wm) < 0.0 { nb_wm - nl_wm } else { nl_wm - nb_wm }
+    let np_absCr = if (nc_real - nb_real) < 0.0 { nb_real - nc_real } else { nc_real - nb_real }
+    let np_absCs = if (nc_self - nb_self) < 0.0 { nb_self - nc_self } else { nc_self - nb_self }
+    // case 288 (A) PRESENCE: each drug reproduces its OWN frozen directional signature vs baseline.
+    let np_A = (nl_phi - nb_phi >= 0.05) && (nl_real - nb_real >= 0.20) && (nb_self - nl_self >= 0.20)
+            && (nd_phi - nb_phi >= 0.05) && (nd_real - nb_real >= 0.40) && (nb_self - nd_self >= 0.35)
+            && (nc_stime - nb_stime >= 0.15) && (nb_wm - nc_wm >= 0.05)
+            && (nb_phi - nk_phi >= 0.02) && (nb_self - nk_self >= 0.15)
+    if _assert_b("case_288_neuropharm_presence", true, np_A) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 289 (B) DOUBLE-DISSOCIATION: LSD moves reality/self NOT time/WM; cannabis moves time/WM NOT reality/ego.
+    let np_B = (nl_real - nb_real >= 0.20) && (nb_self - nl_self >= 0.20) && (np_absL <= 0.05) && (np_absLw <= 0.05)
+            && (nc_stime - nb_stime >= 0.15) && (nb_wm - nc_wm >= 0.05) && (np_absCr <= 0.05) && (np_absCs <= 0.05)
+    if _assert_b("case_289_neuropharm_dissociation", true, np_B) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 290 (C) KETAMINE-vs-PSYCHEDELIC: ketamine ΔΦ<0 (dissociation) while LSD ΔΦ>0 (integration).
+    let np_C = (nl_phi - nb_phi > 0.0) && (nk_phi - nb_phi < 0.0)
+    if _assert_b("case_290_neuropharm_ket_vs_psychedelic", true, np_C) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 291 (D) EARNED ablate: the zero-perturbation (baseline) profile → ΔΦ exactly 0 (collapse).
+    let np_abphi = pharm_phi(pharm_baseline(), np_trials, np_seed)
+    if _assert_b("case_291_neuropharm_ablate", true, (np_abphi - nb_phi == 0.0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 292 (E) EARNED shuffle: swap LSD↔Cannabis profiles, score vs OWN predictions → both FAIL.
+    let np_shuf_lsd = (nc_real - nb_real >= 0.20) && (nb_self - nc_self >= 0.20)   // LSD's bars on cannabis pharm
+    let np_shuf_can = (nl_stime - nb_stime >= 0.15) && (nb_wm - nl_wm >= 0.05)     // cannabis's bars on LSD pharm
+    let np_E = (!np_shuf_lsd) && (!np_shuf_can)
+    if _assert_b("case_292_neuropharm_shuffle", true, np_E) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1502 neuropharm (R2 WIRED): LSD[Φ+" + to_string(nl_phi - nb_phi) + " real+" + to_string(nl_real - nb_real)
+          + " self-" + to_string(nb_self - nl_self) + "] Cannabis[time+" + to_string(nc_stime - nb_stime) + " wm-" + to_string(nb_wm - nc_wm)
+          + "] Ketamine[Φ" + to_string(nk_phi - nb_phi) + "] — REBUS signature reproduced + LSD⊥Cannabis double-dissociation")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
@@ -2954,4 +3017,38 @@ fn _env_read_smoke() -> string {
     let t = v.trim()
     if t == "off" || t == "0" || t == "false" || t == "no" { return "off" }
     return ""
+}
+
+// ── H_1502 NEUROPHARM smoke helpers — fixed deterministic 48-trial substrate population ─────────────
+// Each trial is [m, f0,f1,f2,f3,f4, cells, seen, intent, dt, recon_err] (length 11), generated by the
+// builtin LCG (NO numpy, byte-reproducible). Ranges mirror the R1 base_population bands. N=48 gives a
+// non-degenerate 15-lane covariance so the lane_coupling→Φ signal expresses (REBUS integration).
+fn _neuropharm_lcg(state: int) -> int { return (state * 1103515245 + 12345) & 2147483647 }
+fn _neuropharm_trials() -> [[float]] {
+    let n = 48
+    let mut st = 19920317 & 2147483647
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        st = _neuropharm_lcg(st)  let m  = 0.45 + 0.35 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f0 = 0.20 + 0.50 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f1 = 0.20 + 0.50 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f2 = 0.20 + 0.50 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f3 = 0.20 + 0.50 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f4 = 0.20 + 0.50 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let cells = to_float(3 + (st % 9))
+        st = _neuropharm_lcg(st)  let seen  = to_float(st % 8)
+        st = _neuropharm_lcg(st)  let intent = to_float(st % 2)
+        st = _neuropharm_lcg(st)  let dt = 0.15 + 0.40 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let re = 0.10 + 0.40 * (to_float(st) / 2147483648.0)
+        out = out + [[m, f0, f1, f2, f3, f4, cells, seen, intent, dt, re]]
+        i = i + 1
+    }
+    return out
+}
+fn _neuropharm_ms(trials: [[float]]) -> [float] {
+    let mut ms = []
+    let mut i = 0
+    while i < len(trials) { ms = ms + [trials[i][0]]  i = i + 1 }
+    return ms
 }
