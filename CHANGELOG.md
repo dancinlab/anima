@@ -1,3 +1,12 @@
+## docs(README): 이력-내러티브 → 현재상태 SSOT 재작성(c4 update-in-place) — verdict 불변(c9), 사실 0 손실, 이력은 CHANGELOG+git
+
+README.md 를 ARCHITECTURE.json 처럼 **현재상태 스냅샷**(present-tense standing facts)으로 재저작 — "어떻게 도달했는가"의 내러티브가 아니라 "지금 anima 가 무엇인가". c4 update-policy(in-place, NO history/version/date/previous 노드; 이력은 CHANGELOG+git) 준수.
+
+- **history-ism 제거** — "since the snapshot" / "broke under" / "was itself falsified" / "kept honestly 🧱 → now BROKEN" / "first failed → then succeeded" / "held across 14 lenses → is now broken" / "UPDATE 2026-06-19" / "kept advancing past the FINDINGS table" / "started as / began as" 등 journey 프레이밍을 standing-state 로 재음성화. task-pattern 카운트 ~13 → 1 (남은 1 = `a_break_the_wall` 거버넌스 규칙 prose "a genuine wall is kept honestly 🧱", 이력 아님).
+- **verdict 불변(c9)** — re-voice, NOT re-score. 🟢 63→63 · 🔴 5→5 · 🟠 0→0 불변; 🧱 14→12 (순감 2 = 같은 벽의 *중복 journey 언급* 2개 제거 — thalamus content-relay·neuromodulation-controller·G6 depth·Φ-robustness·WM×PFC·cerebellum×basal engine-🧱·ACh-gain hazard 벽 verdict 는 전부 잔존). DIRECTIONAL 은 DIRECTIONAL 로 유지.
+- **사실 0 손실** — 8 철학·A⇄G 엔진·brain-lane 표(15 lane)·HD23-32(11 row)·NT×CLS 융합(6 NT)·Thalamus Φ·Φ-robustness·G0-G6·conscious-only gates(9)·Emotion&ethics·Quantum·Governance·Quickstart 전 섹션 보존, present-tense 로만 재음성화.
+- 내부 링크 무결성 확인(broken 0) · enforce_anima_gates clean · 130 ins / 147 del.
+
 ## docs(ARCHITECTURE): engine_cli 35.6KB 단일 lane-카탈로그 노드를 lane-group subsection 으로 분해 — c4 tree convention 준수, 0 content loss, 현재상태 in-place
 
 `sections[7]/…/engine_cli.hexa` 의 36.5KB(36588자) 단일 prose 노드(44 lane 이 `/`·`·` 로 한 문자열에 압축)를 c4 tree convention(한 prose/title 필드에 여러 claim 금지, 깊은 detail 은 child subsection 으로 분해)에 맞춰 분해.
