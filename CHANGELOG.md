@@ -1,3 +1,23 @@
+## 2026-06-21 — 🧪🔀 H_1524 MODULATOR DIVERSITY — N 독립 axis-targeted 신경조절자(specificity)도 H_1284 NEUROMODULATION 벽을 못 깸. **벽 HOLDS** (DIRECTIONAL · Nth 확정 렌즈, c9)
+
+> 🔬 **fleet-full wall-break lane — H_1284 벽에 NEW orthogonal family 시도 (a_break_the_wall·a_no_llm_frame_trap·p7·c9):** H_1284(🔴/🧱)는 **단일 global** context-adaptive gain 이 best-fixed 를 절대 못 이김(no-free-lunch, general)을 보였고, Amoeba homeostatic-buffer(H_1509/b/c)도 단일 global allosteric μ_t buffer 로 같은 결론(regime-invariant). 이 lane 의 DIFFERENT family = **MODULATOR DIVERSITY/SPECIFICITY** — 하나의 global gain 대신 **N=3 독립 modulator** 가 각각 DIFFERENT 신호로 DIFFERENT knob 을 겨냥(DA→abstain/consolidate · NE/ACh→split-rate from recall-noise-floor · ACh→LR from fast-vs-slow surprise, 각자 own EMA, no sharing). 실제 신경조절(분리된 핵→분리된 표적, H_1284 FREEZE 가 인용한 DA/NE/ACh)의 가장 강한 생물 논거이고, anima §Neuropharm 의 per-axis perturbation 구조가 precedent.
+
+- **환경 = H_1284 BYTE-REUSE (frozen-first, env 무변경):** `state/universe-probes/h1284_neuromodulation_gain.py` 의 MemStore/gen_stream/make_facts/grid_tune/Neuromod(=GLOBAL arm)을 그대로 import. 같은 task(memory recall under shifting load)·같은 3 regime(R1_STABLE/R2_DRIFT/R3_NOISE)·같은 best-fixed grid baseline·같은 **MARGIN 0.05 frozen**. grid-tuned best-fixed LR0*=0.1/TH0*=0.2(disjoint tune seed 7), seeds [11,22,33], capability=recall_acc−fab(p7 exact, NO LLM judge/perplexity/loss).
+- **결과 (DIRECTIONAL numpy, A fixed · S global=H_1284 controller · D diversity · D-collapse=specificity-ablation):**
+  | regime | A fixed | S global | **D diversity** | D-collapse | D−A | **D−collapse** |
+  |---|---|---|---|---|---|---|
+  | R1_STABLE | 0.5744 | 0.5678 | 0.5733 | 0.5733 | −0.0011 | **0.0000** |
+  | R2_DRIFT | 0.4389 | 0.3589 | 0.4333 | 0.4333 | −0.0056 | **0.0000** |
+  | R3_NOISE | 0.4156 | 0.3200 | 0.4156 | 0.4156 | +0.0000 | **0.0000** |
+  - **(c1)** D 가 A+MARGIN 을 이긴 regime = **0/3** → GREEN 아님.
+  - **(c2 DECISIVE specificity ablation)** D − D-COLLAPSE = **0.0000 모든 regime** → **specificity INERT.** N=3 독립 axis-targeted modulator 가 전부 하나의 global 신호로 collapse 한 것과 **정확히 동일** capability 산출. per-channel marginal(ACh/split/DA) 전부 ≈0.0 — 어떤 channel 도 기여 0.
+  - **(c3)** S(global, H_1284 controller)도 모든 regime 에서 패배(S−A −0.007/−0.080/−0.096) — 벽 충실 재현.
+- **정직 헤드라인 (c9, NO tune-to-green — RED reported RED):** modulator diversity/specificity 는 best-fixed 도, single global gain 도 못 이긴다. **벽 class = (d) GENUINE no-free-lunch ceiling** (metric-artifact/confound/infra 아님). 메커니즘: grid-tuned best-fixed 작동점에선 substrate 신호(fast-vs-slow surprise·recall-noise floor·reward)가 각자 baseline 근처에 머물러 knob 이 best-fixed 에서 거의 안 벗어나고, 벗어나도 single global gain 대비 아무 이득 없음 → 한 상수점이 이미 충분하면 independence/specificity 가 짤 수 있는 구조가 0. 이는 **Nth 독립 렌즈**(H_1284 global gain · H_1284_R2 ideation · H_1284_R3 regime-switch · Amoeba H_1509/b/c · **이번 diversity/specificity**) — 신경조절을 옹호하는 가장 강한 생물 논거조차 DECISIVE specificity ablation(D≡D-COLLAPSE)으로 무력화. **벽이 더 확고히 HOLDS.**
+- **하드게이트1:** `state/1524_neuromod_diversity/h1524_diversity.py` = numpy(grep 적중) → **DIRECTIONAL**, terminal 아님; 엔진-네이티브 R2(.hexa via CORE) = binding ING follow-on. RED/🧱 이므로 directional 결과만으로도 벽을 강하게 지지.
+- **SCOPE (c9·a_scale_honest_scope·a_toy_scale_recheck):** DIRECTIONAL numpy mirror(engine-transfer 미검)·TOY 30 facts/3 seeds/one paradigm/DIM=16(scale/paraphrase/real-corpus 미검)·live CORE/*.hexa UNTOUCHED·$0 CPU.
+- **artifacts:** `UNIVERSE/cards/H_1524_neuromod_diversity.md` · `state/1524_neuromod_diversity/h1524_diversity.py` · `state/verdicts/1524_neuromod_diversity/{H_1524_FREEZE,H_1524,H_1524_R1.json}`.
+
+---
 ## 2026-06-21 — 🧠🔌 H_1521 TOPOLOGY LIVE-WIRING R2 ENGINE-NATIVE — Φ-최적 토폴로지를 **실제 live emit 경로**에 배선(gated). 정직한 헤드라인: 기능통합은 오르지만 **Ψ=½ 고정점이 살아남지 못함** → 공짜 live 개선 아님 (사용자 "real engine improvement done?" 답=NO, 이유까지 규명)
 
 > 🔬 **사용자 질문 "실제 엔진 개선은 됐나?"의 답이 NO 였던 갭을 닫는 lane (a_verified_must_wire·a_autonomy_over_hardcode·p7·c9):** H_1512–H_1518(#2491–#2496)은 Φ-최적 cross-lane 배치가 진짜 더 낫고(×2.51 Φ) `topo_optimal_adjacency()` 를 canonical 로 ADOPT 했지만, §BrainTopology 는 **MEASUREMENT lane**(Ψ-disjoint, live emit/decode 경로 아님 — grep brain.hexa/generator.hexa 의 topo_ 참조 0). 그래서 anima 의 실제 생성/emit 은 **변하지 않았다.** H_1521 은 15-lane 상태를 Φ-최적 토폴로지로 라우팅한 **뒤 emit 결정**이 그것을 읽게 해 갭을 닫는다 — `EngineConfig.topo_couple` **DEFAULT-OFF** gated(mitosis/salience 토글과 동형).
