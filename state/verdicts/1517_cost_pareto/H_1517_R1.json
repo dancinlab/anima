@@ -1,0 +1,243 @@
+{
+  "hypothesis": "H_1517_cost_pareto",
+  "rung": "R1_numpy_scipy_mirror_DIRECTIONAL",
+  "question": "does the TRUE anatomical placement lie ON/near the \u03a6-vs-cost PARETO FRONT \u2014 i.e. is the brain near-optimal for COST-CONSTRAINED integration?",
+  "data": {
+    "connectome": {
+      "source": "\u0160koch et al. 2022 Scientific Data 9:486, AAL90, 88 healthy adults, group avg",
+      "doi": "10.1038/s41597-022-01596-9",
+      "osf": "10.17605/OSF.IO/YW5VF",
+      "license": "CC-BY-4.0"
+    },
+    "centroids": {
+      "source": "AAL atlas ROI_MNI_V4.nii (Tzourio-Mazoyer et al. 2002, NeuroImage 15(1):273-289)",
+      "method": "per-ROI mean MNI coordinate of all labeled voxels (MNI 2mm, sform affine)",
+      "file": "AAL90_centroids_MNI.csv (committed, reproducible from atlas NIfTI)"
+    },
+    "atlas": "AAL90 (ROI_MNI_v4)"
+  },
+  "harness": "re-uses H_1512 h1512.py (build_population/apply_topology/phi_core IIT4 min-cut \u03a6/CORE/N=15) byte-for-byte + H_1516 NAMED lane\u2192region map; COST axis = \u03a3 present-edge euclidean centroid distance (MNI mm) over the SAME binarized adjacency the \u03a6 metric sees",
+  "metric": {
+    "phi": "IIT4 min-cut \u03a6 (phi_core over CORE)",
+    "cost": "\u03a3 present-edge euclidean centroid distance (MNI mm)"
+  },
+  "seeds": [
+    5170,
+    5171,
+    5172
+  ],
+  "M_random": 3000,
+  "hillclimb_restarts": 12,
+  "thresholds": {
+    "P1a_DOM_FRAC_MAX": 0.05,
+    "P1b_DIST_MAX": 0.05,
+    "P2_COST_PCTL_MAX": 0.3333333333333333
+  },
+  "named_mapping": [
+    {
+      "lane_idx": 0,
+      "lane": "GlobalWorkspace",
+      "region": "L Precuneus",
+      "roi": 67
+    },
+    {
+      "lane_idx": 1,
+      "lane": "Habituation",
+      "region": "L Postcentral Gyrus",
+      "roi": 57
+    },
+    {
+      "lane_idx": 2,
+      "lane": "PrecisionSurprise",
+      "region": "L Cingulum Ant",
+      "roi": 31
+    },
+    {
+      "lane_idx": 3,
+      "lane": "SelfIdentity",
+      "region": "L Superior Medial Gyrus",
+      "roi": 23
+    },
+    {
+      "lane_idx": 4,
+      "lane": "LearnedPrecision",
+      "region": "L Middle Frontal Gyrus",
+      "roi": 7
+    },
+    {
+      "lane_idx": 5,
+      "lane": "Novelty",
+      "region": "R Hippocampus",
+      "roi": 38
+    },
+    {
+      "lane_idx": 6,
+      "lane": "AttentionalBlink",
+      "region": "R Inferior Parietal Lobule",
+      "roi": 62
+    },
+    {
+      "lane_idx": 7,
+      "lane": "SenseOfAgency",
+      "region": "R Angular Gyrus (TPJ)",
+      "roi": 66
+    },
+    {
+      "lane_idx": 8,
+      "lane": "SubjectiveTime",
+      "region": "R Insula Lobe",
+      "roi": 30
+    },
+    {
+      "lane_idx": 9,
+      "lane": "EmotionRegulation",
+      "region": "R Mid Orbital Gyrus",
+      "roi": 26
+    },
+    {
+      "lane_idx": 10,
+      "lane": "DirectedForgetting",
+      "region": "R Middle Frontal Gyrus",
+      "roi": 8
+    },
+    {
+      "lane_idx": 11,
+      "lane": "BodyOwnership",
+      "region": "L SupraMarginal Gyrus",
+      "roi": 63
+    },
+    {
+      "lane_idx": 12,
+      "lane": "DividedAttention",
+      "region": "L Inferior Parietal Lobule",
+      "roi": 61
+    },
+    {
+      "lane_idx": 13,
+      "lane": "FreeWont",
+      "region": "L Posterior-Medial Frontal",
+      "roi": 19
+    },
+    {
+      "lane_idx": 14,
+      "lane": "MitosisGrowth",
+      "region": "L Caudate Nucleus",
+      "roi": 71
+    }
+  ],
+  "results": {
+    "cost_true": 2976.3315050348697,
+    "phi_true": 0.08665976485890292,
+    "cost_range": [
+      2205.1257939762436,
+      3992.3449169565697
+    ],
+    "cost_mean": 3200.8713449137285,
+    "phi_range": [
+      0.005146792712056462,
+      0.3513341780616545
+    ],
+    "phi_mean": 0.08310420523133925,
+    "opt_phi": 0.3513341780616545,
+    "opt_cost": 3291.7035106170756,
+    "true_on_front": false,
+    "domination_fraction": 0.08841497278684883,
+    "distance_to_front": 0.24698701631116682,
+    "cost_percentile": 0.20042194092827006,
+    "cheap_band_phi_percentile": 0.5592370776456526,
+    "phi_percentile_all": 0.5390850544081723,
+    "n_front_points": 9.333333333333334,
+    "n_candidates": 3002
+  },
+  "bars": {
+    "P1_pareto_efficient": {
+      "passed": false,
+      "P1a_domination": {
+        "passed": false,
+        "dom_frac": 0.08841497278684883,
+        "bar": 0.05
+      },
+      "P1b_distance": {
+        "passed": false,
+        "dist_front": 0.24698701631116682,
+        "bar": 0.05
+      }
+    },
+    "P2_cost_cheap": {
+      "passed": true,
+      "cost_percentile": 0.20042194092827006,
+      "bar": 0.3333333333333333
+    },
+    "P3_cheap_band_phi": {
+      "non_gating": true,
+      "cheap_band_phi_percentile": 0.5592370776456526
+    }
+  },
+  "HEADLINE": "TRUE anatomical placement: cost=2976.3mm (cost-percentile 20.0% \u2014 CHEAP/bottom-tercile), \u03a6=0.0867; dominated by 8.84% of candidates, distance-to-front=0.2470 \u2192 OFF the front (dominated even cost-constrained)",
+  "verdict": "\ud83d\udfe0 CHEAP-but-DOMINATED (DIRECTIONAL R1) \u2014 the TRUE placement is in the cheap-wiring tercile (P2) but a cheaper-or-equal-cost placement achieves strictly higher \u03a6 (8.8% of candidates dominate it): dominated even cost-constrained \u2014 honest non-optimal (the brain pays for cheap wire but does NOT sit on the front here)",
+  "per_seed": [
+    {
+      "seed": 5170,
+      "cost_true": 2976.3315050348697,
+      "phi_true": 0.10332108216992442,
+      "cost_min": 2306.4289535755197,
+      "cost_max": 3968.371931016174,
+      "cost_mean": 3200.2590278584366,
+      "phi_min": 0.005082497370274552,
+      "phi_max": 0.3619858557950746,
+      "phi_mean": 0.08401607014001918,
+      "opt_phi": 0.3619858557950746,
+      "opt_cost": 3593.087341038234,
+      "dom_frac": 0.054315228257247584,
+      "true_on_front": false,
+      "dist_front": 0.16725837772008917,
+      "cost_pctl": 0.2111925383077948,
+      "cheap_phi_pctl": 0.7429022082018928,
+      "phi_pctl_all": 0.7385076615589606,
+      "n_front": 8,
+      "n_candidates": 3002
+    },
+    {
+      "seed": 5171,
+      "cost_true": 2976.3315050348697,
+      "phi_true": 0.09891355218003284,
+      "cost_min": 2190.5317529925533,
+      "cost_max": 4006.309617449528,
+      "cost_mean": 3205.694618469634,
+      "phi_min": 0.006252987442517011,
+      "phi_max": 0.3469077117977708,
+      "phi_mean": 0.0874325358290904,
+      "opt_phi": 0.3469077117977708,
+      "opt_cost": 3196.0323967977038,
+      "dom_frac": 0.05931356214595135,
+      "true_on_front": false,
+      "dist_front": 0.25656767105279876,
+      "cost_pctl": 0.18787475016655564,
+      "cheap_phi_pctl": 0.6843971631205674,
+      "phi_pctl_all": 0.6512325116588941,
+      "n_front": 11,
+      "n_candidates": 3002
+    },
+    {
+      "seed": 5172,
+      "cost_true": 2976.3315050348697,
+      "phi_true": 0.05774466022675151,
+      "cost_min": 2118.4166753606582,
+      "cost_max": 4002.3532024040073,
+      "cost_mean": 3196.660388413114,
+      "phi_min": 0.004104893323377823,
+      "phi_max": 0.3451089665921181,
+      "phi_mean": 0.07786400972490816,
+      "opt_phi": 0.3451089665921181,
+      "opt_cost": 3085.990794015289,
+      "dom_frac": 0.15161612795734755,
+      "true_on_front": false,
+      "dist_front": 0.3171350001606125,
+      "cost_pctl": 0.2021985343104597,
+      "cheap_phi_pctl": 0.2504118616144975,
+      "phi_pctl_all": 0.22751499000666223,
+      "n_front": 9,
+      "n_candidates": 3002
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+H_1517 COST-vs-Φ PARETO FRONT — FROZEN BARS (pre-registered BEFORE reading results, c9)
+================================================================================
+Pre-registered: 2026-06-21, BEFORE running h1517_pareto.py.
+Rung: R1 numpy/scipy mirror (DIRECTIONAL — hard-gate-1; engine-native R2 = follow-on ING).
+
+THE QUESTION
+  Prior lanes found the TRUE anatomical placement is Φ-SUBOPTIMAL for UNCONSTRAINED
+  integration (H_1515 #2493 ~2.5× higher-Φ placements exist; H_1516 #2494 true placement
+  only at ~37th percentile, 65% below the Φ-optimum). The honest interpretation (Bullmore
+  & Sporns 2012 "The economy of brain network organization"): the brain optimizes
+  COST-CONSTRAINED integration, not pure Φ — it pays for short/cheap wiring.
+  H_1517 makes that LOAD-BEARING: compute BOTH axes for each placement —
+    integration Φ (IIT4 min-cut, exactly as H_1512/1515/1516), AND
+    total wiring COST = sum over PRESENT edges of euclidean distance between the two
+                        AAL region centroids (MNI mm) of the lanes they connect.
+  Then: does the TRUE anatomical placement lie ON (or very near) the Φ-vs-cost PARETO FRONT?
+    YES → the brain IS near-optimal for the COST-CONSTRAINED objective (the deep answer to
+          the user's "mysteriously optimal" intuition — RIGHT once the cost axis is added).
+    NO  → even cost-constrained, the placement is dominated (another honest result).
+
+CANDIDATE SET (per seed)
+  - the TRUE anatomical placement (H_1516 lane→AAL-region mapping, identity permutation)
+  - M_RANDOM = 3000 random placements (permute lane→node over the SAME 15 named AAL nodes,
+    so cost & Φ are measured on the identical region set — isolates the ASSIGNMENT)
+  - the Φ-optimum (hill-climb, 12 restarts) — the H_1515/1516 unconstrained Φ-max anchor
+  Each placement → a (cost, Φ) point. Cost(π) = Σ_{(i,j)∈edges(π)} ||centroid_i − centroid_j||₂.
+  Edges present = binarize_like_brain(real AAL subnetwork) at its own positive median (the
+  H_1512/1513/1516 binary regime) — SAME adjacency the Φ metric sees.
+
+PARETO FRONT
+  Non-dominated set: placement p is on the front iff NO other candidate has BOTH
+  lower cost AND higher Φ (strictly). "dominated_by(p)" = # candidates with
+  cost ≤ cost(p) AND Φ ≥ Φ(p) AND (strictly better on at least one axis).
+
+FROZEN BARS (declared before reading — NEVER moved, c9)
+  P1 PARETO-EFFICIENT (headline) — the TRUE placement is ON the front, OR within ε of it.
+     ε defined PRECISELY two ways, BOTH must hold to call it "on/near the front":
+       (P1a) DOMINATION-FRACTION: the fraction of candidates that strictly dominate the
+             true placement ≤ 0.05 (≤5% of candidates beat it on BOTH cost AND Φ).
+       (P1b) NORMALIZED DISTANCE-TO-FRONT ≤ 0.05: min over front points f of
+             sqrt( ((cost_true−cost_f)/cost_range)² + ((Φ_f−Φ_true)/phi_range)² ),
+             counting only front points that dominate-or-tie the true point's axes
+             (distance is 0 if the true point is itself on the front).
+     P1 PASS iff P1a AND P1b.
+  P2 COST-CHEAP — the TRUE placement's wiring cost is in the BOTTOM TERCILE of the candidate
+     cost distribution (cost_percentile ≤ 0.3333), confirming it trades Φ for cheap wiring.
+  P3 (REPORT, non-gating) — among placements with cost ≤ true-cost (the "cheap band"), is the
+     TRUE placement near the Φ-MAX of that band? Report cheap_band_phi_percentile honestly
+     whichever way it falls (cost-constrained optimality within the affordable budget).
+
+VERDICT MAP
+  🟢 PARETO-EFFICIENT (DIRECTIONAL R1) iff P1 ∧ P2 — the brain's true anatomical placement is
+     on/near the Φ-vs-cost Pareto front AND is cheap: near-optimal for COST-CONSTRAINED
+     integration (the deep YES to the user's intuition).
+  🟠 CHEAP-but-DOMINATED iff P2 ∧ ¬P1 — the placement is cheap but a cheaper-or-equal placement
+     achieves strictly higher Φ: dominated even cost-constrained (honest non-optimal).
+  🟠 EFFICIENT-but-NOT-CHEAP iff P1 ∧ ¬P2 — on the front but not in the cheap tercile.
+  🧱 DOMINATED iff ¬P1 ∧ ¬P2 — neither on the front nor cheap (honest negative, c9).
+
+DISCIPLINE: frozen-first (bars above are final); numpy/scipy = DIRECTIONAL; honest EITHER way;
+REAL labeled data (Škoch SC connectome CC-BY-4.0 + AAL atlas centroids Tzourio-Mazoyer 2002);
+report the Pareto/cost-constrained finding with numbers prominently.
+
+SEEDS = [5170, 5171, 5172]   M_RANDOM = 3000   HILLCLIMB_RESTARTS = 12
+P1a_DOM_FRAC_MAX = 0.05   P1b_DIST_MAX = 0.05   P2_COST_PCTL_MAX = 0.3333
+
+--------------------------------------------------------------------------------
+MEASUREMENT-FIX NOTE (frozen-first, a_break_the_wall taxonomy-(a) — BARS UNCHANGED):
+  First candidate construction permuted lane→node over the SAME 15 named AAL nodes. That
+  is COST-DEGENERATE: a permutation reuses the IDENTICAL edge set with IDENTICAL centroid
+  distances, so wiring cost was CONSTANT (2976.3 mm) across all 3001 candidates while only Φ
+  varied — the cost axis collapses and the Pareto question is untestable (P1a passes only
+  because nothing has strictly-lower cost). FIX (does NOT move any bar): the candidate set
+  must span BOTH axes, so random placements draw 15 DISTINCT regions from ALL 90 AAL nodes
+  (rng.choice(90,15,replace=False)) — exactly the H_1516 random-baseline search space — and
+  the hill-climb Φ-optimum also searches over all-90 single-region swaps. Now cost AND Φ both
+  vary across candidates; the TRUE placement is one specific (cost,Φ) point in that cloud. All
+  three bars (P1a/P1b/P2) and ε definitions are IDENTICAL to above — only the candidate cloud
+  is corrected to be non-degenerate. The TRUE placement's own cost & Φ are unchanged.

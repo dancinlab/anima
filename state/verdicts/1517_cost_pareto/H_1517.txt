@@ -1,0 +1,37 @@
+H_1517 COST-vs-Φ PARETO FRONT — R1 numpy/scipy DIRECTIONAL — measured verdict (verbatim)
+================================================================================
+VERDICT: 🟠 CHEAP-but-DOMINATED (DIRECTIONAL R1) — the TRUE placement is in the cheap-wiring tercile (P2) but a cheaper-or-equal-cost placement achieves strictly higher Φ (8.8% of candidates dominate it): dominated even cost-constrained — honest non-optimal (the brain pays for cheap wire but does NOT sit on the front here)
+
+HEADLINE: TRUE anatomical placement: cost=2976.3mm (cost-percentile 20.0% — CHEAP/bottom-tercile), Φ=0.0867; dominated by 8.84% of candidates, distance-to-front=0.2470 → OFF the front (dominated even cost-constrained)
+
+RESULTS (mean over 3 seeds [5170,5171,5172]):
+  cost_true        = 2976.33 mm   (cost-percentile 20.0%  range 2205.1..3992.3)
+  phi_true         = 0.0867        (phi-percentile 53.9%  range 0.0051..0.3513)
+  opt_phi          = 0.3513  (hill-climb Φ-max, cost 3291.7 mm)
+  true_on_front    = False
+  domination_frac  = 8.84% of candidates strictly dominate true (lower-or-= cost AND higher-or-= Φ)
+  distance_to_front= 0.2470 (normalized)
+  cheap_band_phi_pctl = 55.9% (Φ-rank of true WITHIN the cost≤true-cost band — P3 report)
+  n_front_points   = 9.3  n_candidates 3002
+
+FROZEN BARS (pre-registered, H_1517_FREEZE.txt — NOT moved):
+  P1 PARETO-EFFICIENT : FAIL
+    P1a domination_frac 0.0884 <= 0.05  -> FAIL
+    P1b distance_to_front 0.2470 <= 0.05  -> FAIL
+  P2 COST-CHEAP       : cost_percentile 0.2004 <= 0.3333  -> PASS
+  P3 (report)         : cheap-band Φ-percentile 0.5592
+
+PER-SEED:
+  seed5170: cost%=21.1 phi_true=0.1033 dom%= 5.43 dist=0.1673 on_front=False opt_phi=0.3620 cheap_phi%=74.3
+  seed5171: cost%=18.8 phi_true=0.0989 dom%= 5.93 dist=0.2566 on_front=False opt_phi=0.3469 cheap_phi%=68.4
+  seed5172: cost%=20.2 phi_true=0.0577 dom%=15.16 dist=0.3171 on_front=False opt_phi=0.3451 cheap_phi%=25.0
+
+INTERPRETATION (c9, honest):
+  The cost axis PARTLY vindicates the user's 'mysteriously optimal' intuition: the TRUE
+  anatomical placement IS cheap (wiring cost in the bottom tercile, 20th percentile — P2
+  PASS), confirming the brain trades integration Φ for short/cheap wiring (Bullmore &
+  Sporns 2012 economy). BUT it does NOT fully rescue it to Pareto-optimality: ~8.8% of
+  candidate placements achieve cheaper-or-equal cost AND strictly higher Φ (P1 FAIL,
+  distance-to-front 0.247). So in this 15-lane projection the true placement is
+  CHEAP-but-DOMINATED — economical, but not on the cost-constrained front. Honest
+  non-optimal either way; NO tune-to-green. DIRECTIONAL (numpy/scipy, hard-gate-1).
