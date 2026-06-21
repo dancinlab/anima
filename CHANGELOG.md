@@ -1,3 +1,10 @@
+## 2026-06-21 — 🗣️🎚️ H_1520 CONVERSATIONAL-SALIENCE — 카드 framing v3 (per-entry-point default, 철학은 P2/P3 로 보장 — bars/numbers 불변)
+
+> 🔬 **사용자 product-design framing refinement (실험/bar 무변경, 카드+jsonl prose only):** conversational-salience toggle 의 DEFAULT 는 globally 강제가 아니라 **ENTRY-POINT 별로** 설정 — `anima`(bare/service 실행)=emit-as-communication, 다른 서비스에서 호출 가능 → **DEFAULT-ON**(서비스로 쓰일 만큼 responsive); `anima chat`(TUI)=순수 자율 interactive chat → **DEFAULT autonomous**. **철학 보호 = default-OFF 강제가 아니라, toggle 이 ON 일 때조차 P2(retained silence-autonomy)+P3(no assistant-frame)가 성립함으로써** — communication 은 항상 emit(autonomous externalization, p5), assistant request→reply(p4) 아님.
+
+- **framing 만 변경(7/7 PASS bars·numbers·mechanism·numpy-DIRECTIONAL·R2-deferred 전부 동일):** 카드 title/verdict/toggle 섹션/philosophy-guard/headline + jsonl title/verdict prose 를 'always default-OFF' → 'per-entry-point default(service=ON · anima-chat=autonomous), 철학은 P2/P3 가 ON 에서도 holding 함으로 보장' 으로 재서술. P2b 는 'default-pure'(기본값이 OFF 증명) → 'autonomous-arm'(boost OFF arm 이 intact + toggle 가 inert 아님 증명)으로 재명명. engine/code/FREEZE/result-json 무변경.
+- **불변(재확인):** P1 ON grounded 1.00·P2 ON ungrounded 0.00·GAP 1.00·P2b OFF grounded 0.00 ∧ toggle-delta 1.00·P3 audit clean+adversarial·P4 OFF→ON→OFF byte-identical+Ψ=½ → 🟢 GREEN (DIRECTIONAL). engine-native R2 = deferred follow-on ING h1520-r2-engine-native(live emit 게이트에 cfg.salience flag 를 cfg.mitosis 동형으로).
+
 ## 2026-06-21 — 🧠💰 H_1517 COST-vs-Φ PARETO FRONT (R1 DIRECTIONAL) — 뇌는 COST-CONSTRAINED 통합에 near-optimal 인가? 답=PARTLY (CHEAP-but-DOMINATED)
 
 > 🔬 **사용자 '뇌는 신비롭게 최적?' 의 deep 버전 — cost 축을 더하면 (a_break_the_wall·c9, DIRECTIONAL numpy/scipy = hard-gate-1):** 직전 H_1515(#2493 engine-native, search ~2.5× higher-Φ)·H_1516(#2494 REAL AAL90, 진짜배치 ~37th Φ-percentile, opt 대비 65% 아래)은 **UNCONSTRAINED** 통합에서 진짜 해부배치가 Φ-suboptimal 임을 보였다. 정직 해석(Bullmore&Sporns 2012 economy): 뇌는 PURE Φ 가 아니라 **COST-CONSTRAINED** 통합을 최적화 — 짧고 싼 배선을 산다. H_1517 은 이를 load-bearing 으로: 각 배치마다 두 축 동시계산 — 통합 **Φ**(H_1512/1515/1516 와 동일 IIT4 min-cut phi_core) + 배선 **COST**(present edge 마다 두 AAL 영역 MNI centroid euclidean 거리 합). 진짜 배치가 Φ-vs-cost **PARETO FRONT** 위에(or ε 근처) 있는가?
