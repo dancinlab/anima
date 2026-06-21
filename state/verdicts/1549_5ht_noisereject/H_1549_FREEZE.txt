@@ -1,0 +1,82 @@
+H_1549 — SEROTONIN × CLS: NOISE-REJECTION gate (slow-store PRECISION under unconfirmed noise)
+FROZEN FALSIFIER (pre-registered BEFORE running — frozen-first, c9, NO tune-to-green)
+=============================================================================================
+
+CAPABILITY RE-CENTER (a_break_the_wall — RIGHT capability / RIGHT measurement, NOT a bar-move):
+H_1548 (5-HT commit-GATE) landed 🟠. Its FROZEN bar was about slow-store CORRECTNESS under
+CONTRADICTION, and that bar was FALSIFIED honestly: the contradiction was recency-recoverable
+(the correction B' is the LAST write), so commit-all already lands the right binding and the
+gate ties it (gate−all = +0.0000, 0/3). CORRECTNESS was the WRONG target — recency already
+handles it.
+
+BUT inside H_1548 a DIFFERENT capability genuinely PASSED, ablation-decisive: the gate
+withholds 100% of never-reconfirmed singleton NOISE from permanent slow commit (no_fab 1.0 vs
+control 0.0), and SHUFFLE proved it reads true per-key confirmation (collapse +0.7188). That
+NOISE-REJECTION is a REAL capability the bare two-store CLS lacks.
+
+H_1549 re-centers the PRE-REGISTERED claim on the capability that genuinely exists, measured
+frozen-first with its OWN NEW bars: 5-HT gates out UNCONFIRMED NOISE bindings that commit-all
+wrongly commits to the permanent slow store. This is a_break_the_wall (right capability / right
+measurement), NOT moving H_1548's bars. NO tune-to-green: if a trivial recency rule
+(commit-recent) ALSO rejects noise, recency suffices again → honest 🟠, report it.
+
+Biological 5-HT (Dayan-Huys 2009 — serotonin, inhibition & negative valence; Cools 2008 —
+serotonin & behavioral inhibition / aversive prediction) = withholding an action / commitment
+pending confirmation. Mapped onto CLS: the consolidation sweep must NOT make a permanent slow
+commitment for a binding that was seen ONCE and never reconfirmed (a transient / noise binding).
+
+THE MEASUREMENT (NEW, distinct from H_1548's correctness axis):
+slow-store PRECISION = of the bindings the sweep COMMITTED to the permanent slow store, what
+fraction are REAL (a CONFIRMED or CONTRADICTED key, which has a ground truth) vs NOISE (a
+singleton key with NO truth). A store that commits noise bindings is permanently polluted;
+PRECISION measures that pollution directly (committing noise LOWERS precision). This is NOT
+correctness (does the value match) — it is INTEGRITY (should this binding be in the permanent
+store AT ALL). recall-recovery cannot fix a polluted permanent store.
+
+  precision = (# committed keys that are REAL) / (# committed keys total)
+  REAL key  = CONFIRMED or CONTRADICTED (has a ground-truth binding)
+  NOISE key = singleton, written once, never reconfirmed, NO truth
+
+DISTINCT vs H_1548 CORRECTNESS: H_1548 asked "is the committed VALUE right" (recency fixes it).
+H_1549 asks "should this binding be committed AT ALL" — a singleton noise key has no right
+value; the only correct action is to NOT commit it. Recency CANNOT decide this (a noise key has
+a last_val too), confirmation-count CAN.
+
+CONTRADICTION/NOISE stream (REUSES H_1532 MemStore / key_vec / FNV-1a / suppress_retrieval
+encode-mode / LRU byte-exact; SAME generator as H_1548 H_1548_FREEZE):
+  CONFIRMED keys (n=16)    : A->V reconfirmed CONFIRM_K=2× (REAL, truth=V)
+  CONTRADICTED keys (n=16) : A->B ×2 then A->B' ×2 (REAL, truth=B')
+  NOISE keys (n=16)        : A->X once, never reconfirmed (NOT real, NO truth)
+
+ARMS:
+  HT5-GATE      : commit only RECONFIRMED (count>=CONFIRM_K) last value -> noise WITHHELD
+  COMMIT-ALL    : H_1532 default sweep (commit winner/last cell) -> commits noise too
+  COMMIT-RECENT : commit most-recent value, no confirmation (recency rule) -> commits noise too
+  ABL           : gate threshold->0 (CONFIRM_K effectively 0) == commit-all
+  SHUFFLE       : confirmation ledger permuted across keys -> gate fires on WRONG evidence
+
+FROZEN PARAMS (immutable post-freeze, VERBATIM H_1548/H_1532/H_1284):
+  N_CONFIRMED=16 · N_CONTRADICTED=16 · N_NOISE=16 · CONFIRM_K=2
+  LR*=0.20 · TH*=0.30 (engine-native) · ABSTAIN=0.45
+  MAX_CELLS=max(8, 1.5*total) · MARGIN=0.10 · SCORE_SEEDS=[11,22,33]
+  precision metric defined above. p7 (no loss/perplexity/LLM-judge); $0 CPU.
+
+FROZEN BARS (GREEN iff A AND B AND C AND D AND E):
+  A PRESENCE : gate_precision - commit_all_precision >= +0.10 on >=2/3 seeds AND in mean
+  B DISTINCT : BOTH commit_all AND commit_recent are polluted by noise — each precision
+               < gate_precision - 0.10 (gate beats BOTH controls; recency does NOT suffice)
+  C ABL      : abl reverts to commit-all ( |abl_precision - commit_all_precision| < 0.10 )
+               AND gate_precision - abl_precision >= 0.10
+  D SHUFFLE  : permuted confirmation collapses ( gate_precision - shuffle_precision >= 0.10 )
+               -> proves the lift reads TRUE per-key confirmation, not a gate-rate side effect
+  E NO-FAB   : gate abstains on never-reconfirmed noise at recall ( gate_no_fab >= 0.90 )
+
+VERDICT MAPPING:
+  A AND B AND C AND D AND E                     -> GREEN  (5-HT adds noise-rejection CAPABILITY)
+  A AND D AND E but not B (a control rejects)   -> AMBER  (recency suffices again — report it)
+  not A                                         -> WALL_HOLDS
+
+c9: RED/AMBER reported honestly; bars NOT moved after seeing results; NO tune-to-green.
+If commit-recent already rejects noise (recency suffices again) -> honest AMBER, do NOT force
+green. The whole point of this re-center is that confirmation-COUNT (not recency) is what
+decides commit-AT-ALL; if recency alone rejects noise the claim is FALSIFIED and we report it.

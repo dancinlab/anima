@@ -1,0 +1,69 @@
+{
+  "capability": "slow-store PRECISION under noise: commit only reconfirmed bindings, withhold never-reconfirmed singleton noise from permanent slow commit",
+  "recenter_of": "H_1548 (correctness FALSIFIED, noise-rejection genuinely passed) \u2014 fresh bars on the precision axis, NOT tune-to-green",
+  "LR_star": 0.2,
+  "TH_star": 0.3,
+  "CONFIRM_K": 2,
+  "N_CONFIRMED": 16,
+  "N_CONTRADICTED": 16,
+  "N_NOISE": 16,
+  "MAX_CELLS": 72,
+  "MARGIN": 0.1,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "per_seed": [
+    {
+      "seed": 11,
+      "gate_precision": 1.0,
+      "gate_no_fab": 1.0,
+      "commit_all_precision": 0.6667,
+      "commit_recent_precision": 0.6667,
+      "abl_precision": 0.6667,
+      "shuffle_precision": 0.75,
+      "gate_minus_all": 0.3333,
+      "gate_minus_recent": 0.3333
+    },
+    {
+      "seed": 22,
+      "gate_precision": 1.0,
+      "gate_no_fab": 1.0,
+      "commit_all_precision": 0.6667,
+      "commit_recent_precision": 0.6667,
+      "abl_precision": 0.6667,
+      "shuffle_precision": 0.5938,
+      "gate_minus_all": 0.3333,
+      "gate_minus_recent": 0.3333
+    },
+    {
+      "seed": 33,
+      "gate_precision": 1.0,
+      "gate_no_fab": 1.0,
+      "commit_all_precision": 0.6667,
+      "commit_recent_precision": 0.6667,
+      "abl_precision": 0.6667,
+      "shuffle_precision": 0.5938,
+      "gate_minus_all": 0.3333,
+      "gate_minus_recent": 0.3333
+    }
+  ],
+  "gate_precision_mean": 1.0,
+  "commit_all_precision_mean": 0.6667,
+  "commit_recent_precision_mean": 0.6667,
+  "abl_precision_mean": 0.6667,
+  "shuffle_precision_mean": 0.6459,
+  "gate_no_fab_mean": 1.0,
+  "gate_minus_all_mean": 0.3333,
+  "gate_minus_recent_mean": 0.3333,
+  "gate_minus_abl_mean": 0.3333,
+  "gate_minus_shuffle_mean": 0.3541,
+  "n_wins_over_all+MARGIN": 3,
+  "A_presence": true,
+  "B_distinct": true,
+  "C_abl_reverts": true,
+  "D_shuffle_collapses": true,
+  "E_no_fab": true,
+  "verdict": "GREEN"
+}
