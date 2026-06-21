@@ -1,0 +1,30 @@
+==============================================================================
+H_1510 QUORUM-KURAMOTO — decentralized adjacency-weighted phase coupling (R1 mirror)
+external proposal — Amoeba Protocol (adjacency-weighted Kuramoto / quorum sensing)
+==============================================================================
+FROZEN: A R_in>=0.7 & R_cross<=0.5 · B decentral-ablated>=0.7 & star-no-hub<=0.5 · C R_in_quorum>=R_in_star · D shuffle-gap<=0.2
+seeds=[7, 8, 9]  steps=64  3 clusters x 3 modules  p7 order-parameter  $0 CPU deterministic
+------------------------------------------------------------------------------
+[seed 7]
+  A semantic-lock : PLV_in=1.0000 (>= 0.7) PLV_cross=0.1189 (<= 0.5)  -> PASS
+  B no-hub        : R_in_decentral_ablated=0.9980 (>= 0.7) R_star_no_hub=0.3893 (<= 0.5)  -> PASS
+  C integration   : R_in_quorum=0.9990 >= R_in_star_baseline=0.9908  -> PASS
+  D earned shuffle: PLV_in_shuf=0.9994 PLV_cross_shuf=0.9994 gap=0.0000 (<= 0.2)  -> PASS
+[seed 8]
+  A semantic-lock : PLV_in=1.0000 (>= 0.7) PLV_cross=0.1189 (<= 0.5)  -> PASS
+  B no-hub        : R_in_decentral_ablated=0.9991 (>= 0.7) R_star_no_hub=0.4777 (<= 0.5)  -> PASS
+  C integration   : R_in_quorum=0.9990 >= R_in_star_baseline=0.9908  -> PASS
+  D earned shuffle: PLV_in_shuf=0.8224 PLV_cross_shuf=0.9600 gap=0.1376 (<= 0.2)  -> PASS
+[seed 9]
+  A semantic-lock : PLV_in=1.0000 (>= 0.7) PLV_cross=0.1189 (<= 0.5)  -> PASS
+  B no-hub        : R_in_decentral_ablated=0.9969 (>= 0.7) R_star_no_hub=0.3426 (<= 0.5)  -> PASS
+  C integration   : R_in_quorum=0.9990 >= R_in_star_baseline=0.9908  -> PASS
+  D earned shuffle: PLV_in_shuf=0.9996 PLV_cross_shuf=0.9987 gap=0.0009 (<= 0.2)  -> PASS
+------------------------------------------------------------------------------
+A semantic-lock  : PASS PLV_in [1.0, 1.0, 1.0] / PLV_cross [0.119, 0.119, 0.119]
+B no-central-hub : PASS decentral-ablated [0.998, 0.999, 0.997] vs star-no-hub [0.389, 0.478, 0.343]
+C integration    : PASS quorum [0.999, 0.999, 0.999] >= star [0.991, 0.991, 0.991]
+D earned shuffle : PASS gap [0.0, 0.138, 0.001] (PLV_in [0.999, 0.822, 1.0] / PLV_cross [0.999, 0.96, 0.999])
+------------------------------------------------------------------------------
+VERDICT: GREEN (A & B & C & D) — DIRECTIONAL (numpy mirror, engine-transfer UNVERIFIED)
+==============================================================================
