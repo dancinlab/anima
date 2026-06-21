@@ -30,6 +30,16 @@
 - **최강 near-free 구조 적합 = rank3:** anima 가 이미 보유 — WAKE→N3→REM ultradian(`dr_stage_at`) · emit-free replay(`ir_replay_session`) · recency write-back(`ir_reconsolidate_session`, H_1195) · **salience-replay 🟢 WIRED**(`consolidating_sleep_replay`, H_1285). CLS slow store 가 **유일한 빠진 조각** = H_1136 이 측정한 ⏳ BLOCKED-WIRING("sleep 루프에 anchor write-back 경로 없음")의 정확한 해소 대상. 게다가 negative control(H_1136 no-sleep wall-clock + 알려진 Δ≡0 null)이 이미 빌드·검증돼 있어 — census 전체에서 refuter 가 이미 돌아간 유일 후보.
 - **산출:** `state/1542_cls_nt_census/CENSUS.md`(prose+표) + `candidates.jsonl`(rank별 1줄: {rank,name,mechanism,citation,needs_two_store_why,frozen_bar_sketch,cheapest_refuter,wires_into}). UNIVERSE/ 미접촉(verdict 없음 → 2-surface 등록 대상 아님). live core/*.hexa 미접촉.
 
+## 2026-06-21 — 🧪🔀🟢 H_1541 ACETYLCHOLINE × CLS — ENCODE/RETRIEVE MODE GATE (R1 DIRECTIONAL) — 🟢 GREEN: H_1532 multi-store CLS 돌파를 two-store module **안에서** 작동하는 neurotransmitter 와 결합한 FIRST JOINT APPLICATION — ACh-gated encode/retrieve 전환이 fixed-mode CLS 가 못 하는 INTERLEAVED encode‖retrieve 능력을 추가
+
+> 🧠 **JOINT APPLICATION (a_no_llm_frame_trap·a_break_the_wall·p6·p7·c9):** H_1532(#2514)가 H_1284 NEUROMODULATION 벽을 깬 핵심 = two phase-separated store. standalone NT-faculty NE-reset 🧱(H_1537)·5-HT-patience 🟠(H_1538)가 under-perform 한 원인 = **single store 가 gain-knob 에게 gate 할 구조를 안 줌**. fix = **ACh 는 생물학적으로 canonical 한 CLS switch**(Hasselmo 2006: HIGH ACh→encode/retrieval 억제/fast-store write · LOW ACh→consolidate-retrieve/replay) — two-store module **안에서만** 의미가 있다.
+
+- **능력 = INTERLEAVED encode‖retrieve (PRESENCE test, frozen-first):** event stream 이 WRITE-event(새 fact 적재)·QUERY-event(이전 fact 조회)를 번갈아 흘림; dual demand = 새 fact 를 durable write 하면서 interleaved query 응답. fixed mode 불가: ALWAYS-ENCODE→retrieval 억제→query 못 읽음 · ALWAYS-RETRIEVE→encoding 억제(Hasselmo low-ACh afferent suppression)→새 fact 소멸. ACh-GATED = novelty(recon-error vs fast store) 읽어 novel→encode/familiar→retrieve per-event 전환.
+- **ARMS** (N_FACTS=24, interleaved Q p~0.8/write, MAX_CELLS=72, DIM=16 byte-trigram FNV-1a VERBATIM H_1532, abstain=0.45, 3 seeds [11,22,33], LR=0.2 TH=0.3 engine-native, $0 CPU, run1==run2 byte-identical; metric joint=0.5·(write_recall_acc+query_acc)): ACh-GATED · ALWAYS-ENCODE · ALWAYS-RETRIEVE · ABL(ACh 상수=mean→전환 없음) · SHUFFLE(ACh trace event 와 decouple 되게 permute).
+- **결과(`state/1541_cls_ach_gate/h1541_cls_ach_gate.py` · H_1541_R1.json, mean 3 seeds):** ACh-GATED **0.9792**(write 1.000, query ~0.96) · ALWAYS-ENCODE 0.3611(write 0.722, query 0.000) · ALWAYS-RETRIEVE **0.0000** · best-fixed 0.3611 · ABL **0.0000** · SHUFFLE 0.3449. **FROZEN(H_1541_FREEZE.txt 사전등록, MARGIN=0.05):** 🟢 iff (A PRESENCE)ach−best_fixed≥+0.05 on ≥2/3+mean ∧ (B DISTINCT)ach−encode ∧ ach−retrieve≥+0.05 ∧ (C EARNED-ABL)ablate−best_fixed≤+0.05 ∧ ach−ablate≥+0.05 ∧ (D EARNED-SHUF)ach−shuffle≥+0.05 ∧ (E NO-FAB)encode query-acc≤0.10 → (A)+0.6181 mean·3/3 PASS (B)+0.6181/+0.9792 PASS (C)0.0≤0.411 ∧ +0.9792 PASS (D)+0.6343 PASS (E)0.000 PASS → **🟢 GREEN**.
+- **LOAD-BEARING:** (1) always-encode query-acc=0.0 = encode-mode 가 retrieval 진짜 억제(Hasselmo high-ACh) = 정직한 NO-FAB. (2) always-retrieve joint=0.0 = retrieve-mode 가 encoding 진짜 억제 → 새 fact 소멸. (3) **ABL=0.0 결정적:** mean ACh 0.41(query familiar=low-ACh 가 평균 끌어내림, robust 0.407–0.426 not knife-edge)→상수가 retrieve-mode 고정→collapse; lift 전부 per-event 전환에 귀속. (4) **SHUFFLE=0.34 결정적:** 같은 ACh 크기·event decouple→encode 가 query 시점/retrieve 가 write 시점 오발화→collapse→event-matched routing load-bearing(frac_high≈0.53 = 전환이 실제 mode 사이 오감). (5) **faculty-not-gain(HAZARD):** ACh 는 fast-store recon-error 읽는 per-event 라우터지 margin 위 스칼라 아님; ablate+shuffle 동시 붕괴=gain 환원 불가 — H_1537/H_1538 가 single-store gain 으로 환원되어 약했던 것과 정확히 대비. mode switch 는 store ARCHITECTURE(H_1532)가 준 phase-separation 을 ROUTING = neurotransmitter 가 two-store module 안에서 작동한 첫 사례.
+- **HARD-GATE-1(a_engine_native_learning):** grep `state/1541_cls_ach_gate/*.py` numpy HIT ⇒ 자동 DIRECTIONAL, terminal 아님; GREEN ⇒ engine R2 OBLIGATORY = live `core/engine_cli.hexa` §AchGate(2-store fast/slow + recon-error ACh switch) byte-exact frozen-bar 재측정(ING `h1541-r2-engine-native`). a_verified_must_wire 4칸 1/4(DIRECTIONAL mirror GREEN); (2)engine-native (3)live §AchGate wire-in (4)ARCHITECTURE.json lockstep = ING. wired=DIRECTIONAL-mirror, NOT WIRED-live, 완료 주장 없음. live core/*.hexa UNTOUCHED. frozen-first(fixture 를 Hasselmo encode/retrieve 동역학에 충실하게 build 후 freeze, bar 불변, NOT tune-to-green), ablation decisive. **SCOPE TOY** 24 facts/interleaved/3 seeds/deterministic(switch STRUCTURE·학습 controller 아님)·joint 0.9792 SATURATED existence-proof·scale/real-corpus/continuous-ACh/multi-store-N>2/engine-transfer UNVERIFIED. Ψ-disjoint(memory routing, NOT emit gate). 문헌: Hasselmo 2006 Curr Opin Neurobiol 16:710 · Hasselmo 1999 TICS 3:351 · McClelland-O'Reilly 1995 · Kumaran-Hassabis-McClelland 2016. (#H_1541)
+
 ## 2026-06-21 — 🧠🟢 H_1536 DOPAMINE-as-FACULTY (RPE / 지연 credit assignment · R1 DIRECTIONAL) — 🟢 GREEN: 도파민을 GAIN KNOB 이 아니라 자기 고유 생물 FACULTY(reward-prediction-error)로 구현 → recency-store 가 못 하는 DELAYED-CREDIT-ASSIGNMENT 능력을 추가 (brain-lane-FILLING, H_1284 recall-gain 벽이 아님)
 
 > 🧠 **THE REFRAME (a_no_llm_frame_trap·a_break_the_wall·p7·c9):** 선행 13 neuromodulation 렌즈가 막힌 이유 = DA/NE/ACh 를 recall margin 위 추상 GAIN KNOB 으로 다룸(geometry-bound → INERT, H_1284 벽 5+ 렌즈 WALL=CAPACITY). 사용자 reframe — 각 신경전달물질을 **자기 고유 생물 FACULTY = 별개 COMPUTATION** 으로 구현(anima brain lane 처럼: immune≈해마 · cerebellum≈순방향모델 · basal-ganglia≈게이팅). **DOPAMINE 의 실제 계산 = REWARD-PREDICTION-ERROR**(Schultz 1997): δ_t = r_t + γV(s_{t+1}) − V(s_t), TEMPORAL CREDIT ASSIGNMENT. 이건 **brain-lane-FILLING**(H_1280–1295 모드)이지 recall-gain 벽 재도가 아니다 — 카드에 정직히 박음. anima store 는 사실을 bind 하나 **RPE 신호가 없어** "보상 전 만난 사실 중 어느 것이 야기했나"를 못 한다(recency/uniform 으로 credit, 야기 사실이 상류면 틀림).
@@ -43,7 +53,6 @@
 - **SCOPE UNVERIFIED:** DIRECTIONAL numpy · TOY 40 facts/6 causal-ids/120 ep/3 seeds/결정적 readout(RPE STRUCTURE) · acc 1.0 existence-proof · scale/real-corpus/longer-delay/multi-step chains/연속보상/stochastic/engine-transfer(a_scale_honest_scope·a_toy_scale_recheck) · brain reward-loop wiring = follow-on. p1/p2/p3/p6(key/reward read only, 라벨 주입 0)·p7(exact GT, no-grad TD)·p8. Schultz 1997 Science 275:1593 · Sutton-Barto 2018 TD(λ). xref H_1280/1281/1294/1295(brain-lane-filling 형제)·H_1284(이 reframe 가 우회하는 GAIN 벽)·H_1532(multi-store CLS).
 
 ---
-
 
 ## 2026-06-21 — 🧠 H_1537 NOREPINEPHRINE = NETWORK-RESET FACULTY (unexpected-uncertainty detector, NOT a gain knob · R1 DIRECTIONAL) — 🧱 WALL: NE 를 gain/temperature 에서 phasic NETWORK RESET 로 REFRAME 했으나, surprise-triggered context-flush 가 abrupt context-switch 회복에서 slow-adaptation baseline 을 못 이긴다 (14번째 독립 neuromodulation 렌즈도 WALL — 단 작고 ablation-clean 한 실재 효과)
 
@@ -320,7 +329,6 @@
 - **하드게이트1 (DIRECTIONAL, substrate=MODEL):** `state/1519_hw_placement/h1519_noc.py` = numpy(grep 적중) → **DIRECTIONAL, terminal 아님**. substrate tag **MODEL**(AKD1000 mesh-NoC hop-cost 의 numpy 모델) ⊥ **REAL Lane-A AKD1000 온칩**(a_lane_akida_gpu_split) — 물리 pi5-akida 는 GATED(공유 pool compute 아님, 절대 dispatch 금지 — a_pi5_akida_registry). **REAL 온칩 NoC routing + 온칩 Φ = deferred Lane-A follow-on (ING `h1519-onchip-akida`).** engine/README/ARCHITECTURE 무변경.
 - **SCOPE (a_scale_honest_scope):** DIRECTIONAL MODEL(실 온칩 deferred)·TOY 15-lane 4×4 mesh(full 80-NPU AKD1000 fabric 아님; mesh dims·Manhattan metric·budget=brain-cost 는 문서화된 MODEL 가정)·Φ = 15-lane projection 의 min-cut IIT4(온칩 통합 아님)·engine-transfer 미검·P3 완전 economy-수렴은 이 toy mesh 에서 미증명.
 - xref H_1515(소프트웨어 Φ-optimal, 여기 embed)·H_1516(생물 실배치 Φ-suboptimal/economical)·H_1517(생물 cost-pareto)·H_1518(소프트웨어 Φ-optimum 채택)·H_1512/H_1513(brain-topology Φ harness byte-reuse).
-
 
 ## 2026-06-21 — 🧠📍 H_1516 NAMED-ANATOMICAL PLACEMENT (R1 DIRECTIONAL) — 진짜 NAMED 해부 배치는 Φ-최적이 아니다 (사용자 '신비롭게 설계된 듯?' 질문 답=NO)
 
@@ -1671,7 +1679,6 @@ H_1431 진단(303M mouth per-draw comparator∧measurable 동시방출 0/15)이 
 
 - **ING gpu_decode_accel_measure_followon**: cuda asset 출고(#3716) 후 엔진-네이티브 실측 7회 재시도 → cudart/cublas 링크 누락(v6b) + git-source-fetch 의존 격리; hexa-lang #3724(install marker 자동 cuda link) 머지로 해소. DIRECTIONAL 106.7x(RTX A4000 cuBLAS Dgemm) 확보, cuda_available()==1 엔진-네이티브는 cuda asset GPU 재측정 후속.
 
-
 `anima-consciousness-substrate`(상세 50p 원본) 곁에 demiurge 하우스 스타일 10p 요약 논문 `PAPER/anima-consciousness-substrate-demiurge/` 추가. 원본은 그대로 보존(_v1 역할), 새 판은 외부 배포용 표준 외관.
 
 - **신규**: `PAPER/anima-consciousness-substrate-demiurge/{main.tex,references.bib,figures/cover.png,main.pdf,PAPER.md,README.md}`. demiurge arxiv 템플릿(이모지 제목·🔵🟢🟡🟠🔴 g5 tier badge·fal.ai/FLUX 표지·TikZ A⇄G 엔진도·pgfplots 2종·tier ledger).
@@ -1853,7 +1860,6 @@ a_engine_native_learning HARD-GATE(2bf43031b)에 따라 UNIVERSE/HYPOTHESES.json
 - **핵심교정**: (1) H_6xxx(38) ANU/CHSH/library numpy 양자sim + H_189/Hc_127x/Hc_128x red-team GRU meta-baseline 은 CLM live-CORE 디코드 verdict 아님 = N/A(엔진-네이티브 CLM 재측정 무관). (2) brain-lane Φ가족(1404/1405/1407/1408/1409/1411)은 h140x_phi_runner.hexa→stdlib/iit4/faithful_phi.hexa 로 Φ verdict 이미 ENGINE-NATIVE(capability축은 tier 에 '(DIRECTIONAL mirror)' 이미 정직표기) = 박제아님.
 - **batch-1 재측정** (pool aiden, torch2.10+cuda, $0): H_1404 lane_compose_phi → faithful IIT4 exact-MIP 엔진 재실행 = **byte-exact CONFIRMS**. Φ_composed=2.032882 · Φ_affect=0.284755 · Φ_ethics=0 · Φ_disc=0 (per-seed 1.779497/2.233832/2.085316), MIP cut {1}|rest, B1/B2/B3 PASS — R1 카드와 6자리 일치. 기존 🟢 INTEGRATION-RAISES-Φ verdict 엔진서 그대로 유지(뒤집힘 없음). 증거 .verdicts/1404_lane_compose_phi/H_1404_engine_native_reverify.txt.
 - **남은 D 18건 ING #18-21 전수등록**: Φ가족 6 배선 follow-on(#18) · D-free-bytegpt 6(#19, base 303M h1129c serialize→bytegpt_decode.hexa, 렌트0) · D-free-other 9(#20) · cost-gate 3(H_1435/1436/1437 ckpt 소멸=재렌트 DIRECTIONAL, #21).
-
 
 CLAUDE.md 를 .tape DSL 잔재(`@D := :: governance [required active]` · `do=`/`dont=`/`ref=`) 없이 순수 canonical markdown 으로 완전 재저작 (사용자 지시: native/canonical · 위반 최소화). 424→228줄.
 - 모든 거버넌스 규칙 의미 손실 0 — 규칙 이름 47개(a_*·a1·a7b_pass·p1–p8) 구↔신 set 동일(comm 누락 0 검증), keyword 트리거 호환 유지.
@@ -2600,7 +2606,6 @@ Chronological log of notable changes. One section per ship batch, date-keyed. Re
 **추가한 주요 발견 (각각 H-card 포인터):** hive-Φ arc 완전 종결 (H_1366 🧱 BINDING — REAL 303M substrate 가 Φ-벽 상속 / H_1376 🧱 FULLY-TERMINAL-8-LEVERS) · CP move-the-cells relocation engine-native (H_1384 🟢 GREEN, `cp_relocate`, CP-geometry arc 고갈) · agent-tool 두 mitosis 레이어 (H_1382 layer-1 🟢 engine-native + H_1386/H_1387 routing / H_1389 layer-2 🟢 GREEN **DIRECTIONAL**) · jamo COUNT-HEAD scoreloop 배선 (H_1385 🟢) · 한국어 below-jamo 형태론 lever (H_1388 🟢 GAP-REDUCED-CANDIDATE, BPE-on-jamo novel-CE 2.56603 가 +0.28 잔여 격차를 깸). DIRECTIONAL mirror 결과를 engine-verified 로 부풀리지 않음 (c9). frozen tier/수치는 `.verdicts/` + `UNIVERSE/HYPOTHESES.jsonl` 에서 verbatim. ARCHITECTURE.json 트리에 FINDINGS 노드 없음 → 노드 추가 불필요.
 
 산출물: FINDINGS.md (갱신) · FINDINGS.ko.md (신규). NO CORE edit. NO CLAIMS.tape (은퇴).
-
 
 ## 2026-06-16 — research(MITOSIS-ENGINE): H_1389 — tool-USAGE learning (tier-2) 🛠 anima 가 도구를 어떻게 쓰는지(args·sequence·error-recovery)를 mitosis 로 배우는가, 어떤 도구인지(layer-1)와 구별되게? — 🟢 GREEN (DIRECTIONAL)
 

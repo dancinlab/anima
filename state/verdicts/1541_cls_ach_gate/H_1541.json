@@ -1,0 +1,122 @@
+{
+  "capability": "INTERLEAVED encode||retrieve: write new facts WHILE answering interleaved queries to earlier facts (joint demand)",
+  "LR_star": 0.2,
+  "TH_star": 0.3,
+  "N_FACTS": 24,
+  "MAX_CELLS": 72,
+  "MARGIN": 0.05,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "per_seed": [
+    {
+      "seed": 11,
+      "ach_gated": {
+        "w": 0.9583,
+        "q": 1.0,
+        "joint": 0.9792
+      },
+      "always_encode": {
+        "w": 0.75,
+        "q": 0.0,
+        "joint": 0.375
+      },
+      "always_retrieve": {
+        "w": 0.0,
+        "q": 0.0,
+        "joint": 0.0
+      },
+      "ablate_const": {
+        "w": 0.0,
+        "q": 0.0,
+        "joint": 0.0
+      },
+      "shuffle_ach": {
+        "w": 0.5417,
+        "q": 0.3333,
+        "joint": 0.4375
+      },
+      "best_fixed_joint": 0.375,
+      "ach_minus_bestfixed": 0.6042
+    },
+    {
+      "seed": 22,
+      "ach_gated": {
+        "w": 0.9583,
+        "q": 1.0,
+        "joint": 0.9792
+      },
+      "always_encode": {
+        "w": 0.7083,
+        "q": 0.0,
+        "joint": 0.3542
+      },
+      "always_retrieve": {
+        "w": 0.0,
+        "q": 0.0,
+        "joint": 0.0
+      },
+      "ablate_const": {
+        "w": 0.0,
+        "q": 0.0,
+        "joint": 0.0
+      },
+      "shuffle_ach": {
+        "w": 0.4167,
+        "q": 0.25,
+        "joint": 0.3333
+      },
+      "best_fixed_joint": 0.3542,
+      "ach_minus_bestfixed": 0.625
+    },
+    {
+      "seed": 33,
+      "ach_gated": {
+        "w": 0.9583,
+        "q": 1.0,
+        "joint": 0.9792
+      },
+      "always_encode": {
+        "w": 0.7083,
+        "q": 0.0,
+        "joint": 0.3542
+      },
+      "always_retrieve": {
+        "w": 0.0,
+        "q": 0.0,
+        "joint": 0.0
+      },
+      "ablate_const": {
+        "w": 0.0,
+        "q": 0.0,
+        "joint": 0.0
+      },
+      "shuffle_ach": {
+        "w": 0.4167,
+        "q": 0.1111,
+        "joint": 0.2639
+      },
+      "best_fixed_joint": 0.3542,
+      "ach_minus_bestfixed": 0.625
+    }
+  ],
+  "ach_gated_joint_mean": 0.9792,
+  "always_encode_joint_mean": 0.3611,
+  "always_retrieve_joint_mean": 0.0,
+  "best_fixed_joint_mean": 0.3611,
+  "ablate_const_joint_mean": 0.0,
+  "shuffle_ach_joint_mean": 0.3449,
+  "ach_minus_bestfixed_mean": 0.6181,
+  "ach_minus_ablate_mean": 0.9792,
+  "ach_minus_shuffle_mean": 0.6343,
+  "always_encode_query_acc_mean": 0.0,
+  "n_wins_over_bestfixed+MARGIN": 3,
+  "presence": true,
+  "distinct": true,
+  "earned_ablate": true,
+  "earned_shuffle": true,
+  "no_fab": true,
+  "verdict": "GREEN"
+}

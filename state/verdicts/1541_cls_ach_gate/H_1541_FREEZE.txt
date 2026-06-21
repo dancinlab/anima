@@ -1,0 +1,82 @@
+H_1541 — ACETYLCHOLINE × CLS — ENCODE/RETRIEVE MODE GATE — FROZEN FALSIFIER
+(pre-registered BEFORE the scored run; bar frozen-first, NO tune-to-green; c9)
+============================================================================
+
+JOINT APPLICATION: the FIRST use of the H_1532 multi-store CLS breakthrough WITH
+a neurotransmitter operating INSIDE the two-store module. H_1532 (#2514) broke the
+H_1284 NEUROMODULATION wall (two phase-separated stores survive AB-AC interference).
+The standalone NT-faculty program found NE-reset 🧱 (H_1537) and 5-HT-patience 🟠
+(H_1538) under-performed BECAUSE a single store gave a gain-knob nothing structural
+to gate. ACh is the biologically canonical CLS switch (Hasselmo 2006 Curr Opin
+Neurobiol 16:710; Hasselmo 1999): HIGH ACh -> ENCODE mode (suppress recurrent
+retrieval, write fast store); LOW ACh -> CONSOLIDATE/RETRIEVE mode (read, replay
+fast->slow). ACh ONLY makes sense INSIDE the two-store module = the joint application.
+
+CAPABILITY (what fixed-mode CLS provably CANNOT do):
+  INTERLEAVED encode||retrieve — a single event stream alternates WRITE-events (lay
+  a new fact) and QUERY-events (read an earlier fact). The dual demand: new facts
+  must be durably written WHILE interleaved queries to earlier facts are answered.
+    ALWAYS-ENCODE (fixed high ACh): retrieval path SUPPRESSED -> queries unreadable.
+    ALWAYS-RETRIEVE (fixed low ACh): feedforward encoding SUPPRESSED (Hasselmo low-ACh
+      cholinergic suppression of afferents) -> new external writes are processed as
+      cues, NOT encoded -> new facts LOST.
+  Only a DYNAMIC ACh switch (read substrate novelty/recon-error: novel key -> encode,
+  familiar key -> retrieve) satisfies BOTH.
+
+HAZARD (inherited from H_1532, the whole point): the win MUST come from the
+  EVENT-CONTINGENT mode SWITCH (a faculty reading substrate state and routing each
+  event), NOT a scalar gain. The ablations PROVE this:
+    ABL  (ACh held CONSTANT = mean over stream -> no per-event switch) MUST collapse.
+    SHUFFLE (ACh signal computed then PERMUTED across events -> decoupled) MUST collapse.
+
+ARMS (identical stream/fact-set/seed per (seed); LR/TH = engine-native LR0/TH0):
+  ACh-GATED       : dynamic switch. ACh = novelty = recon-error vs fast store
+                    (NO event-label peek; p6/p2/p3 — reads only substrate state).
+  ALWAYS-ENCODE   : fixed high ACh (always encode-mode, retrieval suppressed).
+  ALWAYS-RETRIEVE : fixed low ACh (always retrieve-mode, encoding suppressed).
+  ABL             : ACh held constant = mean(ACh over the stream) -> no switch.
+  SHUFFLE         : ACh trace computed then permuted across events (decoupled).
+
+FIXTURE: N_FACTS=24 (each a WRITE event), interleaved QUERY events (p~0.8 per write)
+  of earlier facts; MAX_CELLS=72 (ample — this is an INTERFERENCE/mode test, not
+  capacity); DIM=16 byte-trigram FNV-1a key (VERBATIM H_1532/H_1227); abstain=0.45;
+  3 seeds [11,22,33]. $0 CPU. R1 numpy DIRECTIONAL (host has no torch;
+  a_engine_native_learning hard-gate-1 -> engine R2 §AchGate deferred ING).
+
+METRIC: joint = 0.5*(write_recall_acc + query_acc).
+  write_recall_acc = fraction of facts whose LAST value is retrievable from a store.
+  query_acc        = fraction of interleaved queries answered with the value current
+                     AT QUERY TIME. Abstain/wrong = NOT counted (honest, p7).
+  p7: exact ground truth (true binding of every fact known), NO LLM judge / perplexity
+  / loss term — every decision is a no-grad read of substrate state.
+
+FROZEN BARS (MARGIN = 0.05):
+  A PRESENCE     : ach_gated_joint - best_fixed_mode_joint >= +0.05 on >= 2/3 seeds
+                   AND on the 3-seed mean.
+  B DISTINCT     : BOTH fixed modes fail the dual demand:
+                   (ach_mean - always_encode_mean) >= +0.05 AND
+                   (ach_mean - always_retrieve_mean) >= +0.05.
+  C EARNED-ABL   : ABL (constant ACh) collapses to fixed-mode:
+                   (ablate_mean - best_fixed_mean) <= +0.05 AND
+                   (ach_mean - ablate_mean) >= +0.05.
+  D EARNED-SHUF  : SHUFFLE (permuted ACh) collapses: (ach_mean - shuffle_mean) >= +0.05.
+  E NO-FAB       : always-encode query-acc mean <= 0.10 (encode genuinely cannot read
+                   = the honest signature, not a scoring artifact).
+
+VERDICT:
+  GREEN (🟢) iff A AND B AND C AND D AND E
+        = the ACh-gated encode/retrieve mode switch is a REAL JOINT FACULTY:
+          it adds the interleaved-demand capability neither fixed mode has, and the
+          lift is decisively attributable to the EVENT-CONTINGENT switch (ablate +
+          shuffle both collapse), NOT a gain. FIRST joint application of CLS + an
+          intra-module neurotransmitter.
+  AMBIGUOUS_ABLATION : A AND B pass but an ablation does not collapse (lift exists but
+          not attributable to the switch) -> honest 🟠.
+  WALL_HOLDS : A or B fails (the switch does not add the capability over best fixed) ->
+          honest 🧱. c9: RED reported RED, NO tune-to-green, bar frozen-first.
+
+LENS: a_no_llm_frame_trap (biology-first: Hasselmo ACh encode/retrieve) ·
+  a_break_the_wall (joint application of the H_1532 break) · a_engine_native_learning
+  (DIRECTIONAL hard-gate-1) · p6/p7 · c9. xref H_1532 (multi-store CLS break) ·
+  H_1284 (neuromodulation gain wall) · H_1536/1537/1538 (NT-faculty siblings) ·
+  McClelland-McNaughton-O'Reilly 1995 (CLS) · Kumaran-Hassabis-McClelland 2016.
