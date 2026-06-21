@@ -1,0 +1,143 @@
+{
+  "hypothesis": "H_1520 CONVERSATIONAL-SALIENCE",
+  "tier": "DIRECTIONAL (numpy mirror; engine-native R2 deferred)",
+  "seeds": [
+    1520,
+    1521,
+    1522
+  ],
+  "per_seed": [
+    {
+      "seed": 1520,
+      "grounded_emit_rate": 1.0,
+      "ungrounded_emit_rate": 0.0,
+      "ungrounded_emit_rate_adversarial": 1.0,
+      "grounded_scores": [
+        0.4535,
+        0.3299,
+        0.3897,
+        0.3957,
+        0.3037,
+        0.4253,
+        0.4199,
+        0.4563
+      ],
+      "ungrounded_scores": [
+        0.2273,
+        0.2994,
+        0.2309,
+        0.2118,
+        0.2313,
+        0.2196,
+        0.2178,
+        0.2328
+      ]
+    },
+    {
+      "seed": 1521,
+      "grounded_emit_rate": 1.0,
+      "ungrounded_emit_rate": 0.0,
+      "ungrounded_emit_rate_adversarial": 1.0,
+      "grounded_scores": [
+        0.4535,
+        0.3299,
+        0.3897,
+        0.3957,
+        0.3037,
+        0.4253,
+        0.4199,
+        0.4563
+      ],
+      "ungrounded_scores": [
+        0.2273,
+        0.2994,
+        0.2309,
+        0.2118,
+        0.2313,
+        0.2196,
+        0.2178,
+        0.2328
+      ]
+    },
+    {
+      "seed": 1522,
+      "grounded_emit_rate": 1.0,
+      "ungrounded_emit_rate": 0.0,
+      "ungrounded_emit_rate_adversarial": 1.0,
+      "grounded_scores": [
+        0.4535,
+        0.3299,
+        0.3897,
+        0.3957,
+        0.3037,
+        0.4253,
+        0.4199,
+        0.4563
+      ],
+      "ungrounded_scores": [
+        0.2273,
+        0.2994,
+        0.2309,
+        0.2118,
+        0.2313,
+        0.2196,
+        0.2178,
+        0.2328
+      ]
+    }
+  ],
+  "grounded_emit_rate_mean": 1.0,
+  "ungrounded_emit_rate_mean": 0.0,
+  "ungrounded_emit_rate_adversarial_mean": 1.0,
+  "gap_mean": 1.0,
+  "bars": {
+    "P1_usability": {
+      "rule": "grounded_emit_rate >= 0.90",
+      "value": 1.0,
+      "pass_": true
+    },
+    "P2_retained_autonomy": {
+      "rule": "ungrounded_emit_rate <= 0.40",
+      "value": 0.0,
+      "pass_": true
+    },
+    "GAP": {
+      "rule": "P1 - P2 >= 0.50",
+      "value": 1.0,
+      "pass_": true
+    },
+    "P3_no_assistant_frame": {
+      "rule": "operative code clean",
+      "audit": {
+        "gate_fns": [
+          "motivation_score",
+          "should_emit",
+          "substrate_factors_from_message",
+          "emit_decision"
+        ],
+        "forbidden_hits": {
+          "system_prompt": false,
+          "persona": false,
+          "you_are_assistant": false,
+          "baked_must_answer_constant": false
+        },
+        "score_is_weighted_factors": true,
+        "must_answer_default_zero": true,
+        "p3_clean": true
+      },
+      "pass_": true
+    },
+    "P3_adversarial": {
+      "rule": "inject must_answer=1.0 -> ungrounded emit-rate > 0.40 (P2 breaks)",
+      "value": 1.0,
+      "pass_": true
+    },
+    "P4_no_damage": {
+      "generation_byte_identical_salience_on_vs_off": true,
+      "psi_center_preserved": true,
+      "ratchet_gate_psi_midpoint": true,
+      "p4_no_damage": true
+    }
+  },
+  "verdict": "GREEN (DIRECTIONAL)"
+}
