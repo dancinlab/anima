@@ -1,0 +1,86 @@
+{
+  "hypothesis": "H_1513_literal_connectome_ALIGNED",
+  "rung": "R1_numpy_mirror_DIRECTIONAL",
+  "harness": "re-uses H_1512 h1512.py (build_population/apply_topology/phi_iit4/CORE/bars) byte-for-byte; only adjacency = literal DSI",
+  "connectome": "Hagmann/BCT DSI group avg 219x8 (GPLv3) \u2014 REAL",
+  "metric": "IIT4 min-cut \u03a6 (phi_iit4 over CORE) \u2014 H_1512 headline metric",
+  "seeds": [
+    5120,
+    5121,
+    5122
+  ],
+  "A_MIN": 0.05,
+  "B_MIN": 0.03,
+  "ALPHA": 0.6,
+  "N_TRIALS": 240,
+  "phi": {
+    "flat": 0.013904467317105448,
+    "brain": 0.15418298179877135,
+    "random": 0.07155404976751416,
+    "latcol": 0.11030890679074072,
+    "shuf": 0.04175958422726941
+  },
+  "efficiency": {
+    "flat": 0.0,
+    "brain": 0.5749735449735446,
+    "random": 0.6206349206349203
+  },
+  "richclub": {
+    "hub_drop": 0.028504011451986926,
+    "peri_drop": 0.02715206729015311
+  },
+  "bars": {
+    "A_brain_gt_flat": true,
+    "B_brain_gt_random": true,
+    "C_richclub": true,
+    "D_lateralize_headline": true,
+    "E_coord_shuffle": true
+  },
+  "green_iff_ABCE": true,
+  "verdict": "\ud83d\udfe2 REPRODUCES \u2014 literal connectome reproduces H_1512 brain-topology \u03a6 advantage",
+  "n_edges_brain": 30,
+  "per_seed": [
+    {
+      "phi_flat": 0.015771560162695764,
+      "phi_brain": 0.06684791459295525,
+      "phi_rand": 0.044667516940863905,
+      "phi_latcol": 0.05962867920000292,
+      "phi_shuf": 0.034136480255387625,
+      "eff_flat": 0.0,
+      "eff_brain": 0.56015873015873,
+      "eff_rand": 0.614285714285714,
+      "hub_drop": 0.013412826992725169,
+      "peri_drop": 0.0054649788616232264,
+      "seed": 5120,
+      "n_edges": 30
+    },
+    {
+      "phi_flat": 0.00511833768666925,
+      "phi_brain": 0.20011723910119628,
+      "phi_rand": 0.014158516417285938,
+      "phi_latcol": 0.10572667655188006,
+      "phi_shuf": 0.06929609451964502,
+      "eff_flat": 0.0,
+      "eff_brain": 0.5615873015873013,
+      "eff_rand": 0.6158730158730154,
+      "hub_drop": 0.0428665205537877,
+      "peri_drop": 0.045828083714156365,
+      "seed": 5121,
+      "n_edges": 31
+    },
+    {
+      "phi_flat": 0.02082350410195133,
+      "phi_brain": 0.19558379170216256,
+      "phi_rand": 0.15583611594439262,
+      "phi_latcol": 0.16557136462033917,
+      "phi_shuf": 0.021846177906775566,
+      "eff_flat": 0.0,
+      "eff_brain": 0.6031746031746027,
+      "eff_rand": 0.6317460317460316,
+      "hub_drop": 0.029232686809447905,
+      "peri_drop": 0.03016313929467973,
+      "seed": 5122,
+      "n_edges": 32
+    }
+  ]
+}
