@@ -1,0 +1,78 @@
+H_1526 — NEUROMODULATION on the EMIT/SALIENCE gate (abstain_margin),
+        tested on a CALIBRATION capability (NOT recall).
+FROZEN PRE-REGISTRATION (written BEFORE any run; bar is frozen-first, no tune-to-green).
+==============================================================================
+
+CONTEXT (a_break_the_wall — 10th independent lens on the H_1284 NEUROMODULATION wall)
+------------------------------------------------------------------------------
+The H_1284 wall is 9 lenses deep (original + Amoeba buffer H_1509/b/c + diversity
+H_1524 + multitimescale H_1523 + predictive H_1525). EVERY prior lens modulated the
+plasticity-LR / SPLIT_THRESH knobs and EVERY one was INERT — because the RECALL
+capability is decided by cell KEY-GEOMETRY, not the LR schedule
+(geometry-not-protocol bottleneck; ablation INERT precedent H_1416/H_1284).
+
+THE LAST LIVE ANGLE: the abstain_margin (emit/abstain gate) in the H_1284 harness
+is the ONLY knob that is NOT geometry-bound. `MemStore.recall` returns None / abstains
+when recon-err > abstain_margin (the H_1227 no-fabrication gate). The abstain DECISION
+is THRESHOLD-bound, not pure geometry — and the OPTIMAL threshold SHIFTS with regime
+(clean vs noisy vs drift). A neuromodulator that ADAPTS abstain_margin by substrate
+confidence/surprise could beat a single best-fixed margin ACROSS regimes where the
+fixed one cannot. The capability must be CALIBRATION (emit-when-groundable-and-correct,
+abstain-when-ungroundable), NOT recall-accuracy.
+
+CAPABILITY (CALIBRATION) — PRE-REGISTERED METRIC
+------------------------------------------------------------------------------
+Stream has BOTH groundable (subject in store, true value known) and ungroundable
+(never-seen "ghost" subject → correct action = ABSTAIN) recall events, in EVERY regime.
+The abstain gate is the load-bearing decision.
+
+For each recall event the emit-decision is scored as CALIBRATION CORRECTNESS:
+  groundable  query: CORRECT iff store emits AND the emitted value == true value
+                     (emit-the-right-answer); WRONG iff abstain (missed) OR emit-wrong.
+  ungroundable query: CORRECT iff store ABSTAINS (no fabrication);
+                     WRONG iff store emits anything (fabrication).
+CALIBRATION metric  cal = (#correct emit-decisions) / (#recall events)   ∈ [0,1].
+This is a SINGLE balanced calibration score (NOT recall-accuracy alone) — raising the
+margin trades fewer fabrications for more misses, so a single fixed margin cannot be
+optimal across regimes with different groundable/ungroundable error distributions.
+
+ARMS (identical fact set + event stream per (seed,regime); only the margin policy differs)
+------------------------------------------------------------------------------
+A  = BEST-FIXED abstain_margin. Grid-tuned on a DISJOINT tuning seed by the SAME
+     grid_tune procedure (sweep a fixed-margin grid, pick the single best fixed margin
+     averaged over the 3 regimes — the strongest honest single operating point).
+ADAPT = substrate-gated adaptive abstain_margin: margin_t rises when substrate
+     recall-noise/surprise (running uncertainty û = EMA of recon-err) is high
+     (abstain more → fewer fabrications) and lowers when confident (emit more → fewer
+     misses). margin_t = clip(margin0 * (1 + KN*(û - û_ref)), lo, hi). NO LR/SPLIT change.
+ABLATE = collapse ADAPT's per-event margin schedule to its OWN MEAN (a fixed margin
+     equal to the time-average of what ADAPT used). If ABLATE == ADAPT, the adaptation
+     is INERT (the wall holds on the emit knob too — only the mean mattered, not the
+     substrate-gating).
+
+FROZEN BAR (pre-registered; honest either way; NO post-hoc move)
+------------------------------------------------------------------------------
+🟢 WALL-BROKEN  iff  ALL of:
+   (1) ADAPT beats BEST-FIXED by ≥ MARGIN (0.05) on the calibration metric `cal`
+       on ≥ 2 of 3 regimes (R1_STABLE, R2_DRIFT, R3_NOISE), AND
+   (2) ablation is DECISIVE: ADAPT − ABLATE ≥ MARGIN (0.05) on those winning regimes
+       (≥2 of them) — the lift is attributable to the substrate-GATING, not the mean.
+🧱 WALL HOLDS  otherwise (DIRECTIONAL/numpy, hard-gate-1 → terminal verdict is
+   the engine-native R2; this R1 is DIRECTIONAL only). The two failure shapes:
+   - ADAPT does not beat best-fixed on ≥2 regimes → no free lunch, wall holds on emit knob.
+   - ADAPT beats but ABLATE matches (ADAPT − ABLATE < MARGIN on the wins) → INERT:
+     only the AVERAGE margin mattered, substrate-gating added nothing → wall holds.
+
+MARGIN          = 0.05  (frozen)
+N_FACTS         = 30
+SCORE_SEEDS     = [11, 22, 33]   (≥3 seeds)
+TUNE_SEED       = 7              (disjoint)
+REGIMES         = R1_STABLE, R2_DRIFT, R3_NOISE
+ABSTAIN grid    = (0.30, 0.40, 0.45, 0.55, 0.65, 0.80)  (fixed-margin sweep for ARM A)
+n_events        = 300 per regime
+OOS_RATE        = 0.30 (ungroundable ghost probes) in EVERY regime (so abstain gate is load-bearing everywhere)
+
+p7: exact ground truth, NO LLM judge, NO perplexity, NO loss term — every knob is a
+no-grad read-out of substrate state. $0 CPU. a_engine_native_learning: numpy mirror =
+DIRECTIONAL; engine-native R2 (live core/*.hexa abstain gate) deferred follow-on ING.
+c9: FALSIFIED/🧱 is a valid result and will be reported honestly.
