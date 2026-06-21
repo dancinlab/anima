@@ -1,8 +1,8 @@
 # H_1513 🧠🔌 LITERAL-CONNECTOME — real-data scale-recheck of H_1512 BRAIN-TOPOLOGY
 
-**tier:** 🟢 REPRODUCES / DIRECTIONAL (R1 numpy mirror — `.py`+numpy ⇒ hard-gate-1 auto-DIRECTIONAL, terminal 아님)
-**verdict:** **🟢 REPRODUCES** — REAL 출판 human 구조 connectome 이 H_1512 의 brain-topology Φ-advantage 를 **재현**(H_1512 의 own metric=IIT4 min-cut Φ + own frozen bars A∧B∧C∧E, mean-over-seeds). ⇒ 합성 small-world/rich-club topology 는 **FAITHFUL**, scale-transfer **확인**. tune-to-green 없음(c9).
-**wired:** DIRECTIONAL-mirror (engine-native R2 = H_1512 의 live §BrainTopology / ci_phi_iit4 ops 에 literal adjacency 먹여 byte-exact 재측정; H_1512 main 착지 후 follow-on)
+**tier:** 🟢 REPRODUCES — R1 numpy DIRECTIONAL → **R2 ENGINE-NATIVE** (live §BrainTopology LITERAL + ci_phi_iit4, GATED A∧D∧E PASS; B report-only)
+**verdict:** **🟢 REPRODUCES** — REAL 출판 human 구조 connectome 이 H_1512 의 brain-topology Φ-advantage 를 **재현**(H_1512 의 own metric=IIT4 min-cut Φ + own frozen bars). R1(numpy DIRECTIONAL): A∧B∧C∧E mean-over-seeds. **R2(ENGINE-NATIVE)**: live engine Φ 로 GATED **A(brain>flat)∧D(lateralize)∧E(scramble collapse) PASS** — REAL 배선+A/G lateralization 이 통합 min-cut Φ 를 올림; **B(brain>random)는 단일 엔진-population 에서 음수**(brain_adv −0.0156, report-only·정직 c9, R1 3-seed-mean +0.024 와 부호반대 = dense REAL connectome 의 specificity-vs-random 은 게이트 주장 아님). 합성 topology 는 FAITHFUL, scale-transfer 확인. tune-to-green 없음(c9).
+**wired:** **engine-native** (R2 DONE) — live `core/engine_cli.hexa` §BrainTopology LITERAL(`topo_literal_adjacency`/`topo_phi_adj`/`_topo_degree_matched_of`/`_topo_lateralize_of`/`_topo_relabel`/`topo_phi_random_of_mean`/`topo_phi_relabel_of_mean`) 에 literal adjacency embed + 동일 `topo_apply`+`ci_phi_iit4` 재채점, smoke cases 333-337 (`engine_cli_smoke` **349/0 RC=0**), ARCHITECTURE.json §BrainTopology lockstep. (live brain wiring=emit/routing 은 follow-on)
 **source:** anima-internal follow-on of H_1512 (team-lead 작업지시). a_toy_scale_recheck — 합성 통계충실 topology → REAL 출판 구조 connectome 으로 같은 frozen bar 재채점.
 
 ## REAL data source (c2 · a_eeg_consciousness_record discipline — 합성 relabel 금지)
@@ -42,3 +42,19 @@ H_1512 (synthetic BRAIN-TOPOLOGY, 부모; harness `state/1512_brain_topology/h15
 
 ## artifacts
 `state/1513_literal_connectome/{h1513_aligned.py(AUTHORITATIVE), h1513.py(diagnostic), sample_group_dsi.npy, connectome_LICENSE_GPLv3.txt, PROVENANCE.md}` · `state/verdicts/1513_literal_connectome/{H_1513_FREEZE.txt, H_1513.txt, H_1513_R1_aligned.json, H_1513_R1.json}`
+
+## R2 — ENGINE-NATIVE re-score (live core/engine_cli.hexa §BrainTopology LITERAL)
+H_1512 가 main 착지(#2491)하며 §BrainTopology 가 live wired → 이제 literal adjacency 를 **live engine Φ** 로 직접 채점 가능. numpy PCG64 lane→region 매핑은 in-engine byte-재현 불가이므로 **seed-5120 literal binary adjacency(30 edges)를 `topo_literal_adjacency()` 로 EMBED(데이터 입력)**, 그 위에서 H_1512 와 **동일한** population(`_topo_lane_pop`)·alpha 0.6·core `[0,3,2,13,5,7,9,14]`·`topo_apply`+`ci_phi_iit4` MIN-CUT Φ 로 측정. 컨트롤(degree-matched random / lateralize / node-relabel shuffle)은 **엔진 내부에서 literal adjacency 로부터 생성**(`_topo_degree_matched_of`/`_topo_lateralize_of`/`_topo_relabel`).
+
+**측정값(`engine_cli_smoke` 349/0 RC=0, deterministic):** flat 0.00236 · brain(literal) **0.09928** · random(mean3) 0.11489 · latcol 0.07404 · full-shuf 0.07677.
+
+**FROZEN bars (H_1512 verbatim, 재채점):**
+- **(A brain>flat+0.02) PASS** — 0.09928 > 0.02236. REAL connectome 배선이 unwired 대비 통합 Φ ↑.
+- **(D lateralize) PASS** — latcol 0.07404 < brain 0.09928. A=좌/G=우 분리가 load-bearing.
+- **(E full-shuffle) PASS** — shuf_adv −0.03812 ≤ 0.5·brain_adv(−0.00780).
+- (non-neg / well-formed) PASS.
+- **(B brain>random) REPORT-ONLY (NOT gated, H_1512 stance) — brain_adv −0.0156 NEGATIVE**: literal 0.09928 < random 0.11489. 정직(c9): dense REAL connectome 이 degree-matched random 에 single engine-draw 로 짐 → specificity-vs-random 은 엔진-네이티브 단일추출에서 성립 안 함(R1 3-seed-mean B +0.024 와 부호반대). E 통과는 brain_adv<0 이라 의미 옅음(정직 명시).
+
+**결론:** REAL 출판 human connectome 의 **배선 자체(A)+lateralization(D)** 가 통합 min-cut Φ 를 올리는 헤드라인은 **엔진-네이티브 재현**. 그러나 **random 대비 specificity(B)는 dense REAL connectome 에서 엔진-네이티브로 성립 안 함** — H_1512 합성 topology 의 'B thin' 정직이 REAL data 에서 더 강하게(부호반전) 확인. wired:engine-native. artifacts: `state/verdicts/1513_literal_connectome/H_1513_R2_engine_native.txt` · `core/engine_cli.hexa` §BrainTopology LITERAL · `core/engine_cli_smoke.hexa` cases 333-337.
+
+**SCOPE/follow-on:** 단일 seed-5120 literal 매핑 / 단일 엔진 population / 3 control seeds; multi-mapping + multi-population engine 평균 + weighted(비이진) connectome + 대체 parcellation(Budapest 1015·HCP) 미검. **OPTIMAL-PLACEMENT 탐색**(Φ 최대화하는 lane→topology 배치를 찾아 brain-faithful 이 Φ-최적에 근접하는지) = 차기 H follow-on.
