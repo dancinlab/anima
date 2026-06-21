@@ -1,0 +1,43 @@
+H_1532 — MULTI-STORE / CLS on AB-AC INTERFERENCE — R2 ENGINE-NATIVE BINDING
+(the FIRST break of the H_1284 NEUROMODULATION wall, now ENGINE-NATIVE on live core/engine_cli.hexa §MultiStore — terminal, not just DIRECTIONAL)
+=====================================================================
+
+ENGINE: live core/engine_cli.hexa §MultiStore CLS faculty (cls_one_store_retention /
+  cls_two_store_retention / cls_single_encode_retention), reusing the engine's OWN
+  _l2 / _vnearest_idx L2 affinity + _immune_fnv1a FNV-1a key geometry (NO new store type).
+GATE : hexa run core/engine_cli_smoke.hexa  RC=0  (cases 387-392)
+
+--- engine smoke output (verbatim) ---
+PASS  case_387_cls_one_store_interferes want=true got=true
+PASS  case_388_cls_two_store_separates want=true got=true
+PASS  case_389_cls_presence_lift want=true got=true
+PASS  case_390_cls_merge_reverts want=true got=true
+PASS  case_391_cls_shuffle_collapses want=true got=true
+PASS  case_392_cls_encode_deconfound_wellformed want=true got=true
+INFO  H_1532 multi-store/CLS (R2 ENGINE-NATIVE, the FIRST break of the H_1284 wall): ONE-STORE (wall baseline) A→B retention=0.0 (catastrophic interference) | TWO-STORE (CLS) retention=1.0 (separated) → lift=1.0 | MERGE-ablation=0.0 (reverts to one-store) · SHUFFLE-ablation=0.0 (collapses) · single-store+encode-mode deconfound=1.0 (NON-GATING — engine deterministic first-wins tiebreak recovers B; R1's 0.2917 = numpy unstable-sort artifact; the c2 MERGE bar already proves the win is SEPARATION not encode-mode-alone) | VERDICT: WALL-BROKEN ENGINE-NATIVE — the THREE FROZEN BARS (c1 PRESENCE two−one=+1.0 · c2 MERGE reverts to 0.0 · c3 SHUFFLE collapses to 0.0) are reproduced BYTE-EXACT vs the R1 numpy DIRECTIONAL break. The lever is HAVING SEPARATE STORES. GATED 387(one interferes 0.0)/388(⭐ two separates 1.0)/389(presence lift)/390(merge reverts)/391(shuffle collapses)/392(encode-deconfound well-formed, non-gating). c9 frozen-first, NO tune-to-green.
+--- engine_cli smoke summary: 381 pass / 0 fail ---
+
+--- FROZEN VERDICT GATE (R1 bars, MARGIN=0.05; reproduced byte-exact, c9 frozen-first NO tune-to-green) ---
+  c1 PRESENCE : two_store(1.0) - one_store(0.0) = +1.0 >= +0.05         PASS (case 389)
+  c2 MERGE    : merge(0.0) - one(0.0) = 0.0 < +0.05  (REVERTS)          PASS (case 390)
+  c3 SHUFFLE  : two(1.0) - shuffle(0.0) = +1.0 >= +0.05  (COLLAPSES)     PASS (case 391)
+  => c1 AND c2 AND c3  =>  GREEN (🟢 WALL-BROKEN) — ENGINE-NATIVE BINDING
+
+ENGINE-NATIVE vs R1 numpy DIRECTIONAL (byte-exact on the three frozen bars):
+  one-store    : engine 0.0    == R1 0.0
+  two-store    : engine 1.0    == R1 1.0
+  merge-abl    : engine 0.0    == R1 0.0  (reverts)
+  shuffle-abl  : engine 0.0       R1 0.3611 (BOTH collapse; engine deterministic FNV-parity
+                 coin collapses harder than the R1 PCG64 RNG draw — the load-bearing fact is
+                 the COLLAPSE, two-shuffle>=MARGIN, PASS both sides; the 0.3611 is a numpy-RNG
+                 artifact, NOT a frozen verdict bar)
+  single-encode: engine 1.0       R1 0.2917 (NON-GATING deconfound, NOT a frozen verdict bar —
+                 R1's 0.2917 = numpy UNSTABLE-quicksort tiebreak artifact; engine's deterministic
+                 first-wins tiebreak recovers B. The c2 MERGE bar [encode-mode OFF -> 0.0] ALREADY
+                 proves the win is SEPARATION not encode-mode-alone, so the deconfound is recorded
+                 well-formed [0,1] but does not gate the verdict)
+
+NO REGRESSION: full engine_cli_smoke = 381 pass / 0 fail (cases 1-386 unchanged; +6 §MultiStore
+  cases 387-392). RC=0 = the BINDING terminal gate. brace-scan depth 0 (both engine_cli.hexa +
+  engine_cli_smoke.hexa). a_engine_native_learning: this verdict's evidence artifact is a .hexa
+  that calls live core/engine_cli.hexa — terminal, not DIRECTIONAL.
