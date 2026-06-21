@@ -1,0 +1,48 @@
+H_1527 — NEUROMODULATION via REPRESENTATION GEOMETRY — VERDICT: 🧱 WALL_HOLDS
+(DIRECTIONAL numpy mirror; engine-native R2 deferred ING; frozen-first, c9)
+
+ESCAPE TESTED: modulate the KEY-ENCODING GEOMETRY (dimensionality expansion /
+random-projection recoding, granule-cell expansion + ACh sharpening), substrate-
+gated by collision-pressure — instead of the operating-point knob (LR/temp/gate)
+that 10 prior lenses found INERT. Hypothesis: a capacity-bound capability can be
+moved by changing the geometry that BOUNDS capacity, where a schedule cannot.
+
+RESULT (3 seeds [11,22,33], 3 regimes, MARGIN=0.05, best-fixed LR0*=0.1 TH0*=0.2,
+calibrated trigger thr=0.4142 = R1_STABLE tune-seed baseline):
+  regime        A_cap   G_cap   ABL_cap   G-A      G_meanfactor
+  R1_STABLE     0.5744  0.5744  0.3567   +0.0000   1.00 (no expand: not denser than baseline)
+  R2_DRIFT      0.4389  0.2600  0.2256   -0.1789   2.33
+  R3_NOISE      0.4156  0.2789  0.2444   -0.1367   2.33
+  c1 BREAK (G>=A+0.05 on >=2/3): FALSE (0 regimes win — G is WORSE wherever it fires)
+  c2 ADAPTATION: FALSE   c3 NO-FAB: G_fab spikes to 0.21/0.16 vs A 0.03 (expansion ADDS fab)
+  => VERDICT 🧱 WALL_HOLDS
+
+MULTI-VARIANT CONFIRM (H_1527_geometry_sweep.txt — strongest chance for the family,
+BEST fixed expansion of any factor, ReLU AND orthogonalized basis):
+  BASE          R1 0.574  R2 0.439  R3 0.416
+  EXPAND x2     R1 0.518  R2 0.398  R3 0.374   (ReLU & ORTHO identical)
+  EXPAND x3     R1 0.497  R2 0.348  R3 0.371
+  EXPAND x4     R1 0.461  R2 0.324  R3 0.331
+  => NO expansion factor, NO basis variant, EVER beats base — strictly MONOTONE
+     DEGRADATION on every regime. The representation-geometry family is INERT.
+
+MECHANISM (why inert, honest c9): the recall capacity bound is the STORE CELL COUNT
+(max_cells = round(0.6*30) = 18 cells for 30 facts) + LRU eviction — NOT key-vector
+aliasing in the 16-dim byte-trigram space. Random-projection EXPANSION cannot add
+cells; it only distorts the nearest-cell match (raising recon-err scatter) → recall
+DROPS and fabrication RISES. The lever is neither the protocol (10 prior lenses) NOR
+the key-representation geometry (this lens) — it is STORE CAPACITY itself.
+
+=> H_1284 NEUROMODULATION wall CONFIRMED against the representation-structure family
+   (11th independent lens). The wall is a CAPACITY wall, not a control wall.
+
+MEASUREMENT INTEGRITY (a_break_the_wall taxonomy): two artifacts found+fixed
+frozen-first BEFORE reading the verdict — (1) lossy mid-stream pinv re-projection
+corrupted the store on every geometry switch (fixed: commit ONE geometry per run via
+a warmup collision read); (2) the trigger THR=0.55 was above the empirical collision
+scale so the lever never fired (fixed: calibrate THR to the R1 tune-seed baseline so
+expansion genuinely fires in denser regimes). Bars in H_1527_FREEZE.txt UNCHANGED.
+
+SCOPE: DIRECTIONAL numpy mirror (a_engine_native_learning) — engine-native R2 on
+live core/*.hexa deferred ING. $0 CPU, p7, 3 seeds, TOY 30 facts/300 events/3
+regimes — scale/real-corpus/engine-transfer UNVERIFIED. honest c9 either way.

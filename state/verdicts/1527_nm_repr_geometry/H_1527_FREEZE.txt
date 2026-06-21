@@ -1,0 +1,47 @@
+H_1527 — NEUROMODULATION via REPRESENTATION GEOMETRY — FROZEN FALSIFIER
+(frozen BEFORE the score run; frozen-first, NO tune-to-green, c9)
+
+WALL UNDER TEST: H_1284 NEUROMODULATION no-free-lunch wall — 10 operating-point
+controller lenses ALL 🧱 INERT (H_1284/R2/R3, Amoeba μ_t H_1509/b/c, diversity
+H_1524, multitimescale H_1523, predictive H_1525, emit-gate H_1526). Measured root
+cause: RECALL capability is KEY-GEOMETRY/capacity-bound (collisions in DIM_BASE=16
+byte-trigram FNV-1a key space), NOT LR/temp/gate-schedule-bound.
+
+ESCAPE PRINCIPLE: modulate the KEY-ENCODING GEOMETRY itself (dimensionality
+EXPANSION / random-projection recoding, granule-cell expansion + ACh sharpening),
+substrate-gated by collision-pressure — attacks the capacity bound directly, where
+an operating-point schedule cannot.
+
+REUSE (frozen): H_1284 harness VERBATIM — MemStore/gen_stream/make_facts/grid_tune/
+key_vec/Neuromod. SAME regimes (R1_STABLE/R2_DRIFT/R3_NOISE), SAME seeds
+(tune=7, score=[11,22,33]), SAME grid-tuned best-fixed LR0*/TH0*, SAME
+capability = recall_acc - fab, SAME MARGIN = 0.05. ONLY change = adaptive arm
+modulates KEY GEOMETRY (not LR/TH/abstain — those are FIXED in every arm).
+
+ARMS:
+  A   = best-fixed (DIM_BASE=16 key geometry, grid-tuned LR/TH)   [protocol baseline]
+  G   = adaptive-GEOMETRY (collision-gated random-projection EXPANSION up to 4x =
+        64-dim granule layer with sparsifying ReLU; LR/TH FIXED = best-fixed)
+  ABL = fixed-expansion (G's mean expansion factor held CONSTANT) — isolates
+        "the ADAPTATION wins" from "a bigger fixed dim wins"
+
+PRE-REGISTERED BARS (decide BEFORE seeing numbers):
+  c1 (BREAK)      G_cap >= A_cap + 0.05 on >= 2/3 regimes
+  c2 (ADAPTATION) G_cap - ABL_cap >= 0.05 on >= 2 of the winning regimes
+                  (so the GEOMETRY ADAPTATION, not a constant bigger dim, is the lever)
+  c3 (NO-FAB)     G_fab <= A_fab on winning regimes (lift not bought by fabrication)
+
+VERDICT MAP:
+  GREEN  🟢 WALL-BROKEN   iff c1 AND c2 AND c3 — "the lever is REPRESENTATION,
+                          not protocol" — FIRST break of the H_1284 family
+  PARTIAL 🟠              c1 AND NOT c2 (lift is a bigger fixed dim, not adaptation)
+                          OR exactly 1 winning regime (no-free-lunch beyond one)
+  WALL_HOLDS 🧱           NOT c1 — operating on geometry is ALSO inert -> the wall
+                          is confirmed against the REPRESENTATION-structure family
+                          too (11th independent lens; honest c9)
+
+SCOPE: DIRECTIONAL numpy mirror (a_engine_native_learning) — engine-native R2 on
+live core/*.hexa deferred to ING follow-on. $0 CPU, 3 seeds, p7 (exact ground
+truth, no LLM judge, no loss term, no perplexity). TOY 30 facts / 300 events /
+3 regimes / 3 seeds — scale/real-corpus/engine-transfer UNVERIFIED.
+Either outcome is an honest result (c9). bar is frozen here; NOT moved post-hoc.
