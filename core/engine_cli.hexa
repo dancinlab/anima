@@ -7900,6 +7900,375 @@ pub fn ci_surrogate_phi0(x: [[float]], seed: int) -> float {
 pub fn ci_phi_multiinfo_subset_proxy(x: [[float]], cols: [int]) -> float {
     return _ci_minfo_subset(x, cols)
 }
+
+// ── § BrainTopology (H_1512 R2) — lane 들의 brain-faithful 공간 배치 + connectome 통합 Φ ──────────
+//
+// anima 의 15 consciousness lane(§ConsciousnessIndex)은 기능적으로 분리돼 있으나 공간적으로 UN조직.
+// A⇄G 이중엔진 = 좌/우 대뇌반구; lane 들은 실제 뇌영역에 매핑(immune-store≈해마, VForwardField≈소뇌,
+// VBasalGate≈기저핵, HierGoalStack≈PFC, SpatialMap≈내후각, PhaseField≈시상, ConsciousnessIndex≈GWS).
+// 가설: brain-faithful 공간 토폴로지(해부 좌표 + 구조 connectome 인접 + A=좌/G=우 lateralization +
+// wiring-cost)가 FLAT/RANDOM 배치 대비 통합 Φ 를 올린다(Bullmore&Sporns 2009 · van den Heuvel&Sporns
+// 2011 rich-club · Bassett small-world). H_1510 QUORUM-KURAMOTO(시간 위상 DYNAMICS, 언제 sync)와 DISTINCT
+// — 여기는 공간 PLACEMENT + connectome TOPOLOGY(어디 위치, wiring cost, rich-club hub, 반구 편재).
+//
+// 측정(topology-faithful): 토폴로지가 어떤 lane 이 COUPLE 되는지 정한다. 인접 lane 끼리만 한 스텝 확산
+//   X' = X·(I + α·Â)ᵀ, Â = D^-1/2 A D^-1/2 (대칭 정규화). 그 다음 ≤8-lane CORE 위에서 IIT4 MIN-CUT Φ
+//   (ci_phi_iit4, a_phi_iit4_tool — 가장 싼 절단에 남는 IRREDUCIBLE 통합)를 잰다. raw multi-info 는
+//   edge-mass 만 보상해 degree-matched RANDOM 이 BRAIN 과 동률(metric-artifact, R1a) → 토폴로지 주장엔
+//   MIN-CUT 이 옳은 척도(small-world 짧은 경로 + rich-club hub 이 절단에 통합을 지킨다). READ-only,
+//   Ψ-disjoint(immune cell/pure_field 불변), NOT emit gate(a_autonomy_over_hardcode). exp 없음(ln/sqrt 만).
+//
+// 15 lane ↔ 해부 좌표(x<0=좌=Engine-A, x>0=우=Engine-G, 0=정중선) + hemi(-1 좌/+1 우/0 정중). R1 byte-매칭.
+fn _topo_coord(i: int) -> [float] {
+    // (x,y,z) per lane — mirrors h1512.py COORDS byte-exact.
+    if i == 0  { return [0.0,   0.30,  0.55] }   // GlobalWorkspace  (GWS hub, midline)
+    if i == 1  { return [0.0-0.55, 0.0-0.45, 0.10] }  // Habituation (sensory-L)
+    if i == 2  { return [0.10,  0.45,  0.30] }   // PrecisionSurprise (ACC)
+    if i == 3  { return [0.0,   0.65,  0.20] }   // SelfIdentity (mPFC)
+    if i == 4  { return [0.0-0.45, 0.55,  0.35] }  // LearnedPrecision (dlPFC-L)
+    if i == 5  { return [0.40,  0.0-0.30, 0.0-0.10] }  // Novelty (hippocampus-R)
+    if i == 6  { return [0.50,  0.10,  0.45] }   // AttentionalBlink (parietal-R)
+    if i == 7  { return [0.55,  0.0,   0.30] }   // SenseOfAgency (TPJ-R)
+    if i == 8  { return [0.35,  0.0-0.05, 0.05] }  // SubjectiveTime (insula)
+    if i == 9  { return [0.0,   0.60,  0.0-0.05] }  // EmotionRegulation (vmPFC)
+    if i == 10 { return [0.45,  0.55,  0.35] }   // DirectedForgetting (dlPFC-R)
+    if i == 11 { return [0.0-0.50, 0.05,  0.50] }  // BodyOwnership (S1)
+    if i == 12 { return [0.0-0.50, 0.10,  0.45] }  // DividedAttention (parietal-L)
+    if i == 13 { return [0.0,   0.40,  0.55] }   // FreeWont (preSMA)
+    return [0.0, 0.0-0.20, 0.0-0.30]             // 14 MitosisGrowth (subcortical)
+}
+fn _topo_hemi(i: int) -> int {
+    // -1 = left (Engine-A), +1 = right (Engine-G), 0 = midline.
+    if i == 1  { return 0 - 1 }
+    if i == 4  { return 0 - 1 }
+    if i == 11 { return 0 - 1 }
+    if i == 12 { return 0 - 1 }
+    if i == 5  { return 1 }
+    if i == 6  { return 1 }
+    if i == 7  { return 1 }
+    if i == 8  { return 1 }
+    if i == 10 { return 1 }
+    return 0
+}
+fn _topo_dist(a: [float], b: [float]) -> float {
+    let dx = a[0] - b[0]
+    let dy = a[1] - b[1]
+    let dz = a[2] - b[2]
+    return sqrt(dx * dx + dy * dy + dz * dz)
+}
+fn _topo_zeros(n: int) -> [[float]] {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        let mut zr = []
+        let mut j = 0
+        while j < n { zr = zr + [0.0]  j = j + 1 }
+        a = a + [zr]
+        i = i + 1
+    }
+    return a
+}
+// topo_brain_adjacency — brain-faithful 15×15 binary adjacency: short-range dense(거리 임계, 반구내
+// wiring 더 쌈) + rich-club long-range(hub 쌍 전결합 + 각 hub→원거리 peripheral leaf). HUBS=[0,3,2,13]
+// (medial fronto-parietal core) PERIPHERAL=[1,8,11,14]. coords arg 가 주어지면 그것으로(shuffle 용),
+// 아니면 _topo_coord/_topo_hemi 기본 해부 배치. R1 brain_adjacency() byte-매칭(50 edges).
+// _topo_adj — build the 15×15 adjacency. coord_perm/use_perm scramble the GEOMETRY (distance-
+// thresholded short-range edges). perm_backbone (1) ALSO permutes the rich-club hub/peripheral
+// indices, so a FULL-topology shuffle scrambles the LOAD-BEARING backbone too (the EARNED control
+// for the connectome claim — R2 engine finding: the integration advantage rides the rich-club
+// BACKBONE, not the coordinates; a geometry-only shuffle leaves the advantage intact, so the
+// correct earned-shuffle must scramble the backbone as well).
+fn _topo_adj(coord_perm: [int], use_perm: int, perm_backbone: int) -> [[float]] {
+    let n = 15
+    let mut a = _topo_zeros(n)
+    let short_thr = 0.70
+    let mut i = 0
+    while i < n {
+        let mut j = i + 1
+        while j < n {
+            let ci = i
+            let cj = j
+            let mut ii = i
+            let mut jj = j
+            if use_perm == 1 { ii = coord_perm[i]  jj = coord_perm[j] }
+            let hi = _topo_hemi(ii)
+            let hj = _topo_hemi(jj)
+            let d = _topo_dist(_topo_coord(ii), _topo_coord(jj))
+            let mut same = 0
+            if hi == hj { same = 1 }
+            if hi == 0 { same = 1 }
+            if hj == 0 { same = 1 }
+            let mut thr = short_thr
+            if same == 0 { thr = short_thr * 0.6 }
+            if d <= thr { a[ci][cj] = 1.0  a[cj][ci] = 1.0 }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    // rich-club long-range backbone: hub pairs + hub→peripheral leaf. Default placement = ORIGINAL
+    // index (the connectome wiring fact). When perm_backbone==1 the hub/peri indices are remapped
+    // through coord_perm → the FULL shuffle that scrambles the load-bearing topology too.
+    let mut hubs = [0, 3, 2, 13]
+    let mut peri = [1, 8, 11, 14]
+    if perm_backbone == 1 {
+        let mut k = 0
+        while k < 4 { hubs[k] = coord_perm[hubs[k]]  peri[k] = coord_perm[peri[k]]  k = k + 1 }
+    }
+    let mut h1 = 0
+    while h1 < 4 {
+        let mut h2 = h1 + 1
+        while h2 < 4 { a[hubs[h1]][hubs[h2]] = 1.0  a[hubs[h2]][hubs[h1]] = 1.0  h2 = h2 + 1 }
+        a[hubs[h1]][peri[h1]] = 1.0  a[peri[h1]][hubs[h1]] = 1.0
+        h1 = h1 + 1
+    }
+    return a
+}
+fn _topo_identity_perm() -> [int] {
+    let mut p = []
+    let mut i = 0
+    while i < 15 { p = p + [i]  i = i + 1 }
+    return p
+}
+pub fn topo_brain_adjacency() -> [[float]] { return _topo_adj(_topo_identity_perm(), 0, 0) }
+
+// topo_lateralize_collapse — A(좌)&G(우) lane 을 SAME 반구로 강제: 모든 inter-hemispheric 쌍을 dense
+// 연결(좌/우 분리 파괴). D bar(headline)용.
+pub fn topo_lateralize_collapse() -> [[float]] {
+    let mut a = topo_brain_adjacency()
+    let n = 15
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j < n {
+            if i != j {
+                let hi = _topo_hemi(i)
+                let hj = _topo_hemi(j)
+                if hi != 0 { if hj != 0 { if hi != hj { a[i][j] = 1.0  a[j][i] = 1.0 } } }
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return a
+}
+fn _topo_lcg_perm(seed: int) -> [int] {
+    // Fisher–Yates over 15 indices with the local LCG (deterministic).
+    let mut p = _topo_identity_perm()
+    let mut s = _lcg_ci(seed)
+    let mut k = 14
+    while k > 0 {
+        s = _lcg_ci(s)
+        let r = s % (k + 1)
+        let tmp = p[k]  p[k] = p[r]  p[r] = tmp
+        k = k - 1
+    }
+    return p
+}
+// topo_shuffle_coords — FULL-topology shuffle: scramble BOTH the geometry AND the rich-club backbone
+// (perm_backbone=1). EARNED shuffle for the connectome claim — collapses Φ toward RANDOM (the
+// integration advantage rides the rich-club BACKBONE topology). R2 engine-native finding.
+pub fn topo_shuffle_coords(seed: int) -> [[float]] {
+    return _topo_adj(_topo_lcg_perm(seed), 1, 1)
+}
+// topo_shuffle_geometry_only — DISSOCIATION control: scramble ONLY the anatomical coordinates
+// (geometry-derived short-range edges), keep the rich-club backbone at original indices. R2 engine
+// finding: this does NOT collapse Φ → the spatial COORDINATES are INERT; the rich-club TOPOLOGY is
+// what's load-bearing (the headline dissociation — connectome hubs matter, not the 3-D placement).
+pub fn topo_phi_geometry_shuffled(x: [[float]], alpha: float, seed: int) -> float {
+    let a = _topo_adj(_topo_lcg_perm(seed), 1, 0)
+    let xd = topo_apply(x, a, alpha)
+    return ci_phi_iit4(xd, _topo_core())
+}
+// topo_degree_matched_random — degree-matched random rewiring(같은 edge 수, 배치 scramble): EARNED 통제.
+// configuration-model 식 stub pairing(self/multi 회피), 모자라면 random non-edge 로 채움. deterministic LCG.
+pub fn topo_degree_matched_random(seed: int) -> [[float]] {
+    let a = topo_brain_adjacency()
+    let n = 15
+    // total edge count m + degree sequence.
+    let mut m = 0
+    let mut deg = []
+    let mut i = 0
+    while i < n {
+        let mut di = 0
+        let mut j = 0
+        while j < n { if a[i][j] > 0.5 { di = di + 1 } j = j + 1 }
+        deg = deg + [di]
+        m = m + di
+        i = i + 1
+    }
+    m = m / 2
+    // build stub list.
+    let mut stubs = []
+    i = 0
+    while i < n {
+        let mut c = 0
+        while c < deg[i] { stubs = stubs + [i]  c = c + 1 }
+        i = i + 1
+    }
+    let mut r = _topo_zeros(n)
+    let mut placed = 0
+    let mut s = _lcg_ci(seed)
+    let mut nstub = len(stubs)
+    let mut attempts = 0
+    while placed < m {
+        if attempts > 20000 { placed = m } else {
+            if nstub < 2 {
+                // top up with random non-edges.
+                s = _lcg_ci(s)
+                let aa = s % n
+                s = _lcg_ci(s)
+                let bb = s % n
+                if aa != bb { if r[aa][bb] < 0.5 { r[aa][bb] = 1.0  r[bb][aa] = 1.0  placed = placed + 1 } }
+            } else {
+                // pop two random stubs.
+                s = _lcg_ci(s)
+                let p1 = s % nstub
+                let u = stubs[p1]
+                stubs = _topo_remove_at(stubs, p1)
+                nstub = nstub - 1
+                s = _lcg_ci(s)
+                let p2 = s % nstub
+                let v = stubs[p2]
+                stubs = _topo_remove_at(stubs, p2)
+                nstub = nstub - 1
+                if u != v { if r[u][v] < 0.5 {
+                    r[u][v] = 1.0  r[v][u] = 1.0  placed = placed + 1
+                } else { stubs = stubs + [u] + [v]  nstub = nstub + 2 } }
+                else { stubs = stubs + [u] + [v]  nstub = nstub + 2 }
+            }
+            attempts = attempts + 1
+        }
+    }
+    return r
+}
+fn _topo_remove_at(xs: [int], k: int) -> [int] {
+    let mut out = []
+    let mut i = 0
+    while i < len(xs) { if i != k { out = out + [xs[i]] } i = i + 1 }
+    return out
+}
+// _topo_sym_norm — Â = D^-1/2 A D^-1/2 (대칭 정규화, 0-degree 노드는 0).
+fn _topo_sym_norm(a: [[float]]) -> [[float]] {
+    let n = len(a)
+    let mut dinv = []
+    let mut i = 0
+    while i < n {
+        let mut d = 0.0
+        let mut j = 0
+        while j < n { d = d + a[i][j]  j = j + 1 }
+        if d > 0.000001 { dinv = dinv + [1.0 / sqrt(d)] } else { dinv = dinv + [0.0] }
+        i = i + 1
+    }
+    let mut out = _topo_zeros(n)
+    i = 0
+    while i < n {
+        let mut j = 0
+        while j < n { out[i][j] = dinv[i] * a[i][j] * dinv[j]  j = j + 1 }
+        i = i + 1
+    }
+    return out
+}
+// topo_apply — lane 신호를 인접 따라 한 스텝 확산: X' = X·(I + α·Â)ᵀ. 인접 lane 끼리 섞여 구조적
+// cross-lane 공분산 생성. FLAT(A=0)은 X 불변. α 는 모든 토폴로지 공통(per-arm tune 아님).
+pub fn topo_apply(x: [[float]], a: [[float]], alpha: float) -> [[float]] {
+    let nt = len(x)
+    let n = len(a)
+    let ahat = _topo_sym_norm(a)
+    // M = I + α·Â  (n×n)
+    let mut mm = _topo_zeros(n)
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j < n {
+            let mut v = alpha * ahat[i][j]
+            if i == j { v = v + 1.0 }
+            mm[i][j] = v
+            j = j + 1
+        }
+        i = i + 1
+    }
+    // X' = X · Mᵀ  → out[t][i] = Σ_j X[t][j]·M[i][j]
+    let mut out = []
+    let mut t = 0
+    while t < nt {
+        let mut row = []
+        i = 0
+        while i < n {
+            let mut s = 0.0
+            let mut j = 0
+            while j < n { s = s + x[t][j] * mm[i][j]  j = j + 1 }
+            row = row + [s]
+            i = i + 1
+        }
+        out = out + [row]
+        t = t + 1
+    }
+    return out
+}
+// _topo_core — ≤8-lane CORE for the min-cut MIP (must be ≤8 for the faithful exact regime). Includes
+// all 4 HUBS so the rich-club test is in-core. = [0,3,2,13(hubs),5,7,9,14].
+fn _topo_core() -> [int] { return [0, 3, 2, 13, 5, 7, 9, 14] }
+
+// topo_phi_brain/_flat/_random/_lateralized/_coords_shuffled — IIT4 MIN-CUT Φ(ci_phi_iit4) over the
+// CORE of a population X diffused under each topology. THE topology-faithful headline measure.
+pub fn topo_phi_flat(x: [[float]], alpha: float) -> float {
+    // FLAT = no wiring → X unchanged.
+    return ci_phi_iit4(x, _topo_core())
+}
+pub fn topo_phi_brain(x: [[float]], alpha: float) -> float {
+    let xd = topo_apply(x, topo_brain_adjacency(), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+}
+pub fn topo_phi_random(x: [[float]], alpha: float, seed: int) -> float {
+    let xd = topo_apply(x, topo_degree_matched_random(seed), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+}
+pub fn topo_phi_lateralized(x: [[float]], alpha: float) -> float {
+    let xd = topo_apply(x, topo_lateralize_collapse(), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+}
+pub fn topo_phi_coords_shuffled(x: [[float]], alpha: float, seed: int) -> float {
+    let xd = topo_apply(x, topo_shuffle_coords(seed), alpha)
+    return ci_phi_iit4(xd, _topo_core())
+}
+// topo_phi_random_mean / _shuffle_mean / _geometry_shuffle_mean — average min-cut Φ over `nseed`
+// independent random rewirings / full-topology shuffles / geometry-only shuffles. A single random
+// draw is noisy (R2 finding: single-seed B can flip); the EXPECTATION over seeds is the frozen bar.
+pub fn topo_phi_random_mean(x: [[float]], alpha: float, seed0: int, nseed: int) -> float {
+    let mut s = 0.0
+    let mut k = 0
+    while k < nseed { s = s + topo_phi_random(x, alpha, seed0 + k * 7919)  k = k + 1 }
+    if nseed == 0 { return 0.0 }
+    return s / to_float(nseed)
+}
+pub fn topo_phi_shuffle_mean(x: [[float]], alpha: float, seed0: int, nseed: int) -> float {
+    let mut s = 0.0
+    let mut k = 0
+    while k < nseed { s = s + topo_phi_coords_shuffled(x, alpha, seed0 + k * 7919)  k = k + 1 }
+    if nseed == 0 { return 0.0 }
+    return s / to_float(nseed)
+}
+pub fn topo_phi_geometry_shuffle_mean(x: [[float]], alpha: float, seed0: int, nseed: int) -> float {
+    let mut s = 0.0
+    let mut k = 0
+    while k < nseed { s = s + topo_phi_geometry_shuffled(x, alpha, seed0 + k * 7919)  k = k + 1 }
+    if nseed == 0 { return 0.0 }
+    return s / to_float(nseed)
+}
+// topo_phi_hub_ablated — rich-club test: drop one CORE lane `lane` from the min-cut system on the
+// BRAIN-diffused population → ΔΦ = Φ₀ − Φ(core∖lane). hub 절단이 peripheral 절단보다 ΔΦ 크면 hub 가
+// load-bearing. core hubs=[0,3,2,13] · core peripherals=[5,7,9,14].
+pub fn topo_phi_hub_ablated(x: [[float]], alpha: float, lane: int) -> float {
+    let xd = topo_apply(x, topo_brain_adjacency(), alpha)
+    let core = _topo_core()
+    let phi0 = ci_phi_iit4(xd, core)
+    let mut cols = []
+    let mut i = 0
+    while i < len(core) { if core[i] != lane { cols = cols + [core[i]] } i = i + 1 }
+    if len(cols) < 2 { return phi0 }
+    return phi0 - ci_phi_iit4(xd, cols)
+}
+
 // ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate

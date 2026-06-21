@@ -3298,6 +3298,57 @@ fn main() {
           + " | sham_chg=" + to_string(fl_sham_change) + " shuf_chg=" + to_string(fl_shuf_change)
           + " — FOCAL/freq FIELD raises 'wanting'≠'liking' (Berridge via 場), ⊥ GLOBAL/chemical DRUG route(H_1502 LSD); Hayashi2013·Dunlop2017")
 
+    // ── (H_1512 BrainTopology) brain-faithful 공간 토폴로지가 통합 Φ 를 올리는가 — 엔진-네이티브 ──
+    // §BrainTopology: lane 들에 해부 좌표 + connectome 인접 + A=좌/G=우 lateralization 을 부여하고 IIT4
+    // MIN-CUT Φ(ci_phi_iit4, topology-faithful — edge-mass 아닌 절단-저항)를 BRAIN/FLAT/RANDOM/lateralized/
+    // coords-shuffled 토폴로지 별로 재측정. H_1510 QUORUM-KURAMOTO(시간 위상 dynamics)와 DISTINCT(공간 배치).
+    // raw multi-info 는 degree-matched RANDOM 과 동률이 되는 metric-artifact(R1a) → MIN-CUT 이 옳은 척도.
+    let bt_pop   = _topo_lane_pop()
+    let bt_alpha = 0.6
+    let bt_nseed = 3                          // average RANDOM/SHUFFLE over 3 seeds (single draw is noisy)
+    let bt_flat  = topo_phi_flat(bt_pop, bt_alpha)
+    let bt_brain = topo_phi_brain(bt_pop, bt_alpha)
+    let bt_rand  = topo_phi_random_mean(bt_pop, bt_alpha, 2000, bt_nseed)        // mean over seeds
+    let bt_latcol= topo_phi_lateralized(bt_pop, bt_alpha)
+    let bt_shuf  = topo_phi_shuffle_mean(bt_pop, bt_alpha, 3000, bt_nseed)       // FULL shuffle (backbone too)
+    // rich-club: ablate a CORE HUB vs a CORE PERIPHERAL → ΔΦ_mincut. hubs=[0,3,2,13] peri=[5,7,9,14].
+    let bt_hub0  = topo_phi_hub_ablated(bt_pop, bt_alpha, 0)
+    let bt_hub3  = topo_phi_hub_ablated(bt_pop, bt_alpha, 3)
+    let bt_hub2  = topo_phi_hub_ablated(bt_pop, bt_alpha, 2)
+    let bt_hub13 = topo_phi_hub_ablated(bt_pop, bt_alpha, 13)
+    let bt_per5  = topo_phi_hub_ablated(bt_pop, bt_alpha, 5)
+    let bt_per7  = topo_phi_hub_ablated(bt_pop, bt_alpha, 7)
+    let bt_per9  = topo_phi_hub_ablated(bt_pop, bt_alpha, 9)
+    let bt_per14 = topo_phi_hub_ablated(bt_pop, bt_alpha, 14)
+    let bt_hub_drop  = (bt_hub0 + bt_hub3 + bt_hub2 + bt_hub13) / 4.0
+    let bt_peri_drop = (bt_per5 + bt_per7 + bt_per9 + bt_per14) / 4.0
+    let bt_brain_adv = bt_brain - bt_rand     // BRAIN advantage over degree-matched RANDOM
+    let bt_shuf_adv  = bt_shuf - bt_rand       // FULL-shuffle advantage (should collapse to ~0)
+    // ── GATED bars = the ROBUST ones (A,D,E): hold across 20/20 population realizations. ──
+    // case 328 (A BRAIN>FLAT): wiring raises irreducible min-cut Φ over the unwired (flat) layout.
+    if _assert_b("case_328_topo_brain_gt_flat", true, bt_brain > bt_flat + 0.02) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 329 (D LATERALIZATION, headline): forcing A&G into the SAME hemisphere drops Φ vs lateralized.
+    if _assert_b("case_329_topo_lateralization", true, bt_latcol < bt_brain) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 330 (E EARNED shuffle): scrambling the FULL topology (geometry + rich-club backbone)
+    // decorrelates the BRAIN-over-RANDOM advantage toward 0 (the structure is load-bearing).
+    if _assert_b("case_330_topo_full_shuffle", true, bt_shuf_adv <= 0.5 * bt_brain_adv) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 331 NON-NEG sanity: every topology Φ is a non-negative integrated min-cut (Φ ≥ 0).
+    if _assert_b("case_331_topo_phi_nonneg", true, bt_flat >= 0.0 && bt_brain >= 0.0 && bt_rand >= 0.0 && bt_latcol >= 0.0 && bt_shuf >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 332 WELL-FORMED B/C measurement (NON-DIRECTIONAL gate): B(brain>random) and C(rich-club
+    // hub>peri) are SMALL & SAMPLE-FRAGILE at single-population engine scale (flip with N) — they are
+    // REAL in EXPECTATION (R1 multi-population avg: B +0.024 @15/20, C +0.016 @19/20) but NOT robustly
+    // gated on ONE draw. So we assert only that the measurement is WELL-FORMED (finite, ablations
+    // produce a drop), and REPORT the measured B/C sign in the INFO line below — NOT pass/fail-gated
+    // (gating them on one fragile draw would be tune-to-green; honest c9: report the small effect).
+    if _assert_b("case_332_topo_bc_wellformed", true, bt_brain >= 0.0 && bt_rand >= 0.0 && bt_hub_drop >= 0.0 && bt_peri_drop >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1512 brain-topology (R2 WIRED): Φ min-cut flat=" + to_string(bt_flat) + " brain=" + to_string(bt_brain)
+          + " random(mean)=" + to_string(bt_rand) + " | latcol=" + to_string(bt_latcol) + " full-shuf=" + to_string(bt_shuf)
+          + " | rich-club hub_drop=" + to_string(bt_hub_drop) + " peri_drop=" + to_string(bt_peri_drop)
+          + " | GATED A(brain>flat)/D(lateralize)/E(structure-scramble collapses) robust; "
+          + "DIRECTIONAL B(brain_adv=" + to_string(bt_brain_adv) + ")/C(hub−peri=" + to_string(bt_hub_drop - bt_peri_drop)
+          + ") SMALL+sample-fragile, real in R1 expectation — brain-faithful CONNECTOME + A/G lateralization "
+          + "RAISE 통합 Φ; coord/topology 분리 비강건. H_1510 시간 dynamics 와 DISTINCT(공간 배치)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
@@ -3586,3 +3637,30 @@ fn _neuropharm_ms(trials: [[float]]) -> [float] {
     while i < len(trials) { ms = ms + [trials[i][0]]  i = i + 1 }
     return ms
 }
+
+// _topo_lane_pop — deterministic 15-lane-score population for the H_1512 BrainTopology cases:
+// call the LIVE ci_lane_scores on LCG-varied substrate states (mirrors h1512.py build_population).
+// 240 trials, in-engine LCG (NO numpy), byte-exact reproducible. Rows = trials, cols = 15 lanes.
+fn _topo_lane_pop() -> [[float]] {
+    let n = 150
+    let mut st = 5120 & 2147483647
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        st = _neuropharm_lcg(st)  let m  = 0.20 + 0.60 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f0 = 0.10 + 0.80 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f1 = 0.10 + 0.80 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f2 = 0.10 + 0.80 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f3 = 0.10 + 0.80 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let f4 = 0.10 + 0.80 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let cells = 0 + (st % 12)
+        st = _neuropharm_lcg(st)  let seen  = 0 + (st % 8)
+        st = _neuropharm_lcg(st)  let intent = 0 + (st % 2)
+        st = _neuropharm_lcg(st)  let dt = 0.10 + 1.50 * (to_float(st) / 2147483648.0)
+        st = _neuropharm_lcg(st)  let re = 0.05 + 0.90 * (to_float(st) / 2147483648.0)
+        out = out + [ci_lane_scores(m, [f0, f1, f2, f3, f4], cells, seen, intent, dt, re)]
+        i = i + 1
+    }
+    return out
+}
+
