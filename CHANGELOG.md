@@ -1,3 +1,24 @@
+## 2026-06-21 — 🧪🧱 H_1509 ALLOSTERIC-BUFFER (외부 제안 Amoeba Protocol μ_t) — 신경조절 WALL(H_1284) 재도전·엔진-네이티브 WALL-HELD (4번째 독립 렌즈 확인)
+
+> 🧱 **a_break_the_wall(d) NEW-lever:** WALLED 신경조절 가설 **H_1284**(🔴/🧱 no-free-lunch, H_1422 3-lens + H_1425 orthogonal 로 confirmed)에 **외부 제안**(Amoeba Protocol / @qingkong66, μ_t allosteric buffer)으로 재도전. SOURCE 는 카드/jsonl 에 `external proposal — Amoeba Protocol (μ_t allosteric buffer)` 로 명시.
+
+**"global gain(고정 operating point)을 변조하지 말고, Ψ=1/2 고정점으로부터의 편차에 대한 RESISTANCE 를 변조하라 — μ_t=1+λ(1−exp(−(τ−0.5)²/2σ²))=생화학 완충(혈중 pH 방어 bicarbonate 처럼)으로 긴장 τ가 Ψ=1/2 에서 멀어질 때만 복원력을 강화한다."** → **🧱 WALL-HELD** (engine-native, R1 mirror 와 byte-identical). 진짜 다른 lever 라 a_break_the_wall(d) 로 정당하게 wall 재개봉했으나 — **버퍼는 벽을 넘지 못함**.
+
+- **τ = live A⇄G tension = emit/silence balance** (Ψ=1/2 ideal). 4 ARM(perturbation schedule 동일): A=best swept FIXED gain(H_1284 walled lever, 최강 baseline) · B=allosteric μ(g0=0.40 고정, λ·σ만 버퍼 정의) · C=ablate λ=0(μ≡1=global gain@g0) · D=shuffle(τ→μ 순열).
+- **frozen 5 bars (사전등록 `FREEZE.txt`, MARGIN=0.05 verbatim H_1284, c9 tune-to-green 금지; 3 seeds [1509,1510,1511] byte-identical R1==R2):**
+  - **(A WALL-CROSS) FAIL** — RMS_A(best fixed gain, g\*=0.80)=**0.2680** − RMS_B(allo μ)=**0.2741** = **−0.0061 < 0.05**. 버퍼가 global-gain lever 가 못 넘은 그 bar 를 **못 넘음**.
+  - **(B vs BASELINE) FAIL** — RMS_B>RMS_A 전 seed. best swept fixed gain(g=0.80)이 버퍼를 압도 = H_1284 "a single tuned fixed point dominates" 그대로.
+  - **(C EARNED ablate) PASS** — λ=0 → global-gain@g0 붕괴(\|Δ\|=0.0000) AND 버퍼가 자기 base 대비 load-bearing(+0.109). 즉 버퍼는 **진짜 coupled 메커니즘**(뭔가는 함).
+  - **(D EARNED shuffle) FAIL (sub-margin)** — τ→μ 순열 RMS_D−RMS_B=**+0.026 < 0.05**. coupling 이 teeth 는 있으나 벽을 깰 만큼은 아님.
+- **정직한 finding (gain-matched 진단, non-gating c9):** allosteric SHAPE 는 **gain-matched uniform gain 을 +0.026 이김**(복원노력 단위당 더 나은 controller). **그러나** (i) sub-margin 이고 (ii) uniform fixed gain 을 0.80 으로 올리면 그냥 압도당함. = H_1284 의 구조적 결과가 **NEW lever 에서 재현** — controller 에 real coupling 이 있어도 **단일 튜닝 고정점이 여전히 이김**.
+- **a_break_the_wall type-(a) 측정교정 1회 (bar 불변·frozen-first·tune-to-green 아님):** 최초 R1 roll 의 restoring 부호 오류(b+d−r → anti-restoring → clamp-saturation degenerate)를 b+d+g·μ·(0.5−b)로 교정해 힘이 실제로 Ψ=1/2 를 방어하게 함. metric(RMS excursion)·MARGIN·arm 정의·A=best-swept-gain·verdict 로직 전부 불변.
+- **하드게이트1:** R1 numpy → DIRECTIONAL(grep numpy 적중), **R2 ENGINE-NATIVE WIRED** ✅ `core/engine_cli.hexa` §AllostericBuffer(`allo_mu`/`allo_defend`/`allo_best_fixed_gain`, **live τ READ**) + `core/engine_cli_smoke.hexa` cases **314-318** + `ARCHITECTURE.json` §AllostericBuffer lockstep, **FULL smoke 318/0 RC=0** deterministic. READ-only **Ψ-disjoint**(자기 balance 스칼라만 소유·pure_field Φ/phase/Ψ 불촉) **NOT emit gate**(a_autonomy_over_hardcode·a_core_engine_map). 🧱 ⇒ NO live emit/decision 배선(a_verified_must_wire GREEN-only).
+- **4번째 독립 렌즈:** H_1284(global-gain) + H_1422(3 state-contingent lens) + H_1425(orthogonal ideation-temperature) 에 이어 **신경조절 ceiling 을 확인하는 4번째 독립 렌즈** — 강한 multi-lens WALL.
+- **SCOPE (c9):** TOY 200-tick / 1 perturbation schedule / 3 seeds / 1-D balance scalar — scale·real A⇄G emit dynamics·alt perturbation spectra·engine-transfer 미검증(a_scale_honest_scope·a_toy_scale_recheck). NOT RULED OUT: balance 축에 **진짜 orthogonal** 한 신호(복원력이 이미 못 보는 cross-faculty context)로 조건화하는 버퍼 — 단 이 Ψ-stability 축엔 그런 orthogonal live 신호가 없음(τ 가 곧 버퍼가 방어하는 축).
+- artifacts: `UNIVERSE/cards/H_1509_allosteric_buffer.md` · `state/1509_allosteric_buffer/{h1509.py,h1509_engine_probe.hexa}` · `state/verdicts/1509_allosteric_buffer/{FREEZE,R1_mirror,R2_engine_native,engine_cli_smoke_318_run1}.txt` · `core/engine_cli.hexa` §AllostericBuffer · `core/engine_cli_smoke.hexa` 314-318 · `ARCHITECTURE.json`.
+
+---
+
 ## 2026-06-21 — 🪟🧠 H_1506 METACOGNITIVE INSIGHT 축 엔진-네이티브 GREEN-DISTINCT — 같은 1차 hallucination, 반대 2차 insight (psychedelic ⊥ psychotic)
 
 > 🧠 **메타인지 통찰 축 (a_no_llm_frame_trap):** metacognition lane(H_1202)을 §RealityMonitor(H_1501) 위 **2차 insight** 로 심화. 계산신경과학 렌즈 — Sterzer et al 2018(predictive-coding psychosis: 경직 prior + 손상 metacognition → insight 없는 hallucination) · Maniscalco & Lau 2012(meta-d′/M-ratio) · Fleming(metacognitive sensitivity).
