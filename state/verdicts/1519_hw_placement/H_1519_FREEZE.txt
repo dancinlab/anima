@@ -1,0 +1,61 @@
+H_1519 HW-PLACEMENT (neuromorphic NoC routing-cost) — FROZEN BARS (pre-registered BEFORE reading results, c9, NO tune-to-green)
+===========================================================================================================================
+
+SUBSTRATE TAG: MODEL (numpy DIRECTIONAL model of the AKD1000 mesh-NoC routing cost).
+  ⊥ the REAL Lane-A AKD1000 on-chip measurement (a_lane_akida_gpu_split). The physical pi5-akida is
+  GATED (NOT a shared pool host; do NOT dispatch compute to it — a_pi5_akida_registry). The true on-chip
+  NoC routing + on-chip Φ measurement is a Lane-A FOLLOW-ON (ING h1519-onchip-akida). Everything here is
+  a defensible MODEL of the mesh-NoC hop-distance cost, not an on-chip number.
+
+THE 3-TIER SYMMETRY (the insight):
+  - Biology (H_1516 #2494): physical axons → wiring COST → real placement is Φ-suboptimal but economical
+    (real ≈37th percentile, ~65% off the Φ-optimum). H_1517 cost-pareto.
+  - Software anima (H_1515 #2493): connections = memory POINTERS → ZERO wiring cost → free to adopt the
+    Φ-OPTIMAL placement (opt_perm found, ~2.5× Φ vs random mean). H_1518 adopting it.
+  - HARDWARE anima (THIS, H_1519): the AKD1000 is a PHYSICAL mesh Network-on-Chip → lane→core placement
+    has REAL routing cost (NoC hop distance) → the biological wiring tax RETURNS on the chip.
+  PREDICTION: the Φ-optimal placement (FREE in software) becomes EXPENSIVE on the chip, and the HW-cost-
+  constrained optimum should re-converge toward biology's economical-suboptimal solution.
+
+NoC COST MODEL (defensible, documented):
+  The BrainChip AKD1000 is a mesh-NoC neuromorphic accelerator (mesh Network-on-Chip connecting its
+  Neural Processing units; PI5-AKIDA.json = host SSOT). We lay the 15 consciousness lanes on a 4×4 mesh
+  of cores (16 cores, 15 used — the smallest square grid that holds 15 lanes; documents that AKD1000 is a
+  2D mesh-NoC where spatial placement physically matters). A PLACEMENT = an assignment of lanes to mesh
+  coordinates, equivalently a permutation π (lane i sits at mesh cell coord(π⁻¹...) — implemented as
+  coord[k] = mesh cell of slot k, placement maps lane→slot). The NoC COST of a lane-adjacency edge (i,j)
+  = MANHATTAN (hop) distance between the mesh coords of the two lanes = |Δrow| + |Δcol|. Total HW cost of
+  a placement = Σ over present lane-adjacency edges of hop distance. (Neuromorphic analogue of H_1517's
+  biological wiring length.) Φ is the SAME H_1512 min-cut IIT4 Φ (placement-invariant for relabel only via
+  the brain adjacency relabel A_π[i][j]=A[π[i]][π[j]] diffusion — identical to H_1515).
+
+CANDIDATE SET (each → its (NoC_cost, Φ) point):
+  - BRAIN-FAITHFUL placement (identity permutation = the wired layout).
+  - Φ-OPTIMAL placement (H_1515 opt_perm = [11,0,8,4,14,2,6,1,10,5,9,7,3,13,12]; re-verified by hill-climb).
+  - M=4000 RANDOM placements (the NoC-cost + Φ distributions).
+  - HW-COST-CONSTRAINED OPTIMUM: maximize Φ SUBJECT TO NoC cost ≤ BUDGET, where
+        BUDGET = brain-faithful placement's NoC cost   (pre-registered budget = the biological economy bar:
+        "you may spend no more wiring than biology's placement does"). Found by hill-climb over Φ rejecting
+        any swap that violates the budget + a feasible-random fallback.
+
+FROZEN BARS (set BEFORE running):
+  (P1 HW-TAX-ON-OPTIMUM)  The Φ-optimal placement's NoC cost is HIGH on the chip:
+        cost(Φ-opt) >= P75 of the random NoC-cost distribution   (top quartile — software's free optimum
+        is expensive on-chip).  PASS/FAIL.
+  (P2 HW-CONSTRAINED-LOSS) The best Φ achievable under the tight NoC budget is MATERIALLY below the
+        unconstrained Φ-optimum:  (opt_phi − constrained_phi) / opt_phi >= 0.10  (the HW tax forces a real
+        ≥10% Φ sacrifice).  PASS/FAIL.  (quantify the % either way).
+  (P3 BIOLOGY-CONVERGENCE, REPORT-ONLY) Is the HW-constrained optimum's Φ-percentile (vs the random Φ
+        distribution) in the same ballpark as biology's economical placement (H_1516 ~37th pctile)?
+        Report the constrained optimum's Φ-percentile + cost-percentile honestly whichever way.
+
+VERDICT LOGIC:
+  P1 ∧ P2  → 🟢 GREEN (DIRECTIONAL-model): the neuromorphic NoC RE-INTRODUCES the biological wiring tax —
+             the Φ-optimal placement (free in software) is expensive on-chip AND the HW-budget forces a real
+             Φ sacrifice. 3-tier symmetry (biology→software→hardware) CONFIRMED in model.
+  ¬P1 ∨ ¬P2 → 🟠 PARTIAL / honest finding: the HW tax is SMALL → software's freedom EXTENDS to hardware
+             (the mesh-NoC cost does not materially bind) — also an interesting, honestly-reported result.
+
+DISCIPLINE: frozen-first; numpy MODEL = DIRECTIONAL (substrate=MODEL); honest EITHER way; a_scale_honest_scope
+  (toy 15-lane 4×4 mesh, NOT the full 80-NPU AKD1000 fabric); real on-chip akida = Lane-A follow-on.
+  SEEDS for the model RNG fixed; bars are deterministic given the frozen model.
