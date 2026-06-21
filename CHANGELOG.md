@@ -1,3 +1,11 @@
+## docs(ARCHITECTURE): engine_cli 35.6KB 단일 lane-카탈로그 노드를 lane-group subsection 으로 분해 — c4 tree convention 준수, 0 content loss, 현재상태 in-place
+
+`sections[7]/…/engine_cli.hexa` 의 36.5KB(36588자) 단일 prose 노드(44 lane 이 `/`·`·` 로 한 문자열에 압축)를 c4 tree convention(한 prose/title 필드에 여러 claim 금지, 깊은 detail 은 child subsection 으로 분해)에 맞춰 분해.
+- 1 prose 노드 → [짧은 intro prose + 13 child subsection]: 44 lane 을 테마별 lane-group 으로 묶음(§Memory & store · §Global-workspace · §Self/identity · §Attention & agency · §Body/volition · §Perceptual-dynamics · §Temporal-integration · §Gestalt/completion · §Prospection/interoception · §Qualia/presence · §Neuropharm/field · §Metacognition & Amoeba-buffer · §Brain-topology & consciousness-index).
+- 각 child = 기존 file 의 sibling `subsection` 노드와 동일 schema `{"type":"subsection","title":…,"blocks":[{"type":"prose","text":…}]}`(키 모양 복사).
+- ZERO content loss: lane 텍스트 byte-identical(orig 36494 == new 36494, dropped 0), 103 lane-head 토큰 전부 보존, contiguous 분할로 재조립 == 원본 검증. JSON valid(`json.load` PASS), 포맷 보존(indent=1·ensure_ascii=False·no trailing nl) → diff 131 삽입/1 삭제(노드 하나만 확장).
+- current-state in-place(c4 update_policy): history/date/`previous` 트리 삽입 없음, lane 구조만 finer-grained. enforce_anima_gates clean. NOTE: 루트 architecture.html 뷰어는 `node.children`/`node.name` schema 를 읽어 현 JSON(`sections`/`blocks`)과 이미 불일치(사전상태) — 이 변경은 그 뷰어를 건드리지 않음.
+
 ## docs: NT×CLS 융합 캠페인 최신반영 (README + ARCHITECTURE.json)
 
 H_1284 NEUROMODULATION 벽이 CLS(두-store)로 깨진 것 + 6 신경전달물질 융합을 README·ARCHITECTURE 에 반영.
