@@ -1,0 +1,41 @@
+H_1508 R2 ENGINE-NATIVE VERDICT — §MetacogControl on live immune_memory_recall_margin
+=======================================================================================
+seed 11, n 10, deterministic (3x byte-identical: smoke_run1/2/3.txt same md5).
+
+  case_323_metacog_calibration_ece        PASS  (A) ECE=0.13966 ≤ 0.15
+  case_324_metacog_calibration_monotone   PASS  (A) Spearman(difficulty,margin)=1.0 ≥ 0.50
+  case_325_metacog_control_lift           PASS  (B) RPL−uniform lift=0.140 ≥ 0.04
+  case_326_metacog_discrimination_invariant PASS (C) AUROC drift=0.0 ≤ 1e-7 (1.0→1.0)
+  case_327_metacog_calibration_new_axis   PASS  (C) ECE shift=0.364 ≥ 0.10 (0.1397→0.5035)
+  case_328_metacog_control_ablate         PASS  (D) margin-blind lift=0.0 ≤ 0.015
+  case_329_metacog_shuffle                PASS  (E) shuffle AUROC=0.59 |dev|=0.09 ≤ 0.30
+
+--- engine_cli smoke summary: 324 pass / 0 fail ---
+
+HEADLINE (DISCRIMINATION ⊥ CALIBRATION): live recall margin is a near-PERFECT
+discriminator (AUROC 1.0 in the engine's near-orthogonal key geometry) yet the
+SAME signal's over-confidence transform moves ECE 0.1397 → 0.5035 (+0.364) while
+AUROC stays byte-identical — calibration is a NEW axis the type-2 AUROC chain
+(H_1398 0.906) cannot see. The margin both CALIBRATES (ECE 0.140, monotone 1.0)
+and CONTROLS (RPL beats uniform +0.140, collapses to 0 when margin-blind).
+
+R1 numpy mirror (DIRECTIONAL, 3 seeds): GREEN — A ECE 0.036 / mono +0.917,
+B lift +0.049, C AUROC drift 0.0 / ECE shift +0.176, D 0.012, E 0.464/-0.036.
+
+drug-INDEPENDENT: NO §Neuropharm coupling. Nelson-Narens 1990 / Fleming-Lau 2014 /
+Metcalfe-Kornell 2005. WIRED-live (4-rung ladder complete + ARCHITECTURE lockstep).
+
+--- RENUMBER + TOOLCHAIN NOTE (post-capture, honest c9) ---
+This capture was taken at 16:59 under smoke numbering case_323..329. To avoid a
+collision with concurrently-landing work, the 7 cases were renumbered to
+case_340..346 in core/engine_cli_smoke.hexa (assertions, mc_* ops, and thresholds
+BYTE-IDENTICAL — label-only; confirmed via git diff). The underlying bars were
+measured engine-native here at 16:59.
+
+At 17:21 a global hexa toolchain self-rebuild regressed: the stdlib raw-mem natives
+rt_array_arena_alloc_items_native / rt_map_get_native are no longer emitted into the
+program object, so runtime.a fails to link for ANY `hexa run` / `hexa verify` using
+array-slice/map-get (session-wide, unrelated to this hypothesis). The post-renumber
+re-run of cases 340-346 is therefore PENDING the upstream hexa-lang toolchain repair
+(source is correct; the 17:21 BUILD is the broken artifact). All bars above remain
+the genuine 16:59 engine-native measurement.

@@ -1,0 +1,80 @@
+{
+  "hypothesis": "H_1508",
+  "rung": "R1_numpy_mirror_DIRECTIONAL",
+  "seeds": [
+    11,
+    12,
+    13
+  ],
+  "difficulty_ladder": [
+    0.0,
+    0.06,
+    0.09,
+    0.12,
+    0.14
+  ],
+  "n_trials_per_seed": 300,
+  "frozen_bars": {
+    "A_ECE_MAX": 0.15,
+    "A_MONO_MIN": 0.5,
+    "B_LIFT_MIN": 0.04,
+    "D_ABLATE_MAX": 0.015,
+    "E_CHANCE_BAND": 0.3,
+    "C_AUROC_DRIFT_MAX": 1e-09,
+    "C_ECE_SHIFT_MIN": 0.1
+  },
+  "A_calibration": {
+    "ECE": 0.0356,
+    "monotone_spearman_L_vs_margin": 0.9172,
+    "per_level_mean_margin": [
+      -0.15,
+      -0.0586,
+      -0.0272,
+      0.0076,
+      0.0333
+    ],
+    "per_level_accuracy": [
+      1.0,
+      0.9333,
+      0.7556,
+      0.2944,
+      0.0889
+    ],
+    "pass": true
+  },
+  "B_control_lift": {
+    "rpl_minus_uniform_lift_mean": 0.0489,
+    "per_seed_lift": [
+      0.0467,
+      0.0567,
+      0.0433
+    ],
+    "base_accs": [
+      0.6067,
+      0.6033,
+      0.6333
+    ],
+    "pass": true
+  },
+  "C_discrimination_orthogonal_calibration": {
+    "AUROC_conf_vs_correct": 0.9543,
+    "AUROC_after_monotone_xform": 0.9543,
+    "AUROC_drift": 0.0,
+    "ECE_base": 0.0356,
+    "ECE_after_xform": 0.2119,
+    "ECE_shift": 0.1763,
+    "headline": "rank-preserving transform: AUROC INVARIANT, ECE SHIFTS \u2192 calibration \u22a5 discrimination",
+    "pass": true
+  },
+  "D_earned_ablate": {
+    "margin_blind_random_vs_uniform_lift": 0.0122,
+    "pass": true
+  },
+  "E_earned_shuffle": {
+    "shuffled_AUROC": 0.4642,
+    "shuffled_calibration_spearman": -0.0363,
+    "pass": true
+  },
+  "GREEN": true,
+  "verdict": "\ud83d\udfe2 GREEN (A\u2227B\u2227D\u2227E) \u2014 margin CALIBRATES + CONTROLS"
+}

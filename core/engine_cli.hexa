@@ -8915,3 +8915,496 @@ pub fn hallucinate_under_drug(prof: [float], base_prior: float, prior_match: flo
     let drug_thr = base_thr + prof[5]                 // reality_thr_shift ↓ (prof[5]<0 ⇒ lower threshold)
     return hallucinate_call(drug_prior, prior_match, 0.0, drug_thr)   // zero external signal (halluc regime)
 }
+
+// ── § MetacogControl (H_1508 R2) — 메타인지 CALIBRATION + CONTROL (drug-INDEPENDENT) ──────────────────
+// Nelson & Narens 1990 monitoring↔control framework; Fleming & Lau 2014 (calibration ≠ discrimination);
+// Metcalfe & Kornell 2005 region-of-proximal-learning (RPL) control. The G5 NON-FAB/metacognition chain
+// (H_1202/1304/1361/1367/1396/1398/1379/1400) is ALL discrimination/MONITORING resolution (type-2 meta-d′,
+// AUROC up to 0.906). It NEVER measured the OTHER half of Nelson-Narens:
+//   CALIBRATION — does the live recall MARGIN track ACTUAL accuracy NUMERICALLY (not just rank)? A gate
+//     can have high AUROC yet be systematically over/under-confident (mis-calibrated). Measured by ECE +
+//     monotone margin↑ as difficulty↑.
+//   CONTROL — does a LOW margin DRIVE adaptive resource allocation (extra information-seeking on the
+//     uncertain-but-recoverable items) that beats UNIFORM allocation? The metacognitive signal must
+//     CONTROL behavior, not merely monitor it (Metcalfe RPL: study where you are uncertain-but-recoverable).
+//
+// DRUG-INDEPENDENT: this section has NO §Neuropharm coupling whatsoever — pure computational metacognition.
+//
+// MECHANISM (reads the LIVE substrate signal, NO injected accuracy label — p6): a graded-difficulty regime
+// over a live ImmuneMemory store. difficulty = magnitude of deterministic LCG noise added to a stored key
+// (re-normalized) — higher difficulty drifts the query off its cell, so accuracy FALLS and the LIVE
+// immune_memory_recall_margin RISES (toward/over the abstain threshold = lower confidence). margin =
+// immune_memory_recall_margin (the SAME op H_1367 wired); accuracy = does the live nearest-cell route to
+// the original fact's value. Ψ-disjoint (pure READ over the cell population; pure_field Φ/phase/Ψ untouched),
+// NOT an emit gate (a_autonomy_over_hardcode). Deterministic (LCG-seeded, no rng) → byte-repeatable.
+//
+// FROZEN bars (a_engine_native_learning — re-scores the R1 mirror's bars ENGINE-NATIVE on the live op):
+//   (A CALIBRATION) per-bin mean margin tracks per-bin accuracy (ECE ≤ 0.15) AND margin↑ monotone in
+//     difficulty (Spearman(difficulty, margin) ≥ +0.50).
+//   (B CONTROL-LIFT) margin-guided RPL adaptive sampling beats uniform allocation by ≥ +0.04 accuracy.
+//   (C DISCRIMINATION ⊥ CALIBRATION, headline) a strictly-monotone (rank-preserving) transform of the
+//     confidence keeps AUROC byte-identical but SHIFTS ECE ≥ 0.10 — calibration is a NEW axis the
+//     AUROC chain (0.906) is blind to.
+//   (D EARNED ablate) margin-blind allocation → the RPL lift collapses to ~0 (≤ 0.015).
+//   (E EARNED shuffle) permute margin↔difficulty → calibration AND discrimination decorrelate to chance.
+
+// _mc_corrupt_key — deterministic difficulty-ladder corruption in KEY-VECTOR space: add LCG noise of
+// magnitude `level` to each component of the (already-embedded) stored key, then RE-NORMALIZE to the unit
+// sphere (the SAME L2-normalized key geometry immune_embed_key produces). level=0 → the exact key (easy);
+// rising level drifts the query off its cell (hard). Threads the LCG state through `seed`. NO byte ops —
+// pure key-space perturbation so the live vadapt_field_recon_err / immune_memory_recall_margin reads it.
+fn _mc_corrupt_key(key: [float], level: float, seed: int) -> [float] {
+    let dim = len(key)
+    let mut out = []
+    let mut st = (seed * 2654435761 + 1013904223) & 2147483647
+    let mut i = 0
+    while i < dim {
+        st = _lcg_next(st)
+        let noise = (_lcg_unit(st) - 0.5) * 2.0 * level   // signed noise in [-level, +level]
+        out = out + [key[i] + noise]
+        i = i + 1
+    }
+    // L2-normalize back to the unit sphere (immune_embed_key invariant).
+    let mut s = 0.0
+    let mut j = 0
+    while j < dim { s = s + out[j] * out[j]  j = j + 1 }
+    let nrm = sqrt(s)
+    if nrm > 0.0 {
+        let mut o = 0
+        while o < dim { out[o] = out[o] / nrm  o = o + 1 }       // in-place (fast; no array rebuild)
+    }
+    return out
+}
+
+// _mc_store — build a deterministic live ImmuneMemory store of N distinct facts. Each fact key = a
+// random unit vector (LCG-seeded); cell i bound to value "v<i>". This is the live recall faculty the
+// margin op reads (a_core_engine_map — the immune store is the G5 substrate).
+fn _mc_store(n: int, dim: int, seed: int) -> ImmuneMemory {
+    let mut protos = []
+    let mut vals = []
+    let mut st = (seed * 40503 + 7) & 2147483647
+    let mut i = 0
+    while i < n {
+        let mut v = []
+        let mut d = 0
+        while d < dim {
+            st = _lcg_next(st)
+            v = v + [_lcg_unit(st) - 0.5]
+            d = d + 1
+        }
+        // normalize
+        let mut s = 0.0
+        let mut k = 0
+        while k < dim { s = s + v[k] * v[k]  k = k + 1 }
+        let nrm = sqrt(s)
+        let mut vv = []
+        let mut o = 0
+        while o < dim { vv = vv + [v[o] / nrm]  o = o + 1 }
+        protos = protos + [vv]
+        vals = vals + ["v" + to_string(i)]
+        i = i + 1
+    }
+    let af = VAdaptField { protos: protos, n_cells: n, max_cells: n + 4, dim: dim }
+    return ImmuneMemory { field: af, cell_value: vals, recall_thr: 0.15 }
+}
+
+// _mc_levels — the difficulty ladder (key-space noise magnitudes). WELL-POSEDNESS (frozen-first,
+// a_break_the_wall): in the engine's near-orthogonal 64-D key geometry the FIRE gate (err≤recall_thr=0.15)
+// closes SHARPLY at noise ≈0.035, but the NEAREST cell stays the RIGHT one far past it (winner-right=1.0
+// up to ≈0.09) — so the abstain band [0.035..0.06] is the GENUINE proximal zone (recoverable: the right
+// cell is still nearest, just over the firing threshold; averaging extra noisy reads pulls err back under
+// thr → recovery). The ladder is sampled DENSELY across this real transition so accuracy spans ≈1.0→≈0.0
+// with a proximal middle. This corrects the MEASUREMENT regime, NOT any verdict bar (all UNCHANGED).
+fn _mc_levels() -> [float] { return [0.0, 0.037, 0.050, 0.20, 1.0] }
+
+// _mc_trial_margin — the LIVE recall margin for fact `ti` corrupted at difficulty `level` (trial salt
+// `salt` for independent draws). Reads immune_memory_recall_margin — the SAME op H_1367 wired.
+fn _mc_trial_margin(mem: ImmuneMemory, ti: int, level: float, salt: int) -> float {
+    let key = _mc_corrupt_key(mem.field.protos[ti], level, ti * 131071 + salt)
+    return immune_memory_recall_margin(mem, key)
+}
+// _mc_trial_correct — does the corrupted query route to fact `ti`'s OWN cell AND fire (margin<=0)? 1/0.
+fn _mc_trial_correct(mem: ImmuneMemory, ti: int, level: float, salt: int) -> int {
+    let key = _mc_corrupt_key(mem.field.protos[ti], level, ti * 131071 + salt)
+    let err = vadapt_field_recon_err(mem.field, key)
+    if err > mem.recall_thr { return 0 }                        // abstained → wrong (no value emitted)
+    let win = vadapt_field_nearest_idx(mem.field, key)
+    if win == ti { return 1 }
+    return 0
+}
+
+// mc_calibration_ece — (A) ECE of the margin-derived confidence vs empirical accuracy over the full
+// difficulty ladder. confidence = a FIXED held-out-style monotone squash of the margin onto [0,1]
+// (the live recall_thr band sets the scale; NO accuracy label enters the confidence). Bins by
+// confidence, sums |mean_conf − mean_acc| weighted by bin mass. Reads ONLY the live margin op.
+pub fn mc_calibration_ece(seed: int, n: int) -> float {
+    let mem = _mc_store(n, 64, seed)
+    let levels = _mc_levels()
+    let nl = len(levels)
+    // pooled (confidence, correct) over all levels × all facts.
+    let mut confs = []
+    let mut corrs = []
+    let mut li = 0
+    while li < nl {
+        let lv = levels[li]
+        let mut ti = 0
+        while ti < n {
+            let m = _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            let c = _mc_trial_correct(mem, ti, lv, li * 17 + 1)
+            // confidence = clamp(0.5 - margin / (2*recall_thr)) — fixed monotone map of the live margin.
+            let mut cf = 0.5 - m / (2.0 * mem.recall_thr)
+            if cf < 0.0 { cf = 0.0 }
+            if cf > 1.0 { cf = 1.0 }
+            confs = confs + [cf]
+            corrs = corrs + [to_float(c)]
+            ti = ti + 1
+        }
+        li = li + 1
+    }
+    return _mc_ece(confs, corrs, 10)
+}
+
+// _mc_ece — expected calibration error over `nbins` equal-width confidence bins.
+fn _mc_ece(confs: [float], corrs: [float], nbins: int) -> float {
+    let total = len(confs)
+    if total == 0 { return 0.0 }
+    let mut e = 0.0
+    let mut b = 0
+    while b < nbins {
+        let lo = to_float(b) / to_float(nbins)
+        let hi = to_float(b + 1) / to_float(nbins)
+        let mut sc = 0.0
+        let mut sa = 0.0
+        let mut cnt = 0
+        let mut i = 0
+        while i < total {
+            let cf = confs[i]
+            let inbin = if b == nbins - 1 { cf >= lo && cf <= hi } else { cf >= lo && cf < hi }
+            if inbin {
+                sc = sc + cf
+                sa = sa + corrs[i]
+                cnt = cnt + 1
+            }
+            i = i + 1
+        }
+        if cnt > 0 {
+            let mc = sc / to_float(cnt)
+            let ma = sa / to_float(cnt)
+            let gap = if mc >= ma { mc - ma } else { ma - mc }
+            e = e + (to_float(cnt) / to_float(total)) * gap
+        }
+        b = b + 1
+    }
+    return e
+}
+
+// mc_calibration_monotone — (A) Spearman rank correlation between difficulty LEVEL and the mean margin
+// at that level. Margin RISES as difficulty rises (positive). Reads ONLY the live margin op.
+pub fn mc_calibration_monotone(seed: int, n: int) -> float {
+    let mem = _mc_store(n, 64, seed)
+    let levels = _mc_levels()
+    let nl = len(levels)
+    let mut lvl_idx = []
+    let mut lvl_marg = []
+    let mut li = 0
+    while li < nl {
+        let lv = levels[li]
+        let mut acc = 0.0
+        let mut ti = 0
+        while ti < n {
+            acc = acc + _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            ti = ti + 1
+        }
+        lvl_idx = lvl_idx + [to_float(li)]
+        lvl_marg = lvl_marg + [acc / to_float(n)]
+        li = li + 1
+    }
+    return _mc_spearman(lvl_idx, lvl_marg)
+}
+
+// _mc_spearman — Spearman ρ (Pearson on ranks). Small arrays (the ladder levels), distinct values.
+fn _mc_spearman(a: [float], b: [float]) -> float {
+    let ra = _mc_ranks(a)
+    let rb = _mc_ranks(b)
+    return _mc_pearson(ra, rb)
+}
+fn _mc_ranks(x: [float]) -> [float] {
+    let n = len(x)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let mut r = 0.0
+        let mut j = 0
+        while j < n {
+            if x[j] < x[i] { r = r + 1.0 }
+            else { if x[j] == x[i] && j < i { r = r + 1.0 } }
+            j = j + 1
+        }
+        out = out + [r]
+        i = i + 1
+    }
+    return out
+}
+fn _mc_pearson(a: [float], b: [float]) -> float {
+    let n = len(a)
+    if n == 0 { return 0.0 }
+    let mut ma = 0.0
+    let mut mb = 0.0
+    let mut i = 0
+    while i < n { ma = ma + a[i]  mb = mb + b[i]  i = i + 1 }
+    ma = ma / to_float(n)
+    mb = mb / to_float(n)
+    let mut num = 0.0
+    let mut da = 0.0
+    let mut db = 0.0
+    let mut k = 0
+    while k < n {
+        let xa = a[k] - ma
+        let xb = b[k] - mb
+        num = num + xa * xb
+        da = da + xa * xa
+        db = db + xb * xb
+        k = k + 1
+    }
+    let den = sqrt(da * db)
+    if den <= 0.0 { return 0.0 }
+    return num / den
+}
+
+// mc_control_lift — (B) region-of-proximal-learning CONTROL: a budget of extra reads allocated across the
+// trial pool. Each extra read = an INDEPENDENT fresh corruption of the SAME fact at the SAME difficulty;
+// the engine AVERAGES the observation keys (denoise) before the live recall → recovers proximal-zone items.
+// RPL allocates the budget to LOW-confidence-but-RECOVERABLE items (margin near the abstain edge), reading
+// ONLY the live margin (NO accuracy label, p6). Returns rpl_adaptive_accuracy − uniform_accuracy.
+pub fn mc_control_lift(seed: int, n: int) -> float {
+    return mc_control_lift_policy(seed, n, true)
+}
+// mc_control_lift_ablated — (D) margin-BLIND allocation (uniform; the policy cannot read the margin) →
+// the lift collapses to ~0. The EARNED control: the margin read is what earns the adaptive advantage.
+pub fn mc_control_lift_ablated(seed: int, n: int) -> float {
+    return mc_control_lift_policy(seed, n, false)
+}
+// mc_control_lift_policy — shared core. use_margin=true → RPL proximal weighting off the live margin;
+// false → uniform (margin-blind). Both compared against the SAME uniform baseline.
+fn mc_control_lift_policy(seed: int, n: int, use_margin: bool) -> float {
+    let mem = _mc_store(n, 64, seed)
+    let levels = _mc_levels()
+    let nl = len(levels)
+    // build the trial pool: (fact, level) pairs; record base margin (for RPL) + the proximal weight.
+    let total = nl * n
+    let budget = total                 // TIGHT budget (≈1 read/item) so smart allocation MATTERS:
+                                       // uniform can't recover every proximal item, RPL concentration does.
+    // per-trial base margin.
+    let mut t_fact = []
+    let mut t_level = []
+    let mut t_marg = []
+    let mut li = 0
+    while li < nl {
+        let lv = levels[li]
+        let mut ti = 0
+        while ti < n {
+            t_fact = t_fact + [ti]
+            t_level = t_level + [lv]
+            t_marg = t_marg + [_mc_trial_margin(mem, ti, lv, li * 17 + 1)]
+            ti = ti + 1
+        }
+        li = li + 1
+    }
+    // allocation weights.
+    let mut alloc = []
+    if use_margin {
+        // RPL proximal: peak where margin ≈ +0.05 (just past the abstain edge = recoverable), skip the
+        // confidently-correct floor (margin < -0.05). Gaussian weight; normalize to the budget.
+        let center = 0.05
+        let width = 0.05
+        let mut wsum = 0.0
+        let mut prox = []
+        let mut i = 0
+        while i < total {
+            let m = t_marg[i]
+            let z = (m - center) / width
+            let mut w = _mc_exp(-0.5 * z * z)
+            if m <= -0.05 { w = 0.0 }
+            prox = prox + [w]
+            wsum = wsum + w
+            i = i + 1
+        }
+        if wsum <= 0.0 { wsum = 1.0 }
+        let mut j = 0
+        while j < total {
+            alloc = alloc + [_mc_floor(prox[j] / wsum * to_float(budget))]
+            j = j + 1
+        }
+    } else {
+        let per = budget / total
+        let mut j = 0
+        while j < total { alloc = alloc + [per]  j = j + 1 }
+    }
+    // uniform baseline allocation.
+    let per_u = budget / total
+    let mut alloc_u = []
+    let mut ju = 0
+    while ju < total { alloc_u = alloc_u + [per_u]  ju = ju + 1 }
+
+    let acc_adapt = _mc_eval_alloc(mem, t_fact, t_level, alloc)
+    let acc_unif = _mc_eval_alloc(mem, t_fact, t_level, alloc_u)
+    return acc_adapt - acc_unif
+}
+
+// _mc_eval_alloc — evaluate accuracy when each trial gets alloc[i] EXTRA independent re-reads of its fact
+// at its difficulty; the engine AVERAGES the observation keys (denoise) then does the live recall.
+fn _mc_eval_alloc(mem: ImmuneMemory, t_fact: [int], t_level: [float], alloc: [int]) -> float {
+    let total = len(t_fact)
+    let dim = mem.field.dim
+    let mut correct = 0
+    let mut i = 0
+    while i < total {
+        let ti = t_fact[i]
+        let lv = t_level[i]
+        // accumulate the base observation + alloc[i] fresh independent corruptions, averaged.
+        let nreads = alloc[i] + 1
+        let mut acc = []
+        let mut d = 0
+        while d < dim { acc = acc + [0.0]  d = d + 1 }
+        let mut r = 0
+        while r < nreads {
+            let key = _mc_corrupt_key(mem.field.protos[ti], lv, ti * 131071 + i * 7919 + r * 104729 + 3)
+            let mut k = 0
+            while k < dim { acc[k] = acc[k] + key[k]  k = k + 1 }   // in-place accumulate (fast)
+            r = r + 1
+        }
+        // normalize the averaged key.
+        let mut s = 0.0
+        let mut k2 = 0
+        while k2 < dim { s = s + acc[k2] * acc[k2]  k2 = k2 + 1 }
+        let nrm = sqrt(s)
+        if nrm > 0.0 {
+            let mut o = 0
+            while o < dim { acc[o] = acc[o] / nrm  o = o + 1 }      // in-place normalize (fast)
+        }
+        let err = vadapt_field_recon_err(mem.field, acc)
+        if err <= mem.recall_thr {
+            let win = vadapt_field_nearest_idx(mem.field, acc)
+            if win == ti { correct = correct + 1 }
+        }
+        i = i + 1
+    }
+    return to_float(correct) / to_float(total)
+}
+
+fn _mc_exp(x: float) -> float {
+    // exp via the engine's own helper if present; fall back to a series for the small range used here.
+    // |x| here is bounded (proximal Gaussian exponent), a 12-term Taylor is byte-stable.
+    let mut term = 1.0
+    let mut sum = 1.0
+    let mut k = 1
+    while k < 16 {
+        term = term * x / to_float(k)
+        sum = sum + term
+        k = k + 1
+    }
+    return sum
+}
+fn _mc_floor(x: float) -> int {
+    let mut i = 0
+    while to_float(i + 1) <= x { i = i + 1 }
+    return i
+}
+
+// mc_auroc_calibration_orthogonal — (C, headline) the discrimination ⊥ calibration orthogonality.
+// Returns [auroc_base, auroc_xform, ece_base, ece_xform]: a STRICTLY-MONOTONE (rank-preserving) transform
+// c' = 0.55 + 0.44·c of the confidence keeps AUROC byte-identical (rank-only) but SHIFTS ECE up sharply —
+// proving calibration is a NEW axis the type-2 AUROC chain (0.906) is blind to.
+pub fn mc_auroc_calibration_orthogonal(seed: int, n: int) -> [float] {
+    let mem = _mc_store(n, 64, seed)
+    let levels = _mc_levels()
+    let nl = len(levels)
+    let mut confs = []
+    let mut corrs = []
+    let mut li = 0
+    while li < nl {
+        let lv = levels[li]
+        let mut ti = 0
+        while ti < n {
+            let m = _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            let c = _mc_trial_correct(mem, ti, lv, li * 17 + 1)
+            let mut cf = 0.5 - m / (2.0 * mem.recall_thr)
+            if cf < 0.0 { cf = 0.0 }
+            if cf > 1.0 { cf = 1.0 }
+            confs = confs + [cf]
+            corrs = corrs + [to_float(c)]
+            ti = ti + 1
+        }
+        li = li + 1
+    }
+    // split into pos (correct) / neg (wrong) for AUROC.
+    let mut pos = []
+    let mut neg = []
+    let mut posx = []
+    let mut negx = []
+    let mut i = 0
+    while i < len(confs) {
+        let cf = confs[i]
+        let cfx = 0.55 + 0.44 * cf                       // strictly-monotone over-confidence transform
+        if corrs[i] >= 0.5 { pos = pos + [cf]  posx = posx + [cfx] }
+        else { neg = neg + [cf]  negx = negx + [cfx] }
+        i = i + 1
+    }
+    let au_base = mi_auroc(pos, neg)
+    let au_xform = mi_auroc(posx, negx)
+    let ece_base = _mc_ece(confs, corrs, 10)
+    // transformed confidences for ECE.
+    let mut confs_x = []
+    let mut j = 0
+    while j < len(confs) { confs_x = confs_x + [0.55 + 0.44 * confs[j]]  j = j + 1 }
+    let ece_xform = _mc_ece(confs_x, corrs, 10)
+    return [au_base, au_xform, ece_base, ece_xform]
+}
+
+// mc_shuffle_auroc — (E) EARNED shuffle: permute confidence↔correctness pairing → discrimination AUROC
+// decorrelates to chance (~0.5). A deterministic Fisher-Yates permutation of the correctness labels
+// against fixed confidences. Reads ONLY the live margin op; the BAR is |AUROC−0.5| ≤ 0.30 (chance band).
+pub fn mc_shuffle_auroc(seed: int, n: int) -> float {
+    let mem = _mc_store(n, 64, seed)
+    let levels = _mc_levels()
+    let nl = len(levels)
+    let mut confs = []
+    let mut corrs = []
+    let mut li = 0
+    while li < nl {
+        let lv = levels[li]
+        let mut ti = 0
+        while ti < n {
+            let m = _mc_trial_margin(mem, ti, lv, li * 17 + 1)
+            let c = _mc_trial_correct(mem, ti, lv, li * 17 + 1)
+            let mut cf = 0.5 - m / (2.0 * mem.recall_thr)
+            if cf < 0.0 { cf = 0.0 }
+            if cf > 1.0 { cf = 1.0 }
+            confs = confs + [cf]
+            corrs = corrs + [to_float(c)]
+            ti = ti + 1
+        }
+        li = li + 1
+    }
+    // Fisher-Yates permute the correctness labels (engine LCG, deterministic).
+    let total = len(corrs)
+    let mut st = (seed * 2654435761 + 1013904223) & 2147483647
+    let mut k = total - 1
+    while k > 0 {
+        st = _lcg_next(st)
+        let r = st % (k + 1)
+        let tmp = corrs[k]
+        corrs = _mi_set(corrs, k, corrs[r])
+        corrs = _mi_set(corrs, r, tmp)
+        k = k - 1
+    }
+    // AUROC of confidence vs the SHUFFLED labels.
+    let mut pos = []
+    let mut neg = []
+    let mut i = 0
+    while i < total {
+        if corrs[i] >= 0.5 { pos = pos + [confs[i]] } else { neg = neg + [confs[i]] }
+        i = i + 1
+    }
+    return mi_auroc(pos, neg)
+}
