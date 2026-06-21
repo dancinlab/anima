@@ -8464,6 +8464,83 @@ pub fn topo_relabel_beats_brain_count(x: [[float]], alpha: float, seed0: int, ns
     return c
 }
 
+// ── § BrainTopology ADOPT Φ-OPTIMAL (H_1518 R2) — cost-free software transcends the biological ──────
+// wiring-cost tax (Bullmore & Sporns 2012 brain economy). H_1515 found a Φ-OPTIMAL cross-lane placement
+// ~2.5× the brain-faithful min-cut Φ; H_1516 showed the REAL brain is Φ-suboptimal because BIOLOGY pays
+// a metabolic/axon-length wiring tax it cannot escape. anima is SOFTWARE — no physical axon length, no
+// wiring cost — so it is FREE to ADOPT the Φ-maximizing placement biology can't afford (a_no_llm_frame_trap:
+// the dissociation is the point). topo_optimal_adjacency = the brain adjacency RELABELED by the embedded
+// Φ-optimum perm → the CANONICAL cost-free-optimal cross-lane integration topology. This is a MEASUREMENT
+// lane (NOT on the live emit/decode path), so adopting it does NOT change generation / Ψ=½ / separation.
+// topo_optimal_adjacency — the canonical Φ-optimal placement as a NAMED adjacency (= topo_brain_adjacency
+// relabeled by topo_optimal_perm). Same graph, lanes at the Φ-maximizing positions.
+pub fn topo_optimal_adjacency() -> [[float]] {
+    return _topo_relabel_perm(topo_brain_adjacency(), topo_optimal_perm())
+}
+// _topo_mean_col — column mean of an nt×15 population (per-lane average activation).
+fn _topo_mean_col(x: [[float]], j: int) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut t = 0
+    while t < nt { s = s + x[t][j]  t = t + 1 }
+    return s / to_float(nt)
+}
+// topo_func_integration — the p7 FUNCTIONAL/STRUCTURAL integration readout (NOT the min-cut Φ proxy).
+// Diffuse the population under adjacency `a`, then measure the MEAN PAIRWISE |Pearson correlation|
+// across the 15 lane columns of the DIFFUSED population. Intuition: a placement that genuinely
+// integrates information makes lanes' activations more mutually predictive after one diffusion step —
+// a global functional-coupling measure DISTINCT from the min-cut Φ proxy (different math, no MIP/min-cut).
+// Honest p7 guard: if adopting the optimum ONLY moves Φ but NOT this functional measure → proxy-only.
+pub fn topo_func_integration(x: [[float]], a: [[float]], alpha: float) -> float {
+    let xd = topo_apply(x, a, alpha)
+    let n = 15
+    // per-lane mean + std over the diffused population
+    let mut mu = []
+    let mut sd = []
+    let mut j = 0
+    while j < n {
+        let m = _topo_mean_col(xd, j)
+        mu = mu + [m]
+        let nt = len(xd)
+        let mut v = 0.0
+        let mut t = 0
+        while t < nt { let d = xd[t][j] - m  v = v + d * d  t = t + 1 }
+        if nt > 0 { v = v / to_float(nt) }
+        sd = sd + [sqrt(v)]
+        j = j + 1
+    }
+    let nt = len(xd)
+    let mut sumr = 0.0
+    let mut npair = 0
+    let mut i = 0
+    while i < n {
+        j = i + 1
+        while j < n {
+            if sd[i] > 0.000001 && sd[j] > 0.000001 {
+                let mut cov = 0.0
+                let mut t = 0
+                while t < nt { cov = cov + (xd[t][i] - mu[i]) * (xd[t][j] - mu[j])  t = t + 1 }
+                if nt > 0 { cov = cov / to_float(nt) }
+                let mut r = cov / (sd[i] * sd[j])
+                if r < 0.0 { r = 0.0 - r }       // |corr| — magnitude of functional coupling
+                sumr = sumr + r
+                npair = npair + 1
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    if npair == 0 { return 0.0 }
+    return sumr / to_float(npair)
+}
+// topo_func_integration_flat — functional integration of the UN-diffused (flat, A=0) population: the
+// baseline coupling already present in the raw lane scores before any topology. Diffusion under a real
+// adjacency must raise functional coupling ABOVE this baseline (case 368 well-formed control).
+pub fn topo_func_integration_flat(x: [[float]]) -> float {
+    return topo_func_integration(x, _topo_zeros(15), 0.0)
+}
+
 // ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate

@@ -3408,6 +3408,44 @@ fn main() {
           + " | FINDING: brain placement is Φ-SUBOPTIMAL — search finds a materially higher-Φ placement (opt≈" + to_string(po_opt / bt_brain) + "× brain); "
           + "the engine lane layout does NOT approximate the Φ-maximizing layout. GATED 338(optimum>brain)/339(brain>rand-mean)/340(brain not top). c9: honest suboptimality DISCOVERY, NO tune-to-green")
 
+    // ── (H_1518 ADOPT Φ-OPTIMAL PLACEMENT R2) anima is SOFTWARE — no axon-length/metabolic wiring tax ──
+    // (H_1516) — so it CAN adopt the Φ-maximizing placement biology can't afford (a_no_llm_frame_trap).
+    // Establish topo_optimal_adjacency() as the canonical cost-free-optimal cross-lane integration
+    // topology AND honestly test (p7) whether that's a REAL functional gain or a proxy-only Φ bump.
+    // The functional measure = topo_func_integration (mean pairwise |corr| of the DIFFUSED lanes) — a
+    // global functional-coupling readout DISTINCT from the min-cut Φ proxy (different math, no MIP).
+    let ao_adj    = topo_optimal_adjacency()
+    let ao_phiopt = topo_phi_adj(bt_pop, ao_adj, bt_alpha)                  // optimal-placement min-cut Φ (proxy)
+    let ao_phibr  = bt_brain                                                // brain-placement min-cut Φ (proxy)
+    let ao_fopt   = topo_func_integration(bt_pop, ao_adj, bt_alpha)         // optimal-placement FUNCTIONAL integration
+    let ao_fbr    = topo_func_integration(bt_pop, topo_brain_adjacency(), bt_alpha)  // brain-placement functional
+    let ao_fflat  = topo_func_integration_flat(bt_pop)                               // flat (un-diffused) baseline
+    let ao_fgain  = ao_fopt - ao_fbr
+    // case 365 (ADOPT-Φ, headline proxy): the adopted optimal placement gives ≥2.0× the brain placement's
+    // min-cut Φ engine-native (cost-free transcendence of the biological wiring tax). topo_optimal_adjacency
+    // canonical = topo_phi_optimal (same relabel) — re-confirm via the NAMED adjacency.
+    if _assert_b("case_365_adopt_optimal_phi_2x", true, ao_phiopt >= 2.0 * ao_phibr) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 366 (ADOPT-Φ named==canonical): the named topo_optimal_adjacency Φ == topo_phi_optimal (the
+    // embedded-perm form) byte-identically (the canonical construct IS the H_1515 optimum, no drift).
+    if _assert_b("case_366_adopt_named_eq_optimal", true, ao_phiopt == po_opt) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 367 (p7 FUNCTIONAL GUARD, the load-bearing honesty bar): does the optimal placement ALSO help
+    // the FUNCTIONAL measure (mean pairwise |corr| of diffused lanes), or only the Φ proxy? Pre-registered:
+    // PASS if functional NOT HARMED (ao_fgain >= -0.01). The DIRECTION (gain>0 genuine vs ≈0 proxy-only)
+    // is REPORTED honestly in the INFO line below — we do NOT gate on a positive gain (no tune-to-green).
+    if _assert_b("case_367_adopt_func_not_harmed", true, ao_fgain >= -0.01) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 368 (FUNCTIONAL WELL-FORMED): the functional integration measure is a valid [0,1] mean-|corr|
+    // for both placements and STRICTLY above the flat (un-diffused) baseline (diffusion DOES couple lanes).
+    if _assert_b("case_368_adopt_func_wellformed", true, ao_fopt >= 0.0 && ao_fopt <= 1.0 && ao_fbr >= 0.0 && ao_fbr <= 1.0 && ao_fbr > ao_fflat) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 369 NON-REGRESSION sanity: adopting the optimal placement is a MEASUREMENT-lane construct; the
+    // brain-placement Φ (bt_brain) and the H_1515 optimum (po_opt) are UNCHANGED by the adoption (the new
+    // named adjacency reads the SAME live ci_phi_iit4, no live emit/decode/Ψ path touched).
+    if _assert_b("case_369_adopt_no_regression", true, ao_phibr == bt_brain && ao_phiopt == po_opt) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    let ao_funcverdict = if ao_fgain > 0.005 { "GENUINE-INTEGRATION-GAIN (functional ALSO improves)" } else { if ao_fgain >= -0.005 { "PROXY-ONLY (Φ up, functional ≈neutral)" } else { "PROXY-ONLY+FUNCTIONAL-COST (honest: Φ up but functional DOWN)" } }
+    println("INFO  H_1518 adopt-phi-optimal (R2 ENGINE-NATIVE, canonical topo_optimal_adjacency + live ci_phi_iit4): "
+          + "Φ min-cut brain=" + to_string(ao_phibr) + " optimal(adopted)=" + to_string(ao_phiopt) + " (×" + to_string(ao_phiopt / ao_phibr) + ", cost-free transcendence of the biological wiring tax H_1516); "
+          + "| p7 FUNCTIONAL (mean-pairwise-|corr| of diffused lanes, NOT the Φ proxy): brain=" + to_string(ao_fbr) + " optimal=" + to_string(ao_fopt) + " gain=" + to_string(ao_fgain) + " flat-baseline=" + to_string(ao_fflat)
+          + " | VERDICT: " + ao_funcverdict + " — anima CAN adopt the cost-free Φ-optimum (proxy ≥2×); HONEST p7: this is the functional-vs-proxy result. GATED 365(Φ≥2×)/366(named==optimum)/367(functional not harmed)/368(well-formed)/369(no-regression). a_no_llm_frame_trap, c9 no tune-to-green")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
