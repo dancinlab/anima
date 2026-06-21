@@ -298,7 +298,7 @@ fn _rate_ablated(decs: [Dec], mem_abl: ImmuneMemory) -> float {
 // seed cell, recall abstains uniformly (the engine-native ablation).
 fn _build_store(mit_on: bool) -> ImmuneMemory {
     let cfg = if mit_on { engine_config_default() }
-              else { EngineConfig { mitosis: false, engine: "conv" } }
+              else { EngineConfig { mitosis: false, engine: "conv", topo_couple: false } }
     // seed cell binds the first grounded fact; bind the rest of the S1 grounded facts.
     let mut mem = immune_memory_new_text("fact_0 query", "v0", 64)
     let mut i = 1
