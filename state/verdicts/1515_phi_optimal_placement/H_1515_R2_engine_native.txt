@@ -1,0 +1,11 @@
+H_1515 Φ-OPTIMAL PLACEMENT — R2 ENGINE-NATIVE (terminal gate, c2·c9)
+Command: hexa run core/engine_cli_smoke.hexa  →  RC=0
+hexa v0.262.0 · /Users/mini/.hx/bin/hexa · 2026-06-21T10:01:39Z
+Engine-aligned population n=150 seed 5120 (byte-matches H_1512 bt_brain=0.10086188796014994)
+---
+PASS  case_338_phiopt_optimum_beats_brain want=true got=true
+PASS  case_339_phiopt_brain_gt_randmean want=true got=true
+PASS  case_340_phiopt_brain_not_top want=true got=true
+PASS  case_341_phiopt_phi_nonneg want=true got=true
+INFO  H_1515 phi-optimal-placement (R2 ENGINE-NATIVE, embedded-optimum + live ci_phi_iit4): Φ min-cut brain(identity)=0.10086188796014994 optimum=0.2530860397910182 gap=0.15222415183086824 | random-placement mean=0.0839395747399592 | #random-placements-beating-brain=5/16 | FINDING: brain placement is Φ-SUBOPTIMAL — search finds a materially higher-Φ placement (opt≈2.5092336154862704× brain); the engine lane layout does NOT approximate the Φ-maximizing layout. GATED 338(optimum>brain)/339(brain>rand-mean)/340(brain not top). c9: honest suboptimality DISCOVERY, NO tune-to-green
+--- engine_cli smoke summary: 353 pass / 0 fail ---

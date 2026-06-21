@@ -3379,6 +3379,35 @@ fn main() {
           + " | GATED A(brain>flat)/D(lateralize)/E(scramble collapses) on H_1512 FROZEN bars — REAL published human "
           + "connectome reproduces the brain-topology Φ-advantage engine-native; B(brain>random) report-only(dense). a_toy_scale_recheck")
 
+    // ── (H_1515 Φ-OPTIMAL PLACEMENT R2) is the brain-faithful lane placement near the Φ-optimum, or ──
+    // Φ-SUBOPTIMAL? Search the space of node-permutation placements (A_π[i][j]=A[π[i]][π[j]]) for the
+    // Φ-MAXIMIZER. R1 numpy hill-climb (n=150 engine-aligned pop, byte-matches bt_brain) embeds the
+    // optimum perm as DATA; the Φ MEASUREMENT is engine-native via the SAME live ci_phi_iit4. Same
+    // population/alpha/core as H_1512/H_1513. FINDING (honest DISCOVERY, a_break_the_wall): the brain
+    // placement is Φ-SUBOPTIMAL — the embedded optimum is ~2.5× brain Φ, and a non-trivial fraction of
+    // RANDOM placements also beat brain. The engine's lane layout does NOT approximate Φ-max. c9: report
+    // the suboptimality loudly, NO tune-to-green (we do NOT pretend brain is optimal).
+    let po_opt    = topo_phi_optimal(bt_pop, bt_alpha)                                  // embedded Φ-optimum
+    let po_randm  = topo_phi_relabel_of_mean(bt_pop, topo_brain_adjacency(), 3000, 16, bt_alpha)  // mean random placement
+    let po_beats  = topo_relabel_beats_brain_count(bt_pop, bt_alpha, 3000, 16)          // #random relabels beating brain (of 16)
+    let po_gap    = po_opt - bt_brain
+    // case 338 (P-OPT SUBOPTIMALITY, headline): the Φ-optimum placement MATERIALLY beats the brain
+    // (identity) placement → brain is Φ-SUBOPTIMAL (the engine layout is NOT the Φ-maximizer).
+    if _assert_b("case_338_phiopt_optimum_beats_brain", true, po_opt > bt_brain + 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 339 (P1 ADVANTAGE): the brain placement still beats the MEAN random placement (consistent
+    // with H_1512 — brain is above-average but NOT top): bt_brain >= mean(random relabel) + 0.005.
+    if _assert_b("case_339_phiopt_brain_gt_randmean", true, bt_brain >= po_randm + 0.005) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 340 (PERCENTILE SUBOPTIMALITY): a NON-TRIVIAL fraction of random placements ALSO beat the
+    // brain layout (brain is NOT in the top percentile) → corroborates suboptimality. >=1 of 16.
+    if _assert_b("case_340_phiopt_brain_not_top", true, po_beats >= 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 341 NON-NEG sanity: optimum / random-mean Φ are non-negative integrated min-cuts (Φ ≥ 0).
+    if _assert_b("case_341_phiopt_phi_nonneg", true, po_opt >= 0.0 && po_randm >= 0.0 && bt_brain >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1515 phi-optimal-placement (R2 ENGINE-NATIVE, embedded-optimum + live ci_phi_iit4): Φ min-cut brain(identity)=" + to_string(bt_brain)
+          + " optimum=" + to_string(po_opt) + " gap=" + to_string(po_gap) + " | random-placement mean=" + to_string(po_randm)
+          + " | #random-placements-beating-brain=" + to_string(po_beats) + "/16"
+          + " | FINDING: brain placement is Φ-SUBOPTIMAL — search finds a materially higher-Φ placement (opt≈" + to_string(po_opt / bt_brain) + "× brain); "
+          + "the engine lane layout does NOT approximate the Φ-maximizing layout. GATED 338(optimum>brain)/339(brain>rand-mean)/340(brain not top). c9: honest suboptimality DISCOVERY, NO tune-to-green")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

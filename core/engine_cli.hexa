@@ -8416,6 +8416,54 @@ pub fn topo_phi_relabel_of_mean(x: [[float]], a: [[float]], seed0: int, nseed: i
     return s / to_float(nseed)
 }
 
+// ── § BrainTopology Φ-OPTIMAL PLACEMENT (H_1515 R2) — is the brain-faithful lane placement near the ──
+// Φ-MAXIMIZING placement, or Φ-suboptimal? A "placement" = a permutation π of the 15 nodes applied to
+// the brain adjacency: A_π[i][j] = A[π[i]][π[j]] (a node relabel — same graph, lanes at new positions).
+// Φ(π) = live min-cut ci_phi_iit4 over the FIXED CORE after diffusing the population under A_π.
+// Brain-faithful = IDENTITY permutation (the wired layout). H_1515 searches placement space (R1
+// numpy hill-climb, n=150 engine-aligned pop, byte-matches bt_brain=0.1009) and EMBEDS the found
+// Φ-optimum permutation as DATA — the Φ MEASUREMENT below is engine-native via the SAME ci_phi_iit4.
+// FINDING (honest DISCOVERY, a_break_the_wall): the brain placement is Φ-SUBOPTIMAL — the search
+// finds a materially HIGHER-Φ placement (opt ≈ 2.5× brain), so the engine's lane layout does NOT
+// approximate the Φ-maximizing layout. _topo_relabel_perm applies an EXPLICIT perm (vs _topo_relabel
+// which uses an LCG-generated perm); the optimum perm is found in R1 and verified IN-ENGINE here.
+fn _topo_relabel_perm(a: [[float]], perm: [int]) -> [[float]] {
+    let n = 15
+    let mut out = _topo_zeros(n)
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j < n { out[i][j] = a[perm[i]][perm[j]]  j = j + 1 }
+        i = i + 1
+    }
+    return out
+}
+// topo_optimal_perm — the Φ-MAXIMIZING node permutation found by R1 numpy hill-climb (8 restarts,
+// best-improving pairwise swaps) on the n=150 engine-aligned population. EMBEDDED as fixed DATA
+// (numpy search is not byte-reproducible in-engine; the perm is an INPUT, the Φ is engine-native).
+// Source: state/1515_phi_optimal_placement/h1515_optimal.py (engine-aligned n=150 run).
+pub fn topo_optimal_perm() -> [int] { return [8, 11, 2, 3, 6, 9, 4, 5, 0, 7, 1, 10, 12, 13, 14] }
+// topo_phi_optimal — engine-native min-cut Φ of the embedded Φ-optimum placement over the CORE.
+pub fn topo_phi_optimal(x: [[float]], alpha: float) -> float {
+    let a = _topo_relabel_perm(topo_brain_adjacency(), topo_optimal_perm())
+    return topo_phi_adj(x, a, alpha)
+}
+// topo_relabel_beats_brain_count — how many of `nseed` RANDOM node-relabel placements beat the brain
+// (identity) placement's min-cut Φ → engine-native percentile estimate (brain Φ-suboptimality: a
+// non-trivial fraction of random placements ALSO beat the brain layout). Uses the same _topo_relabel
+// LCG draws as the E control (engine-native, NO numpy).
+pub fn topo_relabel_beats_brain_count(x: [[float]], alpha: float, seed0: int, nseed: int) -> int {
+    let phi_brain = topo_phi_brain(x, alpha)
+    let mut c = 0
+    let mut k = 0
+    while k < nseed {
+        let phir = topo_phi_adj(x, _topo_relabel(topo_brain_adjacency(), seed0 + k * 7919), alpha)
+        if phir > phi_brain { c = c + 1 }
+        k = k + 1
+    }
+    return c
+}
+
 // ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate
