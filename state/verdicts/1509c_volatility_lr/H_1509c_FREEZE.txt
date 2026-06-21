@@ -1,0 +1,87 @@
+H_1509c — VOLATILITY-GATED LEARNING RATE — FROZEN BARS (PRE-REGISTERED, before any run)
+================================================================================
+SOURCE: anima-internal ESCAPE from the Amoeba-Protocol thread (μ_t allosteric buffer,
+H_1509/H_1509b). Mechanism-family ESCAPE per the peeled meta-law (H_1509c_ABSTRACT_census.txt).
+LENS: a_break_the_wall — NOT a 6th gain-lens; an ORTHOGONAL mechanism-family.
+
+PEELED META-LAW (🌌, from the 5-wall census):
+  "A tuned FIXED controller-gain dominates any state-contingent adaptation of that SAME
+   gain WHEN the task statistics are stationary/learnable — adaptation pays ONLY when the
+   disturbance is UNPREDICTABLE (the generating statistics CHANGE: changepoints/volatility)."
+
+THE ESCAPE (the meta-law's own escape clause, cast as a falsifiable prediction):
+  Re-position neuromodulation from a TRACKING-GAIN to a LEARNING-RATE/EXPLORATION
+  modulator, on a task whose STATISTICS JUMP (changepoint/volatility). Biology: Yu &
+  Dayan 2005 (ACh=expected / NE=unexpected uncertainty raise learning rate); Behrens
+  et al. 2007 Nat Neurosci (volatility-tracking adaptive learning rate is Bayes-optimal;
+  a FIXED rate cannot be optimal in both stable and volatile blocks).
+
+TASK (changepoint estimation, the orthogonal environment):
+  A hidden mean h_t generates noisy observations o_t = h_t + ε (ε ~ bounded noise). At
+  each tick, with hazard probability H (the CHANGEPOINT rate / volatility) the hidden
+  mean JUMPS to a fresh value drawn uniformly in [0.15,0.85]; otherwise it holds. The
+  agent maintains an estimate x_t and updates it by a learning rate α:
+        x_{t+1} = x_t + α_t · (o_t − x_t)            (delta-rule)
+  METRIC: RMS estimation error sqrt(mean_t (x_t − h_t)²) (lower = better tracking of the
+  jumping hidden mean). H = 0 → a STATIONARY (single fixed mean) learnable task = the
+  meta-law's "no escape" regime; H > 0 → volatile.
+
+ARMS (all see the SAME observation+changepoint stream per seed):
+  A  FIXED-RATE (the walled lever): best-swept FIXED learning rate α* over a grid
+     (A = the BEST fixed α* = the strongest baseline, meta-law's champion).
+  B  VOLATILITY-GATED (the escape): α_t = α_lo + (α_hi − α_lo)·u_t, where u_t ∈ [0,1] is
+     an UNCERTAINTY signal — a normalized recent surprise (|o_t − x_t| relative to a
+     running surprise scale). HIGH surprise (a likely changepoint) → α SPIKES toward
+     α_hi (catch the jump); LOW surprise (between jumps) → α settles to α_lo (reject
+     noise). NO injected changepoint label — u_t is computed from the agent's OWN
+     prediction error only (p6/p2/p3: substrate-derived, not a peek at h_t).
+  C  ABLATE: uncertainty gating OFF → α_t ≡ (α_lo+α_hi)/2 fixed (collapses to a single
+     fixed rate, the meta-law's null). [D leg below uses C.]
+
+FROZEN BARS (3 seeds [1509,1510,1511]; deterministic run1==run2; MARGIN=0.05 verbatim
+H_1284/H_1509). HAZARD (volatility) levels swept: [0.00, 0.02, 0.05, 0.10].
+
+  (A ESCAPE-WIN, HEADLINE) at the VOLATILE hazard H=0.10, the uncertainty-gated rate
+     BEATS the best-swept fixed rate by >= 0.05:
+        RMS_A(best swept fixed α) − RMS_B(gated α) >= 0.05   (mean over 3 seeds AND each).
+     [the prediction: the family-switch from gain→learning-rate on a volatile task FLIPS
+      the wall that 5 gain-lenses could not move.]
+
+  (B vs TRACKING, DOUBLE-DISSOCIATION) the SAME gated mechanism applied to the H_1509
+     LEARNABLE-TRACKING family does NOT win (the win is the FAMILY switch, not the knob):
+        at H=0.00 (stationary single mean = a learnable task): RMS_A <= RMS_B
+        AND at H=0.10: RMS_A − RMS_B >= 0.05.
+     = the escape is regime/family-specific (a real double dissociation on volatility).
+
+  (C VOLATILITY-MONOTONE) the gated advantage is MONOTONE non-decreasing in volatility
+     across the >= 3 positive hazards [0.02, 0.05, 0.10]:
+        adv(H)=RMS_A(H)−RMS_B(H); adv(0.02) <= adv(0.05) <= adv(0.10) AND adv(0.10)>adv(0.00).
+
+  (D EARNED ablate) turning the uncertainty gate OFF (α fixed at the mid rate) removes
+     the win at every hazard:
+        for every H: RMS_C(H) − RMS_A(H) >= −0.02 (ablated never beats best fixed by margin)
+        AND at H=0.10: RMS_C − RMS_B >= 0.05 (the GATING, not the base rate, earns the win).
+
+VERDICT:
+  WALL-BROKEN (orthogonal-family ESCAPE) 🟢  iff  A ∧ B ∧ C ∧ D.
+  MULTI-FAMILY WALL 🧱  otherwise — if the orthogonal learning-rate family ALSO fails on
+     a real volatile task, the neuromodulation ceiling holds across BOTH the tracking-gain
+     AND the learning-rate families → an even STRONGER, multi-family 🧱 (the meta-law is
+     wrong-or-incomplete; honest, valid result, c9). Report WHICH.
+  NO tune-to-green: α grid, α_lo/α_hi, surprise-scale, hazard levels, noise, MARGIN all
+     set HERE before measurement.
+
+PARAMETERS (frozen here, pre-registered):
+  T = 300 ticks · observation noise ε ~ uniform[−0.10,+0.10] · hidden jump target ~
+     uniform[0.15,0.85] (engine LCG) · α grid = [0.05,0.10,0.20,0.30,0.40,0.50,0.70,0.90]
+     (A swept) · α_lo = 0.05 · α_hi = 0.90 (gate endpoints = grid endpoints, NOT tuned) ·
+     surprise u_t = clamp(|o_t−x_t| / S, 0, 1), S = 0.30 (surprise scale, ≈ 1.5× the noise
+     half-range, frozen) · seeds [1509,1510,1511] · x_0 = 0.5, h_0 = 0.5 · run twice assert
+     byte-identical · hazard H applied per-tick via the engine LCG stream.
+
+RUNGS: R1 numpy mirror (DIRECTIONAL) → if R1 GREEN (escape) then R2 engine-native (a
+  §VolatilityLR lane: vlr_gated_rmse / vlr_fixed_best / vlr_ablated reading live surprise),
+  re-score SAME bars byte-exact via new smoke cases (renumber after current max, union KEEP
+  others' §). SSOT: ARCHITECTURE.json blocking-frontiers + LAWS records the meta-law + escape
+  + falsify outcome regardless of verdict.
+================================================================================
