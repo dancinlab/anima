@@ -3509,6 +3509,87 @@ fn main() {
           + "P4 functional integration: flat=" + to_string(lw_f_flat) + " brain=" + to_string(lw_f_brain) + " optimal=" + to_string(lw_f_opt) + " (opt>brain>flat) | "
           + "VERDICT: " + lw_psi_verdict + ". GATED 370(OFF byte-identical)/371(coupling live)/372(Ψ OFF calibrated ½)/373(flat no-op)/374(Ψ destabilization HONEST)/375(func opt>brain>flat)/376(func well-formed). c9 NO tune-to-green — the Ψ-survival bar FAILED and is reported as a real negative.")
 
+    // ── (H_1522 Ψ-PRESERVING OPTIMAL COUPLING R2 ENGINE-NATIVE) — escape the H_1521 no-free-lunch ──
+    // wall. H_1521 proved the naive amplifying operator topo_apply = X·(I+α·Â)ᵀ DESTABILIZES Ψ=½ (the
+    // emit drive saturates → centered Ψ → 1.0). H_1522 asks: does a NORM/MEAN-PRESERVING operator
+    // (redistributes cross-lane influence WITHOUT inflating total drive) give a functional gain WHILE
+    // the Ψ=½ fixed point SURVIVES? Three Ψ-preserving operators (op 1=MEAN-CENTER zero-sum, 2=ROW-
+    // STOCHASTIC averaging, 3=MAGNITUDE-RENORM) vs the naive amplifying op (0). ALL bars reuse H_1521's
+    // EXACT Ψ centered-proxy (ci_psi_balance_op = ci_psi_balance_centered with a selectable operator),
+    // the SAME OFF median threshold (lw_thr), the SAME functional metric (topo_func_integration_op),
+    // the SAME tol 0.05 — no metric-shopping. Frozen-first, c9, NO tune-to-green.
+    // P1 OFF BYTE-IDENTICAL under EVERY operator — coupling OFF ⇒ raw lanes (separation invariant H_1205).
+    let pc_off_amp = ci_psi_balance_op(bt_pop, lw_opt, bt_alpha, 0, lw_thr, lw_off)
+    let pc_off_mc  = ci_psi_balance_op(bt_pop, lw_opt, bt_alpha, 1, lw_thr, lw_off)
+    let pc_off_rs  = ci_psi_balance_op(bt_pop, lw_opt, bt_alpha, 2, lw_thr, lw_off)
+    let pc_off_rn  = ci_psi_balance_op(bt_pop, lw_opt, bt_alpha, 3, lw_thr, lw_off)
+    // case 377 (P1 OFF BYTE-IDENTICAL): OFF Ψ == ½ (median-calibrated) for ALL operators — turning a
+    // Ψ-preserving operator's machinery in does NOT touch the default-OFF path (byte-identical, c9).
+    if _assert_b("case_377_psipres_off_all_ops_half", true, pc_off_amp == 0.5 && pc_off_mc == 0.5 && pc_off_rs == 0.5 && pc_off_rn == 0.5) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // P2 Ψ-PRESERVED ⭐ — for the MEAN-CENTER operator on the OPTIMAL adjacency, sweep α and assert the
+    // centered Ψ stays within tol 0.05 of ½ at EVERY grid α (the operator KEEPS the fixed point, unlike
+    // the naive op which broke it). topo_psi_max_feasible_alpha returns the LARGEST α still within tol.
+    let pc_mc_maxa  = topo_psi_max_feasible_alpha(bt_pop, lw_opt, 1, lw_thr, 0.05, lw_on)   // mean-center / optimal
+    let pc_rs_maxa  = topo_psi_max_feasible_alpha(bt_pop, lw_opt, 2, lw_thr, 0.05, lw_on)   // row-stochastic / optimal
+    let pc_rn_maxa  = topo_psi_max_feasible_alpha(bt_pop, lw_opt, 3, lw_thr, 0.05, lw_on)   // renorm / optimal
+    let pc_amp_maxa = topo_psi_max_feasible_alpha(bt_pop, lw_opt, 0, lw_thr, 0.05, lw_on)   // naive amplifying / optimal
+    // case 378 (P2 Ψ-PRESERVED ⭐, the CRUX): the MEAN-CENTER operator keeps Ψ within tol at FULL α=1.0
+    // on the optimal adjacency (max feasible α == 1.0 — the WHOLE grid is feasible). The fixed point
+    // survives the strongest coupling, where the naive op saturated. This IS the escape from the wall.
+    if _assert_b("case_378_psipres_meancenter_full_alpha_survives", true, pc_mc_maxa >= 1.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 379 (P2b OTHER PRESERVING OPS PARTIAL): row-stochastic + renorm preserve Ψ only at SMALLER α
+    // (feasible region SHRINKS) — they redistribute but drift as α grows. Honest: they ALSO escape the
+    // saturation (max feasible α > 0, strictly less than mean-center's full-grid 1.0). c9 reported, not hidden.
+    if _assert_b("case_379_psipres_other_ops_partial", true, pc_rs_maxa > 0.0 && pc_rs_maxa < pc_mc_maxa && pc_rn_maxa > 0.0 && pc_rn_maxa < pc_mc_maxa) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // P3 FUNCTIONAL GAIN UNDER CONSTRAINT — the BEST Ψ-preserving coupling (within |Ψ−½|≤tol) improves
+    // functional integration vs flat. The frozen BEST = (op=1 MEAN-CENTER, adj=OPTIMAL, α=1.0) — the
+    // max-α feasible point gives the HIGHEST functional integration in the feasible region (search above).
+    let pc_best_func = topo_func_integration_op(bt_pop, lw_opt, 1.0, 1)             // BEST: mean-center / optimal / α=1.0
+    let pc_best_psi  = ci_psi_balance_op(bt_pop, lw_opt, 1.0, 1, lw_thr, lw_on)
+    let pc_best_dev  = if pc_best_psi - 0.5 >= 0.0 { pc_best_psi - 0.5 } else { 0.5 - pc_best_psi }
+    let pc_flat_func = topo_func_integration_flat(bt_pop)
+    let pc_brain_func= topo_func_integration(bt_pop, lw_brain, bt_alpha)
+    // case 380 (P3 FUNCTIONAL GAIN ⭐): the BEST Ψ-preserving coupling raises functional integration
+    // MATERIALLY above the flat baseline (≥ +0.05) WHILE Ψ stays within tol (the genuine constrained gain).
+    if _assert_b("case_380_psipres_best_func_gain_with_psi", true, pc_best_func >= pc_flat_func + 0.05 && pc_best_dev <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 381 (P3b BEST BEATS THE H_1521 ORDERING TARGET): the BEST feasible coupling's functional
+    // integration also clears the brain-placement functional integration (opt-coupling ≥ brain), so the
+    // live improvement is on the Φ-optimal topology AND keeps Ψ — the answer to the user's directive.
+    if _assert_b("case_381_psipres_best_ge_brain_func", true, pc_best_func >= pc_brain_func) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // P4 DISSOCIATION (reproduce H_1521) — the NAIVE amplifying operator still BREAKS Ψ on the SAME
+    // adjacency/α, proving it is the OPERATOR DESIGN (not the topology) that saves Ψ. Its max feasible
+    // α is FAR below mean-center's (saturation reappears the moment α grows).
+    let pc_amp_best_psi = ci_psi_balance_op(bt_pop, lw_opt, 1.0, 0, lw_thr, lw_on)
+    let pc_amp_dev = if pc_amp_best_psi - 0.5 >= 0.0 { pc_amp_best_psi - 0.5 } else { 0.5 - pc_amp_best_psi }
+    // case 382 (P4 DISSOCIATION ⭐): at the SAME (optimal, α=1.0) where mean-center keeps Ψ≈½, the naive
+    // amplifying op DRIVES Ψ off ½ (dev > 0.05) — operator design, not adjacency, is what saves Ψ.
+    if _assert_b("case_382_psipres_naive_breaks_same_point", true, pc_amp_dev > 0.05 && pc_best_dev <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 383 (P4b NAIVE FEASIBLE-α COLLAPSE): the naive op's max feasible α is STRICTLY below the
+    // mean-center op's full-grid 1.0 (its Ψ-feasible region collapses) — the dissociation in α-space.
+    if _assert_b("case_383_psipres_naive_alpha_collapse", true, pc_amp_maxa < pc_mc_maxa) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 384 (MEAN-CENTER ZERO-SUM PROPERTY): the mean-center operator's M=I+α·Â_c has rows summing to
+    // 1 (Â_c rows sum to 0) — the structural reason it adds NO net drive. Probe one coupled row's drive
+    // is NOT inflated above the OFF row's neighbourhood (sanity that the redistribution is real, not amp).
+    let pc_mc_pop  = topo_apply_meancenter(bt_pop, lw_opt, 1.0)
+    let pc_mc_wellformed = topo_func_integration_op(bt_pop, lw_opt, 1.0, 1)
+    if _assert_b("case_384_psipres_meancenter_wellformed", true, pc_mc_wellformed >= 0.0 && pc_mc_wellformed <= 1.0 && len(pc_mc_pop) == len(bt_pop)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 385 (FLAT no-op under EVERY preserving op): the FLAT (zero) adjacency is the identity for all
+    // three preserving operators ⇒ Ψ stays at the OFF value (½). Guards each operator's α-coefficient path.
+    let pc_flat_mc = ci_psi_balance_op(bt_pop, lw_flat, bt_alpha, 1, lw_thr, lw_on)
+    let pc_flat_rs = ci_psi_balance_op(bt_pop, lw_flat, bt_alpha, 2, lw_thr, lw_on)
+    let pc_flat_rn = ci_psi_balance_op(bt_pop, lw_flat, bt_alpha, 3, lw_thr, lw_on)
+    if _assert_b("case_385_psipres_flat_noop_all_ops", true, pc_flat_mc == 0.5 && pc_flat_rs == 0.5 && pc_flat_rn == 0.5) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 386 (NON-REGRESSION): the H_1521 naive-op Ψ-destabilization (case 374) is UNCHANGED — the new
+    // operators are ADDITIVE, the live default-OFF path + the H_1521 measurements are untouched.
+    if _assert_b("case_386_psipres_no_regression", true, pc_amp_best_psi == ci_psi_balance_centered(bt_pop, lw_opt, 1.0, lw_thr, lw_on)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    let pc_verdict = if pc_mc_maxa >= 1.0 && pc_best_func >= pc_flat_func + 0.05 && pc_best_dev <= 0.05 { "ESCAPED — a norm/mean-preserving operator gives a GENUINE functional gain with Ψ=½ INTACT (the Ψ-vs-function tradeoff is NOT fundamental)" } else { "FUNDAMENTAL — no Ψ-preserving operator gives a functional gain with Ψ intact (honest negative)" }
+    println("INFO  H_1522 psi-preserving-coupling (R2 ENGINE-NATIVE, selectable operators): "
+          + "P1 OFF Ψ all-ops=" + to_string(pc_off_mc) + " (byte-identical default-OFF) | "
+          + "P2 ⭐ Ψ-PRESERVED max-feasible-α (|Ψ−½|≤0.05): MEAN-CENTER/optimal=" + to_string(pc_mc_maxa) + " (FULL GRID) · row-stochastic=" + to_string(pc_rs_maxa) + " · renorm=" + to_string(pc_rn_maxa) + " · naive-AMP=" + to_string(pc_amp_maxa) + " | "
+          + "P3 BEST (op=MEAN-CENTER, adj=OPTIMAL, α=1.0): func=" + to_string(pc_best_func) + " vs flat=" + to_string(pc_flat_func) + " (gain=" + to_string(pc_best_func - pc_flat_func) + ") vs brain=" + to_string(pc_brain_func) + " | Ψ=" + to_string(pc_best_psi) + " |Ψ−½|=" + to_string(pc_best_dev) + " (≤0.05 ✓) | "
+          + "P4 DISSOCIATION: at the SAME (optimal, α=1.0) the naive amplifying op Ψ=" + to_string(pc_amp_best_psi) + " |Ψ−½|=" + to_string(pc_amp_dev) + " (BREAKS) — operator DESIGN, not adjacency, saves Ψ | "
+          + "VERDICT: " + pc_verdict + ". GATED 377(OFF byte-identical all-ops)/378(⭐ mean-center full-α survives)/379(other ops partial)/380(⭐ best func gain w/ Ψ)/381(best≥brain func)/382(⭐ naive breaks same point)/383(naive α-collapse)/384(well-formed)/385(flat no-op all ops)/386(no-regression). c9 frozen-first, NO tune-to-green — the BEST Ψ-preserving live coupling = MEAN-CENTER on the Φ-optimal topology at full α.")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }

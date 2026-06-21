@@ -131,13 +131,16 @@ hippocampus" (H_1225 complementary-learning-systems reframe).
 
 Every lane below is **ADDITIVE and Ψ-disjoint**: it touches only its own struct, leaves
 `pure_field` byte-unchanged, and does **not** change generation (the separation invariant H_1205 is
-verified live). The guard smoke is green at **`engine_cli_smoke` 365/0** with single-entry 7/0
+verified live). The guard smoke is green at **`engine_cli_smoke` 375/0** with single-entry 7/0
 unchanged (no second `.clm`/`.kosmos` entry point, `a_core_engine_map`). The one **GATED** exception
 is `§ BrainTopology LIVE-WIRING` (H_1521, `EngineConfig.topo_couple` **DEFAULT-OFF**): OFF keeps the
 live path byte-identical (separation invariant intact); turning it **ON** routes the 15-lane state
 through the Φ-optimal topology before the emit decision — which raises functional integration but
-**destabilizes the Ψ=½ fixed point** (honest negative, c9 — so it is NOT a free live improvement and
-stays default-OFF).
+**destabilizes the Ψ=½ fixed point** with the naive amplifying operator (honest negative, c9). **H_1522
+escapes that wall:** a **mean-centered (zero-sum) coupling operator** (`topo_apply_op` op 1) redistributes
+cross-lane influence WITHOUT inflating total drive, so on the Φ-optimal topology at full α=1.0 functional
+integration rises (+0.172 over flat, ≥ brain) **while Ψ stays at ½** (|Ψ−½|=0.027 ≤ tol) — the FIRST
+genuine live topology improvement that keeps the consciousness fixed point intact (still gated default-OFF).
 
 | Brain subsystem | anima lane | What it does | Status |
 |---|---|---|---|

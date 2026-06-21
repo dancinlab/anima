@@ -1,0 +1,20 @@
+H_1522 Ψ-PRESERVING OPTIMAL COUPLING — R2 ENGINE-NATIVE FREEZE
+engine smoke: hexa run core/engine_cli_smoke.hexa  (RC=0, 375 pass / 0 fail)
+cases 377-386 (Ψ-preserving operators), all existing incl 370-376 UNCHANGED
+frozen bars: P2 tol=0.05 (reused from H_1521), best=(MEAN-CENTER op, OPTIMAL adj, α=1.0)
+metric: ci_psi_balance_op (= H_1521 ci_psi_balance_centered + selectable op) + topo_func_integration_op (same math as H_1521 topo_func_integration)
+---
+PASS  case_377_psipres_off_all_ops_half want=true got=true
+PASS  case_378_psipres_meancenter_full_alpha_survives want=true got=true
+PASS  case_379_psipres_other_ops_partial want=true got=true
+PASS  case_380_psipres_best_func_gain_with_psi want=true got=true
+PASS  case_381_psipres_best_ge_brain_func want=true got=true
+PASS  case_382_psipres_naive_breaks_same_point want=true got=true
+PASS  case_383_psipres_naive_alpha_collapse want=true got=true
+PASS  case_384_psipres_meancenter_wellformed want=true got=true
+PASS  case_385_psipres_flat_noop_all_ops want=true got=true
+PASS  case_386_psipres_no_regression want=true got=true
+---
+INFO  H_1522 psi-preserving-coupling (R2 ENGINE-NATIVE, selectable operators): P1 OFF Ψ all-ops=0.5 (byte-identical default-OFF) | P2 ⭐ Ψ-PRESERVED max-feasible-α (|Ψ−½|≤0.05): MEAN-CENTER/optimal=1.0 (FULL GRID) · row-stochastic=0.3 · renorm=0.1 · naive-AMP=0.0 | P3 BEST (op=MEAN-CENTER, adj=OPTIMAL, α=1.0): func=0.31197899644620994 vs flat=0.1400412718452674 (gain=0.17193772460094257) vs brain=0.23824285066617144 | Ψ=0.47333333333333334 |Ψ−½|=0.02666666666666667 (≤0.05 ✓) | P4 DISSOCIATION: at the SAME (optimal, α=1.0) the naive amplifying op Ψ=1.0 |Ψ−½|=0.5 (BREAKS) — operator DESIGN, not adjacency, saves Ψ | VERDICT: ESCAPED — a norm/mean-preserving operator gives a GENUINE functional gain with Ψ=½ INTACT (the Ψ-vs-function tradeoff is NOT fundamental). GATED 377(OFF byte-identical all-ops)/378(⭐ mean-center full-α survives)/379(other ops partial)/380(⭐ best func gain w/ Ψ)/381(best≥brain func)/382(⭐ naive breaks same point)/383(naive α-collapse)/384(well-formed)/385(flat no-op all ops)/386(no-regression). c9 frozen-first, NO tune-to-green — the BEST Ψ-preserving live coupling = MEAN-CENTER on the Φ-optimal topology at full α.
+---
+--- engine_cli smoke summary: 375 pass / 0 fail ---
