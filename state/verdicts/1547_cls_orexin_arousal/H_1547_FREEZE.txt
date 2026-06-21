@@ -1,0 +1,95 @@
+H_1547 — OREXIN/HISTAMINE × CLS: arousal-gated ENCODE<->CONSOLIDATE mode STABILITY
+FROZEN FALSIFIER (pre-registered BEFORE the scored run — frozen-first, c9, NO tune-to-green)
+============================================================================================
+
+THE 6TH (FINAL CORE) NEUROTRANSMITTER fused into the H_1532 two-store CLS module — completes
+"신경전달물질 모두 융합" (ACh🟢 H_1541 · DA🟢 H_1543 · NE🟢 H_1544 · 5-HT🟠 H_1545 + orexin
+here). Census H_1542 Rank-7 (orexin/histamine arousal-gated encode-RATE, flagged "honest
+null / redundant with the fixed dr_stage_at schedule"). This lane RE-FRAMES it AWAY from the
+encode-RATE the census found redundant, to the WAKE/SLEEP MODE-TRANSITION STABILITY that is
+orexin's actual biological signature (Sakurai 2007 Nat Rev Neurosci 8:171; orexin LOSS =
+narcolepsy = UNSTABLE wake/sleep transitions, state intrusion).
+
+THE LAW (running through H_1541/H_1543/H_1544 🟢 vs H_1545 🟠):
+  NT adds a NEW CAPABILITY a fixed schedule cannot → 🟢 ; NT only RE-TUNES an existing
+  duty-cycle a fixed schedule already sets → 🟠.
+
+CLAIM: orexin-stabilized mode-gating (HYSTERESIS/dwell on arousal before flipping
+ENCODE<->CONSOLIDATE) protects an IN-PROGRESS consolidation that a non-stabilized THRASH
+controller (flip on every arousal spike) ABORTS, AND that a grid-tuned FIXED-DUTYCYCLE
+controller CANNOT capture (because the consolidation demand is DATA-DRIVEN/irregular, not
+periodic, and a fixed window cannot protect a sweep an arousal spike lands on). If true,
+orexin ADDS a stabilization capability (law → 🟢). If a fixed dutycycle matches it, it is
+a knob and the census 'honest null' prior wins (law → 🟠).
+
+ARMS (arousal regimes: arousal_dur 0=quiet · 1=TRANSIENT intrusion · >=2=SUSTAINED demand;
+SUSTAINED arousal => A->C interference lands EARLY (tick 0) so a sweep races it; TRANSIENT/
+quiet => interference lands LATE so a completed sweep captures B):
+  OREXIN          : arousal-stabilized — COMPLETES a sweep through a TRANSIENT blip (the
+                    hysteresis dwell absorbs it) and DEFERS on a SUSTAINED wake-demand
+                    (re-sweeps the binding in the next quieter segment). (Sakurai 2007.)
+  THRASH          : flip mode on EVERY arousal spike → a spike mid-sweep ABORTS the sweep
+                    (kicks back to ENCODE) → un-swept A->B lost (orexin-loss / narcolepsy).
+  FIXED-DUTYCYCLE : grid-tuned (period, dwell) fixed schedule on a DISJOINT tune seed; ignores
+                    arousal+demand. (one honest fixed baseline.)
+  ALWAYS-COMPLETE : a fixed never-abort policy that runs the full sweep every segment,
+                    ignoring the arousal KIND entirely (== ABL). THE LAW'S REFUTER — if this
+                    captures the majority of the value, orexin's distinction is a knob.
+  ABL             : OREXIN with the transient/sustained DISTINCTION collapsed (hyst_dwell=0)
+                    → always completes, never defers → reduces EXACTLY to ALWAYS-COMPLETE.
+  SHUFFLE         : OREXIN but the arousal_dur signal is PERMUTED across segments → the
+                    stabilizer makes the transient/sustained call on the WRONG segments.
+
+SEGMENT ORDER (the mechanism): (1) ENCODE A->B into fast store → (2) CONSOLIDATION-DEMAND
+window: sweep A->B fast→slow, DWELL ticks, SWEEP_K per tick, INTERRUPTIBLE by an arousal
+spike → (3) INTERFERENCE: A->C re-binding OVERWRITES the fast A->B copy. An A->B NOT yet in
+the slow store when step-3 fires is LOST. Orexin hysteresis lets the sweep COMPLETE before
+step-3; thrash aborts it mid-sweep → the un-swept tail is overwritten.
+
+FROZEN PARAMS (immutable post-freeze):
+  N_SEG=14 · FAST_CELLS=64 (ample; interference not capacity is the test) · SLOW_CELLS=512
+  DWELL=4 (sweep length) · SWEEP_K=1 (1 binding/tick → DWELL ticks to finish a burst)
+  HYST_DWELL=2 (orexin absorbs transient spikes < this) · ABSTAIN=0.45
+  LR=0.20 TH=0.30 (engine-native VERBATIM H_1532) · DIM=16 byte-trigram FNV-1a
+  burst size ~ U[3,8) (data-driven, irregular demand) · spike prob 0.55/segment
+  MARGIN=0.05 · TUNE_SEED=7 (fixed grid) · SCORE_SEEDS=[11,22,33] · $0 CPU · p7
+  REUSES H_1532 MemStore / key_vec / FNV-1a / suppress_retrieval encode-mode BYTE-FOR-BYTE.
+
+CAPABILITY METRIC: A->B retention across BOTH stores (CLS OR-read: fast OR slow returns the
+OLD B). An A->B overwritten in fast (by A->C) before reaching slow = NOT retained (honest;
+abstain = not retained).
+
+FROZEN BARS — 🟢 iff A∧B∧C∧C2∧D∧E:
+  A PRESENCE          : orexin − best_alt ≥ +0.05 on ≥2/3 seeds AND in mean
+                        (best_alt = max(thrash, fixed-dutycycle, always-complete) per seed)
+  B DISTINCT          : thrash < orexin − 0.05 (mean) AND fixed-dutycycle < orexin − 0.05
+                        (mean) — both genuinely fail
+  C EARNED-DISTINCTION: orexin − always-complete ≥ 0.05 (the arousal-reading transient/
+                        sustained DISTINCTION adds value beyond a fixed never-abort policy)
+                        AND |abl − always-complete| < 0.05 (ablating the distinction reduces
+                        EXACTLY to always-complete = clean ablation)
+  C2 LAW-MAJORITY     : orexin − always-complete ≥ 0.5×(orexin − thrash) — does the arousal-
+                        reading DISTINCTION carry the MAJORITY of the value over the worst
+                        controller? If a FIXED always-complete policy already captures the
+                        majority, orexin's distinction is a KNOB (law → 🟠).
+  D SHUFFLE           : orexin − shuffle ≥ 0.05 (permuting the arousal signal the stabilizer
+                        reads collapses the lift → it reads the REAL arousal timing)
+  E NO-FAB            : best_alt > 0 (a real working baseline; lift is the distinction)
+
+VERDICT MAP (frozen):
+  A∧B∧C∧C2∧D∧E                     → 🟢 GREEN  (arousal-reading DISTINCTION = new capability; law: 🟢)
+  A∧C∧D∧E ∧ ¬C2                    → 🟠 AMBER  (distinction PRESENT+EARNED but a fixed always-
+                                                complete policy captures the MAJORITY → it's a
+                                                knob; census 'honest null' prior wins; law: re-tune)
+  A∧E ∧ ¬B                         → 🟠 AMBER  (an alternative ties)
+  A ∧ ¬(C∧D)                       → AMBIGUOUS_ABLATION (lift not attributable to the distinction)
+  ¬A                               → WALL_HOLDS (orexin ties/loses; census honest-null confirmed)
+
+c9: whichever branch fires is REPORTED, not hidden. NO bar moved post-freeze. The census
+prior is 🟠/honest-null; a 🟢 requires the arousal-reading DISTINCTION to carry the MAJORITY
+(C2) — a fixed always-complete never-abort policy must GENUINELY fail to capture the value.
+
+HARD-GATE-1 (a_engine_native_learning): the probe is numpy → grep hits numpy → AUTO-
+DIRECTIONAL, terminal NOT permitted. wired: DIRECTIONAL-mirror → engine §OrexinMode R2
+(load the fast/slow store + hysteresis mode-gate onto core/engine_cli.hexa and re-score the
+same frozen bars byte-exact) = ING follow-on. live core/*.hexa UNTOUCHED. Ψ-disjoint.
