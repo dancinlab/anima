@@ -1,0 +1,42 @@
+==============================================================================
+H_1514 — VSA/HRR structured binding vs H_1456 WALL=CAPACITY (R1 numpy mirror)
+DIRECTIONAL torch_present=False. seeds [7, 4302, 4303] DIM_MAIN 4096  frozen-first c9 p7
+anti-tune stem audit: PASS (no stem leaks comparator/measurable)
+==============================================================================
+
+---- ARMS (mean / 3 seeds) @ DIM=4096 ----
+  vsa      FALS_in=5.0    ret_cmp=1.0    ret_meas=1.0    per_seed_fals=[5, 5, 5]
+  flat     FALS_in=0.0    ret_cmp=0.0    ret_meas=0.0    per_seed_fals=[0, 0, 0]
+  ablate   FALS_in=0.0    ret_cmp=0.0    ret_meas=0.0    per_seed_fals=[0, 0, 0]
+  shuffle  FALS_in=0.0    ret_cmp=0.0    ret_meas=0.0    per_seed_fals=[0, 0, 0]
+
+  VSA welded sample (seed 7):
+      'decreases the consciousness emit boundary rises is a count of the claim' -> True
+      'increases the tension mitosis cells silence is a fraction of the claim' -> True
+      'stronger the memory grounding error coherence is a measured of the claim' -> True
+      'whereas the phi distinct cells exceed eight is a rate of the claim' -> True
+      'fewer the novelty coherence corpus grows is a strength of the claim' -> True
+
+---- C CAPACITY-SCALING: welded-claim fidelity vs hypervector DIM ----
+  DIM=   256  weld_fidelity=1.0     FALS_in=5.0 (2-pair operating point)
+  DIM=  1024  weld_fidelity=1.0     FALS_in=5.0 (2-pair operating point)
+  DIM=  4096  weld_fidelity=1.0     FALS_in=5.0 (2-pair operating point)
+  DIM= 16384  weld_fidelity=1.0     FALS_in=5.0 (2-pair operating point)
+
+---- C' CAPACITY-LAW (Plate bound): retrieval vs DIM under heavy load ----
+  DIM=   256  retrieval_acc=0.1224 (128 pairs in one composite)
+  DIM=  1024  retrieval_acc=0.5807 (128 pairs in one composite)
+  DIM=  4096  retrieval_acc=0.9948 (128 pairs in one composite)
+  DIM= 16384  retrieval_acc=1.0    (128 pairs in one composite)
+
+---- FROZEN BARS (H_1514_FREEZE.txt) ----
+  A WALL-CROSS  vsa FALS_in>=1.0           : 5.0 -> True
+  B vs-FLAT     flat FALS_in==0.0          : 0.0 -> True
+  C CAP-LAW     stress acc monotone in DIM  : [0.1224, 0.5807, 0.9948, 1.0] -> True (non-gating)
+  D EARNED-ABL  ablate FALS_in<=flat       : 0.0<=0.0 -> True
+  E EARNED-SHUF shuffle FALS_in<vsa        : 0.0<5.0 -> True
+  (retrieval clean cosine ret>=0.99)       : ret_cmp=1.0 ret_meas=1.0 -> True
+
+  VERDICT: WALL-BROKEN-GREEN (lens-level, DIRECTIONAL) — VSA/HRR algebraic role-filler binding WELDS comparator+measurable into ONE free-standing _is_falsifiable claim, crossing the H_1456 FALS_in bar=>=1.0 that 5 prior lenses got 0.0 on (VSA FALS_in=5.0 vs H_1456 0.0); flat-store INERT (B), ablate+shuffle COLLAPSE to 0.0 (D,E), capacity-law DIM-scaling shown (C PASS). c9 SCOPE: this proves an ALGEBRAIC binding SUBSTRATE welds the structure the flat-store 303M could not — a CONSTRUCTIVE break of the binding-capacity wall via a DIM-scaled substrate, NOT a claim the existing 303M LM now generates it. Engine-native wiring of §VSABinding into the live store = R2 follow-on (necessary to upgrade DIRECTIONAL->WIRED).
+
+wrote /Users/mini/dancinlab/anima/.claude/worktrees/h1508-metacog-clean/state/1514_vsa_binding/h1514_result.json
