@@ -1,0 +1,26 @@
+H_1516 NAMED-ANATOMICAL PLACEMENT — FROZEN BARS (pre-registered, c9, declared in h1516_named.py before running)
+
+QUESTION: map each of anima's 15 consciousness lanes to its TRUE NAMED anatomical home in a
+REAL labeled human connectome (AAL90), wire by the REAL edges between those SPECIFIC named
+regions, and ask: (P1) is that placement advantageous vs random region-assignment? (P2) is the
+TRUE anatomical placement near the Φ-OPTIMUM of the placement search (the user's "is the brain
+mysteriously Φ-optimal / as-if-designed?" question)?
+
+METRIC: H_1512 headline = IIT4 min-cut Φ (phi_core over the 8-lane CORE), apply_topology
+X'=X·(I+α·Â)ᵀ, α=0.6, N=15. Adjacency = REAL AAL90 group-avg subnetwork among the lanes'
+TRUE NAMED regions, binarized at the connectome's own positive median (= H_1512/1513 binary regime).
+
+FROZEN thresholds (set BEFORE running):
+  P1 ADVANTAGE     phi_true >= random_assignment_mean + 0.02
+  P2 NEAR-OPTIMAL  true-anatomical PERCENTILE in placement-search Φ distribution >= 0.80
+                   AND (opt_phi - phi_true) <= 0.30 * opt_phi
+  Seeds [5160,5161,5162]; M_random=2000 random region-assignments; M_search=4000 placement-search
+  permutations of the SAME named region set; hill-climb (12 restarts) + search-max for opt_phi.
+
+INTERPRETATION (declared before reading, either way honest c9):
+  P2 TRUE  -> "real anatomical placement IS near Φ-optimal" (cost-integration economy signature).
+  P2 FALSE -> "real anatomical placement is NOT Φ-optimal" (optimized for wiring cost/economy,
+              not pure integration). NOT mystical either way (Bullmore & Sporns 2012). NO tune-to-green.
+
+DATA: Škoch et al. 2022 Scientific Data 9:486, AAL90, 88 healthy adults group avg, CC-BY-4.0
+(DOI 10.1038/s41597-022-01596-9, OSF 10.17605/OSF.IO/YW5VF). REAL named regions — see PROVENANCE.md.

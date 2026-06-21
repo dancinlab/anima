@@ -1,0 +1,219 @@
+{
+  "hypothesis": "H_1516_named_anatomical",
+  "rung": "R1_numpy_mirror_DIRECTIONAL",
+  "question": "map each lane to its TRUE NAMED anatomical home; is that placement advantageous AND near the \u03a6-optimum?",
+  "data": {
+    "source": "\u0160koch et al. 2022 Scientific Data 9:486, AAL90, 88 healthy adults, group avg",
+    "doi": "10.1038/s41597-022-01596-9",
+    "osf": "10.17605/OSF.IO/YW5VF",
+    "license": "CC-BY-4.0",
+    "atlas": "AAL90 (ROI_MNI_v4)",
+    "cerebellum_note": "AAL90 excludes the cerebellum; H_1512's 15-lane set has no dedicated cerebellar forward-model lane (that lane lives in H_1513's set), so no lane is forced onto a missing region. Cerebellum gap documented, not substituted."
+  },
+  "harness": "re-uses H_1512 h1512.py (build_population/apply_topology/phi_core min-cut \u03a6/CORE/N=15) byte-for-byte; only the adjacency = REAL AAL90 subnetwork among the lanes' TRUE NAMED regions, binarized at own median",
+  "metric": "IIT4 min-cut \u03a6 (phi_core over CORE) \u2014 H_1512 headline metric",
+  "seeds": [
+    5160,
+    5161,
+    5162
+  ],
+  "M_random": 2000,
+  "M_search": 4000,
+  "hillclimb_restarts": 12,
+  "thresholds": {
+    "P1_ADV_MIN": 0.02,
+    "P2_PCTL_MIN": 0.8,
+    "P2_GAP_FRAC": 0.3
+  },
+  "named_mapping": [
+    {
+      "lane_idx": 0,
+      "lane": "GlobalWorkspace",
+      "region": "L Precuneus",
+      "roi": 67,
+      "rationale": "fronto-parietal/DMN global-workspace hub"
+    },
+    {
+      "lane_idx": 1,
+      "lane": "Habituation",
+      "region": "L Postcentral Gyrus",
+      "roi": 57,
+      "rationale": "primary somatosensory (sensory cortex)"
+    },
+    {
+      "lane_idx": 2,
+      "lane": "PrecisionSurprise",
+      "region": "L Cingulum Ant",
+      "roi": 31,
+      "rationale": "anterior cingulate (ACC) \u2014 prediction-error/surprise"
+    },
+    {
+      "lane_idx": 3,
+      "lane": "SelfIdentity",
+      "region": "L Superior Medial Gyrus",
+      "roi": 23,
+      "rationale": "medial PFC (mPFC) \u2014 self-referential"
+    },
+    {
+      "lane_idx": 4,
+      "lane": "LearnedPrecision",
+      "region": "L Middle Frontal Gyrus",
+      "roi": 7,
+      "rationale": "dorsolateral PFC-L (forward/precision, A-side)"
+    },
+    {
+      "lane_idx": 5,
+      "lane": "Novelty",
+      "region": "R Hippocampus",
+      "roi": 38,
+      "rationale": "HIPPOCAMPUS-R \u2014 novelty/encoding (immune-store home)"
+    },
+    {
+      "lane_idx": 6,
+      "lane": "AttentionalBlink",
+      "region": "R Inferior Parietal Lobule",
+      "roi": 62,
+      "rationale": "parietal-R \u2014 attention"
+    },
+    {
+      "lane_idx": 7,
+      "lane": "SenseOfAgency",
+      "region": "R Angular Gyrus (TPJ)",
+      "roi": 66,
+      "rationale": "TPJ-R (angular gyrus) \u2014 agency/mentalizing"
+    },
+    {
+      "lane_idx": 8,
+      "lane": "SubjectiveTime",
+      "region": "R Insula Lobe",
+      "roi": 30,
+      "rationale": "insula \u2014 interoceptive subjective time"
+    },
+    {
+      "lane_idx": 9,
+      "lane": "EmotionRegulation",
+      "region": "R Mid Orbital Gyrus",
+      "roi": 26,
+      "rationale": "ventromedial/orbital PFC (vmPFC) \u2014 emotion regulation"
+    },
+    {
+      "lane_idx": 10,
+      "lane": "DirectedForgetting",
+      "region": "R Middle Frontal Gyrus",
+      "roi": 8,
+      "rationale": "dorsolateral PFC-R \u2014 directed forgetting/control"
+    },
+    {
+      "lane_idx": 11,
+      "lane": "BodyOwnership",
+      "region": "L SupraMarginal Gyrus",
+      "roi": 63,
+      "rationale": "supramarginal (body schema / S1-adjacent)"
+    },
+    {
+      "lane_idx": 12,
+      "lane": "DividedAttention",
+      "region": "L Inferior Parietal Lobule",
+      "roi": 61,
+      "rationale": "parietal-L \u2014 divided attention"
+    },
+    {
+      "lane_idx": 13,
+      "lane": "FreeWont",
+      "region": "L Posterior-Medial Frontal",
+      "roi": 19,
+      "rationale": "pre-SMA (posterior-medial frontal) \u2014 volition/free-wont"
+    },
+    {
+      "lane_idx": 14,
+      "lane": "MitosisGrowth",
+      "region": "L Caudate Nucleus",
+      "roi": 71,
+      "rationale": "subcortical (basal-ganglia/caudate) \u2014 growth substrate"
+    }
+  ],
+  "results": {
+    "phi_true": 0.08415052340603779,
+    "phi_flat": 0.013036211201523429,
+    "random_assignment_mean": 0.09085496276928433,
+    "random_assignment_p95": 0.1319882365015567,
+    "random_assignment_max": 0.17883414510941278,
+    "placement_search_mean": 0.0917650709378001,
+    "placement_search_max": 0.19438023933682866,
+    "opt_phi": 0.2417224276743859,
+    "true_percentile_in_search": 0.3714166666666667,
+    "gap_to_optimum": 0.1575719042683481,
+    "gap_fraction": 0.6524789838426927
+  },
+  "bars": {
+    "P1_advantage": {
+      "passed": false,
+      "detail": "phi_true 0.0842 >= rand_mean 0.0909 + 0.02 (0.1109)"
+    },
+    "P2_near_optimal": {
+      "passed": false,
+      "percentile": {
+        "passed": false,
+        "value": 0.3714166666666667,
+        "bar": 0.8
+      },
+      "gap": {
+        "passed": false,
+        "gap_fraction": 0.6524789838426927,
+        "bar": 0.3
+      }
+    }
+  },
+  "HEADLINE": "TRUE anatomical placement sits at the 37.1th percentile of the placement-search \u03a6 distribution; gap-to-optimum = 65.2% of opt_phi (NOT \u03a6-optimal \u2014 optimized for something else)",
+  "verdict": "\ud83e\uddf1 NO-ADVANTAGE (DIRECTIONAL R1) \u2014 the TRUE named-anatomical placement does NOT beat random region-assignment in min-cut \u03a6: named placement is INERT in this projection (honest negative, c9)",
+  "per_seed": [
+    {
+      "seed": 5160,
+      "phi_true": 0.07819574024517273,
+      "phi_flat": 0.010808051282085174,
+      "rand_mean": 0.09256994131630256,
+      "rand_std": 0.026777118787220642,
+      "rand_p95": 0.13447935238889144,
+      "rand_max": 0.188846776153206,
+      "search_mean": 0.09410868929795417,
+      "search_max": 0.2047535493624979,
+      "pctl_search": 0.2515,
+      "opt_phi": 0.25283028048207434,
+      "gap": 0.17463454023690161,
+      "gap_frac": 0.6907184531216909,
+      "n_edges_true": 53
+    },
+    {
+      "seed": 5161,
+      "phi_true": 0.10794017381120824,
+      "phi_flat": 0.010487263317262574,
+      "rand_mean": 0.09499988639040557,
+      "rand_std": 0.027346324662532825,
+      "rand_p95": 0.13648705101878758,
+      "rand_max": 0.17413312342175757,
+      "search_mean": 0.09637665051059736,
+      "search_max": 0.19597573783258326,
+      "pctl_search": 0.65625,
+      "opt_phi": 0.2431401468337384,
+      "gap": 0.13519997302253017,
+      "gap_frac": 0.5560577912909678,
+      "n_edges_true": 53
+    },
+    {
+      "seed": 5162,
+      "phi_true": 0.0663156561617324,
+      "phi_flat": 0.01781331900522254,
+      "rand_mean": 0.08499506060114483,
+      "rand_std": 0.024874278761139977,
+      "rand_p95": 0.12499830609699111,
+      "rand_max": 0.1735225357532748,
+      "search_mean": 0.0848098730048488,
+      "search_max": 0.18241143081540478,
+      "pctl_search": 0.2065,
+      "opt_phi": 0.22919685570734494,
+      "gap": 0.16288119954561253,
+      "gap_frac": 0.7106607071154195,
+      "n_edges_true": 53
+    }
+  ]
+}
