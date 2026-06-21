@@ -1,0 +1,89 @@
+H_1539 — NOREPINEPHRINE-as-RESET-FACULTY RETRY (non-gain-dissolvable baseline)
+       — FROZEN BARS (PRE-REGISTERED, before any run)
+================================================================================
+SOURCE: anima-internal RETRY of H_1537 (🧱 WALL, #2518), executing THAT lane's own
+explicitly-stated not-ruled-out next lens.
+
+WHY RETRY (H_1537's honest mechanistic finding):
+  H_1537 re-framed NE from a scalar GAIN knob to a phasic NETWORK-RESET faculty
+  (Bouret & Sara 2005, TINS "Network reset"; Yu & Dayan 2005, Neuron "unexpected
+  uncertainty") and tested PRESENCE on an abrupt context-switch task. It found the
+  reset is REAL but SMALL (+0.006 pre-registered; +0.029 even in the most favorable
+  learnable regime) — UNDER the +0.10 PRESENCE bar. The HONEST reason it walled: the
+  best-swept FIXED gain was α*=0.6 (HIGH), and *a high fixed gain itself acts as a
+  partial reset* (it down-weights the stale ŵ fast), MASKING the explicit flush's
+  marginal value. The reset's true contribution was CONFOUNDED by the baseline's
+  freedom to set a high gain.
+
+THE FIX (a_break_the_wall TYPE-(b) VARIABLE-ISOLATION — NOT tune-to-green):
+  Re-run the IDENTICAL abrupt context-switch task, SAME seeds [1537,1538,1539], SAME
+  W_REC=20 recovery metric, SAME PRESENCE bars — changing ONLY the LEARNER so a fixed
+  gain CANNOT double as a reset:
+   (b) SATURATING-NONLINEAR update. The estimator is driven by a LEAKY MOMENTUM
+       integrator m_t squashed through tanh:
+         pred = sign( tanh( GAMMA * (m_t · x_t) ) )
+         m_{t+1} = BETA·m_t + α·(y - out)·(1 - out²)·x / (x·x)
+       The tanh-derivative gate (1 - out²) → 0 once m is CONFIDENT/SATURATED, so even
+       a large α barely moves a stale saturated m: it must decay through the slow leak
+       BETA=0.97 OR be explicitly FLUSHED. Stale context PERSISTS unless actively
+       detected + flushed.
+   (a) HIGH GAIN HURTS STEADY-STATE. Under label noise the saturated estimator chases
+       noise at high α and LOSES asymptote, so the α* sweep can NOT sit high — the
+       fixed baseline's best gain is forced LOW and can no longer use gain as a covert
+       reset. The ONLY fast way to clear a stale saturated context is the explicit
+       phasic FLUSH (m → m·(1-RESET_DECAY)).
+  This ISOLATES the reset faculty's true marginal contribution by removing the
+  gain-as-reset confound H_1537 identified. The PRESENCE BAR IS UNCHANGED — we fix the
+  BASELINE so the comparison is FAIR, we do NOT weaken the bar. frozen-first.
+
+  >>> WHY THE BAR IS UNCHANGED (explicit, c9): this is type-(b) variable-isolation
+      (controlling a confound H_1537's own controls/diagnostic surfaced), NOT
+      tune-to-green. Tune-to-green would MOVE the bar to manufacture a pass; here the
+      +0.10 / ≥2-of-3 / ablation-decisive / time-lock bar is BYTE-IDENTICAL to
+      H_1537's, and only the (confounded) baseline learner is corrected. If the reset
+      STILL fails +0.10 even against a non-gain-dissolvable baseline, NE-reset is
+      genuinely a minor faculty and we report 🧱/🟠 HONESTLY (Bouret-Sara reset is real
+      but small). NO bar moves either way.
+
+TASK (abrupt rule-switch classification — IDENTICAL to H_1537):
+  Inputs x_t ~ N(0, I_D). Hidden RULE y_t = sign(w_r · x_t); w_r switches to a fresh
+  DIFFERENT hyperplane abruptly with hazard H at UNKNOWN times. Label noise p_noise.
+  METRIC = POST-SWITCH RECOVERY = mean accuracy over the W_REC=20 ticks immediately
+  following each switch (averaged over all switches, all seeds). Higher = faster
+  recovery.
+
+ARMS (all see the SAME x_t / y_t / switch stream per seed — only the controller differs):
+  NO-NE   = baseline slow-adaptation on the SATURATING learner, tuned fixed α*
+            (best-swept over the grid = strongest fixed-gain champion; now forced LOW).
+  NE-RESET= same learner + phasic surprise-triggered FLUSH (surprise = agent's OWN
+            prediction error vs a running scale — NO switch-label peek, p6/p2/p3).
+  ABL     = reset detector ALWAYS OFF (never fires) → reverts EXACTLY to NO-NE.
+  SHUFFLE = same NUMBER of resets at permuted random tick positions (decoupled from
+            real surprise/switch times).
+
+FROZEN BARS (pre-registered, PRESENCE test — IDENTICAL to H_1537's c1/c2/c3):
+  Let R(arm) = post-switch recovery accuracy (mean over recovery windows, per seed).
+  (c1 PRESENCE)  R(NE-RESET) − R(NO-NE) ≥ +0.10  on ≥ 2/3 seeds  AND mean ≥ +0.10.
+  (c2 ABLATION-DECISIVE)  |R(ABL) − R(NO-NE)| ≤ 0.02 (mean).
+  (c3 TIME-LOCK)  R(NE-RESET) − R(SHUFFLE) ≥ +0.05 (mean).
+  VERDICT: 🟢 iff c1 ∧ c2 ∧ c3 (NE IS a real faculty once the gain-confound is
+  removed). Else honest 🧱/🟠 (NE-reset is genuinely a minor faculty even on a
+  non-gain-dissolvable baseline — Bouret-Sara reset real but small).
+
+CONTROLS / HONESTY (c9, p7, frozen-first):
+  - α* swept for the NO-NE baseline (strongest fixed-gain champion) BEFORE NE-RESET
+    scored; the α-sweep curve + baseline asymptote are REPORTED in the artifact so the
+    "α* now LOW (gain can't double as reset)" fix is VISIBLE and auditable.
+  - Surprise uses ONLY the agent's own prediction error (NO injected switch label).
+  - 3 seeds, deterministic, $0 CPU, gradient-free numpy mirror = DIRECTIONAL only
+    (engine-native R2 deferred ING per a_engine_native_learning).
+  - HONEST if c1/c2/c3 fail — a reset that still does not beat slow-adaptation against a
+    NON-gain-dissolvable baseline is a valid 🧱/🟠, reported as-is. NO tune-to-green.
+
+PARAMETERS (frozen):
+  D=24 · T=2400 · H(hazard)=0.01 · W_REC=20 · p_noise=0.05 · seeds=[1537,1538,1539]
+  (all IDENTICAL to H_1537). THE FIX: BETA=0.97 (slow leak), GAMMA=3.0 (saturation
+  sharpness), α-grid for NO-NE = {0.02,0.05,0.1,0.2,0.4,0.6}. NE-RESET: flush
+  RESET_DECAY=0.85, phasic threshold k=RESET_K=2.5·(running surprise scale),
+  refractory=8, surprise EMA halflife=30.
+================================================================================

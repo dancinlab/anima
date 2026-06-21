@@ -1,0 +1,98 @@
+{
+  "hypothesis": "H_1539",
+  "title": "NOREPINEPHRINE-as-RESET-FACULTY RETRY (non-gain-dissolvable baseline)",
+  "frame": "NE-as-reset (Bouret&Sara 2005 network reset; Yu&Dayan 2005 unexpected uncertainty) re-tested against a SATURATING-NONLINEAR baseline where a fixed gain CANNOT double as a reset (H_1537 lane's own next lens). a_break_the_wall TYPE-(b) variable-isolation, bars UNCHANGED, NOT tune-to-green.",
+  "substrate": "numpy DIRECTIONAL mirror (engine-native R2 deferred ING)",
+  "the_fix": "saturating-nonlinear leaky-momentum learner: pred=sign(tanh(GAMMA*(m.x))), m=BETA*m+alpha*err*(1-out^2)*x. The tanh-derivative gate + slow leak BETA make a CONFIDENT stale m resist a high gain (gradient gate ->0 when saturated) => high alpha HURTS asymptote under noise => alpha* forced LOW => gain can no longer act as a covert reset; the explicit FLUSH is the only fast clear of stale context.",
+  "seeds": [
+    1537,
+    1538,
+    1539
+  ],
+  "per_seed": [
+    {
+      "seed": 1537,
+      "alpha_star": 0.4,
+      "n_switches": 24,
+      "n_resets_fired": 3,
+      "baseline_asymptote": 0.675,
+      "alpha_sweep_recovery": {
+        "0.02": 0.6,
+        "0.05": 0.6063,
+        "0.1": 0.6229,
+        "0.2": 0.6125,
+        "0.4": 0.6333,
+        "0.6": 0.6021
+      },
+      "R_NO_NE": 0.6333,
+      "R_NE_RESET": 0.6271,
+      "R_ABL": 0.6333,
+      "R_SHUFFLE": 0.6396,
+      "ne_minus_none": -0.0062,
+      "ne_minus_shuf": -0.0125,
+      "abl_minus_none": 0.0
+    },
+    {
+      "seed": 1538,
+      "alpha_star": 0.2,
+      "n_switches": 28,
+      "n_resets_fired": 6,
+      "baseline_asymptote": 0.7643,
+      "alpha_sweep_recovery": {
+        "0.02": 0.5384,
+        "0.05": 0.5421,
+        "0.1": 0.5527,
+        "0.2": 0.5725,
+        "0.4": 0.5563,
+        "0.6": 0.5332
+      },
+      "R_NO_NE": 0.5725,
+      "R_NE_RESET": 0.5689,
+      "R_ABL": 0.5725,
+      "R_SHUFFLE": 0.5743,
+      "ne_minus_none": -0.0036,
+      "ne_minus_shuf": -0.0055,
+      "abl_minus_none": 0.0
+    },
+    {
+      "seed": 1539,
+      "alpha_star": 0.1,
+      "n_switches": 21,
+      "n_resets_fired": 8,
+      "baseline_asymptote": 0.7429,
+      "alpha_sweep_recovery": {
+        "0.02": 0.5452,
+        "0.05": 0.5714,
+        "0.1": 0.6143,
+        "0.2": 0.6119,
+        "0.4": 0.6024,
+        "0.6": 0.6
+      },
+      "R_NO_NE": 0.6143,
+      "R_NE_RESET": 0.6095,
+      "R_ABL": 0.6143,
+      "R_SHUFFLE": 0.6024,
+      "ne_minus_none": -0.0048,
+      "ne_minus_shuf": 0.0071,
+      "abl_minus_none": 0.0
+    }
+  ],
+  "aggregate": {
+    "mean_R_NO_NE": 0.6067,
+    "mean_R_NE_RESET": 0.6018,
+    "mean_R_ABL": 0.6067,
+    "mean_R_SHUFFLE": 0.6054,
+    "mean_alpha_star": 0.2333,
+    "mean_baseline_asymptote": 0.7274,
+    "mean_ne_minus_none": -0.0049,
+    "mean_abl_minus_none": 0.0,
+    "mean_ne_minus_shuf": -0.0036,
+    "n_pass_c1": 0
+  },
+  "bars": {
+    "c1_presence_ne_minus_none>=0.10_on>=2of3_and_mean": false,
+    "c2_ablation_decisive_|abl-none|<=0.02": true,
+    "c3_timelock_ne_minus_shuf>=0.05": false
+  },
+  "verdict": "🧱 WALL"
+}
