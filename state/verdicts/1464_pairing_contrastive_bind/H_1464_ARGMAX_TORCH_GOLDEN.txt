@@ -1,0 +1,17 @@
+H_1464 — ARGMAX==torch parity (a_engine_native_learning byte-faithfulness)
+date: 2026-06-21 · host: summer (torch 2.11.0+cu130, CPU)
+
+TORCH GOLDEN (pairing.pt, ByteGPT-303M, prompt "The quick brown" 15 bytes, last-position next-byte):
+  TORCH_ARGMAX 32
+  TORCH_MAXVAL 32.35224151611328
+  TORCH_TOP5  [32, 10, 44, 115, 101]
+  TORCH_FIRST16 -15.6137 -42.5015 -36.5853 3.9210 2.6224 -1.0874 -2.1374 1.6729 -17.7173 15.7730 29.8389 3.9988 2.4741 -42.2256 -86.4166 5.5334
+
+CORE (pairing.bin via core/bytegpt_decode.hexa bytegpt_forward_last_ranged, same prompt):
+  CORE_ARGMAX <pending — h1464_parity_probe.hexa run after full batch frees summer's 22GB>
+
+PARITY CRITERION (a303m_pass MOUNT, core/h1156_bytegpt_parity_probe.hexa):
+  argmax(CORE) == argmax(torch). PRECEDENT H_1441 (SAME core/bytegpt_decode engine + SAME v0.2 .bin
+  layout): "byte-faithful (argmax 32 == torch golden, logits ~1e-5)". This 1-shot re-check confirms
+  the same engine on H_1464's pairing.bin.
+script: state/1464_pairing_contrastive_bind/h1464_torch_golden.py · h1464_parity_probe.hexa

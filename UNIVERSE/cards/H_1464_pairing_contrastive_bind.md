@@ -3,15 +3,15 @@ id: H_1464
 slug: 1464_pairing_contrastive_bind
 title: G6 FALS-depth — PAIRING-CONTRASTIVE binding objective (same-idea pair vs cross re-weld)
 group: G6 IDEATION ★ — capacity-wall break campaign, LENS ② BINDING-SPECIFIC CONTRASTIVE OBJECTIVE
-terminal_tier: 🟢 DIRECTIONAL-mirror (numpy $0 CPU) — PAIRING-contrastive INSTALLS binding (B3 cross-shuffle COLLAPSES 20/20 seeds; FALS_shuf 0.67 vs FALS_in 4.33); FORM-only ablation regresses to H_1441 no-collapse (1/20). NOT terminal — engine-native re-measure pending (a_engine_native_learning).
-wired: BLOCKED — engine-native decode (live core/bytegpt_decode.hexa via engine_decode_batch_cli.hexa) CANNOT complete on ANY hardware: hexa decode-runtime PER-FRAGMENT MEMORY LEAK (RSS 91→111GB while still on frag3, ~2GB/min → OOM ~frag5-8) on top of cuBLAS-no-speedup (~16min/frag, latency-bound) + ~91GB/model. NOT a science ceiling (type-c infra/runtime wall); terminal 🟢/🧱 OPEN until hexa decode leak fixed (2 hexa-lang INGs filed). mirror stays DIRECTIONAL (🟢 BROKE mirror-only). Partial: 3 valid pairing frags (byte-valid output, only the multi-frag RUN OOMs). GPU pod 41822888 torn down (0 leak, ~$0.1). status: state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_BLOCKED.txt
+terminal_tier: 🧱 WALL=CAPACITY (ENGINE-NATIVE terminal, 2026-06-22) — live core/bytegpt_decode 90-frag 재측정에서 B3 cross-shuffle 이 NO-collapse (FALS_shuf 5.0 = FALS_in 5.0) + B2 DIST 4.67<5 → 🧱. mirror(numpy)의 🟢 B3-collapse(FALS_shuf 0.67 vs 4.33, 20/20 seeds)는 bilinear 표현공간이 공짜로 준 artifact 였음(카드 Scope 예측 그대로 확인). G6 capacity-wall 8번째 수렴 렌즈. a_engine_native_learning HARD-GATE 가 mirror DIRECTIONAL 을 terminal 로 박지 않게 한 정당성 입증(c9, tune-to-green 없음).
+wired: ENGINE-NATIVE 재측정 DONE (2026-06-22) — vast 2.2TB pod(41921615, conc-80 process-isolation decode, teardown 완료)에서 3 trained .bin × 30 frag = 90 frag 를 live core/bytegpt_decode.hexa(via state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa)로 decode → g6_common frozen 5-bar VERBATIM 채점 → 🧱 WALL=CAPACITY. 채점은 torch-free(decode=engine fragment, torch stub 으로 채점 완주 = scoring 이 torch 미사용 입증). raw: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt. terminal 🧱 이므로 live core/ wire-in 불필요(objective 가 binding 못 깸). (이전 BLOCKED 사유 = hexa decode per-frag 누수→OOM 은 PR #3745 farr noop-free fix + process-isolation per-frag fresh process 로 해소.)
 verdict_dir: state/verdicts/1464_pairing_contrastive_bind/
 terminal_verdict: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt
 date: 2026-06-20
 provenance: LENS ② of the G6 capacity-wall break (prior 7 lenses all 🧱 WALL=CAPACITY; H_1441 form-contrastive showed B3 NO-collapse = form learned, pairing not). This lens tests whether a PAIRING-specific objective breaks where form-contrastive failed.
 ---
 
-# H_1464 — PAIRING-CONTRASTIVE binding — 🟢 DIRECTIONAL-mirror (numpy)
+# H_1464 — PAIRING-CONTRASTIVE binding — 🧱 WALL=CAPACITY (ENGINE-NATIVE; mirror 🟢→engine 🧱 반전)
 
 ## Claim / falsifier
 The G6 ideation wall is "model emits a falsifiable FORM but cannot WELD which comparator binds to which
@@ -71,21 +71,32 @@ negative, not capacity per se).
 - TOY: 5 ideas / 3 (+20 robustness) seeds / synthetic vocab / deterministic detector. Scale, real-corpus,
   longer claims, and ENGINE-TRANSFER all UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope).
 
-## Engine-native re-measure — DECODE IN-PROGRESS (2026-06-20, pool CPU $0)
-The terminal verdict (a_engine_native_learning HARD-GATE) requires the live `core/bytegpt_decode.hexa`
-decode of the 3 trained `.bin` re-scored on the FROZEN 5-bar. That decode is **running on pool hosts**
-(NOT mini — game 2; NO GPU rent — $0) via `state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa`
-(the `.hexa` that calls live `core/` decode). **Pipeline validated end-to-end**: pairing.bin fragment 1
-decoded to valid falsifiable text *("the river under load. the amount of the sample is greater whenever the
-river decreases. if the sample grows, t…")* scored FALS=1 by the FROZEN h1305 detector.
-**Substrate-speed wall (a_break_the_wall type-c, infra not ceiling):** on the 30 GB pool hosts (summer/aiden,
-`cuda_available()==0` → CPU farr_matmul, GPU unused; 303M resident as ~30 GB boxed-farr at the memory ceiling,
-earlyoom active) decode = ~10 min/fragment (frag1 measured ~13–14 min incl. load) → ~5 h/bin, 90 frags total.
-Parallelized one-bin-per-host (a_wall_first): summer pairing→base, aiden shuffle; ETA ~10 h. Auto-scorer staged
-to write the terminal `H_1464_ENGINE_NATIVE.txt` (frozen B1–B5 + CTRL) when all 90 land. Frozen bars UNCHANGED
-(c9): 🟢 = WALL=LEARN-GAP (8-lens-first true break → a_verified_must_wire); 🧱 = WALL=CAPACITY (8th lens; mirror's
-bilinear B3 collapse was representational-room artifact). ARGMAX==torch byte-faithful parity still owed (run once
-a host frees; pairing.pt staged on summer). Status detail: `state/verdicts/1464_pairing_contrastive_bind/H_1464_ENGINE_NATIVE_INPROGRESS.txt`.
+## Engine-native re-measure — DONE → 🧱 WALL=CAPACITY (2026-06-22, vast 2.2TB pod, ~$4)
+terminal verdict (a_engine_native_learning HARD-GATE): live `core/bytegpt_decode.hexa` 가 3 trained `.bin`
+(pairing/shuffle/base) 을 decode 하고 FROZEN 5-bar 로 재채점. **90 frag(3 arm × 30 frag) 전부 완주**,
+g6_common frozen 5-bar VERBATIM 채점 결과 (raw → `state/verdicts/1464_pairing_contrastive_bind/H_1464.txt`):
+
+| arm | FALS_in | DIST_in | FALS_shuf | B3 collapse |
+|-----|---------|---------|-----------|-------------|
+| BASE | 0.0 | 3.33 | 0.0 | — |
+| **TRAINED (pairing, engine-native)** | 5.0 | **4.67** | **5.0** | **❌ NO** |
+| SHUF-CORP (control) | 0.0 | — | 0.0 | — |
+
+**5-bar:** B1 5.0≥1 ✅ · **B2 DIST 4.67<5 ❌** · **B3 X-shuffle 5.0<5.0 = NO-collapse ❌(결정적)** · B4 5.0≥1 ✅ ·
+B5 5.0≥0+1 ✅ · CTRL 5.0−0.0 ✅ → **🧱 WALL=CAPACITY** (B2·B3 fail).
+
+**핵심 반전(c9 정직):** mirror(numpy)에선 B3 가 COLLAPSE 했지만(FALS_shuf 0.67≪4.33, 20/20 seeds → 🟢 LEARN-GAP
+처럼 보임) **실제 303M ByteGPT 를 live 엔진으로 decode 하니 B3 가 안 무너짐**(FALS_shuf 5.0 = FALS_in 5.0).
+즉 pairing-contrastive objective 도 "어느 comparator 가 어느 measurable 에 결합하는지"를 WELD 못 함 — 미러의
+B3 collapse 는 bilinear 모델이 표현공간을 *construction 으로* 주었기 때문(카드 Scope 가 정확히 예측: "mirror
+cannot adjudicate CAPACITY"). G6 capacity-wall 의 **8번째 수렴 렌즈**(prior 7 + H_1456 모두 WALL=CAPACITY).
+
+**인프라(a_break_the_wall type-c, 과학 천장 아님):** 이전 BLOCKED 사유(hexa decode per-frag 누수→OOM)는
+(1) hexa-lang PR #3745 farr noop-free fix + (2) process-isolation(frag 마다 fresh `hexa` process → RSS 리셋)
+로 해소. decode 진짜 병목 = hexa farr 단일스레드 스칼라 matmul(BLAS 없음) → frag 당 ~40분; "느린 CPU × 대량
+병렬(2.2TB conc-80)"로 wall-time 단축(a_wall_first). teardown 완료(0 누수 확인, RSS 고정).
+채점 입력 out_*.txt(30/30/30) = engine fragment 이므로 verdict ENGINE-NATIVE(채점 g6_common 의 torch import 는
+미러 _decode 경로용 — torch stub 으로 채점 완주 = scoring 이 torch 미사용 입증).
 
 ## Artifacts
 - `state/1464_pairing_contrastive_bind/h1464_pairing_contrastive.py` (mirror + 5-bar)

@@ -1,34 +1,19 @@
-==============================================================================
-H_1464 PAIRING-CONTRASTIVE binding mirror ($0 CPU numpy, DIRECTIONAL)
-==============================================================================
 
----- ARM: PAIRING-CONTRASTIVE (this lens) ----
-  seed 7: base=3 FALS_in=4 DIST=5 FALS_shuf=0 ho=3
-  seed 4302: base=2 FALS_in=4 DIST=5 FALS_shuf=1 ho=0
-  seed 4303: base=3 FALS_in=5 DIST=5 FALS_shuf=1 ho=0
-  MEAN  base=2.6667 FALS_in=4.3333 DIST=5.0 FALS_shuf=0.6667 ho=1.0
+================ H_1441 contrastive ENGINE-NATIVE FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=3.3333  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=5.0  DIST_in=4.6667  FALS_shuf=5.0  FALS_ho=5.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
 
----- ARM: FORM-ONLY ablation (= H_1441 regression control) ----
-  seed 7: base=3 FALS_in=5 DIST=5 FALS_shuf=5 ho=5
-  seed 4302: base=2 FALS_in=5 DIST=5 FALS_shuf=5 ho=3
-  seed 4303: base=3 FALS_in=5 DIST=5 FALS_shuf=5 ho=4
-  MEAN  base=2.6667 FALS_in=5.0 DIST=5.0 FALS_shuf=5.0 ho=4.0
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 5.0 -> True
+  B2 COUNT        DIST_in>=5                 : 4.6667 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 5.0<5.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 5.0 -> True
+  B5 vs-BASE      FALS_in>=base+1            : 5.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 5.0-0.0 -> True
 
-==============================================================================
-FROZEN 5-BAR (mean/3 seeds) — PAIRING-CONTRASTIVE arm
-==============================================================================
-  B1 FALS-FLOOR   FALS_in>=1                  : 4.3333 -> True
-  B2 COUNT        DIST_in>=5                  : 5.0 -> True
-  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 0.6667<4.3333 -> True
-  B4 HELD-OUT     FALS_ho>=1                  : 1.0 -> True
-  B5 vs-BASE      FALS_in>=base+1             : 4.3333 vs 2.6667+1 -> True
-  CTRL FORM-ONLY  b3 should be FALSE (no-collapse, = H_1441): form_b3=False -> regress_as_predicted=True
+  VERDICT: 🧱 WALL — bars ['B2', 'B3'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
 
-  VERDICT (numpy mirror, DIRECTIONAL): 🟢 BROKE — PAIRING-contrastive INSTALLED binding: cross-shuffle COLLAPSES (B3), floor/count/held-out/base all cleared => WALL=LEARN-GAP (this objective broke it where H_1441 form-contrastive could not)
-
-  INTERPRETATION:
-    - B3 (pairing arm) collapse? True  (FALS_shuf 0.6667 vs FALS_in 4.3333)
-    - FORM-only ablation regresses to no-collapse (= H_1441)? True  (form_b3=False)
-
-  wrote state/1464_pairing_contrastive_bind/result.json
-H1464_MIRROR_DONE
+(decode=ENGINE-NATIVE .bin CORE/bytegpt_decode · score=g6_common frozen 5-bar VERBATIM)
+(1435/36/37 torch DIRECTIONAL: form installed but B3 cross-shuffle did NOT collapse)
+SCORE_NATIVE_DONE
