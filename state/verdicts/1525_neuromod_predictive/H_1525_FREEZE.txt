@@ -1,0 +1,158 @@
+H_1525 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7, c9)
+================================================================
+SLUG: 1525_neuromod_predictive
+LENS: PREDICTIVE / ANTICIPATORY NEUROMODULATION — forward-model-gated gain.
+Neuro/biology lens (c15, a_no_llm_frame_trap), NOT an LLM recipe.
+
+────────────────────────────────────────────────────────────────────
+THE WALL THIS ATTEMPTS TO BREAK (H_1284 / HD27, kept 🔴/🧱)
+────────────────────────────────────────────────────────────────────
+H_1284 (NEUROMODULATION gain controller) + the Amoeba homeostatic-buffer
+family (H_1509/1509b/1509c) ALL failed: every REACTIVE adaptive gain — one
+that responds to the CURRENT surprise/tension — never beats the best-tuned
+FIXED operating point across regimes (no free lunch). Verbatim wall numbers
+(state/verdicts/1284_neuromodulation_gain/H_1284.txt): best-fixed LR0*=0.10
+TH0*=0.20; B(reactive) loses on every regime — R1 B-A=-0.0067, R2 -0.0800,
+R3 -0.0956; C-SHUF ≈ B (no coupling). RED, no free lunch.
+
+WHY REACTIVE LOSES (the a-priori diagnosis, a_break_the_wall):
+a reactive controller reads the CURRENT surprise and adjusts gain AFTER the
+regime has already shifted — it is structurally ONE STEP BEHIND every regime
+change. By the time surprise has risen, the damaging writes/splits of the
+new regime have already landed. The best-FIXED point wins because a
+lagging adjustment is worse than a good compromise constant.
+
+────────────────────────────────────────────────────────────────────
+THE NEW ANGLE (genuinely different mechanism-family, a_break_the_wall)
+────────────────────────────────────────────────────────────────────
+Make the modulator ANTICIPATORY: gate the gain by the PREDICTED next-step
+surprise from a FORWARD MODEL, BEFORE the step is taken — pre-adjusting gain
+ahead of the regime shift rather than reacting to it.
+
+SUBSTRATE LENS (a_no_llm_frame_trap, c15): anima already has a cerebellar
+forward-model lane — VForwardField (H_1280, core/engine_cli.hexa §2697+:
+vforward_new/_predict/_err/_update/_correct). The cerebellum's biological
+role is exactly forward prediction of the next sensory frame for pre-emptive
+motor adjustment. Here the forward model predicts the next-step surprise
+signal s_{t+1}; the neuromodulator gates LR / SPLIT_THRESH / abstain on that
+PREDICTION, not on the current value.
+
+FORWARD MODEL (pre-registered, simple AR/EMA on the surprise series):
+  The forward model is an online linear AR(2) + EMA predictor of the
+  per-tick surprise series s_t (recon-error of the current key off the live
+  store). It predicts ŝ_{t+1} from (s_t, s_{t-1}, running EMA) with online
+  least-mean-squares weight updates (η=0.05) — the cheap numpy stand-in for
+  VForwardField's vforward_update tick (DIRECTIONAL; engine-native VForward
+  re-test is the GREEN follow-on). The predictor sees ONLY past surprise
+  values (no regime label, no future leak); ŝ_{t+1} is formed BEFORE the
+  current event's knobs are set.
+
+KNOB MAP (predictive arm gates on ŝ_{t+1}; SAME knob formulas as the wall's
+Neuromod, only the input swapped current-s → predicted-next-s):
+  ACh plasticity   LR(t)  = clip(LR0*(1 + kA*(ŝ_{t+1} - û)), 0.05, 0.60)
+  ACh/novelty split TH(t) = clip(TH0*(1 + kT*(û - TH0)),     0.15, 0.60)
+  NE exploration   abstain= clip(abstain0*(1 + kN*(û - TH0)), 0.20, 1.20)
+  DA gain          LR(t) *= (1 + kD*reward_ema)
+  û = running EMA of surprise (same as wall). kA=1.2 kT=0.8 kD=0.4 kN=0.6
+  EMA=0.1 (VERBATIM the wall's Neuromod constants — NOT re-tuned).
+The ONLY difference vs the wall's REACTIVE arm is the LR input: reactive
+uses s_t (current), predictive uses ŝ_{t+1} (forward-model prediction).
+
+────────────────────────────────────────────────────────────────────
+ARMS (identical store, seeds, fact set, event stream, capacity, knob
+formulas, base constants — ONLY the gain INPUT differs)
+────────────────────────────────────────────────────────────────────
+  A  = BEST FIXED (LR0*, TH0*) — grid-tuned on the DISJOINT tune seed,
+       held constant across regimes (the wall's strong baseline, identical
+       grid LR0∈{0.1,0.2,0.3,0.4} TH0∈{0.2,0.3,0.4}, abstain0=0.45).
+  R  = REACTIVE-adaptive — the wall's Neuromod gated on CURRENT surprise
+       s_t (reproduces the wall as a control; must lose like H_1284 did).
+  P  = PREDICTIVE-adaptive (THIS hypothesis) — same Neuromod gated on the
+       forward-model prediction ŝ_{t+1} formed BEFORE the step.
+
+REGIMES (reuse the wall's exact generators + bar):
+  R1 STABLE      : low noise σ=0.01, no drift.
+  R2 DRIFT       : facts periodically rewritten (concept drift); surprise
+                   SPIKES at each drift block — the anticipation payoff zone.
+  R3 NOISE-BURST : key noise alternates low(0.01)↔high(0.05) in bursts; the
+                   forward model can foresee burst onset from the schedule.
+  (gen_stream / regimes / capacity / event count = wall's h1284 verbatim,
+   imported, NOT re-tuned.)
+
+────────────────────────────────────────────────────────────────────
+ABLATION (decisive — the anticipation must be load-bearing)
+────────────────────────────────────────────────────────────────────
+  ABL-NOLOOKAHEAD : replace the forward-model prediction ŝ_{t+1} with the
+       CURRENT value s_t (i.e. ŝ_{t+1} := s_t) — removes look-ahead but
+       keeps everything else. If ABL-NOLOOKAHEAD ≈ P (within MARGIN), the
+       anticipation is INERT and the wall HOLDS (this is exactly the
+       reactive arm R by construction → P must SEPARATE from it).
+  ABL-SHUFFLE   : destroy the forward model's predictive accuracy by
+       phase-scrambling the predicted series ŝ (same marginal values,
+       decorrelated from the true future). P must COLLAPSE to reactive/
+       fixed-level — proves the lift is the predictor's ACCURACY, not
+       knob variety.
+
+────────────────────────────────────────────────────────────────────
+METRIC (p7, exact ground truth — NO LLM judge, NO perplexity, NO loss)
+────────────────────────────────────────────────────────────────────
+capability(regime) = recall_accuracy − fabrication_rate
+  recall_accuracy  = #correct recalls / #recall events
+  fabrication_rate = #confident-WRONG (incl. ghost out-of-store) / #recall
+                     events  (honest ABSTAIN is neither).
+Per-regime mean over seeds for A, R, P, ABL-NOLOOKAHEAD, ABL-SHUFFLE.
+Also report forward-model accuracy ρ(ŝ_{t+1}, s_{t+1}) as a diagnostic.
+
+SEEDS = [11, 22, 33] (score); TUNE_SEED = 7 (disjoint grid-search).
+
+────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIER (binding; written before any scoring; MARGIN = 0.05)
+────────────────────────────────────────────────────────────────────
+GREEN (the WALL IS BROKEN) iff ALL of:
+  (c1) P ≥ A + MARGIN on ≥ 2 of {R1,R2,R3}  (predictive beats best-fixed
+       across regimes — the same multi-regime bar the wall used).
+  (c2) P never WORSE than A by > 0.02 on the remaining regime.
+  (c3) P.fabrication ≤ A.fabrication on the winning regimes.
+  (c4) DISSOCIATION: P ≥ R + MARGIN on the winning regimes (predictive
+       beats REACTIVE on the SAME knobs — anticipation, not adaptation
+       per se, is load-bearing).
+  (c5) ABLATION DECISIVE: ABL-NOLOOKAHEAD ≤ P − MARGIN AND ABL-SHUFFLE ≤
+       P − MARGIN on the winning regimes (removing look-ahead OR predictor
+       accuracy collapses the lift).
+
+🟠 PARTIAL iff P beats A+MARGIN on exactly 1 regime, OR P beats A on ≥2 but
+  the dissociation (c4) / ablation (c5) does NOT separate (lift not
+  attributable to anticipation).
+
+🔴/🧱 WALL HOLDS iff P does NOT beat A+MARGIN on any regime, OR P raises
+  fabrication, OR P ≈ R (anticipation no better than reaction), OR the
+  ablation is INERT (ABL-NOLOOKAHEAD ≈ P). Reported honestly as
+  closed-negative (c9, a_paper_negative_ok): the no-free-lunch wall
+  generalizes to the anticipation lens too. NO tune-to-green — bars above
+  are frozen; if RED it is reported RED.
+
+────────────────────────────────────────────────────────────────────
+SUBSTRATE & SCOPE (a_engine_native_learning · a_scale_honest_scope)
+────────────────────────────────────────────────────────────────────
+numpy mirror of CORE/engine_cli.hexa VAdaptField (host has NO torch —
+H_1192/1199/1227/1284 precedent). The forward model is a numpy AR/EMA
+stand-in for the live VForwardField (H_1280) cerebellar tick. Result is
+DIRECTIONAL — engine-transfer UNVERIFIED, HARD-GATE-1: numpy mirror canNOT
+stamp a terminal tier. GREEN ⇒ engine-native follow-on wires the
+VForwardField-predicted-surprise gate into adapt_field_step, re-scored
+engine-native + regression guard (a_verified_must_wire); registered ING.
+TOY scale (30 facts, 3 seeds, hundreds of events) — scale / paraphrase /
+real-corpus / engine-transfer UNVERIFIED. live CORE/*.hexa UNTOUCHED. $0 CPU.
+
+GUARDS: p1/p2/p3 (no prompt/identity/persona) · p6 (gate reads substrate
+surprise + forward-model prediction, NOT a label/reward/ethics) · p7
+(exact metric, no loss, predictor trained by LMS on surprise NOT on the
+capability objective) · p8 (forward tick = engine's own tick) ·
+a_autonomy_over_hardcode (gate = substrate-read context feature, NOT an
+external do/dont) · c9 (RED reported RED) · c7 (no force-push).
+
+xref: H_1284 · H_1284_R2 · H_1284_R3 · H_1280(VForwardField cerebellum) ·
+H_1509/b/c(homeostatic buffer) · H_1230 · H_1228 · a_break_the_wall ·
+a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire ·
+a_autonomy_over_hardcode · a_paper_negative_ok · a_scale_honest_scope ·
+a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15.
