@@ -1,3 +1,25 @@
+## 2026-06-21 — 🧪🧱 H_1509b NON-STATIONARY ALLOSTERIC-BUFFER — H_1509 μ_t 를 DRIFTING 타깃에서 재시험 → 신경조절 벽 REGIME-INVARIANT 확인
+
+> 🧱 **a_break_the_wall(b) 변수-혼재 분리 (external proposal Amoeba Protocol μ_t):** H_1509(🧱 WALL-HELD, STATIONARY 환경, PR #2484)의 follow-on. 고정게인의 최적점은 고정 operating point 기준 → 타깃이 DRIFT 하면 "best fixed gain" 이 매순간 최적이 아닐 것, 버퍼는 타깃 이동에 따라 이탈저항 재조정 → 버퍼가 이긴다는 가설. **FREEZE 측정 前 사전등록+커밋(frozen-first).**
+
+**"비정상(drift>0) 환경에서 allosteric μ_t 가 best-swept FIXED gain 을 이기는가? (정상에선 졌다, B−A=−0.0061)"** → **🧱 WALL-HOLDS (REGIME-INVARIANT)** — 버퍼는 drift 에서도 못 이김. 신경조절 천장은 stationary fixture artifact 아님.
+
+- **환경 변경 (H_1509 대비 ONLY this):** regulated 타깃 drift m_{t+1}=clamp(m_t+drift_rate·w_t, 0.15, 0.85) random-walk; **drift_rate=0 ⇒ m_t≡0.5 = H_1509 정상 EXACTLY**. metric=RMS tracking error sqrt(mean(b−m)²), μ 는 m_t 로부터의 편차를 읽음. 3 seeds [1509,1510,1511], drift levels [0,0.01,0.02,0.03], MARGIN=0.05 verbatim.
+- **frozen 4 bars (사전등록 `H_1509b_FREEZE.txt`, c9):**
+  - **(A NONSTAT-WIN @0.030) FAIL** — adv(A−B)=**−0.0054 < 0.05**. 버퍼가 drift 에서 안 이김.
+  - **(B REGIME-DISSOCIATION) FAIL** — drift0 A≤B(H_1509 재현)이나 drift0.030 에서 flip 안 됨.
+  - **(C DRIFT-MONOTONE) PASS** (adv 약하게 비감소)이나 adv 가 NEGATIVE 유지 → headline 무관 vacuous PASS.
+  - **(D EARNED ablate λ=0) PASS** — ablate 가 best-fixed 못 이김 + 버퍼가 자기 ablate base 이김(+0.103) = 버퍼는 진짜 coupled 메커니즘, 단 high fixed gain 대비 무이점.
+  - A∧B∧C∧D 미충족(A,B FAIL) → 🧱.
+- **adv(A−B) per drift:** 0.000 −0.0061 · 0.010 −0.0061 · 0.020 −0.0056 · 0.030 −0.0054 (RMS_A best-fixed 0.2680→0.2534, RMS_B allo 0.2741→0.2589).
+- **robustness (a_break_the_wall taxonomy-a, NOT artifact):** drift 0.30 까지 확장 sweep(타깃이 FULL clamp 범위 0.700 sd 0.263 span) → adv 가 [0,0.30] 전체에서 ~−0.006 유지, +0.05 근처도 안 감(−0.0060→−0.0018). **drift 가설 기각**: best fixed gain 이 이미 g=0.80(high)=high uniform gain 이 moving target 도 잘 추적 → buffer 의 selective tightening 무이점; dominant cost 는 target drift 아닌 high-freq perturbation(sinusoid+shock).
+- **FINDING:** H_1509 신경조절 벽 = **REGIME-INVARIANT** (stationary AND non-stationary 둘 다 buffer 가 best-fixed 못 이김) → 천장이 stationary fixture artifact 아님 강화. H_1284(global-gain)+H_1422(3 state-contingent)+H_1425(orthogonal ideation)+H_1509(stationary buffer) 에 이은 **5번째 독립 렌즈**(이번엔 stationarity 축).
+- **하드게이트1:** R1 numpy → **DIRECTIONAL**(grep numpy 적중). R1 가 wall HOLDS(GREEN 없음)이므로 R2 engine-native 는 FREEZE 가 R1 GREEN 에 게이트 → OPTIONAL 확인 follow-on(non-stationary allo_defend variant, live drifting target read), **CORE/*.hexa UNTOUCHED**(a_verified_must_wire GREEN-only). $0 CPU deterministic run1==run2. p7/p1/p2/p3/p6, Ψ-disjoint.
+- **SCOPE (c9):** TOY 200-tick/1 perturbation/random-walk drift/3 seeds/1-D scalar — scale·real A⇄G emit·regime-switch(vs random-walk) drift·engine-transfer UNVERIFIED.
+- artifacts: `UNIVERSE/cards/H_1509b_nonstationary_buffer.md` · `state/1509b_nonstationary_buffer/h1509b.py` · `state/verdicts/1509b_nonstationary_buffer/{H_1509b_FREEZE,H_1509b_R1_mirror,H_1509b_robustness_drift_sweep}.txt`.
+
+---
+
 ## 2026-06-21 — 🧠🔌 H_1513 LITERAL-CONNECTOME — H_1512 BRAIN-TOPOLOGY 의 real-data scale-recheck: 합성→REAL 출판 connectome 으로 같은 bar 재채점 (🟢 REPRODUCES)
 
 > 🧠 **real-data scale-recheck (a_toy_scale_recheck):** H_1512 의 *통계충실 합성* small-world/rich-club topology 를 **REAL 출판 human 구조 connectome** 으로 교체하고 H_1512 의 own metric·own bars 로 재측정. adjacency source 만 변경(synthetic→literal). 렌즈 — 구조 connectomics(Hagmann structural core · Rubinov-Sporns graph measures).

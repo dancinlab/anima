@@ -1,0 +1,26 @@
+H_1509b NON-STATIONARY ALLOSTERIC-BUFFER — R1 numpy mirror (DIRECTIONAL)
+SOURCE: external proposal — Amoeba Protocol (μ_t allosteric buffer)
+FROZEN MARGIN=0.05 λ=1.0 σ=0.12 g0=0.4 drifts=[0.0, 0.01, 0.02, 0.03]
+==========================================================================
+
+  drift     RMS_A     RMS_B     RMS_C   adv=A-B      C-A
+  0.000    0.2680    0.2741    0.3827   -0.0061  +0.1148
+  0.010    0.2641    0.2702    0.3752   -0.0061  +0.1112
+  0.020    0.2551    0.2607    0.3633   -0.0056  +0.1082
+  0.030    0.2534    0.2589    0.3618   -0.0054  +0.1083
+
+determinism run1==run2: PASS (0.259525)
+
+FROZEN BAR EVALUATION (MARGIN=0.05, no tune-to-green):
+  (A NONSTAT-WIN @0.030)  A−B=-0.0054 >= 0.05 mean=FAIL each=FAIL => FAIL
+  (B REGIME-DISSOC) drift0 A<=B PASS (A=0.2680 B=0.2741) AND drift0.030 A−B>=0.05 FAIL => FAIL
+  (C DRIFT-MONOTONE) adv -0.0061→-0.0061→-0.0056→-0.0054 => PASS
+  (D EARNED ablate) ablate-never-wins=PASS AND buffer>ablate@0.030 C−B=+0.1029>=0.05 PASS => PASS
+
+==========================================================================
+VERDICT: 🧱 WALL-HOLDS (REGIME-INVARIANT) — the buffer ALSO fails to beat the
+         best fixed gain under drift → the neuromodulation ceiling is regime-
+         invariant (even STRONGER 🧱, c9). Failed bar(s):
+           - bar A FAILED
+           - bar B FAILED
+==========================================================================
