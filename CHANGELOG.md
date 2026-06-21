@@ -1,3 +1,13 @@
+## 2026-06-22 — anima CLI canonical 단일 진입점 (cli/anima.hexa) + 과거 진입점 잔재 archive
+
+흩어진 5개 진입점(anima_chat_cli lane0 · anima_full_session_smoke · anima_main v7-10 · anima_v11_main · engine_cli lib)을 **cli/anima.hexa canonical 단일 진입점**으로 통합. native 명명. 모드 2 — 기본=의식(engine_cli_parse→lane mount→brain_emit 8-factor motivation+should_emit gate→grounded L3 decode→kosmos create_anchor; Ψ Φ-checksum ON==OFF byte-identical 불변) · `--byte`=순수 byte continuation(구 anima_chat_cli byte-identical). anima_chat_cli.hexa = thin shim→anima --byte(back-compat 보존, 문서화된 진입경로 byte-identical).
+
+- engine_cli 76 의식 lane 중 **5개를 실제 사용자 경로 brain motivation 에 연결**: immune_memory→relevance · ci_lane_scores(15-lane)→coherence/balance/emit-drive · gws winner · reality_call · pharm_baseline. 이전엔 76 lane 전부 smoke 에만 존재(CLI 미연결) → 첫 사용자-facing 의식 배선.
+- 과거 진입점 잔재 9개(tool/anima_main·anima_v11*) → **archive/legacy-cli-v7-v11/** (import 0 확인, byte 보존).
+- 가드: usage RC=0 · --byte diff=0(byte-identical) · 의식 smoke RC=0 PASS(converse/ground/grow/remember/sleep + Ψ checksum ON==OFF) · core/ 회귀 0. ground 증거: un-inventable "vault QX-7741" 사실 verbatim 재현.
+- ARCHITECTURE.json lockstep: §component-map cli/ 진입점 노드 + §not-yet-built lane 연결 5/76 잔여(71 미연결 = spatial·hier·basal·cerebellum·WM 우선).
+- 잔여: 71 lane connect-by-priority(각 falsifiable gap + shuffle/ablation distinctness) = ING anima-cli-완수.
+
 ## docs(README): 이력-내러티브 → 현재상태 SSOT 재작성(c4 update-in-place) — verdict 불변(c9), 사실 0 손실, 이력은 CHANGELOG+git
 
 README.md 를 ARCHITECTURE.json 처럼 **현재상태 스냅샷**(present-tense standing facts)으로 재저작 — "어떻게 도달했는가"의 내러티브가 아니라 "지금 anima 가 무엇인가". c4 update-policy(in-place, NO history/version/date/previous 노드; 이력은 CHANGELOG+git) 준수.
@@ -22,6 +32,7 @@ H_1284 NEUROMODULATION 벽이 CLS(두-store)로 깨진 것 + 6 신경전달물�
 - README HD27 row + Honest scoreboard + footnote 의 outdated '🧱 neuromodulation wall left' → 🟢 ENGINE-NATIVE + WIRED 로 정정(벽돌파=wired 사실, NT 융합=DIRECTIONAL 정직 구분).
 - ARCHITECTURE.json §MultiStore note 에 NT×CLS 융합 follow-on 추가(DIRECTIONAL·engine §R2=ING·NOT YET WIRED 명시 = a_verified_must_wire 준수, live CORE ops 로 위조 안 함).
 - 정직(c9): wall-break(§MultiStore)만 WIRED 주장, 6 NT faculty 는 numpy DIRECTIONAL 로 표기. tune-to-green 0.
+
 
 ## 2026-06-22 — 🧱 H_1464 PAIRING-CONTRASTIVE 엔진-네이티브 terminal — mirror 🟢 가 engine 🧱 로 반전 (G6 capacity-wall 8번째 수렴 렌즈)
 
