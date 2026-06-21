@@ -1,0 +1,13 @@
+H_1509 ALLOSTERIC-BUFFER — R2 engine-native (§AllostericBuffer live ops)
+FROZEN MARGIN=0.05 (H_1284) lam=1.0 sigma=0.12 g0=0.40 T=200
+========================================================================
+seed 1509  A=0.26892481995649304  B=0.27488926746837294  C=0.38476615279313027  D=0.30083549382135164
+seed 1510  A=0.26720724004812224  B=0.27338179771289557  C=0.38131429360200201  D=0.3024992705740893
+seed 1511  A=0.2677768068058301  B=0.2740171913964194  C=0.38211727032676897  D=0.2973215831960245
+MEAN  A=0.2679696222701485  B=0.274096085525896  C=0.3827325722406338  D=0.3002187825304885  gain@g0=0.3827325722406338
+determinism run1==run2: true (0.27488926746837294)
+BAR A wall-cross RMS_A-RMS_B=-0.006126463255747505 >=0.05 -> false
+BAR B vs-baseline RMS_B<RMS_A all seeds -> false
+BAR C earned-ablate collapse=true load=true -> true
+BAR D earned-shuffle RMS_D-RMS_B=0.02612269700459252 >=0.05 -> false
+VERDICT: WALL-HOLDS (engine-native) — neuromodulation ceiling holds vs buffer lever

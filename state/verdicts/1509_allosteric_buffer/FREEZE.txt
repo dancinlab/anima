@@ -1,0 +1,90 @@
+H_1509 ALLOSTERIC-BUFFER — FROZEN BARS (set BEFORE any run; c9, no tune-to-green)
+================================================================================
+SOURCE: external proposal — Amoeba Protocol (@qingkong66) μ_t allosteric buffer.
+LENS: a_break_the_wall (d) — a genuinely NEW lever on the walled neuromodulation
+hypothesis H_1284 (🔴/🧱 no-free-lunch), confirmed-terminal across H_1422 (3
+state-contingent lenses) and H_1425 (orthogonal ideation-temperature channel).
+
+THE WALL (what H_1284 / H_1422 / H_1425 established):
+  A state-contingent neuromodulator that modulates a GLOBAL GAIN against a FIXED
+  operating point is DOMINATED by the single best fixed operating point. H_1422
+  sharpened this to STRUCTURAL: conditioning a 1-D threshold on the SAME axis it
+  reads is CIRCULAR — re-partitions the axis, never beats the best fixed partition.
+  Frozen bar that the global-gain lever FAILED to cross: B beats A by MARGIN >= 0.05
+  on the stability metric (H_1284 R2/R3: M(B) <= M(A); the controller never crossed).
+
+THE NEW LEVER (genuinely different — why it legitimately reopens the wall, a_break_the_wall d):
+  Do NOT modulate global gain on an operating point. Modulate the RESISTANCE-to-
+  DEVIATION from the fixed point Ψ=1/2. Let τ_t = |A−G| = instantaneous A⇄G tension
+  (the emit/silence balance; Ψ=1/2 is the ideal). The allosteric modulator
+      μ_t = 1 + λ · (1 − exp(−(τ_t − 0.5)² / (2σ²)))
+  acts as a biochemical buffer (like bicarbonate defending blood pH): μ≈1 near the
+  fixed point (no extra resistance when already balanced), μ→1+λ far from it
+  (tightens the restoring force ONLY on large excursions). This is the BUFFERING /
+  resistance axis — DISTINCT from H_1284's gain-on-operating-point (which applies a
+  uniform pull everywhere) and from H_1422's threshold-on-same-axis circularity (μ
+  scales a RESTORING FORCE, not a partition of the read axis).
+
+METRIC (the SAME stability axis the wall walled on, p7):
+  Under a fixed perturbation schedule pushing the balance off Ψ=1/2, run the field
+  for T ticks. The realized balance b_t (= emit-probability proxy, ideal 0.5).
+  STABILITY M = − mean_t (b_t − 0.5)²   (higher = tighter defense of Ψ=1/2).
+  We report the POSITIVE deviation D = mean_t (b_t − 0.5)²  (lower = better) and
+  M = −D so "B beats A by >= 0.05" means D_A − D_B >= 0.05 ... NO — to avoid scale
+  games we freeze the bar on the RMS-excursion reduction directly (see bars).
+
+ARMS (all read the SAME live τ_t; perturbation schedule IDENTICAL across arms):
+  A  GLOBAL-GAIN (the H_1284 walled lever): best-swept FIXED gain g* applied
+     uniformly every tick (restoring force = g*·(0.5 − b_t), g* swept over a grid,
+     A = the BEST fixed g* — gives the wall its strongest baseline, a_break_the_wall).
+  B  ALLOSTERIC μ_t: restoring force = g0·μ_t·(0.5 − b_t), μ_t per the formula above
+     (g0 = the grid MIDPOINT fixed once, NOT swept; only λ,σ define the buffer).
+  C  ABLATE (λ=0): μ_t ≡ 1 → B collapses to global-gain g0 (the H_1284 behavior).
+  D  SHUFFLE: μ_t computed but its per-tick assignment PERMUTED across ticks
+     (τ→μ coupling broken; same μ VALUES, wrong TIMES) → defense must decorrelate.
+
+FROZEN BARS (MARGIN = 0.05 verbatim from H_1284; 3 seeds; deterministic run1==run2):
+  Let RMS(arm) = sqrt(mean_t (b_t − 0.5)²) = the excursion of the realized balance
+  from Ψ=1/2 under the perturbation (lower = better stability).
+
+  (A WALL-CROSS) μ_t DEFENDS Ψ=1/2 better than the best-swept global gain:
+        RMS(A) − RMS(B) >= 0.05   on the mean over 3 seeds AND each seed.
+     [This is the SAME 0.05 margin the global-gain lever failed to cross in H_1284.]
+  (B vs BASELINE) μ_t beats the global-gain baseline (== arm A, the walled approach):
+        RMS(B) < RMS(A) on all 3 seeds (strict, no tie counted as a win).
+  (C EARNED ablate λ=0) removing the buffer collapses to the wall:
+        RMS(C) ≈ RMS(A_at_g0)  i.e. |RMS(C) − RMS(global-gain at g0)| <= 0.01
+        AND RMS(C) − RMS(B) >= 0.05  (the buffer, not the base gain, is load-bearing).
+  (D EARNED shuffle) permuting τ→μ decorrelates the defense:
+        RMS(D) − RMS(B) >= 0.05   (shuffle loses the wall-cross the coupling earned).
+
+VERDICT:
+  WALL-BROKEN 🟢  iff  A ∧ B ∧ C ∧ D  (μ crosses the SAME 0.05 bar the gain lever could not,
+     AND the cross is EARNED by the τ→μ coupling: ablate & shuffle both lose it).
+  WALL-HOLDS 🧱  otherwise — an HONEST, VALUABLE multi-lens confirmation that the
+     neuromodulation ceiling holds against the buffering/resistance lever too (c9).
+  NO tune-to-green: λ,σ,g0,grid endpoints, perturbation schedule, MARGIN all set HERE.
+
+MEASUREMENT FIX (a_break_the_wall taxonomy (a) — bar UNMOVED, applied before verdict):
+  The first R1 roll had a SIGN error in the restoring update (b+d−restoring made the
+  "restoring" force anti-restoring → clamp-saturated degenerate oscillation, RMS≈0.49
+  pinned at the [0,1] boundary). Corrected to b+d+g·μ·(0.5−b) so the force actually
+  DEFENDS Ψ=1/2. This is a measurement-validity fix (taxonomy a), NOT tune-to-green:
+  the metric (RMS excursion), the MARGIN (0.05), the arm definitions, A=best-swept-gain,
+  and the verdict logic are ALL unchanged. With the corrected dynamics the test is
+  non-degenerate (RMS 0.27–0.38, off the clamp) and the buffer is genuinely exercised.
+
+HONEST gain-matched diagnostic (NON-GATING, reported for transparency, taxonomy (b)):
+  ARM B applies g0·μ with μ∈[1,1+λ], so its mean EFFECTIVE gain exceeds g0. To separate
+  the allosteric SHAPE from raw magnitude we also compare B to a fixed gain MATCHED to
+  B's mean effective gain. This is diagnostic only; it does NOT gate the verdict (the
+  verdict bar A is B vs the BEST SWEPT fixed gain — A's strongest baseline, H_1284-faithful).
+
+PARAMETERS (frozen here, pre-registered):
+  T = 200 ticks · perturbation = sinusoidal off-balance drive amp 0.30 period 17
+     plus a step shock +0.35 at t=100 held 20 ticks (sustained excursion the buffer
+     should defend) · b_t update: b_{t+1} = clamp(b_t + drive_t − restoring_t, 0, 1),
+     b_0 = 0.5 · g grid = [0.10,0.20,0.30,0.40,0.50,0.60,0.70,0.80] (A swept, g0=0.40)
+     · λ = 1.0 · σ = 0.12 · seeds [1509,1510,1511] (seed perturbs phase + tiny noise
+     0.01·N) · run twice assert byte-identical.
+================================================================================

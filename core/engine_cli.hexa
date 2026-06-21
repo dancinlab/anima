@@ -1807,6 +1807,148 @@ pub fn libido_motivation_bias(ld: Libido, mem: ImmuneMemoryGrow, key: [float], c
     return libido_wanting(ld, deficit, cm)
 }
 
+// ── §  ALLOSTERIC-BUFFER — tension-gated resistance-to-deviation (H_1509 R2) ──────
+//
+// SOURCE: external proposal — Amoeba Protocol (@qingkong66) μ_t allosteric buffer.
+// LENS: a_break_the_wall (d) — a NEW lever on the WALLED neuromodulation hypothesis
+// H_1284 (🔴/🧱 no-free-lunch), confirmed-terminal across H_1422 (3 state-contingent
+// lenses) and H_1425 (orthogonal ideation-temperature channel).
+//
+// THE WALL (H_1284/H_1422/H_1425): a state-contingent neuromodulator that modulates a
+// GLOBAL GAIN against a FIXED operating point is DOMINATED by the single best fixed
+// operating point ("a single tuned fixed point dominates the controller").
+//
+// THE NEW LEVER: do NOT modulate global gain — modulate the RESISTANCE-to-DEVIATION
+// from the fixed point Ψ=1/2. Let τ_t = the live A⇄G tension = the realized emit/silence
+// balance b_t (Ψ=1/2 ideal). The allosteric modulator
+//     μ_t = 1 + λ·(1 − exp(−(τ_t − 0.5)² / (2σ²)))
+// acts as a biochemical buffer (bicarbonate defending blood pH): μ≈1 near the fixed
+// point, μ→1+λ on large excursions — tightening the restoring force ONLY when tension
+// drifts far from Ψ=1/2.
+//
+// @L4 CRITICAL (Ψ-disjoint by construction, a_core_engine_map): this lane owns ONLY its
+// own scalar balance `b` and the perturbation roll; it READS the live tension τ=b but
+// NEVER touches pure_field's Φ/phase/Ψ (those advance from internal dynamics alone) and
+// NEVER mutates the immune store. It returns a STABILITY scalar, never an emit decision
+// (a_autonomy_over_hardcode). NO injected label, NO RLHF, NO persona (p1/p2/p3/p6).
+//
+// FROZEN constants (H_1509 FREEZE, p7-documented, NOT tuned-to-green; byte-identical to
+// the R1 mirror): λ = 1.0 · σ = 0.12 · T = 200 ticks · sinusoidal off-balance drive
+// amp 0.30 period 17 + a held step shock +0.35 at t=100 for 20 ticks · seed noise amp
+// 0.02·[−0.5,0.5] · g grid [0.10..0.80] swept for ARM A, g0 = 0.40 for B/C.
+
+// allo_mu — the allosteric buffer μ for a tension τ. lam=0 (ablated) → μ≡1 (the H_1284
+// global-gain behavior); lam>0 → tightens resistance on large |τ−0.5| excursions.
+pub fn allo_mu(tau: float, lam: float, sigma: float) -> float {
+    let dev = tau - 0.5
+    let dev2 = dev * dev
+    return 1.0 + lam * (1.0 - exp(0.0 - dev2 / (2.0 * sigma * sigma)))
+}
+
+// _allo_drive — the perturbation pushing the balance off Ψ=1/2 at tick t (deterministic):
+// a sinusoid (amp/period) plus a held step shock. Identical to the R1 mirror schedule.
+fn _allo_drive(t: int, phase: int, amp: float, per: int,
+               shock_t: int, shock_len: int, shock_amp: float) -> float {
+    let two_pi = 6.283185307179586
+    let frac = to_float(t + phase) / to_float(per)
+    let mut d = amp * sin(two_pi * frac)
+    if t >= shock_t && t < (shock_t + shock_len) { d = d + shock_amp }
+    return d
+}
+
+// allo_defend — roll the balance b_t for T ticks under the perturbation, with the
+// restoring force gated by the allosteric buffer (lam>0) or a uniform global gain
+// (lam=0 → ARM A/C "gain" behavior). Returns the RMS excursion of b_t from Ψ=1/2
+// (LOWER = tighter defense). mode_shuf=0 → live coupling; mode_shuf=1 → the τ→μ
+// assignment is PERMUTED across ticks (the H_1509 shuffle control, ARM D).
+//   READ-ONLY over any other faculty; Ψ-disjoint (owns only its own scalar b).
+pub fn allo_defend(g: float, lam: float, sigma: float, seed: int, mode_shuf: int) -> float {
+    let tt = 200
+    let amp = 0.30
+    let per = 17
+    let shock_t = 100
+    let shock_len = 20
+    let shock_amp = 0.35
+    let phase = seed % per
+
+    // For the shuffle arm, first collect the μ sequence the LIVE-coupled roll would use,
+    // then permute it (same μ VALUES, wrong TIMES → coupling broken).
+    let mut mus_perm = []
+    if mode_shuf == 1 {
+        let mut bb = 0.5
+        let mut stc = seed & 2147483647
+        let mut mus = []
+        let mut tc = 0
+        while tc < tt {
+            stc = _lcg_next(stc)
+            let noise = (to_float(stc) / 2147483647.0 - 0.5) * 0.02
+            let d = _allo_drive(tc, phase, amp, per, shock_t, shock_len, shock_amp) + noise
+            let mu = allo_mu(bb, lam, sigma)
+            mus = mus + [mu]
+            let restoring = g * mu * (0.5 - bb)
+            bb = bb + d + restoring
+            if bb < 0.0 { bb = 0.0 }
+            if bb > 1.0 { bb = 1.0 }
+            tc = tc + 1
+        }
+        // deterministic Fisher-Yates permutation (engine LCG); idx held as floats so it
+        // can reuse _mi_set (the existing [float] swap helper), to_int on read.
+        let mut idx = []
+        let mut ii = 0
+        while ii < tt { idx = idx + [to_float(ii)] ; ii = ii + 1 }
+        let mut stp = (seed * 2654435761) & 2147483647
+        let mut k = tt - 1
+        while k > 0 {
+            stp = _lcg_next(stp)
+            let r = stp % (k + 1)
+            let tmp = idx[k]
+            idx = _mi_set(idx, k, idx[r])
+            idx = _mi_set(idx, r, tmp)
+            k = k - 1
+        }
+        let mut jj = 0
+        while jj < tt { mus_perm = mus_perm + [mus[to_int(idx[jj])]] ; jj = jj + 1 }
+    }
+
+    let mut b = 0.5
+    let mut st = seed & 2147483647
+    let mut sq = 0.0
+    let mut t = 0
+    while t < tt {
+        st = _lcg_next(st)
+        let noise = (to_float(st) / 2147483647.0 - 0.5) * 0.02
+        let d = _allo_drive(t, phase, amp, per, shock_t, shock_len, shock_amp) + noise
+        let mut mu = 1.0
+        if mode_shuf == 1 {
+            mu = mus_perm[t]
+        } else {
+            mu = allo_mu(b, lam, sigma)
+        }
+        let restoring = g * mu * (0.5 - b)
+        b = b + d + restoring
+        if b < 0.0 { b = 0.0 }
+        if b > 1.0 { b = 1.0 }
+        let ex = b - 0.5
+        sq = sq + ex * ex
+        t = t + 1
+    }
+    return sqrt(sq / to_float(tt))
+}
+
+// allo_best_fixed_gain — ARM A: sweep the gain grid, return the LOWEST RMS achievable by
+// any single FIXED uniform gain (the H_1284 strongest baseline B must beat by 0.05).
+pub fn allo_best_fixed_gain(sigma: float, seed: int) -> float {
+    let grid = [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80]
+    let mut best = 1.0e9
+    let mut i = 0
+    while i < len(grid) {
+        let r = allo_defend(grid[i], 0.0, sigma, seed, 0)   // lam=0 → uniform global gain
+        if r < best { best = r }
+        i = i + 1
+    }
+    return best
+}
+
 // ── §  THEORY-OF-MIND — OTHER-AGENT BELIEF MODEL (H_1293 R2, HD30) ────────────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1293 R1): the H_1293 numpy
