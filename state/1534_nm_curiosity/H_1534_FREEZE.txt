@@ -1,0 +1,71 @@
+H_1534 — NEUROMODULATION wall break attempt: C4 CURIOSITY-GATED ACQUISITION
+(census candidate C4, active-sampling family). FROZEN FALSIFIER — pre-registered
+BEFORE running. frozen-first, NO tune-to-green (a_break_the_wall, p7, c9).
+
+================================================================================
+THE WALL (H_1284, 4 prior census families + 12 lenses)
+================================================================================
+H_1284 NEUROMODULATION is 🧱 (no-free-lunch): a state-driven controller of the
+engine's LR/SPLIT_THRESH/abstain never beats a single tuned FIXED operating point.
+Every prior lens (controller / capacity / geometry / interference / retrieval — 12
+probes) shared ONE hidden precondition: the store ADMITTED EVERY FACT (random/full
+admission, no capacity budget). When the store holds everything, selection of WHAT
+to store cannot help — that is structurally why the prior probes were inert.
+
+================================================================================
+C4 ORTHOGONAL LEVER (active-sampling, Gottlieb & Oudeyer 2018 Nat Rev Neurosci)
+================================================================================
+Add the precondition the prior probes lacked: a FIXED STORE BUDGET N < total facts.
+Build a fact stream that mixes (a) DISTINCT facts and (b) REDUNDANT near-collinear
+duplicates of already-stored facts. Under budget N, a curiosity / information-gain
+ADMISSION gate that ADMITS by key-novelty and SKIPS redundant near-collinear dups
+spends the scarce budget on DISTINCT facts -> at recall it answers more distinct
+queries than random admission, which wastes budget slots on duplicates.
+
+If curiosity-admission only TIES random-admission at the same budget, the wall
+EXTENDS to the active-sampling family (honest 🧱, c9).
+
+================================================================================
+ARMS (all share the SAME fact stream + SAME budget N per (seed))
+================================================================================
+RANDOM    — best fixed-budget baseline: reservoir-sample N admits uniformly at
+            random from the stream (each arriving fact admitted with prob to keep
+            a uniform-random N-subset; collinear dups can occupy slots).
+CURIOSITY — admit a fact iff its key-novelty (recon-err = L2 dist to nearest
+            stored prototype) > adaptive threshold (running EMA of seen novelty);
+            collinear near-dups fall BELOW threshold -> SKIPPED. Capacity-bound:
+            if full and a novel fact arrives, LRU-evict stalest. Reads ONLY the
+            substrate key geometry — NO injected answer/quality label (p6).
+ABL       — curiosity OFF -> reverts to RANDOM admission at SAME budget N
+            (must collapse to RANDOM: isolates that the GATE, not the budget,
+            is load-bearing).
+SHUFFLE   — curiosity gate ON but its per-fact info-gain scores are
+            phase-scrambled (permuted) before the admit decision (decouples the
+            novelty signal from the fact it scores -> admits ~randomly -> must
+            collapse to RANDOM). Decisive control: if SHUFFLE matches CURIOSITY,
+            the lift is a budget/sampling artifact, not the curiosity signal.
+
+================================================================================
+FROZEN BARS (pre-registered — NOT moved post-hoc)
+================================================================================
+Metric = recall ACCURACY over a held query set of DISTINCT subjects (fraction of
+queries whose true fact is in the store and correctly recalled), under budget N.
+seeds = [11, 22, 33] (3 seeds). MARGIN = 0.05. Means over seeds.
+
+  B1 LIFT     recall(CURIOSITY) - recall(RANDOM) >= +0.05  on >= 2/3 seeds
+  B2 EARNED-ABL   recall(CURIOSITY) >= recall(ABL) + 0.05         (mean)
+                  AND recall(ABL) within 0.03 of recall(RANDOM)   (revert check)
+  B3 EARNED-SHUF  recall(CURIOSITY) >= recall(SHUFFLE) + 0.05     (mean)
+                  AND recall(SHUFFLE) within 0.03 of recall(RANDOM)(collapse)
+  B4 NO-FAB    fab(CURIOSITY) not worse than fab(RANDOM) by >0.05  (abstain held)
+
+VERDICT:
+  🟢 WALL-BROKEN iff B1 AND B2 AND B3 AND B4
+     (curiosity-admission beats random-admission at budget, decisively coupled).
+  🧱 WALL HOLDS otherwise — honest 🧱: if curiosity ties random-admission at
+     budget, the H_1284 wall EXTENDS to the active-sampling family.
+
+SCOPE: numpy DIRECTIONAL mirror of VAdaptField (host has no torch;
+a_engine_native_learning) -> engine-native R2 reconfirm = follow-on ING ONLY if
+clean-GREEN. TOY: 30 subjects, budget-regime only; scale/real-corpus/engine-
+transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck). $0 CPU, p7, c9.
