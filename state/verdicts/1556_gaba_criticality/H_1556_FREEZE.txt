@@ -1,0 +1,94 @@
+H_1556 — GABA × CLS: SELF-ORGANIZED CRITICALITY (adaptive E/I tracking a SHIFTING critical point)
+FROZEN FALSIFIER (pre-registered BEFORE scoring — c9, NO tune-to-green)
+====================================================================================
+
+THE ESCAPE LENS (a_break_the_wall §3 ABSTRACT→ESCAPE, the 6th GABA family):
+  GABA-as-adaptive walled in 5 mechanism-families because its inhibitory benefit had a
+  GLOBAL/STATIC optimum → a single grid-tuned fixed setting captured it:
+    H_1546 🧱 pattern-SEPARATION (INERT, CLS already separated)
+    H_1551 🧱 capacity-MULTIPLICATION under STATIONARY overload (best-fixed-k captures it)
+    H_1552 🧱 non-stationary sparseness (still static)
+    H_1554 🟠 DISINHIBITION routing (real but always-close dominates, optimum did not shift)
+    H_1555 🟠 GAMMA temporal-binding (segmentation real but best-fixed-bin wins)
+  The census SKIPPED the E/I-setpoint family (R4) as "a single fixed E/I target = monotone →
+  re-tests the static wall." That is correct FOR A FIXED TARGET.
+
+  THE FUSION LAW (proven across ACh/DA/NE/orexin/5-HT 🟢/🟠 vs the GABA walls): a NT's ADAPTIVE
+  lever beats a grid-tuned FIXED setting ONLY where the OPTIMAL OPERATING POINT SHIFTS.
+
+  CRITICALITY is the ONE escape the R4-skip misses. The system is maximally expressive (max
+  dynamic range / max distinct stored patterns) ONLY at the edge-of-chaos CRITICAL E/I ratio,
+  where branching ratio σ≈1 (Beggs-Plenz 2003 neuronal avalanches; Shew-Plenz 2013 functional
+  benefits of criticality). The KEY difference from R4: the critical E/I ratio is NOT a fixed
+  target — it SHIFTS with the INPUT STATISTICS (drive variance/rate). The SAME E/I that yields
+  σ≈1 under one input regime yields σ<1 (subcritical, patterns die) or σ>1 (supercritical,
+  patterns merge) under a different regime. So NO fixed E/I holds criticality as the stream's
+  statistics drift = the SHIFTING-optimum condition, AND a capability the 5 phasic GREEN NTs do
+  NOT provide (they schedule LR/gate/abstain WITHIN a fixed regime; none SET the E/I regime).
+
+  HONEST PRIOR (c9): likely 🟠 if a single best-fixed-E/I still wins (one E/I stays near-critical
+  across regimes, or the criticality capacity benefit is shallow). If 🟠/🧱: GABA-as-adaptive is
+  exhausted across 6 distinct families = honest structural-NT ceiling; 5/6 all-green
+  (ACh/DA/NE/orexin/5-HT) is the honest campaign result. Bars pre-registered BEFORE the scored
+  run, reported whichever side honestly.
+
+THE CRITICALITY PHYSICS (why a fixed E/I cannot hold σ≈1 across drifting input statistics):
+  Recurrent associative substrate over DIM units; a cued pattern recalls by RECURRENT branching
+  propagation; EXPECTED active-units-per-active-unit per step = branching ratio σ, set by
+    σ ∝ drive_level · E_GAIN / inhib_gain   (E/I balance scaled by the current input drive level).
+  Retention peaks at σ≈1: σ<1 (subcritical) the cued pattern DIES → under-recall; σ>1
+  (supercritical) activity EXPLODES → distinct patterns MERGE → cross-talk. Because the drive
+  level (input statistic) DRIFTS, a FIXED inhib_gain yields a DRIFTING σ (off-critical at one
+  drift end). GABA-CRITICAL reads the live σ̂ = descendants/ancestors (the criticality proxy) and
+  homeostatically adjusts inhib_gain to drive σ̂→1 under the CURRENT input statistic.
+
+PRE-REGISTERED CONSTANTS (frozen):
+  DIM=64 · N_PATTERNS=24 · RECALL_STEPS=4 · E_GAIN=1.0 · SIGMA_TARGET=1.0 · ADAPT_RATE=0.5
+  N_SEG=8 (4 LOW-drive even + 4 HIGH-drive odd, ALTERNATING input-statistic drift)
+  DRIVE_LO=0.7 · DRIVE_HI=1.6  (the input statistic that shifts the critical E/I)
+  TUNE_SEED=7 (disjoint best/sub/super-fixed grid) · SCORE_SEEDS=[11,22,33]
+  MARGIN=0.05
+  Fixed inhib-gain grid (disjoint tune seed, SAME drift stream):
+    g ∈ {0.1, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0}
+
+ARMS:
+  GABA-CRITICAL     = inhib_gain adapts each segment to hold σ̂≈1 at the CURRENT drive level
+                      (homeostatic σ-tracking; reads σ̂ ONLY, never the recall outcome — p7).
+  BEST-FIXED-EI     = strongest single grid-tuned FIXED inhib_gain over the WHOLE drift (the honest
+                      strong baseline / fusion-law discriminator). Disjoint tune seed.
+  SUBCRITICAL-FIXED = a fixed gain critical only at the LOW-drive end (σ<1 at high drive).
+  SUPERCRITICAL-FIXED= a fixed gain critical only at the HIGH-drive end (σ>1 at low drive).
+  ABL (const E/I)   = adaptive frozen to a CONSTANT gain == best-fixed → reverts (proves LEVER =
+                      criticality-tracking, not the inhibition per se).
+  SHUFFLE           = the per-segment input-statistic cue PERMUTED vs the TRUE drift order → gain
+                      tracks the WRONG drive → off-critical → collapse (proves it tracks the TRUE
+                      input statistic).
+
+FROZEN BARS (verdict computed mechanically; bars NOT moved after scoring):
+  A PRESENCE+SHIFT  : (crit − best_fixed) ≥ 0.5·(crit − worst_arm), worst-gap>0   AND
+                      best-fixed CANNOT win BOTH ends: min(best_lo_end, best_hi_end) < crit_mean −
+                      MARGIN  (the "critical point shifted" evidence: one fixed E/I is off-critical
+                      at one drift end)
+  B DISTINCT        : sub-critical FAILS the HIGH end (sub_hi < crit_hi − MARGIN)  AND
+                      super-critical FAILS the LOW end (sup_lo < crit_lo − MARGIN) — criticality is
+                      regime-specific, not a global constant
+  C ABL→fixed       : crit − abl ≥ MARGIN  AND  |abl − best_fixed| < MARGIN
+  D SHUFFLE         : crit − shuffle ≥ MARGIN
+  E NO-FAB          : best_fixed > worst_fixed (a working E/I beats a broken one — capacity real)
+
+VERDICT RULE (frozen):
+  🟢 GREEN      iff A ∧ B ∧ C ∧ D ∧ E  → adaptive criticality-tracking carries the majority; the
+                                          critical E/I SHIFTED with input stats and only adaptive
+                                          held it = GABA's ESCAPE capability (6th family GREEN)
+  🟠 AMBER      iff E ∧ (crit − worst_arm > MARGIN) ∧ ¬A → criticality helps over a broken E/I but
+                                          best-fixed-E/I captures ≥half = monotone/static KNOB →
+                                          GABA confirmed structural across 6 families; 5/6 all-green
+  🧱 WALL_HOLDS otherwise               → criticality INERT / ties no-inhibition = GABA static
+                                          across 6 distinct families; fusion law satisfied by NO
+                                          GABA family; 5/6 NTs all-green is the honest endpoint
+
+DIRECTIONAL (numpy mirror, a_engine_native_learning hard-gate-1); engine §GabaCritical R2 = ING
+h1556-r2-engine-native (non-obligatory unless GREEN). live core/*.hexa UNTOUCHED, Ψ-disjoint.
+
+Citations: Beggs & Plenz 2003 J Neurosci 23:11167 · Shew & Plenz 2013 The Neuroscientist 19:88 ·
+Turrigiano 2011 Annu Rev Neurosci.

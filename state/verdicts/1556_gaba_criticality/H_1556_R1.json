@@ -1,0 +1,203 @@
+{
+  "hypothesis": "H_1556",
+  "name": "GABA \u00d7 CLS \u2014 SELF-ORGANIZED CRITICALITY (adaptive E/I tracking a SHIFTING critical point)",
+  "capability": "pattern-retention / effective capacity across a stream whose INPUT STATISTICS (drive level) DRIFT, via GABA homeostatically tracking the branching-ratio proxy \u03c3\u22481 (the edge-of-chaos critical point) per current input statistic \u2014 the regime where the critical E/I SHIFTS so no single fixed E/I holds it",
+  "escape_framing": "the ABSTRACT\u2192ESCAPE lens after GABA 5-family census (sparse \ud83e\uddf1\u00d73 / disinhibition \ud83d\udfe0 / gamma \ud83d\udfe0 / divnorm \ud83e\uddf1 / E-I-setpoint \ud83e\uddf1-skipped). The census SKIPPED E/I-setpoint (R4) as \"single FIXED target = monotone\". CRITICALITY is the distinct escape: the critical E/I is NOT a fixed target \u2014 it SHIFTS with input statistics (Beggs-Plenz \u03c3\u22481 depends on drive), so NO fixed E/I holds criticality as the stream drifts = the fusion-law SHIFTING-optimum condition. 6th GABA family.",
+  "distinct_from_R4": "R4 E/I-setpoint = a SINGLE fixed E/I target (monotone, fixed captures it). H_1556 = the critical E/I MOVES with the input statistic, so the optimum genuinely SHIFTS \u2014 the one regime R4 could not reach. Also a capability the 5 phasic GREEN NTs do NOT provide (they schedule LR/gate/abstain WITHIN a fixed regime; none SET the E/I operating regime).",
+  "cites": [
+    "Beggs & Plenz 2003 J Neurosci 23:11167 (neuronal avalanches; cortex at critical branching ratio \u03c3\u22481)",
+    "Shew & Plenz 2013 The Neuroscientist 19:88 (functional benefits of criticality: max dynamic range / max distinct patterns at the critical point)",
+    "Turrigiano 2011 Annu Rev Neurosci (homeostatic plasticity to a set-point; here the set-point SHIFTS with input statistics)"
+  ],
+  "criticality_proxy": "branching ratio \u03c3\u0302 = descendants/ancestors per recurrent step (Beggs-Plenz avalanche balance); adaptive arm reads \u03c3\u0302 ONLY (p7, no task label) and drives \u03c3\u0302\u21921 by adjusting the GABA inhibitory gain",
+  "N_SEG": 8,
+  "DRIVE_LO": 0.7,
+  "DRIVE_HI": 1.6,
+  "DIM": 64,
+  "N_PATTERNS": 24,
+  "RECALL_STEPS": 4,
+  "SIGMA_TARGET": 1.0,
+  "MARGIN": 0.05,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "best_fixed_gain": 0.75,
+  "worst_fixed_gain": 1.5,
+  "subcritical_gain": 0.5,
+  "supercritical_gain": 0.75,
+  "fixed_grid_tune": {
+    "0.1": 0.0417,
+    "0.25": 0.0417,
+    "0.5": 0.125,
+    "0.75": 0.3333,
+    "1.0": 0.25,
+    "1.5": 0.0,
+    "2.0": 0.0,
+    "3.0": 0.0,
+    "4.0": 0.0,
+    "6.0": 0.0
+  },
+  "fixed_grid_end_means": {
+    "0.1": [
+      0.0417,
+      0.0417
+    ],
+    "0.25": [
+      0.0417,
+      0.0417
+    ],
+    "0.5": [
+      0.2083,
+      0.0417
+    ],
+    "0.75": [
+      0.0,
+      0.6667
+    ],
+    "1.0": [
+      0.0,
+      0.5
+    ],
+    "1.5": [
+      0.0,
+      0.0
+    ],
+    "2.0": [
+      0.0,
+      0.0
+    ],
+    "3.0": [
+      0.0,
+      0.0
+    ],
+    "4.0": [
+      0.0,
+      0.0
+    ],
+    "6.0": [
+      0.0,
+      0.0
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 11,
+      "gaba_critical": 0.7604,
+      "best_fixed_ei": 0.2917,
+      "worst_fixed_ei": 0.0417,
+      "subcritical_fixed": 0.125,
+      "supercritical_fixed": 0.2917,
+      "abl_const": 0.2917,
+      "shuffle": 0.0208,
+      "crit_low_end": 0.7708,
+      "crit_high_end": 0.75,
+      "best_fixed_low_end": 0.0417,
+      "best_fixed_high_end": 0.5417,
+      "sub_low_end": 0.2083,
+      "sub_high_end": 0.0417,
+      "super_low_end": 0.0417,
+      "super_high_end": 0.5417,
+      "crit_minus_best_fixed": 0.4688,
+      "adapt_gains": [
+        0.432,
+        0.947,
+        0.418,
+        0.994,
+        0.437,
+        0.975,
+        0.432,
+        1.034
+      ]
+    },
+    {
+      "seed": 22,
+      "gaba_critical": 0.7135,
+      "best_fixed_ei": 0.2917,
+      "worst_fixed_ei": 0.0625,
+      "subcritical_fixed": 0.2708,
+      "supercritical_fixed": 0.2917,
+      "abl_const": 0.2917,
+      "shuffle": 0.3698,
+      "crit_low_end": 0.7188,
+      "crit_high_end": 0.7083,
+      "best_fixed_low_end": 0.0,
+      "best_fixed_high_end": 0.5833,
+      "sub_low_end": 0.4167,
+      "sub_high_end": 0.125,
+      "super_low_end": 0.0,
+      "super_high_end": 0.5833,
+      "crit_minus_best_fixed": 0.4219,
+      "adapt_gains": [
+        0.399,
+        0.924,
+        0.406,
+        0.901,
+        0.402,
+        0.9,
+        0.404,
+        0.938
+      ]
+    },
+    {
+      "seed": 33,
+      "gaba_critical": 0.7812,
+      "best_fixed_ei": 0.3125,
+      "worst_fixed_ei": 0.0417,
+      "subcritical_fixed": 0.25,
+      "supercritical_fixed": 0.3125,
+      "abl_const": 0.3125,
+      "shuffle": 0.4219,
+      "crit_low_end": 0.7708,
+      "crit_high_end": 0.7917,
+      "best_fixed_low_end": 0.0417,
+      "best_fixed_high_end": 0.5833,
+      "sub_low_end": 0.4167,
+      "sub_high_end": 0.0833,
+      "super_low_end": 0.0417,
+      "super_high_end": 0.5833,
+      "crit_minus_best_fixed": 0.4688,
+      "adapt_gains": [
+        0.421,
+        0.977,
+        0.427,
+        0.968,
+        0.435,
+        0.986,
+        0.428,
+        0.957
+      ]
+    }
+  ],
+  "gaba_critical_mean": 0.7517,
+  "best_fixed_ei_mean": 0.2986,
+  "worst_fixed_ei_mean": 0.0486,
+  "subcritical_fixed_mean": 0.2153,
+  "supercritical_fixed_mean": 0.2986,
+  "abl_const_mean": 0.2986,
+  "shuffle_mean": 0.2708,
+  "crit_low_end_mean": 0.7535,
+  "crit_high_end_mean": 0.75,
+  "best_fixed_low_end_mean": 0.0278,
+  "best_fixed_high_end_mean": 0.5694,
+  "sub_low_end_mean": 0.3472,
+  "sub_high_end_mean": 0.0833,
+  "super_low_end_mean": 0.0278,
+  "super_high_end_mean": 0.5694,
+  "crit_minus_best_fixed_mean": 0.4531,
+  "crit_minus_worst_arm_gap": 0.7031,
+  "best_fixed_weak_end": 0.0278,
+  "crit_carries_pct_of_gap": 64.4,
+  "A_presence_shift": true,
+  "A_earned_majority": true,
+  "A_best_fixed_cant_win_both_ends": true,
+  "B_distinct_sub_super_fail_off_regime": true,
+  "C_abl_reverts": true,
+  "D_shuffle_collapses": true,
+  "E_no_fab": true,
+  "verdict": "GREEN",
+  "law_side": "ADAPTIVE-FACULTY (\ud83d\udfe2, like orexin/5-HT shifting-optimum) \u2014 the CRITICAL E/I SHIFTS with input statistics, so adaptive \u03c3\u22481-tracking beats the best single fixed E/I by the MAJORITY and holds criticality at BOTH drift ends where any fixed E/I goes off-critical; GABA-as-criticality is a genuine adaptive faculty \u2014 the ESCAPE the 5-family census missed (R4 skipped the SHIFTING setpoint)",
+  "directional": true,
+  "note": "numpy mirror \u21d2 DIRECTIONAL (a_engine_native_learning hard-gate-1); engine \u00a7GabaCritical R2 deferred ING h1556-r2-engine-native; reuses H_1532/H_1552 key_vec/FNV-1a byte-exact; NEW = branching-process criticality substrate (\u03c3-dependent recurrent recall) + input-statistic DRIFT stream + \u03c3\u22481-tracking adaptive inhibitory gain; bars frozen-first (NO tune-to-green); A presence measures adaptive vs BEST-FIXED-E/I AND the critical-point-shifted (cant-win-both-ends) test"
+}
