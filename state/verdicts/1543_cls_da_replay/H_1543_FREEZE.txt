@@ -1,0 +1,82 @@
+H_1543 — DOPAMINE × CLS : salience-weighted REPLAY PRIORITY — FROZEN FALSIFIER
+(pre-registered BEFORE any run; bar frozen-first, NO tune-to-green; c9)
+==============================================================================
+
+CENSUS H_1542 Rank 2 — interface DOF I2 (fast->slow transfer priority).
+FUSION: H_1536 DA-RPE faculty (🟢 #2520)  ->  H_1532 two-store CLS (🟢 #2514/#2522).
+GOAL: show DA-RPE value, used as REPLAY PRIORITY inside CLS, retains high-value
+      bindings that uniform/recency replay loses UNDER A CONSOLIDATION BUDGET.
+
+CAPABILITY (only meaningful with two stores + a budget — the I2 interface):
+  BUDGETED CLS CONSOLIDATION — fast episodic store holds N phase-1 A->B bindings;
+  the slow store can absorb only K < N of them per consolidation sweep (budget);
+  un-replayed fast episodes DECAY. Each A_i carries a true reward TAG (HIGH or LOW).
+  CAPABILITY = retain the HIGH-value A_i->B_i bindings after phase-2 A->C interference.
+  Which A_i are high-value is INDEPENDENT of position/recency.
+
+⚠ STRUCTURAL PRECONDITION (census cheapest-refuter, reported NOT a GREEN gate):
+  with K = N (no scarcity) DA-priority MUST be INERT (everything consolidates,
+  order irrelevant). If DA lifts when everything fits, the lever was the budget,
+  not DA. We measure |da - uniform| at K=N and report inert/not-inert.
+
+⚠ HAZARD (inherited from H_1532): the win must come from VALUE-RANKED TRANSFER over
+  the fast->slow channel, NOT a scalar gain on one store. The ablations prove it.
+
+ARMS (identical fixture/fact-set/value-tags per seed; LR/TH = H_1532 best-fixed):
+  DA-PRIORITY : replay the K fast episodes ranked by DA-RPE learned value (high |V|
+                first). The fusion arm. (H_1536 TD(λ) value head supplies the rank.)
+  UNIFORM     : replay a random K of N (H_1532's uniform replay = the baseline).
+  RECENCY     : replay the LAST K written to the fast store.
+  ABL         : DA-PRIORITY with DA value forced CONSTANT (delta->0) -> ranking
+                degenerate -> MUST revert to UNIFORM.
+  SHUFFLE     : DA-PRIORITY with the value<->episode pairing permuted -> priority
+                dissociated from value -> MUST collapse.
+
+FIXTURE: N_PAIRS=24, N_DISTRACT=24, MAX_CELLS=72, DIM=16 byte-trigram FNV-1a key
+  (VERBATIM H_1532/H_1227), abstain=0.45, K=12 (=N/2 budget), FRAC_HIGH=0.5,
+  3 seeds [11,22,33]. DA-RPE TD(λ): GAMMA=0.95 LAMBDA=0.8 ALPHA=0.05 EPOCHS=30
+  (VERBATIM H_1536). $0 CPU. R1 numpy DIRECTIONAL (a_engine_native_learning
+  hard-gate-1: grep numpy => auto-DIRECTIONAL; engine R2 §DaReplay deferred ING).
+
+METRIC: HIGH-value A->B retention = fraction of HIGH-value A keys whose surviving
+  (consolidated slow) store still returns OLD B. Abstain counts as NOT retained
+  (honest, no fabrication credit). p7: exact ground truth (true A->B + true value
+  tag known), NO LLM judge / perplexity / loss term.
+
+FROZEN BARS (MARGIN = 0.10):
+  A PRESENCE : da_priority - uniform >= +0.10 on >= 2/3 seeds.
+  B DISTINCT : (da - uniform >= +0.10) AND (da - recency >= +0.10), means
+               -> uniform AND recency both lose high-value under budget.
+  C EARNED   : ABL (DA->const) REVERTS to uniform -> |abl - uniform| < +0.10, mean.
+  D SHUFFLE  : permuted DA value COLLAPSES -> da - shuffle >= +0.10, mean.
+  E NO-FAB   : abstain = not-retained (built into scoring; no fabrication credit).
+
+VERDICT:
+  GREEN (🟢 FUSION WORKS) iff A AND B AND C AND D
+        = DA-RPE value as replay priority decisively retains high-value bindings
+          uniform/recency lose, and the lift is attributable to the VALUE RANKING
+          (ABL reverts, SHUFFLE collapses). DA becomes a different mechanism inside
+          CLS: standalone it assigns credit; inside CLS it ROUTES consolidation
+          bandwidth under a budget (census Rank 2 prediction confirmed).
+  AMBIGUOUS_ABLATION iff A holds but C or D FAILS
+        = lift exists but NOT proven to come from the value ranking (HONEST, c9).
+  WALL_HOLDS (🧱) iff A FAILS
+        = DA-priority TIES/LOSES to uniform replay under budget -> prioritized replay
+          adds nothing here; uniform CLS replay already suffices (HONEST, c9).
+
+HONEST (c9): if DA-priority ties uniform, that is a real result — the DA value adds
+  no consolidation-routing benefit on this task. NO tune-to-green. WALL_HOLDS reported
+  as WALL_HOLDS, AMBIGUOUS reported as AMBIGUOUS. The K=N precondition is reported
+  whatever the verdict. p1/p2/p3/p6: replay ordering + writes read only substrate
+  state (keys/recon-err/learned value); NO injected answer label / RLHF / persona.
+
+Literature (REAL, cited):
+  - Mattar MG, Daw ND (2018) "Prioritized memory access explains planning and
+    hippocampal replay." Nat Neurosci 21:1609-1617.
+  - Ambrose RE, Pfeiffer BE, Foster DJ (2016) "Reverse replay of hippocampal place
+    cells is uniquely modulated by changing reward." Neuron 91(5):1124-1136.
+  - Lisman JE, Grace AA (2005) "The hippocampal-VTA loop." Neuron 46(5):703-713.
+  - McNamara CG et al. (2014) "Dopaminergic neurons promote hippocampal reactivation
+    and spatial memory persistence." Nat Neurosci 17:1658-1660.
+  - McClelland-McNaughton-O'Reilly (1995); Kumaran-Hassabis-McClelland (2016) — CLS.
+  - Schultz-Dayan-Montague (1997); Sutton & Barto (2018) — DA-RPE / TD(λ).
