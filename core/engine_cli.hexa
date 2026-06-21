@@ -6943,6 +6943,116 @@ fn _ci_bit(v: int, b: int) -> int {
     return x - (x / 2) * 2
 }
 
+// ── § ConsciousnessIndex (H_1492 R4) — pairwise lane 상호작용 + surrogate-null 재보정 op ─────────
+//
+// R4 deepening (a_break_the_wall): three REUSABLE ops folded into the live engine so the next
+// consciousness measurement calls them directly (NOT a one-shot state/ probe).
+//   ④ ci_dphi_single  — ΔΦ_k = Φ₀ − Φ(ablate k): one lane's contribution to integrated Φ.
+//   ⑤ ci_phi_pairwise — joint ablation ΔΦ_ij (drop BOTH lanes i,j) → caller compares to
+//                        ΔΦ_i + ΔΦ_j: superadditive = SYNERGY (complementary, lose-more-together),
+//                        subadditive = REDUNDANCY (information overlap). ci_pair_interaction packs
+//                        [dphi_ij, dphi_i+dphi_j, interaction = dphi_ij − (dphi_i+dphi_j)].
+//   ⑥ ci_surrogate_phi0 — ONE circular-shift surrogate of the lane population: every lane column
+//                        is rotated by an independent offset (destroys cross-lane covariance,
+//                        preserves each marginal) → Φ₀ of the shifted population. The caller builds
+//                        a null DISTRIBUTION by sweeping >=100 shift-seeds and pre-registers a
+//                        percentile (e.g. 95th) as the frozen-first bar D/E threshold — calibrated
+//                        to the REAL covariance, not a toy constant (NOT tune-to-green: the null is
+//                        frozen before the measurement, percentile pre-registered).
+// All READ-only, Ψ-disjoint, NOT an emit gate. No exp; only ln/sqrt/int ops.
+
+// ci_phi_drop2 — Φ (Gaussian multi-info) of population X with BOTH columns i and j removed.
+pub fn ci_phi_drop2(x: [[float]], i: int, j: int) -> float {
+    if len(x) < 2 { return 0.0 }
+    let mut lo = i
+    let mut hi = j
+    if lo > hi { let t = lo  lo = hi  hi = t }
+    let mut xx = []
+    let mut t = 0
+    while t < len(x) {
+        let r1 = _ci_drop_col(x[t], hi)      // drop higher index first (stable lower index)
+        let r2 = _ci_drop_col(r1, lo)
+        xx = xx + [r2]
+        t = t + 1
+    }
+    if len(xx[0]) < 2 { return 0.0 }
+    let mut sld = 0.0
+    let cov = _ci_cov(xx)
+    let nc = len(xx[0])
+    let mut c = 0
+    while c < nc {
+        let mut d = cov[c][c]
+        if d < 0.000000001 { d = 0.000000001 }
+        sld = sld + ln(d)
+        c = c + 1
+    }
+    let phi = 0.5 * (sld - _ci_logdet_chol(cov))
+    if phi < 0.0 { return 0.0 }
+    return phi
+}
+
+// ci_pair_interaction — packs the synergy/redundancy decomposition for lane pair (i,j) over X:
+//   [0] dphi_ij   = Φ₀ − Φ(drop i,j)         (joint contribution)
+//   [1] sum_singles = ΔΦ_i + ΔΦ_j            (additive baseline)
+//   [2] interaction = dphi_ij − sum_singles  (>0 SYNERGY, <0 REDUNDANCY, ≈0 ADDITIVE)
+pub fn ci_pair_interaction(x: [[float]], i: int, j: int) -> [float] {
+    let phi0 = ci_phi_multiinfo(x, -1)
+    let dphi_i = phi0 - ci_phi_multiinfo(x, i)
+    let dphi_j = phi0 - ci_phi_multiinfo(x, j)
+    let dphi_ij = phi0 - ci_phi_drop2(x, i, j)
+    let sum_singles = dphi_i + dphi_j
+    return [dphi_ij, sum_singles, dphi_ij - sum_singles]
+}
+
+// _ci_rot_col — rotate column c of X downward by `off` (circular shift), gather into a fresh row
+// population (never aliases x). Destroys cross-lane covariance for one column, preserves marginal.
+fn _ci_shift_pop(x: [[float]], seed: int) -> [[float]] {
+    let nt = len(x)
+    let nc = len(x[0])
+    // fresh zero population.
+    let mut out = []
+    let mut t = 0
+    while t < nt {
+        let mut zr = []
+        let mut c = 0
+        while c < nc { zr = zr + [0.0]  c = c + 1 }
+        out = out + [zr]
+        t = t + 1
+    }
+    let mut c = 0
+    let mut s = _lcg_ci(seed)
+    while c < nc {
+        s = _lcg_ci(s)
+        let off = 1 + (s % (nt - 1))      // non-zero circular offset per column
+        let mut r = 0
+        while r < nt {
+            let src = (r + off) % nt
+            out[r][c] = x[src][c]
+            r = r + 1
+        }
+        c = c + 1
+    }
+    return out
+}
+
+// _lcg_ci — local deterministic 31-bit LCG (so the surrogate is reproducible byte-exact, $0).
+fn _lcg_ci(s: int) -> int { return (s * 1103515245 + 12345) & 2147483647 }
+
+// ci_surrogate_phi0 — Φ₀ of ONE circular-shift surrogate of X (seed picks the per-column offsets).
+// Sweep many seeds → null distribution → pre-register a percentile as the frozen-first D/E bar.
+pub fn ci_surrogate_phi0(x: [[float]], seed: int) -> float {
+    if len(x) < 3 { return 0.0 }
+    let xs = _ci_shift_pop(x, seed)
+    return ci_phi_multiinfo(xs, -1)
+}
+
+// ci_phi_multiinfo_subset_proxy — Gaussian multi-info PROXY (ci_phi_multiinfo equivalent) restricted
+// to the `cols` subset, so it can be compared head-to-head with the FAITHFUL ci_phi_iit4 (exact
+// min-cut MIP) on the SAME ≤8-lane set (axis-1 faithful-vs-proxy agreement). pub wrapper over the
+// private _ci_minfo_subset building block.
+pub fn ci_phi_multiinfo_subset_proxy(x: [[float]], cols: [int]) -> float {
+    return _ci_minfo_subset(x, cols)
+}
 // ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate

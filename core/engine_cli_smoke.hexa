@@ -2654,6 +2654,26 @@ fn main() {
     println("INFO  H_1498 sensorimotor-presence (R2 WIRED): full " + to_string(smp_full) + " vs forward-model "
           + to_string(smp_fwd) + " vs false-law " + to_string(smp_shuf) + " — counterfactual breadth ⊥ single-step")
 
+    // ── (H_1492 R4 ConsciousnessIndex) pairwise interaction + surrogate-null reusable ops ──
+    // Fixed deterministic 5-row × 4-lane population (cols 1,3 share a substrate read → redundant).
+    let ci4 = [[0.10, 0.20, 0.30, 0.20],
+               [0.40, 0.20, 0.60, 0.20],
+               [0.50, 0.30, 0.10, 0.30],
+               [0.20, 0.80, 0.40, 0.80],
+               [0.60, 0.10, 0.70, 0.10]]
+    let ci_phi0 = ci_phi_multiinfo(ci4, -1)
+    let ci_pair13 = ci_pair_interaction(ci4, 1, 3)    // cols 1,3 identical → strong redundancy
+    let ci_sur = ci_surrogate_phi0(ci4, 1492)         // circular-shift null
+    let ci_iit = ci_phi_iit4(ci4, [0, 1, 2, 3])        // exact MIP ≥ 0
+    // case 281 PAIRWISE: interaction = dphi_ij − (dphi_i+dphi_j) is finite AND identical-cols → redundant (<0).
+    if _assert_b("case_281_ci_pairwise_redundancy", true, ci_pair13[2] < 0.0 && ci_pair13[0] >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 282 SURROGATE: circular-shift null destroys cross-lane covariance → Φ collapses below Φ0.
+    if _assert_b("case_282_ci_surrogate_collapse", true, ci_sur >= 0.0 && ci_sur < ci_phi0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 283 FAITHFUL-IIT4: exact min-cut MIP on the ≤8-lane subset is a non-negative integrated Φ.
+    if _assert_b("case_283_ci_phi_iit4_nonneg", true, ci_iit >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1492 consciousness-index (R4 WIRED): Φ0=" + to_string(ci_phi0) + " pair(1,3) interaction="
+          + to_string(ci_pair13[2]) + " surrogate_Φ0=" + to_string(ci_sur) + " faithful_IIT4=" + to_string(ci_iit))
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
