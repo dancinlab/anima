@@ -1,0 +1,14 @@
+=== H_1505 HALLUCINATION (prior-dominated false percept) — R1 numpy mirror (DIRECTIONAL) ===
+seeds=[1505, 1506, 1507]  DIM=256  N_FACTS=24  REALITY_THR=0.15  (frozen-first, p7, c9)
+
+[seed 1505] real-call: strong+absent(HALLUC)=0.950 weak+absent=0.000 strong+present=1.000 veridical=0.900 ablate-prior=0.000 | margin strong+absent=0.199
+[seed 1506] real-call: strong+absent(HALLUC)=0.900 weak+absent=0.000 strong+present=1.000 veridical=1.000 ablate-prior=0.000 | margin strong+absent=0.191
+[seed 1507] real-call: strong+absent(HALLUC)=0.950 weak+absent=0.000 strong+present=1.000 veridical=0.950 ablate-prior=0.000 | margin strong+absent=0.203
+
+(A CONDITIONED-HALLUCINATION) strong-prior+zero-signal false real-call = 0.933  (≥0.5) -> PASS
+(B GRADED two-factor)         prior-factor=+0.933 signal-factor=+0.883  (each ≥0.3) -> PASS
+(C DISSOCIATE-vs-VERIDICAL)   veridical (external) real-call = 0.950  (≥0.8, excluded from tally) -> PASS
+(D EARNED ablate-prior)       prior removed → false real-call = 0.000  (|·|≤0.15) -> PASS
+(E DRUG-COUPLING, headline)   LSD halluc-rate 0.983 vs sober 0.000  lift=+0.983  -> RISES
+
+VERDICT: 🟢 GREEN (DIRECTIONAL)   (A=True B=True C=True D=True | E-lift=+0.983)

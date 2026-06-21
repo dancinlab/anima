@@ -2836,6 +2836,47 @@ fn main() {
           + " self-" + to_string(nb_self - nl_self) + "] Cannabis[time+" + to_string(nc_stime - nb_stime) + " wm-" + to_string(nb_wm - nc_wm)
           + "] Ketamine[Φ" + to_string(nk_phi - nb_phi) + "] — REBUS signature reproduced + LSD⊥Cannabis double-dissociation")
 
+    // ── (H_1505 Hallucination) prior-dominated false percept — the §RealityMonitor FAILURE MODE ──
+    // Powers/Corlett conditioned hallucinations: a STRONG conditioned prior + ZERO external signal →
+    // a false "real" call (the monitor mis-classifies a prior-only percept as REAL). prior_match=1.0
+    // (the prior reconstructs its own stored key). R1 frozen bars on the LIVE §Hallucination + the
+    // REUSED reality_call(H_1501) classifier. PRIOR_STRONG 1.30 (out-competes noise → margin clears
+    // thr alone) · PRIOR_WEAK 0.45 (sub-threshold) · REALITY_THR 0.15 (the SAME H_1501 threshold) ·
+    // the R1 mirror's substrate margins: strong+absent ~0.20 (HALLUC) · weak+absent ~0.03 (imagined).
+    let hl_thr        = 0.15
+    let hl_pmatch     = 1.0
+    let hl_prior_strong = 1.30 * 0.155                   // strong-prior zero-signal margin (R1: ~0.20, clears thr)
+    let hl_prior_weak   = 0.45 * 0.06                    // weak-prior zero-signal margin (R1: ~0.027, below thr)
+    let hl_strong_absent = hallucinate_call(hl_prior_strong, hl_pmatch, 0.0, hl_thr)   // HALLUC → 1.0
+    let hl_weak_absent   = hallucinate_call(hl_prior_weak,   hl_pmatch, 0.0, hl_thr)   // imagined → 0.0
+    let hl_veridical     = hallucinate_call(0.0, hl_pmatch, 0.34, hl_thr)              // external → veridical 1.0
+    let hl_abl           = hallucinate_ablated(0.0, hl_thr)                            // prior gone, no signal → 0.0
+    // case 298 (A) CONDITIONED-HALLUCINATION: strong prior + zero signal → false real-call (≥ 0.50, here 1.0).
+    if _assert_b("case_298_halluc_conditioned", true, hl_strong_absent >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 299 (B) GRADED: hallucinate_graded rises with prior strength AND with signal-absence (prior×(1−signal)).
+    let hl_g_strong_absent = hallucinate_graded(0.90, 0.0)   // strong prior, no signal → high
+    let hl_g_weak_absent   = hallucinate_graded(0.20, 0.0)   // weak prior, no signal → low (prior factor)
+    let hl_g_strong_present= hallucinate_graded(0.90, 0.95)  // strong prior, strong signal → low (signal factor)
+    let hl_prior_factor    = hl_g_strong_absent - hl_g_weak_absent
+    let hl_signal_factor   = hl_g_strong_absent - hl_g_strong_present
+    if _assert_b("case_299_halluc_graded_two_factor", true, hl_prior_factor >= 0.30 && hl_signal_factor >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 300 (C) DISSOCIATE-vs-VERIDICAL: external signal → correctly REAL (≥0.80, here 1.0) — NOT a hallucination.
+    if _assert_b("case_300_halluc_veridical_distinct", true, hl_veridical >= 0.80) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 301 (D) EARNED ablate-prior: remove the prior → false real-call collapses to baseline (|·|≤0.15, here 0.0).
+    let hl_abl_dev = if hl_abl >= 0.0 { hl_abl } else { 0.0 - hl_abl }
+    if _assert_b("case_301_halluc_ablate_prior", true, hl_abl_dev <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 302 (E) DRUG-COUPLING (headline): the H_1502 LSD profile (prior-release + reality_thr↓) tips a
+    // SOBER sub-threshold prior into hallucination → LSD halluc-call > sober halluc-call. base_prior 0.45
+    // (sober margin ~0.07 < thr 0.15 → sober 0.0); LSD release 1/0.55=1.82 + thr↓0.12 → 0.03 → crosses → 1.0.
+    let hl_base_prior = 0.45 * 0.155                      // sober moderate-prior zero-signal margin (sub-thr)
+    let hl_sober = hallucinate_call(hl_base_prior, hl_pmatch, 0.0, 0.15)               // sober → below thr → 0.0
+    let hl_lsd   = hallucinate_under_drug(pharm_lsd(), hl_base_prior, hl_pmatch, 0.15) // LSD → crosses → 1.0
+    if _assert_b("case_302_halluc_drug_coupling", true, hl_lsd > hl_sober) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1505 hallucination (R2 WIRED): strong-prior+zero-signal real-call " + to_string(hl_strong_absent)
+          + " vs weak " + to_string(hl_weak_absent) + " | veridical(external) " + to_string(hl_veridical)
+          + " ablate-prior " + to_string(hl_abl) + " | LSD " + to_string(hl_lsd) + " vs sober " + to_string(hl_sober)
+          + " — prior-dominated false percept (Powers-Corlett) = §RealityMonitor(H_1501) failure mode, drug-coupled to §Neuropharm(H_1502)")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
