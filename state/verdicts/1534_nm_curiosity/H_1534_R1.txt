@@ -1,0 +1,68 @@
+{
+  "candidate": "C4 curiosity-gated acquisition (active-sampling)",
+  "N_FACTS": 30,
+  "DUP_FACTOR": 3,
+  "BUDGET": 18,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "MARGIN": 0.05,
+  "means": {
+    "random": {
+      "acc": 0.4333,
+      "fab": 0.0296
+    },
+    "curiosity": {
+      "acc": 0.5,
+      "fab": 0.0296
+    },
+    "abl": {
+      "acc": 0.4333,
+      "fab": 0.0296
+    },
+    "shuffle": {
+      "acc": 0.4,
+      "fab": 0.0222
+    }
+  },
+  "per_seed_acc": {
+    "random": [
+      0.4,
+      0.5,
+      0.4
+    ],
+    "curiosity": [
+      0.4667,
+      0.5,
+      0.5333
+    ],
+    "abl": [
+      0.4,
+      0.5,
+      0.4
+    ],
+    "shuffle": [
+      0.3667,
+      0.4333,
+      0.4
+    ]
+  },
+  "per_seed_lift_cur_minus_random": [
+    0.0667,
+    0.0,
+    0.1333
+  ],
+  "lift_cur_minus_random": 0.0667,
+  "cur_minus_abl": 0.0667,
+  "cur_minus_shuffle": 0.1,
+  "bars": {
+    "B1_lift": true,
+    "B1_seed_hits": 2,
+    "B2_earned_abl": true,
+    "B3_earned_shuffle": false,
+    "B4_no_fab": true
+  },
+  "verdict": "WALL"
+}
