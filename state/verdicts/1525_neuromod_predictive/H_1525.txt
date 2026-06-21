@@ -1,0 +1,85 @@
+H_1525 — PREDICTIVE / ANTICIPATORY NEUROMODULATION (forward-model-gated gain)
+neuro lens (c15, a_no_llm_frame_trap), NOT an LLM recipe — VERDICT
+================================================================================
+VERDICT: 🧱 WALL HOLDS / CLOSED-NEGATIVE (NO FREE LUNCH — anticipation lens too)
+  An ANTICIPATORY gain controller (gate the LR/SPLIT/abstain on the forward-model
+  PREDICTED next-step surprise shat_{t+1}, BEFORE the step) does NOT beat the
+  best-tuned FIXED operating point on ANY regime — and is byte-identical to the
+  REACTIVE controller it was meant to beat. The H_1284 no-free-lunch wall
+  GENERALIZES to the predictive/forward-model family. $0 CPU, numpy mirror,
+  3 seeds [11,22,33], tune seed 7 (disjoint), p7, frozen-first, no tune-to-green.
+
+ENGINE-NATIVE NOTE (a_engine_native_learning HARD-GATE-1): numpy mirror of the
+LIVE CORE/engine_cli.hexa VAdaptField; forward model = numpy AR/EMA stand-in for
+the live VForwardField (H_1280) cerebellar tick. DIRECTIONAL only. WALL-HOLDS ⇒
+no wiring follow-on (nothing verified to wire). live CORE/*.hexa UNTOUCHED.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIER (verbatim from H_1525_FREEZE.txt): MARGIN = 0.05 capability.
+  GREEN (WALL BROKEN) iff (c1) P>=A+MARGIN on >=2 regimes AND (c2) P never worse
+  than A by >0.02 on the rest AND (c3) P.fab<=A.fab on wins AND (c4) DISSOCIATION
+  P>=R+MARGIN on wins AND (c5) ABLATION ABL-NOLOOKAHEAD<=P-MARGIN & ABL-SHUFFLE
+  <=P-MARGIN on wins. 🟠 PARTIAL iff 1 win or wins without c4/c5. 🔴/🧱 WALL HOLDS
+  iff P beats A on NO regime, OR P raises fab, OR P~=R, OR ablation INERT.
+
+VERBATIM METRIC OUTPUT (state/1525_neuromod_predictive/h1525_predictive.py;
+H_1525_R1.json):
+  best-fixed grid winner: LR0* = 0.10, TH0* = 0.20 (IDENTICAL to the wall — same
+  grid, same disjoint tune seed). capability = recall_accuracy - fabrication_rate,
+  mean over 3 seeds. A=fixed, R=reactive(current s), P=predictive(forward shat),
+  ABLN=no-lookahead(shat:=s_t), ABLS=shuffle(scrambled shat).
+
+  R1_STABLE : A 0.5744  R 0.5678  P 0.5678  ABLN 0.5678  ABLS 0.5678
+              P-A=-0.0067  P-R=0.0000  P-ABLN=0.0000  P-ABLS=0.0000  fwd_rho 0.133
+              A_fab 0.0278  P_fab 0.0344
+  R2_DRIFT  : A 0.4389  R 0.3589  P 0.3589  ABLN 0.3589  ABLS 0.3589
+              P-A=-0.0800  P-R=0.0000  P-ABLN=0.0000  P-ABLS=0.0000  fwd_rho 0.066
+              A_fab 0.0300  P_fab 0.1100
+  R3_NOISE  : A 0.4156  R 0.3200  P 0.3200  ABLN 0.3200  ABLS 0.3200
+              P-A=-0.0956  P-R=0.0000  P-ABLN=0.0000  P-ABLS=0.0000  fwd_rho 0.042
+
+  wins_P_over_A = []      (0 of 3 — predictive NEVER beats best-fixed)
+  c1_two_wins=false  c2_never_much_worse=false (P worse by >0.02 on R2,R3)
+  c3_fab_ok=true (vacuous: no wins)  c4_dissociation=false  c5_ablation=false
+  => verdict = WALL_HOLDS
+
+────────────────────────────────────────────────────────────────────────────────
+THE LOAD-BEARING DIAGNOSTIC (why P == R exactly, the decisive ablation result):
+  The predictive arm is byte-identical to the reactive arm on EVERY regime
+  (P-R = 0.0000 everywhere). This is NOT because shat_{t+1} literally equals the
+  current surprise s_t — a direct probe (R2_DRIFT seed22) shows the forward model
+  LEARNED a real (weak) AR structure (weights [bias,s_t,s_{t-1},ema] =
+  [0.4262,0.1430,0.1120,0.0114]) and its prediction genuinely DIFFERS from the
+  current value (mean|shat - s_t| = 0.3134; std(shat)=0.2035 vs std(s_t)=0.3522).
+  Yet capability is unchanged because (1) one-step surprise is barely forecastable
+  (fwd_rho 0.13/0.066/0.042 — the surprise series is near-Markov-1-noise, no
+  exploitable look-ahead), and (2) at the grid-tuned best-fixed operating point
+  (LR0*=0.10) the LR knob is pinned at its clip floor across the whole surprise
+  op-range, so the gain gate is INSENSITIVE there. ANTICIPATION IS INERT: ABL-
+  NOLOOKAHEAD (the decisive ablation) reproduces P exactly, which the FREEZE
+  pre-registered as the WALL-HOLDS signature.
+
+INTERPRETATION (a_break_the_wall TAXONOMY): this is (d) a genuine ceiling against
+the anticipation lens, NOT (a) metric artifact / (c) infra. The a-priori thesis —
+"reactive loses because it is one step behind a regime change" — is FALSIFIED at
+its root: the regime change is not the bottleneck; one-step surprise is simply not
+forecastable enough to pre-position the gain, AND the best-fixed gain is already
+at the floor of what the gate can move. The wall is now confirmed against a SIXTH
+independent lens (gain-tuning H_1284 · regime-switch H_1284_R3 · homeostatic-buffer
+H_1509/b/c · predictive-anticipation H_1525), strongly favoring the no-free-lunch
+ceiling for a context-adaptive modulator on this substrate.
+
+SCOPE (a_scale_honest_scope, a_toy_scale_recheck): numpy mirror DIRECTIONAL
+(engine-transfer UNVERIFIED); TOY 30 facts / 3 seeds / hundreds of events / DIM=16;
+AR(2)+EMA forward model (a richer forward model on a longer horizon UNVERIFIED —
+but rho~0 says the signal itself is the limit, not the predictor order). p1/p2/p3
+(no prompt/identity/persona) · p6 (gate reads substrate surprise + forward pred,
+NOT a label/reward/ethics) · p7 (exact metric, predictor LMS on surprise NOT on the
+objective) · p8 (forward tick = engine's own tick) · c9 (RED reported RED) honored.
+
+DELIVERABLES: state/1525_neuromod_predictive/h1525_predictive.py ·
+  state/verdicts/1525_neuromod_predictive/{H_1525_FREEZE,H_1525}.txt + H_1525_R1.json ·
+  UNIVERSE/cards/H_1525_neuromod_predictive.md · UNIVERSE/HYPOTHESES.jsonl · CHANGELOG.
+xref: H_1284 · H_1284_R3 · H_1280 · H_1509/b/c · H_1230 · H_1228 ·
+  a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning ·
+  a_autonomy_over_hardcode · a_paper_negative_ok · a_scale_honest_scope · p6·p7·p8·c9·c15.
