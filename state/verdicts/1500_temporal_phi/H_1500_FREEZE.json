@@ -1,0 +1,34 @@
+{
+  "id": "H_1500",
+  "slug": "1500_temporal_phi",
+  "title": "TEMPORAL-PHI — consciousness time-dynamics (Φ over the 5-stage sleep/imagination ultradian envelope)",
+  "frozen_first": true,
+  "tune_to_green_forbidden": true,
+  "engine_native": true,
+  "engine_import": "core/engine_cli.hexa §ConsciousnessIndex (ci_lane_scores / ci_phi_multiinfo / ci_phi_iit4)",
+  "substrate": "live ImmuneMemory store (immune_memory_new_text/bind, vadapt_field_recon_err) — NOT numpy/torch",
+  "stage_envelope": "DREAM/dream_lib.hexa 5-stage ultradian (WAKE/N1/N2/N3/REM) primitives inlined as dr_* (pure stage-encoding constants; dream_lib NOT imported to avoid a shared-module-loader EOF edge while engine_cli is mid-extension)",
+  "seeds": [1500, 1501, 1502],
+  "n_trials_per_stage": 600,
+  "n_lanes": 15,
+  "bars": {
+    "A_VARYING": {"metric": "Phi(stage) max-min spread", "bar": ">= 0.50", "meaning": "flat => consciousness static, no time axis"},
+    "B_DISTINCT": {"metric": "ordering_score(true) - ordering_score(shuffled stage->arousal mapping)", "bar": ">= 0.50", "meaning": "time envelope orthogonal to static structure; ultradian ordering collapses under stage-scale shuffle"},
+    "C_ULTRADIAN": {"metric": "WAKE>N3 AND REM>N3", "bar": "both true", "meaning": "REM rebound, NOT monotone decrease into sleep"}
+  },
+  "result": {
+    "phi_by_stage": {"WAKE": 29.01215996669896, "N1": 27.72691947894538, "N2": 24.852140248617869, "N3": 18.175322116513968, "REM": 24.78832581484438},
+    "arousal_by_stage": {"WAKE": 1.0, "N1": 0.78, "N2": 0.66, "N3": 0.20, "REM": 0.65},
+    "A_VARYING": {"spread": 10.836837850184993, "pass": true},
+    "B_DISTINCT": {"ordering_true": 2.0, "ordering_shuf": 1.0, "gap": 1.0, "pass": true},
+    "C_ULTRADIAN": {"wake_gt_n3": true, "rem_gt_n3": true, "pass": true},
+    "phi_iit4_8lane_fixed_subset": {"WAKE": 1.18e-15, "N1": 1.78e-15, "N2": 2.96e-15, "N3": 0.0, "REM": 3.55e-15, "note": "honest non-gating cross-check: the FIXED first-8-lane subset is not strongly integrated AS A SUBSET (~0 exact IIT4 MIP); the gating Phi is the full 15-lane Gaussian multi-info"},
+    "GREEN": true,
+    "structure": "consciousness has a TIME ENVELOPE: WAKE high, N3 deep-sleep trough, REM rebound (ultradian), distinct from the static DISTRIBUTED structure (H_1492)"
+  },
+  "verdict": "GREEN ENGINE-NATIVE (A & B & C all PASS) — consciousness Phi is NOT a static structure: same consciousness-gate connectome yields a stage-dependent integrated Phi with a literal ultradian envelope (WAKE 29.01 > N1 27.73 > N2 24.85 > N3 18.18 trough < REM 24.79 rebound). DISTINCT from the static structure (shuffling the stage->arousal mapping collapses the ultradian ordering).",
+  "wired": "engine-native (calls live core/engine_cli.hexa §ConsciousnessIndex ci_* ops; engine UNEDITED except a one-brace corrective fix to _ci_bit — see note). NO new §ConsciousnessIndex op added; measurement-only. ARCHITECTURE.json gets a consciousness time-dynamics measurement note (no tree change).",
+  "engine_brace_fix_note": "core/engine_cli.hexa _ci_bit() was missing its closing brace on origin/main (1231 '{' vs 1230 '}'), causing every FRESH importer to hit 'expected RBrace got Eof' (prior GREEN runs reused a stale hexa build cache). Added the single missing '}' (now 1231/1231 balanced); engine_cli_smoke 280/0 unchanged — strictly corrective, disjoint from §ConsciousnessIndex extension region.",
+  "scope_unverified": "TOY (1 store / 3 seeds / deterministic substrate context / Gaussian multi-info proxy for the 15-lane Phi + exact IIT4 on the 8-lane subset); scale / real-corpus / continuous-arousal / engine-transfer of the dynamics UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).",
+  "guards": "p1/p2/p3/p6: every lane COMPUTED from substrate reads; stage = scalar arousal/tension on the substrate, NO injected Phi label, NO 'WAKE=high' constant written into Phi, NO RLHF/persona. Psi-disjoint (pure READ over cell population + own covariance). NOT an emit gate (a_autonomy_over_hardcode). p7 = integration nats over stages, NOT perplexity."
+}
