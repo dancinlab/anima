@@ -1,0 +1,62 @@
+{
+  "best_fixed_size": 24,
+  "per_regime_best_fixed_size": {
+    "R1_STABLE": 24,
+    "R2_DRIFT": 24,
+    "R3_NOISE": 24
+  },
+  "SIZE_GRID": [
+    3,
+    6,
+    9,
+    12,
+    18,
+    24
+  ],
+  "GROW_K": 1.0,
+  "MARGIN": 0.05,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "regimes": {
+    "R1_STABLE": {
+      "A_cap": 0.7722,
+      "C_cap": 0.7722,
+      "ABL_cap": 0.7722,
+      "A_fab": 0.0278,
+      "C_fab": 0.0278,
+      "C_final_size_mean": 24.0,
+      "C_minus_A": 0.0,
+      "C_minus_ABL": 0.0
+    },
+    "R2_DRIFT": {
+      "A_cap": 0.59,
+      "C_cap": 0.59,
+      "ABL_cap": 0.59,
+      "A_fab": 0.0311,
+      "C_fab": 0.0311,
+      "C_final_size_mean": 24.0,
+      "C_minus_A": 0.0,
+      "C_minus_ABL": 0.0
+    },
+    "R3_NOISE": {
+      "A_cap": 0.5656,
+      "C_cap": 0.5656,
+      "ABL_cap": 0.5656,
+      "A_fab": 0.0356,
+      "C_fab": 0.0356,
+      "C_final_size_mean": 24.0,
+      "C_minus_A": 0.0,
+      "C_minus_ABL": 0.0
+    }
+  },
+  "wins_over_A+MARGIN": [],
+  "n_wins": 0,
+  "schedule_global_C_minus_ABL": 0.0,
+  "schedule_ok": false,
+  "fab_ok": true,
+  "never_much_worse": true,
+  "verdict": "WALL"
+}

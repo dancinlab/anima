@@ -1,0 +1,88 @@
+H_1528 — NEUROMODULATION via ADAPTIVE CAPACITY (neurogenesis): modulate the
+        NUMBER OF CELLS under load, NOT the operating point (LR / SPLIT_THRESH).
+FROZEN PRE-REGISTRATION (written BEFORE any run; bar is frozen-first, no tune-to-green).
+==============================================================================
+
+CONTEXT (a_break_the_wall — 11th independent lens on the H_1284 NEUROMODULATION wall)
+------------------------------------------------------------------------------
+The H_1284 wall is 10 lenses deep: original gain/temp/split controller + Amoeba
+allosteric buffer (H_1509/b/c) + diversity (H_1524) + multitimescale (H_1523) +
+predictive (H_1525) + emit-gate/abstain-margin (H_1526). EVERY prior lens modulated
+an OPERATING POINT (LR, SPLIT_THRESH, decode-temp, abstain-margin) at a FIXED store
+size, and EVERY one was INERT — the recall capability is decided by cell KEY-GEOMETRY
++ CAPACITY, not by the per-step schedule (geometry/capacity-bound bottleneck; ablation
+INERT precedent H_1416 / H_1284 family).
+
+THE ORTHOGONAL LEVER (structure family, not operating-point family): a neuromodulator
+that ADAPTS CAPACITY ITSELF — grows NEW cells (neurogenesis / mitosis) when substrate
+collision/load is high, vs a FIXED store size. Biological: adult hippocampal
+neurogenesis is gated by novelty/cortisol; anima §mitosis precedent (osmotic KL>C
+split, H_1511). The CAPACITY (max_cells) is the one knob NO prior lens touched — all
+10 prior arms ran on the SAME max_cells = round(0.6 * n_facts) bounded store.
+
+HYPOTHESIS: a load-gated capacity controller (grow when recent collision/recon-err
+high) beats the BEST FIXED store SIZE across regimes where the optimal #cells differs
+by regime — AND the win comes from the adaptive SCHEDULE, not merely from ending big.
+
+p7: exact ground truth, NO LLM judge, NO perplexity, NO loss term (the capacity knob
+is a no-grad read-out of substrate collision/surprise). p8: inference-time growth =
+the engine's own mitosis tick. numpy DIRECTIONAL (host has no torch;
+a_engine_native_learning — engine-native R2 deferred ING). $0 CPU. 3 seeds.
+
+CAPABILITY (RECALL, identical metric to H_1284 harness — reused byte-for-byte)
+------------------------------------------------------------------------------
+Same regimes R1_STABLE / R2_DRIFT / R3_NOISE, same N_FACTS=30, same fact set + event
+stream per (seed,regime), same FNV-1a byte-trigram key geometry, same recall/oos
+events. Capability = cap = acc - fab (recall accuracy minus fabrication rate), the
+EXACT H_1284 metric. Only the CAPACITY POLICY differs between arms; LR0/TH0 are fixed
+at the H_1284 best-fixed operating point (so this isolates CAPACITY, the new lever,
+from the already-INERT operating-point knobs).
+
+THE ANTI-CONFOUND (load-bearing, decisive): the FIXED baseline MUST be grid-tuned over
+STORE SIZE too. "Adaptive" must beat the BEST FIXED SIZE, not just a small one — else
+it is a trivial more-capacity win, not a modulation win.
+
+ARMS (identical fact set + event stream per (seed,regime); only the capacity policy differs)
+------------------------------------------------------------------------------
+A  = BEST-FIXED-SIZE. Grid-tune max_cells over a SIZE GRID on a DISJOINT tuning seed
+     (the SAME grid_tune discipline as H_1284 but sweeping SIZE), pick the single best
+     fixed max_cells averaged over the 3 regimes — the strongest honest fixed capacity.
+     (We ALSO record the per-regime best-fixed size to confirm the optimal size DIFFERS
+     by regime — the precondition for an adaptive win to be possible at all.)
+C  = ADAPTIVE-CAPACITY. Start small (max_cells = SIZE_GRID[0]); a substrate-load gate
+     RAISES the cap (allows new cells / neurogenesis) when the running collision/recon-
+     err uncertainty û (EMA of recon-err on writes) exceeds a reference, and holds it
+     otherwise. cap_t monotonically grows up to a hard ceiling = max(SIZE_GRID). NO LR /
+     SPLIT_THRESH change — ONLY the capacity ceiling moves.
+ABL= FIXED-AT-FINAL-SIZE. A FIXED store whose max_cells == the FINAL size C grew to
+     (per seed,regime). This isolates the adaptive SCHEDULE from the final size: if
+     ABL == C, then only ENDING BIG mattered (the growth schedule was INERT) and the
+     "win" is just more capacity, NOT capacity MODULATION → wall HOLDS against the
+     capacity family too (honest, c9).
+
+FROZEN FALSIFIER (MARGIN = 0.05, the H_1284 MARGIN, reused verbatim)
+------------------------------------------------------------------------------
+Let cap_A, cap_C, cap_ABL be mean (3 seeds) capability per regime.
+  WIN(regime)      iff cap_C >= cap_A + MARGIN          (adaptive beats best-fixed SIZE)
+  SCHEDULE(global) iff (cap_C - cap_ABL) >= MARGIN       (mean over regimes; the adaptive
+                       SCHEDULE, not just ending big, is what wins — anti-confound)
+  NO_FAB           iff in every WIN regime fab_C <= fab_A (no win bought by fabrication)
+  NEVER_MUCH_WORSE iff no regime has cap_C < cap_A - 0.02 (no regime badly regressed)
+
+VERDICT (pre-registered, no post-hoc bar move):
+  GREEN  (WALL-BROKEN) iff (#WIN regimes >= 2) AND SCHEDULE AND NO_FAB AND NEVER_MUCH_WORSE
+  PARTIAL              iff (#WIN >= 1) but SCHEDULE or multi-regime condition fails
+  WALL   (🧱, holds)   iff #WIN == 0  OR  (#WIN>=2 but NOT SCHEDULE — i.e. ABL==C, the
+                       win is just ending big, not the adaptive modulation; capacity
+                       family joins the 10 INERT operating-point lenses)
+
+HONEST (c9): if C only MATCHES a generously-sized fixed store (no SCHEDULE separation),
+the wall HOLDS against the capacity family — that is a real result, NOT a failure to
+hide. DIRECTIONAL / numpy mirror; engine-native R2 = deferred ING follow-on. NO
+tune-to-green: the SIZE grid + MARGIN + falsifier above are frozen here, before any run.
+
+SIZE_GRID (frozen): [3, 6, 9, 12, 18, 24]   (n_facts=30; spans under- to over-capacity)
+LOAD GATE (frozen): grow cap by +1 (up to ceiling) whenever on a WRITE the recon-err
+   surprise exceeds the running uncertainty û by GROW_K=1.0 EMAs AND the store is at
+   its current cap (a genuine collision under load); û = EMA(recon-err, rate 0.1).
+SEEDS (frozen): tune=7 (disjoint), score=[11,22,33] (H_1284 seeds verbatim).
