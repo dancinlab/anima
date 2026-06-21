@@ -1,0 +1,87 @@
+{
+  "hypothesis": "H_1533",
+  "lens": "modern/dense associative memory (exponential-separation retrieval)",
+  "cites": [
+    "Ramsauer et al 2020 arXiv:2008.02217",
+    "Krotov & Hopfield 2016 arXiv:1606.01164",
+    "Hopfield 1982 (linear capacity baseline)"
+  ],
+  "confusable_set": {
+    "n_anchors": 12,
+    "n_per_cluster": 5,
+    "n_facts": 60,
+    "mean_max_offdiag_cos": 0.9799
+  },
+  "tuned": {
+    "degree": 2,
+    "beta": 64.0,
+    "abstain_cos": 0.0
+  },
+  "MARGIN": 0.05,
+  "chance": 0.0167,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "mean": {
+    "linear": 0.8889,
+    "dense": 0.8889,
+    "modern": 0.8389,
+    "best": "dense",
+    "best_minus_linear": 0.0
+  },
+  "ablation": {
+    "dense_deg1": 0.8889,
+    "modern_beta0": 0.0167,
+    "dense_reverts": true,
+    "modern_reverts": true,
+    "decisive": true
+  },
+  "shuffle": {
+    "best_arm": "dense",
+    "best_shuf": 0.0111,
+    "collapses": true
+  },
+  "n_seed_break": 0,
+  "per_seed": [
+    {
+      "seed": 11,
+      "linear": 0.95,
+      "dense": 0.95,
+      "modern": 0.8833,
+      "dense_abl_deg1": 0.95,
+      "modern_abl_beta0": 0.0167,
+      "linear_shuf": 0.0,
+      "dense_shuf": 0.0,
+      "modern_shuf": 0.0,
+      "best_minus_linear": 0.0
+    },
+    {
+      "seed": 22,
+      "linear": 0.85,
+      "dense": 0.85,
+      "modern": 0.8167,
+      "dense_abl_deg1": 0.85,
+      "modern_abl_beta0": 0.0167,
+      "linear_shuf": 0.0333,
+      "dense_shuf": 0.0333,
+      "modern_shuf": 0.0167,
+      "best_minus_linear": 0.0
+    },
+    {
+      "seed": 33,
+      "linear": 0.8667,
+      "dense": 0.8667,
+      "modern": 0.8167,
+      "dense_abl_deg1": 0.8667,
+      "modern_abl_beta0": 0.0167,
+      "linear_shuf": 0.0,
+      "dense_shuf": 0.0,
+      "modern_shuf": 0.0,
+      "best_minus_linear": 0.0
+    }
+  ],
+  "verdict": "WALL_HOLDS",
+  "framing": "the H_1284 wall extends to the retrieval-rule family too (linear/dense/modern tie on the confusable set)"
+}
