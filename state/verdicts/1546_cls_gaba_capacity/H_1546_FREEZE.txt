@@ -1,0 +1,65 @@
+H_1546 — GABA × CLS: inhibitory E/I-balance gating of fast-store effective capacity
+FROZEN FALSIFIER (pre-registered BEFORE running — frozen-first, c9, NO tune-to-green)
+======================================================================================
+
+FUSION (the 5th neurotransmitter into the H_1532 two-store CLS — completes "신경전달물질
+모두 융합"; census H_1542 §rank-6):
+  • H_1532 🟢 (PR #2514/#2522) two-store CLS broke the H_1284 wall on AB-AC interference:
+    a FAST episodic store (Hasselmo encode-mode, fresh cell) + a SLOW store (replay) keep
+    confusable A->B / A->C in SEPARATE substrates. But H_1532 wrote each fast cell as a
+    DENSE key_vec — near-collinear keys still collide in the fast geometry (H_1533 regime).
+  • H_1533 🧱 (PR #2515) modern/dense RETRIEVAL energy did NOT separate the confusable
+    near-collinear recall regime (monotone sharpening preserves the single-step winner).
+  GABA reopen: the missing lever is WRITE geometry not retrieval energy — GABAergic
+  inhibition enforces SPARSE coding (k-winner-take-all), orthogonalizing near-collinear
+  inputs onto disjoint sparse supports = genuine PATTERN SEPARATION (Sahay 2011 Nature;
+  Stefanelli 2016 Neuron; Olshausen-Field 1996; Fiete 2008).
+
+THE LAW UNDER TEST (the H_1541/1543/1544 vs H_1545 fusion law):
+  a NT that ADDS a capability the two-store can't do   → 🟢 (ACh-mode/DA-rank/NE-flush)
+  a NT that only RE-TUNES an existing operation (a knob) → 🟠 (5-HT-timing: fixed-γ ~half)
+
+CLAIM: GABA-gated adaptive sparse coding (inhibition scaled to LOCAL confusability)
+lets the two-store CLS survive a CONFUSABLE near-collinear AB-AC regime that the DENSE
+two-store fails, AND the ADAPTIVE inhibition carries the MAJORITY vs a best-fixed k.
+
+ARMS:
+  GABA-SPARSE         : adaptive k-winner sparse fast-store write, k shrinks (sparser, more
+                        separation) as local confusability rises, relaxes (dense) when low
+  DENSE               : k = DIM, no inhibition (the H_1532 two-store default fast write)
+  BEST-FIXED-SPARSITY : strongest single grid-tuned FIXED k on a DISJOINT tune seed (the
+                        law discriminator — if it captures ≥half, GABA is a capacity KNOB)
+  WORST-FIXED         : weakest grid k (defines the GABA−worst gap for the majority bar)
+  ABL                 : adaptive inhibition frozen to a CONSTANT k (== best-fixed) → reverts
+  SHUFFLE             : confusability SIGNAL the gate reads permuted → sparsity at random keys
+
+FROZEN PARAMS (immutable post-freeze):
+  N_ANCHORS=12 · N_PER_CLUSTER=5 (60 confusable near-collinear AB-AC pairs, H_1533 geometry)
+  pert_sigma=0.045 (cos ~0.97-0.99) · K_SPARSE=4 · conf_lo=0.90 conf_hi=0.98 · DIM=16
+  MAX_CELLS_FAST=256 · MAX_CELLS_SLOW=256 (separation, not capacity, is the test)
+  LR*=0.20 · TH*=0.30 (engine-native, H_1532/H_1284) · ABSTAIN=0.45 · MARGIN=0.05
+  TUNE_SEED=7 (disjoint) · SCORE_SEEDS=[11,22,33]
+  k-grid = {1,2,3,4,6,8,12,16}
+
+FROZEN BARS (🟢 iff A∧B∧C∧D∧E):
+  A PRESENCE        : GABA-sparse − dense ≥ +0.05 on ≥2/3 seeds AND in mean
+                      (sparse coding ADDS confusable-recall the dense two-store lacks)
+  B EARNED-MAJORITY : GABA-sparse − best-fixed-k ≥ 0.5 × (GABA-sparse − worst-fixed-k)
+                      [the 5-HT-style law bar: adaptive inhibition must carry ≥half]
+  C ABL→fixed       : (GABA-sparse − abl_const) ≥ 0.05 AND |abl_const − best-fixed| < 0.05
+  D SHUFFLE collapse: (GABA-sparse − shuffle) ≥ 0.05
+  E NO-FAB          : best-fixed-k > 0 (real working baseline)
+
+VERDICT MAP:
+  🟢 GREEN  iff A∧B∧C∧D∧E — GABA adds ADAPTIVE pattern-separation (a NEW capability the
+            two-store lacks); the law's ADDS-CAPABILITY side, like ACh/DA/NE
+  🟠 AMBER  iff A∧E ∧ ¬B — sparse separation PRESENT but a best-fixed k captures ≥half →
+            GABA is a CAPACITY KNOB; the LAW HOLDS (re-tuning, like 5-HT). HONEST, NO bar moved
+  🧱 WALL/INERT iff ¬A — sparse coding ties dense → no separation lever (CLS already
+            separates the AB-AC into distinct substrates; GABA has nothing to orthogonalize)
+
+p7: exact ground truth (true A->B known), NO LLM judge / perplexity / loss. p8: write =
+engine tick. $0 CPU, 3 seeds. R1 numpy ⇒ DIRECTIONAL (a_engine_native_learning); engine
+§GabaSparse R2 deferred ING. Reuses H_1532 MemStore/key_vec/encode-mode + H_1533 confusable
+key geometry byte-exact. NO tune-to-green: if a fixed k still ≥half that is 🟠; if sparse
+ties dense that is 🧱/INERT — both reported, no bar moved.
