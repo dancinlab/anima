@@ -1,0 +1,63 @@
+H_1548 — SEROTONIN × CLS: consolidation COMMIT-GATE (slow-store integrity under contradiction)
+FROZEN FALSIFIER (pre-registered BEFORE running — frozen-first, c9, NO tune-to-green)
+==============================================================================================
+
+CAPABILITY REFRAME (NOT a bar-move of H_1545 timing):
+The fusion law of this batch (a_break_the_wall) — a neurotransmitter that ADDS a
+capability two-store CLS lacks earns GREEN (ACh mode-switch H_1541, DA value-rank H_1543,
+NE state-flush H_1544); one that only RE-TUNES an existing op stays AMBER (H_1545
+5-HT-TIMING: "when to sweep" re-schedules the period, a fixed period captured 66.6%).
+H_1548 does NOT re-run timing — it finds the CAPABILITY 5-HT adds.
+
+Biological 5-HT (Cools 2008; Dayan-Huys 2009) = behavioral INHIBITION / withholding an
+action pending confirmation + aversive/error valence. Mapped onto CLS: a COMMIT-GATE that
+withholds UNCONFIRMED / CONTRADICTED fast-store bindings from permanent commitment to the
+slow store, so transient or later-contradicted entries do not permanently corrupt the
+consolidated store.
+
+DISTINCT vs DA (H_1543): DA ranks WHICH valid memories replay first (priority ORDER).
+5-HT decides WHETHER to commit AT ALL pending confirmation (error/valence GATE, not rank).
+On a contradiction stream DA still commits the high-priority but WRONG last binding; the
+gate withholds it.
+DISTINCT vs H_1545 TIMING: H_1545 controls the sweep PERIOD (when it fires); every binding
+present at the boundary is still committed. H_1548 controls the sweep CONTENT (which
+bindings the sweep is allowed to commit). A fixed period cannot withhold a contradicted
+binding however it is scheduled.
+
+CLAIM: on a stream with CONTRADICTIONS (A->B written, later corrected A->B' before
+consolidation; plus NOISE bindings written once and never reconfirmed), the 5-HT
+commit-gate (commit only reconfirmed/uncontradicted; withhold contradicted/unconfirmed)
+keeps the SLOW store CORRECT where commit-all corrupts it with stale/wrong bindings and
+commit-recent is fooled by recency.
+
+ARMS:
+  HT5-GATE      : commit only RECONFIRMED (count>=CONFIRM_K) AND last-seen (uncontradicted)
+  COMMIT-ALL    : H_1532 default sweep — commit the winner/last cell, no gate
+  COMMIT-RECENT : commit the most-recent value, no confirmation logic (recency rule)
+  ABL           : gate threshold -> 0 (CONFIRM_K effectively 0) == commit-all
+  SHUFFLE       : confirmation ledger permuted across keys -> gate fires on WRONG evidence
+
+FROZEN PARAMS (immutable post-freeze):
+  N_CONFIRMED=16 · N_CONTRADICTED=16 · N_NOISE=16 · CONFIRM_K=2
+  LR*=0.20 · TH*=0.30 (engine-native, H_1532/H_1284) · ABSTAIN=0.45
+  MAX_CELLS=max(8, 1.5*total) · MARGIN=0.10 · SCORE_SEEDS=[11,22,33]
+  Ground truth: CONFIRMED key -> V ; CONTRADICTED key -> B' (the correction) ;
+                NOISE key -> NO truth (recall should ABSTAIN, not fabricate).
+
+FROZEN BARS (GREEN iff A AND B AND C AND D AND E):
+  A PRESENCE : gate_correct - commit_all_correct >= +0.10 on >=2/3 seeds AND in mean
+  B DISTINCT : commit_all corrupted by stale (all < gate-0.10) AND commit_recent fooled
+               by recency (recent < gate-0.10) -> gate beats BOTH controls
+  C ABL      : abl reverts to commit-all ( |abl - commit_all| < 0.10 ) AND gate-abl >= 0.10
+  D SHUFFLE  : permuted confirmation collapses ( gate - shuffle >= 0.10 ) -> proves the
+               lift reads TRUE confirmation, not a gate-rate side effect
+  E NO-FAB   : gate abstains on never-reconfirmed noise ( gate_no_fab >= 0.90 )
+
+VERDICT MAPPING:
+  A AND B AND C AND D AND E             -> GREEN  (5-HT adds the commit-gate CAPABILITY)
+  A only (a control already captures)   -> AMBER_PARTIAL  (5-HT genuinely re-tunes only)
+  not A                                 -> WALL_HOLDS
+
+c9: RED/AMBER reported honestly; bars NOT moved after seeing results; NO tune-to-green.
+If commit-all/recent already captures slow-store integrity, report AMBER/WALL — do NOT
+manufacture green.
