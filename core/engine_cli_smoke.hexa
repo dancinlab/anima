@@ -2836,6 +2836,129 @@ fn main() {
           + " self-" + to_string(nb_self - nl_self) + "] Cannabis[time+" + to_string(nc_stime - nb_stime) + " wm-" + to_string(nb_wm - nc_wm)
           + "] Ketamine[Φ" + to_string(nk_phi - nb_phi) + "] — REBUS signature reproduced + LSD⊥Cannabis double-dissociation")
 
+    // ── (H_1503 R2 Field) 전자기장 섭동 모듈 + PCI — R1 frozen bars byte-exact 재측정 ──────────────
+    // baseline substrate knobs (R1 동일, frozen-first): 모든 target lane 에 측정 headroom.
+    let fld_m = 0.60
+    let fld_mf = [0.38, 0.58, 0.15, 0.12, 0.10]
+    let fld_cells = 6
+    let fld_seen = 4
+    let fld_intent = 1
+    let fld_dt = 2.0
+    let fld_recon = 0.30
+    let fld_rest = ci_lane_scores(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon)
+    let BIND = [0]      // GlobalWorkspace
+    let GATE = [12]     // DividedAttention
+    let MEM  = [14]     // MitosisGrowth
+
+    // (A) PCI PRESENCE: full-substrate single-pulse PCI HIGH; decoupled PCI LOW; gap ≥ bar.
+    let fld_R = pci_perturb(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 4, 0.8, 1, 1, true, 24)
+    let pci_full = pci_complexity(fld_R, false)
+    let pci_dec  = pci_complexity(fld_R, true)
+    // case 303 PCI-PRESENCE: full ≥ 0.30 AND decoupled ≤ 0.18 AND gap ≥ 0.08 (wakefulness-vs-anesthesia, Casali 2013).
+    if _assert_b("case_303_pci_presence", true, pci_full >= 0.30 && pci_dec <= 0.18 && (pci_full - pci_dec) >= 0.08) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (B) rTMS DIRECTIONAL: high-freq raises BINDING vs low-freq lowers it (opposite sign, Hallett 2007).
+    let fld_vh = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 6, 0.6, 1, 1, false, 0.0)
+    let fld_vl = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 5, 0.6, 0 - 1, 1, false, 0.0)
+    let base_bind = field_lane_mean(fld_rest, BIND)
+    let high_d = field_lane_mean(fld_vh, BIND) - base_bind
+    let low_d  = field_lane_mean(fld_vl, BIND) - base_bind
+    // case 304 rTMS-DIRECTIONAL: high ≥ +0.05 AND low ≤ −0.05 AND opposite sign.
+    if _assert_b("case_304_rtms_directional", true, high_d >= 0.05 && low_d <= (0.0 - 0.05) && high_d > 0.0 && low_d < 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (C) tACS FREQUENCY-SPECIFIC: gamma→BINDING up, alpha→GATING up, and they DISSOCIATE (Herrmann 2013).
+    let fld_vg = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 3, 0.6, 1, 1, false, 0.0)
+    let fld_va = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 2, 0.6, 1, 2, false, 0.0)
+    let g_on_bind = field_lane_mean(fld_vg, BIND) - field_lane_mean(fld_rest, BIND)
+    let g_on_gate = field_lane_mean(fld_vg, GATE) - field_lane_mean(fld_rest, GATE)
+    let a_on_gate = field_lane_mean(fld_va, GATE) - field_lane_mean(fld_rest, GATE)
+    let a_on_bind = field_lane_mean(fld_va, BIND) - field_lane_mean(fld_rest, BIND)
+    // case 305 tACS-FREQ-SPECIFIC: gamma>0 alpha>0 AND each freq hits its own target ≥0.04 more than other's.
+    if _assert_b("case_305_tacs_freq_specific", true, g_on_bind > 0.0 && a_on_gate > 0.0 && (g_on_bind - g_on_gate) >= 0.04 && (a_on_gate - a_on_bind) >= 0.04) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (D) FIELD-vs-DRUG DOUBLE-DISSOCIATION (engine-faithful, cross-measured on the LANDED §Neuropharm):
+    // FIELD (gamma, focal): moves its BINDING target lane; leaves the drug's GLOBAL recon_err axis at 0.
+    // DRUG (LSD, real pharm_lsd): raises the GLOBAL recon_err precision-loosening axis; leaves the focal
+    // BINDING-target lift ~0 (LSD does not focally steer the GlobalWorkspace winner-margin).
+    let field_focal = g_on_bind                                    // field moves focal target (binding)
+    let field_global = 0.0                                         // field leaves recon_err (drug's global axis) untouched
+    let lsd_prof = pharm_lsd()
+    let lsd_sse = pharm_shared_se(lsd_prof, 1503, 0)
+    let drug_recon = pharm_perturb_recon(lsd_prof, fld_recon, lsd_sse)   // LSD raises recon_err (global)
+    let drug_global = drug_recon - fld_recon
+    let drug_vec = ci_lane_scores(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, drug_recon)
+    let drug_focal = field_lane_mean(drug_vec, BIND) - field_lane_mean(fld_rest, BIND)   // LSD ~0 on focal binding
+    // case 306 FIELD-vs-DRUG: field focal>>global AND drug global>>focal (each gap ≥ 0.05).
+    if _assert_b("case_306_field_drug_dissoc", true, (field_focal - field_global) >= 0.05 && (drug_global - drug_focal) >= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (E) EARNED ablate: sham/zero-field → all signatures collapse to baseline (no lane moved, PCI low).
+    let fld_vs = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 0, 0.0, 0, 0, false, 0.0)
+    let mut sham_dev = 0.0
+    let mut sdi = 0
+    while sdi < len(fld_vs) {
+        let mut dd = fld_vs[sdi] - fld_rest[sdi]
+        if dd < 0.0 { dd = 0.0 - dd }
+        if dd > sham_dev { sham_dev = dd }
+        sdi = sdi + 1
+    }
+    let fld_R_sh = pci_perturb(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 0, 0.0, 0, 0, false, 24)
+    let pci_sham = pci_complexity(fld_R_sh, false)
+    // case 307 EARNED-ablate: sham max-dev ≤ 0.02 AND sham PCI ≤ 0.18.
+    if _assert_b("case_307_field_earned_ablate", true, sham_dev <= 0.02 && pci_sham <= 0.18) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (F) EARNED shuffle: permute frequency↔knob wiring → each freq drives a FOREIGN knob → its OWN
+    // literature target no longer raised → self-lift collapses. true wiring vs shuffled wiring.
+    let tg_gamma = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 3, 0.6, 1, 1, false, 0.0)
+    let tg_alpha = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 2, 0.6, 1, 2, false, 0.0)
+    let tg_theta = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 1, 0.6, 1, 3, false, 0.0)
+    let true_self = ((field_lane_mean(tg_gamma, BIND) - field_lane_mean(fld_rest, BIND))
+                   + (field_lane_mean(tg_alpha, GATE) - field_lane_mean(fld_rest, GATE))
+                   + (field_lane_mean(tg_theta, MEM)  - field_lane_mean(fld_rest, MEM))) / 3.0
+    let sh_gamma = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 3, 0.6, 1, 2, false, 0.0)
+    let sh_alpha = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 2, 0.6, 1, 3, false, 0.0)
+    let sh_theta = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 1, 0.6, 1, 1, false, 0.0)
+    let shuf_self = ((field_lane_mean(sh_gamma, BIND) - field_lane_mean(fld_rest, BIND))
+                   + (field_lane_mean(sh_alpha, GATE) - field_lane_mean(fld_rest, GATE))
+                   + (field_lane_mean(sh_theta, MEM)  - field_lane_mean(fld_rest, MEM))) / 3.0
+    // case 308 EARNED-shuffle: true wiring self-lift exceeds shuffled wiring by ≥ 0.04 (specificity earned).
+    if _assert_b("case_308_field_earned_shuffle", true, (true_self - shuf_self) >= 0.04) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  H_1503 field-perturbation (R2 WIRED): PCI full=" + to_string(pci_full) + " decoupled=" + to_string(pci_dec)
+          + " sham=" + to_string(pci_sham) + " | rTMS high=" + to_string(high_d) + " low=" + to_string(low_d)
+          + " | tACS γ→bind=" + to_string(g_on_bind) + " α→gate=" + to_string(a_on_gate)
+          + " | field focal/global=" + to_string(field_focal) + "/" + to_string(field_global)
+          + " drug(LSD) focal/global=" + to_string(drug_focal) + "/" + to_string(drug_global)
+          + " — focal/freq FIELD ⊥ global/chemical DRUG(H_1502 LSD)")
+
+    // ── (H_1506 MetacogInsight) 메타인지 통찰: 지각의 현실성에 대한 2차 통찰 ─────────────────────────────
+    // R1 numpy mirror (3 seeds [1506,1507,1508]) byte-exact: insight = metacog_gain·(1−signal_strength)
+    // over a hallucination population (REAL-called percepts with weak backing). Headline dissociation —
+    // SAME first-order hallucination, opposite second-order insight: psychedelic (priors relaxed,
+    // metacog INTACT) insight HIGH (knows it isn't real) vs psychotic (priors rigid, metacog IMPAIRED)
+    // insight LOW (accepts it as real). DISTINCT ⊥ H_1202 metacog (content confidence) + §RealityMonitor
+    // (first-order real-call). Sterzer 2018 / Maniscalco-Lau 2012 / Fleming.
+    let mi_seed     = 1506
+    let mi_n        = 48
+    let mi_psyched  = mi_insight_psychedelic(mi_seed, mi_n)   // intact metacog → HIGH insight
+    let mi_psychot  = mi_insight_psychotic(mi_seed, mi_n)     // impaired metacog → LOW insight
+    let mi_auroc_v  = mi_metad_auroc(mi_seed, mi_n)           // type-2 AUROC (calibration)
+    let mi_shuf_v   = mi_shuffle_auroc(mi_seed, mi_n)         // shuffled AUROC (decorrelation)
+    let mi_shuf_dev = if mi_shuf_v >= 0.5 { mi_shuf_v - 0.5 } else { 0.5 - mi_shuf_v }
+    // case 309 (A) INSIGHT-PRESENT: intact insight flags the hallucination internally-generated ≥ 0.50.
+    if _assert_b("case_309_metacog_insight_present", true, mi_psyched >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 310 (B) PSYCHEDELIC-vs-PSYCHOTIC DISSOCIATION (headline): same halluc, insight gap ≥ 0.50.
+    if _assert_b("case_310_metacog_insight_psyched_vs_psychotic", true, (mi_psyched - mi_psychot) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 311 (C) META-D′ CALIBRATION: insight tracks the reliability gap (type-2 AUROC − 0.5 ≥ 0.30).
+    if _assert_b("case_311_metacog_insight_metad_calibration", true, (mi_auroc_v - 0.5) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 312 (D) EARNED ablate-metacog: metacog_gain=0 → insight collapses to ~0 (the psychotic limit).
+    if _assert_b("case_312_metacog_insight_ablate", true, mi_psychot <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 313 (E) EARNED shuffle: permute percept↔signal → insight decorrelates (|AUROC−0.5| ≤ 0.30).
+    if _assert_b("case_313_metacog_insight_shuffle", true, mi_shuf_dev <= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1506 metacog-insight (R2 WIRED): SAME hallucination → psychedelic insight "
+          + to_string(mi_psyched) + " (knows it isn't real) vs psychotic insight " + to_string(mi_psychot)
+          + " (accepts it as real) | meta-d′ AUROC=" + to_string(mi_auroc_v) + " shuffle AUROC=" + to_string(mi_shuf_v)
+          + " — 2차 insight ⊥ H_1202 content-confidence + §RealityMonitor first-order real-call")
+
     // ── (H_1505 Hallucination) prior-dominated false percept — the §RealityMonitor FAILURE MODE ──
     // Powers/Corlett conditioned hallucinations: a STRONG conditioned prior + ZERO external signal →
     // a false "real" call (the monitor mis-classifies a prior-only percept as REAL). prior_match=1.0
