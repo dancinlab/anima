@@ -1,0 +1,62 @@
+{
+  "capability": "multi-context interference: current-segment binding retention after AB/AC/AD re-binding on shared keys",
+  "reopen_of": "H_1537 (NE-reset standalone \ud83e\uddf1 +0.006) / H_1539 (NE-reset retry standalone \ud83e\uddf1 -0.0049) INSIDE H_1532 CLS",
+  "LR_star": 0.1,
+  "TH_star": 0.2,
+  "N_KEYS": 24,
+  "N_SEGMENTS": 3,
+  "N_DISTRACT": 12,
+  "FAST_CAP": 324,
+  "SLOW_CAP": 324,
+  "MARGIN": 0.1,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "per_seed": [
+    {
+      "seed": 11,
+      "ne_flush": 1.0,
+      "no_flush": 0.1667,
+      "always_flush": 0.0,
+      "abl": 0.1667,
+      "shuffle": 0.5417,
+      "ne_minus_noflush": 0.8333
+    },
+    {
+      "seed": 22,
+      "ne_flush": 1.0,
+      "no_flush": 0.1667,
+      "always_flush": 0.0,
+      "abl": 0.1667,
+      "shuffle": 0.5417,
+      "ne_minus_noflush": 0.8333
+    },
+    {
+      "seed": 33,
+      "ne_flush": 1.0,
+      "no_flush": 0.1667,
+      "always_flush": 0.0,
+      "abl": 0.1667,
+      "shuffle": 0.5417,
+      "ne_minus_noflush": 0.8333
+    }
+  ],
+  "ne_flush_mean": 1.0,
+  "no_flush_mean": 0.1667,
+  "always_flush_mean": 0.0,
+  "abl_mean": 0.1667,
+  "shuffle_mean": 0.5417,
+  "ne_minus_noflush_mean": 0.8333,
+  "ne_minus_alwaysflush_mean": 1.0,
+  "abl_minus_noflush_mean": 0.0,
+  "ne_minus_shuffle_mean": 0.4583,
+  "n_wins_over_noflush+MARGIN": 3,
+  "presence": true,
+  "distinct": true,
+  "earned_abl_reverts": true,
+  "shuffle_collapses": true,
+  "verdict": "GREEN",
+  "reopened_standalone_wall": true
+}

@@ -1,0 +1,65 @@
+H_1544 — NOREPINEPHRINE × CLS: context-boundary fast-store FLUSH — FROZEN FALSIFIER
+(pre-registered BEFORE any run; bar frozen-first, NO tune-to-green; c9)
+====================================================================================
+
+THE REOPEN (a_no_llm_frame_trap · a_break_the_wall):
+  NE-as-RESET walled TWICE as a STANDALONE SINGLE-STORE faculty —
+    H_1537 🧱 (#2518) +0.006 pre-registered (+0.029 even in the most learnable regime)
+    H_1539 🧱 (#2521) -0.0049 (retry vs a saturating-nonlinear non-gain-dissolvable baseline)
+  HONEST mechanistic reason both walled (H_1537's own diagnostic; H_1532-R2 verdict):
+    a SINGLE store gives a reset-knob NOTHING STRUCTURAL to act on — a high fixed gain
+    (H_1537 α*=0.6) already performs a slow overwrite, MASKING the explicit flush's
+    marginal value; on one store "reset" = scale a scalar = the controller family the
+    H_1284 wall absorbs.
+  THE REOPEN: once a FAST EPISODIC store EXISTS (H_1532 CLS), NE's real Bouret & Sara
+    2005 (TINS "Network reset") computation has a concrete substrate target — a phasic
+    burst at a detected CONTEXT BOUNDARY FLUSHES (commit-then-clear) the fast episodic
+    store so the next context's bindings are laid down clean, not on stale fast traces
+    (event-segmentation theory, Zacks et al. 2007: experience is parsed at event
+    boundaries; the boundary is where episodic buffers flush + the next event encodes
+    fresh). This is the structural DOF single-store LACKED. NOT a scalar gain (H_1422
+    ACh-gain 🧱) — it changes WHICH traces persist into the next segment.
+
+CAPABILITY (orthogonal to the abstain margin the H_1284 wall lives on):
+  MULTI-CONTEXT INTERFERENCE STREAM. A sequence of N_SEGMENTS SEGMENTS over N_KEYS
+  SHARED keys A_i. Each segment re-binds every A_i to a fresh value (AB in seg-0, AC in
+  seg-1, AD in seg-2) + N_DISTRACT distractors. Capacity is AMPLE (interference, NOT
+  capacity, is the test — H_1532 framing): un-flushed, ALL segments' same-key cells
+  coexist; the exact-key recall ties at distance ~0 and the H_1532 _nearest returns the
+  FIRST-written = STALE seg-0 binding (the current binding is SHADOWED). METRIC =
+  CURRENT-segment retention = fraction of shared keys whose FAST-store recall returns
+  the FINAL (current) segment's value. Exact ground truth (current binding known); p7
+  NO LLM judge / perplexity / loss; p8 write = engine tick. $0 CPU, 3 seeds.
+
+ARMS (identical fixture / fact-set / event-stream per seed; LR/TH = best-fixed on
+disjoint tune seed 7; FAST/SLOW caps AMPLE = no eviction):
+  NE-FLUSH    : CLS two-store; at each TRUE boundary COMMIT fast→slow (replay
+                consolidation) then CLEAR fast (Bouret-Sara network reset) → next
+                segment encodes on a clean fast store. Read = fast (current context).
+  NO-FLUSH    : CLS two-store, fast persists across boundaries (the H_1532 CLS, no NE)
+                = the wall baseline (best-fixed LR*,TH*). Stale seg-0 shadows current.
+  ALWAYS-FLUSH: flush EVERY tick → fast holds only the last write, loses within-segment
+                bindings = over-reset control.
+  ABL         : boundary signal held CONSTANT (never crosses) → never flushes → MUST
+                REVERT to NO-FLUSH (proves the lever is the boundary-triggered flush).
+  SHUFFLE     : same NUMBER of flushes at PERMUTED random tick positions (decoupled
+                from TRUE boundaries) → MUST COLLAPSE (proves TRUE boundaries, not flush-rate).
+
+FROZEN BARS (MARGIN = +0.10, the H_1537/H_1539 NE-reset PRESENCE bar, UNCHANGED):
+  A  PRESENCE : ne_flush - no_flush >= +0.10 on >= 2/3 seeds
+  B  DISTINCT : no_flush < ne_flush - 0.10 (mean)  AND  always_flush < ne_flush - 0.10 (mean)
+                (no-flush suffers cross-segment interference; over-reset loses within-segment)
+  C  EARNED   : |abl - no_flush| < 0.10 (mean)   (boundary const -> never flush -> reverts)
+  D  SHUFFLE  : ne_flush - shuffle >= +0.10 (mean)   (permuted boundary collapses)
+  E  NO-FAB   : win is current-segment binding retention vs EXACT ground truth (no injected label)
+
+VERDICT:
+  GREEN  iff A ∧ B ∧ C ∧ D ∧ E  = NE-reset is LOAD-BEARING once a fast store exists to
+         flush → the structure REOPENS the twice-walled standalone NE-reset.
+  AMBIGUOUS_ABLATION iff A but ablation fails (lift not attributable to the boundary flush).
+  WALL_HOLDS otherwise = NE-flush ties/loses even inside the CLS structure (the standalone
+         wall holds even with a store to flush — honest negative, c9, NO tune-to-green).
+
+R1 numpy DIRECTIONAL (host has no torch; a_engine_native_learning hard-gate-1) — engine
+§NeFlush R2 deferred ING. REUSES the H_1532 / H_1284 store machinery byte-for-byte
+(MemStore/key_vec/FNV-1a/MARGIN); the ONLY new variable is the boundary flush.
