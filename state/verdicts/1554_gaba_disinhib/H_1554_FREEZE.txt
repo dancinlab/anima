@@ -1,0 +1,56 @@
+H_1554 — GABA × CLS — DISINHIBITION GATING (VIP→SST→PV context-cued write/read routing)
+FROZEN FALSIFIER — pre-registered BEFORE the scored run (c9, NO tune-to-green).
+
+Census H_1553 RANK 1 — the strongest ORTHOGONAL GABA family after 3 sparse-coding falsifications
+(H_1546 separation INERT · H_1551 capacity STATIC · H_1552 non-stationary STATIC). Orthogonal because
+the lever is WRITE-PORT ROUTING (which bindings land in which context's substrate), NOT representational
+density (sparse) / temporal segmentation (gamma) / score rescale (divnorm). Biology: Pi/Kepecs 2013
+Nature 503:521; Williams & Holtmaat 2019 Nat Neurosci 22:1834.
+
+CAPABILITY (the test):  WITHIN-store context collisions. K_CTX=6 contexts each write B_PER=8 bindings
+into a SHARED store; with prob ρ a binding's KEY collides with a key already owned by ANOTHER context
+(different (ctx,key)->value). Recall the RIGHT (ctx,key)->value. This is NOT the trivial novel→fast /
+familiar→slow routing the H_1532 CLS already does (the fast/slow split does not separate WITHIN-store
+cross-context key collisions) — that redundancy is the honest 🧱 risk, forced out by the collision regime.
+
+SWEEP:  ρ ∈ {0.0, 0.25, 0.5, 0.75, 1.0}  ×  seeds [11,22,33].  MARGIN=0.05  PRESENCE_BAR=0.10.
+        ADAPT_THR=0.15 (gate CLOSE threshold on collision-pressure EMA, frozen).
+        LR*=0.20 TH*=0.30 (engine VAdaptField constants) ABSTAIN=0.45 MAX_CELLS=72. $0 CPU, p7.
+
+ARMS:
+  DISINHIB-ADAPTIVE  — VIP gate opens (shared store) / closes (route into context-addressed sub-store)
+                       per CURRENT collision-pressure cue (EMA of recent key-collisions).
+  NO-GATE            — H_1532 default: gate never closes (always shared store, no routing).
+  BEST-FIXED-GATE    — single CONSTANT gate decision (always-open OR always-closed), grid-tuned over the
+                       WHOLE ρ sweep on DISJOINT tune seed 7 (the honest strong baseline).
+  ABL                — gate cue held CONSTANT → degenerates to the best FIXED gate (no adaptivity).
+  CUE-SHUFFLE        — collision-pressure cue permuted: adaptive policy but cue→subset addressing
+                       permuted (mis-routed disinhibition).
+  ACh-FROZEN pair    — ACh encode-mode (suppress_retrieval) held OPTIMAL-ON for EVERY write in BOTH the
+                       adaptive and no-gate arms (encode/retrieve perfectly separated), contexts still
+                       collide WITHIN the encode phase → deconfound: lift here = ROUTING not mode-switch.
+
+FROZEN BARS (do NOT move):
+  A PRESENCE+SHIFT   : (adaptive − best-fixed) ≥ ½·(adaptive − worst-baseline) over the sweep
+                       AND do-no-harm at low-ρ: adaptive(ρ=0) ≥ no-gate(ρ=0) − MARGIN
+                       = the "optimum shifted" evidence (adaptive carries the MAJORITY of the gap).
+  B DISTINCT         : no-gate FAILS at high-ρ (no_gate(1.0) < adaptive(1.0) − MARGIN)
+                       AND best-fixed CANNOT win both ends (fixed loses ≥ MARGIN at ρ=0 OR ρ=1.0).
+  C ABL→best-fixed   : adaptive − abl ≥ MARGIN (freezing the cue reverts to the fixed gate).
+  D CUE-SHUFFLE→     : adaptive − cue-shuffle ≥ MARGIN (mis-routed disinhibition collapses).
+       collapse
+  E DECONFOUND       : (adaptive_achfrozen − no_gate_achfrozen) ≥ MARGIN — lift SURVIVES with the ACh
+       (ACh-FROZEN)    encode/retrieve gate held optimal ⇒ it is ROUTING, not a re-skin of ACh
+                       mode-switching (ACh is global-temporal, cannot route by context cue). LOAD-BEARING.
+
+VERDICT RULE:
+  🟢 GREEN          iff A ∧ B ∧ C ∧ D ∧ E   (adaptive routing carries the majority + does-no-harm proves
+                                             the optimum shifted + survives ACh deconfound).
+  🟠 AMBER_KNOB     if best-fixed-gate captures ≥ half (earned < ½·gap) but adaptive still adds
+                    (adaptive − no-gate ≥ MARGIN) — routing is a KNOB, like 5-HT / H_1534 budget.
+  🧱 WALL_REDUNDANT if gating ties no-gate (adaptive − no-gate < MARGIN) — the CLS already routes →
+                    redundant, like H_1546 sparse-separation.
+
+HONEST ANY TIER (c9). NO tune-to-green — bars frozen here BEFORE scoring; RED reported RED.
+HARD-GATE-1 (a_engine_native_learning): numpy ⇒ auto-DIRECTIONAL, terminal NOT permitted; engine
+§GabaDisinhib R2 deferred ING h1554-r2-engine-native. live core/*.hexa UNTOUCHED, Ψ-disjoint.
