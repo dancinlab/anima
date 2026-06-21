@@ -1,0 +1,81 @@
+H_1555 — GABA × CLS — GAMMA-OSCILLATION temporal-binding (adaptive bin-width)
+FROZEN FALSIFIER — pre-registered BEFORE the scored run (c9, NO tune-to-green).
+
+Census H_1553 RANK 2 — the LAST untested ORTHOGONAL GABA mechanism-family. Orthogonal because the
+lever is TEMPORAL SEGMENTATION (which features count as simultaneous = one item vs span two items),
+NOT representational density (sparse-coding H_1546/1551/1552 all 🧱 STATIC) / write-port routing
+(disinhibition H_1554 🟠 KNOB) / score rescale (divnorm R3 SKIP) / E-I setpoint (R4 SKIP). Biology:
+PV-basket-cell GABAergic feedback generates a ~40 Hz gamma rhythm that chops continuous input into
+discrete time-bins; features in the SAME gamma cycle bind into ONE memory item, features in SUCCESSIVE
+cycles stay SEPARATE (Lisman & Jensen 2013 Neuron 77:1002 "The Theta-Gamma Neural Code"; Buzsáki & Wang
+2012 Annu Rev Neurosci 35:203). Adaptive bin-WIDTH = gamma frequency tracks input rate (fast arrivals →
+narrow bins → finer separation; slow/bursty → wide bins → group co-arriving features).
+
+CAPABILITY (the test): a BOUNDARY-FREE continuous STREAM of feature events arriving at a controllable
+inter-arrival GAP. Ground-truth ITEMS are groups of features that CO-OCCUR (their gaps are SMALL =
+within one item); successive items are separated by a LARGER gap. There are NO abrupt context boundaries
+(NE-deconfound, load-bearing — census-flagged near-overlap with NE-flush H_1544 🟢): the only structure
+is co-occurrence TIMING. The segmenter must decide, from the gap pattern alone, which consecutive
+features belong to the SAME item (bind together) vs the NEXT item (separate). METRIC = item-binding F1:
+fraction of ground-truth items correctly recovered (a recovered item = the exact set of features the
+segmenter grouped into one binding matches a ground-truth item's feature-set), averaged item-F1 over
+the stream. Capacity AMPLE (segmentation, NOT capacity, is the test). p7: exact ground truth (the
+item grouping is known); NO LLM judge / loss / perplexity. p8: write = the engine's own tick. $0 CPU.
+
+RATE SWEEP: the stream is generated at two arrival-RATE regimes so the optimal bin-width SHIFTS:
+  FAST regime — small within-item gaps, small between-item gaps (everything compressed); a WIDE fixed
+                bin over-MERGES distinct items.
+  SLOW regime — large within-item gaps, larger between-item gaps (everything stretched); a NARROW fixed
+                bin over-FRAGMENTS single items.
+  rate ∈ {FAST, SLOW} × seeds [11,22,33]. MARGIN=0.10 (PRESENCE bar). ADAPT_K=0.5 (bin-width =
+  ADAPT_K × running-median inter-arrival gap EMA, frozen). Within/between gap ratio = 1:4 both regimes
+  (the SAME separability; ONLY the absolute scale shifts → a fixed bin tuned to one regime fails the other).
+
+ARMS (identical fixture / feature-set / event-stream per (regime,seed); the gap timestamps are the cue):
+  GAMMA-ADAPTIVE    — bin-width tracks the running inter-arrival gap (ADAPT_K × median-gap EMA); a new
+                      bin opens when the next gap exceeds the current bin-width → features in one bin
+                      bind into one item.
+  NO-BINNING        — H_1532 default: no temporal segmentation; each feature is its own singleton
+                      binding (no grouping at all) = the wall baseline.
+  BEST-FIXED-BINWIDTH — a single CONSTANT bin-width, grid-tuned over the WHOLE rate sweep on DISJOINT
+                      tune seed 7 (the honest strong baseline — if one fixed width wins BOTH regimes,
+                      gamma's adaptivity is INERT → 🧱).
+  ABL (const-bin)   — bin-width frozen to a constant (gamma's adaptive signal OFF) → MUST revert to a
+                      fixed-bin result (proves the lever is the ADAPTIVE width, not the binning machinery).
+  SHUFFLE           — the inter-arrival GAP cue is permuted (gap sequence randomized, decoupled from the
+                      true item structure) → MUST COLLAPSE (proves it is the TRUE co-occurrence timing,
+                      not the number of bins / a periodic chop).
+  NE-FROZEN-DECONFOUND — NE-flush (H_1544) held ON: at every LARGE gap (the within-stream analogue of a
+                      boundary) the fast store is flushed. Since the stream has NO abrupt CONTEXT
+                      boundaries (it is one continuous context, only co-occurrence timing), NE-flush has
+                      nothing meaningful to flush for GROUPING — it cannot recover item membership.
+                      Gamma's lift MUST survive with NE-FROZEN (gamma − ne_frozen ≥ MARGIN) → proves
+                      boundary-free GROUPING ≠ NE segmentation. If gamma ties/loses to NE-frozen, gamma is
+                      NE-flush re-skinned → 🧱-redundant (SKIP as a distinct family).
+
+FROZEN BARS (MARGIN = 0.10):
+  (A PRESENCE+SHIFT) gamma_adaptive − best_fixed_binwidth ≥ ½(gamma − worst_fixed) across the rate
+                     sweep AND gamma − no_binning ≥ MARGIN (mean over regimes/seeds).
+  (B DISTINCT)       no_binning fails to bind co-occurring features (no_binning < gamma − MARGIN) AND a
+                     single best-fixed-binwidth cannot win BOTH FAST and SLOW (best-fixed loses ≥ MARGIN
+                     in at least one regime where gamma holds).
+  (C ABL→fixed)      const-bin (adaptive OFF) reverts to ≤ best_fixed_binwidth + MARGIN (adaptive INERT
+                     when frozen → its lift was the ADAPTIVE width).
+  (D SHUFFLE→collapse) gamma − shuffle ≥ MARGIN (permuted gap cue collapses).
+  (E NE-DECONFOUND)  gamma − ne_frozen ≥ MARGIN (boundary-free grouping survives NE-flush-frozen →
+                     gamma is a DISTINCT capability, not NE re-skinned).
+
+VERDICT:
+  🟢 GREEN     iff A ∧ B ∧ C ∧ D ∧ E.
+  🟠 KNOB      if best-fixed-binwidth captures ≥ half (A's earned-shift sub-bar fails but PRESENCE holds).
+  🧱 WALL      if gamma ties no-binning (segmentation INERT) OR gamma's lift VANISHES under NE-FROZEN
+               (E fails → redundant with NE-flush, not a distinct GABA family).
+
+This CLOSES the GABA mechanism-family census (R2 was the last orthogonal family). HONEST any tier — if
+🟠/🧱, GABA is now MULTI-FAMILY-CONFIRMED across ALL its mechanism families (sparse-coding STATIC ×3,
+disinhibition KNOB, gamma) = a STRUCTURAL/KNOB substrate lever, NOT an adaptive faculty the way the 5
+GREEN NTs (ACh/DA/NE/orexin/5-HT) are. NO tune-to-green; bars frozen here BEFORE the run.
+
+GUARDS: a_engine_native_learning hard-gate-1 — numpy mirror ⇒ DIRECTIONAL, NOT terminal; engine §GabaGamma
+R2 = obligatory follow-on ING. REUSES H_1532/H_1544 MemStore/key_vec/FNV-1a/MARGIN byte-for-byte; the ONLY
+new variable is the temporal bin segmentation. Ψ-disjoint (memory-grouping read, NOT an emit gate). c9/p7.
