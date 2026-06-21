@@ -1,0 +1,56 @@
+H_1535 — NEUROMODULATION on the OBJECTIVE / COST-TRADEOFF axis (precision↔recall Pareto)
+VERDICT: 🟠 PARTIAL — WALL NOT BROKEN (DIRECTIONAL, numpy mirror, HARD-GATE-1)
+frozen falsifier: H_1535_FREEZE.txt (pre-registered before any run). bar NOT met.
+
+=== RESULT (3 seeds [11,22,33], $0 CPU, p7, normalized cost-utility in [0,1]) ===
+m_fixed = 0.20 (single best-fixed margin, avg-best across the 3 cost regimes, disjoint seed 7)
+m_opt   = {R_PRECISION:0.20, R_RECALL:0.60, R_BALANCED:0.20}  (per-regime Pareto optima)
+m_blind (ABL regime-blind point) = mean(m_opt) = 0.333
+
+| regime       | cost (fe:miss) | FIXED | ADAPT  | ABL  | ADAPT−FIXED | ADAPT−ABL |
+|--------------|----------------|-------|--------|------|-------------|-----------|
+| R_PRECISION  | 5:1            | 1.000 | 1.000  | 1.000| +0.0000     | +0.0000   |
+| R_RECALL     | 1:5            | 0.000 | 0.9918 | 0.000| +0.9918     | +0.9918   |
+| R_BALANCED   | 2:2            | 1.000 | 1.000  | 1.000| +0.0000     | +0.0000   |
+
+wins_over_FIXED+MARGIN = [R_RECALL]   (1/3)
+shift_decisive (ADAPT−ABL ≥ +0.05) = [R_RECALL]   (1/3)
+no_harm = true
+FROZEN BAR: GREEN needs (1) ADAPT−FIXED ≥ +0.05 on ≥2/3 AND (2) ADAPT−ABL ≥ +0.05 on ≥2/3.
+(1) holds on 1/3, (2) holds on 1/3 → bar NOT met → 🟠 PARTIAL (1-regime win), NOT GREEN.
+
+=== THE LOAD-BEARING DIAGNOSTIC: the cost-objective optimum is a STEP, not a continuum ===
+Cost-ratio → optimal margin sweep (disjoint tune seed 7), false-emit:miss:
+   5:1 → 0.20 | 3:1 → 0.20 | 2:1 → 0.20 | 1:1 → 0.20 |
+   1:2 → 0.60 | 1:3 → 0.60 | 1:5 → 0.60 | 1:8 → 0.60 | 1:12 → 0.60
+The Pareto-optimal abstain point JUMPS ONCE at the symmetry crossing (Cfe=Cmiss) from
+0.20 to 0.60 and NEVER MOVES AGAIN. The cost-tradeoff axis exposes exactly ONE binary
+shift, not a regime-dependent continuum of optima. So an objective-aware controller can
+beat the single best-fixed point ONLY on the minority side of that single crossing — and
+a 2-point ensemble (or the best single fixed point that already serves the majority side)
+captures the same thing. With 3 principled regimes spanning the asymmetry axis (strong-
+precision / balanced / strong-recall) the optima collapse to {0.20, 0.20, 0.60}: 2 share
+the default point, so even a PERFECT shift-controller wins at most 1/3 — exactly observed.
+
+WHY this does NOT break the H_1284 wall (a_break_the_wall TAXONOMY (d) no-free-lunch):
+The objective lens is genuinely DISTINCT from the symmetric emit-gate H_1526 (the cost is
+asymmetric and the optimum DOES shift — H_1526's optimum did not). But the shift is a
+single STEP with no exploitable structure between regimes on the same side: the substrate
+offers two operating points, not a continuum the controller can ride. The single best-
+fixed point already sits at the majority optimum; the controller adds value only on the
+minority regime, which is insufficient to clear ≥2/3 without hand-picking regimes onto the
+minority side (= tune-to-green, refused). The H_1284 ceiling ABSORBS the objective family:
+no free lunch beyond one binary switch a 2-point ensemble equals.
+
+=== HONESTY (c9, a_engine_native_learning) ===
+- DIRECTIONAL — state/1535_nm_objective_pareto/h1535_objective_pareto.py is a numpy mirror
+  of core/engine_cli.hexa VAdaptField + the H_1227 abstain gate (HARD-GATE-1: grep hits
+  numpy → auto-DIRECTIONAL, terminal NOT permitted). engine-native R2 = ING follow-on.
+- frozen-first: H_1535_FREEZE.txt pre-registered the cost ratios AND the bar before any run.
+  The cost asymmetry is the experimental MANIPULATION (genuine, pre-registered), NOT a tuned
+  knob. The 1/3 outcome is reported as-is; NO post-hoc bar move, NO regime re-pick to a win.
+- TOY: DIM=16, 30 facts, 300 events/regime, 3 seeds, one paradigm. scale / paraphrase /
+  real-corpus / engine-transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).
+- live core/*.hexa UNTOUCHED. p1/p2/p3/p6 (controller reads only the OBJECTIVE cost ratio +
+  substrate surprise base-rate — NO injected per-query label / reward / persona / ethics) ·
+  p7 (exact ground truth, no LLM judge / perplexity / loss — every knob is a no-grad read).

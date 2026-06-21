@@ -1,0 +1,72 @@
+H_1535 — NEUROMODULATION on the OBJECTIVE / COST-TRADEOFF axis (precision↔recall Pareto)
+FROZEN PRE-REGISTRATION — written BEFORE any run (frozen-first, NO tune-to-green).
+
+=== THE WALL ===
+H_1284 NEUROMODULATION wall. 12+ prior lenses (global gain H_1284 · regime-switch
+H_1284_R3 · Amoeba allosteric buffer H_1509/b/c · diversity H_1524 · multi-timescale
+H_1523 · predictive H_1525 · emit-gate calibration H_1526 · repr-geometry H_1527 ·
+adaptive-capacity H_1528 · ideation H_1529) ALL FAILED: the capability under test had
+ONE optimal operating point across regimes (geometry-not-protocol bottleneck), so an
+adaptive controller never beat a single best-fixed point.
+
+=== THE NEW ANGLE (objective-modulation) ===
+The one knob-axis with a GENUINELY regime-dependent optimum: when the COST TRADEOFF
+(false-emit vs abstain) DIFFERS by regime, the Pareto-optimal abstain threshold actually
+SHIFTS. A controller that DETECTS the regime's cost-asymmetry and MOVES the precision/
+recall operating point could beat ANY single best-fixed point that must serve all regimes.
+
+DISTINCT vs emit-gate H_1526 (HELD): H_1526 scored a SYMMETRIC calibration metric
+(acc − fab, both weighted 1.0) under a FIXED cost — so the optimal margin did NOT shift
+and the substrate surprise signal could not separate the two query classes. H_1535
+makes the COST ASYMMETRIC and REGIME-DEPENDENT (the optimum genuinely shifts), and the
+controller does NOT need to separate noisy-groundable from ghost per-query — it only
+needs to DETECT the regime-level base-rate / cost-asymmetry (a coarser, achievable
+signal: the running fraction of high-surprise events). If even THAT coarse regime-cost
+detection cannot beat the best-fixed point, the wall extends to the objective family too.
+
+=== DESIGN (numpy DIRECTIONAL; engine R2 deferred ING) ===
+Import MemStore/regimes/seeds/key geometry from
+state/universe-probes/h1284_neuromodulation_gain.py (MARGIN=0.05 reused).
+
+Two cost regimes with GENUINELY DIFFERENT, PRE-REGISTERED false-emit:abstain cost ratios:
+  R_PRECISION : false-emit VERY costly  → optimal point should ABSTAIN MORE (high margin)
+                cost(false-emit)=5.0, cost(miss/abstain-on-groundable)=1.0
+  R_RECALL    : abstain (missing a groundable answer) costly → should EMIT MORE (low margin)
+                cost(false-emit)=1.0, cost(miss/abstain-on-groundable)=5.0
+  R_BALANCED  : symmetric                → middle point
+                cost(false-emit)=2.0, cost(miss/abstain-on-groundable)=2.0
+Each regime stream has BOTH groundable (noisy) + ungroundable ghost queries
+(OOS_RATE=0.30) so the abstain point is the load-bearing decision in EVERY regime.
+
+CAPABILITY = COST-WEIGHTED UTILITY (higher=better), normalized per regime so regimes are
+comparable: utility = (correct_emits − Cfe·false_emits − Cmiss·groundable_misses) / N,
+then min-max normalized within each regime to [0,1] using the achievable best/worst grid
+point (so +0.05 is a meaningful normalized margin). Cfe, Cmiss are the regime's frozen
+cost ratios above. (Abstaining on a GHOST is CORRECT and costs 0 — that is the whole
+point of an asymmetric objective: it rewards the regime-appropriate operating point.)
+
+ARMS:
+  FIXED  = single best-fixed abstain margin, grid-tuned on a DISJOINT seed to maximize
+           AVERAGE normalized cost-utility ACROSS the 3 cost regimes (the fair single
+           operating point — strongest honest fixed baseline).
+  ADAPT  = neuromodulator detects the regime's cost-asymmetry (running surprise base-rate
+           + the regime's frozen cost ratio, both substrate-/objective-derived, NO injected
+           label) → shifts the abstain margin toward the regime's Pareto-optimal point.
+  ABL    = ADAPT collapsed to its own per-regime MEAN margin (fixed) — kills the
+           per-regime SHIFT, keeps everything else. If ADAPT≈ABL the OBJECTIVE shift
+           contributes nothing.
+
+=== FROZEN FALSIFIER (pre-registered, immutable) ===
+GREEN (WALL-BROKEN) iff BOTH:
+  (1) ADAPT cost-utility − FIXED ≥ +0.05 (normalized) on ≥2/3 regimes, AND
+  (2) ADAPT − ABL ≥ +0.05 on ≥2/3 regimes (the per-regime objective SHIFT is decisive),
+  AND a no-harm clause: ADAPT is never worse than FIXED by > 0.05 on the remaining regime.
+PARTIAL iff (1) holds on ≥2/3 but (2) fails on ≥2/3 (lift not shift-attributable), OR
+  (1) holds on exactly 1 regime.
+WALL HOLDS (🧱) iff (1) fails on every regime (ADAPT never beats best-fixed by ≥0.05) —
+  the objective/cost-tradeoff family is ABSORBED into the H_1284 ceiling (no free lunch).
+
+Cost ratios are GENUINE and PRE-REGISTERED here; NO post-hoc bar move. The asymmetry is
+the experimental manipulation, not a tuned knob. 3 seeds [11,22,33], $0 CPU, p7 (exact
+ground truth, no LLM judge / perplexity / loss — every knob is a no-grad read-out).
+DIRECTIONAL (numpy mirror, HARD-GATE-1 → terminal NOT permitted; engine-native R2 = ING).
