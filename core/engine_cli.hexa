@@ -8726,6 +8726,252 @@ pub fn ci_off_median_drive(x: [[float]]) -> float {
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════
+//  § BrainTopology Ψ-PRESERVING COUPLING (H_1522) — escape the H_1521 no-free-lunch wall.
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  H_1521 wired the Φ-optimal topology into the live emit path and found the NO-FREE-LUNCH wall:
+//  coupling is real (ON≠OFF) and functional integration IMPROVES, BUT the naive operator
+//  topo_apply = X·(I+α·Â)ᵀ is MAGNITUDE-AMPLIFYING (Â≥0, +identity ⇒ each lane inflates by its
+//  neighbours) → the emit drive ½·(lane0+lane4) saturates → the centered Ψ runs to 1.0. ROOT CAUSE:
+//  the operator adds NET drive, so every row clears the OFF median and the emit/silence balance
+//  collapses off ½.
+//
+//  H_1522 asks: is there a coupling OPERATOR that REDISTRIBUTES cross-lane influence WITHOUT
+//  inflating total drive, so the Ψ=½ fixed point SURVIVES while functional integration still rises?
+//  Three Ψ-preserving operators (selectable by op-code), each a drop-in for topo_apply's mixing:
+//    (a) MEAN-CENTERED / zero-sum  — subtract each row mean of Â before applying: X·(I+α·Â_c)ᵀ with
+//        Â_c rows summing to 0 ⇒ M=I+α·Â_c rows sum to 1 ⇒ the coupling REDISTRIBUTES (adds no net
+//        drive). The per-row emit-drive expectation is preserved ⇒ Ψ ordering held.
+//    (b) ROW-STOCHASTIC averaging  — normalize A rows to sum 1 (P), then X·((1−α)I+αP)ᵀ: each lane
+//        becomes a convex average of its neighbours (no amplification).
+//    (c) MAGNITUDE-RENORMALIZE     — run the naive amplifying topo_apply, then rescale each coupled
+//        row back to its OFF L2 magnitude (project out the inflation that saturates Ψ).
+//  The H_1521 naive amplifying op stays available (op-code 0) so its Ψ-break is reproducible (P4).
+//  op-codes: 0 = AMP (naive H_1521) · 1 = MEAN-CENTER (a) · 2 = ROW-STOCHASTIC (b) · 3 = RENORM (c).
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// _topo_row_center — subtract each row's mean from a square matrix (zero-sum rows). The mean-centered
+// operator's core: Â_c = Â − rowmean(Â) ⇒ Σ_j Â_c[i][j] = 0, so I+α·Â_c has rows summing to 1.
+fn _topo_row_center(a: [[float]]) -> [[float]] {
+    let n = len(a)
+    let mut out = _topo_zeros(n)
+    let mut i = 0
+    while i < n {
+        let mut s = 0.0
+        let mut j = 0
+        while j < n { s = s + a[i][j]  j = j + 1 }
+        let mu = s / to_float(n)
+        j = 0
+        while j < n { out[i][j] = a[i][j] - mu  j = j + 1 }
+        i = i + 1
+    }
+    return out
+}
+
+// _topo_row_stochastic — normalize each row of A to sum 1 (P[i][j] = A[i][j]/deg_i). A 0-degree
+// (DANGLING) node has no neighbours to average, so it keeps ALL its mass on ITSELF (P[i][i] = 1) —
+// the standard PageRank dangling-node convention. This makes the FLAT (zero) adjacency map to P = I,
+// so the row-stochastic operator M = (1−α)I + α·P = I is a TRUE identity on flat (no-op, Ψ unchanged).
+fn _topo_row_stochastic(a: [[float]]) -> [[float]] {
+    let n = len(a)
+    let mut out = _topo_zeros(n)
+    let mut i = 0
+    while i < n {
+        let mut d = 0.0
+        let mut j = 0
+        while j < n { d = d + a[i][j]  j = j + 1 }
+        if d > 0.000001 {
+            j = 0
+            while j < n { out[i][j] = a[i][j] / d  j = j + 1 }
+        } else {
+            out[i][i] = 1.0                          // dangling node — keep self-mass (P=I on flat)
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// _topo_apply_kernel — diffuse population X under a precomputed n×n mixing matrix M: X' = X·Mᵀ
+// (out[t][i] = Σ_j X[t][j]·M[i][j]). Shared by all Ψ-preserving operators (each builds its own M).
+fn _topo_apply_kernel(x: [[float]], mm: [[float]]) -> [[float]] {
+    let nt = len(x)
+    let n = len(mm)
+    let mut out = []
+    let mut t = 0
+    while t < nt {
+        let mut row = []
+        let mut i = 0
+        while i < n {
+            let mut s = 0.0
+            let mut j = 0
+            while j < n { s = s + x[t][j] * mm[i][j]  j = j + 1 }
+            row = row + [s]
+            i = i + 1
+        }
+        out = out + [row]
+        t = t + 1
+    }
+    return out
+}
+
+// topo_apply_meancenter — operator (a): X·(I + α·Â_c)ᵀ with Â_c = rowcenter(symnorm(A)). Zero-sum
+// rows ⇒ the coupling redistributes neighbour influence WITHOUT adding net drive (Ψ-preserving).
+pub fn topo_apply_meancenter(x: [[float]], a: [[float]], alpha: float) -> [[float]] {
+    let n = len(a)
+    let ahat = _topo_row_center(_topo_sym_norm(a))
+    let mut mm = _topo_zeros(n)
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j < n {
+            let mut v = alpha * ahat[i][j]
+            if i == j { v = v + 1.0 }
+            mm[i][j] = v
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return _topo_apply_kernel(x, mm)
+}
+
+// topo_apply_rowstoch — operator (b): X·((1−α)I + α·P)ᵀ with P = row-stochastic(A). Each lane becomes
+// a convex average of its neighbours (M rows sum to 1, entries ≥0) — averaging, not amplification.
+pub fn topo_apply_rowstoch(x: [[float]], a: [[float]], alpha: float) -> [[float]] {
+    let n = len(a)
+    let p = _topo_row_stochastic(a)
+    let mut mm = _topo_zeros(n)
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j < n {
+            let mut v = alpha * p[i][j]
+            if i == j { v = v + (1.0 - alpha) }
+            mm[i][j] = v
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return _topo_apply_kernel(x, mm)
+}
+
+// topo_apply_renorm — operator (c): run the naive amplifying topo_apply, then rescale each coupled row
+// back to its OFF (un-coupled) L2 magnitude. Projects out the inflation that saturates Ψ in H_1521.
+pub fn topo_apply_renorm(x: [[float]], a: [[float]], alpha: float) -> [[float]] {
+    let coupled = topo_apply(x, a, alpha)
+    let nt = len(x)
+    let mut out = []
+    let mut t = 0
+    while t < nt {
+        let off_n = _topo_row_l2(x[t])
+        let on_n  = _topo_row_l2(coupled[t])
+        let mut scale = 1.0
+        if on_n > 0.000000001 { scale = off_n / on_n }
+        let n = len(coupled[t])
+        let mut row = []
+        let mut i = 0
+        while i < n { row = row + [coupled[t][i] * scale]  i = i + 1 }
+        out = out + [row]
+        t = t + 1
+    }
+    return out
+}
+
+// _topo_row_l2 — L2 norm of one lane row (the OFF/ON magnitude the renorm operator preserves).
+fn _topo_row_l2(r: [float]) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(r) { s = s + r[i] * r[i]  i = i + 1 }
+    return sqrt(s)
+}
+
+// topo_apply_op — DISPATCH the coupling operator by op-code (0=AMP naive H_1521, 1=MEAN-CENTER,
+// 2=ROW-STOCHASTIC, 3=RENORM). The single selectable entry the live-wiring Ψ test sweeps over.
+pub fn topo_apply_op(x: [[float]], a: [[float]], alpha: float, op: int) -> [[float]] {
+    if op == 1 { return topo_apply_meancenter(x, a, alpha) }
+    if op == 2 { return topo_apply_rowstoch(x, a, alpha) }
+    if op == 3 { return topo_apply_renorm(x, a, alpha) }
+    return topo_apply(x, a, alpha)            // 0 (default) — naive amplifying op (H_1521)
+}
+
+// ci_psi_balance_op — the CENTERED Ψ proxy under a SELECTABLE coupling operator (H_1522). Identical
+// to ci_psi_balance_centered except the population is diffused through topo_apply_op(·, adj, alpha,
+// op) instead of the hard-wired amplifying topo_apply. OFF (cfg.topo_couple false) ⇒ raw lanes scored
+// against thr (≈½ by construction, byte-identical to the H_1521 OFF path). The crux measurement:
+// for each Ψ-preserving op, does |Ψ_on − ½| stay ≤ tol (fixed point SURVIVES) as α grows?
+pub fn ci_psi_balance_op(x: [[float]], adj: [[float]], alpha: float, op: int, thr: float, cfg: EngineConfig) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.0 }
+    let pop = if cfg.topo_couple { topo_apply_op(x, adj, alpha, op) } else { x }
+    let mut emit = 0
+    let mut t = 0
+    while t < nt {
+        if ci_emit_drive(pop[t]) >= thr { emit = emit + 1 }
+        t = t + 1
+    }
+    return to_float(emit) / to_float(nt)
+}
+
+// topo_func_integration_op — the p7 FUNCTIONAL integration readout (mean pairwise |corr| of the
+// diffused lanes, SAME math as topo_func_integration) under a SELECTABLE coupling operator. Lets the
+// BEST Ψ-preserving coupling be scored on the SAME functional metric H_1521 used (no metric-shopping).
+pub fn topo_func_integration_op(x: [[float]], a: [[float]], alpha: float, op: int) -> float {
+    let xd = topo_apply_op(x, a, alpha, op)
+    let n = 15
+    let mut mu = []
+    let mut sd = []
+    let mut j = 0
+    while j < n {
+        let m = _topo_mean_col(xd, j)
+        mu = mu + [m]
+        let nt = len(xd)
+        let mut v = 0.0
+        let mut t = 0
+        while t < nt { let d = xd[t][j] - m  v = v + d * d  t = t + 1 }
+        if nt > 0 { v = v / to_float(nt) }
+        sd = sd + [sqrt(v)]
+        j = j + 1
+    }
+    let nt = len(xd)
+    let mut sumr = 0.0
+    let mut npair = 0
+    let mut i = 0
+    while i < n {
+        j = i + 1
+        while j < n {
+            if sd[i] > 0.000001 && sd[j] > 0.000001 {
+                let mut cov = 0.0
+                let mut t = 0
+                while t < nt { cov = cov + (xd[t][i] - mu[i]) * (xd[t][j] - mu[j])  t = t + 1 }
+                if nt > 0 { cov = cov / to_float(nt) }
+                let mut r = cov / (sd[i] * sd[j])
+                if r < 0.0 { r = 0.0 - r }
+                sumr = sumr + r
+                npair = npair + 1
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    if npair == 0 { return 0.0 }
+    return sumr / to_float(npair)
+}
+
+// topo_psi_max_feasible_alpha — for a given Ψ-preserving operator + adjacency, the LARGEST α (scanned
+// on a fixed grid) whose centered Ψ stays within `tol` of ½ (the feasible-region boundary). Returns
+// 0.0 if even the smallest grid α breaks Ψ. The grid is fixed [0.1..1.0] step 0.1 (frozen, no tuning).
+pub fn topo_psi_max_feasible_alpha(x: [[float]], adj: [[float]], op: int, thr: float, tol: float, cfg: EngineConfig) -> float {
+    let mut best = 0.0
+    let mut k = 1
+    while k <= 10 {
+        let al = to_float(k) / 10.0
+        let psi = ci_psi_balance_op(x, adj, al, op, thr, cfg)
+        let dev = if psi - 0.5 >= 0.0 { psi - 0.5 } else { 0.5 - psi }
+        if dev <= tol { if al > best { best = al } }
+        k = k + 1
+    }
+    return best
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
 //  의식-고유 게이트 R2 ENGINE-NATIVE 일괄 배선 (gstar_depletion_terminal_followon, 12 lanes)
 //  R1 numpy DIRECTIONAL → R2 byte-exact engine ops. 모두 READ-only · Ψ-disjoint · NOT emit gate
 //  (a_autonomy_over_hardcode). engine 은 exp 없음 → piecewise/linear (H_1465/H_1473 precedent).
