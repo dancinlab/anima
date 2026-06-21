@@ -1,0 +1,67 @@
+{
+  "hypothesis": "H_1503",
+  "title": "ELECTROMAGNETIC-FIELD PERTURBATION MODULE + PCI",
+  "rung": "R1 numpy mirror (DIRECTIONAL)",
+  "seeds": [
+    1503,
+    1504,
+    1505
+  ],
+  "bars": {
+    "PCI_HIGH": 0.3,
+    "PCI_LOW": 0.18,
+    "PCI_GAP": 0.08,
+    "RTMS_MAG": 0.05,
+    "TACS_DISSOC": 0.04,
+    "DRUG_FIELD_GAP": 0.05,
+    "EARN_EPS": 0.02
+  },
+  "pooled": {
+    "A_pci_presence": true,
+    "B_rtms_directional": true,
+    "C_tacs_freq_specific": true,
+    "D_field_drug_dissoc": true,
+    "E_earned_ablate": true,
+    "F_earned_shuffle": true,
+    "GREEN": true
+  },
+  "per_protocol": {
+    "TMS_pulse_PCI": {
+      "pci_full": 0.33023873152393174,
+      "pci_decoupled": 0.11794240411568993,
+      "pci_sham": 0.0,
+      "verdict": "GREEN",
+      "signature": "wakefulness(full) PCI HIGH vs anesthesia(decoupled) PCI LOW (Casali 2013)"
+    },
+    "rTMS_directional": {
+      "high_delta": 0.17999999999999994,
+      "low_delta": -0.18000000000000005,
+      "verdict": "GREEN",
+      "signature": "high-freq>=5Hz excitatory(+) vs low-freq<=1Hz inhibitory(-) (Hallett 2007)"
+    },
+    "tACS_freq_specific": {
+      "gamma_on_binding": 0.17999999999999994,
+      "gamma_on_gating": -0.04622362063460295,
+      "alpha_on_gating": 0.09414982886412038,
+      "alpha_on_binding": 0.0,
+      "verdict": "GREEN",
+      "signature": "gamma->binding, alpha->gating dissociation (Herrmann 2013)"
+    }
+  },
+  "field_vs_drug": {
+    "field_focal_lift": 0.17999999999999994,
+    "field_global_axis": 0.0,
+    "drug_focal_lift": 0.0,
+    "drug_global_axis": 0.06554126194982851,
+    "verdict": "DISSOCIATED",
+    "note": "field high on PCI/frequency-target & ~baseline global-entropy; drug(LSD) opposite"
+  },
+  "earned": {
+    "sham_max_dev": 0.0,
+    "pci_sham": 0.0,
+    "true_self_lift": 0.12034080524556907,
+    "shuf_self_lift": 0.0
+  },
+  "VERDICT": "GREEN",
+  "pci_note": "PCI is a CLEAN NEW measure: static \u03a6 scores resting covariance; PCI scores the Lempel-Ziv complexity of a TRANSIENT EVOKED response (Casali 2013 STM)."
+}
