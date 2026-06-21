@@ -708,6 +708,144 @@ pub fn vadapt_field_step_entropic(af: VAdaptField, x: [float], cfg: EngineConfig
               "used_quantum": used_quantum, "pool_exhausted": exhausted }
 }
 
+// ── §  OSMOTIC-MITOSIS — KL>C split-TIMING trigger (H_1511) ───────────────────────────
+//
+// SOURCE: external proposal — Amoeba Protocol (@qingkong66) — "KL>capacity osmotic
+// mitosis". WHAT IT PROPOSES: anima's default split trigger (vadapt_field_step, above)
+// divides a cell when the L2 reconstruction error exceeds the frozen SPLIT_THRESH; BELOW
+// that bar the winner is REFINED — its prototype is pulled toward x AND (on a value-
+// bearing store like the H_1231 immune faculty) its bound value is OVERWRITTEN. The
+// Amoeba Protocol adds an information-theoretic term so a cell DIVIDES (1->2) to
+// accommodate a NEW truth instead of OVERWRITING a grounded fact whose value-
+// distribution diverges from the incoming one:
+//       Trigger Mitosis IF   L_recon + beta * D_KL(P(Z_incoming) || P(Z_prior)) > C
+// where P(Z_prior) is the winner cell's bound value-distribution and P(Z_incoming) is
+// the new fact's. The bottleneck "overflows" (>C) when a metrically-NEAR but
+// semantically-DIVERGENT fact arrives — exactly the case the L_recon-only trigger
+// silently overwrites.
+//
+// WHAT THIS TESTS (split-TIMING, NOT a capacity-wall break — DISTINCT from H_1456):
+// H_1456 confirmed WALL=CAPACITY for BINDING (welding comparator+measurable into a
+// falsifiable claim). This § does NOT claim total binding capacity rises. The capacity
+// cap (max_cells) is IDENTICAL for every arm here; the osmotic trigger only AVOIDS
+// OVERWRITING a grounded fact by dividing IN TIME. Any retention gain is timely
+// division, never extra capacity (the C-bar honesty bound, scored in the smoke).
+//
+// @L4 CRITICAL (same framing as --mitosis / VAdaptField): SUBSTRATE-CONFIG split TIMING,
+// NOT an emit/silence gate. These ops read the LIVE VAdaptField key geometry (_l2 /
+// _vnearest_idx — the SAME affinity vadapt_field_step uses) plus a parallel per-cell
+// value table (exactly the H_1231 immune cell-indexed value store idiom), and return a
+// grown/refined field + value table. They NEVER touch pure_field Φ/phase/Ψ (Ψ-disjoint),
+// NEVER emit, and add NO 2nd .clm/.kosmos entry path (a_core_engine_map). The DEFAULT
+// vadapt_field_step path is UNTOUCHED — this is an OPT-IN trigger a caller selects.
+
+// _kl_div — KL(p || q) over two value-distributions (DIM=VDIM atoms, each summing ~1).
+// Clamped away from 0 to avoid ln(0); the SAME formula the R1 mirror scores.
+fn _kl_div(p: [float], q: [float]) -> float {
+    let n = len(p)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        let mut pi = p[i]
+        let mut qi = q[i]
+        if pi < 0.000000001 { pi = 0.000000001 }
+        if qi < 0.000000001 { qi = 0.000000001 }
+        s = s + pi * ln(pi / qi)
+        i = i + 1
+    }
+    return s
+}
+
+// OsmoticStore — a VAdaptField key store + a PARALLEL per-cell value-distribution table.
+//   field : the LIVE VAdaptField (keys = protos, the engine's OWN split geometry).
+//   vals  : vals[i] = the value-distribution bound to cell i (len == field.n_cells).
+// The osmotic trigger reads field key affinity (_l2) + the KL between the incoming
+// value and the winner cell's vals[win]. SPLIT appends a (key,val) cell; OVERWRITE
+// refines the winner key AND replaces vals[win] (the grounded value is destroyed).
+struct OsmoticStore {
+    field: VAdaptField,
+    vals: [[float]]
+}
+
+// osmotic_store_new — seed the store with one (key,val) cell. Mirrors vadapt_field_new.
+pub fn osmotic_store_new(key0: [float], val0: [float], max_cells: int) -> OsmoticStore {
+    OsmoticStore { field: vadapt_field_new(key0, max_cells), vals: [val0] }
+}
+
+// osmotic_should_split — the KL>C bottleneck-overflow trigger.
+//   mode 0 STANDARD : split iff L_recon > SPLIT_THRESH (the DEFAULT vadapt trigger).
+//   mode 1 OSMOTIC  : split iff L_recon + beta*KL(incoming||winner-prior) > C.
+//   mode 2 ABLATED  : beta:=0 -> reverts to pure L_recon (== STANDARD, the D control).
+// kl_override >= 0 feeds a DECORRELATED KL (the E shuffle control); < 0 = use the true
+// KL(incoming||winner). Reads the engine's OWN _l2 winner affinity — no new geometry.
+pub fn osmotic_should_split(st: OsmoticStore, key: [float], val: [float],
+                            mode: int, beta: float, cap_c: float, kl_override: float) -> bool {
+    let SPLIT_THRESH = 0.30
+    let win = _vnearest_idx(st.field.protos, key)
+    let d = _l2(st.field.protos[win], key)
+    if mode == 0 { return d > SPLIT_THRESH }              // STANDARD
+    let mut b = beta
+    if mode == 2 { b = 0.0 }                              // ABLATED (D control)
+    let mut dkl = 0.0
+    if kl_override >= 0.0 { dkl = kl_override }           // SHUFFLE (E control)
+    else { dkl = _kl_div(val, st.vals[win]) }            // true incoming||winner-prior
+    return (d + b * dkl) > cap_c
+}
+
+// osmotic_learn — learn one (key,val) under the chosen trigger. SPLIT (capacity-honest:
+// only while n_cells < max_cells) appends a new cell at (key,val), keeping BOTH the old
+// and new grounded facts. Otherwise REFINE the winner: pull its key toward `key` (online
+// LR, the SAME vadapt refinement) AND OVERWRITE vals[win] (the grounded value is lost).
+// Returns the updated OsmoticStore. cfg gates the growth tick (p8, engine_mitosis_tick).
+pub fn osmotic_learn(st: OsmoticStore, key: [float], val: [float], cfg: EngineConfig,
+                     mode: int, beta: float, cap_c: float, kl_override: float) -> OsmoticStore {
+    let LR = 0.20
+    let af = st.field
+    let want_split = osmotic_should_split(st, key, val, mode, beta, cap_c, kl_override)
+    if want_split && af.n_cells < af.max_cells {
+        let grown = engine_mitosis_tick(af.n_cells, cfg)
+        if grown > af.n_cells {
+            let nf = VAdaptField { protos: af.protos + [key], n_cells: grown,
+                                   max_cells: af.max_cells, dim: af.dim }
+            return OsmoticStore { field: nf, vals: st.vals + [val] }
+        }
+    }
+    // REFINE / OVERWRITE the winner (no split, or at capacity cap).
+    let win = _vnearest_idx(af.protos, key)
+    let mut p2 = af.protos
+    let mut row = p2[win]
+    let mut i = 0
+    while i < af.dim {
+        row[i] = row[i] + LR * (key[i] - row[i])
+        i = i + 1
+    }
+    p2[win] = row
+    let mut v2 = st.vals
+    v2[win] = val                 // value OVERWRITE — the grounded fact is destroyed
+    let nf2 = VAdaptField { protos: p2, n_cells: af.n_cells, max_cells: af.max_cells, dim: af.dim }
+    return OsmoticStore { field: nf2, vals: v2 }
+}
+
+// osmotic_retains — 1.0 iff SOME cell near `key` (L2 <= recall_thr) still holds the
+// ORIGINAL value `val` (L2 over the value-dist <= 0.20). A split keeps the old cell
+// intact (retained); an overwrite destroys vals[win] (lost). This is the engine-native
+// retention readout the smoke aggregates over the grounded set.
+pub fn osmotic_retains(st: OsmoticStore, key: [float], val: [float], recall_thr: float) -> float {
+    let n = st.field.n_cells
+    let mut i = 0
+    while i < n {
+        if _l2(st.field.protos[i], key) <= recall_thr && _l2(st.vals[i], val) <= 0.20 {
+            return 1.0
+        }
+        i = i + 1
+    }
+    return 0.0
+}
+
+// osmotic_cells — live cell-count accessor (capacity-honest reporting).
+pub fn osmotic_cells(st: OsmoticStore) -> int { return st.field.n_cells }
+
+
 // ── §  IMMUNE-MEMORY RECALL FACULTY — mitosis-as-MEMORY on the LIVE engine (H_1231) ──
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1231): H_1227 (numpy

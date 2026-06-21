@@ -3081,6 +3081,93 @@ fn main() {
           + " shuffle D=" + to_string(ab_rD)
           + " — Amoeba-Protocol resistance lever does NOT break the H_1284 neuromodulation wall (a single tuned fixed point dominates)")
 
+    // ── (H_1511 OSMOTIC-MITOSIS R2) KL>C split-TIMING trigger — overwrite-avoidance ──────
+    // SOURCE: external proposal — Amoeba Protocol (KL>capacity osmotic mitosis). Re-scores
+    // the R1 frozen bars on the LIVE §OsmoticMitosis ops over a DETERMINISTIC fixture (no
+    // RNG, $0): 4 grounded facts, each gets ONE near-key update — 2 COLLISIONS (near key,
+    // DIVERGENT value -> standard OVERWRITES) + 2 BENIGN (near key, ~same value -> refine).
+    // cap=6 IDENTICAL all arms (capacity-honest): ideal osmotic = 4 grounded + 2 splits = 6;
+    // the shuffle's mis-targeted splits exhaust the cap, then collisions overwrite.
+    let om_cfg = engine_config_default()
+    let om_CAP = 6
+    let om_BETA = 1.0
+    let om_C = 0.30
+    let om_RTHR = 0.18
+    let om_k0 = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let om_k1 = [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let om_k2 = [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let om_k3 = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+    let om_vA = [0.7, 0.1, 0.05, 0.05, 0.05, 0.05]
+    let om_vB = [0.05, 0.05, 0.05, 0.05, 0.1, 0.7]
+    let om_nk0 = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1]   // near k0 (L2 0.1 << SPLIT_THRESH)
+    let om_nk1 = [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+    let om_nk2 = [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+    let om_nk3 = [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.1]
+    let om_klC = _kl_div(om_vB, om_vA)                       // collision divergence (high)
+    let om_klBn = 0.0                                        // benign divergence (~0)
+    // grounded: (k0,vA)(k1,vB)(k2,vA)(k3,vB).
+    // STANDARD (mode 0) -----------------------------------------------------------------
+    let mut om_s = osmotic_store_new(om_k0, om_vA, om_CAP)
+    om_s = osmotic_learn(om_s, om_k1, om_vB, om_cfg, 0, om_BETA, om_C, -1.0)
+    om_s = osmotic_learn(om_s, om_k2, om_vA, om_cfg, 0, om_BETA, om_C, -1.0)
+    om_s = osmotic_learn(om_s, om_k3, om_vB, om_cfg, 0, om_BETA, om_C, -1.0)
+    om_s = osmotic_learn(om_s, om_nk0, om_vB, om_cfg, 0, om_BETA, om_C, -1.0)   // collision -> overwrite
+    om_s = osmotic_learn(om_s, om_nk1, om_vB, om_cfg, 0, om_BETA, om_C, -1.0)
+    om_s = osmotic_learn(om_s, om_nk2, om_vB, om_cfg, 0, om_BETA, om_C, -1.0)   // collision -> overwrite
+    om_s = osmotic_learn(om_s, om_nk3, om_vB, om_cfg, 0, om_BETA, om_C, -1.0)
+    let om_ret_std = (osmotic_retains(om_s, om_k0, om_vA, om_RTHR) + osmotic_retains(om_s, om_k1, om_vB, om_RTHR)
+                    + osmotic_retains(om_s, om_k2, om_vA, om_RTHR) + osmotic_retains(om_s, om_k3, om_vB, om_RTHR)) / 4.0
+    // OSMOTIC (mode 1) ------------------------------------------------------------------
+    let mut om_o = osmotic_store_new(om_k0, om_vA, om_CAP)
+    om_o = osmotic_learn(om_o, om_k1, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)
+    om_o = osmotic_learn(om_o, om_k2, om_vA, om_cfg, 1, om_BETA, om_C, -1.0)
+    om_o = osmotic_learn(om_o, om_k3, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)
+    om_o = osmotic_learn(om_o, om_nk0, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)   // collision -> SPLIT
+    om_o = osmotic_learn(om_o, om_nk1, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)   // benign -> refine
+    om_o = osmotic_learn(om_o, om_nk2, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)   // collision -> SPLIT
+    om_o = osmotic_learn(om_o, om_nk3, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)   // benign -> refine
+    let om_ret_osm = (osmotic_retains(om_o, om_k0, om_vA, om_RTHR) + osmotic_retains(om_o, om_k1, om_vB, om_RTHR)
+                    + osmotic_retains(om_o, om_k2, om_vA, om_RTHR) + osmotic_retains(om_o, om_k3, om_vB, om_RTHR)) / 4.0
+    // ABLATED (mode 2, beta forced 0) ---------------------------------------------------
+    let mut om_a = osmotic_store_new(om_k0, om_vA, om_CAP)
+    om_a = osmotic_learn(om_a, om_k1, om_vB, om_cfg, 2, om_BETA, om_C, -1.0)
+    om_a = osmotic_learn(om_a, om_k2, om_vA, om_cfg, 2, om_BETA, om_C, -1.0)
+    om_a = osmotic_learn(om_a, om_k3, om_vB, om_cfg, 2, om_BETA, om_C, -1.0)
+    om_a = osmotic_learn(om_a, om_nk0, om_vB, om_cfg, 2, om_BETA, om_C, -1.0)
+    om_a = osmotic_learn(om_a, om_nk1, om_vB, om_cfg, 2, om_BETA, om_C, -1.0)
+    om_a = osmotic_learn(om_a, om_nk2, om_vB, om_cfg, 2, om_BETA, om_C, -1.0)
+    om_a = osmotic_learn(om_a, om_nk3, om_vB, om_cfg, 2, om_BETA, om_C, -1.0)
+    let om_ret_abl = (osmotic_retains(om_a, om_k0, om_vA, om_RTHR) + osmotic_retains(om_a, om_k1, om_vB, om_RTHR)
+                    + osmotic_retains(om_a, om_k2, om_vA, om_RTHR) + osmotic_retains(om_a, om_k3, om_vB, om_RTHR)) / 4.0
+    // SHUFFLE (mode 1, KL decorrelated: collisions read benign ~0 KL -> overwrite; benign
+    // read collision high KL -> waste a split) ------------------------------------------
+    let mut om_h = osmotic_store_new(om_k0, om_vA, om_CAP)
+    om_h = osmotic_learn(om_h, om_k1, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)
+    om_h = osmotic_learn(om_h, om_k2, om_vA, om_cfg, 1, om_BETA, om_C, -1.0)
+    om_h = osmotic_learn(om_h, om_k3, om_vB, om_cfg, 1, om_BETA, om_C, -1.0)
+    om_h = osmotic_learn(om_h, om_nk0, om_vB, om_cfg, 1, om_BETA, om_C, om_klBn)  // collision reads benign KL -> overwrite
+    om_h = osmotic_learn(om_h, om_nk1, om_vB, om_cfg, 1, om_BETA, om_C, om_klC)   // benign reads collision KL -> waste split
+    om_h = osmotic_learn(om_h, om_nk2, om_vB, om_cfg, 1, om_BETA, om_C, om_klBn)  // collision reads benign KL -> overwrite
+    om_h = osmotic_learn(om_h, om_nk3, om_vB, om_cfg, 1, om_BETA, om_C, om_klC)   // benign reads collision KL -> waste split
+    let om_ret_shf = (osmotic_retains(om_h, om_k0, om_vA, om_RTHR) + osmotic_retains(om_h, om_k1, om_vB, om_RTHR)
+                    + osmotic_retains(om_h, om_k2, om_vA, om_RTHR) + osmotic_retains(om_h, om_k3, om_vB, om_RTHR)) / 4.0
+    // case 323 (A NO-OVERWRITE): osmotic grounded-fact retention >= 0.90 (here 1.0).
+    if _assert_b("case_323_osmotic_no_overwrite", true, om_ret_osm >= 0.90) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 324 (B vs STANDARD): osmotic - standard >= 0.50 (dissociation; standard overwrites collided facts).
+    if _assert_b("case_324_osmotic_vs_standard", true, (om_ret_osm - om_ret_std) >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 325 (D EARNED ablate): beta:=0 reverts to overwrite (== standard) -> ret_ablate <= std + 0.10.
+    if _assert_b("case_325_osmotic_ablate_beta0", true, om_ret_abl <= om_ret_std + 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 326 (E EARNED shuffle): KL decorrelated -> ret_shuffle <= std + 0.10 (protective split lost).
+    if _assert_b("case_326_osmotic_shuffle_kl", true, om_ret_shf <= om_ret_std + 0.10) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 327 (C CAPACITY-HONEST, honesty bound): cap IDENTICAL all arms; osmotic uses <= cap cells
+    // (no capacity raise) — the retention gain is timely DIVISION, NOT extra capacity (distinct from H_1456 wall).
+    if _assert_b("case_327_osmotic_capacity_honest", true, osmotic_cells(om_o) <= om_CAP && osmotic_cells(om_s) <= om_CAP) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1511 osmotic-mitosis (R2 WIRED): ret osmotic=" + to_string(om_ret_osm)
+          + " vs standard=" + to_string(om_ret_std) + " | ablate(b=0)=" + to_string(om_ret_abl)
+          + " shuffle=" + to_string(om_ret_shf) + " | cells osm=" + to_string(osmotic_cells(om_o))
+          + " std=" + to_string(osmotic_cells(om_s)) + " cap=" + to_string(om_CAP)
+          + " — KL>C split-TIMING avoids OVERWRITE of a grounded fact (SPLIT-timing, NOT a capacity-wall break, H_1456); SOURCE external Amoeba Protocol")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
