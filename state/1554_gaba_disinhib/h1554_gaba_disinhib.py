@@ -49,6 +49,14 @@ Frozen falsifier pre-registered in H_1554_FREEZE.txt BEFORE the scored run (NOT 
 
 R1 numpy DIRECTIONAL (host has no torch / hard-gate-1 a_engine_native_learning) — engine §GabaDisinhib
 R2 deferred ING. REUSES the H_1284/H_1532 store machinery (MemStore/key_vec/FNV-1a/MARGIN) byte-exact.
+
+MEASUREMENT FIX (a_break_the_wall taxonomy-(a), frozen-first, bars/verdict-rule UNCHANGED — REPORTED):
+the first fixture drew collisions from a running key-pool; at ρ=1.0 the pool seeds from the FIRST write
+so EVERY key collapsed to ONE key string (ctx00_k000) → all 48 writes hit a single key vector → even
+per-context routing degenerated to intra-store overwrite → adaptive=fixed=0.0 at ρ=1.0 (degenerate
+endpoint, NOT a routing test). FIX: collisions reuse the canonical SHARED slot-j key (one per of B_PER
+slots, shared across all K_CTX contexts) so ρ=1.0 = genuine cross-context collision on B_PER distinct
+keys. Only the collision DRAW changed; all ARMS, BARS, MARGIN, verdict rule are byte-identical to FREEZE.
 """
 import numpy as np
 import json
@@ -150,24 +158,27 @@ class MemStore:
 # the cross-context key collisions WITHIN the same store (NOT separated by novel/familiar
 # fast/slow split — that is the load-bearing distinction from the plain H_1532 routing).
 def make_collision(K_CTX, B_PER, rho, rng):
-    """Return a write-stream of (ctx, key_str, value, true_owner_value) and the recall
-    probe list. rho = fraction of bindings whose key is SHARED with a prior context."""
-    base_keys = [f"k{j:03d}" for j in range(B_PER)]   # B_PER distinct slots per context
+    """Return a write-stream of (ctx, key_str, value) and the recall probe list. rho = fraction
+    of bindings whose key is SHARED with ANOTHER context. Each context owns B_PER distinct SLOTS;
+    a collision makes this context's slot-j reuse the *canonical slot-j key* (shared across all
+    contexts) instead of its OWN context-private key. So at ρ=1.0 every slot-j key is shared by
+    all K_CTX contexts (genuine cross-context collision on B_PER distinct keys), NOT collapsed to a
+    single key (a_break_the_wall taxonomy-(a): the prior 'draw from pool' degenerated to ONE key at
+    ρ=1.0 because the pool seeds from the first write — fixed to keep B_PER distinct shared slots)."""
+    shared_keys = [f"shared_k{j:03d}" for j in range(B_PER)]   # canonical cross-context slots
     stream = []          # (ctx, key_str, value) write order (interleaved contexts)
     truth = {}           # (ctx, key_str) -> value  (the binding we must recall)
-    pool_keys = []       # keys already issued (for collision draws)
     for c in range(K_CTX):
         for j in range(B_PER):
-            # COLLIDE: with prob rho reuse a key already owned by an EARLIER context,
-            # so the SAME key string maps to a DIFFERENT value in THIS context.
-            if rho > 0.0 and pool_keys and rng.random() < rho:
-                key_str = pool_keys[rng.integers(0, len(pool_keys))]
+            # COLLIDE: with prob rho use the canonical SHARED slot-j key (owned by every context)
+            # so the SAME key string maps to a DIFFERENT value per context; else context-private.
+            if rho > 0.0 and rng.random() < rho:
+                key_str = shared_keys[j]
             else:
-                key_str = f"ctx{c:02d}_{base_keys[j]}"
+                key_str = f"ctx{c:02d}_k{j:03d}"
             val = f"v_{c:02d}_{j:03d}_{rng.integers(0, 99999):05d}"
             stream.append((c, key_str, val))
             truth[(c, key_str)] = val           # last write per (ctx,key) is the truth
-            pool_keys.append(key_str)
     # interleave write order across contexts (so collisions actually interfere in time)
     rng.shuffle(stream)
     # re-derive truth as the LAST write per (ctx,key) in the shuffled order
