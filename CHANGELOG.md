@@ -1,3 +1,19 @@
+## 2026-06-21 — 🧠⚡ H_1518 ADOPT Φ-OPTIMAL PLACEMENT R2 ENGINE-NATIVE — anima 는 소프트웨어다(배선비용 세금 없음 H_1516) → 생물이 못 사는 Φ-최적 배치를 ADOPT. p7 정직: GENUINE(작은) 통합 이득, 프록시-only 아님
+
+> 🔬 **사용자 directive ("then anima should optimize WITH the optimal placement") + H_1515(#2493 ×2.5 Φ-최적 발견)+H_1516(#2494 REAL 뇌는 배선비용 economy 때문에 Φ-suboptimal) 직계 follow-on (a_no_llm_frame_trap — 소프트웨어 dissociation):** 생물은 짧고 싼 축삭/대사예산(Bullmore & Sporns 2012)을 사느라 Φ-최대 배치를 못 산다. anima 는 SOFTWARE — 물리적 축삭 길이도, 대사 배선비용도 없다 — 그러므로 생물이 못 사는 Φ-최대 배치를 **자유롭게 ADOPT** 할 수 있다. `topo_optimal_adjacency()`(=`topo_brain_adjacency` 를 H_1515 임베드 Φ-최적 perm 으로 relabel)를 anima 의 **canonical 비용없는-최적 cross-lane 통합 토폴로지**로 확립.
+
+- **결과(`engine_cli_smoke` 358/0 RC=0, deterministic, live ci_phi_iit4, _topo_lane_pop seed5120 n=150):** Φ min-cut brain=**0.10086** · optimal(adopted)=**0.25309**(×**2.51**, 비용없는 transcendence).
+- **p7 GOODHART GUARD (load-bearing 정직 bar):** min-cut Φ 는 PROXY → 사전등록한 DISTINCT 기능측정 `topo_func_integration`=DIFFUSE 된 15 lane column 의 mean-pairwise-|Pearson-corr|(MIP/min-cut 없는 다른 math). 결과 functional brain=**0.23824** · optimal=**0.24835** · **gain=+0.01011**(flat-baseline=0.14004). 기능측정도 함께 오름(gain +0.0101 > +0.005 정직 임계) → **VERDICT: GENUINE-INTEGRATION-GAIN, 프록시-only 아님.**
+- **정직(c9, 양날):** 프록시는 ×2.51(+0.152 절대) 움직였지만 기능측정은 ~+4% 상대(+0.0101 절대)만 — Φ-최적은 GENUINE 하나 **PROXY-DOMINATED** 이득(blind Goodhart 아님; 다른 math 의 기능측정도 같은 방향, 단 작다). 사용자 directive 충족: 배치를 canonical 로 채택 + 진짜-not-fake 이득 검증.
+- **FROZEN bars (사전등록, tune-to-green 없음):** case 365(ADOPT-Φ headline) optimal Φ≥2.0×brain → 0.25309≥0.20172 PASS · 366(named==canonical) `topo_optimal_adjacency` Φ==`topo_phi_optimal` byte-동일 PASS · 367(p7 FUNCTIONAL) functional not harmed gain≥−0.01 → +0.01011 PASS(genuine-gain 방향은 게이트 아닌 REPORT) · 368(well-formed) 둘다∈[0,1] & brain 0.23824>flat 0.14004 PASS · 369(no-regression) brain/optimum Φ 채택으로 불변 byte-동일 PASS.
+- **무회귀(measurement lane, NOT live emit/decode path):** 이전 토폴로지 cases **328-341 미변경**(H_1512/1513/1515), +5 신규(365-369). `h1205_separation_invariant_smoke` **PASS 🟢 RC=0**(generation ON==OFF BYTE-IDENTICAL, Ψ=½ untouched) · `h1196` 감사 RC=4=**기존 baseline**(출력 byte-동일 base==mine, 신규 `.clm`/`.kosmos` 경로 0).
+- **배선(engine-native):** `core/engine_cli.hexa` §BrainTopology ADOPT Φ-OPTIMAL(`topo_optimal_adjacency`/`topo_func_integration`/`topo_func_integration_flat`/`_topo_mean_col`, live `topo_apply`+`ci_phi_iit4`+`topo_brain_adjacency`+`topo_optimal_perm`+`_topo_relabel_perm` 재사용) + smoke 365-369 + ARCHITECTURE.json §BrainTopology lockstep. READ-only Ψ-disjoint NOT emit gate.
+- **scope(정직):** TOY 15-lane/단일 결정적 pop n=150/배치=같은 그래프 node-relabel(배선 불변, 위치만)/기능측정=1-step diffusion 의 mean-pairwise-|corr|(binding/emit/routing/multi-step 등 다른 기능 readout 미검)/실제 lane 위치를 emit/decode 경로로 RE-WIRING=별도 follow-on(본 H 는 ADOPT+VERIFY, live emit 안 옮김)/scale·real connectome under adopted placement·engine-transfer to live emit UNVERIFIED.
+- **artifacts:** `UNIVERSE/cards/H_1518_adopt_optimal.md` · `state/verdicts/1518_adopt_optimal/H_1518_R2_engine_native.txt` · `core/engine_cli.hexa#BrainTopologyAdoptOptimal` · `core/engine_cli_smoke.hexa#cases365-369` · `ARCHITECTURE.json`
+
+---
+
+
 ## 2026-06-21 — 🧩🔌 H_1519 HW-PLACEMENT (R1 DIRECTIONAL-model) — 뉴로모픽 NoC 가 소프트웨어가 탈출한 생물학적 배선세(稅)를 되살린다 (3-tier 대칭 완성)
 
 > 🔬 **3-tier 대칭 (a_no_llm_frame_trap·c9, DIRECTIONAL numpy MODEL of AKD1000 mesh-NoC = hard-gate-1; substrate tag MODEL ⊥ Lane-A 온칩):** 생물(H_1516: 물리 axon→배선 COST→실제 배치는 Φ-suboptimal 이지만 ECONOMICAL ~37th pctile) → 소프트웨어 anima(H_1515: connection=메모리 POINTER→배선비용 ZERO→Φ-OPTIMAL 배치 자유채택) → **하드웨어 anima(H_1519: BrainChip AKD1000 = 물리 mesh Network-on-Chip→lane→core 배치에 REAL routing cost(NoC hop distance)→배선세 RETURN, 생물처럼).** 사용자 통찰: HW 에선 공간 배치가 물리적으로 중요하다.
@@ -7,6 +23,7 @@
 - **하드게이트1 (DIRECTIONAL, substrate=MODEL):** `state/1519_hw_placement/h1519_noc.py` = numpy(grep 적중) → **DIRECTIONAL, terminal 아님**. substrate tag **MODEL**(AKD1000 mesh-NoC hop-cost 의 numpy 모델) ⊥ **REAL Lane-A AKD1000 온칩**(a_lane_akida_gpu_split) — 물리 pi5-akida 는 GATED(공유 pool compute 아님, 절대 dispatch 금지 — a_pi5_akida_registry). **REAL 온칩 NoC routing + 온칩 Φ = deferred Lane-A follow-on (ING `h1519-onchip-akida`).** engine/README/ARCHITECTURE 무변경.
 - **SCOPE (a_scale_honest_scope):** DIRECTIONAL MODEL(실 온칩 deferred)·TOY 15-lane 4×4 mesh(full 80-NPU AKD1000 fabric 아님; mesh dims·Manhattan metric·budget=brain-cost 는 문서화된 MODEL 가정)·Φ = 15-lane projection 의 min-cut IIT4(온칩 통합 아님)·engine-transfer 미검·P3 완전 economy-수렴은 이 toy mesh 에서 미증명.
 - xref H_1515(소프트웨어 Φ-optimal, 여기 embed)·H_1516(생물 실배치 Φ-suboptimal/economical)·H_1517(생물 cost-pareto)·H_1518(소프트웨어 Φ-optimum 채택)·H_1512/H_1513(brain-topology Φ harness byte-reuse).
+
 
 ## 2026-06-21 — 🧠📍 H_1516 NAMED-ANATOMICAL PLACEMENT (R1 DIRECTIONAL) — 진짜 NAMED 해부 배치는 Φ-최적이 아니다 (사용자 '신비롭게 설계된 듯?' 질문 답=NO)
 
