@@ -1,0 +1,31 @@
+=== H_1536 NT-DOPAMINE — dopamine as RPE/credit-assignment FACULTY (R1 numpy mirror, DIRECTIONAL) ===
+seeds=[1536, 1537, 1538]  $0 CPU  deterministic  p7  c9  frozen-first  DA-as-FACULTY (not gain)
+task=DELAYED-CREDIT-ASSIGNMENT  T=8  N_CAUSAL_IDS=6  N_PRESENT=2  episodes=120  γ=0.95 λ=0.80 α=0.05 epochs=30
+causal facts placed at RANDOM positions ⇒ recency uninformative; chance top-2 of 7 = 0.2857
+
+--- arm credit-assignment accuracy (seed-mean) ---
+  DA-RPE  (dopamine faculty)      = 1.0000   per-seed=['1.000', '1.000', '1.000']
+  NO-DA   (recency baseline)      = 0.2910   per-seed=['0.292', '0.281', '0.300']
+  NO-DA   (uniform null)          = 0.2993   per-seed=['0.250', '0.281', '0.367']
+  ABL     (δ→0, no RPE)           = 0.2993   per-seed=['0.250', '0.281', '0.367']
+  SHUFFLE (reward-timing permuted)= 0.3125   per-seed=['0.500', '0.438', '0.000']
+
+=== (A) PRESENCE — DA-RPE − NO-DA(recency) ≥ +0.10 ===
+  Δ = +0.7090   (≥+0.10)   PASS
+=== (B) DISTINCT — DA-RPE − UNIFORM null ≥ +0.10 ===
+  Δ = +0.7007   (≥+0.10)   PASS
+=== (C) ABLATE — δ→0 reverts to baseline (≤ NO-DA + 0.05) ===
+  ABL = 0.2993   NO-DA+0.05 = 0.3410   PASS
+=== (D) SHUFFLE — reward-timing permuted collapses (≤ NO-DA + 0.05) ===
+  SHUFFLE = 0.3125   NO-DA+0.05 = 0.3410   PASS
+
+=== VERDICT ===
+  (A) presence  = PASS
+  (B) distinct  = PASS
+  (C) ablate    = PASS
+  (D) shuffle   = PASS
+
+  H_1536 NT-DOPAMINE (R1 mirror) = 🟢 GREEN DIRECTIONAL
+  → dopamine-as-RPE is a NEW substrate FACULTY: it adds delayed-credit-assignment a recency-store
+    lacks; ablation (δ→0) decisive. NOT a gain knob — a temporal-difference computation.
+  wired: DIRECTIONAL-mirror (numpy) → R2 engine-native §Dopamine follow-on (ING)
