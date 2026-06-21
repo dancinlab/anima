@@ -1,0 +1,56 @@
+{
+  "capability": "AB-AC interference: A->B retention after learning A->C",
+  "LR_star": 0.1,
+  "TH_star": 0.2,
+  "N_PAIRS": 24,
+  "N_DISTRACT": 24,
+  "MAX_CELLS": 72,
+  "MARGIN": 0.05,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "per_seed": [
+    {
+      "seed": 11,
+      "one_store": 0.0,
+      "two_store": 1.0,
+      "merge_abl": 0.0,
+      "shuffle_abl": 0.4583,
+      "single_encode_deconfound": 0.2917,
+      "two_minus_one": 1.0
+    },
+    {
+      "seed": 22,
+      "one_store": 0.0,
+      "two_store": 1.0,
+      "merge_abl": 0.0,
+      "shuffle_abl": 0.2917,
+      "single_encode_deconfound": 0.2917,
+      "two_minus_one": 1.0
+    },
+    {
+      "seed": 33,
+      "one_store": 0.0,
+      "two_store": 1.0,
+      "merge_abl": 0.0,
+      "shuffle_abl": 0.3333,
+      "single_encode_deconfound": 0.2917,
+      "two_minus_one": 1.0
+    }
+  ],
+  "one_store_mean": 0.0,
+  "two_store_mean": 1.0,
+  "merge_abl_mean": 0.0,
+  "shuffle_abl_mean": 0.3611,
+  "single_encode_deconfound_mean": 0.2917,
+  "two_minus_single_encode_mean": 0.7083,
+  "two_minus_one_mean": 1.0,
+  "merge_minus_one_mean": 0.0,
+  "two_minus_shuffle_mean": 0.6389,
+  "n_wins_over_one+MARGIN": 3,
+  "merge_reverts": true,
+  "shuffle_collapses": true,
+  "verdict": "GREEN"
+}

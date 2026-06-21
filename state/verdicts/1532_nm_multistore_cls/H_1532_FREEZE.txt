@@ -1,0 +1,62 @@
+H_1532 — MULTI-STORE / CLS on AB-AC INTERFERENCE — FROZEN FALSIFIER
+(pre-registered BEFORE any run; bar frozen-first, NO tune-to-green; c9)
+=====================================================================
+
+CENSUS C3 (state/1530_nm_research_census/CENSUS.md §3 C3 / §4 SPEC-3).
+GOAL: break the H_1284 NEUROMODULATION wall from an ORTHOGONAL angle.
+
+CAPABILITY (orthogonal to the abstain margin the wall lives on):
+  AB-AC INTERFERENCE — write A->B (phase 1), then write A->C + distractors
+  (phase 2), measure A->B RETENTION. A single flat store catastrophically
+  overwrites B with C at the shared key A; SEPARATE phase-separated stores
+  keep the confusable bindings apart.
+
+⚠ HAZARD (the whole point, census-flagged): the win MUST come from HAVING
+  TWO PHASE-SEPARATED STORES, NOT a scalar gain on one store. A gain framing
+  re-enters the controller family the wall already absorbs (H_1422 ACh-gain 🧱).
+  The ablations below are what PROVE the lever is HAVING SEPARATE STORES.
+
+ARMS (identical fixture/fact-set/event-stream per (seed); LR/TH = best-fixed):
+  ONE-STORE  : single flat MemStore, grid-tuned best (LR*,TH*) on disjoint seed 7
+               = the wall baseline. A->C refines/overwrites the A winner -> B lost.
+  TWO-STORE  : FAST episodic store (phase-1 A->B, retrieval-path SUPPRESSED =
+               Hasselmo encode-mode -> laid in a fresh cell) + SLOW store fed by
+               phase-2 A->C + distractors + REPLAY of episodic A->B. Confusable
+               A->B / A->C live in SEPARATE substrates. Retention = EITHER store
+               still returns B.
+  MERGE-ABL  : merge the two stores / disable phase-separation -> ONE store ->
+               MUST REVERT to one-store interference.
+  SHUFFLE-ABL: randomize which store each fact is assigned to -> destroys the
+               substrate separation -> MUST COLLAPSE.
+
+FIXTURE: N_PAIRS=24 shared keys, N_DISTRACT=24, MAX_CELLS=72 (ample capacity —
+  this tests INTERFERENCE, not capacity), DIM=16 byte-trigram FNV-1a key
+  (VERBATIM H_1284/H_1227), abstain=0.45, 3 seeds [11,22,33], tune seed 7.
+  $0 CPU. R1 numpy DIRECTIONAL (a_engine_native_learning — engine R2 deferred ING).
+
+METRIC: A->B retention = fraction of A keys whose store still returns OLD B.
+  Abstain counts as NOT retained (honest, no fabrication credit). p7: exact
+  ground truth (true A->B known), NO LLM judge / perplexity / loss term.
+
+FROZEN BARS (MARGIN = 0.05):
+  c1 PRESENCE : two_store - one_store >= +0.05 on >= 2/3 seeds.
+  c2 MERGE    : merge ablation REVERTS  -> (merge_mean - one_mean) < +0.05.
+  c3 SHUFFLE  : shuffle ablation COLLAPSES -> (two_mean - shuffle_mean) >= +0.05.
+
+VERDICT:
+  GREEN (🟢 WALL-BROKEN) iff c1 AND c2 AND c3
+        = two-store BEATS one-store on AB-AC AND the lift is decisively
+          attributable to HAVING SEPARATE STORES (merge reverts, shuffle
+          collapses). FIRST BREAK of the H_1284 wall; the lever is HAVING
+          SEPARATE STORES, not a gain.
+  AMBIGUOUS_ABLATION iff c1 holds but c2 or c3 FAILS
+        = lift exists but NOT proven to come from the two-store separation
+          (HONEST — not a clean break; would need a deconfound, c9).
+  WALL_HOLDS (🧱) iff c1 FAILS
+        = two-store TIES/LOSES to one-store on AB-AC interference -> the wall
+          extends to the multi-store / CLS family too (HONEST, c9).
+
+HONEST (c9): if two-store ties one-store, that is a real result — the wall
+  generalizes to the multi-store family. NO tune-to-green. WALL_HOLDS reported
+  as WALL_HOLDS. p1/p2/p3/p6: store-assignment + writes read only substrate
+  state (keys/recon-err); NO injected answer label / RLHF / persona / ethics.
