@@ -1,0 +1,31 @@
+H_1513 LITERAL-CONNECTOME — R2 ENGINE-NATIVE re-score (live core/engine_cli.hexa §BrainTopology LITERAL + ci_phi_iit4)
+captured: 2026-06-21T09:39:36Z · hexa run core/engine_cli_smoke.hexa RC=0
+harness: H_1512 live §BrainTopology (topo_apply + ci_phi_iit4 MIN-CUT Φ over _topo_core [0,3,2,13,5,7,9,14]),
+  population = _topo_lane_pop() (in-engine LCG, SAME as H_1512 R2), alpha=0.6, nseed=3 controls.
+  ONLY change vs H_1512: adjacency = topo_literal_adjacency() = REAL Hagmann/BCT DSI 219-region group-avg
+  (GPLv3) reduced to 15 lanes by R1 (hemisphere x graph-role) mapping seed 5120, median-binarized (30 edges).
+  controls (degree-matched random / lateralize / node-relabel shuffle) generated IN-ENGINE from literal adj.
+
+PASS  case_333_litconn_brain_gt_flat want=true got=true
+PASS  case_334_litconn_lateralization want=true got=true
+PASS  case_335_litconn_full_shuffle want=true got=true
+PASS  case_336_litconn_phi_nonneg want=true got=true
+PASS  case_337_litconn_b_wellformed want=true got=true
+INFO  H_1513 literal-connectome (R2 ENGINE-NATIVE, REAL Hagmann/BCT DSI 219-region GPLv3): Φ min-cut flat=0.002359639746085662 brain(literal)=0.09927861285239015 random(mean)=0.11488741050831901 | latcol=0.07403992572291251 full-shuf=0.07676692599853812 | brain_adv=-0.01560879765592886 shuf_adv=-0.038120484509780894 | GATED A(brain>flat)/D(lateralize)/E(scramble collapses) on H_1512 FROZEN bars — REAL published human connectome reproduces the brain-topology Φ-advantage engine-native; B(brain>random) report-only(dense). a_toy_scale_recheck
+--- engine_cli smoke summary: 349 pass / 0 fail ---
+
+FROZEN BARS (H_1512 verbatim, re-scored engine-native on the LITERAL adjacency):
+  (A brain>flat+0.02)  PASS  lit_brain 0.09927861 > flat 0.00235964 + 0.02
+  (D lateralize)       PASS  lit_latcol 0.07403993 < lit_brain 0.09927861
+  (E full-shuffle adv) PASS  shuf_adv -0.03812048 <= 0.5*brain_adv (0.5*-0.01560880)
+  (non-neg)            PASS  all Φ >= 0
+  (B brain>random)     REPORT-ONLY (NOT gated, H_1512 stance) — brain_adv -0.01560880 NEGATIVE:
+                       lit_brain 0.09927861 < random(mean) 0.11488741 at single engine-population draw.
+
+VERDICT: 🟢 REPRODUCES (GATED A∧D∧E) ENGINE-NATIVE — REAL published human connectome wiring + A/G
+  lateralization RAISE integrated min-cut Φ over the unwired layout, measured by the LIVE engine Φ.
+  HONEST(c9): B(brain>random) does NOT hold engine-native single-draw (brain_adv NEGATIVE) — dense REAL
+  connectome ≤ degree-matched random on one engine population (matches R1 'B thin/sample-fragile'; R1
+  3-seed-mean B was +0.024, sign-flips at single engine pop). Specificity-vs-random is NOT a gated claim.
+  SCOPE: single seed-5120 literal mapping / single engine population / 3 control seeds; multi-mapping +
+  multi-population engine mean + weighted connectome + alt parcellation UNVERIFIED.
