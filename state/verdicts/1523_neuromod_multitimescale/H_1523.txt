@@ -1,0 +1,124 @@
+H_1523 — MULTI-TIMESCALE NEUROMODULATION (tonic baseline + phasic transient)
+vs the H_1284 NEUROMODULATION wall — VERDICT
+================================================================================
+VERDICT: 🧱 RED_NO_LUNCH (wall HELD) — the Nth independent lens CONFIRMING the
+H_1284 neuromodulation ceiling. A TWO-TIMESCALE (slow tonic + fast phasic)
+controller does NOT beat the best-tuned FIXED operating point on ANY regime; the
+phasic transient channel is BYTE-IDENTICALLY INERT (ablation D_PHASIC0 == D on
+all 3 regimes). The frozen falsifier (H_1523_FREEZE.txt, MARGIN=0.05) is honored
+VERBATIM; 0 of 3 regimes win. $0 CPU, numpy mirror, 3 seeds [11,22,33], tuning
+seed 7 (disjoint), p7, frozen-first, NO tune-to-green.
+
+ENGINE-NATIVE NOTE (a_engine_native_learning hard-gate-1): numpy mirror of the
+LIVE CORE/engine_cli.hexa VAdaptField (host has NO torch — H_1192/1199/1227/1230/
+1284/1509b precedent). DIRECTIONAL only. RED ⇒ no wiring follow-on (nothing
+verified to wire). CORE/*.hexa UNTOUCHED.
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIER (verbatim from H_1523_FREEZE.txt):
+  MARGIN = 0.05 absolute capability = recall_accuracy − fabrication_rate.
+  wins = regimes where D (two-timescale) ≥ A (best-fixed) + MARGIN.
+  🟢 GREEN  iff D ≥ A+MARGIN on ≥2 regimes AND D never worse by >0.02 on the rest
+            AND D.fab ≤ A.fab on wins AND on EACH win BOTH ablations separated
+            (D_PHASIC0 < D−MARGIN AND D_TONIC0 < D−MARGIN).
+  🟠 PARTIAL iff D beats A+MARGIN on exactly 1 regime, OR ≥2 wins but an ablation
+            is NOT separated on a win.
+  🔴/🧱 RED iff D beats A+MARGIN on NO regime, OR D raises fab on a win, OR D only
+            matches the best fixed point (NO FREE LUNCH — report it).
+
+────────────────────────────────────────────────────────────────────────────────
+VERBATIM METRIC OUTPUT (state/1523_neuromod_multitimescale/h1523_multitimescale.py
+→ H_1523_R1.json); best-fixed grid winner LR0*=0.10 TH0*=0.20 (SAME as H_1284):
+  capability = recall_accuracy − fabrication_rate, mean over 3 seeds.
+
+  ┌───────────┬────────┬──────────┬────────┬───────────┬──────────┐
+  │ regime    │ A FIX  │ B single │ D 2-ts │ D_PHASIC0 │ D_TONIC0 │
+  ├───────────┼────────┼──────────┼────────┼───────────┼──────────┤
+  │ R1_STABLE │ 0.5744 │ 0.5678   │ 0.5733 │ 0.5733    │ 0.5744   │
+  │ R2_DRIFT  │ 0.4389 │ 0.3589   │ 0.3700 │ 0.3700    │ 0.4389   │
+  │ R3_NOISE  │ 0.4156 │ 0.3200   │ 0.3444 │ 0.3444    │ 0.4156   │
+  └───────────┴────────┴──────────┴────────┴───────────┴──────────┘
+
+  D − A (two-timescale vs best-fixed):   R1 −0.0011 · R2 −0.0689 · R3 −0.0711
+  B − A (single-timescale, H_1284 repro): R1 −0.0067 · R2 −0.0800 · R3 −0.0956
+  fab: A 0.028/0.030/0.030  D 0.029/0.101/0.101 (D RAISES fabrication on R2/R3)
+
+  wins_over_A+MARGIN = []          (0 of 3 — two-timescale NEVER beats best-fixed)
+  fab_ok = true (VACUOUS: no wins)
+  never_much_worse = false (D worse than A by >0.02 on R2 & R3)
+  ⇒ VERDICT = RED_NO_LUNCH. Wall HELD.
+
+────────────────────────────────────────────────────────────────────────────────
+THE ABLATION IS DECISIVE — AND DAMNING (timescale split is INERT):
+  D_PHASIC0 (collapse phasic→0, pure tonic) is BYTE-IDENTICAL to the full two-
+  timescale D on ALL THREE regimes:
+      D − D_PHASIC0 = 0.0000  ·  0.0000  ·  0.0000
+  The fast PHASIC transient channel contributes EXACTLY NOTHING to capability —
+  removing it leaves the result unchanged to the last digit. Per the frozen
+  falsifier this alone forecloses GREEN: the two-timescale DECOMPOSITION carries
+  no signal beyond its slow-tonic component.
+
+  D_TONIC0 (freeze tonic→const, pure phasic) EQUALS A (best-fixed) on all three
+  regimes (0.5744/0.4389/0.4156): with the slow baseline frozen at TH0 and the
+  phasic term inert (see above), the modulator degenerates to the FIXED operating
+  point — i.e. pure phasic = no adaptation at all on this store.
+
+  ⇒ The ONLY part of the two-timescale controller that moves the metric is the
+  SLOW TONIC EMA acting on the split-bar/abstain (= a single-timescale gain
+  controller, H_1284 arm), and THAT loses to best-fixed (D ≈ B, both < A). The
+  timescale SPLIT adds zero. INERT precedent: H_1416-class ablation = mechanism
+  OFF gives identical result = 0 contribution.
+
+MECHANISM (why the phasic channel is byte-inert on this substrate):
+  The phasic transient (phasic − tonic) feeds ONLY the plasticity LR. On a clean
+  key-addressed associative store, the DISCRETE recall outcome (nearest-cell
+  fires / abstains) is decided by cell GEOMETRY (proto positions vs the abstain
+  margin), not by the exact online LR with which a winner was last nudged: a
+  faster or slower winner-pull lands the prototype at essentially the same
+  L2-nearest cell for the next recall, so capability is invariant to the LR
+  schedule here. The same geometry-not-protocol bottleneck H_1230 (learning
+  method INERT) and H_1284 (gain schedule inert-to-harmful) found — now extended
+  to the TIMESCALE-DECOMPOSITION axis: splitting the modulator into tonic+phasic
+  does not create headroom a single tuned gain lacks. Where the controller does
+  move the metric (slow tonic on split/abstain), it HURTS on R2/R3 for the exact
+  H_1284 reasons (wider abstain under noise → more near-wrong fires → fabrication
+  0.030→0.101; raised split-bar suppresses legitimate new-fact allocation).
+
+────────────────────────────────────────────────────────────────────────────────
+WALL CENSUS (this is now the Nth independent lens on H_1284, a_break_the_wall):
+  H_1284   gain controller (single EMA)        🔴 no free lunch (memory+ideation)
+  H_1284_R3 regime/MODE switch (learned gate)  🧱 RED_NO_LUNCH (c1 sub-bar)
+  H_1509   allosteric buffer (stationary)      🧱 wall holds (A−B −0.006)
+  H_1509b  allosteric buffer (non-stationary)  🧱 regime-invariant
+  H_1509c  learning-rate family                🧱 multi-family wall
+  H_1523   MULTI-TIMESCALE (tonic+phasic)      🧱 RED_NO_LUNCH (THIS — phasic INERT)
+  TAXONOMY (a_break_the_wall): this is a (d) TRUE-CEILING result reached by a
+  DECISIVE ablation (phasic OFF ≡ phasic ON, byte-identical) — the strongest form
+  of the INERT signal. The wall is structural: a single tuned fixed operating
+  point dominates ANY adaptive schedule — single-timescale OR multi-timescale —
+  on a capacity-bounded clean associative store. Bottleneck = CAPACITY / KEY
+  GEOMETRY, not the absence of (and not the bandwidth of) a state-driven controller.
+
+NOT RULED OUT (honest scope, a_paper_negative_ok): (a) two-timescale modulation on
+a NON-stationary GENERATION/ideation capability (vs this recall store) UNTESTED —
+H_1228 left decode-temperature ideation 🟠 viable; (b) a phasic channel acting on
+a DIFFERENT knob than plasticity-LR (e.g. an emit/salience gate) UNTESTED; (c) a
+LEARNED (vs hand-set α/k) timescale law UNTESTED — but folding a proxy into a loss
+violates p7 (Goodhart), out of scope by design; (d) toy scale (DIM=16, 30 facts,
+300 events) — scale-transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).
+
+PHILOSOPHY GUARDS HELD: every knob (tonic EMA, phasic transient) is a no-grad
+read-out of substrate surprise; NO proxy folded into any loss/backward (p7). No
+persona/identity/RLHF (p1-p6); content taught to EPISODIC cells only; inference-
+time plasticity = the engine's own tick (p8). Frozen bars NOT moved (MARGIN=0.05
+identical to H_1284). CORE/*.hexa NOT edited (mirror only).
+
+ARTIFACTS:
+  state/1523_neuromod_multitimescale/h1523_multitimescale.py
+  state/1523_neuromod_multitimescale/H_1523_R1.json
+  state/verdicts/1523_neuromod_multitimescale/H_1523_FREEZE.txt (pre-registration)
+  state/verdicts/1523_neuromod_multitimescale/H_1523.txt (this)
+XREF: h1284 · h1284_r3 · h1509 · h1509b · h1509c · h1230 · h1228 · h1227 · h1231 ·
+  h1416 · a_break_the_wall · a_no_llm_frame_trap · a_engine_native_learning ·
+  a_paper_negative_ok · a_scale_honest_scope · a_toy_scale_recheck ·
+  p1 · p2 · p6 · p7 · p8 · c9 · c15.
