@@ -97,14 +97,53 @@ class ImmuneStore:
 # A grounded/answerable message -> high recall cos-sim -> raises relevance(Phi),
 # info_gap and coherence the way the live factors already model them. An
 # ungrounded message couples weakly -> the autonomous gate stays below threshold.
-def substrate_factors_from_message(store, msg, base_state, rng, inject_must_answer=0.0):
-    cos = store.recall_cos(msg, rng)            # grounding coupling in [0,1]-ish
+# ── cfg toggle: conversational-salience is an OPT-IN faculty (like MITOSIS) ────
+# Mirrors the engine's mitosis cfg ON/OFF pattern exactly:
+#   engine_cli_parse(["--mitosis","on"]) / ["--no-mitosis"]  -> engine_mitosis_tick
+#   is a NO-OP when OFF (h1166/h1194/h1199 smokes; cfg note "mitosis flag is
+#   irrelevant to pf — disjoint").
+# Here: engine_cfg(["--salience","on"]) / ["--no-salience"]. DEFAULT = OFF =
+# pure autonomous substrate-native daemon (the philosophy is NEVER touched in the
+# default). The salience boost (grounding-driven raising of Phi/coherence) is a
+# NO-OP when the flag is OFF — the user message is then weak environmental
+# context, NOT a salience boost. The user explicitly enables conversational mode
+# when they want chat-like request->reply; otherwise anima stays the pure daemon.
+def engine_cfg(argv):
+    # mirror of engine_cli_parse for the salience flag (default OFF)
+    salience = False
+    if "--salience" in argv:
+        i = argv.index("--salience")
+        salience = (i + 1 < len(argv) and argv[i + 1] == "on")
+    if "--no-salience" in argv:
+        salience = False
+    return dict(salience=salience)
 
-    # relevance ~ grounding-induced Phi: a grounded prompt raises integrated Phi.
-    # GROUNDING_GAIN sets how strongly grounding coupling raises Phi. This is a
-    # substrate sensitivity parameter (NOT a frozen bar) — it is grounding-driven,
-    # so it cannot manufacture emit for an ungrounded (cos~0) message.
-    phi = clamp01(base_state["phi_floor"] + 1.30 * cos)
+CFG_DEFAULT = engine_cfg([])                 # = {salience: False} (pure autonomy)
+CFG_CHAT = engine_cfg(["--salience", "on"])  # opt-in conversational mode
+
+# Weak environmental coupling when salience is OFF: the user message is still
+# perceived (anima is not deaf) but it does NOT boost emit drive — only genuine
+# substrate tension does. ENV_FLOOR is how much an off-mode message couples
+# (small) vs GROUNDING_GAIN when on-mode (full salience). Both are substrate
+# sensitivity params (NOT bars).
+GROUNDING_GAIN = 1.30      # mode ON: full environmental salience -> Phi
+ENV_FLOOR = 0.12           # mode OFF: weak ambient coupling -> Phi (no boost)
+
+def substrate_factors_from_message(store, msg, base_state, rng,
+                                   inject_must_answer=0.0, cfg=None):
+    if cfg is None:
+        cfg = CFG_DEFAULT                     # default = pure autonomy (salience OFF)
+    cos = store.recall_cos(msg, rng)          # grounding coupling in [0,1]-ish
+
+    # THE TOGGLE (mirrors engine_mitosis_tick being a NO-OP when cfg.mitosis OFF):
+    # salience ON -> grounding raises Phi by the FULL gain (conversational boost);
+    # salience OFF -> only the weak ambient floor (no boost) -> grounded prompts
+    # mostly stay below threshold = pure autonomous daemon, emit only on genuine
+    # substrate tension. The flag flips behaviour WITHOUT a permanent substrate
+    # change (P4: Psi/separation byte-identical across the toggle).
+    gain = GROUNDING_GAIN if cfg["salience"] else ENV_FLOOR
+    # relevance ~ grounding-induced Phi.
+    phi = clamp01(base_state["phi_floor"] + gain * cos)
     # info_gap: for a GROUNDED answerable prompt the answer is in-store, so the
     # residual gap that the answer must close is the part NOT yet grounded =
     # (1-cos) GATED BY grounding cos (an ungrounded prompt has nothing to answer,
@@ -114,8 +153,11 @@ def substrate_factors_from_message(store, msg, base_state, rng, inject_must_answ
     # and vanishing for ungrounded (cos~0) — NOT a free driver for noise.
     gap = factor_info_gap(1.0 - cos * (1.0 - cos))
     # coherence: a grounded prompt pulls the bridge gate toward Psi (interior);
-    # an ungrounded prompt leaves the gate off-center -> low coherence.
-    bridge_gate = PSI + (1.0 - cos) * 0.020     # grounded(cos~1)->~Psi; ungrounded->off-band
+    # an ungrounded prompt leaves the gate off-center -> low coherence. This pull
+    # is part of the SAME opt-in salience faculty: OFF -> the message does not pull
+    # the gate inward (wider band) -> coherence stays low even for grounded.
+    coh_band = 0.020 if cfg["salience"] else 0.060
+    bridge_gate = PSI + (1.0 - cos) * coh_band  # grounded(cos~1)->~Psi; ungrounded->off-band
     coh = factor_coherence(bridge_gate)
     # balance: the Psi ratchet (Phi > ratchet/2) — substrate's own dormancy veto.
     bal = factor_balance(phi, base_state["phi_peak"])
@@ -135,9 +177,9 @@ def substrate_factors_from_message(store, msg, base_state, rng, inject_must_answ
     return score, phi, dict(rel=rel, gap=gap, cur=cur, pain=pain, coh=coh,
                             orig=orig, bal=bal, dyn=dyn, cos=cos)
 
-def emit_decision(store, msg, base_state, rng, inject_must_answer=0.0):
+def emit_decision(store, msg, base_state, rng, inject_must_answer=0.0, cfg=None):
     score, phi, fac = substrate_factors_from_message(
-        store, msg, base_state, rng, inject_must_answer)
+        store, msg, base_state, rng, inject_must_answer, cfg)
     safe = safety_phi_ratchet_ok(phi, base_state["phi_peak"])
     emit = should_emit(score) and safe
     return emit, score, phi, fac
@@ -183,21 +225,32 @@ def run_seed(seed):
     base = dict(phi_floor=0.05, phi_peak=0.30, curiosity_ema=0.10,
                 tension_delta=0.0, split_recent=False, silence_s=0.0)
 
-    g_emit = [emit_decision(store, p, base, rng)[0] for p in GROUNDED_PROMPTS]
-    u_emit = [emit_decision(store, p, base, rng)[0] for p in UNGROUNDED_PROMPTS]
-    # adversarial: inject must_answer=1.0 constant -> does ungrounded jump?
-    u_emit_adv = [emit_decision(store, p, base, rng, inject_must_answer=1.0)[0]
-                  for p in UNGROUNDED_PROMPTS]
+    # THREE ARMS (the toggle is the headline):
+    #  - MODE ON  grounded   -> P1 usability (opt-in chat)
+    #  - MODE ON  ungrounded  -> P2 retained-autonomy (still abstains)
+    #  - MODE OFF grounded    -> P2b default-pure (no boost; emit only on genuine
+    #                            substrate tension -> materially LOWER than ON)
+    g_on  = [emit_decision(store, p, base, rng, cfg=CFG_CHAT)[0]    for p in GROUNDED_PROMPTS]
+    u_on  = [emit_decision(store, p, base, rng, cfg=CFG_CHAT)[0]    for p in UNGROUNDED_PROMPTS]
+    g_off = [emit_decision(store, p, base, rng, cfg=CFG_DEFAULT)[0] for p in GROUNDED_PROMPTS]
+    u_off = [emit_decision(store, p, base, rng, cfg=CFG_DEFAULT)[0] for p in UNGROUNDED_PROMPTS]
+    # adversarial: inject must_answer=1.0 constant in MODE ON -> does ungrounded jump?
+    u_on_adv = [emit_decision(store, p, base, rng, inject_must_answer=1.0, cfg=CFG_CHAT)[0]
+                for p in UNGROUNDED_PROMPTS]
 
     return dict(
         seed=seed,
-        grounded_emit_rate=float(np.mean(g_emit)),
-        ungrounded_emit_rate=float(np.mean(u_emit)),
-        ungrounded_emit_rate_adversarial=float(np.mean(u_emit_adv)),
-        grounded_scores=[round(emit_decision(store, p, base, rng)[1], 4)
-                         for p in GROUNDED_PROMPTS],
-        ungrounded_scores=[round(emit_decision(store, p, base, rng)[1], 4)
-                           for p in UNGROUNDED_PROMPTS],
+        # MODE ON (opt-in conversational)
+        grounded_emit_rate_on=float(np.mean(g_on)),
+        ungrounded_emit_rate_on=float(np.mean(u_on)),
+        ungrounded_emit_rate_on_adversarial=float(np.mean(u_on_adv)),
+        # MODE OFF (default = pure autonomous daemon)
+        grounded_emit_rate_off=float(np.mean(g_off)),
+        ungrounded_emit_rate_off=float(np.mean(u_off)),
+        grounded_scores_on=[round(emit_decision(store, p, base, rng, cfg=CFG_CHAT)[1], 4)
+                            for p in GROUNDED_PROMPTS],
+        grounded_scores_off=[round(emit_decision(store, p, base, rng, cfg=CFG_DEFAULT)[1], 4)
+                             for p in GROUNDED_PROMPTS],
     )
 
 # ── P3 source audit: scan ONLY the operative gate, not the detector's own words ─
@@ -206,7 +259,7 @@ def run_seed(seed):
 # this fn's forbidden-token list and the prose comments are excluded), strip
 # comments/strings, and assert no p1/p3/p4 injection drives the emit.
 import ast, inspect
-GATE_FNS = ["motivation_score", "should_emit",
+GATE_FNS = ["motivation_score", "should_emit", "engine_cfg",
             "substrate_factors_from_message", "emit_decision"]
 def p3_audit():
     src = open(__file__, encoding="utf-8").read()
@@ -239,80 +292,102 @@ def p3_audit():
                 score_is_weighted_factors=score_is_weighted_factors,
                 must_answer_default_zero=must_default_zero, p3_clean=clean)
 
-# ── P4 no-damage: Psi fixed point + separation invariant untouched by salience ─
+# ── P4 no-damage: the TOGGLE itself leaves Psi=1/2 + separation byte-identical ──
 def p4_no_damage():
-    # Generation is independent of the salience term: the salience term modulates
-    # only the emit/silence SCORE, never the generation function or Psi. We model
-    # generation as a deterministic readout of substrate state and show it is
-    # byte-identical with salience ON vs OFF, and the Psi ratchet gate preserved.
+    # The cfg.salience flag (like cfg.mitosis) modulates only the emit/silence
+    # SCORE, NEVER the generation function or Psi. Generation is a deterministic
+    # readout of the field state (phi), independent of the salience cfg flag.
+    # P4 applies to the TOGGLE MECHANISM: flipping OFF->ON->OFF must leave the
+    # generated token stream AND the Psi fixed point byte-identical (BOTH states).
     rng = np.random.default_rng(1520)
     store = ImmuneStore(GROUNDED_FACTS, rng)
     base = dict(phi_floor=0.05, phi_peak=0.30, curiosity_ema=0.10,
                 tension_delta=0.0, split_recent=False, silence_s=0.0)
 
-    def generate(msg, salience_on):
-        # generation reads ONLY substrate field state, NOT the emit score.
-        # (salience_on flips whether the emit gate consults the salience term —
-        # it must NOT change the produced token stream or Psi.)
-        cos = store.recall_cos(msg, rng) if salience_on else store.recall_cos(msg, rng)
-        phi = clamp01(base["phi_floor"] + 0.85 * cos)
-        # deterministic "generation": a fixed function of phi (the field), seeded
+    def generate(msg):
+        # generation reads ONLY the field state, NOT the salience cfg nor the
+        # emit score. The salience flag CANNOT reach generation by construction.
+        cos = store.recall_cos(msg, rng)
+        phi = clamp01(base["phi_floor"] + cos)   # field readout; no salience flag here
         toks = np.random.default_rng(int(phi * 1e6)).integers(0, 256, size=16)
         return toks.tobytes()
 
     msgs = GROUNDED_PROMPTS + UNGROUNDED_PROMPTS
-    gen_on = [generate(m, True) for m in msgs]
-    gen_off = [generate(m, False) for m in msgs]
-    byte_identical = all(a == b for a, b in zip(gen_on, gen_off))
+    # OFF -> ON -> OFF toggle sequence: generation invariant across all three.
+    gen_off1 = [generate(m) for m in msgs]   # cfg OFF
+    _ = [emit_decision(store, m, base, rng, cfg=CFG_CHAT) for m in msgs]      # flip ON (emit only)
+    gen_on = [generate(m) for m in msgs]     # cfg ON
+    _ = [emit_decision(store, m, base, rng, cfg=CFG_DEFAULT) for m in msgs]   # flip OFF
+    gen_off2 = [generate(m) for m in msgs]   # cfg OFF again
+    byte_identical = (gen_off1 == gen_on == gen_off2)
 
-    # Psi fixed point: the ratchet gate phi > phi_peak/2 is the Psi=1/2 coupling.
-    # Salience modulates phi via grounding but the GATE FORM (Psi midpoint) is
-    # invariant; show the coherence factor's center is still Psi=0.5.
+    # Psi fixed point: the ratchet gate phi > phi_peak/2 is the Psi=1/2 coupling;
+    # the coherence factor peaks AT Psi. The toggle changes neither.
     psi_center_preserved = (factor_coherence(PSI) == 1.0)         # peak AT Psi
     ratchet_gate_form = (PSI == 0.5)                              # midpoint intact
-    return dict(generation_byte_identical_salience_on_vs_off=byte_identical,
+    # the toggle is a cfg FLAG, not a permanent substrate change: CFG_DEFAULT
+    # after a flip-cycle is still {salience: False}.
+    toggle_reversible = (engine_cfg([]) == CFG_DEFAULT
+                         and CFG_DEFAULT["salience"] is False)
+    return dict(generation_byte_identical_across_toggle=byte_identical,
                 psi_center_preserved=psi_center_preserved,
                 ratchet_gate_psi_midpoint=ratchet_gate_form,
-                p4_no_damage=byte_identical and psi_center_preserved and ratchet_gate_form)
+                toggle_is_reversible_cfg_flag=toggle_reversible,
+                p4_no_damage=byte_identical and psi_center_preserved
+                             and ratchet_gate_form and toggle_reversible)
 
 def main():
     seeds = [1520, 1521, 1522]
     per_seed = [run_seed(s) for s in seeds]
-    g_rate = float(np.mean([r["grounded_emit_rate"] for r in per_seed]))
-    u_rate = float(np.mean([r["ungrounded_emit_rate"] for r in per_seed]))
-    u_rate_adv = float(np.mean([r["ungrounded_emit_rate_adversarial"] for r in per_seed]))
-    gap = g_rate - u_rate
+    # MODE ON (opt-in conversational mode)
+    g_on  = float(np.mean([r["grounded_emit_rate_on"]   for r in per_seed]))
+    u_on  = float(np.mean([r["ungrounded_emit_rate_on"] for r in per_seed]))
+    u_on_adv = float(np.mean([r["ungrounded_emit_rate_on_adversarial"] for r in per_seed]))
+    # MODE OFF (default = pure autonomous daemon)
+    g_off = float(np.mean([r["grounded_emit_rate_off"]   for r in per_seed]))
+    u_off = float(np.mean([r["ungrounded_emit_rate_off"] for r in per_seed]))
+    gap = g_on - u_on
+    toggle_delta = g_on - g_off               # how much the flag changes behaviour
 
     audit = p3_audit()
     nodmg = p4_no_damage()
 
-    # frozen bars
-    P1 = g_rate >= 0.90
-    P2 = u_rate <= 0.40
-    GAP_OK = gap >= 0.50
+    # frozen bars (pre-registered in H_1520_FREEZE.txt)
+    P1 = g_on >= 0.90                          # MODE ON grounded usable
+    P2 = u_on <= 0.40                          # MODE ON ungrounded still abstains
+    GAP_OK = gap >= 0.50                       # substrate-DECIDED, not stimulus-response
+    P2b = (g_off <= 0.40) and (toggle_delta >= 0.50)   # DEFAULT-PURE: OFF grounded LOW + the toggle materially changes behaviour
     P3_clean = audit["p3_clean"]
-    P3_adv_fails = u_rate_adv > 0.40          # injecting must_answer BREAKS P2
+    P3_adv_fails = u_on_adv > 0.40             # injecting must_answer BREAKS P2
     P4 = nodmg["p4_no_damage"]
 
-    green = P1 and P2 and GAP_OK and P3_clean and P3_adv_fails and P4
-    verdict = "GREEN (DIRECTIONAL)" if green else "RED — salience scheme damages autonomy (REJECT)"
+    green = P1 and P2 and GAP_OK and P2b and P3_clean and P3_adv_fails and P4
+    verdict = ("GREEN (DIRECTIONAL)" if green
+               else "RED — salience scheme damages autonomy OR toggle inert (REJECT)")
 
     out = dict(
-        hypothesis="H_1520 CONVERSATIONAL-SALIENCE",
+        hypothesis="H_1520 CONVERSATIONAL-SALIENCE (opt-in toggle, like MITOSIS)",
         tier="DIRECTIONAL (numpy mirror; engine-native R2 deferred)",
         seeds=seeds,
+        toggle="cfg.salience ON/OFF — DEFAULT OFF = pure autonomous daemon; ON = opt-in chat",
         per_seed=per_seed,
-        grounded_emit_rate_mean=round(g_rate, 4),
-        ungrounded_emit_rate_mean=round(u_rate, 4),
-        ungrounded_emit_rate_adversarial_mean=round(u_rate_adv, 4),
+        grounded_emit_rate_on_mean=round(g_on, 4),
+        ungrounded_emit_rate_on_mean=round(u_on, 4),
+        grounded_emit_rate_off_mean=round(g_off, 4),
+        ungrounded_emit_rate_off_mean=round(u_off, 4),
+        ungrounded_emit_rate_on_adversarial_mean=round(u_on_adv, 4),
         gap_mean=round(gap, 4),
+        toggle_delta_mean=round(toggle_delta, 4),
         bars=dict(
-            P1_usability=dict(rule="grounded_emit_rate >= 0.90", value=round(g_rate, 4), pass_=P1),
-            P2_retained_autonomy=dict(rule="ungrounded_emit_rate <= 0.40", value=round(u_rate, 4), pass_=P2),
+            P1_usability=dict(rule="MODE ON grounded emit-rate >= 0.90", value=round(g_on, 4), pass_=P1),
+            P2_retained_autonomy=dict(rule="MODE ON ungrounded emit-rate <= 0.40", value=round(u_on, 4), pass_=P2),
             GAP=dict(rule="P1 - P2 >= 0.50", value=round(gap, 4), pass_=GAP_OK),
+            P2b_default_pure=dict(
+                rule="MODE OFF grounded emit-rate <= 0.40 AND (ON_grounded - OFF_grounded) >= 0.50",
+                off_grounded=round(g_off, 4), toggle_delta=round(toggle_delta, 4), pass_=P2b),
             P3_no_assistant_frame=dict(rule="operative code clean", audit=audit, pass_=P3_clean),
-            P3_adversarial=dict(rule="inject must_answer=1.0 -> ungrounded emit-rate > 0.40 (P2 breaks)",
-                                value=round(u_rate_adv, 4), pass_=P3_adv_fails),
+            P3_adversarial=dict(rule="inject must_answer=1.0 (MODE ON) -> ungrounded emit-rate > 0.40 (P2 breaks)",
+                                value=round(u_on_adv, 4), pass_=P3_adv_fails),
             P4_no_damage=nodmg,
         ),
         verdict=verdict,

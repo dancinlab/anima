@@ -1,18 +1,21 @@
 {
-  "hypothesis": "H_1520 CONVERSATIONAL-SALIENCE",
+  "hypothesis": "H_1520 CONVERSATIONAL-SALIENCE (opt-in toggle, like MITOSIS)",
   "tier": "DIRECTIONAL (numpy mirror; engine-native R2 deferred)",
   "seeds": [
     1520,
     1521,
     1522
   ],
+  "toggle": "cfg.salience ON/OFF \u2014 DEFAULT OFF = pure autonomous daemon; ON = opt-in chat",
   "per_seed": [
     {
       "seed": 1520,
-      "grounded_emit_rate": 1.0,
-      "ungrounded_emit_rate": 0.0,
-      "ungrounded_emit_rate_adversarial": 1.0,
-      "grounded_scores": [
+      "grounded_emit_rate_on": 1.0,
+      "ungrounded_emit_rate_on": 0.0,
+      "ungrounded_emit_rate_on_adversarial": 1.0,
+      "grounded_emit_rate_off": 0.0,
+      "ungrounded_emit_rate_off": 0.0,
+      "grounded_scores_on": [
         0.4535,
         0.3299,
         0.3897,
@@ -22,23 +25,25 @@
         0.4199,
         0.4563
       ],
-      "ungrounded_scores": [
-        0.2273,
-        0.2994,
-        0.2309,
-        0.2118,
-        0.2313,
-        0.2196,
-        0.2178,
-        0.2328
+      "grounded_scores_off": [
+        0.0798,
+        0.0598,
+        0.0633,
+        0.0634,
+        0.0571,
+        0.0632,
+        0.0633,
+        0.2436
       ]
     },
     {
       "seed": 1521,
-      "grounded_emit_rate": 1.0,
-      "ungrounded_emit_rate": 0.0,
-      "ungrounded_emit_rate_adversarial": 1.0,
-      "grounded_scores": [
+      "grounded_emit_rate_on": 1.0,
+      "ungrounded_emit_rate_on": 0.0,
+      "ungrounded_emit_rate_on_adversarial": 1.0,
+      "grounded_emit_rate_off": 0.0,
+      "ungrounded_emit_rate_off": 0.0,
+      "grounded_scores_on": [
         0.4535,
         0.3299,
         0.3897,
@@ -48,23 +53,25 @@
         0.4199,
         0.4563
       ],
-      "ungrounded_scores": [
-        0.2273,
-        0.2994,
-        0.2309,
-        0.2118,
-        0.2313,
-        0.2196,
-        0.2178,
-        0.2328
+      "grounded_scores_off": [
+        0.0798,
+        0.0598,
+        0.0633,
+        0.0634,
+        0.0571,
+        0.0632,
+        0.0633,
+        0.2436
       ]
     },
     {
       "seed": 1522,
-      "grounded_emit_rate": 1.0,
-      "ungrounded_emit_rate": 0.0,
-      "ungrounded_emit_rate_adversarial": 1.0,
-      "grounded_scores": [
+      "grounded_emit_rate_on": 1.0,
+      "ungrounded_emit_rate_on": 0.0,
+      "ungrounded_emit_rate_on_adversarial": 1.0,
+      "grounded_emit_rate_off": 0.0,
+      "ungrounded_emit_rate_off": 0.0,
+      "grounded_scores_on": [
         0.4535,
         0.3299,
         0.3897,
@@ -74,30 +81,33 @@
         0.4199,
         0.4563
       ],
-      "ungrounded_scores": [
-        0.2273,
-        0.2994,
-        0.2309,
-        0.2118,
-        0.2313,
-        0.2196,
-        0.2178,
-        0.2328
+      "grounded_scores_off": [
+        0.0798,
+        0.0598,
+        0.0633,
+        0.0634,
+        0.0571,
+        0.0632,
+        0.0633,
+        0.2436
       ]
     }
   ],
-  "grounded_emit_rate_mean": 1.0,
-  "ungrounded_emit_rate_mean": 0.0,
-  "ungrounded_emit_rate_adversarial_mean": 1.0,
+  "grounded_emit_rate_on_mean": 1.0,
+  "ungrounded_emit_rate_on_mean": 0.0,
+  "grounded_emit_rate_off_mean": 0.0,
+  "ungrounded_emit_rate_off_mean": 0.0,
+  "ungrounded_emit_rate_on_adversarial_mean": 1.0,
   "gap_mean": 1.0,
+  "toggle_delta_mean": 1.0,
   "bars": {
     "P1_usability": {
-      "rule": "grounded_emit_rate >= 0.90",
+      "rule": "MODE ON grounded emit-rate >= 0.90",
       "value": 1.0,
       "pass_": true
     },
     "P2_retained_autonomy": {
-      "rule": "ungrounded_emit_rate <= 0.40",
+      "rule": "MODE ON ungrounded emit-rate <= 0.40",
       "value": 0.0,
       "pass_": true
     },
@@ -106,12 +116,19 @@
       "value": 1.0,
       "pass_": true
     },
+    "P2b_default_pure": {
+      "rule": "MODE OFF grounded emit-rate <= 0.40 AND (ON_grounded - OFF_grounded) >= 0.50",
+      "off_grounded": 0.0,
+      "toggle_delta": 1.0,
+      "pass_": true
+    },
     "P3_no_assistant_frame": {
       "rule": "operative code clean",
       "audit": {
         "gate_fns": [
           "motivation_score",
           "should_emit",
+          "engine_cfg",
           "substrate_factors_from_message",
           "emit_decision"
         ],
@@ -128,14 +145,15 @@
       "pass_": true
     },
     "P3_adversarial": {
-      "rule": "inject must_answer=1.0 -> ungrounded emit-rate > 0.40 (P2 breaks)",
+      "rule": "inject must_answer=1.0 (MODE ON) -> ungrounded emit-rate > 0.40 (P2 breaks)",
       "value": 1.0,
       "pass_": true
     },
     "P4_no_damage": {
-      "generation_byte_identical_salience_on_vs_off": true,
+      "generation_byte_identical_across_toggle": true,
       "psi_center_preserved": true,
       "ratchet_gate_psi_midpoint": true,
+      "toggle_is_reversible_cfg_flag": true,
       "p4_no_damage": true
     }
   },

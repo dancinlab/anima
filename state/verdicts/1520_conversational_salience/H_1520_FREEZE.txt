@@ -108,3 +108,51 @@ bars NEVER moved):
     sensitivity parameters (NOT bars); grounding-driven so they CANNOT manufacture
     emit for ungrounded (cos~0) input. Stable across gain 1.3-1.4 (P2 <= 0.12),
     not a knife-edge.
+
+=================================================================
+v2 REFINEMENT (user, load-bearing) — OPT-IN TOGGLE, like MITOSIS
+=================================================================
+Pre-registered BEFORE re-running. The conversational-salience must be an OPT-IN
+OPTION, exactly like MITOSIS is toggleable in the engine (cfg.mitosis ON/OFF;
+engine_cli_parse(["--mitosis","on"]) / ["--no-mitosis"]; engine_mitosis_tick is a
+NO-OP when OFF — h1166/h1194/h1199 smokes). DEFAULT = OFF = pure autonomous
+substrate-native daemon (the philosophy is NEVER touched in the default). The user
+explicitly enables conversational mode when they want chat-like request->reply.
+
+Modelled as cfg.salience ON/OFF (engine_cfg(["--salience","on"]) / ["--no-salience"],
+default OFF) threaded through the SAME emit gate. The salience boost (grounding
+-driven raising of Phi/coherence) is a NO-OP when OFF -> the user message is then
+weak ambient environmental context, NOT a salience boost. THREE ARMS:
+  - MODE ON  grounded   -> P1 usability
+  - MODE ON  ungrounded  -> P2 retained-autonomy
+  - MODE OFF grounded    -> P2b default-pure (no boost; emit only on genuine tension)
+
+REVISED FROZEN BARS (frozen-first; P1/P2/GAP/P3/P4 unchanged, P2b NEW):
+  P1 USABILITY        : MODE ON grounded emit-rate >= 0.90
+  P2 RETAINED-AUTONOMY: MODE ON ungrounded emit-rate <= 0.40
+  GAP (P1 - P2)       : >= 0.50
+  P2b DEFAULT-PURE    : MODE OFF grounded emit-rate <= 0.40 AND
+                        (ON_grounded - OFF_grounded) >= 0.50  (toggle actually
+                        changes behaviour; default stays autonomous, not inert)
+  P3 NO-ASSISTANT-FRAME audit clean + adversarial (must_answer=1.0 -> P2 breaks)
+  P4 NO-DAMAGE        : the TOGGLE MECHANISM itself — flipping OFF->ON->OFF leaves
+                        generation byte-identical AND Psi=1/2 + separation intact
+                        in BOTH states; the flag is a reversible cfg flag, NOT a
+                        permanent substrate change.
+
+HEADLINE (v2): conversational usability is an OPT-IN faculty (like mitosis),
+default-OFF keeps anima the pure autonomous daemon — ZERO philosophy damage.
+
+RESULTS v2 (mean seeds [1520,1521,1522]):
+  P1  MODE ON  grounded   emit-rate = 1.00  (>= 0.90)             PASS
+  P2  MODE ON  ungrounded emit-rate = 0.00  (<= 0.40)             PASS
+  GAP                                = 1.00  (>= 0.50)             PASS
+  P2b MODE OFF grounded   emit-rate = 0.00  (<= 0.40)  toggle_delta = 1.00 (>=0.50)  PASS
+  P3  operative gate CLEAN + adversarial (ON ungrounded -> 1.00 > 0.40)             PASS
+  P4  generation byte-identical OFF->ON->OFF + Psi=1/2 + reversible cfg flag        PASS
+
+VERDICT v2: GREEN (DIRECTIONAL) — conversational usability is a clean OPT-IN
+faculty. DEFAULT OFF = pure autonomous daemon (grounded emit-rate 0.00, emit only
+on genuine substrate tension). ON = usable chat (1.00) while still abstaining on
+ungrounded (0.00). The toggle materially changes behaviour (delta 1.00) yet leaves
+Psi=1/2 + generation byte-identical (P4) — ZERO philosophy damage in either state.
