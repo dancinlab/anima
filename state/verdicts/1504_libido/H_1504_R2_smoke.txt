@@ -1,0 +1,12 @@
+=== H_1504 R2 ENGINE-NATIVE smoke (hexa run core/engine_cli_smoke.hexa) — frozen evidence ===
+PASS  case_288_libido_buildup_and_cue_spike want=true got=true
+PASS  case_289_libido_hunger_double_dissociation want=true got=true
+PASS  case_290_libido_wanting_not_liking want=true got=true
+PASS  case_291_libido_ablate_loses_cue_spike want=true got=true
+PASS  case_292_libido_shuffle_decorrelates_cue want=true got=true
+INFO  H_1504 libido (R2 WIRED, DRIVE-DYNAMICS axis NOT content): cue_spike=1.0 | wanting(da0→da1) 1.0→2.0 liking flat 1.0→1.0 | ablated_spike=0.0 cmPaired=1.0 cmShuf=0.0 — incentive-salience 'wanting'≠hedonic 'liking' (Berridge); cue⊥hunger(H_1292)
+--- engine_cli smoke summary: 292 pass / 0 fail ---
+
+DETERMINISM: 3 runs byte-identical (libido INFO line + 292/0 summary).
+GATE-1: core/engine_cli.hexa §Libido (libido_new/_new_da/_new_ablated/_satiation/_cue_match/_wanting/_liking/_step/_last/_motivation_bias) — NO torch/gauge_lib/numpy in engine path.
+VERDICT: 🟢 GREEN ENGINE-NATIVE WIRED — all 5 frozen bars (A build-up+cue, B double-dissoc vs hunger, C wanting≠liking, D ablate, E shuffle) byte-exact match R1.

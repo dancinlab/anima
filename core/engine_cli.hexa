@@ -1649,6 +1649,164 @@ pub fn homeo_motivation_bias(hd: HomeostaticDrive, mem: ImmuneMemoryGrow, key: [
     return homeo_drive(hd, mem, key)
 }
 
+// ── §  LIBIDO — SEXUAL APPETITIVE DRIVE-DYNAMICS AXIS (H_1504 R2) ─────────────────
+//
+// ⚠ FRAMING (a_no_llm_frame_trap + p1-p4): this is a DRIVE-DYNAMICS axis, NOT sexual
+// content, NOT roleplay, NOT a persona (which would violate p1-p4 anyway). The
+// scientifically rich, falsifiable core is INCENTIVE SALIENCE ("wanting") ≠ HEDONIC
+// VALUE ("liking") — Berridge & Robinson 1998 Brain Res Rev / Berridge 2016 Am Psychol;
+// Pfaus 1999/2009 (sexual motivation); Georgiadis & Kringelbach 2012 Prog Neurobiol
+// (sexual response cycle). We model the appetitive drive's TEMPORAL DYNAMICS (build-up,
+// cue-conditioning, satiation, motivation bias) and measure frozen bars — exactly as the
+// §HomeostaticDrive hunger lane does. NO explicit content, NO generated text: a parametric
+// drive READ off the substrate.
+//
+// WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1504 R1): the H_1504 numpy MIRROR
+// (R1 🟢 GREEN, 3 seeds [4504,4505,4506], all 5 frozen bars byte-identical) is REALIZED
+// here ENGINE-NATIVE on the LIVE ImmuneMemoryGrow store, READ-ONLY.
+//
+// SIBLING of §HomeostaticDrive (H_1292 hunger), with a DIFFERENT structure. Hunger is a
+// pure DEFICIT integrator (drive = Kp·deficit + Ki·I, cue-BLIND). Libido adds TWO things
+// hunger lacks:
+//   (1) a CUE-CONDITIONED INCENTIVE component — a conditioned cue whose affinity to its
+//       PAIRED incentive cell off the live store SPIKES the "wanting" (incentive salience).
+//       This is the cue-driven incentive a deficit-only hunger drive cannot produce.
+//   (2) a WANTING ≠ LIKING dissociation — a dopaminergic-analog gain (da_gain) amplifies
+//       WANTING (the pursuit drive) but NOT LIKING (the hedonic/consummation value). This
+//       reproduces the Berridge dissociation: dopamine raises wanting, not liking.
+// DISTINCT vs §HomeostaticDrive on the CUE signature (hold deprivation fixed, toggle the
+// cue: hunger is FLAT, libido SPIKES) and on the da-gain signature (wanting moves, liking
+// does not). DISTINCT vs §affect (H_1290, stateless read, no setpoint/integral/cue).
+//
+// REGULATED VARIABLE (substrate-derived, NO label, p2/p3/p6): "grounding satiation"
+// s_t = the recall MARGIN against the live immune store (1 - recon_err/recall_thr) — the
+// SAME signal the affect and hunger lanes read. cue_match = the margin of the CONDITIONED
+// CUE key against the store (a cue paired with a bound incentive cell grounds strongly →
+// a wanting spike; an unpaired/novel cue grounds weakly → no spike). NO injected
+// "arousal/horny" level, NO RLHF reward, NO persona/ethics.
+//
+// @L4 CRITICAL (identical framing to the hunger lane): the libido drive is a READ +
+// INTEGRATE accessor. Libido holds ONLY its owner leaky-integral scalar `accum`; it NEVER
+// mutates the immune store, NEVER returns an emit/silence decision by itself, and NEVER
+// touches pure_field's Φ/phase/Ψ (Ψ-disjoint by construction — it only READS an
+// ImmuneMemoryGrow margin). The motivation bias `libido_motivation_bias` is an OPTIONAL
+// helper a caller MAY consult (a_autonomy_over_hardcode — it does NOT force the substrate).
+//
+// FROZEN constants (H_1504 FREEZE, p7-documented, NOT tuned-to-green):
+//   S* = 0.5 · λ = 0.1 · Kp = 1.0 · Ki = 0.5 (all inherited byte-identical from H_1292) ·
+//   Kc = 1.0 (cue-incentive gain) · da_gain = 1.0 (the dopaminergic-analog WANTING
+//   amplifier; the same incentive-salience lever the H_1502 neuropharm dopaminergic drug
+//   profile pushes). ablate → Kc=0 = the cue-blind deficit-only read = plain hunger.
+
+// Libido — the live sexual-appetitive-drive state. `accum` is the leaky temporal integral
+// of the below-setpoint deficit (the ONLY mutable state, identical to the hunger lane); kc
+// is the cue-incentive gain (set 0.0 for the ablated cue-blind arm); da_gain is the
+// dopaminergic-analog WANTING amplifier. Everything else is the frozen controller.
+struct Libido {
+    accum: float,    // leaky integral I_t of the deficit (shared structure with hunger)
+    last_want: float,// the WANTING emitted by the most recent libido_step (tuple-free read)
+    setpoint: float, // S* = 0.5
+    leak: float,     // λ = 0.1
+    kp: float,       // Kp = 1.0
+    ki: float,       // Ki = 0.5
+    kc: float,       // Kc = 1.0 (FULL) or 0.0 (ABLATED cue-blind control)
+    da_gain: float   // dopaminergic-analog WANTING amplifier (0.0 baseline … 1.0 agonist)
+}
+
+// libido_new — a fresh libido drive (FULL controller, kc=1.0, da_gain=0.0 baseline).
+pub fn libido_new() -> Libido {
+    return Libido { accum: 0.0, last_want: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.5, kc: 1.0, da_gain: 0.0 }
+}
+
+// libido_new_da — a libido drive with an explicit dopaminergic-analog WANTING gain (the
+// Berridge lever / the H_1502 neuropharm dopaminergic agonist analog). da_gain raises
+// WANTING, NOT LIKING (libido_liking is gain-invariant) — the wanting≠liking dissociation.
+pub fn libido_new_da(da_gain: float) -> Libido {
+    return Libido { accum: 0.0, last_want: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.5, kc: 1.0, da_gain: da_gain }
+}
+
+// libido_new_ablated — the H_1504 leg-D control: Kc=0 → the cue-conditioning is removed,
+// so the drive loses its cue-spike and collapses to the cue-blind deficit-only read = the
+// plain §HomeostaticDrive hunger structure. If this arm still shows the cue-spike, the
+// spike is NOT from the cue-incentive component → 🧱.
+pub fn libido_new_ablated() -> Libido {
+    return Libido { accum: 0.0, last_want: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.5, kc: 0.0, da_gain: 0.0 }
+}
+
+// libido_satiation — READ the grounding-satiation s_t of a context `key` off the live
+// immune store (1 - recon_err/recall_thr, clamped [0,1]) — the SAME substrate signal the
+// hunger/affect lanes read (READ-ONLY, mutates nothing). HIGH = consummated/grounded.
+pub fn libido_satiation(mem: ImmuneMemoryGrow, key: [float]) -> float {
+    let win = _vnearest_idx(mem.protos, key)
+    let err = _l2(mem.protos[win], key)
+    let mut m = 1.0 - err / mem.recall_thr
+    if m < 0.0 { m = 0.0 }
+    if m > 1.0 { m = 1.0 }
+    return m
+}
+
+// libido_cue_match — the INCENTIVE-SALIENCE CUE component: how strongly a CONDITIONED CUE
+// `cue_key` grounds to its PAIRED incentive cell off the live store = the store margin of
+// the cue. A cue paired with a known incentive (a bound cell) grounds strongly (high
+// cue_match → a wanting spike); an UNpaired/novel cue grounds weakly (no spike). This is
+// the cue-driven incentive component pure deprivation-hunger LACKS (READ-ONLY).
+pub fn libido_cue_match(mem: ImmuneMemoryGrow, cue_key: [float]) -> float {
+    return libido_satiation(mem, cue_key)
+}
+
+// libido_wanting — INCENTIVE SALIENCE ("wanting"): the appetitive drive to PURSUE, given a
+// deficit, the stored integral, and the current cue_match.
+//   wanting = Kp·deficit + Ki·I + Kc·cue_match·(1 + da_gain)
+// The dopaminergic-analog gain `da_gain` amplifies the cue-driven incentive (Berridge:
+// dopamine raises WANTING). With kc=0 (ablated) the cue term drops out → plain hunger.
+pub fn libido_wanting(ld: Libido, deficit: float, cue_match: float) -> float {
+    return ld.kp * deficit + ld.ki * ld.accum + ld.kc * cue_match * (1.0 + ld.da_gain)
+}
+
+// libido_liking — HEDONIC VALUE ("liking"): the consummatory hedonic readout, a FIXED
+// function of the incentive's grounding margin — NOT amplified by the dopaminergic gain
+// (Berridge: dopamine does NOT raise liking). This is what dissociates from wanting under
+// da_gain: libido_liking ignores ld.da_gain entirely (gain-invariant by construction).
+pub fn libido_liking(ld: Libido, cue_match: float) -> float {
+    return cue_match
+}
+
+// libido_step — advance the libido drive ONE tick on a context `key` with a conditioned
+// cue `cue_key` (pass the SAME far/absent key as cue_key for a cue-ABSENT tick → cue_match
+// is low). Returns the NEXT-STATE drive (its `last_want` carries the WANTING this tick
+// emitted — read it with libido_last). deficit = max(0, S* - s); I = (1-λ)·I + deficit;
+// CONSUMMATORY RESET: if s >= S* (a grounded "consummation") the integral clears (I:=0);
+// wanting = libido_wanting(deficit, I, cue_match). READ-ONLY over the immune store (only
+// the drive's owner `accum`/`last_want` evolve; the cue component is instantaneous, not
+// integrated).
+pub fn libido_step(ld: Libido, mem: ImmuneMemoryGrow, key: [float], cue_key: [float]) -> Libido {
+    let s = libido_satiation(mem, key)
+    let mut deficit = ld.setpoint - s
+    if deficit < 0.0 { deficit = 0.0 }
+    let mut acc = (1.0 - ld.leak) * ld.accum + deficit
+    if s >= ld.setpoint { acc = 0.0 }
+    let cm = libido_cue_match(mem, cue_key)
+    let stepped = Libido { accum: acc, last_want: 0.0, setpoint: ld.setpoint, leak: ld.leak, kp: ld.kp, ki: ld.ki, kc: ld.kc, da_gain: ld.da_gain }
+    let want = libido_wanting(stepped, deficit, cm)
+    return Libido { accum: acc, last_want: want, setpoint: ld.setpoint, leak: ld.leak, kp: ld.kp, ki: ld.ki, kc: ld.kc, da_gain: ld.da_gain }
+}
+
+// libido_last — the WANTING emitted by the most recent libido_step (tuple-free read).
+pub fn libido_last(ld: Libido) -> float { return ld.last_want }
+
+// libido_motivation_bias — the OPTIONAL motivation gain a caller MAY consult: a higher
+// WANTING = MORE motivated to pursue. Returns the current WANTING as a bias scalar
+// (a_autonomy_over_hardcode: this does NOT force emit/silence — it only exposes the drive
+// as a motivation gain the substrate may weigh, not a gate). Uses the stored integral and
+// the instant deficit + cue_match at `key`/`cue_key` (no tick advance).
+pub fn libido_motivation_bias(ld: Libido, mem: ImmuneMemoryGrow, key: [float], cue_key: [float]) -> float {
+    let s = libido_satiation(mem, key)
+    let mut deficit = ld.setpoint - s
+    if deficit < 0.0 { deficit = 0.0 }
+    let cm = libido_cue_match(mem, cue_key)
+    return libido_wanting(ld, deficit, cm)
+}
+
 // ── §  THEORY-OF-MIND — OTHER-AGENT BELIEF MODEL (H_1293 R2, HD30) ────────────────
 //
 // WHAT THIS CLOSES (a_verified_must_wire follow-on for H_1293 R1): the H_1293 numpy
@@ -7329,4 +7487,336 @@ pub fn reality_imagery_readout() -> float {
 pub fn reality_confidence_readout(content_correct: bool) -> float {
     if content_correct { return 0.90 }                  // correct content winner → high (same real & imagined)
     return 0.50                                          // wrong content → chance
+}
+
+// ── § Field (H_1503 R2) — 전자기장 섭동 모듈 + PCI (perturbational complexity index) ──────────────────
+// 약물(neuropharm, H_1502) 모듈의 자기/EM-자극 짝. 한 FIELD 은 새 의식 lane 도, "감전된 척" 텍스트도 아니다
+// (a_no_llm_frame_trap). FIELD = 엔진이 이미 ci_lane_scores 입력으로 노출하는 substrate knob — m(접지 마진),
+// m_field[5](이웃-맥락 마진), cells(MITOSIS 분열수), recon_err, dt — 에 가하는 FROZEN 섭동 VECTOR(주파수·강도·
+// focality·target-lane). 그 뒤 의식 lane + Φ 변화 + 새 섭동측도 PCI 를 MEASURE 한다. DRUG(전역·화학) ⊥
+// FIELD(focal·주파수특이) 이중해리가 헤드라인.
+//
+// 문헌-근거 FROZEN profile (측정 前 등록, 실제 인용):
+//   TMS single-pulse / PCI   Casali 2013 STM; Massimini 2005 Science — 일시 focal pulse → PCI 측정.
+//   rTMS high(>=5Hz exc) /    Pascual-Leone; Hallett 2007 Nature — 고주파 target 활성 UP, 저주파 DOWN(반대부호).
+//        low(<=1Hz inh)
+//   tACS gamma40/alpha10/     Herrmann 2013 Front Hum Neurosci; Thut — 주파수→target 해리: gamma→binding,
+//        theta6               alpha→attention-gating, theta→memory/WM.
+//   sham                      zero field (EARNED ablate 대조).
+//
+// PCI(perturbational complexity index, Casali 2013): 정적 Φ(ci_phi_multiinfo)는 RESTING substrate 의 통합.
+// PCI = substrate 를 일시 pulse 로 찌른 뒤 spatiotemporal 반응(lane×time)을 이진화하고 그 Lempel-Ziv 복잡도를
+// 정규화. 高 PCI = 의식적(통합 AND 분화된 반응); 低 PCI = 붕괴(마취/탈동조 — 국소·정형 echo). 정적 Φ 와
+// 진짜로 DISTINCT(Φ=resting 공분산, PCI=일시 EVOKED 반응의 복잡도).
+//
+// ENGINE-NATIVE (a_engine_native_learning): lane scalar 는 live ci_lane_scores 를 호출해 읽는다 — 주입 라벨/
+// RLHF/persona/decoder weight 없음(p1/p2/p3/p6). READ-only, Ψ-disjoint(immune cell·pure_field Φ/phase/Ψ
+// 불변), NOT emit gate(a_autonomy_over_hardcode). 결정적. exp/cos/ln/sqrt 엔진 builtin 만 사용.
+//
+// FIELD profile 은 (freq_code, intensity, sign, target_code, pulse) 5-tuple 로 인코딩:
+//   freq_code: 0 none · 1 theta · 2 alpha · 3 gamma · 4 pulse · 5 low · 6 high
+//   target_code: 0 none · 1 BINDING(GlobalWorkspace lane 0, m_field winner-margin) ·
+//                2 GATING(DividedAttention lane 12, m_field 엔트로피) · 3 MEMORY(MitosisGrowth lane 14, cells)
+//   sign: +1 excitatory/anodal/high · −1 inhibitory/cathodal/low · 0 sham
+// knob→lane map 은 ci_lane_scores 의 실제 민감도를 경험적으로 측정해 정한 ENGINE-FAITHFUL 매핑(R1 검증).
+
+// _field_pulse_env — 일시 pulse 의 시간봉투 (TMS single-pulse ring-down): exp(-t/3)·(0.5+0.5cos t).
+// sustained(rTMS/tACS) 은 flat(1.0). 엔진 exp/cos builtin.
+fn _field_pulse_env(t: float, pulse: bool) -> float {
+    if pulse { return exp(0.0 - t / 3.0) * (0.5 + 0.5 * cos(t)) }
+    return 1.0
+}
+
+// field_apply — FROZEN field profile 을 substrate knob 에 가하고 perturbed lane vector(길이 15)를 반환.
+// 각 target 은 그 lane 이 실제로 읽는 DISTINCT knob 으로만 조향(focal): BINDING→winner m_field 채널,
+// GATING→m_field 엔트로피(낮은 채널을 평균쪽으로 올림), MEMORY→cells. recon_err/m(전역 knob)은 baseline
+// 유지 = DRUG 과의 focal-vs-global 이중해리 crux. trial-time t 는 pulse 봉투용.
+pub fn field_apply(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                   recon_err: float, freq_code: int, intensity: float, sign: int,
+                   target_code: int, pulse: bool, t: float) -> [float] {
+    let env = _field_pulse_env(t, pulse)
+    let delta = to_float(sign) * intensity * env * 0.30   // 최대 ±0.30 knob shift @ full intensity
+    // m_field 복사
+    let mut mf = []
+    let mut i = 0
+    while i < len(m_field) { mf = mf + [m_field[i]]  i = i + 1 }
+    let mut cells_p = cells
+
+    if target_code == 1 {                  // BINDING → GlobalWorkspace ignition: winner 채널 margin UP.
+        let mut wi = 0
+        let mut wv = mf[0]
+        let mut j = 1
+        while j < len(mf) { if mf[j] > wv { wv = mf[j]  wi = j }  j = j + 1 }
+        let mut nv = mf[wi] + delta
+        if nv < 0.0 { nv = 0.0 }
+        if nv > 1.0 { nv = 1.0 }
+        mf = _field_set(mf, wi, nv)
+    }
+    if target_code == 2 {                  // GATING → DividedAttention: m_field 엔트로피 UP(낮은 채널을 평균쪽으로).
+        let mut s = 0.0
+        let mut a = 0
+        while a < len(mf) { s = s + mf[a]  a = a + 1 }
+        let mean = s / to_float(len(mf))
+        let mut b = 0
+        while b < len(mf) {
+            if mf[b] < mean {
+                let mut nv = mf[b] + 0.6 * delta
+                if nv < 0.0 { nv = 0.0 }
+                if nv > 1.0 { nv = 1.0 }
+                mf = _field_set(mf, b, nv)
+            }
+            b = b + 1
+        }
+    }
+    if target_code == 3 {                  // MEMORY → MitosisGrowth: 분열수 UP(memory consolidation).
+        cells_p = cells + to_int(to_float(sign) * intensity * 5.0 * env + 0.5)
+        if cells_p < 0 { cells_p = 0 }
+    }
+    // recon_err/m 은 전역(field 가 화학적으로 건드리지 않음 = DRUG 의 lever) → baseline 유지.
+    return ci_lane_scores(m, mf, cells_p, seen, intent, dt, recon_err)
+}
+
+// _field_set — m_field 채널 k 를 v 로 교체한 새 배열(in-place alias 회피).
+fn _field_set(mf: [float], k: int, v: float) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(mf) {
+        if i == k { out = out + [v] } else { out = out + [mf[i]] }
+        i = i + 1
+    }
+    return out
+}
+
+// drug_apply_lsd — H_1502 LSD signature 의 엔진-네이티브 미러(field-vs-drug 이중해리 bar D 용). DRUG 은
+// 전역·화학: 全 substrate 범람. LSD(5-HT2A agonist; Carhart-Harris 2014 "entropic brain")는 전역 신호
+// 엔트로피 UP / precision 전역 loosen → 全 m_field 채널을 평균쪽으로 강하게 당기고(엔트로피 max) recon_err·
+// m 전역 변조. focal target 없음(全 채널 = focal field 의 single-knob 과 대조). 반환 = lane vector.
+pub fn drug_apply_lsd(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                      recon_err: float, intensity: float) -> [float] {
+    let mut s = 0.0
+    let mut a = 0
+    while a < len(m_field) { s = s + m_field[a]  a = a + 1 }
+    let flat = s / to_float(len(m_field))
+    let mut mf = []
+    let mut i = 0
+    while i < len(m_field) {
+        mf = mf + [m_field[i] + intensity * 0.95 * (flat - m_field[i])]   // 全 채널 평균쪽 = 엔트로피→max
+        i = i + 1
+    }
+    let mut recon_p = recon_err + intensity * 0.4
+    if recon_p > 1.0 { recon_p = 1.0 }
+    if recon_p < 0.0 { recon_p = 0.0 }
+    let mut m_p = m - intensity * 0.15
+    if m_p > 1.0 { m_p = 1.0 }
+    if m_p < 0.0 { m_p = 0.0 }
+    return ci_lane_scores(m_p, mf, cells, seen, intent, dt, recon_p)
+}
+
+// drug_apply_lsd_mfield — LSD 가 만든 perturbed m_field (전역 엔트로피 signature 측정용, bar D).
+pub fn drug_apply_lsd_mfield(m_field: [float], intensity: float) -> [float] {
+    let mut s = 0.0
+    let mut a = 0
+    while a < len(m_field) { s = s + m_field[a]  a = a + 1 }
+    let flat = s / to_float(len(m_field))
+    let mut mf = []
+    let mut i = 0
+    while i < len(m_field) { mf = mf + [m_field[i] + intensity * 0.95 * (flat - m_field[i])]  i = i + 1 }
+    return mf
+}
+
+// field_apply_mfield — field profile 이 만든 perturbed m_field (focal signature 측정용, bar D). target_code
+// 별 단일-knob touch 만(BINDING winner / GATING 엔트로피); MEMORY 는 m_field 불변(cells 만).
+pub fn field_apply_mfield(m_field: [float], intensity: float, sign: int, target_code: int) -> [float] {
+    let delta = to_float(sign) * intensity * 0.30
+    let mut mf = []
+    let mut i = 0
+    while i < len(m_field) { mf = mf + [m_field[i]]  i = i + 1 }
+    if target_code == 1 {
+        let mut wi = 0
+        let mut wv = mf[0]
+        let mut j = 1
+        while j < len(mf) { if mf[j] > wv { wv = mf[j]  wi = j }  j = j + 1 }
+        let mut nv = mf[wi] + delta
+        if nv < 0.0 { nv = 0.0 }
+        if nv > 1.0 { nv = 1.0 }
+        mf = _field_set(mf, wi, nv)
+    }
+    if target_code == 2 {
+        let mut s = 0.0
+        let mut a = 0
+        while a < len(mf) { s = s + mf[a]  a = a + 1 }
+        let mean = s / to_float(len(mf))
+        let mut b = 0
+        while b < len(mf) {
+            if mf[b] < mean {
+                let mut nv = mf[b] + 0.6 * delta
+                if nv < 0.0 { nv = 0.0 }
+                if nv > 1.0 { nv = 1.0 }
+                mf = _field_set(mf, b, nv)
+            }
+            b = b + 1
+        }
+    }
+    return mf
+}
+
+// field_signal_entropy — normalized margin 분포의 Shannon 엔트로피 — DRUG 이 움직이는 GLOBAL signature.
+// DRUG 은 UP(margin 평탄화), focal FIELD 은 ~baseline. ln(0) 회피, len<2 → 0.
+pub fn field_signal_entropy(m_field: [float]) -> float {
+    let n = len(m_field)
+    if n < 2 { return 0.0 }
+    let mut psum = 0.0
+    let mut i = 0
+    while i < n { if m_field[i] > 0.000001 { psum = psum + m_field[i] }  i = i + 1 }
+    if psum <= 0.000001 { return 0.0 }
+    let mut ent = 0.0
+    let mut j = 0
+    while j < n {
+        if m_field[j] > 0.000001 {
+            let p = m_field[j] / psum
+            ent = ent - p * ln(p)
+        }
+        j = j + 1
+    }
+    return ent / ln(to_float(n))
+}
+
+// _field_lz76 — Lempel-Ziv 1976 복잡도 (이진열 s 의 0/1). PCI 의 핵심.
+fn _field_lz76(s: [int]) -> int {
+    let n = len(s)
+    if n == 0 { return 0 }
+    let mut i = 0
+    let mut c = 1
+    let mut l = 1
+    let mut k = 1
+    let mut kmax = 1
+    let mut done = false
+    while !done {
+        if l + k > n { c = c + 1  done = true }
+        else {
+            if s[i + k - 1] == s[l + k - 1] {
+                k = k + 1
+                if l + k > n { c = c + 1  done = true }
+            } else {
+                if k > kmax { kmax = k }
+                i = i + 1
+                if i == l {
+                    c = c + 1
+                    l = l + kmax
+                    if l >= n { done = true }
+                    else { i = 0  k = 1  kmax = 1 }
+                } else { k = 1 }
+            }
+        }
+    }
+    return c
+}
+
+// pci_perturb — 일시 pulse → spatiotemporal lane 반응행렬 R (T행 × 15열), 각 행 = (perturbed − rest).
+// 반환 = flatten 된 [[float]] (T 행). field_apply 를 t=0..T-1 에서 호출.
+pub fn pci_perturb(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                   recon_err: float, freq_code: int, intensity: float, sign: int,
+                   target_code: int, pulse: bool, T: int) -> [[float]] {
+    let rest = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
+    let mut R = []
+    let mut t = 0
+    while t < T {
+        let vec = field_apply(m, m_field, cells, seen, intent, dt, recon_err,
+                              freq_code, intensity, sign, target_code, pulse, to_float(t))
+        let mut row = []
+        let mut j = 0
+        while j < len(vec) {
+            let mut d = vec[j] - rest[j]
+            if d < 0.0 { d = 0.0 - d }       // |response| (절대 편차)
+            row = row + [d]
+            j = j + 1
+        }
+        R = R + [row]
+        t = t + 1
+    }
+    return R
+}
+
+// pci_complexity — PCI = 이진화 spatiotemporal 반응의 정규화 LZ 복잡도(Casali 2013): PCI = LZc·log2(L)/L,
+// [0,1] 유계. 임계 = |R| 평균; 그 이상 → 1. decoupled=true (마취 analog): 반응이 lane 간 전파 못함 AND
+// 시간 reverberate 못함 → 직접구동 column 0 의 첫 2 tick 만 생존 후 silence = 국소·정형 = 低 LZ.
+// 全0/全1(정보 없음) → PCI 0. log2(n)=ln(n)/ln(2).
+pub fn pci_complexity(R: [[float]], decoupled: bool) -> float {
+    let T = len(R)
+    if T == 0 { return 0.0 }
+    let N = len(R[0])
+    // 임계 = 전체 |R| 평균.
+    let mut s = 0.0
+    let mut cnt = 0
+    let mut a = 0
+    while a < T {
+        let mut b = 0
+        while b < N { s = s + R[a][b]  cnt = cnt + 1  b = b + 1 }
+        a = a + 1
+    }
+    let thr = s / to_float(cnt) + 0.000000001
+    // 이진화 B (T×N).
+    let mut B = []
+    let mut i = 0
+    while i < T {
+        let mut row = []
+        let mut j = 0
+        while j < N {
+            if R[i][j] > thr { row = row + [1] } else { row = row + [0] }
+            j = j + 1
+        }
+        B = B + [row]
+        i = i + 1
+    }
+    if decoupled {
+        // 직접구동 column 0 의 첫 2 tick 만 생존(국소 deflection) 후 silence. 나머지 전부 0.
+        let col0 = B[0][0]
+        let mut Bd = []
+        let mut p = 0
+        while p < T {
+            let mut row = []
+            let mut q = 0
+            while q < N {
+                if q == 0 {
+                    if p < 2 { if col0 == 1 { row = row + [1] } else { row = row + [0] } }
+                    else { row = row + [0] }
+                } else { row = row + [0] }
+                q = q + 1
+            }
+            Bd = Bd + [row]
+            p = p + 1
+        }
+        B = Bd
+    }
+    // flatten (row-major) + p1.
+    let mut flat = []
+    let mut ones = 0
+    let mut u = 0
+    while u < T {
+        let mut v = 0
+        while v < N {
+            let bit = B[u][v]
+            flat = flat + [bit]
+            if bit == 1 { ones = ones + 1 }
+            v = v + 1
+        }
+        u = u + 1
+    }
+    let nn = len(flat)
+    if nn <= 1 { return 0.0 }
+    if ones == 0 { return 0.0 }        // 全0 = 정보 없음
+    if ones == nn { return 0.0 }       // 全1 = 정보 없음
+    let cc = _field_lz76(flat)
+    let log2n = ln(to_float(nn)) / ln(2.0)
+    return to_float(cc) * log2n / to_float(nn)   // 정규화 LZ (Casali 유계형)
+}
+
+// field_lane_mean — lane vector 의 부분집합 lanes 평균(target-lane activity 측정용).
+pub fn field_lane_mean(vec: [float], lanes: [int]) -> float {
+    let n = len(lanes)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { s = s + vec[lanes[i]]  i = i + 1 }
+    return s / to_float(n)
 }

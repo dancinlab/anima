@@ -443,6 +443,78 @@ fn main() {
     if _assert_b("case_30_ablated_does_not_accumulate", true,
                  homeo_last(ha1) == homeo_last(ha0)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
+    // ── (g2) LIBIDO — SEXUAL APPETITIVE DRIVE-DYNAMICS AXIS (H_1504 R2) ──────────────
+    // ⚠ DRIVE-DYNAMICS axis ONLY (a_no_llm_frame_trap, NOT content/persona). Sibling of
+    // §HomeostaticDrive with a cue-conditioned INCENTIVE component (Berridge wanting≠liking).
+    // ADDITIVE + Ψ-disjoint (a READ over the immune margin + its OWN scalar integral, no
+    // store mutation, no pure_field touch). Cases re-score the H_1504 R1 frozen bars
+    // byte-exact on the live DIM-4 `mg` grow store: `gkeys[1]` = a bound key = the PAIRED
+    // conditioned cue (grounds strongly → cue spike); `affar` = the untaught far key = both
+    // max deprivation AND the UNpaired cue (grounds weakly → no spike). The deficit at
+    // `affar` and the integral path are byte-identical to the homeostat above, so the libido
+    // wanting = hunger-drive + the cue term, proving the cue term is the ONLY new structure.
+    let lb_far = affar                     // far key: max deprivation + UNpaired cue (no spike)
+    let lb_cue = gkeys[1]                   // bound key: PAIRED conditioned cue (grounds → spike)
+    // build the deprivation integral two ticks deep (same path as the homeostat cases).
+    let lb0 = libido_step(libido_new(), mg, lb_far, lb_far)   // tick1: deprived, cue ABSENT
+    let lb1 = libido_step(lb0, mg, lb_far, lb_far)            // tick2: deprived, cue ABSENT → higher
+    // cue spike: hold deprivation FIXED (same far key), toggle the cue present vs absent.
+    let lb_want_cue   = libido_motivation_bias(lb1, mg, lb_far, lb_cue)   // PAIRED cue present
+    let lb_want_nocue = libido_motivation_bias(lb1, mg, lb_far, lb_far)   // cue absent (far)
+    let lb_cue_spike  = lb_want_cue - lb_want_nocue
+
+    // case 288 : BUILD-UP — deprivation BUILDS the wanting (integral accumulates) AND a
+    //   conditioned cue SPIKES it (the incentive-salience component, ≥ the R1 bar 0.50).
+    if _assert_b("case_288_libido_buildup_and_cue_spike", true,
+                 libido_last(lb1) > libido_last(lb0) && lb_cue_spike >= 0.50) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 289 : DOUBLE-DISSOCIATION vs hunger (H_1292) — the SAME conditioned cue that
+    //   spikes libido leaves HUNGER FLAT (hunger is cue-blind: homeo_drive ignores the cue
+    //   key entirely). hunger drive at the far context is identical whether or not a cue is
+    //   "present" (homeo has no cue arg), so its cue-delta is 0 < 0.05 while libido spikes.
+    let hg_at_far = homeo_drive(homeo_step(homeo_step(homeo_new(), mg, affar), mg, affar), mg, affar)
+    if _assert_b("case_289_libido_hunger_double_dissociation", true,
+                 lb_cue_spike >= 0.50 && hg_at_far >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 290 : WANTING ≠ LIKING (the Berridge headline) — a dopaminergic-analog gain
+    //   (da_gain 0→1) RAISES wanting (≥ 0.50) but LEAVES liking FLAT (|Δ| ≤ 0.02). The
+    //   cue_match is identical under both gains (gain enters wanting, not liking/cue_match).
+    let lb_cm  = libido_cue_match(mg, lb_cue)
+    let lb_da0 = libido_new()                              // da_gain = 0 (baseline)
+    let lb_da1 = libido_new_da(1.0)                        // da_gain = 1 (dopaminergic analog)
+    let want_da0 = libido_wanting(lb_da0, 0.0, lb_cm)      // deficit held 0 → isolate the cue term
+    let want_da1 = libido_wanting(lb_da1, 0.0, lb_cm)
+    let like_da0 = libido_liking(lb_da0, lb_cm)
+    let like_da1 = libido_liking(lb_da1, lb_cm)
+    let like_delta = if like_da1 > like_da0 { like_da1 - like_da0 } else { like_da0 - like_da1 }
+    if _assert_b("case_290_libido_wanting_not_liking", true,
+                 (want_da1 - want_da0) >= 0.50 && like_delta <= 0.02) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 291 : EARNED ABLATE — removing cue-conditioning (Kc=0) collapses the cue-spike to
+    //   ≤ 0.05 (the ablated drive is the cue-blind deficit-only read = plain hunger).
+    let lba0 = libido_step(libido_new_ablated(), mg, lb_far, lb_far)
+    let lba1 = libido_step(lba0, mg, lb_far, lb_far)
+    let lba_want_cue   = libido_motivation_bias(lba1, mg, lb_far, lb_cue)   // cue present
+    let lba_want_nocue = libido_motivation_bias(lba1, mg, lb_far, lb_far)   // cue absent
+    let lba_cue_spike  = lba_want_cue - lba_want_nocue
+    let lba_spike_abs  = if lba_cue_spike > 0.0 { lba_cue_spike } else { 0.0 - lba_cue_spike }
+    if _assert_b("case_291_libido_ablate_loses_cue_spike", true,
+                 lba_spike_abs <= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // case 292 : EARNED SHUFFLE — a SHUFFLED cue (matched against a WRONG/UNpaired incentive
+    //   cell = the far key) decorrelates to chance: its cue_match ≤ 0.50× the paired cue's
+    //   cue_match (cue-specificity collapses — the spike is earned by the PAIRING).
+    let cm_paired   = libido_cue_match(mg, lb_cue)     // PAIRED cue grounds strongly
+    let cm_shuffled = libido_cue_match(mg, lb_far)     // shuffled/unpaired cue grounds weakly
+    if _assert_b("case_292_libido_shuffle_decorrelates_cue", true,
+                 cm_shuffled <= 0.50 * cm_paired) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  H_1504 libido (R2 WIRED, DRIVE-DYNAMICS axis NOT content): cue_spike=" + to_string(lb_cue_spike)
+          + " | wanting(da0→da1) " + to_string(want_da0) + "→" + to_string(want_da1)
+          + " liking flat " + to_string(like_da0) + "→" + to_string(like_da1)
+          + " | ablated_spike=" + to_string(lba_cue_spike) + " cmPaired=" + to_string(cm_paired) + " cmShuf=" + to_string(cm_shuffled)
+          + " — incentive-salience 'wanting'≠hedonic 'liking' (Berridge); cue⊥hunger(H_1292)")
+
     // ── (h) THEORY-OF-MIND — OTHER-AGENT BELIEF MODEL (H_1293 R2, HD30) ──────────────
     // The ToM model is ADDITIVE + Ψ-disjoint (a SEPARATE belief cell population read by
     // L2 affinity — it mutates no immune cell and never touches pure_field). These cases
@@ -2700,6 +2772,100 @@ fn main() {
     if _assert_b("case_283_ci_phi_iit4_nonneg", true, ci_iit >= 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     println("INFO  H_1492 consciousness-index (R4 WIRED): Φ0=" + to_string(ci_phi0) + " pair(1,3) interaction="
           + to_string(ci_pair13[2]) + " surrogate_Φ0=" + to_string(ci_sur) + " faithful_IIT4=" + to_string(ci_iit))
+
+    // ── (H_1503 R2 Field) 전자기장 섭동 모듈 + PCI — R1 frozen bars byte-exact 재측정 ──────────────
+    // baseline substrate knobs (R1 과 동일, frozen-first): 모든 target lane 에 측정 headroom.
+    let fld_m = 0.60
+    let fld_mf = [0.58, 0.38, 0.15, 0.12, 0.10]
+    let fld_cells = 6
+    let fld_seen = 4
+    let fld_intent = 1
+    let fld_dt = 2.0
+    let fld_recon = 0.30
+    let fld_rest = ci_lane_scores(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon)
+    let BIND = [0]      // GlobalWorkspace
+    let GATE = [12]     // DividedAttention
+    let MEM  = [14]     // MitosisGrowth
+
+    // (A) PCI PRESENCE: full-substrate single-pulse PCI HIGH; decoupled PCI LOW; gap ≥ bar.
+    let fld_R = pci_perturb(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon,
+                            4, 0.8, 1, 1, true, 24)            // tms_pulse: freq=4 pulse, target BINDING
+    let pci_full = pci_complexity(fld_R, false)
+    let pci_dec  = pci_complexity(fld_R, true)
+    // case 288 PCI-PRESENCE: full ≥ 0.30 AND decoupled ≤ 0.18 AND gap ≥ 0.08 (wakefulness-vs-anesthesia).
+    if _assert_b("case_288_pci_presence", true, pci_full >= 0.30 && pci_dec <= 0.18 && (pci_full - pci_dec) >= 0.08) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (B) rTMS DIRECTIONAL: high-freq raises BINDING vs low-freq lowers it (opposite sign).
+    let fld_vh = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 6, 0.6, 1, 1, false, 0.0)
+    let fld_vl = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 5, 0.6, 0 - 1, 1, false, 0.0)
+    let base_bind = field_lane_mean(fld_rest, BIND)
+    let high_d = field_lane_mean(fld_vh, BIND) - base_bind
+    let low_d  = field_lane_mean(fld_vl, BIND) - base_bind
+    // case 289 rTMS-DIRECTIONAL: high ≥ +0.05 AND low ≤ −0.05 AND opposite sign.
+    if _assert_b("case_289_rtms_directional", true, high_d >= 0.05 && low_d <= (0.0 - 0.05) && high_d > 0.0 && low_d < 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (C) tACS FREQUENCY-SPECIFIC: gamma→BINDING up, alpha→GATING up, and they DISSOCIATE.
+    let fld_vg = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 3, 0.6, 1, 1, false, 0.0)
+    let fld_va = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 2, 0.6, 1, 2, false, 0.0)
+    let g_on_bind = field_lane_mean(fld_vg, BIND) - field_lane_mean(fld_rest, BIND)
+    let g_on_gate = field_lane_mean(fld_vg, GATE) - field_lane_mean(fld_rest, GATE)
+    let a_on_gate = field_lane_mean(fld_va, GATE) - field_lane_mean(fld_rest, GATE)
+    let a_on_bind = field_lane_mean(fld_va, BIND) - field_lane_mean(fld_rest, BIND)
+    // case 290 tACS-FREQ-SPECIFIC: gamma>0 alpha>0 AND each freq hits its own target ≥0.04 more than other's.
+    if _assert_b("case_290_tacs_freq_specific", true, g_on_bind > 0.0 && a_on_gate > 0.0 && (g_on_bind - g_on_gate) >= 0.04 && (a_on_gate - a_on_bind) >= 0.04) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (D) FIELD-vs-DRUG DOUBLE-DISSOCIATION: field high focal & ~0 global-entropy; drug(LSD) opposite.
+    let ent_rest = field_signal_entropy(fld_mf)
+    let fld_mf_g = field_apply_mfield(fld_mf, 0.6, 1, 1)            // gamma focal m_field
+    let field_focal = g_on_bind                                    // field moves focal target (binding)
+    let field_global = field_signal_entropy(fld_mf_g) - ent_rest   // field ~0 on global entropy
+    let drug_vec = drug_apply_lsd(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 0.6)
+    let drug_mf  = drug_apply_lsd_mfield(fld_mf, 0.6)
+    let drug_focal = field_lane_mean(drug_vec, BIND) - field_lane_mean(fld_rest, BIND)
+    let drug_global = field_signal_entropy(drug_mf) - ent_rest
+    // case 291 FIELD-vs-DRUG: field focal>>global AND drug global>>focal (each gap ≥ 0.05).
+    if _assert_b("case_291_field_drug_dissoc", true, (field_focal - field_global) >= 0.05 && (drug_global - drug_focal) >= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (E) EARNED ablate: sham/zero-field → all signatures collapse to baseline (no lane moved, PCI low).
+    let fld_vs = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 0, 0.0, 0, 0, false, 0.0)
+    let mut sham_dev = 0.0
+    let mut sdi = 0
+    while sdi < len(fld_vs) {
+        let mut dd = fld_vs[sdi] - fld_rest[sdi]
+        if dd < 0.0 { dd = 0.0 - dd }
+        if dd > sham_dev { sham_dev = dd }
+        sdi = sdi + 1
+    }
+    let fld_R_sh = pci_perturb(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 0, 0.0, 0, 0, false, 24)
+    let pci_sham = pci_complexity(fld_R_sh, false)
+    // case 292 EARNED-ablate: sham max-dev ≤ 0.02 AND sham PCI ≤ 0.18.
+    if _assert_b("case_292_field_earned_ablate", true, sham_dev <= 0.02 && pci_sham <= 0.18) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (F) EARNED shuffle: permute frequency↔knob wiring → each freq drives a FOREIGN knob → its OWN
+    // literature target is no longer raised → self-lift collapses. true wiring vs shuffled wiring.
+    // true: gamma→BINDING-knob(score on BINDING), alpha→GATING-knob(score on GATING), theta→MEM-knob(score MEM).
+    let tg_gamma = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 3, 0.6, 1, 1, false, 0.0)
+    let tg_alpha = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 2, 0.6, 1, 2, false, 0.0)
+    let tg_theta = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 1, 0.6, 1, 3, false, 0.0)
+    let true_self = ((field_lane_mean(tg_gamma, BIND) - field_lane_mean(fld_rest, BIND))
+                   + (field_lane_mean(tg_alpha, GATE) - field_lane_mean(fld_rest, GATE))
+                   + (field_lane_mean(tg_theta, MEM)  - field_lane_mean(fld_rest, MEM))) / 3.0
+    // shuffle: gamma→GATING-knob(score BINDING), alpha→MEM-knob(score GATING), theta→BINDING-knob(score MEM).
+    let sh_gamma = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 3, 0.6, 1, 2, false, 0.0)
+    let sh_alpha = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 2, 0.6, 1, 3, false, 0.0)
+    let sh_theta = field_apply(fld_m, fld_mf, fld_cells, fld_seen, fld_intent, fld_dt, fld_recon, 1, 0.6, 1, 1, false, 0.0)
+    let shuf_self = ((field_lane_mean(sh_gamma, BIND) - field_lane_mean(fld_rest, BIND))
+                   + (field_lane_mean(sh_alpha, GATE) - field_lane_mean(fld_rest, GATE))
+                   + (field_lane_mean(sh_theta, MEM)  - field_lane_mean(fld_rest, MEM))) / 3.0
+    // case 293 EARNED-shuffle: true wiring self-lift exceeds shuffled wiring by ≥ 0.04 (specificity earned).
+    if _assert_b("case_293_field_earned_shuffle", true, (true_self - shuf_self) >= 0.04) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  H_1503 field-perturbation (R2 WIRED): PCI full=" + to_string(pci_full) + " decoupled=" + to_string(pci_dec)
+          + " sham=" + to_string(pci_sham) + " | rTMS high=" + to_string(high_d) + " low=" + to_string(low_d)
+          + " | tACS γ→bind=" + to_string(g_on_bind) + " α→gate=" + to_string(a_on_gate)
+          + " | field focal/global=" + to_string(field_focal) + "/" + to_string(field_global)
+          + " drug focal/global=" + to_string(drug_focal) + "/" + to_string(drug_global)
+          + " — focal/freq FIELD ⊥ global/chemical DRUG(H_1502 LSD)")
 
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
