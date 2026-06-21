@@ -1,7 +1,7 @@
 # H_1503 — ⚡ ELECTROMAGNETIC-FIELD PERTURBATION MODULE + PCI — §Neuropharm 의 자기/EM-자극 짝
 
 - **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §Field (`field_apply` + `field_apply_mfield` + `field_signal_entropy` + `drug_lsd_mfield` + `pci_perturb` + `pci_complexity` + `field_lane_mean`) · `engine_cli_smoke.hexa` cases 299-304 (6 frozen bars) · FULL smoke **303 pass / 0 fail RC=0** deterministic ×3 · ARCHITECTURE.json §Field lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §Field (`field_apply` + `field_apply_mfield` + `field_signal_entropy` + `drug_lsd_mfield` + `pci_perturb` + `pci_complexity` + `field_lane_mean`) · `engine_cli_smoke.hexa` cases 303-308 (6 frozen bars) · FULL smoke **313 pass / 0 fail RC=0** deterministic ×3 · ARCHITECTURE.json §Field lockstep ✓
 - **source:** team-lead 작업지시(전자기장 섭동 모듈 H_1503) — H_1502 §Neuropharm(약물=전역·화학) 착지 후 그 focal·주파수특이 짝 · TMS/PCI·tACS/rTMS 문헌 렌즈 · `a_no_llm_frame_trap`
 - **lens:** TMS perturbational-complexity (Massimini-Casali) · tACS/tDCS frequency-specific entrainment (Herrmann) · rTMS excitatory/inhibitory (Hallett) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1503_field/h1503_field.py` · verdict `state/verdicts/1503_field/H_1503_R1.txt`(R1 mirror) · `state/verdicts/1503_field/H_1503_R2_engine_native.txt`(R2 byte-exact 6 cases + INFO)
@@ -66,7 +66,7 @@ FIELD 은 focal 주파수-target 을 움직이되 약물의 전역 축은 0, DRU
 - **DIRECTIONAL → R2 ENGINE-NATIVE WIRED:** R1 = numpy mirror(`grep -lE 'import torch|gauge_lib|numpy' state/1503_field/*.py`
   적중, 하드게이트1 → DIRECTIONAL). R2 에서 `core/engine_cli.hexa` §Field 7 op 신설(`field_apply`/`field_apply_mfield`/
   `field_signal_entropy`/`drug_lsd_mfield`/`pci_perturb`/`pci_complexity`/`field_lane_mean`) + `engine_cli_smoke.hexa`
-  cases 299-304 byte-exact 재측정 + ARCHITECTURE.json §Field lockstep, FULL 303/0 RC=0 deterministic ×3
+  cases 303-308 byte-exact 재측정 + ARCHITECTURE.json §Field lockstep, FULL 313/0 RC=0 deterministic ×3
   (`a_engine_native_learning`·`a_verified_must_wire`).
 - **`a_engine_native_learning` 측정교정 — bar 불변·frozen-first·tune-to-green 아님:** R1 mirror 가 엔진의 실제 f0/f1
   winner-margin 로직과 **불일치**함을 R2 에서 발견(엔진은 f0·f1 을 둘 다 m_field[0] 로 init 하고 LATER 원소만 f1 을
@@ -83,7 +83,7 @@ FIELD 은 focal 주파수-target 을 움직이되 약물의 전역 축은 0, DRU
 
 ## follow-on (ING)
 
-1. **R2 ENGINE-NATIVE WIRED ✅** — §Field 7 op + smoke 299-304 + ARCHITECTURE lockstep, FULL 303/0 RC=0 (완료).
+1. **R2 ENGINE-NATIVE WIRED ✅** — §Field 7 op + smoke 299-304 + ARCHITECTURE lockstep, FULL 313/0 RC=0 (완료).
 2. **scale 재측정** — 303M production `.clm` 위 live ci_lane_scores 로 PCI/field-perturbation 재측정(H_1492/H_1500/H_1502 의 303M rung 처럼).
 3. **graded dose-response** — binary 강도 대신 강도-반응 곡선 + 연속 주파수 sweep(theta..gamma 연속) + PCI 의 강도 의존.
 4. **추가 프로토콜** — tDCS anodal/cathodal(흥분성 baseline shift, optional) · 다중-pulse rTMS train · deep TMS 깊이.

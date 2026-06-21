@@ -1,7 +1,7 @@
 # H_1506 — 🪟🧠 METACOGNITIVE INSIGHT / 메타인지 통찰 — 지각의 현실성에 대한 2차 통찰
 
 - **tier:** 🟢 GREEN-DISTINCT ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §MetacogInsight (`mi_gain_intact`/`mi_gain_impaired`/`mi_signal_margin`/`mi_insight_judge`/`mi_insight_psychedelic`/`mi_insight_psychotic`/`mi_metad_auroc`/`mi_auroc`/`mi_shuffle_auroc`) · `engine_cli_smoke.hexa` cases 305-309 · FULL smoke **308 pass / 0 fail RC=0** deterministic ×3 · ARCHITECTURE.json §MetacogInsight lockstep ✓
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §MetacogInsight (`mi_gain_intact`/`mi_gain_impaired`/`mi_signal_margin`/`mi_insight_judge`/`mi_insight_psychedelic`/`mi_insight_psychotic`/`mi_metad_auroc`/`mi_auroc`/`mi_shuffle_auroc`) · `engine_cli_smoke.hexa` cases 309-313 · FULL smoke **313 pass / 0 fail RC=0** deterministic ×3 · ARCHITECTURE.json §MetacogInsight lockstep ✓
 - **source:** UNIVERSE — deepening the metacognition lane (H_1202) over the reality-monitor (H_1501) + neuropharm (H_1502). Computational-neuroscience lens: Sterzer et al 2018 (predictive-coding psychosis) · Maniscalco & Lau 2012 (meta-d′/M-ratio) · Fleming (metacognitive sensitivity).
 - **artifacts:** `state/1506_metacog_insight/h1506_metacog_insight.py` · `state/verdicts/1506_metacog_insight/{H_1506_FREEZE.txt,H_1506_R1_mirror.txt,H_1506_R2_engine_native.txt}`
 

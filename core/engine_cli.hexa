@@ -8170,3 +8170,59 @@ fn _mi_set(v: [float], ix: int, val: float) -> [float] {
     }
     return out
 }
+
+// ── § Hallucination (H_1505 R2) — prior-dominated false percept (the reality-monitor FAILURE MODE) ──
+// The GENERATIVE-FAILURE counterpart to §RealityMonitor (H_1501). Predictive-processing psychosis lens:
+// Powers, Mathys & Corlett, Science 2017 (357:596) conditioned hallucinations — a strong CONDITIONED
+// PRIOR LITERALLY produces a false "real" percept in the ABSENCE of a stimulus; Sterzer et al. 2018
+// Biol Psychiatry (predictive-coding psychosis); Seth 2014 "controlled hallucination" (perception =
+// top-down prediction reined in by sensory evidence; remove the rein → hallucination).
+//
+// A HALLUCINATION = a PRIOR-DOMINATED percept: when the top-down prior is STRONG and the bottom-up
+// external signal is weak/absent, the substrate GENERATES a margin from the prior alone; that margin
+// crosses the SAME reality threshold §RealityMonitor reads → the monitor mis-classifies it as REAL
+// despite ZERO external signal (a false real_call). This is the FAILURE MODE of the reality threshold —
+// DISTINCT from the monitor itself (the classifier H_1501) and from voluntary mental imagery (H_1484,
+// known-to-be-internal: imagery never claims "real"; a hallucination is involuntary + MISattributed
+// external). The prior margin = prior_strength · prior_match (the conditioned cell's top-down
+// reconstruction); the external margin adds the bottom-up drive. NO injected real/imagined label (p6).
+// READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode). Deterministic threshold compare.
+// REUSES the live reality_call op verbatim — the hallucination is feeding it a strong-prior, zero-signal
+// margin, not a new threshold rule.
+//
+// hallucinate_call — the false real_call. The percept's signal margin = prior_strength · prior_match +
+//   signal_strength (the bottom-up drive). When signal_strength≈0 a STRONG prior alone can clear thr →
+//   REAL (1.0) with no external signal = a HALLUCINATION. Routes through reality_call (H_1501) so the
+//   monitor that classifies it is the SAME one — the failure is in the input, not the rule.
+pub fn hallucinate_call(prior_strength: float, prior_match: float, signal_strength: float, thr: float) -> float {
+    let margin = prior_strength * prior_match + signal_strength    // prior-generated + bottom-up margin
+    return reality_call(margin, thr)                                // SAME §RealityMonitor classifier (H_1501)
+}
+// hallucinate_graded — the graded hallucination intensity = prior_strength · (1 − signal_strength),
+// clipped to [0,1]. Powers' two-factor: rises with prior strength, rises with signal-ABSENCE. This is
+// the continuous read behind the binary hallucinate_call (the prior dominates only when signal is gone).
+pub fn hallucinate_graded(prior_strength: float, signal_strength: float) -> float {
+    let s = 1.0 - signal_strength
+    let g = prior_strength * s
+    if g < 0.0 { return 0.0 }
+    if g > 1.0 { return 1.0 }
+    return g
+}
+// hallucinate_ablated — the prior REMOVED (prior_strength→0). With no conditioned prior and no external
+// signal the margin is 0 → below ANY reality threshold → no false real_call (baseline 0.0). The EARNED
+// control: the hallucination is CAUSED by the strong prior, not by the threshold being low. (D bar.)
+pub fn hallucinate_ablated(signal_strength: float, thr: float) -> float {
+    return reality_call(signal_strength, thr)        // prior gone → only the (absent) external signal remains
+}
+// hallucinate_under_drug — the H_1502 §Neuropharm DRUG-COUPLING (E, headline). Under a drug profile the
+// prior is RELAXED from its sensory rein (REBUS: prof[0] prior_strength<1 ⇒ release factor 1/prof[0]
+// amplifies the prior's top-down contribution) AND the reality threshold DROPS (prof[5] reality_thr_shift
+// <0). Both push a sub-threshold sober prior OVER threshold → hallucination rate RISES. base_prior =
+// a moderately conditioned prior that is SUB-threshold when sober. Reuses hallucinate_call + the live
+// pharm profile knobs (prof[0], prof[5]) — same drug vector §Neuropharm uses.
+pub fn hallucinate_under_drug(prof: [float], base_prior: float, prior_match: float, base_thr: float) -> float {
+    let release = 1.0 / prof[0]                       // REBUS prior-release: relaxed prior dominates MORE
+    let drug_prior = base_prior * release
+    let drug_thr = base_thr + prof[5]                 // reality_thr_shift ↓ (prof[5]<0 ⇒ lower threshold)
+    return hallucinate_call(drug_prior, prior_match, 0.0, drug_thr)   // zero external signal (halluc regime)
+}
