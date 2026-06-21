@@ -1,0 +1,150 @@
+H_1524 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7, c9)
+================================================================
+SLUG: 1524_neuromod_diversity
+LENS: MODULATOR DIVERSITY — N INDEPENDENT, axis-targeted neuromodulators
+(specificity) vs ONE global adaptive gain. Neuro/biology lens (c15,
+a_no_llm_frame_trap), NOT an LLM recipe. NEW orthogonal mechanism-family
+attempting the H_1284 NEUROMODULATION wall.
+
+────────────────────────────────────────────────────────────────────
+THE WALL THIS ATTEMPTS TO BREAK (HD27 / H_1284, kept honestly 🔴/🧱)
+────────────────────────────────────────────────────────────────────
+H_1284 tested a SINGLE global context-adaptive gain controller
+(dopamine/NE/ACh-like) that maps substrate state → a unified knob bundle
+(LR, SPLIT_THRESH, abstain) via ONE shared signal/EMA. VERDICT: a single
+global adaptive gain NEVER beats a single well-tuned FIXED operating point
+— no-free-lunch, GENERAL across regimes (reproduced RED here:
+R1 B−A=−0.007, R2 −0.080, R3 −0.096; 0/3 regimes won). Amoeba
+homeostatic-buffer family (H_1509/b/c) confirmed the same with a single
+global allosteric μ_t buffer (regime-invariant, no break). 5+ lenses → the
+wall is WELL-DEFENDED; this is the Nth lens. If it also fails, the result =
+Nth confirming lens (valid, c9). NO tune-to-green.
+
+────────────────────────────────────────────────────────────────────
+THE NEW ANGLE (genuinely different family, a_break_the_wall)
+────────────────────────────────────────────────────────────────────
+H_1284's controller was MONOLITHIC: one substrate signal (recon-err EMA)
+drove a coupled bundle of knobs through one expected-uncertainty EMA û.
+Its failure mode: a single signal cannot raise plasticity for "genuine new
+fact" while SIMULTANEOUSLY lowering it for "noisy recall cue" — the two
+events look the same to one EMA, so the global gain compromises (the H_1230
+over-split-on-noise failure the FREEZE itself names).
+
+NEW FAMILY = MODULATOR DIVERSITY / SPECIFICITY: N INDEPENDENT modulators,
+each driven by a DIFFERENT substrate signal and targeting a DIFFERENT knob,
+with NO shared EMA. This mirrors real neuromodulation (the H_1284 FREEZE
+cites these exact systems): DA, NE, ACh are SEPARATE nuclei reading
+SEPARATE signals onto SEPARATE targets — not one global gain. anima's
+§Neuropharm already realizes this per-axis structure (prior/entropy/self/
+coupling/dt/reality/WM are 7 independent knobs each with its own perturb op)
+— leverage that precedent (numpy mirror only; engine NOT edited).
+
+PRE-REGISTERED N=3 CHANNELS (each: own signal → own knob, NO shared û):
+  ACh (plasticity-rate → LR)  : signal = SHORT-window surprise vs LONG-window
+      baseline (per-channel fast/slow EMA, λ_fast=0.5, λ_slow=0.05). RAISE LR
+      when the IMMEDIATE event is more surprising than the slow baseline
+      (a genuinely novel write), independent of the noise floor.
+      LR = clip(LR0·(1 + kA·(s_fast − s_slow)), 0.05, 0.60).
+  ACh/NE (split-rate → SPLIT_THRESH) : signal = a SEPARATE noise-floor
+      estimator = LONG-window EMA of recall-cue surprise ONLY (writes
+      excluded). RAISE the split bar when the recall-noise floor is high (the
+      H_1230 anti-over-split guard) — driven by recall noise, NOT by write
+      novelty (the axis H_1284's single EMA conflated).
+      TH = clip(TH0·(1 + kT·n_floor), 0.15, 0.60).
+  DA (reward-gain → abstain margin/consolidation) : signal = reward EMA
+      (correct-recall rate). On a high reward run, NARROW abstain (exploit:
+      answer confidently from a working store); on a low reward run, WIDEN
+      abstain (explore/caution). ab = clip(ab0·(1 − kD·(r_ema − 0.5)),
+      0.20, 1.20); DA also scales winner-pull on correct recalls
+      LR·=(1+kG·r_ema).
+  Each channel observes its OWN signal stream; NO channel shares another's
+  EMA state (the diversity claim is exactly this separation).
+
+────────────────────────────────────────────────────────────────────
+ARMS (identical store, seeds, fact set, event stream, capacity)
+────────────────────────────────────────────────────────────────────
+  A FIXED      : best (LR0*, TH0*) by grid on a DISJOINT tune seed, held
+                 CONSTANT across all regimes (the SAME strong baseline +
+                 grid as H_1284, byte-reused grid_tune).
+  S GLOBAL     : H_1284's single-global-adaptive controller, VERBATIM
+                 (reproduce the wall — the Neuromod class, one shared û).
+  D DIVERSITY  : N=3 independent axis-targeted modulators (above). Same
+                 (LR0*, TH0*) base as A → any lift is from SPECIFICITY.
+  D-COLLAPSE   : ABLATION — collapse all N channels to share ONE global
+                 signal (the SAME recon-err EMA S uses), removing per-axis
+                 specificity while keeping the 3 knobs. If D-COLLAPSE ≈ D,
+                 specificity is INERT (the wall holds; diversity contributes
+                 nothing beyond global gain). DECISIVE control.
+  Per-channel ablations (marginal): D minus ACh, D minus split-axis, D minus
+                 DA — each channel held at A's fixed constant, others active;
+                 report each channel's marginal capability contribution.
+
+CONTROLS:
+  (1) param/budget matched — same max_cells, #events, key dim, seeds.
+  (2) A is grid-TUNED (the best fixed point, not a strawman) — reused verbatim.
+  (3) D-COLLAPSE specificity-ablation (above) is the decisive wall-vs-break
+      discriminator: lift must SURVIVE per-axis specificity and VANISH when
+      collapsed to one global signal.
+
+TASK / REGIMES / METRIC — IDENTICAL to H_1284 (frozen-first, byte-reused):
+  Memory recall under shifting load; 3 regimes R1_STABLE / R2_DRIFT /
+  R3_NOISE; capability = recall_accuracy − fabrication_rate per regime
+  (p7 exact, NO LLM judge, NO perplexity, NO loss); abstain = neither.
+  N_FACTS=30, ABSTAIN0=0.45, max_cells=0.6·#facts, n_events=300.
+
+≥3 seeds (rng = [11, 22, 33]); tune seed = 7 (DISJOINT from scored seeds).
+The gen_stream / make_facts / MemStore / grid_tune / Neuromod(GLOBAL) are
+BYTE-REUSED from state/universe-probes/h1284_neuromodulation_gain.py
+(no environment change — same task the wall used).
+
+────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIER (binding; written before any scoring; MARGIN unchanged 0.05)
+────────────────────────────────────────────────────────────────────
+MARGIN = 0.05 absolute capability (SAME bar as H_1284 — NOT moved).
+
+GREEN (the wall is BROKEN) iff ALL hold:
+  (c1) D.capability ≥ A.capability + MARGIN on ≥ 2 of {R1,R2,R3}
+       AND D never WORSE than A by > 0.02 on the remaining regime
+       AND D.fabrication ≤ A.fabrication on the winning regimes.
+  (c2) SPECIFICITY survives: D − D-COLLAPSE ≥ MARGIN on the winning regimes
+       (the lift is from per-axis specificity, NOT from having 3 knobs fed by
+       one global signal). If D-COLLAPSE ≈ D → specificity INERT → wall holds.
+  (c3) HONEST continuity: S GLOBAL (H_1284's controller) does NOT clear the
+       bar (S < A + MARGIN on the winning regimes) — confirms diversity, not
+       generic adaptation, is what (if anything) won.
+
+🟠 PARTIAL iff D beats A+MARGIN on exactly 1 regime (single operating point),
+  OR D ≥ A+MARGIN on ≥2 but c2 fails (specificity not separated — lift is
+  knob-count not specificity).
+
+🔴 / 🧱 (wall HOLDS, CLOSED-NEGATIVE) iff D does NOT beat A+MARGIN on any
+  regime, OR D raises fabrication, OR D-COLLAPSE ≈ D (specificity INERT). The
+  no-free-lunch generalizes to modulator diversity too; report with numbers
+  (c9, a_paper_negative_ok). This is the EXPECTED outcome given 5+ prior
+  lenses; it is a VALID Nth confirming lens.
+
+────────────────────────────────────────────────────────────────────
+SUBSTRATE & SCOPE (a_engine_native_learning · a_scale_honest_scope)
+────────────────────────────────────────────────────────────────────
+numpy mirror of CORE/engine_cli.hexa VAdaptField (host has NO torch) —
+byte-faithful to the live wires (winner=L2-nearest; split iff recon-err>TH
+and capacity; refine=winner+=LR·(x−winner); LRU evict; abstain if
+recon-err>margin). DIRECTIONAL only — HARD-GATE-1: this is .py+numpy, so the
+verdict is automatically DIRECTIONAL, terminal NOT permitted; engine-native
+R2 (.hexa via CORE) is the binding follow-on, registered ING. The ONLY arm
+difference vs the live engine is the per-tick (LR,TH,abstain) policy.
+TOY scale (30 facts, 3 seeds, one paradigm) — scale/paraphrase/real-corpus/
+engine-transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).
+live CORE/*.hexa UNTOUCHED in this probe. $0 CPU.
+
+GUARDS: p1/p2/p3 (no prompt/identity/persona) · p6 (every channel reads
+substrate surprise/reward, NOT a label/RLHF/ethics) · p7 (exact metric, no
+loss; all knobs no-grad read-outs) · p8 (write/gate = engine's own tick) ·
+a_autonomy_over_hardcode (channels = substrate-read context features, NOT
+external do/dont gates) · c9 (RED reported RED) · c7 (no force-push).
+
+xref: H_1284 · H_1284_R2 · H_1284_R3 · H_1509/b/c · H_1228 · H_1230 ·
+H_1281 · H_1285 · H_1290 · §Neuropharm(H_1502) · a_break_the_wall ·
+a_no_llm_frame_trap · a_engine_native_learning · a_verified_must_wire ·
+a_autonomy_over_hardcode · a_paper_negative_ok · a_scale_honest_scope ·
+a_toy_scale_recheck · p1·p2·p3·p6·p7·p8·c9·c15.

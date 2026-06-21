@@ -1,0 +1,63 @@
+H_1524 — RESULT (scored AFTER freeze; p7, c9) — DIRECTIONAL (numpy mirror)
+==========================================================================
+VERDICT: 🔴 / 🧱 WALL HOLDS — modulator diversity does NOT break H_1284.
+         (Nth confirming lens; DIRECTIONAL hard-gate-1, engine-native R2 = ING.)
+
+GRID-TUNED BEST FIXED: LR0*=0.1, TH0*=0.2 (disjoint tune seed 7).
+SEEDS [11,22,33]; MARGIN 0.05 (frozen, NOT moved); N_FACTS=30, n_events=300.
+
+PER-REGIME (capability = recall_accuracy − fabrication_rate):
+  regime      A(fixed)  S(global)  D(diversity)  D-collapse  D−A    D−collapse  S−A
+  R1_STABLE   0.5744    0.5678     0.5733        0.5733      -0.0011  0.0000     -0.0067
+  R2_DRIFT    0.4389    0.3589     0.4333        0.4333      -0.0056  0.0000     -0.0800
+  R3_NOISE    0.4156    0.3200     0.4156        0.4156      +0.0000  0.0000     -0.0956
+
+FROZEN FALSIFIER OUTCOME:
+  (c1) D ≥ A+MARGIN on ≥2 regimes? — NO. wins = []  (0/3; D never beats
+       best-fixed: −0.0011 / −0.0056 / 0.0000). c1 FAILS → not GREEN.
+  (c2) specificity separated (D − D-COLLAPSE ≥ MARGIN)? — NO. D − D-COLLAPSE
+       = 0.0000 on ALL 3 regimes. Specificity is INERT: the N=3 independent
+       axis-targeted modulators produce the EXACT capability as collapsing all
+       channels onto one global signal. The diversity has zero marginal effect.
+  (c3) S (global, H_1284's controller) clears bar? — NO (S−A = −0.007/−0.080/
+       −0.096; reproduces the wall: single global gain loses on every regime).
+  fab_ok = TRUE (D never raised fabrication) · never_much_worse = TRUE.
+
+PER-CHANNEL MARGINALS (D minus each-channel-ablated; all ≈0):
+  R1: ACh 0.0 · split 0.0 · DA −0.0011
+  R2: ACh 0.0 · split 0.0 · DA −0.0056
+  R3: ACh 0.0 · split 0.0 · DA 0.0
+  → NO channel contributes positive capability. ACh/split marginals exactly 0
+    (at the grid-tuned best-fixed operating point LR0*=0.1/TH0*=0.2 the
+    fast-vs-slow surprise and recall-noise-floor signals stay near their own
+    baselines → LR/TH barely deviate from the fixed best); DA's tiny negative
+    marginal = abstain modulation slightly hurts. This IS the no-free-lunch
+    mechanism: at the best fixed point the substrate signals carry no exploitable
+    deviation, so independence/specificity buys nothing — identical to a single
+    global gain (D≡D-COLLAPSE) AND no better than best-fixed.
+
+INTERPRETATION (a_break_the_wall TAXONOMY): wall class = (d) GENUINE
+no-free-lunch ceiling, NOT (a) metric-artifact / (b) variable-confound / (c)
+infra. This is the Nth INDEPENDENT lens (multi-lens depletion): H_1284 single
+global gain · H_1284_R2 ideation substrate · H_1284_R3 regime-switch · Amoeba
+homeostatic-buffer H_1509/b/c · NOW modulator-diversity/specificity. A
+DIFFERENT mechanism-family (separate-nuclei specificity, the strongest
+biological argument FOR neuromodulation) ALSO fails to beat best-fixed, with a
+DECISIVE specificity-ablation (D≡D-COLLAPSE, 0.0 on every regime) proving the
+diversity itself is inert. The wall HOLDS more confidently after this lens.
+
+HONESTY / SCOPE (c9):
+  - DIRECTIONAL ONLY (numpy mirror of VAdaptField; host no torch). HARD-GATE-1:
+    .py+numpy → verdict cannot be terminal; engine-native R2 (.hexa via CORE) is
+    the binding follow-on, registered ING. (For a RED/🧱 the directional result
+    already strongly supports the wall; engine-native R2 would only confirm.)
+  - TOY: 30 facts, 3 seeds, one paradigm, DIM=16. scale/paraphrase/real-corpus/
+    engine-transfer UNVERIFIED (a_scale_honest_scope, a_toy_scale_recheck).
+  - frozen-first: MARGIN 0.05 and all bars written before scoring; NO
+    tune-to-green (RED reported RED). Environment byte-reused from H_1284
+    (no env change). live CORE/*.hexa UNTOUCHED. $0 CPU.
+
+ARTIFACTS: state/1524_neuromod_diversity/h1524_diversity.py ·
+  state/verdicts/1524_neuromod_diversity/{H_1524_FREEZE,H_1524}.txt ·
+  state/verdicts/1524_neuromod_diversity/H_1524_R1.json ·
+  UNIVERSE/cards/H_1524_neuromod_diversity.md · UNIVERSE/HYPOTHESES.jsonl.
