@@ -1,0 +1,64 @@
+{
+  "hypothesis": "H_1538",
+  "name": "serotonin-as-patience temporal-discounting emit-timing faculty",
+  "seeds": [
+    1538,
+    1539,
+    1540
+  ],
+  "params": {
+    "T_TICKS": 12,
+    "WAIT_COST": 0.02,
+    "GROUND_THR": 0.35,
+    "n_episodes": 400
+  },
+  "means": {
+    "IMPULSIVE": 0.0,
+    "PATIENT-5HT": 0.1911081750458581,
+    "ABL-FIXED": 0.0968785801515754,
+    "NEVERWAIT": -0.050759002983411516,
+    "PATIENT-SHUFFLE": 0.47423220376102665,
+    "IMPULSIVE-SHUFFLE": 0.45327996533856124
+  },
+  "wait_ticks": {
+    "IMPULSIVE": 0.0,
+    "PATIENT-5HT": 1.1033333333333333,
+    "ABL-FIXED": 0.26499999999999996,
+    "NEVERWAIT": 11.0
+  },
+  "bars": {
+    "A_presence_lift": {
+      "lift": 0.1911081750458581,
+      "bar": 0.1,
+      "pass": true
+    },
+    "A2_per_seed": {
+      "n_pass": 3,
+      "bar": 2,
+      "pass": true
+    },
+    "B_beat_neverwait": {
+      "margin": 0.2418671780292696,
+      "bar": 0.1,
+      "pass": true
+    },
+    "B2_wait_between": {
+      "pass": true
+    },
+    "C_ablate": {
+      "margin": 0.09422959489428269,
+      "bar": 0.09555408752292904,
+      "pass": false
+    },
+    "D_shuffle": {
+      "patient_edge_shuffled": 0.020952238422465408,
+      "collapse": 0.17015593662339268,
+      "bar": 0.09555408752292904,
+      "pass": true
+    }
+  },
+  "verdict": "AMBER",
+  "faculty_present": true,
+  "directional": true,
+  "note": "numpy mirror \u21d2 DIRECTIONAL (a_engine_native_learning); engine R2 deferred ING"
+}
