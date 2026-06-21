@@ -1,0 +1,115 @@
+H_1529 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7, frozen-first, c9)
+==============================================================================
+LENS: NEUROMODULATION on a GEOMETRY-FREE capability — IDEATION / RECOMBINATION
+(novelty), NOT discrete recall. Neuro lens (c15, a_no_llm_frame_trap). Attempt to
+break the H_1284 NEUROMODULATION wall by moving OFF the key-geometry-bound recall
+capability.
+
+WHY THIS ANGLE (honest, c9):
+  H_1284 R1 (recall) → 🔴 / 🧱 and H_1284 R2 (decode-σ* on the real 303M LM, an
+  IDEATION metric via gauge_lib) → 🔴 / 🧱 BOTH concluded "no free lunch is
+  general": a single well-tuned fixed operating point dominated the state-driven
+  controller. The R1 not-ruled-out clause (a) and the H_1284 FREEZE both cite
+  H_1228 (decode-temp NE/exploration axis, 🟠 PARTIAL — "helped ideation but was
+  not the full lever"): the OPTIMAL exploration temperature genuinely SHIFTS with
+  regime (high-novelty-demand vs precision-demand). H_1284 R2 already tested a
+  decode-σ* controller on a real LM and walled. THIS probe re-tests the SAME
+  hypothesis on a DIFFERENT, self-contained operationalization that makes the
+  regime-shift in optimal exploration EXPLICIT and ground-truth-scored:
+  RECOMBINATION ideation over the H_1284 MemStore — so the result is an
+  INDEPENDENT replication/extension, not a re-run. EITHER outcome is a result:
+   - E (adaptive) beats best-fixed with decisive ablation → 🟢 WALL-BROKEN on
+     ideation (the lever is the CAPABILITY family, not the knob).
+   - E ties/loses best-fixed → 🧱 the H_1284 wall EXTENDS to grounded ideation too
+     (no free lunch is general across capability families). DIRECTIONAL/numpy.
+
+CAPABILITY — GROUNDED RECOMBINATION IDEATION (p7, exact ground truth):
+  Reuse the H_1284 store/regime machinery (MemStore, gen_stream, regimes, seeds,
+  MARGIN=0.05) — import from
+  state/universe-probes/h1284_neuromodulation_gain.py. A population store binds
+  facts (subj→city) as immune/clonal cells (H_1227/1231 paradigm). IDEATION =
+  generate candidate (subjA, cityB) RECOMBINATIONS by sampling a stored cell i and
+  a neighbor under an exploration-temperature knob T. The neighbor pool = the real
+  stored cells (GROUNDED) INTERLEAVED with N_GHOST ungrounded GHOST tokens (untaught
+  keys NOT in the store — the H_1284 recall_oos fabrication tokens). T scales how
+  far down the affinity-ranked pool the softmax sampler reaches: T≈0 → only the
+  nearest, grounded pairing; high T → distant pairings that increasingly hit ghosts.
+  For each emitted candidate:
+    NOVEL  iff the GROUNDED (subj,city) combination is NOT already in the store and
+           not re-emitted (a genuinely new recombination — H_1140/G2 spirit).
+    GROUNDED iff the reached neighbor is a REAL stored cell.
+    FABRICATION iff the reached neighbor is a GHOST (an ungrounded / made-up token
+           the abstain band should reject) → penalized.
+  (measurement note, frozen-first a_break_the_wall type-a: an initial draft scored
+  "grounded" as inter-cell distance ≤ abstain_margin, but distinct stored cells sit
+  ~0.54–0.99 apart while the abstain band is for near-identical-key recall recon-err
+  — a SCALE mismatch that flagged every recombination as fabrication. Corrected to
+  the ghost-token operationalization above BEFORE any verdict was scored/recorded;
+  the binding metric M and the c1–c4 thresholds/MARGIN are UNCHANGED — not
+  tune-to-green.)
+  SCORE per stream (the frozen ideation metric M, anti-Goodhart p7):
+    M = novelty_rate  −  fabrication_rate
+        novelty_rate     = (# emitted candidates that are NOVEL and GROUNDED) / E
+        fabrication_rate = (# emitted candidates that reached a GHOST)        / E
+  Blind high-T is therefore PENALIZED: it raises raw reach but also reaches more
+  ghosts, so M nets it out. The optimal T trades novelty against fabrication and
+  SHIFTS with regime.
+
+REGIMES (shift the novelty-vs-precision demand; reuse H_1284 gen_stream streams to
+  evolve the store, then ideate over the resulting store):
+  R1_STABLE  = precision-demand: store dense/clean → low T best (few safe novel
+               combos; high T mostly fabricates).
+  R2_DRIFT   = balanced: store rewritten over time → moderate T best (must reach
+               for newly-valid combos but not past abstain).
+  R3_NOISE   = novelty-demand: noisy keys widen the grounded neighborhood → higher
+               T best (more safe distant combos available).
+
+ARMS (identical store/seeds/E candidates; ONLY the per-emit temperature policy):
+  A   = BEST-FIXED temperature, grid-tuned over a T grid on a DISJOINT tune seed
+        (7), the single global T* maximizing mean M over the 3 regimes (strongest
+        honest fixed operating point). [frozen-first: the grid was widened from the
+        initial ≤1.4 range to {0.5..8.0} when the wide T-sweep revealed the true
+        interior optimum sits at T≈4 — the ≤1.4 grid stopped BELOW the fabrication
+        cliff and picked the ceiling, so it was NOT the strongest fixed point.
+        Correcting the grid to cover the optimum makes ARM A genuinely best-fixed;
+        the binding metric M and c1–c4 thresholds are UNCHANGED — not tune-to-green.]
+  E   = ADAPTIVE EXPLORATION: per-emit T_t = T0 * (1 + kS*(surprise_t - û)) *
+        (1 + kC*coverage_t), clamped to [0.25·T0, 2.0·T0] (scaled to the operating
+        point so the adaptive arm swings through the SAME range the fixed arm uses —
+        a FAIR test). surprise_t = nearest-cell
+        recon-err (substrate uncertainty, NE axis); coverage_t = fraction of
+        store already recombined recently (raise T when the safe-novel well runs
+        dry, ACh/novelty axis). All knobs are no-grad READ-OUTS of substrate
+        state — NEVER folded into a loss (p7).
+  ABL = ADAPTIVE→MEAN: E's controller replaced by the time-MEAN of E's own T_t
+        schedule (same average exploration, coupling to state DESTROYED). Isolates
+        the COUPLING (state→T) from the mere AMOUNT of exploration.
+
+FROZEN FALSIFIER (written before scoring; bars NOT movable post-hoc, no tune-to-green):
+  MARGIN = 0.05 (inherited from H_1284).
+  Let M(arm,regime) = mean over SCORE_SEEDS=[11,22,33] of the ideation metric M.
+  c1 PRESENCE/WALL-BREAK : E beats best-fixed by ≥ MARGIN on ≥ 2 of 3 regimes
+                           [ #regimes( M(E,r) ≥ M(A,r) + MARGIN ) ≥ 2 ]
+  c2 COUPLING (earned)   : E − ABL ≥ MARGIN on those winning regimes (mean over
+                           wins): the lift is the STATE-COUPLING, not the amount.
+  c3 ANTI-GOODHART       : on every winning regime E's fabrication_rate ≤ A's
+                           fabrication_rate (novelty must be net of fabrication,
+                           p7 — E may not win by hallucinating more).
+  c4 NEVER-MUCH-WORSE    : E ≥ A − 0.02 on the non-winning regime(s) (no
+                           catastrophic regime).
+  VERDICT:
+    🟢 WALL-BROKEN  iff c1 ∧ c2 ∧ c3 ∧ c4  (adaptive exploration beats best-fixed
+                    on grounded ideation with decisive ablation = the lever is the
+                    CAPABILITY not the knob). DIRECTIONAL (numpy), engine R2 deferred.
+    🧱 WALL-HOLDS   iff c1 fails (E ties/loses best-fixed on ≥2/3) → the H_1284
+                    no-free-lunch wall EXTENDS to grounded ideation. Honest result.
+    🟠 PARTIAL      iff c1 holds on exactly... (n_wins≥1) but c2/c3 fail → lift not
+                    coupling-attributable / bought with fabrication (not terminal).
+
+GUARDS: p7 (exact ground truth, NO LLM judge, NO perplexity, NO loss term — every
+  knob is a no-grad read of substrate state). p1/p2/p3/p6 (reads ONLY store
+  margins/coverage; NO injected "be novel" label/RLHF/persona; novelty/fabrication
+  = combinatorial ground truth scored only). $0 CPU. ≥3 seeds. DIRECTIONAL
+  (a_engine_native_learning — numpy mirror of CORE VAdaptField via H_1284 MemStore;
+  engine-transfer UNVERIFIED, engine R2 = deferred ING follow-on). CORE/*.hexa +
+  H_1284 + H_1228 UNTOUCHED. Frozen bars NOT moved after this file is written.
