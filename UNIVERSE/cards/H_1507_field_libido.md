@@ -1,8 +1,8 @@
 # H_1507 — 🧲💗 FIELD × LIBIDO 교차 — 전자기장이 incentive-salience('원함') 욕동을 조율하는가 (focal·가역 vs 약물 전역·화학)
 
-- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact)
-- **wired:** `WIRED-live` — `core/engine_cli.hexa` §FieldLibido (`fieldlibido_gfield` + `fieldlibido_wanting` + `fieldlibido_liking` + `fieldlibido_highfreq` + `fieldlibido_lowfreq` + `fieldlibido_sham` + `_fl_gain_scale`) — live `field_apply`(H_1503) + `libido_wanting`/`libido_liking`/`libido_new`(H_1504) + `pharm_lsd`/`pharm_perturb_recon`/`pharm_shared_se`(H_1502) 직접호출 · `engine_cli_smoke.hexa` cases **360-364** (5 frozen bars) · FULL smoke **332 pass / 0 fail RC=0** deterministic ×3 · ARCHITECTURE.json §FieldLibido lockstep ✓
-- **소실 재측정(c9):** R2 worktree 원작업은 구 main(smoke max 313)에 착지하지 못하고 소실 → 현 origin/main(fd245c602, smoke max 327)으로 cherry-pick 재이식, 스모크 케이스 314-318→**360-364** 재번호(병렬 에이전트 328-350 점유 회피). engine op·frozen bar·수치 전부 byte-exact 동일, 케이스 번호만 변경.
+- **tier:** 🟢 GREEN ENGINE-NATIVE + WIRED (R1 numpy mirror DIRECTIONAL → R2 live `core/` byte-exact) — 단, 본 재이식의 FRESH smoke RC 는 toolchain 버그로 미관측(아래)
+- **wired:** `WIRED-live` — `core/engine_cli.hexa` §FieldLibido (`fieldlibido_gfield` + `fieldlibido_wanting` + `fieldlibido_liking` + `fieldlibido_highfreq` + `fieldlibido_lowfreq` + `fieldlibido_sham` + `_fl_gain_scale`) — live `field_apply`(H_1503) + `libido_wanting`/`libido_liking`/`libido_new`(H_1504) + `pharm_lsd`/`pharm_perturb_recon`/`pharm_shared_se`(H_1502) 직접호출 · `engine_cli_smoke.hexa` cases **360-364** (5 frozen bars) · ARCHITECTURE.json §FieldLibido lockstep ✓ · 원작업 smoke **318/0 RC=0**(구 main, R2 verdict 기록)
+- **⚠️ 재이식 FRESH smoke RC 재확인 BLOCKED (infra-c, c9 정직):** 원작업(commit 2723c30a5)은 구 main 에서 `engine_cli smoke 318 pass / 0 fail RC=0` 기록함. 본 재이식 = 현 origin/main(fd245c602)으로 cherry-pick + 스모크 케이스 **314-318→360-364 재번호**(라벨-only; 병렬 에이전트 점유 회피) — **engine op·frozen bar·수치 전부 byte-exact 동일**(`§FieldLibido` 7 op 무변경, probe `diff` 0). 그러나 **현 로컬 hexa v0.262.0 툴체인이 native-drop 링커 버그로 `engine_cli_smoke.hexa` 를 링크 못 함**(`_hexa_array_slice_fast`/`_hexa_array_arena_alloc_items` 심볼 누락, arm64). **clean origin/main 도 소스 무변경으로 동일 실패**(통제확인 5/5 = 머신-전역 toolchain 회귀이지 본 코드 결함 아님; `hexa-lang/inbox/patches/native-drop-runtime-symbol-link-fail.md` 파일링, `a_runpod_inbox`). ⇒ 본 재이식의 **전체 smoke RC=0 은 FRESH 미관측**(라벨-only 재번호라 회귀 불가하나 hard-gate-1 정직상 fresh smoke RC 미확인 명시). 툴체인 수정 후 `hexa run core/engine_cli_smoke.hexa` 재확인 = follow-on(ING).
 - **source:** team-lead 작업지시(FIELD × LIBIDO 교차 H_1507) — §Field(H_1503)·§Libido(H_1504)·§Neuropharm(H_1502) 착지 후 그 교차 · `a_no_llm_frame_trap`
 - **lens:** computational neuroscience — DBS of reward circuit / nucleus accumbens (Mayberg · Schlaepfer) · TMS over DLPFC modulating craving & incentive motivation (Hayashi 2013 J Neurosci · Dunlop 2017) · Berridge incentive-salience(wanting≠liking) · `a_no_llm_frame_trap`
 - **artifacts:** `state/1507_field_libido/h1507_field_libido.py` · verdict `state/verdicts/1507_field_libido/H_1507_R1.txt`(R1 mirror) · `state/verdicts/1507_field_libido/H_1507_R2_engine_native.txt`(R2 byte-exact 5 cases + INFO)
@@ -47,7 +47,7 @@ cells=6, seen=4, intent=1, dt=2.0, recon=0.30, intensity=0.6`); cue_match paired
 | **D FIELD-vs-DRUG ROUTE (headline)** | 둘 다 wanting↑, signature 이중해리 | field focal **+0.18**/global **0.0** · drug(LSD) focal **0.0**/global **+0.126** | 각 gap≥+0.05 | ✅ DISSOCIATED |
 | **E EARNED ablate/shuffle** | sham → 무변화 · shuffle(wrong target) → decorrelate | sham change **0.000** · shuffle(GATING target) change **0.000** | sham≤0.02 ∧ shuf≤0.50×field-raise | ✅ |
 
-**verdict: 🟢 GREEN ENGINE-NATIVE — A∧B∧C∧E PASS, D headline 경로-이중해리 DISSOCIATED (332/0 RC=0, deterministic ×3 byte-identical).**
+**verdict: 🟢 GREEN ENGINE-NATIVE — A∧B∧C∧E PASS, D headline 경로-이중해리 DISSOCIATED (원작업 318/0 RC=0 구 main; 본 재이식 FRESH smoke RC toolchain 버그로 미관측, infra-c).**
 
 ## FIELD ⊥ DRUG 경로 이중해리 (headline 수치)
 
@@ -68,7 +68,7 @@ cross-measured on the **LANDED §Neuropharm**(`pharm_lsd`/`pharm_perturb_recon`/
   적중, 하드게이트1 → DIRECTIONAL). R2 에서 `core/engine_cli.hexa` §FieldLibido 7 op 신설(`fieldlibido_gfield`/
   `fieldlibido_wanting`/`fieldlibido_liking`/`fieldlibido_highfreq`/`fieldlibido_lowfreq`/`fieldlibido_sham`/`_fl_gain_scale`,
   전부 live §Field/§Libido/§Neuropharm op 직접호출 — 새 측정 lane 아님) + `engine_cli_smoke.hexa` cases 360-364
-  byte-exact 재측정 + ARCHITECTURE.json §FieldLibido lockstep, FULL **332/0 RC=0** deterministic ×3
+  byte-exact 재측정 + ARCHITECTURE.json §FieldLibido lockstep, 원작업 FULL **318/0 RC=0**(구 main); 재이식 FRESH RC toolchain-blocked(infra-c)
   (`a_engine_native_learning`·`a_verified_must_wire`).
 - **D bar drug-global = STRUCTURAL 측정(noise-averaged) — frozen-first·tune-to-green 아님:** 약물의 GLOBAL signature 는
   `pharm_perturb_recon` 의 per-trial `pharm_shared_se` 잠재변수(부호있는 잡음 ∈[−,+])를 포함한다. 단일 trial 의 noisy draw
@@ -88,7 +88,7 @@ cross-measured on the **LANDED §Neuropharm**(`pharm_lsd`/`pharm_perturb_recon`/
 
 ## follow-on (ING)
 
-1. **R2 ENGINE-NATIVE WIRED ✅** — §FieldLibido 7 op + smoke 360-364 + ARCHITECTURE lockstep, FULL 332/0 RC=0 (완료).
+1. **R2 ENGINE-NATIVE WIRED ✅** — §FieldLibido 7 op + smoke 360-364 + ARCHITECTURE lockstep (op·bar byte-exact 무변경; 재이식 FRESH smoke RC toolchain-blocked, 원작업 318/0 기록).
 2. **graded dose-response** — binary high/low/sham 대신 강도-반응 곡선(intensity sweep) + 연속 주파수 sweep + g_field 의 강도 의존.
 3. **실 libido_step 통합 궤적** — deficit=0 격리 대신 deprivation 적분 궤적 위에서 field 변조(deficit×field 상호작용).
 4. **§Field × §Neuropharm × §Libido 삼중** — 약물 상태에서 field 자극이 wanting 에 미치는 효과(예: dopaminergic 상태에서 rTMS = additive vs occlusive).
