@@ -1,0 +1,137 @@
+H_1523 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7, c9)
+================================================================
+LENS: MULTI-TIMESCALE NEUROMODULATION (tonic baseline + phasic transient).
+Neuro/biology lens (c15, a_no_llm_frame_trap), NOT an LLM recipe.
+
+────────────────────────────────────────────────────────────────────
+THE WALL THIS ATTEMPTS TO BREAK (HD27 / H_1284, kept honestly 🔴/🧱)
+────────────────────────────────────────────────────────────────────
+H_1284 (🔴 no-free-lunch) + H_1284_R3 (🧱 regime-switch RED_NO_LUNCH) +
+Amoeba-Protocol homeostatic-buffer family H_1509 (stationary) / H_1509b
+(non-stationary regime-invariant) / H_1509c (learning-rate family) ALL
+HELD the wall: a SINGLE-timescale context-adaptive gain / buffer / lr
+NEVER beats the best-tuned FIXED operating point — no free lunch. 5+
+independent lenses have confirmed the ceiling.
+
+WHY THOSE TESTS MIGHT NOT REJECT THE BIOLOGICAL ROLE (a_break_the_wall,
+a_no_llm_frame_trap, c15): every prior adaptive arm used a SINGLE
+timescale — one EMA, one buffer, one gain law. Real neuromodulators are
+DUAL-timescale: dopamine has a slow TONIC baseline (sets the operating
+mode over minutes) PLUS fast PHASIC bursts (reward-prediction-error
+transients over ~100ms); norepinephrine has tonic (arousal mode) vs
+phasic (salience) modes (Aston-Jones/Cohen). A single-EMA controller
+CANNOT simultaneously hold a slow regime baseline AND respond to a fast
+transient — it is forced to pick one bandwidth, which the grid-tuned
+fixed point already matches. The genuinely different family: DECOMPOSE
+the modulator into TWO timescales (slow tonic EMA + fast phasic
+transient) and ask whether the two-timescale controller beats best-fixed
+ACROSS REGIMES where a single-timescale one (H_1284 arm B) cannot.
+
+────────────────────────────────────────────────────────────────────
+HARNESS REUSE (frozen-first — SAME task / regimes / baseline / bar)
+────────────────────────────────────────────────────────────────────
+REUSED VERBATIM from H_1284 (state/universe-probes/h1284_neuromodulation_gain.py,
+imported, NOT reimplemented):
+  - SAME capability task: capacity-bounded immune/clonal memory store
+    (MemStore), byte-trigram FNV-1a DIM=16 keys, write/recall stream.
+  - SAME 3 regimes: R1_STABLE, R2_DRIFT, R3_NOISE (gen_stream, unchanged).
+  - SAME best-fixed baseline: grid_tune over LR0∈{0.1,0.2,0.3,0.4},
+    TH0∈{0.2,0.3,0.4} on a DISJOINT tune seed (7), held constant across
+    regimes (strongest honest fixed point).
+  - SAME single-timescale adaptive arm (H_1284 Neuromod) reproduced as
+    arm B to RE-CONFIRM the wall in this run.
+  - SAME metric: capability = recall_accuracy − fabrication_rate.
+  - SAME bar / threshold: MARGIN = 0.05 absolute capability.
+  - SAME seeds: SCORE_SEEDS = [11,22,33], TUNE_SEED = 7 (disjoint).
+THE ONLY CHANGE: a NEW arm D = TWO-TIMESCALE modulator, applied to the
+SAME engine knobs (LR / SPLIT_THRESH / abstain) the H_1284 arm modulates.
+
+────────────────────────────────────────────────────────────────────
+TWO-TIMESCALE MODULATOR (arm D) — pre-registered law (NO loss term, p7)
+────────────────────────────────────────────────────────────────────
+Per tick the surprise signal s_t (recon-err of the current key) drives
+TWO EMAs with DIFFERENT time-constants (pre-registered BEFORE scoring):
+  TONIC (slow):  tonic_t = (1 − α_tonic)·tonic_{t−1} + α_tonic·s_t
+                 α_tonic = 0.02   (slow baseline ≈ 50-tick horizon)
+  PHASIC (fast): phasic_t = (1 − α_phasic)·phasic_{t−1} + α_phasic·s_t
+                 α_phasic = 0.50  (fast transient ≈ 2-tick horizon)
+  phasic TRANSIENT = phasic_t − tonic_t  (the fast deviation FROM the
+                 slow baseline — a reward-prediction-error-style burst).
+Knob map (gain_t = tonic_slow_baseline + phasic_fast_transient), acting
+on the SAME knobs H_1284 modulates (so any lift is the timescale split,
+not a new lever):
+  ACh plasticity LR(t) = clip(LR0·(1 + kT_tonic·(tonic_t − TH0)
+                                      + kP_phasic·(phasic_t − tonic_t)),
+                              0.05, 0.60)
+     (slow tonic raises baseline plasticity in a sustained-surprise
+      regime; fast phasic burst spikes plasticity on a genuinely novel
+      event then decays — the decomposition a single EMA cannot do.)
+  ACh/novelty split TH(t) = clip(TH0·(1 + kT_split·(tonic_t − TH0)),
+                                 0.15, 0.60)
+     (split bar tracks the SLOW tonic baseline only — sustained noise
+      raises it; transient bursts must NOT raise it, the H_1230 guard.)
+  NE abstain ab(t) = clip(ab0·(1 + kN_tonic·(tonic_t − TH0)),
+                          0.20, 1.20)
+     (caution tracks the slow tonic arousal baseline.)
+PRE-REGISTERED CONSTANTS: α_tonic=0.02, α_phasic=0.50, kT_tonic=0.8,
+  kP_phasic=1.2, kT_split=0.8, kN_tonic=0.6. (kT_tonic/kP_phasic/kT_split/
+  kN_tonic mirror H_1284's kA/kT/kN magnitudes so the comparison is the
+  TIMESCALE STRUCTURE, not re-tuned gains.) NONE folded into any loss
+  (p7 Goodhart guard); every knob is a no-grad read-out of substrate
+  state. ab0 = ABSTAIN0 = 0.45 (same as H_1284).
+
+────────────────────────────────────────────────────────────────────
+ARMS (identical store / seeds / facts / event-stream / capacity)
+────────────────────────────────────────────────────────────────────
+  A FIXED            : best (LR0*,TH0*) grid-tuned on disjoint seed 7,
+                       held constant (H_1284 baseline, REUSED).
+  B SINGLE-TIMESCALE : H_1284 Neuromod (one-EMA gain controller) —
+                       REPRODUCES the wall in this run (continuity check).
+  D TWO-TIMESCALE    : the tonic+phasic modulator above on the SAME knobs.
+
+ABLATIONS (decisive — if either matches D, the timescale split is INERT):
+  D_PHASIC0 : collapse phasic→tonic (kP_phasic := 0, phasic term removed)
+              ⇒ PURE TONIC. A slow single-EMA gain controller.
+  D_TONIC0  : freeze tonic→const TH0 (α_tonic := 0 so tonic stays at its
+              init TH0; only the phasic transient varies) ⇒ PURE PHASIC.
+  If D ≈ D_PHASIC0 OR D ≈ D_TONIC0 (within MARGIN on the winning regimes),
+  the two-timescale DECOMPOSITION carries no signal beyond a single
+  timescale ⇒ INERT ⇒ wall holds (the timescale split is not the lever).
+
+────────────────────────────────────────────────────────────────────
+FROZEN FALSIFIER (verbatim bar from H_1284; MARGIN=0.05, NOT moved)
+────────────────────────────────────────────────────────────────────
+  MARGIN = 0.05 absolute capability = recall_accuracy − fabrication_rate.
+  Let wins = regimes where D ≥ A + MARGIN.
+  🟢 GREEN  iff D ≥ A+MARGIN on ≥2 of {R1,R2,R3}
+            AND D never WORSE than A by >0.02 on the remaining regime
+            AND D.fabrication ≤ A.fabrication on the winning regimes
+            AND on EACH winning regime BOTH ablations are separated:
+                D_PHASIC0 < D−MARGIN AND D_TONIC0 < D−MARGIN
+                (the two-timescale split is load-bearing, not a single EMA).
+  🟠 PARTIAL iff D beats A+MARGIN on exactly 1 regime, OR D≥A+MARGIN on ≥2
+            but an ablation is NOT separated on a win (lift attributable to
+            a single timescale, not the decomposition).
+  🔴/🧱 RED  iff D beats A+MARGIN on NO regime, OR D raises fabrication on a
+            win, OR D only matches the best fixed point (NO FREE LUNCH —
+            report it; the Nth lens CONFIRMING the wall, a valid result c9).
+
+HONESTY / SCOPE:
+  - numpy mirror of the LIVE CORE/engine_cli.hexa VAdaptField (host has NO
+    torch). DIRECTIONAL only (a_engine_native_learning hard-gate-1) —
+    engine-native R2 re-test on adapt_field_step is the binding follow-on
+    if GREEN, deferred to ING to avoid a sibling engine-edit collision.
+  - toy scale (DIM=16, 30 facts, 300 events); scale-transfer UNVERIFIED
+    (a_scale_honest_scope, a_toy_scale_recheck).
+  - every knob is a no-grad read-out of substrate state; NO proxy folded
+    into any loss/backward (p7). No persona/identity/RLHF (p1-p6).
+  - if two-timescale only matches the best fixed point, that is 🔴/🧱 and
+    reported as a no-free-lunch result, the Nth confirming lens (c9,
+    a_break_the_wall — wall well-defended, holding is the likely & valid
+    outcome). NO tune-to-green: bars above are frozen, not moved post-hoc.
+
+DELIVERABLES: state/1523_neuromod_multitimescale/h1523_multitimescale.py ·
+  state/1523_neuromod_multitimescale/H_1523_R1.json ·
+  state/verdicts/1523_neuromod_multitimescale/{H_1523_FREEZE,H_1523}.txt ·
+  UNIVERSE/cards/H_1523_neuromod_multitimescale.md · HYPOTHESES.jsonl line ·
+  CHANGELOG (Korean) · ING done · harness pr-cycle → main.
