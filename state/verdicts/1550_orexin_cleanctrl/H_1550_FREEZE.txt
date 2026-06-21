@@ -1,0 +1,79 @@
+H_1550 — OREXIN × CLS: mode-stability with a CLEAN SHUFFLE CONTROL (honest GREEN attempt)
+FROZEN FALSIFIER (pre-registered BEFORE the scored run — frozen-first, c9, NO tune-to-green)
+============================================================================================
+
+CONTROL-FIX of H_1547 (a_break_the_wall type-(a) measurement-fix, NOT tune-to-green).
+H_1547 landed 🟠: PRESENCE passed decisively (orexin − best_alt = +0.125/+0.268/+0.141, 3/3;
+thrash collapses; ABL reverts) but the SHUFFLE control did NOT cleanly collapse (seed33
+shuffle 0.654 > orexin 0.603; mean orexin−shuffle only +0.0579) and the distinction did not
+carry the law-majority (C2 frac 0.4168 < 0.5).
+
+DIAGNOSIS (the control-design flaw, type-(a)): the H_1547 shuffle permuted the per-segment
+`arousal_dur`, but that SAME field also drives the TRUE interference position inside the arm
+(interf_tick = 0 if arousal_dur>=2 else DWELL). So permuting arousal_dur CO-PERMUTED the true
+boundary, keeping the controller's transient/sustained call ALIGNED with where interference
+actually landed. The shuffle never broke the alignment between the SIGNAL the controller reads
+and the TRUE boundary -> a fixed-dwell hysteresis on a permuted-but-still-aligned stream keeps
+its gain. That is a CONTROL flaw, not evidence against the capability.
+
+THE CORRECTED CONTROL (pre-registered): hold the dwell-width hysteresis controller byte-
+identical, but DECOUPLE the two roles of arousal_dur:
+  • interf_dur   = each segment's REAL arousal_dur -> fixes WHERE A->C interference lands
+                   (the TRUE consolidation-demand boundary). NEVER permuted -> the physics of
+                   the stream is identical for every arm including CLEAN-SHUFFLE.
+  • arousal_read = the signal the CONTROLLER reads to call transient-vs-sustained. For every
+                   arm EXCEPT clean_shuffle, arousal_read == interf_dur (so orexin/thrash/
+                   fixed/abl/always behave BYTE-IDENTICALLY to H_1547). For CLEAN-SHUFFLE,
+                   arousal_read is PERMUTED across segments while interf_dur stays REAL.
+In CLEAN-SHUFFLE the controller makes its transient/sustained call on the WRONG segments while
+interference still lands at the REAL boundary. Surviving gain = PURE dwell-width knob (works
+regardless of timing); collapse = the gain reads TRUE arousal-boundary timing.
+
+ARMS:
+  OREXIN          : arousal-stabilized — completes a sweep through a TRANSIENT read, DEFERS
+                    on a SUSTAINED read (re-sweeps next quieter segment). (Sakurai 2007.)
+  THRASH          : flip on EVERY read spike -> aborts sweeps mid-flight (orexin-loss).
+  FIXED-DUTYCYCLE : grid-tuned (period,dwell) on a DISJOINT tune seed; ignores arousal+demand.
+  ALWAYS-COMPLETE : fixed never-abort policy, runs full sweep every segment (== ABL).
+  ABL             : OREXIN with hyst_dwell=0 -> always completes, never defers (== always).
+  CLEAN-SHUFFLE   : OREXIN but arousal_read PERMUTED while interf_dur (TRUE boundary) REAL.
+
+FROZEN PARAMS (immutable post-freeze — IDENTICAL to H_1547):
+  N_SEG=14 · FAST_CELLS=64 · SLOW_CELLS=512 · DWELL=4 · SWEEP_K=1 · HYST_DWELL=2 · ABSTAIN=0.45
+  LR=0.20 TH=0.30 (engine-native VERBATIM H_1532) · DIM=16 byte-trigram FNV-1a
+  burst size ~ U[3,8) · arousal: 0.45 transient / 0.30 sustained / 0.25 quiet
+  MARGIN=0.05 · TUNE_SEED=7 · SCORE_SEEDS=[11,22,33] · $0 CPU · p7
+  REUSES H_1532 MemStore / key_vec / FNV-1a / suppress_retrieval BYTE-FOR-BYTE.
+
+CAPABILITY METRIC: A->B retention across BOTH stores (CLS OR-read). An A->B overwritten in
+fast (by A->C) before reaching slow = NOT retained (honest; abstain = not retained).
+
+FROZEN BARS — 🟢 iff A∧B∧C∧D∧E (ALL except D are UNCHANGED from H_1547; D is the corrected control):
+  A PRESENCE       : orexin − best_alt ≥ +0.05 on ≥2/3 seeds AND in mean
+                     (best_alt = max(thrash, fixed-dutycycle, always-complete) per seed)  [UNCHANGED]
+  B DISTINCT       : thrash < orexin − 0.05 (mean) AND fixed-dutycycle < orexin − 0.05 (mean) [UNCHANGED]
+  C ABL            : orexin − always-complete ≥ 0.05 AND |abl − always-complete| < 0.05      [UNCHANGED]
+  D CLEAN-SHUFFLE  : orexin − clean_shuffle ≥ +0.05 on ≥2/3 seeds AND in mean                [CORRECTED]
+                     — permuting ONLY the controller's read (TRUE boundary untouched) collapses
+                     the lift => the gain reads TRUE arousal-boundary timing, not just dwell-width.
+  E NO-FAB         : best_alt > 0                                                            [UNCHANGED]
+
+VERDICT MAP (frozen):
+  A∧B∧C∧D∧E                        → 🟢 GREEN     (clean control collapses -> reads TRUE timing
+                                                   = a real stabilization capability)
+  A∧B∧C∧E ∧ ¬D                     → 🟠 AMBER_KNOB (presence/distinct/ablation hold but even the
+                                                   CORRECTED control does not collapse -> the lever
+                                                   genuinely is the fixed dwell-WIDTH, a knob;
+                                                   HONEST — reported, NOT forced green)
+  A∧E ∧ ¬B                         → 🟠 AMBER_TIE  (an alternative ties)
+  A ∧ ¬(C∧D)                       → AMBIGUOUS_ABLATION
+  ¬A                               → WALL_HOLDS
+
+c9: whichever branch fires is REPORTED, not hidden. NO bar moved post-freeze. NOT tune-to-green:
+the ONLY change from H_1547 is the corrected control (D); A/B/C/E are byte-identical bars. If the
+clean control still does not collapse, that is an honest 🟠 (the lever is dwell-width, not timing).
+
+HARD-GATE-1 (a_engine_native_learning): the probe is numpy -> AUTO-DIRECTIONAL, terminal NOT
+permitted. wired: DIRECTIONAL-mirror -> engine §OrexinMode R2 (load fast/slow store + hysteresis
+mode-gate onto core/engine_cli.hexa, re-score the same frozen bars byte-exact) = ING follow-on.
+live core/*.hexa UNTOUCHED. Ψ-disjoint.
