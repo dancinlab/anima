@@ -1,0 +1,51 @@
+{
+  "LR0_star": 0.1,
+  "TH0_star": 0.2,
+  "thr_calibrated(R1_tune_baseline)": 0.4142,
+  "abl_fixed_factor": 2,
+  "DIM_BASE": 16,
+  "MARGIN": 0.05,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "regimes": {
+    "R1_STABLE": {
+      "A_cap": 0.5744,
+      "G_cap": 0.5744,
+      "ABL_cap": 0.3567,
+      "A_fab": 0.0278,
+      "G_fab": 0.0278,
+      "G_meanfactor": 1.0,
+      "G_minus_A": 0.0,
+      "G_minus_ABL": 0.2178
+    },
+    "R2_DRIFT": {
+      "A_cap": 0.4389,
+      "G_cap": 0.26,
+      "ABL_cap": 0.2256,
+      "A_fab": 0.03,
+      "G_fab": 0.2078,
+      "G_meanfactor": 2.333,
+      "G_minus_A": -0.1789,
+      "G_minus_ABL": 0.0344
+    },
+    "R3_NOISE": {
+      "A_cap": 0.4156,
+      "G_cap": 0.2789,
+      "ABL_cap": 0.2444,
+      "A_fab": 0.03,
+      "G_fab": 0.1644,
+      "G_meanfactor": 2.333,
+      "G_minus_A": -0.1367,
+      "G_minus_ABL": 0.0344
+    }
+  },
+  "wins_over_A+MARGIN": [],
+  "adaptation_separated(G-ABL>=M)": [],
+  "c1_break": false,
+  "c2_adaptation": false,
+  "c3_no_fab": true,
+  "verdict": "WALL_HOLDS"
+}
