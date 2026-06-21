@@ -1,0 +1,36 @@
+=== H_1540 SEROTONIN-AS-PATIENCE — REGIME-SHIFTING-HORIZON retry (R1 numpy DIRECTIONAL) ===
+seeds=[1538, 1539, 1540]  T_TICKS=12  WAIT_COST=0.02  GROUND_THR=0.35  400 ep/seed  $0 CPU  p7  c9  frozen-first
+regime-shifting horizon: FAST(peak 1-2,decay 0.14-0.22,short opt wait) vs SLOW(peak 7-9,decay 0.04-0.08,long opt wait), 50/50, regime hidden (only early slope leaks it)
+
+--- mean net grounded payoff per arm (per seed) ---
+  seed    IMPULSIVE  PATIENT-5HT  ABL-FIXED  NEVERWAIT  PAT-SHUFFLE
+  1538    +0.0000    +0.5184    +0.4852   +0.0990    +0.4237
+  1539    +0.0000    +0.4957    +0.4620   +0.1450    +0.4144
+  1540    +0.0000    +0.5032    +0.4716   +0.1482    +0.4329
+
+--- mean wait-ticks per arm (must-not-always-wait sanity) ---
+  IMPULSIVE=0.00  PATIENT-5HT=1.96  ABL-FIXED=1.60  NEVERWAIT=11.00  (PATIENT must be strictly between)
+
+=== (A) PRESENCE — PATIENT-5HT out-earns IMPULSIVE ===
+  PATIENT +0.5057 − IMPULSIVE +0.0000 = lift +0.5057  (≥0.1)  PASS
+  per-seed lifts ['+0.5184', '+0.4957', '+0.5032']  ≥0.1 on 3/3  (≥2/3)  PASS
+
+=== (B) NOT-JUST-ALWAYS-WAIT — PATIENT beats the always-wait floor too ===
+  PATIENT +0.5057 − NEVERWAIT +0.1308 = +0.3750  (≥0.1)  PASS
+  wait-ticks IMPULSIVE 0.00 < PATIENT 1.96 < NEVERWAIT 11.00  (strictly between)  PASS
+
+=== (C) EARNED ablate — fixed-γ (no 5-HT slope/regime read) loses ≥HALF the edge ===
+  ABL-FIXED edge +0.4729  vs PATIENT edge +0.5057  →  margin +0.0328  (≥0.5×lift=+0.2529)  FAIL
+  → fixed-γ captures 94% of the patient edge; adaptive-γ (5-HT regime read) carries 6%
+
+=== (D) EARNED shuffle — permuted arrival-times collapse the patient edge ===
+  shuffled stream: PATIENT +0.4237  IMPULSIVE +0.3595
+  PATIENT edge (real) +0.5057  →  patient edge (shuffled) +0.0642  →  collapse +0.4416  (≥0.5×lift=+0.2529)  PASS
+
+=== VERDICT: 🟠 AMBER (A∧A2∧B∧B2∧C∧D) ===
+  A presence=True A2 per-seed=True | B beat-never=True B2 between=True | C ablate=False | D shuffle=True
+  AMBER reading (c9, frozen-first NO bar moved): the PATIENCE faculty is PRESENT+EARNED, but even
+  under regime-shifting horizon a fixed γ STILL captures ≥half (94%) → 5-HT-adaptive
+  is genuinely a minority lever (honest, Miyazaki 2014 / Doya 2002).
+
+wrote H_1540_R1.json

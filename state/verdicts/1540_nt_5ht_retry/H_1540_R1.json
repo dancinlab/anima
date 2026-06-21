@@ -1,0 +1,70 @@
+{
+  "hypothesis": "H_1540",
+  "name": "serotonin-as-patience REGIME-SHIFTING-HORIZON retry of H_1538",
+  "seeds": [
+    1538,
+    1539,
+    1540
+  ],
+  "params": {
+    "T_TICKS": 12,
+    "WAIT_COST": 0.02,
+    "GROUND_THR": 0.35,
+    "n_episodes": 400
+  },
+  "regime": {
+    "mix": "50/50 FAST vs SLOW, hidden (early slope leaks it)",
+    "FAST": "rise_len 1-2, decay 0.14-0.22, short optimal wait",
+    "SLOW": "rise_len 7-9, decay 0.04-0.08, long optimal wait"
+  },
+  "means": {
+    "IMPULSIVE": 0.0,
+    "PATIENT-5HT": 0.5057499141521089,
+    "ABL-FIXED": 0.4729212304176906,
+    "NEVERWAIT": 0.1307592934689201,
+    "PATIENT-SHUFFLE": 0.4236952506695197,
+    "IMPULSIVE-SHUFFLE": 0.3595345853636858
+  },
+  "wait_ticks": {
+    "IMPULSIVE": 0.0,
+    "PATIENT-5HT": 1.9649999999999999,
+    "ABL-FIXED": 1.5983333333333334,
+    "NEVERWAIT": 11.0
+  },
+  "fixed_gamma_captures_pct": 93.50890967733416,
+  "bars": {
+    "A_presence_lift": {
+      "lift": 0.5057499141521089,
+      "bar": 0.1,
+      "pass": true
+    },
+    "A2_per_seed": {
+      "n_pass": 3,
+      "bar": 2,
+      "pass": true
+    },
+    "B_beat_neverwait": {
+      "margin": 0.3749906206831888,
+      "bar": 0.1,
+      "pass": true
+    },
+    "B2_wait_between": {
+      "pass": true
+    },
+    "C_ablate": {
+      "margin": 0.03282868373441833,
+      "bar": 0.25287495707605445,
+      "pass": false
+    },
+    "D_shuffle": {
+      "patient_edge_shuffled": 0.06416066530583386,
+      "collapse": 0.44158924884627504,
+      "bar": 0.25287495707605445,
+      "pass": true
+    }
+  },
+  "verdict": "AMBER",
+  "faculty_present": true,
+  "directional": true,
+  "note": "numpy mirror \u21d2 DIRECTIONAL (a_engine_native_learning); engine R2 deferred ING; bars IDENTICAL to H_1538 (frozen-first)"
+}

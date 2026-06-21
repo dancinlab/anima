@@ -1,0 +1,68 @@
+=== H_1540 SEROTONIN-AS-PATIENCE — REGIME-SHIFTING-HORIZON RETRY of H_1538 — pre-registered FROZEN bars ===
+frozen 2026-06-21  BEFORE measurement  seeds=[1538,1539,1540]  $0 CPU  p7  c9  frozen-first  NO tune-to-green
+R1 numpy mirror (a_engine_native_learning: grep numpy ⇒ auto-DIRECTIONAL; engine R2 deferred ING)
+
+WHY THE RETRY (the H_1538 lane's OWN identified gap, NOT tune-to-green):
+  H_1538 (🟠 AMBER #2519) found the wait-for-better-emit PATIENCE faculty PRESENT + EARNED (out-earns
+  impulsive +0.1911, beats always-wait +0.2419, edge collapses under shuffle) — only the STRONG
+  mechanism-attribution bar C FAILED: a FIXED γ already captured ~51% of the patience value (margin
+  +0.0942 vs bar +0.0956), so the substrate-ADAPTIVE 5-HT slope read was real but a MINORITY lever.
+  The reason a fixed γ sufficed in H_1538: EVERY episode shared ONE value-arrival timescale (rise_len
+  ∈ [3,7]) → a single constant discount horizon was near-optimal for all episodes.
+
+THE ONE CHANGE (pre-registered): a REGIME-SHIFTING HORIZON. The optimal patience / time-horizon now
+  genuinely SHIFTS across contexts, with the regime inferable from substrate state (the early slope):
+    FAST regime : peak arrives EARLY (rise_len 1-2) + decays HARD (decay 0.14-0.22) → SHORT optimal
+                  wait, waiting is PUNISHED; early slope STEEP.
+    SLOW regime : peak arrives LATE  (rise_len 7-9) + decays gently (decay 0.04-0.08) → LONG optimal
+                  wait, waiting is REWARDED; early slope SHALLOW.
+  50/50 mix, regime HIDDEN from the policy (only the early-slope substrate signal leaks it). A single
+  fixed γ is a compromise wrong in BOTH regimes; a substrate-state-gated adaptive γ (the 5-HT read)
+  CAN tell them apart and set the horizon per-regime. This is exactly the condition under which
+  5-HT-as-adaptive-discounting (Doya 2002: 5-HT sets the context-adaptive reward time-scale) earns
+  its keep — i.e. SHOULD now carry the MAJORITY of the edge → clear bar C.
+
+WAIT-RULE CONSTRUCTION (a_break_the_wall type-a, frozen-first — bars UNCHANGED): the wait decision uses
+  a γ-HORIZON multi-step look-ahead (best γ^k-discounted grounded value reachable by waiting k more
+  ticks along the local slope, net of k wait-costs), NOT a myopic one-tick peek. A one-step peek cannot
+  SEE a grounded peak several ticks away → in the SLOW regime it force-emits an ungrounded tick-0 and
+  SLOW degenerates to 0 for ALL arms (no differential — a faulty CONTROL WIRING, not a bar). γ IS the
+  reward-time-scale: a larger γ literally integrates farther ahead, so the 5-HT regime-gated γ controls
+  the horizon — the lever a fixed γ cannot match across regimes. This is the SAME class of control-wiring
+  fix the H_1538 card applied to the D-shuffle control; NO bar moved.
+
+ADAPTIVE-γ (the 5-HT REGIME read, arm PATIENT-5HT): γ inferred ONCE per episode from the early-slope
+  steepness (substrate-state regime inference): early_slope = (v[2]-v[0])/2;
+  γ_eff = clip01(0.55 + 1.2*(0.30 − early_slope)) → shallow early climb (SLOW) ⇒ γ↑ patient; steep
+  early climb (FAST) ⇒ γ↓ impatient. ABL-FIXED = fixed γ=0.55 (no substrate read). These constants are
+  set from the GENERATIVE regime structure (SLOPE_REF 0.30 is the midpoint between FAST ~0.5+ and SLOW
+  ~0.1 early slopes), NOT fitted to the bar.
+
+CAPABILITY = WAIT-FOR-BETTER-EMIT (unchanged from H_1538): per episode grounded-emit value rises to a
+  peak then decays; each waited tick costs WAIT_COST=0.020; an emit below GROUND_THR=0.35 nets ZERO
+  (p7). T_TICKS=12, 400 episodes/seed.
+
+ARMS (identical roster to H_1538):
+  IMPULSIVE   : emit at tick 0 (γ→0, impatient baseline)
+  PATIENT-5HT : temporal-discounting faculty, γ ADAPTED by substrate early-slope REGIME read
+  ABL-FIXED   : fixed γ=0.55, NO substrate adaptation (patience without the 5-HT regime read)
+  NEVERWAIT   : always-wait floor (emit only at last tick) — the must-not-just-always-wait control
+  PATIENT-SHUFFLE : PATIENT-5HT on time-permuted envelope (rising→decaying destroyed; same shuffled
+                    stream scored for PATIENT and IMPULSIVE — the H_1538 apples-to-apples fix)
+
+FROZEN BARS — IDENTICAL TO H_1538 (GREEN iff A ∧ A2 ∧ B ∧ B2 ∧ C ∧ D), NO bar changed:
+  (A  PRESENCE)        mean PATIENT-5HT − IMPULSIVE ≥ +0.10 (normalized net grounded payoff)
+  (A2 PER-SEED)        lift ≥ +0.10 on ≥2/3 seeds
+  (B  NOT-ALWAYS-WAIT) mean PATIENT-5HT − NEVERWAIT ≥ +0.10  (must beat the always-wait floor too)
+  (B2 WAIT-BETWEEN)    mean wait-ticks: IMPULSIVE < PATIENT-5HT < NEVERWAIT (strictly between)
+  (C  EARNED ablate)   (PATIENT−IMPULSIVE) − (ABL-FIXED−IMPULSIVE) ≥ 0.5×lift   [UNCHANGED — the retry's
+                       target: under regime-shifting horizon the adaptive γ SHOULD now carry ≥half]
+  (D  EARNED shuffle)  (PATIENT_edge − SHUFFLE_edge) ≥ 0.5×lift  (permuted arrival-times collapse edge)
+
+VERDICT MAP: 🟢 GREEN iff all six (adaptive 5-HT carries the MAJORITY = real majority faculty);
+  🟠 AMBER iff faculty PRESENT+EARNED (A,A2,B,B2,D) but C still fails (fixed γ STILL captures ≥half →
+  5-HT-adaptive genuinely minority, honest c9); 🧱 WALL otherwise.
+
+HONEST (c9): if a fixed γ STILL captures ≥half even under regime-shifting horizon, 5-HT-adaptive is
+  genuinely a minority lever → HONEST 🟠, reported not hidden, NO bar moved post-hoc. NO tune-to-green;
+  must-not-always-wait (B/B2) still enforced. DIRECTIONAL numpy mirror; engine R2 deferred ING.
