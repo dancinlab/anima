@@ -1,0 +1,38 @@
+==============================================================================
+G* DEPLETION WEAK-CANDIDATE PROBE — 7 candidates, ENGINE-NATIVE (live core/engine_cli.hexa)
+LIFT_BAR=0.3 (candidate-op presence)  FLAT_BAR=0.1 (existing neighbour op flat => distinct; else absorbed)
+==============================================================================
+
+  1. VOLATILITY (2nd-order surprise) (vs PrecisionSurprise H_1468):
+      presence lift (candidate op)   = 0.16000000000000004  (>= 0.3 ? false)
+      existing-op delta (neighbour)   = 0.15999999999999996  (|d| <= 0.1 = flat/abstain ? false)
+      --> ABSORBED
+  2. HAZARD-RATE (when-timing) (vs TRW H_1486 / SubjTime H_1475):
+      presence lift (candidate op)   = 0.8333333333333334  (>= 0.3 ? true)
+      existing-op delta (neighbour)   = 2.5  (|d| <= 0.1 = flat/abstain ? false)
+      --> ABSORBED
+  3. MOOD (slow background tone) (vs Affect H_1290 / Drive H_1292):
+      presence lift (candidate op)   = 1.9769415699078632  (>= 0.3 ? true)
+      existing-op delta (neighbour)   = 2.696058363523577  (|d| <= 0.1 = flat/abstain ? false)
+      --> ABSORBED
+  4. EFFORT (cost integral) (vs Drive H_1292 / DividedAttn):
+      presence lift (candidate op)   = 0.99999999999999982  (>= 0.3 ? true)
+      existing-op delta (neighbour)   = 2.12830389975  (|d| <= 0.1 = flat/abstain ? false)
+      --> ABSORBED
+  5. TOJ (temporal-order judgment) (vs SubjTime H_1475 / TRW H_1486):
+      presence lift (candidate op)   = 1.0  (>= 0.3 ? true)
+      existing-op delta (neighbour)   = 0.75  (|d| <= 0.1 = flat/abstain ? false)
+      --> ABSORBED
+  6. THOUGHT-OWNERSHIP (vs Self H_1471 / Agency H_1474):
+      presence lift (candidate op)   = 1.0  (>= 0.3 ? true)
+      existing-op delta (neighbour)   = 1.0  (|d| <= 0.1 = flat/abstain ? false)
+      --> ABSORBED
+  7. CROSSMODAL-BINDING (vs Gestalt H_1491 / Qualia H_1497):
+      presence lift (candidate op)   = 0.8  (>= 0.3 ? true)
+      existing-op delta (neighbour)   = 1.0  (|d| <= 0.1 = flat/abstain ? false)
+      --> ABSORBED
+
+==============================================================================
+TALLY: ABSORBED=7 / DISTINCT=0 (of 7)
+CONCLUSION: DEPLETION HARDENED (all weak candidates absorbed into adjacent lanes)
+==============================================================================
