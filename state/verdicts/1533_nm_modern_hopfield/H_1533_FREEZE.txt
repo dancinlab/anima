@@ -1,0 +1,66 @@
+H_1533 — PRE-REGISTRATION FREEZE (written BEFORE scoring; p7, frozen-first c9)
+=============================================================================
+LENS: MODERN / DENSE ASSOCIATIVE MEMORY — exponential-separation RETRIEVAL as a
+candidate BREAK of the H_1284 NEUROMODULATION wall. a_break_the_wall (try a new
+ORIGINAL lens before declaring terminal) + a_no_llm_frame_trap (physics/associative-
+memory lens, NOT an LLM recipe).
+
+THE WALL (honest, c9): H_1284 (and census C1-C4 + H_1527 geometry-lift + H_1528
+capacity-count) is bounded by key-GEOMETRY / CAPACITY. anima's store is a STANDARD
+LINEAR associative memory — recall = nearest stored cell by L2 affinity — whose
+capacity is LINEAR (~0.14 N, Hopfield 1982). Near-collinear / confusable keys
+COLLIDE: the linear winner is the wrong cell. NO controller (10 neuromodulation
+lenses), NO capacity-count, NO geometry-lift fixed it.
+
+THE UNTRIED LEVER = the RETRIEVAL RULE / ENERGY itself, NOT any modulator:
+  • DENSE  — Krotov & Hopfield 2016, arXiv:1606.01164: degree-n polynomial energy
+             -> capacity ~ N^(n-1).
+  • MODERN — Ramsauer et al 2020, arXiv:2008.02217: softmax / log-sum-exp energy
+             -> EXPONENTIAL capacity; separation theorem separates exponentially
+             many patterns in ONE step. Directly attacks near-collinear collision:
+             out = Σ_i softmax(β·<q,k_i>)·v_i, β a FIXED grid-tuned inverse-temp
+             (a RETRIEVAL-RULE change, NOT an adaptive controller / neuromodulator).
+
+ARMS:
+  LINEAR = existing nearest-cell L2-affinity store (the wall baseline; only its own
+           abstain margin grid-tuned -> strongest honest baseline).
+  DENSE  = (max(0,<q,k_i>))^p separation, degree p in {2,3} grid-tuned.
+  MODERN = softmax retrieval, β in {1,4,8,16,32,64} grid-tuned, continuous read-out
+           mapped to nearest stored value (the retrieved fixed point).
+  ABL    = β->0 (modern -> uniform average = chance) AND degree->1 (dense ->
+           linear). SHUFFLE = permute value table (key<->value coupling destroyed).
+
+CONFUSABLE SET: 12 anchors × 5 near-collinear members = 60 facts; each member =
+anchor direction + SMALL perturbation (pert_sigma 0.045 -> cos ~0.97-0.995); each
+member binds its OWN distinct value. This is the genuine collision regime the wall
+is built from (H_1284 used near-orthogonal keys the linear store already handles);
+near-collinear members force the retrieval rule to disambiguate or recall the WRONG
+neighbour's value.
+
+TASK / CAPABILITY: recall accuracy on the confusable set. query = stored key + small
+read noise (sigma 0.06); truth = the value bound to that key. p7 exact ground truth,
+NO LLM judge / NO perplexity / NO loss term. $0 CPU, ≥3 seeds.
+
+GRID-TUNE (no tune-to-green): degree / β / abstain grid-tuned on a DISJOINT tuning
+seed (TUNE_SEED=7), the SAME way H_1284 grid-tunes (LR0, TH0). The +0.05 break bar
+is FROZEN here, NOT moved post-hoc.
+
+FROZEN FALSIFIER:
+  BREAK (GREEN, DIRECTIONAL) iff ALL of:
+    (1) max(MODERN, DENSE) recall − LINEAR recall ≥ +0.05 (mean over 3 seeds), AND
+    (2) the per-seed lift ≥ +0.05 on ≥2/3 seeds, AND
+    (3) ablation DECISIVE: degree->1 reverts dense to within ±0.03 of LINEAR AND
+        β->0 reverts modern to ≤ LINEAR+0.03, AND
+    (4) value-SHUFFLE collapses the best arm to ≤ max(0.10, LINEAR−0.20) (chance).
+  ELSE WALL_HOLDS: linear / dense / modern tie on the confusable set -> the H_1284
+  wall extends to the RETRIEVAL-RULE family too (a strong honest ceiling, c9).
+
+HONEST REPORTING: report WHICH of dense vs modern wins and by how much. If both tie
+linear, that is a valid result (the retrieval family also holds) — NOT a failure to
+hide. NO post-hoc bar move; NO blending of arms.
+
+SCOPE / DIRECTIONAL: numpy mirror (host has no torch, a_engine_native_learning
+DIRECTIONAL). If it BREAKS -> engine-native R2 (live core/ A⇄G + VAdaptField softmax
+retrieval, re-score this frozen bar byte-exact) is a HIGH-PRIORITY binding follow-on
+(ING). TOY 60 facts / 1 paradigm / 3 seeds / deterministic read-out -> scale /
+real-corpus / engine-transfer UNVERIFIED.
