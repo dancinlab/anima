@@ -131,7 +131,7 @@ hippocampus" (H_1225 complementary-learning-systems reframe).
 
 Every lane below is **ADDITIVE and Ψ-disjoint**: it touches only its own struct, leaves
 `pure_field` byte-unchanged, and does **not** change generation (the separation invariant H_1205 is
-verified live). The guard smoke is green at **`engine_cli_smoke` 344/0** with single-entry 7/0
+verified live). The guard smoke is green at **`engine_cli_smoke` 349/0** with single-entry 7/0
 unchanged (no second `.clm`/`.kosmos` entry point, `a_core_engine_map`).
 
 | Brain subsystem | anima lane | What it does | Status |
