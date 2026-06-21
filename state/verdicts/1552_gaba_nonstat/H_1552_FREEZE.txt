@@ -1,0 +1,73 @@
+H_1552 — GABA × CLS: adaptive sparseness under NON-STATIONARY load
+FROZEN FALSIFIER (pre-registered BEFORE scoring — c9, NO tune-to-green)
+====================================================================================
+
+THE FINAL, PRINCIPLED GABA LENS (a_break_the_wall MULTI-LENS class-d, NOT fishing):
+  GABA-as-adaptive walled TWICE on STATIONARY regimes:
+    H_1546 🧱 — pattern-SEPARATION (confusable AB-AC, non-overload two-store). INERT
+                because the CLS architecture already separated the bindings.
+    H_1551 🧱 — capacity-MULTIPLICATION under STATIONARY overload (N≫DIM, single super-
+                position store, constant arrival rate). ADAPTIVE-INERT: a single best-FIXED-k
+                (k=4) captures the whole capacity gain (14.6x vs dense); the load-gated
+                adaptive arm is inert/worse because under a STATIONARY load ONE fixed
+                sparsity is optimal (Litwin-Kumar 2017) and adaptive's early dense writes
+                irreversibly pollute the matrix.
+
+  THE FUSION LAW (proven across ACh/DA/NE/orexin/5-HT 🟢/🟠 vs the GABA walls): a NT's
+  ADAPTIVE lever beats a grid-tuned FIXED setting ONLY where the OPTIMAL OPERATING POINT
+  SHIFTS over time. orexin (H_1550 🟢) and 5-HT (H_1549 🟢) earned their honest green
+  precisely because the optimum SHIFTED. H_1551 used a STATIONARY overload → one fixed-k is
+  optimal everywhere → adaptive correctly inert (honest 🧱).
+
+  The UNTESTED regime — the ONLY one where adaptive sparseness can genuinely earn its keep —
+  is NON-STATIONARY load: the binding-arrival RATE VARIES, ALTERNATING LIGHT phases (few
+  writes → low cross-talk → DENSE/large-k best for fidelity) with HEAVY phases (many writes →
+  high cross-talk → SPARSE/small-k needed to avoid collision). Under non-stationary load NO
+  single fixed-k is optimal (light-optimal large k overflows in heavy; heavy-optimal small k
+  wastes fidelity in light), so GABA-gated adaptive-k tracking the CURRENT local load should
+  beat the best fixed-k. The SAME shifting-optimum principle that gave orexin/5-HT their honest
+  green, applied to GABA — a PRINCIPLED DISTINCT lens, NOT a post-hoc bar move.
+
+  HONEST PRIOR (c9): if best-fixed-k STILL captures it on the non-stationary stream, that IS
+  the scientific answer — GABA is a STATIC architectural parameter, not an adaptive faculty,
+  and this is the 3rd DECISIVE lens confirming a class-(d) no-free-lunch ceiling for GABA-as-NT.
+  We pre-register the bars BEFORE the scored run and report whichever side honestly.
+
+PRE-REGISTERED CONSTANTS (frozen):
+  SUBSTRATE = single Hebbian SUPERPOSITION matrix (DIMxDIM); capacity = code cross-talk (H_1551)
+  DIM=64 · N_SEG=8 (4 LIGHT even + 4 HEAVY odd, alternating) · RATE_LO=6 · RATE_HI=24
+    → N_FACTS = 4*6 + 4*24 = 120 (matches H_1551 load), NON-STATIONARILY distributed
+  K_SPARSE=8 (heavy-phase strong inhibition) · K_LIGHT=DIM=64 (light-phase relax/dense)
+  TUNE_SEED=7 (disjoint fact-draw + store_seed) · SCORE_SEEDS=[11,22,33]
+  MARGIN=0.05 · PRESENCE_BAR=0.10
+  Fixed-k grid (disjoint tune seed, SAME non-stationary stream): k ∈ {2,4,8,12,16,24,32,48,64}
+
+ARMS:
+  GABA-ADAPTIVE-K = k tracks the LIVE LOCAL load: k=K_SPARSE in HEAVY phases, k=K_LIGHT in
+                    LIGHT phases. The signal a fixed k cannot use: the live local arrival rate.
+  BEST-FIXED-K    = strongest single grid-tuned FIXED k over the WHOLE non-stationary stream
+                    (the honest strong baseline / law discriminator). Disjoint tune seed.
+  DENSE           = k=DIM everywhere (no inhibition).
+  ABL (const k)   = adaptive frozen to a CONSTANT k == best-fixed → reverts (proves LEVER =
+                    load-gating, not the sparse write per se).
+  SHUFFLE         = the per-fact load-phase signal PERMUTED vs the TRUE order → sparsifies at
+                    the WRONG phase → collapse (proves it tracks the TRUE phase, not mean k).
+
+FROZEN BARS (verdict computed mechanically from the 5 booleans, bars NOT moved after scoring):
+  A PRESENCE        : GABA-adaptive-k − BEST-FIXED-k ≥ +0.10 on ≥2/3 seeds AND in mean
+                      (STRICTER than H_1551's vs-dense: adaptive must beat the best FIXED k,
+                      since non-stationarity is the regime that is supposed to break fixed-k)
+  B EARNED-MAJORITY : (GABA − best-fixed) ≥ 0.5×(GABA − worst-fixed), worst-fixed-gap > 0
+  C ABL→fixed       : (GABA − abl) ≥ MARGIN  AND  |abl − best-fixed| < MARGIN
+  D SHUFFLE         : (GABA − shuffle) ≥ MARGIN
+  E NO-FAB          : best-fixed-k > dense (the capacity packing effect is genuinely real)
+
+VERDICT RULE (frozen):
+  🟢 GREEN      iff A ∧ B ∧ C ∧ D ∧ E  → adaptive sparseness is the lever UNDER NON-STATIONARITY
+                                          (GABA IS a genuine adaptive faculty in shifting-optimum)
+  🟠 AMBER      iff A ∧ E ∧ ¬B           → adaptive helps but best-fixed-k captures ≥half = KNOB
+  🧱 WALL_HOLDS otherwise                → best-fixed-k STILL captures it = GABA is a STATIC
+                                          architectural parameter, NOT an adaptive faculty; 3rd
+                                          DECISIVE lens = confirmed class-(d) no-free-lunch ceiling
+
+DIRECTIONAL (numpy mirror, a_engine_native_learning hard-gate-1); engine §GabaSparse R2 = ING.
