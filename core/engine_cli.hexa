@@ -99,13 +99,17 @@ fn _norm_onoff(raw: string) -> string {
 // The struct is the extension point: future ENGINE flags add fields here.
 struct EngineConfig {
     mitosis: bool,
-    engine: string
+    engine: string,
+    topo_couple: bool
 }
 
 // engine_config_default — the default ENGINE config: mitosis ON (p8 native),
-// engine = conv (the production .clm decoder, the default engine).
+// engine = conv (the production .clm decoder, the default engine),
+// topo_couple OFF (H_1521 — the topology-routed cross-lane coupling is DEFAULT-OFF
+// so the live emit/decode path is byte-identical to the pre-H_1521 substrate; the
+// separation invariant H_1205 + Ψ=½ fixed point hold on the pure default).
 pub fn engine_config_default() -> EngineConfig {
-    EngineConfig { mitosis: true, engine: "conv" }
+    EngineConfig { mitosis: true, engine: "conv", topo_couple: false }
 }
 
 // ── mitosis resolver (3-tier precedence: flag > env > default(on)) ────────────
@@ -199,9 +203,56 @@ pub fn engine_cli_resolve_engine(arg: [string]) -> string {
 // ONCE with the process argv and threads the returned config into the engine.
 pub fn engine_cli_parse(arg: [string]) -> EngineConfig {
     EngineConfig {
-        mitosis: engine_cli_resolve_mitosis(arg),
-        engine:  engine_cli_resolve_engine(arg)
+        mitosis:     engine_cli_resolve_mitosis(arg),
+        engine:      engine_cli_resolve_engine(arg),
+        topo_couple: engine_cli_resolve_topo_couple(arg)
     }
+}
+
+// ── §  TOPO-COUPLE resolver (H_1521, 3-tier: flag > env > default(OFF)) ─────────
+//
+// arg is the raw user argv. Scans for `--topo-couple on|off` / `--topo-couple=on`
+// / `--no-topo-couple`, then env ANIMA_TOPO_COUPLE, then default OFF.
+//
+//   `--topo-couple on`         → on
+//   `--topo-couple off`        → off
+//   `--no-topo-couple`         → off
+//   `--topo-couple=on`         → on
+//   (no flag) + ANIMA_TOPO_COUPLE → env value (on/off/1/0/true/false)
+//   (no flag, no env)          → OFF  (default — the live path stays byte-identical
+//                                       to pre-H_1521; separation invariant H_1205)
+//
+// returns: bool (true = topology-routed cross-lane coupling ON).
+pub fn engine_cli_resolve_topo_couple(arg: [string]) -> bool {
+    let flag = _cli_topo_couple_flag(arg)
+    if flag == "on"  { return true }
+    if flag == "off" { return false }
+    let env = _norm_onoff(_env_read("ANIMA_TOPO_COUPLE"))
+    if env == "on"  { return true }
+    if env == "off" { return false }
+    return false   // default OFF — pure substrate, separation invariant holds
+}
+
+// _cli_topo_couple_flag — scan argv for the topo-couple flag surface. Tri-state.
+fn _cli_topo_couple_flag(arg: [string]) -> string {
+    let n = len(arg)
+    let mut i = 0
+    while i < n {
+        let a = arg[i]
+        if a == "--no-topo-couple" { return "off" }
+        if a == "--topo-couple" {
+            if i + 1 < n {
+                let v = _norm_onoff(arg[i + 1])
+                if v != "" { return v }
+            }
+        }
+        if a.starts_with("--topo-couple=") {
+            let v = _norm_onoff(_after_eq(a))
+            if v != "" { return v }
+        }
+        i = i + 1
+    }
+    return ""
 }
 
 // ── §  mitosis GROWTH tick — the smallest honest gated unit ───────────────────
@@ -4789,11 +4840,13 @@ pub fn quorum_shuffle_adj(seed: int, nc: int, per: int) -> [float] {
 // ── introspection ────────────────────────────────────────────────────────────
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
+    let tc = if cfg.topo_couple { "on" } else { "off" }
     return "engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · "
-        + "flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · "
+        + "flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · --topo-couple on|off · --no-topo-couple · env ANIMA_TOPO_COUPLE · "
         + "precedence flag>env>default · "
         + "mitosis=" + m + " (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · "
         + "engine=" + cfg.engine + " (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · "
+        + "topo_couple=" + tc + " (H_1521 — ON=15-lane state routed through the Φ-optimal cross-lane topology before the emit decision; OFF=DEFAULT, byte-identical pre-H_1521 live path, separation invariant H_1205) · "
         + "extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis"
 }
 
@@ -8539,6 +8592,137 @@ pub fn topo_func_integration(x: [[float]], a: [[float]], alpha: float) -> float 
 // adjacency must raise functional coupling ABOVE this baseline (case 368 well-formed control).
 pub fn topo_func_integration_flat(x: [[float]]) -> float {
     return topo_func_integration(x, _topo_zeros(15), 0.0)
+}
+
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § BrainTopology LIVE-WIRING (H_1521) — put the Φ-optimal cross-lane topology ON the live
+//  emit/decision path, GATED default-OFF (separation invariant H_1205, a_autonomy_over_hardcode).
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  EVERY consciousness lane so far is Ψ-DISJOINT: it READS the substrate but does NOT change the
+//  emit decision, so the Ψ=½ fixed point + the H_1205 separation invariant hold. §BrainTopology
+//  (H_1512–H_1518) PROVED the Φ-optimal placement is genuinely better (×2.51 Φ) and adopted
+//  topo_optimal_adjacency() as a CANONICAL construct — but as a MEASUREMENT lane, NOT on the live
+//  path. H_1521 closes that gap: it routes the 15-lane state through the optimal topology BEFORE
+//  the emit decision, so the placement ACTUALLY affects what anima emits.
+//
+//  THE LOAD-BEARING QUESTION (this IS the science, c9): letting cross-lane coupling into the
+//  decision path can PERTURB Ψ. Does a topology-routed coupling improve a functional readout WHILE
+//  the Ψ=½ fixed point SURVIVES? If Ψ breaks → honest finding (coupling destabilizes the fixed
+//  point — REPORT it). If Ψ holds AND function improves → the genuine live engine improvement.
+//
+//  GATED, like the mitosis/salience toggles: cfg.topo_couple DEFAULT OFF ⇒ byte-identical to the
+//  pre-H_1521 path (the safe default that protects pure `anima chat`). ON ⇒ the lanes cross-
+//  influence per the optimal topology before the downstream emit/decision.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// ci_lane_scores_coupled — the 15-lane state for ONE substrate trial-state, OPTIONALLY routed
+// through a cross-lane coupling topology per cfg.topo_couple (H_1521 live-wiring).
+//   OFF (default) → returns ci_lane_scores(...) BYTE-IDENTICALLY (separation invariant H_1205).
+//   ON            → mixes the raw 15-lane vector through topo_apply(·, adj, alpha) so each lane
+//                   cross-influences its topological neighbours BEFORE the emit decision reads it.
+// `adj` is the coupling adjacency (FLAT = no-op via _topo_zeros, BRAIN = topo_brain_adjacency,
+// OPTIMAL = topo_optimal_adjacency). When OFF, adj/alpha are ignored (no diffusion at all).
+pub fn ci_lane_scores_coupled(m: float, m_field: [float], cells: int, seen: int,
+                              intent: int, dt: float, recon_err: float,
+                              adj: [[float]], alpha: float, cfg: EngineConfig) -> [float] {
+    let raw = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
+    if !cfg.topo_couple { return raw }            // OFF — pure substrate, byte-identical
+    // ON — diffuse this single trial-row through the coupling topology (one diffusion step).
+    let coupled = topo_apply([raw], adj, alpha)
+    return coupled[0]
+}
+
+// ci_emit_decision — the deterministic emit/silence readout from a 15-lane state vector. This is
+// the live "does anima externalize?" proxy the H_1521 coupling feeds into. Emit iff the integrated
+// drive to externalize clears the Ψ=½ midpoint: drive = mean of the GlobalWorkspace ignition
+// (lane 0) and the LearnedPrecision grounding (lane 4) — the two lanes that, when high, mean a
+// confident grounded thought is ready to surface. The threshold is the substrate's OWN Ψ=½ fixed
+// point (0.5), NOT a tuned constant (a_autonomy_over_hardcode — no hardcoded do/dont gate, the
+// emit balance is a substrate read against the architectural midpoint).
+pub fn ci_emit_decision(lanes: [float]) -> bool {
+    let gws   = lanes[0]    // GlobalWorkspace ignition (winner margin)
+    let lprec = lanes[4]    // LearnedPrecision (grounding confidence)
+    let drive = 0.5 * (gws + lprec)
+    return drive >= 0.5     // emit iff the externalization drive clears the Ψ=½ midpoint
+}
+
+// ci_psi_balance — the Ψ PROXY: the EMIT FRACTION over a population diffused under coupling `adj`.
+// Ψ=½ is the architectural fixed point (emit ⇄ silence pulled to balance); a healthy substrate
+// sits near 0.5. H_1521 measures whether turning the topology coupling ON keeps |Ψ−½| small (the
+// fixed point SURVIVES) or pushes it away (the coupling destabilizes Ψ — honest negative, c9).
+//   cfg.topo_couple OFF → adj/alpha ignored, raw lanes scored (the pre-H_1521 baseline Ψ).
+//   cfg.topo_couple ON  → each row routed through `adj` before the emit decision.
+pub fn ci_psi_balance(x: [[float]], adj: [[float]], alpha: float, cfg: EngineConfig) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.0 }
+    // diffuse the whole population in one shot when ON (same math as per-row, batched).
+    let pop = if cfg.topo_couple { topo_apply(x, adj, alpha) } else { x }
+    let mut emit = 0
+    let mut t = 0
+    while t < nt {
+        if ci_emit_decision(pop[t]) { emit = emit + 1 }
+        t = t + 1
+    }
+    return to_float(emit) / to_float(nt)
+}
+
+// ci_lane_vector_l2_diff — L2 distance between two 15-lane vectors (P2 COUPLING-IS-LIVE probe:
+// ON vs OFF must DIFFER measurably — the coupling actually reaches the decision, not a no-op).
+pub fn ci_lane_vector_l2_diff(a: [float], b: [float]) -> float {
+    let n = len(a)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { let d = a[i] - b[i]  s = s + d * d  i = i + 1 }
+    return sqrt(s)
+}
+
+// ci_emit_drive — the scalar externalization drive behind ci_emit_decision (mean of the
+// GlobalWorkspace ignition + LearnedPrecision grounding lanes). Exposed so the Ψ test can
+// center the emit threshold on the un-coupled population's OWN operating point.
+pub fn ci_emit_drive(lanes: [float]) -> float {
+    return 0.5 * (lanes[0] + lanes[4])
+}
+
+// ci_psi_balance_centered — the CALIBRATED Ψ proxy: emit fraction over a population, where the
+// emit threshold = the MEDIAN drive of the UN-COUPLED (OFF) population. By construction the OFF
+// path then sits EXACTLY at Ψ=½ (median split), so the test is honest: turning the coupling ON
+// asks whether the topology DISTORTS the relative emit ordering (Ψ drifts off ½) or PRESERVES it
+// (Ψ stays ½). This separates "coupling breaks the fixed point" from "the absolute proxy was never
+// calibrated to ½". Pre-register the tolerance on |Ψ_on − ½| with this centered threshold.
+//   thr = median drive of the OFF population (passed in, computed once via ci_off_median_drive).
+//   cfg.topo_couple OFF → adj/alpha ignored, raw lanes scored against thr (≈½ by construction).
+//   cfg.topo_couple ON  → population routed through `adj`, scored against the SAME OFF thr.
+pub fn ci_psi_balance_centered(x: [[float]], adj: [[float]], alpha: float, thr: float, cfg: EngineConfig) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.0 }
+    let pop = if cfg.topo_couple { topo_apply(x, adj, alpha) } else { x }
+    let mut emit = 0
+    let mut t = 0
+    while t < nt {
+        if ci_emit_drive(pop[t]) >= thr { emit = emit + 1 }
+        t = t + 1
+    }
+    return to_float(emit) / to_float(nt)
+}
+
+// ci_off_median_drive — the median externalization drive of the UN-COUPLED population (the
+// reference threshold that puts OFF at Ψ=½). Insertion sort of the per-trial drives, take middle.
+pub fn ci_off_median_drive(x: [[float]]) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.5 }
+    let mut ds = []
+    let mut t = 0
+    while t < nt { ds = ds + [ci_emit_drive(x[t])]  t = t + 1 }
+    // insertion sort
+    let mut i = 1
+    while i < nt {
+        let key = ds[i]
+        let mut j = i - 1
+        while j >= 0 && ds[j] > key { ds[j + 1] = ds[j]  j = j - 1 }
+        ds[j + 1] = key
+        i = i + 1
+    }
+    return ds[nt / 2]
 }
 
 // ════════════════════════════════════════════════════════════════════════════════════════════

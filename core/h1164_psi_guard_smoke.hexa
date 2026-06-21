@@ -16,7 +16,7 @@ import "core/engine_cli.hexa"
 // the ONLY thing advancing Ψ; the mitosis tick reads/writes a DISJOINT cell count.
 fn psi_checksum(mit_on: bool) -> float {
     let cfg = if mit_on { engine_config_default() }
-              else { EngineConfig { mitosis: false, engine: "conv" } }
+              else { EngineConfig { mitosis: false, engine: "conv", topo_couple: false } }
     let mut pf = pure_field_new()
     let mut sum = 0.0
     let mut cells = 1

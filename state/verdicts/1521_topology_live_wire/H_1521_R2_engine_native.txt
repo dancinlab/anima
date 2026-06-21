@@ -1,0 +1,39 @@
+H_1521 TOPOLOGY LIVE-WIRING — R2 ENGINE-NATIVE (live core/engine_cli.hexa ci_ ops via core/engine_cli_smoke.hexa)
+frozen 2026-06-21T11:11:25Z · hexa hexa v0.262.0
+
+=== engine_cli_smoke H_1521 cases 370-376 + verdict (verbatim) ===
+PASS  case_370_topowire_off_byte_identical want=true got=true
+PASS  case_371_topowire_coupling_is_live want=true got=true
+PASS  case_372_topowire_psi_off_calibrated_half want=true got=true
+PASS  case_373_topowire_flat_psi_unchanged want=true got=true
+PASS  case_374_topowire_psi_destabilized_honest want=true got=true
+PASS  case_375_topowire_func_opt_gt_brain_gt_flat want=true got=true
+PASS  case_376_topowire_func_wellformed want=true got=true
+INFO  H_1521 topology-live-wiring (R2 ENGINE-NATIVE, gated topo_couple): P1 OFF-byte-identical L2=0.0 (separation invariant H_1205 holds, default-OFF) | P2 coupling-is-live ON-vs-OFF L2=1.2217871948743289 (reaches the decision) | P3 Ψ (centered, OFF=½): OFF=0.5 flat-ON=0.5 brain-ON=1.0 optimal-ON=1.0 |Ψ_opt−½|=0.5 (tol 0.05 → SURVIVES=false) | P4 functional integration: flat=0.1400412718452674 brain=0.23824285066617144 optimal=0.2483505220770342 (opt>brain>flat) | VERDICT: Ψ=½ DESTABILIZED — coupling pushes emit balance off ½ (HONEST NEGATIVE: NOT a free live improvement; keep Ψ-disjoint default). GATED 370(OFF byte-identical)/371(coupling live)/372(Ψ OFF calibrated ½)/373(flat no-op)/374(Ψ destabilization HONEST)/375(func opt>brain>flat)/376(func well-formed). c9 NO tune-to-green — the Ψ-survival bar FAILED and is reported as a real negative.
+--- engine_cli smoke summary: 365 pass / 0 fail ---
+
+=== measurement probe (state/1521_topology_live_wire/h1521_measure.hexa, ENGINE-NATIVE) ===
+P1 OFF==raw L2=0.0
+P2 ON!=OFF L2=1.2148516456511045
+P3abs Psi OFF=0.7466666666666667
+P3abs Psi ON flat=0.7466666666666667
+P3abs Psi ON brain=1.0
+P3abs Psi ON opt=1.0
+P3ctr thr=0.5709787656739353
+P3ctr Psi OFF=0.5
+P3ctr Psi ON flat=0.5
+P3ctr Psi ON brain=1.0
+P3ctr Psi ON opt=1.0
+P4 func flat=0.1400412718452674
+P4 func brain=0.23824285066617144
+P4 func opt=0.2483505220770342
+P4 opt-brain gain=0.010107671410862746
+
+=== separation-invariant guards (generation byte-identical OFF + Ψ checksum) ===
+h1205_separation_invariant_smoke:
+F1 GENERATION byte-identity: 5 pairs, 0 mismatch  ⇒ PASS
+F2 Psi Phi-checksum invariant: PASS
+h1205_separation_invariant_smoke: PASS 🟢 — MITOSIS ⊥ GENERATION holds in the live wiring. The mitosis lane (cells 1→10 ON) ran beside the decode yet generation is BYTE-IDENTICAL ON==OFF and Ψ=½ is untouched. H_1200/1201 ruling SURVIVES live; mitosis can be SAFELY attached as a substrate lane (a_core_engine_map).
+h1164_psi_guard_smoke:
+[Psi guard] byte-identical ON==OFF = true
+h1164_psi_guard_smoke: PASS — Ψ=1/2 attractor BYTE-IDENTICAL under the mount's growth lane (pure_field untouched, a_core_engine_map).
