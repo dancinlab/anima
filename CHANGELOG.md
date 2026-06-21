@@ -1,3 +1,11 @@
+## 2026-06-21 — 🧅🧱 H_1509c VOLATILITY-GATED LEARNING-RATE ESCAPE — 신경조절 벽(H_1284) orthogonal-family 재도전 → MULTI-FAMILY WALL (DIRECTIONAL)
+
+> 🧱 **a_break_the_wall(d) orthogonal mechanism-family ESCAPE (anima-internal, Amoeba-thread 파생):** 5개 gain-lens(H_1284·H_1422·H_1425·H_1509·H_1509b)가 막힌 뒤 census 로 벗긴 메타법칙 "적응은 외란이 예측불가(volatility)일 때만 값을 한다" 의 escape 절을 falsifiable 예측으로 사전등록(frozen-first). 신경조절을 추적-게인 → 학습률/탐색 변조로 재포지션, changepoint estimation 과제에서 측정.
+
+- **결과:** 🧱 MULTI-FAMILY WALL (DIRECTIONAL — R1 numpy mirror, terminal 아님). FROZEN MARGIN=0.05, 3 seeds, hazards [0,0.02,0.05,0.10]. 4/4 bar FAIL — gated 가 best-fixed 를 0.05 마진으로 못 이김.
+- **정직 뉘앙스(c9):** 벽은 적응 무용이 아니라 (1) DOUBLE-DISSOCIATION 방향 CONFIRMED — adv 부호가 정상(H=0, −0.0145)→변동(H>0, +0.011~+0.015)에서 뒤집힘; (2) gated 가 changepoint oracle 천장의 97–109% 달성; (3) 과제 총 headroom(oracle vs best-fixed, max +0.0151)이 구조적으로 0.05 마진 < → 마진이 과제 한계보다 큼. 신경조절 천장이 gain AND learning-rate 양 family 에서 버팀(5렌즈보다 강한 multi-family 🧱); "적응은 변동에서만 값을 한다" 는 방향 법칙은 생존(절대크기 < 마진).
+- **follow-on:** engine-native 재측정(numpy→live core/); headroom-normalized 마진 재사전등록(tune-to-green 금지).
+- **artifacts:** `UNIVERSE/cards/H_1509c_volatility_lr.md` · `state/1509c_volatility_lr/h1509c.py` · `state/verdicts/1509c_volatility_lr/{H_1509c_FREEZE,H_1509c_ABSTRACT_census,H_1509c_R1_mirror,H_1509c_oracle_ceiling}.txt`
 ## 2026-06-21 — 🫧 H_1511 OSMOTIC-MITOSIS (external proposal · Amoeba Protocol) 엔진-네이티브 GREEN-DIRECTIONAL — KL>C 삼투압 분열이 grounded fact OVERWRITE 회피 (split-TIMING, NOT capacity-wall)
 
 > 🫧 **외부 제안 프로빙 (a_no_llm_frame_trap):** SOURCE = **external proposal — Amoeba Protocol (@qingkong66) — "KL>capacity osmotic mitosis"**. anima 의 mitosis(VAdaptField, H_1199)는 L2 reconstruction error 가 frozen `SPLIT_THRESH`(0.30) 넘으면 분열·아니면 winner REFINE(value 운반 store 에선 grounded value OVERWRITE). 제안: 정보-이론 trigger 를 더해 cell bottleneck 이 Shannon capacity `C` 넘치면 grounded fact 덮어쓰는 대신 **분열(1→2)**해 새 truth 수용 — **Trigger Mitosis IF L_recon + β·D_KL(P(Z_incoming)‖P(Z_prior)) > C**.

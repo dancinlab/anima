@@ -1,0 +1,28 @@
+H_1509c VOLATILITY-GATED LEARNING RATE — R1 numpy mirror (DIRECTIONAL)
+ESCAPE (anima-internal) from Amoeba-thread; meta-law: adaptation pays iff VOLATILE
+FROZEN MARGIN=0.05 α_lo=0.05 α_hi=0.9 S=0.3 hazards=[0.0, 0.02, 0.05, 0.1]
+============================================================================
+
+ hazard  A.best_a     RMS_A     RMS_B     RMS_C   adv=A-B
+   0.00      0.05    0.0076    0.0221    0.0317   -0.0145
+   0.02      0.40    0.0423    0.0274    0.0438   +0.0149
+   0.05      0.40    0.0423    0.0311    0.0428   +0.0113
+   0.10      0.70    0.0511    0.0364    0.0602   +0.0147
+
+determinism run1==run2: PASS (0.035876)
+
+FROZEN BAR EVALUATION (MARGIN=0.05, no tune-to-green):
+  (A ESCAPE-WIN @H=0.10) A−B=+0.0147 >= 0.05 mean=FAIL each=FAIL => FAIL
+  (B DOUBLE-DISSOC) H=0 A<=B PASS (A=0.0076 B=0.0221) AND H=0.10 A−B>=0.05 FAIL => FAIL
+  (C VOLATILITY-MONOTONE) adv -0.0145→+0.0149→+0.0113→+0.0147 => FAIL
+  (D EARNED ablate) ablate-never-wins=PASS AND gate>ablate@0.10 C−B=+0.0238>=0.05 FAIL => FAIL
+
+============================================================================
+VERDICT: 🧱 MULTI-FAMILY WALL — the orthogonal learning-rate family ALSO fails
+         to beat the best fixed rate → the neuromodulation ceiling holds across
+         BOTH the tracking-gain AND learning-rate families (meta-law incomplete). c9.
+           - bar A FAILED
+           - bar B FAILED
+           - bar C FAILED
+           - bar D FAILED
+============================================================================

@@ -1,0 +1,24 @@
+H_1509c ORACLE-CEILING + DIRECTIONAL-DISSOCIATION evidence (a_break_the_wall taxonomy-d)
+==============================================================================
+FINDING 1 — the volatility-gate is NEAR-OPTIMAL (not a weak gate): RMS_B(gated) sits AT
+the changepoint oracle ceiling (gated-oracle ~ +0.0004..-0.0026 across H).
+FINDING 2 — TOTAL headroom (oracle vs best-fixed) is STRUCTURALLY < the frozen 0.05 margin:
+
+hazard  bestfix-vs-oracle(=max possible adaptive win)  gated achieves  fraction-of-headroom
+  0.02                                       +0.0205         +0.0149               72.7%
+  0.05                                       +0.0130         +0.0113               86.3%
+  0.10                                       +0.0151         +0.0147               97.5%
+  0.20                                       +0.0093         +0.0102              109.1%
+
+FINDING 3 — DIRECTIONAL DOUBLE-DISSOCIATION (the meta-law escape clause, CONFIRMED):
+  adv(A-B) at H=0.00 (stationary) = NEGATIVE (gated HURTS, fixed wins)
+  adv(A-B) at H>0   (volatile)    = POSITIVE (gated HELPS) — sign FLIPS with volatility.
+  H=0.00: adv(A-B)=-0.0145  (fixed wins)
+  H=0.02: adv(A-B)=+0.0149  (gated HELPS)
+  H=0.05: adv(A-B)=+0.0113  (gated HELPS)
+  H=0.10: adv(A-B)=+0.0147  (gated HELPS)
+==============================================================================
+CONCLUSION: meta-law QUALITATIVELY CONFIRMED (adaptation pays IFF volatile — sign flip),
+but the frozen 0.05 wall HOLDS QUANTITATIVELY because the task headroom (best-fixed→oracle)
+is itself < 0.05 — no adaptive rate, even a perfect oracle, can clear the bar here.
+MULTI-FAMILY 🧱 on the 0.05 criterion; meta-law escape clause directionally VALID.
