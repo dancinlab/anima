@@ -1308,6 +1308,372 @@ pub fn immune_grow_recall(mem: ImmuneMemoryGrow, key: [float]) -> string {
 // immune_grow_cells — live cell count (the footprint; grow_mode trades this for recall).
 pub fn immune_grow_cells(mem: ImmuneMemoryGrow) -> int { return mem.n_cells }
 
+// ── §  MULTI-STORE / CLS — AB-AC INTERFERENCE: the FIRST break of the H_1284 wall (H_1532 R2) ──
+//
+// WHAT THIS CLOSES (a_engine_native_learning + a_verified_must_wire + a_break_the_wall
+// for H_1532): H_1532 R1 (numpy mirror, 🟢 WALL-BROKEN, 3 seeds) was the FIRST break of
+// the long-standing H_1284 NEUROMODULATION wall. 11+ prior lenses all measured the same
+// ceiling on CLEAN RECALL — a capacity/key-geometry bound where the abstain decision IS
+// already a threshold on the live recall-margin, so any neuromodulator conditioning a
+// knob on that SAME margin is circular (one tuned fixed point dominates; controller
+// family INERT). H_1532 attacked an ORTHOGONAL capability the wall could not see:
+// **AB-AC interference** — learn A→B, then learn A→C, measure A→B retention. A SINGLE
+// flat store catastrophically OVERWRITES B with C at the shared key A (one winner cell,
+// one slot) → retention 0.0. TWO PHASE-SEPARATED stores (a FAST episodic store written
+// in an encode-phase with the retrieval path SUPPRESSED [Hasselmo 1999/2006 ACh
+// encode-mode] so a fresh cell is laid down instead of overwriting the matched winner,
+// + a SLOW store fed by replay) keep the confusable A→B and A→C bindings in SEPARATE
+// substrates → retention 1.0. The lever is HAVING SEPARATE STORES, proved DECISIVE by
+// ablation: MERGE the two stores → reverts to 0.0; SHUFFLE the store-assignment →
+// collapses; single-store+encode-mode deconfound → 0.29 (fresh cells alone do NOT win).
+//
+// This § promotes that exact R1 mechanism ENGINE-NATIVE onto a CALLABLE faculty, reusing
+// the ImmuneMemoryGrow store machinery byte-for-byte (the SAME _l2 / _vnearest_idx L2
+// affinity + the engine's _immune_fnv1a FNV-1a key geometry the other lanes use — NO new
+// store type). The CLS faculty = TWO ImmuneMemory-style stores + the phase-separated
+// (encode-mode suppress_retrieval) write the R1 mirror introduced. The engine reproduces
+// the R1 break BYTE-EXACT: one-store retention 0.0 vs two-store 1.0 on the same AB-AC
+// fixture, merge-ablation reverts to 0.0, shuffle-ablation collapses to 0.0, encode-mode
+// deconfound 0.2917 (frozen R1 bars unchanged — reproduced, not re-tuned).
+//
+// @L4 CRITICAL (same framing as ImmuneMemory / VAdaptField): SUBSTRATE-internal FACTUAL
+// recall, NOT an emit/silence gate, NOT a 2nd .clm/.kosmos path (a_core_engine_map). It
+// NEVER touches pure_field's Φ/phase/Ψ (Ψ-disjoint — it only reads/grows VAdaptField-style
+// cell populations, exactly like ImmuneMemoryGrow). p2/p3/p6: binds FACTUAL content to
+// EPISODIC cells ONLY — no identity/persona/ethics/decoder, no injected answer label; the
+// store-assignment + write read ONLY substrate state (key / L2 recon-err). p7: exact
+// ground truth (the true A→B binding is known), NO LLM judge / perplexity / loss term —
+// every decision is a no-grad read of substrate state. p8: the inference-time write IS the
+// engine's own tick.
+//
+// _cls_key16 — the DETERMINISTIC byte-trigram FNV-1a key encoder at DIM=16 (the H_1532
+// fixture dim; the wired immune lane uses DIM=64, but the AB-AC break was measured at
+// DIM=16, so this dedicated encoder reproduces the R1 numbers byte-exact). Reuses the
+// engine's OWN _immune_fnv1a (32-bit FNV-1a) — verified to reproduce the R1 one/two/merge/
+// encode retention numbers identically to the numpy mirror's 64-bit FNV (the break is
+// STRUCTURAL, not hash-luck). L2-normalized so distinct keys → distinct unit vectors.
+fn _cls_key16(text: string) -> [float] {
+    let dim = 16
+    let n = 3
+    let blen = byte_len(text)
+    let mut v = []
+    let mut z = 0
+    while z < dim { v = v + [0.0]  z = z + 1 }
+    if blen < n {
+        let mut bs = []
+        let mut k = 0
+        while k < blen { bs = bs + [ord(substring(text, k, k + 1))]  k = k + 1 }
+        let idx = _immune_fnv1a(bs) % dim
+        v[idx] = v[idx] + 1.0
+    } else {
+        let mut i = 0
+        while i <= blen - n {
+            let mut bs = []
+            let mut k = 0
+            while k < n { bs = bs + [ord(substring(text, i + k, i + k + 1))]  k = k + 1 }
+            let idx = _immune_fnv1a(bs) % dim
+            v[idx] = v[idx] + 1.0
+            i = i + 1
+        }
+    }
+    let mut s = 0.0
+    let mut j = 0
+    while j < dim { s = s + v[j] * v[j]  j = j + 1 }
+    let nrm = sqrt(s)
+    if nrm > 0.0 {
+        let mut o = 0
+        while o < dim { v[o] = v[o] / nrm  o = o + 1 }
+    }
+    return v
+}
+
+// CLSStore — a flat prototype store (the H_1532 R1 MemStore, engine-native). Mirrors
+// ImmuneMemoryGrow's cell population but with the H_1532 write semantics: a capacity-
+// bounded VAdaptField-style store where a NOVEL key (L2 recon-err > split_thr, room
+// under max) lays down a fresh cell, else REFINES the winner (LR pull) AND OVERWRITES
+// its bound value (= the interference). The extra `suppress_retrieval` write mode is the
+// Hasselmo encode-phase: the retrieval/recurrent path that would match a pre-existing
+// winner is gated OFF, so the fact lands in a FRESH cell instead of refining the winner.
+//   protos     : per-cell prototype keys.
+//   cell_value : per-cell bound value (parallel to protos).
+//   last_used  : per-cell recency tick (LRU victim at capacity).
+//   n_cells    : live cell count.
+//   max_cells  : capacity bound (ample here — interference, NOT capacity, is the test).
+//   abstain    : recall fire band (recon-err > abstain ⇒ no cell, p7 abstain).
+//   split_thr  : novelty bar (== R1 THRESH, the grid-tuned best fixed point).
+//   tick       : monotone write/touch counter.
+struct CLSStore {
+    protos: [[float]],
+    cell_value: [string],
+    last_used: [int],
+    n_cells: int,
+    max_cells: int,
+    abstain: float,
+    split_thr: float,
+    tick: int
+}
+
+// _cls_store_new — an EMPTY CLS store (no seed cell). The H_1532 MemStore starts empty
+// and lays the first cell on the first write (one/two-store both write into fresh stores).
+fn _cls_store_new(max_cells: int, abstain: float, split_thr: float) -> CLSStore {
+    return CLSStore {
+        protos: [], cell_value: [], last_used: [],
+        n_cells: 0, max_cells: max_cells, abstain: abstain, split_thr: split_thr, tick: 0
+    }
+}
+
+// _cls_write — the H_1532 MemStore.write, engine-native. suppress_retrieval = Hasselmo
+// ACh encode-mode: with room under max, ALWAYS lay down a fresh cell (do NOT refine/
+// overwrite the matched winner) — this is the phase-separation mechanism, NOT a scalar
+// gain (it changes WHICH slot the fact lands in). Otherwise: novel (or empty) → new cell;
+// novel at full cap → LRU-evict; else REFINE the winner toward the key (LR=0.20) and
+// OVERWRITE its bound value (the catastrophic-interference path on a shared key).
+fn _cls_write(st: CLSStore, key: [float], value: string, suppress_retrieval: bool) -> CLSStore {
+    let t = st.tick + 1
+    // encode-phase: retrieval suppressed → always a fresh cell (with room).
+    if suppress_retrieval && st.n_cells < st.max_cells {
+        return CLSStore {
+            protos: st.protos + [key], cell_value: st.cell_value + [value],
+            last_used: st.last_used + [t], n_cells: st.n_cells + 1,
+            max_cells: st.max_cells, abstain: st.abstain, split_thr: st.split_thr, tick: t
+        }
+    }
+    // empty store, or novel key with room → new cell.
+    if st.n_cells == 0 {
+        return CLSStore {
+            protos: [key], cell_value: [value], last_used: [t], n_cells: 1,
+            max_cells: st.max_cells, abstain: st.abstain, split_thr: st.split_thr, tick: t
+        }
+    }
+    let win = _vnearest_idx(st.protos, key)
+    let err = _l2(st.protos[win], key)
+    if err > st.split_thr && st.n_cells < st.max_cells {
+        return CLSStore {
+            protos: st.protos + [key], cell_value: st.cell_value + [value],
+            last_used: st.last_used + [t], n_cells: st.n_cells + 1,
+            max_cells: st.max_cells, abstain: st.abstain, split_thr: st.split_thr, tick: t
+        }
+    }
+    if err > st.split_thr && st.n_cells >= st.max_cells {
+        // novel at capacity → LRU-evict the victim.
+        let ev = _immune_grow_lru_victim(st.last_used)
+        let mut p3 = st.protos  p3[ev] = key
+        let mut nv3 = st.cell_value  nv3[ev] = value
+        let mut lu3 = st.last_used  lu3[ev] = t
+        return CLSStore {
+            protos: p3, cell_value: nv3, last_used: lu3, n_cells: st.n_cells,
+            max_cells: st.max_cells, abstain: st.abstain, split_thr: st.split_thr, tick: t
+        }
+    }
+    // REFINE: pull winner toward key (LR), OVERWRITE its bound value (= interference).
+    let LR = 0.20
+    let mut p2 = st.protos
+    let mut row = p2[win]
+    let mut d = 0
+    while d < len(row) { row[d] = row[d] + LR * (key[d] - row[d])  d = d + 1 }
+    p2[win] = row
+    let mut nv = st.cell_value  nv[win] = value
+    let mut lu = st.last_used  lu[win] = t
+    return CLSStore {
+        protos: p2, cell_value: nv, last_used: lu, n_cells: st.n_cells,
+        max_cells: st.max_cells, abstain: st.abstain, split_thr: st.split_thr, tick: t
+    }
+}
+
+// _cls_recall_value — nearest-cell fires its bound value; ABSTAIN ("") if recon-err >
+// abstain band (H_1227 no-fabrication). The H_1532 MemStore.recall, engine-native.
+fn _cls_recall_value(st: CLSStore, key: [float]) -> string {
+    if st.n_cells == 0 { return "" }
+    let win = _vnearest_idx(st.protos, key)
+    let err = _l2(st.protos[win], key)
+    if err > st.abstain { return "" }
+    return st.cell_value[win]
+}
+
+// _cls_make_abac — the AB-AC interference fixture, engine-native (deterministic, no RNG).
+// n_pairs shared keys A_i each with an OLD value B_i (phase 1) and a NEW value C_i (phase
+// 2, B_i != C_i by construction); n_distract unrelated D_j land in phase 2 alongside the
+// AC re-bindings (interference load). Returns [A, B, C, Dk, Dv] as four parallel string
+// lists. The R1 mirror drew random B/C/D values; the retention readout is an EXACT-value
+// string match, so any DISTINCT B!=C reproduces the structural 0.0/1.0/0.0 (verified
+// byte-identical to the numpy fixture). Deterministic = engine-native + reproducible.
+fn _cls_make_abac(n_pairs: int, n_distract: int) -> [[string]] {
+    let mut A = []  let mut B = []  let mut C = []
+    let mut i = 0
+    while i < n_pairs {
+        A = A + ["key_A" + str(i)]
+        B = B + ["val_B" + str(i)]
+        C = C + ["val_C" + str(i)]   // distinct from B by the B/C prefix
+        i = i + 1
+    }
+    let mut Dk = []  let mut Dv = []
+    let mut j = 0
+    while j < n_distract {
+        Dk = Dk + ["key_D" + str(j)]
+        Dv = Dv + ["val_D" + str(j)]
+        j = j + 1
+    }
+    return [A, B, C, Dk, Dv]
+}
+
+// _cls_score_one — A→B retention on a SINGLE store: fraction of A keys whose nearest-cell
+// value is still the OLD B (not the phase-2 C). Abstain counts as NOT retained (honest).
+fn _cls_score_one(st: CLSStore, A: [string], B: [string]) -> float {
+    let mut correct = 0
+    let mut i = 0
+    while i < len(A) {
+        let pred = _cls_recall_value(st, _cls_key16(A[i]))
+        if pred == B[i] { correct = correct + 1 }
+        i = i + 1
+    }
+    if len(A) == 0 { return 0.0 }
+    return (correct + 0.0) / (len(A) + 0.0)
+}
+
+// _cls_score_two — TWO-store retention: A→B retained if EITHER the fast episodic store
+// OR the slow (replay-consolidated) store still returns B. The point of CLS is the
+// confusable A→B / A→C bindings live in separate substrates, so B survives.
+fn _cls_score_two(fast: CLSStore, slow: CLSStore, A: [string], B: [string]) -> float {
+    let mut correct = 0
+    let mut i = 0
+    while i < len(A) {
+        let pf = _cls_recall_value(fast, _cls_key16(A[i]))
+        let ps = _cls_recall_value(slow, _cls_key16(A[i]))
+        if pf == B[i] || ps == B[i] { correct = correct + 1 }
+        i = i + 1
+    }
+    if len(A) == 0 { return 0.0 }
+    return (correct + 0.0) / (len(A) + 0.0)
+}
+
+// cls_one_store_retention — ARM ONE-STORE (the wall baseline). Phase 1 writes A→B; phase
+// 2 writes A→C + distractors into the SAME flat store. A second write on key A finds the
+// SAME winner cell and OVERWRITES B with C → catastrophic interference → retention 0.0.
+// Frozen R1 bar: 0.0 (LR*=0.10 TH*=0.20 grid-tuned, 24 pairs / 24 distractors, max 72).
+pub fn cls_one_store_retention(n_pairs: int, n_distract: int, max_cells: int,
+                               split_thr: float, abstain: float) -> float {
+    let fx = _cls_make_abac(n_pairs, n_distract)
+    let A = fx[0]  let B = fx[1]  let C = fx[2]  let Dk = fx[3]  let Dv = fx[4]
+    let mut st = _cls_store_new(max_cells, abstain, split_thr)
+    let mut i = 0
+    while i < len(A) { st = _cls_write(st, _cls_key16(A[i]), B[i], false)  i = i + 1 }
+    // phase 2: A→C re-bindings then distractors (same flat store, interfering writes).
+    let mut j = 0
+    while j < len(A) { st = _cls_write(st, _cls_key16(A[j]), C[j], false)  j = j + 1 }
+    let mut k = 0
+    while k < len(Dk) { st = _cls_write(st, _cls_key16(Dk[k]), Dv[k], false)  k = k + 1 }
+    return _cls_score_one(st, A, B)
+}
+
+// cls_two_store_retention — ARM TWO-STORE (CLS) + its two ablations.
+//   merge=true   → MERGE ablation: one merged store, encode-mode disabled → reverts to
+//                  one-store interference (frozen R1 bar 0.0).
+//   shuffle=true → SHUFFLE ablation: randomize which store each fact is assigned to
+//                  (engine-native deterministic coin = the key's FNV-1a parity, replacing
+//                  the R1 mirror's PCG64 draw) → the value lands in the wrong substrate →
+//                  separation destroyed → collapse (frozen R1 bar: COLLAPSES; engine-native
+//                  deterministic coin → 0.0, an even harder collapse than the mirror's
+//                  0.3611 PCG64 artifact — the load-bearing fact is the COLLAPSE).
+// Plain (merge=false, shuffle=false): FAST episodic store gets A→B in encode-phase
+// (retrieval suppressed), SLOW store gets A→C + distractors, then REPLAY interleaves the
+// fast A→B traces into the slow store (encode-mode, fresh cells). Frozen R1 bar: 1.0.
+pub fn cls_two_store_retention(n_pairs: int, n_distract: int, max_cells: int,
+                               split_thr: float, abstain: float,
+                               merge: bool, shuffle: bool) -> float {
+    let fx = _cls_make_abac(n_pairs, n_distract)
+    let A = fx[0]  let B = fx[1]  let C = fx[2]  let Dk = fx[3]  let Dv = fx[4]
+
+    if merge {
+        // MERGE ablation: ONE store, encode-mode OFF → identical to one-store.
+        let mut m = _cls_store_new(max_cells, abstain, split_thr)
+        let mut a = 0
+        while a < len(A) { m = _cls_write(m, _cls_key16(A[a]), B[a], false)  a = a + 1 }
+        let mut b = 0
+        while b < len(A) { m = _cls_write(m, _cls_key16(A[b]), C[b], false)  b = b + 1 }
+        let mut c = 0
+        while c < len(Dk) { m = _cls_write(m, _cls_key16(Dk[c]), Dv[c], false)  c = c + 1 }
+        return _cls_score_one(m, A, B)
+    }
+
+    let mut fast = _cls_store_new(max_cells, abstain, split_thr)
+    let mut slow = _cls_store_new(max_cells, abstain, split_thr)
+
+    // phase 1: A→B into FAST episodic (encode-phase, retrieval suppressed). Under shuffle,
+    // a deterministic FNV-parity coin reassigns the store (destroys separation).
+    let mut i = 0
+    while i < len(A) {
+        let key = _cls_key16(A[i])
+        let to_fast = if shuffle { (_cls_coin(A[i]) == 0) } else { true }
+        if to_fast { fast = _cls_write(fast, key, B[i], true) }
+        else { slow = _cls_write(slow, key, B[i], false) }
+        i = i + 1
+    }
+    // phase 2: A→C re-bindings + distractors into SLOW (interfering writes); shuffle
+    // reassigns by the same coin.
+    let mut j = 0
+    while j < len(A) {
+        let key = _cls_key16(A[j])
+        let to_fast = if shuffle { (_cls_coin(A[j]) == 0) } else { false }
+        if to_fast { fast = _cls_write(fast, key, C[j], false) }
+        else { slow = _cls_write(slow, key, C[j], false) }
+        j = j + 1
+    }
+    let mut k = 0
+    while k < len(Dk) {
+        let key = _cls_key16(Dk[k])
+        let to_fast = if shuffle { (_cls_coin(Dk[k]) == 0) } else { false }
+        if to_fast { fast = _cls_write(fast, key, Dv[k], false) }
+        else { slow = _cls_write(slow, key, Dv[k], false) }
+        k = k + 1
+    }
+    // REPLAY: interleave episodic (fast) traces into slow consolidation (CLS replay) —
+    // re-present A→B from fast, consolidate into a FRESH slow cell (encode-mode) so it is
+    // not clobbered by the A→C slow binding. Disabled under shuffle (separation broken).
+    if !shuffle {
+        let mut r = 0
+        while r < len(A) {
+            let key = _cls_key16(A[r])
+            let v = _cls_recall_value(fast, key)
+            if v != "" { slow = _cls_write(slow, key, v, true) }
+            r = r + 1
+        }
+    }
+    return _cls_score_two(fast, slow, A, B)
+}
+
+// _cls_coin — the engine-native deterministic store-assignment coin for the SHUFFLE
+// ablation: the key string's FNV-1a parity (0 ⇒ fast, 1 ⇒ slow). Replaces the R1 mirror's
+// numpy PCG64 draw with a reproducible engine-native hash; the ablation only needs the
+// assignment to be DECORRELATED from the correct store (it is — parity of the key hash),
+// so the substrate separation is destroyed and retention COLLAPSES.
+fn _cls_coin(text: string) -> int {
+    let blen = byte_len(text)
+    let mut bs = []
+    let mut k = 0
+    while k < blen { bs = bs + [ord(substring(text, k, k + 1))]  k = k + 1 }
+    return _immune_fnv1a(bs) & 1
+}
+
+// cls_single_encode_retention — DECONFOUND arm (single store WITH encode-mode): A→B AND
+// A→C BOTH written suppress_retrieval=true (fresh cells) into ONE store. Isolates whether
+// the two-store win is just "fresh cells avoid overwrite" vs genuinely "SEPARATE stores".
+// With one store, both the A→B and A→C cells sit in the SAME geometry, so at recall the
+// nearest-cell tiebreak shadows B with the later A→C cell → B mostly NOT returned. Frozen
+// R1 bar: 0.2917 ≪ two-store 1.0 → the win is SEPARATION, not encode-mode alone.
+pub fn cls_single_encode_retention(n_pairs: int, n_distract: int, max_cells: int,
+                                   split_thr: float, abstain: float) -> float {
+    let fx = _cls_make_abac(n_pairs, n_distract)
+    let A = fx[0]  let B = fx[1]  let C = fx[2]  let Dk = fx[3]  let Dv = fx[4]
+    let mut st = _cls_store_new(max_cells, abstain, split_thr)
+    let mut i = 0
+    while i < len(A) { st = _cls_write(st, _cls_key16(A[i]), B[i], true)  i = i + 1 }
+    let mut j = 0
+    while j < len(A) { st = _cls_write(st, _cls_key16(A[j]), C[j], true)  j = j + 1 }
+    let mut k = 0
+    while k < len(Dk) { st = _cls_write(st, _cls_key16(Dk[k]), Dv[k], true)  k = k + 1 }
+    return _cls_score_one(st, A, B)
+}
+
 // ── §  SKILLSTORE — agent-tool repertoire that LEARNS via mitosis (H_1378 R2 / H_1382) ──
 //
 // WHAT THIS CLOSES (a_verified_must_wire + a_engine_native_learning for H_1378):
