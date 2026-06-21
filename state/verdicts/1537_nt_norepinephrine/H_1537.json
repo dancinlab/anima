@@ -1,0 +1,102 @@
+{
+  "hypothesis": "H_1537",
+  "title": "NOREPINEPHRINE as a NETWORK-RESET FACULTY (unexpected-uncertainty detector)",
+  "frame": "NE-as-reset-faculty (Bouret&Sara 2005 network reset; Yu&Dayan 2005 unexpected uncertainty) — NOT a gain knob",
+  "substrate": "numpy DIRECTIONAL mirror (engine-native R2 deferred ING)",
+  "seeds": [
+    1537,
+    1538,
+    1539
+  ],
+  "per_seed": [
+    {
+      "seed": 1537,
+      "alpha_star": 0.4,
+      "n_switches": 24,
+      "n_resets_fired": 5,
+      "R_NO_NE": 0.5792,
+      "R_NE_RESET": 0.5896,
+      "R_ABL": 0.5792,
+      "R_SHUFFLE": 0.5938,
+      "ne_minus_none": 0.0104,
+      "ne_minus_shuf": -0.0042,
+      "abl_minus_none": 0.0
+    },
+    {
+      "seed": 1538,
+      "alpha_star": 0.4,
+      "n_switches": 28,
+      "n_resets_fired": 10,
+      "R_NO_NE": 0.5296,
+      "R_NE_RESET": 0.5207,
+      "R_ABL": 0.5296,
+      "R_SHUFFLE": 0.5277,
+      "ne_minus_none": -0.0089,
+      "ne_minus_shuf": -0.007,
+      "abl_minus_none": 0.0
+    },
+    {
+      "seed": 1539,
+      "alpha_star": 0.4,
+      "n_switches": 21,
+      "n_resets_fired": 8,
+      "R_NO_NE": 0.5357,
+      "R_NE_RESET": 0.5524,
+      "R_ABL": 0.5357,
+      "R_SHUFFLE": 0.5357,
+      "ne_minus_none": 0.0167,
+      "ne_minus_shuf": 0.0167,
+      "abl_minus_none": 0.0
+    }
+  ],
+  "aggregate": {
+    "mean_R_NO_NE": 0.5482,
+    "mean_R_NE_RESET": 0.5542,
+    "mean_R_ABL": 0.5482,
+    "mean_R_SHUFFLE": 0.5524,
+    "mean_ne_minus_none": 0.0061,
+    "mean_abl_minus_none": 0.0,
+    "mean_ne_minus_shuf": 0.0018,
+    "n_pass_c1": 0
+  },
+  "bars": {
+    "c1_presence_ne_minus_none>=0.10_on>=2of3_and_mean": false,
+    "c2_ablation_decisive_|abl-none|<=0.02": true,
+    "c3_timelock_ne_minus_shuf>=0.05": false
+  },
+  "verdict": "🧱 WALL",
+  "secondary_diagnostic_learnable_regime": {
+    "note": "NON-GATING diagnostic (learnable-rule regime); bars NOT moved",
+    "per_seed": [
+      {
+        "seed": 1537,
+        "alpha_star": 0.6,
+        "asymptote": 0.963,
+        "R_base": 0.7725,
+        "R_ne": 0.815,
+        "ne_minus_base": 0.0425,
+        "n_resets": 34
+      },
+      {
+        "seed": 1538,
+        "alpha_star": 0.6,
+        "asymptote": 0.92,
+        "R_base": 0.788,
+        "R_ne": 0.836,
+        "ne_minus_base": 0.048,
+        "n_resets": 37
+      },
+      {
+        "seed": 1539,
+        "alpha_star": 0.6,
+        "asymptote": 0.9,
+        "R_base": 0.85,
+        "R_ne": 0.8475,
+        "ne_minus_base": -0.0025,
+        "n_resets": 32
+      }
+    ],
+    "mean_asymptote": 0.928,
+    "mean_ne_minus_base": 0.0293
+  }
+}

@@ -1,0 +1,89 @@
+H_1537 — NOREPINEPHRINE as a NETWORK-RESET FACULTY (unexpected-uncertainty detector)
+       — FROZEN BARS (PRE-REGISTERED, before any run)
+================================================================================
+SOURCE: anima-internal REFRAME of the neuromodulation thread. 13 prior NE lenses
+(H_1284 gain, H_1422 state-contingent, H_1425 temperature-ideation, H_1523 multitimescale,
+H_1524 diversity, H_1525 predictive, H_1526 emitgate, H_1509/b/c volatility-LR family, …)
+all treated NE as a scalar GAIN/TEMPERATURE knob over an EXISTING controller — INERT against
+a tuned fixed gain on learnable statistics (the peeled meta-law).
+
+THE REFRAME (a_no_llm_frame_trap · a_break_the_wall — NOT a 6th gain-lens):
+  NE's real computation is NOT a slow temperature dial. Bouret & Sara (2005, TINS
+  "Network reset: a simplified overarching theory of locus coeruleus noradrenaline function")
+  = phasic LC-NE fires a GLOBAL NETWORK RESET on a detected CONTEXT/REGIME CHANGE — it
+  ABANDONS the now-stale model/context and triggers re-learning. Yu & Dayan (2005, Neuron
+  "Uncertainty, neuromodulation, and attention") = NE signals UNEXPECTED UNCERTAINTY (a
+  detected violation of the current model's assumptions), distinct from ACh's expected
+  uncertainty. The faculty anima LACKS: detect "the world changed → FLUSH the stale
+  context, stop fitting it → re-acquire fast." This is a BRAIN-LANE-FILLING faculty
+  (a missing computation), NOT another recall-gain knob. Honest framing: PRESENCE test
+  (does a reset faculty ADD fast context-reswitch), NOT beat-a-tuned-fixed-gain.
+
+CAPABILITY (where a reset matters) = ABRUPT CONTEXT-SWITCH adaptation:
+  The task's input→output MAPPING (the "rule") flips abruptly at UNKNOWN times. After a
+  switch the old learned mapping is now WRONG; the agent must recover accuracy fast. A
+  faculty WITH a reset (detect surprise spike → flush stale expectations → re-acquire)
+  recovers FAST; a baseline that only slowly re-adapts the SAME weights recovers SLOW
+  (it must un-learn the stale mapping first). This reproduces WHY the reactive gain
+  lenses lagged: a gain knob cannot abandon a stale context, it can only re-fit it slowly.
+
+TASK (abrupt rule-switch classification, the environment):
+  Inputs x_t are random D-dim binary-ish feature vectors. A hidden RULE r maps x_t to a
+  binary label y_t = sign( w_r · x_t )   (w_r = a fixed random hyperplane per rule).
+  At each tick, with hazard probability H the rule SWITCHES to a DIFFERENT rule (a fresh
+  w_r), abruptly and at UNKNOWN times; otherwise it holds. The agent maintains an online
+  linear estimator ŵ updated by a delta-rule on its prediction error after seeing y_t.
+  METRIC (primary): POST-SWITCH RECOVERY = mean accuracy over the RECOVERY WINDOW of
+  W_REC ticks IMMEDIATELY FOLLOWING each switch (averaged over all switches, all seeds).
+  Higher = faster recovery. (Secondary diagnostic: area-over-recovery-curve, reported
+  but NOT gating.)
+
+ARMS (all arms see the SAME x_t / y_t / switch-time stream per seed):
+  NO-NE  = baseline SLOW-ADAPTATION. Plain delta-rule online learner with a tuned fixed
+           learning rate α* (best-swept over a grid = the STRONGEST gain-style baseline,
+           the controller the reactive lenses were). After a switch it must slowly
+           un-learn the stale ŵ → lags. (This arm reproduces why the gain lenses failed.)
+  NE-RESET = the RESET FACULTY. SAME base learner, PLUS a phasic reset detector:
+           surprise s_t = running prediction-error signal (the agent's OWN error vs a
+           running surprise scale — NO peek at the switch label, p6/p2/p3 substrate-
+           derived). When s_t exceeds a phasic threshold (a detected UNEXPECTED-uncertainty
+           spike = a likely context change) → fire a NETWORK RESET: FLUSH the stale
+           estimator toward a neutral prior (decay ŵ → 0, reset the surprise scale) so
+           the agent re-acquires the NEW rule fast instead of slowly un-learning the old.
+           Refractory period prevents continuous re-firing.
+  ABL    = reset detector ALWAYS OFF (threshold = +inf → never fires) → reverts EXACTLY
+           to NO-NE base learner (same α*). Tests that the lift comes from the RESET
+           firing, not from any incidental parameter difference.
+  SHUFFLE= reset detector fires on SHUFFLED (permuted) switch-time positions — i.e. the
+           reset events are decoupled from the REAL surprise/context-change times (resets
+           fire at random ticks unrelated to actual switches). Tests that resets must be
+           TIME-LOCKED to real surprise to help (a reset at the wrong time HURTS or is
+           inert). [Implemented as: fire the same NUMBER of resets but at randomly
+           permuted tick positions, blind to s_t.]
+
+FROZEN BARS (pre-registered, PRESENCE test — faculty adds fast reswitch):
+  Let R(arm) = post-switch recovery accuracy (mean over recovery windows, per seed).
+  (c1 PRESENCE)  R(NE-RESET) − R(NO-NE) ≥ +0.10  on ≥ 2/3 seeds  AND mean ≥ +0.10.
+  (c2 ABLATION-DECISIVE)  R(ABL) ≈ R(NO-NE):  |R(ABL) − R(NO-NE)| ≤ 0.02 (mean) — turning
+                 the detector OFF removes the lift (the lift IS the reset firing).
+  (c3 TIME-LOCK)  R(NE-RESET) − R(SHUFFLE) ≥ +0.05 (mean) — resets must be time-locked to
+                 real surprise; randomly-timed resets do NOT earn the recovery lift.
+  VERDICT: 🟢 iff c1 ∧ c2 ∧ c3. Else honest 🧱/🟠 (reset faculty does NOT beat slow-
+  adaptation, or controls do not discriminate → NE-reset is not the missing faculty here).
+
+CONTROLS / HONESTY (c9, p7, frozen-first):
+  - α* is swept for the NO-NE baseline (the STRONGEST fixed-gain champion) BEFORE the
+    NE-RESET arm is scored — bars are NOT moved after seeing results.
+  - Surprise s_t uses ONLY the agent's own prediction error (NO injected switch label).
+  - 3 seeds, deterministic, $0 CPU, gradient-free numpy mirror = DIRECTIONAL only
+    (engine-native R2 deferred ING per a_engine_native_learning).
+  - HONEST if c1/c2/c3 fail — a reset that does not beat slow-adaptation is a valid 🧱
+    (NE-as-reset is not the missing faculty on this task), reported as-is.
+
+PARAMETERS (frozen):
+  D=24 features · T=2400 ticks · H (hazard)=0.01 (abrupt switches at unknown times) ·
+  W_REC=20 (recovery window after each switch) · noise label-flip p_noise=0.05 ·
+  α-grid for NO-NE = {0.02,0.05,0.1,0.2,0.4} · NE-RESET reset: flush decay=0.85 toward 0,
+  phasic threshold = k·(running surprise scale) with k frozen below, refractory=8 ticks ·
+  seeds = [1537,1538,1539].
+================================================================================
