@@ -1,0 +1,57 @@
+H_1551 — GABA × CLS: sparse-coding CAPACITY-MULTIPLICATION under fast-store OVERLOAD
+FROZEN FALSIFIER (pre-registered BEFORE scoring — c9, NO tune-to-green)
+====================================================================================
+
+NEW CAPABILITY ANGLE (a_break_the_wall MULTI-LENS, NOT a re-hit of H_1546's wall):
+  H_1546 🧱 INERT tested pattern-SEPARATION on a CONFUSABLE near-collinear AB-AC set in a
+  TWO-store CLS that was NOT capacity-pressured (MAX_CELLS_FAST=256, 60 facts). It was inert
+  because the fast/slow architecture already separated the confusable bindings into distinct
+  substrates. THIS hypothesis tests a DIFFERENT capability: capacity-MULTIPLICATION under
+  OVERLOAD — N_facts (120) >> N_fast_cells (40), a SINGLE store (no fast/slow escape hatch),
+  DIVERSE (non-collinear) facts so confusability is NOT the bottleneck; CAPACITY is. Sparse
+  k-of-N codes pack more near-orthogonal bindings per cell than dense (Babadi-Sompolinsky
+  2014 / Litwin-Kumar 2017). DIM raised 16->64 so sparse supports have room to multiply.
+
+MEASUREMENT FIX (a_break_the_wall taxonomy (a), frozen-first — bars UNCHANGED, reported in card):
+  The first draft routed the overload stream through the H_1532 SLOT-store (MemStore). That
+  store's capacity is HARD-BOUNDED at max_cells by construction: under diverse-key overload
+  every fact is novel (err>THRESH) → ALWAYS the LRU-EVICT path (40 fresh + 80 evict + 0 refine,
+  instrumented, identical dense vs sparse) → keeps the last max_cells by RECENCY, geometry-blind
+  → gaba==dense==best-fixed==0.3333 for EVERY k = a FIXTURE ARTIFACT (sparse cannot multiply
+  SLOT capacity). FIX: score on the SUPERPOSITION substrate where the mechanism acts — a single
+  Hebbian matrix M=Σ outer(value_code, sparse_key), recall=argmax value-code of M·key. There
+  sparse k-of-N codes genuinely reduce cross-talk (Babadi-Sompolinsky) → more bindings survive.
+  Bars A–E and the verdict rule are IDENTICAL; only the substrate (and DIM 16->64, N vs DIM not
+  max_cells) changed to make the measurement able to SEE the mechanism. NO tune-to-green.
+
+PRE-REGISTERED CONSTANTS (frozen):
+  SUBSTRATE = single Hebbian SUPERPOSITION matrix (DIMxDIM); capacity = code cross-talk
+  DIM=64 · N_FACTS=120 (overload vs DIM ≈ 1.875x) · K_SPARSE=8 · LOAD_LO/HI=0.30/0.90
+  TUNE_SEED=7 (disjoint fact-draw + store_seed) · SCORE_SEEDS=[11,22,33]
+  MARGIN=0.05 · PRESENCE_BAR=0.10
+  Fixed-k grid (disjoint tune seed): k ∈ {2,4,8,12,16,24,32,48,64}
+
+ARMS:
+  GABA-SPARSE (adaptive)  = load-gated k-winner sparse write; k shrinks toward K_SPARSE as
+                            the store fills toward overload, relaxes to DIM when there's room.
+  DENSE                   = k=DIM (H_1532 default, no inhibition).
+  BEST-FIXED-K            = strongest single grid-tuned FIXED k (law discriminator).
+  ABL (const k)           = adaptive frozen to a CONSTANT k == best-fixed → reverts.
+  SHUFFLE                 = the LOAD-pressure signal permuted → sparsity at meaningless fill.
+
+FROZEN BARS (verdict computed mechanically from the 5 booleans, bars NOT moved after scoring):
+  A PRESENCE        : GABA-sparse − dense ≥ +0.10 on ≥2/3 seeds AND in mean
+  B EARNED-MAJORITY : (GABA − best-fixed) ≥ 0.5×(GABA − worst-fixed), worst-fixed-gap > 0
+                      (the 5-HT-style bar: ADAPTIVE must carry the MAJORITY over best FIXED k)
+  C ABL→fixed       : (GABA − abl) ≥ MARGIN  AND  |abl − best-fixed| < MARGIN
+  D SHUFFLE         : (GABA − shuffle) ≥ MARGIN
+  E NO-FAB          : best-fixed-k > dense (the capacity packing effect is genuinely real)
+
+VERDICT RULE (frozen):
+  🟢 GREEN     iff A ∧ B ∧ C ∧ D ∧ E  → adaptive capacity-multiplication is a CAPABILITY
+  🟠 AMBER     iff A ∧ E ∧ ¬B          → capacity real but best-fixed-k captures ≥half = KNOB
+  🧱 WALL_HOLDS otherwise               → sparse ties dense, no capacity gain at all
+
+HONEST PRIOR: if a fixed sparsity-k already captures the capacity gain (GABA's adaptive
+inhibition is a minority lever), this is 🟠 like 5-HT-timing — report it, DO NOT force green.
+DIRECTIONAL (numpy mirror, a_engine_native_learning hard-gate-1); engine §GabaSparse R2 = ING.
