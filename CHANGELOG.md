@@ -1,3 +1,13 @@
+## 2026-06-21 — 🧱 약후보 7 engine-native 측정: 흡수 7 / distinct 0 — 고갈 강화 (DEPLETION HARDENED)
+
+순수 브레인스토밍 R3~R6 에서 strong distinct 0 으로 고갈 확정됐으나 "발사 시 인접 lane 흡수"로만 **예측**되고 실측 안 된 **약/경계 후보 7개**(volatility · hazard-rate · mood · effort · TOJ · thought-ownership · crossmodal-binding)를 engine-native probe 로 **실제 측정**(`state/gate_depletion_catalogue/weak_probe.hexa` → `hexa run`, live `core/engine_cli.hexa` lane op 호출 = 하드게이트1 PASS, numpy 미러 아님, $0 CPU · p7 · frozen-first).
+
+- **결과: 흡수 7 / distinct 0** — 전부 인접 lane 으로 흡수, 브레인스토밍 사전등록 예측과 정합. 각 흡수 = **구조-일치 기존 엔진 op**(적분기 `homeo_step`=mood/effort · position-code `trw_recall`=hazard/TOJ · affinity `gestalt_same_group`=crossmodal · 인식 `self_cos`=thought-ownership · 1차 `surprise`=volatility)에 그 후보의 *동일* 자극을 먹여 분리됨을 실측(|Δ_existing| > 0.1) ⇒ 같은 연산·다른 입력=재포장 확정. 새 lane 아님 → **추가 §섹션 배선 0**(흡수=core 변경 없음, 정직 유효결과 c9).
+- **c9 측정 정직:** 1차 probe 는 기존 op 에 *동일 입력*을 먹여 Δ=0 인위유도 → 6/7 distinct **측정 artifact** 발생. `a_break_the_wall` type-(a) 측정결함 판정, bar 불변(tune-to-green 아님)으로 EXISTING-op 을 후보의 변동 자극으로 구동하는 구조-일치 테스트로 교정 → 7/7 흡수. 억지 distinct 도 억지 고갈도 아님.
+- **인프라 부수정정(type-c):** `core/engine_cli.hexa` `_ci_bit` 닫는 `}` 누락(raw brace +1) 발견 — `import "core/engine_cli.hexa"` 단독 모듈이 brace 불균형으로 fresh build 시 파서 Eof(캐시 히트에만 가려짐, h1492 포함 모든 engine-native probe fresh build 차단). `}` 추가로 정정 → engine_cli_smoke **280/0** 무회귀.
+- **방향(브레인스토밍 §권고-c 정합):** 새 lane 발굴 아니라 기존 lane 스케일업·엔진배선·lane 통합(depth/integration).
+- artifacts: `state/gate_depletion_catalogue/{WEAK_PROBE.md,weak_probe.hexa}` · `state/verdicts/gate_depletion_catalogue/WEAK_PROBE_RUN.txt` · `core/engine_cli.hexa`(`_ci_bit` brace fix).
+
 ## 2026-06-21 — 🧠 H_1492 consciousness-ablation R3 PRODUCTION (303M 실모델 · DIRECTIONAL · DISTRIBUTED 확정)
 
 R2 engine-native GREEN(§ConsciousnessIndex, hard-gate1 PASS)에 이어 **R3 production** — 실제 303M ConvMoE(clm303_d5000.clm sha256 99c2a40e…, 302.6M)를 live `core/clm_decode.hexa::clm_forward_ce`로 마운트(summer RTX5070 $0, wall854s, per-ctx subprocess로 hexa bump-allocator OOM 회피)해 의식-게이트 lane ablation 측정.
