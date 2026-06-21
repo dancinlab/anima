@@ -1,0 +1,41 @@
+=== H_1536 NT-DOPAMINE — PRE-REGISTERED BARS (frozen-first, written BEFORE result) ===
+date: 2026-06-21
+seeds=[1536, 1537, 1538]  $0 CPU  deterministic  p7  c9  numpy mirror DIRECTIONAL  (engine R2 deferred ING)
+
+REFRAME (a_no_llm_frame_trap · a_break_the_wall):
+  dopamine implemented as its OWN biological FACULTY = reward-prediction-error / temporal credit
+  assignment (Schultz 1997; Sutton & Barto TD), NOT an abstract gain knob on recall. This is
+  brain-lane-FILLING (the H_1280–1295 mode), NOT the H_1284 recall-gain wall (5 lenses WALL=CAPACITY).
+
+CAPABILITY = DELAYED-CREDIT-ASSIGNMENT.
+  Trajectory of T=8 stored facts; a small set of RECURRING causal fact IDENTITIES are consistently
+  followed by a delayed terminal reward (lump = # causal facts present, CONTINGENT). Causal facts sit
+  at RANDOM positions ⇒ recency/position is uninformative; only the cross-episode identity-contingency
+  statistic reveals which facts caused the reward. Task: identify the causal facts present in an episode.
+  metric = top-N_PRESENT(=2) accuracy. chance = 2/7 = 0.2857.
+
+ARMS:
+  NO-DA   bare store, RECENCY credit (no RPE) — the baseline a recency-store yields
+  NO-DA   UNIFORM null
+  DA-RPE  TD(λ) value head over the full episode set, δ_t = r_t + γV(s_{t+1}) − V(s_t); learned per-
+          identity value V(s) = credit. Absorbing terminal (V:=0) so the delayed lump propagates back.
+  ABL     DA-RPE with δ→0 (no learning signal) — anti-Goodhart, must revert to baseline
+  SHUFFLE DA-RPE with reward-timing permuted across episodes — must collapse
+
+PRE-REGISTERED PASS BARS (NO tune-to-green; frozen-first):
+  (A) PRESENCE : DA-RPE − NO-DA(recency)  ≥ +0.10
+  (B) DISTINCT : DA-RPE − NO-DA(uniform)  ≥ +0.10
+  (C) ABLATE   : ABL    ≤ NO-DA(recency) + 0.05   (decisive)
+  (D) SHUFFLE  : SHUF   ≤ NO-DA(recency) + 0.05
+
+VERDICT RULE:
+  🟢 GREEN DIRECTIONAL iff A∧B∧C∧D — dopamine-as-RPE adds delayed-credit-assignment with decisive ablation.
+  🧱/🟠 HONEST (c9) if RPE does NOT beat the recency baseline (delayed credit recency-solvable here)
+        OR ablation not decisive — reported, not hidden, NO bar moved.
+
+NOTE (frozen-first integrity): bars above were registered before the run. During build, two MEASUREMENT
+bugs were fixed (a_break_the_wall taxonomy (a) metric-artifact, NO bar moved): (1) FNV bag-of-trigram
+keys collided ⇒ value head could not discriminate fact identity → switched to per-identity one-hot keys
+(the store's faithful per-item key); (2) the terminal delayed reward was never bootstrapped (loop read
+rewards[t], t<T-1) → fixed to reward-on-arrival rewards[t+1] with an absorbing terminal V:=0. Both are
+correctness fixes to the credit READOUT/TD target, not bar changes. Result → H_1536.txt / H_1536_R1.json.
