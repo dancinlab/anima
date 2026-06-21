@@ -1,0 +1,125 @@
+{
+  "hypothesis": "H_1514",
+  "lens": "VSA/HRR algebraic role-filler binding (Plate1995/Kanerva2009/Gayler)",
+  "directional": true,
+  "engine": "numpy-mirror",
+  "torch_present": false,
+  "seeds": [
+    7,
+    4302,
+    4303
+  ],
+  "dim_main": 4096,
+  "arms": {
+    "vsa": {
+      "FALS_in": 5.0,
+      "ret_cmp": 1.0,
+      "ret_meas": 1.0,
+      "per_seed_fals": [
+        5,
+        5,
+        5
+      ]
+    },
+    "flat": {
+      "FALS_in": 0.0,
+      "ret_cmp": 0.0,
+      "ret_meas": 0.0,
+      "per_seed_fals": [
+        0,
+        0,
+        0
+      ]
+    },
+    "ablate": {
+      "FALS_in": 0.0,
+      "ret_cmp": 0.0,
+      "ret_meas": 0.0,
+      "per_seed_fals": [
+        0,
+        0,
+        0
+      ]
+    },
+    "shuffle": {
+      "FALS_in": 0.0,
+      "ret_cmp": 0.0,
+      "ret_meas": 0.0,
+      "per_seed_fals": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "capacity_curve": [
+    {
+      "dim": 256,
+      "fidelity": 1.0,
+      "ret_cmp": 1.0,
+      "ret_meas": 1.0,
+      "FALS_in": 5.0
+    },
+    {
+      "dim": 1024,
+      "fidelity": 1.0,
+      "ret_cmp": 1.0,
+      "ret_meas": 1.0,
+      "FALS_in": 5.0
+    },
+    {
+      "dim": 4096,
+      "fidelity": 1.0,
+      "ret_cmp": 1.0,
+      "ret_meas": 1.0,
+      "FALS_in": 5.0
+    },
+    {
+      "dim": 16384,
+      "fidelity": 1.0,
+      "ret_cmp": 1.0,
+      "ret_meas": 1.0,
+      "FALS_in": 5.0
+    }
+  ],
+  "capacity_stress_curve": [
+    {
+      "dim": 256,
+      "n_pairs": 128,
+      "retrieval_acc": 0.1224
+    },
+    {
+      "dim": 1024,
+      "n_pairs": 128,
+      "retrieval_acc": 0.5807
+    },
+    {
+      "dim": 4096,
+      "n_pairs": 128,
+      "retrieval_acc": 0.9948
+    },
+    {
+      "dim": 16384,
+      "n_pairs": 128,
+      "retrieval_acc": 1.0
+    }
+  ],
+  "bars": {
+    "A": true,
+    "B": true,
+    "C_nongating": true,
+    "D": true,
+    "E": true,
+    "retrieval_clean": true,
+    "A_fals": 5.0,
+    "flat_fals": 0.0,
+    "ablate_fals": 0.0,
+    "shuffle_fals": 0.0
+  },
+  "green_wall_broken": true,
+  "verdict": "WALL-BROKEN-GREEN (lens-level, DIRECTIONAL) — VSA/HRR algebraic role-filler binding WELDS comparator+measurable into ONE free-standing _is_falsifiable claim, crossing the H_1456 FALS_in bar=>=1.0 that 5 prior lenses got 0.0 on (VSA FALS_in=5.0 vs H_1456 0.0); flat-store INERT (B), ablate+shuffle COLLAPSE to 0.0 (D,E), capacity-law DIM-scaling shown (C PASS). c9 SCOPE: this proves an ALGEBRAIC binding SUBSTRATE welds the structure the flat-store 303M could not — a CONSTRUCTIVE break of the binding-capacity wall via a DIM-scaled substrate, NOT a claim the existing 303M LM now generates it. Engine-native wiring of §VSABinding into the live store = R2 follow-on (necessary to upgrade DIRECTIONAL->WIRED).",
+  "vs_h1456": {
+    "h1456_FALS_in": 0.0,
+    "h1514_vsa_FALS_in": 5.0
+  }
+}

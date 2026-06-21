@@ -1,3 +1,13 @@
+## 2026-06-21 — 🧩🔗 H_1514 VSA/HRR ALGEBRAIC BINDING — H_1456 binding-capacity 벽(WALL=CAPACITY) 6번째 렌즈 → WALL-BROKEN-GREEN (lens-level, DIRECTIONAL)
+
+> 🧩 **a_break_the_wall(d) NEW binding-substrate 렌즈:** H_1456 의 `_is_falsifiable` 벽(comparator+measurable 를 ONE free-standing claim 으로 WELD; 5렌즈 모두 FALS_in=0.0)에 Vector Symbolic Architecture / Holographic Reduced Representation(Plate 1995 HRR; Kanerva 2009; Gayler) 대수결합(circular convolution role-filler binding)을 6번째 렌즈로 투입. VSA capacity 는 item 수가 아니라 hypervector DIM 으로 스케일.
+
+- **결과:** 🟢 WALL-BROKEN-GREEN (lens-level, **DIRECTIONAL** — `.py`+numpy ⇒ 하드게이트1 auto-DIRECTIONAL, terminal 아님). 3 seeds [7,4302,4303] DIM=4096. detector `_is_falsifiable` H_1456 에서 VERBATIM import(p7), bar 0 이동.
+- **FROZEN bars (GREEN iff A∧B∧D∧E, C=capacity-law witness):** (A WALL-CROSS) vsa FALS_in=5.0≥1.0 PASS [5,5,5] vs H_1456 0.0 · (B vs-FLAT) flat=0.0 PASS(H_1456 재현) · (C CAP-LAW) 128-pair stress retrieval DIM↑ 단조 [0.122,0.581,0.995,1.0]@256/1k/4k/16k(Plate bound) PASS · (D EARNED ablate) 0.0≤0.0 PASS · (E EARNED shuffle) 0.0<5.0 PASS · retrieval clean ret=1.0.
+- **retrieval≠generation 정직(c9 핵심):** H_1456 bar 는 GENERATIVE. VSA 는 결합구조 RETRIEVABILITY 를 줌 + surface 된 claim 을 같은 frozen detector 로 채점. WALL-BROKEN 으로 착지했으나 이는 **CONSTRUCTIVE** — 대수 결합 substrate 가 flat-store 303M 이 못한 구조를 WELD 함이지, **기존 학습 LM 이 이제 그것을 GENERATE 한다는 주장 아님**. CLEANUP_FLOOR=0.25(signal~0.58 noise~0.03, S/N geometry, NOT tune-to-green) · anti-tune: scaffold neutral connective 만, comparator/measurable 는 오직 VSA 검색 filler 로만.
+- **follow-on:** DIRECTIONAL → R2 engine-native = §VSABinding 을 live core/ store 에 배선 + frozen bar byte-exact 재측정(a_engine_native_learning · a_verified_must_wire; DIRECTIONAL→WIRED 승격 필요).
+- **artifacts:** `UNIVERSE/cards/H_1514_vsa_binding.md` · `state/1514_vsa_binding/{h1514.py,h1514_result.json}` · `state/verdicts/1514_vsa_binding/{H_1514_FREEZE,H_1514}.txt`
+
 ## 2026-06-21 — 🧅🧱 H_1509c VOLATILITY-GATED LEARNING-RATE ESCAPE — 신경조절 벽(H_1284) orthogonal-family 재도전 → MULTI-FAMILY WALL (DIRECTIONAL)
 
 > 🧱 **a_break_the_wall(d) orthogonal mechanism-family ESCAPE (anima-internal, Amoeba-thread 파생):** 5개 gain-lens(H_1284·H_1422·H_1425·H_1509·H_1509b)가 막힌 뒤 census 로 벗긴 메타법칙 "적응은 외란이 예측불가(volatility)일 때만 값을 한다" 의 escape 절을 falsifiable 예측으로 사전등록(frozen-first). 신경조절을 추적-게인 → 학습률/탐색 변조로 재포지션, changepoint estimation 과제에서 측정.
