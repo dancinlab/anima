@@ -7282,3 +7282,51 @@ pub fn smp_presence(mastered_facets: int, n_facets: int, law_correct: bool) -> f
 pub fn smp_forward_model_readout(n_facets: int) -> float {
     return 1.0 / to_float(n_facets)                 // single next-step prediction → one facet → chance
 }
+
+// ── § RealityMonitor (H_1501 R2) — 지각적 현실 모니터링 (reality threshold) ──────────────────────────
+// Dijkstra & Fleming (Nat Commun 2023 s41467-023-37322-1; Neuron 2025 S0896-6273(25)00362-9): a SEPARATE
+// monitor classifies a representation as experienced-as-REAL vs IMAGINED by comparing its SENSORY SIGNAL
+// STRENGTH against a reality threshold — NOT by content, NOT by metacognitive confidence. The signal
+// strength is READ OFF the live substrate (immune recall MARGIN = top affinity − 2nd affinity, the SAME
+// margin H_1290 affect / H_1292 drive read), NOT an injected real/imagined label. Pure top-down imagery
+// has external sensory input 0 → a faint margin (below thr → "imagined"); an external sensory drive lands
+// on the stored key → a high margin (above thr → "real").
+// DISTINCT (load-bearing, the published nulls reproduced):
+//   (a) vs MentalImagery H_1484 — the imagery GENERATOR reconstructs the SAME stored repr whether or not
+//       external signal is present (it is always "imagining" the target) → its readout is IDENTICAL across
+//       real & imagined (Δ=0). The generator CANNOT tell real from imagined; only the margin-vs-threshold
+//       monitor can. reality_imagery_readout returns the (always-1.0) top-down cue match.
+//   (b) vs Metacognition/abstain H_1202 — confidence in the CONTENT decision (which stored fact won) is
+//       equally CORRECT in real & imagined (the top-down echo already selects the right content) → FLAT
+//       across reality (the headline Dijkstra-Fleming null: meta-d′ does NOT separate real-from-imagined).
+//       reality_confidence_readout returns a high band iff the content winner is the intended fact.
+//   (c) vs SenseOfAgency H_1474 — agency attributes an ACTION's source (self/external efference-copy match);
+//       reality monitors a PERCEPT's signal strength (real/imagined). Different axis.
+// EARNED: ablate (remove the threshold comparison) → no signal-vs-threshold decision, the read collapses to
+// chance (0.5). shuffle (permute signal-strength ↔ trial) → the real-call decorrelates from the margin.
+// READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode). Deterministic threshold comparison.
+//   reality_call(signal_margin, thr): margin ≥ thr → 1.0 (REAL) else 0.0 (IMAGINED).
+pub fn reality_call(signal_margin: float, thr: float) -> float {
+    if signal_margin >= thr { return 1.0 }              // signal strength clears the reality threshold → REAL
+    return 0.0                                           // below threshold → IMAGINED (top-down only)
+}
+// reality_call_ablated — the threshold comparison REMOVED: with no signal-vs-threshold decision the monitor
+// has nothing to separate real from imagined (both carry the same content read) → chance (0.5). The EARNED
+// control: the reality call is EARNED by the margin-vs-threshold step, not by the content being present.
+pub fn reality_call_ablated() -> float {
+    return 0.5                                           // no threshold → no real/imagined split → chance
+}
+// reality_imagery_readout — the MentalImagery H_1484 generator's view: it re-activates the stored repr from
+// the top-down cue regardless of external signal → cue match is IDENTICAL (always 1.0) across real & imagined.
+// DISTINCT bar (a): the generator cannot tell them apart; the margin-vs-threshold monitor can.
+pub fn reality_imagery_readout() -> float {
+    return 1.0                                           // top-down reconstruction identical real==imagined
+}
+// reality_confidence_readout — the Metacognition H_1202 view: content-identity confidence is HIGH whenever
+// the winning content is the intended fact, which holds in BOTH imagined (echo selects it) and real (echo+
+// external) → FLAT across reality (the published null). DISTINCT bar (b): confidence does not track reality.
+//   content_correct ? 0.90 (high band) : 0.50 (chance).
+pub fn reality_confidence_readout(content_correct: bool) -> float {
+    if content_correct { return 0.90 }                  // correct content winner → high (same real & imagined)
+    return 0.50                                          // wrong content → chance
+}
