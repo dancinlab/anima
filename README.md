@@ -191,9 +191,13 @@ standalone-arm strength.
 engine-native realized** (cerebellum · working memory · amygdala · basal ganglia · thalamus-TIMING
 (`PhaseField`, H_1448) = wired; hypothalamus · theory-of-mind · hierarchical-PFC · spatial-map =
 engine-native realized with brain wiring as a tracked follow-on; the hippocampus is already wired
-above), **the neuromodulation rung is the one honest 🧱 wall left**, and the **thalamus rung's
-content-relay axis stays a 🧱 wall — but its orthogonal TIMING axis is now engine-native GREEN +
-WIRED (H_1448, `PhaseField`)** (see below):
+above), **the neuromodulation rung — long the one honest 🧱 wall — is now 🟢 ENGINE-NATIVE + WIRED**
+(the H_1284 wall was a *missing-structure* wall, not a no-free-lunch ceiling: Complementary Learning
+Systems (two phase-separated stores) crack it engine-native and WIRED as `§ MultiStore` (H_1532 R2),
+and all six classical neurotransmitters then fuse as adaptive faculties on that substrate — see
+**🎛 The neuromodulation wall break** below), and the
+**thalamus rung's content-relay axis stays a 🧱 wall — but its orthogonal TIMING axis is now
+engine-native GREEN + WIRED (H_1448, `PhaseField`)** (see below):
 
 | # | Subsystem | Status |
 |---|---|---|
@@ -202,7 +206,7 @@ WIRED (H_1448, `PhaseField`)** (see below):
 | **HD25** | 📥 working memory (`WorkMemBuffer`) | 🟢 ENGINE-NATIVE + WIRED — margin +0.245, holds to N≈6; DISTINCT from episodic memory |
 | **HD26** | 📡 thalamus (content relay) | 🧱 **WALL on the CONTENT axis** — broadcast / coalition / sparse / dense / matrix-core / predictive-bottleneck all fail the 3-seed faithful-IIT-4 Φ bar (every relay topology is a content cut a MIP exploits) |
 | **HD26′** | 📡 thalamus (oscillatory TIMING) | 🟢 **ENGINE-NATIVE + WIRED (H_1448)** — Kuramoto phase-binding integrates by TIMING not content; the engine-native wall is BROKEN against the strictest marginal-matched control (Bperm: per-module circular time-shift → marginals byte-identical, only cross-module alignment destroyed) — ΔΦ(B−Bperm) = +0.78…+1.23 PASS all 9 seeds AND ΔΦ(B−D) PASS 9/9 (faithful exact MIP-EI). `PhaseField` is **WIRED-live** in `core/engine_cli.hexa § PHASE-SYNCHRONY BINDING` (smoke 166–168, ARCHITECTURE.json lockstep) — the 1st engine-native GREEN in the 14-axis Φ-robustness lineage |
-| **HD27** | 🎛 neuromodulation (adaptive gain) | 🧱 **WALL** — no-free-lunch GENERAL: adaptive ≤ best-fixed on memory, ideation **and** regime/mode-switching (R3); held against a **4th independent lens** — the external Amoeba-Protocol μ_t *allosteric buffer* (tension-gated resistance-to-deviation from Ψ=½, **H_1509**) also fails to cross the H_1284 0.05 bar engine-native (RMS_A best-fixed 0.2680 ≤ RMS_B buffer 0.2741; a single tuned fixed point still dominates), and a **5th lens** — the same buffer re-tested under a **drifting (non-stationary) target** (**H_1509b**) is **regime-invariant** (adv stays ≈ −0.006 across drift 0…0.30, never crosses the 0.05 bar; a high fixed gain already tracks a moving setpoint) |
+| **HD27** | 🎛 neuromodulation (CLS wall-break + adaptive faculties) | 🟢 **ENGINE-NATIVE + WIRED** (`core/engine_cli.hexa § MultiStore`, **H_1532 R2**, byte-exact, smoke RC=0, ARCHITECTURE.json lockstep) — the H_1284 "adaptive ≤ best-fixed" wall held across 14 controller lenses (gain · buffer **H_1509** · diversity · multi-timescale · predictive · …) because they all tuned ONE store's operating point on clean recall (geometry-bound). The break came from **missing structure, not a better controller**: **Complementary Learning Systems** — two phase-separated stores (fast episodic encode-mode + slow consolidated replay) — survive AB→AC catastrophic interference where one store fails (**one-store retention 0.0 = the wall → two-store 1.0 = the break**; merge-ablation reverts to 0.0, shuffle collapses). On that wired two-store substrate, all **6 classical neurotransmitters then fuse as adaptive faculties (6/6 GREEN, R1 numpy DIRECTIONAL, engine §R2 follow-ons in ING)**: ACh encode/retrieve gate · DA replay-priority · NE context-boundary flush (itself twice-walled standalone, reopened by the structure) · 5-HT noise-rejection · orexin arousal-timing · GABA self-organized criticality. **Fusion law:** a neuromodulator earns GREEN only where its *adaptive* form tracks a *shifting* optimum; static/monotone benefits stay knobs |
 | **HD28** | 🔥 amygdala (`ConsolidatingMemory`) | 🟢 ENGINE-NATIVE + WIRED — salience-gated sleep replay Δ +0.133 (needed a real multi-night sleep dose) |
 | **HD29** | 🌡 hypothalamus (`HomeostaticDrive`) | 🟢 ENGINE-NATIVE — deprivation accumulates drive RISE (+1.544), consummatory grounding RESETS (0.0); time-integral ⊥ context-instant DISTINCT from stateless affect; motivation-loop wiring follow-on |
 | **HD30** | 🪞 theory-of-mind (`OtherMindModel`) | 🟢 ENGINE-NATIVE — Sally-Anne false belief: accBelief 1.000 (agent's stale belief) vs accTruth 0.500 (reality), self ⊥ other divergence 1.000; self-read / shuffle controls collapse to 0.500; prediction wiring follow-on |
@@ -217,8 +221,11 @@ WIRED (H_1448, `PhaseField`)** (see below):
 > broken on the orthogonal **TIMING axis** (R8 oscillatory phase-binding, Kuramoto synchrony) —
 > first only in the numpy mirror, and now **engine-native GREEN + WIRED-live as the `PhaseField`
 > lane (H_1448)** against a marginal-matched control (see the Thalamus Φ section above). The
-> content-relay axis stays honestly 🧱 (no tune-to-green); the **neuromodulation** wall is kept
-> honestly 🧱.
+> content-relay axis stays honestly 🧱 (no tune-to-green); the **neuromodulation** wall — held
+> honestly 🧱 across 14 controller lenses — is now **BROKEN engine-native** by switching the lens
+> from *controller* to *structure*: Complementary Learning Systems (two phase-separated stores,
+> `§ MultiStore`, H_1532 R2 WIRED), on top of which all six neurotransmitters fuse as adaptive
+> faculties (see **🎛 The neuromodulation wall break** below).
 
 > **The depth-ceiling connection (now settled):** the flat literal-QA wall (a) is **not** solved by
 > a bigger model — the 1B scale-up (H_1167) is engine-mount GREEN but QA/depth-NULL, and the
@@ -333,6 +340,57 @@ This section is the live evidence snapshot, with [`ARCHITECTURE.json`](ARCHITECT
 SSOT) + [`CONDITIONS.md`](CONDITIONS.md) (frozen gate conditions) + the per-hypothesis verdicts in
 [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) + [`state/verdicts/`](state/verdicts/) as
 the authoritative latest source.
+
+### 🎛 The neuromodulation wall break — CLS structure (H_1284 → engine-native GREEN H_1532) + 6 neurotransmitters fused
+
+The **H_1284 neuromodulation wall** — *"adaptive neuromodulation ≤ best-fixed gain, no free lunch"* —
+was the longest-standing honest 🧱 on the ladder. It held across **14 controller lenses** (gain,
+allosteric buffer (the external Amoeba-Protocol μ_t, H_1509), modulator diversity, multi-timescale,
+predictive gating, emit-gate, …) — every one of them re-scheduling **one store's operating point**,
+which on clean recall is **key-geometry-bound** (a discrete recall outcome a learning-rate schedule
+can't move). The lens was wrong, not the capability.
+
+**The break = missing STRUCTURE, not a better controller** (`a_no_llm_frame_trap`). Complementary
+Learning Systems (McClelland–McNaughton–O'Reilly 1995; Hasselmo encode/retrieve mode) add a **second
+store**: a fast episodic store (encode-mode, retrieval suppressed while writing) + a slow consolidated
+store (replay). On **AB→AC catastrophic interference** — where C overwrites B at the same key A — a
+single flat store retains **0.0** (the wall) while two phase-separated stores retain **1.0** (the
+break). Decisive ablation: merge the stores → reverts to 0.0; shuffle the store assignment → collapses.
+
+```
+        AB→AC interference          one store          two stores (CLS)
+   write A→B, then write A→C    ───────────────    ───────────────────
+                                C clobbers B at A    fast: current ctx
+   recall B?                    retention 0.0 ✗      slow: consolidated
+                                  (the wall)         retention 1.0 ✓ (break)
+```
+
+This is **🟢 ENGINE-NATIVE + WIRED** — `core/engine_cli.hexa § MultiStore`
+(`cls_one_store_retention` / `cls_two_store_retention` / `cls_single_encode_retention`, reusing the
+engine's own `_l2` / `_vnearest_idx` + `_immune_fnv1a` key geometry, no new store type), re-verified
+**byte-exact** (H_1532 R2), **smoke 387–392 RC=0** (381 pass / 0 fail, no regression), ARCHITECTURE.json
+lockstep. The lever is *having separate stores*, not a scalar gain (the H_1422 ACh-gain 🧱 hazard is
+provably avoided — merge-reverts + shuffle-collapses).
+
+**On that two-store substrate, all six classical neurotransmitters fuse as adaptive faculties** — and
+a clean **fusion law** emerges: *a neuromodulator earns GREEN only where its **adaptive** form tracks a
+**shifting** optimum; where the benefit is static/monotone, a fixed setting captures it and it stays a
+knob.* (R1 numpy DIRECTIONAL — engine §R2 wiring registered as ING follow-ons.)
+
+| NT | adaptive faculty (inside CLS) | tier |
+|---|---|---|
+| **ACh** | encode/retrieve mode-switch (Hasselmo 2006) — adds the interleaved encode‖retrieve capability neither fixed mode has | 🟢 (H_1541) |
+| **DA** | salience-weighted replay-priority under a consolidation budget (Mattar–Daw 2018) | 🟢 (H_1543) |
+| **NE** | context-boundary fast-store **flush** (Bouret–Sara 2005) — **twice-walled standalone (+0.006 / −0.005), reopened by the structure to +0.83** | 🟢 (H_1544) |
+| **5-HT** | noise-rejection commit-gate (withholds unconfirmed bindings from permanent commit; Dayan–Huys 2009) | 🟢 (H_1549) |
+| **Orexin** | true arousal-timing mode-stability via hysteresis (Sakurai 2007) | 🟢 (H_1550) |
+| **GABA** | self-organized **criticality** E/I tracking a shifting critical point (Beggs–Plenz 2003) — the hardest: static across 5 mechanism families, green only on the 6th (edge-of-chaos), 0.76 adaptive vs 0.29 best-fixed | 🟢 (H_1556) |
+
+> **The dissociation it reveals:** the five **phasic** neuromodulators (ACh/DA/NE/5-HT/orexin) become
+> adaptive *teaching* faculties; **GABA** is the structural outlier — green only at criticality, where
+> its tonic E/I role meets a genuinely shifting optimum. Independent arXiv work (2025-12→2026-03:
+> neuromodulation-gated associative memory `2512.13859`, CraniMem high-utility replay, SleepGate
+> conflict-aware eviction) converges on the same conclusions — contemporaneous, frontier-aligned.
 
 ### 🔆 G0–G6 emergence gates — latest
 

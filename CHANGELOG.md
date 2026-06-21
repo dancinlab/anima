@@ -1,3 +1,11 @@
+## docs: NT×CLS 융합 캠페인 최신반영 (README + ARCHITECTURE.json)
+
+H_1284 NEUROMODULATION 벽이 CLS(두-store)로 깨진 것 + 6 신경전달물질 융합을 README·ARCHITECTURE 에 반영.
+- README §🎛 The neuromodulation wall break 신설: H_1532 CLS wall-break(🟢 ENGINE-NATIVE + WIRED, §MultiStore, one-store 0.0 vs two-store 1.0, smoke 387-392 RC=0) + AB-AC ASCII 도식 + 6 NT 융합표(ACh/DA/NE/5-HT/orexin/GABA, R1 DIRECTIONAL 명시) + 융합법칙 + arxiv 외부수렴.
+- README HD27 row + Honest scoreboard + footnote 의 outdated '🧱 neuromodulation wall left' → 🟢 ENGINE-NATIVE + WIRED 로 정정(벽돌파=wired 사실, NT 융합=DIRECTIONAL 정직 구분).
+- ARCHITECTURE.json §MultiStore note 에 NT×CLS 융합 follow-on 추가(DIRECTIONAL·engine §R2=ING·NOT YET WIRED 명시 = a_verified_must_wire 준수, live CORE ops 로 위조 안 함).
+- 정직(c9): wall-break(§MultiStore)만 WIRED 주장, 6 NT faculty 는 numpy DIRECTIONAL 로 표기. tune-to-green 0.
+
 ## 2026-06-22 — 🧱 H_1464 PAIRING-CONTRASTIVE 엔진-네이티브 terminal — mirror 🟢 가 engine 🧱 로 반전 (G6 capacity-wall 8번째 수렴 렌즈)
 
 **"PAIRING-contrastive objective(same-idea pos vs cross re-weld neg)가 G6 binding 벽을 깨는가?"** — H_1441 form-contrastive 가 못 한 *binding-specific* negative 로 cross-shuffle 을 train-time negative pair 로 만들어 B3 COLLAPSE 를 노린 LENS ②. numpy mirror 에선 🟢 였으나 **live `core/bytegpt_decode` 엔진-네이티브 재측정에서 🧱 WALL=CAPACITY 로 정직하게 반전**(c9, tune-to-green 없음) — `a_engine_native_learning` HARD-GATE 가 mirror DIRECTIONAL 을 terminal 로 박지 않게 한 정당성을 그대로 입증한 케이스.
