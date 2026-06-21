@@ -1,0 +1,72 @@
+H_1464 — PAIRING-CONTRASTIVE binding objective (same-idea pair vs cross re-weld)
+ENGINE-NATIVE 5-bar (B3 cross-shuffle) — IN-PROGRESS (LEAK-FIX VERIFIED, full batch decoding)
+date: 2026-06-21
+
+STATUS: NOT a terminal verdict yet (c9 / a_engine_native_learning HARD-GATE). Honest IN-PROGRESS.
+The numpy mirror stays DIRECTIONAL (🟢 BROKE=LEARN-GAP). Terminal 🟢/🧱 stamped only from the
+completed engine-native frozen 5-bar over the 90 decoded fragments (B3 cross-shuffle decisive).
+
+=== ROOT-CAUSE OF THE PRIOR BLOCK (now FIXED) ===
+The decode runtime had an UNBOUNDED per-fragment memory leak: hexa runtime's packed-array
+(farr/farr32/farr_int) bulk buffers used a noop-free bump allocator → every transient buffer a
+long-running decode allocated per forward was never reclaimed → RSS climbed ~2GB/min (91→125GB),
+OOM-killed at ~frag 5-8 on ANY host. No host could finish 90 frags in one process.
+
+=== THE FIX (PR#3745 MERGED 2026-06-21T03:54Z, dancinlab/hexa-lang) ===
+FARR-NOOP-FREE-DECODE-LEAK: packed-array bulk buffers routed to the REAL reclaiming libc allocator
+(__libc_calloc / __libc_free) via the HXFARR_CALLOC macro shim in self/runtime.c (restore_frozen_seeds
+post-restore patch). farr-scope only; the compiler's one-shot bump allocator is unchanged.
+Measured upstream: 20k×1.5MB iters — noop-free 29.7-30.3GB linear vs real __libc_free FLAT 5.2MB.
+
+=== FIXED-HEXA INSTALL ON POOL (summer, 30GB RTX5070, glibc/Linux) ===
+- ~/.hx/src updated to merged main (commit 593172e6, includes the fix).
+- restore_frozen_seeds restored self/runtime.c WITH the HXFARR patch (5 markers).
+- runtime.a rebuilt via stage_resolve_runtime_a. NOTE: the release-parity native-asm path left
+  rt_array_arena_alloc_items_native / rt_map_set_inplace_native UNDEFINED at the consumer link
+  (newer runtime symbols not in the frozen .s seeds). FIX: rebuilt with the native array/map path
+  forced OFF (HEXA_ZEROC_RT_HI=0 HEXA_RT_ARRAY_NATIVE=0 HEXA_RT_MAP_NATIVE=0) so the C bodies define
+  those symbols. Result: HXFARR present (nm __libc_free), NATIVE_UNDEF=0, ARRAY_DEFINED=1. Staged to
+  ~/.hx/bin/build/runtime.a; stale ~/.hexa-cache/hexa_run.ac3ea... cleared so the decode relinks fresh.
+
+★ LEAK-FIX VERIFIED END-TO-END (2026-06-21 ~14:00Z): single-fragment decode (pairing.bin frag 7|in|0,
+  gen=110 top_k=40 temp=0.7) via engine_decode_batch_cli.hexa (→ live core/bytegpt_decode.hexa) on
+  summer: BATCH_DONE 1 fragments, PEAK_RSS_MB=22276 FLAT across the entire run (100 samples, NOT
+  climbing — previously NEVER finished one fragment). Output byte-valid + falsifiable:
+  "the river under load. the amount of the sample is greater whenever the river decreases. if the
+   sample grows, t..." → FALS=1 by the FROZEN h1305 detector. RSS 22GB < 30GB → fits summer at conc=1.
+
+=== FULL BATCH DECODE LAUNCHED (2026-06-21 ~14:02Z) ===
+/tmp/h1464_batch.sh (setsid nohup, survives SSH drops) runs 3 arms SEQUENTIALLY (22GB/proc, can't
+parallelize on 30GB): pairing.bin → shuffle.bin → base.bin, each = its 30-frag jobs.tsv in ONE
+load-once process via engine_decode_batch_cli.hexa. Commit-early/resumable (appends per fragment).
+Outputs: /tmp/h1464out/out_{pairing,shuffle,base}.txt. master log: /tmp/h1464_master.log.
+ETA ~15h (~10 min/frag latency-bound no-KV-cache O(T^2) CPU forward; cuBLAS gives no speedup).
+
+INPUTS VERIFIED (sha256 on summer == local == prior note):
+  base.bin    5c303f026f134e4bc4faf516ef5298bd26269e19693696a73a5058e6ffa5319e
+  pairing.bin 3cd60673791fdc93e1e38179d9f9ab46ba52f812e69405531c3ad9bf3577dae1
+  shuffle.bin 967568a07cc6a87d17c555be3364fb3362c5e933d6482f89163ffb05950846a0
+  engine_decode_batch_cli.hexa ac3ea6b72542b3395526258b29609a9fea29a2cbdee074b8e157890f8099d1d1
+  core/bytegpt_decode.hexa     2e6c3209e10205c2a13abc038d4e93ffb371f01cabc045a67da0dd04198a0907
+jobs.tsv = 30 lines (5 in + 5 ho) × 3 seeds [7,4302,4303].
+
+FROZEN 5-BAR RUBRIC (UNMOVED — c9 / same bars as the mirror & H_1441):
+  🟢 TERMINAL = WALL=LEARN-GAP iff B1(FALS_in>=1) ∧ B2(DIST_in>=5) ∧
+       B3(cross-shuffle COLLAPSE: FALS_shuf < FALS_in) ∧ B4(FALS_ho>=1) ∧ B5(FALS_in>=base+1) ∧
+       CTRL form-only no-collapse.
+  🧱 TERMINAL = WALL=CAPACITY otherwise (B3 no-collapse = pairing objective did NOT install binding).
+  B3 cross-shuffle COLLAPSE is the decisive target (H_1435/36/37/1441 all FAILED B3 engine-native).
+
+HARVEST + SCORE recipe (when out_{pairing,shuffle,base}.txt each = 30 frags):
+  on summer: cd ~/anima && G6_PROBES=~/anima/state/universe-probes python3 \
+     state/1464_pairing_contrastive_bind/h1464_engine_native.py --score \
+     /tmp/h1464out/out_pairing.txt /tmp/h1464out/out_shuffle.txt /tmp/h1464out/out_base.txt
+  → prints FROZEN 5-bar + 🟢/🧱 → pull raw out_*.txt to local + score stdout to H_1464_ENGINE_NATIVE.txt.
+
+ARGMAX==torch parity: precedent H_1441 (same core/bytegpt_decode engine + same v0.2 .bin layout):
+  "byte-faithful (argmax 32 == torch golden, logits ~1e-5)". A fresh 1-shot re-check on summer
+  (torch 2.11 + pairing.pt) is owed before terminal stamp.
+
+RESUME (if this session ends): the batch is detached (setsid). poll /tmp/h1464_master.log for
+ALL_ARMS_DONE; if a host reboot lost it, re-launch /tmp/h1464_batch.sh (resumable, but it overwrites
+out files — to resume mid-run, edit jobs.tsv to remaining frags). Then score + stamp terminal.
