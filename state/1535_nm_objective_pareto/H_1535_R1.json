@@ -1,0 +1,62 @@
+{
+  "m_fixed": 0.2,
+  "m_opt": {
+    "R_PRECISION": 0.2,
+    "R_RECALL": 0.6,
+    "R_BALANCED": 0.2
+  },
+  "MARGIN": 0.05,
+  "OOS_RATE": 0.3,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "cost_ratios": {
+    "R_PRECISION": [
+      5.0,
+      1.0
+    ],
+    "R_RECALL": [
+      1.0,
+      5.0
+    ],
+    "R_BALANCED": [
+      2.0,
+      2.0
+    ]
+  },
+  "regimes": {
+    "R_PRECISION": {
+      "FIXED": 1.0,
+      "ADAPT": 1.0,
+      "ABL": 1.0,
+      "ADAPT_minus_FIXED": 0.0,
+      "ADAPT_minus_ABL": 0.0
+    },
+    "R_RECALL": {
+      "FIXED": 0.0,
+      "ADAPT": 0.9918,
+      "ABL": 0.0,
+      "ADAPT_minus_FIXED": 0.9918,
+      "ADAPT_minus_ABL": 0.9918
+    },
+    "R_BALANCED": {
+      "FIXED": 1.0,
+      "ADAPT": 1.0,
+      "ABL": 1.0,
+      "ADAPT_minus_FIXED": 0.0,
+      "ADAPT_minus_ABL": 0.0
+    }
+  },
+  "wins_over_FIXED+MARGIN": [
+    "R_RECALL"
+  ],
+  "shift_decisive": [
+    "R_RECALL"
+  ],
+  "no_harm": true,
+  "n_wins": 1,
+  "n_shift": 1,
+  "verdict": "PARTIAL"
+}
