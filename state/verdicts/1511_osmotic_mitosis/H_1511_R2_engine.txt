@@ -1,0 +1,16 @@
+=== H_1511 OSMOTIC-MITOSIS R2 engine-native — core/engine_cli_smoke.hexa cases 323-327 ===
+engine ops: §OsmoticMitosis in core/engine_cli.hexa (osmotic_store_new / osmotic_should_split / osmotic_learn / osmotic_retains / osmotic_cells / _kl_div)
+on origin/main b2c0368de (after H_1509/H_1510 landed); deterministic: 327 pass / 0 fail
+
+PASS  case_323_osmotic_no_overwrite want=true got=true
+PASS  case_324_osmotic_vs_standard want=true got=true
+PASS  case_325_osmotic_ablate_beta0 want=true got=true
+PASS  case_326_osmotic_shuffle_kl want=true got=true
+PASS  case_327_osmotic_capacity_honest want=true got=true
+INFO  H_1511 osmotic-mitosis (R2 WIRED): ret osmotic=1.0 vs standard=0.5 | ablate(b=0)=0.5 shuffle=0.5 | cells osm=6 std=4 cap=6 — KL>C split-TIMING avoids OVERWRITE of a grounded fact (SPLIT-timing, NOT a capacity-wall break, H_1456); SOURCE external Amoeba Protocol
+--- engine_cli smoke summary: 327 pass / 0 fail ---
+
+=== engine-native probe (state/1511_osmotic_mitosis/probe.hexa) ===
+ret_std=0.5 ret_osm=1.0 ret_abl=0.5 ret_shf=0.5
+cells std=4 osm=6 shf=6 cap=6
+klC=1.750044623277915

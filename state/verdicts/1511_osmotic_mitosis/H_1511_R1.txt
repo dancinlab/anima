@@ -1,0 +1,16 @@
+=== H_1511 OSMOTIC-MITOSIS — R1 numpy mirror (DIRECTIONAL) ===
+SOURCE: external proposal — Amoeba Protocol (KL>capacity osmotic mitosis)
+seeds=[4511, 4512, 4513]  DIM=8 VDIM=6 SPLIT_THRESH=0.3 C=0.3 beta=1.0 MAX_CELLS=38
+--- per-seed ---
+  seed 4511: ret std=0.500 osm=1.000 abl(b=0)=0.500 shuf=0.500 | cells std=24 osm=36 (cap 38)
+  seed 4512: ret std=0.500 osm=1.000 abl(b=0)=0.500 shuf=0.500 | cells std=24 osm=36 (cap 38)
+  seed 4513: ret std=0.500 osm=1.000 abl(b=0)=0.500 shuf=0.500 | cells std=24 osm=36 (cap 38)
+--- mean / 3 seeds ---
+  (A NO-OVERWRITE)   ret_osmotic   = 1.000   (bar >= 0.9)   PASS
+  (B vs STANDARD)    osm - std     = +0.500  (bar >= 0.5)  PASS
+                     ret_standard  = 0.500
+  (C CAPACITY-HONEST) cells std=24.0 osm=36.0 cap=38 (SAME cap both arms -> gain is timely SPLIT, NOT raised capacity)
+  (D EARNED ablate)  ret_ablate    = 0.500   (<= std+0.1=0.600)  PASS
+  (E EARNED shuffle) ret_shuffle   = 0.500   (<= std+0.1=0.600)  PASS
+--- VERDICT (R1 DIRECTIONAL): GREEN  (A&B&D&E; C honesty-only) ---
+  NOTE: osmotic AVOIDS overwrite that standard trigger commits (split-timing gain, NOT capacity).
