@@ -1,0 +1,39 @@
+{
+  "id": "H_1507",
+  "slug": "field_libido",
+  "rung": "R1_numpy_mirror_DIRECTIONAL",
+  "A_want_sham": 0.9,
+  "A_want_high": 1.5479999999999998,
+  "A_field_raises_wanting_delta": 0.6479999999999998,
+  "B_like_sham": 0.9,
+  "B_like_high": 0.9,
+  "B_like_delta": 0.0,
+  "C_want_low": 0.25199999999999984,
+  "C_high_delta": 0.6479999999999998,
+  "C_low_delta": -0.6480000000000001,
+  "D_want_drug": 1.3528209196750174,
+  "D_field_delta": 0.6479999999999998,
+  "D_drug_delta": 0.45282091967501736,
+  "D_field_focal": 0.17999999999999994,
+  "D_field_global": 0.0,
+  "D_drug_focal": 0.0,
+  "D_drug_global": 0.12578358879861595,
+  "E_sham_change": 0.0,
+  "E_shuf_gfield": 0.0,
+  "E_shuf_change": 0.0,
+  "passA": true,
+  "passB": true,
+  "passC": true,
+  "passD": true,
+  "passE": true,
+  "verdict": "GREEN",
+  "green_rule": "A and B and C and E (D is the headline route-dissociation, reported)"
+}
+
+=== H_1507 FIELD×LIBIDO FROZEN BARS ===
+(A FIELD-RAISES-WANTING) Δwant high-vs-sham = +0.6480 >= 0.3 -> PASS
+(B WANTING≠LIKING) Δlike = 0.0000 <= 0.02 (while wanting raised) -> PASS
+(C FREQ-DIRECTIONAL) high=+0.6480 low=-0.6480 (opposite sign) -> PASS
+(D FIELD-vs-DRUG) field Δwant=+0.6480 drug Δwant=+0.4528 | field focal/global=0.1800/0.0000 drug focal/global=0.0000/0.1258 -> PASS
+(E EARNED) sham change=0.0000 shuffle change=0.0000 -> PASS
+VERDICT: GREEN  (rule: A and B and C and E (D is the headline route-dissociation, reported))

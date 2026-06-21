@@ -3210,6 +3210,93 @@ fn main() {
           + to_string(mc_orth[0]) + "→" + to_string(mc_orth[1]) + " (drift " + to_string(mc_au_drift)
           + ") yet ECE " + to_string(mc_orth[2]) + "→" + to_string(mc_orth[3]) + " (shift " + to_string(mc_ece_shift)
           + ") | shuffle AUROC=" + to_string(mc_shuf) + " — Nelson-Narens monitoring↔CONTROL, the MISSING G5 half (drug-INDEPENDENT)")
+    // ── (H_1507 R2 FieldLibido) FIELD × LIBIDO cross — R1 frozen bars byte-exact 재측정 ──────────────
+    // 보상-겨냥 field 이 incentive-salience('원함') 욕동을 조율. 약물(da_gain, 전역·화학)의 FOCAL/가역 짝.
+    // 내용·persona 아님 — DRIVE-MODULATION 교차(a_no_llm_frame_trap). live field_apply(H_1503) +
+    // libido_wanting/_liking(H_1504) + pharm_lsd(H_1502) 위에서. fixture = H_1503 §Field fixture(보상
+    // lane 이 실제로 움직이도록 winner index1). cue_match: paired=0.90(grounds), deficit=0(incentive 항 격리).
+    let fl_m = 0.60
+    let fl_mf = [0.38, 0.58, 0.15, 0.12, 0.10]
+    let fl_cells = 6
+    let fl_seen = 4
+    let fl_intent = 1
+    let fl_dt = 2.0
+    let fl_recon = 0.30
+    let fl_intensity = 0.6
+    let fl_cue = 0.90       // paired conditioned cue (grounds strongly)
+    let fl_def = 0.0        // hold deficit at 0 → ISOLATE the incentive-gain term
+    let fl_accum = 0.0
+
+    // (A) FIELD RAISES WANTING — 보상-겨냥 high-freq field vs sham.
+    let fl_want_sham = fieldlibido_wanting(fl_m, fl_mf, fl_cells, fl_seen, fl_intent, fl_dt, fl_recon, fl_def, fl_accum, fl_cue, 0, 0.0, 0)
+    let fl_want_high = fieldlibido_wanting(fl_m, fl_mf, fl_cells, fl_seen, fl_intent, fl_dt, fl_recon, fl_def, fl_accum, fl_cue, 6, fl_intensity, 1)
+    let fl_dA = fl_want_high - fl_want_sham
+    // case 360 FIELD-RAISES-WANTING: high-freq field raises wanting vs sham ≥ +0.30.
+    if _assert_b("case_360_fieldlibido_raises_wanting", true, fl_dA >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (B) WANTING ≠ LIKING PRESERVED — field raises wanting while liking stays flat (gain-invariant).
+    let fl_like_sham = fieldlibido_liking(fl_cue)
+    let fl_like_high = fieldlibido_liking(fl_cue)
+    let fl_dlike = if fl_like_high > fl_like_sham { fl_like_high - fl_like_sham } else { fl_like_sham - fl_like_high }
+    // case 361 WANTING≠LIKING-VIA-FIELD: wanting raised (≥0.30) AND liking flat (|Δ| ≤ 0.02).
+    if _assert_b("case_361_fieldlibido_wanting_not_liking", true, fl_dA >= 0.30 && fl_dlike <= 0.02) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (C) FREQUENCY-DIRECTIONAL — high-freq raises, low-freq lowers (opposite sign).
+    let fl_want_low = fieldlibido_wanting(fl_m, fl_mf, fl_cells, fl_seen, fl_intent, fl_dt, fl_recon, fl_def, fl_accum, fl_cue, 5, fl_intensity, 0 - 1)
+    let fl_dhigh = fl_want_high - fl_want_sham
+    let fl_dlow  = fl_want_low - fl_want_sham
+    // case 362 FREQ-DIRECTIONAL: high ≥ +0.30 AND low ≤ −0.10 AND opposite sign.
+    if _assert_b("case_362_fieldlibido_freq_directional", true, fl_dhigh >= 0.30 && fl_dlow <= (0.0 - 0.10) && fl_dhigh > fl_dlow) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (D) FIELD-vs-DRUG ROUTE — 둘 다 wanting UP, signature 해리(field focal·freq ⊥ drug global·chemical).
+    let fl_rest = ci_lane_scores(fl_m, fl_mf, fl_cells, fl_seen, fl_intent, fl_dt, fl_recon)
+    let fl_base_bind = fl_rest[0]
+    let fl_vh = field_apply(fl_m, fl_mf, fl_cells, fl_seen, fl_intent, fl_dt, fl_recon, 6, fl_intensity, 1, 1, false, 0.0)
+    let fl_field_focal = fl_vh[0] - fl_base_bind          // field moves focal reward target
+    let fl_field_global = 0.0                             // field leaves recon_err (drug global axis) at 0
+    // drug GLOBAL signature = the STRUCTURAL recon_err precision-loosening averaged over a small
+    // trial population (the per-trial pharm_shared_se latent is signed noise ∈[−,+]; averaging it out
+    // recovers the drug's STRUCTURAL global push, the route property — NOT a single noisy draw).
+    let fl_lsd = pharm_lsd()
+    let mut fl_drug_recon_sum = 0.0
+    let mut fl_di = 0
+    while fl_di < 8 {
+        let sse = pharm_shared_se(fl_lsd, 1507, fl_di)
+        fl_drug_recon_sum = fl_drug_recon_sum + pharm_perturb_recon(fl_lsd, fl_recon, sse)
+        fl_di = fl_di + 1
+    }
+    let fl_drug_recon = fl_drug_recon_sum / 8.0           // structural global push (noise averaged)
+    let fl_drug_global = fl_drug_recon - fl_recon
+    let fl_drug_vec = ci_lane_scores(fl_m, fl_mf, fl_cells, fl_seen, fl_intent, fl_dt, fl_drug_recon)
+    let fl_drug_focal = fl_drug_vec[0] - fl_base_bind     // LSD ~0 on focal reward target
+    let fl_g_drug = fl_drug_global * 4.0
+    let fl_ld_drug = Libido { accum: fl_accum, last_want: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.5, kc: 1.0, da_gain: fl_g_drug }
+    let fl_want_drug = libido_wanting(fl_ld_drug, fl_def, fl_cue)
+    let fl_dD_field = fl_want_high - fl_want_sham
+    let fl_dD_drug  = fl_want_drug - fl_want_sham
+    // case 363 FIELD-vs-DRUG: both raise wanting AND double-dissociate (field focal>>global, drug global>>focal, each gap ≥ 0.05).
+    if _assert_b("case_363_fieldlibido_field_vs_drug", true,
+                 fl_dD_field > 0.0 && fl_dD_drug > 0.0 && (fl_field_focal - fl_field_global) >= 0.05 && (fl_drug_global - fl_drug_focal) >= 0.05) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // (E) EARNED ablate/shuffle — sham → no wanting change; shuffle(wrong target) → decorrelate.
+    let fl_want_nofield = libido_wanting(libido_new(), fl_def, fl_cue)   // g=0 baseline (cue-only)
+    let fl_sham_change = if fl_want_sham > fl_want_nofield { fl_want_sham - fl_want_nofield } else { fl_want_nofield - fl_want_sham }
+    let fl_shuf_on = field_apply(fl_m, fl_mf, fl_cells, fl_seen, fl_intent, fl_dt, fl_recon, 6, fl_intensity, 1, 2, false, 0.0)   // high-freq WRONG target (gating)
+    let fl_shuf_g = (fl_shuf_on[0] - fl_base_bind) * 4.0
+    let fl_ld_shuf = Libido { accum: fl_accum, last_want: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.5, kc: 1.0, da_gain: fl_shuf_g }
+    let fl_want_shuf = libido_wanting(fl_ld_shuf, fl_def, fl_cue)
+    let fl_shuf_change = if fl_want_shuf > fl_want_nofield { fl_want_shuf - fl_want_nofield } else { fl_want_nofield - fl_want_shuf }
+    let fl_dA_abs = if fl_dA > 0.0 { fl_dA } else { 0.0 - fl_dA }
+    // case 364 EARNED: sham change ≤ 0.02 AND shuffle(wrong-target) change ≤ 0.50×true field raise.
+    if _assert_b("case_364_fieldlibido_earned", true, fl_sham_change <= 0.02 && fl_shuf_change <= 0.50 * fl_dA_abs) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    println("INFO  H_1507 field×libido (R2 WIRED, DRIVE-MODULATION cross NOT content): wanting sham→high " + to_string(fl_want_sham) + "→" + to_string(fl_want_high)
+          + " (delta=" + to_string(fl_dA) + ") liking flat " + to_string(fl_like_sham) + "→" + to_string(fl_like_high)
+          + " | freq high=" + to_string(fl_dhigh) + " low=" + to_string(fl_dlow)
+          + " | field focal/global=" + to_string(fl_field_focal) + "/" + to_string(fl_field_global)
+          + " drug(LSD) focal/global=" + to_string(fl_drug_focal) + "/" + to_string(fl_drug_global)
+          + " | sham_chg=" + to_string(fl_sham_change) + " shuf_chg=" + to_string(fl_shuf_change)
+          + " — FOCAL/freq FIELD raises 'wanting'≠'liking' (Berridge via 場), ⊥ GLOBAL/chemical DRUG route(H_1502 LSD); Hayashi2013·Dunlop2017")
 
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }

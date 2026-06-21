@@ -9407,4 +9407,68 @@ pub fn mc_shuffle_auroc(seed: int, n: int) -> float {
         i = i + 1
     }
     return mi_auroc(pos, neg)
+// ── § FieldLibido (H_1507 R2) — FIELD × LIBIDO cross: 전자기장이 incentive-salience('원함') 욕동을 조율 ──
+// §Field(H_1503, focal·주파수, 가역) × §Libido(H_1504, incentive salience) 의 교차. 약물(§Neuropharm
+// H_1502, 전역·화학)이 da_gain 으로 '원함'을 올리듯, 보상회로(BINDING/GlobalWorkspace lane 0 = NAcc/보상-
+// salience 허브)를 겨냥한 FIELD 이 같은 욕동을 올린다 — 약물의 FOCAL/가역 짝(a_no_llm_frame_trap; DBS of
+// reward circuit/NAcc · TMS over DLPFC modulating craving — Hayashi 2013 J Neurosci · Dunlop 2017).
+// 내용·persona 아님 — 순수 DRIVE-MODULATION 교차. HARDWARE 없음 — software substrate parametric 섭동.
+//
+// 메커니즘(FIELD → WANTING): 보상-겨냥 field(target_code=1 BINDING)가 보상 lane 활성을 올린다. 그 lane
+// lift 를 live field_apply 응답에서 읽어 effective incentive gain g_field 로 변환 → libido_wanting 의
+// da_gain 슬롯에 그대로 진입. wanting = Kp·deficit + Ki·I + Kc·cue_match·(1 + g_field). liking 은
+// gain-invariant(libido_liking 은 gain 무시) → field 경로도 wanting≠liking 재현(Berridge).
+//   high-freq(sign=+1 흥분성) → lane lift>0 → g_field>0 → wanting UP.
+//   low-freq (sign=−1 억제성) → lane lift<0 → g_field<0 → wanting DOWN(반대 부호).
+//   sham     (sign= 0)        → lane lift=0 → g_field=0 → 변화 없음.
+// g_field 는 live lane 응답만 읽는다 — 주입 라벨/RLHF/persona/decoder weight 없음(p1/p2/p3/p6). READ-only,
+// Ψ-disjoint(immune cell·pure_field 불변), NOT emit gate(a_autonomy_over_hardcode). 결정적.
+//
+// FIELD ⊥ DRUG 경로 이중해리(headline): FIELD 은 FOCAL 보상-target lane 을 움직이고 약물의 GLOBAL recon_err
+// 축은 ~0; DRUG(pharm_lsd, 전역·화학)은 GLOBAL recon_err 정밀-loosening 축을 움직이고 FOCAL 보상-target 은
+// ~0. 둘 다 wanting 을 올리지만 reach 하는 방식(경로 signature)이 해리한다.
+
+// _fl_gain_scale — lane-lift → incentive-gain 스케일(FROZEN, 측정 前 등록 · tune 아님).
+fn _fl_gain_scale() -> float { return 4.0 }
+
+// fieldlibido_gfield — 보상-겨냥(target_code=1 BINDING) field 이 유도하는 effective incentive gain:
+// live field_apply 의 보상 lane(0) lift vs resting 응답 × scale. sign +1 high-freq(올림)·−1 low-freq
+// (내림)·0 sham(0).
+pub fn fieldlibido_gfield(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                          recon_err: float, freq_code: int, intensity: float, sign: int) -> float {
+    let rest = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
+    let on = field_apply(m, m_field, cells, seen, intent, dt, recon_err, freq_code, intensity, sign, 1, false, 0.0)
+    let lift = on[0] - rest[0]
+    return lift * _fl_gain_scale()
+}
+
+// fieldlibido_wanting — field-유도 incentive gain 을 libido_wanting 의 gain 슬롯에 먹여 '원함' 계산.
+// (libido_wanting(ld, deficit, cue_match) = kp·deficit + ki·accum + kc·cue·(1+ld.da_gain) 이므로
+//  da_gain=g_field 인 Libido 를 만들어 호출 → 약물 경로와 BYTE-동일 슬롯.)
+pub fn fieldlibido_wanting(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                           recon_err: float, deficit: float, accum: float, cue_match: float,
+                           freq_code: int, intensity: float, sign: int) -> float {
+    let g = fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, freq_code, intensity, sign)
+    let ld = Libido { accum: accum, last_want: 0.0, setpoint: 0.5, leak: 0.1, kp: 1.0, ki: 0.5, kc: 1.0, da_gain: g }
+    return libido_wanting(ld, deficit, cue_match)
+}
+
+// fieldlibido_liking — hedonic value: gain-invariant(field 경로는 '좋아함'을 못 움직임 — Berridge).
+pub fn fieldlibido_liking(cue_match: float) -> float {
+    let ld = libido_new()
+    return libido_liking(ld, cue_match)
+}
+
+// fieldlibido_highfreq / _lowfreq / _sham — 명명된 protocol shortcut (보상-겨냥 incentive gain).
+pub fn fieldlibido_highfreq(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                            recon_err: float, intensity: float) -> float {
+    return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 6, intensity, 1)
+}
+pub fn fieldlibido_lowfreq(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                           recon_err: float, intensity: float) -> float {
+    return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 5, intensity, 0 - 1)
+}
+pub fn fieldlibido_sham(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                        recon_err: float) -> float {
+    return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 0, 0.0, 0)
 }
