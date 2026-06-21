@@ -1,0 +1,51 @@
+==============================================================================
+H_1492 R4 — CONSCIOUSNESS ABLATION deepening (faithful IIT4 + pairwise + surrogate re-calib)
+  ckpt: clm303_d5000.clm  n_ctx=30  surrogates=200 pctl=95
+==============================================================================
+  SHA256 OK: 99c2a40e4e4c23e16f7ec80f29aaa3a362065983e00709f723f1106598efa3cd
+
+[1] 303M per-ctx decode (engine-native clm_forward_ce, OOM-safe subprocess)...
+  ctx0: model_ce=1.7047 m=0.6448
+  ctx1: model_ce=1.5483 m=0.6774
+  ctx2: model_ce=1.0453 m=0.7822
+  ctx3: model_ce=1.0293 m=0.7855
+  ctx4: model_ce=1.6273 m=0.6609
+  ctx5: model_ce=1.4353 m=0.7009
+  ctx6: model_ce=0.8887 m=0.8148
+  ctx7: model_ce=2.2728 m=0.5264
+  ctx8: model_ce=1.4276 m=0.7025
+  ctx9: model_ce=1.3858 m=0.7112
+  ctx10: model_ce=1.8548 m=0.6135
+  ctx11: model_ce=1.4637 m=0.6950
+  ctx12: model_ce=0.9435 m=0.8034
+  ctx13: model_ce=1.6162 m=0.6632
+  ctx14: model_ce=1.4487 m=0.6981
+  ctx15: model_ce=1.8121 m=0.6224
+  ctx16: model_ce=1.4280 m=0.7024
+  ctx17: DECODE FAILED
+  ctx18: model_ce=1.3893 m=0.7105
+  ctx19: model_ce=1.8619 m=0.6120
+  ctx20: model_ce=1.2269 m=0.7443
+  ctx21: model_ce=1.8292 m=0.6188
+  ctx22: model_ce=2.0431 m=0.5743
+  ctx23: model_ce=1.5142 m=0.6845
+  ctx24: model_ce=1.5880 m=0.6691
+  ctx25: model_ce=1.3023 m=0.7286
+  ctx26: model_ce=1.2985 m=0.7294
+  ctx27: model_ce=1.2215 m=0.7455
+  ctx28: model_ce=1.6230 m=0.6618
+  ctx29: model_ce=1.3692 m=0.7147
+  decoded 29/30 in 837.9s
+
+[2] engine-native SCORING (.hexa → core/engine_cli.hexa §ConsciousnessIndex)...
+  scored in 8.0s
+
+Result -> /home/summer/anima/state/1492_consciousness_ablation/h1492_r4_303m_result.json
+
+==============================================================================
+R4 STRUCTURE=DISTRIBUTED top=SubjectiveTime share=0.1367
+axis1 faithful IIT4=0.934437  proxy_sub=17.586808  picks=['SubjectiveTime', 'AttentionalBlink', 'EmotionRegulation', 'LearnedPrecision', 'PrecisionSurprise', 'DirectedForgetting', 'Habituation', 'Novelty']
+axis2 top SYNERGY=SubjectiveTime+LearnedPrecision I=-0.0000 | top REDUNDANCY=SubjectiveTime+AttentionalBlink I=-3.1656
+axis3 null_mean=2.7193 null_p95=4.7570 phi0=22.4518 -> E_recalib(phi0>p95)=True
+GREEN_recalib(A & E)=True
+==============================================================================
