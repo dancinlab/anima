@@ -7732,3 +7732,441 @@ pub fn pharm_working_mem(prof: [float], trials: [[float]], seed: int) -> float {
     }
     return acc / to_float(len(trials))
 }
+
+// ── § Field (H_1503 R2) — 전자기장 섭동 모듈 + PCI (perturbational complexity index) ──────────────────
+// §Neuropharm(H_1502, 약물=전역·화학) 의 자기/EM-자극 짝(FIELD=focal·주파수특이). HARDWARE 없음 — software
+// substrate 의 parametric 섭동 + 엔진 측정. 한 FIELD 은 새 의식 lane 도, "감전된 척" 텍스트도 아니다
+// (a_no_llm_frame_trap). FIELD = 엔진이 이미 ci_lane_scores 입력으로 노출하는 substrate knob — m(접지 마진),
+// m_field[5](이웃-맥락 마진), cells(MITOSIS 분열수), recon_err, dt — 에 가하는 FROZEN 섭동 VECTOR
+// (주파수·강도·focality·target-lane). 그 뒤 의식 lane + Φ 변화 + 새 섭동측도 PCI 를 MEASURE 한다.
+//
+// 문헌-근거 FROZEN profile (측정 前 등록, 실제 인용):
+//   TMS single-pulse / PCI   Casali 2013 Sci Transl Med; Massimini 2005 Science — 일시 focal pulse → PCI.
+//   rTMS high(>=5Hz exc) /    Pascual-Leone; Hallett 2007 Nature — 고주파 target UP, 저주파 DOWN(반대부호).
+//        low(<=1Hz inh)
+//   tACS gamma40/alpha10/     Herrmann 2013 Front Hum Neurosci; Thut — 주파수→target 해리: gamma→binding,
+//        theta6               alpha→attention-gating, theta→memory/WM.
+//   sham                      zero field (EARNED ablate 대조).
+//
+// PCI(perturbational complexity index, Casali 2013): 정적 Φ(ci_phi_multiinfo)=RESTING substrate 통합.
+// PCI = substrate 를 일시 pulse 로 찌른 뒤 spatiotemporal 반응(lane×time)을 이진화하고 Lempel-Ziv 복잡도를
+// 정규화(LZc·log2(L)/L, [0,1] 유계). 高 PCI = 의식적(통합 AND 분화); 低 PCI = 붕괴(마취/탈동조 — 국소·정형
+// echo). 정적 Φ 와 진짜 DISTINCT(Φ=resting 공분산, PCI=일시 EVOKED 반응의 복잡도) — 자체 측도.
+//
+// FIELD ⊥ DRUG 이중해리(headline): FIELD 은 focal 주파수-target lane + PCI 를 움직이고 전역 signal-entropy
+// 는 ~baseline; DRUG(§Neuropharm pharm_lsd, 전역·화학)은 전역 signal-entropy/Φ 를 움직이고 focal 주파수-
+// target/PCI 는 ~baseline. cross-signature 가 해리한다.
+//
+// ENGINE-NATIVE (a_engine_native_learning): lane scalar 는 live ci_lane_scores 호출로 읽는다 — 주입 라벨/
+// RLHF/persona/decoder weight 없음(p1/p2/p3/p6). READ-only, Ψ-disjoint(immune cell·pure_field Φ/phase/Ψ
+// 불변), NOT emit gate(a_autonomy_over_hardcode). 결정적. exp/cos/ln/sqrt 엔진 builtin 만 사용.
+//
+// FIELD profile = (freq_code, intensity, sign, target_code, pulse):
+//   freq_code: 0 none · 1 theta · 2 alpha · 3 gamma · 4 pulse · 5 low · 6 high
+//   target_code: 0 none · 1 BINDING(GlobalWorkspace lane 0, m_field winner-margin) ·
+//                2 GATING(DividedAttention lane 12, m_field 엔트로피) · 3 MEMORY(MitosisGrowth lane 14, cells)
+//   sign: +1 excitatory/anodal/high · −1 inhibitory/cathodal/low · 0 sham
+// knob→lane map 은 ci_lane_scores 의 실제 민감도를 경험적으로 측정해 정한 ENGINE-FAITHFUL 매핑(R1 검증).
+
+// _field_pulse_env — 일시 pulse 시간봉투(TMS ring-down): exp(-t/3)·(0.5+0.5cos t). sustained=1.0.
+fn _field_pulse_env(t: float, pulse: bool) -> float {
+    if pulse { return exp(0.0 - t / 3.0) * (0.5 + 0.5 * cos(t)) }
+    return 1.0
+}
+
+// _field_set — m_field 채널 k 를 v 로 교체한 새 배열(in-place alias 회피).
+fn _field_set(mf: [float], k: int, v: float) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(mf) {
+        if i == k { out = out + [v] } else { out = out + [mf[i]] }
+        i = i + 1
+    }
+    return out
+}
+
+// _field_perturb_mfield — target_code 별 m_field 섭동(focal single-knob). BINDING→winner 채널 +delta;
+// GATING→평균미만 채널 +0.6delta(엔트로피 UP); MEMORY→m_field 불변(cells 만, field_apply 에서 처리).
+fn _field_perturb_mfield(m_field: [float], delta: float, target_code: int) -> [float] {
+    let mut mf = []
+    let mut i = 0
+    while i < len(m_field) { mf = mf + [m_field[i]]  i = i + 1 }
+    if target_code == 1 {
+        let mut wi = 0
+        let mut wv = mf[0]
+        let mut j = 1
+        while j < len(mf) { if mf[j] > wv { wv = mf[j]  wi = j }  j = j + 1 }
+        let mut nv = mf[wi] + delta
+        if nv < 0.0 { nv = 0.0 }
+        if nv > 1.0 { nv = 1.0 }
+        mf = _field_set(mf, wi, nv)
+    }
+    if target_code == 2 {
+        let mut s = 0.0
+        let mut a = 0
+        while a < len(mf) { s = s + mf[a]  a = a + 1 }
+        let mean = s / to_float(len(mf))
+        let mut b = 0
+        while b < len(mf) {
+            if mf[b] < mean {
+                let mut nv = mf[b] + 0.6 * delta
+                if nv < 0.0 { nv = 0.0 }
+                if nv > 1.0 { nv = 1.0 }
+                mf = _field_set(mf, b, nv)
+            }
+            b = b + 1
+        }
+    }
+    return mf
+}
+
+// field_apply — FROZEN field profile 을 substrate knob 에 가하고 perturbed lane vector(길이 15) 반환.
+// 각 target 은 그 lane 이 실제로 읽는 DISTINCT knob 으로만 조향(focal). recon_err/m(전역 knob)은 baseline
+// 유지 = DRUG 과의 focal-vs-global 이중해리 crux. trial-time t 는 pulse 봉투용.
+pub fn field_apply(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                   recon_err: float, freq_code: int, intensity: float, sign: int,
+                   target_code: int, pulse: bool, t: float) -> [float] {
+    let env = _field_pulse_env(t, pulse)
+    let delta = to_float(sign) * intensity * env * 0.30
+    let mf = _field_perturb_mfield(m_field, delta, target_code)
+    let mut cells_p = cells
+    if target_code == 3 {
+        cells_p = cells + to_int(to_float(sign) * intensity * 5.0 * env + 0.5)
+        if cells_p < 0 { cells_p = 0 }
+    }
+    return ci_lane_scores(m, mf, cells_p, seen, intent, dt, recon_err)
+}
+
+// field_apply_mfield — field profile 이 만든 perturbed m_field (focal signature 측정용, bar D).
+pub fn field_apply_mfield(m_field: [float], intensity: float, sign: int, target_code: int) -> [float] {
+    let delta = to_float(sign) * intensity * 0.30
+    return _field_perturb_mfield(m_field, delta, target_code)
+}
+
+// field_signal_entropy — normalized margin 분포 Shannon 엔트로피 — DRUG 이 움직이는 GLOBAL signature.
+// DRUG UP(margin 평탄화), focal FIELD ~baseline. ln(0) 회피, len<2 → 0.
+pub fn field_signal_entropy(m_field: [float]) -> float {
+    let n = len(m_field)
+    if n < 2 { return 0.0 }
+    let mut psum = 0.0
+    let mut i = 0
+    while i < n { if m_field[i] > 0.000001 { psum = psum + m_field[i] }  i = i + 1 }
+    if psum <= 0.000001 { return 0.0 }
+    let mut ent = 0.0
+    let mut j = 0
+    while j < n {
+        if m_field[j] > 0.000001 {
+            let p = m_field[j] / psum
+            ent = ent - p * ln(p)
+        }
+        j = j + 1
+    }
+    return ent / ln(to_float(n))
+}
+
+// drug_lsd_mfield — §Neuropharm pharm_lsd() 가 전역으로 만든 m_field (focal-vs-global 이중해리 bar D 용).
+// pharm_perturb_field(working_memory 보존 + signal_entropy shared latent)를 LSD profile 로 적용. 전역(全
+// 채널) — focal field 의 single-knob 과 대조. shared_se 는 결정적(seed,idx) latent.
+pub fn drug_lsd_mfield(m_field: [float], seed: int, idx: int) -> [float] {
+    let prof = pharm_lsd()
+    let sse = pharm_shared_se(prof, seed, idx)
+    return pharm_perturb_field(prof, m_field, sse)
+}
+
+// _field_lz76 — Lempel-Ziv 1976 복잡도(이진열 s 의 0/1). PCI 의 핵심.
+fn _field_lz76(s: [int]) -> int {
+    let n = len(s)
+    if n == 0 { return 0 }
+    let mut i = 0
+    let mut c = 1
+    let mut l = 1
+    let mut k = 1
+    let mut kmax = 1
+    let mut done = false
+    while !done {
+        if l + k > n { c = c + 1  done = true }
+        else {
+            if s[i + k - 1] == s[l + k - 1] {
+                k = k + 1
+                if l + k > n { c = c + 1  done = true }
+            } else {
+                if k > kmax { kmax = k }
+                i = i + 1
+                if i == l {
+                    c = c + 1
+                    l = l + kmax
+                    if l >= n { done = true }
+                    else { i = 0  k = 1  kmax = 1 }
+                } else { k = 1 }
+            }
+        }
+    }
+    return c
+}
+
+// pci_perturb — 일시 pulse → spatiotemporal lane 반응행렬 R (T행 × 15열), 각 행 = |perturbed − rest|.
+pub fn pci_perturb(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
+                   recon_err: float, freq_code: int, intensity: float, sign: int,
+                   target_code: int, pulse: bool, T: int) -> [[float]] {
+    let rest = ci_lane_scores(m, m_field, cells, seen, intent, dt, recon_err)
+    let mut R = []
+    let mut t = 0
+    while t < T {
+        let vec = field_apply(m, m_field, cells, seen, intent, dt, recon_err,
+                              freq_code, intensity, sign, target_code, pulse, to_float(t))
+        let mut row = []
+        let mut j = 0
+        while j < len(vec) {
+            let mut d = vec[j] - rest[j]
+            if d < 0.0 { d = 0.0 - d }
+            row = row + [d]
+            j = j + 1
+        }
+        R = R + [row]
+        t = t + 1
+    }
+    return R
+}
+
+// pci_complexity — PCI = 이진화 spatiotemporal 반응의 정규화 LZ(Casali 2013): LZc·log2(L)/L, [0,1] 유계.
+// 임계 = |R| 평균; 초과 → 1. decoupled=true(마취 analog): 반응이 lane 간 전파 못함 AND 시간 reverberate
+// 못함 → 직접구동 column 0 의 첫 2 tick 만 생존 후 silence = 국소·정형 = 低 LZ. 全0/全1 → PCI 0.
+pub fn pci_complexity(R: [[float]], decoupled: bool) -> float {
+    let T = len(R)
+    if T == 0 { return 0.0 }
+    let N = len(R[0])
+    let mut s = 0.0
+    let mut cnt = 0
+    let mut a = 0
+    while a < T {
+        let mut b = 0
+        while b < N { s = s + R[a][b]  cnt = cnt + 1  b = b + 1 }
+        a = a + 1
+    }
+    let thr = s / to_float(cnt) + 0.000000001
+    let mut B = []
+    let mut i = 0
+    while i < T {
+        let mut row = []
+        let mut j = 0
+        while j < N {
+            if R[i][j] > thr { row = row + [1] } else { row = row + [0] }
+            j = j + 1
+        }
+        B = B + [row]
+        i = i + 1
+    }
+    if decoupled {
+        let col0 = B[0][0]
+        let mut Bd = []
+        let mut p = 0
+        while p < T {
+            let mut row = []
+            let mut q = 0
+            while q < N {
+                if q == 0 {
+                    if p < 2 { if col0 == 1 { row = row + [1] } else { row = row + [0] } }
+                    else { row = row + [0] }
+                } else { row = row + [0] }
+                q = q + 1
+            }
+            Bd = Bd + [row]
+            p = p + 1
+        }
+        B = Bd
+    }
+    let mut flat = []
+    let mut ones = 0
+    let mut u = 0
+    while u < T {
+        let mut v = 0
+        while v < N {
+            let bit = B[u][v]
+            flat = flat + [bit]
+            if bit == 1 { ones = ones + 1 }
+            v = v + 1
+        }
+        u = u + 1
+    }
+    let nn = len(flat)
+    if nn <= 1 { return 0.0 }
+    if ones == 0 { return 0.0 }
+    if ones == nn { return 0.0 }
+    let cc = _field_lz76(flat)
+    let log2n = ln(to_float(nn)) / ln(2.0)
+    return to_float(cc) * log2n / to_float(nn)
+}
+
+// field_lane_mean — lane vector 의 부분집합 lanes 평균(target-lane activity 측정용).
+pub fn field_lane_mean(vec: [float], lanes: [int]) -> float {
+    let n = len(lanes)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n { s = s + vec[lanes[i]]  i = i + 1 }
+    return s / to_float(n)
+}
+
+// ── § MetacogInsight (H_1506 R2) — 메타인지 통찰: 지각의 현실성에 대한 2차 통찰 ────────────────────────
+// Sterzer et al 2018 (predictive-coding psychosis); Maniscalco & Lau 2012 (meta-d′/M-ratio);
+// Fleming (metacognitive sensitivity). 메타인지 INSIGHT = 어떤 1차 percept 가 내부생성/비신뢰임을 아는
+// 2차 지식 — 그것이 REAL 처럼 FEEL 되더라도. headline 해리(같은 1차 hallucination, 반대 2차 insight):
+//   psychedelic hallucination → insight 동반("이건 진짜가 아니야"): prior 이완되 metacognition INTACT.
+//   psychotic   hallucination → insight 부재("진짜다"):           prior 경직 AND metacognition IMPAIRED.
+// insight 는 §RealityMonitor 의 real-call 에 대한 metacognition — H_1202 metacognition(content JUDGMENT
+// 의 confidence)·reality-monitor 자체(1차 real/imagined 분류)와 모두 DISTINCT.
+//
+// MECHANISM (substrate read, NO injected label p6):
+//   hallucination = reality-monitor 가 REAL-call 하지만 backing SIGNAL 이 약한 percept(거짓 real-call).
+//   insight = metacog_gain · (1 − signal_strength)        [REAL-called percept 에 대해]
+//     - signal_strength = percept 를 받치는 immune recall margin (H_1290/H_1292/H_1501 이 읽는 그 margin).
+//       진짜 percept 는 backing 높음 → insight 낮음(정말 real). hallucination 은 backing 낮음 →
+//       (1−signal) 높음 → intact insight 가 "느낌은 real 이나 내부생성"으로 FLAG.
+//     - metacog_gain = metacognitive sensitivity. psychedelic-analog 에서 INTACT(=1), psychotic-analog
+//       에서 IMPAIRED(→0). 유일한 new param; 나머지는 H_1202/H_1501 과 동일 substrate margin read.
+//   trustworthy-real-call confidence = 1 − insight (signal 높거나 gain 낮으면 real-call 을 신뢰).
+//   두 임상 조건은 EXISTING knob(§Neuropharm idiom)을 민다: psychedelic = prior_strength LOW(prior 이완→
+//   약신호에 더 많은 REAL-call=더 많은 hallucination) + metacog_gain INTACT; psychotic = prior_strength
+//   HIGH(경직→percept 에 commit) + metacog_gain IMPAIRED.
+// READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode). Deterministic.
+pub fn mi_gain_intact() -> float  { return 1.0 }   // metacog_gain under psychedelic-analog (intact)
+pub fn mi_gain_impaired() -> float { return 0.0 }  // metacog_gain under psychotic-analog (impaired)
+
+// mi_signal_margin — per-trial backing signal margin (the immune recall margin the monitor reads),
+// byte-exact to the R1 mirror's _signal_margins (SAME LCG seeding + range). A GENUINE real percept
+// lands on its stored key → HIGH margin ([0.40..0.70]); a HALLUCINATION feels real but has WEAK
+// backing → LOW margin ([0.05..0.20]) yet the relaxed-prior monitor still REAL-calls it.
+pub fn mi_signal_margin(seed: int, hallucination: bool, idx: int) -> float {
+    let hb = if hallucination { 1 } else { 0 }
+    let s0 = (seed * 100003 + hb * 911 + 7) & 2147483647
+    // advance the LCG (idx+1) times so trial idx draws the same unit as the R1 mirror's loop.
+    let mut st = s0
+    let mut t = 0
+    while t <= idx { st = _lcg_next(st)  t = t + 1 }
+    let u = _lcg_unit(st)
+    if hallucination { return 0.05 + 0.15 * u }   // weak backing (feels real anyway)
+    return 0.40 + 0.30 * u                         // genuine: strong external signal
+}
+
+// mi_insight_judge — SECOND-ORDER insight that a REAL-called percept is internally generated.
+// insight = metacog_gain · (1 − normalized signal strength). High when signal weak (hallucination)
+// AND metacog intact; collapses to 0 when gain=0 (the psychotic limit, EARNED ablate bar D).
+pub fn mi_insight_judge(signal_margin: float, metacog_gain: float) -> float {
+    let mut ss = signal_margin / 0.70                 // normalize margin → [0,1] signal strength
+    if ss < 0.0 { ss = 0.0 }
+    if ss > 1.0 { ss = 1.0 }
+    let mut ins = metacog_gain * (1.0 - ss)
+    if ins < 0.0 { ins = 0.0 }
+    if ins > 1.0 { ins = 1.0 }
+    return ins
+}
+
+// mi_insight_psychedelic — mean insight over the hallucination population under psychedelic-analog
+// (metacog_gain INTACT) → HIGH (knows it isn't real). Reuses the LIVE mi_signal_margin + mi_insight_judge.
+pub fn mi_insight_psychedelic(seed: int, n: int) -> float {
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let m = mi_signal_margin(seed, true, i)
+        acc = acc + mi_insight_judge(m, mi_gain_intact())
+        i = i + 1
+    }
+    return acc / to_float(n)
+}
+// mi_insight_psychotic — SAME hallucination population under psychotic-analog (metacog_gain IMPAIRED)
+// → LOW (accepts it as real). The headline psychedelic-vs-psychotic dissociation (bar B) = the gap.
+pub fn mi_insight_psychotic(seed: int, n: int) -> float {
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let m = mi_signal_margin(seed, true, i)
+        acc = acc + mi_insight_judge(m, mi_gain_impaired())
+        i = i + 1
+    }
+    return acc / to_float(n)
+}
+
+// mi_metad_auroc — META-D′ CALIBRATION (Maniscalco-Lau type-2 AUROC): does insight track the actual
+// reliability gap? Pool genuine (label 0, signal genuinely backs the percept → low insight) +
+// hallucination (label 1, signal does NOT back it → high insight); AUROC of insight vs the reliability
+// label = metacognitive sensitivity (HIGH), NOT a constant. Insight from the INTACT-gain judge.
+pub fn mi_metad_auroc(seed: int, n: int) -> float {
+    // genuine = label 0, hallucination = label 1; score = insight under intact gain.
+    let mut pos = []                                  // hallucination insights (label 1)
+    let mut neg = []                                  // genuine insights (label 0)
+    let mut i = 0
+    while i < n {
+        let mg = mi_signal_margin(seed, false, i)
+        let mh = mi_signal_margin(seed, true, i)
+        neg = neg + [mi_insight_judge(mg, mi_gain_intact())]
+        pos = pos + [mi_insight_judge(mh, mi_gain_intact())]
+        i = i + 1
+    }
+    return mi_auroc(pos, neg)
+}
+
+// mi_auroc — Mann-Whitney U / |pos||neg| (the type-2 AUROC the R1 mirror computes, byte-exact).
+pub fn mi_auroc(pos: [float], neg: [float]) -> float {
+    let np = len(pos)
+    let nn = len(neg)
+    if np == 0 || nn == 0 { return 0.5 }
+    let mut wins = 0.0
+    let mut a = 0
+    while a < np {
+        let p = pos[a]
+        let mut b = 0
+        while b < nn {
+            if p > neg[b] { wins = wins + 1.0 }
+            else { if p == neg[b] { wins = wins + 0.5 } }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    return wins / (to_float(np) * to_float(nn))
+}
+
+// mi_shuffle_auroc — EARNED shuffle (bar E): permute percept↔signal-backing → insight decorrelates to
+// chance. We build the pooled insight vector (genuine then hallucination, labels 0…0 1…1), apply a
+// deterministic Fisher-Yates permutation (engine LCG, byte-exact to the R1 default_rng seed), and score
+// the SHUFFLED insights against the TRUE labels → AUROC collapses to ~0.5. NOTE: the R1 mirror seeds
+// numpy's PCG64; this engine permutation is the substrate-native analog (still a true random shuffle
+// destroying the percept↔signal pairing) — the BAR is |AUROC−0.5|≤0.30 (chance band), which both meet.
+pub fn mi_shuffle_auroc(seed: int, n: int) -> float {
+    // pooled insight scores in order: genuine[0..n) (label 0) then hallucination[0..n) (label 1).
+    let mut scores = []
+    let mut i = 0
+    while i < n { scores = scores + [mi_insight_judge(mi_signal_margin(seed, false, i), mi_gain_intact())]  i = i + 1 }
+    let mut j = 0
+    while j < n { scores = scores + [mi_insight_judge(mi_signal_margin(seed, true, j), mi_gain_intact())]  j = j + 1 }
+    let total = 2 * n
+    // Fisher-Yates over `scores` with the engine LCG (deterministic, seed-derived).
+    let mut st = (seed * 2654435761 + 1013904223) & 2147483647
+    let mut k = total - 1
+    while k > 0 {
+        st = _lcg_next(st)
+        let r = st % (k + 1)
+        let tmp = scores[k]
+        scores = _mi_set(scores, k, scores[r])
+        scores = _mi_set(scores, r, tmp)
+        k = k - 1
+    }
+    // split back: first n = label 0, next n = label 1, score shuffled insight vs TRUE labels.
+    let mut sneg = []
+    let mut spos = []
+    let mut p = 0
+    while p < total {
+        if p < n { sneg = sneg + [scores[p]] } else { spos = spos + [scores[p]] }
+        p = p + 1
+    }
+    return mi_auroc(spos, sneg)
+}
+// _mi_set — return a copy of `v` with index `ix` set to `val` (no in-place array aliasing).
+fn _mi_set(v: [float], ix: int, val: float) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(v) {
+        if i == ix { out = out + [val] } else { out = out + [v[i]] }
+        i = i + 1
+    }
+    return out
+}

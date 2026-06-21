@@ -1,0 +1,360 @@
+PASS  case_1_default_or_env want=true got=true
+PASS  case_2_no_mitosis_flag_off want=false got=false
+PASS  case_3_mitosis_on want=true got=true
+PASS  case_3b_mitosis_off want=false got=false
+PASS  case_3c_mitosis_eq_off want=false got=false
+PASS  case_4a_flag_on_beats_env want=true got=true
+PASS  case_4b_flag_off_beats_env want=false got=false
+PASS  case_5_on_grows_to_13 want=13 got=13
+PASS  case_6_off_stays_static_3 want=3 got=3
+PASS  case_7_ON_differs_from_OFF want=true got=true
+PASS  case_8_tick_on_plus1 want=1 got=1
+PASS  case_9_tick_off_noop want=0 got=0
+INFO  engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · precedence flag>env>default · mitosis=on (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · engine=conv (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis
+INFO  engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · precedence flag>env>default · mitosis=off (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · engine=conv (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis
+PASS  case_10_wm_starts_empty want=0 got=0
+PASS  case_11_wm_capacity_caps_at_k want=2 got=2
+PASS  case_12_wm_fresh_cue_high_score want=true got=true
+PASS  case_13_wm_cue_decays_below_fresh want=true got=true
+PASS  case_14_no_leak_stays_immune_like want=true got=true
+PASS  case_15_wm_total_activation_nonneg want=true got=true
+PASS  case_16_grow_off_caps_at_base_max want=3 got=3
+PASS  case_17_grow_on_grows_past_base_max want=6 got=6
+PASS  case_18_grow_recalls_more_than_evict want=true got=true
+PASS  case_19_grow_abstains_on_untaught want=true got=true
+PASS  case_20_salient_tag_higher want=true got=true
+PASS  case_21_shuffle_preserves_tag_sum want=true got=true
+PASS  case_22_salience_replay_protects_salient want=true got=true
+PASS  case_23_consolidating_abstains_on_untaught want=true got=true
+PASS  case_24_grounded_positive_valence_emits want=true got=true
+PASS  case_25_ungrounded_negative_valence_abstains want=true got=true
+PASS  case_26_ungrounded_arousal_higher want=true got=true
+PASS  case_27_affect_shuffle_is_permutation want=true got=true
+PASS  case_28_deprivation_builds_drive want=true got=true
+PASS  case_29_consummatory_resets_drive want=true got=true
+PASS  case_30_ablated_does_not_accumulate want=true got=true
+PASS  case_293_libido_buildup_and_cue_spike want=true got=true
+PASS  case_294_libido_hunger_double_dissociation want=true got=true
+PASS  case_295_libido_wanting_not_liking want=true got=true
+PASS  case_296_libido_ablate_loses_cue_spike want=true got=true
+PASS  case_297_libido_shuffle_decorrelates_cue want=true got=true
+INFO  H_1504 libido (R2 WIRED, DRIVE-DYNAMICS axis NOT content): cue_spike=1.0 | wanting(da0→da1) 1.0→2.0 liking flat 1.0→1.0 | ablated_spike=0.0 cmPaired=1.0 cmShuf=0.0 — incentive-salience 'wanting'≠hedonic 'liking' (Berridge); cue⊥hunger(H_1292)
+PASS  case_31_tom_tracks_witnessed_belief want=true got=true
+PASS  case_32_false_belief_self_differs_from_other want=true got=true
+PASS  case_33_tom_abstains_on_untaught want=true got=true
+PASS  case_34_witnessed_revision_overwrites want=true got=true
+PASS  case_133_memtom_agree_shared_vote want=true got=true
+PASS  case_134_memtom_conflict_reality_memory_wins want=true got=true
+PASS  case_135_memtom_conflict_belief_tom_wins want=true got=true
+PASS  case_136_memtom_both_abstain_no_fab want=true got=true
+PASS  case_137_spatepi_agree_shared_vote want=true got=true
+PASS  case_138_spatepi_conflict_where_spatial_wins want=true got=true
+PASS  case_139_spatepi_conflict_what_episodic_wins want=true got=true
+PASS  case_140_spatepi_abstain_discipline want=true got=true
+PASS  case_141_tomspat_agree_shared_vote want=true got=true
+PASS  case_142_tomspat_conflict_tom_wins want=true got=true
+PASS  case_143_tomspat_conflict_spatial_wins want=true got=true
+PASS  case_144_tomspat_abstain_discipline want=true got=true
+PASS  case_145_tombasal_agree_shared_vote want=true got=true
+PASS  case_146_tombasal_conflict_tom_wins want=true got=true
+PASS  case_147_tombasal_conflict_basal_wins want=true got=true
+PASS  case_148_tombasal_abstain_discipline want=true got=true
+PASS  case_149_cerebmem_agree_shared_vote want=true got=true
+PASS  case_150_cerebmem_tail_deferral_to_memory want=true got=true
+PASS  case_151_cerebmem_baseline_route_no_deferral want=true got=true
+PASS  case_152_cerebmem_abstain_discipline want=true got=true
+PASS  case_35_hier_completes_ordered_chain want=true got=true
+PASS  case_36_hier_suppresses_out_of_order want=true got=true
+PASS  case_37_flat_selector_lacks_ordering want=true got=true
+PASS  case_38_frozen_pointer_never_completes want=true got=true
+PASS  case_39_hive_super_additive_110_110 want=true got=true
+PASS  case_40_hive_decoupled_null want=false got=false
+PASS  case_41_hive_rule_class_dissociation want=true got=true
+PASS  case_42_hive_no_collapse want=true got=true
+PASS  case_44_spatial_map_answers_relational want=true got=true
+PASS  case_45_item_store_abstains_relational want=true got=true
+PASS  case_46_ablate_metric_collapses_to_tie want=true got=true
+PASS  case_47_shuffle_decorrelates_metric want=true got=true
+PASS  case_48_spatial_map_abstains_on_unplaced want=true got=true
+PASS  case_49_clock_fires_at_origin want=true got=true
+PASS  case_50_clock_scheduled_firing want=true got=true
+PASS  case_51_clock_phase_is_elapsed_fraction want=true got=true
+PASS  case_52_clock_phase_invariant_under_feed want=true got=true
+PASS  case_53_ablate_period_off_schedule want=true got=true
+PASS  case_54_itimer_learns_interval_13_pm2 want=true got=true
+PASS  case_55_itimer_reentrains_to_20 want=true got=true
+PASS  case_56_itimer_distinct_from_clock want=true got=true
+PASS  case_57_itimer_ablate_frozen_at_init want=5 got=5
+PASS  case_58_itimer_no_fab_off_interval want=true got=true
+PASS  case_59_skill_grow_splits_under_error want=true got=true
+PASS  case_60_skill_route_classifies_trained want=true got=true
+PASS  case_61_ablate_no_split want=true got=true
+PASS  case_64_prc_entrains_to_zeitgeber want=true got=true
+PASS  case_65_prc_ablate_free_runs_drifts want=true got=true
+PASS  case_66_prc_period_tracks_zeitgeber want=true got=true
+PASS  case_67_prc_ablate_period_at_tau want=true got=true
+PASS  case_68_prc_no_fab_off_boundary want=true got=true
+PASS  case_69_scn_reaches_consensus want=true got=true
+PASS  case_70_scn_uncoupled_no_consensus want=true got=true
+PASS  case_71_scn_frustrated_collapses want=true got=true
+PASS  case_72_scn_ablate_collapses want=true got=true
+PASS  case_73_scn_network_damps_perturbed_member want=true got=true
+PASS  case_79_cp_w1_present_lang_vs_baseline want=true got=true
+PASS  case_80_cp_w2_whorfian_dissociation want=true got=true
+PASS  case_81_cp_w3prime_languages_coherent want=true got=true
+PASS  case_82_cp_w3prime_shuffle_incoherent want=true got=true
+PASS  case_83_cp_regrow_relocates want=true got=true
+PASS  case_84_cp_regrow_grows_store want=true got=true
+PASS  case_85_cp_regrow_coherent want=true got=true
+PASS  case_112_cp_relocate_lands_on_moved_boundary want=true got=true
+PASS  case_113_cp_relocate_distinct_from_split want=true got=true
+PASS  case_114_cp_relocate_eta0_equals_regrow want=true got=true
+PASS  case_115_cp_relocate_coherent want=true got=true
+PASS  case_86_cp_tagged_coexist_pA want=true got=true
+PASS  case_87_cp_tagged_coexist_pB want=true got=true
+PASS  case_88_cp_untagged_overwrite want=false got=false
+PASS  case_89_cp_ba_no_spurious_cp_at_pB want=false got=false
+PASS  case_90_cp_shuffle_incoherent want=true got=true
+PASS  case_91_cp_tag_separation want=true got=true
+PASS  case_92_jamo_head_present want=true got=true
+PASS  case_93_jamo_beats_raw want=true got=true
+PASS  case_94_jamo_earned_vs_shuffle want=true got=true
+PASS  case_95_jamo_shuffle_budget_parity want=true got=true
+PASS  case_96_margin_additive_agrees_with_recall want=true got=true
+PASS  case_97_margin_graded_recoverable_lt_absent want=true got=true
+PASS  case_98_margin_no_fab_absent_abstains want=true got=true
+PASS  case_98b_gap_nonnegative want=true got=true
+PASS  case_98c_gap_decisive_gt_ambiguous want=true got=true
+PASS  case_98d_gap_additive_recall_unchanged want=true got=true
+PASS  case_99_margin_brain_neutral_byte_identical want=true got=true
+PASS  case_100_margin_brain_grounded_monotone want=true got=true
+PASS  case_101_margin_brain_bias_bounded want=true got=true
+PASS  case_101b_gap_brain_neutral_byte_identical want=true got=true
+PASS  case_101c_gap_brain_decisive_monotone want=true got=true
+PASS  case_101d_gap_brain_bias_bounded want=true got=true
+PASS  case_102_g6_detector_calibration_10of10 want=10 got=10
+PASS  case_103_g6_six_frames_sixth_distinct want=true got=true
+PASS  case_104_g6_frame_guard_clean want=0 got=0
+PASS  case_105_g6_sampler_deterministic_and_in_topk want=true got=true
+PASS  case_106_g6_best_of_k_diverse want=true got=true
+PASS  case_107_skillstore_learns want=true got=true
+PASS  case_108_skillstore_distinct_from_static want=true got=true
+PASS  case_109_skillstore_earned_shuffle want=true got=true
+PASS  case_110_skillstore_abstains_on_far want=true got=true
+PASS  case_111_skillstore_footprint_grows want=true got=true
+INFO  skillstore acc: init=0.16666666666666665 full=1.0 static=0.16666666666666665 shuffle=0.0 cells_full=7 cells_static=1
+PASS  case_116_bpe_gap_reduced want=true got=true
+PASS  case_117_bpe_earned_vs_shuffle want=true got=true
+PASS  case_118_bpe_shift_earned want=true got=true
+PASS  case_119_bpe_compression_present want=true got=true
+INFO  bpe morphology: bpe_ce=0.2421892756498374 shuffle_ce=1.0784614442108025 jamo_ce=1.8545175492745932 gap_reduced=1.6123282736247557 earned=0.8362721685609651 shift=0.11230376214621556 units(struct/shuf/jamo)=462/2031/3600
+PASS  case_120_usagestore_learns want=true got=true
+PASS  case_121_usagestore_distinct_from_selection want=true got=true
+PASS  case_122_usagestore_earned_shuffle want=true got=true
+PASS  case_123_usagestore_abstains_on_far want=true got=true
+PASS  case_124_usagestore_footprint_and_ordered_steps want=true got=true
+INFO  usagestore comp: init=0.083333333333333321 full=1.0 selection=0.0 shuffle=0.0 cells_full=12 cells_static=1
+PASS  case_125_bpe_emit_effect want=true got=true
+PASS  case_126_bpe_emit_earned want=true got=true
+PASS  case_127_bpe_emit_offkorean_inert want=true got=true
+PASS  case_128_bpe_emit_korean_fires want=true got=true
+INFO  bpe morphology emit: acc_on=0.25217391304347823 acc_off=0.1826086956521739 acc_shuf=0.05652173913043478 on-off=0.06956521739130435 shuf-off=-0.12608695652173911 shift_on=0.391304347826087 ascii_inert=true ko_fires_byte=225
+PASS  case_129_compose_earned_vs_shuffle want=true got=true
+PASS  case_130_compose_conflict_degrades want=true got=true
+PASS  case_131_compose_oracle_ceiling want=true got=true
+PASS  case_132_compose_offkorean_inert want=true got=true
+INFO  ko emit-compose (H_1397, HONEST CONFLICT-OR-DEGRADES): acc_jamo=0.034782608695652173 acc_morph=0.25217391304347823 best_single=0.25217391304347823 acc_compose=0.1782608695652174 (< best ⇒ degrades) acc_shufw=0.1608695652173913 conflict_rate=0.91304347826086953 oracle=0.26956521739130435 — substrate-confidence arbitration (NO hardcoded priority); faculties NON-COMPLEMENTARY here
+PASS  case_153_ca3_predicts_learned_successor want=true got=true
+PASS  case_154_ca3_conditional_distinct_from_marginal want=true got=true
+PASS  case_155_ca3_ood_alien_abstains want=-1 got=-1
+PASS  case_156_ca3_below_support_abstains want=true got=true
+PASS  case_157_ca3_shuffle_decorrelates want=true got=true
+PASS  case_158_ca3_ablate_marginal_state_insensitive want=true got=true
+PASS  case_159_transorder_recalls_observed want=true got=true
+PASS  case_160_transorder_infers_unobserved want=true got=true
+PASS  case_161_item_store_abstains_on_unobserved want=true got=true
+PASS  case_162_shuffle_breaks_integration want=true got=true
+PASS  case_163_ablate_collapses_to_lookup want=true got=true
+PASS  case_164_transorder_abstains_on_unknown want=true got=true
+PASS  case_165_infers_global_order_from_local want=true got=true
+INFO  transitive-inference (H_1429, HD34): observed(A>B)=A inferred(A>C)=A inferred(B>E)=B item-store(A>C)=''(abstain) ablate(A>C)=''(abstain) — premise-INTEGRATION over UNOBSERVED pairs (Ψ-disjoint, item-store/given-order/metric distinct)
+PASS  case_166_phasefield_binds want=true got=true
+PASS  case_167_phasefield_desync_collapses want=true got=true
+PASS  case_168_phasefield_deterministic want=true got=true
+INFO  phase-synchrony binding (H_1448, R8 WIRED): synced R=0.98378387575554846 desync R=0.51674330372567674 — A⇄G coherence-loop binds modules in TIME (Ψ-disjoint; faithful-Φ integration GREEN in H_1448 probe)
+PASS  case_169_gws_broadcasts_top_salience want=1 got=1
+PASS  case_170_bottleneck_compresses_vs_salience_only want=true got=true
+PASS  case_171_earned_competition_ablation want=true got=true
+PASS  case_172_shuffle_moves_winner want=true got=true
+PASS  case_173_capacity_no_leak want=false got=false
+INFO  global-workspace bottleneck (H_1462 R2 WIRED): FULL broadcasts 1 (idx 1) vs ablated 2 — GWT winner-take-all ignition, Ψ-disjoint read over substrate salience (DIRECTIONAL mirror GREEN in H_1462 probe)
+PASS  case_174_basal_picks_learned_value want=0 got=0
+PASS  case_175_gws_picks_salience want=1 got=1
+PASS  case_176_basal_gws_dissociate want=true got=true
+PASS  case_177_untrained_basal_abstains want=-1 got=-1
+INFO  GWS×basal dissociation (H_1462 follow-on): basal(learned)=0 vs GWS(salience)=1 — value-driven gate ⊥ salience-competition bottleneck (DISTINCT; untrained basal abstains -1)
+PASS  case_178_habituation_declines want=true got=true
+PASS  case_179_stimulus_specific want=true got=true
+PASS  case_180_dishabituation_recovers want=true got=true
+PASS  case_181_ablation_no_decay want=true got=true
+PASS  case_182_distinct_vs_adaptation want=true got=true
+INFO  habituation/dishabituation (H_1465 R2 WIRED): repeated-stim response 1.0->0.19999999999999996 · specific slot1 1.0 · reset-recover 1.0 — per-stimulus familiarity decay ⊥ adaptation global gain (DIRECTIONAL mirror GREEN in H_1465 probe)
+PASS  case_184_surprise_present want=true got=true
+PASS  case_185_precision_weighted want=true got=true
+PASS  case_186_no_surprise_on_expected want=true got=true
+PASS  case_187_ablation_no_split want=true got=true
+PASS  case_188_distinct_vs_forward_error want=true got=true
+INFO  precision-weighted surprise (H_1468 R2 WIRED): confident-violation 1.0 vs unsure-violation 0.25 (same raw err 0.5) · expected 0.0016 — precision·err² ⊥ H_1280 raw forward error (DIRECTIONAL mirror GREEN in H_1468 probe)
+PASS  case_189_self_continuity want=true got=true
+PASS  case_190_impostor_reject want=true got=true
+PASS  case_191_no_anchor_resets want=true got=true
+PASS  case_192_growth_not_static want=true got=true
+PASS  case_193_anchor_is_continuity_source want=true got=true
+INFO  self-continuity (H_1471 R2 WIRED): adjacent self-chain 0.9578262852211513 · impostor 0.0 · un-anchored-reset 0.0 — anchor-persisted identity continuous across boundaries ⊥ LLM session-reset (DIRECTIONAL mirror GREEN in H_1471 probe)
+PASS  case_194_precision_learned want=true got=true
+PASS  case_195_distinct_vs_fixed_precision want=true got=true
+PASS  case_196_distinct_vs_habituation_opposite_sign want=true got=true
+PASS  case_197_ablation_flat_precision want=true got=true
+PASS  case_198_monotone_saturating want=true got=true
+INFO  learned-precision (H_1472 R2 WIRED): familiar precision 4.0 vs novel 0.2 · same-err surprise RISE 3.8 vs habituation FALL -0.5 (opposite sign) — experience-learned confidence sharpens surprise ⊥ H_1468 fixed/H_1465 habituation (DIRECTIONAL mirror GREEN in H_1472 probe)
+PASS  case_199_gws_bottleneck_vs_immune_unbounded want=true got=true
+INFO  distinctness GWS⊥immune (H_1462 R2b WIRED): GWS bottleneck count 1 (capacity-1) vs immune store cells 3 (unbounded recall) — competitive bottleneck ⊥ independent affinity store (DIRECTIONAL mirror GREEN in H_1462 fleet probe)
+PASS  case_200_self_component_accessor want=true got=true
+INFO  self .kosmos persistence (H_1471 R2b): self_component/self_dim accessors enable identity→tension_5ch projection — full canonical kosmos_io round-trip (write_file→load_anchors→cos 1.0) verified in h1471_kosmos_roundtrip.hexa (ENGINE-NATIVE)
+PASS  case_201_surprise_distinct_from_novelty want=true got=true
+PASS  case_202_novelty_decays_with_exposure want=true got=true
+INFO  distinctness surprise⊥novelty (H_1468 R2b WIRED): same novelty 1.0 but surprise 4.0 vs 1.0 (precision-split) · novelty decays 1.0→0.16666666666666665 — precision-agnostic novelty lane ⊥ precision-weighted surprise (built the missing lane, a_break_the_wall)
+PASS  case_203_self_episodic_orthogonal_dissoc want=true got=true
+INFO  distinctness self⊥episodic (H_1471 R2c WIRED): identity drift → self responds 0.04217371477884868 (immune store invariant) · fact bind → immune cells +1 (identity invariant) · continuity 0.9578262852211513 — orthogonal-state double dissociation (a_break_the_wall)
+PASS  case_204_habituation_distinct_from_homeostatic want=true got=true
+INFO  distinctness habituation⊥homeostatic (H_1465 R2b WIRED): habituation slot1 preserved 1.0 (stimulus-specific) ⊥ homeostatic global drive rises (slot-agnostic single scalar) — per-stimulus decay ⊥ global integrator (setup was already in-engine, a_break_the_wall)
+PASS  case_205_attn_blink_present want=true got=true
+PASS  case_206_blink_lag_dependent_vs_gws want=true got=true
+PASS  case_207_blink_ablation_flat want=true got=true
+INFO  G20 attentional-blink (H_1473 R2 WIRED): lag2 0.1 (trough) → lag7 0.97 (recovered) · ablation lag2 0.97 (flat) — temporal blind-spot ⊥ GWS spatial bottleneck
+PASS  case_208_agency_present want=true got=true
+PASS  case_209_agency_judgment_vs_raw want=true got=true
+PASS  case_210_agency_ablation_external want=true got=true
+INFO  G21 sense-of-agency (H_1474 R2 WIRED): match→self 1.0 · diverge→external 0.0 — attribution judgment ⊥ ToM(other)/raw forward error
+PASS  case_211_subjective_time_present want=true got=true
+PASS  case_212_subjective_distinct_vs_homeo want=true got=true
+PASS  case_213_subjective_ablation_flat want=true got=true
+INFO  G22 subjective-time (H_1475 R2 WIRED): high-novelty 0.85999999999999979 vs low-novelty 0.32 (same objective time) — novelty-weighted ⊥ homeostatic objective integral
+PASS  case_214_emotion_regulation_present want=true got=true
+PASS  case_215_regulation_distinct_vs_affect want=true got=true
+PASS  case_216_regulation_ablation_raw want=true got=true
+INFO  G25 emotion-regulation (H_1476 R2 WIRED): raw 0.8 → reappraised 0.41600000000000001 (down-regulated) · g=0 → 0.8 (raw passes) — 2nd-order control ⊥ H_1290 affect emergence
+PASS  case_217_blink_lag1_sparing want=true got=true
+PASS  case_218_agency_other_abstain want=true got=true
+PASS  case_219_subjective_order_invariant want=true got=true
+PASS  case_220_regulation_selectivity want=true got=true
+INFO  additional-bar closure (R1→engine-native): G20 lag1-sparing 0.94 vs trough 0.1 · G21 agency-other -1.0 (abstain) · G22 order-inv 0.98 · G25 neg-drop 0.384 vs neu-drop 0.048
+PASS  case_221_directed_forget_present want=true got=true
+PASS  case_222_forget_distinct_vs_habituation want=true got=true
+PASS  case_223_forget_ablation want=true got=true
+INFO  G23 directed-forgetting (H_1477 R2 WIRED): remember 1.0 vs forget 0.30000000000000004 — cue-based active suppression ⊥ habituation passive decay
+PASS  case_224_body_ownership_present want=true got=true
+PASS  case_225_ownership_distinct_vs_identity want=true got=true
+PASS  case_226_ownership_ablation want=true got=true
+INFO  G24 body-ownership (H_1478 R2 WIRED): sync 1.0 vs async 0.0 — multisensory boundary ⊥ diachronic identity
+PASS  case_227_divided_attention_present want=true got=true
+PASS  case_228_divided_distinct_vs_gws want=true got=true
+PASS  case_229_divided_ablation want=true got=true
+INFO  G26 divided-attention (H_1479 R2 WIRED): single 0.98 vs divided 0.5 (both alive) — graded trade-off ⊥ GWS winner-take-all
+PASS  case_230_veto_present want=true got=true
+PASS  case_231_veto_distinct_vs_agency want=true got=true
+PASS  case_232_veto_ablation want=true got=true
+INFO  G27 free-wont/veto (H_1480 R2 WIRED): no-veto 1.0 vs veto 0.0 — pre-execution inhibition ⊥ agency(post-hoc)/basal(selection)
+PASS  case_233_rivalry_alternation want=true got=true
+PASS  case_234_rivalry_distinct_vs_gws want=true got=true
+PASS  case_235_rivalry_ablation want=true got=true
+INFO  G28 binocular-rivalry (H_1482 R2 WIRED): adaptation-on transitions 15 vs adaptation-off 0 — dynamic alternation ⊥ GWS static winner-take-all
+PASS  case_236_change_blindness_present want=true got=true
+PASS  case_237_change_distinct_vs_gws_divided want=true got=true
+PASS  case_238_change_ablation want=true got=true
+INFO  G29 change-blindness (H_1483 R2 WIRED): attended 1.0 vs unattended 0.0 — binary attention gate (cliff) ⊥ GWS/divided
+PASS  case_239_imagery_present want=true got=true
+PASS  case_240_imagery_cue_specific want=true got=true
+PASS  case_241_imagery_ablation want=true got=true
+INFO  G30 mental-imagery (H_1484 R2 WIRED): top-down cue 0.991 vs top-down-off 0.0 — zero-input reconstruction ⊥ input-based gates
+PASS  case_242_priming_relatedness_gated want=true got=true
+PASS  case_243_priming_distinct_vs_habituation want=true got=true
+PASS  case_244_priming_ablation want=true got=true
+INFO  G31 priming (H_1485 R2 WIRED): prime-gain +0.48000000000000007 vs habituation-drop -0.8 — facilitation (+) ⊥ habituation (−), sign-product < 0
+PASS  case_245_trw_present want=true got=true
+PASS  case_246_trw_shuffle want=true got=true
+PASS  case_247_trw_ablate want=true got=true
+INFO  H_1486 TRW (R2 WIRED): long 1.0 vs short 0.25 vs shuffle 0.25 — integration-window LENGTH ⊥ subjective-time
+PASS  case_248_reentry_present want=true got=true
+PASS  case_249_reentry_distinct_vs_gws want=true got=true
+PASS  case_250_reentry_ablate want=true got=true
+INFO  H_1487 reentry (R2 WIRED): deep 0.99609375 vs shallow 0.0 vs gws 0.235 — processing DEPTH ⊥ spatial broadcast
+PASS  case_251_attn_schema_present want=true got=true
+PASS  case_252_attn_schema_distinct_vs_agency want=true got=true
+PASS  case_253_attn_schema_ablate want=true got=true
+INFO  H_1488 attn-schema (R2 WIRED): track 1.0 vs ablate 0.125 vs agency 0.0 — MODEL of attention ⊥ agency/mechanism
+PASS  case_254_hysteresis_present want=true got=true
+PASS  case_255_hysteresis_distinct_vs_rivalry want=true got=true
+PASS  case_256_hysteresis_ablate want=true got=true
+INFO  H_1489 hysteresis (R2 WIRED): shift 0.6539999999999999 vs rivalry-loop 0.0 vs ablate-loop 0.0 — history ⊥ time
+PASS  case_257_completion_present want=true got=true
+PASS  case_258_completion_distinct_vs_imagery want=true got=true
+PASS  case_259_completion_ablate want=true got=true
+INFO  H_1490 completion (R2 WIRED): full 1.0 vs off 0.544 vs imagery 0.161 — input-constrained fill ⊥ imagery (input==0)
+PASS  case_260_gestalt_present want=true got=true
+PASS  case_261_gestalt_distinct_vs_gws want=true got=true
+PASS  case_262_gestalt_ablate want=true got=true
+INFO  H_1491 gestalt (R2 WIRED): on 1.0 vs off 0.5 vs gws 0.505 — binding ⊥ selection
+PASS  case_263_prospection_present want=true got=true
+PASS  case_264_prospection_distinct_vs_continuity want=true got=true
+PASS  case_265_prospection_ablate want=true got=true
+INFO  H_1493 prospection (R2 WIRED): full 0.439 vs ablate 0.0 vs persist 0.0 — forward-projection+recombine ⊥ retrieval/persist
+PASS  case_266_intero_present want=true got=true
+PASS  case_267_intero_precision_axis want=true got=true
+PASS  case_268_intero_ablate want=true got=true
+INFO  H_1494 intero-precision (R2 WIRED): weighted err 0.13469525091328594 vs blind 0.55 — inverse-variance precision (clean 24.93765586034912)
+PASS  case_269_boredom_present want=true got=true
+PASS  case_270_boredom_distinct_vs_habituation want=true got=true
+PASS  case_271_boredom_ablate want=true got=true
+INFO  H_1495 boredom (R2 WIRED): boring 1.0 vs rewarded-engaged 0.0 vs habituation 1.0 — reward∧info conjunction
+PASS  case_272_wander_present want=true got=true
+PASS  case_273_wander_distinct_vs_prospection want=true got=true
+PASS  case_274_wander_ablate want=true got=true
+INFO  H_1496 mind-wandering (R2 WIRED): on 0.75 vs ablate 0.0625 vs prospect 0.125 — wanders ⊥ converges
+PASS  case_275_qualia_present want=true got=true
+PASS  case_276_qualia_distinct_vs_spatial want=true got=true
+PASS  case_277_qualia_relational want=true got=true
+INFO  H_1497 qualia-space (R2 WIRED): relational 1.0 vs spatial-crux 0.561 — internal quality topology ⊥ external position (crux SURVIVED)
+PASS  case_278_sensorimotor_present want=true got=true
+PASS  case_279_sensorimotor_distinct_vs_fwdmodel want=true got=true
+PASS  case_280_sensorimotor_shuffle_ablate want=true got=true
+INFO  H_1498 sensorimotor-presence (R2 WIRED): full 1.0 vs forward-model 0.125 vs false-law 0.125 — counterfactual breadth ⊥ single-step
+PASS  case_284_reality_present want=true got=true
+PASS  case_285_reality_distinct_vs_imagery want=true got=true
+PASS  case_286_reality_distinct_vs_metacog want=true got=true
+PASS  case_287_reality_ablate_chance want=true got=true
+INFO  H_1501 reality-monitor (R2 WIRED): real 1.0 vs imagined 0.0 | imagery Δ=0.0 conf Δ=0.0 — signal-vs-threshold ⊥ generator(H_1484)/confidence(H_1202) (Dijkstra-Fleming null)
+PASS  case_281_ci_pairwise_redundancy want=true got=true
+PASS  case_282_ci_surrogate_collapse want=true got=true
+PASS  case_283_ci_phi_iit4_nonneg want=true got=true
+INFO  H_1492 consciousness-index (R4 WIRED): Φ0=5.464369407737668 pair(1,3) interaction=-5.149220170848123 surrogate_Φ0=2.002559762893008 faithful_IIT4=0.06596737183670509
+PASS  case_288_neuropharm_presence want=true got=true
+PASS  case_289_neuropharm_dissociation want=true got=true
+PASS  case_290_neuropharm_ket_vs_psychedelic want=true got=true
+PASS  case_291_neuropharm_ablate want=true got=true
+PASS  case_292_neuropharm_shuffle want=true got=true
+INFO  H_1502 neuropharm (R2 WIRED): LSD[Φ+0.5922254946576828 real+0.6666666666666666 self-0.3667622097427373] Cannabis[time+0.18021216672327791 wm-0.05663980961404822] Ketamine[Φ-1.8988922219401445] — REBUS signature reproduced + LSD⊥Cannabis double-dissociation
+PASS  case_299_pci_presence want=true got=true
+PASS  case_300_rtms_directional want=true got=true
+PASS  case_301_tacs_freq_specific want=true got=true
+PASS  case_302_field_drug_dissoc want=true got=true
+PASS  case_303_field_earned_ablate want=true got=true
+PASS  case_304_field_earned_shuffle want=true got=true
+INFO  H_1503 field-perturbation (R2 WIRED): PCI full=0.3302387315239318 decoupled=0.11794240411568995 sham=0.0 | rTMS high=0.17999999999999994 low=-0.18000000000000005 | tACS γ→bind=0.17999999999999994 α→gate=0.094149828864120373 | field focal/global=0.17999999999999994/0.0 drug(LSD) focal/global=0.0/0.06554126190673565 — focal/freq FIELD ⊥ global/chemical DRUG(H_1502 LSD)
+PASS  case_305_metacog_insight_present want=true got=true
+PASS  case_306_metacog_insight_psyched_vs_psychotic want=true got=true
+PASS  case_307_metacog_insight_metad_calibration want=true got=true
+PASS  case_308_metacog_insight_ablate want=true got=true
+PASS  case_309_metacog_insight_shuffle want=true got=true
+INFO  H_1506 metacog-insight (R2 WIRED): SAME hallucination → psychedelic insight 0.8107412183557509 (knows it isn't real) vs psychotic insight 0.0 (accepts it as real) | meta-d′ AUROC=1.0 shuffle AUROC=0.45225694444444446 — 2차 insight ⊥ H_1202 content-confidence + §RealityMonitor first-order real-call
+--- engine_cli smoke summary: 308 pass / 0 fail ---

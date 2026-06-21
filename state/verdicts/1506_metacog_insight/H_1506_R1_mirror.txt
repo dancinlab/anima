@@ -1,0 +1,15 @@
+==============================================================================
+H_1506 METACOGNITIVE-INSIGHT axis — R1 numpy mirror (DIRECTIONAL)
+seeds: [1506, 1507, 1508] | N_TRIALS: 48
+------------------------------------------------------------------------------
+(A) INSIGHT-PRESENT   insight(halluc,intact) = 0.821  (bar >= 0.5) -> PASS
+(B) PSYCHED-vs-PSYCHOTIC  psychedelic=0.821  psychotic=0.000  dissoc=0.821  (bar >= 0.5) -> PASS
+(C) META-D' CALIBRATION  AUROC=1.000  gap=0.500  (bar >= 0.3) -> PASS
+(D) EARNED ablate-metacog  insight(gain=0)=0.000  (bar <= 0.15) -> PASS
+(E) EARNED shuffle   shuf_gap=0.036  (bar <= 0.3) -> PASS
+------------------------------------------------------------------------------
+VERDICT: 🟢 GREEN — A∧B∧C∧D∧E
+==============================================================================
+HEADLINE: same first-order hallucination, opposite second-order insight —
+  psychedelic (priors relaxed, metacog intact) insight 0.821 (knows it isn't real)
+  psychotic   (priors rigid,   metacog impaired) insight 0.000 (accepts it as real)

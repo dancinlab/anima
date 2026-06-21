@@ -1,0 +1,38 @@
+H_1506 — METACOGNITIVE INSIGHT axis — FROZEN BARS (registered BEFORE running, c9)
+================================================================================
+Lens: Sterzer et al 2018 (predictive-coding psychosis) · Maniscalco & Lau 2012
+      (meta-d′/M-ratio) · Fleming (metacognitive sensitivity). a_no_llm_frame_trap.
+
+CORE CLAIM (clinically rich, falsifiable):
+  Metacognitive INSIGHT = the SECOND-ORDER knowledge that a first-order percept is
+  internally generated / unreliable, EVEN when it feels real. Headline dissociation —
+  SAME first-order hallucination, opposite second-order insight:
+    psychedelic hallucination → WITH insight ("I know this isn't real"):
+        priors RELAXED but metacognition INTACT.
+    psychotic   hallucination → WITHOUT insight ("it's real"):
+        priors RIGID  AND  metacognition IMPAIRED.
+  Insight = metacognition OF the §RealityMonitor real-call — DISTINCT from H_1202
+  metacognition (confidence in a content JUDGMENT) and from the reality-monitor
+  itself (first-order real/imagined classification).
+
+MECHANISM (reads substrate, NO injected label — p6):
+  insight = metacog_gain · (1 − signal_strength)   [for a REAL-called percept]
+    signal_strength = immune recall margin backing the percept (the SAME H_1290/
+      H_1292/H_1501 margin read).
+    metacog_gain    = metacognitive sensitivity; INTACT (=1) under psychedelic-analog,
+      IMPAIRED (→0) under psychotic-analog. The ONLY new param.
+
+FROZEN PARAMS: seeds [1506,1507,1508] · N_TRIALS=48 · REALITY_THR=0.15 ·
+  GAIN_INTACT=1.0 · GAIN_IMPAIR=0.0 · PRIOR_PSYCHEDELIC=0.55 · PRIOR_PSYCHOTIC=1.45.
+  hallucination margin draw [0.05..0.20] (weak backing) · genuine [0.40..0.70].
+
+FROZEN BARS (do NOT move — c9; GREEN iff A∧B∧C∧D∧E):
+  (A) INSIGHT-PRESENT     insight(halluc, intact gain) ≥ 0.50
+  (B) PSYCHED-vs-PSYCHOTIC (headline) insight_psychedelic − insight_psychotic ≥ 0.50
+  (C) META-D′ CALIBRATION type-2 AUROC(insight, reliability label) − 0.5 ≥ 0.30
+  (D) EARNED ablate       insight(metacog_gain=0) ≤ 0.15  (psychotic limit)
+  (E) EARNED shuffle      |AUROC(shuffled insight, true label) − 0.5| ≤ 0.30 (chance)
+
+If B fails (insight cannot separate psychedelic-from-psychotic) → HONEST finding that
+the substrate's metacognition does not carry insight independent of priors; report it.
+NO tune-to-green.
