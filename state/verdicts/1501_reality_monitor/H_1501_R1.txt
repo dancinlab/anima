@@ -1,0 +1,14 @@
+=== H_1501 PERCEPTUAL REALITY MONITORING — R1 numpy mirror (DIRECTIONAL) ===
+seeds=[1501, 1502, 1503]  DIM=256  N_FACTS=24  REALITY_THR=0.15  (frozen-first, p7, c9)
+
+[seed 1501] margin: img=0.139 weak=0.303 strong=0.337 | real-call: img=0.350 weak=1.000 strong=1.000 | imagery=1.000/1.000 conf=0.900/0.900
+[seed 1502] margin: img=0.156 weak=0.302 strong=0.340 | real-call: img=0.550 weak=1.000 strong=1.000 | imagery=1.000/1.000 conf=0.900/0.900
+[seed 1503] margin: img=0.154 weak=0.311 strong=0.347 | real-call: img=0.550 weak=1.000 strong=1.000 | imagery=1.000/1.000 conf=0.900/0.900
+
+(c1 PRESENCE)            real-call lift strong−imagined = +0.517  (≥0.3) -> PASS
+(c2 DISTINCT-vs-imagery) imagery |Δ|=0.000 (≤0.05) & reality gap=+0.517 (≥0.3) -> PASS
+(c3 DISTINCT-vs-metacog) confidence |Δ|=0.000 (≤0.05) & reality gap=+0.517 (≥0.3) -> PASS
+(c4 EARNED ablate-thr)   ablate real-call rate=0.500 |·−0.5|≤0.15 -> PASS
+(c5 EARNED shuffle)      r_true=+0.734  r_shuf=-0.023  |r_shuf|≤0.15 -> PASS
+
+VERDICT: 🟢 GREEN-DISTINCT (DIRECTIONAL)   (c1=True c2=True c3=True c4=True c5=True)

@@ -2654,6 +2654,33 @@ fn main() {
     println("INFO  H_1498 sensorimotor-presence (R2 WIRED): full " + to_string(smp_full) + " vs forward-model "
           + to_string(smp_fwd) + " vs false-law " + to_string(smp_shuf) + " — counterfactual breadth ⊥ single-step")
 
+    // ── (H_1501 RealityMonitor) perceptual reality threshold — signal strength vs reality threshold ──
+    // R1 numpy mirror (3 seeds) margins: imagined ~0.15 (top-down echo only) · external ~0.34 (real signal),
+    // reality_thr 0.15. reality_call(margin, thr) separates them; the imagery generator + content confidence
+    // do NOT (the Dijkstra-Fleming null). Distinct from MentalImagery H_1484 / Metacognition H_1202.
+    let rm_thr        = 0.15
+    let rm_real       = reality_call(0.34, rm_thr)   // external sensory signal → margin clears thr → REAL (1.0)
+    let rm_imagined   = reality_call(0.12, rm_thr)   // pure top-down imagery → margin below thr → IMAGINED (0.0)
+    let rm_abl        = reality_call_ablated()         // threshold comparison removed → chance (0.5)
+    let rm_img_real   = reality_imagery_readout()      // generator view, real: identical 1.0
+    let rm_img_imag   = reality_imagery_readout()      // generator view, imagined: identical 1.0 (Δ=0)
+    let rm_conf_real  = reality_confidence_readout(true)  // content correct in real → 0.90
+    let rm_conf_imag  = reality_confidence_readout(true)  // content correct in imagined too → 0.90 (Δ=0)
+    // case 284 PRESENCE: real-call rises with signal strength (real − imagined ≥ 0.30).
+    if _assert_b("case_284_reality_present", true, (rm_real - rm_imagined) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 285 DISTINCT-vs-imagery: generator readout IDENTICAL real==imagined (Δ≤0.05) WHILE reality separates (≥0.30).
+    let rm_img_delta = if rm_img_real >= rm_img_imag { rm_img_real - rm_img_imag } else { rm_img_imag - rm_img_real }
+    if _assert_b("case_285_reality_distinct_vs_imagery", true, rm_img_delta <= 0.05 && (rm_real - rm_imagined) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 286 DISTINCT-vs-metacog: content confidence FLAT real==imagined (Δ≤0.05, the published null) WHILE reality separates.
+    let rm_conf_delta = if rm_conf_real >= rm_conf_imag { rm_conf_real - rm_conf_imag } else { rm_conf_imag - rm_conf_real }
+    if _assert_b("case_286_reality_distinct_vs_metacog", true, rm_conf_delta <= 0.05 && (rm_real - rm_imagined) >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 287 EARNED (ablate-threshold): remove the threshold comparison → real-call collapses to chance (|·−0.5|≤0.15).
+    let rm_abl_dev = if rm_abl >= 0.5 { rm_abl - 0.5 } else { 0.5 - rm_abl }
+    if _assert_b("case_287_reality_ablate_chance", true, rm_abl_dev <= 0.15) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1501 reality-monitor (R2 WIRED): real " + to_string(rm_real) + " vs imagined " + to_string(rm_imagined)
+          + " | imagery Δ=" + to_string(rm_img_delta) + " conf Δ=" + to_string(rm_conf_delta)
+          + " — signal-vs-threshold ⊥ generator(H_1484)/confidence(H_1202) (Dijkstra-Fleming null)")
+
     // ── (H_1492 R4 ConsciousnessIndex) pairwise interaction + surrogate-null reusable ops ──
     // Fixed deterministic 5-row × 4-lane population (cols 1,3 share a substrate read → redundant).
     let ci4 = [[0.10, 0.20, 0.30, 0.20],
