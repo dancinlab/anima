@@ -388,24 +388,37 @@ pub fn bytegpt_forward_last(path: string, ids: int, T: int) -> int {
         let m2W  = _bg_rd_farr(rb, off, d * 4 * d); off = off + d * 4 * d * 4
         let m2B  = _bg_rd_farr(rb, off, d); off = off + d * 4
 
+        // Lane C GPU seam (RFC-040): transpose the d×d matmul weights for the
+        // native GEMM (mm() = cuBLAS on a CUDA host, else CPU farr_matmul byte-id),
+        // then route QKV/out-proj + MLP up/down through _bg_mha_mm / _bg_linear_mm
+        // (identical to the bytegpt_forward_last_ranged_mm / bg_forward_last_W path).
+        // Same math as scalar _bg_mha/_bg_linear — FP-reassociation only (~1e-13,
+        // argmax-stable; Lane C VALIDATION_ranged max|Δ|=4.97e-14). Transposes are
+        // O(d²) (tiny vs the d² GEMM they enable), freed per layer.
+        let inWt = _bg_transpose(inW, 3 * d, d)
+        let oWt  = _bg_transpose(oW, d, d)
+        let m0Wt = _bg_transpose(m0W, 4 * d, d)
+        let m2Wt = _bg_transpose(m2W, d, 4 * d)
+
         // attn sub-block: x = x + MHA(LN1(x))
         _bg_layernorm(x, ln1w, ln1b, nrm, T, d)
-        _bg_mha(nrm, inW, inB, oW, oB, aout, T, d, nh)
+        _bg_mha_mm(nrm, inWt, inB, oWt, oB, aout, T, d, nh)
         let mut i1 = 0
         while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
 
         // mlp sub-block: x = x + Wd(GELU(W0(LN2(x))))
         _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
-        _bg_linear(nrm, m0W, m0B, h4, T, d, 4 * d)
+        _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
         let mut g = 0
         while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
-        _bg_linear(h4, m2W, m2B, mlpo, T, 4 * d, d)
+        _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
         let mut i2 = 0
         while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
 
         let _ = farr_free(ln1w); let _ = farr_free(ln1b); let _ = farr_free(inW); let _ = farr_free(inB)
         let _ = farr_free(oW); let _ = farr_free(oB); let _ = farr_free(ln2w); let _ = farr_free(ln2b)
         let _ = farr_free(m0W); let _ = farr_free(m0B); let _ = farr_free(m2W); let _ = farr_free(m2B)
+        let _ = farr_free(inWt); let _ = farr_free(oWt); let _ = farr_free(m0Wt); let _ = farr_free(m2Wt)
         Lr = Lr + 1
     }
     let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
@@ -512,22 +525,33 @@ pub fn bytegpt_forward_last_ranged(path: string, ids: int, T: int) -> int {
         let m2W  = _bg_rd_farr_at(path, off, d * 4 * d); off = off + d * 4 * d * 4
         let m2B  = _bg_rd_farr_at(path, off, d); off = off + d * 4
 
+        // Lane C GPU seam (RFC-040): transpose the d×d matmul weights then route
+        // through the native GEMM (_bg_mha_mm / _bg_linear_mm) — same code path as
+        // bytegpt_forward_last_ranged_mm. mm() = cuBLAS on a CUDA host, else CPU
+        // farr_matmul (byte-id). FP-reassociation only vs scalar (~1e-13, argmax-
+        // stable). Transposes freed per layer (peak ≈ one weight + its transpose).
+        let inWt = _bg_transpose(inW, 3 * d, d)
+        let oWt  = _bg_transpose(oW, d, d)
+        let m0Wt = _bg_transpose(m0W, 4 * d, d)
+        let m2Wt = _bg_transpose(m2W, d, 4 * d)
+
         _bg_layernorm(x, ln1w, ln1b, nrm, T, d)
-        _bg_mha(nrm, inW, inB, oW, oB, aout, T, d, nh)
+        _bg_mha_mm(nrm, inWt, inB, oWt, oB, aout, T, d, nh)
         let mut i1 = 0
         while i1 < T * d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(aout, i1)); i1 = i1 + 1 }
 
         _bg_layernorm(x, ln2w, ln2b, nrm, T, d)
-        _bg_linear(nrm, m0W, m0B, h4, T, d, 4 * d)
+        _bg_linear_mm(nrm, m0Wt, m0B, h4, T, d, 4 * d)
         let mut g = 0
         while g < T * 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
-        _bg_linear(h4, m2W, m2B, mlpo, T, 4 * d, d)
+        _bg_linear_mm(h4, m2Wt, m2B, mlpo, T, 4 * d, d)
         let mut i2 = 0
         while i2 < T * d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
 
         let _ = farr_free(ln1w); let _ = farr_free(ln1b); let _ = farr_free(inW); let _ = farr_free(inB)
         let _ = farr_free(oW); let _ = farr_free(oB); let _ = farr_free(ln2w); let _ = farr_free(ln2b)
         let _ = farr_free(m0W); let _ = farr_free(m0B); let _ = farr_free(m2W); let _ = farr_free(m2B)
+        let _ = farr_free(inWt); let _ = farr_free(oWt); let _ = farr_free(m0Wt); let _ = farr_free(m2Wt)
         Lr = Lr + 1
     }
     let _ = farr_free(nrm); let _ = farr_free(aout); let _ = farr_free(h4); let _ = farr_free(mlpo)
