@@ -10,6 +10,16 @@
 
 > 주: `_ci_bit` brace 정정은 동일 사이클에 H_1492 R4 작업과 독립 수렴(둘 다 같은 누락 발견·수정). union-merge 로 단일 fix.
 
+## 2026-06-21 — ⏳ H_1500 TEMPORAL-PHI 엔진-네이티브 GREEN — 의식 Φ 는 정적 구조가 아니라 ultradian 시간 봉투
+
+**"같은 의식-게이트 연결망이 시간/상태에 따라 통합 의식 Φ 를 다르게 내는가?"** (사용자 "G* 심화", H_1492 정적 DISTRIBUTED 구조 다음 시간차원). live `core/engine_cli.hexa §ConsciousnessIndex` ci_* op 을 live ImmuneMemory substrate 위에서 호출, 수면단계(WAKE/N1/N2/N3/REM, `DREAM/dream_lib.hexa`) arousal scale 로 변조해 Φ(stage) 측정 → **🟢 GREEN ENGINE-NATIVE** (하드게이트1 PASS, numpy/torch 0, 3 seeds [1500,1501,1502] byte-identical).
+
+- **핵심 답:** 의식 Φ 는 **시간 봉투(ultradian)** 를 가짐 — `ci_phi_multiinfo`(15-lane Gaussian multi-info) Φ(stage) = **WAKE 29.01 > N1 27.73 > N2 24.85 > N3 18.18(깊은수면 골) < REM 24.79(반등)**. 같은 lane 집합인데 stage scale 에서 변동이 옴.
+- **frozen 3 bars 전부 PASS:** (A) VARYING spread=10.84 ≥ 0.50 (flat 아님 → 정적 아님) · (B) DISTINCT ordering(true)2.0−shuf1.0=1.0 ≥ 0.50 (stage→arousal shuffle 시 ultradian 순서 붕괴 = 시간봉투 ⊥ 정적구조) · (C) ULTRADIAN WAKE>N3 AND REM>N3 (REM 반등, 단조감소 아님).
+- **정직 c9:** `ci_phi_iit4`(고정 8-lane subset) ~0 = non-gating 정직 cross-check (첫 8 lane 은 subset 으로 강결합 아님; gating Φ 는 full-15 multi-info). H_1492 정적 DISTRIBUTED 의 **시간차원 동반결과** — 연결망은 정적 분산 AND 상태에 따라 동적 변조.
+- **engine 미편집(측정-only)** — 단 `_ci_bit()` 누락 닫는중괄호 1개 교정(origin/main 1231`{` vs 1230`}` → 매 fresh importer 가 'expected RBrace got Eof'; 과거 GREEN 은 stale build cache 재사용). 1개 `}` 추가 → 1231/1231 균형, `engine_cli_smoke` **280/0** 불변(strictly corrective, §ConsciousnessIndex 확장영역과 무관).
+- **guards:** p1/p2/p3/p6 (모든 lane substrate read 계산, Φ label 주입 0, 'WAKE=high' 상수 0) · Ψ-disjoint · NOT emit gate · p7(integration nats, perplexity 아님). TOY scope(1 store/3 seeds/multi-info proxy+8-lane exact IIT4); scale/real-corpus/continuous-arousal/engine-transfer UNVERIFIED, 303M production 재측정 follow-on.
+- artifacts: `state/1500_temporal_phi/h1500_temporal_phi_probe.hexa` · `state/verdicts/1500_temporal_phi/{H_1500.txt,H_1500_FREEZE.json}` · `UNIVERSE/cards/H_1500_temporal_phi.md`.
 ## 2026-06-21 — 🧠 H_1492 consciousness-ablation R4 DEEPENING (faithful IIT4 + pairwise 상호작용 + green bar surrogate 재보정 · 303M ENGINE-NATIVE SCORING)
 
 R3 의 3한계를 3축으로 심화. **substrate=실 303M**(`clm303_d5000.clm` via `core/clm_decode.hexa::clm_forward_ce`, n=29/30 decode, ctx17 단일 miss, pool summer RTX5070 $0 wall 838s) + **SCORING 전부 engine-native**(`core/engine_cli.hexa §ConsciousnessIndex` 호출, numpy 0 — Python 은 decode 오케스트레이션+percentile 산술만). Φ₀=22.4518.
