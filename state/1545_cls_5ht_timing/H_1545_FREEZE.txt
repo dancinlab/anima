@@ -1,0 +1,55 @@
+H_1545 — SEROTONIN × CLS: adaptive consolidation TIMING (when to replay fast→slow)
+FROZEN FALSIFIER (pre-registered BEFORE running — frozen-first, c9, NO tune-to-green)
+======================================================================================
+
+FUSION: H_1532 🟢 two-store CLS (broke H_1284 wall on AB-AC interference) × H_1538/H_1540
+🟠 serotonin-as-patience (adaptive 5-HT stayed MINORITY lever in a single store). The
+structure-reopen: 5-HT controls WHEN to trigger the fast→slow consolidation sweep. The
+fast episodic store is finite + LRU-evicting; consolidate too LATE → an unreplayed A->B
+is evicted (lost); too EARLY → a half-formed store is swept (wasted). The right timing is
+CONTEXT-DEPENDENT (DENSE interference segments flood the fast store → need EARLY sweeps;
+SPARSE can wait) → no fixed period serves both → the adaptive 5-HT read should now carry
+the MAJORITY of the value (the condition H_1538/H_1540 lacked).
+Doya 2002 (5-HT = reward-integration TIME-SCALE); Lisman 2017 (consolidation TIMING).
+
+CLAIM: adaptive 5-HT-gated consolidation timing (sweep when fast-store interference-
+pressure crosses a substrate-gated threshold) beats ANY fixed consolidation schedule on a
+VARYING-interference-density stream, AND the adaptive read carries the MAJORITY of the
+timing value.
+
+ARMS:
+  ADAPTIVE     : sweep when fast.pressure() ≥ thr* (5-HT substrate-gated threshold)
+  FIXED-EARLY  : sweep every 1 event (aggressive)
+  FIXED-LATE   : sweep every 32 events (lazy)
+  BEST-FIXED   : grid-tuned single fixed period on a DISJOINT tune seed (the honest baseline)
+  WORST-FIXED  : weakest grid period (defines the adaptive−worst gap for the majority bar)
+  ABL          : adaptive threshold frozen to a CONSTANT count == best fixed → reverts to fixed
+  SHUFFLE      : pressure SIGNAL the gate reads is permuted → trigger fires at meaningless times
+
+FROZEN PARAMS (immutable post-freeze):
+  N_SEGMENTS=16 · MAX_CELLS_FAST=8 (small → overflow hazard) · MAX_CELLS_SLOW=256
+  LR*=0.20 · TH*=0.30 (engine-native, H_1532/H_1284) · ABSTAIN=0.45 · MARGIN=0.05
+  TUNE_SEED=7 (disjoint) · SCORE_SEEDS=[11,22,33]
+  DENSE seg: 8-11 pairs, 0-1 distractors ; SPARSE seg: 1-2 pairs, 2-4 distractors ; 50/50
+
+FROZEN BARS (🟢 iff A∧B∧C∧D∧E):
+  A PRESENCE        : adaptive − best-fixed ≥ +0.05 on ≥2/3 seeds AND in mean
+  B EARNED-MAJORITY : adaptive − best-fixed ≥ 0.5 × (adaptive − worst-fixed)
+                      [the bar H_1538(~49%)/H_1540(~6%) MISSED — adaptive must now carry ≥half]
+  C ABL→fixed       : (adaptive − abl_const) ≥ 0.05  AND  |abl_const − best_fixed| < 0.05
+  D SHUFFLE collapse: (adaptive − shuffle) ≥ 0.05
+  E NO-FAB          : best-fixed > 0 (real working baseline; lift is timing, not a broken control)
+
+VERDICT MAP:
+  🟢 GREEN  iff A∧B∧C∧D∧E — 5-HT timing load-bearing AND majority lever (wall-break extended:
+            timing is the lever once there is a consolidation event to time)
+  🟠 AMBER  iff A∧C∧D∧E ∧ ¬B — adaptive present+earned but a fixed schedule STILL captures
+            ≥half even under varying density (HONEST: 5-HT-timing minority, like H_1538/H_1540;
+            reported not hidden, NO bar moved, c9)
+  🧱 WALL   iff ¬A — adaptive ties/loses best-fixed → timing is not a lever here
+
+p7: exact ground truth (true A->B known), NO LLM judge / perplexity / loss. p8: write =
+engine tick. $0 CPU, 3 seeds. R1 numpy ⇒ DIRECTIONAL (a_engine_native_learning); engine
+§Ht5Timing R2 deferred ING. Reuses H_1532 MemStore/key_vec/encode-mode byte-exact.
+NO tune-to-green: if a fixed schedule still ≥half under varying density, that is 🟠 and is
+the honest result.
