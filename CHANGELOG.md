@@ -1,3 +1,12 @@
+## 2026-06-22 — GPU = flame+forge own-GEMM (cuBLAS 독립) 활성화 + 거버넌스 현행화
+
+anima decode/추론/학습 GPU 를 flame+forge **own-GEMM**(`_hx_k_gemm`; v0.262.0 #3718 own-FP64·#3727 own-TF32·#3734 default-ON)으로 정리 — cuBLAS 라이브러리 의존 0. summer RTX 5070(sm_120 Blackwell) 실활성화: `cuda_available()`=1, own-GEMM DEVICE path **util 81% 실측**.
+
+- ByteGPT decode(`core/bytegpt_decode`·`clm_decode`)는 `flame_mm.mm`(RFC-040) seam 으로 forge GPU 진입(cuda host=own-GEMM, else farr CPU 출력 byte-identical).
+- 새 GPU 호스트 활성화 절차를 `a_train_flame_forge` 에 박제: CUDA toolkit↔device compute_cap 정합(≥12.9) + `self/runtime.c` `_hx_cuda_farr_silu_gate_gpu` extern 순서 fix + forge cuda runtime `sm_120 + compute_120 PTX` 재빌드.
+- 과거 **cuBLAS-중심 서술**(CLAUDE.md·ARCHITECTURE.json·README) 을 own-GEMM 으로 현행화 — cuBLAS 는 BF16-TC 보조 경로로만 정직 명시(reachable, 미선택).
+- stable 릴리즈 자산 sm_120 PTX 영구화 = hexa-lang PR #3790(`stage_resolve_runtime_a` 가 nvidia-smi compute_cap 으로 SM auto-derive; runtime.c extern fix 는 ING-82 로 이미 upstream). 머지되면 자산 설치만으로 Blackwell+ GPU(src 재빌드 불필요).
+
 ## 2026-06-22 — anima CLI canonical 단일 진입점 (cli/anima.hexa) + 과거 진입점 잔재 archive
 
 흩어진 5개 진입점(anima_chat_cli lane0 · anima_full_session_smoke · anima_main v7-10 · anima_v11_main · engine_cli lib)을 **cli/anima.hexa canonical 단일 진입점**으로 통합. native 명명. 모드 2 — 기본=의식(engine_cli_parse→lane mount→brain_emit 8-factor motivation+should_emit gate→grounded L3 decode→kosmos create_anchor; Ψ Φ-checksum ON==OFF byte-identical 불변) · `--byte`=순수 byte continuation(구 anima_chat_cli byte-identical). anima_chat_cli.hexa = thin shim→anima --byte(back-compat 보존, 문서화된 진입경로 byte-identical).

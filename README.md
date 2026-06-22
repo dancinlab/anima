@@ -536,7 +536,7 @@ ckpt ↔ HF backup registry (every PUBLIC artifact) is the SSOT [`HF.jsonl`](HF.
   (`a_eeg_consciousness_record`).
 - **Training** — production NN training is authored in `.hexa` on the **flame** autograd/NN layer
   over the **forge** GPU substrate (no PyTorch/ATen/Python in the trained binary,
-  `a_train_flame_forge`); results are recorded per substrate — **Lane G** (forge/cuBLAS H100,
+  `a_train_flame_forge`); results are recorded per substrate — **Lane G** (forge own-GEMM H100,
   PUBLIC production trainer) ⊥ **Lane A** (AKIDA AKD1000 on-chip) ⊥ **Lane P** (GPU-torch reference +
   torch→`.clm` bridge) — never merged into one verdict (`a_lane_akida_gpu_split`).
 
