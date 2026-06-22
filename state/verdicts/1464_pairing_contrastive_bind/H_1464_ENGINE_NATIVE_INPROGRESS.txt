@@ -70,3 +70,39 @@ ARGMAX==torch parity: precedent H_1441 (same core/bytegpt_decode engine + same v
 RESUME (if this session ends): the batch is detached (setsid). poll /tmp/h1464_master.log for
 ALL_ARMS_DONE; if a host reboot lost it, re-launch /tmp/h1464_batch.sh (resumable, but it overwrites
 out files — to resume mid-run, edit jobs.tsv to remaining frags). Then score + stamp terminal.
+
+=== AIDEN RELAUNCH (2026-06-22, after summer reboot lost the prior batch) ===
+Summer rebooted ~2h before this session, killing the single-process batch (it had partial/
+inconsistent out files locally: out_pairing 29 distinct tags, out_shuffle 30, out_base 3 garbled).
+Re-dispatched to aiden (RTX 5070 sm_120, idle) via PROCESS-ISOLATION (run_decode_isolated.sh):
+a FRESH `hexa` process per fragment → RSS resets to ~weight+1frag (~24GB peak measured) on each
+exit → the noop-free decode leak NEVER stacks (aiden's runtime.a does NOT have the PR#3745 leak fix;
+process-isolation makes that irrelevant). conc=1 (24GB/proc on 30GB RAM).
+
+SUBSTRATE: farr CPU path (forge GPU NOT active on aiden — cuda_available=0, GPU util 0%/2MiB during
+decode; aiden's sm_120 runtime was not rebuilt this session). farr CPU is BYTE-IDENTICAL to forge
+GPU per RFC-040 seam → result is still ENGINE-NATIVE (live core/bytegpt_decode.hexa), just slower.
+
+BINS VERIFIED on aiden (sha256 == frozen FREEZE note):
+  base    5c303f026f134e4bc4faf516ef5298bd26269e19693696a73a5058e6ffa5319e
+  pairing 3cd60673791fdc93e1e38179d9f9ab46ba52f812e69405531c3ad9bf3577dae1
+  shuffle 967568a07cc6a87d17c555be3364fb3362c5e933d6482f89163ffb05950846a0
+SMOKE: 1-frag shuffle decode BATCH_DONE in ~70s (gen=30) → pipeline verified.
+LAUNCHED: setsid nohup run_decode_isolated.sh ~/anima /tmp/h1464_decode 1 (90 tasks, 3 arms × 30 frag).
+  master.log /tmp/h1464_decode/master.log · outputs /tmp/h1464_decode/out_{pairing,shuffle,base}.txt.
+  Resumable (skips tags already present). ETA ~15h (latency-bound ~10min/frag CPU O(T^2) forward).
+HARVEST+SCORE: G6_PROBES=~/anima/state/universe-probes python3 \
+  state/1464_pairing_contrastive_bind/h1464_engine_native.py --score \
+  /tmp/h1464_decode/out_pairing.txt /tmp/h1464_decode/out_shuffle.txt /tmp/h1464_decode/out_base.txt
+
+=== CLOSURE (2026-06-22) — AIDEN DECODE STOPPED AS REDUNDANT; TERMINAL VERDICT ALREADY LANDED ===
+The aiden process-isolation decode above was a parallel FALLBACK. The vast 2.2TB pod (41921615,
+conc-80) finished the same 90-frag engine-native decode FIRST and the terminal verdict was scored +
+landed via PR #2543 (commit 46a1dcf7d): 🧱 WALL=CAPACITY. See state/verdicts/1464_pairing_contrastive_bind/
+H_1464.txt (TRAINED FALS_in 5.0 · DIST_in 4.6667 · FALS_shuf 5.0 · FALS_ho 5.0 · base 0.0 → B2,B3 FAIL).
+The aiden run was only at frag_000/90 (pairing arm) when found; per a_dont_kill_live_compute the kill
+was justified ONLY because the verdict it would reproduce is already terminally landed (not a stall
+misdiagnosis) — verified PR #2543 MERGED + H_1464.txt SCORE_NATIVE_DONE before killing PIDs 39658/39624.
+This SAME engine-native 5-bar also resolves the sister H_1441 (verdict file header = "H_1441 contrastive
+ENGINE-NATIVE FROZEN 5-BAR" — identical .bin/objective) → H_1441 card + HYPOTHESES.jsonl row updated
+from BLOCKED → 🧱 WALL=CAPACITY this cycle. aiden GPU/RAM freed for H_1557 (serial, shared 30GB host).

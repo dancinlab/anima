@@ -1,3 +1,13 @@
+## 2026-06-22 — H_1441 sister 가설 engine-native terminal 동기화 (🧱 WALL=CAPACITY) + redundant aiden decode 정리
+
+H_1464 (PAIRING-contrastive) engine-native terminal 🧱 WALL=CAPACITY 가 PR #2543 (commit 46a1dcf7d)로 이미 착지된 상태에서, **동일 .bin/objective 를 공유하는 sister 가설 H_1441 (CONTRASTIVE falsifiable-vs-nonfalsifiable)** 의 verdict 표면이 여전히 BLOCKED 로 남아있던 것(stale)을 terminal 로 동기화:
+
+- **공유 증거**: terminal verdict 파일 `state/verdicts/1464_pairing_contrastive_bind/H_1464.txt` 의 header 가 문자 그대로 `"H_1441 contrastive ENGINE-NATIVE FROZEN 5-BAR"` — H_1441/H_1464 는 같은 contrastive .bin × 30 frag = 90 frag engine-native decode(live core/bytegpt_decode.hexa via engine_decode_batch_cli.hexa)를 공유하므로 단일 5-bar 가 양 가설 동시 resolve.
+- **5-bar (engine-native, mean/3 seeds)**: TRAINED FALS_in 5.0 · DIST_in 4.6667 · FALS_shuf 5.0 · FALS_ho 5.0; BASE FALS_in 0.0. B1 PASS · **B2 COUNT DIST 4.6667<5 FAIL** · **B3 X-shuffle 5.0<5.0 NO-collapse FAIL(결정적)** · B4 PASS · B5 PASS · CTRL PASS → **🧱 WALL=CAPACITY** (form 은 install 됐으나 comparator↔measurable WELD 못함 = H_1435/36/37 실패모드). mirror(numpy)의 B3 COLLAPSE(🟢 LEARN-GAP)는 bilinear 표현공간 construction artifact 였음이 engine 재측정으로 확인 = a_engine_native_learning HARD-GATE 정당성 입증(c9, no tune-to-green).
+- **갱신 표면**: `UNIVERSE/cards/H_1441_contrastive_falsifiability.md`(frontmatter terminal_tier/wired/terminal_verdict + 본문 terminal 노트) · `UNIVERSE/HYPOTHESES.jsonl` H_1441 row tier/verdict/artifacts.
+- **redundant aiden decode 정리**: aiden(RTX 5070) 의 process-isolation fallback decode 는 vast 2.2TB pod(41921615, conc-80)이 먼저 완주하여 불필요 → frag_000/90 에서 정리(a_dont_kill_live_compute: PR #2543 MERGED + H_1464.txt SCORE_NATIVE_DONE 확인 후에만 kill, stall 오진 아님). aiden GPU/RAM 해방으로 H_1557 OI-probe(serial, shared 30GB host) 진입.
+- substrate(c9): farr CPU path = forge GPU byte-identical (RFC-040 seam) 이므로 ENGINE-NATIVE terminal. G6 capacity-wall 수렴 렌즈(prior 7 + H_1456 + H_1464).
+
 ## 2026-06-22 — setup.hexa hx install 훅 컴파일 결함 직접 수정 (stale-script)
 
 `hx install anima` 의 마지막 단계 setup.hexa 가 stale 함수명으로 컴파일 실패하던 것 직접 수정(c1, hexa-lang 위임 아님):

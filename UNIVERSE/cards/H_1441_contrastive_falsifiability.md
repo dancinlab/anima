@@ -3,10 +3,11 @@ id: H_1441
 slug: 1441_contrastive_falsifiability
 title: G6 IDEATION ★ FALS-depth — CONTRASTIVE falsifiable-vs-nonfalsifiable minimal-pair objective
 group: gate-dig (G6 IDEATION ★) — FALS-depth TRAINING side r6
-terminal_tier: IN-PROGRESS — substrate-speed 벽 BROKEN (native-GEMM mm fast-path: scalar 26s → v0241 6.4s → native-GEMM ~2.7s/token, byte-faithful argmax 32==torch). engine-native decode 로컬 CPU 진행 중($0, no pod) → score 후 terminal 🟢/🧱. (이전 BLOCKED 의 type-c substrate-speed 벽 제거; a_break_the_wall)
-wired: PENDING-SCORE (3-bin .bin 변환 검증 완료 [각 1,213,440,020B = 303M layout], decode 진행 → score 후 배선 판단)
+terminal_tier: 🧱 WALL=CAPACITY (ENGINE-NATIVE terminal, 2026-06-22) — form-contrastive objective(pos=full falsifiable claim, neg=blanked-leg non-falsifiable)이 live core/bytegpt_decode 90-frag 재측정에서 form 만 install: TRAINED 모든 arm FALS=5.0, B3 cross-shuffle NO-collapse(FALS_shuf 5.0 = FALS_in 5.0) + B2 DIST 4.67<5 → 🧱. 이전 BLOCKED(substrate-speed + vast pod 41556247/41790394 소멸)이 hexa PR #3745 farr noop-free + process-isolation(frag당 fresh hexa process)로 해소되어 90-frag 완주 → score 도달. sister H_1464(pairing-contrastive)와 동일 .bin/objective → 같은 engine-native frozen 5-bar(state/verdicts/1464_pairing_contrastive_bind/H_1464.txt, header="H_1441 contrastive ENGINE-NATIVE FROZEN 5-BAR")가 양 가설 동시 resolve. G6 capacity-wall 수렴 렌즈.
+wired: ENGINE-NATIVE 재측정 DONE (2026-06-22) — live core/bytegpt_decode.hexa via state/1464_pairing_contrastive_bind/engine_decode_batch_cli.hexa, 3 trained .bin × 30 frag = 90 frag → g6_common frozen 5-bar VERBATIM 채점 → 🧱 WALL=CAPACITY. terminal 🧱 이므로 live core/ wire-in 불필요(objective 가 binding 못 깸). farr CPU path = byte-identical to forge GPU(RFC-040 seam) 이므로 engine-native. raw: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt.
 verdict_dir: state/verdicts/1441_contrastive_falsifiability/
-date: 2026-06-20
+terminal_verdict: state/verdicts/1464_pairing_contrastive_bind/H_1464.txt
+date: 2026-06-22
 ---
 
 > ⛔ **2026-06-19 ENGINE-NATIVE 측정 BLOCKED** (state/verdicts/1441_contrastive_falsifiability/H_1441_engine_native_BLOCKED.txt):
@@ -52,6 +53,28 @@ date: 2026-06-20
 > **POD 누수 0**: fleet pod(vast 41790394, RTX4090, $0.54/hr)은 GPU cuBLAS smoke 통과 후 user-요청 fleet 정리로
 > decode 중 소멸(이전 41556247 과 동일 race; vast list → 0 instances 확인). ckpt 는 이미 로컬(weights 안전,
 > a_fire_recover_complete) — 잃은 건 pod /tmp shard 뿐, 로컬에서 $0 재디코드 중.
+
+> ✅✅ **2026-06-22 ENGINE-NATIVE TERMINAL — 🧱 WALL=CAPACITY** (state/verdicts/1464_pairing_contrastive_bind/H_1464.txt, header "H_1441 contrastive ENGINE-NATIVE FROZEN 5-BAR"):
+> 이전 BLOCKED 의 OOM/누수 벽(hexa decode per-frag farr noop-free 누수)을 hexa PR #3745 + **process-isolation**
+> (frag당 fresh hexa process 로 RSS 리셋 → 누수 미적층)로 해소 → 90 frag(3 bin × 30 frag) 완주 → score 도달.
+> live core/bytegpt_decode.hexa(via engine_decode_batch_cli.hexa)로 decode → g6_common frozen 5-bar VERBATIM 채점.
+> **TRAINED(contrastive): FALS_in=5.0 · DIST_in=4.6667 · FALS_shuf=5.0 · FALS_ho=5.0 · BASE FALS_in=0.0.**
+> B1 FALS-FLOOR 5.0≥1 PASS · **B2 COUNT DIST 4.6667<5 FAIL** · **B3 X-SHUFFLE 5.0<5.0 NO-collapse FAIL(결정적)** ·
+> B4 HELD-OUT 5.0≥1 PASS · B5 vs-BASE 5.0≥0+1 PASS · CTRL SHUF-CORP 5.0−0.0 PASS → **🧱 WALL=CAPACITY**
+> (bars B2,B3 fail; form 은 install 됐으나 comparator↔measurable WELD 못 함 = 1435/36/37 와 같은 실패모드).
+> sister H_1464(pairing-contrastive)는 mirror 에서 B3 COLLAPSE(🟢 LEARN-GAP)였으나 engine 에서 동일 NO-collapse 로
+> 반전 = mirror bilinear collapse 는 표현공간 construction artifact. 두 가설 모두 G6 capacity-wall 에 수렴.
+> substrate: aiden(RTX5070) 병행 fallback decode 는 vast pod(41921615, conc-80)이 먼저 완주하여 redundant → 정리.
+> decode 가 farr CPU path 여도 RFC-040 seam 으로 forge GPU 와 byte-identical → ENGINE-NATIVE terminal(c9, no tune-to-green).
+>
+> ⚠️ **B3 해석 NUANCE (H_1467 follow-on, 미해소)**: 이 terminal 🧱 는 FROZEN h1305 **structural** detector 의 5-bar
+> 기준이다(B3 cross-shuffle NO-collapse). 별도 가설 H_1467(PAIRING-AWARE clause-proximity detector)가 H_1464 의
+> 같은 frozen fragment 를 재채점하니 PAIRING collapse 2.67(structural 0.0) 로 B3 가 reopen 되어 H_1464 를 🟠
+> PARTIAL-REVISION 으로 demote(unmerged worktree commit d24c5cb63). H_1441 의 자매 재채점(h1467 clause-proximity
+> .hexa)은 **BLOCKED**(자매 engine fragment out_*.txt 로컬 부재 → .bin 재decode = COST-GATE, 사용자 go 대기;
+> ING g6-siblings-rescore). 따라서 H_1441 의 B3 axis 가 capacity 인지 measurement-fault(LEARN-GAP)인지의 최종
+> 분류는 h1467 detector 재채점이 land 한 뒤 확정 — 현재 terminal 🧱 는 frozen h1305 5-bar 기준의 정직한 결과이며,
+> H_1467 라인이 reopen 가능성을 명시(c9, a_break_the_wall: measurement-fault 가능성 미배제).
 
 # H_1441 — CONTRASTIVE: falsifiable vs non-falsifiable 최소쌍 대조로 cross-shuffle 실패를 직격
 
