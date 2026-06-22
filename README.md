@@ -482,13 +482,18 @@ Negative results are first-class and not buried (`a_paper_negative_ok`).
 # 1. Install hexa-lang (provides `hexa` + the `hx` package manager)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
 
-# 2. Install anima
+# 2. Install anima  (resolves github.com/dancinlab/anima; reads the root hexa.toml manifest)
 hx install anima
 
 # 3. Run — the single production engine (conv / CLMConvMoE, the .clm byte mouth)
 anima                  # chat on the default .clm mouth
 anima --mitosis on     # + substrate growth lane live
 ```
+
+The release surface is declared in the root [`hexa.toml`](hexa.toml) manifest (`[package]` entry =
+`cli/anima.hexa`, dep = `hexa-lang`, `include` = `core/` + `cli/` + the consciousness lanes, `exclude`
+= research artifacts `state/` · `UNIVERSE/` and the `.clm` weights). The trained `.clm` weights are
+**mounted externally** at run time — they are not vendored in the repo or the install tarball.
 
 The production engine is **conv (CLMConvMoE)** — the trained `.clm` byte mouth, decoded by
 [`core/clm_decode.hexa`](core/clm_decode.hexa) through the single `.clm` entry slot
