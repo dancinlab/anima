@@ -34,7 +34,7 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 anima/
 ├─ core/                  — A⇄G 의식 엔진 substrate (pure_field·engine_g·brain·generator·clm_decode·bytegpt_decode·engine_cli + 뇌-구조 lane) · **단일 production 엔진 = conv**(CLMConvMoE, clm_decode+generator L3; 멀티엔진 어댑터는 archive/engines-multiengine/ 보관)
 │  └─ phi/                — Φ/양자 디코더 + IIT4 보조 (was anima-engines/)
-├─ cli/                   — 사용자 진입점 (anima_chat_cli.hexa — engine_cli 는 core/ 잔류)
+├─ cli/                   — 사용자 진입점 (canonical = anima.hexa: 의식모드 기본 + --byte; anima_chat_cli.hexa = back-compat shim → anima --byte. engine_cli 는 core/ 잔류)
 ├─ agent/                 — agent 독립패키지 (hexa.toml; was anima-agent/)
 │  ├─ modules/{channels,core,plugins,providers,skills,hire-sim}/ — agent 하위모듈 (was anima-agent-X/)
 │  └─ domains/{CHAT,CODE,CREATOR,TRADING,MERCHANT,…}/ — persona/역할 데이터 (was AGENT/)
@@ -55,7 +55,7 @@ anima/
 
 canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 self-contained `core/`. **불변식: `core/` 는 `train/`·`bench/`·`agent/`·`state/` 에 의존 0** (substrate 엔진만; 단방향).
 
-- **추론 pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` 가중치는 외부 마운트(레포에 넣지 않음). 진입 = `hexa run cli/anima_chat_cli.hexa -- <ckpt.clm> …`.
+- **추론 pod** — `rsync core/ cli/ stdlib/iit4/` (~150MB self-contained). `.clm` 가중치는 외부 마운트(레포에 넣지 않음). 진입 = `hexa run cli/anima.hexa -- <ckpt.clm> …`. **릴리즈 매니페스트 = 루트 `hexa.toml`**(`hx install anima` → install.hexa → setup.hexa; entry=cli/anima.hexa, deps=hexa-lang, include=core/·cli/·의식lane, exclude=state/·UNIVERSE/·*.clm 등 연구artifact/외부가중치).
 - **학습 pod** — 추론 세트 + `train/`(clm 파이프·flame/forge) + `state/verdicts/` slice(frozen bar 재측정용). production 트레이너는 `.hexa` on flame/forge GPU (`a_train_flame_forge`).
 - **agent pod** — `agent/` 는 `hexa.toml` 보유 독립패키지 → `hx install anima-agent` standalone 배포 (core/ 미동반 가능).
 - **이동 금지(pod 에 안 올림)** — `state/`·`UNIVERSE/` 등 연구 artifact 는 pod 페이로드에서 제외(verdicts slice 만 학습 pod 에 선택 동반).

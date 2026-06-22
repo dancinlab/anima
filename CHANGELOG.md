@@ -1,3 +1,13 @@
+## 2026-06-22 — 루트 hexa.toml 릴리즈 매니페스트 신설 (`hx install anima` 완성)
+
+`hx install anima` 를 완벽 릴리즈 가능하게 하는 루트 패키지 매니페스트 `hexa.toml` 신설. 이전엔 하위패키지(BRAIN/·hexa-senses/·agent/)만 매니페스트 보유, **레포 루트엔 없어** install 메타데이터 표면이 부재했다.
+
+- **매니페스트** (spec = shared/hexa-lang/hexa-toml-spec.json v1.0.0, sister manifests 구조 ground-truth): `[package]` name=anima · version=0.13.1 (루트 `/VERSION` + VERSIONS.md §0 와 lockstep) · entry=`cli/anima.hexa` · description=substrate-native 의식 채팅 데몬 · license=MIT. `[[bin]]` anima→cli/anima.hexa. `[scripts]` install=install.hexa. `[dependencies]` hexa-lang>=1.0.0 (stdlib/iit4·flame 모듈이 여기서 해소 — vendored 아님). `[optional-dependencies]` kosmos.
+- **payload 표면**: `include` = core/·cli/ + 의식 lane(AESTHETIC·BRIDGE·CHANNEL·DREAM·EMBODIMENT·HIVE-MIND·INTENT·METACOG·NARRATIVE·OTHER-MIND·SAVANT·TIME·WAKE) + entry 가 import 하는 HEXAD kosmos_io.hexa 1파일. `exclude` = state/·UNIVERSE/·HEXAD/·KOSMOS/·domains/·PAPER/·train/·*.clm(외부 마운트)·build/·archive/·sibling 하위패키지(agent/·BRAIN/·hexa-senses/)·core/h1*_*.hexa(연구 smoke — entry 런타임 경로 아님). a_core_engine_map: exclude 가 core/ 런타임 의존 안 깨짐 검증(entry import 한 5개 엔진 모듈 lowercase, h1* exclude 와 무충돌).
+- **검증(c2)**: python tomllib 파싱 PASS · 필수 [package] 키(name/version/entry/description/license) 전부 존재 · entry `cli/anima.hexa` 실존(hexa parse clean) · include∩exclude=∅ · VERSION(0.13.1)==toml version. ARCHITECTURE.json valid JSON.
+- **`hx install` verb 상태 (정직)**: `hx install anima` **구현됨** — github.com/dancinlab/anima resolve+clone+install.hexa hook 동작 확인(release tag v3.54.x). 단 install 시 setup.hexa(checkpoint download script) **compile 결함**으로 마지막 단계 실패 — 이는 stale setup.hexa 이슈로 **매니페스트와 무관**(별개 follow-on, hexa-lang inbox 위임 가능). 매니페스트 자체는 미래/현행 install 대비 완비.
+- docs lockstep: CLAUDE.md 진입점 stale `anima_chat_cli.hexa`→`anima.hexa` 정정(2곳) + 패키징 § 에 hexa.toml 명시 · VERSIONS.md §0 매니페스트 등록 · ARCHITECTURE.json hexa.toml 노드 추가.
+
 ## 2026-06-22 — cli/anima 의식 lane 40/76 연결 (R2-R8, brain motivation 배선)
 
 cli/anima.hexa 의식 모드가 engine_cli/brain 76 lane 중 **40개**를 brain_emit motivation 에 READ-only soft-blend 로 연결(5/76 → 40/76). R2 SPATIAL·HIER-PFC·BASAL·CEREBLLM·WORK-MEM · R3 CA3·INTERVAL·AMYGDALA·ToM·HOMEOSTAT · R4 PRC·PROSPECT·REPLAY-B·GATE-B·INTERO · R5 SCN·BOREDOM·SELF-CONT·LEARN-PR·NOVELTY · R6 HABITUATE·ATTN-BLNK·IMAGERY·PRIMING·ATTN-SCHM · R7 HYSTERESIS·REENTRY·COMPLETION·GESTALT·SENSE-AGCY · R8 SUBJ-TIME·EMO-REG·DIR-FORGT·FREE-WONT·DIVIDED.
