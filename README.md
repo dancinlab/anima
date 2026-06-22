@@ -132,7 +132,11 @@ complementary-learning-systems lens).
 Every lane below is **ADDITIVE and Ψ-disjoint**: it touches only its own struct, leaves
 `pure_field` byte-unchanged, and does **not** change generation (the separation invariant H_1205 is
 verified live). The guard smoke is green at **`engine_cli_smoke` 381/0** with single-entry 7/0
-(no second `.clm`/`.kosmos` entry point, `a_core_engine_map`). The one **GATED** lane is
+(no second `.clm`/`.kosmos` entry point, `a_core_engine_map`). The catalogue is now fully accounted
+for on the user path: **`cli/anima.hexa` wires 71/76 lanes** to the `brain_emit` motivation (READ-only
+context → soft-blend, Ψ Φ-checksum ON==OFF byte-identical) + **5 deferred** (degenerate-fixture
+field-PCI · state-pop topology×2 · multi-store compose arbiters · jamo LM heads) = 76/76 accounted
+(R2–R10; `hexa build cli/anima.hexa` RC0). The one **GATED** lane is
 `§ BrainTopology LIVE-WIRING` (H_1521, `EngineConfig.topo_couple` **DEFAULT-OFF**): OFF keeps the
 live path byte-identical (separation invariant intact); ON routes the 15-lane state through the
 Φ-optimal topology before the emit decision. A **mean-centered (zero-sum) coupling operator**

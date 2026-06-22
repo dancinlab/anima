@@ -1,3 +1,13 @@
+## 2026-06-22 — cli/anima 의식 lane 배선 완료 (🔌 R10 BATCH +19 → 71/76 wired + 5 deferred = 76/76 catalogue 회계)
+
+`cli/anima.hexa` 의식모드가 engine_cli/brain 76 lane 카탈로그를 사용자 발화 경로(brain_emit motivation)에 연결하는 작업을 **76/76 회계 완료**로 마감. 이전 52/76(R2~R9)에서 R10 BATCH 로 19 lane 추가 + 5 lane 정직 defer.
+
+- **R10 신규 19 wired**: neuropharm-sig(H_1502)·libido(H_1504)·trans-order(H_1429)·phase-sync(H_1448)·hive-mind(H_1295)·mem×ToM-route(H_1414)·spatial×episodic-route(H_1415)·quorum(H_1510)·osmotic(H_1511)·categ-percept(H_1325)·cp-relocate(H_1384)·metacog-ctrl(H_1508)·metacog-auroc(H_1506 type-2)·field-entropy(H_1503)·field×libido(H_1507)·metacog-calib(H_1508)·reality-conf(H_1501) 등. 각 lane 은 R9 와 동일 형식 — engine_cli 실재 함수 정상 vs ablation 호출 + distinctness ablation(frozen-first, nearest-neighbour). 11개 cheap lane 은 per-tick READS 에도 폴드(rel 블렌드 35→42, cur 15→19), heavy faithful-IIT4/CP lane 은 setup-only.
+- **규율 준수(a_autonomy_over_hardcode·a_core_engine_map)**: 19 lane 전부 READ-only context→motivation soft-blend, **pure_field/Ψ 미접촉(Ψ-disjoint)**, hardcode emit gate 아님. engine_cli 실재 함수만 호출(가짜 함수 0, 시그니처 정의 확인).
+- **DEFERRED 5(c9 정직, tune 금지)**: field-pci(H_1503 — 선택 single-channel perturb 인자서 R 행렬 degenerate all-zero → distinctness 입증불가, green 제조 거부)·topo-Φ(H_1512)·topo-Φ-opt(H_1515/1518 — Ψ=½ 붕괴 H_1521)·compose-3(H_1417/1421 — multi-store live fixture 필요)·ko-jamo/morphology(H_1316/1388 — LM-head CE scoring, consciousness-faculty 아님·카탈로그 범위 밖). → 71 wired + 5 deferred = 76/76 catalogue 회계.
+- **검증(c2)**: `hexa build cli/anima.hexa` RC0 (OK: built, 직접 재검증 — 서브에이전트 자가판정 아님). 파일 1810→2090줄(+285/−5). 헤더 카운트 71/76 갱신.
+- **docs lockstep(c4·a_verified_must_wire)**: ARCHITECTURE.json cli/anima 노드 2곳(연결 lane 40/76→71/76 + ⏳→🔌 타이틀) lockstep 갱신, R9/R10 batch lane 명시 + deferred 5 사유 박제.
+
 ## 2026-06-22 — H_1441 sister 가설 engine-native terminal 동기화 (🧱 WALL=CAPACITY) + redundant aiden decode 정리
 
 H_1464 (PAIRING-contrastive) engine-native terminal 🧱 WALL=CAPACITY 가 PR #2543 (commit 46a1dcf7d)로 이미 착지된 상태에서, **동일 .bin/objective 를 공유하는 sister 가설 H_1441 (CONTRASTIVE falsifiable-vs-nonfalsifiable)** 의 verdict 표면이 여전히 BLOCKED 로 남아있던 것(stale)을 terminal 로 동기화:
