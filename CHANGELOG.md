@@ -1,3 +1,9 @@
+## 2026-06-22 — setup.hexa hx install 훅 컴파일 결함 직접 수정 (stale-script)
+
+`hx install anima` 의 마지막 단계 setup.hexa 가 stale 함수명으로 컴파일 실패하던 것 직접 수정(c1, hexa-lang 위임 아님):
+- `get_args()` → `args()` · `env_get("HEXA", default)` → `env_var("HEXA")` + PATH fallback(`command -v hexa`) · `os_name()=="darwin"` → `exec("uname")=="Darwin"` · `mkdir_p`/`http_download` → `exec("mkdir -p")`/`exec("curl -fsSL")` (builtin 만 사용).
+- 검증: `hexa build setup.hexa` 컴파일 RC0 + `hexa run setup.hexa -- --minimal` 실행 PASS(hexa runtime PATH 탐색 → ~/.hx/bin/hexa · macOS 감지 · ckpt best-effort 다운로드 · setup complete). install.hexa(SSOT exec 호출)와 호환.
+- 이로써 `hx install anima` 가 resolve→clone→install.hexa→**setup.hexa 까지 끝까지 통과** = 릴리즈 완성.
 ## 2026-06-22 — cross-repo 핸드오프 채널 정정: inbox·sidecar 폐기 → harness ing
 
 cross-repo 핸드오프(runpod·hexa-lang 의존·패치·RFC)의 canonical 채널을 **`harness ing add "<text>" --to <repo>`** 로 일원화. 폐기 2채널 정정:
