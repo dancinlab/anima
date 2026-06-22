@@ -172,7 +172,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 
 **`a_dont_kill_live_compute`** — bg 에이전트 죽이기 전 stall 증명. live CPU 진행 ≠ stall. ✅ kill 전 stall 증명 · 'NN% CPU'/'k/N cells'=live(끝내게 둠) · detached nohup JSON 회수. ⛔ CPU 진행중인 에이전트 TaskStop · 'running'='stalled' 가정 · live nohup 중복지출.
 
-**`a_runpod_inbox`** — runpod 트러블은 `hexa-lang/inbox/patches/<slug>.md` 로 파일링(hexa cloud 용). ⛔ anima-side-only 패치로 우회를 이 repo 에 가둠.
+**`a_runpod_inbox`** — cross-repo 핸드오프(runpod 트러블·hexa-lang 의존·패치·RFC)는 **`harness ing add "<text>" --to <repo>`** 로 파일링 — 대상 repo 의 ING.jsonl board(ing ref)에 전달되어 그 repo 다음 SessionStart 에 📥 표면화. (구 `hexa-lang/inbox/patches/` 폴더 + sidecar handoff registry 는 둘 다 retired — 쓰지 말 것.) ⛔ inbox 폴더·sidecar 부활 · `HANDOFF.md`/`INBOX.md`/`inbox/*.md` scatter · anima-side-only 패치로 우회를 이 repo 에 가둠.
 
 ### 🏗️ CORE 엔진 · 학습 substrate
 
