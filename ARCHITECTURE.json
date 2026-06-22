@@ -376,7 +376,7 @@
        "blocks": [
         {
          "type": "prose",
-         "text": "**summary**: clm_decode/bytegpt_decode = the two decode backends;"
+         "text": "**summary**: clm_decode/bytegpt_decode = the two decode backends; GPU-DECODE RULE(a_train_flame_forge, 2026-06-22 5+회 '또 CPU' 재발 방지): decode 는 GPU 기본 — 돌리기 전 cuda_available()(1=GPU/0=CPU)+nvidia-smi util+frag log '[OWN-GEMM-FIRED] DEVICE path' 로 GPU 경로 실측 확인. GPU on/off = ~/.hx/bin/build/runtime.a 내용(CPU~1MB / CUDA-fold~4MB) + ~/.hx/.cuda-runtime 마커(self/main.hexa 자동 ldflags). 함정: stale ~/.hexa-cache/hexa_run.<hash> CPU 바이너리 캐시히트 → runtime.a CUDA 로 바꿔도 CPU 폴백, rm 후 재컴파일. forge cuda 빌드 = CUDA-12.x clean(stage_resolve_runtime_a HEXA_CUDA=1 SM=<cc>) / CUDA-13 은 3버그(forward-decl·native-obj·-lstdc++) → CUDA-12 호스트·이미지 선택. 호스트(a_break_the_wall): 같은 불안정 호스트 N회 재발사 금지(summer 잦은 재부팅·aiden CUDA-13) → 장시간 decode 는 재부팅없는 전용 pod(CUDA-devel=nvcc 내장 이미지+verified GPU; bare CUDA 이미지는 apt install libssl-dev 선행) 또는 tmux SSH-독립. GPU box 빌려 CPU 로 돌리는 건 낭비."
         },
         {
          "type": "subsection",

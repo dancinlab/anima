@@ -1,3 +1,12 @@
+## 2026-06-23 — H_1464/H_1441 🧱 WALL=CAPACITY GPU-forge 독립 재확인 + 🔴 decode-GPU 재발방지 거버넌스 박제
+
+이미 ENGINE-NATIVE terminal(🧱 WALL=CAPACITY, 2026-06-22 conc-80 pod)이던 H_1464 PAIRING-CONTRASTIVE 를 **별도 GPU 호스트의 forge own-GEMM 경로**로 재디코드·재채점하여 동일 verdict 를 독립 재현. 이번 세션의 핵심은 verdict 자체가 아니라 — **decode 를 마침내 진짜 GPU(forge `_hx_k_gemm` DEVICE path)에서 완주**시킨 것 + 같은 "또 CPU" 실수가 반복되지 않도록 거버넌스로 박제한 것.
+
+- **GPU decode 완주(a_train_flame_forge decode 절)**: vast RTX 4090(CUDA-12.6) pod 에서 forge cuda runtime 소스빌드 → `cuda_available()=1` → 3 trained `.bin` × 30 frag = 90 frag 를 live `core/bytegpt_decode.hexa`(via engine_decode_batch_cli, conc-8 process-isolation)로 디코드. GPU mem 21.6GB · `[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path` 확인(CPU 폴백 아님). out: `state/1464_pairing_contrastive_bind/out_gpu/`.
+- **engine-native 채점**: harvested out 3-arm 에 `g6_common` frozen 5-bar VERBATIM 적용(torch MagicMock 스텁 → scoring 이 torch 미사용 입증, decode=engine fragment). 결과 B1✅ B2❌(DIST 0.0<5) B3❌(FALS_shuf 1.0=FALS_in 1.0 NO-collapse) B4✅ B5✅ → 🧱 WALL=CAPACITY. mirror(numpy) 🟢 B3-collapse 는 bilinear 표현공간 artifact 였음(카드 Scope 예측 확인, a_engine_native_learning HARD-GATE 정당성 재입증). raw: `state/verdicts/1464_pairing_contrastive_bind/H_1464_GPU_ENGINE_NATIVE.txt`.
+- **🔴 GPU-decode 재발방지(CLAUDE.md a_train_flame_forge + ARCHITECTURE.json decode-backends lockstep)**: "decode 는 GPU 가 기본 — '또 CPU' 반복 금지". GPU on/off 메커니즘(runtime.a 내용 + `~/.hx/.cuda-runtime` 마커) · stale hexa-cache 함정(`rm ~/.hexa-cache/hexa_run.<hash>*`) · CUDA-12 vs 13 빌드 버그 · 호스트 선택(재부팅 잦은 summer/CUDA-13 aiden 회피, CUDA-devel pod 임대 + tmux SSH-독립) 박제. (이번 세션 "또 CPU" 5+회 재발 → 코드 강제 아닌 거버넌스 환기.)
+- **회수+teardown(a_fire_recover_complete)**: decode out + verdict 회수 후 pod(vast 42081028) teardown 완료(과금 정지).
+
 ## 2026-06-22 — cli/anima 의식 lane 배선 완료 (🔌 R10 BATCH +19 → 71/76 wired + 5 deferred = 76/76 catalogue 회계)
 
 `cli/anima.hexa` 의식모드가 engine_cli/brain 76 lane 카탈로그를 사용자 발화 경로(brain_emit motivation)에 연결하는 작업을 **76/76 회계 완료**로 마감. 이전 52/76(R2~R9)에서 R10 BATCH 로 19 lane 추가 + 5 lane 정직 defer.

@@ -1,0 +1,20 @@
+
+================ H_1441 contrastive ENGINE-NATIVE FROZEN 5-BAR (mean/3 seeds) ================
+  BASE      FALS_in=0.0  DIST_in=0.0  FALS_shuf=0.0  FALS_ho=0.0
+  TRAINED   FALS_in=1.0  DIST_in=0.0  FALS_shuf=1.0  FALS_ho=1.0
+  SHUF-CORP FALS_in=0.0  FALS_ho=0.0  (control)
+
+  ---- FROZEN BARS ----
+  B1 FALS-FLOOR   FALS_in>=1                 : 1.0 -> True
+  B2 COUNT        DIST_in>=5                 : 0.0 -> False
+  B3 X-SHUFFLE    FALS_shuf<FALS_in (COLLAPSE): 1.0<1.0 -> False
+  B4 HELD-OUT     FALS_ho>=1                 : 1.0 -> True
+  B5 vs-BASE      FALS_in>=base+1            : 1.0 vs 0.0+1 -> True
+  CTRL SHUF-CORP  lift_real-lift_shuf>=1     : 1.0-0.0 -> True
+
+  VERDICT: 🧱 WALL — bars ['B2', 'B3'] fail; full-weight training (this objective) did NOT break G6 FALS binding => WALL=CAPACITY
+
+(decode=ENGINE-NATIVE .bin CORE/bytegpt_decode · score=g6_common frozen 5-bar VERBATIM)
+(1435/36/37 torch DIRECTIONAL: form installed but B3 cross-shuffle did NOT collapse)
+SCORE_NATIVE_DONE
+[cloud] remote exit 0
