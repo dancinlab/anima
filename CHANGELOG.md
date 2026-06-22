@@ -1,3 +1,12 @@
+## 2026-06-22 — cli/anima 의식 lane 40/76 연결 (R2-R8, brain motivation 배선)
+
+cli/anima.hexa 의식 모드가 engine_cli/brain 76 lane 중 **40개**를 brain_emit motivation 에 READ-only soft-blend 로 연결(5/76 → 40/76). R2 SPATIAL·HIER-PFC·BASAL·CEREBLLM·WORK-MEM · R3 CA3·INTERVAL·AMYGDALA·ToM·HOMEOSTAT · R4 PRC·PROSPECT·REPLAY-B·GATE-B·INTERO · R5 SCN·BOREDOM·SELF-CONT·LEARN-PR·NOVELTY · R6 HABITUATE·ATTN-BLNK·IMAGERY·PRIMING·ATTN-SCHM · R7 HYSTERESIS·REENTRY·COMPLETION·GESTALT·SENSE-AGCY · R8 SUBJ-TIME·EMO-REG·DIR-FORGT·FREE-WONT·DIVIDED.
+
+- 각 lane = (a) falsifiable gap-vs-engine + (b) 이웃 lane 과 control-survive distinctness(ablate/shuffle/marginal collapse) 둘 다 통과해야 연결. 누적 **DEFERRED 3**(정직, 필러 0): curiosity-acq(H_1534 engine lane 부재) · phase-synchrony(H_1448 SCN 와 Kuramoto R 중복) · perceptual-bistability(rivalry = hysteresis control arm).
+- 가드: 매 라운드 engine_cli_smoke **381/0** · **Ψ Φ-checksum byte-identical ON==OFF**(brain 정체성 보존, lane Ψ-disjoint) · `--byte` path 9함수 source-identical · enforce_anima_gates clean · hexa verify RC=0 · grounded emit "vault QX-7741" verbatim 불변. frozen-first, tune-to-green 0.
+- decode 경로: cli 의식모드 emit→L3(gen_clm_backend)→core/bytegpt_decode/clm_decode 는 코드 연결 + mac farr smoke 검증(QX-7741). forge GPU decode 자체는 OI-probe(H_1557) 측정에서 core/bytegpt_decode `[OWN-GEMM-FIRED]` byte-exact 입증. cli 풀스택 의식모드 summer forge GPU e2e 는 edge-build clang 링크 벽으로 BLOCKED(type-c infra, decode 연결 결함 아님) → hexa-lang inbox follow-on.
+- 잔여 36 lane = ING follow-on (body-ownership H_1478 · binocular-rivalry H_1482 · change-blindness H_1483 · H_1486-1492 등, 카탈로그 밀집).
+
 ## 2026-06-22 — GPU = flame+forge own-GEMM (cuBLAS 독립) 활성화 + 거버넌스 현행화
 
 anima decode/추론/학습 GPU 를 flame+forge **own-GEMM**(`_hx_k_gemm`; v0.262.0 #3718 own-FP64·#3727 own-TF32·#3734 default-ON)으로 정리 — cuBLAS 라이브러리 의존 0. summer RTX 5070(sm_120 Blackwell) 실활성화: `cuda_available()`=1, own-GEMM DEVICE path **util 81% 실측**.
