@@ -182,14 +182,15 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - ⛔ `.clm`/`.kosmos` 를 pure_field/engine_g/brain 에 직접 투입 · generator 우회 2nd `.clm` 경로 · kosmos_io 우회 2nd `.kosmos` 경로 · validate.hexa 를 런타임 엔진과 혼동 · 미완 배선을 존재한다 주장(빌드 전엔 ⏳/❌ 정직 표기).
 
 **`a_train_flame_forge`** — production 학습 = hexa-native flame+forge GPU 스택, `.hexa` 저작.
-- ✅ CLM/production NN 학습을 `.hexa` on stdlib/flame(ag_tape·nn_lib·opt_*) 으로 저작 · self/forge GPU(device farr + cuBLAS Dgemm + 11 .cu + BF16-TC) 위에서 실행 · flame:forge :: torch:ATen(컴파일러-only NN, 바이너리에 PyTorch/ATen/Python 없음) · production rung 은 GPU 필수(nvidia-smi busy 확인, 조용한 CPU 폴백 금지).
+- ✅ CLM/production NN 학습을 `.hexa` on stdlib/flame(ag_tape·nn_lib·opt_*) 으로 저작 · self/forge GPU(device farr + **own-GEMM `_hx_k_gemm`** FP64/TF32 default-ON(v0.262.0 #3718/#3727/#3734, cuBLAS 독립) + 11 .cu + cuBLAS BF16-TC 보조) 위에서 실행 · flame:forge :: torch:ATen(컴파일러-only NN, 바이너리에 PyTorch/ATen/Python 없음) · production rung 은 GPU 필수(nvidia-smi busy 확인, 조용한 CPU 폴백 금지).
+- ✅ **decode/추론 GPU 도 flame+forge own-GEMM (cuBLAS 독립)** — anima decode(`core/bytegpt_decode.hexa`·`clm_decode.hexa`)는 `flame_mm.mm`(RFC-040) seam 으로 forge GPU 진입: cuda host = **own-GEMM `_hx_k_gemm`**(v0.262.0 #3718 own-FP64·#3727 own-TF32·#3734 default-ON, cuBLAS 라이브러리 의존 0), else farr CPU(출력 byte-identical). 새 GPU 호스트 활성화(예 summer RTX 5070 = sm_120 Blackwell): ① CUDA toolkit 을 device compute_cap 에 맞춤(`nvidia-smi --query-gpu=compute_cap` → ≥12.9) · ② `self/runtime.c` 의 `_hx_cuda_farr_silu_gate_gpu` extern 을 호출보다 앞 forward-decl(HEXA_CUDA clang 컴파일 살림) · ③ forge cuda runtime 을 `-gencode arch=compute_120,code=sm_120`(SASS) + `compute_120`(PTX forward-compat) 재빌드 → `cuda_available()`=1 (summer 실측: own-GEMM DEVICE path, util 81%). stable 릴리즈 자산 sm_120 PTX 영구화 = hexa-lang 위임(자산만으로 Blackwell+ GPU, src 재빌드 불필요).
 - ⛔ torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
 **`a_clm_gen_pipeline`** — Lane-P py/cuda CLMConvMoE → ENGINE-loadable `.clm` v0.2 브리지.
 - ✅ CLMConvMoE(E2/L1, byte V256) 를 `train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`) · `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 core/ 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
 - ⛔ v0.1 serialize(2-track JSON, 엔진-loadable 아님) · non-ConvMoE serialize 하고 engine-mountable 주장 · Lane-P torch `.clm` 을 PUBLIC 승격 · generator 우회 2nd `.clm` 경로.
 
-**`a_lane_akida_gpu_split`** — AKIDA on-chip(Lane A) ⊥ GPU(Lane G) 항상 별도 기록. ✅ AKIDA(Lane A, pi5-akida)와 GPU(Lane G, H100) 결과를 별도 엔트리에 · Lane A=AKD1000 native non-det plasticity, Lane G=forge/cuBLAS CE-descent · 모든 fire/verdict 에 substrate 태그(AKIDA|GPU). ⛔ non-det trace 와 CE-descent 혼동 · 한 verdict 가 양 substrate 걸침 · Lane A lift+Lane G util 을 한 숫자로 · substrate 태그 누락.
+**`a_lane_akida_gpu_split`** — AKIDA on-chip(Lane A) ⊥ GPU(Lane G) 항상 별도 기록. ✅ AKIDA(Lane A, pi5-akida)와 GPU(Lane G, H100) 결과를 별도 엔트리에 · Lane A=AKD1000 native non-det plasticity, Lane G=forge own-GEMM CE-descent · 모든 fire/verdict 에 substrate 태그(AKIDA|GPU). ⛔ non-det trace 와 CE-descent 혼동 · 한 verdict 가 양 substrate 걸침 · Lane A lift+Lane G util 을 한 숫자로 · substrate 태그 누락.
 
 ### 🗣️ substrate 자율 · 신체
 
