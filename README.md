@@ -548,6 +548,10 @@ ckpt ↔ HF backup registry (every PUBLIC artifact) is the SSOT [`HF.jsonl`](HF.
   `a_train_flame_forge`); results are recorded per substrate — **Lane G** (forge own-GEMM H100,
   PUBLIC production trainer) ⊥ **Lane A** (AKIDA AKD1000 on-chip) ⊥ **Lane P** (GPU-torch reference +
   torch→`.clm` bridge) — never merged into one verdict (`a_lane_akida_gpu_split`).
+- **Decode/inference** — decode (`core/bytegpt_decode.hexa` · `clm_decode.hexa`) also enters the
+  **forge** GPU via the `flame_mm.mm` seam (own-GEMM `_hx_k_gemm`, cuBLAS-independent) when
+  `cuda_available()=1`, else byte-identical farr CPU; GPU is the default, not a CPU fallback
+  (`a_train_flame_forge`).
 
 ## Repository map
 
