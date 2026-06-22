@@ -1,3 +1,9 @@
+## 2026-06-22 — cross-repo 핸드오프 채널 정정: inbox·sidecar 폐기 → harness ing
+
+cross-repo 핸드오프(runpod·hexa-lang 의존·패치·RFC)의 canonical 채널을 **`harness ing add "<text>" --to <repo>`** 로 일원화. 폐기 2채널 정정:
+- `hexa-lang/inbox/patches/<slug>.md` (retired 2026-06-05) · `~/.sidecar/handoff/handoff.jsonl` sidecar registry (retired, CLI 부재) — 둘 다 쓰지 말 것. harness `handoff-guard.ts` 가 `inbox/*.md`·`HANDOFF.md`·`INBOX.md` Write 를 차단하고 harness ing 로 안내.
+- 갱신: CLAUDE.md `a_runpod_inbox`(규칙 이름은 keyword-트리거 호환 유지) → harness ing add --to <repo> · ARCHITECTURE.json 2곳 lockstep · ING.jsonl 의 잘못된 inbox/sidecar 위임 문구 정정.
+- setup.hexa 훅 compile 결함(hx install 마지막 단계) = `harness ing add --to hexa-lang` 로 실제 등록(이전에 inbox·sidecar 로 잘못 위임한 것 원복).
 ## 2026-06-22 — 루트 hexa.toml 릴리즈 매니페스트 신설 (`hx install anima` 완성)
 
 `hx install anima` 를 완벽 릴리즈 가능하게 하는 루트 패키지 매니페스트 `hexa.toml` 신설. 이전엔 하위패키지(BRAIN/·hexa-senses/·agent/)만 매니페스트 보유, **레포 루트엔 없어** install 메타데이터 표면이 부재했다.
