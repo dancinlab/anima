@@ -564,7 +564,7 @@ anima/
 │   └── clm_decode.hexa             CLMConvMoE byte decode (H_1403: streaming/bounded — FLAT RSS/step, byte-exact; GEN=110 unblocked)
 │   └── phi/                        Φ / IIT4 decoders (was anima-engines/)
 │
-├── cli/                            user entry — anima_chat_cli.hexa (engine_cli stays in core/)
+├── cli/                            user entry — anima.hexa (canonical single entry: 기본 consciousness mode = brain_emit + engine_cli lanes + grounded L3 decode + kosmos; `--byte` = pure byte). anima_chat_cli.hexa = thin shim → anima --byte (back-compat). engine_cli stays in core/.
 ├── agent/                          standalone agent package (hexa.toml) — modules/{channels,core,plugins,providers,skills,hire-sim} · domains/{CHAT,CODE,CREATOR,TRADING,MERCHANT}
 ├── train/                          learning — clm/ (.clm lane-p → serialize v0.2 → verify) + variants
 ├── platform/                       substrate sub-systems (was anima-core/)
