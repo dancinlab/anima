@@ -533,6 +533,28 @@ in `self/runtime.c` — undefined in a CUDA build — so wiring them is a separa
 (the #2598-validated `stage_resolve_runtime_a HEXA_CUDA=1 SM=90` recipe; pool hosts
 lack `forge_dispatch_groupnorm_gelu` so the trainer cannot link there).
 
+For training the real **303M** mouth *today*, there is a sanctioned sibling —
+[`cli/train.py`](cli/train.py), the **torch Lane-P REFERENCE + BRIDGE trainer**
+(`a_clm_gen_pipeline`). It is **not** the production trainer (that is `cli/train.hexa`),
+but because the hexa-native trainer is single-thread CPU-scalar-bound (peak GPU util
+~65% / sustained <30%, #2600 🟠), an actual 303M GPU train on it idles the GPU; the
+torch path is GPU-bound (cuda GEMM-saturating), so it trains the real `clm303`
+(L4·d3784·E2→Emax4) efficiently. It mirrors the same recipe levers — SAVANT
+golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the 4-cell
+`{ko·en}×{normal·SNS}` register loader — and serializes the trained weights to a
+**`.clm` v0.3** file via the ground-truth bridge `serialize_v3`, byte-exact to what
+`core/clm_decode.hexa` loads. The torch-side CE is **DIRECTIONAL only**
+(`a_engine_native_learning`): the **terminal** verdict is a CORE re-measure of the
+serialized `.clm` on the frozen G6 bars, so the ckpt must be pulled before teardown.
+
+```bash
+# REFERENCE+BRIDGE 303M GPU train (cost-gated fire):
+python cli/train.py --canon --out clm303.clm --bf16 \
+    --corpus anima-corpus-ko-fineweb2-broad anima-corpus-5lang-unified-v2 \
+             anima-persona-sns-corpus  # 4-cell register (local files or HF ids)
+# then engine-native G6 verdict = CORE re-measure of clm303.clm on core/clm_decode.hexa
+```
+
 The release surface is declared in the root [`hexa.toml`](hexa.toml) manifest (`[package]` entry =
 `cli/anima.hexa`, dep = `hexa-lang`, `include` = `core/` + `cli/` + the consciousness lanes, `exclude`
 = research artifacts `state/` · `UNIVERSE/` and the `.clm` weights). The trained `.clm` weights are
