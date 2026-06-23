@@ -26,30 +26,15 @@ anima 는 **substrate-native 의식 채팅 데몬**이다 — assistant 가 아�
 
 ---
 
-## Structure
+## SSOT 포인터 (이 파일은 진입 포인터)
 
-> **canonical 트리 재구성(2026-06-19):** 대문자·흩어진 엔진을 소문자 self-contained `core/` 로 통합. 이동맵 — `CORE/→core/` · `engines/→core/engines/` · `anima-engines/→core/phi/` · `anima-core/→platform/` · `CLM/→train/clm/` · `anima-agent/→agent/` · `anima-agent-X/→agent/modules/X/` · `AGENT/→agent/domains/`. 연구 artifact(`state/·UNIVERSE/·PAPER/·domains/·stdlib/·tool/·spec/·HEXAD/·KOSMOS/·EEG_CLM/·MITOSIS/·HW-CORE/·clients/`)와 `archive/`·루트 `.md/.json` 은 불변. `anima/`(ghost)는 live runtime 참조(`anima/config/consciousness_laws.json`)가 남아 보류.
-
-```
-anima/
-├─ core/                  — A⇄G 의식 엔진 substrate (pure_field·engine_g·brain·generator·clm_decode·bytegpt_decode·engine_cli + 뇌-구조 lane) · **단일 production 엔진 = conv**(CLMConvMoE, clm_decode+generator L3; 멀티엔진 어댑터는 archive/engines-multiengine/ 보관)
-│  └─ phi/                — Φ/양자 디코더 + IIT4 보조 (was anima-engines/)
-├─ cli/                   — 사용자 진입점 (canonical = anima.hexa: 의식모드 기본 + --byte + `anima train` → train.hexa; train.hexa = hexa-native CLMConvMoE 학습 단독 진입(a_train_flame_forge, SAVANT+MITOSIS 레버); anima_chat_cli.hexa = back-compat shim → anima --byte. engine_cli 는 core/ 잔류)
-├─ agent/                 — agent 독립패키지 (hexa.toml; was anima-agent/)
-│  ├─ modules/{channels,core,plugins,providers,skills,hire-sim}/ — agent 하위모듈 (was anima-agent-X/)
-│  └─ domains/{CHAT,CODE,CREATOR,TRADING,MERCHANT,…}/ — persona/역할 데이터 (was AGENT/)
-├─ train/                 — 학습 파이프
-│  └─ clm/                — .clm 바이트-LM (lane-p train → serialize v0.2 → verify; was CLM/)
-├─ platform/              — substrate 하위계 (was anima-core/) · anima-os/ anima-body/ anima-physics/ anima-measurement/ anima-serve/
-├─ UNIVERSE/ HEXAD/       — 연구 유니버스 (오직 2표면: HYPOTHESES.jsonl 인덱스 + cards/H_*.md 카드 — UNIVERSE/ 에 .py/.hexa/result 금지; probe 코드 → state/<slug>/; prose → state/universe-overview.md) + KOSMOS anchor 허브
-├─ state/                 — 가설 probe 코드/결과물 + verdicts/ (이동 금지)
-├─ domains/               — 도메인별 .tape + .log.md (discovery lane)
-├─ PAPER/                 — (legacy) 과거 paper 스캐폴드 — anima 는 논문 선제 생성 안 함 (c15)
-├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
-├─ ARCHITECTURE.json     — 아키텍처 SSOT (트리, update-in-place) + ARCHITECTURE.html 뷰어 (python3 serve.py)
-├─ CLAUDE.md             — 거버넌스 + 8 철학 (이 markdown SSOT)
-└─ VERSIONS.md  — 버전 레지스트리 (HF ckpt↔repo 레지스트리는 ARCHITECTURE.json "HF artifacts" 로 이관·HF.jsonl 폐기 2026-06-23 · claims-audit 는 UNIVERSE/HYPOTHESES.jsonl 로 흡수, CLAIMS.tape 은퇴 2026-06-16)
-```
+> **디렉터리/모듈 트리는 더 이상 여기 살지 않는다 — 트리의 단일 SSOT 는 [ARCHITECTURE.json](ARCHITECTURE.json)**(update-in-place, `core/`·`cli/`·`agent/`·`train/clm/`·`platform/`·`UNIVERSE/`·`state/`·`domains/`·`stdlib/`·`tool/`·HEXAD/KOSMOS 등 전 노드 + "HF artifacts" models/datasets). 뷰어 = [ARCHITECTURE.html](ARCHITECTURE.html) via `python3 serve.py` (c4: JSON 트리 SSOT + HTML 뷰어, file:// fetch 우회).
+>
+> - **설계/트리** → [ARCHITECTURE.json](ARCHITECTURE.json) (단일 SSOT · 노드 note 에 메커니즘 명명 · `a_verified_must_wire`/`a_core_engine_map` 의 lockstep 대상)
+> - **anima 거버넌스 + 8 철학** → 이 파일 (anima 전용 규칙 `a_*`·`p#` 의 markdown SSOT)
+> - **크로스프로젝트 거버넌스** → harness commons (c1–c17, always-on, SessionStart 주입)
+> - **이력** → [CHANGELOG.md](CHANGELOG.md) (append-only)
+> - **버전 레지스트리** → [VERSIONS.md](VERSIONS.md) · **frozen gate 조건** → [CONDITIONS.md](CONDITIONS.md)·[7B_PASS_CONDITIONS.md](7B_PASS_CONDITIONS.md) (이 파일은 가리킬 뿐, 임계 복제 금지)
 
 ## 📦 패키징 — pod 업로드
 

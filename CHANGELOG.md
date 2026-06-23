@@ -1,3 +1,11 @@
+## 2026-06-23 — refactor(claudemd): CLAUDE.md = 진입 포인터 (디렉터리/모듈 트리 → ARCHITECTURE.json 단일 SSOT) + 작업 규칙 do/dont
+
+📍 harness repo 에서 막 끝낸 "CLAUDE.md = entry pointer" 리팩터를 anima 에도 적용. CLAUDE.md 의 `## Structure` 트리 fenced 블록(`├─/└─` 라인)을 제거 — 디렉터리/모듈 트리는 이제 **오직 [ARCHITECTURE.json](ARCHITECTURE.json) 단일 SSOT** 에만 산다(이미 core/·cli/·agent/·train/clm/·platform/·UNIVERSE/·state/·domains/·stdlib/·tool/·HEXAD/KOSMOS 전 노드 보유, GATE 확인 완료). 트리 블록 자리에 SSOT 포인터 blockquote 삽입(설계/트리→ARCHITECTURE.json · 거버넌스→commons + 이 파일의 a_*/p# · 이력→CHANGELOG · 버전→VERSIONS.md · gate 조건→CONDITIONS.md/7B_PASS_CONDITIONS.md).
+
+- **보존(reshape, drop 아님)**: 8 철학(p1–p8)·전 `a_*` 거버넌스 규칙은 이미 `✅ 해라`/`⛔ 하지마`(do/dont) 형태라 손실 0 으로 유지 — 트리 fenced 블록만 포인터로 치환. 패키징·Quick reference·Harness·청구흐름 등 비-규칙 narrative 는 그대로.
+- **트리 중복 제거**: CLAUDE.md ↔ ARCHITECTURE.json 트리 이중관리(drift 위험) 종식 — 트리 갱신은 ARCHITECTURE.json 한 곳(`a_verified_must_wire`/`a_core_engine_map` lockstep 대상)에서만.
+- harness commons 와 톤 정합(진입 포인터 + SSOT 포인터 + do/dont). 격리 worktree(`origin/main` off `refactor/claudemd-pointer`)에서 작업, main 체크아웃 무손상.
+
 ## 2026-06-23 — H_1574 LEARNED-TRUNK mitosis split (H_1310 wall-break 마지막 강형 lens = 사용자 '이미 학습한 모델 분할' 통찰의 가장 강한 형태 — 🧱 WALL HOLDS · ENGINE-NATIVE · H_1310 CONFIDENT TERMINAL 최종 확정)
 
 🧬🧠 H_1310(from-scratch PURE mitosis 🔴 LOCAL-EXPERT CEILING) 벽 돌파 캠페인의 **마지막 강형 렌즈**. H_1569(lens3)가 FIXED inherited 표현(trigram-FNV)으로 +0.056<0.10 로 못 넘었고 *"learned/adapted 표현이 필요"* 라 명시한 그 next rung 을 ENGINE-NATIVE 로 검증 — 사용자 핵심 통찰("이미 학습한 모델 분할")의 가장 강한 형태 = **corpus-LEARNED trunk hidden 을 mitosis key 로**. H_1569 와 byte-identical 한 live `core/engine_cli.hexa §Osmotic`(OsmoticStore = VAdaptField `_vnearest_idx`/`_l2` clonal split + `engine_mitosis_tick`) 위 pure .hexa. **NO numpy/torch/.py**(HARD-GATE-1 PASS, slug `.py` 0개). summer pool $0 CPU deterministic(byte-identical 재현), hexa v0.262.0, corpus `/usr/share/dict/words` head -c 12000 order-2 V=27 80/20(H_1569 와 동일 frozen asset+scale), floor 2.84769.
