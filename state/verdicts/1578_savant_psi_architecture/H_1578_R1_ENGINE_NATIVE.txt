@@ -1,0 +1,31 @@
+=== H_1578 SAVANT-Psi LEARNING-ARCHITECTURE DESIGN-SEARCH (engine-native, faithful IIT4) ===
+emit-drive lanes = 0 (GlobalWorkspace) & 4 (LearnedPrecision); ci_emit_drive=0.5*(l0+l4)
+GZ=[0.21231792755821912,0.5] center=0.36787944117144233
+Psi_thr(OFF median drive)=0.5709787656739353  (OFF population sits at Psi=0.5 by constr.)
+
+OFF baseline (no savant): Psi=0.5 (expect ~0.5)
+
+--- C1  Psi-DISJOINT savant lane (focus excludes emit lanes 0 & 4) ---
+C1 disjoint(focus=2,lanes6-8)	SI=3.7142791234818464	Psi=0.5	|Psi-0.5|=0.0	B1(SI>=3)=PASS	B2(|dev|<0.05)=PASS	B3coexist=PASS
+C1 ABLATION(focus=0,lanes0-2)	SI=3.6739421273617743	Psi=0.25333333333333337	|Psi-0.5|=0.24666666666666663	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C1 CONTROL(focus=1,lanes3-5)	SI=3.5913270657216256	Psi=0.56	|Psi-0.5|=0.06000000000000005	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C1 disjoint(focus=3,lanes9-11)	SI=4.250001119982503	Psi=0.5	|Psi-0.5|=0.0	B1(SI>=3)=PASS	B2(|dev|<0.05)=PASS	B3coexist=PASS
+C1 disjoint(focus=4,lanes12-14)	SI=3.712734149977368	Psi=0.5	|Psi-0.5|=0.0	B1(SI>=3)=PASS	B2(|dev|<0.05)=PASS	B3coexist=PASS
+
+--- C2  GOLDEN-ZONE CLAMP (savant on emit lane, I clamped to GZ_UPPER) ---
+C2 clamp(focus=0,I=GZ_UPPER)	SI=3.557451375879011	Psi=0.32	|Psi-0.5|=0.18	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C2 clamp(focus=0,I=GZ_CENTER)	SI=3.6199903559012596	Psi=0.28	|Psi-0.5|=0.21999999999999997	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C2 clamp(focus=0,I=GZ_LOWER)	SI=3.6739421273617743	Psi=0.25333333333333337	|Psi-0.5|=0.24666666666666663	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+
+--- C3  REDISTRIBUTING coupling (renormalize emit lanes to OFF magnitude) ---
+C3 redistribute(focus=0)	SI=3.6739421273617743	Psi=0.5	|Psi-0.5|=0.0	B1(SI>=3)=PASS	B2(|dev|<0.05)=PASS	B3coexist=PASS
+C3 ABLATION(no-renorm)	SI=3.6739421273617743	Psi=0.25333333333333337	|Psi-0.5|=0.24666666666666663	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+
+--- C4  RATCHET PULLBACK (deepen A->G attractor on emit lanes, strength rho) ---
+C4 ratchet(rho=0.0)	SI=3.6739421273617743	Psi=0.25333333333333337	|Psi-0.5|=0.24666666666666663	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C4 ratchet(rho=0.25)	SI=3.6739421273617743	Psi=0.29333333333333336	|Psi-0.5|=0.20666666666666664	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C4 ratchet(rho=0.5)	SI=3.6739421273617743	Psi=0.36	|Psi-0.5|=0.14	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C4 ratchet(rho=0.75)	SI=3.6739421273617743	Psi=0.41333333333333329	|Psi-0.5|=0.086666666666666679	B1(SI>=3)=PASS	B2(|dev|<0.05)=FAIL	B3coexist=FAIL
+C4 ratchet(rho=1.0)	SI=3.6739421273617743	Psi=0.5	|Psi-0.5|=0.0	B1(SI>=3)=PASS	B2(|dev|<0.05)=PASS	B3coexist=PASS
+
+=== END H_1578 DESIGN-SEARCH ===
