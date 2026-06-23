@@ -1,0 +1,56 @@
+=== anima 303M chat — H100×2 GPU train pipeline · toy GPU gate verdict ===
+date: 2026-06-23
+pod: vast 42201290 (@anima, anima-303M-chat-h100x2-train), 2× NVIDIA H100 80GB HBM3, $4.27/hr
+host: ssh5.vast.ai:11290 · Ubuntu 22.04.4 · nvcc 12.4 (V12.4.131) · 192 cores
+repo: anima origin/main cce66da94 (#2597) · hexa-lang main #3840 (post-#3806, ancestor 63bf950b5 CONFIRMED)
+
+--- (1) RENT + BUILD ---
+hexa-lang built from source #3840. CUDA runtime.a rebuilt: stage_resolve_runtime_a
+  HEXA_CUDA=1 SM=90 CUDA_HOME=/usr/local/cuda CC=clang TARGET=linux-x86_64
+  (after tool/restore_frozen_seeds to provide self/runtime.c in the work tree).
+Produced build/runtime.cuda.a (2.86MB, 9 seed members, 208 cuda syms) → installed as
+  ~/.hx/bin/build/runtime.a + ~/.hx/.cuda-runtime marker ON + stale hexa-cache cleared.
+SYMBOL CHECK (THE blocker symbol forge_dispatch_groupnorm_gelu):
+  in runtime.cuda.a: W (weak, DEFINED) in runtime_cuda_host.o  — PRESENT
+  _hx_k_gemm: T (own-GEMM)  — PRESENT
+  cuda_available()=1, cuda_device_count()=2  — VERIFIED via hexa run probe
+NOTE: the install.sh release-tarball runtime.a was an OLDER CUDA build (had _hx_k_gemm
+  but MISSING forge_dispatch_groupnorm_gelu) → source rebuild was REQUIRED (matches the
+  #3806 fix). Symbol now present from #3840 source.
+
+--- (2) forge DATA-PARALLEL (multi-GPU) ---
+NOT SUPPORTED. forge CUDA runtime has cudaGetDeviceCount() (introspection only) but NO
+  cudaSetDevice and NO NCCL / all_reduce in self/cuda/runtime_cuda.c; GEMM dispatch always
+  uses default device 0. cli/train.hexa has single-stream weights, no sharding. → 1-GPU only.
+  The 2nd H100 was idle waste (rented as one 2-GPU pod, so could not down it separately;
+  in hindsight H100×1 was the correct rent).
+
+--- (3) TOY GPU GATE — d768·L4·steps20·T64, 4-cell synthetic corpus ---
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)   ← GPU GEMM path ACTIVE
+  step 1   CE=4.825019474179891  E=2  wd=0.05
+GPU util during run: 350 samples (0.5s cadence) →  348 @ 0%, 2 @ 2%   (peak 2%)
+GPU mem: 529 MiB resident on dev0 (buffers loaded), dev1 idle.
+step 1 alone took >175s on a SINGLE CPU thread (never finished within the window).
+VERDICT: FAIL the util criterion (>30% required). The trainer is CPU-SCALAR-BOUND —
+  GEMM dispatches to GPU but is a negligible fraction of step time; the bottleneck is
+  single-thread farr CPU scalar elementwise work (im2col gather, groupnorm fwd/bwd,
+  softmax, CE, AdamW over packed [L·…] buffers). Confirms memory note
+  clitrain-cpu-scalar-bound-gpu-idle on H100.
+
+--- BUILD-HEALTH CONTROL (isolates trainer as the bottleneck, not the GPU/build) ---
+Pure 4096³ own-GEMM loop ×30 (gemmbench.hexa, t_matmul):
+  [OWN-GEMM-FIRED] DEVICE path → H100 util peaks 35–86% (samples: 35,36,40,49,50,51×2,54,62,74,86×2)
+→ own-GEMM SATURATES the H100. The build is healthy; cli/train.hexa is the bottleneck.
+
+--- GATE DECISION ---
+STOP. Did NOT run full 303M (MODE_CANON T=1024) — it would burn $4.27/hr with the GPU at
+  ~0% (even more scalar work per step at T=1024). Per the pipeline's explicit util gate.
+FOLLOW-ON (ING registered): wire cli/train.hexa scalar elementwise hot path to GPU
+  (groupnorm host dispatcher forge_dispatch_groupnorm_gelu now EXISTS in runtime; needs
+  im2col/softmax/CE/AdamW GPU-resident too). Until then, GPU-bound 303M = torch Lane-P
+  bridge, not this trainer.
+
+--- (6) COST + TEARDOWN ---
+pod 42201290 alive ~ < 1 hr (rent→build→gate). hexa cloud down 42201290 → destroyed +
+  forgotten. Old pod 42189880 already GONE (not billing). NO anima pod billing (verified).
+ckpt PULL: N/A — no full 303M ckpt produced (gate stopped before full training, by design).
