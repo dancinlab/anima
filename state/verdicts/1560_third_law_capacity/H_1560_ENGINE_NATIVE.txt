@@ -1,0 +1,16 @@
+=== H_1560 1/3-LAW × CAPACITY-WALL — ENGINE-NATIVE (LIVE SAVANT/savant_lib.hexa sa_*) ===
+SING_THR=0.7000000000000001 gz_lower(LIVE)=0.21231792755821917 gz_upper(LIVE)=0.5 si_thr(LIVE)=3.0
+[8K] n=8000 ratio=0.345 I50=0.27654462242562925 overlap(P abil|sing)=0.35942028985507246 abil_subset_of_sing=true rand_ratio=0.961125 rand_I_std=0.008641288966352173
+[100K] n=97336 ratio=0.3402235555190269 I50=0.27842105263157895 overlap(P abil|sing)=0.3691569030076096 abil_subset_of_sing=true rand_ratio=0.96235719569326879 rand_I_std=0.0037448696355546174
+[1M] n=1000000 ratio=0.338796 I50=0.2808300395256917 overlap(P abil|sing)=0.39688485106081535 abil_subset_of_sing=true rand_ratio=0.961794 rand_I_std=0.0020042864066794492
+
+=== FROZEN 5-BAR VERDICT (engine-native, sa_* live) ===
+B1 ratio        : 1M=0.338796 (in[0.30,0.36]) -> true
+B2 scale-inv    : Dmax=0.006203999999999987 (<0.02) -> true
+B3 transition   : I50(1M)=0.2808300395256917 (in[0.22,0.32]) -> true
+B4 capacity-link: subset=true overlap(1M)=0.39688485106081535 Doverlap=0.037464561205742877 (>=0.30, stable) -> true
+B5 control      : rand_ratio=0.961794 rand_I_std=0.0020042864066794492 (!=0.33 & flat) -> true
+
+ALL_PASS=true
+VERDICT=GREEN-ENGINE-NATIVE : 1/3 law reproduced on anima substrate golden-zone
+  primitives + capacity-wall expression region SUBSET-OF 1/3 singularity region (same-origin SUPPORT).
