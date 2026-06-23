@@ -1,0 +1,55 @@
+H_1569 — PRETRAINED / INHERITED-REPRESENTATION mitosis split (H_1310 wall-break lens 3)
+ENGINE-NATIVE verdict (pure .hexa via core/engine_cli.hexa §Osmotic; HARD-GATE-1 PASS: no .py)
+Run: summer pool, $0 CPU deterministic. hexa v0.262.0. Corpus /usr/share/dict/words head -c 12000.
+========================================================================================
+RAW STDOUT (full 12000-byte corpus):
+
+CORPUS bytes=12000
+PAIRS N=11998 train=9598 test=2400
+
+=== H_1569 INHERITED-REPRESENTATION MITOSIS SPLIT — held-out next-byte CE (nats) ===
+A_lossy (H_1310 ceiling)      CE = 3.143418755236637   cells=6.0
+A_repr  (inherited repr)      CE = 3.0878201413782267   cells=64.0
+A_rand  (B2 ablation)         CE = 3.2931073310092875
+A_shuf  (B3 causal shuffle)   CE = 3.3004390163532547
+n-gram FLOOR (order-2 Markov) CE = 2.8476877587913405
+
+B1 WALL-BREAK  repr<lossy-0.10 : false  (repr 3.0878201413782267 vs lossy-0.10 3.0434187552366367)
+B2 ABLATION    rand>=repr+0.10 : true  (rand 3.2931073310092875 vs repr+0.10 3.187820141378227)
+B3 CAUSAL      shuf>=repr+0.10 : true  (shuf 3.3004390163532547 vs repr+0.10 3.187820141378227)
+B4 vs-FLOOR    repr<=floor+0.02: false  (repr 3.0878201413782267 vs floor+0.02 2.8676877587913406)
+   [report] repr-floor=0.24013238258688618  lossy-floor=0.2957309964452963  (H_1310 lossy was +0.069)
+B5 CONTROL     cells_repr==cells_lossy(report): false  (lossy 6.0 repr 64.0)
+
+VERDICT: WALL HOLDS (engine-native) — inherited representation does NOT lift split-only mitosis here (B1/B2/B3 not all true).
+B1=false B2=true B3=true B4=false B5report=false
+
+----------------------------------------------------------------------------------------
+SCALE NOTE (a_toy_scale_recheck — load-bearing): on a SMALL 1500-byte slice the SAME probe
+returned 🟢 GREEN (B1 PASS: repr 2.791 vs lossy 3.026, gap 0.235 > 0.10). At the full
+12000-byte frozen scale the gap COLLAPSES to +0.056 < 0.10 → B1 FAIL → 🧱 WALL HOLDS. The
+small-scale GREEN was a scale artifact (precedent: h1464 mirror→engine flip). The FROZEN bar
+is the 12000-byte run; the 0.10 break bar was set BEFORE either run and NOT moved (c9).
+
+DIAGNOSIS (why the wall holds):
+ (1) The inherited representation (immune_embed_key trigram-FNV DIM=64) IS richer than the
+     lossy pair — it narrows the gap to the n-gram floor from +0.296 (lossy) to +0.240 (repr),
+     and lets mitosis grow 64 cells vs the lossy arm's 6 (collinear lossy keys rarely exceed
+     SPLIT_THRESH=0.30 → almost no splits → ceiling). So representation DOES matter
+     (B2 ablation + B3 causal both PASS decisively: destroying / shuffling the representation
+     collapses the repr arm by +0.21/+0.21 nats).
+ (2) BUT the lift is only +0.056 nats — UNDER the 0.10 break bar — because the inherited
+     representation is still a FIXED feature the cells partition, not a LEARNED/task-adapted
+     one, AND the trigram-FNV keys SATURATE the L2 split trigger at 64 cells (NOT a max_cells
+     cap — max_cells=512, unused; DIM=64 trigram-bucket keys stop exceeding SPLIT_THRESH=0.30
+     once ~64 regimes are tiled) so the cells cannot tile finer however many are allowed. A
+     fixed richer feature relocates the ceiling slightly; it does not cross it.
+
+VERDICT: 🧱 WALL HOLDS (ENGINE-NATIVE) — B1 FAIL (B2∧B3 PASS, B4 FAIL). Inherited-representation
+mitosis split does NOT break the H_1310 lossy ceiling by the frozen 0.10 bar at this scale. The
+H_1310 wall is NOT yet narrowed to "from-scratch lossy only" — a FIXED inherited representation
+is insufficient. Single lens ≠ confident terminal (c16). NEXT ORTHOGONAL LENS sharpened by this
+result: the representation must be LEARNABLE/EXPANDABLE (lens 2 lateral-gene-transfer of cell
+next-byte statistics; lens 4 curriculum-staged split that grows the feature with the cells), not
+merely inherited-and-fixed. a_engine_native_learning · a_no_llm_frame_trap · a_break_the_wall ·
+a_toy_scale_recheck · c9 frozen-first NO tune-to-green.

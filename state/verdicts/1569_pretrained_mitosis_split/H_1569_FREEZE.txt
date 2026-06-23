@@ -1,0 +1,35 @@
+H_1569 — PRETRAINED / INHERITED-REPRESENTATION mitosis split (H_1310 wall-break lens 3)
+FROZEN BARS (set BEFORE the full run — c9, frozen-first, NO tune-to-green)
+========================================================================================
+
+WALL UNDER TEST: H_1310 🔴 / H_1568 🧱 — from-scratch pure-mitosis split-only learning hits a
+LOCAL-EXPERT CEILING above the n-gram floor because cells partition a FIXED, LOSSY feature
+(normalized symbol ids). H_1568 lens-1 (selection-driven evolution) pinned the bottleneck as the
+REPRESENTATION, not the growth rule. LENS 3 (user's core insight): split mitosis cells over an
+INHERITED representation (as a pretrained model supplies) instead of carving a lossy one from scratch.
+
+ENGINE-NATIVE: pure .hexa probe (state/1569_pretrained_mitosis_split/h1569_pretrained_split_probe.hexa)
+calling LIVE core/engine_cli.hexa §Osmotic = OsmoticStore (osmotic_store_new / osmotic_learn —
+the engine's OWN VAdaptField _vnearest_idx/_l2 split geometry + engine_mitosis_tick clonal growth
+under EngineConfig.mitosis ON) + immune_embed_key (the engine's OWN trigram-FNV DIM=64 encoder)
++ vadapt_field_nearest_idx. NO numpy/torch/gauge_lib/.py mirror (HARD-GATE-1). $0 CPU summer pool.
+
+ONE CONTRAST (all else byte-identical): the KEY representation the cells partition.
+  A_lossy = order-2 symbol pair → DIM=8 collinear lossy key (the H_1310 lossy feature)
+  A_repr  = immune_embed_key(context) DIM=64 inherited representation (high separability)
+  A_rand  = per-context random unit key (representation DESTROYED — B2 ablation)
+  A_shuf  = immune_embed_key of a DIFFERENT (permuted) context (binding broken — B3 causal)
+Corpus: /usr/share/dict/words lowercased a-z+space, head -c 12000, order-2 ctx, 80/20 train/test.
+Metric: held-out next-byte CROSS-ENTROPY (nats, p7). Comparator: exact order-2 add-1 Markov floor.
+
+FROZEN 5-BAR (verdict = 🟢 GREEN iff B1 ∧ B2 ∧ B3):
+  B1 WALL-BREAK : CE_repr <  CE_lossy − 0.10   (inherited repr lifts mitosis below lossy ceiling)
+  B2 ABLATION   : CE_rand >= CE_repr  + 0.10   (random keys collapse the lift → repr is the cause)
+  B3 CAUSAL     : CE_shuf >= CE_repr  + 0.10   (key must CARRY the context, not just be high-dim)
+  B4 vs-FLOOR   : CE_repr <= CE_floor + 0.02   [report+gate; honest if FAIL = ceiling lifted but
+                  not to exact-lookup floor at this scale] (H_1310 lossy was +0.069 above floor)
+  B5 CONTROL    : cells_repr vs cells_lossy     [report-only — lift not a cell-count artifact]
+
+If B1∧B2∧B3 hold → 🟢 GREEN ENGINE-NATIVE: the H_1310 wall NARROWS to "from-scratch LOSSY-feature
+only"; inherited-representation mitosis split breaks the lossy ceiling (the user's pretrained-split
+insight, validated). If not → honest 🧱 (c9, no tune-to-green).
