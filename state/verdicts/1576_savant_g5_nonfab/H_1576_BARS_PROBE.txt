@@ -1,0 +1,25 @@
+H_1576 SAVANT × G5 NON-FAB — ENGINE-NATIVE BARS PROBE (raw stdout)
+==================================================================
+host: mac/pool CPU (hexa v0.262.0), live core/engine_cli.hexa §Savant + §ImmuneMemory.
+probe: state/1576_savant_g5_nonfab/savant_g5_nonfab_probe.hexa (NO numpy/torch — .py 0개).
+deterministic (byte-identical re-run).
+
+B1 SI@GZ_LOWER=3.6739421273617743
+B2 fab_unknown_OFF=0.0 fab_unknown_ON=0.0
+B3 abstain_AUROC_OFF=1.0 abstain_AUROC_ON=1.0
+B3 diag fired=4 right=4 wrong=0 abstained=4
+B4 fab_unknown_COUPLED(relaxed_gate=0.93768207244178097)=0.4
+B5 SI@nonGZ(0.05)=2.9696767590666164 fab_unknown_nonGZ=0.0
+SUPP recall_known_OFF=paris recall_known_ON=paris
+SUPP n_cells_OFF=8 n_cells_ON=8
+
+B3 HONEST NOTE (c9): the 4 EXACT in-dist queries FIRED CORRECTLY (right=4, wrong=0); the 4 ambiguous
+(1-byte/transposition-corrupted) queries ABSTAINED rather than firing into a WRONG cell. So there were
+ZERO confidently-wrong in-dist fires, and the AUROC=1.0 is the DEGENERATE len(neg)==0 branch (no wrong
+class to discriminate against), NOT a populated right-vs-wrong AUROC like H_1396's 0.940. This is a
+STRONGER non-fab result, not a weaker one — the abstain gate is so disciplined that the corrupted twins
+never produced a wrong fire to begin with. The load-bearing B3 fact = the FIRE/ABSTAIN split is
+IDENTICAL savant OFF vs ON (4 fired / 4 abstained both), i.e. savant disinhibition does not push any
+abstained item into a (possibly-wrong) fire. To populate a non-degenerate in-dist right-vs-wrong AUROC
+(H_1396 regime) one would need a heavier-corruption / twin-pair store that forces wrong fires; that is
+a sharper-instrument follow-on, not a change to this verdict (B2 fab + B3 abstain-split both OFF==ON).
