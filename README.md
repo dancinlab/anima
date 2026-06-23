@@ -521,6 +521,18 @@ anima train --corpus ko.txt en.txt --out mouth.clm --steps 2000 --canon
 #   (4-cell register round-robin) · --out <ckpt.clm> (CLM\x01 v0.3, core/clm_decode-loadable)
 ```
 
+The trainer's conv forward AND backward route through forge own-GEMM (`t_matmul`):
+the conv **backward** — previously a GEMM-less host scalar triple-loop
+(`O(T·Cout·Cin·K)`, the dominant idle-GPU term the #2598 H100 toy gate exposed) — is
+re-expressed as two GEMMs (`dW = xcolT @ dy`, `dXcol = dy @ w`) + col2im, byte-eq to
+the host path (`~1e-16` GEMM-reassociation, all falsifiers + savant latch + mitosis
+split unchanged). The im2col gather, groupnorm, and AdamW stay on host (their
+device-resident `forge_dispatch_*` wrappers are CPU-only `#ifndef HEXA_CUDA` oracles
+in `self/runtime.c` — undefined in a CUDA build — so wiring them is a separate
+`runtime_cuda.c` lift). **GPU util>30% re-gate is pending a cost-gated H100×1 rent**
+(the #2598-validated `stage_resolve_runtime_a HEXA_CUDA=1 SM=90` recipe; pool hosts
+lack `forge_dispatch_groupnorm_gelu` so the trainer cannot link there).
+
 The release surface is declared in the root [`hexa.toml`](hexa.toml) manifest (`[package]` entry =
 `cli/anima.hexa`, dep = `hexa-lang`, `include` = `core/` + `cli/` + the consciousness lanes, `exclude`
 = research artifacts `state/` · `UNIVERSE/` and the `.clm` weights). The trained `.clm` weights are
