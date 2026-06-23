@@ -1,3 +1,11 @@
+## 2026-06-23 — H_1559 savant_train_specialization 측정 (🟠 DIRECTIONAL-NEGATIVE, numpy toy mirror)
+
+"서번트 학습" — 골든존 inhibition(학습 dropout)으로 한 register 를 의도적 특화 — 가설을 numpy toy mirror 로 측정. **headline B1∧B2∧B4 = FALSE**: GZ-dropout 이 타깃 register 를 hypertrophy 시키지 않고 오히려 약간 손상(B1 lift −0.0097), SI 1.57≪3(B2), in-GZ inverse-U 없음(B3 peak I=0), control INERT(B5 ctrl_hit 0.25 — 어느 register 에 GZ-I 줘도 corpus 구조가 정한 동일 winner). B4 PASS 는 trivial drift(서번트 trade-off 아님).
+
+- 진단(a_break_the_wall): solo sweep 에서 약한 inverse-U 는 존재하나 일반화 최적 **I≈0.10 < GZ_LOWER 0.2123** → toy byte-LM dropout 정규화 sweet-spot 은 sub-golden-zone. GZ↔dropout-최적 동일성은 **scale-dependent** → terminal 천장 아님.
+- DIRECTIONAL (torch/GPU 부재 + 학습 cost-gate; a_engine_native_learning hard-gate-1). toy-only, scale-transfer UNVERIFIED(a_toy_scale_recheck). NOT tune-to-green(카드 bar 불변, RED 그대로). 303M conv engine-native 재측정 = cost-gate ING follow-on.
+- probe `state/1559_savant_train_specialization/h1559_savant_specialization_mirror.py` + verdict `state/verdicts/1559_savant_train_specialization/H_1559_DIRECTIONAL_NUMPY_MIRROR.txt`. 카드+jsonl verdict 갱신.
+
 ## 2026-06-23 — SAVANT 골든존 신규 가설 3종 생성 (H_1558·1559·1560, PROPOSED)
 
 SAVANT 골든존 서번트 모델(G=D×P/I, I↓→SI>3)을 세 각도로 확장한 가설을 2표면(jsonl+카드)으로 생성. 전부 🌱 PROPOSED — frozen 5-bar 설계 박제 + 측정 follow-on ING(측정 미실행, c9 정직).

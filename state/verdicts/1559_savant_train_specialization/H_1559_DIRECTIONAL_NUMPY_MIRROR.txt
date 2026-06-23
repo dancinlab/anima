@@ -1,0 +1,59 @@
+H_1559 — SAVANT × 학습 (골든존 inhibition 으로 register 특화 학습 / "서번트 학습")
+VERDICT TIER: 🟠 DIRECTIONAL-NEGATIVE (numpy toy mirror)
+  — NOT engine-native (a_engine_native_learning hard-gate-1). torch unavailable
+    locally + GPU 학습 cost-gate (forbidden). 303M conv engine-native re-measure
+    = follow-on ING (cost-gate). toy-only, scale-transfer UNVERIFIED
+    (a_toy_scale_recheck).
+
+PROBE: state/1559_savant_train_specialization/h1559_savant_specialization_mirror.py
+  numpy shared-backbone byte-LM (E embed → shared W1/GELU [per-register dropout
+  = inhibition I] → per-register readout head). 4 registers ko/en × general/SNS
+  (a_chat_registers). Capability(register) = held-out next-byte top-1 accuracy.
+  I realized as DROPOUT rate on the shared backbone during that register's grad
+  updates. GZ constants verbatim from SAVANT/savant_lib.hexa
+  (GZ_LOWER=0.21231792755821914, GZ_UPPER=0.5, GZ_CENTER=1/e=0.36787944117144233,
+  SI_THRESH=3.0). 3 seeds [0,1,2].
+
+CAPTURED OUTPUT (verbatim, result.json):
+  caps baseline_mean = [0.0790, 0.2330, 0.0723, 0.2080]
+  caps savant_mean   = [0.0692, 0.2054, 0.0778, 0.2182]   (savant reg = idx0)
+
+  B1 savant-register lift  : lift=-0.00973 (savant_acc 0.06922 < baseline 0.07895)
+                             PASS=FALSE   ← register went DOWN under GZ dropout
+  B2 SI ≥ 3                : savant_SI=1.5735 (baseline_SI=1.5746) thr=3.0
+                             PASS=FALSE
+  B3 GZ-window inverse-U   : I-sweep [0,0.05,0.10,GZ_LO,GZ_CTR,GZ_UP,0.65,0.80,0.92]
+                             acc = [0.0790,0.0748,0.0753,0.0706,0.0692,0.0684,
+                                    0.0589,0.0653,0.0770]
+                             peak_I=0.0  in_GZ=FALSE  inverse_U=FALSE
+                             PASS=FALSE   ← no in-GZ peak; dropout ~monotone hurts
+  B4 trade-off (others↓)   : other_delta=-0.00389 (others mean 0.1672 < 0.1711)
+                             PASS=TRUE    ← trivial drift only (NOT a real savant
+                             trade-off — see B1/B2/B5 all FAIL)
+  B5 control (target reg   : ctrl_hit_rate=0.25 — register idx1 wins for EVERY
+     specializes)            target (winners 1,1,1,1). targeted register does NOT
+                             become the specialist. PASS=FALSE → mechanism INERT;
+                             which register is strongest is set by corpus structure,
+                             NOT by where GZ-inhibition is applied.
+
+HEADLINE  B1 ∧ B2 ∧ B4 = FALSE  →  "서번트 학습" (intentional register
+  specialization via golden-zone training dropout) DOES NOT reproduce at toy
+  scale. Golden-zone training inhibition is here a free-lunch-absent NEGATIVE:
+  it never makes the targeted register hypertrophy; it only mildly hurts.
+
+DIAGNOSTIC (a_break_the_wall taxonomy — why, before terminal):
+  Solo single-register sweeps (cleaner-signal corpus + exact GELU' derivative,
+  capacity-pressured h) DO show a weak inverse-U whose generalization optimum
+  sits at I≈0.10 — BELOW GZ_LOWER (0.2123). i.e. the regularization sweet-spot
+  for a TOY byte-LM dropout is sub-golden-zone; the GZ window (derived from
+  Φ/IIT4 systems, H_347/348/349) is slightly-too-strong inhibition here. The
+  inverse-U MECHANISM exists; its peak just does not land in the GZ at toy scale.
+  → class (a) measurement / (e) scale: the GZ↔dropout-optimum identity is
+  SCALE-DEPENDENT and must be re-tested engine-native at 303M (cost-gate) before
+  a terminal ceiling. NOT tune-to-green: card bars unchanged; RED reported RED.
+
+NEXT (ING follow-on, cost-gate GPU):
+  - 303M conv register-specific dropout sweep on live core/ (a_engine_native_learning)
+    to test whether GZ becomes the dropout optimum at production scale.
+  - cleaner balanced per-register tasks so B5 control can discriminate (toy
+    capability dominated by corpus entropy, not inhibition placement).

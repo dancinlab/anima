@@ -1,0 +1,112 @@
+{
+  "meta": {
+    "mirror": "numpy DIRECTIONAL toy (torch/GPU unavail+cost-gate)",
+    "GZ_LOWER": 0.21231792754821915,
+    "GZ_UPPER": 0.5,
+    "GZ_CENTER": 0.36787944117144233,
+    "SI_THRESH": 3.0,
+    "registers": [
+      "ko_general",
+      "ko_sns",
+      "en_general",
+      "en_sns"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "B1_savant_register": {
+    "lift": -0.009730330831248246,
+    "savant_acc": 0.06922435362802336,
+    "baseline_acc": 0.0789546844592716,
+    "PASS": false
+  },
+  "B2_SI": {
+    "savant_SI": 1.5735299396440692,
+    "baseline_SI": 1.5745862203701042,
+    "threshold": 3.0,
+    "PASS": false
+  },
+  "B3_GZ_window": {
+    "I_grid": [
+      0.0,
+      0.05,
+      0.1,
+      0.21231792754821915,
+      0.36787944117144233,
+      0.5,
+      0.65,
+      0.8,
+      0.92
+    ],
+    "sweep_acc": [
+      0.0789546844592716,
+      0.07478454267445094,
+      0.07534056157909369,
+      0.07061440088963024,
+      0.06922435362802336,
+      0.06839032527105922,
+      0.05893800389213233,
+      0.06533222129552403,
+      0.07700861829302195
+    ],
+    "peak_I": 0.0,
+    "in_GZ": false,
+    "inverse_U": false,
+    "PASS": false
+  },
+  "B4_tradeoff": {
+    "other_delta": -0.0038921323324993262,
+    "savant_others_mean": 0.16717635066258918,
+    "baseline_others_mean": 0.1710684829950885,
+    "PASS": true
+  },
+  "B5_control": {
+    "ctrl_hit_rate": 0.25,
+    "trials": [
+      {
+        "target": 0,
+        "winner": 1
+      },
+      {
+        "target": 1,
+        "winner": 1
+      },
+      {
+        "target": 2,
+        "winner": 1
+      },
+      {
+        "target": 3,
+        "winner": 1
+      }
+    ],
+    "PASS": false
+  },
+  "caps": {
+    "baseline_mean": [
+      0.0789546844592716,
+      0.23297192104531553,
+      0.07228245760355852,
+      0.20795107033639146
+    ],
+    "savant_mean": [
+      0.06922435362802336,
+      0.20544898526549904,
+      0.0778426466499861,
+      0.21823742007228245
+    ]
+  },
+  "VERDICT": {
+    "B1": false,
+    "B2": false,
+    "B3": false,
+    "B4": true,
+    "B5": false,
+    "headline_B1_B2_B4": false,
+    "tier": "DIRECTIONAL (numpy toy mirror; engine-native + 303M scale = cost-gate ING)",
+    "wall_s": 8.5
+  }
+}
