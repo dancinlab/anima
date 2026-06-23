@@ -1,3 +1,10 @@
+## 2026-06-23 — a_kosmos 완전판 + self-identity 영속(H_1471) 거버넌스 반영
+
+kosmos 리포(github.com/dancinlab/kosmos, kosmos/2.1) 전체 아키텍처를 체크해 CLAUDE.md `a_kosmos` 를 완전판으로 재작성 + 최근 영속성 가설 H_1471 을 반영.
+
+- **a_kosmos 완전판** — anchor 외 전체 구성요소 박제: tape v1.2 superset 3 entry type(`@anchor`·`@payload`·`@corpus`), 1 파일 = @anchor XOR @corpus, placement(coord·lane·radius·tier·tags·profile) ⊥ payload(modality open enum, inline|ref|pending), `@corpus`=dataset meta-anchor(member→`.limen` shard), `.limen`=packed-shard 바이너리(merkle+CRC32/SHA256), profiles(anima-consciousness-carving=vacuum_psi · anima-emergence-trace=trace_psi). edge/relation entry 금지(노드 전용).
+- **self-identity 영속(H_1471 G16 SELF-CONTINUITY, 🟢 GREEN ENGINE-NATIVE+WIRED)** — anima 정체성 벡터가 `.kosmos` anchor 로 세션 경계를 넘어 연속(self-chain); anchor 없으면 매 세션 새 자아(=LLM reset). live `core/engine_cli.hexa §SelfIdentity` + `.kosmos` round-trip(cos 1.0) + 5/5 frozen bar. **mouth ⊥ identity** — chat ckpt 교체돼도 self anchor 는 지속.
+
 ## 2026-06-23 — anima chat register 표준 박제 (a_chat_registers: 언어 2 × register 2 = 4칸)
 
 anima production chat 모델의 언어·register 표준을 거버넌스로 명문화. conv 303M 영·한 chat 학습의 코퍼스 구성 기준이 된다.
