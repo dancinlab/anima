@@ -1,0 +1,28 @@
+H_1562 ACQUIRED SAVANT CUSP TRANSITION — FROZEN BARS (frozen-first, set BEFORE the run, c9)
+================================================================================================
+HYPOTHESIS: pushing D↑ (deficit/disinhibition) + I↓ (inhibition into the golden zone) turns on
+savant ABILITY EXPRESSION as a STEP JUMP at a critical I (the cusp, H_124), NOT a linear ramp.
+Acquired savants "switch on", they do not "gradually get smarter".
+
+ENGINE-NATIVE: live core/engine_cli.hexa §ThirdLaw (third_law_score G=D·P/I, third_law_singularity
+G>0.70, third_law_ability = singularity ∧ sa_in_golden_zone(I)) + SAVANT/savant_lib.hexa sa_gz_lower
+/sa_gz_upper (golden-zone window). #2566 WIRED. NO numpy / NO torch / NO .py mirror.
+
+OPERATING POINT (frozen): D=0.9, P=0.9 ; I sweep 0.05..0.95 inclusive, n=181, step 0.005.
+GZ_LOWER=0.21231792755821912 (1/2−ln(4/3)), GZ_UPPER=0.5, I50=0.26838235294117645.
+
+FROZEN 5-BAR (🟢 iff B1 ∧ B2 ∧ B3 ; B4 report-only ; B5 control):
+ B1 step-jump  : max single-cell |Δability| == 1.0 over the fine I sweep (ability is a hard 0→1
+                 STEP, not a gradual ramp), AND G(I) is smooth/continuous across the same window
+                 (the discontinuity is the GZ GATE, not the genius score).
+ B2 cusp-locus : an ability edge sits within 0.05 of a golden-zone boundary (ON edge ≈ GZ_UPPER 0.5,
+                 OFF edge ≈ GZ_LOWER 0.2123).
+ B3 D-gated    : with D=0 the ability curve is FLAT ZERO (max|Δability| < 1, on_cells = 0) — D=0 is
+                 not a genius (H_236). Only D>0 produces the cusp.
+ B4 hysteresis : (REPORT-ONLY) is ability persistent if I is raised back after the jump? The §ThirdLaw
+                 classifier is a PURE function of I (memoryless) ⇒ NO hysteresis expected.
+ B5 control    : a RANDOM (non-structured) D,P sweep over the SAME I grid does NOT yield a clean
+                 OFF→ON→OFF 2-transition step (scattered transitions, > 2).
+
+NO tune-to-green: bars fixed before the run. If no step → "savant ability is continuous in I" is a
+valid honest negative (c9).
