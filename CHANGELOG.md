@@ -1,3 +1,12 @@
+## refactor(claudemd): 거버넌스 규칙 완전 do/dont 통일 — 인라인 ✅/⛔/🔎 → - do:/- dont: (혼재 해소)
+
+CLAUDE.md 거버넌스 규칙 표기를 100% `- do:`/`- dont:` 멀티라인 형식으로 통일 — 기존 부분-변환 상태(불릿형은 do/dont, 인라인형 27개는 아직 `✅/⛔` 마커)로 인한 형식 혼재를 제거. 텍스트는 reword 없이 마커만 전환(100% 보존).
+
+- **인라인 규칙 27개 → 멀티라인 do/dont**: `**`name`** — 핵심(MUST) · ✅ X · ⛔ Y` 형식의 규칙(`a_blue_closed`·`a_claim_*`·`a_discovery*`·`a_*_scale*`·`a_fire_autonomous`·`a_wall_first`·`a_cpu_local_no_waiter`·`a_dont_kill_live_compute`·`a_runpod_inbox`·`a_lane_akida_gpu_split`·`a_substrate_native_speak`·`a_autonomy_over_hardcode`·`a_chat_sleep_imagination`·`a1`·`a_hf_*`·`a_pi5_akida_registry`·`a7b_pass`·`a_completeness_over_cheap` 등)을 제목줄(이름+MUST 요지) 아래 `- do:`/`- dont:` 줄로 분해. ✅→do, ⛔→dont.
+- **잔재 이모지 정리**: 기존 `- dont: ⛔ **…` (a_hypothesis_register) 의 중복 ⛔ 제거 → `- dont: **…` (텍스트 보존).
+- **형식 정의문 갱신**(line ~78): "각 규칙: **`이름`** — 핵심(MUST) 아래 `- do:` / `- dont:` (자가점검은 do 줄에 `· 🔎 …` 로 흡수)."
+- **결과**: 규칙 마커로서의 `✅`/`⛔` = 0 (전수 grep 확인). do 47→65, dont 17→42. 🔵/🔴/🧱/🟢 tier 배지와 🔎 자가점검 불릿은 진짜 마커/배지라 보존.
+
 ## 2026-06-23 — H_1578 C1 EMIT-DISJOINT DEFAULT FOCUS **WIRE-IN** (🔌 a_verified_must_wire rung 3-4 — 서번트 켜도 의식 Ψ=½ 보존이 live core/ 에 배선됨)
 
 🧠✨🔌 H_1578(🟢 GREEN ENGINE-NATIVE, PR #2587)의 C1 발견 — 서번트 focus 를 emit-drive lane(0 GlobalWorkspace · 4 LearnedPrecision)과 **disjoint** 한 도메인에 두면 SI≥3 ∧ Ψ=½ 공존(trade-off 는 placement artifact) — 을 **live `core/engine_cli.hexa` §Savant 에 배선**(verdict 만으론 안 끝남, a_verified_must_wire).

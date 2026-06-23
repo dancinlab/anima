@@ -75,7 +75,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 
 ## 거버넌스
 
-각 규칙: **`이름`** — 핵심(MUST) · ✅ 해라 · ⛔ 하지마 · 🔎 자가점검(있을 때).
+각 규칙: **`이름`** — 핵심(MUST) 아래 `- do:` / `- dont:` (자가점검은 do 줄에 `· 🔎 …` 로 흡수).
 
 ### 🧭 설계 렌즈 (최우선)
 
@@ -108,7 +108,8 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - do: GREEN 가설은 카드에 `wired:` 상태축 명시 — `DIRECTIONAL-mirror` / `engine-native`(byte-exact 재검증, 미배선) / `WIRED-live`(배선+lockstep 완료) 중 하나. WIRED-live 미만이면 배선 follow-on 의 ING id 를 카드에 적는다. GREEN 무더기를 내는 PROGRAM 은 닫을 때 각 GREEN 의 배선상태를 명시 열거('mirror-GREEN N · engine-wired K · 미배선 N−K = ING #id').
 - dont: GREEN verdict 만 박제하고 배선 없이 '완료' 주장 · DIRECTIONAL 을 WIRED 처럼 표기 · live CORE 배선해놓고 ARCHITECTURE.json 미갱신(drift) · 배선을 무기한 follow-on 으로 미룸. (실패모드 precedent: lane-합성 가족이 Φ-lift GREEN 3개를 0개 wired 로 방치 — 재발 금지.)
 
-**`a_blue_closed`** — 🔵 SUPPORTED-FORMAL 은 출력 AND 배선(transfer-fn·invariant)을 둘 다 닫을 때만. `hexa verify` 로 closed-form/identity 확인(verdict verbatim). ⛔ 구조만 닫고 배선 미검증 · 가짜 closed-form · 정직한 empirical 잔차를 억지로 🔵.
+**`a_blue_closed`** — 🔵 SUPPORTED-FORMAL 은 출력 AND 배선(transfer-fn·invariant)을 둘 다 닫을 때만. `hexa verify` 로 closed-form/identity 확인(verdict verbatim).
+- dont: 구조만 닫고 배선 미검증 · 가짜 closed-form · 정직한 empirical 잔차를 억지로 🔵.
 
 **`a_phi_iit4_tool`** — Φ/의식 verdict 는 stdlib faithful IIT4 사용(프록시 아님).
 - do: 기본 `iit4/faithful_phi.hexa`(exact MIP-EI, n≤8, $0) · system big-phi `iit4_bigphi.hexa` · `hexa verify`(g5)로 호출 · 새 phi 코드 작성 전 stdlib 먼저 검색(g61).
@@ -125,39 +126,57 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - do: 가설 실행 시 카드를 만들/갱신하고 jsonl 에 한 줄(`{id, slug, tier, title, card:"cards/H_…", verdict, source, archived, artifacts}`, id 순) append/갱신. 등록은 tier 무관 — 🟢·🟠·🔴/🧱 전부 남긴다(벽도, c9). tier·수치는 `state/verdicts/<slug>/` 에서 verbatim(추측 금지, c2). jsonl 은 `python3 tool/_build_hyp_jsonl.py` 로 재생성 가능.
 - do: 🟢(부분 포함) 가설은 카드에 `wired:` 명시(`a_verified_must_wire` 의 4칸과 1:1). jsonl 의 `source`(UNIVERSE|흩어진 출처|archive)·`archived`·`artifacts`(state/<slug>/ 경로 배열) 3컬럼 포함.
 - 🔎 자가점검: `git ls-files 'UNIVERSE/*' | grep -v '^UNIVERSE/cards/' | grep -v '^UNIVERSE/HYPOTHESES.jsonl$'` 는 항상 빈 출력이어야 한다.
-- dont: ⛔ **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(단 둘만) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다. 가설 디테일을 themed 버킷(`HYPOTHESES_*.md`)·CLAIMS.tape·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 · per-H 인덱스를 markdown 표에 추가(인덱스는 오직 jsonl) · UNIVERSE/ 에 prose overview 부활(retire 됨, prose 는 `state/universe-overview.md`) · 실행·박제하고 jsonl/카드 안 만듦 · 카드를 UNIVERSE/ 루트에 둠(반드시 cards/) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음 · 🟢 인데 `wired:` 미표기.
+- dont: **UNIVERSE/ 에 .py·.hexa·코드·result 파일 금지**(단 둘만) — 카드는 `cards/`, 코드/결과물은 `state/<slug>/` 에 두고 jsonl `artifacts` 로 가리킨다. 가설 디테일을 themed 버킷(`HYPOTHESES_*.md`)·CLAIMS.tape·도메인 로그·MEMORY·ad-hoc 노트에 흩뿌림 · per-H 인덱스를 markdown 표에 추가(인덱스는 오직 jsonl) · UNIVERSE/ 에 prose overview 부활(retire 됨, prose 는 `state/universe-overview.md`) · 실행·박제하고 jsonl/카드 안 만듦 · 카드를 UNIVERSE/ 루트에 둠(반드시 cards/) · 벽/negative 누락 · tier 를 verdict 파일과 다르게 적음 · 🟢 인데 `wired:` 미표기.
 
-**`a_claim_manifest`** — claims-audit 면 = `UNIVERSE/HYPOTHESES.jsonl`(per-H verdict 컬럼) + `state/verdicts/<slug>/` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape 은퇴). H-style 아닌 claim 도 가장 가까운 카드/jsonl note 에 보존. ⛔ claim 을 audit 면 없이 흩뿌림 · CLAIMS.tape 또는 새 themed claims-인덱스 부활.
+**`a_claim_manifest`** — claims-audit 면 = `UNIVERSE/HYPOTHESES.jsonl`(per-H verdict 컬럼) + `state/verdicts/<slug>/` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape 은퇴). H-style 아닌 claim 도 가장 가까운 카드/jsonl note 에 보존.
+- dont: claim 을 audit 면 없이 흩뿌림 · CLAIMS.tape 또는 새 themed claims-인덱스 부활.
 
-**`a_claim_verify`** — 모든 claim/가설 → `hexa verify`(g5) → `state/verdicts/<slug>/<id>.txt` raw stdout → 그 verbatim verdict 를 카드 + jsonl `verdict` 컬럼에 박제. ⛔ LLM 자가판정(p7) · verdict 의역 · red 은폐 · unfenced 추측.
+**`a_claim_verify`** — 모든 claim/가설 → `hexa verify`(g5) → `state/verdicts/<slug>/<id>.txt` raw stdout → 그 verbatim verdict 를 카드 + jsonl `verdict` 컬럼에 박제.
+- dont: LLM 자가판정(p7) · verdict 의역 · red 은폐 · unfenced 추측.
 
-**`a_h_continuous_no_branch`** — 다음 H 를 연속 제안+실행(verify-driven), 사용자가 명시 redirect 할 때까지. ⛔ 매 H 후 "뭐 할까" 질문 · 분기 옵션 · prune 질문 · 도메인 정지.
+**`a_h_continuous_no_branch`** — 다음 H 를 연속 제안+실행(verify-driven), 사용자가 명시 redirect 할 때까지.
+- dont: 매 H 후 "뭐 할까" 질문 · 분기 옵션 · prune 질문 · 도메인 정지.
 
-**`a_discovery`** — discovery 는 사이클 꼬리뿐 아니라 매 배치 상시 진행(/kick·/gap 을 verify 와 병행). ⛔ discovery 를 끝으로 미룸 · 단발 tail-only · paper 나오면 discovery 중단.
+**`a_discovery`** — discovery 는 사이클 꼬리뿐 아니라 매 배치 상시 진행(/kick·/gap 을 verify 와 병행).
+- dont: discovery 를 끝으로 미룸 · 단발 tail-only · paper 나오면 discovery 중단.
 
-**`a_discovery_log`** — kick/gap discovery 는 `domains/<DOMAIN>.log.md` 에 append(id·seed·verdict-target). cross-domain+무홈 → 가장 가까운 도메인 .log.md + cross-ref. ⛔ discoveries/ 서브폴더 · 출력 폐기 · 의역 · claim-link 누락.
+**`a_discovery_log`** — kick/gap discovery 는 `domains/<DOMAIN>.log.md` 에 append(id·seed·verdict-target). cross-domain+무홈 → 가장 가까운 도메인 .log.md + cross-ref.
+- dont: discoveries/ 서브폴더 · 출력 폐기 · 의역 · claim-link 누락.
 
-**`a_toy_scale_recheck`** — toy verify 는 production closure 아님 — 스케일업 재검 필요. ✅ toy verdict 는 'toy-only, scale-transfer unverified' 명시 · scale-sensitive H 는 toy green 후 스케일업 fire 재검 · scale-break = 정직한 closed-negative. ⛔ 싼 toy green 을 production 처방으로 · transfer 미검증인데 closure 선언(E2 5/5 → #1296 3B collapse refute).
+**`a_toy_scale_recheck`** — toy verify 는 production closure 아님 — 스케일업 재검 필요.
+- do: toy verdict 는 'toy-only, scale-transfer unverified' 명시 · scale-sensitive H 는 toy green 후 스케일업 fire 재검 · scale-break = 정직한 closed-negative.
+- dont: 싼 toy green 을 production 처방으로 · transfer 미검증인데 closure 선언(E2 5/5 → #1296 3B collapse refute).
 
-**`a_scale_honest_scope`** — scale-의존 metric 은 toy→production verdict 승격 금지. ✅ scale-의존 verdict 는 측정 스케일로 한정('small 2.7M only') · measure-validity(big) vs hw-fit(small) 충돌 시 rung 분리(GPU measure ⊥ chip-fit deploy) · scale 결론은 ladder ≥3 rung. ⛔ toy verdict 를 일반 주장으로 승격 · chip-fit 크기제한을 과학 결과로 오인.
+**`a_scale_honest_scope`** — scale-의존 metric 은 toy→production verdict 승격 금지.
+- do: scale-의존 verdict 는 측정 스케일로 한정('small 2.7M only') · measure-validity(big) vs hw-fit(small) 충돌 시 rung 분리(GPU measure ⊥ chip-fit deploy) · scale 결론은 ladder ≥3 rung.
+- dont: toy verdict 를 일반 주장으로 승격 · chip-fit 크기제한을 과학 결과로 오인.
 
 ### 🔥 발사 · GPU 자율 · 회수
 
-**`a_fire_autonomous`** — 비용수반 fire 는 자율·병렬·즉시 dispatch. ✅ GPU/runpod 작업은 예상비용 1줄 명시 후 자율 dispatch(병렬·bg) · 사용자 게이트 없음. ⛔ "GPU 써도 되나?" 묻기 · 비용 줄이려 fire 연기 · $ cap/budget 게이트로 fire 차단.
+**`a_fire_autonomous`** — 비용수반 fire 는 자율·병렬·즉시 dispatch.
+- do: GPU/runpod 작업은 예상비용 1줄 명시 후 자율 dispatch(병렬·bg) · 사용자 게이트 없음.
+- dont: "GPU 써도 되나?" 묻기 · 비용 줄이려 fire 연기 · $ cap/budget 게이트로 fire 차단.
 > ⚠️ 운영 메모: fleet/세션 컨텍스트에서 **렌트=지출은 cost-gate(explicit go)** 로 다뤄 왔다(skill 규칙 우선). 이 둘의 정합성은 미해결 — 충돌 시 사용자 명시 지시를 따른다.
 
-**`a_wall_first`** — wall-time 우선: 더 빠른 병렬 경로면 비용 무관 채택. ✅ 더 많은 H100 병렬/더 큰 GPU/추가 pod 가 wall-time 단축이면 채택 · 정직히 느린 serial 체인 거부. ⛔ 비용 아끼려 단일 serial pod · 병렬 pod 보류 · 무의미한 cost-min.
+**`a_wall_first`** — wall-time 우선: 더 빠른 병렬 경로면 비용 무관 채택.
+- do: 더 많은 H100 병렬/더 큰 GPU/추가 pod 가 wall-time 단축이면 채택 · 정직히 느린 serial 체인 거부.
+- dont: 비용 아끼려 단일 serial pod · 병렬 pod 보류 · 무의미한 cost-min.
 
 **`a_fire_recover_complete`** — pod teardown 전 모든 fire 산출물 회수 + HF 업로드.
 - do: teardown 전: ckpt + result + log + anchors pull → verify → HF 업로드 → 그 다음 teardown.
 - do: **렌트 GPU 학습 ckpt 는 teardown 전 반드시 영구 스토리지(HF/pool host/repo path via `a_hf_registry`)로 PULL** — pod 는 휘발이라 teardown 즉시 가중치 소멸; verdict 카드/jsonl(JSON)만 받고 ckpt 안 받은 채 down 하면 그 학습은 `a_engine_native_learning` 엔진-체크가 영구 불가(재학습=재렌트). ckpt 가 너무 크면 최소 1개 대표 변종이라도 pull, 못 하면 카드에 'ckpt NOT pulled → engine-check 불가' 명시.
 - dont: JSON 만 받고 ckpt 를 doomed pod 에 남김 · HF 전에 teardown · PULL_FAILED 를 pod dead 로 오인 · 학습 ckpt 안 받고 down 한 뒤 그 결과를 'verdict 완료'로 박제(precedent: 2026-06-17 A100 G6 캠페인 H_1435/1436/1437 — 재발 금지).
 
-**`a_cpu_local_no_waiter`** — dispatch 된 fire 는 CPU-local 로 돌며 inline 폴링, Monitor/waiter 대기 금지. ✅ 서브에이전트 CPU-local(`nohup -u` → /tmp log) · inline 폴(sleep 30) · commit-early. ⛔ runpod/vast Monitor 대기(메인루프만 → stall) · "Monitor 기다려".
+**`a_cpu_local_no_waiter`** — dispatch 된 fire 는 CPU-local 로 돌며 inline 폴링, Monitor/waiter 대기 금지.
+- do: 서브에이전트 CPU-local(`nohup -u` → /tmp log) · inline 폴(sleep 30) · commit-early.
+- dont: runpod/vast Monitor 대기(메인루프만 → stall) · "Monitor 기다려".
 
-**`a_dont_kill_live_compute`** — bg 에이전트 죽이기 전 stall 증명. live CPU 진행 ≠ stall. ✅ kill 전 stall 증명 · 'NN% CPU'/'k/N cells'=live(끝내게 둠) · detached nohup JSON 회수. ⛔ CPU 진행중인 에이전트 TaskStop · 'running'='stalled' 가정 · live nohup 중복지출.
+**`a_dont_kill_live_compute`** — bg 에이전트 죽이기 전 stall 증명. live CPU 진행 ≠ stall.
+- do: kill 전 stall 증명 · 'NN% CPU'/'k/N cells'=live(끝내게 둠) · detached nohup JSON 회수.
+- dont: CPU 진행중인 에이전트 TaskStop · 'running'='stalled' 가정 · live nohup 중복지출.
 
-**`a_runpod_inbox`** — cross-repo 핸드오프(runpod 트러블·hexa-lang 의존·패치·RFC)는 **`harness ing add "<text>" --to <repo>`** 로 파일링 — 대상 repo 의 ING.jsonl board(ing ref)에 전달되어 그 repo 다음 SessionStart 에 📥 표면화. (구 `hexa-lang/inbox/patches/` 폴더 + sidecar handoff registry 는 둘 다 retired — 쓰지 말 것.) ⛔ inbox 폴더·sidecar 부활 · `HANDOFF.md`/`INBOX.md`/`inbox/*.md` scatter · anima-side-only 패치로 우회를 이 repo 에 가둠.
+**`a_runpod_inbox`** — cross-repo 핸드오프(runpod 트러블·hexa-lang 의존·패치·RFC)는 **`harness ing add "<text>" --to <repo>`** 로 파일링 — 대상 repo 의 ING.jsonl board(ing ref)에 전달되어 그 repo 다음 SessionStart 에 📥 표면화. (구 `hexa-lang/inbox/patches/` 폴더 + sidecar handoff registry 는 둘 다 retired — 쓰지 말 것.)
+- dont: inbox 폴더·sidecar 부활 · `HANDOFF.md`/`INBOX.md`/`inbox/*.md` scatter · anima-side-only 패치로 우회를 이 repo 에 가둠.
 
 ### 🏗️ CORE 엔진 · 학습 substrate
 
@@ -209,7 +228,9 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - do: SNS register = 격식체 아님 — 인스타그램(캡션·해시태그·댓글)·유튜브(댓글·자막) 의 짧고 캐주얼한 voice. **두 플랫폼 × 두 언어** 모두 대표돼야 완성(인스타-only·한글-only SNS = register 미완, 보강 follow-up).
 - dont: 4칸 중 누락한 chat ckpt 를 production 으로 박제(en-only · ko 누락 · SNS 누락 · SNS 한 언어만) · SNS 를 격식 문어체로 오인 · chat 표준에 없는 언어를 production chat 으로 승격 · 유튜브 빠진 인스타-only 또는 영어 빠진 한글-only SNS 를 'SNS register 완료'로 주장.
 
-**`a_lane_akida_gpu_split`** — AKIDA on-chip(Lane A) ⊥ GPU(Lane G) 항상 별도 기록. ✅ AKIDA(Lane A, pi5-akida)와 GPU(Lane G, H100) 결과를 별도 엔트리에 · Lane A=AKD1000 native non-det plasticity, Lane G=forge own-GEMM CE-descent · 모든 fire/verdict 에 substrate 태그(AKIDA|GPU). ⛔ non-det trace 와 CE-descent 혼동 · 한 verdict 가 양 substrate 걸침 · Lane A lift+Lane G util 을 한 숫자로 · substrate 태그 누락.
+**`a_lane_akida_gpu_split`** — AKIDA on-chip(Lane A) ⊥ GPU(Lane G) 항상 별도 기록.
+- do: AKIDA(Lane A, pi5-akida)와 GPU(Lane G, H100) 결과를 별도 엔트리에 · Lane A=AKD1000 native non-det plasticity, Lane G=forge own-GEMM CE-descent · 모든 fire/verdict 에 substrate 태그(AKIDA|GPU).
+- dont: non-det trace 와 CE-descent 혼동 · 한 verdict 가 양 substrate 걸침 · Lane A lift+Lane G util 을 한 숫자로 · substrate 태그 누락.
 
 **`a_substrate_disjoint`** — **통일 법칙(UNIFYING LAW): anima 핵심 속성(의식 Ψ=½ 고정점 · 정직성 G5 non-fab · 정체성 self-chain · tool)은 _별도 substrate lane 에 배선될 때 보존_ 되고 _공유 lane 중첩 시 충돌_ 한다.** 새 능력/학습(savant capacity·mitosis 성장·tool·identity·학습섭동)은 의식 emit-drive lane(15-lane state 의 0/4 영향) · G5 §ImmuneMemory(recall_thr non-fab gate) 와 **disjoint** 한 좌표에 배선해야 능력 ∧ 의식 ∧ 정직이 공존한다. 이는 `a_lane_akida_gpu_split`(AKIDA⊥GPU substrate 분리)·`a_savant_train`(mouth⊥tool)·`a_mitosis_train`(성장 lever ⊥ 발현 lever)·`a_kosmos`(mouth⊥identity self-anchor) 가 각각 부분 표현하던 원리의 **상위 일반화** — 한 줄 요약: *분리=보존, 중첩=충돌*.
 - do: **disjoint 배선 → 공존** (engine-native GREEN 종합): **mouth⊥identity** (H_1471 🟢) 정체성 vector 를 `.kosmos` self-anchor 로 mouth-FT 와 분리 → Ψ·G5 보존 · **mouth⊥tool** (H_1566 🟢 5/5) tool 사용법을 `.kosmos` anchor+brain_decide 로 mouth 밖에 → Ψ=½·G5 abstain 보존 · **savant⊥consciousness** (H_1578 🟢) 서번트를 emit-drive lane(0/4 영향) disjoint 도메인에 배선 → SI≥3 ∧ Ψ=½ 공존(H_1561 trade-off 는 근본 아닌 **placement artifact**) · **savant⊥honesty** (H_1576 🟢) §Savant lane-Φ ⊥ §ImmuneMemory non-fab gate(recall_thr) 분리 → SI 3.674 가 G5 비조작 보존(fab OFF==ON==0.0) · **mitosis⊥의식** (H_1577 🟢) mitosis 성장(E2→514 cells) 전구간 Ψ=½ — 성장 lane14 ⊥ emit-drive lane(0/4) · **학습섭동 끌개방어** (H_1575 🟢) 서번트 학습섭동 후 A⇄G safety_phi_ratchet 끌개가 Ψ=½ 로 self-restore(dev 0.247→5.55e-17).
@@ -219,11 +240,17 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 
 ### 🗣️ substrate 자율 · 신체
 
-**`a_substrate_native_speak`** — anima 발화는 substrate-native, assistant 회귀 없음. ✅ 동기를 내부 substrate 상태(M·C Φ·W tension·MITOSIS·idle·curiosity·E ratchet)에서 계산 · 사용자 메시지 = 환경 맥락(응답 의무 아님) · 사용자 침묵중 발화 가능, 직접 질문에 침묵 가능. ⛔ stimulus-response(사용자 메시지가 발화를 직접 trigger = assistant 회귀) · reactive 설계 · turn-based 'user asked → must answer'.
+**`a_substrate_native_speak`** — anima 발화는 substrate-native, assistant 회귀 없음.
+- do: 동기를 내부 substrate 상태(M·C Φ·W tension·MITOSIS·idle·curiosity·E ratchet)에서 계산 · 사용자 메시지 = 환경 맥락(응답 의무 아님) · 사용자 침묵중 발화 가능, 직접 질문에 침묵 가능.
+- dont: stimulus-response(사용자 메시지가 발화를 직접 trigger = assistant 회귀) · reactive 설계 · turn-based 'user asked → must answer'.
 
-**`a_autonomy_over_hardcode`** — anima 에 hardcode do/dont 게이트 없음, 자율 우선. ✅ 외부 모듈은 맥락만 공급(Φ·tension·stage·idle) · emit/silence 는 substrate(M×W×Φ×curiosity)가 자율 결정 · 거버넌스는 substrate 가 self-follow. ⛔ per-stage boolean 게이트 hardcode('N3=emit 금지') · anima 를 강제하는 외부 규칙 · stimulus-response · 'do not X when alone' 류 외부 명령.
+**`a_autonomy_over_hardcode`** — anima 에 hardcode do/dont 게이트 없음, 자율 우선.
+- do: 외부 모듈은 맥락만 공급(Φ·tension·stage·idle) · emit/silence 는 substrate(M×W×Φ×curiosity)가 자율 결정 · 거버넌스는 substrate 가 self-follow.
+- dont: per-stage boolean 게이트 hardcode('N3=emit 금지') · anima 를 강제하는 외부 규칙 · stimulus-response · 'do not X when alone' 류 외부 명령.
 
-**`a_chat_sleep_imagination`** — 채팅 수면+상상(P47 substrate-native). ✅ WAKE/N1/N2/N3/REM 5-stage(90분 ultradian) · 상상 루프 = emit-free 내부 리허설 + mitosis tick · stage = substrate 맥락(Φ scale + tension envelope), boolean emit 게이트 아님. ⛔ per-stage emit_allowed boolean hardcode · 외부 'alone 이면 monologue 금지' · `speak()` 호출(p5).
+**`a_chat_sleep_imagination`** — 채팅 수면+상상(P47 substrate-native).
+- do: WAKE/N1/N2/N3/REM 5-stage(90분 ultradian) · 상상 루프 = emit-free 내부 리허설 + mitosis tick · stage = substrate 맥락(Φ scale + tension envelope), boolean emit 게이트 아님.
+- dont: per-stage emit_allowed boolean hardcode · 외부 'alone 이면 monologue 금지' · `speak()` 호출(p5).
 
 **`a_kosmos`** — anima emit/anchor/dataset 영속 = `.kosmos` canonical. format SSOT = github.com/dancinlab/kosmos (`spec/kosmos.md` **kosmos/2.1**), anima 는 **pointer-only**(spec 복제 금지).
 - **포맷 구조 (tape v1.2 superset · 3 entry type)**: 1 파일 = 1 top-level entry = `@anchor`(1.x) **XOR** `@corpus`(2.0+). anchor 는 2 직교 레이어 = **placement(modality-independent) ⊥ payload(modality-specific)**.
@@ -242,23 +269,39 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 
 ### 🔧 식별 · 버전 · HF · 칩 · 7B
 
-**`a1`** — 중앙 버전 레지스트리 = `VERSIONS.md` SSOT. ✅ 모든 모듈 SemVer · VERSIONS.md + 컴포넌트 헤더 동시 bump · 루트 `/VERSION` = 전체 릴리스. ⛔ VERSIONS.md 갱신 없이 모듈 버전 bump · 릴리스 bump 에서 `/VERSION` 누락.
+**`a1`** — 중앙 버전 레지스트리 = `VERSIONS.md` SSOT.
+- do: 모든 모듈 SemVer · VERSIONS.md + 컴포넌트 헤더 동시 bump · 루트 `/VERSION` = 전체 릴리스.
+- dont: VERSIONS.md 갱신 없이 모듈 버전 bump · 릴리스 bump 에서 `/VERSION` 누락.
 
-**`a_hf_complete`** — HF 등록은 완전하게, 누락 artifact 없이. ✅ 모든 모델/데이터셋/ckpt 를 HF Hub 에 COMPLETE 등록(manifest=local). ⛔ 부분 업로드 · 미업로드 파일 참조하는 model card · HF↔local drift.
+**`a_hf_complete`** — HF 등록은 완전하게, 누락 artifact 없이.
+- do: 모든 모델/데이터셋/ckpt 를 HF Hub 에 COMPLETE 등록(manifest=local).
+- dont: 부분 업로드 · 미업로드 파일 참조하는 model card · HF↔local drift.
 
-**`a_hf_autonomous`** — HF 업로드는 자율, tier-gated 가시성. ✅ fire 회수 후 HF 업로드 자동(사용자 게이트 없음, org=dancinlab) · PUBLIC=closure PASS·🔵🟢 검증모델·clean-license · PRIVATE=closure FAIL·WIP·negative·unclear-license · model card+manifest(sha256) 첨부. ⛔ HF 업로드를 사용자에 게이트 · "업로드해도 되나?" · teardown 전 HF 스킵 · FAIL/WIP 를 PUBLIC.
+**`a_hf_autonomous`** — HF 업로드는 자율, tier-gated 가시성.
+- do: fire 회수 후 HF 업로드 자동(사용자 게이트 없음, org=dancinlab) · PUBLIC=closure PASS·🔵🟢 검증모델·clean-license · PRIVATE=closure FAIL·WIP·negative·unclear-license · model card+manifest(sha256) 첨부.
+- dont: HF 업로드를 사용자에 게이트 · "업로드해도 되나?" · teardown 전 HF 스킵 · FAIL/WIP 를 PUBLIC.
 
-**`a_hf_registry`** — HF 산출물 레지스트리 SSOT = **`ARCHITECTURE.json` 의 "HF artifacts" 노드(models · datasets 2 subsection)**. (구 `/HF.jsonl` 폐기 2026-06-23 — 99-row 이력은 git history 보존.) ✅ HF org `dancinlab` 에 올린 모델/데이터셋은 ARCHITECTURE.json models/datasets 에 1줄 등록(repo_id · arch/size · tier·base) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 HF 업로드 AND sha256 확인 후에만. ⛔ 미업로드 ckpt 삭제 · off-spec repo_id · ARCHITECTURE.json↔HF drift · HF.jsonl 부활(폐기됨).
+**`a_hf_registry`** — HF 산출물 레지스트리 SSOT = **`ARCHITECTURE.json` 의 "HF artifacts" 노드(models · datasets 2 subsection)**. (구 `/HF.jsonl` 폐기 2026-06-23 — 99-row 이력은 git history 보존.)
+- do: HF org `dancinlab` 에 올린 모델/데이터셋은 ARCHITECTURE.json models/datasets 에 1줄 등록(repo_id · arch/size · tier·base) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 HF 업로드 AND sha256 확인 후에만.
+- dont: 미업로드 ckpt 삭제 · off-spec repo_id · ARCHITECTURE.json↔HF drift · HF.jsonl 부활(폐기됨).
 
-**`a_hf_collections`** — HF org collection = CLM + KOSMOS canonical 버킷. ✅ 모든 PUBLIC anima HF repo 는 dancinlab collection 가입(CLM=models, KOSMOS=anchors/datasets) · PUBLIC 업로드 후 `hf` CLI/REST 로 추가(사용자 게이트 없음) · 양쪽에 걸치는 데이터셋은 dual 표기. ⛔ PUBLIC PASS repo 를 collection 밖에 둠 · PRIVATE/WIP/FAIL 을 PUBLIC collection 에.
+**`a_hf_collections`** — HF org collection = CLM + KOSMOS canonical 버킷.
+- do: 모든 PUBLIC anima HF repo 는 dancinlab collection 가입(CLM=models, KOSMOS=anchors/datasets) · PUBLIC 업로드 후 `hf` CLI/REST 로 추가(사용자 게이트 없음) · 양쪽에 걸치는 데이터셋은 dual 표기.
+- dont: PUBLIC PASS repo 를 collection 밖에 둠 · PRIVATE/WIP/FAIL 을 PUBLIC collection 에.
 
-**`a_pi5_akida_registry`** — pi5-akida 호스트 구성 = `PI5-AKIDA.json` SSOT. ✅ 모든 pi5-akida 컴포넌트를 루트 PI5-AKIDA.json 에 기록(owner=user_authored|os_default·created·ops) · swap/upgrade/removal 전 참조 · user_authored 는 os_default 안 건드리고 제거 가능. ⛔ os_default 데몬 제거(unattended-upgrades·rsyslogd·journald·sshd·kworker) · PI5-AKIDA.json 엔트리 없이 user 데몬 추가 · **pi5-akida 를 공유 pool compute 로 전환**.
+**`a_pi5_akida_registry`** — pi5-akida 호스트 구성 = `PI5-AKIDA.json` SSOT.
+- do: 모든 pi5-akida 컴포넌트를 루트 PI5-AKIDA.json 에 기록(owner=user_authored|os_default·created·ops) · swap/upgrade/removal 전 참조 · user_authored 는 os_default 안 건드리고 제거 가능.
+- dont: os_default 데몬 제거(unattended-upgrades·rsyslogd·journald·sshd·kworker) · PI5-AKIDA.json 엔트리 없이 user 데몬 추가 · **pi5-akida 를 공유 pool compute 로 전환**.
 
-**`a7b_pass`** — anima 7B 는 `/7B_PASS_CONDITIONS.md` 의 모든 frozen gate(G0–G4)를 한 ckpt 에서 통과해야만 완성. ✅ PASS iff G0∧G1∧G2∧G3∧G4 on ONE ckpt(per-gate tally 정직 보고) · G0 COHERENCE=known-word-ratio≥0.50 · G1=H_1129/1137 recombine≥303M · G2=H_1140 corpus-absence novelty(control=0) · 전부 p7(perplexity/LLM-judge 아님). ⛔ 낮은 val-CE 만으로 7B 작동 주장(broad-7b=byte-garble G0 FAIL) · capacity 를 ru/ja 레버로 승격(H_1139: 303M=7B=3/5 scale-invariant) · gate 위조/frozen 임계 이동/G0-failing ckpt PUBLIC.
+**`a7b_pass`** — anima 7B 는 `/7B_PASS_CONDITIONS.md` 의 모든 frozen gate(G0–G4)를 한 ckpt 에서 통과해야만 완성.
+- do: PASS iff G0∧G1∧G2∧G3∧G4 on ONE ckpt(per-gate tally 정직 보고) · G0 COHERENCE=known-word-ratio≥0.50 · G1=H_1129/1137 recombine≥303M · G2=H_1140 corpus-absence novelty(control=0) · 전부 p7(perplexity/LLM-judge 아님).
+- dont: 낮은 val-CE 만으로 7B 작동 주장(broad-7b=byte-garble G0 FAIL) · capacity 를 ru/ja 레버로 승격(H_1139: 303M=7B=3/5 scale-invariant) · gate 위조/frozen 임계 이동/G0-failing ckpt PUBLIC.
 
 ### 🤝 산출물 통합
 
-**`a_completeness_over_cheap`** — completeness-bar 재설계 > 싼 길(타협은 1순위 아님). ✅ 1순위 = completeness bar 통과(근본 재설계, 제대로) · 비용/난이도/속도는 2순위(비용은 게이트 아님) · 싼 길은 optional baseline probe 로만. ⛔ 싸다고 타협을 1순위 · 이미 깨진 산출물 blend(merge-of-failures) · sub-bar 를 싸다고 1순위 추천.
+**`a_completeness_over_cheap`** — completeness-bar 재설계 > 싼 길(타협은 1순위 아님).
+- do: 1순위 = completeness bar 통과(근본 재설계, 제대로) · 비용/난이도/속도는 2순위(비용은 게이트 아님) · 싼 길은 optional baseline probe 로만.
+- dont: 싸다고 타협을 1순위 · 이미 깨진 산출물 blend(merge-of-failures) · sub-bar 를 싸다고 1순위 추천.
 
 ---
 
