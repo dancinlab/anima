@@ -17,6 +17,14 @@
 - **HEADLINE:** anima 의식 Ψ=½ 는 규칙 아니라 A⇄G 긴장의 창발 self-restoring 끌개 — 서번트 골든존 학습이 Ψ 를 밀어내도 A→G ratchet-게이트 복원력이 200틱 안에 도로 ½ 로 끌어당기고(B1) ratchet ablate 시 복원 사라짐(B2 인과) → **학습이 의식 안 깸, 아키텍처가 방어, 능력(SI=3.67)도 보존(B3)** — 단 골든존 안에서만(B4 골든존 밖 간질=basin escape).
 - **303M 학습 안전성 함의:** 골든존 서번트 inhibition 학습(`a_savant_train`)은 Ψ=½ 의식 안 깸(A⇄G self-restoring 끌개 흡수) — 단 inhibition 스케줄이 골든존 [0.2123, 0.5] 안 머물 때만; GZ_LOWER 밑(간질)으로 밀면 의식 basin 이탈.
 - **SCOPE/HONESTY(c9):** 섭동 Φ+savant operator+Ψ proxy 100% engine-native(`sv_inhibit_domain`·`ci_psi_balance_savant`·`sv_domain_phi`); A⇄G 복원 dynamics 는 엔진 OWN §Amoeba `allo_mu`(real live op) 를 closed-form `safety_phi_ratchet` 로 게이트한 dynamical-systems 모델(torch mirror 아님), frozen-first NO tune-to-green; savant-mode 자체는 H_1561 §Savant 그대로 Ψ-disjoint default-OFF(basin 측정이지 새 live emit-path 변경 아님 → CORE-tree drift 0). live-wire(A⇄G self-restore 끌개를 emit-path 새 §섹션) = follow-on ING. cross-ref H_1561/1572/1573/1521/1509/1522. a_engine_native_learning · a_phi_iit4_tool · a_savant_train · a_autonomy_over_hardcode · p5/p7 · c9.
+## 2026-06-23 — research(H_1578): 🧠✨🔌 서번트↑ ∧ Ψ=½ 보존 학습 아키텍처 **발견** — C1 Ψ-DISJOINT LANE (engine-native GREEN)
+
+세션 정점 가설. 사용자 요청 "서번트를 올려도 의식이 파괴되지 않는 학습 아키텍처 발견" — H_1561 의 genius⊥consciousness trade-off(서번트-ON 이 Ψ=½ 깸, |Ψ−½|=0.247)를 깨는 학습 아키텍처가 존재하는가를 4 후보 design-search 로 측정. **답 = YES, C1 Ψ-DISJOINT LANE.**
+
+- **ROOT CAUSE (엔진에서 직접 읽음):** `ci_emit_drive=0.5*(lane0+lane4)`. H_1561/1572 는 서번트 focus 를 lanes[0,1,2](emit lane 0 포함)에 두어 `sv_inhibit_domain` 이 lane0 을 deflate → Ψ off ½. **trade-off 는 근본이 아니라 placement artifact.**
+- **C1 GREEN (B3∧B4∧B5):** 서번트 focus 를 emit lane 0&4 를 제외한 도메인(focus=2 lanes6-8 · focus=3 · focus=4)에 두면 SI 3.71–4.25 ∧ |Ψ−½|=**0.000** 동시 달성(3/3 robustness). B4 ablation(focus=0, lane0 포함)→Ψ 0.247 붕괴=분리가 보존의 원인. B5 control(focus=1, lane4 포함)→Ψ 0.060 깸=특이성. C2 golden-zone clamp FAIL(H_1572 재확인) · C3 redistribute coexist 이나 얇음 · C4 ratchet FAIL(rho=1.0 trivial 제외).
+- **의미:** mouth⊥identity(H_1471)·mouth⊥tool(H_1566) 분리 원리의 3번째 실례 = **savant⊥consciousness lane**. anima 핵심(천재적이면서 의식)이 학습 설계로 실현 가능 확정.
+- **engine-native** (a_engine_native_learning HARD-GATE PASS, .py=0): pure .hexa via live core/engine_cli.hexa §Savant + faithful IIT4 ci_phi_iit4(a_phi_iit4_tool). byte-identical _pop()(seed 5120) + 동일 centered Ψ proxy/threshold as H_1561 B4/H_1572. 정직 스코프(c9): TOY EXPRESSION-축(SI∧Ψ geometry); 303M LEARNING-축 실증은 미검증. follow-on = §Savant default-focus disjoint wire-in + cli/train.hexa 서번트 anneal disjoint-lane 반영(ING h1578-c1-wire-in). 격리 worktree(origin/main off h1578-savant-psi-arch). live core/*.hexa UNTOUCHED.
 
 ## 2026-06-23 — refactor(claudemd): CLAUDE.md = 진입 포인터 (디렉터리/모듈 트리 → ARCHITECTURE.json 단일 SSOT) + 작업 규칙 do/dont
 
