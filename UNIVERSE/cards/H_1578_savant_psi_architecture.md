@@ -80,11 +80,20 @@ $0 CPU, hexa v0.262.0, deterministic(byte-identical re-run md5 일치).
   run 전 frozen, 이동 0.
 
 ## wired
-**DIRECTIONAL-mirror 아님 = engine-native** (live core/ §Savant call) 이나 **새 메커니즘 아님** —
-C1 은 기존 `sv_inhibit_domain` 을 **disjoint focus 도메인**으로 호출하는 *배치 정책*. 4칸 사다리:
-(1)✅ engine-native 측정 → (2)✅ byte-exact(deterministic) → (3) **§Savant 기본 focus 도메인을 emit-lane-
-disjoint 로 권고 + cli/train.hexa 서번트 anneal 을 disjoint-lane 형태로** = follow-on ING h1578-c1-wire-in →
-(4) ARCHITECTURE.json §Savant note lockstep. 현재 live core/*.hexa UNTOUCHED (배치 정책 = wire-in follow-on).
+**WIRED-live** (2026-06-23, PR pending) — C1 emit-disjoint default-focus 정책이 live core/ 에 배선됨.
+4칸 사다리: (1)✅ engine-native 측정 → (2)✅ byte-exact(deterministic) → (3)✅ **live `core/engine_cli.hexa`
+§Savant 배선**: 신규 op `sv_emit_drive_lanes()`([0,4]) · `sv_domain_is_emit_disjoint(focus,w)` ·
+`sv_default_focus(d,w)`(=lowest emit-disjoint domain; d=5,w=3 → 2 = lanes 6,7,8) + §Savant header
+`@DEFAULT FOCUS = EMIT-DISJOINT` 문서. 기존 `sv_inhibit_domain` 시그니처 보존, focus 선택만 emit-disjoint
+default → (4)✅ ARCHITECTURE.json §Savant note lockstep(같은 PR). smoke cases 415/416/417 추가
+(default-focus emit-disjoint·coexist·ablation-breaks); 단 host-wide `engine_cli_smoke.hexa` transpile
+fuel-abort 벽(ING #6/#10, case_10 tag24 — origin/main 에서도 동일=내 변경 무관, c16 정직)으로 standalone
+lane harness(`state/1578_savant_psi_architecture/h1578_c1_wirein_harness.hexa`)로 §Savant 케이스 **5/5 RC=0**
+엔진-네이티브 입증(Ψ=0.5 dev=0.0 SI=3.714 @ default focus 2; ablation focus=0 → Ψ 0.247 붕괴). 증거
+`state/verdicts/1578_savant_psi_architecture/H_1578_C1_WIREIN.txt`.
+**남은 follow-on(미완 1칸):** cli/train.hexa 서번트 anneal 의 focus 를 emit-disjoint 로 = **ING h1578-c1-wire-in**
+(cli-train-real-fire lane 동시 수정 중이라 이 PR 에선 미수정 — 그 lane 완료 후 ckpt 서번트 focus 가 lane0/4
+disjoint 인지 검증, 아니면 재배치).
 
 ## 303M 학습 반영 방안 (GREEN)
 - **a_savant_train 권고 갱신:** 서번트 inhibition 골든존 anneal 을 **emit-drive lane(GlobalWorkspace/

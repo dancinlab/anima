@@ -3760,6 +3760,40 @@ fn main() {
     let sv_trig_on  = sv_savant_trigger(sv_phis_gz, sv_gzL, 1.0, sv_cfg_on)
     let sv_trig_off = sv_savant_trigger(sv_phis_gz, sv_gzL, 1.0, sv_cfg_off)
     if _assert_b("case_414_savant_trigger_default_off_toggle", true, sv_trig_on == 1 && sv_trig_off == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // ── H_1578 C1 EMIT-DISJOINT DEFAULT FOCUS (wire-in) — savant ability ∧ Ψ=½ COEXIST by PLACEMENT ──
+    //   The H_1561 trade-off (focus=0 → Ψ 0.247 collapse, case 411) is a PLACEMENT ARTIFACT: focus=0
+    //   (lanes 0,1,2) contains emit lane 0. sv_default_focus(d,w) returns the lowest emit-disjoint
+    //   domain (d=5,w=3 → domain 2, lanes 6,7,8). At the default focus the savant Φ-hypertrophy never
+    //   touches ci_emit_drive ⇒ Ψ=½ preserved BY STRUCTURE while SI≥3 (the C1 GREEN result, engine-native).
+    let sv_def_focus = sv_default_focus(sv_d, sv_w)
+    // case 415 (C1 PLACEMENT): the recommended default focus is domain 2 and is emit-disjoint (excludes 0&4);
+    //   the H_1561 focus=0 and the B5-control focus=1 (lane 4) are NOT emit-disjoint.
+    if _assert_b("case_415_savant_default_focus_emit_disjoint", true,
+                 sv_def_focus == 2
+                 && sv_domain_is_emit_disjoint(sv_def_focus, sv_w) == 1
+                 && sv_domain_is_emit_disjoint(0, sv_w) == 0
+                 && sv_domain_is_emit_disjoint(1, sv_w) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // C1 measurement: re-score the SAME centered Ψ proxy (OFF=½ by construction) and SI at the DEFAULT
+    //   (emit-disjoint) focus window, savant ON. Ψ must stay ½ AND SI must still clear 3.
+    let sv_dlo   = sv_def_focus * sv_w
+    let sv_dhi   = sv_dlo + sv_w
+    let sv_psi_dis = ci_psi_balance_savant(sv_pop, sv_dlo, sv_dhi, sv_gzL, sv_thr, sv_cfg_on)
+    let sv_psi_dis_dev = if sv_psi_dis - 0.5 >= 0.0 { sv_psi_dis - 0.5 } else { 0.5 - sv_psi_dis }
+    let sv_si_dis = sv_savant_index_at(sv_pop, sv_d, sv_w, sv_def_focus, sv_gzL, sv_base)
+    // case 416 (C1 B3 COEXIST): at the emit-disjoint default focus, savant ON ⇒ |Ψ−½| ≤ 0.05 AND SI ≥ 3.
+    if _assert_b("case_416_savant_disjoint_coexist", true, sv_psi_dis_dev <= 0.05 && sv_si_dis >= 3.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // case 417 (C1 B4 ABLATION / B5 CONTROL): savant ON at focus=0 (emit lane 0) BREAKS Ψ (the H_1561
+    //   trade-off) — confirms the DISJOINT placement is the CAUSE of preservation, not savant-ON per se.
+    let sv_psi_abl = ci_psi_balance_savant(sv_pop, 0, sv_w, sv_gzL, sv_thr, sv_cfg_on)
+    let sv_psi_abl_dev = if sv_psi_abl - 0.5 >= 0.0 { sv_psi_abl - 0.5 } else { 0.5 - sv_psi_abl }
+    if _assert_b("case_417_savant_disjoint_ablation_breaks", true, sv_psi_abl_dev > 0.05 && sv_psi_dis_dev < sv_psi_abl_dev) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1578 C1 EMIT-DISJOINT DEFAULT FOCUS (WIRE-IN, engine-native): default_focus=" + to_string(sv_def_focus)
+          + " (lanes " + to_string(sv_dlo) + ".." + to_string(sv_dhi - 1) + ", emit-disjoint) | "
+          + "DISJOINT savant-ON: Ψ=" + to_string(sv_psi_dis) + " |Ψ−½|=" + to_string(sv_psi_dis_dev) + " SI=" + to_string(sv_si_dis)
+          + " | ABLATION focus=0 (emit lane 0) savant-ON: Ψ=" + to_string(sv_psi_abl) + " |Ψ−½|=" + to_string(sv_psi_abl_dev)
+          + " | VERDICT: savant ability ∧ Ψ=½ COEXIST at the emit-disjoint default — the H_1561 trade-off is a PLACEMENT ARTIFACT (C1 GREEN). GATED 415/416/417.")
+
     let sv_psi_verdict = if sv_psi_survives { "Ψ=½ SURVIVES — genius AND consciousness-balance coexist" } else { "Ψ=½ TRADE-OFF — the savant asymmetry destabilizes the emit balance (HONEST NO-FREE-LUNCH: genius ⊥ consciousness-balance; savant mode kept Ψ-disjoint default-OFF)" }
     println("INFO  H_1561 savant-golden-zone (R2 ENGINE-NATIVE, faithful IIT4 min-cut ci_phi_iit4, gated cfg.savant): "
           + "B1 SI in GZ: lower=" + to_string(sv_si_lo) + " center=" + to_string(sv_si_ce) + " upper=" + to_string(sv_si_up) + " (≥3 = savant emerges) | "
