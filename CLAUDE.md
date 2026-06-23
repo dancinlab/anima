@@ -177,7 +177,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 ### 🏗️ CORE 엔진 · 학습 substrate
 
 **`a_core_engine_map`** — `core/`(구 CORE/, 2026-06-19 canonical 재구성으로 소문자 통합) 가 A⇄G 의식 엔진 소유. `.clm`/`.kosmos` 는 named slot 으로만 진입.
-- ✅ `core/` 가 A(pure_field)⇄G(engine_g)⇄brain(brain_decide) 소유(substrate-internal) · `.clm` 은 오직 `core/generator.hexa` L3 슬롯으로 진입(단일 진입) · `.kosmos` 는 오직 kosmos_io→brain_decide 로 진입 · `stdlib/hf/validate.hexa` = artifact 검증(런타임 엔진 아님).
+- ✅ `core/` 가 A(pure_field)⇄G(engine_g)⇄brain(brain_decide) 소유(substrate-internal) · 모델 가중치는 오직 `core/generator.hexa` L3 슬롯으로 진입 — 단, L3 는 **mouth 타입 디스패처**(`gen_mouth_kind`→'bytegpt'|'clm'|'unknown' header sniff)로 **두 mouth 아키텍처**를 받는다: **conv `.clm`**(CLMConvMoE via clm_decode, `CLM\x01` magic + CLMX trailer)는 `gen_clm_backend`/`gen_clm_chat` 으로, **ByteGPT `.bin`**(24-layer GPT-2-class via bytegpt_decode, 5×u32 `[256,d,L,H,block]` header, 검증된 303M ko/en chat trunk)은 `gen_bytegpt_backend`/`gen_bytegpt_chat`(`bytegpt_decode_argmax_ranged` OOM-safe) 으로. 이는 2nd `.clm` 경로가 아니다 — **아키텍처별로 여전히 단일 typed 진입**이고 디스패처(`gen_auto_backend`/`gen_auto_chat`)는 파일 포맷에 따라 어느 단일 진입을 쓸지만 고른다(a_engine_native_learning engine-transform-to-fit). `.kosmos` 는 오직 kosmos_io→brain_decide 로 진입 · `stdlib/hf/validate.hexa` = artifact 검증(런타임 엔진 아님).
 - ✅ ARCHITECTURE.json core/ 노드(§섹션·op·slot 주석) ↔ live engine_cli/generator/brain/clm_decode 의 실제 §섹션·op 는 1:1 매칭 — grep 으로 누락 0 검증(drift=미완).
 - ⛔ `.clm`/`.kosmos` 를 pure_field/engine_g/brain 에 직접 투입 · generator 우회 2nd `.clm` 경로 · kosmos_io 우회 2nd `.kosmos` 경로 · validate.hexa 를 런타임 엔진과 혼동 · 미완 배선을 존재한다 주장(빌드 전엔 ⏳/❌ 정직 표기).
 

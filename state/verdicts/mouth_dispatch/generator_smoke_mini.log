@@ -1,0 +1,15 @@
+[anchors] read 1 anchor(s) from kosmos dir
+[emit  high] EMIT=true gen_emitted=true gen_backend=null gen_fellback=false gen_text="[null-gen] phase=SUSTAIN tier=T2_write phi=0.1190 motiv=0.7098 anchors=1 last_anchor=smoke_anchor_001"
+[silent low] EMIT=false gen_emitted=false gen_backend=null gen_fellback=false gen_text=""
+[clm absent] valid=false loaded=false reason=no ckpt at path
+[clm   high] EMIT=true gen_emitted=true gen_backend=null gen_fellback=true gen_text="[null-gen] phase=SUSTAIN tier=T2_write phi=0.1190 motiv=0.7098 anchors=1 last_anchor=smoke_anchor_001"
+[clm valid] valid=false loaded=false nblocks=0 reason=no ckpt at path
+[clm bad  ] valid=false reason=file present but not a valid .clm (bad CLM\x01 magic)
+[bg absent] valid=false loaded=false reason=no ckpt at path
+[bg    high] EMIT=true gen_emitted=true gen_backend=null gen_fellback=true gen_text="[null-gen] phase=SUSTAIN tier=T2_write phi=0.1190 motiv=0.7098 anchors=1 last_anchor=smoke_anchor_001"
+[bg on clm] valid=false (must be false — .clm is not ByteGPT)
+[bg tiny  ] valid=true loaded=true n_layer=2 reason=valid ByteGPT flat binary admitted + LOADED (vocab=256 d=64 n_layer=2 n_head=4 block=512); decode forward = full-24-layer BYTE-EXACT-argmax parity with torch ByteGPT (H_1157 R1, G1 inherited)
+  FAIL clm real: valid != true (header not parsed)
+  FAIL clm real: nblocks not extracted
+  FAIL clm real: loaded != true after decode-forward landed
+generator_smoke: 18 PASS, 3 FAIL

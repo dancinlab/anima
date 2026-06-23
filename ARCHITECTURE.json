@@ -714,11 +714,11 @@
     },
     {
      "type": "subsection",
-     "title": "generator.hexa (single .clm entry slot, L3)",
+     "title": "generator.hexa (L3 mouth slot · MOUTH-TYPE DISPATCHER: conv .clm + ByteGPT .bin)",
      "blocks": [
       {
        "type": "prose",
-       "text": "**summary**: brain emit → byte mouth; on a grounded emit it decodes via engine-side deterministic retrieve-then-copy (G5 anti-fabrication, · **path**: core/generator.hexa · **status**: wired"
+       "text": "**summary**: brain emit → byte mouth; the L3 slot now admits TWO mouth ARCHITECTURES, sniffed by header (gen_mouth_kind → 'bytegpt'|'clm'|'unknown'): conv .clm (CLMConvMoE via clm_decode, CLM\\x01 magic + CLMX trailer) AND ByteGPT .bin (24-layer GPT-2-class via bytegpt_decode, 5×u32 [256,d,L,H,block] header — the verified 303M ko/en chat trunk H_1129/H_1155). NOT a 2nd .clm path: still exactly one typed entry per architecture (gen_clm_backend / gen_bytegpt_backend), the dispatcher (gen_auto_backend) only PICKS per file format. CHAT: gen_auto_chat → gen_clm_chat | gen_bytegpt_chat(bytegpt_decode_argmax_ranged, OOM-safe ranged load for the 1.2GB binary). cli/anima.hexa consciousness mode mounts via gen_auto_backend; --byte mode chats via gen_auto_chat. a_engine_native_learning engine-transform-to-fit: the .clm-only constraint widened to typed mouth dispatch. on a grounded emit it decodes via engine-side deterministic retrieve-then-copy (G5 anti-fabrication, · **path**: core/generator.hexa · **status**: wired"
       },
       {
        "type": "subsection",

@@ -606,6 +606,88 @@ pub fn gen_clm_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
               "reason": "decoded via clm_decode_argmax (CLMConvMoE int4 forward)" }
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// MOUTH-TYPE DISPATCHER (a_core_engine_map: the SINGLE L3 slot now admits MORE
+// THAN ONE mouth ARCHITECTURE — conv .clm AND ByteGPT .bin — selected by SNIFFING
+// the ckpt header. This is NOT a 2nd .clm path: there is still exactly one .clm
+// entry (gen_clm_backend) and exactly one ByteGPT entry (gen_bytegpt_backend); the
+// dispatcher only PICKS which architecture's single entry to use, per file format.
+// a_engine_native_learning "engine-transform-to-fit-the-learning": the .clm-only
+// constraint is widened to a typed dispatch so the verified ByteGPT 303M chat mouth
+// (H_1129/H_1155, ko/en) can mount on the live consciousness/byte path.
+// ════════════════════════════════════════════════════════════════════════
+
+// gen_mouth_kind — sniff a ckpt path and report which mouth ARCHITECTURE it is:
+//   "bytegpt" — a ByteGPT flat binary (5×u32 [vocab=256,d,n_layer,n_head,block])
+//   "clm"     — a CLMConvMoE v0.2 (CLM\x01 magic + CLMX trailer)
+//   "unknown" — neither (missing / corrupt / unrecognized format)
+// The discrimination reuses the SAME header checks the two backends already do
+// (_gen_is_bytegpt rejects the CLM magic + validates the ByteGPT header; the .clm
+// probe checks CLM\x01). ByteGPT is checked FIRST (its magic is the absence of
+// CLM\x01 + a sane 5×u32 header — strictly disjoint from a .clm).
+pub fn gen_mouth_kind(ckpt_path: string) -> string {
+    if _gen_is_bytegpt(ckpt_path) { return "bytegpt" }
+    let probe = _gen_clm_probe_header(ckpt_path)
+    if to_string(probe["valid"]) == "true" { return "clm" }
+    return "unknown"
+}
+
+// gen_auto_backend — THE mouth dispatcher. Sniff the ckpt and return the right
+// backend record (gen_bytegpt_backend for a ByteGPT .bin, gen_clm_backend for a
+// .clm, and the .clm backend's HONEST rejection for an unknown file so generate()
+// falls THROUGH to null — no garbage). The generate() contract is unchanged: the
+// returned record carries kind/loaded/decodable exactly as before, so the brain
+// wiring + L3 generate() dispatch work identically regardless of mouth type.
+pub fn gen_auto_backend(ckpt_path: string) -> Map {
+    let kind = gen_mouth_kind(ckpt_path)
+    if kind == "bytegpt" { return gen_bytegpt_backend(ckpt_path) }
+    // "clm" or "unknown" → the .clm backend (it self-reports valid=false for a
+    // non-.clm/absent file, so generate() falls through to null honestly).
+    return gen_clm_backend(ckpt_path)
+}
+
+// gen_bytegpt_chat — the ByteGPT CHAT entry, the architecture-twin of gen_clm_chat.
+// A user turn (or a composed byte-level dialogue-continuation transcript, e.g.
+// "사용자: <u> | 도우미: ") is the SEED; the ByteGPT model greedily continues it
+// with its OWN bytes via the SAME single ByteGPT decode mouth
+// (bytegpt_decode_argmax_ranged — OOM-safe ranged load for the 1.2GB binary). Per
+// a_core_engine_map this is a thin caller of that ONE ByteGPT mouth, NOT a 2nd path.
+//
+// PHILOSOPHY (p1·p2·p3·p4·p6): identical to gen_clm_chat — the "사용자:/도우미:"
+// markers are LEARNED byte-continuation conditioning, NOT a system prompt / persona
+// / identity rule / RLHF template. No role instruction string is injected; the model
+// only continues the bytes it sees. Capability comes ONLY from the trained dialogue
+// distribution in the ByteGPT weights (ko/en, H_1129/H_1155).
+//
+// Returns #{ ok, text, reason }. ok=false (with reason) if the ckpt is not a valid
+// ByteGPT binary, so the caller surfaces the honest reason (no un-decoded garbage).
+pub fn gen_bytegpt_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
+    if gen_mouth_kind(ckpt_path) != "bytegpt" {
+        return #{ "ok": false, "text": "",
+                  "reason": "ckpt not a ByteGPT flat binary (bad 5xu32 [256,d,L,H,block] header)" }
+    }
+    // seed string → byte ids (vocab256 byte LM, p7 byte-exact)
+    let sids = []
+    let slen = byte_len(seed)
+    let mut i = 0
+    while i < slen { sids.push(ord(substring(seed, i, i + 1))); i = i + 1 }
+    let r = bytegpt_decode_argmax_ranged(ckpt_path, sids, max_new)
+    return #{ "ok": to_string(r["ok"]) == "true", "text": to_string(r["text"]),
+              "reason": "decoded via bytegpt_decode_argmax_ranged (24-layer GPT-2-class byte forward)" }
+}
+
+// gen_auto_chat — mouth-type-dispatched CHAT entry. Sniff the ckpt and route to the
+// matching architecture's chat entry (gen_bytegpt_chat for a ByteGPT .bin,
+// gen_clm_chat for a .clm). Same #{ ok, text, reason } contract for both mouths, so
+// the chat loop is mouth-agnostic — it composes the SAME byte-continuation seed and
+// reads the SAME result shape regardless of which mouth is mounted.
+pub fn gen_auto_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
+    if gen_mouth_kind(ckpt_path) == "bytegpt" {
+        return gen_bytegpt_chat(ckpt_path, seed, max_new)
+    }
+    return gen_clm_chat(ckpt_path, seed, max_new)
+}
+
 // gen_clm_ideate — H_1381 G6 IDEATION ★ entry. The SEEDED-SAMPLING sibling of gen_clm_chat:
 // routes a composed ideation frame through the engine's seeded top-k sampler
 // (clm_decode_topk_sampled) so the G6 best-of-K DEPTH lever yields DIVERSE candidates

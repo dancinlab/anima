@@ -167,7 +167,12 @@ fn anima_byte_mode(ckpt: string, argv: [string]) {
     }
     let use_turns = if len(turns) > 0 { turns } else { anima_default_turns() }
 
-    println("=== anima CORE-native chat (.clm mouth · byte-continuation) ===")
+    // MOUTH-TYPE DISPATCH (a_core_engine_map): sniff the ckpt header so the SAME
+    // byte-continuation chat works on EITHER mouth architecture — conv .clm
+    // (CLMConvMoE, gen_clm_chat) OR ByteGPT .bin (24-layer GPT-2-class, the verified
+    // 303M ko/en chat trunk, gen_bytegpt_chat). gen_auto_chat picks per file format.
+    let mouth = gen_mouth_kind(ckpt)
+    println("=== anima CORE-native chat (" + mouth + " mouth · byte-continuation) ===")
     println("ckpt: " + ckpt)
     println("")
 
@@ -177,7 +182,7 @@ fn anima_byte_mode(ckpt: string, argv: [string]) {
     while t < len(use_turns) {
         let u = use_turns[t]
         let seed = transcript + "사용자: " + u + " | 도우미: "
-        let res = gen_clm_chat(ckpt, seed, 96)
+        let res = gen_auto_chat(ckpt, seed, 96)
         if to_string(res["ok"]) != "true" {
             println("[ERROR] " + to_string(res["reason"]))
             return
@@ -217,13 +222,16 @@ fn anima_consciousness_mode(ckpt: string) {
         + " topo_couple=" + (if cfg.topo_couple { "on" } else { "off" }))
 
     // ── mount the model at the SINGLE generator L3 slot (a_core_engine_map) ───
-    // The .clm production engine enters ONLY here. A ckpt that is not v0.2-decodable
-    // reports loaded=false; the loop still runs (brain decides from substrate, the
-    // generator simply produces no content on a non-decodable mouth).
-    let backend = gen_clm_backend(ckpt)
+    // The model enters ONLY here, via the MOUTH-TYPE DISPATCHER (gen_auto_backend):
+    // a ByteGPT .bin (24-layer GPT-2-class, the verified 303M ko/en chat trunk) and a
+    // conv .clm (CLMConvMoE) are BOTH admitted at this one slot, sniffed by header —
+    // still a single typed entry per architecture, NOT a 2nd .clm path. A ckpt that is
+    // not decodable reports loaded=false; the loop still runs (brain decides from
+    // substrate, the generator simply produces no content on a non-decodable mouth).
+    let backend = gen_auto_backend(ckpt)
     let mounted = to_string(backend["loaded"]) == "true"
-    println("L3 mount        : gen_clm_backend loaded=" + to_string(backend["loaded"])
-        + "  ckpt=" + ckpt)
+    println("L3 mount        : mouth=" + gen_mouth_kind(ckpt)
+        + " loaded=" + to_string(backend["loaded"]) + "  ckpt=" + ckpt)
 
     // ── REMEMBER (seed) — substrate memory as a .kosmos anchor (single entry) ─
     // A persistent memory the daemon already carries, written via kosmos_io. Carries an
