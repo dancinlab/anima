@@ -1,0 +1,80 @@
+H_1568 — SELECTION-DRIVEN PURE MITOSIS (evolution as gradient-substitute) — FREEZE
+================================================================================
+FROZEN BEFORE ANY SCORING (p7 NO PERPLEXITY-as-truth · c9 a wall is a result · NO tune-to-green)
+Lens 1 of the H_1310 wall-break campaign (a_break_the_wall, c16): EVOLUTIONARY DYNAMICS.
+$0 CPU · DIRECTIONAL numpy/engine mirror (a_engine_native_learning — mirror = DIRECTIONAL).
+
+THE WALL (H_1310 RED LOCAL-EXPERT CEILING): from-scratch pure mitosis (1 cell, split-only,
+gradient-free) LEARNS a little (PRESENCE PASS) but FAILS the FLOOR bar (sits +0.069 nats
+ABOVE the exact order-2 n-gram floor 2.50884) and FAILS the CONTROL bar (B_shuffle TIES
+B_scratch at every rung -> error-TARGETING gives NO lift -> learning is CAPACITY-bound, not
+error-targeted). THESIS: pure split-only tiles a FIXED lossy feature (normalized symbol ids)
+finer and finer but injects NO new information -- split is random replication, gradient-free
+has no information channel.
+
+THE LENS (a_no_llm_frame_trap -- evolution is the MISSING STRUCTURE, not a bigger net):
+gradient-free does NOT mean information-free. Biological evolution learns WITHOUT gradients
+through DIFFERENTIAL SURVIVAL: variation (MUTATION) + heredity + SELECTION (fitness-gated
+reproduction) + death (APOPTOSIS) + population (ENSEMBLE). Selection injects information by
+KEEPING the variants that fit and DISCARDING the rest -- the same information a gradient
+supplies, paid for in deaths instead of derivatives. HYPOTHESIS: adding a full evolutionary
+loop to pure mitosis (each cell carries a MUTABLE per-dim context-weight genome; fitness =
+owned proxy accuracy; fit cells REPRODUCE/split, unfit cells DIE; children MUTATE; the
+population VOTES) turns "random replication" into LEARNING -- crossing the H_1310 FLOOR the
+fixed-feature split-only could not.
+
+WHY THIS IS A NEW INFORMATION CHANNEL (vs H_1310 shuffle tie): H_1310's split-only could only
+vary WHERE to split a FIXED embedding (shuffle tied = inert). The evolutionary arm varies WHAT
+each cell measures (its genome reweights the context dims) and SELECTS genomes by fitness --
+information flows in through which genomes SURVIVE, a channel pure split-only never had.
+
+CORPUS (REAL English bytes -- BYTE-IDENTICAL REUSE of H_1310, same sha256):
+  source = /usr/share/dict/words (system fixed asset), filtered isalpha 2..12 chars,
+           lowercased, Random(13100).shuffle, first 4000 words, space-joined+newline,
+           truncated to 24000 bytes.
+  sha256 = 86864aa32dcf1c8680ab254e1b28357bf0326c8d45a86837ae4e3b9d09350f62
+  size   = 24000 bytes . alphabet = 27 symbols
+  split  = first 80% = TRAIN, last 20% = held-out TEST (deterministic, disjoint).
+  FEATURE = order-2 byte context (previous 2 bytes), SAME as H_1310. The evolutionary
+            arm gives each cell a per-dim WEIGHT genome over this SAME 2-dim context
+            (no new input information -- only a learnable lossy-recovery via selection).
+
+METRIC: held-out next-byte CROSS-ENTROPY in NATS (p7 -- NEVER perplexity-as-truth).
+SEEDS = [15681, 15682, 15683]. LADDER (frozen) = [1, 8, 64, 512] cells (SAME as H_1310).
+GRADIENT-FREE: NO backprop, NO autograd, NO analytic gradient anywhere. Mutation = random
+perturbation; selection = compare scalar fitness only (no derivative of fitness w.r.t. genome).
+
+ARMS:
+  E_evo      = SELECTION-DRIVEN pure mitosis: population of cells, each = (center, genome,
+               next-sym table). Online single pass. Fitness-gated reproduction (fit cell
+               splits -> 2 children, child genomes MUTATED), density-dependent APOPTOSIS
+               (worst-fitness cell dies when over soft-cap), population reaches budget cells.
+               Prediction = nearest-cell table (winner) -- SAME readout as H_1310.
+  E_norepro  = ABLATION (B2 selection-causal): split a RANDOM cell, NO fitness gate, NO
+               apoptosis, NO genome (fixed identity weights) = REPRODUCES H_1310 floor.
+               Isolates SELECTION as the learning cause.
+  E_nomut    = ABLATION (B4): selection+apoptosis but mutation OFF (children = parent genome).
+  E_noapop   = ABLATION (B4): selection+mutation but apoptosis OFF (no death).
+  E_ens      = ENSEMBLE readout (B4): population soft-vote (genome-weighted) vs E_evo single
+               winner readout -- measures ENSEMBLE contribution.
+  E_randfit  = CONTROL (B5): SAME evolutionary machinery but fitness = RANDOM scalar (no real
+               selection pressure) -> must NOT learn (collapse to floor).
+  A_freq     = order-2 add-1 Markov n-gram FLOOR (BYTE-IDENTICAL to H_1310) = 2.50884 nats.
+
+FROZEN BARS (pre-registered, NOT moved -- c9):
+  B1 BREAK    : E_evo[512] < A_freq - 0.02  (crosses the H_1310 FLOOR the wall could not).
+                = the wall-break threshold. PASS => selection-driven pure mitosis LEARNS
+                past the structure-bound ceiling.
+  B2 CAUSAL   : E_evo[512] < E_norepro[512] - 0.05 (selection ablation regresses toward the
+                H_1310 floor -> selection is the learning CAUSE, not capacity).
+  B3 GRADFREE : source shows ZERO backprop/autograd/analytic-gradient (p8 purity). Asserted
+                in-code (no torch, no .backward, no analytic grad) + printed.
+  B4 COMPONENT: per-knockout deltas E_evo - E_{nomut,noapop} (+ ensemble E_ens - E_evo);
+                report which component carries the lift (diagnostic, not a pass/fail gate).
+  B5 CONTROL  : E_randfit[512] >= E_evo[512] + 0.05 (random fitness -> NO learning -> confirms
+                the lift is real selection PRESSURE, not the machinery itself).
+
+GREEN (wall BROKEN) = B1 AND B2 AND B3.
+  B1 fail with B2/B5 honoring -> wall HOLDS for this lens -> name next orthogonal lens.
+  NO tune-to-green. A FAIL is a first-class result (c9). Mirror = DIRECTIONAL; engine-native
+  reconfirm (live VAdaptField + section evo) is the R2 follow-on IF B1 GREEN (a_verified_must_wire).
