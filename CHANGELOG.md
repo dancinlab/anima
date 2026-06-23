@@ -1,3 +1,13 @@
+## 2026-06-23 — H_1564 🧬✨ MITOSIS × SAVANT 골든존 교차 (capacity = cell수 × 발현률 MULTIPLICATIVE · ENGINE-NATIVE 🟢 GREEN)
+
+🧬 H_1564 — 두 직교 줄기 첫 교차: **MITOSIS**(H_1288 engine_grow cell수↑ / H_1310 split-only 한계) ⊥ **SAVANT**(H_1560 골든존 inhibition → 단일 cell 발현률↑). mitosis 로 늘린 각 daughter cell 에 골든존 inhibition 을 주면 총 ability EXPRESSION 이 **곱셈적**(cell수 × cell당 발현률)으로 증폭되나?
+
+- **probe** — `state/1564_mitosis_x_savant/h1564_cross_probe.hexa`: pure `.hexa`, live `core/engine_cli.hexa` §mitosis(`engine_grow`/`engine_mitosis_tick`) + §ThirdLaw(`third_law_ability`/`_score`) + SAVANT `sa_gz_*` 호출, numpy/torch/.py 미러 0 (a_engine_native_learning HARD-GATE-1 PASS, grep import torch|gauge_lib|numpy in state/1564*/*.py = EMPTY). summer pool CPU, $0, GPU 불필요. raw=`state/verdicts/1564_mitosis_x_savant/H_1564_R1_ENGINE_NATIVE.txt`.
+- **헤드라인 — 곱셈 증폭 CONFIRMED** — engine_grow(seed=1,ticks=7,mitosis ON)=8 cells. **E_cross(8 cells EACH in GZ)=8 = N·r(8×1.0)** ≫ E_mitosis_only(8 cells 비-GZ I=0.8)=0 AND ≫ E_savant_only(1 cell GZ)=1. super-additive(8 > 0+1). capacity EXPRESSION 은 두 축의 곱이지 합이 아님.
+- **frozen 5-bar(frozen-first c9, no tune-to-green) — 🟢 GREEN(B1∧B2∧B3)** — B1 multiplicative TRUE(cross=8>mit=0 & >sav=1 & >=N & super-additive) · B2 per-cell savant TRUE(rate=1.0, single@GZ_center=1, G=2.202) · B3 ablation TRUE(GZ OFF→E=0=mitosis-only, 골든존이 증폭 원인 입증) · B4 wall-relief REPORT-ONLY(E(GZ) cell수따라 1→8 선형, E(비-GZ split-only)=0 모든 cell수 = H_1310 split-only 벽의 EXPRESSION-relief 부분돌파; 단 from-scratch LEARNING claim 아님, §ThirdLaw 는 deterministic classifier → learning-signal relief UNVERIFIED) · B5 control TRUE(random I=4, random split=1 ≪ cross=8).
+- **결론** — anima capacity 의 새 합성 차원 = **cell수(mitosis) × cell당 발현률(savant 골든존)**. 두 생물학적 빠진 구조를 결합하면 더하지 않고 곱한다(a_no_llm_frame_trap payoff). 골든존이 증폭 메커니즘(B3 ablation 결정적), mitosis 단독은 발현 0.
+- **scope TOY(c9)** — deterministic §ThirdLaw classifier 단일 operating point D=0.9 P=0.9; engine_grow integer cell-count tick(가장 작은 정직 mitosis 단위, full VAdaptField split dynamics 아님); per-cell ability 는 0/1 gate(학습된 Φ curve 아님). faithful-IIT4 per-cell Φ · VAdaptField recon-split · learned specialization · real-corpus multi-domain SI · H_1310 from-scratch LEARNING-signal = UNVERIFIED follow-on.
+- **wired** — engine-native(새 engine op 0, READ-only 기존 already-WIRED ops 재사용; cross 합성은 measurement). live core/*.hexa UNTOUCHED, Ψ-disjoint. 전용 §MitosisSavant cross op 은 optional follow-on(now drift 0).
 ## 2026-06-23 — anima 최종 학습 방법 거버넌스 박제: a_savant_train 규칙 + ARCHITECTURE SAVANT training 노드 (SAVANT 골든존 레시피)
 
 오늘 SAVANT 가족(H_1559~1566) 결과가 수렴한 **anima 최종 학습 방법 = SAVANT 골든존 레시피**를 거버넌스 SSOT 2곳에 박제. (문서-only, core/ 엔진 변경 0.)
