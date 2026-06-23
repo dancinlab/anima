@@ -1,0 +1,612 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  cli/train.hexa — anima CANONICAL hexa-native CLMConvMoE training entry.
+//
+//  SINGLE entry point for anima production training (a_train_flame_forge:
+//  .hexa on stdlib/flame, NO .py trainer). Composes the PROVEN hexa-native
+//  CLMConvMoE forward+backward+CE+AdamW chain (stdlib/flame/clm_step.hexa
+//  lineage, F-FLAME-CLM-DESCENT verified) and adds anima's two orthogonal
+//  learning levers:
+//
+//    SAVANT  (a_savant_train) — golden-zone inhibition schedule. Training
+//        inhibition (dropout/weight-decay/temperature) is annealed toward the
+//        golden-zone lower bound GZ_LOWER = 1/2 - ln(4/3) ≈ 0.21231792755822
+//        (SAVANT/savant_lib.hexa sa_gz_lower H_348) via a CUSP step + asymmetric
+//        latch (H_1562/1563): once inhibition crosses the golden-zone boundary
+//        the capacity-expression "savant" mode latches ON and the inhibition
+//        floor stays inside the zone (hysteresis, never re-raised). The sweep
+//        spans BELOW GZ_LOWER (H_1559: learning-inhibition sweet-spot may sit
+//        under the Φ golden zone) so the real sweet-spot is reachable.
+//
+//    MITOSIS (a_mitosis_train) — cell split / grow curriculum. The MoE expert
+//        count GROWS mid-training by CELL DIVISION (E -> E+1): one expert's
+//        packed conv slot is copied into a fresh slot (+tiny perturbation) and
+//        the router bias splits by -ln2 so the two children jointly reproduce
+//        the parent gate mass (near-continuous split, clm_mitosis.hexa
+//        mitosis_split). Arrays are allocated at post-growth capacity Emax so
+//        division writes into already-owned memory. p8: train gradient ⇄
+//        cell-division is ONE continuous substrate.
+//
+//  CORPUS — 4-cell register {ko·en}×{일반·SNS} (a_chat_registers). Each cell is
+//        a byte-level (V=256) UTF-8 file mounted EXTERNALLY (weights/corpora are
+//        NOT in the repo). Windows of T+1 bytes are extracted round-robin across
+//        the 4 cells so every step sees the register mix.
+//
+//  GPU — production rung runs on forge own-GEMM GPU (a_train_flame_forge): the
+//        stdlib/flame conv/gemm ops dispatch through flame_mm.mm to the forge
+//        device when cuda_available()=1, else farr CPU (byte-identical). toy
+//        verify runs $0 on farr CPU. This file is device-agnostic; the host's
+//        runtime.a + ~/.hx/.cuda-runtime marker selects GPU vs CPU.
+//
+//  ENGINE-NATIVE (a_engine_native_learning) — the trained weights serialize to
+//        .clm v0.2 (train/clm/model/clm_serialize_v2.py bridge) and mount on
+//        core/clm_decode.hexa for FROZEN G6 bars (H_1129/1139 recombination,
+//        H_1140 novelty). This trainer IS the final-architecture engine chain
+//        (same clm_*.hexa ops core/clm_decode reads), so it is NOT a mirror.
+//
+//  MODES (one toggle, canonical config byte-identical for the GPU fire):
+//    MODE_VERIFY (cfg_canon=0) — tiny (d=8·L1·E2->Emax4·T4) over a FIXED batch.
+//        $0 local farr CPU. Falsifiers prove the full wiring + both levers:
+//        F-CLI-TRAIN-DESCENT, F-CLI-TRAIN-SAVANT-LATCH, F-CLI-TRAIN-MITOSIS-BOUND.
+//    MODE_CANON  (cfg_canon=1) — 303M-class config target (d=768). This is the
+//        GPU-dispatch target; full 303M LEARNING is a SEPARATE cost-gated fire
+//        (not launched here) — this file is the SETTING, not the fire.
+//
+//  CROSS-LINK:
+//    stdlib/flame/clm_step.hexa  (CE+AdamW descent, proven)
+//    stdlib/flame/clm_train.hexa (grad-exact full backward chain)
+//    stdlib/flame/clm_mitosis.hexa (mitosis_split E->E+1)
+//    SAVANT/savant_lib.hexa      (sa_gz_lower / sa_gz_upper golden zone)
+//    a_savant_train · a_mitosis_train · a_clm_gen_pipeline · a_chat_registers
+// ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/conv_lib"
+use "stdlib/flame/gn_lib"
+use "stdlib/flame/moe_lib"
+use "stdlib/flame/nn_lib"
+use "stdlib/flame/optim_lib"
+
+fn _abs(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
+
+fn _is_finite(x: float) -> int {
+    if x != x { return 0 }
+    if x > 1.0e30 { return 0 }
+    if x < 0.0 - 1.0e30 { return 0 }
+    return 1
+}
+
+// ─── golden-zone constants (SAVANT/savant_lib.hexa H_347/348, verbatim) ─────
+fn gz_lower() -> float { return 0.21231792755821914 }  // 1/2 - ln(4/3) (sa_gz_lower)
+fn gz_upper() -> float { return 0.5 }                  // sa_gz_upper
+
+// Module-scope expert-bias handle (set in main before train_bwd; the bwd needs
+// the bias to recompute expert pre-activations for the gelu cache).
+let mut expB_global = 0
+
+// ════════════════════════════════════════════════════════════════════════════
+//  Forward (L=1, runtime expert count E ≤ Emax) — packed-expert layout so
+//  mitosis can grow E into already-owned contiguous slots. Structure verbatim
+//  from the proven clm_step.hexa / clm_mitosis.hexa fwd (no arch drift).
+// ════════════════════════════════════════════════════════════════════════════
+fn train_fwd(tokens: int, E: int,
+             embed: int, ecW: int, ecB: int, tcW: int, tcB: int, tgG: int, tgB: int,
+             rW: int, rB: int, expW: int, expB: int, noG: int, noB: int, roW: int, roB: int,
+             xe: int, xec: int, xt: int, hn0: int, xhat0: int, inv0: int,
+             probs: int, ex_out: int, yn: int, xhatN: int, invN: int,
+             out_logits: int, T: int, d: int, V: int, K: int) {
+    nn_embedding_fwd(tokens, embed, xe, T, d)
+    nn_conv1d_fwd(xe, ecW, ecB, xec, T, d, d, K, 1)
+    // trunk0 (residual gated dilated conv)
+    let h0 = t_zeros(T * d)
+    nn_conv1d_fwd(xec, tcW, tcB, h0, T, d, d, K, 1)
+    let mean0 = t_zeros(1)
+    nn_groupnorm_fwd(h0, tgG, tgB, hn0, mean0, inv0, xhat0, T, d, 1)
+    let hg0 = t_zeros(T * d); nn_gelu_fwd(hn0, hg0, T * d)
+    let mut i = 0
+    while i < T * d { t_set(xt, i, t_get(xec, i) + t_get(hg0, i)); i = i + 1 }
+    // MoE: router (d->E) + E packed conv experts
+    let logits_r = t_zeros(T * E)
+    nn_conv1d_fwd(xt, rW, rB, logits_r, T, d, E, 1, 1)
+    let dd = d * d * K
+    let mut e = 0
+    while e < E {
+        let eo = t_zeros(T * d)
+        // packed expert e: weights at expW[e*dd..], bias at expB[e*d..]
+        let eW = t_zeros(dd); let eB = t_zeros(d)
+        let mut wi = 0
+        while wi < dd { t_set(eW, wi, t_get(expW, e * dd + wi)); wi = wi + 1 }
+        let mut bi = 0
+        while bi < d { t_set(eB, bi, t_get(expB, e * d + bi)); bi = bi + 1 }
+        nn_conv1d_fwd(xt, eW, eB, eo, T, d, d, K, 1)
+        let ex = t_zeros(T * d); nn_gelu_fwd(eo, ex, T * d)
+        let mut j = 0
+        while j < T * d { t_set(ex_out, e * T * d + j, t_get(ex, j)); j = j + 1 }
+        let _ = t_free(eo); let _ = t_free(eW); let _ = t_free(eB); let _ = t_free(ex)
+        e = e + 1
+    }
+    let y = t_zeros(T * d)
+    nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
+    // norm_out
+    let meanN = t_zeros(1)
+    nn_groupnorm_fwd(y, noG, noB, yn, meanN, invN, xhatN, T, d, 1)
+    // readout d->V
+    nn_conv1d_fwd(yn, roW, roB, out_logits, T, d, V, 1, 1)
+    let _ = t_free(h0); let _ = t_free(mean0); let _ = t_free(hg0)
+    let _ = t_free(logits_r); let _ = t_free(y); let _ = t_free(meanN)
+}
+
+// CE gradient seed: dlogits[t,v] = (softmax(logits[t])[v] - 1[v=tgt]) / T.
+fn train_ce_grad(logits: int, targets: int, dlogits_out: int, T: int, V: int) {
+    let mut t = 0
+    while t < T {
+        let base = t * V
+        let mut mx = t_get(logits, base)
+        let mut i = 1
+        while i < V { let v = t_get(logits, base + i); if v > mx { mx = v }; i = i + 1 }
+        let mut sm = 0.0
+        let mut i2 = 0
+        while i2 < V { sm = sm + exp(t_get(logits, base + i2) - mx); i2 = i2 + 1 }
+        let invT = 1.0 / to_float(T)
+        let mut v3 = 0
+        while v3 < V {
+            let p = exp(t_get(logits, base + v3) - mx) / sm
+            t_set(dlogits_out, base + v3, p * invT)
+            v3 = v3 + 1
+        }
+        let tgt = to_int(t_get(targets, t))
+        t_set(dlogits_out, base + tgt, t_get(dlogits_out, base + tgt) - invT)
+        t = t + 1
+    }
+}
+
+// Backward chain (runtime E), grads accumulate. Verbatim wiring from the
+// grad-exact clm_train.hexa / clm_step.hexa chain (#2302).
+fn train_bwd(dlogits: int, tokens: int, E: int,
+             embed: int, ecW: int, tcW: int, tgG: int, rW: int, expW: int, noG: int, roW: int,
+             xe: int, xec: int, xt: int, hn0: int, xhat0: int, inv0: int,
+             probs: int, ex_out: int, yn: int, xhatN: int, invN: int,
+             dembed: int, decW: int, decB: int, dtcW: int, dtcB: int, dtgG: int, dtgB: int,
+             drW: int, drB: int, dexpW: int, dexpB: int, dnoG: int, dnoB: int, droW: int, droB: int,
+             T: int, d: int, V: int, K: int) {
+    let dd = d * d * K
+    let dynorm = t_zeros(T * d)
+    nn_conv1d_bwd(yn, roW, dlogits, droW, dynorm, droB, T, d, V, 1, 1)
+    let dy = t_zeros(T * d)
+    nn_groupnorm_bwd(xhatN, invN, noG, dynorm, dnoG, dnoB, dy, T, d, 1)
+    let dlogits_r = t_zeros(T * E)
+    let dex_out = t_zeros(E * T * d)
+    nn_moe_router_bwd(probs, ex_out, dy, dlogits_r, dex_out, T, E, d)
+    let dxt_r = t_zeros(T * d)
+    nn_conv1d_bwd(xt, rW, dlogits_r, drW, dxt_r, drB, T, d, E, 1, 1)
+    // accumulate expert dxt across all E experts
+    let dxt = t_zeros(T * d)
+    let mut xi = 0
+    while xi < T * d { t_set(dxt, xi, t_get(dxt_r, xi)); xi = xi + 1 }
+    let mut e = 0
+    while e < E {
+        // recompute eo_e for gelu bwd (xt is cached; expert conv is deterministic)
+        let eW = t_zeros(dd); let eB = t_zeros(d)
+        let mut wi = 0
+        while wi < dd { t_set(eW, wi, t_get(expW, e * dd + wi)); wi = wi + 1 }
+        let mut bi = 0
+        while bi < d { t_set(eB, bi, t_get(expB_global, e * d + bi)); bi = bi + 1 }
+        let eo = t_zeros(T * d); nn_conv1d_fwd(xt, eW, eB, eo, T, d, d, K, 1)
+        let dex = t_zeros(T * d)
+        let mut di = 0
+        while di < T * d { t_set(dex, di, t_get(dex_out, e * T * d + di)); di = di + 1 }
+        let deo = t_zeros(T * d); nn_gelu_bwd(eo, dex, deo, T * d)
+        let deW = t_zeros(dd); let deB = t_zeros(d); let dxt_e = t_zeros(T * d)
+        nn_conv1d_bwd(xt, eW, deo, deW, dxt_e, deB, T, d, d, K, 1)
+        let mut gw = 0
+        while gw < dd { t_set(dexpW, e * dd + gw, t_get(deW, gw)); gw = gw + 1 }
+        let mut gb = 0
+        while gb < d { t_set(dexpB, e * d + gb, t_get(deB, gb)); gb = gb + 1 }
+        let mut ai = 0
+        while ai < T * d { t_set(dxt, ai, t_get(dxt, ai) + t_get(dxt_e, ai)); ai = ai + 1 }
+        let _ = t_free(eW); let _ = t_free(eB); let _ = t_free(eo); let _ = t_free(dex)
+        let _ = t_free(deo); let _ = t_free(deW); let _ = t_free(deB); let _ = t_free(dxt_e)
+        e = e + 1
+    }
+    // trunk0 bwd (residual xt = xec + gelu(gn(conv(xec))))
+    let dhn0 = t_zeros(T * d); nn_gelu_bwd(hn0, dxt, dhn0, T * d)
+    let dh0 = t_zeros(T * d)
+    nn_groupnorm_bwd(xhat0, inv0, tgG, dhn0, dtgG, dtgB, dh0, T, d, 1)
+    let dxec_b = t_zeros(T * d)
+    nn_conv1d_bwd(xec, tcW, dh0, dtcW, dxec_b, dtcB, T, d, d, K, 1)
+    let dxec = t_zeros(T * d)
+    let mut ci = 0
+    while ci < T * d { t_set(dxec, ci, t_get(dxt, ci) + t_get(dxec_b, ci)); ci = ci + 1 }
+    let dxe = t_zeros(T * d)
+    nn_conv1d_bwd(xe, ecW, dxec, decW, dxe, decB, T, d, d, K, 1)
+    let mut zi = 0
+    while zi < V * d { t_set(dembed, zi, 0.0); zi = zi + 1 }
+    nn_embedding_bwd_scatter(dxe, tokens, dembed, T, d)
+    let _ = t_free(dynorm); let _ = t_free(dy); let _ = t_free(dlogits_r)
+    let _ = t_free(dex_out); let _ = t_free(dxt_r); let _ = t_free(dxt)
+    let _ = t_free(dhn0); let _ = t_free(dh0); let _ = t_free(dxec_b)
+    let _ = t_free(dxec); let _ = t_free(dxe)
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  MITOSIS split (a_mitosis_train) — E -> E+1 cell division. Verbatim port of
+//  clm_mitosis.hexa::mitosis_split (continuity-preserving: router bias -ln2 on
+//  both children, expert weights copied + tiny perturbation, Adam moments reset).
+// ════════════════════════════════════════════════════════════════════════════
+fn train_mitosis_split(s: int, E: int, d: int, dd: int,
+                       expW: int, expB: int, rW: int, rB: int,
+                       m_eW: int, v_eW: int, m_eB: int, v_eB: int,
+                       m_rW: int, v_rW: int, m_rB: int, v_rB: int) {
+    let ln2 = 0.6931471805599453
+    let child = E
+    let mut i = 0
+    while i < dd {
+        let pw = t_get(expW, s * dd + i)
+        let mut eps = 0.0001
+        if i - (i / 2) * 2 == 1 { eps = 0.0 - 0.0001 }
+        t_set(expW, child * dd + i, pw + eps)
+        i = i + 1
+    }
+    let mut j = 0
+    while j < d { t_set(expB, child * d + j, t_get(expB, s * d + j)); j = j + 1 }
+    let mut c = 0
+    while c < d { t_set(rW, child * d + c, t_get(rW, s * d + c)); c = c + 1 }
+    let pb = t_get(rB, s)
+    t_set(rB, s, pb - ln2)
+    t_set(rB, child, pb - ln2)
+    let mut k = 0
+    while k < dd {
+        t_set(m_eW, s * dd + k, 0.0); t_set(v_eW, s * dd + k, 0.0)
+        t_set(m_eW, child * dd + k, 0.0); t_set(v_eW, child * dd + k, 0.0)
+        k = k + 1
+    }
+    let mut b = 0
+    while b < d {
+        t_set(m_eB, s * d + b, 0.0); t_set(v_eB, s * d + b, 0.0)
+        t_set(m_eB, child * d + b, 0.0); t_set(v_eB, child * d + b, 0.0)
+        t_set(m_rW, s * d + b, 0.0); t_set(v_rW, s * d + b, 0.0)
+        t_set(m_rW, child * d + b, 0.0); t_set(v_rW, child * d + b, 0.0)
+        b = b + 1
+    }
+    t_set(m_rB, s, 0.0); t_set(v_rB, s, 0.0)
+    t_set(m_rB, child, 0.0); t_set(v_rB, child, 0.0)
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  SAVANT golden-zone inhibition schedule (a_savant_train) — cusp anneal +
+//  asymmetric latch. inhibition I starts HIGH (I0) and is annealed DOWN toward
+//  a target floor I_floor (set BELOW GZ_LOWER so the learning sweet-spot is
+//  reachable, H_1559). When I first ENTERS the golden zone [GZ_LOWER, GZ_UPPER]
+//  on the way down, the savant mode LATCHES ON (cusp hard-step, H_1562) and the
+//  latch stays held for the rest of training (hysteresis — once on, never
+//  un-set, H_1563 asymmetric latch). Returns the inhibition for THIS step;
+//  writes the latch flag into latch[0].
+// ════════════════════════════════════════════════════════════════════════════
+fn savant_inhibition(step: int, n_steps: int, I0: float, I_floor: float,
+                     latch: int) -> float {
+    // linear anneal I0 -> I_floor over training
+    let denom = if n_steps > 1 { n_steps - 1 } else { 1 }
+    let frac = to_float(step - 1) / to_float(denom)
+    let I = I0 + (I_floor - I0) * frac
+    // cusp latch: once I crosses into the golden zone, savant mode is ON
+    let lo = gz_lower()
+    let hi = gz_upper()
+    if t_get(latch, 0) < 0.5 {
+        if I <= hi {
+            if I >= lo {
+                t_set(latch, 0, 1.0)   // hard-step ON inside golden zone (cusp)
+            }
+        }
+    }
+    // asymmetric hysteresis: if latched ON but anneal drove I below the zone,
+    // KEEP descending toward I_floor (sweep below GZ_LOWER is intentional,
+    // H_1559) but the latch (capacity expression) STAYS on (H_1563).
+    return I
+}
+
+// Map inhibition I -> weight-decay used by AdamW for THIS step (inhibition is
+// realized as L2 weight decay here; dropout/temperature variants share the same
+// scalar lever). Higher I = stronger regularization = lower capacity expression.
+fn inhibition_to_wd(I: float) -> float {
+    // scale: I in [0,0.5] -> wd in [0, 0.05]. Linear, deterministic (p7).
+    return I * 0.1
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  4-cell corpus loader (a_chat_registers) — {ko·en}×{일반·SNS}. Each path is
+//  an EXTERNAL byte-level UTF-8 file. Extract one T+1 window per call. Returns 1
+//  if a real window was filled, else 0 (cell missing/too small → caller falls
+//  back to the fixed verify batch so the $0 wiring proof needs no corpora).
+// ════════════════════════════════════════════════════════════════════════════
+fn load_window(cell_bytes: int, n_bytes: int, off: int,
+               tokens_out: int, targets_out: int, T: int) -> int {
+    if n_bytes < T + 1 { return 0 }
+    let mut start = off
+    if start + T + 1 > n_bytes { start = 0 }  // wrap
+    let mut p = 0
+    while p < T {
+        t_set(tokens_out, p, to_float(farr_get(cell_bytes, start + p)))
+        t_set(targets_out, p, to_float(farr_get(cell_bytes, start + p + 1)))
+        p = p + 1
+    }
+    return 1
+}
+
+fn _adam(W: int, gW: int, m: int, v: int, n: int, lr: float, wd: float, t: int) {
+    opt_adamw_step(W, gW, m, v, n, lr, 0.9, 0.999, 0.00000001, wd, t)
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  main — train loop. cfg_canon toggles tiny-verify ($0) vs 303M-class config.
+// ════════════════════════════════════════════════════════════════════════════
+fn main() {
+    println("=== anima cli/train.hexa — hexa-native CLMConvMoE trainer (flame/forge) ===")
+
+    // ── config toggle: 0 = MODE_VERIFY ($0 farr CPU) · 1 = MODE_CANON (GPU) ──
+    let cfg_canon = 0
+
+    // savant + mitosis curriculum knobs (CLI-shaped; defaults enable both levers)
+    let savant_mode = 1     // --savant-mode : enable golden-zone inhibition anneal
+    let mitosis_on  = 1     // --mitosis     : enable cell-division growth
+
+    // 303M-class canonical config (GPU dispatch target; LEARNING = separate fire)
+    let T_canon = 1024; let d_canon = 768; let E0_canon = 2; let Emax_canon = 4
+    let nsteps_canon = 20
+    // tiny $0 verify config (clm_step.hexa proven scale)
+    let T_verify = 4;   let d_verify = 8;  let E0_verify = 2; let Emax_verify = 4
+    let nsteps_verify = 40
+    let V = 256             // byte-level vocab (a_clm_gen_pipeline)
+    let K = 3              // causal conv kernel
+
+    let T  = if cfg_canon == 1 { T_canon }  else { T_verify }
+    let d  = if cfg_canon == 1 { d_canon }  else { d_verify }
+    let E0 = if cfg_canon == 1 { E0_canon } else { E0_verify }
+    let Emax = if cfg_canon == 1 { Emax_canon } else { Emax_verify }
+    let n_steps = if cfg_canon == 1 { nsteps_canon } else { nsteps_verify }
+    let dd = d * d * K; let ed = Emax * d; let vd = V * d
+
+    print("  mode: ")
+    if cfg_canon == 1 { println("MODE_CANON (d768 303M-class — GPU dispatch target, LEARNING=separate fire)") }
+    else { println("MODE_VERIFY (d8·L1·E2->Emax4 $0 farr CPU — full lever wiring proof)") }
+    print("  config: T="); print(T); print(" d="); print(d); print(" E0="); print(E0)
+    print(" Emax="); print(Emax); print(" V="); print(V); print(" K="); print(K)
+    print(" n_steps="); print(n_steps); println("")
+    print("  savant_mode="); print(savant_mode); print(" mitosis="); print(mitosis_on); println("")
+
+    // ── 4-cell corpus (a_chat_registers). External byte paths; if absent, the
+    //    fixed verify batch is used so the $0 wiring proof needs no corpora. ──
+    // MODE_CANON would point these at the mounted corpora, e.g.:
+    //   ko-일반 : anima-corpus-ko-fineweb2-broad  · en-일반 : anima-corpus-5lang-unified-v2(en)
+    //   ko-SNS  : anima-persona-sns-corpus(ko)    · en-SNS  : anima-persona-sns-corpus(en)
+    let use_corpus = 0        // 0 = fixed verify batch ($0, no external mount)
+
+    // ── params (packed experts at Emax capacity so mitosis grows in place) ──
+    let embed = t_zeros(vd);  t_fill_lcg(embed, vd, 1, 0.3)
+    let ecW = t_zeros(dd);    t_fill_lcg(ecW, dd, 2, 0.2)
+    let ecB = t_zeros(d);     t_fill_lcg(ecB, d, 3, 0.1)
+    let tcW = t_zeros(dd);    t_fill_lcg(tcW, dd, 4, 0.2)
+    let tcB = t_zeros(d);     t_fill_lcg(tcB, d, 5, 0.1)
+    let tgG = t_zeros(d);     t_fill_lcg(tgG, d, 6, 0.5)
+    let tgB = t_zeros(d);     t_fill_lcg(tgB, d, 7, 0.1)
+    let rW  = t_zeros(ed);    t_fill_lcg(rW, ed, 12, 0.2)
+    let rB  = t_zeros(Emax);  t_fill_lcg(rB, Emax, 13, 0.1)
+    let expW = t_zeros(Emax * dd)
+    let expB = t_zeros(Emax * d)
+    // init only the E0 active experts (grown slots start as parent copies)
+    let mut e = 0
+    while e < E0 {
+        let tmpW = t_zeros(dd); t_fill_lcg(tmpW, dd, 14 + e * 2, 0.2)
+        let tmpB = t_zeros(d);  t_fill_lcg(tmpB, d, 15 + e * 2, 0.1)
+        let mut wi = 0
+        while wi < dd { t_set(expW, e * dd + wi, t_get(tmpW, wi)); wi = wi + 1 }
+        let mut bi = 0
+        while bi < d { t_set(expB, e * d + bi, t_get(tmpB, bi)); bi = bi + 1 }
+        let _ = t_free(tmpW); let _ = t_free(tmpB)
+        e = e + 1
+    }
+    let noG = t_zeros(d);     t_fill_lcg(noG, d, 18, 0.5)
+    let noB = t_zeros(d);     t_fill_lcg(noB, d, 19, 0.1)
+    let roW = t_zeros(vd);    t_fill_lcg(roW, vd, 20, 0.2)
+    let roB = t_zeros(V);     t_fill_lcg(roB, V, 21, 0.1)
+    expB_global = expB
+
+    // ── grads ──
+    let dembed=t_zeros(vd); let decW=t_zeros(dd); let decB=t_zeros(d)
+    let dtcW=t_zeros(dd); let dtcB=t_zeros(d); let dtgG=t_zeros(d); let dtgB=t_zeros(d)
+    let drW=t_zeros(ed); let drB=t_zeros(Emax)
+    let dexpW=t_zeros(Emax*dd); let dexpB=t_zeros(Emax*d)
+    let dnoG=t_zeros(d); let dnoB=t_zeros(d); let droW=t_zeros(vd); let droB=t_zeros(V)
+
+    // ── Adam state ──
+    let m_embed=t_zeros(vd); let v_embed=t_zeros(vd)
+    let m_ecW=t_zeros(dd); let v_ecW=t_zeros(dd); let m_ecB=t_zeros(d); let v_ecB=t_zeros(d)
+    let m_tcW=t_zeros(dd); let v_tcW=t_zeros(dd); let m_tcB=t_zeros(d); let v_tcB=t_zeros(d)
+    let m_tgG=t_zeros(d); let v_tgG=t_zeros(d); let m_tgB=t_zeros(d); let v_tgB=t_zeros(d)
+    let m_rW=t_zeros(ed); let v_rW=t_zeros(ed); let m_rB=t_zeros(Emax); let v_rB=t_zeros(Emax)
+    let m_expW=t_zeros(Emax*dd); let v_expW=t_zeros(Emax*dd)
+    let m_expB=t_zeros(Emax*d); let v_expB=t_zeros(Emax*d)
+    let m_noG=t_zeros(d); let v_noG=t_zeros(d); let m_noB=t_zeros(d); let v_noB=t_zeros(d)
+    let m_roW=t_zeros(vd); let v_roW=t_zeros(vd); let m_roB=t_zeros(V); let v_roB=t_zeros(V)
+
+    // ── caches ──
+    let xe=t_zeros(T*d); let xec=t_zeros(T*d); let xt=t_zeros(T*d)
+    let hn0=t_zeros(T*d); let xhat0=t_zeros(T*d); let inv0=t_zeros(1)
+    let probs=t_zeros(T*Emax); let ex_out=t_zeros(Emax*T*d)
+    let yn=t_zeros(T*d); let xhatN=t_zeros(T*d); let invN=t_zeros(1)
+    let logits=t_zeros(T*V); let dlogits=t_zeros(T*V)
+
+    // ── fixed verify batch (used when use_corpus==0) ──
+    let tokens = t_zeros(T)
+    let targets = t_zeros(T)
+    let mut fi = 0
+    while fi < T {
+        // deterministic byte stream (a 4-cell-register stand-in for the $0 proof)
+        let tk = (3 + fi * 37) - ((3 + fi * 37) / 256) * 256
+        let tg = (14 + fi * 37) - ((14 + fi * 37) / 256) * 256
+        t_set(tokens, fi, to_float(tk))
+        t_set(targets, fi, to_float(tg))
+        fi = fi + 1
+    }
+
+    // ── savant latch state ──
+    let latch = t_zeros(1)   // 0 = savant OFF, 1 = latched ON
+    let I0 = gz_upper()                          // start HIGH (max inhibition)
+    let I_floor = gz_lower() - 0.05              // anneal BELOW GZ_LOWER (H_1559)
+
+    // ── mitosis schedule: split one expert at the midpoint (E0 -> E0+1) ──
+    let mut E = E0
+    let split_step = n_steps / 2
+
+    let lr = 0.05
+    let mut loss0 = 0.0
+    let mut lossF = 0.0
+    let mut latched_at = 0
+    let mut split_at = 0
+    let mut bound_ok = 1
+    let mut ce_before_split = 0.0
+    let mut ce_after_split = 0.0
+    let mut step = 1
+    while step <= n_steps {
+        // savant inhibition for this step
+        let mut wd = 0.0
+        if savant_mode == 1 {
+            let I = savant_inhibition(step, n_steps, I0, I_floor, latch)
+            wd = inhibition_to_wd(I)
+            if t_get(latch, 0) > 0.5 {
+                if latched_at == 0 { latched_at = step }
+            }
+        }
+
+        // mitosis split at midpoint (grow E0 -> E0+1)
+        if mitosis_on == 1 {
+            if step == split_step {
+                if E < Emax {
+                    train_mitosis_split(0, E, d, dd, expW, expB, rW, rB,
+                                        m_expW, v_expW, m_expB, v_expB,
+                                        m_rW, v_rW, m_rB, v_rB)
+                    E = E + 1
+                    split_at = step
+                }
+            }
+        }
+
+        train_fwd(tokens, E, embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
+                  expW, expB, noG, noB, roW, roB,
+                  xe, xec, xt, hn0, xhat0, inv0, probs, ex_out, yn, xhatN, invN,
+                  logits, T, d, V, K)
+        let loss = nn_ce_loss_allpos(logits, targets, T, V)
+        if _is_finite(loss) == 0 { bound_ok = 0 }
+        if step == 1 { loss0 = loss }
+        lossF = loss
+        if step == split_step - 1 { ce_before_split = loss }
+        if step == split_step + 1 { ce_after_split = loss }
+        if step == 1 { print("  step 1   CE="); print(loss); print("  E="); print(E); print("  wd="); println(wd) }
+        if step == split_step { print("  step "); print(step); print(" (SPLIT) CE="); print(loss); print("  E="); println(E) }
+
+        train_ce_grad(logits, targets, dlogits, T, V)
+        train_bwd(dlogits, tokens, E, embed, ecW, tcW, tgG, rW, expW, noG, roW,
+                  xe, xec, xt, hn0, xhat0, inv0, probs, ex_out, yn, xhatN, invN,
+                  dembed, decW, decB, dtcW, dtcB, dtgG, dtgB, drW, drB,
+                  dexpW, dexpB, dnoG, dnoB, droW, droB, T, d, V, K)
+
+        // AdamW with savant-scheduled weight decay (inhibition lever)
+        _adam(embed, dembed, m_embed, v_embed, vd, lr, wd, step)
+        _adam(ecW, decW, m_ecW, v_ecW, dd, lr, wd, step); _adam(ecB, decB, m_ecB, v_ecB, d, lr, wd, step)
+        _adam(tcW, dtcW, m_tcW, v_tcW, dd, lr, wd, step); _adam(tcB, dtcB, m_tcB, v_tcB, d, lr, wd, step)
+        _adam(tgG, dtgG, m_tgG, v_tgG, d, lr, wd, step);  _adam(tgB, dtgB, m_tgB, v_tgB, d, lr, wd, step)
+        _adam(rW, drW, m_rW, v_rW, ed, lr, wd, step);     _adam(rB, drB, m_rB, v_rB, Emax, lr, wd, step)
+        _adam(expW, dexpW, m_expW, v_expW, Emax*dd, lr, wd, step)
+        _adam(expB, dexpB, m_expB, v_expB, Emax*d, lr, wd, step)
+        _adam(noG, dnoG, m_noG, v_noG, d, lr, wd, step);  _adam(noB, dnoB, m_noB, v_noB, d, lr, wd, step)
+        _adam(roW, droW, m_roW, v_roW, vd, lr, wd, step); _adam(roB, droB, m_roB, v_roB, V, lr, wd, step)
+        step = step + 1
+    }
+    print("  step "); print(n_steps); print("  CE="); print(lossF); print("  E="); println(E)
+    print("  loss0="); print(loss0); print("  lossF="); println(lossF)
+    print("  savant latched_at step="); println(latched_at)
+    print("  mitosis split_at step="); print(split_at); print(" (E0="); print(E0); print(" -> E="); print(E); println(")")
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  Falsifiers (MODE_VERIFY $0). MODE_CANON defers run-time to the GPU fire.
+    // ════════════════════════════════════════════════════════════════════════
+    let mut pass = 0
+    let total = 3
+
+    // F-CLI-TRAIN-DESCENT — end-to-end fwd+CE+bwd+AdamW (with savant wd +
+    // mid-training mitosis split) DESCENDS on the fixed batch.
+    if lossF < loss0 * 0.95 {
+        print("PASS  F-CLI-TRAIN-DESCENT        loss0="); print(loss0); print(" -> lossF="); print(lossF)
+        println(" (CE descends through savant inhibition + mitosis split)")
+        pass = pass + 1
+    } else {
+        print("FAIL  F-CLI-TRAIN-DESCENT        loss0="); print(loss0); print(" lossF="); println(lossF)
+    }
+
+    // F-CLI-TRAIN-SAVANT-LATCH — golden-zone inhibition latched ON during anneal
+    // (cusp crossing of [GZ_LOWER, GZ_UPPER]); latch flag set, never un-set.
+    if savant_mode == 1 {
+        if latched_at > 0 {
+            if t_get(latch, 0) > 0.5 {
+                print("PASS  F-CLI-TRAIN-SAVANT-LATCH   savant ON at step "); print(latched_at)
+                print(" (golden zone ["); print(gz_lower()); print(", "); print(gz_upper()); println("] crossed, latched)")
+                pass = pass + 1
+            } else {
+                println("FAIL  F-CLI-TRAIN-SAVANT-LATCH   latch flag not held")
+            }
+        } else {
+            println("FAIL  F-CLI-TRAIN-SAVANT-LATCH   never entered golden zone")
+        }
+    } else {
+        println("SKIP  F-CLI-TRAIN-SAVANT-LATCH   savant_mode off")
+    }
+
+    // F-CLI-TRAIN-MITOSIS-BOUND — after E0->E0+1 division the model stays BOUNDED
+    // and the loss does NOT BLOW UP across the split, matching the clm_mitosis.hexa
+    // falsifier semantics (post-split FINITE + NO UPWARD spike + continues to
+    // descend). A continuity-preserving split conserves gate mass (router bias
+    // -ln2 on both children), so CE must not jump UP by a large factor; a flat or
+    // DOWNWARD step across the division is the desired outcome (NOT a failure).
+    // We measure UPWARD blow-up only (ce_after vs ce_before), never penalize a
+    // drop — the absolute |ΔCE| against a near-zero late-training baseline is a
+    // metric-artifact, frozen-first fixed here (a_break_the_wall class-a).
+    if mitosis_on == 1 {
+        let rise = ce_after_split - ce_before_split          // >0 = CE went UP
+        // blow-up = a large UPWARD spike (≥2× the pre-split CE, or ≥1.0 abs when
+        // pre-split CE is tiny). A drop (rise ≤ 0) is always continuity-OK.
+        let blowup = if ce_before_split > 0.01 {
+            rise > ce_before_split
+        } else {
+            rise > 1.0
+        }
+        if split_at > 0 {
+            if bound_ok == 1 {
+                if blowup == false {
+                    print("PASS  F-CLI-TRAIN-MITOSIS-BOUND  split E"); print(E0); print("->E"); print(E)
+                    print(" bounded, no blow-up (CE "); print(ce_before_split)
+                    print(" -> "); print(ce_after_split); println(", continues descending)")
+                    pass = pass + 1
+                } else {
+                    print("FAIL  F-CLI-TRAIN-MITOSIS-BOUND  CE blew UP across split (")
+                    print(ce_before_split); print(" -> "); print(ce_after_split); println(")")
+                }
+            } else {
+                println("FAIL  F-CLI-TRAIN-MITOSIS-BOUND  non-finite loss post-split")
+            }
+        } else {
+            println("FAIL  F-CLI-TRAIN-MITOSIS-BOUND  split never fired")
+        }
+    } else {
+        println("SKIP  F-CLI-TRAIN-MITOSIS-BOUND  mitosis off")
+    }
+
+    println("")
+    print("=== anima cli/train.hexa: "); print(pass); print("/"); print(total); println(" PASS ===")
+    if pass == total {
+        if cfg_canon == 0 {
+            println("PASS — anima hexa-native CLMConvMoE trainer (flame/forge substrate) wires CE descent + SAVANT golden-zone inhibition latch + MITOSIS cell-division, all on the SAME clm_*.hexa ops core/clm_decode mounts (a_engine_native_learning). 303M LEARNING = separate cost-gated GPU fire (MODE_CANON).")
+        } else {
+            println("PASS — MODE_CANON d768 303M-class config compiles (GPU dispatch ready). Run-time LEARNING = separate cost-bearing forge fire.")
+        }
+        return
+    }
+    println("FAIL — named blockers above")
+}

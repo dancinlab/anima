@@ -1,0 +1,16 @@
+=== anima cli/train.hexa — hexa-native CLMConvMoE trainer (flame/forge) ===
+  mode: MODE_VERIFY (d8·L1·E2->Emax4 $0 farr CPU — full lever wiring proof)
+  config: T=4 d=8 E0=2 Emax=4 V=256 K=3 n_steps=40
+  savant_mode=1 mitosis=1
+  step 1   CE=4.785261967723521  E=2  wd=0.05
+  step 20 (SPLIT) CE=0.10244232799586934  E=3
+  step 40  CE=0.0004321544912324474  E=3
+  loss0=4.785261967723521  lossF=0.0004321544912324474
+  savant latched_at step=1
+  mitosis split_at step=20 (E0=2 -> E=3)
+PASS  F-CLI-TRAIN-DESCENT        loss0=4.785261967723521 -> lossF=0.0004321544912324474 (CE descends through savant inhibition + mitosis split)
+PASS  F-CLI-TRAIN-SAVANT-LATCH   savant ON at step 1 (golden zone [0.21231792755821912, 0.5] crossed, latched)
+PASS  F-CLI-TRAIN-MITOSIS-BOUND  split E2->E3 bounded, no blow-up (CE 0.15487492609030196 -> 0.06819508638846403, continues descending)
+
+=== anima cli/train.hexa: 3/3 PASS ===
+PASS — anima hexa-native CLMConvMoE trainer (flame/forge substrate) wires CE descent + SAVANT golden-zone inhibition latch + MITOSIS cell-division, all on the SAME clm_*.hexa ops core/clm_decode mounts (a_engine_native_learning). 303M LEARNING = separate cost-gated GPU fire (MODE_CANON).
