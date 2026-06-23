@@ -92,6 +92,18 @@ fn _pow2(e: int) -> int {
 // the bias to recompute expert pre-activations for the gelu cache).
 let mut expB_global = 0
 
+// ── device-resident NN-op gate (a_train_flame_forge) ────────────────────────
+// CLM_PROD_DEVFEED=1 routes the non-offset NN ops (embedding / gelu / moe_router
+// / groupnorm norm_out / ce_grad) through the device-resident forge_dispatch_*
+// path so activations stay FARR_DEVICE across ops on a CUDA host (sustained util
+// — the GEMM-burst gaps were the host scalar reductions). Each forge_dispatch_*
+// returns 0 on a successful device run, rc<0 → the proven host nn_* runs (byte-
+// eq). DEFAULT OFF (env unset) = the unchanged host path (byte-neutral); on the
+// no-CUDA Mac build the gate may be ON but the forge bodies are CPU oracles that
+// reproduce the host op bit-for-bit, so MODE_VERIFY is byte-identical either way.
+// Set once in main(); read by train_fwd/bwd/ce.
+let mut devfeed_global = 0
+
 // ════════════════════════════════════════════════════════════════════════════
 //  Forward (L trunk layers, runtime expert count E ≤ Emax) — packed-layer AND
 //  packed-expert layout so mitosis can grow E into already-owned contiguous
@@ -118,33 +130,39 @@ fn train_fwd(tokens: int, E: int, L: int,
              probs: int, ex_out: int, yn: int, xhatN: int, invN: int,
              out_logits: int, T: int, d: int, V: int, K: int) {
     let dd = d * d * K
-    nn_embedding_fwd(tokens, embed, xe, T, d)
+    // embedding gather: device-resident forge path (rc 0) else host (byte-eq)
+    let mut emb_rc = -1
+    if devfeed_global == 1 { emb_rc = forge_dispatch_embedding(tokens, embed, xe, T, d) }
+    if emb_rc != 0 { nn_embedding_fwd(tokens, embed, xe, T, d) }
     // x = running trunk activation (starts at embed-conv output)
     let x = t_zeros(T * d)
     nn_conv1d_fwd(xe, ecW, ecB, x, T, d, d, K, 1)
     // ── L trunk layers: x ← x + gelu(gn(conv_dil(x))), dilation min(2^l,512) ──
     let mut l = 0
     while l < L {
-        // cache layer input (conv operand) for bwd
-        let mut ti = 0
-        while ti < T * d { t_set(tin, l * T * d + ti, t_get(x, ti)); ti = ti + 1 }
+        // cache layer input (conv operand) for bwd — device slice-copy
+        // (farr_copy_slice_gpu: GPU on a CUDA host, byte-eq CPU fallback else;
+        // replaces the O(T·d) host scalar t_set/t_get loop — a_train_flame_forge).
+        let _ = farr_copy_slice_gpu(x, 0, tin, l * T * d, T * d)
         let h = t_zeros(T * d)
         nn_conv1d_fwd_off(x, tcW, l * dd, tcB, l * d, h, T, d, d, K, _pow2(l))
         let hnl = t_zeros(T * d); let meanl = t_zeros(1); let invl = t_zeros(1); let xhl = t_zeros(T * d)
         nn_groupnorm_fwd_off(h, tgG, l * d, tgB, l * d, hnl, meanl, invl, xhl, T, d, 1)
-        let mut ci = 0
-        while ci < T * d { t_set(hn, l * T * d + ci, t_get(hnl, ci)); t_set(xh, l * T * d + ci, t_get(xhl, ci)); ci = ci + 1 }
+        let _ = farr_copy_slice_gpu(hnl, 0, hn, l * T * d, T * d)
+        let _ = farr_copy_slice_gpu(xhl, 0, xh, l * T * d, T * d)
         t_set(inv, l, t_get(invl, 0))
-        let hg = t_zeros(T * d); nn_gelu_fwd(hnl, hg, T * d)
-        let mut ai = 0
-        while ai < T * d { t_set(x, ai, t_get(x, ai) + t_get(hg, ai)); ai = ai + 1 }
+        let hg = t_zeros(T * d)
+        let mut hg_rc = -1
+        if devfeed_global == 1 { hg_rc = forge_dispatch_gelu(hnl, hg, T * d) }
+        if hg_rc != 0 { nn_gelu_fwd(hnl, hg, T * d) }
+        // x += hg  (device in-place add, byte-eq CPU fallback)
+        let _ = farr_add_inplace_gpu(x, hg, T * d)
         let _ = t_free(h); let _ = t_free(hnl); let _ = t_free(meanl); let _ = t_free(invl)
         let _ = t_free(xhl); let _ = t_free(hg)
         l = l + 1
     }
-    // xt = post-trunk activation (router + expert input)
-    let mut xi = 0
-    while xi < T * d { t_set(xt, xi, t_get(x, xi)); xi = xi + 1 }
+    // xt = post-trunk activation (router + expert input) — device slice-copy
+    let _ = farr_copy_slice_gpu(x, 0, xt, 0, T * d)
     // MoE: router (d->E) + E packed conv experts
     let logits_r = t_zeros(T * E)
     nn_conv1d_fwd(xt, rW, rB, logits_r, T, d, E, 1, 1)
@@ -155,17 +173,23 @@ fn train_fwd(tokens: int, E: int, L: int,
         // flame *_off conv (no per-expert eW/eB slice copy — that O(E·dd) scalar
         // copy was the trainer's hidden CPU cost; *_off addresses the pack).
         nn_conv1d_fwd_off(xt, expW, e * dd, expB, e * d, eo, T, d, d, K, 1)
-        let ex = t_zeros(T * d); nn_gelu_fwd(eo, ex, T * d)
-        let mut j = 0
-        while j < T * d { t_set(ex_out, e * T * d + j, t_get(ex, j)); j = j + 1 }
+        let ex = t_zeros(T * d)
+        let mut ex_rc = -1
+        if devfeed_global == 1 { ex_rc = forge_dispatch_gelu(eo, ex, T * d) }
+        if ex_rc != 0 { nn_gelu_fwd(eo, ex, T * d) }
+        let _ = farr_copy_slice_gpu(ex, 0, ex_out, e * T * d, T * d)
         let _ = t_free(eo); let _ = t_free(ex)
         e = e + 1
     }
     let y = t_zeros(T * d)
-    nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
+    let mut mr_rc = -1
+    if devfeed_global == 1 { mr_rc = forge_dispatch_moe_router(logits_r, ex_out, probs, y, T, E, d) }
+    if mr_rc != 0 { nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d) }
     // norm_out
     let meanN = t_zeros(1)
-    nn_groupnorm_fwd(y, noG, noB, yn, meanN, invN, xhatN, T, d, 1)
+    let mut gn_rc = -1
+    if devfeed_global == 1 { gn_rc = forge_dispatch_groupnorm(y, noG, noB, yn, meanN, invN, xhatN, T, d, 1) }
+    if gn_rc != 0 { nn_groupnorm_fwd(y, noG, noB, yn, meanN, invN, xhatN, T, d, 1) }
     // readout d->V
     nn_conv1d_fwd(yn, roW, roB, out_logits, T, d, V, 1, 1)
     let _ = t_free(x); let _ = t_free(logits_r); let _ = t_free(y); let _ = t_free(meanN)
@@ -173,6 +197,10 @@ fn train_fwd(tokens: int, E: int, L: int,
 
 // CE gradient seed: dlogits[t,v] = (softmax(logits[t])[v] - 1[v=tgt]) / T.
 fn train_ce_grad(logits: int, targets: int, dlogits_out: int, T: int, V: int) {
+    // device-resident forge path (rc 0) else the host scalar loop (byte-eq)
+    if devfeed_global == 1 {
+        if forge_dispatch_ce_grad(logits, targets, dlogits_out, T, V) == 0 { return }
+    }
     let mut t = 0
     while t < T {
         let base = t * V
@@ -209,16 +237,19 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
     let dynorm = t_zeros(T * d)
     nn_conv1d_bwd(yn, roW, dlogits, droW, dynorm, droB, T, d, V, 1, 1)
     let dy = t_zeros(T * d)
-    nn_groupnorm_bwd(xhatN, invN, noG, dynorm, dnoG, dnoB, dy, T, d, 1)
+    let mut gnb_rc = -1
+    if devfeed_global == 1 { gnb_rc = forge_dispatch_groupnorm_bwd(xhatN, invN, noG, dynorm, dnoG, dnoB, dy, T, d, 1) }
+    if gnb_rc != 0 { nn_groupnorm_bwd(xhatN, invN, noG, dynorm, dnoG, dnoB, dy, T, d, 1) }
     let dlogits_r = t_zeros(T * E)
     let dex_out = t_zeros(E * T * d)
-    nn_moe_router_bwd(probs, ex_out, dy, dlogits_r, dex_out, T, E, d)
+    let mut mrb_rc = -1
+    if devfeed_global == 1 { mrb_rc = forge_dispatch_moe_router_bwd(probs, ex_out, dy, dlogits_r, dex_out, T, E, d) }
+    if mrb_rc != 0 { nn_moe_router_bwd(probs, ex_out, dy, dlogits_r, dex_out, T, E, d) }
     let dxt_r = t_zeros(T * d)
     nn_conv1d_bwd(xt, rW, dlogits_r, drW, dxt_r, drB, T, d, E, 1, 1)
     // accumulate expert dxt across all E experts → dx (grad w.r.t. post-trunk x)
     let dx = t_zeros(T * d)
-    let mut xi = 0
-    while xi < T * d { t_set(dx, xi, t_get(dxt_r, xi)); xi = xi + 1 }
+    let _ = farr_copy_slice_gpu(dxt_r, 0, dx, 0, T * d)
     let mut e = 0
     while e < E {
         // recompute eo_e for gelu bwd (xt is cached; expert conv is deterministic).
@@ -226,15 +257,17 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
         let eo = t_zeros(T * d)
         nn_conv1d_fwd_off(xt, expW, e * dd, expB_global, e * d, eo, T, d, d, K, 1)
         let dexg = t_zeros(T * d)
-        let mut di = 0
-        while di < T * d { t_set(dexg, di, t_get(dex_out, e * T * d + di)); di = di + 1 }
-        let deo = t_zeros(T * d); nn_gelu_bwd(eo, dexg, deo, T * d)
+        let _ = farr_copy_slice_gpu(dex_out, e * T * d, dexg, 0, T * d)
+        let deo = t_zeros(T * d)
+        let mut deo_rc = -1
+        if devfeed_global == 1 { deo_rc = forge_dispatch_gelu_bwd(eo, dexg, deo, T * d) }
+        if deo_rc != 0 { nn_gelu_bwd(eo, dexg, deo, T * d) }
         // accumulate grads DIRECTLY into the packed dexpW[e*dd]/dexpB[e*d] (bwd_off
         // zeros+writes the per-expert slice in place — no deW/deB temp + copy-back).
         let dxt_e = t_zeros(T * d)
         nn_conv1d_bwd_off(xt, expW, e * dd, deo, dexpW, e * dd, dxt_e, dexpB, e * d, T, d, d, K, 1)
-        let mut ai = 0
-        while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dxt_e, ai)); ai = ai + 1 }
+        // dx += dxt_e  (device in-place add, byte-eq CPU fallback)
+        let _ = farr_add_inplace_gpu(dx, dxt_e, T * d)
         let _ = t_free(eo); let _ = t_free(dexg)
         let _ = t_free(deo); let _ = t_free(dxt_e)
         e = e + 1
@@ -247,23 +280,23 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
     let mut l = L - 1
     while l >= 0 {
         let hnl = t_zeros(T * d)
-        let mut hi = 0
-        while hi < T * d { t_set(hnl, hi, t_get(hn, l * T * d + hi)); hi = hi + 1 }
-        let dhn = t_zeros(T * d); nn_gelu_bwd(hnl, dx, dhn, T * d)
+        let _ = farr_copy_slice_gpu(hn, l * T * d, hnl, 0, T * d)
+        let dhn = t_zeros(T * d)
+        let mut dhn_rc = -1
+        if devfeed_global == 1 { dhn_rc = forge_dispatch_gelu_bwd(hnl, dx, dhn, T * d) }
+        if dhn_rc != 0 { nn_gelu_bwd(hnl, dx, dhn, T * d) }
         let xhl = t_zeros(T * d); let invl = t_zeros(1)
-        let mut xi2 = 0
-        while xi2 < T * d { t_set(xhl, xi2, t_get(xh, l * T * d + xi2)); xi2 = xi2 + 1 }
+        let _ = farr_copy_slice_gpu(xh, l * T * d, xhl, 0, T * d)
         t_set(invl, 0, t_get(inv, l))
         let dh = t_zeros(T * d)
         nn_groupnorm_bwd_off(xhl, invl, tgG, l * d, dhn, dtgG, l * d, dtgB, l * d, dh, T, d, 1)
         // conv branch operand = tin[l] (cached layer input); dconv_in adds to dx
         let tinl = t_zeros(T * d)
-        let mut ti = 0
-        while ti < T * d { t_set(tinl, ti, t_get(tin, l * T * d + ti)); ti = ti + 1 }
+        let _ = farr_copy_slice_gpu(tin, l * T * d, tinl, 0, T * d)
         let dconv_in = t_zeros(T * d)
         nn_conv1d_bwd_off(tinl, tcW, l * dd, dh, dtcW, l * dd, dconv_in, dtcB, l * d, T, d, d, K, _pow2(l))
-        let mut ai = 0
-        while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dconv_in, ai)); ai = ai + 1 }
+        // dx += dconv_in  (device in-place add, byte-eq CPU fallback)
+        let _ = farr_add_inplace_gpu(dx, dconv_in, T * d)
         let _ = t_free(hnl); let _ = t_free(dhn); let _ = t_free(xhl); let _ = t_free(invl)
         let _ = t_free(dh); let _ = t_free(tinl); let _ = t_free(dconv_in)
         l = l - 1
@@ -271,9 +304,11 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
     // embed-conv bwd (x0 = conv(xe); dx now = grad w.r.t. x0)
     let dxe = t_zeros(T * d)
     nn_conv1d_bwd(xe, ecW, dx, decW, dxe, decB, T, d, d, K, 1)
-    let mut zi = 0
-    while zi < V * d { t_set(dembed, zi, 0.0); zi = zi + 1 }
-    nn_embedding_bwd_scatter(dxe, tokens, dembed, T, d)
+    // zero dembed (device, byte-eq CPU fallback) before scatter-add
+    let _ = farr_zero_slice_gpu(dembed, 0, V * d)
+    let mut ebs_rc = -1
+    if devfeed_global == 1 { ebs_rc = forge_dispatch_embedding_bwd_scatter(dxe, tokens, dembed, T, d, V) }
+    if ebs_rc != 0 { nn_embedding_bwd_scatter(dxe, tokens, dembed, T, d) }
     let _ = t_free(dynorm); let _ = t_free(dy); let _ = t_free(dlogits_r)
     let _ = t_free(dex_out); let _ = t_free(dxt_r); let _ = t_free(dx)
     let _ = t_free(dxe)
@@ -384,6 +419,12 @@ fn load_window(cell_bytes: int, n_bytes: int, off: int,
 }
 
 fn _adam(W: int, gW: int, m: int, v: int, n: int, lr: float, wd: float, t: int) {
+    // device-resident AdamW (forge keepmv arm, rc 0) else proven host optimizer.
+    // forge_dispatch_adamw is byte-eq to opt_adamw_step (elementwise in-place,
+    // no cross-element reduction); returns -1 on a no-CUDA build → host runs.
+    if devfeed_global == 1 {
+        if forge_dispatch_adamw(W, gW, m, v, n, lr, 0.9, 0.999, 0.00000001, wd, t) == 0 { return }
+    }
     opt_adamw_step(W, gW, m, v, n, lr, 0.9, 0.999, 0.00000001, wd, t)
 }
 
@@ -633,6 +674,11 @@ fn main() {
     let mitosis_on  = if cli_has(argv, "--no-mitosis") { 0 } else { 1 }
     let corpus_paths = cli_corpus(argv)
     let out_ckpt = cli_val(argv, "--out")
+    // device-resident NN-op gate (a_train_flame_forge): CLM_PROD_DEVFEED=1 (or
+    // --devfeed) routes the non-offset NN ops + AdamW through forge_dispatch_*
+    // (device-resident on a CUDA host; byte-eq host fallback). DEFAULT OFF.
+    if env("CLM_PROD_DEVFEED") != "" { devfeed_global = 1 }
+    if cli_has(argv, "--devfeed") { devfeed_global = 1 }
 
     // 303M-class canonical config — the REAL clm303_L4_d3784 shape (L4·d3784·E2->
     // Emax4 = true 303M). GPU dispatch target; full 303M LEARNING is a separate
