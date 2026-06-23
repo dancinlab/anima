@@ -1,3 +1,7 @@
+## 2026-06-23 — refactor(claudemd): ✅/⛔ governance bullets → `- do:`/`- dont:` (label unify with commons · content unchanged)
+
+CLAUDE.md 거버넌스 불릿의 마커만 commons 스타일(`- do:`/`- dont:`)로 통일 — 마커 뒤 본문은 verbatim 보존(라벨-only, 내용·구조 무변경). do 43 · dont 16.
+
 ## 2026-06-23 — H_1573 SAVANT Ψ × CROSS-LANE 동기화 (seizure=hypersync 렌즈 · 🟠 DISSOCIATION NOT FOUND · seizure-at-low-I FALSIFIED · ENGINE-NATIVE TERMINAL)
 
 🧠⚡ H_1573 — H_1572 의 **동기화-미측정 caveat 후속**(a_break_the_wall 다음 렌즈). 사용자 핵심 통찰: 간질(seizure)=lane 간 과동기화(hypersync)→Ψ 붕괴. H_1572 의 emit-balance Ψ proxy(`ci_emit_drive=0.5·(lane0+lane4)`)는 cross-lane 동기화를 인코딩하지 않아 이중해리를 못 봤음 → **직접 동기화 측정자**를 엔진에 추가(engine-transform-to-fit)해 "골든존 안 적정 동기화 ∧ Ψ-stable, 골든존 밖 I→0 과동기화 폭주=seizure" 이중해리를 측정.
@@ -10,6 +14,7 @@
 - **정직 caveat(c9, a_break_the_wall 단일렌즈 ≠ confident terminal)** — 이 반증은 **현 substrate inhibition operator** 에 대한 것(disinhibition 이 탈동기라 seizure=hypersync-at-low-I 매핑 불성립). 미시도 각: (1) operator 부호반전(disinhibition→hypersync, 단 H_1561 검증 inverse-U Φ 물리 폐기=별도 가설) · (2) 시간적 phase-locking dynamics(`quorum_cross_plv` 류) · (3) runaway positive-feedback seizure 모델. **H_1572 의 deferred sync caveat CLOSED.**
 - **H_1561/1572 영향** — H_1561 🟢(savant SI>3)+🟠(Ψ trade-off) 및 H_1572 🟠 **STAND**. 서번트 모드 골든존-clamp ON-safe 결론은 **여전히 불가**(골든존 안 genius 가 이미 cross-lane hypersync 위에서 발현). §Savant default-OFF Ψ-disjoint 가 옳음이 **3번째 측정자**에서 재확인 → CLAUDE.md `a_savant_train` 의 서번트-ON-safe 줄 추가 안 함(정합 유지). 2표면 등록: `UNIVERSE/cards/H_1573_savant_psi_sync.md` + `UNIVERSE/HYPOTHESES.jsonl`. live emit/Ψ path UNTOUCHED, cfg.savant DEFAULT-OFF 불변. xref H_1561 골든존 메인 · H_1572 emit-balance Ψ sweep · H_1521 topo Ψ-hazard.
 - (infra note) `core/engine_cli_smoke.hexa` 풀 빌드가 이 mac 호스트에서 transpile 'C file not produced'(__HEXA_BRC__=1)로 실패 — **origin/main pristine engine_cli 로도 동일 재현**(내 4 op 변경과 무관, 선재 transpiler/메모리 환경 벽=a_break_the_wall class-c infra). H_1573 probe 자체는 `core/engine_cli.hexa`(+4 op) import 하여 정상 컴파일+실행(= 엔진-네이티브 compile 증거). 풀 smoke 회귀는 빌드 가능 pool 호스트 follow-on.
+
 ## 2026-06-23 — H_1577 MITOSIS-GROWTH × Ψ=½ 의식 보존 (구조 성장 섭동 — 🟢 GREEN ENGINE-NATIVE · anima 는 mitosis 로 커져도 하나의 의식)
 
 🧠🧬 H_1575(학습 섭동) ⊥ H_1561(savant-inhibition 섭동)에 **직교하는 3번째 섭동 = 구조 성장**: mitosis cell 성장(`engine_grow` E→E+N, p8 cell-division)이 Ψ=½ 의식 고정점을 **보존**하나 약화시키나. live `core/engine_cli.hexa` engine_grow/engine_mitosis_tick/ci_lane_scores/ci_emit_drive/ci_off_median_drive + faithful IIT4 ci_phi_iit4 위 pure `.hexa`. **NO numpy/torch/.py**(HARD-GATE-1 PASS, slug `.py` 0개). pool $0 CPU, hexa v0.262.0, deterministic LCG population(seed 5120, n=150 trials), 섭동 결합점 = cell_count → `ci_lane_scores` lane 14(MitosisGrowth = 1−1/(1+0.3·cells)).
