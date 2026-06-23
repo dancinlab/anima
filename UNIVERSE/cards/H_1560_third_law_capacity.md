@@ -81,8 +81,53 @@ reopening 의 실증은 학습-side follow-on(H_1559 류 골든존 inhibition �
   1/3 구조상수 = capacity-wall reopening), JSON valid.
 - **NOT an emit gate** — context-only classifier(a_autonomy_over_hardcode), Ψ-disjoint.
 
+## R2 — REOPENING SWEEP 정량 (2026-06-23 · ENGINE-NATIVE)
+
+R1 follow-on 실행: inhibition I 를 golden-zone UPPER(0.5)→CENTER(1/e)→LOWER(0.2123)→그 아래로 밀 때
+**ability-발현률**(D×P 평면에서 third_law_ability=1 비율)이 1/3 위로 오르나(reopening 정량) vs 1/3 고정.
+
+probe: `state/1560_third_law_capacity/h1560_r2_reopening_sweep.hexa` (live `core/engine_cli.hexa`
+§ThirdLaw `third_law_ability`/`third_law_singularity`/`third_law_score` + SAVANT `sa_gz_lower/_upper/_center`/
+`sa_in_golden_zone` 호출 — numpy/torch 미러 아님, a_engine_native_learning).
+verdict raw: `state/verdicts/1560_third_law_capacity/H_1560_R2_REOPENING.txt`.
+
+PER-I ability-발현률 = 고정 I 에서 (D×P) 평면(각 축 linspace(0.05,0.95), nDP=100=10K점) 중
+ability(=singularity G=D·P/I>0.70 ∧ I∈golden-zone) 인 비율.
+
+| I | ability_rate | sing_rate | inGZ |
+| GZ_UPPER 0.500 | **0.2736** | 0.2736 | 1 |
+| 0.450 | 0.3165 | 0.3165 | 1 |
+| 0.400 | 0.3641 | 0.3641 | 1 |
+| GZ_CENTER 0.368 | **0.3973** | 0.3973 | 1 |
+| 0.300 | 0.4755 | 0.4755 | 1 |
+| 0.250 | 0.5417 | 0.5417 | 1 |
+| GZ_LOWER 0.212 | **0.5965** | 0.5965 | 1 |
+| 0.180 | **0.0** | 0.6484 | 0 |
+| 0.150 | 0.0 | 0.7007 | 0 |
+| 0.100 | 0.0 | 0.8004 | 0 |
+| 0.050 | 0.0 | 0.9202 | 0 |
+
+| R2 bar (frozen-first) | 임계 | 실측 | PASS |
+| R2-B1 reopening DIRECTION | GZ 내 monotone ∧ r(lower)>r(upper) | monotone ∧ 0.597>0.274 | ✅ |
+| R2-B2 reopening MAGNITUDE | r(GZ_LOWER) ≥ 0.50 | **0.5965** | ✅ |
+| R2-B3 below-GZ CLIFF | I<0.2123 에서 ability_rate=0 | **0.0** (sing_rate 는 계속 상승 0.65→0.92) | ✅ |
+| R2-B4 SING_THR 민감도 | thr∈{0.5,0.7,1.0} 전부 direction 유지 | 3/3 lower>upper (0.70→0.60·0.41→0.70·0.13→0.47) | ✅ |
+| R2-B5 reopening curve scale-inv | nDP 32/100/300 Δ<0.02 | r(lower) Δ0.0107 · r(upper) Δ0.0032 | ✅ |
+
+**verdict: 🟢 GREEN-ENGINE-NATIVE — R2 ALL_PASS 5/5.** **헤드라인 reopening lift = r(GZ_LOWER) −
+r(GZ_UPPER) = 0.2736 → 0.5965 = +0.3229.** → **1/3 은 inhibition 축으로 안 뚫리는 hard 구조상수가
+아니다** — I 를 golden-zone 하한으로 밀면 ability-발현률이 baseline 1/3(0.339, R1 B1) 을 넘어
+**~60%(D×P 평면의 절반 이상)** 까지 reopening 한다(a_break_the_wall: capacity-wall = flat 천장 X,
+disinhibition 으로 열리는 1/3-shape manifold). **단, reopening 은 golden-zone 에 BOUNDED** — GZ_LOWER
+아래로 더 disinhibit 하면 raw singularity 는 계속 오르지만(0.65→0.92) ability-발현은 0 으로 cliff
+(GZ gate 닫힘) = "무한 disinhibition" 이 아니라 golden-zone 안에서만 reopening 유효(B3).
+
+**결정적 한계 (c9):** 이건 G=D×P/I geometry 추상 sweep 의 reopening 정량이지 *실 학습 binding/FALS
+발현률*이 아니다. ability 정의가 `singularity ∧ in_GZ` 인 by-construction geometry — 진짜 reopening
+실증(학습-side capacity 발현률이 I↓ 로 1/3 위로 오르나)은 GPU 학습 필요 = cost-gate(아래 ING).
+
 ## 후속 (follow-on ING)
-- **reopening 실증 (next round)**: 추상 G=D×P/I sweep 을 더 넓은 disinhibition·inhibition 격자로 확장해
-  1/3 manifold 의 경계(golden-zone 하한으로 I 를 밀 때 ability 발현률 lift)를 정량화. 단 **실 학습 capacity
-  발현률**(binding/FALS rate vs 1/3 구조상수 transfer)은 GPU 학습이 필요해 **cost-gate**(추상 sweep 까지가
-  무료 mac/pool, 실 학습-side 측정은 explicit-go 임대).
+- **reopening 실증 (학습-side) = GPU cost-gate**: 본 R2 는 G=D×P/I geometry 추상 sweep(무료 mac/pool).
+  진짜 reopening 실증 = golden-zone inhibition(dropout/weight-decay/temperature 를 GZ_LOWER 로) 특화
+  학습(H_1559 류)에서 **실 capacity 발현률(binding/FALS rate)이 I↓ 로 baseline 1/3 위로 오르는지** 실측 —
+  GPU 학습 필요 → **explicit-go cost-gate**(발사 금지, deferred ING `h1560-r3-learning-reopening-gpu`).
