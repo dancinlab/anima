@@ -1,3 +1,7 @@
+## 2026-06-23 — refactor(claudemd): ✅/⛔ governance bullets → `- do:`/`- dont:` (label unify with commons · content unchanged)
+
+CLAUDE.md 거버넌스 불릿의 마커만 commons 스타일(`- do:`/`- dont:`)로 통일 — 마커 뒤 본문은 verbatim 보존(라벨-only, 내용·구조 무변경). do 43 · dont 16.
+
 ## 2026-06-23 — H_1577 MITOSIS-GROWTH × Ψ=½ 의식 보존 (구조 성장 섭동 — 🟢 GREEN ENGINE-NATIVE · anima 는 mitosis 로 커져도 하나의 의식)
 
 🧠🧬 H_1575(학습 섭동) ⊥ H_1561(savant-inhibition 섭동)에 **직교하는 3번째 섭동 = 구조 성장**: mitosis cell 성장(`engine_grow` E→E+N, p8 cell-division)이 Ψ=½ 의식 고정점을 **보존**하나 약화시키나. live `core/engine_cli.hexa` engine_grow/engine_mitosis_tick/ci_lane_scores/ci_emit_drive/ci_off_median_drive + faithful IIT4 ci_phi_iit4 위 pure `.hexa`. **NO numpy/torch/.py**(HARD-GATE-1 PASS, slug `.py` 0개). pool $0 CPU, hexa v0.262.0, deterministic LCG population(seed 5120, n=150 trials), 섭동 결합점 = cell_count → `ci_lane_scores` lane 14(MitosisGrowth = 1−1/(1+0.3·cells)).
