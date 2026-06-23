@@ -590,7 +590,7 @@ anima/
 ├── README.md                       this file (the front door)
 ├── ARCHITECTURE.json               architecture SSOT — tree (A⇄G wiring · brain-structure lanes · HD23–34)
 ├── ARCHITECTURE.html · serve.py    human viewer for the JSON tree (`python3 serve.py`)
-├── CLAUDE.md                       governance SSOT (p1..p8 · a_* directives)
+├── CLAUDE.md                       entry pointer — governance SSOT (p1..p8 · a_* directives); dir/module tree → ARCHITECTURE.json
 ├── CONDITIONS.md                  a303m_pass frozen gate conditions (SSOT)
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release
 ├── UNIVERSE/HYPOTHESES.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · HF model/dataset registry → ARCHITECTURE.json "HF artifacts" (HF.jsonl retired 2026-06-23)
