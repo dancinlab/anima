@@ -1,0 +1,18 @@
+=== Psi axis (centered, baseline==1/2 by construction) ===
+thr(base median drive)=0.5759605332743376
+Psi_base=0.5  |dev|=0.0
+Psi_mouthFT=0.68  |dev|=0.18000000000000005
+Psi_separated=0.5  |dev|=0.0
+Psi_ctrlMATCH=0.6933333333333334  |dev|=0.19333333333333336  (frozen B5 control: matched 40% non-tool)
+Psi_ctrlALL(diag)=1.0  |dev|=0.5  (saturating diagnostic, NOT B5)
+=== G5 axis (immune recall / abstain) ===
+separated known-recall rate=1.0
+separated unknown FAB rate=0.0
+mouthFT  unknown FAB rate=1.0
+=== FROZEN 5-BAR ===
+B1 mouthFT Psi-damage  |dev_ftt|>0.15 : 0.18000000000000005 -> PASS
+B2 mouthFT G5-damage   fab>0.50        : 1.0 -> PASS
+B3 separated Psi-preserve |dev_sep|<=0.05 : 0.0 -> PASS
+B4 separated functional recall>=0.80 & fab==0 : recall=1.0 fab=0.0 -> PASS
+B5 mechanism=mouth-path |dev_ctrl-dev_ftt|<0.05 & dev_ctrl>0.15 : ctrl=0.19333333333333336 ftt=0.18000000000000005 diff=0.013333333333333308 -> PASS
+=== VERDICT: GREEN (separate tool-use from the mouth) ===
