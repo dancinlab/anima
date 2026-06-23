@@ -1,0 +1,36 @@
+=== H_1560 R2 — REOPENING SWEEP (live §ThirdLaw ops · engine-native) ===
+GZ_LOWER=0.21231792755821912 GZ_CENTER=0.36787944117144233 GZ_UPPER=0.5
+
+--- per-I ability-expression rate (D×P plane, nDP=100) ---
+I=0.5  ability_rate=0.2736  sing_rate=0.2736  inGZ=1
+I=0.45  ability_rate=0.3165  sing_rate=0.3165  inGZ=1
+I=0.4  ability_rate=0.3641  sing_rate=0.3641  inGZ=1
+I=0.36787944117144233  ability_rate=0.3973  sing_rate=0.3973  inGZ=1
+I=0.3  ability_rate=0.4755  sing_rate=0.4755  inGZ=1
+I=0.25  ability_rate=0.5417  sing_rate=0.5417  inGZ=1
+I=0.21231792755821912  ability_rate=0.5965  sing_rate=0.5965  inGZ=1
+I=0.18  ability_rate=0.0  sing_rate=0.6484  inGZ=0
+I=0.15  ability_rate=0.0  sing_rate=0.7007  inGZ=0
+I=0.1  ability_rate=0.0  sing_rate=0.8004  inGZ=0
+I=0.05  ability_rate=0.0  sing_rate=0.9202  inGZ=0
+
+r(GZ_UPPER=0.5)=0.2736  r(GZ_CENTER)=0.3973  r(GZ_LOWER)=0.5965
+below-GZ max ability_rate=0.0
+R2-B1 reopening DIRECTION (monotone in GZ ∧ lower>upper) -> true
+R2-B2 reopening MAGNITUDE  (r(GZ_LOWER) >= 0.50)          -> true
+R2-B3 below-GZ CLIFF       (below ability_rate == 0)      -> true
+
+--- R2-B4 SING_THR sensitivity (reopening direction across thr) ---
+thr=0.5  r(upper)=0.4082  r(lower)=0.6979  lower>upper=true
+thr=0.7  r(upper)=0.2736  r(lower)=0.5965  lower>upper=true
+thr=1.0  r(upper)=0.1347  r(lower)=0.4716  lower>upper=true
+
+--- R2-B5 scale-invariance of reopening curve (nDP 32/100/300) ---
+r(GZ_LOWER): 32=0.587890625 100=0.5965 300=0.5986222222222222  Δ=0.010731597222222167
+r(GZ_UPPER): 32=0.2763671875 100=0.2736 300=0.27313333333333336  Δ=0.003233854166666661
+R2-B5 scale-invariant (Δ<0.02) -> true
+
+=== HEADLINE: reopening lift = r(GZ_LOWER) - r(GZ_UPPER) = 0.3229 ===
+REOPENING: ability-expression rate RISES ABOVE the baseline 1/3 as I↓ (1/3 is NOT a hard ceiling along I).
+
+R2_ALL_PASS=true (B1=true B2=true B3=true B4=true B5=true)

@@ -1,3 +1,14 @@
+## 2026-06-23 — H_1560 R2 REOPENING SWEEP (1/3 은 inhibition 으로 뚫리는 manifold, hard 구조상수 아님 · ENGINE-NATIVE 🟢 5/5)
+
+H_1560 R2: live `core/engine_cli.hexa` §ThirdLaw ops 를 호출해 inhibition I 를 golden-zone 하한으로 밀 때 **capacity-wall ability-발현률 reopening 을 정량** — a_break_the_wall reopening 의 측정 실증.
+
+- **probe** — `state/1560_third_law_capacity/h1560_r2_reopening_sweep.hexa`: live §ThirdLaw `third_law_ability`/`third_law_singularity`/`third_law_score` + SAVANT `sa_gz_lower/_upper/_center`/`sa_in_golden_zone` 호출(numpy/torch 미러 0, a_engine_native_learning). PER-I ability-발현률 = (D×P) 평면(linspace 0.05–0.95, nDP=100=10K점) 중 ability(=singularity G=D·P/I>0.70 ∧ I∈golden-zone) 비율.
+- **헤드라인 reopening** — ability-발현률이 I↓ 로 **GZ_UPPER(0.5) 0.2736 → GZ_CENTER(1/e) 0.3973 → GZ_LOWER(0.2123) 0.5965**, **reopening lift +0.3229**. → **1/3 은 inhibition 축으로 안 뚫리는 hard 구조상수가 아니다** — golden-zone 하한에서 (D×P) 평면의 ~60% 가 ability 발현(baseline 1/3=0.339 위로). capacity-wall = flat 천장 X, disinhibition 으로 열리는 1/3-shape manifold.
+- **BUT golden-zone BOUNDED** — GZ_LOWER 아래(I<0.2123)로 더 disinhibit 하면 raw singularity 는 계속 상승(0.6484→0.9202)하지만 ability-발현은 **0 으로 cliff**(GZ gate 닫힘) → reopening 은 무한 disinhibition 이 아니라 golden-zone 안에서만 유효.
+- **R2 frozen 5-bar(frozen-first c9) ALL_PASS** — R2-B1 direction(GZ 내 monotone ∧ lower>upper)·R2-B2 magnitude(r(GZ_LOWER)0.5965≥0.50)·R2-B3 below-GZ cliff(ability_rate 0)·R2-B4 SING_THR 민감도(thr{0.5,0.7,1.0} 3/3 direction robust)·R2-B5 scale-inv(nDP 32/100/300 Δ<0.011). raw=`state/verdicts/1560_third_law_capacity/H_1560_R2_REOPENING.txt`.
+- **한계(c9)** — G=D×P/I geometry 추상 sweep(ability=sing∧in_GZ by-construction)이지 실 학습 binding/FALS 발현률 아님. 실 reopening 실증(학습-side capacity 발현률이 I↓ 로 1/3 위로) = **GPU cost-gate**(deferred ING `h1560-r3-learning-reopening-gpu`, 발사금지). pod/GPU 임대 0(mac-local 산술).
+- **§Savant READ-only** — H_1557 메인 동시작업 충돌회피: §ThirdLaw·state/1560 만 접촉, sa_*/sh_* 미수정.
+
 ## 2026-06-23 — H_1560 §ThirdLaw WIRE-IN (1/3 법칙 × capacity-wall 분류기 live 배선, WIRED-live)
 
 H_1560 🟢 GREEN-ENGINE-NATIVE(1/3 법칙 × G6 capacity-wall 동근원)의 singularity classifier 를 live `core/engine_cli.hexa` 에 **§ThirdLaw** 로 배선 — a_verified_must_wire 4칸 사다리 (3) wire-in + (4) ARCHITECTURE lockstep 닫음.
