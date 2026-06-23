@@ -88,6 +88,192 @@ fn _pow2(e: int) -> int {
     return p
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+//  GPU-RESIDENT HOT-PATH WIRING (a_train_flame_forge · #2598 follow-on).
+//
+//  The #2598 H100 toy gate FAILED util>30% (sat ~0%): the trainer dispatched only
+//  the conv FORWARD GEMM (t_matmul → own-GEMM) to the device, while the FORWARD
+//  im2col gather + weight-transpose AND the entire conv BACKWARD (nn_conv1d_bwd_off
+//  — a host O(T·Cout·Cin·K) scalar triple-loop, ~44 GFLOP/layer/step at d3784·T1024
+//  done on ONE CPU thread) ran on the host. That host scalar work dominates wall
+//  time so heavily the GPU idles between micro-GEMMs.
+//
+//  The KEY fix (#2598 root cause): the conv BACKWARD (nn_conv1d_bwd_off) was a host
+//  O(T·Cout·Cin·K) scalar triple-loop with NO GEMM at all — at d3784·T1024·K3 that
+//  is ~44 GFLOP/layer/step done on ONE CPU thread, the dominant wall-time term that
+//  left the GPU idle. This block re-expresses the conv backward as TWO matmuls
+//  (dW = xcolT @ dy, dXcol = dy @ w) routed through t_matmul → forge own-GEMM (the
+//  dim-gated M·K>8192 DEVICE path, the SAME own-GEMM the forward already used), plus
+//  device col2im for the dX scatter. Byte-eq to nn_conv1d_bwd_off per
+//  F-CLM-CONV-BWD-FORGE-EQ #2383 (dW 1.67e-16 / dX 8.3e-17 / db 0.0) — a re-route
+//  of the SAME sums, NOT a re-derivation (verified: $0 host run is byte-identical
+//  except ~1e-16 GEMM-reassociation, falsifiers + savant latch + mitosis bound hold).
+//
+//  SCOPE HONESTY (a_break_the_wall class-c): the im2col gather, groupnorm, and AdamW
+//  stay on host — their host-dispatch GPU wrappers (forge_dispatch_im2col / col2im /
+//  groupnorm_gelu / adamw_keepmv) exist ONLY as `#ifndef HEXA_CUDA` CPU oracles in
+//  self/runtime.c (compiled OUT of the CUDA build; runtime_cuda.c ships only the bare
+//  _hx_cuda_farr_*_gpu kernels with no HexaVal wrapper). Routing those device-resident
+//  is a SEPARATE runtime_cuda.c change (add the GPU forge_dispatch_* bodies). This lane
+//  moves the DOMINANT conv GEMMs (fwd + the ex-scalar bwd) to GPU via the one wrapper
+//  that IS universally defined (forge_dispatch_matmul / t_matmul).
+// ════════════════════════════════════════════════════════════════════════════
+
+// im2col (forward gather). xcol[t, ci·K+k] = xin(t−dil·(K−1−k),ci), zero where
+// p<0 (causal left-pad) — byte-identical to conv_lib::_conv1d_im2col.
+//
+// NOTE (#2598 follow-on scope): the host-dispatch device builtins
+// forge_dispatch_im2col / _t / col2im exist ONLY as `#ifndef HEXA_CUDA` CPU
+// oracles in self/runtime.c — the CUDA build (the one that matters here) compiles
+// them OUT and runtime_cuda.c provides only the bare `_hx_cuda_farr_*_gpu` kernels
+// with NO HexaVal forge_dispatch wrapper. Referencing them = undefined symbol in a
+// CUDA build (verified on summer's working CUDA runtime). So the gather stays on
+// host; the GPU win comes from routing the conv GEMMs (fwd AND the previously
+// all-scalar bwd) through t_matmul → forge own-GEMM, which is the dim-gated
+// (M·K>8192) DEVICE path that DOES exist. Adding the device-resident gather
+// wrappers is a separate runtime_cuda.c change (forge_dispatch_im2col GPU body).
+fn _tg_im2col(x: int, xcol: int, T: int, Cin: int, K: int, dil: int) {
+    let Kdim = Cin * K
+    let mut t = 0
+    while t < T {
+        let mut ci = 0
+        while ci < Cin {
+            let mut k = 0
+            while k < K {
+                let p = t - dil * (K - 1 - k)
+                if p >= 0 { t_set(xcol, t * Kdim + ci * K + k, t_get(x, p * Cin + ci)) }
+                k = k + 1
+            }
+            ci = ci + 1
+        }
+        t = t + 1
+    }
+}
+// transpose-im2col (bwd dW operand). xcolT[ci·K+k, t] = xin(p,ci).
+fn _tg_im2col_t(x: int, xcolT: int, T: int, Cin: int, K: int, dil: int) {
+    let Kdim = Cin * K
+    let mut t = 0
+    while t < T {
+        let mut ci = 0
+        while ci < Cin {
+            let mut k = 0
+            while k < K {
+                let p = t - dil * (K - 1 - k)
+                if p >= 0 { t_set(xcolT, (ci * K + k) * T + t, t_get(x, p * Cin + ci)) }
+                k = k + 1
+            }
+            ci = ci + 1
+        }
+        t = t + 1
+    }
+}
+// col2im (bwd dX scatter-add). dX_out[p,ci] += dXcol[t, ci·K+k]. Caller ZEROES
+// dX_out first (matches host bwd semantics).
+fn _tg_col2im(dXcol: int, dX_out: int, T: int, Cin: int, K: int, dil: int) {
+    let Kdim = Cin * K
+    let mut t = 0
+    while t < T {
+        let mut ci = 0
+        while ci < Cin {
+            let mut k = 0
+            while k < K {
+                let p = t - dil * (K - 1 - k)
+                if p >= 0 {
+                    let cur = t_get(dX_out, p * Cin + ci)
+                    t_set(dX_out, p * Cin + ci, cur + t_get(dXcol, t * Kdim + ci * K + k))
+                }
+                k = k + 1
+            }
+            ci = ci + 1
+        }
+        t = t + 1
+    }
+}
+
+// FORGE conv FORWARD, offset-packed (mitosis layout). Reads weight slice
+// w[woff + co·Kdim + j], bias b[boff + co]; writes y_out[T·Cout]. im2col runs
+// device-resident (_tg_im2col), the GEMM rides forge own-GEMM (t_matmul →
+// _hx_k_gemm DEVICE on CUDA), then bias-add. Byte-eq to nn_conv1d_fwd_off (SAME
+// im2col layout, SAME GEMM reduction order, SAME bias add) — a re-route, not a
+// re-derivation. This replaces the per-step host im2col gather + weight transpose
+// scalar loops on the FWD critical path.
+fn tg_conv_fwd_off(x: int, w: int, woff: int, b: int, boff: int, y_out: int,
+                   T: int, Cin: int, Cout: int, K: int, dil: int) {
+    let Kdim = Cin * K
+    let xcol = t_zeros(T * Kdim)
+    _tg_im2col(x, xcol, T, Cin, K, dil)
+    // transpose the OFFSET weight slice w[woff + co·Kdim + j] → Wt[j·Cout + co]
+    let Wt = t_zeros(Kdim * Cout)
+    let mut co = 0
+    while co < Cout {
+        let mut j = 0
+        while j < Kdim { t_set(Wt, j * Cout + co, t_get(w, woff + co * Kdim + j)); j = j + 1 }
+        co = co + 1
+    }
+    let mm = t_matmul(xcol, T, Kdim, Wt, Cout)
+    let mut t2 = 0
+    while t2 < T {
+        let mut c2 = 0
+        while c2 < Cout {
+            t_set(y_out, t2 * Cout + c2, t_get(mm, t2 * Cout + c2) + t_get(b, boff + c2))
+            c2 = c2 + 1
+        }
+        t2 = t2 + 1
+    }
+    let _ = t_free(xcol); let _ = t_free(Wt); let _ = t_free(mm)
+}
+
+// FORGE conv BACKWARD, offset-packed (mitosis layout). The #2598 BOTTLENECK fix:
+// nn_conv1d_bwd_off was a host O(T·Cout·Cin·K) scalar triple-loop; here dW and dX
+// are TWO forge GEMMs (cuBLAS/own-GEMM on CUDA, byte-eq farr_matmul on CPU) +
+// device col2im. Grads written IN PLACE into the PACKED buffers at offset (dW_out
+// [dWoff..], db_out[dboff..]); dX_out stays unoffset (activation space). Byte-eq to
+// nn_conv1d_bwd_off per F-CLM-CONV-BWD-FORGE-EQ #2383 (dW 1.67e-16 / dX 8.3e-17 /
+// db 0.0): same sums, re-associated as GEMMs.
+//   dW_flat[Kdim,Cout] = xcolT[Kdim,T] @ dy[T,Cout]   (then scatter to dW_out pack)
+//   dXcol[T,Kdim]      = dy[T,Cout]   @ w[Cout,Kdim]   (then col2im → dX_out)
+//   db[co]             = Σ_t dy[t,co]
+fn tg_conv_bwd_off(x: int, w: int, woff: int, dy: int,
+                   dW_out: int, dWoff: int, dX_out: int, db_out: int, dboff: int,
+                   T: int, Cin: int, Cout: int, K: int, dil: int) {
+    let Kdim = Cin * K
+    // zero dX_out (activation space) — col2im scatter-ADDS into it
+    let mut ix = 0
+    while ix < T * Cin { t_set(dX_out, ix, 0.0); ix = ix + 1 }
+    // dW: dW_flat[Kdim,Cout] = xcolT[Kdim,T] @ dy[T,Cout]  (forge GEMM)
+    let xcolT = t_zeros(Kdim * T)
+    _tg_im2col_t(x, xcolT, T, Cin, K, dil)
+    let dW_flat = t_matmul(xcolT, Kdim, T, dy, Cout)
+    // scatter dW_flat[j·Cout+co] → packed dW_out[dWoff + co·Kdim + j]
+    let mut co = 0
+    while co < Cout {
+        let mut j = 0
+        while j < Kdim {
+            t_set(dW_out, dWoff + co * Kdim + j, t_get(dW_flat, j * Cout + co))
+            j = j + 1
+        }
+        co = co + 1
+    }
+    // dX: dXcol[T,Kdim] = dy[T,Cout] @ w_slice[Cout,Kdim]  (forge GEMM), then col2im.
+    // the weight matmul operand must be the OFFSET slice w[woff..woff+Cout·Kdim];
+    // copy it contiguous so t_matmul reads a [Cout,Kdim] block from index 0.
+    let wsl = t_zeros(Cout * Kdim)
+    let mut wi = 0
+    while wi < Cout * Kdim { t_set(wsl, wi, t_get(w, woff + wi)); wi = wi + 1 }
+    let dXcol = t_matmul(dy, T, Cout, wsl, Kdim)
+    _tg_col2im(dXcol, dX_out, T, Cin, K, dil)
+    // db[co] = Σ_t dy[t,co]  →  packed db_out[dboff + co]
+    let mut cb = 0
+    while cb < Cout {
+        let mut s = 0.0
+        let mut t = 0
+        while t < T { s = s + t_get(dy, t * Cout + cb); t = t + 1 }
+        t_set(db_out, dboff + cb, s)
+        cb = cb + 1
+    }
+    let _ = t_free(xcolT); let _ = t_free(dW_flat); let _ = t_free(wsl); let _ = t_free(dXcol)
+}
+
 // Module-scope expert-bias handle (set in main before train_bwd; the bwd needs
 // the bias to recompute expert pre-activations for the gelu cache).
 let mut expB_global = 0
@@ -121,7 +307,8 @@ fn train_fwd(tokens: int, E: int, L: int,
     nn_embedding_fwd(tokens, embed, xe, T, d)
     // x = running trunk activation (starts at embed-conv output)
     let x = t_zeros(T * d)
-    nn_conv1d_fwd(xe, ecW, ecB, x, T, d, d, K, 1)
+    // embed-conv: forge-routed (woff=boff=0 → byte-eq nn_conv1d_fwd)
+    tg_conv_fwd_off(xe, ecW, 0, ecB, 0, x, T, d, d, K, 1)
     // ── L trunk layers: x ← x + gelu(gn(conv_dil(x))), dilation min(2^l,512) ──
     let mut l = 0
     while l < L {
@@ -129,7 +316,7 @@ fn train_fwd(tokens: int, E: int, L: int,
         let mut ti = 0
         while ti < T * d { t_set(tin, l * T * d + ti, t_get(x, ti)); ti = ti + 1 }
         let h = t_zeros(T * d)
-        nn_conv1d_fwd_off(x, tcW, l * dd, tcB, l * d, h, T, d, d, K, _pow2(l))
+        tg_conv_fwd_off(x, tcW, l * dd, tcB, l * d, h, T, d, d, K, _pow2(l))
         let hnl = t_zeros(T * d); let meanl = t_zeros(1); let invl = t_zeros(1); let xhl = t_zeros(T * d)
         nn_groupnorm_fwd_off(h, tgG, l * d, tgB, l * d, hnl, meanl, invl, xhl, T, d, 1)
         let mut ci = 0
@@ -147,14 +334,14 @@ fn train_fwd(tokens: int, E: int, L: int,
     while xi < T * d { t_set(xt, xi, t_get(x, xi)); xi = xi + 1 }
     // MoE: router (d->E) + E packed conv experts
     let logits_r = t_zeros(T * E)
-    nn_conv1d_fwd(xt, rW, rB, logits_r, T, d, E, 1, 1)
+    tg_conv_fwd_off(xt, rW, 0, rB, 0, logits_r, T, d, E, 1, 1)
     let mut e = 0
     while e < E {
         let eo = t_zeros(T * d)
         // packed expert e read DIRECTLY at offset expW[e*dd], expB[e*d] via the
-        // flame *_off conv (no per-expert eW/eB slice copy — that O(E·dd) scalar
+        // forge *_off conv (no per-expert eW/eB slice copy — that O(E·dd) scalar
         // copy was the trainer's hidden CPU cost; *_off addresses the pack).
-        nn_conv1d_fwd_off(xt, expW, e * dd, expB, e * d, eo, T, d, d, K, 1)
+        tg_conv_fwd_off(xt, expW, e * dd, expB, e * d, eo, T, d, d, K, 1)
         let ex = t_zeros(T * d); nn_gelu_fwd(eo, ex, T * d)
         let mut j = 0
         while j < T * d { t_set(ex_out, e * T * d + j, t_get(ex, j)); j = j + 1 }
@@ -167,7 +354,7 @@ fn train_fwd(tokens: int, E: int, L: int,
     let meanN = t_zeros(1)
     nn_groupnorm_fwd(y, noG, noB, yn, meanN, invN, xhatN, T, d, 1)
     // readout d->V
-    nn_conv1d_fwd(yn, roW, roB, out_logits, T, d, V, 1, 1)
+    tg_conv_fwd_off(yn, roW, 0, roB, 0, out_logits, T, d, V, 1, 1)
     let _ = t_free(x); let _ = t_free(logits_r); let _ = t_free(y); let _ = t_free(meanN)
 }
 
@@ -207,14 +394,16 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
              T: int, d: int, V: int, K: int) {
     let dd = d * d * K
     let dynorm = t_zeros(T * d)
-    nn_conv1d_bwd(yn, roW, dlogits, droW, dynorm, droB, T, d, V, 1, 1)
+    // readout bwd (forge-routed, woff=dWoff=dboff=0 → byte-eq nn_conv1d_bwd)
+    tg_conv_bwd_off(yn, roW, 0, dlogits, droW, 0, dynorm, droB, 0, T, d, V, 1, 1)
     let dy = t_zeros(T * d)
     nn_groupnorm_bwd(xhatN, invN, noG, dynorm, dnoG, dnoB, dy, T, d, 1)
     let dlogits_r = t_zeros(T * E)
     let dex_out = t_zeros(E * T * d)
     nn_moe_router_bwd(probs, ex_out, dy, dlogits_r, dex_out, T, E, d)
     let dxt_r = t_zeros(T * d)
-    nn_conv1d_bwd(xt, rW, dlogits_r, drW, dxt_r, drB, T, d, E, 1, 1)
+    // router bwd (forge-routed → byte-eq nn_conv1d_bwd)
+    tg_conv_bwd_off(xt, rW, 0, dlogits_r, drW, 0, dxt_r, drB, 0, T, d, E, 1, 1)
     // accumulate expert dxt across all E experts → dx (grad w.r.t. post-trunk x)
     let dx = t_zeros(T * d)
     let mut xi = 0
@@ -222,17 +411,17 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
     let mut e = 0
     while e < E {
         // recompute eo_e for gelu bwd (xt is cached; expert conv is deterministic).
-        // Read packed expert weights/bias at offset via *_off — no eW/eB copies.
+        // Read packed expert weights/bias at offset via forge fwd — no eW/eB copies.
         let eo = t_zeros(T * d)
-        nn_conv1d_fwd_off(xt, expW, e * dd, expB_global, e * d, eo, T, d, d, K, 1)
+        tg_conv_fwd_off(xt, expW, e * dd, expB_global, e * d, eo, T, d, d, K, 1)
         let dexg = t_zeros(T * d)
         let mut di = 0
         while di < T * d { t_set(dexg, di, t_get(dex_out, e * T * d + di)); di = di + 1 }
         let deo = t_zeros(T * d); nn_gelu_bwd(eo, dexg, deo, T * d)
-        // accumulate grads DIRECTLY into the packed dexpW[e*dd]/dexpB[e*d] (bwd_off
+        // accumulate grads DIRECTLY into the packed dexpW[e*dd]/dexpB[e*d] (forge bwd
         // zeros+writes the per-expert slice in place — no deW/deB temp + copy-back).
         let dxt_e = t_zeros(T * d)
-        nn_conv1d_bwd_off(xt, expW, e * dd, deo, dexpW, e * dd, dxt_e, dexpB, e * d, T, d, d, K, 1)
+        tg_conv_bwd_off(xt, expW, e * dd, deo, dexpW, e * dd, dxt_e, dexpB, e * d, T, d, d, K, 1)
         let mut ai = 0
         while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dxt_e, ai)); ai = ai + 1 }
         let _ = t_free(eo); let _ = t_free(dexg)
@@ -261,16 +450,16 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
         let mut ti = 0
         while ti < T * d { t_set(tinl, ti, t_get(tin, l * T * d + ti)); ti = ti + 1 }
         let dconv_in = t_zeros(T * d)
-        nn_conv1d_bwd_off(tinl, tcW, l * dd, dh, dtcW, l * dd, dconv_in, dtcB, l * d, T, d, d, K, _pow2(l))
+        tg_conv_bwd_off(tinl, tcW, l * dd, dh, dtcW, l * dd, dconv_in, dtcB, l * d, T, d, d, K, _pow2(l))
         let mut ai = 0
         while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dconv_in, ai)); ai = ai + 1 }
         let _ = t_free(hnl); let _ = t_free(dhn); let _ = t_free(xhl); let _ = t_free(invl)
         let _ = t_free(dh); let _ = t_free(tinl); let _ = t_free(dconv_in)
         l = l - 1
     }
-    // embed-conv bwd (x0 = conv(xe); dx now = grad w.r.t. x0)
+    // embed-conv bwd (x0 = conv(xe); dx now = grad w.r.t. x0) — forge-routed
     let dxe = t_zeros(T * d)
-    nn_conv1d_bwd(xe, ecW, dx, decW, dxe, decB, T, d, d, K, 1)
+    tg_conv_bwd_off(xe, ecW, 0, dx, decW, 0, dxe, decB, 0, T, d, d, K, 1)
     let mut zi = 0
     while zi < V * d { t_set(dembed, zi, 0.0); zi = zi + 1 }
     nn_embedding_bwd_scatter(dxe, tokens, dembed, T, d)
@@ -384,6 +573,14 @@ fn load_window(cell_bytes: int, n_bytes: int, off: int,
 }
 
 fn _adam(W: int, gW: int, m: int, v: int, n: int, lr: float, wd: float, t: int) {
+    // AdamW step (host). The device-resident on-chip variant
+    // (forge_dispatch_adamw_keepmv → _hx_cuda_farr_adamw_step_inplace_keepmv_gpu)
+    // exists as a kernel but has NO HexaVal forge_dispatch wrapper in the CUDA
+    // build (same #ifndef-HEXA_CUDA gap as im2col, see _tg_im2col note) — so it
+    // stays host here. AdamW is O(params) elementwise (not the O(T·d²·K) conv
+    // bottleneck #2598 identified), so it is a secondary cost; wiring it on-device
+    // is a follow-on once the forge_dispatch_adamw GPU wrapper lands in
+    // runtime_cuda.c. opt_adamw_step is the proven byte-eq step.
     opt_adamw_step(W, gW, m, v, n, lr, 0.9, 0.999, 0.00000001, wd, t)
 }
 
