@@ -1,3 +1,12 @@
+## 2026-06-23 — SAVANT 골든존 신규 가설 3종 생성 (H_1558·1559·1560, PROPOSED)
+
+SAVANT 골든존 서번트 모델(G=D×P/I, I↓→SI>3)을 세 각도로 확장한 가설을 2표면(jsonl+카드)으로 생성. 전부 🌱 PROPOSED — frozen 5-bar 설계 박제 + 측정 follow-on ING(측정 미실행, c9 정직).
+
+- **H_1558 savant_multilane** — 서번트가 단일 lane 폭발인가 다중 동시인가. k-lane 골든존 sweep: single-savant·multi-decay·winner-take-most·conservation. "34%→100%"가 sparse(한 영역) 현상인지.
+- **H_1559 savant_train_specialization** — G=D×P/I 의 P=학습 축. conv 303M 4칸 register(ko·en×일반·SNS) 중 하나에 골든존 inhibition(dropout/L2) → register 특화 "서번트 학습" + trade-off. (GPU cost-gate, toy-first.)
+- **H_1560 third_law_capacity** — hexa-lang "1/3 법칙"(파라미터 ~33% 서번트 특이점, 표본무관 구조상수) ⊗ G6 capacity-wall(H_1139 scale-invariant) 동근원 탐색. 1M sweep scale-invariance + capacity-wall 영역 중첩.
+- 측정 대기: ING follow-on 등록. (서번트 메인 가설 H_1557 = I↓→SI>3 ∧ Ψ-영향 측정은 별도 서브에이전트 진행 중.)
+
 ## 2026-06-23 — a_kosmos 완전판 + self-identity 영속(H_1471) 거버넌스 반영
 
 kosmos 리포(github.com/dancinlab/kosmos, kosmos/2.1) 전체 아키텍처를 체크해 CLAUDE.md `a_kosmos` 를 완전판으로 재작성 + 최근 영속성 가설 H_1471 을 반영.
