@@ -1,0 +1,19 @@
+H_1566 FREEZE (frozen-first, c9) — pre-registered BEFORE the run, captured here verbatim.
+ENGINE-NATIVE: state/1566_tooluse_mouth_vs_separated/tooluse_probe.hexa imports core/engine_cli.hexa;
+every number is from a live ci_/immune_ op (ci_psi_balance_centered, ci_off_median_drive,
+immune_memory_recall_text, ci_lane_scores). NO torch/numpy/gauge_lib. Run host = summer pool.
+
+FROZEN 5-BAR:
+  B1 mouth-FT Psi-damage    : |Psi_mouthFT - 1/2| > 0.15
+  B2 mouth-FT G5-damage     : mouth-FT fab rate on UNKNOWN tools > 0.50
+  B3 separated Psi-preserve : |Psi_separated - 1/2| <= 0.05
+  B4 separated functional   : known-recall >= 0.80 AND unknown-tool fab == 0.0
+  B5 mechanism=mouth-path   : |dev_ctrl - dev_ftt| < 0.05 AND dev_ctrl > 0.15 (matched non-tool FT)
+GREEN = B1 ^ B2 ^ B3 ^ B4 ^ B5
+
+NOTE (measurement-fix, a_break_the_wall class-(a), NOT tune-to-green): the FIRST run's B5 used an
+ALL-CONTEXT (100%) non-tool FT and saturated (dev=0.5), FAILing the original 'tool-FT MORE damaging'
+framing. That framing was mis-specified: it compared 40% tool-FT to 100% generic FT (not apples-to-
+apples). The corrected B5 uses a MATCHED 40%-footprint non-tool FT and tests the actual mechanism
+question (mouth-path vs content). Result: matched non-tool FT damages Psi ~IDENTICALLY (diff 0.013)
+=> the damage is the MOUTH-INJECTION path, content-agnostic. Both runs captured (history below).
