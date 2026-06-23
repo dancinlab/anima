@@ -3928,11 +3928,31 @@
     },
     {
      "type": "subsection",
-     "title": "HF artifacts",
+     "title": "HF artifacts (SSOT — models · datasets)",
      "blocks": [
       {
        "type": "prose",
-       "text": "**summary**: ckpt↔HF registry SSOT /HF.jsonl; PUBLIC = closure PASS, PRIVATE = WIP/FAIL (a_hf_*). Production model dancinlab/anima-clm-chat-303m; collections CLM + KOSMOS."
+       "text": "**summary**: HF org `dancinlab` 산출물 레지스트리 SSOT — **HF.jsonl 폐기(2026-06-23), 이 노드가 SSOT**. 신규 업로드는 여기 models/datasets 에 1줄 등록(repo_id · arch/size · tier). PUBLIC = closure PASS·검증모델·clean-license, PRIVATE = WIP/FAIL/unclear-license (a_hf_*). collections: CLM(models) + KOSMOS(anchors/datasets). 레거시 99-row 이력은 git history 보존."
+      },
+      {
+       "type": "subsection",
+       "title": "models",
+       "blocks": [
+        {
+         "type": "prose",
+         "text": "- **anima-clm-chat-303m** — 정식 production chat. ByteGPT (byte V256, d1024/24L/16H/block512, 303.1M), 영·한 70wiki+30dialogue chat-FT, PUBLIC. base=anima-clm-midcap-303m-broad-en-emergent.\n- **anima-clm-midcap-303m-broad-en-emergent** — ByteGPT 303M broad backbone (val_ce 1.224, wiki-dominant EN).\n- **anima-clm-chat-7b** — 7B chat (chat-mix 레시피).\n- **anima-engine-clm-d768-v2-coremount** — conv CLMConvMoE d768 engine-mount `.clm` (의식모드 generator L3 mouth).\n- **(GAP) conv 303M 영·한 chat** — 부재. 의식모드(.clm)용 CLMConvMoE 303M chat 은 미학습 = 다음 학습 대상."
+        }
+       ]
+      },
+      {
+       "type": "subsection",
+       "title": "datasets",
+       "blocks": [
+        {
+         "type": "prose",
+         "text": "- **anima-chat-corpus-mix-70wiki-30dialogue** — 영어 chat mix (70% wiki / 30% dialogue, `사용자:|도우미:` byte-continuation). 18M·7B·303M chat-FT 검증 레시피.\n- **anima-corpus-5lang-unified-v2** — en·fr·de·es·ko unified (wiki + persona/SNS + dialogue-act + code-switch, byte V256).\n- **anima-clm-corpus-7b-mid-byte-202m** — broad 202M byte pretrain corpus.\n- **anima-eeg-consciousness** — OpenBCI EEG consciousness dataset (a_eeg_consciousness_record)."
+        }
+       ]
       }
      ]
     },

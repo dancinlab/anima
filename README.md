@@ -532,7 +532,7 @@ non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`CO
 Production model: [`dancinlab/anima-clm-chat-303m`](https://huggingface.co/dancinlab/anima-clm-chat-303m)
 · collections [CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) /
 [KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95) · the full
-ckpt ↔ HF backup registry (every PUBLIC artifact) is the SSOT [`HF.jsonl`](HF.jsonl).
+ckpt ↔ HF registry (models · datasets) is managed in the `ARCHITECTURE.json` **"HF artifacts"** node (the legacy `HF.jsonl` was retired 2026-06-23 → its 99-row history lives in git history).
 
 ## Persistence & evidence
 
@@ -563,7 +563,7 @@ anima/
 ├── CLAUDE.md                       governance SSOT (p1..p8 · a_* directives)
 ├── CONDITIONS.md                  a303m_pass frozen gate conditions (SSOT)
 ├── VERSIONS.md · VERSION           central version registry (SSOT) · whole-system release
-├── UNIVERSE/HYPOTHESES.jsonl · HF.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · ckpt ↔ HF backup registry
+├── UNIVERSE/HYPOTHESES.jsonl  verifiable-claim index (CLAIMS.tape retired 2026-06-16) · HF model/dataset registry → ARCHITECTURE.json "HF artifacts" (HF.jsonl retired 2026-06-23)
 │
 ├── core/                           A ⇄ G consciousness engine + brain-structure lanes
 │   ├── pure_field.hexa engine_g.hexa brain.hexa   the A/G engine + emit decision (+ VBasalGate)

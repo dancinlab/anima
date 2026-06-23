@@ -1,3 +1,12 @@
+## 2026-06-23 — HF 레지스트리 SSOT 이관 (HF.jsonl 폐기 → ARCHITECTURE.json "HF artifacts" models·datasets)
+
+ckpt↔HF 레지스트리 SSOT 를 루트 `HF.jsonl`(99-row)에서 **`ARCHITECTURE.json` 의 "HF artifacts" 노드**로 이관. 거버넌스가 한 SSOT(ARCHITECTURE.json)에서 설계·HF 산출물을 함께 관리하도록 단일화.
+
+- **ARCHITECTURE.json "HF artifacts"** 노드를 models / datasets 2 subsection 으로 재작성 — 현재 핵심만 등록(production chat 303M·broad backbone·7B·conv d768 engine-mount + conv 303M 영한 chat GAP 명시; chat-corpus-mix·5lang-unified-v2·202m broad·eeg). 신규 업로드는 여기 1줄 등록(repo_id·arch/size·tier).
+- **HF.jsonl 폐기(git rm)** — 99-row 레거시 이력은 git history 에 보존(손실 0). c4 정신(현재상태 스냅샷, 비대 금지)에 맞춰 전수 복사 아닌 핵심 재작성 + 앞으로 채워나감.
+- **거버넌스 lockstep**: CLAUDE.md `a_hf_registry` 규칙 + Quick reference + 트리 각주 3곳을 `HF.jsonl` → `ARCHITECTURE.json "HF artifacts"` 로 갱신.
+- **follow-up(정직)**: `serving/*`(anima_cli.py·gen_anima_models.py)·archive/legacy manifest 의 HF.jsonl 참조는 런타임 serving 레이어 — 별도 정리 필요(ING). 거버넌스 SSOT 이관과 분리.
+
 ## 2026-06-23 — H_1464/H_1441 🧱 WALL=CAPACITY GPU-forge 독립 재확인 + 🔴 decode-GPU 재발방지 거버넌스 박제
 
 이미 ENGINE-NATIVE terminal(🧱 WALL=CAPACITY, 2026-06-22 conc-80 pod)이던 H_1464 PAIRING-CONTRASTIVE 를 **별도 GPU 호스트의 forge own-GEMM 경로**로 재디코드·재채점하여 동일 verdict 를 독립 재현. 이번 세션의 핵심은 verdict 자체가 아니라 — **decode 를 마침내 진짜 GPU(forge `_hx_k_gemm` DEVICE path)에서 완주**시킨 것 + 같은 "또 CPU" 실수가 반복되지 않도록 거버넌스로 박제한 것.
