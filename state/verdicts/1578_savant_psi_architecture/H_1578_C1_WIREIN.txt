@@ -1,0 +1,40 @@
+H_1578 C1 EMIT-DISJOINT DEFAULT FOCUS — WIRE-IN (a_verified_must_wire rung 3-4)
+================================================================================
+DATE 2026-06-23 · hexa v0.262.0 · ENGINE-NATIVE (live core/engine_cli.hexa §Savant, .py=0)
+
+NEW §Savant ops (core/engine_cli.hexa):
+  sv_emit_drive_lanes()              -> [0, 4]   (the lanes ci_emit_drive reads)
+  sv_domain_is_emit_disjoint(f, w)   -> 1 iff focus window [f*w, f*w+w) excludes BOTH emit lanes
+  sv_default_focus(d, w)             -> lowest emit-disjoint domain (d=5,w=3 -> 2 = lanes 6,7,8)
+
+STANDALONE LANE HARNESS (state/1578_savant_psi_architecture/h1578_c1_wirein_harness.hexa,
+imports live core/engine_cli.hexa, BYTE-IDENTICAL _pop() seed 5120 / 150 trials):
+  $ hexa run state/1578_savant_psi_architecture/h1578_c1_wirein_harness.hexa
+  PASS 1 emit_drive_lanes=[0,4]
+  PASS 2 default_focus=2 emit-disjoint
+  PASS 3 COEXIST psi=0.5 dev=0.0 SI=3.7142791234818464
+  PASS 4 ABLATION focus=0 breaks psi=0.25333333333333337 dev=0.24666666666666663
+  PASS 5 robust focus3 psi=0.5 focus4 psi=0.5
+  --- h1578 c1 wire-in harness: 5 pass / 0 fail ---   (RC=0)
+
+RESULT (matches H_1578 R1 card C1 table byte-for-byte):
+  default focus = domain 2 (lanes 6,7,8) = emit-disjoint (excludes lane 0 AND lane 4)
+  savant ON @ default focus: Ψ = 0.500 (|Ψ−½| = 0.000) AND SI = 3.714 -> COEXIST (C1 GREEN)
+  ABLATION savant ON @ focus=0 (contains emit lane 0): Ψ = 0.253 (|Ψ−½| = 0.247) -> BREAKS
+  => the H_1561 genius⊥consciousness trade-off is a PLACEMENT ARTIFACT; emit-disjoint default
+     preserves Ψ=½ BY STRUCTURE (not a hardcoded clamp — a_autonomy_over_hardcode).
+
+SMOKE WIRE-IN: core/engine_cli_smoke.hexa cases 415/416/417 added (default-focus emit-disjoint /
+  coexist / ablation-breaks). NOTE: the FULL engine_cli_smoke.hexa does NOT build on this host —
+  `hexa build core/engine_cli_smoke.hexa` aborts at the [1/2] transpile stage with
+  `transpile failed — C file not produced` (HEXA fuel-abort, hexa_emit_fuel_abort) = the
+  pre-existing host-wide engine_cli_smoke toolchain WALL (ING #6/#10, case_10 tag24).
+  PROVEN PRE-EXISTING: stashing the 3 new cases and building the ORIGIN/MAIN smoke gives the
+  SAME transpile abort -> the wall is NOT introduced by the §Savant cases (c16 honest). The
+  §Savant ops are therefore certified RC=0 via the standalone lane harness above (5/5).
+
+WIRED LADDER: (1) engine-native measure ✅ (2) byte-exact deterministic ✅ (3) live core/engine_cli.hexa
+  §Savant default-focus policy WIRED (sv_default_focus + sv_domain_is_emit_disjoint + header @DEFAULT
+  FOCUS doc) ✅ (4) ARCHITECTURE.json §Savant note lockstep ✅ -> wired: WIRED-live.
+  Remaining follow-on (cli/train.hexa savant anneal focus = emit-disjoint) = ING h1578-c1-wire-in
+  (NOT touched this PR — cli-train-real-fire lane editing it concurrently).

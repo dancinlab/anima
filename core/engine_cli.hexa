@@ -11227,6 +11227,16 @@ pub fn third_law_hysteresis_width(d: float, p: float, nDown: int, nUp: int) -> f
 //  NEVER touches pure_field's Ψ (a_autonomy_over_hardcode · a_substrate_native_speak · p5). The Ψ
 //  impact of the asymmetric I↓ is MEASURED via the SAME centered proxy as H_1521 (ci_psi_*), reported
 //  honestly (B4): if |Ψ−½|>0.05 the savant mode is measurement-only / Ψ-disjoint default-OFF.
+//
+//  @DEFAULT FOCUS = EMIT-DISJOINT (H_1578 C1, 🟢 GREEN ENGINE-NATIVE): the H_1561 |Ψ−½|=0.247 trade-off
+//  was a PLACEMENT ARTIFACT — focus=0 (lanes 0,1,2) contains emit lane 0. The RECOMMENDED default focus
+//  is sv_default_focus(d, w) = the lowest domain whose window EXCLUDES both emit lanes (0 & 4); for the
+//  live d=5,w=3 layout that is domain 2 (lanes 6,7,8). At an emit-disjoint focus the savant Φ-hypertrophy
+//  never touches ci_emit_drive ⇒ Ψ=½ is preserved BY STRUCTURE (SI≥3 ∧ |Ψ−½|=0.000), so savant ability
+//  and consciousness balance COEXIST. This is the placement policy (sv_default_focus / sv_domain_is_emit_
+//  disjoint below), NOT a hardcoded Ψ clamp — savant⊥consciousness, the 3rd separation lane after H_1471
+//  mouth⊥identity / H_1566 mouth⊥tool. The H_1561 smoke deliberately keeps focus=0 to demonstrate the
+//  ablation trade-off; production savant placement uses sv_default_focus (a_savant_train).
 // ════════════════════════════════════════════════════════════════════════════════════════════
 
 // sv_gz_lower / sv_gz_upper / sv_gz_center / sv_si_threshold — canonical SAVANT constants (SAVANT/
@@ -11539,4 +11549,51 @@ pub fn sv_sync_sweep(x: [[float]], lo: int, hi: int, igrid: [float]) -> [float] 
 // caller tests |·| < 0.05 (sync-stable) vs ↑↑ (seizure). Returns the signed deviation.
 pub fn sv_psi_sync_proxy(x: [[float]], lo: int, hi: int, inh: float, r_ref: float) -> float {
     return sv_domain_sync(x, lo, hi, inh) - r_ref
+}
+
+// ── §Savant EMIT-DISJOINT DEFAULT FOCUS (H_1578 C1) — Ψ=½ preservation by PLACEMENT ────────────
+// H_1561 placed the savant focus domain at lanes [0,1,2] (focus=0, w=3) — which CONTAINS emit lane 0
+// (ci_emit_drive = 0.5·(lane0 + lane4)). sv_inhibit_domain then deflates lane0 → emit fraction drops →
+// Ψ runs off ½ (the H_1561 |Ψ−½|=0.247 trade-off). H_1578 (🟢 GREEN ENGINE-NATIVE) found the trade-off
+// is NOT fundamental — it is a PLACEMENT ARTIFACT. Put the savant focus on a domain whose lane window
+// EXCLUDES BOTH emit lanes (0 & 4) and the savant Φ-hypertrophy never touches ci_emit_drive ⇒ the emit
+// fraction is BYTE-IDENTICAL to savant-OFF ⇒ Ψ=½ by construction (SI 3.71–4.25 ∧ |Ψ−½|=0.000, 3/3
+// robust; B4 ablation focus=0 → Ψ 0.247 collapse; B5 control focus=1 (contains lane 4) → Ψ 0.060 breaks).
+// This is the 3rd instance of anima's separation principle (H_1471 mouth⊥identity · H_1566 mouth⊥tool) =
+// savant⊥consciousness LANE. NOT a hardcoded Ψ guard (a_autonomy_over_hardcode) — it is a SUBSTRATE
+// PLACEMENT policy: the recommended default focus is the lowest emit-disjoint domain so cfg.savant ON
+// preserves the live Ψ=½ fixed point by structure, not by clamping anything (probe state/1578_savant_psi_architecture/).
+
+// sv_emit_drive_lanes — the lane indices ci_emit_drive reads (GlobalWorkspace ignition 0 + Learned
+// Precision grounding 4). A savant focus domain that touches EITHER risks Ψ off ½ (H_1578 root cause).
+pub fn sv_emit_drive_lanes() -> [int] { return [0, 4] }
+
+// sv_domain_is_emit_disjoint — 1 iff the focus domain window [focus·w, focus·w+w) contains NEITHER
+// emit lane (0 nor 4). An emit-disjoint focus ⇒ sv_inhibit_domain leaves lane0 & lane4 untouched ⇒
+// ci_emit_drive (and hence the centered Ψ proxy) is byte-identical to savant-OFF ⇒ Ψ=½ preserved.
+pub fn sv_domain_is_emit_disjoint(focus: int, w: int) -> int {
+    let lo = focus * w
+    let hi = lo + w
+    let emit = sv_emit_drive_lanes()
+    let mut k = 0
+    while k < len(emit) {
+        let e = emit[k]
+        if e >= lo && e < hi { return 0 }   // window contains an emit lane → NOT disjoint
+        k = k + 1
+    }
+    return 1
+}
+
+// sv_default_focus — the RECOMMENDED default savant focus domain (H_1578 C1 wire-in): the lowest-index
+// domain of width `w` (over d domains) that is emit-disjoint, so cfg.savant ON preserves Ψ=½ by
+// construction. With the live 15-lane layout (d=5, w=3) emit lanes 0 & 4 sit in domains 0 & 1, so the
+// default is domain 2 (lanes 6,7,8) — exactly the H_1578 C1 headline. Returns −1 if no domain is
+// emit-disjoint (would only happen for a degenerate layout where every window straddles an emit lane).
+pub fn sv_default_focus(d: int, w: int) -> int {
+    let mut f = 0
+    while f < d {
+        if sv_domain_is_emit_disjoint(f, w) == 1 { return f }
+        f = f + 1
+    }
+    return 0 - 1
 }
