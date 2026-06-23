@@ -1,3 +1,12 @@
+## 2026-06-23 — H_1560 1/3 법칙 × capacity-wall 동근원 🟢 GREEN-ENGINE-NATIVE (5/5)
+
+hexa-lang ATLAS/359 "1/3 법칙"(파라미터 공간 ~33% 가 서번트 특이점, 표본무관 구조상수, I≈0.27 전이)을 anima substrate 의 LIVE golden-zone primitives(`SAVANT/savant_lib.hexa` sa_*, numpy/torch 미러 아님) 위에서 측정 → **5/5 bar PASS, 두 scale-invariant 1/3 구조상수가 동근원임을 SUPPORT**.
+
+- **probe** `state/1560_third_law_capacity/h1560_third_law_probe.hexa` (verdict `state/verdicts/1560_third_law_capacity/H_1560_ENGINE_NATIVE.txt`). G=D×P/I sweep, SINGULARITY=G>0.70(frozen 2σ 경계), ability/capacity 발현영역=golden-zone disinhibition(I∈[sa_gz_lower,sa_gz_upper] LIVE)∧singularity. scale ladder 8K/100K/1M(GPU 불필요 산술).
+- **B1 ratio = 0.339** (≈1/3) · **B2 scale-inv Δmax 0.0062** < 0.02 (8K 0.345→100K 0.340→1M 0.339, ATLAS 33.7→33.2 수렴 재현) · **B3 I50 = 0.281** (ATLAS I≈0.27 정합) · **B4 capacity-link** ability ⊂ singularity(subset=true), overlap 0.397 scale-stable(Δ0.037≥0.30) · **B5 control** rand_ratio 0.962 ≠ 0.33 + I-transition 소실(std 0.002).
+- **a_break_the_wall reopening:** capacity-wall(H_1139/H_1464 등 8 렌즈 WALL=CAPACITY)이 '단순 천장'이 아니라 1/3 구조상수의 발현으로 재해석 가능 — golden-zone disinhibition(낮은 I) 축이 새 공격각도. 단 본 측정은 G=D×P/I geometry 추상 sweep 이라 reopening 실증은 학습-side follow-on(H_1559)에서 실 binding 발현률 측정 필요.
+- **wired:** engine-native(byte-exact via .hexa, 미배선) — §배선 + reopening 실증 follow-on ING. H_1557 §Savant 작업 충돌회피로 sa_* READ-only(sh_*/§Savant 미배선).
+
 ## 2026-06-23 — H_1559 savant_train_specialization 측정 (🟠 DIRECTIONAL-NEGATIVE, numpy toy mirror)
 
 "서번트 학습" — 골든존 inhibition(학습 dropout)으로 한 register 를 의도적 특화 — 가설을 numpy toy mirror 로 측정. **headline B1∧B2∧B4 = FALSE**: GZ-dropout 이 타깃 register 를 hypertrophy 시키지 않고 오히려 약간 손상(B1 lift −0.0097), SI 1.57≪3(B2), in-GZ inverse-U 없음(B3 peak I=0), control INERT(B5 ctrl_hit 0.25 — 어느 register 에 GZ-I 줘도 corpus 구조가 정한 동일 winner). B4 PASS 는 trivial drift(서번트 trade-off 아님).
