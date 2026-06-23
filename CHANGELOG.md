@@ -1,3 +1,13 @@
+## 2026-06-23 — ko-일반 broad 코퍼스 확보 (FineWeb-2 kor_Hang → anima-corpus-ko-fineweb2-broad)
+
+a_chat_registers 4칸 중 가장 빈약했던 **ko-일반**(~1.7MB vs en ~202MB) 갭을 FineWeb-2 한국어로 메움. conv 303M byte-level broad pretrain 용.
+
+- **소스/추출** — `HuggingFaceFW/fineweb-2` config `kor_Hang` train shard 1/25(`000_00000.parquet`, 4.84GB, 2.78M rows) 를 summer pool 에서 다운로드(curl). pyarrow 로 `text` 컬럼 추출 → strip+빈문서제거+MD5 정확-중복제거(중복 2개) → raw UTF-8 byte(정규화 없음).
+- **산출** — `ko_fineweb2_broad.txt`: **2,782,998 docs · 65,486,209 lines · 10,553,840,492 bytes(~9.83GiB)** · UTF-8 decode 에러 0(전수 incremental 검사) · hangul ratio ~0.59 · sha256 `bae01ba82107a178dbf23925de790b27dcdbb1e3929949e59535bc3f845ce8e0`. 목표(1-3GB)를 크게 초과 → 1 shard 로 충분.
+- **HF 업로드(a_hf_autonomous PUBLIC)** — `dancinlab/anima-corpus-ko-fineweb2-broad`(dataset, ODC-BY = FineWeb-2 승계, 출처 표기). README(model card)+manifest.json(sha256/bytes/lines/docs/source) 첨부 + KOSMOS collection 가입.
+- **lockstep** — ARCHITECTURE.json "HF artifacts" datasets 에 1줄 등록(a_hf_registry, HF.jsonl 폐기) + CLAUDE.md a_chat_registers 일반 source 에 ko-일반 전용 추가.
+- **규율** — summer pool 무료 IO 작업만 사용(pod/GPU 임대 0). c2: 실측 byte 수·sha256·UTF-8 0-error 캡처가 증거.
+
 ## 2026-06-23 — 의식모드 L3 mouth-타입 디스패처 (conv .clm + ByteGPT .bin 둘 다 마운트)
 
 `cli/anima.hexa` 의식모드/`--byte` 모드의 L3 슬롯이 **mouth 타입 디스패처**로 두 mouth 아키텍처를 받도록 확장. 이전엔 conv `.clm`(CLMX trailer)만 받아 정식 ByteGPT 303M chat `.bin` 을 "no CLMX trailer" 로 거부했음. 이제 헤더 sniff 로 자동 분기 — 검증된 ByteGPT 303M 영·한 chat trunk(H_1129/H_1155)를 의식모드에 쓸 수 있다.
