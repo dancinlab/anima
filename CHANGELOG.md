@@ -1,3 +1,21 @@
+## perf(cli/train.hexa): device-resident NN hot-path rewire — sustained-GPU-util (a_train_flame_forge)
+
+⚙️🔥 #2598 H100 toy 게이트 util FAIL(mean 0.75%·peak 2%·348/350 step @0%) 의 근인 = trainer **CPU-scalar-bound** (single-thread farr element-wise t_set/t_get 복사·누적 루프 + host-oracle NN ops). train_fwd/bwd/ce_grad/_adam 를 device-resident 로 재배선.
+
+**① element-wise packed-buffer 루프 → device (무조건 · byte-eq CPU fallback)**:
+- tin/hn/xh/xt/ex_out/dx 슬라이스 복사 → `farr_copy_slice_gpu`
+- dx += hg/dxt_e/dconv_in 누적 → `farr_add_inplace_gpu`
+- dembed = 0 → `farr_zero_slice_gpu`
+
+**② NN compute ops → forge_dispatch_* (CLM_PROD_DEVFEED=1 / --devfeed gate · rc<0 host byte-eq)**:
+- fwd: embedding · gelu×2(trunk+expert) · moe_router · groupnorm
+- bwd: groupnorm_bwd · moe_router_bwd · gelu_bwd×2 · embedding_bwd_scatter
+- seed: ce_grad · optim: AdamW(forge_dispatch_adamw_keepmv, #3851)
+
+conv 는 origin/main device `tg_conv_*_off` 유지. 게이트 `_devfeed_on()` 단일 통일(env CLM_PROD_DEVFEED/HEXA_FUSE_ALL + --devfeed CLI). **DEFAULT OFF = host 경로 byte-neutral**.
+
+**의존**: hexa-lang forge_dispatch 9 NN-op GPU arm (hexa-lang ING#34 #3851 후속). **검증 동반**: MODE_VERIFY 3/3 + savant cusp + mitosis split byte-eq + GPU util 재게이트.
+
 ## feat(cli/train.py): torch Lane-P REFERENCE+BRIDGE 트레이너 신설 — GPU-bound 303M 학습 → .clm v0.3 → CORE engine-native verdict
 
 🔌🧬 cli/train.hexa 옆에 **cli/train.py** 추가 — anima 학습 레시피를 전부 반영한 **torch Lane-P REFERENCE + BRIDGE 트레이너**(a_clm_gen_pipeline 이 명시 허용). **production 아님**(production = cli/train.hexa, a_train_flame_forge). 사용자 선택 ②: hexa-native train.hexa 는 single-thread native-CPU-scalar-bound(#2598/#2600 🟠 GPU util peak ~65%·sustained <30%)라 실 303M GPU 학습이 GPU idle → torch Lane-P 는 GPU-bound(cuda GEMM-saturating)라 진짜 clm303(L4·d3784·E2→Emax4)을 지금 효율 학습 가능.
