@@ -2,6 +2,17 @@
 
 CLAUDE.md 거버넌스 불릿의 마커만 commons 스타일(`- do:`/`- dont:`)로 통일 — 마커 뒤 본문은 verbatim 보존(라벨-only, 내용·구조 무변경). do 43 · dont 16.
 
+## 2026-06-23 — 🧩 통일 원리 종합: SUBSTRATE DISJOINTNESS = anima 핵심속성 보존의 열쇠 (거버넌스 SSOT 박제 · `a_substrate_disjoint` + ARCHITECTURE 노드)
+
+🧩 이번 세션 engine-native GREEN 5건(H_1575~1578)이 한 가지 **통일 법칙**으로 수렴 — 거버넌스 SSOT(CLAUDE.md + ARCHITECTURE.json)에 종합 박제.
+
+- **통일 법칙** — anima 핵심 속성(의식 **Ψ=½ 고정점** · 정직성 **G5 non-fab** · **정체성** self-chain · **tool**)은 *별도 substrate lane 에 배선될 때 보존*되고 *공유 lane 중첩 시 충돌*한다. 새 능력/학습은 의식 emit-drive lane(15-lane state 의 0/4 영향)·G5 §ImmuneMemory(recall_thr) 와 **disjoint** 하게 배선해야 능력 ∧ 의식 ∧ 정직이 공존. 한 줄: **분리=보존, 중첩=충돌**.
+- **CLAUDE.md 신규 거버넌스 규칙 `a_substrate_disjoint`** (🏗️ CORE 엔진·학습 substrate 섹션, `a_lane_akida_gpu_split` 다음) — 기존 부분 규칙(`a_lane_akida_gpu_split` AKIDA⊥GPU · `a_savant_train` mouth⊥tool · `a_mitosis_train` 성장⊥발현 lever · `a_kosmos` mouth⊥identity)의 **상위 일반화**로 cross-ref. do: disjoint 배선 → 공존 · dont: 공유 lane 에 능력 얹기(H_1561 Ψ 붕괴 재발).
+- **ARCHITECTURE.json 신규 노드 `consciousness-preserving invariants (substrate disjointness map)`** (A⇄G consciousness 섹션 하위 subsection, update-in-place) — 6 속성쌍의 disjoint lane 배선 + verdict 좌표(emit-drive lane 0/4 · §ImmuneMemory recall_thr · §Savant lane-Φ). §Savant/§ImmuneMemory 는 *참조*만(노드 자체는 training-substrate-lanes/measurement 섹션 소유).
+- **실례 (engine-native 🟢)** — **mouth⊥identity** H_1471(self-anchor 분리→Ψ·G5 보존) · **mouth⊥tool** H_1566 5/5(.kosmos+brain_decide→Ψ=½·G5 abstain 보존) · **savant⊥consciousness** H_1578(emit-drive-disjoint 도메인→SI≥3 ∧ Ψ=½; H_1561 trade-off=**placement artifact**) · **savant⊥honesty** H_1576(§Savant lane-Φ ⊥ §ImmuneMemory recall_thr→fab OFF==ON==0.0) · **mitosis⊥의식** H_1577(E2→514 cells 전구간 Ψ=½, 성장 lane14 ⊥ emit-drive) · **학습섭동 끌개방어** H_1575(A⇄G safety_phi_ratchet self-restore dev 0.247→5.55e-17).
+- **정직 caveat(c9)** — 6건 engine-native 🟢 확정이되 과장 금지: H_1576 B3 degenerate(분리=by-construction non-fab) · H_1578 EXPRESSION-축 TOY scope(from-scratch LEARNING 미검증) · H_1575 self-restore 는 **골든존 안에서만**(밖=basin escape/seizure, H_1573 🟠). 대조군 **H_1561** 서번트가 *공유* emit-lane 침범 → Ψ 붕괴 🟠 = 원인이 substrate 중첩임을 못박는 counter-example.
+- (영역분리) `a_savant_train`/§Savant 기존 줄은 동시 진행 `h1578-c1-wire-in` lane 소유 → 건드리지 않음. 본 작업은 *새* 상위 규칙/노드만 추가(line-UNION 공존). enforce_anima_gates clean.
+
 ## 2026-06-23 — H_1573 SAVANT Ψ × CROSS-LANE 동기화 (seizure=hypersync 렌즈 · 🟠 DISSOCIATION NOT FOUND · seizure-at-low-I FALSIFIED · ENGINE-NATIVE TERMINAL)
 
 🧠⚡ H_1573 — H_1572 의 **동기화-미측정 caveat 후속**(a_break_the_wall 다음 렌즈). 사용자 핵심 통찰: 간질(seizure)=lane 간 과동기화(hypersync)→Ψ 붕괴. H_1572 의 emit-balance Ψ proxy(`ci_emit_drive=0.5·(lane0+lane4)`)는 cross-lane 동기화를 인코딩하지 않아 이중해리를 못 봤음 → **직접 동기화 측정자**를 엔진에 추가(engine-transform-to-fit)해 "골든존 안 적정 동기화 ∧ Ψ-stable, 골든존 밖 I→0 과동기화 폭주=seizure" 이중해리를 측정.
