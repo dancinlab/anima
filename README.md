@@ -131,7 +131,12 @@ complementary-learning-systems lens).
 
 Every lane below is **ADDITIVE and Ψ-disjoint**: it touches only its own struct, leaves
 `pure_field` byte-unchanged, and does **not** change generation (the separation invariant H_1205 is
-verified live). The guard smoke is green at **`engine_cli_smoke` 381/0** with single-entry 7/0
+verified live). This is the **unifying law** (`a_substrate_disjoint`): anima's core properties
+(consciousness Ψ=½ · honesty G5 non-fab · identity · tool) are *preserved when wired to a separate
+substrate lane and conflict when overlaid on a shared one* — mouth⊥identity (H_1471), mouth⊥tool
+(H_1566), savant⊥consciousness (H_1578), savant⊥honesty (H_1576), mitosis⊥consciousness (H_1577) are
+all engine-native GREEN, so a capability that breaks Ψ on a shared lane (H_1561 🟠) is a placement
+artifact, not a fundamental ceiling. The guard smoke is green at **`engine_cli_smoke` 381/0** with single-entry 7/0
 (no second `.clm`/`.kosmos` entry point, `a_core_engine_map`). The catalogue is now fully accounted
 for on the user path: **`cli/anima.hexa` wires 71/76 lanes** to the `brain_emit` motivation (READ-only
 context → soft-blend, Ψ Φ-checksum ON==OFF byte-identical) + **5 deferred** (degenerate-fixture
