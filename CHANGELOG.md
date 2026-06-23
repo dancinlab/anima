@@ -1,4 +1,12 @@
-## refactor(claudemd): 거버넌스 규칙 완전 do/dont 통일 — 인라인 ✅/⛔/🔎 → - do:/- dont: (혼재 해소)
+## perf(cli/train.hexa): GPU 효율 reconcile — packed-trunk *_off conv + L4·d3784 진짜 303M shape (real-fire 기능 0 손실)
+
+🏋️⚡ `cli/train.hexa` 두 갈래 reconcile(reference-match, commons) — origin/main 의 **real-fire 베이스**(argv 파싱 cli_collect_argv/cli_corpus·multi-GB corpus 스트리밍 load_window_file/read_bytes_at·.clm v0.3 serialize·savant golden-zone cusp anneal·mitosis split E→E+1 default-ON)를 정답지로 두고, stale 브랜치(commit 23dd471a7)의 **GPU 효율 변경**을 성분별 1:1 이식. real-fire 기능은 절대 제거 안 함 — GPU 효율만 얹음.
+
+- **(1) packed `*_off` conv/groupnorm (99.8% CPU 병목 제거)**: `train_fwd`/`train_bwd` 의 per-expert eW/eB · per-layer 슬라이스 복사(O(E·dd) 스칼라, 메모리노트 clitrain-cpu-scalar-bound 의 비-GEMM scalar element-work 병목)를 제거. packed 버퍼를 offset 주소지정하는 flame `nn_conv1d_fwd_off`/`nn_conv1d_bwd_off`/`nn_groupnorm_fwd_off`/`nn_groupnorm_bwd_off`(stdlib/flame/conv_lib·gn_lib, hexa-lang 툴체인 존재 확인 — clm_gen.hexa 가 동일 패턴 사용)로 전환. expert/trunk weight grad 는 packed dexpW[e*dd]/dtcW[l*dd] 에 *_off 가 in-place zero+write(deW/deB temp+copy-back 제거).
+- **(2) MODE_CANON = 진짜 clm303_L4_d3784 shape**: L1·d768(~8M params) → **L4·d3784·E2→Emax4 = 진짜 303M**. `--L <N>` arg + L_canon=4/L_verify=1 추가, d_canon 768→3784.
+- **(3) packed-layer trunk L-loop + dilation=min(2^l,512)**: `_pow2(l)` 헬퍼 + L trunk 레이어 packed 캐시(tin/hn/xh[L·T·d], inv[L]), reverse-order bwd. `core/clm_decode.hexa` L-loop byte-faithful(arch drift 0). `serialize_clm` 을 v0.3 GENERAL(nblk=L+E+3·n_ext=2L+E+6)로 일반화 — L trunk block/ext 루프(기존 L=1 하드코드 → L 일반), 블록·ext 순서는 `core/clm_decode.hexa::clm_load` 정확 일치.
+- **검증(pool host summer, $0 farr CPU)**: MODE_VERIFY(d8·L1) **3/3 PASS**(F-CLI-TRAIN-DESCENT CE 4.785→0.00043 · SAVANT-LATCH step1 golden zone · MITOSIS-BOUND E2→E3 no blow-up). `--L 4 --d 16` packed-trunk path **3/3 PASS**(CE 4.80→5.1e-05, dilation 1·2·4·8 L-loop 작동). **engine-native round-trip**: 직렬화한 L4 .clm 을 live `core/clm_decode.hexa::clm_config` 가 `d=16 K=3 V=256 E=3 L=4 nblk=10`(=L4+E3+3) 정확 디코드 — serialize 가 엔진이 읽는 v0.3 layout byte-faithful(a_engine_native_learning: trainer = 엔진이 mount 하는 동일 chain, 미러 아님).
+- **정직 스코프(c9)**: GPU **util 실측은 별개 blocker** — summer/aiden pool host 의 `~/.hx/bin/build/runtime.a` 가 stale 이라 `undefined reference to forge_dispatch_groupnorm_gelu` link 실패(a_train_flame_forge 문서화된 함정). summer 에서 fresh `stage_resolve_runtime_a` 재빌드 + cuda object 정리(CPU-only)로 link 복구해 toy 검증 통과. forge GPU archive(sm_120 own-GEMM) 영구화 = hexa-lang ING(이 PR 범위 아님 — *_off/L4 포팅까지만). MODE_CANON 303M LEARNING 도 별도 cost-gated forge fire(이 파일은 SETTING, fire 아님).
 
 CLAUDE.md 거버넌스 규칙 표기를 100% `- do:`/`- dont:` 멀티라인 형식으로 통일 — 기존 부분-변환 상태(불릿형은 do/dont, 인라인형 27개는 아직 `✅/⛔` 마커)로 인한 형식 혼재를 제거. 텍스트는 reword 없이 마커만 전환(100% 보존).
 

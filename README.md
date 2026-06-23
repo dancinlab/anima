@@ -516,8 +516,8 @@ anima --mitosis on     # + substrate growth lane live
 
 # 4. Train — the hexa-native CLMConvMoE trainer (a_train_flame_forge, NO .py)
 anima train --corpus ko.txt en.txt --out mouth.clm --steps 2000 --canon
-#   --canon (d768 303M-class) · --savant/--no-savant (golden-zone inhibition) ·
-#   --mitosis/--no-mitosis (cell-division grow) · --d DIM · --corpus <paths..>
+#   --canon (L4·d3784 303M-class) · --savant/--no-savant (golden-zone inhibition) ·
+#   --mitosis/--no-mitosis (cell-division grow) · --d DIM · --L N · --corpus <paths..>
 #   (4-cell register round-robin) · --out <ckpt.clm> (CLM\x01 v0.3, core/clm_decode-loadable)
 ```
 

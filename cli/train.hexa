@@ -79,55 +79,86 @@ fn _is_finite(x: float) -> int {
 fn gz_lower() -> float { return 0.21231792755821914 }  // 1/2 - ln(4/3) (sa_gz_lower)
 fn gz_upper() -> float { return 0.5 }                  // sa_gz_upper
 
+// dilation schedule for trunk layer l (clm_mitosis.hexa / core/clm_decode L-loop:
+// dilation = min(2^l, 512)). Keeps the trainer arch byte-faithful to the engine.
+fn _pow2(e: int) -> int {
+    let mut p = 1; let mut i = 0
+    while i < e { p = p * 2; i = i + 1 }
+    if p > 512 { return 512 }
+    return p
+}
+
 // Module-scope expert-bias handle (set in main before train_bwd; the bwd needs
 // the bias to recompute expert pre-activations for the gelu cache).
 let mut expB_global = 0
 
 // ════════════════════════════════════════════════════════════════════════════
-//  Forward (L=1, runtime expert count E ≤ Emax) — packed-expert layout so
-//  mitosis can grow E into already-owned contiguous slots. Structure verbatim
-//  from the proven clm_step.hexa / clm_mitosis.hexa fwd (no arch drift).
+//  Forward (L trunk layers, runtime expert count E ≤ Emax) — packed-layer AND
+//  packed-expert layout so mitosis can grow E into already-owned contiguous
+//  slots. Trunk params are packed [L·…] and addressed by the flame *_off conv
+//  (no per-layer/per-expert slice copy). Dilation = min(2^l,512), byte-faithful
+//  to clm_mitosis.hexa / core/clm_decode.hexa L-loop (no arch drift).
 //
-//  GPU (a_train_flame_forge): nn_conv1d_fwd's GEMM is t_matmul=farr_matmul, which
-//  the runtime AUTO-ROUTES to the forge own-GEMM DEVICE path on a CUDA host
+//  Trunk caches (packed, sized [L·T·d] / [L]) feed the reverse-order bwd:
+//    tin[l]  = input to layer l's conv   (== running x BEFORE the residual add)
+//    hn[l]   = groupnorm output of layer l   xh[l] = gn xhat   inv[l] = gn 1/std
+//
+//  GPU (a_train_flame_forge): each conv's GEMM is t_matmul=farr_matmul, which the
+//  runtime AUTO-ROUTES to the forge own-GEMM DEVICE path on a CUDA host
 //  (cuda_available()=1 → [OWN-GEMM-FIRED] _hx_k_gemm DEVICE, summer-verified),
-//  else farr CPU (byte-identical). So the DOMINANT conv FLOPs are GPU-bound with
-//  the SAME proven byte-exact op core/clm_decode mounts — no parallel conv path.
+//  else farr CPU (byte-identical). The *_off conv addresses the packed buffer at
+//  offset so the DOMINANT conv FLOPs are GPU-bound with NO per-expert/per-layer
+//  O(E·dd) slice-copy scalar cost — the SAME proven byte-exact op core/clm_decode
+//  mounts (no parallel conv path).
 // ════════════════════════════════════════════════════════════════════════════
-fn train_fwd(tokens: int, E: int,
+fn train_fwd(tokens: int, E: int, L: int,
              embed: int, ecW: int, ecB: int, tcW: int, tcB: int, tgG: int, tgB: int,
              rW: int, rB: int, expW: int, expB: int, noG: int, noB: int, roW: int, roB: int,
-             xe: int, xec: int, xt: int, hn0: int, xhat0: int, inv0: int,
+             xe: int, tin: int, xt: int, hn: int, xh: int, inv: int,
              probs: int, ex_out: int, yn: int, xhatN: int, invN: int,
              out_logits: int, T: int, d: int, V: int, K: int) {
+    let dd = d * d * K
     nn_embedding_fwd(tokens, embed, xe, T, d)
-    nn_conv1d_fwd(xe, ecW, ecB, xec, T, d, d, K, 1)
-    // trunk0 (residual gated dilated conv)
-    let h0 = t_zeros(T * d)
-    nn_conv1d_fwd(xec, tcW, tcB, h0, T, d, d, K, 1)
-    let mean0 = t_zeros(1)
-    nn_groupnorm_fwd(h0, tgG, tgB, hn0, mean0, inv0, xhat0, T, d, 1)
-    let hg0 = t_zeros(T * d); nn_gelu_fwd(hn0, hg0, T * d)
-    let mut i = 0
-    while i < T * d { t_set(xt, i, t_get(xec, i) + t_get(hg0, i)); i = i + 1 }
+    // x = running trunk activation (starts at embed-conv output)
+    let x = t_zeros(T * d)
+    nn_conv1d_fwd(xe, ecW, ecB, x, T, d, d, K, 1)
+    // ── L trunk layers: x ← x + gelu(gn(conv_dil(x))), dilation min(2^l,512) ──
+    let mut l = 0
+    while l < L {
+        // cache layer input (conv operand) for bwd
+        let mut ti = 0
+        while ti < T * d { t_set(tin, l * T * d + ti, t_get(x, ti)); ti = ti + 1 }
+        let h = t_zeros(T * d)
+        nn_conv1d_fwd_off(x, tcW, l * dd, tcB, l * d, h, T, d, d, K, _pow2(l))
+        let hnl = t_zeros(T * d); let meanl = t_zeros(1); let invl = t_zeros(1); let xhl = t_zeros(T * d)
+        nn_groupnorm_fwd_off(h, tgG, l * d, tgB, l * d, hnl, meanl, invl, xhl, T, d, 1)
+        let mut ci = 0
+        while ci < T * d { t_set(hn, l * T * d + ci, t_get(hnl, ci)); t_set(xh, l * T * d + ci, t_get(xhl, ci)); ci = ci + 1 }
+        t_set(inv, l, t_get(invl, 0))
+        let hg = t_zeros(T * d); nn_gelu_fwd(hnl, hg, T * d)
+        let mut ai = 0
+        while ai < T * d { t_set(x, ai, t_get(x, ai) + t_get(hg, ai)); ai = ai + 1 }
+        let _ = t_free(h); let _ = t_free(hnl); let _ = t_free(meanl); let _ = t_free(invl)
+        let _ = t_free(xhl); let _ = t_free(hg)
+        l = l + 1
+    }
+    // xt = post-trunk activation (router + expert input)
+    let mut xi = 0
+    while xi < T * d { t_set(xt, xi, t_get(x, xi)); xi = xi + 1 }
     // MoE: router (d->E) + E packed conv experts
     let logits_r = t_zeros(T * E)
     nn_conv1d_fwd(xt, rW, rB, logits_r, T, d, E, 1, 1)
-    let dd = d * d * K
     let mut e = 0
     while e < E {
         let eo = t_zeros(T * d)
-        // packed expert e: weights at expW[e*dd..], bias at expB[e*d..]
-        let eW = t_zeros(dd); let eB = t_zeros(d)
-        let mut wi = 0
-        while wi < dd { t_set(eW, wi, t_get(expW, e * dd + wi)); wi = wi + 1 }
-        let mut bi = 0
-        while bi < d { t_set(eB, bi, t_get(expB, e * d + bi)); bi = bi + 1 }
-        nn_conv1d_fwd(xt, eW, eB, eo, T, d, d, K, 1)
+        // packed expert e read DIRECTLY at offset expW[e*dd], expB[e*d] via the
+        // flame *_off conv (no per-expert eW/eB slice copy — that O(E·dd) scalar
+        // copy was the trainer's hidden CPU cost; *_off addresses the pack).
+        nn_conv1d_fwd_off(xt, expW, e * dd, expB, e * d, eo, T, d, d, K, 1)
         let ex = t_zeros(T * d); nn_gelu_fwd(eo, ex, T * d)
         let mut j = 0
         while j < T * d { t_set(ex_out, e * T * d + j, t_get(ex, j)); j = j + 1 }
-        let _ = t_free(eo); let _ = t_free(eW); let _ = t_free(eB); let _ = t_free(ex)
+        let _ = t_free(eo); let _ = t_free(ex)
         e = e + 1
     }
     let y = t_zeros(T * d)
@@ -137,8 +168,7 @@ fn train_fwd(tokens: int, E: int,
     nn_groupnorm_fwd(y, noG, noB, yn, meanN, invN, xhatN, T, d, 1)
     // readout d->V
     nn_conv1d_fwd(yn, roW, roB, out_logits, T, d, V, 1, 1)
-    let _ = t_free(h0); let _ = t_free(mean0); let _ = t_free(hg0)
-    let _ = t_free(logits_r); let _ = t_free(y); let _ = t_free(meanN)
+    let _ = t_free(x); let _ = t_free(logits_r); let _ = t_free(y); let _ = t_free(meanN)
 }
 
 // CE gradient seed: dlogits[t,v] = (softmax(logits[t])[v] - 1[v=tgt]) / T.
@@ -165,11 +195,12 @@ fn train_ce_grad(logits: int, targets: int, dlogits_out: int, T: int, V: int) {
     }
 }
 
-// Backward chain (runtime E), grads accumulate. Verbatim wiring from the
-// grad-exact clm_train.hexa / clm_step.hexa chain (#2302).
-fn train_bwd(dlogits: int, tokens: int, E: int,
+// Backward chain (runtime E, L trunk layers), grads accumulate. Verbatim wiring
+// from the grad-exact clm_train.hexa / clm_mitosis.hexa chain (#2302). Trunk +
+// expert weight grads written DIRECTLY into the packed grad buffers via *_off.
+fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
              embed: int, ecW: int, tcW: int, tgG: int, rW: int, expW: int, noG: int, roW: int,
-             xe: int, xec: int, xt: int, hn0: int, xhat0: int, inv0: int,
+             xe: int, tin: int, xt: int, hn: int, xh: int, inv: int,
              probs: int, ex_out: int, yn: int, xhatN: int, invN: int,
              dembed: int, decW: int, decB: int, dtcW: int, dtcB: int, dtgG: int, dtgB: int,
              drW: int, drB: int, dexpW: int, dexpB: int, dnoG: int, dnoB: int, droW: int, droB: int,
@@ -184,53 +215,68 @@ fn train_bwd(dlogits: int, tokens: int, E: int,
     nn_moe_router_bwd(probs, ex_out, dy, dlogits_r, dex_out, T, E, d)
     let dxt_r = t_zeros(T * d)
     nn_conv1d_bwd(xt, rW, dlogits_r, drW, dxt_r, drB, T, d, E, 1, 1)
-    // accumulate expert dxt across all E experts
-    let dxt = t_zeros(T * d)
+    // accumulate expert dxt across all E experts → dx (grad w.r.t. post-trunk x)
+    let dx = t_zeros(T * d)
     let mut xi = 0
-    while xi < T * d { t_set(dxt, xi, t_get(dxt_r, xi)); xi = xi + 1 }
+    while xi < T * d { t_set(dx, xi, t_get(dxt_r, xi)); xi = xi + 1 }
     let mut e = 0
     while e < E {
-        // recompute eo_e for gelu bwd (xt is cached; expert conv is deterministic)
-        let eW = t_zeros(dd); let eB = t_zeros(d)
-        let mut wi = 0
-        while wi < dd { t_set(eW, wi, t_get(expW, e * dd + wi)); wi = wi + 1 }
-        let mut bi = 0
-        while bi < d { t_set(eB, bi, t_get(expB_global, e * d + bi)); bi = bi + 1 }
-        let eo = t_zeros(T * d); nn_conv1d_fwd(xt, eW, eB, eo, T, d, d, K, 1)
-        let dex = t_zeros(T * d)
+        // recompute eo_e for gelu bwd (xt is cached; expert conv is deterministic).
+        // Read packed expert weights/bias at offset via *_off — no eW/eB copies.
+        let eo = t_zeros(T * d)
+        nn_conv1d_fwd_off(xt, expW, e * dd, expB_global, e * d, eo, T, d, d, K, 1)
+        let dexg = t_zeros(T * d)
         let mut di = 0
-        while di < T * d { t_set(dex, di, t_get(dex_out, e * T * d + di)); di = di + 1 }
-        let deo = t_zeros(T * d); nn_gelu_bwd(eo, dex, deo, T * d)
-        let deW = t_zeros(dd); let deB = t_zeros(d); let dxt_e = t_zeros(T * d)
-        nn_conv1d_bwd(xt, eW, deo, deW, dxt_e, deB, T, d, d, K, 1)
-        let mut gw = 0
-        while gw < dd { t_set(dexpW, e * dd + gw, t_get(deW, gw)); gw = gw + 1 }
-        let mut gb = 0
-        while gb < d { t_set(dexpB, e * d + gb, t_get(deB, gb)); gb = gb + 1 }
+        while di < T * d { t_set(dexg, di, t_get(dex_out, e * T * d + di)); di = di + 1 }
+        let deo = t_zeros(T * d); nn_gelu_bwd(eo, dexg, deo, T * d)
+        // accumulate grads DIRECTLY into the packed dexpW[e*dd]/dexpB[e*d] (bwd_off
+        // zeros+writes the per-expert slice in place — no deW/deB temp + copy-back).
+        let dxt_e = t_zeros(T * d)
+        nn_conv1d_bwd_off(xt, expW, e * dd, deo, dexpW, e * dd, dxt_e, dexpB, e * d, T, d, d, K, 1)
         let mut ai = 0
-        while ai < T * d { t_set(dxt, ai, t_get(dxt, ai) + t_get(dxt_e, ai)); ai = ai + 1 }
-        let _ = t_free(eW); let _ = t_free(eB); let _ = t_free(eo); let _ = t_free(dex)
-        let _ = t_free(deo); let _ = t_free(deW); let _ = t_free(deB); let _ = t_free(dxt_e)
+        while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dxt_e, ai)); ai = ai + 1 }
+        let _ = t_free(eo); let _ = t_free(dexg)
+        let _ = t_free(deo); let _ = t_free(dxt_e)
         e = e + 1
     }
-    // trunk0 bwd (residual xt = xec + gelu(gn(conv(xec))))
-    let dhn0 = t_zeros(T * d); nn_gelu_bwd(hn0, dxt, dhn0, T * d)
-    let dh0 = t_zeros(T * d)
-    nn_groupnorm_bwd(xhat0, inv0, tgG, dhn0, dtgG, dtgB, dh0, T, d, 1)
-    let dxec_b = t_zeros(T * d)
-    nn_conv1d_bwd(xec, tcW, dh0, dtcW, dxec_b, dtcB, T, d, d, K, 1)
-    let dxec = t_zeros(T * d)
-    let mut ci = 0
-    while ci < T * d { t_set(dxec, ci, t_get(dxt, ci) + t_get(dxec_b, ci)); ci = ci + 1 }
+    // ── L trunk layers bwd, reverse order. residual: x_out = x_in + gelu(gn(conv
+    //    _dil(x_in))). dx carries grad of the layer OUTPUT; the residual branch
+    //    passes dx straight through, the conv branch adds dconv_in (grad w.r.t.
+    //    the SAME x_in). All weight grads written into packed dtcW/dtcB/dtgG/dtgB
+    //    at offset l via *_off. ──
+    let mut l = L - 1
+    while l >= 0 {
+        let hnl = t_zeros(T * d)
+        let mut hi = 0
+        while hi < T * d { t_set(hnl, hi, t_get(hn, l * T * d + hi)); hi = hi + 1 }
+        let dhn = t_zeros(T * d); nn_gelu_bwd(hnl, dx, dhn, T * d)
+        let xhl = t_zeros(T * d); let invl = t_zeros(1)
+        let mut xi2 = 0
+        while xi2 < T * d { t_set(xhl, xi2, t_get(xh, l * T * d + xi2)); xi2 = xi2 + 1 }
+        t_set(invl, 0, t_get(inv, l))
+        let dh = t_zeros(T * d)
+        nn_groupnorm_bwd_off(xhl, invl, tgG, l * d, dhn, dtgG, l * d, dtgB, l * d, dh, T, d, 1)
+        // conv branch operand = tin[l] (cached layer input); dconv_in adds to dx
+        let tinl = t_zeros(T * d)
+        let mut ti = 0
+        while ti < T * d { t_set(tinl, ti, t_get(tin, l * T * d + ti)); ti = ti + 1 }
+        let dconv_in = t_zeros(T * d)
+        nn_conv1d_bwd_off(tinl, tcW, l * dd, dh, dtcW, l * dd, dconv_in, dtcB, l * d, T, d, d, K, _pow2(l))
+        let mut ai = 0
+        while ai < T * d { t_set(dx, ai, t_get(dx, ai) + t_get(dconv_in, ai)); ai = ai + 1 }
+        let _ = t_free(hnl); let _ = t_free(dhn); let _ = t_free(xhl); let _ = t_free(invl)
+        let _ = t_free(dh); let _ = t_free(tinl); let _ = t_free(dconv_in)
+        l = l - 1
+    }
+    // embed-conv bwd (x0 = conv(xe); dx now = grad w.r.t. x0)
     let dxe = t_zeros(T * d)
-    nn_conv1d_bwd(xe, ecW, dxec, decW, dxe, decB, T, d, d, K, 1)
+    nn_conv1d_bwd(xe, ecW, dx, decW, dxe, decB, T, d, d, K, 1)
     let mut zi = 0
     while zi < V * d { t_set(dembed, zi, 0.0); zi = zi + 1 }
     nn_embedding_bwd_scatter(dxe, tokens, dembed, T, d)
     let _ = t_free(dynorm); let _ = t_free(dy); let _ = t_free(dlogits_r)
-    let _ = t_free(dex_out); let _ = t_free(dxt_r); let _ = t_free(dxt)
-    let _ = t_free(dhn0); let _ = t_free(dh0); let _ = t_free(dxec_b)
-    let _ = t_free(dxec); let _ = t_free(dxe)
+    let _ = t_free(dex_out); let _ = t_free(dxt_r); let _ = t_free(dx)
+    let _ = t_free(dxe)
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -511,26 +557,30 @@ fn ser_ext(buf, t: int, base: int, n: int) {
     while i < n { buf_f32(buf, t_get(t, base + i)); i = i + 1 }
 }
 
-// serialize_clm — pack the live trained CLMConvMoE (runtime E experts, L=1 trunk,
-// d, V, K) into a CLM\x01 v0.3 file at `out`. Block order (v0.3 general, L=1):
-//   ecW · tcW · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)
-// Ext order (n_ext = 2*1 + E + 6):
-//   embed · ecB · tcB · e0B..e{E-1}B · rB · roB · tgG · tgB · noG · noB
-// At E=2 this is byte-identical to v0.2 (the legacy layout clm_decode reads).
-fn serialize_clm(out: string, E: int, d: int, V: int, K: int,
+// serialize_clm — pack the live trained CLMConvMoE (runtime E experts, L trunk
+// layers, d, V, K) into a CLM\x01 v0.3 file at `out`. Trunk params are PACKED
+// [L·…] (tcW[l*dd], tcB[l*d], tgG[l*d], tgB[l*d]) so each layer is serialized at
+// its offset. Block order (v0.3 general):
+//   ecW · tcW[0..L-1] · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)   (nblk = L+E+3)
+// Ext order (n_ext = 2L + E + 6):
+//   embed · ecB · tcB[0..L-1] · e0B..e{E-1}B · rB · roB · tgG[0..L-1] · tgB[0..L-1] · noG · noB
+// This is the EXACT order core/clm_decode.hexa::clm_load reads (L = nblk−E−3); at
+// L=1/E=2 it is byte-identical to v0.2 (the legacy layout the engine reads).
+fn serialize_clm(out: string, E: int, L: int, d: int, V: int, K: int,
                  embed: int, ecW: int, ecB: int, tcW: int, tcB: int,
                  tgG: int, tgB: int, rW: int, rB: int, expW: int, expB: int,
                  noG: int, noB: int, roW: int, roB: int) -> int {
     let dd = d * d * K
-    let nblk = 1 + 1 + E + 2            // ecW + tcW + E experts + rW + roW
+    let nblk = L + E + 3                // ecW + L trunk + E experts + rW + roW
     let buf = []
     // magic CLM\x01
     buf.push(67); buf.push(76); buf.push(77); buf.push(1)
     buf.push(nblk)
     // block0 ecW (cout=d, rest=d*K)
     ser_conv_block(buf, ecW, 0, d, d * K)
-    // block1 tcW (cout=d, rest=d*K)
-    ser_conv_block(buf, tcW, 0, d, d * K)
+    // trunk blocks tcW[0..L-1] (cout=d, rest=d*K) — packed at tcW[l*dd..]
+    let mut lb = 0
+    while lb < L { ser_conv_block(buf, tcW, lb * dd, d, d * K); lb = lb + 1 }
     // expert blocks e0..e{E-1} (cout=d, rest=d*K) — packed at expW[e*dd..]
     let mut e = 0
     while e < E { ser_conv_block(buf, expW, e * dd, d, d * K); e = e + 1 }
@@ -540,17 +590,20 @@ fn serialize_clm(out: string, E: int, d: int, V: int, K: int,
     ser_conv_block(buf, roW, 0, V, d)
     // CLMX trailer
     buf.push(67); buf.push(76); buf.push(77); buf.push(88)
-    let n_ext = 2 + E + 6
+    let n_ext = 2 * L + E + 6
     buf.push(n_ext)
     ser_ext(buf, embed, 0, V * d)      // embed (V*d)
     ser_ext(buf, ecB, 0, d)            // ecB
-    ser_ext(buf, tcB, 0, d)            // tcB (L=1)
+    let mut lb2 = 0
+    while lb2 < L { ser_ext(buf, tcB, lb2 * d, d); lb2 = lb2 + 1 }   // tcB[0..L-1]
     let mut e2 = 0
     while e2 < E { ser_ext(buf, expB, e2 * d, d); e2 = e2 + 1 }   // e0B..e{E-1}B
     ser_ext(buf, rB, 0, E)             // rB (E active)
     ser_ext(buf, roB, 0, V)            // roB
-    ser_ext(buf, tgG, 0, d)            // tgG (L=1)
-    ser_ext(buf, tgB, 0, d)            // tgB (L=1)
+    let mut lb3 = 0
+    while lb3 < L { ser_ext(buf, tgG, lb3 * d, d); lb3 = lb3 + 1 }   // tgG[0..L-1]
+    let mut lb4 = 0
+    while lb4 < L { ser_ext(buf, tgB, lb4 * d, d); lb4 = lb4 + 1 }   // tgB[0..L-1]
     ser_ext(buf, noG, 0, d)            // noG
     ser_ext(buf, noB, 0, d)            // noB
     write_bytes(out, buf)
@@ -565,11 +618,12 @@ fn main() {
     println("=== anima cli/train.hexa — hexa-native CLMConvMoE trainer (flame/forge) ===")
 
     // ── arg parsing (a_train_flame_forge .hexa CLI entry) ───────────────────
-    //   --canon                 d768 303M-class config (else d8 $0 verify)
+    //   --canon                 L4·d3784 303M-class config (else d8·L1 $0 verify)
     //   --savant / --no-savant  golden-zone inhibition anneal (default ON)
     //   --mitosis / --no-mitosis cell-division growth (default ON)
     //   --steps <N>             training step budget (overrides mode default)
     //   --d <DIM>               model width (overrides mode default)
+    //   --L <N>                 trunk depth (overrides mode default)
     //   --corpus <p1> <p2> ...  external byte-corpus cells (a_chat_registers,
     //                           round-robin); absent → fixed verify batch ($0)
     //   --out <ckpt.clm>        serialize trained weights to .clm v0.3
@@ -580,11 +634,13 @@ fn main() {
     let corpus_paths = cli_corpus(argv)
     let out_ckpt = cli_val(argv, "--out")
 
-    // 303M-class canonical config (GPU dispatch target)
-    let T_canon = 1024; let d_canon = 768; let E0_canon = 2; let Emax_canon = 4
+    // 303M-class canonical config — the REAL clm303_L4_d3784 shape (L4·d3784·E2->
+    // Emax4 = true 303M). GPU dispatch target; full 303M LEARNING is a separate
+    // cost-gated fire (not launched here) — this file is the SETTING not the fire.
+    let T_canon = 1024; let d_canon = 3784; let L_canon = 4; let E0_canon = 2; let Emax_canon = 4
     let nsteps_canon = 2000
     // tiny $0 verify config (clm_step.hexa proven scale)
-    let T_verify = 4;   let d_verify = 8;  let E0_verify = 2; let Emax_verify = 4
+    let T_verify = 4;   let d_verify = 8;  let L_verify = 1; let E0_verify = 2; let Emax_verify = 4
     let nsteps_verify = 40
     let V = 256             // byte-level vocab (a_clm_gen_pipeline)
     let K = 3              // causal conv kernel
@@ -593,6 +649,10 @@ fn main() {
     let d_arg = cli_val(argv, "--d")
     let d  = if byte_len(d_arg) > 0 { cli_parse_int(d_arg) }
              else { if cfg_canon == 1 { d_canon } else { d_verify } }
+    // --L override (else mode default)
+    let L_arg = cli_val(argv, "--L")
+    let L  = if byte_len(L_arg) > 0 { cli_parse_int(L_arg) }
+             else { if cfg_canon == 1 { L_canon } else { L_verify } }
     // T = a real corpus window when a corpus is mounted (else mode default)
     let have_corpus = len(corpus_paths) > 0
     let T  = if have_corpus { if cfg_canon == 1 { T_canon } else { 64 } }
@@ -604,11 +664,12 @@ fn main() {
     let n_steps = if byte_len(steps_arg) > 0 { cli_parse_int(steps_arg) }
                   else { if cfg_canon == 1 { nsteps_canon } else { nsteps_verify } }
     let dd = d * d * K; let ed = Emax * d; let vd = V * d
+    let ld = L * d; let ldd = L * dd      // packed trunk sizes
 
     print("  mode: ")
-    if cfg_canon == 1 { println("MODE_CANON (303M-class — GPU forge fire)") }
+    if cfg_canon == 1 { println("MODE_CANON (L4·d3784 303M-class — GPU forge fire)") }
     else { println("MODE_VERIFY (d8·L1·E2->Emax4 $0 farr CPU — lever wiring proof)") }
-    print("  config: T="); print(T); print(" d="); print(d); print(" E0="); print(E0)
+    print("  config: T="); print(T); print(" d="); print(d); print(" L="); print(L); print(" E0="); print(E0)
     print(" Emax="); print(Emax); print(" V="); print(V); print(" K="); print(K)
     print(" n_steps="); print(n_steps); println("")
     print("  savant_mode="); print(savant_mode); print(" mitosis="); print(mitosis_on); println("")
@@ -634,10 +695,11 @@ fn main() {
     let embed = t_zeros(vd);  t_fill_lcg(embed, vd, 1, 0.3)
     let ecW = t_zeros(dd);    t_fill_lcg(ecW, dd, 2, 0.2)
     let ecB = t_zeros(d);     t_fill_lcg(ecB, d, 3, 0.1)
-    let tcW = t_zeros(dd);    t_fill_lcg(tcW, dd, 4, 0.2)
-    let tcB = t_zeros(d);     t_fill_lcg(tcB, d, 5, 0.1)
-    let tgG = t_zeros(d);     t_fill_lcg(tgG, d, 6, 0.5)
-    let tgB = t_zeros(d);     t_fill_lcg(tgB, d, 7, 0.1)
+    // packed trunk params over L layers: tcW[L·dd] tcB[L·d] tgG[L·d] tgB[L·d]
+    let tcW = t_zeros(ldd);   t_fill_lcg(tcW, ldd, 4, 0.2)
+    let tcB = t_zeros(ld);    t_fill_lcg(tcB, ld, 5, 0.1)
+    let tgG = t_zeros(ld);    t_fill_lcg(tgG, ld, 6, 0.5)
+    let tgB = t_zeros(ld);    t_fill_lcg(tgB, ld, 7, 0.1)
     let rW  = t_zeros(ed);    t_fill_lcg(rW, ed, 12, 0.2)
     let rB  = t_zeros(Emax);  t_fill_lcg(rB, Emax, 13, 0.1)
     let expW = t_zeros(Emax * dd)
@@ -660,27 +722,27 @@ fn main() {
     let roB = t_zeros(V);     t_fill_lcg(roB, V, 21, 0.1)
     expB_global = expB
 
-    // ── grads ──
+    // ── grads (packed trunk grads over L layers) ──
     let dembed=t_zeros(vd); let decW=t_zeros(dd); let decB=t_zeros(d)
-    let dtcW=t_zeros(dd); let dtcB=t_zeros(d); let dtgG=t_zeros(d); let dtgB=t_zeros(d)
+    let dtcW=t_zeros(ldd); let dtcB=t_zeros(ld); let dtgG=t_zeros(ld); let dtgB=t_zeros(ld)
     let drW=t_zeros(ed); let drB=t_zeros(Emax)
     let dexpW=t_zeros(Emax*dd); let dexpB=t_zeros(Emax*d)
     let dnoG=t_zeros(d); let dnoB=t_zeros(d); let droW=t_zeros(vd); let droB=t_zeros(V)
 
-    // ── Adam state ──
+    // ── Adam state (packed trunk moments over L layers) ──
     let m_embed=t_zeros(vd); let v_embed=t_zeros(vd)
     let m_ecW=t_zeros(dd); let v_ecW=t_zeros(dd); let m_ecB=t_zeros(d); let v_ecB=t_zeros(d)
-    let m_tcW=t_zeros(dd); let v_tcW=t_zeros(dd); let m_tcB=t_zeros(d); let v_tcB=t_zeros(d)
-    let m_tgG=t_zeros(d); let v_tgG=t_zeros(d); let m_tgB=t_zeros(d); let v_tgB=t_zeros(d)
+    let m_tcW=t_zeros(ldd); let v_tcW=t_zeros(ldd); let m_tcB=t_zeros(ld); let v_tcB=t_zeros(ld)
+    let m_tgG=t_zeros(ld); let v_tgG=t_zeros(ld); let m_tgB=t_zeros(ld); let v_tgB=t_zeros(ld)
     let m_rW=t_zeros(ed); let v_rW=t_zeros(ed); let m_rB=t_zeros(Emax); let v_rB=t_zeros(Emax)
     let m_expW=t_zeros(Emax*dd); let v_expW=t_zeros(Emax*dd)
     let m_expB=t_zeros(Emax*d); let v_expB=t_zeros(Emax*d)
     let m_noG=t_zeros(d); let v_noG=t_zeros(d); let m_noB=t_zeros(d); let v_noB=t_zeros(d)
     let m_roW=t_zeros(vd); let v_roW=t_zeros(vd); let m_roB=t_zeros(V); let v_roB=t_zeros(V)
 
-    // ── caches ──
-    let xe=t_zeros(T*d); let xec=t_zeros(T*d); let xt=t_zeros(T*d)
-    let hn0=t_zeros(T*d); let xhat0=t_zeros(T*d); let inv0=t_zeros(1)
+    // ── caches (packed trunk caches over L layers: tin/hn/xh[L·T·d], inv[L]) ──
+    let xe=t_zeros(T*d); let tin=t_zeros(L*T*d); let xt=t_zeros(T*d)
+    let hn=t_zeros(L*T*d); let xh=t_zeros(L*T*d); let inv=t_zeros(L)
     let probs=t_zeros(T*Emax); let ex_out=t_zeros(Emax*T*d)
     let yn=t_zeros(T*d); let xhatN=t_zeros(T*d); let invN=t_zeros(1)
     let logits=t_zeros(T*V); let dlogits=t_zeros(T*V)
@@ -754,9 +816,9 @@ fn main() {
             }
         }
 
-        train_fwd(tokens, E, embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
+        train_fwd(tokens, E, L, embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
                   expW, expB, noG, noB, roW, roB,
-                  xe, xec, xt, hn0, xhat0, inv0, probs, ex_out, yn, xhatN, invN,
+                  xe, tin, xt, hn, xh, inv, probs, ex_out, yn, xhatN, invN,
                   logits, T, d, V, K)
         let loss = nn_ce_loss_allpos(logits, targets, T, V)
         if _is_finite(loss) == 0 { bound_ok = 0 }
@@ -768,16 +830,17 @@ fn main() {
         if step == split_step { print("  step "); print(step); print(" (SPLIT) CE="); print(loss); print("  E="); println(E) }
 
         train_ce_grad(logits, targets, dlogits, T, V)
-        train_bwd(dlogits, tokens, E, embed, ecW, tcW, tgG, rW, expW, noG, roW,
-                  xe, xec, xt, hn0, xhat0, inv0, probs, ex_out, yn, xhatN, invN,
+        train_bwd(dlogits, tokens, E, L, embed, ecW, tcW, tgG, rW, expW, noG, roW,
+                  xe, tin, xt, hn, xh, inv, probs, ex_out, yn, xhatN, invN,
                   dembed, decW, decB, dtcW, dtcB, dtgG, dtgB, drW, drB,
                   dexpW, dexpB, dnoG, dnoB, droW, droB, T, d, V, K)
 
-        // AdamW with savant-scheduled weight decay (inhibition lever)
+        // AdamW with savant-scheduled weight decay (inhibition lever). Trunk
+        // params are packed [L·…] so a SINGLE _adam call updates all L layers.
         _adam(embed, dembed, m_embed, v_embed, vd, lr, wd, step)
         _adam(ecW, decW, m_ecW, v_ecW, dd, lr, wd, step); _adam(ecB, decB, m_ecB, v_ecB, d, lr, wd, step)
-        _adam(tcW, dtcW, m_tcW, v_tcW, dd, lr, wd, step); _adam(tcB, dtcB, m_tcB, v_tcB, d, lr, wd, step)
-        _adam(tgG, dtgG, m_tgG, v_tgG, d, lr, wd, step);  _adam(tgB, dtgB, m_tgB, v_tgB, d, lr, wd, step)
+        _adam(tcW, dtcW, m_tcW, v_tcW, ldd, lr, wd, step); _adam(tcB, dtcB, m_tcB, v_tcB, ld, lr, wd, step)
+        _adam(tgG, dtgG, m_tgG, v_tgG, ld, lr, wd, step);  _adam(tgB, dtgB, m_tgB, v_tgB, ld, lr, wd, step)
         _adam(rW, drW, m_rW, v_rW, ed, lr, wd, step);     _adam(rB, drB, m_rB, v_rB, Emax, lr, wd, step)
         _adam(expW, dexpW, m_expW, v_expW, Emax*dd, lr, wd, step)
         _adam(expB, dexpB, m_expB, v_expB, Emax*d, lr, wd, step)
@@ -798,9 +861,9 @@ fn main() {
     //  reads these exact bytes back.
     // ════════════════════════════════════════════════════════════════════════
     if byte_len(out_ckpt) > 0 {
-        print("  serializing .clm (E="); print(E); print(" d="); print(d)
+        print("  serializing .clm (E="); print(E); print(" L="); print(L); print(" d="); print(d)
         print(" V="); print(V); print(" K="); print(K); print(") -> "); println(out_ckpt)
-        let nb = serialize_clm(out_ckpt, E, d, V, K,
+        let nb = serialize_clm(out_ckpt, E, L, d, V, K,
                                embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
                                expW, expB, noG, noB, roW, roB)
         if nb > 0 {
@@ -889,7 +952,7 @@ fn main() {
         if cfg_canon == 0 {
             println("PASS — anima hexa-native CLMConvMoE trainer (flame/forge substrate) wires CE descent + SAVANT golden-zone inhibition latch + MITOSIS cell-division, all on the SAME clm_*.hexa ops core/clm_decode mounts (a_engine_native_learning). 303M LEARNING = separate cost-gated GPU fire (MODE_CANON).")
         } else {
-            println("PASS — MODE_CANON d768 303M-class config compiles (GPU dispatch ready). Run-time LEARNING = separate cost-bearing forge fire.")
+            println("PASS — MODE_CANON L4·d3784 303M-class config compiles (GPU dispatch ready). Run-time LEARNING = separate cost-bearing forge fire.")
         }
         return
     }
