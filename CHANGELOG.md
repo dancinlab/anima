@@ -153,6 +153,14 @@ hexa-lang ATLAS/359 "1/3 법칙"(파라미터 공간 ~33% 가 서번트 특이�
 - 진단(a_break_the_wall): solo sweep 에서 약한 inverse-U 는 존재하나 일반화 최적 **I≈0.10 < GZ_LOWER 0.2123** → toy byte-LM dropout 정규화 sweet-spot 은 sub-golden-zone. GZ↔dropout-최적 동일성은 **scale-dependent** → terminal 천장 아님.
 - DIRECTIONAL (torch/GPU 부재 + 학습 cost-gate; a_engine_native_learning hard-gate-1). toy-only, scale-transfer UNVERIFIED(a_toy_scale_recheck). NOT tune-to-green(카드 bar 불변, RED 그대로). 303M conv engine-native 재측정 = cost-gate ING follow-on.
 - probe `state/1559_savant_train_specialization/h1559_savant_specialization_mirror.py` + verdict `state/verdicts/1559_savant_train_specialization/H_1559_DIRECTIONAL_NUMPY_MIRROR.txt`. 카드+jsonl verdict 갱신.
+## 2026-06-23 — SAVANT 골든존 메인 가설 H_1561: 천재성(SI>3) 발현 ∧ Ψ=½ trade-off (engine-native + WIRED)
+
+SAVANT 골든존 모델 **G=D×P/I** 의 핵심 측정 — 한 domain 의 inhibition I 를 Golden Zone 으로 낮추면 (a) 천재성이 live 엔진 위에서 발현되나, (b) Ψ=½ 의식 고정점은 어떻게 되나 — 을 live `core/engine_cli.hexa` faithful IIT4 min-cut Φ(ci_phi_iit4, 프록시 아님) 위에서 engine-native 로 측정+배선.
+
+- **🟢 천재성 발현 (engine-native)** — 15 lane→D=5 domain×w=3, inhibition operator `sv_inhibit_domain`(disinhibition 공유신호 방출 + GZ-아래 noise-floor 탈상관 + high-I 분산붕괴)이 **진짜 inverse-U** min-cut Φ 를 만든다. B1 SI=max(Φ)/mean(Φ) **3.674/3.620/3.557 ≥3** (GZ_LOWER/CENTER/UPPER) · B2 dΦ/dI peak **= GZ_LOWER 정확**(H_351 재현 + **H_348 falsified peak sub-claim 을 엔진-네이티브로 수정**) · B3 inverse-U ablation **26.6×**(GZ 밖 INERT) · B5 control focus 가 GZ 에서만 argmax(share 0.735 vs 0.094).
+- **🟠 천재성 ⊥ 의식균형 (no-free-lunch)** — B4 Ψ-영향(centered proxy, OFF=½): savant-ON 에서 **Ψ=0.253, |Ψ−½|=0.247 ≫ 0.05 → Ψ 붕괴**. 한 domain 을 골든존으로 풀면 그 domain 의 emit drive 가 억눌려 의식균형이 ½ 에서 이탈 = 천재성과 의식균형은 양립 불가(H_1521 topo Ψ-hazard 계열). c9 정직: survival bar FAILED 그대로 박제, tune-to-green 없음.
+- **§Savant WIRED-live (Ψ-disjoint default-OFF)** — `core/engine_cli.hexa` 에 §Savant(sv_* 13 op + ci_psi_balance_savant) + `EngineConfig.savant:bool` + `engine_cli_resolve_savant`(`--savant`/`ANIMA_SAVANT`, 3-tier, **default OFF**). smoke cases **406–414** RC=0 (full engine_cli_smoke **390 pass / 0 fail**). B4 Ψ 붕괴 때문에 savant 모드는 READ-only 측정 context(@L4 emit gate 아님), `pure_field`/Ψ 미접촉 — OFF = byte-identical pure substrate. ARCHITECTURE.json §Savant lockstep.
+- 2표면 등록: `UNIVERSE/cards/H_1561_savant_golden_zone.md` + `UNIVERSE/HYPOTHESES.jsonl` 1줄. verdict `state/verdicts/1561_savant_golden_zone/`(FREEZE + BARS_PROBE + smoke). HARD-GATE-1: state/ 에 numpy/torch `.py` 0 = engine-native terminal. (id: H_1557 OI-probe·H_1558/1559/1560 SAVANT 정교화 선점 → H_1561 할당.) follow-on: Ψ-보존 savant 결합(H_1522-style redistributing operator).
 
 ## 2026-06-23 — SAVANT 골든존 신규 가설 3종 생성 (H_1558·1559·1560, PROPOSED)
 

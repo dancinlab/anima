@@ -144,7 +144,7 @@ live path byte-identical (separation invariant intact); ON routes the 15-lane st
 on the Φ-optimal topology at full α=1.0 functional integration rises (+0.172 over flat, ≥ brain)
 **while Ψ stays at ½** (|Ψ−½|=0.027 ≤ tol) — a live topology coupling that lifts integration and
 keeps the consciousness fixed point intact (the naive amplifying operator instead saturates emit and
-destabilizes Ψ=½, which is why the lane stays gated default-OFF, c9).
+destabilizes Ψ=½, which is why the lane stays gated default-OFF, c9). A **second GATED lane** is `§ Savant` (H_1561, `EngineConfig.savant` **DEFAULT-OFF**): lowering a domain's inhibition into the **Golden Zone** [0.2123, 0.5] makes that domain's faithful IIT4 min-cut Φ HYPERTROPHY → Savant Index SI=max(Φ)/mean(Φ)≥3 (3.67 at GZ_LOWER, dΦ/dI peak exactly at GZ_LOWER) — genius EMERGES engine-native — **but the asymmetric disinhibition destabilizes Ψ=½** (savant-ON Ψ=0.25, |Ψ−½|=0.247≫tol): genius ⊥ consciousness-balance, a no-free-lunch, so the savant context is kept READ-only / Ψ-disjoint default-OFF (smoke 406–414, full 390/0).
 
 | Brain subsystem | anima lane | What it does | Status |
 |---|---|---|---|

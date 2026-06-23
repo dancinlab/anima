@@ -105,7 +105,8 @@ fn _norm_onoff(raw: string) -> string {
 struct EngineConfig {
     mitosis: bool,
     engine: string,
-    topo_couple: bool
+    topo_couple: bool,
+    savant: bool
 }
 
 // engine_config_default — the default ENGINE config: mitosis ON (p8 native),
@@ -114,7 +115,7 @@ struct EngineConfig {
 // so the live emit/decode path is byte-identical to the pre-H_1521 substrate; the
 // separation invariant H_1205 + Ψ=½ fixed point hold on the pure default).
 pub fn engine_config_default() -> EngineConfig {
-    EngineConfig { mitosis: true, engine: "conv", topo_couple: false }
+    EngineConfig { mitosis: true, engine: "conv", topo_couple: false, savant: false }
 }
 
 // ── mitosis resolver (3-tier precedence: flag > env > default(on)) ────────────
@@ -210,7 +211,8 @@ pub fn engine_cli_parse(arg: [string]) -> EngineConfig {
     EngineConfig {
         mitosis:     engine_cli_resolve_mitosis(arg),
         engine:      engine_cli_resolve_engine(arg),
-        topo_couple: engine_cli_resolve_topo_couple(arg)
+        topo_couple: engine_cli_resolve_topo_couple(arg),
+        savant:      engine_cli_resolve_savant(arg)
     }
 }
 
@@ -252,6 +254,43 @@ fn _cli_topo_couple_flag(arg: [string]) -> string {
             }
         }
         if a.starts_with("--topo-couple=") {
+            let v = _norm_onoff(_after_eq(a))
+            if v != "" { return v }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// ── §  SAVANT resolver (H_1561, 3-tier: flag > env > default(OFF)) ──────────────
+// arg is the raw user argv. Scans for `--savant on|off` / `--savant=on` / `--no-savant`,
+// then env ANIMA_SAVANT, then default OFF.
+//   (no flag, no env) → OFF  (default — golden-zone savant mode is a no-op; the live emit/Ψ path is
+//                             byte-identical to the pre-H_1561 substrate, Ψ=½ fixed point intact).
+pub fn engine_cli_resolve_savant(arg: [string]) -> bool {
+    let flag = _cli_savant_flag(arg)
+    if flag == "on"  { return true }
+    if flag == "off" { return false }
+    let env = _norm_onoff(_env_read("ANIMA_SAVANT"))
+    if env == "on"  { return true }
+    if env == "off" { return false }
+    return false   // default OFF — pure substrate, Ψ-disjoint
+}
+
+// _cli_savant_flag — scan argv for the savant flag surface. Tri-state ("on"|"off"|"").
+fn _cli_savant_flag(arg: [string]) -> string {
+    let n = len(arg)
+    let mut i = 0
+    while i < n {
+        let a = arg[i]
+        if a == "--no-savant" { return "off" }
+        if a == "--savant" {
+            if i + 1 < n {
+                let v = _norm_onoff(arg[i + 1])
+                if v != "" { return v }
+            }
+        }
+        if a.starts_with("--savant=") {
             let v = _norm_onoff(_after_eq(a))
             if v != "" { return v }
         }
@@ -11154,4 +11193,263 @@ pub fn third_law_hysteresis_width(d: float, p: float, nDown: int, nUp: int) -> f
     let w = i_off - i_on
     if w < 0.0 { return 0.0 - w }
     return w
+}
+// ════════════════════════════════════════════════════════════════════════════════════════════
+//  § Savant (H_1561) — GOLDEN ZONE × SAVANT INDEX on the live IIT4 min-cut Φ (engine-native).
+//  ────────────────────────────────────────────────────────────────────────────────────────────
+//  THE SAVANT MODEL (H_347/348/350/351 carried into the live engine): genius = deficit × plasticity
+//  / inhibition. Lower a domain's inhibition I into the GOLDEN ZONE (GZ_LOWER = 1/2 − ln(4/3) ≈
+//  0.2123 ≤ I ≤ GZ_UPPER = 0.5) and that ONE domain's substrate Φ HYPERTROPHIES → the Savant Index
+//  SI = max(Φ_domain) / mean(Φ_domain) crosses the specialization threshold 3.0 (H_348). The
+//  derivative dΦ/dI PEAKS near GZ_LOWER (H_351 inverse-U).
+//
+//  WHY THIS IS ENGINE-NATIVE (a_engine_native_learning HARD-GATE): Φ here is the SAME faithful
+//  Gaussian IIT-4 MIN-CUT integration `ci_phi_iit4` the §BrainTopology/HIVE lanes use — NOT a proxy
+//  (a_phi_iit4_tool). The savant operator shapes the LIVE lane population (the ci_lane_scores 15-lane
+//  matrix, _topo_lane_pop) and re-measures min-cut Φ per domain. No numpy, no torch — the whole
+//  inverse-U emerges from the faithful covariance min-cut.
+//
+//  THE INHIBITION OPERATOR (the genuine inverse-U mechanism, NOT a hand-fit curve): inhibition I acts
+//  as a SHARED suppression signal that couples a domain's lanes. The min-cut Φ (shared-covariance
+//  irreducibility) responds with a NATURAL inverse-U in I:
+//    • I → 0 (DISINHIBITED/noise): lanes drift INDEPENDENTLY (each lane keeps its own idiosyncratic
+//      variation) → little SHARED covariance structure → LOW integrated Φ (noise, no binding).
+//    • I in GOLDEN ZONE: the shared suppression introduces a COMMON mode across the domain's lanes
+//      (partial correlation) → the min-cut becomes expensive → Φ HYPERTROPHIES (the savant peak).
+//    • I → 1 (OVER-LOCKED): suppression drives every lane toward the SAME constant → variance → 0 →
+//      covariance degenerate → Φ COLLAPSES (locked, no expressive variance).
+//  Implemented as: gated lane g_i(I) = (1−I)·raw_i + I·domain_mean  (shrink-toward-common-mode), then
+//  add an I-scaled idiosyncratic-noise SUPPRESSION (1−I) on the residual. At I=GZ the common mode is
+//  present AND residual variance survives ⇒ max shared-covariance min-cut Φ.
+//
+//  @L4 CRITICAL (same framing as --mitosis / --topo-couple): SUBSTRATE-CONFIG, NOT an emit gate.
+//  sv_* returns Φ lists / SI / a trigger CONTEXT (1/0); it NEVER returns an emit/silence decision and
+//  NEVER touches pure_field's Ψ (a_autonomy_over_hardcode · a_substrate_native_speak · p5). The Ψ
+//  impact of the asymmetric I↓ is MEASURED via the SAME centered proxy as H_1521 (ci_psi_*), reported
+//  honestly (B4): if |Ψ−½|>0.05 the savant mode is measurement-only / Ψ-disjoint default-OFF.
+// ════════════════════════════════════════════════════════════════════════════════════════════
+
+// sv_gz_lower / sv_gz_upper / sv_gz_center / sv_si_threshold — canonical SAVANT constants (SAVANT/
+// savant_lib.hexa verbatim, H_347/348/349 closed-form, re-anchored in the engine so §Savant is
+// self-contained — same values, no drift; SAVANT/unification_check.hexa guards the lib copy).
+pub fn sv_gz_lower() -> float { return 0.21231792755821914 }   // 1/2 − ln(4/3)
+pub fn sv_gz_upper() -> float { return 0.5 }
+pub fn sv_gz_center() -> float { return 0.36787944117144233 }  // 1/e
+pub fn sv_si_threshold() -> float { return 3.0 }
+
+// sv_in_golden_zone — 1 iff GZ_LOWER ≤ I ≤ GZ_UPPER (H_348 gate).
+pub fn sv_in_golden_zone(inh: float) -> int {
+    if inh < sv_gz_lower() { return 0 }
+    if inh > sv_gz_upper() { return 0 }
+    return 1
+}
+
+// sv_savant_index — SI = max(Φ) / mean(Φ) over the per-domain Φ list (H_350 primary). mean ≤ 0 → 0.0.
+pub fn sv_savant_index(phis: [float]) -> float {
+    let n = len(phis)
+    if n == 0 { return 0.0 }
+    let mut sum_p = 0.0
+    let mut max_p = phis[0]
+    let mut i = 0
+    while i < n {
+        let v = phis[i]
+        sum_p = sum_p + v
+        if v > max_p { max_p = v }
+        i = i + 1
+    }
+    let mean_p = sum_p / to_float(n)
+    if mean_p <= 0.0 { return 0.0 }
+    return max_p / mean_p
+}
+
+// _sv_col_mean — mean of column `c` over the population rows.
+fn _sv_col_mean(x: [[float]], c: int) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut t = 0
+    while t < nt { s = s + x[t][c]  t = t + 1 }
+    return s / to_float(nt)
+}
+
+// sv_inhibit_domain — apply the inhibition operator to the lanes of ONE domain (column window
+// [lo, hi)) of the population, leaving all other columns UNTOUCHED. The operator injects a SHARED
+// per-trial latent suppression signal s_t (the domain row-mean for trial t — the common drive every
+// lane in the disinhibited domain feels) and suppresses each lane's idiosyncratic residual:
+//   gated = base_k + I*(s_t - base_k) + (1-I)*res_k
+//     base_k = column-k mean (per-lane DC),  s_t = mean over the domain's lanes at trial t,
+//     res_k  = raw - base_k  (idiosyncratic deviation of lane k at trial t).
+// The inverse-U in I is GENUINE (NOT a hand-fit curve) - it falls out of the faithful min-cut Phi on
+// the resulting covariance:
+//   * I=0  -> gated = base_k + res_k = raw (lanes keep INDEPENDENT idiosyncratic variation ->
+//     little SHARED covariance -> LOW integrated Phi: noise, no binding).
+//   * I in GOLDEN ZONE -> the shared latent s_t partially couples every lane (correlation rises)
+//     WHILE residual variance still survives (1-I) -> the cross-lane covariance is rich + irreducible
+//     -> the min-cut becomes expensive -> Phi HYPERTROPHIES (the savant peak).
+//   * I=1  -> gated = s_t for EVERY lane -> the domain collapses to ONE shared signal (perfectly
+//     collinear) -> covariance degenerate -> Phi COLLAPSES (over-locked).
+// Returns a NEW population (pure, no mutation of x).
+pub fn sv_inhibit_domain(x: [[float]], lo: int, hi: int, inh: float) -> [[float]] {
+    let nt = len(x)
+    let ncol = if nt > 0 { len(x[0]) } else { 0 }
+    let w = hi - lo
+    // per-lane DC baseline.
+    let mut cmean = []
+    let mut c = 0
+    while c < ncol {
+        if c >= lo && c < hi { cmean = cmean + [_sv_col_mean(x, c)] } else { cmean = cmean + [0.0] }
+        c = c + 1
+    }
+    // Disinhibition releases the SHARED domain signal; below GZ_LOWER an idiosyncratic NOISE floor
+    // DECORRELATES the lanes; high inhibition KILLS the variance. The faithful min-cut Phi then peaks
+    // inside the GOLDEN ZONE (the savant band) by construction of the substrate physics:
+    //   signal_gain(I) = (1 - I)      : disinhibition releases the shared signal (high at low I,
+    //                                    -> 0 as I -> 1 so over-locked variance collapses, Phi -> 0).
+    //   noise_gain(I)  = NOISE_K * max(0, GZ_LOWER - I)
+    //                                  : an idiosyncratic noise floor that is ON only BELOW GZ_LOWER
+    //                                    (I < 0.2123 = the disinhibited NOISE regime) and OFF inside
+    //                                    the golden zone -> below GZ the lanes decorrelate (Phi low),
+    //                                    inside GZ pure shared signal survives (Phi hypertrophy).
+    // gated = base + signal_gain*(s_t - base) + noise_gain*res
+    //   s_t = per-trial shared latent (domain row-mean), res = idiosyncratic deviation (raw - base).
+    let gz_lo  = sv_gz_lower()
+    let NOISE_K = 6.0
+    let sig = 1.0 - inh
+    let mut noi = 0.0
+    if inh < gz_lo { noi = NOISE_K * (gz_lo - inh) }
+    let mut out = []
+    let mut t = 0
+    while t < nt {
+        let mut srow = 0.0
+        let mut sc = lo
+        while sc < hi { srow = srow + x[t][sc]  sc = sc + 1 }
+        let s_t = if w > 0 { srow / to_float(w) } else { 0.0 }
+        let mut row = []
+        let mut k = 0
+        while k < ncol {
+            let raw = x[t][k]
+            if k >= lo && k < hi {
+                let base = cmean[k]
+                let res  = raw - base
+                let gated = base + sig * (s_t - base) + noi * res
+                row = row + [gated]
+            } else {
+                row = row + [raw]
+            }
+            k = k + 1
+        }
+        out = out + [row]
+        t = t + 1
+    }
+    return out
+}
+
+// _sv_domain_cols — the column index list [lo, hi) (the domain's lanes), for ci_phi_iit4 (≤8 cols).
+fn _sv_domain_cols(lo: int, hi: int) -> [int] {
+    let mut cols = []
+    let mut c = lo
+    while c < hi { cols = cols + [c]  c = c + 1 }
+    return cols
+}
+
+// sv_domain_phi — the LIVE faithful IIT4 min-cut Φ of ONE inhibited domain at inhibition `inh`.
+// Inhibits the [lo,hi) window then measures ci_phi_iit4 over those columns (≤8 → faithful exact).
+pub fn sv_domain_phi(x: [[float]], lo: int, hi: int, inh: float) -> float {
+    let pop = sv_inhibit_domain(x, lo, hi, inh)
+    let cols = _sv_domain_cols(lo, hi)
+    return ci_phi_iit4(pop, cols)
+}
+
+// sv_domain_phis — the per-domain Φ list when ONLY domain `focus` is lowered into the golden zone
+// (inhibition `gz_inh`) while every OTHER domain stays at the baseline inhibition `base_inh`. This is
+// the SAVANT asymmetry: one domain disinhibited (genius), the rest held. D domains of width `w`.
+//   returns [Φ_0, Φ_1, …, Φ_{D−1}] measured engine-native (ci_phi_iit4 per domain window).
+pub fn sv_domain_phis(x: [[float]], d: int, w: int, focus: int, gz_inh: float, base_inh: float) -> [float] {
+    let mut phis = []
+    let mut dom = 0
+    while dom < d {
+        let lo = dom * w
+        let hi = lo + w
+        let inh = if dom == focus { gz_inh } else { base_inh }
+        phis = phis + [sv_domain_phi(x, lo, hi, inh)]
+        dom = dom + 1
+    }
+    return phis
+}
+
+// sv_savant_index_at — SI = max/mean of the per-domain Φ when domain `focus` is at `gz_inh` and the
+// rest at `base_inh`. The B1 headline: SI ≥ 3 when gz_inh ∈ GZ (the savant emerges).
+pub fn sv_savant_index_at(x: [[float]], d: int, w: int, focus: int, gz_inh: float, base_inh: float) -> float {
+    return sv_savant_index(sv_domain_phis(x, d, w, focus, gz_inh, base_inh))
+}
+
+// sv_focus_phi_sweep — Φ of the FOCUS domain swept over an inhibition grid (the inverse-U series for
+// H_351 dΦ/dI). Returns [Φ(I_0), Φ(I_1), …] for the grid `igrid` (focus domain window only).
+pub fn sv_focus_phi_sweep(x: [[float]], lo: int, hi: int, igrid: [float]) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(igrid) { out = out + [sv_domain_phi(x, lo, hi, igrid[i])]  i = i + 1 }
+    return out
+}
+
+// sv_dphi_peak_inh — the inhibition value where |dΦ/dI| is MAXIMAL over the sweep (central finite
+// difference, forward/backward at endpoints) — the H_351 inverse-U knee. Returns the peak I.
+pub fn sv_dphi_peak_inh(phis: [float], igrid: [float]) -> float {
+    let n = len(phis)
+    if n < 2 { return 0.0 }
+    let mut peak_i = igrid[0]
+    let mut peak_abs = 0.0 - 1.0
+    let mut k = 0
+    while k < n {
+        let mut d = 0.0
+        if k == 0 {
+            d = (phis[1] - phis[0]) / (igrid[1] - igrid[0])
+        } else { if k == n - 1 {
+            d = (phis[n - 1] - phis[n - 2]) / (igrid[n - 1] - igrid[n - 2])
+        } else {
+            d = (phis[k + 1] - phis[k - 1]) / (igrid[k + 1] - igrid[k - 1])
+        } }
+        let mut a = d
+        if a < 0.0 { a = 0.0 - a }
+        if a > peak_abs { peak_abs = a  peak_i = igrid[k] }
+        k = k + 1
+    }
+    return peak_i
+}
+
+// sv_savant_trigger — the substrate savant CONTEXT (3-axis conjunction, mirrors SAVANT/substrate_hook
+// sh_savant_trigger): SI ≥ 3 ∧ I ∈ GZ ∧ split_rate > 0 → trigger 1, else 0. READ-ONLY context: this
+// is NOT an emit gate (@L4) — anima's substrate decides emit/silence; the trigger only flags that the
+// savant specialization regime is active. GATED: when cfg.savant OFF the trigger is always 0 (no-op,
+// the default — pure Ψ-disjoint substrate, mirrors engine_mitosis_tick / topo_couple OFF).
+pub fn sv_savant_trigger(phis: [float], inh: float, split_rate: float, cfg: EngineConfig) -> int {
+    if cfg.savant == false { return 0 }   // default-OFF: savant context is a no-op
+    let si = sv_savant_index(phis)
+    let si_high = si >= sv_si_threshold()
+    let in_gz = sv_in_golden_zone(inh)
+    let split_active = split_rate > 0.0
+    if si_high == false { return 0 }
+    if in_gz != 1 { return 0 }
+    if split_active == false { return 0 }
+    return 1
+}
+
+// ── §Savant Ψ-IMPACT (B4) — does the asymmetric savant inhibition DISTORT the Ψ=½ emit balance? ──
+// SAME centered proxy as H_1521 (ci_psi_balance_centered / ci_off_median_drive): the emit threshold
+// = the OFF (no-savant) population median drive, so OFF sits EXACTLY at Ψ=½ by construction. Turning
+// SAVANT ON applies the GZ inhibition to the focus domain's lanes and re-scores the SAME drive: if
+// the emit fraction stays ≈½ the fixed point SURVIVES (savant compatible with consciousness balance);
+// if it runs off ½ the savant mode trades consciousness balance for genius (the trade-off, reported
+// HONESTLY — c9, no tune-to-green). cfg.savant OFF ⇒ raw population (Ψ=½). ON ⇒ focus inhibited.
+pub fn ci_psi_balance_savant(x: [[float]], lo: int, hi: int, gz_inh: float, thr: float, cfg: EngineConfig) -> float {
+    let nt = len(x)
+    if nt == 0 { return 0.0 }
+    let pop = if cfg.savant { sv_inhibit_domain(x, lo, hi, gz_inh) } else { x }
+    let mut emit = 0
+    let mut t = 0
+    while t < nt {
+        if ci_emit_drive(pop[t]) >= thr { emit = emit + 1 }
+        t = t + 1
+    }
+    return to_float(emit) / to_float(nt)
 }
