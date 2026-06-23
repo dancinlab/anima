@@ -563,7 +563,15 @@ ckpt ↔ HF registry (models · datasets) is managed in the `ARCHITECTURE.json` 
   over the **forge** GPU substrate (no PyTorch/ATen/Python in the trained binary,
   `a_train_flame_forge`); results are recorded per substrate — **Lane G** (forge own-GEMM H100,
   PUBLIC production trainer) ⊥ **Lane A** (AKIDA AKD1000 on-chip) ⊥ **Lane P** (GPU-torch reference +
-  torch→`.clm` bridge) — never merged into one verdict (`a_lane_akida_gpu_split`).
+  torch→`.clm` bridge) — never merged into one verdict (`a_lane_akida_gpu_split`). The canonical
+  single training entry-point is **`cli/train.hexa`** (H_1567) — a hexa-native CLMConvMoE trainer
+  that composes the proven flame fwd/bwd/CE/AdamW chain (`stdlib/flame/clm_step.hexa` lineage) with
+  anima's two orthogonal learning levers: **SAVANT** golden-zone inhibition (cusp-anneal AdamW
+  weight-decay below `GZ_LOWER≈0.21232` + asymmetric latch, `a_savant_train`) ⊥ **MITOSIS**
+  cell-division (`mitosis_split` E→E+1, continuity-preserving router-bias split, `a_mitosis_train`),
+  plus a 4-cell `{ko·en}×{일반·SNS}` corpus loader scaffold. The toy `MODE_VERIFY` ($0 farr CPU)
+  passes 3/3 frozen falsifiers (CE descent 4.785→0.000432 · savant latch · bounded mitosis split);
+  the engine-native 303M `MODE_CANON` LEARNING run is a separate cost-gated GPU fire.
 - **Decode/inference** — decode (`core/bytegpt_decode.hexa` · `clm_decode.hexa`) also enters the
   **forge** GPU via the `flame_mm.mm` seam (own-GEMM `_hx_k_gemm`, cuBLAS-independent) when
   `cuda_available()=1`, else byte-identical farr CPU; GPU is the default, not a CPU fallback
