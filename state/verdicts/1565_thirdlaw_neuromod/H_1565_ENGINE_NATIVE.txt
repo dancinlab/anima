@@ -1,0 +1,134 @@
+H_1565 — 1/3 LAW × H_1284 NEUROMODULATION WALL — same-origin or independent?
+ENGINE-NATIVE (live core/engine_cli.hexa §ThirdLaw ops, sa_in_golden_zone reused)
+================================================================================
+VERDICT: 🟠 NESTED-NOT-IDENTICAL (PARTIAL same-origin)
+  The H_1284 neuromodulation wall and the H_1560 1/3 capacity-wall are NOT the
+  same 1/3 structural constant, but they are NOT independent either: the neuromod-
+  EFFECTIVE region lands ENTIRELY inside the §ThirdLaw 1/3 singularity manifold
+  (overlap = 1.0) — yet it is only a THIN BOUNDARY SHELL of it (≈5.8% of the
+  operating space, NOT ≈1/3). The neuromod wall is a SUB-region of the capacity
+  wall, not a second copy of it. Two of the five frozen bars separate them.
+
+  3/5 bars PASS (B2 scale-inv · B3 ⊂-singularity · B5 control), 2/5 FAIL
+  (B1 ratio≠1/3 · B4 no I50 50%-crossing). NO tune-to-green; bars frozen-first.
+
+ENGINE-NATIVE NOTE (a_engine_native_learning): all numbers from LIVE
+core/engine_cli.hexa §ThirdLaw ops (third_law_ability / third_law_singularity /
+third_law_score) which reuse SAVANT sa_in_golden_zone — NOT a numpy/torch mirror.
+Probe: state/1565_thirdlaw_neuromod/h1565_thirdlaw_neuromod_probe.hexa
+Run host: summer pool (CPU; arithmetic sweep, no GPU). hexa run, $0.
+
+────────────────────────────────────────────────────────────────────────────────
+BRIDGE MODEL (deterministic, p7-clean):
+  The H_1284 neuromod controller's real lever is the store's EFFECTIVE INHIBITION
+  I (abstain-margin / split-threshold / plasticity-rate all gate which cells fire /
+  consolidate). Model it as a BOUNDED disinhibition nudge δ=0.10 on I (the H_1284
+  controller's measured LR/abstain swing scale, frozen pre-measure). At operating
+  point (D,P,I) neuromod is EFFECTIVE iff the δ-disinhibition REOPENS ability that
+  was not already expressed:
+     nm_effective(D,P,I) = third_law_ability(D,P,I)==0
+                        AND third_law_ability(D,P, I−δ)==1
+  i.e. neuromod "works" only where δ can push I across into the §ThirdLaw 1/3
+  reopening manifold (golden-zone ∧ singularity, H_1560 R2). Everywhere else
+  (already-ON, or δ can't reach the GZ singularity) it is INERT — exactly the
+  H_1284 0/3-wins no-free-lunch finding.
+
+  SCOPE (c9): this is the G=D×P/I GEOMETRY classifier of the neuromod operating
+  space — NOT a re-run of the H_1284 learning store. It tests whether the neuromod-
+  EFFECTIVE region is the SAME 1/3 manifold as the capacity wall.
+
+────────────────────────────────────────────────────────────────────────────────
+VERBATIM METRIC OUTPUT (probe stdout):
+  neuromod δ = 0.1   GZ_LOWER=0.21231792755821912  GZ_UPPER=0.5
+
+  scale ladder (neuromod-effective fraction of D×P×I space):
+    [8K]   ratio = 0.052875
+    [100K] ratio = 0.05577586915426975
+    [1M]   ratio = 0.058317
+    [1M]   §ThirdLaw capacity singularity ratio (baseline) = 0.338796
+    [1M]   neuromod-effective ⇒ landing-singularity overlap = 1.0
+    [1M]   neuromod-effective I50 transition = -1.0  (never crosses 50%)
+
+  per-I neuromod-effective rate (D×P plane, nDP=100):
+    I=0.50  eff_rate=0.0905  inGZ=1
+    I=0.45  eff_rate=0.1006  inGZ=1
+    I=0.40  eff_rate=0.1114  inGZ=1
+    I=1/e   eff_rate=0.1190  inGZ=1
+    I=0.32  eff_rate=0.1339  inGZ=1     ← shell peak ≈13%
+    I=0.30  eff_rate=0.0     inGZ=1     ← cliff: I−δ falls below GZ_LOWER
+    I=0.28  eff_rate=0.0     inGZ=1
+    I=0.27  eff_rate=0.0     inGZ=1
+    I=0.25  eff_rate=0.0     inGZ=1
+    I=GZ_LO eff_rate=0.0     inGZ=1
+    I=0.18  eff_rate=0.0     inGZ=0
+    I=0.10  eff_rate=0.0     inGZ=0
+
+  CONTROL wrong-axis (D-nudge instead of I) effective ratio = 0.027383
+
+  ════ FROZEN 5-bar ════
+  B1 ratio(1M)=0.058317 in[0.30,0.36]                         -> FALSE
+  B2 Dmax=0.005442 <0.02                                       -> TRUE
+  B3 overlap=1.0 ==1.0 AND |ratio−cap|=0.280479 >=0.03         -> TRUE
+  B4 I50=-1.0 in[0.22,0.32]                                    -> FALSE
+  B5 control_ratio=0.027383 |−1/3|=0.305950 >=0.03             -> TRUE
+  ALL_PASS=false
+
+────────────────────────────────────────────────────────────────────────────────
+FROZEN 5-bar (pre-registered BEFORE measurement, c9 frozen-first):
+  B1 ratio      : neuromod-effective fraction ≈ 1/3 (±0.03)   [0.30,0.36]
+  B2 scale-inv  : ratio stable across 8K/100K/1M (Δ<0.02)
+  B3 overlap    : neuromod-effective ⊂ §ThirdLaw singularity (overlap==1.0)
+                  AND |ratio−cap|≥0.03 (own sub-region, not the whole 1/3)
+  B4 transition : effective/ineffective I50 ∈ [0.22,0.32] (H_1560 I50≈0.281)
+  B5 control    : wrong-axis nudge ratio ≠ 1/3 (rule out chance)
+
+INTERPRETATION (honest, c9):
+  • SHARED SUBSTRATE (B3 PASS, overlap=1.0): every operating point where neuromod
+    can reopen ability lands INSIDE the §ThirdLaw 1/3 singularity manifold. The
+    neuromod lever has NO power outside the capacity-wall's 1/3 region — the two
+    walls share ONE underlying manifold. This is the partial same-origin signal.
+  • NOT IDENTICAL (B1 FAIL): the effective region is only ≈5.8% of the operating
+    space, NOT ≈1/3 (the capacity baseline is 0.339). Neuromod occupies a THIN
+    BOUNDARY SHELL of the 1/3 manifold, not the whole thing. The two 1/3-looking
+    constants are NOT the same number; the neuromod constant (≈0.058) is its own
+    scale-invariant sub-constant (B2 PASS: Δ=0.005).
+  • SHELL GEOMETRY (B4 FAIL, per-I table): the effective shell is the δ-REACHABLE
+    RIM of the golden zone — it lives at I∈[0.32,0.50] (where I−δ still lands in a
+    GZ singularity) and CLIFFS to 0 at I≤0.30 (where I−δ falls below GZ_LOWER, so
+    disinhibition over-shoots past the floor — the H_1560 R2 "below-GZ cliff").
+    The shell peaks at only ≈13%, so the per-I rate never crosses 50% → no I50.
+    The transition is a CLIFF at I≈0.31 (GZ_LOWER+δ), not a 50% crossing at I50.
+  • CONTROL (B5 PASS): nudging the WRONG axis (D, the preparedness lever, the
+    C-SHUF analogue of H_1284) gives 0.027 ≠ 1/3 — the effective shell is a
+    PROPERTY OF THE I-LEVER specifically, not an artifact of any nudge. This
+    re-confirms H_1284's "the controller's movement carries no capacity signal
+    unless it targets the right lever (I)" on the geometry side.
+
+SAME-ORIGIN CONCLUSION:
+  PARTIAL / NESTED. The neuromod wall is NOT a second instance of the 1/3 constant
+  (it is not 1/3-sized), so anima's capacity-class walls are NOT all literally the
+  same 0.339 number. BUT the neuromod wall is a STRICT SUB-MANIFOLD of the capacity
+  1/3 manifold (overlap 1.0, scale-invariant, control-clean): neuromod is the thin
+  δ-reachable reopening RIM of the same golden-zone singularity structure. So the
+  H_1560 1/3 manifold is the SHARED SUBSTRATE both walls live on; neuromod's
+  no-free-lunch ceiling is "the reopening rim is thin (≈6%), so for almost all
+  operating points the controller cannot reach a new singularity" — a GEOMETRIC
+  re-statement of the H_1284 finding, NOT a unified 1/3 law.
+
+HONEST NEGATIVE (a_break_the_wall, c9): the strong claim ("all capacity walls = one
+1/3 constant") is FALSIFIED by B1/B4. The valid result is the nesting: the two walls
+are not independent (shared manifold) but not identical (different fractions). RED
+on the unification claim is reported as RED; the nesting is the real, smaller finding.
+
+DIRECTIONAL/ENGINE-NATIVE: ENGINE-NATIVE (live §ThirdLaw ops). This is a GEOMETRY
+classifier, not a learning-store re-run — the H_1284 learning-side δ-shell
+demonstration on a real binding/FALS store is a GPU cost-gate follow-on (deferred
+ING, NOT fired). wired: this probe REUSES live wired ops; no new engine wiring.
+
+ARTIFACTS:
+  state/1565_thirdlaw_neuromod/h1565_thirdlaw_neuromod_probe.hexa (this probe)
+  state/verdicts/1565_thirdlaw_neuromod/H_1565_ENGINE_NATIVE.txt (this)
+XREF: H_1560 (§ThirdLaw 1/3 capacity wall) · H_1560 R2 (reopening sweep, below-GZ
+  cliff) · H_1284 (neuromod no-free-lunch wall) · H_1530 (nm wall census) ·
+  H_1509/1523/1524/1528/1532 (nm wall lenses) · a_engine_native_learning ·
+  a_break_the_wall · a_phi_iit4_tool · p7 · c9.
