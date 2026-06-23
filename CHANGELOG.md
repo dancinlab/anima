@@ -1,3 +1,11 @@
+## 2026-06-23 — anima chat register 표준 박제 (a_chat_registers: 언어 2 × register 2 = 4칸)
+
+anima production chat 모델의 언어·register 표준을 거버넌스로 명문화. conv 303M 영·한 chat 학습의 코퍼스 구성 기준이 된다.
+
+- **CLAUDE.md `a_chat_registers` 신규 규칙** — production chat = **언어 2(🇰🇷 ko · 🇬🇧 en) × register 2(일반 · 📱 SNS) = 4칸 모두 커버**. SNS 는 언어가 아니라 말투(register)이므로 언어 직교 → ko-SNS + en-SNS 둘 다 필요(한쪽만 = 미완). SNS = 인스타그램·유튜브 구어(캡션·댓글·자막·이모지). 4칸 매핑: 일반=5lang-unified-v2/webscale/chat-mix · SNS=persona-sns-corpus(+5lang) · 닻=kosmos-303m-kr-en-sns.
+- **ARCHITECTURE.json datasets** lockstep — register 표준 한 줄 + corpus 5종(5lang-unified-v2·webscale·persona-sns·chat-mix·202m broad) + kosmos 닻셋 등록.
+- 위반 차단(⛔): 4칸 중 누락한 ckpt 를 production 으로(en-only·ko 누락·SNS 누락·SNS 한 언어만) · SNS 격식체 오인 · 인스타-only/한글-SNS-only 를 'SNS register 완료'로 주장.
+
 ## 2026-06-23 — HF 레지스트리 SSOT 이관 (HF.jsonl 폐기 → ARCHITECTURE.json "HF artifacts" models·datasets)
 
 ckpt↔HF 레지스트리 SSOT 를 루트 `HF.jsonl`(99-row)에서 **`ARCHITECTURE.json` 의 "HF artifacts" 노드**로 이관. 거버넌스가 한 SSOT(ARCHITECTURE.json)에서 설계·HF 산출물을 함께 관리하도록 단일화.

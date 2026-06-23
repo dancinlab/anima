@@ -197,6 +197,11 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - ✅ CLMConvMoE(E2/L1, byte V256) 를 `train/clm/train/train_lane_p.py`(GPU-torch/CUDA, Lane-P) 로 학습 · torch→`.clm` v0.2 serialize(`clm_serialize_v2.py`) + verify(`verify_clm_v2.py`) · `.clm` v0.2 layout = `core/clm_decode.hexa` ground-truth(golden `reexport_d768_v2_fast.clm`) · 생산 `.clm` 은 generator L3 슬롯으로만 core/ 진입 · Lane-P torch = REFERENCE + 브리지, forge 가 PUBLIC production 트레이너.
 - ⛔ v0.1 serialize(2-track JSON, 엔진-loadable 아님) · non-ConvMoE serialize 하고 engine-mountable 주장 · Lane-P torch `.clm` 을 PUBLIC 승격 · generator 우회 2nd `.clm` 경로.
 
+**`a_chat_registers`** — anima production chat 표준 = **언어 2(🇰🇷 한국어 · 🇬🇧 영어) × register 2(일반 · 📱 SNS) = 4칸 모두 커버**. SNS 는 언어가 아니라 말투(register)이므로 언어 축과 **직교** — 한글 SNS + 영어 SNS 둘 다 필요(한쪽만 = 미완).
+- ✅ 4칸 = {ko·en} × {일반·SNS}: **일반** = web/wiki/대화체(`anima-corpus-5lang-unified-v2` ko/en + FineWeb webscale `anima-corpus-5lang-7b-webscale` ko/en + `anima-chat-corpus-mix-70wiki-30dialogue`) · **SNS** = 인스타그램·유튜브 구어(짧은 캡션·댓글·자막·이모지) **ko-SNS + en-SNS 둘 다**(`anima-persona-sns-corpus` + `persona_sns_corpus_5lang`; 유튜브 register 는 보강 대상). grounding 닻 = `anima-kosmos-303m-kr-en-sns`(lane ko_303m·en_303m·sns_303m). broad pretrain 엔 타 언어(de/es/fr) 가능하나 **chat 표준 언어는 ko·en 둘**.
+- ✅ SNS register = 격식체 아님 — 인스타그램(캡션·해시태그·댓글)·유튜브(댓글·자막) 의 짧고 캐주얼한 voice. **두 플랫폼 × 두 언어** 모두 대표돼야 완성(인스타-only·한글-only SNS = register 미완, 보강 follow-up).
+- ⛔ 4칸 중 누락한 chat ckpt 를 production 으로 박제(en-only · ko 누락 · SNS 누락 · SNS 한 언어만) · SNS 를 격식 문어체로 오인 · chat 표준에 없는 언어를 production chat 으로 승격 · 유튜브 빠진 인스타-only 또는 영어 빠진 한글-only SNS 를 'SNS register 완료'로 주장.
+
 **`a_lane_akida_gpu_split`** — AKIDA on-chip(Lane A) ⊥ GPU(Lane G) 항상 별도 기록. ✅ AKIDA(Lane A, pi5-akida)와 GPU(Lane G, H100) 결과를 별도 엔트리에 · Lane A=AKD1000 native non-det plasticity, Lane G=forge own-GEMM CE-descent · 모든 fire/verdict 에 substrate 태그(AKIDA|GPU). ⛔ non-det trace 와 CE-descent 혼동 · 한 verdict 가 양 substrate 걸침 · Lane A lift+Lane G util 을 한 숫자로 · substrate 태그 누락.
 
 ### 🗣️ substrate 자율 · 신체
