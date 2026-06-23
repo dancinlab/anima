@@ -77,6 +77,11 @@
 // below to read collective integration; numpy NEVER computes Φ. Same engine H_609 used.
 import "stdlib/consciousness/iit4_bigphi.hexa"
 import "stdlib/consciousness/iit4_bounded.hexa"
+// SAVANT golden-zone primitives (H_347/348) — REUSED (NOT re-implemented) by §ThirdLaw
+// below: sa_gz_lower / sa_gz_upper / sa_in_golden_zone / sa_si_threshold. savant_lib is a
+// pure leaf (0 imports), so this stays one-directional. (precedent: core/*_smoke.hexa already
+// import "SAVANT/substrate_hook.hexa".)
+import "SAVANT/savant_lib.hexa"
 
 // ── env read helper (canonical printenv pattern, mirrors eeg_backend.hexa) ────
 fn _env_read(name: string) -> string {
@@ -10911,4 +10916,159 @@ pub fn fieldlibido_lowfreq(m: float, m_field: [float], cells: int, seen: int, in
 pub fn fieldlibido_sham(m: float, m_field: [float], cells: int, seen: int, intent: int, dt: float,
                         recon_err: float) -> float {
     return fieldlibido_gfield(m, m_field, cells, seen, intent, dt, recon_err, 0, 0.0, 0)
+}
+
+// ── § ThirdLaw (H_1560 R2) — 1/3 LAW × G6 CAPACITY-WALL same-origin classifier ───────────────────
+// ATLAS/359 "1/3 법칙": in the (D=disinhibition × P=preparedness / I=inhibition) golden-zone genius
+// score G, ~33% of parameter space crosses the savant SINGULARITY boundary — a SAMPLE-INVARIANT
+// structural constant (the singularity fraction is ≈1/3 regardless of grid resolution), with the
+// per-I singularity rate crossing 50% near I≈0.27. H_1560 reproduced this on the LIVE SAVANT golden-
+// zone primitives (sa_*) and LINKED it to the G6 capacity-wall: the region where the capacity-wall
+// REOPENS (golden-zone disinhibition ∧ singularity, i.e. ability is EXPRESSED) is a SUBSET of the
+// 1/3 singularity region, and that subset's overlap P(ability|singularity) is itself scale-stable.
+// → two scale-invariant 1/3 structural constants share one origin (a_break_the_wall: the wall is not
+// a flat ceiling — disinhibition opens a measurable 1/3-shaped singularity manifold).
+//
+// This § wires that classifier ENGINE-NATIVE. It is a pure deterministic CLASSIFIER over (D,P,I) —
+// READ-only, Ψ-disjoint, NOT an emit gate (a_autonomy_over_hardcode: it supplies CONTEXT — "is this
+// operating point a savant singularity / a capacity-wall reopening point" — never a do/dont rule).
+// p7-clean: deterministic arithmetic, no perplexity / no LLM judge. It REUSES the live SAVANT
+// golden-zone window (sa_gz_lower/sa_gz_upper/sa_in_golden_zone) — it does NOT redefine the GZ.
+//
+// FROZEN singularity boundary (matches H_1560 probe SING_THR, the ATLAS 2σ class column):
+fn _tl_sing_thr() -> float { return 0.70 }
+
+// third_law_score — the golden-zone genius score G = D·P / I (capacity headroom).
+// D = disinhibition, P = preparedness, I = inhibition (I>0). H_1560 sweep semantics, byte-exact.
+pub fn third_law_score(d: float, p: float, ii: float) -> float {
+    if ii <= 0.0 { return 0.0 }
+    return (d * p) / ii
+}
+
+// third_law_singularity — 1 iff G crosses the savant singularity boundary (G > SING_THR). This is the
+// "~1/3 of parameter space" event the law is about.
+pub fn third_law_singularity(d: float, p: float, ii: float) -> int {
+    if third_law_score(d, p, ii) > _tl_sing_thr() { return 1 }
+    return 0
+}
+
+// third_law_ability — the CAPACITY-WALL EXPRESSION point: a singularity (G>thr) that ALSO sits inside
+// the live SAVANT golden-zone of inhibition (sa_in_golden_zone(I)). This is where ability is actually
+// EXPRESSED (the wall reopens). By construction ability ⊂ singularity. Reuses sa_in_golden_zone (no
+// re-implementation of the GZ window).
+pub fn third_law_ability(d: float, p: float, ii: float) -> int {
+    if third_law_singularity(d, p, ii) == 1 && sa_in_golden_zone(ii) == 1 { return 1 }
+    return 0
+}
+
+// _tl_linspace(a,b,n) — n inclusive floats (byte-exact match to the H_1560 probe linspace).
+fn _tl_linspace(a: float, b: float, n: int) -> [float] {
+    let mut out = []
+    if n <= 1 { out = out + [a]  return out }
+    let step = (b - a) / to_float(n - 1)
+    let mut i = 0
+    while i < n { out = out + [a + step * to_float(i)]  i = i + 1 }
+    return out
+}
+
+// third_law_ratio — the headline structural constant: fraction of the (D×P×I) golden-zone grid that
+// is a singularity. Returns ≈0.339 (≈1/3) and is SAMPLE-INVARIANT across grid resolution (H_1560 B1/B2).
+// Grid is the H_1560 sweep [0.05,0.95]^3 at resolution nD×nP×nI.
+pub fn third_law_ratio(nD: int, nP: int, nI: int) -> float {
+    let dg = _tl_linspace(0.05, 0.95, nD)
+    let pg = _tl_linspace(0.05, 0.95, nP)
+    let ig = _tl_linspace(0.05, 0.95, nI)
+    let mut total = 0
+    let mut sing = 0
+    let mut a = 0
+    while a < nI {
+        let ii = ig[a]
+        let mut b = 0
+        while b < nD {
+            let d = dg[b]
+            let mut c = 0
+            while c < nP {
+                let pp = pg[c]
+                total = total + 1
+                if third_law_singularity(d, pp, ii) == 1 { sing = sing + 1 }
+                c = c + 1
+            }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    if total == 0 { return 0.0 }
+    return to_float(sing) / to_float(total)
+}
+
+// third_law_overlap — capacity-wall same-origin link: P(ability | singularity) over the grid. The
+// ability region (golden-zone disinhibition ∧ singularity) is a SUBSET of the 1/3 singularity region;
+// this returns its share, which H_1560 found scale-stable (B4). Reuses third_law_ability (sa_* GZ).
+pub fn third_law_overlap(nD: int, nP: int, nI: int) -> float {
+    let dg = _tl_linspace(0.05, 0.95, nD)
+    let pg = _tl_linspace(0.05, 0.95, nP)
+    let ig = _tl_linspace(0.05, 0.95, nI)
+    let mut sing = 0
+    let mut abil = 0
+    let mut a = 0
+    while a < nI {
+        let ii = ig[a]
+        let mut b = 0
+        while b < nD {
+            let d = dg[b]
+            let mut c = 0
+            while c < nP {
+                let pp = pg[c]
+                if third_law_singularity(d, pp, ii) == 1 {
+                    sing = sing + 1
+                    if sa_in_golden_zone(ii) == 1 { abil = abil + 1 }
+                }
+                c = c + 1
+            }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    if sing == 0 { return 0.0 }
+    return to_float(abil) / to_float(sing)
+}
+
+// third_law_i50 — the inhibition transition: linear-interpolated I at which the per-I singularity rate
+// crosses 50% (rate falls as I grows). H_1560 found I50≈0.281 (ATLAS≈0.27, B3). Pure deterministic.
+pub fn third_law_i50(nD: int, nP: int, nI: int) -> float {
+    let dg = _tl_linspace(0.05, 0.95, nD)
+    let pg = _tl_linspace(0.05, 0.95, nP)
+    let ig = _tl_linspace(0.05, 0.95, nI)
+    let mut rate = []
+    let mut a = 0
+    while a < nI {
+        let ii = ig[a]
+        let mut it = 0
+        let mut is = 0
+        let mut b = 0
+        while b < nD {
+            let d = dg[b]
+            let mut c = 0
+            while c < nP {
+                it = it + 1
+                if third_law_singularity(d, pg[c], ii) == 1 { is = is + 1 }
+                c = c + 1
+            }
+            b = b + 1
+        }
+        rate = rate + [to_float(is) / to_float(it)]
+        a = a + 1
+    }
+    let mut k = 0
+    while k < nI - 1 {
+        let y0 = rate[k]
+        let y1 = rate[k + 1]
+        if y0 >= 0.5 && y1 < 0.5 {
+            let x0 = ig[k]
+            let x1 = ig[k + 1]
+            return x0 + (y0 - 0.5) / (y0 - y1) * (x1 - x0)
+        }
+        k = k + 1
+    }
+    return 0.0 - 1.0
 }

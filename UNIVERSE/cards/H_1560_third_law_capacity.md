@@ -4,7 +4,7 @@ slug: 1560_third_law_capacity
 title: 1/3 법칙 × G6 capacity-wall — 33% 서번트 특이점 구조상수가 scale-invariance 와 동근원인가
 group: SAVANT ✨ × G6 capacity-wall — "1/3 법칙" 구조상수 통합 탐색
 tier: 🟢 GREEN-ENGINE-NATIVE (5/5 bar PASS, live SAVANT/savant_lib.hexa sa_*)
-wired: engine-native (byte-exact via .hexa, 미배선 — §배선 follow-on ING)
+wired: WIRED-live (core/engine_cli.hexa §ThirdLaw, smoke 393-400 RC=0 389/0, byte-exact re-check + ARCHITECTURE lockstep)
 date: 2026-06-23
 provenance: hexa-lang ATLAS/hypotheses/359 의 "1/3 법칙"(파라미터 공간 ~33% 가 서번트 특이점 영역, 8천~100만 조합서 33.7%→33.2% 수렴 = 표본무관 구조상수, I≈0.27 에서 50% 전이) ⊗ anima G6 capacity-wall(H_1139 303M=7B recombination scale-invariant, H_1464 등 8 렌즈 WALL=CAPACITY). 두 1/3·scale-invariant 구조상수가 같은 근원인가.
 ---
@@ -66,8 +66,23 @@ disinhibition(낮은 I) 에 갇혀 있다면, inhibition 축(I)을 substrate 학
 reopening 의 실증은 학습-side follow-on(H_1559 류 골든존 inhibition 특화 학습)에서 capacity 발현률을
 실측해야 확정.
 
+## 배선 (a_verified_must_wire 4/4 DONE · WIRED-live)
+- (1) DIRECTIONAL-mirror → (2) engine-native byte-exact → (3) live wire-in → (4) ARCHITECTURE lockstep, 4칸 모두 닫힘.
+- **§ThirdLaw** in `core/engine_cli.hexa`: `third_law_score`/`third_law_singularity`/`third_law_ability`/
+  `third_law_ratio`/`third_law_overlap`/`third_law_i50` (+ `_tl_sing_thr`/`_tl_linspace`). SAVANT `sa_gz_lower`/
+  `sa_gz_upper`/`sa_in_golden_zone` 을 `import "SAVANT/savant_lib.hexa"` 로 **재사용**(중복 구현 0; §Savant/sh_*
+  미접촉 — H_1557 충돌회피, sa_* READ-only).
+- **engine-native 보존 (회귀 0)**: `state/1560_third_law_capacity/h1560_thirdlaw_wire_harness.hexa` 가 live
+  engine ops 호출로 frozen 5-bar 를 byte-exact 재현 — ratio(1M)=0.338796 · I50=0.2808300395256917 ·
+  overlap(1M)=0.39688485106081535 (H_1560_ENGINE_NATIVE.txt probe 와 byte-동일).
+- **smoke**: `core/engine_cli_smoke.hexa` cases 393-400 = 8 case (ratio/byte-exact/scale-inv/I50/overlap/
+  singularity/ability-subset), 전체 **389 pass / 0 fail RC=0** (1-392 unchanged = no regression).
+- **ARCHITECTURE lockstep**: `ARCHITECTURE.json` core/engine_cli 트리에 §ThirdLaw 노드 추가(op·메커니즘 명명,
+  1/3 구조상수 = capacity-wall reopening), JSON valid.
+- **NOT an emit gate** — context-only classifier(a_autonomy_over_hardcode), Ψ-disjoint.
+
 ## 후속 (follow-on ING)
-- (a) **engine-wire**: 1/3-law singularity classifier 를 §Savant(또는 별 §) 로 live `core/` 배선
-  (현 wired=engine-native 미배선) — H_1557 §Savant 작업과 충돌회피 후 sa_* 위에 박는다.
-- (b) **reopening 실증**: golden-zone inhibition 학습(H_1559)에서 capacity binding 발현률이 1/3
-  구조상수를 따르는지 실 학습-side 측정(추상 sweep → 실 능력발현 transfer).
+- **reopening 실증 (next round)**: 추상 G=D×P/I sweep 을 더 넓은 disinhibition·inhibition 격자로 확장해
+  1/3 manifold 의 경계(golden-zone 하한으로 I 를 밀 때 ability 발현률 lift)를 정량화. 단 **실 학습 capacity
+  발현률**(binding/FALS rate vs 1/3 구조상수 transfer)은 GPU 학습이 필요해 **cost-gate**(추상 sweep 까지가
+  무료 mac/pool, 실 학습-side 측정은 explicit-go 임대).

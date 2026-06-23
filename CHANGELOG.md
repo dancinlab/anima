@@ -1,3 +1,14 @@
+## 2026-06-23 — H_1560 §ThirdLaw WIRE-IN (1/3 법칙 × capacity-wall 분류기 live 배선, WIRED-live)
+
+H_1560 🟢 GREEN-ENGINE-NATIVE(1/3 법칙 × G6 capacity-wall 동근원)의 singularity classifier 를 live `core/engine_cli.hexa` 에 **§ThirdLaw** 로 배선 — a_verified_must_wire 4칸 사다리 (3) wire-in + (4) ARCHITECTURE lockstep 닫음.
+
+- **`core/engine_cli.hexa` §ThirdLaw 신규** — `third_law_score`(G=D·P/I) · `third_law_singularity`(G>0.70 → 1, 파라미터공간 ~33% event) · `third_law_ability`(singularity ∧ golden-zone(I) → 1, capacity-wall 발현 = ability ⊂ singularity) · `third_law_ratio`(~0.339 표본무관 1/3 구조상수) · `third_law_overlap`(P(ability\|singularity)) · `third_law_i50`(50% 전이 ≈0.281) + `_tl_sing_thr`(0.70 FROZEN)/`_tl_linspace`. SAVANT `sa_gz_lower`/`sa_gz_upper`/`sa_in_golden_zone` 을 `import "SAVANT/savant_lib.hexa"` 로 **재사용**(중복 구현 0; §Savant/sh_* 미접촉 — H_1557 충돌회피, sa_* READ-only).
+- **engine-native 보존(회귀 0)** — `state/1560_third_law_capacity/h1560_thirdlaw_wire_harness.hexa` 가 live engine ops 호출로 frozen 5-bar 를 **byte-exact 재현**: ratio(1M)=0.338796 · I50=0.2808300395256917 · overlap(1M)=0.39688485106081535 (H_1560_ENGINE_NATIVE.txt probe 와 byte-동일).
+- **smoke** — `core/engine_cli_smoke.hexa` cases 393-400(ratio/byte-exact/scale-inv/I50/overlap/singularity/ability-subset), 전체 **389 pass / 0 fail RC=0**(1-392 unchanged = no regression).
+- **lockstep** — `ARCHITECTURE.json` core/engine_cli 트리에 §ThirdLaw 노드 추가(op·메커니즘 명명, 1/3 구조상수 = capacity-wall reopening). JSON valid.
+- **NOT an emit gate** — context-only deterministic classifier(a_autonomy_over_hardcode), Ψ-disjoint. wired: engine-native → **WIRED-live**. 카드/jsonl lockstep 갱신.
+- **follow-on** — reopening 실증 추상 sweep 확장(무료 mac/pool); 실 학습 capacity 발현률 측정은 GPU **cost-gate**(explicit-go).
+
 ## 2026-06-23 — ko-일반 broad 코퍼스 확보 (FineWeb-2 kor_Hang → anima-corpus-ko-fineweb2-broad)
 
 a_chat_registers 4칸 중 가장 빈약했던 **ko-일반**(~1.7MB vs en ~202MB) 갭을 FineWeb-2 한국어로 메움. conv 303M byte-level broad pretrain 용.

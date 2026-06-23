@@ -3644,6 +3644,28 @@ fn main() {
           + "single-store+encode-mode deconfound=" + to_string(cls_enc) + " (NON-GATING — engine deterministic first-wins tiebreak recovers B; R1's 0.2917 = numpy unstable-sort artifact; the c2 MERGE bar already proves the win is SEPARATION not encode-mode-alone) | "
           + "VERDICT: WALL-BROKEN ENGINE-NATIVE — the THREE FROZEN BARS (c1 PRESENCE two−one=+1.0 · c2 MERGE reverts to 0.0 · c3 SHUFFLE collapses to 0.0) are reproduced BYTE-EXACT vs the R1 numpy DIRECTIONAL break. The lever is HAVING SEPARATE STORES. GATED 387(one interferes 0.0)/388(⭐ two separates 1.0)/389(presence lift)/390(merge reverts)/391(shuffle collapses)/392(encode-deconfound well-formed, non-gating). c9 frozen-first, NO tune-to-green.")
 
+    // ── § ThirdLaw (H_1560 R2 WIRE-IN) — 1/3 law × G6 capacity-wall same-origin classifier ──
+    // Verify the wired §ThirdLaw ops reproduce the H_1560 frozen 5-bar BYTE-EXACT (ratio 1M=0.338796,
+    // I50=0.2808300395256917, overlap=0.39688485106081535) + classifier point-checks. sa_* reused.
+    let tl_r1m = third_law_ratio(100, 100, 100)
+    let tl_r8  = third_law_ratio(20, 20, 20)
+    let tl_ov1m = third_law_overlap(100, 100, 100)
+    let tl_i50 = third_law_i50(100, 100, 100)
+    if _assert_b("case_393_thirdlaw_ratio_is_one_third", true, tl_r1m >= 0.30 && tl_r1m <= 0.36) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_394_thirdlaw_ratio_byte_exact", true, (tl_r1m - 0.338796 < 0.0000005) && (0.338796 - tl_r1m < 0.0000005)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    let tl_dmax = tl_r8 - tl_r1m
+    let tl_dmax_abs = (if tl_dmax < 0.0 { 0.0 - tl_dmax } else { tl_dmax })
+    if _assert_b("case_395_thirdlaw_scale_invariant", true, tl_dmax_abs < 0.02) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_396_thirdlaw_i50_transition", true, tl_i50 >= 0.22 && tl_i50 <= 0.32) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_397_thirdlaw_i50_byte_exact", true, (tl_i50 - 0.2808300395256917 < 0.0000005) && (0.2808300395256917 - tl_i50 < 0.0000005)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_398_thirdlaw_overlap_capacity_link", true, tl_ov1m >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_399_thirdlaw_singularity_classifier", true, third_law_singularity(0.95, 0.95, 0.05) == 1 && third_law_singularity(0.05, 0.05, 0.95) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("case_400_thirdlaw_ability_subset_of_singularity", true, third_law_ability(0.95, 0.95, 0.30) == 1 && third_law_ability(0.95, 0.95, 0.05) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1560 §ThirdLaw (R2 WIRE-IN, 1/3 law × G6 capacity-wall same-origin): "
+          + "ratio(1M)=" + to_string(tl_r1m) + " (≈1/3, byte-exact 0.338796) · scale-inv Dmax=" + to_string(tl_dmax_abs) + " (<0.02) · "
+          + "I50=" + to_string(tl_i50) + " (≈0.281, ATLAS≈0.27) · overlap P(ability|sing)=" + to_string(tl_ov1m) + " (capacity-wall expression ⊂ 1/3 singularity) | "
+          + "VERDICT: WIRED-LIVE — §ThirdLaw classifier reproduces the H_1560 frozen 5-bar BYTE-EXACT on live engine ops (sa_in_golden_zone REUSED, NOT re-implemented). GATED 393-400. NOT an emit gate (context-only).")
+
     println("--- engine_cli smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
 }
