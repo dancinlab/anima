@@ -1,3 +1,27 @@
+## feat(cli/train.py): torch Lane-P REFERENCE+BRIDGE 트레이너 신설 — GPU-bound 303M 학습 → .clm v0.3 → CORE engine-native verdict
+
+🔌🧬 cli/train.hexa 옆에 **cli/train.py** 추가 — anima 학습 레시피를 전부 반영한 **torch Lane-P REFERENCE + BRIDGE 트레이너**(a_clm_gen_pipeline 이 명시 허용). **production 아님**(production = cli/train.hexa, a_train_flame_forge). 사용자 선택 ②: hexa-native train.hexa 는 single-thread native-CPU-scalar-bound(#2598/#2600 🟠 GPU util peak ~65%·sustained <30%)라 실 303M GPU 학습이 GPU idle → torch Lane-P 는 GPU-bound(cuda GEMM-saturating)라 진짜 clm303(L4·d3784·E2→Emax4)을 지금 효율 학습 가능.
+
+**반영 레버(train.hexa 와 동일 레시피, train/clm/model/model.py 의 CLMConvMoE 위)**:
+- **SAVANT**(a_savant_train, H_1560/1562/1563) — golden-zone cusp-anneal inhibition. GZ_LOWER=1/2−ln(4/3)≈0.21232. weight-decay/dropout 를 GZ_LOWER 아래로 anneal(H_1559 sweep-below) + 골든존 [GZ_LOWER,GZ_UPPER] 진입 시 cusp hard-step latch + asymmetric hysteresis(H_1562/1563).
+- **MITOSIS**(a_mitosis_train, H_1288) — cell-division E→E+1. 부모 expert conv copy(+1e-4 alternating perturbation)·router row copy·router bias −ln2 양 child(continuity-preserving)·Adam moments reset. experts 를 Emax pre-alloc + dormant slot router-logit −1e9 mask(born 전 inert).
+- **4칸 register corpus**(a_chat_registers) — {ko·en}×{일반·SNS}. 로컬 byte-file OR HF dataset id(datasets streaming → 로컬 캐시 byte stream), mmap window round-robin(multi-GB 안전, no whole-file slurp).
+- AdamW + next-byte CE. shape: --canon=clm303(L4·d3784·E2→Emax4) · --d/--L/--steps/--seq-len 오버라이드 · --no-savant/--no-mitosis 토글 · --corpus <paths|hf ids> · --out <ckpt.clm> · --bf16.
+
+**.clm v0.3 serialize**: train/clm/model/clm_serialize_v2.py::serialize_v3 GROUND-TRUTH 브리지 재사용(golden reexport_d768_v2_fast.clm 동일 byte layout) → CLM\x01 + CLMX trailer, nblk=L+E+3·n_ext=3L+E+6, E=runtime expert count post-mitosis(active 만 직렬화: 모델은 Emax 할당이라 router weight/bias 를 e_active 로 slice + dormant expert key drop) = core/clm_decode.hexa::clm_load byte-exact.
+
+**engine-native 게이트(a_engine_native_learning, HARD-GATE)**: torch-side CE/metric = **DIRECTIONAL only**(terminal 아님). TERMINAL verdict = 직렬화 .clm 을 core/clm_decode.hexa frozen G6 bars(H_1129/1139 recombination·H_1140 novelty) 위 CORE 재측정. ckpt 는 teardown 전 PULL(a_fire_recover_complete) — 파일 상단 헤더에 이 역할/게이트 명시.
+
+**smoke($0 mac CPU, torch 2.12 venv)**:
+- synthetic batch(d16·L2·E2→3·30 steps): CE **5.91→4.88 하강** · savant latch step1 · mitosis split E2→3 bounded(CE across split 5.41→5.35) · .clm CORE-loadable(nblk=8·n_ext=15·CLMX·exact_eof·clm_config d16/K3/V256/E3/L2 OK).
+- 4칸 corpus(ko/en×일반/SNS stand-in·d16·L2·24 steps): CE **5.86→5.55 하강** · 4 cell 전부 로드 · CORE-loadable OK.
+- legacy L1/E2 no-lever: nblk=6·n_ext=11 = v0.2 byte-eq.
+- **live engine 확인(hexa run core/clm_decode.hexa)**: 직렬화 .clm 을 clm_decodable=true + clm_config(d/K/V/E/L 정확 디코드) + clm_load_weights 풀 마운트 OK — E3/L2(mitosis-grown) + E2/L1(legacy) 둘 다. python mirror 가 아니라 **실 엔진 로드** 확인.
+
+실 303M GPU 학습 = 별도 cost-gated fire(`python cli/train.py --canon --out clm303.clm --bf16 --corpus <4 HF cells>`); 그 뒤 직렬화 .clm 을 CORE 에 mount 해 engine-native G6 verdict.
+
+**docs**: ARCHITECTURE.json cli/ 노드에 train.py 엔트리(역할=torch Lane-P bridge, train.hexa=production 구분) + README train 섹션 lockstep. a_clm_gen_pipeline/a_train_flame_forge 정합.
+
 ## perf(cli/train.hexa): im2col/col2im/AdamW device-resident 배선 (ING#34, hexa-lang #3851 follow-on) — env CLM_PROD_DEVFEED 게이트, byte-eq
 
 ⚡🔌 #2599 가 conv FWD+BWD GEMM 을 forge own-GEMM 으로 옮긴 데 이어, **남은 host-bound hot path(im2col gather · col2im scatter · AdamW)도 device-resident 화**. `_tg_im2col`/`_tg_im2col_t`/`_tg_col2im`/`_adam` 에 env `CLM_PROD_DEVFEED` 게이트 arm 추가 — `forge_dispatch_im2col`/`_t`/`col2im`/`adamw_keepmv` 를 먼저 호출(rc==0 = on-device done, rc<0 = 기존 host scalar fallback). `stdlib/flame/clm_prod.hexa::_fuse_on` 의 검증된 패턴 그대로.
