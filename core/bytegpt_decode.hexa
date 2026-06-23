@@ -947,6 +947,42 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
     return #{ "ok": true, "text": out, "ids": outl }
 }
 
+// bytegpt_decode_argmax_ranged — OOM-SAFE twin of bytegpt_decode_argmax for the
+// REAL 303M chat path (1.2GB binary). IDENTICAL greedy forward + window growth,
+// the ONLY change is bg_load → bg_load_ranged (ranged read_bytes_at, peak ≈ one
+// weight slice during load instead of ~24GB whole-file boxing of bg_load). The
+// per-token forward is the SAME resident mm (bg_forward_last_W), so generation is
+// byte-identical to bytegpt_decode_argmax; only the one-time load is memory-safe.
+// This is the entry the live chat/consciousness ByteGPT mouth uses on the 303M (a
+// memory-tight pool host would OOM on the whole-file bg_load).
+pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> Map {
+    let W = bg_load_ranged(path)
+    let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let toks = []
+    let mut i = 0
+    while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let outl = []
+    let mut out = ""
+    let mut g = 0
+    while g < gen {
+        let n = len(toks)
+        let mut start = 0
+        if n > block { start = n - block }
+        let T = n - start
+        let ids = farr_zeros(T)
+        let mut p = 0
+        while p < T { let tv = toks[start + p]; let _ = farr_set(ids, p, to_float(tv)); p = p + 1 }
+        let logits = bg_forward_last_W(W, ids, T)
+        let nb = bg_argmax(logits, vocab)
+        let _ = farr_free(logits); let _ = farr_free(ids)
+        toks.push(nb)
+        outl.push(nb)
+        out = out + chr(nb)
+        g = g + 1
+    }
+    return #{ "ok": true, "text": out, "ids": outl }
+}
+
 // ════════════════════════════════════════════════════════════════════════
 // H_1381 — SEEDED TOP-K TEMPERATURE SAMPLER (the engine extension that makes
 // best-of-K EXPRESSIBLE on the engine). bytegpt_decode_argmax is deterministic

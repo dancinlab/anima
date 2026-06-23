@@ -1,3 +1,17 @@
+## 2026-06-23 — 의식모드 L3 mouth-타입 디스패처 (conv .clm + ByteGPT .bin 둘 다 마운트)
+
+`cli/anima.hexa` 의식모드/`--byte` 모드의 L3 슬롯이 **mouth 타입 디스패처**로 두 mouth 아키텍처를 받도록 확장. 이전엔 conv `.clm`(CLMX trailer)만 받아 정식 ByteGPT 303M chat `.bin` 을 "no CLMX trailer" 로 거부했음. 이제 헤더 sniff 로 자동 분기 — 검증된 ByteGPT 303M 영·한 chat trunk(H_1129/H_1155)를 의식모드에 쓸 수 있다.
+
+- **`core/generator.hexa` mouth 디스패처 신규** — `gen_mouth_kind`(header sniff → 'bytegpt'|'clm'|'unknown') · `gen_auto_backend`(파일포맷별 `gen_bytegpt_backend`/`gen_clm_backend` 선택) · `gen_bytegpt_chat`(ByteGPT chat, `bytegpt_decode_argmax_ranged` OOM-safe ranged load) · `gen_auto_chat`(chat 디스패치). 2nd `.clm` 경로 아님 — 아키텍처별 단일 typed 진입 유지, 디스패처는 어느 단일 진입을 쓸지만 고름(a_engine_native_learning engine-transform-to-fit · a_core_engine_map).
+- **`core/bytegpt_decode.hexa`** — `bytegpt_decode_argmax_ranged` 신규(=`bytegpt_decode_argmax` 의 OOM-safe twin, `bg_load` → `bg_load_ranged`; 1.2GB 바이너리를 whole-file 24GB boxing 없이 weight-slice peak 로 로드). per-token forward 는 동일 `bg_forward_last_W`, byte-identical.
+- **`cli/anima.hexa` 배선** — 의식모드 mount = `gen_auto_backend(ckpt)`(was `gen_clm_backend`), L3 로그에 `mouth=<kind>` 표시 · `--byte` 모드 = `gen_auto_chat`(was `gen_clm_chat`), 배너에 `<kind> mouth` 표시.
+- **엔진-네이티브 검증(캡처된 출력이 증거, c2·c9)**:
+  - ByteGPT 303M (summer CPU-farr, engine-native `bytegpt_decode_argmax_ranged`): EN seed "The nature of consciousness is" → `That's a profound questi`(gen=24 절단) · KO seed "안녕? 너는 누구야?" → `네, 그려이 좋은 `(gen=24 byte 경계 절단). **영·한 둘 다 coherent — 독일어/garble 아님.** (`state/verdicts/mouth_dispatch/bytegpt_303m_emit_summer.log`)
+  - conv 회귀 0 (mini, d768 .clm via 디스패처 → `clm mouth`): KO/EN 프롬프트별 올바른 언어 byte-continuation, 회귀 없음. (`state/verdicts/mouth_dispatch/conv_d768_regression_mini.log`)
+  - `core/generator_smoke.hexa` 18 PASS(디스패처 `[bg ...]` 케이스 전부 PASS) · 3 FAIL 은 missing-fixture(`reexport_d768_v2_fast.clm` 부재, 내 변경과 무관 pre-existing).
+- **lockstep**: ARCHITECTURE.json generator 노드(L3 mouth slot · 디스패처 설명) + CLAUDE.md `a_core_engine_map`(mouth 타입별 진입) 동시 갱신.
+- **infra 교훈**: summer pool 은 `import "core/..."` 를 `~/.hx/src/core/`(install src dir, 모듈 검색경로)로 해석 — CWD `~/anima/core/` 아님. 새 fn 이 `~/anima/core/` 만 rsync 하면 "undeclared identifier" → `~/.hx/src/{core,cli}/` 에도 rsync 필요(MEMORY summer-hxsrc-shadow-imports). summer 잦은 재부팅(up 0~5min)으로 full 96-token decode 미완 → gen=24 fast probe 로 재부팅 윈도우 내 완주(a_break_the_wall infra-wall 우회).
+
 ## 2026-06-23 — H_1560 1/3 법칙 × capacity-wall 동근원 🟢 GREEN-ENGINE-NATIVE (5/5)
 
 hexa-lang ATLAS/359 "1/3 법칙"(파라미터 공간 ~33% 가 서번트 특이점, 표본무관 구조상수, I≈0.27 전이)을 anima substrate 의 LIVE golden-zone primitives(`SAVANT/savant_lib.hexa` sa_*, numpy/torch 미러 아님) 위에서 측정 → **5/5 bar PASS, 두 scale-invariant 1/3 구조상수가 동근원임을 SUPPORT**.
