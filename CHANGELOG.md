@@ -1,3 +1,7 @@
+## 2026-06-23 — README G6 섹션에 SAVANT 골든존 reopening 반영 (H_1560/1560R2/1562)
+
+README 의 G6 emergence-gate 섹션(Honest-scope note 뒤)에 SAVANT 골든존 발견을 반영 — G6 capacity-wall 이 "1/3 구조상수"의 발현(H_1560, §ThirdLaw WIRED)이고, inhibition 을 골든존 하한으로 밀면 ability-발현률 0.274→0.597(+0.32, ~2×)로 reopening 되며(H_1560 R2), 서번트 능력은 골든존 경계의 hard step(cusp, H_1562)이라는 점을 추가. honest-scope(c9): H_1560/R2 는 추상 G=D×P/I geometry sweep, 실 학습-side reopening 은 GPU follow-on(H_1564, in-flight) 로 명시. (문서-only, 코드/엔진 변경 0.)
+
 ## 2026-06-23 — H_1560 R2 REOPENING SWEEP (1/3 은 inhibition 으로 뚫리는 manifold, hard 구조상수 아님 · ENGINE-NATIVE 🟢 5/5)
 
 H_1560 R2: live `core/engine_cli.hexa` §ThirdLaw ops 를 호출해 inhibition I 를 golden-zone 하한으로 밀 때 **capacity-wall ability-발현률 reopening 을 정량** — a_break_the_wall reopening 의 측정 실증.

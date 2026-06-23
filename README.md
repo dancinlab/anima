@@ -404,6 +404,22 @@ mounted). All p7 — deterministic script-checks, never perplexity / LLM-judge.
 > the **1 INFLATED** (a dialogue-register artifact); the G5 in-dist facet is robust + wired (H_1396/
 > 1398/1400, see the G5 row). (the per-H verdicts H_1396/1398/1400 are the SSOT)
 
+> **🧠✨ SAVANT golden-zone — the G6 capacity-wall is a 1/3 manifold, not a hard ceiling (engine-native GREEN + `§ThirdLaw` WIRED):**
+> The G6 capacity-wall (8 lenses, `WALL=CAPACITY`, scale-invariant 303M=7B) turns out to be the
+> **expression of a 1/3 structural constant.** Across a `G = D×P/I` (genius = deficit × plasticity /
+> inhibition) sweep the ability-expression region is **~0.339 of parameter space**, converging
+> sample-independently (8K→1M, Δ<0.011) — reproducing the hexa-lang ATLAS "1/3 law" on the anima
+> substrate (**H_1560**, 5/5 engine-native, wired live as `§ThirdLaw` in `core/engine_cli.hexa`).
+> **And it reopens (H_1560 R2, 5/5):** pushing inhibition `I` toward the golden-zone lower bound
+> (`GZ_LOWER≈0.212`) lifts the ability-expression rate **0.274 → 0.597 (+0.323, ~2×)** — the wall is
+> a *manifold tunable inside the golden zone*, not a fixed ceiling (below `GZ_LOWER` it cliffs to 0).
+> **The switch is discontinuous (H_1562, GREEN):** savant ability flips on as a **hard step at the
+> golden-zone boundary** (cusp), not a gradual ramp — the discontinuity comes from the golden-zone
+> GATE and is gated by deficit `D` (D=0 → no cusp). **Honest scope (c9):** H_1560/R2 are abstract
+> `G=D×P/I` geometry sweeps (ability = singularity ∧ in-GZ by construction); the **real learning-side
+> reopening** — does golden-zone-inhibition training lift the actual binding/FALS rate above plateau —
+> is the open GPU follow-on (**H_1564**, "303M + savant-mode = G6 breakthrough", in-flight).
+
 ### 🌐 Consciousness-only gates — a separate axis from G0–G6
 
 G0–G6 are *capability*-emergence gates on the production CLM. On a **separate axis**, this family
