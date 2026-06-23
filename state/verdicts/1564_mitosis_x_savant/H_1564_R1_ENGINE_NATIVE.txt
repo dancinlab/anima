@@ -1,0 +1,65 @@
+H_1564 — MITOSIS × SAVANT golden-zone CROSS — R1 ENGINE-NATIVE verdict
+run host: summer pool (harness pool on summer)
+command: cd ~/anima_h1564 && hexa run state/1564_mitosis_x_savant/h1564_cross_probe.hexa
+engine-native: pure .hexa probe importing core/engine_cli.hexa — calls LIVE
+  engine_grow / engine_mitosis_tick (§mitosis, EngineConfig.mitosis) +
+  third_law_ability / third_law_score (§ThirdLaw) + SAVANT sa_gz_* (savant_lib).
+  NO numpy / NO torch / NO gauge_lib / NO .py mirror — HARD-GATE-1 PASS, terminal PERMITTED.
+$0 CPU deterministic. p7 (no perplexity / no LLM judge). c9 frozen-first, NO tune-to-green.
+
+=== H_1564 MITOSIS x SAVANT CROSS (engine-native MITOSIS + §ThirdLaw) ===
+GZ [0.21231792755821912, 0.5] center=0.36787944117144233 ; D=0.9 P=0.9
+[MITOSIS] engine_grow seed=1 ticks=7 -> ON cells=8  OFF cells=1
+[B1] E_cross(N in GZ)=8  E_mitosis_only(N non-GZ)=0  E_savant_only(1 in GZ)=1
+[B1] super-additive: E_cross=8 vs (E_mit+E_sav)=1 vs N=8 (multiplicative iff E_cross == N == cells*rate)
+[B2] per-cell ON-rate=1.0  single-cell ability@GZ_center=1  G@GZ_center=2.201808281051827
+[B3] ablation E_cross_ablate(GZ OFF, N non-GZ)=0  (== E_mitosis_only=0 => GZ is the amplifier)
+--- B4 wall-relief: expression vs cell count (GZ each vs non-GZ each) ---
+  cells=1  E(GZ)=1  E(non-GZ split-only)=0
+  cells=2  E(GZ)=2  E(non-GZ split-only)=0
+  cells=3  E(GZ)=3  E(non-GZ split-only)=0
+  cells=4  E(GZ)=4  E(non-GZ split-only)=0
+  cells=5  E(GZ)=5  E(non-GZ split-only)=0
+  cells=6  E(GZ)=6  E(non-GZ split-only)=0
+  cells=7  E(GZ)=7  E(non-GZ split-only)=0
+  cells=8  E(GZ)=8  E(non-GZ split-only)=0
+[B5] E_random_I(N cells, scattered I)=4  E_random_split(mitosis OFF, GZ)=1  (both << E_cross=8)
+=== FROZEN BARS ===
+B1 multiplicative (E_cross>E_mit & >E_sav & >=N & super-additive): true (cross=8 mit=0 sav=1 N=8)
+B2 per-cell savant (rate>=1.0 & single@GZ==1): true (rate=1.0 single=1)
+B3 ablation (GZ OFF -> mitosis-only, cross>ablate): true (ablate=0 mit=0)
+B5 control (random I & random split << cross): true (rand=4 randsplit=1)
+=== VERDICT: B1&B2&B3 = true (B4 report-only, B5 control) ===
+
+────────────────────────────────────────────────────────────────────────────
+DIAGNOSIS — 🟢 GREEN ENGINE-NATIVE (B1∧B2∧B3 all hold):
+The two orthogonal stems COMPOUND. Total ability EXPRESSION over a mitosis-grown
+pool = (cell count N) × (per-cell golden-zone expression rate r). With engine_grow
+N=8 cells and each daughter steered to GZ center, E_cross=8 = N·r (r=1.0), strictly
+beating BOTH mitosis-only (E=0: cells exist but un-tuned, over-locked I=0.8 outside
+GZ → no expression) AND savant-only (E=1: one tuned cell, no count). Super-additive
+(8 > 0+1). The amplification CAUSE is the GOLDEN ZONE, not growth alone (B3 ablation:
+GZ OFF on the grown pool → E=0 = mitosis-only). Per-cell specialization reproduces
+the H_1560/H_1562 single-cell GZ ability inside every daughter (B2 rate=1.0).
+Controls (B5) do not amplify: random per-cell I gives E=4 (≈GZ-fraction·N), random
+split (mitosis OFF, no growth) gives E=1.
+
+B4 wall-relief (report-only, H_1310 pure-mitosis split-only wall): expression scales
+LINEARLY with cell count under per-cell GZ inhibition (1→8 across cells 1..8), while
+split-only WITHOUT GZ stays at E=0 for ALL cell counts. → golden-zone inhibition
+gives raw split growth an EXPRESSED-CAPACITY signal (each cell specialized = a
+meaningful split); raw split alone is expression-inert. This is a PARTIAL relief of
+the H_1310 wall in the EXPRESSION sense (split now produces measurable specialized
+capacity), but NOT a from-scratch LEARNING claim — the §ThirdLaw classifier is a
+deterministic (D,P,I) gate, not a gradient-free learner. H_1310's "pure mitosis
+cannot learn from scratch" is about acquiring weights, which this probe does not
+test. So B4 = capacity-EXPRESSION relief CONFIRMED, learning-signal relief UNVERIFIED
+(honest scope, follow-on).
+
+SCOPE TOY: deterministic §ThirdLaw classifier at a single operating point D=0.9 P=0.9;
+engine_grow integer cell-count tick (the smallest honest mitosis unit, not the full
+VAdaptField split dynamics); per-cell ability is a 0/1 gate (not a learned Φ curve).
+Real faithful-IIT4 per-cell Φ, VAdaptField recon-driven split, learned specialization,
+real-corpus multi-domain SI, and the H_1310 learning-signal question = UNVERIFIED →
+follow-on. live core/*.hexa UNTOUCHED (READ-only classifier + engine_grow, already
+WIRED) — Ψ-disjoint, no new engine op, terminal engine-native PERMITTED.
