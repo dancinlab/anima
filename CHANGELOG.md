@@ -1,3 +1,13 @@
+## perf(cli/train.hexa): device-resident NN hot-path 배선 — #2598 CPU-scalar-bound util FAIL 의 근본 fix (a_train_flame_forge)
+
+⚡🖥️ #2598 H100 토이 게이트가 util FAIL(mean 0.75% · peak 2% · 348/350@0%)한 근본원인 = trainer 가 **CPU-scalar-bound**(conv GEMM 은 forge own-GEMM DEVICE 로 가나 step time 의 극소부분, 병목은 single-thread farr CPU scalar work — packed-buffer element-wise t_set/t_get copy/accumulate 루프 + host-oracle NN ops). train_fwd/bwd/ce_grad/_adam 의 그 hot path 를 CUDA 호스트에서 device-resident 로 재배선(어디서나 byte-eq host fallback — DEFAULT 불변).
+
+- **① element-wise packed-buffer 루프 → device ops (무조건, runtime 내장 byte-eq CPU fallback)**: `tin[l]=x·hn/xh[l]=gn·xt=x·ex_out[e]=ex·dx=dxt_r` → `farr_copy_slice_gpu` · `x+=hg·dx+=dxt_e·dx+=dconv_in` → `farr_add_inplace_gpu` · `dembed=0(V·d)` → `farr_zero_slice_gpu`. d768 에서 측정된 >99.8% 비-GEMM step cost(메모리노트 clitrain-cpu-scalar-bound-gpu-idle)인 O(L·T·d)+O(E·T·d) single-thread scalar 축약을 대체.
+- **② NN compute ops → forge_dispatch_* device-resident (CLM_PROD_DEVFEED=1 / --devfeed 게이트, DEFAULT OFF = 기존 host 경로; rc 0=device·rc<0=host nn_*, byte-eq)**: fwd embedding·gelu(trunk+expert)·moe_router·groupnorm(norm_out) / bwd groupnorm_bwd·moe_router_bwd·gelu_bwd×2·embedding_bwd_scatter / seed ce_grad / optim AdamW(forge_dispatch_adamw keepmv arm, opt_adamw_step 와 byte-eq).
+- **수치 동등(Mac CPU build, MODE_VERIFY d8·L1·E2→Emax4·T4·40steps)**: baseline 3/3 PASS(loss0=4.785261967723521 lossF=0.0004321544912324474) · --devfeed OFF 3/3 byte-IDENTICAL · --devfeed ON 3/3 byte-IDENTICAL(SPLIT-step 중간 CE 만 1.4e-16 차 = GEMM 재결합 tolerance #2383, bound 이내, tune-to-green 아님). savant cusp latch(step1) + mitosis split(step20) 셋 다 보존.
+- **upstream 동반 fix (hexa-lang runtime ING#34 cont)**: #3851 이 5 forge_dispatch GPU arm(im2col/_t/col2im/groupnorm_gelu/adamw_keepmv) 배선했고, 이 PR 이 anima trainer 가 쓰는 나머지 13개(residual_add/grad_sum3/expert_pack2/unpack2/embedding/groupnorm/moe_router/gelu/gelu_bwd/ce_grad/groupnorm_bwd/moe_router_bwd/embedding_bwd_scatter)를 동일 #ifdef HEXA_CUDA extern-before-use idiom 으로 배선(GPU 커널은 이미 runtime_cuda.c 에 byte-eq 결정성으로 존재, host caller 0 이던 것). extern signature 13/13 kernel def 일치, clang -fsyntax-only CPU/CUDA(-DHEXA_CUDA) 둘 다 0 error.
+- **H100 sustained-util re-gate**: 별도 cost-bearing forge fire(H100×1) — 결과는 후속 CHANGELOG 에 박제.
+
 ## research(cli/train.hexa H100×2 GPU train gate): 🛑 TOY GPU GATE FAIL — trainer CPU-scalar-bound, util ~0% (GPU idle); 303M GPU 학습 보류, own-GEMM build 健全
 
 🏋️🔬 사용자 명시 go(H100×2 cost 승인)로 자기완결 GPU 학습 파이프 실행 — rent → fresh hexa-lang 빌드 → 토이 GPU 게이트 → (게이트 PASS 시) 풀 303M. **게이트가 STOP 을 반환**: 풀 303M 미실행(GPU 돈낭비 방지), 정직 보고. evidence frozen = `state/verdicts/clitrain_h100_gpu_gate/cli_train_gpu_gate.txt`.
