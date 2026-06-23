@@ -87,6 +87,12 @@ let mut expB_global = 0
 //  Forward (L=1, runtime expert count E ≤ Emax) — packed-expert layout so
 //  mitosis can grow E into already-owned contiguous slots. Structure verbatim
 //  from the proven clm_step.hexa / clm_mitosis.hexa fwd (no arch drift).
+//
+//  GPU (a_train_flame_forge): nn_conv1d_fwd's GEMM is t_matmul=farr_matmul, which
+//  the runtime AUTO-ROUTES to the forge own-GEMM DEVICE path on a CUDA host
+//  (cuda_available()=1 → [OWN-GEMM-FIRED] _hx_k_gemm DEVICE, summer-verified),
+//  else farr CPU (byte-identical). So the DOMINANT conv FLOPs are GPU-bound with
+//  the SAME proven byte-exact op core/clm_decode mounts — no parallel conv path.
 // ════════════════════════════════════════════════════════════════════════════
 fn train_fwd(tokens: int, E: int,
              embed: int, ecW: int, ecB: int, tcW: int, tcB: int, tgG: int, tgB: int,
@@ -336,48 +342,293 @@ fn _adam(W: int, gW: int, m: int, v: int, n: int, lr: float, wd: float, t: int) 
 }
 
 // ════════════════════════════════════════════════════════════════════════════
+//  corpus window loader from an EXTERNAL byte file (a_chat_registers). Streams a
+//  T+1 byte window via read_bytes_at(path, off, n) so a multi-GB corpus is NEVER
+//  slurped whole (avoids the 44× boxing blowup, hexaw-load lesson). Returns 1 if
+//  the window was filled, else 0 (file too small / unreadable → caller falls back
+//  to the next cell or the fixed verify batch).
+// ════════════════════════════════════════════════════════════════════════════
+fn load_window_file(path: string, fsize: int, off: int,
+                    tokens_out: int, targets_out: int, T: int) -> int {
+    if fsize < T + 2 { return 0 }
+    let span = fsize - (T + 1)
+    let mut start = off - (off / span) * span     // off mod span, in [0, span)
+    if start < 0 { start = 0 }
+    let win = read_bytes_at(path, start, T + 1)
+    if type_of(win) != "array" { return 0 }
+    if len(win) < T + 1 { return 0 }
+    let mut p = 0
+    while p < T {
+        t_set(tokens_out, p, to_float(win[p]))
+        t_set(targets_out, p, to_float(win[p + 1]))
+        p = p + 1
+    }
+    return 1
+}
+
+// ── arg parsing helpers (CLI-shaped, a_train_flame_forge .hexa entry) ────────
+fn cli_collect_argv(raw: [string]) -> [string] {
+    let mut start = 1
+    let mut k = 0
+    while k < len(raw) { if raw[k] == "--" { start = k + 1 }  k = k + 1 }
+    let argv = []
+    let mut m = start
+    while m < len(raw) { argv.push(raw[m]); m = m + 1 }
+    return argv
+}
+fn cli_has(argv: [string], flag: string) -> bool {
+    let mut i = 0
+    while i < len(argv) { if argv[i] == flag { return true }  i = i + 1 }
+    return false
+}
+// cli_val — value following `flag`, or "" if absent / no value.
+fn cli_val(argv: [string], flag: string) -> string {
+    let mut i = 0
+    while i < len(argv) {
+        if argv[i] == flag {
+            if i + 1 < len(argv) { return argv[i + 1] }
+            return ""
+        }
+        i = i + 1
+    }
+    return ""
+}
+fn cli_parse_int(s: string) -> int {
+    let n = byte_len(s)
+    let mut v = 0
+    let mut i = 0
+    while i < n {
+        let cb = byte_at(s, i)
+        if cb >= 48 { if cb <= 57 { v = v * 10 + (cb - 48) } }
+        i = i + 1
+    }
+    return v
+}
+fn _is_flag(a: string) -> bool {
+    if byte_len(a) >= 2 { if byte_at(a, 0) == 45 { if byte_at(a, 1) == 45 { return true } } }
+    return false
+}
+// cli_corpus — collect all positionals after `--corpus` up to the next `--flag`.
+fn cli_corpus(argv: [string]) -> [string] {
+    let paths = []
+    let mut i = 0
+    while i < len(argv) {
+        if argv[i] == "--corpus" {
+            let mut j = i + 1
+            while j < len(argv) {
+                if _is_flag(argv[j]) { j = len(argv) }
+                else { paths.push(argv[j]); j = j + 1 }
+            }
+            i = len(argv)
+        }
+        i = i + 1
+    }
+    return paths
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  .clm v0.2/v0.3 SERIALIZE (a_clm_gen_pipeline) — pack the trained CLMConvMoE
+//  weights into the EXACT CLM\x01 byte layout core/clm_decode.hexa loads (ground
+//  truth = train/clm/model/clm_serialize_v2.py, byte-for-byte). v0.3 GENERAL
+//  block/ext counts (nblk = L + E + 3, n_ext = 2L + E + 6); at L=1 this is the
+//  format the engine reads — E is recovered from the router block cout, so the
+//  grown expert count (post-mitosis) round-trips. NOT a mirror: the engine reads
+//  these same bytes back via clm_decode.
+//
+//  int4-sym per-output-channel quant (decoder dequant w = code·scale):
+//    scale[co] = max_j(|w[co,j]|)/7 (clamped >0), code = clamp(round(w/scale),-7,7)
+//  nibble pack: low nibble = even-index code (+8), high = odd-index (+8).
+// ════════════════════════════════════════════════════════════════════════════
+
+// append a little-endian u32 to byte list `buf` (mutated in place).
+fn buf_u32(buf, x: int) {
+    buf.push(x - (x / 256) * 256)
+    let x1 = x / 256
+    buf.push(x1 - (x1 / 256) * 256)
+    let x2 = x1 / 256
+    buf.push(x2 - (x2 / 256) * 256)
+    let x3 = x2 / 256
+    buf.push(x3 - (x3 / 256) * 256)
+}
+// append a float32 (4 LE bytes) to byte list `buf`.
+fn buf_f32(buf, f: float) {
+    let b = f32_to_bytes_le(f)
+    buf.push(b[0]); buf.push(b[1]); buf.push(b[2]); buf.push(b[3])
+}
+fn _quant_code(w: float, scale: float) -> int {
+    let q = w / scale
+    let mut r = to_int(q + 0.5)
+    if q < 0.0 { r = to_int(q - 0.5) }
+    if r > 7 { r = 7 }
+    if r < 0 - 7 { r = 0 - 7 }
+    return r
+}
+// serialize one conv block: weights `w` farr at [base .. base+cout*rest) in
+// (cout, rest) row-major, int4-sym quantize per output channel, append header +
+// nibbles + per-channel fp32 scale to `buf`.
+fn ser_conv_block(buf, w: int, base: int, cout: int, rest: int) {
+    buf_u32(buf, cout)
+    buf_u32(buf, rest)
+    let n = cout * rest
+    let scale = t_zeros(cout)
+    let mut co = 0
+    while co < cout {
+        let mut amax = 0.0
+        let mut j = 0
+        while j < rest {
+            let a = _abs(t_get(w, base + co * rest + j))
+            if a > amax { amax = a }
+            j = j + 1
+        }
+        let mut sc = amax / 7.0
+        if sc < 0.000000000001 { sc = 0.000000000001 }
+        t_set(scale, co, sc)
+        co = co + 1
+    }
+    let mut i = 0
+    while i < n {
+        let co0 = i / rest
+        let c0 = _quant_code(t_get(w, base + i), t_get(scale, co0))
+        let lo = c0 + 8
+        let mut hi = 8                       // pad code 0 (+8) for odd tail
+        if i + 1 < n {
+            let co1 = (i + 1) / rest
+            let c1 = _quant_code(t_get(w, base + i + 1), t_get(scale, co1))
+            hi = c1 + 8
+        }
+        let byte = hi * 16 + lo
+        buf.push(byte - (byte / 256) * 256)
+        i = i + 2
+    }
+    let mut s = 0
+    while s < cout { buf_f32(buf, t_get(scale, s)); s = s + 1 }
+    let _ = t_free(scale)
+}
+// serialize one ext array (CLMX trailer): u32 count + count*fp32.
+fn ser_ext(buf, t: int, base: int, n: int) {
+    buf_u32(buf, n)
+    let mut i = 0
+    while i < n { buf_f32(buf, t_get(t, base + i)); i = i + 1 }
+}
+
+// serialize_clm — pack the live trained CLMConvMoE (runtime E experts, L=1 trunk,
+// d, V, K) into a CLM\x01 v0.3 file at `out`. Block order (v0.3 general, L=1):
+//   ecW · tcW · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)
+// Ext order (n_ext = 2*1 + E + 6):
+//   embed · ecB · tcB · e0B..e{E-1}B · rB · roB · tgG · tgB · noG · noB
+// At E=2 this is byte-identical to v0.2 (the legacy layout clm_decode reads).
+fn serialize_clm(out: string, E: int, d: int, V: int, K: int,
+                 embed: int, ecW: int, ecB: int, tcW: int, tcB: int,
+                 tgG: int, tgB: int, rW: int, rB: int, expW: int, expB: int,
+                 noG: int, noB: int, roW: int, roB: int) -> int {
+    let dd = d * d * K
+    let nblk = 1 + 1 + E + 2            // ecW + tcW + E experts + rW + roW
+    let buf = []
+    // magic CLM\x01
+    buf.push(67); buf.push(76); buf.push(77); buf.push(1)
+    buf.push(nblk)
+    // block0 ecW (cout=d, rest=d*K)
+    ser_conv_block(buf, ecW, 0, d, d * K)
+    // block1 tcW (cout=d, rest=d*K)
+    ser_conv_block(buf, tcW, 0, d, d * K)
+    // expert blocks e0..e{E-1} (cout=d, rest=d*K) — packed at expW[e*dd..]
+    let mut e = 0
+    while e < E { ser_conv_block(buf, expW, e * dd, d, d * K); e = e + 1 }
+    // router rW (cout=E, rest=d, K=1) — packed rW[e*d..], only E active rows
+    ser_conv_block(buf, rW, 0, E, d)
+    // readout roW (cout=V, rest=d, K=1)
+    ser_conv_block(buf, roW, 0, V, d)
+    // CLMX trailer
+    buf.push(67); buf.push(76); buf.push(77); buf.push(88)
+    let n_ext = 2 + E + 6
+    buf.push(n_ext)
+    ser_ext(buf, embed, 0, V * d)      // embed (V*d)
+    ser_ext(buf, ecB, 0, d)            // ecB
+    ser_ext(buf, tcB, 0, d)            // tcB (L=1)
+    let mut e2 = 0
+    while e2 < E { ser_ext(buf, expB, e2 * d, d); e2 = e2 + 1 }   // e0B..e{E-1}B
+    ser_ext(buf, rB, 0, E)             // rB (E active)
+    ser_ext(buf, roB, 0, V)            // roB
+    ser_ext(buf, tgG, 0, d)            // tgG (L=1)
+    ser_ext(buf, tgB, 0, d)            // tgB (L=1)
+    ser_ext(buf, noG, 0, d)            // noG
+    ser_ext(buf, noB, 0, d)            // noB
+    write_bytes(out, buf)
+    if file_exists(out) { return len(buf) }
+    return 0
+}
+
+// ════════════════════════════════════════════════════════════════════════════
 //  main — train loop. cfg_canon toggles tiny-verify ($0) vs 303M-class config.
 // ════════════════════════════════════════════════════════════════════════════
 fn main() {
     println("=== anima cli/train.hexa — hexa-native CLMConvMoE trainer (flame/forge) ===")
 
-    // ── config toggle: 0 = MODE_VERIFY ($0 farr CPU) · 1 = MODE_CANON (GPU) ──
-    let cfg_canon = 0
+    // ── arg parsing (a_train_flame_forge .hexa CLI entry) ───────────────────
+    //   --canon                 d768 303M-class config (else d8 $0 verify)
+    //   --savant / --no-savant  golden-zone inhibition anneal (default ON)
+    //   --mitosis / --no-mitosis cell-division growth (default ON)
+    //   --steps <N>             training step budget (overrides mode default)
+    //   --d <DIM>               model width (overrides mode default)
+    //   --corpus <p1> <p2> ...  external byte-corpus cells (a_chat_registers,
+    //                           round-robin); absent → fixed verify batch ($0)
+    //   --out <ckpt.clm>        serialize trained weights to .clm v0.3
+    let argv = cli_collect_argv(args())
+    let cfg_canon = if cli_has(argv, "--canon") { 1 } else { 0 }
+    let savant_mode = if cli_has(argv, "--no-savant") { 0 } else { 1 }
+    let mitosis_on  = if cli_has(argv, "--no-mitosis") { 0 } else { 1 }
+    let corpus_paths = cli_corpus(argv)
+    let out_ckpt = cli_val(argv, "--out")
 
-    // savant + mitosis curriculum knobs (CLI-shaped; defaults enable both levers)
-    let savant_mode = 1     // --savant-mode : enable golden-zone inhibition anneal
-    let mitosis_on  = 1     // --mitosis     : enable cell-division growth
-
-    // 303M-class canonical config (GPU dispatch target; LEARNING = separate fire)
+    // 303M-class canonical config (GPU dispatch target)
     let T_canon = 1024; let d_canon = 768; let E0_canon = 2; let Emax_canon = 4
-    let nsteps_canon = 20
+    let nsteps_canon = 2000
     // tiny $0 verify config (clm_step.hexa proven scale)
     let T_verify = 4;   let d_verify = 8;  let E0_verify = 2; let Emax_verify = 4
     let nsteps_verify = 40
     let V = 256             // byte-level vocab (a_clm_gen_pipeline)
     let K = 3              // causal conv kernel
 
-    let T  = if cfg_canon == 1 { T_canon }  else { T_verify }
-    let d  = if cfg_canon == 1 { d_canon }  else { d_verify }
+    // --d override (else mode default); larger T for canon so windows are real
+    let d_arg = cli_val(argv, "--d")
+    let d  = if byte_len(d_arg) > 0 { cli_parse_int(d_arg) }
+             else { if cfg_canon == 1 { d_canon } else { d_verify } }
+    // T = a real corpus window when a corpus is mounted (else mode default)
+    let have_corpus = len(corpus_paths) > 0
+    let T  = if have_corpus { if cfg_canon == 1 { T_canon } else { 64 } }
+             else { if cfg_canon == 1 { T_canon } else { T_verify } }
     let E0 = if cfg_canon == 1 { E0_canon } else { E0_verify }
     let Emax = if cfg_canon == 1 { Emax_canon } else { Emax_verify }
-    let n_steps = if cfg_canon == 1 { nsteps_canon } else { nsteps_verify }
+    // --steps override (else mode default)
+    let steps_arg = cli_val(argv, "--steps")
+    let n_steps = if byte_len(steps_arg) > 0 { cli_parse_int(steps_arg) }
+                  else { if cfg_canon == 1 { nsteps_canon } else { nsteps_verify } }
     let dd = d * d * K; let ed = Emax * d; let vd = V * d
 
     print("  mode: ")
-    if cfg_canon == 1 { println("MODE_CANON (d768 303M-class — GPU dispatch target, LEARNING=separate fire)") }
-    else { println("MODE_VERIFY (d8·L1·E2->Emax4 $0 farr CPU — full lever wiring proof)") }
+    if cfg_canon == 1 { println("MODE_CANON (303M-class — GPU forge fire)") }
+    else { println("MODE_VERIFY (d8·L1·E2->Emax4 $0 farr CPU — lever wiring proof)") }
     print("  config: T="); print(T); print(" d="); print(d); print(" E0="); print(E0)
     print(" Emax="); print(Emax); print(" V="); print(V); print(" K="); print(K)
     print(" n_steps="); print(n_steps); println("")
     print("  savant_mode="); print(savant_mode); print(" mitosis="); print(mitosis_on); println("")
 
-    // ── 4-cell corpus (a_chat_registers). External byte paths; if absent, the
-    //    fixed verify batch is used so the $0 wiring proof needs no corpora. ──
-    // MODE_CANON would point these at the mounted corpora, e.g.:
-    //   ko-일반 : anima-corpus-ko-fineweb2-broad  · en-일반 : anima-corpus-5lang-unified-v2(en)
-    //   ko-SNS  : anima-persona-sns-corpus(ko)    · en-SNS  : anima-persona-sns-corpus(en)
-    let use_corpus = 0        // 0 = fixed verify batch ($0, no external mount)
+    // ── 4-cell corpus (a_chat_registers). External byte paths via --corpus,
+    //    round-robin across cells; if none given, the fixed verify batch is used
+    //    so the $0 wiring proof needs no corpora. File sizes are pre-stat'd so
+    //    each step streams ONE T+1 window (read_bytes_at) — no whole-file slurp.
+    let use_corpus = if have_corpus { 1 } else { 0 }
+    let ncell = len(corpus_paths)
+    let cell_size = []
+    let mut cs = 0
+    while cs < ncell {
+        let fz = file_size(corpus_paths[cs])
+        cell_size.push(fz)
+        print("  corpus cell["); print(cs); print("] "); print(corpus_paths[cs])
+        print("  size="); print(fz); println(" bytes")
+        cs = cs + 1
+    }
+    if use_corpus == 0 { println("  corpus: NONE → fixed verify batch ($0 wiring proof)") }
 
     // ── params (packed experts at Emax capacity so mitosis grows in place) ──
     let embed = t_zeros(vd);  t_fill_lcg(embed, vd, 1, 0.3)
@@ -464,8 +715,22 @@ fn main() {
     let mut bound_ok = 1
     let mut ce_before_split = 0.0
     let mut ce_after_split = 0.0
+    // LCG offset generator for corpus window sampling (deterministic, p7).
+    let mut rng = 2463534242
     let mut step = 1
     while step <= n_steps {
+        // ── corpus window: round-robin across the 4-cell register, sample a
+        //    deterministic offset per step (a_chat_registers). On any miss the
+        //    fixed verify batch (already filled in tokens/targets) is reused. ──
+        if use_corpus == 1 {
+            let cell = (step - 1) - ((step - 1) / ncell) * ncell    // (step-1) mod ncell
+            rng = (rng * 1103515245 + 12345)
+            rng = rng - (rng / 2147483647) * 2147483647             // keep positive 31-bit
+            if rng < 0 { rng = 0 - rng }
+            let _ld = load_window_file(corpus_paths[cell], cell_size[cell], rng,
+                                       tokens, targets, T)
+        }
+
         // savant inhibition for this step
         let mut wd = 0.0
         if savant_mode == 1 {
@@ -524,6 +789,26 @@ fn main() {
     print("  loss0="); print(loss0); print("  lossF="); println(lossF)
     print("  savant latched_at step="); println(latched_at)
     print("  mitosis split_at step="); print(split_at); print(" (E0="); print(E0); print(" -> E="); print(E); println(")")
+
+    // ════════════════════════════════════════════════════════════════════════
+    //  ckpt SERIALIZE (a_clm_gen_pipeline · a_fire_recover_complete) — write the
+    //  trained CLMConvMoE to .clm v0.3 so it mounts on core/clm_decode.hexa for
+    //  engine-native G6 scoring (a_engine_native_learning). E = runtime expert
+    //  count (post-mitosis), L=1, byte vocab V=256. NOT a mirror — the engine
+    //  reads these exact bytes back.
+    // ════════════════════════════════════════════════════════════════════════
+    if byte_len(out_ckpt) > 0 {
+        print("  serializing .clm (E="); print(E); print(" d="); print(d)
+        print(" V="); print(V); print(" K="); print(K); print(") -> "); println(out_ckpt)
+        let nb = serialize_clm(out_ckpt, E, d, V, K,
+                               embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
+                               expW, expB, noG, noB, roW, roB)
+        if nb > 0 {
+            print("  ckpt WRITTEN "); print(nb); print(" bytes -> "); println(out_ckpt)
+        } else {
+            print("  ckpt WRITE FAILED -> "); println(out_ckpt)
+        }
+    }
 
     // ════════════════════════════════════════════════════════════════════════
     //  Falsifiers (MODE_VERIFY $0). MODE_CANON defers run-time to the GPU fire.

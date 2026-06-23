@@ -513,6 +513,12 @@ hx install anima
 # 3. Run — the single production engine (conv / CLMConvMoE, the .clm byte mouth)
 anima                  # chat on the default .clm mouth
 anima --mitosis on     # + substrate growth lane live
+
+# 4. Train — the hexa-native CLMConvMoE trainer (a_train_flame_forge, NO .py)
+anima train --corpus ko.txt en.txt --out mouth.clm --steps 2000 --canon
+#   --canon (d768 303M-class) · --savant/--no-savant (golden-zone inhibition) ·
+#   --mitosis/--no-mitosis (cell-division grow) · --d DIM · --corpus <paths..>
+#   (4-cell register round-robin) · --out <ckpt.clm> (CLM\x01 v0.3, core/clm_decode-loadable)
 ```
 
 The release surface is declared in the root [`hexa.toml`](hexa.toml) manifest (`[package]` entry =
