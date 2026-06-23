@@ -530,10 +530,13 @@ whether the substrate grows; it is **not** an emit/silence gate (`a_autonomy_ove
 ## The model — the byte mouth (a component, not the center)
 
 The brain-structure lanes above are the point; the model is just the **byte mouth** they grow
-around. The production substrate is **`anima-clm-chat-303m`** — a from-scratch ByteGPT (byte vocab
-V256) dialogue-finetuned for conversation and **mounted byte-exact** on the core engine
-(`core/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*, not
-re-claimed. A frozen pass set **`a303m_pass`** (coherence · recombination · novelty · philosophy ·
+around. The production substrate is **`anima-clm-chat-303m`** — a from-scratch **ByteGPT
+(24-layer GPT-2-class decoder-only byte-vocab LM**, V256, d1024/24L/16H/block512, 303.1M, 5×u32
+header `[256,1024,24,16,512]`) dialogue-finetuned for conversation and **mounted byte-exact** on the
+core engine (`core/bytegpt_decode.hexa`, H_1157), so recombination is *inherited through the mount*,
+not re-claimed. The repo-id `clm` names the chat-mouth *role*, **not** the architecture — this is
+**not** the conv `CLMConvMoE` (`.clm` v0.2) mouth (that is `anima-engine-clm-d768-v2-coremount`,
+decoded by `core/clm_decode.hexa`). A frozen pass set **`a303m_pass`** (coherence · recombination · novelty · philosophy ·
 non-fabrication · ideation · mount · chat — thresholds are the SSOT of [`CONDITIONS.md`](CONDITIONS.md) and
 [`CONDITIONS.md`](CONDITIONS.md), p7, *no perplexity / no LLM-judge*) gates completion.
 

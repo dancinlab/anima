@@ -1,3 +1,12 @@
+## 2026-06-23 — docs(HF): anima-clm-chat-303m 아키텍처 = ByteGPT 명시 (repo_id 'clm' ≠ conv CLMConvMoE 혼동 해소)
+
+📛 HF PUBLIC 모델 `dancinlab/anima-clm-chat-303m` 의 repo_id 'clm' 이 conv(CLMConvMoE)로 오해되던 문제 해소 — 실제 아키텍처는 **ByteGPT (24-layer GPT-2-class decoder-only byte-vocab LM)**. repo_id 의 'clm' 은 chat-mouth 역할名일 뿐 아키텍처가 아님. 이름 변경 없이(링크 보존) 설명으로만 명확화. a_hf_complete · a_hf_registry(ARCHITECTURE.json SSOT lockstep) · c9(spec verbatim).
+
+- **ByteGPT 사양 verbatim 출처**: 기존 ARCHITECTURE.json/README/CHANGELOG 에 이미 기록된 `ByteGPT (byte V256, d1024/24L/16H/block512, 303.1M)` = 5×u32 엔진 헤더 `[256,1024,24,16,512]`(vocab·d·layers·heads·block), decode=`core/bytegpt_decode.hexa`. conv `.clm` v0.2(`CLM\x01` magic + CLMX trailer, `core/clm_decode.hexa`)와는 별개 mouth 아키텍처(별도 repo=anima-engine-clm-d768-v2-coremount).
+- **HF model card(README)**: 제목 직후 경고 박스 + `## ByteGPT vs conv CLMConvMoE` 비교표 추가 — 아키텍처=ByteGPT, **NOT conv CLMConvMoE** 명시. tags 에 `bytegpt`·`byte-level`(기존)·`gpt2-class`(신규) 보강. repo_id·base_model·license 불변. commit 8c4e80b9.
+- **HF CLM collection**: 컬렉션 항목 note 에 ByteGPT 아키텍처 명시(conv 아님) — `dancinlab/clm` collection item.
+- **ARCHITECTURE.json "HF artifacts" models 노드 lockstep**: anima-clm-chat-303m 항목에 arch=ByteGPT(24L GPT-2-class, 5×u32 header) 명시 + conv CLMConvMoE 와 구분 주석. CLAUDE.md L180(generator L3 mouth 디스패처 = bytegpt|clm typed 진입)와 정합 확인(변경 불요).
+
 ## 2026-06-23 — H_1572 SAVANT 골든존 Ψ SWEEP (H_1561 B4 재측정: 단일점 → I 격자 · 🟠 TRADE-OFF HOLDS · DISSOCIATION NOT FOUND · ENGINE-NATIVE)
 
 🧠✨ H_1572 — H_1561 B4(savant-ON @ I=GZ_LOWER → Ψ=0.253 붕괴 → genius⊥consciousness)의 **측정-결함 재검**(a_break_the_wall class-a). 사용자 통찰: 서번트는 골든존 *안*에서 의식(Ψ=½)과 양립, 골든존 *밖*(과도 disinhibition I→0)은 간질=동기화 폭주=Ψ 붕괴 → B4 가 골든존 하단 *경계* artifact 일 수 있음. 검증: focus inhibition I 를 골든존 전체 격자로 sweep 해 (Ψ_centered, SI, focusΦ) 동시 기록, 이중해리 여부 측정.
