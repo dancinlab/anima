@@ -1,3 +1,15 @@
+## perf(cli/train.hexa): im2col/col2im/AdamW device-resident 배선 (ING#34, hexa-lang #3851 follow-on) — env CLM_PROD_DEVFEED 게이트, byte-eq
+
+⚡🔌 #2599 가 conv FWD+BWD GEMM 을 forge own-GEMM 으로 옮긴 데 이어, **남은 host-bound hot path(im2col gather · col2im scatter · AdamW)도 device-resident 화**. `_tg_im2col`/`_tg_im2col_t`/`_tg_col2im`/`_adam` 에 env `CLM_PROD_DEVFEED` 게이트 arm 추가 — `forge_dispatch_im2col`/`_t`/`col2im`/`adamw_keepmv` 를 먼저 호출(rc==0 = on-device done, rc<0 = 기존 host scalar fallback). `stdlib/flame/clm_prod.hexa::_fuse_on` 의 검증된 패턴 그대로.
+
+**근본원인 정정(#2598/#2599 의 stale 가정)**: #2599 는 "forge_dispatch_im2col 등이 self/runtime.c 에 `#ifndef HEXA_CUDA` CPU oracle 로만 있어 CUDA 빌드 undefined"라 host 유지했으나, 정독 결과 **hexa-lang #3806/ING#33 이 이미 그 host body 를 `#if 1`+`HEXA_FORGE_HOST_WEAK` 로 CUDA 빌드에 LINK 시켜놨음**(mac runtime.a 에도 `forge_dispatch_im2col`/`col2im`/`adamw_keepmv` T-defined 확인). 진짜 간극은 그 body 가 **CPU oracle 본문 그대로라 CUDA 에서도 GPU 안 씀**이었고, 대응 GPU kernel(`_hx_cuda_farr_im2col_gpu` 등 "LEVER-a device-resident im2col/col2im")은 runtime_cuda.c 에 **완전 구현돼 있으나 host caller 0**(unwired). → hexa-lang **#3851/ING#34** 가 그 body 에 `#ifdef HEXA_CUDA` arm 을 추가해 RUN-on-GPU 로 닫음(별도 PR).
+
+**byte-eq(수치 동등, NOT tune-to-green)**: device kernel 들은 byte-eq 결정성으로 작성됨 — im2col/col2im 순수 gather/scatter(FP reduction 0, col2im k-ascending 단일스레드 = host 순서)·adamw_keepmv element-wise in-place. **MODE_VERIFY 3/3 PASS(mac 실측)**: devfeed OFF(host) vs ON(forge oracle) `lossF` 0.0004321544912324474 vs 0.00043215449123250291 = ~1e-16 차(F-CLM-CONV-BWD-FORGE-EQ #2383 GEMM-reassoc tolerance, #2599 conv-bwd 경로가 이미 가진 것)·F-CLI-TRAIN-DESCENT·SAVANT-LATCH(step1)·MITOSIS-BOUND(E2→E3) 전부 불변.
+
+**남은 host-bound(정직·secondary)**: groupnorm 은 host 유지 — train.hexa 는 unfused `nn_groupnorm_*_off` 를 쓰고 device kernel 은 fused gn+gelu(`forge_dispatch_groupnorm_gelu`)라 직접 1:1 아님(follow-on). conv GEMM(dominant FLOP)은 #2599 로 이미 GPU.
+
+**GPU util>30% 재게이트**: cost-gated H100×1 rent(stage_resolve HEXA_CUDA=1 SM=90 fresh build + hexa-lang #3851 포함)에서 측정. live core/*.hexa UNTOUCHED, Ψ-disjoint. ARCHITECTURE.json train.hexa 노드 lockstep.
+
 ## perf(cli/train.hexa): conv FWD+BWD GPU-resident 배선 — #2598 CPU-scalar-bound 병목(scalar conv backward)을 forge own-GEMM 으로 재라우트 (byte-eq CPU 검증; GPU util 재게이트는 cost-gated H100 rent 대기)
 
 🏋️⚡ #2598 H100 게이트 FAIL(util ~0%)의 **근본 병목을 정독으로 격리 + 배선** — 핵심 발견: trainer 의 conv **BACKWARD**(`nn_conv1d_bwd_off`)가 GEMM 0개의 host O(T·Cout·Cin·K) scalar triple-loop(d3784·T1024·K3 = ~44 GFLOP/layer/step 을 single CPU thread)였고, 이것이 GPU 를 idle 로 두는 dominant wall-time 항. #2598 은 "im2col/groupnorm/CE/AdamW 가 병목"이라 했으나 정독 결과 **conv backward 가 GEMM 자체를 안 쓰는 것**이 진짜 단일 최대 항.

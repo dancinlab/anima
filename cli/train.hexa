@@ -109,30 +109,47 @@ fn _pow2(e: int) -> int {
 //  of the SAME sums, NOT a re-derivation (verified: $0 host run is byte-identical
 //  except ~1e-16 GEMM-reassociation, falsifiers + savant latch + mitosis bound hold).
 //
-//  SCOPE HONESTY (a_break_the_wall class-c): the im2col gather, groupnorm, and AdamW
-//  stay on host — their host-dispatch GPU wrappers (forge_dispatch_im2col / col2im /
-//  groupnorm_gelu / adamw_keepmv) exist ONLY as `#ifndef HEXA_CUDA` CPU oracles in
-//  self/runtime.c (compiled OUT of the CUDA build; runtime_cuda.c ships only the bare
-//  _hx_cuda_farr_*_gpu kernels with no HexaVal wrapper). Routing those device-resident
-//  is a SEPARATE runtime_cuda.c change (add the GPU forge_dispatch_* bodies). This lane
-//  moves the DOMINANT conv GEMMs (fwd + the ex-scalar bwd) to GPU via the one wrapper
-//  that IS universally defined (forge_dispatch_matmul / t_matmul).
+//  ING#34 UPDATE (was #2598/#2599 SCOPE HONESTY): the im2col gather, col2im
+//  scatter, and AdamW are now device-resident too, gated by env CLM_PROD_DEVFEED
+//  (mirrors stdlib/flame/clm_prod.hexa::_fuse_on). hexa-lang #3851 (follow-on to
+//  #3806/ING#33) wired the forge_dispatch_im2col / _t / col2im / adamw_keepmv
+//  HOST dispatchers to their _hx_cuda_farr_*_gpu kernels under -DHEXA_CUDA — they
+//  were CPU-oracle-only before. The env gate keeps the prebuilt mac binary (which
+//  lacks the symbols) from link-referencing them; on a CUDA self-host pod
+//  CLM_PROD_DEVFEED=1 routes the gather/scatter/optimizer on-device. The DOMINANT
+//  conv GEMMs (fwd + the ex-scalar bwd, #2599) already ride forge own-GEMM via
+//  t_matmul = forge_dispatch_matmul. groupnorm stays on host (train.hexa uses the
+//  unfused nn_groupnorm_*_off; the device kernel is fused gn+gelu) = secondary
+//  follow-on. Byte-eq: every device arm is a re-route to a byte-eq kernel, never
+//  a re-derivation; rc<0 always falls through to the proven host body.
 // ════════════════════════════════════════════════════════════════════════════
 
 // im2col (forward gather). xcol[t, ci·K+k] = xin(t−dil·(K−1−k),ci), zero where
 // p<0 (causal left-pad) — byte-identical to conv_lib::_conv1d_im2col.
 //
-// NOTE (#2598 follow-on scope): the host-dispatch device builtins
-// forge_dispatch_im2col / _t / col2im exist ONLY as `#ifndef HEXA_CUDA` CPU
-// oracles in self/runtime.c — the CUDA build (the one that matters here) compiles
-// them OUT and runtime_cuda.c provides only the bare `_hx_cuda_farr_*_gpu` kernels
-// with NO HexaVal forge_dispatch wrapper. Referencing them = undefined symbol in a
-// CUDA build (verified on summer's working CUDA runtime). So the gather stays on
-// host; the GPU win comes from routing the conv GEMMs (fwd AND the previously
-// all-scalar bwd) through t_matmul → forge own-GEMM, which is the dim-gated
-// (M·K>8192) DEVICE path that DOES exist. Adding the device-resident gather
-// wrappers is a separate runtime_cuda.c change (forge_dispatch_im2col GPU body).
+// ING#34: now device-resident under env CLM_PROD_DEVFEED via forge_dispatch_im2col
+// (hexa-lang #3851 wired it to _hx_cuda_farr_im2col_gpu under -DHEXA_CUDA). The
+// env gate prevents the prebuilt mac binary (which lacks the symbol) from link-
+// referencing it; OFF / device-fail → the host scalar gather below (byte-eq).
+// ING#34: device-feed gate. hexa-lang #3851 wired the forge_dispatch_im2col/
+// col2im/groupnorm_gelu/adamw HOST dispatchers to their _hx_cuda_farr_*_gpu
+// kernels under -DHEXA_CUDA (was CPU-oracle-only). The prebuilt mac binary
+// still lacks these symbols, so the env gate keeps `hexa run` on mac from
+// link-referencing them — mirrors stdlib/flame/clm_prod.hexa::_fuse_on.
+// Enable on a CUDA self-host pod: CLM_PROD_DEVFEED=1 (or HEXA_FUSE_ALL=1).
+fn _devfeed_on() -> bool {
+    if env("CLM_PROD_DEVFEED") != "" { return true }
+    if env("HEXA_FUSE_ALL") != "" { return true }
+    return false
+}
+
 fn _tg_im2col(x: int, xcol: int, T: int, Cin: int, K: int, dil: int) {
+    if _devfeed_on() {
+        // device-resident gather (byte-eq: pure scatter, no FP reduction).
+        // rc==0 = done on-device; rc<0 → host scalar fallback below.
+        let rc = forge_dispatch_im2col(x, xcol, T, Cin, K, dil)
+        if rc == 0 { return }
+    }
     let Kdim = Cin * K
     let mut t = 0
     while t < T {
@@ -151,6 +168,10 @@ fn _tg_im2col(x: int, xcol: int, T: int, Cin: int, K: int, dil: int) {
 }
 // transpose-im2col (bwd dW operand). xcolT[ci·K+k, t] = xin(p,ci).
 fn _tg_im2col_t(x: int, xcolT: int, T: int, Cin: int, K: int, dil: int) {
+    if _devfeed_on() {
+        let rc = forge_dispatch_im2col_t(x, xcolT, T, Cin, K, dil)
+        if rc == 0 { return }
+    }
     let Kdim = Cin * K
     let mut t = 0
     while t < T {
@@ -170,6 +191,13 @@ fn _tg_im2col_t(x: int, xcolT: int, T: int, Cin: int, K: int, dil: int) {
 // col2im (bwd dX scatter-add). dX_out[p,ci] += dXcol[t, ci·K+k]. Caller ZEROES
 // dX_out first (matches host bwd semantics).
 fn _tg_col2im(dXcol: int, dX_out: int, T: int, Cin: int, K: int, dil: int) {
+    if _devfeed_on() {
+        // device-resident scatter (byte-eq: GPU kernel zeroes dX then sums the K
+        // taps k-ascending per cell = host order; caller pre-zeroed dX so the
+        // host ADD == the device SET, identical result, no double-count).
+        let rc = forge_dispatch_col2im(dXcol, dX_out, T, Cin, K, dil)
+        if rc == 0 { return }
+    }
     let Kdim = Cin * K
     let mut t = 0
     while t < T {
@@ -573,14 +601,17 @@ fn load_window(cell_bytes: int, n_bytes: int, off: int,
 }
 
 fn _adam(W: int, gW: int, m: int, v: int, n: int, lr: float, wd: float, t: int) {
-    // AdamW step (host). The device-resident on-chip variant
-    // (forge_dispatch_adamw_keepmv → _hx_cuda_farr_adamw_step_inplace_keepmv_gpu)
-    // exists as a kernel but has NO HexaVal forge_dispatch wrapper in the CUDA
-    // build (same #ifndef-HEXA_CUDA gap as im2col, see _tg_im2col note) — so it
-    // stays host here. AdamW is O(params) elementwise (not the O(T·d²·K) conv
-    // bottleneck #2598 identified), so it is a secondary cost; wiring it on-device
-    // is a follow-on once the forge_dispatch_adamw GPU wrapper lands in
-    // runtime_cuda.c. opt_adamw_step is the proven byte-eq step.
+    // AdamW step. ING#34: hexa-lang #3851 added the device-resident on-chip arm
+    // (forge_dispatch_adamw_keepmv → _hx_cuda_farr_adamw_step_inplace_keepmv_gpu;
+    // W D2H, m/v device-resident). Byte-eq to the host elementwise step (no
+    // cross-element reduction) — same precedent stdlib/flame/clm_prod.hexa wires.
+    // Env-gated like the im2col/col2im arms; rc<0 → proven host opt_adamw_step.
+    // AdamW is O(params) elementwise (not the O(T·d²·K) conv bottleneck), a
+    // secondary util term.
+    if _devfeed_on() {
+        let rc = forge_dispatch_adamw_keepmv(W, gW, m, v, n, lr, 0.9, 0.999, 0.00000001, wd, t)
+        if rc == 0 { return }
+    }
     opt_adamw_step(W, gW, m, v, n, lr, 0.9, 0.999, 0.00000001, wd, t)
 }
 
