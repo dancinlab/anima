@@ -1,0 +1,27 @@
+H_1568 -- SELECTION-DRIVEN PURE MITOSIS (evolution lens) -- DIRECTIONAL numpy mirror
+================================================================================
+corpus = /usr/share/dict/words slice | sha256=86864aa32dcf1c86... | 24000 bytes | V=27 symbols  (BYTE-IDENTICAL to H_1310)
+train=19198 test=4800 order=2 seeds=[15681, 15682, 15683] ladder=[1, 8, 64, 512]
+FROZEN: MUT_SIGMA=0.3 FITNESS_BETA=0.05 FLOOR_MARGIN=0.02 CAUSAL_MARGIN=0.05 CONTROL_MARGIN=0.05
+--------------------------------------------------------------------------------
+computing arms (this is the slow part: 512-rung x 3 seeds x several arms)...
+
+  cells |     E_evo | E_norepro |   E_nomut |  E_noapop | E_randfit
+      1 |   2.94658 |   2.94658 |   2.94658 |   2.94658 |   2.94658
+      8 |   2.89998 |   2.89630 |   2.90527 |   2.89998 |   2.89260
+     64 |   2.72841 |   2.74550 |   2.73315 |   2.72841 |   2.74564
+    512 |   2.53949 |   2.53903 |   2.53787 |   2.53949 |   2.53479
+--------------------------------------------------------------------------------
+A_freq (order-2 n-gram FLOOR) = 2.50884 nats   (H_1310 reference floor = 2.50884)
+E_ens (population soft-vote readout, top rung) = 3.11535 nats
+--------------------------------------------------------------------------------
+FROZEN BARS:
+(B1) BREAK    E_evo[512] < A_freq-0.02: 2.53949 < 2.48884 -> FAIL  (gap to floor = +0.03065 nats)
+(B2) CAUSAL   E_evo[512] < E_norepro[512]-0.05: 2.53949 < 2.48903 -> FAIL  (selection lift = -0.00046)
+(B3) GRADFREE no torch/jax/tf/autograd loaded, no .backward: loaded=[] -> PASS
+(B4) COMPONENT  mutation d=-0.00162 | apoptosis d=+0.00000 | ensemble d=-0.57586  (>0 = that component HELPS E_evo)
+(B5) CONTROL  E_randfit[512] >= E_evo[512]+0.05: 2.53479 >= 2.58949 -> FAIL  (random-fitness penalty = -0.00470)
+--------------------------------------------------------------------------------
+VERDICT TIER (frozen): WALL HOLDS (B1 FAIL) -- selection-driven mitosis does NOT cross the floor
+  B1=False B2=False B3=True B5=False | DIRECTIONAL numpy mirror (a_engine_native_learning -- engine-native R2 = follow-on if GREEN)
+================================================================================
