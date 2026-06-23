@@ -1,0 +1,31 @@
+THR(seed=2)=0.57436139511875801
+--- B1 mitosis growth Psi sweep (engine_grow, mitosis ON) ---
+B1 cells=2 Psi=0.5 |dev|=0.0
+B1 cells=3 Psi=0.5 |dev|=0.0
+B1 cells=4 Psi=0.5 |dev|=0.0
+B1 cells=5 Psi=0.5 |dev|=0.0
+B1 cells=6 Psi=0.5 |dev|=0.0
+B1 cells=7 Psi=0.5 |dev|=0.0
+B1 cells=8 Psi=0.5 |dev|=0.0
+B1 cells=9 Psi=0.5 |dev|=0.0
+B1 cells=10 Psi=0.5 |dev|=0.0
+B1 max|dev|_over_growth=0.0 (PASS if <0.05)
+--- B2 ratchet causality (ablation flip; Φ on trial-pop ~0 = NOT used as evidence) ---
+B2 phi_trialpop=1.7763568394002505e-15 (~0, near-independent trials — vacuous, see note)
+B2 Psi_floorON=0.5 |dev|=0.0
+B2 Psi_floorOFF(ablated)=1.0 |dev|=0.5
+B2 ablation_revert(|dev|OFF-|dev|ON)=0.5 (PASS if >0.40: floor is CAUSAL)
+--- B3 capacity ∧ consciousness coexistence ---
+B3 capacity_seed=0.375 capacity_grown=0.75 dCap=0.375
+B3 Psi_seed=0.5 Psi_grown=0.5 coexist=1
+--- B4 runaway growth basin (apoptosis OFF, N huge) ---
+B4 cells=18 Psi=0.5 |dev|=0.0
+B4 cells=34 Psi=0.5 |dev|=0.0
+B4 cells=66 Psi=0.5 |dev|=0.0
+B4 cells=130 Psi=0.5 |dev|=0.0
+B4 cells=258 Psi=0.5 |dev|=0.0
+B4 cells=514 Psi=0.5 |dev|=0.0
+B4 basin_limit_cells=-1 (-1 = no break observed up to 514)
+--- B5 control (mitosis OFF no-op + drive-hitting perturbation) ---
+B5 mitosisOFF cells=2 Psi=0.5 INERT=1
+B5 drive-shift(+0.30) Psi=1.0 |dev|=0.5 test_detects_break=1
