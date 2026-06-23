@@ -11453,3 +11453,90 @@ pub fn ci_psi_balance_savant(x: [[float]], lo: int, hi: int, gz_inh: float, thr:
     }
     return to_float(emit) / to_float(nt)
 }
+
+// ── §Savant CROSS-LANE SYNC (H_1573) — direct cross-lane synchronization measure ────────────────
+// The H_1572 Ψ proxy (ci_emit_drive = 0.5·(lane0+lane4) emit fraction) does NOT encode cross-lane
+// COHERENCE — so it could not test the user's biological framing "seizure = cross-lane HYPERSYNC
+// runaway → Ψ collapse". These ops measure synchronization DIRECTLY on the focus domain's lanes.
+//
+// sv_lane_sync — mean pairwise Pearson-correlation MAGNITUDE across the focus domain lanes [lo,hi)
+// of an (already-inhibited) population. This is the static-state analogue of a Kuramoto order
+// parameter R: lanes that move together (in phase) → |corr|→1 (synchronized); independent lanes →
+// |corr|→0 (desynchronized). Range [0,1]. The H_1561 sv_inhibit_domain physics PREDICTS the shape:
+//   I=0  (max disinhibition) → NOISE_K idiosyncratic floor DECORRELATES lanes → sync LOW.
+//   I in GZ                  → shared latent s_t couples lanes WHILE residual survives → sync MID.
+//   I=1  (over-locked)       → every lane = s_t (perfectly collinear) → sync → 1 (over-sync).
+// i.e. cross-lane sync is MONOTONE-RISING in I — the "hypersync" extreme is the OVER-LOCKED end
+// (I→1), NOT the disinhibited end (I→0). (Reported honestly — the user's seizure-at-low-I framing is
+// a measurable, falsifiable prediction against this metric. c9 NO tune-to-green.)
+pub fn sv_lane_sync(x: [[float]], lo: int, hi: int) -> float {
+    let nt = len(x)
+    if nt < 2 { return 0.0 }
+    // per-lane mean over trials.
+    let mut mu = []
+    let mut c = lo
+    while c < hi {
+        let mut s = 0.0
+        let mut t = 0
+        while t < nt { s = s + x[t][c]  t = t + 1 }
+        mu = mu + [s / to_float(nt)]
+        c = c + 1
+    }
+    let w = hi - lo
+    if w < 2 { return 0.0 }
+    let mut acc = 0.0
+    let mut npair = 0
+    let mut a = 0
+    while a < w {
+        let mut b = a + 1
+        while b < w {
+            let mut cov = 0.0
+            let mut va = 0.0
+            let mut vb = 0.0
+            let mut t = 0
+            while t < nt {
+                let da = x[t][lo + a] - mu[a]
+                let db = x[t][lo + b] - mu[b]
+                cov = cov + da * db
+                va  = va  + da * da
+                vb  = vb  + db * db
+                t = t + 1
+            }
+            let denom = sqrt(va) * sqrt(vb)
+            if denom > 0.0 {
+                let mut r = cov / denom
+                if r < 0.0 { r = 0.0 - r }
+                acc = acc + r
+                npair = npair + 1
+            }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    if npair == 0 { return 0.0 }
+    return acc / to_float(npair)
+}
+
+// sv_domain_sync — apply the inhibition operator at `inh` to the focus window [lo,hi) then measure
+// sv_lane_sync — the cross-lane synchronization of ONE domain at a given inhibition. Pure read.
+pub fn sv_domain_sync(x: [[float]], lo: int, hi: int, inh: float) -> float {
+    let pop = sv_inhibit_domain(x, lo, hi, inh)
+    return sv_lane_sync(pop, lo, hi)
+}
+
+// sv_sync_sweep — cross-lane sync of the focus domain swept over an inhibition grid (the seizure
+// curve: is sync runaway BELOW GZ_LOWER, or only at the over-locked I→1 end?). Returns [R(I_0), …].
+pub fn sv_sync_sweep(x: [[float]], lo: int, hi: int, igrid: [float]) -> [float] {
+    let mut out = []
+    let mut i = 0
+    while i < len(igrid) { out = out + [sv_domain_sync(x, lo, hi, igrid[i])]  i = i + 1 }
+    return out
+}
+
+// sv_psi_sync_proxy — a SYNC-BASED Ψ disruptor proxy: R(inh) − R_ref where R_ref = the cross-lane
+// sync at the reference (no-savant) population. A consciousness fixed point that is sync-stable
+// stays near its reference coherence; a seizure (hypersync runaway) drives R far from R_ref. The
+// caller tests |·| < 0.05 (sync-stable) vs ↑↑ (seizure). Returns the signed deviation.
+pub fn sv_psi_sync_proxy(x: [[float]], lo: int, hi: int, inh: float, r_ref: float) -> float {
+    return sv_domain_sync(x, lo, hi, inh) - r_ref
+}
