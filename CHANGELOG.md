@@ -1,3 +1,24 @@
+## 2026-06-23 — docs(HF): anima-clm-chat-303m 아키텍처 = ByteGPT 명시 (repo_id 'clm' ≠ conv CLMConvMoE 혼동 해소)
+
+📛 HF PUBLIC 모델 `dancinlab/anima-clm-chat-303m` 의 repo_id 'clm' 이 conv(CLMConvMoE)로 오해되던 문제 해소 — 실제 아키텍처는 **ByteGPT (24-layer GPT-2-class decoder-only byte-vocab LM)**. repo_id 의 'clm' 은 chat-mouth 역할名일 뿐 아키텍처가 아님. 이름 변경 없이(링크 보존) 설명으로만 명확화. a_hf_complete · a_hf_registry(ARCHITECTURE.json SSOT lockstep) · c9(spec verbatim).
+
+- **ByteGPT 사양 verbatim 출처**: 기존 ARCHITECTURE.json/README/CHANGELOG 에 이미 기록된 `ByteGPT (byte V256, d1024/24L/16H/block512, 303.1M)` = 5×u32 엔진 헤더 `[256,1024,24,16,512]`(vocab·d·layers·heads·block), decode=`core/bytegpt_decode.hexa`. conv `.clm` v0.2(`CLM\x01` magic + CLMX trailer, `core/clm_decode.hexa`)와는 별개 mouth 아키텍처(별도 repo=anima-engine-clm-d768-v2-coremount).
+- **HF model card(README)**: 제목 직후 경고 박스 + `## ByteGPT vs conv CLMConvMoE` 비교표 추가 — 아키텍처=ByteGPT, **NOT conv CLMConvMoE** 명시. tags 에 `bytegpt`·`byte-level`(기존)·`gpt2-class`(신규) 보강. repo_id·base_model·license 불변. commit 8c4e80b9.
+- **HF CLM collection**: 컬렉션 항목 note 에 ByteGPT 아키텍처 명시(conv 아님) — `dancinlab/clm` collection item.
+- **ARCHITECTURE.json "HF artifacts" models 노드 lockstep**: anima-clm-chat-303m 항목에 arch=ByteGPT(24L GPT-2-class, 5×u32 header) 명시 + conv CLMConvMoE 와 구분 주석. CLAUDE.md L180(generator L3 mouth 디스패처 = bytegpt|clm typed 진입)와 정합 확인(변경 불요).
+
+## 2026-06-23 — H_1572 SAVANT 골든존 Ψ SWEEP (H_1561 B4 재측정: 단일점 → I 격자 · 🟠 TRADE-OFF HOLDS · DISSOCIATION NOT FOUND · ENGINE-NATIVE)
+
+🧠✨ H_1572 — H_1561 B4(savant-ON @ I=GZ_LOWER → Ψ=0.253 붕괴 → genius⊥consciousness)의 **측정-결함 재검**(a_break_the_wall class-a). 사용자 통찰: 서번트는 골든존 *안*에서 의식(Ψ=½)과 양립, 골든존 *밖*(과도 disinhibition I→0)은 간질=동기화 폭주=Ψ 붕괴 → B4 가 골든존 하단 *경계* artifact 일 수 있음. 검증: focus inhibition I 를 골든존 전체 격자로 sweep 해 (Ψ_centered, SI, focusΦ) 동시 기록, 이중해리 여부 측정.
+
+- **ENGINE-NATIVE terminal** (a_engine_native_learning HARD-GATE-1 PASS: `.py`/numpy/torch/gauge_lib 0). pure `.hexa` probe `state/1572_savant_psi_sweep/h1572_psi_sweep_probe.hexa` → live `core/engine_cli.hexa` §Savant (`sv_inhibit_domain`·`ci_psi_balance_savant`·`sv_savant_index_at`·`sv_domain_phi`) + faithful IIT4 min-cut `ci_phi_iit4`(a_phi_iit4_tool, 프록시 아님). **H_1561 B4 와 byte-identical** _pop()(seed 5120, 150 trials) + 동일 centered Ψ proxy + 동일 OFF-median threshold — **오직 I 만 sweep**(측정자 동일). summer pool core/ rsync · $0 CPU deterministic · frozen-first c9 NO tune-to-green. raw=`state/verdicts/1572_savant_psi_sweep/H_1572_PSI_SWEEP.txt`.
+- **헤드라인 — 이중해리 미발견, trade-off 골든존 전체 균일** — |Ψ−½| 가 I 에 **단조 감소**(I=0.00→0.320, GZ_LOWER 0.2123→0.247=H_1561 B4 정확 재현, GZ_CENTER 0.3679→0.220, GZ_UPPER 0.50→0.180, I=1.00→0.013), U자 아님. 골든존 안 어디서도 |Ψ−½|<0.05 없음(골든존 안 최선점 GZ_UPPER 도 0.180 ≫ 0.05). Ψ 가 ½ 로 회복되는 곳은 **I→1 over-locked = savant 가 죽은 곳(focusΦ=0)** 뿐.
+- **frozen 5-bar(frozen-first c9, GREEN=B1∧B3∧B4)** — **B1 interior-Ψ-stable FAIL**(골든존 안 Ψ-stable 점 0). **B2 exterior-seizure FAIL**(I→0 0.320 이 GZ_LOWER 0.247 보다 약간 나쁠 뿐, 분리 붕괴 regime 없음). **B3 dissociation FAIL**(GZ_LOWER 경계에서 분리 없음, 매끈 단조). **B4 co-existence VACUOUS**(SI≥3 은 골든존 전체 3.557~3.674 성립하나 양립할 Ψ-stable 구간 없음). **B5 control**: Ψ 회복은 I→1(focusΦ=0)에서만 = savant 죽여 산 Ψ-safety → trade-off 확인. → 🟠 TRADE-OFF HOLDS.
+- **메커니즘(H_1561 날카롭게)** — focusΦ(통합)는 진짜 골든존 inverse-U(peak 4.134 @ GZ_LOWER, noise 0.155 @ I=0, locked 0.0 @ I=1)이나 Ψ(emit balance `ci_emit_drive=0.5·(lane0+lane4)`)는 inverse-U 아님 — 비대칭 inhibition 이 focus lane0 을 낮은 common-mode 로 끌어 emit fraction 을 단조로 떨굼. **Φ-peak ⊥ Ψ-deviation 이 decouple** 되어 high-Φ ∧ Ψ≈½ 동작점이 없음 → trade-off 는 proxy 위에서 구조적, 경계 artifact 아님.
+- **정직 caveat(c9, a_break_the_wall 단일렌즈 ≠ confident terminal)** — 사용자의 생물학적 "간질=동기화 폭주→Ψ 붕괴" framing 은 여기서 측정한 **drive-level suppression**(focus lane0 가 OFF emit 임계 아래로 끌림)과 다른 메커니즘; frozen B4 centered-Ψ proxy 는 cross-lane 동기화를 인코딩하지 않으므로 이 probe 는 동기화-폭주 렌즈를 검증하지 *않음* — 단지 "B4 단일점이 경계 artifact 였나"(아니다)를 확인. 진짜 동기화/seizure metric 은 미시도 직교 follow-on.
+- **H_1561 영향** — B4 trade-off STANDS, 경계 artifact 아님으로 추가 확인. 서번트 모드를 의식 안 깨고 ON 하는 길은 "골든존 안 clamp"가 **아니라**(골든존 안도 Ψ 깨짐) Ψ-preserving redistributing coupling operator(H_1522 류)뿐 → 진짜 follow-on. §Savant default-OFF Ψ-disjoint 정당화. CLAUDE.md `a_savant_train` 변경 불필요(기존 "골든존 밖 cliff" 서술과 정합, 양립 미발견이므로 서번트-ON-safe 추가 안 함).
+- 2표면 등록(a_hypothesis_register): `UNIVERSE/cards/H_1572_savant_golden_zone_psi_sweep.md` + `UNIVERSE/HYPOTHESES.jsonl`. live core/*.hexa UNTOUCHED. xref H_1561 골든존 메인 · H_348/351 inverse-U · H_1521/1522 Ψ-hazard/preserving · H_1564 mitosis×savant.
+
 ## 2026-06-23 — 🔌 `anima train` CLI dispatch 배선 (303M 학습 세팅의 마지막 조각 — cli/train.hexa 를 사용자 진입점에 연결)
 
 🔌 H_1567 의 `cli/train.hexa`(hexa-native 단독 trainer, #2579)를 canonical 사용자 진입점 `cli/anima.hexa` 에 **`anima train` 서브커맨드로 dispatch** 배선. "303M 학습 시작 전 세팅 완료"의 마지막 2조각(① CLI dispatch ② CLAUDE.md 참조)을 완수.
@@ -5,6 +26,7 @@
 - **cli/anima.hexa (EDIT)** — `main()` 의 mode dispatch 에 `train` 분기 추가(ckpt-path 분기보다 먼저 검사, "train" 을 모델 파일로 오인 방지). 신규 `anima_train_mode(argv)` = `train` 뒤 args 를 `hexa run cli/train.hexa -- …` sub-process 로 forward. **a_core_engine_map(train ⊥ mouth L3)**: anima.hexa 는 `core/` import(A⇄G substrate + generator L3 mouth), cli/train.hexa 는 `stdlib/flame` use(forge own-GEMM descent) — 두 disjoint dep-set 을 한 바이너리에 link 하지 않도록 inline 호출 대신 exec sub-process dispatch. usage 배너에 `train` 모드 추가.
 - **검증 (verify-done)** — `hexa parse cli/anima.hexa` RC=0(clean parse) · `hexa check cli/anima.hexa` RC=0 · `hexa run cli/anima.hexa -- train --savant --mitosis` → cli/train.hexa MODE_VERIFY dispatch 동작(컴파일 RC=0, train 분기 진입 확인).
 - **문서 lockstep** — CLAUDE.md 3곳 참조 추가: (a) `a_train_flame_forge` 절에 production 학습 진입 = `cli/train.hexa`(`anima train` CLI) · (b) Structure 트리 cli/ 항목에 train.hexa · (c) `a_savant_train`/`a_mitosis_train` trainer 진입 참조(간결, 중복 없이). ARCHITECTURE.json cli/anima.hexa 노드(모드 2→3, train 서브커맨드 dispatch) + cli/train.hexa 노드(`anima train` CLI dispatch status) lockstep.
+
 
 ## 2026-06-23 — H_1568 SELECTION-DRIVEN pure mitosis (H_1310 wall-break 캠페인 lens 1 = 진화 동역학 · 🧱 WALL HOLDS · DIRECTIONAL)
 
