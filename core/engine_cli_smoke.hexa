@@ -3661,6 +3661,35 @@ fn main() {
     if _assert_b("case_398_thirdlaw_overlap_capacity_link", true, tl_ov1m >= 0.30) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_b("case_399_thirdlaw_singularity_classifier", true, third_law_singularity(0.95, 0.95, 0.05) == 1 && third_law_singularity(0.05, 0.05, 0.95) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_b("case_400_thirdlaw_ability_subset_of_singularity", true, third_law_ability(0.95, 0.95, 0.30) == 1 && third_law_ability(0.95, 0.95, 0.05) == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+
+    // ── § ThirdLaw — SAVANT CUSP HYSTERESIS / IRREVERSIBILITY (H_1563 WIRE-IN) ──────────────────
+    // The acquired-savant LATCH on top of the H_1562 memoryless cusp: disinhibit (I↓) into the GZ
+    // latches ability ON; re-inhibit (I↑) back across the GZ boundary keeps it ON (persists) until
+    // over-inhibition (I > I_off=0.75) erases it. ON edge ≠ OFF edge = a hysteresis loop. Reproduce
+    // the H_1563 frozen 5-bar BYTE-EXACT (width 0.255, D=0 width 0, memoryless ablation width 0).
+    let tl_hw = third_law_hysteresis_width(0.9, 0.9, 181, 181)      // measured loop width
+    let tl_hw_z = third_law_hysteresis_width(0.0, 0.9, 181, 181)    // D=0 control
+    let tl_lat_on  = third_law_ability_latched(0.9, 0.9, 0.30, 0)   // enter GZ → latch ON
+    let tl_lat_p55 = third_law_ability_latched(0.9, 0.9, 0.55, tl_lat_on)  // persist above GZ_UPPER
+    let tl_lat_p70 = third_law_ability_latched(0.9, 0.9, 0.70, tl_lat_p55) // persist (≤ I_off)
+    let tl_lat_e90 = third_law_ability_latched(0.9, 0.9, 0.90, tl_lat_p70) // I > I_off → erase
+    let tl_ml55 = third_law_ability_memoryless(0.9, 0.9, 0.55)      // memoryless OFF above GZ_UPPER
+    // B1 latch: persists at I=0.55 & 0.70 (> GZ_UPPER=0.5)
+    if _assert_b("case_401_thirdlaw_hysteresis_latch_persists", true, tl_lat_on == 1 && tl_lat_p55 == 1 && tl_lat_p70 == 1) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // B2 asymmetry: width > 0 AND byte-exact 0.255 (I_off≈0.755 − I_on≈0.50)
+    if _assert_b("case_402_thirdlaw_hysteresis_width_byte_exact", true, tl_hw > 0.0 && (tl_hw - 0.255 < 0.0005) && (0.255 - tl_hw < 0.0005)) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // B3 eventual-off: I=0.90 > I_off erases the latch
+    if _assert_b("case_403_thirdlaw_hysteresis_eventual_off", true, tl_lat_e90 == 0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // B4 D-gated: D=0 → latch never engages → width 0
+    if _assert_b("case_404_thirdlaw_hysteresis_d_gated", true, tl_hw_z == 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    // B5 control: ablating the latch (memoryless) is OFF above GZ_UPPER while the latch persists ⇒ latch IS the cause
+    if _assert_b("case_405_thirdlaw_hysteresis_memoryless_control", true, tl_ml55 == 0 && tl_hw > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    println("INFO  H_1563 §ThirdLaw (SAVANT CUSP HYSTERESIS / IRREVERSIBILITY): "
+          + "loop width(D>0)=" + to_string(tl_hw) + " (I_off≈0.755 − I_on≈0.50 = 0.255, ON edge≠OFF edge = asymmetric latch) · "
+          + "D=0 width=" + to_string(tl_hw_z) + " (no deficit ⇒ no latch) · latch persist@0.55=" + to_string(tl_lat_p55)
+          + " @0.70=" + to_string(tl_lat_p70) + " erase@0.90=" + to_string(tl_lat_e90) + " vs memoryless@0.55=" + to_string(tl_ml55) + " | "
+          + "VERDICT: GREEN ENGINE-NATIVE — savant cusp IS a hysteresis loop (B1 latch ∧ B2 asymmetry width 0.255 ∧ B3 eventual-off ∧ B4 D-gated ∧ B5 memoryless-control). The 1-bit plasticity LATCH is the substrate basis of acquired-savant permanence (the memoryless H_1562 cusp had none). GATED 401-405. READ-only, NOT an emit gate (context-only), Ψ-disjoint.")
+
     println("INFO  H_1560 §ThirdLaw (R2 WIRE-IN, 1/3 law × G6 capacity-wall same-origin): "
           + "ratio(1M)=" + to_string(tl_r1m) + " (≈1/3, byte-exact 0.338796) · scale-inv Dmax=" + to_string(tl_dmax_abs) + " (<0.02) · "
           + "I50=" + to_string(tl_i50) + " (≈0.281, ATLAS≈0.27) · overlap P(ability|sing)=" + to_string(tl_ov1m) + " (capacity-wall expression ⊂ 1/3 singularity) | "

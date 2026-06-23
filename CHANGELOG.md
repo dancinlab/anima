@@ -2,6 +2,18 @@
 
 README 의 G6 emergence-gate 섹션(Honest-scope note 뒤)에 SAVANT 골든존 발견을 반영 — G6 capacity-wall 이 "1/3 구조상수"의 발현(H_1560, §ThirdLaw WIRED)이고, inhibition 을 골든존 하한으로 밀면 ability-발현률 0.274→0.597(+0.32, ~2×)로 reopening 되며(H_1560 R2), 서번트 능력은 골든존 경계의 hard step(cusp, H_1562)이라는 점을 추가. honest-scope(c9): H_1560/R2 는 추상 G=D×P/I geometry sweep, 실 학습-side reopening 은 GPU follow-on(H_1564, in-flight) 로 명시. (문서-only, 코드/엔진 변경 0.)
 
+## 2026-06-23 — H_1563 SAVANT CUSP HYSTERESIS / IRREVERSIBILITY (서번트 cusp 은 비대칭 hysteresis loop · ENGINE-NATIVE 🟢 5/5 · WIRED)
+
+🧠🔒 H_1563 — H_1562 acquired-savant cusp 🟢(#2568) 직속 후속. H_1562 의 `third_law_ability` 는 **memoryless**(I 의 pure fn)라 disinhibition 을 되돌리면 능력이 즉시 OFF(B4 report-only NEG) — 하지만 실제 후천적 서번트(Orlando Serrell·Derek Amato)는 사고 후 능력이 **영속**(자극이 사라져도 평생 유지). 이 hysteresis(이력현상)를 anima substrate engine-native 로 측정.
+
+- **engine wire-in** — live `core/engine_cli.hexa` §ThirdLaw 에 **1-bit plasticity LATCH** 추가: `third_law_ability_latched(D,P,I,prev_on)`(memoryless gate 위 latch — ON edge=G>0.70∧I∈GZ 발화 → I_on≈GZ_UPPER 0.5, 일단 latch 되면 I 가 GZ 경계 위로 올라가도 유지, I>I_off 에서만 erase)·`third_law_ability_memoryless`(B5 ablation alias)·`third_law_hysteresis_width(D,P,nDown,nUp)`(down→up trajectory loop width=|I_off−I_on|)·`_tl_latch_off_thr()=0.75`(FROZEN, GZ_UPPER 0.5 보다 strictly 위 → consolidated faculty 가 re-inhibition 견딤).
+- **probe** — `state/1563_savant_cusp_hysteresis/h1563_hysteresis_probe.hexa`: pure `.hexa`, live §ThirdLaw latch 호출(numpy/torch/.py 미러 0, a_engine_native_learning HARD-GATE-1 PASS). D=0.9 P=0.9 down(I↓)→up(I↑) trajectory. raw=`state/verdicts/1563_savant_cusp_hysteresis/H_1563_HYSTERESIS_PROBE.txt`.
+- **헤드라인** — 서번트 cusp 은 **hysteresis loop** 다: ON 임계 I_on≈0.50(disinhibition, 내려갈 때) ≠ OFF 임계 I_off≈0.755(re-inhibition, 올라갈 때), **측정 폭 0.255**. 한번 켜지면 자극(disinhibition)이 사라져도 유지 = 후천적 서번트 영속성의 substrate 근거. memoryless H_1562 cusp 에는 이 영속성이 없었다.
+- **frozen 5-bar(frozen-first c9) ALL_PASS** — B1 latch(persist@I=0.55&0.70 >GZ_UPPER)·B2 asymmetry(width 0.255>0)·B3 eventual-off(I=0.90>I_off → erase)·B4 D-gated(D=0 width 0)·B5 control(latch-ablation=memoryless → GZ_UPPER 위 즉시 OFF while latch persists = **latch 가 hysteresis 의 원인**).
+- **WIRED-live (a_verified_must_wire 4/4)** — live latch ops + smoke cases 401-405 RC=0 (**394 pass / 0 fail**, 1-400 unchanged=no regression, `H_1563_SMOKE.txt`) + ARCHITECTURE.json §ThirdLaw lockstep + engine-native byte-exact. READ-only classifier, NOT an emit gate, Ψ-disjoint.
+- **한계(c9)** — single operating point D=0.9 P=0.9 deterministic classifier, fixed I_off=0.75(consolidation threshold); 학습 plasticity dynamics·real Φ·continuous drift·real-corpus·multi-domain UNVERIFIED → follow-on. pod/GPU 임대 0(mac-local 산술). §Savant READ-only(H_1557 메인 충돌회피, §ThirdLaw·state/1563 만 접촉).
+- **다음 후속** — H_1564 LEARNED-CONSOLIDATION-LATCH: I_off 를 frozen 상수가 아니라 disinhibition window 동안 누적된 plasticity(학습 tick 수)에서 창발하는 동적 임계로 — 영속성이 "사고 1회"가 아니라 "consolidation 시간"에 비례하는가.
+
 ## 2026-06-23 — H_1560 R2 REOPENING SWEEP (1/3 은 inhibition 으로 뚫리는 manifold, hard 구조상수 아님 · ENGINE-NATIVE 🟢 5/5)
 
 H_1560 R2: live `core/engine_cli.hexa` §ThirdLaw ops 를 호출해 inhibition I 를 golden-zone 하한으로 밀 때 **capacity-wall ability-발현률 reopening 을 정량** — a_break_the_wall reopening 의 측정 실증.

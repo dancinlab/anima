@@ -11072,3 +11072,86 @@ pub fn third_law_i50(nD: int, nP: int, nI: int) -> float {
     }
     return 0.0 - 1.0
 }
+
+// ── § ThirdLaw — ACQUIRED-SAVANT CUSP HYSTERESIS / IRREVERSIBILITY (H_1563) ───────────────────────
+// H_1562 showed savant ability EXPRESSION (third_law_ability) is a STEP JUMP at the golden-zone
+// boundary, but its B4 noted the classifier is MEMORYLESS (a pure fn of I) → raise I back above the
+// GZ and the savant instantly turns OFF. Acquired savants (ATLAS/162: Orlando Serrell, Derek Amato)
+// are the opposite: a one-time event flips the ability ON and it PERSISTS for life — the stimulus is
+// gone yet the faculty stays. That is HYSTERESIS (an asymmetric switch): the I at which ability turns
+// ON while DISinhibiting (I falling into the GZ) differs from the I at which it turns OFF while
+// RE-inhibiting (I rising back). Biology: the disinhibition opens a window in which the latent
+// circuit CONSOLIDATES (synaptic plasticity / structural LATCH); once consolidated it does not need
+// the disinhibition to keep firing — only much STRONGER re-inhibition can erase it.
+//
+// MODEL (deterministic, p7-clean, READ-only, Ψ-disjoint — NOT an emit gate, a_autonomy_over_hardcode):
+// a 1-bit latch over the memoryless third_law_ability. Two asymmetric thresholds on I:
+//   • ON  edge  = the H_1562 memoryless gate: ability turns ON only when third_law_ability(D,P,I)==1
+//                 (G>thr AND I ∈ [GZ_LOWER, GZ_UPPER]). The highest such I (entering the GZ from
+//                 above as we disinhibit) is the ON threshold I_on ≈ GZ_UPPER = 0.5.
+//   • OFF edge  = a STRICTLY HIGHER inhibition I_off = _tl_latch_off_thr() (0.75) ≫ GZ_UPPER. Once
+//                 latched ON, ability PERSISTS as I rises back across the GZ boundary, and only turns
+//                 OFF when I exceeds I_off (the consolidated faculty is over-suppressed / erased).
+//   ⇒ hysteresis width = I_off − I_on = 0.75 − 0.5 = 0.25 > 0 (the asymmetry, B2).
+//
+// ABLATION (B5): _tl_latch_off_thr() ≤ GZ_UPPER collapses the loop to the memoryless H_1562 behaviour
+// (ON edge == OFF edge, width 0). The third_law_ability_memoryless alias makes that control explicit.
+
+// FROZEN latch OFF threshold — the inhibition at which a consolidated savant faculty is finally erased.
+// Strictly above GZ_UPPER (0.5) so a latched ability survives re-inhibition across the GZ boundary.
+fn _tl_latch_off_thr() -> float { return 0.75 }
+
+// third_law_ability_memoryless — explicit alias of the H_1562 memoryless classifier (NO latch). Used
+// as the B5 ablation control: with no latch state, ability is a pure function of the current I.
+pub fn third_law_ability_memoryless(d: float, p: float, ii: float) -> int {
+    return third_law_ability(d, p, ii)
+}
+
+// third_law_ability_latched — the hysteresis step. Given the PRIOR latch state prev_on (1 = the savant
+// faculty is currently latched ON, 0 = OFF), return the new latch state at inhibition I:
+//   prev_on == 0 : turn ON iff the memoryless gate fires (third_law_ability==1) — entry needs the GZ.
+//   prev_on == 1 : STAY ON (persist across the GZ boundary) until I exceeds I_off; then turn OFF.
+// D-gated for free (B4): if D=0 the memoryless gate never fires, so a 0-latch never turns ON.
+pub fn third_law_ability_latched(d: float, p: float, ii: float, prev_on: int) -> int {
+    if prev_on == 1 {
+        if ii > _tl_latch_off_thr() { return 0 }   // over-inhibition finally erases the faculty
+        return 1                                    // otherwise the consolidated faculty PERSISTS
+    }
+    return third_law_ability(d, p, ii)              // not yet latched: needs the memoryless GZ gate
+}
+
+// third_law_hysteresis_width — measured loop width over a fine I trajectory: run I DOWN (disinhibit)
+// to latch ON, record the ON threshold (highest I at which it first turned ON), then run I UP
+// (re-inhibit) and record the OFF threshold (lowest I at which the latched faculty turned OFF). Width
+// = |I_off − I_on|. A memoryless classifier (no latch) returns 0; a true hysteresis loop returns > 0.
+// `nDown`/`nUp` = grid resolution of the down/up legs over [0.05, 0.95]. Pure deterministic.
+pub fn third_law_hysteresis_width(d: float, p: float, nDown: int, nUp: int) -> float {
+    // DOWN leg: I from 0.95 → 0.05, find the I where ability first latches ON (the ON edge).
+    let dg = _tl_linspace(0.95, 0.05, nDown)
+    let mut latch = 0
+    let mut i_on = 0.0 - 1.0
+    let mut a = 0
+    while a < nDown {
+        let ii = dg[a]
+        let nl = third_law_ability_latched(d, p, ii, latch)
+        if latch == 0 && nl == 1 { i_on = ii }   // first ON during disinhibition = ON threshold
+        latch = nl
+        a = a + 1
+    }
+    if i_on < 0.0 { return 0.0 }                  // never latched (e.g. D=0) → no loop
+    // UP leg: continue from the latched state, I from 0.05 → 0.95, find where it turns OFF (OFF edge).
+    let ug = _tl_linspace(0.05, 0.95, nUp)
+    let mut i_off = 0.0 - 1.0
+    let mut b = 0
+    while b < nUp {
+        let ii = ug[b]
+        let nl = third_law_ability_latched(d, p, ii, latch)
+        if latch == 1 && nl == 0 { i_off = ii }   // first OFF during re-inhibition = OFF threshold
+        latch = nl
+        b = b + 1
+    }
+    if i_off < 0.0 { return 0.0 - 1.0 }           // latched but never released within the grid (eventual-off bar fail signal)
+    let w = i_off - i_on
+    if w < 0.0 { return 0.0 - w }
+    return w
+}
