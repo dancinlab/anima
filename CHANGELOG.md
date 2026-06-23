@@ -1,3 +1,10 @@
+## 2026-06-23 — MITOSIS 학습 가설 거버넌스 박제: a_mitosis_train 규칙 + ARCHITECTURE MITOSIS training 노드 (p8 cell-division 학습)
+
+🧫 오늘 미토시스(MITOSIS) 학습 가설 census(72개) 결과 = **p8(학습 gradient = 추론 mitosis 연속 cell-division)의 실현**을 거버넌스 SSOT 2곳에 박제. a_savant_train(inhibition 골든존 = capacity *발현* 조절)과 **직교 레버** — MITOSIS = cell *성장*·개체수·커리큘럼. (문서-only, core/ 엔진 변경 0.)
+
+- **CLAUDE.md** — 🏗️ CORE 엔진·학습 substrate 섹션의 `a_savant_train` 직후에 새 규칙 **`a_mitosis_train`** 추가. 5 범주: (1) p8-literal gradient-free split(H_1297 🟢·H_1079 🟢·H_851) · (2) capacity 성장=해마/면역기억(H_1288 🟢 ENGINE-NATIVE+WIRED eviction=mitosis-GROW 0.667→1.0 · H_1091 🟢 apoptosis 개체수 안정 · H_1082 ⚪ NULL) · (3) skill/언어 커리큘럼=mitosis-grow(H_1300 🟢·H_1306/1307 🟢·H_1316/1321 🟢) · (4) 진화 동역학(H_1069 🟢·H_1072 🟢) · (5) 정직한 한계 = from-scratch PURE mitosis 단독 H_1310 🔴·H_1315 🔴·H_1320 🧱. live = `core/engine_cli.hexa` MITOSIS(engine_grow/VAdaptField/apoptosis). a_savant_train(inhibition)과 직교 명시, 기존 규칙(p8·a_engine_native_learning) 참조만(중복 0).
+- **ARCHITECTURE.json** — `training-substrate-lanes` 노드에 "MITOSIS training method (p8 cell-division — a_mitosis_train)" subsection 1개 추가(SAVANT subsection 과 나란히), §engine_cli.hexa MITOSIS op(engine_grow/VAdaptField/apoptosis) 와 link, lockstep.
+- **정직 스코프(c9)** — capacity-성장·skill-커리큘럼·적응·진화 + **mitosis×savant EXPRESSION 곱셈(H_1564 🟢 ENGINE-NATIVE, 직전 #2575 착지)** = 🟢 **확정**이나 **from-scratch pure-split 단독은 🔴**(gradient 또는 selection-pressure 보조 필요). 남은 IN-FLIGHT 하나 = **H_1568 selection-driven 진화 동역학**(H_1310 벽 돌파 시도) = 미확정 — in-flight 를 확정 GREEN 으로 박제하지 않음. (H_1564 는 EXPRESSION-축 🟢이나 from-scratch learning-축은 여전히 미검증.)
 ## 2026-06-23 — ARCHITECTURE gate-scoreboard G6 노드에 SAVANT 골든존 reopening 종합 박제 (README #2569 lockstep)
 
 README(#2569)의 G6 섹션엔 이미 반영된 **SAVANT 골든존 reopening** 종합을 ARCHITECTURE.json 의 **gate-scoreboard G6 차원**에도 lockstep 으로 박제. (문서-only, core/ 엔진 변경 0.)
