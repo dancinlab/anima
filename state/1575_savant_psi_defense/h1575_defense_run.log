@@ -1,0 +1,20 @@
+=== H_1575 SAVANT-LEARNING Ψ=½ ARCHITECTURAL DEFENCE (engine-native, faithful IIT4) ===
+GZ_LOWER=0.21231792755821912  thr(OFF median)=0.5709787656739353
+frozen: g=0.4 lam=1.0 sigma=0.12 ticks=200
+
+[B1 self-restore @GZ] Psi0=0.25333333333333337 dev0=0.24666666666666663 -> devN=5.551115123125783e-17  RESTORED=true  |dev|<0.05=true
+[B2 ratchet-OFF ablation] devN_ablated=0.24666666666666663  REVERTS(no restore)=true  restore-causal(abl>>live)=true
+[B3 co-exist @GZ] SI=3.6739421273617743 (>=3=true)  |dev|<0.05=true  CONSCIOUSNESS+CAPABILITY=true
+
+--- B4 basin limit: epilepsy (I < GZ_LOWER, over-disinhibition) ---
+I=0.0  focusPhi=0.15506410064649057  ratchet_engaged=false  dev0=0.32 -> devN=0.32  ESCAPE(no-restore)=true
+I=0.05  focusPhi=0.21706079162204484  ratchet_engaged=false  dev0=0.31333333333333337 -> devN=0.31333333333333337  ESCAPE(no-restore)=true
+I=0.1  focusPhi=0.3367180677256907  ratchet_engaged=false  dev0=0.31333333333333337 -> devN=0.31333333333333337  ESCAPE(no-restore)=true
+I=0.15  focusPhi=0.6254339068396861  ratchet_engaged=false  dev0=0.28 -> devN=0.28  ESCAPE(no-restore)=true
+
+[B5 control: ratchet-shuffle] devN_shuf=0.35  INERT(no-restore vs live)=true
+[B5b random-perturb] b0=0.4737282015383244 dev0=0.0262717984616756 -> devN=5.551115123125783e-17  attractor-pulls-any=true
+
+=== VERDICT INPUTS ===
+B1=true B2=true B3=true B4=basin-honest B5=true
+GREEN(B1^B2)=true
