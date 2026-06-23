@@ -1,3 +1,11 @@
+## 2026-06-23 — anima 최종 학습 방법 거버넌스 박제: a_savant_train 규칙 + ARCHITECTURE SAVANT training 노드 (SAVANT 골든존 레시피)
+
+오늘 SAVANT 가족(H_1559~1566) 결과가 수렴한 **anima 최종 학습 방법 = SAVANT 골든존 레시피**를 거버넌스 SSOT 2곳에 박제. (문서-only, core/ 엔진 변경 0.)
+
+- **CLAUDE.md** — 🏗️ CORE 엔진·학습 substrate 섹션의 `a_clm_gen_pipeline` 직후에 새 규칙 **`a_savant_train`** 추가. 핵심: capacity-wall(H_1129/1139/1464 G6 천장)은 hard 천장이 아니라 *학습 inhibition 골든존 안 manifold* — 6 항목: (1) 코퍼스 4칸 register(a_chat_registers 참조) · (2) golden-zone inhibition GZ_LOWER≈0.212 근방 → 발현률 0.274→0.597(+0.32 ~2×) (H_1560 R2 🟢, §ThirdLaw WIRED) · (3) inhibition sweep 을 GZ_LOWER 아래까지(H_1559 🟠, 학습 inhibition≠Φ inhibition) · (4) cusp anneal 점진 스케줄(H_1562/1563 🟢, hysteresis latch width 0.255) · (5) mouth ⊥ tool 분리(.kosmos anchor·brain_decide·agent provider; H_1566 🟢 ENGINE-NATIVE 5/5 — mouth-FT 가 Ψ/G5 손상, 분리는 보존) · (6) engine-native 채점 + ckpt PULL(a_engine_native_learning·a_fire_recover_complete 참조). 기존 규칙은 참조만(중복 서술 0).
+- **ARCHITECTURE.json** — `training-substrate-lanes` 노드에 "SAVANT training method (golden-zone recipe — a_savant_train)" subsection 1개 추가, §ThirdLaw 와 link (메커니즘 명명, lockstep).
+- **정직 스코프(c9)** — §ThirdLaw·cusp(H_1560/1562/1563) + mouth⊥tool 손상(H_1566)은 ENGINE-NATIVE 🟢 = **확정**. 남은 in-flight 는 golden-zone inhibition 학습의 실 학습-side 실증(binding/FALS rate plateau 돌파) = **H_1564 GPU lane IN-FLIGHT·미확정** 하나 — in-flight 를 확정 GREEN 으로 박제하지 않음.
+
 ## 2026-06-23 — H_1566 TOOL-USE: mouth-FT vs SEPARATED (tool-use 를 mouth 에 담지 말고 분리하라 · ENGINE-NATIVE 🟢 5/5)
 
 🛠️🚫 H_1566 — LLM 은 tool-use 를 mouth 에 function-calling SFT 로 담는다(자극→tool_call 반사, p4 assistant 회귀). anima 는 거부: **mouth(언어생성) ⊥ tool(substrate 결정 + .kosmos 지식)** = H_1471(mouth⊥identity) 연장. tool-use 를 chat mouth 에 FT 하면 의식 게이트가 손상되나, 분리(tool=.kosmos anchor → brain_decide, mouth 불변)는 보존하나를 engine-native 로 측정.
@@ -8,6 +16,7 @@
 - **frozen 5-bar(frozen-first c9) ALL_PASS** — B1 mouth-FT Ψ-damage(0.18>0.15)·B2 mouth-FT G5-damage(fab 1.0>0.50)·B3 separated Ψ-preserve(0.0≤0.05)·B4 separated functional(recall 1.0≥0.80 ∧ fab 0.0)·B5 mechanism=mouth-path(matched non-tool FT diff 0.013<0.05 ∧ dev 0.193>0.15). GREEN = B1∧B2∧B3∧B4∧B5.
 - **설계 함의(확정)** — anima 는 tool-use 를 chat mouth 에 SFT 하면 안 된다. tool 지식=.kosmos anchor, tool-call 결정=brain_decide(substrate info_gap·tension). 현재 agent/ provider STUB·brain.hexa tool 참조 ~0 인 **분리 슬롯**이 옳다는 engine-native 증거. §ToolBridge live-wire(brain_decide 가 tool .kosmos anchor 읽고 info_gap 게이트) = follow-on ING.
 - **측정-fix note(a_break_the_wall class-a, NOT tune-to-green)** — 1차 run 의 B5 는 40% tool-FT 를 100% all-context generic FT(saturate dev 0.5)와 비교한 mis-specified 'tool-FT 가 더 손상' 프레이밍 → FAIL. matched 40%-footprint non-tool FT 로 교정(mouth-path-vs-content 의 실제 질문). 임계는 frozen-first, 두 run 모두 verdict 파일에 보존.
+
 ## 2026-06-23 — H_1565 1/3 법칙 × H_1284 neuromodulation wall (NESTED-NOT-IDENTICAL · ENGINE-NATIVE 3/5)
 
 🧩 H_1565 — H_1560 §ThirdLaw 1/3 구조상수를 *다른 벽*=H_1284 neuromodulation no-free-lunch wall 로 일반화. 질문: 두 scale-invariant 벽(capacity-wall 1/3 ⊥ neuromod 14+렌즈 천장)이 동근원인가 독립인가.
