@@ -48,7 +48,7 @@ anima/
 ├─ stdlib/ tool/ spec/    — hexa stdlib (flame·iit4) · tools · specs
 ├─ ARCHITECTURE.json     — 아키텍처 SSOT (트리, update-in-place) + ARCHITECTURE.html 뷰어 (python3 serve.py)
 ├─ CLAUDE.md             — 거버넌스 + 8 철학 (이 markdown SSOT)
-└─ VERSIONS.md HF.jsonl  — 버전 레지스트리 · ckpt↔HF 레지스트리 (claims-audit 는 UNIVERSE/HYPOTHESES.jsonl 로 흡수, CLAIMS.tape 은퇴 2026-06-16)
+└─ VERSIONS.md  — 버전 레지스트리 (HF ckpt↔repo 레지스트리는 ARCHITECTURE.json "HF artifacts" 로 이관·HF.jsonl 폐기 2026-06-23 · claims-audit 는 UNIVERSE/HYPOTHESES.jsonl 로 흡수, CLAIMS.tape 은퇴 2026-06-16)
 ```
 
 ## 📦 패키징 — pod 업로드
@@ -67,7 +67,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 - ✅ 주장·verdict → [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (per-H `verdict` 컬럼) + frozen 증거 `state/verdicts/<slug>/<id>.txt` (was `.verdicts/` until 2026-06-18 state-unify; CLAIMS.tape 은퇴 2026-06-16, 0 손실, ledger `state/verdicts/claims-tape-retirement/`)
 - 🔬 가설 → 2표면: [`UNIVERSE/HYPOTHESES.jsonl`](UNIVERSE/HYPOTHESES.jsonl) (JSON object 1개/가설) · `UNIVERSE/cards/H_*.md` · (prose overview → `state/universe-overview.md`)
 - 🔢 버전 → [VERSIONS.md](VERSIONS.md) · 📖 Readme → [README.md](README.md)
-- 🤖 HF 레지스트리 → `HF.jsonl` · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
+- 🤖 HF 레지스트리 → `ARCHITECTURE.json` "HF artifacts" 노드(models·datasets, HF.jsonl 폐기 2026-06-23) · pi5-akida → `PI5-AKIDA.json` · 7B gates → `7B_PASS_CONDITIONS.md`
 
 ---
 
@@ -189,6 +189,8 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
   - **stale hexa-cache 함정**: runtime.a 를 CPU→CUDA 로 바꿔도 `~/.hexa-cache/hexa_run.<hash>` 의 CPU-시절 바이너리가 캐시히트 → GPU 무시·CPU 폴백(GPU mem 4MiB). 해결 = `rm ~/.hexa-cache/hexa_run.<hash>*` 후 재컴파일.
   - **CUDA-12 vs 13**: forge cuda runtime 은 CUDA-12.x 에서 clean 빌드(`stage_resolve_runtime_a HEXA_CUDA=1 SM=<cc>`). CUDA-13(nvcc 13.0)은 3 버그(forward-decl·native-obj ar·`-lstdc++`) — 회피보다 CUDA-12 호스트/이미지 선택. (CUDA-13 의 `-fno-threadsafe-statics` 워크어라운드는 full-decode 0-token 으로 깨지니 금지, 올바른 건 `-lstdc++`.)
   - **호스트 선택(a_break_the_wall)**: 같은 불안정 호스트에 N회 재발사 금지 — summer=주인 워크스테이션 잦은 재부팅(장시간 job 소실)·aiden=CUDA-13(full-decode 깨짐). 장시간 decode 는 (a) 재부팅 없는 전용 pod 임대(**CUDA-devel 이미지=nvcc 내장** + verified GPU, bare CUDA 이미지는 `apt install libssl-dev` 선행) 또는 (b) tmux 로 SSH/세션 독립화. GPU box 빌려놓고 CPU 로 돌리는 건 돈 낭비.
+  - **pool 호스트 runtime.a stale → link 실패 (2026-06-23 summer 실측)**: pool 호스트에서 anima CLI(`hexa run cli/anima.hexa`)가 `undefined reference to forge_dispatch_groupnorm_gelu`(또는 `cudaGetLastError` 등)로 link 실패하면 = `~/.hx/bin/build/runtime.a` 가 현재 `hexa` 바이너리(self/ 소스)보다 **구버전 빌드**(최신 core/ 가 요구하는 forge 심볼 누락). 근본수정(c1) = self/runtime.c 로 **fresh 재빌드**: `cd ~/.hx/bin && cp build/runtime.a build/runtime.a.preReb && CC=clang tool/stage_resolve_runtime_a`. ⚠️ 재빌드 후 archive 에 **CPU object(runtime.o) + 옛 cuda object(runtime_cuda*.o) 가 섞여 multiple-definition / undefined cuda 심볼**이 날 수 있음 → CPU 로 쓰려면 `for o in $(ar t build/runtime.a|grep -i cuda); do ar d build/runtime.a "$o"; done` 로 cuda object 제거(nm 으로 forge_dispatch 가 CPU object 에 남고 `U cuda` 0 확인) + `~/.hx/.cuda-runtime` marker off; GPU 로 쓰려면 cuda runtime 전체를 sm 맞춰 재빌드 + marker on. 끝에 stale `rm ~/.hexa-cache/hexa_run.<hash>*`. self-contained `core/`/`cli/` 는 mac→호스트 rsync(`rsync -az cli/ core/ <host>:~/anima/`)로 동기.
+  - **⚠️ 영어-only ckpt 가 독일어 출력 = 무결성 anomaly (2026-06-23, 조사 ING)**: `clm303_L4_d3784.clm`(303M deep-mouth-ladder, **영어 코퍼스만 학습**)을 summer CPU farr decode 시 byte/의식 mouth 가 `der ersten der Schule …` 독일어 토큰으로 collapse. byte-CLM 이 영어만 봤으면 독일어 *단어*(der·Sie·Schule)가 나올 수 없음 → 단순 "실험 ckpt 라 어수선"(byte-garble)과 **별개의 디코드/ckpt 무결성 의심**(CPU farr ≠ GPU byte-identical? clm v0.2 layout 로드 오류? embedding/vocab 오프셋?). 조사 = 같은 ckpt 를 (1) GPU forge decode 와 (2) torch golden(`h1464_torch_golden.py` 류)으로 디코드해 3-way byte 대조 → 어느 경로가 독일어를 만드는지 격리. chat-coherent 아님(별개 이슈)과 혼동 금지.
 - ⛔ torch/CPU `train_clm.py` 를 production 트레이너로 · 트레이너를 `.py` 로 저작 · 44.68M+ rung 을 CPU 로 · device 경로 없는 트레이너로 'pool GPU fire' 주장 · flame↔PyTorch wall speedup 주장(RETRACTED 2026-05-19, 미측정).
 
 **`a_clm_gen_pipeline`** — Lane-P py/cuda CLMConvMoE → ENGINE-loadable `.clm` v0.2 브리지.
@@ -219,7 +221,7 @@ canonical 재구성의 목적 = 학습/추론/벤치 pod 에 올리기 쉬운 se
 
 **`a_hf_autonomous`** — HF 업로드는 자율, tier-gated 가시성. ✅ fire 회수 후 HF 업로드 자동(사용자 게이트 없음, org=dancinlab) · PUBLIC=closure PASS·🔵🟢 검증모델·clean-license · PRIVATE=closure FAIL·WIP·negative·unclear-license · model card+manifest(sha256) 첨부. ⛔ HF 업로드를 사용자에 게이트 · "업로드해도 되나?" · teardown 전 HF 스킵 · FAIL/WIP 를 PUBLIC.
 
-**`a_hf_registry`** — ckpt↔HF 백업 레지스트리 = 루트 `/HF.jsonl` SSOT. ✅ gitignored local-only ckpt 마다 HF.jsonl 1행(run·local_path·hf_repo_id·base_model·lineage·size·status) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 status=uploaded AND sha256 확인 후에만. ⛔ pending_upload/needs_verify 인 ckpt 삭제 · off-spec repo_id · HF.jsonl↔disk drift.
+**`a_hf_registry`** — HF 산출물 레지스트리 SSOT = **`ARCHITECTURE.json` 의 "HF artifacts" 노드(models · datasets 2 subsection)**. (구 `/HF.jsonl` 폐기 2026-06-23 — 99-row 이력은 git history 보존.) ✅ HF org `dancinlab` 에 올린 모델/데이터셋은 ARCHITECTURE.json models/datasets 에 1줄 등록(repo_id · arch/size · tier·base) · repo_id 는 naming spec 준수 · `tool/hf_upload_mk2.hexa` 로 업로드(ledger state/hf_upload_audit/) · ckpt prune 은 HF 업로드 AND sha256 확인 후에만. ⛔ 미업로드 ckpt 삭제 · off-spec repo_id · ARCHITECTURE.json↔HF drift · HF.jsonl 부활(폐기됨).
 
 **`a_hf_collections`** — HF org collection = CLM + KOSMOS canonical 버킷. ✅ 모든 PUBLIC anima HF repo 는 dancinlab collection 가입(CLM=models, KOSMOS=anchors/datasets) · PUBLIC 업로드 후 `hf` CLI/REST 로 추가(사용자 게이트 없음) · 양쪽에 걸치는 데이터셋은 dual 표기. ⛔ PUBLIC PASS repo 를 collection 밖에 둠 · PRIVATE/WIP/FAIL 을 PUBLIC collection 에.
 
