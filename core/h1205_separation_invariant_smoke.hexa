@@ -41,7 +41,7 @@ import "core/bytegpt_decode.hexa"
 // cfg for a given mitosis state.
 fn cfg_for(mit_on: bool) -> EngineConfig {
     if mit_on { return engine_config_default() }    // mitosis ON (grows)
-    return EngineConfig { mitosis: false, engine: "conv", topo_couple: false }
+    return EngineConfig { mitosis: false, engine: "conv", topo_couple: false, savant: false }
 }
 
 // run_mitosis_lane — advance the engine-native mitosis/adapt-field lane by `ticks`

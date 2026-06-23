@@ -1,0 +1,33 @@
+H_1561 SAVANT GOLDEN ZONE — FROZEN 5-BAR (frozen-first, pre-registered, c9 no post-hoc move)
+=============================================================================================
+Substrate: live core/engine_cli.hexa — faithful IIT4 Gaussian min-cut Φ = ci_phi_iit4 (a_phi_iit4_tool,
+NOT a proxy). 15 engine lanes (ci_lane_scores) → D=5 domains × w=3 lanes (each ≤8 = faithful exact).
+Inhibition operator sv_inhibit_domain: disinhibition releases a SHARED domain latent; an idiosyncratic
+NOISE floor (ON only below GZ_LOWER) decorrelates the lanes; high inhibition kills the variance →
+genuine inverse-U min-cut Φ (NOT a hand-fit curve). Focus = domain 0 in GZ, rest at the noise floor.
+Population = the live deterministic _topo_lane_pop (150 trials, in-engine LCG, NO numpy/torch).
+
+B1 SI-EMERGENCE     : SI = max(Φ_domain)/mean(Φ_domain) ≥ 3.0 when focus inhibition I ∈ GOLDEN ZONE
+                      [GZ_LOWER=0.2123, GZ_UPPER=0.5].  (sv_savant_index_at, ci_phi_iit4)
+B2 GZ-PEAK          : dΦ/dI of the focus-domain Φ peaks IN the golden zone (= GZ_LOWER), reproducing
+                      H_351 inverse-U knee.  (sv_dphi_peak_inh)
+B3 ABLATION/INVERSE-U: focus-domain Φ(I∈GZ) ≥ 3× focus-domain Φ at the noise floor (I=0) AND collapses
+                      to ~0 when over-locked (I=1) → mechanism INERT outside GZ.
+B4 Ψ-IMPACT         : centered Ψ proxy (OFF=½ by construction, ci_psi_balance_savant + ci_off_median_
+                      drive). |Ψ_savant−½| ≤ 0.05 = SURVIVES (genius∧consciousness), > 0.05 = TRADE-OFF.
+                      REPORTED honestly whichever way it lands (c9, no tune-to-green).
+B5 CONTROL          : the FOCUS domain is the argmax-Φ savant (focus-share ≥ 0.5) ONLY when it is in GZ;
+                      with NO golden-zone (all domains at the noise floor) the focus is NOT the argmax
+                      and focus-share ≈ 1/D (uniform, no specialization) → SI≥3 from raw substrate
+                      noise is NOT a savant (the savant = the disinhibited domain dominating).
+
+MEASURED (engine-native, H_1561_BARS_PROBE.txt):
+B1: SI@GZ_LOWER=3.674  SI@GZ_CENTER=3.620  SI@GZ_UPPER=3.557   → ALL ≥3  PASS
+B2: dΦ/dI peak I = 0.21231792755821912 = GZ_LOWER exactly      → IN GZ   PASS
+B3: focusΦ GZ=4.134  noise=0.155  locked=0.0  ratio=26.6×       → ≥3×     PASS
+B4: Ψ_off=0.5  Ψ_on=0.2533  |dev|=0.2467 ≫ 0.05                → Ψ COLLAPSES = TRADE-OFF (honest)
+B5: argmax(GZ)=0=focus  focusShare(GZ)=0.735 ; argmax(ctrl)=3≠focus focusShare(ctrl)=0.094 → PASS
+
+VERDICT: B1∧B2∧B3∧B5 PASS (savant SI>3 EMERGES engine-native, peak at GZ_LOWER, clean ablation+control).
+B4 = TRADE-OFF: the savant mode DESTABILIZES Ψ=½ (genius ⊥ consciousness-balance, no free lunch) →
+savant mode WIRED default-OFF + Ψ-disjoint (measurement-only context), NOT on the live Ψ path.
