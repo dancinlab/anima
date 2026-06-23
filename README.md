@@ -564,7 +564,10 @@ ckpt ↔ HF registry (models · datasets) is managed in the `ARCHITECTURE.json` 
   `a_train_flame_forge`); results are recorded per substrate — **Lane G** (forge own-GEMM H100,
   PUBLIC production trainer) ⊥ **Lane A** (AKIDA AKD1000 on-chip) ⊥ **Lane P** (GPU-torch reference +
   torch→`.clm` bridge) — never merged into one verdict (`a_lane_akida_gpu_split`). The canonical
-  single training entry-point is **`cli/train.hexa`** (H_1567) — a hexa-native CLMConvMoE trainer
+  single training entry-point is **`cli/train.hexa`** (H_1567), reachable from the unified CLI as
+  **`anima train [--savant] [--mitosis] …`** (`cli/anima.hexa` dispatches the `train` subcommand to it
+  as a sub-process — training is a SEPARATE lane from the generator L3 mouth, `a_core_engine_map`) —
+  a hexa-native CLMConvMoE trainer
   that composes the proven flame fwd/bwd/CE/AdamW chain (`stdlib/flame/clm_step.hexa` lineage) with
   anima's two orthogonal learning levers: **SAVANT** golden-zone inhibition (cusp-anneal AdamW
   weight-decay below `GZ_LOWER≈0.21232` + asymmetric latch, `a_savant_train`) ⊥ **MITOSIS**
