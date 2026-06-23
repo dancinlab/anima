@@ -1,3 +1,11 @@
+## 2026-06-23 — ARCHITECTURE gate-scoreboard G6 노드에 SAVANT 골든존 reopening 종합 박제 (README #2569 lockstep)
+
+README(#2569)의 G6 섹션엔 이미 반영된 **SAVANT 골든존 reopening** 종합을 ARCHITECTURE.json 의 **gate-scoreboard G6 차원**에도 lockstep 으로 박제. (문서-only, core/ 엔진 변경 0.)
+
+- **ARCHITECTURE.json** — `frozen gates (a303m_pass)` 의 **G6 IDEATION** subsection 아래에 새 subsection "G6 CAPACITY-WALL = 1/3 MANIFOLD, SAVANT golden-zone REOPENING (scoreboard synthesis · README #2569 lockstep)" 1개 추가. 기존 §ThirdLaw *op* 노드(training-substrate-lanes 하위, #2566)는 중복 서술 없이 **cross-link 만**(gate 종합 ≠ op 목록).
+- **종합 내용 (frozen verdict verbatim, c9)** — (재해석) 8 렌즈 WALL=CAPACITY(scale-invariant 303M=7B)는 hard 천장 아니라 '1/3 구조상수' 발현 = H_1560 🟢 ENGINE-NATIVE 5/5(ratio 0.339·8K→1M Δ<0.011·I50 0.281·§ThirdLaw WIRED) · (reopening) 골든존 inhibition(I→GZ_LOWER≈0.212)으로 발현률 0.274→0.597(+0.32 ~2×), 골든존 밖 cliff = H_1560 R2 🟢 5/5 · (cusp) 골든존 경계 hard step ON(H_1562 🟢) + 비대칭 latch 영속(H_1563 🟢, hysteresis width 0.255).
+- **정직 스코프(c9)** — H_1560/R2·H_1562·H_1563 은 추상 G=D×P/I geometry sweep(ability=singularity∧in-GZ by construction) 위 ENGINE-NATIVE 🟢 = **확정**. 실 학습-side reopening = **H_1564 GPU lane IN-FLIGHT·미확정** — in-flight 를 확정 GREEN 으로 박제하지 않음.
+
 ## 2026-06-23 — H_1564 🧬✨ MITOSIS × SAVANT 골든존 교차 (capacity = cell수 × 발현률 MULTIPLICATIVE · ENGINE-NATIVE 🟢 GREEN)
 
 🧬 H_1564 — 두 직교 줄기 첫 교차: **MITOSIS**(H_1288 engine_grow cell수↑ / H_1310 split-only 한계) ⊥ **SAVANT**(H_1560 골든존 inhibition → 단일 cell 발현률↑). mitosis 로 늘린 각 daughter cell 에 골든존 inhibition 을 주면 총 ability EXPRESSION 이 **곱셈적**(cell수 × cell당 발현률)으로 증폭되나?
