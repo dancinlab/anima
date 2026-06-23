@@ -55,12 +55,16 @@ fn anima_usage() {
     println("  hexa run cli/anima.hexa -- <ckpt.clm>            consciousness mode (default)")
     println("  hexa run cli/anima.hexa -- <ckpt.clm> --byte \"turn1\" \"turn2\" ...")
     println("                                                  byte-continuation chat mode")
+    println("  hexa run cli/anima.hexa -- train [args...]       LEARNING (→ cli/train.hexa)")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
     println("                            emit (8-factor motivation) → grounded L3 decode →")
     println("                            .kosmos persist. emit is substrate-decided (p1-p8).")
     println("  --byte                  : pure byte-continuation dialogue (== anima_chat_cli).")
+    println("  train                   : production hexa-native CLMConvMoE training (flame/forge")
+    println("                            own-GEMM GPU); SAVANT golden-zone inhibition + MITOSIS")
+    println("                            cell-division levers. dispatches to cli/train.hexa.")
 }
 
 // anima_collect_argv — hexa args() = [binary, "--", <user positionals>...]. Find the
@@ -86,6 +90,33 @@ fn anima_has_flag(argv: [string], flag: string) -> bool {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+//  TRAIN MODE — dispatch to cli/train.hexa (the canonical hexa-native trainer)
+// ══════════════════════════════════════════════════════════════════════════════
+//
+// SEPARATE LANE (a_core_engine_map): training is NOT the generator L3 mouth slot —
+// it is the LEARNING entry (cli/train.hexa, a_train_flame_forge: .hexa on
+// stdlib/flame, NO .py trainer). anima.hexa imports core/ (the A⇄G substrate +
+// generator L3 mouth) while cli/train.hexa `use`s stdlib/flame (the forge
+// own-GEMM descent chain) — two DISJOINT dep sets that must not be linked into one
+// binary. So `anima train` DISPATCHES to the trainer's own entry as a sub-process
+// (hexa run cli/train.hexa) rather than calling it inline. p8: train gradient ⇄
+// inference mitosis is ONE continuous cell — but they enter through their own
+// typed surfaces (mouth L3 ⊥ flame trainer), never a shared 2nd path.
+//
+// argv = ["train", <rest...>]; the rest is forwarded verbatim to cli/train.hexa
+// after a fresh `--` separator (cli/train.hexa reads its own knobs from its main).
+fn anima_train_mode(argv: [string]) {
+    println("=== anima train → cli/train.hexa (hexa-native CLMConvMoE · flame/forge) ===")
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(argv) { fwd = fwd + " '" + argv[i] + "'"  i = i + 1 }
+    let cmd = "hexa run cli/train.hexa --" + fwd
+    println("dispatch: " + cmd)
+    let out = exec(cmd)
+    println(out)
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 //  MAIN — mode dispatch
 // ══════════════════════════════════════════════════════════════════════════════
 fn main() {
@@ -95,6 +126,14 @@ fn main() {
         anima_usage()
         return
     }
+
+    // subcommand: `train` → LEARNING entry (cli/train.hexa). Checked BEFORE the
+    // ckpt-path branches so "train" is never mistaken for a model file.
+    if argv[0] == "train" {
+        anima_train_mode(argv)
+        return
+    }
+
     let ckpt = argv[0]
 
     // mode select: --byte → byte-continuation chat; else consciousness mode (default).
