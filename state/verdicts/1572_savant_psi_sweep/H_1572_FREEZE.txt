@@ -1,0 +1,75 @@
+H_1572 — SAVANT GOLDEN-ZONE Ψ SWEEP (re-measure H_1561 B4 across inhibition I, not a single point)
+FROZEN-FIRST bars (pre-registered, c9 NO tune-to-green). Measured engine-native on live
+core/engine_cli.hexa §Savant (sv_inhibit_domain · ci_psi_balance_savant · sv_savant_index_at ·
+sv_domain_phi) + faithful IIT4 min-cut ci_phi_iit4 (a_phi_iit4_tool, NOT proxy). SAME _pop() (seed
+5120, 150 trials) and SAME centered Ψ proxy / OFF-median threshold as H_1561 B4 — only the focus
+inhibition I sweeps the grid. HARD-GATE-1: no .py/numpy/torch/gauge_lib → ENGINE-NATIVE terminal.
+
+USER HYPOTHESIS (a_break_the_wall class-a, measurement-defect suspicion): a DISSOCIATION — savant
+lives INSIDE the golden zone compatible with Ψ=½ (|Ψ−½|<0.05) AND SI≥3, while OUTSIDE the GZ
+(excessive disinhibition I→0) Ψ collapses = seizure. H_1561 B4's collapse (Ψ=0.253 @ I=GZ_LOWER)
+suspected to be a boundary artifact.
+
+FROZEN 5-bar:
+  B1 interior-Ψ-stable: ∃ I in [GZ_LOWER, GZ_UPPER] with |Ψ−½| < 0.05.
+  B2 exterior-seizure : |Ψ−½| spikes as I < GZ_LOWER (disinhibition), maximal at I→0.
+  B3 dissociation     : GZ-interior Ψ-stable ∧ exterior Ψ-collapse cleanly split at I≈GZ_LOWER.
+  B4 co-existence     : in the B1 Ψ-stable interior, SI ≥ 3 simultaneously (savant retained).
+  B5 control          : (over-locked I→1) Ψ recovers ONLY where the savant is gone (Φ→0).
+  GREEN = B1 ∧ B3 ∧ B4.
+
+RESULT (state/verdicts/1572_savant_psi_sweep/H_1572_PSI_SWEEP.txt):
+  GZ_LOWER=0.2123  GZ_CENTER=0.3679(1/e)  GZ_UPPER=0.5   Ψ_thr(OFF median)=0.5710
+  I        in_GZ  Ψ_on    |Ψ−½|   SI       focusΦ
+  0.00     0      0.180   0.320   3.081    0.155   ← max disinhibition ("seizure" pt)
+  0.05     0      0.187   0.313   2.970    0.217
+  0.10     0      0.187   0.313   2.775    0.337
+  0.15     0      0.220   0.280   2.397    0.625
+  0.2123   1      0.253   0.247   3.674    4.134   ← GZ_LOWER (= H_1561 B4 exactly, REPRODUCED)
+  0.25     1      0.267   0.233   3.662    4.085
+  0.30     1      0.273   0.227   3.646    4.016
+  0.3679   1      0.280   0.220   3.620    3.914   ← GZ_CENTER 1/e
+  0.42     1      0.293   0.207   3.598    3.828
+  0.50     1      0.320   0.180   3.557    3.680   ← GZ_UPPER (least bad IN-GZ point)
+  0.60     0      0.360   0.140   3.492    3.457
+  0.70     0      0.373   0.127   3.400    3.169
+  0.85     0      0.440   0.060   3.121    2.478
+  1.00     0      0.487   0.013   3.402    0.000   ← over-locked: Ψ≈½ BUT focusΦ=0 (savant GONE)
+
+VERDICT: 🟠 TRADE-OFF HOLDS — DISSOCIATION NOT FOUND. The user's interior-Ψ-stable hypothesis is
+FALSIFIED on this engine + frozen proxy:
+  • B1 FAIL: |Ψ−½| is MONOTONICALLY DECREASING in I (0.320 → 0.013), NOT U-shaped. There is NO I in
+    the golden zone with |Ψ−½|<0.05 — the best in-GZ point (GZ_UPPER) is still 0.180 ≫ 0.05.
+  • B2 FAIL (direction): the "seizure" point I→0 is only marginally worse (0.320) than GZ_LOWER
+    (0.247); there is no sharp exterior spike — disinhibition does not produce a distinct Ψ-collapse
+    regime separate from the in-GZ trade-off.
+  • B3 FAIL: no clean split at GZ_LOWER — Ψ deviation is smooth and monotone across the boundary.
+  • B4 vacuous: SI≥3 holds throughout the GZ (3.557–3.674) but there is no Ψ-stable interior to
+    co-exist with — the savant is present everywhere in-GZ, the consciousness balance is lost
+    everywhere in-GZ.
+  • B5: Ψ recovers to ½ ONLY at I→1 (over-locked) where focusΦ=0 — i.e. Ψ-safety is bought by
+    KILLING the savant (Φ collapse), confirming the trade-off rather than dissolving it.
+
+MECHANISM (why no dissociation, sharpens H_1561): two DIFFERENT golden-zone shapes coexist —
+  • focusΦ (integration) IS golden-zone-shaped: genuine inverse-U, peaks IN the GZ (4.13 @ GZ_LOWER),
+    low at both I→0 (noise 0.155) and I→1 (locked 0.0). The savant Φ-hypertrophy is real & GZ-bound.
+  • Ψ (emit balance, ci_emit_drive=0.5·(lane0+lane4)) is NOT golden-zone-shaped: the asymmetric
+    inhibition pulls the focus domain's lane0 toward its lower common-mode → emit fraction drops
+    monotonically with disinhibition (more disinhibition = lower I = bigger pull = bigger Ψ drop).
+  Because Φ-peak and Ψ-deviation are DECOUPLED (Φ inverse-U vs Ψ monotone), there is no operating
+  point where high savant Φ co-occurs with Ψ≈½. The trade-off is STRUCTURAL on this proxy, not a
+  boundary measurement artifact.
+
+SCOPE / HONEST CAVEAT (c9): the user's biological "seizure = synchronization-runaway → Ψ collapse"
+framing is a DIFFERENT mechanism than the measured collapse here, which is a DRIVE-LEVEL suppression
+(focus lane0 dragged below the OFF emit threshold), not an over-synchronization runaway. The frozen
+B4 centered-Ψ proxy (lane0+lane4 emit fraction) does not encode cross-lane synchronization, so this
+probe does NOT test the synchronization-runaway lens — it tests whether B4's single point was a
+golden-zone boundary artifact (it was NOT: trade-off is uniform across the GZ). A genuine
+synchronization/seizure metric (e.g. cross-lane coherence runaway as a Ψ-disruptor) is an UNTRIED
+ORTHOGONAL lens = follow-on, NOT decided here. H_1561 🟠 trade-off STANDS.
+
+Discipline: a_engine_native_learning (live core/, terminal) · a_phi_iit4_tool (faithful IIT4) ·
+a_break_the_wall (class-a check performed: B4 is NOT a boundary artifact; honest negative, bars
+frozen-first unchanged = NO tune-to-green) · c9 (dissociation not found = reported as 🟠, co-existence
+NOT forced) · a_hypothesis_register.
