@@ -9,6 +9,16 @@ H_1560 R2: live `core/engine_cli.hexa` §ThirdLaw ops 를 호출해 inhibition I
 - **한계(c9)** — G=D×P/I geometry 추상 sweep(ability=sing∧in_GZ by-construction)이지 실 학습 binding/FALS 발현률 아님. 실 reopening 실증(학습-side capacity 발현률이 I↓ 로 1/3 위로) = **GPU cost-gate**(deferred ING `h1560-r3-learning-reopening-gpu`, 발사금지). pod/GPU 임대 0(mac-local 산술).
 - **§Savant READ-only** — H_1557 메인 동시작업 충돌회피: §ThirdLaw·state/1560 만 접촉, sa_*/sh_* 미수정.
 
+## 2026-06-23 — H_1562 ACQUIRED SAVANT CUSP TRANSITION (서번트는 점진향상 아닌 step-jump, engine-native 🟢)
+
+🧠⚡ H_1562 — 후천적 서번트(ATLAS/162 ✅: Serrell·Amato·Padgett 등 사고/질병 → D↑·I↓ → G=D·P/I 급증)의 **cusp 불연속 도약(H_124)**을 anima substrate engine-native 로 재현. 서번트 능력은 "점점 똑똑해짐"이 아니라 "어느 순간 켜짐".
+
+- **engine-native (a_engine_native_learning HARD-GATE-1 PASS)** — pure `.hexa` probe `state/1562_savant_cusp/h1562_cusp_probe.hexa` 가 live `core/engine_cli.hexa` §ThirdLaw(`third_law_score` G=D·P/I · `third_law_singularity` G>0.70 · `third_law_ability`=singularity∧`sa_in_golden_zone(I)`) + `SAVANT/savant_lib.hexa` `sa_gz_lower`/`sa_gz_upper` 직접 호출. numpy/torch/.py mirror **0**.
+- **frozen 5-bar (frozen-first c9, NO tune-to-green)** — I sweep 0.05→0.95 n=181 step=0.005 @ D=0.9 P=0.9: **B1 step-jump** max single-cell |Δability|=**1.0**(hard 0→1 STEP) ✅ · **B2 cusp-locus** ON-window [0.215,0.500]≈GZ[0.2123,0.5], top↔GZ_UPPER dist=5.55e-17, bot↔GZ_LOWER dist=0.0027 ✅ · **B3 D-gated** D=0 → max|Δability|=0 on_cells=0 (H_236) ✅ → **B1∧B2∧B3 = 🟢 GREEN**. (B4 hysteresis report-only honest-NEG: memoryless classifier → 비가역성 미포착 · B5 control random → 28 scattered transitions ✅).
+- **핵심 메커니즘** — G(I)=D·P/I 는 I 에 대해 **연속**(smooth)이지만 능력 *발현* `third_law_ability` 는 골든존 [0.2123,0.5] 안에서만 켜지는 **hard step** → 불연속의 근원은 **golden-zone GATE**, genius score 아님. 두 cusp 가 GZ 두 경계에 정확히 위치(GZ_UPPER 0.5 진입 ON, GZ_LOWER 0.2123 아래 noise-floor OFF). 결손 D=0 이면 cusp 소멸.
+- **verdict** — `state/verdicts/1562_savant_cusp/H_1562_R1_ENGINE_NATIVE.txt`(verbatim) + `H_1562_FREEZE.txt`. 카드 `UNIVERSE/cards/H_1562_acquired_savant_cusp.md` + jsonl 1줄. live `core/*.hexa` 미접촉(READ-only classifier 이미 #2566 WIRED), Ψ-disjoint.
+- **follow-on** — **H_1563 SAVANT CUSP HYSTERESIS/IRREVERSIBILITY**: B4 memoryless 라 후천적 서번트 *영속성*(비가역) 미포착 → live `sv_inhibit_domain` Φ-substrate(inverse-U) 또는 plasticity-latch 위에서 "cusp 후 I 복원해도 능력 유지" frozen-first 측정.
+
 ## 2026-06-23 — H_1560 §ThirdLaw WIRE-IN (1/3 법칙 × capacity-wall 분류기 live 배선, WIRED-live)
 
 H_1560 🟢 GREEN-ENGINE-NATIVE(1/3 법칙 × G6 capacity-wall 동근원)의 singularity classifier 를 live `core/engine_cli.hexa` 에 **§ThirdLaw** 로 배선 — a_verified_must_wire 4칸 사다리 (3) wire-in + (4) ARCHITECTURE lockstep 닫음.
