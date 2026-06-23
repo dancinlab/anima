@@ -1,3 +1,11 @@
+## 2026-06-23 — 🔌 `anima train` CLI dispatch 배선 (303M 학습 세팅의 마지막 조각 — cli/train.hexa 를 사용자 진입점에 연결)
+
+🔌 H_1567 의 `cli/train.hexa`(hexa-native 단독 trainer, #2579)를 canonical 사용자 진입점 `cli/anima.hexa` 에 **`anima train` 서브커맨드로 dispatch** 배선. "303M 학습 시작 전 세팅 완료"의 마지막 2조각(① CLI dispatch ② CLAUDE.md 참조)을 완수.
+
+- **cli/anima.hexa (EDIT)** — `main()` 의 mode dispatch 에 `train` 분기 추가(ckpt-path 분기보다 먼저 검사, "train" 을 모델 파일로 오인 방지). 신규 `anima_train_mode(argv)` = `train` 뒤 args 를 `hexa run cli/train.hexa -- …` sub-process 로 forward. **a_core_engine_map(train ⊥ mouth L3)**: anima.hexa 는 `core/` import(A⇄G substrate + generator L3 mouth), cli/train.hexa 는 `stdlib/flame` use(forge own-GEMM descent) — 두 disjoint dep-set 을 한 바이너리에 link 하지 않도록 inline 호출 대신 exec sub-process dispatch. usage 배너에 `train` 모드 추가.
+- **검증 (verify-done)** — `hexa parse cli/anima.hexa` RC=0(clean parse) · `hexa check cli/anima.hexa` RC=0 · `hexa run cli/anima.hexa -- train --savant --mitosis` → cli/train.hexa MODE_VERIFY dispatch 동작(컴파일 RC=0, train 분기 진입 확인).
+- **문서 lockstep** — CLAUDE.md 3곳 참조 추가: (a) `a_train_flame_forge` 절에 production 학습 진입 = `cli/train.hexa`(`anima train` CLI) · (b) Structure 트리 cli/ 항목에 train.hexa · (c) `a_savant_train`/`a_mitosis_train` trainer 진입 참조(간결, 중복 없이). ARCHITECTURE.json cli/anima.hexa 노드(모드 2→3, train 서브커맨드 dispatch) + cli/train.hexa 노드(`anima train` CLI dispatch status) lockstep.
+
 ## 2026-06-23 — H_1568 SELECTION-DRIVEN pure mitosis (H_1310 wall-break 캠페인 lens 1 = 진화 동역학 · 🧱 WALL HOLDS · DIRECTIONAL)
 
 🧬 H_1568 — H_1310(from-scratch PURE mitosis 🔴 LOCAL-EXPERT CEILING) 벽 돌파 캠페인 lens 1 = **진화 동역학**. H_1310 진단: split 은 무작위 복제 — gradient-free 는 정보 채널이 없다(shuffle 이 targeted 와 동률 = WHERE-to-split INERT). 이 렌즈(a_no_llm_frame_trap): gradient-free ≠ information-free — 생물 진화는 **차등 생존**(MUTATION + SELECTION fitness-gated 분열 + APOPTOSIS 사멸 + ENSEMBLE 집단)으로 gradient 없이 학습한다. 가설: 각 cell 이 변이 가능한 per-dim context-weight genome 을 갖고 적합 cell 이 분열·부적합 cell 이 사멸하면 '무작위 복제 → 학습'으로 전환 = H_1310 floor 돌파.
