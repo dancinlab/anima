@@ -23,6 +23,15 @@ H_1579 clm303 오진(overfit 을 직렬화 결함으로, dt_ln-corrupt engine CE
 - **2번째 진짜 버그(hexa-lang dt_ln):** `flame_math.hexa::dt_ln` atanh 급수가 x≈1 만 수렴 — dt_ln(256)=4.799(참 5.545)·dt_ln(1e-6)=−5.14(참 −13.82) → `nn_lib.hexa::nn_ce_loss_allpos`(−dt_ln(p_t), p_t≥1e-6)가 per-position CE 를 **~5.14 clamp** → engine `clm_forward_ce` 가 overfit clm303 을 model 3.30<shuffle 4.93<(버그)uniform 4.799 = **GREEN 오판**. numpy mirror(math.log)가 정답 → 게이트는 engine CE 아닌 math.log mirror 로 채점. hexa-lang ing 이관(모든 엔진 CE/Φ readout 영향).
 - **fix = held-out mirror-DESCENT 게이트(이 PR):** `train/clm/model/verify_clm_v2.py` 에 `descent_gate`/`serialize_self_verify`(math.log mirror, dt_ln-immune; held-out 필수 + train-vs-heldout gap → overfit 경고) + `descent` CLI + random-weight self-test. 3 trainer(`train_lane_p.py`·`_split.py`·`_3b.py`) + `cli/train.hexa` 가 직렬화 직후 self-verify(`--heldout`/`--heldout-corpus`, fallback=학습코퍼스 deep tail slice) → broken/overfit `.clm` 'done'·HF업로드 차단. 검증: control PASS(F-CLM-DESCENT=1) / clm303 FAIL+overfit_warning(gap 6.42) / random-weight self-test FAIL / 기존 4 구조 round-trip 회귀 0 / train.hexa MODE_VERIFY 3/3 PASS.
 - **재학습 follow-on(cost-gate):** savant clm303 은 재직렬화로 overfit 못 고침 → 정규화/큰 코퍼스로 재학습(별도 ING, 자동 rent 금지). artifacts: `UNIVERSE/cards/H_1579_*.md`(정정) · `state/clm303_g6/CORRECTION_overfit_not_serialize.md` · `HYPOTHESES.jsonl` H_1579.
+## feat(HF): clean 4칸 register 데이터셋 HF 업로드 + ARCHITECTURE 등록 + KOSMOS collection
+
+📤 언어-검증된 clean 4칸을 dancinlab org에 PUBLIC 업로드(a_hf_complete/a_hf_autonomous/a_hf_collections). 데이터셋 완성 = GPU 차단게이트 해제 직전 단계.
+- **4 dataset PUBLIC 업로드** (각 dataset card = 언어순도·크기·sha256·역할·정제법): `anima-corpus-ko-general`(100% ko·60MB) · `anima-corpus-en-general`(99.7% en·60MB) · `anima-corpus-ko-sns`(100% ko·6.18MB) · `anima-corpus-en-sns`(97.4% en·1.33MB, ⚠️KNOWN-SMALL baseline 플래그). HF↔local sha256 일치 확인.
+- **ARCHITECTURE.json HF artifacts/datasets 등록**: clean 4칸 노드 + legacy 5lang(en 오염, chat 직접사용 금지) 명시 구분. 빌드 재현 = `state/clm303_clean_corpus/build_corpus.py`.
+- **KOSMOS collection 가입** (4개, a_hf_collections: datasets→KOSMOS bucket).
+- **en-SNS 보강 ING 등록**: clean en-SNS large source 부재(NC/라이선스無) → youtube/insta-en follow-up, 그 전까지 size-proportional 샘플링으로 암기 방지(사용자 모호함0: 작은 건 알려진 사실·플래그됨).
+- 5체크리스트 ✅: 언어검증·분량(en-SNS는 baseline 플래그)·canonical naming·HF 업로드+card·재현스크립트. GPU smoke→retrain = 별도 user go.
+
 ## feat(state/clm303_clean_corpus): clean 4칸 데이터셋 빌드 + size-proportional 샘플링 (HF 업로드 직전)
 
 🧼 언어-검증된 clean 4칸 corpus 빌드 완료(HF 업로드만 (B) 결정 대기). 직전 사고의 2중 결함(en칸 5lang 20% 오염 + size 불균형 암기)을 둘 다 차단.
