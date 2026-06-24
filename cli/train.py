@@ -945,6 +945,15 @@ def main():
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--corpus", nargs="*", default=[])
     ap.add_argument("--cell-label", nargs="*", default=[])
+    ap.add_argument("--mid-measure-every", type=int, default=0,
+                    help="every N steps, run the MONITOR-ONLY mid-train gauge panel "
+                         "(torch-side, DIRECTIONAL per a_train_inline_gauge) and append "
+                         "one line to --mid-measure-out: mirror held-out CE per register "
+                         "(real numpy) + tool/gauge_lib inline gauges (G1/G2/G6/phi_proxy) "
+                         "+ Psi/G5 torch proxies. NOT a frozen verdict — the terminal "
+                         "engine-native 1-6 runs post-hoc on a hexa host. 0 = off.")
+    ap.add_argument("--mid-measure-out", default="midtrain_metrics.jsonl",
+                    help="jsonl path for the mid-train gauge panel (1 line/checkpoint)")
     ap.add_argument("--canon", action="store_true")
     ap.add_argument("--d", type=int, default=0)
     ap.add_argument("--L", type=int, default=0)
@@ -1207,6 +1216,59 @@ def main():
         print(f"  .clm WRITTEN {os.path.getsize(out_path)} bytes -> {out_path}", flush=True)
         print(f"  clm_decodable={VC.clm_decodable(open(out_path, 'rb').read())}", flush=True)
 
+    # ── mid-train MONITOR-ONLY gauge panel (a_train_inline_gauge, DIRECTIONAL) ──
+    # All torch-side / pure-numpy — NOT a frozen verdict. It records the *curves*
+    # (held-out generalization per register + recombination/novelty/ideation +
+    # Psi/G5 maintenance proxies) so we can SEE, during training, that ability
+    # rises while Psi stays ~1/2 and G5 stays non-fabricating. The TERMINAL
+    # engine-native 1-6 (anima eval G0-G6 · faithful Psi/G5/SI) runs POST-HOC on a
+    # hexa host after the ckpt is pulled (a_engine_native_learning HARD-GATE: the
+    # pod has no hexa runtime, so engine-native cannot run mid-train here).
+    _gauge = None
+    if a.mid_measure_every > 0:
+        try:
+            import importlib.util as _ilu
+            _gp = os.path.join(_REPO, "tool", "gauge_lib.py")
+            if os.path.exists(_gp):
+                _sp = _ilu.spec_from_file_location("gauge_lib", _gp)
+                _gauge = _ilu.module_from_spec(_sp); _sp.loader.exec_module(_gauge)
+        except Exception as e:
+            print(f"  mid-measure: gauge_lib unavailable ({e}); curve = mirror-CE only")
+
+    def mid_measure(step: int):
+        """Append one MONITOR-ONLY gauge line to --mid-measure-out (DIRECTIONAL)."""
+        import json
+        rec = {"step": step, "kind": "MONITOR-ONLY-DIRECTIONAL",
+               "note": "a_train_inline_gauge; terminal verdict = engine-native post-hoc"}
+        # (1) mirror held-out CE per register (real numpy via the model fwd) — the
+        # generalization curve; reuse the disjoint per-cell val machinery.
+        rec["heldout_ce"] = {lab: round(v, 5) for lab, v in val_per_cell().items()}
+        rec["train_ce"] = round(lossF, 5) if lossF is not None else None
+        rec["e_active"] = int(mito.e_active)
+        rec["inhibition_wd"] = round(wd, 5)
+        rec["inhibition_dp"] = round(dp, 5)
+        rec["savant_latched_at"] = int(latch["at"])
+        # (2/3/4/6) torch-side proxies via gauge_lib (G1 recombine · G2 novelty ·
+        # G6 ideation · phi_proxy ≈ Psi-maintenance). Best-effort; labeled proxy.
+        if _gauge is not None:
+            try:
+                was = model.training; model.eval()
+                g = _gauge.compute_inline_gauges(
+                    model, None, seeds=7,
+                    corpus_index=[c.path for c in cells],
+                    ce=lossF, step=step, torch=torch)
+                if was:
+                    model.train()
+                rec["gauges_proxy"] = {k: (round(v, 5) if isinstance(v, float) else v)
+                                       for k, v in (g or {}).items()}
+            except Exception as e:
+                rec["gauges_proxy_error"] = str(e)[:160]
+        with open(a.mid_measure_out, "a") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+        hc = rec["heldout_ce"]
+        print(f"  [MID-MEASURE step {step}] heldout_ce={hc}  "
+              f"(MONITOR-ONLY/DIRECTIONAL → {a.mid_measure_out})")
+
     # ── train loop ───────────────────────────────────────────────────────────
     model.train()
     t0 = time.time(); loss0 = lossF = None
@@ -1302,6 +1364,9 @@ def main():
             atxt = (" " + json.dumps({k: round(v, 4) for k, v in aux.items()})) if aux else ""
             print(f"  step {step:5d}  CE={ce:.5f}  E={e_now()}  "
                   f"wd={wd:.4f} dp={dp:.4f}{vtxt}{atxt}", flush=True)
+        if a.mid_measure_every > 0 and (step % a.mid_measure_every == 0
+                                        or step == steps):
+            mid_measure(step)
     wall = time.time() - t0
 
     # ── FINAL held-out val per register (DESCENT gate, plain CE) ──────────────
