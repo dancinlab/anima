@@ -4350,7 +4350,7 @@
               "blocks": [
                 {
                   "type": "prose",
-                  "text": "**summary**: · train/clm/model/verify_clm_v2.py"
+                  "text": "**summary**: · train/clm/model/verify_clm_v2.py — .clm post-serialize verifier. (1) STRUCTURAL round-trips: clm_decodable + parse_clm + v2/v3 byte-eq + general (L,E) dim round-trip (decodable = right shape). (2) HELD-OUT mirror-DESCENT gate (the OVERFIT detector, a_clm_gen_pipeline · H_1579): descent_gate/serialize_self_verify/mirror_ce/`descent` CLI = FAITHFUL pure-numpy mirror of core/clm_decode.hexa forward (int4 dequant + dilated causal conv1d + GN + MoE) reading the .clm BYTES, scored with math.log (correct — IMMUNE to the engine dt_ln CE-clamp bug that masks overfit: dt_ln(256)=4.799≠5.545, per-pos CE clamped ~5.14). PASS iff held-out model_ce < uniform(lnV) AND < shuffle; train-vs-held-out gap → overfit_warning. MUST run on HELD-OUT text (never the training corpus = hides overfit). Build-time SERIALIZE-INTEGRITY tooling, NOT a G0-G6 capability verdict (those go through cli/anima.hexa -- eval, a_engine_native_learning). Wired into train_lane_p*.py + cli/train.hexa post-serialize → broken/overfit .clm blocked from done/HF-upload. Validated: CONTROL clm_d768 PASS (F-CLM-DESCENT=1) · overfit clm303 FAIL+overfit_warning(gap 6.42) · random-weight self-test FAIL · 4 structural round-trips regression 0. · **status**: wired (post-serialize self-verify in all 3 py trainers + train.hexa MODE_CANON)"
                 }
               ]
             },

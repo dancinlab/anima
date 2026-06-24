@@ -1,3 +1,13 @@
+## fix(a_clm_gen_pipeline): clm303 NO-DESCENT = OVERFIT (직렬화 byte-faithful) — H_1579 정정 + held-out mirror-DESCENT 게이트 배선 + dt_ln 버그 격리
+
+🔴→정정. 직전 항목(H_1579 "SERIALIZATION DEFECT")의 **결론을 정정**한다 — raw 측정은 유효하나 결론이 틀렸다. torch-free reference-match(mac)로 **직렬화는 byte-faithful** 입증, 진짜 원인 = **OVERFITTING + engine-CE dt_ln masking**. fabricate 없이 전제 뒤집음(c9).
+
+- **직렬화 무결(reference-match):** `clm303_L4_d3784.pt` → `clm_serialize_v2.serialize` 재직렬화 = 출하 `.clm` 과 **BYTE-IDENTICAL**(155074330B==155074330B). TORCH-GOLDEN fp32 forward(raw `.pt`, `.clm` 우회) vs int4 `.clm` mirror, English(L4 학습언어): **2.2346 vs 2.2349**(4자리, Δ=int4 양자화 노이즈) → int4→v0.3 round-trip 함수적으로 정확. 도구(torch-free) `state/clm303_g6/tools/{ptload,fastmirror,torch_golden_fwd}.py`.
+- **NO-DESCENT = OVERFIT:** clm303(savant) mirror CE = own-train slice **0.656 DESCENT**(암기, torch lossF 0.047, ~25MB 5lang) vs English/Korean held-out **13.7/7.6 NO-DESCENT**. L4_d3784(영어-only)는 English 2.235 DESCENT vs Korean 22.98 = 원 'NO-DESCENT'는 wrong-corpus(영어모델→한국어) 아티팩트. control clm_d768 held-out DESCENT = 일반화이지 clm303 corrupt 아님.
+- **2번째 진짜 버그(hexa-lang dt_ln):** `flame_math.hexa::dt_ln` atanh 급수가 x≈1 만 수렴 — dt_ln(256)=4.799(참 5.545)·dt_ln(1e-6)=−5.14(참 −13.82) → `nn_lib.hexa::nn_ce_loss_allpos`(−dt_ln(p_t), p_t≥1e-6)가 per-position CE 를 **~5.14 clamp** → engine `clm_forward_ce` 가 overfit clm303 을 model 3.30<shuffle 4.93<(버그)uniform 4.799 = **GREEN 오판**. numpy mirror(math.log)가 정답 → 게이트는 engine CE 아닌 math.log mirror 로 채점. hexa-lang ing 이관(모든 엔진 CE/Φ readout 영향).
+- **fix = held-out mirror-DESCENT 게이트(이 PR):** `train/clm/model/verify_clm_v2.py` 에 `descent_gate`/`serialize_self_verify`(math.log mirror, dt_ln-immune; held-out 필수 + train-vs-heldout gap → overfit 경고) + `descent` CLI + random-weight self-test. 3 trainer(`train_lane_p.py`·`_split.py`·`_3b.py`) + `cli/train.hexa` 가 직렬화 직후 self-verify(`--heldout`/`--heldout-corpus`, fallback=학습코퍼스 deep tail slice) → broken/overfit `.clm` 'done'·HF업로드 차단. 검증: control PASS(F-CLM-DESCENT=1) / clm303 FAIL+overfit_warning(gap 6.42) / random-weight self-test FAIL / 기존 4 구조 round-trip 회귀 0 / train.hexa MODE_VERIFY 3/3 PASS.
+- **재학습 follow-on(cost-gate):** savant clm303 은 재직렬화로 overfit 못 고침 → 정규화/큰 코퍼스로 재학습(별도 ING, 자동 rent 금지). artifacts: `UNIVERSE/cards/H_1579_*.md`(정정) · `state/clm303_g6/CORRECTION_overfit_not_serialize.md` · `HYPOTHESES.jsonl` H_1579.
+
 ## research(H_1579): clm303.clm 직렬화 BROKEN (NO-DESCENT) — decode 경로는 무결 (engine-native 3-way + control diagnostic)
 
 🔴💾 clm303(CLMConvMoE 388M, savant+mitosis, sha 75b04897)을 frozen G0–G6 (`anima eval`)에 통과시키기 전 **decode-integrity 전제**를 3-way 로 측정 → 직렬화 결함 격리. anima eval 은 실행 안 함(깨진 ckpt 위 G-점수는 garbage, c9 정직).

@@ -568,6 +568,19 @@ python cli/train.py --canon --out clm303.clm --bf16 \
 # then engine-native G6 verdict = CORE re-measure of clm303.clm on core/clm_decode.hexa
 ```
 
+Right after every `.clm` is serialized, both trainers (`.hexa` and `.py`) run the
+**held-out mirror-DESCENT gate** — a faithful pure-numpy mirror of the
+`core/clm_decode.hexa` forward (`train/clm/model/verify_clm_v2.py`, `descent_gate` /
+`serialize_self_verify`) scored with `math.log` on **held-out** text. It PASSes only
+when the serialized model genuinely predicts unseen bytes (`model_ce < uniform AND <
+shuffle`) and warns when the train-vs-held-out gap is large (overfit), so a broken or
+memorized `.clm` cannot be marked done or HF-uploaded. It deliberately does **not** use
+the engine's `clm_forward_ce`: hexa-lang's `dt_ln` (atanh series) is numerically wrong
+away from `x=1` (`dt_ln(256)=4.799 ≠ ln256=5.545`), which clamps per-position CE at
+~5.14 and would read an overfit model as GREEN (anima H_1579 — the clm303 case that
+prompted this gate; `dt_ln` is filed to hexa-lang). Run it standalone with
+`python train/clm/model/verify_clm_v2.py descent <clm> <heldout> [train]`.
+
 The release surface is declared in the root [`hexa.toml`](hexa.toml) manifest (`[package]` entry =
 `cli/anima.hexa`, dep = `hexa-lang`, `include` = `core/` + `cli/` + the consciousness lanes, `exclude`
 = research artifacts `state/` · `UNIVERSE/` and the `.clm` weights). The trained `.clm` weights are

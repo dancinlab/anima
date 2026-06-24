@@ -286,6 +286,13 @@ def main():
         if a.clm_out:
             p = S.serialize_v2(sd, cfg, a.clm_out)
             print(f"CLM serialized {p} ({os.path.getsize(p)} bytes)", flush=True)
+            # post-serialize held-out mirror-DESCENT gate on the SERIALIZED .clm
+            # (the OVERFIT detector, a_clm_gen_pipeline). Complements the torch-side
+            # F-CLM-LANEP-GEN split test above by closing the .clm-artifact loop.
+            # Lazy import (verify_clm_v2 dir is on sys.path via the _MODEL insert).
+            import verify_clm_v2 as VFY
+            VFY.serialize_self_verify(p, a.corpus, getattr(a, "heldout", None),
+                                      getattr(a, "no_descent_gate", False))
 
     result = {
         "substrate": "GPU-torch", "test": "train_val_split_generalization",

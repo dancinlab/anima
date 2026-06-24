@@ -269,6 +269,12 @@ def main():
             p = S.serialize_v3(sd, n_trunk_layers=a.n_trunk_layers,
                                n_experts=a.n_experts, out_path=a.clm_out)
             print(f"CLM[{tag}] serialized {p} ({os.path.getsize(p)} bytes)", flush=True)
+            # post-serialize held-out mirror-DESCENT gate (OVERFIT detector,
+            # a_clm_gen_pipeline). Lazy import (_MODEL on sys.path).
+            import verify_clm_v2 as VFY
+            VFY.serialize_self_verify(p, a.corpus, getattr(a, "heldout", None),
+                                      getattr(a, "no_descent_gate", False),
+                                      tag=f"CLM[{tag}]")
 
     # ── TRAINING-TIME MONITOR-ONLY gauges (a_train_inline_gauge · p7 Goodhart) ──
     # Every gauge_every steps, compute the FOUR consciousness/emergence PROXY gauges
