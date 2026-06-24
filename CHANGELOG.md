@@ -23,6 +23,44 @@ H_1579 clm303 오진(overfit 을 직렬화 결함으로, dt_ln-corrupt engine CE
 - **2번째 진짜 버그(hexa-lang dt_ln):** `flame_math.hexa::dt_ln` atanh 급수가 x≈1 만 수렴 — dt_ln(256)=4.799(참 5.545)·dt_ln(1e-6)=−5.14(참 −13.82) → `nn_lib.hexa::nn_ce_loss_allpos`(−dt_ln(p_t), p_t≥1e-6)가 per-position CE 를 **~5.14 clamp** → engine `clm_forward_ce` 가 overfit clm303 을 model 3.30<shuffle 4.93<(버그)uniform 4.799 = **GREEN 오판**. numpy mirror(math.log)가 정답 → 게이트는 engine CE 아닌 math.log mirror 로 채점. hexa-lang ing 이관(모든 엔진 CE/Φ readout 영향).
 - **fix = held-out mirror-DESCENT 게이트(이 PR):** `train/clm/model/verify_clm_v2.py` 에 `descent_gate`/`serialize_self_verify`(math.log mirror, dt_ln-immune; held-out 필수 + train-vs-heldout gap → overfit 경고) + `descent` CLI + random-weight self-test. 3 trainer(`train_lane_p.py`·`_split.py`·`_3b.py`) + `cli/train.hexa` 가 직렬화 직후 self-verify(`--heldout`/`--heldout-corpus`, fallback=학습코퍼스 deep tail slice) → broken/overfit `.clm` 'done'·HF업로드 차단. 검증: control PASS(F-CLM-DESCENT=1) / clm303 FAIL+overfit_warning(gap 6.42) / random-weight self-test FAIL / 기존 4 구조 round-trip 회귀 0 / train.hexa MODE_VERIFY 3/3 PASS.
 - **재학습 follow-on(cost-gate):** savant clm303 은 재직렬화로 overfit 못 고침 → 정규화/큰 코퍼스로 재학습(별도 ING, 자동 rent 금지). artifacts: `UNIVERSE/cards/H_1579_*.md`(정정) · `state/clm303_g6/CORRECTION_overfit_not_serialize.md` · `HYPOTHESES.jsonl` H_1579.
+## feat(HF): clean 4칸 register 데이터셋 HF 업로드 + ARCHITECTURE 등록 + KOSMOS collection
+
+📤 언어-검증된 clean 4칸을 dancinlab org에 PUBLIC 업로드(a_hf_complete/a_hf_autonomous/a_hf_collections). 데이터셋 완성 = GPU 차단게이트 해제 직전 단계.
+- **4 dataset PUBLIC 업로드** (각 dataset card = 언어순도·크기·sha256·역할·정제법): `anima-corpus-ko-general`(100% ko·60MB) · `anima-corpus-en-general`(99.7% en·60MB) · `anima-corpus-ko-sns`(100% ko·6.18MB) · `anima-corpus-en-sns`(97.4% en·1.33MB, ⚠️KNOWN-SMALL baseline 플래그). HF↔local sha256 일치 확인.
+- **ARCHITECTURE.json HF artifacts/datasets 등록**: clean 4칸 노드 + legacy 5lang(en 오염, chat 직접사용 금지) 명시 구분. 빌드 재현 = `state/clm303_clean_corpus/build_corpus.py`.
+- **KOSMOS collection 가입** (4개, a_hf_collections: datasets→KOSMOS bucket).
+- **en-SNS 보강 ING 등록**: clean en-SNS large source 부재(NC/라이선스無) → youtube/insta-en follow-up, 그 전까지 size-proportional 샘플링으로 암기 방지(사용자 모호함0: 작은 건 알려진 사실·플래그됨).
+- 5체크리스트 ✅: 언어검증·분량(en-SNS는 baseline 플래그)·canonical naming·HF 업로드+card·재현스크립트. GPU smoke→retrain = 별도 user go.
+
+## feat(state/clm303_clean_corpus): clean 4칸 데이터셋 빌드 + size-proportional 샘플링 (HF 업로드 직전)
+
+🧼 언어-검증된 clean 4칸 corpus 빌드 완료(HF 업로드만 (B) 결정 대기). 직전 사고의 2중 결함(en칸 5lang 20% 오염 + size 불균형 암기)을 둘 다 차단.
+
+- **size-proportional 샘플링 (`cli/train.py --sample proportional`)**: round-robin 균등 step-share 는 작은 칸(en-SNS 1.3MB)을 ~90× 반복 = 암기 재발. proportional 은 P(cell)∝train_bytes 라 매 byte 균등 노출 → **칸별 repetition 균일**. 실측 4칸 rep 표(30000step×16×1024=491.5M tok, 125MB corpus): ko-general/en-general/ko-sns/en-sns **전부 3.93× 동일**(round-robin이면 en-SNS 378× 였을 것). balance 표가 sample 모드 반영.
+- **clean 4칸 빌드(`build_corpus.py`, 재현스크립트 SSOT)**: ① ko-general FineWeb2-ko HF raw .txt range-read 60MB(100% ko 검증) · ② en-general FineWeb-en HF stream 60MB(99.7% en 검증) · ③ ko-sns persona+5lang-split+MIT/apache aug(NLPBada/JaeJiMin/jojo0217) 6.18MB(100% ko) · ④ en-sns 5lang-split 1.33MB(97.4% en). 칸별 line 분류(clean_split.classify, de/es/fr/ja/zh drop + dedup)로 **각 칸 목표언어만**. sha256 MANIFEST.sha256.
+- **rep≤2x 옵션**: 125MB corpus 에서 15000step→1.97×(≤2x 충족) / 30000step→3.93×. SNS 칸이 상한(en-SNS 1.33MB clean 이 전부, dancinlab org 보강원 0).
+- ⚠️ en-SNS HF 업로드는 라이선스 정직(REDDIT_comments 명시無→PRIVATE 또는 작게-baseline) 결정 대기 — en-general(FineWeb ODC-By)·ko 3칸은 PUBLIC 가능.
+- artifacts: `state/clm303_clean_corpus/{build_corpus,clean_split,langaudit}.py` + `MANIFEST.sha256`(cells 자체는 .gitignore, scratchpad). engine-native verdict 무관(DIRECTIONAL, torch CE).
+
+## fix(cli/train.py): 4칸 레지스터 강제 — 칸별 balance 표 + 칸별 held-out val-CE + require-cells 게이트
+
+🎯 a_chat_registers SSOT 강제 — 직전 사고의 핵심(4칸 의도였으나 ko-SNS 4MB 1칸만 staging)을 코드로 차단. {ko·en}×{일반·SNS} 4칸이 **전부 present + balanced** 여야 학습 진행.
+
+- **칸별 balance 표(시작 시)**: `--cell-label ko-normal en-normal ko-sns en-sns` 로 칸 명명 → `register | train_bytes | tokens/cell(균등 step-share) | rep_ratio` 표 출력. round-robin 이 각 칸에 균등 step-share 를 주므로 칸별 repetition = (tokens/cell)/(칸 bytes). 칸별 rep>5x = `<-- MEMORIZATION RISK` + worst_per_cell WARNING. (실측: 로컬 ~25MB 4칸 only @30000step → ko-normal 47.8x·en-normal 23.9x·ko-sns 29.9x·en-sns 9.6x = 전 칸 암기 위험 → **HF ko_fineweb2 10.5GB ko-normal 칸 필수** 정량 입증.)
+- **`--require-cells N` 게이트**: 정확히 N usable 칸이 아니면 **exit 3, 0 step**(register-incompleteness 거부). 실측: ko-SNS 1칸 only + require-cells 4 → ABORT(= 원래 사고를 *예방*했을 게이트).
+- **칸별 held-out val-CE**: FINAL 에 register 별 val_CE + DESCENT/NO-DESCENT verdict + `registers_DESCENT=k/N` 요약. 어느 레지스터가 generalize/overfit 인지 분리 관측 — 4칸 다 held-out DESCENT 해야 성공. pooled val-CE 는 칸별 평균(균등 가중, balanced step-share 와 정합).
+- **로컬 4칸 smoke 통과**: enrichment(ko-normal 대역)+wiki(en-normal)+persona(ko-sns)+persona_5lang(en-sns) 4칸 RC=0, 칸별 표·칸별 val·require-cells 4 PASS·CORE-loadable 확인. (실 ko-normal 은 pod 에서 HF `anima-corpus-ko-fineweb2-broad` PULL.)
+
+## fix(cli/train.py): anti-overfit — fail-loud 코퍼스 가드 + held-out val 모니터 + 정규화 1급 knob
+
+🛡️ clm303 재학습이 직전 사고(실효 ~25MB·120× 반복 암기)를 반복하지 않도록 Lane-P bridge 트레이너(`cli/train.py`)에 3중 안전장치를 배선. 트레이너 자체의 `ByteCell` 스트리밍(mmap 랜덤 윈도우·cell round-robin)은 결함 없음 — 진짜 사고 원인은 **pod 에서 cell[0](4MB SNS) 하나만 staging 되고 나머지(특히 10.5GB ko_fineweb2)가 조용히 미해결**된 코퍼스 굶주림(train.log `corpus cell[0] … 4194308 bytes` 단일 cell 이 증거). 그 silent starvation 을 못 잡던 게 핵심.
+
+- **fail-loud 코퍼스 가드(anti-starvation)**: 시작 시 `total_train_bytes`·`tokens_to_see`(steps×bs×seq)·`repetition_ratio` 출력. ratio>5x = HIGH MEMORIZATION WARNING(원래 사고: 단일 4MB cell+30000step → ratio **119.58x** 정확 재현). `--min-corpus-bytes N` = 실효 코퍼스가 N 미만이면 **exit 2 로 학습 거부**(0 step) — 굶주린 코퍼스로 GPU 돈 낭비 차단.
+- **held-out val 모니터(overfit 탐지)**: `ByteCell` 이 각 cell 의 꼬리 `--val-frac` 를 train 윈도우와 **byte-disjoint** 하게 떼어 보관(직접 assert: max_train_window_end ≤ train_end ≤ min_val_window_start = DISJOINT). `--val-every N` 으로 val-CE 를 train-CE 옆에 로그(+`gap`), `--val-batches` 평균. `FINAL val_CE` 가 일반화 verdict(train-CE 아님, p7 정신) — uniform ln(V) 이상이면 NOT-generalizing WARNING. val RNG 는 train 과 별도 seed.
+- **정규화 1급 knob**: `--dropout`/`--weight-decay` 가 savant-derived 값보다 우선(>=0 일 때). 암기 억제를 savant inhibition 스케줄과 decoupling. 모델 dropout 은 TrunkLayer 에만 존재(experts/router 無) — per-step `m.p` 루프가 적용.
+- **로컬 CPU smoke 통과(GPU 전 게이트)**: tiny d16·L1·30step 4-cell 실행 RC=0 — 전체스트림·정규화·val-disjoint·.clm v0.3 CORE-loadable self-check 전부 OK. 가드 2종(ratio WARNING·min-bytes ABORT exit 2) 실측 검증.
+- ⚠️ engine-native verdict 무관(DIRECTIONAL only, `a_engine_native_learning`): torch CE/val-CE 는 방향지표, terminal G6 는 CORE `core/clm_decode.hexa` mount 재측정. 재학습 ckpt 는 teardown 전 PULL(`a_fire_recover_complete`).
+- artifacts: `cli/train.py` (production `cli/train.hexa` parity 는 follow-on).
 
 ## research(H_1579): clm303.clm 직렬화 BROKEN (NO-DESCENT) — decode 경로는 무결 (engine-native 3-way + control diagnostic)
 
