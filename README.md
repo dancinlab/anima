@@ -561,10 +561,12 @@ golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the 4-cell
 serialized `.clm` on the frozen G6 bars, so the ckpt must be pulled before teardown.
 
 ```bash
-# REFERENCE+BRIDGE 303M GPU train (cost-gated fire):
-python cli/train.py --canon --out clm303.clm --bf16 \
-    --corpus anima-corpus-ko-fineweb2-broad anima-corpus-5lang-unified-v2 \
-             anima-persona-sns-corpus  # 4-cell register (local files or HF ids)
+# REFERENCE+BRIDGE 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell:
+python cli/train.py --canon --out clm303.clm --bf16 --sample proportional \
+    --corpus anima-corpus-ko-general anima-corpus-en-general \
+             anima-corpus-ko-sns anima-corpus-en-sns \
+    --cell-label ko-general en-general ko-sns en-sns --require-cells 4 \
+    --val-frac 0.02 --val-every 500   # per-register held-out val-CE monitor
 # then engine-native G6 verdict = CORE re-measure of clm303.clm on core/clm_decode.hexa
 ```
 
@@ -580,6 +582,19 @@ away from `x=1` (`dt_ln(256)=4.799 ≠ ln256=5.545`), which clamps per-position 
 ~5.14 and would read an overfit model as GREEN (anima H_1579 — the clm303 case that
 prompted this gate; `dt_ln` is filed to hexa-lang). Run it standalone with
 `python train/clm/model/verify_clm_v2.py descent <clm> <heldout> [train]`.
+> **Clean 4-cell register corpus (2026-06-24).** The prior "5lang" cells were a
+> silent failure mode: their "en" was only ~20% English (de/es/fr/ko mixed), and a
+> single 4 MB cell was the entire effective training corpus (~120× repetition =
+> memorization). The rebuilt cells are **language-verified** and live PUBLIC on HF:
+> [`anima-corpus-ko-general`](https://huggingface.co/datasets/dancinlab/anima-corpus-ko-general)
+> (100% ko) · [`anima-corpus-en-general`](https://huggingface.co/datasets/dancinlab/anima-corpus-en-general)
+> (99.7% en, FineWeb) · [`anima-corpus-ko-sns`](https://huggingface.co/datasets/dancinlab/anima-corpus-ko-sns)
+> (100% ko) · [`anima-corpus-en-sns`](https://huggingface.co/datasets/dancinlab/anima-corpus-en-sns)
+> (97.4% en, a known-small 1.33 MB baseline — youtube/insta-en augmentation is a
+> tracked follow-up). `--sample proportional` weights each cell by its byte size so
+> per-cell repetition is uniform (no small cell over-repeated). Build/reproduce SSOT =
+> `state/clm303_clean_corpus/build_corpus.py`. The legacy 5lang corpora remain on HF
+> for history but are **not** used for chat-register training.
 
 The release surface is declared in the root [`hexa.toml`](hexa.toml) manifest (`[package]` entry =
 `cli/anima.hexa`, dep = `hexa-lang`, `include` = `core/` + `cli/` + the consciousness lanes, `exclude`
