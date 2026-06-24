@@ -717,6 +717,44 @@ pub fn gen_clm_ideate_W(W: Map, seed: string, max_new: int,
               "reason": "ideated via clm_decode_topk_sampled_W (loaded-W, seeded top-k)" }
 }
 
+// gen_bytegpt_ideate — the ByteGPT twin of gen_clm_ideate (the SEEDED-SAMPLING sibling
+// of gen_bytegpt_chat). Routes an ideation seed through the ByteGPT engine's OWN seeded
+// top-k sampler (bytegpt_decode_topk_sampled_ranged — OOM-safe ranged load for the 1.2GB
+// 303M binary) so the G6 best-of-K DEPTH lever yields DIVERSE candidates on the ByteGPT
+// mouth too (argmax = a no-op for best-of-K). Stays inside the SINGLE generator L3 ByteGPT
+// slot (a_core_engine_map) — this is a thin caller of the ONE ByteGPT sampled mouth, NOT a
+// 2nd decode path. HARD-BOUNDED by `max_new`. Same #{ ok, text, reason } shape as the .clm
+// twin so the gate scorers / ideation driver are mouth-agnostic.
+pub fn gen_bytegpt_ideate(ckpt_path: string, seed: string, max_new: int,
+                          top_k: int, temp: float, seed_rng: int) -> Map {
+    if gen_mouth_kind(ckpt_path) != "bytegpt" {
+        return #{ "ok": false, "text": "",
+                  "reason": "ckpt not a ByteGPT flat binary (bad 5xu32 [256,d,L,H,block] header)" }
+    }
+    // seed string → byte ids (vocab256 byte LM, p7 byte-exact) — same as gen_bytegpt_chat
+    let sids = []
+    let slen = byte_len(seed)
+    let mut i = 0
+    while i < slen { sids.push(ord(substring(seed, i, i + 1))); i = i + 1 }
+    let r = bytegpt_decode_topk_sampled_ranged(ckpt_path, sids, max_new, top_k, temp, seed_rng)
+    return #{ "ok": to_string(r["ok"]) == "true", "text": to_string(r["text"]),
+              "reason": "ideated via bytegpt_decode_topk_sampled_ranged (seeded top-k, OOM-safe)" }
+}
+
+// gen_auto_ideate — mouth-type-dispatched IDEATE entry (the seeded-sampling sibling of
+// gen_auto_chat). Sniff the ckpt and route to the matching architecture's seeded-sample
+// ideate (gen_bytegpt_ideate for a ByteGPT .bin, gen_clm_ideate for a .clm). Same
+// #{ ok, text, reason } contract for both mouths so the G0-G6 gate scorers (core/g_gates.hexa)
+// run on EITHER mouth via this ONE typed entry — the eval system is mouth-agnostic
+// (a_core_engine_map: per-architecture single typed entry, dispatcher picks by file format).
+pub fn gen_auto_ideate(ckpt_path: string, seed: string, max_new: int,
+                       top_k: int, temp: float, seed_rng: int) -> Map {
+    if gen_mouth_kind(ckpt_path) == "bytegpt" {
+        return gen_bytegpt_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng)
+    }
+    return gen_clm_ideate(ckpt_path, seed, max_new, top_k, temp, seed_rng)
+}
+
 // gen_g6_sampler_selftest — H_1381: exercise the engine's seeded top-k sampler on a
 // SYNTHETIC peaked logits vector (NO model forward — fast, deterministic, smoke-safe).
 // Returns #{ deterministic, diverse, in_topk } proving the DEPTH-lever mechanism. Lives

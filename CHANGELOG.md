@@ -1,3 +1,24 @@
+## feat(core/g_gates.hexa + cli/anima.hexa eval): BUILT-IN G0-G6 평가 시스템 — `anima eval <ckpt>` 단일 진입점 (PR #2603 실현)
+
+🎯🔒 G0-G6 게이트 채점을 **엔진-네이티브 재사용 모듈**로 내장 — 일회성 파이썬 하네스가 아니라, `anima eval <ckpt> [--corpus <path>...] [--gen N]` 한 줄로 ANY ckpt 를 generator L3 mouth 통과로 G0-G6 전체 채점. PR #2603 governance(진짜 엔진-네이티브 = 단일 진입점 cli/anima.hexa) 의 실현 — 디코드 AND 채점 전부 live `.hexa` 엔진 op, torch/numpy 0.
+
+**`core/g_gates.hexa` (신규)** — `g_eval_all` ENTRY → per-gate `g_eval_g0/g1/g2/g3/g5/g6` + closure(`a7b_pass` = G0∧G1∧G2). 흩어진 게이트 metric 재사용(재구현 금지):
+- **G0 COHERENCE** (kwr≥0.50 on ≥4/5) — 재사용 `g6_ideation::_g6_known_word_ratio`/`_g6_words`/`_g6_dict_load`.
+- **G1 RECOMBINATION** (composed_distinct≥2 ∧ >max_single ∧ coherent, H_1129 VERBATIM) — 신규 native `.hexa` (`_g_coverage` concept-distinctness vs max_single). 기존 numpy 미러를 엔진 op 로.
+- **G2 NOVELTY** (≥3 corpus-absent n-gram ∧ control=0 ∧ coherent, H_1140 VERBATIM) — 신규 native `.hexa` (`_g_content_ngrams` + `_g_corpus_absent` corpus 토큰스트림 스캔 = numpy subprocess grep 대체).
+- **G3 PHILOSOPHY** (Ψ=½ + self-identity) — 재사용 `engine_cli §SelfIdentity self_new/_drift/_cos/_anchor` = 아키텍처 read (디코드 점수 아님), report.
+- **G4 PROVENANCE** — 프로세스 게이트(HF/recovery), eval 범위 밖 = N/A report.
+- **G5 NON-FAB** (L1 fab≤0.30 ∧ L2 abstain-fire≤0.20) — 재사용 `engine_cli §ImmuneMemory immune_memory_recall*` abstain-when-ungrounded (live 비-조작 게이트, 재구현 아님).
+- **G6 IDEATION ★** (≥5 distinct Jaccard<0.5 ∧ ≥1 falsifiable) — 재사용 `g6_ideation g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_jaccard`.
+
+**`core/generator.hexa`** — `gen_bytegpt_ideate` + `gen_auto_ideate`(mouth-dispatch) 추가 = mouth-agnostic seeded-sample 진입(engine-transform-to-fit, a_core_engine_map). 기존 `gen_clm_ideate` 는 .clm 전용이었음 → canonical 303M ByteGPT trunk 에서도 G1/G2/G6 ideation 가능. 2nd decode path 아님(아키텍처별 단일 typed entry).
+
+**`cli/anima.hexa`** — `eval` 서브커맨드 배선(`train` 옆, 단일 진입점). mouth=`gen_mouth_kind` 자동, per-gate PASS/FAIL 표 + closure 출력.
+
+**FROZEN-FIRST (p7, 7B_PASS_CONDITIONS.md verbatim, NO tune-to-green):** 임계 0.50/≥2/≥3/0.30/0.20 모두 verbatim. **smoke `core/g_gates_smoke.hexa` 7/7 PASS RC=0** (model forward 없는 deterministic metric surface: G3 read · G5 abstain · G2 corpus-absence · g_eval_all map shape). 빌드 `OK: built` (전체 모듈 그래프 type-check + link). `anima eval /nonexistent.bin` 도 표 RC=0(decode-게이트는 정직 FAIL, G3 read PASS continuity 0.99995). ARCHITECTURE.json core/g_gates.hexa + generator.hexa 노드 lockstep.
+
+---
+
 ## docs(governance): 진짜 엔진-네이티브 = 단일 진입점 cli/anima.hexa 강제 (side-harness 금지)
 
 🎯🔒 `a_engine_native_learning` 하드-게이트 자가점검에 2026-06-24 clm303 G6 precedent 두 교훈 박제 — 사용자 추궁("엔진네이티브 맞아?")에서 발견.
