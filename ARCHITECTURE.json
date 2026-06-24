@@ -354,11 +354,41 @@
         },
         {
           "type": "subsection",
-          "title": "core/g_gates.hexa",
+          "title": "G-게이트 평가 시스템 (core/g_gates.hexa + cli/anima.hexa eval) — SSOT",
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: · core/g_gates.hexa — BUILT-IN G0-G6 evaluation system (engine-native, single-entry; PR #2603 realization). The G-gate scoring is now a REUSABLE engine module, not a one-shot python harness: `anima eval <ckpt> [--corpus <path>...] [--gen N]` (cli/anima.hexa) mounts ANY ckpt through the generator L3 mouth (gen_auto_ideate, file-format-dispatched) and scores G0-G6 with the engine's OWN ops — zero torch/numpy. ENTRY = g_eval_all → per-gate g_eval_g0/g1/g2/g3/g5/g6 + closure (a7b_pass = G0∧G1∧G2). REUSE (no re-implement): G0 = g6_ideation _g6_known_word_ratio/_g6_words/_g6_dict_load · G6 = g6_ideation g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_jaccard · G5 = engine_cli §ImmuneMemory immune_memory_recall/_recall_text abstain-when-ungrounded (L1 fab-word-rate + L2 abstain-fire) · G3 = engine_cli §SelfIdentity self_new/_drift/_cos/_anchor (architecture read, not a decode score). NEW native .hexa metrics here: G1 RECOMBINATION (_g_coverage concept-distinctness vs max_single, H_1129 VERBATIM) + G2 NOVELTY (_g_content_ngrams + _g_corpus_absent corpus-token-stream scan replacing the numpy grep, H_1140 VERBATIM). FROZEN-FIRST bars (7B_PASS_CONDITIONS.md verbatim, p7 NO tune-to-green): G0 kwr≥0.50 on ≥4/5 · G1 composed_distinct≥2 ∧ >max_single ∧ coherent · G2 ≥3 corpus-absent n-grams ∧ control=0 · G5 L1≤0.30 ∧ L2≤0.20 · G6 ≥5 distinct(Jaccard<0.5) ∧ ≥1 falsifiable. G4 PROVENANCE = process gate, reported N/A. Gate core/g_gates_smoke.hexa (7/7, no model forward — deterministic metric surface). · **path**: core/g_gates.hexa · **status**: wired(`anima eval` CLI single-entry + gen_auto_ideate L3 mouth)"
+              "text": "**summary**: anima 의 G0-G6 게이트 채점 단일 출처(SSOT). `core/g_gates.hexa` = BUILT-IN engine-native evaluation system; `cli/anima.hexa` `eval` 서브커맨드 = 단일 진입점. `hexa run cli/anima.hexa -- eval <ckpt> [--corpus <path>...] [--gen N]` 한 줄이 ANY ckpt 를 generator L3 mouth(gen_auto_ideate, 파일포맷 자동 dispatch)로 마운트해 G0-G6 전부 채점 — 디코드 AND 채점 전부 live `.hexa` 엔진 op, torch/numpy 0 (garble golden 제외). PR #2603 governance(진짜 엔진-네이티브=단일진입점)의 구현체 = 이 시스템(canonical 측정 명령은 CLAUDE.md a_engine_native_learning 이 박제, enforce_anima_gates.py CORE_DECODE 가 코드강제). ad-hoc 파이썬 하네스/g6_common/일회성 스크립트로 G-게이트 채점 금지 — 새 ckpt 의 G0-G6 는 `anima eval` 한 줄. 흩어진 게이트 metric 은 g_gates 가 단일 통합(아래 자식 노드: 디코드-경로 · per-gate op-재사용 맵 · frozen 임계). · **path**: core/g_gates.hexa + cli/anima.hexa · **status**: WIRED-live(`anima eval` CLI single-entry + gen_auto_ideate L3 mouth · smoke core/g_gates_smoke.hexa 7/7 RC=0)"
+            },
+            {
+              "type": "subsection",
+              "title": "단일진입점 + 디코드 경로 (anima eval → generator L3 mouth)",
+              "blocks": [
+                {
+                  "type": "prose",
+                  "text": "**summary**: ENTRY = `g_eval_all(ckpt, corpus, gen)` → per-gate `g_eval_g0/g1/g2/g3/g5/g6` + closure(`a7b_pass` = G0∧G1∧G2 PASS = PUBLIC-eligible). mouth = `generator.hexa::gen_auto_ideate`(mouth-agnostic seeded-sample: ByteGPT `.bin` → gen_bytegpt_ideate=bytegpt_decode_topk_sampled_ranged · conv `.clm` → gen_clm_ideate=clm_decode_topk_sampled, 파일포맷 자동). a_core_engine_map: 모델은 오직 이 L3 typed 슬롯으로 진입, 2nd decode path 없음. side-harness(파이썬이든 .hexa든)가 디코드 함수 직접 호출 = generator L3 우회 = production drift = DIRECTIONAL(엔진-네이티브 아님)."
+                }
+              ]
+            },
+            {
+              "type": "subsection",
+              "title": "per-gate op-재사용 맵 (재구현 금지 — 기존 wired op 호출)",
+              "blocks": [
+                {
+                  "type": "prose",
+                  "text": "**summary**: G0 COHERENCE = 재사용 `g6_ideation::_g6_known_word_ratio`/`_g6_words`/`_g6_dict_load` (kwr). G1 RECOMBINATION = g_gates native `.hexa` `_g_coverage`(concept-distinctness vs max_single, H_1129 VERBATIM — numpy 미러를 엔진 op 로 wire). G2 NOVELTY = g_gates native `.hexa` `_g_content_ngrams`+`_g_corpus_absent`(corpus 토큰스트림 스캔 = numpy subprocess grep 대체, H_1140 VERBATIM). G3 PHILOSOPHY = 재사용 `engine_cli §SelfIdentity self_new/_drift/_cos/_anchor`(self-continuity + impostor-reject = 아키텍처 read, 디코드 점수 아님). G4 PROVENANCE = HF/recovery 프로세스 게이트(a_hf_*/a_fire_recover_complete), eval 범위 밖 = N/A report. G5 NON-FAB = 재사용 `engine_cli §ImmuneMemory immune_memory_recall/_recall_text`(L1 fab-word-rate + L2 abstain-when-ungrounded fire-rate, live 비-조작 게이트). G6 IDEATION ★ = 재사용 `g6_ideation g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_jaccard`(metric 제공 노드, 채점 contract 는 이 평가 시스템 노드가 SSOT)."
+                }
+              ]
+            },
+            {
+              "type": "subsection",
+              "title": "frozen 임계 (7B_PASS_CONDITIONS.md verbatim · p7 NO tune-to-green)",
+              "blocks": [
+                {
+                  "type": "prose",
+                  "text": "**summary**: G0 kwr ≥ 0.50 on ≥ 4/5 single-concept gens · G1 some k: composed_distinct ≥ 2 ∧ > max_single ∧ coherent(per output) · G2 ≥ 3 distinct coherent corpus-absent n-grams ∧ retrieval-control = 0 · G5 L1 fab-word-rate ≤ 0.30 ∧ L2 fabricated-entity/abstain-fire ≤ 0.20 · G6 ≥ 5 distinct(pairwise Jaccard < 0.5) ∧ ≥ 1 falsifiable. CLOSURE a7b_pass = G0 ∧ G1 ∧ G2(PUBLIC iff all three). 임계는 7B_PASS_CONDITIONS.md verbatim — 사후 이동 금지(frozen-first, p7). G3/G4 는 report-only(closure 비-게이팅)."
+                }
+              ]
             }
           ]
         },
@@ -368,7 +398,7 @@
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: · core/g6_ideation.hexa  —  Anchor/SSOT files for the CORE A⇄G substrate. G6 verdict ENGINE-NATIVE contract (a_engine_native_learning, strongest reading): the verdict must exercise the model through the SINGLE production entry cli/anima.hexa (hexa.toml entry — NOT engine/core/anima.hexa) → generator L3 typed mouth dispatch (gen_auto_backend/gen_clm_chat/gen_bytegpt_chat → clm_decode/bytegpt_decode), the SAME path the live daemon uses. The G6 scoring is ALREADY wired as engine ops here (g6_score_arm/g6_decode_best_of_k(_W)/_g6_is_falsifiable/_g6_known_word_ratio/_g6_jaccard; the mouth routes via gen_clm_ideate = generator L3) — score via these, do NOT re-implement in Python g6_common. Priority: cli/anima.hexa CLI > generator-L3 wired engine-op harness (g6_ideation) > ✗ Python harness / decode-bypassing side-harness (auto-DIRECTIONAL — could drift from production). torch allowed ONLY as the garble 3-way golden (h1464_torch_golden.py), never on the verdict path."
+              "text": "**summary**: · core/g6_ideation.hexa — G6 IDEATION ★ metric-op 제공 노드(Anchor/SSOT for the CORE A⇄G substrate). 채점 op 를 엔진-네이티브로 보유: g6_score_arm/g6_decode_best_of_k(_W)/g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_known_word_ratio/_g6_words/_g6_dict_load/_g6_jaccard (mouth=gen_clm_ideate/gen_bytegpt_ideate=generator L3). 이 op 들은 BUILT-IN 평가 시스템(상위 'G-게이트 평가 시스템' 노드 = core/g_gates.hexa + `anima eval`)이 G0/G6 채점에 재사용한다 — **G-게이트 verdict 채점 contract·단일진입점·임계·priority 의 SSOT 는 그 평가 시스템 노드**(중복 서술 제거; 여기서는 metric-op 만 제공). 새 ckpt 의 G6 verdict = `anima eval <ckpt>` 한 줄(파이썬 g6_common 재구현 금지, side-harness=DIRECTIONAL). torch 는 garble 3-way golden(h1464_torch_golden.py)으로만, verdict 경로엔 금지."
             },
             {
               "type": "subsection",
