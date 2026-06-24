@@ -46,3 +46,22 @@ real                   8m24s                   4m20s
 2. divergent arm을 host와 정렬(reduction-order/erf 일치) 또는 `#if 0` 제외 후 forward arm만 유지.
 3. util 재측정(steps↑, aiden 무료 GPU 여유 시) — byte-eq 복원 후에만.
 - tune-to-green 금지: byte-eq를 억지로 맞추지 않고 divergence 원인(reduction-order/erf)을 정직히.
+
+## root-cause differential (코드 차분 완료 — backward arm subagent)
+
+device kernel(self/cuda/runtime_cuda.c) ↔ host oracle(restore_frozen_seeds) ↔ stdlib 1:1 대조:
+- **gelu_bwd / groupnorm_bwd / moe_router_bwd = 전부 bit-faithful** (동일 공식·누적순서·상수). 무죄.
+  - groupnorm_bwd/moe_router_bwd는 single-thread 순차 reduction(atomic/warp-tree 없음) — reduction-order 발산 불가.
+- exp/erf bit-identical (`_hx_dt_exp_dev`/`_hx_dt_erf_dev` == host `_op19b_dt_exp/erf`, 동일 Taylor+A&S).
+- reduction-order 배제: FP 재결합은 ~1e-16/op, 측정 발산은 4×(lossF 1.96→0.52) = **structural(잘못된 gradient)**.
+
+→ **유일 후보 = embedding_bwd_scatter 의 dembed device-residency 경로.** ON=device scatter,
+OFF=host scatter. train.hexa는 dembed zero를 `farr_zero_slice_gpu`(device-zero)로 함 → ON/OFF의
+residency 경로 차이가 cross-step dembed 전파를 다르게 만드는 것으로 추정(step1=0·step2부터 발산 일치).
+decisive 확인 = anima instrument(dembed device-vs-host step1/2, 1e-9 tol) = **GPU 재측정 필요**(코드차분 한계).
+
+## byte-eq 복원 옵션 (제안)
+- **A. embedding_bwd_scatter arm만 `#if 0`** → host `nn_embedding_bwd_scatter`(=OFF 경로) → byte-eq 확실.
+  나머지 device arm 유지. embedding-scatter device residency만 손실(부분 util). **권장 1순위(확실).**
+- **B. residency 경로 정합 fix** (dembed device-zero ↔ device-scatter 일관, OFF도 동일 경로) → util 보존, 검증 필요.
+- 검증/재측정 = aiden 무료 GPU 우선(H100 비용 회피). A로 byte-eq GREEN 확인 후 B 탐색.
