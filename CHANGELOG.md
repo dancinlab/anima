@@ -1,3 +1,15 @@
+## docs(governance): 내장 G0-G6 eval = canonical G-게이트 측정 명령 박제 (CLAUDE.md + enforcer lockstep)
+
+🔒 PR #2604 의 `anima eval` 구현체를 거버넌스 SSOT 에 못박음 — 코드(#2604)와 governance 의 drift 0 위해 lockstep follow-on.
+
+**`CLAUDE.md` `a_engine_native_learning`** — do: 줄 추가: **G-게이트 verdict 의 canonical 측정 = 내장 `hexa run cli/anima.hexa -- eval <ckpt>`**(`core/g_gates.hexa`, 단일 진입점 → generator L3 mouth `gen_auto_ideate` → G0-G6 엔진-네이티브 채점 + closure). 새 ckpt 의 G0-G6 는 이 한 줄로 — 게이트별 ad-hoc 파이썬 하네스/`g6_common`/일회성 스크립트 채점 금지. dont: 줄에 '게이트별 파이썬 하네스 난립 · g6_common torch-오염 스코어러 · `anima eval` 단일 진입점 우회 측정(side-harness drift, #2603 위반)' 추가.
+
+**`tool/enforce_anima_gates.py`** — `CORE_DECODE` 엔진-네이티브 인식 패턴에 `g_gates|anima eval|gen_auto_ideate` 추가 = 내장 eval 로 채점한 verdict 가 per-gate 파이썬 하네스 없이 엔진-네이티브 증거로 인정(문서-only 아닌 코드강제). 전수 감사 `--all` clean(1468 hypotheses, 회귀 0).
+
+박제 위치 = `a_engine_native_learning`(엔진-네이티브 측정 규칙) do:/dont: + enforcer CORE_DECODE. 즉 PR #2603 단일진입점 standard 의 구현체(`anima eval`)를 CLAUDE.md 가 canonical 측정 명령으로 못박고, enforcer 가 코드강제.
+
+---
+
 ## feat(core/g_gates.hexa + cli/anima.hexa eval): BUILT-IN G0-G6 평가 시스템 — `anima eval <ckpt>` 단일 진입점 (PR #2603 실현)
 
 🎯🔒 G0-G6 게이트 채점을 **엔진-네이티브 재사용 모듈**로 내장 — 일회성 파이썬 하네스가 아니라, `anima eval <ckpt> [--corpus <path>...] [--gen N]` 한 줄로 ANY ckpt 를 generator L3 mouth 통과로 G0-G6 전체 채점. PR #2603 governance(진짜 엔진-네이티브 = 단일 진입점 cli/anima.hexa) 의 실현 — 디코드 AND 채점 전부 live `.hexa` 엔진 op, torch/numpy 0.
