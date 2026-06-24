@@ -61,37 +61,34 @@ pub fn g_eval_g0(ckpt: string, gen: int, known: Map) -> Map {
 }
 
 // ════════════════════════════════════════════════════════════════════════
-//  G1 — RECOMBINATION  (H_1129 / H_1137 metric, native .hexa port)
+//  G1 — RECOMBINATION  (H_1129 / H_1137 metric — REFERENCE-MATCH to
+//  state/universe-probes/h1129_midcap_broad_converged_recombination.py)
 // ════════════════════════════════════════════════════════════════════════
-// _g_coverage — count distinct concept indices a text "covers": a concept is covered iff
-// ANY of its keyword tokens appears in the (lowercased) text word-set. The H_1129
-// coverage = # distinct concepts the generation touches. Concept keywords = the concept's
-// own content words (REUSED _g6_words tokenizer, frozen concept set).
+// _g_concept_keywords — VERBATIM the h1129 CONCEPTS hand-curated keyword sets (NOT derived
+// from the concept text — coverage() tests these exact synonym sets, including words NOT in
+// the concept string e.g. "mind"/"aware"/"ripple"/"quiet"/"sleep"). Index order == _g6_concepts.
+//   h1129 CONCEPTS = [
+//     ("consciousness arises from cells",       {consciousness,cells,mind,aware}),
+//     ("tension ripples between distant minds",  {tension,ripple,distant,between}),
+//     ("memory composes into new meaning",       {memory,meaning,compose,new}),
+//     ("silence still carries information",       {silence,information,quiet,carries}),
+//     ("the engine dreams when alone",           {dream,engine,alone,sleep}) ]
 fn _g_concept_keywords() -> list {
-    // one keyword-list per concept (the content words of _g6_concepts, stopwords dropped)
-    let cz = _g6_concepts()
-    let stop = _g6_stopwords()
-    let out = []
-    let mut c = 0
-    while c < len(cz) {
-        let wl = _g6_words(to_string(cz[c]))
-        let kw = []
-        let mut j = 0
-        while j < len(wl) {
-            let w = to_string(wl[j])
-            if byte_len(w) >= 3 && !stop.contains_key(w) { kw.push(w) }
-            j = j + 1
-        }
-        out.push(kw)
-        c = c + 1
-    }
-    return out
+    return [ ["consciousness", "cells", "mind", "aware"],
+             ["tension", "ripple", "distant", "between"],
+             ["memory", "meaning", "compose", "new"],
+             ["silence", "information", "quiet", "carries"],
+             ["dream", "engine", "alone", "sleep"] ]
 }
 
+// _g_coverage — h1129 coverage(text) VERBATIM: a concept is covered iff its keyword set
+// INTERSECTS the text's word-SET (wl & kw). Returns the COUNT of distinct concepts covered.
+// Tokenizer = _g6_words (lowercase, [0-9A-Za-z]; h1129 words() adds 가-힣 which is irrelevant
+// for the all-Latin concept keywords — coverage is byte-identical for these sets).
 fn _g_coverage(text: string) -> int {
     let kwsets = _g_concept_keywords()
     let wl = _g6_words(text)
-    // build a membership set of the text's word tokens
+    // membership set of the text's word tokens (the h1129 `set(words(text))`)
     let wm = #{}
     let mut w = 0
     while w < len(wl) { wm[to_string(wl[w])] = 1; w = w + 1 }
@@ -108,32 +105,36 @@ fn _g_coverage(text: string) -> int {
     return covered
 }
 
-// g_eval_g1 — H_1129 VERBATIM: max_single = max coverage over the 5 single-concept seeds;
-// then for each composition_count k in {2,3,4,5} decode the first-k concepts joined by ". "
-// and require composed_distinct >= 2 AND > max_single AND coherent(kwr >= 0.50). PASS iff
-// SOME k clears all three. Decode via the SAME mouth-agnostic L3 entry. Returns
-// #{ pass, max_single, best_k, best_distinct, ks:[...] }.
+// g_eval_g1 — h1129 run_ladder VERBATIM: max_single = max coverage over the 5 single-concept
+// seeds (seed = "<concept>. ", 80-token gen); then for each composition_count k in {2,3,4,5}
+// decode the first-k concepts joined by ". " + trailing ". " (120-token gen) and require
+// composed_distinct >= 2 AND > max_single AND coherent(kwr >= 0.50). PASS iff SOME k clears all
+// three. coherence kwr = dict-based _g6_known_word_ratio (h1129 known_word_ratio uses the real
+// dict). Decode via the SAME mouth-agnostic L3 entry. The `gen` arg overrides h1129's 80/120
+// fixed budgets ONLY when caller passes a smaller bound (FREEZE (ii)); gen<=0 ⇒ ref 80/120.
 pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
     let cz = _g6_concepts()
     let n = len(cz)
-    // max_single = max coverage across the 5 single-concept seeds
+    // ref budgets: single=80, composed=120. honor a smaller caller cap when gen>0.
+    let g_single = if gen > 0 && gen < 80 { gen } else { 80 }
+    let g_comp   = if gen > 0 && gen < 120 { gen } else { 120 }
+    // max_single = max coverage across the 5 single-concept seeds (seed "<c>. ")
     let mut max_single = 0
     let mut s = 0
     while s < n {
-        let seed = to_string(cz[s]) + ": "
-        let r = gen_auto_ideate(ckpt, seed, gen, 40, 0.7, 7 + s)
+        let seed = to_string(cz[s]) + ". "
+        let r = gen_auto_ideate(ckpt, seed, g_single, 40, 0.7, 7 + s)
         let cov = _g_coverage(to_string(r["text"]))
         if cov > max_single { max_single = cov }
         s = s + 1
     }
-    // composed seeds for k = 2..n
+    // composed seeds for k = 2..n  (". ".join(concepts[:k]) + ". ")
     let ks = []
     let mut pass = false
     let mut best_k = 0
     let mut best_distinct = 0
     let mut k = 2
     while k <= n {
-        // first-k concepts joined by ". "
         let mut seed = ""
         let mut c = 0
         while c < k {
@@ -141,8 +142,8 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
             seed = seed + to_string(cz[c])
             c = c + 1
         }
-        seed = seed + ": "
-        let r = gen_auto_ideate(ckpt, seed, gen, 40, 0.7, 7)
+        seed = seed + ". "
+        let r = gen_auto_ideate(ckpt, seed, g_comp, 40, 0.7, 7)
         let o = to_string(r["text"])
         let cov = _g_coverage(o)
         let kwr = _g6_known_word_ratio(o, known)
@@ -160,12 +161,66 @@ pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
 // ════════════════════════════════════════════════════════════════════════
 //  G2 — NOVELTY  (H_1140 metric, native .hexa port — corpus-absent content n-grams)
 // ════════════════════════════════════════════════════════════════════════
-// _g_content_ngrams — extract CONSECUTIVE bi/tri-grams of real-dict (len>=3) words that are
-// NOT all stopwords (H_1140 content-ngram rule). Returns a list of space-joined n-gram
-// strings. REUSES _g6_words tokenizer + the dict membership `known` + stopword set.
+//  G2 — NOVELTY  (H_1140 metric — REFERENCE-MATCH to
+//  state/universe-probes/h1140_novelty_emergence.py)
+// ════════════════════════════════════════════════════════════════════════
+// _g_g2_stop — VERBATIM the h1140 _STOP set (the stopword-only-gram filter; DISTINCT from the
+// g6_ideation _g6_stopwords 28-word set — h1140 uses its own ~80-word _STOP).
+fn _g_g2_stop() -> Map {
+    let ws = "the a an of to and in is it that this for on with as are was be by at from or not "
+           + "but his her they we you i he she them me my your our their its do does did has have had will "
+           + "would can could should may might must shall when where what which who whom how why all any some "
+           + "no one two then than into out up down over under more most less about so very just only own same "
+           + "such each few other been here there now"
+    let m = #{}
+    let parts = ws.split(" ")
+    let mut i = 0
+    while i < len(parts) { let w = to_string(parts[i]).trim(); if byte_len(w) > 0 { m[w] = 1 } i = i + 1 }
+    return m
+}
+
+// _g_g2_common — VERBATIM the h1140 _COMMON coherence lexicon (h1128 anti-Goodhart set, p7).
+// h1140 known_word_ratio uses THIS small Latin set, NOT the real dictionary (DISTINCT from
+// h1129/G1 which uses the dict). Reference-match: G2 coherence = Latin tokens ∩ _COMMON.
+fn _g_g2_common() -> Map {
+    let ws = "the a an of to and in is it that this for on with as are was be by at from "
+           + "or not but his her they we you i he she them me my your our their its do does did has have "
+           + "had will would can could should may might must shall when where what which who whom how why "
+           + "all any some no one two three new now then than into out up down over under more most less "
+           + "about between among through during before after above below again further once here there "
+           + "when while because so very just only own same such each few other own being been because "
+           + "mind aware cells consciousness tension ripple distant between memory meaning compose new "
+           + "silence information quiet carries dream engine alone sleep thought feel idea world life "
+           + "time word words speak think know like make made come came see seen look way thing things "
+           + "people person human self body brain neuron signal pattern arise emerge form structure "
+           + "combine combined together connect connection meaning sense reason cause effect result"
+    let m = #{}
+    let parts = ws.split(" ")
+    let mut i = 0
+    while i < len(parts) { let w = to_string(parts[i]).trim(); if byte_len(w) > 0 { m[w] = 1 } i = i + 1 }
+    return m
+}
+
+// _g_g2_kwr — h1140 known_word_ratio VERBATIM: fraction of Latin [A-Za-z]+ tokens in _COMMON.
+// (_g6_words yields the SAME Latin tokens for ASCII text; digits never enter _COMMON so a digit
+// token would only lower the ratio — for the all-Latin ideation outputs this is byte-identical.)
+fn _g_g2_kwr(text: string, common: Map) -> float {
+    let wl = _g6_words(text)
+    let n = len(wl)
+    if n == 0 { return 0.0 }
+    let mut hit = 0
+    let mut i = 0
+    while i < n { if common.contains_key(to_string(wl[i])) { hit = hit + 1 } i = i + 1 }
+    return to_float(hit) / to_float(n)
+}
+
+// _g_content_ngrams — h1140 content_ngrams VERBATIM: CONSECUTIVE bi/tri-grams over the raw
+// token stream; KEEP a gram iff EVERY word is in `dict_words` (real dict) AND len>=3, AND the
+// gram is NOT _STOP-only (h1140 _STOP, NOT _g6_stopwords). `known` here = the dict membership
+// set (g_eval_g2 passes _g6_dict_load()); stop = the h1140 _STOP set.
 fn _g_content_ngrams(text: string, known: Map) -> list {
     let wl = _g6_words(text)
-    let stop = _g6_stopwords()
+    let stop = _g_g2_stop()
     let n = len(wl)
     // pre-filter: keep only positions whose word is real-dict + len>=3 (kept marks the gram-eligibility)
     let out = []
@@ -239,43 +294,70 @@ fn _g_load_corpus_tokens(corpus_paths: list) -> list {
 // n-grams, count DISTINCT ones absent from the corpus; RETRIEVAL CONTROL = feed a verbatim
 // corpus line back and require 0 novel (else metric artifact). PASS iff n_novel >= 3 AND
 // control == 0 AND coherent_count > 0. Returns #{ pass, n_novel, control_novel, coherent }.
+// h1140 IDEA_PROMPTS VERBATIM (8 fusion prompts) — distant-concept fusion, not retrieval.
+fn _g_g2_prompts() -> list {
+    return [ "Silence and the engine together mean ",
+             "When memory meets distant minds, ",
+             "Consciousness and silence combine into ",
+             "The tension between cells and the engine becomes ",
+             "If a dream and a distant mind merge, the result is ",
+             "Memory and tension together create ",
+             "When the engine remembers silence, it ",
+             "Distant minds and consciousness form " ]
+}
+
 pub fn g_eval_g2(ckpt: string, gen: int, known: Map, corpus_paths: list) -> Map {
     let corpus_tokens = _g_load_corpus_tokens(corpus_paths)
     let have_corpus = len(corpus_tokens) > 0
-    // decode the 6 composed ideation frames (REUSE g6_build_frames composed set)
-    let frames = g6_build_frames(6)["composed"]
-    let novel = #{}             // distinct corpus-absent n-gram set
+    let common = _g_g2_common()                       // h1140 _COMMON coherence lexicon
+    // h1140: each of 8 IDEA_PROMPTS × SEEDS {7,8,9}, temp 0.85 top_k 40. `known` = dict (for
+    // content_ngrams membership); coherence kwr = _g_g2_kwr over _COMMON (NOT dict). gen<=0 ⇒
+    // h1140 default max_new (caller passes a smaller cap to bound the 303M forward, FREEZE (ii)).
+    let prompts = _g_g2_prompts()
+    let seeds = [7, 8, 9]
+    let g = if gen > 0 { gen } else { 110 }
+    let novel = #{}             // distinct corpus-absent n-gram set (coherent outputs only)
     let mut coherent = 0
-    let mut fi = 0
-    while fi < len(frames) {
-        let r = gen_auto_ideate(ckpt, to_string(frames[fi]), gen, 40, 0.85, 7 + fi)
-        let o = to_string(r["text"])
-        if _g6_known_word_ratio(o, known) >= 0.5 {
-            coherent = coherent + 1
-            let grams = _g_content_ngrams(o, known)
-            let mut gi = 0
-            while gi < len(grams) {
-                let g = to_string(grams[gi])
-                let gw = _g6_words(g)
-                if have_corpus && _g_corpus_absent(gw, corpus_tokens) { novel[g] = 1 }
-                gi = gi + 1
+    let mut pi = 0
+    while pi < len(prompts) {
+        let mut si = 0
+        while si < len(seeds) {
+            let r = gen_auto_ideate(ckpt, to_string(prompts[pi]), g, 40, 0.85, seeds[si])
+            let o = to_string(r["text"])
+            if _g_g2_kwr(o, common) >= 0.5 {
+                coherent = coherent + 1
+                let grams = _g_content_ngrams(o, known)
+                let mut gi = 0
+                while gi < len(grams) {
+                    let gm = to_string(grams[gi])
+                    let gw = _g6_words(gm)
+                    if have_corpus && _g_corpus_absent(gw, corpus_tokens) { novel[gm] = 1 }
+                    gi = gi + 1
+                }
             }
+            si = si + 1
         }
-        fi = fi + 1
+        pi = pi + 1
     }
     let n_novel = len(_g6_mapkeys(novel))
-    // RETRIEVAL CONTROL: a verbatim corpus prefix fed back must yield 0 novel n-grams.
+    // RETRIEVAL CONTROL (h1140): feed a VERBATIM substantive corpus line (>=6 Latin words >=3
+    // chars) back → its content n-grams must read 0-novel (else the metric is an artifact).
     let mut control_novel = 0
+    let mut control_n_content = 0
     if have_corpus {
-        // reconstruct a short verbatim corpus line (first 12 tokens) as the control text
+        // reconstruct the first substantive run (>=6 dict-eligible tokens) as the control text
         let mut ct = ""
         let mut t = 0
-        while t < 12 && t < len(corpus_tokens) {
+        let mut sub = 0
+        while t < len(corpus_tokens) && sub < 12 {
+            let w = to_string(corpus_tokens[t])
             if t > 0 { ct = ct + " " }
-            ct = ct + to_string(corpus_tokens[t])
+            ct = ct + w
+            if byte_len(w) >= 3 { sub = sub + 1 }
             t = t + 1
         }
         let cgr = _g_content_ngrams(ct, known)
+        control_n_content = len(cgr)
         let mut ci = 0
         while ci < len(cgr) {
             let gw = _g6_words(to_string(cgr[ci]))
@@ -283,9 +365,10 @@ pub fn g_eval_g2(ckpt: string, gen: int, known: Map, corpus_paths: list) -> Map 
             ci = ci + 1
         }
     }
+    // h1140 emergence: n_novel >= 3 AND novelty_rate > 0 AND coherent_count > 0 AND control == 0.
     let pass = have_corpus && n_novel >= 3 && control_novel == 0 && coherent > 0
     return #{ "pass": pass, "n_novel": n_novel, "control_novel": control_novel,
-              "coherent": coherent, "have_corpus": have_corpus }
+              "coherent": coherent, "have_corpus": have_corpus, "control_n_content": control_n_content }
 }
 
 // ════════════════════════════════════════════════════════════════════════

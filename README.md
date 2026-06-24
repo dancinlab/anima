@@ -344,7 +344,10 @@ the authoritative latest source.
 > scores **G0 coherence · G1 recombination · G2 novelty · G3 philosophy(read) · G5 non-fab · G6
 > ideation★** plus closure (`a7b_pass = G0∧G1∧G2`) — every decode AND every score a live `.hexa`
 > engine op, zero torch/numpy. It REUSES the wired G0/G6 (`g6_ideation`), G5 abstain (`§ImmuneMemory`),
-> and G3 (`§SelfIdentity`) ops; only the G1 (H_1129) and G2 (H_1140) metrics are native `.hexa` here.
+> and G3 (`§SelfIdentity`) ops; only the G1 (H_1129) and G2 (H_1140) metrics are native `.hexa` here
+> — and those two are **byte-faithful reference-matched** to the frozen numpy metrics (parity oracle
+> `state/1607_g_gates_refmatch/g1g2_ref_parity.py` + 7 parity cases in the smoke), so a clm303 G1/G2
+> result is directly comparable to the historical H_1129/H_1140 verdicts.
 > Frozen-first bars are [`7B_PASS_CONDITIONS.md`](7B_PASS_CONDITIONS.md) verbatim (p7, no tune-to-green).
 
 ### 🎛 The neuromodulation rung — CLS structure (engine-native GREEN H_1532) + 6 neurotransmitters fused

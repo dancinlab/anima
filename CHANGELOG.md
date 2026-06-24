@@ -1,3 +1,23 @@
+## fix(core/g_gates.hexa): G1/G2 metric을 numpy reference(H_1129/H_1140)와 byte-faithful 정렬 + parity smoke
+
+🔬 reference-match (commons) — #2604 의 G1/G2 native .hexa metric 이 기존 frozen numpy reference 와 **여러 성분에서 발산**함을 정독으로 발견, 성분별 1:1 정렬(은폐 0, 발산이 결과). clm303 G1/G2 결과가 과거 H_1129/H_1140 verdict 와 비교 가능해지도록.
+
+**G1 (h1129) 정렬:**
+- `_g_coverage` 키워드 = h1129 `CONCEPTS` **hand-curated 키워드 셋 VERBATIM**(예 "consciousness arises from cells"→{consciousness,cells,**mind,aware**}) — 이전엔 concept 텍스트에서 파생(mind/aware/ripple/quiet/sleep 누락, arises/from 포함 = 발산). wl&kw 교집합 카운트.
+- seed 포맷 `"<c>. "`(single)·`". ".join(concepts[:k])+". "`(composed), gen budget single 80/composed 120 — 이전 `": "`·uniform 발산 수정.
+
+**G2 (h1140) 정렬:**
+- 디코드 = h1140 **8 IDEA_PROMPTS × seeds[7,8,9] temp0.85 VERBATIM**(`_g_g2_prompts`) — 이전 `g6_build_frames` 발산.
+- coherence kwr = h1140 **`_COMMON` 소형 Latin lexicon**(`_g_g2_kwr`) — 이전 dict-기반 `_g6_known_word_ratio` 발산(h1140 은 dict 안 씀).
+- `_g_content_ngrams` stopword = h1140 **`_STOP` ~80 단어 셋**(`_g_g2_stop`) — 이전 `_g6_stopwords` 28 단어 발산.
+- ✅ `_g_corpus_absent`(token-stream consecutive 매치)는 h1140 `[^A-Za-z]+`-between boundary regex 와 **동치** 확인(이미 faithful).
+
+**parity 강제:** `state/1607_g_gates_refmatch/g1g2_ref_parity.py`(torch 0 오라클) → 고정 fixture 기대 카운트(G1 coverage [2,2,0,4]·G2 content_ngrams [5,0]·G2 corpus_absent 2). **smoke `core/g_gates_smoke.hexa` 에 7 parity case 추가 → .hexa op == 오라클, 14/14 PASS RC=0.** transcend-axis(정직 잔차, c9): tokenizer scope `_g6_words` [0-9A-Za-z](Hangul drop) vs h1129 [가-힣 포함]/h1140 [A-Za-z] — all-Latin ideation 출력엔 byte-identical, 비-Latin 에서만 발산(scope 명시).
+
+빌드 OK(전체 모듈 그래프). ARCHITECTURE.json eval-system 노드에 reference-match 자식 노드 + CLAUDE.md a_engine_native_learning reference-match 명시 lockstep. enforcer --all clean(1468 hyp).
+
+---
+
 ## docs(ARCHITECTURE): G-게이트 평가 시스템 단일 노드 통합 (anima eval = G-게이트 채점 단일 출처)
 
 🗂️ ARCHITECTURE.json 정리/통합 — 단순 노드 추가가 아니라 평가 SSOT 응집(c4 트리 규율: 한 셀에 여러 사실 욱여넣기 금지, 자식 노드 분해).
