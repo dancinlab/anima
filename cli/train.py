@@ -358,6 +358,15 @@ def main():
                          "(e.g. 4 for the full {ko·en}x{normal·SNS} register). "
                          "Catches the silent register-incompleteness that caused "
                          "the ko-SNS-only overfit. 0 = off.")
+    ap.add_argument("--sample", choices=["roundrobin", "proportional"],
+                    default="roundrobin",
+                    help="cell sampling: 'roundrobin' = equal step-share per cell "
+                         "(SMALL cells get repeated MANY more times = memorization "
+                         "when sizes differ) · 'proportional' = each cell sampled "
+                         "with prob proportional to its train_bytes, so every BYTE "
+                         "gets ~equal exposure and per-cell repetition is uniform "
+                         "(use this when cells differ in size, e.g. 60MB general vs "
+                         "1.3MB SNS).")
     ap.add_argument("--canon", action="store_true",
                     help="clm303 canonical shape (L4·d3784·E2->Emax4, 303M)")
     ap.add_argument("--d", type=int, default=0, help="model width (override mode default)")
@@ -470,20 +479,26 @@ def main():
         total_train_bytes = sum(c.train_end for c in usable)
         tokens_to_see = steps * a.batch_size * seq_len
         rep = (tokens_to_see / total_train_bytes) if total_train_bytes else float("inf")
-        # round-robin gives each cell an EQUAL step-share, so each cell sees
-        # ~tokens_to_see/len(cells) tokens — per-cell repetition = that / its bytes.
+        # expected tokens/cell depends on the sampling mode:
+        #  roundrobin   -> equal step-share: tokens_to_see / n  (SMALL cell repeats more)
+        #  proportional -> tokens ∝ train_bytes: every byte ~equal exposure (uniform rep)
         n = len(cells)
-        per_cell_tokens = tokens_to_see / n if n else 0
         print(f"  ── 4-cell register balance table "
-              f"(tokens_to_see={tokens_to_see}, equal step-share /{n}) ──")
+              f"(tokens_to_see={tokens_to_see}, sample={a.sample}) ──")
         print(f"     {'register':<12s} {'train_bytes':>12s} {'tokens/cell':>12s} "
               f"{'rep_ratio':>10s}")
         worst_rep = 0.0
         for c, lab in zip(cells, labels):
-            cell_rep = (per_cell_tokens / c.train_end) if c.train_end else float("inf")
+            if c.train_end < seq_len + 2:
+                cell_tok = 0.0
+            elif a.sample == "proportional":
+                cell_tok = tokens_to_see * (c.train_end / total_train_bytes) if total_train_bytes else 0.0
+            else:
+                cell_tok = tokens_to_see / n if n else 0.0
+            cell_rep = (cell_tok / c.train_end) if c.train_end else float("inf")
             worst_rep = max(worst_rep, cell_rep if c.train_end else 0.0)
             flag = "  <-- MEMORIZATION RISK" if cell_rep > 5.0 else ""
-            print(f"     {lab:<12s} {c.train_end:>12d} {per_cell_tokens:>12.0f} "
+            print(f"     {lab:<12s} {c.train_end:>12d} {cell_tok:>12.0f} "
                   f"{cell_rep:>9.2f}x{flag}")
         print(f"  corpus guard: cells={n} usable={len(usable)}  "
               f"total_train_bytes={total_train_bytes}  "
@@ -511,11 +526,22 @@ def main():
                   f"Check that every --corpus path actually staged.")
             sys.exit(2)
 
+    # proportional sampling weights: P(cell) ∝ its usable train bytes, so every
+    # byte gets ~equal exposure and per-cell repetition is uniform (a SMALL cell
+    # is sampled LESS, not repeated 90x like equal round-robin would do).
+    _samp_cells = [c for c in cells if c.train_end >= seq_len + 2]
+    _samp_w = torch.tensor([float(c.train_end) for c in _samp_cells]) \
+        if _samp_cells else torch.tensor([1.0])
+
     def get_batch(step: int):
         if cells:
             xs, ys = [], []
             for b in range(a.batch_size):
-                cell = cells[(step - 1 + b) % len(cells)]
+                if a.sample == "proportional" and _samp_cells:
+                    ci = int(torch.multinomial(_samp_w, 1, generator=gen).item())
+                    cell = _samp_cells[ci]
+                else:
+                    cell = cells[(step - 1 + b) % len(cells)]
                 w = cell.window(seq_len, gen)
                 if w is None:
                     base = torch.arange(seq_len)

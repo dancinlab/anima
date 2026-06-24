@@ -23,6 +23,16 @@ H_1579 clm303 오진(overfit 을 직렬화 결함으로, dt_ln-corrupt engine CE
 - **2번째 진짜 버그(hexa-lang dt_ln):** `flame_math.hexa::dt_ln` atanh 급수가 x≈1 만 수렴 — dt_ln(256)=4.799(참 5.545)·dt_ln(1e-6)=−5.14(참 −13.82) → `nn_lib.hexa::nn_ce_loss_allpos`(−dt_ln(p_t), p_t≥1e-6)가 per-position CE 를 **~5.14 clamp** → engine `clm_forward_ce` 가 overfit clm303 을 model 3.30<shuffle 4.93<(버그)uniform 4.799 = **GREEN 오판**. numpy mirror(math.log)가 정답 → 게이트는 engine CE 아닌 math.log mirror 로 채점. hexa-lang ing 이관(모든 엔진 CE/Φ readout 영향).
 - **fix = held-out mirror-DESCENT 게이트(이 PR):** `train/clm/model/verify_clm_v2.py` 에 `descent_gate`/`serialize_self_verify`(math.log mirror, dt_ln-immune; held-out 필수 + train-vs-heldout gap → overfit 경고) + `descent` CLI + random-weight self-test. 3 trainer(`train_lane_p.py`·`_split.py`·`_3b.py`) + `cli/train.hexa` 가 직렬화 직후 self-verify(`--heldout`/`--heldout-corpus`, fallback=학습코퍼스 deep tail slice) → broken/overfit `.clm` 'done'·HF업로드 차단. 검증: control PASS(F-CLM-DESCENT=1) / clm303 FAIL+overfit_warning(gap 6.42) / random-weight self-test FAIL / 기존 4 구조 round-trip 회귀 0 / train.hexa MODE_VERIFY 3/3 PASS.
 - **재학습 follow-on(cost-gate):** savant clm303 은 재직렬화로 overfit 못 고침 → 정규화/큰 코퍼스로 재학습(별도 ING, 자동 rent 금지). artifacts: `UNIVERSE/cards/H_1579_*.md`(정정) · `state/clm303_g6/CORRECTION_overfit_not_serialize.md` · `HYPOTHESES.jsonl` H_1579.
+## feat(state/clm303_clean_corpus): clean 4칸 데이터셋 빌드 + size-proportional 샘플링 (HF 업로드 직전)
+
+🧼 언어-검증된 clean 4칸 corpus 빌드 완료(HF 업로드만 (B) 결정 대기). 직전 사고의 2중 결함(en칸 5lang 20% 오염 + size 불균형 암기)을 둘 다 차단.
+
+- **size-proportional 샘플링 (`cli/train.py --sample proportional`)**: round-robin 균등 step-share 는 작은 칸(en-SNS 1.3MB)을 ~90× 반복 = 암기 재발. proportional 은 P(cell)∝train_bytes 라 매 byte 균등 노출 → **칸별 repetition 균일**. 실측 4칸 rep 표(30000step×16×1024=491.5M tok, 125MB corpus): ko-general/en-general/ko-sns/en-sns **전부 3.93× 동일**(round-robin이면 en-SNS 378× 였을 것). balance 표가 sample 모드 반영.
+- **clean 4칸 빌드(`build_corpus.py`, 재현스크립트 SSOT)**: ① ko-general FineWeb2-ko HF raw .txt range-read 60MB(100% ko 검증) · ② en-general FineWeb-en HF stream 60MB(99.7% en 검증) · ③ ko-sns persona+5lang-split+MIT/apache aug(NLPBada/JaeJiMin/jojo0217) 6.18MB(100% ko) · ④ en-sns 5lang-split 1.33MB(97.4% en). 칸별 line 분류(clean_split.classify, de/es/fr/ja/zh drop + dedup)로 **각 칸 목표언어만**. sha256 MANIFEST.sha256.
+- **rep≤2x 옵션**: 125MB corpus 에서 15000step→1.97×(≤2x 충족) / 30000step→3.93×. SNS 칸이 상한(en-SNS 1.33MB clean 이 전부, dancinlab org 보강원 0).
+- ⚠️ en-SNS HF 업로드는 라이선스 정직(REDDIT_comments 명시無→PRIVATE 또는 작게-baseline) 결정 대기 — en-general(FineWeb ODC-By)·ko 3칸은 PUBLIC 가능.
+- artifacts: `state/clm303_clean_corpus/{build_corpus,clean_split,langaudit}.py` + `MANIFEST.sha256`(cells 자체는 .gitignore, scratchpad). engine-native verdict 무관(DIRECTIONAL, torch CE).
+
 ## fix(cli/train.py): 4칸 레지스터 강제 — 칸별 balance 표 + 칸별 held-out val-CE + require-cells 게이트
 
 🎯 a_chat_registers SSOT 강제 — 직전 사고의 핵심(4칸 의도였으나 ko-SNS 4MB 1칸만 staging)을 코드로 차단. {ko·en}×{일반·SNS} 4칸이 **전부 present + balanced** 여야 학습 진행.
