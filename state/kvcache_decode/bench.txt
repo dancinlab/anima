@@ -1,0 +1,8 @@
+[bench] gen=40 (d=64,L=2 fixture)
+[bench] REF full-forward (O(gen^2)) t0=1782275694.728510000
+ t1=1782275695.006177000
+
+[bench] KV-cache       (O(gen))   t1=1782275695.006177000
+ t2=1782275695.037149000
+
+[bench] (subtract t1-t0 vs t2-t1; KV should be lower and the gap WIDENS with gen)

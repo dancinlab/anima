@@ -1,3 +1,21 @@
+## perf(core/bytegpt_decode.hexa): KV-cache incremental decode — root-cause fix for the O(gen²) decode wall (byte-exact)
+
+🔧⚡ anima ByteGPT 디코드의 throughput 벽을 **근본수정(c1)** — KV-cache(incremental decode) 추가. H_1564 6-arm G6 decode 가 ~16분/frag 로 기던 진짜 원인은 엔진에 KV-cache 가 없어 `_bg_gen_from_W` 가 매 생성 토큰마다 `bg_forward_last_W(W, ids, T)` 로 **T 토큰 전체를 24층 re-forward** → 전체 gen 비용 O(gen²). 하드웨어 우회 아님 — 엔진을 고쳤다.
+
+**무엇을 바꿨나 (core/bytegpt_decode.hexa):**
+- `_bg_kv_new`/`_bg_kv_step`/`_bg_kv_free` 추가 — 층별 K,V 캐시(farr[block×d]) 위에서 **새 토큰 1개의 row 만** 24층 forward(O(d²·nlay)/step → gen 에 선형). attention 은 캐시된 prior K,V[0..p] 를 읽고, 새 위치의 K,V 만 append. 단일-row projection 은 `mm()` gemv(M=1) = batched matmul 의 해당 row(독립 dot-product, 누적순서 동일).
+- `_bg_gen_from_W` — 윈도우 비-슬라이드(nseed+gen ≤ block, start=0 고정) 일 때만 KV-cache 경로 게이트. 슬라이드 시 verbatim full-forward `bg_forward_last_W` 로 fallback(reference 경로 보존). 새 진입점·2nd 경로 없음(a_core_engine_map).
+- **production 전 경로 배선(wire-to-prod)** — sampling `_bg_gen_from_W`(H_1564 batch=`bytegpt_decode_batch_to_file`) 뿐 아니라 greedy `bytegpt_decode_argmax`(R1/R2 probe) + `bytegpt_decode_argmax_ranged`(**live 303M chat mouth**, OOM-safe) 둘 다 동일 guard로 배선(세 entry 모두 같은 `_bg_kv_step` 재사용, 중복 0). 디코드 표면 전체가 캐시 경로(dead code 0).
+
+**byte-exact 게이트 (core/bytegpt_kvcache_smoke.hexa, live core/ 엔진-네이티브):**
+- seed-position logits **max|Δ| = 0.0** (단순 argmax-stable 아닌 bit-identical — REF·KV 가 같은 mm 커널, M=1 vs M=T 차이만).
+- 32-token 생성 id-stream **전부 일치** — sampling(동일 sampler+RNG state) **AND** greedy(argmax) 둘 다 REF full-forward 와 IDENTICAL. → **PASS**.
+- 속도(d=64·L=2 fixture, gen=40·seed=20): REF 277.7ms vs KV 30.9ms ≈ **9× 빠름**, 격차는 gen 과 함께 quadratic 으로 벌어짐. 303M(d1024·L24)에선 per-position d×d GEMM 을 (gen−p)회 대신 1회만 → ~16분/frag 가 gen 에 선형으로 붕괴.
+- a_engine_native_learning ✓ (`import core/bytegpt_decode.hexa` 호출, torch/numpy 미러 아님) · tune-to-green 없음(bar=byte-identity, frozen-first).
+- ARCHITECTURE.json bytegpt_decode 노드 lockstep 갱신(_bg_kv_* 메커니즘 명명).
+
+---
+
 ## feat(cli/train.py): torch Lane-P REFERENCE+BRIDGE 트레이너 신설 — GPU-bound 303M 학습 → .clm v0.3 → CORE engine-native verdict
 
 🔌🧬 cli/train.hexa 옆에 **cli/train.py** 추가 — anima 학습 레시피를 전부 반영한 **torch Lane-P REFERENCE + BRIDGE 트레이너**(a_clm_gen_pipeline 이 명시 허용). **production 아님**(production = cli/train.hexa, a_train_flame_forge). 사용자 선택 ②: hexa-native train.hexa 는 single-thread native-CPU-scalar-bound(#2598/#2600 🟠 GPU util peak ~65%·sustained <30%)라 실 303M GPU 학습이 GPU idle → torch Lane-P 는 GPU-bound(cuda GEMM-saturating)라 진짜 clm303(L4·d3784·E2→Emax4)을 지금 효율 학습 가능.

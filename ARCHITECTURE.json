@@ -328,7 +328,7 @@
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: · core/bytegpt_decode.hexa"
+              "text": "**summary**: · core/bytegpt_decode.hexa — 24-layer GPT-2-class ByteGPT decode (303M ko/en chat trunk). Forward = bg_forward_last_W (per-layer d² GEMM via mm()=farr_matmul/own-GEMM). KV-CACHE incremental decode (_bg_kv_new/_bg_kv_step/_bg_kv_free): per-layer K,V cache → forward only the new token's row each step (O(gen) vs O(gen²) full re-forward), byte-identical (CPU farr seed-pos logits max|Δ|=0.0; gate core/bytegpt_kvcache_smoke.hexa). Wired into all three decode entries (_bg_gen_from_W sampling · bytegpt_decode_argmax · bytegpt_decode_argmax_ranged live mouth) under the no-window-slide guard (nseed+gen ≤ block), full-forward fallback on slide."
             }
           ]
         },
@@ -3422,7 +3422,7 @@
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: GPT-2-class ByteGPT decoder (learned-pos + LayerNorm + bias + exact-erf GELU + tied head). PRODUCTION TRUNK = ByteGPT (H_1155 pivot: only arch passing G1 emergence; ConvMoE demoted G1-unfixable). · **path**: core/bytegpt_decode.hexa · **note**: Two forward paths: bytegpt_forward_last/bg_load (LOAD-ONCE, whole-file read for 303M-class boxed budgets) vs bytegpt_forward_last_ranged (NEW, H_1167, per-slice read_bytes_at on-demand for 1B+)."
+              "text": "**summary**: GPT-2-class ByteGPT decoder (learned-pos + LayerNorm + bias + exact-erf GELU + tied head). PRODUCTION TRUNK = ByteGPT (H_1155 pivot: only arch passing G1 emergence; ConvMoE demoted G1-unfixable). · **path**: core/bytegpt_decode.hexa · **note**: Two forward paths: bytegpt_forward_last/bg_load (LOAD-ONCE, whole-file read for 303M-class boxed budgets) vs bytegpt_forward_last_ranged (NEW, H_1167, per-slice read_bytes_at on-demand for 1B+). KV-CACHE incremental decode (_bg_kv_new/_bg_kv_step/_bg_kv_free): the gen loop in _bg_gen_from_W forwards ONLY the new token's single row through all layers each step (O(d²·nlay)/step → linear in gen), caching per-layer K,V so attention reads prior positions from the cache instead of re-projecting them — root-cause fix for the O(gen²) full-forward decode wall. Gated on the non-slide window (nseed+gen ≤ block, start stays 0); slide falls back to the verbatim full-forward bg_forward_last_W reference. BYTE-IDENTICAL (single-row gemv == batched-mm row, same accumulation order): bytegpt_kvcache_smoke = seed-pos logits max|Δ|=0.0, 32-token id-stream exact-match."
             },
             {
               "type": "subsection",
