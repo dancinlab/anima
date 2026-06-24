@@ -1,3 +1,13 @@
+## research(H_1579): clm303.clm 직렬화 BROKEN (NO-DESCENT) — decode 경로는 무결 (engine-native 3-way + control diagnostic)
+
+🔴💾 clm303(CLMConvMoE 388M, savant+mitosis, sha 75b04897)을 frozen G0–G6 (`anima eval`)에 통과시키기 전 **decode-integrity 전제**를 3-way 로 측정 → 직렬화 결함 격리. anima eval 은 실행 안 함(깨진 ckpt 위 G-점수는 garbage, c9 정직).
+
+- **3-way (frozen prompt `"a new idea about consciousness: "`, gen=40, top_k=40, temp=0.7):** ① GPU forge (live `core/clm_decode.hexa`, RTX 4090, `cuda_available=1`, `[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path`) = `ggndtle_oppa:…` garble · ② CPU farr (mac, `cuda_available=0`) = GPU 와 **48B BYTE-IDENTICAL** garble · ③ 독립 numpy mirror golden (`clm_decode_mirror.py`, .clm 바이트 직접 read, int4 dequant+dilated-conv+GN VERBATIM, v0.3 (L,E) 정확) = **NO-DESCENT** (ko heldout CE 7.622 > uniform 5.545).
+- **CONTROL (mirror 정상 입증):** 같은 mirror 가 known-good `clm_d768_e2l1.clm` 엔 CE 4.442 < uniform = GREEN/DESCENT → clm303 의 NO-DESCENT 는 진짜 직렬화 결함, mirror artifact 아님.
+- **진단:** GPU≡CPU byte-id = 디코드 경로 무결·결정적(forge own-GEMM ≡ farr, `summer-sm120` farr-결함 가설 기각). 결함 = 직렬화(`clm_serialize_v2`/`pt_to_engine_bin` int4→v0.3). `ko heldout CE 3.351 ✅` 는 torch-side(직렬화 전) = 학습 OK, 직렬화된 .clm 별개 손상. `clm303_L4_d3784` German-garble anomaly 와 동근.
+- **follow-on:** 직렬화 파이프 근본수정 = serfix 에이전트(clm303_L4_d3784.pt test case, mirror 회귀게이트) · savant clm303 torch .pt 소실(vast 42222605 destroyed) → 직렬화 fix 후 재학습 ING(cost-gate). 이 세션 G6-only side-harness + torch-free py scorer = `anima eval` 단일진입점으로 superseded(박제 경로 아님).
+- artifacts: `UNIVERSE/cards/H_1579_clm303_serialization_defect.md` · `state/clm303_g6/GARBLE_3WAY_RESULT.md` + mirror/garble logs · `HYPOTHESES.jsonl` H_1579. pod 42322098 teardown 완료(GONE, 증거 PULL 후 — `a_fire_recover_complete`).
+
 ## fix(core/g_gates.hexa): G1/G2 metric을 numpy reference(H_1129/H_1140)와 byte-faithful 정렬 + parity smoke
 
 🔬 reference-match (commons) — #2604 의 G1/G2 native .hexa metric 이 기존 frozen numpy reference 와 **여러 성분에서 발산**함을 정독으로 발견, 성분별 1:1 정렬(은폐 0, 발산이 결과). clm303 G1/G2 결과가 과거 H_1129/H_1140 verdict 와 비교 가능해지도록.
