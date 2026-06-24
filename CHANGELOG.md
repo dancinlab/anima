@@ -1,3 +1,5 @@
+## docs(state): 검증-지식 전수수집 census 2026-06-25 — UNIVERSE/HYPOTHESES.jsonl n=1469 (verified 491 · falsified+closed-neg+wall 160 · pending/archive/other 818) + G6–G16 numerical PROOF·H_9010–H_9019 real-QM·engine-native WIRED-live 63, frozen 증거 state/verdicts/ 978dir — `state/knowledge-census-2026-06-25.md` (additive · 코드 무수정)
+
 ## feat(cli/train.hexa): train.py 와 학습 기준 FULL PARITY (7 갭 포팅) + cli/CLAUDE.md parity 거버넌스
 
 사용자 지시("전부 완벽히 구현" · "2개는 구현기준 동일해야된다" · "cli/ 폴더에 CLAUDE.md 생성 관리"). train.hexa 직접 감사(train.py 1:1 대조) → 핵심 학습 체인·두 레버(savant/mitosis)는 이미 parity, 7개 실 갭만 포팅(#7 multi-split 은 phantom 정정 — 둘 다 단일 split E0→E0+1 at n_steps/2, 재학습 불요):
