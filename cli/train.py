@@ -62,6 +62,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 import os
 import sys
 import time
@@ -245,9 +246,16 @@ def install_router_mask(model: CLMConvMoE, mito: MitosisMoE):
 #  slurped whole into RAM.
 # ════════════════════════════════════════════════════════════════════════════
 class ByteCell:
-    """One register cell — a memory-mapped byte file sampled by random windows."""
+    """One register cell — a memory-mapped byte file sampled by random windows.
 
-    def __init__(self, path: str):
+    The TAIL `val_frac` of the file is reserved as a held-out validation region
+    DISJOINT from the train region (overfit detector, a_savant_train held-out
+    monitor). Train windows are sampled only from [0, train_end); val windows
+    only from [train_end, size). A window can NEVER straddle the boundary
+    (start ranges are clamped to keep start+seq_len+1 within the region), so the
+    val region's bytes are never seen by a training gradient step."""
+
+    def __init__(self, path: str, val_frac: float = 0.0):
         import mmap
         self.path = path
         self.size = os.path.getsize(path)
@@ -256,17 +264,30 @@ class ByteCell:
             self._mm = mmap.mmap(self._f.fileno(), 0, access=mmap.ACCESS_READ)
         else:
             self._mm = b""
+        # boundary: bytes [0, train_end) = train, [train_end, size) = held-out val.
+        vf = max(0.0, min(0.5, val_frac))
+        self.train_end = int(self.size * (1.0 - vf)) if self.size > 0 else 0
 
-    def window(self, seq_len: int, gen: torch.Generator):
-        """Return (x, y) long tensors of length seq_len (next-byte shifted), or
-        None if the cell is too small for even one window."""
-        if self.size < seq_len + 2:
+    def _window_in(self, lo: int, hi_excl: int, seq_len: int,
+                   gen: torch.Generator):
+        """Sample one (x,y) window whose [start, start+seq_len+1) lies entirely
+        inside the byte range [lo, hi_excl). Returns None if the range is too
+        small for even one window."""
+        if hi_excl - lo < seq_len + 2:
             return None
-        hi = self.size - seq_len - 1
-        start = int(torch.randint(0, hi, (1,), generator=gen).item())
+        hi = hi_excl - seq_len - 1            # last valid start (exclusive upper bound)
+        start = int(torch.randint(lo, hi, (1,), generator=gen).item())
         chunk = self._mm[start:start + seq_len + 1]
         buf = torch.frombuffer(bytearray(chunk), dtype=torch.uint8).long()
         return buf[:seq_len], buf[1:seq_len + 1]
+
+    def window(self, seq_len: int, gen: torch.Generator):
+        """A TRAIN window — sampled only from [0, train_end) (never the val tail)."""
+        return self._window_in(0, self.train_end, seq_len, gen)
+
+    def val_window(self, seq_len: int, gen: torch.Generator):
+        """A held-out VAL window — sampled only from [train_end, size)."""
+        return self._window_in(self.train_end, self.size, seq_len, gen)
 
 
 def resolve_corpus_path(spec: str) -> str:
@@ -295,7 +316,11 @@ def resolve_corpus_path(spec: str) -> str:
             f"installed to fetch it as an HF dataset ({e}). Provide a local "
             f"byte file, or `pip install datasets`."
         )
+    # An HF id never looks like a bare local filename (no slash AND ends in a
+    # file extension that doesn't exist locally) — a plain missing path is almost
+    # always a staging mistake, so make the HF intent explicit in the log.
     repo = spec if "/" in spec else f"dancinlab/{spec}"
+    print(f"  resolve: '{spec}' is not a local path -> streaming HF dataset {repo}")
     ds = load_dataset(repo, split="train", streaming=True)
     maxrows = int(os.environ.get("ANIMA_CORPUS_MAXROWS", "0") or 0)
     text_col = None
@@ -339,6 +364,29 @@ def main():
     ap.add_argument("--bf16", action="store_true", help="bf16 autocast (cuda)")
     ap.add_argument("--ckpt-out", default=None, help="optional torch state_dict path")
     ap.add_argument("--log-every", type=int, default=10)
+    # ── anti-overfit regularization (explicit 1st-class knobs) ───────────────
+    ap.add_argument("--dropout", type=float, default=-1.0,
+                    help="FIXED trunk dropout p; overrides the savant-derived "
+                         "dropout when >=0 (default -1 = let savant drive it)")
+    ap.add_argument("--weight-decay", type=float, default=-1.0,
+                    help="FIXED AdamW weight-decay; overrides the savant-derived "
+                         "wd when >=0 (default -1 = let savant drive it)")
+    # ── held-out validation monitor (overfit detector) ───────────────────────
+    ap.add_argument("--val-frac", type=float, default=0.0,
+                    help="fraction of EACH corpus cell's TAIL held out for "
+                         "validation, disjoint from train (e.g. 0.02); 0 = off")
+    ap.add_argument("--val-every", type=int, default=0,
+                    help="log held-out val-CE every N steps (0 = off). Requires "
+                         "--val-frac>0; val-CE is the generalization gate, NOT "
+                         "train-CE (a_savant_train held-out monitor).")
+    ap.add_argument("--val-batches", type=int, default=4,
+                    help="number of val batches averaged per val-CE measurement")
+    # ── fail-loud corpus guard (anti-starvation, a_no_llm_frame_trap) ────────
+    ap.add_argument("--min-corpus-bytes", type=int, default=0,
+                    help="abort if the TOTAL effective train corpus is below this "
+                         "many bytes (catches the silent single-cell/missing-file "
+                         "starvation that caused the 120x-repetition overfit). "
+                         "0 = warn only.")
     a = ap.parse_args()
 
     savant_on = not a.no_savant
@@ -393,10 +441,39 @@ def main():
     cells = []
     for spec in a.corpus:
         p = resolve_corpus_path(spec)
-        cells.append(ByteCell(p))
-        print(f"  corpus cell[{len(cells)-1}] {p}  size={cells[-1].size} bytes")
+        cells.append(ByteCell(p, val_frac=a.val_frac))
+        c = cells[-1]
+        print(f"  corpus cell[{len(cells)-1}] {p}  size={c.size} bytes  "
+              f"(train={c.train_end} val_tail={c.size - c.train_end})")
     if not cells:
         print("  corpus: NONE -> synthetic byte batch ($0 wiring smoke)")
+
+    # ── fail-loud corpus guard + repetition-ratio report (anti-starvation) ────
+    # The previous overfit was driven by ONLY cell[0] (4MB) actually loading on
+    # the pod while the manifest claimed a 10.5GB ko cell — so ~500M tokens were
+    # drawn from 4MB (~120x repetition = memorization). Surface this at startup.
+    if cells:
+        usable = [c for c in cells if c.train_end >= seq_len + 2]
+        total_train_bytes = sum(c.train_end for c in usable)
+        tokens_to_see = steps * a.batch_size * seq_len
+        rep = (tokens_to_see / total_train_bytes) if total_train_bytes else float("inf")
+        print(f"  corpus guard: cells={len(cells)} usable={len(usable)}  "
+              f"total_train_bytes={total_train_bytes}  "
+              f"tokens_to_see={tokens_to_see}  repetition_ratio={rep:.2f}x")
+        if len(usable) < len(cells):
+            dead = [c.path for c in cells if c.train_end < seq_len + 2]
+            print(f"  corpus guard: WARNING {len(cells)-len(usable)} cell(s) too "
+                  f"small to yield a train window (seq_len={seq_len}): {dead}")
+        if rep > 5.0:
+            print(f"  corpus guard: WARNING repetition_ratio {rep:.1f}x > 5x — "
+                  f"HIGH MEMORIZATION RISK (each byte seen ~{rep:.0f} times). "
+                  f"Add more corpus or reduce steps.")
+        if a.min_corpus_bytes > 0 and total_train_bytes < a.min_corpus_bytes:
+            print(f"FAIL — total effective train corpus {total_train_bytes} bytes "
+                  f"< --min-corpus-bytes {a.min_corpus_bytes}. Refusing to train "
+                  f"(this is the silent starvation that caused the overfit). "
+                  f"Check that every --corpus path actually staged.")
+            sys.exit(2)
 
     def get_batch(step: int):
         if cells:
@@ -414,6 +491,41 @@ def main():
         y = ((14 + base * 37) % V).unsqueeze(0).repeat(a.batch_size, 1).to(device)
         return x, y
 
+    val_gen = torch.Generator().manual_seed(1234)   # disjoint RNG from train
+
+    @torch.no_grad()
+    def eval_val_ce() -> float | None:
+        """Mean next-byte CE over held-out VAL windows (disjoint tail of each
+        cell). Returns None if no cell has a usable val region. This is the
+        generalization gate — it descends with train-CE only if the model is
+        learning the language, not memorizing the train slice."""
+        val_cells = [c for c in cells if c.size - c.train_end >= seq_len + 2]
+        if not val_cells:
+            return None
+        was_training = model.training
+        model.eval()
+        tot, nb = 0.0, 0
+        for vb in range(a.val_batches):
+            xs, ys = [], []
+            for b in range(a.batch_size):
+                cell = val_cells[(vb * a.batch_size + b) % len(val_cells)]
+                w = cell.val_window(seq_len, val_gen)
+                if w is None:
+                    continue
+                xs.append(w[0]); ys.append(w[1])
+            if not xs:
+                continue
+            vx = torch.stack(xs).to(device); vy = torch.stack(ys).to(device)
+            if a.bf16 and device == "cuda":
+                with torch.autocast("cuda", dtype=torch.bfloat16):
+                    vo = model(vx, vy)
+            else:
+                vo = model(vx, vy)
+            tot += float(vo["ce_loss"].detach()); nb += 1
+        if was_training:
+            model.train()
+        return (tot / nb) if nb else None
+
     # ── train loop ───────────────────────────────────────────────────────────
     model.train()
     t0 = time.time()
@@ -426,6 +538,12 @@ def main():
             dp = inhibition_to_dropout(inh)
         else:
             wd, dp = 0.0, 0.0
+        # explicit overrides take precedence over the savant-derived values
+        # (anti-overfit knobs decoupled from the savant inhibition schedule).
+        if a.weight_decay >= 0.0:
+            wd = a.weight_decay
+        if a.dropout >= 0.0:
+            dp = a.dropout
         for grp in opt.param_groups:
             grp["weight_decay"] = wd
         for m in model.modules():
@@ -459,9 +577,26 @@ def main():
             ce_before_split = ce
         if step == split_step + 1:
             ce_after_split = ce
-        if step == 1 or step % a.log_every == 0 or step == steps:
-            print(f"  step {step:5d}  CE={ce:.5f}  E={mito.e_active}  wd={wd:.4f}")
+        do_val = (a.val_every > 0 and (step == 1 or step % a.val_every == 0
+                                       or step == steps))
+        val_ce = eval_val_ce() if do_val else None
+        if step == 1 or step % a.log_every == 0 or step == steps or do_val:
+            vtxt = ""
+            if val_ce is not None:
+                gap = val_ce - ce
+                vtxt = f"  val_CE={val_ce:.5f}  gap={gap:+.5f}"
+            print(f"  step {step:5d}  CE={ce:.5f}  E={mito.e_active}  "
+                  f"wd={wd:.4f}  dp={dp:.4f}{vtxt}")
     wall = time.time() - t0
+
+    # ── final held-out val-CE (the generalization verdict, NOT train-CE) ──────
+    final_val = eval_val_ce() if a.val_frac > 0.0 else None
+    if final_val is not None:
+        print(f"  FINAL val_CE={final_val:.5f}  (train_CE={lossF:.5f}  "
+              f"gap={final_val - lossF:+.5f})  uniform_ref={math.log(V):.5f}")
+        if final_val >= math.log(V):
+            print(f"  WARNING final val_CE {final_val:.4f} >= uniform "
+                  f"{math.log(V):.4f} — NOT generalizing (memorized train slice).")
 
     print(f"  loss0={loss0:.5f}  lossF={lossF:.5f}  wall={wall:.1f}s")
     print(f"  savant latched_at={latch['at']}  mitosis E0={e0}->E={mito.e_active}")

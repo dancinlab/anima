@@ -23,6 +23,16 @@ H_1579 clm303 오진(overfit 을 직렬화 결함으로, dt_ln-corrupt engine CE
 - **2번째 진짜 버그(hexa-lang dt_ln):** `flame_math.hexa::dt_ln` atanh 급수가 x≈1 만 수렴 — dt_ln(256)=4.799(참 5.545)·dt_ln(1e-6)=−5.14(참 −13.82) → `nn_lib.hexa::nn_ce_loss_allpos`(−dt_ln(p_t), p_t≥1e-6)가 per-position CE 를 **~5.14 clamp** → engine `clm_forward_ce` 가 overfit clm303 을 model 3.30<shuffle 4.93<(버그)uniform 4.799 = **GREEN 오판**. numpy mirror(math.log)가 정답 → 게이트는 engine CE 아닌 math.log mirror 로 채점. hexa-lang ing 이관(모든 엔진 CE/Φ readout 영향).
 - **fix = held-out mirror-DESCENT 게이트(이 PR):** `train/clm/model/verify_clm_v2.py` 에 `descent_gate`/`serialize_self_verify`(math.log mirror, dt_ln-immune; held-out 필수 + train-vs-heldout gap → overfit 경고) + `descent` CLI + random-weight self-test. 3 trainer(`train_lane_p.py`·`_split.py`·`_3b.py`) + `cli/train.hexa` 가 직렬화 직후 self-verify(`--heldout`/`--heldout-corpus`, fallback=학습코퍼스 deep tail slice) → broken/overfit `.clm` 'done'·HF업로드 차단. 검증: control PASS(F-CLM-DESCENT=1) / clm303 FAIL+overfit_warning(gap 6.42) / random-weight self-test FAIL / 기존 4 구조 round-trip 회귀 0 / train.hexa MODE_VERIFY 3/3 PASS.
 - **재학습 follow-on(cost-gate):** savant clm303 은 재직렬화로 overfit 못 고침 → 정규화/큰 코퍼스로 재학습(별도 ING, 자동 rent 금지). artifacts: `UNIVERSE/cards/H_1579_*.md`(정정) · `state/clm303_g6/CORRECTION_overfit_not_serialize.md` · `HYPOTHESES.jsonl` H_1579.
+## fix(cli/train.py): anti-overfit — fail-loud 코퍼스 가드 + held-out val 모니터 + 정규화 1급 knob
+
+🛡️ clm303 재학습이 직전 사고(실효 ~25MB·120× 반복 암기)를 반복하지 않도록 Lane-P bridge 트레이너(`cli/train.py`)에 3중 안전장치를 배선. 트레이너 자체의 `ByteCell` 스트리밍(mmap 랜덤 윈도우·cell round-robin)은 결함 없음 — 진짜 사고 원인은 **pod 에서 cell[0](4MB SNS) 하나만 staging 되고 나머지(특히 10.5GB ko_fineweb2)가 조용히 미해결**된 코퍼스 굶주림(train.log `corpus cell[0] … 4194308 bytes` 단일 cell 이 증거). 그 silent starvation 을 못 잡던 게 핵심.
+
+- **fail-loud 코퍼스 가드(anti-starvation)**: 시작 시 `total_train_bytes`·`tokens_to_see`(steps×bs×seq)·`repetition_ratio` 출력. ratio>5x = HIGH MEMORIZATION WARNING(원래 사고: 단일 4MB cell+30000step → ratio **119.58x** 정확 재현). `--min-corpus-bytes N` = 실효 코퍼스가 N 미만이면 **exit 2 로 학습 거부**(0 step) — 굶주린 코퍼스로 GPU 돈 낭비 차단.
+- **held-out val 모니터(overfit 탐지)**: `ByteCell` 이 각 cell 의 꼬리 `--val-frac` 를 train 윈도우와 **byte-disjoint** 하게 떼어 보관(직접 assert: max_train_window_end ≤ train_end ≤ min_val_window_start = DISJOINT). `--val-every N` 으로 val-CE 를 train-CE 옆에 로그(+`gap`), `--val-batches` 평균. `FINAL val_CE` 가 일반화 verdict(train-CE 아님, p7 정신) — uniform ln(V) 이상이면 NOT-generalizing WARNING. val RNG 는 train 과 별도 seed.
+- **정규화 1급 knob**: `--dropout`/`--weight-decay` 가 savant-derived 값보다 우선(>=0 일 때). 암기 억제를 savant inhibition 스케줄과 decoupling. 모델 dropout 은 TrunkLayer 에만 존재(experts/router 無) — per-step `m.p` 루프가 적용.
+- **로컬 CPU smoke 통과(GPU 전 게이트)**: tiny d16·L1·30step 4-cell 실행 RC=0 — 전체스트림·정규화·val-disjoint·.clm v0.3 CORE-loadable self-check 전부 OK. 가드 2종(ratio WARNING·min-bytes ABORT exit 2) 실측 검증.
+- ⚠️ engine-native verdict 무관(DIRECTIONAL only, `a_engine_native_learning`): torch CE/val-CE 는 방향지표, terminal G6 는 CORE `core/clm_decode.hexa` mount 재측정. 재학습 ckpt 는 teardown 전 PULL(`a_fire_recover_complete`).
+- artifacts: `cli/train.py` (production `cli/train.hexa` parity 는 follow-on).
 
 ## research(H_1579): clm303.clm 직렬화 BROKEN (NO-DESCENT) — decode 경로는 무결 (engine-native 3-way + control diagnostic)
 
