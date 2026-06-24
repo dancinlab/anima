@@ -1,3 +1,7 @@
+## docs(corpus cards): 데이터셋 카드에 언어-audit provenance 박제 (c2 measurer-stakes)
+
+각 HF dataset card 에 before→after 언어% + 소스repo+라이선스 표 + audit method + 재현스크립트 포인터 추가(c2: 측정한 자가 출처와 함께 박제). en-general 20.6%→99.7% en · en-sns 18.7%→97.4% en · ko 칸 100% ko · ko-SNS 소스 라이선스(MIT/Apache) 열거 · en-SNS thin-baseline+youtube follow-up 플래그. a_chat_registers 가 per-cell 언어검증 precedent 로 cross-ref. 카드 재push(데이터 불변).
+
 ## docs(CLAUDE.md a_chat_registers): 4칸 데이터셋 무결성 do/dont 박제 (H_1579 clm303 overfit 근본교훈)
 
 clm303 overfit 의 *근본* = 4칸 register 가 '의도'였으나 코퍼스 굶주림(ko_fineweb2 HF-only 미해결 → 실효 학습이 ko-SNS 4MB 1칸만 ~120× 반복 = 암기) + 언어오염 가능성. `a_chat_registers` 에 재발방지 do/dont 박제.
