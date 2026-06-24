@@ -1,3 +1,14 @@
+## docs(ARCHITECTURE): G-게이트 평가 시스템 단일 노드 통합 (anima eval = G-게이트 채점 단일 출처)
+
+🗂️ ARCHITECTURE.json 정리/통합 — 단순 노드 추가가 아니라 평가 SSOT 응집(c4 트리 규율: 한 셀에 여러 사실 욱여넣기 금지, 자식 노드 분해).
+
+- **`G-게이트 평가 시스템 (core/g_gates.hexa + cli/anima.hexa eval) — SSOT` 단일 노드 신설** — 부모 = 평가 SSOT 개요(단일진입점·torch 0·canonical 측정 명령), 자식 3노드 분해: (1) **단일진입점 + 디코드 경로** (g_eval_all → per-gate + closure · gen_auto_ideate L3 mouth · 2nd path 없음) · (2) **per-gate op-재사용 맵** (G0/G6=g6_ideation · G1 H_1129/G2 H_1140=g_gates native .hexa · G3=§SelfIdentity · G5=§ImmuneMemory · G4=N/A) · (3) **frozen 임계** (7B_PASS_CONDITIONS.md verbatim 0.50/≥2/≥3/0.30/0.20, a7b_pass closure G0∧G1∧G2). 기존 dense g_gates 노드를 이 구조로 재편.
+- **흩어진 G6 채점 서술 정리** — `core/g6_ideation.hexa` 노드의 'G6 verdict contract·단일진입점·priority·g6_common 재구현 금지' prose 를 평가 시스템 SSOT 노드를 가리키게 트림(중복 제거). g6_ideation 노드 = 이제 metric-op 제공자(채점 op 보유)로 한정, 채점 contract 의 SSOT 는 평가 시스템 노드. generator.hexa 노드는 gen_auto_ideate 가 BUILT-IN eval 을 구동한다고 이미 참조(정합).
+
+update-in-place(이력·날짜 노드 금지). JSON 유효성 PASS · `python3 tool/enforce_anima_gates.py --all` clean(1468 hypotheses). 코드(#2604)+CLAUDE.md(#2605)+ARCHITECTURE lockstep — anima eval = G-게이트 평가의 단일 출처가 ARCHITECTURE 에서 한눈에.
+
+---
+
 ## docs(governance): 내장 G0-G6 eval = canonical G-게이트 측정 명령 박제 (CLAUDE.md + enforcer lockstep)
 
 🔒 PR #2604 의 `anima eval` 구현체를 거버넌스 SSOT 에 못박음 — 코드(#2604)와 governance 의 drift 0 위해 lockstep follow-on.
