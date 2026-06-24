@@ -1,3 +1,12 @@
+## docs(CLAUDE.md a_savant_train): overfit + 고장난-측정기 교훈 박제 (H_1579) — held-out CE 판정 의무 + dt_ln-오염 engine CE 불신
+
+H_1579 clm303 오진(overfit 을 직렬화 결함으로, dt_ln-corrupt engine CE 를 GREEN 으로)의 교훈을 `a_savant_train` 에 do/dont 로 박제 — 같은 함정(train-loss 암기를 능력으로, engine CE 단독 verdict) 재발 방지.
+
+- **do(추가):** 학습 품질은 반드시 HELD-OUT CE 로 판정 — train-loss/lossF≈0 = 암기≠능력(clm303 lossF 0.047·own-train 0.656 DESCENT vs ko/en held-out 7.6–13.7 NO-DESCENT). 균형 코퍼스(4칸)+풀스트림+정규화(GZ_LOWER≈0.212)+held-out val 모니터 + 직렬화 후 `verify_clm_v2.py descent` 게이트 PASS.
+- **do(추가):** 엔진 CE/Φ readout 은 dt_ln 수정 전까지 신뢰 불가 — numpy mirror(math.log)가 정답지(dt_ln(256)=4.799≠5.545 → per-pos CE ~5.14 clamp → engine clm_forward_ce 가 overfit clm303 을 GREEN 오판). dt_ln hexa-lang 이관됨.
+- **dont(추가):** train-loss/암기를 능력으로 박제 · held-out 없이 '언어 잘한다' 주장 · dt_ln-오염 engine CE 를 mirror 교차검증 없이 terminal verdict 로 · 편향/소량 슬라이스 코퍼스로 일반화 주장.
+- **"ko CE 3.351 ✅" 정정:** `state/verdicts/clm303_ko_heldout_ce/clm303_ko_ce.txt`(untracked 증거)에 corrected 헤더 prepend = dt_ln-corrupt engine 측정(DIRECTIONAL only) · 진짜 ko held-out mirror 7.6–12.6 NO-DESCENT = overfit, 재학습 필요. (durable 정정은 H_1579 card #2609 + 이 CLAUDE.md 교훈.)
+
 ## fix(a_clm_gen_pipeline): clm303 NO-DESCENT = OVERFIT (직렬화 byte-faithful) — H_1579 정정 + held-out mirror-DESCENT 게이트 배선 + dt_ln 버그 격리
 
 🔴→정정. 직전 항목(H_1579 "SERIALIZATION DEFECT")의 **결론을 정정**한다 — raw 측정은 유효하나 결론이 틀렸다. torch-free reference-match(mac)로 **직렬화는 byte-faithful** 입증, 진짜 원인 = **OVERFITTING + engine-CE dt_ln masking**. fabricate 없이 전제 뒤집음(c9).
