@@ -358,7 +358,7 @@
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: anima 의 G0-G6 게이트 채점 단일 출처(SSOT). `core/g_gates.hexa` = BUILT-IN engine-native evaluation system; `cli/anima.hexa` `eval` 서브커맨드 = 단일 진입점. `hexa run cli/anima.hexa -- eval <ckpt> [--corpus <path>...] [--gen N]` 한 줄이 ANY ckpt 를 generator L3 mouth(gen_auto_ideate, 파일포맷 자동 dispatch)로 마운트해 G0-G6 전부 채점 — 디코드 AND 채점 전부 live `.hexa` 엔진 op, torch/numpy 0 (garble golden 제외). PR #2603 governance(진짜 엔진-네이티브=단일진입점)의 구현체 = 이 시스템(canonical 측정 명령은 CLAUDE.md a_engine_native_learning 이 박제, enforce_anima_gates.py CORE_DECODE 가 코드강제). ad-hoc 파이썬 하네스/g6_common/일회성 스크립트로 G-게이트 채점 금지 — 새 ckpt 의 G0-G6 는 `anima eval` 한 줄. 흩어진 게이트 metric 은 g_gates 가 단일 통합(아래 자식 노드: 디코드-경로 · per-gate op-재사용 맵 · frozen 임계). · **path**: core/g_gates.hexa + cli/anima.hexa · **status**: WIRED-live(`anima eval` CLI single-entry + gen_auto_ideate L3 mouth · smoke core/g_gates_smoke.hexa 7/7 RC=0)"
+              "text": "**summary**: anima 의 G0-G6 게이트 채점 단일 출처(SSOT). `core/g_gates.hexa` = BUILT-IN engine-native evaluation system; `cli/anima.hexa` `eval` 서브커맨드 = 단일 진입점. `hexa run cli/anima.hexa -- eval <ckpt> [--corpus <path>...] [--gen N]` 한 줄이 ANY ckpt 를 generator L3 mouth(gen_auto_ideate, 파일포맷 자동 dispatch)로 마운트해 G0-G6 전부 채점 — 디코드 AND 채점 전부 live `.hexa` 엔진 op, torch/numpy 0 (garble golden 제외). PR #2603 governance(진짜 엔진-네이티브=단일진입점)의 구현체 = 이 시스템(canonical 측정 명령은 CLAUDE.md a_engine_native_learning 이 박제, enforce_anima_gates.py CORE_DECODE 가 코드강제). ad-hoc 파이썬 하네스/g6_common/일회성 스크립트로 G-게이트 채점 금지 — 새 ckpt 의 G0-G6 는 `anima eval` 한 줄. 흩어진 게이트 metric 은 g_gates 가 단일 통합(아래 자식 노드: 디코드-경로 · per-gate op-재사용 맵 · frozen 임계). · **path**: core/g_gates.hexa + cli/anima.hexa · **status**: WIRED-live(`anima eval` CLI single-entry + gen_auto_ideate L3 mouth · smoke core/g_gates_smoke.hexa 14/14 RC=0 incl. 7 reference-match parity cases)"
             },
             {
               "type": "subsection",
@@ -376,7 +376,17 @@
               "blocks": [
                 {
                   "type": "prose",
-                  "text": "**summary**: G0 COHERENCE = 재사용 `g6_ideation::_g6_known_word_ratio`/`_g6_words`/`_g6_dict_load` (kwr). G1 RECOMBINATION = g_gates native `.hexa` `_g_coverage`(concept-distinctness vs max_single, H_1129 VERBATIM — numpy 미러를 엔진 op 로 wire). G2 NOVELTY = g_gates native `.hexa` `_g_content_ngrams`+`_g_corpus_absent`(corpus 토큰스트림 스캔 = numpy subprocess grep 대체, H_1140 VERBATIM). G3 PHILOSOPHY = 재사용 `engine_cli §SelfIdentity self_new/_drift/_cos/_anchor`(self-continuity + impostor-reject = 아키텍처 read, 디코드 점수 아님). G4 PROVENANCE = HF/recovery 프로세스 게이트(a_hf_*/a_fire_recover_complete), eval 범위 밖 = N/A report. G5 NON-FAB = 재사용 `engine_cli §ImmuneMemory immune_memory_recall/_recall_text`(L1 fab-word-rate + L2 abstain-when-ungrounded fire-rate, live 비-조작 게이트). G6 IDEATION ★ = 재사용 `g6_ideation g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_jaccard`(metric 제공 노드, 채점 contract 는 이 평가 시스템 노드가 SSOT)."
+                  "text": "**summary**: G0 COHERENCE = 재사용 `g6_ideation::_g6_known_word_ratio`/`_g6_words`/`_g6_dict_load` (kwr). G1 RECOMBINATION = g_gates native `.hexa` `_g_coverage`(h1129 CONCEPTS hand-curated 키워드 셋 VERBATIM × wl&kw 교집합, seed \"<c>. \"·80/composed 120 tok). G2 NOVELTY = g_gates native `.hexa` `_g_content_ngrams`(h1140 _STOP·dict membership·[A-Za-z] consecutive bi/tri-gram VERBATIM)+`_g_corpus_absent`(corpus 토큰스트림 consecutive 매치 = numpy `[^A-Za-z]+`-between grep 와 동치)+`_g_g2_kwr`(h1140 _COMMON 소형 coherence lexicon, dict-kwr 아님)+`_g_g2_prompts`(8 IDEA_PROMPTS × seeds[7,8,9] temp0.85). G3 PHILOSOPHY = 재사용 `engine_cli §SelfIdentity self_new/_drift/_cos/_anchor`(self-continuity + impostor-reject = 아키텍처 read, 디코드 점수 아님). G4 PROVENANCE = HF/recovery 프로세스 게이트(a_hf_*/a_fire_recover_complete), eval 범위 밖 = N/A report. G5 NON-FAB = 재사용 `engine_cli §ImmuneMemory immune_memory_recall/_recall_text`(L1 fab-word-rate + L2 abstain-when-ungrounded fire-rate, live 비-조작 게이트). G6 IDEATION ★ = 재사용 `g6_ideation g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_jaccard`(metric 제공 노드, 채점 contract 는 이 평가 시스템 노드가 SSOT)."
+                }
+              ]
+            },
+            {
+              "type": "subsection",
+              "title": "reference-match (G1 h1129 / G2 h1140 numpy 와 byte-faithful)",
+              "blocks": [
+                {
+                  "type": "prose",
+                  "text": "**summary**: G1/G2 native `.hexa` metric 은 새 metric 발명이 아니라 기존 frozen numpy metric 과 **성분별 1:1 reference-match** (commons reference-match) — clm303 G1/G2 결과가 과거 H_1129/H_1140 verdict 와 비교 가능해야 하므로. reference = `state/universe-probes/h1129_midcap_broad_converged_recombination.py`(G1 coverage/CONCEPTS) + `h1140_novelty_emergence.py`(G2 content_ngrams/_STOP/_COMMON/corpus_absent/IDEA_PROMPTS), VERBATIM 이식. **parity 오라클** = `state/1607_g_gates_refmatch/g1g2_ref_parity.py`(torch 0, 순수 metric on fixtures) → 고정 fixture 의 기대 카운트(G1 coverage [2,2,0,4] · G2 content_ngrams [5,0] · G2 corpus_absent 2) 출력. **smoke `core/g_gates_smoke.hexa` 7 parity case**(parity_g1_coverage_*/parity_g2_content_ngrams_*/parity_g2_corpus_absent)가 같은 fixture 에서 .hexa op == 오라클 카운트 검증 — 14/14 PASS RC=0. transcend-axis(정직 잔차, c9): tokenizer scope = .hexa `_g6_words` [0-9A-Za-z](Hangul drop) vs h1129 [0-9A-Za-z가-힣]·h1140 [A-Za-z] — all-Latin ideation 출력엔 byte-identical, 비-Latin 입력에서만 발산(scope 명시). corpus_absent 는 token-stream consecutive 매치 = ref boundary-anchored regex 와 동치."
                 }
               ]
             },
