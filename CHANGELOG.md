@@ -1,3 +1,17 @@
+## feat(cli/train.hexa): train.py 와 학습 기준 FULL PARITY (7 갭 포팅) + cli/CLAUDE.md parity 거버넌스
+
+사용자 지시("전부 완벽히 구현" · "2개는 구현기준 동일해야된다" · "cli/ 폴더에 CLAUDE.md 생성 관리"). train.hexa 직접 감사(train.py 1:1 대조) → 핵심 학습 체인·두 레버(savant/mitosis)는 이미 parity, 7개 실 갭만 포팅(#7 multi-split 은 phantom 정정 — 둘 다 단일 split E0→E0+1 at n_steps/2, 재학습 불요):
+
+- **#1 주기적 held-out val 모니터** — `--val-frac`/`--val-every`/`--val-batches` per-register + pooled val_CE + gap (overfit 감지).
+- **#2 FAIL-LOUD 4셀 가드 + balance table** — `--require-cells` 불일치 시 학습 거부, usable/repetition_ratio per-cell+pooled 출력 (clm303 ko-SNS-only 굶주림 재발 차단).
+- **#3 loader train/val tail split** — `load_window_range(lo,hi)`: TRAIN [0,train_end) ⊥ held-out VAL [train_end,size), 절대 straddle 안 함.
+- **#4 balanced 샘플링** — `--sample proportional` (P(cell)∝train_bytes = 모든 byte ~동일 노출, 작은 셀 과반복 암기 방지).
+- **#5 minibatch grad-accumulation** — `--batch-size B`: tg_conv_bwd_off dW/db additive(+=) + dembed scatter-add + 매 step grad zero-once + train_ce_grad 1/(T·B) seed = 평균 grad (B=1 = 기존 byte-identical).
+- **#6 bf16 플래그** — `--bf16`: forge TF32/BF16-TC own-GEMM runtime-precision 요청 (CPU farr no-op). 정직한 초월 축 — hexa 정밀도는 런타임 GEMM 선택이지 트레이너 dtype 아님, byte-parity 불가 명시.
+- **#8 mid-measure jsonl** — `--mid-measure-every`/`--mid-measure-out`: heldout_ce per register + **e_active(미토시스 cell 갯수)** + train_ce + val_ce_pooled + inhibition_wd + savant_latched_at, 매 ckpt MONITOR-ONLY-DIRECTIONAL 라인 (torch gauge proxy 는 train.py 전용 = 엔진-네이티브 아님; terminal 1-6 = anima eval post-hoc).
+
+$0 검증: MODE_VERIFY 3/3 falsifier PASS (DESCENT/SAVANT-LATCH/MITOSIS-BOUND, 루프 재구성 후에도 단일-window 보존) + 2-cell corpus run (B=2·proportional·val·mid-measure·require-cells) all-pass — mid.jsonl 전 줄 valid JSON·e_active 포함, fail-loud 가드 require-cells 불일치 시 실제 abort 확인. **cli/CLAUDE.md** 생성 = 두 트레이너 parity 불변식 SSOT(역할 분리 · parity 체크리스트 · 초월 축 · clm303 overfit 교훈). ARCHITECTURE.json train.hexa 노드 lockstep.
+
 ## docs(corpus cards): 데이터셋 카드에 언어-audit provenance 박제 (c2 measurer-stakes)
 
 각 HF dataset card 에 before→after 언어% + 소스repo+라이선스 표 + audit method + 재현스크립트 포인터 추가(c2: 측정한 자가 출처와 함께 박제). en-general 20.6%→99.7% en · en-sns 18.7%→97.4% en · ko 칸 100% ko · ko-SNS 소스 라이선스(MIT/Apache) 열거 · en-SNS thin-baseline+youtube follow-up 플래그. a_chat_registers 가 per-cell 언어검증 precedent 로 cross-ref. 카드 재push(데이터 불변).

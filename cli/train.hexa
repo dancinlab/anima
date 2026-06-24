@@ -68,6 +68,21 @@ use "stdlib/flame/optim_lib"
 
 fn _abs(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
 
+// zero an existing tensor buffer in place (grad-accumulation reset, B≥1 per step).
+fn t_zero(buf: int, n: int) { let mut i = 0; while i < n { t_set(buf, i, 0.0); i = i + 1 } }
+
+// write a text string to a file (string→byte list→write_bytes). Used to (re)write
+// the mid-measure jsonl each checkpoint (hexa has no append; rewrite full content).
+fn write_text_file(path: string, s: string) -> int {
+    let buf = []
+    let n = byte_len(s)
+    let mut i = 0
+    while i < n { buf.push(byte_at(s, i)); i = i + 1 }
+    write_bytes(path, buf)
+    if file_exists(path) { return 1 }
+    return 0
+}
+
 fn _is_finite(x: float) -> int {
     if x != x { return 0 }
     if x > 1.0e30 { return 0 }
@@ -272,12 +287,16 @@ fn tg_conv_bwd_off(x: int, w: int, woff: int, dy: int,
     let xcolT = t_zeros(Kdim * T)
     _tg_im2col_t(x, xcolT, T, Cin, K, dil)
     let dW_flat = t_matmul(xcolT, Kdim, T, dy, Cout)
-    // scatter dW_flat[j·Cout+co] → packed dW_out[dWoff + co·Kdim + j]
+    // scatter dW_flat[j·Cout+co] → packed dW_out[dWoff + co·Kdim + j]. ACCUMULATE
+    // (+=) so minibatch grad-accumulation over B windows sums into one buffer; the
+    // caller ZEROES all weight-grad buffers ONCE before the B-loop (B=1 + pre-zero
+    // == the old overwrite, so single-window behavior is byte-identical).
     let mut co = 0
     while co < Cout {
         let mut j = 0
         while j < Kdim {
-            t_set(dW_out, dWoff + co * Kdim + j, t_get(dW_flat, j * Cout + co))
+            let gwi = dWoff + co * Kdim + j
+            t_set(dW_out, gwi, t_get(dW_out, gwi) + t_get(dW_flat, j * Cout + co))
             j = j + 1
         }
         co = co + 1
@@ -290,13 +309,14 @@ fn tg_conv_bwd_off(x: int, w: int, woff: int, dy: int,
     while wi < Cout * Kdim { t_set(wsl, wi, t_get(w, woff + wi)); wi = wi + 1 }
     let dXcol = t_matmul(dy, T, Cout, wsl, Kdim)
     _tg_col2im(dXcol, dX_out, T, Cin, K, dil)
-    // db[co] = Σ_t dy[t,co]  →  packed db_out[dboff + co]
+    // db[co] = Σ_t dy[t,co]  →  packed db_out[dboff + co]. ACCUMULATE (+=), same
+    // minibatch grad-accumulation contract as dW above (caller pre-zeroes).
     let mut cb = 0
     while cb < Cout {
         let mut s = 0.0
         let mut t = 0
         while t < T { s = s + t_get(dy, t * Cout + cb); t = t + 1 }
-        t_set(db_out, dboff + cb, s)
+        t_set(db_out, dboff + cb, t_get(db_out, dboff + cb) + s)
         cb = cb + 1
     }
     let _ = t_free(xcolT); let _ = t_free(dW_flat); let _ = t_free(wsl); let _ = t_free(dXcol)
@@ -386,8 +406,10 @@ fn train_fwd(tokens: int, E: int, L: int,
     let _ = t_free(x); let _ = t_free(logits_r); let _ = t_free(y); let _ = t_free(meanN)
 }
 
-// CE gradient seed: dlogits[t,v] = (softmax(logits[t])[v] - 1[v=tgt]) / T.
-fn train_ce_grad(logits: int, targets: int, dlogits_out: int, T: int, V: int) {
+// CE gradient seed: dlogits[t,v] = (softmax(logits[t])[v] - 1[v=tgt]) / (T·bdiv).
+// bdiv = minibatch size B so accumulating the seed over B windows yields the MEAN
+// per-window gradient (grad-accumulation; bdiv=1 = the old single-window 1/T seed).
+fn train_ce_grad(logits: int, targets: int, dlogits_out: int, T: int, V: int, bdiv: int) {
     let mut t = 0
     while t < T {
         let base = t * V
@@ -397,7 +419,7 @@ fn train_ce_grad(logits: int, targets: int, dlogits_out: int, T: int, V: int) {
         let mut sm = 0.0
         let mut i2 = 0
         while i2 < V { sm = sm + exp(t_get(logits, base + i2) - mx); i2 = i2 + 1 }
-        let invT = 1.0 / to_float(T)
+        let invT = 1.0 / to_float(T * bdiv)
         let mut v3 = 0
         while v3 < V {
             let p = exp(t_get(logits, base + v3) - mx) / sm
@@ -488,8 +510,9 @@ fn train_bwd(dlogits: int, tokens: int, E: int, L: int,
     // embed-conv bwd (x0 = conv(xe); dx now = grad w.r.t. x0) — forge-routed
     let dxe = t_zeros(T * d)
     tg_conv_bwd_off(xe, ecW, 0, dx, decW, 0, dxe, decB, 0, T, d, d, K, 1)
-    let mut zi = 0
-    while zi < V * d { t_set(dembed, zi, 0.0); zi = zi + 1 }
+    // dembed is scatter-ADD (nn_embedding_bwd_scatter accumulates); the caller
+    // zeroes dembed ONCE before the B-loop (grad-accumulation contract, same as
+    // the dW/db buffers) so it sums across the minibatch.
     nn_embedding_bwd_scatter(dxe, tokens, dembed, T, d)
     let _ = t_free(dynorm); let _ = t_free(dy); let _ = t_free(dlogits_r)
     let _ = t_free(dex_out); let _ = t_free(dxt_r); let _ = t_free(dx)
@@ -624,10 +647,20 @@ fn _adam(W: int, gW: int, m: int, v: int, n: int, lr: float, wd: float, t: int) 
 // ════════════════════════════════════════════════════════════════════════════
 fn load_window_file(path: string, fsize: int, off: int,
                     tokens_out: int, targets_out: int, T: int) -> int {
-    if fsize < T + 2 { return 0 }
-    let span = fsize - (T + 1)
-    let mut start = off - (off / span) * span     // off mod span, in [0, span)
-    if start < 0 { start = 0 }
+    return load_window_range(path, 0, fsize, off, tokens_out, targets_out, T)
+}
+// load_window_range — sample one T+1 window whose [start, start+T+1) lies ENTIRELY
+// inside the byte range [lo, hi) (a_savant_train held-out: TRAIN windows use
+// [0, train_end), VAL windows use [train_end, fsize), never straddling). Returns
+// 1 if a real window was filled, else 0 (range too small for one window). Mirrors
+// train.py ByteCell._window_in (the disjoint train/val split, overfit detector).
+fn load_window_range(path: string, lo: int, hi: int, off: int,
+                     tokens_out: int, targets_out: int, T: int) -> int {
+    if hi - lo < T + 2 { return 0 }
+    let span = (hi - lo) - (T + 1)               // # valid start positions in range
+    let mut rel = off - (off / span) * span      // off mod span, in [0, span)
+    if rel < 0 { rel = 0 }
+    let start = lo + rel
     let win = read_bytes_at(path, start, T + 1)
     if type_of(win) != "array" { return 0 }
     if len(win) < T + 1 { return 0 }
@@ -678,16 +711,38 @@ fn cli_parse_int(s: string) -> int {
     }
     return v
 }
+// cli_parse_float — parse a decimal like "0.02" (no exponent). Used by --val-frac.
+fn cli_parse_float(s: string) -> float {
+    let n = byte_len(s)
+    let mut intpart = 0.0
+    let mut frac = 0.0
+    let mut scale = 1.0
+    let mut seen_dot = 0
+    let mut i = 0
+    while i < n {
+        let cb = byte_at(s, i)
+        if cb == 46 { seen_dot = 1 }
+        else {
+            if cb >= 48 { if cb <= 57 {
+                let dgt = to_float(cb - 48)
+                if seen_dot == 0 { intpart = intpart * 10.0 + dgt }
+                else { scale = scale * 0.1; frac = frac + dgt * scale }
+            } }
+        }
+        i = i + 1
+    }
+    return intpart + frac
+}
 fn _is_flag(a: string) -> bool {
     if byte_len(a) >= 2 { if byte_at(a, 0) == 45 { if byte_at(a, 1) == 45 { return true } } }
     return false
 }
-// cli_corpus — collect all positionals after `--corpus` up to the next `--flag`.
-fn cli_corpus(argv: [string]) -> [string] {
+// cli_poslist — collect all positionals after `flag` up to the next `--flag`.
+fn cli_poslist(argv: [string], flag: string) -> [string] {
     let paths = []
     let mut i = 0
     while i < len(argv) {
-        if argv[i] == "--corpus" {
+        if argv[i] == flag {
             let mut j = i + 1
             while j < len(argv) {
                 if _is_flag(argv[j]) { j = len(argv) }
@@ -699,6 +754,8 @@ fn cli_corpus(argv: [string]) -> [string] {
     }
     return paths
 }
+// cli_corpus — positionals after `--corpus` (the 4-cell register paths).
+fn cli_corpus(argv: [string]) -> [string] { return cli_poslist(argv, "--corpus") }
 
 // ════════════════════════════════════════════════════════════════════════════
 //  .clm v0.2/v0.3 SERIALIZE (a_clm_gen_pipeline) — pack the trained CLMConvMoE
@@ -868,6 +925,37 @@ fn main() {
     let gate_corpus = if byte_len(heldout_arg) > 0 { heldout_arg }
                       else { if len(corpus_paths) > 0 { corpus_paths[0] } else { "" } }
 
+    // ── PARITY flags (cli/CLAUDE.md: train.hexa ⇔ train.py same standard) ─────
+    //   --batch-size <B>       minibatch grad-accumulation (default 1)
+    //   --val-frac <F>         tail fraction of EACH cell held out for val (0=off)
+    //   --val-every <N>        log per-register held-out val-CE every N steps
+    //   --val-batches <N>      windows per cell for the val estimate (default 4)
+    //   --require-cells <N>    FAIL-LOUD abort unless exactly N usable cells
+    //   --sample proportional  byte∝exposure sampling (else roundrobin)
+    //   --bf16                 request forge TF32/BF16-TC own-GEMM (runtime-select)
+    //   --mid-measure-every N  append MONITOR-ONLY held-out CE curve (DIRECTIONAL)
+    //   --cell-label l1 l2 ..  register labels (same order as --corpus)
+    //   --log-every <N>        train-CE log cadence (default 100)
+    let bs_arg = cli_val(argv, "--batch-size")
+    let batch_size = if byte_len(bs_arg) > 0 { cli_parse_int(bs_arg) } else { 1 }
+    let vf_arg = cli_val(argv, "--val-frac")
+    let val_frac = if byte_len(vf_arg) > 0 { cli_parse_float(vf_arg) } else { 0.0 }
+    let ve_arg = cli_val(argv, "--val-every")
+    let val_every = if byte_len(ve_arg) > 0 { cli_parse_int(ve_arg) } else { 0 }
+    let vb_arg = cli_val(argv, "--val-batches")
+    let val_batches = if byte_len(vb_arg) > 0 { cli_parse_int(vb_arg) } else { 4 }
+    let rc_arg = cli_val(argv, "--require-cells")
+    let require_cells = if byte_len(rc_arg) > 0 { cli_parse_int(rc_arg) } else { 0 }
+    let sample_prop = if cli_val(argv, "--sample") == "proportional" { 1 } else { 0 }
+    let bf16_on = if cli_has(argv, "--bf16") { 1 } else { 0 }
+    let mm_arg = cli_val(argv, "--mid-measure-every")
+    let mid_every = if byte_len(mm_arg) > 0 { cli_parse_int(mm_arg) } else { 0 }
+    let mm_out_arg = cli_val(argv, "--mid-measure-out")
+    let mid_out = if byte_len(mm_out_arg) > 0 { mm_out_arg } else { "midtrain_metrics.jsonl" }
+    let le_arg = cli_val(argv, "--log-every")
+    let log_every = if byte_len(le_arg) > 0 { cli_parse_int(le_arg) } else { 100 }
+    let cell_labels = cli_poslist(argv, "--cell-label")
+
     // 303M-class canonical config — the REAL clm303_L4_d3784 shape (L4·d3784·E2->
     // Emax4 = true 303M). GPU dispatch target; full 303M LEARNING is a separate
     // cost-gated fire (not launched here) — this file is the SETTING not the fire.
@@ -906,7 +994,12 @@ fn main() {
     print("  config: T="); print(T); print(" d="); print(d); print(" L="); print(L); print(" E0="); print(E0)
     print(" Emax="); print(Emax); print(" V="); print(V); print(" K="); print(K)
     print(" n_steps="); print(n_steps); println("")
-    print("  savant_mode="); print(savant_mode); print(" mitosis="); print(mitosis_on); println("")
+    print("  savant_mode="); print(savant_mode); print(" mitosis="); print(mitosis_on)
+    print(" batch_size="); print(batch_size); print(" sample=")
+    if sample_prop == 1 { print("proportional") } else { print("roundrobin") }
+    print(" val_frac="); print(val_frac); print(" val_every="); print(val_every)
+    print(" bf16="); print(bf16_on); println("")
+    if bf16_on == 1 { println("  (bf16: requests forge TF32/BF16-TC own-GEMM — runtime-selected precision, NOT a trainer dtype; CPU farr = no-op. cli/CLAUDE.md transcend axis)") }
 
     // ── 4-cell corpus (a_chat_registers). External byte paths via --corpus,
     //    round-robin across cells; if none given, the fixed verify batch is used
@@ -915,13 +1008,59 @@ fn main() {
     let use_corpus = if have_corpus { 1 } else { 0 }
     let ncell = len(corpus_paths)
     let cell_size = []
+    let cell_train_end = []      // [0, train_end) = TRAIN; [train_end, size) = held-out VAL
     let mut cs = 0
     while cs < ncell {
         let fz = file_size(corpus_paths[cs])
         cell_size.push(fz)
-        print("  corpus cell["); print(cs); print("] "); print(corpus_paths[cs])
-        print("  size="); print(fz); println(" bytes")
+        let te = fz - to_int(to_float(fz) * val_frac)
+        cell_train_end.push(te)
         cs = cs + 1
+    }
+    // usable = cells whose TRAIN region fits ≥1 window; total = pooled train bytes
+    let mut usable = 0
+    let mut total_train_bytes = 0
+    let mut uci = 0
+    while uci < ncell {
+        if cell_train_end[uci] >= T + 2 { usable = usable + 1; total_train_bytes = total_train_bytes + cell_train_end[uci] }
+        uci = uci + 1
+    }
+    let tokens_to_see = n_steps * batch_size * T
+    // ── FAIL-LOUD 4-cell guard + balance/repetition table (a_chat_registers;
+    //    clm303 overfit 교훈 — SMALL cell + roundrobin = huge rep_ratio = 암기). ──
+    if use_corpus == 1 {
+        print("  ── 4-cell register balance table (tokens_to_see="); print(tokens_to_see)
+        print(" sample="); if sample_prop == 1 { print("proportional") } else { print("roundrobin") }
+        println(") ──")
+        let mut bi2 = 0
+        while bi2 < ncell {
+            let lab = if bi2 < len(cell_labels) { cell_labels[bi2] } else { corpus_paths[bi2] }
+            let te = cell_train_end[bi2]
+            let mut tok_cell = 0
+            if sample_prop == 1 {
+                if total_train_bytes > 0 { tok_cell = to_int(to_float(tokens_to_see) * (to_float(te) / to_float(total_train_bytes))) }
+            } else {
+                if usable > 0 { tok_cell = tokens_to_see / usable }
+            }
+            let rep = if te > 0 { to_float(tok_cell) / to_float(te) } else { 0.0 }
+            print("     cell["); print(bi2); print("] "); print(lab)
+            print("  size="); print(cell_size[bi2]); print("  train="); print(te)
+            print("  rep_ratio="); print(rep); println("x")
+            bi2 = bi2 + 1
+        }
+        let pooled_rep = if total_train_bytes > 0 { to_float(tokens_to_see) / to_float(total_train_bytes) } else { 0.0 }
+        print("  corpus guard: cells="); print(ncell); print(" usable="); print(usable)
+        print("  total_train_bytes="); print(total_train_bytes)
+        print("  repetition_ratio(pooled)="); print(pooled_rep); println("x")
+        // FAIL-LOUD: refuse to train on an incomplete register (the clm303
+        // ko-SNS-only starvation that produced the overfit). require_cells=0=off.
+        if require_cells > 0 {
+            if usable != require_cells {
+                print("FAIL — require_cells="); print(require_cells); print(" but usable="); print(usable)
+                println(" (a_chat_registers fail-loud: register incomplete → refusing to train — clm303 overfit guard)")
+                return
+            }
+        }
     }
     if use_corpus == 0 { println("  corpus: NONE → fixed verify batch ($0 wiring proof)") }
 
@@ -1013,20 +1152,10 @@ fn main() {
     let mut ce_after_split = 0.0
     // LCG offset generator for corpus window sampling (deterministic, p7).
     let mut rng = 2463534242
+    let mut mid_jsonl = ""        // accumulated mid-measure curve (rewritten each ckpt)
+    let mut rr = 0                // round-robin running window counter
     let mut step = 1
     while step <= n_steps {
-        // ── corpus window: round-robin across the 4-cell register, sample a
-        //    deterministic offset per step (a_chat_registers). On any miss the
-        //    fixed verify batch (already filled in tokens/targets) is reused. ──
-        if use_corpus == 1 {
-            let cell = (step - 1) - ((step - 1) / ncell) * ncell    // (step-1) mod ncell
-            rng = (rng * 1103515245 + 12345)
-            rng = rng - (rng / 2147483647) * 2147483647             // keep positive 31-bit
-            if rng < 0 { rng = 0 - rng }
-            let _ld = load_window_file(corpus_paths[cell], cell_size[cell], rng,
-                                       tokens, targets, T)
-        }
-
         // savant inhibition for this step
         let mut wd = 0.0
         if savant_mode == 1 {
@@ -1037,7 +1166,7 @@ fn main() {
             }
         }
 
-        // mitosis split at midpoint (grow E0 -> E0+1)
+        // mitosis split at midpoint (grow E0 -> E0+1, single split — train.py parity)
         if mitosis_on == 1 {
             if step == split_step {
                 if E < Emax {
@@ -1050,24 +1179,63 @@ fn main() {
             }
         }
 
-        train_fwd(tokens, E, L, embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
-                  expW, expB, noG, noB, roW, roB,
-                  xe, tin, xt, hn, xh, inv, probs, ex_out, yn, xhatN, invN,
-                  logits, T, d, V, K)
-        let loss = nn_ce_loss_allpos(logits, targets, T, V)
+        // ── minibatch grad-accumulation over B windows (a_chat_registers balanced
+        //    sampling). Zero ALL weight grads ONCE (bwd is additive), then fwd+ce+
+        //    bwd each window; train_ce_grad scales by 1/(T·B) = MEAN grad. ──
+        t_zero(dembed, vd); t_zero(decW, dd); t_zero(decB, d)
+        t_zero(dtcW, ldd); t_zero(dtcB, ld); t_zero(dtgG, ld); t_zero(dtgB, ld)
+        t_zero(drW, ed); t_zero(drB, Emax); t_zero(dexpW, Emax * dd); t_zero(dexpB, Emax * d)
+        t_zero(dnoG, d); t_zero(dnoB, d); t_zero(droW, vd); t_zero(droB, V)
+        let mut bce = 0.0
+        let mut b = 0
+        while b < batch_size {
+            if use_corpus == 1 {
+                rng = (rng * 1103515245 + 12345)
+                rng = rng - (rng / 2147483647) * 2147483647    // positive 31-bit
+                if rng < 0 { rng = 0 - rng }
+                // pick a cell: proportional (P∝train_bytes, every BYTE ~equal
+                // exposure — anti-memorization) or equal round-robin.
+                let mut cell = 0
+                if sample_prop == 1 {
+                    if total_train_bytes > 0 {
+                        let r = rng - (rng / total_train_bytes) * total_train_bytes
+                        let mut acc = 0
+                        let mut c = 0
+                        while c < ncell {
+                            if cell_train_end[c] >= T + 2 {
+                                acc = acc + cell_train_end[c]
+                                if r < acc { cell = c; c = ncell }
+                            }
+                            if c < ncell { c = c + 1 }
+                        }
+                    }
+                } else {
+                    cell = rr - (rr / ncell) * ncell           // rr mod ncell
+                    rr = rr + 1
+                }
+                let _ld = load_window_range(corpus_paths[cell], 0, cell_train_end[cell],
+                                            rng, tokens, targets, T)
+            }
+            train_fwd(tokens, E, L, embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
+                      expW, expB, noG, noB, roW, roB,
+                      xe, tin, xt, hn, xh, inv, probs, ex_out, yn, xhatN, invN,
+                      logits, T, d, V, K)
+            let wloss = nn_ce_loss_allpos(logits, targets, T, V)
+            if _is_finite(wloss) == 0 { bound_ok = 0 }
+            bce = bce + wloss
+            train_ce_grad(logits, targets, dlogits, T, V, batch_size)
+            train_bwd(dlogits, tokens, E, L, embed, ecW, tcW, tgG, rW, expW, noG, roW,
+                      xe, tin, xt, hn, xh, inv, probs, ex_out, yn, xhatN, invN,
+                      dembed, decW, decB, dtcW, dtcB, dtgG, dtgB, drW, drB,
+                      dexpW, dexpB, dnoG, dnoB, droW, droB, T, d, V, K)
+            b = b + 1
+        }
+        let loss = bce / to_float(batch_size)        // mean train-CE over the minibatch
         if _is_finite(loss) == 0 { bound_ok = 0 }
         if step == 1 { loss0 = loss }
         lossF = loss
         if step == split_step - 1 { ce_before_split = loss }
         if step == split_step + 1 { ce_after_split = loss }
-        if step == 1 { print("  step 1   CE="); print(loss); print("  E="); print(E); print("  wd="); println(wd) }
-        if step == split_step { print("  step "); print(step); print(" (SPLIT) CE="); print(loss); print("  E="); println(E) }
-
-        train_ce_grad(logits, targets, dlogits, T, V)
-        train_bwd(dlogits, tokens, E, L, embed, ecW, tcW, tgG, rW, expW, noG, roW,
-                  xe, tin, xt, hn, xh, inv, probs, ex_out, yn, xhatN, invN,
-                  dembed, decW, decB, dtcW, dtcB, dtgG, dtgB, drW, drB,
-                  dexpW, dexpB, dnoG, dnoB, droW, droB, T, d, V, K)
 
         // AdamW with savant-scheduled weight decay (inhibition lever). Trunk
         // params are packed [L·…] so a SINGLE _adam call updates all L layers.
@@ -1080,6 +1248,99 @@ fn main() {
         _adam(expB, dexpB, m_expB, v_expB, Emax*d, lr, wd, step)
         _adam(noG, dnoG, m_noG, v_noG, d, lr, wd, step);  _adam(noB, dnoB, m_noB, v_noB, d, lr, wd, step)
         _adam(roW, droW, m_roW, v_roW, vd, lr, wd, step); _adam(roB, droB, m_roB, v_roB, V, lr, wd, step)
+
+        // ── periodic held-out VAL monitor + mid-measure curve (overfit detector,
+        //    a_savant_train · a_train_inline_gauge). Compute per-register held-out
+        //    CE over the disjoint val tail [train_end, size); used for BOTH the
+        //    val log line AND the MONITOR-ONLY mid-measure jsonl. ──
+        let mut do_val = 0
+        if val_every > 0 { if step == 1 { do_val = 1 } }
+        if val_every > 0 { if step - (step / val_every) * val_every == 0 { do_val = 1 } }
+        if val_every > 0 { if step == n_steps { do_val = 1 } }
+        let mut do_mid = 0
+        if mid_every > 0 { if step - (step / mid_every) * mid_every == 0 { do_mid = 1 } }
+        if mid_every > 0 { if step == n_steps { do_mid = 1 } }
+        if do_val + do_mid > 0 {
+            if use_corpus == 1 { if val_frac > 0.0 {
+                let mut vsum = 0.0
+                let mut vcnt = 0
+                let mut hc_json = "{"
+                let mut vc = 0
+                while vc < ncell {
+                    if cell_size[vc] - cell_train_end[vc] >= T + 2 {
+                        let mut cce = 0.0
+                        let mut nb = 0
+                        let mut vb = 0
+                        while vb < val_batches {
+                            rng = (rng * 1103515245 + 12345)
+                            rng = rng - (rng / 2147483647) * 2147483647
+                            if rng < 0 { rng = 0 - rng }
+                            let okv = load_window_range(corpus_paths[vc], cell_train_end[vc],
+                                                        cell_size[vc], rng, tokens, targets, T)
+                            if okv == 1 {
+                                train_fwd(tokens, E, L, embed, ecW, ecB, tcW, tcB, tgG, tgB, rW, rB,
+                                          expW, expB, noG, noB, roW, roB,
+                                          xe, tin, xt, hn, xh, inv, probs, ex_out, yn, xhatN, invN,
+                                          logits, T, d, V, K)
+                                let vl = nn_ce_loss_allpos(logits, targets, T, V)
+                                if _is_finite(vl) == 1 { cce = cce + vl; nb = nb + 1 }
+                            }
+                            vb = vb + 1
+                        }
+                        if nb > 0 {
+                            let cell_val = cce / to_float(nb)
+                            let lab = if vc < len(cell_labels) { cell_labels[vc] } else { corpus_paths[vc] }
+                            if vcnt > 0 { hc_json = hc_json + "," }   // comma before all but the FIRST emitted
+                            hc_json = hc_json + "\"" + lab + "\":" + str(cell_val)
+                            vsum = vsum + cell_val; vcnt = vcnt + 1
+                        }
+                    }
+                    vc = vc + 1
+                }
+                hc_json = hc_json + "}"
+                if vcnt > 0 {
+                    let val_ce = vsum / to_float(vcnt)
+                    let gap = val_ce - loss
+                    if do_val == 1 {
+                        print("  step "); print(step); print("  CE="); print(loss)
+                        print("  val_CE="); print(val_ce); print("  gap="); println(gap)
+                    }
+                    if do_mid == 1 {
+                        // MONITOR-ONLY-DIRECTIONAL (a_train_inline_gauge): native
+                        // mirror held-out CE per register + e_active (mitosis cell
+                        // count) + inhibition_wd + savant_latched_at. torch gauge
+                        // proxies (g1/g2/g6/phi) are train.py-only (engine-native
+                        // terminal 1-6 = anima eval post-hoc). cli/CLAUDE.md.
+                        let line = "{\"step\":" + str(step)
+                            + ",\"kind\":\"MONITOR-ONLY-DIRECTIONAL\""
+                            + ",\"heldout_ce\":" + hc_json
+                            + ",\"train_ce\":" + str(loss)
+                            + ",\"val_ce_pooled\":" + str(val_ce)
+                            + ",\"e_active\":" + str(E)
+                            + ",\"inhibition_wd\":" + str(wd)
+                            + ",\"savant_latched_at\":" + str(latched_at) + "}"
+                        mid_jsonl = mid_jsonl + line + "\n"
+                        let _w = write_text_file(mid_out, mid_jsonl)
+                        print("  [MID-MEASURE step "); print(step); print("] heldout_ce=")
+                        print(hc_json); print("  e_active="); print(E)
+                        print("  (MONITOR-ONLY/DIRECTIONAL → "); print(mid_out); println(")")
+                    }
+                }
+            } }
+        }
+
+        // compact train-CE log (every log_every; always step 1 + split + last)
+        let mut do_log = 0
+        if step == 1 { do_log = 1 }
+        if step == n_steps { do_log = 1 }
+        if step == split_step { do_log = 1 }
+        if log_every > 0 { if step - (step / log_every) * log_every == 0 { do_log = 1 } }
+        if do_log == 1 {
+            print("  step "); print(step); print("  CE="); print(loss); print("  E="); print(E)
+            print("  wd="); print(wd)
+            if step == split_step { print("  (SPLIT)") }
+            println("")
+        }
         step = step + 1
     }
     print("  step "); print(n_steps); print("  CE="); print(lossF); print("  E="); println(E)
