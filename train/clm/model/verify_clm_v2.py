@@ -21,6 +21,7 @@ from __future__ import annotations
 import struct
 import sys
 import os
+import math
 
 MAGIC = bytes([67, 76, 77, 1])
 CLMX = bytes([67, 76, 77, 88])
@@ -298,7 +299,337 @@ def run_v3_byteeq_v2(here):
     return False, f"v2 ({len(b2)}B) != v3 ({len(b3)}B)"
 
 
+# --------------------------------------------------------------------------- #
+# HELD-OUT mirror-DESCENT gate (the OVERFIT detector)
+# --------------------------------------------------------------------------- #
+# WHY this exists: the structural round-trips above only prove the .clm is
+# *decodable* (right shape/headers). They say NOTHING about whether the
+# serialized weights actually PREDICT TEXT. A model that memorized a tiny corpus
+# (overfit) is structurally perfect yet useless on held-out text — and the
+# engine's own clm_forward_ce can MISS this, because hexa-lang's dt_ln (atanh
+# series, flame_math.hexa) is numerically wrong away from x=1: dt_ln(256)=4.799
+# (true ln=5.545), dt_ln(1e-6)=-5.14 (true -13.82). That clamps per-position CE
+# at ~5.14 (nn_lib.hexa nn_ce_loss_allpos uses -dt_ln(p_t)), so a broken/overfit
+# model gets a falsely-low engine CE and reads GREEN. (clm303 precedent 2026-06-24:
+# engine model_ce 3.30 < shuffle 4.93 = "GREEN" while the true held-out CE was
+# 7.6-13.7 = worse than random.)
+#
+# This gate is a FAITHFUL pure-numpy mirror of core/clm_decode.hexa's forward
+# (byte-reproduces state/mid_convmoe_fire/clm_decode_mirror.py and the engine
+# clm_forward_ce) BUT uses math.log (correct, dt_ln-immune), reading the .clm
+# BYTES directly. It is build-time SERIALIZE-INTEGRITY tooling, NOT a G0-G6
+# capability verdict — capability verdicts still go through the single entry
+# `cli/anima.hexa -- eval` (a_engine_native_learning). It exists so a broken or
+# overfit .clm cannot be marked "done" or HF-uploaded.
+#
+# It MUST be evaluated on HELD-OUT text (never the training corpus — that would
+# hide overfitting), and optionally reports the train-vs-held-out gap.
+
+INT4_OFF = 8  # nibble code = (byte&0xF) - 8
+
+
+def _load_clm_weights(path):
+    """Pure-numpy load of a .clm (v0.2/v0.3) into a weight dict, matching
+    core/clm_decode.hexa::_clmd_load EXACTLY (int4 dequant w=code*scale, general
+    (L,E) derivation). Requires numpy. Returns None if not decodable."""
+    import numpy as np
+    rb = open(path, "rb").read() if not isinstance(path, (bytes, bytearray)) else path
+    if not clm_decodable(rb):
+        return None
+    nblk = rb[4]
+    # walk headers for (cout,rest) to derive E,V and block offsets
+    off = 5
+    hdrs = []
+    for _ in range(nblk):
+        c = _ru32(rb, off); r = _ru32(rb, off + 4)
+        hdrs.append((c, r))
+        off += 8 + (c * r + 1) // 2 + c * 4
+    E = hdrs[nblk - 2][0]
+    V = hdrs[nblk - 1][0]
+    L = nblk - E - 3
+    d = hdrs[0][0]
+    K = hdrs[0][1] // d
+
+    def rd_block(o):
+        cout = _ru32(rb, o); o += 4
+        rest = _ru32(rb, o); o += 4
+        n = cout * rest
+        nb = (n + 1) // 2
+        raw = np.frombuffer(rb, dtype=np.uint8, count=nb, offset=o); o += nb
+        lo = (raw & 0xF).astype(np.int64) - INT4_OFF
+        hi = ((raw >> 4) & 0xF).astype(np.int64) - INT4_OFF
+        codes = np.empty(2 * nb, dtype=np.float64)
+        codes[0::2] = lo
+        codes[1::2] = hi
+        codes = codes[:n].reshape(cout, rest)
+        scale = np.frombuffer(rb, dtype="<f4", count=cout, offset=o).astype(np.float64)
+        o += 4 * cout
+        return codes * scale[:, None], o
+
+    def rd_ext(o):
+        n = _ru32(rb, o); o += 4
+        arr = np.frombuffer(rb, dtype="<f4", count=n, offset=o).astype(np.float64)
+        o += 4 * n
+        return arr, o
+
+    off = 5
+    ecW, off = rd_block(off)
+    tcW = []
+    for _ in range(L):
+        w, off = rd_block(off); tcW.append(w)
+    eW = []
+    for _ in range(E):
+        w, off = rd_block(off); eW.append(w)
+    rW, off = rd_block(off)
+    roW, off = rd_block(off)
+    off += 5  # CLMX + n_ext
+    embed, off = rd_ext(off)
+    ecB, off = rd_ext(off)
+    tcB = []
+    for _ in range(L):
+        a, off = rd_ext(off); tcB.append(a)
+    eB = []
+    for _ in range(E):
+        a, off = rd_ext(off); eB.append(a)
+    rB, off = rd_ext(off)
+    roB, off = rd_ext(off)
+    tgG = []
+    for _ in range(L):
+        a, off = rd_ext(off); tgG.append(a)
+    tgB = []
+    for _ in range(L):
+        a, off = rd_ext(off); tgB.append(a)
+    noG, off = rd_ext(off)
+    noB, off = rd_ext(off)
+    return dict(d=d, E=E, V=V, K=K, L=L, ecW=ecW, tcW=tcW, eW=eW, rW=rW, roW=roW,
+                embed=embed.reshape(V, d), ecB=ecB, tcB=tcB, eB=eB, rB=rB, roB=roB,
+                tgG=tgG, tgB=tgB, noG=noG, noB=noB)
+
+
+def _gelu(x):
+    import numpy as np
+    # tanh approx — matches generator.hexa::_gen_gelu (same form clm_decode uses)
+    inner = 0.7978845608 * (x + 0.044715 * x * x * x)
+    a = np.clip(inner, -15.0, 15.0)
+    e2 = np.exp(2.0 * a)
+    return 0.5 * x * (1.0 + (e2 - 1.0) / (e2 + 1.0))
+
+
+def _conv1d(x, w2d, b, T, Cin, Cout, K, dil):
+    import numpy as np
+    Kdim = Cin * K
+    xcol = np.zeros((T, Kdim))
+    idx = np.arange(Cin) * K
+    for k in range(K):
+        shift = dil * (K - 1 - k)
+        if shift == 0:
+            xcol[:, idx + k] = x
+        elif shift < T:
+            xcol[shift:, idx + k] = x[:T - shift]
+    return xcol @ w2d.T + b[None, :]
+
+
+def _gn1(x, g, b):
+    import numpy as np
+    mu = x.mean(1, keepdims=True)
+    var = x.var(1, keepdims=True)
+    return (x - mu) / np.sqrt(var + 1e-5) * g[None, :] + b[None, :]
+
+
+def _fwd_logits(W, tok, T):
+    import numpy as np
+    d, E, V, K, L = W["d"], W["E"], W["V"], W["K"], W["L"]
+    xe = W["embed"][tok.astype(int)]
+    xt = _conv1d(xe, W["ecW"], W["ecB"], T, d, d, K, 1)
+    dil = 1
+    for li in range(L):
+        de = min(dil, 512)
+        h = _conv1d(xt, W["tcW"][li], W["tcB"][li], T, d, d, K, de)
+        xt = xt + _gelu(_gn1(h, W["tgG"][li], W["tgB"][li]))
+        dil *= 2
+    lr = _conv1d(xt, W["rW"], W["rB"], T, d, E, 1, 1)
+    exo = [_gelu(_conv1d(xt, W["eW"][e], W["eB"][e], T, d, d, K, 1)) for e in range(E)]
+    p = np.exp(lr - lr.max(1, keepdims=True)); p /= p.sum(1, keepdims=True)
+    y = sum(p[:, e:e + 1] * exo[e] for e in range(E))
+    yn = _gn1(y, W["noG"], W["noB"])
+    return _conv1d(yn, W["roW"], W["roB"], T, d, V, 1, 1)
+
+
+def _ce_allpos(logits, tgt, T):
+    import numpy as np
+    z = logits - logits.max(1, keepdims=True)
+    lse = np.log(np.exp(z).sum(1))
+    return float((-(z[np.arange(T), tgt.astype(int)] - lse)).sum() / T)
+
+
+def mirror_ce(clm_path, corpus_path, nwin=64, T=24):
+    """Faithful mirror next-byte CE over `nwin` windows of a byte corpus, using
+    math.log (correct — dt_ln-immune). Returns (model_ce, shuffle_ce, uniform_ce,
+    windows). uniform_ce = ln(V) (the TRUE blind baseline, not the buggy engine
+    dt_ln(V))."""
+    import numpy as np
+    W = _load_clm_weights(clm_path)
+    if W is None:
+        raise ValueError(f"{clm_path}: not v0.2/v0.3 decodable")
+    V = W["V"]
+    rb = open(corpus_path, "rb").read()
+    n = len(rb)
+    stride = max(1, (n - T - 1) // nwin)
+    sm = ss = 0.0
+    cnt = 0
+    for s in range(nwin):
+        base = s * stride
+        if base + T + 1 <= n:
+            tok = np.frombuffer(rb, np.uint8, T, base).astype(float)
+            tgt = np.frombuffer(rb, np.uint8, T, base + 1).astype(float)
+            lg = _fwd_logits(W, tok, T)
+            sm += _ce_allpos(lg, tgt, T)
+            ss += _ce_allpos(lg, tgt[::-1].copy(), T)
+            cnt += 1
+    return sm / cnt, ss / cnt, math.log(V), cnt
+
+
+def descent_gate(clm_path, heldout_corpus, train_corpus=None, nwin=64,
+                 max_gap=3.0):
+    """The OVERFIT detector. PASS iff the serialized .clm genuinely models
+    HELD-OUT text: model_ce < uniform AND model_ce < shuffle. If a `train_corpus`
+    is given, also reports the train-vs-held-out gap (large gap = overfit warning)
+    and FAILs when held-out fails the descent test (the gap alone is advisory).
+
+    Returns (ok: bool, report: dict). Frozen bars: uniform=ln(V), shuffle=
+    reversed-target control. NOT tunable (a_break_the_wall: frozen-first)."""
+    h_model, h_shuf, uni, h_win = mirror_ce(clm_path, heldout_corpus, nwin)
+    lt_uniform = h_model < uni
+    lt_shuffle = h_model < h_shuf
+    ok = lt_uniform and lt_shuffle
+    rep = {"heldout_model_ce": round(h_model, 5),
+           "heldout_shuffle_ce": round(h_shuf, 5),
+           "uniform_ce_lnV": round(uni, 5),
+           "heldout_lt_uniform": lt_uniform,
+           "heldout_lt_shuffle": lt_shuffle,
+           "heldout_windows": h_win,
+           "train_model_ce": None, "train_heldout_gap": None,
+           "overfit_warning": False}
+    if train_corpus and os.path.exists(train_corpus):
+        t_model, _, _, _ = mirror_ce(clm_path, train_corpus, nwin)
+        gap = h_model - t_model
+        rep["train_model_ce"] = round(t_model, 5)
+        rep["train_heldout_gap"] = round(gap, 5)
+        # Overfit signature: descends on train but the held-out gap is huge.
+        rep["overfit_warning"] = (t_model < uni) and (gap > max_gap)
+    return ok, rep
+
+
+def run_descent_gate_cli(clm_path, heldout_corpus, train_corpus=None, nwin=64):
+    """Verbatim-output CLI wrapper (p7/c9 honest). Prints F-CLM-DESCENT=1/0 +
+    the report, exits 0 on PASS else 1. Used by train.py / train.hexa as the
+    post-serialize self-verify (a_clm_gen_pipeline)."""
+    try:
+        ok, rep = descent_gate(clm_path, heldout_corpus, train_corpus, nwin)
+    except Exception as e:  # numpy missing / undecodable — honest fail
+        print(f"F-CLM-DESCENT=0\nDESCENT_ERROR: {e}")
+        return 1
+    print(f"F-CLM-DESCENT={'1' if ok else '0'}")
+    print("DESCENT " + repr(rep))
+    if rep["overfit_warning"]:
+        print("OVERFIT_WARNING: descends on train but held-out gap "
+              f"{rep['train_heldout_gap']} > 3.0 — the serialized .clm memorized "
+              "its corpus and does NOT generalize. Re-train with regularization / "
+              "a larger corpus (re-serialization will NOT fix this).")
+    if not ok:
+        print("DESCENT_FAIL: serialized .clm does NOT model held-out text "
+              f"(model_ce {rep['heldout_model_ce']} vs uniform {rep['uniform_ce_lnV']}, "
+              f"shuffle {rep['heldout_shuffle_ce']}). Broken or overfit — do NOT "
+              "mark done / HF-upload.")
+    return 0 if ok else 1
+
+
+def serialize_self_verify(clm_path, train_corpus, heldout=None, skip=False,
+                          nwin=64, tail_frac=0.1, tag="CLM"):
+    """Post-serialize convenience for the trainers (train.py / train.hexa bridge).
+    Runs the held-out mirror-DESCENT gate right after a .clm is written, so a
+    broken/overfit artifact can't be marked done. If `heldout` is None, holds out
+    a DEEP TAIL slice of `train_corpus` (last `tail_frac`, written to a temp file)
+    as a stand-in held-out set — never evaluate the gate on the head the model
+    trained on. Returns the gate rc (0=PASS). Honest no-op (rc 0) when skip=True
+    or no usable corpus, with a printed reason."""
+    if skip:
+        print(f"{tag}_DESCENT_GATE=SKIPPED (--no-descent-gate)")
+        return 0
+    held = heldout
+    tmp_made = None
+    try:
+        if held is None:
+            if not train_corpus or not os.path.exists(train_corpus):
+                print(f"{tag}_DESCENT_GATE=SKIPPED (no held-out and no readable "
+                      "train corpus to slice)")
+                return 0
+            rb = open(train_corpus, "rb").read()
+            n = len(rb)
+            cut = int(n * (1.0 - tail_frac))
+            if n - cut < 4096:
+                print(f"{tag}_DESCENT_GATE=SKIPPED (corpus too small to hold out "
+                      f"a {tail_frac:.0%} tail)")
+                return 0
+            import tempfile
+            fd, tmp_made = tempfile.mkstemp(suffix=".heldtail")
+            with os.fdopen(fd, "wb") as f:
+                f.write(rb[cut:])
+            held = tmp_made
+            print(f"{tag}_DESCENT_GATE: holding out deep tail slice "
+                  f"(last {tail_frac:.0%} = {n - cut} bytes) of {train_corpus}")
+        return run_descent_gate_cli(clm_path, held, train_corpus, nwin)
+    finally:
+        if tmp_made and os.path.exists(tmp_made):
+            try:
+                os.remove(tmp_made)
+            except OSError:
+                pass
+
+
+def run_descent_selftest(here):
+    """CI self-test of the DESCENT-gate MACHINERY (no torch, no big artifacts):
+    serialize a tiny RANDOM-weight model to .clm, run the held-out mirror gate on
+    a small byte corpus, and assert the broken-detector FIRES (random weights ⇒
+    NO-DESCENT, F-CLM-DESCENT=0). This proves the gate loads/forwards/scores and
+    that a non-modeling .clm is correctly REJECTED — the exact failure the gate
+    must catch. (A PASS-side fixture would need a trained model = torch; the
+    real PASS path is exercised by the control clm_d768 + the trainers in CI.)"""
+    import numpy as np
+    sd, _ = _build_synthetic_general(d=24, L=2, E=2, K=3, V=256, seed=7)
+    ctmp = os.path.join(here, "_rt_descent.clm")
+    import clm_serialize_v2 as S
+    S.serialize_v3(sd, n_trunk_layers=2, n_experts=2, out_path=ctmp)
+    # small deterministic byte corpus (English-ish) — random weights can't model it
+    corp = os.path.join(here, "_rt_descent_corpus.txt")
+    with open(corp, "wb") as f:
+        f.write((b"the mind is a fire to be kindled not a vessel to be filled. ") * 64)
+    try:
+        ok, rep = descent_gate(ctmp, corp, None, nwin=16)
+        # machinery sanity: produced finite CEs + the random model does NOT descend
+        finite = (rep["heldout_model_ce"] == rep["heldout_model_ce"]  # not NaN
+                  and rep["uniform_ce_lnV"] > 5.0)
+        fires = (ok is False)  # broken-detector must reject random weights
+        return (finite and fires), rep
+    finally:
+        for p in (ctmp, corp):
+            try:
+                os.remove(p)
+            except OSError:
+                pass
+
+
 def main():
+    # `verify_clm_v2.py descent <clm> <heldout> [train] [nwin]` runs the
+    # held-out overfit gate (the post-serialize self-verify). No args → the
+    # structural round-trip self-test suite.
+    if len(sys.argv) >= 2 and sys.argv[1] == "descent":
+        clm = sys.argv[2]
+        heldout = sys.argv[3]
+        train = sys.argv[4] if len(sys.argv) > 4 and not sys.argv[4].isdigit() else None
+        nwin = int(sys.argv[-1]) if sys.argv[-1].isdigit() else 64
+        sys.exit(run_descent_gate_cli(clm, heldout, train, nwin))
+
     here = os.path.dirname(os.path.abspath(__file__))
     if here not in sys.path:
         sys.path.insert(0, here)
@@ -333,7 +664,20 @@ def main():
         os.remove(gtmp)
     except OSError:
         pass
-    ok = ok and eq_ok and g_ok_small and g_ok_3b
+
+    # held-out DESCENT-gate machinery self-test (broken-detector must fire on
+    # random weights). numpy required; honest SKIP if absent.
+    try:
+        import numpy as _np  # noqa: F401  @root-cause-ok probe whether numpy is importable for the gate self-test
+        d_ok, d_rep = run_descent_selftest(here)
+        print(f"F-CLM-DESCENT-SELFTEST={'1' if d_ok else '0'}  "
+              f"(random-weight .clm correctly rejected: heldout_ce="
+              f"{d_rep['heldout_model_ce']} >= uniform={d_rep['uniform_ce_lnV']})")
+    except ImportError:
+        print("F-CLM-DESCENT-SELFTEST=SKIP (numpy unavailable)")
+        d_ok = True  # don't fail the structural suite on a missing optional dep
+
+    ok = ok and eq_ok and g_ok_small and g_ok_3b and d_ok
 
     # golden-reference parse: prove the mirror matches the REAL flame format.
     golden = None

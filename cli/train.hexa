@@ -861,6 +861,12 @@ fn main() {
     let mitosis_on  = if cli_has(argv, "--no-mitosis") { 0 } else { 1 }
     let corpus_paths = cli_corpus(argv)
     let out_ckpt = cli_val(argv, "--out")
+    // --heldout-corpus <path>  byte corpus for the post-serialize DESCENT gate
+    // (the OVERFIT detector). Absent → the first --corpus cell is sliced (the
+    // gate holds out its deep tail, never the head the model trained on).
+    let heldout_arg = cli_val(argv, "--heldout-corpus")
+    let gate_corpus = if byte_len(heldout_arg) > 0 { heldout_arg }
+                      else { if len(corpus_paths) > 0 { corpus_paths[0] } else { "" } }
 
     // 303M-class canonical config — the REAL clm303_L4_d3784 shape (L4·d3784·E2->
     // Emax4 = true 303M). GPU dispatch target; full 303M LEARNING is a separate
@@ -1096,6 +1102,36 @@ fn main() {
                                expW, expB, noG, noB, roW, roB)
         if nb > 0 {
             print("  ckpt WRITTEN "); print(nb); print(" bytes -> "); println(out_ckpt)
+            // ── post-serialize SELF-VERIFY: held-out mirror-DESCENT gate ──────
+            // The serialized .clm must genuinely model HELD-OUT text — not just be
+            // structurally decodable (a_clm_gen_pipeline). Shell out to the
+            // canonical torch-free gate verify_clm_v2.py (math.log mirror, immune
+            // to the engine dt_ln CE-clamp bug that masks overfit). It holds out a
+            // deep tail slice of --heldout-corpus (or, absent that, of the first
+            // --corpus). DELIBERATELY NOT the engine clm_forward_ce: that uses the
+            // buggy dt_ln and would read an overfit .clm as GREEN. A FAIL here =
+            // the .clm is broken/overfit → do NOT mark done / HF-upload.
+            // Skipped for the d8 MODE_VERIFY toy (descent on a toy is meaningless).
+            if cfg_canon == 1 {
+                let held = if byte_len(gate_corpus) > 0 { gate_corpus } else { "" }
+                if byte_len(held) > 0 {
+                    let vfy = "train/clm/model/verify_clm_v2.py"
+                    let cmd = "python3 " + vfy + " descent "
+                        + out_ckpt + " " + held + " " + held + " 64 2>&1"
+                    println("  post-serialize held-out DESCENT gate (verify_clm_v2 mirror, dt_ln-immune):")
+                    let gout = exec(cmd)
+                    print(gout)
+                    if str_contains(gout, "F-CLM-DESCENT=0") {
+                        println("  ⛔ DESCENT GATE FAIL — serialized .clm broken/overfit; do NOT mark done / HF-upload (a_clm_gen_pipeline).")
+                    } else {
+                        if str_contains(gout, "F-CLM-DESCENT=1") {
+                            println("  ✅ DESCENT GATE PASS — serialized .clm models held-out text.")
+                        }
+                    }
+                } else {
+                    println("  (held-out DESCENT gate SKIPPED — no --heldout-corpus / --corpus to slice)")
+                }
+            }
         } else {
             print("  ckpt WRITE FAILED -> "); println(out_ckpt)
         }

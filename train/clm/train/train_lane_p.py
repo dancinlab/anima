@@ -36,6 +36,14 @@ from model import CLMConfig, CLMConvMoE          # noqa: E402
 import clm_serialize_v2 as S                      # noqa: E402
 
 
+def _run_descent_gate(clm_path, train_corpus, heldout, skip):
+    """Post-serialize held-out mirror-DESCENT gate (the OVERFIT detector,
+    a_clm_gen_pipeline). Imports verify_clm_v2 lazily (its dir is on sys.path via
+    the _MODEL insert above) and delegates to serialize_self_verify."""
+    import verify_clm_v2 as VFY
+    return VFY.serialize_self_verify(clm_path, train_corpus, heldout, skip)
+
+
 def load_byte_stream(path: str) -> torch.Tensor:
     with open(path, "rb") as f:
         raw = f.read()
@@ -75,6 +83,13 @@ def main():
     ap.add_argument("--ckpt-out", required=True)
     ap.add_argument("--clm-out", required=True)
     ap.add_argument("--json-out", default=None)
+    ap.add_argument("--heldout", default=None,
+                    help="held-out byte corpus for the post-serialize descent gate "
+                         "(verify_clm_v2 mirror-DESCENT, the OVERFIT detector). "
+                         "absent → a deep tail slice of --corpus is held out.")
+    ap.add_argument("--no-descent-gate", action="store_true",
+                    help="skip the post-serialize held-out mirror-DESCENT gate "
+                         "(NOT recommended — the gate blocks shipping broken/overfit .clm)")
     ap.add_argument("--log-every", type=int, default=100)
     ap.add_argument("--bf16", action="store_true")
     a = ap.parse_args()
@@ -161,6 +176,14 @@ def main():
     p = S.serialize_v2(sd, cfg, a.clm_out)
     sz = os.path.getsize(p)
     print(f"CLM serialized {p} ({sz} bytes)", flush=True)
+
+    # post-serialize SELF-VERIFY: held-out mirror-DESCENT gate (the OVERFIT
+    # detector, a_clm_gen_pipeline). The serialized .clm must genuinely model
+    # HELD-OUT text — not just be structurally decodable, and not just memorize
+    # the training corpus. A FAIL here means the .clm is broken or overfit and
+    # must NOT be marked done / HF-uploaded. (Uses verify_clm_v2's math.log
+    # mirror — immune to the engine dt_ln CE-clamp bug.)
+    descent_rc = _run_descent_gate(p, a.corpus, a.heldout, a.no_descent_gate)
 
     result = {
         "substrate": "GPU-torch",
