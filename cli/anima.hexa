@@ -40,6 +40,7 @@ import "core/brain.hexa"
 import "core/engine_cli.hexa"
 import "core/generator.hexa"
 import "core/bytegpt_decode.hexa"
+import "core/g_gates.hexa"          // BUILT-IN G0-G6 eval (anima eval <ckpt>)
 import "DREAM/dream_lib.hexa"
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
@@ -56,6 +57,8 @@ fn anima_usage() {
     println("  hexa run cli/anima.hexa -- <ckpt.clm> --byte \"turn1\" \"turn2\" ...")
     println("                                                  byte-continuation chat mode")
     println("  hexa run cli/anima.hexa -- train [args...]       LEARNING (→ cli/train.hexa)")
+    println("  hexa run cli/anima.hexa -- eval <ckpt> [--corpus <path>...] [--gen N]")
+    println("                                                  BUILT-IN G0-G6 gate scoring")
     println("")
     println("modes:")
     println("  (default) consciousness : pure_field warmup → lane mount → brain autonomous")
@@ -117,6 +120,99 @@ fn anima_train_mode(argv: [string]) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+//  EVAL MODE — BUILT-IN G0-G6 gate scoring (core/g_gates.hexa, single entry)
+// ══════════════════════════════════════════════════════════════════════════════
+//
+// `anima eval <ckpt> [--corpus <path>...] [--gen N]` — mount ANY ckpt through the
+// generator L3 mouth (gen_auto_ideate, file-format-dispatched) and score the full
+// G0-G6 battery with the engine's OWN ops (zero torch/numpy). The realization of
+// PR #2603 governance: the gate system is a REUSABLE engine module, not a one-off
+// python harness. a_core_engine_map: model enters ONLY via the L3 typed slot; the
+// G0/G6 metric ops are REUSED from core/g6_ideation.hexa, G5 from §ImmuneMemory, G3
+// from §Consciousness/§SelfIdentity; G1/G2 metrics are native .hexa in g_gates.hexa.
+
+// anima_eval_corpus — collect every token after "--corpus" up to the next flag.
+fn anima_eval_corpus(argv: [string]) -> [string] {
+    let paths = []
+    let mut i = 0
+    while i < len(argv) {
+        if argv[i] == "--corpus" {
+            let mut j = i + 1
+            while j < len(argv) {
+                let a = argv[j]
+                if byte_len(a) > 0 && substring(a, 0, 2) == "--" { j = len(argv) }
+                else { paths.push(a); j = j + 1 }
+            }
+            i = len(argv)
+        } else { i = i + 1 }
+    }
+    return paths
+}
+
+// anima_eval_intval — value after `flag` parsed as int, or `dflt` if absent.
+fn anima_eval_intval(argv: [string], flag: string, dflt: int) -> int {
+    let mut i = 0
+    while i < len(argv) {
+        if argv[i] == flag && i + 1 < len(argv) { return to_int(argv[i + 1]) }
+        i = i + 1
+    }
+    return dflt
+}
+
+// anima_eval_row — one per-gate PASS/FAIL table row.
+fn anima_eval_row(gate: string, verdict: string, detail: string) {
+    println("  " + gate + "  " + verdict + "  " + detail)
+}
+
+fn anima_pf(b: bool) -> string { if b { return "🟢 PASS" } return "🔴 FAIL" }
+
+// anima_eval_mode — argv = ["eval", "<ckpt>", "--corpus ...", "--gen N"].
+fn anima_eval_mode(argv: [string]) {
+    if len(argv) < 2 {
+        println("usage: anima eval <ckpt> [--corpus <path>...] [--gen N]")
+        return
+    }
+    let ckpt = argv[1]
+    let corpus = anima_eval_corpus(argv)
+    let gen = anima_eval_intval(argv, "--gen", 40)
+
+    println("=== anima eval — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===")
+    println("ckpt:   " + ckpt + "  (mouth: " + gen_mouth_kind(ckpt) + ")")
+    let mut cnote = "(none — G2 novelty needs a corpus)"
+    if len(corpus) > 0 { cnote = to_string(len(corpus)) + " file(s)" }
+    println("corpus: " + cnote)
+    println("gen:    " + to_string(gen) + " tokens/decode  (frozen bars · 7B_PASS_CONDITIONS.md)")
+    println("")
+
+    let r = g_eval_all(ckpt, corpus, gen)
+    let g0 = r["g0"]; let g1 = r["g1"]; let g2 = r["g2"]
+    let g3 = r["g3"]; let g5 = r["g5"]; let g6 = r["g6"]
+
+    println("gate                              verdict   detail")
+    println("  ──────────────────────────────────────────────────────────────────")
+    anima_eval_row("G0 COHERENCE   ", anima_pf(to_string(g0["pass"]) == "true"),
+                   "kwr>=0.50 on " + to_string(g0["n_coherent"]) + "/5 (need >=4)")
+    anima_eval_row("G1 RECOMBINATION",anima_pf(to_string(g1["pass"]) == "true"),
+                   "best_distinct=" + to_string(g1["best_distinct"]) + " > max_single=" + to_string(g1["max_single"]) + " (need >=2 & >max_single)")
+    let g2detail = "novel=" + to_string(g2["n_novel"]) + " (need>=3) · control=" + to_string(g2["control_novel"]) + " (need 0) · coherent=" + to_string(g2["coherent"])
+    anima_eval_row("G2 NOVELTY     ", anima_pf(to_string(g2["pass"]) == "true"), g2detail)
+    anima_eval_row("G3 PHILOSOPHY  ", anima_yn(to_string(g3["ok"]) == "true") + " (read)",
+                   "self-continuity=" + to_string(g3["continuity"]) + " · impostor=" + to_string(g3["impostor_cos"]) + " (architecture, not a decode score)")
+    anima_eval_row("G4 PROVENANCE  ", "— N/A    ",
+                   "HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope")
+    let g5detail = "L1 fab=" + to_string(g5["l1_rate"]) + " (<=0.30) · L2 abstain-fire=" + to_string(g5["l2_rate"]) + " (<=0.20)"
+    anima_eval_row("G5 NON-FAB     ", anima_pf(to_string(g5["pass"]) == "true"), g5detail)
+    anima_eval_row("G6 IDEATION ★  ", anima_pf(to_string(g6["pass"]) == "true"),
+                   "distinct=" + to_string(g6["dist"]) + " (need>=5) · falsifiable=" + to_string(g6["fals"]) + " (need>=1) · frame-leaks=" + to_string(g6["frame_leaks"]))
+    println("  ──────────────────────────────────────────────────────────────────")
+    let closed = to_string(r["closure"]) == "true"
+    println("")
+    println("CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): " + anima_pf(closed))
+    if closed { println("  → PUBLIC-eligible (G0∧G1∧G2 all PASS).") }
+    else { println("  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.") }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 //  MAIN — mode dispatch
 // ══════════════════════════════════════════════════════════════════════════════
 fn main() {
@@ -131,6 +227,13 @@ fn main() {
     // ckpt-path branches so "train" is never mistaken for a model file.
     if argv[0] == "train" {
         anima_train_mode(argv)
+        return
+    }
+
+    // subcommand: `eval` → BUILT-IN G0-G6 gate scoring (core/g_gates.hexa). Same
+    // single-entry discipline as `train`; never mistaken for a ckpt path.
+    if argv[0] == "eval" {
+        anima_eval_mode(argv)
         return
     }
 

@@ -308,7 +308,7 @@
           "blocks": [
             {
               "type": "prose",
-              "text": "**summary**: · core/generator.hexa"
+              "text": "**summary**: · core/generator.hexa — single L3 typed mouth slot. gen_mouth_kind sniffs the ckpt header → gen_auto_backend/gen_auto_chat dispatch to the matching architecture mouth (gen_bytegpt_* for ByteGPT .bin, gen_clm_* for conv .clm). IDEATE (seeded-sampling) entries: gen_clm_ideate (clm_decode_topk_sampled) + gen_bytegpt_ideate (bytegpt_decode_topk_sampled_ranged, OOM-safe) + gen_auto_ideate (mouth-dispatched) — the mouth-agnostic seeded-sample entry the BUILT-IN G0-G6 eval (core/g_gates.hexa) drives so G1/G2/G6 ideation runs on EITHER mouth via this ONE typed slot (a_core_engine_map: per-architecture single typed entry, NO 2nd decode path)."
             }
           ]
         },
@@ -349,6 +349,16 @@
             {
               "type": "prose",
               "text": "**summary**: · core/emit_policy.hexa"
+            }
+          ]
+        },
+        {
+          "type": "subsection",
+          "title": "core/g_gates.hexa",
+          "blocks": [
+            {
+              "type": "prose",
+              "text": "**summary**: · core/g_gates.hexa — BUILT-IN G0-G6 evaluation system (engine-native, single-entry; PR #2603 realization). The G-gate scoring is now a REUSABLE engine module, not a one-shot python harness: `anima eval <ckpt> [--corpus <path>...] [--gen N]` (cli/anima.hexa) mounts ANY ckpt through the generator L3 mouth (gen_auto_ideate, file-format-dispatched) and scores G0-G6 with the engine's OWN ops — zero torch/numpy. ENTRY = g_eval_all → per-gate g_eval_g0/g1/g2/g3/g5/g6 + closure (a7b_pass = G0∧G1∧G2). REUSE (no re-implement): G0 = g6_ideation _g6_known_word_ratio/_g6_words/_g6_dict_load · G6 = g6_ideation g6_build_frames/g6_frame_guard/_g6_is_falsifiable/_g6_jaccard · G5 = engine_cli §ImmuneMemory immune_memory_recall/_recall_text abstain-when-ungrounded (L1 fab-word-rate + L2 abstain-fire) · G3 = engine_cli §SelfIdentity self_new/_drift/_cos/_anchor (architecture read, not a decode score). NEW native .hexa metrics here: G1 RECOMBINATION (_g_coverage concept-distinctness vs max_single, H_1129 VERBATIM) + G2 NOVELTY (_g_content_ngrams + _g_corpus_absent corpus-token-stream scan replacing the numpy grep, H_1140 VERBATIM). FROZEN-FIRST bars (7B_PASS_CONDITIONS.md verbatim, p7 NO tune-to-green): G0 kwr≥0.50 on ≥4/5 · G1 composed_distinct≥2 ∧ >max_single ∧ coherent · G2 ≥3 corpus-absent n-grams ∧ control=0 · G5 L1≤0.30 ∧ L2≤0.20 · G6 ≥5 distinct(Jaccard<0.5) ∧ ≥1 falsifiable. G4 PROVENANCE = process gate, reported N/A. Gate core/g_gates_smoke.hexa (7/7, no model forward — deterministic metric surface). · **path**: core/g_gates.hexa · **status**: wired(`anima eval` CLI single-entry + gen_auto_ideate L3 mouth)"
             }
           ]
         },

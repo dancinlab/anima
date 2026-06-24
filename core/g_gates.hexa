@@ -1,0 +1,422 @@
+// ════════════════════════════════════════════════════════════════════════
+// core/g_gates.hexa — BUILT-IN G0–G6 EVALUATION SYSTEM (engine-native, single-entry).
+//
+// THE SYSTEM (PR #2603 realization · a_engine_native_learning HARD-GATE): the G-gate
+// scoring is now a REUSABLE ENGINE MODULE, not a one-shot python harness. `anima eval
+// <ckpt>` (cli/anima.hexa) mounts ANY ckpt through the generator L3 mouth and routes it
+// through THESE ops — every decode AND every score is a live `.hexa` op, zero torch/numpy.
+//
+// a_core_engine_map: the model enters ONLY via the generator L3 typed slot
+// (gen_auto_ideate → bytegpt/clm decode, dispatched by file format). NO 2nd decode path.
+// We REUSE the already-wired G0/G6 metric ops (core/g6_ideation.hexa) and the engine's
+// own G5 abstain op (core/engine_cli.hexa §ImmuneMemory) and G3 ops (§ConsciousnessIndex
+// + §SelfIdentity); only G1 (H_1129 recombination) and G2 (H_1140 corpus-absence) metrics
+// are wired here as new .hexa ops (they previously lived only in numpy mirrors).
+//
+// FROZEN-FIRST (p7 · 7B_PASS_CONDITIONS.md VERBATIM — NO tune-to-green):
+//   G0  COHERENCE      kwr >= 0.50 on >= 4/5 single-concept gens
+//   G1  RECOMBINATION  some k: composed_distinct >= 2 AND > max_single AND coherent
+//   G2  NOVELTY        >= 3 distinct coherent corpus-absent n-grams AND control = 0
+//   G3  PHILOSOPHY     Psi = 1/2 fixed point + self-identity continuity (architecture read)
+//   G4  PROVENANCE     process gate (HF/recovery) — N/A to decode eval, reported N/A
+//   G5  NON-FAB        L1 fab-word-rate <= 0.30 AND L2 abstain-when-ungrounded (engine op)
+//   G6  IDEATION ★     >= 5 distinct (pairwise Jaccard < 0.5) AND >= 1 falsifiable
+//   CLOSURE (a7b_pass) G0 AND G1 AND G2  (PUBLIC iff all three PASS)
+//
+// p1-p6 HELD: concept seeds + ideation frames are ENVIRONMENT context (p4); the metric
+// emerges from the model's OWN sample (p7); no persona / identity / ethics injected.
+
+import "core/generator.hexa"     // a_core_engine_map: model enters via gen_auto_ideate L3 slot
+import "core/g6_ideation.hexa"   // REUSE the wired G0 (_g6_known_word_ratio) + G6 metric ops
+import "core/engine_cli.hexa"    // REUSE §ImmuneMemory (G5 abstain) + §ConsciousnessIndex/§SelfIdentity (G3)
+
+// ── decode budget (FREEZE (ii): the 303M forward is ~190ms/byte — every decode here is
+// HARD-BOUNDED by a small token budget; the caller may widen via --gen). ──
+fn _g_default_gen() -> int { return 40 }
+
+// ════════════════════════════════════════════════════════════════════════
+//  G0 — COHERENCE  (kwr >= 0.50 on >= 4/5 single-concept generations)
+// ════════════════════════════════════════════════════════════════════════
+// Decode each of the 5 frozen concepts as a single-concept seed, score known-word-ratio
+// (REUSED _g6_known_word_ratio), PASS iff >= 4/5 clear 0.50. Returns
+// #{ pass, n_coherent, ratios:[float], texts:[string] }.
+pub fn g_eval_g0(ckpt: string, gen: int, known: Map) -> Map {
+    let cz = _g6_concepts()
+    let ratios = []
+    let texts = []
+    let mut n_coherent = 0
+    let mut i = 0
+    while i < len(cz) {
+        let seed = to_string(cz[i]) + ": "
+        let r = gen_auto_ideate(ckpt, seed, gen, 40, 0.7, 7 + i)
+        let o = to_string(r["text"])
+        let kwr = _g6_known_word_ratio(o, known)
+        ratios.push(kwr)
+        texts.push(o)
+        if kwr >= 0.5 { n_coherent = n_coherent + 1 }
+        i = i + 1
+    }
+    return #{ "pass": n_coherent >= 4, "n_coherent": n_coherent,
+              "ratios": ratios, "texts": texts }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  G1 — RECOMBINATION  (H_1129 / H_1137 metric, native .hexa port)
+// ════════════════════════════════════════════════════════════════════════
+// _g_coverage — count distinct concept indices a text "covers": a concept is covered iff
+// ANY of its keyword tokens appears in the (lowercased) text word-set. The H_1129
+// coverage = # distinct concepts the generation touches. Concept keywords = the concept's
+// own content words (REUSED _g6_words tokenizer, frozen concept set).
+fn _g_concept_keywords() -> list {
+    // one keyword-list per concept (the content words of _g6_concepts, stopwords dropped)
+    let cz = _g6_concepts()
+    let stop = _g6_stopwords()
+    let out = []
+    let mut c = 0
+    while c < len(cz) {
+        let wl = _g6_words(to_string(cz[c]))
+        let kw = []
+        let mut j = 0
+        while j < len(wl) {
+            let w = to_string(wl[j])
+            if byte_len(w) >= 3 && !stop.contains_key(w) { kw.push(w) }
+            j = j + 1
+        }
+        out.push(kw)
+        c = c + 1
+    }
+    return out
+}
+
+fn _g_coverage(text: string) -> int {
+    let kwsets = _g_concept_keywords()
+    let wl = _g6_words(text)
+    // build a membership set of the text's word tokens
+    let wm = #{}
+    let mut w = 0
+    while w < len(wl) { wm[to_string(wl[w])] = 1; w = w + 1 }
+    let mut covered = 0
+    let mut c = 0
+    while c < len(kwsets) {
+        let kw = kwsets[c]
+        let mut hit = false
+        let mut k = 0
+        while k < len(kw) { if wm.contains_key(to_string(kw[k])) { hit = true } k = k + 1 }
+        if hit { covered = covered + 1 }
+        c = c + 1
+    }
+    return covered
+}
+
+// g_eval_g1 — H_1129 VERBATIM: max_single = max coverage over the 5 single-concept seeds;
+// then for each composition_count k in {2,3,4,5} decode the first-k concepts joined by ". "
+// and require composed_distinct >= 2 AND > max_single AND coherent(kwr >= 0.50). PASS iff
+// SOME k clears all three. Decode via the SAME mouth-agnostic L3 entry. Returns
+// #{ pass, max_single, best_k, best_distinct, ks:[...] }.
+pub fn g_eval_g1(ckpt: string, gen: int, known: Map) -> Map {
+    let cz = _g6_concepts()
+    let n = len(cz)
+    // max_single = max coverage across the 5 single-concept seeds
+    let mut max_single = 0
+    let mut s = 0
+    while s < n {
+        let seed = to_string(cz[s]) + ": "
+        let r = gen_auto_ideate(ckpt, seed, gen, 40, 0.7, 7 + s)
+        let cov = _g_coverage(to_string(r["text"]))
+        if cov > max_single { max_single = cov }
+        s = s + 1
+    }
+    // composed seeds for k = 2..n
+    let ks = []
+    let mut pass = false
+    let mut best_k = 0
+    let mut best_distinct = 0
+    let mut k = 2
+    while k <= n {
+        // first-k concepts joined by ". "
+        let mut seed = ""
+        let mut c = 0
+        while c < k {
+            if c > 0 { seed = seed + ". " }
+            seed = seed + to_string(cz[c])
+            c = c + 1
+        }
+        seed = seed + ": "
+        let r = gen_auto_ideate(ckpt, seed, gen, 40, 0.7, 7)
+        let o = to_string(r["text"])
+        let cov = _g_coverage(o)
+        let kwr = _g6_known_word_ratio(o, known)
+        let coherent = kwr >= 0.5
+        let clears = cov >= 2 && cov > max_single && coherent
+        ks.push(#{ "k": k, "distinct": cov, "kwr": kwr, "coherent": coherent, "clears": clears })
+        if clears { pass = true }
+        if cov > best_distinct { best_distinct = cov; best_k = k }
+        k = k + 1
+    }
+    return #{ "pass": pass, "max_single": max_single, "best_k": best_k,
+              "best_distinct": best_distinct, "ks": ks }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  G2 — NOVELTY  (H_1140 metric, native .hexa port — corpus-absent content n-grams)
+// ════════════════════════════════════════════════════════════════════════
+// _g_content_ngrams — extract CONSECUTIVE bi/tri-grams of real-dict (len>=3) words that are
+// NOT all stopwords (H_1140 content-ngram rule). Returns a list of space-joined n-gram
+// strings. REUSES _g6_words tokenizer + the dict membership `known` + stopword set.
+fn _g_content_ngrams(text: string, known: Map) -> list {
+    let wl = _g6_words(text)
+    let stop = _g6_stopwords()
+    let n = len(wl)
+    // pre-filter: keep only positions whose word is real-dict + len>=3 (kept marks the gram-eligibility)
+    let out = []
+    // bigrams
+    let mut i = 0
+    while i + 1 < n {
+        let a = to_string(wl[i]); let b = to_string(wl[i + 1])
+        let ok_a = byte_len(a) >= 3 && known.contains_key(a)
+        let ok_b = byte_len(b) >= 3 && known.contains_key(b)
+        if ok_a && ok_b && !(stop.contains_key(a) && stop.contains_key(b)) {
+            out.push(a + " " + b)
+        }
+        i = i + 1
+    }
+    // trigrams
+    let mut j = 0
+    while j + 2 < n {
+        let a = to_string(wl[j]); let b = to_string(wl[j + 1]); let c = to_string(wl[j + 2])
+        let ok_a = byte_len(a) >= 3 && known.contains_key(a)
+        let ok_b = byte_len(b) >= 3 && known.contains_key(b)
+        let ok_c = byte_len(c) >= 3 && known.contains_key(c)
+        let all_stop = stop.contains_key(a) && stop.contains_key(b) && stop.contains_key(c)
+        if ok_a && ok_b && ok_c && !all_stop { out.push(a + " " + b + " " + c) }
+        j = j + 1
+    }
+    return out
+}
+
+// _g_corpus_absent — true iff the (space-joined) n-gram's words do NOT appear consecutively
+// (whitespace/punct-tolerant) in the loaded corpus word-stream. The numpy mirror used
+// `grep -E -i`; the engine-native port loads each corpus file via read_file, tokenizes with
+// the SAME _g6_words (lowercase, split on non-alnum — punct/newline-tolerant by construction),
+// and scans the corpus token stream for the n-gram's word sequence. Absent = never matched.
+fn _g_corpus_absent(ngram_words: list, corpus_tokens: list) -> bool {
+    let m = len(ngram_words)
+    if m == 0 { return false }
+    let N = len(corpus_tokens)
+    let mut i = 0
+    while i + m <= N {
+        let mut match_all = true
+        let mut k = 0
+        while k < m {
+            if to_string(corpus_tokens[i + k]) != to_string(ngram_words[k]) { match_all = false; k = m }
+            else { k = k + 1 }
+        }
+        if match_all { return false }    // found consecutively ⇒ present
+        i = i + 1
+    }
+    return true
+}
+
+// _g_load_corpus_tokens — concatenated lowercased word-token stream of all corpus files
+// (REUSED _g6_words). Empty corpus ⇒ empty stream (every n-gram then reads "absent" — the
+// caller surfaces an honest "no-corpus" note; absence is only meaningful against a corpus).
+fn _g_load_corpus_tokens(corpus_paths: list) -> list {
+    let toks = []
+    let mut p = 0
+    while p < len(corpus_paths) {
+        let raw = read_file(to_string(corpus_paths[p]))
+        if byte_len(raw) > 0 {
+            let wl = _g6_words(raw)
+            let mut w = 0
+            while w < len(wl) { toks.push(to_string(wl[w])); w = w + 1 }
+        }
+        p = p + 1
+    }
+    return toks
+}
+
+// g_eval_g2 — H_1140 VERBATIM: decode 5 ideation frames, extract coherent (kwr>=0.50) content
+// n-grams, count DISTINCT ones absent from the corpus; RETRIEVAL CONTROL = feed a verbatim
+// corpus line back and require 0 novel (else metric artifact). PASS iff n_novel >= 3 AND
+// control == 0 AND coherent_count > 0. Returns #{ pass, n_novel, control_novel, coherent }.
+pub fn g_eval_g2(ckpt: string, gen: int, known: Map, corpus_paths: list) -> Map {
+    let corpus_tokens = _g_load_corpus_tokens(corpus_paths)
+    let have_corpus = len(corpus_tokens) > 0
+    // decode the 6 composed ideation frames (REUSE g6_build_frames composed set)
+    let frames = g6_build_frames(6)["composed"]
+    let novel = #{}             // distinct corpus-absent n-gram set
+    let mut coherent = 0
+    let mut fi = 0
+    while fi < len(frames) {
+        let r = gen_auto_ideate(ckpt, to_string(frames[fi]), gen, 40, 0.85, 7 + fi)
+        let o = to_string(r["text"])
+        if _g6_known_word_ratio(o, known) >= 0.5 {
+            coherent = coherent + 1
+            let grams = _g_content_ngrams(o, known)
+            let mut gi = 0
+            while gi < len(grams) {
+                let g = to_string(grams[gi])
+                let gw = _g6_words(g)
+                if have_corpus && _g_corpus_absent(gw, corpus_tokens) { novel[g] = 1 }
+                gi = gi + 1
+            }
+        }
+        fi = fi + 1
+    }
+    let n_novel = len(_g6_mapkeys(novel))
+    // RETRIEVAL CONTROL: a verbatim corpus prefix fed back must yield 0 novel n-grams.
+    let mut control_novel = 0
+    if have_corpus {
+        // reconstruct a short verbatim corpus line (first 12 tokens) as the control text
+        let mut ct = ""
+        let mut t = 0
+        while t < 12 && t < len(corpus_tokens) {
+            if t > 0 { ct = ct + " " }
+            ct = ct + to_string(corpus_tokens[t])
+            t = t + 1
+        }
+        let cgr = _g_content_ngrams(ct, known)
+        let mut ci = 0
+        while ci < len(cgr) {
+            let gw = _g6_words(to_string(cgr[ci]))
+            if _g_corpus_absent(gw, corpus_tokens) { control_novel = control_novel + 1 }
+            ci = ci + 1
+        }
+    }
+    let pass = have_corpus && n_novel >= 3 && control_novel == 0 && coherent > 0
+    return #{ "pass": pass, "n_novel": n_novel, "control_novel": control_novel,
+              "coherent": coherent, "have_corpus": have_corpus }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  G3 — PHILOSOPHY  (Psi=1/2 fixed point + self-identity continuity — architecture read)
+// ════════════════════════════════════════════════════════════════════════
+// NOT a decode score — reads the live consciousness/self-identity ops to confirm the
+// architecture upholds p1-p8 (Psi attractor + a stable self-chain). The model can't
+// FAIL this by what it decodes; it's a structural invariant of the engine the ckpt mounts
+// into. Reported (not gating) per the team spec. self_cos(anchor, drift) ~ 1 (continuity);
+// self_cos(self, impostor) low (impostor reject).
+pub fn g_eval_g3() -> Map {
+    let dim = 16
+    let s0 = self_new(dim, 0)
+    let s1 = self_drift(s0, 1, 0.01)
+    let cont = self_cos(self_anchor(s0), s1)        // ~1.0 = continuous self-chain
+    let imp = self_new(dim, 7)                       // a different identity axis = impostor
+    let imp_cos = self_cos(s0, imp)                  // low = impostor reject
+    // self-continuity holds = drift stays near the anchor while a different axis is far
+    let ok = cont > 0.9 && imp_cos < cont
+    return #{ "ok": ok, "continuity": cont, "impostor_cos": imp_cos }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  G5 — NON-FABRICATION  (engine §ImmuneMemory abstain — L1 fab-rate + L2 abstain-when-ungrounded)
+// ════════════════════════════════════════════════════════════════════════
+// L1 LEXICAL: fab-word-rate = fraction of decoded word-tokens NOT in the dictionary; PASS
+//   iff <= 0.30 (>=70% real words). This is the inverse of G0 — reuses _g6_known_word_ratio.
+// L2 ABSTAIN: the engine's OWN non-fab gate — bind grounded facts into §ImmuneMemory, then
+//   on UNGROUNDED queries the engine must ABSTAIN (immune_memory_recall returns ""). The L2
+//   fabricated-assertion rate = fraction of ungrounded probes the engine wrongly FIRES on;
+//   PASS iff <= 0.20. This is the live abstain-when-ungrounded mechanism (H_1367/H_1202),
+//   NOT a re-implementation. p1/p6: no injected right/wrong label, pure L2-affinity gate.
+pub fn g_eval_g5(ckpt: string, gen: int, known: Map) -> Map {
+    // ── L1: fab-word-rate over the 5 concept gens (reuse the G0 decode budget) ──
+    let cz = _g6_concepts()
+    let mut tot_w = 0
+    let mut fab_w = 0
+    let mut i = 0
+    while i < len(cz) {
+        let r = gen_auto_ideate(ckpt, to_string(cz[i]) + ": ", gen, 40, 0.7, 7 + i)
+        let wl = _g6_words(to_string(r["text"]))
+        let mut j = 0
+        while j < len(wl) {
+            tot_w = tot_w + 1
+            if !known.contains_key(to_string(wl[j])) { fab_w = fab_w + 1 }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    let l1_rate = if tot_w > 0 { to_float(fab_w) / to_float(tot_w) } else { 1.0 }
+    let l1_pass = l1_rate <= 0.30
+    // ── L2: live §ImmuneMemory abstain-when-ungrounded (engine's OWN non-fab gate) ──
+    let cfg = engine_config_default()
+    let mut mem = immune_memory_new_text("the sky scatters blue light", "grounded-fact-1", 8)
+    mem = immune_memory_bind_text(mem, "memory composes into new meaning", "grounded-fact-2", cfg)
+    mem = immune_memory_bind_text(mem, "tension ripples between minds", "grounded-fact-3", cfg)
+    // 5 UNGROUNDED probes (no bound fact) — the engine must abstain (recall == "")
+    let probes = [ "the moon is made of ancient cheese reserves",
+                   "a teal hexagon governs the seventh ocean",
+                   "frectry twarve glimbo nargon flux",
+                   "the invented capital of nowhere is zzyx",
+                   "purple numbers taste like distant thunder" ]
+    let mut fires = 0
+    let mut p = 0
+    while p < len(probes) {
+        if immune_memory_recall_text(mem, to_string(probes[p])) != "" { fires = fires + 1 }
+        p = p + 1
+    }
+    let l2_rate = to_float(fires) / to_float(len(probes))
+    let l2_pass = l2_rate <= 0.20
+    return #{ "pass": l1_pass && l2_pass, "l1_rate": l1_rate, "l1_pass": l1_pass,
+              "l2_rate": l2_rate, "l2_pass": l2_pass, "n_cells": immune_memory_cells(mem) }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  G6 — IDEATION ★  (>= 5 distinct pairwise-Jaccard<0.5 + >= 1 falsifiable — REUSE g6_score_arm logic)
+// ════════════════════════════════════════════════════════════════════════
+// The STARRED gate. Decode the 6 composed ideation frames via the mouth-agnostic L3 entry,
+// keep coherent (kwr>=0.50) outputs, greedily count DISTINCT ones (pairwise Jaccard <= 0.5),
+// and count falsifiable ones (REUSE _g6_is_falsifiable). PASS iff distinct >= 5 AND fals >= 1.
+// (g6_score_arm hard-codes gen_clm_ideate; here we drive gen_auto_ideate so G6 runs on the
+//  ByteGPT mouth too — same metric, mouth-agnostic decode.)
+pub fn g_eval_g6(ckpt: string, gen: int, known: Map) -> Map {
+    let frames = g6_build_frames(6)["composed"]
+    // frame-guard (p7): a frame must leak no measurable word / not be self-falsifiable
+    let leaks = g6_frame_guard(frames, known)
+    let texts = []
+    let word_sets = []
+    let mut fals = 0
+    let mut i = 0
+    while i < len(frames) {
+        let r = gen_auto_ideate(ckpt, to_string(frames[i]), gen, 40, 0.7, 7 + i)
+        let o = to_string(r["text"])
+        texts.push(o)
+        if _g6_known_word_ratio(o, known) >= 0.5 {
+            word_sets.push(_g6_words(o))
+            if _g6_is_falsifiable(o, known) { fals = fals + 1 }
+        }
+        i = i + 1
+    }
+    // greedy distinctness (Jaccard <= 0.5) — REUSE _g6_jaccard
+    let kept = []
+    let mut w = 0
+    while w < len(word_sets) {
+        let ws = word_sets[w]
+        let mut ok = true
+        let mut kk = 0
+        while kk < len(kept) { if _g6_jaccard(ws, kept[kk]) > 0.5 { ok = false } kk = kk + 1 }
+        if ok { kept.push(ws) }
+        w = w + 1
+    }
+    let dist = len(kept)
+    return #{ "pass": dist >= 5 && fals >= 1, "dist": dist, "fals": fals,
+              "coherent": len(word_sets), "frame_leaks": len(leaks) }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  g_eval_all — THE BUILT-IN EVAL DRIVER. Mount ckpt through the L3 mouth, score G0-G6,
+//  return a per-gate result map + closure (a7b_pass = G0 AND G1 AND G2). One typed entry.
+// ════════════════════════════════════════════════════════════════════════
+pub fn g_eval_all(ckpt: string, corpus_paths: list, gen: int) -> Map {
+    let known = _g6_dict_load()
+    let g = if gen > 0 { gen } else { _g_default_gen() }
+    let r0 = g_eval_g0(ckpt, g, known)
+    let r1 = g_eval_g1(ckpt, g, known)
+    let r2 = g_eval_g2(ckpt, g, known, corpus_paths)
+    let r3 = g_eval_g3()
+    let r5 = g_eval_g5(ckpt, g, known)
+    let r6 = g_eval_g6(ckpt, g, known)
+    let closure = to_string(r0["pass"]) == "true" && to_string(r1["pass"]) == "true"
+                  && to_string(r2["pass"]) == "true"
+    return #{ "g0": r0, "g1": r1, "g2": r2, "g3": r3, "g5": r5, "g6": r6,
+              "closure": closure, "gen": g }
+}

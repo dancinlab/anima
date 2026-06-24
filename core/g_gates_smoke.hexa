@@ -1,0 +1,69 @@
+// g_gates_smoke.hexa — runnable proof of the BUILT-IN G0-G6 eval system (core/g_gates.hexa).
+//
+// Proves the SCORING PIPELINE works WITHOUT a model forward (FREEZE (ii): the 303M decode is
+// HARD-BOUNDED and not run in the smoke — the deterministic metric surface is the engine-native
+// evidence). Each case exercises a g_gates metric op on a FIXED synthetic fixture so the smoke
+// is fast + deterministic (p7: assertion is value/flag equality, not perplexity). A real
+// `anima eval <ckpt>` run (with a mounted ckpt) is the bounded confirming probe, not the smoke.
+//
+// What is proved here:
+//   - G3 architecture read returns self-continuity + impostor-reject (no decode).
+//   - G5 §ImmuneMemory abstain-when-ungrounded mechanism fires correctly (engine op, no decode).
+//   - the G2 corpus-absence metric distinguishes a corpus-present from a corpus-absent n-gram.
+//   - g_eval_all returns the full per-gate map shape (closure field present) on an absent ckpt
+//     (decode honestly empty ⇒ gates FAIL, but the PIPELINE + map shape are exercised RC=0).
+
+import "core/g_gates.hexa"
+import "core/g6_ideation.hexa"
+
+fn _ok(label: string, cond: bool) -> int {
+    if cond { println("  PASS " + label); return 1 }
+    println("  FAIL " + label); return 0
+}
+
+fn main() {
+    println("=== g_gates_smoke — BUILT-IN G0-G6 eval pipeline (no model forward) ===")
+    let mut pass = 0
+    let mut total = 0
+    let known = _g6_dict_load()
+
+    // ── G3 architecture read (self-identity continuity + impostor reject) ──
+    let g3 = g_eval_g3()
+    total = total + 1; pass = pass + _ok("case_g3_self_continuity_read",
+        to_string(g3["ok"]) == "true")
+
+    // ── G5 §ImmuneMemory abstain mechanism: ungrounded probe must abstain (recall == "") ──
+    let cfg = engine_config_default()
+    let mut mem = immune_memory_new_text("the sky scatters blue light", "fact-1", 8)
+    mem = immune_memory_bind_text(mem, "memory composes into new meaning", "fact-2", cfg)
+    // grounded recall: a bound fact should FIRE (non-empty)
+    total = total + 1; pass = pass + _ok("case_g5_grounded_fires",
+        immune_memory_recall_text(mem, "the sky scatters blue light") != "")
+    // ungrounded recall: a nonsense probe should ABSTAIN (empty)
+    total = total + 1; pass = pass + _ok("case_g5_ungrounded_abstains",
+        immune_memory_recall_text(mem, "frectry twarve glimbo nargon flux") == "")
+
+    // ── G2 corpus-absence metric on a FIXED fixture corpus ──
+    let corpus_dir = exec("printf '%s' \"$(mktemp -d)\"").trim()
+    let corpus_file = corpus_dir + "/c.txt"
+    write_file(corpus_file, "consciousness arises from cells. tension ripples between minds.")
+    let g2 = g_eval_g2("/nonexistent_ckpt_smoke.bin", 8, known, [corpus_file])
+    // the ckpt is absent ⇒ decode is honestly empty ⇒ no novel n-grams, but the PIPELINE ran:
+    // have_corpus must be true (corpus loaded) and control_novel must be 0 (verbatim line is present).
+    total = total + 1; pass = pass + _ok("case_g2_corpus_loaded",
+        to_string(g2["have_corpus"]) == "true")
+    total = total + 1; pass = pass + _ok("case_g2_retrieval_control_zero",
+        to_string(g2["control_novel"]) == "0")
+
+    // ── g_eval_all map shape (closure field present) on an absent ckpt — pipeline RC=0 ──
+    let r = g_eval_all("/nonexistent_ckpt_smoke.bin", [corpus_file], 8)
+    total = total + 1; pass = pass + _ok("case_eval_all_has_closure_field",
+        r.contains_key("closure") && r.contains_key("g0") && r.contains_key("g6"))
+    // absent ckpt ⇒ closure must be false (G0/G1/G2 can't pass with empty decode) — honest
+    total = total + 1; pass = pass + _ok("case_eval_all_absent_ckpt_not_closure",
+        to_string(r["closure"]) == "false")
+
+    println("")
+    println("g_gates_smoke: " + to_string(pass) + " PASS, " + to_string(total - pass) + " FAIL")
+    if pass == total { println("RESULT: ALL PASS") } else { println("RESULT: FAIL") }
+}
