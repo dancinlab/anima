@@ -1,3 +1,10 @@
+## docs(CLAUDE.md a_chat_registers): 4칸 데이터셋 무결성 do/dont 박제 (H_1579 clm303 overfit 근본교훈)
+
+clm303 overfit 의 *근본* = 4칸 register 가 '의도'였으나 코퍼스 굶주림(ko_fineweb2 HF-only 미해결 → 실효 학습이 ko-SNS 4MB 1칸만 ~120× 반복 = 암기) + 언어오염 가능성. `a_chat_registers` 에 재발방지 do/dont 박제.
+
+- **do(추가):** 4칸은 '의도' 아니라 **실효 로드로 검증·FAIL-LOUD** — 칸별 실효 bytes+반복비율 출력, 누락/과소(미해결 경로·HF-only 미pull)면 조용히 스킵 말고 거부 · **칸 언어 실측 검증**(en 칸이 진짜 en인지; 5lang 파일은 언어별 split 후 진짜 ko/en만) · **balanced 샘플링**(큰 칸이 작은 칸 압도 금지, held-out val 도 4칸 각각) · **데이터셋=1급 산출물**(canonical 네이밍 `anima-corpus-{ko,en}-{general,sns}`, 접미사 `5lang`/`_v2`/`_broad` 금지 + HF + dataset card(언어·크기·sha256) + ARCHITECTURE HF artifacts 등록).
+- **dont(추가):** 4칸 '의도'만으로 구성완료 주장 · 코퍼스 누락 침묵 통과(clm303 precedent) · en 칸에 5lang(de/es/fr) 혼합 방치 · 한 칸 편향(clm303 ≈99.7% ko) · 검증·HF기록 없이 학습 투입 · 접미사-naming 으로 언어/register 모호화.
+
 ## docs(CLAUDE.md a_savant_train): overfit + 고장난-측정기 교훈 박제 (H_1579) — held-out CE 판정 의무 + dt_ln-오염 engine CE 불신
 
 H_1579 clm303 오진(overfit 을 직렬화 결함으로, dt_ln-corrupt engine CE 를 GREEN 으로)의 교훈을 `a_savant_train` 에 do/dont 로 박제 — 같은 함정(train-loss 암기를 능력으로, engine CE 단독 verdict) 재발 방지.
