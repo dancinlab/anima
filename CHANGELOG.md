@@ -1,3 +1,15 @@
+## docs(governance): 진짜 엔진-네이티브 = 단일 진입점 cli/anima.hexa 강제 (side-harness 금지)
+
+🎯🔒 `a_engine_native_learning` 하드-게이트 자가점검에 2026-06-24 clm303 G6 precedent 두 교훈 박제 — 사용자 추궁("엔진네이티브 맞아?")에서 발견.
+
+**교훈 ① 단일 진입점 강제 (최강 기준):** 진짜 엔진-네이티브 verdict 는 디코드를 *따로 떼서* 도는 게 아니라 **실제 production 단일 진입점 `cli/anima.hexa`**(canonical, `hexa.toml` entry — engine/도 core/anima.hexa 도 아님) **→ generator L3 typed mouth(`gen_auto_backend`/`gen_clm_chat`/`gen_bytegpt_chat` → clm_decode/bytegpt_decode)** 를 통과해야 한다 = live 데몬이 실제 쓰는 경로. side-harness(파이썬이든 .hexa든)가 디코드 함수를 직접 호출 = generator L3 우회 = production drift 가능 = DIRECTIONAL. G6 채점은 이미 `core/g6_ideation.hexa` 에 엔진 op 로 배선됨(`g6_score_arm`/`g6_decode_best_of_k(_W)`/`_g6_is_falsifiable`/`_g6_known_word_ratio`/`_g6_jaccard`, mouth=`gen_clm_ideate`=generator L3) → 파이썬 `g6_common` 재구현 금지. 우선순위 cli/anima.hexa > generator-L3 wired 엔진-op > ✗ 파이썬/decode-우회.
+
+**교훈 ② TRANSITIVE import 오염:** 부득이 파이썬 채점 시 grep 자가점검은 import 폐포 전체를 본다 — `import g6_common`(자체 `import torch` + `_decode_ideas` 미러) 한 줄로 슬러그가 torch 오염(grep flag + enforcer PR 차단). g6_common 통째 import 금지(torch-free 텍스트 bar 만 VERBATIM 추출). torch 는 garble 3-way golden reference 로만.
+
+**박제:** `CLAUDE.md` a_engine_native_learning 자가점검 2 bullet + `ARCHITECTURE.json` core/g6_ideation.hexa 노드 lockstep.
+
+---
+
 ## perf(core/bytegpt_decode.hexa): KV-cache incremental decode — root-cause fix for the O(gen²) decode wall (byte-exact)
 
 🔧⚡ anima ByteGPT 디코드의 throughput 벽을 **근본수정(c1)** — KV-cache(incremental decode) 추가. H_1564 6-arm G6 decode 가 ~16분/frag 로 기던 진짜 원인은 엔진에 KV-cache 가 없어 `_bg_gen_from_W` 가 매 생성 토큰마다 `bg_forward_last_W(W, ids, T)` 로 **T 토큰 전체를 24층 re-forward** → 전체 gen 비용 O(gen²). 하드웨어 우회 아님 — 엔진을 고쳤다.
