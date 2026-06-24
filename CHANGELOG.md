@@ -23,6 +23,15 @@ H_1579 clm303 오진(overfit 을 직렬화 결함으로, dt_ln-corrupt engine CE
 - **2번째 진짜 버그(hexa-lang dt_ln):** `flame_math.hexa::dt_ln` atanh 급수가 x≈1 만 수렴 — dt_ln(256)=4.799(참 5.545)·dt_ln(1e-6)=−5.14(참 −13.82) → `nn_lib.hexa::nn_ce_loss_allpos`(−dt_ln(p_t), p_t≥1e-6)가 per-position CE 를 **~5.14 clamp** → engine `clm_forward_ce` 가 overfit clm303 을 model 3.30<shuffle 4.93<(버그)uniform 4.799 = **GREEN 오판**. numpy mirror(math.log)가 정답 → 게이트는 engine CE 아닌 math.log mirror 로 채점. hexa-lang ing 이관(모든 엔진 CE/Φ readout 영향).
 - **fix = held-out mirror-DESCENT 게이트(이 PR):** `train/clm/model/verify_clm_v2.py` 에 `descent_gate`/`serialize_self_verify`(math.log mirror, dt_ln-immune; held-out 필수 + train-vs-heldout gap → overfit 경고) + `descent` CLI + random-weight self-test. 3 trainer(`train_lane_p.py`·`_split.py`·`_3b.py`) + `cli/train.hexa` 가 직렬화 직후 self-verify(`--heldout`/`--heldout-corpus`, fallback=학습코퍼스 deep tail slice) → broken/overfit `.clm` 'done'·HF업로드 차단. 검증: control PASS(F-CLM-DESCENT=1) / clm303 FAIL+overfit_warning(gap 6.42) / random-weight self-test FAIL / 기존 4 구조 round-trip 회귀 0 / train.hexa MODE_VERIFY 3/3 PASS.
 - **재학습 follow-on(cost-gate):** savant clm303 은 재직렬화로 overfit 못 고침 → 정규화/큰 코퍼스로 재학습(별도 ING, 자동 rent 금지). artifacts: `UNIVERSE/cards/H_1579_*.md`(정정) · `state/clm303_g6/CORRECTION_overfit_not_serialize.md` · `HYPOTHESES.jsonl` H_1579.
+## fix(cli/train.py): 4칸 레지스터 강제 — 칸별 balance 표 + 칸별 held-out val-CE + require-cells 게이트
+
+🎯 a_chat_registers SSOT 강제 — 직전 사고의 핵심(4칸 의도였으나 ko-SNS 4MB 1칸만 staging)을 코드로 차단. {ko·en}×{일반·SNS} 4칸이 **전부 present + balanced** 여야 학습 진행.
+
+- **칸별 balance 표(시작 시)**: `--cell-label ko-normal en-normal ko-sns en-sns` 로 칸 명명 → `register | train_bytes | tokens/cell(균등 step-share) | rep_ratio` 표 출력. round-robin 이 각 칸에 균등 step-share 를 주므로 칸별 repetition = (tokens/cell)/(칸 bytes). 칸별 rep>5x = `<-- MEMORIZATION RISK` + worst_per_cell WARNING. (실측: 로컬 ~25MB 4칸 only @30000step → ko-normal 47.8x·en-normal 23.9x·ko-sns 29.9x·en-sns 9.6x = 전 칸 암기 위험 → **HF ko_fineweb2 10.5GB ko-normal 칸 필수** 정량 입증.)
+- **`--require-cells N` 게이트**: 정확히 N usable 칸이 아니면 **exit 3, 0 step**(register-incompleteness 거부). 실측: ko-SNS 1칸 only + require-cells 4 → ABORT(= 원래 사고를 *예방*했을 게이트).
+- **칸별 held-out val-CE**: FINAL 에 register 별 val_CE + DESCENT/NO-DESCENT verdict + `registers_DESCENT=k/N` 요약. 어느 레지스터가 generalize/overfit 인지 분리 관측 — 4칸 다 held-out DESCENT 해야 성공. pooled val-CE 는 칸별 평균(균등 가중, balanced step-share 와 정합).
+- **로컬 4칸 smoke 통과**: enrichment(ko-normal 대역)+wiki(en-normal)+persona(ko-sns)+persona_5lang(en-sns) 4칸 RC=0, 칸별 표·칸별 val·require-cells 4 PASS·CORE-loadable 확인. (실 ko-normal 은 pod 에서 HF `anima-corpus-ko-fineweb2-broad` PULL.)
+
 ## fix(cli/train.py): anti-overfit — fail-loud 코퍼스 가드 + held-out val 모니터 + 정규화 1급 knob
 
 🛡️ clm303 재학습이 직전 사고(실효 ~25MB·120× 반복 암기)를 반복하지 않도록 Lane-P bridge 트레이너(`cli/train.py`)에 3중 안전장치를 배선. 트레이너 자체의 `ByteCell` 스트리밍(mmap 랜덤 윈도우·cell round-robin)은 결함 없음 — 진짜 사고 원인은 **pod 에서 cell[0](4MB SNS) 하나만 staging 되고 나머지(특히 10.5GB ko_fineweb2)가 조용히 미해결**된 코퍼스 굶주림(train.log `corpus cell[0] … 4194308 bytes` 단일 cell 이 증거). 그 silent starvation 을 못 잡던 게 핵심.

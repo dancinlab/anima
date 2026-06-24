@@ -349,6 +349,15 @@ def main():
     ap.add_argument("--corpus", nargs="*", default=[],
                     help="4-cell register byte files OR HF dataset ids "
                          "(round-robin {ko·en}x{normal·SNS}); empty -> synthetic smoke")
+    ap.add_argument("--cell-label", nargs="*", default=[],
+                    help="optional register label per --corpus entry, same order "
+                         "(e.g. ko-normal en-normal ko-sns en-sns) — used in the "
+                         "per-cell balance/val report so the 4 registers are named")
+    ap.add_argument("--require-cells", type=int, default=0,
+                    help="abort unless EXACTLY this many usable corpus cells load "
+                         "(e.g. 4 for the full {ko·en}x{normal·SNS} register). "
+                         "Catches the silent register-incompleteness that caused "
+                         "the ko-SNS-only overfit. 0 = off.")
     ap.add_argument("--canon", action="store_true",
                     help="clm303 canonical shape (L4·d3784·E2->Emax4, 303M)")
     ap.add_argument("--d", type=int, default=0, help="model width (override mode default)")
@@ -439,35 +448,62 @@ def main():
 
     # ── corpus cells (4-register) or synthetic smoke batch ───────────────────
     cells = []
-    for spec in a.corpus:
+    labels = []
+    for ci, spec in enumerate(a.corpus):
         p = resolve_corpus_path(spec)
         cells.append(ByteCell(p, val_frac=a.val_frac))
+        labels.append(a.cell_label[ci] if ci < len(a.cell_label) else f"cell{ci}")
         c = cells[-1]
-        print(f"  corpus cell[{len(cells)-1}] {p}  size={c.size} bytes  "
+        print(f"  corpus cell[{ci}] {labels[ci]:<12s} {p}  size={c.size} bytes  "
               f"(train={c.train_end} val_tail={c.size - c.train_end})")
     if not cells:
         print("  corpus: NONE -> synthetic byte batch ($0 wiring smoke)")
 
-    # ── fail-loud corpus guard + repetition-ratio report (anti-starvation) ────
-    # The previous overfit was driven by ONLY cell[0] (4MB) actually loading on
-    # the pod while the manifest claimed a 10.5GB ko cell — so ~500M tokens were
-    # drawn from 4MB (~120x repetition = memorization). Surface this at startup.
+    # ── fail-loud corpus guard + PER-CELL balance/repetition table ────────────
+    # The previous overfit was driven by ONLY cell[0] (4MB ko-SNS) actually
+    # loading while the manifest claimed a 4-register {ko·en}x{normal·SNS} set —
+    # so ~500M tokens were drawn from 4MB (~120x repetition = memorization). The
+    # per-cell table surfaces BOTH starvation (missing cell) AND imbalance (one
+    # tiny register repeated far more than the others = per-register overfit).
     if cells:
         usable = [c for c in cells if c.train_end >= seq_len + 2]
         total_train_bytes = sum(c.train_end for c in usable)
         tokens_to_see = steps * a.batch_size * seq_len
         rep = (tokens_to_see / total_train_bytes) if total_train_bytes else float("inf")
-        print(f"  corpus guard: cells={len(cells)} usable={len(usable)}  "
+        # round-robin gives each cell an EQUAL step-share, so each cell sees
+        # ~tokens_to_see/len(cells) tokens — per-cell repetition = that / its bytes.
+        n = len(cells)
+        per_cell_tokens = tokens_to_see / n if n else 0
+        print(f"  ── 4-cell register balance table "
+              f"(tokens_to_see={tokens_to_see}, equal step-share /{n}) ──")
+        print(f"     {'register':<12s} {'train_bytes':>12s} {'tokens/cell':>12s} "
+              f"{'rep_ratio':>10s}")
+        worst_rep = 0.0
+        for c, lab in zip(cells, labels):
+            cell_rep = (per_cell_tokens / c.train_end) if c.train_end else float("inf")
+            worst_rep = max(worst_rep, cell_rep if c.train_end else 0.0)
+            flag = "  <-- MEMORIZATION RISK" if cell_rep > 5.0 else ""
+            print(f"     {lab:<12s} {c.train_end:>12d} {per_cell_tokens:>12.0f} "
+                  f"{cell_rep:>9.2f}x{flag}")
+        print(f"  corpus guard: cells={n} usable={len(usable)}  "
               f"total_train_bytes={total_train_bytes}  "
-              f"tokens_to_see={tokens_to_see}  repetition_ratio={rep:.2f}x")
+              f"repetition_ratio(pooled)={rep:.2f}x  worst_per_cell={worst_rep:.2f}x")
         if len(usable) < len(cells):
             dead = [c.path for c in cells if c.train_end < seq_len + 2]
             print(f"  corpus guard: WARNING {len(cells)-len(usable)} cell(s) too "
                   f"small to yield a train window (seq_len={seq_len}): {dead}")
-        if rep > 5.0:
-            print(f"  corpus guard: WARNING repetition_ratio {rep:.1f}x > 5x — "
-                  f"HIGH MEMORIZATION RISK (each byte seen ~{rep:.0f} times). "
-                  f"Add more corpus or reduce steps.")
+        if worst_rep > 5.0:
+            print(f"  corpus guard: WARNING worst per-cell repetition {worst_rep:.1f}x "
+                  f">5x — that register will be MEMORIZED. Enlarge the small "
+                  f"register(s) or reduce steps (balance = even per-cell exposure).")
+        # register-completeness gate (the 4-cell requirement)
+        if a.require_cells > 0 and len(usable) != a.require_cells:
+            print(f"FAIL — require_cells={a.require_cells} but {len(usable)} usable "
+                  f"cell(s) loaded. The 4-register {{ko·en}}x{{normal·SNS}} set is "
+                  f"INCOMPLETE — refusing to train (this is the register-"
+                  f"incompleteness that caused the ko-SNS-only overfit). Check "
+                  f"every --corpus path staged (esp. HF-only ko_fineweb2_broad).")
+            sys.exit(3)
         if a.min_corpus_bytes > 0 and total_train_bytes < a.min_corpus_bytes:
             print(f"FAIL — total effective train corpus {total_train_bytes} bytes "
                   f"< --min-corpus-bytes {a.min_corpus_bytes}. Refusing to train "
@@ -494,22 +530,17 @@ def main():
     val_gen = torch.Generator().manual_seed(1234)   # disjoint RNG from train
 
     @torch.no_grad()
-    def eval_val_ce() -> float | None:
-        """Mean next-byte CE over held-out VAL windows (disjoint tail of each
-        cell). Returns None if no cell has a usable val region. This is the
-        generalization gate — it descends with train-CE only if the model is
-        learning the language, not memorizing the train slice."""
-        val_cells = [c for c in cells if c.size - c.train_end >= seq_len + 2]
-        if not val_cells:
+    def _cell_val_ce(c: ByteCell) -> float | None:
+        """Mean next-byte CE over held-out VAL windows of a SINGLE cell."""
+        if c.size - c.train_end < seq_len + 2:
             return None
         was_training = model.training
         model.eval()
         tot, nb = 0.0, 0
         for vb in range(a.val_batches):
             xs, ys = [], []
-            for b in range(a.batch_size):
-                cell = val_cells[(vb * a.batch_size + b) % len(val_cells)]
-                w = cell.val_window(seq_len, val_gen)
+            for _ in range(a.batch_size):
+                w = c.val_window(seq_len, val_gen)
                 if w is None:
                     continue
                 xs.append(w[0]); ys.append(w[1])
@@ -525,6 +556,23 @@ def main():
         if was_training:
             model.train()
         return (tot / nb) if nb else None
+
+    def eval_val_per_cell() -> dict:
+        """Per-register held-out val-CE: {label: CE}. Lets us see WHICH register
+        generalizes vs overfits (the 4-cell separate-monitor requirement)."""
+        out = {}
+        for c, lab in zip(cells, labels):
+            v = _cell_val_ce(c)
+            if v is not None:
+                out[lab] = v
+        return out
+
+    def eval_val_ce() -> float | None:
+        """Pooled mean held-out val-CE across all registers (= the single
+        generalization number for the loop log). Mean over per-cell CEs so each
+        register is weighted equally (matches the balanced step-share)."""
+        per = eval_val_per_cell()
+        return (sum(per.values()) / len(per)) if per else None
 
     # ── train loop ───────────────────────────────────────────────────────────
     model.train()
@@ -589,14 +637,23 @@ def main():
                   f"wd={wd:.4f}  dp={dp:.4f}{vtxt}")
     wall = time.time() - t0
 
-    # ── final held-out val-CE (the generalization verdict, NOT train-CE) ──────
-    final_val = eval_val_ce() if a.val_frac > 0.0 else None
-    if final_val is not None:
-        print(f"  FINAL val_CE={final_val:.5f}  (train_CE={lossF:.5f}  "
-              f"gap={final_val - lossF:+.5f})  uniform_ref={math.log(V):.5f}")
-        if final_val >= math.log(V):
-            print(f"  WARNING final val_CE {final_val:.4f} >= uniform "
-                  f"{math.log(V):.4f} — NOT generalizing (memorized train slice).")
+    # ── final held-out val-CE PER REGISTER (the generalization verdict) ───────
+    if a.val_frac > 0.0:
+        per = eval_val_per_cell()
+        uniform = math.log(V)
+        if per:
+            print(f"  ── FINAL held-out val-CE per register "
+                  f"(uniform_ref={uniform:.4f}; DESCENT iff < uniform) ──")
+            for lab, v in per.items():
+                verdict = "DESCENT" if v < uniform else "NO-DESCENT(memorized/garbage)"
+                print(f"     {lab:<12s} val_CE={v:.5f}  {verdict}")
+            final_val = sum(per.values()) / len(per)
+            n_desc = sum(1 for v in per.values() if v < uniform)
+            print(f"  FINAL val_CE(pooled)={final_val:.5f}  (train_CE={lossF:.5f}  "
+                  f"gap={final_val - lossF:+.5f})  registers_DESCENT={n_desc}/{len(per)}")
+            if n_desc < len(per):
+                print(f"  WARNING {len(per)-n_desc}/{len(per)} register(s) NOT "
+                      f"generalizing (val_CE >= uniform {uniform:.4f}).")
 
     print(f"  loss0={loss0:.5f}  lossF={lossF:.5f}  wall={wall:.1f}s")
     print(f"  savant latched_at={latch['at']}  mitosis E0={e0}->E={mito.e_active}")
