@@ -608,6 +608,18 @@ remains validated by a **reference-match** against torch·numpy golden on small 
 (the gate that caught the `dt_ln` divergence) — a golden *reference*, not a co-equal
 production engine.
 
+The two trainers hold an enforced **PARITY invariant** — identical training
+standard, governed by [`cli/CLAUDE.md`](cli/CLAUDE.md). `cli/train.hexa` now carries
+the same anti-overfit + measurement surface as `cli/train.py`: held-out val monitor
+(`--val-frac`/`--val-every`, per-register + pooled val-CE + gap), fail-loud 4-cell
+guard (`--require-cells` abort + balance/repetition table — the clm303 starvation
+guard), disjoint train/val tail split, byte-proportional sampling (`--sample`),
+minibatch grad-accumulation (`--batch-size`), a `--bf16` request flag (forge
+TF32/BF16-TC, runtime-selected precision), and the MONITOR-ONLY mid-measure curve
+(`--mid-measure-every` → per-register held-out CE + `e_active` mitosis-cell count +
+inhibition + savant latch). Adding a lever to one trainer means adding it to the
+other in lockstep.
+
 ```bash
 # 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell, hexa-single:
 anima train --canon --out clm303.clm --bf16 --sample proportional \
