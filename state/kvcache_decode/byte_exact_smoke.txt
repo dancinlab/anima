@@ -1,0 +1,7 @@
+[kvcache-smoke] loaded fixture  d=64 nlay=2 nh=4 block=64
+[kvcache-smoke] seed-position logits max|Δ| (REF full-forward vs KV step) = 0.0
+[kvcache-smoke] REF ids[0..8] = 166,58,12,125 ...
+[kvcache-smoke] KV  ids[0..8] = 166,58,12,125 ...
+[kvcache-smoke] greedy(argmax) REF vs KV: IDENTICAL
+
+bytegpt_kvcache_smoke: PASS — KV-cache incremental decode is BYTE-IDENTICAL to the full-forward reference over 32 generated tokens (sample AND greedy; seed-pos logits max|Δ|=0.0, all ids match).

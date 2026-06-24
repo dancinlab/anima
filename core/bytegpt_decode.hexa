@@ -900,6 +900,181 @@ pub fn bg_forward_last_W(W: Map, ids: int, T: int) -> int {
     return logits
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// KV-CACHE INCREMENTAL DECODE (root-cause fix for the O(gen²) decode wall)
+//
+// WHY: _bg_gen_from_W re-runs bg_forward_last_W(W, ids, T) at EVERY generated
+// token, and T grows by 1 per step → Σ_{t} O(T) layer-work = O(gen²). The
+// dominant cost is the per-layer d×d projection GEMMs, recomputed for ALL prior
+// positions every step even though their K,V never change. KV-cache forwards
+// ONLY the one new token's row through the 24 layers (O(d²·nlay) per step,
+// linear in gen), caching each layer's K,V so attention reads the prior positions
+// from the cache instead of re-projecting them.
+//
+// BYTE-EXACTNESS (the gate):
+//   (1) Each position p's per-layer K,V depend ONLY on that position's layer-input
+//       row (the projections do not mix across positions — only attention mixes,
+//       and it READS the cache). So K_cache[j],V_cache[j] equal exactly what the
+//       full-forward computes for row j. The new query row p attends over cached
+//       K,V[0..p] → identical scores/softmax/weighted-V as bg_forward_last_W's
+//       last row.
+//   (2) The single-row projection (gemv, M=1 via mm) equals the M=T matmul's row p
+//       element-by-element (independent dot products, same accumulation order) →
+//       byte-identical to the batched mm() path.
+// The full-forward bg_forward_last_W is KEPT verbatim as the reference; the gen
+// loop falls back to it when the window would SLIDE (start>0 changes the pos
+// embedding of cached rows → cache invalid), so the cache path is only taken when
+// start==0 holds for the whole fragment (seed+gen < block).
+// ════════════════════════════════════════════════════════════════════════
+
+// _bg_kv_new — fresh per-layer K,V cache for `nlay` layers. Each entry is a farr
+// grown to `cap` rows×d (cap = max positions = block); only the first `p` rows are
+// live. Returns #{ "K": list-of-farr, "V": list-of-farr, "cap": cap }. Caller frees
+// via _bg_kv_free.
+fn _bg_kv_new(nlay: int, cap: int, d: int) -> Map {
+    let K = []
+    let V = []
+    let mut l = 0
+    while l < nlay {
+        K.push(farr_zeros(cap * d))
+        V.push(farr_zeros(cap * d))
+        l = l + 1
+    }
+    return #{ "K": K, "V": V, "cap": cap }
+}
+
+fn _bg_kv_free(kv: Map) {
+    let K = kv["K"]; let V = kv["V"]
+    let mut l = 0
+    while l < len(K) { let _ = farr_free(to_int(K[l])); let _ = farr_free(to_int(V[l])); l = l + 1 }
+}
+
+// _bg_kv_step — forward the SINGLE new token (id=`id` at absolute position `pos_p`,
+// 0-indexed) through all layers, appending its K,V to the cache at cache-row `pos_p`,
+// and return a fresh farr[vocab] of next-byte logits. `pos_p` is BOTH the learned-
+// position index (pos[pos_p]) AND the cache row to write/the count of prior live rows.
+// Byte-identical to bg_forward_last_W's last-row logits when called incrementally with
+// the cache built from rows 0..pos_p-1 (see header proof). Caller frees the logits.
+fn _bg_kv_step(W: Map, kv: Map, id: int, pos_p: int) -> int {
+    let vocab = to_int(W["vocab"]); let d = to_int(W["d"])
+    let nlay = to_int(W["nlay"]); let nh = to_int(W["nh"])
+    let hd = d / nh
+    let scale = 1.0 / dt_sqrt(to_float(hd))
+    let tok = to_int(W["tok"]); let pos = to_int(W["pos"])
+    let ln1w = W["ln1w"]; let ln1b = W["ln1b"]; let inB = W["inB"]
+    let oB = W["oB"]; let ln2w = W["ln2w"]; let ln2b = W["ln2b"]
+    let m0B = W["m0B"]; let m2B = W["m2B"]
+    let inWt = W["inWt"]; let oWt = W["oWt"]; let m0Wt = W["m0Wt"]; let m2Wt = W["m2Wt"]
+    let Kc = kv["K"]; let Vc = kv["V"]
+
+    // residual stream for THIS token: x[d] = tok[id] + pos[pos_p]
+    let x = farr_zeros(d)
+    let mut c = 0
+    while c < d {
+        let _ = farr_set(x, c, farr_get(tok, id * d + c) + farr_get(pos, pos_p * d + c))
+        c = c + 1
+    }
+    let Lrows = pos_p + 1   // live cache rows after appending this token (causal: 0..pos_p)
+
+    let nrm = farr_zeros(d)
+    let h4 = farr_zeros(4 * d)
+    let mlpo = farr_zeros(d)
+
+    let mut Lr = 0
+    while Lr < nlay {
+        // ── attention sub-block: x = x + MHA(LN1(x)) on the single row ──
+        _bg_layernorm(x, to_int(ln1w[Lr]), to_int(ln1b[Lr]), nrm, 1, d)
+        // QKV = nrm[1,d] · inWt[d,3d] + inB  (gemv == batched-mm row, byte-id)
+        let QKV = mm(nrm, 1, d, to_int(inWt[Lr]), 3 * d)
+        let inBl = to_int(inB[Lr])
+        // Q[d] for this row; append K,V into cache at row pos_p
+        let q = farr_zeros(d)
+        let Kl = to_int(Kc[Lr]); let Vl = to_int(Vc[Lr])
+        let mut j = 0
+        while j < d {
+            let _ = farr_set(q, j, farr_get(QKV, j) + farr_get(inBl, j))
+            let _ = farr_set(Kl, pos_p * d + j, farr_get(QKV, d + j) + farr_get(inBl, d + j))
+            let _ = farr_set(Vl, pos_p * d + j, farr_get(QKV, 2 * d + j) + farr_get(inBl, 2 * d + j))
+            j = j + 1
+        }
+        let _ = farr_free(QKV)
+        // per-head causal softmax: query = row pos_p, keys/values = cache rows 0..pos_p
+        let ctx = farr_zeros(d)
+        let srow = farr_zeros(Lrows)
+        let mut hh = 0
+        while hh < nh {
+            let base = hh * hd
+            let mut mx = 0.0 - 1.0e30
+            let mut jx = 0
+            while jx < Lrows {
+                let mut dot = 0.0
+                let mut cc2 = 0
+                while cc2 < hd {
+                    dot = dot + farr_get(q, base + cc2) * farr_get(Kl, jx * d + base + cc2)
+                    cc2 = cc2 + 1
+                }
+                let sv = dot * scale
+                let _ = farr_set(srow, jx, sv)
+                if sv > mx { mx = sv }
+                jx = jx + 1
+            }
+            let mut tot = 0.0
+            let mut j2 = 0
+            while j2 < Lrows {
+                let e = exp(farr_get(srow, j2) - mx)
+                let _ = farr_set(srow, j2, e)
+                tot = tot + e
+                j2 = j2 + 1
+            }
+            let mut c2 = 0
+            while c2 < hd {
+                let mut acc = 0.0
+                let mut j3 = 0
+                while j3 < Lrows {
+                    acc = acc + (farr_get(srow, j3) / tot) * farr_get(Vl, j3 * d + base + c2)
+                    j3 = j3 + 1
+                }
+                let _ = farr_set(ctx, base + c2, acc)
+                c2 = c2 + 1
+            }
+            hh = hh + 1
+        }
+        let _ = farr_free(srow); let _ = farr_free(q)
+        // out proj: aout[d] = ctx[1,d] · oWt[d,d] + oB  ; x += aout
+        _bg_linear_mm(ctx, to_int(oWt[Lr]), to_int(oB[Lr]), nrm, 1, d, d)
+        let mut i1 = 0
+        while i1 < d { let _ = farr_set(x, i1, farr_get(x, i1) + farr_get(nrm, i1)); i1 = i1 + 1 }
+        let _ = farr_free(ctx)
+
+        // ── mlp sub-block: x = x + Wd(GELU(W0(LN2(x)))) on the single row ──
+        _bg_layernorm(x, to_int(ln2w[Lr]), to_int(ln2b[Lr]), nrm, 1, d)
+        _bg_linear_mm(nrm, to_int(m0Wt[Lr]), to_int(m0B[Lr]), h4, 1, d, 4 * d)
+        let mut g = 0
+        while g < 4 * d { let _ = farr_set(h4, g, _bg_gelu(farr_get(h4, g))); g = g + 1 }
+        _bg_linear_mm(h4, to_int(m2Wt[Lr]), to_int(m2B[Lr]), mlpo, 1, 4 * d, d)
+        let mut i2 = 0
+        while i2 < d { let _ = farr_set(x, i2, farr_get(x, i2) + farr_get(mlpo, i2)); i2 = i2 + 1 }
+        Lr = Lr + 1
+    }
+    let _ = farr_free(h4); let _ = farr_free(mlpo)
+
+    // final LayerNorm + tied head on the single row
+    let lnfw = to_int(W["lnfw"]); let lnfb = to_int(W["lnfb"]); let head = to_int(W["head"])
+    let lastrow = farr_zeros(d)
+    _bg_layernorm(x, lnfw, lnfb, lastrow, 1, d)
+    let logits = farr_zeros(vocab)
+    let mut hk = 0
+    while hk < vocab {
+        let mut hacc = 0.0
+        let mut hc = 0
+        while hc < d { hacc = hacc + farr_get(head, hk * d + hc) * farr_get(lastrow, hc); hc = hc + 1 }
+        let _ = farr_set(logits, hk, hacc)
+        hk = hk + 1
+    }
+    let _ = farr_free(x); let _ = farr_free(nrm); let _ = farr_free(lastrow)
+    return logits
+}
+
 // bg_argmax — index of the max of a farr[n].
 fn bg_argmax(a: int, n: int) -> int {
     let mut bi = 0
@@ -926,6 +1101,31 @@ pub fn bytegpt_decode_argmax(path: string, seed_ids: list, gen: int) -> Map {
     while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
     let outl = []
     let mut out = ""
+    // KV-cache fast path (no window slide): O(gen) greedy, byte-identical to the
+    // full-forward loop below (bytegpt_kvcache_smoke: seed-pos max|Δ|=0.0).
+    let nseed = len(toks)
+    let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
+    if nseed > 0 && nseed + gen <= block {
+        let kv = _bg_kv_new(nlay, block, d)
+        let mut logits = -1
+        let mut sp = 0
+        while sp < nseed {
+            if logits >= 0 { let _ = farr_free(logits) }
+            logits = _bg_kv_step(W, kv, to_int(toks[sp]), sp)
+            sp = sp + 1
+        }
+        let mut gc = 0
+        while gc < gen {
+            let nb = bg_argmax(logits, vocab)
+            let _ = farr_free(logits)
+            toks.push(nb); outl.push(nb); out = out + chr(nb)
+            logits = _bg_kv_step(W, kv, nb, len(toks) - 1)
+            gc = gc + 1
+        }
+        let _ = farr_free(logits)
+        _bg_kv_free(kv)
+        return #{ "ok": true, "text": out, "ids": outl }
+    }
     let mut g = 0
     while g < gen {
         // window = last `block` tokens
@@ -963,6 +1163,31 @@ pub fn bytegpt_decode_argmax_ranged(path: string, seed_ids: list, gen: int) -> M
     while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
     let outl = []
     let mut out = ""
+    // KV-cache fast path (no window slide): O(gen) greedy, byte-identical to the
+    // full-forward loop below (the live 303M chat mouth; bytegpt_kvcache_smoke max|Δ|=0.0).
+    let nseed = len(toks)
+    let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
+    if nseed > 0 && nseed + gen <= block {
+        let kv = _bg_kv_new(nlay, block, d)
+        let mut logits = -1
+        let mut sp = 0
+        while sp < nseed {
+            if logits >= 0 { let _ = farr_free(logits) }
+            logits = _bg_kv_step(W, kv, to_int(toks[sp]), sp)
+            sp = sp + 1
+        }
+        let mut gc = 0
+        while gc < gen {
+            let nb = bg_argmax(logits, vocab)
+            let _ = farr_free(logits)
+            toks.push(nb); outl.push(nb); out = out + chr(nb)
+            logits = _bg_kv_step(W, kv, nb, len(toks) - 1)
+            gc = gc + 1
+        }
+        let _ = farr_free(logits)
+        _bg_kv_free(kv)
+        return #{ "ok": true, "text": out, "ids": outl }
+    }
     let mut g = 0
     while g < gen {
         let n = len(toks)
@@ -1150,11 +1375,46 @@ pub fn bytegpt_decode_topk_sampled_ranged(path: string, seed_ids: list, gen: int
 // load the 303M ONCE and generate MANY fragments without per-fragment reload. seed = byte ids.
 fn _bg_gen_from_W(W: Map, seed_ids: list, gen: int, top_k: int, temp: float, seed_rng: int) -> string {
     let vocab = to_int(W["vocab"]); let block = to_int(W["block"])
+    let d = to_int(W["d"]); let nlay = to_int(W["nlay"])
     let toks = []
     let mut i = 0
     while i < len(seed_ids) { toks.push(to_int(seed_ids[i])); i = i + 1 }
+    let nseed = len(toks)
     let mut out = ""
     let mut rng = _g6_mix32(seed_rng)
+
+    // KV-cache fast path: valid ONLY when the window never slides (start stays 0)
+    // for the whole fragment, i.e. final length nseed+gen ≤ block. Then every
+    // position's learned-pos index == its absolute index == its cache row, so the
+    // cached K,V stay correct. Byte-identical to the full-forward loop below (the
+    // ELSE branch is the verbatim reference). Slide ⇒ fall back to full-forward.
+    if nseed > 0 && nseed + gen <= block {
+        let kv = _bg_kv_new(nlay, block, d)
+        // prime the cache: run positions 0..nseed-1 through _bg_kv_step (we only need
+        // the LAST seed position's logits to draw the first byte).
+        let mut logits = -1
+        let mut sp = 0
+        while sp < nseed {
+            if logits >= 0 { let _ = farr_free(logits) }
+            logits = _bg_kv_step(W, kv, to_int(toks[sp]), sp)
+            sp = sp + 1
+        }
+        let mut g = 0
+        while g < gen {
+            let sm = _g6_topk_sample(logits, vocab, top_k, temp, rng)
+            let nb = to_int(sm["tok"]); rng = to_int(sm["s"])
+            let _ = farr_free(logits)
+            toks.push(nb); out = out + chr(nb)
+            // advance: forward the just-drawn byte at its absolute position
+            logits = _bg_kv_step(W, kv, nb, len(toks) - 1)
+            g = g + 1
+        }
+        let _ = farr_free(logits)
+        _bg_kv_free(kv)
+        return out
+    }
+
+    // reference path (full-forward per step) — used when the window slides.
     let mut g = 0
     while g < gen {
         let n = len(toks)
