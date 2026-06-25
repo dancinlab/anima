@@ -1,3 +1,13 @@
+## docs(core·ARCHITECTURE): byte-mouth DECODER-SELECTION-MAP SSOT 박제 + 두 디코더 farr 누수 일관성 검증
+
+"디코더가 둘인데 어느 걸 고쳐야 하나" 혼선(clm303 ConvMoE on `clm_decode` ⊥ ByteGPT-303M on `bytegpt_decode` — 둘 다 303M 이라 작업이 엇갈림)을 단일 SSOT 로 종결. 새 파일·날짜·버전 난립 없이 `ARCHITECTURE.json` core/ 트리에 update-in-place 노드 1개(`DECODER-SELECTION-MAP (SSOT)`) 추가(commons c4 · a_core_engine_map lockstep).
+
+- **맵 (magic → decoder → model → production-wired → 누수상태, live 코드 file:line lockstep)**:
+  - (a) `CLM\x01` · `core/clm_decode.hexa` · clm303 (CLMConvMoE 303M, held-out 4/4 DESCENT) · WIRED via generator L3 `gen_clm_chat`(generator.hexa:599→clm_decode_argmax) · **BOUNDED via _sc scratch-재사용** — 6 public CE/decode fn 전부(clm_forward_ce:167·clm_omega_closure:661·clm_decode_argmax:733·clm_decode_topk_sampled_W:871·clm_decode_topk_sampled:909·clm_decode_grounded:968)가 `_clmd_fwd_logits_sc` 사용, 할당형 `_clmd_fwd_logits`(:574)는 live caller 0(주석만).
+  - (b) ByteGPT magic(5×u32 `[256,d,L,H,block]`, NOT-CLM) · `core/bytegpt_decode.hexa` · ByteGPT 303M(H_1129 GPT-2-class 24-layer) · WIRED via generator L3 `gen_bytegpt_chat`(generator.hexa:664→bytegpt_decode_argmax_ranged) · **BOUNDED via 명시적 per-token farr_free** (scratch-재사용 아님).
+- **farr 누수 일관성 (reference-match)**: clm 는 commit 99b9b4d64 으로 3 CE/decode fn 이미 _sc 배선 완료 → 잔여 할당형 caller 0 확인(코드변경 0). bytegpt 는 **이미 누수-경계** — per-token forward(`_bg_kv_step`:958 live chat KV-cache 경로 · `bg_forward_last_W`:833 window-slide fallback)가 매 토큰 scratch(x·nrm·aout·h4·mlpo·q·ctx·srow·QKV·lastrow·xt) 전량 `farr_free` + caller 가 logits/ids free, resident KV cache(`_bg_kv_new`:934)는 1회 할당/1회 해제(`_bg_kv_free`:946). clm 의 옛 누수(noop-free 의존 비-해제)와 달리 bytegpt 는 명시 해제라 누적 0 → **코드변경 불필요, 문서화만**. (bytegpt CE fn 부재 — CE 는 clm_decode 에만.)
+- **header cross-ref**: 두 디코더 파일 상단에 1줄(mouth·production-wired·누수상태·SSOT=ARCHITECTURE.json core/) 주석 추가. 빌드 RC=0(cli/anima.hexa --help 완주, 양 디코더 컴파일/링크 clean, full session 출력).
+
 ## fix(core/clm_decode): clm303 G0-G6 farr 누수 해소 — clm_forward_ce·clm_omega_closure 를 H_1400 scratch-재사용(_sc) 경로로 배선
 
 clm303_clean 303M 엔진-네이티브 G0-G6 eval 이 첫 디코드에서 메모리 55→424G 폭증하며 죽던(ING#178) 진짜 원인을 격리: **CLMConvMoE 디코드(`core/clm_decode.hexa`)의 per-token forward 가 비-재사용 `_clmd_fwd_logits` 를 호출** → 매 토큰·매 conv 마다 `t_zeros`(=`hexa_farr_zeros`) scratch 3덩이(xcol·Wt·matmul-output)가 새로 잡히고 hexa-lang runtime 의 noop-free(`#define free→hxlcl_free`, runtime emitter SSOT, byteeq 폐포·user-gated HARD-HALT 영역)라 안 풀려 누적.

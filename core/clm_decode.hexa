@@ -1,5 +1,10 @@
 // clm_decode.hexa — CORE-native .clm DECODE FORWARD (the AXIS-2 CE unblock).
 //
+// MOUTH = CLMConvMoE (magic CLM\x01); production-wired via generator L3 (gen_clm_chat
+// → clm_decode_argmax). LEAK = BOUNDED via _sc scratch-reuse (_clmd_scratch_new/_free,
+// H_1400) across all CE/decode fns; allocating _clmd_fwd_logits has no live caller.
+// decoder-selection-map SSOT = ARCHITECTURE.json core/.
+//
 // This is the weight-decode backend that generator.hexa::_gen_clm_decode plugs
 // into. It is imported ONLY by generator.hexa, so the SINGLE .clm entry point
 // (a_core_engine_map: .clm enters CORE via the generator L3 slot) is PRESERVED —

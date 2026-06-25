@@ -1,6 +1,11 @@
 // ════════════════════════════════════════════════════════════════════════
 // core/bytegpt_decode.hexa — H_1156 ByteGPT (H_1129 303M arch) decode forward.
 //
+// MOUTH = ByteGPT (5×u32 [256,d,L,H,block] header, NOT CLM\x01); production-wired via
+// generator L3 (gen_bytegpt_chat → bytegpt_decode_argmax_ranged). LEAK = BOUNDED via
+// explicit per-token farr_free (resident KV cache + per-token scratch all freed; NO
+// scratch-reuse needed). decoder-selection-map SSOT = ARCHITECTURE.json core/.
+//
 // WHY: the a303m_pass campaign (H_1155, decision-grade) settled that ByteGPT-303M
 // passes G1 (창발/seed-adherence) where ConvMoE does not. ByteGPT must become the
 // engine-mounted production trunk, but it is NOT in the ConvMoE .clm v0.2 format —
