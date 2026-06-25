@@ -1,0 +1,35 @@
+clm303 303M 잔여 누수 — HOST-vs-DEVICE 귀속 측정 (GPU 재측정, 2026-06-25)
+========================================================================
+
+POD: 42521890 (vast, 2× A40, nvidia/cuda devel image), label=clm303-device-mem-attribution
+ENTRY: anima eval clm303_clean.clm  (mouth=clm, gen=5, no corpus)
+GPU PATH CONFIRMED: [OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS) · cuda_available=1
+
+TRAJECTORY (PID 2784 hexa_run, State=Rl running, etime ~19min, eval_out stuck at 685B = first decode glue-bound):
+  SAMPLE1        : host_RSS = 112,778,060 KB (~112.8 GB)  ·  GPU mem = 273 MiB
+  SAMPLE2 (+35s) : host_RSS = 120,931,296 KB (~120.9 GB)  ·  GPU mem = 273 MiB
+  delta          : host +8,153,236 KB (~8.15 GB / 35s ≈ 233 MB/s)  ·  GPU +0 MiB
+  (earlier pod 42510650 pre-#2622 showed the same: host RSS climbed to 94GB)
+
+ATTRIBUTION VERDICT: **HOST-side leak — DEVICE-side FALSIFIED**
+  - host RSS climbs ~233 MB/s monotonically; GPU device memory rock-flat at 273 MiB (delta 0).
+  - The med-conf "device cudaMalloc input/slot accumulation" hypothesis is FALSIFIED — GPU mem does not grow.
+  - GPU forward computes via own-GEMM DEVICE path, but the per-token leak is in HOST allocations.
+
+RECONCILE w/ prior 6-agent workflow (which found CPU-path FLAT, runtime farr-free works):
+  - That workflow tested the CPU decode path (cuda_available=0) → FLAT, correct.
+  - THIS is the GPU decode path (cuda_available=1) → host RSS leaks. So the leak is GPU-PATH-SPECIFIC
+    host-side allocation in the flame_mm GPU seam (RFC-040): per-matmul host staging / h2d input buffer
+    or the host-side packed matmul output farr that the device path allocates per call and does not free.
+  - NOT the shared decode logic (CPU path proves that bounded). NOT device cudaMalloc (GPU mem flat).
+
+IMPLICATION:
+  - clm303 verdict stays DIRECTIONAL (held-out 4/4 DESCENT robust). Engine-native G0-G6 terminal still
+    blocked, but now PRECISELY attributed: GPU-path host-side farr leak (~233 MB/s), not device, not CPU-path.
+  - Fix surface = flame_mm GPU-seam HOST allocation (core/DECODER/flame_mm.hexa ↔ hexa-lang forge host glue):
+    free the per-matmul host staging buffer on the DEVICE path, OR reuse a bounded host scratch (H_1400 pattern
+    extended to the GPU seam). Next: locate the unfreed host alloc in the flame_mm.mm DEVICE branch.
+  - Workaround for terminal NOW: run engine-native G0-G6 on the CPU path (cuda_available=0) which is FLAT —
+    slower but leak-free → could complete full G0-G6 for the terminal verdict (own-GEMM CPU farr, byte-identical).
+
+cumulative GPU spend this attribution: ~2× A40 short run (~40min incl prior agent setup) ≈ $1.
