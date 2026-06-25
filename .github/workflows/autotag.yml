@@ -33,7 +33,11 @@ jobs:
           set -euo pipefail
 
           # 최신 semver 태그 (없으면 v0.0.0 부터 시작).
-          last="$(git tag --list 'v*' --sort=-v:refname | head -1)"
+          # NOTE: `sed -n 1p` reads ALL stdin (no early close) so the upstream
+          # `git tag` never gets SIGPIPE — `head -1` closed the pipe early once
+          # tags accumulated, SIGPIPE'd git → exit 141 under `pipefail` (broken
+          # autotag on every main push). sed-take-first keeps pipefail honest.
+          last="$(git tag --list 'v*' --sort=-v:refname | sed -n '1p')"
           [ -z "$last" ] && last="v0.0.0"
           base="${last#v}"
           IFS=. read -r MA MI PA <<<"$base"
