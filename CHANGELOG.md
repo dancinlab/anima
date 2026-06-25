@@ -1,3 +1,12 @@
+## fix(core/clm_decode): clm303 G0-G6 farr 누수 해소 — clm_forward_ce·clm_omega_closure 를 H_1400 scratch-재사용(_sc) 경로로 배선
+
+clm303_clean 303M 엔진-네이티브 G0-G6 eval 이 첫 디코드에서 메모리 55→424G 폭증하며 죽던(ING#178) 진짜 원인을 격리: **CLMConvMoE 디코드(`core/clm_decode.hexa`)의 per-token forward 가 비-재사용 `_clmd_fwd_logits` 를 호출** → 매 토큰·매 conv 마다 `t_zeros`(=`hexa_farr_zeros`) scratch 3덩이(xcol·Wt·matmul-output)가 새로 잡히고 hexa-lang runtime 의 noop-free(`#define free→hxlcl_free`, runtime emitter SSOT, byteeq 폐포·user-gated HARD-HALT 영역)라 안 풀려 누적.
+
+- **근본원인 2겹**: (1) hexa-lang farr noop-free(런타임 결함, fix #3745 가 selfhost zero-c 재생성 #3859 에 덮여 소실 — 그 자리는 active selfhost 정중앙이라 upstream-fix STOP) (2) **anima 측에서 H_1400 scratch-재사용 fix(`_clmd_scratch_new`+`_clmd_fwd_logits_sc`+`_clmd_scratch_free`)가 이미 구현돼 `clm_decode_argmax` 등 3 함수엔 배선됐는데, 정작 G0-G6 가 타는 `clm_forward_ce`(+`clm_omega_closure`)엔 배선 누락**.
+- **fix(anima-only, hexa-lang 런타임 무수정)**: 두 함수를 `clm_decode_argmax` 의 검증된 _sc 패턴으로 byte 정확히 미러 배선(6 edit). 재사용 핸들은 이미 mmap 된 buffer 를 유지 → per-step 새 farr 할당 0 → noop-free 무관, RSS 평탄.
+- **로컬 검증**: cli/anima.hexa 빌드 RC=0 · d768 G0-G6 eval 완주(크래시 0) · G0 COHERENCE PASS(kwr≥0.50 4/5 = 디코드 sane). clm_forward_ce 의 _sc 머신은 G0-PASS 한 clm_decode_argmax 와 동일(verify-by-precedent).
+- **남은 terminal 검증(GPU follow-on)**: clm303 303M 을 GPU 에 올려 (a) 누수 55→424G 가 평탄해지는지 (b) G0-G6 완주 → ING#178 DIRECTIONAL→엔진-네이티브 terminal 승격. anima clm303 능력 자체는 held-out 4/4 DESCENT 견고(불변).
+
 ## research(device-decode byte-exact): #3921 SAME-ROOT FALSIFIED — 발산 = own-GEMM 정밀도(TF32 의심) · PARITY 2-tier 재서술 + eval_pod kit
 
 clm303 device-resident decode(commit 422328421)의 GPU byte-exact 발산을 hexa-lang `dirty_host` forward-residency clobber(#3921 `fix/devresident forward w coherence` + matmul device-keep residency, v0.315.2 stable)와 같은 뿌리로 가설했으나 — **엔진-네이티브 재측정으로 FALSIFIED**:
