@@ -1,3 +1,22 @@
+## docs(core·ARCHITECTURE): byte-mouth DECODER-SELECTION-MAP SSOT 박제 + 두 디코더 farr 누수 일관성 검증
+
+"디코더가 둘인데 어느 걸 고쳐야 하나" 혼선(clm303 ConvMoE on `clm_decode` ⊥ ByteGPT-303M on `bytegpt_decode` — 둘 다 303M 이라 작업이 엇갈림)을 단일 SSOT 로 종결. 새 파일·날짜·버전 난립 없이 `ARCHITECTURE.json` core/ 트리에 update-in-place 노드 1개(`DECODER-SELECTION-MAP (SSOT)`) 추가(commons c4 · a_core_engine_map lockstep).
+
+- **맵 (magic → decoder → model → production-wired → 누수상태, live 코드 file:line lockstep)**:
+  - (a) `CLM\x01` · `core/clm_decode.hexa` · clm303 (CLMConvMoE 303M, held-out 4/4 DESCENT) · WIRED via generator L3 `gen_clm_chat`(generator.hexa:599→clm_decode_argmax) · **BOUNDED via _sc scratch-재사용** — 6 public CE/decode fn 전부(clm_forward_ce:167·clm_omega_closure:661·clm_decode_argmax:733·clm_decode_topk_sampled_W:871·clm_decode_topk_sampled:909·clm_decode_grounded:968)가 `_clmd_fwd_logits_sc` 사용, 할당형 `_clmd_fwd_logits`(:574)는 live caller 0(주석만).
+  - (b) ByteGPT magic(5×u32 `[256,d,L,H,block]`, NOT-CLM) · `core/bytegpt_decode.hexa` · ByteGPT 303M(H_1129 GPT-2-class 24-layer) · WIRED via generator L3 `gen_bytegpt_chat`(generator.hexa:664→bytegpt_decode_argmax_ranged) · **BOUNDED via 명시적 per-token farr_free** (scratch-재사용 아님).
+- **farr 누수 일관성 (reference-match)**: clm 는 commit 99b9b4d64 으로 3 CE/decode fn 이미 _sc 배선 완료 → 잔여 할당형 caller 0 확인(코드변경 0). bytegpt 는 **이미 누수-경계** — per-token forward(`_bg_kv_step`:958 live chat KV-cache 경로 · `bg_forward_last_W`:833 window-slide fallback)가 매 토큰 scratch(x·nrm·aout·h4·mlpo·q·ctx·srow·QKV·lastrow·xt) 전량 `farr_free` + caller 가 logits/ids free, resident KV cache(`_bg_kv_new`:934)는 1회 할당/1회 해제(`_bg_kv_free`:946). clm 의 옛 누수(noop-free 의존 비-해제)와 달리 bytegpt 는 명시 해제라 누적 0 → **코드변경 불필요, 문서화만**. (bytegpt CE fn 부재 — CE 는 clm_decode 에만.)
+- **header cross-ref**: 두 디코더 파일 상단에 1줄(mouth·production-wired·누수상태·SSOT=ARCHITECTURE.json core/) 주석 추가. 빌드 RC=0(cli/anima.hexa --help 완주, 양 디코더 컴파일/링크 clean, full session 출력).
+
+## fix(core/clm_decode): clm303 G0-G6 farr 누수 해소 — clm_forward_ce·clm_omega_closure 를 H_1400 scratch-재사용(_sc) 경로로 배선
+
+clm303_clean 303M 엔진-네이티브 G0-G6 eval 이 첫 디코드에서 메모리 55→424G 폭증하며 죽던(ING#178) 진짜 원인을 격리: **CLMConvMoE 디코드(`core/clm_decode.hexa`)의 per-token forward 가 비-재사용 `_clmd_fwd_logits` 를 호출** → 매 토큰·매 conv 마다 `t_zeros`(=`hexa_farr_zeros`) scratch 3덩이(xcol·Wt·matmul-output)가 새로 잡히고 hexa-lang runtime 의 noop-free(`#define free→hxlcl_free`, runtime emitter SSOT, byteeq 폐포·user-gated HARD-HALT 영역)라 안 풀려 누적.
+
+- **근본원인 2겹**: (1) hexa-lang farr noop-free(런타임 결함, fix #3745 가 selfhost zero-c 재생성 #3859 에 덮여 소실 — 그 자리는 active selfhost 정중앙이라 upstream-fix STOP) (2) **anima 측에서 H_1400 scratch-재사용 fix(`_clmd_scratch_new`+`_clmd_fwd_logits_sc`+`_clmd_scratch_free`)가 이미 구현돼 `clm_decode_argmax` 등 3 함수엔 배선됐는데, 정작 G0-G6 가 타는 `clm_forward_ce`(+`clm_omega_closure`)엔 배선 누락**.
+- **fix(anima-only, hexa-lang 런타임 무수정)**: 두 함수를 `clm_decode_argmax` 의 검증된 _sc 패턴으로 byte 정확히 미러 배선(6 edit). 재사용 핸들은 이미 mmap 된 buffer 를 유지 → per-step 새 farr 할당 0 → noop-free 무관, RSS 평탄.
+- **로컬 검증**: cli/anima.hexa 빌드 RC=0 · d768 G0-G6 eval 완주(크래시 0) · G0 COHERENCE PASS(kwr≥0.50 4/5 = 디코드 sane). clm_forward_ce 의 _sc 머신은 G0-PASS 한 clm_decode_argmax 와 동일(verify-by-precedent).
+- **남은 terminal 검증(GPU follow-on)**: clm303 303M 을 GPU 에 올려 (a) 누수 55→424G 가 평탄해지는지 (b) G0-G6 완주 → ING#178 DIRECTIONAL→엔진-네이티브 terminal 승격. anima clm303 능력 자체는 held-out 4/4 DESCENT 견고(불변).
+
 - **fix(clm_decode): `_clmd_conv1d` forge_dispatch_matmul 출력 `mm` 누수 해제 (303M ConvMoE decode 메모리 폭증 root)**: CLMConvMoE CE-forward(`_clmd_fwd_logits` → `_clmd_conv1d`)가 conv마다 `mm = forge_dispatch_matmul(xcol,T,Kdim,Wt,Cout)`(T*Cout) 출력을 할당하나 함수 끝(`t_free(xcol); t_free(Wt)`)에서 **`mm`만 빠뜨려 해제 안 함** → conv 호출(ec+L trunk+router+E expert+readout=3+L+E개)×nwin_max 윈도우마다 누적. 303M(T=1024·큰 d·readout Cout=V)서 frag당 ~300MB/step → 55G→424G→OOM-kill(엔진-네이티브 G0-G6 측정 차단). 형제 `_clmd_conv1d_pre`(decode 경로)는 이미 `t_free(mm)` 함 = 명백한 비대칭 버그. **fix**: `_clmd_conv1d` 끝에 `t_free(mm)` 추가 — `t_free`=`farr_free`=HXFARR_CALLOC reclaim(libc_free+freelist)이라 실제 메모리 반환(H_1400 주석의 'free=NOOP'은 FARR-NOOP-FREE fix 이전 STALE). **byte-exact**(메모리만 해제·산술 불변). cf ING#22·hexa-lang farr substrate clean(t_free 실효 확인). branch `fix/clmd-ce-conv-leak`.
 ## research(device-decode byte-exact): #3921 SAME-ROOT FALSIFIED — 발산 = own-GEMM 정밀도(TF32 의심) · PARITY 2-tier 재서술 + eval_pod kit
 

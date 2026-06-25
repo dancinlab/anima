@@ -1,5 +1,10 @@
 // clm_decode.hexa — CORE-native .clm DECODE FORWARD (the AXIS-2 CE unblock).
 //
+// MOUTH = CLMConvMoE (magic CLM\x01); production-wired via generator L3 (gen_clm_chat
+// → clm_decode_argmax). LEAK = BOUNDED via _sc scratch-reuse (_clmd_scratch_new/_free,
+// H_1400) across all CE/decode fns; allocating _clmd_fwd_logits has no live caller.
+// decoder-selection-map SSOT = ARCHITECTURE.json core/.
+//
 // This is the weight-decode backend that generator.hexa::_gen_clm_decode plugs
 // into. It is imported ONLY by generator.hexa, so the SINGLE .clm entry point
 // (a_core_engine_map: .clm enters CORE via the generator L3 slot) is PRESERVED —
@@ -183,6 +188,7 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
     if stride < 1 { stride = 1 }
 
     let logits = t_zeros(T*V)
+    let sc = _clmd_scratch_new(W, T)        // H_1400: reusable scratch, built ONCE
     let tok = t_zeros(T); let tgt = t_zeros(T)
     let mut sum_model = 0.0; let mut sum_shuf = 0.0; let mut nwin = 0
     let mut s = 0
@@ -196,7 +202,7 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
                 p = p + 1
             }
             // ── inference forward (general L trunk · E experts) ──
-            _clmd_fwd_logits(W, tok, logits, T)
+            _clmd_fwd_logits_sc(W, sc, tok, logits, T)
 
             let ce = nn_ce_loss_allpos(logits, tgt, T, V)
             sum_model = sum_model + ce
@@ -209,6 +215,7 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
         }
         s = s + 1
     }
+    _clmd_scratch_free(sc)
     let model_ce = sum_model / to_float(nwin)
     let shuf_ce  = sum_shuf / to_float(nwin)
     let uniform_ce = dt_ln(to_float(V))
@@ -674,6 +681,7 @@ pub fn clm_omega_closure(path: string, corpus: string, nwin_max: int,
     let gated_self = t_zeros(T*V)    // (gB+gA)·base  (A==base self-coupling)
     let gated_orac = t_zeros(T*V)    // gB·base + gA·oracle(true-next)
     let tok = t_zeros(T); let tgt = t_zeros(T)
+    let sc = _clmd_scratch_new(W, T)        // H_1400: reusable scratch, built ONCE
     let mut sum_base = 0.0; let mut sum_self = 0.0; let mut sum_orac = 0.0
     let mut nwin = 0
     let mut s = 0
@@ -687,7 +695,7 @@ pub fn clm_omega_closure(path: string, corpus: string, nwin_max: int,
                 p = p + 1
             }
             // REAL conv .clm forward → base byte logits (the production mouth)
-            _clmd_fwd_logits(W, tok, logits, T)
+            _clmd_fwd_logits_sc(W, sc, tok, logits, T)
             // apply the OMEGA min-gate per position: self (A==base) + oracle
             let mut q = 0
             while q < T {
@@ -711,6 +719,7 @@ pub fn clm_omega_closure(path: string, corpus: string, nwin_max: int,
         }
         s = s + 1
     }
+    _clmd_scratch_free(sc)
     let base_ce = sum_base / to_float(nwin)
     let self_ce = sum_self / to_float(nwin)
     let orac_ce = sum_orac / to_float(nwin)
