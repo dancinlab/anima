@@ -372,6 +372,16 @@
             },
             {
               "type": "subsection",
+              "title": "측정-발사기 (cli/eval_pod.sh) — fresh GPU pod 반복검사 orchestrator",
+              "blocks": [
+                {
+                  "type": "prose",
+                  "text": "**summary**: `cli/eval_pod.sh <pod_id> [clm] [--bootstrap] [--gen N] [--harvest <out>]` = `anima eval` 을 fresh GPU pod 에서 한 명령으로 발사하는 bash glue. pod 는 휘발이라 매번 import-closure 를 손으로 push 하는 고고학을 반복하므로 그 절차(15 lane `.hexa` 번들 + core/cli/ckpt push + core/core nesting 제거 + detached `anima eval` + 회수)를 박제. import-closure = core/*.hexa + cli/anima.hexa 가 부르는 15 top-level lane(AESTHETIC·BRAIN·BRIDGE·CHANNEL·DREAM·EMBODIMENT·HEXAD·HIVE-MIND·INTENT·METACOG·NARRATIVE·OTHER-MIND·SAVANT·TIME·WAKE)의 `.hexa`(데이터 제외 ≈9.3MB) + core/cli/stdlib + ckpt. ⚠️ verdict 자격은 이 스크립트가 아니라 그것이 호출하는 `anima.hexa`(엔진-네이티브)에 있다 — eval_pod.sh 는 발사 orchestrator일 뿐(a_engine_native_learning). hexa stable ≥ v0.311.0(farr 누수 fix) 필수. · **path**: cli/eval_pod.sh · **SSOT**: state/clm303_clean_corpus/EVAL_KIT.md (절차·필요파일·함정) · **status**: 도구(bash glue, verdict-neutral)"
+                }
+              ]
+            },
+            {
+              "type": "subsection",
               "title": "per-gate op-재사용 맵 (재구현 금지 — 기존 wired op 호출)",
               "blocks": [
                 {

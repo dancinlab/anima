@@ -346,35 +346,70 @@ fn _clmd_transpose_w(w: int, Kdim: int, Cout: int) -> int {
 // same im2col gather + same forge matmul + same bias add, only without per-call
 // alloc of xcol/Wt. The forge matmul output `mm` is freed each call (the runtime
 // allocates it internally — unavoidable; ~T*Cout doubles, the residual floor).
-fn _clmd_conv1d_pre(x: int, Wt: int, b: int, y_out: int, xcol: int,
+//
+// DEVICE-RESIDENT (ING#34 LEVER-a · clm303 util-fix r1): when `_clmd_devres()`,
+// the im2col gather routes through forge_dispatch_im2col (the SAME device kernel
+// the trainer uses) so `xcol` stays FARR_DEVICE → the follow-up forge GEMM reads
+// it in place (no host scalar gather, no H2D ping), and the per-channel bias add
+// rides forge_dispatch_residual_add against a PRE-EXPANDED full-bias buffer
+// `bfull[t*Cout+c]=b[c]` (built once per decode, row-periodic so a maxT-sized
+// buffer serves any T≤maxT) so `y_out` stays FARR_DEVICE for the NEXT op. The
+// host gather + host scalar bias loop (the per-token CPU 0%-util sink) run ONLY
+// when device is OFF / the kernels return non-zero — byte-eq oracle (max|Δ|=0:
+// same im2col order, same A[i]+B[i] add as the scalar t_get+t_get). `bfull` is
+// passed pre-built (−1 → always host bias, e.g. CE/omega bounded path).
+fn _clmd_conv1d_pre(x: int, Wt: int, b: int, bfull: int, y_out: int, xcol: int,
                     T: int, Cin: int, Cout: int, K: int, dil: int) {
     let Kdim = Cin * K
-    _clmd_zero(xcol, T * Kdim)
-    let mut t = 0
-    while t < T {
-        let mut ci = 0
-        while ci < Cin {
-            let mut k = 0
-            while k < K {
-                let p = t - dil * (K - 1 - k)
-                if p >= 0 { t_set(xcol, t*Kdim + ci*K + k, t_get(x, p*Cin + ci)) }
-                k = k + 1
+    let dev = _clmd_devres()
+    if !(dev && forge_dispatch_im2col(x, xcol, T, Cin, K, dil) == 0) {
+        _clmd_zero(xcol, T * Kdim)
+        let mut t = 0
+        while t < T {
+            let mut ci = 0
+            while ci < Cin {
+                let mut k = 0
+                while k < K {
+                    let p = t - dil * (K - 1 - k)
+                    if p >= 0 { t_set(xcol, t*Kdim + ci*K + k, t_get(x, p*Cin + ci)) }
+                    k = k + 1
+                }
+                ci = ci + 1
             }
-            ci = ci + 1
+            t = t + 1
         }
-        t = t + 1
     }
     let mm = forge_dispatch_matmul(xcol, T, Kdim, Wt, Cout)
-    let mut t2 = 0
-    while t2 < T {
-        let mut c2 = 0
-        while c2 < Cout {
-            t_set(y_out, t2*Cout + c2, t_get(mm, t2*Cout + c2) + t_get(b, c2))
-            c2 = c2 + 1
+    // bias add: device residual_add against pre-expanded bfull keeps y_out
+    // FARR_DEVICE; else the host per-channel scalar loop (byte-eq).
+    if !(dev && bfull >= 0 && forge_dispatch_residual_add(mm, bfull, y_out, T*Cout) == 0) {
+        let mut t2 = 0
+        while t2 < T {
+            let mut c2 = 0
+            while c2 < Cout {
+                t_set(y_out, t2*Cout + c2, t_get(mm, t2*Cout + c2) + t_get(b, c2))
+                c2 = c2 + 1
+            }
+            t2 = t2 + 1
         }
-        t2 = t2 + 1
     }
     t_free(mm)
+}
+
+// _clmd_bias_expand — build a maxT-row broadcast of a per-channel bias `b[Cout]`
+// into `bfull[maxT*Cout]` (bfull[t*Cout+c]=b[c]). Row-periodic so the SAME buffer
+// serves any T≤maxT (residual_add over T*Cout reads only the first T rows, each a
+// faithful copy of b). Built ONCE per decode in _clmd_scratch_new (bias is const
+// across steps) — keeps the device bias add allocation-free per step.
+fn _clmd_bias_expand(b: int, Cout: int, maxT: int) -> int {
+    let bf = t_zeros(maxT * Cout)
+    let mut t = 0
+    while t < maxT {
+        let mut c = 0
+        while c < Cout { t_set(bf, t*Cout + c, t_get(b, c)); c = c + 1 }
+        t = t + 1
+    }
+    return bf
 }
 
 // _clmd_scratch_new — build the REUSABLE forward scratch record ONCE per decode
@@ -393,6 +428,15 @@ fn _clmd_scratch_new(W: Map, T: int) -> Map {
     while j < E { eWt.push(_clmd_transpose_w(to_int(eW[j]), Kd, d)); j = j + 1 }
     let rWt  = _clmd_transpose_w(to_int(W["rW"]),  d * 1, E)   // router K=1
     let roWt = _clmd_transpose_w(to_int(W["roW"]), d * 1, V)   // readout K=1
+    // pre-expanded full-bias buffers (device residual_add broadcast, const/decode):
+    // one per conv, sized maxT*Cout, row-periodic (bfull[t*Cout+c]=b[c]).
+    let ecBf = _clmd_bias_expand(to_int(W["ecB"]), d, T)
+    let tcBf = []; let tcB = W["tcB"]; let mut bi = 0
+    while bi < L { tcBf.push(_clmd_bias_expand(to_int(tcB[bi]), d, T)); bi = bi + 1 }
+    let eBf  = []; let eB  = W["eB"];  let mut bj = 0
+    while bj < E { eBf.push(_clmd_bias_expand(to_int(eB[bj]), d, T)); bj = bj + 1 }
+    let rBf  = _clmd_bias_expand(to_int(W["rB"]),  E, T)        // router  Cout=E
+    let roBf = _clmd_bias_expand(to_int(W["roB"]), V, T)        // readout Cout=V
     // reusable im2col buffers: the d-conv ones share T*Kd; router/readout K=1 → T*d
     let xcolD = t_zeros(T * Kd)     // for ec/trunk/expert convs (Kdim=d*K)
     let xcol1 = t_zeros(T * d)      // for router/readout convs   (Kdim=d*1)
@@ -405,6 +449,7 @@ fn _clmd_scratch_new(W: Map, T: int) -> Map {
     let probs = t_zeros(T*E); let y = t_zeros(T*d)
     let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
     return #{ "ecWt": ecWt, "tcWt": tcWt, "eWt": eWt, "rWt": rWt, "roWt": roWt,
+              "ecBf": ecBf, "tcBf": tcBf, "eBf": eBf, "rBf": rBf, "roBf": roBf,
               "xcolD": xcolD, "xcol1": xcol1, "xe": xe, "xt": xt,
               "h": h, "hn": hn, "hg": hg, "m1": m1, "iv1": iv1, "xh1": xh1,
               "logits_r": logits_r, "ex_out": ex_out, "eo": eo, "ex": ex,
@@ -418,6 +463,11 @@ fn _clmd_scratch_free(sc: Map) {
     while i < len(tcWt) { t_free(to_int(tcWt[i])); i = i + 1 }
     let eWt = sc["eWt"]; let mut j = 0
     while j < len(eWt) { t_free(to_int(eWt[j])); j = j + 1 }
+    t_free(to_int(sc["ecBf"])); t_free(to_int(sc["rBf"])); t_free(to_int(sc["roBf"]))
+    let tcBf = sc["tcBf"]; let mut bi = 0
+    while bi < len(tcBf) { t_free(to_int(tcBf[bi])); bi = bi + 1 }
+    let eBf = sc["eBf"]; let mut bj = 0
+    while bj < len(eBf) { t_free(to_int(eBf[bj])); bj = bj + 1 }
     t_free(to_int(sc["xcolD"])); t_free(to_int(sc["xcol1"]))
     t_free(to_int(sc["xe"])); t_free(to_int(sc["xt"]))
     t_free(to_int(sc["h"])); t_free(to_int(sc["hn"])); t_free(to_int(sc["hg"]))
@@ -433,17 +483,35 @@ fn _clmd_scratch_free(sc: Map) {
 // buffer is reused from the scratch record `sc`. Reused buffers that the consuming
 // op fully overwrites (conv writes all T*Cout, GN/GELU write all T*d) need no
 // re-zero; only the im2col xcol's causal padding is reset (inside _clmd_conv1d_pre).
+// _clmd_devres — decode device-resident gate. ON under CLM_PROD_DEVRESIDENT (or the
+// HEXA_FUSE_ALL umbrella), mirroring clm_prod.hexa's _fuse_on. When ON, the per-token
+// fwd glue (embedding · groupnorm→gelu→residual · expert gelu · moe router · final GN)
+// routes through the forge_dispatch_* device kernels — the SAME ones the trainer uses
+// — keeping activations FARR_DEVICE across the chain (no per-op CPU scalar / H2D ping).
+// rc==0 = ran on device; OFF / no-cuda / device-fail → the byte-exact host ops run
+// (max|Δ|=0, same erf-gelu + GN reduction order). This is the decode twin of the
+// a_train_flame_forge device-resident hot-path (#2598/#3851).
+fn _clmd_devres() -> bool {
+    if env("CLM_PROD_DEVRESIDENT") != "" { return true }
+    if env("HEXA_FUSE_ALL") != "" { return true }
+    return false
+}
+
 fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
     let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"])
     let K = to_int(W["K"]); let L = to_int(W["L"])
     let embed = to_int(W["embed"])
     let tcB = W["tcB"]; let eB = W["eB"]; let tgG = W["tgG"]; let tgB = W["tgB"]
     let tcWt = sc["tcWt"]; let eWt = sc["eWt"]
+    let tcBf = sc["tcBf"]; let eBf = sc["eBf"]
     let xcolD = to_int(sc["xcolD"]); let xcol1 = to_int(sc["xcol1"])
     let xe = to_int(sc["xe"]); let xt = to_int(sc["xt"])
 
-    nn_embedding_fwd(tok, embed, xe, T, d)
-    _clmd_conv1d_pre(xe, to_int(sc["ecWt"]), to_int(W["ecB"]), xt, xcolD, T, d, d, K, 1)
+    let dev = _clmd_devres()
+    if !(dev && forge_dispatch_embedding(tok, embed, xe, T, d) == 0) {
+        nn_embedding_fwd(tok, embed, xe, T, d)
+    }
+    _clmd_conv1d_pre(xe, to_int(sc["ecWt"]), to_int(W["ecB"]), to_int(sc["ecBf"]), xt, xcolD, T, d, d, K, 1)
 
     let DIL_CAP = 512
     let h = to_int(sc["h"]); let hn = to_int(sc["hn"]); let hg = to_int(sc["hg"])
@@ -453,32 +521,43 @@ fn _clmd_fwd_logits_sc(W: Map, sc: Map, tok: int, out_logits: int, T: int) {
     while li < L {
         let mut dil_eff = dil
         if dil_eff > DIL_CAP { dil_eff = DIL_CAP }
-        _clmd_conv1d_pre(xt, to_int(tcWt[li]), to_int(tcB[li]), h, xcolD, T, d, d, K, dil_eff)
-        nn_groupnorm_fwd(h, to_int(tgG[li]), to_int(tgB[li]), hn, m1, iv1, xh1, T, d, 1)
-        nn_gelu_fwd(hn, hg, T*d)
-        let mut i = 0
-        while i < T*d { t_set(xt, i, t_get(xt, i) + t_get(hg, i)); i = i + 1 }
+        _clmd_conv1d_pre(xt, to_int(tcWt[li]), to_int(tcB[li]), to_int(tcBf[li]), h, xcolD, T, d, d, K, dil_eff)
+        // FUSED device gn→gelu→residual: xt = xt + gelu(groupnorm(h)). rc==0 = on device
+        // (xt stays FARR_DEVICE for the next conv GEMM). OFF/device-fail → byte-exact host
+        // triple (the interpreted scalar residual loop — the per-token CPU 0%-util sink).
+        if !(dev && forge_dispatch_groupnorm_gelu_residual(h, to_int(tgG[li]), to_int(tgB[li]), xt, hn, hg, xt, m1, iv1, xh1, T, d, 1) == 0) {
+            nn_groupnorm_fwd(h, to_int(tgG[li]), to_int(tgB[li]), hn, m1, iv1, xh1, T, d, 1)
+            nn_gelu_fwd(hn, hg, T*d)
+            let mut i = 0
+            while i < T*d { t_set(xt, i, t_get(xt, i) + t_get(hg, i)); i = i + 1 }
+        }
         dil = dil * 2
         li = li + 1
     }
 
     let logits_r = to_int(sc["logits_r"])
-    _clmd_conv1d_pre(xt, to_int(sc["rWt"]), to_int(W["rB"]), logits_r, xcol1, T, d, E, 1, 1)
+    _clmd_conv1d_pre(xt, to_int(sc["rWt"]), to_int(W["rB"]), to_int(sc["rBf"]), logits_r, xcol1, T, d, E, 1, 1)
     let ex_out = to_int(sc["ex_out"]); let eo = to_int(sc["eo"]); let ex = to_int(sc["ex"])
     let mut ej = 0
     while ej < E {
-        _clmd_conv1d_pre(xt, to_int(eWt[ej]), to_int(eB[ej]), eo, xcolD, T, d, d, K, 1)
-        nn_gelu_fwd(eo, ex, T*d)
+        _clmd_conv1d_pre(xt, to_int(eWt[ej]), to_int(eB[ej]), to_int(eBf[ej]), eo, xcolD, T, d, d, K, 1)
+        if !(dev && forge_dispatch_gelu(eo, ex, T*d) == 0) {
+            nn_gelu_fwd(eo, ex, T*d)
+        }
         let mut jj = 0
         while jj < T*d { t_set(ex_out, ej*T*d + jj, t_get(ex, jj)); jj = jj + 1 }
         ej = ej + 1
     }
     let probs = to_int(sc["probs"]); let y = to_int(sc["y"])
-    nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
+    if !(dev && forge_dispatch_moe_router(logits_r, ex_out, probs, y, T, E, d) == 0) {
+        nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
+    }
     let yn = to_int(sc["yn"]); let meanN = to_int(sc["meanN"])
     let invN = to_int(sc["invN"]); let xhatN = to_int(sc["xhatN"])
-    nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
-    _clmd_conv1d_pre(yn, to_int(sc["roWt"]), to_int(W["roB"]), out_logits, xcol1, T, d, V, 1, 1)
+    if !(dev && forge_dispatch_groupnorm(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1) == 0) {
+        nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
+    }
+    _clmd_conv1d_pre(yn, to_int(sc["roWt"]), to_int(W["roB"]), to_int(sc["roBf"]), out_logits, xcol1, T, d, V, 1, 1)
 }
 
 // _clmd_fwd_logits — run the general CLMConvMoE inference forward on a T-length

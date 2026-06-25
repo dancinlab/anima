@@ -13,11 +13,23 @@
 - `train.py` 는 **production 아님** — 388M GPU 학습이 현재 torch 경로뿐이라 BRIDGE 로 쓴다. 그 ckpt 의 verdict 는 `.clm` 을 CORE 엔진(`anima eval`)에 올려 frozen bar 재측정해야 성립(`a_engine_native_learning`).
 - `train.hexa` 가 PUBLIC production 트레이너 — `.py` 트레이너를 production 으로 박제 금지(`a_train_flame_forge` dont).
 
-## 🔒 PARITY 불변식 (BLOCKING — 사용자 지시: "2개는 구현기준 동일해야된다")
+## 🔒 PARITY 불변식 (2-tier — 사용자 지시 "2개는 구현기준 동일" 의 정밀화, 2026-06-25 device-decode 측정 교훈)
 
-**`train.hexa` 와 `train.py` 는 학습 기준(레시피·가드·측정)이 byte-faithful 동일해야 한다.** 한쪽에 기능을 추가하면 같은 PR 에서 다른 쪽에도 반영(lockstep). 한쪽에만 있는 학습 레버/가드 = parity 위반.
+> 재프레임: hexa·py 는 **대등한 두 production 이 아니다** — `train.hexa`/`core/*.hexa` = production canonical(verdict 권위), `train.py`/torch = **수치 golden oracle**(DIRECTIONAL, `a_engine_native_learning`·`reference-match`). 정답지의 일은 *수치 커널 검증*이지 *커리큘럼 복제*가 아니다. 그래서 parity 는 두 tier 로 분리한다:
 
-### parity 체크리스트 (둘 다 가져야 하는 기준)
+### Tier-1 — 수치 커널 byte-golden (🔒 BLOCKING · 정답지의 본질)
+**hexa 의 forward / CE / decode-logits 수치는 torch·numpy(math.log) golden 과 성분별 byte-match 해야 한다** — 작은 CI fixture 로(고정 ckpt·고정 입력, GPU pod 불필요). 이게 hexa own-GEMM(어린 자작 GEMM)을 신뢰하게 하는 단 하나의 장치다. 이 tier 가 잡은 실제 결함(전부 정답지 diff 로만 드러남): `dt_ln` 급수 발산(engine CE overfit 은폐) · device `dirty_host` clobber · own-GEMM TF32 decode 발산(2026-06-25). 발산 시 **첫 발산점만 정렬해 정직 기록**(reference-match), hexa 가 틀리면 hexa 를 고친다(정답지는 자(尺)).
+
+| Tier-1 항목 | golden | 게이트 |
+|---|---|---|
+| forward / CE 수치 | numpy `math.log` mirror (dt_ln-immune) · torch fp32 fwd | byte/4자리 일치 (CI fixture) |
+| decode logits | torch golden(`h1464_torch_golden.py` 류) 3-way | host==device==torch byte-exact |
+| post-serialize held-out DESCENT | `verify_clm_v2.py descent` (held-out, math.log) | model_ce < uniform ∧ < shuffle |
+
+### Tier-2 — 학습 레버 lockstep (🟡 권장 · non-blocking)
+학습 *레시피·가드·커리큘럼* 레버는 양쪽에 두는 걸 권장하되 byte-parity 강제 아님 — 정답지(py)는 이 레버들을 검증할 의무가 없다(production=hexa 가 소유). 한쪽에만 있으면 **`parity-drift: <레버>` 라벨**로 산출물에 명시(은폐 금지), blocking 은 아님. (drift 가 수치 커널에 새면 그건 Tier-1 위반으로 승격.)
+
+#### Tier-2 레버 체크리스트 (권장 lockstep)
 
 | 기준 | 의미 | 근거 규칙 |
 |---|---|---|
@@ -30,8 +42,9 @@
 | **balanced 샘플링** | `--sample proportional` = byte∝노출 (작은 셀 과반복 암기 방지) | `a_chat_registers` |
 | minibatch | `--batch-size` (grad accumulation) | parity |
 | bf16 | `--bf16` autocast(py) ⇔ forge TF32/BF16-TC own-GEMM 경로(hexa, 런타임-선택) | parity (초월 축, 아래) |
-| post-serialize held-out DESCENT 게이트 | 직렬화 직후 `verify_clm_v2.py descent` (overfit 탐지, dt_ln-immune) | `a_clm_gen_pipeline` |
 | mid-measure 1-6 (DIRECTIONAL) | `--mid-measure-every` 곡선 (held-out CE per register + gauge proxy) | `a_train_inline_gauge` |
+
+(post-serialize held-out DESCENT 게이트는 Tier-1 로 승격 — 수치 커널 검증이므로.)
 
 ### 정직한 초월 축 (byte-parity 불가, 명시 보존 — `reference-match`)
 

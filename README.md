@@ -560,17 +560,27 @@ golden-zone cusp-anneal inhibition, MITOSIS `E→E+1` cell-division, the 4-cell
 (`a_engine_native_learning`): the **terminal** verdict is a CORE re-measure of the
 serialized `.clm` on the frozen G6 bars, so the ckpt must be pulled before teardown.
 
-The two trainers hold an enforced **PARITY invariant** — identical training
-standard, governed by [`cli/CLAUDE.md`](cli/CLAUDE.md). `cli/train.hexa` now carries
-the same anti-overfit + measurement surface as `cli/train.py`: held-out val monitor
+The two trainers hold a **2-tier PARITY invariant** (governed by
+[`cli/CLAUDE.md`](cli/CLAUDE.md) — refined 2026-06-25 from the device-decode
+measurement): `hexa` is the sole production engine, `py`/torch is the **numerical
+golden oracle** (`reference-match`), not a co-equal production mirror. **Tier-1
+(🔒 BLOCKING)** = the numerical kernel (forward / CE / decode-logits) must be
+byte-golden to the torch·numpy reference on small CI fixtures — the single device
+that keeps the young own-GEMM trustworthy (it caught `dt_ln` divergence, the
+device `dirty_host` clobber, and the own-GEMM TF32 decode drift, each visible only
+by diffing against the golden). **Tier-2 (🟡 recommended)** = training levers are
+kept in lockstep across both trainers but are not byte-parity-blocking; a one-sided
+lever is surfaced as a `parity-drift:<lever>` label, not a hard fail. `cli/train.hexa`
+carries the same anti-overfit + measurement surface as `cli/train.py`: held-out val monitor
 (`--val-frac`/`--val-every`, per-register + pooled val-CE + gap), fail-loud 4-cell
 guard (`--require-cells` abort + balance/repetition table — the clm303 starvation
 guard), disjoint train/val tail split, byte-proportional sampling (`--sample`),
 minibatch grad-accumulation (`--batch-size`), a `--bf16` request flag (forge
 TF32/BF16-TC, runtime-selected precision), and the MONITOR-ONLY mid-measure curve
 (`--mid-measure-every` → per-register held-out CE + `e_active` mitosis-cell count +
-inhibition + savant latch). Adding a lever to one trainer means adding it to the
-other in lockstep.
+inhibition + savant latch). Adding a Tier-2 lever to one trainer means adding it to
+the other in lockstep (recommended); a numerical-kernel change is Tier-1 byte-golden
+(blocking).
 
 ```bash
 # REFERENCE+BRIDGE 303M GPU train (cost-gated fire) — CLEAN language-verified 4-cell:

@@ -1,0 +1,12 @@
+CKPT=clm_d768_e2l1.clm GEN=4
+OFF1_WALL_SEC=214.18
+OFF2_WALL_SEC=216.34
+ON_WALL_SEC=187.97
+OFF_DETERMINISM=IDENTICAL           # OFF#1 vs OFF#2 gate lines (IDENTICAL = eval deterministic)
+BYTE_EXACT_OFF_VS_ON=PASS    # PASS = device decode == host (a_clm_gen_pipeline)
+OFF1_OWNGEMM_DEVICE=0
+ON_OWNGEMM_DEVICE=0
+HEXA_VERSION=hexa v0.315.2
+--- OFF#1 gates ---
+--- ON gates ---
+ALL_DONE=1

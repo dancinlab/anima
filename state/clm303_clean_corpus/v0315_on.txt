@@ -1,0 +1,24 @@
+[psi_loader] WARN: consciousness_laws.json not found; alpha DEFAULT=0.014
+[psi_loader] WARN: consciousness_laws.json not found; balance DEFAULT=0.5
+[psi_loader] WARN: consciousness_laws.json not found; phase_dormant_max DEFAULT=0.01
+[psi_loader] WARN: consciousness_laws.json not found; phase_flicker_max DEFAULT=0.05
+[psi_loader] WARN: consciousness_laws.json not found; phase_sustain_max DEFAULT=0.15
+=== anima eval — BUILT-IN G0-G6 gate scoring (engine-native, single-entry) ===
+ckpt:   clm_d768_e2l1.clm  (mouth: clm)
+corpus: (none — G2 novelty needs a corpus)
+gen:    4 tokens/decode  (frozen bars · 7B_PASS_CONDITIONS.md)
+
+[OWN-GEMM-FIRED] _hx_k_gemm DEVICE path (no cuBLAS)
+gate                              verdict   detail
+  ──────────────────────────────────────────────────────────────────
+  G0 COHERENCE     🔴 FAIL  kwr>=0.50 on 0/5 (need >=4)
+  G1 RECOMBINATION  🔴 FAIL  best_distinct=0 > max_single=0 (need >=2 & >max_single)
+  G2 NOVELTY       🔴 FAIL  novel=0 (need>=3) · control=0 (need 0) · coherent=0
+  G3 PHILOSOPHY    ✅ (read)  self-continuity=0.99995000374968761 · impostor=0.0 (architecture, not a decode score)
+  G4 PROVENANCE    — N/A      HF/recovery = process gate (a_hf_* / a_fire_recover_complete), out of eval scope
+  G5 NON-FAB       🔴 FAIL  L1 fab=1.0 (<=0.30) · L2 abstain-fire=0.0 (<=0.20)
+  G6 IDEATION ★    🔴 FAIL  distinct=1 (need>=5) · falsifiable=0 (need>=1) · frame-leaks=0
+  ──────────────────────────────────────────────────────────────────
+
+CLOSURE (a7b_pass = G0 ∧ G1 ∧ G2): 🔴 FAIL
+  → NOT closure (PRIVATE/WIP) — closure needs G0∧G1∧G2 all PASS.
