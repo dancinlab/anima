@@ -7,6 +7,7 @@ clm303 device-resident decode(commit 422328421)의 GPU byte-exact 발산을 hexa
 - **버전게이트 교훈**: v0.314.2 Pre-release(cancelled run)는 `bootstrap --hexa` 가 v0.314.1로 폴백 → 측정 전 `hexa --version > v0.314.1` 검증 게이트로 차단(돈낭비 방지). 산출 = `state/clm303_clean_corpus/{device_decode_measure_verdict.md, run_timed.sh, v0315_*.txt}` · run_timed gates() 빈추출 trivial-PASS 버그 → raw-diff+empty-guard 수정.
 - **`cli/eval_pod.sh` + EVAL_KIT.md**: fresh GPU pod 에서 `anima eval` 을 한 명령으로(import-closure 15 lane 번들+push+nesting제거+detached+회수). ARCHITECTURE.json + 루트 CLAUDE.md `a_engine_native_learning` 에 배선.
 - **PARITY 불변식 2-tier 재서술** (`cli/CLAUDE.md`, 사용자 "2개 동일" 의 정밀화): hexa=유일 production, py/torch=수치 golden oracle(`reference-match`). **Tier-1 수치커널 byte-golden(forward/CE/decode-logits, CI fixture)=🔒 BLOCKING** — own-GEMM 신뢰의 단일 장치(이번 dt_ln·clobber·TF32 셋 다 정답지 diff로만 드러남). **Tier-2 학습레버(savant/mitosis/4셀/스케줄) lockstep=🟡 권장(parity-drift 라벨, non-blocking)** — 정답지는 커리큘럼 복제 의무 없음.
+## docs(state): 검증-지식 전수수집 census 2026-06-25 — UNIVERSE/HYPOTHESES.jsonl n=1469 (verified 491 · falsified+closed-neg+wall 160 · pending/archive/other 818) + G6–G16 numerical PROOF·H_9010–H_9019 real-QM·engine-native WIRED-live 63, frozen 증거 state/verdicts/ 978dir — `state/knowledge-census-2026-06-25.md` (additive · 코드 무수정)
 
 ## feat(cli/train.hexa): train.py 와 학습 기준 FULL PARITY (7 갭 포팅) + cli/CLAUDE.md parity 거버넌스
 

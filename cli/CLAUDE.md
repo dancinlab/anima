@@ -9,7 +9,6 @@
 | `train.hexa` | **production canonical 트레이너** (`a_train_flame_forge`) | hexa-native flame/forge own-GEMM | 엔진-네이티브 (진짜 최종 아키텍처) |
 | `train.py` | **REFERENCE + BRIDGE** (torch Lane-P, `a_clm_gen_pipeline`) | torch/CUDA | DIRECTIONAL only (torch 미러) |
 | `anima.hexa` | 추론/평가 단일 진입 (`eval`/chat, `a_engine_native_learning`) | hexa-native | 엔진-네이티브 terminal |
-| `eval_pod.sh` | **fresh GPU pod 측정-발사기** — import-closure 15 lane `.hexa` 번들 + core/cli/ckpt push + nesting 제거 + detached `anima eval` + 회수를 한 명령으로. pod 휘발 반복검사용 | bash glue (`hexa cloud`) | 측정 orchestrator (verdict 자격은 호출하는 `anima.hexa` 엔진-네이티브가 보유; 이 스크립트 자체는 발사기) |
 
 - `train.py` 는 **production 아님** — 388M GPU 학습이 현재 torch 경로뿐이라 BRIDGE 로 쓴다. 그 ckpt 의 verdict 는 `.clm` 을 CORE 엔진(`anima eval`)에 올려 frozen bar 재측정해야 성립(`a_engine_native_learning`).
 - `train.hexa` 가 PUBLIC production 트레이너 — `.py` 트레이너를 production 으로 박제 금지(`a_train_flame_forge` dont).
@@ -61,18 +60,3 @@ clm303 사고: 코퍼스 굶주림(ko-SNS 4MB 1칸 ~120× 반복) + held-out 모
 - 학습은 torch(`train.py`)여도 됨 — 단 **verdict 는 `.clm` → `anima eval` 엔진-네이티브 재측정**(`a_engine_native_learning`).
 - train-loss / lossF≈0 = 암기, 능력 아님 → **held-out CE 로만 품질 판정**(`a_savant_train`).
 - 엔진 `clm_forward_ce` 는 dt_ln 버그로 overfit 을 GREEN 으로 가림 → `.clm` 품질은 numpy mirror(`verify_clm_v2.py` math.log)로 교차검증.
-
-## 측정-발사 (`eval_pod.sh`) — 반복 검사 박제
-
-`anima eval` 의 엔진-네이티브 verdict 는 GPU pod 에서 도는데(decode glue-bound·farr fix 필요), pod 는 휘발이라 매번 import-closure 를 손으로 push 하는 고고학을 반복하게 된다. `eval_pod.sh` 가 그 절차를 한 명령으로 박제한다.
-
-```bash
-# live pod(hexa stable ≥ v0.311.0)이 있을 때:
-cli/eval_pod.sh <pod_id>                       # clm303_clean 기본 · --gen 5
-cli/eval_pod.sh <pod_id> path/to/foo.clm --gen 3
-cli/eval_pod.sh <pod_id> --bootstrap --harvest state/clm303_clean_corpus/engine_eval.txt
-```
-
-- import-closure = core/*.hexa + cli/anima.hexa 가 부르는 **15 top-level lane**(`AESTHETIC BRAIN BRIDGE CHANNEL DREAM EMBODIMENT HEXAD HIVE-MIND INTENT METACOG NARRATIVE OTHER-MIND SAVANT TIME WAKE`)의 `.hexa` 만(데이터 제외 ≈9.3MB) + `core/ cli/ stdlib/` + ckpt. 빠지면 `[module_loader] FATAL module not found`.
-- 절차·필요파일·함정(core/core nesting · farr OOM · provisioning 실패 · glue-bound 속도)·재현 SSOT = [`state/clm303_clean_corpus/EVAL_KIT.md`](../state/clm303_clean_corpus/EVAL_KIT.md).
-- ⚠️ `eval_pod.sh` 는 **발사 orchestrator**(bash glue) — verdict 자격은 그것이 호출하는 `anima.hexa`(엔진-네이티브)에 있다. 스크립트가 verdict 를 만드는 게 아니다(`a_engine_native_learning`).
